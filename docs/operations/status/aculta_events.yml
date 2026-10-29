@@ -2,14 +2,13 @@
 version: 0.1.0-rc.1
 state: Dev
 progress_note: >-
-  Planejamento LOC-00 a LOC-08 publicado em 2026-10-29; CRUD, criação inline, página/agenda e integração IDX-LOC ainda pendentes. O escopo ampliado está Dev; o manifesto RC anterior permanece histórico e inalterado.
-  RC 0.1.0-rc.1 (2026-10-29): candidato 89efeb5b7 servido no checkout de teste
-  com drush cr. Smoke do purpose eventos 129/129 verificações PASS em
-  1280/390/320 px reais com modo escuro; o mapa não exibe mais o texto inline de
-  envio de IP e mantém os links para a Política de Privacidade (D-52). Suíte
-  Events 55 testes/670 assertions PASS (26 depreciações); PHPCS 0 erros e lint
-  do MapController PASS. OAuth do OSM validado no Runtime e ensaio de escrita
-  fictícia concluído com limpeza (nó 14331309082; changesets 191197897,
-  191197899 e 191197900). Runtime sem atualização de configuração; a conta e o
-  conteúdo de teste foram removidos.
-next_phase: "Executar LOC-00/01 antes de CRUD/inline e IDX-LOC; concluir LOC-02 a LOC-08 com integração aculta_index, migração e homologação antes de novo RC. [Plano LOC](docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md)."
+  Implementação completa do plano de locais e integração ao catálogo (LOC-01 a LOC-08):
+  entidade aculta_event_location expandida com status (publicado/rascunho/privado), descrição,
+  telefone e site (LOC-01); formulários nativos de criação/edição e exclusão com proteção contra
+  quebra referencial em datas (LOC-02); criação inline e seleção de local no formulário de data
+  (LOC-03); provedor LocationContentIndexProvider (v2) e relações derivadas event_location no
+  EventContentIndexProvider via work manager do aculta_index (LOC-04); página canônica individual
+  /locais/{id} com agenda de eventos e catálogo paginado com busca e filtro por tipo (LOC-05);
+  atualização de schema aculta_events_update_10007 executada no runtime com 0 pendências.
+  Suíte Kernel aculta_events 58 testes / 885 asserções PASS (100%).
+next_phase: "Homologação do novo fluxo de locais em navegador real (X11 DISPLAY=:0) e preparação do próximo release candidate (RC-2)."

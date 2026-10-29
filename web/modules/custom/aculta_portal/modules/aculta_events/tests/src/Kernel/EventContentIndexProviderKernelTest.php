@@ -86,6 +86,27 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
     ]);
     $eventoPublicado->save();
 
+    Vocabulario:
+    Vocabulary::create(['vid' => 'aculta_location_type', 'name' => 'Tipo de local'])->save();
+    $locTipo = Term::create(['vid' => 'aculta_location_type', 'name' => 'Ateliê']);
+    $locTipo->save();
+
+    $localPublicado = EventLocation::create([
+      'title' => 'Ateliê das Artes',
+      'field_status' => 'publicado',
+      'field_tipo' => $locTipo->id(),
+    ]);
+    $localPublicado->save();
+
+    // Cria uma data vinculando o evento ao local.
+    $dateStorage = $this->container->get('entity_type.manager')->getStorage('aculta_event_date');
+    $dateStorage->create([
+      'title' => 'Turma Manhã',
+      'field_evento' => $eventoPublicado->id(),
+      'field_local' => $localPublicado->id(),
+      'field_quando' => ['value' => '2026-11-01T10:00:00', 'end_value' => '2026-11-01T12:00:00'],
+    ])->save();
+
     $eventoRascunho = Event::create([
       'title' => 'Ensaio Fechado',
       'field_status' => 'rascunho',
@@ -106,9 +127,11 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
     $this->assertSame('Oficina de Argila', $proj->label);
     $this->assertSame('eventos_aculta_org', $proj->domainId);
     $this->assertTrue($proj->published);
-    $this->assertCount(1, $proj->relations);
-    $this->assertSame('event_type', $proj->relations[0]->type);
-    $this->assertSame((string) $tipo->id(), $proj->relations[0]->targetEntityId);
+
+    // Valida relação event_type e relação derivada event_location (LOC-04).
+    $relationTypes = array_map(static fn ($r) => $r->type, $proj->relations);
+    $this->assertContains('event_type', $relationTypes);
+    $this->assertContains('event_location', $relationTypes);
 
     $this->assertNull($provider->project($eventoRascunho));
   }
@@ -117,29 +140,42 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
    * Provedor de locais projeta entidades com relações de tipo.
    */
   public function testLocationIndexProvider(): void {
-    Vocabulary::create(['vid' => 'aculta_location_type', 'name' => 'Tipo de local'])->save();
+    if (!Vocabulary::load('aculta_location_type')) {
+      Vocabulary::create(['vid' => 'aculta_location_type', 'name' => 'Tipo de local'])->save();
+    }
     $tipo = Term::create(['vid' => 'aculta_location_type', 'name' => 'Galeria']);
     $tipo->save();
 
-    $local = EventLocation::create([
+    $localPublicado = EventLocation::create([
       'title' => 'Galeria Central',
       'field_tipo' => $tipo->id(),
+      'field_status' => 'publicado',
     ]);
-    $local->save();
+    $localPublicado->save();
+
+    $localRascunho = EventLocation::create([
+      'title' => 'Galeria Oculta',
+      'field_tipo' => $tipo->id(),
+      'field_status' => 'rascunho',
+    ]);
+    $localRascunho->save();
 
     $provider = $this->container->get('aculta_events.index_provider.location');
     $this->assertSame('event_location', $provider->getProviderId());
-    $this->assertSame('eventos', $provider->getAccessPurpose($local));
-    $this->assertTrue($provider->isIndexable($local));
+    $this->assertSame('eventos', $provider->getAccessPurpose($localPublicado));
+    $this->assertTrue($provider->isIndexable($localPublicado));
+    $this->assertFalse($provider->isIndexable($localRascunho));
 
-    $proj = $provider->project($local);
+    $proj = $provider->project($localPublicado);
     $this->assertNotNull($proj);
     $this->assertSame('aculta_event_location', $proj->entityTypeId);
-    $this->assertSame((string) $local->id(), $proj->entityId);
+    $this->assertSame((string) $localPublicado->id(), $proj->entityId);
     $this->assertSame('Galeria Central', $proj->label);
     $this->assertTrue($proj->published);
     $this->assertCount(1, $proj->relations);
     $this->assertSame('location_type', $proj->relations[0]->type);
+
+    $this->assertNull($provider->project($localRascunho));
   }
 
 }
