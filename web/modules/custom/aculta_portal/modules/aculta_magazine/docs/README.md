@@ -2,13 +2,13 @@
 
 ## ARQ-08A - Correção incremental de foco (2026-10-29)
 
-A validação de formulários da Revista continua usando Core Form API. Após os commits de tratamento dos caminhos originais, a busca pelo primeiro campo inválido agora evita atribuir `autofocus` a elementos não interativos (`container`, `markup`, `details` etc.). Um teste Unit cobre o erro de container sem widget. **Testes PHP e Drupal não foram executados nesta sessão**; repetir Unit, Kernel, Form API e Firefox ESR com campos vazios, widgets AJAX e erros reais antes de homologar. O fluxo editorial permanece no bundle `revista`, sem novas entidades ou campos.
+A validação de formulários da Revista continua usando Core Form API. Após os commits de tratamento dos caminhos originais, a busca pelo primeiro campo inválido evita atribuir `autofocus` a elementos não interativos (`container`, `markup`, `details` etc.). Em 2026-10-29 o fluxo foi homologado no Runtime de desenvolvimento: Unit 31/121 e Kernel 12/500 PASS; criação, edição, erro principal e secundário, preview, revisões, transições, acesso, no-JS/AJAX e apresentação foram exercitados em Firefox ESR. Detalhes e pendências em [ARQ-08-FECHAMENTO-LOCAL.md](ARQ-08-FECHAMENTO-LOCAL.md). O fluxo editorial permanece no bundle `revista`, sem novas entidades ou campos.
 
 ## ARQ-08 - Encerramento do editorial existente (2026-10-29)
 
 O único bundle de publicação editorial permanece `revista`. Não criar `article`, `blog`, press mention, entidades de apoiadores, campos de chamada/resumo nem editor paralelo. [Plano atualizado](../../../../../../../docs/architecture/PLANO-ARQUITETURAL-OPENCULTURAS-ACULTA-ARQ-01-09.md), microfases ARQ-08A-D: fluxo Studio/Core, exibição dos campos e mídia existentes, descoberta via Views/Index, autoria/coautoria/comentários/SEO/anexos.
 
-**Incremento 08A, em progresso:** `RevistaFormHooks` reconhece erros do Form API reportados no caminho original de campos secundários ou no caminho agrupado e abre o `details` para exibir o campo inválido, sem regravar erros do Core. Testes Unit adicionados para caminho original e precedência do primeiro erro. **PHPUnit, Kernel, HTTP e navegador ainda não executados nesta rodada; não homologar.** Permanecem pendentes confirmação das operações de criação/edição/revisão, discussões e integração Studio em Runtime.
+**Incremento 08A, homologado em 2026-10-29:** `RevistaFormHooks` reconhece erros do Form API no caminho original dos campos secundários ou no caminho agrupado, abre o `details` e não foca wrappers não interativos. Unit e Kernel passaram; criação, edição, revisão, preview, transições e acesso foram confirmados no Runtime. A submissão real de comentário e a visibilidade foram validadas: conta `email_confirmed` fica pendente e invisível ao anônimo; o moderador vê os pendentes. Pendências fora do Magazine: cartão da listagem (tema), backfill do catálogo do índice (ARQ-03) e `skip comment approval` em `content_editor` (decisão de política).
 
 # aculta_magazine (Revista)
 

@@ -114,6 +114,8 @@ Este documento substitui a antiga sequência linear que condicionava a criação
 
 **Observações de código:** `RevistaFormHooks` só recolhe conjunto fixo de campos, sem contrato formal de grupos e sem prova de erro/foco nos detalhes; `PostPresentation` monta links absolutos para compartilhamento e consulta perfil/caches, exigindo teste de Domain, privacidade, render-cache e XSS; `ArticleAuthorsHooks` só atua em Node publicado e view mode full no purpose magazine. São alvos de auditoria, não defeitos comprovados.
 
+**Homologação local ARQ-08 (2026-10-29):** o fluxo editorial foi exercitado no Runtime de desenvolvimento com Firefox ESR: criação, edição, erro principal e secundário, preview, revisões, transições, acesso, no-JS, apresentação no purpose `magazine`, comentários reais e visibilidade. 08A e 08D PASS (08D com achado: `content_editor` sem `skip comment approval` mantém comentários do editor pendentes). 08B e 08C permanecem parciais: a listagem usa o teaser sem imagem/chamada/resumo (handoff ao tema) e o catálogo do índice não tem geração com `node/revista` (gate ARQ-03). Evidências em `aculta_magazine/docs/ARQ-08-FECHAMENTO-LOCAL.md`.
+
 ## Roadmap versionado — microfases
 
 | Fase | Dono | Entrega | Dependência / gate |

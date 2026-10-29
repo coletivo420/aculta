@@ -1,28 +1,51 @@
 # ARQ-08 - Fechamento no agente local (2026-10-29)
 
-**Estado:** implementação parcial; **nenhuma homologação Drupal/Firefox foi executada nesta rodada remota**. Este roteiro **não** autoriza novos bundles, tipos de conteúdo, campos `field_subtitle`/`field_summary` ou serviços editoriais redundantes. A única publicação é `node:revista`.
+**Estado da execução:** 2026-10-29, contra Drupal 11.4.10 no Runtime de desenvolvimento (`aculta_runtime`, host `aculta.toca.net.br`), Firefox ESR visível (`DISPLAY=:0`) e o banco Kernel dedicado `aculta_simpletest`. O escopo continua restrito ao bundle `revista`: nenhum bundle, campo, entidade editorial, workflow ou editor paralelo foi criado.
 
-## Trabalho já feito na PR #299
+## Evidências executadas
 
-- `RevistaFormHooks` abre as propriedades secundárias quando a validação reporta erros tanto no caminho agrupado quanto no caminho original Form API; conserva a ordem dos erros do Core e não foca wrappers não interativos.
-- `RevistaFormHooksTest` contempla erros agrupados/originais, precedência do primeiro erro, elementos sem widget e controles ocultos/sem acesso.
-- Contrato existente `STUDIO-INTEGRATION-CONTRACT.md`: `node.add`, `entity.node.edit_form`, `entity.node.version_history`, `entity.node.preview` e `content_moderation_control` são recursos do Core; criar uma nova camada editorial só com consumidor real.
-
-## Fila de conclusão, sem reconstruir o existente
-
-| Fase | Pendente | Aceite/evidência |
+| Gate | Comando | Resultado |
 | --- | --- | --- |
-| **08A** | executar PHPUnit Unit/Kernel, PHPCS e browser sobre criação, edição e erro secundário no Form API; verificar integração `StudioListingBuilder`/RevistaTab com o purpose correto | conta autora, coautora, revisora e sem permissão; no-JS/AJAX, preview pelo formulário nativo, transições e revisões; sem novo editor |
-| **08B** | conferir `field_subtitle`, `field_summary`, `field_media_image`, displays de `revista` e SDCs já existentes em listagem/full | paridade desktop/mobile/light/dark; sem campos ou novos SDCs desnecessários; casos sem imagem |
-| **08C** | testar `revista_sessoes` e relações `MagazineContentIndexProvider` com o `aculta_index` real | catálogo paginado, ACL, conteúdo despublicado, cache contexts/tags/max-age, módulo Index habilitado/ausente; não criar catálogo duplicado |
-| **08D** | homologar `ArticleAuthorsHooks`, `PostPresentation`, `PublicationDiscussionHooks`, SEO e anexos existentes | autores/coautores, perfil privado, comentários POST e moderação, metatag/JSON-LD com/sem imagem, anexos, duas contas, testes HTTP/Firefox |
+| PHP lint | `php -l` em todos os PHP de `aculta_magazine` | PASS (0 erros) |
+| PHPCS | `phpcs --standard=Drupal,DrupalPractice` no módulo | 0 erros, 1 aviso pré-existente (`aculta_magazine.install`) |
+| Unit | PHPUnit `tests/src/Unit` | 31 testes / 121 asserções PASS |
+| Kernel | `RevistaEditorialAccessKernelTest` em `aculta_simpletest` | 12 testes / 500 asserções PASS |
+| Navegador | `tests/browser/revista-editorial/flow.py` (Firefox ESR) | 28 verificações PASS em execução contínua; demais etapas PASS em execuções focais (ver nota) |
 
-**Não declarar concluído** com apenas código disponível ou testes escritos. Marcar por subfase `PASS`, `FAIL`, `BLOCKED` ou `DEFERRED` e guardar logs, URLs e commits. **Não alterar** `aculta_events`, `aculta_calendar`, `aculta_maps` nem a frente de salvos, pois outros agentes trabalham nesses caminhos. Se a integração exigir `aculta_studio`/tema `aculta420` sob outra frente, registrar handoff e coordenar antes da edição. No mesmo branch `refactor/opencultures-codigo-visual` e PR #299, sem nova branch/PR, merge ou force-push.
+**Nota sobre o navegador:** o script completo não fechou uma execução única. Em 2026-10-29 o checkout servido era trocado por outros agentes durante a execução e a máquina chegou a 13 geckodrivers concorrentes; houve `HTTP 500`/timeout no login e o widget de mídia deixou de renderizar em recargas. Cada verificação abaixo foi executada e aprovada em execução contínua (28 checks) ou em probe focal com o mesmo Firefox ESR e o mesmo Runtime. O script foi mantido com retentativas e deve ser reexecutado em janela estável para um PASS único.
 
-### Riscos para o teste local
+## ARQ-08A - PASS
 
-1. Validadores podem devolver caminhos Form API originais ou prefixados; confirmar render/HTML do formulário e localização dos erros, não só Unit.
-2. Os testes Unit utilizam árvores reduzidas. Widgets compostos (Media, metatags, Entity Autocomplete) precisam ser testados com Drupal real.
-3. Preview não deve receber link GET inventado: preservar tokens de formulário e `NodePreviewAccessCheck`.
-4. Discussões `field_aculta_discussion` têm smoke de render anterior, mas submissão real/visibilidade do comentário não estão homologadas no roadmap.
-5. A camada visual global mobile-first é de outra frente: usar SDCs compartilhados, sem CSS exclusivo que contorne o tema.
+Formulário nativo (`node/add/revista`): criação com título, chamada, resumo, corpo (CKEditor 5), autoria e categoria editoriais, imagem via media library e seletor de moderação; envio inválido gera erros do Form API (principal e secundário) sem gravar node; recarga limpa do formulário; edição salvando nova revisão; erro em `field_references` abre o grupo "Propriedades secundárias" e mantém o erro visível; pré-visualização pela rota `entity.node.preview`; histórico de revisões; transições `draft → review → published → archived → draft`; acesso negado a anônimo e a `email_confirmed` sem papel editorial; envio do formulário de edição com JavaScript desabilitado, preservando a moderação e a mídia. Nenhum editor paralelo foi criado.
+
+## ARQ-08B - PARTIAL
+
+- **Full display e SDC `aculta420:revista-publication`: PASS.** Chamada, resumo, imagem, categoria, autoria, cartão do autor, 5 links de compartilhamento, metatag description, og:image, canonical e JSON-LD renderizam na publicação no propósito `magazine` (`revista.aculta.toca.net.br`). Sem overflow horizontal medido em 1280 px e no mínimo de 500 px do Firefox ESR (a janela não reduz a 320 px neste ambiente).
+- **Listagem (`revista_sessoes`, view mode `teaser`): PARTIAL/BLOCKED no tema.** A listagem exibe título, categoria, corpo e "Leia mais", mas o display `teaser` oculta `field_media_image`, `field_subtitle` e `field_summary`; o ACULTA420 não possui `node--revista--teaser` e o SDC `editorial-card` não tem slot de imagem nem é consumido pela Revista. Handoff: a frente de tema/Studio precisa definir o cartão (imagem + chamada + resumo) antes de alterar o display.
+- **Caso sem imagem:** os campos são obrigatórios no bundle; `RevistaContentHooks::metatagsAlter()` só atua em nodes legados sem imagem e está coberto por Unit.
+
+## ARQ-08C - PARTIAL
+
+- **Provider e acesso: PASS.** `MagazineContentIndexProvider` é descoberto no `aculta_index` real (`magazine → node/revista`); projeção do node real com `publishedAt`, `owner_uid` e relação `editorial_image`; `isIndexable()` exige revisão padrão; `getAccessPurpose()` = `magazine`. O filtro de acesso autorizou o node publicado para anônimo e editor, com contexts `domain`, `user.node_grants:view`, `user.permissions`, tags do node, max-age `-1`; a consulta do índice fixa max-age `0`.
+- **Views e listagens: PASS com ressalvas.** `page_editorial` responde 200, filtra `status=1` e categoria e não lista o rascunho; a frente da Revista (`/`) renderiza `revista_sessoes`. `/noticias` é alias do node 9 e a listagem daquela página vem de um bloco, não do display `page_noticias`; `/revista` redireciona ao root do propósito. São decisões de conteúdo/rota, não defeitos do Magazine.
+- **Catálogo do índice: BLOCKED.** A geração ativa não tem entradas `node/revista` e os itens de `aculta_index_update` são concluídos sem gravação quando não há geração gravável. Backfill/ativação de nova geração é gate operacional do ARQ-03 e exige autorização própria; **nenhum rebuild foi executado**. Não foi criado índice nem catálogo paralelo.
+
+## ARQ-08D - PASS (com achado)
+
+- `ArticleAuthorsHooks` e `PostPresentation`: caixa de autoria, cartão do autor e cinco links de compartilhamento com URL absoluta do host da Revista; SEO com description, og:image, canonical e JSON-LD `NewsArticle` verificados.
+- **Discussão:** submissão real pelo formulário (CKEditor 5) por conta `email_confirmed`; o comentário fica pendente ("aguardando uma verificação dos administradores") e invisível ao anônimo; o moderador com `administer comments` vê os pendentes. Comentário do editor também fica pendente porque o papel `content_editor` não possui `skip comment approval` (ver achado). Anexos e galeria da discussão aparecem no formulário; o upload não foi exercitado (pertence ao `aculta_forum`) - DEFERRED.
+- **Achado de política:** `content_editor` é isento da regra do primeiro comentário (`papeis_isentos`), mas o Core mantém seus comentários pendentes por falta de `skip comment approval`. Decisão pendente: conceder a permissão ao papel ou documentar a moderação entre editores.
+
+## Achados fora do Magazine (handoff)
+
+1. **Media library (Core 11.4.10):** o botão visível "Inserir selecionado(s)" fica fora do `<form>` (jQuery UI) e o POST chega sem `media_library_select_form[...]`; `MediaLibrarySelectForm::viewsFormValidate()` lança `array_filter(): Argument #1 must be of type array, null given`. Evidência no watchdog (`wid` 254268, 254280, 254581). O teste usa o caminho AJAX equivalente, documentado no README da pasta.
+2. **Listagem da Revista** sem cartão com imagem/chamada/resumo - frente de tema/Studio.
+3. **`/noticias`** é alias de node 9 e sombreia o display `page_noticias` - decisão de conteúdo/rota.
+4. **`skip comment approval` ausente em `content_editor`** - decisão de política de moderação.
+
+## Limites desta rodada
+
+- Nenhum rebuild/ativação do catálogo do índice; nenhuma importação global de configuração; nenhuma alteração em `aculta_events`, `aculta_calendar`, `aculta_maps`, `aculta_studio` ou no tema.
+- Nenhum bundle, campo, entidade ou workflow novo.
+- Contas e conteúdo de teste com prefixo `agente-teste-`/`[AGENTE ARQ-08]` foram criados para a homologação e removidos ao fim da sessão, conforme `docs/portal/GUARDRAILS.md`.
+- A execução contínua do script de navegador deve ser repetida em janela sem concorrência para registrar o PASS único; as verificações já executadas estão descritas acima.
