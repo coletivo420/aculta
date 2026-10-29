@@ -21,3 +21,8 @@ existentes no Runtime; o teste não altera Fórum, Revista ou galerias.
 O teste também valida que a barra administrativa top-bar mantém suas ações
 visíveis em cada viewport; essa parte é regressão da integração mobile-first do
 tema ACULTA420 no contexto de uma galeria.
+
+Para avaliar uma regra CSS ainda não publicada no Runtime, SUITE_THEME_CSS pode
+apontar para a folha local. O script injeta o conteúdo somente no documento
+atual do Firefox, sem alterar o servidor; esse resultado é prototipagem e não
+substitui repetir o teste após o cache rebuild do candidato.

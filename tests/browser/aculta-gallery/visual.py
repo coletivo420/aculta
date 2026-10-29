@@ -21,6 +21,8 @@ NODE_ID = os.environ["SUITE_NODE_ID"]
 OUT = Path(os.environ["SUITE_OUT"])
 WIDTHS = [(1280, "desktop"), (390, "mobile-390"), (320, "mobile-320")]
 ALBUM = "/albuns/marcha-da-maconha-de-goiania-2025-registros-antiproibicionistas"
+THEME_CSS = os.environ.get("SUITE_THEME_CSS")
+THEME_CSS_CONTENT = Path(THEME_CSS).read_text() if THEME_CSS else None
 results = []
 
 
@@ -107,13 +109,22 @@ def screenshot(name):
     (OUT / f"{name}.png").write_bytes(base64.b64decode(data))
 
 
+def navigate(url):
+    driver.get(url)
+    if THEME_CSS_CONTENT:
+        driver.js("""const style = document.createElement('style');
+          style.dataset.suiteThemeOverride = 'true';
+          style.textContent = arguments[0];
+          document.head.append(style);""", [THEME_CSS_CONTENT])
+
+
 try:
     driver = Driver(bidi=True)
     bidi = connect(driver.websocket_url)
-    driver.get(login)
+    navigate(login)
     check("login de uso único concluiu", wait_for("document.readyState === 'complete'"))
 
-    driver.get(f"{BASE}/node/{NODE_ID}/edit")
+    navigate(f"{BASE}/node/{NODE_ID}/edit")
     editor_open = wait_for("!!document.querySelector('.ck-editor')")
     check("formulário descartável da Revista abriu", editor_open,
           driver.js("return location.pathname"))
@@ -175,7 +186,7 @@ try:
                   f"topBarActionsVisible={metrics['topBarActionsVisible']}")
 
     for host, label in ((BASE, "main"), (FORUM, "forum")):
-        driver.get(host + ALBUM)
+        navigate(host + ALBUM)
         loaded = wait_for("!!document.querySelector('main h1') && !!document.querySelector('main img')")
         page = driver.js("""return {
           path: location.pathname,

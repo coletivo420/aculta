@@ -4,7 +4,9 @@
   colunas a 767.98px; títulos podem quebrar linha e as ações Editar/Mais ações
   permanecem visíveis. Override no arquivo de integração Drupal/Bootstrap.
 - Design Foundations 2379 checks e SDC schemas 54 componentes/734 checks PASS.
-  Firefox ESR pós-cache rebuild pendente; Gate módulo-tema continua FAIL por
+  Firefox ESR com SUITE_THEME_CSS injetado no documento atual passou 15/15
+  verificações em álbuns/diálogo, 1280/390/320px; o CSS ainda não está servido
+  pelo Runtime. Repetir após cache rebuild. Gate módulo-tema continua FAIL por
   aculta_events e aculta_calendar em arquivos de outra frente.
 
 ## 0.7.0-dev.8 — mapear tokens semânticos do checkout
