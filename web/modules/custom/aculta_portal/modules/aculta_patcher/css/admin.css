@@ -1,4 +1,4 @@
-.aculta-patcher-table-wrapper {
+[data-portal-ui~="patcher-table-wrapper"] {
   max-width: 100%;
   overflow-x: auto;
 }

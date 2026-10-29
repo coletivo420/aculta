@@ -1,5 +1,12 @@
 # Changelog — aculta_patcher
 
+## 0.1.0-dev.6 — wrapper semântico do tema
+
+- A tabela usa o contrato neutro data-portal-ui patcher-table-wrapper; o
+  CSS administrativo local seleciona o contrato, sem classe ACULTA exposta.
+- Suite Unit 41/73, PHPCS Drupal e lint permanecem verdes.
+
+
 ## 0.1.0-dev.5 — validação prévia de caminhos de artefatos
 
 - O exportador rejeita fontes alcançadas por qualquer diretório symlink do

@@ -19,7 +19,7 @@ final class AcultaPatchListBuilder extends ConfigEntityListBuilder {
     $table = $build['table'];
     $build['table'] = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-patcher-table-wrapper']],
+      '#attributes' => ['data-portal-ui' => 'patcher-table-wrapper'],
       'table' => $table,
     ];
     $build['#attached']['library'][] = 'aculta_patcher/admin';
