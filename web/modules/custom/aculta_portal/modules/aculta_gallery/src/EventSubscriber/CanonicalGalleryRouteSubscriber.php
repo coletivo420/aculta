@@ -47,7 +47,7 @@ final class CanonicalGalleryRouteSubscriber implements EventSubscriberInterface 
       return;
     }
     $request = $event->getRequest();
-    // O alias em português resolve para a mesma rota; bloqueia só o caminho técnico cru.
+    // O alias em português usa a mesma rota; bloqueia o caminho técnico cru.
     if ($request->attributes->get('_route') === self::CANONICAL_ROUTE
       && str_starts_with($request->getPathInfo(), self::TECHNICAL_PREFIX)) {
       throw new NotFoundHttpException();

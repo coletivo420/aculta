@@ -14,9 +14,9 @@ use Drupal\editor\EditorInterface;
 /**
  * Botão "Criar galeria" do CKEditor 5 (formato da Revista).
  *
- * Abre o formulário de galeria num diálogo do Core, cria a entidade media_gallery e insere a
- * incorporação pelo comando insertEntityEmbed do Entity Embed. Não guarda lista de imagens no texto.
- * Ver docs/ARQUITETURA.md, §4.3.
+ * Abre o formulário num diálogo do Core e cria uma entidade media_gallery.
+ * A incorporação usa insertEntityEmbed; a lista de imagens não fica no texto.
+ * Consulte a seção 4.3 de docs/ARQUITETURA.md.
  */
 #[CKEditor5Plugin(
   id: 'aculta_gallery_create',

@@ -22,21 +22,34 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Diálogo "Criar galeria" do CKEditor 5.
  *
- * Reaproveita o widget de imagens do display de formulário da galeria (`media_gallery.media_gallery.default`),
- * a mesma escolha de mídia do formulário editorial. Cria a entidade media_gallery publicada e devolve a
- * incorporação para o Entity Embed inserir no texto.
+ * Reuses the gallery form display's image widget. It creates a published
+ * media_gallery entity and returns its Entity Embed markup to the editor.
  */
 final class GalleryEmbedDialogForm extends FormBase {
 
-  /** Pasta das fotos enviadas pelo diálogo. */
+  /**
+   * Directory for photos uploaded through the dialog.
+   */
   private const UPLOAD_DIRECTORY = 'public://galerias/uploads';
 
-  /** Modo de exibição padrão da incorporação (Entity Embed). */
+  /**
+   * Default Entity Embed display mode.
+   */
   private const EMBED_DISPLAY = 'entity_reference:entity_reference_entity_view';
 
-  /** Serviços guardados como propriedades comuns: o Drupal restaura o objeto entre as requisições AJAX. */
+  /**
+   * Entity type manager retained between AJAX requests.
+   */
   protected EntityTypeManagerInterface $entityTypeManager;
+
+  /**
+   * Field widget manager retained between AJAX requests.
+   */
   protected WidgetPluginManager $widgetManager;
+
+  /**
+   * Current user retained between AJAX requests.
+   */
   protected AccountProxyInterface $currentUser;
 
   public function __construct(
@@ -91,17 +104,17 @@ final class GalleryEmbedDialogForm extends FormBase {
     $form['images']['#required'] = TRUE;
     $form['images']['#description'] = $this->t('Escreva o nome ou o ID de cada imagem já existente na biblioteca de mídia.');
 
-    // Upload direto (elemento de arquivo do Core, sem modal): as fotos novas viram mídias ao criar a galeria.
+    // Upload direto pelo elemento de arquivo do Core, sem modal aninhado.
     $form['new_images'] = [
       '#type' => 'managed_file',
       '#title' => $this->t('Enviar fotos novas'),
       '#description' => $this->t('Formatos: png, gif, jpg, jpeg ou webp. Cada arquivo com até 10 MB.'),
       '#multiple' => TRUE,
       '#upload_location' => self::UPLOAD_DIRECTORY,
-      '#upload_validators' => [
-        ...$this->uploadPolicy->validators(),
-        'FileIsImage' => [],
-      ],
+      '#upload_validators' => array_merge(
+        $this->uploadPolicy->validators(),
+        ['FileIsImage' => []],
+      ),
     ];
 
     $form['actions'] = ['#type' => 'actions'];
@@ -121,7 +134,7 @@ final class GalleryEmbedDialogForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {}
 
   /**
-   * Transforma os arquivos enviados no diálogo em mídias de imagem (uma por foto).
+   * Transforms uploaded files into image media, one entity per file.
    *
    * @return int[]
    *   IDs das mídias criadas, na ordem do envio.
@@ -157,8 +170,10 @@ final class GalleryEmbedDialogForm extends FormBase {
   /**
    * Widget do campo de imagens: autocompletar por entidade do Core (múltiplo).
    *
-   * Não usa a Media Library: ela abre um modal dentro do diálogo, e o Drupal tem um único elemento de modal
-   * (#drupal-modal). A Media Library substituiria o diálogo da galeria. Ver docs/ARQUITETURA.md §4.3.
+   * Uses the Core entity autocomplete instead of opening a nested media modal.
+   *
+   * Drupal provides one modal element, so the Media Library would replace this
+   * gallery dialog. See docs/ARQUITETURA.md section 4.3.
    */
   private function imagesWidget(EntityInterface $gallery): WidgetInterface {
     return $this->widgetManager->getInstance([

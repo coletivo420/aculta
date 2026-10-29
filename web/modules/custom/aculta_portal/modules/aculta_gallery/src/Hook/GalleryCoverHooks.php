@@ -10,9 +10,9 @@ use Drupal\Core\Hook\Attribute\Hook;
 /**
  * Capa da galeria: sempre uma das imagens da própria galeria.
  *
- * Regra da Fase 3 (0.1.0-dev.4): a capa é escolhida entre as imagens da galeria. Se a capa não estiver nas
- * imagens (ou estiver vazia com imagens presentes), a primeira imagem vira capa. Sem imagens, a capa é limpa.
- * A regra roda no presave, então vale para formulário, importação e script.
+ * Regra da Fase 3 (0.1.0-dev.4): a capa deve pertencer à galeria.
+ * Se estiver vazia ou for inválida, a primeira imagem será usada; sem imagens,
+ * a capa é limpa. A regra no presave cobre formulário, importação e scripts.
  */
 final class GalleryCoverHooks {
 

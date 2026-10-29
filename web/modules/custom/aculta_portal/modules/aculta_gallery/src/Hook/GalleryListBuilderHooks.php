@@ -9,7 +9,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
 /**
- * Troca a coleção administrativa de galerias pela versão que aponta para a Revista.
+ * Points the administrative gallery collection to the Magazine purpose.
  */
 final class GalleryListBuilderHooks {
 
@@ -17,6 +17,7 @@ final class GalleryListBuilderHooks {
    * Implements hook_entity_type_alter().
    *
    * @param array<string, \Drupal\Core\Entity\EntityTypeInterface> $entity_types
+   *   The entity type definitions, keyed by entity type ID.
    */
   #[Hook('entity_type_alter')]
   public function entityTypeAlter(array &$entity_types): void {

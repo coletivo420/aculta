@@ -14,6 +14,9 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ * Tests the Gallery content index provider.
+ */
 #[CoversClass(\Drupal\aculta_gallery\ContentIndex\GalleryContentIndexProvider::class)]
 #[Group('aculta_gallery')]
 final class GalleryContentIndexProviderTest extends UnitTestCase {

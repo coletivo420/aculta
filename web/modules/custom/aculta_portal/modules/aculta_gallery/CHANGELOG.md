@@ -1,5 +1,14 @@
 # Changelog — ACULTA Gallery
 
+## 0.1.0-dev.19 — conformidade de estilo
+
+- Comentários PHP e documentação de propriedades/métodos foram alinhados ao
+  padrão Drupal. A montagem dos validadores de upload mantém as mesmas regras.
+- PHPCS Drupal passou sem erros ou avisos; Unit 2/13 e Kernel Content Index
+  2/51 passaram (9 depreciações upstream); lint 11/11 passou. Revisão visual
+  Firefox/aparelho real permanece pendente.
+
+
 ## 0.1.0-dev.18 — dependências de configuração opcionais
 
 - Configuração da galeria que depende de `media.type.image`, `editorial_category` ou `revista_tags`, incluindo o formulário que referencia esses campos, passa a `config/optional`. A instalação da Gallery não falha em sites sem essas configurações editoriais; ambientes que as fornecem ainda recebem os campos e o formulário.
