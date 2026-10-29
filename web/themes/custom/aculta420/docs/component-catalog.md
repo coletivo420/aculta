@@ -378,5 +378,7 @@ prop ou slot foi alterado.
 Reutilizados os elementos de shell existentes; nenhum SDC novo. A biblioteca
 global do tema corrige o deslocamento Drupal quando a top-bar está no fluxo
 móvel, mantendo o cálculo nativo quando a top-bar fica fixa no desktop. O
-fallback sem JavaScript usa o token de altura existente. Comportamento, testes
-e limites estão em [`mobile-first-audit.md`](mobile-first-audit.md).
+fallback sem JavaScript usa o token de altura existente. A Navigation top-bar
+empilha título, contexto e ações como base mobile-first e restaura a grade de
+três regiões em 768px. Comportamento, testes e limites estão em
+[`mobile-first-audit.md`](mobile-first-audit.md).

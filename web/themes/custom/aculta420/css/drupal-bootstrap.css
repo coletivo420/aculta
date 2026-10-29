@@ -19,30 +19,52 @@
 }
 .aculta-navbar .dropdown-menu { --bs-dropdown-font-size: 1.25rem; }
 
-/* The Drupal Navigation top bar uses a three-column grid with 40ch title
-   content by default. Stack its regions on narrow screens so long titles and
-   administrative actions remain inside the viewport. */
-@media (max-width: 767.98px) {
+/* Drupal Navigation keeps its three regions stacked until a wide viewport can
+   fit the administrative title, context, and actions without horizontal
+   overflow. Keep the specificity required by its administrative stylesheet. */
+:is(#extra-specificity-hack, [data-drupal-admin-styles]) .top-bar__content {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 0.5rem;
+}
+:is(#extra-specificity-hack, [data-drupal-admin-styles]) .top-bar__context {
+  min-width: 0;
+  justify-content: flex-start;
+}
+:is(#extra-specificity-hack, [data-drupal-admin-styles]) .top-bar__context > * {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+:is(#extra-specificity-hack, [data-drupal-admin-styles]) .top-bar__actions {
+  min-width: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 0.25rem;
+}
+
+@media (min-width: 48rem) {
   :is(#extra-specificity-hack, [data-drupal-admin-styles]) .top-bar__content {
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
-    gap: 0.5rem;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--admin-toolbar-space-16, 1rem);
   }
   :is(#extra-specificity-hack, [data-drupal-admin-styles]) .top-bar__context {
-    min-width: 0;
-    justify-content: flex-start;
+    min-width: auto;
+    justify-content: center;
   }
   :is(#extra-specificity-hack, [data-drupal-admin-styles]) .top-bar__context > * {
-    min-width: 0;
-    max-width: 100%;
-    overflow-wrap: anywhere;
+    min-width: auto;
+    max-width: none;
+    overflow-wrap: normal;
   }
   :is(#extra-specificity-hack, [data-drupal-admin-styles]) .top-bar__actions {
-    min-width: 0;
-    max-width: 100%;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 0.25rem;
+    min-width: auto;
+    max-width: none;
+    flex-wrap: nowrap;
+    justify-content: end;
+    gap: 0.5rem;
   }
 }
 

@@ -1,5 +1,6 @@
 # Alterações pendentes de validação visual — ainda sem nova marcação de versão
 
+- `drupal-bootstrap.css` empilha a Navigation top-bar como base móvel e restaura a grade de três regiões em 768px. Lint CSS e sintaxe do smoke Firefox PASS; execução visual DEFERRED por `DISPLAY` indisponível e sessões concorrentes.
 - `revista-post.css` (commit `e40c39265`) usa figuras full-width/static como base e restaura proporções editoriais em `min-width: 36rem`; `npm run lint:css` passou posteriormente na raiz do tema. Firefox e consumer real permanecem pendentes.
 - `statistics.css` empilha os filtros como base e restaura os controles em linha em `min-width: 36rem`. Lint CSS, Python compile, schemas SDC, Design Foundations e índice de status passaram nesta microfase. Firefox/Runtime estão DEFERRED; atribuir a próxima versão somente após a validação visual prevista pelo versionamento do tema.
 - A limpeza da fronteira substitui classes de apresentação emitidas por downloads, conteúdo salvo, editorial de eventos e variações de cartão por tokens do Portal mapeados no tema. Gates estáticos da fronteira/tokens e Unit do registry passaram; Kernel e Runtime ainda pendentes.

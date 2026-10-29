@@ -678,3 +678,19 @@ base; em `min-width: 36rem` retoma padding de `1rem` e altura mínima de `60vh`.
 `office-options.py` verifica a fronteira 575/576px em ACULTA420 e Olivero, além
 do overflow. Lint CSS e sintaxe Python passam; Firefox visual DEFERRED por
 `DISPLAY` ausente e sessões concorrentes. THEME-MF3 segue pendente.
+
+### THEME-MF2 — Navigation top-bar mobile-first (2026-10-29)
+
+`drupal-bootstrap.css` agora empilha título, contexto e ações como base móvel;
+em `min-width: 48rem` (768 CSS px) restaura a grade upstream de três regiões,
+alinhamentos e ações sem quebra. Mantém especificidade necessária para a folha
+administrativa do Drupal Navigation. Nenhum markup, shell, comportamento da
+Institution Bar ou código de módulo foi alterado.
+
+`tests/browser/aculta-theme-mobile-first/navigation-top-bar.py` compara
+baseline/candidato em 320/360/390/575/576/599/600/767/768/1024/1280/1440px,
+verificando uma coluna, ordem vertical/DOM, ausência de overflow e paridade da
+grade larga. Lint CSS e sintaxe Python são gates estáticos desta microfase;
+Firefox visível fica DEFERRED porque `DISPLAY` não está disponível e há sessões
+geckodriver concorrentes. A fixture não substitui validação autenticada da
+Navigation top-bar servida no Runtime. THEME-MF3 continua pendente.

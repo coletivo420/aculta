@@ -1,5 +1,27 @@
 # ACULTA420 — SDC responsivos do tema
 
+## Navigation top-bar mobile-first
+
+`navigation-top-bar.py` compara a composição do Drupal Navigation top-bar antes
+e depois da CSS candidata. Mede uma coluna e a ordem vertical em
+320/360/390/575/576/599/600/767px; a partir de 768px verifica a grade original
+de três regiões, alinhamentos e wrapping, além de ordem DOM e ausência de
+overflow. O teste usa fixture sintética: não autentica, não acessa Runtime e
+não substitui a conferência da barra administrativa nas páginas reais.
+
+```sh
+cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-navigation-top-bar-layout
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/navigation-top-bar.py
+```
+
+`TOP_BAR_BASELINE_REF` seleciona a CSS de baseline (padrão `HEAD^`) e
+`TOP_BAR_WIDTHS` aceita larguras separadas por vírgula. O script usa Firefox ESR
+visível via geckodriver; PNGs e `summary.json` são gravados em `$SUITE_OUT`.
+Não cobre zoom, tema escuro, reduced motion, teclado completo ou WCAG 2.2 AA.
+
 `author-card.py` valida o SDC de autoria no consumer público da lista de tópicos
 do Fórum. O script usa GETs e mudança de viewport; não autentica, submete
 formulários nem altera dados. Confere o breakpoint de alinhamento em 576 CSS px,

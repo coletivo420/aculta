@@ -107,7 +107,7 @@ com evidências da MF-0.1 na
 | --- | --- | --- |
 | MF-0.1 | Concluída — 2026-10-21 | Inventário de CSS, breakpoints, shell, carregamento de assets, Studio, Runtime e cobertura existente; sem refatoração visual. |
 | MF-0.2 | Planejada | Fundamentos responsivos compartilhados sobre tokens, grids, containers, tipografia, formulários, imagens e controles. |
-| MF-0.3 | Em andamento — 2026-10-29 | Top-bar Navigation empilha contexto e ações em uma coluna até 767.98px; ações refluem sem exceder a viewport. Firefox ESR com CSS local injetado passou nos álbuns autenticados a 1280/390/320px. CSS servido pelo Runtime e diálogos seguem pendentes, assim como Institution Bar, menus, Conta, Messenger, Carrinho, alertas e rodapé. |
+| MF-0.3 | Em andamento — 2026-10-29 | Navigation top-bar usa pilha móvel como base e restaura as três regiões a partir de 768px; preserva a ordem DOM e o cálculo de deslocamento já validado para Institution Bar/Toolbar. Smoke baseline/candidato em 12 larguras criado; Firefox visual DEFERRED por DISPLAY indisponível e sessões concorrentes. Restam CSS servido, diálogos, menus, Conta, Messenger, Carrinho, alertas, rodapé e demais consumers. |
 | MF-0.4 | Planejada | Estrutura visual responsiva do Studio em três níveis. Preferência registrada: seletor nativo compacto para área no mobile; validar URL real, fallback sem JavaScript, teclado e leitores de tela. |
 | MF-0.5 | Planejada | AJAX progressivo do Studio: histórico, concorrência, foco, carregamento, erros e formulários com alterações. |
 | MF-0.6 | Planejada | Autoria editorial da Revista, CKEditor 5, Media, validação, workflow e ações de publicação. |
