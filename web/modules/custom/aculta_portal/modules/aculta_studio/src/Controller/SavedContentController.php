@@ -93,6 +93,7 @@ class SavedContentController {
       'url.query_args:purpose',
     ];
     $cacheTags = $this->savedContent->getCacheTags($this->account);
+    $cacheMaxAge = \Drupal\Core\Cache\Cache::PERMANENT;
 
     if ($activeTab === 'recomendacoes') {
       $recs = $this->recommendations->getRecommendations($this->account, 15);
@@ -120,6 +121,8 @@ class SavedContentController {
       $pagination = $this->buildPagination($queryResult, $page, $limit, $activeTab, $bundle, $purpose);
 
       $cacheTags = array_unique(array_merge($cacheTags, $queryResult->getCacheTags()));
+      $cacheContexts = array_unique(array_merge($cacheContexts, $queryResult->getCacheContexts()));
+      $cacheMaxAge = $queryResult->getCacheMaxAge();
     }
 
     $tabLinks = [];
@@ -179,6 +182,7 @@ class SavedContentController {
       '#cache' => [
         'contexts' => $cacheContexts,
         'tags' => $cacheTags,
+        'max-age' => $cacheMaxAge,
       ],
     ];
   }
