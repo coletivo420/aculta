@@ -2,10 +2,12 @@
 version: 0.1.0-dev.325
 state: Dev
 next_phase: >-
-  Preparar teste idempotente do importador Growroom dentro de
-  Kernel/aculta_simpletest, sem criar banco efêmero. RC.2 é histórico, sem
-  candidato vigente.
-progress_note: "Dev.325: Firefox ESR/X11 revisou o cartão histórico em viewports CSS 1280/390/320; 7/7 verificações, sem overflow. Fixture somente no DOM porque não há posts públicos com LegacyAuthor no Runtime. Kernel focal dev.324 1/23 PASS e suíte integral 343/4223 PASS, 42 depreciações e 6 skips; PHP lint/PHPCS dos arquivos de teste PASS. Importador Growroom idempotente em aculta_simpletest continua sem cenário dedicado. RC.2 histórico; nenhuma escrita no Runtime."
+  Isolar o teste Growroom em fixture Kernel dedicada: a tentativa com
+  `aculta_forum_post_test` colidiu com `PublicForumLastActivityAuthorKernelTest`
+  ao registrar `legacy_author` como campo base e como storage. Não repetir a
+  suíte nem alterar suas regras nesta rodada; retomar em microfase própria.
+  RC.2 é histórico, sem candidato vigente.
+progress_note: "Dev.325: Firefox ESR/X11 revisou o cartão histórico em viewports CSS 1280/390/320; 7/7 verificações, sem overflow. Fixture somente no DOM porque não há posts públicos com LegacyAuthor no Runtime. Kernel focal dev.324 1/23 PASS e suíte integral dev.325 343/4223 PASS, 42 depreciações e 6 skips. Tentativa de teste Kernel Growroom: teste focado 1/28 PASS; suíte completa 344/4233 apresentou erro em PublicForumLastActivityAuthorKernelTest devido ao fixture compartilhado aculta_forum_post_test registrar legacy_author em duplicidade. Alterações da tentativa foram revertidas; módulo bloqueado nesta rodada e nenhuma escrita no Runtime ocorreu."
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; gate: scripts/validate-no-temporary-route-aliases.php.

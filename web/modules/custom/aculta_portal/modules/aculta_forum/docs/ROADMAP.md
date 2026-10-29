@@ -50,6 +50,17 @@ permanece necessária quando o candidato estiver servido. O importador Growroom
 precisa de cenário idempotente dentro do banco `aculta_simpletest`; não criar
 banco separado para o ensaio.
 
+**Tentativa de teste Growroom (2026-10-29; não incorporada):** um cenário
+focado de autoria histórica passou isoladamente (1 teste / 28 assertions; 5
+depreciações), mas a suíte integral terminou com 344 testes / 4.233 assertions,
+1 erro, 42 depreciações e 6 skips. O hook de campo base registrado no fixture
+compartilhado `aculta_forum_post_test` colidiu com
+`PublicForumLastActivityAuthorKernelTest`, que ainda cria `legacy_author` como
+field storage. O código da tentativa foi revertido. Não alterar as regras do
+teste existente; uma retomada deve isolar o suporte da migration em fixture
+Kernel dedicada antes de executar a suíte de novo. Nenhuma migration ou escrita
+no Runtime ocorreu.
+
 **Ownership compartilhado vigente:** o Fórum mantém produtores, assinaturas e
 seleção de destinatários. Todos os consumers/adapters, agregação, persistência
 compartilhada, preferências, filas, workers e coordenação dos modos de e-mail
