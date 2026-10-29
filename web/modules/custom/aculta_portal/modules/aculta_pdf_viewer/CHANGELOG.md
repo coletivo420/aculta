@@ -11,6 +11,7 @@
   assertions, 145 deprecações.
 - PV7 continua em Dev: revisão ampliada de acessibilidade/leitura, CSP e
   validação visual pré-RC permanecem pendentes. Sem escrita no Runtime.
+- Evidência da limpeza integral de estilo: commit `48be2b2f4`.
 
 ## 0.1.0-dev.42 — fechar harness Kernel com closure real do Portal (2026-10-29)
 
