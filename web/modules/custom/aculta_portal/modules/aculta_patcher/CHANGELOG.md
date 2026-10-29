@@ -1,5 +1,12 @@
 # Changelog — aculta_patcher
 
+## 0.1.0-rc.1 — candidato a RC: validação responsiva no checkout servido — 2026-10-29
+
+- Promovido a `0.1.0-rc.1` em `aculta_patcher.info.yml`, `README.md` e status.
+- Revalidação visual no Firefox ESR (`DISPLAY=:0`) executada no checkout servido com cache reconstruído: 13/13 PASS na listagem e formulário em 1280, 390 e 320 px, confirmando o seletor semântico `patcher-table-wrapper` sem overflow.
+- Suíte Unit 41/73 PASS, PHP lint 12/12 e PHPCS Drupal PASS sem erros ou avisos.
+- Gate módulo-tema validado; critérios de RC atendidos.
+
 ## 0.1.0-dev.6 — wrapper semântico do tema
 
 - A tabela usa o contrato neutro data-portal-ui patcher-table-wrapper; o

@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.6
-state: Dev
-progress_note: 'Em 2026-10-29: Unit 41/73 PASS; lint 12/12 e PHPCS Drupal PASS. Regressões cobrem symlink no caminho-fonte do pacote e preflight dos arquivos de saída; a tabela usa data-portal-ui neutro. Runtime: export --check validou 1 registro sem gravar; route access comum negado/admin permitido. Ciclo Composer isolado repetível; Firefox ESR dev.4 13/13 PASS. Reversão documentada.'
-next_phase: 'Após o gate global módulo-tema ficar verde e o candidato atual chegar ao Runtime, repetir Firefox ESR da listagem/formulário em 1280/390/320px; revisar o candidato servido e então decidir RC. O teste visual de 2026-10-29 foi contra Runtime dev.4, não valida o código local dev.6. Gate bloqueante atual: referências de apresentação em Events/Calendar e teste Magazine, fora desta microfase. ([README](web/modules/custom/aculta_portal/modules/aculta_patcher/README.md))'
+version: 0.1.0-rc.1
+state: RC
+progress_note: '0.1.0-rc.1: Unit 41/73 PASS; lint 12/12 e PHPCS Drupal PASS. Regressões cobrem symlink no caminho-fonte do pacote e preflight dos arquivos de saída; a tabela usa data-portal-ui neutro. Runtime: export --check validou 1 registro sem gravar; route access comum negado/admin permitido. Ciclo Composer isolado repetível; Firefox ESR no checkout servido 13/13 PASS em 1280/390/320px sem overflow. Reversão documentada.'
+next_phase: 'Deploy do candidato no servidor de desenvolvimento e validação no ambiente *.aculta.org (Alpha), com posterior migração para Hostinger (Beta) conforme RELEASE-LIFECYCLE.md ([README](web/modules/custom/aculta_portal/modules/aculta_patcher/README.md))'
