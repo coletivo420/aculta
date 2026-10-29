@@ -204,3 +204,12 @@ Norma: [Kernel ACULTA](../../../../../../../docs/architecture/aculta-kernels.md)
 ## Backlog editorial OC315 (2026-10-29)
 
 Após o roadmap MAG vigente, aproveitar como padrões opcionais do OpenCulturas 3.1.5: menções à imprensa (`media_mention`), cartão `editorial-card` já disponível, dados de apoiadores verificados e override de título/resumo/imagem só na apresentação do teaser. `views.view.archive.yml` da origem vem **desabilitada**: só criar arquivo mensal se houver demanda. Exigir autoria e links verificáveis, ACL por purpose, cache, esquema de campos próprio e consumidor UI Patterns real. Ver [auditoria](../../../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md). Não introduzir Paragraphs, ECA ou bibliotecas novas só para copiar o comportamento.
+
+## Backlog editorial OC-D - OpenCulturas 3.1.5 (2026-10-29)
+
+- [ ] Menções na imprensa com veículo, data, link, citação autorizada e reuso do `editorial-card` existente.
+- [ ] Apoiadores com autorização registrada; consumir o SDC experimental `sponsor-logos` somente com dados reais e mídia gerida pelo `aculta_image`.
+- [ ] Override de teaser editorial por contrato próprio, sem impor Paragraphs; pesquisa/arquivo histórico e glossário só com uso real (Views `archive`, `content_recent` e `glossary` estão **desabilitadas** na origem).
+- [ ] Gates de acesso, cache, WCAG, origem de textos/marcas e UI Patterns.
+
+Referência: `docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md`.
