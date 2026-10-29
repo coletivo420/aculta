@@ -1,5 +1,14 @@
 # Changelog — aculta_events
 
+## 0.1.0-dev.2 — fronteira de apresentação via tokens (2026-10-29)
+
+- Catálogo deixou de invocar o componente `aculta420:event_card`; a estrutura
+  agora usa render arrays Drupal com tokens semânticos `data-portal-ui`.
+- Links do mapa usam os mesmos tokens neutros. As classes visuais equivalentes
+  ficam no `PortalUiHooks` do ACULTA420.
+- Events: 55 testes / 669 assertions PASS (26 depreciações upstream); gate
+  módulo–tema PASS.
+
 ## 2026-10-28 — E7 MP3, mapas Leaflet/OSM
 
 - `/mapa` passa a usar o renderer compartilhado `aculta_maps`, tiles OSM e agrupamento de marcadores; a lista continua disponível sem JavaScript.

@@ -83,14 +83,14 @@ Decisão do responsável em 2026-10-28; detalhes, origem e hashes em `DHTMLX.md`
 - Manter `state: Dev` até PHPCS, revisão visual de ADM8 e revisão de código
   estarem concluídos. Nenhuma configuração Runtime foi importada.
 
-## CA — limpeza PHPCS (2026-10-29, dev.2)
+## CA — fechamento PHPCS e fronteira módulo–tema (2026-10-29, dev.3)
 
-- PHPCS Drupal/DrupalPractice passou nos 59 arquivos PHP fora de
-  `src/Controller/InteractiveController.php`. O controller permanece intocado
-  por pertencer à frente DHTMLX; sua checagem isolada ainda aponta 2 erros e 2
-  avisos.
-- Suíte completa reexecutada: 117 testes / 398 assertions PASS, com 2
-  depreciações de annotations em Core/contrib. PHP lint: 60/60 PASS; diff check
-  PASS.
-- O módulo permanece Dev até a frente DHTMLX liberar o arquivo, a revisão
-  visual autenticada de ADM8 e a revisão final de código.
+- `InteractiveController` e `EmbedHostsController` usam render arrays e tokens
+  `data-portal-ui`; IDs e atributos de acessibilidade/comportamento foram
+  mantidos. PortalUiHooks mapeia os tokens em classes do ACULTA420.
+- PHPCS Drupal/DrupalPractice integral passou nos PHP do módulo, inclusive
+  `InteractiveController.php`. Suíte: 117 testes / 399 assertions PASS, duas
+  depreciações Core/contrib. Gate global módulo–tema: 3397 verificações PASS.
+- Sem revisão visual autenticada nova. Revalidar calendário interativo e ADM8
+  no Firefox ESR quando o candidato estiver servido; acesso ADM8 continua
+  limitado pela credencial documentada no status do módulo.

@@ -8,9 +8,7 @@ use Drupal\aculta_calendar\Agenda\CalendarOccurrences;
 use Drupal\aculta_calendar\Item\CalendarItemSource;
 use Drupal\aculta_calendar\Item\CalendarQuery;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -19,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Visão interativa do calendário (DHTMLX Scheduler), carregada só nesta rota.
  *
  * O componente só apresenta. O motor de recorrência, o .ics e a regra de acesso
- * continuam no aculta_calendar; a agenda em HTML é a alternativa sem JavaScript.
+ * continuam no aculta_calendar; a agenda HTML é a alternativa sem JavaScript.
  */
 final class InteractiveController extends ControllerBase {
 
@@ -53,16 +51,47 @@ final class InteractiveController extends ControllerBase {
   public function page(): array {
     $agenda = $this->url('agenda');
     return [
-      'aviso' => ['#markup' => Markup::create('<p class="aculta-calendar-interactive__aviso">Visão interativa do calendário. Sem JavaScript, use a agenda em lista.</p>')],
-      'controle' => ['#markup' => Markup::create('<p class="aculta-calendar-interactive__controle"><button type="button" id="aculta-calendar-contrast" aria-pressed="false">Alto contraste</button></p>')],
-      'componente' => ['#markup' => Markup::create('<div id="aculta-calendar-interactive" class="aculta-calendar-interactive" role="region" aria-label="Calendário interativo de eventos"></div>')],
-      'alternativa' => ['#markup' => Markup::create($agenda === NULL ? '' : '<p class="aculta-calendar-interactive__alternativa"><a href="' . Html::escape($agenda) . '">Ver a agenda em lista</a></p>')],
-      // Em telas menores, a grade dá lugar a esta agenda (sem JavaScript, também).
+      'aviso' => [
+        '#type' => 'html_tag',
+        '#tag' => 'p',
+        '#attributes' => ['data-portal-ui' => 'calendar-interactive-notice'],
+        '#value' => $this->t('Visão interativa do calendário. Sem JavaScript, use a agenda em lista.'),
+      ],
+      'controle' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'calendar-interactive-controls'],
+        'contrast' => [
+          '#type' => 'html_tag',
+          '#tag' => 'button',
+          '#attributes' => ['type' => 'button', 'id' => 'aculta-calendar-contrast', 'aria-pressed' => 'false'],
+          '#value' => $this->t('Alto contraste'),
+        ],
+      ],
+      'componente' => [
+        '#type' => 'container',
+        '#attributes' => [
+          'id' => 'aculta-calendar-interactive',
+          'role' => 'region',
+          'aria-label' => $this->t('Calendário interativo de eventos'),
+          'data-portal-ui' => 'calendar-interactive',
+        ],
+      ],
+      'alternativa' => $agenda === NULL ? ['#access' => FALSE] : [
+        '#type' => 'html_tag',
+        '#tag' => 'p',
+        '#attributes' => ['data-portal-ui' => 'calendar-interactive-alternative'],
+        'link' => [
+          '#type' => 'link',
+          '#title' => $this->t('Ver a agenda em lista'),
+          '#url' => $agenda,
+        ],
+      ],
+      // Em telas menores, a grade dá lugar à agenda sem JavaScript.
       'agenda' => [
         '#type' => 'container',
         '#attributes' => [
           'id' => 'aculta-calendar-agenda',
-          'class' => ['aculta-calendar-interactive__agenda'],
+          'data-portal-ui' => 'calendar-interactive-agenda',
         ],
         'conteudo' => $this->agendaPagina->conteudo(TRUE),
       ],
@@ -84,6 +113,7 @@ final class InteractiveController extends ControllerBase {
    * Abre no mês da primeira ocorrência; sem itens, no mês atual.
    *
    * @return array{items: array<int, array<string, mixed>>, date: string}
+   *   Itens e data inicial para a grade.
    */
   private function dados(): array {
     $itens = $this->itens();
@@ -101,6 +131,7 @@ final class InteractiveController extends ControllerBase {
    * A expansão é do motor do calendário; o componente só apresenta.
    *
    * @return array<int, array<string, mixed>>
+   *   Ocorrências expandidas no intervalo solicitado.
    */
   private function itens(): array {
     $fuso = new \DateTimeZone('America/Sao_Paulo');
@@ -138,10 +169,10 @@ final class InteractiveController extends ControllerBase {
   /**
    * URL de uma rota do publisher, informada em `_aculta_calendar_rotas`.
    */
-  private function url(string $chave): ?string {
+  private function url(string $chave): ?Url {
     $rotas = $this->rotaAtual->getRouteObject()?->getOption('_aculta_calendar_rotas') ?? [];
     $nome = is_array($rotas) && is_string($rotas[$chave] ?? NULL) ? $rotas[$chave] : NULL;
-    return $nome === NULL ? NULL : Url::fromRoute($nome)->toString();
+    return $nome === NULL ? NULL : Url::fromRoute($nome);
   }
 
 }

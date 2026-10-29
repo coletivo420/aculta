@@ -225,3 +225,13 @@ Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`.
 - Venda de ingressos pagos dentro do ACULTA (D-30 a D-41). Usa só `aculta_commerce` e `aculta_pagamentos_mercadopago`, sem repasse automático e com repasse manual por evento. Checkout próprio de Eventos, com entrada no carrinho integrado (precedência LMS > Loja > Eventos > Doações), conforme o aditivo à ADR-013. Sem frete; pagamento na etapa final do Mercado Pago (D-42). CPF só em evento pago. Fases P0 a P7 em `docs/PLANO-INGRESSOS-PAGOS.md`. Depende de parecer fiscal e de LGPD antes de qualquer venda, e a fase P1 (caracterização do carrinho e das rotas globais) precede qualquer mudança no integrado.
 - Calendário pessoal na conta do usuário.
 - Integração com a Revista e o Studio (referência a eventos).
+
+## Fronteira de apresentação (2026-10-29, dev.2)
+
+- O catálogo não chama mais `aculta420:event_card`; emite render arrays Drupal
+  e tokens `data-portal-ui`. `MapController` usa os tokens de aviso e link.
+- ACULTA420 mapeia os tokens para classes do cartão e do mapa. O módulo não
+  contém nome do tema nem classe de design.
+- Gate módulo–tema PASS (3397 verificações); Events 55/669 PASS, 26
+  depreciações upstream. Confirmar a apresentação no Firefox ESR após servir o
+  candidato.

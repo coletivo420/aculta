@@ -1,5 +1,12 @@
 # Changelog — aculta_calendar
 
+## 0.1.0-dev.3 — fronteira de apresentação via tokens (2026-10-29)
+
+- Interactive e EmbedHosts usam `data-portal-ui` em render arrays neutros; IDs e
+  atributos de acessibilidade/comportamento foram preservados.
+- Calendar: 117 testes / 399 assertions PASS, 2 depreciações Core/contrib;
+  PHPCS Drupal/DrupalPractice integral e gate módulo–tema PASS.
+
 ## 2026-10-29 — CA PHPCS cleanup (0.1.0-dev.2)
 
 - Limpas as violações Drupal/DrupalPractice dos PHP do Calendar, exceto `InteractiveController.php`, que permanece sob edição da frente DHTMLX.

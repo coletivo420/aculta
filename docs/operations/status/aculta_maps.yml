@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.4
+version: 0.1.0-dev.5
 state: Dev
 progress_note: >-
-  MP0–MP7 concluídas; F0 implementada em dc032d9e0 conforme D-46. Google permanece opcional; Nominatim geocodifica
+  Dev.5: MapRenderer, MapController e catálogo Events usam tokens `data-portal-ui`; PortalUiHooks do tema faz o mapeamento de apresentação. Gate módulo–tema PASS (3397 verificações). Suíte Maps 10/39 PASS, 2 depreciações. MP0–MP7 concluídas; F0 implementada em dc032d9e0 conforme D-46. Google permanece opcional; Nominatim geocodifica
   para todos os engines e a interface atribui dados OSM/ODbL no mapa Google. Suíte Maps revalidada em 2026-10-29:
   10 testes/39 assertions PASS, 2 depreciações do Core. A revisão da política continua pendente: a preferência de não
   mencionar o envio de IP conflita com a transparência exigida pelo ADR-030 antes da ativação final.

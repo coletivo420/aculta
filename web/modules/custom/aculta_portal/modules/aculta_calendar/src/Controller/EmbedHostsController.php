@@ -42,7 +42,7 @@ final class EmbedHostsController extends ControllerBase {
 
     return [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-calendar-embed-hosts']],
+      '#attributes' => ['data-portal-ui' => 'calendar-embed-hosts'],
       'description' => [
         '#plain_text' => $this->t('Os hosts abaixo vêm do ACULTA Deployer. Esta tela é somente para consulta; alterações devem ser feitas no mapeamento de domínios do Deployer.'),
       ],

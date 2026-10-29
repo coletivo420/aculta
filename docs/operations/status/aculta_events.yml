@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.1
+version: 0.1.0-dev.2
 state: Dev
 progress_note: >-
-  E1–E6 e R concluídos, incluindo E2 Views e exportação via provedor, E4 com referência segura, E5 embed e E6 `.ics`. E7/ADM7 MP0–MP7 estão ativadas no Runtime de teste; revisão editorial da divulgação de tiles segue pendente na frente de mapa. F0/D-46 resolveu a política de coordenadas: Nominatim para qualquer mapa, sem persistir resultados Google. E9: seis respostas aprovadas publicadas no Runtime de teste (Nodes 567–572), sem produção. E10 está implementado, mas OAuth não foi concluído nem houve escrita no OSM. Ingressos pagos fora da v1 (D-30).
-next_phase: 'Concluir a validação OAuth de teste sem escrita no OSM; o cartão SDC e revisão visual de F3 seguem na frente visual. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_events/docs/ROADMAP.md) e [plano de ingressos pagos](web/modules/custom/aculta_portal/modules/aculta_events/docs/PLANO-INGRESSOS-PAGOS.md).'
+  Dev.2 migra o catálogo de eventos e o aviso de rota do mapa para render arrays neutros `data-portal-ui`; remove a dependência direta `aculta420:event_card`. Gate módulo–tema PASS (3397 verificações). Suíte Events: 55 testes/669 assertions PASS, 26 depreciações upstream. E1–E6/R, F0/D-46 e E9 mantêm as evidências anteriores; E10 ainda sem conclusão OAuth ou escrita OSM. A revisão editorial da divulgação dos tiles segue pendente.
+next_phase: 'Concluir validação OAuth de teste sem escrita no OSM; revisar visualmente o catálogo de eventos após servir o candidato e acompanhar a decisão editorial do mapa. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_events/docs/ROADMAP.md) e [plano de ingressos pagos](web/modules/custom/aculta_portal/modules/aculta_events/docs/PLANO-INGRESSOS-PAGOS.md).'

@@ -1,3 +1,11 @@
+# 0.7.0-dev.11 — tokens de Eventos, Calendar e Maps (2026-10-29)
+
+- PortalUiHooks mapeia cartões de evento, calendário interativo e mapa. O
+  módulo entrega apenas estrutura Drupal e tokens semânticos.
+- Gate módulo–tema: 3397 verificações PASS, zero classes de design no código de
+  módulos. Revisão visual dos três consumidores fica pendente após servir o
+  candidato.
+
 ## 0.7.0-dev.10 — empilhar a top-bar Navigation no mobile
 
 - Refluxo mobile da integração Drupal/Bootstrap agora empilha contexto e ações em uma coluna e alinha as ações ao início; Editar e Mais ações permanecem disponíveis.

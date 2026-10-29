@@ -31,6 +31,26 @@ final class PortalUiHooks {
     // Avisos e mensagens (classes de mensagens do Drupal, estilizadas aqui).
     'notice-warning' => ['messages', 'messages--warning'],
     'notice-error' => ['messages', 'messages--error'],
+    // Eventos: estrutura neutra do catálogo e leitores de calendário.
+    'event-card' => ['event-card'],
+    'event-card-cancelled' => ['event-card--cancelado'],
+    'event-card-type' => ['event-card__tipo'],
+    'event-card-title' => ['event-card__titulo'],
+    'event-card-subtitle' => ['event-card__subtitulo'],
+    'event-card-meta' => ['event-card__meta'],
+    'event-card-cancel-status' => ['event-card__aviso'],
+    'calendar-interactive-notice' => ['aculta-calendar-interactive__aviso'],
+    'calendar-interactive-controls' => ['aculta-calendar-interactive__controle'],
+    'calendar-interactive' => ['aculta-calendar-interactive'],
+    'calendar-interactive-alternative' => ['aculta-calendar-interactive__alternativa'],
+    'calendar-interactive-agenda' => ['aculta-calendar-interactive__agenda'],
+    'calendar-embed-hosts' => ['aculta-calendar-embed-hosts'],
+    // Mapas: apresentação fica no tema; módulo entrega somente tokens.
+    'map-widget' => ['aculta-map'],
+    'map-location-route' => ['aculta-map__location-route'],
+    'map-privacy-notice' => ['aculta-map__aviso'],
+    'map-wrapper' => ['aculta-map-wrapper'],
+    'map-geocoding-attribution' => ['aculta-map__geocoding-attribution'],
     'email-notice' => ['aculta-email-notice'],
     // Checkout (Commerce): link para os outros dados fiscais da conta.
     'fiscal-identity-other-data' => ['aculta-fiscal-identity-other-data'],

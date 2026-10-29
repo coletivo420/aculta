@@ -65,7 +65,7 @@ final class MapController extends ControllerBase {
           '#type' => 'link',
           '#title' => $this->t('Ver rota'),
           '#url' => $this->routeLinks->build($item['endereco']),
-          '#options' => ['attributes' => ['class' => ['aculta-map__location-route']]],
+          '#options' => ['attributes' => ['data-portal-ui' => 'map-location-route']],
         ];
       }
       $itens[] = $itemRender;
@@ -92,7 +92,7 @@ final class MapController extends ControllerBase {
       'lista' => ['#theme' => 'item_list', '#items' => $itens, '#empty' => $this->t('Nenhum local cadastrado.')],
       'aviso' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-map__aviso']],
+        '#attributes' => ['data-portal-ui' => 'map-privacy-notice'],
         'texto' => [
           '#plain_text' => $this->t('Ao carregar o mapa, seu navegador envia seu endereço IP ao OpenStreetMap para solicitar os mapas. Consulte a política de privacidade para saber como funciona esse serviço.'),
         ],

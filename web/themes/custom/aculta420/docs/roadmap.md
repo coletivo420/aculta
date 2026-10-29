@@ -1,5 +1,14 @@
 # Roadmap — ACULTA420
 
+## Fronteira visual Events, Calendar e Maps — 2026-10-29 (dev.11)
+
+- PortalUiHooks mapeia os tokens semânticos dos módulos para as classes do tema.
+  Os módulos renderizam estrutura neutra e não referenciam `aculta420` nem
+  classes visuais.
+- `validate-module-theme-boundary.php`: 3397 verificações PASS; classes de
+  design no código dos módulos: zero. Eventos, calendário e mapa precisam de
+  revisão visual Firefox ESR depois que o candidato for servido.
+
 **Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../docs/operations/RELEASE-LIFECYCLE.md). Todo requisito de código, testes, gates e revisão visual aplicável deve estar pronto antes de RC; Alpha é validação pós-deploy no servidor de desenvolvimento. Após Alpha aprovado, preparar a migração para produção e realizar checks específicos pós-deploy.
 
 | Versão | Estado | Marcação | Conteúdo |

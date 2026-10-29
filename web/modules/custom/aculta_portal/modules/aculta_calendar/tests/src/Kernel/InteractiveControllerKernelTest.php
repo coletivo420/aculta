@@ -28,13 +28,14 @@ final class InteractiveControllerKernelTest extends KernelTestBase {
     $build = InteractiveController::create($this->container)->page();
 
     $this->assertArrayHasKey('componente', $build);
-    $this->assertStringContainsString('aculta-calendar-interactive', (string) $build['componente']['#markup']);
+    $this->assertSame('aculta-calendar-interactive', $build['componente']['#attributes']['id']);
+    $this->assertSame('calendar-interactive', $build['componente']['#attributes']['data-portal-ui']);
     $this->assertSame(['aculta_calendar/dhtmlx'], $build['#attached']['library']);
     $this->assertArrayHasKey('acultaCalendar', $build['#attached']['drupalSettings']);
     $this->assertArrayHasKey('items', $build['#attached']['drupalSettings']['acultaCalendar']);
     $this->assertArrayHasKey('date', $build['#attached']['drupalSettings']['acultaCalendar']);
     $this->assertArrayHasKey('agenda', $build, 'a agenda em HTML é a alternativa em telas menores');
-    $this->assertSame('', (string) $build['alternativa']['#markup'], 'sem rota de agenda informada, não há link');
+    $this->assertFalse($build['alternativa']['#access'], 'sem rota de agenda informada, não há link');
   }
 
 }

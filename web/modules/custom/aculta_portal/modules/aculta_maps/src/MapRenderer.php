@@ -64,7 +64,7 @@ final class MapRenderer {
       '#type' => 'container',
       '#attributes' => [
         'id' => $mapId,
-        'class' => ['aculta-map'],
+        'data-portal-ui' => 'map-widget',
         'role' => 'region',
         'aria-label' => (string) ($options['label'] ?? 'Mapa'),
         'data-aculta-map' => 'true',
@@ -98,17 +98,17 @@ final class MapRenderer {
         '#tag' => 'p',
         '#value' => 'Google Maps não está configurado; usando OpenStreetMap.',
         '#access' => $this->currentUser->hasPermission('administer aculta maps'),
-        '#attributes' => ['class' => ['messages', 'messages--warning']],
+        '#attributes' => ['data-portal-ui' => 'notice-warning'],
       ];
     }
     if ($provider === 'google' && $markers !== []) {
       return [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-map-wrapper']],
+        '#attributes' => ['data-portal-ui' => 'map-wrapper'],
         'map' => $build,
         'geocoding_attribution' => [
           '#type' => 'container',
-          '#attributes' => ['class' => ['aculta-map__geocoding-attribution']],
+          '#attributes' => ['data-portal-ui' => 'map-geocoding-attribution'],
           'text' => [
             '#plain_text' => 'Dados de localização © OpenStreetMap contributors, disponíveis sob ODbL. ',
           ],

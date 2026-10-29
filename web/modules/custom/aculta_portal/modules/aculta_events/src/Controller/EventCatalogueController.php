@@ -70,17 +70,46 @@ final class EventCatalogueController extends ControllerBase {
     $itens = [];
     foreach ($resultados as $item) {
       $evento = $item['evento'];
+      $cancelado = $evento->get('field_status')->value === 'cancelado';
+      $card_tokens = $cancelado ? 'event-card event-card-cancelled' : 'event-card';
       $itens[] = [
-        '#type' => 'component',
-        '#component' => 'aculta420:event_card',
-        '#props' => [
-          'title' => (string) $evento->label(),
-          'url' => Url::fromRoute('aculta_events.page', ['slug' => (string) $evento->get('field_slug')->value])->toString(),
-          'subtitle' => (string) $evento->get('field_subtitulo')->value ?: NULL,
-          'tipo' => $evento->get('field_tipo')->entity?->label(),
-          'proxima' => $item['proxima']['inicio']->format('d/m/Y H:i'),
-          'local' => NULL,
-          'cancelado' => $evento->get('field_status')->value === 'cancelado',
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => $card_tokens],
+        'type' => [
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#attributes' => ['data-portal-ui' => 'event-card-type'],
+          '#value' => Html::escape((string) ($evento->get('field_tipo')->entity?->label() ?? '')),
+          '#access' => $evento->get('field_tipo')->entity !== NULL,
+        ],
+        'title' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h3',
+          '#attributes' => ['data-portal-ui' => 'event-card-title'],
+          'link' => [
+            '#type' => 'link',
+            '#title' => (string) $evento->label(),
+            '#url' => Url::fromRoute('aculta_events.page', ['slug' => (string) $evento->get('field_slug')->value]),
+          ],
+        ],
+        'subtitle' => [
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#attributes' => ['data-portal-ui' => 'event-card-subtitle'],
+          '#value' => Html::escape((string) $evento->get('field_subtitulo')->value),
+          '#access' => (string) $evento->get('field_subtitulo')->value !== '',
+        ],
+        'meta' => [
+          '#theme' => 'item_list',
+          '#attributes' => ['data-portal-ui' => 'event-card-meta'],
+          '#items' => [$this->t('Próxima data: @date', ['@date' => $item['proxima']['inicio']->format('d/m/Y H:i')])],
+        ],
+        'cancelled' => [
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#attributes' => ['role' => 'status', 'data-portal-ui' => 'event-card-cancel-status'],
+          '#value' => $this->t('Cancelado'),
+          '#access' => $cancelado,
         ],
       ];
     }

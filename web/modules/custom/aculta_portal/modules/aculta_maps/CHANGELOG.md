@@ -1,5 +1,12 @@
 # Changelog — aculta_maps
 
+## 0.1.0-dev.5 — fronteira de apresentação via tokens (2026-10-29)
+
+- Renderer, aviso de provedor e atribuição usam tokens `data-portal-ui`; o
+  ACULTA420 mapeia os tokens para classes de apresentação.
+- Maps: 10 testes / 39 assertions PASS, 2 depreciações Core; gate módulo–tema
+  PASS. A revisão editorial de privacidade segue pendente.
+
 ## 2026-10-29 — F0: decisão D-46 e validação
 
 - A decisão D-46 está implementada: Nominatim geocodifica para todos os engines; resultados Google Geocoding não são usados nem persistidos. Quando coordenadas Nominatim aparecem no mapa Google, há atribuição OSM/ODbL.

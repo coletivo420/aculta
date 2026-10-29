@@ -68,6 +68,7 @@ Atributos: não há wildcard. Todo nome usado no código aparece na tabela acima
 | `data-aculta-docx-status` | exato | sim | 0 |
 | `data-aculta-docx-title` | exato | sim | 1 |
 | `data-aculta-docx-url` | exato | sim | 1 |
+| `data-aculta-docx-render-options` | exato | sim | 2 |
 | `data-aculta-drawer-action` | exato | sim | 3 |
 | `data-aculta-drawer-back` | exato | sim | 4 |
 | `data-aculta-drawer-content` | exato | sim | 2 |
@@ -92,6 +93,7 @@ Atributos: não há wildcard. Todo nome usado no código aparece na tabela acima
 | `data-aculta-mailer-table` | exato | não | 2 |
 | `data-aculta-mailer-tendencia` | exato | não | 1 |
 | `data-aculta-member-name` | exato | sim | 1 |
+| `data-aculta-map` | exato | sim | 2 |
 | `data-aculta-messenger-count` | exato | sim | 2 |
 | `data-aculta-modelo` | exato | sim | 3 |
 | `data-aculta-new-conversation` | exato | sim | 2 |
@@ -128,8 +130,10 @@ Atributos: não há wildcard. Todo nome usado no código aparece na tabela acima
 | `data-aculta-revista` | exato | não | 1 |
 | `data-aculta-sent-date` | exato | sim | 1 |
 | `data-aculta-sheet` | exato | sim | 2 |
+| `data-aculta-sheet-default-mode` | exato | sim | 2 |
 | `data-aculta-sheet-count` | exato | sim | 0 |
 | `data-aculta-sheet-format` | exato | sim | 1 |
+| `data-aculta-sheet-page-size` | exato | sim | 2 |
 | `data-aculta-sheet-frame-url` | exato | sim | 1 |
 | `data-aculta-sheet-libs` | exato | sim | 1 |
 | `data-aculta-sheet-status` | exato | sim | 0 |
@@ -478,6 +482,13 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `forum-category-count` | `aculta-forum-category__count` | `web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/views/field/ForumCategoryTopicCount.php` |
 
 
+## Famílias sem mapeamento de tema
+
+- `patcher-*`: invólucros de tabela administrativa do Patcher, com estilo local
+  no Claro.
+- `studio-mercadopago-*`: conteúdo contextual do Studio sem estilo próprio no
+  ACULTA420.
+
 ## Tokens com mapeamento de tema
 
 | Token | Classes no ACULTA420 | Origem no módulo/tema |
@@ -525,6 +536,24 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `green-stash-products` | `aculta-green-stash__products` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Controller/GreenStashController.php` |
 | `green-stash-shipments` | `aculta-green-stash__shipments` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Controller/GreenStashController.php` |
 | `green-stash-product-detail` | `aculta-green-stash__product-detail` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Controller/GreenStashProductController.php` |
+| `event-card` | `event-card` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php` |
+| `event-card-cancelled` | `event-card--cancelado` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php` |
+| `event-card-type` | `event-card__tipo` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php` |
+| `event-card-title` | `event-card__titulo` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php` |
+| `event-card-subtitle` | `event-card__subtitulo` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php` |
+| `event-card-meta` | `event-card__meta` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php` |
+| `event-card-cancel-status` | `event-card__aviso` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php` |
+| `calendar-interactive-notice` | `aculta-calendar-interactive__aviso` | `web/modules/custom/aculta_portal/modules/aculta_calendar/src/Controller/InteractiveController.php` |
+| `calendar-interactive-controls` | `aculta-calendar-interactive__controle` | `web/modules/custom/aculta_portal/modules/aculta_calendar/src/Controller/InteractiveController.php` |
+| `calendar-interactive` | `aculta-calendar-interactive` | `web/modules/custom/aculta_portal/modules/aculta_calendar/src/Controller/InteractiveController.php` |
+| `calendar-interactive-alternative` | `aculta-calendar-interactive__alternativa` | `web/modules/custom/aculta_portal/modules/aculta_calendar/src/Controller/InteractiveController.php` |
+| `calendar-interactive-agenda` | `aculta-calendar-interactive__agenda` | `web/modules/custom/aculta_portal/modules/aculta_calendar/src/Controller/InteractiveController.php` |
+| `calendar-embed-hosts` | `aculta-calendar-embed-hosts` | `web/modules/custom/aculta_portal/modules/aculta_calendar/src/Controller/EmbedHostsController.php` |
+| `map-widget` | `aculta-map` | `web/modules/custom/aculta_portal/modules/aculta_maps/src/MapRenderer.php` |
+| `map-location-route` | `aculta-map__location-route` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/MapController.php` |
+| `map-privacy-notice` | `aculta-map__aviso` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/MapController.php` |
+| `map-wrapper` | `aculta-map-wrapper` | `web/modules/custom/aculta_portal/modules/aculta_maps/src/MapRenderer.php` |
+| `map-geocoding-attribution` | `aculta-map__geocoding-attribution` | `web/modules/custom/aculta_portal/modules/aculta_maps/src/MapRenderer.php` |
 | `studio-shell` | `studio` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
 | `studio-marley-entry` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/MarleyExperienceProvider.php` |
 | `studio-account-home` | `studio__panel card card-body` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php` |

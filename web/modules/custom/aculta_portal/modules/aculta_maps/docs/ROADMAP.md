@@ -81,6 +81,12 @@ Implementação F0 concluída em `dc032d9e0`. Revalidação em 2026-10-29: suít
 10 testes/39 assertions PASS, com 2 depreciações do Core; cobre o uso de Nominatim
 e a atribuição OSM/ODbL no engine Google. A revisão da política continua aberta:
 a preferência registrada de não mencionar o envio de IP conflita com a exigência
-de transparência do ADR-030 antes da ativação final. O gate global módulo–tema
-também acusa `aculta-map` em `MapRenderer.php`; essa marcação ainda precisa migrar
-para o contrato semântico `data-portal-ui`.
+de transparência do ADR-030 antes da ativação final.
+
+## Fronteira módulo–tema (2026-10-29, dev.5)
+
+`MapRenderer` e `MapController` agora enviam tokens semânticos `data-portal-ui`
+para mapa, atribuição, avisos e links. PortalUiHooks mapeia as classes no tema.
+Gate global módulo–tema PASS (3397 verificações); suíte Maps 10/39 PASS, duas
+depreciações Core. A revisão de privacidade e a verificação visual continuam
+pendentes.

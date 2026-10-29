@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.7.0-dev.10
+version: 0.7.0-dev.11
 state: Dev
 progress_note: >-
-  MF-0.3 / 0.7.0-dev.10: top-bar Navigation empilha contexto e ações em uma coluna até 767.98px. Firefox ESR com CSS local injetado: álbuns autenticados no host principal e no Fórum passaram 8/8 checks em 1280/390/320px, sem overflow e com ações visíveis. Revalidar CSS servido após cache rebuild; diálogos não cobertos nesta rodada. Gate global módulo-tema ainda vermelho por arquivos de Events/Calendar/Maps de outra frente; intocados.
-next_phase: 'Após resolver o gate global módulo–tema fora desta frente, servir o CSS candidato no Runtime e repetir o teste Firefox ESR com cache rebuild; validar diálogo, matriz móvel e Olivero. Depois avançar Institution Bar, menus e overlays na MF-0.3, seguido das demais fases mobile-first antes de RC.'
+  MF-0.3 / 0.7.0-dev.11: top-bar Navigation empilha contexto e ações em uma coluna até 767.98px. PortalUiHooks recebe os tokens de Eventos, Calendar e Maps e mapeia a apresentação desses módulos para classes do ACULTA420. Gate módulo–tema PASS (3397 verificações); PHPCS Drupal/DrupalPractice do hook PASS. Firefox ESR do CSS móvel anterior passou 8/8 checks em 1280/390/320px; a nova página de eventos/mapa ainda precisa de revisão visual depois que este candidato for servido.
+next_phase: 'Servir o candidato com os tokens atualizados após a publicação permitida e revisar no Firefox ESR o catálogo de eventos, calendário interativo e mapa; continuar diálogos, matriz mobile-first e Olivero antes de RC.'
