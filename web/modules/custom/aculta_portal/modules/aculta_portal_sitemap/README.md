@@ -50,7 +50,7 @@ Versão do `info.yml` e do CHANGELOG: `0.1.2`. Verificações recentes: `php tes
 
 ## Próximas etapas
 
-- Deploy: o candidato completo precisa estar em RC antes do deploy/validação Alpha; após aprovação Alpha, segue para produção conforme [ciclo vigente](../../../../../../docs/operations/RELEASE-LIFECYCLE.md).
+- Próxima etapa técnica: testar `isPurposeFrontNode()` com configurações de front-page por domínio em Kernel e concluir a revisão pré-RC. DEP-0002 está resolvida no servidor de testes; a sonda de produção e o Search Console são verificações Beta, conforme [ciclo vigente](../../../../../../docs/operations/RELEASE-LIFECYCLE.md).
 
 ## Verificação de desenvolvimento — 2026-10-29
 
@@ -58,4 +58,4 @@ Versão do `info.yml` e do CHANGELOG: `0.1.2`. Verificações recentes: `php tes
 - `tests/homologacao-url-site.sh 5 127.0.0.1`: PASS, 5 ciclos, 6 hosts e 2 caminhos.
 - GET somente em `127.0.0.1`, com Host dos testes: `/sitemap.xml` e sete sitemaps filhos retornaram HTTP 200 e `X-Robots-Tag: noindex, nofollow, noarchive`; os filhos continham 29 URLs ao todo, todas em hosts de teste declarados pelo Deployer.
 - A checagem comparou os hosts com `domain_transition.entries` e `robots_policy.test.hosts`; o segundo inventário isolado não contém todos os purposes, como `cursos`.
-- D-49 (2026-10-29) decidiu incluir `/wiki/verbetes` na variante `wiki`; a rota foi adicionada à allowlist pública e coberta pela suíte. Permanecem pendentes DEP-0002 e validação Search Console no ciclo Alpha/Beta apropriado. O módulo continua em Dev.
+- D-49 (2026-10-29) decidiu incluir `/wiki/verbetes` na variante `wiki`; a rota foi adicionada à allowlist pública e coberta pela suíte. DEP-0002 está resolvida no servidor de testes; a sonda de produção e o Search Console ficam para Beta. Falta um teste Kernel de `isPurposeFrontNode()` por domínio. O módulo continua em Dev.

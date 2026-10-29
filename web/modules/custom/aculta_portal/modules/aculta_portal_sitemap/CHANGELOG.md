@@ -28,7 +28,7 @@
 
 - Incluído `/wiki/verbetes` em `PUBLIC_PATHS` da variante `wiki`, conforme decisão do responsável D-49.
 - Suíte Unit/Kernel: 7 testes, 14 assertions, 46 depreciações; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS.
-- DEP-0002 e a validação no Search Console permanecem pendentes; sem validação de produção.
+- DEP-0002 está resolvida no servidor de testes; a sonda de produção e Search Console ficam para Beta. Falta teste Kernel de `isPurposeFrontNode()` por domínio; sem validação de produção.
 
 ## 0.1.2 — evidência HTTP dos hosts de teste — 2026-10-29
 

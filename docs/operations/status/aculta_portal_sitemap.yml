@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.2
 state: Dev
-progress_note: 'Em 2026-10-29: runner estático 13/13 PASS; homologação url.site (5 ciclos, 6 hosts, 2 caminhos) PASS; checkout servido 662c62d43: índice e 7 filhos HTTP 200/noindex, com 29 URLs somente em hosts de teste do Deployer. D-49 inclui /wiki/verbetes; suíte 7 testes/14 assertions PASS, 46 depreciações; PHPCS e PHP lint PASS. DEP-0002 e validação Search Console seguem pendentes.'
-next_phase: Fechar DEP-0002 e concluir revisão/gates do módulo; completar gates e revisão para RC. Search Console fica para validação no ciclo Alpha/Beta ([README](web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/README.md))
+progress_note: 'Em 2026-10-29: runner estático 13/13 PASS; homologação url.site (5 ciclos, 6 hosts, 2 caminhos) PASS; checkout servido 662c62d43: índice e 7 filhos HTTP 200/noindex, com 29 URLs somente em hosts de teste do Deployer. D-49 inclui /wiki/verbetes; suíte 7 testes/14 assertions PASS, 46 depreciações; PHPCS e PHP lint PASS. DEP-0002 está resolvida no teste; sonda de produção/Search Console fica para Beta. Falta teste Kernel de isPurposeFrontNode por domínio.'
+next_phase: Adicionar teste Kernel de isPurposeFrontNode por domínio; concluir revisão e gates antes de RC. Sonda DEP-0002 e Search Console ficam para Beta ([README](web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/README.md))
