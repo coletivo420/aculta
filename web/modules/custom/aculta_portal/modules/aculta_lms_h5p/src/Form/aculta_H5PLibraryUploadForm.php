@@ -51,7 +51,7 @@ final class aculta_H5PLibraryUploadForm extends FormBase {
   }
 
   /**
-   *
+   * Creates the upload form with its required service dependencies.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -63,14 +63,14 @@ final class aculta_H5PLibraryUploadForm extends FormBase {
   }
 
   /**
-   *
+   * Returns the stable form ID used by Drupal Form API.
    */
   public function getFormId(): string {
     return 'aculta_lms_h5p_library_upload_form';
   }
 
   /**
-   *
+   * Builds a form that accepts only reviewed local H5P library packages.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $storagePath = (string) ($this->h5pConfigFactory->get('aculta_lms_h5p.settings')->get('aculta_lms_h5p_default_path') ?? 'h5p');
@@ -99,7 +99,7 @@ final class aculta_H5PLibraryUploadForm extends FormBase {
   }
 
   /**
-   *
+   * Validates that the managed upload is a readable H5P package.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $fids = $form_state->getValue('package');
@@ -110,7 +110,7 @@ final class aculta_H5PLibraryUploadForm extends FormBase {
   }
 
   /**
-   *
+   * Installs validated libraries and removes the temporary package file.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $fids = $form_state->getValue('package');

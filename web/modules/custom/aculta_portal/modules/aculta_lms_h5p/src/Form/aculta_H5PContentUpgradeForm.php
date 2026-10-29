@@ -1,8 +1,8 @@
 <?php
 
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Form;
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\Controller\aculta_H5PContentUpgrade;
 use Drupal\aculta_lms_h5p\Controller\aculta_H5PLibraryAdmin;
@@ -23,13 +23,24 @@ use Drupal\Core\Form\FormStateInterface;
 // phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 class aculta_H5PContentUpgradeForm extends FormBase {
 
+  /**
+   * Database connection for H5P library versions and content counts. */
   protected Connection $database;
 
+  /**
+   * Discovers the installed module path used by H5P assets. */
   protected ModuleExtensionList $moduleList;
 
+  /**
+   * Generates local asset URLs for the H5P upgrade interface. */
   protected FileUrlGeneratorInterface $fileUrlGenerator;
 
+  /**
+   * Adds cache-busting query strings to H5P asset URLs. */
   protected AssetQueryStringInterface $assetQueryString;
+
+  /**
+   * H5P framework adapter used for upgrade metadata. */
   protected aculta_H5PDrupal $framework;
 
   public function __construct(
@@ -47,7 +58,7 @@ class aculta_H5PContentUpgradeForm extends FormBase {
   }
 
   /**
-   *
+   * Creates the upgrade form with its database and asset services.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -90,7 +101,6 @@ class aculta_H5PContentUpgradeForm extends FormBase {
 
     $contents_plural = $this->formatPlural($contents, '1 atividade', '@count atividades');
     $returnLink = Link::fromTextAndUrl($this->t('Voltar'), Url::fromUri('internal:/admin/content/h5p/'))->toString();
-    $h5p_module_rel = base_path() . $this->moduleList->getPath('aculta_lms_h5p');
     $settings = [
       'libraryInfo' => [
         'message' => $this->t('Você vai atualizar %num. Selecione a versão de destino.', ['%num' => $contents_plural]),

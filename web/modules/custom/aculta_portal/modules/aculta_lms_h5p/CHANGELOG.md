@@ -1,3 +1,15 @@
+## 0.4.0-dev.157 — documentar contratos dos formulários H5P (2026-10-29)
+
+- PHPDoc dos quatro formulários administrativos foi completado; removidos
+  blocos de código antigo inteiramente comentados e o caminho de módulo que
+  não era utilizado. O caminho temporário continua sendo `<diretório>/temp`.
+- PHPCS integral caiu de 232 erros/30 avisos em 31 arquivos para 203/21 em 27
+  arquivos. Os quatro formulários passam Drupal/DrupalPractice sem erros nem
+  avisos; regras PHPCS e identificadores H5P foram preservados.
+- Unit + Kernel no `aculta_simpletest`: 43 testes / 481 asserções PASS, 41
+  depreciações Core/contrib. PHP lint dos formulários, PHPCS focado e
+  `git diff --check` PASS. Nenhuma alteração Runtime.
+
 ## 0.4.0-dev.156 — limpar documentação dos testes Unit/Kernel (2026-10-29)
 
 - Sete arquivos de teste receberam PHPDoc descritivo no lugar de comentários

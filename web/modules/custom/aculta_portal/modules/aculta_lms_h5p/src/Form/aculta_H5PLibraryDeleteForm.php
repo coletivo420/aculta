@@ -1,8 +1,8 @@
 <?php
 
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Form;
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PLibraryCacheInvalidator;
 
@@ -17,6 +17,8 @@ use Drupal\Core\Form\FormStateInterface;
 // phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 class aculta_H5PLibraryDeleteForm extends FormBase {
 
+  /**
+   * H5P framework adapter for library management operations. */
   protected aculta_H5PDrupal $framework;
 
   public function __construct(
@@ -28,8 +30,7 @@ class aculta_H5PLibraryDeleteForm extends FormBase {
   }
 
   /**
-   *
-   */
+   * Creates the delete form with its database and H5P services. */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('database'),
@@ -49,8 +50,10 @@ class aculta_H5PLibraryDeleteForm extends FormBase {
    * Check if library is deletable.
    *
    * @param string $library_id
+   *   The H5P library identifier.
    *
    * @return bool
+   *   Whether no content or other libraries depend on this library.
    */
   private function isLibraryDeletable($library_id) {
     // Is library deletable ?
