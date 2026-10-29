@@ -16,8 +16,9 @@ use Drupal\user\UserInterface;
  * 2. avatar ilustrativo estável do acervo (AvatarPool), que é o fallback final
  *    e obrigatório para quem não tem foto.
  *
- * Não decide visibilidade de campos: recebe $showPhoto já calculado pela policy.
- * O AvatarPool é opcional só para testes unitários; em produção é sempre injetado.
+ * Não decide visibilidade de campos: recebe $showPhoto já calculado pela
+ * policy. O AvatarPool é opcional só para testes unitários; em produção é
+ * sempre injetado.
  * O NULL abaixo é contrato defensivo do teste sem pool: o site não tem estado
  * "sem acervo" e a inicial do nome nunca é usada.
  */
@@ -31,8 +32,19 @@ final class AvatarResolver {
   /**
    * Monta o render array do avatar, ou NULL quando não há imagem a mostrar.
    *
+   * @param \Drupal\user\UserInterface|null $account
+   *   Conta cuja foto ou avatar será apresentado.
+   * @param string $name
+   *   Texto alternativo acessível da imagem.
+   * @param bool $showPhoto
+   *   Se a política do chamador autoriza mostrar foto pessoal.
+   * @param \Drupal\Core\Cache\CacheableMetadata $cacheability
+   *   Metadata compartilhada de cache da identidade.
    * @param array<string, string> $attributes
    *   Atributos extras do elemento de avatar (por exemplo, data-portal-ui).
+   *
+   * @return array|null
+   *   Imagem cacheável ou NULL quando a fonte não está disponível.
    */
   public function build(?UserInterface $account, string $name, bool $showPhoto, CacheableMetadata $cacheability, array $attributes = []): ?array {
     // Every consumer must invalidate the rendered identity when the canonical
@@ -52,7 +64,17 @@ final class AvatarResolver {
         $isPoolAvatar = str_starts_with($uri, AvatarPool::DIRECTORY . '/');
         if ($showPhoto || $isPoolAvatar) {
           $cacheability->addCacheableDependency($file);
-          return $this->imageRenderer->build('avatar', $uri, $name, ['loading' => 'lazy']);
+          $avatar = $this->imageRenderer->build('avatar', $uri, $name, ['loading' => 'lazy']);
+          if ($avatar !== NULL) {
+            // Keep this renderable independently cache-safe. Consumers also
+            // receive the metadata through $cacheability, but must not have to
+            // remember to bubble it for the canonical picture.
+            (new CacheableMetadata())
+              ->addCacheableDependency($account)
+              ->addCacheableDependency($file)
+              ->applyTo($avatar);
+          }
+          return $avatar;
         }
       }
     }
@@ -64,7 +86,7 @@ final class AvatarResolver {
     if ($entry === NULL) {
       return NULL;
     }
-    return [
+    $avatar = [
       '#type' => 'html_tag',
       '#tag' => 'img',
       '#attributes' => $attributes + [
@@ -74,6 +96,10 @@ final class AvatarResolver {
       ],
       '#cache' => ['contexts' => ['languages:language_interface']],
     ];
+    if ($account !== NULL) {
+      CacheableMetadata::createFromObject($account)->applyTo($avatar);
+    }
+    return $avatar;
   }
 
 }

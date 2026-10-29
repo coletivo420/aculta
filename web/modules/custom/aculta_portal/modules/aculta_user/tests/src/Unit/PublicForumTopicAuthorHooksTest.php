@@ -47,6 +47,7 @@ final class PublicForumTopicAuthorHooksTest extends UnitTestCase {
     self::assertSame('Maria', $build['author_card']['#display_name']);
     self::assertSame('2020', $build['author_card']['#member_since']);
     self::assertSame(-20, $build['author_card']['#weight']);
+    self::assertContains('user:42', $build['author_card']['#cache']['tags']);
   }
 
   /**

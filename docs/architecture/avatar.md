@@ -30,6 +30,13 @@ A mesma regra vale para Conta/perfil, cartões de autor, Fórum, Revista, LMS
 (roster, sala e feedback), Wiki, Mensagens privadas, memorial histórico e
 Views que mostrem pessoas.
 
+**Decisão permanente (2026-10-29):** a foto ou avatar selecionado tem uma única
+fonte persistida por conta: `user_picture`. `user.data.avatar_id` identifica a
+entrada escolhida no acervo, e `sorteio_pendente` guarda uma prévia não salva;
+nenhum deles é uma segunda fonte de apresentação. `field_exibir_foto` é somente
+uma regra de visibilidade pública. Módulos, purposes e perfis não criam cópias
+paralelas de campos de avatar; todos consomem a identidade central.
+
 ## 2. Fronteiras e donos
 
 | Capacidade | Dono | Onde |
@@ -149,10 +156,11 @@ Fonte de verdade dos dados: [data-ownership.md](data-ownership.md).
   autorizados e cacheáveis.
 - O avatar do acervo é imagem institucional, não dado pessoal; por isso pode
   aparecer sem opt-in.
-- Cache: `AvatarResolver` sempre incorpora a conta e o arquivo resolvido à
-  metadata, de modo que Fórum, perfil público e demais consumidores invalidem a
-  identidade quando `user_picture` mudar. O cartão também incorpora o Profile e
-  os contextos da identidade. Feedback do LMS acrescenta a resposta e o curso
+- Cache: `AvatarResolver` inclui as tags da conta e do arquivo resolvido no
+  próprio render array do avatar e na metadata de identidade, de modo que
+  Fórum, perfil público e demais consumidores invalidem a apresentação quando
+  `user_picture` mudar. O cartão também incorpora o Profile e os contextos da
+  identidade. Feedback do LMS acrescenta a resposta e o curso
   (e a tag de lista de membros do curso) para o rótulo de educador não ficar
   preso em cache.
 - A foto personalizada importada do Google é tratada como foto pessoal; a

@@ -23,8 +23,9 @@ use PHPUnit\Framework\Attributes\Group;
 class AvatarResolverTest extends UnitTestCase {
 
   /**
-   * Sem foto liberada e sem acervo, o resolver devolve NULL; nenhum chamador
-   * inventa a inicial.
+   * Sem fonte de imagem, o resolver devolve NULL.
+   *
+   * Nenhum chamador inventa a inicial.
    */
   public function testReturnsNullWithoutPhotoOrPool(): void {
     $account = $this->createMock(UserInterface::class);
@@ -57,6 +58,8 @@ class AvatarResolverTest extends UnitTestCase {
     self::assertSame('image_style', $build['#theme']);
     self::assertSame(AvatarPool::DIRECTORY . '/avatar-17.png', $build['#uri']);
     self::assertContains('user:42', $cacheability->getCacheTags());
+    self::assertContains('user:42', $build['#cache']['tags']);
+    self::assertContains('file:17', $build['#cache']['tags']);
   }
 
   /**
@@ -78,7 +81,7 @@ class AvatarResolverTest extends UnitTestCase {
     $file = $this->createMock(FileInterface::class);
     $file->method('getFileUri')->willReturn($uri);
     $file->method('getCacheContexts')->willReturn([]);
-    $file->method('getCacheTags')->willReturn([]);
+    $file->method('getCacheTags')->willReturn(['file:17']);
     $file->method('getCacheMaxAge')->willReturn(-1);
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('__get')->with('entity')->willReturn($file);
