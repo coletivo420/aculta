@@ -379,25 +379,6 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/webform-layout.py
 
 `messenger-reply-layout.py` compara a CSS baseline/candidata do composer de
 resposta em fixture que reproduz a estrutura publicada pelo módulo Messenger.
-Mede padding da gaveta e do formulário, margem do campo, altura da caixa,
-ordem da mensagem e botão, alvo de toque e overflow em 320/360/390/575/576/599/
-600/768/1024/1280/1440 px. Não autentica, envia mensagens nem acessa o Runtime.
-Firefox ESR precisa estar visível em `DISPLAY=:0`; screenshots e resumo ficam em
-`$SUITE_OUT`. `MESSENGER_REPLY_BASELINE_REF` e `MESSENGER_REPLY_WIDTHS` escolhem
-a baseline e as larguras.
-
-```sh
-export DISPLAY=:0
-export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-messenger-reply-mobile-first
-export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
-DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/messenger-reply-layout.py
-```
-
-
-## Composer de resposta da gaveta Messenger
-
-`messenger-reply-layout.py` compara a CSS baseline/candidata do composer de
-resposta em fixture que reproduz a estrutura publicada pelo módulo Messenger.
 Mede padding da gaveta e do formulário, margem do campo, altura da caixa, ordem
 da mensagem e botão, alvo de toque e overflow em 320/360/390/575/576/599/600/
 768/1024/1280/1440 px. Não autentica, envia mensagens nem acessa o Runtime.
