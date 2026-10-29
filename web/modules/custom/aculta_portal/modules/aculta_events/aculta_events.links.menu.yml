@@ -4,3 +4,18 @@ aculta_events.admin_export:
   route_name: aculta_events.admin_export
   parent: system.admin_content
   weight: 31
+
+aculta_events.admin_locations:
+  title: 'Locais de eventos'
+  description: 'Gerenciamento de locais e espaços culturais para eventos.'
+  route_name: aculta_events.locations
+  parent: system.admin_content
+  weight: 32
+
+aculta_events.admin_location_add:
+  title: 'Adicionar local'
+  description: 'Cadastrar um novo local de evento.'
+  route_name: aculta_events.location_add
+  parent: system.admin_content
+  weight: 33
+

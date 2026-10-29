@@ -29,6 +29,52 @@ aculta_events.locations:
   options:
     _aculta_domain_purpose: eventos
 
+aculta_events.location_canonical:
+  path: '/locais/{aculta_event_location}'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\LocationPageController::page'
+    _title_callback: '\Drupal\aculta_events\Controller\LocationPageController::title'
+  requirements:
+    _entity_access: 'aculta_event_location.view'
+    aculta_event_location: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+
+aculta_events.location_add:
+  path: '/locais/adicionar'
+  defaults:
+    _entity_form: 'aculta_event_location.add'
+    _title: 'Adicionar local'
+  requirements:
+    _entity_create_access: 'aculta_event_location'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: eventos
+
+aculta_events.location_edit:
+  path: '/locais/{aculta_event_location}/editar'
+  defaults:
+    _entity_form: 'aculta_event_location.edit'
+    _title: 'Editar local'
+  requirements:
+    _entity_access: 'aculta_event_location.update'
+    aculta_event_location: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: eventos
+
+aculta_events.location_delete:
+  path: '/locais/{aculta_event_location}/excluir'
+  defaults:
+    _entity_form: 'aculta_event_location.delete'
+    _title: 'Excluir local'
+  requirements:
+    _entity_access: 'aculta_event_location.delete'
+    aculta_event_location: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: eventos
+
 aculta_events.date_add:
   path: '/painel-administrativo/eventos/datas/adicionar'
   defaults:
