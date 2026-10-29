@@ -184,6 +184,13 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
   fixture. Permanecem validação da instalação completa do Portal, binários
   Hostinger e integração Growroom.
 
+### Retenção sem coordenador — 2026-10-29
+
+- Kernel confirma que uma imagem permanente enfileirada continua no banco e no
+  storage se `aculta_portal.unused_file_cleaner` estiver indisponível. O item
+  não é removido da fila, para nova tentativa após expirar o lease. O mesmo
+  teste confirma que quarentena também falha fechada sem coordenador.
+
 Fora deste ciclo: bloqueio automático de duplicatas durante o upload. O relatório continua sugerindo revisão administrativa.
 
 ## 6. Perguntas abertas

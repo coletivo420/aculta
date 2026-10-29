@@ -12,6 +12,11 @@
 
 # Changelog — aculta_image
 
+## 0.1.0-dev.42 — retenção quando coordenador indisponível (2026-10-29)
+
+- Kernel confirma que uma imagem permanente enfileirada permanece no banco e no storage quando o serviço coordenador do Portal não está disponível; o item fica elegível a nova tentativa após o lease.
+- Suíte do módulo: 32 testes / 150 assertions PASS; quatro depreciações upstream de `media_duplicates`/Drupal.
+
 ## 0.1.0-dev.41 — referências em revisões históricas (2026-10-29)
 
 - Kernel cria uma revisão antiga de página com UUID de File embutido, salva uma revisão nova sem essa referência e confirma que o coordenador preserva o arquivo ainda usado pelo histórico.
