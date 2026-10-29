@@ -290,3 +290,17 @@ A decisão D-47 também autoriza converter o acervo existente. Isso não ocorre 
 salvar as opções: M12 deve inventariar referências, definir execução em lotes,
 preservar metadados/URLs e preparar reversão antes de qualquer migração. Nenhum
 arquivo existente foi migrado nesta fase.
+
+### Inventário inicial M12 — 2026-10-29
+
+Consulta somente leitura ao banco `aculta_runtime` no servidor de
+desenvolvimento: `file_managed` contém zero registros com URI
+`public://inline-images/%`; a pasta correspondente no public files também
+contém zero arquivos. Assim, o conjunto atual de candidatos inline é vazio e
+nenhuma conversão ou reescrita de referência foi necessária. Esta medição foi
+feita no Runtime enquanto o checkout servido estava em `355e48a89`, antes de
+servir o candidato `0.1.0-dev.46`; ela não demonstra ausência de arquivos em
+outros ambientes nem substitui a repetição do inventário antes de executar uma
+migração. O arquivo de status do Image está sendo editado por outra sessão no
+checkout servido; essa alteração foi preservada e o manifesto permanece sem
+atualização nesta microfase.
