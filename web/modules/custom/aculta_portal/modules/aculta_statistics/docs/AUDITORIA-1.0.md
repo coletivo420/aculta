@@ -57,3 +57,12 @@ ser decidido.
 - **Por host (GET em `/painel-administrativo/aculta/estatisticas`, anônimo):** `aculta.toca.net.br` responde 403 (permissão negada). `conta.` e `loja.` respondem 302 para o principal. Ou seja, a rota administrativa só é servida no host principal, como manda a política de domínio. Não há teste automatizado por host.
 - **Visual das áreas (administrador, período de 30 dias):** vendas, cursos e fórum renderizadas com seletor, comparação, gráfico, tabela e rótulos legíveis. As demais áreas (e-mail, links, mídia, wiki) usam o mesmo modelo, e mídia e wiki foram vistas antes da correção do rótulo. Tudo no tema administrativo Claro.
 - **Clientes GA4 e Search Console:** desligados (sem credenciais). A verificação real (`aculta-statistics:google-check`) está pronta e depende das credenciais da conta de serviço.
+
+## Revalidação local em 2026-10-29
+
+- Unit: 108 testes / 438 assertions PASS.
+- Kernel: 47 testes / 319 assertions PASS em `aculta_simpletest`.
+- PHP lint: 95 arquivos / 0 erros.
+- PHPCS Drupal/DrupalPractice: 0 erros e 190 avisos de comprimento de linha.
+- Nenhuma escrita foi feita no Runtime durante esta revalidação.
+- O módulo permanece Dev: a revisão visual/acessível completa e a confirmação autorizada das integrações externas continuam pendentes. O gate global módulo–tema falha em referências de apresentação nos módulos Events, Calendar e Maps, fora do escopo Statistics.
