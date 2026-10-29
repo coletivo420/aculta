@@ -6,11 +6,18 @@
 - Suíte completa: 56 testes/645 assertions PASS, com 156 depreciações Core/contrib e zero depreciações PHPUnit.
 - Runtime não alterado. **Nota de reconciliação (`RELEASE-LIFECYCLE.md`):** notas anteriores deste roadmap listavam a confirmação no FPM Hostinger antes de RC; conforme `docs/operations/RELEASE-LIFECYCLE.md`, o fluxo vigente é `Dev → RC → Alpha (*.aculta.org) → Beta (Hostinger)`, de modo que a verificação em FPM Hostinger/LiteSpeed/Cloudflare pertence à etapa **Beta** pós-Alpha, e não bloqueia a promoção a RC.
 
-## Opções administrativas globais (2026-10-29, dev.19–dev.20)
+## Opções administrativas globais e padronização por tipo (2026-10-29, dev.19–rc.1)
 
-- ACULTA > Site > Leitor de documentos reúne os controles globais PDF já
-  existentes e inclui opções de renderização DOCX (cabeçalhos, rodapés,
-  notas e quebras de página) e planilhas (modo inicial e linhas por página).
+- ACULTA > Site > Leitor de documentos (`/painel-administrativo/aculta/leitor-documentos`)
+  é o caminho administrativo único (substituindo `/painel-administrativo/aculta/leitor-pdf`),
+  dividido sem repetição em 4 subabas horizontais nativas do Drupal (`links.task.yml`):
+  - **Geral** (`/painel-administrativo/aculta/leitor-documentos`, seção `aculta_document_viewer_general`, opções conjuntas do módulo)
+  - **PDF** (`/painel-administrativo/aculta/leitor-documentos/pdf`, seção `aculta_document_viewer_pdf`, opções específicas do leitor PDF)
+  - **Documentos** (`/painel-administrativo/aculta/leitor-documentos/documentos`, seção `aculta_document_viewer_doc`, opções específicas do leitor DOCX)
+  - **Planilhas** (`/painel-administrativo/aculta/leitor-documentos/planilhas`, seção `aculta_document_viewer_sheet`, opções específicas do leitor de planilhas)
+- Padronizados os sufixos `aculta_document_viewer_pdf`, `aculta_document_viewer_doc` e
+  `aculta_document_viewer_sheet` em bibliotecas, serviços, FieldFormatters e `config/sync/`,
+  com remoção completa do módulo legado `aculta_pdf_viewer`.
 - Os valores viajam por atributos de dados validados (`data-aculta-docx-render-options`,
   `data-aculta-sheet-default-mode`, `data-aculta-sheet-page-size`) e, a partir
   da `0.1.0-dev.20`, são consumidos efetivamente por `docx-viewer-behavior.mjs`
@@ -18,9 +25,9 @@
   isolado em iframe sandboxed; planilhas continuam somente para leitura. Tetos de 20
   abas, 2000 linhas, 100 colunas e 500 caracteres por célula não são editáveis.
 - Config Sync foi atualizado, mas não importado no Runtime (conforme regra operacional).
-  A suíte completa (módulo + submódulo Group) passou em 56 testes/645 assertions,
-  zero depreciações PHPUnit e 156 depreciações Core/contrib; PHPCS Drupal/DrupalPractice
-  0/0 em todos os 39 arquivos PHP; `node --check` 8/8.
+  A suíte completa (módulo + submódulo Group) passou em 69 testes/666 assertions,
+  zero depreciações PHPUnit; PHPCS Drupal/DrupalPractice 0/0 em todos os arquivos PHP;
+  `node --check` 10/10.
 - D-48 validada em Firefox ESR visível (`DISPLAY=:0`) por
   `tests/browser/aculta-document-viewer/office-options.py`: 17/17 verificações PASS
   em ACULTA420 e Olivero (1280/390/320 px), cobrindo rotulagem e foco `:focus-visible`

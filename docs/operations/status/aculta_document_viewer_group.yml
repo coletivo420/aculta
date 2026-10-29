@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.2
-state: Dev
-progress_note: "Kernel MariaDB do acesso a documentos de turma passou 1/48 após carregar a closure real, o bundle course_document do contrato Sync e schemas requeridos pelos hooks Portal/User/Commerce. Membership, relação, não membro e revogação revalidados; 144 depreciações upstream. Sem escrita Runtime. Bundle Media permanece legado no PDF Group; migration de ownership ainda bloqueada."
-next_phase: 'Homologar instalação/Config Sync por purpose em ambiente isolado e planejar migração de ownership do bundle Media legado no PDF Group; instalação por ambiente ainda precisa confirmação ([README](web/modules/custom/aculta_portal/modules/aculta_document_viewer/modules/aculta_document_viewer_group/README.md))'
+version: 0.1.0-rc.1
+state: RC
+progress_note: "RC 0.1.0-rc.1: ownership do bundle privado course_document consolidado em config/install e config/sync após remoção do módulo legado aculta_pdf_viewer_group. CourseDocumentAccessTest (1/48) e ContentIndexCourseDocumentAccessKernelTest (1/48) PASS no MariaDB aculta_simpletest; PHPCS Drupal/DrupalPractice 0/0. Sem escrita no Runtime."
+next_phase: 'Alpha (*.aculta.org): importar Config Sync após autorização e confirmar relação Group lms_course no ambiente Alpha ([README](web/modules/custom/aculta_portal/modules/aculta_document_viewer/modules/aculta_document_viewer_group/README.md))'

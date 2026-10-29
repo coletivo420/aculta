@@ -198,7 +198,8 @@ def build_test_page(theme: str) -> str:
     <h1>Leitor de documentos — opções administrativas D-48 ({theme})</h1>
     <nav aria-label="Subabas horizontais do Leitor de documentos">
       <ul class="tabs tabs--secondary" style="display:flex; gap:8px; list-style:none; padding:0; margin:0 0 12px 0;">
-        <li><a href="/painel-administrativo/aculta/leitor-documentos" data-subtab="aculta_document_viewer_pdf">PDF</a></li>
+        <li><a href="/painel-administrativo/aculta/leitor-documentos" data-subtab="aculta_document_viewer_general">Geral</a></li>
+        <li><a href="/painel-administrativo/aculta/leitor-documentos/pdf" data-subtab="aculta_document_viewer_pdf">PDF</a></li>
         <li><a href="/painel-administrativo/aculta/leitor-documentos/documentos" data-subtab="aculta_document_viewer_doc" aria-current="page">Documentos</a></li>
         <li><a href="/painel-administrativo/aculta/leitor-documentos/planilhas" data-subtab="aculta_document_viewer_sheet">Planilhas</a></li>
       </ul>
@@ -469,6 +470,11 @@ try:
         check(f"[{theme}] leitores DOCX (padrão/custom) e planilha montados sem erro", bool(ready))
 
         form_audit = driver.js("""
+          const subtabs = [...document.querySelectorAll('nav .tabs--secondary a')].map(el => ({
+            text: el.textContent.trim(),
+            href: el.getAttribute('href'),
+            subtab: el.dataset.subtab,
+          }));
           const targets = [...document.querySelectorAll('#aculta-document-viewer-settings [data-config-target]')]
             .map(el => ({
               name: el.name,
@@ -477,8 +483,30 @@ try:
             }));
           const modeOpts = [...document.querySelectorAll('#edit-spreadsheet-default-mode option')].map(o => o.value);
           const sizeOpts = [...document.querySelectorAll('#edit-spreadsheet-page-size option')].map(o => o.value);
-          return { targets, modeOpts, sizeOpts };
+          return { subtabs, targets, modeOpts, sizeOpts };
         """)
+        expected_subtabs = [
+            {
+                "text": "Geral",
+                "href": "/painel-administrativo/aculta/leitor-documentos",
+                "subtab": "aculta_document_viewer_general",
+            },
+            {
+                "text": "PDF",
+                "href": "/painel-administrativo/aculta/leitor-documentos/pdf",
+                "subtab": "aculta_document_viewer_pdf",
+            },
+            {
+                "text": "Documentos",
+                "href": "/painel-administrativo/aculta/leitor-documentos/documentos",
+                "subtab": "aculta_document_viewer_doc",
+            },
+            {
+                "text": "Planilhas",
+                "href": "/painel-administrativo/aculta/leitor-documentos/planilhas",
+                "subtab": "aculta_document_viewer_sheet",
+            },
+        ]
         expected_targets = {
             "aculta_document_viewer.settings:docx_render_headers",
             "aculta_document_viewer.settings:docx_render_footers",
@@ -491,8 +519,9 @@ try:
         found_targets = {item["target"] for item in form_audit["targets"]}
         all_labelled = all(item["labelled"] for item in form_audit["targets"])
         check(
-            f"[{theme}] opções administrativas D-48 presentes e rotuladas",
-            expected_targets == found_targets and all_labelled
+            f"[{theme}] subabas horizontais (Geral / PDF / Documentos / Planilhas) e opções D-48 presentes e rotuladas",
+            form_audit["subtabs"] == expected_subtabs
+            and expected_targets == found_targets and all_labelled
             and form_audit["modeOpts"] == ["sheet", "table"]
             and form_audit["sizeOpts"] == ["25", "50", "100"],
             json.dumps(form_audit, ensure_ascii=False),

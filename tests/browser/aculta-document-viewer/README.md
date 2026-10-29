@@ -26,7 +26,11 @@ CSP, PDF de grande porte ou o resultado após deploy.
 o `web/` do checkout candidato (`ACULTA_PROJECT_ROOT`) e fixtures OOXML/CSV em
 memória para validar no Firefox ESR visível (`DISPLAY=:0`):
 
-- estrutura e rotulagem acessível das seções administrativas `Apresentação de
+- subabas horizontais do caminho único `/painel-administrativo/aculta/leitor-documentos`
+  (**Geral** `aculta_document_viewer_general`, **PDF** `aculta_document_viewer_pdf`,
+  **Documentos** `aculta_document_viewer_doc` e **Planilhas**
+  `aculta_document_viewer_sheet`),
+  além da estrutura e rotulagem acessível das seções administrativas `Apresentação de
   documentos DOCX` (`docx_render_headers`, `docx_render_footers`,
   `docx_render_footnotes`, `docx_render_endnotes`, `docx_respect_page_breaks`) e
   `Apresentação de planilhas` (`spreadsheet_default_mode`,

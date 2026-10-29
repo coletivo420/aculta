@@ -1,5 +1,0 @@
-# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.44
-state: Dev
-next_phase: 'PV7: concluir revisão ampliada de acessibilidade/leitura, validar CSP e checagens visuais pré-RC; confirmar miniatura PDF via Imagick PHP no FPM Hostinger quando o candidato estiver servido ([roadmap](web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/docs/ROADMAP.md))'
-progress_note: '2026-10-29 Dev.44: a miniatura pública usa o serviço compartilhado `aculta_image.pdf_thumbnail` com PHP Imagick, sem PDFPreview/ImageMagick CLI; validação sintética no host e suíte completa 36 testes/367 assertions PASS, 137 depreciações. PV7 preserva pendências de inspeção CSP ao servir o candidato, revisão ampliada de acessibilidade/leitura e visual pré-RC; FPM Hostinger ainda não testado pela aplicação.'

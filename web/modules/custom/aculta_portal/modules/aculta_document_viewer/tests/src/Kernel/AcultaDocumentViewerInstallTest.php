@@ -83,6 +83,10 @@ final class AcultaDocumentViewerInstallTest extends KernelTestBase {
     foreach ([
       'aculta_document_viewer.settings' => [
         '/painel-administrativo/aculta/leitor-documentos',
+        'aculta_document_viewer_general',
+      ],
+      'aculta_document_viewer.settings_pdf' => [
+        '/painel-administrativo/aculta/leitor-documentos/pdf',
         'aculta_document_viewer_pdf',
       ],
       'aculta_document_viewer.settings_doc' => [
@@ -101,14 +105,32 @@ final class AcultaDocumentViewerInstallTest extends KernelTestBase {
     }
 
     $form_builder = $container->get('form_builder');
+    $general_form = $form_builder->getForm(DocumentViewerSettingsForm::class, 'aculta_document_viewer_general');
+    $this->assertArrayHasKey('aculta_document_viewer_general', $general_form);
+    $this->assertArrayNotHasKey('aculta_document_viewer_pdf', $general_form);
+    $this->assertArrayNotHasKey('aculta_document_viewer_doc', $general_form);
+    $this->assertArrayNotHasKey('aculta_document_viewer_sheet', $general_form);
+    $this->assertSame('aculta_document_viewer.settings:show_download', $general_form['aculta_document_viewer_general']['controls']['show_download']['#config_target']);
+    $this->assertSame('aculta_document_viewer.settings:show_zoom', $general_form['aculta_document_viewer_general']['controls']['show_zoom']['#config_target']);
+    $this->assertSame('aculta_document_viewer.settings:show_fullscreen', $general_form['aculta_document_viewer_general']['controls']['show_fullscreen']['#config_target']);
+    $this->assertSame('aculta_document_viewer.settings:language', $general_form['aculta_document_viewer_general']['controls']['language']['#config_target']);
+    $this->assertSame('aculta_document_viewer.settings:link_target', $general_form['aculta_document_viewer_general']['link']['link_target']['#config_target']);
+
     $pdf_form = $form_builder->getForm(DocumentViewerSettingsForm::class, 'aculta_document_viewer_pdf');
     $this->assertArrayHasKey('aculta_document_viewer_pdf', $pdf_form);
+    $this->assertArrayNotHasKey('aculta_document_viewer_general', $pdf_form);
     $this->assertArrayNotHasKey('aculta_document_viewer_doc', $pdf_form);
     $this->assertArrayNotHasKey('aculta_document_viewer_sheet', $pdf_form);
-    $this->assertSame('aculta_document_viewer.settings:show_download', $pdf_form['aculta_document_viewer_pdf']['controls']['show_download']['#config_target']);
+    $this->assertArrayNotHasKey('show_download', $pdf_form['aculta_document_viewer_pdf']['controls']);
+    $this->assertArrayNotHasKey('show_zoom', $pdf_form['aculta_document_viewer_pdf']['controls']);
+    $this->assertArrayNotHasKey('show_fullscreen', $pdf_form['aculta_document_viewer_pdf']['controls']);
+    $this->assertArrayNotHasKey('link', $pdf_form['aculta_document_viewer_pdf']);
+    $this->assertSame('aculta_document_viewer.settings:show_print', $pdf_form['aculta_document_viewer_pdf']['controls']['show_print']['#config_target']);
+    $this->assertSame('aculta_document_viewer.settings:default_zoom', $pdf_form['aculta_document_viewer_pdf']['defaults']['default_zoom']['#config_target']);
 
     $doc_form = $form_builder->getForm(DocumentViewerSettingsForm::class, 'aculta_document_viewer_doc');
     $this->assertArrayHasKey('aculta_document_viewer_doc', $doc_form);
+    $this->assertArrayNotHasKey('aculta_document_viewer_general', $doc_form);
     $this->assertArrayNotHasKey('aculta_document_viewer_pdf', $doc_form);
     $this->assertArrayNotHasKey('aculta_document_viewer_sheet', $doc_form);
     $this->assertSame('aculta_document_viewer.settings:docx_render_headers', $doc_form['aculta_document_viewer_doc']['docx_render_headers']['#config_target']);
@@ -116,6 +138,7 @@ final class AcultaDocumentViewerInstallTest extends KernelTestBase {
 
     $sheet_form = $form_builder->getForm(DocumentViewerSettingsForm::class, 'aculta_document_viewer_sheet');
     $this->assertArrayHasKey('aculta_document_viewer_sheet', $sheet_form);
+    $this->assertArrayNotHasKey('aculta_document_viewer_general', $sheet_form);
     $this->assertArrayNotHasKey('aculta_document_viewer_pdf', $sheet_form);
     $this->assertArrayNotHasKey('aculta_document_viewer_doc', $sheet_form);
     $this->assertSame('aculta_document_viewer.settings:spreadsheet_default_mode', $sheet_form['aculta_document_viewer_sheet']['spreadsheet_default_mode']['#config_target']);

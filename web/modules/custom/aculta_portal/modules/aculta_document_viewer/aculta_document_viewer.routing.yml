@@ -2,7 +2,18 @@ aculta_document_viewer.settings:
   path: '/painel-administrativo/aculta/leitor-documentos'
   defaults:
     _form: '\Drupal\aculta_document_viewer\Form\DocumentViewerSettingsForm'
-    _title: 'Leitor de documentos'
+    _title: 'Leitor de documentos — Geral'
+    section: 'aculta_document_viewer_general'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: true
+
+aculta_document_viewer.settings_pdf:
+  path: '/painel-administrativo/aculta/leitor-documentos/pdf'
+  defaults:
+    _form: '\Drupal\aculta_document_viewer\Form\DocumentViewerSettingsForm'
+    _title: 'Leitor de documentos — PDF'
     section: 'aculta_document_viewer_pdf'
   requirements:
     _permission: 'administer site configuration'

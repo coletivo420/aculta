@@ -46,10 +46,10 @@ construam URLs ou markup de viewer diretamente.
 
 ### `PdfViewerBuilder`
 
-Serviço `aculta_document_viewer.builder`, com DI de `file_url_generator`,
-`current_user` e `aculta_document_viewer.thumbnail_builder`. A sequência é fail-closed:
+Serviço `aculta_document_viewer.pdf_builder` (com alias `aculta_document_viewer.builder`), com DI de `file_url_generator`,
+`current_user` e `aculta_document_viewer.pdf_thumbnail_builder`. A sequência é fail-closed:
 
-1. Confere Media `view`, bundle `document` e presença do campo.
+1. Confere Media `view`, bundle autorizado (`document`, `course_document`, `forum_attachment`) e presença do campo.
 2. Confere `view` no campo e obtém a referência File.
 3. Confere File `view` e `download`, permanência, esquema `public://` ou
    `private://`, MIME e extensão PDF.
@@ -64,7 +64,7 @@ Serviço `aculta_document_viewer.builder`, com DI de `file_url_generator`,
 6. Gera uma URL local pelo File URL Generator; rejeita URL com scheme/host ou
    fora de path local.
 7. Cria o render array acessível com miniatura, canvas, estado e controles, anexa a
-   biblioteca local e borbulha cache tags/contexts/max-age de Media, File e
+   biblioteca local `aculta_document_viewer/aculta_document_viewer_pdf` e borbulha cache tags/contexts/max-age de Media, File e
    resultados de acesso.
 
 Stream wrapper remoto, MIME divergente ou entidade sem acesso não recebe
@@ -73,7 +73,7 @@ editor. Arquivos temporários não recebem viewer.
 
 ### `PdfPreviewThumbnailBuilder`
 
-O serviço `aculta_document_viewer.thumbnail_builder` usa `pdfpreview.generator` para
+O serviço `aculta_document_viewer.pdf_thumbnail_builder` (com alias `aculta_document_viewer.thumbnail_builder`) usa `pdfpreview.generator` para
 obter uma miniatura da primeira página. Só processa File permanente `public://`,
 PDF até 20 MiB, com scheme padrão público e configuração fixa
 `public://pdfpreview`, 480×640, JPEG e nome derivado do ID. O processo
@@ -95,8 +95,8 @@ ambiente.
 ### `AcultaPdfMediaFormatter`
 
 Plugin do Field API descoberto pelo atributo `#[FieldFormatter]`, ID
-`aculta_document_pdf_media`, tipo `file`. O display padrão `media.document` usa esse
-plugin. O formatter valida o acesso à Media e ao campo, verifica
+`aculta_document_viewer_pdf`, tipo `file`. O display `media.course_document` usa esse
+plugin; o display padrão `media.document` usa `aculta_document_viewer_media`, que delega PDF, DOCX (`aculta_document_viewer_doc`) e planilhas (`aculta_document_viewer_sheet`). O formatter valida o acesso à Media e ao campo, verifica
 `File::access('download')` e delega PDF ao builder. Arquivos de outros tipos
 usam `file_link`, preservando o comportamento Core.
 
@@ -111,7 +111,7 @@ de isolamento por Group/turma. O bundle `document` exportado continua usando
 
 ### `AcultaPdfFileFormatter`
 
-O plugin `aculta_document_pdf_file` atende campos File diretos, sem criar Media ou
+O plugin `aculta_document_viewer_pdf_file` atende campos File diretos, sem criar Media ou
 duplicar metadados. Ele exige acesso de visualização à entidade e ao campo, e
 acesso `download` ao File. PDF permanente `public://` usa `buildFile()` com a
 cacheabilidade acumulada pelo formatter; qualquer outro tipo, URI privado,
@@ -137,8 +137,8 @@ pode ser selecionado nesses formatos.
 
 ## JavaScript e carregamento
 
-`js/pdf-viewer.mjs` do owner `aculta_pdf_viewer` é carregado pela biblioteca
-compartilhada `aculta_pdf_viewer/viewer`, anexada somente ao render array
+`js/pdf-viewer.mjs` do módulo `aculta_document_viewer` é carregado pela biblioteca
+`aculta_document_viewer/aculta_document_viewer_pdf`, anexada somente ao render array
 autorizado do formatter Document Viewer. Importa `pdf.mjs` e configura
 `pdf.worker.mjs` da distribuição Mozilla local em `web/libraries/pdf.js`.
 Carrega o PDF no canvas, oferece navegação anterior/próxima, zoom, busca de
@@ -146,15 +146,14 @@ texto por página e tela cheia. A busca usa `getTextContent()` do PDF.js; os
 resultados navegam até a página correspondente, sem criar armazenamento,
 anotação ou estado persistente. Erro de leitura mantém o link autorizado.
 
-`aculta_document_viewer` depende de `aculta_pdf_viewer`; as cópias byte-a-byte
-idênticas do script, wrapper e CSS foram removidas. Seu builder mantém opções e
-políticas próprias de Media/File antes de anexar a biblioteca compartilhada.
+As bibliotecas seguem a convenção de sufixos por tipo:
+- `aculta_document_viewer/aculta_document_viewer_pdf` (PDF)
+- `aculta_document_viewer/aculta_document_viewer_doc` (DOCX / Documentos)
+- `aculta_document_viewer/aculta_document_viewer_sheet` (Planilhas)
 
 O arquivo registra `Drupal.behaviors.acultaPdfViewer.attach(context)` para
 renderizações Drupal e também faz bootstrap em `DOMContentLoaded`. Isso é um
-JavaScript behavior do Drupal, não um hook PHP. Não há `hook_*`, subscriber,
-controller nem classe de formulário neste módulo; não existe arquivo
-`aculta_document_viewer.module`.
+JavaScript behavior do Drupal, não um hook PHP. O formulário administrativo `DocumentViewerSettingsForm` expõe as subabas horizontais `Geral`, `PDF`, `Documentos` e `Planilhas` em `/painel-administrativo/aculta/leitor-documentos`.
 
 ### Investigação de text layer acessível
 
@@ -253,10 +252,10 @@ strings próprias em português.
 
 - Unit: `tests/src/Unit/Pdf/PdfViewerBuilderTest.php` e
   `tests/src/Unit/Plugin/Field/FieldFormatter/AcultaPdfMediaFormatterTest.php`.
-- Kernel: `tests/src/Kernel/AcultaPdfViewerInstallTest.php` valida descoberta
+- Kernel: `tests/src/Kernel/AcultaDocumentViewerInstallTest.php` valida descoberta
   do submódulo, registro do serviço/formatter e ausência de storage/hooks de
   download próprios.
-- Kernel: `AcultaPdfMediaEmbedTest` percorre o endpoint Core privado com um
+- Kernel: `AcultaDocumentMediaEmbedTest` percorre o endpoint Core privado com um
   arquivo local `private://`; usuário autorizado recebe 200 e resposta privada,
   enquanto usuário autenticado sem permissão e acesso anônimo recebem 403. O
   usuário com `view media` recebe 200 para Media publicada e 403 após

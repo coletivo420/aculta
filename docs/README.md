@@ -28,8 +28,7 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 - [architecture/data-ownership.md](architecture/data-ownership.md) — quem é dono de cada dado.
 - [architecture/aculta_image.md](architecture/aculta_image.md) — ownership e política central do pipeline de imagens.
 - [architecture/aculta_wiki.md](architecture/aculta_wiki.md) — ownership da Wiki e revisão editorial de propostas.
-- [architecture/aculta_pdf_viewer.md](architecture/aculta_pdf_viewer.md) — autorização dos arquivos PDF privados pelo Core e Group.
-- [architecture/aculta_document_viewer.md](architecture/aculta_document_viewer.md) — ownership e autorização dos documentos File/Media.
+- [architecture/aculta_document_viewer.md](architecture/aculta_document_viewer.md) — ownership e autorização dos documentos File/Media (PDF, DOCX e planilhas) pelo Core e Group.
 - [architecture/aculta_forum_lms.md](architecture/aculta_forum_lms.md) — contrato de acesso contextual entre Fórum e LMS.
 - [architecture/aculta_lms.md](architecture/aculta_lms.md) — matrículas, prazos e ciclo de vida de certificados.
 - [architecture/aculta_portal.md](architecture/aculta_portal.md) — fronteiras de contratos transversais do Portal.

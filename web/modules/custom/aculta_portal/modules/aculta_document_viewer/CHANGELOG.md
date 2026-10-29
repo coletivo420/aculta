@@ -1,19 +1,45 @@
 # Changelog — aculta_document_viewer
 
-## 0.1.0-rc.1 — promoção a candidato RC (2026-10-29)
+## 0.1.0-rc.1 — padronização de sufixos por tipo, subabas administrativas e promoção a RC (2026-10-29)
 
+- Padroniza os sufixos por tipo de arquivo (`aculta_document_viewer_pdf`,
+  `aculta_document_viewer_doc` e `aculta_document_viewer_sheet`) em bibliotecas
+  (`aculta_document_viewer.libraries.yml`), serviços
+  (`aculta_document_viewer.pdf_builder`, `aculta_document_viewer.doc_builder`,
+  `aculta_document_viewer.sheet_builder`), FieldFormatters
+  (`aculta_document_viewer_pdf`, `aculta_document_viewer_pdf_file`,
+  `aculta_document_viewer_doc`, `aculta_document_viewer_sheet` e
+  `aculta_document_viewer_media`) e seções administrativas.
+- Unifica o painel administrativo em `ACULTA > Site > Leitor de documentos`
+  (`/painel-administrativo/aculta/leitor-documentos`), separando as opções sem
+  repetição nas subabas horizontais nativas do Drupal (`links.task.yml`):
+  **Geral** (`/painel-administrativo/aculta/leitor-documentos`, opções conjuntas
+  do módulo), **PDF** (`/painel-administrativo/aculta/leitor-documentos/pdf`,
+  opções específicas do PDF), **Documentos**
+  (`/painel-administrativo/aculta/leitor-documentos/documentos`, opções
+  específicas do DOCX) e **Planilhas**
+  (`/painel-administrativo/aculta/leitor-documentos/planilhas`, opções
+  específicas de planilhas). Remove a rota
+  duplicada `/painel-administrativo/aculta/leitor-pdf` e o módulo legado
+  `aculta_pdf_viewer`, internalizando `js/pdf-viewer.mjs`,
+  `js/pdf-viewer-wrapper.mjs`, `css/pdf-viewer-wrapper.css`,
+  `viewer-wrapper.html`, `CspReportRequestGuardSubscriber` e o `config/install`
+  do bundle `course_document` em `aculta_document_viewer_group`.
+- Renomeia as classes de formulário e testes gerais para `DocumentViewerSettingsForm`,
+  `DocumentViewerFormatterSettingsTrait`, `AcultaDocumentViewerInstallTest` e
+  `AcultaDocumentMediaEmbedTest`.
 - Promove `aculta_document_viewer` a `0.1.0-rc.1` (`state: RC`) após fechamento de
-  PV0–PV7 e D-48: formatter composto `aculta_document_media` (PDF, DOCX e
-  planilhas), painel administrativo `ACULTA > Site > Leitor de documentos`,
+  PV0–PV7 e D-48: formatter composto `aculta_document_viewer_media` (PDF, DOCX e
+  planilhas), painel administrativo com subabas por tipo,
   propagação validada das opções de DOCX e planilhas, miniatura PDF via
   `aculta_image.pdf_thumbnail` (PHP Imagick/Ghostscript) e CSP em Report-Only
   sem enforcement.
-- Evidências consolidadas: PHPUnit 56 testes / 645 assertions PASS (0
-  depreciações PHPUnit, 156 Core/contrib); PHP lint 39/39 PASS; PHPCS
-  Drupal/DrupalPractice 0/0; `node --check` 8/8 PASS; Firefox ESR visível
-  (`DISPLAY=:0`) 7/7 PDF (`visual.py`) e 17/17 D-48 DOCX/planilhas em ACULTA420
-  e Olivero (`office-options.py`, 1280/390/320 px); gates globais módulo–tema,
-  SDC, Design Foundations, Browser Validators, aliases e índice de status PASS.
+- Evidências consolidadas: PHPUnit 69 testes / 666 assertions PASS no módulo e
+  submódulo Group (além de 20 testes / 548 assertions nos consumidores); PHPCS
+  Drupal/DrupalPractice 0/0; `node --check` 10/10 PASS; Firefox ESR visível
+  (`DISPLAY=:0`) validando PDF, DOCX, planilhas e as 3 subabas administrativas;
+  gates globais módulo–tema, SDC, Design Foundations, Browser Validators,
+  aliases e índice de status PASS.
 - Runtime não foi alterado e Config Sync não foi importado sem autorização.
   Importação de configuração e análise dos relatórios CSP Report-Only pertencem
   à etapa Alpha (`*.aculta.org`); validação em FPM Hostinger/LiteSpeed/Cloudflare
