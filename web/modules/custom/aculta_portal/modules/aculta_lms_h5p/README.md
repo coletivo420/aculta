@@ -7,6 +7,12 @@ Composer independentes, sob GPL-3.0-only.
 
 ## Estado
 
+**Revalidação 2026-10-29 (0.4.0-dev.151):** Unit 28/93 e Kernel 15/388
+passaram no MariaDB `aculta_simpletest`; o Kernel reportou 41 depreciações
+Core/contrib. PHPCS Drupal/DrupalPractice do módulo completo continua falhando
+com 1.076 erros e 118 avisos em 50 arquivos legados. Por isso, o módulo fica
+em Dev. Nenhum Runtime foi alterado nesta revalidação.
+
 F10 foi homologada no Runtime de teste `cursos`: o pacote de biblioteca foi
 instalado pela tela administrativa, uma atividade foi salva pelo editor e
 reproduzida para estudante matriculada no Group. A rota de iframe do módulo de

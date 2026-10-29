@@ -1,3 +1,13 @@
+## 0.4.0-dev.151 — revalidar F15 e registrar o gate PHPCS (2026-10-29)
+
+- Revalidação no MariaDB dedicado: Unit 28 testes / 93 assertions; Kernel
+  15 / 388, com 41 depreciações de Core/contrib. As duas suítes passaram.
+- PHPCS Drupal/DrupalPractice do módulo completo falha com 1.076 erros e 118
+  avisos em 50 arquivos, em convenções legadas de nomenclatura/documentação e
+  estilo. Nenhuma regra foi relaxada e não houve reformatação ampla; F15 não é
+  promovida a RC enquanto esse gate seguir vermelho.
+- Nenhuma alteração de Runtime ou configuração.
+
 ## 0.4.0-dev.150 — delegar remoção de assets H5P ao coordenador global — 2026-10-26
 
 - `removeLibraryFiles()` e `removeContentFile()` liberam referências do H5P e da Image e pedem ao `aculta_portal.unused_file_cleaner` a decisão/exclusão final. Arquivos H5P não-imagem também passam pelo proprietário central de referências e remoção; uma referência remanescente mantém o arquivo e falha fechado.
