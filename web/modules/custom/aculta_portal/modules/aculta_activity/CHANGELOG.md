@@ -1,5 +1,17 @@
 # Changelog — ACULTA Activity
 
+## 0.1.0-dev.10 — fixture Kernel com Portal real (2026-10-29)
+
+- Kernel carrega a cadeia completa declarada do Portal e remove o override de
+  `aculta_portal.domain_purpose`; o teste confirma o serviço real e que a
+  checagem de acesso restaura o Domain `courses`, inclusive quando o Domain
+  canônico `main` está ausente.
+- Unit + Kernel: 10 testes/89 assertions PASS em MariaDB `aculta_simpletest`,
+  com 113 depreciações de Core/contrib. PHPCS Drupal/DrupalPractice e PHP lint
+  do arquivo alterado passaram.
+- Grants específicos do Portal, formulário/Metatag e homologação Runtime ainda
+  não foram cobertos; nenhum acesso ou dado Runtime foi alterado.
+
 ## 0.1.0-dev.9 — boot sem Content Index e PHPCS (2026-10-29)
 
 - Kernel separado confirma que o serviço tagged de Activity inicializa sem `aculta_index` e preserva o ID `activity`.

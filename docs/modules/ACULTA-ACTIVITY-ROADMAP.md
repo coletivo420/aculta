@@ -85,6 +85,23 @@ release independente enquanto o módulo for apenas o adapter e sua fronteira.
   que hoje impedem o boot reduzido; então retomar o teste sem Index e Entity
   Access. Activity permanece em Dev.
 
+### Integração Kernel com a cadeia real — 2026-10-29 (dev.10)
+
+- A fixture passou a habilitar a cadeia declarada do Portal e a instalar os
+  schemas/configurações usados pelos hooks ativos (Domain Source, Entity Usage,
+  comentários, arquivos, Profile e apelidos). O serviço
+  `aculta_portal.domain_purpose` não é mais substituído pelo teste.
+- O Kernel confirma que o módulo Portal está ativo, que o serviço é a classe
+  `DomainPurposeManager`, que o filtro acessa Activity sob o purpose `main` e
+  restaura o Domain original `courses`. Sem o Domain `main`, o acesso nega e o
+  contexto continua em `courses`.
+- Suíte Unit + Kernel no MariaDB `aculta_simpletest`: 10 testes/89 assertions
+  PASS; 113 depreciações upstream da cadeia carregada. PHPCS e lint do arquivo
+  alterado passaram.
+- Isso fecha o harness de integração real. Ainda faltam grants específicos do
+  Portal, integração de formulário/Metatag, revisão conjunta e Runtime; Activity
+  permanece Dev.
+
 ### Sondagem adicional da cadeia do Portal — 2026-10-29
 
 - Para identificar se a ausência de `aculta_mailer.mailer` era o último bloqueio,

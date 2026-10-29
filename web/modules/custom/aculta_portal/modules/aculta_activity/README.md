@@ -1,6 +1,6 @@
 # ACULTA Activity
 
-**Versão:** `0.1.0-dev.8` — acesso do provider do Index avaliado no purpose canônico; integração opcional coberta por Unit.
+**Versão:** `0.1.0-dev.10` — integração Kernel carrega o Portal real e avalia o acesso no purpose canônico.
 
 Módulo mínimo que estabelece `aculta_activity` como proprietário do bundle
 Node `activity`, seus hooks de formulário/Metatag, validação condicional e
@@ -16,3 +16,11 @@ habilitado. O Portal mantém apenas comportamento transversal de canonicalizaç�
 e metadados.
 
 Roadmap: [`ACULTA-ACTIVITY-ROADMAP.md`](../../../../../../docs/modules/ACULTA-ACTIVITY-ROADMAP.md).
+
+Em `0.1.0-dev.10`, o teste de integração inicializa a cadeia declarada do
+Portal, sem substituir `aculta_portal.domain_purpose`. No MariaDB
+`aculta_simpletest`, a suíte Unit + Kernel passou 10 testes/89 assertions; o
+Kernel reportou 113 depreciações de Core/contrib ao carregar a cadeia completa.
+Isso fecha o boot integrado e a restauração do Domain ativo, mas os grants
+específicos do Portal, formulários/Metatag e homologação Runtime continuam
+pendentes.
