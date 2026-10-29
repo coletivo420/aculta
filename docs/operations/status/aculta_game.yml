@@ -2,8 +2,9 @@
 version: 0.1.0-dev.19
 state: Dev
 progress_note: >-
-  Unit Game 14/77 e Kernel ForumPost real 1/25 PASS; o hook concedeu uma única
-  vez após chamadas repetidas. Cinco deprecações vieram do módulo Domain. Não
-  executamos cron, envio real ou alteração Runtime. Perfil/acessibilidade e
-  homologação da migração no Runtime seguem pendentes.
-next_phase: 'Validar perfil/acessibilidade e homologar migração no Runtime somente após autorização ([roadmap](web/modules/custom/aculta_portal/modules/aculta_game/docs/ROADMAP.md))'
+  Unit Game 14/77, Kernel ForumPost real 1/25 e Firefox ESR 12/12 PASS. Smoke
+  cobriu /atividade/conquistas e /u/pessoa-5, rótulos, alternativas textuais e
+  apresentação pública; cinco depreciações do Kernel são do Domain. CSS servido
+  ainda é anterior ao candidato mobile-first; reflow, teclado/foco completo,
+  rotas administrativas e homologação da migração Runtime seguem pendentes.
+next_phase: 'Validar 320/390px e teclado/foco no CSS candidato servido; testar rotas administrativas com conta temporária de permissão específica; concluir homologação de migração Runtime somente após autorização ([roadmap](web/modules/custom/aculta_portal/modules/aculta_game/docs/ROADMAP.md))'

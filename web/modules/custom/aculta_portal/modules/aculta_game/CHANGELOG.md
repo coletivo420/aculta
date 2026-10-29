@@ -1,3 +1,20 @@
+# Changelog — ACULTA Game
+
+## 0.1.0-dev.19 — ForumPost real e smoke visual do perfil (2026-10-29)
+
+- Kernel cria e publica `ForumPost` pela entidade real e invoca o hook duas
+  vezes; a concessão do badge existente ocorre uma única vez.
+- Smoke Firefox ESR no servidor de desenvolvimento: 12/12 em
+  `/atividade/conquistas` e `/u/pessoa-5`; verificou associação de rótulos,
+  textos alternativos e cartões públicos. Layout 390 px e administração foram
+  omitidos: o CSS candidato não está servido e não havia conta administrativa
+  temporária.
+- Unit: 14 testes / 77 assertions PASS; Kernel: 1 teste / 25 assertions PASS,
+  com 5 deprecações provenientes do módulo `domain`. PHP lint, PHPCS e
+  `git diff --check` PASS. Sem concessões/configuração persistentes ou Runtime.
+- Perfil/acessibilidade responsiva e homologação da migração Runtime continuam
+  pendentes.
+
 ## 0.1.0-dev.18 — idempotência das tentativas de e-mail — 2026-10-28
 
 - O worker usa correlação UUID v5 estável por concessão. Se o transporte aceitar o e-mail e o processo falhar antes de gravar a confirmação local, a repetição mantém a mesma identidade e o Mailer pode deduplicá-la. A chave contém apenas o ID opaco da concessão, sem destinatário ou conteúdo.
@@ -46,17 +63,6 @@
 - Conquista obtida mostra "Concluída em DATA" e tooltip "Obtida em DATA" (atributo `title`), em `MissionProgress`.
 - Administração e concessão de conquistas continuam só para o administrador (`administer aculta game`, sem papel concedido).
 - `aculta_game.info.yml` 0.1.0-dev.15. RUNTIME STATUS: DEFERRED (inspeção visual pendente).
-
-# Changelog — ACULTA Game
-
-## 0.1.0-dev.19 — testar concessão do hook com ForumPost real (2026-10-29)
-
-- Kernel cria e publica `ForumPost` pela entidade real e invoca o hook duas
-  vezes; a concessão do badge existente ocorre uma única vez.
-- PHPUnit Unit: 14 testes / 77 assertions PASS; Kernel: 1 teste / 25 assertions
-  PASS, com 5 deprecações provenientes do módulo `domain`. PHPCS, `php -l` e
-  `git diff --check` PASS. Sem concessões/configuração persistentes ou Runtime.
-- Perfil/acessibilidade e homologação da migração Runtime continuam pendentes.
 
 ## 0.1.0-dev.14 — excluir tópicos LMS da conquista pública de Fórum
 

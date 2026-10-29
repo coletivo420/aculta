@@ -75,6 +75,16 @@ público e reflow 1280/390/320 px usando uma entidade temporária `[TESTE]` no
 Runtime de desenvolvimento. Requer uma sessão administrativa efêmera. Ver o
 README local para criação e limpeza da fixture.
 
+### `aculta-game/`
+
+`smoke.mjs` verifica a área de conta, perfil público e alternativas de texto das
+imagens de conquistas. Reutiliza a sessão WebDriver do Messenger, usa a conta
+descartável `teste.comum` (UID 5) do Runtime de desenvolvimento e não submete
+formulários. O trecho administrativo só roda com `GAME_ADMIN_ACCOUNT` apontando
+para uma conta ativa com `administer aculta game`. O layout responsivo pode ser
+omitido com `GAME_SKIP_RESPONSIVE=1` quando o CSS do candidato não está servido;
+nesse modo não há evidência móvel. Ver `aculta-game/README.md`.
+
 ### Fora da convenção de pasta
 
 Scripts de teste visual anteriores à regra, mantidos onde a frente dona os

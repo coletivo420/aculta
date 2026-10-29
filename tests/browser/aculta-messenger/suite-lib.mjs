@@ -9,13 +9,15 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
 if (process.env.DISPLAY !== ':0') {
   throw new Error('A suíte do Messenger exige Firefox ESR visível em DISPLAY=:0.');
 }
 
-export const PROJECT = fileURLToPath(new URL('../../../', import.meta.url));
+export const PROJECT = process.env.SUITE_PROJECT_ROOT
+  ? resolve(process.env.SUITE_PROJECT_ROOT)
+  : fileURLToPath(new URL('../../../', import.meta.url));
 export const BASE = process.env.SUITE_BASE || 'https://aculta.toca.net.br';
 const LOGIN_URI = process.env.SUITE_LOGIN_URI || 'https://conta.aculta.toca.net.br';
 export const GD = process.env.GECKODRIVER || 'http://127.0.0.1:4444';

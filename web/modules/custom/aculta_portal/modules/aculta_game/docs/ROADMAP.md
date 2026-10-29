@@ -88,6 +88,12 @@ ator e auditoria, sem CRUD paralelo às entidades Drupal existentes.
 
 ## Matriz mínima de evidência
 
+Revalidação de 2026-10-29: Firefox ESR no Runtime conferiu a área
+`/atividade/conquistas` e o perfil público de teste `/u/pessoa-5` (12/12), com
+rótulos de formulário e alt text das ilustrações. A stylesheet servida ainda é
+anterior ao candidato mobile-first; reflow 320/390px, teclado/foco completo e
+rotas administrativas com conta temporária continuam critérios abertos para G3.
+
 - Primeiro Comment ACULTA ou `ForumPost` salvo não publicado e aprovado depois:
   uma concessão; insert publicado também qualifica uma única vez.
 - O hook `BadgeEvaluationHooks::forumPostSave` tem cobertura Kernel com

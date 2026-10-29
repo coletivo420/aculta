@@ -40,6 +40,7 @@ Variáveis opcionais:
 | `SUITE_BASE` | `https://aculta.toca.net.br` | Site de teste |
 | `SUITE_LOGIN_URI` | `https://conta.aculta.toca.net.br` | URI do Drush para o link de login |
 | `SUITE_OUT` | `.suite-out/` (fora do Git) | Capturas e `results.json` |
+| `SUITE_PROJECT_ROOT` | Raiz do checkout do script | Diretório usado pelos comandos Drush. Para executar scripts do worktree contra o servidor de desenvolvimento, informe `/home/piradopirata/projetos/aculta`; não copie settings ou segredos para o worktree. |
 | `SUITE_WIDTH` | `1280` | Largura solicitada pelos smokes da gaveta e da nova conversa; Firefox pode impor outra largura efetiva |
 | `GECKODRIVER` | `http://127.0.0.1:4444` | Endereço do geckodriver |
 

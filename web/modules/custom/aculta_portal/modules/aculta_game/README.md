@@ -1,15 +1,17 @@
 # ACULTA Game — conquistas e missões
 
-Versão atual: `0.1.0-dev.18` — primeira publicação de Comment ACULTA vigente ou
+Versão atual: `0.1.0-dev.19` — primeira publicação de Comment ACULTA vigente ou
 de `ForumPost` público pode conceder uma vez a conquista existente; migração,
 sincronização, autoria histórica e outros contextos permanecem inelegíveis.
 Os avisos de conquista usam o publisher/centro central do Messenger, sem storage
-paralelo no Game. Unit Game passou 14 testes / 77 assertions; o Kernel
-Game/Messenger passou 3/30 para revalidação e migração de avisos.
-`BadgeEvaluationHooks::forumPostSave` tem teste focal que executa o hook, a
-policy e o `BadgeService` reais contra um ForumPost-shaped test double e
-confirma uma única gravação em insert/update. Kernel com entidade ForumPost
-real e homologação Runtime continuam pendentes.
+paralelo no Game. Unit Game passou 14 testes / 77 assertions; o Kernel do
+Messenger passou 3/30 para revalidação e migração de avisos; o Kernel Game com
+ForumPost real passou 1/25, com cinco deprecações do módulo `domain`.
+`BadgeEvaluationHooks::forumPostSave` tem cobertura Unit e Kernel: o Kernel
+salva um ForumPost real e confirma uma única concessão após chamadas repetidas.
+Firefox ESR verificou `/atividade/conquistas` e `/u/pessoa-5` (12/12), inclusive
+rótulos e textos alternativos. Reflow do CSS mobile-first e revisão completa de
+teclado/foco continuam pendentes porque o CSS candidato ainda não está servido.
 
 Submódulo opcional `aculta_game`, integrante do `aculta_portal`.
 Decisões de produto registradas em **2026-10-15**. G1 fornece a extensão instalável;
