@@ -14,6 +14,17 @@
 
 # Changelog
 
+## 0.3.0-dev.7 — limpar PHPCS Drupal/DrupalPractice (2026-10-29)
+
+- Removidos docblocks vazios, descrições e quebras de linha ausentes nos
+  serviços e testes; preservados os nomes públicos `DocumentType::CPF` e
+  `DocumentType::CNPJ` por serem siglas legais.
+- Runner de domínio: 248 PASS; Unit: 48 testes/116 assertions PASS; Kernel:
+  7 testes/46 assertions PASS, 8 deprecações Core/contrib. PHPCS integral e
+  PHP lint dos arquivos alterados PASS. Sem mudança funcional ou Runtime.
+- D-51 autoriza login por CPF em todas as superfícies locais antes do RC; a
+  implementação permanece pendente de integração com os formulários do Portal.
+
 ## 0.3.0-dev.6 — integrar o formulário Portal ao store e testar rollback — 2026-10-29
 
 - Novo Kernel integra `AccountOtherDataForm` ao `AccountDocumentStore` real:

@@ -23,10 +23,16 @@ use PHPUnit\Framework\TestCase;
 #[Group('aculta_id_cpf')]
 final class DocumentStorageTest extends TestCase {
 
+  /**
+   * Creates the validator with its pure validation dependencies.
+   */
   private function validator(): DocumentValidator {
     return new DocumentValidator(new DocumentNormalizer(), new CpfValidator(), new CnpjValidator());
   }
 
+  /**
+   * Creates a repository stub with an optional encryption key.
+   */
   private function keyRepository(?string $hex): KeyRepositoryInterface {
     $repository = $this->createMock(KeyRepositoryInterface::class);
     if ($hex === NULL) {
@@ -39,12 +45,18 @@ final class DocumentStorageTest extends TestCase {
     return $repository;
   }
 
+  /**
+   * Masks visible characters while preserving punctuation.
+   */
   public function testPartialShowsFiveCharactersAndKeepsPunctuation(): void {
     $formatter = new DocumentFormatter($this->validator());
     $this->assertSame('529.98*.***-**', $formatter->partial('52998224725', DocumentType::CPF));
     $this->assertSame('11.222.***/****-**', $formatter->partial('11222333000181', DocumentType::CNPJ));
   }
 
+  /**
+   * Detects CPF and CNPJ from masked and unmasked input.
+   */
   public function testDetectsTypeFromPunctuatedOrPlainInput(): void {
     $validator = $this->validator();
     $this->assertSame(DocumentType::CPF, $validator->detectType('529.982.247-25'));
@@ -53,6 +65,12 @@ final class DocumentStorageTest extends TestCase {
     $this->assertSame(DocumentType::CNPJ, $validator->detectType('11222333000181'));
   }
 
+  /**
+   * Provides malformed document strings.
+   *
+   * @return array<string, array{string}>
+   *   Input cases keyed by their reason for rejection.
+   */
   public static function malformedInputs(): array {
     return [
       'pontuação parcial de CPF' => ['529.98224725'],
@@ -62,12 +80,18 @@ final class DocumentStorageTest extends TestCase {
     ];
   }
 
+  /**
+   * Rejects malformed document representations.
+   */
   #[DataProvider('malformedInputs')]
   public function testRejectsMalformedInput(string $input): void {
     $this->expectException(\InvalidArgumentException::class);
     $this->validator()->detectType($input);
   }
 
+  /**
+   * Encrypts and decrypts a value and rejects tampering.
+   */
   public function testCipherRoundTripAndTamperDetection(): void {
     $hex = str_repeat('ab', 32);
     $cipher = new DocumentCipher($this->keyRepository($hex));
@@ -82,7 +106,10 @@ final class DocumentStorageTest extends TestCase {
     $cipher->decrypt($tampered);
   }
 
-  public function testCipherIsUnavailableWithoutAValidKey(): void {
+  /**
+   * Rejects encryption when a valid key is unavailable.
+   */
+  public function testCipherIsUnavailableWithoutValidKey(): void {
     $this->assertFalse((new DocumentCipher($this->keyRepository(NULL)))->isAvailable());
     $this->assertFalse((new DocumentCipher($this->keyRepository('abcd')))->isAvailable());
     $this->expectException(\RuntimeException::class);

@@ -23,18 +23,36 @@ use PHPUnit\Framework\TestCase;
 #[Group('aculta_id_cpf')]
 final class DocumentValidationTest extends TestCase {
 
+  /**
+   * Creates the validator with its pure validation dependencies.
+   */
   private function validator(): DocumentValidator {
     return new DocumentValidator(new DocumentNormalizer(), new CpfValidator(), new CnpjValidator());
   }
 
+  /**
+   * Provides valid CPF and CNPJ examples.
+   *
+   * @return array<string, array{string, string, string, string}>
+   *   Valid document cases from the shared fixture.
+   */
   public static function validDocuments(): array {
     return (require dirname(__DIR__, 2) . '/fixtures/documents.php')['valid'];
   }
 
+  /**
+   * Provides invalid CPF and CNPJ examples.
+   *
+   * @return array<string, array{string, string}>
+   *   Invalid document cases from the shared fixture.
+   */
   public static function invalidDocuments(): array {
     return (require dirname(__DIR__, 2) . '/fixtures/documents.php')['invalid'];
   }
 
+  /**
+   * Normalizes and formats valid document examples.
+   */
   #[DataProvider('validDocuments')]
   public function testCanonicalizationAndFormatting(string $type, string $input, string $expected, string $formatted): void {
     $documentType = DocumentType::from($type);
@@ -45,17 +63,26 @@ final class DocumentValidationTest extends TestCase {
     $this->assertSame(substr($expected, -2), preg_replace('/[^0-9]/', '', $formatter->redact($input, $documentType)));
   }
 
+  /**
+   * Rejects malformed documents and invalid check digits.
+   */
   #[DataProvider('invalidDocuments')]
   public function testMalformedOrInvalidDocuments(string $type, string $input): void {
     $this->assertFalse($this->validator()->isValid($input, DocumentType::from($type)));
   }
 
+  /**
+   * Rejects CPF values made from a repeated digit.
+   */
   public function testRepeatedCpfDigitsAreRejected(): void {
     foreach (range(0, 9) as $digit) {
       $this->assertFalse($this->validator()->isValid(str_repeat((string) $digit, 11), DocumentType::CPF));
     }
   }
 
+  /**
+   * Keeps fingerprints stable and separates document types.
+   */
   public function testFingerprintIsDeterministicAndNamespaced(): void {
     $key = $this->createMock(KeyInterface::class);
     $key->expects($this->exactly(3))
@@ -80,6 +107,9 @@ final class DocumentValidationTest extends TestCase {
     $this->assertMatchesRegularExpression('/^[a-f0-9]{64}$/', $cpf);
   }
 
+  /**
+   * Fails closed when the fingerprint key is too weak.
+   */
   public function testFingerprintFailsClosedWithoutStrongKey(): void {
     $key = $this->createMock(KeyInterface::class);
     $key->method('getKeyValue')->with(TRUE)->willReturn(str_repeat('k', 31));

@@ -1,16 +1,18 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.3.0-dev.6
+version: 0.3.0-dev.7
 state: Dev
 progress_note: >-
-  Dev.6: integração Kernel do AccountOtherDataForm ao AccountDocumentStore real
-  (cifra, fingerprint, máscara e duplicidade), rollback de 10002 preserva linhas
-  e remove só o índice; Runner de domínio 248 PASS, Unit 48/116, Kernel 7/46 PASS
-  com 8 depreciações Core/contrib. Runtime read-only 2026-10-29, checkout
-  detached 355e48a89: módulo ativo 0.3.0-dev.4, schema 10002, índice presente,
-  2 linhas de documentos, 0 sem fingerprint e 0 duplicados. Nenhuma escrita foi
-  feita; o Runtime não está servindo o candidato .6 desta branch.
+  Dev.7: PHPCS Drupal/DrupalPractice integral 0 erros/0 avisos após corrigir
+  docblocks e formatação; Runner de domínio 248 PASS, Unit 48/116 e Kernel 7/46
+  PASS, com 8 depreciações Core/contrib. Sem mudança funcional. Dev.6 integrou
+  o AccountOtherDataForm ao AccountDocumentStore real e validou rollback de
+  10002. Runtime read-only 2026-10-29, checkout detached 355e48a89: módulo ativo
+  0.3.0-dev.4, schema 10002, índice presente, 2 linhas de documentos, 0 sem
+  fingerprint e 0 duplicados. Nenhuma escrita foi feita; Runtime não serve .7.
 next_phase: >-
-  Confirmar a experiência visual do formulário quando o candidato .6 estiver
-  servido no Firefox; rever a integração de login por CPF ao pipeline existente
-  antes de fechar o escopo de RC
+  Integrar login por CPF em todas as superfícies locais (formulário principal e
+  popup), preservando flood, confirmação de e-mail, CAPTCHA, Social Auth e
+  respostas genéricas, conforme D-51. A integração depende de os arquivos dos
+  formulários do Portal serem liberados pela outra frente; depois, validar o
+  formulário visualmente quando o candidato estiver servido e rever os gates
   ([README](web/modules/custom/aculta_portal/modules/aculta_id_cpf/README.md))

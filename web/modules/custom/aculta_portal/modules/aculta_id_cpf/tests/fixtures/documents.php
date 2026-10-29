@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Public CPF and CNPJ vectors used by module tests.
+ */
+
 declare(strict_types=1);
 
 // Public illustrative vectors only; no account data or registry lookups.

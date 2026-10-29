@@ -25,6 +25,9 @@ use PHPUnit\Framework\TestCase;
 #[Group('aculta_id_cpf')]
 final class AccountDocumentStoreAvailabilityTest extends TestCase {
 
+  /**
+   * Allows reading without optional fingerprint infrastructure.
+   */
   public function testReadableWhenFingerprintFieldAndKeyAreMissing(): void {
     $store = $this->store(['field_documento' => new \stdClass()], FALSE);
 
@@ -32,6 +35,9 @@ final class AccountDocumentStoreAvailabilityTest extends TestCase {
     $this->assertFalse($store->canSave());
   }
 
+  /**
+   * Disables access when the document field is missing.
+   */
   public function testUnavailableForReadingWhenDocumentFieldIsMissing(): void {
     $store = $this->store(['field_documento_indice' => new \stdClass()]);
 
@@ -39,6 +45,9 @@ final class AccountDocumentStoreAvailabilityTest extends TestCase {
     $this->assertFalse($store->canSave());
   }
 
+  /**
+   * Enables reading and saving when required dependencies exist.
+   */
   public function testAvailableWhenRequiredFieldsAndKeysExist(): void {
     $store = $this->store([
       'field_documento' => new \stdClass(),
@@ -50,8 +59,12 @@ final class AccountDocumentStoreAvailabilityTest extends TestCase {
   }
 
   /**
+   * Creates the store with the requested fields and key availability.
+   *
    * @param array<string, object> $fields
    *   Configurable profile field definitions.
+   * @param bool $fingerprint_key_available
+   *   Whether the fingerprint key is available.
    */
   private function store(array $fields, bool $fingerprint_key_available = FALSE): AccountDocumentStore {
     $field_manager = $this->createMock(EntityFieldManagerInterface::class);

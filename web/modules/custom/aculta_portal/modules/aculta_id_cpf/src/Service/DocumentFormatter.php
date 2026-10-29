@@ -13,17 +13,25 @@ final class DocumentFormatter {
 
   public function __construct(private readonly DocumentValidator $validator) {}
 
+  /**
+   * Formats a valid document using its standard punctuation.
+   */
   public function format(string $input, DocumentType $type): string {
     $value = $this->validator->canonicalize($input, $type);
     return match ($type) {
-      DocumentType::CPF => substr($value, 0, 3) . '.' . substr($value, 3, 3) . '.' . substr($value, 6, 3) . '-' . substr($value, 9, 2),
-      DocumentType::CNPJ => substr($value, 0, 2) . '.' . substr($value, 2, 3) . '.' . substr($value, 5, 3) . '/' . substr($value, 8, 4) . '-' . substr($value, 12, 2),
+      DocumentType::CPF => substr($value, 0, 3) . '.' . substr($value, 3, 3)
+        . '.' . substr($value, 6, 3) . '-' . substr($value, 9, 2),
+      DocumentType::CNPJ => substr($value, 0, 2) . '.' . substr($value, 2, 3)
+        . '.' . substr($value, 5, 3) . '/' . substr($value, 8, 4)
+        . '-' . substr($value, 12, 2),
     };
   }
 
   /**
-   * Shows the first five characters and hides the rest with '*', keeping the mask punctuation.
-   * Example: 974.12*.***-**. Does not grant read access; callers decide who may see it.
+   * Partially masks a formatted document.
+   *
+   * Shows the first five characters and keeps mask punctuation. This does not
+   * grant read access; callers decide who may see the value.
    */
   public function partial(string $input, DocumentType $type): string {
     $formatted = $this->format($input, $type);

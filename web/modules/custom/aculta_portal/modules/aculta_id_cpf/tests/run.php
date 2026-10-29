@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Standalone validation checks for public CPF and CNPJ examples.
+ */
+
 declare(strict_types=1);
 
 /**

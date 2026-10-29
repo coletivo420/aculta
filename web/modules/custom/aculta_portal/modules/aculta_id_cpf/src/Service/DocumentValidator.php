@@ -36,10 +36,11 @@ final class DocumentValidator {
   }
 
   /**
-   * Detects CPF or CNPJ from a complete representation, with or without the full mask.
+   * Detects CPF or CNPJ from a complete representation, with or without a mask.
    *
-   * The formats do not overlap: CPF has 11 digits or the 14-character masked form, CNPJ has 14
-   * alphanumeric characters or the 18-character masked form. Check digits are not verified here.
+   * The formats do not overlap. CPF has 11 digits or the 14-character masked
+   * form. CNPJ has 14 alphanumeric characters or the 18-character masked form.
+   * Check digits are not verified here.
    *
    * @throws \InvalidArgumentException
    *   When the input matches neither format; never includes the input.
@@ -57,6 +58,9 @@ final class DocumentValidator {
     throw new \InvalidArgumentException('Invalid document format.');
   }
 
+  /**
+   * Checks a document without exposing validation exceptions.
+   */
   public function isValid(string $input, DocumentType $type): bool {
     try {
       $this->canonicalize($input, $type);

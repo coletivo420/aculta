@@ -53,11 +53,18 @@ final class DocumentFingerprint {
     return hash_hmac('sha256', $message, $secret);
   }
 
-  /** TRUE when the Key exists and meets the minimum strength; never exposes the value. */
+  /**
+   * Reports whether a sufficiently strong fingerprint key is available.
+   *
+   * The key value is never exposed.
+   */
   public function isAvailable(): bool {
     return $this->secret() !== NULL;
   }
 
+  /**
+   * Resolves the fingerprint key only when it meets the minimum strength.
+   */
   private function secret(): ?string {
     $secret = $this->keyRepository->getKey(self::KEY_ID)?->getKeyValue(TRUE);
     return is_string($secret) && strlen($secret) >= self::MINIMUM_KEY_BYTES ? $secret : NULL;

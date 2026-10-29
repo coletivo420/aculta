@@ -9,6 +9,9 @@ namespace Drupal\aculta_id_cpf\Service;
  */
 final class CpfValidator {
 
+  /**
+   * Checks the syntax and check digits of a normalized CPF.
+   */
   public function isValid(string $value): bool {
     if (preg_match('/\A[0-9]{11}\z/', $value) !== 1
       || preg_match('/\A([0-9])\1{10}\z/', $value) === 1) {

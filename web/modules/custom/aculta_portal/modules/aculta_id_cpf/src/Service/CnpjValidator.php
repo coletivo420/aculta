@@ -14,6 +14,9 @@ final class CnpjValidator {
     [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2],
   ];
 
+  /**
+   * Checks the syntax and check digits of a normalized CNPJ.
+   */
   public function isValid(string $value): bool {
     if (preg_match('/\A[A-Z0-9]{12}[0-9]{2}\z/', $value) !== 1
       || $value === '00000000000000') {

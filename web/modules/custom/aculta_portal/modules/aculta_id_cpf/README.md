@@ -1,7 +1,7 @@
 # ACULTA CPF e CNPJ
 
 Submódulo opcional do `aculta_portal`, baseline Drupal **11.3+** e PHP **8.4**.
-Versão atual: **0.3.0-dev.6**. Persiste o CPF/CNPJ cifrado da aba "Outros Dados"
+Versão atual: **0.3.0-dev.7**. Persiste o CPF/CNPJ cifrado da aba "Outros Dados"
 e um índice de unicidade (fingerprint HMAC).
 
 **Runtime:** verificação somente leitura em 2026-10-29 confirmou `aculta_runtime`
@@ -136,10 +136,11 @@ Evidência histórica da implementação removida está em
 ## Próximas entregas
 
 1. Confirmar a experiência visual do formulário Outros Dados quando o candidato desta branch estiver servido no Firefox.
-2. Rever e decidir a integração de login por CPF ao pipeline existente, preservando flood, confirmação, CAPTCHA, Social Auth e respostas genéricas.
-3. Integrar login por CPF ao pipeline existente, preservando flood, confirmação,
-   CAPTCHA, Social Auth e respostas genéricas.
-4. Avaliar integração Webform somente após proteção de rascunhos, tokens,
+2. Implementar login por CPF em todos os formulários locais, inclusive `/entrar`
+   e o login popup, preservando flood, confirmação de e-mail, CAPTCHA,
+   autenticação Social Auth e respostas genéricas. A decisão do responsável está
+   registrada como D-51; integração antes do RC.
+3. Avaliar integração Webform somente após proteção de rascunhos, tokens,
    e-mails, exportações e handlers.
 
 Não adicionar tabela paralela ou resolvedor de login sem documentar a lacuna
