@@ -100,3 +100,11 @@ Fonte: [auditoria 3.1.5](../../../../../../../docs/architecture/AUDITORIA-OPENCU
 - **OC-M3/P1:** integrar dados estruturados de acessibilidade/horários a filtros e popups, quando schema de Eventos existir.
 - **OC-M4/P2:** revisar `OfficeHoursToOsmFormatter.php` da origem após adoção de dados estruturados; não importar edição OSM sem revisão humana.
 - **Exploratório fora da paridade 3.1.5:** geometrias Polygon/MultiPolygon para circuitos e trajetos de eventos; **não** tratar como característica confirmada da origem nem implementar sem ADR de privacidade/custo.
+
+## Complemento OC-A/OC-E - OpenCulturas 3.1.5 (2026-10-29)
+
+- [ ] Rever a política de acesso dos locais antes de exportar marcadores e listagens; preservar privacidade de precisão aproximada, cache e purpose. Tratar coordenadas zero numericamente.
+- [ ] Consumir horários estruturados e selos de acessibilidade somente depois de modelo aprovado em Events.
+- [ ] Estudar `OfficeHoursToOsmFormatter` após o novo contrato de horários e revisão OSM; filtros de proximidade são referência de UX. Manter Leaflet/OSM padrão e Google opcional. Polígonos não foram comprovados no pacote 3.1.5; considerar apenas como pesquisa independente.
+
+Nenhuma autorização de escrita OSM, deploy ou substituição de geocodificador.
