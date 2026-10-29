@@ -457,3 +457,12 @@
 - Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
   depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
 
+## 0.4.0-dev.170 — documentar painel administrativo de bibliotecas (2026-10-29)
+
+- Completa o PHPDoc de renderização, configuração e ações JSON do painel H5P;
+  remove somente comentário de código obsoleto.
+- PHPCS integral caiu de 63 erros/4 avisos em 5 arquivos para 50/3 em 4
+  arquivos; o controller passa Drupal/DrupalPractice e PHP lint.
+- Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
+  depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
+

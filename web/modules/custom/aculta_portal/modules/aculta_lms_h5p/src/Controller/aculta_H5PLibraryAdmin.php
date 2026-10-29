@@ -1,8 +1,8 @@
 <?php
 
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Controller;
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\Entity\aculta_H5PContent;
 
@@ -37,7 +37,7 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
   ) {}
 
   /**
-   *
+   * Creates the controller using Drupal's service container.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -53,7 +53,8 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
   /**
    * Creates the library list page.
    *
-   * @return string Html
+   * @return array<string, mixed>
+   *   Render array for the installed library list and upload form.
    */
   public function libraryList() {
     $core = aculta_H5PDrupal::getInstance('core');
@@ -92,7 +93,6 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
           'query' => $this->redirectDestination->getAsArray(),
         ];
         $deleteUrl = Url::fromUri('internal:/admin/content/h5p/libraries/' . $library->id . '/delete', $option);
-        // $detailsUrl = Url::fromUri('internal:/admin/content/h5p/libraries/' . $library->id);
         $settings['libraryList']['listData'][] = [
           'title' => $library->title . ' (' . \H5PCore::libraryVersion($library) . ')',
           'restricted' => $restricted,
@@ -110,7 +110,14 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
     }
 
     // All translations are made server side.
-    $settings['libraryList']['listHeaders'] = [$this->translation->translate('Título'), $this->translation->translate('Restrita'), $this->translation->translate('Atividades'), $this->translation->translate('Dependências de atividades'), $this->translation->translate('Dependências da biblioteca'), $this->translation->translate('Ações')];
+    $settings['libraryList']['listHeaders'] = [
+      $this->translation->translate('Título'),
+      $this->translation->translate('Restrita'),
+      $this->translation->translate('Atividades'),
+      $this->translation->translate('Dependências de atividades'),
+      $this->translation->translate('Dependências da biblioteca'),
+      $this->translation->translate('Ações'),
+    ];
 
     // Make it possible to rebuild all caches.
     if ($numNotFiltered) {
@@ -125,9 +132,19 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
     $build['#attached'] = self::addSettings($settings);
     $build['#attached']['library'][] = 'aculta_lms_h5p/h5p.admin.library.list';
 
-    $build['title_add'] = ['#type' => 'html_tag', '#tag' => 'h3', '#attributes' => ['data-portal-ui' => 'h5p-admin-header'], '#value' => $this->translation->translate('Adicionar bibliotecas')];
+    $build['title_add'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'h3',
+      '#attributes' => ['data-portal-ui' => 'h5p-admin-header'],
+      '#value' => $this->translation->translate('Adicionar bibliotecas'),
+    ];
     $build['form'] = $this->h5pFormBuilder->getForm('Drupal\aculta_lms_h5p\Form\aculta_H5PLibraryUploadForm');
-    $build['title_installed'] = ['#type' => 'html_tag', '#tag' => 'h3', '#attributes' => ['data-portal-ui' => 'h5p-admin-header'], '#value' => $this->translation->translate('Bibliotecas instaladas')];
+    $build['title_installed'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'h3',
+      '#attributes' => ['data-portal-ui' => 'h5p-admin-header'],
+      '#value' => $this->translation->translate('Bibliotecas instaladas'),
+    ];
     $build['container'] = ['#markup' => '<div id="h5p-admin-container"></div>'];
 
     return $build;
@@ -137,8 +154,10 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
    * Settings needed to rebuild cache from UI.
    *
    * @param int $num
+   *   Number of content items that still require filtered cache data.
    *
    * @return array
+   *   Settings for the cache rebuild action in the administrative interface.
    */
   public function getNotCachedSettings($num) {
     $url = Url::fromRoute('aculta_lms_h5p.admin.content.aculta_lms_h5p.rebuild_cache');
@@ -155,8 +174,10 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
    * Restrict a library.
    *
    * @param string $library_id
+   *   ID of the H5P library to restrict or unrestrict.
    *
    * @return \Symfony\Component\HttpFoundation\JsonResponse
+   *   JSON response containing the updated action URL or an error.
    */
   public function restrict($library_id) {
     $request = $this->requestStack->getCurrentRequest();
@@ -190,6 +211,7 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
    * Callback for rebuilding all content cache.
    *
    * @return \Symfony\Component\HttpFoundation\JsonResponse
+   *   JSON response with the number of remaining items.
    */
   public function rebuildCache() {
     $request = $this->requestStack->getCurrentRequest();
@@ -222,11 +244,13 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
   }
 
   /**
-   * Helper function - creates admin settings.
+   * Creates settings for the H5P administration integration.
    *
    * @param array $settings
+   *   Additional integration settings, when supplied.
    *
    * @return array
+   *   Drupal settings attachments for the H5P administration interface.
    */
   public static function addSettings($settings = NULL) {
     $settings['containerSelector'] = '#h5p-admin-container';
