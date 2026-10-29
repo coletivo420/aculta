@@ -732,3 +732,12 @@ gap progressivo do SDC `content-grid`, incluindo o row-gap desktop em 992px.
 `institutional-layout.py` compara baseline/candidato e adiciona a View às
 medições existentes de layout institucional. Lint CSS e compilação Python
 PASS; Firefox visível DEFERRED sem `DISPLAY=:0`. Não conclui THEME-MF3.
+
+### THEME-MF2 — SDC Context Tabs
+
+O SDC existente apresenta links e listas `item_list` com gap compacto até 368px
+e gap amplo a partir de 369px. `context-tabs.provider-list.story.yml` registra
+o markup produzido pelo provider; o harness compara os dois formatos em catorze
+larguras, incluindo 368/369px e os nove viewports globais, ordem, foco/tamanho dos alvos e overflow. Lint
+CSS e sintaxe Python PASS; Firefox visível e validação UI Patterns ficam
+DEFERRED sem `DISPLAY=:0`. Não homologa THEME-MF3.

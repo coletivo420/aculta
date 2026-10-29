@@ -1,0 +1,8 @@
+name: Navegação contextual — item_list do Drupal
+description: 'Lista renderizada pelo provider, preservando semântica, links reais e reflow mobile-first.'
+component: aculta420:context-tabs
+props:
+  label: Seções relacionadas
+slots:
+  items:
+    markup: '<ul><li><a href="#visao" aria-current="page">Visão geral</a></li><li><a href="#historico">Histórico e revisões</a></li><li><a href="#discussao">Discussão</a></li></ul>'

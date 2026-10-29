@@ -744,3 +744,14 @@ SDC e compara também a View de projetos nas fronteiras 576/767/768/992px,
 mantendo os testes existentes de CTA, áreas, detalhes, screenshots e overflow.
 Lint CSS e sintaxe Python passaram. Firefox/Runtime DEFERRED sem `DISPLAY=:0`;
 nenhum gate global MF3 é declarado.
+
+### THEME-MF2 — SDC Context Tabs
+
+O SDC reaproveitado usa gaps compactos como base em links estáticos e listas
+`item_list`; `min-width: 23.0625rem` (369px) recupera os gaps amplos. A story
+`context-tabs.provider-list.story.yml` documenta o markup de lista, e
+`context-tabs-layout.py` mede ambas as estruturas, a fronteira 368/369px,
+ordem/acessibilidade e overflow em catorze larguras, incluindo os viewports
+globais 320/360/390/599/600/768/1024/1280/1440px. Lint CSS, validação estática
+do catálogo e sintaxe Python passaram; Firefox e UI Patterns Runtime ficam
+DEFERRED nesta sessão sem `DISPLAY=:0`. MF3 permanece pendente.

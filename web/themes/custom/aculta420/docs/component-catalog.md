@@ -64,6 +64,11 @@ O rodapé global também é composição do tema, não SDC; sua grade móvel com
 uma coluna e amplia progressivamente sem alterar blocos ou ordem DOM. A auditoria
 de cobertura por purpose e as evidências ficam em `mobile-first-audit.md`.
 
+O SDC existente `context-tabs` mantém links e semântica em layouts mobile-first:
+gap compacto é a base até 368px e a separação ampla retorna em 369px. A regra
+cobre stories com links estáticos e o `<ul>` gerado por `item_list`;
+`context-tabs.provider-list.story.yml` registra essa estrutura.
+
 A Institution Bar multidomínio também pertence ao shell, não ao catálogo SDC; em
 viewports abaixo de 375px a marca é ocultada visualmente como base, preservando
 o link acessível, e reaparece progressivamente em `min-width: 23.4375rem`.

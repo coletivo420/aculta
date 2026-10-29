@@ -285,6 +285,27 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/institutional-layo
 
 `INSTITUTIONAL_BASELINE_REF` escolhe o commit do CSS de baseline; use `HEAD` ao
 rodar antes de criar o commit e mantenha o padrão `HEAD^` após a publicação.
+
+## SDC `context-tabs`
+
+`context-tabs-layout.py` compara a apresentação compacta de mobile ao layout
+amplo em 320/352/360/368/369/390/575/576/599/600/768/1024/1280/1440px. Verifica links
+estáticos e a estrutura `<ul>` produzida por `item_list`, gap em ambos os
+formatos, ordem DOM, `aria-current`, alvo mínimo de 44px e ausência de overflow.
+É uma fixture local com Firefox ESR visível; não acessa Runtime nem substitui a
+verificação no UI Patterns Library ou nas rotas reais.
+
+```sh
+cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-context-tabs-mobile-first
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/context-tabs-layout.py
+```
+
+`CONTEXT_TABS_BASELINE_REF` escolhe o CSS de baseline (padrão `HEAD^`), e
+`CONTEXT_TABS_WIDTHS` permite focar larguras específicas. Capturas e
+`summary.json` ficam fora do repositório em `$SUITE_OUT`.
 `INSTITUTIONAL_LAYOUT_WIDTHS` permite uma lista focal separada por vírgulas.
 
 ## Perfil público mobile-first
