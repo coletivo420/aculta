@@ -256,6 +256,11 @@ no padrão `<nome>.<variante>.story.yml` do catálogo. Há teste Unit
 estático de schema/slots/assets/fixtures e ausência de lógica
 de dados no Twig, escrito mas não executado.
 
+`profile-identity` não cria fallback visual quando o slot está vazio. O
+`AvatarResolver` central do Portal fornece a mesma imagem canônica em Conta,
+Studio, perfil público e cartões de autoria; uma story sem slot representa
+somente o estado defensivo de teste.
+
 As contagens históricas anteriores permanecem vinculadas à data de
 inventário e **não** são totais verificados da branch atual. Os
 SDCs novos ainda não possuem consumidor, nem validação no UI Patterns

@@ -37,12 +37,6 @@
   object-fit: cover;
 }
 
-.aculta-profile-identity__avatar--initial {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--aculta-text-primary);
-}
-
 .aculta-profile-identity__details { min-inline-size: 0; }
 
 .aculta-profile-identity__name {

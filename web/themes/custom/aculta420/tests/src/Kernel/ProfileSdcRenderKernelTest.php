@@ -114,7 +114,8 @@ final class ProfileSdcRenderKernelTest extends ComponentKernelTestBase {
       ],
     ];
     $crawler = $this->renderComponentRenderArray($build);
-    self::assertCount(1, $crawler->filter('.aculta-profile-identity__avatar--initial'));
+    self::assertCount(0, $crawler->filter('.aculta-profile-identity__avatar'));
+    self::assertSame('Perfil Exemplo', $crawler->filter('.aculta-profile-identity__name')->text());
     self::assertCount(0, $crawler->filter('a'));
     self::assertCount(0, $crawler->filter('.aculta-profile-editor__biography'));
     self::assertCount(0, $crawler->filter('.aculta-profile-editor__social'));

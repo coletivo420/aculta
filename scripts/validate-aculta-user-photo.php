@@ -13,6 +13,7 @@
  * - INV-FOTO-8: sortear só troca a prévia do modal; a foto muda ao salvar; fechar sem salvar descarta a escolha.
  * - INV-FOTO-7: o popup não mostra nome nem link da foto atual; "Remover foto" (só personalizada) volta a um avatar sorteado do acervo.
  * - INV-FOTO-10: o acervo é componente obrigatório e o último fallback: catálogo válido e ao menos uma entrada ativa com arquivo.
+ * - INV-FOTO-11: `user_picture` é a fonte única; Perfil público e autoria usam o resolver central com cache da conta, e o tema não inventa avatar por inicial.
  *
  * Verificação estática do código-fonte (não depende de servidor). A verificação de navegador está no roteiro do docs.
  */
@@ -35,6 +36,10 @@ $picture = $read('src/Form/UserPictureForm.php');
 $crop = $read('src/Form/AvatarCropForm.php');
 $hooks = $read('src/Hook/PhotoEditorHooks.php');
 $flow = $read('js/photo-flow.js');
+$avatarResolver = $read('src/Avatar/AvatarResolver.php');
+$authorResolver = $read('src/Identity/AuthorIdentityResolver.php');
+$publicProfile = $read('src/Controller/PublicProfileController.php');
+$identityTemplate = (string) @file_get_contents($root . '/web/themes/custom/aculta420/components/content/profile-identity/profile-identity.twig');
 
 if ($picture === '' || $crop === '') {
   fwrite(STDERR, "ACULTA USER PHOTO FAIL:\n- arquivos do formulário de foto ausentes\n");
@@ -131,6 +136,17 @@ else {
   }
 }
 
+// INV-FOTO-11: fonte única e resolução compartilhada, sem fallback concorrente do tema.
+if (!str_contains($avatarResolver, "get('user_picture')") || !str_contains($avatarResolver, 'addCacheableDependency($account)')) {
+  $errors[] = 'INV-FOTO-11: AvatarResolver não usa user_picture como fonte canônica com cache da conta';
+}
+if (!str_contains($authorResolver, '$this->avatars->build(') || !str_contains($publicProfile, '$this->avatars->build(')) {
+  $errors[] = 'INV-FOTO-11: autoria e perfil público não usam AvatarResolver';
+}
+if (preg_match('/slice\s*\(\s*0\s*,\s*1\s*\)|profile-identity__avatar--initial/', $identityTemplate)) {
+  $errors[] = 'INV-FOTO-11: SDC de identidade privada inventa avatar por inicial';
+}
+
 // INV-FOTO-10: o acervo é componente obrigatório e o último fallback. Exige catálogo válido e ao menos uma entrada ativa com arquivo.
 $catalogPath = $module . '/assets/avatars/meta/avatars.json';
 $catalog = is_file($catalogPath) ? json_decode((string) file_get_contents($catalogPath), TRUE) : NULL;
@@ -154,4 +170,4 @@ if ($errors !== []) {
   exit(1);
 }
 
-echo 'ACULTA USER PHOTO: PASS (INV-FOTO-1 a INV-FOTO-10)' . PHP_EOL;
+echo 'ACULTA USER PHOTO: PASS (INV-FOTO-1 a INV-FOTO-11)' . PHP_EOL;

@@ -68,6 +68,22 @@ envio do acervo não tem remove_button. Para desfazer um envio, a pessoa envia o
 - `js/photo-flow.js`: abertura automática do recorte após o envio; reabre o popup depois do recorte.
 - `src/Avatar/AvatarPool.php::reroll()`: sortear troca a foto e descarta o recorte pendente.
 
+## Fonte única e atualização entre áreas
+
+`user_picture` é a única foto/avatar persistida da conta em todo o Portal.
+`user.data.avatar_id` apenas identifica o item escolhido no acervo e
+`sorteio_pendente` apenas guarda a prévia ainda não salva. O Profile principal
+selecionado por `PerfilDoPapel` fornece os campos de identidade compartilhados;
+não se criam campos paralelos de avatar por purpose, bundle ou módulo.
+
+Depois de salvar, Perfil público (`PublicProfileController`), Studio,
+Fórum e demais cartões obtêm a imagem por `AvatarResolver` ou
+`AuthorIdentityResolver` → `AuthorCardBuilder`. A alteração de `user_picture`
+invalida a tag da conta e a imagem renderizada também carrega a tag do arquivo,
+para que todos esses consumidores mostrem a mesma seleção sem expor foto
+pessoal não autorizada. O gate `validate-aculta-user-photo.php` verifica essa
+fronteira e impede fallback por inicial no SDC privado.
+
 ## Barreiras
 
 1. Gate: `php scripts/validate-aculta-user-photo.php` (estático; falha se um invariante sair do código).

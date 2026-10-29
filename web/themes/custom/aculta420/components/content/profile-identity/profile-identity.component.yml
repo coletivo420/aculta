@@ -17,7 +17,7 @@ props:
 slots:
   avatar:
     title: Avatar
-    description: 'Render array de avatar próprio autorizado e renderizado pelo aculta_image. Vazio mostra a inicial.'
+    description: 'Render array de avatar fornecido pelo AvatarResolver central e renderizado pelo aculta_image. Slot vazio é estado defensivo de teste; nunca gera avatar ou inicial alternativos.'
   public_link:
     title: Perfil público
     description: 'Link canônico somente quando o PublicProfileLink permitir; sem inferir publicidade.'

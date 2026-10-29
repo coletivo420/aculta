@@ -1,5 +1,6 @@
 # Alterações pendentes de validação visual — ainda sem nova marcação de versão
 
+- `profile-identity` não cria inicial nem placeholder quando o slot de avatar está vazio; o AvatarResolver central é a única fonte da imagem. Atualizado schema, story, catálogo e Kernel para impedir fallback paralelo. Firefox visual DEFERRED.
 - `drupal-bootstrap.css` empilha a Navigation top-bar como base móvel e restaura a grade de três regiões em 768px. Lint CSS e sintaxe do smoke Firefox PASS; execução visual DEFERRED por `DISPLAY` indisponível e sessões concorrentes.
 - `wiki-entry.css` agora usa margem compacta das abas como base e restaura o espaçamento anterior em 768px; o smoke de Wiki mede margem, grade e ordem do aside. Lint CSS e sintaxe Python PASS; Firefox/Runtime DEFERRED.
 - `profile-identity.css` usa avatar de 56px e alinhamento superior como base; restaura 72px e alinhamento central a partir de 353px. Smoke baseline/candidato criado; lint CSS, sintaxe Python, Design Foundations e índice PASS; Firefox DEFERRED.

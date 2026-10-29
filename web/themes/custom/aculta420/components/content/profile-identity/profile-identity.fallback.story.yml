@@ -1,5 +1,5 @@
-name: Identidade sem foto ou perfil público
-description: 'Apenas a inicial é exibida, sem criar link público que o owner não autorizou.'
+name: Identidade sem avatar no fixture defensivo
+description: 'O estado de teste sem o slot de avatar não inventa uma imagem ou inicial, nem cria link público que o owner não autorizou. Em produção, o AvatarResolver fornece o avatar do acervo.'
 component: aculta420:profile-identity
 props:
   display_name: Perfil Exemplo
