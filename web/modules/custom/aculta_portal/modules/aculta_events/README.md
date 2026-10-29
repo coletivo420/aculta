@@ -20,3 +20,9 @@ reais, com modo escuro. Script e instruções:
 
 O dev.4 recusa `UNTIL` anterior ao início da série no formulário de recorrência,
 com a mesma regra no expansor como guarda de dados.
+
+O dev.5 aplica a D-52: o mapa mantém apenas a atribuição do provedor e o link
+para a Política de Privacidade, sem o texto inline de envio de IP. O OAuth do
+OSM foi validado no Runtime (token conectado, ambiente `production` por D-45 e
+leitura de `node/1` sem escrita). A revisão visual do novo aviso aguarda o
+checkout livre para servir este candidato; depois disso o módulo pode ir a RC.

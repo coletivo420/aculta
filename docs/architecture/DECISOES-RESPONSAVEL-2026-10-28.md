@@ -61,6 +61,8 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 | D-49 | Indexação da listagem da Wiki | **Incluir `/wiki/verbetes` no sitemap da Wiki.** | `aculta_portal_sitemap`; manter a listagem no conjunto público da variante `wiki`, sujeito aos controles `noindex` do ambiente. |
 | D-50 | Cookie de sessão no ambiente local | **Remover `cookie_domain: '.aculta.test'`; usar cookie host-only local.** Os cookies compartilhados de test e production não mudam. | `aculta_deployer`; `services.local.yml` não compartilha sessão entre subdomínios. |
 | D-51 | Login por CPF | **Incluir antes do RC em todas as superfícies locais de login**, incluindo o formulário principal e o popup. Usar os fluxos existentes e preservar flood control, confirmação de e-mail, CAPTCHA, Social Auth e respostas genéricas; não criar um caminho de autenticação paralelo. | `aculta_id_cpf` e `aculta_portal`; login social não passa a aceitar CPF/senha. |
+| D-52 | Aviso de privacidade do mapa | **Sem texto inline de envio de IP.** A página do mapa mantém apenas o link para a Política de Privacidade e a atribuição do provedor (Leaflet/OpenStreetMap); o texto explicativo sai da página. | `aculta_events` (mapa de locais); a política publicada continua sendo o local do detalhamento. |
+| D-53 | Credencial OAuth do OpenStreetMap | **Uma única aplicação OAuth de produção atende teste, desenvolvimento e produção**, exceção registrada em `docs/operations/SECRETS.md`; `OSM_TEST_*` não é provisionada. O token do usuário continua cifrado no State por ambiente e cada escrita exige confirmação explícita (D-45). | `aculta_events_openstreetmap`; não altera a separação das demais credenciais. |
 
 ## Pendente
 
@@ -100,3 +102,4 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 - 2026-10-29: D-49 registrada — `/wiki/verbetes` deve constar no sitemap da Wiki.
 - 2026-10-29: D-50 registrada — remover o domínio de cookie `.aculta.test` e manter sessão host-only no ambiente local.
 - 2026-10-29: D-51 registrada — login por CPF em todas as superfícies locais antes do RC, preservando controles e fluxo de autenticação existentes.
+- 2026-10-29: D-52 e D-53 registradas — aviso do mapa sem texto inline de IP (só link da política e atribuição) e credencial OAuth única do OSM para teste/desenvolvimento/produção, documentada em `SECRETS.md`.

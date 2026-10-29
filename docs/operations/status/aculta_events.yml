@@ -1,14 +1,15 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.4
+version: 0.1.0-dev.5
 state: Dev
 progress_note: >-
-  Dev.4: o formulário de recorrência recusa UNTIL anterior ao início da série,
-  com mensagem no campo, e o expansor mantém a mesma regra como guarda de dados.
-  Suíte Events: 55 testes/669 assertions PASS (26 depreciações); PHPCS sem erros
-  nos arquivos alterados. Dev.3: smoke visual no candidato a4f878d55 pelo purpose
-  eventos com tests/browser/eventos/agenda-embed.mjs, 129/129 verificações PASS
-  em 1280/390/320 px reais via BiDi, cobrindo catálogo, página de evento, agenda,
-  grade do mês, agenda do dia, incorporação e mapa, com modo escuro, sem rolagem
-  horizontal e sem erro visível. E10/OAuth e a decisão editorial dos tiles
-  seguem pendentes; nenhuma escrita no OSM. Runtime sem atualização.
-next_phase: 'Revalidar catálogo e mapa no candidato com estas correções quando o checkout de teste estiver livre; concluir a validação OAuth de teste sem escrita no OSM (exige login de conta OSM) e aguardar a decisão editorial da divulgação dos tiles.'
+  Dev.5: D-52 aplicada — a página do mapa não exibe mais o texto inline de envio
+  de IP; ficam a atribuição do provedor e o link para a Política de Privacidade,
+  e o Kernel do mapa passa a exigir o link e rejeitar o texto antigo. OAuth do
+  OSM validado no Runtime: token conectado, ambiente efetivo production (D-45) e
+  leitura real de node/1 (versão 47) sem escrita. Suíte Events 55 testes/670
+  assertions PASS (26 depreciações); PHPCS 0 erros e lint do MapController PASS.
+  Revalidação visual do aviso pendente porque o checkout aguarda a outra sessão.
+  Dev.4: UNTIL anterior ao início da série é recusado no formulário, com a mesma
+  regra no expansor. Dev.3: smoke do purpose eventos 129/129 em 1280/390/320 px
+  reais. Runtime sem atualização.
+next_phase: 'Servir o candidato dev.5 quando o checkout estiver livre, repetir o smoke do mapa e de eventos e, se passar, promover a 0.1.0-rc.1; o ensaio de escrita fictícia no OSM depende da confirmação do diff.'

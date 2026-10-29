@@ -90,12 +90,11 @@ final class MapController extends ControllerBase {
     ]);
     $render = [
       'lista' => ['#theme' => 'item_list', '#items' => $itens, '#empty' => $this->t('Nenhum local cadastrado.')],
+      // Decisão editorial de 2026-10-29: sem o texto inline de envio de IP;
+      // ficam a atribuição do provedor (Leaflet/OSM) e o link da política.
       'aviso' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'map-privacy-notice'],
-        'texto' => [
-          '#plain_text' => $this->t('Ao carregar o mapa, seu navegador envia seu endereço IP ao OpenStreetMap para solicitar os mapas. Consulte a política de privacidade para saber como funciona esse serviço.'),
-        ],
         'politica' => [
           '#type' => 'link',
           '#title' => $this->t('Política de privacidade'),

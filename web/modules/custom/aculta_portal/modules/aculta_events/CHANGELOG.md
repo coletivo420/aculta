@@ -1,5 +1,18 @@
 # Changelog — aculta_events
 
+## 0.1.0-dev.5 — aviso do mapa e OAuth do OSM validados (2026-10-29)
+
+- D-52: a página do mapa não exibe mais o texto inline de envio de IP; ficam a
+  atribuição do provedor (Leaflet/OpenStreetMap) e o link para a Política de
+  Privacidade. O detalhamento continua na política publicada.
+- OAuth do OSM validado no Runtime: token conectado, ambiente efetivo em
+  `production` (D-45) e leitura real de `node/1` (versão 47) sem escrita.
+- Suíte Events: 55 testes/670 assertions PASS (26 depreciações); PHPCS 0 erros
+  e `php -l` do `MapController` PASS. O Kernel do mapa agora exige o link da
+  política e rejeita o texto inline de IP.
+- A revalidação visual do aviso depende de servir este candidato; o checkout
+  segue aguardando a outra sessão.
+
 ## 0.1.0-dev.4 — validar UNTIL contra o início da série (2026-10-29)
 
 - O formulário de recorrência recusa `UNTIL` anterior ao início da série, com

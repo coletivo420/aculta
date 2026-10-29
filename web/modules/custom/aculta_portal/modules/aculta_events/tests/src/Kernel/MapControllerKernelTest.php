@@ -71,8 +71,11 @@ final class MapControllerKernelTest extends KernelTestBase {
     $this->assertSame(-49.26, $marcadores[0]['lng']);
     $this->assertStringContainsString('Casa de cultura', (string) \Drupal::service('renderer')->renderInIsolation($pagina['lista']));
     $aviso = (string) \Drupal::service('renderer')->renderInIsolation($pagina['aviso']);
-    $this->assertStringContainsString('OpenStreetMap', $aviso);
+    // D-52: only the privacy-policy link remains; the provider attribution is
+    // rendered by the map component, not by the inline notice.
     $this->assertStringContainsString('/sobre/politica-de-privacidade', $aviso);
+    $this->assertStringNotContainsString('envia seu endereço IP', $aviso);
+    $this->assertStringNotContainsString('OpenStreetMap', $aviso);
   }
 
 }
