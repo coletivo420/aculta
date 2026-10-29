@@ -4,9 +4,9 @@
 
 - A tabela de registros é envolvida por contêiner rolável em viewports estreitos;
   estilo carregado apenas pela listagem do Patcher.
-- Unit 38/65, lint 12/12 e PHPCS Drupal passaram. O Firefox autenticado anterior
-  identificou overflow da tabela em 390/320px; repetir a validação após o cache
-  rebuild do candidato no servidor de teste.
+- Unit 38/65, lint 12/12 e PHPCS Drupal passaram. Após cache rebuild no
+  servidor de teste, Firefox ESR validou lista e formulário em 1280/390/320px:
+  13/13 verificações PASS, sem overflow e com títulos visíveis.
 
 
 ## 0.1.0-dev.3 — proteção da raiz de artefatos — 2026-10-26
