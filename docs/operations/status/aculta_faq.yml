@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.2
-state: Dev
+version: 0.1.0-rc.1
+state: RC
 progress_note: >-
-  Dev.2: Kernel 3/45 PASS (XSS, acesso administrativo e negação das rotas de edição). PHP lint 4/4 e PHPCS Drupal/DrupalPractice PASS. Seis respostas aprovadas cadastradas no Runtime de teste (Nodes 567–572); Firefox ESR anônimo 6/6 em 1280/390/320px, todo conteúdo presente, 11/11 destinos de link únicos acessíveis por Tab com indicador :focus-visible. A fixture temporária foi removida. F1 completa; status Dev apenas pelo gate global módulo–tema, que nesta revalidação falha em Events/Calendar/Maps fora do escopo.
-next_phase: 'Após resolver o gate global módulo–tema fora desta frente, repetir o status index e promover `aculta_faq` a RC; não há trabalho funcional pendente em F1. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_faq/docs/ROADMAP.md).'
+  RC.1: F1 completa. Kernel 3/45 PASS (XSS, acesso administrativo e negação das rotas de edição); PHP lint 4/4 e PHPCS Drupal/DrupalPractice PASS. Runtime de teste mantém seis perguntas publicadas; Firefox ESR anônimo PASS, seis respostas e 11/11 links por Tab com foco visível, sem overflow em 1280/390/320px. validate-module-theme-boundary PASS (3397), mapa módulo-tema PASS (214), tokens PASS (380), índice PASS (50). Aguarda autorização para Alpha; sem alteração de Runtime nesta revisão.
+next_phase: 'Aguardar autorização explícita para deploy/validação Alpha; aplicar o procedimento de RELEASE-LIFECYCLE.md e registrar evidências do ambiente. Nenhum deploy foi executado nesta microfase. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_faq/docs/ROADMAP.md).'

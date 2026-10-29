@@ -18,19 +18,29 @@ ESR final passou 6/6 verificações, incluindo 11/11 destinos de link únicos
 alcançáveis por Tab com `:focus-visible`, em 1280/390/320px. A fixture visual
 temporária anterior foi removida.
 
-### Gate de release
+### Candidato RC — 2026-10-29
 
-F1 está completa no módulo. O status permanece Dev porque o gate global
-`validate-module-theme-boundary.php` ainda reprova por referências em
-Events/Calendar e uma classe de teste da Revista, sem ocorrência no `aculta_faq`.
-Após o gate global ficar verde, reexecutar o status index e classificar o módulo
-como RC; não há trabalho funcional restante nesta fase.
+F1 satisfaz os critérios de release: conteúdo revisado e aprovado, seis
+respostas publicadas no Runtime de teste, rotas protegidas, formato sanitizado,
+Kernel, PHPCS, revisão visual/teclado e reflow aprovados. O gate módulo–tema
+global que bloqueava a classificação agora passa no candidato publicado.
 
-Na revalidação desta sessão (2026-10-29), a suíte Kernel passou 3/3 (45
-assertions), PHP lint 4/4 e PHPCS Drupal/DrupalPractice passou. O runner
-`tests/browser/aculta-faq/visual.py` voltou a confirmar as seis respostas,
-11/11 links navegáveis por Tab com `:focus-visible` e reflow sem overflow em
-1280/390/320px. O código funcional `src/` é igual ao checkout de teste; neste
-candidato, as diferenças do módulo são documentação, versão e cobertura Kernel.
-O gate global foi reexecutado e segue vermelho em Events/Calendar/Maps.
+Revalidação deste candidato:
+
+- Kernel: 3 testes / 45 assertions PASS; cobre XSS, acesso administrativo e
+  negação das rotas de edição para usuário comum.
+- PHP lint: 4/4; PHPCS Drupal/DrupalPractice: PASS.
+- Firefox ESR anônimo no servidor de desenvolvimento: conteúdo integral,
+  11/11 links alcançáveis por Tab com `:focus-visible`, sem overflow em
+  1280/390/320 CSS px.
+- `validate-module-theme-boundary.php`: 3397 verificações PASS;
+  `validate-module-theme-map.php`: 214 checks PASS;
+  `validate-portal-ui-docs.php`: 380 tokens, 300 usados e 149 atributos PASS;
+  índice de status: 50 componentes PASS.
+- O PHP funcional de `aculta_faq` em `src/` coincide com o checkout de teste
+  anterior; nesta linha, a diferença publicada é de versão, documentação e
+  cobertura Kernel. A revisão visual não altera nem cria conteúdo.
+
+Classificação: `0.1.0-rc.1`, estado RC. O próximo passo é aguardar autorização
+para deploy e validação Alpha; nenhuma operação de Alpha foi executada.
 

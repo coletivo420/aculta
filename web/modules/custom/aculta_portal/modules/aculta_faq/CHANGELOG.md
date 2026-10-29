@@ -1,5 +1,12 @@
 # Changelog — aculta_faq
 
+## 0.1.0-rc.1 — candidato de release (2026-10-29)
+
+- F1 aprovada: conteúdo, segurança, acesso, teclado e reflow revalidados.
+- Gate global módulo–tema e índice de status passaram; nenhuma alteração de
+  conteúdo ou configuração Runtime nesta classificação.
+- Alpha aguarda autorização explícita; sem deploy.
+
 ## 0.1.0-dev.2 — autorização de edição e revisão visual
 
 - Kernel nega usuário comum também nas rotas de edição de pergunta e bloco;
