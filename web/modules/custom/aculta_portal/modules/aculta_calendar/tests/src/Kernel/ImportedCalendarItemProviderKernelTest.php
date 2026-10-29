@@ -11,18 +11,31 @@ use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
-/** Published imported items alone are exposed to calendar consumers. */
+/**
+ * Published imported items alone are exposed to calendar consumers. */
 #[Group('aculta_calendar')]
 #[RunTestsInSeparateProcesses]
 final class ImportedCalendarItemProviderKernelTest extends KernelTestBase {
 
+  /**
+   * Modules enabled by this Kernel test.
+   *
+   * @var string[]
+   */
+
   protected static $modules = ['system', 'user', 'aculta_calendar'];
 
+  /**
+   * Configures the test environment and installs required schemas.
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('aculta_calendar_imported_item');
   }
 
+  /**
+   * Verifies only published item is returned and visible in calendar.
+   */
   public function testOnlyPublishedItemIsReturnedAndVisibleInCalendar(): void {
     $source = CalendarImportSource::create([
       'id' => 'fonte_teste',

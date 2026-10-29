@@ -45,9 +45,10 @@ class IcsEventBuilderTest extends UnitTestCase {
    * Desfaz a dobra (RFC 5545 §3.1) e devolve as linhas lógicas.
    *
    * @return string[]
+   *   Linhas lógicas do arquivo.
    */
   private function linhas(string $ics): array {
-    // O bloco VTIMEZONE tem DTSTART próprio; fica fora das propriedades do evento.
+    // VTIMEZONE tem DTSTART próprio e fica fora das propriedades do evento.
     $semFuso = preg_replace('/BEGIN:VTIMEZONE.*?END:VTIMEZONE\r\n/s', '', $ics) ?? $ics;
     $desdobrado = str_replace("\r\n ", '', $semFuso);
     return explode("\r\n", rtrim($desdobrado, "\r\n"));
@@ -57,6 +58,7 @@ class IcsEventBuilderTest extends UnitTestCase {
    * Linhas que começam com o nome da propriedade informado.
    *
    * @return string[]
+   *   Propriedades encontradas.
    */
   private function propriedade(string $ics, string $nome): array {
     return array_values(array_filter(
@@ -66,7 +68,7 @@ class IcsEventBuilderTest extends UnitTestCase {
   }
 
   /**
-   * Título com CRLF não cria propriedade extra; CR e LF viram espaço antes do escape.
+   * Título com CRLF não cria propriedade extra; quebras viram espaços.
    */
   public function testTituloComQuebraDeLinhaNaoCriaPropriedade(): void {
     $ics = $this->builder->build(
@@ -108,7 +110,7 @@ class IcsEventBuilderTest extends UnitTestCase {
   /**
    * Ponto e vírgula, vírgula e barra invertida saem escapados.
    */
-  public function testPontoEVirgulaEBarraSaoEscapados(): void {
+  public function testPontoEvirgulaEbarraSaoEscapados(): void {
     $ics = $this->builder->build(
       'node:2',
       'A;B,C\D',
@@ -123,9 +125,9 @@ class IcsEventBuilderTest extends UnitTestCase {
   }
 
   /**
-   * Mesma entidade e mesma data geram o mesmo UID, mesmo com título e carimbo diferentes.
+   * A mesma entidade e data mantêm o UID se título e carimbo mudarem.
    */
-  public function testUidEstavelParaMesmaEntidadeEData(): void {
+  public function testUidEstavelParaMesmaEntidadeEdata(): void {
     $primeiro = $this->builder->build('node:7', 'Título antigo', '', $this->inicio(), NULL, FALSE, $this->carimbo());
     $segundo = $this->builder->build(
       'node:7',
@@ -200,9 +202,9 @@ class IcsEventBuilderTest extends UnitTestCase {
   }
 
   /**
-   * Evento com horário sai no horário de Brasília (TZID), com VTIMEZONE; DTSTAMP segue em UTC.
+   * Evento com horário usa Brasília em TZID/VTIMEZONE e UTC em DTSTAMP.
    */
-  public function testHorarioEmBrasiliaComVtimezoneEDtstampEmUtc(): void {
+  public function testHorarioEmBrasiliaComVtimezoneEdtstampEmUtc(): void {
     $ics = $this->builder->build(
       'node:4',
       'Sessão',
@@ -223,7 +225,7 @@ class IcsEventBuilderTest extends UnitTestCase {
   /**
    * Horário informado em outro fuso é convertido para Brasília.
    */
-  public function testHorarioDeOutroFusoEConvertidoParaBrasilia(): void {
+  public function testHorarioDeOutroFusoEconvertidoParaBrasilia(): void {
     $ics = $this->builder->build(
       'node:4',
       'Sessão',
@@ -241,7 +243,7 @@ class IcsEventBuilderTest extends UnitTestCase {
   /**
    * Linha longa é dobrada em 75 octetos, e nenhum caractere UTF-8 é cortado.
    */
-  public function testLinhaLongaEDobradaEmSetentaECincoOctetos(): void {
+  public function testLinhaLongaEdobradaEmSetentaEcincoOctetos(): void {
     $titulo = str_repeat('ã', 60) . str_repeat('a', 20);
     $ics = $this->builder->build('node:5', $titulo, '', $this->inicio(), NULL, FALSE, $this->carimbo());
 
@@ -260,11 +262,10 @@ class IcsEventBuilderTest extends UnitTestCase {
     $this->assertSame(['SUMMARY:' . $titulo], $this->propriedade($ics, 'SUMMARY'));
   }
 
-
   /**
-   * Série: RRULE com UNTIL em UTC (fim do dia de Brasília), EXDATE do cancelado e RECURRENCE-ID do reagendado.
+   * Série exporta RRULE/UNTIL, EXDATE e RECURRENCE-ID do reagendamento.
    */
-  public function testSerieComRruleExdateERecurrenceId(): void {
+  public function testSerieComRruleExdateErecurrenceId(): void {
     $brasilia = new \DateTimeZone('America/Sao_Paulo');
     $inicio = new \DateTimeImmutable('2026-10-28 19:00:00', $brasilia);
     $ics = $this->builder->buildSerie(
@@ -281,7 +282,8 @@ class IcsEventBuilderTest extends UnitTestCase {
         'original' => new \DateTimeImmutable('2026-11-04 19:00:00', $brasilia),
         'inicio' => new \DateTimeImmutable('2026-11-05 20:00:00', $brasilia),
         'fim' => new \DateTimeImmutable('2026-11-05 22:00:00', $brasilia),
-      ]],
+      ],
+      ],
     );
 
     // 15/11 às 23:59:59 em Brasília é 16/11 às 02:59:59 UTC.
@@ -316,23 +318,29 @@ class IcsEventBuilderTest extends UnitTestCase {
     $this->assertSame(['RRULE:FREQ=DAILY;UNTIL=20261030'], $this->propriedade($ics, 'RRULE'));
   }
 
-
   /**
-   * Período com várias séries: um VCALENDAR, um VEVENT por série, UIDs distintos.
+   * Período com várias séries: um VCALENDAR, VEVENTs e UIDs distintos.
    */
   public function testExportacaoDePeriodoTemUmCalendario(): void {
     $brasilia = new \DateTimeZone('America/Sao_Paulo');
     $ics = $this->builder->buildMany([
       [
-        'key' => 'node:1', 'summary' => 'Oficina', 'location' => '',
+        'key' => 'node:1',
+        'summary' => 'Oficina',
+        'location' => '',
         'start' => new \DateTimeImmutable('2026-10-28 19:00:00', $brasilia),
         'end' => new \DateTimeImmutable('2026-10-28 21:00:00', $brasilia),
-        'allDay' => FALSE, 'stamp' => $this->carimbo(),
+        'allDay' => FALSE,
+        'stamp' => $this->carimbo(),
       ],
       [
-        'key' => 'node:2', 'summary' => 'Feira', 'location' => 'Praça',
-        'start' => new \DateTimeImmutable('2026-10-30', $brasilia), 'end' => NULL,
-        'allDay' => TRUE, 'stamp' => $this->carimbo(),
+        'key' => 'node:2',
+        'summary' => 'Feira',
+        'location' => 'Praça',
+        'start' => new \DateTimeImmutable('2026-10-30', $brasilia),
+        'end' => NULL,
+        'allDay' => TRUE,
+        'stamp' => $this->carimbo(),
       ],
     ]);
     $this->assertCount(1, array_filter($this->linhas($ics), static fn (string $l): bool => $l === 'BEGIN:VCALENDAR'), 'um único calendário');

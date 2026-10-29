@@ -82,3 +82,15 @@ Decisão do responsável em 2026-10-28; detalhes, origem e hashes em `DHTMLX.md`
   configurada em `secrets/`; a pergunta ao responsável permanece aberta.
 - Manter `state: Dev` até PHPCS, revisão visual de ADM8 e revisão de código
   estarem concluídos. Nenhuma configuração Runtime foi importada.
+
+## CA — limpeza PHPCS (2026-10-29, dev.2)
+
+- PHPCS Drupal/DrupalPractice passou nos 59 arquivos PHP fora de
+  `src/Controller/InteractiveController.php`. O controller permanece intocado
+  por pertencer à frente DHTMLX; sua checagem isolada ainda aponta 2 erros e 2
+  avisos.
+- Suíte completa reexecutada: 117 testes / 398 assertions PASS, com 2
+  depreciações de annotations em Core/contrib. PHP lint: 60/60 PASS; diff check
+  PASS.
+- O módulo permanece Dev até a frente DHTMLX liberar o arquivo, a revisão
+  visual autenticada de ADM8 e a revisão final de código.

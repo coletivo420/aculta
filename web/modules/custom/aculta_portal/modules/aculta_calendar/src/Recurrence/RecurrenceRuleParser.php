@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Drupal\aculta_calendar\Recurrence;
 
 /**
- * Valida e normaliza a regra de recorrência da v1 (RECORRENCIA.md, seções 5 e 7).
+ * Valida e normaliza a regra de recorrência v1.
  *
- * Lista branca: parte desconhecida, repetida ou fora da combinação permitida é erro,
+ * Parte desconhecida, repetida ou fora da combinação permitida é erro,
  * nunca ignorada em silêncio.
  */
 final class RecurrenceRuleParser {

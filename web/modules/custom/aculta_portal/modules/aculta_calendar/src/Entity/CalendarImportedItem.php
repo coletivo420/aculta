@@ -11,7 +11,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Revisável, normalizado e não publicado por padrão, item importado de calendário.
+ * Item importado de calendário, normalizado e não publicado por padrão.
  */
 #[ContentEntityType(
   id: 'aculta_calendar_imported_item',
@@ -62,7 +62,8 @@ final class CalendarImportedItem extends EditorialContentEntityBase {
     'ausente' => 'Ausente da fonte',
   ];
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 
@@ -144,7 +145,8 @@ final class CalendarImportedItem extends EditorialContentEntityBase {
     return $fields;
   }
 
-  /** Sets the import workflow state and its corresponding Drupal publish flag. */
+  /**
+   * Sets the import workflow state and its corresponding Drupal publish flag. */
   public function setImportState(string $state): static {
     if (!isset(self::IMPORT_STATES[$state])) {
       throw new \InvalidArgumentException("Estado de importação inválido: $state.");

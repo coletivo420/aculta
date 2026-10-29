@@ -7,13 +7,19 @@ namespace Drupal\aculta_calendar\Import;
 use GuzzleHttp\Psr7\StreamDecoratorTrait;
 use Psr\Http\Message\StreamInterface;
 
-/** Caps bytes written by the HTTP transport before they reach a response sink. */
+/**
+ * Caps bytes written by the HTTP transport before they reach a response sink.
+ */
 final class CalendarImportResponseStream implements StreamInterface {
 
   use StreamDecoratorTrait;
 
+  /**
+   * Number of bytes already written to the wrapped stream. */
   private int $written = 0;
 
+  /**
+   * Whether a write attempt exceeded the configured byte limit. */
   private bool $limitExceeded = FALSE;
 
   public function __construct(
@@ -21,6 +27,9 @@ final class CalendarImportResponseStream implements StreamInterface {
     private readonly int $maximumBytes,
   ) {}
 
+  /**
+   * Describes the write value.
+   */
   public function write(string $string): int {
     $length = strlen($string);
     $remaining = max(0, $this->maximumBytes - $this->written);
@@ -38,6 +47,9 @@ final class CalendarImportResponseStream implements StreamInterface {
     return $written;
   }
 
+  /**
+   * Describes the limitExceeded value.
+   */
   public function limitExceeded(): bool {
     return $this->limitExceeded;
   }

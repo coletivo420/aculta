@@ -7,9 +7,9 @@ namespace Drupal\aculta_calendar\Recurrence;
 use RRule\RRule;
 
 /**
- * Calcula as ocorrências de uma série numa janela, na leitura (RECORRENCIA.md, seção 6).
+ * Calcula as ocorrências de uma série numa janela, em leitura.
  *
- * Usa rlanvin/php-rrule. Não materializa ocorrências: a regra e as exceções são a
+ * Usa rlanvin/php-rrule. Não materializa ocorrências: regra e exceções são a
  * fonte de verdade.
  */
 final class RecurrenceExpander {
@@ -30,10 +30,10 @@ final class RecurrenceExpander {
    * Expande a série dentro da janela [$de, $ate].
    *
    * Exceções são chaveadas pelo início original da ocorrência (M1). Uma exceção
-   * com `inicio` = NULL cancela a ocorrência; com `inicio` preenchido, reagenda.
+   * `inicio` NULL cancela a ocorrência; valor definido reagenda.
    *
-   * Série sem COUNT nem UNTIL é limitada por $limiteSerieAberta. Quem chama define
-   * esse limite como "agora + field_limite_meses" (padrão 12).
+   * Série aberta é limitada por $limiteSerieAberta, definida pela chamada como
+   * "agora + field_limite_meses" (padrão 12).
    *
    * @param string $regra
    *   RRULE do campo `field_regra`.
@@ -48,6 +48,7 @@ final class RecurrenceExpander {
    * @param \DateTimeImmutable $limiteSerieAberta
    *   Último instante para série sem COUNT nem UNTIL.
    * @param array<int, array{inicio: ?\DateTimeImmutable, fim: ?\DateTimeImmutable}> $excecoes
+   *   Cancelled or rescheduled occurrence overrides.
    *   Exceções indexadas pelo timestamp do início original.
    *
    * @return array<int, array{inicio: \DateTimeImmutable, fim: \DateTimeImmutable, original: \DateTimeImmutable, cancelada: bool}>
@@ -119,10 +120,12 @@ final class RecurrenceExpander {
   /**
    * Monta o RFC 5545 da série com DTSTART no fuso do site.
    *
-   * UNTIL, quando houver, vai como fim do dia local (23:59:59) convertido para UTC.
+   * UNTIL vira o fim do dia local (23:59:59) convertido para UTC.
    *
    * @param array<string, mixed> $partes
    *   Partes normalizadas pelo parser.
+   * @param \DateTimeImmutable $inicio
+   *   Start date used to build DTSTART in the site's timezone.
    */
   private function rfc(array $partes, \DateTimeImmutable $inicio): string {
     $ordem = ['FREQ', 'INTERVAL', 'BYDAY', 'BYMONTHDAY', 'COUNT'];

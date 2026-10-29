@@ -37,7 +37,7 @@ final class EmbedSourceAllowlist {
    *   Valor vindo do parâmetro source_uri.
    */
   public function isAllowed(string $sourceUri): bool {
-    // Espaço, controle e barra invertida são recusados antes de qualquer análise.
+    // Espaço, controle e barra invertida são recusados antes da análise.
     if ($sourceUri === '' || preg_match('/[\x00-\x20\x7F\\\\]/', $sourceUri) === 1) {
       return FALSE;
     }

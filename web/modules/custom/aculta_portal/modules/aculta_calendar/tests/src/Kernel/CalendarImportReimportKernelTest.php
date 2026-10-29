@@ -10,19 +10,32 @@ use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
-/** Tests import idempotency, editorial revisions, and absent source UIDs. */
+/**
+ * Tests import idempotency, editorial revisions, and absent source UIDs. */
 #[Group('aculta_calendar')]
 #[RunTestsInSeparateProcesses]
 final class CalendarImportReimportKernelTest extends KernelTestBase {
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
+  /**
+   * Modules enabled by this Kernel test.
+   *
+   * @var string[]
+   */
   protected static $modules = ['system', 'user', 'aculta_calendar'];
 
+  /**
+   * Configures the test environment and installs required schemas.
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('aculta_calendar_imported_item');
   }
 
+  /**
+   * Verifies equal reimport does not create another revision.
+   */
   public function testEqualReimportDoesNotCreateAnotherRevision(): void {
     $source = $this->source();
     $processor = $this->container->get('aculta_calendar.import_processor');
@@ -41,6 +54,9 @@ final class CalendarImportReimportKernelTest extends KernelTestBase {
     self::assertSame('presente', $current->get('source_presence')->value);
   }
 
+  /**
+   * Verifies reimport adds a review revision without changing public content.
+   */
   public function testChangedPublishedItemBecomesReviewRevisionWhilePublicVersionRemains(): void {
     $source = $this->source();
     $processor = $this->container->get('aculta_calendar.import_processor');
@@ -66,6 +82,9 @@ final class CalendarImportReimportKernelTest extends KernelTestBase {
     self::assertFalse($latest->isDefaultRevision());
   }
 
+  /**
+   * Verifies missing uid is marked absent without deleting or unpublishing.
+   */
   public function testMissingUidIsMarkedAbsentWithoutDeletingOrUnpublishing(): void {
     $source = $this->source();
     $processor = $this->container->get('aculta_calendar.import_processor');
@@ -94,6 +113,9 @@ final class CalendarImportReimportKernelTest extends KernelTestBase {
     self::assertTrue($restored->isPublished());
   }
 
+  /**
+   * Describes the source value.
+   */
   private function source(): CalendarImportSource {
     $source = CalendarImportSource::create([
       'id' => 'fonte_teste',
@@ -105,6 +127,9 @@ final class CalendarImportReimportKernelTest extends KernelTestBase {
     return $source;
   }
 
+  /**
+   * Describes the event value.
+   */
   private function event(string $title = 'Evento de teste'): NormalizedCalendarEvent {
     $timezone = new \DateTimeZone('America/Sao_Paulo');
     return new NormalizedCalendarEvent(

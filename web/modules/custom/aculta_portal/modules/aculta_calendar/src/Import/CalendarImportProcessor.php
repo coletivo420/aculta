@@ -7,7 +7,9 @@ namespace Drupal\aculta_calendar\Import;
 use Drupal\aculta_calendar\Entity\CalendarImportSource;
 use Drupal\aculta_calendar\Entity\CalendarImportedItem;
 
-/** Applies a complete local-file import without deleting existing records. */
+/**
+ * Applies a complete local-file import without deleting existing records.
+ */
 final class CalendarImportProcessor {
 
   public function __construct(
@@ -17,6 +19,8 @@ final class CalendarImportProcessor {
   /**
    * Reconciles normalized events from one source with saved imported items.
    *
+   * @param \Drupal\aculta_calendar\Entity\CalendarImportSource $source
+   *   Configured source whose existing items are reconciled.
    * @param \Drupal\aculta_calendar\Import\NormalizedCalendarEvent[] $events
    *   Events parsed and sanitized from a local iCalendar file.
    *
@@ -80,7 +84,8 @@ final class CalendarImportProcessor {
     return $result;
   }
 
-  /** Compares normalized external content with the latest saved revision. */
+  /**
+   * Compares normalized external content with the latest saved revision. */
   private function contentMatches(CalendarImportedItem $item, NormalizedCalendarEvent $event): bool {
     $cancelled = $event->status === 'CANCELLED';
     $stateCompatible = $cancelled

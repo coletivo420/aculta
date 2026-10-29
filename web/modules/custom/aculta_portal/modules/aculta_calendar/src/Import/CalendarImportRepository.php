@@ -42,7 +42,8 @@ final class CalendarImportRepository {
     return $item;
   }
 
-  /** Loads an item's current default revision for a source and UID. */
+  /**
+   * Loads an item's current default revision for a source and UID. */
   public function findCurrent(CalendarImportSource $source, string $externalUid): ?CalendarImportedItem {
     $items = $this->entityTypeManager->getStorage('aculta_calendar_imported_item')
       ->loadByProperties([
@@ -55,7 +56,8 @@ final class CalendarImportRepository {
     return reset($items);
   }
 
-  /** Loads the latest revision, including a non-default review revision. */
+  /**
+   * Loads the latest revision, including a non-default review revision. */
   public function findLatest(CalendarImportSource $source, string $externalUid): ?CalendarImportedItem {
     $current = $this->findCurrent($source, $externalUid);
     if ($current === NULL) {
@@ -73,13 +75,15 @@ final class CalendarImportRepository {
     return $latest instanceof CalendarImportedItem ? $latest : $current;
   }
 
-  /** Loads all current items from a source, keyed by entity ID. */
+  /**
+   * Loads all current items from a source, keyed by entity ID. */
   public function itemsForSource(CalendarImportSource $source): array {
     return $this->entityTypeManager->getStorage('aculta_calendar_imported_item')
       ->loadByProperties(['source' => $source->id()]);
   }
 
-  /** Creates a draft from one normalized external event. */
+  /**
+   * Creates a draft from one normalized external event. */
   public function createFromEvent(CalendarImportSource $source, NormalizedCalendarEvent $event): CalendarImportedItem {
     $storage = $this->entityTypeManager->getStorage('aculta_calendar_imported_item');
     /** @var \Drupal\aculta_calendar\Entity\CalendarImportedItem $item */
@@ -102,7 +106,8 @@ final class CalendarImportRepository {
     return $item;
   }
 
-  /** Applies normalized content and a local workflow state to a revision. */
+  /**
+   * Applies normalized content and a local workflow state to a revision. */
   public function applyEvent(CalendarImportedItem $item, NormalizedCalendarEvent $event, string $state): void {
     $item->set('external_uid', $event->uid);
     $item->set('title', $event->title !== '' ? $event->title : $event->uid);

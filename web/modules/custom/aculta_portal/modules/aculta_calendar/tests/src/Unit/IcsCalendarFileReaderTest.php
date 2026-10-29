@@ -15,6 +15,9 @@ use PHPUnit\Framework\TestCase;
 #[Group('aculta_calendar')]
 final class IcsCalendarFileReaderTest extends TestCase {
 
+  /**
+   * Verifies reads handwritten fixture.
+   */
   public function testReadsHandwrittenFixture(): void {
     $reader = new IcsCalendarFileReader();
     $events = $reader->read(__DIR__ . '/../../fixtures/importacao-basica.ics');
@@ -29,7 +32,10 @@ final class IcsCalendarFileReaderTest extends TestCase {
     self::assertSame('CONFIRMED', $events[0]->status);
   }
 
-  public function testRejectsFileLargerThanTwoMiBBeforeParsing(): void {
+  /**
+   * Verifies rejects file larger than two mi bbefore parsing.
+   */
+  public function testRejectsFileLargerThanTwoMegabytesBeforeParsing(): void {
     $path = tempnam(sys_get_temp_dir(), 'aculta-ics-size-');
     self::assertNotFalse($path);
     try {
@@ -43,6 +49,9 @@ final class IcsCalendarFileReaderTest extends TestCase {
     }
   }
 
+  /**
+   * Verifies rejects more than two thousand events.
+   */
   public function testRejectsMoreThanTwoThousandEvents(): void {
     $path = tempnam(sys_get_temp_dir(), 'aculta-ics-count-');
     self::assertNotFalse($path);
@@ -59,6 +68,9 @@ final class IcsCalendarFileReaderTest extends TestCase {
     }
   }
 
+  /**
+   * Verifies rejects url instead of fetching it.
+   */
   public function testRejectsUrlInsteadOfFetchingIt(): void {
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage('A importação aceita apenas um arquivo ICS local legível.');

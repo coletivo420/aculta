@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_calendar\Import;
 
-/** Uses the system resolver to look up A and AAAA records. */
+/**
+ * Uses the system resolver to look up A and AAAA records. */
 final class NativeCalendarHostResolver implements CalendarHostResolverInterface {
 
+  /**
+   * Resolves an approved calendar hostname to its IP addresses.
+   */
   public function resolve(string $hostname): array {
     $records = @dns_get_record($hostname, DNS_A | DNS_AAAA);
     if (!is_array($records)) {

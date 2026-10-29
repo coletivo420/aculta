@@ -16,22 +16,38 @@ use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
-/** Remote fetch feeds the same reviewable import pipeline without network I/O. */
+/**
+ * Remote fetch feeds the same reviewable import pipeline without network I/O. */
 #[Group('aculta_calendar')]
 #[RunTestsInSeparateProcesses]
 final class CalendarRemoteImportKernelTest extends KernelTestBase {
 
+  /**
+   * Modules enabled by this Kernel test.
+   *
+   * @var string[]
+   */
+
   protected static $modules = ['system', 'user', 'aculta_calendar'];
 
+  /**
+   * Configures the test environment and installs required schemas.
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('aculta_calendar_imported_item');
   }
 
+  /**
+   * Verifies remote import service is registered.
+   */
   public function testRemoteImportServiceIsRegistered(): void {
     self::assertInstanceOf(CalendarRemoteImportService::class, $this->container->get('aculta_calendar.remote_import'));
   }
 
+  /**
+   * Verifies inactive source is rejected before any network access.
+   */
   public function testInactiveSourceIsRejectedBeforeAnyNetworkAccess(): void {
     $source = CalendarImportSource::create([
       'id' => 'fonte_inativa',
@@ -47,6 +63,9 @@ final class CalendarRemoteImportKernelTest extends KernelTestBase {
     $this->container->get('aculta_calendar.remote_import')->import($source);
   }
 
+  /**
+   * Verifies remote import creates draft items through the existing processor.
+   */
   public function testRemoteImportCreatesDraftItemsThroughTheExistingProcessor(): void {
     $source = CalendarImportSource::create([
       'id' => 'fonte_remota_teste',
@@ -59,9 +78,14 @@ final class CalendarRemoteImportKernelTest extends KernelTestBase {
     $calendar = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nUID:remote@example.invalid\r\nDTSTART;TZID=America/Sao_Paulo:20300510T100000\r\nDTEND;TZID=America/Sao_Paulo:20300510T110000\r\nSUMMARY:Evento remoto sintético\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n";
     $handler = HandlerStack::create(new MockHandler([new Response(200, ['Content-Length' => (string) strlen($calendar)], $calendar)]));
     $resolver = new class implements CalendarHostResolverInterface {
+
+      /**
+       * Resolves an approved calendar hostname to its IP addresses.
+       */
       public function resolve(string $hostname): array {
         return ['8.8.8.8'];
       }
+
     };
     $fetcher = new CalendarIcsRemoteFetcher(new Client(['handler' => $handler]), $resolver);
     $service = new CalendarRemoteImportService(

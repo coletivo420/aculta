@@ -15,6 +15,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_calendar')]
 final class DeployerHostDirectoryTest extends UnitTestCase {
 
+  /**
+   * Verifies only unambiguous dns host mappings are listed.
+   */
   public function testOnlyUnambiguousDnsHostMappingsAreListed(): void {
     $data = [
       'domain_transition' => [
@@ -35,6 +38,9 @@ final class DeployerHostDirectoryTest extends UnitTestCase {
     ], DeployerHostDirectory::mappingsFromData($data));
   }
 
+  /**
+   * Verifies repository mapping contains ten domains across two environments.
+   */
   public function testRepositoryMappingContainsTenDomainsAcrossTwoEnvironments(): void {
     $extensions = $this->createMock(ModuleExtensionList::class);
     $extensions->method('getPath')->with('aculta_deployer')->willReturn(dirname(__DIR__, 3) . '/../aculta_deployer');

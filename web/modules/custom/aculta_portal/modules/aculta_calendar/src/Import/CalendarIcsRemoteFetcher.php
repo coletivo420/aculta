@@ -7,7 +7,9 @@ namespace Drupal\aculta_calendar\Import;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Psr7\Utils;
 
-/** Fetches a bounded remote ICS document from an explicitly allowlisted host. */
+/**
+ * Fetches a bounded remote ICS document from an explicitly allowlisted host.
+ */
 final class CalendarIcsRemoteFetcher {
 
   public const MAX_FILE_BYTES = IcsCalendarFileReader::MAX_FILE_BYTES;
@@ -22,8 +24,13 @@ final class CalendarIcsRemoteFetcher {
   /**
    * Downloads one ICS file, with DNS pinning and SSRF protection.
    *
+   * @param string $url
+   *   HTTPS URL to retrieve from an approved hostname.
    * @param string[] $allowedHosts
    *   Exact DNS names. Wildcards and IP literals are rejected.
+   *
+   * @return string
+   *   The bounded response body.
    */
   public function fetch(string $url, array $allowedHosts): string {
     if (!extension_loaded('curl')) {
@@ -87,24 +94,24 @@ final class CalendarIcsRemoteFetcher {
     );
     try {
       $response = $this->httpClient->request('GET', $url, [
-      'allow_redirects' => FALSE,
-      'connect_timeout' => self::CONNECT_TIMEOUT_SECONDS,
-      'timeout' => self::TIMEOUT_SECONDS,
-      'verify' => TRUE,
-      'http_errors' => FALSE,
-      'stream' => TRUE,
-      'decode_content' => FALSE,
-      'sink' => $sink,
-      'headers' => [
-        'Accept' => 'text/calendar, text/plain;q=0.9',
-        'Accept-Encoding' => 'identity',
-      ],
-      'curl' => [
-        CURLOPT_RESOLVE => [$host . ':443:' . $pinnedAddress],
-        CURLOPT_PROTOCOLS => CURLPROTO_HTTPS,
-        CURLOPT_PROXY => '',
-        CURLOPT_NOPROXY => '*',
-      ],
+        'allow_redirects' => FALSE,
+        'connect_timeout' => self::CONNECT_TIMEOUT_SECONDS,
+        'timeout' => self::TIMEOUT_SECONDS,
+        'verify' => TRUE,
+        'http_errors' => FALSE,
+        'stream' => TRUE,
+        'decode_content' => FALSE,
+        'sink' => $sink,
+        'headers' => [
+          'Accept' => 'text/calendar, text/plain;q=0.9',
+          'Accept-Encoding' => 'identity',
+        ],
+        'curl' => [
+          CURLOPT_RESOLVE => [$host . ':443:' . $pinnedAddress],
+          CURLOPT_PROTOCOLS => CURLPROTO_HTTPS,
+          CURLOPT_PROXY => '',
+          CURLOPT_NOPROXY => '*',
+        ],
       ]);
     }
     catch (\Throwable $exception) {
@@ -143,13 +150,15 @@ final class CalendarIcsRemoteFetcher {
     return $contents;
   }
 
-  /** Validates a plain DNS name without a trailing dot, wildcard, or IP form. */
+  /**
+   * Validates a plain DNS name without a trailing dot, wildcard, or IP form. */
   private function isDnsName(string $host): bool {
     return str_contains($host, '.')
       && preg_match('/^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)(?:\.(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?))*$/D', $host) === 1;
   }
 
-  /** Rejects non-global, multicast, and translation/transition addresses. */
+  /**
+   * Rejects non-global, multicast, and translation/transition addresses. */
   private function isPublicUnicastAddress(string $address): bool {
     if (filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_GLOBAL_RANGE) === FALSE) {
       return FALSE;
@@ -171,7 +180,8 @@ final class CalendarIcsRemoteFetcher {
       && !$this->addressInRange($address, '3fff::/20');
   }
 
-  /** Checks whether an IP address is inside a CIDR range. */
+  /**
+   * Checks whether an IP address is inside a CIDR range. */
   private function addressInRange(string $address, string $cidr): bool {
     [$network, $prefixText] = explode('/', $cidr, 2);
     $addressBytes = inet_pton($address);

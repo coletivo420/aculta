@@ -10,8 +10,8 @@ use Drupal\aculta_calendar\Item\CalendarQuery;
 /**
  * Agenda do período: ocorrências dos itens, agrupadas por dia (CA4).
  *
- * Saída agrupada por dia em ordem; cancelado entra marcado. A fonte decide o que
- * é público; a agenda não conhece entidade de nenhuma área.
+ * Saída agrupada por dia em ordem; cancelados ficam marcados. A fonte decide
+ * o conteúdo público; a agenda não conhece entidades de outras áreas.
  */
 final class CalendarAgenda {
 
@@ -24,9 +24,11 @@ final class CalendarAgenda {
   ) {}
 
   /**
-   * Ocorrências de [$de, $ate], agrupadas por dia (chave Y-m-d, no fuso do item).
+   * Ocorrências da janela, agrupadas por dia no fuso do item.
    *
-   * @return array<string, array<int, array{titulo: string, inicio: \DateTimeImmutable, fim: \DateTimeImmutable, local: string, cancelada: bool}>>
+   * @return array<string, array<int, array{titulo: string, inicio: \DateTimeImmutable,
+   *   fim: \DateTimeImmutable, local: string, cancelada: bool}>>
+   *   Occurrences grouped by local calendar date.
    */
   public function dias(CalendarQuery $query): array {
     $grupos = [];

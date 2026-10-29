@@ -37,31 +37,70 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 )]
 final class CalendarImportSource extends ConfigEntityBase {
 
-  /** URL HTTPS do arquivo iCalendar. */
+  /**
+   * HTTPS URL of the source iCalendar file.
+   *
+   * @var string
+   */
   protected string $sourceUrl = '';
 
-  /** @var string[] Hosts HTTPS permitidos para esta fonte, sem curingas. */
+  /**
+   * Exact HTTPS hostnames allowed for this source, without wildcards.
+   *
+   * @var string[]
+   */
   protected array $allowedHosts = [];
 
-  /** Timestamp UTC do último processamento, zero quando nunca processada. */
+  /**
+   * UTC timestamp of the last processing attempt, or zero if never processed.
+   *
+   * @var int
+   */
   protected int $lastSync = 0;
 
-  /** Resultado curto do último processamento. */
+  /**
+   * Short result code for the last processing attempt.
+   *
+   * @var string
+   */
   protected string $lastResult = 'never';
 
+  /**
+   * Returns the HTTPS URL configured for this source.
+   *
+   * @return string
+   *   The configured source URL.
+   */
   public function sourceUrl(): string {
     return $this->sourceUrl;
   }
 
-  /** @return string[] */
+  /**
+   * Returns the exact hostnames allowed for this source.
+   *
+   * @return string[]
+   *   The configured hostnames.
+   */
   public function allowedHosts(): array {
     return $this->allowedHosts;
   }
 
+  /**
+   * Returns the UTC timestamp of the last processing attempt.
+   *
+   * @return int
+   *   The timestamp, or zero if no attempt has occurred.
+   */
   public function lastSync(): int {
     return $this->lastSync;
   }
 
+  /**
+   * Returns the short result code from the last processing attempt.
+   *
+   * @return string
+   *   The result code.
+   */
   public function lastResult(): string {
     return $this->lastResult;
   }

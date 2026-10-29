@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_calendar\Import;
 
-/** Sanitizes external iCalendar event content before it is stored. */
+/**
+ * Sanitizes external iCalendar event content before it is stored. */
 final class CalendarEventNormalizer {
 
   public const DEFAULT_TIMEZONE = 'America/Sao_Paulo';
@@ -51,7 +52,8 @@ final class CalendarEventNormalizer {
     );
   }
 
-  /** Reinterprets a wall-clock value in a chosen timezone, without shifting it. */
+  /**
+   * Reinterprets a wall-clock value in a chosen timezone, without shifting it. */
   private function reinterpretWallTime(\DateTimeImmutable $date, \DateTimeZone $timezone): \DateTimeImmutable {
     $wallTime = $date->format('Y-m-d H:i:s');
     $normalized = \DateTimeImmutable::createFromFormat('!Y-m-d H:i:s', $wallTime, $timezone);
@@ -61,7 +63,8 @@ final class CalendarEventNormalizer {
     return $normalized;
   }
 
-  /** Checks against timezone identifiers rather than PHP's abbreviation aliases. */
+  /**
+   * Checks against timezone identifiers rather than PHP's abbreviation aliases. */
   private function isKnownTimezone(string $timezone): bool {
     if (in_array($timezone, ['UTC', 'GMT'], TRUE)) {
       return TRUE;

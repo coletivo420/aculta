@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_calendar\Import;
 
-/** Parsed event values before the content-safety normalization in I3. */
+/**
+ * Parsed event values before the content-safety normalization in I3. */
 final class ParsedCalendarEvent {
 
   public function __construct(

@@ -23,7 +23,9 @@ final class CalendarOccurrences {
   /**
    * Ocorrências do item em [$de, $ate].
    *
-   * @return array<int, array{inicio: \DateTimeImmutable, fim: \DateTimeImmutable, original: \DateTimeImmutable, cancelada: bool}>
+   * @return array<int, array{inicio: \DateTimeImmutable, fim: \DateTimeImmutable,
+   *   original: \DateTimeImmutable, cancelada: bool}>
+   *   Expanded or adjusted occurrences within the requested window.
    *
    * @throws \Drupal\aculta_calendar\Recurrence\RecurrenceException
    */
@@ -41,7 +43,8 @@ final class CalendarOccurrences {
         'fim' => $fim,
         'original' => $inicio,
         'cancelada' => $item->cancelado,
-      ]];
+      ],
+      ];
     }
 
     $duracao = $fim->getTimestamp() - $inicio->getTimestamp();
@@ -52,7 +55,9 @@ final class CalendarOccurrences {
   /**
    * Exceções do item, indexadas pelo timestamp do início original.
    *
-   * @return array<int, array{inicio: ?\DateTimeImmutable, fim: ?\DateTimeImmutable}>
+   * @return array<int, array{inicio: ?\DateTimeImmutable,
+   *   fim: ?\DateTimeImmutable}>
+   *   Overrides indexed by the original occurrence timestamp.
    */
   private function excecoes(CalendarItem $item): array {
     $mapa = [];

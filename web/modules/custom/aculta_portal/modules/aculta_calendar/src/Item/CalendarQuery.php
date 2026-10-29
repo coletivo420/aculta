@@ -19,7 +19,7 @@ final class CalendarQuery {
    * @param \DateTimeImmutable $agora
    *   Referência para o horizonte de série aberta.
    * @param array<string, int> $filtros
-   *   Filtros do provedor (ex.: tipo, tipo_local); chaves que o provedor define.
+   *   Filtros do provedor, por exemplo tipo_local; suas chaves variam.
    */
   public function __construct(
     public readonly \DateTimeImmutable $de,

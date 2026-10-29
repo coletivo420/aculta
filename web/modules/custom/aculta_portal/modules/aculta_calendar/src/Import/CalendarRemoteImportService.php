@@ -6,12 +6,14 @@ namespace Drupal\aculta_calendar\Import;
 
 use Drupal\aculta_calendar\Entity\CalendarImportSource;
 
-/** Coordinates secure remote fetch, local parsing, normalization, and import. */
+/**
+ * Coordinates secure remote fetch, local parsing, normalization, and import.
+ */
 final class CalendarRemoteImportService {
 
   public function __construct(
     private readonly CalendarIcsRemoteFetcher $fetcher,
-    private readonly CalendarFileReader $reader,
+    private readonly CalendarFileReaderInterface $reader,
     private readonly CalendarEventNormalizer $normalizer,
     private readonly CalendarImportProcessor $processor,
   ) {}

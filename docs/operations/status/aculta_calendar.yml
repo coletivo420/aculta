@@ -1,9 +1,11 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.1
+version: 0.1.0-dev.2
 state: Dev
 progress_note: >-
   CA0–CA6, ADM8, DH-A–DH-F e I1–I8 implementados; CA5 LMS presente desde
-  7c37023ef. Suíte Calendar 117/398 PASS (2 depreciações); PHP lint 60/60 PASS.
-  PHPCS Drupal em PHP: 261 erros/35 warnings em 44 arquivos. Revisão Firefox
-  autenticada do painel ADM8 pendente por falta de conta com permissão específica.
-next_phase: 'Resolver PHPCS, obter acesso de teste para revisar ADM8 visualmente e concluir revisão de código antes de RC. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_calendar/docs/ROADMAP.md).'
+  7c37023ef. Dev.2: Unit + Kernel 117/398 PASS (2 depreciações); PHP lint
+  60/60 PASS. PHPCS Drupal/DrupalPractice passa nos 59 PHP fora de
+  src/Controller/InteractiveController.php; o arquivo protegido da frente
+  DHTMLX mantém 2 erros e 2 avisos, sem alteração. Revisão Firefox autenticada
+  do painel ADM8 segue pendente.
+next_phase: 'Após a frente DHTMLX liberar `InteractiveController.php`, concluir PHPCS integral; então obter/reusar conta com `administer aculta calendar embedding` para a revisão visual ADM8 e revisão de código antes de RC. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_calendar/docs/ROADMAP.md).'

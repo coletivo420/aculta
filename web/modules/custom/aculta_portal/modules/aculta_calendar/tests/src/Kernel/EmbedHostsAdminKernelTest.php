@@ -19,8 +19,17 @@ use Symfony\Component\HttpFoundation\Request;
 #[RunTestsInSeparateProcesses]
 final class EmbedHostsAdminKernelTest extends KernelTestBase {
 
+  /**
+   * Modules enabled by this Kernel test.
+   *
+   * @var string[]
+   */
+
   protected static $modules = ['system', 'user', 'aculta_calendar'];
 
+  /**
+   * Verifies regular user cannot view embed hosts.
+   */
   public function testRegularUserCannotViewEmbedHosts(): void {
     $route = $this->container->get('router.route_provider')->getRouteByName('aculta_calendar.embed_hosts');
     $request = Request::create('/painel-administrativo/calendario/incorporacao');
@@ -36,6 +45,9 @@ final class EmbedHostsAdminKernelTest extends KernelTestBase {
     self::assertFalse($result->isAllowed());
   }
 
+  /**
+   * Verifies authorized user can view the deployer mapping read only.
+   */
   public function testAuthorizedUserCanViewTheDeployerMappingReadOnly(): void {
     Role::create([
       'id' => 'calendar_embed_admin',

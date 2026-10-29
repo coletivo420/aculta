@@ -7,7 +7,8 @@ namespace Drupal\aculta_calendar\Agenda;
 /**
  * Grade de um mês (CA4), independente de entidade e de renderização.
  *
- * Semanas começam na segunda (ISO 8601). Dias de outros meses entram como célula
+ * Semanas começam na segunda (ISO 8601). Dias de outros meses entram como
+ * célula
  * vazia, para a grade fechar em sete colunas, sem conteúdo fora do mês.
  */
 final class MonthGrid {
@@ -15,7 +16,20 @@ final class MonthGrid {
   /**
    * Nomes dos meses em português, indexados de 1 a 12.
    */
-  private const MESES = [1 => 'janeiro', 2 => 'fevereiro', 3 => 'março', 4 => 'abril', 5 => 'maio', 6 => 'junho', 7 => 'julho', 8 => 'agosto', 9 => 'setembro', 10 => 'outubro', 11 => 'novembro', 12 => 'dezembro'];
+  private const MESES = [
+    1 => 'janeiro',
+    2 => 'fevereiro',
+    3 => 'março',
+    4 => 'abril',
+    5 => 'maio',
+    6 => 'junho',
+    7 => 'julho',
+    8 => 'agosto',
+    9 => 'setembro',
+    10 => 'outubro',
+    11 => 'novembro',
+    12 => 'dezembro',
+  ];
 
   /**
    * Monta a grade do mês.

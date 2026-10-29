@@ -48,7 +48,7 @@ final class MonthGridTest extends TestCase {
   /**
    * Os meses vizinhos atravessam a virada do ano e o dia de hoje é marcado.
    */
-  public function testMesesVizinhosEHoje(): void {
+  public function testMesesVizinhosEhoje(): void {
     $grade = (new MonthGrid())->build(2027, 1, [], $this->hoje('2027-01-10'));
 
     $this->assertSame(['ano' => 2026, 'mes' => 12], $grade['anterior']);

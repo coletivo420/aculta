@@ -9,10 +9,14 @@ use Drupal\aculta_calendar\Import\ParsedCalendarEvent;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-/** Tests sanitization, timezone handling, and cancellation normalization. */
+/**
+ * Tests sanitization, timezone handling, and cancellation normalization. */
 #[Group('aculta_calendar')]
 final class CalendarEventNormalizerTest extends TestCase {
 
+  /**
+   * Verifies removes script markup decodes entities and truncates.
+   */
   public function testRemovesScriptMarkupDecodesEntitiesAndTruncates(): void {
     $event = $this->event(
       '<b>Festa &amp; feira</b><script>alert(1)</script>',
@@ -33,6 +37,9 @@ final class CalendarEventNormalizerTest extends TestCase {
     self::assertSame(255, mb_strlen($bounded->location, 'UTF-8'));
   }
 
+  /**
+   * Verifies timezone less wall time uses sao paulo and records assumption.
+   */
   public function testTimezoneLessWallTimeUsesSaoPauloAndRecordsAssumption(): void {
     $event = $this->event(timezone: NULL);
     $normalized = (new CalendarEventNormalizer())->normalize($event);
@@ -43,6 +50,9 @@ final class CalendarEventNormalizerTest extends TestCase {
     self::assertSame('2026-10-28 15:00:00 -03:00', $normalized->end->format('Y-m-d H:i:s P'));
   }
 
+  /**
+   * Verifies known timezone is preserved and not marked assumed.
+   */
   public function testKnownTimezoneIsPreservedAndNotMarkedAssumed(): void {
     $event = $this->event(timezone: 'Europe/Lisbon');
     $normalized = (new CalendarEventNormalizer())->normalize($event);
@@ -52,6 +62,9 @@ final class CalendarEventNormalizerTest extends TestCase {
     self::assertSame('2026-10-28 14:00:00', $normalized->start->format('Y-m-d H:i:s'));
   }
 
+  /**
+   * Verifies cancelled event maps to cancelled import state without deletion.
+   */
   public function testCancelledEventMapsToCancelledImportStateWithoutDeletion(): void {
     $normalized = (new CalendarEventNormalizer())->normalize($this->event(status: 'CANCELLED'));
 
@@ -60,6 +73,9 @@ final class CalendarEventNormalizerTest extends TestCase {
     self::assertSame('uid@example.invalid', $normalized->uid);
   }
 
+  /**
+   * Verifies rejects unknown timezone and unsupported status.
+   */
   public function testRejectsUnknownTimezoneAndUnsupportedStatus(): void {
     $normalizer = new CalendarEventNormalizer();
     try {
@@ -75,6 +91,9 @@ final class CalendarEventNormalizerTest extends TestCase {
     $normalizer->normalize($this->event(status: 'MAYBE'));
   }
 
+  /**
+   * Describes the event value.
+   */
   private function event(
     string $title = 'Evento de teste',
     string $description = 'Descrição de teste',

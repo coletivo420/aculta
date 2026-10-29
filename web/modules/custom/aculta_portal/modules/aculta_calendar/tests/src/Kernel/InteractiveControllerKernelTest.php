@@ -24,7 +24,7 @@ final class InteractiveControllerKernelTest extends KernelTestBase {
   /**
    * A página tem o container e a library; sem rota de agenda, não inventa link.
    */
-  public function testPaginaTemContainerELibrary(): void {
+  public function testPaginaTemContainerElibrary(): void {
     $build = InteractiveController::create($this->container)->page();
 
     $this->assertArrayHasKey('componente', $build);

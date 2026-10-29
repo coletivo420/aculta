@@ -10,15 +10,18 @@ namespace Drupal\aculta_calendar\Import;
  * This parser intentionally has no network support and no third-party library.
  * It is not an implementation of every iCalendar component or recurrence rule.
  */
-final class IcsCalendarFileReader implements CalendarFileReader {
+final class IcsCalendarFileReader implements CalendarFileReaderInterface {
 
-  /** Maximum accepted file size: 2 MiB. */
+  /**
+   * Maximum accepted file size: 2 MiB. */
   public const MAX_FILE_BYTES = 2 * 1024 * 1024;
 
-  /** Maximum accepted number of VEVENT components. */
+  /**
+   * Maximum accepted number of VEVENT components. */
   public const MAX_EVENTS = 2000;
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function read(string $path): array {
     if (preg_match('/^[a-z][a-z0-9+.-]*:\/\//i', $path) === 1 || !is_file($path) || !is_readable($path)) {
       throw new \InvalidArgumentException('A importação aceita apenas um arquivo ICS local legível.');
@@ -93,7 +96,8 @@ final class IcsCalendarFileReader implements CalendarFileReader {
     return $events;
   }
 
-  /** Unfolds RFC 5545 continuation lines. */
+  /**
+   * Unfolds RFC 5545 continuation lines. */
   private function unfoldLines(string $contents): array {
     $physicalLines = preg_split('/\r\n|\n|\r/', $contents) ?: [];
     $lines = [];
@@ -115,7 +119,8 @@ final class IcsCalendarFileReader implements CalendarFileReader {
     return $lines;
   }
 
-  /** Parses a content line into property name, parameters, and value. */
+  /**
+   * Parses a content line into property name, parameters, and value. */
   private function parseProperty(string $line): ?array {
     $separator = strpos($line, ':');
     if ($separator === FALSE) {
@@ -138,7 +143,8 @@ final class IcsCalendarFileReader implements CalendarFileReader {
     return [$name, $parameters, $value];
   }
 
-  /** Creates the normalized event DTO from its supported properties. */
+  /**
+   * Creates the normalized event DTO from its supported properties. */
   private function createEvent(array $properties): ParsedCalendarEvent {
     $uid = $properties['UID']['value'] ?? '';
     if ($uid === '') {
@@ -175,7 +181,8 @@ final class IcsCalendarFileReader implements CalendarFileReader {
     );
   }
 
-  /** Parses DTSTART/DTEND and returns whether it is an all-day date. */
+  /**
+   * Parses DTSTART/DTEND and returns whether it is an all-day date. */
   private function parseDate(array $property): array {
     $value = $property['value'];
     $timezoneId = $property['parameters']['TZID'] ?? NULL;
@@ -212,7 +219,8 @@ final class IcsCalendarFileReader implements CalendarFileReader {
     return [$date, $allDay, $timezoneId];
   }
 
-  /** Unescapes RFC 5545 TEXT values; HTML safety is applied in I3. */
+  /**
+   * Unescapes RFC 5545 TEXT values; HTML safety is applied in I3. */
   private function unescapeText(string $value): string {
     return preg_replace_callback('/\\\\([nN,;\\\\])/', static function (array $match): string {
       return match (strtolower($match[1])) {

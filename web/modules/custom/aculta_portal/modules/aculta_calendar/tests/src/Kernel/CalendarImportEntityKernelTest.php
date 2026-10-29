@@ -18,14 +18,26 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 final class CalendarImportEntityKernelTest extends KernelTestBase {
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
+  /**
+   * Modules enabled by this Kernel test.
+   *
+   * @var string[]
+   */
   protected static $modules = ['system', 'user', 'aculta_calendar'];
 
+  /**
+   * Configures the test environment and installs required schemas.
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('aculta_calendar_imported_item');
   }
 
+  /**
+   * Verifies source and imported item are created and uid is idempotent.
+   */
   public function testSourceAndImportedItemAreCreatedAndUidIsIdempotent(): void {
     $source = CalendarImportSource::create([
       'id' => 'fonte_teste',
@@ -49,6 +61,9 @@ final class CalendarImportEntityKernelTest extends KernelTestBase {
     $this->assertCount(1, $items);
   }
 
+  /**
+   * Verifies local reader is registered as service.
+   */
   public function testLocalReaderIsRegisteredAsService(): void {
     $this->assertInstanceOf(
       IcsCalendarFileReader::class,

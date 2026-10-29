@@ -7,7 +7,8 @@ namespace Drupal\aculta_calendar\Item;
 /**
  * Item de calendário, independente do módulo dono do dado (ADR-031).
  *
- * Com `rrule`, o item é uma série; sem ela, é uma ocorrência única. O calendário
+ * Com `rrule`, o item é uma série; sem ela, é uma ocorrência única.
+ * O calendário
  * expande a série na leitura, usando o motor de recorrência.
  */
 final class CalendarItem {

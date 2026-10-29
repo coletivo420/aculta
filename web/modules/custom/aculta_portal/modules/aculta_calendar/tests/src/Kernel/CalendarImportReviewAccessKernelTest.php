@@ -11,13 +11,23 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
 
-/** Checks that the import review queue is restricted to authorized staff. */
+/**
+ * Checks that the import review queue is restricted to authorized staff. */
 #[Group('aculta_calendar')]
 #[RunTestsInSeparateProcesses]
 final class CalendarImportReviewAccessKernelTest extends KernelTestBase {
 
+  /**
+   * Modules enabled by this Kernel test.
+   *
+   * @var string[]
+   */
+
   protected static $modules = ['system', 'user', 'aculta_calendar'];
 
+  /**
+   * Verifies regular user cannot read review queue.
+   */
   public function testRegularUserCannotReadReviewQueue(): void {
     $route = $this->container->get('router.route_provider')->getRouteByName('aculta_calendar.import_review');
     $request = Request::create('/painel-administrativo/calendario/importacao');

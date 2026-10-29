@@ -16,10 +16,12 @@ use Drupal\aculta_calendar\Import\CalendarRemoteImportService;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-/** Registers the import repository without editing parallel calendar services. */
+/**
+ * Registers the import repository without editing parallel calendar services. */
 final class AcultaCalendarServiceProvider extends ServiceProviderBase {
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function alter(ContainerBuilder $container): void {
     $container->register('aculta_calendar.import_repository', CalendarImportRepository::class)
       ->addArgument(new Reference('entity_type.manager'));

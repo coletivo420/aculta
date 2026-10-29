@@ -20,11 +20,15 @@ class RecurrenceRuleParserTest extends UnitTestCase {
    * Regras válidas, com a forma canônica esperada.
    *
    * @return array<string, array{string, string}>
+   *   Valid rule strings with their canonical values.
    */
   public static function validas(): array {
     return [
       'diária com intervalo' => ['FREQ=DAILY;INTERVAL=3;COUNT=5', 'FREQ=DAILY;INTERVAL=3;COUNT=5'],
-      'semanal com dias fora de ordem' => ['FREQ=WEEKLY;BYDAY=WE,MO;COUNT=3', 'FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,WE;COUNT=3'],
+      'semanal com dias fora de ordem' => [
+        'FREQ=WEEKLY;BYDAY=WE,MO;COUNT=3',
+        'FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,WE;COUNT=3',
+      ],
       'mensal por dia do mês' => ['FREQ=MONTHLY;BYMONTHDAY=31;COUNT=3', 'FREQ=MONTHLY;INTERVAL=1;BYMONTHDAY=31;COUNT=3'],
       'minúsculas são aceitas' => ['freq=weekly;byday=mo;count=2', 'FREQ=WEEKLY;INTERVAL=1;BYDAY=MO;COUNT=2'],
       'série aberta, sem fim' => ['FREQ=DAILY', 'FREQ=DAILY;INTERVAL=1'],
@@ -37,6 +41,7 @@ class RecurrenceRuleParserTest extends UnitTestCase {
    * Regras que devem ser recusadas, com o motivo esperado na mensagem.
    *
    * @return array<string, array{string, string}>
+   *   Invalid rule strings with the expected exception message.
    */
   public static function invalidas(): array {
     return [
@@ -65,7 +70,7 @@ class RecurrenceRuleParserTest extends UnitTestCase {
    * Regra válida é aceita e normalizada.
    */
   #[DataProvider('validas')]
-  public function testAceitaERetornaFormaCanonica(string $regra, string $esperada): void {
+  public function testAceitaEretornaFormaCanonica(string $regra, string $esperada): void {
     $this->assertSame($esperada, (new RecurrenceRuleParser())->normalize($regra));
   }
 

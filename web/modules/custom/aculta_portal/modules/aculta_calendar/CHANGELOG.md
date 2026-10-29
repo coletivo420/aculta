@@ -1,5 +1,11 @@
 # Changelog — aculta_calendar
 
+## 2026-10-29 — CA PHPCS cleanup (0.1.0-dev.2)
+
+- Limpas as violações Drupal/DrupalPractice dos PHP do Calendar, exceto `InteractiveController.php`, que permanece sob edição da frente DHTMLX.
+- Suíte completa: 117 testes / 398 assertions PASS; lint: 60/60 arquivos PASS. PHPCS do arquivo protegido ainda reporta 2 erros e 2 avisos.
+- Renomeado o contrato interno `CalendarFileReader` para `CalendarFileReaderInterface`, conforme a convenção de interfaces Drupal.
+
 ## 2026-10-28 — calendário compartilhado com o purpose main (D6)
 
 - Rotas públicas do calendário também são servidas no purpose `main`, com acesso limitado aos purposes `main` e `eventos`.

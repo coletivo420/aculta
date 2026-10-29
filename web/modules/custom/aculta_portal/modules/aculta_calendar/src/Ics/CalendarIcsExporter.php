@@ -36,7 +36,8 @@ final class CalendarIcsExporter {
       }
       $series[] = $this->serie($item, $query->agora);
     }
-    // O domínio do UID vem do host da requisição: é estável por ambiente e não fica fixo no código.
+    // O domínio do UID vem do host da requisição: é estável por ambiente e não
+    // fica fixo no código.
     return (new IcsEventBuilder($dominioUid))->buildMany($series);
   }
 
@@ -51,6 +52,7 @@ final class CalendarIcsExporter {
    * Série pronta para o IcsEventBuilder.
    *
    * @return array<string, mixed>
+   *   Dados de um evento no formato de entrada do gerador iCalendar.
    */
   private function serie(CalendarItem $item, \DateTimeImmutable $agora): array {
     $fuso = new \DateTimeZone($item->fuso);

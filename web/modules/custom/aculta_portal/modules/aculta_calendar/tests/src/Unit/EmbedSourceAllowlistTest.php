@@ -26,6 +26,7 @@ class EmbedSourceAllowlistTest extends UnitTestCase {
    * Casos aceitos: caminho interno e https do host da lista.
    *
    * @return array<string, array{string}>
+   *   URIs accepted by the allowlist.
    */
   public static function aceitos(): array {
     return [
@@ -41,6 +42,7 @@ class EmbedSourceAllowlistTest extends UnitTestCase {
    * Casos recusados, com o defeito que cada um representa.
    *
    * @return array<string, array{string}>
+   *   URIs rejected by the allowlist.
    */
   public static function recusados(): array {
     return [
@@ -64,7 +66,7 @@ class EmbedSourceAllowlistTest extends UnitTestCase {
    * Casos aceitos passam.
    */
   #[DataProvider('aceitos')]
-  public function testAceitaCaminhoInternoEHostDaLista(string $uri): void {
+  public function testAceitaCaminhoInternoEhostDaLista(string $uri): void {
     $this->assertTrue($this->allowlist()->isAllowed($uri));
   }
 

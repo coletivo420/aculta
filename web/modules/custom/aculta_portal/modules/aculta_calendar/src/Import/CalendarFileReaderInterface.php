@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_calendar\Import;
 
-/** Reads local iCalendar files into normalized event records. */
-interface CalendarFileReader {
+/**
+ * Reads local iCalendar files into normalized event records.
+ */
+interface CalendarFileReaderInterface {
 
   /**
    * Reads events from a local .ics file.

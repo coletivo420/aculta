@@ -47,8 +47,10 @@ class RecurrenceExpanderTest extends UnitTestCase {
    * Lista só as datas de início, no formato dia/mês/ano hora.
    *
    * @param array<int, array{inicio: \DateTimeImmutable}> $ocorrencias
+   *   Expanded occurrences whose start dates are formatted.
    *
    * @return string[]
+   *   Start dates formatted as day/month/year and time.
    */
   private function inicios(array $ocorrencias): array {
     return array_map(static fn (array $o): string => $o['inicio']->format('d/m/Y H:i'), $ocorrencias);
@@ -71,7 +73,7 @@ class RecurrenceExpanderTest extends UnitTestCase {
   /**
    * Diária com intervalo de 3 dias e COUNT=5.
    */
-  public function testDiariaComIntervaloEContagem(): void {
+  public function testDiariaComIntervaloEcontagem(): void {
     [$de, $ate] = $this->janela();
     $ocorrencias = $this->expansor->expandir(
       'FREQ=DAILY;INTERVAL=3;COUNT=5',
@@ -88,7 +90,7 @@ class RecurrenceExpanderTest extends UnitTestCase {
   }
 
   /**
-   * Semanal em MO e WE, a partir de quarta: a primeira é a própria data de início.
+   * Semanal em MO e WE, começando na própria quarta-feira.
    */
   public function testSemanalEmDiasDaSemana(): void {
     [$de, $ate] = $this->janela();
@@ -126,7 +128,7 @@ class RecurrenceExpanderTest extends UnitTestCase {
   }
 
   /**
-   * COUNT conta a ocorrência cancelada (decisão 1): ela aparece marcada e não some da contagem.
+   * COUNT inclui a ocorrência cancelada, que continua marcada na saída.
    */
   public function testCancelamentoNaoLiberaContagem(): void {
     [$de, $ate] = $this->janela();
@@ -146,7 +148,7 @@ class RecurrenceExpanderTest extends UnitTestCase {
   }
 
   /**
-   * Reagendamento é chaveado pelo início original (M1): só aquela ocorrência muda.
+   * Reagendamento usa o início original como chave e altera só essa ocorrência.
    */
   public function testReagendamentoMudaSoAquelaOcorrencia(): void {
     [$de, $ate] = $this->janela();
@@ -172,7 +174,7 @@ class RecurrenceExpanderTest extends UnitTestCase {
   /**
    * Série aberta é cortada pelo limite de horizonte, não pela janela pedida.
    */
-  public function testSerieAbertaRespeitaOLimiteDeHorizonte(): void {
+  public function testSerieAbertaRespeitaOlimiteDeHorizonte(): void {
     $ocorrencias = $this->expansor->expandir(
       'FREQ=DAILY',
       $this->data('2026-10-28 19:00'),
@@ -190,7 +192,7 @@ class RecurrenceExpanderTest extends UnitTestCase {
   /**
    * UNTIL é o fim do dia local, então a última ocorrência do dia entra.
    */
-  public function testUntilIncluiOUltimoDia(): void {
+  public function testUntilIncluiOultimoDia(): void {
     [$de, $ate] = $this->janela();
     $ocorrencias = $this->expansor->expandir(
       'FREQ=DAILY;UNTIL=20261030',
@@ -225,7 +227,7 @@ class RecurrenceExpanderTest extends UnitTestCase {
   /**
    * Janela que cabe exatamente no teto é aceita.
    */
-  public function testJanelaNoLimiteEAceita(): void {
+  public function testJanelaNoLimiteEaceita(): void {
     $ocorrencias = $this->expansor->expandir(
       'FREQ=DAILY',
       $this->data('2026-10-28 19:00'),

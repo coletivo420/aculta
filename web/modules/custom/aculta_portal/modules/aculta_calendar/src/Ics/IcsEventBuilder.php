@@ -44,7 +44,7 @@ final class IcsEventBuilder {
    *   Chave estável da entidade, por exemplo "node:123". Compõe o UID junto
    *   com a data de início, então o mesmo evento na mesma data mantém o UID.
    * @param string $summary
-   *   Título. CR e LF viram espaço; demais controles são removidos antes do escape.
+   *   Título. CR e LF viram espaço; controles são removidos antes do escape.
    * @param string $location
    *   Local. Recebe o mesmo tratamento do título. Vazio omite a propriedade.
    * @param \DateTimeImmutable $start
@@ -73,16 +73,33 @@ final class IcsEventBuilder {
   }
 
   /**
-   * Calendário com uma série: evento mestre com RRULE, EXDATE e reagendamentos (RECURRENCE-ID).
+   * Calendário com uma série: evento mestre, exceções e reagendamentos.
    *
-   * Decisão M5 (RECORRENCIA.md): a série sai como regra, sem expandir ocorrências no arquivo.
+   * Decisão M5: a série sai como regra, sem expandir ocorrências no arquivo.
    *
+   * @param string $key
+   *   Chave estável da entidade, usada para compor o UID.
+   * @param string $summary
+   *   Título do evento, escapado conforme RFC 5545.
+   * @param string $location
+   *   Local do evento, escapado conforme RFC 5545.
+   * @param \DateTimeImmutable $start
+   *   Início da série.
+   * @param \DateTimeImmutable|null $end
+   *   Fim da primeira ocorrência, se houver.
+   * @param bool $allDay
+   *   Se o evento ocupa o dia inteiro.
+   * @param \DateTimeImmutable $stamp
+   *   Instante UTC usado em DTSTAMP.
    * @param string|null $rrule
-   *   RRULE normalizada (FREQ=...;...). UNTIL em AAAAMMDD vira fim do dia de Brasília, em UTC.
+   *   RRULE normalizada. UNTIL vira fim do dia de Brasília em UTC.
    * @param \DateTimeImmutable[] $excecoes
    *   Inícios originais cancelados (EXDATE).
-   * @param array<int, array{original: \DateTimeImmutable, inicio: \DateTimeImmutable, fim: ?\DateTimeImmutable}> $reagendadas
+   * @param array<int, array<string, \DateTimeImmutable|null>> $reagendadas
    *   Ocorrências com novo horário (VEVENT com RECURRENCE-ID).
+   *
+   * @return string
+   *   Calendário iCalendar completo para a série.
    */
   public function buildSerie(
     string $key,
@@ -123,9 +140,13 @@ final class IcsEventBuilder {
   }
 
   /**
-   * Calendário com várias séries (exportação de período). Cada item: chaves do buildSerie().
+   * Calendário com várias séries para uma exportação de período.
    *
-   * @param array<int, array{key: string, summary: string, location: string, start: \DateTimeImmutable, end: ?\DateTimeImmutable, allDay: bool, stamp: \DateTimeImmutable, rrule?: ?string, excecoes?: array, reagendadas?: array}> $series
+   * @param array<int, array<string, mixed>> $series
+   *   Dados de cada série no formato aceito por buildSerie().
+   *
+   * @return string
+   *   Calendário iCalendar completo.
    */
   public function buildMany(array $series): string {
     $lines = [
@@ -161,9 +182,31 @@ final class IcsEventBuilder {
   }
 
   /**
-   * Linhas de um VEVENT. Com $recorrencia, é a ocorrência reagendada de uma série.
+   * Linhas de um VEVENT, incluindo RECURRENCE-ID se for reagendamento.
+   *
+   * @param string $uid
+   *   UID estável do evento mestre.
+   * @param string $summary
+   *   Título do evento.
+   * @param string $location
+   *   Local do evento.
+   * @param \DateTimeImmutable $start
+   *   Início da ocorrência.
+   * @param \DateTimeImmutable|null $end
+   *   Fim da ocorrência, se houver.
+   * @param bool $allDay
+   *   Se a ocorrência ocupa o dia inteiro.
+   * @param \DateTimeImmutable $stamp
+   *   Instante UTC usado em DTSTAMP.
+   * @param \DateTimeImmutable|null $recorrencia
+   *   Início original de ocorrência reagendada.
+   * @param string|null $rrule
+   *   Regra de recorrência do evento mestre, se houver.
+   * @param array<int, \DateTimeImmutable> $excecoes
+   *   Inícios originais cancelados.
    *
    * @return string[]
+   *   Linhas lógicas de um VEVENT.
    */
   private function vevent(string $uid, string $summary, string $location, \DateTimeImmutable $start, ?\DateTimeImmutable $end, bool $allDay, \DateTimeImmutable $stamp, ?\DateTimeImmutable $recorrencia, ?string $rrule, array $excecoes): array {
     $lines = ['BEGIN:VEVENT', 'UID:' . $uid, 'DTSTAMP:' . $this->utc($stamp)];
@@ -204,7 +247,7 @@ final class IcsEventBuilder {
   }
 
   /**
-   * RRULE pronta para o arquivo. UNTIL em data vira fim do dia local, em UTC (ou data, em dia inteiro).
+   * RRULE pronta para o arquivo, com UNTIL convertido para UTC.
    */
   private function rruleRfc(string $rrule, bool $allDay): string {
     $partes = [];
@@ -233,7 +276,7 @@ final class IcsEventBuilder {
   }
 
   /**
-   * Data e hora em UTC, no formato de DATE-TIME com sufixo Z (usado em DTSTAMP).
+   * Data e hora em UTC no formato DATE-TIME com sufixo Z, usado em DTSTAMP.
    */
   private function utc(\DateTimeImmutable $moment): string {
     return $moment->setTimezone(new \DateTimeZone('UTC'))->format('Ymd\THis\Z');

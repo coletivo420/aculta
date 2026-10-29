@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_calendar\Import;
 
-/** Sanitized event data ready for persistence as an imported item. */
+/**
+ * Sanitized event data ready for persistence as an imported item. */
 final class NormalizedCalendarEvent {
 
   public function __construct(
@@ -20,7 +21,8 @@ final class NormalizedCalendarEvent {
     public readonly string $status,
   ) {}
 
-  /** Maps iCalendar status to the local import lifecycle. */
+  /**
+   * Maps iCalendar status to the local import lifecycle. */
   public function importState(): string {
     return $this->status === 'CANCELLED' ? 'cancelado' : 'rascunho';
   }

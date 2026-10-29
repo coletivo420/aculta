@@ -24,6 +24,11 @@ final class CalendarAgendaKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
+  /**
+   * Modules enabled by this Kernel test.
+   *
+   * @var string[]
+   */
   protected static $modules = ['system'];
 
   /**

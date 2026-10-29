@@ -19,6 +19,11 @@ final class EmbedControllerKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
+  /**
+   * Modules enabled by this Kernel test.
+   *
+   * @var string[]
+   */
   protected static $modules = ['system', 'user', 'key', 'aculta_calendar'];
 
   /**

@@ -12,7 +12,8 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\aculta_calendar\Import\CalendarImportRepository;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Editorial review queue for imported calendar items. */
+/**
+ * Editorial review queue for imported calendar items. */
 final class CalendarImportReviewForm extends FormBase {
 
   public function __construct(
@@ -21,6 +22,9 @@ final class CalendarImportReviewForm extends FormBase {
     private readonly CalendarImportRepository $repository,
   ) {}
 
+  /**
+   * Creates the form instance from the Drupal service container.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
@@ -29,14 +33,27 @@ final class CalendarImportReviewForm extends FormBase {
     );
   }
 
+  /**
+   * Returns the form ID used by Drupal Form API.
+   */
   public function getFormId(): string {
     return 'aculta_calendar_import_review';
   }
 
+  /**
+   * Describes the buildForm value.
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['items'] = [
       '#type' => 'table',
-      '#header' => [$this->t('Título'), $this->t('UID externo'), $this->t('Início'), $this->t('Estado'), $this->t('Presença na fonte'), $this->t('Ações')],
+      '#header' => [
+        $this->t('Título'),
+        $this->t('UID externo'),
+        $this->t('Início'),
+        $this->t('Estado'),
+        $this->t('Presença na fonte'),
+        $this->t('Ações'),
+      ],
       '#empty' => $this->t('Não há itens importados para revisar.'),
     ];
     $storage = $this->entityTypeManager->getStorage('aculta_calendar_imported_item');
@@ -75,8 +92,14 @@ final class CalendarImportReviewForm extends FormBase {
     return $form;
   }
 
+  /**
+   * Describes the submitForm value.
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {}
 
+  /**
+   * Describes the publishItem value.
+   */
   public function publishItem(array &$form, FormStateInterface $form_state): void {
     $item = $this->latestItem((string) $form_state->getTriggeringElement()['#item_id']);
     $item->setImportState('publicado');
@@ -88,6 +111,9 @@ final class CalendarImportReviewForm extends FormBase {
     $form_state->setRedirect('aculta_calendar.import_review');
   }
 
+  /**
+   * Describes the keepDraft value.
+   */
   public function keepDraft(array &$form, FormStateInterface $form_state): void {
     $item = $this->latestItem((string) $form_state->getTriggeringElement()['#item_id']);
     if ($item->get('import_state')->value !== 'rascunho') {
@@ -100,6 +126,9 @@ final class CalendarImportReviewForm extends FormBase {
     $form_state->setRedirect('aculta_calendar.import_review');
   }
 
+  /**
+   * Describes the latestItem value.
+   */
   private function latestItem(string $id): CalendarImportedItem {
     $entity = $this->entityTypeManager->getStorage('aculta_calendar_imported_item')->load($id);
     if (!$entity instanceof CalendarImportedItem) {
