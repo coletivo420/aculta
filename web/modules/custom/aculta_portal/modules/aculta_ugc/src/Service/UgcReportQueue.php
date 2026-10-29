@@ -71,22 +71,18 @@ final class UgcReportQueue {
       ->sort('created', 'DESC');
 
     $reportIds = $query->execute();
-    if (empty($reportIds)) {
-      return [
-        'items' => [],
-        'total_items' => 0,
-        'total_pages' => 0,
-        'page' => $page,
-        'limit' => $limit,
-      ];
-    }
-
     /** @var \Drupal\aculta_ugc\Entity\UgcReport[] $reports */
-    $reports = $storage->loadMultiple($reportIds);
+    $reports = !empty($reportIds) ? $storage->loadMultiple($reportIds) : [];
     $grupos = [];
     $validTargets = [];
+    $legacyFlagIds = [];
 
     foreach ($reports as $report) {
+      $legacyId = (int) $report->get('legacy_flag_id')->value;
+      if ($legacyId > 0) {
+        $legacyFlagIds[$legacyId] = $legacyId;
+      }
+
       $targetType = (string) $report->get('target_type')->value;
       $targetId = (int) $report->get('target_id')->value;
       $reportPurpose = (string) $report->get('purpose')->value;
@@ -123,6 +119,62 @@ final class UgcReportQueue {
       $motivo = (string) $report->get('motivo')->value;
       if (!in_array($motivo, $grupos[$key]['motivos'], TRUE)) {
         $grupos[$key]['motivos'][] = $motivo;
+      }
+    }
+
+    // Reconciliação transparente com flags legadas do Fórum pendentes de migração (ARQ-06F).
+    if (in_array('forum', $allowedPurposes, TRUE) && $status === 'pendente' && $this->entityTypeManager->hasDefinition('flagging')) {
+      $flagStorage = $this->entityTypeManager->getStorage('flagging');
+      $flagIds = $flagStorage->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('flag_id', ReportQueue::FLAGS, 'IN')
+        ->execute();
+
+      if (!empty($flagIds)) {
+        /** @var \Drupal\flag\FlaggingInterface[] $flaggings */
+        $flaggings = $flagStorage->loadMultiple($flagIds);
+        foreach ($flaggings as $flagging) {
+          $fid = (int) $flagging->id();
+          if (isset($legacyFlagIds[$fid])) {
+            // Já contabilizado através de denúncia UGC sincronizada.
+            continue;
+          }
+
+          $targetType = $flagging->getFlaggableType();
+          $targetId = (int) $flagging->getFlaggableId();
+          $key = $targetType . ':' . $targetId;
+
+          if (!isset($validTargets[$key])) {
+            if (!$this->entityTypeManager->hasDefinition($targetType)) {
+              $validTargets[$key] = FALSE;
+            }
+            else {
+              $target = $this->entityTypeManager->getStorage($targetType)->load($targetId);
+              $validTargets[$key] = ($target !== NULL);
+            }
+          }
+
+          if (!$validTargets[$key]) {
+            continue;
+          }
+
+          if (!isset($grupos[$key])) {
+            $grupos[$key] = [
+              'target_type' => $targetType,
+              'target_id' => $targetId,
+              'purpose' => 'forum',
+              'total' => 0,
+              'ultima' => (int) $flagging->getCreatedTime(),
+              'motivos' => [],
+            ];
+          }
+
+          $grupos[$key]['total']++;
+          $grupos[$key]['ultima'] = max($grupos[$key]['ultima'], (int) $flagging->getCreatedTime());
+          if (!in_array('sinalizacao_legada_forum', $grupos[$key]['motivos'], TRUE)) {
+            $grupos[$key]['motivos'][] = 'sinalizacao_legada_forum';
+          }
+        }
       }
     }
 
