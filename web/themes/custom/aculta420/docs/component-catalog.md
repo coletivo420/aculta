@@ -28,10 +28,10 @@ não requer uma aplicação Storybook separada.
 - Ao criar um SDC, atualizar o índice de componentes e seu story no mesmo
   commit.
 
-## Inventário estático atual — 2026-10-28
+## Inventário estático atual — 2026-10-29
 
-Na árvore deste commit há **52 arquivos `.component.yml`, 52 Twig, 43 CSS e 91
-stories** em `components/`. A contagem inclui componentes experimentais e
+Na árvore em `f2708e60f` há **54 arquivos `.component.yml`, 54 Twig, 45 CSS,
+3 JS e 97 stories** em `components/`. A contagem inclui componentes experimentais e
 candidatos abaixo; não demonstra validação do schema no Runtime, renderização na
 UI Patterns Library nem aprovação visual.
 
