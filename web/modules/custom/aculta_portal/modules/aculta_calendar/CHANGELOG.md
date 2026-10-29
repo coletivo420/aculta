@@ -1,5 +1,10 @@
 # Changelog — aculta_calendar
 
+## 2026-10-28 — calendário compartilhado com o purpose main (D6)
+
+- Rotas públicas do calendário também são servidas no purpose `main`, com acesso limitado aos purposes `main` e `eventos`.
+- Páginas HTML usam canonical do purpose `eventos`, resolvido pelo ACULTA Deployer no ambiente ativo.
+
 ## 2026-10-28 — importação remota com proteção SSRF (I5)
 
 - D-21 confirmada: fetch HTTPS apenas para hosts exatos da allowlist da fonte, DNS público fixado no cURL, TLS validado, sem redirecionamentos e com timeout.

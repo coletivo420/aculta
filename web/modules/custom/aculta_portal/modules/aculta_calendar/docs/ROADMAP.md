@@ -1,7 +1,7 @@
 # Roadmap — ACULTA Calendário (`aculta_calendar`)
 
 Roadmap único do submódulo. Plano: `PLANO-IMPLANTACAO.md`. Arquitetura: ADR-031 (D-20).
-Status: a fazer, salvo onde indicado.
+Status: D6 implementada no Runtime de teste; as rotas públicas do calendário também respondem no purpose `main`.
 
 ## CA0 — Fundação independente
 - [x] Ajustar `aculta_calendar.info.yml` (descrição sem dependência de purpose de eventos).
@@ -19,6 +19,13 @@ Status: a fazer, salvo onde indicado.
 ## CA3 — Embed (já existe em código)
 - [x] Allowlist de origem do `source_uri` (E5).
 - [x] Rota de incorporação ligada a um provedor, quando o purpose correspondente estiver ativo.
+
+## D6 — calendário também no purpose `main`
+- [x] Agenda, mês, dia, `.ics`, embed e visão interativa aceitam os purposes `eventos` e `main`; rotas administrativas não são compartilhadas.
+- [x] Páginas HTML declaram canonical no host do purpose `eventos` resolvido pelo ACULTA Deployer no ambiente ativo.
+- [x] Runtime de teste: todas as seis rotas retornam HTTP 200 em `aculta.toca.net.br` e `eventos.aculta.toca.net.br`; `/calendario` declara um único canonical para `eventos.aculta.toca.net.br` em ambos.
+- [x] Suítes Kernel/Unit do calendário e Unit da política de purpose; 126 testes, 414 assertions, 2 depreciações. PHP lint e PHPCS passaram.
+- Evidência de código: `9800e0d62`.
 
 ## CA4 — Visões de agenda e de mês
 - [x] Agenda por dia e grade do mês, com filtros comuns, a partir da API de itens.

@@ -39,9 +39,12 @@ registradas em `docs/architecture/ROUTES-SITEMAP.md` com os identificadores `eve
 `main.aculta`.
 
 Decisão D6 (calendário também no `main`): o `main` serve as mesmas rotas de agenda, com os mesmos
-dados. A URL canônica de produção é a do purpose `eventos` (`eventos.aculta.org/calendario`), para
-evitar conteúdo duplicado; no `main` a página mantém o link para essa canonical. Confirmar essa
-regra no `ROUTES-SITEMAP.md` antes de F5 (a regra de canonical do ACULTA é pela produção do purpose).
+dados. As páginas HTML declaram canonical para o purpose `eventos`, resolvido pelo ACULTA Deployer
+no ambiente ativo (host de teste em teste; `eventos.aculta.org` em produção). Assim o canonical
+evita conteúdo duplicado e acompanha a troca de domínio feita pelo Deployer. O `ROUTES-SITEMAP.md`
+registra os dois purposes. No Runtime de teste, as seis rotas respondem nos dois hosts e a página
+em cada host declara o mesmo canonical de teste.
+Implementação: `9800e0d62`.
 
 | Caminho | Função | Observação |
 | --- | --- | --- |
