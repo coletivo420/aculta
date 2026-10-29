@@ -1,10 +1,9 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.17
+version: 0.1.0-dev.18
 state: Dev
 progress_note: >-
-  Unit Game 12/73 PASS; Kernel Game/Messenger 3/30 PASS para revalidação e
-  migração de avisos. BadgeEvaluationHooks::forumPostSave é testado com policy
-  e BadgeService reais e storage simulado: insert/update elegível grava uma vez.
-  O teste não substitui Kernel com ForumPost real. Sem concessão ou update no
-  Runtime.
+  Unit Game 14/77 PASS; correlação UUID v5 estável por concessão evita nova
+  identidade em retry de e-mail. Não executamos cron nem envio real. Kernel com
+  ForumPost real, perfil/acessibilidade e homologação de migração Runtime seguem
+  pendentes.
 next_phase: 'Adicionar Kernel com ForumPost real, validar perfil/acessibilidade e homologar migração no Runtime somente após autorização ([roadmap](web/modules/custom/aculta_portal/modules/aculta_game/docs/ROADMAP.md))'
