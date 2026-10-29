@@ -1,3 +1,21 @@
+## Retificação final OCS: Green Stash incluído (2026-10-29)
+
+**Normativa:** [plano atualizado](../../../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md). O plano anterior F0-F10 foi substituído por **OCS-F0-F11**. Green Stash é experiência Studio independente (provider `green_stash` do `aculta_commerce`), não parte de Marley, e deve aparecer no inventário, no hub conforme autorização, na paridade visual e na futura identidade Aculta.
+
+- [ ] OCS-F0: inventário dinâmico completo, **incluindo Green Stash**, Marley, GanjaLab, WE Sativa, Conta, Perfil e demais providers.
+- [ ] OCS-F1-F4: fidelidade Next, shell contextual, SDCs reutilizados e hub orientado ao registry/ACL.
+- [ ] OCS-F5: Marley.
+- [ ] OCS-F6: GanjaLab.
+- [ ] OCS-F7: WE Sativa.
+- [ ] **OCS-F8: Green Stash** - navegação de gestão de loja mobile-first, cards, formulários e operações comerciais *efetivamente implementadas*, seguindo `GREEN-STASH-UX-MOBILE-FIRST.md` e `GREEN-STASH-OPERATIONS-CONTRACT.md`. Sem expor admin Commerce, checkout paralelo, produtos/pedidos de outra loja ou ações ainda planejadas.
+- [ ] OCS-F9: Conta e Perfil separados, S-R4/S-R5, `/conta-legada`.
+- [ ] OCS-F10: demais experiências verificadas no registry.
+- [ ] **OCS-F11: gate final de fidelidade**, com testes de loja/usuário e demais experiências; somente após F11 entrar OCS-A1-A4.
+- [ ] OCS-A1-A4: identidade própria Aculta também para **Green Stash**.
+
+A API e ACL comerciais permanecem no `aculta_commerce`; alterações de services/controllers/forms/rotas da frente funcional são `Pede-A`. Todos os estados devem diferenciar implementado, condicional, planejado e DEFERRED. Nenhuma fase foi executada nesta correção documental.
+
+
 ## Retificação de escopo OCS - plataforma completa (2026-10-29)
 
 **Substitui o bloco inicial "Frente visual aprovada" onde limita F5 ao Marley e encerra fidelidade em F7.** A fonte normativa agora é [plano visual atualizado](../../../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md), seção "Retificação vinculante de escopo transversal".
