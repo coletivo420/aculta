@@ -486,3 +486,13 @@ passou 33/33 checks autenticados no Firefox em 320/360/390/599/600/767/768/
 33/33 após `drush cr`; evidência em
 `/home/piradopirata/suite-out/aculta-account-shell-8768825cf/`. Tabelas de pedido
 continuam com regras móveis próprias para fase posterior.
+
+### THEME-MF0 — baseline SUPPORT / `donation-quick` (2026-10-29)
+
+O consumer real de `donation-quick` no propósito SUPPORT passou 36/36
+verificações em Firefox ESR visível, em 320/360/390/480/481/599/600/768/1024/
+1280/1440px. Foram observados cinco cartões, reflow da grade e zero overflow.
+O teste registra que a Institution Bar aparece, mas o Domain Header não é
+renderizado nesse purpose; segue o Pede-A global, sem shell paralelo. Este é
+baseline auditável, não implementação de THEME-MF2 nem gate MF3. Detalhes,
+capturas e limitações estão em `mobile-first-audit.md`.

@@ -272,3 +272,13 @@ em dez larguras e sem overflow. A repetição integrada sem CSS override passou
 33/33 após commit e `drush cr`; a agregação ativa foi verificada. Evidência em
 `/home/piradopirata/suite-out/aculta-account-shell-8768825cf/`.
 
+## THEME-MF0 — `donation-quick` no purpose SUPPORT
+
+O purpose público SUPPORT consome o SDC existente `donation-quick`, que compõe
+cinco instâncias de `donation-card`; nenhum componente novo foi criado. Firefox
+ESR registrou baseline em onze larguras entre 320 e 1440px, com grade dentro do
+viewport e sem overflow. A captura também observou ausência do Domain Header,
+registrada no Pede-A de composição global; este baseline não homologa a
+presença do shell completo. Ver detalhes e limitações em
+[`mobile-first-audit.md`](mobile-first-audit.md).
+

@@ -58,3 +58,25 @@ essa variável, o browser usa o CSS que o Drupal serviu.
 O teste cobre somente navegação responsiva e a presença da Institution Bar na
 página autenticada `/configuracoes`. Não valida as tabelas de pedidos, todos os
 submenus, teclado completo, zoom real, cache/ACL entre contas nem WCAG 2.2 AA.
+
+## Purpose SUPPORT e `donation-quick`
+
+`support-form.py` mede o formulário público e o SDC `donation-quick` em Firefox
+ESR no servidor de desenvolvimento (`https://apoio.aculta.toca.net.br/`).
+Verifica o formulário, cartões, Institution Bar, overflow e limites da grade em
+320/360/390/480/481/599/600/768/1024/1280/1440 CSS px. É somente leitura: não
+envia formulário nem altera configuração. Registra a presença do Domain Header
+para diagnóstico; o Runtime atual não o renderiza nesse purpose, questão
+registrada no Pede-A transversal.
+
+```sh
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-support-mobile-first
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 tests/browser/aculta-theme-mobile-first/support-form.py
+```
+
+O Firefox usa perfil isolado em `$SUITE_OUT`; screenshots e `results.json` ficam
+fora do repositório. Requer DNS e acesso ao servidor de desenvolvimento. Não
+submete Form API, não exercita checkout/CAPTCHA, teclado/zoom/leitor de tela,
+dados, pagamento, cache, permissões ou WCAG completa.

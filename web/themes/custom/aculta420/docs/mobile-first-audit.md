@@ -303,3 +303,22 @@ envia o formulário e não cobre tabelas, teclado completo, A/B, zoom real ou
 WCAG. Após publicar e reconstruir caches, a repetição sem override também passou
 33/33, confirmando a folha CSS agregada no Runtime. Evidência em
 `/home/piradopirata/suite-out/aculta-account-shell-8768825cf/`.
+
+### THEME-MF0 — purpose SUPPORT e SDC `donation-quick` (2026-10-29)
+
+O Firefox ESR visível capturou `https://apoio.aculta.toca.net.br/`, que renderiza
+o formulário de apoio e o SDC existente `donation-quick` com cinco cartões.
+`tests/browser/aculta-theme-mobile-first/support-form.py` passou 36/36
+verificações em 320/360/390/480/481/599/600/768/1024/1280/1440px: consumer e
+Institution Bar presentes, cartões dentro da grade e nenhum overflow de
+documento. A grade usou 2/3/3/4/4/5/5/6/8/10/10 tracks respectivamente. PNGs e
+`results.json` estão em
+`/home/piradopirata/aculta-suite-out/aculta-support-mobile-first-20261029b/`.
+
+O markup do formulário corrente não possui `fieldset` ou input de ação; por
+isso as regras correspondentes em `css/components/portal-support.css` não foram
+validadas com este consumer. A captura confirmou `.aculta-header` ausente no
+purpose SUPPORT e a Institution Bar presente. O Pede-A transversal de composição
+do Domain Header permanece aberto; não foi criado shell visual paralelo. A
+rodada é baseline para o purpose e não valida zoom, teclado, modo escuro,
+reduced motion, Form API submetido, checkout nem WCAG completa.
