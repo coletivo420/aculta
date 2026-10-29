@@ -5,12 +5,28 @@ services:
 
   aculta_ugc.moderation_notifier:
     class: Drupal\aculta_ugc\Service\ModerationNotifier
-    arguments: ['@entity_type.manager']
+    arguments:
+      - '@entity_type.manager'
+      - '@logger.channel.aculta_ugc'
+      - '@?aculta_mailer.mailer'
 
   aculta_ugc.report_service:
     class: Drupal\aculta_ugc\Service\ReportService
-    arguments: ['@entity_type.manager', '@datetime.time', '@aculta_ugc.moderation_notifier', '@lock', '@logger.channel.aculta_ugc']
+    arguments:
+      - '@entity_type.manager'
+      - '@datetime.time'
+      - '@aculta_ugc.moderation_notifier'
+      - '@lock'
+      - '@logger.channel.aculta_ugc'
 
   aculta_ugc.report_queue:
     class: Drupal\aculta_ugc\Service\UgcReportQueue
-    arguments: ['@entity_type.manager']
+    arguments:
+      - '@entity_type.manager'
+      - '@current_user'
+
+  aculta_ugc.mail_type.report_notice:
+    class: Drupal\aculta_ugc\Mail\UgcReportNoticeMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }

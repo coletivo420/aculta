@@ -35,6 +35,9 @@ final class UgcReport extends ContentEntityBase {
 
   use EntityChangedTrait;
 
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 
@@ -78,6 +81,10 @@ final class UgcReport extends ContentEntityBase {
 
     $fields['decision_notes'] = BaseFieldDefinition::create('string_long')
       ->setLabel(new TranslatableMarkup('Parecer da moderação'));
+
+    $fields['legacy_flag_id'] = BaseFieldDefinition::create('integer')
+      ->setLabel(new TranslatableMarkup('ID do flagging legado'))
+      ->setDescription(new TranslatableMarkup('Vínculo com a sinalização legada para migração idempotente e rastreabilidade (ARQ-06D).'));
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(new TranslatableMarkup('Criado em'));
