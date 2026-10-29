@@ -134,17 +134,17 @@ pendentes. MF2 segue parcial e MF3 não foi aprovado.
 
 ## Escopo quantificado
 
-O inventário foi refeito no commit de auditoria de 2026-10-29 por
-`scripts/audit-aculta420-responsive-inventory.py`. O tema tem 541 arquivos,
-incluindo 92 estilos CSS/Sass, 12 scripts JavaScript (11 de produção e um de
-teste) e 98 templates Twig/HTML. O TSV inclui esses 202 arquivos fonte; não
-inclui a documentação. Busca lexical encontrou `@media` em 44 folhas (77
-blocos), zero `@container`, expressões de dimensão em 72 folhas (599 matches)
-e declarações `overflow`, `overflow-x` ou `overflow-y` em 28 folhas (54
-declarações). A expressão de dimensão inclui width/height/inline-size/
-block-size, variantes min/max e condições de media query. As contagens não
-analisam cascata nem efeito calculado. O inventário é estrutural; não mede
-overflow renderizado ou prova comportamento por tela.
+O inventário foi regenerado em 2026-10-29 por
+`scripts/audit-aculta420-responsive-inventory.py`. O TSV contém 204 arquivos-
+fonte: 93 folhas CSS/Sass, 12 scripts JavaScript (11 de produção e um de teste)
+e 99 templates Twig/HTML; não inclui documentação ou demais ativos. A busca
+lexical atual encontra `@media` em 45 folhas (78 blocos), zero `@container`,
+expressões de dimensão em 73 folhas (624 matches) e declarações `overflow`,
+`overflow-x` ou `overflow-y` em 28 folhas (54 declarações). A expressão de
+dimensão inclui width/height/inline-size/block-size, variantes min/max e
+condições de media query. As contagens não analisam cascata nem efeito
+calculado. O inventário é estrutural; não mede overflow renderizado ou prova
+comportamento por tela.
 
 | Camada | Arquivos identificados | Observação da auditoria |
 |---|---|---|
@@ -221,7 +221,7 @@ Cobertura de runtime ainda pendente para todos os dez; os outros purposes e
 rotas encontradas não podem ser omitidos se a associação route/library revelar
 consumidores adicionais.
 
-O inventário dos 92 estilos, 12 scripts e 98 templates encontra-se em
+O inventário dos 93 estilos, 12 scripts e 99 templates encontra-se em
 [`theme-mobile-file-inventory.tsv`](theme-mobile-file-inventory.tsv); pode ser
 regenerado com `python3 scripts/audit-aculta420-responsive-inventory.py --write`.
 Ele contém contagens lexicais de media/container/dimensão/overflow por folha de
@@ -767,3 +767,17 @@ módulo. `messenger-reply-layout.py` compara baseline e candidata nas larguras
 globais e na fronteira 575/576px; sintaxe Python e lint CSS passam. Firefox
 visível fica DEFERRED sem `DISPLAY=:0`; o fixture não cobre envio, ACL nem a
 gaveta real no Runtime. THEME-MF3 continua pendente.
+
+
+### THEME-MF2 — composer de resposta da gaveta Messenger (2026-10-29)
+
+`messenger-drawer.css` usa padding compacto para a gaveta e o formulário,
+margem curta entre mensagem e ação e textarea de 5.5rem como base móvel. Em
+`min-width: 36rem` (576 CSS px), restaura os espaçamentos anteriores e a altura
+natural da caixa. Markup, ordem DOM, Form API e envio continuam no módulo. O
+harness `tests/browser/aculta-theme-mobile-first/messenger-reply-layout.py`
+compara baseline/candidata nas larguras globais e na fronteira 575/576px. Lint
+CSS, sintaxe do harness, Design Foundations (2.442 verificações), índice do
+projeto e `git diff --check` passaram. Firefox visível fica DEFERRED sem
+`DISPLAY=:0`; o fixture não cobre envio, ACL nem a gaveta real no Runtime.
+THEME-MF3 continua pendente.

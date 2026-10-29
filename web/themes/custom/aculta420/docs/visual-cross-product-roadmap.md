@@ -751,3 +751,13 @@ anterior e a altura natural da caixa retornam em 576px.
 fixture com baseline e candidata nas larguras globais, mantendo a ordem
 mensagem/ação e o alvo de toque. Firefox visível está DEFERRED nesta sessão; o
 teste não altera conversas nem substitui homologação da gaveta real.
+
+
+### THEME-MF2 — composer de resposta Messenger
+
+O composer de resposta usa padding e altura compactos como base; o espaçamento
+anterior e a altura natural da caixa retornam em 576px. O teste
+`tests/browser/aculta-theme-mobile-first/messenger-reply-layout.py` compara a
+fixture com baseline e candidata nas larguras globais, mantendo a ordem
+mensagem/ação e o alvo de toque. Firefox visível ficou DEFERRED nesta sessão; o
+script não altera conversas nem substitui homologação da gaveta real.
