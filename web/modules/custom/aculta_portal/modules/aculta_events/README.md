@@ -13,8 +13,7 @@ Eventos, datas e locais do purpose `eventos` (ADR-015). Usa o `aculta_calendar` 
 
 ## Validação visual (2026-10-29)
 
-O smoke do purpose `eventos` passou 129/129 verificações no candidato servido
-`355e48a89` (events dev.1), em 1280/390/320 px reais, com modo escuro. Script e
-instruções: [tests/browser/eventos](../../../../../../tests/browser/eventos/README.md).
-O checkout servido ainda é anterior ao dev.2; repetir quando o commit atual for
-servido.
+O smoke do purpose `eventos` passou 129/129 verificações no candidato atual
+`a4f878d55` (events dev.3), servido no checkout de teste, em 1280/390/320 px
+reais, com modo escuro. Script e instruções:
+[tests/browser/eventos](../../../../../../tests/browser/eventos/README.md).

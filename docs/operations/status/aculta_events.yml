@@ -2,13 +2,12 @@
 version: 0.1.0-dev.3
 state: Dev
 progress_note: >-
-  Dev.3: smoke visual no candidato servido 355e48a89 (events dev.1) pelo purpose
-  eventos, com tests/browser/eventos/agenda-embed.mjs: 129/129 verificações PASS
-  (0 falhas, 0 ignoradas) em 1280/390/320 px reais via BiDi, cobrindo catálogo,
-  página de evento, agenda, grade do mês, agenda do dia, incorporação e mapa,
-  com modo escuro, sem rolagem horizontal e sem erro visível. Suíte atual no
-  worktree: 55 testes/669 assertions PASS (26 depreciações). O candidato servido
-  é anterior ao dev.2 (EventCatalogue mudou 49 linhas): revalidar quando o commit
-  atual for servido. E10/OAuth e a decisão editorial dos tiles seguem pendentes;
-  nenhuma escrita no OSM. Runtime sem atualização.
-next_phase: 'Revalidar catálogo e mapa no candidato atual (dev.2) quando servido; concluir a validação OAuth de teste sem escrita no OSM (exige login de conta OSM, ausente em secrets) e aguardar a decisão editorial da divulgação dos tiles.'
+  Dev.3: smoke visual concluído no candidato atual a4f878d55 (events dev.3),
+  servido no checkout de teste, pelo purpose eventos com
+  tests/browser/eventos/agenda-embed.mjs: 129/129 verificações PASS (0 falhas,
+  0 ignoradas) em 1280/390/320 px reais via BiDi, cobrindo catálogo, página de
+  evento, agenda, grade do mês, agenda do dia, incorporação e mapa, com modo
+  escuro, sem rolagem horizontal e sem erro visível. Suíte atual: 55
+  testes/669 assertions PASS (26 depreciações). E10/OAuth e a decisão editorial
+  dos tiles seguem pendentes; nenhuma escrita no OSM. Runtime sem atualização.
+next_phase: 'Concluir a validação OAuth de teste sem escrita no OSM (exige login de conta OSM, ausente em secrets) e aguardar a decisão editorial da divulgação dos tiles; a revisão visual já cobre o dev.3 no candidato a4f878d55.'

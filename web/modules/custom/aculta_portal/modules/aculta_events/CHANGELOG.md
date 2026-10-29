@@ -3,14 +3,14 @@
 ## 0.1.0-dev.3 — smoke visual do purpose eventos (2026-10-29)
 
 - `tests/browser/eventos/agenda-embed.mjs` passou 129/129 verificações no
-  candidato servido `355e48a89` (events dev.1), no purpose `eventos`: catálogo,
+  candidato atual `a4f878d55` (events dev.3), servido no checkout de teste, no
+  purpose `eventos`: catálogo,
   página de evento, agenda, grade do mês, agenda do dia, incorporação e mapa,
   em 1280/390/320 px reais via BiDi, com modo escuro, sem rolagem horizontal e
   sem erro visível.
 - Suíte atual no worktree: 55 testes/669 assertions PASS (26 depreciações).
-  O candidato servido é anterior ao dev.2 (mudança no `EventCatalogue`), então a
-  revisão será repetida quando o commit atual for servido. Nenhuma escrita no
-  OSM e nenhuma alteração no Runtime.
+  A revisão visual cobre o dev.3 no candidato `a4f878d55`. Nenhuma escrita no
+  OSM e nenhuma atualização do Runtime.
 
 ## 0.1.0-dev.2 — fronteira de apresentação via tokens (2026-10-29)
 

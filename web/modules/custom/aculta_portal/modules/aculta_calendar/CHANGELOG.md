@@ -2,7 +2,8 @@
 
 ## 0.1.0-dev.4 — revisão visual ADM8 e visão interativa (2026-10-29)
 
-- ADM8 revisada no candidato servido `355e48a89` com conta descartável de
+- ADM8 revisada no candidato atual `a4f878d55` (dev.4), servido com `drush cr`,
+  com conta descartável de
   permissão única: anônimo 403, autenticado 200, tabela somente leitura com três
   cabeçalhos e 10 linhas, sem formulários/botões e sem overflow em 1270 e 500 px
   reais. A conta e o papel foram removidos ao final.
@@ -13,8 +14,9 @@
   `tests/browser/aculta-calendar-interactive/`, com os artefatos fora do
   repositório.
 - Suíte atual no worktree: 117 testes/399 assertions PASS (2 depreciações).
-  O candidato servido é anterior ao dev.3; o markup `data-portal-ui` será
-  revalidado quando esse commit for servido. Nenhum Runtime foi alterado.
+  A revisão visual cobre o markup `data-portal-ui` do dev.4 no candidato
+  `a4f878d55`. Nenhum `config:import` ou atualização do Runtime foi executado;
+  a conta descartável foi criada e removida.
 
 ## 0.1.0-dev.3 — fronteira de apresentação via tokens (2026-10-29)
 

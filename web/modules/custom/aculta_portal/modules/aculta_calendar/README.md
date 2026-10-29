@@ -11,9 +11,9 @@ Submódulo reutilizável de calendário (ADR-031, D-20). Fornece o motor de reco
 
 ## Validação visual (2026-10-29)
 
-ADM8 autenticada e visão interativa foram revisadas no candidato servido `355e48a89`
-(calendar dev.1). Scripts reutilizáveis:
+ADM8 autenticada e visão interativa foram revisadas no candidato atual `a4f878d55`
+(calendar dev.4), servido no checkout de teste com `drush cr`. Scripts reutilizáveis:
 [tests/browser/aculta-calendar-admin](../../../../../../tests/browser/aculta-calendar-admin/README.md)
 e [tests/browser/aculta-calendar-interactive](../../../../../../tests/browser/aculta-calendar-interactive/README.md).
-O checkout servido ainda é anterior ao dev.3; o markup `data-portal-ui` deve ser
-revalidado quando esse commit for servido.
+A revisão cobre o markup `data-portal-ui` do dev.4; resta a revisão de código
+antes de RC.
