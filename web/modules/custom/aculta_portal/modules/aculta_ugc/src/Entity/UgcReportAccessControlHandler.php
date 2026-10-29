@@ -8,29 +8,34 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\aculta_ugc\ModerationScope;
 
 /**
  * Controle de acesso a denúncias de UGC.
+ *
+ * Moderadores só acessam denúncias do purpose que moderam (ARQ-06A). O
+ * denunciante vê somente as próprias denúncias.
  */
 final class UgcReportAccessControlHandler extends EntityAccessControlHandler {
 
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
-    if ($account->hasPermission('moderar denuncias ugc')) {
-      return AccessResult::allowed()->cachePerPermissions();
+    $purpose = (string) $entity->get('purpose')->value;
+    if (ModerationScope::allows($account, $purpose)) {
+      return AccessResult::allowed()->cachePerPermissions()->addCacheableDependency($entity);
     }
 
     if ($operation === 'view') {
       $uid = (int) $entity->get('uid')->target_id;
-      if ($uid === (int) $account->id()) {
+      if ($uid > 0 && $uid === (int) $account->id()) {
         return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
       }
     }
 
-    return AccessResult::forbidden()->cachePerUser();
+    return AccessResult::forbidden()->cachePerUser()->cachePerPermissions()->addCacheableDependency($entity);
   }
 
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
-    return AccessResult::allowedIf($account->isAuthenticated())->cachePerPermissions();
+    return AccessResult::allowedIf($account->isAuthenticated())->cachePerPermissions()->cachePerUser();
   }
 
 }

@@ -1,4 +1,7 @@
 moderar denuncias ugc:
   title: 'Moderar denúncias transversais de UGC'
-  description: 'Permite visualizar a fila de denúncias e emitir decisões de moderação.'
+  description: 'Permite visualizar a fila de denúncias e emitir decisões de moderação em todos os purposes. Para limitar a um purpose use as permissões "Moderar denúncias de UGC do purpose".'
   restrict access: true
+
+permission_callbacks:
+  - Drupal\aculta_ugc\UgcPermissions::permissions
