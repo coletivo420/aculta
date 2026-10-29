@@ -1,3 +1,8 @@
+# 0.7.0-dev.16 — regenerar inventário responsivo mobile-first (2026-10-29)
+
+- O TSV de MF0 é gerado por `scripts/audit-aculta420-responsive-inventory.py` e agora inclui o script `navigation-top-bar-displace.js` e as media queries mobile-first recentes.
+- Recontagem: 541 arquivos no tema; 92 estilos, 12 JS e 98 Twig/HTML; 77 blocos `@media`, zero `@container`, 599 expressões dimensionais e 54 declarações de overflow. É inventário lexical, não validação visual.
+
 # 0.7.0-dev.15 — migrar formulários públicos de autenticação para mobile-first (2026-10-29)
 
 - `/entrar`, registro e recuperação passam a usar espaçamento compacto como base; `min-width: 36rem` restaura o painel amplo anterior.

@@ -46,15 +46,17 @@ pendentes. MF2 segue parcial e MF3 não foi aprovado.
 
 ## Escopo quantificado
 
-Varredura recursiva de `web/themes/custom/aculta420`, excluindo `node_modules`
-e `vendor`: 537 arquivos, 92 CSS/Sass, 11 JavaScript e 98 templates Twig/HTML.
-A recontagem literal encontrou 53 arquivos com `@media` ou expressão de
-`width`: 44 arquivos com `@media` (78 blocos), 50 com matches de largura
-(146 matches) e 22 com `overflow` (39 declarações); zero `@container`. Os 146
-matches incluem condições de breakpoints `min-width`/`max-width`, portanto não
-são 146 declarações de dimensão fixa. A busca aceita valores `px`, `rem`, `em`
-ou `vw` e é lexical, sem análise de cascata ou efeito calculado.
-O inventário é estrutural; não mede overflow nem prova comportamento renderizado.
+O inventário foi refeito no commit de auditoria de 2026-10-29 por
+`scripts/audit-aculta420-responsive-inventory.py`. O tema tem 541 arquivos,
+incluindo 92 estilos CSS/Sass, 12 scripts JavaScript (11 de produção e um de
+teste) e 98 templates Twig/HTML. O TSV inclui esses 202 arquivos fonte; não
+inclui a documentação. Busca lexical encontrou `@media` em 44 folhas (77
+blocos), zero `@container`, expressões de dimensão em 72 folhas (599 matches)
+e declarações `overflow`, `overflow-x` ou `overflow-y` em 28 folhas (54
+declarações). A expressão de dimensão inclui width/height/inline-size/
+block-size, variantes min/max e condições de media query. As contagens não
+analisam cascata nem efeito calculado. O inventário é estrutural; não mede
+overflow renderizado ou prova comportamento por tela.
 
 | Camada | Arquivos identificados | Observação da auditoria |
 |---|---|---|
@@ -62,7 +64,7 @@ O inventário é estrutural; não mede overflow nem prova comportamento renderiz
 | Shell global | `css/components/header.css`, `navigation.css`, `institution-bar.css`, `breadcrumb.css`, `footer.css`, `institutional.css` | Afeta todos os purposes; Institution Bar e Domain Header são invariantes. |
 | Componentes compartilhados | 41 folhas em `css/components/` e 45 folhas CSS de SDC | Mistura estilos sem breakpoint e media queries; os consumidores reais precisam ser correlacionados antes da migração. |
 | Áreas de produto | account/portal, fórum/discussion, wiki, editorial/revista, product/cart/sales, eventos, messenger, mídia/documentos, doações e suporte | Não podem ser excluídas por ausência de rota no Studio. |
-| JavaScript | 10 scripts de apresentação mais um teste JS | Auditar progressive enhancement, estado de navegação, carrosséis/slideshows, drawer Messenger, calculadora de envio, doação e notificações. |
+| JavaScript | 11 scripts de apresentação e um teste JS | Auditar progressive enhancement, estado de navegação, carrosséis/slideshows, drawer Messenger, calculadora de envio, doação e notificações. |
 | Templates/layouts | 98 Twig/HTML | A contagem inclui componentes SDC e templates do tema; precisa cruzamento com bibliotecas anexadas por módulos e Views. |
 
 ## Registro responsivo reproduzível
@@ -131,9 +133,10 @@ Cobertura de runtime ainda pendente para todos os dez; os outros purposes e
 rotas encontradas não podem ser omitidos se a associação route/library revelar
 consumidores adicionais.
 
-O inventário reproduzível dos 92 estilos, 11 scripts e 98 templates encontra-se
-em [`theme-mobile-file-inventory.tsv`](theme-mobile-file-inventory.tsv), com
-contagens literais e expressões de media/container/largura/overflow por folha de
+O inventário dos 92 estilos, 12 scripts e 98 templates encontra-se em
+[`theme-mobile-file-inventory.tsv`](theme-mobile-file-inventory.tsv); pode ser
+regenerado com `python3 scripts/audit-aculta420-responsive-inventory.py --write`.
+Ele contém contagens lexicais de media/container/dimensão/overflow por folha de
 estilo. Contagens podem incluir declarações sem efeito em um purpose e não
 substituem análise de cascata. A enumeração de bibliotecas anexadas
 dinamicamente por Views e módulos consumidores continua pendente. As 20
@@ -142,9 +145,10 @@ manifestações custom `*.libraries.yml` foram enumeradas em
 dependências e assets. Os 85 call sites de produção custom (80 usos de
 `#attached` e cinco de `attach_library()`) estão indexados em
 [`theme-library-attachment-sites.tsv`](theme-library-attachment-sites.tsv).
-Testes e documentação foram excluídos da contagem. Isso não resolve expressões
-dinâmicas nem relaciona cada attach à rota/purpose e consumer; declaração em
-YAML não prova carregamento em runtime.
+O inventário inclui um arquivo JS de teste por registrar todas as fontes `.js`;
+os templates Twig/HTML são incluídos sem tentar resolver condições. Isso não
+resolve expressões dinâmicas nem relaciona cada attach à rota/purpose e
+consumer; declaração em YAML não prova carregamento em runtime.
 
 ## Breakpoints de referência (comparação estática em `0a479dde3`)
 
@@ -163,23 +167,23 @@ e captura Firefox visível antes e depois da migração.
 
 ### Maior frequência de media queries encontradas
 
-Recontagem lexical de 78 blocos em 44 folhas de estilo do tema. `@media`
+Recontagem lexical de 77 blocos em 44 folhas de estilo do tema. `@media`
 contém também preferências/recursos de acessibilidade, não só breakpoints:
 
 | Query literal | Blocos | Arquivos |
 |---|---:|---:|
-| `max-width: 575.98px` | 18 | 15 |
 | `prefers-reduced-motion: reduce` | 13 | 12 |
-| `max-width: 767.98px` | 12 | 8 |
-| `min-width: 48rem` | 3 | 3 |
+| `max-width: 575.98px` | 11 | 8 |
+| `max-width: 767.98px` | 7 | 6 |
+| `min-width: 48rem` | 7 | 6 |
+| `min-width: 36rem` | 5 | 5 |
+| `min-width: 768px` | 4 | 4 |
 | `max-width: 768px` | 3 | 3 |
+| `min-width: 576px` | 3 | 3 |
 | `min-width: 992px` | 3 | 2 |
-| `max-width: 1099.98px` | 3 | 2 |
-| `min-width: 768px` | 3 | 3 |
-| `min-width: 576px` | 2 | 2 |
 | `min-width: 1100px` | 2 | 2 |
 
-Há outras 15 expressões literais de uso único, incluindo 320–480 px, 992–1200
+Há outras 19 expressões literais de uso único, incluindo 320–480 px, 992–1200
 px, `forced-colors`, `hover` e `prefers-color-scheme`. Sobreposições entre
 Bootstrap (575.98/767.98) e limites do tema (576/768/1100), além de `max-width`
 e `min-width` misturados, pedem análise de cascade por consumer; contagens não

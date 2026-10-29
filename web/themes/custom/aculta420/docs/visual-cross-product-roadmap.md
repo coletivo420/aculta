@@ -591,3 +591,13 @@ fixture em 11 larguras foi criado; Firefox e validação das páginas reais est�
 DEFERRED por falta de recursos enquanto a suíte visível da Revista está ativa.
 Não é gate MF3. Ver `mobile-first-audit.md` e
 `tests/browser/aculta-theme-mobile-first/auth-layout.py`.
+
+### THEME-MF0 — inventário estático regenerável (2026-10-29)
+
+`scripts/audit-aculta420-responsive-inventory.py --write` refaz o inventário
+lexical do tema e inclui styles, JavaScript e Twig/HTML atuais. O snapshot atual
+encontra 541 arquivos no tema, 92 folhas de estilo, 12 scripts JS e 98 templates;
+44 folhas têm 77 blocos `@media`, sem `@container`, com 599 matches dimensionais
+e 54 declarações overflow. Isso documenta fontes e regras literais, sem medir
+layout computado ou declarar cobertura de runtime. Fonte detalhada em
+`mobile-first-audit.md` e `theme-mobile-file-inventory.tsv`.
