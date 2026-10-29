@@ -1,5 +1,7 @@
 # ACULTA Document Viewer
 
+**Versão:** `0.1.0-rc.1` (`RC`).
+
 Miniaturas PDF públicas são geradas pelo serviço compartilhado
 `aculta_image.pdf_thumbnail` usando PHP Imagick e Ghostscript; DOCX e planilhas
 mantêm as prévias de documento e o fallback Core descritos abaixo.

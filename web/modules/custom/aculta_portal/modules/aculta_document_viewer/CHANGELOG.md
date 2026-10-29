@@ -1,5 +1,24 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-rc.1 — promoção a candidato RC (2026-10-29)
+
+- Promove `aculta_document_viewer` a `0.1.0-rc.1` (`state: RC`) após fechamento de
+  PV0–PV7 e D-48: formatter composto `aculta_document_media` (PDF, DOCX e
+  planilhas), painel administrativo `ACULTA > Site > Leitor de documentos`,
+  propagação validada das opções de DOCX e planilhas, miniatura PDF via
+  `aculta_image.pdf_thumbnail` (PHP Imagick/Ghostscript) e CSP em Report-Only
+  sem enforcement.
+- Evidências consolidadas: PHPUnit 56 testes / 645 assertions PASS (0
+  depreciações PHPUnit, 156 Core/contrib); PHP lint 39/39 PASS; PHPCS
+  Drupal/DrupalPractice 0/0; `node --check` 8/8 PASS; Firefox ESR visível
+  (`DISPLAY=:0`) 7/7 PDF (`visual.py`) e 17/17 D-48 DOCX/planilhas em ACULTA420
+  e Olivero (`office-options.py`, 1280/390/320 px); gates globais módulo–tema,
+  SDC, Design Foundations, Browser Validators, aliases e índice de status PASS.
+- Runtime não foi alterado e Config Sync não foi importado sem autorização.
+  Importação de configuração e análise dos relatórios CSP Report-Only pertencem
+  à etapa Alpha (`*.aculta.org`); validação em FPM Hostinger/LiteSpeed/Cloudflare
+  pertence à etapa Beta pós-Alpha conforme `docs/operations/RELEASE-LIFECYCLE.md`.
+
 ## 0.1.0-dev.20 — propagação JS e validação Firefox das opções D-48 (2026-10-29)
 
 - `js/docx-viewer-behavior.mjs`, `js/docx-viewer.mjs` e `docx/docx-frame.js`
