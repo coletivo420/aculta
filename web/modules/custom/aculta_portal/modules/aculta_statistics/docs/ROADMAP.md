@@ -208,6 +208,7 @@ Decisão: "quem está online" entra no Statistics. A forma segue o padrão de pr
 
 - Feito: auditoria de código, segurança e privacidade, com o que foi e não foi verificado (`docs/AUDITORIA-1.0.md`).
 - Decidido (2026-10-21): painéis de estatísticas ficam no tema administrativo Claro. Ajusta-se só o conteúdo. O CSS do ACULTA420 para estatísticas não se aplica a essas telas.
+- Feito no código (0.9.0-dev.10): CSS local da biblioteca do módulo limita controles e tabelas do painel ao espaço disponível e permite quebra de textos longos. Kernel confirma o anexo da biblioteca. Prévia visual Firefox com CSS injetado passou em 34/34 verificações; falta confirmar a biblioteca servida após sincronizar o checkout de desenvolvimento.
 - Pendente: testes funcionais e multidomínio; teste de carga; cliente GA4 real (bloqueado pelo composer); revisão visual de todos os painéis por área.
 
 - Testes unitários, Kernel, funcionais e multidomínio.

@@ -1,6 +1,6 @@
 # ACULTA Statistics
 
-**Versão:** `0.9.0-dev.9` — concessão da permissão granular ao papel content_editor.
+**Versão:** `0.9.0-dev.10` — reflow responsivo dos controles e tabelas do painel.
 
 Central de métricas da plataforma ACULTA: catálogo, agregados diários, retenção
 configurável por métrica e consulta. Não substitui os dados de origem. Pedidos
@@ -52,6 +52,6 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
 ## Testes
 
 - Unit: `tests/src/Unit/` (catálogo, retenção, gravador, janela e variação do GSC, controlador da Wiki, pedido pago). 108 testes / 438 assertions PASS reexecutados em 2026-10-29 (PHP 8.4.27).
-- Kernel: `tests/src/Kernel/` (storage, cron, formulário de retenção, banner, beacon da Wiki). 47 testes / 319 assertions PASS reexecutados em 2026-10-29 contra `aculta_simpletest`.
+- Kernel: `tests/src/Kernel/` (storage, cron, formulário de retenção, banner, beacon da Wiki, dashboard). 47 testes / 320 assertions PASS reexecutados em 2026-10-29 contra `aculta_simpletest`.
 - Gates de 2026-10-29: PHP lint 95/95; PHPCS Drupal/DrupalPractice com 0 erros e 190 avisos de comprimento de linha.
-- O Kernel focal `StatisticsDashboardKernelTest` falhou no setup em 2026-10-26 por carregar `system_hook_info()` dos dois Core paths. Na reexecução completa de 2026-10-29, a suíte Kernel passou (47/319), incluindo esse teste. A revisão visual completa e a validação Functional seguem pendentes; nenhuma escrita foi feita no Runtime nesta revalidação.
+- Firefox ESR no host de desenvolvimento: 34/34 verificações passaram com o CSS candidato injetado na sessão, incluindo oito rotas, teclado/foco e larguras de 1280, 390 e 320 px. Esta prévia não confirma que a biblioteca Drupal esteja instalada/servida. A revisão visual do CSS integrado, a validação Functional e as consultas GA4/Search Console continuam pendentes; nenhuma escrita foi feita no Runtime nesta revalidação.

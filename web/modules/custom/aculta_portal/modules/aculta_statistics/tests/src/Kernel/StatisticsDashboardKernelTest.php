@@ -114,6 +114,7 @@ final class StatisticsDashboardKernelTest extends KernelTestBase {
     $page = StatisticsDashboardController::create($this->container)->overview($request, 'midia');
     $html = (string) $this->container->get('renderer')->renderInIsolation($page);
 
+    $this->assertContains('aculta_statistics/dashboard', $page['#attached']['library']);
     $this->assertStringContainsString('data-portal-ui="statistics-panel"', $html);
     $this->assertStringContainsString('data-portal-ui="statistics-chart"', $html);
     $this->assertStringContainsString('value="media.files.requests"', $html);

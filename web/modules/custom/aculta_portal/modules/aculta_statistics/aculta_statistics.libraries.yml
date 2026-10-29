@@ -11,3 +11,8 @@ wiki-read:
   dependencies:
     - core/drupal
     - core/once
+
+dashboard:
+  css:
+    theme:
+      css/statistics-dashboard.css: {}

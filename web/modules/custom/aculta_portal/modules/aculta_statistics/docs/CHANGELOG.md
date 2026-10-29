@@ -1,3 +1,14 @@
+# 0.9.0-dev.10 — reflow responsivo do painel (2026-10-29)
+
+- Controles de período/métrica agora podem quebrar linha e limitam o `<select>`
+  à largura disponível; tabelas do painel usam layout fixo e quebram textos
+  longos para evitar rolagem horizontal em telas estreitas.
+- O Kernel do dashboard confirma o anexo da biblioteca de apresentação.
+- Testes: Unit 108/438 e Kernel 47/320 PASS. Firefox ESR: prévia do CSS
+  injetada na sessão, 34/34 verificações PASS (oito rotas, teclado/foco e
+  1280/390/320 px). A integração visual da biblioteca no host ainda precisa ser
+  confirmada após sincronizar o checkout de desenvolvimento.
+
 ## Functional BrowserKit — diagnóstico do container isolado — 2026-10-26
 
 A execução com Core 11.4.10 físico em docroot temporário corrigiu o harness

@@ -106,6 +106,7 @@ final class StatisticsDashboardController extends ControllerBase {
 
     $build = [
       '#type' => 'container',
+      '#attached' => ['library' => ['aculta_statistics/dashboard']],
       '#attributes' => ['data-portal-ui' => 'statistics-panel'],
       'areas' => $this->areaNavigation($area),
       'controles' => [
