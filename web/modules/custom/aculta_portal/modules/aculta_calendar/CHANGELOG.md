@@ -1,5 +1,14 @@
 # Changelog — aculta_calendar
 
+## 0.1.0-dev.6 — eventos de vários dias em cada dia coberto (2026-10-29)
+
+- Agenda e grade do mês exibem a ocorrência em todos os dias que ela cobre
+  dentro da janela, não apenas no dia inicial. Fim à meia-noite pertence ao dia
+  anterior; consultar um dia posterior ao início ainda mostra o evento.
+- Testes: Calendar 126/422 PASS (2 depreciações); PHPCS 0 erros no arquivo
+  alterado; `php -l` PASS. Revalidação visual do candidato com esta mudança
+  pendente.
+
 ## 0.1.0-dev.5 — correções da revisão de código (2026-10-29)
 
 - Ocorrência única em curso, iniciada antes da janela, deixa de ser descartada;

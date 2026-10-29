@@ -48,7 +48,7 @@ final class CalendarAgenda {
         continue;
       }
       foreach ($ocorrencias as $ocorrencia) {
-        $grupos[$ocorrencia['inicio']->format('Y-m-d')][] = [
+        $ocorrenciaItem = [
           'titulo' => $item->titulo,
           'inicio' => $ocorrencia['inicio'],
           'fim' => $ocorrencia['fim'],
@@ -56,6 +56,23 @@ final class CalendarAgenda {
           'diaInteiro' => $item->diaInteiro,
           'cancelada' => $ocorrencia['cancelada'] || $item->cancelado,
         ];
+        // A multi-day occurrence appears on every day it covers inside the
+        // requested window, not only on its start day.
+        $primeiro = $ocorrencia['inicio'] > $query->de
+          ? $ocorrencia['inicio']->setTime(0, 0)
+          : $query->de->setTime(0, 0);
+        $ultimo = $ocorrencia['fim'] < $query->ate ? $ocorrencia['fim'] : $query->ate;
+        if ($ultimo->format('H:i:s') === '00:00:00') {
+          // Midnight belongs to the previous day; ends are exclusive.
+          $ultimo = $ultimo->modify('-1 second');
+        }
+        $ultimo = $ultimo->setTime(0, 0);
+        if ($ultimo < $primeiro) {
+          $ultimo = $primeiro;
+        }
+        for ($dia = $primeiro; $dia <= $ultimo; $dia = $dia->modify('+1 day')) {
+          $grupos[$dia->format('Y-m-d')][] = $ocorrenciaItem;
+        }
       }
     }
     ksort($grupos);

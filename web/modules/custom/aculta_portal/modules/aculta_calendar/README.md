@@ -20,4 +20,5 @@ da revisão de código (sobreposição de eventos, UID numérico, janela de 366 
 isolamento de série inválida, `RECURRENCE-ID`, `UNTIL`, fonte órfã, fuso da
 revisão, filtros da exportação e dia inteiro). A revalidação visual do candidato
 corrigido está pendente porque o checkout de teste tem trabalho concorrente não
-commitado. Eventos de vários dias ainda são agrupados pelo dia inicial.
+commitado. No dev.6, eventos de vários dias aparecem em cada dia coberto na
+agenda e na grade do mês.

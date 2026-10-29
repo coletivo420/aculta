@@ -64,28 +64,42 @@ final class CalendarAgendaKernelTest extends KernelTestBase {
   }
 
   /**
-   * Evento no fim da noite continua no dia local, não no dia UTC seguinte.
+   * Evento que cruza a meia-noite ocupa os dois dias locais.
    */
-  public function testFimDaNoiteFicaNoDiaLocal(): void {
+  public function testFimDaNoiteOcupaOsDoisDiasLocais(): void {
     $item = $this->item('t', 'Tarde', '2030-05-28 23:30', '2030-05-29 00:30');
     $dias = $this->agenda([$item])->dias($this->consulta('2030-05-27', '2030-05-30'));
 
-    $this->assertSame(['2030-05-28'], array_keys($dias));
+    $this->assertSame(['2030-05-28', '2030-05-29'], array_keys($dias));
     $this->assertSame('23:30', $dias['2030-05-28'][0]['inicio']->format('H:i'));
   }
 
   /**
-   * Evento em curso iniciado antes da janela continua retornado.
+   * Evento em curso iniciado antes da janela aparece em cada dia coberto.
    *
    * Uses the same overlap rule as the providers (start <= ate, end >= de).
-   * The agenda still groups the occurrence by its start date.
    */
   public function testEventoEmCursoIniciadoAntesDaJanelaPermanece(): void {
     $item = $this->item('r', 'Retiro', '2030-05-04 08:00', '2030-05-12 18:00');
     $dias = $this->agenda([$item])->dias($this->consulta('2030-05-10', '2030-05-12'));
 
-    $this->assertSame(['2030-05-04'], array_keys($dias));
-    $this->assertSame('Retiro', $dias['2030-05-04'][0]['titulo']);
+    $this->assertSame(['2030-05-10', '2030-05-11', '2030-05-12'], array_keys($dias));
+    foreach (['2030-05-10', '2030-05-11', '2030-05-12'] as $dia) {
+      $this->assertSame('Retiro', $dias[$dia][0]['titulo']);
+    }
+  }
+
+  /**
+   * Evento de vários dias aparece em todos os dias que cobre.
+   */
+  public function testEventoDeVariosDiasApareceEmCadaDia(): void {
+    $item = $this->item('m', 'Festival', '2030-05-04 08:00', '2030-05-08 18:00');
+    $dias = $this->agenda([$item])->dias($this->consulta('2030-05-01', '2030-05-31'));
+
+    $this->assertSame(
+      ['2030-05-04', '2030-05-05', '2030-05-06', '2030-05-07', '2030-05-08'],
+      array_keys($dias),
+    );
   }
 
   /**
