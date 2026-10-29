@@ -280,6 +280,16 @@ o tema o apresenta como ação secundária em uma linha separada no mobile e num
 linha compacta no desktop. O botão continua oculto sem marcador e o tema não
 consulta History. Evidência visual em `0.6.0-dev.116`.
 
+Atualização mobile-first 2026-10-29: 2 colunas como base abaixo de 360px, 4
+colunas em `min-width: 22.5rem` e a barra desktop sticky em `min-width: 36rem`.
+O harness `tests/browser/aculta-forum/progress-visual.mjs` confere esses estados
+e aceita CSS candidata; a rodada Firefox desta revisão está DEFERRED.
+
+Atualização mobile-first 2026-10-29: 2 colunas como base abaixo de 360px, 4
+colunas em `min-width: 22.5rem` e a barra desktop sticky em `min-width: 36rem`.
+O harness `tests/browser/aculta-forum/progress-visual.mjs` confere esses estados
+e aceita CSS candidata; a rodada Firefox desta revisão está DEFERRED.
+
 ## Patterns
 
 Patterns não são engines de dados.

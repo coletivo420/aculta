@@ -68,6 +68,16 @@ A Institution Bar multidomínio também pertence ao shell, não ao catálogo SDC
 viewports abaixo de 375px a marca é ocultada visualmente como base, preservando
 o link acessível, e reaparece progressivamente em `min-width: 23.4375rem`.
 
+A barra de progresso de comentários é CSS compartilhada de Fórum/Wiki/Revista,
+com markup e ações emitidos pelo Portal; a grade começa compacta e cresce em
+`22.5rem` e `36rem`. O harness e os limites por consumer estão documentados em
+`tests/browser/aculta-forum/README.md` e `mobile-first-audit.md`.
+
+A barra de progresso de comentários é CSS compartilhada de Fórum/Wiki/Revista,
+com markup e ações emitidos pelo Portal; a grade começa compacta e cresce em
+`22.5rem` e `36rem`. O harness e os limites por consumer estão documentados em
+`tests/browser/aculta-forum/README.md` e `mobile-first-audit.md`.
+
 
 ## UI Styles
 

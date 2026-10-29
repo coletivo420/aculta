@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.7.0-dev.22
+version: 0.7.0-dev.23
 state: Dev
 progress_note: >-
-  0.7.0-dev.22 / THEME-MF2: Institution Bar mobile-first: marca oculta como base abaixo de 375px e reaparece em min-width 23.4375rem, mantendo-a no accessibility tree; shell sticky e consumers inalterados. Firefox nas dez purposes DEFERRED por sessões concorrentes; MF3 não aprovado.
-next_phase: 'Repetir Firefox para Institution Bar, rodapé, gavetas utilitárias, Webform, PDF, carrossel, autenticação e Perfil quando sessões concorrentes encerrarem; revisar rotas reais após sincronização/cache pelo owner. Continuar demais superfícies MF2 antes de THEME-MF3.'
+  0.7.0-dev.23 / THEME-MF2: discussion.css usa layout móvel como base: 2 colunas até 359px, 4 colunas de 360–575px e barra sticky de 7 trilhas a partir de 576px; formulário de resposta compacto em mobile. Smoke progress-visual ampliado para CSS candidata e fronteira 575/576px. Firefox/runtime DEFERRED por sessões concorrentes; MF3 não aprovado.
+next_phase: 'Executar Firefox com DISCUSSION_CSS_OVERRIDE em Fórum, Wiki e Revista quando sessões concorrentes encerrarem; continuar demais superfícies MF2 e revalidar Institution Bar/rodapé antes de THEME-MF3.'

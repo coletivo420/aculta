@@ -653,3 +653,19 @@ A marca é ocultada como base e volta a ser exibida em `min-width: 23.4375rem`;
 o harness existente confere a fronteira 374/375px nos dez purposes. Firefox e
 rotas reais DEFERRED por sessões concorrentes; não é gate MF3. O comportamento
 de shell fica documentado em `mobile-first-audit.md`.
+
+### THEME-MF2 — controles de discussão
+
+`discussion.css` usa grade de 2 colunas como base, 4 colunas a partir de 360px e
+barra sticky de 7 trilhas a partir de 576px; o formulário de resposta também
+começa compacto. O harness do Fórum passou a aceitar CSS candidata e cobre
+320/360/390/500/575/576/900px, mas a execução Firefox fica DEFERRED. Deve ser
+rodado em consumers de Fórum, Wiki e Revista. Ver `mobile-first-audit.md`.
+
+### THEME-MF2 — controles de discussão
+
+`discussion.css` usa grade de 2 colunas como base, 4 colunas a partir de 360px e
+barra sticky de 7 trilhas a partir de 576px; o formulário de resposta também
+começa compacto. O harness do Fórum passou a aceitar CSS candidata e cobre
+320/360/390/500/575/576/900px, mas a execução Firefox fica DEFERRED. Deve ser
+rodado em consumers de Fórum, Wiki e Revista. Ver `mobile-first-audit.md`.

@@ -1,6 +1,6 @@
 // X11 visual regression checks for the shared discussion progress controls.
 // Only synthetic DOM messages are added; this script never submits a form.
-import { chmodSync, mkdirSync, writeFileSync } from 'node:fs';
+import { chmodSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, isAbsolute, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -9,6 +9,7 @@ const page = process.env.SUITE_PAGE;
 const output = process.env.SUITE_OUT;
 const display = process.env.DISPLAY;
 const driver = process.env.GECKODRIVER || 'http://127.0.0.1:4444';
+const cssOverride = process.env.DISCUSSION_CSS_OVERRIDE === '1';
 if (!page || !output || !isAbsolute(output) || !display) {
   throw new Error('Defina SUITE_PAGE, SUITE_OUT absoluto fora do checkout e DISPLAY da sessão X11.');
 }
@@ -98,6 +99,10 @@ try {
   check('Página de teste carregou em Firefox com interface X11', await execute(`return location.hostname === ${JSON.stringify(pageUrl.hostname)} && !!document.querySelector('[data-aculta-discussion-thread]')`));
 
   check('A biblioteca de progresso foi carregada', await execute(`return !!Drupal?.behaviors?.acultaDiscussionProgress && typeof once === 'function'`));
+  if (cssOverride) {
+    const css = readFileSync(resolve(root, 'web/themes/custom/aculta420/css/components/discussion.css'), 'utf8');
+    await execute(`const style=document.createElement('style');style.id='aculta-discussion-css-candidate';style.textContent=arguments[0];document.head.append(style);return true;`, [css]);
+  }
   await execute(`
     const source = document.querySelector('[data-aculta-discussion-thread]');
     const thread = document.createElement('div');
@@ -146,14 +151,17 @@ try {
   // Restore the visible unread state so the target size and placement are measured.
   await execute(`document.querySelector('#aculta-visual-comment-4').classList.add('new'); return true;`);
   await sleep(100);
-  for (const width of [320, 360, 390, 500, 900]) {
+  for (const width of [320, 360, 390, 500, 575, 576, 900]) {
     await bidiCommand('browsingContext.setViewport', { context, viewport: { width, height: 844 }, devicePixelRatio: 1 });
     const baseline = await execute(`const t=window.__acultaTestThread; const parent=t.parentElement; t.remove(); const viewport=innerWidth; const offenders=[...document.querySelectorAll('body *')].map(e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);return {tag:e.tagName,id:e.id,className:typeof e.className==='string'?e.className.slice(0,80):'',left:Math.round(r.left),right:Math.round(r.right),width:Math.round(r.width),display:s.display,position:s.position,overflow:s.overflowX}}).filter(e=>e.display!=='none'&&e.width>0&&e.right>viewport+1).sort((a,b)=>b.right-a.right).slice(0,5); const metrics={viewport,document:document.documentElement.scrollWidth,body:document.body.scrollWidth,offenders}; parent.append(t); return metrics;`);
     await execute(`const t=window.__acultaTestThread; const top=t.querySelector('[data-aculta-discussion-progress]').getBoundingClientRect().top + window.scrollY; window.scrollTo(0, Math.max(0, top - 80)); return true;`);
     await sleep(200);
-    const metrics = await execute(`const t=window.__acultaTestThread; const nav=t.querySelector('[data-aculta-discussion-progress]'); const slider=nav.querySelector('[data-aculta-discussion-range]'); const unread=nav.querySelector('[data-aculta-discussion-unread]'); return {viewport:innerWidth,document:document.documentElement.scrollWidth,body:document.body.scrollWidth,nav:Math.round(nav.getBoundingClientRect().width),navLeft:Math.round(nav.getBoundingClientRect().left),navRight:Math.round(nav.getBoundingClientRect().right),slider:Math.round(slider.getBoundingClientRect().width),touch:Math.round(unread.getBoundingClientRect().height),status:nav.querySelector('[data-aculta-discussion-status]').innerText};`);
+    const metrics = await execute(`const t=window.__acultaTestThread; const nav=t.querySelector('[data-aculta-discussion-progress]'); const slider=nav.querySelector('[data-aculta-discussion-range]'); const unread=nav.querySelector('[data-aculta-discussion-unread]'); const style=getComputedStyle(nav); const status=getComputedStyle(nav.querySelector('[data-aculta-discussion-status]')); return {viewport:innerWidth,document:document.documentElement.scrollWidth,body:document.body.scrollWidth,nav:Math.round(nav.getBoundingClientRect().width),navLeft:Math.round(nav.getBoundingClientRect().left),navRight:Math.round(nav.getBoundingClientRect().right),slider:Math.round(slider.getBoundingClientRect().width),touch:Math.round(unread.getBoundingClientRect().height),status:nav.querySelector('[data-aculta-discussion-status]').innerText,position:style.position,areas:style.gridTemplateAreas,columnCount:style.gridTemplateColumns.split(' ').length,statusFont:status.fontSize};`);
     check(`Viewport CSS exato ${width}px; os controles não ampliam overflow`, metrics.viewport === width && metrics.navLeft >= -1 && metrics.navRight <= width + 1 && metrics.document <= baseline.document + 1 && metrics.body <= baseline.body + 1, JSON.stringify({ ...metrics, baseline }));
-    if (width <= 500) {
+    const columns = width < 360 ? 2 : width < 576 ? 4 : 7;
+    const mobileAreas = width < 360 ? metrics.areas.includes('"first previous"') : width < 576 ? metrics.areas.includes('"first previous next last"') : metrics.areas === 'none';
+    check(`Layout progressivo correto em ${width}px`, metrics.position === (width < 576 ? 'static' : 'sticky') && metrics.columnCount === columns && mobileAreas && metrics.statusFont === (width < 576 ? '12px' : '14px'), JSON.stringify({ position: metrics.position, columnCount: metrics.columnCount, areas: metrics.areas, statusFont: metrics.statusFont }));
+    if (width < 576) {
       check(`Alvo de toque Não lidas ≥44px a ${width}px`, metrics.touch >= 44, `${metrics.touch}px`);
     }
     if (width === 390 || width === 900) {
@@ -174,7 +182,7 @@ finally {
   if (bidi?.readyState === WebSocket.OPEN) bidi.close();
   const passed = checks.filter((item) => item.pass).length;
   const resultFile = resolve(output, 'results.json');
-  writeFileSync(resultFile, JSON.stringify({ page: pageUrl.href, display, checks, passed, total: checks.length }, null, 2), { mode: 0o600 });
+  writeFileSync(resultFile, JSON.stringify({ page: pageUrl.href, display, cssOverride, checks, passed, total: checks.length }, null, 2), { mode: 0o600 });
   console.log(`${passed}/${checks.length} verificações visuais passaram. Evidências em ${dirname(resultFile)}.`);
 }
 if (checks.some((item) => !item.pass)) process.exitCode = 1;

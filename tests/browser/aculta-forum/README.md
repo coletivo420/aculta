@@ -87,10 +87,12 @@ node tests/browser/aculta-forum/progress-visual.mjs
 Use somente hosts de teste declarados em
 `aculta_deployer/config/deploy.json`. `SUITE_OUT` deve ser um caminho absoluto
 fora do checkout; arquivos são criados com permissões privadas. A suíte valida
-viewports CSS exatos de 320, 360, 390, 500 e 900 px via WebDriver BiDi,
-estados claro/escuro, overflow introduzido pelos controles, tamanho mínimo do
-controle móvel e anúncio da primeira mensagem marcada como não lida. Capturas
-PNG e `results.json` ficam no diretório indicado.
+viewports CSS exatos de 320, 360, 390, 500, 575, 576 e 900 px via WebDriver BiDi,
+estados claro/escuro, overflow introduzido pelos controles, forma da grade por
+breakpoint, tamanho mínimo do controle móvel e anúncio da primeira mensagem
+marcada como não lida. `DISCUSSION_CSS_OVERRIDE=1` injeta a folha candidata do
+checkout antes da medição. Capturas PNG e `results.json` ficam no diretório
+indicado; o JSON registra se a folha foi sobrescrita.
 
 Ela não substitui inspeção com leitor de tela, dispositivo físico ou validação
 de comentários reais autenticados pelo History. A página deve ser de teste e

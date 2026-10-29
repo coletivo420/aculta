@@ -1,3 +1,8 @@
+# 0.7.0-dev.23 — migrar controles de discussão para mobile-first (2026-10-29)
+
+- Controles de progresso começam com 2 colunas abaixo de 360px; usam 4 colunas de 360px a 575px e restauram a barra sticky de 7 trilhas em `min-width: 36rem`. O formulário de resposta usa padding compacto como base e volta a 1rem no mesmo breakpoint.
+- `progress-visual.mjs` aceita `DISCUSSION_CSS_OVERRIDE=1`, verifica o layout em 320/360/390/500/575/576/900px e registra a folha candidata. Stylelint, sintaxe JS e validações estáticas PASS; Firefox nas rotas reais DEFERRED por sessões concorrentes. THEME-MF3 permanece pendente.
+
 # 0.7.0-dev.22 — converter exceção estreita da Institution Bar para mobile-first (2026-10-29)
 
 - A marca da Institution Bar fica visualmente oculta como base nos viewports abaixo de 375px e reaparece em `min-width: 23.4375rem`; o link permanece na árvore de acessibilidade. Sticky, estrutura e navegação não mudam.
