@@ -14,6 +14,19 @@
 
 # Changelog
 
+## 0.3.0-dev.6 — integrar o formulário Portal ao store e testar rollback — 2026-10-29
+
+- Novo Kernel integra `AccountOtherDataForm` ao `AccountDocumentStore` real:
+  validação de CPF, gravação de valor cifrado e fingerprint, máscara em modo
+  somente leitura e mensagem genérica para documento duplicado.
+- Kernel `DocumentFingerprintUniqueIndexKernelTest` agora executa o rollback
+  documentado: remove apenas o índice novo e confirma que a linha de índice
+  continua íntegra.
+- Runner de domínio: 248 checks PASS; Unit: 48 testes / 116 assertions PASS;
+  Kernel: 7 testes / 46 assertions PASS, 8 depreciações Core/contrib. PHPCS e
+  PHP lint dos arquivos alterados PASS. Update não executado no Runtime.
+- `10002` no Runtime permanece pendente de autorização operacional e snapshot.
+
 ## 0.3.0-dev.4 — impedir unicidade falsa com documentos sem fingerprint — 2026-10-26
 
 - O update 10002 agora verifica que todo documento não vazio do bundle Profile associado possui fingerprint antes de criar a restrição SQL. Se faltar índice ou tabela de origem, a operação falha fechada com contagem agregada e sem imprimir valores.

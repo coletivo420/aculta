@@ -134,4 +134,30 @@ final class DocumentFingerprintUniqueIndexKernelTest extends KernelTestBase {
     }
   }
 
+  /**
+   * The documented rollback drops only the new index and preserves rows.
+   */
+  public function testRollbackDropsIndexWithoutChangingFingerprintRows(): void {
+    $database = $this->container->get('database');
+    $database->insert('profile__field_documento_indice')
+      ->fields(['entity_id' => 20, 'deleted' => 0, 'field_documento_indice_value' => str_repeat('c', 64)])
+      ->execute();
+
+    aculta_id_cpf_update_10002();
+    self::assertTrue($database->schema()->indexExists(
+      'profile__field_documento_indice',
+      'aculta_id_cpf_documento_unique',
+    ));
+
+    $database->schema()->dropIndex('profile__field_documento_indice', 'aculta_id_cpf_documento_unique');
+    self::assertFalse($database->schema()->indexExists(
+      'profile__field_documento_indice',
+      'aculta_id_cpf_documento_unique',
+    ));
+    self::assertSame(1, (int) $database->select('profile__field_documento_indice', 'i')
+      ->countQuery()
+      ->execute()
+      ->fetchField());
+  }
+
 }

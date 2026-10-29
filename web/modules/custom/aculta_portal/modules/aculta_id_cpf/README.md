@@ -1,7 +1,7 @@
 # ACULTA CPF e CNPJ
 
 Submódulo opcional do `aculta_portal`, baseline Drupal **11.3+** e PHP **8.4**.
-Versão atual: **0.3.0-dev.5**. Persiste o CPF/CNPJ cifrado da aba "Outros Dados"
+Versão atual: **0.3.0-dev.6**. Persiste o CPF/CNPJ cifrado da aba "Outros Dados"
 e um índice de unicidade (fingerprint HMAC).
 
 **Runtime:** Homelab MAIN ativo, consultado somente para leitura em 2026-10-26.
@@ -120,27 +120,22 @@ php scripts/validate-aculta-portal-drupal11.php
 ```
 
 Na validação M-1 com o autoloader isolado da branch: Runner de domínio 248 checks
-PASS; Unit 48 testes / 116 assertions PASS; Kernel MariaDB 4 testes / 20
-assertions PASS. Além da idempotência do update `10002`, bloqueio SQL de
-fingerprints duplicados e aborto seguro com conflitos, o Kernel exercita o
-`AccountDocumentStore` com usuário, tipo Profile, campos e entidades Profile
-reais: cifra, fingerprint, perfil despublicado, máscara e mensagem genérica de
-duplicidade. O teste focal emite 7 deprecações Core/contrib. O novo Unit também
-comprova que a colisão concorrente retorna mensagem genérica sem preservar
-detalhe do banco/fingerprint como exceção encadeada. PHPCS e PHP lint dos arquivos
-alterados PASS. Nenhum update foi aplicado no Runtime. Teste integrado do
-formulário Portal ainda falta: o Kernel focal do CPF não consegue carregar
-sozinho as definições do Portal (`file.usage`, `aculta_image.file_remover` e
-`aculta_mailer.mailer` não existem no fixture reduzido). Criar uma fixture de
-integração Portal que habilite esses owners ou um teste de formulário no
-harness próprio do Portal. Homologação Runtime também falta. Evidência
-histórica da implementação removida está em
+PASS; Unit 48 testes / 116 assertions PASS; Kernel MariaDB 7 testes / 46
+assertions PASS (8 depreciações Core/contrib). Além da idempotência do update
+`10002`, bloqueio SQL de fingerprints duplicados, aborto seguro com conflitos e
+rollback que remove somente o índice mantendo as linhas, o Kernel exercita o
+`AccountDocumentStore` e o formulário real `AccountOtherDataForm`: validação,
+gravação cifrada/fingerprint, máscara após salvar e mensagem genérica para
+duplicidade. PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS.
+Nenhum update foi aplicado no Runtime. A execução operacional de `10002` segue
+pendente de autorização e snapshot; não foi solicitada nem criada neste commit.
+Evidência histórica da implementação removida está em
 [ACULTA-ASSOCIADO-ID.md](../../../../../../docs/modules/ACULTA-ASSOCIADO-ID.md).
 
 ## Próximas entregas
 
-1. Executar `10002` em banco isolado com dados representativos, inclusive conflito e rollback.
-2. Testar o formulário Portal com o `AccountDocumentStore` real; validar duplicidade e perfil despublicado pela experiência do titular.
+1. Revisar snapshot/rollback e obter autorização operacional antes de executar `10002` no Runtime; sem autorização, manter Dev.
+2. Confirmar a experiência visual do formulário Outros Dados após o candidato ser servido.
 3. Integrar login por CPF ao pipeline existente, preservando flood, confirmação,
    CAPTCHA, Social Auth e respostas genéricas.
 4. Avaliar integração Webform somente após proteção de rascunhos, tokens,
