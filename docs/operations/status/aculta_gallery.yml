@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.18
 state: Dev
-next_phase: 'Validar no Kernel o provider Content Index, purpose canônico `magazine` e suas relações com imagens; depois validar diálogo e galerias do Fórum no navegador/aparelho real antes de RC ([arquitetura](web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md))'
-progress_note: "Config editorial opcional; Gallery instalada nas provas limpas de Doação e LMS."
+next_phase: 'Corrigir PHPCS e, após gates verdes, revisar diálogo e galerias do Fórum no Firefox ESR/aparelho real antes de RC ([arquitetura](web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md))'
+progress_note: "Em 2026-10-28: Gallery Unit 2/13 PASS; Kernel Content Index 2/51 PASS com 9 depreciações; PHP lint 11/11 PASS. PHPCS Drupal falha com 11 erros e 12 avisos em 6 arquivos. Provider cobre purpose magazine e relações com imagens; revisão do diálogo e das galerias do Fórum no Firefox/aparelho real permanece pendente."
