@@ -75,6 +75,14 @@ público e reflow 1280/390/320 px usando uma entidade temporária `[TESTE]` no
 Runtime de desenvolvimento. Requer uma sessão administrativa efêmera. Ver o
 README local para criação e limpeza da fixture.
 
+### `aculta-portal-cep/`
+
+`olivero.py` verifica o formulário autenticado de endereço, o preenchimento
+assíncrono do CEP, campos bloqueados e reflow 1280/390/320 px com o tema Olivero.
+Usa conta descartável e link ULI; não submete o formulário. A ativação temporária
+do tema deve ser restaurada pelo `trap` documentado no README local. Capturas e
+link ULI ficam em `$SUITE_OUT`.
+
 ### `aculta-forum-lms/`
 
 `h5p-discussions.py` prepara um curso LMS, uma conta Educadora temporária e um

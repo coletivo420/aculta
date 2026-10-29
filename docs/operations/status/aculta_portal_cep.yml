@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.3.0-dev.13
 state: Dev
-progress_note: "Dev.13: PHPCS Drupal/DrupalPractice em todo o PHP do módulo PASS; 10 arquivos corrigidos sem mudança de contratos. CepLookupServiceTest 10/45 PASS; validate-account-address.php PASS (24 verificações). Smoke Firefox ESR X11: example.com abriu; conta.aculta.toca.net.br falhou e o resolver local não encontrou DNS. O fluxo que submete endereço também requer conta descartável; nenhuma gravação Runtime foi feita."
-next_phase: Restaurar resolução do host de teste e executar o script Firefox ESR com conta descartável em ambiente isolado; manter PHPCS com extensões PHP explícitas; homologar Browser com conta descartável ([contrato](docs/portal/ACCOUNT-ADDRESS.md))
+progress_note: "Dev.13: PHPCS Drupal/DrupalPractice no PHP do módulo PASS; CepLookupServiceTest 10/45 PASS; validate-account-address.php PASS (24 verificações). Em 2026-10-29, Firefox ESR/X11 validou o formulário autenticado e consulta CEP sem salvar o endereço: ACULTA420 17/17 e Olivero 19/19, com viewport real 1280/390/320 px, sem overflow. O JS servido no Runtime corresponde ao branch; tema Olivero restaurado."
+next_phase: Executar o fluxo completo de persistência do endereço com conta descartável e limpeza confirmada; revisar o módulo e gates finais para avaliar RC ([contrato](docs/portal/ACCOUNT-ADDRESS.md), [smoke Firefox](tests/browser/aculta-portal-cep/README.md))
