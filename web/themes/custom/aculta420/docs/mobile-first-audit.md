@@ -7,6 +7,20 @@ A auditoria original foi registrada no checkout servidor `ded8a6181`. Em
 varredura abaixo cobre os arquivos atuais do tema, mas não altera a evidência
 de runtime. Nenhuma escrita persistente foi executada no Runtime.
 
+### THEME-MF2 — busca e linhas de tópicos do Fórum (2026-10-29)
+
+`forum-index.css` usa uma coluna como base na linha de tópico e no formulário
+exposto de busca. `min-width: 36rem` restaura duas colunas para os metadados e
+busca; `min-width: 62rem` amplia a busca para três trilhas. Ordem DOM e conteúdo
+não mudam.
+
+`forum-index-visual.mjs` injeta a CSS candidata e mede uma linha sintética
+somente no DOM mais categorias reais em 320/360/390/575/576/600/767/768/1024/
+1280/1440px. `search-visual.mjs` injeta a mesma folha e mede a busca real nas
+fronteiras 575/576 e 991/992, além das larguras de regressão. Stylelint e
+sintaxe JS PASS; Firefox/runtime DEFERRED por sessões concorrentes. A linha
+sintética não substitui a inspeção de tópico real; MF3 permanece pendente.
+
 ### THEME-MF2 — busca e listagens Wiki (2026-10-29)
 
 `wiki.css` declara tamanhos compactos do header como base; `36rem` reintroduz

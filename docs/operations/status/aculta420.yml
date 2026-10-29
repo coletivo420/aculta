@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.7.0-dev.24
+version: 0.7.0-dev.25
 state: Dev
 progress_note: >-
-  0.7.0-dev.24 / THEME-MF2: wiki.css usa composição mobile como base na busca, listagens e header Wiki, ampliando para grids de duas colunas a partir de 768px; harness visual injeta CSS candidata e mede 575/576/767/768px. Firefox/runtime DEFERRED por sessões concorrentes; MF3 não aprovado.
-next_phase: 'Executar Firefox com WIKI_CSS_OVERRIDE nos três caminhos públicos e atualizar teste autenticado Studio; continuar demais superfícies MF2 e revalidar Discussão, Institution Bar e rodapé antes de THEME-MF3.'
+  0.7.0-dev.25 / THEME-MF2: forum-index.css inicia lista de tópicos e busca em uma coluna, abre duas trilhas em 576px e três trilhas da busca em 992px; CSS candidata coberta por fixtures DOM e rotas públicas. Stylelint e sintaxe JS PASS; Firefox DEFERRED por sessões concorrentes; MF3 não aprovado.
+next_phase: 'Executar Firefox com FORUM_INDEX_CSS_OVERRIDE e FORUM_SEARCH_CSS_OVERRIDE em categorias e busca pública; integrar formulário real e consumers pós-publicação; continuar demais superfícies MF2 antes de THEME-MF3.'

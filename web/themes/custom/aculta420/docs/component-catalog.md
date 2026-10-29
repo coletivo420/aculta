@@ -77,6 +77,11 @@ A composição pública de Wiki (header, formulários e grids de Views) permanec
 Twig/CSS de apresentação, sem SDC novo; inicia em coluna única e aprimora em
 `48rem`. O inventário de rotas e o smoke candidato estão no roadmap transversal.
 
+O índice do Fórum usa Twig/Views e classes de apresentação já existentes; linhas
+de tópico empilham seus metadados até `36rem`. Não houve SDC novo nem alteração
+dos dados/handlers da View. O teste visual sintético está documentado em
+`tests/browser/aculta-forum/README.md`.
+
 A barra de progresso de comentários é CSS compartilhada de Fórum/Wiki/Revista,
 com markup e ações emitidos pelo Portal; a grade começa compacta e cresce em
 `22.5rem` e `36rem`. O harness e os limites por consumer estão documentados em

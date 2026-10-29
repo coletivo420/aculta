@@ -1,5 +1,5 @@
 // Read-only X11 visual checks for the public Growroom420 search page.
-import { chmodSync, mkdirSync, writeFileSync } from 'node:fs';
+import { chmodSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { isAbsolute, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -8,6 +8,8 @@ const page = process.env.SUITE_PAGE;
 const output = process.env.SUITE_OUT;
 const display = process.env.DISPLAY;
 const driver = process.env.GECKODRIVER || 'http://127.0.0.1:4448';
+const cssOverride = process.env.FORUM_SEARCH_CSS_OVERRIDE === '1';
+const cssRoot = process.env.ACULTA_THEME_ROOT || root;
 if (!page || !output || !isAbsolute(output) || !display) {
   throw new Error('Defina SUITE_PAGE, SUITE_OUT absoluto fora do checkout e DISPLAY da sessão X11.');
 }
@@ -50,7 +52,7 @@ const request = async (method, path, body) => {
   return data.value;
 };
 const path = (suffix) => `/session/${session}${suffix}`;
-const execute = (script) => request('POST', path('/execute/sync'), { script, args: [] });
+const execute = (script, args = []) => request('POST', path('/execute/sync'), { script, args });
 const sleep = (ms) => new Promise((resolveSleep) => setTimeout(resolveSleep, ms));
 const bidiCommand = (method, params = {}) => new Promise((resolveCommand, rejectCommand) => {
   const id = ++bidiId;
@@ -86,17 +88,25 @@ try {
   const context = (await bidiCommand('browsingContext.getTree', { maxDepth: 0 })).contexts[0].context;
   await request('POST', path('/url'), { url: pageUrl.href });
   await sleep(1800);
+  if (cssOverride) {
+    const css = readFileSync(resolve(cssRoot, 'web/themes/custom/aculta420/css/components/forum-index.css'), 'utf8');
+    const loaded = await execute(`const style=document.createElement('style');style.id='aculta-forum-search-css-candidate';style.textContent=arguments[0];document.head.append(style);return !!style.sheet&&style.sheet.cssRules.length>0;`, [css]);
+    check('A folha candidata da busca do Fórum foi injetada', loaded);
+  }
   check('A busca pública abriu no host de teste em Firefox/X11', await execute(`return location.hostname === ${JSON.stringify(pageUrl.hostname)} && location.pathname === '/pesquisar'`));
   check('A tela apresenta um único título principal', await execute(`return document.querySelectorAll('main h1, h1').length === 1 && document.querySelector('h1')?.innerText.includes('Pesquisar discussões')`));
   check('O formulário de busca e o filtro de categoria estão presentes', await execute(`return !!document.querySelector('form input[name="keys"]') && !!document.querySelector('form select[name="categoria"]') && !!document.querySelector('form button[type="submit"], form input[type="submit"]')`));
   check('A busca GET de somente leitura não apresenta CAPTCHA', await execute(`return !document.querySelector('[name*="captcha" i], iframe[src*="turnstile" i], .cf-turnstile')`));
   check('A consulta sem conteúdo mostra estado vazio e link de categorias', await execute(`return document.body.innerText.includes('Nenhuma discussão corresponde') && [...document.querySelectorAll('a')].some(a => new URL(a.href).pathname === '/categorias')`));
 
-  for (const width of [390, 768, 1024]) {
+  for (const width of [320, 360, 390, 575, 576, 600, 767, 768, 991, 992, 1024, 1280]) {
     await bidiCommand('browsingContext.setViewport', { context, viewport: { width, height: 844 }, devicePixelRatio: 1 });
     await sleep(200);
     const metrics = await execute(`
       const form = document.querySelector('form input[name="keys"]')?.closest('form');
+      const grid = document.querySelector('#views-exposed-form-aculta-forum-search-page-search > .d-flex');
+      const gridStyle = grid ? getComputedStyle(grid) : null;
+      const actionsStyle = getComputedStyle(document.querySelector('#views-exposed-form-aculta-forum-search-page-search #edit-actions'));
       const rect = form?.getBoundingClientRect();
       const viewport = innerWidth;
       const overflow = [...document.querySelectorAll('body *')]
@@ -105,10 +115,17 @@ try {
         .sort((a,b)=>b.right-a.right).slice(0,4);
       return {viewport, document:document.documentElement.scrollWidth, body:document.body.scrollWidth,
         formLeft:rect ? Math.round(rect.left) : null, formRight:rect ? Math.round(rect.right) : null,
+        columns:gridStyle ? gridStyle.gridTemplateColumns.split(' ').length : null,
+        actionColumnStart:actionsStyle.gridColumnStart, actionColumnEnd:actionsStyle.gridColumnEnd,
         query:document.querySelector('input[name="keys"]')?.value, overflow};
     `);
     check(`Viewport CSS ${width}px mantém formulário dentro da tela`, metrics.viewport === width && metrics.formLeft >= -1 && metrics.formRight <= width + 1, JSON.stringify(metrics));
-    for (const mode of ['light', 'dark']) {
+    const expectedColumns = width < 576 ? 1 : width < 992 ? 2 : 3;
+    const actionSpan = width < 992
+      ? metrics.actionColumnStart === '1' && metrics.actionColumnEnd === '-1'
+      : metrics.actionColumnStart === 'auto' && metrics.actionColumnEnd === 'auto';
+    check(`Grade de busca mobile-first em ${width}px`, metrics.columns === expectedColumns && actionSpan, JSON.stringify(metrics));
+    if ([390, 1024].includes(width)) for (const mode of ['light', 'dark']) {
       await execute(`document.documentElement.setAttribute('data-bs-theme', ${JSON.stringify(mode)}); return true;`);
       await sleep(100);
       const screenshot = await request('GET', path('/screenshot'));
@@ -134,7 +151,7 @@ finally {
   if (session) await request('DELETE', `/session/${session}`).catch(() => {});
   if (bidi?.readyState === WebSocket.OPEN) bidi.close();
   const passed = checks.filter((item) => item.pass).length;
-  writeFileSync(resolve(output, 'results.json'), JSON.stringify({ page: pageUrl.href, display, checks, passed, total: checks.length }, null, 2), { mode: 0o600 });
+  writeFileSync(resolve(output, 'results.json'), JSON.stringify({ page: pageUrl.href, display, cssOverride, checks, passed, total: checks.length }, null, 2), { mode: 0o600 });
   console.log(`${passed}/${checks.length} verificações visuais passaram. Evidências privadas: ${output}.`);
 }
 if (checks.some((item) => !item.pass)) process.exitCode = 1;

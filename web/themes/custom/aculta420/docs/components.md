@@ -262,6 +262,12 @@ corpo, data e identidade sem alterações. Firefox/X11 verificou a listagem em
 1024 e 500 px e o detalhe em 500 px; capturas privadas e limites restantes
 estão no changelog `0.6.0-dev.109`.
 
+Atualização mobile-first 2026-10-29: o resumo de metadados da listagem começa
+sob o título do tópico e volta à coluna lateral em `min-width: 36rem`; o
+formulário público de busca usa uma coluna como base, duas em `36rem` e três em
+`62rem`. Harnesses candidatos e limites DEFERRED estão em
+`tests/browser/aculta-forum/README.md`.
+
 O Portal pode anexar ao campo compartilhado a navegação de progresso das
 mensagens. O tema apresenta os controles neutros `[data-aculta-discussion-progress]`
 em `discussion.css`; não consulta dados nem decide quais comentários são
@@ -279,11 +285,6 @@ renderizado com `.new`, o Portal acrescenta `[data-aculta-discussion-unread]`;
 o tema o apresenta como ação secundária em uma linha separada no mobile e numa
 linha compacta no desktop. O botão continua oculto sem marcador e o tema não
 consulta History. Evidência visual em `0.6.0-dev.116`.
-
-Atualização mobile-first 2026-10-29: 2 colunas como base abaixo de 360px, 4
-colunas em `min-width: 22.5rem` e a barra desktop sticky em `min-width: 36rem`.
-O harness `tests/browser/aculta-forum/progress-visual.mjs` confere esses estados
-e aceita CSS candidata; a rodada Firefox desta revisão está DEFERRED.
 
 Atualização mobile-first 2026-10-29: 2 colunas como base abaixo de 360px, 4
 colunas em `min-width: 22.5rem` e a barra desktop sticky em `min-width: 36rem`.

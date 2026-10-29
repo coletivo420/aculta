@@ -50,9 +50,11 @@ Não autentica, não envia formulários e não grava Nodes ou Comments.
 ## Busca pública
 
 `search-visual.mjs` verifica a página somente leitura `/pesquisar` em Firefox
-visível. Ela exige uma query sem resultados, percorre 390/768/1024 CSS px nos
-modos claro/escuro e confere formulário, estado vazio, CAPTCHA, enquadramento e
-contraste. Não submete formulários nem cria conteúdo.
+visível. Ela exige uma query sem resultados, percorre larguras de 320 a 1280px
+e confere formulário, grade 1/2/3 colunas, estado vazio, CAPTCHA, enquadramento
+e contraste em 390/1024px claro/escuro. Não submete formulários nem cria
+conteúdo. `FORUM_SEARCH_CSS_OVERRIDE=1` injeta a folha candidata
+`forum-index.css` do checkout; `ACULTA_THEME_ROOT` seleciona outro worktree.
 
 ```sh
 DISPLAY=:0 geckodriver --host 127.0.0.1 --port 4448
@@ -62,6 +64,7 @@ Em outro terminal:
 
 ```sh
 DISPLAY=:0 GECKODRIVER=http://127.0.0.1:4448 \
+FORUM_SEARCH_CSS_OVERRIDE=1 ACULTA_THEME_ROOT=/path/to/worktree \
 SUITE_PAGE='https://<host-de-teste>/pesquisar?keys=<termo-sem-resultados>' \
 SUITE_OUT='/home/<usuario>/private/aculta/visual-tests/forum-search' \
 node tests/browser/aculta-forum/search-visual.mjs
@@ -216,6 +219,12 @@ O script confirma que o HTML carrega assets só do tema informado. Com
 `SUITE_THEME=aculta420`, ele mede a grade do tema, o contador de cada cartão e
 o reflow; a inspeção de todas as combinações de cor continua na suíte
 `forum-index-visual.mjs`.
+
+`forum-index-visual.mjs` percorre 320/360/390/575/576/600/767/768/1024/1280/
+1440px, mede cartões reais de categoria e injeta uma linha de tópico sintética
+somente no DOM para conferir a mudança de uma para duas colunas em 576px.
+`FORUM_INDEX_CSS_OVERRIDE=1` injeta a folha candidata local; use
+`ACULTA_THEME_ROOT` para selecionar o worktree. Não cria nem altera conteúdo.
 
 ## Painel autenticado — leitura somente (ambiente local)
 

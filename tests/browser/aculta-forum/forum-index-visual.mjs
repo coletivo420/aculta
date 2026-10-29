@@ -1,5 +1,5 @@
 // Read-only Firefox/X11 visual checks for Growroom420 category views.
-import { chmodSync, mkdirSync, writeFileSync } from 'node:fs';
+import { chmodSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { isAbsolute, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -8,6 +8,8 @@ const page = process.env.SUITE_PAGE;
 const output = process.env.SUITE_OUT;
 const display = process.env.DISPLAY;
 const driver = process.env.GECKODRIVER || 'http://127.0.0.1:4448';
+const cssOverride = process.env.FORUM_INDEX_CSS_OVERRIDE === '1';
+const cssRoot = process.env.ACULTA_THEME_ROOT || root;
 if (!page || !output || !isAbsolute(output) || !display) {
   throw new Error('Defina SUITE_PAGE, SUITE_OUT absoluto fora do checkout e DISPLAY da sessão X11.');
 }
@@ -52,7 +54,7 @@ const request = async (method, path, body) => {
   return data.value;
 };
 const sessionPath = (suffix) => `/session/${session}${suffix}`;
-const execute = (script) => request('POST', sessionPath('/execute/sync'), { script, args: [] });
+const execute = (script, args = []) => request('POST', sessionPath('/execute/sync'), { script, args });
 const key = (value) => request('POST', sessionPath('/actions'), {
   actions: [{
     type: 'key',
@@ -95,6 +97,11 @@ try {
   const context = (await bidiCommand('browsingContext.getTree', { maxDepth: 0 })).contexts[0].context;
   await request('POST', sessionPath('/url'), { url: pageUrl.href });
   await sleep(1600);
+  if (cssOverride) {
+    const css = readFileSync(resolve(cssRoot, 'web/themes/custom/aculta420/css/components/forum-index.css'), 'utf8');
+    const loaded = await execute(`const style=document.createElement('style');style.id='aculta-forum-index-css-candidate';style.textContent=arguments[0];document.head.append(style);return !!style.sheet&&style.sheet.cssRules.length>0;`, [css]);
+    check('A folha candidata do índice do Fórum foi injetada', loaded);
+  }
 
   const initial = await execute(`return {
     host: location.hostname,
@@ -144,13 +151,23 @@ try {
     && skipDestination.activeId === 'main-content'
     && skipDestination.mainTabindex === '-1', JSON.stringify(skipDestination));
 
-  for (const width of [390, 768, 1024]) {
+  for (const width of [320, 360, 390, 575, 576, 600, 767, 768, 1024, 1280, 1440]) {
     await bidiCommand('browsingContext.setViewport', { context, viewport: { width, height: 844 }, devicePixelRatio: 1 });
     await sleep(250);
     const metrics = await execute(`
       const main = document.querySelector('main, [role="main"]');
       const rect = main?.getBoundingClientRect();
       const viewport = innerWidth;
+      const row = document.createElement('div');
+      row.className = 'aculta-forum-topic-list-row';
+      row.setAttribute('data-aculta-test-topic-list', '');
+      row.innerHTML = '<div class="aculta-forum-topic-list-row__topic"><article class="aculta-forum-topic--teaser"><h2><a href="#test">Tópico sintético de revisão visual</a></h2></article></div><dl class="aculta-forum-topic-list-row__meta"><div><dt>Respostas</dt><dd>3</dd></div><div class="aculta-forum-topic-list-row__last-author"><div class="aculta-author-card"><span>Autoria de teste</span></div></div></dl>';
+      main.append(row);
+      const rowStyle = getComputedStyle(row);
+      const metaStyle = getComputedStyle(row.querySelector('.aculta-forum-topic-list-row__meta'));
+      const authorStyle = getComputedStyle(row.querySelector('.aculta-forum-topic-list-row__last-author'));
+      const topicLayout = {columns:rowStyle.gridTemplateColumns.split(' ').length,metaTop:metaStyle.borderBlockStartStyle,metaInline:metaStyle.borderInlineStartStyle,authorAlign:authorStyle.justifyContent};
+      row.remove();
       const cards = [...document.querySelectorAll('.aculta-forum-category')].map(e => {
         const r=e.getBoundingClientRect();
         return {left:Math.round(r.left),right:Math.round(r.right),width:Math.round(r.width)};
@@ -158,11 +175,18 @@ try {
       const outside = cards.filter(r => r.left < -1 || r.right > viewport + 1);
       return {viewport, document:document.documentElement.scrollWidth, body:document.body.scrollWidth,
         mainLeft:rect ? Math.round(rect.left) : null, mainRight:rect ? Math.round(rect.right) : null,
+        topicLayout,
         cards:cards.length, outside:outside.slice(0,4)};
     `);
     check(`Viewport CSS ${width}px mantém categorias no enquadramento`,
       metrics.viewport === width && metrics.mainLeft >= -1 && metrics.mainRight <= width + 1
       && metrics.document <= width + 1 && metrics.outside.length === 0, JSON.stringify(metrics));
+    const mobileTopicLayout = width < 576
+      ? metrics.topicLayout.columns === 1 && metrics.topicLayout.metaTop === 'solid'
+        && metrics.topicLayout.metaInline === 'none' && metrics.topicLayout.authorAlign === 'flex-start'
+      : metrics.topicLayout.columns === 2 && metrics.topicLayout.metaTop === 'none'
+        && metrics.topicLayout.metaInline === 'solid' && metrics.topicLayout.authorAlign === 'flex-end';
+    check(`Linha de tópico usa layout apropriado em ${width}px`, mobileTopicLayout, JSON.stringify(metrics.topicLayout));
 
     for (const mode of ['light', 'dark']) {
       await execute(`document.documentElement.setAttribute('data-bs-theme', ${JSON.stringify(mode)}); return true;`);
@@ -185,7 +209,7 @@ finally {
   if (session) await request('DELETE', `/session/${session}`).catch(() => {});
   if (bidi?.readyState === WebSocket.OPEN) bidi.close();
   const passed = checks.filter((item) => item.pass).length;
-  writeFileSync(resolve(output, 'results.json'), JSON.stringify({ page: pageUrl.href, display, checks }, null, 2), { mode: 0o600 });
+  writeFileSync(resolve(output, 'results.json'), JSON.stringify({ page: pageUrl.href, display, cssOverride, checks }, null, 2), { mode: 0o600 });
   console.log(`Resultado: ${passed}/${checks.length} verificações; capturas em ${output}`);
 }
 

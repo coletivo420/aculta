@@ -1,3 +1,8 @@
+# 0.7.0-dev.25 — migrar busca e metadados do Fórum para mobile-first (2026-10-29)
+
+- Busca de tópicos começa em uma coluna, cresce para duas em 576px e três em 992px; metadados da linha de tópico empilham em mobile e voltam à coluna lateral em 576px.
+- `forum-index-visual.mjs` mede linha sintética do DOM em 11 larguras; `search-visual.mjs` mede 1/2/3 colunas em 12 larguras. Ambos aceitam CSS candidata local. Stylelint e sintaxe JS PASS; Firefox DEFERRED por sessões concorrentes. THEME-MF3 pendente.
+
 # 0.7.0-dev.24 — migrar busca e listagens Wiki para mobile-first (2026-10-29)
 
 - Header Wiki usa tamanhos compactos na base; `min-width: 36rem` amplia a marca e `min-width: 48rem` restaura dimensões desktop. Formulários de busca e grids começam em uma coluna e passam a duas em 768px.
