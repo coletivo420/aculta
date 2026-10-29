@@ -242,3 +242,16 @@ Depois da varredura acima, foram corrigidos os itens abaixo. Os que não estão 
   sai antes de `preventDefault()` quando o link é de outra origem. Gate: PASS (18). A exigência de same-origin no AJAX
   continua verificada em `search-preview.js`.
 - Gates "Local only" continuam dependendo do ambiente local.
+
+### Tokens para downloads, conteúdo salvo e blocos editoriais (2026-10-29)
+
+`DownloadWithMetaFormatter`, `SavedContentController`, `EventEditorialPresenter`
+e `CardVariationManager` passaram a emitir tokens neutros `data-portal-ui` (e
+`data-card-variation`, que mantém sua lista fechada). O tema converte os tokens
+de render arrays para classes; tokens dentro de markup legado ficam disponíveis
+como atributos para o CSS do tema. Consultas, autorização de marcas, render
+arrays, destinos de links, cache e variações válidas continuam nos módulos. A
+variante compacta também aceita `data-card-variation="compact"` no SDC card.
+Os gates de fronteira e de documentação de tokens passam no worktree após a
+mudança; a validação Runtime e os testes Kernel ainda precisam ser executados.
+

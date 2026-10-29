@@ -9,13 +9,14 @@ use Drupal\aculta_events\Editorial\EventEditorialPresenter;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_portal\Editorial\CardVariationManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
-use Drupal\file\Entity\File;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Validates editorial enhancements: ReadableMime, CardVariation and EventEditorialPresenter.
+ * Validates editorial resources.
+ *
+ * Covers ReadableMime, CardVariationManager and EventEditorialPresenter.
  */
 #[Group('aculta_portal')]
 #[RunTestsInSeparateProcesses]
@@ -35,8 +36,25 @@ final class EditorialResourcesKernelTest extends KernelTestBase {
     'aculta_events',
   ];
 
+  /**
+   * The readable MIME service under test.
+   *
+   * @var \Drupal\aculta_document_viewer\Document\ReadableMime
+   */
   protected ReadableMime $readableMime;
+
+  /**
+   * The card variation manager under test.
+   *
+   * @var \Drupal\aculta_portal\Editorial\CardVariationManager
+   */
   protected CardVariationManager $cardVariationManager;
+
+  /**
+   * The event editorial presenter under test.
+   *
+   * @var \Drupal\aculta_events\Editorial\EventEditorialPresenter
+   */
   protected EventEditorialPresenter $editorialPresenter;
 
   /**
@@ -72,7 +90,7 @@ final class EditorialResourcesKernelTest extends KernelTestBase {
   }
 
   /**
-   * Tests ReadableMime conversion, file size localization, and accessible download labels.
+   * Tests MIME conversion, file-size localization and accessible labels.
    */
   public function testReadableMimeAndAccessibleLabels(): void {
     $this->assertSame('PDF', $this->readableMime->getHumanReadableFormat('application/pdf'));
@@ -92,7 +110,7 @@ final class EditorialResourcesKernelTest extends KernelTestBase {
   }
 
   /**
-   * Tests CardVariationManager closed variations list and render array decoration.
+   * Tests the closed variations list and render array decoration.
    */
   public function testCardVariationManagerEnforcement(): void {
     $allowed = $this->cardVariationManager->getAllowedVariations();
@@ -107,8 +125,8 @@ final class EditorialResourcesKernelTest extends KernelTestBase {
     $build = ['#type' => 'container', '#attributes' => []];
     $this->cardVariationManager->applyVariation($build, 'destaque');
 
-    $this->assertContains('aculta-card', $build['#attributes']['class']);
-    $this->assertContains('aculta-card--destaque', $build['#attributes']['class']);
+    $this->assertSame('editorial-card', $build['#attributes']['data-portal-ui']);
+    $this->assertArrayNotHasKey('class', $build['#attributes']);
     $this->assertSame('destaque', $build['#attributes']['data-card-variation']);
   }
 
@@ -120,7 +138,8 @@ final class EditorialResourcesKernelTest extends KernelTestBase {
       'title' => 'Festival Cultural',
       'field_status' => 'publicado',
       'field_apoiadores' => "Empresa Parceira | Patrocínio Master | https://parceiro.exemplo.com",
-      'field_apoiadores_autorizados' => FALSE, // NOT authorized.
+    // NOT authorized.
+      'field_apoiadores_autorizados' => FALSE,
     ]);
     $event->save();
 

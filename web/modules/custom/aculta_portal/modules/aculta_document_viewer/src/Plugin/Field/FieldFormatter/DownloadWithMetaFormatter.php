@@ -78,21 +78,23 @@ final class DownloadWithMetaFormatter extends FormatterBase implements Container
       $elements[$delta] = [
         '#type' => 'container',
         '#attributes' => [
-          'class' => ['aculta-download-meta-item'],
+          'data-portal-ui' => 'document-download-item',
           'data-download-format' => strtolower($formatBadge),
         ],
         'link' => [
           '#type' => 'link',
           '#title' => $filename,
-          '#url' => Url::fromUri($url, ['attributes' => [
-            'download' => '',
-            'aria-label' => $accessibleLabel,
-            'class' => ['download-link'],
-          ]]),
+          '#url' => Url::fromUri($url, [
+            'attributes' => [
+              'download' => '',
+              'aria-label' => $accessibleLabel,
+              'data-portal-ui' => 'document-download-link',
+            ],
+          ]),
         ],
         'meta' => [
           '#markup' => sprintf(
-            '<span class="download-badge-format" aria-hidden="true">%s</span> <span class="download-badge-size" aria-hidden="true">%s</span>',
+            '<span data-portal-ui="document-download-format" aria-hidden="true">%s</span> <span data-portal-ui="document-download-size" aria-hidden="true">%s</span>',
             htmlspecialchars($formatBadge, ENT_QUOTES, 'UTF-8'),
             htmlspecialchars($sizeFormatted, ENT_QUOTES, 'UTF-8')
           ),

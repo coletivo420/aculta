@@ -36,6 +36,7 @@ Atributos: não há wildcard. Todo nome usado no código aparece na tabela acima
 | `data-aculta-bio-form` | exato | sim | 2 |
 | `data-aculta-cart-count` | exato | não | 2 |
 | `data-aculta-cart-trigger` | exato | não | 2 |
+| `data-card-variation` | exato | não | 1 |
 | `data-aculta-cep-status` | exato | sim | 1 |
 | `data-aculta-chip` | exato | sim | 2 |
 | `data-aculta-chip-name` | exato | sim | 1 |
@@ -493,6 +494,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 
 | Token | Classes no ACULTA420 | Origem no módulo/tema |
 | --- | --- | --- |
+| `editorial-card` | `aculta-card card` | `web/modules/custom/aculta_portal/src/Editorial/CardVariationManager.php` |
 | `fiscal-identity-other-data` | `aculta-fiscal-identity-other-data` | `web/modules/custom/aculta_portal/src/Plugin/Commerce/CheckoutPane/FiscalIdentityPane.php` |
 | `wiki-proposal-contribute` | `button button--secondary` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiProposalLinkHooks.php` |
 | `statistics-panel` | `aculta-statistics` | `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Controller/StatisticsDashboardController.php` |
@@ -537,6 +539,20 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `green-stash-shipments` | `aculta-green-stash__shipments` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Controller/GreenStashController.php` |
 | `green-stash-product-detail` | `aculta-green-stash__product-detail` | `web/modules/custom/aculta_portal/modules/aculta_commerce/src/Controller/GreenStashProductController.php` |
 | `event-card` | `event-card` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php` |
+| `event-supporters` | `event-supporters sponsor-logos` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
+| `event-supporters-list` | `sponsor-logos-list` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
+| `event-supporter-item` | `sponsor-item` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
+| `event-supporter-tier` | `sponsor-cota` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
+| `event-supporter-name` | `sponsor-name` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
+| `event-supporter-link` | `sponsor-link` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
+| `event-section-title` | `section-title` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
+| `event-press-quotes` | `event-press-quotes media-mentions` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
+| `event-press-quotes-list` | `press-quotes-list` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
+| `event-press-quote` | `press-quote` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Editorial/EventEditorialPresenter.php` |
+| `document-download-item` | `aculta-download-meta-item` | `web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Plugin/Field/FieldFormatter/DownloadWithMetaFormatter.php` |
+| `document-download-link` | `download-link` | `web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Plugin/Field/FieldFormatter/DownloadWithMetaFormatter.php` |
+| `document-download-format` | `download-badge-format` | `web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Plugin/Field/FieldFormatter/DownloadWithMetaFormatter.php` |
+| `document-download-size` | `download-badge-size` | `web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Plugin/Field/FieldFormatter/DownloadWithMetaFormatter.php` |
 | `event-card-cancelled` | `event-card--cancelado` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php` |
 | `event-card-type` | `event-card__tipo` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php` |
 | `event-card-title` | `event-card__titulo` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php` |
@@ -554,6 +570,8 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `map-privacy-notice` | `aculta-map__aviso` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/MapController.php` |
 | `map-wrapper` | `aculta-map-wrapper` | `web/modules/custom/aculta_portal/modules/aculta_maps/src/MapRenderer.php` |
 | `map-geocoding-attribution` | `aculta-map__geocoding-attribution` | `web/modules/custom/aculta_portal/modules/aculta_maps/src/MapRenderer.php` |
+| `document-download-item` | `aculta-download-meta-item` | `web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Plugin/Field/FieldFormatter/DownloadWithMetaFormatter.php` |
+| `document-download-link` | `download-link` | `web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Plugin/Field/FieldFormatter/DownloadWithMetaFormatter.php` |
 | `studio-shell` | `studio` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
 | `studio-marley-entry` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/MarleyExperienceProvider.php` |
 | `studio-account-home` | `studio__panel card card-body` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php` |
@@ -563,6 +581,28 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `studio-profile-actions` | `studio__actions list-unstyled d-flex flex-wrap gap-2` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
 | `studio-profile-public-link` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
 | `studio-profile-editor` | `aculta-profile-editor` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
+| `studio-saved-content` | `studio studio-saved-page` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-summary` | `studio-saved-summary` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/SavedExperienceProvider.php` |
+| `studio-page-title` | `page-title` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-tabs` | `nav nav-tabs studio-saved-tabs` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-list-wrapper` | `studio-saved-list-wrapper` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-empty` | `studio-saved-empty` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-card-compact-list` | `studio-card-compact-list` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-card-compact` | `studio-card-compact` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `saved-item` | `saved-item` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-card-title` | `compact-card-title` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-meta` | `compact-card-meta` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-purpose` | `badge badge-purpose` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-pager-prev` | `pager-prev` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-pager-info` | `pager-info` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-pager-next` | `pager-next` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-pagination` | `studio-saved-pagination` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `recommendation-item` | `recommendation-item` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-recommendation-reason` | `recommendation-reason` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-recommendation-badge` | `badge-reason` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-content` | `studio studio-saved-page` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-page-title` | `page-title` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
+| `studio-saved-tabs` | `nav nav-tabs studio-saved-tabs` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-account-section` | `studio studio__layout` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |
 | `studio-account-nav-link` | `nav-link studio__link` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |
 | `studio-account-contextual-nav` | `nav nav-tabs studio__subtabs` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |

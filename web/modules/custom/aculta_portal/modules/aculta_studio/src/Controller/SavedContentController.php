@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_studio\Controller;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\aculta_portal\Saved\SavedContentFilter;
 use Drupal\aculta_portal\Saved\SavedContentQueryInterface;
 use Drupal\aculta_portal\Saved\SavedContentQueryResult;
@@ -93,7 +94,7 @@ class SavedContentController {
       'url.query_args:purpose',
     ];
     $cacheTags = $this->savedContent->getCacheTags($this->account);
-    $cacheMaxAge = \Drupal\Core\Cache\Cache::PERMANENT;
+    $cacheMaxAge = Cache::PERMANENT;
 
     if ($activeTab === 'recomendacoes') {
       $recs = $this->recommendations->getRecommendations($this->account, 15);
@@ -147,27 +148,26 @@ class SavedContentController {
     return [
       '#type' => 'container',
       '#attributes' => [
-        'class' => ['studio-saved-page'],
         'data-portal-ui' => 'studio-saved-content',
       ],
       'header' => [
         '#type' => 'html_tag',
         '#tag' => 'h1',
         '#value' => $this->t('Meu espaço: salvos e recomendações'),
-        '#attributes' => ['class' => ['page-title']],
+        '#attributes' => ['data-portal-ui' => 'studio-page-title'],
       ],
       'tabs' => [
         '#theme' => 'item_list',
         '#items' => $tabLinks,
-        '#attributes' => ['class' => ['nav-tabs', 'studio-saved-tabs']],
+        '#attributes' => ['data-portal-ui' => 'studio-saved-tabs'],
       ],
       'content' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['studio-saved-list-wrapper']],
+        '#attributes' => ['data-portal-ui' => 'studio-saved-list-wrapper'],
         'list' => empty($itemsList)
           ? [
             '#type' => 'container',
-            '#attributes' => ['class' => ['studio-saved-empty']],
+            '#attributes' => ['data-portal-ui' => 'studio-saved-empty'],
             'message' => [
               '#markup' => '<p>' . $emptyMessage . '</p>',
             ],
@@ -175,7 +175,7 @@ class SavedContentController {
           : [
             '#theme' => 'item_list',
             '#items' => $itemsList,
-            '#attributes' => ['class' => ['studio-card-compact-list']],
+            '#attributes' => ['data-portal-ui' => 'studio-card-compact-list'],
           ],
         'pager' => $pagination,
       ],
@@ -202,19 +202,19 @@ class SavedContentController {
       $dateStr = $this->dateFormatter->format($item->getCreatedTime(), 'short');
       $url = $item->getUrl() ?? Url::fromRoute('<front>');
 
-      $metaHtml = '<span class="compact-card-meta">' . $this->t('Salvo em @date', ['@date' => $dateStr]) . '</span>';
+      $metaHtml = '<span data-portal-ui="studio-saved-meta">' . $this->t('Salvo em @date', ['@date' => $dateStr]) . '</span>';
       if ($item->getPurpose() !== NULL) {
-        $metaHtml .= ' <span class="badge badge-purpose">' . htmlspecialchars(strtoupper($item->getPurpose()), ENT_QUOTES, 'UTF-8') . '</span>';
+        $metaHtml .= ' <span data-portal-ui="studio-saved-purpose">' . htmlspecialchars(strtoupper($item->getPurpose()), ENT_QUOTES, 'UTF-8') . '</span>';
       }
 
       $cards[] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['studio-card-compact', 'saved-item']],
+        '#attributes' => ['data-portal-ui' => 'studio-card-compact saved-item'],
         'link' => [
           '#type' => 'link',
           '#title' => $item->getTitle() ?: $this->t('Sem título'),
           '#url' => $url,
-          '#attributes' => ['class' => ['compact-card-title']],
+          '#attributes' => ['data-portal-ui' => 'studio-saved-card-title'],
         ],
         'meta' => [
           '#markup' => $metaHtml,
@@ -271,7 +271,7 @@ class SavedContentController {
         '#type' => 'link',
         '#title' => $this->t('« Anterior'),
         '#url' => Url::fromRoute('aculta_studio.salvos', [], ['query' => $prevQuery]),
-        '#attributes' => ['class' => ['pager-prev']],
+        '#attributes' => ['data-portal-ui' => 'studio-saved-pager-prev'],
       ];
     }
 
@@ -283,7 +283,7 @@ class SavedContentController {
         '@total' => $totalPages,
         '@count' => $totalCount,
       ]),
-      '#attributes' => ['class' => ['pager-info']],
+      '#attributes' => ['data-portal-ui' => 'studio-saved-pager-info'],
     ];
 
     if ($queryResult->hasMore()) {
@@ -297,13 +297,13 @@ class SavedContentController {
         '#type' => 'link',
         '#title' => $this->t('Próxima »'),
         '#url' => Url::fromRoute('aculta_studio.salvos', [], ['query' => $nextQuery]),
-        '#attributes' => ['class' => ['pager-next']],
+        '#attributes' => ['data-portal-ui' => 'studio-saved-pager-next'],
       ];
     }
 
     return [
       '#type' => 'container',
-      '#attributes' => ['class' => ['studio-saved-pagination']],
+      '#attributes' => ['data-portal-ui' => 'studio-saved-pagination'],
       'links' => $links,
     ];
   }
@@ -326,15 +326,15 @@ class SavedContentController {
 
       $cards[] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['studio-card-compact', 'recommendation-item']],
+        '#attributes' => ['data-portal-ui' => 'studio-card-compact recommendation-item'],
         'link' => [
           '#type' => 'link',
           '#title' => $entity->label() ?? $this->t('Sem título'),
           '#url' => $entity->toUrl(),
-          '#attributes' => ['class' => ['compact-card-title']],
+          '#attributes' => ['data-portal-ui' => 'studio-saved-card-title'],
         ],
         'reason' => [
-          '#markup' => '<div class="recommendation-reason"><span class="badge-reason">' . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . '</span></div>',
+          '#markup' => '<div data-portal-ui="studio-recommendation-reason"><span data-portal-ui="studio-recommendation-badge">' . htmlspecialchars($reason, ENT_QUOTES, 'UTF-8') . '</span></div>',
         ],
       ];
     }

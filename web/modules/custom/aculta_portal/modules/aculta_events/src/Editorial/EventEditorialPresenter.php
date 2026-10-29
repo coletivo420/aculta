@@ -59,33 +59,32 @@ class EventEditorialPresenter {
       $cota = htmlspecialchars($item['cota'] ?? 'Apoio', ENT_QUOTES, 'UTF-8');
       $link = !empty($item['link']) ? filter_var($item['link'], FILTER_VALIDATE_URL) : NULL;
 
-      $itemMarkup = sprintf('<span class="sponsor-cota">%s</span>: <strong class="sponsor-name">%s</strong>', $cota, $name);
+      $itemMarkup = sprintf('<span data-portal-ui="event-supporter-tier">%s</span>: <strong data-portal-ui="event-supporter-name">%s</strong>', $cota, $name);
       if ($link) {
-        $itemMarkup = sprintf('<a href="%s" target="_blank" rel="noopener noreferrer" class="sponsor-link">%s</a>', htmlspecialchars($link, ENT_QUOTES, 'UTF-8'), $itemMarkup);
+        $itemMarkup = sprintf('<a href="%s" target="_blank" rel="noopener noreferrer" data-portal-ui="event-supporter-link">%s</a>', htmlspecialchars($link, ENT_QUOTES, 'UTF-8'), $itemMarkup);
       }
 
       $renderItems[] = [
         '#markup' => $itemMarkup,
-        '#wrapper_attributes' => ['class' => ['sponsor-item']],
+        '#wrapper_attributes' => ['data-portal-ui' => 'event-supporter-item'],
       ];
     }
 
     return [
       '#type' => 'container',
       '#attributes' => [
-        'class' => ['event-supporters', 'sponsor-logos'],
         'data-portal-ui' => 'event-supporters',
       ],
       'heading' => [
         '#type' => 'html_tag',
         '#tag' => 'h3',
         '#value' => $this->t('Apoio e Realização'),
-        '#attributes' => ['class' => ['section-title']],
+        '#attributes' => ['data-portal-ui' => 'event-section-title'],
       ],
       'list' => [
         '#theme' => 'item_list',
         '#items' => $renderItems,
-        '#attributes' => ['class' => ['sponsor-logos-list']],
+        '#attributes' => ['data-portal-ui' => 'event-supporters-list'],
       ],
     ];
   }
@@ -123,26 +122,25 @@ class EventEditorialPresenter {
         : sprintf('<cite>%s</cite>', $sourceText);
 
       $renderItems[] = [
-        '#markup' => sprintf('<blockquote class="press-quote"><p>“%s”</p><footer>%s</footer></blockquote>', $trecho, $sourceMarkup),
+        '#markup' => sprintf('<blockquote data-portal-ui="event-press-quote"><p>“%s”</p><footer>%s</footer></blockquote>', $trecho, $sourceMarkup),
       ];
     }
 
     return [
       '#type' => 'container',
       '#attributes' => [
-        'class' => ['event-press-quotes', 'media-mentions'],
         'data-portal-ui' => 'event-press-quotes',
       ],
       'heading' => [
         '#type' => 'html_tag',
         '#tag' => 'h3',
         '#value' => $this->t('Na Imprensa'),
-        '#attributes' => ['class' => ['section-title']],
+        '#attributes' => ['data-portal-ui' => 'event-section-title'],
       ],
       'list' => [
         '#theme' => 'item_list',
         '#items' => $renderItems,
-        '#attributes' => ['class' => ['press-quotes-list']],
+        '#attributes' => ['data-portal-ui' => 'event-press-quotes-list'],
       ],
     ];
   }
@@ -151,6 +149,7 @@ class EventEditorialPresenter {
    * Parses supporters data from JSON or line format.
    *
    * @return array<int, array{nome: string, cota?: string, link?: string}>
+   *   Parsed supporter records.
    */
   protected function parseSupportersData(string $raw): array {
     $trimmed = trim($raw);
@@ -161,7 +160,7 @@ class EventEditorialPresenter {
       }
     }
 
-    // Line fallback: "Nome | Cota | Link"
+    // Line fallback: "Nome | Cota | Link".
     $lines = preg_split('/\r\n|\r|\n/', $trimmed);
     $results = [];
     foreach ($lines as $line) {
@@ -184,6 +183,7 @@ class EventEditorialPresenter {
    * Parses press quotes data from JSON or line format.
    *
    * @return array<int, array{veiculo: string, trecho: string, data?: string, link?: string}>
+   *   Parsed press quote records.
    */
   protected function parsePressQuotesData(string $raw): array {
     $trimmed = trim($raw);
@@ -194,7 +194,7 @@ class EventEditorialPresenter {
       }
     }
 
-    // Line fallback: "Veículo | Trecho | Data | Link"
+    // Line fallback: "Veículo | Trecho | Data | Link".
     $lines = preg_split('/\r\n|\r|\n/', $trimmed);
     $results = [];
     foreach ($lines as $line) {

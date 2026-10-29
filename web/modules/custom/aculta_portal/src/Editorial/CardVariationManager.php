@@ -15,6 +15,8 @@ namespace Drupal\aculta_portal\Editorial;
  */
 class CardVariationManager {
 
+  private const VARIATION_ATTRIBUTE = 'data-card-variation';
+
   public const VARIATION_COMPACT = 'compact';
   public const VARIATION_TEASER = 'teaser';
   public const VARIATION_DESTAQUE = 'destaque';
@@ -39,16 +41,17 @@ class CardVariationManager {
   }
 
   /**
-   * Returns list of allowed variation identifiers.
+   * Returns the closed list of allowed variation identifiers.
    *
    * @return string[]
+   *   Allowed variation identifiers.
    */
   public function getAllowedVariations(): array {
     return self::VALID_VARIATIONS;
   }
 
   /**
-   * Decorates a Drupal render array with the standardized card variation attributes.
+   * Decorates a render array with the standardized card variation attributes.
    *
    * @param array<string, mixed> $build
    *   The render array to decorate.
@@ -58,9 +61,13 @@ class CardVariationManager {
   public function applyVariation(array &$build, string $variation): void {
     $valid = $this->normalize($variation);
 
-    $build['#attributes']['class'][] = 'aculta-card';
-    $build['#attributes']['class'][] = 'aculta-card--' . $valid;
-    $build['#attributes']['data-card-variation'] = $valid;
+    $existingTokens = $build['#attributes']['data-portal-ui'] ?? '';
+    $tokens = is_string($existingTokens)
+      ? (preg_split('/\s+/', trim($existingTokens), -1, PREG_SPLIT_NO_EMPTY) ?: [])
+      : [];
+    $tokens[] = 'editorial-card';
+    $build['#attributes']['data-portal-ui'] = implode(' ', array_unique($tokens));
+    $build['#attributes'][self::VARIATION_ATTRIBUTE] = $valid;
   }
 
 }
