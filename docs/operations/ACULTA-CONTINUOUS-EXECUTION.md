@@ -1497,3 +1497,14 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
 - `drush cr`: `[success] Cache rebuild complete.` Página principal `https://aculta.toca.net.br/` e loja `https://loja.aculta.toca.net.br/` responderam HTTP 200.
 - Nenhum snapshot ou update foi necessário: não há updates de banco pendentes; nenhuma troca de schema ou configuração ocorreu neste gate.
 
+## ADM8, F0 e ativação seletiva E8 — 2026-10-28
+
+- **Publicação:** commits `1a423c042` (ADM8), `dc032d9e0` (F0/D-46) e `da3fd99db` (E8) publicados por fast-forward, cada microfase em seu próprio commit. Branch remota `refactor/opencultures-codigo-visual`; sem branch nova.
+- **Checkout servido:** antes `03483aa44`, limpo e destacado; depois `/home/piradopirata/projetos/aculta` destacado em `da3fd99db`. `hostname` = `toca`; Drupal 11.4.10; URI `http://default`; root `/home/piradopirata/projetos/aculta/web`; Drush confirmou `aculta_runtime` conectado.
+- **Gatilho antes da importação:** `updatedb:status` retornou `[success] No database updates required.` A contagem em `information_schema.tables` foi 605. `config:status` mostrou divergências antigas em várias áreas; no escopo E8, os três novos itens (storage, field e form display) estavam apenas no sync e os displays Revista full/teaser divergiam. Nenhuma divergência alheia foi importada.
+- **Snapshot antes da escrita:** `/home/piradopirata/aculta-suite-out/aculta-runtime-before-e8-da3fd99db.sql`, 51.200.724 bytes, modo `0600`, diretório `0700`; SHA-256 `a2869c5ffd8e3122e7888d81cde2c60a69997bc1ae069912cddf7509c8d859ef`.
+- **Importação autorizada e revisada:** `drush config:import --partial --source=/home/piradopirata/aculta-suite-out/e8-config-da3fd99db --diff -y`; fonte continha somente os cinco YAML versionados de E8. Resultado: `[success] The configuration was imported successfully.` Nenhum `updatedb` ou import global foi executado.
+- **Pós-importação:** `drush cr` retornou `[success] Cache rebuild complete.`; `updatedb:status` seguiu sem pendências; contagem passou a 607 tabelas por causa do field storage novo. O plugin `aculta_editorial_category_color` foi descoberto. Os cinco termos existentes de `editorial_category` continuam sem cor; nenhum conteúdo foi alterado. A checagem focal apontou apenas diferença de ordem serializada no display teaser, alinhada em `config/sync` no follow-up E8; não há diferença semântica pendente no display.
+- **HTTP:** `https://aculta.toca.net.br/` e `https://loja.aculta.toca.net.br/` retornaram HTTP 200.
+- **Firefox ESR visível:** script `tests/browser/revista-color/visual.py`, com amostras DOM sintéticas, verificou os quatro tokens em 1280 px e 320 px, sem overflow e com as cores computadas esperadas. Capturas/JSON em `/home/piradopirata/aculta-suite-out/e8-category`. O teste não alterou configuração, conteúdo ou termos.
+
