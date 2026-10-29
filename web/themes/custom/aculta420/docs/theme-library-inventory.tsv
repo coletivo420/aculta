@@ -83,6 +83,7 @@ web/themes/custom/aculta420/aculta420.libraries.yml	global	bootstrap/bootstrap |
 web/themes/custom/aculta420/aculta420.libraries.yml	bootstrap-icons		css	component	assets/icons/bootstrap-icons/font/bootstrap-icons.min.css
 web/themes/custom/aculta420/aculta420.libraries.yml	album-slideshow	core/drupal | core/once	css	theme	css/components/album-slideshow.css
 web/themes/custom/aculta420/aculta420.libraries.yml	editorial-content		css	theme	css/components/editorial-content.css
+web/themes/custom/aculta420/aculta420.libraries.yml	revista-listing		css	theme	css/components/revista-listing.css
 web/themes/custom/aculta420/aculta420.libraries.yml	editorial-carousel	core/drupal | core/once	css	theme	css/components/editorial-carousel.css
 web/themes/custom/aculta420/aculta420.libraries.yml	messenger-drawers	core/drupal | core/drupal.dialog | core/once | bootstrap/bootstrap	css	theme	components/content/messenger-item/messenger-item.css
 web/themes/custom/aculta420/aculta420.libraries.yml	messenger-drawers	core/drupal | core/drupal.dialog | core/once | bootstrap/bootstrap	css	theme	components/feedback/messenger-state/messenger-state.css

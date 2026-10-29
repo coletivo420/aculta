@@ -1,0 +1,83 @@
+/* Cartão da Revista nas listagens (revista_sessoes). Mobile first. */
+
+.aculta-revista-teaser {
+  height: 100%;
+}
+
+.aculta-revista-teaser .aculta-card {
+  height: 100%;
+}
+
+.aculta-revista-teaser .aculta-card > .card-header {
+  color: var(--aculta-text-accent);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.aculta-revista-teaser .aculta-card > .card-header a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.aculta-revista-teaser img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.aculta-revista-teaser__title {
+  margin: 0 0 0.5rem;
+  font: 500 1.15rem/1.3 var(--aculta-font-display);
+}
+
+.aculta-revista-teaser__title a {
+  color: var(--aculta-text-primary);
+  text-decoration: none;
+}
+
+.aculta-revista-teaser__title a:is(:hover, :focus-visible) {
+  color: var(--aculta-link);
+  text-decoration: underline;
+  text-underline-offset: 0.17em;
+}
+
+.aculta-revista-teaser__subtitle {
+  margin: 0 0 0.5rem;
+  color: var(--aculta-text-primary);
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.aculta-revista-teaser__summary {
+  color: var(--aculta-text-secondary);
+  line-height: 1.55;
+}
+
+.aculta-revista-teaser__summary > :last-child {
+  margin-bottom: 0;
+}
+
+.aculta-revista-teaser__cta {
+  color: var(--aculta-link);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.17em;
+}
+
+.aculta-revista-teaser :focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+
+@media (min-width: 768px) {
+  .aculta-revista-teaser__title {
+    font-size: 1.25rem;
+  }
+
+  .aculta-revista-teaser .aculta-card > .card-body {
+    padding: 1.15rem 1.25rem;
+  }
+}

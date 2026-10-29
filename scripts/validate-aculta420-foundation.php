@@ -329,6 +329,8 @@ $expectedTemplates = [
   'login-with.html.twig',
   // The magazine page reuses the shared editorial component.
   'node--revista--full.html.twig',
+  // The magazine listing reuses the shared card SDC for teasers.
+  'node--revista--teaser.html.twig',
   // Site Alert keeps native scheduling and access, using the theme SDC.
   'site-alert.html.twig',
   // Private Message wrapper exposes native content and supplied read state.

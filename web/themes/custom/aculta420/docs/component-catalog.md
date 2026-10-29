@@ -50,7 +50,7 @@ renderização autenticada:
 
 | Contrato citado na matriz | Schema encontrado | Uso candidato |
 |---|---|---|
-| `card` | `patterns/card/card.component.yml` | Hub, listagens e produtos com consumer real já existente; revisar variantes disponíveis. |
+| `card` | `patterns/card/card.component.yml` | Hub, listagens (inclui `node--revista--teaser`) e produtos com consumer real já existente; revisar variantes disponíveis. |
 | `context-header`, `context-tabs` | `patterns/context-header/context-header.component.yml`, `patterns/context-tabs/context-tabs.component.yml` | Cabeçalho e navegação contextual Studio/Conta; rota/consumer ainda requer validação. |
 | `content-section`, `content-grid`, `empty-state` | `patterns/content-section/content-section.component.yml`, `patterns/content-grid/content-grid.component.yml`, `feedback/empty-state/empty-state.component.yml` | Composição e estados vazios de telas/listas; validar owner dos dados e estado real. |
 | `wiki-entry` | `patterns/wiki-entry/wiki-entry.component.yml` | Lista/entrada Wiki; consumer e estado de revisão/moderação pendentes de homologação. |

@@ -77,6 +77,11 @@ editorial-content:
     theme:
       css/components/editorial-content.css: {}
 
+revista-listing:
+  css:
+    theme:
+      css/components/revista-listing.css: {}
+
 editorial-carousel:
   css:
     theme:
