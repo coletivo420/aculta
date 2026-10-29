@@ -1,8 +1,8 @@
 <?php
 
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\aculta_H5PEditor;
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\Core\Asset\AssetQueryStringInterface;
 use Drupal\Core\Database\Connection;
@@ -18,6 +18,9 @@ use Drupal\lms\Entity\Bundle\CourseInterface;
 // phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
 class aculta_H5PEditorUtilities {
 
+  /**
+   * Cached editor instance created on first use.
+   */
   private ?\H5peditor $editor = NULL;
 
   public function __construct(
@@ -35,6 +38,7 @@ class aculta_H5PEditorUtilities {
    * Keeps track of our editor instance, saving valuable resources.
    *
    * @return \H5peditor
+   *   The editor instance used for this request.
    */
   public function getEditor(): \H5peditor {
     if ($this->editor === NULL) {
@@ -48,9 +52,13 @@ class aculta_H5PEditorUtilities {
   }
 
   /**
-   * Get editor settings needed for JS front-end.
+   * Gets editor settings needed by the JavaScript front end.
    *
-   * @return array Settings needed for view
+   * @param \Drupal\lms\Entity\Bundle\CourseInterface $course
+   *   The course whose editor endpoint will be configured.
+   *
+   * @return array<string, mixed>
+   *   Settings required to render the editor.
    */
   public function getEditorSettings(CourseInterface $course): array {
     $contentValidator = aculta_H5PDrupal::getInstance('contentvalidator');
@@ -75,9 +83,10 @@ class aculta_H5PEditorUtilities {
   }
 
   /**
-   * Get assets needed to display editor. These are fetched from core.
+   * Gets assets needed to display the editor from H5P Core.
    *
-   * @return array Js and css for showing the editor
+   * @return array{css: array<int, string>, js: array<int, string>}
+   *   Stylesheets and scripts required by the editor.
    */
   private function getEditorAssets(): array {
     $corePath = $this->fileUrlGenerator->generateAbsoluteString('assets://h5p/h5p-core/') . base_path();
@@ -106,7 +115,8 @@ class aculta_H5PEditorUtilities {
    * @param null|array $exceptions
    *   Exceptions from the collection that should be skipped.
    *
-   * @return array Extracted assets from the source collection
+   * @return array<int, string>
+   *   Asset URLs extracted from the source collection.
    */
   private function getAssets($collection, $prefix, $exceptions = NULL): array {
     $assets      = [];
@@ -123,9 +133,10 @@ class aculta_H5PEditorUtilities {
   }
 
   /**
-   * Get cache buster.
+   * Gets the cache-busting query string for editor assets.
    *
-   * @return string A cache buster that may be applied to resources
+   * @return string
+   *   The query string, or an empty string when cache busting is disabled.
    */
   private function getCacheBuster(): string {
     $cache_buster = $this->assetQueryString->get();
@@ -133,10 +144,10 @@ class aculta_H5PEditorUtilities {
   }
 
   /**
-   * Translation file path for the editor. Defaults to English if chosen
-   * language is not available.
+   * Gets the editor translation file path, defaulting to English if needed.
    *
-   * @return string Path to translation file for editor
+   * @return string
+   *   Absolute URL of the selected translation file.
    */
   private function getTranslationFilePath(): string {
     $language = $this->languageManager->getCurrentLanguage()->getId();
@@ -150,9 +161,10 @@ class aculta_H5PEditorUtilities {
   }
 
   /**
-   * Create URI for ajax the client may send to the server.
+   * Creates the AJAX URI that the editor client may send to the server.
    *
-   * @return \Drupal\Core\GeneratedUrl|string Uri for AJAX
+   * @return string
+   *   The internal URL string for the editor AJAX endpoint.
    */
   private function getAjaxPath(CourseInterface $course): string {
     $securityToken = \H5PCore::createToken('editorajax');
@@ -162,15 +174,16 @@ class aculta_H5PEditorUtilities {
   }
 
   /**
-   * Extract library information from library string.
+   * Extracts library information from a versioned library string.
    *
    * @param string $library
    *   Library string with versioning, e.g. H5P.MultiChoice 1.9.
    * @param string $property
    *   May be used to only extract certain information
-   *   about library. Available values are 'all', 'libraryId' and specific property.
+   *   about the library. Values include 'all', 'libraryId', or a property name.
    *
-   * @return int|bool|array One or more properties, or false if invalid.
+   * @return int|bool|array<string, string|int>|null
+   *   Requested library data, or FALSE when the library string is invalid.
    */
   public function getLibraryProperty($library, $property = 'all') {
     $matches = [];
@@ -201,13 +214,13 @@ class aculta_H5PEditorUtilities {
   }
 
   /**
-   * Library ID from unique library data.
+   * Gets the library ID from unique library data.
    *
    * @param array $libraryData
-   *   Library data which must contain
-   *   'machineName', 'majorVersion' and 'minorVersion'.
+   *   Library data containing its name and major and minor version numbers.
    *
-   * @return null|int Library id
+   * @return null|int
+   *   The matching library ID, or NULL when it is not installed.
    */
   private function getLibraryId($libraryData) {
     $select = $this->database->select('h5p_libraries');

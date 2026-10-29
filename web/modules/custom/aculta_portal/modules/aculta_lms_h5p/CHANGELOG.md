@@ -430,3 +430,12 @@
 - Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
   depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
 
+## 0.4.0-dev.167 — documentar utilitários do editor H5P (2026-10-29)
+
+- Completa PHPDoc do cache local do editor, montagem de assets, endpoint AJAX,
+  tradução e leitura dos metadados de bibliotecas; reposiciona o cabeçalho GPL.
+- PHPCS integral caiu de 94 erros/5 avisos em 8 arquivos para 82/4 em 7
+  arquivos; os arquivos desta rodada passam Drupal/DrupalPractice e PHP lint.
+- Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
+  depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
+
