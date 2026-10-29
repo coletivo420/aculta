@@ -346,4 +346,88 @@ final class EventLocationManagementKernelTest extends KernelTestBase {
     $this->assertCount(2, $page1['items']);
   }
 
+  /**
+   * Valida formulário próprio de cadastro de local com campos (LOC-02).
+   */
+  public function testEventLocationStandaloneForm(): void {
+    $this->container->get('current_user')->setAccount($this->adminUser);
+    $location = EventLocation::create([]);
+    /** @var \Drupal\Core\Entity\EntityFormInterface $formObject */
+    $formObject = $this->container->get('entity_type.manager')
+      ->getFormObject('aculta_event_location', 'add')
+      ->setEntity($location);
+    $formState = new FormState();
+    $form = $this->container->get('form_builder')->buildForm($formObject, $formState);
+
+    // Confirma que os campos próprios do formulário de local estão presentes.
+    $this->assertArrayHasKey('title', $form);
+    $this->assertArrayHasKey('field_tipo', $form);
+    $this->assertArrayHasKey('field_status', $form);
+    $this->assertArrayHasKey('field_endereco', $form);
+    $this->assertArrayHasKey('field_precisao', $form);
+    $this->assertArrayHasKey('field_horario', $form);
+    $this->assertArrayHasKey('field_descricao', $form);
+    $this->assertArrayHasKey('field_telefone', $form);
+    $this->assertArrayHasKey('field_site', $form);
+  }
+
+  /**
+   * Valida formulário de evento com seleção e cadastro inline de local.
+   */
+  public function testEventFormWithInlineLocationCreation(): void {
+    $this->container->get('current_user')->setAccount($this->adminUser);
+    $event = Event::create([]);
+    /** @var \Drupal\Core\Entity\EntityFormInterface $formObject */
+    $formObject = $this->container->get('entity_type.manager')
+      ->getFormObject('aculta_event', 'add')
+      ->setEntity($event);
+    $formState = new FormState();
+    $form = $this->container->get('form_builder')->buildForm($formObject, $formState);
+
+    $this->assertArrayHasKey('title', $form);
+    $this->assertArrayHasKey('body', $form);
+    $this->assertArrayHasKey('field_tipo', $form);
+    $this->assertArrayHasKey('field_status', $form);
+    $this->assertArrayHasKey('date_location', $form);
+    $this->assertArrayHasKey('local_id', $form['date_location']);
+    $this->assertArrayHasKey('cadastrar_novo_local', $form['date_location']);
+    $this->assertArrayHasKey('novo_local', $form['date_location']);
+
+    // Simula submissão do formulário de evento com cadastro inline de local.
+    $formState->setValues([
+      'title' => [['value' => 'Concerto Noturno']],
+      'field_status' => [['value' => 'publicado']],
+      'cadastrar_novo_local' => 1,
+      'novo_local_nome' => 'Auditório Principal',
+      'novo_local_precisao' => 'exato',
+      'novo_local_logradouro' => 'Rua da Cultura, 100',
+      'novo_local_municipio' => 'São Paulo',
+      'novo_local_uf' => 'SP',
+      'novo_local_cep' => '01001-000',
+      'starts_at' => new DrupalDateTime('2026-12-15 20:00:00'),
+      'ends_at' => new DrupalDateTime('2026-12-15 22:00:00'),
+    ]);
+
+    $formObject->validateForm($form, $formState);
+    $this->assertEmpty($formState->getErrors());
+
+    $formObject->submitForm($form, $formState);
+    $formObject->save($form, $formState);
+    $savedEvent = $formObject->getEntity();
+    $this->assertNotEmpty($savedEvent->id());
+
+    // Confirma que o novo local inline foi criado.
+    $locStorage = $this->container->get('entity_type.manager')->getStorage('aculta_event_location');
+    $locations = $locStorage->loadByProperties(['title' => 'Auditório Principal']);
+    $this->assertCount(1, $locations);
+    $newLoc = reset($locations);
+
+    // Confirma que a data associada foi criada vinculando ao novo local.
+    $dateStorage = $this->container->get('entity_type.manager')->getStorage('aculta_event_date');
+    $dates = $dateStorage->loadByProperties(['field_evento' => $savedEvent->id()]);
+    $this->assertCount(1, $dates);
+    $newDate = reset($dates);
+    $this->assertSame((int) $newLoc->id(), (int) $newDate->get('field_local')->target_id);
+  }
+
 }
