@@ -29,7 +29,7 @@ final class LocationContentIndexProvider implements ContentIndexProviderInterfac
    * {@inheritdoc}
    */
   public function getProjectionVersion(): int {
-    return 1;
+    return 2;
   }
 
   /**
@@ -50,7 +50,8 @@ final class LocationContentIndexProvider implements ContentIndexProviderInterfac
    * {@inheritdoc}
    */
   public function isIndexable(ContentEntityInterface $entity): bool {
-    return $entity instanceof EventLocation;
+    return $entity instanceof EventLocation
+      && (string) ($entity->get('field_status')->value ?? 'publicado') === 'publicado';
   }
 
   /**
@@ -64,6 +65,8 @@ final class LocationContentIndexProvider implements ContentIndexProviderInterfac
     $relations = [];
     $this->addRelations($entity, 'field_tipo', 'location_type', 'taxonomy_term', $relations);
 
+    $isPublished = (string) ($entity->get('field_status')->value ?? 'publicado') === 'publicado';
+
     return new ContentIndexProjection(
       'aculta_event_location',
       (string) $entity->id(),
@@ -72,11 +75,10 @@ final class LocationContentIndexProvider implements ContentIndexProviderInterfac
       (string) $entity->uuid(),
       (string) $entity->label(),
       'eventos_aculta_org',
-      TRUE,
+      $isPublished,
       0,
       0,
-      NULL,
-      array_values($relations),
+      relations: array_values($relations),
       ownerUid: ContentIndexOwnerResolver::resolve($entity),
     );
   }

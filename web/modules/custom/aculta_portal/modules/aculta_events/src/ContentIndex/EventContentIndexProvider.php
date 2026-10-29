@@ -29,7 +29,7 @@ final class EventContentIndexProvider implements ContentIndexProviderInterface, 
    * {@inheritdoc}
    */
   public function getProjectionVersion(): int {
-    return 1;
+    return 2;
   }
 
   /**
@@ -66,6 +66,7 @@ final class EventContentIndexProvider implements ContentIndexProviderInterface, 
     $relations = [];
     $this->addRelations($entity, 'field_tipo', 'event_type', 'taxonomy_term', $relations);
     $this->addRelations($entity, 'field_organizador', 'organizer', 'user', $relations);
+    $this->addLocationRelations($entity, $relations);
 
     $isPublished = (string) $entity->get('field_status')->value === 'publicado';
 
@@ -80,10 +81,54 @@ final class EventContentIndexProvider implements ContentIndexProviderInterface, 
       $isPublished,
       0,
       0,
-      NULL,
-      array_values($relations),
+      relations: array_values($relations),
       ownerUid: ContentIndexOwnerResolver::resolve($entity),
     );
+  }
+
+  /**
+   * Adiciona relações Evento > Local derivadas das datas ativas do evento.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   Entidade do evento.
+   * @param array<string, \Drupal\aculta_portal\ContentIndex\ContentIndexRelation> $relations
+   *   Vetor de relações acumuladas.
+   */
+  private function addLocationRelations(ContentEntityInterface $entity, array &$relations): void {
+    if (!\Drupal::hasService('entity_type.manager')) {
+      return;
+    }
+
+    $dateStorage = \Drupal::entityTypeManager()->getStorage('aculta_event_date');
+    $dateIds = $dateStorage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('field_evento', (int) $entity->id())
+      ->execute();
+
+    if (empty($dateIds)) {
+      return;
+    }
+
+    $dates = $dateStorage->loadMultiple($dateIds);
+    $locStorage = \Drupal::entityTypeManager()->getStorage('aculta_event_location');
+
+    foreach ($dates as $date) {
+      $localId = (int) ($date->get('field_local')->target_id ?? 0);
+      if ($localId <= 0) {
+        continue;
+      }
+      $key = 'event_location:aculta_event_location:' . $localId;
+      if (isset($relations[$key])) {
+        continue;
+      }
+
+      /** @var \Drupal\aculta_events\Entity\EventLocation|null $location */
+      $location = $locStorage->load($localId);
+      // Relação só deve existir para locais publicamente descobríveis (LOC-04).
+      if ($location !== NULL && (string) ($location->get('field_status')->value ?? 'publicado') === 'publicado') {
+        $relations[$key] = new ContentIndexRelation('event_location', 'aculta_event_location', (string) $localId);
+      }
+    }
   }
 
   /**

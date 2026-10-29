@@ -9,6 +9,7 @@ use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Occurrence\UpcomingDates;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Routing\AdminContext;
@@ -99,6 +100,57 @@ final class EventDateHooks {
   #[Hook('aculta_event_override_delete')]
   public function invalidarLista(EntityInterface $entity): void {
     Cache::invalidateTags([EventCacheTags::LISTA]);
+
+    // Quando datas são inseridas, atualizadas ou excluídas, agenda reprojeção
+    // do evento pai para atualizar as relações event_location no Content Index (LOC-04).
+    if ($entity instanceof EventDate && \Drupal::hasService('aculta_index.work_manager')) {
+      $entityTypeManager = \Drupal::entityTypeManager();
+
+      $eventId = (int) ($entity->get('field_evento')->target_id ?? 0);
+      if ($eventId > 0) {
+        $event = $entityTypeManager->getStorage('aculta_event')->load($eventId);
+        if ($event instanceof ContentEntityInterface) {
+          $this->scheduleEventProjection($event);
+        }
+      }
+
+      // Se a data mudou de evento, reprojeta também o evento anterior.
+      $original = method_exists($entity, 'getOriginal') ? $entity->getOriginal() : ($entity->original ?? NULL);
+      if ($original instanceof EventDate) {
+        $oldEventId = (int) ($original->get('field_evento')->target_id ?? 0);
+        if ($oldEventId > 0 && $oldEventId !== $eventId) {
+          $oldEvent = $entityTypeManager->getStorage('aculta_event')->load($oldEventId);
+          if ($oldEvent instanceof ContentEntityInterface) {
+            $this->scheduleEventProjection($oldEvent);
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Agenda reprojeção de evento no Content Index work manager.
+   */
+  private function scheduleEventProjection(ContentEntityInterface $event): void {
+    if (!\Drupal::hasService('aculta_index.work_manager')) {
+      return;
+    }
+    /** @var \Drupal\aculta_index\Queue\ContentIndexWorkManager $workManager */
+    $workManager = \Drupal::service('aculta_index.work_manager');
+    $providerId = 'aculta_event';
+    if (\Drupal::hasService('aculta_index.provider_registry')) {
+      /** @var \Drupal\aculta_index\Provider\ContentIndexProviderRegistry $registry */
+      $registry = \Drupal::service('aculta_index.provider_registry');
+      $resolved = $registry->findProviderIdForBundle($event->getEntityTypeId(), $event->bundle());
+      if ($resolved !== NULL) {
+        $providerId = $resolved;
+      }
+    }
+    foreach ($event->getTranslationLanguages() as $langcode => $language) {
+      if ($event->hasTranslation($langcode)) {
+        $workManager->schedule($providerId, $event->getEntityTypeId(), (string) $event->id(), $langcode, 'project');
+      }
+    }
   }
 
   /**
