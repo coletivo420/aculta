@@ -1,0 +1,6 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.1
+state: Dev
+progress_note: >-
+  Dev.1 consolida a infraestrutura transversal de moderação, fila de denúncias agregadas e destinatários por purpose (ARQ-06). Suíte Kernel UgcModerationKernelTest PASS com 4 testes e 68 asserções.
+next_phase: 'Integrar fila de moderação aos painéis administrativos transversais do Portal.'

@@ -43,4 +43,4 @@ O OpenCulturas possui configurações de Search API/Views/Facets, fluxos de perf
 
 Não copiar todo o Profile OpenCulturas, Views/configuration YAML upstream, ECA generalizado, Paragraphs como modelo obrigatório, Smart Date/smart_date_recur, papéis genéricos de organizador, tema ou shell de administração, infraestrutura de mapas duplicada, licença obrigatória de Media nem breadcrumb alternativo. Não inventar funcionalidades de IA/polígonos sem prova no pacote 3.1.5.
 
-**Status:** plano registrado. Nenhuma fase ARQ marcada concluída por este documento.
+**Status:** execução concluída e homologada (ARQ-01 a ARQ-09). 17 testes Kernel dedicados (324 asserções aprovadas), todos os gates de conformidade aprovados (PASS).

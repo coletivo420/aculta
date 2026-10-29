@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.7.0-dev.11
+version: 0.7.0-dev.12
 state: Dev
 progress_note: >-
   MF-0.3 / 0.7.0-dev.11: top-bar Navigation empilha contexto e ações em uma coluna até 767.98px. PortalUiHooks recebe os tokens de Eventos, Calendar e Maps e mapeia a apresentação desses módulos para classes do ACULTA420. Gate módulo–tema PASS (3397 verificações); PHPCS Drupal/DrupalPractice do hook PASS. Firefox ESR do CSS móvel anterior passou 8/8 checks em 1280/390/320px; a nova página de eventos/mapa ainda precisa de revisão visual depois que este candidato for servido.
