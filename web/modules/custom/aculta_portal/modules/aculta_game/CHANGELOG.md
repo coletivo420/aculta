@@ -49,6 +49,15 @@
 
 # Changelog — ACULTA Game
 
+## 0.1.0-dev.19 — testar concessão do hook com ForumPost real (2026-10-29)
+
+- Kernel cria e publica `ForumPost` pela entidade real e invoca o hook duas
+  vezes; a concessão do badge existente ocorre uma única vez.
+- PHPUnit Unit: 14 testes / 77 assertions PASS; Kernel: 1 teste / 25 assertions
+  PASS, com 5 deprecações provenientes do módulo `domain`. PHPCS, `php -l` e
+  `git diff --check` PASS. Sem concessões/configuração persistentes ou Runtime.
+- Perfil/acessibilidade e homologação da migração Runtime continuam pendentes.
+
 ## 0.1.0-dev.14 — excluir tópicos LMS da conquista pública de Fórum
 
 - `ForumParticipationPolicyTest` prova que uma resposta hospedada por

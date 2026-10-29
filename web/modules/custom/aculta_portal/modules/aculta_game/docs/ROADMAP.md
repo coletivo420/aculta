@@ -90,6 +90,9 @@ ator e auditoria, sem CRUD paralelo às entidades Drupal existentes.
 
 - Primeiro Comment ACULTA ou `ForumPost` salvo não publicado e aprovado depois:
   uma concessão; insert publicado também qualifica uma única vez.
+- O hook `BadgeEvaluationHooks::forumPostSave` tem cobertura Kernel com
+  `ForumPost` real: duas chamadas para uma publicação elegível geram uma única
+  concessão; o storage da concessão é simulado.
 - Editar resposta publicada, salvar revisão que não é default, migrar/sincronizar
   conteúdo, autoria histórica, Domain incorreto e tópico privado/não publicado:
   nenhuma concessão.

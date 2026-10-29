@@ -1,5 +1,17 @@
 # Execução por fases — ACULTA Game
 
+## Dev.19 — testar a concessão do hook com ForumPost real (2026-10-29)
+
+- Kernel instala a fixture de entidade de produção `aculta_forum_post_test`,
+  salva uma resposta real publicada no tópico público e chama o hook Game duas
+  vezes. O serviço real cria uma única concessão para o badge existente.
+- Unit Game: 14 testes / 77 assertions PASS. Kernel Game: 1 teste / 25
+  assertions PASS; as cinco deprecações são do módulo contrib `domain`.
+  PHPCS, `php -l` e `git diff --check` PASS.
+- O teste usa armazenamento de concessões simulado para isolar a integração
+  do hook; não grava concessão nem configuração no Runtime. Perfil,
+  acessibilidade e homologação de migração continuam pendentes.
+
 ## Dev.17 — centralizar avisos no Messenger (2026-10-25)
 
 - Game publica o evento de conquista no contrato central; Messenger mantém
