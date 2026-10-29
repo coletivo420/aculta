@@ -108,3 +108,18 @@ Decisão do responsável em 2026-10-28; detalhes, origem e hashes em `DHTMLX.md`
   erros e 1 aviso em `CalendarAgenda.php`, alterado na revisão dev.5.
 - A correção não conclui a revisão de código restante nem promove o módulo a
   RC.
+
+## RC — evidência do candidato (2026-10-29, 0.1.0-rc.1)
+
+- Candidato `e36140e63` servido no checkout de teste com `drush cr`.
+- ADM8 autenticada: anônimo 403, autenticado 200, tabela somente leitura com 3
+  cabeçalhos e 10 linhas, sem controles de edição e sem overflow em 1270/500 px.
+- Visão interativa: 200, DHTMLX 7.2.15, 7 dias, alto contraste e fallback de
+  agenda abaixo de `md`.
+- Smoke do purpose `eventos`: 129/129 verificações em 1280/390/320 px reais.
+- Suíte 127 testes/431 assertions PASS (2 depreciações); PHPCS 0 erros e lint
+  PASS; gate módulo–tema PASS no dev.3.
+- Inclui as correções da revisão de código (dev.5), a publicação explícita de
+  cancelamentos importados e a exibição de eventos de vários dias em cada dia
+  coberto (dev.6). Runtime sem `config:import`.
+- Próxima etapa: validação Alpha após autorização de release.

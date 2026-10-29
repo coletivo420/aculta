@@ -1,5 +1,21 @@
 # Changelog — aculta_calendar
 
+## 0.1.0-rc.1 — candidato RC (2026-10-29)
+
+- Candidato `e36140e63` servido no checkout de teste com `drush cr`.
+- ADM8 autenticada (anônimo 403/autenticado 200, tabela somente leitura com 3
+  cabeçalhos e 10 linhas, sem controles de edição, sem overflow em 1270/500 px);
+  visão interativa 200 com DHTMLX 7.2.15, 7 dias, contraste e fallback móvel.
+- Smoke do purpose `eventos`: 129/129 verificações PASS em 1280/390/320 px
+  reais, com modo escuro.
+- Suíte: 127 testes/431 assertions PASS (2 depreciações Core); PHPCS 0 erros e
+  `php -l` PASS; gate módulo–tema já PASS no dev.3.
+- Inclui as correções da revisão de código, a publicação explícita de
+  cancelamentos importados e a exibição de eventos de vários dias em cada dia
+  coberto. Runtime sem `config:import`; apenas a conta descartável de revisão
+  foi criada e removida.
+- Próxima etapa: validação Alpha após autorização de release (RELEASE-LIFECYCLE).
+
 ## 0.1.0-dev.6 — cancelamentos importados e eventos de vários dias (2026-10-29)
 
 - A revisão de importação oferece uma ação própria para publicar `CANCELLED`;

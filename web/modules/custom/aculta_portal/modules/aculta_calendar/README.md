@@ -11,15 +11,12 @@ Submódulo reutilizável de calendário (ADR-031, D-20). Fornece o motor de reco
 
 ## Validação visual (2026-10-29)
 
-ADM8 autenticada e visão interativa foram revisadas no candidato atual `a4f878d55`
-(calendar dev.4), servido no checkout de teste com `drush cr`. Scripts reutilizáveis:
+ADM8 autenticada e visão interativa foram revisadas no candidato RC
+`e36140e63`, servido no checkout de teste com `drush cr`. Scripts reutilizáveis:
 [tests/browser/aculta-calendar-admin](../../../../../../tests/browser/aculta-calendar-admin/README.md)
 e [tests/browser/aculta-calendar-interactive](../../../../../../tests/browser/aculta-calendar-interactive/README.md).
-A revisão cobre o markup `data-portal-ui` do dev.4. O dev.5 corrige os achados
-da revisão de código (sobreposição de eventos, UID numérico, janela de 366 dias,
-isolamento de série inválida, `RECURRENCE-ID`, `UNTIL`, fonte órfã, fuso da
-revisão, filtros da exportação e dia inteiro). O dev.6 preserva cancelamentos
-importados (ação própria de publicação) e exibe eventos de vários dias em cada
-dia coberto na agenda e na grade do mês. A revalidação visual do candidato
-corrigido está pendente porque o checkout de teste tem trabalho concorrente não
-commitado.
+Resultado: ADM8 anônimo 403/autenticado 200, tabela somente leitura sem overflow
+em 1270/500 px; visão interativa com DHTMLX 7.2.15, 7 dias, contraste e fallback
+móvel; smoke de eventos 129/129. O candidato inclui as correções da revisão de
+código, a publicação explícita de cancelamentos importados e a exibição de
+eventos de vários dias em cada dia coberto.
