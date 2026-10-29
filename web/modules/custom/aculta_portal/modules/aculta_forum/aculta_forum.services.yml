@@ -199,4 +199,9 @@ services:
 
   Drupal\aculta_forum\Hook\ForumReportUgcBridgeHooks:
     class: Drupal\aculta_forum\Hook\ForumReportUgcBridgeHooks
-    arguments: ['@entity_type.manager', '@?aculta_ugc.moderation_notifier']
+    arguments: ['@entity_type.manager', '@?aculta_ugc.moderation_notifier', '@lock', '@datetime.time', '@?logger.channel.aculta_forum']
+    public: true
+
+  aculta_forum.report_ugc_bridge:
+    alias: Drupal\aculta_forum\Hook\ForumReportUgcBridgeHooks
+    public: true
