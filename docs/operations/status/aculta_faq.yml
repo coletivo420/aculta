@@ -2,5 +2,5 @@
 version: 0.1.0-dev.2
 state: Dev
 progress_note: >-
-  Dev.2: Kernel 3/45 PASS (XSS, acesso administrativo e negação das rotas de edição). PHPCS Drupal/PHP lint PASS. Seis respostas aprovadas cadastradas no Runtime de teste (Nodes 567–572); Firefox ESR anônimo 6/6 em 1280/390/320px, todo conteúdo presente, 11/11 destinos de link únicos acessíveis por Tab com indicador :focus-visible. A fixture temporária foi removida. F1 completa; status Dev apenas pelo gate global módulo–tema, que falha em Events/Calendar/Magazine fora do escopo.
+  Dev.2: Kernel 3/45 PASS (XSS, acesso administrativo e negação das rotas de edição). PHP lint 4/4 e PHPCS Drupal/DrupalPractice PASS. Seis respostas aprovadas cadastradas no Runtime de teste (Nodes 567–572); Firefox ESR anônimo 6/6 em 1280/390/320px, todo conteúdo presente, 11/11 destinos de link únicos acessíveis por Tab com indicador :focus-visible. A fixture temporária foi removida. F1 completa; status Dev apenas pelo gate global módulo–tema, que nesta revalidação falha em Events/Calendar/Maps fora do escopo.
 next_phase: 'Após resolver o gate global módulo–tema fora desta frente, repetir o status index e promover `aculta_faq` a RC; não há trabalho funcional pendente em F1. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_faq/docs/ROADMAP.md).'

@@ -26,3 +26,11 @@ Events/Calendar e uma classe de teste da Revista, sem ocorrência no `aculta_faq
 Após o gate global ficar verde, reexecutar o status index e classificar o módulo
 como RC; não há trabalho funcional restante nesta fase.
 
+Na revalidação desta sessão (2026-10-29), a suíte Kernel passou 3/3 (45
+assertions), PHP lint 4/4 e PHPCS Drupal/DrupalPractice passou. O runner
+`tests/browser/aculta-faq/visual.py` voltou a confirmar as seis respostas,
+11/11 links navegáveis por Tab com `:focus-visible` e reflow sem overflow em
+1280/390/320px. O código funcional `src/` é igual ao checkout de teste; neste
+candidato, as diferenças do módulo são documentação, versão e cobertura Kernel.
+O gate global foi reexecutado e segue vermelho em Events/Calendar/Maps.
+
