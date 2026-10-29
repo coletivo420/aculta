@@ -1,5 +1,19 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.42 — fechar harness Kernel com closure real do Portal (2026-10-29)
+
+- O teste de integração do Media Embed agora carrega a closure real do Portal e
+  os schemas necessários de User, Profile, Path Alias, Domain e Entity Usage;
+  sem substituir serviços. A suíte completa passou: 36 testes, 371 assertions,
+  137 deprecações.
+- Declarado o schema dos settings dos formatters `aculta_pdf_media` e
+  `aculta_pdf_file`, para que os displays Drupal sejam validados pelo Config
+  Schema Checker.
+- O teste de instalação registra a configuração mínima do menu administrativo
+  e carrega os providers reais necessários. PV7 deixa de estar bloqueada pela
+  fixture Kernel; ainda requer revisão ampliada de acessibilidade/leitura e os
+  gates de CSP/validação visual indicados no roadmap. Sem escrita no Runtime.
+
 ## 0.1.0-dev.41 — revalidar dependências do harness PV7 (2026-10-29)
 
 - Nova tentativa carregou o ledger real e ampliou o harness com os módulos

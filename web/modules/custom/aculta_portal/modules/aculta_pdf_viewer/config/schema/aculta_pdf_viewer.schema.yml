@@ -59,3 +59,56 @@ aculta_pdf_viewer.settings:
     css_class:
       type: string
       label: 'Classe CSS adicional'
+
+aculta_pdf_viewer.formatter_settings:
+  type: mapping
+  label: 'Configurações dos leitores PDF ACULTA'
+  mapping:
+    show_download:
+      type: boolean
+    show_print:
+      type: boolean
+    show_zoom:
+      type: boolean
+    show_rotation:
+      type: boolean
+    show_outline:
+      type: boolean
+    show_page_thumbnails:
+      type: boolean
+    show_fullscreen:
+      type: boolean
+    show_search:
+      type: boolean
+    show_page_navigation:
+      type: boolean
+    show_full_viewer:
+      type: boolean
+    use_site_settings:
+      type: boolean
+    default_zoom:
+      type: string
+    default_scroll:
+      type: string
+    double_page:
+      type: boolean
+    double_page_mobile:
+      type: boolean
+    language:
+      type: string
+    embed_title:
+      type: label
+    link_text:
+      type: label
+    link_target:
+      type: string
+    css_class:
+      type: string
+
+field.formatter.settings.aculta_pdf_media:
+  type: aculta_pdf_viewer.formatter_settings
+  label: 'Configurações do formatter PDF de mídia ACULTA'
+
+field.formatter.settings.aculta_pdf_file:
+  type: aculta_pdf_viewer.formatter_settings
+  label: 'Configurações do formatter PDF de arquivo ACULTA'

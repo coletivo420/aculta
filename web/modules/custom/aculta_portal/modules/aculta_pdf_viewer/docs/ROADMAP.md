@@ -1,5 +1,20 @@
 # Roadmap — ACULTA PDF Viewer
 
+## PV7 — closure real do harness Kernel (2026-10-29)
+
+- `AcultaPdfMediaEmbedTest` carrega a closure real do Portal, sem mocks, e
+  prepara os schemas de User, Profile, Path Alias, Domain e Entity Usage antes
+  de criar conteúdo. `AcultaPdfViewerInstallTest` também carrega os providers
+  reais necessários e a configuração mínima `system.menu.admin` para validar a
+  instalação.
+- A suíte completa passou: 36 testes, 371 assertions e 137 deprecações.
+- O Config Schema Checker revelou que os dois formatters não declaravam o
+  schema dos próprios settings. O contrato foi acrescentado em
+  `config/schema/aculta_pdf_viewer.schema.yml`.
+- Evidência: commit da microfase PV7 deve ser registrado aqui após o commit.
+  PV7 segue Dev; falta revisão ampliada de acessibilidade/leitura e concluir os
+  gates de CSP e validação visual pré-RC já descritos abaixo.
+
 ## PV7 — revalidação do bloqueio de bootstrap em 2026-10-29
 
 - Nova tentativa de carregar a closure real no teste focal, sem substituir

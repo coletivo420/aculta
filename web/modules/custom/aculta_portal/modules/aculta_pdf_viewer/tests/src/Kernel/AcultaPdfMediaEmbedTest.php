@@ -15,8 +15,13 @@ use Drupal\file\Entity\File;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\filter\FilterPluginCollection;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\aculta_portal\Profile\PerfilDoPapel;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
+use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
+use Drupal\profile\Entity\ProfileType;
+use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use Drupal\user\Entity\Role;
 use PHPUnit\Framework\Attributes\Group;
@@ -45,15 +50,76 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system',
-    'user',
+    'address',
+    'block',
+    'comment',
+    'commerce',
+    'commerce_cart',
+    'commerce_checkout',
+    'commerce_number_pattern',
+    'commerce_order',
+    'commerce_payment',
+    'commerce_price',
+    'commerce_store',
+    'ctools',
+    'ctools_views',
+    'datetime',
+    'domain',
+    'domain_alias',
+    'domain_config',
+    'domain_source',
+    'entity',
+    'entity_reference_revisions',
+    'entity_usage',
     'field',
     'file',
-    'image',
-    'media',
     'filter',
+    'flexible_permissions',
+    'group',
+    'image',
+    'inline_entity_form',
+    'key',
+    'language',
+    'link',
+    'lms',
+    'login_emailusername',
+    'media',
+    'media_duplicates',
+    'metatag',
     'text',
     'node',
+    'options',
+    'path',
+    'path_alias',
+    'physical',
+    'profile',
+    'schema_article',
+    'schema_event',
+    'schema_image_object',
+    'schema_metatag',
+    'schema_organization',
+    'schema_product',
+    'schema_web_page',
+    'schema_web_site',
+    'search_api',
+    'search_api_db',
+    'social_api',
+    'social_auth',
+    'state_machine',
+    'system',
+    'taxonomy',
+    'token',
+    'user',
+    'views',
+    'vvj_core',
+    'vvjs',
+    'aculta_image',
+    'aculta_mail_confirmer',
+    'aculta_mail_confirmer_user',
+    'aculta_mailer',
+    'aculta_portal',
+    'aculta_portal_cep',
+    'aculta_user',
   ];
 
   /**
@@ -62,14 +128,34 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
 
-    $this->installConfig(['system', 'user', 'media', 'filter', 'image', 'node']);
+    $this->installConfig(['system', 'user', 'language', 'media', 'filter', 'image', 'node']);
     $this->installSchema('file', ['file_usage']);
     $this->installEntitySchema('user');
+    $this->installEntitySchema('profile');
+    $this->installEntitySchema('path_alias');
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
     $this->installEntitySchema('node');
+    $this->installEntitySchema('domain');
+    $this->installEntitySchema('commerce_order');
     $this->installSchema('node', ['node_access']);
+    $this->installSchema('entity_usage', ['entity_usage']);
+    $this->installConfig(['aculta_user', 'domain', 'domain_source']);
     $this->assertTrue($this->container->get('module_installer')->install(['aculta_pdf_viewer'], TRUE));
+    $this->installSchema('user', ['users_data']);
+    $this->installSchema('aculta_user', ['aculta_user_agreement', 'aculta_user_nickname']);
+    foreach (PerfilDoPapel::TIPOS as $bundle) {
+      if (ProfileType::load($bundle) !== NULL) {
+        foreach (['field_nickname' => 'Nickname', 'field_perfil_publico' => 'Public profile'] as $field_name => $label) {
+          FieldConfig::create([
+            'entity_type' => 'profile',
+            'bundle' => $bundle,
+            'field_name' => $field_name,
+            'label' => $label,
+          ])->save();
+        }
+      }
+    }
 
     $media_type = MediaType::create([
       'id' => 'document',
@@ -118,7 +204,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
       'settings' => ['file_extensions' => 'pdf'],
     ])->save();
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
-    $this->container->get('current_user')->setAccount($this->createUser(['view media']));
+    $this->container->get('current_user')->setAccount($this->createUser(['view media', 'access content']));
 
     EntityViewDisplay::create([
       'targetEntityType' => 'media',
@@ -152,7 +238,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
    * Tests the shared formatter on an institutional document's File field.
    */
   public function testInstitutionalDocumentFileFieldUsesSharedPdfViewer(): void {
-    $node_type = \Drupal\node\Entity\NodeType::create([
+    $node_type = NodeType::create([
       'type' => 'document',
       'name' => 'Institutional document',
     ]);
@@ -198,7 +284,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     $file->setPermanent();
     $file->save();
 
-    $node = \Drupal\node\Entity\Node::create([
+    $node = Node::create([
       'type' => 'document',
       'title' => 'Institutional PDF fixture',
       'status' => TRUE,
@@ -405,7 +491,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     $unauthorized_response = $kernel->handle(Request::create($private_url));
     $this->assertSame(403, $unauthorized_response->getStatusCode());
 
-    $this->container->get('current_user')->setAccount(new \Drupal\Core\Session\AnonymousUserSession());
+    $this->container->get('current_user')->setAccount(new AnonymousUserSession());
     $denied_response = $kernel->handle(Request::create($private_url));
     $this->assertSame(403, $denied_response->getStatusCode());
 
@@ -423,7 +509,7 @@ final class AcultaPdfMediaEmbedTest extends KernelTestBase {
     $entity_type_manager = $this->container->get('entity_type.manager');
     $entity_type_manager->getAccessControlHandler('media')->resetCache();
     $entity_type_manager->getAccessControlHandler('file')->resetCache();
-    $anonymous_with_media_access = new \Drupal\Core\Session\AnonymousUserSession();
+    $anonymous_with_media_access = new AnonymousUserSession();
     $this->container->get('current_user')->setAccount($anonymous_with_media_access);
     $this->assertTrue($anonymous_with_media_access->hasPermission('view media'));
     $this->assertTrue($media->access('view', $anonymous_with_media_access, TRUE)->isAllowed());
