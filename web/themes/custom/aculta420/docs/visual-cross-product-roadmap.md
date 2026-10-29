@@ -571,3 +571,14 @@ a CSS servida repetiu 22 PASS/0 FAIL e uma DEFERRED; o snapshot e os validadores
 estão registrados em `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`. A implementação é parcial
 da THEME-MF2 e não homologa o gate THEME-MF3. Detalhes e limites em
 `mobile-first-audit.md`.
+
+### THEME-MF2 — Perfil público (2026-10-29)
+
+`public-profile.css` passa a usar o perfil empilhado como base e recupera o
+arranjo horizontal em `min-width: 36rem`, preservando espaçamentos computados
+antes da migração. A primeira fixture Firefox fez 21/22 checks e levou à correção
+de espaçamento em 320 px; repetição ficou DEFERRED por sessões concorrentes e
+memória baixa. A página real ainda depende de sincronização/cache rebuild no
+servidor de desenvolvimento. Esta fatia não aprova THEME-MF3. Ver
+`mobile-first-audit.md` e
+`tests/browser/aculta-theme-mobile-first/public-profile-layout.py`.

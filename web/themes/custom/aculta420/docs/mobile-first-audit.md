@@ -7,6 +7,19 @@ A auditoria original foi registrada no checkout servidor `ded8a6181`. Em
 varredura abaixo cobre os arquivos atuais do tema, mas não altera a evidência
 de runtime. Nenhuma escrita persistente foi executada no Runtime.
 
+### THEME-MF2 — Perfil público (2026-10-29)
+
+`public-profile.css` declara o perfil empilhado e seus espaçamentos compactos
+como estilo-base; `min-width: 36rem` restaura a apresentação horizontal e os
+espaçamentos amplos anteriores. A mudança preserva a hierarquia e o markup do
+perfil público e não altera o formulário privado da Conta. A comparação
+reutilizável `tests/browser/aculta-theme-mobile-first/public-profile-layout.py`
+usa fixture sintética. A primeira execução Firefox fez 21/22 checks e revelou
+uma diferença de espaçamento na fixture em 320 px, corrigida no CSS; a repetição
+não iniciou uma sessão pois a memória/sessões geckodriver visíveis da Revista
+estavam ocupadas (DEFERRED). A inspeção da rota real servida ainda depende de
+sincronização/cache rebuild. THEME-MF3 permanece pendente.
+
 ### THEME-MF2 — composição institucional (2026-10-29)
 
 `css/components/institutional.css` agora define primeiro a pilha vertical para

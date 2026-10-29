@@ -217,3 +217,21 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/institutional-layo
 `INSTITUTIONAL_BASELINE_REF` escolhe o commit do CSS de baseline; use `HEAD` ao
 rodar antes de criar o commit e mantenha o padrão `HEAD^` após a publicação.
 `INSTITUTIONAL_LAYOUT_WIDTHS` permite uma lista focal separada por vírgulas.
+
+## Perfil público mobile-first
+
+`public-profile-layout.py` compara geometria computada e screenshots do CSS
+anterior e candidato para uma fixture sintética de Perfil público em
+320/360/390/575/576/599/600/768/1024/1280/1440 px. Requer Firefox ESR visível,
+`DISPLAY=:0`, geckodriver e `websockets`; evidências ficam em `$SUITE_OUT`.
+Define `PUBLIC_PROFILE_BASELINE_REF` para escolher o commit baseline e
+`PUBLIC_PROFILE_WIDTHS` para uma lista focal de larguras. O teste cobre somente
+CSS/layout da fixture, sem Runtime, formulário privado, ACL ou gates completos
+de acessibilidade.
+
+```sh
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-profile-mobile-first
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/public-profile-layout.py
+```

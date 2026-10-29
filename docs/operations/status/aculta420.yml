@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.7.0-dev.13
+version: 0.7.0-dev.14
 state: Dev
 progress_note: >-
-  0.7.0-dev.13 / THEME-MF2: CTAs, áreas e detalhes institucionais passam a começar no layout móvel; 24/24 verificações Firefox compararam capturas e geometria calculada ao baseline em 12 larguras. Lint CSS, SDC (734), Design Foundations (2434), browser validators (21) e Foundation via Runtime (348) PASS. Revisão das páginas servidas após sincronização do checkout pendente; MF3 global não aprovado.
-next_phase: 'Sincronizar este commit no checkout de desenvolvimento pelo owner e revisar o conteúdo institucional renderizado; continuar THEME-MF2 nos demais purposes antes de THEME-MF3.'
+  0.7.0-dev.14 / THEME-MF2: Perfil público migrado para base empilhada com aprimoramento em 36rem, mantendo o layout anterior. Lint CSS, compilação do harness, SDC schemas (734) e Design Foundations (2434) PASS. Comparação Firefox da fixture iniciou e revelou diferença em 320px, corrigida; repetição DEFERRED enquanto sessões visíveis de outra frente ocupam o Firefox/geckodriver. Página real ainda depende de sync/cache pelo owner; MF3 global não aprovado.
+next_phase: 'Repetir a comparação Firefox da fixture quando o driver compartilhado estiver livre; depois sincronização/cache pelo owner e revisar Perfil público renderizado. Continuar THEME-MF2 nos demais purposes antes de THEME-MF3.'

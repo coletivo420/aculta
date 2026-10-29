@@ -1,3 +1,8 @@
+# 0.7.0-dev.14 — migrar o Perfil público para mobile-first (2026-10-29)
+
+- Perfil público usa composição empilhada e espaçamento móvel como base; `min-width: 36rem` restaura a apresentação ampla anterior.
+- O harness Firefox ESR usa fixture sintética em 11 larguras. A primeira execução fez 21/22 checks: uma diferença do fixture em 320 px foi corrigida; a repetição ficou DEFERRED porque as sessões visíveis da Revista saturaram memória e geckodriver. Não representa render do Runtime nem aprova THEME-MF3.
+
 # 0.7.0-dev.13 — reflow mobile-first da composição institucional (2026-10-29)
 
 - CTAs de hero, grade de áreas institucionais e pares de detalhes da instituição passam a usar layout móvel como base; as colunas largas são aprimoradas em `min-width`.
