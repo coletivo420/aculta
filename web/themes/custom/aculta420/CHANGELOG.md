@@ -1,3 +1,9 @@
+## 0.7.0-dev.10 — empilhar a top-bar Navigation no mobile
+
+- Refluxo mobile da integração Drupal/Bootstrap agora empilha contexto e ações em uma coluna e alinha as ações ao início; Editar e Mais ações permanecem disponíveis.
+- Firefox ESR visível com CSS local injetado: álbuns autenticados do host principal e do Fórum passaram 8/8 verificações em 1280/390/320 px, sem overflow e com ações dentro da viewport. O CSS ainda não foi servido pelo Runtime; repetir após cache rebuild.
+- Design Foundations, SDC schemas, gate global e diff check ainda pendentes nesta entrega.
+
 ## 0.7.0-dev.9 — reflow mobile da barra administrativa Drupal
 
 - A barra top-bar do módulo Navigation reordena contexto e ações em duas

@@ -36,20 +36,23 @@ if os.environ.get("DISPLAY") != ":0":
 if not OUT.is_absolute():
     raise SystemExit("SUITE_OUT deve ser absoluto e fora do repositório.")
 OUT.mkdir(parents=True, exist_ok=True)
+os.environ["ACULTA_FF_PROFILE_ROOT"] = str(OUT / "firefox-profiles")
 env = os.environ.copy()
 env.pop("DISPLAY", None)
-login = subprocess.run(
-    [
-        "php", "vendor/drush/drush/drush.php", "uli", "--uid=1",
-        f"--uri={ACCOUNT}",
-    ],
-    cwd=PROJECT,
-    env=env,
-    check=True,
-    capture_output=True,
-    text=True,
-    timeout=30,
-).stdout.strip().splitlines()[-1]
+login = os.environ.get("SUITE_LOGIN_URL")
+if not login:
+    login = subprocess.run(
+        [
+            "php", "vendor/drush/drush/drush.php", "uli", "--uid=1",
+            f"--uri={ACCOUNT}",
+        ],
+        cwd=PROJECT,
+        env=env,
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    ).stdout.strip().splitlines()[-1]
 
 driver = None
 bidi = None
@@ -124,36 +127,37 @@ try:
     navigate(login)
     check("login de uso único concluiu", wait_for("document.readyState === 'complete'"))
 
-    navigate(f"{BASE}/node/{NODE_ID}/edit")
-    editor_open = wait_for("!!document.querySelector('.ck-editor')")
-    check("formulário descartável da Revista abriu", editor_open,
-          driver.js("return location.pathname"))
-    button = driver.js("""return [...document.querySelectorAll('button')]
+    if os.environ.get("SUITE_SKIP_EDITOR") != "1":
+        navigate(f"{BASE}/node/{NODE_ID}/edit")
+        editor_open = wait_for("!!document.querySelector('.ck-editor')")
+        check("formulário descartável da Revista abriu", editor_open,
+              driver.js("return location.pathname"))
+        button = driver.js("""return [...document.querySelectorAll('button')]
       .map(button => ({
         label: button.getAttribute('aria-label') || button.title || button.innerText,
         className: button.className,
       }))
       .find(item => (item.label + ' ' + item.className).toLowerCase().includes('galeria')) || null;""")
-    check("ação Criar galeria está disponível no editor", bool(button), button or "")
-    if button:
-        driver.js("""const button = [...document.querySelectorAll('button')].find(item =>
+        check("ação Criar galeria está disponível no editor", bool(button), button or "")
+        if button:
+            driver.js("""const button = [...document.querySelectorAll('button')].find(item =>
           ((item.getAttribute('aria-label') || item.title || item.innerText) +
            ' ' + item.className).toLowerCase().includes('galeria'));
           button?.click();""")
-        dialog_open = wait_for("!!document.querySelector('#drupal-modal form input[name=\"title\"]')")
-        form = driver.js("""return {
+            dialog_open = wait_for("!!document.querySelector('#drupal-modal form input[name=\"title\"]')")
+            form = driver.js("""return {
           modal: !!document.querySelector('#drupal-modal'),
           title: !!document.querySelector('#drupal-modal input[name="title"]'),
           images: !!document.querySelector('#drupal-modal [name^="images"]'),
           upload: !!document.querySelector('#drupal-modal input[type="file"]'),
           submit: !!document.querySelector('#drupal-modal form [type="submit"]'),
         };""") if dialog_open else {}
-        check("diálogo mostra título, imagens, upload e ação", dialog_open and
+            check("diálogo mostra título, imagens, upload e ação", dialog_open and
               all(form.get(key) for key in ("title", "images", "upload", "submit")),
               str(form))
-        for width, label in WIDTHS:
-            actual = set_width(width)
-            metrics = driver.js("""return {
+            for width, label in WIDTHS:
+                actual = set_width(width)
+                metrics = driver.js("""return {
               viewport: window.innerWidth,
               document: document.documentElement.scrollWidth,
               modal: (() => {
@@ -178,8 +182,8 @@ try:
                   text: (element.innerText || '').trim().slice(0, 70),
                 })),
             };""")
-            screenshot(f"dialog-{label}")
-            check(f"diálogo sem overflow em {width}px",
+                screenshot(f"dialog-{label}")
+                check(f"diálogo sem overflow em {width}px",
                   actual == width and metrics["document"] <= width and
                   metrics["modal"] <= width and metrics["topBarActionsVisible"],
                   f"viewport={actual}, document={metrics['document']}, modal={metrics['modal']}, "

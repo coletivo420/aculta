@@ -26,3 +26,8 @@ Para avaliar uma regra CSS ainda não publicada no Runtime, SUITE_THEME_CSS pode
 apontar para a folha local. O script injeta o conteúdo somente no documento
 atual do Firefox, sem alterar o servidor; esse resultado é prototipagem e não
 substitui repetir o teste após o cache rebuild do candidato.
+
+`SUITE_SKIP_EDITOR=1` omite somente o fluxo de diálogo e mantém login e álbum
+público, para isolar regressões da top-bar sem depender de uma fixture editorial
+editável. `SUITE_LOGIN_URL` pode receber um link único gerado pelo Drush do
+checkout do servidor de teste; o script captura esse valor sem imprimi-lo.

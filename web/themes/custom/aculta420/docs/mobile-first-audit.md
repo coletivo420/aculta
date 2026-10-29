@@ -185,10 +185,10 @@ O roadmap do tema contém a sequência completa MF-0.1 a MF-1.0.
   `scrollWidth` reportar 390px.
 - A regra pertence à integração Drupal/Bootstrap (`css/drupal-bootstrap.css`):
   a grade original de três colunas usa uma coluna central com largura intrínseca
-  longa. MF-0.3 iniciou o reflow para `minmax(0, 1fr) auto`; o contexto pode
-  quebrar linha e ações mantêm espaço e destinos reais.
-- Gate estático: Design Foundations 2379 e SDC schemas 54 componentes/734 checks
-  PASS. Protótipo Firefox ESR com a folha local injetada passou 15/15 verificações
-  no diálogo e em álbuns do host principal/Fórum (1280/390/320px), sem overflow e
-  com ações visíveis. O CSS ainda não está servido pelo Runtime; repetir após
-  cache rebuild. Não valida zoom, modo escuro ou a matriz inteira.
+  longa. A regra agora empilha as regiões em uma coluna até 767.98px, permite
+  quebra do contexto e refluência das ações Editar/Mais ações.
+- Firefox ESR com a folha local injetada passou 8/8 verificações nos álbuns
+  autenticados do host principal/Fórum (1280/390/320px), sem overflow e com
+  ações visíveis. Design Foundations 2379 e SDC schemas 54 componentes/734
+  checks PASS. O CSS ainda não está servido pelo Runtime; repetir após cache
+  rebuild. O diálogo, zoom, modo escuro e a matriz inteira não foram validados.
