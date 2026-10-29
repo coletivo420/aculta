@@ -121,6 +121,32 @@ pontos de transição existentes, inclusive 599/600 e 1024/1280. Esta comparaç�
 não prova que layouts se ajustem nesses tamanhos; cada tela precisa de baseline
 e captura Firefox visível antes e depois da migração.
 
+
+### Maior frequência de media queries encontradas
+
+Recontagem lexical de 78 blocos em 44 folhas de estilo do tema. `@media`
+contém também preferências/recursos de acessibilidade, não só breakpoints:
+
+| Query literal | Blocos | Arquivos |
+|---|---:|---:|
+| `max-width: 575.98px` | 18 | 15 |
+| `prefers-reduced-motion: reduce` | 13 | 12 |
+| `max-width: 767.98px` | 12 | 8 |
+| `min-width: 48rem` | 3 | 3 |
+| `max-width: 768px` | 3 | 3 |
+| `min-width: 992px` | 3 | 2 |
+| `max-width: 1099.98px` | 3 | 2 |
+| `min-width: 768px` | 3 | 3 |
+| `min-width: 576px` | 2 | 2 |
+| `min-width: 1100px` | 2 | 2 |
+
+Há outras 15 expressões literais de uso único, incluindo 320–480 px, 992–1200
+px, `forced-colors`, `hover` e `prefers-color-scheme`. Sobreposições entre
+Bootstrap (575.98/767.98) e limites do tema (576/768/1100), além de `max-width`
+e `min-width` misturados, pedem análise de cascade por consumer; contagens não
+indicam conflito visual por si só. A saída completa foi conferida diretamente
+nos 92 CSS/Sass da worktree `7f073206a` em 2026-10-29.
+
 ## Regras para a migração
 
 - Começar com 320 CSS px e estilos mobile como base; media queries devem
