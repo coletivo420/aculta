@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_pdf_viewer_group\Plugin\Group\Relation;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\group\Plugin\Group\Relation\GroupRelationTypeInterface;
 use Drupal\media\Entity\MediaType;
 
@@ -27,8 +28,11 @@ final class MediaDocumentDeriver extends DeriverBase {
 
       $derivative = clone $base_plugin_definition;
       $derivative->set('entity_bundle', $id);
-      $derivative->set('label', t('Group Media document'));
-      $derivative->set('description', t('Adds document Media to a group and applies group access to the Media entity.'));
+      $derivative->set('label', new TranslatableMarkup('Group Media document'));
+      $derivative->set(
+        'description',
+        new TranslatableMarkup('Adds document Media to a group and applies group access to the Media entity.'),
+      );
       $this->derivatives[$id] = $derivative;
     }
 

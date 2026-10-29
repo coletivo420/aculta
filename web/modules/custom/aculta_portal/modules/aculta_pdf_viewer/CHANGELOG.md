@@ -1,5 +1,17 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.43 — PHPCS integral limpo na PV7 (2026-10-29)
+
+- Corrigidos docblocks, indentação e traduções dos formatters, settings e
+  metadados da relação Group; o
+  PHPCS Drupal/DrupalPractice integral do módulo e do submódulo Group agora
+  passa sem erros ou avisos.
+- A suíte completa do PDF Viewer passou novamente: 36 testes, 371 assertions,
+  137 deprecações. O Kernel de acesso Group também passou: 1 teste, 52
+  assertions, 145 deprecações.
+- PV7 continua em Dev: revisão ampliada de acessibilidade/leitura, CSP e
+  validação visual pré-RC permanecem pendentes. Sem escrita no Runtime.
+
 ## 0.1.0-dev.42 — fechar harness Kernel com closure real do Portal (2026-10-29)
 
 - O teste de integração do Media Embed agora carrega a closure real do Portal e

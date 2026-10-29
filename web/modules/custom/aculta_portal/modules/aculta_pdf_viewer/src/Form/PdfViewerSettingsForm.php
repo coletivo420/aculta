@@ -69,8 +69,8 @@ final class PdfViewerSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Zoom inicial'),
       '#options' => [
         'fit-width' => $this->t('Ajustar à largura'),
-        '100' => '100%',
-        '125' => '125%',
+        '100' => $this->t('100%'),
+        '125' => $this->t('125%'),
       ],
       '#config_target' => 'aculta_pdf_viewer.settings:default_zoom',
     ];

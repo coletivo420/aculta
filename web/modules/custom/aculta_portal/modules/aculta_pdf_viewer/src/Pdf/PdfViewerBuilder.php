@@ -116,15 +116,25 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
 
     $title = trim((string) ($settings['embed_title'] ?? '')) ?: (trim($title) ?: $file->getFilename());
     $defaults = [
-      'show_download' => TRUE, 'show_print' => TRUE, 'show_zoom' => TRUE,
-      'show_fullscreen' => TRUE, 'show_search' => TRUE, 'show_page_navigation' => TRUE,
+      'show_download' => TRUE,
+      'show_print' => TRUE,
+      'show_zoom' => TRUE,
+      'show_fullscreen' => TRUE,
+      'show_search' => TRUE,
+      'show_page_navigation' => TRUE,
       'show_rotation' => TRUE,
       'show_outline' => TRUE,
       'show_page_thumbnails' => TRUE,
-      'show_full_viewer' => TRUE, 'default_zoom' => 'fit-width', 'default_scroll' => 'vertical',
+      'show_full_viewer' => TRUE,
+      'default_zoom' => 'fit-width',
+      'default_scroll' => 'vertical',
       'use_site_settings' => TRUE,
-      'double_page' => FALSE, 'double_page_mobile' => FALSE, 'language' => 'pt-BR',
-      'link_text' => '', 'link_target' => '_blank', 'css_class' => '',
+      'double_page' => FALSE,
+      'double_page_mobile' => FALSE,
+      'language' => 'pt-BR',
+      'link_text' => '',
+      'link_target' => '_blank',
+      'css_class' => '',
     ];
     $settings = array_replace($defaults, $settings);
     $full_viewer_url = $this->fullViewerUrl($url, $settings);
@@ -187,41 +197,41 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
           '#type' => 'container',
           '#attributes' => ['data-aculta-pdf-control' => 'zoom-controls'],
           'zoom_out' => [
-          '#type' => 'html_tag',
-          '#tag' => 'button',
-          '#value' => new TranslatableMarkup('Reduzir zoom'),
-          '#attributes' => [
-            'type' => 'button',
-            'data-aculta-pdf-control' => 'zoom-out',
-            'aria-label' => new TranslatableMarkup('Reduzir zoom'),
+            '#type' => 'html_tag',
+            '#tag' => 'button',
+            '#value' => new TranslatableMarkup('Reduzir zoom'),
+            '#attributes' => [
+              'type' => 'button',
+              'data-aculta-pdf-control' => 'zoom-out',
+              'aria-label' => new TranslatableMarkup('Reduzir zoom'),
+            ],
           ],
-        ],
           'zoom_status' => [
-          '#type' => 'html_tag',
-          '#tag' => 'span',
-          '#value' => '100%',
-          '#attributes' => ['data-aculta-pdf-control' => 'zoom-status', 'aria-live' => 'polite'],
-        ],
+            '#type' => 'html_tag',
+            '#tag' => 'span',
+            '#value' => '100%',
+            '#attributes' => ['data-aculta-pdf-control' => 'zoom-status', 'aria-live' => 'polite'],
+          ],
           'zoom_in' => [
-          '#type' => 'html_tag',
-          '#tag' => 'button',
-          '#value' => new TranslatableMarkup('Aumentar zoom'),
-          '#attributes' => [
-            'type' => 'button',
-            'data-aculta-pdf-control' => 'zoom-in',
-            'aria-label' => new TranslatableMarkup('Aumentar zoom'),
+            '#type' => 'html_tag',
+            '#tag' => 'button',
+            '#value' => new TranslatableMarkup('Aumentar zoom'),
+            '#attributes' => [
+              'type' => 'button',
+              'data-aculta-pdf-control' => 'zoom-in',
+              'aria-label' => new TranslatableMarkup('Aumentar zoom'),
+            ],
           ],
-        ],
           'zoom_reset' => [
-          '#type' => 'html_tag',
-          '#tag' => 'button',
-          '#value' => new TranslatableMarkup('Restaurar zoom'),
-          '#attributes' => [
-            'type' => 'button',
-            'data-aculta-pdf-control' => 'zoom-reset',
+            '#type' => 'html_tag',
+            '#tag' => 'button',
+            '#value' => new TranslatableMarkup('Restaurar zoom'),
+            '#attributes' => [
+              'type' => 'button',
+              'data-aculta-pdf-control' => 'zoom-reset',
+            ],
           ],
         ],
-          ],
         'rotate' => [
           '#type' => 'html_tag',
           '#tag' => 'button',
@@ -429,7 +439,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
    *
    * The Runtime's front controller does not resolve Core's path-processor
    * form `/system/files/{filepath}` reliably. The same Core route accepts
-   * `?file={filepath}` and still rechecks the Media/File access on each request.
+   * `?file={filepath}` and still rechecks Media/File access on each request.
    */
   private function privateFileUrl(string $uri): string {
     $path = substr($uri, strlen('private://'));

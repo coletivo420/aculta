@@ -11,6 +11,9 @@
 - O Config Schema Checker revelou que os dois formatters não declaravam o
   schema dos próprios settings. O contrato foi acrescentado em
   `config/schema/aculta_pdf_viewer.schema.yml`.
+- PHPCS Drupal/DrupalPractice integral do módulo e do submódulo Group passou
+  sem erros ou avisos; as mudanças de estilo e traduções são registradas na
+  microfase PV7 de PHPCS.
 - Evidência: commit `d78ce158d` — `test(aculta-pdf-viewer): PV7 fecha closure Kernel real`.
   PV7 segue Dev; falta revisão ampliada de acessibilidade/leitura e concluir os
   gates de CSP e validação visual pré-RC já descritos abaixo.

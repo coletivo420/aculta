@@ -79,8 +79,9 @@ final class DocumentMigrationSpikeTest extends KernelTestBase {
   }
 
   /**
-   * Estratégia: trocar o tipo do componente para o ID novo, recalcular a
-   * dependência e só então desinstalar o antigo.
+   * Troca o formatter antes de desinstalar o módulo que o fornece.
+   *
+   * A configuração recalcula a dependência antes da remoção do módulo antigo.
    */
   public function testRewriteComponentTypeBeforeUninstallKeepsComponent(): void {
     $installer = $this->container->get('module_installer');
