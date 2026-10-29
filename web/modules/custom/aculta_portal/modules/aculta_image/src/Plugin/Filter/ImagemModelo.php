@@ -19,8 +19,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Modelo de imagem do texto (aculta_image, docs/MODELOS-DE-IMAGEM.md).
  *
- * Transforma `<img data-aculta-modelo="…">` gravada pelo editor em `<figure>` com srcset explícito (estilos do modelo),
- * legenda e crédito. Roda depois do filtro de HTML, então o marcador precisa estar permitido no formato. Sem marcador,
+ * Transforma `<img data-aculta-modelo="…">` gravada pelo editor em `<figure>`
+ * com srcset explícito (estilos do modelo),
+ * legenda e crédito. Roda depois do filtro de HTML, então o marcador precisa
+ * estar permitido no formato. Sem marcador,
  * ou se a imagem não existe em public://, o HTML original segue sem mudança.
  */
 #[Filter(
@@ -30,7 +32,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 )]
 final class ImagemModelo extends FilterBase implements ContainerFactoryPluginInterface {
 
-  /** Largura de exibição de cada modelo (atributo sizes). */
+  /**
+   * Largura de exibição de cada modelo (atributo sizes). */
   private const TAMANHOS = [
     'pequena' => '(min-width: 600px) 290px, 100vw',
     'padrao' => '(min-width: 600px) 580px, 100vw',
@@ -38,7 +41,8 @@ final class ImagemModelo extends FilterBase implements ContainerFactoryPluginInt
     'destaque' => '100vw',
   ];
 
-  /** Alinhamentos aceitos; qualquer outro valor vira centro. */
+  /**
+   * Alinhamentos aceitos; qualquer outro valor vira centro. */
   private const ALINHAMENTOS = ['esquerda', 'direita', 'centro'];
 
   public function __construct(
@@ -52,6 +56,9 @@ final class ImagemModelo extends FilterBase implements ContainerFactoryPluginInt
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
+  /**
+   * Creates the object with its injected services.
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $configuration,
@@ -63,7 +70,8 @@ final class ImagemModelo extends FilterBase implements ContainerFactoryPluginInt
     );
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function process($text, $langcode): FilterProcessResult {
     if (!str_contains($text, 'data-aculta-modelo')) {
       return new FilterProcessResult($text);
@@ -72,7 +80,8 @@ final class ImagemModelo extends FilterBase implements ContainerFactoryPluginInt
     return new FilterProcessResult($novo ?? $text);
   }
 
-  /** Figura do modelo, ou NULL se o modelo ou o arquivo não existem. */
+  /**
+   * Figura do modelo, ou NULL se o modelo ou o arquivo não existem. */
   private function figura(string $tag): ?string {
     $atributos = $this->atributos($tag);
     $modelo = $atributos['data-aculta-modelo'] ?? '';
@@ -94,14 +103,18 @@ final class ImagemModelo extends FilterBase implements ContainerFactoryPluginInt
     $srcset = implode(', ', array_map(fn(array $u): string => Html::escape($u['url']) . ' ' . $u['largura'] . 'w', $urls));
     $img = '<img src="' . Html::escape($urls[0]['url']) . '" srcset="' . $srcset . '" sizes="' . self::TAMANHOS[$modelo] . '"'
       . ' alt="' . Html::escape($atributos['alt'] ?? '') . '" loading="lazy" decoding="async">';
-    // Só legenda: o crédito foi removido de todos os modelos a pedido do responsável.
+    // Só legenda: o crédito foi removido de todos os modelos a pedido do
+    // responsável.
     $legenda = Html::escape($atributos['data-aculta-legenda'] ?? '');
-    // Marcação em string (filtro de texto): atributos de dados estilizados no tema por seletor de atributo.
+    // Marcação em string (filtro de texto): atributos de dados estilizados
+    // no tema.
+    // por seletor de atributo.
     $rodape = $legenda !== '' ? '<figcaption data-aculta-imagem-legenda>' . $legenda . '</figcaption>' : '';
     return '<figure data-aculta-imagem data-aculta-imagem-modelo="' . $modelo . '" data-aculta-imagem-alinhamento="' . $alinhamento . '">' . $img . $rodape . '</figure>';
   }
 
-  /** URI public:// do src de um arquivo de imagem do site, ou NULL. */
+  /**
+   * URI public:// do src de um arquivo de imagem do site, ou NULL. */
   private function uriDoSrc(string $src): ?string {
     if (!preg_match('~/sites/[^/]+/files/([^?#]+)~', html_entity_decode($src), $m)) {
       return NULL;
@@ -111,7 +124,12 @@ final class ImagemModelo extends FilterBase implements ContainerFactoryPluginInt
     return $caminho !== FALSE && is_file($caminho) ? $uri : NULL;
   }
 
-  /** Atributos de uma tag, com valores já escapados pelo editor. @return array<string, string> */
+  /**
+   * Parses tag attributes that were escaped by the editor.
+   *
+   * @return array<string, string>
+   *   Attribute names and decoded values.
+   */
   private function atributos(string $tag): array {
     preg_match_all('/([\w-]+)="([^"]*)"/', $tag, $pares, PREG_SET_ORDER);
     $saida = [];

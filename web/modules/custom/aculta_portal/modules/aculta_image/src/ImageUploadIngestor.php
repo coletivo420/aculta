@@ -9,7 +9,11 @@ use Drupal\file\Upload\FileUploadHandlerInterface;
 use Drupal\file\Upload\FileUploadResult;
 use Drupal\file\Upload\UploadedFileInterface;
 
-/** Validates image uploads through ACULTA policy and Drupal's managed upload API. */
+/**
+ * Validates uploads through the ACULTA image policy.
+ *
+ * Uses Drupal's managed upload API.
+ */
 final class ImageUploadIngestor {
 
   public function __construct(
@@ -55,6 +59,9 @@ final class ImageUploadIngestor {
     );
   }
 
+  /**
+   * Checks whether the extension matches the detected MIME type.
+   */
   private function matchesExtension(string $extension, string $mime): bool {
     $allowed = [
       'image/png' => ['png'],

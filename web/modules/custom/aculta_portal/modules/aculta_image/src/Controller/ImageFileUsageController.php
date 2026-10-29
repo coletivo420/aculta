@@ -20,6 +20,9 @@ final class ImageFileUsageController extends ControllerBase {
     private readonly FileUsageInterface $fileUsage,
   ) {}
 
+  /**
+   * Creates the object with its injected services.
+   */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('file.usage'));
   }

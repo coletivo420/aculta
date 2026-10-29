@@ -12,7 +12,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Quarentena de imagens candidatas: enviar, restaurar e excluir vencidas. Cada ação é separada e confirmada pelo botão.
+ * Formulário administrativo da quarentena de imagens.
+ *
+ * Enviar, restaurar e excluir vencidas são ações separadas e confirmadas.
  */
 final class ImageQuarantineForm extends FormBase {
 
@@ -22,6 +24,9 @@ final class ImageQuarantineForm extends FormBase {
     private readonly EntityTypeManagerInterface $entityTypeManagerService,
   ) {}
 
+  /**
+   * Creates the object with its injected services.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_image.audit'),
@@ -30,10 +35,16 @@ final class ImageQuarantineForm extends FormBase {
     );
   }
 
+  /**
+   * Returns the form identifier.
+   */
   public function getFormId(): string {
     return 'aculta_image_quarantine_form';
   }
 
+  /**
+   * Builds the administrative form.
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $candidatas = [];
     foreach ($this->audit->candidatas(50) as $c) {
@@ -45,7 +56,11 @@ final class ImageQuarantineForm extends FormBase {
       '#options' => $candidatas,
       '#description' => $this->t('Enviar move o arquivo para a área privada. Nada é apagado.'),
     ];
-    $form['enviar'] = ['#type' => 'submit', '#value' => $this->t('Enviar selecionadas à quarentena'), '#submit' => ['::enviar']];
+    $form['enviar'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Enviar selecionadas à quarentena'),
+      '#submit' => ['::enviar'],
+    ];
 
     $quarentena = [];
     foreach ($this->quarantine->listar() as $linha) {
@@ -56,7 +71,11 @@ final class ImageQuarantineForm extends FormBase {
       '#title' => $this->t('Na quarentena'),
       '#options' => $quarentena,
     ];
-    $form['restaurar'] = ['#type' => 'submit', '#value' => $this->t('Restaurar selecionadas'), '#submit' => ['::restaurar']];
+    $form['restaurar'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Restaurar selecionadas'),
+      '#submit' => ['::restaurar'],
+    ];
     $form['excluir'] = [
       '#type' => 'submit',
       '#value' => $this->t('Excluir vencidas (sem referência)'),
@@ -66,6 +85,9 @@ final class ImageQuarantineForm extends FormBase {
     return $form;
   }
 
+  /**
+   * Sends selected images to quarantine.
+   */
   public function enviar(array &$form, FormStateInterface $form_state): void {
     $enviadas = 0;
     foreach (array_filter($form_state->getValue('candidatas') ?? []) as $fid) {
@@ -77,6 +99,9 @@ final class ImageQuarantineForm extends FormBase {
     $this->messenger()->addStatus($this->t('@n arquivo(s) enviado(s) à quarentena.', ['@n' => $enviadas]));
   }
 
+  /**
+   * Restores selected images from quarantine.
+   */
   public function restaurar(array &$form, FormStateInterface $form_state): void {
     $restauradas = 0;
     foreach (array_filter($form_state->getValue('quarentena') ?? []) as $fid) {
@@ -87,11 +112,17 @@ final class ImageQuarantineForm extends FormBase {
     $this->messenger()->addStatus($this->t('@n arquivo(s) restaurado(s).', ['@n' => $restauradas]));
   }
 
+  /**
+   * Deletes expired quarantined images.
+   */
   public function excluir(array &$form, FormStateInterface $form_state): void {
     $apagadas = $this->quarantine->excluirVencidas();
     $this->messenger()->addStatus($this->t('@n arquivo(s) vencido(s) excluído(s).', ['@n' => $apagadas]));
   }
 
+  /**
+   * Handles the form submission.
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {}
 
 }

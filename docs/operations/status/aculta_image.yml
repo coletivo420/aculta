@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.36
+version: 0.1.0-dev.37
 state: Dev
-next_phase: Resolver PHPCS Drupal do módulo (223 erros/57 avisos); depois cobrir integração Kernel com o coordenador real, confirmar binários necessários para produção e avançar integração Growroom após a F3 do Fórum ([plano](web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md))
-progress_note: "Dev.36: suíte 30/123 PASS (1 deprecação); novo Kernel confirma serviços de limpeza/quarentena iniciam sem Portal e quarentena recusa mover sem coordenador. PHP lint 39/39 PASS; PHPCS Drupal no Kernel focal e validate-aculta-image PASS. PHPCS Drupal do módulo completo falha em 32 arquivos existentes (223 erros/57 avisos). Integração Kernel com coordenador Portal real ainda pendente; ImageMagick/Ghostscript Hostinger sem confirmação; Growroom bloqueado por F3 do Fórum. Nenhum arquivo real foi limpo/movido; Runtime sem alteração."
+next_phase: Cobrir integração Kernel com o coordenador real; confirmar binários necessários para produção; avançar integração Growroom após a F3 do Fórum ([plano](web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md))
+progress_note: "Dev.37: PHPCS Drupal/DrupalPractice PASS sem erros ou avisos após limpeza de estilo em 33 arquivos. PHP lint 33/33 PASS; Unit 28 testes/118 assertions PASS; Kernel 2 testes/5 assertions PASS com 1 deprecação upstream de media_duplicates_requirements; git diff --check PASS. A integração Kernel com coordenador Portal real continua pendente; ImageMagick/Ghostscript Hostinger sem confirmação; Growroom bloqueado pela F3 do Fórum. Nenhum arquivo real foi limpo/movido; Runtime sem alteração."

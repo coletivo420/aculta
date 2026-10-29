@@ -15,7 +15,11 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_image')]
 class ImageIngesterTest extends UnitTestCase {
 
-  /** Extensões da política são aceitas, sem diferença de caixa; outras são recusadas. */
+  /**
+   * Valida a aceitação de extensões pela política.
+   *
+   * A comparação ignora caixa; outras extensões são recusadas.
+   */
   public function testExtensoesDaPolitica(): void {
     $this->assertTrue(ImageIngester::extensaoAceita('foto.JPG'));
     $this->assertTrue(ImageIngester::extensaoAceita('capa.webp'));
@@ -23,7 +27,11 @@ class ImageIngesterTest extends UnitTestCase {
     $this->assertFalse(ImageIngester::extensaoAceita('semextensao'));
   }
 
-  /** Tamanho: zero e acima do limite são recusados; o limite exato é aceito. */
+  /**
+   * Valida os limites de tamanho da política.
+   *
+   * Zero e valores acima do limite são recusados; o limite exato é aceito.
+   */
   public function testTamanhoDaPolitica(): void {
     $this->assertFalse(ImageIngester::tamanhoAceito(0));
     $this->assertTrue(ImageIngester::tamanhoAceito(1));

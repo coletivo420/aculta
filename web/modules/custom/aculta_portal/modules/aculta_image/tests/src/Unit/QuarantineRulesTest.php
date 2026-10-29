@@ -9,15 +9,23 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Prazo da quarentena: 30 dias a partir do envio; vencida só no próprio instante do vencimento ou depois.
+ * Valida o prazo de retenção da quarentena.
+ *
+ * O prazo é de 30 dias; a quarentena vence no instante definido ou depois.
  */
 #[Group('aculta_image')]
 class QuarantineRulesTest extends UnitTestCase {
 
+  /**
+   * Confirms quarantine retention lasts thirty days.
+   */
   public function testPrazoDeTrintaDias(): void {
     $this->assertSame(1000 + 30 * 86400, QuarantineRules::vencimento(1000));
   }
 
+  /**
+   * Confirms quarantine expiry at the exact boundary.
+   */
   public function testVencimentoNoInstante(): void {
     $vence = QuarantineRules::vencimento(1000);
     $this->assertFalse(QuarantineRules::vencida($vence, $vence - 1));

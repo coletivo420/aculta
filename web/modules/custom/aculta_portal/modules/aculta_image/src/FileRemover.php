@@ -12,7 +12,9 @@ use Drupal\file\FileInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 
 /**
- * Exclusão controlada de arquivos (imagens e não-imagens) após checar referências.
+ * Remove arquivos após verificar suas referências.
+ *
+ * A operação aceita imagens e outros tipos de arquivo.
  */
 final class FileRemover implements FileRemoverInterface {
 

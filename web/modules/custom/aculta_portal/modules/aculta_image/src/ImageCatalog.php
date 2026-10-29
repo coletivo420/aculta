@@ -5,16 +5,23 @@ declare(strict_types=1);
 namespace Drupal\aculta_image;
 
 /**
- * Catálogo de finalidades de imagem do ACULTA (aculta_image, seção 3.1 do plano).
+ * Provides the canonical image styles, purposes, and text models.
  *
- * Única fonte de nomes de estilo de imagem do site. Quem precisa de uma imagem pede uma finalidade, não um estilo.
- * Os estilos listados em STYLES são os que existem em config/sync; o gate (scripts/validate-aculta-image.php) reprova
- * estilo exportado que não esteja aqui. Nomes antigos só podem permanecer enquanto houver configuração consumidora
+ * Única fonte de nomes de estilo de imagem do site. Quem precisa de uma imagem
+ * pede uma finalidade, não um estilo.
+ * Os estilos listados em STYLES são os que existem em config/sync; o gate
+ * (scripts/validate-aculta-image.php) reprova
+ * estilo exportado que não esteja aqui. Nomes antigos só podem permanecer
+ * enquanto houver configuração consumidora
  * identificada e registrada no plano de migração (R8).
  */
 final class ImageCatalog {
 
-  /** Todos os estilos de imagem aceitos no projeto (espelho de config/sync/image.style.*.yml). */
+  /**
+   * Lists the image style machine names accepted by the project.
+   *
+   * @todo Keep this list aligned with config/sync/image.style.*.yml.
+   */
   public const STYLES = [
     'aculta_avatar',
     'aculta_avatar_pequeno',
@@ -43,7 +50,8 @@ final class ImageCatalog {
     'wide',
   ];
 
-  /** Finalidade => estilo. Novas finalidades entram aqui antes de qualquer uso. */
+  /**
+   * Finalidade => estilo. Novas finalidades entram aqui antes de qualquer uso. */
   public const PURPOSES = [
     'avatar' => 'aculta_avatar',
     'card' => 'aculta_card_1x',
@@ -66,8 +74,10 @@ final class ImageCatalog {
   ];
 
   /**
-   * Modelos de imagem do texto (padrão de jornais digitais, ver docs/MODELOS-DE-IMAGEM.md): nome => estilos do srcset.
-   * Primeiro estilo: 1x (tela comum). Segundo: 2x (tela retina) ou o maior tamanho disponível para o modelo.
+   * Image models for rich text images.
+   *
+   * The first style is the common-screen size; the second is the retina or
+   * largest available size for the model.
    */
   public const MODELOS = [
     'pequena' => ['aculta_corpo_320', 'aculta_corpo_640'],
@@ -76,17 +86,31 @@ final class ImageCatalog {
     'destaque' => ['aculta_corpo_1024', 'aculta_corpo_1200'],
   ];
 
-  /** Estilos do srcset de um modelo de imagem do texto, ou NULL se o modelo não existe. */
+  /**
+   * Returns srcset styles for a rich text image model.
+   *
+   * @param string $modelo
+   *   Model machine name.
+   *
+   * @return array<int, string>|null
+   *   Styles for the model, or NULL when it is not defined.
+   */
   public function estilosDoModelo(string $modelo): ?array {
     return self::MODELOS[$modelo] ?? NULL;
   }
 
-  /** Estilo da finalidade, ou NULL se a finalidade não existe no catálogo. */
+  /**
+   * Estilo da finalidade, ou NULL se a finalidade não existe no catálogo. */
   public function styleFor(string $purpose): ?string {
     return self::PURPOSES[$purpose] ?? NULL;
   }
 
-  /** @return string[] */
+  /**
+   * Returns the machine names of supported image purposes.
+   *
+   * @return string[]
+   *   Purpose machine names.
+   */
   public function purposes(): array {
     return array_keys(self::PURPOSES);
   }

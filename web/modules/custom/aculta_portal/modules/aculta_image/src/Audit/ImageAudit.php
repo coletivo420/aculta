@@ -7,20 +7,27 @@ namespace Drupal\aculta_image\Audit;
 use Drupal\aculta_image\Visual\DHash;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\File\FileSystemInterface;
-use Drupal\file\FileInterface;
 
 /**
- * Inventário e auditoria de imagens (aculta_image, fases M0, M5 e M6 do plano). Somente leitura.
+ * Audita o acervo de imagens nas fases M0, M5 e M6.
  *
- * Nunca apaga nem altera arquivo. Candidatas à revisão são sugestões com motivos; a exclusão só existe na
+ * A auditoria é somente leitura.
+ *
+ * Nunca apaga nem altera arquivo. Candidatas à revisão são sugestões com
+ * motivos; a exclusão só existe na
  * quarentena (fase M7), com confirmação administrativa.
  */
 final class ImageAudit {
 
-  /** Marca de imagem que o GD não lê. */
+  /**
+   * Marca de imagem que o GD não lê. */
   public const SEM_LEITURA = 'ffffffffffffffff';
 
-  /** Impressões de imagem sem gradiente (lisa ou quase lisa): não servem para comparar. */
+  /**
+   * Ignora imagens sem gradiente útil.
+   *
+   * Imagens lisas ou quase lisas não servem para comparar.
+   */
   private const SEM_GRADIENTE = ['0000000000000000', 'ffffffffffffffff'];
 
   public function __construct(
@@ -30,9 +37,10 @@ final class ImageAudit {
   ) {}
 
   /**
-   * Resumo do acervo de imagens: quantidade, bytes, uso por file_usage e mídias.
+   * Resume imagens, bytes, referências e mídias do acervo.
    *
    * @return array{total: int, bytes: int, com_uso: int, sem_uso: int, midias: int}
+   *   Asset counts, byte total, usage counts, and media count.
    */
   public function resumo(): array {
     $total = (int) $this->database->select('file_managed', 'f')
@@ -47,13 +55,22 @@ final class ImageAudit {
       ->condition('f.fid', $this->database->select('file_usage', 'fu')->fields('fu', ['fid']), 'IN')
       ->countQuery()->execute()->fetchField();
     $midias = (int) $this->database->select('media', 'm')->countQuery()->execute()->fetchField();
-    return ['total' => $total, 'bytes' => $bytes, 'com_uso' => $comUso, 'sem_uso' => $total - $comUso, 'midias' => $midias];
+    return [
+      'total' => $total,
+      'bytes' => $bytes,
+      'com_uso' => $comUso,
+      'sem_uso' => $total - $comUso,
+      'midias' => $midias,
+    ];
   }
 
   /**
-   * Grupos de mídias com a mesma checksum (media_duplicates). Vazio se o módulo não estiver disponível.
+   * Lista grupos de mídias com a mesma checksum.
+   *
+   * Retorna lista vazia se media_duplicates não estiver disponível.
    *
    * @return array<int, array{checksum: string, midias: array<int|string, string>}>
+   *   Duplicate checksum groups and their media identifiers.
    */
   public function gruposDeDuplicatas(): array {
     if ($this->checksums === NULL) {
@@ -70,9 +87,12 @@ final class ImageAudit {
   }
 
   /**
-   * Imagens sem nenhuma referência em file_usage: candidatas à revisão, com o motivo de cada uma.
+   * Lista imagens sem referência em file_usage.
+   *
+   * Cada candidata inclui o motivo da revisão.
    *
    * @return array<int, array{fid: int, uri: string, bytes: int, motivos: string[]}>
+   *   Candidate files with review reasons.
    */
   public function candidatas(int $limite = 200): array {
     $linhas = $this->database->select('file_managed', 'f')
@@ -118,8 +138,15 @@ final class ImageAudit {
   }
 
   /**
-   * Calcula a impressão digital visual de até $limite imagens que ainda não têm uma (lote de cron).
-   * Retorna quantas foram calculadas. Imagens que o GD não lê ficam sem impressão e não são tentadas de novo.
+   * Calculates missing visual fingerprints for a cron batch.
+   *
+   * Images that GD cannot read are marked and not retried.
+   *
+   * @param int $limite
+   *   Maximum number of images to process.
+   *
+   * @return int
+   *   Number of fingerprints calculated.
    */
   public function calcularImpressoes(int $limite = 200): int {
     if ($this->fileSystem === NULL) {
@@ -147,9 +174,12 @@ final class ImageAudit {
   }
 
   /**
-   * Pares de imagens com impressão digital a no máximo $limiar bits de distância. Sugestão para revisão humana.
+   * Lista pares de imagens visualmente parecidas.
+   *
+   * A distância máxima é $limiar bits; a lista serve para revisão humana.
    *
    * @return array<int, array{a: int, b: int, distancia: int}>
+   *   Image pairs within the selected distance threshold.
    */
   public function paresVisuais(int $limiar = DHash::LIMIAR, int $limite = 200): array {
     $impressoes = array_filter($this->database->select('aculta_image_fingerprint', 'i')
@@ -172,9 +202,10 @@ final class ImageAudit {
   }
 
   /**
-   * Motivos de uma candidata. Pura: testável sem banco.
+   * Returns review reasons for a file candidate.
    *
    * @return string[]
+   *   Reasons the file has no recognized references.
    */
   public static function motivos(bool $usadaPorMidia, bool $usadaPorEntidade): array {
     $motivos = ['sem referência em file_usage'];

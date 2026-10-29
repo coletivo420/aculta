@@ -126,6 +126,18 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 - Hostinger: ImageMagick/Ghostscript continuam sem confirmação documental;
   Growroom continua bloqueado pela F3 do Fórum.
 
+### PHPCS Drupal — limpeza do módulo — 2026-10-29
+
+- Corrigida a formatação Drupal/DrupalPractice em 33 arquivos PHP, sem mudança
+  de comportamento. PHPCS completo do módulo: 0 erros e 0 avisos (baseline
+  anterior: 223 erros e 57 avisos em 32 arquivos).
+- PHP lint: 33/33; Unit: 28 testes/118 assertions; Kernel: 2 testes/5
+  assertions, com uma deprecação upstream de `media_duplicates_requirements`;
+  `git diff --check`: PASS.
+- Próxima fase: integração Kernel com o coordenador Portal real. Binários
+  ImageMagick/Ghostscript para produção ainda sem confirmação; Growroom depende
+  da F3 do Fórum. Nenhuma operação foi feita no Runtime.
+
 Fora deste ciclo: bloqueio automático de duplicatas durante o upload. O relatório continua sugerindo revisão administrativa.
 
 ## 6. Perguntas abertas

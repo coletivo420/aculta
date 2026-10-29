@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_image\Unit;
 
+use Drupal\Core\Image\ImageFactory;
+use Drupal\Core\File\FileExists;
 use Drupal\aculta_image\ImageInspector;
 use Drupal\aculta_image\ImageUploadIngestor;
 use Drupal\aculta_image\UploadPolicy;
@@ -14,9 +16,15 @@ use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+/**
+ * Tests validation and file handling for image uploads.
+ */
 #[CoversClass(\DefaultClass\Drupal\aculta_image\ImageUploadIngestor::class)]
 final class ImageUploadIngestorTest extends UnitTestCase {
 
+  /**
+   * Rejects an image whose extension disagrees with its MIME type.
+   */
   public function testRejectsAnImageWithMismatchedExtension(): void {
     $path = $this->pngFile();
     $handler = $this->createMock(FileUploadHandlerInterface::class);
@@ -36,6 +44,9 @@ final class ImageUploadIngestorTest extends UnitTestCase {
     }
   }
 
+  /**
+   * Uses the shared upload policy and managed file handler.
+   */
   public function testUsesTheSharedPolicyAndManagedFileHandler(): void {
     $path = $this->pngFile();
     $handler = $this->createMock(FileUploadHandlerInterface::class);
@@ -43,9 +54,12 @@ final class ImageUploadIngestorTest extends UnitTestCase {
       ->method('handleFileUpload')
       ->with(
         self::isInstanceOf(FormUploadedFile::class),
-        ['FileExtension' => ['extensions' => UploadPolicy::EXTENSIONS], 'FileSizeLimit' => ['fileLimit' => UploadPolicy::MAX_BYTES]],
+        [
+          'FileExtension' => ['extensions' => UploadPolicy::EXTENSIONS],
+          'FileSizeLimit' => ['fileLimit' => UploadPolicy::MAX_BYTES],
+        ],
         'private://h5p/editor/images',
-        \Drupal\Core\File\FileExists::Rename,
+        FileExists::Rename,
       )
       ->willReturn(new FileUploadResult());
     try {
@@ -72,7 +86,7 @@ final class ImageUploadIngestorTest extends UnitTestCase {
         self::isInstanceOf(FormUploadedFile::class),
         ['FileExtension' => ['extensions' => 'png'], 'FileSizeLimit' => ['fileLimit' => 20 * 1024 * 1024]],
         'private://forum/attachments',
-        \Drupal\Core\File\FileExists::Rename,
+        FileExists::Rename,
       )
       ->willReturn(new FileUploadResult());
     try {
@@ -89,14 +103,20 @@ final class ImageUploadIngestorTest extends UnitTestCase {
     }
   }
 
+  /**
+   * Creates the image upload ingestor test subject.
+   */
   private function ingestor(FileUploadHandlerInterface $handler): ImageUploadIngestor {
     return new ImageUploadIngestor(
       new UploadPolicy(),
-      new ImageInspector($this->createMock(\Drupal\Core\Image\ImageFactory::class)),
+      new ImageInspector($this->createMock(ImageFactory::class)),
       $handler,
     );
   }
 
+  /**
+   * Creates a temporary PNG fixture.
+   */
   private function pngFile(): string {
     $path = tempnam(sys_get_temp_dir(), 'aculta-image-upload-');
     self::assertNotFalse($path);

@@ -11,7 +11,9 @@ use Drupal\image\ImageStyleInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Derivados 1x e 2x da finalidade de card (aculta_image). Movido do tema: a fonte de srcset é o sistema de imagens.
+ * Define derivados 1x e 2x para cartões.
+ *
+ * A fonte de srcset é aculta_image, antes definida no tema.
  */
 final class ImageStyleHooks {
 
@@ -22,7 +24,11 @@ final class ImageStyleHooks {
     private readonly ImageCatalog $catalog,
   ) {}
 
-  /** Implements hook_preprocess_image_style(). Só o card 1x recebe srcset com o 2x; outras imagens não mudam. */
+  /**
+   * Implements hook_preprocess_image_style().
+   *
+   * Só o cartão 1x recebe srcset com o 2x; outras imagens não mudam.
+   */
   #[Hook('preprocess_image_style')]
   public function preprocessImageStyle(array &$variables): void {
     $umX = $this->catalog->styleFor('card');

@@ -11,11 +11,14 @@ use Drupal\file\FileInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Imagens enviadas no texto dos editores (diretório inline-images): comprime sem perda logo após o upload.
+ * Comprime imagens enviadas no texto dos editores.
+ *
+ * A compressão sem perda ocorre após o upload em inline-images.
  */
 final class InlineImageHooks {
 
-  /** Diretório dos uploads de imagem feitos pelos editores de texto. */
+  /**
+   * Diretório dos uploads de imagem feitos pelos editores de texto. */
   public const DIRETORIO = 'public://inline-images/';
 
   public function __construct(
@@ -26,7 +29,9 @@ final class InlineImageHooks {
   ) {}
 
   /**
-   * Implements hook_file_insert(). Reduz a largura para 1200 px (aceita e converte) e comprime sem perda.
+   * Implements hook_file_insert().
+   *
+   * Reduz a largura para 1200 px e comprime sem perda.
    */
   #[Hook('file_insert')]
   public function fileInsert(FileInterface $file): void {

@@ -14,7 +14,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 use Drupal\file\FileRepositoryInterface;
 
-/** Publishes immutable, reviewed Composer image assets through aculta_image. */
+/**
+ * Publishes immutable, reviewed Composer image assets through aculta_image. */
 final class PackagedAssetPublisher {
 
   public function __construct(
@@ -85,7 +86,10 @@ final class PackagedAssetPublisher {
     return TRUE;
   }
 
-  /** Publishes an image from an H5P package into private managed storage. */
+  /**
+   * Publishes an image from an H5P package into private storage.
+   */
+  // phpcs:ignore Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
   public function publishH5PLibraryImage(string $source, string $destination, string $packageRoot, string $origin): bool {
     $sourcePath = realpath($source);
     $rootPath = realpath($packageRoot);
@@ -138,7 +142,10 @@ final class PackagedAssetPublisher {
     return TRUE;
   }
 
-  /** Checks H5P library image policy and immutable destination without writing. */
+  /**
+   * Checks H5P image policy and destination without writing.
+   */
+  // phpcs:ignore Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
   public function canPublishH5PLibraryImage(string $source, string $destination, string $packageRoot, string $origin): bool {
     $sourcePath = realpath($source);
     $rootPath = realpath($packageRoot);
@@ -167,7 +174,8 @@ final class PackagedAssetPublisher {
     return (bool) reset($files);
   }
 
-  /** Verifies provenance against the two pinned H5P Composer package roots. */
+  /**
+   * Verifies provenance against the two pinned H5P Composer package roots. */
   private function trustedH5pSource(string $sourcePath, string $origin): bool {
     if (!preg_match('@^composer://h5p/(h5p-core|h5p-editor)/([A-Za-z0-9._/-]+)$@D', $origin, $matches)
       || preg_match('@(?:^|/)\.{1,2}(?:/|$)@', $matches[2])) {
@@ -181,6 +189,9 @@ final class PackagedAssetPublisher {
     return hash_equals(str_replace(DIRECTORY_SEPARATOR, '/', substr($sourcePath, strlen($realRoot) + 1)), $matches[2]);
   }
 
+  /**
+   * Validates a package-relative destination path.
+   */
   private function safeDestination(string $destination): ?string {
     if (!str_starts_with($destination, 'public://h5p/')) {
       return NULL;
@@ -193,6 +204,9 @@ final class PackagedAssetPublisher {
     return in_array($extension, [...explode(' ', UploadPolicy::EXTENSIONS), 'svg'], TRUE) ? $destination : NULL;
   }
 
+  /**
+   * Validates packaged asset bytes before publication.
+   */
   private function validatedBytes(string $bytes, string $destination): ?string {
     if ($bytes === '' || strlen($bytes) > UploadPolicy::MAX_BYTES) {
       return NULL;
@@ -221,7 +235,11 @@ final class PackagedAssetPublisher {
     return ImageIngester::extensaoAceita($destination) && in_array($extension, $extensions, TRUE) ? $bytes : NULL;
   }
 
-  /** Rejects active SVG markup; these files are pinned package assets, not user uploads. */
+  /**
+   * Rejects active SVG markup in pinned package assets.
+   *
+   * These files are not user uploads.
+   */
   private function validSvg(string $bytes): bool {
     if (preg_match('/<!DOCTYPE|<!ENTITY/i', $bytes)) {
       return FALSE;
@@ -254,6 +272,9 @@ final class PackagedAssetPublisher {
     }
   }
 
+  /**
+   * Records metadata for a published packaged asset.
+   */
   private function record(int $fid, string $sha, string $origin): void {
     $exists = $this->database->select('aculta_image_origin', 'o')
       ->fields('o', ['id'])

@@ -5,17 +5,23 @@ declare(strict_types=1);
 namespace Drupal\aculta_image;
 
 /**
- * Política única de upload de imagem do ACULTA (aculta_image, seção 3.1 do plano).
+ * Define a política única de upload de imagem do ACULTA.
  *
- * Extensões e tamanho máximo de todo campo ou formulário de imagem. Não inclui dimensão máxima. O limite de
- * 2 MB e 4096 px da conquista (aculta_game) é exceção aprovada e fica só nesse formulário.
+ * A seção 3.1 do plano descreve a política.
+ *
+ * Extensões e tamanho máximo de todo campo ou formulário de imagem. Não inclui
+ * dimensão máxima. O limite de
+ * 2 MB e 4096 px da conquista (aculta_game) é exceção aprovada e fica só nesse
+ * formulário.
  */
 final class UploadPolicy {
 
-  /** Extensões aceitas. */
+  /**
+   * Extensões aceitas. */
   public const EXTENSIONS = 'png gif jpg jpeg webp';
 
-  /** Tamanho máximo do arquivo enviado, em bytes (10 MB). */
+  /**
+   * Tamanho máximo do arquivo enviado, em bytes (10 MB). */
   public const MAX_BYTES = 10485760;
 
   /**

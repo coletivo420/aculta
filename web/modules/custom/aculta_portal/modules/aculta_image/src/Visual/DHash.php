@@ -5,19 +5,30 @@ declare(strict_types=1);
 namespace Drupal\aculta_image\Visual;
 
 /**
- * Impressão digital visual (dHash de 64 bits) com GD (aculta_image, fase M9 do plano). Código próprio, sem
- * dependência Composer.
+ * Calculates 64-bit difference hashes for visual image comparisons.
  *
- * A imagem é reduzida a 9×8 tons de cinza; cada bit indica se um pixel é mais claro que o seguinte. Imagens iguais
- * ou só redimensionadas, recomprimidas ou levemente editadas ficam a poucos bits de distância. Resultado é sugestão:
+ * The implementation uses GD and has no Composer dependency.
+ *
+ * A imagem é reduzida a 9×8 tons de cinza; cada bit indica se um pixel é mais
+ * claro que o seguinte. Imagens iguais
+ * ou só redimensionadas, recomprimidas ou levemente editadas ficam a poucos
+ * bits de distância. Resultado é sugestão:
  * nada é alterado a partir dele.
  */
 final class DHash {
 
-  /** Distância máxima (bits diferentes, de 64) para considerar um par parecido no relatório. */
+  /**
+   * Define a distância máxima para pares parecidos.
+   *
+   * A comparação usa os bits diferentes entre 64 no relatório.
+   */
   public const LIMIAR = 6;
 
-  /** Impressão digital (16 caracteres hexadecimais) de uma imagem em GD, ou NULL. */
+  /**
+   * Calcula a impressão digital da imagem em GD.
+   *
+   * Retorna até 16 caracteres hexadecimais ou NULL.
+   */
   public static function deGd(\GdImage $imagem): string {
     $pequena = imagecreatetruecolor(9, 8);
     imagecopyresampled($pequena, $imagem, 0, 0, 0, 0, 9, 8, imagesx($imagem), imagesy($imagem));
@@ -34,7 +45,11 @@ final class DHash {
     return $hex;
   }
 
-  /** Impressão digital de um arquivo de imagem em $caminho, ou NULL se não for possível ler. */
+  /**
+   * Calcula a impressão digital de um arquivo de imagem.
+   *
+   * Retorna NULL se não for possível ler o arquivo.
+   */
   public static function deArquivo(string $caminho): ?string {
     $conteudo = is_file($caminho) ? file_get_contents($caminho) : FALSE;
     if ($conteudo === FALSE) {
@@ -47,7 +62,8 @@ final class DHash {
     return self::deGd($imagem);
   }
 
-  /** Quantidade de bits diferentes entre duas impressões digitais. */
+  /**
+   * Quantidade de bits diferentes entre duas impressões digitais. */
   public static function distancia(string $a, string $b): int {
     $distancia = 0;
     for ($i = 0; $i < min(strlen($a), strlen($b)); $i++) {
@@ -60,6 +76,9 @@ final class DHash {
     return $distancia;
   }
 
+  /**
+   * Calculates the luminance of a pixel.
+   */
   private static function luminancia(\GdImage $imagem, int $x, int $y): float {
     $cor = imagecolorat($imagem, $x, $y);
     $r = ($cor >> 16) & 0xFF;

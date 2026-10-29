@@ -13,12 +13,14 @@ use Drupal\image\ImageStyleInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * og:image de páginas de conteúdo: o derivado de compartilhamento (1200×630), não o original (aculta_image, decisão de
- * 2026-10-17). Campos cobertos: imagem direta (`field_image`) e mídia de imagem (`field_media_image`).
+ * Provides the generated social-sharing image for content pages.
+ *
+ * Uses the 1200×630 derivative from `field_image` or `field_media_image`.
  */
 final class SocialImageHooks {
 
-  /** Campos que podem guardar a imagem da publicação, na ordem de preferência. */
+  /**
+   * Campos que podem guardar a imagem da publicação, na ordem de preferência. */
   private const CAMPOS = ['field_media_image', 'field_image'];
 
   public function __construct(
@@ -28,7 +30,9 @@ final class SocialImageHooks {
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
-  /** Implements hook_metatags_alter(). Troca só o og_image, quando a publicação tem imagem. */
+  /**
+   * Replaces og_image when a content entity has an image.
+   */
   #[Hook('metatags_alter')]
   public function metatagsAlter(array &$metatags, array &$context): void {
     $entidade = $context['entity'] ?? NULL;
@@ -46,6 +50,9 @@ final class SocialImageHooks {
     $metatags['og_image'] = $estilo->buildUrl($arquivo->getFileUri());
   }
 
+  /**
+   * Finds the image file attached to a published entity.
+   */
   private function arquivoDaPublicacao(EntityInterface $entidade): ?FileInterface {
     foreach (self::CAMPOS as $campo) {
       if (!$entidade->hasField($campo) || $entidade->get($campo)->isEmpty()) {
@@ -65,6 +72,9 @@ final class SocialImageHooks {
     return NULL;
   }
 
+  /**
+   * Loads the configured social sharing image style.
+   */
   private function estilo(): ?ImageStyleInterface {
     $nome = $this->catalog->styleFor('compartilhamento');
     $estilo = $nome === NULL ? NULL : $this->entityTypeManager->getStorage('image_style')->load($nome);

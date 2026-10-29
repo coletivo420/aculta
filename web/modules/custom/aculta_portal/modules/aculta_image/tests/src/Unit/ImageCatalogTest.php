@@ -10,12 +10,15 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Catálogo e política do aculta_image: toda finalidade aponta para um estilo conhecido; a política é a única.
+ * Valida o catálogo e a política do aculta_image.
+ *
+ * Toda finalidade aponta para um estilo conhecido e a política é única.
  */
 #[Group('aculta_image')]
 class ImageCatalogTest extends UnitTestCase {
 
-  /** Toda finalidade resolve para um estilo que existe no projeto. */
+  /**
+   * Toda finalidade resolve para um estilo que existe no projeto. */
   public function testFinalidadesApontamParaEstilosConhecidos(): void {
     $catalogo = new ImageCatalog();
     foreach ($catalogo->purposes() as $finalidade) {
@@ -24,12 +27,14 @@ class ImageCatalogTest extends UnitTestCase {
     }
   }
 
-  /** Finalidade inexistente não resolve para estilo. */
+  /**
+   * Finalidade inexistente não resolve para estilo. */
   public function testFinalidadeDesconhecidaNaoResolve(): void {
     $this->assertNull((new ImageCatalog())->styleFor('estilo_inventado'));
   }
 
-  /** A política aceita só as extensões e o limite de 10 MB. */
+  /**
+   * A política aceita só as extensões e o limite de 10 MB. */
   public function testPoliticaUnicaDeUpload(): void {
     $validadores = (new UploadPolicy())->validators();
     $this->assertSame('png gif jpg jpeg webp', $validadores['FileExtension']['extensions']);
@@ -37,7 +42,8 @@ class ImageCatalogTest extends UnitTestCase {
     $this->assertArrayNotHasKey('FileImageDimensions', $validadores);
   }
 
-  /** Política contextual pode ampliar tamanho, mas não as extensões de imagem. */
+  /**
+   * Política contextual pode ampliar tamanho, mas não as extensões de imagem. */
   public function testPoliticaContextualMantemCatalogoCentral(): void {
     $validadores = (new UploadPolicy())->validators(20 * 1024 * 1024, 'png webp');
     $this->assertSame('png webp', $validadores['FileExtension']['extensions']);

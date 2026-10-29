@@ -30,7 +30,10 @@ final class ImageCleanup {
   ) {}
 
   /**
-   * Registra arquivos que deixaram de estar em campos de arquivo/imagem de uma entidade. */
+   * Registra arquivos removidos dos campos de uma entidade.
+   *
+   * A verificação cobre campos de arquivo e imagem.
+   */
   public function enqueueReplaced(EntityInterface $entity): void {
     $original = $entity->getOriginal();
     if ($original === NULL || !$entity->getEntityType()->entityClassImplements('Drupal\\Core\\Entity\\FieldableEntityInterface')) {
@@ -56,7 +59,10 @@ final class ImageCleanup {
   }
 
   /**
-   * Enfileira referências de texto rico antes que a atualização do editor as remova. */
+   * Enfileira referências de texto rico antes da atualização do editor.
+   *
+   * Isso evita perder os arquivos antes do registro de uso.
+   */
   public function enqueueChangedText(EntityInterface $entity): void {
     $original = $entity->getOriginal();
     if ($original === NULL || !$entity->getEntityType()->entityClassImplements('Drupal\\Core\\Entity\\FieldableEntityInterface') || !$this->formattedTextChanged($original, $entity)) {
@@ -66,7 +72,8 @@ final class ImageCleanup {
   }
 
   /**
-   * Enfileira todas as imagens associadas ao registro no momento de remover a entidade. */
+   * Enfileira imagens associadas ao remover uma entidade.
+   */
   public function enqueueBeforeDelete(EntityInterface $entity): void {
     if ($entity->id() !== NULL) {
       $this->enqueueEntityUsage($entity);

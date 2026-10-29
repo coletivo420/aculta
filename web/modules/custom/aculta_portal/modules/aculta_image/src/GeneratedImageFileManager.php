@@ -11,7 +11,8 @@ use Drupal\Core\File\MimeType\MimeTypeGuesser;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
 
-/** Registers generated image derivatives for the aculta_image lifecycle. */
+/**
+ * Registers generated image derivatives for the aculta_image lifecycle. */
 final class GeneratedImageFileManager {
 
   public function __construct(
@@ -23,8 +24,9 @@ final class GeneratedImageFileManager {
   ) {}
 
   /**
-   * Registers a generated public image as temporary, or returns NULL if invalid.
+   * Registers a generated public image as temporary.
    *
+   * Returns NULL if the image is invalid.
    * Temporary derivatives have no entity usage and are removed by the normal
    * aculta_image cleanup after system.file:temporary_maximum_age.
    */
@@ -55,8 +57,9 @@ final class GeneratedImageFileManager {
       if ($file->isPermanent()) {
         return $file;
       }
-      // ImageCleanup selects temporaries by `created`, so the lifetime starts at the first registration and is not
-      // renewed on each render. Only a derivative replaced on disk gets its size and status refreshed.
+      // ImageCleanup selects by `created`, so the lifetime starts at
+      // the first registration and is not renewed on each render. Only a
+      // derivative replaced on disk gets its size and status refreshed.
       if ((int) $file->getSize() !== $size || !$file->isTemporary()) {
         $file->setTemporary();
         $file->setSize($size);

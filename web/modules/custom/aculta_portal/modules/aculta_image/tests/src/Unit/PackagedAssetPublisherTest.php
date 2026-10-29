@@ -17,9 +17,15 @@ use Drupal\file\FileRepositoryInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+/**
+ * Tests validation and publication of packaged image assets.
+ */
 #[CoversClass(\DefaultClass\Drupal\aculta_image\PackagedAssetPublisher::class)]
 final class PackagedAssetPublisherTest extends UnitTestCase {
 
+  /**
+   * Rejects asset sources outside pinned Composer packages.
+   */
   public function testRejectsImageOutsidePinnedComposerPackages(): void {
     $source = tempnam(sys_get_temp_dir(), 'aculta-image-test-');
     self::assertNotFalse($source);
@@ -36,6 +42,9 @@ final class PackagedAssetPublisherTest extends UnitTestCase {
     }
   }
 
+  /**
+   * Rejects destination path traversal.
+   */
   public function testRejectsDestinationTraversal(): void {
     $source = tempnam(sys_get_temp_dir(), 'aculta-image-test-');
     self::assertNotFalse($source);
@@ -52,24 +61,46 @@ final class PackagedAssetPublisherTest extends UnitTestCase {
     }
   }
 
+  /**
+   * Accepts pinned H5P SVG assets and rejects active markup.
+   */
   public function testAcceptsPinnedH5pSvgAssetsAndRejectsActiveMarkup(): void {
     $publisher = (new \ReflectionClass(PackagedAssetPublisher::class))->newInstanceWithoutConstructor();
     $validator = new \ReflectionMethod(PackagedAssetPublisher::class, 'validatedBytes');
     $root = dirname(__DIR__, 9) . '/vendor/h5p';
     $assets = [
-      ['h5p-core/images/h5p.svg', 'public://h5p/h5p-core/images/h5p.svg'],
-      ['h5p-editor/styles/css/fonts/h5p-metadata-icons.svg', 'public://h5p/h5p-editor/styles/css/fonts/h5p-metadata-icons.svg'],
-      ['h5p-editor/styles/css/fonts/h5p-hub.svg', 'public://h5p/h5p-editor/styles/css/fonts/h5p-hub.svg'],
-      ['h5p-editor/styles/css/fonts/h5p-fullscreen-bar.svg', 'public://h5p/h5p-editor/styles/css/fonts/h5p-fullscreen-bar.svg'],
+      [
+        'h5p-core/images/h5p.svg',
+        'public://h5p/h5p-core/images/h5p.svg',
+      ],
+      [
+        'h5p-editor/styles/css/fonts/h5p-metadata-icons.svg',
+        'public://h5p/h5p-editor/styles/css/fonts/h5p-metadata-icons.svg',
+      ],
+      [
+        'h5p-editor/styles/css/fonts/h5p-hub.svg',
+        'public://h5p/h5p-editor/styles/css/fonts/h5p-hub.svg',
+      ],
+      [
+        'h5p-editor/styles/css/fonts/h5p-fullscreen-bar.svg',
+        'public://h5p/h5p-editor/styles/css/fonts/h5p-fullscreen-bar.svg',
+      ],
     ];
     foreach ($assets as [$path, $destination]) {
       $sanitized = $validator->invoke($publisher, file_get_contents($root . '/' . $path), $destination);
       self::assertIsString($sanitized, $path);
       self::assertStringNotContainsString('<!DOCTYPE', $sanitized);
     }
-    self::assertNull($validator->invoke($publisher, '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>', 'public://h5p/h5p-core/images/unsafe.svg'));
+    self::assertNull($validator->invoke(
+      $publisher,
+      '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>',
+      'public://h5p/h5p-core/images/unsafe.svg',
+    ));
   }
 
+  /**
+   * Rejects H5P image sources outside the extracted package.
+   */
   public function testH5pImagePublisherRejectsSourcesOutsideExtractedPackage(): void {
     $root = sys_get_temp_dir() . '/aculta-h5p-extract-' . bin2hex(random_bytes(4));
     mkdir($root, 0700);
@@ -91,6 +122,9 @@ final class PackagedAssetPublisherTest extends UnitTestCase {
     }
   }
 
+  /**
+   * Creates the asset publisher test subject.
+   */
   private function publisher(): PackagedAssetPublisher {
     return new PackagedAssetPublisher(
       $this->createMock(FileRepositoryInterface::class),

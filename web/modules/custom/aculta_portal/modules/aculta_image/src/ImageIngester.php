@@ -12,18 +12,19 @@ use Drupal\file\FileRepositoryInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 
 /**
- * Ingestão de imagem vinda de fora do site (aculta_image, regra B6 do plano).
+ * Ingests external images through the central upload policy.
  *
- * Única porta de entrada de arquivo de imagem de origem externa (importações, arquivos recebidos). Valida pela
- * política única, calcula SHA-256, reaproveita o arquivo quando o conteúdo já existe, nunca sobrescreve e registra a
- * origem (URL e data de captura) na tabela aculta_image_origin.
+ * This is the only entry point for imported or received image files. It
+ * validates, hashes, reuses identical files, and records their origin.
  */
 final class ImageIngester {
 
-  /** Diretório público das imagens importadas. */
+  /**
+   * Diretório público das imagens importadas. */
   public const DIRETORIO = 'public://importacao';
 
-  /** Resultados possíveis. */
+  /**
+   * Resultados possíveis. */
   public const CRIADO = 'created';
   public const REAPROVEITADO = 'reused';
   public const RECUSADO = 'rejected';
@@ -37,21 +38,31 @@ final class ImageIngester {
     private readonly LoggerChannelFactoryInterface $loggerFactory,
   ) {}
 
-  /** Extensão aceita pela política única. */
+  /**
+   * Extensão aceita pela política única. */
   public static function extensaoAceita(string $nome): bool {
     $ext = strtolower(pathinfo($nome, PATHINFO_EXTENSION));
     return $ext !== '' && in_array($ext, explode(' ', UploadPolicy::EXTENSIONS), TRUE);
   }
 
-  /** Tamanho dentro do limite da política única. */
+  /**
+   * Tamanho dentro do limite da política única. */
   public static function tamanhoAceito(int $bytes): bool {
     return $bytes > 0 && $bytes <= UploadPolicy::MAX_BYTES;
   }
 
   /**
-   * Ingere o arquivo de $caminho, com origem $urlOrigem capturada em $capturadoEm (timestamp).
+   * Imports an image file with its source URL and capture time.
+   *
+   * @param string $caminho
+   *   Local image path.
+   * @param string $urlOrigem
+   *   Original source URL.
+   * @param int $capturadoEm
+   *   Capture timestamp.
    *
    * @return array{status: string, fid?: int, motivo?: string}
+   *   Import status and the resulting file ID or rejection reason.
    */
   public function ingest(string $caminho, string $urlOrigem, int $capturadoEm): array {
     if (!is_file($caminho) || !is_readable($caminho)) {
@@ -90,7 +101,8 @@ final class ImageIngester {
     return ['status' => self::CRIADO, 'fid' => (int) $arquivo->id()];
   }
 
-  /** FID de um arquivo ainda existente com o mesmo SHA-256, ou NULL. */
+  /**
+   * FID de um arquivo ainda existente com o mesmo SHA-256, ou NULL. */
   private function fidExistente(string $sha): ?int {
     $fid = $this->database->select('aculta_image_origin', 'o')
       ->fields('o', ['fid'])
@@ -110,8 +122,12 @@ final class ImageIngester {
     return $existe === FALSE ? NULL : (int) $fid;
   }
 
+  /**
+   * Registers the origin metadata for an ingested file.
+   */
   private function registrarOrigem(int $fid, string $sha, string $urlOrigem, int $capturadoEm): void {
-    // Repetir a mesma importação não duplica a origem: uma linha por arquivo e URL de origem.
+    // Repetir a mesma importação não duplica a origem: uma linha por arquivo e
+    // URL de origem.
     $existe = $this->database->select('aculta_image_origin', 'o')
       ->fields('o', ['id'])
       ->condition('o.fid', $fid)
@@ -132,9 +148,22 @@ final class ImageIngester {
       ->execute();
   }
 
-  /** @return array{status: string, motivo: string} */
+  /**
+   * Rejects an import and logs the reason.
+   *
+   * @param string $motivo
+   *   Rejection reason.
+   * @param string $urlOrigem
+   *   Original source URL.
+   *
+   * @return array{status: string, motivo: string}
+   *   Rejected status and reason.
+   */
   private function recusar(string $motivo, string $urlOrigem): array {
-    $this->loggerFactory->get('aculta_image')->warning('Ingestão recusada ({motivo}): {url}', ['motivo' => $motivo, 'url' => $urlOrigem]);
+    $this->loggerFactory->get('aculta_image')->warning(
+      'Ingestão recusada ({motivo}): {url}',
+      ['motivo' => $motivo, 'url' => $urlOrigem],
+    );
     return ['status' => self::RECUSADO, 'motivo' => $motivo];
   }
 

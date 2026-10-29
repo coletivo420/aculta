@@ -10,16 +10,24 @@ use Drupal\Core\Link;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Relatório administrativo de imagens (somente leitura): resumo, duplicatas e candidatas à revisão.
+ * Exibe o relatório administrativo de imagens.
+ *
+ * O relatório é somente leitura e inclui resumo, duplicatas e candidatas.
  */
 final class ImageAuditController extends ControllerBase {
 
   public function __construct(private readonly ImageAudit $audit) {}
 
+  /**
+   * Creates the object with its injected services.
+   */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('aculta_image.audit'));
   }
 
+  /**
+   * Builds the image audit dashboard.
+   */
   public function dashboard(): array {
     $resumo = $this->audit->resumo();
     return [
@@ -56,6 +64,9 @@ final class ImageAuditController extends ControllerBase {
     ];
   }
 
+  /**
+   * Builds the detailed image audit report.
+   */
   public function report(): array {
     $resumo = $this->audit->resumo();
     $linhas = [];

@@ -10,11 +10,14 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Cron do aculta_image: calcula impressões digitais visuais em lotes pequenos (fase M9). Não altera imagens.
+ * Executa o cron de imagens em lotes pequenos.
+ *
+ * Calcula impressões digitais visuais da fase M9 sem alterar as imagens.
  */
 final class CronHooks {
 
-  /** Imagens por execução do cron, para não sobrecarregar CPU e memória. */
+  /**
+   * Imagens por execução do cron, para não sobrecarregar CPU e memória. */
   private const LOTE = 200;
 
   public function __construct(
@@ -24,7 +27,8 @@ final class CronHooks {
     private readonly ImageCleanup $cleanup,
   ) {}
 
-  /** Implements hook_cron(). */
+  /**
+   * Implements hook_cron(). */
   #[Hook('cron')]
   public function calcularImpressoes(): void {
     $this->audit->calcularImpressoes(self::LOTE);

@@ -12,6 +12,12 @@
 
 # Changelog — aculta_image
 
+## 0.1.0-dev.37 — PHPCS sem erros ou avisos (2026-10-29)
+
+- Corrigida a formatação Drupal em 33 arquivos PHP, sem alteração de comportamento.
+- PHPCS Drupal/DrupalPractice: 0 erros e 0 avisos; PHP lint 33/33; Unit 28 testes/118 assertions; Kernel 2 testes/5 assertions com 1 deprecação upstream de `media_duplicates_requirements`.
+- A validação Runtime, a integração com o coordenador Portal, a confirmação dos binários Hostinger e a dependência do Growroom continuam pendentes.
+
 ## 0.1.0-dev.36 — Kernel da instalação sem Portal (2026-10-29)
 
 - Kernel confirma que os serviços reais de limpeza e quarentena iniciam sem Portal e que a quarentena recusa a operação sem o coordenador compartilhado.

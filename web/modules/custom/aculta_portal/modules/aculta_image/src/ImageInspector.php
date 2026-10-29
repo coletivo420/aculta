@@ -7,13 +7,17 @@ namespace Drupal\aculta_image;
 use Drupal\Core\Image\ImageFactory;
 
 /**
- * Leitura de dimensões de imagem (aculta_image). Único acesso a ImageFactory do site.
+ * Inspeciona dimensões de imagem para aculta_image.
+ *
+ * É o único acesso do site a ImageFactory.
  */
 final class ImageInspector {
 
   public function __construct(private readonly ImageFactory $imageFactory) {}
 
-  /** Dimensões e MIME de uma imagem em memória, ou NULL fora da política raster. */
+  /**
+   * Dimensões e MIME de uma imagem em memória, ou NULL fora da política raster.
+   * */
   public function fromBytes(string $bytes): ?array {
     $info = @getimagesizefromstring($bytes);
     if ($info === FALSE || !in_array($info[2] ?? 0, [IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF, IMAGETYPE_WEBP], TRUE)) {
@@ -26,7 +30,11 @@ final class ImageInspector {
     ];
   }
 
-  /** Largura e altura da imagem em $uri, ou NULL se o arquivo não é uma imagem válida. */
+  /**
+   * Lê as dimensões da imagem informada.
+   *
+   * Retorna NULL se o arquivo não for uma imagem válida.
+   */
   public function dimensions(string $uri): ?array {
     $image = $this->imageFactory->get($uri);
     if (!$image->isValid() || $image->getWidth() < 1 || $image->getHeight() < 1) {

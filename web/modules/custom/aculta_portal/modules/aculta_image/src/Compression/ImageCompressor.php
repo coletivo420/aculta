@@ -8,63 +8,118 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Symfony\Component\Process\Process;
 
 /**
- * Compressão sem perda das imagens enviadas no texto (aculta_image, código próprio).
+ * Compresses inline images without loss when supported tools are available.
  *
- * Usa somente os binários documentados pela Hostinger para otimização (optipng, jpegoptim e gifsicle), com argumentos
- * fixos e sem entrada do usuário além do caminho do arquivo. Sem binário, ou em caso de falha, o arquivo original
- * permanece como foi enviado.
+ * Uses fixed arguments for optipng, jpegoptim, and gifsicle. If a tool is
+ * missing or fails, the original file remains unchanged.
  */
 final class ImageCompressor {
 
-  /** Tempo máximo, em segundos, por arquivo. */
+  /**
+   * Tempo máximo, em segundos, por arquivo. */
   public const TIMEOUT = 60;
 
   /**
-   * Largura máxima, em px, das imagens do texto. Imagens maiores são reduzidas para esta largura (aceita e converte);
-   * imagens menores não mudam. Substitui a validação de dimensão do core, que recusava o upload.
+   * Maximum width for inline images.
+   *
+   * Larger images are resized; smaller images remain unchanged. This replaces
+   * Core dimension validation, which rejected oversized uploads.
    */
   public const LARGURA_MAXIMA = 1200;
 
-  /** Tipos que a redução de largura aceita. */
+  /**
+   * Tipos que a redução de largura aceita. */
   private const TIPOS_REDIMENSIONAVEIS = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
   public function __construct(private readonly LoggerChannelFactoryInterface $loggerFactory) {}
 
   /**
-   * Comando de redução de largura (só reduz, mantém a proporção). Pura: testável sem executar nada.
+   * Builds the fixed command that reduces an image without changing its ratio.
+   *
+   * @param string $caminho
+   *   Image path.
+   * @param int $largura
+   *   Maximum width.
    *
    * @return string[]
+   *   Command and arguments.
    */
   public static function redimensionamento(string $caminho, int $largura = self::LARGURA_MAXIMA): array {
     return ['mogrify', '-resize', $largura . 'x>', $caminho];
   }
 
   /**
-   * Comando de compressão sem perda para o tipo MIME, ou NULL se o tipo não é comprimido.
-   * Pura: testável sem executar nada.
+   * Builds a fixed lossless compression command for a MIME type.
+   *
+   * @param string $mime
+   *   Image MIME type.
+   * @param string $caminho
+   *   Image path.
    *
    * @return string[]|null
+   *   Command and arguments, or NULL when the type is not supported.
    */
   public static function comando(string $mime, string $caminho): ?array {
     return match ($mime) {
-      'image/jpeg' => ['jpegoptim', '--strip-all', '--all-progressive', '-q', $caminho],
-      'image/png' => ['optipng', '-o2', '-quiet', $caminho],
-      'image/gif' => ['gifsicle', '-O2', '--batch', $caminho],
+      'image/jpeg' => [
+        'jpegoptim', '--strip-all', '--all-progressive', '-q', $caminho,
+      ],
+      'image/png' => [
+        'optipng', '-o2', '-quiet', $caminho,
+      ],
+      'image/gif' => [
+        'gifsicle', '-O2', '--batch', $caminho,
+      ],
       default => NULL,
     };
   }
 
-  /** Reduz $caminho para LARGURA_MAXIMA in place, se for maior. Retorna TRUE se o processo terminou com sucesso. */
+  /**
+   * Reduces the image in place when it exceeds the maximum width.
+   *
+   * @param string $caminho
+   *   Image path.
+   * @param string $mime
+   *   Image MIME type.
+   *
+   * @return bool
+   *   TRUE when the process succeeds.
+   */
   public function redimensionar(string $caminho, string $mime): bool {
-    return $this->executar(in_array($mime, self::TIPOS_REDIMENSIONAVEIS, TRUE) && is_file($caminho) ? self::redimensionamento($caminho) : NULL, $caminho);
+    return $this->executar(
+      in_array($mime, self::TIPOS_REDIMENSIONAVEIS, TRUE) && is_file($caminho)
+        ? self::redimensionamento($caminho)
+        : NULL,
+      $caminho,
+    );
   }
 
-  /** Comprime $caminho in place. Retorna TRUE se o processo terminou com sucesso. */
+  /**
+   * Compresses the image in place when its MIME type is supported.
+   *
+   * @param string $caminho
+   *   Image path.
+   * @param string $mime
+   *   Image MIME type.
+   *
+   * @return bool
+   *   TRUE when the process succeeds.
+   */
   public function comprimir(string $caminho, string $mime): bool {
     return $this->executar(is_file($caminho) ? self::comando($mime, $caminho) : NULL, $caminho);
   }
 
-  /** Executa um comando fixo de otimização. NULL ou falha retornam FALSE e não alteram o arquivo original. */
+  /**
+   * Executes a fixed optimization command.
+   *
+   * @param array<int, string>|null $comando
+   *   Command and arguments, or NULL when unavailable.
+   * @param string $caminho
+   *   Image path used for logging.
+   *
+   * @return bool
+   *   TRUE on success; FALSE leaves the original unchanged.
+   */
   private function executar(?array $comando, string $caminho): bool {
     if ($comando === NULL) {
       return FALSE;
@@ -74,12 +129,24 @@ final class ImageCompressor {
       $processo->setTimeout(self::TIMEOUT);
       $processo->run();
       if (!$processo->isSuccessful()) {
-        $this->loggerFactory->get('aculta_image')->warning('Compressão falhou para {arquivo}: {erro}', ['arquivo' => basename($caminho), 'erro' => trim($processo->getErrorOutput())]);
+        $this->loggerFactory->get('aculta_image')->warning(
+          'Compressão falhou para {arquivo}: {erro}',
+          [
+            'arquivo' => basename($caminho),
+            'erro' => trim($processo->getErrorOutput()),
+          ],
+        );
         return FALSE;
       }
     }
     catch (\Throwable $e) {
-      $this->loggerFactory->get('aculta_image')->warning('Compressão indisponível para {arquivo}: {erro}', ['arquivo' => basename($caminho), 'erro' => $e->getMessage()]);
+      $this->loggerFactory->get('aculta_image')->warning(
+        'Compressão indisponível para {arquivo}: {erro}',
+        [
+          'arquivo' => basename($caminho),
+          'erro' => $e->getMessage(),
+        ],
+      );
       return FALSE;
     }
     return TRUE;
