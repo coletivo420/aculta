@@ -6,16 +6,22 @@ namespace Drupal\Tests\aculta_activity\Kernel;
 
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\aculta_index\Query\ContentIndexAccessFilter;
+use Drupal\aculta_activity\Form\ActivityFormCallbacks;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
 use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\profile\Entity\ProfileType;
+use Drupal\Core\Form\FormState;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
+use Drupal\node\Form\NodeForm;
+use Drupal\schema_metatag\SchemaMetatagManager;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\Tests\user\Traits\UserCreationTrait;
@@ -147,6 +153,28 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
         'label' => 'Nickname',
       ])->save();
     }
+    NodeType::create(['type' => 'activity', 'name' => 'Activity'])->save();
+    foreach ([
+      'field_media_image' => ['entity_reference', ['target_type' => 'media']],
+      'field_modality' => ['string', []],
+      'field_place_name' => ['string', []],
+      'field_online_url' => ['link', []],
+      'field_event_start' => ['datetime', ['datetime_type' => 'datetime']],
+      'field_event_end' => ['datetime', ['datetime_type' => 'datetime']],
+    ] as $name => [$type, $settings]) {
+      FieldStorageConfig::create([
+        'entity_type' => 'node',
+        'field_name' => $name,
+        'type' => $type,
+        'settings' => $settings,
+      ])->save();
+      FieldConfig::create([
+        'entity_type' => 'node',
+        'bundle' => 'activity',
+        'field_name' => $name,
+        'label' => $name,
+      ])->save();
+    }
     aculta_index_install();
     foreach (['aculta_org' => 'main', 'cursos_aculta_org' => 'courses'] as $id => $name) {
       Domain::create([
@@ -161,7 +189,6 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
     $negotiator->setActiveDomain(Domain::load('cursos_aculta_org'));
-    NodeType::create(['type' => 'activity', 'name' => 'Activity'])->save();
   }
 
   /**
@@ -280,7 +307,114 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
 
     Domain::load('aculta_org')->delete();
     self::assertCount(0, $filter->filter($candidate, $reader)->entities, 'A missing canonical purpose denies exposure.');
-    self::assertSame('cursos_aculta_org', $negotiator->getActiveDomain()?->id(), 'The active purpose remains unchanged when the canonical Domain is missing.');
+    self::assertSame(
+      'cursos_aculta_org',
+      $negotiator->getActiveDomain()?->id(),
+      'The active purpose remains unchanged when the canonical Domain is missing.',
+    );
+  }
+
+  /**
+   * Tests form grouping and callback dispatch through the Portal hook manager.
+   */
+  public function testActivityFormHooksAreDispatchedByPortal(): void {
+    $node = Node::create(['type' => 'activity', 'title' => 'Atividade de teste']);
+    $formObject = NodeForm::create($this->container);
+    $formObject->setEntity($node);
+    $formState = new FormState();
+    $formState->setFormObject($formObject);
+    $form = [
+      'title' => [],
+      'body' => [],
+      'field_media_image' => [],
+      'field_gallery' => [],
+      'field_related_activity' => [],
+      'field_meta_tags' => [],
+      'author' => [],
+      'options' => [],
+    ];
+
+    $arguments = [&$form, $formState, 'node_activity_form'];
+    $this->container->get('module_handler')->invoke('aculta_activity', 'form_node_form_alter', $arguments);
+
+    self::assertSame('editorial_content', $form['title']['#group']);
+    self::assertSame('editorial_image', $form['field_media_image']['#group']);
+    self::assertSame('editorial_relations', $form['field_related_activity']['#group']);
+    self::assertSame('editorial_seo', $form['field_meta_tags']['#group']);
+    self::assertSame('Conta responsável pelo cadastro', (string) $form['author']['#title']);
+    self::assertSame(['aculta_activity.form_callbacks:validateActivity'], $form['#validate']);
+    self::assertInstanceOf(ActivityFormCallbacks::class, $this->container->get('aculta_activity.form_callbacks'));
+  }
+
+  /**
+   * Tests conditional errors from submitted values through the real callback.
+   */
+  public function testActivityFormValidationUsesSubmittedValues(): void {
+    $validate = function (array $values): FormState {
+      $node = Node::create(['type' => 'activity', 'title' => 'Atividade validada']);
+      $formObject = NodeForm::create($this->container);
+      $formObject->setEntity($node);
+      $formState = new FormState();
+      $formState->setFormObject($formObject);
+      $formState->setValues($values);
+      $formDisplay = EntityFormDisplay::create([
+        'targetEntityType' => 'node',
+        'bundle' => 'activity',
+        'mode' => 'default',
+        'status' => TRUE,
+      ]);
+      $formObject->setFormDisplay($formDisplay, $formState);
+      $form = ['#parents' => []];
+      $this->container->get('aculta_activity.form_callbacks')
+        ->validateActivity($form, $formState);
+      return $formState;
+    };
+
+    $onlineWithoutUrl = $validate(['field_modality' => [['value' => 'online']]]);
+    self::assertArrayHasKey('field_online_url', $onlineWithoutUrl->getErrors());
+
+    $inPersonWithoutPlace = $validate(['field_modality' => [['value' => 'presencial']]]);
+    self::assertArrayHasKey('field_place_name', $inPersonWithoutPlace->getErrors());
+
+    $endBeforeStart = $validate([
+      'field_modality' => [['value' => 'online']],
+      'field_online_url' => [['uri' => 'https://example.invalid/atividade']],
+      'field_event_start' => [['value' => '2030-04-12T19:00:00']],
+      'field_event_end' => [['value' => '2030-04-12T18:00:00']],
+    ]);
+    self::assertArrayHasKey('field_event_end', $endBeforeStart->getErrors());
+  }
+
+  /**
+   * Tests location schema and explicit overrides through hook dispatch.
+   */
+  public function testActivityMetatagsHookAddsVirtualLocationAndPreservesOverride(): void {
+    $node = Node::create([
+      'type' => 'activity',
+      'title' => 'Atividade online',
+      'field_modality' => 'online',
+      'field_online_url' => ['uri' => 'https://example.invalid/atividade'],
+    ]);
+    $tags = [
+      'schema_article_image' => '[node:image]',
+      'schema_event_image' => '[node:image]',
+      'schema_web_page_image' => '[node:image]',
+    ];
+    $context = ['entity' => $node];
+    $arguments = [&$tags, &$context];
+    $this->container->get('module_handler')->invoke('aculta_activity', 'metatags_alter', $arguments);
+
+    self::assertArrayNotHasKey('schema_article_image', $tags);
+    self::assertArrayNotHasKey('schema_event_image', $tags);
+    self::assertArrayNotHasKey('schema_web_page_image', $tags);
+    self::assertSame([
+      '@type' => 'VirtualLocation',
+      'url' => 'https://example.invalid/atividade',
+    ], SchemaMetatagManager::unserialize($tags['schema_event_location']));
+
+    $tags['schema_event_location'] = 'editorial override';
+    $this->container->get('module_handler')->invoke('aculta_activity', 'metatags_alter', $arguments);
+    self::assertSame('editorial override', $tags['schema_event_location']);
   }
 
   /**

@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.10
+version: 0.1.0-dev.11
 state: Dev
 progress_note: >-
-  Dev.10: fixture Kernel carrega a cadeia real do Portal e usa seu DomainPurposeManager sem substituição; teste de acesso confirma a restauração do Domain ativo e falha fechada sem o Domain canônico. Unit + Kernel: 10 testes/89 assertions PASS no MariaDB aculta_simpletest, com 113 depreciações Core/contrib. PHPCS Drupal/DrupalPractice e PHP lint do arquivo alterado passaram. Grants específicos, integração de formulário/Metatag e homologação Runtime permanecem pendentes.
-next_phase: 'Cobrir grants de Entity Access do Portal e integração de formulário/Metatag na fixture real; depois homologar integração conjunta no Runtime autorizado ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'
+  Dev.11: Kernel usa o dispatcher real para formulário e Metatag; valida URL online, local presencial, ordem das datas, VirtualLocation, remoção de imagem sem valor e preservação de override editorial. Unit + Kernel: 13 testes/143 assertions PASS no MariaDB aculta_simpletest, com 121 depreciações Core/contrib. PHPCS Drupal/DrupalPractice e PHP lint 8/8 PASS. Grants específicos do Portal, revisão visual e homologação Runtime seguem pendentes.
+next_phase: 'Cobrir grants contextuais específicos de Entity Access do Portal; homologar formulário e renderização Schema.org no ambiente autorizado antes de avaliar RC ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'

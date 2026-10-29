@@ -1,5 +1,19 @@
 # Changelog — ACULTA Activity
 
+## 0.1.0-dev.11 — hooks de formulário e Metatag integrados (2026-10-29)
+
+- Kernel invoca os hooks pelo `module_handler` real: formulário de edição de
+  Activity, callback condicional e localização Schema.org.
+- O callback é executado com `NodeForm` e `EntityFormDisplay` reais e verifica
+  URL online obrigatória, local presencial obrigatório e término posterior ao
+  início. O hook Metatag gera VirtualLocation, remove placeholders de imagem
+  vazios e preserva override editorial.
+- Unit + Kernel: 13 testes/143 assertions PASS no MariaDB `aculta_simpletest`,
+  com 121 depreciações de Core/contrib. PHPCS Drupal/DrupalPractice e lint
+  passaram para os arquivos do módulo.
+- Grants específicos do Portal, revisão visual e homologação Runtime continuam
+  pendentes; nenhum dado Runtime foi alterado.
+
 ## 0.1.0-dev.10 — fixture Kernel com Portal real (2026-10-29)
 
 - Kernel carrega a cadeia completa declarada do Portal e remove o override de

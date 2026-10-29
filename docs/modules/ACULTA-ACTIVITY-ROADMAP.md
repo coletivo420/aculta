@@ -102,6 +102,21 @@ release independente enquanto o módulo for apenas o adapter e sua fronteira.
   Portal, integração de formulário/Metatag, revisão conjunta e Runtime; Activity
   permanece Dev.
 
+### Hooks de formulário e Metatag na integração — 2026-10-29 (dev.11)
+
+- Kernel invoca `form_node_form_alter` e `metatags_alter` pelo `module_handler`
+  real; o formulário usa `NodeForm`/`EntityFormDisplay` do Core. Confirma os
+  grupos editoriais, callback registrado e três validações: URL para modalidade
+  online, local para presencial e data final posterior à inicial.
+- O hook de Metatag remove imagens sem mídia, gera `VirtualLocation` a partir
+  do link online e mantém `schema_event_location` editorial já definido.
+- Unit + Kernel: 13 testes/143 assertions PASS; 121 depreciações upstream do
+  conjunto de dependências do Portal. PHPCS Drupal/DrupalPractice e PHP lint
+  8/8 PASS.
+- Entity Access com grants contextuais específicos, revisão visual e
+  homologação conjunta no Runtime autorizado continuam pendentes; Activity
+  permanece Dev.
+
 ### Sondagem adicional da cadeia do Portal — 2026-10-29
 
 - Para identificar se a ausência de `aculta_mailer.mailer` era o último bloqueio,

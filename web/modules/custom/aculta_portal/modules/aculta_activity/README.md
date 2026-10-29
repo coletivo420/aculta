@@ -1,6 +1,6 @@
 # ACULTA Activity
 
-**Versão:** `0.1.0-dev.10` — integração Kernel carrega o Portal real e avalia o acesso no purpose canônico.
+**Versão:** `0.1.0-dev.11` — hooks de formulário e Metatag validados no dispatcher do Drupal e no formulário real de nó.
 
 Módulo mínimo que estabelece `aculta_activity` como proprietário do bundle
 Node `activity`, seus hooks de formulário/Metatag, validação condicional e
@@ -17,10 +17,9 @@ e metadados.
 
 Roadmap: [`ACULTA-ACTIVITY-ROADMAP.md`](../../../../../../docs/modules/ACULTA-ACTIVITY-ROADMAP.md).
 
-Em `0.1.0-dev.10`, o teste de integração inicializa a cadeia declarada do
-Portal, sem substituir `aculta_portal.domain_purpose`. No MariaDB
-`aculta_simpletest`, a suíte Unit + Kernel passou 10 testes/89 assertions; o
-Kernel reportou 113 depreciações de Core/contrib ao carregar a cadeia completa.
-Isso fecha o boot integrado e a restauração do Domain ativo, mas os grants
-específicos do Portal, formulários/Metatag e homologação Runtime continuam
-pendentes.
+Em `0.1.0-dev.11`, a suíte Unit + Kernel passou 13 testes/143 assertions no
+MariaDB `aculta_simpletest`, com 121 depreciações de Core/contrib ao carregar a
+cadeia completa. O dispatcher real cobre agrupamento do formulário, as três
+regras condicionais de validação e os metadados de localização, inclusive
+preservação de override editorial. Os grants específicos do Portal e a
+homologação visual/Runtime continuam pendentes.
