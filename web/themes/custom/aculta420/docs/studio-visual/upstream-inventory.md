@@ -127,6 +127,28 @@ teste concluírem sem erro, mais Kernel de integração do acesso à relação d
 documento. Qualquer `updatedb`/`config:import` no Runtime depende do procedimento
 e autorização próprios.
 
+### Pede-A — reconciliação de `config/sync` e FAQ do Runtime
+
+A decisão do responsável é que `aculta_runtime` corresponda ao `config/sync` do
+head, preservando `aculta_faq` e sua configuração no Sync. A inspeção anterior
+encontrou seis nós FAQ ativos (NIDs 567–572), porém o Sync não contém a
+extensão nem a configuração do bundle; também há três extensões listadas como
+ativas no banco sem código no checkout: `aculta_document_viewer_group`,
+`aculta_pdf_viewer` e `aculta_pdf_viewer_group`. A Frente B não exportou nem
+importou configuração e não alterou os dados.
+
+| Caminho/contrato | Entrega necessária do owner | Teste/evidência de aceite |
+|---|---|---|
+| `config/sync/core.extension.yml`, configs `node.type.aculta_faq` e `field.*` relacionados, módulo `aculta_faq` | Reconciliar a configuração canônica para manter a extensão e o bundle FAQ no Sync e preservar os seis nós existentes; registrar export/diff revisado no head. | `config:status` sem diff inesperado; teste Kernel/Functional do bundle e acesso aos seis nós após import controlado. |
+| Código e configuração das três extensões sem código no checkout | Restaurar e versionar as extensões com seus owners, ou aprovar/documentar reconciliação compatível antes de retirar sua ativação/configuração do estado de destino. | Discovery Drupal sem avisos de extensão ausente; testes de integração dos consumidores e `updatedb:status` limpo. |
+| `aculta_runtime` | Após reconciliação versionada e revisão do diff, seguir `AGENTES-PROCEDIMENTO.md`: confirmar banco/tabelas, snapshot com hash, `updatedb` se necessário e import somente do Sync do head. | Snapshot identificado; `config:status` e `updatedb:status` limpos; smoke HTTP da home e loja; validar os seis FAQs e os módulos preservados. |
+
+Até o owner concluir a reconciliação, não importar o Sync corrente: ele não
+atende à decisão de preservar FAQ e a ausência de código das três extensões
+impede confirmar um destino coerente. Isso mantém a etapa de runtime deste
+baseline como **DEFERRED**, sem bloquear o trabalho visual estático que não
+precise do Runtime.
+
 ### Pede-A — consumidores/fixtures necessários ao gate visual
 
 | Caminho/contrato | Evidência observada | Entrega do owner e teste de aceite |
