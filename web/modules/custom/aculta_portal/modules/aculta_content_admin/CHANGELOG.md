@@ -1,5 +1,10 @@
 # Changelog — aculta_content_admin
 
+## 2026-10-29 — evitar colisão com a listagem Core de conteúdo
+
+- Movido o painel para `/painel-administrativo/colecoes-moderaveis`, pois o caminho anterior colidia com `view.content.page_1`.
+- Sem alias para a rota anterior, conforme a política global de URLs durante o desenvolvimento.
+
 ## 2026-10-28 — painel geral por acesso de moderação (ADM5)
 
 - Criado `/painel-administrativo/conteudo` com descoberta de Views editoriais e allowlist de coleções servidas por controllers.

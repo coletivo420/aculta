@@ -6,6 +6,8 @@
 - [x] Incluir filas de controller via allowlist explícita; sem áreas acessíveis, o painel fica negado.
 - [x] Kernel cobre coleção escondida/negada e coleção liberada pelo acesso nativo.
 - [x] Auditar rotas administrativas servidas por controllers no checkout de 2026-10-28; filas editoriais existentes estão na allowlist e nenhum controller adicional atende ao critério.
+- [x] Corrigir colisão de caminho: `/painel-administrativo/conteudo` era compartilhado com a listagem Core `view.content.page_1`; rota customizada agora é `/painel-administrativo/colecoes-moderaveis`, sem alias transitório.
+- [ ] Repetir revisão visual/acessível autenticada do candidato servido. A rodada no Runtime (HEAD `355e48a89`) abriu a rota Core antiga e não é evidência do novo caminho.
 
 ### Auditoria de controllers — 2026-10-28
 
@@ -22,4 +24,12 @@
 - A revisão visual/acessível autenticada ainda não foi executada. A conta
   temporária autorizada nesta sessão é específica ao ADM8 do Calendar; não foi
   reutilizada para o painel de conteúdo. Manter `Dev` até essa revisão.
+
+### Revisão da colisão e gates — 2026-10-29
+
+- Drush read-only no Runtime confirmou `aculta_content_admin.overview` e `view.content.page_1` no mesmo caminho `/painel-administrativo/conteudo`. O navegador autenticado abriu a View Core, não o painel customizado.
+- Rota customizada renomeada para `/painel-administrativo/colecoes-moderaveis`; o Kernel confirma esse caminho e sua distinção da rota Core.
+- Kernel: 4 testes / 56 assertions PASS. PHP lint: 3 arquivos PASS. `git diff --check`: PASS.
+- Revisão visual do novo caminho permanece pendente, pois o Runtime testado ainda estava em `355e48a89`, sem este candidato. Manter `Dev`.
+- `validate-module-theme-boundary.php` permanece bloqueado por violações em outros módulos, inclusive rotas de eventos/calendário e teste da Revista.
 

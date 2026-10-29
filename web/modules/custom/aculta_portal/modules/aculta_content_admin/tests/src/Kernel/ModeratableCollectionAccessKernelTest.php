@@ -42,6 +42,21 @@ final class ModeratableCollectionAccessKernelTest extends KernelTestBase {
   }
 
   /**
+   * The dashboard uses a distinct path from Core's content overview.
+   */
+  public function testOverviewRouteDoesNotCollideWithCoreContentOverview(): void {
+    $route_provider = $this->container->get('router.route_provider');
+    self::assertSame(
+      '/painel-administrativo/colecoes-moderaveis',
+      $route_provider->getRouteByName('aculta_content_admin.overview')->getPath(),
+    );
+    self::assertNotSame(
+      $route_provider->getRouteByName('view.content.page_1')->getPath(),
+      $route_provider->getRouteByName('aculta_content_admin.overview')->getPath(),
+    );
+  }
+
+  /**
    * Areas denied by their own access rules stay hidden and deny direct access.
    */
   public function testDeniedFaqAreaIsHiddenAndDeniedByItsOwnRoute(): void {

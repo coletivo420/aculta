@@ -121,7 +121,7 @@ correspondentes estão habilitados no ambiente.
 | `main.aculta` | `/apoiar/{valor}/agora` | Doação rápida de valor informado | Ativo conforme configuração do fluxo Commerce. |
 | `main.aculta` | `/termos/aceitar` | Ação de aceite dos termos | Endpoint autenticado; `POST` processa e redireciona ao destino seguro. |
 | `main.aculta` | `/painel-administrativo/**` | Árvore do painel administrativo ACULTA | Rotas administrativas; access do Core/contrib decide cada operação. |
-| `main.aculta` | `/painel-administrativo/conteudo` | Links para coleções editoriais que a pessoa autenticada pode moderar | Condicional ao submódulo `aculta_content_admin`; só lista rotas com acesso nativo permitido. A própria página nega acesso quando nenhuma coleção é autorizada. |
+| `main.aculta` | `/painel-administrativo/colecoes-moderaveis` | Links para coleções editoriais que a pessoa autenticada pode moderar | Condicional ao submódulo `aculta_content_admin`; só lista rotas com acesso nativo permitido. A própria página nega acesso quando nenhuma coleção é autorizada. |
 | `main.aculta` | `/perguntas-frequentes` | Lista pública das perguntas frequentes publicadas | Condicional ao submódulo `aculta_faq`; cada node respeita o acesso e a publicação. |
 | `main.aculta` | `/painel-administrativo/faq` | Lista e atalhos de edição de perguntas frequentes e blocos editoriais | Condicional ao `aculta_faq`; exige `administer aculta faq`. |
 | `main.aculta` | `/painel-administrativo/faq/perguntas/adicionar` | Formulário de criação de pergunta frequente | Condicional ao `aculta_faq`; exige `administer aculta faq`. |

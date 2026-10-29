@@ -1,5 +1,5 @@
 aculta_content_admin.overview:
-  path: /painel-administrativo/conteudo
+  path: /painel-administrativo/colecoes-moderaveis
   defaults:
     _controller: '\Drupal\aculta_content_admin\Controller\ContentModerationOverviewController::overview'
     _title: 'Conteúdo que posso moderar'

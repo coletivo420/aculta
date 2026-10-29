@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.1
+version: 0.1.0-dev.2
 state: Dev
 progress_note: >-
-  ADM5 controller audit concluído em 2026-10-28; filas editoriais estão na allowlist e outras rotas avaliadas são operacionais. Kernel 3/43 PASS, 0 deprecações; PHP lint 3/3 PASS e PHPCS Drupal PASS em 2026-10-28. Revisão visual/acessível autenticada ainda pendente.
-next_phase: 'Concluir revisão visual/acessível autenticada do painel antes de avaliar RC; repetir a auditoria quando surgirem novas coleções editoriais. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_content_admin/docs/ROADMAP.md).'
+  ADM5: rota mudou para /painel-administrativo/colecoes-moderaveis após colisão confirmada com view.content.page_1 em /painel-administrativo/conteudo. Kernel 4/56 PASS, PHP lint 3/3 PASS; revisão visual/acessível do candidato pendente porque o Runtime não serve este commit.
+next_phase: 'Validar visual e acesso autenticado do caminho canônico quando este candidato estiver servido; repetir a auditoria quando surgirem novas coleções editoriais. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_content_admin/docs/ROADMAP.md).'
