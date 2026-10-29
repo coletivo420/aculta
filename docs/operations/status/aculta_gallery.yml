@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.19
 state: Dev
-next_phase: 'Revisar o diálogo de criação e galerias do Fórum no Firefox ESR/aparelho real antes de RC ([arquitetura](web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md))'
-progress_note: "Em 2026-10-28: PHPCS Drupal PASS sem erros/avisos, PHP lint 11/11 PASS, Gallery Unit 2/13 PASS; Kernel Content Index 2/51 PASS com 9 depreciações Core/contrib. Correções de estilo/documentação sem mudança intencional de comportamento. Revisão visual do diálogo e galerias do Fórum no Firefox/aparelho real permanece pendente."
+next_phase: 'Localizar/corrigir overflow 390/320px na frente proprietária do shell/tema e repetir a revisão visual; depois concluir auditoria de Gallery antes de avaliar RC ([arquitetura](web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md))'
+progress_note: "Dev.19: PHPCS Drupal PASS, PHP lint 11/11 PASS, Gallery Unit 2/13 PASS; Kernel Content Index 2/51 PASS com 9 depreciações upstream. Firefox ESR: diálogo aberto sem envio; álbum em host principal/Fórum. 12/15 verificações PASS, com overflow 390px no editor e 320px nos álbuns (439px), aparentemente no shell/tema; atribuição exata pendente. Fixture draft removida; nenhuma galeria criada."

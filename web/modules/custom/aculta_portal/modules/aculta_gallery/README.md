@@ -33,3 +33,21 @@ módulo owner `aculta_gallery` completo nem substitui a homologação no Runtime
   de documentação; nenhuma mudança de comportamento foi intencional.
 - A revisão interativa do diálogo e das galerias do Fórum no Firefox
   ESR/aparelho real continua pendente. Manter Dev até concluir essa revisão.
+
+
+## Revisão visual — 2026-10-29
+
+- Firefox ESR abriu o formulário descartável da Revista e o diálogo "Criar
+  galeria"; ação, título, campo de imagens, upload e envio estão presentes.
+  Nenhum formulário foi enviado. Os dois álbuns públicos usados já existiam.
+- O álbum renderizou no host principal e no Fórum; em 1280px e 390px não houve
+  overflow. Em 320px ambos os hosts reportaram documento de 439px, com o título
+  do álbum e palco visíveis. A captura aponta para a faixa global do cabeçalho,
+  fora do componente Gallery.
+- O diálogo teve documento de 398px em viewport 390px, embora o modal medisse
+  359px e em 320px o documento/modal coubessem (320/294px). A captura não mostra
+  o modal ultrapassando a tela; precisa localizar se a largura vem do editor ou
+  do shell antes de atribuir ao Gallery.
+- Resultado agregado: 12/15 verificações PASS; 3 falhas de overflow em
+  390/320px provavelmente relacionadas ao shell/tema. Corrigir a causa na frente
+  proprietária e repetir antes de avaliar RC. O rascunho de teste foi removido.

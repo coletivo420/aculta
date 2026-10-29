@@ -5,8 +5,11 @@
 - Comentários PHP e documentação de propriedades/métodos foram alinhados ao
   padrão Drupal. A montagem dos validadores de upload mantém as mesmas regras.
 - PHPCS Drupal passou sem erros ou avisos; Unit 2/13 e Kernel Content Index
-  2/51 passaram (9 depreciações upstream); lint 11/11 passou. Revisão visual
-  Firefox/aparelho real permanece pendente.
+  2/51 passaram (9 depreciações upstream); lint 11/11 passou.
+- Firefox ESR em 2026-10-29 abriu diálogo e álbuns no host principal/Fórum. 12/15
+  verificações PASS; houve overflow em viewport 390px no editor e 320px nos
+  álbuns, pendente localizar entre shell/tema e Gallery. Rascunho descartável
+  removido; nenhuma galeria foi salva.
 
 
 ## 0.1.0-dev.18 — dependências de configuração opcionais
