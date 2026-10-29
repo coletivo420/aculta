@@ -23,7 +23,7 @@ gate de foto.
 
 | Componente | Papel |
 | --- | --- |
-| `Avatar\AvatarResolver` (`aculta_user.avatar_resolver`) | Regra única de apresentação: foto quando `$showPhoto` e `user_picture` existem; senão `AvatarPool::fallbackEntry($uid)` com `previewUrl`; senão `NULL` defensivo. Não decide policy. |
+| `Avatar\AvatarResolver` (`aculta_user.avatar_resolver`) | Regra única de apresentação: foto pessoal quando `$showPhoto`; avatar escolhido do acervo (`public://pictures/acervo/`) independentemente do opt-in; senão `AvatarPool::fallbackEntry($uid)` com `previewUrl`; senão `NULL` defensivo. Não decide policy da foto pessoal. |
 | `Avatar\AvatarPool` (`aculta_user.avatar_pool`) | Catálogo versionado `assets/avatars/meta/avatars.json`. Atribui uma cópia do acervo a `user_picture` (`public://pictures/acervo/`, `user.data.avatar_id`), guarda escolha pendente (`user.data.sorteio_pendente`), faz `reroll`/`applyPending` e fornece `fallbackEntry`/`previewUrl` para apresentação sem foto. |
 | `Avatar\AvatarAssetCleanup` + `Hook\AvatarCronHooks` | Limpeza de uploads temporários, cópias do acervo sem conta e recortes órfãos. |
 | `Hook\AccountCreationHooks` | Conta nova: foto OAuth vira permanente; sem foto, atribui acervo (`assignPresave`); cria o Profile de papel. |

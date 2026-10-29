@@ -50,6 +50,7 @@ use Drupal\aculta_messenger\Service\NoticeFlagStateLoader;
 use Drupal\aculta_messenger\Service\NoticeReadActionBuilder;
 use Drupal\aculta_messenger\Service\MemberInitiatedRequest;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
+use Drupal\aculta_user\Avatar\AvatarResolver;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\UserInterface;
 use Drupal\site_alert\GetAlertsInterface;
@@ -87,6 +88,7 @@ final class MessagesController extends ControllerBase {
     private readonly NoticeListFilter $noticeListFilter,
     private readonly NoticeReadActionBuilder $noticeReadActionBuilder,
     private readonly NoticeFlagStateLoader $noticeFlagStateLoader,
+    private readonly AvatarResolver $avatarResolver,
     private readonly ?ModuleHandlerInterface $extensionModuleHandler = NULL,
   ) {}
 
@@ -113,6 +115,7 @@ final class MessagesController extends ControllerBase {
       $container->get('aculta_messenger.notice_list_filter'),
       $container->get('aculta_messenger.notice_read_action_builder'),
       $container->get('aculta_messenger.notice_flag_state_loader'),
+      $container->get('aculta_user.avatar_resolver'),
       $container->get('module_handler'),
     );
   }
@@ -632,11 +635,17 @@ final class MessagesController extends ControllerBase {
       $senderKey = (string) $senderId;
       if (!isset($senderBoxes[$senderKey])) {
         $avatar = NULL;
-        if ($sender instanceof UserInterface && $sender->hasField('user_picture') && !$sender->get('user_picture')->isEmpty()) {
+        if ($sender instanceof UserInterface) {
           $avatarAccess = $sender->access('view', $this->account, TRUE);
           $cacheability->addCacheableDependency($avatarAccess);
           if ($avatarAccess->isAllowed()) {
-            $avatar = $sender->get('user_picture')->view('default');
+            $avatar = $this->avatarResolver->build(
+              $sender,
+              $senderName,
+              TRUE,
+              $cacheability,
+              ['data-portal-ui' => 'messenger-sender-avatar-image'],
+            );
           }
         }
         // The same "Opções" box as inside the conversation (friendship, block, clear), per member.
@@ -673,7 +682,7 @@ final class MessagesController extends ControllerBase {
         'avatar' => [
           '#type' => 'container',
           '#attributes' => ['data-portal-ui' => 'messenger-sender-avatar', 'aria-hidden' => 'true'],
-          'image' => $senderBox['avatar'] ?? ['#plain_text' => mb_substr($senderBox['name'], 0, 1)],
+          'image' => $senderBox['avatar'] ?? ['#markup' => ''],
         ],
         'name' => $senderBox['open'] ?? ['#plain_text' => $senderBox['name']],
         // Rótulo Lido / Não lido à direita, fora do link: a caixa inteira continua sendo o link.

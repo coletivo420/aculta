@@ -32,14 +32,22 @@ final class AvatarResolver {
    * Monta o render array do avatar, ou NULL quando não há imagem a mostrar.
    *
    * @param array<string, string> $attributes
-   *   Atributos extras do avatar ilustrativo (por exemplo, data-portal-ui).
+   *   Atributos extras do elemento de avatar (por exemplo, data-portal-ui).
    */
   public function build(?UserInterface $account, string $name, bool $showPhoto, CacheableMetadata $cacheability, array $attributes = []): ?array {
-    if ($showPhoto && $account !== NULL && $account->hasField('user_picture') && !$account->get('user_picture')->isEmpty()) {
+    if ($account !== NULL && $account->hasField('user_picture') && !$account->get('user_picture')->isEmpty()) {
       $file = $account->get('user_picture')->entity;
       if ($file !== NULL) {
-        $cacheability->addCacheableDependency($file);
-        return $this->imageRenderer->build('avatar', $file->getFileUri(), $name, ['loading' => 'lazy']);
+        $uri = $file->getFileUri();
+        // Avatars from the institutional pool are not personal photos. The
+        // member explicitly selected them in the photo editor, so keep that
+        // selection consistent in public profiles and author cards even when
+        // public-photo opt-in is off. Uploaded personal photos remain private.
+        $isPoolAvatar = str_starts_with($uri, AvatarPool::DIRECTORY . '/');
+        if ($showPhoto || $isPoolAvatar) {
+          $cacheability->addCacheableDependency($file);
+          return $this->imageRenderer->build('avatar', $uri, $name, ['loading' => 'lazy']);
+        }
       }
     }
 

@@ -10,10 +10,12 @@ e o estado da foto em
 
 Em todo ponto que mostra uma pessoa, a ordem é:
 
-1. **Foto** da conta, quando a política pública a libera;
-2. **Avatar ilustrativo do acervo** (`AvatarPool`), que é o padrão e o
-   **último fallback obrigatório**;
-3. `NULL` apenas como contrato defensivo de teste/base sem acervo. Não existe
+1. **Foto pessoal** da conta, quando a política pública a libera;
+2. **Avatar do acervo selecionado** (`public://pictures/acervo/`), sempre
+   visível por ser institucional e escolhido no editor de foto;
+3. **Avatar ilustrativo estável do acervo** (`AvatarPool`), como fallback
+   obrigatório;
+4. `NULL` apenas como contrato defensivo de teste/base sem acervo. Não existe
    estado "sem acervo" em produção.
 
 **A inicial do nome nunca é usada.** Não crie letra, monograma, `slice(0, 1)`,
@@ -52,7 +54,7 @@ Fonte de verdade dos dados: [data-ownership.md](data-ownership.md).
 
 | Componente | Serviço/arquivo | Responsabilidade |
 | --- | --- | --- |
-| `AvatarResolver` | `aculta_user.avatar_resolver` / `src/Avatar/AvatarResolver.php` | Regra única de apresentação: foto quando `$showPhoto` é verdadeiro e existe `user_picture`; senão `AvatarPool::fallbackEntry($uid)` com URL de prévia do acervo; senão `NULL` defensivo. Não decide policy: recebe `$showPhoto` já calculado. |
+| `AvatarResolver` | `aculta_user.avatar_resolver` / `src/Avatar/AvatarResolver.php` | Regra única de apresentação: foto pessoal quando `$showPhoto` é verdadeiro; avatar escolhido no acervo mesmo sem opt-in de foto; senão `AvatarPool::fallbackEntry($uid)` com URL de prévia do acervo; senão `NULL` defensivo. Não decide policy da foto pessoal: recebe `$showPhoto` já calculado. |
 | `AvatarPool` | `aculta_user.avatar_pool` / `src/Avatar/AvatarPool.php` | Catálogo `assets/avatars/meta/avatars.json` (entradas ativas com arquivo). Atribui uma cópia do acervo a `user_picture` na criação/remoção/reroll (`public://pictures/acervo/`, `user.data.avatar_id`); oferece prévia pendente (`sorteio_pendente`), `reroll`, `applyPending`, `fallbackEntry` estável por UID e `previewUrl`. |
 | `AvatarAssetCleanup` | `src/Avatar/AvatarAssetCleanup.php` | Remove uploads temporários vencidos, cópias do acervo sem conta e recortes órfãos. |
 | `AvatarRerollController` | `src/Controller/AvatarRerollController.php` | AJAX do botão "Sortear novo avatar": grava apenas a escolha pendente e troca a prévia no modal. |

@@ -8,7 +8,7 @@ use Drupal\aculta_user\Bio\AccountBioCard;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use Drupal\aculta_user\PublicProfileLinkInterface;
 use Drupal\aculta_user\Social\SocialLinksCard;
-use Drupal\aculta_image\ImageRenderer;
+use Drupal\aculta_user\Avatar\AvatarResolver;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -34,7 +34,7 @@ final class StudioProfileController {
     private readonly ?AccountBioCard $bioCard = NULL,
     private readonly ?SocialLinksCard $socialCard = NULL,
     private readonly ?AuthorIdentityResolver $identityResolver = NULL,
-    private readonly ?ImageRenderer $imageRenderer = NULL,
+    private readonly ?AvatarResolver $avatarResolver = NULL,
   ) {}
 
   /**
@@ -75,15 +75,12 @@ final class StudioProfileController {
 
     // The profile editor is private to its owner. The owner may see their
     // own photo even when they have not opted to publish it; public author
-    // cards continue obeying PublicProfilePolicy. Use only aculta_image.
-    if ($this->imageRenderer !== NULL && $user->hasField('user_picture') && !$user->get('user_picture')->isEmpty()) {
-      $file = $user->get('user_picture')->entity;
-      if ($file !== NULL) {
-        $ownPhoto = $this->imageRenderer->build('avatar', $file->getFileUri(), $displayName, ['loading' => 'lazy']);
-        if ($ownPhoto !== NULL) {
-          $avatar = $ownPhoto;
-          $cache->addCacheableDependency($file);
-        }
+    // cards continue obeying PublicProfilePolicy. Use the central resolver so
+    // selected institutional avatars stay identical in every Portal context.
+    if ($this->avatarResolver !== NULL) {
+      $ownAvatar = $this->avatarResolver->build($user, $displayName, TRUE, $cache);
+      if ($ownAvatar !== NULL) {
+        $avatar = $ownAvatar;
       }
     }
 

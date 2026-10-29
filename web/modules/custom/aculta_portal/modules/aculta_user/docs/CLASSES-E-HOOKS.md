@@ -66,7 +66,7 @@ Atualizado a partir do código em 2026-10-27 (`src/`). Cada classe aparece com a
 | --- | --- | --- |
 | `AvatarAssetCleanup` | `src/Avatar/AvatarAssetCleanup.php` | Limpeza de assets temporários de avatar (chamada pelo cron do aculta_user). |
 | `AvatarPool` | `src/Avatar/AvatarPool.php` | Catálogo do acervo: atribui uma cópia a `user_picture` na criação/remoção/reroll (`user.data.avatar_id`), controla a escolha pendente do modal e fornece `fallbackEntry`/`previewUrl` para apresentação sem foto. |
-| `AvatarResolver` | `src/Avatar/AvatarResolver.php` | Regra única de apresentação: foto quando a policy libera e existe `user_picture`; senão acervo (`fallbackEntry`/`previewUrl`); senão `NULL` defensivo. Nunca usa a inicial. |
+| `AvatarResolver` | `src/Avatar/AvatarResolver.php` | Regra única de apresentação: foto pessoal quando a policy libera; avatar escolhido do acervo (`public://pictures/acervo/`) mesmo sem opt-in; senão fallback do acervo (`fallbackEntry`/`previewUrl`); senão `NULL` defensivo. Nunca usa a inicial. |
 
 ### `Badge`
 

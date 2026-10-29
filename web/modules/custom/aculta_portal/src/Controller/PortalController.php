@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
-use Drupal\aculta_image\ImageRenderer;
+use Drupal\aculta_user\Avatar\AvatarResolver;
 use Drupal\aculta_portal\Secrets\SecretsManager;
 use Drupal\Core\Template\Attribute;
 use Drupal\aculta_portal\Account\AccountDocumentInterface;
@@ -14,6 +14,7 @@ use Drupal\aculta_portal\Auth\AuthIntegrationManager;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Form\AccountPasswordCreateForm;
 use Drupal\Core\Block\BlockManagerInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
@@ -57,7 +58,7 @@ final class PortalController extends ControllerBase {
     private readonly DateFormatterInterface $dateFormatter,
     private readonly CurrencyFormatterInterface $currencyFormatter,
     private readonly ?AccountDocumentInterface $accountDocument,
-    private readonly ImageRenderer $imageRenderer,
+    private readonly ?AvatarResolver $avatars,
     private readonly SecretsManager $secrets,
   ) {}
 
@@ -78,7 +79,7 @@ final class PortalController extends ControllerBase {
       $container->get('date.formatter'),
       $container->get('commerce_price.currency_formatter'),
       self::accountDocumentService($container),
-      $container->get('aculta_image.render'),
+      self::avatarResolver($container),
       $container->get('aculta_portal.secrets_manager'),
     );
   }
@@ -89,6 +90,15 @@ final class PortalController extends ControllerBase {
   private static function accountDocumentService(ContainerInterface $container): ?AccountDocumentInterface {
     return $container->has('aculta_id_cpf.account_document')
       ? $container->get('aculta_id_cpf.account_document')
+      : NULL;
+  }
+
+  /**
+   * Resolves the shared avatar service when the ACULTA User submodule is active.
+   */
+  private static function avatarResolver(ContainerInterface $container): ?AvatarResolver {
+    return $container->has('aculta_user.avatar_resolver')
+      ? $container->get('aculta_user.avatar_resolver')
       : NULL;
   }
 
@@ -108,13 +118,19 @@ final class PortalController extends ControllerBase {
     $nickname = $profile && $profile->hasField('field_nickname') && !$profile->get('field_nickname')->isEmpty() ? $profile->get('field_nickname')->value : '';
     $first_name = $profile && !$profile->get('field_first_name')->isEmpty() ? $profile->get('field_first_name')->value : '';
     $display_name = $nickname ?: ($first_name ?: $account->getDisplayName());
-    $file = $account->hasField('user_picture') && !$account->get('user_picture')->isEmpty() ? $account->get('user_picture')->entity : NULL;
-    $photo = $file ? $this->imageRenderer->build('avatar', $file->getFileUri(), (string) $this->t('Foto de perfil de @name', ['@name' => $display_name]), ['data-portal-ui' => 'account-avatar']) : [
-      '#theme' => 'aculta_portal_element',
-      '#tag' => 'span',
-      '#value' => mb_strtoupper(mb_substr($display_name, 0, 1)),
-      '#element_attributes' => new Attribute(['data-portal-ui' => 'account-avatar-empty', 'aria-hidden' => 'true']),
-    ];
+    $photoCacheability = (new CacheableMetadata())
+      ->addCacheableDependency($account)
+      ->addCacheContexts(['user']);
+    $photo = $this->avatars?->build(
+      $account,
+      (string) $this->t('Foto de perfil de @name', ['@name' => $display_name]),
+      TRUE,
+      $photoCacheability,
+      ['data-portal-ui' => 'account-avatar'],
+    ) ?? ['#markup' => ''];
+    if ($this->avatars !== NULL) {
+      $photoCacheability->applyTo($photo);
+    }
 
     // Extensão do editor de foto: o submódulo aculta_user adiciona o sorteio de avatar (formulário próprio).
     $photoForm = [
