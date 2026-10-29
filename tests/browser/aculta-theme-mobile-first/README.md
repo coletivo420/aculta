@@ -156,10 +156,12 @@ validação do lookup ao vivo do CEP.
 `support-form.py` mede o formulário público e o SDC `donation-quick` em Firefox
 ESR no servidor de desenvolvimento (`https://apoio.aculta.toca.net.br/`).
 Verifica o formulário, cartões, Institution Bar, overflow e limites da grade em
-320/360/390/480/481/599/600/768/1024/1280/1440 CSS px. É somente leitura: não
-envia formulário nem altera configuração. Registra a presença do Domain Header
-para diagnóstico; o Runtime atual não o renderiza nesse purpose, questão
-registrada no Pede-A transversal.
+320/360/390/480/481/599/600/768/1024/1280/1440 CSS px. Confere também o
+fieldset compacto até 480px, seu retorno a 24px em 481px e a largura das ações
+do formulário em mobile e desktop. É somente leitura: não envia formulário nem
+altera configuração. Registra a presença do Domain Header para diagnóstico; o
+Runtime atual não o renderiza nesse purpose, questão registrada no Pede-A
+transversal.
 
 ```sh
 export DISPLAY=:0

@@ -68,6 +68,7 @@ try:
       url: location.href,
       title: document.title,
       form: !!document.querySelector('form[data-portal-ui="support-form"]'),
+      actionCount: document.querySelectorAll('form[data-portal-ui="support-form"] .form-actions :is(button, input[type="submit"], input[type="button"])').length,
       donationCards: document.querySelectorAll('.aculta-donation-quick .aculta-donation-card').length,
       institutionBar: document.querySelectorAll('.aculta-institution-bar').length,
       domainHeader: document.querySelectorAll('.aculta-header').length
@@ -82,6 +83,8 @@ try:
         time.sleep(0.45)
         metrics = driver.js("""return (() => {
           const form = document.querySelector('form[data-portal-ui="support-form"]');
+          const fieldset = form?.querySelector('fieldset');
+          const action = form?.querySelector('.form-actions :is(button, input[type="submit"], input[type="button"])');
           const grid = document.querySelector('.aculta-donation-quick');
           const tracks = grid ? getComputedStyle(grid).gridTemplateColumns.trim().split(/\\s+/).filter(Boolean) : [];
           const cards = grid?.querySelectorAll('.aculta-donation-card') ?? [];
@@ -89,6 +92,9 @@ try:
             width: innerWidth,
             documentWidth: document.documentElement.scrollWidth,
             form: !!form,
+            fieldsetPadding: fieldset ? getComputedStyle(fieldset).paddingTop : null,
+            actionWidth: action ? Math.round(action.getBoundingClientRect().width) : null,
+            actionParentWidth: action?.parentElement ? Math.round(action.parentElement.getBoundingClientRect().width) : null,
             donationCards: grid?.querySelectorAll('.aculta-donation-card').length ?? 0,
             gridColumns: tracks.length,
             gridWidth: grid ? Math.round(grid.getBoundingClientRect().width) : 0,
@@ -103,6 +109,13 @@ try:
               and metrics["gridWidth"] > 0
               and metrics["lastCardRight"] <= width,
               json.dumps(metrics, ensure_ascii=False))
+        expected_padding = "16px" if width <= 480 else "24px"
+        check(f"{width}px: espaçamento do fieldset", metrics["fieldsetPadding"] == expected_padding,
+              f"esperado={expected_padding}; medido={metrics['fieldsetPadding']}")
+        if page["actionCount"]:
+            full_width = metrics["actionWidth"] == metrics["actionParentWidth"]
+            check(f"{width}px: ação do formulário", full_width if width <= 480 else not full_width,
+                  json.dumps(metrics, ensure_ascii=False))
         screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
         (OUT / f"support-form-{width}.png").write_bytes(base64.b64decode(screenshot))
 

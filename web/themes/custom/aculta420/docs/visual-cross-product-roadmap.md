@@ -715,3 +715,12 @@ O iframe DOCX começa em 50vh e amplia para 60vh em `36rem`; o wrapper retoma
 padding de 1rem no mesmo breakpoint. `tests/browser/aculta-document-viewer/
 office-options.py` mede 575/576px em ACULTA420 e Olivero; revisão Firefox ainda
 pendente.
+
+### THEME-MF2 — formulário público de apoio (2026-10-29)
+
+Fieldsets e ações do formulário no purpose SUPPORT usam layout compacto como
+base e recuperam espaçamentos e largura natural a partir de 481px. Os campos,
+ordem DOM e Form API permanecem iguais. `tests/browser/aculta-theme-mobile-first/
+support-form.py` mede os estados em onze larguras; lint CSS e compilação Python
+são gates desta fatia. Firefox visível e a página real ficam DEFERRED sem
+`DISPLAY=:0`; esta microfase não aprova THEME-MF3.

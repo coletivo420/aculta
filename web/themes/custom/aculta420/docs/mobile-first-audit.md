@@ -723,3 +723,13 @@ desktop, depois as dimensões compactas, alinhamento e overflow a 390px. Lint CS
 e sintaxe JS PASS; Firefox E2E DEFERRED porque a suíte prepara e altera dados de
 teste do Runtime, `DISPLAY` está ausente e sessões concorrentes estão ativas.
 THEME-MF3 continua pendente.
+
+### THEME-MF2 — formulário público de apoio (2026-10-29)
+
+`portal-support.css` agora começa com fieldset de 16px de padding, margem de
+16px e ações de largura total com quebra de texto; em 481px (`30.0625rem`),
+restaura padding/margem de 24px e largura natural das ações. Ordem DOM, campos,
+semântica e Form API não mudam. `support-form.py` mede padding, largura das
+ações, grade de doações e overflow em 320–1440px. Lint CSS e sintaxe Python
+foram executados; Firefox/Runtime ficam DEFERRED sem `DISPLAY=:0`. Esta fatia
+não homologa SUPPORT nem THEME-MF3.

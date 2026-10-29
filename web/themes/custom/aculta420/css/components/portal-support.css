@@ -1,15 +1,19 @@
 :is(.aculta-support, [data-portal-ui="support-form"]) { max-width: 72ch; }
 .aculta-support-intro { font-size: 1.125rem; }
-:is(.aculta-support, [data-portal-ui="support-form"]) fieldset { padding: 24px; border: 1px solid var(--aculta-border-default); background: var(--aculta-surface-raised); margin: 24px 0; }
+:is(.aculta-support, [data-portal-ui="support-form"]) fieldset { min-inline-size: 0; padding: 1rem; border: 1px solid var(--aculta-border-default); background: var(--aculta-surface-raised); margin-block: 1rem; }
 :is(.aculta-support, [data-portal-ui="support-form"]) legend { font-family: Oswald, sans-serif; font-size: 1.375rem; font-weight: 600; }
 :is(.aculta-support, [data-portal-ui="support-form"]) .form-radios { display: flex; flex-wrap: wrap; gap: 12px 24px; margin: 12px 0 20px; }
 :is(.aculta-support, [data-portal-ui="support-form"]) .form-radios .form-item { display: flex; align-items: center; gap: 8px; margin: 0; }
 :is(.aculta-support, [data-portal-ui="support-form"]) input[type="radio"] { accent-color: var(--aculta-text-primary); }
 :is(.aculta-support, [data-portal-ui="support-form"]) label { color: var(--aculta-text-primary); }
-:is(.aculta-support, [data-portal-ui="support-form"]) .form-actions { display: flex; flex-wrap: wrap; gap: 16px; }
+:is(.aculta-support, [data-portal-ui="support-form"]) .form-actions { display: flex; flex-wrap: wrap; gap: 1rem; }
+:is(.aculta-support, [data-portal-ui="support-form"]) .form-actions :is(button, input[type="submit"], input[type="button"]) { inline-size: 100%; max-inline-size: 100%; white-space: normal; overflow-wrap: anywhere; }
 :is(.aculta-support, [data-portal-ui="support-form"]) .aculta-button:disabled { background: var(--aculta-surface-muted); color: var(--aculta-text-primary); border: 1px solid var(--aculta-border-default); cursor: not-allowed; }
 .aculta-support-other { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--aculta-border-default); }
-@media (max-width: 480px) { :is(.aculta-support, [data-portal-ui="support-form"]) fieldset { padding: 16px; } :is(.aculta-support, [data-portal-ui="support-form"]) .form-actions input { width: 100%; white-space: normal; } }
+@media (min-width: 30.0625rem) {
+  :is(.aculta-support, [data-portal-ui="support-form"]) fieldset { padding: 1.5rem; margin-block: 1.5rem; }
+  :is(.aculta-support, [data-portal-ui="support-form"]) .form-actions :is(button, input[type="submit"], input[type="button"]) { inline-size: auto; }
+}
 @media (prefers-reduced-motion: reduce) { :is(.aculta-support, [data-portal-ui="support-form"]) * { scroll-behavior: auto; transition: none; animation: none; } }
 
 /* Valores sugeridos do formulário de apoio (tokens do módulo: support-amounts): cartões em grade, sem sublinhado. */
