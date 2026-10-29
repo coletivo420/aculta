@@ -24,6 +24,12 @@ ausência de rolagem horizontal em 1280, 390 e 320 px.
 
 - 2026-10-26, checkout do servidor de desenvolvimento em `c1e210934`: `painel-visual.py` 16/16 PASS (1280, 390 e 320 px);
   `popups-visual.py` 7/7 PASS. Conta `qa_segredos` (uid 205).
+- 2026-10-29, servidor de desenvolvimento em `355e48a89` (código do módulo igual
+  ao candidato): HTTP 9/9; `painel-visual.py` 16/16; `popups-visual.py` 7/7;
+  `claro-foco-alvos.py` 28/28. Revisão manual das capturas mostrou conteúdo da
+  tabela esmagado verticalmente em 320 e 1280 px, apesar dos asserts de rolagem
+  passarem. Não considerar revisão visual aprovada até corrigir e atualizar a
+  medição da legibilidade. Artefatos: `/home/piradopirata/private/aculta/test-evidence/secrets-manager-20261029`.
 - Correção do seletor da tabela: o módulo marca o contêiner com `data-portal-ui="secrets-table-scroll"`, e não com a
   classe. O script procurava a classe e acusava falso "não encontrado" (`excesso=None`). O seletor agora usa o atributo,
   como o CSS e o teste Unit `SecretsTabsTest` já fazem.

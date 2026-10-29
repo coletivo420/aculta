@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.0-dev.6 — registrar revisão funcional e visual (2026-10-29)
+
+- HTTP com sessão real: 9/9; Firefox ESR: painel 16/16, popups 7/7 e foco/alvos
+  28/28. Teste Unit: 13/56; PHP lint, PHPCS PHP e `node --check` passam.
+- Inspeção manual das capturas detectou tabela ilegível em 320 px e coluna
+  comprimida em 1280 px. Kernel não iniciou: `commerce_shipping` indisponível,
+  0 assertions. Nenhum Runtime foi alterado além das sessões de teste.
+- A fase permanece Dev; Functional de instalação/rollback e correção visual
+  continuam pendentes.
+
 ## 0.1.0-dev.5 — cor do ícone de apagar no Claro — 2026-10-26
 
 - A cor de erro do botão de apagar cai, quando `--aculta-status-error-text` não existe, em
