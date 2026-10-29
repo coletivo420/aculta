@@ -69,7 +69,7 @@ services:
     arguments: ['@aculta_studio.experience_manager', '@current_user']
   aculta_studio.saved_content:
     class: Drupal\aculta_studio\Saved\SavedContentService
-    arguments: ['@entity_type.manager', '@database', '@?flag']
+    arguments: ['@aculta_portal.saved_content_query']
   aculta_studio.recommendations:
     class: Drupal\aculta_studio\Recommendation\RecommendationService
     arguments: ['@entity_type.manager', '@aculta_studio.saved_content', '@database', '@?aculta_index.relation_query', '@?aculta_index.query']
@@ -78,4 +78,4 @@ services:
     arguments: ['@aculta_studio.saved_content']
   aculta_studio.saved_controller:
     class: Drupal\aculta_studio\Controller\SavedContentController
-    arguments: ['@aculta_studio.saved_content', '@aculta_studio.recommendations', '@current_user', '@request_stack', '@date.formatter', '@string_translation']
+    arguments: ['@aculta_studio.saved_content', '@aculta_studio.recommendations', '@current_user', '@request_stack', '@date.formatter', '@string_translation', '@aculta_portal.saved_content_query']

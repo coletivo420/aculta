@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_studio\Controller;
 
+use Drupal\aculta_portal\Saved\SavedContentFilter;
+use Drupal\aculta_portal\Saved\SavedContentQueryInterface;
+use Drupal\aculta_portal\Saved\SavedContentQueryResult;
 use Drupal\aculta_studio\Recommendation\RecommendationService;
 use Drupal\aculta_studio\Saved\SavedContentService;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -21,6 +24,9 @@ class SavedContentController {
 
   use StringTranslationTrait;
 
+  /**
+   * Constructs a SavedContentController instance.
+   */
   public function __construct(
     protected readonly SavedContentService $savedContent,
     protected readonly RecommendationService $recommendations,
@@ -28,6 +34,7 @@ class SavedContentController {
     protected readonly RequestStack $requestStack,
     protected readonly DateFormatterInterface $dateFormatter,
     TranslationInterface $stringTranslation,
+    protected readonly ?SavedContentQueryInterface $savedContentQuery = NULL,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -48,6 +55,12 @@ class SavedContentController {
     if (!in_array($activeTab, ['salvos', 'seguindo', 'recomendacoes'], TRUE)) {
       $activeTab = 'salvos';
     }
+
+    $page = max(0, (int) ($request?->query->get('page', 0) ?? 0));
+    $bundle = $request?->query->get('bundle');
+    $purpose = $request?->query->get('purpose');
+    $limit = 15;
+    $offset = $page * $limit;
 
     $counts = $this->savedContent->getSavedCounts($this->account);
 
@@ -71,21 +84,46 @@ class SavedContentController {
     ];
 
     $itemsList = [];
-    if ($activeTab === 'salvos') {
-      $items = $this->savedContent->getSavedItems($this->account, 'saved', 30);
-      $itemsList = $this->buildCompactCards($items);
-    }
-    elseif ($activeTab === 'seguindo') {
-      $items = $this->savedContent->getSavedItems($this->account, 'following', 30);
-      $itemsList = $this->buildCompactCards($items);
-    }
-    else {
+    $pagination = [];
+    $cacheContexts = [
+      'user',
+      'url.query_args:tab',
+      'url.query_args:page',
+      'url.query_args:bundle',
+      'url.query_args:purpose',
+    ];
+    $cacheTags = $this->savedContent->getCacheTags($this->account);
+
+    if ($activeTab === 'recomendacoes') {
       $recs = $this->recommendations->getRecommendations($this->account, 15);
       $itemsList = $this->buildRecommendationCards($recs);
+      $cacheTags = array_merge($cacheTags, ['node_list']);
+    }
+    else {
+      $category = $activeTab === 'salvos'
+        ? SavedContentQueryInterface::CATEGORY_SAVED
+        : SavedContentQueryInterface::CATEGORY_FOLLOWING;
+
+      $filter = new SavedContentFilter(
+        account: $this->account,
+        category: $category,
+        bundle: $bundle ? (string) $bundle : NULL,
+        purpose: $purpose ? (string) $purpose : NULL,
+        limit: $limit,
+        offset: $offset,
+      );
+
+      $queryService = $this->savedContentQuery ?? $this->savedContent->getQueryService();
+      $queryResult = $queryService->query($filter);
+
+      $itemsList = $this->buildCardsFromQueryResult($queryResult);
+      $pagination = $this->buildPagination($queryResult, $page, $limit, $activeTab, $bundle, $purpose);
+
+      $cacheTags = array_unique(array_merge($cacheTags, $queryResult->getCacheTags()));
     }
 
     $tabLinks = [];
-    foreach ($tabs as $key => $tabData) {
+    foreach ($tabs as $tabData) {
       $tabLinks[] = [
         '#type' => 'link',
         '#title' => $tabData['title'],
@@ -96,6 +134,12 @@ class SavedContentController {
         ],
       ];
     }
+
+    $emptyMessage = match ($activeTab) {
+      'recomendacoes' => $this->t('Nenhuma recomendação disponível no momento. Explore conteúdos na comunidade para receber sugestões.'),
+      'seguindo' => $this->t('Você ainda não está seguindo nenhum tópico ou publicação.'),
+      default => $this->t('Você ainda não possui itens nesta lista. Marque tópicos ou conteúdos para encontrá-los aqui.'),
+    };
 
     return [
       '#type' => 'container',
@@ -122,9 +166,7 @@ class SavedContentController {
             '#type' => 'container',
             '#attributes' => ['class' => ['studio-saved-empty']],
             'message' => [
-              '#markup' => '<p>' . ($activeTab === 'recomendacoes'
-                ? $this->t('Nenhuma recomendação disponível no momento. Explore conteúdos na comunidade para receber sugestões.')
-                : $this->t('Você ainda não possui itens nesta lista. Marque tópicos ou conteúdos para encontrá-los aqui.')) . '</p>',
+              '#markup' => '<p>' . $emptyMessage . '</p>',
             ],
           ]
           : [
@@ -132,48 +174,134 @@ class SavedContentController {
             '#items' => $itemsList,
             '#attributes' => ['class' => ['studio-card-compact-list']],
           ],
+        'pager' => $pagination,
       ],
       '#cache' => [
-        'contexts' => ['user', 'url.query_args:tab'],
-        'tags' => array_merge(
-          $this->savedContent->getCacheTags($this->account),
-          ['node_list']
-        ),
+        'contexts' => $cacheContexts,
+        'tags' => $cacheTags,
       ],
     ];
   }
 
   /**
-   * Builds compact cards for saved or followed items.
+   * Builds compact cards from SavedContentQueryResult.
    *
-   * @param array<int, array<string, mixed>> $items
-   *   Items from SavedContentService.
+   * @param \Drupal\aculta_portal\Saved\SavedContentQueryResult $queryResult
+   *   The query result.
    *
    * @return array<int, array<string, mixed>>
-   *   Render items.
+   *   Render array items.
    */
-  protected function buildCompactCards(array $items): array {
+  protected function buildCardsFromQueryResult(SavedContentQueryResult $queryResult): array {
     $cards = [];
-    foreach ($items as $item) {
-      /** @var \Drupal\Core\Entity\EntityInterface $entity */
-      $entity = $item['entity'];
-      $dateStr = $this->dateFormatter->format($item['created'], 'short');
+    foreach ($queryResult->getItems() as $item) {
+      $dateStr = $this->dateFormatter->format($item->getCreatedTime(), 'short');
+      $url = $item->getUrl() ?? Url::fromRoute('<front>');
+
+      $metaHtml = '<span class="compact-card-meta">' . $this->t('Salvo em @date', ['@date' => $dateStr]) . '</span>';
+      if ($item->getPurpose() !== NULL) {
+        $metaHtml .= ' <span class="badge badge-purpose">' . htmlspecialchars(strtoupper($item->getPurpose()), ENT_QUOTES, 'UTF-8') . '</span>';
+      }
 
       $cards[] = [
         '#type' => 'container',
         '#attributes' => ['class' => ['studio-card-compact', 'saved-item']],
         'link' => [
           '#type' => 'link',
-          '#title' => $entity->label() ?? $this->t('Sem título'),
-          '#url' => $entity->toUrl(),
+          '#title' => $item->getTitle() ?: $this->t('Sem título'),
+          '#url' => $url,
           '#attributes' => ['class' => ['compact-card-title']],
         ],
         'meta' => [
-          '#markup' => '<span class="compact-card-meta">' . $this->t('Salvo em @date', ['@date' => $dateStr]) . '</span>',
+          '#markup' => $metaHtml,
         ],
       ];
     }
+
     return $cards;
+  }
+
+  /**
+   * Builds pagination render array.
+   *
+   * @param \Drupal\aculta_portal\Saved\SavedContentQueryResult $queryResult
+   *   The query result.
+   * @param int $page
+   *   Current 0-indexed page number.
+   * @param int $limit
+   *   Items per page.
+   * @param string $activeTab
+   *   Current active tab.
+   * @param mixed $bundle
+   *   Optional bundle filter.
+   * @param mixed $purpose
+   *   Optional purpose filter.
+   *
+   * @return array<string, mixed>
+   *   Pagination render array.
+   */
+  protected function buildPagination(
+    SavedContentQueryResult $queryResult,
+    int $page,
+    int $limit,
+    string $activeTab,
+    mixed $bundle,
+    mixed $purpose,
+  ): array {
+    $totalCount = $queryResult->getTotalCount();
+    $totalPages = (int) ceil($totalCount / $limit);
+
+    if ($totalPages <= 1) {
+      return [];
+    }
+
+    $links = [];
+    if ($page > 0) {
+      $prevQuery = array_filter([
+        'tab' => $activeTab,
+        'page' => $page > 1 ? $page - 1 : NULL,
+        'bundle' => $bundle,
+        'purpose' => $purpose,
+      ]);
+      $links[] = [
+        '#type' => 'link',
+        '#title' => $this->t('« Anterior'),
+        '#url' => Url::fromRoute('aculta_studio.salvos', [], ['query' => $prevQuery]),
+        '#attributes' => ['class' => ['pager-prev']],
+      ];
+    }
+
+    $links[] = [
+      '#type' => 'html_tag',
+      '#tag' => 'span',
+      '#value' => $this->t('Página @current de @total (@count itens)', [
+        '@current' => $page + 1,
+        '@total' => $totalPages,
+        '@count' => $totalCount,
+      ]),
+      '#attributes' => ['class' => ['pager-info']],
+    ];
+
+    if ($queryResult->hasMore()) {
+      $nextQuery = array_filter([
+        'tab' => $activeTab,
+        'page' => $page + 1,
+        'bundle' => $bundle,
+        'purpose' => $purpose,
+      ]);
+      $links[] = [
+        '#type' => 'link',
+        '#title' => $this->t('Próxima »'),
+        '#url' => Url::fromRoute('aculta_studio.salvos', [], ['query' => $nextQuery]),
+        '#attributes' => ['class' => ['pager-next']],
+      ];
+    }
+
+    return [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['studio-saved-pagination']],
+      'links' => $links,
+    ];
   }
 
   /**
@@ -206,6 +334,7 @@ class SavedContentController {
         ],
       ];
     }
+
     return $cards;
   }
 
