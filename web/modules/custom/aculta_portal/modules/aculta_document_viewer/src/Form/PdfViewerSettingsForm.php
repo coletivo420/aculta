@@ -8,7 +8,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Defines global defaults for PDF readers in the ACULTA administration panel.
+ * Defines global defaults for document viewers in ACULTA administration.
  */
 final class PdfViewerSettingsForm extends ConfigFormBase {
 
@@ -32,7 +32,7 @@ final class PdfViewerSettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['scope'] = [
       '#type' => 'item',
-      '#plain_text' => $this->t('Estes são os padrões globais. Cada formatter de campo pode desativar “Usar padrões do painel” e manter uma configuração própria. A autorização do arquivo no Drupal continua prevalecendo para download e impressão.'),
+      '#plain_text' => $this->t('Estes são os padrões globais de PDF, DOCX e planilhas. A autorização do arquivo no Drupal continua prevalecendo para leitura e download.'),
     ];
 
     $form['controls'] = [
@@ -121,6 +121,48 @@ final class PdfViewerSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Abrir link em'),
       '#options' => ['_blank' => $this->t('Nova aba'), '_self' => $this->t('Mesma aba')],
       '#config_target' => 'aculta_document_viewer.settings:link_target',
+    ];
+
+    $form['docx'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Apresentação de documentos DOCX'),
+      '#open' => TRUE,
+      '#description' => $this->t('As opções só afetam a prévia no navegador. O arquivo original e o link autorizado para download permanecem disponíveis.'),
+    ];
+    foreach ([
+      'docx_render_headers' => $this->t('Exibir cabeçalhos'),
+      'docx_render_footers' => $this->t('Exibir rodapés'),
+      'docx_render_footnotes' => $this->t('Exibir notas de rodapé'),
+      'docx_render_endnotes' => $this->t('Exibir notas de fim'),
+      'docx_respect_page_breaks' => $this->t('Respeitar quebras de página gravadas no documento'),
+    ] as $key => $label) {
+      $form['docx'][$key] = [
+        '#type' => 'checkbox',
+        '#title' => $label,
+        '#config_target' => 'aculta_document_viewer.settings:' . $key,
+      ];
+    }
+
+    $form['spreadsheet'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Apresentação de planilhas'),
+      '#open' => TRUE,
+      '#description' => $this->t('As planilhas continuam somente para leitura. Os limites máximos de abas, linhas, colunas e texto de célula não podem ser aumentados pelo painel.'),
+    ];
+    $form['spreadsheet']['spreadsheet_default_mode'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Modo inicial'),
+      '#options' => [
+        'sheet' => $this->t('Planilha com coordenadas de células'),
+        'table' => $this->t('Tabela com filtros e paginação'),
+      ],
+      '#config_target' => 'aculta_document_viewer.settings:spreadsheet_default_mode',
+    ];
+    $form['spreadsheet']['spreadsheet_page_size'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Linhas por página no modo tabela'),
+      '#options' => [25 => 25, 50 => 50, 100 => 100],
+      '#config_target' => 'aculta_document_viewer.settings:spreadsheet_page_size',
     ];
 
     return parent::buildForm($form, $form_state);

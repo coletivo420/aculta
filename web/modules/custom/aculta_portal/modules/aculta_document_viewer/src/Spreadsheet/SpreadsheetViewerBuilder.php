@@ -7,6 +7,7 @@ namespace Drupal\aculta_document_viewer\Spreadsheet;
 use Drupal\aculta_document_viewer\Docx\DocxValidationException;
 use Drupal\aculta_document_viewer\Document\DocumentViewerChrome;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
@@ -53,6 +54,7 @@ final class SpreadsheetViewerBuilder implements SpreadsheetViewerBuilderInterfac
     private readonly ModuleExtensionList $moduleList,
     private readonly SpreadsheetFileValidator $validator,
     private readonly LoggerInterface $logger,
+    private readonly ConfigFactoryInterface $configFactory,
   ) {}
 
   /**
@@ -83,6 +85,12 @@ final class SpreadsheetViewerBuilder implements SpreadsheetViewerBuilderInterfac
     }
 
     $modulePath = $this->moduleList->getPath('aculta_document_viewer');
+    $settings = $this->configFactory->get('aculta_document_viewer.settings');
+    $default_mode = $settings->get('spreadsheet_default_mode') === 'table' ? 'table' : 'sheet';
+    $page_size = (int) ($settings->get('spreadsheet_page_size') ?? 50);
+    if (!in_array($page_size, [25, 50, 100], TRUE)) {
+      $page_size = 50;
+    }
     return [
       '#type' => 'container',
       '#attributes' => [
@@ -94,8 +102,11 @@ final class SpreadsheetViewerBuilder implements SpreadsheetViewerBuilderInterfac
         'data-aculta-sheet-frame-url' => Url::fromUri('base:' . $modulePath . '/js/sheet-frame.html')->toString(),
         'data-aculta-sheet-libs' => json_encode([Url::fromUri('base:libraries/sheetjs/dist/xlsx.full.min.js')->toString()], JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR),
         'data-aculta-sheet-title' => $title,
+        'data-aculta-sheet-default-mode' => $default_mode,
+        'data-aculta-sheet-page-size' => (string) $page_size,
       ],
       '#attached' => ['library' => [self::LIBRARY]],
+      '#cache' => ['tags' => $settings->getCacheTags()],
       'chrome' => DocumentViewerChrome::elements($title, new TranslatableMarkup('Planilha')),
       'viewer' => [
         '#type' => 'html_tag',

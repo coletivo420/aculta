@@ -16,11 +16,14 @@ Core de download permitido ao lado da prévia; formato incompatível, pacote
 inválido ou leitor indisponível fica somente com o link Core. O formatter de
 campo do LMS mantém seu display próprio.
 
-Padrões globais ficam em ACULTA → Site → Leitor de PDF
+Padrões globais ficam em ACULTA → Site → Leitor de documentos
 (`/painel-administrativo/aculta/leitor-documentos`). O painel pertence ao módulo Portal;
-formatters usam esses valores por padrão e podem optar por configuração
-específica do campo. A configuração fica em `aculta_document_viewer.settings` e faz
-parte do Config Sync. Rolagem horizontal e página dupla são aplicadas pelo
+formatters PDF usam esses valores por padrão e podem optar por configuração
+específica do campo. A aba também define cabeçalhos, rodapés, notas e quebras
+para DOCX, além de modo e paginação para planilhas. Planilhas seguem somente
+para leitura e seus limites máximos não são configuráveis. A configuração fica
+em `aculta_document_viewer.settings` e faz parte do Config Sync. O arquivo de
+Config Sync mudou nesta fase, mas não foi importado no Runtime. Rolagem horizontal e página dupla são aplicadas pelo
 wrapper ao viewer PDF.js completo antes de sua inicialização. O canvas ACULTA
 continua em navegação paginada. Em telas móveis, página dupla fica desligada por
 padrão e respeita a opção explícita do painel/formatter.

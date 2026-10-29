@@ -6,6 +6,18 @@
 - Suíte completa: 52 testes/570 assertions PASS, com 147 depreciações Core/contrib e uma depreciação PHPUnit.
 - Runtime não alterado. Após o candidato ser servido, confirmar PDF pelo FPM Hostinger junto à revisão visual de DOCX/planilhas, CSP e acessibilidade.
 
+## Opções administrativas globais (2026-10-29, dev.19)
+
+- ACULTA > Site > Leitor de documentos reúne os controles globais PDF já
+  existentes e agora inclui opções de renderização DOCX (cabeçalhos, rodapés,
+  notas e quebras de página) e planilhas (modo inicial e linhas por página).
+- Os valores viajam por atributos de dados validados. DOCX permanece isolado
+  em iframe sandboxed; planilhas continuam somente para leitura. Tetos de 20
+  abas, 2000 linhas, 100 colunas e 500 caracteres por célula não são editáveis.
+- Config Sync foi atualizado, mas não importado no Runtime. A suíte completa
+  passou em 52 testes/575 assertions, com 147 depreciações Core/contrib e uma
+  depreciação PHPUnit. Firefox visual autenticado permanece gate antes de RC.
+
 **Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). PV7 só pode ser classificada RC quando todo o escopo e testes, CSP em Report-Only configurada sem enforcement, acessibilidade e validação visual pré-deploy aplicável estiverem concluídos. Alpha valida a coleta/análise dos relatórios no servidor de desenvolvimento; enforcement será decidido após Alpha. LiteSpeed/Cloudflare são validados depois do deploy em produção.
 
 Este roadmap cobre somente o módulo compartilhado `aculta_document_viewer`. O
@@ -57,8 +69,8 @@ acessibilidade. Fontes: [recursos básicos](https://docs.tncflipbook.com/article
 | Leitura em voz alta | Pós-deploy. Avaliar suporte/voz do navegador no ambiente de produção e testar com leitor de tela antes de qualquer implementação. | Fora do escopo pré-deploy; registrar como evolução pós-deploy. |
 | Tema, ícones e embed | Tokens ACULTA420/Bootstrap; formatter configura título, link, destino e classe validada. | Campos do formatter presentes; confirmar apresentação com validação visual pré-RC. |
 
-Os padrões globais do leitor ficam na subaba Site → Leitor de PDF dentro do
-painel ACULTA. A configuração
+Os padrões globais do leitor ficam em **ACULTA → Site → Leitor de documentos**.
+A configuração
 `aculta_document_viewer.settings` é fonte exportável do site; formatter de campo
 herda os valores por padrão e pode desligar a herança para manter seu próprio
 perfil. O link de impressão e o link ao viewer completo abrem um wrapper same-

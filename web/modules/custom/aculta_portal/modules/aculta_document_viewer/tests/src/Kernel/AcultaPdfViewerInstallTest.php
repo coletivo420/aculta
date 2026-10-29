@@ -75,6 +75,12 @@ final class AcultaPdfViewerInstallTest extends KernelTestBase {
     $settings = $container->get('config.factory')->get('aculta_document_viewer.settings');
     $this->assertTrue($settings->get('show_download'));
     $this->assertSame('fit-width', $settings->get('default_zoom'));
+    $this->assertTrue($settings->get('docx_render_headers'));
+    $this->assertFalse($settings->get('docx_respect_page_breaks'));
+    $this->assertSame('sheet', $settings->get('spreadsheet_default_mode'));
+    $this->assertSame(50, $settings->get('spreadsheet_page_size'));
+    $route = $container->get('router.route_provider')->getRouteByName('aculta_document_viewer.settings');
+    $this->assertSame('administer site configuration', $route->getRequirement('_permission'));
     $this->assertFalse($module_handler->hasImplementations('file_download', ['aculta_document_viewer']));
     $this->assertFalse($module_handler->hasImplementations('install', ['aculta_document_viewer']));
   }

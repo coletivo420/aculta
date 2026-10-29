@@ -59,6 +59,27 @@ aculta_document_viewer.settings:
     css_class:
       type: string
       label: 'Classe CSS adicional'
+    docx_render_headers:
+      type: boolean
+      label: 'Exibir cabeçalhos DOCX'
+    docx_render_footers:
+      type: boolean
+      label: 'Exibir rodapés DOCX'
+    docx_render_footnotes:
+      type: boolean
+      label: 'Exibir notas de rodapé DOCX'
+    docx_render_endnotes:
+      type: boolean
+      label: 'Exibir notas de fim DOCX'
+    docx_respect_page_breaks:
+      type: boolean
+      label: 'Respeitar quebras de página DOCX'
+    spreadsheet_default_mode:
+      type: string
+      label: 'Modo inicial da planilha'
+    spreadsheet_page_size:
+      type: integer
+      label: 'Linhas por página no modo tabela'
 
 aculta_document_viewer.formatter_settings:
   type: mapping

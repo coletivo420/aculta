@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_document_viewer\Unit\Docx;
 use Drupal\aculta_document_viewer\Docx\DocxPackageValidator;
 use Drupal\aculta_document_viewer\Docx\DocxViewerBuilder;
 use Drupal\Core\Extension\ModuleExtensionList;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
@@ -52,6 +53,18 @@ final class DocxViewerBuilderTest extends UnitTestCase {
   private function builder(string $path): DocxViewerBuilder {
     $fileSystem = $this->createMock(FileSystemInterface::class);
     $fileSystem->method('realpath')->willReturn($path);
+    $config = new class {
+
+      /**
+       * Returns no override for the requested setting.
+       */
+      public function get(string $key): NULL {
+        return NULL;
+      }
+
+    };
+    $config_factory = $this->createMock(ConfigFactoryInterface::class);
+    $config_factory->method('get')->with('aculta_document_viewer.settings')->willReturn($config);
     return new DocxViewerBuilder(
       $this->createMock(FileUrlGeneratorInterface::class),
       $this->createMock(UrlGeneratorInterface::class),
@@ -59,6 +72,7 @@ final class DocxViewerBuilderTest extends UnitTestCase {
       new DocxPackageValidator(),
       $this->createMock(ModuleExtensionList::class),
       $this->createMock(LoggerInterface::class),
+      $config_factory,
     );
   }
 

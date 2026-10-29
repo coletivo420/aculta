@@ -7,6 +7,7 @@ namespace Drupal\aculta_document_viewer\Docx;
 use Drupal\aculta_document_viewer\Document\DocumentViewerChrome;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Extension\ModuleExtensionList;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
@@ -51,6 +52,7 @@ final class DocxViewerBuilder implements DocxViewerBuilderInterface {
     private readonly DocxPackageValidator $validator,
     private readonly ModuleExtensionList $moduleList,
     private readonly LoggerInterface $logger,
+    private readonly ConfigFactoryInterface $configFactory,
   ) {}
 
   /**
@@ -80,6 +82,14 @@ final class DocxViewerBuilder implements DocxViewerBuilderInterface {
     }
 
     $modulePath = $this->moduleList->getPath('aculta_document_viewer');
+    $settings = $this->configFactory->get('aculta_document_viewer.settings');
+    $render_options = [
+      'renderHeaders' => (bool) ($settings->get('docx_render_headers') ?? TRUE),
+      'renderFooters' => (bool) ($settings->get('docx_render_footers') ?? TRUE),
+      'renderFootnotes' => (bool) ($settings->get('docx_render_footnotes') ?? TRUE),
+      'renderEndnotes' => (bool) ($settings->get('docx_render_endnotes') ?? TRUE),
+      'respectPageBreaks' => (bool) ($settings->get('docx_respect_page_breaks') ?? FALSE),
+    ];
     $libs = array_map(
       static fn(string $lib): string => Url::fromUri('base:' . $lib)->toString(),
       self::LOCAL_LIBS,
@@ -92,9 +102,11 @@ final class DocxViewerBuilder implements DocxViewerBuilderInterface {
         'data-aculta-docx-url' => $this->fileUrl($uri),
         'data-aculta-docx-frame-url' => Url::fromUri('base:' . $modulePath . '/docx/docx-frame.html')->toString(),
         'data-aculta-docx-libs' => json_encode($libs, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR),
+        'data-aculta-docx-render-options' => json_encode($render_options, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR),
         'data-aculta-docx-title' => $title,
       ],
       '#attached' => ['library' => [self::LIBRARY]],
+      '#cache' => ['tags' => $settings->getCacheTags()],
       'chrome' => DocumentViewerChrome::elements($title, new TranslatableMarkup('Documento Word (DOCX)')),
       'viewer' => [
         '#type' => 'html_tag',

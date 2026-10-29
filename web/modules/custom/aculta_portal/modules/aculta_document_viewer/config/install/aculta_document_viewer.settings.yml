@@ -17,3 +17,10 @@ embed_title: ''
 link_text: ''
 link_target: _blank
 css_class: ''
+docx_render_headers: true
+docx_render_footers: true
+docx_render_footnotes: true
+docx_render_endnotes: true
+docx_respect_page_breaks: false
+spreadsheet_default_mode: sheet
+spreadsheet_page_size: 50

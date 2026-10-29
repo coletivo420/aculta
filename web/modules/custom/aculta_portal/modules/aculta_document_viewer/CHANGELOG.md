@@ -1,5 +1,14 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-dev.19 — padrões administrativos DOCX e planilhas (2026-10-29)
+
+- A subaba ACULTA > Site > Leitor de documentos agora reúne os padrões globais
+  de PDF, DOCX e planilhas. DOCX permite mostrar cabeçalhos, rodapés, notas e
+  respeitar quebras de página; planilhas escolhem modo inicial e 25/50/100 linhas
+  por página.
+- Planilhas permanecem somente para leitura e os limites de processamento não
+  podem ser aumentados pelo painel. Nenhum Config Sync foi importado no Runtime.
+
 ## 0.1.0-dev.18 — miniaturas PDF via Imagick PHP (2026-10-29)
 
 - Builder usa `aculta_image.pdf_thumbnail` para rasterizar a primeira página pela extensão PHP Imagick e Ghostscript, sem exigir o CLI ImageMagick.

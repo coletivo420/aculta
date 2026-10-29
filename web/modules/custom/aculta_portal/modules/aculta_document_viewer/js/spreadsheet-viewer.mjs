@@ -65,7 +65,7 @@ function tableOptions(definition) {
   };
 }
 
-function renderModes(toolbar, sheetTitles, onChange) {
+function renderModes(toolbar, sheetTitles, onChange, defaultMode) {
   const group = document.createElement('div');
   group.dataset.acultaDocumentPart = 'modes';
   group.setAttribute('role', 'group');
@@ -78,7 +78,7 @@ function renderModes(toolbar, sheetTitles, onChange) {
     button.type = 'button';
     button.dataset.acultaDocumentPart = 'mode';
     button.textContent = label;
-    button.setAttribute('aria-pressed', mode === 'sheet' ? 'true' : 'false');
+    button.setAttribute('aria-pressed', mode === defaultMode ? 'true' : 'false');
     button.addEventListener('click', () => {
       buttons.forEach((other) => other.setAttribute('aria-pressed', other === button ? 'true' : 'false'));
       select.hidden = mode !== 'table';
@@ -90,7 +90,7 @@ function renderModes(toolbar, sheetTitles, onChange) {
   const select = document.createElement('select');
   select.dataset.acultaDocumentPart = 'sheet-select';
   select.setAttribute('aria-label', translate('Aba exibida no modo Tabela'));
-  select.hidden = true;
+  select.hidden = defaultMode !== 'table';
   sheetTitles.forEach((title, index) => {
     const option = document.createElement('option');
     option.value = String(index);
@@ -127,7 +127,12 @@ async function mountSpreadsheet(host, frame) {
       ? new TabulatorFull(frame, spreadsheetOptions(definitions))
       : new TabulatorFull(frame, tableOptions(definitions[sheetIndex]));
   };
-  renderModes(chrome.toolbar, definitions.map((definition) => definition.title), (mode, index) => show(mode, index));
+  renderModes(
+    chrome.toolbar,
+    definitions.map((definition) => definition.title),
+    (mode, index) => show(mode, index),
+    defaultMode,
+  );
   show('sheet');
 
   const truncated = definitions.some((definition) => definition.truncated);

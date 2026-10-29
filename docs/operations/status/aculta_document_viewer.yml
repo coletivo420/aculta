@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.18
+version: 0.1.0-dev.19
 state: Dev
-next_phase: 'Ativar a configuração do display no Runtime após sincronização autorizada; validar prévias DOCX/planilha em Firefox a 1280/390/320px, miniatura PDF via Imagick no FPM Hostinger, CSP Report-Only e acessibilidade ampliada antes de avaliar RC ([roadmap](web/modules/custom/aculta_portal/modules/aculta_document_viewer/docs/ROADMAP.md))'
-progress_note: 'Dev.18 mantém o formatter composto Media document e migra a miniatura PDF para `aculta_image.pdf_thumbnail` (PHP Imagick/Ghostscript, sem CLI). Suíte 52/570 PASS; 147 depreciações Core/contrib e 1 PHPUnit. Config versionada, Runtime não importado. Verificar visual DOCX/planilhas e PDF no FPM Hostinger, CSP e acessibilidade ampliada antes de RC.'
+next_phase: 'Validar no Firefox as opções administrativas DOCX/planilhas e aplicar Config Sync somente com autorização; verificar miniatura PDF no FPM Hostinger, CSP Report-Only e acessibilidade ampliada antes de avaliar RC ([roadmap](web/modules/custom/aculta_portal/modules/aculta_document_viewer/docs/ROADMAP.md))'
+progress_note: 'Dev.19 expande ACULTA > Site > Leitor de documentos com padrões DOCX (cabeçalho/rodapé/notas/quebras) e planilhas (modo inicial e paginação); mantém limites de leitura e acesso Core. Document Viewer: 52 testes/575 assertions PASS, 147 depreciações Core/contrib e 1 PHPUnit; lint PHP, PHPCS focal e node --check PASS. Config Sync mudou sem import no Runtime. Revisão visual autenticada, FPM Hostinger, CSP e acessibilidade ampliada pendentes.'
