@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.19
+version: 0.1.0-dev.20
 state: Dev
-next_phase: 'Localizar/corrigir overflow 390/320px na frente proprietária do shell/tema e repetir a revisão visual; depois concluir auditoria de Gallery antes de avaliar RC ([arquitetura](web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md))'
-progress_note: "Dev.19: PHPCS Drupal PASS, PHP lint 11/11 PASS, Gallery Unit 2/13 PASS; Kernel Content Index 2/51 PASS com 9 depreciações upstream. Firefox ESR: diálogo aberto sem envio; álbum em host principal/Fórum. 12/15 verificações PASS, com overflow 390px no editor e 320px nos álbuns (439px), aparentemente no shell/tema; atribuição exata pendente. Fixture draft removida; nenhuma galeria criada."
+next_phase: 'Após servir o commit 0b3643f32 do tema no checkout de teste, repetir Firefox ESR sem CSS injetado e cache rebuild; então revisar auditoria final e critérios restantes de RC ([arquitetura](web/modules/custom/aculta_portal/modules/aculta_gallery/docs/ARQUITETURA.md)).'
+progress_note: "Dev.20: PHPCS Drupal PASS e PHP lint 11/11 PASS previamente; Gallery Unit 2/13 PASS e Kernel Content Index 2/51 PASS, 9 depreciações upstream, reexecutados nesta rodada. Firefox ESR abriu CKEditor e diálogo com fixture válida; diálogo e álbuns principal/Fórum passaram 15/15 em 1280/390/320px com CSS candidato do tema injetado. Rascunho e revisão removidos. CSS ainda não servido pelo Runtime; repetir sem injeção após cache rebuild."

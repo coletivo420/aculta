@@ -1,5 +1,11 @@
 # Changelog — ACULTA Gallery
 
+## 0.1.0-dev.20 — revalidação visual com o reflow candidato do tema
+
+- Firefox ESR abriu o formulário real da Revista com campos obrigatórios válidos e o diálogo Gallery; nenhum envio foi feito.
+- Diálogo e álbuns autenticados no host principal/Fórum passaram 15/15 verificações em 1280/390/320 px com a folha CSS candidata do ACULTA420 injetada. Ações administrativas visíveis e sem overflow.
+- Rascunho temporário e revisão foram removidos. O CSS ainda não está servido pelo Runtime; repetir a revisão depois que o candidato do tema chegar ao checkout de teste. Gallery continua Dev.
+
 ## 0.1.0-dev.19 — conformidade de estilo
 
 - Comentários PHP e documentação de propriedades/métodos foram alinhados ao
