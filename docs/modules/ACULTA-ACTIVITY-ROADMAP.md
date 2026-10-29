@@ -85,6 +85,17 @@ release independente enquanto o módulo for apenas o adapter e sua fronteira.
   que hoje impedem o boot reduzido; então retomar o teste sem Index e Entity
   Access. Activity permanece em Dev.
 
+### Sondagem adicional da cadeia do Portal — 2026-10-29
+
+- Para identificar se a ausência de `aculta_mailer.mailer` era o último bloqueio,
+  a fixture experimental incluiu também `aculta_mailer`, `aculta_user`,
+  `comment`, `image`, `link` e `path_alias`, além dos módulos anteriores.
+- O container então parou em `aculta_portal.email_confirmation_requester`, que
+  requer `aculta_mail_confirmer`; os três casos Kernel falharam antes das
+  asserções. A inclusão de módulos foi descartada, mantendo o baseline 9/68
+  PASS. Isso confirma que a solução não é habilitar um único serviço e requer
+  um harness compartilhado da cadeia de integração Portal.
+
 ## Posterior
 
 Workflow editorial, campos, experiência de edição, migração de dados e relações

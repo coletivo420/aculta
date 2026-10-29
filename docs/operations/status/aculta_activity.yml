@@ -3,9 +3,9 @@ version: 0.1.0-dev.8
 state: Dev
 progress_note: >-
   Em 2026-10-29: baseline Unit + Kernel 9/68 PASS, com 5 depreciações Core/contrib.
-  Tentativa controlada com file/aculta_image/Portal/key falhou antes das asserções:
-  aculta_portal.registration_mail_policy requer aculta_mailer.mailer. A alteração
-  experimental foi removida; produção inalterada. É necessário fixture Portal
-  compartilhada ou separação arquitetural dos serviços para continuar.
+  Tentativas de fixture Portal com file/aculta_image/Portal/key/mailer/user e
+  path_alias falham antes das asserções porque o container exige também
+  aculta_mail_confirmer. Alterações experimentais foram removidas; produção
+  inalterada. O teste integrado requer fixture Portal compartilhada completa.
   Runtime não homologado.
 next_phase: 'Preparar fixture de integração Portal que carregue dependências reais ou separar serviços auxiliares que impedem o boot reduzido; então verificar Entity Access, boot sem Index e formulário/Metatag. Runtime permanece pendente ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'
