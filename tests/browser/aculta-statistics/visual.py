@@ -22,7 +22,7 @@ EXPECTED_PROJECT = Path("/home/piradopirata/projetos/aculta").resolve()
 UID = 1
 OUT = Path(os.environ["SUITE_OUT"])
 PREVIEW_CSS = os.environ.get("STATISTICS_CSS_PREVIEW")
-WIDTHS = [(1280, "desktop"), (390, "mobile-390"), (320, "mobile-320")]
+WIDTHS = [(1280, "desktop"), (768, "tablet-768"), (390, "mobile-390"), (320, "mobile-320")]
 AREAS = ["", "vendas", "email", "lms", "links", "forum", "midia", "wiki"]
 results = []
 
@@ -139,6 +139,14 @@ try:
         check(f"rota de painel acessível ({area or 'todas'})", passed,
               f"h1={page['h1']!r}, nav={page['nav']}, overflow={page['overflow']}")
         if area == "":
+            driver.js("""if (!document.querySelector('[data-statistics-layout-fixture]')) {
+              const fixture = document.createElement('section');
+              fixture.dataset.statisticsLayoutFixture = 'true';
+              fixture.className = 'aculta-statistics';
+              fixture.style.cssText = 'box-sizing:border-box;width:min(calc(100% - 1rem),28rem);margin:1rem auto;padding:0.5rem;border:1px dashed currentColor';
+              fixture.innerHTML = '<form class="aculta-statistics__form"><label>Área<select><option>Geral</option></select></label><button type="button">Aplicar</button></form>';
+              document.body.append(fixture);
+            }""")
             expected = driver.js("""return [...new Map(
               [...document.querySelectorAll('main a[href]')].map(link => [link.href, link.href])
             ).values()];""")
@@ -184,6 +192,24 @@ try:
             check(f"{area or 'todas'} sem overflow em {width}px",
                   actual == width and metrics["documentWidth"] <= width and metrics["headingVisible"] and metrics["mainPresent"],
                   str(metrics))
+            if area == "" and width in (320, 768):
+                form_layout = driver.js("""const fixture=document.querySelector('[data-statistics-layout-fixture]');
+                  const form=fixture?.querySelector('form'), label=form?.querySelector('label');
+                  const select=label?.querySelector('select'), box=fixture?.getBoundingClientRect();
+                  const labelBox=label?.getBoundingClientRect(), selectBox=select?.getBoundingClientRect();
+                  return {fixtureWidth:box?.width,labelWidth:labelBox?.width,selectWidth:selectBox?.width,
+                    selectMinWidth:select ? getComputedStyle(select).minWidth : null};""")
+                if width == 320:
+                    layout_ok = (
+                        abs(form_layout["labelWidth"] - form_layout["fixtureWidth"]) <= 1
+                        and abs(form_layout["selectWidth"] - form_layout["labelWidth"]) <= 1
+                    )
+                else:
+                    layout_ok = (
+                        form_layout["labelWidth"] < form_layout["fixtureWidth"] - 100
+                        and form_layout["selectWidth"] >= 192
+                    )
+                check(f"filtro de estatísticas reflow em {width}px", layout_ok, str(form_layout))
 finally:
     if bidi:
         bidi.close()

@@ -3,8 +3,11 @@
 Firefox ESR visível no servidor de desenvolvimento `aculta.toca.net.br`. O
 runner autentica a conta administrativa pelo link único de uso único gerado no
 host `conta.aculta.toca.net.br`, abre as oito rotas do painel (visão geral e
-sete áreas), mede overflow em 1280, 390 e 320 CSS px e percorre os links por
+sete áreas), mede overflow em 1280, 768, 390 e 320 CSS px e percorre os links por
 teclado para conferir `:focus-visible`. Não altera dados nem configuração.
+Na visão geral, acrescenta uma fixture sem dados para medir o reflow dos
+filtros em 320 e 768 CSS px; isso verifica a geometria da folha, não o
+formulário real nem a disponibilidade de filtros em outras rotas.
 Capturas e `summary.json` ficam fora do repositório em `SUITE_OUT`.
 O perfil temporário do Firefox também fica dentro de `SUITE_OUT` e é removido
 ao encerrar o runner.

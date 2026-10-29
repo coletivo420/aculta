@@ -1,3 +1,8 @@
+# Alterações pendentes de validação visual — ainda sem nova marcação de versão
+
+- `revista-post.css` (commit `e40c39265`) usa figuras full-width/static como base e restaura proporções editoriais em `min-width: 36rem`; `npm run lint:css` passou posteriormente na raiz do tema. Firefox e consumer real permanecem pendentes.
+- `statistics.css` empilha os filtros como base e restaura os controles em linha em `min-width: 36rem`. Lint CSS, Python compile, schemas SDC, Design Foundations e índice de status passaram nesta microfase. Firefox/Runtime estão DEFERRED; atribuir a próxima versão somente após a validação visual prevista pelo versionamento do tema.
+
 # 0.7.0-dev.26 — migrar navegação interna do Studio para mobile-first (2026-10-29)
 
 - Navegação lateral e painel do Studio empilham como base; `min-width: 48rem` restaura o layout horizontal com sidebar de 14rem. Sem alteração de markup, ACL, rotas ou shell.

@@ -612,3 +612,23 @@ consumer Messenger, incluindo a fronteira 560/561 conforme o viewport efetivo.
 A execução Firefox está DEFERRED por sessões concorrentes; os consumers de
 Alertas e Carrinho seguem requerendo revisão visual própria. THEME-MF3 permanece
 pendente.
+
+### THEME-MF2 — painel de Estatísticas (2026-10-29)
+
+`statistics.css` declara os filtros empilhados e de largura total como base;
+`min-width: 36rem` restaura os controles em linha e a largura mínima de 12rem
+do seletor. O markup e os dados do painel não mudam. O teste reutilizável
+`tests/browser/aculta-statistics/visual.py` ganhou uma fixture sintética para
+medir os estados mobile em 320px e ampliado em 768px; a rota autenticada mede
+overflow em 320/390/768/1280px. Firefox/Runtime estão DEFERRED nesta sessão
+(`DISPLAY` indisponível e geckodrivers concorrentes); a fixture não equivale à
+homologação do painel real e THEME-MF3 permanece pendente.
+
+### THEME-MF2 — publicação da Revista (2026-10-29)
+
+`revista-post.css` usa figuras full-width/static como base e restaura em
+`min-width: 36rem` as larguras pequenas/padrão e os modelos larga/destaque
+centralizados. A regra móvel redundante para o subtítulo foi removida. A
+alteração foi commitada em `e40c39265`. O lint CSS foi executado posteriormente
+na raiz correta do tema e PASS; não houve ainda comparação Firefox nem revisão
+visual do consumer real, que seguem DEFERRED.

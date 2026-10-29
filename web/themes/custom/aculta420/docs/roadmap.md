@@ -1,5 +1,15 @@
 # Roadmap — ACULTA420
 
+## THEME-MF2 — painel de Estatísticas e publicação da Revista
+
+O painel de Estatísticas começa com filtros empilhados e amplia em
+`min-width: 36rem`; as figuras da Revista usam composição fluida como base e
+recuperam as proporções editoriais progressivamente. Evidências e limites estão
+em [`mobile-first-audit.md`](mobile-first-audit.md). Lint CSS, sintaxe Python,
+schemas SDC, Design Foundations e índice de status PASS; Firefox/Runtime estão
+DEFERRED. O marcador de versão não avança antes da validação visual. THEME-MF3
+continua não aprovado.
+
 ## Fronteira visual Events, Calendar e Maps — 2026-10-29 (dev.11)
 
 - PortalUiHooks mapeia os tokens semânticos dos módulos para as classes do tema.

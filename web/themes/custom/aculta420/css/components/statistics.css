@@ -49,7 +49,8 @@
 }
 
 .aculta-statistics__form select {
-  min-width: 12rem;
+  width: 100%;
+  min-width: 0;
   padding: 0.4rem 0.5rem;
   border: 1px solid var(--aculta-border-default);
   border-radius: var(--bs-border-radius);
@@ -104,10 +105,18 @@
   color: var(--aculta-text-secondary);
 }
 
-@media (max-width: 575.98px) {
+/* Keep filters stacked on narrow screens; restore the compact inline control progressively. */
+.aculta-statistics__form label {
+  width: 100%;
+}
+
+@media (min-width: 36rem) {
   .aculta-statistics__form label,
   .aculta-statistics__form select {
-    width: 100%;
-    min-width: 0;
+    width: auto;
+  }
+
+  .aculta-statistics__form select {
+    min-width: 12rem;
   }
 }

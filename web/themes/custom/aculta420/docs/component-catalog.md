@@ -338,6 +338,14 @@ hosts vêm do manifesto de transição; LINKS não exige menu utilitário porque
 Portal o omite deliberadamente. Domain Header apareceu somente em MAIN e Wiki;
 seguem pendentes Pede-A e validação MF3.
 
+### THEME-MF2 — Revista e Estatísticas
+
+As figuras editoriais da Revista e os filtros do painel de Estatísticas usam
+composição compacta como base e ampliam progressivamente com `min-width`.
+São estilos de consumers existentes; não criam SDC nem alteram props, slots,
+Form API ou contratos dos módulos. Evidências e limites estão em
+[`mobile-first-audit.md`](mobile-first-audit.md).
+
 
 ### THEME-MF2 — Institution Bar e Navigation top-bar
 
