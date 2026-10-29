@@ -346,6 +346,10 @@ São estilos de consumers existentes; não criam SDC nem alteram props, slots,
 Form API ou contratos dos módulos. Evidências e limites estão em
 [`mobile-first-audit.md`](mobile-first-audit.md).
 
+O SDC `patterns/card` mantém as variantes atuais e aceita também
+`data-card-variation="compact"` emitido pelo contrato neutro do Portal; nenhuma
+prop ou slot foi alterado.
+
 
 ### THEME-MF2 — Institution Bar e Navigation top-bar
 

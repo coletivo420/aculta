@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tradução de tokens `data-portal-ui` em classes do ACULTA420.
  *
- * O módulo marca o elemento com tokens semânticos; se a tradução falhar, o
- * Portal aparece sem estilo. Estes testes não precisam de banco nem de container.
+ * O módulo marca elementos com tokens semânticos; se a tradução falhar, o
+ * Portal aparece sem estilo. Estes testes não precisam de banco ou container.
  */
 #[Group('aculta420')]
 final class PortalUiHooksTest extends UnitTestCase {
@@ -89,7 +89,7 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
-   * WE SATIVA workspace and navigation actions receive responsive Bootstrap classes.
+   * WE SATIVA workspace and navigation actions receive responsive classes.
    */
   public function testMapsWeSativaWorkspaceAndLinkTokens(): void {
     $variables = [
@@ -133,7 +133,7 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
-   * Elementos de render guardam #attributes como array: a tradução grava no próprio elemento.
+   * Render elements keep #attributes as arrays until the theme hook maps them.
    */
   public function testMapsTokensInRenderElementArrayAttributes(): void {
     $variables = [
@@ -151,7 +151,7 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
-   * Messenger notice filters and the filtered empty state receive theme classes.
+   * Messenger notice filters and empty state receive theme classes.
    */
   public function testMapsMessengerNoticeFilterAndEmptyStateTokens(): void {
     $variables = [
@@ -173,7 +173,7 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
-   * Newly documented account, reporting, commerce and notice tokens map to styles.
+   * Account, reporting, commerce and notice tokens map to theme styles.
    */
   public function testMapsTokensPreviouslyMissingFromTheThemeRegistry(): void {
     $variables = [
@@ -195,7 +195,48 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
-   * Atributos ainda em array (antes da conversão do núcleo) viram Attribute com as classes.
+   * Download formatter and saved-content tokens keep presentation in the theme.
+   */
+  public function testMapsDocumentDownloadAndStudioSavedContentTokens(): void {
+    $variables = [
+      'element' => [
+        '#attributes' => [
+          'data-portal-ui' => 'document-download-item studio-saved-content event-supporter-item',
+        ],
+      ],
+      'attributes' => new Attribute([
+        'data-portal-ui' => 'document-download-link document-download-format document-download-size studio-page-title studio-saved-tabs event-supporters event-press-quotes editorial-card',
+      ]),
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    $element = $variables['element']['#attributes'];
+    $this->assertArrayNotHasKey('data-portal-ui', $element);
+    $this->assertContains('aculta-download-meta-item', $element['class']);
+    $this->assertContains('studio', $element['class']);
+    $this->assertContains('studio-saved-page', $element['class']);
+    $this->assertContains('sponsor-item', $element['class']);
+
+    $attributes = $variables['attributes'];
+    $this->assertFalse($attributes->offsetExists('data-portal-ui'));
+    $this->assertTrue($attributes->hasClass('download-link'));
+    $this->assertTrue($attributes->hasClass('download-badge-format'));
+    $this->assertTrue($attributes->hasClass('download-badge-size'));
+    $this->assertTrue($attributes->hasClass('page-title'));
+    $this->assertTrue($attributes->hasClass('nav'));
+    $this->assertTrue($attributes->hasClass('nav-tabs'));
+    $this->assertTrue($attributes->hasClass('studio-saved-tabs'));
+    $this->assertTrue($attributes->hasClass('event-supporters'));
+    $this->assertTrue($attributes->hasClass('sponsor-logos'));
+    $this->assertTrue($attributes->hasClass('event-press-quotes'));
+    $this->assertTrue($attributes->hasClass('media-mentions'));
+    $this->assertTrue($attributes->hasClass('aculta-card'));
+    $this->assertTrue($attributes->hasClass('card'));
+  }
+
+  /**
+   * Arrays of attributes become Attribute objects with mapped classes.
    */
   public function testArrayAttributesAreConvertedToAttributeObjects(): void {
     $variables = [
@@ -210,7 +251,7 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
-   * Contador de não lidos: valor válido vira componente; zero e valor inválido não.
+   * Positive unread counts become components; zero and invalid values do not.
    */
   public function testUnreadBadgeIsAddedOnlyForPositiveIntegerCounts(): void {
     $variables = [
