@@ -12,12 +12,13 @@
   do hook; não grava concessão nem configuração no Runtime. Perfil,
   acessibilidade e homologação de migração continuam pendentes.
 - Firefox ESR visível (`DISPLAY=:0`), checkout servido `355e48a89`: smoke de
-  Conta e perfil público 12/12 PASS em 1280 px. O arquivo PHP de apresentação
-  do Game é igual ao candidato. Verificou `/atividade/conquistas`, perfil
-  `/u/pessoa-5`, preferências, alt text e cartões. Asserções 390 px foram
-  explicitamente omitidas porque o checkout servido ainda usa CSS anterior ao
-  candidato mobile-first; a rota administrativa foi omitida sem conta temporária
-  própria. Capturas e JSON em
+  Conta, perfil público e administração 19/19 PASS em 1280 px. O PHP do Game é
+  igual ao candidato. Verificou `/atividade/conquistas`, perfil `/u/pessoa-5`,
+  preferências, alt text, cartões, controles administrativos, editor e
+  confirmação de remoção. Uma conta e papel com permissão específica foram
+  criados para o smoke e removidos; consulta posterior confirmou ambos ausentes.
+  Asserções 390 px foram omitidas porque o checkout servido ainda usa CSS
+  anterior ao candidato mobile-first. Capturas e JSON em
   `/home/piradopirata/aculta-suite-out/game-20261029`.
 
 ## Dev.17 — centralizar avisos no Messenger (2026-10-25)

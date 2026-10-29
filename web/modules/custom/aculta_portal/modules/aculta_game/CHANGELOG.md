@@ -4,11 +4,11 @@
 
 - Kernel cria e publica `ForumPost` pela entidade real e invoca o hook duas
   vezes; a concessão do badge existente ocorre uma única vez.
-- Smoke Firefox ESR no servidor de desenvolvimento: 12/12 em
-  `/atividade/conquistas` e `/u/pessoa-5`; verificou associação de rótulos,
-  textos alternativos e cartões públicos. Layout 390 px e administração foram
-  omitidos: o CSS candidato não está servido e não havia conta administrativa
-  temporária.
+- Smoke Firefox ESR no servidor de desenvolvimento: 19/19 em
+  `/atividade/conquistas`, `/u/pessoa-5` e rotas administrativas; verificou
+  associação de rótulos, textos alternativos, cartões, edição e confirmação de
+  imagem. O perfil CSS 390 px foi omitido porque o candidato mobile-first não
+  está servido. A conta e o papel administrativos temporários foram removidos.
 - Unit: 14 testes / 77 assertions PASS; Kernel: 1 teste / 25 assertions PASS,
   com 5 deprecações provenientes do módulo `domain`. PHP lint, PHPCS e
   `git diff --check` PASS. Sem concessões/configuração persistentes ou Runtime.
