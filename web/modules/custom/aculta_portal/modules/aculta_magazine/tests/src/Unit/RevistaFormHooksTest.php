@@ -127,6 +127,38 @@ final class RevistaFormHooksTest extends UnitTestCase {
   }
 
   /**
+   * Core field widgets may still report original paths without group prefix.
+   */
+  public function testOriginalFieldErrorOpensGroupAndFocusesWidget(): void {
+    $form = $this->form();
+    $form_state = new FormState();
+    $form_state->setErrorByName('field_tags][target_id', 'Etiqueta inválida.');
+    (new RevistaFormHooks())->alter($form, $form_state, 'node_revista_edit_form');
+
+    self::assertTrue($form['revista_secondary']['#open']);
+    self::assertSame(
+      'autofocus',
+      $form['revista_secondary']['field_tags']['target_id']['#attributes']['autofocus'] ?? NULL,
+    );
+    // A alteração visual não deve reescrever o estado de validação do Core.
+    self::assertArrayHasKey('field_tags][target_id', $form_state->getErrors());
+  }
+
+  /**
+   * An original-path error opens the group but does not steal earlier focus.
+   */
+  public function testOriginalFieldErrorPreservesEarlierErrorFocus(): void {
+    $form = $this->form();
+    $form_state = new FormState();
+    $form_state->setErrorByName('title', 'Título obrigatório.');
+    $form_state->setErrorByName('field_tags][target_id', 'Etiqueta inválida.');
+    (new RevistaFormHooks())->alter($form, $form_state, 'node_revista_edit_form');
+
+    self::assertTrue($form['revista_secondary']['#open']);
+    self::assertFalse($this->hasAutofocus($form));
+  }
+
+  /**
    * An earlier error keeps the focus; the group still opens.
    */
   public function testEarlierErrorKeepsTheFocusButGroupStillOpens(): void {
