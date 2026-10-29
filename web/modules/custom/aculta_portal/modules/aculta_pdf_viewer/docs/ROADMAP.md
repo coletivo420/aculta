@@ -18,6 +18,20 @@
   PV7 segue Dev; falta revisão ampliada de acessibilidade/leitura e concluir os
   gates de CSP e validação visual pré-RC já descritos abaixo.
 
+## PV7 — revalidação do modo Report-Only (2026-10-29)
+
+- `config/sync/csp.settings.yml` mantém `report-only.enable: true` e
+  `enforce.enable: false`, com o endpoint interno `reporting/default`.
+- Leitura no Runtime de desenvolvimento confirmou CSP e Reporting habilitados,
+  Report-Only ativo, enforcement desativado e plugin `reporting`; nenhuma
+  configuração foi importada ou alterada nesta verificação.
+- A suíte completa reexecutada passou: 36 testes / 371 assertions, com 137
+  depreciações upstream; PHPCS Drupal/DrupalPractice e lint integral do PDF
+  Viewer e Group passaram.
+- Isso fecha somente a configuração Report-Only e o guard do endpoint. A
+  inspeção de relatórios ao servir o candidato e a revisão acessível/leitura
+  contínua continuam pendentes antes de RC.
+
 ## PV7 — revalidação do bloqueio de bootstrap em 2026-10-29
 
 - Nova tentativa de carregar a closure real no teste focal, sem substituir
