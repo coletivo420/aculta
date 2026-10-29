@@ -29,10 +29,14 @@ final class aculta_H5PFileController implements ContainerInjectionInterface {
   ) {}
 
   /**
-   *
+   * Creates the controller using Drupal's service container.
    */
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('aculta_lms_h5p.course_access'), $container->get('current_user'), $container->get('aculta_lms_h5p.storage_path'));
+    return new static(
+      $container->get('aculta_lms_h5p.course_access'),
+      $container->get('current_user'),
+      $container->get('aculta_lms_h5p.storage_path'),
+    );
   }
 
   /**
@@ -54,7 +58,18 @@ final class aculta_H5PFileController implements ContainerInjectionInterface {
     if (!$this->courseAccess->studentAccess($group_id, $content_id, $this->currentUser)->isAllowed()) {
       throw new AccessDeniedHttpException();
     }
-    $relative = implode('/', array_filter([$file_path, $path_2, $path_3, $path_4, $path_5, $path_6, $path_7, $path_8, $path_9, $path_10], static fn (string $part): bool => $part !== ''));
+    $relative = implode('/', array_filter([
+      $file_path,
+      $path_2,
+      $path_3,
+      $path_4,
+      $path_5,
+      $path_6,
+      $path_7,
+      $path_8,
+      $path_9,
+      $path_10,
+    ], static fn (string $part): bool => $part !== ''));
     return $this->serve($this->storagePath->getPath() . '/content/' . $content_id, $relative, FALSE);
   }
 
@@ -74,12 +89,25 @@ final class aculta_H5PFileController implements ContainerInjectionInterface {
     string $path_11 = '',
     string $path_12 = '',
   ): Response {
-    $relative = implode('/', array_filter([$library, $file_path, $path_3, $path_4, $path_5, $path_6, $path_7, $path_8, $path_9, $path_10, $path_11, $path_12], static fn (string $part): bool => $part !== ''));
+    $relative = implode('/', array_filter([
+      $library,
+      $file_path,
+      $path_3,
+      $path_4,
+      $path_5,
+      $path_6,
+      $path_7,
+      $path_8,
+      $path_9,
+      $path_10,
+      $path_11,
+      $path_12,
+    ], static fn (string $part): bool => $part !== ''));
     return $this->serve($this->storagePath->getPath() . '/libraries', $relative, TRUE);
   }
 
   /**
-   *
+   * Validates the asset path and streams an authorized file response.
    */
   private function serve(string $base, string $relative, bool $library): Response {
     if ($relative === '' || strlen($relative) > 2048 || count(explode('/', $relative)) > 12
@@ -88,8 +116,14 @@ final class aculta_H5PFileController implements ContainerInjectionInterface {
     }
     $extension = strtolower(pathinfo($relative, PATHINFO_EXTENSION));
     $allowed = $library
-      ? ['js', 'css', 'json', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'woff', 'woff2', 'ttf', 'otf', 'mp3', 'mp4', 'webm', 'vtt']
-      : ['json', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'woff', 'woff2', 'ttf', 'otf', 'mp3', 'mp4', 'webm', 'vtt', 'txt', 'pdf'];
+      ? [
+        'js', 'css', 'json', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'woff',
+        'woff2', 'ttf', 'otf', 'mp3', 'mp4', 'webm', 'vtt',
+      ]
+      : [
+        'json', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'woff', 'woff2',
+        'ttf', 'otf', 'mp3', 'mp4', 'webm', 'vtt', 'txt', 'pdf',
+      ];
     if (!in_array($extension, $allowed, TRUE)) {
       throw new NotFoundHttpException();
     }

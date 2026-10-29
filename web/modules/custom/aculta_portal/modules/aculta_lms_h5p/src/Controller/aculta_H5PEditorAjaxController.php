@@ -40,7 +40,7 @@ final class aculta_H5PEditorAjaxController implements ContainerInjectionInterfac
   ) {}
 
   /**
-   *
+   * Creates the controller using Drupal's service container.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -257,16 +257,25 @@ final class aculta_H5PEditorAjaxController implements ContainerInjectionInterfac
     $upload = $request?->files->get('file');
     $contentId = $request?->request->getInt('contentId', -1) ?? -1;
     if ($contentId !== $routeContentId || !$upload instanceof UploadedFile) {
-      return new JsonResponse(['success' => FALSE, 'message' => $this->translation->translate('O envio não corresponde à atividade aberta.')], 400);
+      return new JsonResponse([
+        'success' => FALSE,
+        'message' => $this->translation->translate('O envio não corresponde à atividade aberta.'),
+      ], 400);
     }
     try {
       $field = json_decode($request->request->getString('field'), TRUE, 16, JSON_THROW_ON_ERROR);
     }
     catch (\JsonException) {
-      return new JsonResponse(['success' => FALSE, 'message' => $this->translation->translate('O campo de arquivo da atividade está inválido.')], 400);
+      return new JsonResponse([
+        'success' => FALSE,
+        'message' => $this->translation->translate('O campo de arquivo da atividade está inválido.'),
+      ], 400);
     }
     if (!is_array($field)) {
-      return new JsonResponse(['success' => FALSE, 'message' => $this->translation->translate('O campo de arquivo da atividade está inválido.')], 400);
+      return new JsonResponse([
+        'success' => FALSE,
+        'message' => $this->translation->translate('O campo de arquivo da atividade está inválido.'),
+      ], 400);
     }
     $result = $this->uploadManager->upload($upload, $field);
     return new JsonResponse($result, ($result['success'] ?? TRUE) === FALSE ? 400 : 200);

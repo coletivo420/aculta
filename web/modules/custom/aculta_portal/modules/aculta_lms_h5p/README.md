@@ -7,9 +7,9 @@ Composer independentes, sob GPL-3.0-only.
 
 ## Estado
 
-**Revalidação 2026-10-29 (0.4.0-dev.165):** Unit + Kernel 43/481 passaram
+**Revalidação 2026-10-29 (0.4.0-dev.166):** Unit + Kernel 43/481 passaram
 no MariaDB `aculta_simpletest`; o Kernel reportou 41 depreciações Core/contrib,
-Unit não teve depreciações. PHPCS integral registra 104 erros e 5 avisos em 10
+Unit não teve depreciações. PHPCS integral registra 94 erros e 5 avisos em 8
 arquivos, abaixo de 174/20 em 19 arquivos na rodada anterior. Sete arquivos de
 teste, quatro formulários administrativos, entidade, sete classes auxiliares e
 o adaptador central têm PHPCS limpo; nomes de discovery/protocolo permanecem

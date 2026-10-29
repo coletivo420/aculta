@@ -421,3 +421,12 @@
 - Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
   depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
 
+## 0.4.0-dev.166 — documentar controllers de arquivos H5P (2026-10-29)
+
+- Completa PHPDoc das factories e da validação de assets e formata allowlists e
+  respostas JSON multilinha, preservando os valores e resultados existentes.
+- PHPCS integral caiu de 104 erros/5 avisos em 10 arquivos para 94/5 em 8
+  arquivos; os dois controllers passam Drupal/DrupalPractice e PHP lint.
+- Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
+  depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
+
