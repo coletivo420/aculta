@@ -131,6 +131,15 @@ final class EventLocation extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Versão do elemento do OpenStreetMap'))
       ->setSetting('max_length', 32);
 
+        $fields['field_allow_claiming'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(new TranslatableMarkup('Permitir reivindicação de posse'))
+      ->setDescription(new TranslatableMarkup('Permite que outros usuários solicitem a titularidade deste local à moderação.'))
+      ->setDefaultValue(FALSE);
+
+    $fields['field_organizador'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(new TranslatableMarkup('Organizador / Responsável'))
+      ->setSetting('target_type', 'user');
+
     return $fields;
   }
 

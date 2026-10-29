@@ -109,3 +109,15 @@ services:
   # sem ler a entidade aculta_associado.
   aculta_user.active_associate:
     alias: aculta_user.associado_marker
+
+  aculta_user.organization_membership_manager:
+    class: Drupal\aculta_user\Organization\OrganizationMembershipManager
+    arguments: ['@entity_type.manager', '@datetime.time']
+
+  aculta_user.ownership_claim_service:
+    class: Drupal\aculta_user\Organization\OwnershipClaimService
+    arguments: ['@entity_type.manager', '@datetime.time', '@aculta_user.organization_membership_manager']
+
+  aculta_user.organization_access_service:
+    class: Drupal\aculta_user\Organization\OrganizationAccessService
+    arguments: ['@aculta_user.organization_membership_manager']

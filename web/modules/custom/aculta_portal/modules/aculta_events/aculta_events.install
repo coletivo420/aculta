@@ -269,3 +269,30 @@ function aculta_events_update_10005(): string {
     ? 'Campos estruturados de ARQ-04 já existiam.'
     : 'Campos instalados: ' . implode(', ', $installed) . '.';
 }
+
+/**
+ * Instala campos de reivindicação de posse e organizador de locais (ARQ-05).
+ */
+function aculta_events_update_10006(): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $fieldManager = \Drupal::service('entity_field.manager');
+  $installed = [];
+
+  $eventDefs = $fieldManager->getBaseFieldDefinitions('aculta_event');
+  if ($manager->getFieldStorageDefinition('field_allow_claiming', 'aculta_event') === NULL) {
+    $manager->installFieldStorageDefinition('field_allow_claiming', 'aculta_event', 'aculta_events', $eventDefs['field_allow_claiming']);
+    $installed[] = 'aculta_event.field_allow_claiming';
+  }
+
+  $locDefs = $fieldManager->getBaseFieldDefinitions('aculta_event_location');
+  foreach (['field_allow_claiming', 'field_organizador'] as $fieldName) {
+    if ($manager->getFieldStorageDefinition($fieldName, 'aculta_event_location') === NULL) {
+      $manager->installFieldStorageDefinition($fieldName, 'aculta_event_location', 'aculta_events', $locDefs[$fieldName]);
+      $installed[] = "aculta_event_location.$fieldName";
+    }
+  }
+
+  return $installed === []
+    ? 'Campos de ARQ-05 já existiam em aculta_event e aculta_event_location.'
+    : 'Campos instalados: ' . implode(', ', $installed) . '.';
+}

@@ -30,6 +30,23 @@ final class EventAccessControlHandler extends EntityAccessControlHandler {
       return AccessResult::allowed()->addCacheableDependency($entity);
     }
 
+    if ($operation === 'update' || $operation === 'delete') {
+      if ($account->hasPermission('administer aculta events')) {
+        return AccessResult::allowed()->cachePerPermissions();
+      }
+
+      if (in_array('content_editor', $account->getRoles(), TRUE)) {
+        if (\Drupal::hasService('aculta_user.organization_access_service')) {
+          /** @var \Drupal\aculta_user\Organization\OrganizationAccessService $orgAccess */
+          $orgAccess = \Drupal::service('aculta_user.organization_access_service');
+          if ($orgAccess->isContentEditorScoped($entity, $account)) {
+            return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
+          }
+        }
+        return AccessResult::forbidden('Editor sem vínculo comprovado com a organização do evento.')->cachePerUser()->addCacheableDependency($entity);
+      }
+    }
+
     return AccessResult::allowedIfHasPermission($account, 'administer aculta events');
   }
 
@@ -37,7 +54,8 @@ final class EventAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
-    return AccessResult::allowedIfHasPermission($account, 'administer aculta events');
+    return AccessResult::allowedIfHasPermission($account, 'administer aculta events')
+      ->orIf(AccessResult::allowedIf(in_array('content_editor', $account->getRoles(), TRUE)));
   }
 
 }

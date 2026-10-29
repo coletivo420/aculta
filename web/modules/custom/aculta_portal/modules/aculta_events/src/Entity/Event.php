@@ -82,6 +82,11 @@ final class Event extends ContentEntityBase {
     $fields['field_url'] = BaseFieldDefinition::create('uri')
       ->setLabel(new TranslatableMarkup('Site do evento'));
 
+        $fields['field_allow_claiming'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(new TranslatableMarkup('Permitir reivindicação de posse'))
+      ->setDescription(new TranslatableMarkup('Permite que outros usuários solicitem a titularidade deste evento à moderação.'))
+      ->setDefaultValue(FALSE);
+
     $fields['field_organizador'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(new TranslatableMarkup('Organizador'))
       ->setSetting('target_type', 'user');

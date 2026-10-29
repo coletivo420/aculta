@@ -292,3 +292,21 @@ function aculta_user_update_10013(): string {
     '@invalid' => $result['ignored_invalid_format'],
   ]);
 }
+
+/** Instala tipos de entidade para vinculos de organizacao e reivindicacao de posse (ARQ-05). */
+function aculta_user_update_10014(): string {
+  $updateManager = \Drupal::entityDefinitionUpdateManager();
+  $entityTypeManager = \Drupal::entityTypeManager();
+
+  if (!$updateManager->getEntityType('aculta_org_member')) {
+    $entityType = $entityTypeManager->getDefinition('aculta_org_member');
+    $updateManager->installEntityType($entityType);
+  }
+
+  if (!$updateManager->getEntityType('aculta_ownership_claim')) {
+    $entityType = $entityTypeManager->getDefinition('aculta_ownership_claim');
+    $updateManager->installEntityType($entityType);
+  }
+
+  return (string) t('Installed organization member and ownership claim entity types (ARQ-05).');
+}
