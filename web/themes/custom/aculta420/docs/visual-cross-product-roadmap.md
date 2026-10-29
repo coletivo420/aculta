@@ -619,3 +619,13 @@ reutilizável agora mede a fronteira 640/641 além de 320–1280 e pode injetar 
 CSS candidato local na rota servida. Runtime/Firefox estão DEFERRED enquanto há
 sessões concorrentes; fullscreen não é exercitado. Evidência em
 `mobile-first-audit.md` e `tests/browser/aculta-document-viewer/README.md`.
+
+### THEME-MF2 — apresentação Likert de Webform
+
+Conteúdo de ajuda e descrição ocultado pelo formulário no desktop agora é
+apresentado como base móvel e ocultado novamente acima de 768 CSS px. O modal
+fica com sua única exceção mobile-only porque sua largura vem de opções
+jQuery UI/Webform dinâmicas, sem contrato fixo do tema. Harness comparativo
+Firefox criado em 14 larguras; a execução está DEFERRED por sessões
+concorrentes. Ver `mobile-first-audit.md` e
+`tests/browser/aculta-theme-mobile-first/webform-layout.py`.

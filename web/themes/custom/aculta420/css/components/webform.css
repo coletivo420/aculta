@@ -30,13 +30,19 @@
   margin: 10px 0.5em 10px 0;
 }
 
-/* Likert: texto de ajuda e descrição alternam em telas estreitas. */
-@media (max-width: 768px) {
-  .webform-likert-help.hidden { display: inline !important; }
-  .webform-likert-description.hidden { display: block !important; }
+/* Likert: a ajuda e a descrição ocultadas pelo desktop aparecem em mobile. */
+.webform-likert-help.hidden { display: inline !important; }
+.webform-likert-description.hidden { display: block !important; }
+
+@media (min-width: 48.0625rem) {
+  .webform-likert-help.hidden,
+  .webform-likert-description.hidden { display: none !important; }
 }
 
-/* Confirmação em modal ocupa quase toda a largura em telas pequenas. */
+/*
+ * O Webform/jQuery UI define a largura desktop dinamicamente (opção width e
+ * minWidth); manter o ajuste mobile-only evita fixar uma opção do consumidor.
+ */
 @media only screen and (max-width: 650px) {
   .webform-confirmation-modal { width: 90% !important; }
 }

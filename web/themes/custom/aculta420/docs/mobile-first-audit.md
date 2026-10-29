@@ -180,7 +180,7 @@ contém também preferências/recursos de acessibilidade, não só breakpoints:
 | `min-width: 768px` | 4 | 4 |
 | `min-width: 576px` | 3 | 3 |
 | `min-width: 992px` | 3 | 2 |
-| `max-width: 768px` | 2 | 2 |
+| `min-width: 48.0625rem` | 2 | 2 |
 | `min-width: 1100px` | 2 | 2 |
 
 Há outras 20 expressões literais de uso único, incluindo 320–480 px, 992–1200
@@ -518,3 +518,15 @@ fullscreen também restaura padding e max-height. O smoke reutilizável
 candidata. A execução Firefox e a página Runtime estão DEFERRED enquanto as
 sessões visíveis da Revista ocupam o browser. O smoke não ativa fullscreen; esse
 estado precisa de revisão posterior. THEME-MF3 não aprovado.
+
+### THEME-MF2 — auxiliares Likert de Webform (2026-10-29)
+
+A ajuda e descrição Likert recebem `display` mobile como base; acima de
+768 CSS px o tema volta a ocultar ambos, preservando o conteúdo desktop. O
+modal de confirmação mantém a exceção `max-width: 650px`: a largura de desktop é
+calculada pelo consumidor jQuery UI/Webform a partir de opções dinâmicas
+`width`/`minWidth`, portanto o tema não impõe um valor fixo. O harness
+`tests/browser/aculta-theme-mobile-first/webform-layout.py` compara fixture,
+geometria e capturas em 14 larguras, incluindo 650/651 e 768/769. Firefox e
+rotas Webform reais estão DEFERRED enquanto sessões concorrentes ocupam o
+browser. THEME-MF3 segue pendente.

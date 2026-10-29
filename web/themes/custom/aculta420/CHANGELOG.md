@@ -1,3 +1,8 @@
+# 0.7.0-dev.19 — migrar conteúdo Likert do Webform para mobile-first (2026-10-29)
+
+- Ajuda e descrição Likert passam a ser visíveis como base e voltam a `display:none` acima de 768px. Override mobile do modal fica como exceção porque largura/minWidth são opções dinâmicas do Webform/jQuery UI.
+- Harness baseline/candidato em 14 larguras criado; comparação Firefox DEFERRED por sessões visíveis concorrentes. Gates estáticos executados; sem homologação MF3.
+
 # 0.7.0-dev.18 — migrar o visual do leitor PDF para mobile-first (2026-10-29)
 
 - Reader PDF usa controles em fluxo compacto, busca em linha própria e superfície reduzida como base; `min-width: 40.0001rem` restaura a composição ampla após 640px.

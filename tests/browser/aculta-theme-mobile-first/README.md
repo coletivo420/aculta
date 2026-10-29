@@ -267,3 +267,19 @@ export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-editorial-carousel-m
 export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
 DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/editorial-carousel-layout.py
 ```
+
+## Webform Likert e modal de confirmação
+
+`webform-layout.py` compara a exibição do texto auxiliar Likert, o modal e as
+capturas de baseline/candidato em 320/360/390/575/576/599/600/650/651/768/769/
+1024/1280/1440 px. Usa fixture sintética para que o caso de modal não submeta
+conteúdo nem dependa de uma configuração particular. Requer Firefox ESR visível
+em `DISPLAY=:0`, geckodriver e `websockets`; arquivos vão para `$SUITE_OUT`.
+`WEBFORM_BASELINE_REF` e `WEBFORM_WIDTHS` selecionam baseline e larguras.
+
+```sh
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-webform-mobile-first
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/webform-layout.py
+```
