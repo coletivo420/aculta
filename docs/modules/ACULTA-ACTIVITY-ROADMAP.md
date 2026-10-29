@@ -69,6 +69,22 @@ release independente enquanto o módulo for apenas o adapter e sua fronteira.
   relaxar Entity Access; então cobrir boot sem Index e formulário/Metatag.
   Runtime e revisão visual continuam pendentes.
 
+### Tentativa controlada de carregar o Portal real — 2026-10-29
+
+- Baseline após retirar a alteração experimental: Unit 6/19 e Kernel 3/49 PASS;
+  Kernel registra 5 deprecações Core/Domain.
+- Tentativa de habilitar `file`, `aculta_image` e `aculta_portal` (com `key`)
+  na fixture passou pela ausência anterior de `file.usage`, mas o container
+  falhou na validação de `aculta_portal.registration_mail_policy`, que exige
+  `aculta_mailer.mailer`. A suíte parou antes de qualquer asserção (3 errors,
+  0 assertions). As linhas experimentais foram removidas.
+- O boot completo do Portal exige mais módulos da sua cadeia funcional. Não
+  substituímos serviços do Portal nem alteramos produção/testes para ocultar a
+  dependência. Próxima ação: definir uma fixture compartilhada de integração
+  Portal que carregue as dependências reais ou separar os serviços auxiliares
+  que hoje impedem o boot reduzido; então retomar o teste sem Index e Entity
+  Access. Activity permanece em Dev.
+
 ## Posterior
 
 Workflow editorial, campos, experiência de edição, migração de dados e relações

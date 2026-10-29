@@ -3,8 +3,9 @@ version: 0.1.0-dev.8
 state: Dev
 progress_note: >-
   Em 2026-10-29: baseline Unit + Kernel 9/68 PASS, com 5 depreciações Core/contrib.
-  A tentativa de carregar o módulo Portal real na fixture Kernel falhou antes das
-  asserções: aculta_portal.unused_file_cleaner requer file.usage, ausente no
-  harness. A alteração experimental do teste foi removida; produção inalterada.
+  Tentativa controlada com file/aculta_image/Portal/key falhou antes das asserções:
+  aculta_portal.registration_mail_policy requer aculta_mailer.mailer. A alteração
+  experimental foi removida; produção inalterada. É necessário fixture Portal
+  compartilhada ou separação arquitetural dos serviços para continuar.
   Runtime não homologado.
-next_phase: 'Corrigir o harness para instalar os módulos mínimos requeridos pelo serviço real do Portal, verificar Entity Access, boot sem Index e formulário/Metatag; repetir o gate completo. Runtime permanece pendente ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'
+next_phase: 'Preparar fixture de integração Portal que carregue dependências reais ou separar serviços auxiliares que impedem o boot reduzido; então verificar Entity Access, boot sem Index e formulário/Metatag. Runtime permanece pendente ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'
