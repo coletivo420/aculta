@@ -1,3 +1,39 @@
+## Retificação vinculante de escopo transversal - 2026-10-29
+
+**Esta seção substitui a numeração e o escopo restrito das fases F4-F7 na seção 4, as referências a F7 como gate final e qualquer interpretação de que Marley é a única experiência integrada.** O objetivo é reproduzir fielmente o OpenCulturas Next na **plataforma inteira Aculta Studio** antes da identidade própria. As seções anteriores continuam como histórico técnico, mas a matriz abaixo é a sequência executável vigente.
+
+### Catálogo dinâmico obrigatório
+
+F0 deve inventariar, pelo código em HEAD e não por uma lista fechada, todo registro de `StudioTab`, providers/registry, rotas, presenters, permissões, states e consumers do Studio. Cobertura inicial conhecida: **hub Studio, Marley, GanjaLab, WE Sativa, Conta privada e Perfil público**. Adicionar as demais experiências que forem descobertas, inclusive as opcionais; classificar cada uma como presente/condicional/planejada e não criar interface falsa para a última categoria.
+
+A navegação deve **derivar da disponibilidade/autorização do registry existente**, nunca de menu hardcoded com Marley/GanjaLab/WE Sativa. Uma experiência ausente não aparece; entrada permitida e link canônico são calculados pelo provider do módulo dono. Não transferir para o Studio a propriedade dos cursos, matrículas, Wiki, revisão, publicação, loja, notificações ou dados privados. GanjaLab segue o ACL LMS, WE Sativa segue o ACL Wiki e Marley segue contratos editoriais. **Conta, Perfil público e organização nunca são sinônimos.**
+
+### Etapa 1 - OpenCulturas Fidelity: microfases vigentes
+
+| Fase | Entrega | Gate |
+| --- | --- | --- |
+| **OCS-F0** | Inventário completo de registros, rotas, módulos opcionais, telas e estados; fonte exata `opcult`, licenças, screenshots e matriz de paridade por experiência | registrar todos os providers existentes e os planejados sem supor rotas; não alterar runtime |
+| **OCS-F1** | Tokens visuais Next escopados e referência tipográfica/espacial | não vazar estilos para outros purposes |
+| **OCS-F2** | Navegação contextual e layout interno guiados pelo registry/ACL | Institution Bar e Domain Header intactos; sem segunda navegação global |
+| **OCS-F3** | Variantes e consumidores SDC compartilhados; cards, grids, tabs, campos, vazios, estados e ações | reutilizar SDCs existentes, story e schema no mesmo commit |
+| **OCS-F4** | Hub Studio, cards de experiências disponíveis, onboarding e estados reais | matriz de acesso entre contas e testes de módulo opcional ausente |
+| **OCS-F5** | Marley: listagens/editor/formulários e estados de publicação | sem mudar ownership editorial |
+| **OCS-F6** | GanjaLab: cursos, turmas, biblioteca, painel, ações de aprendizagem que já existirem | matrícula/grants LMS, limite entre portal público e área do Studio, nenhuma ação simulada |
+| **OCS-F7** | WE Sativa: autoria Wiki, verbetes, revisão e acompanhamento realmente disponíveis | ACL de autoria versus moderação, sem confundir GanjaLab e Wiki |
+| **OCS-F8** | Conta privada e Perfil público como experiências separadas | S-R4/S-R5, `/conta-legada`, foto e privacidade A/B, sem confundir entidades |
+| **OCS-F9** | Outras experiências encontradas em F0, com fallback e ausência de módulo | matriz de paridade fechada para cada provider real; nenhuma aba inventada |
+| **OCS-F10** | Gate transversal de fidelidade, screenshots e testes completos | aprovação antes de começar OCS-A1; nenhum PASS sem execução real |
+
+**OCS-F10 substitui OCS-F7 como gate de entrada da Etapa 2.** As fases OCS-A1 a OCS-A4 continuam iguais em propósito, mas sua aplicação e regressão devem abranger **todas as experiências identificadas no F0**, não só hub/Marley/Conta/Perfil.
+
+### Matriz de aceite por experiência
+
+Para cada experiência inventariada exigir: provider e módulos donos, rota canônica, condição de disponibilidade, ACL para usuário anônimo/autenticado/editor/matriculado/autor/revisor quando aplicável, library CSS carregada, SDC/consumer, screenshots desktop/mobile/light/dark, teclado/no-JS, cache, estados vazios e limites de acesso cruzado. Para uma experiência indisponível no ambiente, marcar `DEFERRED` com motivo e evidência, não `PASS`. Um provider planejado sem código executável fica `PLANEJADO` e não bloqueia visual de funcionalidades existentes, mas não será simulado.
+
+### Protocolo de atualização documental
+
+Atualizar o catálogo e as stories do tema, matriz `visual-parity-matrix.md`, este plano, roadmap Studio e roadmap transversal por microfase. Se a integração exigir controller, access checker, router ou services, abrir handoff `Pede-A` com arquivo/contrato/teste, sem invadir a Frente A. Commits estritamente nos paths da Frente B e push fast-forward na PR #299. Se os gates de S-R4/S-R5 ou de F10 não forem homologados, documentar bloqueio e **não** avançar para a etapa Identity.
+
 # Plano de implementação visual - OpenCulturas Next → ACULTA Studio
 
 **Decisão do responsável, 2026-10-29:** duas etapas consecutivas. **Etapa 1: fidelidade visual mensurável ao OpenCulturas Next. Etapa 2: identidade própria ACULTA Studio sobre os mesmos contratos SDC.** Documento normativo de planejamento; nenhuma fase é considerada implementada por sua inclusão.
