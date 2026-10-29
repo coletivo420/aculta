@@ -44,6 +44,23 @@ nem promove SDCs. Componentes experimentais (`stat-counter`,
 `accessibility-badges`, `sponsor-logos`) só entram em uma tela após validar
 schema, story, consumer real e status no catálogo.
 
+A conferência dos nomes usados na matriz de paridade encontrou estes SDCs em
+`components/`; a existência do arquivo não confirma consumer da rota nem
+renderização autenticada:
+
+| Contrato citado na matriz | Schema encontrado | Uso candidato |
+|---|---|---|
+| `card` | `patterns/card/card.component.yml` | Hub, listagens e produtos com consumer real já existente; revisar variantes disponíveis. |
+| `context-header`, `context-tabs` | `patterns/context-header/context-header.component.yml`, `patterns/context-tabs/context-tabs.component.yml` | Cabeçalho e navegação contextual Studio/Conta; rota/consumer ainda requer validação. |
+| `content-section`, `content-grid`, `empty-state` | `patterns/content-section/content-section.component.yml`, `patterns/content-grid/content-grid.component.yml`, `feedback/empty-state/empty-state.component.yml` | Composição e estados vazios de telas/listas; validar owner dos dados e estado real. |
+| `wiki-entry` | `patterns/wiki-entry/wiki-entry.component.yml` | Lista/entrada Wiki; consumer e estado de revisão/moderação pendentes de homologação. |
+| `profile-editor`, `profile-identity`, `profile-bio`, `profile-social` | `patterns/profile-editor/profile-editor.component.yml`, `content/profile-identity/profile-identity.component.yml`, `content/profile-bio/profile-bio.component.yml`, `content/profile-social/profile-social.component.yml` | Reuso separado para edição privada e perfil público; grants, campos opt-in e cache precisam passar S-R4/S-R5. |
+
+Institution Bar e Domain Header são elementos do shell ACULTA, não substitutos
+para SDC de conteúdo Studio. Seus contratos e consumers continuam independentes
+desta lista.
+
+
 ## UI Styles
 
 O catálogo está em `aculta420.ui_styles.yml`; `css/components/ui-styles.css`
