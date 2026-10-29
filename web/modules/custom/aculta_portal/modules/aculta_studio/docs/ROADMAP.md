@@ -602,3 +602,9 @@ rotas Marley, Conta e Perfil em 320/1440 px. O modo escuro alterou os tokens
 computados e confirmou as media queries dark/reduced; o modo auto refletiu a
 preferência padrão clara do Firefox. Capturas e limites estão na matriz F0; não
 são aprovação de contraste WCAG nem cobertura global.
+
+Os modos claro, escuro + reduced motion e auto foram revalidados em toda a
+grade de nove viewports para Marley, Conta e Perfil (81 capturas). As media
+queries e tokens esperados foram observados em 27/27 capturas por modo, sem
+overflow medido. Isso aumenta a evidência das três rotas; não cobre todos os
+componentes/purposes, não aprova WCAG nem encerra F0/MF0.

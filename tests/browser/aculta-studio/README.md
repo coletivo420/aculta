@@ -224,3 +224,11 @@ escuro `#171513`/`#f4efe8`. Nenhum overflow horizontal foi medido nessas 18
 páginas. A captura escura Marley/320 foi inspecionada. Esta matriz limita-se a
 tokens e rotas/viewport indicados; não testa contraste completo, todos os
 componentes, todos os purposes nem conformidade WCAG.
+
+**Grade completa em 2026-10-29:** os três modos foram repetidos nos nove
+viewports do gate, em Marley, Conta e Perfil (27 capturas por modo, 81 ao todo).
+Light: dark/reduced `0/27`, tokens `#f2f7f0`/`#0c3c29`; dark + reduced:
+`27/27` em ambos, tokens `#171513`/`#f4efe8`; auto no perfil padrão Firefox:
+claro, `0/27` em ambos. Não houve overflow horizontal medido. Artefatos em
+`$SUITE_OUT/aculta-ocs-f0-mode-{light-full,dark-reduced-full,auto-full}-20261029/`.
+Isso estende o registro anterior de 320/1440; continua limitado a três rotas.

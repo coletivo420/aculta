@@ -242,3 +242,11 @@ foi inspecionado. O tema explícito foi aplicado apenas no atributo DOM dentro
 do browser temporário, sem salvar configuração/preferência Drupal. A evidência
 não substitui avaliação de contraste AA, demais states/components/purposes ou
 o gate visual completo.
+
+**Grade completa:** em 2026-10-29, as mesmas três rotas foram capturadas em
+nove viewports nos modos light, dark+reduced e auto: 81 PNG/JSON records.
+`matchMedia` confirmou os modos escuro/reduzido em 27/27 capturas; light e auto
+(perfil padrão do Firefox claro) em 0/27 para cada preferência. Os tokens
+continuaram coerentes por modo e não houve overflow medido em nenhuma captura.
+Artefatos ficam em `$SUITE_OUT/aculta-ocs-f0-mode-{light-full,dark-reduced-full,auto-full}-20261029/`.
+A cobertura permanece restrita a Marley, Conta e Perfil.

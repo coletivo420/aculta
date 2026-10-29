@@ -85,3 +85,13 @@ excedeu o viewport nas 18 capturas; Marley/320 escuro foi inspecionada. Os
 atributos foram aplicados somente no DOM temporário; nenhuma preferência
 Drupal foi salva. Isso não aprova contraste WCAG nem os demais componentes/
 purposes.
+
+### Atualização: modes na grade completa do viewport
+
+A execução expandida cobriu Marley, Conta e Perfil a 320/360/390/599/600/768/
+1024/1280/1440 em modo claro, escuro + reduced motion e automático (81
+capturas). Light e auto/default Firefox: `prefers-color-scheme: dark` e
+`prefers-reduced-motion: reduce` falsos em 27/27; modo dark/reduced: ambos
+verdadeiros em 27/27. Tokens claro/escuro permaneceram `#f2f7f0`/`#0c3c29` e
+`#171513`/`#f4efe8`, respectivamente. Nenhum overflow foi medido. Isto não
+substitui contraste AA, nem cobre outras rotas/purposes.
