@@ -1,3 +1,10 @@
+## Green Stash na frente visual Studio - correção 2026-10-29
+
+O escopo vigente é **OCS-F0-F11**, seguido por **OCS-A1-A4**, conforme [plano normativo](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md). A experiência independente **Green Stash** (Commerce) é expressamente incluída ao lado de Marley, GanjaLab, WE Sativa, Conta, Perfil e demais experiências descobertas. **F8 = Green Stash; F9 = Conta/Perfil; F10 = adicionais; F11 = gate de fidelidade**. Referências anteriores a F10 como gate final estão superadas.
+
+Para Green Stash, usar SDCs compartilhados com variantes adaptadas a operação comercial e navegação interna mobile-first, nunca duplicar shell, checkout ou UI administrativa. Não mostrar recursos ainda em plano como operacionais; ACL por loja, dados privados e ações de pagamento/estoque/envio permanecem em serviços Commerce. Capturas e testes devem incluir usuários de lojas distintas, sem JS, 320 px e modo escuro. Só após F11 homologada aplicar Aculta Identity em toda a plataforma, inclusive Green Stash.
+
+
 ## Correção da frente visual Studio - todas as experiências (2026-10-29)
 
 O roteiro OCS-F0-F7 resumido anteriormente foi **substituído** pela [sequência transversal OCS-F0-F10](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md), seguida de OCS-A1-A4. É obrigatório aplicar padrões OpenCulturas Next ao hub, Marley, GanjaLab, WE Sativa, Conta privada, Perfil público e demais experiências reais detectadas em F0. Não existe prioridade exclusiva Marley.
