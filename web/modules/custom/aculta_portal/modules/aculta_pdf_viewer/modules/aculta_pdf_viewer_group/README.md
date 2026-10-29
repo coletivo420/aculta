@@ -16,6 +16,16 @@ provider declara o purpose canônico `courses` para a revalidação transversal.
 Nenhum ID de arquivo, URI, URL ou conteúdo do documento é copiado. O serviço
 tagged não torna `aculta_index` uma dependência obrigatória do módulo.
 
+### Validação de acesso no Kernel — 2026-10-29
+
+O teste local `CourseDocumentAccessTest` foi executado no banco dedicado e
+parou antes das assertions porque a compilação da closure real do Portal
+requer `aculta_user.aculta_user_agreement_ledger`, ausente na fixture Kernel
+reduzida (1 erro / 0 assertions). Nenhuma regra de acesso foi alterada. O teste
+transversal do `aculta_index` cobre descoberta do provider e persistência da
+relação; a matriz de download atualizada sob purpose `courses` segue pendente
+até preparar a closure real completa, sem mocks.
+
 O boot/DI desse provider foi validado pelo teste transversal
 `ContentIndexOwnerIntegrationKernelTest` do Index (dev.161, 1 teste / 8
 assertions, 83 depreciações Core/contrib). No dev.162, o mesmo harness também
