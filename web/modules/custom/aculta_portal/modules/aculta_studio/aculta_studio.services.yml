@@ -20,6 +20,7 @@ services:
       - [addProvider, ['@aculta_studio.experience.ganjalab']]
       - [addProvider, ['@aculta_studio.experience.we_sativa']]
       - [addProvider, ['@aculta_studio.experience.mercado_pago_plans']]
+      - [addProvider, ['@aculta_studio.experience.salvos']]
   aculta_studio.experience.marley:
     class: Drupal\aculta_studio\Experience\MarleyExperienceProvider
     arguments: ['@aculta_studio.marley_presenter', '@current_user']
@@ -66,3 +67,15 @@ services:
   aculta_studio.we_sativa_controller:
     class: Drupal\aculta_studio\Controller\WeSativaController
     arguments: ['@aculta_studio.experience_manager', '@current_user']
+  aculta_studio.saved_content:
+    class: Drupal\aculta_studio\Saved\SavedContentService
+    arguments: ['@entity_type.manager', '@database', '@?flag']
+  aculta_studio.recommendations:
+    class: Drupal\aculta_studio\Recommendation\RecommendationService
+    arguments: ['@entity_type.manager', '@aculta_studio.saved_content', '@database', '@?aculta_index.relation_query', '@?aculta_index.query']
+  aculta_studio.experience.salvos:
+    class: Drupal\aculta_studio\Experience\SavedExperienceProvider
+    arguments: ['@aculta_studio.saved_content']
+  aculta_studio.saved_controller:
+    class: Drupal\aculta_studio\Controller\SavedContentController
+    arguments: ['@aculta_studio.saved_content', '@aculta_studio.recommendations', '@current_user', '@request_stack', '@date.formatter', '@string_translation']

@@ -263,3 +263,14 @@ aculta_studio.hub:
     _user_is_logged_in: 'TRUE'
   options:
     _aculta_domain_purpose: account
+
+aculta_studio.salvos:
+  path: /studio/salvos
+  defaults:
+    _controller: 'aculta_studio.saved_controller:page'
+    _title: 'Meus Salvos'
+  requirements:
+    _permission: access aculta portal
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
