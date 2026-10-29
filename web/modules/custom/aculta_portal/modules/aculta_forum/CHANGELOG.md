@@ -1,3 +1,13 @@
+## `0.1.0-dev.327` — provar indexação Search API após migração
+
+- `ForumCommentMigrationBatchKernelTest::testMigratedPostIsIndexedWithoutDuplicatesOnReplay`
+  executa a migração Comment→ForumPost, indexa o destino no Search API,
+  encontra o post pela busca e confirma que o replay não acrescenta resultado.
+- Teste focal 1/25 PASS (7 depreciações de Core/contrib); suíte Kernel
+  152/2.916 PASS (42 depreciações); Unit 186/1.337 PASS; combinado
+  338/4.253 PASS. PHP lint e PHPCS do arquivo alterado PASS.
+- Só `aculta_simpletest` foi usado; nenhuma migration ou escrita no Runtime.
+
 ## `0.1.0-dev.326` — isolar fixture de autoria histórica
 
 - `PublicForumLastActivityAuthorKernelTest` usa fixture dedicada para fornecer

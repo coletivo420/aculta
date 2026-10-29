@@ -67,8 +67,16 @@ foi isolada em `aculta_forum_last_activity_test`, fixture exclusiva que delega
 ao hook de produção a definição do campo-base `legacy_author`. O teste não cria
 mais field storage configurável para o mesmo campo. Kernel focal: 1/23 PASS;
 suíte Kernel: 151/2.886 PASS, 42 depreciações; Unit: 186/1.337 PASS; suíte
-combinada: 337/4.223 PASS. O importador Growroom ainda precisa de cenário
-idempotente em `aculta_simpletest`; migração de dados Runtime não foi executada.
+combinada: 337/4.223 PASS. A anotação anterior de falta de cenário idempotente
+foi corrigida em dev.327: `ForumCommentMigrationBatchKernelTest` já o cobre e
+passou novamente. Migração de dados Runtime não foi executada.
+
+**Search API após a migração (dev.327, 2026-10-29):** Kernel MariaDB executa a
+migração Comment→ForumPost, indexa o post pelo datasource
+`entity:aculta_forum_post`, localiza o resultado por assunto e reexecuta a
+migração sem criar duplicata no índice (1/25 assertions). Isso cobre indexação
+do destino; não substitui a auditoria da equivalência completa de embeds e
+marcadores. Nenhuma escrita foi feita no Runtime.
 
 **Ownership compartilhado vigente:** o Fórum mantém produtores, assinaturas e
 seleção de destinatários. Todos os consumers/adapters, agregação, persistência

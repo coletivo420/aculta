@@ -1,13 +1,13 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.326
+version: 0.1.0-dev.327
 state: Dev
 next_phase: >-
-  Completar a matriz sintética F-M5 para flags, denúncias, anexos, permalinks,
-  índices e marcadores de aviso; conferir cada item contra os Kernels já
-  existentes antes de implementar lacunas. Não executar migração de dados no
-  Runtime. Depois reavaliar as pendências F-M3/F-M6/F-M7, gates e revisão visual
-  antes de RC. RC.2 é histórico, sem candidato vigente.
-progress_note: "Dev.326: fixture exclusiva `aculta_forum_last_activity_test` fornece o campo-base histórico pelo hook de produção; Kernel focal 1/23 PASS. Suíte Kernel 151/2.886 PASS (42 depreciações), Unit 186/1.337 PASS; combinado 337/4.223 PASS. `ForumCommentMigrationBatchKernelTest::testBatchImportIsIdempotentAndContinues` reexecutado 1/26 PASS (5 depreciações de contrib); PHP lint/PHPCS focais PASS; índice de status PASS. Nenhuma escrita no Runtime. O cenário idempotente já existe; a matriz sintética F-M5 ainda requer auditoria de equivalência."
+  Provar preservação de embeds válidos de Media/Gallery na migração e auditar
+  marcadores de aviso. A decisão do responsável sobre o destino dos antigos
+  `/comment/{cid}` está em aberto; não implementar redirect ou aposentadoria
+  antes da resposta. Não executar migração de dados no Runtime. Depois reavaliar
+  F-M3/F-M6/F-M7, gates e revisão visual antes de RC. RC.2 é histórico.
+progress_note: "Dev.327: fixture de autoria histórica isolada; migração→Search API coberta no Kernel 1/25, com resultado encontrado uma vez após replay. Suíte Kernel 152/2.916 PASS (42 depreciações), Unit 186/1.337 PASS; combinado 338/4.253 PASS. PHP lint/PHPCS focais PASS; índice de status PASS. Nenhuma escrita no Runtime. A idempotência já era coberta; continua pendente a equivalência de embeds válidos e a decisão sobre permalinks históricos."
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; gate: scripts/validate-no-temporary-route-aliases.php.

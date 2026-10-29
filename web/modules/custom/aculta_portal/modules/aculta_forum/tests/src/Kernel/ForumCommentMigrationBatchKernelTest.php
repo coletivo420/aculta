@@ -21,6 +21,8 @@ use Drupal\migrate\Plugin\Migration;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
+use Drupal\search_api\Entity\Index;
+use Drupal\search_api\Entity\Server;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -53,6 +55,8 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     'language',
     'domain',
     'migrate',
+    'search_api',
+    'search_api_db',
     'workflows',
     'content_moderation',
     'aculta_forum_post_test',
@@ -113,9 +117,12 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installSchema('history', ['history']);
+    $this->installSchema('search_api', ['search_api_item']);
+    $this->installEntitySchema('search_api_task');
     $this->installConfig([
       'system', 'user', 'field', 'filter', 'text', 'node', 'comment',
-      'history', 'language', 'domain', 'migrate', 'workflows', 'content_moderation',
+      'history', 'language', 'domain', 'migrate', 'search_api', 'search_api_db',
+      'workflows', 'content_moderation',
     ]);
     ConfigurableLanguage::createFromLangcode('pt-br')->save();
 
@@ -182,6 +189,61 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     self::assertSame(MigrationInterface::RESULT_COMPLETED, $this->runMigration());
     self::assertSame(3, $this->postCount());
     self::assertNotNull($map->lookupDestinationIds(['cid' => (int) $late->id()]));
+  }
+
+  /**
+   * A migrated ForumPost is searchable once even after the migration replays.
+   */
+  public function testMigratedPostIsIndexedWithoutDuplicatesOnReplay(): void {
+    Server::create([
+      'id' => 'forum_migration_test',
+      'name' => 'Forum migration test',
+      'backend' => 'search_api_db',
+      'backend_config' => [
+        'database' => 'default:default',
+        'min_chars' => 1,
+        'matching' => 'words',
+        'phrase' => 'bigram',
+      ],
+      'status' => TRUE,
+    ])->save();
+    $index = Index::create([
+      'id' => 'forum_migration_test',
+      'name' => 'Forum migration test',
+      'status' => TRUE,
+      'server' => 'forum_migration_test',
+      'datasource_settings' => [
+        'entity:aculta_forum_post' => [
+          'bundles' => ['default' => FALSE, 'selected' => ['aculta_forum_post']],
+          'languages' => ['default' => TRUE, 'selected' => []],
+        ],
+      ],
+      'tracker_settings' => ['default' => []],
+      'field_settings' => [
+        'subject' => [
+          'label' => 'Subject',
+          'type' => 'text',
+          'datasource_id' => 'entity:aculta_forum_post',
+          'property_path' => 'subject',
+        ],
+      ],
+      'options' => ['index_directly' => FALSE, 'cron_limit' => -1],
+    ]);
+    $index->save();
+
+    $comment = $this->comment('migrationindexneedle');
+    self::assertSame(MigrationInterface::RESULT_COMPLETED, $this->runMigration(), implode("\n", $this->migrationMessages));
+    self::assertSame(1, $index->indexItems());
+    $results = $index->query()->keys('migrationindexneedle')->execute()->getResultItems();
+    self::assertCount(1, $results);
+    $post_id = (int) $this->migration()->getIdMap()
+      ->lookupDestinationIds(['cid' => (int) $comment->id()])[0][0];
+    $result = reset($results);
+    self::assertSame($post_id, (int) $result->getOriginalObject()->getValue()->id());
+
+    self::assertSame(MigrationInterface::RESULT_COMPLETED, $this->runMigration());
+    self::assertSame(0, $index->indexItems());
+    self::assertCount(1, $index->query()->keys('migrationindexneedle')->execute()->getResultItems());
   }
 
   /**
