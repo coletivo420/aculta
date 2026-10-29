@@ -96,6 +96,19 @@ release independente enquanto o módulo for apenas o adapter e sua fronteira.
   PASS. Isso confirma que a solução não é habilitar um único serviço e requer
   um harness compartilhado da cadeia de integração Portal.
 
+### Boot do adapter sem o consumidor Index — 2026-10-29
+
+- `ActivityWithoutIndexKernelTest` inicia o container com `aculta_activity`,
+  sem habilitar `aculta_index`; confirma que o serviço tagged
+  `aculta_activity.content_index_provider` está disponível e mantém o ID
+  `activity`.
+- PHPCS Drupal/DrupalPractice: 0 erros e 0 avisos após corrigir o baseline
+  pequeno do módulo. Unit: 6/19; Kernel: 4/53, com 5 depreciações upstream
+  de Domain/Core; PHP lint: 4/4.
+- Isso fecha somente o boot isolado do adapter sem o consumidor. Não substitui
+  o boot de integração com Portal real, nem cobre grants Portal, formulários,
+  Metatag ou Runtime conjunto. Activity permanece em Dev.
+
 ## Posterior
 
 Workflow editorial, campos, experiência de edição, migração de dados e relações

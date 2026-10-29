@@ -1,11 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.8
+version: 0.1.0-dev.9
 state: Dev
 progress_note: >-
-  Em 2026-10-29: baseline Unit + Kernel 9/68 PASS, com 5 depreciações Core/contrib.
-  Tentativas de fixture Portal com file/aculta_image/Portal/key/mailer/user e
-  path_alias falham antes das asserções porque o container exige também
-  aculta_mail_confirmer. Alterações experimentais foram removidas; produção
-  inalterada. O teste integrado requer fixture Portal compartilhada completa.
-  Runtime não homologado.
-next_phase: 'Preparar fixture de integração Portal que carregue dependências reais ou separar serviços auxiliares que impedem o boot reduzido; então verificar Entity Access, boot sem Index e formulário/Metatag. Runtime permanece pendente ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'
+  Dev.9: Unit 6/19 PASS; Kernel 4/53 PASS, com 5 depreciações Core/contrib. Novo Kernel confirma que o adapter tagged inicializa sem aculta_index. PHPCS Drupal/DrupalPractice 0 erros/0 avisos; PHP lint 4/4 PASS. Fixture com Portal real ainda exige a cadeia completa de dependências; Entity Access com grants Portal, formulário/Metatag e Runtime conjunto permanecem pendentes.
+next_phase: 'Preparar fixture compartilhada que carregue a cadeia real do Portal; então verificar Entity Access com grants, integração de formulário/Metatag e homologação conjunta ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'

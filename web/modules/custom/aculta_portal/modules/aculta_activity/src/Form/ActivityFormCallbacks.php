@@ -7,14 +7,18 @@ namespace Drupal\aculta_activity\Form;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
-/** Form validation callbacks owned by the Activity module. */
+/**
+ * Form validation callbacks owned by the Activity module.
+ */
 final class ActivityFormCallbacks {
 
   public function __construct(
     private readonly TranslationInterface $translation,
   ) {}
 
-  /** Validates the conditional Activity fields. */
+  /**
+   * Validates the conditional Activity fields.
+   */
   public function validateActivity(array &$form, FormStateInterface $formState): void {
     $node = $formState->getFormObject()->buildEntity($form, $formState);
     $mode = $node->get('field_modality')->value;

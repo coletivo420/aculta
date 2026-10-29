@@ -1,5 +1,11 @@
 # Changelog — ACULTA Activity
 
+## 0.1.0-dev.9 — boot sem Content Index e PHPCS (2026-10-29)
+
+- Kernel separado confirma que o serviço tagged de Activity inicializa sem `aculta_index` e preserva o ID `activity`.
+- PHPCS Drupal/DrupalPractice: 0 erros e 0 avisos; Unit: 6 testes/19 assertions; Kernel: 4 testes/53 assertions, com 5 depreciações Core/Domain; PHP lint: 4/4.
+- A fixture Kernel com a cadeia real do Portal, grants de Entity Access, formulário/Metatag e homologação Runtime continuam pendentes.
+
 ## 0.1.0-dev.8 — validar acesso Index no purpose canônico
 
 - Kernel adiciona Domains persistidos `main` e `courses`, usa o negotiator

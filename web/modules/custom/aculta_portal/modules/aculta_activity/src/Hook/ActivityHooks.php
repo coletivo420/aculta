@@ -11,7 +11,9 @@ use Drupal\node\NodeInterface;
 use Drupal\schema_metatag\SchemaMetatagManager;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Hooks and form presentation owned by the Activity module. */
+/**
+ * Hooks and form presentation owned by the Activity module.
+ */
 final class ActivityHooks {
 
   public function __construct(
@@ -19,7 +21,9 @@ final class ActivityHooks {
     private readonly TranslationInterface $translation,
   ) {}
 
-  /** Adds structured locations and removes empty image tags for activities. */
+  /**
+   * Adds structured locations and removes empty image tags for activities.
+   */
   #[Hook('metatags_alter')]
   public function metatagsAlter(array &$tags, array &$context): void {
     $node = ($context['entity'] ?? NULL) instanceof NodeInterface ? $context['entity'] : NULL;
@@ -77,7 +81,9 @@ final class ActivityHooks {
     }
   }
 
-  /** Groups Activity fields and attaches the owner module's validator. */
+  /**
+   * Groups Activity fields and attaches the owner module's validator.
+   */
   #[Hook('form_node_form_alter')]
   public function formNodeFormAlter(array &$form, FormStateInterface $formState, string $formId): void {
     $formObject = $formState->getFormObject();
@@ -90,7 +96,17 @@ final class ActivityHooks {
       'editorial_content' => [
         $this->translation->translate('Conteúdo'),
         -40,
-        ['title', 'body', 'field_summary', 'field_subtitle', 'field_editorial_category', 'field_tags', 'field_editorial_author', 'field_credits', 'field_references'],
+        [
+          'title',
+          'body',
+          'field_summary',
+          'field_subtitle',
+          'field_editorial_category',
+          'field_tags',
+          'field_editorial_author',
+          'field_credits',
+          'field_references',
+        ],
       ],
       'editorial_image' => [
         $this->translation->translate('Imagem'),
