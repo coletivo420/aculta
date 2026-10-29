@@ -536,3 +536,13 @@ mobile e mantém o offset real quando ela fica fixa no desktop. Testes Firefox
 visíveis de candidato autenticado, fallback sem JavaScript e homes anônimas dos
 dez purposes passaram; validação pós-publicação/cache e o gate transversal
 THEME-MF3 permanecem pendentes. Evidências e escopo em `mobile-first-audit.md`.
+
+### THEME-MF2 — sticky/offset da Institution Bar repetidos no HEAD servido (2026-10-29)
+
+Firefox ESR visível confirmou 99/99 checks anônimos nas dez homes em 320/390px e
+38/38 checks administrativos na MAIN em 320/390/1023/1024/1280px, sem CSS/JS
+override. A barra estabilizou sem salto e permaneceu sticky; em mobile respeita
+a top-bar enquanto visível e passa ao topo quando ela sai da viewport; no
+desktop acompanha o offset de 64px. Evidências e limites completos em
+[`mobile-first-audit.md`](mobile-first-audit.md). Esta validação focal não
+aprova THEME-MF3.

@@ -401,3 +401,24 @@ candidatos da worktree; validação integrada servida após cache rebuild é
 pendente. Esta correção pontual não aprova THEME-MF3 nem os gates completos de
 teclado, zoom, tema escuro, reduced motion, leitores de tela ou WCAG 2.2 AA.
 Teste reutilizável: `tests/browser/aculta-theme-mobile-first/institution-bar-scroll.py`.
+
+### THEME-MF2 — sticky e deslocamento no HEAD servido `487596bb0`
+
+No Firefox ESR visível 153.5.1esr/geckodriver 0.37.1, o CSS servido passou
+137/137 verificações, sem folhas candidatas injetadas. Anônimo: 99/99 nas dez
+homes (MAIN, Conta, SUPPORT, Revista, Wiki, Loja, Cursos, Fórum, Links e
+Eventos), larguras 320/390px, estabilização sem salto e Institution Bar
+`position: sticky` em `top: 0` durante scroll; nenhuma Toolbar administrativa.
+UID administrativo: 38/38 na MAIN em 320/390/1023/1024/1280px. Em mobile a
+barra acompanha a top-bar administrativa enquanto ela ainda ocupa a viewport e
+assume o topo quando a top-bar rola para fora; a mudança 1023→1024px preserva o
+offset esperado (0 na top-bar em fluxo; 64px quando fixa), inclusive ao
+redimensionar sem recarga. `maxTopChange` foi zero nos carregamentos medidos.
+
+Evidência: 15 PNGs anônimos e `results.json` em
+`/home/piradopirata/aculta-suite-out/institution-bar-scroll-anon-487596bb0/`;
+`results.json` admin em
+`/home/piradopirata/aculta-suite-out/institution-bar-scroll-admin-487596bb0/`.
+Esta rodada confirma o comportamento focal servido, mas não exercita outras
+rotas internas autenticadas, teclado completo, zoom real, contraste, dark mode,
+reduced motion ou WCAG 2.2 AA; portanto THEME-MF3 continua pendente.
