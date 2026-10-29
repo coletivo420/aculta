@@ -2,5 +2,8 @@
 version: 0.1.0-dev.1
 state: Dev
 progress_note: >-
-  D-15: agenda de turma restrita aos matriculados, com isolamento por turma coberto por testes (`df76938ae`).
-next_phase: 'Confirmar acesso por matrícula via `field_turma`, com teste de acesso negado para aluno de outra turma e para quem não tem matrícula. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_lms_agenda/docs/ROADMAP.md).'
+  D-15 revalidado: suíte do módulo 12/227 PASS, 92 depreciações Core/contrib;
+  PHP lint completo PASS. PHPCS Drupal: 20 erros e 14 warnings em 9 arquivos;
+  sem mudança de regra. Dependências `aculta_lms`, `aculta_events` e
+  `aculta_calendar` continuam Dev.
+next_phase: 'Resolver PHPCS, concluir revisão visual integrada e homologar Runtime depois que aculta_lms, aculta_events e aculta_calendar atingirem RC; ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_lms_agenda/docs/ROADMAP.md).'

@@ -18,3 +18,15 @@ A correção do sitemap usa o hook oficial de alteração de links do Simple Sit
 Uma regressão também confirma que a rota continua respeitando a permissão existente de prévia de rascunho em evento
 sem turma. Nenhum envio de e-mail, escrita externa ou dado real foi usado. Código: `1b932d29c`, `dbf2d94e8`,
 `3be40be71`.
+
+### Prontidão para RC — bloqueios registrados em 2026-10-28
+
+- D-15 revalidado nesta sessão: suíte do módulo com 12 testes / 227 assertions
+  PASS; 92 depreciações de Core/contrib. PHP lint de todos os arquivos do módulo
+  PASS.
+- PHPCS Drupal do módulo completo encontrou 20 erros e 14 warnings em 9
+  arquivos. A microfase anterior tinha PHPCS limpo apenas nos arquivos
+  alterados; não corrigimos o baseline neste gate vermelho.
+- `aculta_lms`, `aculta_events` e `aculta_calendar` permanecem em Dev e são
+  dependências diretas. A homologação visual integrada e Runtime aguardam esses
+  módulos e autorização operacional; manter `state: Dev`.
