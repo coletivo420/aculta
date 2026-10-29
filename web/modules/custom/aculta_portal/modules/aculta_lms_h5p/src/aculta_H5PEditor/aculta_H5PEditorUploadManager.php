@@ -33,6 +33,8 @@ final class aculta_H5PEditorUploadManager {
   /**
    * Stores one media upload and returns the JSON fields expected by H5P.
    *
+   * @param \Symfony\Component\HttpFoundation\File\UploadedFile $upload
+   *   The temporary upload received by the editor request.
    * @param array{type: string, mimes?: array, name?: string} $field
    *   The H5P semantic field describing the expected media.
    *
@@ -125,14 +127,14 @@ final class aculta_H5PEditorUploadManager {
   }
 
   /**
-   *
+   * Checks an extension against the effective H5P allowlist for the field.
    */
   private function extensionAllowedForType(string $extension, string $type): bool {
     return in_array($extension, explode(' ', $this->extensionsForType($type)), TRUE);
   }
 
   /**
-   *
+   * Builds the extension allowlist for the requested media type.
    */
   private function extensionsForType(string $type): string {
     $h5pWhitelist = preg_split('/\s+/', trim((string) $this->h5pFramework->getWhitelist(FALSE, \H5PCore::$defaultContentWhitelist, \H5PCore::$defaultLibraryWhitelistExtras))) ?: [];
@@ -145,7 +147,13 @@ final class aculta_H5PEditorUploadManager {
   }
 
   /**
+   * Returns a safe H5P editor upload error response.
    *
+   * @param string $message
+   *   The user-facing validation message.
+   *
+   * @return array{success: bool, message: string}
+   *   The H5P error object.
    */
   private function error(string $message): array {
     return ['success' => FALSE, 'message' => $message];
