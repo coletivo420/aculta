@@ -1,5 +1,15 @@
 # ACULTA Magazine — Roadmap de realinhamento arquitetural
 
+### Revalidação da fronteira módulo–tema — 2026-10-29
+
+O teste Unit da paleta editorial usa a classe de integração `field-name` do
+Core para comprovar que o formatter preserva classes preexistentes, sem listar
+tokens visuais do tema em seu atributo. Magazine Unit 27/110 e Kernel 12/500
+passaram no MariaDB `aculta_simpletest`, sem depreciações; o teste alterado
+passou em PHP lint e PHPCS Drupal/DrupalPractice. A verificação global da
+fronteira não aponta mais Magazine, mas segue vermelha por Calendar, Events e
+Maps. E8 ainda requer revisão visual; Magazine permanece Dev.
+
 ### Gestão de planos Mercado Pago pelo Studio (MP dev.79 / Studio dev.24)
 
 O hub do Studio oferece a entrada para gestão de planos do Mercado Pago apenas a

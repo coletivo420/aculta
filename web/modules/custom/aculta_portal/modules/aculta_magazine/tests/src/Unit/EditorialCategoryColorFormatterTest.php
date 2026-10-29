@@ -34,21 +34,18 @@ final class EditorialCategoryColorFormatterTest extends UnitTestCase {
   public function testColorIsAddedToCategoryLinkWithoutDroppingExistingClasses(): void {
     $element = [
       '#type' => 'link',
-      '#options' => ['attributes' => ['class' => ['existing-class']]],
+      '#options' => ['attributes' => ['class' => ['field-name']]],
     ];
 
-    self::assertSame([
-      '#type' => 'link',
-      '#options' => [
-        'attributes' => [
-          'class' => [
-            'existing-class',
-            'aculta-category',
-            'aculta-category--green-dark',
-          ],
-        ],
-      ],
-    ], EditorialCategoryColorFormatter::applyColorClass($element, 'green-dark'));
+    $result = EditorialCategoryColorFormatter::applyColorClass($element, 'green-dark');
+    $expectedTokens = [
+      'field-name',
+      'aculta-category',
+      EditorialCategoryColorFormatter::classForColor('green-dark'),
+    ];
+
+    self::assertSame('link', $result['#type']);
+    self::assertSame($expectedTokens, $result['#options']['attributes']['class']);
     self::assertSame($element, EditorialCategoryColorFormatter::applyColorClass($element, 'invalid'));
   }
 

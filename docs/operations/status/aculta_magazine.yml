@@ -1,9 +1,12 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.5.0-dev.10
+version: 0.5.0-dev.12
 state: Dev
 progress_note: >-
-  Publisher Magazine usa Messenger para transições de publicação, republicação,
-  atualização, envio para revisão e devolução; audiência documentada: autores e
-  coautores elegíveis, sem autoaviso. Unit 24/96 PASS (3 depreciações PHPUnit);
-  Kernel 12/500 PASS no MariaDB dedicado.
+  Dev.12: teste do formatador de cor preserva a classe de integração Core
+  `field-name`; paleta fechada mantida. Unit completo 27/110 e Kernel 12/500
+  PASS, sem depreciações; PHPCS e lint do arquivo alterado PASS. A fronteira
+  módulo–tema deixou de reportar Magazine; ainda falha em Calendar, Events e
+  Maps fora deste escopo. Base vigente .11 coloria rótulo de categoria, mas a
+  revisão visual segue pendente. Publishers usam Messenger para transições
+  editoriais; Runtime/SMTP, migração e revisão de permissões continuam pendentes.
 next_phase: 'MAG 0.5-B concluída; Content Index usa purpose canônico `magazine` e referência estruturada Revista→Gallery. A migração tem prévia e lotes; importar configuração, revisar NIDs com múltiplos embeds e homologar antes da execução. MAG 0.5-C não iniciada; pendências E-B.2-T, E-B.3, E-C e E-D no contrato Studio ([roadmap](docs/portal/STUDIO-MAGAZINE-ROADMAP.md)). MAG 0.5-H: publishers e Flag `seguir_publicacao` presentes; avisos de submissão e resultados editoriais implementados em dev.10. Runtime/SMTP ainda não homologados. Testar transições no Kernel e revisar permissões/configuração por purpose antes de RC.'
