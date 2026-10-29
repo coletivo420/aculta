@@ -1,3 +1,11 @@
+## DECISÃO GLOBAL - ACULTA420 inteiramente mobile-first (2026-10-29)
+
+**Regra obrigatória para todo o tema, sem exceção por purpose:** definir a apresentação base a partir do viewport móvel (mínimo 320 px), com aprimoramento progressivo desktop, preservando ordem DOM, foco, acessibilidade, semântica, shell institucional e Domain Header. Converter progressivamente os estilos, layouts, componentes SDC, formulários, navegação, mídia, tabelas, overlays, modal e UI Patterns do ACULTA420, não apenas CSS de Studio.
+
+**THEME-MF0:** inventariar bibliotecas, estilos, `@media`, `@container`, breakpoints, conflitos Bootstrap e overflow de **todas** as telas e purposes. **THEME-MF1:** tokens, base CSS e guidelines mobile-first. **THEME-MF2:** migrar por famílias com stories reais e correção de cascata; não trocar `max-width` por `min-width` mecanicamente. **THEME-MF3:** testar responsividade 320/360/390/599/600/768/1024/1280/1440, zoom 200/400%, teclado, no-JS, modo claro/escuro, reduced motion, formulários/mídia/tabelas e shell em Fórum, Wiki, Revista, Loja, Eventos, GanjaLab, Conta e demais purposes. Registrar bloqueios por proprietário.
+
+A fidelidade visual ao OpenCulturas Next (`opcult`) continua **escopada ao Studio**; a fundação mobile-first é **global**. O Green Stash é uma **área integrada ao Studio**, não uma experiência independente ou shell próprio; utiliza Commerce como owner funcional e componentes do tema. Dependência: THEME-MF3 aprovado antes de OCS-F11. [Plano vigente](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md).
+
 ## Green Stash na frente visual Studio - correção 2026-10-29
 
 O escopo vigente é **OCS-F0-F11**, seguido por **OCS-A1-A4**, conforme [plano normativo](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md). A experiência independente **Green Stash** (Commerce) é expressamente incluída ao lado de Marley, GanjaLab, WE Sativa, Conta, Perfil e demais experiências descobertas. **F8 = Green Stash; F9 = Conta/Perfil; F10 = adicionais; F11 = gate de fidelidade**. Referências anteriores a F10 como gate final estão superadas.
