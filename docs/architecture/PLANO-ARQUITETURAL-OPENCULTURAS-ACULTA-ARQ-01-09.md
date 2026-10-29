@@ -1,3 +1,18 @@
+## Diretriz aprovada para ARQ-08 - concluir Revista existente, sem novos conteúdos (2026-10-29)
+
+**Esta seção substitui ARQ-08/P2 onde sugeria novos modelos de imprensa, apoiadores, teasers ou metadados como entregas obrigatórias.** A Revista existente (`aculta_magazine`, **único bundle `revista`**) é a infraestrutura editorial. Já contém `field_subtitle` (chamada), `field_summary` (resumo), metatags, coautoria, discussões, Views e SDCs: **não duplicar entidades, bundles, campos, workflows ou módulos**. Os recursos OpenCulturas são apenas referências para fechar lacunas reais da Revista e de seus consumidores.
+
+| Microfase | Conclusão pendente | Gate |
+| --- | --- | --- |
+| **ARQ-08A** | verificar fluxo existente Studio Marley ↔ Magazine: criação, edição, revisão, aprovação, publicação, preview e listagens com permissões Core | testes de rota, revisão, dois usuários, estados, retornos e no-JS; sem editor paralelo |
+| **ARQ-08B** | completar apresentação de chamada, resumo, imagem e variantes já existentes, sem campos novos | stories SDC, cache, responsive mobile-first e só consumidores reais |
+| **ARQ-08C** | relacionamentos e descoberta de matérias por Views e `aculta_index`, paginação/ACL/caches | sem nova fonte de verdade ou catálogo editorial duplicado |
+| **ARQ-08D** | fechar autoria/coautoria, comentários contextuais, SEO e anexos existentes | formulários e exibição no Runtime, privacidade, A/B e testes browser |
+
+**Fora do escopo atual:** novo tipo de publicação, press mention, entidade de patrocinador, novos campos de chamada/resumo, novo dashboard editorial, motor de teaser e download próprios. Qualquer solicitação futura depende de consumidor real e decisão específica.
+
+Verificar código antes de implementar: `web/modules/custom/aculta_portal/modules/aculta_magazine/docs/STUDIO-INTEGRATION-CONTRACT.md`, `ARCHITECTURE.md`, `EDITORIAL-ACCESS-MATRIX.md`, `docs/portal/STUDIO-MAGAZINE-ROADMAP.md`. Respeitar ownership: Studio compõe; Magazine mantém negócio editorial; Core Form API, Entity Access e Content Moderation permanecem autoritativos. Microcommits exclusivos à PR #299, testes proporcionais e status comprovados.
+
 # Plano arquitetural de incorporação seletiva OpenCulturas 3.1.5 → ACULTA
 
 **Aprovação:** 2026-10-29. **Estado:** planejamento e auditoria estática; NÃO constitui implementação/homologação. **Execução:** frente arquitetural ARQ-01 a ARQ-09, separada das frentes de UI `OCS-F/A` e `THEME-MF`. Branch existente `refactor/opencultures-codigo-visual`, PR #299; sem criar outra PR, merge ou force-push.
