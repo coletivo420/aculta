@@ -1,3 +1,7 @@
+## Nova frente arquitetural OpenCulturas - ARQ-01 a ARQ-09 (2026-10-29)
+
+[Plano arquitetural de incorporação seletiva](../architecture/PLANO-ARQUITETURAL-OPENCULTURAS-ACULTA-ARQ-01-09.md). P0: segurança/privacidade de locais, escala de ocorrências, descoberta via Index/Search API; P1: modelos de eventos, organizações, moderação UGC e salvos; P2: editorial e Media; ARQ-09 integra gates de segurança, cache e Runtime. **Sem substituir** `aculta_index`, owners funcionais, contratos por purpose, Studio, Green Stash integrado ou a frente global mobile-first ACULTA420. Estado: planejamento, sem testes nesta atualização.
+
 # Roadmap do aculta_portal
 
 ## Inventário de helpers de imagem — 2026-10-29
