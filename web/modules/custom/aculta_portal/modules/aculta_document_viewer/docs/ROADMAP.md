@@ -246,6 +246,7 @@ separada, posterior ao deploy; nenhum deploy foi feito nesta fase.
 
 ### PV7 — selecionar readers por formato — 2026-10-29
 
+- Commit de implementação: `a9b2c8c2e82780e30b31a45b37ccd383161574b3`.
 - Implementado formatter composto `aculta_document_media` no display padrão do
   Media `document`. Ele mantém o leitor PDF existente e seleciona builders
   locais de DOCX e planilhas por MIME e extensão; preserva acesso explícito a
