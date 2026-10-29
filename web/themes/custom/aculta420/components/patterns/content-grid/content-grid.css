@@ -1,9 +1,30 @@
-/* Content grid pattern: layout only; items keep their own card styles. */
-.aculta-content-grid { display: grid; gap: 2rem 3rem; }
-.aculta-content-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.aculta-content-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-@media (max-width: 575.98px) {
-  .aculta-content-grid--2,
-  .aculta-content-grid--3 { grid-template-columns: minmax(0, 1fr); }
+/* Mobile-first content grid: cards retain their own presentation. */
+.aculta-content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 1.5rem;
+  column-gap: 1rem;
 }
+
+@media (min-width: 36rem) {
+  .aculta-content-grid {
+    column-gap: clamp(1.25rem, 3vw, 3rem);
+  }
+
+  .aculta-content-grid--2,
+  .aculta-content-grid--3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 62rem) {
+  .aculta-content-grid {
+    row-gap: 2rem;
+  }
+
+  .aculta-content-grid--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 .aculta-content-grid > * { min-width: 0; }

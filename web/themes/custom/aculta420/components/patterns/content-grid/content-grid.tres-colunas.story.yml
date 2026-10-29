@@ -1,5 +1,5 @@
 name: Três colunas
-description: Grade de três colunas com itens.
+description: Uma coluna no mobile, duas em telas médias e três a partir de 992 CSS px.
 component: aculta420:content-grid
 props:
   columns: 3

@@ -1,5 +1,5 @@
 name: Padrão
-description: Grade de dois colunas com itens.
+description: Uma coluna no mobile; duas colunas a partir de 576 CSS px.
 component: aculta420:content-grid
 props:
   columns: 2

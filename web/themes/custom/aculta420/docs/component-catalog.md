@@ -224,6 +224,13 @@ O acabamento inicial de fidelidade Studio reutiliza o SDC
 fornecidos pelo consumidor. Nenhum SDC, prop, slot ou story novo foi necessário
 nesta camada; a matriz de paridade e o inventário upstream registram os estados
 pendentes de captura.
+
+## THEME-MF2 — `patterns/content-grid`
+
+O SDC experimental tem consumidores reais em Marley, LMS e Wiki. Sua base
+responsiva agora empilha os itens no mobile, passa a duas colunas em 576px e a
+três em 992px; as stories declaram esse reflow. O aceite visual dos consumers
+continua pendente de Firefox no Runtime.
 # Retificação de escopo visual (2026-10-29)
 
 O inventário deste catálogo é uma referência histórica de componentes, não uma

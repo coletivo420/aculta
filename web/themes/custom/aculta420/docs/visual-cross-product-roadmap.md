@@ -445,3 +445,10 @@ do `opcult` 3.1.5, aplicados somente ao layout Studio de Marley. Nenhuma fonte
 ou folha upstream foi copiada. A tipografia aguarda licença verificável, e a
 captura visual pós-alteração está pendente; F1 segue parcial. Detalhes em
 `studio-visual/upstream-inventory.md`.
+
+### THEME-MF2 — `content-grid`
+
+Primeiro SDC global migrado: uma coluna na base mobile, duas colunas a partir
+de 576px e três a partir de 992px. Consumidores encontrados em Marley, LMS e
+Wiki; stories atualizadas. O Firefox pós-alteração desses consumidores está
+pendente, portanto MF2 permanece em andamento.

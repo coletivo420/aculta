@@ -240,3 +240,13 @@ Arquivos alterados: `css/tokens.css`, `css/base.css` e `css/layout.css`. Esta é
 uma fundação parcial: componentes específicos ainda precisam ser migrados e o
 resultado visual pós-alteração não foi capturado no checkout servido. Portanto
 MF1 está **em andamento**, MF2/MF3 seguem pendentes e nenhum gate é declarado.
+
+### THEME-MF2 — primeira família migrada: `content-grid`
+
+`patterns/content-grid` agora usa uma coluna como base, duas colunas a partir de
+36rem e até três a partir de 62rem. Assim o padrão de três itens deixa de forçar
+três cartões estreitos em telas médias. Consumidores verificados no código:
+Marley (`MarleyController`), painel LMS (`LearnerDashboardComposer`) e Wiki
+(`WikiContributorWorkspace`/`WikiContributionIntentController`). As três
+stories descrevem o reflow esperado. A captura Firefox pós-alteração está
+pendente; não se declara aprovação visual nem cobertura dos três consumidores.
