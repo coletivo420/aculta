@@ -1,3 +1,14 @@
+## `0.1.0-dev.325` — revisão visual do cartão de autoria histórica
+
+- Firefox ESR visível em X11 confirmou o cartão de autoria histórica em 1280,
+  390 e 320 px, sem overflow horizontal (7/7 verificações).
+- A página servida não tinha posts públicos com `LegacyAuthor`; o cartão foi
+  injetado somente no DOM para a revisão visual. A integração de dados reais
+  segue coberta pelo Kernel dev.324. Script e limites estão em
+  `tests/browser/aculta-forum/`.
+- Importador Growroom idempotente ainda não tem cenário dedicado em
+  `aculta_simpletest`; sem mudança em Runtime.
+
 ## `0.1.0-dev.323` — aplicar `-gr` no cartão da última atividade
 
 `PublicForumLastActivityAuthorHooks` agora usa o builder de autoria histórica

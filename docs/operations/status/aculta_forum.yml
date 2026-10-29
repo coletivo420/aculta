@@ -1,12 +1,11 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.324
+version: 0.1.0-dev.325
 state: Dev
 next_phase: >-
-  Revisar cartões da última atividade e autoria histórica no Firefox ESR depois
-  que o candidato puder ser servido; preparar teste idempotente do importador
-  Growroom dentro de Kernel/aculta_simpletest, sem criar banco efêmero. RC.2 é
-  histórico, sem candidato vigente.
-progress_note: "Dev.324: Kernel focal PublicForumLastActivityAuthor 1/23 PASS; confirma `buildLegacyForum`, sufixo -gr e cache da autoria histórica sem criar usuário. Suíte integral do Fórum 343/4223 PASS, 42 depreciações e 6 skips; PHP lint/PHPCS nos dois arquivos alterados PASS. Firefox ESR da autoria histórica ainda pendente após candidato servido. Importador Growroom idempotente em aculta_simpletest ainda não coberto. RC.2 reclassificado como histórico; sem Runtime write."
+  Preparar teste idempotente do importador Growroom dentro de
+  Kernel/aculta_simpletest, sem criar banco efêmero. RC.2 é histórico, sem
+  candidato vigente.
+progress_note: "Dev.325: Firefox ESR/X11 revisou o cartão histórico em viewports CSS 1280/390/320; 7/7 verificações, sem overflow. Fixture somente no DOM porque não há posts públicos com LegacyAuthor no Runtime. Kernel focal dev.324 1/23 PASS e suíte integral 343/4223 PASS, 42 depreciações e 6 skips; PHP lint/PHPCS dos arquivos de teste PASS. Importador Growroom idempotente em aculta_simpletest continua sem cenário dedicado. RC.2 histórico; nenhuma escrita no Runtime."
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; gate: scripts/validate-no-temporary-route-aliases.php.

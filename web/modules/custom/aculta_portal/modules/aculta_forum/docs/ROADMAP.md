@@ -34,6 +34,14 @@ evidência histórica e não é candidato de deploy; reexecutar testes e revisã
 visual/acessível antes de promover outro RC. Autores não recebem perfil/rota
 individual e o memorial coletivo mantém nomes sem sufixo.
 
+**Verificação dev.325 (2026-10-29):** Firefox ESR visível em X11 confirmou o
+cartão histórico em 1280/390/320 CSS px, 7/7 verificações, sem overflow
+horizontal. Como o Runtime não tem post público com `LegacyAuthor`, o cartão
+foi fixture sintética injetada apenas no DOM. A integração real da View continua
+coberta pelo Kernel registrado abaixo. Script, execução e limitação estão em
+`tests/browser/aculta-forum/`. O importador Growroom ainda precisa de cenário
+idempotente em `aculta_simpletest`.
+
 **Verificação dev.324 (2026-10-29):** `PublicForumLastActivityAuthorKernelTest`
 passa com 1/23, e a suíte completa passa com 343/4.223, 42 depreciações e 6
 skips. O teste cobre a integração da View, o cartão histórico `-gr` e cache da

@@ -1,5 +1,39 @@
 # Suíte visual X11 do ACULTA Forum
 
+## Cartão de autoria histórica na última atividade
+
+`last-activity-author-visual.mjs` abre uma página pública de tópicos em Firefox
+ESR visível com `DISPLAY=:0` e mede o cartão histórico do Fórum em 1280/390/320
+px. O Runtime atual não tem posts públicos ligados a `LegacyAuthor`; por isso o
+script injeta um cartão com nome de teste somente no DOM, sem gravar conteúdo,
+autenticar ou enviar formulários. O Kernel
+`PublicForumLastActivityAuthorKernelTest` verifica separadamente que a View
+real entrega o render array `author_growroom_historico`, com sufixo `-gr` e
+cache da autoria. As capturas e `results.json` ficam fora do repositório.
+
+Defina `SUITE_OUT` como diretório absoluto privado fora do checkout. Inicie o
+driver com `TMPDIR` dentro desse diretório para manter o perfil temporário do
+Firefox fora de `/mnt/disco1`:
+
+```sh
+export SUITE_OUT='/home/<usuario>/private/aculta/visual-tests/forum-last-activity'
+mkdir -p "$SUITE_OUT/profiles"
+chmod 700 "$SUITE_OUT" "$SUITE_OUT/profiles"
+DISPLAY=:0 TMPDIR="$SUITE_OUT/profiles" geckodriver --host 127.0.0.1 --port 4448
+```
+
+Em outro terminal da mesma sessão X11, execute:
+
+```sh
+DISPLAY=:0 GECKODRIVER='http://127.0.0.1:4448' SUITE_OUT="$SUITE_OUT" \
+node tests/browser/aculta-forum/last-activity-author-visual.mjs
+```
+
+O script aceita `SUITE_PAGE` apenas para caminhos públicos de listagem do Fórum
+em HTTPS e hosts de teste declarados pelo ACULTA Deployer. Não reproduz a
+consulta SQL/Views nem prova a ocorrência do cartão em dados reais, pois não há
+autoria histórica pública no Runtime de teste.
+
 `progress-visual.mjs` verifica a apresentação e a interação da barra de progresso
 em Firefox visível numa sessão X11. Ela usa uma página pública de publicação que
 já carrega a biblioteca de discussão e injeta seis mensagens **somente no DOM**.
