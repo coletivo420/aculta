@@ -17,10 +17,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * .ics pessoal: a agenda das turmas em que o aluno está matriculado, por link com token revogável.
+ * Exports the enrolled user's personal agenda as a revocable ICS feed.
  *
- * Gerar e revogar exigem login e token CSRF. O link de exportação leva só o token. Respostas são
- * privadas e sem indexação.
+ * Generating and revoking require login and a CSRF token. The export link
+ * contains only the token; responses are private and not indexed.
  */
 final class PersonalCalendarController extends ControllerBase {
 
@@ -62,8 +62,8 @@ final class PersonalCalendarController extends ControllerBase {
     $revogar = $this->urlComCsrf('aculta_lms_agenda.revogar');
     return [
       '#markup' => '<p>' . $this->t('O link do calendário mostra os prazos e eventos das turmas em que você está matriculado. Quem tem o link consegue ver essas datas, por isso não o compartilhe.') . '</p>'
-        . '<p><a href="' . Html::escape($gerar) . '">' . $this->t('Gerar link (substitui o anterior)') . '</a></p>'
-        . '<p><a href="' . Html::escape($revogar) . '">' . $this->t('Revogar link') . '</a></p>',
+      . '<p><a href="' . Html::escape($gerar) . '">' . $this->t('Gerar link (substitui o anterior)') . '</a></p>'
+      . '<p><a href="' . Html::escape($revogar) . '">' . $this->t('Revogar link') . '</a></p>',
       '#cache' => ['max-age' => 0],
     ];
   }
@@ -130,6 +130,7 @@ final class PersonalCalendarController extends ControllerBase {
    * Cabeçalhos de resposta privada.
    *
    * @return array<string, string>
+   *   Private response headers.
    */
   private function cabecalhosPrivados(string $tipo): array {
     return [

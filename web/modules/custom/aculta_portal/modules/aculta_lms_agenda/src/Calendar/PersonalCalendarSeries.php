@@ -5,18 +5,22 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms_agenda\Calendar;
 
 /**
- * Transforma entradas da agenda (AgendaEntriesProvider) em séries do IcsEventBuilder::buildMany().
+ * Transforms agenda entries into event series for the ICS builder.
  *
- * Chave estável por entrada (tipo, turma, título e início), para o UID não mudar entre exportações.
+ * Stable entry keys keep UIDs unchanged between exports.
  */
 final class PersonalCalendarSeries {
 
   /**
-   * Séries para o .ics, uma por entrada.
+   * Converts entries into one ICS event series each.
    *
    * @param array<int, array{tipo: string, titulo: string, inicio: \DateTimeImmutable, fim: \DateTimeImmutable, cancelada: bool, curso: int|string, turma: int|string}> $entradas
+   *   Agenda entries projected by the provider.
+   * @param \DateTimeImmutable $agora
+   *   Timestamp used for the generated ICS event.
    *
    * @return array<int, array<string, mixed>>
+   *   ICS event series.
    */
   public static function paraIcs(array $entradas, \DateTimeImmutable $agora): array {
     $series = [];

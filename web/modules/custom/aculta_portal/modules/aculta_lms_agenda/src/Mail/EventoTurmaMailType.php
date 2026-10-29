@@ -8,9 +8,10 @@ use Drupal\aculta_mailer\Type\MailTypeInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
- * E-mail "novo evento na turma": aviso aos matriculados quando um evento da turma é publicado.
+ * Email notice sent to group members when an event is published.
  *
- * Só variáveis declaradas são substituídas. URL e textos chegam prontos no contexto.
+ * Only declared variables are replaced; the context provides prepared text and
+ * URLs.
  */
 final class EventoTurmaMailType implements MailTypeInterface {
 
@@ -38,9 +39,18 @@ final class EventoTurmaMailType implements MailTypeInterface {
    */
   public function variables(): array {
     return [
-      'titulo' => ['label' => (string) $this->traducao->translate('Título do evento'), 'sample' => 'Oficina de cerâmica'],
-      'turma' => ['label' => (string) $this->traducao->translate('Turma'), 'sample' => 'Turma A'],
-      'url' => ['label' => (string) $this->traducao->translate('Endereço do evento'), 'sample' => 'https://eventos.exemplo.invalid/eventos/oficina-de-ceramica'],
+      'titulo' => [
+        'label' => (string) $this->traducao->translate('Título do evento'),
+        'sample' => 'Oficina de cerâmica',
+      ],
+      'turma' => [
+        'label' => (string) $this->traducao->translate('Turma'),
+        'sample' => 'Turma A',
+      ],
+      'url' => [
+        'label' => (string) $this->traducao->translate('Endereço do evento'),
+        'sample' => 'https://eventos.exemplo.invalid/eventos/oficina-de-ceramica',
+      ],
     ];
   }
 

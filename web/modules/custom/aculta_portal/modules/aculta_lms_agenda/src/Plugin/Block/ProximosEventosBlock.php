@@ -15,9 +15,10 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Painel de aprendizado: próximos prazos e eventos das turmas em que o usuário está matriculado.
+ * Learning panel with upcoming deadlines and events for the user's groups.
  *
- * Só aparece para quem está matriculado. Visitante ou usuário sem turma vê o bloco vazio.
+ * Only enrolled users see entries. Visitors and users without groups see an
+ * empty block.
  */
 #[Block(
   id: 'aculta_lms_agenda_proximos',

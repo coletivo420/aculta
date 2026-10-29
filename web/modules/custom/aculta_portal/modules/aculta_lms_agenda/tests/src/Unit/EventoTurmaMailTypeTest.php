@@ -11,7 +11,7 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Tipo de e-mail "evento de turma": variáveis declaradas, texto padrão e contexto completo.
+ * Group event email variables, default text, and message context.
  */
 #[Group('aculta_lms_agenda')]
 class EventoTurmaMailTypeTest extends UnitTestCase {
@@ -28,7 +28,7 @@ class EventoTurmaMailTypeTest extends UnitTestCase {
   /**
    * Identificador snake_case e as três variáveis do modelo.
    */
-  public function testIdEVariaveis(): void {
+  public function testIdAndVariables(): void {
     $tipo = $this->tipo();
     $this->assertSame('aculta_evento_turma', $tipo->id());
     $this->assertSame(['titulo', 'turma', 'url'], array_keys($tipo->variables()));

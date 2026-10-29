@@ -9,7 +9,7 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Entradas da agenda viram séries do .ics, com chave estável e prefixo de cancelado.
+ * Agenda entries become stable ICS series with cancellation labels.
  */
 #[Group('aculta_lms_agenda')]
 class PersonalCalendarSeriesTest extends UnitTestCase {
@@ -21,8 +21,24 @@ class PersonalCalendarSeriesTest extends UnitTestCase {
     $fuso = new \DateTimeZone('America/Sao_Paulo');
     $agora = new \DateTimeImmutable('2026-10-28 10:00', $fuso);
     $entradas = [
-      ['tipo' => 'prazo', 'titulo' => 'Prazo: Leitura', 'inicio' => new \DateTimeImmutable('2026-11-02 12:00', $fuso), 'fim' => new \DateTimeImmutable('2026-11-02 12:00', $fuso), 'cancelada' => FALSE, 'curso' => 1, 'turma' => 5],
-      ['tipo' => 'evento', 'titulo' => 'Roda', 'inicio' => new \DateTimeImmutable('2026-11-04 19:00', $fuso), 'fim' => new \DateTimeImmutable('2026-11-04 21:00', $fuso), 'cancelada' => TRUE, 'curso' => 1, 'turma' => 5],
+      [
+        'tipo' => 'prazo',
+        'titulo' => 'Prazo: Leitura',
+        'inicio' => new \DateTimeImmutable('2026-11-02 12:00', $fuso),
+        'fim' => new \DateTimeImmutable('2026-11-02 12:00', $fuso),
+        'cancelada' => FALSE,
+        'curso' => 1,
+        'turma' => 5,
+      ],
+      [
+        'tipo' => 'evento',
+        'titulo' => 'Roda',
+        'inicio' => new \DateTimeImmutable('2026-11-04 19:00', $fuso),
+        'fim' => new \DateTimeImmutable('2026-11-04 21:00', $fuso),
+        'cancelada' => TRUE,
+        'curso' => 1,
+        'turma' => 5,
+      ],
     ];
     $series = PersonalCalendarSeries::paraIcs($entradas, $agora);
 

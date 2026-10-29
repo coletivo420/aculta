@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms_agenda\Plugin\QueueWorker;
 
+use Drupal\user\UserInterface;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -18,9 +19,10 @@ use Drupal\user\UserDataInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Envia o aviso "novo evento na turma" aos matriculados, uma única vez por evento e por pessoa.
+ * Sends each enrolled user one notification for a newly published group event.
  *
- * Item da fila: ['event_id' => int]. Mesma regra de matrícula do painel: membro da turma publicada.
+ * Queue item: ['event_id' => int]. The user must belong to the published
+ * group, matching the agenda panel's enrollment rule.
  */
 #[QueueWorker(
   id: 'aculta_lms_agenda_evento_turma',
@@ -98,6 +100,7 @@ final class EventoTurmaNotificationWorker extends QueueWorkerBase implements Con
    * Contexto do modelo: só as três variáveis declaradas no tipo.
    *
    * @return array<string, string>
+   *   Values available to the mail template.
    */
   public static function contexto(string $titulo, string $turma, string $url): array {
     return ['titulo' => $titulo, 'turma' => $turma, 'url' => $url];
@@ -107,12 +110,13 @@ final class EventoTurmaNotificationWorker extends QueueWorkerBase implements Con
    * Usuários ativos matriculados na turma (membros, com conta ativa).
    *
    * @return \Drupal\user\UserInterface[]
+   *   Active user accounts enrolled in the group.
    */
   private function matriculados(object $turma): array {
     $contas = [];
     foreach (GroupMembership::loadByGroup($turma) as $membro) {
       $conta = $membro->getEntity();
-      if ($conta instanceof \Drupal\user\UserInterface && $conta->isActive()) {
+      if ($conta instanceof UserInterface && $conta->isActive()) {
         $contas[$conta->id()] = $conta;
       }
     }

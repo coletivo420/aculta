@@ -33,7 +33,7 @@ class PersonalCalendarTokensTest extends UnitTestCase {
   /**
    * O token gerado identifica o dono; o valor em claro não aparece no estado.
    */
-  public function testGeraEIdentificaODono(): void {
+  public function testGeneratesAndIdentifiesOwner(): void {
     $servico = $this->servico();
     $token = $servico->gerar(7);
     $this->assertSame(7, $servico->usuarioDoToken($token));
@@ -43,7 +43,7 @@ class PersonalCalendarTokensTest extends UnitTestCase {
   /**
    * Gerar outro token troca o anterior, que deixa de valer.
    */
-  public function testNovoTokenSubstituiOAnterior(): void {
+  public function testNewTokenReplacesPreviousToken(): void {
     $servico = $this->servico();
     $antigo = $servico->gerar(7);
     $novo = $servico->gerar(7);
@@ -54,7 +54,7 @@ class PersonalCalendarTokensTest extends UnitTestCase {
   /**
    * Revogar apaga o acesso na hora.
    */
-  public function testRevogarInvalidaOToken(): void {
+  public function testRevokingInvalidatesToken(): void {
     $servico = $this->servico();
     $token = $servico->gerar(7);
     $this->assertTrue($servico->revogar(7));
@@ -65,7 +65,7 @@ class PersonalCalendarTokensTest extends UnitTestCase {
   /**
    * O hash é determinístico e diferente do token.
    */
-  public function testHashNaoEOToken(): void {
+  public function testHashDiffersFromToken(): void {
     $this->assertSame(PersonalCalendarTokens::hash('abc'), PersonalCalendarTokens::hash('abc'));
     $this->assertNotSame('abc', PersonalCalendarTokens::hash('abc'));
   }

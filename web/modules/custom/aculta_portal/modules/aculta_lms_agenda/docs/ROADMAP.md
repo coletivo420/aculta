@@ -24,9 +24,12 @@ sem turma. Nenhum envio de e-mail, escrita externa ou dado real foi usado. Códi
 - D-15 revalidado nesta sessão: suíte do módulo com 12 testes / 227 assertions
   PASS; 92 depreciações de Core/contrib. PHP lint de todos os arquivos do módulo
   PASS.
-- PHPCS Drupal do módulo completo encontrou 20 erros e 14 warnings em 9
-  arquivos. A microfase anterior tinha PHPCS limpo apenas nos arquivos
-  alterados; não corrigimos o baseline neste gate vermelho.
+- PHPCS Drupal do módulo completo PASS após corrigir comentários, formatação de
+  arrays e nomes de métodos de teste. A alteração é somente de estilo e não muda
+  a regra de acesso D-15.
 - `aculta_lms`, `aculta_events` e `aculta_calendar` permanecem em Dev e são
   dependências diretas. A homologação visual integrada e Runtime aguardam esses
   módulos e autorização operacional; manter `state: Dev`.
+
+Verificação da correção de estilo em 2026-10-28: suíte completa 12 testes / 227
+assertions PASS, 92 depreciações; PHP lint 15/15 PASS; PHPCS Drupal PASS.

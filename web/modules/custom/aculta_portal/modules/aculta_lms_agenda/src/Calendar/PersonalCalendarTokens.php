@@ -9,8 +9,8 @@ use Drupal\Core\State\StateInterface;
 /**
  * Token revogável do .ics pessoal. Guarda só o hash do token, nunca o valor.
  *
- * Um usuário tem no máximo um token ativo. Gerar outro substitui o anterior; revogar apaga o registro,
- * e o link antigo deixa de funcionar na hora.
+ * One active token is allowed per user. Generating replaces it; revoking
+ * deletes it and immediately invalidates the old link.
  */
 final class PersonalCalendarTokens {
 
@@ -27,7 +27,7 @@ final class PersonalCalendarTokens {
   ) {}
 
   /**
-   * Gera um token novo para o usuário, substituindo o anterior, e devolve o valor (uma única vez).
+   * Generates a token, replacing the prior value, and returns it once.
    */
   public function gerar(int $uid): string {
     $token = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
@@ -77,6 +77,7 @@ final class PersonalCalendarTokens {
    * Mapa atual uid => hash.
    *
    * @return array<int, string>
+   *   User IDs mapped to token hashes.
    */
   private function mapa(): array {
     $mapa = $this->estado->get(self::ESTADO, []);
