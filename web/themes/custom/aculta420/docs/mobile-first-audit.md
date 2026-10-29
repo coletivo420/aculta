@@ -227,3 +227,16 @@ reduced motion, ausência de overflow em componentes não carregados ou gate MF3
 | Owner/caminho | Contrato e pergunta técnica | Aceite esperado |
 |---|---|---|
 | Domain/Portal; composição de `AccountShellBuilder`, tema `templates/layout/page.html.twig` e attachments por purpose | Confirmar por que `.aculta-header` aparece somente em MAIN e Wiki nos oito propósitos públicos restantes, embora Institution Bar esteja presente em todos; confirmar se há intentionally hidden/unavailable state ou composição ausente. | Resposta/patch do owner sem duplicar shell; teste Firefox por purpose confirmando Institution Bar e Domain Header conforme decisão, incluindo ACCOUNT anônimo/autenticado e navegação canônica. |
+
+## THEME-MF1 — primeira camada de fundação global
+
+No commit desta alteração, a fundação compartilhada adota gutter de 1rem,
+espaçamento vertical compacto e escala H1 fluida desde 320 CSS px. A partir de
+48rem, os gutters e espaços principais crescem progressivamente. O container
+continua limitado a 80rem; o max-width existente de 1280px foi promovido a
+token sem mudar seu valor. As regras preservam a ordem DOM e o layout Bootstrap.
+
+Arquivos alterados: `css/tokens.css`, `css/base.css` e `css/layout.css`. Esta é
+uma fundação parcial: componentes específicos ainda precisam ser migrados e o
+resultado visual pós-alteração não foi capturado no checkout servido. Portanto
+MF1 está **em andamento**, MF2/MF3 seguem pendentes e nenhum gate é declarado.

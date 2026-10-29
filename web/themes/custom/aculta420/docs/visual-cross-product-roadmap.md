@@ -428,3 +428,12 @@ multidomínio precisa de decisão/validação do owner em oito purposes. ACCOUNT
 redirecionou ao login; Revista mostrou corpo vazio; a página MAIN divide a
 palavra longa do título em 320 px. Conteúdo autenticado, formulários e fluxos
 funcionais não foram exercitados. Detalhes e Pede-A em `mobile-first-audit.md`.
+
+### THEME-MF1 — fundação global inicial
+
+Adicionados tokens mobile-first para gutter, largura máxima e espaçamento
+vertical, com aprimoramento a partir de 48rem; o container mantém o limite
+existente de 1280px. A escala H1 agora começa em 2rem em 320px para reduzir
+quebras forçadas de títulos longos. Esta fundação estática ainda não foi
+renderizada no checkout servido e não conclui MF1 nem inicia MF2. Ver
+`mobile-first-audit.md`.

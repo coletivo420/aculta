@@ -87,6 +87,11 @@
   --aculta-border: var(--aculta-border-default);
   --aculta-control-border: var(--aculta-border-strong);
   --aculta-space-section: clamp(2.25rem, 4.5vw, 4.25rem);
+  /* Mobile is the baseline; wider layouts gain room through progressive enhancement. */
+  --aculta-page-gutter: 1rem;
+  --aculta-page-content-max: 80rem;
+  --aculta-main-space-block: 1.5rem;
+  --aculta-main-space-block-compact: 0.5rem;
   --aculta-focus: var(--aculta-focus-ring);
   --aculta-motion-fast: 180ms;
   --aculta-motion-quick: 150ms;
