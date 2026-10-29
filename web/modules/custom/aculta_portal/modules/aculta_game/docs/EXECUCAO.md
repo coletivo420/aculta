@@ -367,6 +367,10 @@ nenhum código ou plugin GamiPress foi instalado ou copiado.
 - E-mail é enfileirado no evento de nova concessão. A pessoa pode desativá-lo em
   suas preferências de conquistas. Worker valida concessão ativa, conta e envio
   idempotente antes de chamar Mail API. Não executamos cron nem enviamos e-mail real.
+- A correlação agora é UUID v5 estável por ID da concessão. Reprocessar o mesmo
+  item mantém a identidade idempotente no Mailer inclusive se o transporte aceitou
+  a mensagem antes de o worker gravar sua confirmação local. Unit Game: 14 testes /
+  77 assertions PASS; o transporte do ambiente continua sem validação ponta a ponta.
 
 ### Verificação no Homelab
 

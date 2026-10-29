@@ -1,10 +1,10 @@
 # ACULTA Game — conquistas e missões
 
-Versão atual: `0.1.0-dev.17` — primeira publicação de Comment ACULTA vigente ou
+Versão atual: `0.1.0-dev.18` — primeira publicação de Comment ACULTA vigente ou
 de `ForumPost` público pode conceder uma vez a conquista existente; migração,
 sincronização, autoria histórica e outros contextos permanecem inelegíveis.
 Os avisos de conquista usam o publisher/centro central do Messenger, sem storage
-paralelo no Game. Unit Game passou 12 testes / 73 assertions; o Kernel
+paralelo no Game. Unit Game passou 14 testes / 77 assertions; o Kernel
 Game/Messenger passou 3/30 para revalidação e migração de avisos.
 `BadgeEvaluationHooks::forumPostSave` tem teste focal que executa o hook, a
 policy e o `BadgeService` reais contra um ForumPost-shaped test double e

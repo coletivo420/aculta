@@ -6,7 +6,7 @@ namespace Drupal\aculta_game\Plugin\QueueWorker;
 
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_mailer\Message\MailMessage;
-use Drupal\Component\Uuid\UuidInterface;
+use Drupal\aculta_mailer\Message\MessageIdFactory;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\Attribute\QueueWorker;
@@ -18,7 +18,9 @@ use Drupal\user\UserDataInterface;
 use Drupal\aculta_user\Badge\BadgeService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Delivers opted-in email notices after the award has been committed. */
+/**
+ * Delivers opted-in email notices after the award has been committed.
+ */
 #[QueueWorker(
   id: 'aculta_game_achievement_email',
   title: new TranslatableMarkup('Avisos de conquistas por e-mail'),
@@ -33,7 +35,6 @@ final class AchievementEmailWorker extends QueueWorkerBase implements ContainerF
     private readonly EntityTypeManagerInterface $entities,
     private readonly UserDataInterface $userData,
     private readonly AcultaMailerInterface $mailer,
-    private readonly UuidInterface $uuid,
     private readonly DomainPurposeManager $domainPurpose,
     private readonly LockBackendInterface $lock,
     private readonly BadgeService $badges,
@@ -41,18 +42,23 @@ final class AchievementEmailWorker extends QueueWorkerBase implements ContainerF
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
+  /**
+   * Constructs the queue worker with the delivery and award services.
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static($configuration, $plugin_id, $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('user.data'),
       $container->get('aculta_mailer.mailer'),
-      $container->get('uuid'),
       $container->get('aculta_portal.domain_purpose'),
       $container->get('lock.persistent'),
       $container->get('aculta_user.badge_service'),
     );
   }
 
+  /**
+   * Sends one opted-in email for an active award.
+   */
   public function processItem($data): void {
     $awardId = is_array($data) ? filter_var($data['award_id'] ?? NULL, FILTER_VALIDATE_INT) : FALSE;
     if ($awardId === FALSE || $awardId < 1) {
@@ -89,7 +95,7 @@ final class AchievementEmailWorker extends QueueWorkerBase implements ContainerF
         (string) $account->getEmail(),
         $account->getPreferredLangcode() ?: 'und',
         ['label' => $definition['label'], 'url' => $url->toString()],
-        $this->uuid->generate(),
+        self::correlationIdForAward($awardId),
       );
       if (!$this->mailer->send($message)) {
         throw new \RuntimeException('O sistema de e-mail não confirmou o envio do aviso de conquista.');
@@ -102,6 +108,22 @@ final class AchievementEmailWorker extends QueueWorkerBase implements ContainerF
     }
   }
 
+  /**
+   * Returns the stable idempotency correlation for one award email.
+   *
+   * The opaque queue record ID is the identity of this logical delivery. It
+   * contains no recipient or message content and remains stable across retries.
+   */
+  public static function correlationIdForAward(int $awardId): string {
+    if ($awardId < 1) {
+      throw new \InvalidArgumentException('A concessão precisa ter um ID positivo.');
+    }
+    return MessageIdFactory::correlationIdFor('aculta_game:achievement_email:award:' . $awardId);
+  }
+
+  /**
+   * Checks the account's current email-notification preference.
+   */
   private function emailEnabled(int $uid): bool {
     $preferences = $this->userData->get('aculta_user', $uid, 'game_achievement_display');
     return !is_array($preferences) || !array_key_exists('email_notifications', $preferences) || (bool) $preferences['email_notifications'];

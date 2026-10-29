@@ -1,3 +1,8 @@
+## 0.1.0-dev.18 — idempotência das tentativas de e-mail — 2026-10-28
+
+- O worker usa correlação UUID v5 estável por concessão. Se o transporte aceitar o e-mail e o processo falhar antes de gravar a confirmação local, a repetição mantém a mesma identidade e o Mailer pode deduplicá-la. A chave contém apenas o ID opaco da concessão, sem destinatário ou conteúdo.
+- `AchievementEmailWorkerTest` verifica estabilidade, unicidade por concessão e rejeição de ID inválido. Suíte Unit Game: 14 testes / 77 assertions PASS. Não executamos cron nem enviamos e-mail real; entrega no transporte do ambiente continua não verificada.
+
 ## Teste focal do gatilho ForumPost (2026-10-26)
 
 - `BadgeEvaluationHooksTest` invoca `forumPostSave` para uma publicação elegível
