@@ -81,10 +81,10 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | `melhorenvio_production_client_id` | `MELHORENVIO_PRODUCTION_CLIENT_ID` | Produção | Não, identificador do cliente | plain |
 | `melhorenvio_production_client_secret` | `MELHORENVIO_PRODUCTION_CLIENT_SECRET` | Produção | Sim | plain |
 | `aculta_melhorenvio_token_encryption` | `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` | Produção e testes (obrigatória nos dois) | Sim, chave de cifra do token OAuth | plain |
-| `osm_test_client_id` | `OSM_TEST_CLIENT_ID` | Testes | Não, ID da aplicação OAuth2 de desenvolvimento do OSM | plain |
-| `osm_test_client_secret` | `OSM_TEST_CLIENT_SECRET` | Testes | Sim, segredo da aplicação OAuth2 de desenvolvimento do OSM | plain |
-| `osm_production_client_id` | `OSM_PRODUCTION_CLIENT_ID` | Produção e testes | Não, ID da aplicação OAuth2 da API ativa do OSM; no teste só é resolvido com `aculta_openstreetmap_environment=production` (D-45) | plain |
-| `osm_production_client_secret` | `OSM_PRODUCTION_CLIENT_SECRET` | Produção e testes | Sim, segredo da aplicação OAuth2 da API ativa; em teste fica somente em `secrets/aculta.secrets.env` (D-45) | plain |
+| `osm_test_client_id` | `OSM_TEST_CLIENT_ID` | Testes (não provisionada; ver exceção do OSM) | Não, ID da aplicação OAuth2 de desenvolvimento do OSM | plain |
+| `osm_test_client_secret` | `OSM_TEST_CLIENT_SECRET` | Testes (não provisionada; ver exceção do OSM) | Sim, segredo da aplicação OAuth2 de desenvolvimento do OSM | plain |
+| `osm_production_client_id` | `OSM_PRODUCTION_CLIENT_ID` | Produção, testes e desenvolvimento (credencial única do OSM) | Não, ID da aplicação OAuth2 da API ativa; no teste só é resolvido com `aculta_openstreetmap_environment=production` (D-45) | plain |
+| `osm_production_client_secret` | `OSM_PRODUCTION_CLIENT_SECRET` | Produção, testes e desenvolvimento (credencial única do OSM) | Sim, segredo da aplicação OAuth2 da API ativa; em teste fica somente em `secrets/aculta.secrets.env` (D-45) | plain |
 | `aculta_osm_token_encryption` | `ACULTA_OSM_TOKEN_ENCRYPTION_KEY` | Produção e testes | Sim, chave hex de 64 caracteres para cifrar tokens OAuth2 no State | plain |
 | `smtp_password` | `SMTP_PASSWORD` | Produção e testes | Sim, senha do envio SMTP do domínio | plain |
 
@@ -94,6 +94,15 @@ Pela D-45, o checkout de teste pode selecionar explicitamente a API ativa do OSM
 nesse modo as credenciais de cliente OAuth de produção ficam no arquivo de segredos
 do teste e o token do usuário continua cifrado no State do banco de teste. Sem a
 configuração explícita, o site de teste continua usando a API de desenvolvimento.
+
+**Exceção do OSM (2026-10-29):** uma única aplicação OAuth do OpenStreetMap atende
+teste, desenvolvimento e produção. O arquivo de segredos do servidor traz somente
+`OSM_PRODUCTION_CLIENT_ID`, `OSM_PRODUCTION_CLIENT_SECRET` e
+`ACULTA_OSM_TOKEN_ENCRYPTION_KEY`; `OSM_TEST_*` não está provisionada. A sonda de
+2026-10-29 confirmou `site=test`, ambiente efetivo `production` (D-45), credencial
+de produção presente e ausência de token OAuth. A autorização continua exigindo
+login humano no OSM e cada escrita no mapa público exige revisão e confirmação
+explícita. Nenhum valor é versionado.
 O allowlist do loader do Runtime também deve reconhecer cada variável do contrato,
 inclusive as credenciais opcionais; o gate `validate-secrets-contract.php`
 verifica essa correspondência.

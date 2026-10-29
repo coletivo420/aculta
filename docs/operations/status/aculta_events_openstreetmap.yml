@@ -7,8 +7,12 @@ progress_note: >-
   E10-B: busca por tipo e ID, seleção e revisão dos dados, gravação do local e
   envio só das diferenças após confirmação. Kernel de segurança do OAuth 4
   testes/53 assertions PASS no worktree (12 depreciações), cobrindo rotas,
-  ambiente, credenciais ausentes e armazenamento cifrado. As credenciais do app
-  estão em secrets (client id/secret e chave de cifra), mas não há login de conta
-  OSM disponível; por D-45 cada escrita real no mapa público exige revisão e
-  confirmação explícita. Nenhuma chamada externa ou envio foi feito.
-next_phase: 'Obter conta OSM de teste e confirmar previamente cada escrita real (D-45); depois testar envio de dados fictícios no servidor de desenvolvimento e revisar termos ODbL e atribuição antes de qualquer envio fora do teste.'
+  ambiente, credenciais ausentes e armazenamento cifrado. Sonda no Runtime em
+  2026-10-29: site=test, ambiente OSM efetivo=production (D-45),
+  OSM_PRODUCTION_CLIENT_ID/SECRET e a chave de cifra presentes, OSM_TEST_*
+  ausente e nenhum token OAuth conectado. A credencial única de produção
+  compartilhada por teste, desenvolvimento e produção é a exceção registrada em
+  docs/operations/SECRETS.md. A autorização OAuth ainda exige login humano no
+  OSM e cada escrita no mapa público exige revisão e confirmação explícita.
+  Nenhuma chamada externa ou envio foi feito.
+next_phase: 'Concluir a autorização OAuth com login humano no OSM (a credencial única de produção já está em secrets) e confirmar previamente cada escrita real (D-45); depois testar envio de dados fictícios no servidor de desenvolvimento e revisar termos ODbL e atribuição antes de qualquer envio fora do teste.'

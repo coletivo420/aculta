@@ -23,6 +23,21 @@ Páginas da integração: `/integracoes/openstreetmap/configuracao` e
 `/integracoes/openstreetmap/importar`. OAuth usa `/autorizar` e `/retorno`, em popup,
 com `no_cache`. Todas exigem `administer aculta events`.
 
+## Credenciais e ambientes (exceção única)
+
+Uma única aplicação OAuth do OpenStreetMap atende teste, desenvolvimento e
+produção. Em `secrets/` ficam `OSM_PRODUCTION_CLIENT_ID`,
+`OSM_PRODUCTION_CLIENT_SECRET` e `ACULTA_OSM_TOKEN_ENCRYPTION_KEY`; as variáveis
+`OSM_TEST_*` do contrato não estão provisionadas. O site de teste só resolve a
+credencial de produção com `aculta_openstreetmap_environment=production` (D-45);
+sem essa seleção usa a API de desenvolvimento e não tem credencial.
+
+O token do usuário é cifrado no State por ambiente. A sonda de 2026-10-29
+confirmou `site=test`, ambiente efetivo `production`, credencial presente e
+nenhum token conectado: a autorização OAuth ainda exige login humano no OSM. Cada
+escrita no mapa público exige revisão e confirmação explícita (D-45). Nenhum
+valor de credencial é versionado nem exibido em log.
+
 ## Testes
 
 Kernel: `tests/src/Kernel/OpenStreetMapOAuthSafetyKernelTest.php` cobre permissão de rotas,
