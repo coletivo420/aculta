@@ -365,3 +365,9 @@ migração ou alteração de Runtime foi executada.
   outro post.
 - Testes: revisões 3/39; suíte Kernel do Fórum 126/2.433; PHPCS limpo.
 
+## `0.1.0-dev.324` — cobrir autoria histórica da última atividade
+
+- Novo Kernel focal executa a View de tópicos e confirma que a resposta mais recente com `legacy_author` usa `buildLegacyForum`, apresenta `-gr` e propaga a tag de cache da autoria. A fixture registra a entidade histórica real sem instalar toda a cadeia de serviços do módulo User; nenhum usuário é criado para representar autor legado.
+- Kernel focal 1 teste / 23 assertions PASS; suíte completa do Fórum 343 testes / 4.223 assertions PASS, 42 depreciações e 6 skips. PHP lint e PHPCS Drupal/DrupalPractice dos arquivos novos PASS.
+- A revisão Firefox ESR segue pendente até servir o candidato. Nenhum dado Runtime foi alterado.
+

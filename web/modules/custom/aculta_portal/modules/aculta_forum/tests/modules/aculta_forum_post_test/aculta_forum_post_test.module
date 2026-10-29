@@ -1,0 +1,29 @@
+<?php
+
+use Drupal\Core\Entity\ContentEntityType;
+use Drupal\aculta_user\Entity\LegacyAuthor;
+use Drupal\aculta_user\Entity\LegacyAuthorAccessControlHandler;
+
+/**
+ * Implements hook_entity_type_build().
+ *
+ * Registers the production legacy-author entity class in the focused Forum
+ * Kernel fixture without enabling the full ACULTA User service graph.
+ */
+function aculta_forum_post_test_entity_type_build(array &$entity_types): void {
+  $entity_types['aculta_legado_autor'] = new ContentEntityType([
+    'id' => 'aculta_legado_autor',
+    'class' => LegacyAuthor::class,
+    'provider' => 'aculta_forum_post_test',
+    'entity_keys' => [
+      'id' => 'id',
+      'uuid' => 'uuid',
+      'label' => 'nome',
+    ],
+    'handlers' => [
+      'access' => LegacyAuthorAccessControlHandler::class,
+    ],
+    'base_table' => 'aculta_legado_autor',
+    'internal' => TRUE,
+  ]);
+}

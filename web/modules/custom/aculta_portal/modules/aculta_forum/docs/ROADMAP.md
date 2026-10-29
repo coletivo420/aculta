@@ -34,6 +34,14 @@ evidência histórica e não é candidato de deploy; reexecutar testes e revisã
 visual/acessível antes de promover outro RC. Autores não recebem perfil/rota
 individual e o memorial coletivo mantém nomes sem sufixo.
 
+**Verificação dev.324 (2026-10-29):** `PublicForumLastActivityAuthorKernelTest`
+passa com 1/23, e a suíte completa passa com 343/4.223, 42 depreciações e 6
+skips. O teste cobre a integração da View, o cartão histórico `-gr` e cache da
+entidade. PHPCS e PHP lint dos arquivos de teste passam. A revisão Firefox ESR
+permanece necessária quando o candidato estiver servido. O importador Growroom
+precisa de cenário idempotente dentro do banco `aculta_simpletest`; não criar
+banco separado para o ensaio.
+
 **Ownership compartilhado vigente:** o Fórum mantém produtores, assinaturas e
 seleção de destinatários. Todos os consumers/adapters, agregação, persistência
 compartilhada, preferências, filas, workers e coordenação dos modos de e-mail
