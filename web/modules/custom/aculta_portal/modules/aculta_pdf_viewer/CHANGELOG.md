@@ -2,13 +2,16 @@
 
 ## 0.1.0-dev.41 — revalidar dependências do harness PV7 (2026-10-29)
 
-- Tentativa de carregar o ledger real adicionou `aculta_user` e revelou a
-  dependência Core `path_alias.manager`. Com `path_alias`, Portal e Image reais,
-  o container avançou e parou em `key.repository` (`aculta_portal.turnstile_toggle`):
-  Kernel focal 4 erros / 0 assertions.
+- Nova tentativa carregou o ledger real e ampliou o harness com os módulos
+  reais de User, Mailer, confirmação, Commerce, Domain e LMS. O container
+  avançou, mas parou em `commerce_price.currency_formatter`, requerido por
+  `aculta_portal.recurring_donations_report`: 1 erro / 0 assertions / 2
+  depreciações no teste focal.
 - As alterações experimentais da fixture foram removidas. Não se substituiu o
-  ledger nem se flexibilizou o harness. PV7 permanece bloqueada pela cadeia de
-  dependências completa do Portal; revisar acessibilidade/leitura também falta.
+  ledger nem se flexibilizou o harness. A suíte Kernel completa não foi
+  executada porque o teste de instalação falha no bootstrap. PV7 permanece
+  bloqueada pela closure real completa do Portal; revisar acessibilidade/leitura
+  também falta.
 
 ## 0.1.0-dev.40 — reconhece anexos PDF privados do Fórum — 2026-10-21
 

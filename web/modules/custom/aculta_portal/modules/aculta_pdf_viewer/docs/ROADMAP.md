@@ -2,6 +2,16 @@
 
 ## PV7 — revalidação do bloqueio de bootstrap em 2026-10-29
 
+- Nova tentativa de carregar a closure real no teste focal, sem substituir
+  serviços: `aculta_user.aculta_user_agreement_ledger` foi resolvido, mas o
+  container avançou por dependências de Mailer, confirmação de e-mail,
+  Commerce, Domain e LMS. A última falha foi `commerce_price.currency_formatter`
+  em `aculta_portal.recurring_donations_report` (1 teste, 0 assertions, 1 erro;
+  2 depreciações). A ampliação experimental da lista de módulos foi revertida.
+  Não manter módulos de owner alheio só para satisfazer o fixture; preparar a
+  closure Kernel de Portal com os módulos reais necessários e então repetir a
+  suíte completa, sem mocks.
+
 - Tentativa focal em `AcultaPdfViewerInstallTest`: ao habilitar `key` e
   prover somente `system.menu.admin`, a instalação avançou até a compilação do
   container e parou porque `aculta_portal.aculta_user_agreement_registration`
