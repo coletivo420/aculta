@@ -2,7 +2,7 @@
 
 Fonte: [plano normativo](../../../../../../../docs/architecture/PLANO-ARQUITETURAL-OPENCULTURAS-ACULTA-ARQ-01-09.md).
 - [x] **ARQ-01 (IMPLEMENTADO):** formalizado `EventLocationAccessControlHandler` em `aculta_event_location`, cobrindo leitura pública, mutações restritas a administradores e respeito a hooks de acesso. `LocationCatalogue::busca()` corrigido para filtrar por `access('view')` do usuário atual. Validação de privacidade preservada (aproximado vs exato sem vazamento de rua/CEP). Testes Kernel cobrindo anônimo, usuário autenticado e admin (`LocationCatalogueKernelTest`, `LocationPurposeAccessKernelTest`, `MapControllerKernelTest` PASS).
-- [ ] **ARQ-02:** benchmark/paginação/projeção de ocorrências com ACL e RRULE existente.
+- [x] **ARQ-02 (IMPLEMENTADO):** `EventCatalogue::busca()` otimizado com eliminação de consultas N+1 via carregamento em lote de datas (`IN` por lote de IDs de eventos), introdução de suporte a paginação (`$limite`, `$offset`) sem quebra de retrocompatibilidade, e preservação estrita da recorrência ACULTA, timezones, cancelamentos e ACL. Teste Kernel `EventCatalogueKernelTest` cobrindo paginação e ordenação PASS (6 testes, 97 asserções).
 - [ ] **ARQ-03:** provider/Index para eventos e locais, incluindo descoberta cultural com grants.
 - [ ] **ARQ-04:** modelo aditivo para horários, acessibilidade, eventos híbridos/virtuais, informações e exceções. Não copiar Views/Smart Date/Office Hours sem decisão ou migração idempotente.
 

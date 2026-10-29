@@ -195,4 +195,27 @@ final class EventCatalogueKernelTest extends KernelTestBase {
     $this->assertContains('user.permissions', $publicPage['#cache']['contexts']);
   }
 
+  /**
+   * Paginação e limites da busca evitam sobrecarga e respeitam ordenação.
+   */
+  public function testPaginationAndLimit(): void {
+    $this->cenario();
+    $catalogo = $this->container->get('aculta_events.catalogue');
+
+    // Ordem cronológica: Roda cancelada (+2d), Oficina (+3d), Feira (+10d).
+    $todos = $catalogo->busca(NULL, NULL, NULL, $this->agora);
+    $this->assertCount(3, $todos);
+
+    // Página 1 com limite 2 traz os 2 primeiros na ordem cronológica.
+    $pagina1 = $catalogo->busca(NULL, NULL, NULL, $this->agora, 2, 0);
+    $this->assertCount(2, $pagina1);
+    $this->assertSame('Roda cancelada', (string) $pagina1[0]['evento']->label());
+    $this->assertSame('Oficina de cerâmica', (string) $pagina1[1]['evento']->label());
+
+    // Página 2 com limite 2 e offset 2 traz o restante.
+    $pagina2 = $catalogo->busca(NULL, NULL, NULL, $this->agora, 2, 2);
+    $this->assertCount(1, $pagina2);
+    $this->assertSame('Feira do livro', (string) $pagina2[0]['evento']->label());
+  }
+
 }

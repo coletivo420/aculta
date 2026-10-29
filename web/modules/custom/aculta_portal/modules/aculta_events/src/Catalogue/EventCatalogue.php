@@ -33,10 +33,30 @@ final class EventCatalogue {
   /**
    * Eventos com ocorrência no período, cada um com a primeira ocorrência.
    *
+   * @param int|null $tipo
+   *   Termo do tipo de evento opcional.
+   * @param \DateTimeImmutable|null $de
+   *   Data de início da janela.
+   * @param \DateTimeImmutable|null $ate
+   *   Data de término da janela.
+   * @param \DateTimeImmutable $agora
+   *   Data atual de referência.
+   * @param int|null $limite
+   *   Limite opcional de registros na página.
+   * @param int $offset
+   *   Deslocamento inicial para paginação.
+   *
    * @return array<int, array{evento: \Drupal\aculta_events\Entity\Event, proxima: array}>
    *   Eventos com suas ocorrências mais próximas.
    */
-  public function busca(?int $tipo, ?\DateTimeImmutable $de, ?\DateTimeImmutable $ate, \DateTimeImmutable $agora): array {
+  public function busca(
+    ?int $tipo,
+    ?\DateTimeImmutable $de,
+    ?\DateTimeImmutable $ate,
+    \DateTimeImmutable $agora,
+    ?int $limite = NULL,
+    int $offset = 0,
+  ): array {
     $fuso = new \DateTimeZone('America/Sao_Paulo');
     $inicio = $de !== NULL && $de > $agora ? $de->setTimezone($fuso) : $agora->setTimezone($fuso);
     $fim = $ate !== NULL ? $ate->setTimezone($fuso)->setTime(23, 59, 59) : $agora->modify('+' . self::HORIZONTE_DIAS . ' days');
@@ -51,30 +71,77 @@ final class EventCatalogue {
     if ($tipo !== NULL) {
       $consulta->condition('field_tipo.target_id', $tipo);
     }
-    $resultados = [];
-    foreach ($storage->loadMultiple($consulta->execute()) as $evento) {
-      if (!$evento->access('view')) {
-        continue;
+    $ids = $consulta->execute();
+    if ($ids === []) {
+      return [];
+    }
+
+    $eventos = [];
+    foreach ($storage->loadMultiple($ids) as $evento) {
+      if ($evento instanceof Event && $evento->access('view')) {
+        $eventos[(int) $evento->id()] = $evento;
       }
-      $proxima = $this->primeiraOcorrencia($evento, $inicio, $fim, $agora);
+    }
+    if ($eventos === []) {
+      return [];
+    }
+
+    // Carregamento em lote de todas as datas vinculadas, evitando N+1 queries.
+    $dateStorage = $this->entityTypeManager->getStorage('aculta_event_date');
+    $dateIds = $dateStorage->getQuery()
+      ->condition('field_evento.target_id', array_keys($eventos), 'IN')
+      ->accessCheck(FALSE)
+      ->execute();
+
+    $datasPorEvento = [];
+    foreach ($dateStorage->loadMultiple($dateIds) as $data) {
+      if ($data instanceof EventDate) {
+        $eventoId = (int) $data->get('field_evento')->target_id;
+        $datasPorEvento[$eventoId][] = $data;
+      }
+    }
+
+    $resultados = [];
+    foreach ($eventos as $eventoId => $evento) {
+      $datas = $datasPorEvento[$eventoId] ?? [];
+      $proxima = $this->primeiraOcorrenciaEmDatas($datas, $inicio, $fim, $agora);
       if ($proxima !== NULL) {
         $resultados[] = ['evento' => $evento, 'proxima' => $proxima];
       }
     }
+
     usort($resultados, static fn (array $a, array $b): int => $a['proxima']['inicio'] <=> $b['proxima']['inicio']);
+
+    if ($limite !== NULL && $limite > 0) {
+      return array_slice($resultados, max(0, $offset), $limite);
+    }
+
     return $resultados;
   }
 
   /**
-   * Primeira ocorrência de qualquer data do evento dentro do período, ou NULL.
+   * Primeira ocorrência de um conjunto de datas dentro do período, ou NULL.
+   *
+   * @param array<\Drupal\aculta_events\Entity\EventDate> $datas
+   *   Datas do evento.
+   * @param \DateTimeImmutable $inicio
+   *   Início da janela.
+   * @param \DateTimeImmutable $fim
+   *   Fim da janela.
+   * @param \DateTimeImmutable $agora
+   *   Instante atual de referência.
+   *
+   * @return array|null
+   *   Primeira ocorrência encontrada ou NULL.
    */
-  private function primeiraOcorrencia(Event $evento, \DateTimeImmutable $inicio, \DateTimeImmutable $fim, \DateTimeImmutable $agora): ?array {
-    $ids = $this->entityTypeManager->getStorage('aculta_event_date')->getQuery()
-      ->condition('field_evento.target_id', $evento->id())
-      ->accessCheck(FALSE)
-      ->execute();
+  private function primeiraOcorrenciaEmDatas(
+    array $datas,
+    \DateTimeImmutable $inicio,
+    \DateTimeImmutable $fim,
+    \DateTimeImmutable $agora,
+  ): ?array {
     $primeira = NULL;
-    foreach ($this->entityTypeManager->getStorage('aculta_event_date')->loadMultiple($ids) as $data) {
+    foreach ($datas as $data) {
       if (!$data instanceof EventDate) {
         continue;
       }
