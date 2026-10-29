@@ -25,7 +25,11 @@
 - Runner de domínio: 248 checks PASS; Unit: 48 testes / 116 assertions PASS;
   Kernel: 7 testes / 46 assertions PASS, 8 depreciações Core/contrib. PHPCS e
   PHP lint dos arquivos alterados PASS. Update não executado no Runtime.
-- `10002` no Runtime permanece pendente de autorização operacional e snapshot.
+- Runtime verificado somente em leitura em 2026-10-29 no checkout detached
+  `355e48a89`: módulo ativo 0.3.0-dev.4, schema 10002, índice único presente,
+  2 linhas de documentos, 0 sem fingerprint e 0 grupos duplicados. Nenhuma
+  atualização foi executada nesta fase; essa observação não valida a branch
+  0.3.0-dev.6 nem a interface ainda não servida.
 
 ## 0.3.0-dev.4 — impedir unicidade falsa com documentos sem fingerprint — 2026-10-26
 

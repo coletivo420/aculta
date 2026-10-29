@@ -5,11 +5,12 @@ progress_note: >-
   Dev.6: integração Kernel do AccountOtherDataForm ao AccountDocumentStore real
   (cifra, fingerprint, máscara e duplicidade), rollback de 10002 preserva linhas
   e remove só o índice; Runner de domínio 248 PASS, Unit 48/116, Kernel 7/46 PASS
-  com 8 depreciações Core/contrib. Nenhuma atualização foi aplicada no Runtime.
-  O Runtime MAIN continua conforme leitura 2026-10-26: 1 documento
-  cifrado/fingerprinted, sem duplicidades, schema 10001 e índice ausente.
+  com 8 depreciações Core/contrib. Runtime read-only 2026-10-29, checkout
+  detached 355e48a89: módulo ativo 0.3.0-dev.4, schema 10002, índice presente,
+  2 linhas de documentos, 0 sem fingerprint e 0 duplicados. Nenhuma escrita foi
+  feita; o Runtime não está servindo o candidato .6 desta branch.
 next_phase: >-
-  Revisar snapshot/rollback e obter autorização operacional antes de executar
-  updatedb 10002 no Runtime; confirmar depois a tela do formulário servida no
-  Firefox. Sem essa autorização, manter Dev
+  Confirmar a experiência visual do formulário quando o candidato .6 estiver
+  servido no Firefox; rever a integração de login por CPF ao pipeline existente
+  antes de fechar o escopo de RC
   ([README](web/modules/custom/aculta_portal/modules/aculta_id_cpf/README.md))

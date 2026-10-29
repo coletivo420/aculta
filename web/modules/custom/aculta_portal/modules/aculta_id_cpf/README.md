@@ -4,10 +4,11 @@ Submódulo opcional do `aculta_portal`, baseline Drupal **11.3+** e PHP **8.4**.
 Versão atual: **0.3.0-dev.6**. Persiste o CPF/CNPJ cifrado da aba "Outros Dados"
 e um índice de unicidade (fingerprint HMAC).
 
-**Runtime:** Homelab MAIN ativo, consultado somente para leitura em 2026-10-26.
-O checkout Runtime ainda usa 0.3.0-dev.1 e registra schema 10001; há um documento
-associado com fingerprint, nenhum documento sem índice e nenhum grupo duplicado.
-A chave SQL única ainda não existe. O update 10002 desta branch não foi aplicado.
+**Runtime:** verificação somente leitura em 2026-10-29 confirmou `aculta_runtime`
+no checkout detached `355e48a89` (não é o candidato desta branch). O módulo ativo
+é `0.3.0-dev.4`, schema `10002`; o índice SQL único está presente. Há 2 linhas de
+documentos associados, nenhum documento sem fingerprint e nenhum grupo
+duplicado. Não executei atualização nem alterei dados do Runtime nesta fase.
 
 ## Disponível
 
@@ -134,8 +135,8 @@ Evidência histórica da implementação removida está em
 
 ## Próximas entregas
 
-1. Revisar snapshot/rollback e obter autorização operacional antes de executar `10002` no Runtime; sem autorização, manter Dev.
-2. Confirmar a experiência visual do formulário Outros Dados após o candidato ser servido.
+1. Confirmar a experiência visual do formulário Outros Dados quando o candidato desta branch estiver servido no Firefox.
+2. Rever e decidir a integração de login por CPF ao pipeline existente, preservando flood, confirmação, CAPTCHA, Social Auth e respostas genéricas.
 3. Integrar login por CPF ao pipeline existente, preservando flood, confirmação,
    CAPTCHA, Social Auth e respostas genéricas.
 4. Avaliar integração Webform somente após proteção de rascunhos, tokens,
