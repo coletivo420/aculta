@@ -5,15 +5,23 @@ declare(strict_types=1);
 namespace AcultaDeployer;
 
 /**
- * Barreiras rígidas de separação: o Portal e o tema não podem referenciar a
- * ferramenta, e a ferramenta não pode depender deles nem do Drupal. As listas
- * ficam em config/boundary.json para que este arquivo não contenha os termos.
+ * Valida as fronteiras de dependência do Deployer.
+ *
+ * O Portal e o tema não podem executar a ferramenta, e a ferramenta não pode
+ * depender deles nem do Drupal. As listas ficam em config/boundary.json.
  */
 final class Boundary {
 
   /**
+   * Cria o validador com as raízes e regras do repositório.
+   *
+   * @param string $repoRoot
+   *   Raiz do repositório.
+   * @param string $toolRoot
+   *   Raiz do módulo Deployer.
    * @param array<string, mixed> $rules
-   *   Conteúdo de config/boundary.json. .*/
+   *   Conteúdo de config/boundary.json.
+   */
   public function __construct(
     private readonly string $repoRoot,
     private readonly string $toolRoot,
@@ -21,7 +29,11 @@ final class Boundary {
   ) {}
 
   /**
-   * @return string[] Violações encontradas. */
+   * Encontra referências que cruzam as fronteiras permitidas.
+   *
+   * @return string[]
+   *   Violações encontradas.
+   */
   public function check(): array {
     $violations = [];
     foreach ($this->rules['consumers'] as $dir) {
@@ -41,14 +53,16 @@ final class Boundary {
         if ($this->consumerReferenceAllowed($rel)) {
           foreach ($this->rules['consumer_allowed_forbidden'] ?? [] as $token) {
             if (str_contains($text, $token)) {
-              $violations[] = $rel . " usa '$token' na pasta de leitura neutra; o Portal não executa a ferramenta";
+              $violations[] = $rel . " usa '$token' na pasta de leitura neutra; "
+              . 'o Portal não executa a ferramenta';
             }
           }
           continue;
         }
         foreach ($this->rules['tool_terms'] as $term) {
           if (str_contains($text, $term)) {
-            $violations[] = $this->rel($file) . " referencia a ferramenta ('$term'); consumidores não podem depender de o submódulo aculta_deployer";
+            $violations[] = $this->rel($file) . " referencia a ferramenta ('$term'); "
+              . 'consumidores não podem depender do submódulo aculta_deployer';
           }
         }
       }
@@ -59,7 +73,7 @@ final class Boundary {
         continue;
       }
       foreach ($this->files($abs) as $file) {
-        // The rules file lists the forbidden terms by design; it is data, not a dependency.
+        // The rules file is data, not a dependency.
         if (realpath($file) === realpath($this->toolRoot . '/config/boundary.json')) {
           continue;
         }
@@ -95,7 +109,11 @@ final class Boundary {
   }
 
   /**
-   * @return string[] */
+   * Lista arquivos não Markdown sob um diretório.
+   *
+   * @return string[]
+   *   Caminhos absolutos encontrados.
+   */
   private function files(string $dir): array {
     $out = [];
     $it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS));
@@ -108,7 +126,7 @@ final class Boundary {
   }
 
   /**
-   *
+   * Converte um caminho absoluto em caminho relativo ao repositório.
    */
   private function rel(string $abs): string {
     return ltrim(str_replace($this->repoRoot, '', $abs), '/');

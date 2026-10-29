@@ -5,18 +5,29 @@ declare(strict_types=1);
 namespace AcultaDeployer;
 
 /**
- * Resultado neutro da verificação de indexação (`robots`), lido pelo painel do Portal.
+ * Resultado neutro da verificação de indexação.
  *
- * Contém só URLs públicas, estados e o valor público do cabeçalho X-Robots-Tag. Nunca contém
- * credenciais, tokens ou corpo de página.
+ * O painel do Portal consome somente URLs públicas, estados e o cabeçalho
+ * X-Robots-Tag. O resultado não contém credenciais, tokens ou corpo de página.
  */
 final class Indexing {
 
   public const FILE = 'indexing.json';
 
   /**
+   * Builds a schema 1 indexing report.
+   *
+   * @param string $environment
+   *   Environment checked by the report.
    * @param array<int, array{kind: string, url: string, ok: bool, observed: string}> $checks
+   *   Individual checks.
+   * @param bool $ok
+   *   Whether all checks passed.
+   * @param string $checkedAt
+   *   Timestamp of the check.
+   *
    * @return array<string, mixed>
+   *   Report data safe for the Portal to read.
    */
   public static function build(string $environment, array $checks, bool $ok, string $checkedAt): array {
     return [
@@ -29,12 +40,13 @@ final class Indexing {
   }
 
   /**
-   * Resumo para o relatório de status. Retorna null quando o arquivo não existe ou não é do schema 1.
+   * Summarizes a schema 1 report for the status page.
    *
    * @param mixed $data
-   *   conteúdo decodificado de indexing.json.
+   *   Decoded data from indexing.json.
    *
    * @return array{environment: string, checked_at: string, ok: bool, passed: int, failed: int, failed_urls: list<string>}|null
+   *   Summary, or NULL when the input is not a schema 1 report.
    */
   public static function summarize(mixed $data): ?array {
     if (!is_array($data) || ($data['schema'] ?? NULL) !== 1) {

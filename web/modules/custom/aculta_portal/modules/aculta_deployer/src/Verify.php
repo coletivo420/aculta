@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace AcultaDeployer;
 
 /**
- * Verificação pós-deploy somente leitura: uma requisição GET por entrada com
- * "probe" e "expect". Não grava nada e não segue redirecionamentos.
+ * Performs read-only post-deploy checks.
+ *
+ * Each entry makes one GET request for its probe and expectation. The verifier
+ * writes nothing and does not follow redirects.
  */
 final class Verify {
 
@@ -14,7 +16,14 @@ final class Verify {
   public const MAX_BYTES = 1048576;
 
   /**
-   * Somente HTTPS, com host e sem credenciais na URL. */
+   * Checks whether a URL meets the verifier's HTTPS requirements.
+   *
+   * @param string $url
+   *   URL to validate.
+   *
+   * @return bool
+   *   TRUE when the URL uses HTTPS, has a host, and contains no credentials.
+   */
   public static function isAllowedUrl(string $url): bool {
     if (!str_starts_with($url, 'https://') || filter_var($url, FILTER_VALIDATE_URL) === FALSE) {
       return FALSE;
@@ -24,13 +33,29 @@ final class Verify {
   }
 
   /**
-   * O texto esperado precisa aparecer na resposta. */
+   * Checks whether an expected value appears in a response body.
+   *
+   * @param string $body
+   *   Response body.
+   * @param string $expect
+   *   Expected text.
+   *
+   * @return bool
+   *   TRUE when the non-empty expected text appears in the body.
+   */
   public static function evaluate(string $body, string $expect): bool {
     return $expect !== '' && str_contains($body, $expect);
   }
 
   /**
-   * GET sem seguir redirecionamentos; devolve corpo e cabeçalhos ou null. */
+   * Fetches a URL without following redirects.
+   *
+   * @param string $url
+   *   URL to fetch.
+   *
+   * @return array{body: string, headers: array<int, string>}|null
+   *   Response body and headers, or NULL on failure.
+   */
   public static function fetchWithHeaders(string $url): ?array {
     if (!self::isAllowedUrl($url)) {
       return NULL;
@@ -45,7 +70,10 @@ final class Verify {
   }
 
   /**
+   * Creates the bounded GET request context.
    *
+   * @return resource
+   *   Stream context with redirect and timeout protections.
    */
   private static function context() {
     return stream_context_create([
@@ -61,7 +89,14 @@ final class Verify {
   }
 
   /**
-   * Valor do cabeçalho X-Robots-Tag, ou null se ausente. */
+   * Reads the X-Robots-Tag response header.
+   *
+   * @param array<int, string> $headers
+   *   HTTP response headers.
+   *
+   * @return string|null
+   *   Header value, or NULL when absent.
+   */
   public static function robotsHeader(array $headers): ?string {
     foreach ($headers as $line) {
       if (preg_match('/^x-robots-tag:\s*(.+)$/i', trim((string) $line), $m) === 1) {
@@ -72,13 +107,27 @@ final class Verify {
   }
 
   /**
-   * Verdadeiro quando o valor do cabeçalho impede indexação. */
+   * Determines whether a header value blocks indexing.
+   *
+   * @param string|null $value
+   *   X-Robots-Tag header value.
+   *
+   * @return bool
+   *   TRUE when the value includes noindex.
+   */
   public static function isNoindex(?string $value): bool {
     return $value !== NULL && stripos($value, 'noindex') !== FALSE;
   }
 
   /**
-   * Código HTTP da resposta (primeira linha de status), ou null. */
+   * Reads the HTTP status code from response headers.
+   *
+   * @param array<int, string> $headers
+   *   HTTP response headers.
+   *
+   * @return int|null
+   *   Status code, or NULL when no status line is present.
+   */
   public static function statusCode(array $headers): ?int {
     foreach ($headers as $line) {
       if (preg_match('#^HTTP/\S+\s+(\d{3})#', trim((string) $line), $m) === 1) {
@@ -89,18 +138,23 @@ final class Verify {
   }
 
   /**
-   * Status que não expõe conteúdo indexável: 401/403 (acesso recusado) e
-   * 404/410 (rota inexistente para o anônimo). Usado nos caminhos privados.
+   * Determines whether an HTTP status refuses access to a private path.
+   *
+   * @param int|null $status
+   *   HTTP status code.
+   *
+   * @return bool
+   *   TRUE for 401, 403, 404, or 410 responses.
    */
   public static function isRefusedStatus(?int $status): bool {
     return in_array($status, [401, 403, 404, 410], TRUE);
   }
 
   /**
-   * Valores de <loc> de um sitemap ou índice de sitemaps, ou null se o XML não
-   * for válido. Sem resolução de entidades externas.
+   * Extracts sitemap location values without resolving external entities.
    *
    * @return string[]|null
+   *   Location URLs, or NULL when the XML is invalid.
    */
   public static function xmlLocs(string $xml): ?array {
     $dom = new \DOMDocument();
@@ -115,9 +169,10 @@ final class Verify {
   }
 
   /**
-   * URLs das diretivas "Sitemap:" de um robots.txt (sem diferenciar caixa).
+   * Extracts Sitemap directive URLs from robots.txt.
    *
    * @return string[]
+   *   Sitemap URLs found in the document.
    */
   public static function sitemapDirectives(string $robots): array {
     $urls = [];
@@ -130,7 +185,14 @@ final class Verify {
   }
 
   /**
-   * Verdadeiro quando o robots.txt bloqueia o site inteiro ("Disallow: /"). */
+   * Determines whether robots.txt blocks the whole site.
+   *
+   * @param string $robots
+   *   Robots.txt contents.
+   *
+   * @return bool
+   *   TRUE when a root Disallow directive is present.
+   */
   public static function disallowsRoot(string $robots): bool {
     foreach (preg_split('/\R/', $robots) ?: [] as $line) {
       if (preg_match('/^\s*disallow\s*:\s*\/\s*(#.*)?$/i', $line) === 1) {
@@ -141,17 +203,31 @@ final class Verify {
   }
 
   /**
-   * Equivalente de teste de um host de produção: aculta.org -> aculta.toca.net.br,
-   * preservando o subdomínio (apoio.aculta.org -> apoio.aculta.toca.net.br). Só troca
-   * o sufixo exato, então evil-aculta.org não vira host de teste.
+   * Converts a production host to its test host equivalent.
+   *
+   * Only the exact aculta.org suffix is replaced; lookalike domains remain
+   * unchanged.
+   *
+   * @param string $host
+   *   Production hostname.
+   *
+   * @return string
+   *   Test hostname with the same subdomain.
    */
   public static function testEquivalent(string $host): string {
     return preg_replace('/(^|\.)aculta\.org$/i', '$1aculta.toca.net.br', strtolower($host)) ?? $host;
   }
 
   /**
-   * Converte um texto (URL de sonda ou valor esperado) do ambiente de produção para o de teste:
-   * cada host "*.aculta.org" vira o equivalente "*.aculta.toca.net.br". Texto sem host de produção não muda.
+   * Replaces production hosts in a probe or expected value with test hosts.
+   *
+   * Text without an aculta.org URL remains unchanged.
+   *
+   * @param string $text
+   *   Probe URL or expected response value.
+   *
+   * @return string
+   *   Text with matching production hosts replaced.
    */
   public static function toTestEnvironment(string $text): string {
     return preg_replace_callback(
@@ -162,7 +238,14 @@ final class Verify {
   }
 
   /**
-   * Host (sem porta) de uma URL, em minúsculas, ou null. */
+   * Extracts a URL host without its port.
+   *
+   * @param string $url
+   *   URL to inspect.
+   *
+   * @return string|null
+   *   Lowercase host, or NULL when the URL has none.
+   */
   public static function hostOf(string $url): ?string {
     $host = parse_url($url, PHP_URL_HOST);
     return is_string($host) ? strtolower($host) : NULL;

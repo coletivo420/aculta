@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace AcultaDeployer;
 
 /**
- * Provisionamento de segredos e do webhook do Brevo por ambiente, de forma idempotente.
+ * Provisiona segredos e webhooks Brevo idempotentemente por ambiente.
  *
- * Lógica pura, sem rede: decide o que falta e grava segredos novos sem tocar nos existentes. A CLI faz as chamadas à
- * API do Brevo e lê o arquivo de segredos. Valores de segredo nunca são impressos.
+ * A lógica decide o que falta e grava segredos sem alterar os existentes.
+ * The CLI calls Brevo and reads secrets; values are never printed.
  */
 final class Provision {
 
@@ -54,7 +54,7 @@ final class Provision {
    * @param array|null $webhook
    *   Webhook já cadastrado com a URL do ambiente (ou NULL).
    * @param bool $tokenChanged
-   *   TRUE quando o token do webhook foi gerado agora (exige atualizar o cadastro existente).
+   *   TRUE quando o token novo exige atualizar o cadastro existente.
    * @param int|null $testWebhookId
    *   Cadastro de teste a remover depois que o de produção existe (ou NULL).
    *
@@ -82,7 +82,7 @@ final class Provision {
   }
 
   /**
-   * Acrescenta segredos novos ao arquivo, sem alterar linhas existentes nem as permissões.
+   * Acrescenta segredos ao arquivo sem alterar linhas existentes ou permissões.
    *
    * @param string $path
    *   Caminho do arquivo de segredos.
@@ -132,7 +132,10 @@ final class Provision {
   }
 
   /**
-   * Valor de uma variável do arquivo, lido só para uso em memória. NULL quando ausente.
+   * Lê o valor de uma variável em memória.
+   *
+   * @return string|null
+   *   Value from the file, or NULL when absent.
    */
   public static function valueOf(string $path, string $name): ?string {
     foreach (preg_split('/\r?\n/', (string) file_get_contents($path)) ?: [] as $line) {

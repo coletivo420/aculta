@@ -5,23 +5,49 @@ declare(strict_types=1);
 namespace AcultaDeployer;
 
 /**
- * Comandos da ferramenta. Não usa Drupal, Drush nem vendor. */
+ * Runs the standalone deployment commands.
+ *
+ * The CLI does not depend on Drupal, Drush, or Composer vendor packages.
+ */
 final class Cli {
 
   public const VERSION = '0.1.28';
 
+  /**
+   * Absolute path to this tool's module directory.
+   *
+   * @var string
+   */
   private readonly string $toolRoot;
+
+  /**
+   * Absolute path to the project repository root.
+   *
+   * @var string
+   */
   private readonly string $repoRoot;
 
+  /**
+   * Creates the CLI handler for the installed module directory.
+   *
+   * @param string $toolRoot
+   *   Absolute path to the Deployer module.
+   */
   public function __construct(string $toolRoot) {
     $this->toolRoot = $toolRoot;
-    // Submódulo em web/modules/custom/aculta_portal/modules/aculta_deployer: seis níveis até a raiz.
+    // The module is six directory levels below the repository root.
     $this->repoRoot = dirname($toolRoot, 6);
   }
 
   /**
+   * Dispatches a command from the command-line arguments.
+   *
    * @param string[] $argv
-   *   */
+   *   Arguments passed to the CLI process.
+   *
+   * @return int
+   *   Process exit code.
+   */
   public function run(array $argv): int {
     $command = $argv[1] ?? 'help';
     $options = $this->options(array_slice($argv, 2));
@@ -48,7 +74,13 @@ final class Cli {
   }
 
   /**
+   * Validates configuration, boundaries, and the deploy registry.
    *
+   * @param bool $strict
+   *   Whether blocking registry entries should fail the command.
+   *
+   * @return int
+   *   Process exit code.
    */
   private function check(bool $strict): int {
     $code = 0;
@@ -68,7 +100,7 @@ final class Cli {
       $this->err("configuração: $e");
       $code = 1;
     }
-    // Guardrail de ambiente: arquivos que mudam entre teste e produção precisam de perfil em todos os ambientes.
+    // Environment-specific files require profile rules for every environment.
     foreach ($transform->validateProfiles() as $e) {
       $this->err("perfil: $e");
       $code = 1;
@@ -98,7 +130,7 @@ final class Cli {
       return 2;
     }
     $this->say($code === 0 ? 'check: PASS' : 'check: FAIL');
-    // Barreira: cookie de sessão por ambiente tem de bater com config/deploy.json (session_cookie).
+    // Session cookie settings must match the session_cookie environment policy.
     if ($this->cookies() !== 0) {
       $code = 1;
     }
@@ -106,7 +138,10 @@ final class Cli {
   }
 
   /**
+   * Checks that consumers and the tool respect their dependency boundaries.
    *
+   * @return int
+   *   Process exit code.
    */
   private function boundaries(): int {
     $violations = $this->boundaryViolations();
@@ -122,7 +157,10 @@ final class Cli {
   }
 
   /**
+   * Lists correction registry entries.
    *
+   * @return int
+   *   Process exit code.
    */
   private function list(): int {
     foreach ($this->registry()->entries() as $e) {
@@ -132,10 +170,15 @@ final class Cli {
   }
 
   /**
-   * Política de indexação por ambiente: produção indexável em todos os hosts;
-   * teste com noindex. GET somente leitura.
+   * Checks indexing policy across the configured hosts using read-only GETs.
+   *
+   * Production must be indexable; the test environment must use noindex.
    *
    * @param array<string, string|bool> $o
+   *   Command options.
+   *
+   * @return int
+   *   Process exit code.
    */
   private function robots(array $o): int {
     $env = $this->activeEnvironment($o);
@@ -175,7 +218,13 @@ final class Cli {
         $blocked = Verify::disallowsRoot($res['body']);
         $ok = $advertised && !$blocked;
         $this->say(sprintf('%s %s robots.txt: Sitemap=%s, Disallow: / %s', $ok ? 'PASS' : 'FAIL', $url, $advertised ? 'índice' : 'ausente', $blocked ? 'presente' : 'ausente'));
-        $checks[] = ['kind' => 'robots_txt', 'url' => (string) $url, 'ok' => $ok, 'observed' => ($advertised ? 'Sitemap índice' : 'Sitemap ausente') . ', Disallow: / ' . ($blocked ? 'presente' : 'ausente')];
+        $checks[] = [
+          'kind' => 'robots_txt',
+          'url' => (string) $url,
+          'ok' => $ok,
+          'observed' => ($advertised ? 'Sitemap índice' : 'Sitemap ausente')
+          . ', Disallow: / ' . ($blocked ? 'presente' : 'ausente'),
+        ];
         $code = $ok ? $code : 1;
       }
     }
@@ -190,11 +239,18 @@ final class Cli {
       $value = Verify::robotsHeader($res['headers']);
       $status = Verify::statusCode($res['headers']);
       $meta = Verify::metaNoindex($res['body']);
-      // Privado: noindex no cabeçalho ou no HTML, ou status que não expõe conteúdo.
+      // Private paths must be noindex in headers or HTML, or refuse access.
       $ok = Verify::isNoindex($value) || $meta || Verify::isRefusedStatus($status);
       $this->say(sprintf('%s %s (privado): status=%s X-Robots-Tag=%s meta=%s',
         $ok ? 'PASS' : 'FAIL', $url, $status ?? '?', $value ?? '(ausente)', $meta ? 'noindex' : 'ausente'));
-      $checks[] = ['kind' => 'private', 'url' => (string) $url, 'ok' => $ok, 'observed' => 'status ' . ($status ?? '?') . ', X-Robots-Tag ' . ($value ?? 'ausente') . ', meta ' . ($meta ? 'noindex' : 'ausente')];
+      $checks[] = [
+        'kind' => 'private',
+        'url' => (string) $url,
+        'ok' => $ok,
+        'observed' => 'status ' . ($status ?? '?')
+        . ', X-Robots-Tag ' . ($value ?? 'ausente')
+        . ', meta ' . ($meta ? 'noindex' : 'ausente'),
+      ];
       $code = $ok ? $code : 1;
     }
     $this->writeIndexing($env, $checks, $code === 0);
@@ -203,13 +259,16 @@ final class Cli {
   }
 
   /**
-   * Descoberta e sitemaps por ambiente (GET somente leitura):
-   * 1) o índice responde e cada filho está na base do ambiente (sem host de teste
-   *    em produção, e sem host de produção no servidor de desenvolvimento além do canônico);
-   * 2) as URLs dos filhos pertencem aos hosts de produção da política e esses hosts
-   *    respondem (cross-host, por exemplo apoio.aculta.org).
+   * Checks sitemap discovery and content hosts with read-only GET requests.
+   *
+   * The index and children must use the environment base. Child URLs must be in
+   * the production host policy and each content host must respond.
    *
    * @param array<string, string|bool> $o
+   *   Command options.
+   *
+   * @return int
+   *   Process exit code.
    */
   private function sitemap(array $o): int {
     $env = $this->activeEnvironment($o);
@@ -219,7 +278,7 @@ final class Cli {
       $this->err("sitemap: ambiente desconhecido: $env");
       return 1;
     }
-    // A política de hosts é a de produção; no teste, cada host permitido é comparado pelo equivalente de teste.
+    // Test mode compares each production host with its test equivalent.
     $allowed = [];
     foreach ($cfg['robots_policy']['production']['hosts'] ?? [] as $url) {
       $host = (string) Verify::hostOf((string) $url);
@@ -260,11 +319,17 @@ final class Cli {
       $this->say(sprintf('PASS %s: %d URL(s) de conteúdo', $child, count($locs)));
     }
     foreach (array_keys($contentHosts) as $h) {
-      // No servidor de desenvolvimento, o host de conteúdo é verificado pelo equivalente de teste.
+      // Check test mode hosts against their test equivalents.
       $target = $env === 'test' ? Verify::testEquivalent((string) $h) : (string) $h;
       $probe = Verify::fetchWithHeaders("https://$target/");
       $ok = $probe !== NULL && (Verify::statusCode($probe['headers']) ?? 500) < 400;
-      $this->say(sprintf('%s host de conteúdo %s (%s) responde %s', $ok ? 'PASS' : 'FAIL', $h, $target, $probe === NULL ? 'sem resposta' : (string) Verify::statusCode($probe['headers'])));
+      $this->say(sprintf(
+        '%s host de conteúdo %s (%s) responde %s',
+        $ok ? 'PASS' : 'FAIL',
+        $h,
+        $target,
+        $probe === NULL ? 'sem resposta' : (string) Verify::statusCode($probe['headers']),
+      ));
       $code = $ok ? $code : 1;
     }
     $this->say("sitemap ($env): " . ($code === 0 ? 'PASS' : 'FAIL'));
@@ -272,24 +337,33 @@ final class Cli {
   }
 
   /**
-   * Ambiente ativo, lido do arquivo neutro var/deployer/environment.json. Retorna NULL se ainda não foi definido.
+   * Reads the active environment from the neutral environment report.
    *
    * @return array{environment: string, site: string, changed_at: string}|null
+   *   Environment data, or NULL when no environment has been selected.
    */
   private function currentEnvironment(): ?array {
     $file = $this->repoRoot . '/var/deployer/environment.json';
     $data = is_file($file) ? json_decode((string) file_get_contents($file), TRUE) : NULL;
-    return is_array($data) && ($data['schema'] ?? NULL) === 1 && isset($data['environment'], $data['site'], $data['changed_at'])
-      ? ['environment' => (string) $data['environment'], 'site' => (string) $data['site'], 'changed_at' => (string) $data['changed_at']]
+    return is_array($data)
+      && ($data['schema'] ?? NULL) === 1
+      && isset($data['environment'], $data['site'], $data['changed_at'])
+      ? [
+        'environment' => (string) $data['environment'],
+        'site' => (string) $data['site'],
+        'changed_at' => (string) $data['changed_at'],
+      ]
       : NULL;
   }
 
   /**
-   * Ambiente de trabalho de uma função: --env explícito; senão o ambiente definido em
-   * var/deployer/environment.json; senão "test" (estado seguro). Valor inválido vira "test"
-   * e a função informa o ambiente usado.
+   * Resolves the environment for a command, defaulting safely to test.
    *
    * @param array<string, string|bool> $o
+   *   Command options.
+   *
+   * @return string
+   *   Selected environment name.
    */
   private function activeEnvironment(array $o): string {
     $sites = $this->json($this->toolRoot . '/config/deploy.json')['environments'] ?? [];
@@ -301,11 +375,15 @@ final class Cli {
   }
 
   /**
-   * Ambiente do site: "environment" mostra o atual; "environment set --to=production|test" grava o
-   * ambiente e o endereço do site em var/deployer/environment.json. O Portal lê esse arquivo para
-   * escolher o conjunto de chaves (o deployer determina qual conjunto usar).
+   * Displays or changes the selected site environment.
    *
+   * @param string $sub
+   *   Subcommand, either show or set.
    * @param array<string, string|bool> $o
+   *   Command options.
+   *
+   * @return int
+   *   Process exit code.
    */
   private function environment(string $sub, array $o): int {
     if ($sub === '' || $sub === 'show') {
@@ -347,12 +425,20 @@ final class Cli {
       return 1;
     }
     $this->say("environment: definido como {$to} — {$data['site']}");
-    // O painel lê o relatório: atualiza-o para refletir o ambiente recém-definido.
+    // Refresh the report after changing the environment.
     return $this->report([]);
   }
 
   /**
-   * Grava o resultado da verificação de robots em var/deployer/indexing.json (só URLs públicas e estados). */
+   * Writes the public-only robots result to the neutral indexing report.
+   *
+   * @param string $env
+   *   Environment checked.
+   * @param array<int, array{kind: string, url: string, ok: bool, observed: string}> $checks
+   *   Results to store.
+   * @param bool $ok
+   *   Whether all checks passed.
+   */
   private function writeIndexing(string $env, array $checks, bool $ok): void {
     $dir = $this->repoRoot . '/var/deployer';
     if (!is_dir($dir) && !mkdir($dir, 0750, TRUE)) {
@@ -364,17 +450,29 @@ final class Cli {
   }
 
   /**
-   * @return mixed */
+   * Reads and decodes a JSON file when it exists.
+   *
+   * @param string $path
+   *   Absolute or repository-relative path.
+   *
+   * @return mixed
+   *   Decoded JSON value, or NULL when the file does not exist.
+   */
   private function readJsonFile(string $path): mixed {
     return is_file($path) ? json_decode((string) file_get_contents($path), TRUE) : NULL;
   }
 
   /**
-   * Relatório neutro para o painel do ACULTA Portal (var/deployer/status.json). Contém só nomes,
-   * contagens e estados: nunca valores de credenciais. Não faz rede; sitemap e robots são comandos
-   * próprios e não entram no relatório.
+   * Writes the neutral status report consumed by the Portal.
+   *
+   * It contains names, counts, and states, never credential values.
+   * Network checks remain separate commands.
    *
    * @param array<string, string|bool> $o
+   *   Command options, including an optional output path.
+   *
+   * @return int
+   *   Process exit code.
    */
   private function report(array $o): int {
     $out = is_string($o['out'] ?? NULL) ? $o['out'] : $this->repoRoot . '/var/deployer/status.json';
@@ -424,11 +522,14 @@ final class Cli {
   }
 
   /**
-   * Fase 5: GET somente leitura nas entradas com probe e expect. */
-
-  /**
+   * Verifies configured probes using read-only GET requests.
+   *
    * @param array<string, string|bool> $o
-   *   */
+   *   Command options.
+   *
+   * @return int
+   *   Process exit code.
+   */
   private function verify(array $o): int {
     $env = $this->activeEnvironment($o);
     $code = 0;
@@ -437,14 +538,13 @@ final class Cli {
       if (!isset($e['probe'], $e['expect'])) {
         continue;
       }
-      // Entrada já resolvida pelo responsável: no teste, a conferência é obsoleta e sai do verify.
-      // A sonda de produção segue para a verificação pós-deploy (campo decision do registro).
+      // In test mode, resolved production probes are checked after deployment.
       if ($env === 'test' && ($e['status'] ?? '') === 'resolved') {
         $this->say("SKIP {$e['id']}: resolvida; sonda de produção é verificação pós-deploy");
         continue;
       }
       $checked++;
-      // Sondas e valores esperados são de produção; no teste viram os equivalentes de teste.
+      // Map production probes to test hosts in test mode.
       $probe = $env === 'test' ? Verify::toTestEnvironment((string) $e['probe']) : (string) $e['probe'];
       $expect = $env === 'test' ? Verify::toTestEnvironment((string) $e['expect']) : (string) $e['expect'];
       $body = Verify::fetch($probe);
@@ -466,8 +566,14 @@ final class Cli {
   }
 
   /**
+   * Adds a correction to the registry or imports a findings file.
+   *
    * @param array<string, string|bool> $o
-   *   */
+   *   Command options.
+   *
+   * @return int
+   *   Process exit code.
+   */
   private function register(array $o): int {
     if (isset($o['from-json'])) {
       return $this->importFindings((string) $o['from-json']);
@@ -499,7 +605,14 @@ final class Cli {
   }
 
   /**
-   * Fase 3: importa achados de um JSON (lista de objetos), tudo ou nada. */
+   * Imports a list of findings atomically from JSON.
+   *
+   * @param string $path
+   *   Path to a regular JSON file.
+   *
+   * @return int
+   *   Process exit code.
+   */
   private function importFindings(string $path): int {
     if ($path === '' || !is_file($path) || is_link($path)) {
       $this->err('register: --from-json precisa apontar para um arquivo regular');
@@ -532,8 +645,14 @@ final class Cli {
   }
 
   /**
+   * Builds a deployment tree for the selected target.
+   *
    * @param array<string, string|bool> $o
-   *   */
+   *   Command options.
+   *
+   * @return int
+   *   Process exit code.
+   */
   private function build(array $o): int {
     $target = is_string($o['target'] ?? NULL) ? $o['target'] : 'production';
     if (!in_array($target, ['production', 'test'], TRUE)) {
@@ -550,7 +669,7 @@ final class Cli {
       return 1;
     }
     $outAbs = $this->absolute($out);
-    // Resolve symlinks do ancestral existente antes de comparar com o repositório.
+    // Resolve ancestor symlinks before checking the repository boundary.
     $probe = $outAbs;
     while (!file_exists($probe) && dirname($probe) !== $probe) {
       $probe = dirname($probe);
@@ -561,14 +680,20 @@ final class Cli {
       $this->err('build: o diretório de saída não pode ficar dentro do repositório (inclusive via link)');
       return 1;
     }
-    // Nunca sobrescreve: cada build vai para um diretório novo, preservando o anterior.
+    // Builds never overwrite existing output directories.
     if (file_exists($outAbs) && (!is_dir($outAbs) || count(scandir($outAbs)) > 2)) {
-      $this->err('build: o diretório de saída já existe e não está vazio; use um diretório novo (builds anteriores são preservados)');
+      $this->err(
+        'build: o diretório de saída já existe e não está vazio; '
+        . 'use um diretório novo (builds anteriores são preservados)',
+      );
       return 1;
     }
     $blocking = $this->registry()->openBlocking();
     if ($target === 'production' && $blocking !== [] && !isset($o['allow-open-blocking'])) {
-      $this->err('build: existem entradas bloqueantes abertas; resolva-as ou use --allow-open-blocking para um build de ensaio');
+      $this->err(
+        'build: existem entradas bloqueantes abertas; resolva-as ou '
+        . 'use --allow-open-blocking para um build de ensaio',
+      );
       foreach ($blocking as $e) {
         $this->err("  {$e['id']} ({$e['kind']}): {$e['page']}");
       }
@@ -585,7 +710,15 @@ final class Cli {
       $this->err('build: a política de produção envia noindex; o build de produção não é gerado');
       return 1;
     }
-    $report = ['tool' => 'aculta-deployer ' . self::VERSION, 'target' => $target, 'files' => [], 'dropped' => [], 'skipped_binary' => [], 'replacements' => 0, 'profile_rules' => 0];
+    $report = [
+      'tool' => 'aculta-deployer ' . self::VERSION,
+      'target' => $target,
+      'files' => [],
+      'dropped' => [],
+      'skipped_binary' => [],
+      'replacements' => 0,
+      'profile_rules' => 0,
+    ];
     if (!is_dir($outAbs) && !mkdir($outAbs, 0775, TRUE)) {
       $this->err('build: não foi possível criar o diretório de saída');
       return 1;
@@ -630,7 +763,7 @@ final class Cli {
         $report['files'][] = ['path' => $rel, 'replacements' => $count, 'sha256' => hash('sha256', $content)];
         $report['replacements'] += $count;
       }
-      // Autoverificação: nenhum host de teste pode restar nos arquivos gerados de produção.
+      // No test mode, no test host can remain in generated production files.
       foreach ($target === 'production' ? $report['files'] : [] as $f) {
         if (in_array($f['path'], $report['skipped_binary'], TRUE)) {
           continue;
@@ -653,9 +786,16 @@ final class Cli {
   }
 
   /**
-   * Plano de transição para um ambiente: gera o build do alvo, lista os arquivos de config/sync que mudam
-   * em relação ao repositório e grava transition-plan.json com a importação parcial e o rollback.
-   * Não altera nenhum Runtime.
+   * Creates a read-only environment transition plan.
+   *
+   * The plan lists config/sync changes and rollback steps without modifying a
+   * Runtime.
+   *
+   * @param array<string, string|bool> $o
+   *   Command options.
+   *
+   * @return int
+   *   Process exit code.
    */
   private function transition(array $o): int {
     $target = is_string($o['target'] ?? NULL) ? $o['target'] : '';
@@ -699,7 +839,12 @@ final class Cli {
       'not_done' => 'nenhum Runtime foi alterado por este comando',
     ];
     $this->writeAtomic($outAbs . '/transition-plan.json', json_encode($plan, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
-    $this->say(sprintf('transition (%s): %d arquivo(s) de config/sync mudam; plano em %s/transition-plan.json', $target, count($changed), $out));
+    $this->say(sprintf(
+      'transition (%s): %d arquivo(s) de config/sync mudam; plano em %s/transition-plan.json',
+      $target,
+      count($changed),
+      $out,
+    ));
     foreach ($changed as $rel) {
       $this->say("  $rel");
     }
@@ -707,7 +852,16 @@ final class Cli {
   }
 
   /**
-   * Prepara public_html para servir web/; por padrão, somente simula. */
+   * Prepares public_html to serve the Drupal web directory.
+   *
+   * The command only simulates unless --apply is provided.
+   *
+   * @param array<string, string|bool> $o
+   *   Command options.
+   *
+   * @return int
+   *   Process exit code.
+   */
   private function hostingerLayout(array $o): int {
     $domainRoot = $o['domain-root'] ?? NULL;
     if (!is_string($domainRoot) || $domainRoot === '' || $domainRoot[0] !== '/') {
@@ -734,9 +888,12 @@ final class Cli {
   }
 
   /**
-   * Grava um arquivo de forma atômica: temporário no mesmo diretório, depois rename.
+   * Writes a file atomically using a temporary sibling and rename.
    *
-   * Se a gravação falhar, nenhum arquivo parcial nem temporário fica no lugar do destino.
+   * @param string $target
+   *   Destination path.
+   * @param string $content
+   *   File contents.
    */
   private function writeAtomic(string $target, string $content): void {
     $temp = dirname($target) . '/.' . basename($target) . '-' . bin2hex(random_bytes(6)) . '.tmp';
@@ -748,7 +905,10 @@ final class Cli {
   }
 
   /**
+   * Removes a directory tree and its contents.
    *
+   * @param string $dir
+   *   Directory path.
    */
   private function removeTree(string $dir): void {
     if (!is_dir($dir)) {
@@ -762,16 +922,21 @@ final class Cli {
   }
 
   /**
-   * @return string[] */
+   * Finds violations of configured dependency boundaries.
+   *
+   * @return string[]
+   *   Boundary violations.
+   */
   private function boundaryViolations(): array {
     $rules = $this->json($this->toolRoot . '/config/boundary.json');
     return (new Boundary($this->repoRoot, $this->toolRoot, $rules))->check();
   }
 
   /**
-   * Arquivos do escopo com e-mail fixo dos domínios do projeto que não estão em environment_bound.
+   * Finds fixed project email addresses outside environment_bound.
    *
-   * @return array<string, string> caminho => primeiro endereço encontrado
+   * @return array<string, string>
+   *   Relative file path mapped to its first matching email address.
    */
   private function unboundEnvironmentValues(): array {
     $config = $this->json($this->toolRoot . '/config/deploy.json');
@@ -790,9 +955,10 @@ final class Cli {
   }
 
   /**
-   * Regras de perfil que não casam exatamente uma vez no config/sync atual (regra morta ou ambígua).
+   * Finds profile rules that do not match exactly once in config/sync.
    *
    * @return string[]
+   *   Dead, ambiguous, or invalid profile rules.
    */
   private function profileRuleFailures(Transform $transform): array {
     $errors = [];
@@ -805,7 +971,11 @@ final class Cli {
           continue;
         }
         try {
-          $transform->applyProfile((string) file_get_contents($file), [['pattern' => (string) $rule['pattern'], 'with' => (string) $rule['with']]], (string) $rule['file']);
+          $transform->applyProfile(
+            (string) file_get_contents($file),
+            [['pattern' => (string) $rule['pattern'], 'with' => (string) $rule['with']]],
+            (string) $rule['file'],
+          );
         }
         catch (\RuntimeException $e) {
           $errors[] = "$target regra $i: " . $e->getMessage();
@@ -816,21 +986,31 @@ final class Cli {
   }
 
   /**
+   * Creates the configured transformation service.
    *
+   * @return \AcultaDeployer\Transform
+   *   Transformation service.
    */
   private function transform(): Transform {
     return new Transform($this->json($this->toolRoot . '/config/deploy.json'));
   }
 
   /**
+   * Loads the deployment correction registry.
    *
+   * @return \AcultaDeployer\Registry
+   *   Registry service.
    */
   private function registry(): Registry {
     return new Registry($this->toolRoot . '/registry/deploy-registry.json');
   }
 
   /**
-   * @return string[] Caminhos relativos ao repositório, dentro do escopo. */
+   * Lists repository-relative files included in deployment builds.
+   *
+   * @return string[]
+   *   Files within the configured build scope.
+   */
   private function scopeFiles(): array {
     $files = [];
     foreach (['config/sync', 'scripts/content'] as $dir) {
@@ -853,7 +1033,14 @@ final class Cli {
   }
 
   /**
-   * @return array{scope: int, with_test_host: int, dropped: int, outside_scope: string[]} */
+   * Scans build-scope files and documentation for host counts.
+   *
+   * @param \AcultaDeployer\Transform $transform
+   *   Rules used to detect and classify hosts.
+   *
+   * @return array{scope: int, with_test_host: int, dropped: int, outside_scope: string[]}
+   *   Scan counters and out-of-scope documentation paths.
+   */
   private function scan(Transform $transform): array {
     $scope = $this->scopeFiles();
     $withTest = 0;
@@ -880,14 +1067,12 @@ final class Cli {
   }
 
   /**
-   * @return array<string, mixed> */
-  /**
-   * Confere, somente leitura, a tabela domain_transition contra os registros de domínio em config/sync. */
-
-  /**
-   * Confere (somente leitura) os webhooks de external_webhooks: URL por ambiente, segredo no contrato e estado do cadastro.
+   * Checks webhook endpoints and secret declarations without writing.
    *
-   * Não chama o provedor e não lê valores de segredo. O cadastro é feito no deploy, conforme docs/USO.md.
+   * Does not call the provider or read secret values.
+   *
+   * @return int
+   *   Process exit code.
    */
   private function webhooks(): int {
     $config = $this->json($this->toolRoot . '/config/deploy.json');
@@ -940,11 +1125,16 @@ final class Cli {
   }
 
   /**
-   * Provisiona segredos e o webhook do Brevo de um ambiente. Dry-run por padrão; --apply executa.
+   * Provisions missing secrets and a Brevo webhook for an environment.
    *
-   * Idempotente: gera só o que falta, nunca sobrescreve segredo existente, cadastra o webhook só se não houver, e troca o
-   * token do webhook existente somente quando o token foi gerado agora. Produção exige --confirm-production.
-   * Valores de segredo nunca são impressos.
+   * The default is dry-run. Applying production changes requires explicit
+   * confirmation; secret values are never printed.
+   *
+   * @param array<string, string|bool> $o
+   *   Command options.
+   *
+   * @return int
+   *   Process exit code.
    */
   private function provision(array $o): int {
     $env = (string) ($o['env'] ?? '');
@@ -1050,9 +1240,10 @@ final class Cli {
   }
 
   /**
-   * Chamada à API do Brevo. A chave segue só em cabeçalho, em memória.
+   * Calls the Brevo API with the key held only in memory.
    *
    * @return array{http: int, body: array}
+   *   HTTP status and decoded response body.
    */
   private function brevoCall(string $method, string $path, string $apiKey, ?array $payload = NULL): array {
     $handle = curl_init('https://api.brevo.com' . $path);
@@ -1077,7 +1268,10 @@ final class Cli {
   }
 
   /**
-   * Confere (somente leitura) o cookie de sessão de cada ambiente contra os arquivos de serviços.
+   * Checks each environment's session cookie against its services file.
+   *
+   * @return int
+   *   Process exit code.
    */
   private function cookies(): int {
     $config = $this->json($this->toolRoot . '/config/deploy.json');
@@ -1095,7 +1289,7 @@ final class Cli {
       $check = $source;
       $label = 'arquivo';
       if (!is_file($source)) {
-        // Produção: o arquivo real é provisionado no servidor; confere-se o modelo versionado.
+        // Check the versioned model when a production file is absent.
         $check = $this->repoRoot . '/' . ($spec['source'] ?? '') . '.example';
         $label = 'modelo';
         if (!is_file($check)) {
@@ -1123,7 +1317,10 @@ final class Cli {
   }
 
   /**
+   * Checks the domain transition table against config/sync.
    *
+   * @return int
+   *   Process exit code.
    */
   private function domains(): int {
     $config = $this->json($this->toolRoot . '/config/deploy.json');
@@ -1165,22 +1362,40 @@ final class Cli {
   }
 
   /**
+   * Reads and decodes a JSON file.
    *
+   * @param string $path
+   *   File path.
+   *
+   * @return array<string, mixed>
+   *   Decoded JSON data.
    */
   private function json(string $path): array {
     return json_decode((string) file_get_contents($path), TRUE, 512, JSON_THROW_ON_ERROR);
   }
 
   /**
+   * Resolves a path relative to the current working directory.
    *
+   * @param string $path
+   *   Relative or absolute path.
+   *
+   * @return string
+   *   Absolute path.
    */
   private function absolute(string $path): string {
     return str_starts_with($path, '/') ? rtrim($path, '/') : rtrim(getcwd() . '/' . $path, '/');
   }
 
   /**
+   * Parses long command-line options.
+   *
    * @param string[] $args
-   * @return array<string, string|bool> .*/
+   *   Raw command arguments.
+   *
+   * @return array<string, string|bool>
+   *   Parsed option names and values.
+   */
   private function options(array $args): array {
     $out = [];
     foreach ($args as $a) {
@@ -1193,7 +1408,10 @@ final class Cli {
   }
 
   /**
+   * Prints command usage information.
    *
+   * @return int
+   *   Success exit code.
    */
   private function help(): int {
     $this->say(<<<TXT
@@ -1228,7 +1446,13 @@ TXT . "\n", ['{version}' => self::VERSION]);
   }
 
   /**
+   * Writes an informational line to standard output.
    *
+   * @param string $line
+   *   Line to print.
+   *
+   * @return int
+   *   Success exit code.
    */
   private function say(string $line): int {
     fwrite(STDOUT, $line . "\n");
@@ -1236,7 +1460,10 @@ TXT . "\n", ['{version}' => self::VERSION]);
   }
 
   /**
+   * Writes an error line to standard error.
    *
+   * @param string $line
+   *   Line to print.
    */
   private function err(string $line): void {
     fwrite(STDERR, $line . "\n");

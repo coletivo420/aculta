@@ -5,15 +5,22 @@ declare(strict_types=1);
 namespace AcultaDeployer;
 
 /**
- * Safely points a Hostinger domain's public_html at the Drupal web directory. */
+ * Inspects and activates the Hostinger public_html layout.
+ */
 final class HostingerLayout {
 
   /**
-   * @return array{domain_root: string, installation_root: string, public_root: string, status: string} */
+   * Inspects the project and public_html paths without changing them.
+   *
+   * @return array{domain_root: string, installation_root: string, public_root: string, status: string}
+   *   Resolved paths and current public_html status.
+   */
   public function inspect(string $domainRoot): array {
     $root = realpath($domainRoot);
     if ($root === FALSE || !is_dir($root) || $root === DIRECTORY_SEPARATOR) {
-      throw new \RuntimeException('informe --domain-root apontando para uma pasta de domínio existente');
+      throw new \RuntimeException(
+        'informe --domain-root apontando para uma pasta de domínio existente',
+      );
     }
     foreach ([
       'composer.json',
@@ -56,8 +63,14 @@ final class HostingerLayout {
   }
 
   /**
+   * Activates the inspected public_html layout.
+   *
    * @param array{domain_root: string, installation_root: string, public_root: string, status: string} $plan
-   *   */
+   *   Validated layout returned by ::inspect().
+   *
+   * @return string
+   *   Result message for the CLI.
+   */
   public function activate(array $plan): string {
     if ($plan['status'] === 'already_linked') {
       return 'public_html já aponta para a raiz web da instalação';
@@ -71,9 +84,11 @@ final class HostingerLayout {
     }
     try {
       if (!flock($lock, LOCK_EX | LOCK_NB)) {
-        throw new \RuntimeException('outra operação de layout está em andamento para este domínio');
+        throw new \RuntimeException(
+          'outra operação de layout está em andamento para este domínio',
+        );
       }
-      // Reinspect after taking the lock so a stale plan cannot move a changed destination.
+      // Recheck after locking to avoid moving a changed destination.
       $current = $this->inspect($plan['domain_root']);
       if ($current['status'] === 'already_linked') {
         return 'public_html já aponta para a raiz web da instalação';
@@ -117,7 +132,7 @@ final class HostingerLayout {
   }
 
   /**
-   *
+   * Removes a file, symlink, or directory tree.
    */
   private function removePath(string $path): void {
     if (is_link($path) || is_file($path)) {

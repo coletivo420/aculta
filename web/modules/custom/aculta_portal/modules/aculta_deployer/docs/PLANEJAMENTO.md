@@ -177,10 +177,10 @@ Reexecução isolada em 2026-10-29:
 - `cookies` ainda registra a dívida não bloqueante de `services.local.yml`
   (`.aculta.test`), que não é carregado no Runtime de desenvolvimento. A decisão
   de como declarar ou remover esse ambiente continua com o responsável.
-- PHPCS Drupal reportava 331 erros e 56 avisos. Em 2026-10-29, correções
-  automáticas de estilo em sete arquivos PHP reduziram o resultado para 101
-  erros e 56 avisos. O gate continua pendente; revisar os comentários e as
-  linhas longas restantes antes de avaliar RC.
+- PHPCS Drupal reportava 331 erros e 56 avisos. Em 2026-10-29, correções de
+  estilo e documentação PHP reduziram o resultado para zero erros e avisos. A
+  suíte funcional passou depois da revisão; permanecem a decisão de cookie,
+  DEP-0003 e a revisão final de segurança antes de avaliar RC.
 
 Os gates são obrigatórios e devem ser registrados no CHANGELOG da versão.
 

@@ -172,12 +172,20 @@ $assert((new Registry($corrupt))->entries()[0]['id'] === 'DEP-0001', 'registro g
 array_map('unlink', glob($tmpDir . '/*') ?: []);
 @rmdir($tmpDir);
 
-// Fase 2b: concorrência do registro. Duas instâncias leram o mesmo estado; a segunda não pode sobrescrever a primeira.
+// Fase 2b: concorrência do registro. A segunda instância não deve
+// sobrescrever o estado lido pela primeira.
 $raceDir = sys_get_temp_dir() . '/aculta-deployer-race-' . getmypid();
 @mkdir($raceDir);
 $raceFile = $raceDir . '/reg.json';
 file_put_contents($raceFile, json_encode(['schema' => 1, 'entries' => []]));
-$record = static fn(string $page): array => ['kind' => 'other', 'page' => $page, 'current' => 'c', 'expected_production' => 'e', 'reason' => 'r', 'owner' => 'o'];
+$record = static fn(string $page): array => [
+  'kind' => 'other',
+  'page' => $page,
+  'current' => 'c',
+  'expected_production' => 'e',
+  'reason' => 'r',
+  'owner' => 'o',
+];
 $first = new Registry($raceFile);
 $second = new Registry($raceFile);
 $first->add($record('pagina-1'));
@@ -536,7 +544,7 @@ exec($cli . ' build --target=test --out=' . escapeshellarg($outTest) . ' 2>&1', 
 $mailTest = is_file($outTest . '/config/sync/system.mail.yml') ? (string) file_get_contents($outTest . '/config/sync/system.mail.yml') : '';
 $assert($btrc === 0 && str_contains($mailTest, '  default: aculta_mailer'), 'build --target=test: system.mail na camada de envio E-Mails ACULTA');
 $assert(!is_file($outTest . '/config/sync/smtp.settings.yml'), 'build --target=test: smtp.settings legado não é gerado');
-// Escrita atômica dos relatórios: existem, são JSON válido e não sobra temporário oculto.
+// Relatórios válidos foram gravados sem temporários ocultos.
 $reportsOk = TRUE;
 foreach (['deploy-policy.json', 'deploy-report.json'] as $report) {
   $reportsOk = $reportsOk && is_file($outTest . '/' . $report) && json_decode((string) file_get_contents($outTest . '/' . $report), TRUE) !== NULL;

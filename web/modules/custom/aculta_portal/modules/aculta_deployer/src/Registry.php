@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace AcultaDeployer;
 
 /**
- * Registro de correções de deploy (canônicos, sitemap e páginas que apontam
- * para produção). Fonte única: registry/deploy-registry.json.
+ * Reads and writes the deploy correction registry.
+ *
+ * The single source of truth is registry/deploy-registry.json.
  */
 final class Registry {
 
@@ -14,11 +15,17 @@ final class Registry {
   public const STATUSES = ['open', 'resolved'];
 
   /**
-   * @var array<int, array<string, mixed>> */
+   * Stores the validated registry entries.
+   *
+   * @var array<int, array<string, mixed>>
+   */
   private array $entries;
 
   /**
-   * Digest SHA-256 do arquivo no momento da leitura, para detectar gravação concorrente. */
+   * SHA-256 digest captured at load time to detect concurrent writes.
+   *
+   * @var string
+   */
   private string $loadedDigest;
 
   public function __construct(private readonly string $path) {
@@ -32,13 +39,21 @@ final class Registry {
   }
 
   /**
-   * @return array<int, array<string, mixed>> */
+   * Returns all registry entries.
+   *
+   * @return array<int, array<string, mixed>>
+   *   Registry entries.
+   */
   public function entries(): array {
     return $this->entries;
   }
 
   /**
-   * @return string[] Erros de validação; vazio quando o registro está correto. */
+   * Validates the registry schema and values.
+   *
+   * @return string[]
+   *   Validation errors, or an empty array when valid.
+   */
   public function validate(): array {
     $errors = [];
     $ids = [];
@@ -70,22 +85,31 @@ final class Registry {
   }
 
   /**
-   * @return array<int, array<string, mixed>> Entradas abertas. */
+   * Returns open registry entries.
+   *
+   * @return array<int, array<string, mixed>>
+   *   Open entries.
+   */
   public function open(): array {
     return array_values(array_filter($this->entries, static fn(array $e): bool => ($e['status'] ?? '') === 'open'));
   }
 
   /**
-   * @return array<int, array<string, mixed>> Entradas abertas e bloqueantes. */
+   * Returns open entries that block release.
+   *
+   * @return array<int, array<string, mixed>>
+   *   Open blocking entries.
+   */
   public function openBlocking(): array {
     return array_values(array_filter($this->open(), static fn(array $e): bool => ($e['blocking'] ?? FALSE) === TRUE));
   }
 
   /**
-   * Grava o registro de forma atômica: escreve em arquivo temporário e renomeia.
+   * Grava o registro com um arquivo temporário e rename.
    *
-   * Controle otimista: sob o bloqueio exclusivo (.lock), recusa gravar se o arquivo mudou desde a leitura.
-   * Sem isso, duas gravações concorrentes sobrescreveriam uma à outra e poderiam atribuir o mesmo id.
+   * Recusa gravar se o arquivo mudou desde a leitura sob lock exclusivo.
+   * Sem isso, duas gravações concorrentes
+   * poderiam sobrescrever entradas ou atribuir o mesmo ID.
    */
   public function save(): void {
     $lock = fopen($this->path . '.lock', 'c');
@@ -96,7 +120,10 @@ final class Registry {
       if (hash('sha256', (string) @file_get_contents($this->path)) !== $this->loadedDigest) {
         throw new \RuntimeException('O registro foi alterado por outro processo desde a leitura; releia e repita a operação.');
       }
-      $json = json_encode(['schema' => 1, 'entries' => $this->entries], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n";
+      $json = json_encode(
+        ['schema' => 1, 'entries' => $this->entries],
+        JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
+      ) . "\n";
       $tmp = $this->path . '.tmp-' . getmypid();
       if (file_put_contents($tmp, $json) === FALSE || !rename($tmp, $this->path)) {
         @unlink($tmp);
@@ -110,12 +137,13 @@ final class Registry {
   }
 
   /**
-   * Importa vários achados de uma vez, tudo ou nada: se qualquer achado for
-   * inválido, nada é gravado. Campos desconhecidos são descartados.
+   * Imports validated findings atomically and discards unknown fields.
    *
    * @param array<int, array<string, mixed>> $findings
+   *   Findings to validate and add.
    *
-   * @return string[] Ids criados.
+   * @return string[]
+   *   IDs created for the findings.
    */
   public function addMany(array $findings): array {
     $backup = $this->entries;
@@ -153,13 +181,24 @@ final class Registry {
   }
 
   /**
-   * Acrescenta uma entrada e grava o arquivo. Retorna o id criado. */
+   * Adds an entry and saves the registry.
+   *
+   * @param array<string, mixed> $fields
+   *   Fields to validate and store.
+   *
+   * @return string
+   *   ID assigned to the entry.
+   */
   public function add(array $fields): string {
     $max = 0;
     foreach ($this->entries as $e) {
       $max = max($max, (int) substr((string) $e['id'], 4));
     }
-    $fields = ['id' => sprintf('DEP-%04d', $max + 1)] + $fields + ['status' => 'open', 'blocking' => FALSE, 'decision' => 'pendente'];
+    $fields = ['id' => sprintf('DEP-%04d', $max + 1)] + $fields + [
+      'status' => 'open',
+      'blocking' => FALSE,
+      'decision' => 'pendente',
+    ];
     $this->entries[] = $fields;
     $errors = $this->validate();
     if ($errors !== []) {

@@ -1,5 +1,11 @@
 ## Não lançado — ciclo Alpha/Beta
 
+## Não lançado — conformidade Drupal PHPCS — 2026-10-29
+
+- Correções de estilo e documentação PHP reduziram o PHPCS Drupal do módulo de 331 erros e 56 avisos para zero erros e avisos.
+- A suíte standalone `tests/run.php` passou; não houve mudança intencional de comportamento nem escrita em Runtime.
+- Permanecem antes de RC a decisão sobre `.aculta.test`, os gates finais de segurança e a revisão do DEP-0003.
+
 - Fluxo vigente passa a Dev → RC → Alpha → Beta. A troca de domínio para `*.aculta.org` acontece no Alpha, no servidor de desenvolvimento (`*.aculta.toca.net.br`). O deploy no Hostinger (produção) fica para o Beta.
 - `config/deploy.json`: textos de `domain_transition.note`, `provision` (ação) e `session_cookie.transition` trocados de "deploy do RC" para Alpha/Beta. Identificadores `production`/`test` não mudaram.
 - `domains` (Cli): pendências mostradas como "pendente(s) de Alpha" e "muda na troca de domínio no Alpha". `tests/run.php` acompanha o texto.
