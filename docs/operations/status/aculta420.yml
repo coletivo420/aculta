@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.7.0-dev.16
+version: 0.7.0-dev.17
 state: Dev
 progress_note: >-
-  0.7.0-dev.16 / THEME-MF0: inventário responsivo regenerado por script: 541 arquivos no tema, 92 estilos, 12 JS, 98 Twig/HTML; 77 @media, zero @container, 599 expressões dimensionais e 54 declarações de overflow. O inventário é lexical e não aprova MF3. As validações Firefox de Perfil/autenticação e rotas reais continuam DEFERRED pelo uso concorrente de recursos.
-next_phase: 'Repetir Firefox para autenticação e Perfil público quando as sessões concorrentes encerrarem; sincronização/cache pelo owner e revisão das páginas reais continuam pendentes. Seguir auditoria/migrações das superfícies MF2 antes do gate THEME-MF3.'
+  0.7.0-dev.17 / THEME-MF2: carrossel editorial da home MAIN migrou de max-width para base compacta com restauração ampla após 768px; harness em 12 viewports criado. Firefox e página real DEFERRED enquanto as sessões visíveis da Revista ocupam os recursos; MF3 não aprovado.
+next_phase: 'Repetir Firefox para carrossel, autenticação e Perfil público quando sessões concorrentes encerrarem; sincronização/cache pelo owner e revisão das páginas reais permanecem pendentes. Continuar demais superfícies MF2 antes de THEME-MF3.'

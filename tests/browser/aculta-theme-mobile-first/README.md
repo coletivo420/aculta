@@ -250,3 +250,20 @@ export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-auth-mobile-first
 export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
 DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/auth-layout.py
 ```
+
+## Carrossel editorial da home MAIN
+
+`editorial-carousel-layout.py` compara geometria calculada e screenshots da
+View `view-home-editorial-highlights` entre o CSS de baseline e o candidato,
+em 320/360/390/575/576/599/600/768/769/1024/1280/1440 px. Usa fixture, não a
+página Runtime. Requer Firefox ESR visível em `DISPLAY=:0`, geckodriver e
+`websockets`; screenshots ficam fora do repositório em `$SUITE_OUT`.
+`EDITORIAL_CAROUSEL_BASELINE_REF` e `EDITORIAL_CAROUSEL_WIDTHS` permitem escolher
+baseline e larguras.
+
+```sh
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-editorial-carousel-mobile-first
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/editorial-carousel-layout.py
+```

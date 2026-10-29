@@ -178,12 +178,12 @@ contém também preferências/recursos de acessibilidade, não só breakpoints:
 | `min-width: 48rem` | 7 | 6 |
 | `min-width: 36rem` | 5 | 5 |
 | `min-width: 768px` | 4 | 4 |
-| `max-width: 768px` | 3 | 3 |
 | `min-width: 576px` | 3 | 3 |
 | `min-width: 992px` | 3 | 2 |
+| `max-width: 768px` | 2 | 2 |
 | `min-width: 1100px` | 2 | 2 |
 
-Há outras 19 expressões literais de uso único, incluindo 320–480 px, 992–1200
+Há outras 20 expressões literais de uso único, incluindo 320–480 px, 992–1200
 px, `forced-colors`, `hover` e `prefers-color-scheme`. Sobreposições entre
 Bootstrap (575.98/767.98) e limites do tema (576/768/1100), além de `max-width`
 e `min-width` misturados, pedem análise de cascade por consumer; contagens não
@@ -495,3 +495,14 @@ computados em cada lado do breakpoint. A fixture
 comparar candidato/baseline em 11 larguras; a execução Firefox está DEFERRED
 enquanto sessões da Revista mantêm geckodriver e memória ocupados. Rotas reais
 e páginas servidas após cache rebuild também permanecem pendentes.
+
+### THEME-MF2 — carrossel editorial da home MAIN (2026-10-29)
+
+`editorial-carousel.css` agora usa o limite compacto de 390px e itens fluidos
+como base; `min-width: 48.0625rem` restaura o limite de 764px e itens de até
+370px, preservando a transição original em 768px. O consumer é a View de
+Destaques editoriais da home MAIN. Foi criado
+`tests/browser/aculta-theme-mobile-first/editorial-carousel-layout.py` para
+comparar geometria e capturas baseline/candidato em 12 larguras; Firefox e a
+página servida estão DEFERRED pelas sessões concorrentes visíveis. THEME-MF3
+segue pendente.

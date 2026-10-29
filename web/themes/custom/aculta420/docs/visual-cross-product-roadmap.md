@@ -601,3 +601,12 @@ encontra 541 arquivos no tema, 92 folhas de estilo, 12 scripts JS e 98 templates
 e 54 declarações overflow. Isso documenta fontes e regras literais, sem medir
 layout computado ou declarar cobertura de runtime. Fonte detalhada em
 `mobile-first-audit.md` e `theme-mobile-file-inventory.tsv`.
+
+### THEME-MF2 — carrossel editorial da home MAIN (2026-10-29)
+
+O consumidor real `view-home-editorial-highlights` declara primeiro o layout
+compacto, e restaura largura ampla do wrapper e dos slides em
+`min-width: 48.0625rem` (após 768 CSS px). Harness comparativo em 12 viewports
+criado; execução Firefox e conferência da rota servida estão DEFERRED por
+sessões concorrentes. Não aprova MF3. Evidência e limites em `mobile-first-audit.md`
+e `tests/browser/aculta-theme-mobile-first/editorial-carousel-layout.py`.

@@ -1,3 +1,8 @@
+# 0.7.0-dev.17 — migrar carrossel editorial para mobile-first (2026-10-29)
+
+- O carrossel da View editorial na home MAIN usa limite compacto (390px) e item fluido como base; `min-width: 48.0625rem` restaura os limites amplos anteriores, mantendo a transição original após 768 CSS px.
+- Harness Firefox candidato/baseline em 12 viewports criado, execução DEFERRED por sessões concorrentes visíveis. Sem homologação Runtime ou THEME-MF3.
+
 # 0.7.0-dev.16 — regenerar inventário responsivo mobile-first (2026-10-29)
 
 - O TSV de MF0 é gerado por `scripts/audit-aculta420-responsive-inventory.py` e agora inclui o script `navigation-top-bar-displace.js` e as media queries mobile-first recentes.
