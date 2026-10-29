@@ -12,6 +12,11 @@
 
 # Changelog — aculta_image
 
+## 0.1.0-dev.43 — revalidar binários Hostinger (2026-10-29)
+
+- Reconsultada a documentação oficial de Hostinger: Web e Cloud documentam `optipng`, `jpegoptim`, `jpegtran`, `gifsicle` e `libwebp-tools`, mas não documentam ImageMagick nem Ghostscript.
+- Isso não comprova indisponibilidade; miniaturas de PDF seguem condicionadas à confirmação no plano específico antes do RC.
+
 ## 0.1.0-dev.42 — retenção quando coordenador indisponível (2026-10-29)
 
 - Kernel confirma que uma imagem permanente enfileirada permanece no banco e no storage quando o serviço coordenador do Portal não está disponível; o item fica elegível a nova tentativa após o lease.

@@ -207,12 +207,14 @@ Fontes: páginas de suporte da Hostinger e especificação pública da API (busc
 | --- | --- |
 | Binários de otimização documentados (Web e Cloud) | `optipng`, `jpegoptim`, `jpegtran`, `gifsicle` e `libwebp-tools` (`cwebp`). Exigem `shell_exec` liberado no painel |
 | `exec` e `shell_exec` | desabilitados por padrão nos planos Web e Cloud; liberam-se em PHP Configuration, removendo a função de `disableFunctions` |
-| ImageMagick e Ghostscript | **não citados** nas páginas consultadas. Sem confirmação |
+| ImageMagick e Ghostscript | **não citados** na página oficial atual de ferramentas de otimização; disponibilidade para Web/Cloud não confirmada em 2026-10-29 |
 | Extensões PHP | SimpleXML e SOAP habilitadas por padrão; OPcache pré-instalada; ionCube para PHP 8.1 ou superior; `dl()` desabilitado. A lista completa não é pública |
 | Limites de PHP | `upload_max_filesize` padrão 128M; opções 128M, 256M e 512M |
 
 Consequências: a miniatura de PDF não pode ser prometida em produção sem confirmação. A compressão é viável com os
 binários documentados, depois de liberar `shell_exec`.
+
+Revalidação documental em 2026-10-29: a página oficial [What image optimization tools are supported at Hostinger](https://www.hostinger.com/support/3738441-what-image-optimization-tools-are-supported/) lista `optipng`, `jpegoptim`, `jpegtran`, `gifsicle` e `libwebp-tools`, com uso via SSH e `shell_exec` sujeito à configuração; ela não lista ImageMagick/Ghostscript. A página [Which media, compression, and web applications are supported at Hostinger](https://www.hostinger.com/support/which-media-compression-and-web-applications-are-supported/) cobre codecs/FFmpeg/GCC e também não confirma esses binários. Ausência na documentação não prova que estejam indisponíveis no plano contratado. A miniatura PDF continua sem validação para produção; confirmar com o plano/painel ou suporte antes do RC.
 
 ## 8. Paridade do Homelab (2026-10-17)
 
@@ -267,4 +269,5 @@ testes de integração serem concluídos.
 - Media Duplicates: https://www.drupal.org/project/media_duplicates
 - File Hash: https://www.drupal.org/project/filehash (avaliado; não adotado)
 - Hostinger: páginas de suporte sobre PHP e binários consultadas em 2026-10-17 (ver seção 7)
+- Hostinger: documentação oficial de ferramentas de imagem e mídia reconsultada em 2026-10-29 (ver seção 7)
 - Modelos de imagem dos veículos: ver `MODELOS-DE-IMAGEM.md`, seção 2
