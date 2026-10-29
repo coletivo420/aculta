@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_ugc\Kernel;
 
+use Drupal\domain\DomainNegotiator;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_user\Associado\ActiveAssociateInterface;
 use Drupal\aculta_user\Identity\AuthorCardBuilder;
@@ -105,6 +106,10 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     $loader->addPsr4('Drupal\\aculta_forum\\', $root . '/web/modules/custom/aculta_portal/modules/aculta_forum/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_user\\', $root . '/web/modules/custom/aculta_portal/modules/aculta_user/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_image\\', $root . '/web/modules/custom/aculta_portal/modules/aculta_image/src', TRUE);
+    $loader->addPsr4('Drupal\\domain\\', $root . '/web/modules/contrib/domain/domain/src', TRUE);
+
+    $container->register('domain.negotiator', DomainNegotiator::class)
+      ->setFactory([self::class, 'createDummyDomainNegotiator']);
 
     $container->register('aculta_portal.email_confirmation_policy', EmailConfirmationPolicy::class)
       ->addArgument(new Reference('user.data'))
@@ -168,6 +173,14 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
    */
   public static function createDummyFileRemover(): FileRemover {
     $ref = new \ReflectionClass(FileRemover::class);
+    return $ref->newInstanceWithoutConstructor();
+  }
+
+  /**
+   * Cria instância dummy de DomainNegotiator para testes.
+   */
+  public static function createDummyDomainNegotiator(): DomainNegotiator {
+    $ref = new \ReflectionClass(DomainNegotiator::class);
     return $ref->newInstanceWithoutConstructor();
   }
 
@@ -396,6 +409,208 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     catch (AccessDeniedHttpException) {
       $this->assertTrue(TRUE);
     }
+  }
+
+  /**
+   * Valida que flag sobre conteúdo sem permissão de leitura não cria denúncia.
+   */
+  public function testFlagDeniedIfNoAccessToTarget(): void {
+    // Tópico despublicado: usuário comum não tem acesso de leitura.
+    $privateTopic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Tópico Privado Despublicado',
+      'status' => 0,
+    ]);
+    $privateTopic->save();
+
+    $this->container->get('current_user')->setAccount($this->reporter);
+    $this->assertFalse($privateTopic->access('view', $this->reporter));
+
+    $flagging = Flagging::create([
+      'flag_id' => 'sinalizar_topico',
+      'entity_type' => 'node',
+      'entity_id' => $privateTopic->id(),
+      'uid' => $this->reporter->id(),
+      'created' => 1700000600,
+    ]);
+
+    // O hook de bridge não deve criar denúncia se não houver acesso de view.
+    $this->container->get('aculta_forum.report_ugc_bridge')->flaggingInsert($flagging);
+
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+    $reports = $reportStorage->loadByProperties([
+      'target_id' => $privateTopic->id(),
+    ]);
+    $this->assertEmpty($reports);
+  }
+
+  /**
+   * Valida que denúncia já decidida não reabre na fila pendente via flag.
+   */
+  public function testDecidedReportDoesNotReopenFromLegacyFlag(): void {
+    $topic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Tópico Julgado',
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    // Cria denúncia UGC já procedente/decidida pela moderação.
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+    $reportStorage->create([
+      'target_type' => 'node',
+      'target_id' => $topic->id(),
+      'uid' => $this->reporter->id(),
+      'motivo' => 'spam',
+      'purpose' => 'forum',
+      'status' => 'procedente',
+      'created' => 1700000700,
+    ])->save();
+
+    // Simula existência de flagging no banco para o mesmo tópico.
+    $this->container->get('database')->insert('flagging')
+      ->fields([
+        'flag_id' => 'sinalizar_topico',
+        'uuid' => $this->container->get('uuid')->generate(),
+        'entity_type' => 'node',
+        'entity_id' => $topic->id(),
+        'uid' => $this->reporter->id(),
+        'session_id' => NULL,
+        'created' => 1700000750,
+      ])
+      ->execute();
+
+    // Consulta fila pendente: o tópico decidido não deve reaparecer.
+    $queueData = $this->queue->getQueueItems($this->forumModerator, 'forum', 'pendente');
+    $targetIds = array_column($queueData['items'], 'target_id');
+    $this->assertNotContains((int) $topic->id(), $targetIds);
+  }
+
+  /**
+   * Valida que exclusão de flag não apaga denúncia em análise ou decidida.
+   */
+  public function testFlaggingDeletePreservesReviewedOrDecidedReport(): void {
+    $topic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Tópico Em Análise',
+      'status' => 1,
+    ]);
+    $topic->save();
+
+    $this->container->get('current_user')->setAccount($this->reporter);
+    $flagging = Flagging::create([
+      'flag_id' => 'sinalizar_topico',
+      'entity_type' => 'node',
+      'entity_id' => $topic->id(),
+      'uid' => $this->reporter->id(),
+      'created' => 1700000800,
+    ]);
+    $flagging->save();
+
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+    $reports = $reportStorage->loadByProperties(['legacy_flag_id' => (int) $flagging->id()]);
+    $this->assertCount(1, $reports);
+
+    /** @var \Drupal\aculta_ugc\Entity\UgcReport $report */
+    $report = reset($reports);
+    $report->set('status', 'em_analise')->save();
+
+    // Exclui a flag: a denúncia em análise deve permanecer intacta.
+    $flagging->delete();
+
+    $reloaded = $reportStorage->load((int) $report->id());
+    $this->assertNotNull($reloaded);
+    $this->assertSame('em_analise', $reloaded->get('status')->value);
+  }
+
+  /**
+   * Valida proteção de conteúdo restrito no painel de moderação.
+   */
+  public function testRestrictedContentProtectionInPanel(): void {
+    $topic = Node::create([
+      'type' => 'aculta_forum_topic',
+      'title' => 'Segredo Privado Não Publicado',
+      'status' => 0,
+    ]);
+    $topic->save();
+
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+    $reportStorage->create([
+      'target_type' => 'node',
+      'target_id' => $topic->id(),
+      'uid' => $this->reporter->id(),
+      'motivo' => 'ofensa',
+      'purpose' => 'forum',
+      'status' => 'pendente',
+    ])->save();
+
+    $this->container->get('current_user')->setAccount($this->forumModerator);
+    $controller = ReportQueueController::create($this->container);
+    $request = Request::create('/painel-administrativo/forum/denuncias');
+    $build = $controller->view($request);
+
+    $this->assertIsArray($build);
+    $cellMarkup = (string) ($build['table']['#rows'][0][0]['data']['#plain_text'] ?? '');
+    // O moderador sem view access do node não vê o título nem recebe link.
+    $this->assertStringContainsString('Conteúdo restrito', $cellMarkup);
+    $this->assertStringNotContainsString('Segredo Privado Não Publicado', $cellMarkup);
+  }
+
+  /**
+   * Valida rejeição 403 para moderador de purpose diferente no painel.
+   */
+  public function testModeratorOfDifferentPurposeForbidden(): void {
+    $roleMag = Role::create(['id' => 'mod_magazine', 'label' => 'Mod Magazine']);
+    $roleMag->grantPermission('moderar denuncias ugc: magazine');
+    $roleMag->save();
+
+    $magModerator = User::create(['name' => 'mag_mod', 'mail' => 'mag@example.com', 'status' => 1]);
+    $magModerator->addRole('mod_magazine');
+    $magModerator->save();
+
+    $this->container->get('current_user')->setAccount($magModerator);
+    $controller = ReportQueueController::create($this->container);
+    $request = Request::create('/painel-administrativo/forum/denuncias');
+
+    $this->expectException(AccessDeniedHttpException::class);
+    $controller->view($request);
+  }
+
+  /**
+   * Valida ordenação determinística e paginação da fila unificada.
+   */
+  public function testDeterministicPagination(): void {
+    $reportStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ugc_report');
+
+    $topics = [];
+    for ($i = 1; $i <= 3; $i++) {
+      $node = Node::create(['type' => 'aculta_forum_topic', 'title' => 'Tópico ' . $i, 'status' => 1]);
+      $node->save();
+      $topics[$i] = $node;
+
+      $reportStorage->create([
+        'target_type' => 'node',
+        'target_id' => $node->id(),
+        'uid' => $this->reporter->id(),
+        'motivo' => 'spam',
+        'purpose' => 'forum',
+        'status' => 'pendente',
+        'created' => 1700000000 + ($i * 100),
+      ])->save();
+    }
+
+    // Página 0 com limite 2: deve retornar Tópico 3 e Tópico 2.
+    $page0 = $this->queue->getQueueItems($this->forumModerator, 'forum', 'pendente', 0, 2);
+    $this->assertSame(3, $page0['total_items']);
+    $this->assertSame(2, $page0['total_pages']);
+    $this->assertCount(2, $page0['items']);
+    $this->assertSame((int) $topics[3]->id(), $page0['items'][0]['target_id']);
+    $this->assertSame((int) $topics[2]->id(), $page0['items'][1]['target_id']);
+
+    // Página 1 com limite 2: deve retornar Tópico 1.
+    $page1 = $this->queue->getQueueItems($this->forumModerator, 'forum', 'pendente', 1, 2);
+    $this->assertCount(1, $page1['items']);
+    $this->assertSame((int) $topics[1]->id(), $page1['items'][0]['target_id']);
   }
 
 }
