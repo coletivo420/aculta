@@ -153,6 +153,17 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
   fixture. Binários ImageMagick/Ghostscript no Hostinger e Growroom seguem
   pendentes; nenhum arquivo real ou Runtime foi alterado.
 
+### Retenção de referência estruturada — 2026-10-29
+
+- O Kernel agora cria uma Media com campo `image` apontando a File e confirma
+  que `FileReferenceInspector` detecta a referência estruturada e impede a
+  remoção. O caso complementa File Usage; a mesma rodada também confirma que
+  um File sem referências é excluído. A suíte completa passa com 31 testes /
+  138 assertions; o módulo informa quatro depreciações upstream relacionadas
+  a `media_duplicates`/Drupal.
+- Referências em campos File/Image estão cobertas. Referências em texto
+  formatado/revisões e a integração com o Portal completo permanecem pendentes.
+
 Fora deste ciclo: bloqueio automático de duplicatas durante o upload. O relatório continua sugerindo revisão administrativa.
 
 ## 6. Perguntas abertas
