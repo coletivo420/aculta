@@ -1,6 +1,9 @@
 # ACULTA PDF Viewer
 
-**Revalidação 2026-10-29 (0.1.0-dev.41):** PV7 continua bloqueada. Carregar o
+**Revalidação 2026-10-29 (0.1.0-dev.44):** PV7 continua em Dev. Miniaturas de PDF
+usam `aculta_image.pdf_thumbnail` com a extensão PHP Imagick, sem depender do
+CLI ImageMagick; a validação da aplicação no FPM Hostinger segue pendente.
+Carregar o
 ledger real do `aculta_user` avançou o bootstrap; depois de incluir os módulos
 reais `path_alias`, Portal e Image na investigação, o container exigiu também
 `key.repository`. A tentativa terminou em 4 Kernel errors / 0 assertions; a

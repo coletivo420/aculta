@@ -8,12 +8,11 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\aculta_image\GeneratedImageFileManager;
+use Drupal\aculta_image\PdfThumbnailGenerator;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\aculta_image\ImageInspector;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
-use Drupal\imagemagick\ImagemagickExecManagerInterface;
-use Drupal\pdfpreview\PDFPreviewGenerator;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -23,28 +22,21 @@ final class PdfPreviewThumbnailBuilder implements PdfPreviewThumbnailBuilderInte
 
   private const MAX_SOURCE_BYTES = 20_971_520;
 
-  private const PROCESS_TIMEOUT_SECONDS = 15;
-
-  private const DEFAULT_PROCESS_TIMEOUT_SECONDS = 60;
-
   public function __construct(
-    private readonly ?PDFPreviewGenerator $previewGenerator,
+    private readonly PdfThumbnailGenerator $previewGenerator,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly GeneratedImageFileManager $generatedImageFileManager,
     private readonly ImageRenderer $imageRenderer,
     private readonly ImageInspector $imageInspector,
     private readonly FileSystemInterface $fileSystem,
     private readonly LoggerInterface $logger,
-    private readonly ?ImagemagickExecManagerInterface $imagemagickExecManager,
   ) {}
 
   /**
    * {@inheritdoc}
    */
   public function build(FileInterface $file, string $alt): ?array {
-    if (!$this->previewGenerator instanceof PDFPreviewGenerator
-      || !$this->imagemagickExecManager instanceof ImagemagickExecManagerInterface
-      || !$file instanceof File
+    if (!$file instanceof File
       || !$file->isPermanent()
       || !str_starts_with($file->getFileUri(), 'public://')
       || strtolower((string) $file->getMimeType()) !== 'application/pdf'
@@ -57,15 +49,7 @@ final class PdfPreviewThumbnailBuilder implements PdfPreviewThumbnailBuilderInte
     }
 
     try {
-      // Avoid unavailable binaries and cap work during the web request.
-      $this->imagemagickExecManager->setTimeout(self::PROCESS_TIMEOUT_SECONDS);
-      try {
-        $preview_uri = $this->previewGenerator->getPDFPreview($file);
-      }
-      finally {
-        // The exec manager is shared; restore ImageMagick's contrib default.
-        $this->imagemagickExecManager->setTimeout(self::DEFAULT_PROCESS_TIMEOUT_SECONDS);
-      }
+      $preview_uri = $this->previewGenerator->generate($file);
       if (!is_string($preview_uri) || !str_starts_with($preview_uri, 'public://pdfpreview/')) {
         return NULL;
       }

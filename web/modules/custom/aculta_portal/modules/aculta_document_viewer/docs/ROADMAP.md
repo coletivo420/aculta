@@ -1,5 +1,11 @@
 # Roadmap — ACULTA Document Viewer
 
+## Miniaturas PDF em Hostinger (2026-10-29)
+
+- PDF Preview passou a usar o serviço `aculta_image.pdf_thumbnail`, com extensão PHP Imagick/Ghostscript; não depende do executável CLI ImageMagick.
+- Suíte completa: 52 testes/570 assertions PASS, com 147 depreciações Core/contrib e uma depreciação PHPUnit.
+- Runtime não alterado. Após o candidato ser servido, confirmar PDF pelo FPM Hostinger junto à revisão visual de DOCX/planilhas, CSP e acessibilidade.
+
 **Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). PV7 só pode ser classificada RC quando todo o escopo e testes, CSP em Report-Only configurada sem enforcement, acessibilidade e validação visual pré-deploy aplicável estiverem concluídos. Alpha valida a coleta/análise dos relatórios no servidor de desenvolvimento; enforcement será decidido após Alpha. LiteSpeed/Cloudflare são validados depois do deploy em produção.
 
 Este roadmap cobre somente o módulo compartilhado `aculta_document_viewer`. O

@@ -50,6 +50,24 @@ final class ImageFileUsageAccessKernelTest extends KernelTestBase {
   }
 
   /**
+   * A regular user cannot change image processing settings.
+   */
+  public function testRegularUserCannotChangeProcessingSettings(): void {
+    $route = $this->container->get('router.route_provider')->getRouteByName('aculta_image.settings');
+    $request = Request::create('/painel-administrativo/imagens/configuracoes');
+    $request->attributes->set('_route', 'aculta_image.settings');
+    $request->attributes->set('_route_object', $route);
+    $result = $this->container->get('access_manager')->check(
+      RouteMatch::createFromRequest($request),
+      new UserSession(['uid' => 2, 'roles' => ['authenticated']]),
+      $request,
+      TRUE,
+    );
+
+    $this->assertFalse($result->isAllowed());
+  }
+
+  /**
    * Cleanup services install without Portal and quarantine fails closed.
    */
   public function testCleanupServicesBootWithoutPortalCoordinator(): void {

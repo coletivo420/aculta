@@ -12,6 +12,20 @@
 
 # Changelog — aculta_image
 
+## 0.1.0-dev.45 — opções administrativas de processamento (2026-10-29)
+
+- `/painel-administrativo/imagens/configuracoes` detecta Imagick/GD, formatos PHP
+  e otimizadores opcionais; só permite selecionar um backend disponível.
+- Compressão/redimensionamento, largura, tipos MIME processados, saída original,
+  JPEG/PNG, conversão WebP e qualidades JPEG/PNG/WebP ficam configuráveis.
+- O upload inline usa o backend selecionado. WebP fica ativo por padrão e gera qualidade 82,
+  atualiza URI, nome e MIME do File após gravação temporária; GIF animado é
+  preservado e GD não processa GIF. A migração do acervo existente ainda não foi
+  executada nem implementada.
+- Acesso da rota protegido por `administer aculta images`; teste Kernel nega
+  acesso a usuário comum. Suíte Image: 33 testes / 169 assertions PASS (4
+  depreciações upstream).
+
 ## 0.1.0-dev.43 — revalidar binários Hostinger (2026-10-29)
 
 - Reconsultada a documentação oficial de Hostinger: Web e Cloud documentam `optipng`, `jpegoptim`, `jpegtran`, `gifsicle` e `libwebp-tools`, mas não documentam ImageMagick nem Ghostscript.
@@ -264,4 +278,10 @@ Classificação: PATCH.
 - Comparação visual (`DHash`): dHash de 64 bits com GD, sem dependência nova. Impressões calculadas no cron, 200 por execução (`aculta_image_update_10003`). Imagens que o GD não lê e imagens lisas são excluídas dos pares. Pares de cópias reais têm distância 0; fotos sequenciais muito parecidas ficam entre 4 e 6 bits. Sugestão para revisão, nada é alterado.
 - Pendente (M8): compressão com `imageapi_optimize` depende de binários (`optipng`, `jpegoptim` etc.), que não estão no sistema, ou de serviço externo com chave. Decisão do responsável.
 - Testes unitários: `DHashTest`, `QuarantineRulesTest` e `ImageIngesterTest` (11 no total).
+
+## 0.1.0-dev.44 — miniatura PDF com PHP Imagick (2026-10-29)
+
+- `aculta_image.pdf_thumbnail` gera a primeira página de PDFs elegíveis usando a extensão PHP Imagick, sem depender do CLI `magick`/`convert`; valida assinatura/tamanho, restringe recursos, preserva proporção e grava JPEG temporário atomicamente.
+- Hostinger verificado via SSH somente leitura: Imagick 3.8.1 com coders PDF/WebP e Ghostscript 9.54.0; PDF sintético processado em memória. A validação via FPM ainda não foi feita.
+- Suítes: Image 33/164 PASS (4 depreciações); PDF Viewer 36/367 PASS (137); Document Viewer 52/570 PASS (147 Core/contrib e 1 PHPUnit).
 

@@ -1,5 +1,11 @@
 # Changelog — aculta_pdf_viewer
 
+## 0.1.0-dev.44 — miniaturas via Imagick PHP (2026-10-29)
+
+- O builder usa `aculta_image.pdf_thumbnail`, que rasteriza PDF pela extensão PHP Imagick e Ghostscript, sem exigir `magick`/`convert` nem o exec manager CLI do contrib.
+- Suíte completa: 36 testes, 367 assertions PASS, 137 depreciações Core/contrib. PHPCS e lint focal incluídos na validação da microfase compartilhada.
+- Runtime não alterado; verificação real pelo FPM Hostinger ainda pendente.
+
 ## 0.1.0-dev.43 — PHPCS integral limpo na PV7 (2026-10-29)
 
 - Corrigidos docblocks, indentação e traduções dos formatters, settings e

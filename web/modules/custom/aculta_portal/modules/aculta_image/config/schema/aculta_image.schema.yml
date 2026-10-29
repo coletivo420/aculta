@@ -19,3 +19,38 @@ ckeditor5.plugin.aculta_image_model:
       sequence:
         type: string
         label: 'Modelo'
+
+aculta_image.settings:
+  type: config_object
+  label: 'Configurações do processamento de imagens'
+  mapping:
+    backend:
+      type: string
+      label: 'Biblioteca PHP'
+    compression_enabled:
+      type: boolean
+      label: 'Processamento ativo'
+    max_width:
+      type: integer
+      label: 'Largura máxima'
+    supported_mime_types:
+      type: sequence
+      label: 'Tipos MIME processados'
+      sequence:
+        type: string
+        label: 'Tipo MIME'
+    webp_enabled:
+      type: boolean
+      label: 'Conversão para WebP ativa'
+    webp_quality:
+      type: integer
+      label: 'Qualidade WebP'
+    output_format:
+      type: string
+      label: 'Formato de saída'
+    jpeg_quality:
+      type: integer
+      label: 'Qualidade JPEG'
+    png_compression:
+      type: integer
+      label: 'Nível de compressão PNG'

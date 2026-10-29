@@ -8,6 +8,16 @@ aculta_image.audit:
   options:
     _admin_route: true
 
+aculta_image.settings:
+  path: '/painel-administrativo/imagens/configuracoes'
+  defaults:
+    _form: '\Drupal\aculta_image\Form\ImageSettingsForm'
+    _title: 'Configurações de processamento de imagens'
+  requirements:
+    _permission: 'administer aculta images'
+  options:
+    _admin_route: true
+
 aculta_image.audit_report:
   path: '/painel-administrativo/imagens/relatorio'
   defaults:

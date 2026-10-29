@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 /**
  * Comprime imagens enviadas no texto dos editores.
  *
- * A compressão sem perda ocorre após o upload em inline-images.
+ * Configurable processing occurs after upload in inline-images.
  */
 final class InlineImageHooks {
 
@@ -31,7 +31,7 @@ final class InlineImageHooks {
   /**
    * Implements hook_file_insert().
    *
-   * Reduz a largura para 1200 px e comprime sem perda.
+   * Processes eligible files using the selected backend and settings.
    */
   #[Hook('file_insert')]
   public function fileInsert(FileInterface $file): void {
@@ -43,15 +43,7 @@ final class InlineImageHooks {
     if ($caminho === FALSE) {
       return;
     }
-    $mime = (string) $file->getMimeType();
-    $redimensionou = $this->compressor->redimensionar($caminho, $mime);
-    $comprimiu = $this->compressor->comprimir($caminho, $mime);
-    if (!$redimensionou && !$comprimiu) {
-      return;
-    }
-    clearstatcache(TRUE, $caminho);
-    $file->setSize((int) filesize($caminho));
-    $file->save();
+    $this->compressor->processFile($file, $caminho);
   }
 
 }

@@ -33,7 +33,9 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 | `aculta_image.ingester` | `ImageIngester` | Ingestão de imagem externa (SHA-256, reaproveitamento, origem). |
 | `aculta_image.audit` | `ImageAudit` | Resumo, duplicatas exatas, impressões visuais e candidatas. Somente leitura. |
 | `aculta_image.quarantine` | `ImageQuarantine` | Envio, restauração e exclusão de vencidas à quarentena. |
-| `aculta_image.compressor` | `ImageCompressor` | Redução de largura para 1200 px e compressão sem perda (binários com argumentos fixos). |
+| `aculta_image.compressor` | `ImageCompressor` | Processamento inline por Imagick/GD conforme configuração, com redução, qualidade e formatos configuráveis. |
+| `aculta_image.capabilities` | `ImageCapabilities` | Detecta backends PHP, formatos e otimizadores opcionais disponíveis no servidor. |
+| `aculta_image.pdf_thumbnail` | `PdfThumbnailGenerator` | Miniatura JPEG da primeira página de PDF público com a extensão PHP Imagick, sem chamada a `magick`/`convert`; falha fechada quando o formato PDF não está disponível. |
 
 ## Texto dos editores (CKEditor 5 e filtro)
 
@@ -57,6 +59,7 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 ## Rotas e permissões
 
 - `/painel-administrativo/imagens`: painel com resumo e atalhos administrativos.
+- `/painel-administrativo/imagens/configuracoes`: selecionar backend, processamento, formatos e qualidades.
 - `/painel-administrativo/imagens/relatorio`: resumo, duplicatas exatas, pares visuais e candidatas.
 - `/painel-administrativo/imagens/limpeza`: executar até 100 itens da fila e temporários vencidos.
 - `/painel-administrativo/imagens/quarentena`: enviar candidatas, restaurar e excluir vencidas. Arquivos já quarentenados não voltam a aparecer como candidatas.
@@ -67,8 +70,9 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 - Core: `file`, `image`, `media`, `ckeditor5`, `filter`, `editor`.
 - Contrib (justificativa em `docs/PLANO.md`): `entity_usage` 5.0.1, `media_duplicates` 2.0.4, `imageapi_optimize` 4.2.0,
   `imageapi_optimize_binaries` 1.2.0-beta1 (beta, aprovado pelo responsável).
-- Binários no sistema: ImageMagick 7 (com Ghostscript para PDF), optipng, jpegoptim, gifsicle e cwebp. Na Hostinger, ver
-  `docs/PLANO.md`, seção 7.
+- Bibliotecas e ferramentas disponíveis variam por ambiente. Miniaturas PDF usam a extensão PHP Imagick; seleção de
+  backend, recursos WebP e ferramentas opcionais são detectados e configurados em `/painel-administrativo/imagens/configuracoes`.
+  Evidência por ambiente: `docs/PLANO.md`, seção 7.
 
 ## Regras de negócio
 
@@ -79,9 +83,10 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 - **Comparação visual:** dHash de 64 bits com GD. Impressões são calculadas no cron, em lotes de 200. Pares com até 6
   bits de diferença aparecem para revisão. Imagens lisas e não lidas são excluídas dos pares.
 - **Ingestão:** um arquivo por conteúdo (SHA-256). Origem registrada por arquivo e URL. Nunca sobrescreve.
-- **Compressão:** sem perda, com `optipng -o2`, `jpegoptim --strip-all --all-progressive` e `gifsicle -O2`. Tempo máximo
-  de 60 s por arquivo. Falha mantém o arquivo original.
-- **Redução de largura:** `mogrify -resize 1200x>` (só reduz, mantém a proporção) em jpeg, png, gif e webp.
+- **Compressão inline:** via Imagick ou GD em PHP, escolhidos entre os disponíveis. Qualidade JPEG/WebP e nível PNG são configuráveis; WebP substitui o original no upload inline e fica ativo por padrão, em qualidade 82.
+- **Tipos:** o painel escolhe os MIME processados. A saída pode manter o formato, gerar JPEG/PNG ou gerar WebP. As regras de validação de upload dos campos são independentes.
+- **GIF:** Imagick preserva animações; o backend GD ignora GIF para não descartar quadros.
+- **Acervo existente:** ainda não migrado. A migração terá inventário, atualização de referências e reversão antes de qualquer gravação.
 
 ## Gates e testes
 

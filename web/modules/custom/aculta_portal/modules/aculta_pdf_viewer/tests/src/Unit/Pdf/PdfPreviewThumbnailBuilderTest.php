@@ -8,6 +8,7 @@ use Drupal\aculta_image\GeneratedImageFileManager;
 use Drupal\aculta_image\ImageCatalog;
 use Drupal\aculta_image\ImageInspector;
 use Drupal\aculta_image\ImageRenderer;
+use Drupal\aculta_image\PdfThumbnailGenerator;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileSystemInterface;
@@ -16,8 +17,6 @@ use Drupal\Core\File\MimeType\MimeTypeGuesser;
 use Drupal\aculta_pdf_viewer\Pdf\PdfPreviewThumbnailBuilder;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\file\Entity\File;
-use Drupal\imagemagick\ImagemagickExecManagerInterface;
-use Drupal\pdfpreview\PDFPreviewGenerator;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use Psr\Log\LoggerInterface;
@@ -45,17 +44,10 @@ final class PdfPreviewThumbnailBuilderTest extends UnitTestCase {
       ->with('public://documento.pdf')
       ->willReturn(FALSE);
 
-    $preview_generator = $this->getMockBuilder(PDFPreviewGenerator::class)
-      ->disableOriginalConstructor()
-      ->onlyMethods(['getPDFPreview'])
-      ->getMock();
-    $preview_generator->expects(self::never())->method('getPDFPreview');
-
-    $exec_manager = $this->createMock(ImagemagickExecManagerInterface::class);
-    $exec_manager->expects(self::never())->method('setTimeout');
+    $thumbnail_generator = new PdfThumbnailGenerator($this->createMock(ConfigFactoryInterface::class), $file_system);
 
     $builder = new PdfPreviewThumbnailBuilder(
-      $preview_generator,
+      $thumbnail_generator,
       $this->createMock(ConfigFactoryInterface::class),
       new GeneratedImageFileManager(
         $this->createMock(EntityTypeManagerInterface::class),
@@ -68,7 +60,6 @@ final class PdfPreviewThumbnailBuilderTest extends UnitTestCase {
       new ImageInspector($this->createMock(ImageFactory::class)),
       $file_system,
       $this->createMock(LoggerInterface::class),
-      $exec_manager,
     );
 
     self::assertNull($builder->build($file, 'Documento'));
@@ -100,17 +91,10 @@ final class PdfPreviewThumbnailBuilderTest extends UnitTestCase {
         ->with('public://documento.pdf')
         ->willReturn($path);
 
-      $preview_generator = $this->getMockBuilder(PDFPreviewGenerator::class)
-        ->disableOriginalConstructor()
-        ->onlyMethods(['getPDFPreview'])
-        ->getMock();
-      $preview_generator->expects(self::never())->method('getPDFPreview');
-
-      $exec_manager = $this->createMock(ImagemagickExecManagerInterface::class);
-      $exec_manager->expects(self::never())->method('setTimeout');
+      $thumbnail_generator = new PdfThumbnailGenerator($this->createMock(ConfigFactoryInterface::class), $file_system);
 
       $builder = new PdfPreviewThumbnailBuilder(
-        $preview_generator,
+        $thumbnail_generator,
         $this->createMock(ConfigFactoryInterface::class),
         new GeneratedImageFileManager(
           $this->createMock(EntityTypeManagerInterface::class),
@@ -123,7 +107,6 @@ final class PdfPreviewThumbnailBuilderTest extends UnitTestCase {
         new ImageInspector($this->createMock(ImageFactory::class)),
         $file_system,
         $this->createMock(LoggerInterface::class),
-        $exec_manager,
       );
 
       self::assertNull($builder->build($file, 'Documento'));

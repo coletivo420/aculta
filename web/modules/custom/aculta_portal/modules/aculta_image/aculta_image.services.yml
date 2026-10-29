@@ -70,6 +70,15 @@ services:
       - { name: aculta_portal.helper }
   aculta_image.compressor:
     class: Drupal\aculta_image\Compression\ImageCompressor
-    arguments: ['@logger.factory']
+    arguments: ['@config.factory', '@logger.factory']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_image.pdf_thumbnail:
+    class: Drupal\aculta_image\PdfThumbnailGenerator
+    arguments: ['@config.factory', '@file_system']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_image.capabilities:
+    class: Drupal\aculta_image\ImageCapabilities
     tags:
       - { name: aculta_portal.helper }

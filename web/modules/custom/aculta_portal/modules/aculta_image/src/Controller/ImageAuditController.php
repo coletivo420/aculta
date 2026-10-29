@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_image\Controller;
 
 use Drupal\aculta_image\Audit\ImageAudit;
+use Drupal\aculta_image\ImageCapabilities;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Link;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -16,13 +18,21 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class ImageAuditController extends ControllerBase {
 
-  public function __construct(private readonly ImageAudit $audit) {}
+  public function __construct(
+    private readonly ImageAudit $audit,
+    private readonly ImageCapabilities $capabilities,
+    private readonly ConfigFactoryInterface $imageConfigFactory,
+  ) {}
 
   /**
    * Creates the object with its injected services.
    */
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('aculta_image.audit'));
+    return new static(
+      $container->get('aculta_image.audit'),
+      $container->get('aculta_image.capabilities'),
+      $container->get('config.factory'),
+    );
   }
 
   /**
@@ -30,6 +40,10 @@ final class ImageAuditController extends ControllerBase {
    */
   public function dashboard(): array {
     $resumo = $this->audit->resumo();
+    $settings = $this->imageConfigFactory->get('aculta_image.settings');
+    $backends = $this->capabilities->backends();
+    $active_backend = (string) ($settings->get('backend') ?? 'imagick');
+    $active_available = isset($backends[$active_backend]);
     return [
       '#cache' => ['max-age' => 0],
       'intro' => ['#markup' => '<p>' . $this->t('Administre o acervo, revise imagens sem referência, acompanhe duplicatas e limpe arquivos temporários ou substituídos.') . '</p>'],
@@ -42,6 +56,32 @@ final class ImageAuditController extends ControllerBase {
           [$this->t('Com referência em file_usage'), (string) $resumo['com_uso']],
           [$this->t('Sem referência em file_usage'), (string) $resumo['sem_uso']],
           [$this->t('Mídias'), (string) $resumo['midias']],
+        ],
+      ],
+      'processamento' => [
+        '#type' => 'table',
+        '#caption' => $this->t('Estado do processamento de imagens neste servidor'),
+        '#header' => [$this->t('Recurso'), $this->t('Estado')],
+        '#rows' => [
+          [
+            $this->t('Backend selecionado'),
+            $active_backend . ($active_available ? '' : ' (' . $this->t('indisponível') . ')'),
+          ],
+          [
+            $this->t('Bibliotecas PHP'),
+            $backends === [] ? $this->t('Nenhuma') : implode(', ', array_keys($backends)),
+          ],
+          [
+            $this->t('Compressão e redimensionamento'),
+            $settings->get('compression_enabled') ? $this->t('Ativos') : $this->t('Desativados'),
+          ],
+          [
+            $this->t('Conversão WebP'),
+            ($settings->get('webp_enabled') ?? TRUE)
+              ? $this->t('Ativa, qualidade @quality', ['@quality' => $settings->get('webp_quality') ?? 82])
+              : $this->t('Desativada'),
+          ],
+          [$this->t('Largura máxima'), (string) ($settings->get('max_width') ?? 1200) . ' px'],
         ],
       ],
       'acoes' => [
@@ -59,6 +99,7 @@ final class ImageAuditController extends ControllerBase {
           Link::createFromRoute($this->t('Abrir relatório'), 'aculta_image.audit_report'),
           Link::createFromRoute($this->t('Executar limpeza'), 'aculta_image.cleanup'),
           Link::createFromRoute($this->t('Gerenciar quarentena'), 'aculta_image.quarantine'),
+          Link::createFromRoute($this->t('Configurar processamento e formatos'), 'aculta_image.settings'),
         ],
       ],
     ];

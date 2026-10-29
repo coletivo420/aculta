@@ -1,0 +1,13 @@
+backend: imagick
+compression_enabled: true
+max_width: 1200
+supported_mime_types:
+  - image/jpeg
+  - image/png
+  - image/gif
+  - image/webp
+webp_enabled: true
+webp_quality: 82
+output_format: original
+jpeg_quality: 82
+png_compression: 6

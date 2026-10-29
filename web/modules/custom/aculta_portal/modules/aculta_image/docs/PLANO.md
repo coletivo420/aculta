@@ -1,6 +1,6 @@
 # Plano — ACULTA Image (sistema único de imagens do site)
 
-**Ciclo vigente:** [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Status em 2026-10-26: versão **0.1.0-dev.33**. O campo histórico `commerce_product.produto_loja.field_imagens` foi alinhado à política `aculta_image` e o gate passou. A mesma política foi aplicada somente a esse campo no Runtime de teste; nenhuma importação global foi feita. A classificação permanece **Dev**: há bloqueios operacionais/integração. `preRC` foi aposentado; concluir pendências, gates/testes e revisão visual aplicável antes de RC. Alpha é deploy/validação no servidor de desenvolvimento; produção ocorre depois da aprovação Alpha.
+**Ciclo vigente:** [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Status em 2026-10-29: versão **0.1.0-dev.45**. O campo histórico `commerce_product.produto_loja.field_imagens` foi alinhado à política `aculta_image` e o gate passou. A mesma política foi aplicada somente a esse campo no Runtime de teste; nenhuma importação global foi feita. A classificação permanece **Dev**: há bloqueios operacionais/integração. `preRC` foi aposentado; concluir pendências, gates/testes e revisão visual aplicável antes de RC. Alpha é deploy/validação no servidor de desenvolvimento; produção ocorre depois da aprovação Alpha.
 Para retomar o trabalho, leia primeiro [HANDOFF.md](HANDOFF.md).
 
 Documentos relacionados: [README](../README.md) (serviços e rotas), [MODELOS DE IMAGEM](MODELOS-DE-IMAGEM.md) (modelos no texto),
@@ -38,14 +38,16 @@ coordenador do Portal e pelo proprietário Image.
 | M0 inventário | feito | relatório `/painel-administrativo/imagens` |
 | M0.5 barreiras | feito | gate com tolerância zero (R1 a R10), incluindo Views, modos de exibição e assets |
 | M1 a M3 consumidores | feito | Gallery, Magazine, Usuário, Portal, PDF migrados para o `aculta_image` |
-| M4 miniatura de PDF | feito no Homelab | ImageMagick 7 com Ghostscript; `pdfpreview` com JPEG 480×640; teste com PDF real: 480×621. Produção depende de confirmação da Hostinger |
+| M4 miniatura de PDF | implementado com PHP Imagick | Serviço `aculta_image.pdf_thumbnail` usa a extensão PHP Imagick e Ghostscript, sem depender do CLI `magick`/`convert`; limita entrada a PDF público/permanente de até 20 MiB, renderiza só a primeira página, aplica limites temporários de recursos e grava JPEG 480×640 mantendo proporção. Suporte Hostinger confirmado por SSH somente leitura; suíte gera fixture sintética local. Validação via aplicação no FPM Hostinger segue pendente |
+| M11 opções de processamento | implementado no candidato dev.45 | Tela administrativa detecta Imagick/GD e otimizadores, permite seleção manual do backend, liga/desliga processamento e WebP, escolhe tipos MIME de entrada e saída original/JPEG/PNG/WebP, largura e níveis de qualidade. WebP usa qualidade 82 por padrão e atualiza metadados do File. Acesso comum negado por Kernel. Migração do acervo existente e revisão visual no Runtime ainda pendentes |
+| M12 migração de formatos existentes | pendente | Requer inventário por File ID, referências em File Usage, Entity Usage, campos e textos/revisões; executar em lotes com plano de reversão e atualização de URLs. Nenhum arquivo existente foi alterado |
 | M5 duplicatas exatas | feito | `media_duplicates` 2.0.4; os dois grupos reais da galeria 11 foram mesclados, uma ocorrência por arquivo, mantendo o `alt` do menor ID |
 | M6 auditoria de uso | feito | `entity_usage` 5.0.1; candidatas com motivos |
 | M7 quarentena | parcial | 30 dias; restauração preservada; mover e excluir exigem verificação pelo coordenador global. Testes Unit confirmam retenção com referência File API e indisponibilidade do coordenador. Falta validar Kernel/integração em instalação limpa e revisão operacional. |
 | M8 compressão | feito no Homelab | `imageapi_optimize` 4.2.0 + `imageapi_optimize_binaries` 1.2.0-beta1 (aprovado pelo responsável); pipeline `aculta_derivados`. Ganho medido: JPEG 0,7%, PNG 13,6% |
 | M9 comparação visual | feito | dHash de 64 bits com GD, código próprio; cron em lotes de 200; limiar 6 bits |
 | og:image | feito | estilo `aculta_compartilhamento_1200x630`; verificado HTTP 200 |
-| Upload do texto (1200 px) | feito | redução para 1200 px de largura antes da compressão (`ImageCompressor::redimensionar`); imagens maiores são convertidas, não recusadas |
+| Upload do texto | implementado/configurável | `InlineImageHooks` usa biblioteca PHP selecionada, limite configurado e qualidades; WebP e formatos de saída são opcionais. Uploads não inline não são alterados por esta fase |
 | M10 modelos de imagem no texto | feito | Runtime, Firefox, Orca/AT-SPI, persistência da legenda e renderização pública conferidos; detalhes em `MODELOS-DE-IMAGEM.md` |
 | R8 migração e dívida | feito | Auditoria estática sem consumidores `legado_*`; todas as referências de estilo no Config Sync existem no catálogo. Gate sem ocorrências fora do `aculta_image`. R9 também audita estilos em Views e modos de exibição. |
 
@@ -214,13 +216,9 @@ Fontes: páginas de suporte da Hostinger e especificação pública da API (busc
 Consequências: a miniatura de PDF não pode ser prometida em produção sem confirmação. A compressão é viável com os
 binários documentados, depois de liberar `shell_exec`.
 
-Revalidação documental em 2026-10-29: a página oficial [What image optimization tools are supported at Hostinger](https://www.hostinger.com/support/3738441-what-image-optimization-tools-are-supported/) lista `optipng`, `jpegoptim`, `jpegtran`, `gifsicle` e `libwebp-tools`, com uso via SSH e `shell_exec` sujeito à configuração; ela não lista ImageMagick/Ghostscript. A página [Which media, compression, and web applications are supported at Hostinger](https://www.hostinger.com/support/which-media-compression-and-web-applications-are-supported/) cobre codecs/FFmpeg/GCC e também não confirma esses binários. Ausência na documentação não prova que estejam indisponíveis no plano contratado. A miniatura PDF continua sem validação para produção; confirmar com o plano/painel ou suporte antes do RC.
+Revalidação documental e por SSH em 2026-10-29: a página oficial [What image optimization tools are supported at Hostinger](https://www.hostinger.com/support/3738441-what-image-optimization-tools-are-supported/) lista `optipng`, `jpegoptim`, `jpegtran`, `gifsicle` e `libwebp-tools`; o host consultado permite `proc_open`, embora `exec`/`shell_exec` estejam desabilitados. PHP CLI 8.3.36 reportou Imagick 3.8.1 com coders PDF e WebP, GD com WebP e Ghostscript 9.54.0. `optipng`, `jpegoptim` e `gifsicle` estão presentes; `jpegtran`, `cwebp`, `magick` e `convert` não foram encontrados. Um PDF sintético foi processado em memória por Imagick para JPEG, sem criar arquivo persistente. O painel Hostinger também indica Imagick no PHP (relato do responsável); não foi feita requisição web nem gravação no host.
 
-Verificação no servidor de desenvolvimento em 2026-10-29: `convert`, `magick`,
-`identify`, `gs`, `optipng`, `jpegoptim`, `jpegtran`, `gifsicle` e `cwebp`
-existem em `/usr/bin`; ImageMagick reporta `7.1.1-43`, e PHP tem GD e Imagick.
-Isso comprova somente o servidor de desenvolvimento; não valida o plano da
-Hostinger nem permite concluir a disponibilidade de ImageMagick/Ghostscript em
+Verificação local em `toca`, 2026-10-29: PHP 8.4.27 CLI e FPM têm Imagick 3.8.0, coders PDF/WebP, GD com WebP e `proc_open`; `php8.4-fpm` está ativo. O Homelab possui `magick`, `convert`, `identify`, `gs`, `optipng`, `jpegoptim`, `jpegtran`, `gifsicle` e `cwebp`. A disponibilidade foi separada por ambiente; a miniatura PDF agora usa Imagick PHP para não exigir o CLI em Hostinger.
 produção. Nenhum comando foi executado contra produção.
 
 ## 8. Paridade do Homelab (2026-10-17)

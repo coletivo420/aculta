@@ -1,5 +1,11 @@
 # Roadmap — ACULTA PDF Viewer
 
+## Miniaturas PDF em Hostinger (2026-10-29)
+
+- Builder de PDF Viewer passou a usar `aculta_image.pdf_thumbnail`, com PHP Imagick e Ghostscript via extensão, não o CLI ImageMagick.
+- Unit/Kernel completo: 36 testes/367 assertions PASS; 137 depreciações upstream. O serviço compartilhado também é usado pelo Document Viewer.
+- A conversão sintética por SSH validou a extensão CLI do Hostinger sem gravar arquivos; confirmar o caminho web/FPM após o candidato ser servido. PV7 ainda exige a revisão de acessibilidade/leitura e os gates visuais/CSP listados abaixo.
+
 ## PV7 — closure real do harness Kernel (2026-10-29)
 
 - `AcultaPdfMediaEmbedTest` carrega a closure real do Portal, sem mocks, e

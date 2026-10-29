@@ -4,3 +4,10 @@ aculta_image.admin:
   route_name: aculta_image.audit
   parent: system.admin_config_media
   weight: 30
+
+aculta_image.settings:
+  title: 'Processamento e formatos'
+  description: 'Bibliotecas, compressão e formatos de imagem.'
+  route_name: aculta_image.settings
+  parent: aculta_image.admin
+  weight: 5

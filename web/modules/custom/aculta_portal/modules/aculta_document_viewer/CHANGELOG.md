@@ -1,5 +1,10 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-dev.18 — miniaturas PDF via Imagick PHP (2026-10-29)
+
+- Builder usa `aculta_image.pdf_thumbnail` para rasterizar a primeira página pela extensão PHP Imagick e Ghostscript, sem exigir o CLI ImageMagick.
+- Suíte completa: 52 testes, 570 assertions PASS, 147 depreciações Core/contrib e 1 depreciação PHPUnit. Runtime não alterado; validação via FPM Hostinger pendente.
+
 ## 0.1.0-dev.17 — selecionar leitor no Media document — 2026-10-29
 
 - Formatter composto `aculta_document_media` seleciona PDF, DOCX ou planilha

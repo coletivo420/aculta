@@ -1,5 +1,9 @@
 # ACULTA Document Viewer
 
+Miniaturas PDF públicas são geradas pelo serviço compartilhado
+`aculta_image.pdf_thumbnail` usando PHP Imagick e Ghostscript; DOCX e planilhas
+mantêm as prévias de documento e o fallback Core descritos abaixo.
+
 `aculta_document_viewer` fornece leitores locais compartilhados de PDF, DOCX e
 planilhas. Não pertence ao LMS: conteúdo pode usar o formatter de Media
 `document`, o formatter `aculta_document_pdf_file` em um campo File direto ou
