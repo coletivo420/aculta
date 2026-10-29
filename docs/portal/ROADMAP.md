@@ -330,3 +330,15 @@ Fonte normativa: [nova auditoria 3.1.5](../architecture/AUDITORIA-OPENCULTURAS-3
 - **OC-F:** homologação explícita por módulo (Unit/Kernel/Functional e acessibilidade no Runtime), registrar o que foi realmente executado.
 
 Não adicionar `drupal/facets`, `office_hours`, `paragraphs` ou outra dependência por efeito desta aprovação documental; requer decisão técnica e atualização de README. Não executar importações de configuração, migrações, alterações de banco ou deploy nesta fase.
+
+## Backlog aprovado - incorporação OpenCulturas 3.1.5 (2026-10-29)
+
+Referências: [auditoria](../architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md) e [ondas OC-A a OC-F](../architecture/PLANO-INCORPORACAO-OPENCULTURAS.md).
+
+- [ ] OC-A/P0: descoberta cultural interoperável no Search API incluindo eventos/locais, grants, purpose, busca GET e paginação; preservar `aculta_index` já implementado.
+- [ ] OC-B/P1: contratos de eventos/locais, acessibilidade, horários e consumidores SDC com dados reais.
+- [ ] OC-C/P1: representação de organizações com vínculo aprovado, reivindicação moderada, salvos/recomendações privados e fila UGC.
+- [ ] OC-D/E/P2: imprensa, apoiadores, metadados de downloads, teasers e arquivo histórico sob demanda; comparar implementações antes de criar módulos.
+- [ ] OC-F: testes de acesso/cache, regressão, provenance, WCAG e validação visual.
+
+Não altera fases atuais, status Dev, nem autoriza Facets/Office Hours, Drush, Config Sync, deploy ou escrita OSM.
