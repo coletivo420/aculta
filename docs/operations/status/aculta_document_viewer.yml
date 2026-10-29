@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.16
+version: 0.1.0-dev.17
 state: Dev
-next_phase: 'Definir e ativar formatter de Office/planilhas para apresentação descartável; validar em 1280/390/320px, CSP Report-Only e acessibilidade ampliada antes de avaliar RC ([roadmap](web/modules/custom/aculta_portal/modules/aculta_document_viewer/docs/ROADMAP.md))'
-progress_note: '0.1.0-dev.16: PHPCS Drupal/DrupalPractice PHP PASS (0 erros/avisos); Unit 43/228 e Kernel 5/296 PASS (147 depreciações). Firefox ESR no Runtime já validou PDF 7/7 em 1280/390/320px. O Runtime só usa formatter PDF no display Media document; formatters Office/planilha, CSP e revisão ampliada de acessibilidade ainda precisam de apresentação configurada antes de RC.'
+next_phase: 'Ativar a configuração do display no Runtime após sincronização autorizada; validar prévias DOCX/planilha em Firefox a 1280/390/320px, CSP Report-Only e acessibilidade ampliada antes de avaliar RC ([roadmap](web/modules/custom/aculta_portal/modules/aculta_document_viewer/docs/ROADMAP.md))'
+progress_note: '0.1.0-dev.17: formatter composto no display Media document roteia PDF/DOCX/planilhas por MIME+extensão, após acesso Media/campo/arquivo; preserva fallback Core. Unit 47/275 e Kernel 5/299 PASS (147 depreciações); PHP lint 38/38 e PHPCS do módulo PASS. Config versionada; Runtime não importado. Verificar visualmente DOCX/planilhas e CSP/acessibilidade ampliada antes de RC.'

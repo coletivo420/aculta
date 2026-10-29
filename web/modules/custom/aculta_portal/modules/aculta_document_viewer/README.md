@@ -5,6 +5,13 @@ planilhas. Não pertence ao LMS: conteúdo pode usar o formatter de Media
 `document`, o formatter `aculta_document_pdf_file` em um campo File direto ou
 os builders DOCX/planilha consumidos por integrações como o Fórum.
 
+O display padrão do Media `document` usa o formatter `aculta_document_media`,
+que seleciona o leitor local pelo par MIME/extensão depois de confirmar acesso
+à Media, ao campo e ao download do arquivo. DOCX e planilhas mantêm um link
+Core de download permitido ao lado da prévia; formato incompatível, pacote
+inválido ou leitor indisponível fica somente com o link Core. O formatter de
+campo do LMS mantém seu display próprio.
+
 Padrões globais ficam em ACULTA → Site → Leitor de PDF
 (`/painel-administrativo/aculta/leitor-documentos`). O painel pertence ao módulo Portal;
 formatters usam esses valores por padrão e podem optar por configuração

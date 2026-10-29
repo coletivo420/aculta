@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_document_viewer\Kernel;
 
+use Drupal\aculta_document_viewer\Docx\DocxViewerBuilderInterface;
 use Drupal\aculta_document_viewer\Pdf\PdfViewerBuilderInterface;
 use Drupal\aculta_document_viewer\Pdf\PdfPreviewThumbnailBuilderInterface;
+use Drupal\aculta_document_viewer\Spreadsheet\SpreadsheetViewerBuilderInterface;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -54,8 +56,20 @@ final class AcultaPdfViewerInstallTest extends KernelTestBase {
       PdfPreviewThumbnailBuilderInterface::class,
       $container->get('aculta_document_viewer.thumbnail_builder'),
     );
+    $this->assertInstanceOf(
+      DocxViewerBuilderInterface::class,
+      $container->get('aculta_document_viewer.docx_builder'),
+    );
+    $this->assertInstanceOf(
+      SpreadsheetViewerBuilderInterface::class,
+      $container->get('aculta_document_viewer.spreadsheet_builder'),
+    );
     $this->assertArrayHasKey(
       'aculta_document_pdf_media',
+      $container->get('plugin.manager.field.formatter')->getDefinitions(),
+    );
+    $this->assertArrayHasKey(
+      'aculta_document_media',
       $container->get('plugin.manager.field.formatter')->getDefinitions(),
     );
     $settings = $container->get('config.factory')->get('aculta_document_viewer.settings');

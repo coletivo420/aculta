@@ -21,7 +21,7 @@ use Psr\Log\LoggerInterface;
  * Aqui só valida a estrutura do pacote e gera a URL pelo Core. Arquivos fora
  * de `public://` e `private://` nunca recebem viewer.
  */
-final class DocxViewerBuilder {
+final class DocxViewerBuilder implements DocxViewerBuilderInterface {
 
   /**
    * Biblioteca do leitor DOCX (behavior e estilos).

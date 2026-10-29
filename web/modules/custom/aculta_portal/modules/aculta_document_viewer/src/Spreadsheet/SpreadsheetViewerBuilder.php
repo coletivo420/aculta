@@ -21,7 +21,7 @@ use Psr\Log\LoggerInterface;
  * Somente leitura: o viewer não grava o arquivo nem recalcula fórmulas. Aceita
  * só `public://` e `private://` e valida o pacote XLSX antes de entregar a URL.
  */
-final class SpreadsheetViewerBuilder {
+final class SpreadsheetViewerBuilder implements SpreadsheetViewerBuilderInterface {
 
   /**
    * Biblioteca do leitor de planilhas (SheetJS, Tabulator e behavior).

@@ -244,6 +244,23 @@ separada, posterior ao deploy; nenhum deploy foi feito nesta fase.
   configuração do ambiente. CSP e revisão ampliada de acessibilidade seguem
   pendentes para RC.
 
+### PV7 — selecionar readers por formato — 2026-10-29
+
+- Implementado formatter composto `aculta_document_media` no display padrão do
+  Media `document`. Ele mantém o leitor PDF existente e seleciona builders
+  locais de DOCX e planilhas por MIME e extensão; preserva acesso explícito a
+  Media/campo/download e o link Core como fallback permitido.
+- Unit: 47 testes / 275 assertions PASS. Kernel: 5 testes / 299 assertions
+  PASS, 147 depreciações Core/contrib. A verificação Kernel confirma registro
+  do novo formatter e builders. Runtime permanece sem importação e sem
+  conteúdo novo nesta microfase.
+- PHP lint: 38/38 arquivos PASS. PHPCS Drupal/DrupalPractice PASS nos PHP do
+  módulo; dois avisos preexistentes permanecem no submódulo
+  `aculta_document_viewer_group`. `git diff --check` e YAML parse PASS.
+- Pendências: validar a apresentação efetiva de DOCX/planilhas no Firefox ESR
+  (1280/390/320px), CSP Report-Only e revisão ampliada de acessibilidade. Não
+  declarar RC antes dessas verificações e dos gates de fronteira globais.
+
 ### Auditoria do contrib Drupal 3D Flipbook
 
 O release 11.0.2 foi inspecionado diretamente no commit registrado acima. Ele

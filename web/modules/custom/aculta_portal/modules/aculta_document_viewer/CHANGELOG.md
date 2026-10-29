@@ -1,5 +1,18 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.0-dev.17 — selecionar leitor no Media document — 2026-10-29
+
+- Formatter composto `aculta_document_media` seleciona PDF, DOCX ou planilha
+  pelo par MIME/extensão, mantém checagens de acesso de Media/campo/arquivo e
+  preserva link Core para DOCX/planilhas e para formatos não suportados.
+- O display versionado `media.document.default` agora seleciona o formatter
+  composto e preserva as opções existentes de PDF. Runtime não alterado nem
+  importado; ativação e smoke visual nele continuam pendentes.
+- Unit: 47 testes / 275 assertions PASS. Kernel: 5 testes / 299 assertions
+  PASS, 147 depreciações Core/contrib. PHP lint: 38 arquivos PASS. PHPCS
+  Drupal/DrupalPractice do módulo PASS; dois avisos preexistentes permanecem
+  em `aculta_document_viewer_group`.
+
 ## 0.1.0-dev.16 — baseline PHPCS PHP limpo — 2026-10-29
 
 - Corrigidos 10 erros e 26 avisos PHPCS Drupal/DrupalPractice nos PHP do módulo e testes; as opções de zoom agora passam pela tradução Drupal. PHPCS `--extensions=php`: zero erros/avisos.

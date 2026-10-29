@@ -62,7 +62,7 @@ aculta_document_viewer.settings:
 
 aculta_document_viewer.formatter_settings:
   type: mapping
-  label: 'Configurações do formatter do leitor PDF ACULTA'
+  label: 'Configurações dos leitores de documentos ACULTA'
   mapping:
     show_download:
       type: boolean
@@ -108,6 +108,10 @@ aculta_document_viewer.formatter_settings:
 field.formatter.settings.aculta_document_pdf_media:
   type: aculta_document_viewer.formatter_settings
   label: 'Configurações do formatter de mídia PDF ACULTA'
+
+field.formatter.settings.aculta_document_media:
+  type: aculta_document_viewer.formatter_settings
+  label: 'Configurações dos leitores de mídia documental ACULTA'
 
 field.formatter.settings.aculta_document_pdf_file:
   type: aculta_document_viewer.formatter_settings
