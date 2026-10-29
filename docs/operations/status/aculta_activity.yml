@@ -2,9 +2,9 @@
 version: 0.1.0-dev.8
 state: Dev
 progress_note: >-
-  Baseline: Unit 6/19; Kernel 3/49 com 5 depreciações Core/contrib. Em 2026-10-28
-  cobertura Unit exploratória de formulário/Metatag passou 11/33, mas a tentativa
-  de verificar EntityHooks falhou porque a fixture Kernel não habilita
-  `aculta_portal` (usa um DomainPurposeManager substituto); os testes exploratórios
-  foram removidos e nenhuma regra de produção alterada. Runtime não homologado.
-next_phase: 'Corrigir o harness para carregar o Portal real e verificar Entity Access; depois validar boot sem Index e revisar formulário/Metatag. Runtime permanece pendente ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'
+  Em 2026-10-29: baseline Unit + Kernel 9/68 PASS, com 5 depreciações Core/contrib.
+  A tentativa de carregar o módulo Portal real na fixture Kernel falhou antes das
+  asserções: aculta_portal.unused_file_cleaner requer file.usage, ausente no
+  harness. A alteração experimental do teste foi removida; produção inalterada.
+  Runtime não homologado.
+next_phase: 'Corrigir o harness para instalar os módulos mínimos requeridos pelo serviço real do Portal, verificar Entity Access, boot sem Index e formulário/Metatag; repetir o gate completo. Runtime permanece pendente ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'

@@ -53,6 +53,22 @@ release independente enquanto o módulo for apenas o adapter e sua fronteira.
   harness que carregue o Portal real, sem substituir sua regra de acesso. A
   homologação Runtime segue pendente; Activity permanece em Dev.
 
+### Revalidação do harness — 2026-10-29
+
+- Baseline reexecutado: Unit + Kernel 9 testes / 68 assertions PASS, com 5
+  depreciações de Core/contrib. O teste de acesso usa a classe real
+  `DomainPurposeManager`, mas a fixture substitui o serviço e não carrega o
+  módulo `aculta_portal`.
+- Tentativa de carregar `aculta_portal` real na fixture: 3 Kernel errors antes
+  de executar asserções. O container não compilou porque
+  `aculta_portal.unused_file_cleaner` depende de `file.usage`, serviço ausente
+  nessa instalação reduzida. A alteração experimental do teste foi descartada;
+  código de produção não mudou.
+- Próximo passo permanece técnico: identificar o conjunto mínimo de módulos
+  Core/contrib exigido pelo serviço Portal, sem substituir o serviço nem
+  relaxar Entity Access; então cobrir boot sem Index e formulário/Metatag.
+  Runtime e revisão visual continuam pendentes.
+
 ## Posterior
 
 Workflow editorial, campos, experiência de edição, migração de dados e relações
