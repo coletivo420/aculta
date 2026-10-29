@@ -107,7 +107,7 @@ final class UgcReportQueue {
       $ugcRows = $ugcQuery->execute()->fetchAll();
 
       foreach ($ugcRows as $row) {
-        $key = $row->target_type . ':' . $row->target_id;
+        $key = $row->target_type . ':' . $row->target_id . ':' . $row->purpose;
         $grupos[$key] = [
           'target_type' => (string) $row->target_type,
           'target_id' => (int) $row->target_id,
@@ -123,22 +123,25 @@ final class UgcReportQueue {
         && $status === 'pendente'
         && $db->schema()->tableExists('flagging')) {
         $flagQuery = $db->select('flagging', 'f');
+        $flagQuery->join('users_field_data', 'u', 'u.uid = f.uid');
         $flagQuery->fields('f', ['entity_type', 'entity_id']);
         $flagQuery->addExpression('COUNT(*)', 'total');
-        $flagQuery->addExpression('MAX(created)', 'ultima');
-        $flagQuery->condition('flag_id', ReportQueue::FLAGS, 'IN');
+        $flagQuery->addExpression('MAX(f.created)', 'ultima');
+        $flagQuery->condition('f.flag_id', ReportQueue::FLAGS, 'IN');
+        $flagQuery->condition('u.status', 1);
         if (!empty($migratedFlagIds)) {
-          $flagQuery->condition('id', $migratedFlagIds, 'NOT IN');
+          $flagQuery->condition('f.id', $migratedFlagIds, 'NOT IN');
         }
         $flagQuery->groupBy('f.entity_type');
         $flagQuery->groupBy('f.entity_id');
         $flagRows = $flagQuery->execute()->fetchAll();
 
         foreach ($flagRows as $fRow) {
-          $key = $fRow->entity_type . ':' . $fRow->entity_id;
-          if (isset($decidedTargets[$key])) {
+          $targetKey = $fRow->entity_type . ':' . $fRow->entity_id;
+          if (isset($decidedTargets[$targetKey])) {
             continue;
           }
+          $key = $targetKey . ':forum';
           if (!isset($grupos[$key])) {
             $grupos[$key] = [
               'target_type' => (string) $fRow->entity_type,
@@ -201,10 +204,11 @@ final class UgcReportQueue {
       }
     }
 
-    // Remove alvos excluídos fisicamente.
+    // Remove alvos excluídos fisicamente preservando o purpose dos grupos.
     $validGrupos = [];
-    foreach ($grupos as $key => $g) {
-      if (isset($existingTargetIds[$key])) {
+    foreach ($grupos as $g) {
+      $targetKey = $g['target_type'] . ':' . $g['target_id'];
+      if (isset($existingTargetIds[$targetKey])) {
         $validGrupos[] = $g;
       }
     }
@@ -215,7 +219,11 @@ final class UgcReportQueue {
       if ($cmp !== 0) {
         return $cmp;
       }
-      return $b['target_id'] <=> $a['target_id'];
+      $cmpId = $b['target_id'] <=> $a['target_id'];
+      if ($cmpId !== 0) {
+        return $cmpId;
+      }
+      return strcmp($a['purpose'], $b['purpose']);
     });
 
     $totalItems = count($validGrupos);
@@ -223,35 +231,39 @@ final class UgcReportQueue {
     $offset = max(0, $page * $limit);
     $pagedItems = array_slice($validGrupos, $offset, $limit);
 
-    // 6. Enriquecimento de motivos apenas para os itens da fatia paginada.
+    // 6. Enriquecimento de motivos respeitando (target_type, target_id, purpose, status).
     if (!empty($pagedItems) && $db !== NULL) {
-      $pagedConditions = [];
+      $orCond = $db->condition('OR');
       foreach ($pagedItems as $pItem) {
-        $pagedConditions[$pItem['target_type']][] = $pItem['target_id'];
+        $andCond = $db->condition('AND')
+          ->condition('target_type', $pItem['target_type'])
+          ->condition('target_id', $pItem['target_id'])
+          ->condition('purpose', $pItem['purpose']);
+        $orCond->condition($andCond);
       }
-      foreach ($pagedConditions as $tType => $tIds) {
-        $motivoQuery = $db->select('aculta_ugc_report', 'r')
-          ->fields('r', ['target_id', 'motivo'])
-          ->condition('target_type', $tType)
-          ->condition('target_id', $tIds, 'IN')
-          ->condition('status', $status)
-          ->distinct();
-        $motivoRows = $motivoQuery->execute()->fetchAll();
-        $motivosByTarget = [];
-        foreach ($motivoRows as $mRow) {
-          $motivosByTarget[(int) $mRow->target_id][] = (string) $mRow->motivo;
-        }
-        foreach ($pagedItems as &$pItemRef) {
-          if ($pItemRef['target_type'] === $tType && isset($motivosByTarget[$pItemRef['target_id']])) {
-            foreach ($motivosByTarget[$pItemRef['target_id']] as $m) {
-              if (!in_array($m, $pItemRef['motivos'], TRUE)) {
-                $pItemRef['motivos'][] = $m;
-              }
+      $motivoQuery = $db->select('aculta_ugc_report', 'r')
+        ->fields('r', ['target_type', 'target_id', 'purpose', 'motivo'])
+        ->condition($orCond)
+        ->condition('status', $status)
+        ->distinct();
+      $motivoRows = $motivoQuery->execute()->fetchAll();
+
+      $motivosByGroup = [];
+      foreach ($motivoRows as $mRow) {
+        $gKey = $mRow->target_type . ':' . $mRow->target_id . ':' . $mRow->purpose;
+        $motivosByGroup[$gKey][] = (string) $mRow->motivo;
+      }
+      foreach ($pagedItems as &$pItemRef) {
+        $gKey = $pItemRef['target_type'] . ':' . $pItemRef['target_id'] . ':' . $pItemRef['purpose'];
+        if (isset($motivosByGroup[$gKey])) {
+          foreach ($motivosByGroup[$gKey] as $m) {
+            if (!in_array($m, $pItemRef['motivos'], TRUE)) {
+              $pItemRef['motivos'][] = $m;
             }
           }
         }
-        unset($pItemRef);
       }
+      unset($pItemRef);
     }
 
     return [
@@ -266,10 +278,25 @@ final class UgcReportQueue {
   /**
    * Retorna os itens pendentes da fila agrupados por entidade (retrocompatibilidade).
    *
+   * @param string|null $purpose
+   *   Propósito das denúncias.
+   * @param int $limit
+   *   Limite máximo de itens retornados.
+   * @param \Drupal\Core\Session\AccountInterface|null $account
+   *   Conta do moderador consultante.
+   *
    * @return array<int, array{target_type: string, target_id: int, total: int, ultima: int}>
    *   Lista dos itens pendentes agrupados.
    */
-  public function getPendingItems(?string $purpose = NULL, int $limit = 50): array {
+  public function getPendingItems(?string $purpose = NULL, int $limit = 50, ?AccountInterface $account = NULL): array {
+    $moderator = $account ?? $this->currentUser;
+    if ($moderator === NULL || $moderator->isAnonymous()) {
+      throw new AccessDeniedHttpException('Acesso negado: usuário anônimo não tem permissão para moderar.');
+    }
+    $checkPurpose = $purpose ?? 'forum';
+    if (!ModerationScope::allows($moderator, $checkPurpose)) {
+      throw new AccessDeniedHttpException('Acesso negado: sem permissão para consultar denúncias deste purpose.');
+    }
     $storage = $this->entityTypeManager->getStorage('aculta_ugc_report');
     $query = $storage->getQuery()
       ->accessCheck(FALSE)
