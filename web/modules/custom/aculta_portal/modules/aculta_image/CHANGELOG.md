@@ -12,6 +12,11 @@
 
 # Changelog — aculta_image
 
+## 0.1.0-dev.40 — referência embutida em texto (2026-10-29)
+
+- Kernel salva uma página com referência UUID a um File em texto formatado e confirma que o coordenador Portal mantém o arquivo.
+- Suíte do módulo: 31 testes / 144 assertions PASS; quatro depreciações upstream de `media_duplicates`/Drupal. PHPCS e gate próprio PASS.
+
 ## 0.1.0-dev.39 — retenção por referência estruturada (2026-10-29)
 
 - Kernel cria uma mídia com campo de imagem real apontando para um File e confirma que o coordenador Portal mantém o arquivo; o caso de File Usage também continua coberto.

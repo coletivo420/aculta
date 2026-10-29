@@ -15,6 +15,8 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
+use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -32,7 +34,7 @@ final class ImageCleanupPortalCoordinatorKernelTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system', 'user', 'field', 'file', 'image', 'media', 'entity_usage', 'media_duplicates', 'aculta_image',
+    'system', 'user', 'field', 'file', 'image', 'media', 'node', 'text', 'entity_usage', 'media_duplicates', 'aculta_image',
   ];
 
   /**
@@ -68,10 +70,13 @@ final class ImageCleanupPortalCoordinatorKernelTest extends KernelTestBase {
     $this->installEntitySchema('file');
     $this->installEntitySchema('user');
     $this->installEntitySchema('media');
+    $this->installEntitySchema('node');
     $this->installSchema('file', ['file_usage']);
+    $this->installSchema('node', ['node_access']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('aculta_image', ['aculta_image_fingerprint', 'aculta_image_origin', 'aculta_image_quarantine']);
     $this->installConfig(['media']);
+    $this->installConfig(['node']);
 
     MediaType::create([
       'id' => 'image',
@@ -89,31 +94,54 @@ final class ImageCleanupPortalCoordinatorKernelTest extends KernelTestBase {
       'bundle' => 'image',
       'label' => 'Test image',
     ])->save();
+    NodeType::create(['type' => 'page', 'name' => 'Page'])->save();
+    FieldStorageConfig::create([
+      'field_name' => 'body',
+      'entity_type' => 'node',
+      'type' => 'text_long',
+    ])->save();
+    FieldConfig::create([
+      'field_storage' => FieldStorageConfig::loadByName('node', 'body'),
+      'bundle' => 'page',
+      'label' => 'Body',
+    ])->save();
 
     $file = $this->createFixtureImage('unused');
     $referencedFile = $this->createFixtureImage('referenced');
     $structuredFile = $this->createFixtureImage('structured');
+    $embeddedFile = $this->createFixtureImage('embedded');
     $this->container->get('file.usage')->add($referencedFile, 'test', 'node', '123');
     Media::create([
       'bundle' => 'image',
       'name' => 'Fixture media reference',
       'field_test_image' => ['target_id' => $structuredFile->id(), 'alt' => 'fixture'],
     ])->save();
+    Node::create([
+      'type' => 'page',
+      'title' => 'Fixture embedded reference',
+      'body' => [
+        'value' => '<drupal-entity data-entity-type="file" data-entity-uuid="' . $embeddedFile->uuid() . '"></drupal-entity>',
+        'format' => 'plain_text',
+      ],
+    ])->save();
 
     $queue = $this->container->get('queue')->get('aculta_image_replaced_files', TRUE);
     $queue->createItem(['fid' => (int) $file->id()]);
     $queue->createItem(['fid' => (int) $referencedFile->id()]);
     $queue->createItem(['fid' => (int) $structuredFile->id()]);
+    $queue->createItem(['fid' => (int) $embeddedFile->id()]);
 
-    $result = $this->container->get('aculta_image.cleanup')->run(3);
+    $result = $this->container->get('aculta_image.cleanup')->run(4);
 
-    self::assertSame(['processed' => 3, 'deleted' => 1], $result);
+    self::assertSame(['processed' => 4, 'deleted' => 1], $result);
     self::assertNull($this->container->get('entity_type.manager')->getStorage('file')->load($file->id()));
     self::assertFalse(file_exists($this->container->get('file_system')->realpath($file->getFileUri())));
     self::assertNotNull($this->container->get('entity_type.manager')->getStorage('file')->load($referencedFile->id()));
     self::assertNotNull($this->container->get('file_system')->realpath($referencedFile->getFileUri()));
     self::assertNotNull($this->container->get('entity_type.manager')->getStorage('file')->load($structuredFile->id()));
     self::assertNotNull($this->container->get('file_system')->realpath($structuredFile->getFileUri()));
+    self::assertNotNull($this->container->get('entity_type.manager')->getStorage('file')->load($embeddedFile->id()));
+    self::assertNotNull($this->container->get('file_system')->realpath($embeddedFile->getFileUri()));
   }
 
   /**

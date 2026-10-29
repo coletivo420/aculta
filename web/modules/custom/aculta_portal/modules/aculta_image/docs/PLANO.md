@@ -164,6 +164,16 @@ Entregue no repositório (commits `1e6d5126`, `4a4f4b0c`, `19b779eb`, `6ba90058`
 - Referências em campos File/Image estão cobertas. Referências em texto
   formatado/revisões e a integração com o Portal completo permanecem pendentes.
 
+### Referência embutida em texto formatado — 2026-10-29
+
+- O Kernel cria uma página contendo UUID de File em campo `text_long`; o
+  `FileReferenceInspector` encontra a referência e o coordenador mantém o
+  arquivo físico. A suíte completa passa: 31 testes / 144 assertions, com
+  quatro depreciações upstream de `media_duplicates`/Drupal.
+- A varredura textual cobre a referência ativa. Referências históricas em
+  revisões, validação da instalação completa do Portal, binários Hostinger e
+  integração Growroom permanecem pendentes.
+
 Fora deste ciclo: bloqueio automático de duplicatas durante o upload. O relatório continua sugerindo revisão administrativa.
 
 ## 6. Perguntas abertas
