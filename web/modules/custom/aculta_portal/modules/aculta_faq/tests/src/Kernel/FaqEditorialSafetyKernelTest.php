@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_faq\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\block_content\Entity\BlockContent;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Routing\RouteObjectInterface;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Covers safe markup formats and administrative route access.
@@ -82,6 +86,47 @@ final class FaqEditorialSafetyKernelTest extends KernelTestBase {
       TRUE,
     );
     self::assertFalse($access->isAllowed());
+  }
+
+  /**
+   * FAQ question and editorial block edit routes deny ordinary users.
+   */
+  public function testQuestionAndBlockEditRoutesDenyOrdinaryUser(): void {
+    $user = User::create(['uid' => 3, 'name' => 'faq-editorial-reader']);
+    $user->save();
+    $question = Node::create([
+      'type' => 'aculta_faq',
+      'title' => 'Pergunta de teste de acesso',
+      'status' => 1,
+    ]);
+    $question->save();
+    $block = BlockContent::create([
+      'type' => 'aculta_editorial',
+      'info' => 'Bloco de teste de acesso',
+    ]);
+    $block->save();
+
+    $route_provider = $this->container->get('router.route_provider');
+    $question_request = Request::create('/painel-administrativo/faq/perguntas/' . $question->id() . '/editar');
+    $question_request->attributes->set(RouteObjectInterface::ROUTE_NAME, 'aculta_faq.question_edit');
+    $question_request->attributes->set(
+      RouteObjectInterface::ROUTE_OBJECT,
+      $route_provider->getRouteByName('aculta_faq.question_edit'),
+    );
+    $question_request->attributes->set('node', $question);
+    $question_access = $this->container->get('access_manager')->checkRequest($question_request, $user, TRUE);
+
+    $block_request = Request::create('/painel-administrativo/faq/blocos/' . $block->id() . '/editar');
+    $block_request->attributes->set(RouteObjectInterface::ROUTE_NAME, 'aculta_faq.block_edit');
+    $block_request->attributes->set(
+      RouteObjectInterface::ROUTE_OBJECT,
+      $route_provider->getRouteByName('aculta_faq.block_edit'),
+    );
+    $block_request->attributes->set('block_content', $block);
+    $block_access = $this->container->get('access_manager')->checkRequest($block_request, $user, TRUE);
+
+    self::assertFalse($question_access->isAllowed());
+    self::assertFalse($block_access->isAllowed());
   }
 
 }

@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.1
+version: 0.1.0-dev.2
 state: Dev
 progress_note: >-
-  FAQ e blocos editoriais (ADM4 e E9), com texto formatado sanitizado (D-23, D-25).
-next_phase: 'Cadastrar e revisar o conteúdo editorial antes da publicação (F1). Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_faq/docs/ROADMAP.md).'
+  Dev.2: Kernel 3/45 PASS (XSS, acesso administrativo e negação das rotas de edição). PHPCS Drupal/PHP lint PASS. Seis respostas aprovadas cadastradas no Runtime de teste (Nodes 567–572); Firefox ESR anônimo 6/6 em 1280/390/320px, todo conteúdo presente, 11/11 destinos de link únicos acessíveis por Tab com indicador :focus-visible. A fixture temporária foi removida. F1 completa; status Dev apenas pelo gate global módulo–tema, que falha em Events/Calendar/Magazine fora do escopo.
+next_phase: 'Após resolver o gate global módulo–tema fora desta frente, repetir o status index e promover `aculta_faq` a RC; não há trabalho funcional pendente em F1. Ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_faq/docs/ROADMAP.md).'

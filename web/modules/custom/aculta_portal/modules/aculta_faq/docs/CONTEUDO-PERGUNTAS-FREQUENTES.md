@@ -1,6 +1,7 @@
-# Rascunho de conteúdo — Perguntas frequentes
+# Conteúdo editorial — Perguntas frequentes
 
-> Minuta editorial para revisão. Não está cadastrada nem publicada no Runtime.
+> Aprovado pelo responsável em 2026-10-29 e cadastrado no Runtime de teste.
+> Não publicado em produção.
 > O conteúdo abaixo foi redigido a partir dos fluxos atuais do ACULTA; não
 > reproduz perguntas ou respostas da FAQ do OpenCulturas.
 
@@ -53,7 +54,8 @@ link para abrir a rota no Google Maps.
   `aculta_events/docs/MODELO-DE-DADOS.md`.
 
 Revisão técnica em 2026-10-28 confirmou rotas, exportação `.ics`, texto de
-cancelamento, dados exibidos e ausência de processamento de ingressos. A nova
-resposta sobre locais reflete o mapa e os links de rota atuais. Antes do
-cadastro, a revisão editorial ainda deve confirmar a voz institucional e se
-estas respostas cobrem as dúvidas prioritárias do público do ACULTA.
+cancelamento, dados exibidos e ausência de processamento de ingressos. O
+responsável aprovou o texto em 2026-10-29. No Runtime de teste, as seis
+perguntas foram cadastradas como Nodes publicados `567`–`572`; Firefox ESR
+confirmou o conteúdo, links, teclado e reflow. Nenhum cadastro foi feito em
+produção.
