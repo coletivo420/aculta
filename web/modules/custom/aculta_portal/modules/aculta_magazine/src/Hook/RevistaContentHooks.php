@@ -7,10 +7,12 @@ namespace Drupal\aculta_magazine\Hook;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\node\NodeInterface;
 
-/** Maintains Magazine publication metadata owned by the Revista bundle. */
+/**
+ * Maintains Magazine publication metadata owned by the Revista bundle. */
 final class RevistaContentHooks {
 
-  /** Records the first publication time when a Revista Node is published. */
+  /**
+ * Records the first publication time when a Revista Node is published. */
   #[Hook('node_presave')]
   public function nodePresave(NodeInterface $node): void {
     if ($node->bundle() === 'revista'
@@ -21,7 +23,8 @@ final class RevistaContentHooks {
     }
   }
 
-  /** Removes an empty optional image from the Revista JSON-LD metadata. */
+  /**
+ * Removes an empty optional image from the Revista JSON-LD metadata. */
   #[Hook('metatags_alter')]
   public function metatagsAlter(array &$tags, array &$context): void {
     $entity = $context['entity'] ?? NULL;

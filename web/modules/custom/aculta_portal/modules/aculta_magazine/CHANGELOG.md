@@ -374,3 +374,9 @@ Classificação: PATCH (correção de cache; sem mudança de contrato).
 - RUNTIME STATUS: verificado no Homelab por renderização a frio (em memória) das publicações. Inspeção visual humana pendente.
 
 # Changelog — aculta_magazine
+## 0.5.0-dev.13 — fechar estilo Drupal do Magazine (2026-10-29)
+
+- `PostPresentation` passa a usar `StringTranslationTrait`, organiza arrays e comentários conforme os padrões Drupal, sem alterar os tokens de tema nem os dados renderizados. `RevistaContentHooks` recebeu PHPDoc no formato Drupal.
+- O sniff PHP de constantes aplicado a JavaScript fica desativado localmente no arquivo do behavior; `true`/`false` permanecem literais JavaScript válidos.
+- PHPCS Drupal/DrupalPractice do módulo, PHP lint e `node --check` PASS. Unit + Kernel completos: 39 testes / 610 assertions PASS, sem depreciações. A revisão visual móvel da cor segue pendente.
+

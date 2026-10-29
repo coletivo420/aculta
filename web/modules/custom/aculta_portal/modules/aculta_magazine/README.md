@@ -3,6 +3,14 @@
 Submódulo editorial do ACULTA Portal. Drupal continua como fonte de verdade para
 conteúdo, publicação e mídia.
 
+## Estado
+
+**0.5.0-dev.13:** PHPCS Drupal/DrupalPractice integral PASS; Unit + Kernel
+39/610 PASS sem depreciações; PHP lint 2/2 e `node --check` PASS. A revisão
+visual móvel do rótulo de categoria colorido ainda depende de servir o
+candidato atual. O gate global de fronteira módulo–tema continua vermelho por
+arquivos de Calendar, Events e Maps, sem violações do Magazine.
+
 ## Documentação
 
 - [Índice documental](docs/README.md)

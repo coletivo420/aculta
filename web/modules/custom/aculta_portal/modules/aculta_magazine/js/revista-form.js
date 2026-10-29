@@ -7,6 +7,7 @@
  * de envio é limpo; sem isso, o aviso ficaria desligado para sempre. O retorno por "Voltar" a um formulário
  * não enviado preserva o aviso.
  */
+// phpcs:disable Generic.PHP.UpperCaseConstant -- JavaScript primitives use lowercase.
 (function (Drupal, once) {
   'use strict';
 

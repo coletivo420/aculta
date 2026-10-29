@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_magazine\Presentation;
 
+use Drupal\user\UserInterface;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_user\Account\AccountNames;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -14,19 +15,25 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Cabeçalho de apresentação das publicações da Revista: autor, data, hora e compartilhamento.
+ * Cabeçalho de apresentação das publicações da Revista.
  *
- * Função apenas: monta os dados e os links com tokens data-portal-ui. A aparência é do ACULTA420.
- * Serviço (não é hook): o Drupal aceita uma implementação de hook por módulo, então node_view fica em ArticleAuthorsHooks.
+ * Monta autor, data, hora e links com tokens data-portal-ui. A aparência
+ * pertence ao ACULTA420.
+ *
+ * Este serviço não é um hook; node_view fica em ArticleAuthorsHooks porque o
+ * Drupal aceita uma implementação de cada hook por módulo.
  */
 final class PostPresentation {
 
+  use StringTranslationTrait;
+
   /**
-   * Redes de compartilhamento: rótulo, ícone (Bootstrap Icons) e montagem do link.
+   * Redes de compartilhamento: rótulo, ícone e montagem do link.
    */
   private const SHARE = [
     'whatsapp' => ['label' => 'WhatsApp', 'icon' => 'whatsapp'],
@@ -46,10 +53,14 @@ final class PostPresentation {
   ) {}
 
   /**
-   * Adiciona metainformação e compartilhamento à publicação (chamado pelo hook node_view de aculta_magazine).
+   * Adiciona metainformação e compartilhamento à publicação.
+   *
+   * Chamado pelo hook node_view de aculta_magazine.
    */
   public function build(array &$build, NodeInterface $entity): void {
-    $cache = (new CacheableMetadata())->addCacheableDependency($entity)->addCacheContexts(['url.path', 'url.site']);
+    $cache = (new CacheableMetadata())
+      ->addCacheableDependency($entity)
+      ->addCacheContexts(['url.path', 'url.site']);
     $ts = $entity->hasField('field_published_at') && !$entity->get('field_published_at')->isEmpty()
       ? strtotime((string) $entity->get('field_published_at')->value . ' UTC') ?: $entity->getCreatedTime()
       : $entity->getCreatedTime();
@@ -61,9 +72,11 @@ final class PostPresentation {
       '#type' => 'container',
       '#weight' => -30,
       '#attributes' => ['data-portal-ui' => 'post-meta'],
-      // O link do autor depende do apelido e da visibilidade do perfil: a cache acompanha o perfil e o usuário.
-      // O cabeçalho é montado com elementos do tema (aculta_portal_element): declara a dependência de tema, que o
-      // nó raiz precisa ter em algum filho para o Core aceitar a variação em cache sem imagem de capa.
+      // O link do autor depende do apelido e da visibilidade do perfil. A cache
+      // acompanha o perfil e o usuário.
+      // O cabeçalho é montado com elementos do tema (aculta_portal_element):
+      // declara a dependência de tema, que o nó raiz precisa ter em algum filho
+      // para o Core aceitar a variação em cache sem imagem de capa.
       '#cache' => ['tags' => $authorTags, 'contexts' => ['theme']],
       'author' => $authorElement,
       'date' => $this->item('post-meta-date', mb_strtolower($this->dateFormatter->format($ts, 'custom', 'j \d\e F \d\e Y'))),
@@ -82,20 +95,25 @@ final class PostPresentation {
         'title' => $network['label'],
       ]);
     }
-    // Compartilhamento dentro da mesma faixa da metainformação (à direita).
+    // Compartilhamento dentro da mesma faixa da metainformação, à direita.
     $build['post_meta']['share'] = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'post-share'],
-      'label' => ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#value' => (string) t('Compartilhe:'), '#element_attributes' => new Attribute(['data-portal-ui' => 'post-share-label'])],
+      'label' => [
+        '#theme' => 'aculta_portal_element',
+        '#tag' => 'span',
+        '#value' => (string) $this->t('Compartilhe:'),
+        '#element_attributes' => new Attribute(['data-portal-ui' => 'post-share-label']),
+      ],
       'links' => $links,
     ];
     $cache->applyTo($build);
   }
 
   /**
-   * Nome do autor: link para o perfil público quando o perfil é público (mesma regra da caixa de autores).
+   * Retorna link para o perfil público quando ele estiver visível.
    */
-  private function authorElement(?\Drupal\user\UserInterface $owner, array &$tags): array {
+  private function authorElement(?UserInterface $owner, array &$tags): array {
     $name = $owner ? $owner->getDisplayName() : '';
     if ($owner) {
       $tags = array_merge($tags, $owner->getCacheTags());
@@ -103,14 +121,24 @@ final class PostPresentation {
       if ($profile) {
         $tags = array_merge($tags, $profile->getCacheTags());
       }
-      $nickname = $profile && $profile->hasField('field_nickname') ? trim((string) $profile->get('field_nickname')->value) : '';
+      $nickname = $profile && $profile->hasField('field_nickname')
+        ? trim((string) $profile->get('field_nickname')->value)
+        : '';
       $publico = $profile ? (bool) $profile->get('field_perfil_publico')->value : TRUE;
       $publico = $publico || PublicProfilePolicy::isObrigatorioPublico($owner->getRoles());
       $publicSlug = AccountNames::publicRouteSlug($nickname);
       if ($publico && $publicSlug !== NULL) {
-        $url = $this->purposeManager->routeUrl('main', 'aculta_user.perfil_publico', ['apelido' => $publicSlug]);
+        $url = $this->purposeManager->routeUrl(
+          'main',
+          'aculta_user.perfil_publico',
+          ['apelido' => $publicSlug],
+        );
         if ($url !== NULL) {
-          return PortalLinkElement::build($nickname, $url, ['data-portal-ui' => 'post-meta-author']);
+          return PortalLinkElement::build(
+            $nickname,
+            $url,
+            ['data-portal-ui' => 'post-meta-author'],
+          );
         }
       }
     }
@@ -118,10 +146,15 @@ final class PostPresentation {
   }
 
   /**
-   * Um item de metainformação (texto com token).
+   * Cria um item de metainformação com o token correspondente.
    */
   private function item(string $token, string $value): array {
-    return ['#theme' => 'aculta_portal_element', '#tag' => 'span', '#value' => $value, '#element_attributes' => new Attribute(['data-portal-ui' => $token])];
+    return [
+      '#theme' => 'aculta_portal_element',
+      '#tag' => 'span',
+      '#value' => $value,
+      '#element_attributes' => new Attribute(['data-portal-ui' => $token]),
+    ];
   }
 
   /**
