@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.4.0-dev.172
-state: Dev
-progress_note: "Dev.172: PHPDoc do adapter de armazenamento completado. PHPCS Drupal/DrupalPractice com --extensions=php PASS sem erros/avisos; node --check nos JavaScript do módulo PASS; a invocação PHPCS bruta no diretório aplica sniff de literais PHP ao JS e não representa gate de JavaScript. Unit + Kernel 43/481 PASS no aculta_simpletest, 41 depreciações Core/contrib no Kernel e 0 no Unit. F15 completa em código, teste e evidência visual; permanece Dev pelo gate global módulo–tema, que falha apenas em Events/Calendar/Maps fora do escopo."
-next_phase: 'Após o gate global módulo–tema ficar verde, repetir o status index e promover aculta_lms_h5p a RC; F10 e F15 estão tecnicamente completas conforme [README](web/modules/custom/aculta_portal/modules/aculta_lms_h5p/README.md).'
+version: 0.4.0-rc.1
+state: RC
+progress_note: "RC.1 (2026-10-29): F10/F15 completas. Unit 28/93 PASS; Kernel 15/388 PASS com 41 depreciações Core/contrib; PHPCS Drupal/DrupalPractice em PHP, lint 57/57 e node --check 3/3 PASS. Gates módulo–tema 3397, mapa 214, tokens 380 e índice 50 PASS. Revisão visual autenticada no Runtime de teste registrada para F10/F15; as alterações posteriores à versão servida dev.150 foram PHPDoc/estilo, sem mudança de rotas ou interface. Nenhuma operação Runtime nesta promoção."
+next_phase: 'Aguardar autorização explícita para deploy/validação Alpha; seguir docs/operations/RELEASE-LIFECYCLE.md e registrar evidência por purpose. Nenhum deploy ou atualização do Runtime foi executado nesta microfase.'

@@ -1,3 +1,11 @@
+## 0.4.0-rc.1 — candidato de release (2026-10-29)
+
+- F10 e F15 completas; revisão visual autenticada documentada no Runtime de teste.
+- Unit 28/93 e Kernel 15/388 PASS; 41 depreciações Core/contrib no Kernel.
+- PHPCS Drupal/DrupalPractice, lint PHP 57/57, `node --check` 3/3 e gates globais
+  de módulo–tema, mapa, tokens e índice PASS.
+- O Runtime não foi alterado nesta promoção. Alpha depende de autorização explícita.
+
 ## 0.4.0-dev.160 — documentar o adaptador H5P central (2026-10-29)
 
 - PHPDoc da implementação de `H5PFrameworkInterface` foi completado e seus

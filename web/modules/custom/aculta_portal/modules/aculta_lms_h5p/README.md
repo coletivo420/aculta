@@ -7,15 +7,16 @@ Composer independentes, sob GPL-3.0-only.
 
 ## Estado
 
-**Revalidação 2026-10-29 (0.4.0-dev.172):** Unit + Kernel 43/481 passaram
-no MariaDB `aculta_simpletest`; o Kernel reportou 41 depreciações Core/contrib,
-Unit não teve depreciações. PHPCS Drupal/DrupalPractice aplicado somente a PHP
-passa sem erros ou avisos; `node --check` passou em todos os JavaScript do
-módulo. A invocação bruta de PHPCS no diretório também analisa JS com sniffs de
-PHP e marca os literais válidos `true`, `false` e `null`, por isso não é usada
-como gate para JS. Vinte arquivos PHP tocados nesta série passaram PHP lint.
-F15 está tecnicamente completa; o estado continua Dev enquanto o gate global
-módulo–tema reprovar em módulos fora deste escopo. Nenhum Runtime foi alterado.
+**Candidato RC 2026-10-29 (`0.4.0-rc.1`):** Unit 28/93 e Kernel 15/388
+passaram no MariaDB `aculta_simpletest`; o Kernel reportou 41 depreciações
+Core/contrib e Unit não teve depreciações. PHPCS Drupal/DrupalPractice sobre PHP
+passa sem erros ou avisos; PHP lint 57/57 e `node --check` 3/3 passaram. Os gates
+globais módulo–tema, mapa, tokens do Portal e índice de status também passaram.
+F10 e F15 estão completas. A revisão visual autenticada de ambas foi registrada
+no Runtime de teste; o código servido era dev.150. A revisão dos commits
+dev.151–dev.172 confirma mudanças de PHPDoc, estilo e higiene, sem mudança de
+rota ou interface. Nenhuma operação Runtime foi feita nesta promoção; Alpha
+aguarda autorização explícita.
 
 F10 foi homologada no Runtime de teste `cursos`: o pacote de biblioteca foi
 instalado pela tela administrativa, uma atividade foi salva pelo editor e
