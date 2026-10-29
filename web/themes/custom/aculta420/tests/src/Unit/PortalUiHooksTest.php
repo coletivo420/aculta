@@ -65,6 +65,25 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
+   * The Forum report queue uses neutral Portal tokens for theme presentation.
+   */
+  public function testMapsForumReportQueueTokens(): void {
+    $variables = [
+      'element' => [
+        '#attributes' => ['data-portal-ui' => 'forum-report-queue'],
+      ],
+      'attributes' => new Attribute(['data-portal-ui' => 'forum-report-pager']),
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    self::assertContains('aculta-forum-report-queue', $variables['element']['#attributes']['class']);
+    self::assertArrayNotHasKey('data-portal-ui', $variables['element']['#attributes']);
+    self::assertTrue($variables['attributes']->hasClass('aculta-pager'));
+    self::assertFalse($variables['attributes']->offsetExists('data-portal-ui'));
+  }
+
+  /**
    * Checkout account registration and Google controls receive theme classes.
    */
   public function testMapsCheckoutAccountTokens(): void {

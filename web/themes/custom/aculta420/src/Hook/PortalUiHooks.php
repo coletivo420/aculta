@@ -504,6 +504,9 @@ final class PortalUiHooks {
     'studio-listing-wrap' => ['table-responsive', 'studio__listing-wrap'],
     // Fórum: contagem de tópicos visíveis no cartão de categoria.
     'forum-category-count' => ['aculta-forum-category__count'],
+    // Fila de denúncias do Fórum; markup e acesso pertencem ao Portal.
+    'forum-report-queue' => ['aculta-forum-report-queue'],
+    'forum-report-pager' => ['aculta-pager'],
   ];
 
   /**

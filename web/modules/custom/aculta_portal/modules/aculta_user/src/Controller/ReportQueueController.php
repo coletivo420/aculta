@@ -112,7 +112,7 @@ final class ReportQueueController extends ControllerBase {
 
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-forum-report-queue']],
+      '#attributes' => ['data-portal-ui' => 'forum-report-queue'],
       'title' => [
         '#type' => 'html_tag',
         '#tag' => 'h2',
@@ -142,7 +142,7 @@ final class ReportQueueController extends ControllerBase {
     if ($queueData['total_pages'] > 1) {
       $build['pager'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-pager']],
+        '#attributes' => ['data-portal-ui' => 'forum-report-pager'],
         'status' => [
           '#markup' => sprintf('<p>%s</p>', $this->t('Página @current de @total', [
             '@current' => $page + 1,

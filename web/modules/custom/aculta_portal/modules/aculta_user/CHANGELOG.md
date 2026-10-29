@@ -1,3 +1,11 @@
+## 0.4.0-dev.92 — tokens neutros na fila de denúncias do Fórum (2026-10-29)
+
+- `ReportQueueController` marca container e pager com `data-portal-ui`; o tema
+  mapeia os tokens, sem classes de design no módulo. ACL, filas, links e cache
+  permanecem no owner Portal/UGC.
+- Unit do controller 3/13 e Unit de `PortalUiHooks` 12/83 PASS;
+  `validate-module-theme-boundary.php` e `validate-portal-ui-docs.php` PASS.
+
 ## 0.4.0-dev.91 — instalação limpa e rollback do módulo (2026-10-29)
 
 - Novo `AcultaUserInstallRollbackKernelTest` instala o `aculta_user` a partir de

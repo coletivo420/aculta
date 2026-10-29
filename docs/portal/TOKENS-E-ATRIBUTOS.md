@@ -496,6 +496,8 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | Token | Classes no ACULTA420 | Origem no módulo/tema |
 | --- | --- | --- |
 | `editorial-card` | `aculta-card card` | `web/modules/custom/aculta_portal/src/Editorial/CardVariationManager.php` |
+| `forum-report-queue` | `aculta-forum-report-queue` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/ReportQueueController.php` |
+| `forum-report-pager` | `aculta-pager` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/ReportQueueController.php` |
 | `fiscal-identity-other-data` | `aculta-fiscal-identity-other-data` | `web/modules/custom/aculta_portal/src/Plugin/Commerce/CheckoutPane/FiscalIdentityPane.php` |
 | `wiki-proposal-contribute` | `button button--secondary` | `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiProposalLinkHooks.php` |
 | `statistics-panel` | `aculta-statistics` | `web/modules/custom/aculta_portal/modules/aculta_statistics/src/Controller/StatisticsDashboardController.php` |

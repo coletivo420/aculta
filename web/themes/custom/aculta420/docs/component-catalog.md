@@ -91,6 +91,11 @@ de tópico empilham seus metadados até `36rem`. Não houve SDC novo nem altera�
 dos dados/handlers da View. O teste visual sintético está documentado em
 `tests/browser/aculta-forum/README.md`.
 
+A fila de denúncias do Fórum não cria SDC: `ReportQueueController` emite os
+tokens neutros `forum-report-queue` e `forum-report-pager`; `PortalUiHooks`
+traduz para `aculta-forum-report-queue` e `aculta-pager`. Conteúdo, pager,
+permissões e cache continuam no Portal/UGC.
+
 `studio.css` compõe navegação e painel internos com os elementos neutros do
 Studio. O mobile usa coluna única como base e recupera a sidebar lateral em
 `48rem`; nenhum SDC paralelo ou novo contrato foi criado.

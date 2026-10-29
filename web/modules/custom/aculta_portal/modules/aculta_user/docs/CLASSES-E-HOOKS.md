@@ -93,7 +93,7 @@ Atualizado a partir do código em 2026-10-27 (`src/`). Cada classe aparece com a
 | `ChangemailRedirectController` | `src/Controller/ChangemailRedirectController.php` | Caminhos legados `/seguranca/email` e `/seguranca/email/{user}`: `302` para a aba E-mail da Segurança, só para a própria conta. Ver [TROCA-DE-EMAIL](TROCA-DE-EMAIL.md). |
 | `LegacyMemorialController` | `src/Controller/LegacyMemorialController.php` | Memorial coletivo das autorias históricas do Fórum em /u/lendashistoricas (ACULTA Fórum, F2, F-D07). |
 | `PublicProfileController` | `src/Controller/PublicProfileController.php` | Página pública do perfil em /u/<apelido>. |
-| `ReportQueueController` | `src/Controller/ReportQueueController.php` | Redirect local do caminho legado de denúncias para `/painel-administrativo/forum`; mantém access route-level e não carrega a fila. |
+| `ReportQueueController` | `src/Controller/ReportQueueController.php` | Renderiza a fila unificada no escopo Fórum; marca o container e o pager com tokens neutros `data-portal-ui` para o tema mapear a apresentação. Mantém ACL, conteúdo, links e cache no owner Portal/UGC. |
 | `SocialLinkSaveController` | `src/Controller/SocialLinkSaveController.php` | Gravação do link de uma rede social pelo modal (JSON). O JS do formulário atualiza a página depois. |
 
 ### `Entity`

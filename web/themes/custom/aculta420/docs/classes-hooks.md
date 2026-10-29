@@ -51,6 +51,8 @@ atributo neutro `data-portal-ui` em classes de apresentação do tema. O mapa
 
 O hook não cria classe para token desconhecido. Novos tokens precisam ser
 emitidos pelo Portal como contrato neutro e mapeados em `TOKENS` no tema.
+Para a fila de denúncias do Fórum, `forum-report-queue` e `forum-report-pager`
+se traduzem em `aculta-forum-report-queue` e `aculta-pager`.
 
 ## `PortalBrandHooks`
 
