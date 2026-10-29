@@ -1,3 +1,8 @@
+## Retificação da Frente B - Green Stash e gate F11 (2026-10-29)
+
+O escopo visual Studio inclui obrigatoriamente **Green Stash**, além de Marley, GanjaLab, WE Sativa, Conta, Perfil, hub e demais providers existentes. A sequência vinculante é **OCS-F0-F11 → gate F11 → OCS-A1-A4** no [plano visual](PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md); referências antigas F7/F10 como gate estão revogadas. F8 pertence ao Green Stash, F9 à Conta/Perfil, F10 às demais experiências. Requisitos Commerce e mobile-first estão em `aculta_commerce/docs/GREEN-STASH-UX-MOBILE-FIRST.md` e `GREEN-STASH-OPERATIONS-CONTRACT.md`. A Frente B só altera tema, SDC, CSS, Twig, stories e docs próprias; operações Commerce/ACL/controllers/rotas ficam na frente funcional (`Pede-A`). Commits específicos na PR #299, sem branch/PR adicional, force ou merge.
+
+
 ## Retificação da subfrente B - experiência Studio completa (2026-10-29)
 
 A sequência OCS-F0-F7 anteriormente descrita foi **revogada** pelo [plano vinculante OCS-F0-F10](PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md). O trabalho da Frente B abrange hub, Marley, GanjaLab, WE Sativa, Conta, Perfil e experiências extras verificadas no registry, com os respectivos donos funcionais preservados. Etapa A1-A4 somente após **OCS-F10 homologada**. A Frente B não modifica controllers/services/rotas/ACL da Frente A. Conflitos ou dependências entre frentes viram `Pede-A`; manter commits isolados e push fast-forward na PR #299, sem branch/PR adicional e sem merge.
