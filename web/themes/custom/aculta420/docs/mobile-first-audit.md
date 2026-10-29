@@ -178,3 +178,12 @@ Esses validadores cobrem estrutura SDC, fundações/tokens e fronteira tema-mód
 Não exercitam CSS computado em rotas, breakpoints, shell renderizado, outros
 purposes, teclado, zoom ou conteúdo real; logo MF0 permanece parcial e MF3 não
 está aprovado.
+
+### Verificação do inventário de anexação de libraries
+
+No head `5f14c5863`, conferi os 85 registros de
+`theme-library-attachment-sites.tsv` contra os arquivos-fonte atuais: 85/85
+caminhos/linhas ainda existem e cada linha continua contendo o call site de
+anexação declarado. Isso confirma apenas que o índice está referenciando linhas
+válidas; chamadas dinâmicas, condições de execução, associação à rota/purpose e
+carregamento efetivo no browser permanecem sem comprovação.
