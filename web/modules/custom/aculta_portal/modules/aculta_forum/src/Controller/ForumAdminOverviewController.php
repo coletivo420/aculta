@@ -10,6 +10,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\node\NodeInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -94,6 +95,16 @@ final class ForumAdminOverviewController extends ControllerBase {
         '#title' => $this->t('Ver categorias públicas'),
         '#url' => $this->domainPurposeManager->pathUrl('forum', '/categorias'),
       ];
+      $account = $this->currentUser();
+      if ($account->hasPermission('moderar denuncias do forum')
+        || $account->hasPermission('moderar denuncias ugc')
+        || $account->hasPermission('moderar denuncias ugc: forum')) {
+        $build['public_links']['#items'][] = [
+          '#type' => 'link',
+          '#title' => $this->t('Fila de denúncias do Fórum'),
+          '#url' => Url::fromRoute('aculta_user.denuncias_forum'),
+        ];
+      }
       CacheableMetadata::createFromRenderArray($build)
         ->addCacheableDependency($forumDomain)
         ->applyTo($build);

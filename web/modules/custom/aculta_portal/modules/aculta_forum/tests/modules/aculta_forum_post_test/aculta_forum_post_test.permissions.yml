@@ -2,3 +2,11 @@ create aculta forum posts:
   title: 'Create Forum posts'
   description: 'Declares the production Forum publish permission for isolated Kernel tests.'
   restrict access: true
+
+moderar denuncias do forum:
+  title: 'Moderar denúncias do fórum'
+  description: 'Declares the production Forum moderation permission for isolated Kernel tests.'
+
+report aculta forum content:
+  title: 'Report Aculta Forum content'
+  description: 'Declares the production Forum report permission for isolated Kernel tests.'

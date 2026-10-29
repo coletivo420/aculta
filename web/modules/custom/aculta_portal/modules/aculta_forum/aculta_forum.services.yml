@@ -196,3 +196,7 @@ services:
   aculta_forum.read_marker:
     class: Drupal\aculta_forum\Service\ForumReadMarker
     arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose', '@current_user', '@string_translation', '@messenger']
+
+  Drupal\aculta_forum\Hook\ForumReportUgcBridgeHooks:
+    class: Drupal\aculta_forum\Hook\ForumReportUgcBridgeHooks
+    arguments: ['@entity_type.manager', '@?aculta_ugc.moderation_notifier']
