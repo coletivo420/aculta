@@ -10,3 +10,11 @@ Eventos, datas e locais do purpose `eventos` (ADR-015). Usa o `aculta_calendar` 
 - Visual: [docs/VISUAL.md](docs/VISUAL.md)
 - Origem e atribuição do OpenCulturas: [docs/ORIGEM-OPENCULTURAS.md](docs/ORIGEM-OPENCULTURAS.md)
 - Histórico de alterações: [CHANGELOG.md](CHANGELOG.md)
+
+## Validação visual (2026-10-29)
+
+O smoke do purpose `eventos` passou 129/129 verificações no candidato servido
+`355e48a89` (events dev.1), em 1280/390/320 px reais, com modo escuro. Script e
+instruções: [tests/browser/eventos](../../../../../../tests/browser/eventos/README.md).
+O checkout servido ainda é anterior ao dev.2; repetir quando o commit atual for
+servido.

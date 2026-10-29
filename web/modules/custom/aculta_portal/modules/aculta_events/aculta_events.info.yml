@@ -1,6 +1,6 @@
 name: ACULTA Eventos
 type: module
-version: '0.1.0-dev.2'
+version: '0.1.0-dev.3'
 description: 'Eventos, datas e locais do purpose eventos. Modelo em docs/MODELO-DE-DADOS.md. Recorrência via aculta_calendar.'
 package: 'ACULTA Portal'
 core_version_requirement: ^11.3
