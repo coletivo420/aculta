@@ -7,6 +7,7 @@ namespace Drupal\aculta_maps;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Url;
 use Drupal\aculta_portal\Secrets\SecretsManager;
 
 /**
@@ -98,6 +99,31 @@ final class MapRenderer {
         '#value' => 'Google Maps não está configurado; usando OpenStreetMap.',
         '#access' => $this->currentUser->hasPermission('administer aculta maps'),
         '#attributes' => ['class' => ['messages', 'messages--warning']],
+      ];
+    }
+    if ($provider === 'google' && $markers !== []) {
+      return [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['aculta-map-wrapper']],
+        'map' => $build,
+        'geocoding_attribution' => [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['aculta-map__geocoding-attribution']],
+          'text' => [
+            '#plain_text' => 'Dados de localização © OpenStreetMap contributors, disponíveis sob ODbL. ',
+          ],
+          'license' => [
+            '#type' => 'link',
+            '#title' => 'Licença e direitos autorais',
+            '#url' => Url::fromUri('https://www.openstreetmap.org/copyright'),
+            '#options' => [
+              'attributes' => [
+                'rel' => 'noopener noreferrer',
+                'target' => '_blank',
+              ],
+            ],
+          ],
+        ],
       ];
     }
     return $build;

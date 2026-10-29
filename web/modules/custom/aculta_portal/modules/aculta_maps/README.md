@@ -25,10 +25,11 @@ não usa JavaScript. O aviso de privacidade deve apontar para
 
 Google é opcional e escolhido no painel ADM7. `GOOGLE_MAPS_API_KEY` é usada no
 navegador e deve ser restrita aos hosts por referenciador e à Maps JavaScript
-API. `GOOGLE_GEOCODING_API_KEY` é separada, só fica no servidor e deve ser
-restrita ao IP do servidor e à Geocoding API. Ambas são lidas por
-`aculta_portal.secrets_manager`; não grave valores em config, código, logs ou
-documentação. O formulário mostra somente se estão configuradas.
+API. Por D-46, a geocodificação usa Nominatim para todos os engines e não chama
+Google Geocoding; a chave `GOOGLE_GEOCODING_API_KEY` provisionada permanece sem
+uso pela aplicação. Quando coordenadas Nominatim aparecem em mapa Google, o
+renderer exibe atribuição a OpenStreetMap contributors e link à licença ODbL.
+Não grave valores de credenciais em config, código, logs ou documentação.
 
 ## Responsabilidades do consumidor
 

@@ -10,3 +10,7 @@ Decisão: D-19 em `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`. Proved
 
 Regra de uso: nenhum módulo chama o Google, o OpenStreetMap ou o Nominatim diretamente. Todo mapa e toda
 geocodificação passam pelo `aculta_maps`.
+
+Por D-46, a geocodificação usa Nominatim qualquer que seja o engine do mapa. Se coordenadas Nominatim forem exibidas
+em mapa Google, a interface apresenta atribuição a OpenStreetMap contributors e link à licença ODbL. A chave Google
+Geocoding provisionada não é usada pela aplicação.

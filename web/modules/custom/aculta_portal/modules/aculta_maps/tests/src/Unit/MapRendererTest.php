@@ -13,6 +13,7 @@ use Drupal\aculta_portal\Secrets\SecretsManager;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Drupal\key\KeyRepositoryInterface;
+use Drupal\key\KeyInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -91,6 +92,39 @@ final class MapRendererTest extends UnitTestCase {
     $this->assertSame('openstreetmap', $mapSettings['provider']);
     $this->assertArrayNotHasKey('googleApiKey', $mapSettings);
     $this->assertTrue($build['provider_notice']['#access']);
+  }
+
+  /**
+   * Google maps show attribution for Nominatim coordinates and their ODbL data.
+   */
+  public function testGoogleMapCreditsNominatimCoordinates(): void {
+    $settings = $this->createMock(ImmutableConfig::class);
+    $settings->method('get')->willReturnMap([
+      ['engine', 'google'],
+      ['center_lat', -14.235],
+      ['center_lng', -51.9253],
+      ['zoom_initial', 4],
+      ['zoom_location', 15],
+    ]);
+    $configFactory = $this->createMock(ConfigFactoryInterface::class);
+    $configFactory->method('get')->with('aculta_maps.settings')->willReturn($settings);
+    $logger = $this->createMock(LoggerInterface::class);
+    $loggerFactory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $loggerFactory->method('get')->willReturn($logger);
+    $key = $this->createMock(KeyInterface::class);
+    $key->method('getKeyValue')->willReturn('test-map-key');
+    $keys = $this->createMock(KeyRepositoryInterface::class);
+    $keys->method('getKey')->with('google_maps_api_key')->willReturn($key);
+    $secrets = new SecretsManager($keys, new Settings(['aculta_secrets_environment' => 'test']), $loggerFactory, dirname(__DIR__, 8));
+    $renderer = new MapRenderer($configFactory, $secrets, $this->createMock(AccountProxyInterface::class));
+
+    $build = $renderer->build([
+      'markers' => [['lat' => -16.68, 'lng' => -49.26, 'label' => 'Local']],
+    ]);
+
+    $this->assertSame('google', $build['map']['#attached']['drupalSettings']['acultaMaps']['aculta-map']['provider']);
+    $this->assertStringContainsString('OpenStreetMap contributors', (string) $build['geocoding_attribution']['text']['#plain_text']);
+    $this->assertSame('https://www.openstreetmap.org/copyright', $build['geocoding_attribution']['license']['#url']->getUri());
   }
 
 }

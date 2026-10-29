@@ -15,21 +15,21 @@ responsável decidiu copiar esse método.
 
 1. **Padrão: Leaflet** (biblioteca livre, BSD-2-Clause) com **tiles do OpenStreetMap públicos**
    (`tile.openstreetmap.org`), com atribuição visível, como no OpenCulturas.
-2. **Opção: Google Maps**, escolhida no painel administrativo, para o mapa e a geocodificação. Só é usada se o
+2. **Opção: Google Maps**, escolhida no painel administrativo, somente para o mapa. Só é usada se o
    responsável a selecionar.
 3. **Seleção no painel:** um formulário de configuração em `/painel-administrativo/mapas` define o provedor
    (`openstreetmap` ou `google`), o centro e o zoom iniciais, e o zoom para "mostrar no mapa". Sem caminho `/admin`.
 4. **Chaves do Google no `aculta_secrets`:** `GOOGLE_MAPS_API_KEY` é enviada ao navegador somente quando Google
    está selecionado; deve restringir referenciadores aos hosts autorizados e a Maps JavaScript API.
-   `GOOGLE_GEOCODING_API_KEY` é distinta e usada só no servidor, restrita ao IP do servidor e à Geocoding API.
-   Nenhuma chave é editável no formulário ou salva em configuração exportada. Sem chave de navegador, o mapa cai
+   `GOOGLE_GEOCODING_API_KEY` foi provisionada, mas não é usada pela aplicação após D-46. Nenhuma chave é editável
+   no formulário ou salva em configuração exportada. Sem chave de navegador, o mapa cai
    para OSM; o aviso de fallback é restrito a administradores.
 5. **Carregamento na página** (D-08 vale): o mapa carrega junto com a página em ambas as opções. Aviso de
    privacidade visível, com link para `/sobre/politica-de-privacidade` (caminho indicado pelo responsável
    em 2026-10-28). O conteúdo deve mencionar os provedores e os dados técnicos enviados antes de ativar o link no mapa.
-6. **Geocodificação:** no servidor, uma vez por local, guardada no local. Não é feita a cada visualização. Com
-   OpenStreetMap, usa Nominatim público, com User-Agent identificando o ACULTA, no máximo uma requisição por
-   segundo e sem autocompletar. Com Google, usa a chave de servidor distinta.
+6. **Geocodificação:** no servidor, uma vez por local, guardada no local. Não é feita a cada visualização. Usa
+   Nominatim público qualquer que seja o engine do mapa, com User-Agent identificando o ACULTA, no máximo uma
+   requisição por segundo e sem autocompletar (D-46).
 7. **Atribuição obrigatória** ("© OpenStreetMap contributors") em todo mapa que use tiles do OSM.
 8. **Código:** o sistema de mapa do OpenCulturas (`openculturas_map`, GPL-2.0-or-later) é adaptado, não copiado. Cada
    arquivo derivado leva o cabeçalho de atribuição e uma linha em `ORIGEM-OPENCULTURAS.md`. O que sai do
@@ -105,6 +105,11 @@ separada `GOOGLE_GEOCODING_API_KEY`, restrita para uso de servidor.
 O Google é código opcional e não está selecionado no Runtime de teste. A política pública ainda não descreve os
 provedores e o responsável decidiu não informar IP; essa pendência de transparência deste ADR continua registrada.
 
+**Atualização D-46 (2026-10-28):** a implementação original de MP4 passou a usar Nominatim para qualquer engine.
+Resultados do Google Geocoding não são consultados nem persistidos. Quando coordenadas retornadas por Nominatim são
+exibidas sobre mapa Google, a interface mostra atribuição a OpenStreetMap contributors e um link para a licença
+ODbL em <https://www.openstreetmap.org/copyright>. A chave Google Geocoding já provisionada permanece sem uso.
+
 MP5 adiciona o `RouteLinkBuilder` no ACULTA Maps. Ele monta links HTTPS de rota a partir do modelo configurado,
 aceita somente hosts Google aprovados e codifica o destino; a lista textual e os popups abrem a rota só após clique.
 Evidência: `33b638ccf`.
@@ -125,5 +130,5 @@ Revisão oficial de cobrança/licença em 2026-10-28: [termos da Google Maps Pla
 [preços por SKU](https://developers.google.com/maps/billing-and-pricing/pricing). A Geocoding API não pode ser usada
 junto a mapa não Google; coordenadas podem ser armazenadas por até 30 dias, salvo uma exceção restrita de uso
 diretamente voltado ao usuário e isolado por usuário. O código só chama Google quando Google Maps está selecionado,
-mas persiste coordenadas no local sem origem nem expiração. O responsável precisa escolher a política de dados antes
-de ativar Geocoding Google; detalhes em `web/modules/custom/aculta_portal/modules/aculta_maps/docs/REVISAO-TERMOS-MAPAS-2026-10-28.md`.
+mas agora usa Nominatim em todos os engines por decisão D-46; detalhes em
+`web/modules/custom/aculta_portal/modules/aculta_maps/docs/REVISAO-TERMOS-MAPAS-2026-10-28.md`.

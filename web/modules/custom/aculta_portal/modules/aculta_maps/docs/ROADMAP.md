@@ -29,7 +29,7 @@ Evidência de MP2: `cac0efbba`.
 
 - [x] Leaflet 1.9.4 e assets locais sob BSD-2-Clause; agrupamento próprio, sem CDN.
 - [x] Atribuição "© OpenStreetMap contributors" visível em todo mapa.
-- [x] Geocodificação com Nominatim: 1 req/s global, User-Agent, coordenadas armazenadas no local, sem autocompletar.
+- [x] Geocodificação somente com Nominatim, qualquer que seja o engine do mapa: 1 req/s global, User-Agent, coordenadas armazenadas no local, sem autocompletar (D-46).
 - [x] Lista alternativa textual funciona sem JavaScript.
 
 Runtime de teste ativado com OSM após ordem explícita do responsável. A política não foi alterada conforme decisão de não informar IP; esse ponto de transparência continua registrado como pendência editorial.
@@ -39,7 +39,7 @@ Evidência técnica MP3: `58359728f`.
 ## MP4 — Engine Google (opção) e fallback
 
 - [x] Maps JavaScript API opcional com chave lida do `aculta_secrets`, carregada só quando Google está selecionado.
-- [x] Geocoding API no servidor com `GOOGLE_GEOCODING_API_KEY`, separada da chave de navegador.
+- [x] Geocoding API removida do fluxo da aplicação por D-46; a chave provisionada está sem uso.
 - [x] Fallback para OSM sem chave ou quando a API falha; aviso só para o administrador.
 - [x] Documentar restrições por referenciador/API no navegador e por IP/API no servidor.
 
@@ -73,6 +73,6 @@ Commit MP7: `fd5c96526`.
 ## Revisão F0 — Termos e licenças
 
 Revisão técnica em [`REVISAO-TERMOS-MAPAS-2026-10-28.md`](REVISAO-TERMOS-MAPAS-2026-10-28.md). OpenStreetMap permanece
-o engine do Runtime de teste. Os termos da Geocoding API exigem decidir a persistência das coordenadas antes de usar
-esse serviço; a decisão do responsável foi solicitada. A política pública não foi alterada e a revisão editorial
-sobre o provedor de tiles permanece pendente.
+o engine do Runtime de teste. D-46 mantém Nominatim para todos os engines e exige atribuição OSM/ODbL quando seus
+resultados aparecem em mapa Google. A chave Google Geocoding provisionada está sem uso. A política pública não foi
+alterada e a revisão editorial sobre o provedor de tiles permanece pendente.

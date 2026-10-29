@@ -12,7 +12,7 @@ Dentro:
 - renderização de mapa com Leaflet, usando **OpenStreetMap público como padrão e fallback** (D-18);
 - opção de **Google Maps API**, com a chave lida do `aculta_secrets` (`GOOGLE_MAPS_API_KEY`), sem exibir o valor;
 - **link de rota do Google sem API**, com o modelo de URL configurável no painel (D-18);
-- geocodificação de endereço, com provedor Nominatim (padrão) ou Google Geocoding (opção), guardada no objeto de origem;
+- geocodificação de endereço somente com Nominatim, guardada no objeto de origem independentemente do provedor do mapa (D-46);
 - agrupamento de marcadores e lista alternativa textual (acessibilidade);
 - painel administrativo de configuração em `/painel-administrativo/mapas` (ADM7 passa a viver aqui);
 - privacidade: aviso visível, coordenadas arredondadas para locais de precisão aproximada, atribuição do OSM.
@@ -44,13 +44,14 @@ Regras do contrato:
 | Engine | Mapa | Geocodificação | Chave |
 | --- | --- | --- | --- |
 | `openstreetmap` (padrão e fallback) | Leaflet com tiles públicos do OSM, atribuição visível | Nominatim público: 1 req/s, User-Agent do ACULTA, cache, sem autocompletar | Não precisa |
-| `google` (opção) | Maps JavaScript API | Geocoding API, no servidor | `GOOGLE_MAPS_API_KEY` (navegador) e `GOOGLE_GEOCODING_API_KEY` (servidor), do `aculta_secrets` |
+| `google` (opção) | Maps JavaScript API | Nominatim público no servidor | `GOOGLE_MAPS_API_KEY` (navegador), do `aculta_secrets`; a chave Google Geocoding provisionada não é usada |
 
 - Se `google` estiver escolhido e a chave faltar ou a API falhar: usar `openstreetmap` e mostrar aviso discreto ao
   administrador. O visitante não vê erro.
 - Link de rota: disponível em qualquer engine, abre o Google Maps em nova aba só por clique.
-- Chave do Maps JavaScript fica visível no navegador e deve ter restrições de host e API. A chave da Geocoding API
-  é separada, restrita a IP do servidor e à Geocoding API. Nenhuma chave fica em configuração exportável.
+- Chave do Maps JavaScript fica visível no navegador e deve ter restrições de host e API. A chave Google Geocoding
+  não é usada pelo ACULTA após D-46. Nenhuma chave fica em configuração exportável.
+- Quando resultados do Nominatim forem exibidos em mapa Google, a interface mostra atribuição a OpenStreetMap contributors e link ODbL.
 
 ## 5. Privacidade
 

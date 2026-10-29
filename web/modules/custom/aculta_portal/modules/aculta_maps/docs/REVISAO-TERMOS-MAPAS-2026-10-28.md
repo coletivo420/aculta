@@ -23,15 +23,10 @@ Referências oficiais:
 
 ### Verificação do código ACULTA
 
-`GeocodingService` chama Google somente quando `aculta_maps.settings:engine` é `google`, e só então lê
-`GOOGLE_GEOCODING_API_KEY`. A geocodificação do local persiste as coordenadas na entidade para uso compartilhado,
-sem registrar provedor/origem e sem expiração. Portanto, o código atual não demonstra que os dados Google deixam de
-ser usados com OSM nem aplica a janela de 30 dias. O Google não está selecionado no Runtime de teste, cujo engine é
-OpenStreetMap.
-
-É necessária uma decisão do responsável antes de novas ativações de Google Geocoding: remover esse provedor e manter
-Nominatim para coordenadas persistentes, ou implementar origem e expiração para coordenadas Google. A segunda opção
-requer alteração de schema e migração autorizada; não foi executada nesta auditoria.
+**Decisão D-46 (2026-10-28):** `GeocodingService` usa Nominatim qualquer que seja o engine do mapa. A aplicação não
+consulta Google Geocoding e não persiste resultados dessa API. Coordenadas retornadas por Nominatim continuam sendo
+armazenadas no local; quando forem exibidas sobre mapa Google, a interface atribui OpenStreetMap contributors e liga
+à página de copyright/licença ODbL. A chave Google Geocoding provisionada permanece sem uso pela aplicação.
 
 ## OpenStreetMap
 
@@ -57,6 +52,6 @@ sobre IP. A revisão editorial da informação sobre o provedor permanece penden
 
 ## Estado
 
-Termos, cobrança, atribuição, cache e licenças foram revisados tecnicamente. A pendência é aplicar uma política
-compatível para os dados retornados pela Geocoding API após decisão do responsável; a transparência editorial dos
-tiles continua separada e pendente.
+Termos, cobrança, atribuição, cache e licenças foram revisados tecnicamente. D-46 remove o uso de resultados Google
+Geocoding; a atribuição OSM/ODbL é mostrada em mapas Google quando há coordenadas de Nominatim. A transparência
+editorial geral da política de privacidade continua separada e pendente.

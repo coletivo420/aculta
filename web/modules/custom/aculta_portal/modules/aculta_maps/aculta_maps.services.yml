@@ -1,7 +1,7 @@
 services:
   aculta_maps.geocoding:
     class: Drupal\aculta_maps\Geocoding\GeocodingService
-    arguments: ['@http_client', '@logger.factory', '@state', '@lock.persistent', '@datetime.time', '@config.factory', '@?aculta_portal.secrets_manager']
+    arguments: ['@http_client', '@logger.factory', '@state', '@lock.persistent', '@datetime.time']
   aculta_maps.renderer:
     class: Drupal\aculta_maps\MapRenderer
     arguments: ['@config.factory', '@?aculta_portal.secrets_manager', '@current_user']

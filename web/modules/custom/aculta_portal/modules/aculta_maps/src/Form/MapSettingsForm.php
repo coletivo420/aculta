@@ -110,13 +110,6 @@ final class MapSettingsForm extends ConfigFormBase {
       '#markup' => is_string($keyValue) && $keyValue !== '' ? $this->t('Configurada') : $this->t('Ausente'),
       '#description' => $this->t('A chave fica no Secrets Manager. Este formulário não exibe nem altera credenciais.'),
     ];
-    $geocodingKey = $this->secrets?->value('GOOGLE_GEOCODING_API_KEY');
-    $form['geocoding_credential_status'] = [
-      '#type' => 'item',
-      '#title' => $this->t('Chave do Google Geocoding'),
-      '#markup' => is_string($geocodingKey) && $geocodingKey !== '' ? $this->t('Configurada') : $this->t('Ausente'),
-      '#description' => $this->t('A chamada de geocodificação usa uma chave separada, restrita para uso no servidor.'),
-    ];
     return parent::buildForm($form, $form_state);
   }
 
