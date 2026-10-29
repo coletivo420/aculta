@@ -33,3 +33,11 @@ services:
     class: Drupal\aculta_events\EventSubscriber\AdministrativeExportRouteSubscriber
     tags:
       - { name: event_subscriber }
+  aculta_events.index_provider.event:
+    class: Drupal\aculta_events\ContentIndex\EventContentIndexProvider
+    tags:
+      - { name: aculta_index.provider }
+  aculta_events.index_provider.location:
+    class: Drupal\aculta_events\ContentIndex\LocationContentIndexProvider
+    tags:
+      - { name: aculta_index.provider }
