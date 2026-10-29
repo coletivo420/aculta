@@ -252,3 +252,13 @@ Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`.
 | OC-EV7 / P2 | geodados | mapa atual é de pontos; `MapController` usa `!empty` para lat/lon | aceitar coordenada 0; estudar polígonos **como ideia, não paridade comprovada 3.1.5** |
 
 **Dependências:** indexação cruzada via `aculta_index`/Search API; `aculta_maps` continua dono do renderer; não introduzir novo papel `organizador`, ECA ou `smart_date`. Revisar code owner e autorização antes de qualquer alteração de esquema ou Runtime.
+
+## Backlog complementar OC-A/OC-B - OpenCulturas 3.1.5 (2026-10-29)
+
+Fonte: `docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md`. Preservar E0-E10 e fases F, sem reabrir entregas anteriores.
+
+- [ ] **OC-A/P0:** benchmark e limites/paginação reais de `EventCatalogue::busca()` (expansão em PHP); contrato explícito de publicidade/acesso de `EventLocation` e teste A/B/purpose, pois `LocationCatalogue::busca()` usa `accessCheck(FALSE)`. Validar latitude/longitude zero em `MapController` (não usar `!empty()` para validar coordenadas numéricas).
+- [ ] **OC-A/P0:** tornar eventos/locais descobríveis na busca cultural apenas com grants e purpose corretos; jamais expor evento de turma LMS privada.
+- [ ] **OC-B/P1:** modalidade virtual/híbrida, referência online, idade mínima, segurança, horário de portas, status da data, horário estruturado e acessibilidade como dados; instalar novas dependências só após aprovação própria. Updates idempotentes e testes Kernel.
+- [ ] **OC-B/P1:** ligar SDCs existentes `accessibility-badges` e `event-page-five-regions` a consumidor real; apurar duplicidade de H1, teclado, zoom 200% e 320 px.
+- [ ] **OC-C/D:** organizações verificadas, relações/apoios autorizados e imprensa, respeitando separação de conta/perfil/organização. Sem alterar regras de ingressos, frete ou pagamento nesta onda.
