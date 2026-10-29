@@ -10,7 +10,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Universal implementation of SavedContentQueryInterface backed by Drupal Flag storage.
+ * Universal implementation of SavedContentQueryInterface backed by Flags.
  */
 class SavedContentQuery implements SavedContentQueryInterface {
 
@@ -73,6 +73,11 @@ class SavedContentQuery implements SavedContentQueryInterface {
     elseif ($category !== NULL && $category !== 'all') {
       $baseQuery->condition('f.flag_id', $category);
     }
+    else {
+      // By default ('all' or NULL), include all bookmark and following flags.
+      // This strictly excludes moderation and abuse flags from the start.
+      $baseQuery->condition('f.flag_id', array_merge(self::SAVED_FLAGS, self::FOLLOW_FLAGS), 'IN');
+    }
 
     if ($filter->getEntityTypeId() !== NULL) {
       $baseQuery->condition('f.entity_type', $filter->getEntityTypeId());
@@ -80,19 +85,20 @@ class SavedContentQuery implements SavedContentQueryInterface {
 
     $baseQuery->orderBy('f.created', 'DESC');
 
-    // Fetch candidate rows. To handle pagination with post-access filtering safely,
-    // we fetch a bounded batch of rows.
+    // Fetch candidate rows up to a safe window to perform access checks.
     $offset = $filter->getOffset();
     $limit = $filter->getLimit();
 
-    // Query candidates with window headroom to account for unpublished/restricted entities.
-    $fetchLimit = max($limit * 3, 60);
-    $recordsQuery = clone $baseQuery;
-    $recordsQuery->range($offset, $fetchLimit);
-    $records = $recordsQuery->execute()->fetchAll();
+    $records = $baseQuery->range(0, 500)->execute()->fetchAll();
 
     if (empty($records)) {
-      return new SavedContentQueryResult([], 0, FALSE, ['user', 'user.permissions'], ['flagging_list', 'user:' . $account->id()]);
+      return new SavedContentQueryResult(
+        [],
+        0,
+        FALSE,
+        ['user', 'user.permissions'],
+        ['flagging_list', 'user:' . $account->id()]
+      );
     }
 
     // Group IDs by entity type for batch loading.
@@ -114,8 +120,8 @@ class SavedContentQuery implements SavedContentQueryInterface {
       }
     }
 
-    $items = [];
-    $cacheTags = ['flagging_list', 'user:' . $account->id()];
+    $accessibleItems = [];
+    $allCacheTags = ['flagging_list', 'user:' . $account->id()];
     $purposeFilter = $filter->getPurpose();
     $bundleFilter = $filter->getBundle();
 
@@ -123,7 +129,8 @@ class SavedContentQuery implements SavedContentQueryInterface {
       $type = $row->entity_type;
       $id = $row->entity_id;
 
-      // 1. Safe handling of deleted entities (flagging row exists, entity does not).
+      // 1. Safe handling of deleted entities (flagging row exists, entity
+      // does not exist).
       if (!isset($loadedEntities[$type][$id])) {
         continue;
       }
@@ -133,7 +140,8 @@ class SavedContentQuery implements SavedContentQueryInterface {
         continue;
       }
 
-      // 2. Strict Entity Access enforcement: unpublished or restricted entities must never leak.
+      // 2. Strict Entity Access enforcement: unpublished or restricted
+      // entities must never leak.
       if (!$entity->access('view', $account)) {
         continue;
       }
@@ -153,7 +161,7 @@ class SavedContentQuery implements SavedContentQueryInterface {
       $isFollow = in_array($row->flag_id, self::FOLLOW_FLAGS, TRUE);
       $cat = $isFollow ? self::CATEGORY_FOLLOWING : self::CATEGORY_SAVED;
 
-      $items[] = new SavedContentItem(
+      $accessibleItems[] = new SavedContentItem(
         $type,
         $id,
         $entity,
@@ -164,19 +172,17 @@ class SavedContentQuery implements SavedContentQueryInterface {
       );
 
       // Collect entity cache tags.
-      $cacheTags = array_merge($cacheTags, $entity->getCacheTags());
-
-      if (count($items) >= $limit) {
-        break;
-      }
+      $allCacheTags = array_merge($allCacheTags, $entity->getCacheTags());
     }
 
-    $cacheTags = array_values(array_unique($cacheTags));
-    $hasMore = count($records) > count($items);
+    $totalCount = count($accessibleItems);
+    $pagedItems = array_slice($accessibleItems, $offset, $limit);
+    $hasMore = ($offset + $limit) < $totalCount;
+    $cacheTags = array_values(array_unique($allCacheTags));
 
     return new SavedContentQueryResult(
-      $items,
-      count($items),
+      $pagedItems,
+      $totalCount,
       $hasMore,
       ['user', 'user.permissions'],
       $cacheTags

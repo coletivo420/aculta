@@ -25,7 +25,7 @@ interface SavedContentQueryInterface {
   public const CATEGORY_FOLLOWING = 'following';
 
   /**
-   * System moderation and abuse flags strictly excluded from personal bookmarks.
+   * Moderation and abuse flags excluded from personal bookmarks.
    */
   public const EXCLUDED_FLAGS = [
     'abuse',
@@ -56,11 +56,12 @@ interface SavedContentQueryInterface {
    *   The account to inspect.
    *
    * @return array{saved: int, following: int, total: int}
+   *   Array containing counts for saved, following, and total items.
    */
   public function getCounts(AccountInterface $account): array;
 
   /**
-   * Checks whether a specific entity is currently flagged as saved by the account.
+   * Checks whether a specific entity is flagged as saved by the account.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The account.
