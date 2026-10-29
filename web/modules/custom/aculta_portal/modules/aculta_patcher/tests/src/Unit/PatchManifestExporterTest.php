@@ -75,6 +75,67 @@ class PatchManifestExporterTest extends UnitTestCase {
   }
 
   /**
+   * Rejects a package source reached through a symlinked parent directory.
+   */
+  public function testRejectsPackageSourceSymlinkParent(): void {
+    $outside = $this->project . '/outside-source';
+    mkdir($outside);
+    file_put_contents($outside . '/Greeting.txt', "hello\nworld\n");
+    symlink($outside, $this->project . '/vendor/acme/lib/src/linked');
+    $diff = "diff --git a/src/linked/Greeting.txt b/src/linked/Greeting.txt\n--- a/src/linked/Greeting.txt\n+++ b/src/linked/Greeting.txt\n@@ -1,2 +1,2 @@\n hello\n-world\n+ACULTA\n";
+
+    try {
+      $this->exporter(['symlink' => $this->patch('symlink', '1.0.0', $diff)])->export(TRUE);
+      $this->fail('Export must reject source paths that cross a symlink.');
+    }
+    catch (\RuntimeException $exception) {
+      $this->assertStringContainsString('simbólico', $exception->getMessage());
+    }
+    $this->assertSame("hello\nworld\n", file_get_contents($outside . '/Greeting.txt'));
+  }
+
+  /**
+   * Rejects a symlinked manifest before writing any patch artifact.
+   */
+  public function testRejectsManifestSymlinkBeforeWritingArtifacts(): void {
+    $outside = $this->project . '/outside-manifest.json';
+    file_put_contents($outside, 'keep');
+    symlink($outside, $this->project . '/patches-aculta.json');
+
+    try {
+      $this->exporter(['ok' => $this->patch('ok', '1.0.0', self::VALID_DIFF)])->export();
+      $this->fail('Export must reject a symlinked manifest.');
+    }
+    catch (\RuntimeException $exception) {
+      $this->assertStringContainsString('manifesto', $exception->getMessage());
+    }
+
+    $this->assertSame('keep', file_get_contents($outside));
+    $this->assertFileDoesNotExist($this->project . '/patches/aculta_patcher/ok.patch');
+  }
+
+  /**
+   * Rejects a symlinked patch file before writing the manifest.
+   */
+  public function testRejectsArtifactSymlinkBeforeWritingManifest(): void {
+    mkdir($this->project . '/patches/aculta_patcher', 0777, TRUE);
+    $outside = $this->project . '/outside-patch';
+    file_put_contents($outside, 'keep');
+    symlink($outside, $this->project . '/patches/aculta_patcher/ok.patch');
+
+    try {
+      $this->exporter(['ok' => $this->patch('ok', '1.0.0', self::VALID_DIFF)])->export();
+      $this->fail('Export must reject a symlinked patch artifact.');
+    }
+    catch (\RuntimeException $exception) {
+      $this->assertStringContainsString('artefato', $exception->getMessage());
+    }
+
+    $this->assertSame('keep', file_get_contents($outside));
+    $this->assertFileDoesNotExist($this->project . '/patches-aculta.json');
+  }
+
+  /**
    * An empty export creates artifacts only below the project root.
    */
   public function testEmptyExportCreatesProjectLocalArtifacts(): void {

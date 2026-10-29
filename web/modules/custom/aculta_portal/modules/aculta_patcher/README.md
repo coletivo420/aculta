@@ -40,10 +40,10 @@ código executável. Não usar o formulário como editor de produção.
 
 ## Verificação de ciclo e prontidão — 2026-10-28
 
-- Suíte Unit: 38 testes / 65 assertions PASS; inclui exportação e comparação
-  byte a byte dos artefatos em duas execuções num projeto temporário.
-- PHP lint: 12 arquivos PASS; PHPCS Drupal no módulo PASS após corrigir a
-  documentação de classe, propriedades e métodos.
+- Suíte Unit: 41 testes / 73 assertions PASS; inclui comparação byte a byte
+  dos artefatos em duas execuções e regressões para symlink no pacote, no
+  manifesto e no arquivo de patch.
+- PHP lint: 12 arquivos PASS; PHPCS Drupal no módulo PASS.
 - O comando `aculta:patcher-export --check` no Runtime de teste validou o
   registro ativo sem gravar artefatos.
 - Em cópia isolada do projeto, `composer patches-relock` e duas execuções de
@@ -54,9 +54,10 @@ código executável. Não usar o formulário como editor de produção.
   13/13 verificações passaram. Lista e formulário abriram; o patch H5P, a ação
   de inclusão e campos mínimos aparecem. Títulos visíveis e sem overflow em
   1280/390/320px, com o menu lateral recolhido durante as medições.
-- Exportação de artefatos no Runtime não foi executada. Concluir auditoria final
-  antes de avaliar RC. Nenhum `composer require` ou `composer update` foi
-  executado.
+- Runtime de teste: a rota da coleção exige `administer aculta patches`; a
+  conta comum foi negada e o papel administrator autorizado. O comando
+  `aculta:patcher-export --check` não grava artefatos. Nenhum artefato foi
+  exportado no Runtime e nenhum `composer require`/`composer update` foi feito.
 
 ## Patch H5P inicial
 
@@ -65,3 +66,11 @@ processamento de upload de conteúdo e recusa dependências locais marcadas como
 restritas antes da gravação. Ele cobre bibliotecas incluídas e dependências
 preloaded/dynamic. O pacote alvo é travado em `h5p/h5p-editor` 1.25; uma versão
 diferente exige nova revisão e teste antes de exportar.
+
+
+## Reversão
+
+A reversão do build é o revert do commit que atualizou manifesto, patches e
+composer.lock, seguido de composer install a partir do lock anterior. No
+checkout administrativo, desative o registro antes de uma nova exportação; o
+próximo manifesto deixa de incluir o diff. Não executar Composer no Runtime.

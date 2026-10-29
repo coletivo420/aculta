@@ -103,6 +103,17 @@ final class PatchManifestExporter {
       return sprintf('%d patch(es) ativo(s) validados; nenhum artefato foi gravado.', count($artifacts));
     }
 
+    $manifestPath = $projectRoot . '/patches-aculta.json';
+    if (is_link($manifestPath) || is_dir($manifestPath)) {
+      throw new \RuntimeException('O manifesto de patches não pode ser link simbólico nem diretório.');
+    }
+    foreach (array_keys($artifacts) as $relativePath) {
+      $path = $projectRoot . '/' . $relativePath;
+      if (is_link($path) || is_dir($path)) {
+        throw new \RuntimeException(sprintf('O artefato %s não pode ser link simbólico nem diretório.', $relativePath));
+      }
+    }
+
     $this->prepareArtifactDirectory($projectRoot);
     foreach ($artifacts as $relativePath => $contents) {
       $path = $projectRoot . '/' . $relativePath;
@@ -110,7 +121,6 @@ final class PatchManifestExporter {
         throw new \RuntimeException(sprintf('Não foi possível escrever o artefato %s.', $relativePath));
       }
     }
-    $manifestPath = $projectRoot . '/patches-aculta.json';
     if (is_link($manifestPath) || file_put_contents($manifestPath, $manifestJson, LOCK_EX) === FALSE) {
       throw new \RuntimeException('Não foi possível escrever patches-aculta.json.');
     }
@@ -180,9 +190,20 @@ final class PatchManifestExporter {
     }
     try {
       foreach (array_keys($paths) as $relative) {
-        $source = $packageRoot . '/' . $relative;
-        if (is_link($source)) {
-          return ['success' => FALSE, 'output' => 'O diff aponta para um arquivo simbólico.'];
+        $packageRealPath = realpath($packageRoot);
+        $source = $packageRoot;
+        foreach (explode('/', $relative) as $segment) {
+          $source .= '/' . $segment;
+          if (is_link($source)) {
+            return ['success' => FALSE, 'output' => 'O diff aponta para um caminho simbólico.'];
+          }
+          if (file_exists($source)) {
+            $realSource = realpath($source);
+            if ($packageRealPath === FALSE || $realSource === FALSE ||
+              !str_starts_with($realSource, $packageRealPath . DIRECTORY_SEPARATOR)) {
+              return ['success' => FALSE, 'output' => 'O diff sai do pacote por um caminho resolvido.'];
+            }
+          }
         }
         $directory = dirname($temporaryRoot . '/' . $relative);
         if (!is_dir($directory) && !mkdir($directory, 0700, TRUE) && !is_dir($directory)) {

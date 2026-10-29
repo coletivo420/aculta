@@ -1,5 +1,15 @@
 # Changelog — aculta_patcher
 
+## 0.1.0-dev.5 — validação prévia de caminhos de artefatos
+
+- O exportador rejeita fontes alcançadas por qualquer diretório symlink do
+  pacote e pré-valida symlinks/diretórios nos destinos do manifesto e patches
+  antes de escrever artefatos.
+- Unit Patcher: 41 testes / 73 assertions PASS; PHPCS Drupal e PHP lint PASS.
+  A autorização de rota foi verificada no Runtime: conta comum negada e papel
+  administrator permitido. Firefox ESR dev.4 permanece 13/13 PASS.
+
+
 ## 0.1.0-dev.4 — rolagem horizontal na tabela administrativa
 
 - A tabela de registros é envolvida por contêiner rolável em viewports estreitos;

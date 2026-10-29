@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.4
+version: 0.1.0-dev.5
 state: Dev
-progress_note: 'Em 2026-10-29: Unit 38/65 PASS; lint 12/12 e PHPCS Drupal PASS. Export --check validou 1 registro ativo sem gravar. Ciclo Composer repetível em cópia isolada, rede desabilitada. Firefox ESR pós-cache rebuild: 13/13 PASS; lista/formulário sem overflow e títulos visíveis em 1280/390/320px. Exportação no Runtime não executada.'
-next_phase: 'Concluir auditoria final de segurança e release antes de avaliar RC; exportação Runtime permanece não executada ([README](web/modules/custom/aculta_portal/modules/aculta_patcher/README.md))'
+progress_note: 'Em 2026-10-29: Unit 41/73 PASS; lint 12/12 e PHPCS Drupal PASS. Regressões cobrem symlink no caminho-fonte do pacote e preflight dos arquivos de saída. Runtime: export --check validou 1 registro sem gravar; coleção negada a usuário comum e permitida ao papel administrator. Ciclo Composer repetível em cópia isolada; Firefox ESR após dev.4 13/13 PASS. Reversão documentada.'
+next_phase: 'Finalizar registro RC após revisão da microfase dev.5 e registrar hash/candidato ([README](web/modules/custom/aculta_portal/modules/aculta_patcher/README.md))'
