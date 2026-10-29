@@ -1,5 +1,15 @@
 # Roadmap — ACULTA PDF Viewer
 
+## PV7 — bloqueio de suíte em 2026-10-28
+
+- Suíte completa: 36 testes iniciados, 237 assertions, 5 erros de bootstrap e
+  11 depreciações. Os erros Kernel repetem que o serviço do Portal requer
+  `aculta_user.aculta_user_agreement_ledger`, ausente no harness.
+- Unit concluídos antes dos erros de Kernel; a suíte não fica verde por isso.
+- A fixture não foi alterada nesta verificação. Parar PV7 até reparar o
+  harness com a dependência real e reexecutar a suíte; revisão ampliada de
+  acessibilidade/leitura também continua pendente. Não classificar como RC.
+
 **Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). PV7 só pode ser classificada RC quando todo o escopo e testes, CSP em Report-Only configurada sem enforcement, acessibilidade e validação visual pré-deploy aplicável estiverem concluídos. Alpha valida a coleta/análise dos relatórios no servidor de desenvolvimento; enforcement será decidido após Alpha. LiteSpeed/Cloudflare são validados depois do deploy em produção.
 
 Este roadmap cobre somente o módulo compartilhado `aculta_pdf_viewer`. O
