@@ -11,7 +11,7 @@ namespace AcultaDeployer;
  */
 final class Cli {
 
-  public const VERSION = '0.1.28';
+  public const VERSION = '0.1.28-rc.1';
 
   /**
    * Absolute path to this tool's module directory.

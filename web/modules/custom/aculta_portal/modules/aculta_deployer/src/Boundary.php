@@ -52,7 +52,7 @@ final class Boundary {
         // da ferramenta, sem executá-la nem importar suas classes.
         if ($this->consumerReferenceAllowed($rel)) {
           foreach ($this->rules['consumer_allowed_forbidden'] ?? [] as $token) {
-            if (str_contains($text, $token)) {
+            if ($this->containsForbiddenToken($text, (string) $token)) {
               $violations[] = $rel . " usa '$token' na pasta de leitura neutra; "
               . 'o Portal não executa a ferramenta';
             }
@@ -106,6 +106,22 @@ final class Boundary {
       }
     }
     return FALSE;
+  }
+
+  /**
+   * Checks whether text contains a forbidden execution token.
+   *
+   * Function-call tokens such as `system(` require an identifier boundary so
+   * class names like `Filesystem(` do not produce false positives.
+   */
+  private function containsForbiddenToken(string $text, string $token): bool {
+    if ($token === '') {
+      return FALSE;
+    }
+    if (str_ends_with($token, '(') && preg_match('/^[A-Za-z_]/', $token) === 1) {
+      return preg_match('/(?<![A-Za-z0-9_])' . preg_quote($token, '/') . '/', $text) === 1;
+    }
+    return str_contains($text, $token);
   }
 
   /**

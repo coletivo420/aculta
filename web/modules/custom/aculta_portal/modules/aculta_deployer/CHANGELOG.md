@@ -1,23 +1,12 @@
-## Não lançado — ciclo Alpha/Beta
+## 0.1.28-rc.1 — candidato a RC: fronteira de testes Sitemap, D-50, PHPCS e revisão de DEP-0003 — 2026-10-29
 
-## Não lançado — política do cookie local (D-50) — 2026-10-29
-
-- Removido `cookie_domain: '.aculta.test'` de `services.local.yml`; o ambiente local passa a usar cookie host-only.
-- Domínios compartilhados dos ambientes `test` e `production` permanecem inalterados.
-- Runner standalone, `cookies`, PHPCS e PHP lint revalidados nesta microfase; nenhum acesso de escrita ao Runtime/produção.
-
-
-## Não lançado — conformidade Drupal PHPCS — 2026-10-29
-
-- Correções de estilo e documentação PHP reduziram o PHPCS Drupal do módulo de 331 erros e 56 avisos para zero erros e avisos.
-- A suíte standalone `tests/run.php` passou; não houve mudança intencional de comportamento nem escrita em Runtime.
-- Permanecem antes de RC a decisão sobre `.aculta.test`, os gates finais de segurança e a revisão do DEP-0003.
-
-- Fluxo vigente passa a Dev → RC → Alpha → Beta. A troca de domínio para `*.aculta.org` acontece no Alpha, no servidor de desenvolvimento (`*.aculta.toca.net.br`). O deploy no Hostinger (produção) fica para o Beta.
-- `config/deploy.json`: textos de `domain_transition.note`, `provision` (ação) e `session_cookie.transition` trocados de "deploy do RC" para Alpha/Beta. Identificadores `production`/`test` não mudaram.
-- `domains` (Cli): pendências mostradas como "pendente(s) de Alpha" e "muda na troca de domínio no Alpha". `tests/run.php` acompanha o texto.
-- Documentação: `MIGRACAO-DOMINIOS.md` com passos separados em Alpha e Beta; `PLANEJAMENTO.md` e `COOKIES-AMBIENTE.md` alinhados; "servidor de testes" renomeado para "servidor de desenvolvimento" nos textos.
-- Sem alteração de comportamento de comando. No estado daquela integração, os testes ainda apontavam três falhas: fronteira, expectativa de nove domínios e contrato em `SECRETS.md`; a revalidação de 0.1.28 abaixo registra o estado atual.
+- Versão sincronizada em `0.1.28-rc.1` em `aculta_deployer.info.yml`, `VERSION` e `Cli::VERSION`.
+- `config/boundary.json` e `src/Boundary.php`: inclui a fixture read-only `SitemapWiringKernelTest.php` na allowlist de contratos de dados e aplica fronteira de identificador (`(?<![A-Za-z0-9_])`) em tokens de chamada como `system(`, evitando falso positivo com `Filesystem(` e preservando a proibição de execução.
+- `registry/deploy-registry.json`: `DEP-0003` revisado com decisão alinhada ao ciclo vigente (`RELEASE-LIFECYCLE.md` e `MIGRACAO-DOMINIOS.md`): política de indexação, `robots` e trava de build concluídos em RC; o servidor de desenvolvimento mantém `X-Robots-Tag: noindex` (inclusive no Alpha) e a verificação de ausência de `noindex` nas respostas públicas da Hostinger (LiteSpeed) ocorre na etapa Beta pós-deploy, mantendo a trava bloqueante até lá.
+- Política do cookie local (D-50): removido `cookie_domain: '.aculta.test'` de `services.local.yml`; o ambiente local passa a usar cookie host-only e os domínios compartilhados de `test` (`.aculta.toca.net.br`) e `production` (`.aculta.org`) permanecem inalterados.
+- Conformidade PHPCS (`Drupal,DrupalPractice`): zero erros e zero avisos em todo o módulo.
+- Ciclo Alpha/Beta: `config/deploy.json`, `Cli::domains()`, `MIGRACAO-DOMINIOS.md`, `PLANEJAMENTO.md` e `COOKIES-AMBIENTE.md` alinhados ao fluxo Dev → RC → Alpha → Beta.
+- Validação em `0.1.28-rc.1`: `tests/run.php` 120/120 PASS; `boundaries`, `check`, `cookies`, `domains` (10/10 alinhados), `webhooks`, `robots --env=test` (8/8 hosts PASS) e `sitemap --env=test` (7/7 filhos e hosts PASS); `validate-session-cookie-policy.php` PASS; PHPCS 0/0. Nenhuma escrita em Runtime ou produção.
 
 ## 0.1.28 — allowlist exata para contratos somente leitura — 2026-10-29
 

@@ -115,7 +115,7 @@ $assert((new Boundary($repo, $toolRoot, $rules))->check() === [], 'fronteiras at
 $boundaryFixtureRoot = sys_get_temp_dir() . '/aculta-boundary-test-' . getmypid();
 mkdir($boundaryFixtureRoot . '/consumer', 0777, TRUE);
 mkdir($boundaryFixtureRoot . '/tool', 0777, TRUE);
-file_put_contents($boundaryFixtureRoot . '/consumer/allowed.php', "<?php // aculta_deployer data\n");
+file_put_contents($boundaryFixtureRoot . '/consumer/allowed.php', "<?php new Filesystem(); // aculta_deployer data\n");
 file_put_contents($boundaryFixtureRoot . '/consumer/sibling.php', "<?php // aculta_deployer data\n");
 $fixtureRules = [
   'consumers' => ['consumer'],
@@ -125,7 +125,7 @@ $fixtureRules = [
   'consumer_exclude' => [],
   'consumer_tool_reference_allowed' => [],
   'consumer_tool_reference_allowed_files' => ['consumer/allowed.php'],
-  'consumer_allowed_forbidden' => ['exec('],
+  'consumer_allowed_forbidden' => ['exec(', 'system('],
 ];
 $fixtureBoundary = new Boundary($boundaryFixtureRoot, $boundaryFixtureRoot . '/tool', $fixtureRules);
 $assert(count($fixtureBoundary->check()) === 1, 'allowlist read-only aceita arquivo exato e reprova vizinho');
@@ -552,6 +552,9 @@ foreach (['deploy-policy.json', 'deploy-report.json'] as $report) {
   $reportsOk = $reportsOk && is_file($outTest . '/' . $report) && json_decode((string) file_get_contents($outTest . '/' . $report), TRUE) !== NULL;
 }
 $assert($reportsOk && (glob($outTest . '/.*.tmp') ?: []) === [], 'build: relatórios gravados de forma atômica, sem temporário sobrando');
+if (is_dir($outTest)) {
+  $removeTree($outTest);
+}
 // Alvo e ambiente divergentes são recusados sem gerar saída.
 exec($cli . ' build --env=test --target=production --out=' . escapeshellarg(sys_get_temp_dir() . '/aculta-build-' . getmypid()) . ' 2>&1', $b1, $brc1);
 $assert($brc1 !== 0, 'build recusa --env diferente de --target');

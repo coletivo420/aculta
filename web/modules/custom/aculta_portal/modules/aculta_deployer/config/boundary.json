@@ -42,7 +42,8 @@
     "web/modules/custom/aculta_portal/tests/src/Unit/DeployerEnvironmentTest.php",
     "web/modules/custom/aculta_portal/modules/aculta_calendar/src/Embed/DeployerHostDirectory.php",
     "web/modules/custom/aculta_portal/modules/aculta_calendar/tests/src/Unit/DeployerHostDirectoryTest.php",
-    "web/modules/custom/aculta_portal/modules/aculta_events/src/EventSubscriber/EmbedFrameSubscriber.php"
+    "web/modules/custom/aculta_portal/modules/aculta_events/src/EventSubscriber/EmbedFrameSubscriber.php",
+    "web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/src/Kernel/SitemapWiringKernelTest.php"
   ],
   "consumer_allowed_forbidden": [
     "exec(",

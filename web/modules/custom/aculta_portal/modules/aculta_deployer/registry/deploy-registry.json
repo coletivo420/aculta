@@ -39,7 +39,7 @@
             "owner": "responsável do projeto",
             "blocking": true,
             "status": "open",
-            "decision": "pendente"
+            "decision": "política de indexação, comando robots e trava de build concluídos em RC; o servidor de desenvolvimento mantém X-Robots-Tag noindex (inclusive durante o Alpha) e a verificação da ausência de noindex nas respostas públicas da Hostinger (LiteSpeed) ocorre na etapa Beta pós-deploy (RELEASE-LIFECYCLE.md e MIGRACAO-DOMINIOS.md). A entrada permanece aberta e bloqueante até a validação Beta."
         }
     ]
 }

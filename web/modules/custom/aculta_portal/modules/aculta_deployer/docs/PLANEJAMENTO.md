@@ -3,8 +3,7 @@
 **Ciclo vigente:** seguir [Dev → RC → Alpha → Beta](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Em RC, toda preparação, código, gates e revisão visual aplicável estão concluídos. Alpha é deploy no servidor de desenvolvimento, com a troca de domínio para `*.aculta.org`; depois de validar Alpha, o mesmo candidato vai ao Beta (deploy no Hostinger), com a validação pós-deploy. Esta nota substitui marcos antigos que adiavam preparação essencial para o RC.
 
 Este documento define as fases de construção do submódulo `aculta_deployer`
-(versão atual: 0.1.22, conforme `VERSION`; estado de testes e de `check` em
-`docs/portal/historico/RELATORIO-ESTADO-2026-10-12.md` e DT-O12). Regra geral: cada fase é curta, termina com testes
+(versão atual: `0.1.28-rc.1`, conforme `VERSION`, `Cli::VERSION` e `aculta_deployer.info.yml`). Regra geral: cada fase é curta, termina com testes
 determinísticos e commits atômicos na branch autorizada; PR só quando solicitada. Fases longas terminam com uma **verificação
 de segurança** obrigatória (seção "Gates de segurança"). Nenhuma fase começa com a
 anterior com pendência de segurança aberta.
@@ -177,9 +176,16 @@ Reexecução isolada em 2026-10-29:
 - D-50 removeu o `cookie_domain` de `services.local.yml`; o ambiente `*.aculta.test`
   usa cookie host-only. `cookies` verifica os ambientes compartilhados test e production.
 - PHPCS Drupal reportava 331 erros e 56 avisos. Em 2026-10-29, correções de
-  estilo e documentação PHP reduziram o resultado para zero erros e avisos. A
-  suíte funcional passou depois da revisão; permanecem a decisão de cookie,
-  DEP-0003 e a revisão final de segurança antes de avaliar RC.
+  estilo e documentação PHP reduziram o resultado para zero erros e avisos.
+- `DEP-0003` revisado em `registry/deploy-registry.json`: política, comando `robots`
+  e trava de build estão prontos em RC; `noindex` permanece no servidor de
+  desenvolvimento (inclusive durante o Alpha) e a verificação de ausência de
+  `X-Robots-Tag: noindex` na Hostinger (LiteSpeed) ocorre na etapa Beta pós-deploy.
+- Em `0.1.28-rc.1`, a fixture read-only `SitemapWiringKernelTest.php` foi
+  incluída em `consumer_tool_reference_allowed_files` com fronteira de
+  identificador para tokens de chamada (`system(` vs `Filesystem(`), e todos os
+  gates (`tests/run.php` 120/120, `boundaries`, `check`, `cookies`, `domains`,
+  `webhooks`, `robots --env=test`, `sitemap --env=test` e PHPCS 0/0) passaram.
 
 Os gates são obrigatórios e devem ser registrados no CHANGELOG da versão.
 

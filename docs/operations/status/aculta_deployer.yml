@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.26
-state: Dev
-next_phase: 'Executar gates finais de segurança e revisar DEP-0003 antes de avaliar RC ([plano](web/modules/custom/aculta_portal/modules/aculta_deployer/docs/PLANEJAMENTO.md))'
-progress_note: 'D-50 removeu cookie_domain de services.local.yml: *.aculta.test usa cookie host-only; test e production mantêm domínios compartilhados. Runner, comando cookies, PHPCS e PHP lint revalidados nesta microfase. Fronteira permite somente cinco arquivos exatos de integração de leitura; Runtime MAIN permanece sem o módulo habilitado.'
+version: 0.1.28-rc.1
+state: RC
+next_phase: 'Validar transição de domínios no Alpha (servidor de desenvolvimento) e executar deploy, provisionamento e sondas HTTP (DEP-0001/0002/0003, robots e sitemap) no Beta (Hostinger) ([plano](web/modules/custom/aculta_portal/modules/aculta_deployer/docs/PLANEJAMENTO.md))'
+progress_note: '0.1.28-rc.1 sincroniza manifesto, VERSION e Cli::VERSION; conclui D-50 (cookie local host-only em services.local.yml), inclui SitemapWiringKernelTest na allowlist read-only com fronteira de identificador em Boundary.php e revisa a decisão de DEP-0003 para validação Beta pós-deploy na Hostinger. Runner standalone 120/120 PASS; boundaries, check, cookies, domains (10/10), webhooks, robots --env=test (8/8), sitemap --env=test (7/7), validate-session-cookie-policy e PHPCS Drupal/DrupalPractice (0/0) PASS. Revisão visual não se aplica à CLI standalone (painel coberto pelo Portal).'

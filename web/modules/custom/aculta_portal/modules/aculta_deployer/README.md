@@ -6,7 +6,7 @@ produção, prepara a raiz pública da Hostinger como symlink para `web/` e mant
 o registro das correções de deploy que o código não pode resolver sozinho
 (canonicals e sitemap).
 
-- Versão do módulo Drupal: 0.1.26 (manifesto). Versão da CLI standalone: 0.1.28 (`VERSION`, `Cli::VERSION` e changelog).
+- Versão do módulo Drupal e da CLI standalone: `0.1.28-rc.1` (`aculta_deployer.info.yml`, `VERSION`, `Cli::VERSION` e changelog).
 - Papel: complemento opcional do `aculta_portal`. O Portal não depende dele. O módulo fica desabilitado por padrão; a CLI roda sem Drupal e o painel do Portal lê o relatório `var/deployer/status.json`, mesmo com o módulo desabilitado.
 - Estado no Drupal: descoberto, **não habilitado**. A ferramenta não precisa de
   Drupal para rodar; a CLI é standalone.
