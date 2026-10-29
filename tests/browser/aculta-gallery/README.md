@@ -16,3 +16,8 @@ Execute com:
 O script não salva a galeria nem edita o rascunho. O chamador deve remover o
 rascunho temporário ao terminar. Os álbuns públicos usados são fixtures já
 existentes no Runtime; o teste não altera Fórum, Revista ou galerias.
+
+
+O teste também valida que a barra administrativa top-bar mantém suas ações
+visíveis em cada viewport; essa parte é regressão da integração mobile-first do
+tema ACULTA420 no contexto de uma galeria.

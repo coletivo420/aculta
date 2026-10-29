@@ -174,3 +174,19 @@ bidimensional e correções de limite.
 4. **MF-0.5:** robustez do AJAX progressivo.
 
 O roadmap do tema contém a sequência completa MF-0.1 a MF-1.0.
+
+
+## Delta mobile-first — 2026-10-29
+
+- Firefox ESR no Runtime de teste encontrou que `.top-bar__actions` do Core
+  Navigation excedia a viewport em páginas de álbum autenticadas: borda direita
+  em 439px num viewport de 320px e 474px em 390px. Em 320px, isso ampliava o
+  documento para 439px; em 390px, o conteúdo ficava cortado apesar de o
+  `scrollWidth` reportar 390px.
+- A regra pertence à integração Drupal/Bootstrap (`css/drupal-bootstrap.css`):
+  a grade original de três colunas usa uma coluna central com largura intrínseca
+  longa. MF-0.3 iniciou o reflow para `minmax(0, 1fr) auto`; o contexto pode
+  quebrar linha e ações mantêm espaço e destinos reais.
+- Gate estático: Design Foundations 2379 e SDC schemas 54 componentes/734 checks
+  PASS. A validação Firefox da correção segue pendente após cache rebuild no
+  Runtime. Não valida zoom, modo escuro, outros shells ou a matriz inteira.

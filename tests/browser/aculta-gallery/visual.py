@@ -150,12 +150,29 @@ try:
                 if (!modal) return 0;
                 return Math.round(modal.getBoundingClientRect().width);
               })(),
+              topBarActionsVisible: (() => {
+                const actions = document.querySelector('.top-bar__actions');
+                return !actions || actions.getBoundingClientRect().right <= window.innerWidth;
+              })(),
+              overflow: [...document.body.querySelectorAll('*')].map(element => {
+                const rect = element.getBoundingClientRect();
+                return {element, rect};
+              }).filter(({element, rect}) => rect.width > 0 &&
+                rect.right > window.innerWidth + 1 &&
+                getComputedStyle(element).visibility !== 'hidden')
+                .slice(0, 8).map(({element, rect}) => ({
+                  tag: element.tagName,
+                  className: String(element.className || '').slice(0, 100),
+                  right: Math.round(rect.right),
+                  text: (element.innerText || '').trim().slice(0, 70),
+                })),
             };""")
             screenshot(f"dialog-{label}")
             check(f"diálogo sem overflow em {width}px",
                   actual == width and metrics["document"] <= width and
-                  metrics["modal"] <= width,
-                  f"viewport={actual}, document={metrics['document']}, modal={metrics['modal']}")
+                  metrics["modal"] <= width and metrics["topBarActionsVisible"],
+                  f"viewport={actual}, document={metrics['document']}, modal={metrics['modal']}, "
+                  f"topBarActionsVisible={metrics['topBarActionsVisible']}")
 
     for host, label in ((BASE, "main"), (FORUM, "forum")):
         driver.get(host + ALBUM)
@@ -179,13 +196,30 @@ try:
                 return rect.left >= 0 && rect.right <= window.innerWidth;
               })(),
               images: document.querySelectorAll('main img').length,
+              topBarActionsVisible: (() => {
+                const actions = document.querySelector('.top-bar__actions');
+                return !actions || actions.getBoundingClientRect().right <= window.innerWidth;
+              })(),
+              overflow: [...document.body.querySelectorAll('*')].map(element => {
+                const rect = element.getBoundingClientRect();
+                return {element, rect};
+              }).filter(({element, rect}) => rect.width > 0 &&
+                rect.right > window.innerWidth + 1 &&
+                getComputedStyle(element).visibility !== 'hidden')
+                .slice(0, 8).map(({element, rect}) => ({
+                  tag: element.tagName,
+                  className: String(element.className || '').slice(0, 100),
+                  right: Math.round(rect.right),
+                  text: (element.innerText || '').trim().slice(0, 70),
+                })),
             };""")
             screenshot(f"album-{label}-{width_label}")
             check(f"álbum {label} reflow em {width}px",
                   actual == width and metrics["document"] <= width and metrics["h1"] and
-                  metrics["images"] > 0,
+                  metrics["images"] > 0 and metrics["topBarActionsVisible"],
                   f"viewport={actual}, document={metrics['document']}, h1={metrics['h1']}, "
-                  f"images={metrics['images']}")
+                  f"images={metrics['images']}, topBarActionsVisible={metrics['topBarActionsVisible']}; "
+                  f"overflow={metrics['overflow']}")
 finally:
     if bidi:
         bidi.close()

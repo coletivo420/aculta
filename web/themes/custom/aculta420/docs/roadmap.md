@@ -79,7 +79,7 @@ com evidências da MF-0.1 na
 | --- | --- | --- |
 | MF-0.1 | Concluída — 2026-10-21 | Inventário de CSS, breakpoints, shell, carregamento de assets, Studio, Runtime e cobertura existente; sem refatoração visual. |
 | MF-0.2 | Planejada | Fundamentos responsivos compartilhados sobre tokens, grids, containers, tipografia, formulários, imagens e controles. |
-| MF-0.3 | Planejada | Shell multidomínio, navegação, Conta, Messenger, Carrinho, alertas, diálogos e rodapé. |
+| MF-0.3 | Em andamento — 2026-10-29 | Correção inicial da top-bar Navigation em viewports estreitos: ações do título agora refluem em duas colunas. Seguem pendentes Institution Bar, menus, Conta, Messenger, Carrinho, alertas, diálogos e rodapé. |
 | MF-0.4 | Planejada | Estrutura visual responsiva do Studio em três níveis. Preferência registrada: seletor nativo compacto para área no mobile; validar URL real, fallback sem JavaScript, teclado e leitores de tela. |
 | MF-0.5 | Planejada | AJAX progressivo do Studio: histórico, concorrência, foco, carregamento, erros e formulários com alterações. |
 | MF-0.6 | Planejada | Autoria editorial da Revista, CKEditor 5, Media, validação, workflow e ações de publicação. |

@@ -19,6 +19,30 @@
 }
 .aculta-navbar .dropdown-menu { --bs-dropdown-font-size: 1.25rem; }
 
+/* The Drupal Navigation top bar uses a three-column grid with 40ch title
+   content by default. Reflow title and actions instead of clipping at mobile
+   widths; the edit and overflow actions remain available. */
+@media (max-width: 767.98px) {
+  :is(#extra-specificity-hack, [data-drupal-admin-styles]) .top-bar__content {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem;
+  }
+  :is(#extra-specificity-hack, [data-drupal-admin-styles]) .top-bar__context {
+    min-width: 0;
+    justify-content: flex-start;
+  }
+  :is(#extra-specificity-hack, [data-drupal-admin-styles]) .top-bar__context > * {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+  :is(#extra-specificity-hack, [data-drupal-admin-styles]) .top-bar__actions {
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+}
+
 .form-control, .form-select, .form-check-input, .input-group-text {
   color: var(--aculta-text-primary);
   background-color: var(--aculta-surface-interactive);
