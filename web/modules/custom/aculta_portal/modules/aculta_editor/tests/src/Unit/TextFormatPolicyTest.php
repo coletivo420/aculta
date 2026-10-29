@@ -11,10 +11,11 @@ use Drupal\Tests\UnitTestCase;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Política de HTML dos formatos de texto exportados: nenhum formato libera tag ou atributo executável.
+ * Política de HTML dos formatos exportados: sem tag ou atributo executável.
  *
- * Lê os arquivos filter.format.*.yml de config/sync, sem Drupal. Falha se alguém incluir script, iframe, object,
- * embed, style ou qualquer atributo de evento (on*) numa lista allowed_html.
+ * Lê os arquivos filter.format.*.yml de config/sync, sem Drupal. Falha se
+ * alguém incluir script, iframe, object, embed, style ou qualquer atributo de
+ * evento (on*) numa lista allowed_html.
  */
 #[CoversNothing]
 #[Group('aculta_editor')]

@@ -202,7 +202,10 @@ Permissão `use text format restricted_html` revogada do papel anônimo.
 
 ## 15. Revalidação para RC no branch de integração (2026-10-29)
 
-- Versão `aculta_editor` 0.1.0-dev.6. Unit: 16 testes / 61 assertions PASS; Kernel: 8 testes / 127 assertions PASS no MariaDB `aculta_simpletest`, com três depreciações upstream. O Kernel executa a instalação dos formatos/templates e cobre sanitização.
-- Firefox ESR visível no servidor de desenvolvimento: 2/2 verificações anônimas PASS. As rotas de edição de `full_html` e criação de `aculta_adm` não renderizam os formulários para visitantes. Script: `tests/browser/aculta-editor/access.py`.
-- A revisão autenticada com papéis editor e administrator não foi repetida. O Runtime de desenvolvimento não contém a conta QA documentada; uma verificação de schema confirmou ausente a tabela `user_nickname`, necessária pelo hook de criação de conta. Nenhuma conta ou conteúdo foi criado nesta rodada.
-- PHPCS Drupal do módulo ainda sai com dois avisos preexistentes em `TextFormatPolicyTest.php`; nenhum PHP do módulo foi alterado nesta microfase. Estado permanece **Dev** até revisar acesso autenticado e sanitização renderizada no Firefox e limpar/reavaliar os avisos.
+- Versão `aculta_editor` promovida a `0.1.0-rc.1` (candidato a RC). Unit: 16 testes / 61 assertions PASS; Kernel: 8 testes / 127 assertions PASS no MariaDB `aculta_simpletest`, com três depreciações upstream. O Kernel executa a instalação dos formatos/templates e cobre sanitização.
+- PHPCS Drupal e DrupalPractice com zero erros e zero avisos após correção de docblocks em `TextFormatPolicyTest.php`.
+- Firefox ESR visível (`DISPLAY=:0`) no servidor de desenvolvimento (`tests/browser/aculta-editor/access.py`), validado em três sessões independentes sem escrita no Runtime:
+  1. Anônimo: rotas administrativas negadas (2/2); renderização de página editorial (`node/6`) sem tags/atributos executáveis e sem overflow horizontal em 1280, 390 e 320 px.
+  2. Editor de conteúdo (`content_editor`, uid 15 via login de uso único): `full_html` e `aculta_adm` negados; formulário de criação da Revista (`node/add/revista`) com CKEditor 5 ativo, formato `revista_editorial`, sem opção de `full_html` e sem overflow em 1280, 390 e 320 px.
+  3. Administrador (uid 1 via login de uso único): formulário `node/add/aculta_adm` e `node/add/page` com CKEditor 5 e barra de ferramentas ativos, sem overflow em 1280, 390 e 320 px.
+- Critérios de RC atendidos; componente pronto para a etapa Alpha.

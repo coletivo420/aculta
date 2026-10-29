@@ -1,3 +1,14 @@
+## 0.1.0-rc.1 — candidato a RC: revisão visual autenticada e conformidade PHPCS — 2026-10-29
+
+- Versão promovida a `0.1.0-rc.1` em `aculta_editor.info.yml`, `README.md` e status.
+- PHPCS: removidos os dois avisos de comprimento de linha em docblock de `TextFormatPolicyTest.php` (0 erros e 0 avisos em Drupal e DrupalPractice).
+- Suíte automatizada: Unit 16/61 e Kernel 8/127 PASS no MariaDB `aculta_simpletest` (188 assertions no total).
+- Revisão no Firefox ESR visível (`DISPLAY=:0`), sem escrita no Runtime (`tests/browser/aculta-editor/access.py`):
+  - Anônimo: rotas administrativas negadas e sanitização da renderização de nó editorial sem tags/atributos executáveis e sem overflow horizontal (1280/390/320 px).
+  - Editor (`content_editor`, uid 15 via login de uso único): acesso negado a `full_html` e `aculta_adm`; CKEditor 5 ativo em `node/add/revista` sem expor `full_html` e sem overflow em 1280, 390 e 320 px.
+  - Administrador (uid 1 via login de uso único): formulário `node/add/aculta_adm` e `node/add/page` com CKEditor 5 e toolbar ativos sem overflow em 1280, 390 e 320 px.
+- Critérios de RC atendidos; candidato pronto para deploy Alpha.
+
 ## 0.1.0-dev.6 — smoke de acesso editorial — 2026-10-29
 
 - Adicionado smoke Firefox ESR, sem sessão ou escrita, para confirmar que visitante não recebe os formulários de edição de `full_html` nem de criação de `aculta_adm`.
