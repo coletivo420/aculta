@@ -155,6 +155,15 @@ Pendências:
 
 ## Gates de segurança
 
+### Verificação do runner — 2026-10-28
+
+- `tests/run.php` passou por 24 verificações, mas `fronteiras atuais passam`
+  falhou. O runner iniciou `report` e não concluiu dentro da janela de execução;
+  a execução foi encerrada e seus artefatos temporários próprios removidos.
+- A execução não é PASS integral. Não repetir nem alterar regras de fronteira
+  nesta fase; investigar em ambiente isolado antes de continuar. A pendência de
+  `session_cookie` permanece registrada em `docs/COOKIES-AMBIENTE.md`.
+
 Os gates são obrigatórios e devem ser registrados no CHANGELOG da versão.
 
 ### Gate S2 (cobertura do build)

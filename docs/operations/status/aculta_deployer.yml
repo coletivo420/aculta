@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.25
 state: Dev
-next_phase: Corrigir pendências incluindo `session_cookie`; toda preparação/gates prontos antes de RC; deploy Alpha e produção depois ([plano](web/modules/custom/aculta_portal/modules/aculta_deployer/docs/PLANEJAMENTO.md))
-progress_note: 'CLI `0.1.27`; runner focal passou sem avisos em 2026-10-26; limpeza de fixtures temporárias corrigida. Módulo desabilitado no Runtime MAIN.'
+next_phase: 'Investigar a falha de fronteiras no runner em ambiente isolado; depois concluir `session_cookie` e gates de segurança antes de RC ([plano](web/modules/custom/aculta_portal/modules/aculta_deployer/docs/PLANEJAMENTO.md))'
+progress_note: 'CLI `0.1.27`; em 2026-10-28, runner executou parcialmente: 24 verificações PASS, `fronteiras atuais passam` FAIL; ficou no comando `report` e foi encerrado. `session_cookie` continua pendente. Módulo desabilitado no Runtime MAIN.'
