@@ -9,12 +9,13 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Link;
 use Drupal\Core\Routing\LocalRedirectResponse;
 use Drupal\Core\Url;
+use Drupal\aculta_ugc\ModerationScope;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
- * Painel de moderação da fila unificada de denúncias do Fórum (ARQ-06F).
+ * Painel de moderação da fila unificada de denúncias do Fórum (ARQ-06F/G).
  */
 final class ReportQueueController extends ControllerBase {
 
@@ -47,11 +48,9 @@ final class ReportQueueController extends ControllerBase {
     }
 
     $account = $this->currentUser();
-    $hasPermission = $account->hasPermission('moderar denuncias do forum')
-      || $account->hasPermission('moderar denuncias ugc')
-      || $account->hasPermission('moderar denuncias ugc: forum');
 
-    if (!$hasPermission) {
+    // Controle estrito: moderadores de outros purposes não acessam o Fórum.
+    if (!ModerationScope::allows($account, 'forum')) {
       throw new AccessDeniedHttpException('Usuário sem permissão para moderar denúncias do Fórum.');
     }
 
@@ -66,19 +65,35 @@ final class ReportQueueController extends ControllerBase {
     foreach ($queueData['items'] as $item) {
       $targetType = $item['target_type'];
       $targetId = $item['target_id'];
-      $targetLabel = sprintf('%s #%d', $targetType, $targetId);
-      $targetLink = $targetLabel;
 
-      if ($storage->hasDefinition($targetType)) {
+      // Resolução segura de acesso do alvo denunciado.
+      if (!$storage->hasDefinition($targetType)) {
+        $targetCell = ['data' => ['#plain_text' => sprintf('[%s #%d]', $targetType, $targetId)]];
+      }
+      else {
         $entity = $storage->getStorage($targetType)->load($targetId);
-        if ($entity !== NULL) {
-          try {
-            if ($entity->hasLinkTemplate('canonical')) {
-              $targetLink = Link::fromTextAndUrl($entity->label() ?? $targetLabel, $entity->toUrl())->toString();
+        if ($entity === NULL) {
+          $targetCell = ['data' => ['#plain_text' => sprintf('[%s] (%s #%d)', $this->t('Conteúdo excluído'), $targetType, $targetId)]];
+        }
+        elseif (!$entity->access('view', $account)) {
+          // Conteúdo restrito: não vaza label nem link sem acesso.
+          $targetCell = ['data' => ['#plain_text' => sprintf('[%s] (%s #%d)', $this->t('Conteúdo restrito'), $targetType, $targetId)]];
+        }
+        else {
+          $label = $entity->label() ?? sprintf('%s #%d', $targetType, $targetId);
+          $isUnpublished = method_exists($entity, 'isPublished') && !$entity->isPublished();
+          $displayText = $isUnpublished ? sprintf('%s (%s)', $label, $this->t('despublicado')) : (string) $label;
+
+          if ($entity->hasLinkTemplate('canonical')) {
+            try {
+              $targetCell = ['data' => Link::fromTextAndUrl($displayText, $entity->toUrl())->toRenderable()];
+            }
+            catch (\Throwable) {
+              $targetCell = ['data' => ['#plain_text' => $displayText]];
             }
           }
-          catch (\Throwable) {
-            $targetLink = $entity->label() ?? $targetLabel;
+          else {
+            $targetCell = ['data' => ['#plain_text' => $displayText]];
           }
         }
       }
@@ -87,7 +102,7 @@ final class ReportQueueController extends ControllerBase {
       $dataStr = gmdate('Y-m-d H:i:s', $item['ultima']);
 
       $rows[] = [
-        ['data' => ['#markup' => (string) $targetLink]],
+        $targetCell,
         ['data' => ['#plain_text' => $targetType]],
         ['data' => ['#plain_text' => $motivosStr]],
         ['data' => ['#plain_text' => (string) $item['total']]],
@@ -124,7 +139,6 @@ final class ReportQueueController extends ControllerBase {
       ],
     ];
 
-    // Controles de paginação se houver mais de uma página.
     if ($queueData['total_pages'] > 1) {
       $build['pager'] = [
         '#type' => 'container',
