@@ -403,3 +403,12 @@
 - Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
   depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
 
+## 0.4.0-dev.164 — documentar armazenamento de assets H5P (2026-10-29)
+
+- Completa a documentação do espelhamento de assets Composer e reordena o
+  cabeçalho de atribuição adaptado sem mudar comportamento.
+- PHPCS integral caiu de 107 erros/7 avisos em 12 arquivos para 105/6 em 11
+  arquivos; o arquivo passa Drupal/DrupalPractice e PHP lint.
+- Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
+  depreciações Core/contrib no Kernel e 0 no Unit. F15 permanece Dev.
+

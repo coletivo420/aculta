@@ -1,8 +1,8 @@
 <?php
 
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p;
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 use Composer\InstalledVersions;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
@@ -47,7 +47,7 @@ class aculta_H5PAssetFileStorage {
   }
 
   /**
-   *
+   * Mirrors reviewed H5P libraries into Drupal's private asset scheme.
    */
   public function mirrorAssets(): void {
     $specifications = [
@@ -101,7 +101,10 @@ class aculta_H5PAssetFileStorage {
           }
           $local_destination = $this->resolveLocalAssetPath($destination_path);
           $destination_directory = dirname($local_destination);
-          if (!$this->fileSystem->prepareDirectory($destination_directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+          if (!$this->fileSystem->prepareDirectory(
+            $destination_directory,
+            FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS,
+          )) {
             throw new \UnexpectedValueException("Unable to prepare H5P asset directory: {$destination_directory}");
           }
           $this->fileSystem->copy($source_path, $local_destination, FileExists::Replace);
@@ -112,7 +115,7 @@ class aculta_H5PAssetFileStorage {
   }
 
   /**
-   * Resolves a trusted assets URI to its local path for a Drupal FileSystem write.
+   * Resolves a trusted assets URI to its local path for Drupal FileSystem.
    *
    * `assets://` is a hidden stream wrapper. On Linux installations using ACLs,
    * PHP's stream-wrapper `is_writable()` check can disagree with the actual
