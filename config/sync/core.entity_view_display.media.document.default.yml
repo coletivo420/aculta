@@ -15,7 +15,7 @@ bundle: document
 mode: default
 content:
   field_media_document:
-    type: aculta_document_media
+    type: aculta_document_viewer_media
     label: visually_hidden
     settings:
       show_download: true

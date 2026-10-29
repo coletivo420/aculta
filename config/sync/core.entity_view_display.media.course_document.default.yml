@@ -18,7 +18,7 @@ bundle: course_document
 mode: default
 content:
   field_media_course_document:
-    type: aculta_document_pdf_media
+    type: aculta_document_viewer_pdf
     label: visually_hidden
     settings: {  }
     third_party_settings: {  }
