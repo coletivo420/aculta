@@ -1,3 +1,17 @@
+## Frente visual aprovada - OCS-F → OCS-A (2026-10-29)
+
+**Ordem obrigatória:** primeiro reproduzir fielmente a aparência OpenCulturas **Next** (`opcult`, não `openculturas_base`); só depois do gate de fidelidade passar para identidade própria Aculta Studio. Plano técnico: [PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md](../../../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md).
+
+- [ ] **OCS-F0:** inventário, baseline e matriz visual por tela/estado, auditoria de licenças e consumers SDC.
+- [ ] **OCS-F1-F3:** tokens de fidelidade escopados, shell/navegação internos e variantes de SDCs existentes; não mudar Institution Bar/Domain Header nem CSS global.
+- [ ] **OCS-F4:** dashboard fiel, dados e ações reais; sem salvos/recomendações/organização simulados.
+- [ ] **OCS-F5:** Marley e ferramentas editoriais com a mesma aparência; módulos mantêm dados e operações.
+- [ ] **OCS-F6:** Conta privada e Perfil público com apresentação consistente, mas contratos distintos, sem retirar `/conta-legada`; respeitar gates S-R4/S-R5.
+- [ ] **OCS-F7 (gate):** screenshots de paridade e aceite de acessibilidade, cache, acesso A/B, no-JS, mobile e SDC Runtime.
+- [ ] **OCS-A1-A4:** aplicar identidade institucional Aculta, refinar componentes, revisar as telas e remover estilos provisórios sem trocar props/slots/rotas.
+
+F0-F3 podem ser implementadas sem desbloquear a homologação de S-R4/S-R5; F4-F6 seguem restrições funcionais existentes. Cada fase: commit independente na PR #299; **documentação não significa implementação**.
+
 ## Melhorias inspiradas no OpenCulturas (2026-10-28)
 
 Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`. Entram depois do fechamento de S-R5.

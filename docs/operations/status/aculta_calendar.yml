@@ -2,18 +2,16 @@
 version: 0.1.0-dev.6
 state: Dev
 progress_note: >-
-  Dev.6: eventos de vários dias aparecem em cada dia que cobrem dentro da
-  janela, na agenda e na grade do mês, em vez de só no dia inicial; fim à
-  meia-noite pertence ao dia anterior e consultar um dia posterior ao início
-  ainda mostra o evento. Calendar 126/422 PASS (2 depreciações); PHPCS 0 erros
-  no arquivo alterado e lint PASS. Dev.5: correções da revisão de código —
-  sobreposição de ocorrência única, UID externo numérico, janela de 366/367
-  dias, isolamento de série inválida, RECURRENCE-ID, UNTIL anterior ao início,
-  fonte órfã na revisão, fuso da revisão de importação, filtros da exportação
-  do dia e dia inteiro no interativo. Dev.4: ADM8 autenticada no candidato
-  a4f878d55 (403 anônimo/200 autenticado, tabela somente leitura, sem overflow
-  em 1270/500 px) e visão interativa com DHTMLX 7.2.15, contraste e fallback
-  móvel. Runtime sem config:import; só a conta descartável foi criada e
-  removida. Revalidação visual do candidato com as mudanças do dev.5/dev.6
-  pendente.
-next_phase: 'Revalidar agenda, grade e visão interativa no candidato servido com dev.5/dev.6; se passar, promover a 0.1.0-rc.1 e registrar a evidência.'
+  Dev.6: a revisão de importação publica cancelamentos por ação própria
+  ("Publicar cancelamento"), o provedor propaga o marcador e a agenda exibe
+  eventos de vários dias em cada dia coberto; fim à meia-noite pertence ao dia
+  anterior. Dev.5: correções da revisão — sobreposição de ocorrência única, UID
+  externo numérico, janela de 366/367 dias, isolamento de série inválida,
+  RECURRENCE-ID, UNTIL anterior ao início, fonte órfã, fuso da revisão,
+  filtros da exportação e dia inteiro no interativo. Dev.4: ADM8 autenticada no
+  candidato a4f878d55 (403 anônimo/200 autenticado, tabela somente leitura, sem
+  overflow em 1270/500 px) e visão interativa com DHTMLX 7.2.15, contraste e
+  fallback móvel. Suíte integrada 127/431 PASS (2 depreciações); PHPCS 0 erros
+  e lint PASS. Runtime sem config:import; só a conta descartável foi criada e
+  removida. Revalidação visual do candidato dev.6 pendente.
+next_phase: 'Revalidar agenda, grade e visão interativa no candidato servido com dev.6; se passar, promover a 0.1.0-rc.1.'

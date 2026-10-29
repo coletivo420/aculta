@@ -1,13 +1,18 @@
 # Changelog — aculta_calendar
 
-## 0.1.0-dev.6 — eventos de vários dias em cada dia coberto (2026-10-29)
+## 0.1.0-dev.6 — cancelamentos importados e eventos de vários dias (2026-10-29)
 
+- A revisão de importação oferece uma ação própria para publicar `CANCELLED`;
+  a ação comum não converte cancelamento em evento ativo.
+- O provedor de itens propaga o marcador de cancelado para agenda e exportação.
 - Agenda e grade do mês exibem a ocorrência em todos os dias que ela cobre
   dentro da janela, não apenas no dia inicial. Fim à meia-noite pertence ao dia
   anterior; consultar um dia posterior ao início ainda mostra o evento.
-- Testes: Calendar 126/422 PASS (2 depreciações); PHPCS 0 erros no arquivo
-  alterado; `php -l` PASS. Revalidação visual do candidato com esta mudança
-  pendente.
+- Kernel cobre a revisão, publicação e apresentação do aviso de cancelamento.
+- Suíte integrada: 127 testes/431 assertions PASS; 2 depreciações Core.
+- PHPCS dos arquivos das duas microfases PASS; a checagem integral tem 0 erros
+  e 1 aviso em `CalendarAgenda.php`.
+- Revalidação visual do candidato com estas mudanças pendente.
 
 ## 0.1.0-dev.5 — correções da revisão de código (2026-10-29)
 

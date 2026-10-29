@@ -1,3 +1,9 @@
+## Subfrente visual Studio OCS-F → OCS-A (2026-10-29)
+
+Aprovação posterior à execução B1-B5: [plano detalhado](PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md). Primeiro uma reprodução visual fiel do OpenCulturas **Next** (tema `opcult`); depois uma variante de identidade Aculta usando os mesmos SDCs e contratos. É subfrente da **Frente B**, não altera ownership da tabela acima: B é responsável por tema/SDC/CSS/Twig/stories; novos providers, PHP, rotas, acesso e services exigem handoff à A. Não abrir branch/PR nova.
+
+A execução segue OCS-F0 (baseline), F1 (tokens), F2 (navegação interna), F3 (componentes), F4 (dashboard), F5 (Marley), F6 (Conta/Perfil), F7 (gate de fidelidade); somente depois OCS-A1-A4 (identidade, refino, validação e consolidação). O shell institucional e Domain Header são invioláveis. Portar padrões e CSS com licenças e provenance verificadas; **não** instalar/ativar `opcult`, copiar config YAML/UUID ou inventar funcionalidades. Gates S-R4/S-R5 e de release continuam mandatórios. Microcommits e push fast-forward na PR #299, com paths próprios e sem force/merge.
+
 # Plano de execução — refatoração de código e visual (OpenCulturas)
 
 Branch: `refactor/opencultures-codigo-visual` (checkout local e remoto são a mesma branch).
