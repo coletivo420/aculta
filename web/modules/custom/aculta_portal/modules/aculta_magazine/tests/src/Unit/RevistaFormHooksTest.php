@@ -159,6 +159,28 @@ final class RevistaFormHooksTest extends UnitTestCase {
   }
 
   /**
+   * Non-interactive wrappers must not receive autofocus after field errors.
+   */
+  public function testErrorOnContainerWithoutWidgetDoesNotFocusWrapper(): void {
+    $form = [
+      'field_credits' => [
+        '#type' => 'container',
+        '#attributes' => [],
+        'description' => [
+          '#type' => 'markup',
+          '#markup' => 'Sem campo de entrada.',
+        ],
+      ],
+    ];
+    $form_state = new FormState();
+    $form_state->setErrorByName('field_credits', 'Crédito inválido.');
+    (new RevistaFormHooks())->alter($form, $form_state, 'node_revista_edit_form');
+
+    self::assertTrue($form['revista_secondary']['#open']);
+    self::assertFalse($this->hasAutofocus($form));
+  }
+
+  /**
    * An earlier error keeps the focus; the group still opens.
    */
   public function testEarlierErrorKeepsTheFocusButGroupStillOpens(): void {
