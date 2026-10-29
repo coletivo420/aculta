@@ -1,17 +1,15 @@
 <?php
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Form;
 
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PLibraryCacheInvalidator;
-use Drupal\aculta_lms_h5p\Controller\aculta_H5PLibraryAdmin;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Database\Connection;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
-
 
 /**
  * Implements the aculta_H5PLibraryDeleteForm form.
@@ -28,6 +26,9 @@ class aculta_H5PLibraryDeleteForm extends FormBase {
     $this->framework = $framework;
   }
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('database'),
@@ -44,10 +45,11 @@ class aculta_H5PLibraryDeleteForm extends FormBase {
   }
 
   /**
-   * Check if library is deletable
+   * Check if library is deletable.
    *
    * @param string $library_id
-   * @return boolean
+   *
+   * @return bool
    */
   private function isLibraryDeletable($library_id) {
     // Is library deletable ?
@@ -63,23 +65,23 @@ class aculta_H5PLibraryDeleteForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state, $library_id = NULL) {
     if ($this->isLibraryDeletable($library_id)) {
       // Create form:
-      $form['library_id'] = array(
+      $form['library_id'] = [
         '#type' => 'hidden',
-        '#value' => $library_id
-      );
+        '#value' => $library_id,
+      ];
 
-      $form['info'] = array(
-        '#markup' => '<div>' . $this->t('Confirma a exclusão da biblioteca H5P @library_name?', ['@library_name' => $this->database->select('h5p_libraries', 'l')->fields('l', ['title'])->condition('library_id', $library_id)->execute()->fetchField()]) . '</div>'
-      );
+      $form['info'] = [
+        '#markup' => '<div>' . $this->t('Confirma a exclusão da biblioteca H5P @library_name?', ['@library_name' => $this->database->select('h5p_libraries', 'l')->fields('l', ['title'])->condition('library_id', $library_id)->execute()->fetchField()]) . '</div>',
+      ];
 
       $form['actions']['#type'] = 'actions';
-      $form['actions']['submit'] = array(
+      $form['actions']['submit'] = [
         '#type' => 'submit',
         '#value' => $this->t('Excluir'),
-      );
+      ];
     }
     else {
-      // May not delete this one
+      // May not delete this one.
       $form['undeletable'] = [
         '#markup' => $this->t('A biblioteca está em uso por atividades ou por outras bibliotecas e não pode ser excluída.'),
       ];
@@ -87,7 +89,6 @@ class aculta_H5PLibraryDeleteForm extends FormBase {
 
     return $form;
   }
-
 
   /**
    * {@inheritdoc}
@@ -99,4 +100,5 @@ class aculta_H5PLibraryDeleteForm extends FormBase {
       $this->cacheInvalidator->invalidate();
     }
   }
+
 }

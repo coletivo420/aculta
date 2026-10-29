@@ -1,6 +1,6 @@
 <?php
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Plugin\Field;
 
 use Drupal\Core\Entity\EntityFormInterface;
@@ -10,13 +10,16 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\Entity\aculta_H5PContent;
 
+/**
+ *
+ */
 abstract class aculta_H5PWidgetBase extends WidgetBase {
 
   /**
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-    // Prevent setting default value
+    // Prevent setting default value.
     if ($this->isDefaultValueWidget($form_state)) {
       $element += [
         '#type' => 'markup',
@@ -35,7 +38,7 @@ abstract class aculta_H5PWidgetBase extends WidgetBase {
       '#value' => $h5p_content_id,
     ];
 
-    // Make it possible to clear a field
+    // Make it possible to clear a field.
     $element['clear_content'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Limpar atividade'),
@@ -44,33 +47,33 @@ abstract class aculta_H5PWidgetBase extends WidgetBase {
       '#weight' => 40,
     ];
 
-     $field_name = $items->getName();
-     if (isset($element['#field_parents'])) {
-       $identifier = implode('_', array_merge($element['#field_parents'], [$field_name, $delta]));
-     }
-     else {
-       $identifier = implode('_', [$field_name, $delta]);
-     }
-     // Add path to this element.
-     $element['element_path'] = [
-       '#type' => 'value',
-       '#value' => $identifier,
-     ];
+    $field_name = $items->getName();
+    if (isset($element['#field_parents'])) {
+      $identifier = implode('_', array_merge($element['#field_parents'], [$field_name, $delta]));
+    }
+    else {
+      $identifier = implode('_', [$field_name, $delta]);
+    }
+    // Add path to this element.
+    $element['element_path'] = [
+      '#type' => 'value',
+      '#value' => $identifier,
+    ];
 
-    // Determine if this is a new translation or not
+    // Determine if this is a new translation or not.
     $element['new_translation'] = [
       '#type' => 'value',
       '#value' => !empty($form_state->get('content_translation')),
     ];
 
-    // Load content
+    // Load content.
     $disable = NULL;
     $h5p_content = $h5p_content_id ? aculta_H5PContent::load($h5p_content_id) : NULL;
     if (!empty($h5p_content)) {
       $disable = $h5p_content->get('disabled_features')->value;
     }
 
-    // Add display options
+    // Add display options.
     $core = aculta_H5PDrupal::getInstance('core');
     $display_options = $core->getDisplayOptionsForEdit($disable === \H5PCore::DISABLE_NONE ? NULL : $disable);
     $labels = [
@@ -78,7 +81,7 @@ abstract class aculta_H5PWidgetBase extends WidgetBase {
       \H5PCore::DISPLAY_OPTION_DOWNLOAD => $this->t('Permitir que estudantes baixem a atividade'),
       \H5PCore::DISPLAY_OPTION_EMBED => $this->t('Botão de incorporação'),
       \H5PCore::DISPLAY_OPTION_COPYRIGHT => $this->t('Botão de direitos autorais'),
-      \H5PCore::DISPLAY_OPTION_ABOUT => $this->t('Botão Sobre o H5P')
+      \H5PCore::DISPLAY_OPTION_ABOUT => $this->t('Botão Sobre o H5P'),
     ];
     foreach ($display_options as $name => $value) {
       $element[$name] = [
@@ -95,7 +98,7 @@ abstract class aculta_H5PWidgetBase extends WidgetBase {
         $element[$name]['#states'] = [
           'visible' => [
             '#' . str_replace('_', '-', $field_name) . "-{$delta}-h5p-content-" . \H5PCore::DISPLAY_OPTION_FRAME => ['checked' => TRUE],
-          ]
+          ],
         ];
       }
 
@@ -112,21 +115,22 @@ abstract class aculta_H5PWidgetBase extends WidgetBase {
    */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
 
-    // We only message after validation has completed
+    // We only message after validation has completed.
     if (!$form_state->isValidationComplete()) {
       return $values;
     }
 
-    // Determine if new revisions should be made
+    // Determine if new revisions should be made.
     $do_new_revision = self::doNewRevision($form_state);
 
     $return_values = [];
     foreach ($values as $delta => $value) {
       if (!isset($value['h5p_content'])) {
-        continue; // Prevent crashing when there's no data
+        // Prevent crashing when there's no data.
+        continue;
       }
 
-      // Massage out each H5P Upload from the submitted form
+      // Massage out each H5P Upload from the submitted form.
       $return_values[$delta] = $this->massageFormValue($value['h5p_content'], $delta, $do_new_revision);
     }
 
@@ -134,11 +138,11 @@ abstract class aculta_H5PWidgetBase extends WidgetBase {
   }
 
   /**
-   * Help message out each value from the submitted form
+   * Help message out each value from the submitted form.
    *
    * @param array $value
-   * @param integer $delta
-   * @param boolean $do_new_revision
+   * @param int $delta
+   * @param bool $do_new_revision
    */
   protected function massageFormValue(array $value, $delta, $do_new_revision) {
     return [];
@@ -149,8 +153,9 @@ abstract class aculta_H5PWidgetBase extends WidgetBase {
    * This is useful to avoid changing the H5P content belonging to
    * an older revision of the entity.
    *
-   * @param FormStateInterface $form_state
-   * @return boolean
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return bool
    */
   private static function doNewRevision(FormStateInterface $form_state) {
     $form_object = $form_state->getFormObject();
@@ -160,7 +165,7 @@ abstract class aculta_H5PWidgetBase extends WidgetBase {
     }
     $entity = $form_object->getEntity();
 
-    // Determine if this is a new revision
+    // Determine if this is a new revision.
     $is_new_revision = ($entity->getEntityType()->hasKey('revision') && $form_state->getValue('revision'));
 
     // Determine if we do revisioning for H5P content

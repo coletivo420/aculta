@@ -14,7 +14,8 @@ use Drupal\file\Upload\FileUploadHandlerInterface;
 use Drupal\file\Upload\FormUploadedFile;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-/** Validates H5P editor media and writes uploads to managed private files. */
+/**
+ * Validates H5P editor media and writes uploads to managed private files. */
 final class aculta_H5PEditorUploadManager {
 
   public function __construct(
@@ -120,10 +121,16 @@ final class aculta_H5PEditorUploadManager {
     return $response;
   }
 
+  /**
+   *
+   */
   private function extensionAllowedForType(string $extension, string $type): bool {
     return in_array($extension, explode(' ', $this->extensionsForType($type)), TRUE);
   }
 
+  /**
+   *
+   */
   private function extensionsForType(string $type): string {
     $h5pWhitelist = preg_split('/\s+/', trim((string) $this->h5pFramework->getWhitelist(FALSE, \H5PCore::$defaultContentWhitelist, \H5PCore::$defaultLibraryWhitelistExtras))) ?: [];
     $typeWhitelist = match ($type) {
@@ -134,6 +141,9 @@ final class aculta_H5PEditorUploadManager {
     return implode(' ', array_values(array_intersect($typeWhitelist, $h5pWhitelist)));
   }
 
+  /**
+   *
+   */
   private function error(string $message): array {
     return ['success' => FALSE, 'message' => $message];
   }

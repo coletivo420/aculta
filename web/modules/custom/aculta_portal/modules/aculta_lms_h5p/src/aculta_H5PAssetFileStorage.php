@@ -1,6 +1,6 @@
 <?php
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p;
 
 use Composer\InstalledVersions;
@@ -45,6 +45,9 @@ class aculta_H5PAssetFileStorage {
     return $directory_uri;
   }
 
+  /**
+   *
+   */
   public function mirrorAssets(): void {
     $specifications = [
       'h5p-core' => [

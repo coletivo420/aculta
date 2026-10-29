@@ -1,6 +1,6 @@
 <?php
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
@@ -12,7 +12,8 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PEvent;
 
-/** Defines the H5P content entity. */
+/**
+ * Defines the H5P content entity. */
 #[ContentEntityType(
   id: 'aculta_h5p_content',
   label: new TranslatableMarkup('H5P Content'),
@@ -27,6 +28,9 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
 
   protected $library;
 
+  /**
+   *
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
 
@@ -91,10 +95,10 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
       ->setSetting('size', 'normal');
 
     $fields['year_to'] = BaseFieldDefinition::create('integer')
-    ->setLabel(t('Year (to)'))
-    ->setDescription(t('End year for copyright'))
-    ->setSetting('unsigned', TRUE)
-    ->setSetting('size', 'normal');
+      ->setLabel(t('Year (to)'))
+      ->setDescription(t('End year for copyright'))
+      ->setSetting('unsigned', TRUE)
+      ->setSetting('size', 'normal');
 
     $fields['license'] = BaseFieldDefinition::create('string')
       ->setLabel(t('License'))
@@ -147,7 +151,7 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
   }
 
   /**
-   * Load library used by content
+   * Load library used by content.
    */
   protected function loadLibrary() {
     $this->library = aculta_H5PDrupal::getInstance()->getDatabaseConnection()->query("
@@ -160,7 +164,7 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
       FROM {h5p_libraries}
       WHERE library_id = :id",
       [
-        ':id' => $this->get('library_id')->value
+        ':id' => $this->get('library_id')->value,
       ])
       ->fetchObject();
     if (!$this->library) {
@@ -168,6 +172,9 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
     }
   }
 
+  /**
+   *
+   */
   public function getLibrary($assoc = FALSE) {
     if (empty($this->library)) {
       $this->loadLibrary();
@@ -178,13 +185,16 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
         'name' => $this->library->name,
         'machineName' => $this->library->name,
         'majorVersion' => $this->library->major,
-        'minorVersion' => $this->library->minor
+        'minorVersion' => $this->library->minor,
       ];
     }
 
     return $this->library;
   }
 
+  /**
+   *
+   */
   public function getLibraryString() {
     if (empty($this->library)) {
       $this->loadLibrary();
@@ -193,6 +203,9 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
     return "{$this->library->name} {$this->library->major}.{$this->library->minor}";
   }
 
+  /**
+   *
+   */
   public function getLibraryId() {
     return $this->get('library_id')->value;
   }
@@ -218,10 +231,16 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
     return in_array('iframe', $embedTypes, TRUE) ? 'iframe' : NULL;
   }
 
+  /**
+   *
+   */
   public function isDivEmbeddable(): bool {
     return $this->getEmbedType() === 'div';
   }
 
+  /**
+   *
+   */
   protected function getExportURL() {
     // Exports contain all package source files. Do not expose a direct URL;
     // an authenticated export endpoint requires a separate access contract.
@@ -255,13 +274,13 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
       'params' => $this->get('parameters')->value,
       'filtered' => $this->get('filtered_parameters')->value,
       'embedType' => $this->getEmbedType() ?? 'div',
-      'metadata' => $this->getMetadata()
+      'metadata' => $this->getMetadata(),
     ];
 
     $core = aculta_H5PDrupal::getInstance('core');
     $filteredParameters = $core->filterParameters($content);
 
-    // alters filtered params
+    // Alters filtered params.
     $filteredAsJson = json_decode($filteredParameters);
     aculta_H5PDrupal::getInstance()->alterFilteredParameters($filteredAsJson);
     return json_encode($filteredAsJson);
@@ -307,12 +326,15 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
     return '{"params":' . $this->getFilteredParameters() . ',"metadata":' . json_encode($this->getMetadata()) . '}';
   }
 
+  /**
+   *
+   */
   public function getaculta_H5PIntegrationSettings($canUpdateEntity = FALSE) {
     if (empty($this->library)) {
       $this->loadLibrary();
     }
 
-    // Load user data for content
+    // Load user data for content.
     $results = aculta_H5PDrupal::getInstance()->getDatabaseConnection()->query("
       SELECT sub_content_id, data_id, data
         FROM {h5p_content_user_data}
@@ -327,7 +349,7 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
     $content_user_data = [
       0 => [
         'state' => '{}',
-      ]
+      ],
     ];
     foreach ($results as $result) {
       $content_user_data[$result->sub_content_id][$result->data_id] = $result->data;
@@ -337,8 +359,7 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
     $filtered_parameters = $this->getFilteredParameters();
     $display_options = $core->getDisplayOptionsForView($this->get('disabled_features')->value, $canUpdateEntity);
 
-
-    return array(
+    return [
       'library' => $this->getLibraryString(),
       'jsonContent' => $filtered_parameters,
       'fullScreen' => $this->library->fullscreen,
@@ -346,7 +367,7 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
       'metadata' => $this->getMetadata(),
       'contentUserData' => $content_user_data,
       'displayOptions' => $display_options,
-    );
+    ];
   }
 
   /**
@@ -357,20 +378,21 @@ class aculta_H5PContent extends ContentEntityBase implements ContentEntityInterf
       $this->loadLibrary();
     }
 
-    // Delete entity
+    // Delete entity.
     parent::delete();
 
-    // Delete all associated files and data
+    // Delete all associated files and data.
     $storage = aculta_H5PDrupal::getInstance('storage');
     $storage->deletePackage([
       'id' => $this->id(),
       'slug' => 'interactive-content',
     ]);
 
-    // Log content delete
+    // Log content delete.
     new aculta_H5PEvent('content', 'delete',
       $this->id(), '',
       $this->library->name, $this->library->major . '.' . $this->library->minor
     );
   }
+
 }

@@ -1,6 +1,6 @@
 <?php
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Form;
 
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
@@ -45,6 +45,9 @@ class aculta_H5PContentUpgradeForm extends FormBase {
     $this->framework = $framework;
   }
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('database'),
@@ -78,7 +81,7 @@ class aculta_H5PContentUpgradeForm extends FormBase {
     $core = aculta_H5PDrupal::getInstance('core');
     $upgrades = $core->getUpgrades($library, $versions);
 
-    // Get num of contents that can be upgraded
+    // Get num of contents that can be upgraded.
     $contents = $core->h5pF->getNumContent($library_id);
     if (!$contents) {
       return ['#markup' => $this->t('Não há atividades para atualizar.')];
@@ -112,11 +115,12 @@ class aculta_H5PContentUpgradeForm extends FormBase {
         'buttonLabel' => $this->t('Atualizar'),
         'infoUrl' => Url::fromRoute('aculta_lms_h5p.admin.content.aculta_lms_h5p.libraries.upgrade', ['library_id' => $library_id])->toString(),
         'total' => $contents,
-        'token' => \H5PCore::createToken('contentupgrade'), // Use token to avoid unauthorized updating
-      ]
+        // Use token to avoid unauthorized updating.
+        'token' => \H5PCore::createToken('contentupgrade'),
+      ],
     ];
 
-    // Create page - add settings and JS
+    // Create page - add settings and JS.
     $build['#markup'] = '<div id="h5p-admin-container">' . $this->t('Ative o JavaScript para usar esta página.') . '</div>';
     // The upgrade endpoint URL contains a session-bound Drupal CSRF token.
     $build['#cache']['contexts'][] = 'session';
@@ -130,6 +134,7 @@ class aculta_H5PContentUpgradeForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // This is intentionally left blank
+    // This is intentionally left blank.
   }
+
 }

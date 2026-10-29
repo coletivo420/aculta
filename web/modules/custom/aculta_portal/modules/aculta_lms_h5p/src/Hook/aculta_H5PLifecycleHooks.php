@@ -10,7 +10,8 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Handles H5P lifecycle hooks through Drupal's object-oriented hook API. */
+/**
+ * Handles H5P lifecycle hooks through Drupal's object-oriented hook API. */
 final class aculta_H5PLifecycleHooks {
 
   public function __construct(
@@ -20,14 +21,16 @@ final class aculta_H5PLifecycleHooks {
     private readonly Connection $database,
   ) {}
 
-  /** Implements hook_cron(). */
+  /**
+ * Implements hook_cron(). */
   #[Hook('cron')]
   public function cron(): void {
     $this->framework->fetchLibrariesMetadata();
     $this->framework->removeOldLogEvents();
   }
 
-  /** Implements hook_user_delete(). */
+  /**
+ * Implements hook_user_delete(). */
   #[Hook('user_delete')]
   public function userDelete(EntityInterface $entity): void {
     $this->database->delete('h5p_points')

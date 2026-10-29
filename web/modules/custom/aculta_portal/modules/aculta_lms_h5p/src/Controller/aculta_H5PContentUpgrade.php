@@ -1,6 +1,6 @@
 <?php
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Controller;
 
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
@@ -14,12 +14,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * The aculta_H5PContentUpgrade controller
+ * The aculta_H5PContentUpgrade controller.
  */
 final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
 
   /**
-   * constructor.
+   * Constructor.
    */
   public function __construct(
     private readonly Connection $database,
@@ -28,6 +28,9 @@ final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
     private readonly aculta_H5PDrupal $framework,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('database'),
@@ -38,7 +41,7 @@ final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
   }
 
   /**
-   * Helper for getting library versions
+   * Helper for getting library versions.
    *
    * @param string $library_id
    *
@@ -64,7 +67,7 @@ final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
   }
 
   /**
-   * Creates the title for the upgrade content page
+   * Creates the title for the upgrade content page.
    *
    * @param string $library_id
    *
@@ -83,23 +86,23 @@ final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
   }
 
   /**
-   * Handles saving of upgraded content. Returns new batch
+   * Handles saving of upgraded content. Returns new batch.
    *
    * @param string $library_id
    *
-   * @return JsonResponse|array
+   * @return \Symfony\Component\HttpFoundation\JsonResponse|array
    */
   public function upgrade($library_id) {
     $request = $this->requestStack->getCurrentRequest();
     if ($request === NULL || $request->getMethod() !== 'POST') {
       return new JsonResponse(['error' => (string) $this->translation->translate('Método não permitido.')], 405);
     }
-    // Verify security token
+    // Verify security token.
     if (!\H5PCore::validToken('contentupgrade', $request->request->getString('token'))) {
       return new JsonResponse(['error' => (string) $this->translation->translate('Token de segurança inválido.')], 403);
     }
 
-    // Get the library we're upgrading to
+    // Get the library we're upgrading to.
     $targetLibraryId = $request->request->getInt('libraryId');
     if (!ctype_digit((string) $library_id) || $targetLibraryId < 1) {
       return new JsonResponse(['error' => (string) $this->translation->translate('Biblioteca de destino inválida.')], 400);
@@ -109,16 +112,16 @@ final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
       return new JsonResponse(['error' => (string) $this->translation->translate('Biblioteca não encontrada.')], 404);
     }
 
-    // Prepare response
+    // Prepare response.
     $out = [
       'params' => [],
       'token' => \H5PCore::createToken('contentupgrade'),
     ];
 
-    // Prepare our interface
+    // Prepare our interface.
     $interface = aculta_H5PDrupal::getInstance('interface');
 
-    // Get updated params
+    // Get updated params.
     $params = $request->request->get('params');
     if (is_string($params) && $params !== '' && strlen($params) <= 2_000_000) {
       // Update params.
@@ -134,13 +137,13 @@ final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
         if (!is_object($upgraded) || !isset($upgraded->params)) {
           continue;
         }
-        $metadata = isset($upgraded->metadata) && (is_object($upgraded->metadata) || is_array($upgraded->metadata)) ? $upgraded->metadata : array();
+        $metadata = isset($upgraded->metadata) && (is_object($upgraded->metadata) || is_array($upgraded->metadata)) ? $upgraded->metadata : [];
 
-        $fields = array_merge(\H5PMetadata::toDBArray($metadata, false, false), array(
+        $fields = array_merge(\H5PMetadata::toDBArray($metadata, FALSE, FALSE), [
           'library_id' => $to_library->id,
           'parameters' => json_encode($upgraded->params),
           'filtered_parameters' => '',
-        ));
+        ]);
 
         $this->database->update('h5p_content')
           ->fields($fields)
@@ -148,24 +151,24 @@ final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
           ->condition('library_id', $library_id)
           ->execute();
 
-        // Log content upgrade successful
+        // Log content upgrade successful.
         new aculta_H5PEvent('content', 'upgrade',
           $id,
           (is_object($metadata) ? ($metadata->title ?? '') : ($metadata['title'] ?? '')),
           $to_library->name,
           $to_library->major_version . '.' . $to_library->minor_version);
 
-        // Clear content cache
+        // Clear content cache.
         $interface->updateContentFields($id, ['filtered' => '']);
       }
     }
 
-    // Determine if any content has been skipped during the process
+    // Determine if any content has been skipped during the process.
     $skipped = $request->request->get('skipped');
     if (is_string($skipped) && $skipped !== '' && strlen($skipped) <= 65536) {
       $decodedSkipped = json_decode($skipped, TRUE);
       $out['skipped'] = is_array($decodedSkipped) ? $decodedSkipped : [];
-      // Clean up input, only numbers
+      // Clean up input, only numbers.
       $out['skipped'] = array_values(array_unique(array_filter(array_map(
         static fn ($id): int => filter_var($id, FILTER_VALIDATE_INT) ?: 0,
         $out['skipped'],
@@ -173,16 +176,16 @@ final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
       $skipped = implode(',', $out['skipped']);
     }
     else {
-      $out['skipped'] = array();
+      $out['skipped'] = [];
     }
 
-    // Get number of contents for this library
+    // Get number of contents for this library.
     $out['left'] = $interface->getNumContent($library_id, $skipped);
 
     if ($out['left']) {
       $skip_query = empty($skipped) ? '' : " AND id NOT IN ($skipped)";
 
-      // Find the 40 first contents using library and add to params
+      // Find the 40 first contents using library and add to params.
       $contents = $this->database->query(
         "SELECT id, parameters AS params, title, authors, source, license,
                 license_version, license_extras, year_from, year_to, changes,
@@ -191,8 +194,8 @@ final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
           WHERE library_id = :id
                 {$skip_query}
           LIMIT 40", [
-        ':id' => $library_id
-      ]);
+            ':id' => $library_id,
+          ]);
 
       foreach ($contents as $content) {
         $out['params'][$content->id] =
@@ -207,11 +210,12 @@ final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
   /**
    * AJAX loading of libraries for content upgrade script.
    *
-   * @param string $name Machine name
+   * @param string $name
+   *   Machine name.
    * @param int $major
    * @param int $minor
    *
-   * @return JsonResponse
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
   public function prepareUpgrade($name, $major, $minor) {
     $library = (object) [
@@ -233,4 +237,5 @@ final class aculta_H5PContentUpgrade implements ContainerInjectionInterface {
 
     return new JsonResponse($library);
   }
+
 }

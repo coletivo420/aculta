@@ -13,21 +13,26 @@ use Drupal\Core\File\FileSystemInterface;
 use Drupal\file\Validation\FileValidatorSettingsTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Adds reviewed local H5P library packages through the H5P validator. */
+/**
+ * Adds reviewed local H5P library packages through the H5P validator. */
 final class aculta_H5PLibraryUploadForm extends FormBase {
 
   use FileValidatorSettingsTrait;
 
-  /** H5P package installer. */
+  /**
+   * H5P package installer. */
   protected aculta_H5PLibraryPackageInstaller $installer;
 
-  /** Entity type manager. */
+  /**
+   * Entity type manager. */
   protected EntityTypeManagerInterface $entityTypeManager;
 
-  /** H5P configuration factory. */
+  /**
+   * H5P configuration factory. */
   protected ConfigFactoryInterface $h5pConfigFactory;
 
-  /** Resolves managed file URIs to local paths for the H5P package validator. */
+  /**
+   * Resolves managed file URIs to local paths for the H5P package validator. */
   protected FileSystemInterface $fileSystem;
 
   public function __construct(
@@ -42,6 +47,9 @@ final class aculta_H5PLibraryUploadForm extends FormBase {
     $this->fileSystem = $fileSystem;
   }
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_lms_h5p.library_package_installer'),
@@ -51,10 +59,16 @@ final class aculta_H5PLibraryUploadForm extends FormBase {
     );
   }
 
+  /**
+   *
+   */
   public function getFormId(): string {
     return 'aculta_lms_h5p_library_upload_form';
   }
 
+  /**
+   *
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $storagePath = (string) ($this->h5pConfigFactory->get('aculta_lms_h5p.settings')->get('aculta_lms_h5p_default_path') ?? 'h5p');
     if (!preg_match('@^[a-z0-9_-]+(?:/[a-z0-9_-]+)*$@iD', $storagePath)) {
@@ -81,6 +95,9 @@ final class aculta_H5PLibraryUploadForm extends FormBase {
     return $form;
   }
 
+  /**
+   *
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $fids = $form_state->getValue('package');
     $file = is_array($fids) && isset($fids[0]) ? $this->entityTypeManager->getStorage('file')->load($fids[0]) : NULL;
@@ -89,6 +106,9 @@ final class aculta_H5PLibraryUploadForm extends FormBase {
     }
   }
 
+  /**
+   *
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $fids = $form_state->getValue('package');
     $file = $this->entityTypeManager->getStorage('file')->load($fids[0] ?? 0);

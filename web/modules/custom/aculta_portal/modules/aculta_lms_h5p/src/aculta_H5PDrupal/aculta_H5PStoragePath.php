@@ -7,7 +7,8 @@ namespace Drupal\aculta_lms_h5p\aculta_H5PDrupal;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileSystemInterface;
 
-/** Resolves the private directory used for H5P content and libraries. */
+/**
+ * Resolves the private directory used for H5P content and libraries. */
 final class aculta_H5PStoragePath implements aculta_H5PStoragePathInterface {
 
   public function __construct(
@@ -15,7 +16,8 @@ final class aculta_H5PStoragePath implements aculta_H5PStoragePathInterface {
     private readonly FileSystemInterface $fileSystem,
   ) {}
 
-  /** Returns the validated, prepared absolute H5P storage directory. */
+  /**
+   * Returns the validated, prepared absolute H5P storage directory. */
   public function getPath(): string {
     $relativePath = (string) ($this->configFactory->get('aculta_lms_h5p.settings')->get('aculta_lms_h5p_default_path') ?? 'h5p');
     if (!preg_match('@^[a-z0-9_-]+(?:/[a-z0-9_-]+)*$@iD', $relativePath)) {

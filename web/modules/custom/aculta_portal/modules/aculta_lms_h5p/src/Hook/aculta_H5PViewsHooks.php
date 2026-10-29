@@ -9,14 +9,16 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\field\FieldStorageConfigInterface;
 use Drupal\views\FieldViewsDataProvider;
 
-/** Integrates H5P field references with the Drupal Views data layer. */
+/**
+ * Integrates H5P field references with the Drupal Views data layer. */
 final class aculta_H5PViewsHooks {
 
   public function __construct(
     private readonly FieldViewsDataProvider $fieldViewsDataProvider,
   ) {}
 
-  /** Implements hook_field_views_data(). */
+  /**
+ * Implements hook_field_views_data(). */
   #[Hook('field_views_data')]
   public function fieldViewsData(FieldStorageConfigInterface $fieldStorage): array {
     $data = $this->fieldViewsDataProvider->defaultFieldImplementation($fieldStorage);

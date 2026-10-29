@@ -11,7 +11,8 @@ use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Builds dynamic Drupal libraries for installed H5P content types. */
+/**
+ * Builds dynamic Drupal libraries for installed H5P content types. */
 final class aculta_H5PLibraryHooks {
 
   public function __construct(
@@ -23,6 +24,9 @@ final class aculta_H5PLibraryHooks {
     private readonly FileUrlGeneratorInterface $fileUrlGenerator,
   ) {}
 
+  /**
+ *
+ */
   #[Hook('library_info_build')]
   public function libraryInfoBuild(): array {
     $database = $this->database;
@@ -221,7 +225,7 @@ final class aculta_H5PLibraryHooks {
       $libraries['h5p.editor']['css']['base'][$url] = [];
     }
 
-    // Load installed libraries
+    // Load installed libraries.
     $h5p_libraries = $database->query("
       SELECT
         library_id AS id,
@@ -260,7 +264,7 @@ final class aculta_H5PLibraryHooks {
         }
       }
 
-      // Load dependencies
+      // Load dependencies.
       $h5p_dependencies = $database->query(
           "SELECT hl.machine_name AS name,
                   hl.major_version AS major,

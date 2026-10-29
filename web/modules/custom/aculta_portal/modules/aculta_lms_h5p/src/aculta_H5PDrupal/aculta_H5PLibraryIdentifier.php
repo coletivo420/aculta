@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms_h5p\aculta_H5PDrupal;
 
-/** Converts an installed H5P library version to its Drupal asset library ID. */
+/**
+ * Converts an installed H5P library version to its Drupal asset library ID. */
 final class aculta_H5PLibraryIdentifier {
 
   /**
@@ -47,7 +48,8 @@ final class aculta_H5PLibraryIdentifier {
     return $name . '-' . $major . '.' . $minor;
   }
 
-  /** Normalizes a non-negative H5P version component. */
+  /**
+   * Normalizes a non-negative H5P version component. */
   private static function version(mixed $version): ?int {
     if (is_int($version) && $version >= 0) {
       return $version;

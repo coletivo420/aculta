@@ -1,11 +1,14 @@
 <?php
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\aculta_H5PEditor;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Session\AccountProxyInterface;
 
+/**
+ *
+ */
 class aculta_H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
 
   public function __construct(
@@ -14,21 +17,21 @@ class aculta_H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
   ) {}
 
   /**
-   * Gets latest library versions that exists locally
+   * Gets latest library versions that exists locally.
    *
    * @return array Latest version of all local libraries
    */
   public function getLatestLibraryVersions() {
     $connection = $this->database;
 
-    // Retrieve latest major version
+    // Retrieve latest major version.
     $max_major_version = $connection->select('h5p_libraries', 'h1');
     $max_major_version->fields('h1', ['machine_name']);
     $max_major_version->addExpression('MAX(h1.major_version)', 'major_version');
     $max_major_version->condition('h1.runnable', 1);
     $max_major_version->groupBy('h1.machine_name');
 
-    // Find latest minor version among the latest major versions
+    // Find latest minor version among the latest major versions.
     $max_minor_version = $connection->select('h5p_libraries', 'h2');
     $max_minor_version->fields('h2', [
       'machine_name',
@@ -36,17 +39,17 @@ class aculta_H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
     ]);
     $max_minor_version->addExpression('MAX(h2.minor_version)', 'minor_version');
 
-    // Join max major version and minor versions
+    // Join max major version and minor versions.
     $max_minor_version->join($max_major_version, 'h1', "
       h1.machine_name = h2.machine_name AND
       h1.major_version = h2.major_version
     ");
 
-    // Group together on major versions to get latest minor version
+    // Group together on major versions to get latest minor version.
     $max_minor_version->groupBy('h2.machine_name');
     $max_minor_version->groupBy('h2.major_version');
 
-    // Find latest patch version from latest major and minor version
+    // Find latest patch version from latest major and minor version.
     $latest = $connection->select('h5p_libraries', 'h3');
     $latest->addField('h3', 'library_id', 'id');
     $latest->fields('h3', [
@@ -59,14 +62,14 @@ class aculta_H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
       'restricted',
     ]);
 
-    // Join max minor versions with the latest patch version
+    // Join max minor versions with the latest patch version.
     $latest->join($max_minor_version, 'h4', "
       h4.machine_name = h3.machine_name AND
       h4.major_version = h3.major_version AND
       h4.minor_version = h3.minor_version
     ");
 
-    // Grab the results
+    // Grab the results.
     $results = $latest->execute()->fetchAll();
     return $results;
   }
@@ -82,25 +85,25 @@ class aculta_H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
   public function getContentTypeCache($machineName = NULL) {
     $database = $this->database;
 
-    // Get only the specified content type from cache
+    // Get only the specified content type from cache.
     if ($machineName !== NULL) {
       return $database->query(
         "SELECT id, is_recommended
         FROM {h5p_libraries_hub_cache}
         WHERE machine_name = :name",
-        array(':name' => $machineName)
+        [':name' => $machineName]
       )->fetchObject();
     }
 
-    // Get all cached content types
+    // Get all cached content types.
     return $database->query("SELECT * FROM {h5p_libraries_hub_cache}")->fetchAll();
   }
 
   /**
-   * Create a list of the recently used libraries
+   * Create a list of the recently used libraries.
    *
    * @return array machine names. The first element in the array is the most
-   * recently used.
+   *   recently used.
    */
   public function getAuthorsRecentlyUsedLibraries() {
     $uid = $this->currentUser->id();
@@ -114,7 +117,7 @@ class aculta_H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
       WHERE type='content' AND sub_type = 'create' AND user_id = :uid
       GROUP BY library_name
       ORDER BY max_created_at DESC
-    ", array(':uid' => $uid));
+    ", [':uid' => $uid]);
 
     foreach ($result as $row) {
       $recently_used[] = $row->library_name;
@@ -124,9 +127,10 @@ class aculta_H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
   }
 
   /**
-   * Checks if the provided token is valid for this endpoint
+   * Checks if the provided token is valid for this endpoint.
    *
-   * @param string $token The token that will be validated for.
+   * @param string $token
+   *   The token that will be validated for.
    *
    * @return bool True if successful validation
    */
@@ -135,14 +139,16 @@ class aculta_H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
   }
 
   /**
-   * Get translations for a language for a list of libraries
+   * Get translations for a language for a list of libraries.
    *
-   * @param array $libraries An array of libraries, in the form "<machineName> <majorVersion>.<minorVersion>
+   * @param array $libraries
+   *   An array of libraries, in the form "<machineName> <majorVersion>.<minorVersion>.
    * @param string $language_code
+   *
    * @return array
    */
   public function getTranslations($libraries, $language_code) {
-    $translations = array();
+    $translations = [];
 
     foreach ($libraries as $library) {
       $parsedLib = \H5PCore::libraryFromString($library);
@@ -159,7 +165,7 @@ class aculta_H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
           ':machine_name' => $parsedLib['machineName'],
           ':major_version' => $parsedLib['majorVersion'],
           ':minor_version' => $parsedLib['minorVersion'],
-          ':language_code' => $language_code
+          ':language_code' => $language_code,
         ])->fetchField();
 
       if ($translation !== FALSE) {
@@ -169,4 +175,5 @@ class aculta_H5PEditorDrupalAjax implements \H5PEditorAjaxInterface {
 
     return $translations;
   }
+
 }

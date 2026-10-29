@@ -9,9 +9,15 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 
+/**
+ *
+ */
 #[CoversClass(aculta_H5PContent::class)]
 final class aculta_H5PContentTest extends UnitTestCase {
 
+  /**
+ *
+ */
   #[DataProvider('embedTypesProvider')]
   public function testEmbedModeUsesSupportedH5PCoreEmbedTypes(string $embedTypes, ?string $expected): void {
     $content = (new \ReflectionClass(aculta_H5PContent::class))->newInstanceWithoutConstructor();
@@ -21,6 +27,9 @@ final class aculta_H5PContentTest extends UnitTestCase {
     self::assertSame($expected === 'div', $content->isDivEmbeddable());
   }
 
+  /**
+   *
+   */
   public static function embedTypesProvider(): array {
     return [
       'div only' => ['div', 'div'],

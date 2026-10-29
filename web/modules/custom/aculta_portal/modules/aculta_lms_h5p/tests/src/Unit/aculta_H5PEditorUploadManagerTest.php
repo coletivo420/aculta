@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms_h5p\Unit;
 
+use Drupal\Core\Config\ImmutableConfig;
+use Drupal\file\Upload\FormUploadedFile;
 use Drupal\aculta_image\ImageInspector;
 use Drupal\aculta_image\ImageUploadIngestor;
 use Drupal\aculta_image\UploadPolicy;
@@ -21,9 +23,15 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+/**
+ *
+ */
 #[CoversClass(aculta_H5PEditorUploadManager::class)]
 final class aculta_H5PEditorUploadManagerTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testRejectsSvgAsAnUploadedContentImage(): void {
     $path = tempnam(sys_get_temp_dir(), 'aculta-h5p-svg-');
     self::assertNotFalse($path);
@@ -39,6 +47,9 @@ final class aculta_H5PEditorUploadManagerTest extends UnitTestCase {
     }
   }
 
+  /**
+   *
+   */
   public function testRejectsMissingH5pFieldType(): void {
     $path = tempnam(sys_get_temp_dir(), 'aculta-h5p-file-');
     self::assertNotFalse($path);
@@ -52,6 +63,9 @@ final class aculta_H5PEditorUploadManagerTest extends UnitTestCase {
     }
   }
 
+  /**
+   *
+   */
   public function testStoresRasterUploadThroughAcultaImageAndCoreFileApi(): void {
     $path = tempnam(sys_get_temp_dir(), 'aculta-h5p-image-');
     self::assertNotFalse($path);
@@ -65,7 +79,7 @@ final class aculta_H5PEditorUploadManagerTest extends UnitTestCase {
     $handler->expects(self::once())
       ->method('handleFileUpload')
       ->with(
-        self::isInstanceOf(\Drupal\file\Upload\FormUploadedFile::class),
+        self::isInstanceOf(FormUploadedFile::class),
         ['FileExtension' => ['extensions' => 'png gif jpg jpeg webp'], 'FileSizeLimit' => ['fileLimit' => 10485760]],
         'private://h5p-custom/editor/images',
         FileExists::Rename,
@@ -81,7 +95,7 @@ final class aculta_H5PEditorUploadManagerTest extends UnitTestCase {
     $imageIngestor = new ImageUploadIngestor(new UploadPolicy(), $inspector, $handler);
     $fileSystem = $this->createMock(FileSystemInterface::class);
     $fileSystem->expects(self::once())->method('prepareDirectory')->willReturn(TRUE);
-    $config = $this->createMock(\Drupal\Core\Config\ImmutableConfig::class);
+    $config = $this->createMock(ImmutableConfig::class);
     $config->method('get')->with('aculta_lms_h5p_default_path')->willReturn('h5p-custom');
     $configFactory = $this->createMock(ConfigFactoryInterface::class);
     $configFactory->method('get')->with('aculta_lms_h5p.settings')->willReturn($config);
@@ -105,6 +119,9 @@ final class aculta_H5PEditorUploadManagerTest extends UnitTestCase {
     }
   }
 
+  /**
+   *
+   */
   private function manager(): aculta_H5PEditorUploadManager {
     $inspector = new ImageInspector($this->createMock(ImageFactory::class));
     return new aculta_H5PEditorUploadManager(
@@ -117,6 +134,9 @@ final class aculta_H5PEditorUploadManagerTest extends UnitTestCase {
     );
   }
 
+  /**
+   *
+   */
   private function framework(): aculta_H5PDrupal {
     $framework = $this->createMock(aculta_H5PDrupal::class);
     $framework->method('getWhitelist')->willReturn(\H5PCore::$defaultContentWhitelist);

@@ -1,3 +1,9 @@
+## 0.4.0-dev.152 — primeira rodada de limpeza PHPCS (2026-10-29)
+
+- PHPCBF Drupal/DrupalPractice corrigiu automaticamente 838 violações de estilo em 46 arquivos, sem mudar regras e preservando os nomes históricos `aculta_H5P*`.
+- PHPCS completo ainda aponta 349 erros e 36 avisos em 48 arquivos; a limpeza manual continua pendente.
+- Suítes no `aculta_simpletest`: Unit + Kernel 43 testes / 481 assertions PASS, com 41 depreciações Core/contrib. Nenhuma escrita Runtime.
+
 ## 0.4.0-dev.151 — revalidar F15 e registrar o gate PHPCS (2026-10-29)
 
 - Revalidação no MariaDB dedicado: Unit 28 testes / 93 assertions; Kernel

@@ -1,6 +1,6 @@
 <?php
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldItemBase;
@@ -12,7 +12,8 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\Entity\aculta_H5PContent;
 
-/** Provides the H5P field type. */
+/**
+ * Provides the H5P field type. */
 #[FieldType(
   id: 'h5p',
   label: new TranslatableMarkup('Conteúdo interativo – H5P'),
@@ -27,19 +28,19 @@ class aculta_H5PItem extends FieldItemBase implements FieldItemInterface {
    * {@inheritdoc}
    */
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
-    return array(
-      'columns' => array(
-        'h5p_content_id' => array(
+    return [
+      'columns' => [
+        'h5p_content_id' => [
           'description' => 'Referance to the H5P Content entity ID',
           'type' => 'int',
           'unsigned' => TRUE,
           'not null' => TRUE,
-        ),
-      ),
-      'indexes' => array(
-        'h5p_content_id' => array('h5p_content_id'),
-      )
-    );
+        ],
+      ],
+      'indexes' => [
+        'h5p_content_id' => ['h5p_content_id'],
+      ],
+    ];
   }
 
   /**
@@ -73,17 +74,18 @@ class aculta_H5PItem extends FieldItemBase implements FieldItemInterface {
    */
   public function preSave() {
 
-    // Handles the revisioning when there's no widget doing it
+    // Handles the revisioning when there's no widget doing it.
     $h5p_content_revisioning_handled = !empty($this->get('h5p_content_revisioning_handled')->getValue());
     if ($h5p_content_revisioning_handled || $this->isEmpty()) {
-      return; // No need to do anything
+      // No need to do anything.
+      return;
     }
 
-    // Determine if this is a new revision
+    // Determine if this is a new revision.
     $entity = $this->getEntity();
     $is_new_revision = (!empty($entity->original) && $entity->getRevisionId() != $entity->original->getRevisionId());
 
-    // Determine if this is a new translation
+    // Determine if this is a new translation.
     $do_new_translation = $this->get('h5p_content_new_translation')->getValue();
 
     // Determine if we do revisioning for H5P content
@@ -91,21 +93,22 @@ class aculta_H5PItem extends FieldItemBase implements FieldItemInterface {
     $interface = aculta_H5PDrupal::getInstance();
     $do_new_revision = $interface->getOption('revisioning', TRUE) && $is_new_revision;
     if (!$do_new_revision && !$do_new_translation) {
-      return; // No need to do anything
+      // No need to do anything.
+      return;
     }
 
-    // New revision or translation, clone the existing content
+    // New revision or translation, clone the existing content.
     $h5p_content_id = $this->get('h5p_content_id')->getValue();
     $h5p_content = aculta_H5PContent::load($h5p_content_id);
     $h5p_content->set('id', NULL);
     $h5p_content->set('filtered_parameters', NULL);
     $h5p_content->save();
 
-    // Clone content folder
+    // Clone content folder.
     $core = aculta_H5PDrupal::getInstance('core');
     $core->fs->cloneContent($h5p_content_id, $h5p_content->id());
 
-    // Update field reference id
+    // Update field reference id.
     $this->set('h5p_content_id', $h5p_content->id());
   }
 
@@ -113,7 +116,7 @@ class aculta_H5PItem extends FieldItemBase implements FieldItemInterface {
    * {@inheritdoc}
    */
   public function delete() {
-    // Get entity
+    // Get entity.
     $entity = $this->getEntity();
 
     if ($entity->isDefaultTranslation() || $this->getFieldDefinition()->isTranslatable()) {
@@ -129,7 +132,7 @@ class aculta_H5PItem extends FieldItemBase implements FieldItemInterface {
     // Bug in Drupal Core?
     static $revisionsCleanedUp = [];
     if ($entity->isDefaultTranslation() && empty($revisionsCleanedUp[$entity->id()])) {
-      // Only trigger cleanup once pr entity
+      // Only trigger cleanup once pr entity.
       $revisionsCleanedUp[$entity->id()] = TRUE;
 
       $storage = aculta_H5PDrupal::getInstance()->getEntityStorage($entity->getEntityTypeId());
@@ -142,17 +145,17 @@ class aculta_H5PItem extends FieldItemBase implements FieldItemInterface {
       $database = aculta_H5PDrupal::getInstance()->getDatabaseConnection();
       $from_table = ($database->schema()->tableExists($revision_table) ? $revision_table : $table_mapping->getDedicatedDataTableName($storage_definition, $storage_definition->isDeleted()));
 
-      // Find column name for field instance
+      // Find column name for field instance.
       $columns = $storage_definition->getColumns();
       $column = $table_mapping->getFieldColumnName($storage_definition, key($columns));
 
-      // Look up all the H5P content referenced by this field
+      // Look up all the H5P content referenced by this field.
       $results = $database->select($from_table, 'f')
-          ->fields('f', [$column])
-          ->condition('entity_id', $entity->id())
-          ->execute();
+        ->fields('f', [$column])
+        ->condition('entity_id', $entity->id())
+        ->execute();
 
-      // delete them one by one
+      // Delete them one by one.
       while ($h5p_content_id = $results->fetchField()) {
         self::deleteaculta_H5PContent($h5p_content_id);
       }
@@ -170,18 +173,21 @@ class aculta_H5PItem extends FieldItemBase implements FieldItemInterface {
   }
 
   /**
-   * Delete the H5P Content referenced by this field
+   * Delete the H5P Content referenced by this field.
    */
   public static function deleteaculta_H5PContent($content_id) {
     if (empty($content_id)) {
-      return; // Nothing to delete
+      // Nothing to delete.
+      return;
     }
 
     $h5p_content = aculta_H5PContent::load($content_id);
     if (empty($h5p_content)) {
-      return; // Nothing to delete
+      // Nothing to delete.
+      return;
     }
 
     $h5p_content->delete();
   }
+
 }

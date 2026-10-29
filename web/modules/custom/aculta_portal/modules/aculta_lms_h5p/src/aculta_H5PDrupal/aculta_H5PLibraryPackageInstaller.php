@@ -6,7 +6,8 @@ namespace Drupal\aculta_lms_h5p\aculta_H5PDrupal;
 
 use Drupal\Core\File\FileSystemInterface;
 
-/** Installs locally reviewed H5P library packages with the official validator. */
+/**
+ * Installs locally reviewed H5P library packages with the official validator. */
 final class aculta_H5PLibraryPackageInstaller {
 
   public function __construct(
@@ -61,7 +62,8 @@ final class aculta_H5PLibraryPackageInstaller {
     }
   }
 
-  /** Rejects ZIP paths that could escape the isolated extraction directory. */
+  /**
+   * Rejects ZIP paths that could escape the isolated extraction directory. */
   private function assertSafeArchivePaths(string $packagePath): void {
     $zip = new \ZipArchive();
     if ($zip->open($packagePath, \ZipArchive::RDONLY) !== TRUE) {

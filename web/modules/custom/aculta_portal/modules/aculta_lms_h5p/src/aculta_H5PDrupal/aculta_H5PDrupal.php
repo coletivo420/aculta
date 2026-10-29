@@ -1,6 +1,6 @@
 <?php
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\aculta_H5PDrupal;
 
 use Drupal\Component\Datetime\TimeInterface;
@@ -25,9 +25,13 @@ use Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorDrupalStorage;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use GuzzleHttp\ClientInterface;
 
+/**
+ *
+ */
 class aculta_H5PDrupal implements \H5PFrameworkInterface {
 
-  /** DI-initialized adapter used by H5P's legacy static framework API. */
+  /**
+   * DI-initialized adapter used by H5P's legacy static framework API. */
   private static ?self $frameworkInstance = NULL;
 
   public function __construct(
@@ -54,7 +58,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     self::$frameworkInstance = $this;
   }
 
-  /** Returns the adapter registered by Drupal dependency injection. */
+  /**
+   * Returns the adapter registered by Drupal dependency injection. */
   private static function framework(): self {
     if (!self::$frameworkInstance) {
       throw new \LogicException('The H5P framework adapter must be initialized through Drupal dependency injection before use.');
@@ -62,22 +67,26 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     return self::$frameworkInstance;
   }
 
-  /** Returns the platform database connection for legacy H5P entity callbacks. */
+  /**
+   * Returns the platform database connection for legacy H5P entity callbacks. */
   public function getDatabaseConnection(): Connection {
     return $this->database;
   }
 
-  /** Returns the current account ID for legacy H5P callbacks. */
+  /**
+   * Returns the current account ID for legacy H5P callbacks. */
   public function getCurrentUserId(): ?string {
     return $this->currentUser->id();
   }
 
-  /** Applies the H5P filtered-parameters alter hook. */
+  /**
+   * Applies the H5P filtered-parameters alter hook. */
   public function alterFilteredParameters(&$parameters): void {
     $this->moduleHandler->alter('h5p_filtered_params', $parameters);
   }
 
-  /** Returns entity storage for legacy field-type lifecycle callbacks. */
+  /**
+   * Returns entity storage for legacy field-type lifecycle callbacks. */
   public function getEntityStorage(string $entityTypeId) {
     return $this->entityTypeManager->getStorage($entityTypeId);
   }
@@ -88,28 +97,31 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Kesps track of messages for the user.
+   *
    * @var array
    */
   private $messages = ['error' => [], 'info' => []];
 
   /**
-   *  Store these options in State API instead of config.
+   * Store these options in State API instead of config.
    */
   const STATE_OPTIONS = [
     'content_type_cache_updated_at',
     'fetched_library_metadata_on',
   ];
+
   /**
-   * Get an instance of one of the h5p library classes
+   * Get an instance of one of the h5p library classes.
    *
    * @staticvar aculta_H5PDrupal $interface
    *  The interface between the H5P library and drupal
    * @staticvar H5PCore $core
    *  Core functions and storage in the h5p library
    * @param string $type
-   *  Specifies the instance to be returned; validator, storage, interface or core
+   *   Specifies the instance to be returned; validator, storage, interface or core.
+   *
    * @return \H5PCore|\H5PValidator|\H5PStorage|\H5PContentValidator|\H5PExport|\Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal
-   *  The instance og h5p specified by type
+   *   The instance og h5p specified by type
    */
   public static function getInstance($type = 'interface', $instance = 'default') {
     static $instances;
@@ -121,34 +133,38 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
       // Drupal service throughout the framework implementation.
       $interface = self::framework();
 
-      // Determine language
+      // Determine language.
       $language = $interface->languageManager->getCurrentLanguage()->getId();
 
       // Prepare file storage.
       $file_path = $interface->storagePath->getPath();
       $fs = $interface->fileStorageFactory->create($file_path);
 
-      // Determine if exports should be generated
+      // Determine if exports should be generated.
       $is_export_enabled = !!$interface->getOption('export', TRUE);
       $core = new \H5PCore($interface, $fs, base_path(), $language, $is_export_enabled);
 
-      // Add to runtime cache
+      // Add to runtime cache.
       $instances[$instance] = [$interface, $core];
     }
     else {
-      // Get runtime cache
+      // Get runtime cache.
       [$interface, $core] = $instances[$instance];
     }
 
     switch ($type) {
       case 'validator':
         return new \H5PValidator($interface, $core);
+
       case 'storage':
         return new \H5PStorage($interface, $core);
+
       case 'contentvalidator':
         return new \H5PContentValidator($interface, $core);
+
       case 'export':
         return new \H5PExport($interface, $core);
+
       default:
       case 'interface':
         return $interface;
@@ -167,31 +183,33 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     return 'h5p-library-assets';
   }
 
-  /** Returns the validated private directory used by H5P content and libraries. */
+  /**
+   * Returns the validated private directory used by H5P content and libraries. */
   public static function getStoragePath(): string {
     return self::framework()->storagePath->getPath();
   }
 
   /**
-   * Prepares the generic H5PIntegration settings
+   * Prepares the generic H5PIntegration settings.
    */
   public static function getGenericaculta_H5PIntegrationSettings(?CourseInterface $course = NULL): array {
     return self::framework()->buildGenericaculta_H5PIntegrationSettings($course);
   }
 
-  /** Builds H5PIntegration data from the injected Drupal services. */
+  /**
+   * Builds H5PIntegration data from the injected Drupal services. */
   private function buildGenericaculta_H5PIntegrationSettings(?CourseInterface $course = NULL): array {
 
-    // Load current user
+    // Load current user.
     $user = $this->currentUser;
 
-    // Load configuration settings
+    // Load configuration settings.
     $interface = self::getInstance();
     $h5p_save_content_state = $interface->getOption('save_content_state', FALSE);
     $h5p_save_content_frequency = $interface->getOption('save_content_frequency', 30);
     $h5p_hub_is_enabled = $interface->getOption('hub_is_enabled', FALSE);
 
-    // Create AJAX URLs
+    // Create AJAX URLs.
     $set_finished_url = '';
     $content_user_data_url = '';
     if ($course) {
@@ -213,20 +231,20 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     }
     $h5p_url = base_path() . self::getRelativeaculta_H5PPath();
 
-    // Define the generic H5PIntegration settings
+    // Define the generic H5PIntegration settings.
     $core = self::getInstance('core');
-    $settings = array(
+    $settings = [
       'baseUrl' => base_path(),
       'url' => $h5p_url,
       'postUserStatistics' => $user->id() > 0 && $course !== NULL,
-      'ajax' => array(
+      'ajax' => [
         'setFinished' => $set_finished_url,
         'contentUserData' => $content_user_data_url,
-      ),
+      ],
       'saveFreq' => $h5p_save_content_state ? $h5p_save_content_frequency : FALSE,
-      'l10n' => array(
+      'l10n' => [
         'H5P' => $core->getLocalization(),
-      ),
+      ],
       // H5P's internal iframe document loads these same core assets before
       // initializing its library. The parent page also attaches them through
       // Drupal's library system.
@@ -236,7 +254,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
       'libraryConfig' => $core->h5pF->getLibraryConfig(),
       'pluginCacheBuster' => '?' . $this->assetQueryString->get(),
       'libraryUrl' => $this->fileUrlGenerator->generateAbsoluteString('assets://h5p/h5p-core/js'),
-    );
+    ];
 
     if ($user->id()) {
       $settings['user'] = [
@@ -255,33 +273,36 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   /**
    * Get a list with prepared asset links that is used when JS loads components.
    *
-   * @param array [$keys] Optional keys, first for JS second for CSS.
+   * @param array [ $keys]
+   *   Optional keys, first for JS second for CSS.
+   *
    * @return array
    */
   public static function getCoreAssets($keys = NULL) {
     return self::framework()->buildCoreAssets($keys);
   }
 
-  /** Builds library asset URLs from the H5P Core asset definition. */
+  /**
+   * Builds library asset URLs from the H5P Core asset definition. */
   private function buildCoreAssets($keys = NULL): array {
     if (empty($keys)) {
       $keys = ['scripts', 'styles'];
     }
 
-    // Prepare arrays
+    // Prepare arrays.
     $assets = [
       $keys[0] => [],
       $keys[1] => [],
     ];
 
-    // Determine cache buster
+    // Determine cache buster.
     $cache_buster = $this->assetQueryString->get();
-    // Add all core scripts
+    // Add all core scripts.
     foreach (\H5PCore::$scripts as $script) {
       $assets[$keys[0]][] = $this->fileUrlGenerator->generateAbsoluteString('assets://h5p/h5p-core/' . $script) . '?' . $cache_buster;
     }
 
-    // and styles
+    // And styles.
     foreach (\H5PCore::$styles as $style) {
       $assets[$keys[1]][] = $this->fileUrlGenerator->generateAbsoluteString('assets://h5p/h5p-core/' . $style) . '?' . $cache_buster;
     }
@@ -301,7 +322,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     return self::framework()->buildAggregatedAssets($scriptAssets, $styleAssets);
   }
 
-  /** Normalizes aggregator output to absolute URLs for the legacy H5P player. */
+  /**
+   * Normalizes aggregator output to absolute URLs for the legacy H5P player. */
   private function buildAggregatedAssets($scriptAssets, $styleAssets): array {
     // DT-H5P02 (docs/operations/DEBT-REGISTER.md): handle assets through
     // Drupal's library system once the legacy player no longer needs it.
@@ -351,7 +373,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements getPlatformInfo
+   * Implements getPlatformInfo.
+   *
    * @return array
    */
   public function getPlatformInfo() {
@@ -361,20 +384,21 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     return [
       'name' => 'drupal',
       'version' => \DRUPAL::VERSION,
-      'h5pVersion' => isset($h5p_info['version']) ? $h5p_info['version'] : NULL,
+      'h5pVersion' => $h5p_info['version'] ?? NULL,
     ];
   }
 
   /**
-   * Implements fetchExternalData
+   * Implements fetchExternalData.
+   *
    * @return string|array
    */
-  public function fetchExternalData($url, $data = NULL, $blocking = TRUE, $stream = NULL, $fullData = FALSE, $headers = array(), $files = array(), $method = 'POST') {
+  public function fetchExternalData($url, $data = NULL, $blocking = TRUE, $stream = NULL, $fullData = FALSE, $headers = [], $files = [], $method = 'POST') {
 
     $options = [];
     if (!empty($data)) {
       $options['headers'] = [
-        'Content-Type' => 'application/x-www-form-urlencoded'
+        'Content-Type' => 'application/x-www-form-urlencoded',
       ];
       $options['form_params'] = $data;
     }
@@ -398,7 +422,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     }
 
     if ($stream && empty($response->error)) {
-      // Create file from data
+      // Create file from data.
       aculta_H5PEditorDrupalStorage::saveFileTemporarily($response_data);
       // DT-H5P03 (docs/operations/DEBT-REGISTER.md): evaluate Guzzle's sink
       // option instead of delegating the stream to the H5P Editor storage.
@@ -409,9 +433,9 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements setLibraryTutorialUrl
+   * Implements setLibraryTutorialUrl.
    *
-   * Set the tutorial URL for a library. All versions of the library is set
+   * Set the tutorial URL for a library. All versions of the library is set.
    *
    * @param string $machineName
    * @param string $tutorialUrl
@@ -426,18 +450,18 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements setErrorMessage
+   * Implements setErrorMessage.
    */
   public function setErrorMessage($message, $code = NULL) {
-    $this->messages['error'][] = (object)array(
+    $this->messages['error'][] = (object) [
       'code' => $code,
-      'message' => $message
-    );
+      'message' => $message,
+    ];
     $this->messenger->addError($message);
   }
 
   /**
-   * Implements setInfoMessage
+   * Implements setInfoMessage.
    */
   public function setInfoMessage($message) {
     $this->messages['info'][] = $message;
@@ -445,7 +469,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements getMessages
+   * Implements getMessages.
+   *
    * @return array
    */
   public function getMessages($type) {
@@ -454,12 +479,14 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     }
     $messages = $this->messages[$type];
     $this->messages[$type] = [];
-    $this->messenger->messagesByType($type === 'info' ? 'status' : $type, TRUE); // Prevent messages from displaying twice
+    // Prevent messages from displaying twice.
+    $this->messenger->messagesByType($type === 'info' ? 'status' : $type, TRUE);
     return $messages;
   }
 
   /**
-   * Implements t
+   * Implements t.
+   *
    * @return string
    */
   public function t($message, $replacements = []) {
@@ -467,7 +494,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements getLibraryFileUrl
+   * Implements getLibraryFileUrl.
+   *
    * @return string
    */
   public function getLibraryFileUrl($libraryFolderName, $fileName) {
@@ -476,7 +504,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements getUploadedH5PFolderPath
+   * Implements getUploadedH5PFolderPath.
+   *
    * @return string
    */
   public function getUploadedH5pFolderPath($set = NULL) {
@@ -488,7 +517,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements getUploadedH5PPath
+   * Implements getUploadedH5PPath.
+   *
    * @return string
    */
   public function getUploadedH5pPath($set = NULL) {
@@ -499,14 +529,16 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     return $this->h5pPath;
   }
 
-  /** Clears transient package paths after an import request. */
+  /**
+   * Clears transient package paths after an import request. */
   public function resetUploadedH5pPaths(): void {
     $this->folderPath = NULL;
     $this->h5pPath = NULL;
   }
 
   /**
-   * Implements loadLibraries
+   * Implements loadLibraries.
+   *
    * @return array
    */
   public function loadLibraries() {
@@ -534,7 +566,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements getAdminUrl
+   * Implements getAdminUrl.
+   *
    * @return string
    */
   public function getAdminUrl() {
@@ -544,7 +577,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements getLibraryId
+   * Implements getLibraryId.
+   *
    * @return int|false
    */
   public function getLibraryId($machineName, $majorVersion = NULL, $minorVersion = NULL) {
@@ -557,7 +591,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
       [
         ':machine_name' => $machineName,
         ':major_version' => $majorVersion,
-        ':minor_version' => $minorVersion
+        ':minor_version' => $minorVersion,
       ]
     )->fetchField();
 
@@ -566,6 +600,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements isPatchedLibrary().
+   *
    * @return bool
    */
   public function isPatchedLibrary($library) {
@@ -584,7 +619,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
         ':machineName' => $library['machineName'],
         ':majorVersion' => $library['majorVersion'],
         ':minorVersion' => $library['minorVersion'],
-        ':patchVersion' => $library['patchVersion']
+        ':patchVersion' => $library['patchVersion'],
       ]
     )->fetchField();
     return $result === '1';
@@ -592,6 +627,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements isInDevMode().
+   *
    * @return bool
    */
   public function isInDevMode() {
@@ -600,26 +636,28 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements mayUpdateLibraries
+   * Implements mayUpdateLibraries.
+   *
    * @return bool
    */
   public function mayUpdateLibraries() {
 
-    // Get the current user
+    // Get the current user.
     $user = $this->currentUser;
-    // Check for permission
+    // Check for permission.
     return $user->hasPermission('update h5p libraries');
   }
 
   /**
-   * Implements getLibraryUsage
+   * Implements getLibraryUsage.
    *
    * Get number of content using a library, and the number of
-   * dependencies to other libraries
+   * dependencies to other libraries.
    *
    * @param int $libraryId
+   *
    * @return array The array contains two elements, keyed by 'content' and 'libraries'.
-   *               Each element contains a number
+   *   Each element contains a number
    */
   public function getLibraryUsage($libraryId, $skipContent = FALSE) {
     $usage = [];
@@ -638,7 +676,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
         ON nl.content_id = nfd.id
         WHERE l.library_id = :id",
         [
-          ':id' => $libraryId
+          ':id' => $libraryId,
         ])->fetchField());
     }
 
@@ -653,19 +691,19 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements getLibraryContentCount
+   * Implements getLibraryContentCount.
    *
    * Get a key value list of library version and count of content created
    * using that library.
    *
    * @return array
-   *  Array containing library, major and minor version - content count
-   *  e.g. "H5P.CoursePresentation 1.6" => "14"
+   *   Array containing library, major and minor version - content count
+   *   e.g. "H5P.CoursePresentation 1.6" => "14"
    */
   public function getLibraryContentCount() {
     $contentCount = [];
 
-    // Count content with same machine name, major and minor version
+    // Count content with same machine name, major and minor version.
     $results = $this->database->query("
       SELECT
         l.machine_name AS name,
@@ -680,8 +718,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
         l.minor_version"
     );
 
-    // Format results
-    foreach($results as $library) {
+    // Format results.
+    foreach ($results as $library) {
       $contentCount["{$library->name} {$library->major}.{$library->minor}"] = $library->count;
     }
 
@@ -689,7 +727,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements getLibraryStats
+   * Implements getLibraryStats.
+   *
    * @return array
    */
   public function getLibraryStats($type) {
@@ -703,11 +742,11 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
       FROM {h5p_counters}
       WHERE type = :type",
       [
-        ':type' => $type
+        ':type' => $type,
       ])->fetchAll();
 
-    // Extract results
-    foreach($results as $library) {
+    // Extract results.
+    foreach ($results as $library) {
       $count["{$library->name} {$library->version}"] = $library->num;
     }
 
@@ -715,7 +754,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements getNumAuthors
+   * Implements getNumAuthors.
+   *
    * @return int
    */
   public function getNumAuthors() {
@@ -725,23 +765,23 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
       FROM {h5p_content}
       LIMIT 1")->fetchField();
 
-    // Return 1 if there is content and 0 if there is none
+    // Return 1 if there is content and 0 if there is none.
     return empty($id) ? 0 : 1;
   }
 
   /**
-   * Implements saveLibraryData
+   * Implements saveLibraryData.
    *
    * @param array $libraryData
-   * @param boolean $new
+   * @param bool $new
    */
   public function saveLibraryData(&$libraryData, $new = TRUE) {
     $preloadedJs = $this->pathsToCsv($libraryData, 'preloadedJs');
-    $preloadedCss =  $this->pathsToCsv($libraryData, 'preloadedCss');
+    $preloadedCss = $this->pathsToCsv($libraryData, 'preloadedCss');
     $dropLibraryCss = '';
 
     if (isset($libraryData['dropLibraryCss'])) {
-      $libs = array();
+      $libs = [];
       foreach ($libraryData['dropLibraryCss'] as $lib) {
         $libs[] = $lib['machineName'];
       }
@@ -787,7 +827,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
       $libraryData['libraryId'] = $libraryId;
       if ($libraryData['runnable']) {
         $h5p_first_runnable_saved = $this->getOption('first_runnable_saved', FALSE);
-        if (! $h5p_first_runnable_saved) {
+        if (!$h5p_first_runnable_saved) {
           $this->setOption('first_runnable_saved', 1);
         }
       }
@@ -813,15 +853,15 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
       $this->deleteLibraryDependencies($libraryData['libraryId']);
     }
 
-    // Log library installed or updated
+    // Log library installed or updated.
     new aculta_H5PEvent('library', ($new ? 'create' : 'update'),
       NULL, NULL,
       $libraryData['machineName'],
       $libraryData['majorVersion'] . '.' . $libraryData['minorVersion']
     );
 
-    // invoke library installed
-    $this->moduleHandler->invokeAll('h5p_library_installed', array($libraryData, $new));
+    // Invoke library installed.
+    $this->moduleHandler->invokeAll('h5p_library_installed', [$libraryData, $new]);
 
     $database->delete('h5p_libraries_languages')
       ->condition('library_id', $libraryData['libraryId'])
@@ -829,11 +869,11 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     if (isset($libraryData['language'])) {
       foreach ($libraryData['language'] as $languageCode => $languageJson) {
         $id = $database->insert('h5p_libraries_languages')
-          ->fields(array(
+          ->fields([
             'library_id' => $libraryData['libraryId'],
             'language_code' => $languageCode,
             'language_json' => $languageJson,
-          ))
+          ])
           ->execute();
       }
     }
@@ -841,18 +881,19 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Convert list of file paths to csv
+   * Convert list of file paths to csv.
    *
    * @param array $libraryData
-   *  Library data as found in library.json files
+   *   Library data as found in library.json files.
    * @param string $key
-   *  Key that should be found in $libraryData
+   *   Key that should be found in $libraryData.
+   *
    * @return string
-   *  file paths separated by ', '
+   *   file paths separated by ', '
    */
   private function pathsToCsv($libraryData, $key) {
     if (isset($libraryData[$key])) {
-      $paths = array();
+      $paths = [];
       foreach ($libraryData[$key] as $file) {
         $paths[] = $file['path'];
       }
@@ -861,6 +902,9 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     return '';
   }
 
+  /**
+   *
+   */
   public function lockDependencyStorage() {
     $database = $this->database;
 
@@ -871,6 +915,9 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     }
   }
 
+  /**
+   *
+   */
   public function unlockDependencyStorage() {
     $database = $this->database;
     if ($database->driver() === 'mysql') {
@@ -879,7 +926,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements deleteLibraryDependencies
+   * Implements deleteLibraryDependencies.
    */
   public function deleteLibraryDependencies($libraryId) {
     $this->database->delete('h5p_libraries_libraries')
@@ -888,7 +935,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements deleteLibrary. Will delete a library's data both in the database and file system
+   * Implements deleteLibrary. Will delete a library's data both in the database and file system.
    */
   public function deleteLibrary($libraryId) {
     $database = $this->database;
@@ -915,7 +962,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements saveLibraryDependencies
+   * Implements saveLibraryDependencies.
    */
   public function saveLibraryDependencies($libraryId, $dependencies, $dependency_type) {
     $database = $this->database;
@@ -932,66 +979,66 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
       // The insert field order mirrors the select expressions above:
       // required_library_id, library_id, dependency_type.
       $database->insert('h5p_libraries_libraries')
-        ->fields(array('required_library_id', 'library_id', 'dependency_type'))
+        ->fields(['required_library_id', 'library_id', 'dependency_type'])
         ->from($query)
         ->execute();
     }
   }
 
   /**
-   * Implements updateContent
+   * Implements updateContent.
    */
   public function updateContent($content, $contentMainId = NULL) {
-    // Load existing entity
+    // Load existing entity.
     $h5p_content = aculta_H5PContent::load($content['id']);
 
-    // Update properties
+    // Update properties.
     $h5p_content->set('library_id', $content['library']['libraryId']);
     $h5p_content->set('parameters', $content['params']);
     $h5p_content->set('disabled_features', $content['disable']);
     $h5p_content->set('filtered_parameters', '');
 
-    // Update metadata properties
+    // Update metadata properties.
     $metadata_fields = \H5PMetadata::toDBArray($content['metadata']);
     foreach ($metadata_fields as $key => $value) {
       $h5p_content->set($key, $value);
     }
 
-    // Save changes
+    // Save changes.
     $h5p_content->save();
 
-    // Log update event
+    // Log update event.
     $this->logContentEvent('update', $content);
   }
 
   /**
-   * Implements insertContent
+   * Implements insertContent.
    */
   public function insertContent($content, $contentMainId = NULL) {
     $fields = array_merge(\H5PMetadata::toDBArray($content['metadata']), [
       'library_id' => $content['library']['libraryId'],
       'parameters' => $content['params'],
-      'disabled_features' => $content['disable']
+      'disabled_features' => $content['disable'],
     ]);
 
-    // Create new entity for content
+    // Create new entity for content.
     $h5p_content = aculta_H5PContent::create($fields);
 
-    // Save
+    // Save.
     $h5p_content->save();
 
-    // Grab id of new entitu
+    // Grab id of new entitu.
     $content['id'] = $h5p_content->id();
 
-    // Log create event
+    // Log create event.
     $this->logContentEvent('create', $content);
 
-    // Return content id of the new entity
+    // Return content id of the new entity.
     return $content['id'];
   }
 
   /**
-   * Help log content events
+   * Help log content events.
    *
    * @param string $eventType
    * @param array $content
@@ -1008,14 +1055,14 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements resetContentUserData
+   * Implements resetContentUserData.
    */
   public function resetContentUserData($contentId) {
-    // Reset user datas for this content
+    // Reset user datas for this content.
     $this->database->update('h5p_content_user_data')
       ->fields([
         'timestamp' => $this->time->getCurrentTime(),
-        'data' => 'RESET'
+        'data' => 'RESET',
       ])
       ->condition('content_main_id', $contentId)
       ->condition('delete_on_content_change', 1)
@@ -1023,7 +1070,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements getWhitelist
+   * Implements getWhitelist.
    */
   public function getWhitelist($isLibrary, $defaultContentWhitelist, $defaultLibraryWhitelist) {
     // Misplaced; should be done by Core.
@@ -1038,7 +1085,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements copyLibraryUsage
+   * Implements copyLibraryUsage.
    */
   public function copyLibraryUsage($contentId, $copyFromId, $contentMainId = NULL) {
     $this->database->query("
@@ -1050,31 +1097,31 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
       WHERE hnl.content_id = :fromId",
       [
         ':toId' => $contentId,
-        ':fromId' => $copyFromId
+        ':fromId' => $copyFromId,
       ]);
   }
 
   /**
-   * Implements deleteContentData
+   * Implements deleteContentData.
    */
   public function deleteContentData($contentId) {
-    // Delete library usage
+    // Delete library usage.
     $this->deleteLibraryUsage($contentId);
     $database = $this->database;
 
-    // Remove content points
+    // Remove content points.
     $database->delete('h5p_points')
       ->condition('content_id', $contentId)
       ->execute();
 
-    // Remove content user data
+    // Remove content user data.
     $database->delete('h5p_content_user_data')
       ->condition('content_main_id', $contentId)
       ->execute();
   }
 
   /**
-   * Implements deleteLibraryUsage
+   * Implements deleteLibraryUsage.
    */
   public function deleteLibraryUsage($contentId) {
     $this->database->delete('h5p_content_libraries')
@@ -1083,10 +1130,10 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements saveLibraryUsage
+   * Implements saveLibraryUsage.
    */
   public function saveLibraryUsage($contentId, $librariesInUse) {
-    $dropLibraryCssList = array();
+    $dropLibraryCssList = [];
     foreach ($librariesInUse as $dependency) {
       if (!empty($dependency['library']['dropLibraryCss'])) {
         $dropLibraryCssList = array_merge($dropLibraryCssList, explode(', ', $dependency['library']['dropLibraryCss']));
@@ -1096,19 +1143,20 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     foreach ($librariesInUse as $dependency) {
       $dropCss = in_array($dependency['library']['machineName'], $dropLibraryCssList) ? 1 : 0;
       $database->insert('h5p_content_libraries')
-        ->fields(array(
+        ->fields([
           'content_id' => $contentId,
           'library_id' => $dependency['library']['libraryId'],
           'dependency_type' => $dependency['type'],
           'drop_css' => $dropCss,
           'weight' => $dependency['weight'],
-        ))
+        ])
         ->execute();
     }
   }
 
   /**
-   * Implements loadLibrary
+   * Implements loadLibrary.
+   *
    * @return array|false
    */
   public function loadLibrary($machineName, $majorVersion, $minorVersion) {
@@ -1136,7 +1184,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
       [
         ':machine_name' => $machineName,
         ':major_version' => $majorVersion,
-        ':minor_version' => $minorVersion
+        ':minor_version' => $minorVersion,
       ]
     )->fetchObject();
 
@@ -1145,7 +1193,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     }
     $library = \H5PCore::snakeToCamel($library);
 
-    // Load dependencies
+    // Load dependencies.
     $result = $database->query(
       "SELECT hl.machine_name AS name,
               hl.major_version AS major,
@@ -1156,7 +1204,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
             ON hll.required_library_id = hl.library_id
         WHERE hll.library_id = :library_id",
       [
-        ':library_id' => $library['libraryId']
+        ':library_id' => $library['libraryId'],
       ]
     );
 
@@ -1173,6 +1221,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements loadLibrarySemantics().
+   *
    * @return string
    */
   public function loadLibrarySemantics($machineName, $majorVersion, $minorVersion) {
@@ -1185,7 +1234,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
       [
         ':machine_name' => $machineName,
         ':major_version' => $majorVersion,
-        ':minor_version' => $minorVersion
+        ':minor_version' => $minorVersion,
       ]
     )->fetchField();
 
@@ -1196,13 +1245,14 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
    * Implements alterLibrarySemantics().
    */
   public function alterLibrarySemantics(&$semantics, $name, $majorVersion, $minorVersion) {
-    // alter only takes 4 arguments, so versions are combined to single parameter
-    $version = $majorVersion . '.'. $minorVersion;
+    // Alter only takes 4 arguments, so versions are combined to single parameter.
+    $version = $majorVersion . '.' . $minorVersion;
     $this->moduleHandler->alter('h5p_semantics', $semantics, $name, $version);
   }
 
   /**
    * Implements loadContent().
+   *
    * @return array
    */
   public function loadContent($id) {
@@ -1213,6 +1263,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements loadContentDependencies().
+   *
    * @return array
    */
   public function loadContentDependencies($id, $type = NULL) {
@@ -1246,9 +1297,10 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
    * Get stored setting.
    *
    * @param string $name
-   *   Identifier for the setting
+   *   Identifier for the setting.
    * @param string $default
-   *   Optional default value if settings is not set
+   *   Optional default value if settings is not set.
+   *
    * @return mixed
    *   Whatever has been stored as the setting
    */
@@ -1259,16 +1311,17 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     else {
       $value = $this->configFactory->get('aculta_lms_h5p.settings')->get('aculta_lms_h5p_' . $name);
     }
-    return $value !== NULL ? $value : $default;
+    return $value ?? $default;
   }
 
   /**
    * Stores the given setting.
    *
    * @param string $name
-   *   Identifier for the setting
-   * @param mixed $value Data
-   *   Whatever we want to store as the setting
+   *   Identifier for the setting.
+   * @param mixed $value
+   *   Data
+   *   Whatever we want to store as the setting.
    */
   public function setOption($name, $value) {
     // Only update the setting if it has infact changed.
@@ -1290,6 +1343,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
    * H5P Core 1.28 added this interface method. The ACULTA installation keeps
    * Hub communication disabled; clear any legacy registration material and
    * leave both Hub and usage reporting disabled after an authorization failure.
+   *
    * @return void
    */
   public function resetHubOrganizationData() {
@@ -1305,12 +1359,14 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
    * Returns whether to store this variable in Drupal's state api, or config.
    *
    * @param string $name
-   *   Key for the name
-   * @return boolean
+   *   Key for the name.
+   *
+   * @return bool
    */
   protected function stateOption($name) {
     return in_array($name, self::STATE_OPTIONS);
   }
+
   /**
    * Convert variables to fit our DB.
    */
@@ -1341,29 +1397,29 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
    */
   public function clearFilteredParameters($library_ids) {
 
-    // Grab all aculta_H5PContent entities
+    // Grab all aculta_H5PContent entities.
     $h5p_contents = $this->entityTypeManager
-        ->getStorage('aculta_h5p_content')
-        ->loadByProperties(['library_id' => $library_ids]);
+      ->getStorage('aculta_h5p_content')
+      ->loadByProperties(['library_id' => $library_ids]);
     /** @var \Drupal\aculta_lms_h5p\Entity\aculta_H5PContent[] $h5p_contents */
 
-    // Clear their filtered_parameters
+    // Clear their filtered_parameters.
     foreach ($h5p_contents as $h5p_content) {
       $h5p_content->set('filtered_parameters', '');
       $h5p_content->save();
     }
 
-    // Clear hook_library_info_build() to use updated libraries
+    // Clear hook_library_info_build() to use updated libraries.
     $this->libraryDiscovery->clear();
 
-    // Delete ALL cached JS and CSS files
+    // Delete ALL cached JS and CSS files.
     $this->jsCollectionOptimizer->deleteAll();
     $this->cssCollectionOptimizer->deleteAll();
 
-    // Reset cache buster
+    // Reset cache buster.
     $this->assetQueryString->reset();
 
-    // Clear field view cache for ALL H5P content
+    // Clear field view cache for ALL H5P content.
     Cache::invalidateTags(['h5p_content']);
   }
 
@@ -1379,6 +1435,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
 
   /**
    * Implements getNumContent.
+   *
    * @return int
    */
   public function getNumContent($library_id, $skip = NULL) {
@@ -1387,7 +1444,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements isContentSlugAvailable
+   * Implements isContentSlugAvailable.
+   *
    * @return bool
    */
   public function isContentSlugAvailable($slug) {
@@ -1395,29 +1453,31 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements saveCachedAssets
+   * Implements saveCachedAssets.
    */
   public function saveCachedAssets($key, $libraries) {
   }
 
   /**
-   * Implements deleteCachedAssets
+   * Implements deleteCachedAssets.
+   *
    * @return array
    */
   public function deleteCachedAssets($library_id) {
   }
 
   /**
-   * Implements afterExportCreated
+   * Implements afterExportCreated.
    */
   public function afterExportCreated($content, $filename) {
   }
 
   /**
-   * Implements hasPermission
+   * Implements hasPermission.
    *
    * @param H5PPermission $permission
-   * @param boolean $canUpdateEntity
+   * @param bool $canUpdateEntity
+   *
    * @return bool
    */
   public function hasPermission($permission, $canUpdateEntity = NULL) {
@@ -1455,14 +1515,15 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Replaces existing content type cache with the one passed in
+   * Replaces existing content type cache with the one passed in.
    *
-   * @param object $contentTypeCache Json with an array called 'libraries'
-   *  containing the new content type cache that should replace the old one.
+   * @param object $contentTypeCache
+   *   Json with an array called 'libraries'
+   *   containing the new content type cache that should replace the old one.
    */
   public function replaceContentTypeCache($contentTypeCache) {
     $database = $this->database;
-    // Replace existing cache
+    // Replace existing cache.
     $database->delete('h5p_libraries_hub_cache')->execute();
 
     foreach ($contentTypeCache->contentTypes as $ct) {
@@ -1485,19 +1546,20 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
           'is_recommended' => $ct->isRecommended === TRUE ? 1 : 0,
           'popularity' => $ct->popularity,
           'screenshots' => json_encode($ct->screenshots),
-          'license' => json_encode(isset($ct->license) ? $ct->license : array()),
+          'license' => json_encode($ct->license ?? []),
           'example' => $ct->example,
-          'tutorial' => isset($ct->tutorial) ? $ct->tutorial : '',
-          'keywords' => json_encode(isset($ct->keywords) ? $ct->keywords : array()),
-          'categories' => json_encode(isset($ct->categories) ? $ct->categories : array()),
-          'owner' => $ct->owner
+          'tutorial' => $ct->tutorial ?? '',
+          'keywords' => json_encode($ct->keywords ?? []),
+          'categories' => json_encode($ct->categories ?? []),
+          'owner' => $ct->owner,
         ])
         ->execute();
     }
   }
 
   /**
-   * Implements loadAddons
+   * Implements loadAddons.
+   *
    * @return array
    */
   public function loadAddons() {
@@ -1511,9 +1573,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
       AND l2.machine_name IS NULL");
 
     // NOTE: These are treated as library objects but are missing the following properties:
-    // title, embed_types, drop_library_css, fullscreen, runnable, semantics, has_icon
-
-    $addons = array();
+    // title, embed_types, drop_library_css, fullscreen, runnable, semantics, has_icon.
+    $addons = [];
     while ($addon = $result->fetchObject()) {
       $addons[] = \H5PCore::snakeToCamel($addon);
     }
@@ -1521,7 +1582,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements getLibraryConfig
+   * Implements getLibraryConfig.
+   *
    * @return array
    */
   public function getLibraryConfig($libraries = NULL) {
@@ -1529,7 +1591,8 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   }
 
   /**
-   * Implements libraryHasUpgrade
+   * Implements libraryHasUpgrade.
+   *
    * @return bool
    */
   public function libraryHasUpgrade($library) {
@@ -1543,9 +1606,10 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
       [
         ':name' => $library['machineName'],
         ':major' => $library['majorVersion'],
-        ':minor' => $library['minorVersion']
+        ':minor' => $library['minorVersion'],
       ])->fetchField();
   }
+
   /**
    * Replaces the Content Hub metadata cache for one language.
    *
@@ -1634,4 +1698,5 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
     $lang = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $lang);
     return 'h5p.content_hub_metadata' . ($checked ? '_checked' : '') . '.' . ($lang !== '' ? $lang : 'en');
   }
+
 }

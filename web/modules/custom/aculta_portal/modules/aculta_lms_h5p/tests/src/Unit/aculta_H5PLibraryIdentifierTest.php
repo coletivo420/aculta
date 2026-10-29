@@ -9,14 +9,23 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 
+/**
+ *
+ */
 #[CoversClass(aculta_H5PLibraryIdentifier::class)]
 final class aculta_H5PLibraryIdentifierTest extends UnitTestCase {
 
+  /**
+ *
+ */
   #[DataProvider('libraryMetadataProvider')]
   public function testConvertsH5PLibraryMetadata(array|\stdClass $library, string $expected): void {
     self::assertSame($expected, aculta_H5PLibraryIdentifier::toDrupalLibraryId($library));
   }
 
+  /**
+   *
+   */
   public static function libraryMetadataProvider(): array {
     return [
       'database dependency' => [(object) ['name' => 'H5P.HelloWorld', 'major' => 1, 'minor' => 0], 'h5p.helloworld-1.0'],
@@ -25,6 +34,9 @@ final class aculta_H5PLibraryIdentifierTest extends UnitTestCase {
     ];
   }
 
+  /**
+   *
+   */
   public function testRejectsMalformedLibraryIdentifierParts(): void {
     $this->expectException(\InvalidArgumentException::class);
     aculta_H5PLibraryIdentifier::toDrupalLibraryId([

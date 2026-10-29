@@ -9,9 +9,13 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_lms_h5p\Plugin\views\access\aculta_H5PAccessUserPoints;
 use Drupal\Tests\UnitTestCase;
 
-/** Tests account-scoped access to the H5P results view. */
+/**
+ * Tests account-scoped access to the H5P results view. */
 final class aculta_H5PAccessUserPointsTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testGlobalPermissionAllowsResultsOutsideUserProfile(): void {
     $routeMatch = $this->createMock(RouteMatchInterface::class);
     $routeMatch->method('getRouteName')->willReturn('view.h5p_results.page');
@@ -23,6 +27,9 @@ final class aculta_H5PAccessUserPointsTest extends UnitTestCase {
     self::assertTrue($this->plugin($routeMatch)->access($account));
   }
 
+  /**
+   *
+   */
   public function testOwnResultsRequireCanonicalProfileAndOwnPermission(): void {
     $routeAccount = $this->account('42');
     $routeMatch = $this->createMock(RouteMatchInterface::class);
@@ -35,6 +42,9 @@ final class aculta_H5PAccessUserPointsTest extends UnitTestCase {
     self::assertFalse($this->plugin($routeMatch)->access($this->account('42')));
   }
 
+  /**
+   *
+   */
   public function testOwnPermissionDoesNotGrantAccessOnOtherRoutes(): void {
     $routeMatch = $this->createMock(RouteMatchInterface::class);
     $routeMatch->method('getRouteName')->willReturn('view.h5p_results.page');
@@ -42,11 +52,15 @@ final class aculta_H5PAccessUserPointsTest extends UnitTestCase {
     self::assertFalse($this->plugin($routeMatch)->access($this->account('42', ['access own h5p results'])));
   }
 
+  /**
+   *
+   */
   private function plugin(RouteMatchInterface $routeMatch): aculta_H5PAccessUserPoints {
     return new aculta_H5PAccessUserPoints([], 'h5paccessuserpoints', [], $routeMatch);
   }
 
-  /** Creates an account double with only the requested permissions. */
+  /**
+   * Creates an account double with only the requested permissions. */
   private function account(string $id, array $permissions = []): AccountInterface {
     $account = $this->createMock(AccountInterface::class);
     $account->method('id')->willReturn($id);

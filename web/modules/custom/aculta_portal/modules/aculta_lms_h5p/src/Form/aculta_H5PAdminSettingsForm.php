@@ -1,6 +1,6 @@
 <?php
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Form;
 
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
@@ -31,6 +31,9 @@ class aculta_H5PAdminSettingsForm extends FormBase {
     $this->framework = $framework;
   }
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('file_system'), $container->get('cache_tags.invalidator'), $container->get('aculta_lms_h5p.framework'));
   }
@@ -42,9 +45,12 @@ class aculta_H5PAdminSettingsForm extends FormBase {
     return 'h5p_admin_settings_form';
   }
 
-  function buildForm(array $form, FormStateInterface $form_state) {
+  /**
+   *
+   */
+  public function buildForm(array $form, FormStateInterface $form_state) {
 
-    // make sure core is loaded
+    // Make sure core is loaded.
     $interface = aculta_H5PDrupal::getInstance();
     $form['h5p_display_options'] = [
       '#type' => 'fieldset',
@@ -54,121 +60,121 @@ class aculta_H5PAdminSettingsForm extends FormBase {
     // Hub confirmation UI stays disabled in ACULTA; kept for upstream parity.
     /*
     $disable_hub_data = array(
-      'errors' => $server_setup_errors,
-      'header' => $core->h5pF->t('Confirmation action'),
-      'confirmationDialogMsg' => $core->h5pF->t('Do you still want to enable the hub ?'),
-      'cancelLabel' => $core->h5pF->t('Cancel'),
-      'confirmLabel' => $core->h5pF->t('Confirm')
+    'errors' => $server_setup_errors,
+    'header' => $core->h5pF->t('Confirmation action'),
+    'confirmationDialogMsg' => $core->h5pF->t('Do you still want to enable the hub ?'),
+    'cancelLabel' => $core->h5pF->t('Cancel'),
+    'confirmLabel' => $core->h5pF->t('Confirm')
     );
     $form['h5p_display_options'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Display Options'),
-      '#attached' => array(
-        'js' => array(
-          array(
-            'data' => 'H5PDisableHubData = ' . json_encode($disable_hub_data) . ';',
-            'type' => 'inline'
-          ),
-          $path . '/vendor/h5p/h5p-core/js/jquery.js',
-          $path . '/vendor/h5p/h5p-core/js/h5p-event-dispatcher.js',
-          $path . '/vendor/h5p/h5p-core/js/h5p-confirmation-dialog.js',
-          $path . '/vendor/h5p/h5p-core/js/settings/h5p-disable-hub.js',
-          $path . '/vendor/h5p/h5p-core/js/h5p-display-options.js',
-        ),
-        'css' => array(
-          $path . '/vendor/h5p/h5p-core/styles/h5p-confirmation-dialog.css',
-          $path . '/vendor/h5p/h5p-core/styles/h5p.css',
-          $path . '/vendor/h5p/h5p-core/styles/h5p-core-button.css'
-        )
-      )
+    '#type' => 'fieldset',
+    '#title' => t('Display Options'),
+    '#attached' => array(
+    'js' => array(
+    array(
+    'data' => 'H5PDisableHubData = ' . json_encode($disable_hub_data) . ';',
+    'type' => 'inline'
+    ),
+    $path . '/vendor/h5p/h5p-core/js/jquery.js',
+    $path . '/vendor/h5p/h5p-core/js/h5p-event-dispatcher.js',
+    $path . '/vendor/h5p/h5p-core/js/h5p-confirmation-dialog.js',
+    $path . '/vendor/h5p/h5p-core/js/settings/h5p-disable-hub.js',
+    $path . '/vendor/h5p/h5p-core/js/h5p-display-options.js',
+    ),
+    'css' => array(
+    $path . '/vendor/h5p/h5p-core/styles/h5p-confirmation-dialog.css',
+    $path . '/vendor/h5p/h5p-core/styles/h5p.css',
+    $path . '/vendor/h5p/h5p-core/styles/h5p-core-button.css'
+    )
+    )
     );
-    */
+     */
 
-    $button_behaviours_download = array(
-        \H5PDisplayOptionBehaviour::NEVER_SHOW => $this->t('Nunca'),
-        \H5PDisplayOptionBehaviour::ALWAYS_SHOW => $this->t('Sempre'),
-        \H5PDisplayOptionBehaviour::CONTROLLED_BY_PERMISSIONS => $this->t('Somente quando permitido pelas permissões'),
-        \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_ON => $this->t('Controlado por quem criou, ligado por padrão'),
-        \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF => $this->t('Controlado por quem criou, desligado por padrão'),
-    );
+    $button_behaviours_download = [
+      \H5PDisplayOptionBehaviour::NEVER_SHOW => $this->t('Nunca'),
+      \H5PDisplayOptionBehaviour::ALWAYS_SHOW => $this->t('Sempre'),
+      \H5PDisplayOptionBehaviour::CONTROLLED_BY_PERMISSIONS => $this->t('Somente quando permitido pelas permissões'),
+      \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_ON => $this->t('Controlado por quem criou, ligado por padrão'),
+      \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF => $this->t('Controlado por quem criou, desligado por padrão'),
+    ];
 
-    $button_behaviours = array(
+    $button_behaviours = [
       \H5PDisplayOptionBehaviour::NEVER_SHOW => $this->t('Nunca exibir'),
       \H5PDisplayOptionBehaviour::ALWAYS_SHOW => $this->t('Exibir sempre'),
       \H5PDisplayOptionBehaviour::CONTROLLED_BY_PERMISSIONS => $this->t('Exibir somente quando permitido pelas permissões'),
       \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_ON => $this->t('Controlado por quem criou, ligado por padrão'),
       \H5PDisplayOptionBehaviour::CONTROLLED_BY_AUTHOR_DEFAULT_OFF => $this->t('Controlado por quem criou, desligado por padrão'),
-    );
+    ];
 
     $this->addDisplayOption($form['h5p_display_options'], 'h5p_frame', $this->t('Exibir botões de download, incorporação e direitos autorais'), $interface->getOption('frame', 1), '.form-item-h5p-export, .form-item-h5p-embed, .form-item-h5p-copyright, .form-item-h5p-icon');
-    $form['h5p_display_options']['h5p_export'] = array(
+    $form['h5p_display_options']['h5p_export'] = [
       '#title' => $this->t('Permitir download'),
       '#options' => $button_behaviours_download,
       '#default_value' => $interface->getOption('export'),
       '#type' => 'select',
-    );
+    ];
 
-    $form['h5p_display_options']['h5p_embed'] = array(
+    $form['h5p_display_options']['h5p_embed'] = [
       '#title' => $this->t('Botão de incorporação'),
       '#options' => $button_behaviours,
       '#default_value' => $interface->getOption('embed'),
       '#type' => 'select',
-    );
+    ];
 
     $this->addDisplayOption($form['h5p_display_options'], 'h5p_copyright', $this->t('Botão de direitos autorais'), $interface->getOption('copyright'));
     $this->addDisplayOption($form['h5p_display_options'], 'h5p_icon', $this->t('Botão Sobre o H5P'), $interface->getOption('icon'));
 
     $dir = $this->fileSystem->realpath('private://');
-    $form['h5p_default_path'] = array(
+    $form['h5p_default_path'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Diretório privado dos arquivos H5P'),
       '#default_value' => $interface->getOption('default_path', 'h5p'),
       '#description' => $this->t('Subdiretório em %dir para armazenar os arquivos H5P. Use apenas letras, números, hífen, sublinhado e barras entre pastas.', ['%dir' => $dir]),
-    );
+    ];
 
-    $form['h5p_revisioning'] = array(
+    $form['h5p_revisioning'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Guardar os arquivos de cada revisão'),
       '#default_value' => $interface->getOption('revisioning', 1),
       '#description' => $this->t('Desative para economizar espaço. Isso não apaga arquivos de revisões já existentes.'),
-    );
+    ];
 
-    $form['h5p_whitelist'] = array(
+    $form['h5p_whitelist'] = [
       '#type' => 'textfield',
       '#maxlength' => 8192,
       '#title' => $this->t('Extensões permitidas para os arquivos de conteúdo'),
       '#default_value' => $interface->getOption('whitelist', \H5PCore::$defaultContentWhitelist),
       '#description' => $this->t('Separe as extensões por espaço, por exemplo: png jpg jpeg gif webm mp4 ogg mp3. Alterar esta lista afeta a segurança; nunca permita extensões executáveis como php.'),
-    );
+    ];
 
-    $form['h5p_library_whitelist_extras'] = array(
+    $form['h5p_library_whitelist_extras'] = [
       '#type' => 'textfield',
       '#maxlength' => 8192,
       '#title' => $this->t('Extensões adicionais permitidas nas bibliotecas'),
       '#default_value' => $interface->getOption('library_whitelist_extras', \H5PCore::$defaultLibraryWhitelistExtras),
       '#description' => $this->t('Algumas bibliotecas precisam de extensões adicionais. Alterar esta lista afeta a segurança; nunca permita extensões executáveis como php.'),
-    );
+    ];
 
-    $form['h5p_save_content_state'] = array(
+    $form['h5p_save_content_state'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Salvar o estado das atividades'),
       '#default_value' => $interface->getOption('save_content_state', 0),
       '#description' => $this->t('Salva automaticamente o estado da atividade para que cada pessoa possa continuar de onde parou.'),
-    );
+    ];
 
-    $form['h5p_save_content_frequency'] = array(
+    $form['h5p_save_content_frequency'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Intervalo para salvar o estado'),
       '#default_value' => $interface->getOption('save_content_frequency', 30),
       '#description' => $this->t('Intervalo em segundos entre salvamentos automáticos do progresso.'),
-    );
+    ];
 
-    $form['h5p_enable_lrs_content_types'] = array(
+    $form['h5p_enable_lrs_content_types'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Permitir tipos que dependem de um LRS'),
       '#default_value' => $interface->getOption('enable_lrs_content_types', 0),
       '#description' => $this->t('Permite tipos de atividade que precisam de um Learning Record Store (LRS), como Questionário.'),
-    );
+    ];
 
     $form['h5p_external_services'] = [
       '#type' => 'item',
@@ -177,18 +183,17 @@ class aculta_H5PAdminSettingsForm extends FormBase {
     ];
 
     // Site key editing is intentionally unavailable while the H5P Hub is disabled.
-//  $site_key = variable_get('h5p_site_key', variable_get('h5p_site_uuid', ''));
-//  $form['h5p_site_key'] = array(
-//    '#type' => 'textfield',
-//    '#title' => t('Site Key'),
-//    '#default_value' => '',
-//    '#attributes' => array(
-//      'data-value' => $site_key,
-//      'placeholder' => ($site_key ? '********-****-****-****-************' : t('Empty'))
-//    ),
-//    '#description' => t("The site key is a secret that uniquely identifies this site with the Hub."),
-//  );
-
+    //  $site_key = variable_get('h5p_site_key', variable_get('h5p_site_uuid', ''));
+    //  $form['h5p_site_key'] = array(
+    //    '#type' => 'textfield',
+    //    '#title' => t('Site Key'),
+    //    '#default_value' => '',
+    //    '#attributes' => array(
+    //      'data-value' => $site_key,
+    //      'placeholder' => ($site_key ? '********-****-****-****-************' : t('Empty'))
+    //    ),
+    //    '#description' => t("The site key is a secret that uniquely identifies this site with the Hub."),
+    //  );
     // Development mode settings.
     $form['h5p_development_mode'] = [
       '#type' => 'select',
@@ -202,12 +207,11 @@ class aculta_H5PAdminSettingsForm extends FormBase {
       ],
     ];
 
-
     $form['actions']['#type'] = 'actions';
-    $form['actions']['submit'] = array(
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Salvar'),
-    );
+    ];
 
     return $form;
   }
@@ -215,7 +219,7 @@ class aculta_H5PAdminSettingsForm extends FormBase {
   /**
    * Form validation handler for admin settings form.
    */
-  function validateForm(array &$form, FormStateInterface $form_state) {
+  public function validateForm(array &$form, FormStateInterface $form_state) {
 
     $values = $form_state->getValues();
 
@@ -235,7 +239,7 @@ class aculta_H5PAdminSettingsForm extends FormBase {
       $form_state->setErrorByName('h5p_default_path', $this->t('O diretório informado é inválido.'));
     }
 
-    if (! is_numeric($values['h5p_save_content_frequency']) || $values['h5p_save_content_frequency'] < 0) {
+    if (!is_numeric($values['h5p_save_content_frequency']) || $values['h5p_save_content_frequency'] < 0) {
       $form_state->setErrorByName('h5p_save_content_frequency', $this->t('Informe um número maior ou igual a zero.'));
     }
   }
@@ -243,7 +247,7 @@ class aculta_H5PAdminSettingsForm extends FormBase {
   /**
    * Form submit handler for h5p admin settings form.
    */
-  function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
 
     $interface = aculta_H5PDrupal::getInstance();
     $values = $form_state->getValues();
@@ -276,13 +280,14 @@ class aculta_H5PAdminSettingsForm extends FormBase {
     $this->cacheTagsInvalidator->invalidateTags(['h5p_content']);
 
     // Site key editing is intentionally unavailable while the H5P Hub is disabled.
-//  if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $form_state['values']['h5p_site_key'])) {
-//    // Invalid key, use the old one
-//    $form_state['values']['h5p_site_key'] = variable_get('h5p_site_key', variable_get('h5p_site_uuid', ''));
-//  }
+    //  if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $form_state['values']['h5p_site_key'])) {
+    //    // Invalid key, use the old one
+    //    $form_state['values']['h5p_site_key'] = variable_get('h5p_site_key', variable_get('h5p_site_uuid', ''));
+    //  }.
   }
 
-  /** Adds one H5P display option with an optional visibility selector. */
+  /**
+   * Adds one H5P display option with an optional visibility selector. */
   private function addDisplayOption(array &$element, string $name, string $title, mixed $value, ?string $visibilitySubjectId = NULL): void {
     $element[$name] = [
       '#type' => 'checkbox',

@@ -10,7 +10,8 @@ use Drupal\Core\File\FileSystemInterface;
 use Drupal\file\FileRepositoryInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 
-/** Keeps H5P media records synchronized with Drupal's managed file lifecycle. */
+/**
+ * Keeps H5P media records synchronized with Drupal's managed file lifecycle. */
 final class aculta_H5PFileUsageManager {
 
   public function __construct(
@@ -21,7 +22,8 @@ final class aculta_H5PFileUsageManager {
     private readonly ImageFileUsageManager $imageUsage,
   ) {}
 
-  /** Marks a media file retained by a saved H5P content entity. */
+  /**
+   * Marks a media file retained by a saved H5P content entity. */
   public function keep(string $absolutePath): void {
     $base = (string) ($this->configFactory->get('aculta_lms_h5p.settings')->get('aculta_lms_h5p_default_path') ?? 'h5p');
     if (!preg_match('@^[a-z0-9_-]+(?:/[a-z0-9_-]+)*$@iD', $base)) {

@@ -14,7 +14,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-/** Handles authenticated, course-scoped H5P progress requests. */
+/**
+ * Handles authenticated, course-scoped H5P progress requests. */
 final class aculta_H5PAJAX extends ControllerBase {
 
   public function __construct(
@@ -23,6 +24,9 @@ final class aculta_H5PAJAX extends ControllerBase {
     private readonly aculta_H5PCourseAccessManager $courseAccess,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     $controller = new static(
       $container->get('database'),
@@ -32,7 +36,8 @@ final class aculta_H5PAJAX extends ControllerBase {
     return $controller;
   }
 
-  /** Stores a completed score after validating membership and the H5P token. */
+  /**
+   * Stores a completed score after validating membership and the H5P token. */
   public function setFinished(int $group_id, Request $request): JsonResponse {
     $uid = (int) $this->currentUser()->id();
     $content_id = $request->request->getInt('contentId');
@@ -65,7 +70,8 @@ final class aculta_H5PAJAX extends ControllerBase {
     return $this->privateResponse(['success' => TRUE]);
   }
 
-  /** Loads or saves user state for content accessible through this course. */
+  /**
+   * Loads or saves user state for content accessible through this course. */
   public function contentUserData(int $group_id, int $content_main_id, string $data_id, int $sub_content_id, Request $request): JsonResponse {
     $user = $this->currentUser();
     if (!$user->isAuthenticated() || $content_main_id < 1 || !preg_match('/^[a-zA-Z0-9_.-]{1,128}$/', $data_id) || $sub_content_id < 0 || !$this->courseAccess->studentAccess($group_id, $content_main_id, $user)->isAllowed() || !\H5PCore::validToken('contentuserdata', (string) $request->query->get('token', ''))) {
@@ -106,7 +112,8 @@ final class aculta_H5PAJAX extends ControllerBase {
     return $this->privateResponse(['success' => TRUE, 'data' => $data === FALSE ? NULL : $data]);
   }
 
-  /** Returns personalized progress data with browser and proxy caching disabled. */
+  /**
+   * Returns personalized progress data with browser and proxy caching disabled. */
   private function privateResponse(array $data, int $status = 200): JsonResponse {
     $response = new JsonResponse($data, $status);
     $response->headers->set('Cache-Control', 'private, no-store, max-age=0');

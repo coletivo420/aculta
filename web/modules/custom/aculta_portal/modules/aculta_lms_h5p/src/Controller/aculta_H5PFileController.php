@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms_h5p\Controller;
 
+use Symfony\Component\Mime\MimeTypes;
 use Drupal\aculta_lms_h5p\Access\aculta_H5PCourseAccessManager;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PStoragePathInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -14,7 +15,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/** Serves H5P assets from private storage with explicit path and access checks. */
+/**
+ * Serves H5P assets from private storage with explicit path and access checks. */
 final class aculta_H5PFileController implements ContainerInjectionInterface {
 
   public function __construct(
@@ -23,11 +25,15 @@ final class aculta_H5PFileController implements ContainerInjectionInterface {
     private readonly aculta_H5PStoragePathInterface $storagePath,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('aculta_lms_h5p.course_access'), $container->get('current_user'), $container->get('aculta_lms_h5p.storage_path'));
   }
 
-  /** Serves a content asset only to members who can access its course. */
+  /**
+   * Serves a content asset only to members who can access its course. */
   public function contentFile(
     int $group_id,
     int $content_id,
@@ -49,7 +55,8 @@ final class aculta_H5PFileController implements ContainerInjectionInterface {
     return $this->serve($this->storagePath->getPath() . '/content/' . $content_id, $relative, FALSE);
   }
 
-  /** Serves installed library runtime assets; package uploads are not exposed. */
+  /**
+   * Serves installed library runtime assets; package uploads are not exposed. */
   public function libraryFile(
     string $library,
     string $file_path,
@@ -68,6 +75,9 @@ final class aculta_H5PFileController implements ContainerInjectionInterface {
     return $this->serve($this->storagePath->getPath() . '/libraries', $relative, TRUE);
   }
 
+  /**
+   *
+   */
   private function serve(string $base, string $relative, bool $library): Response {
     if ($relative === '' || strlen($relative) > 2048 || count(explode('/', $relative)) > 12
       || str_contains($relative, "\0") || str_contains($relative, '\\') || preg_match('@(^|/)\.\.?(/|$)@', $relative)) {
@@ -86,7 +96,7 @@ final class aculta_H5PFileController implements ContainerInjectionInterface {
       throw new NotFoundHttpException();
     }
 
-    $mime = (new \Symfony\Component\Mime\MimeTypes())->getMimeTypes($extension)[0] ?? 'application/octet-stream';
+    $mime = (new MimeTypes())->getMimeTypes($extension)[0] ?? 'application/octet-stream';
     $response = new BinaryFileResponse($path);
     $response->headers->set('Content-Type', $mime);
     $response->headers->set('X-Content-Type-Options', 'nosniff');

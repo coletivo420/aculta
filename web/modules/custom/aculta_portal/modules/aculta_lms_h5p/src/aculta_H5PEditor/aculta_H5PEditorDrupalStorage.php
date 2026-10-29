@@ -1,12 +1,15 @@
 <?php
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\aculta_H5PEditor;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 
+/**
+ *
+ */
 class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
 
   public function __construct(
@@ -20,10 +23,15 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
    * Load language file(JSON) from database.
    * This is used to translate the editor fields(title, description etc.)
    *
-   * @param string $machineName The machine readable name of the library(content type)
-   * @param int $majorVersion Major part of version number
-   * @param int $minor Minor part of version number
-   * @param string $lang Language code
+   * @param string $machineName
+   *   The machine readable name of the library(content type)
+   * @param int $majorVersion
+   *   Major part of version number.
+   * @param int $minor
+   *   Minor part of version number.
+   * @param string $lang
+   *   Language code.
+   *
    * @return string Translation in JSON format
    */
   public function getLanguage($name, $major, $minor, $lang) {
@@ -49,9 +57,13 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
   /**
    * Load a list of available language codes from the database.
    *
-   * @param string $machineName The machine readable name of the library(content type)
-   * @param int $majorVersion Major part of version number
-   * @param int $minor Minor part of version number
+   * @param string $machineName
+   *   The machine readable name of the library(content type)
+   * @param int $majorVersion
+   *   Major part of version number.
+   * @param int $minor
+   *   Minor part of version number.
+   *
    * @return array List of possible language codes
    */
   public function getAvailableLanguages($machineName, $majorVersion, $minor) {
@@ -66,10 +78,11 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
       [
         ':name' => $machineName,
         ':major' => $majorVersion,
-        ':minor' => $minor
+        ':minor' => $minor,
       ]);
 
-    $codes = array('en'); // Semantics is 'en' by default.
+    // Semantics is 'en' by default.
+    $codes = ['en'];
     foreach ($results as $result) {
       $codes[] = $result->language_code;
     }
@@ -81,7 +94,8 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
    * "Callback" for mark the given file as a permanent file.
    * Used when saving content that has new uploaded files.
    *
-   * @param string $path To new file
+   * @param string $path
+   *   To new file.
    */
   public function keepFile($path) {
     $this->fileUsageManager->keep((string) $path);
@@ -97,7 +111,9 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
    * Editor that already knows which content types are supported in its
    * slides.
    *
-   * @param array $libraries List of library names + version to load info for
+   * @param array $libraries
+   *   List of library names + version to load info for.
+   *
    * @return array List of all libraries loaded
    */
   public function getLibraries($libraries = NULL) {
@@ -107,7 +123,7 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
 
     if ($libraries !== NULL) {
       // Get details for the specified libraries only.
-      $librariesWithDetails = array();
+      $librariesWithDetails = [];
       foreach ($libraries as $library) {
         $details = $database->query(
           "SELECT title, runnable, restricted, tutorial_url, metadata_settings
@@ -115,11 +131,12 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
           WHERE machine_name = :name
           AND major_version = :major
           AND minor_version = :minor
-          AND semantics IS NOT NULL", // DT-H5P04 (DEBT-REGISTER.md): measure before removing.
+// DT-H5P04 (DEBT-REGISTER.md): measure before removing.
+          AND semantics IS NOT NULL",
           [
             ':name' => $library->name,
             ':major' => $library->majorVersion,
-            ':minor' => $library->minorVersion
+            ':minor' => $library->minorVersion,
           ])
           ->fetchObject();
         if ($details !== FALSE) {
@@ -148,10 +165,11 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
       FROM {h5p_libraries}
       WHERE runnable = 1
       AND semantics IS NOT NULL
-      ORDER BY title"); // DT-H5P04 (DEBT-REGISTER.md): measure before removing.
+// DT-H5P04 (DEBT-REGISTER.md): measure before removing.
+      ORDER BY title");
     foreach ($libraries_result as $library) {
       // Convert result object properties to camelCase.
-      $library = \H5PCore::snakeToCamel($library, true);
+      $library = \H5PCore::snakeToCamel($library, TRUE);
 
       $library->metadataSettings = json_decode($library->metadataSettings ?? '');
 
@@ -160,7 +178,7 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
         if ($library->name === $existingLibrary->name) {
 
           // Mark old ones
-          // This is the newest
+          // This is the newest.
           if (($library->majorVersion === $existingLibrary->majorVersion && $library->minorVersion > $existingLibrary->minorVersion) ||
             ($library->majorVersion > $existingLibrary->majorVersion)) {
             $existingLibrary->isOld = TRUE;
@@ -173,7 +191,7 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
 
       $library->restricted = $super_user ? FALSE : ($library->restricted === '1' ? TRUE : FALSE);
 
-      // Add new library
+      // Add new library.
       $libraries[] = $library;
     }
 
@@ -186,10 +204,10 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
    * the content types.
    *
    * @param array $files
-   *  List of files as objects with path and version as properties
+   *   List of files as objects with path and version as properties.
    * @param array $libraries
-   *  List of libraries indexed by machineName with objects as values. The objects
-   *  have majorVersion and minorVersion as properties.
+   *   List of libraries indexed by machineName with objects as values. The objects
+   *   have majorVersion and minorVersion as properties.
    */
   public function alterLibraryFiles(&$files, $libraries) {
     $mode = 'editor';
@@ -206,10 +224,11 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
   }
 
   /**
-   * Saves a file temporarily with a given name
+   * Saves a file temporarily with a given name.
    *
    * @param string $data
-   * @param bool $move_file Only move the uploaded file
+   * @param bool $move_file
+   *   Only move the uploaded file.
    *
    * @return bool|false|string Real absolute path of the temporary folder
    */
@@ -226,16 +245,18 @@ class aculta_H5PEditorDrupalStorage implements \H5peditorStorage {
    * @param \H5peditorFile $file
    * @param int $content_id
    */
-  public static function markFileForCleanup($file, $content_id = null) {
+  public static function markFileForCleanup($file, $content_id = NULL) {
     throw new \LogicException('Legacy H5P editor file cleanup is disabled; use managed H5P uploads.');
   }
 
   /**
-   * Clean up temporary files
+   * Clean up temporary files.
    *
-   * @param string $filePath Path to file or directory
+   * @param string $filePath
+   *   Path to file or directory.
    */
   public static function removeTemporarilySavedFiles($filePath) {
     throw new \LogicException('Legacy H5P temporary package cleanup is disabled.');
   }
+
 }

@@ -1,6 +1,6 @@
 <?php
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\aculta_H5PEditor;
 
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
@@ -12,6 +12,9 @@ use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Url;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 
+/**
+ *
+ */
 class aculta_H5PEditorUtilities {
 
   private ?\H5peditor $editor = NULL;
@@ -44,7 +47,7 @@ class aculta_H5PEditorUtilities {
   }
 
   /**
-   * Get editor settings needed for JS front-end
+   * Get editor settings needed for JS front-end.
    *
    * @return array Settings needed for view
    */
@@ -93,11 +96,14 @@ class aculta_H5PEditorUtilities {
   }
 
   /**
-   * Extracts assets from a collection of assets
+   * Extracts assets from a collection of assets.
    *
-   * @param array $collection Collection of assets
-   * @param string $prefix Prefix needed for constructing the file-path of the assets
-   * @param null|array $exceptions Exceptions from the collection that should be skipped
+   * @param array $collection
+   *   Collection of assets.
+   * @param string $prefix
+   *   Prefix needed for constructing the file-path of the assets.
+   * @param null|array $exceptions
+   *   Exceptions from the collection that should be skipped.
    *
    * @return array Extracted assets from the source collection
    */
@@ -106,7 +112,7 @@ class aculta_H5PEditorUtilities {
     $cacheBuster = $this->getCacheBuster();
 
     foreach ($collection as $item) {
-      // Skip exceptions
+      // Skip exceptions.
       if ($exceptions && in_array($item, $exceptions)) {
         continue;
       }
@@ -116,7 +122,7 @@ class aculta_H5PEditorUtilities {
   }
 
   /**
-   * Get cache buster
+   * Get cache buster.
    *
    * @return string A cache buster that may be applied to resources
    */
@@ -143,7 +149,7 @@ class aculta_H5PEditorUtilities {
   }
 
   /**
-   * Create URI for ajax the client may send to the server
+   * Create URI for ajax the client may send to the server.
    *
    * @return \Drupal\Core\GeneratedUrl|string Uri for AJAX
    */
@@ -155,11 +161,13 @@ class aculta_H5PEditorUtilities {
   }
 
   /**
-   * Extract library information from library string
+   * Extract library information from library string.
    *
-   * @param string $library Library string with versioning, e.g. H5P.MultiChoice 1.9
-   * @param string $property May be used to only extract certain information
-   * about library. Available values are 'all', 'libraryId' and specific property
+   * @param string $library
+   *   Library string with versioning, e.g. H5P.MultiChoice 1.9.
+   * @param string $property
+   *   May be used to only extract certain information
+   *   about library. Available values are 'all', 'libraryId' and specific property.
    *
    * @return int|bool|array One or more properties, or false if invalid.
    */
@@ -177,9 +185,11 @@ class aculta_H5PEditorUtilities {
         case 'all':
           $libraryData['libraryId'] = $this->getLibraryId($libraryData);
           return $libraryData;
+
         case 'libraryId':
           $libraryId = $this->getLibraryId($libraryData);
           return $libraryId;
+
         default:
           return $libraryData[$property];
       }
@@ -190,19 +200,21 @@ class aculta_H5PEditorUtilities {
   }
 
   /**
-   * Library ID from unique library data
+   * Library ID from unique library data.
    *
-   * @param array $libraryData Library data which must contain
-   * 'machineName', 'majorVersion' and 'minorVersion'
+   * @param array $libraryData
+   *   Library data which must contain
+   *   'machineName', 'majorVersion' and 'minorVersion'.
    *
    * @return null|int Library id
    */
   private function getLibraryId($libraryData) {
     $select = $this->database->select('h5p_libraries');
-    $select->fields('h5p_libraries', array('library_id'))
-           ->condition('machine_name', $libraryData['machineName'])
-           ->condition('major_version', $libraryData['majorVersion'])
-           ->condition('minor_version', $libraryData['minorVersion']);
+    $select->fields('h5p_libraries', ['library_id'])
+      ->condition('machine_name', $libraryData['machineName'])
+      ->condition('major_version', $libraryData['majorVersion'])
+      ->condition('minor_version', $libraryData['minorVersion']);
     return $select->execute()->fetchField();
   }
+
 }

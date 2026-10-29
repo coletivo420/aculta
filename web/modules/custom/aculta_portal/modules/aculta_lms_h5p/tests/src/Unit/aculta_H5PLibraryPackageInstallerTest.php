@@ -14,9 +14,15 @@ use Drupal\Core\File\FileSystemInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+/**
+ *
+ */
 #[CoversClass(aculta_H5PLibraryPackageInstaller::class)]
 final class aculta_H5PLibraryPackageInstallerTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testRejectsNonH5pFileBeforeBootstrap(): void {
     $file = tempnam(sys_get_temp_dir(), 'aculta-h5p-invalid-');
     self::assertNotFalse($file);
@@ -39,6 +45,9 @@ final class aculta_H5PLibraryPackageInstallerTest extends UnitTestCase {
     }
   }
 
+  /**
+   *
+   */
   public function testRejectsZipPathTraversalBeforeH5pExtraction(): void {
     $path = tempnam(sys_get_temp_dir(), 'aculta-h5p-traversal-');
     self::assertNotFalse($path);
@@ -64,6 +73,9 @@ final class aculta_H5PLibraryPackageInstallerTest extends UnitTestCase {
     }
   }
 
+  /**
+   *
+   */
   private function createCacheInvalidator(): aculta_H5PLibraryCacheInvalidator {
     return new aculta_H5PLibraryCacheInvalidator(
       $this->createMock(CacheBackendInterface::class),

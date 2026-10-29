@@ -1,6 +1,6 @@
 <?php
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Controller;
 
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
@@ -17,12 +17,14 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ *
+ */
 final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
 
   /**
-   * constructor.
+   * Constructor.
    */
   public function __construct(
     private readonly Connection $database,
@@ -33,6 +35,9 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
     private readonly aculta_H5PDrupal $framework,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('database'),
@@ -45,16 +50,16 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
   }
 
   /**
-   * Creates the library list page
+   * Creates the library list page.
    *
    * @return string Html
    */
-  function libraryList() {
+  public function libraryList() {
     $core = aculta_H5PDrupal::getInstance('core');
     $numNotFiltered = $core->h5pF->getNumNotFiltered();
     $libraries = $core->h5pF->loadLibraries();
 
-    // Add settings for each library
+    // Add settings for each library.
     $settings = [];
     $i = 0;
     foreach ($libraries as $versions) {
@@ -71,8 +76,8 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
             'query' => [
               'token' => \H5PCore::createToken('library_' . $library->id),
               'token_id' => $library->id,
-              'restrict' => ($library->restricted === '1' ? 0 : 1)
-            ]
+              'restrict' => ($library->restricted === '1' ? 0 : 1),
+            ],
           ];
           $restricted_url = Url::fromUri('internal:/admin/content/h5p/libraries/' . $library->id . '/restrict', $option)->toString();
         }
@@ -86,8 +91,7 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
           'query' => $this->redirectDestination->getAsArray(),
         ];
         $deleteUrl = Url::fromUri('internal:/admin/content/h5p/libraries/' . $library->id . '/delete', $option);
-        //$detailsUrl = Url::fromUri('internal:/admin/content/h5p/libraries/' . $library->id);
-
+        // $detailsUrl = Url::fromUri('internal:/admin/content/h5p/libraries/' . $library->id);
         $settings['libraryList']['listData'][] = [
           'title' => $library->title . ' (' . \H5PCore::libraryVersion($library) . ')',
           'restricted' => $restricted,
@@ -96,7 +100,7 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
           'numContentDependencies' => $usage['content'] === -1 ? '' : $usage['content'],
           'numLibraryDependencies' => $usage['libraries'],
           'upgradeUrl' => $upgradeUrl,
-          //'detailsUrl' => $detailsUrl->toString(),
+          // 'detailsUrl' => $detailsUrl->toString(),
           'deleteUrl' => $deleteUrl->toString(),
         ];
 
@@ -104,7 +108,7 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
       }
     }
 
-    // All translations are made server side
+    // All translations are made server side.
     $settings['libraryList']['listHeaders'] = [$this->translation->translate('Título'), $this->translation->translate('Restrita'), $this->translation->translate('Atividades'), $this->translation->translate('Dependências de atividades'), $this->translation->translate('Dependências da biblioteca'), $this->translation->translate('Ações')];
 
     // Make it possible to rebuild all caches.
@@ -132,27 +136,28 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
    * Settings needed to rebuild cache from UI.
    *
    * @param int $num
+   *
    * @return array
    */
-  function getNotCachedSettings($num) {
+  public function getNotCachedSettings($num) {
     $url = Url::fromRoute('aculta_lms_h5p.admin.content.aculta_lms_h5p.rebuild_cache');
     return [
       'num' => $num,
       'url' => $url->toString(),
       'message' => $this->translation->translate('Ainda há atividades sem cache atualizado. Reconstrua o cache para excluir bibliotecas e ver quantas atividades usam cada uma.'),
       'progress' => $this->translation->formatPlural($num, '1 conteúdo precisa reconstruir o cache.', '@count conteúdos precisam reconstruir o cache.'),
-      'button' => $this->translation->translate('Reconstruir cache')
+      'button' => $this->translation->translate('Reconstruir cache'),
     ];
   }
 
   /**
-   * Restrict a library
+   * Restrict a library.
    *
    * @param string $library_id
    *
-   * @return JsonResponse
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
-  function restrict($library_id) {
+  public function restrict($library_id) {
     $request = $this->requestStack->getCurrentRequest();
     $restricted = $request?->query->getString('restrict');
     $restrict = ($restricted === '1');
@@ -174,7 +179,7 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
         'token' => \H5PCore::createToken('library_' . $token_id),
         'token_id' => $token_id,
         'restrict' => ($restrict ? 0 : 1),
-      ]
+      ],
     ]);
 
     return new JsonResponse(['url' => $restrictUrl->toString()]);
@@ -183,9 +188,9 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
   /**
    * Callback for rebuilding all content cache.
    *
-   * @return JsonResponse
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
    */
-  function rebuildCache() {
+  public function rebuildCache() {
     $request = $this->requestStack->getCurrentRequest();
     if ($request === NULL || $request->getMethod() !== 'POST') {
       return new JsonResponse('Método não permitido.', 403);
@@ -212,14 +217,14 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
 
     $count = $num_rows - $done;
 
-    return new JsonResponse((string)$count);
+    return new JsonResponse((string) $count);
   }
 
-
   /**
-   * Helper function - creates admin settings
+   * Helper function - creates admin settings.
    *
    * @param array $settings
+   *
    * @return array
    */
   public static function addSettings($settings = NULL) {
@@ -228,11 +233,11 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
       'NA' => new TranslatableMarkup('Não se aplica'),
       /*'viewLibrary' => t('View library details'),*/
       'deleteLibrary' => new TranslatableMarkup('Excluir biblioteca'),
-      'upgradeLibrary' => new TranslatableMarkup('Atualizar atividades da biblioteca')
+      'upgradeLibrary' => new TranslatableMarkup('Atualizar atividades da biblioteca'),
     ];
 
     $build['drupalSettings']['h5p']['drupal_h5p_admin_integration'] = [
-      'H5PAdminIntegration' =>  $settings,
+      'H5PAdminIntegration' => $settings,
     ];
     $build['drupalSettings']['h5p']['drupal_h5p'] = [
       'H5P' => aculta_H5PDrupal::getGenericaculta_H5PIntegrationSettings(),
@@ -240,4 +245,5 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
 
     return $build;
   }
+
 }

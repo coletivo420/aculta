@@ -9,7 +9,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 
-/** Checks that an H5P content ID belongs to a course the account may access. */
+/**
+ * Checks that an H5P content ID belongs to a course the account may access. */
 final class aculta_H5PCourseAccessManager {
 
   public function __construct(
@@ -26,11 +27,15 @@ final class aculta_H5PCourseAccessManager {
     return $this->courseAccess($groupId, $contentId, $account, TRUE);
   }
 
-  /** Checks access for student playback, progress and protected content files. */
+  /**
+   * Checks access for student playback, progress and protected content files. */
   public function studentAccess(int $groupId, int $contentId, AccountInterface $account): AccessResult {
     return $this->courseAccess($groupId, $contentId, $account, FALSE);
   }
 
+  /**
+   *
+   */
   private function courseAccess(int $groupId, int $contentId, AccountInterface $account, bool $editor): AccessResult {
     $cacheContexts = ['user', 'user.permissions', 'user.group_permissions'];
     $course = $this->entityTypeManager->getStorage('group')->load($groupId);

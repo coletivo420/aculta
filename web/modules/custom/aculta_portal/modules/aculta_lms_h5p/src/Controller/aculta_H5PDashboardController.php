@@ -14,7 +14,8 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\lms\Entity\Bundle\CourseInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Builds H5P entry points within the existing ACULTA LMS contexts. */
+/**
+ * Builds H5P entry points within the existing ACULTA LMS contexts. */
 final class aculta_H5PDashboardController implements ContainerInjectionInterface {
 
   public function __construct(
@@ -24,6 +25,9 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
     private readonly TranslationInterface $translation,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
@@ -33,7 +37,8 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
     );
   }
 
-  /** Administrative library and configuration hub. */
+  /**
+   * Administrative library and configuration hub. */
   public function administrator(): array {
     return [
       '#plain_text' => $this->translation->translate('Gerencie os recursos H5P do LMS usando as abas acima.'),
@@ -41,12 +46,14 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
     ];
   }
 
-  /** Student view of interactive content in courses they can take. */
+  /**
+   * Student view of interactive content in courses they can take. */
   public function student(): array {
     return $this->courseList(FALSE);
   }
 
-  /** Educator view of courses they can update. */
+  /**
+   * Educator view of courses they can update. */
   public function educator(): array {
     return $this->courseList(TRUE);
   }
@@ -121,9 +128,11 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
         '#value' => $educator ? $this->translation->translate('Atividades interativas dos meus cursos') : $this->translation->translate('Atividades interativas'),
       ],
       'courses' => $items === []
-        ? ['#plain_text' => $educator
-          ? $this->translation->translate('Você ainda não administra cursos com atividades H5P.')
-          : $this->translation->translate('Você ainda não tem acesso a cursos com atividades H5P.')]
+        ? [
+          '#plain_text' => $educator
+            ? $this->translation->translate('Você ainda não administra cursos com atividades H5P.')
+            : $this->translation->translate('Você ainda não tem acesso a cursos com atividades H5P.'),
+        ]
         : ['#theme' => 'item_list', '#items' => $items],
       '#cache' => [],
     ];

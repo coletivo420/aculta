@@ -24,7 +24,8 @@ use Drupal\lms\Entity\Bundle\CourseInterface;
 )]
 final class GroupHasaculta_H5PActivities extends ConditionPluginBase {
 
-  /** Evaluates from the Group field, which remains the LMS source of truth. */
+  /**
+   * Evaluates from the Group field, which remains the LMS source of truth. */
   public function evaluate(): bool {
     $course = $this->getContextValue('group');
     return $course instanceof CourseInterface
@@ -33,19 +34,31 @@ final class GroupHasaculta_H5PActivities extends ConditionPluginBase {
       && !$course->get('field_h5p_activities')->isEmpty();
   }
 
+  /**
+   *
+   */
   public function summary(): string {
     return (string) $this->t('O curso contém pelo menos uma atividade H5P.');
   }
 
+  /**
+   *
+   */
   public function getCacheTags(): array {
     $course = $this->getContextValue('group');
     return $course instanceof CourseInterface ? Cache::mergeTags($course->getCacheTags(), ['aculta_h5p_content_list']) : ['group_list'];
   }
 
+  /**
+   *
+   */
   public function getCacheContexts(): array {
     return [];
   }
 
+  /**
+   *
+   */
   public function getCacheMaxAge(): int {
     return Cache::PERMANENT;
   }

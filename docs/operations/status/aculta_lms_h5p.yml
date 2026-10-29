@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.4.0-dev.151
+version: 0.4.0-dev.152
 state: Dev
-progress_note: "Revalidação 2026-10-29: Unit H5P 28/93 e Kernel 15/388 passaram no MariaDB dedicado; 41 depreciações Core/contrib. PHPCS Drupal/DrupalPractice integral falha em 50 arquivos com 1.076 erros e 118 avisos de baseline legado; as regras não foram relaxadas e não houve reformatamento amplo. Player, PDF privado e discussão H5P–Fórum mantêm os smokes autenticados registrados, com fixtures removidas. Nenhuma escrita Runtime nesta rodada."
-next_phase: 'F15: resolver violações PHPCS legadas sem alterar regras, repetir gates e revisão de diff antes de avaliar RC; player H5P, PDF privado e discussão H5P–Fórum seguem homologados conforme [README](web/modules/custom/aculta_portal/modules/aculta_lms_h5p/README.md). F10 permanece homologada.'
+progress_note: "Dev.152: PHPCBF Drupal/DrupalPractice corrigiu automaticamente 838 violações em 46 arquivos sem alterar regras ou renomear identificadores H5P. PHPCS integral ainda registra 349 erros e 36 avisos em 48 arquivos. Unit + Kernel 43/481 PASS no aculta_simpletest, com 41 depreciações Core/contrib; PHP lint e revisão completa do diff pendentes. Player, PDF privado e discussão H5P–Fórum mantêm os smokes autenticados registrados. Nenhuma escrita Runtime."
+next_phase: 'F15: resolver violações PHPCS remanescentes sem alterar regras nem identificadores públicos, rodar lint, revisar diff e repetir gates antes de avaliar RC; player H5P, PDF privado e discussão H5P–Fórum seguem homologados conforme [README](web/modules/custom/aculta_portal/modules/aculta_lms_h5p/README.md). F10 permanece homologada.'

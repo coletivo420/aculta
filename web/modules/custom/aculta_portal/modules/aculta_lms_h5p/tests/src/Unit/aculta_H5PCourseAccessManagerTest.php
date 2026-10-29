@@ -16,15 +16,24 @@ use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+/**
+ *
+ */
 #[CoversClass(aculta_H5PCourseAccessManager::class)]
 final class aculta_H5PCourseAccessManagerTest extends UnitTestCase {
 
+  /**
+   *
+   */
   public function testStudentCanAccessOnlyContentReferencedByTheirCourse(): void {
     [$manager, $course, $items] = $this->managerForCourse([41]);
     self::assertTrue($manager->studentAccess(8, 41, $this->createMock(AccountInterface::class))->isAllowed());
     self::assertFalse($manager->studentAccess(8, 42, $this->createMock(AccountInterface::class))->isAllowed());
   }
 
+  /**
+   *
+   */
   public function testStudentAccessIncludesGroupAndContentCacheability(): void {
     [$manager, $course] = $this->managerForCourse([41]);
     $result = $manager->studentAccess(8, 41, $this->createMock(AccountInterface::class));
@@ -34,6 +43,9 @@ final class aculta_H5PCourseAccessManagerTest extends UnitTestCase {
     self::assertContains('aculta_h5p_content:41', $result->getCacheTags());
   }
 
+  /**
+   *
+   */
   public function testEditorNeedsGroupUpdateAccessAndExistingReference(): void {
     [$manager] = $this->managerForCourse([41], FALSE);
     self::assertFalse($manager->editorAccess(8, 41, $this->createMock(AccountInterface::class))->isAllowed());

@@ -1,6 +1,6 @@
 <?php
-// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 
+// ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 namespace Drupal\aculta_lms_h5p\Plugin\views\access;
 
 use Drupal\views\Plugin\views\access\AccessPluginBase;
@@ -13,7 +13,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Symfony\Component\Routing\Route;
 
-/** Access plugin for viewing H5P user points. */
+/**
+ * Access plugin for viewing H5P user points. */
 #[ViewsAccess(
   id: 'h5paccessuserpoints',
   title: new TranslatableMarkup('Acesso aos resultados H5P'),
@@ -33,7 +34,8 @@ class aculta_H5PAccessUserPoints extends AccessPluginBase implements ContainerFa
     $this->currentRouteMatch = $currentRouteMatch;
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static($configuration, $plugin_id, $plugin_definition, $container->get('current_route_match'));
   }
@@ -62,4 +64,5 @@ class aculta_H5PAccessUserPoints extends AccessPluginBase implements ContainerFa
   public function alterRouteDefinition(Route $route) {
     $route->setRequirement('_access', 'TRUE');
   }
+
 }

@@ -21,7 +21,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/** Handles Group-authorized H5P editor requests for one course. */
+/**
+ * Handles Group-authorized H5P editor requests for one course. */
 final class aculta_H5PEditorAjaxController implements ContainerInjectionInterface {
 
   public function __construct(
@@ -35,6 +36,9 @@ final class aculta_H5PEditorAjaxController implements ContainerInjectionInterfac
     private readonly TranslationInterface $translation,
   ) {}
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_lms_h5p.course_access'),
@@ -48,7 +52,8 @@ final class aculta_H5PEditorAjaxController implements ContainerInjectionInterfac
     );
   }
 
-  /** Dispatches the editor's non-mutating requests after course authorization. */
+  /**
+   * Dispatches the editor's non-mutating requests after course authorization. */
   public function handle(
     int $group_id,
     string $token,
@@ -115,7 +120,8 @@ final class aculta_H5PEditorAjaxController implements ContainerInjectionInterfac
     return $response;
   }
 
-  /** Lists installed local libraries. The H5P API returns this list as a flat array. */
+  /**
+   * Lists installed local libraries. The H5P API returns this list as a flat array. */
   private function libraries(string $method): JsonResponse {
     if ($method !== 'GET') {
       throw new NotFoundHttpException();
@@ -130,7 +136,8 @@ final class aculta_H5PEditorAjaxController implements ContainerInjectionInterfac
     return new JsonResponse($libraries);
   }
 
-  /** Returns metadata and assets for one installed, permitted library. */
+  /**
+   * Returns metadata and assets for one installed, permitted library. */
   private function singleLibrary(
     string $method,
     string $arguments,
@@ -162,7 +169,8 @@ final class aculta_H5PEditorAjaxController implements ContainerInjectionInterfac
     return new JsonResponse($data);
   }
 
-  /** Resolves the parameter format emitted by H5P's editor JavaScript API. */
+  /**
+   * Resolves the parameter format emitted by H5P's editor JavaScript API. */
   private function singleLibraryFromQuery(Request $request): JsonResponse {
     $machine = $request->query->getString('machineName');
     $major = $request->query->getString('majorVersion');
@@ -180,7 +188,8 @@ final class aculta_H5PEditorAjaxController implements ContainerInjectionInterfac
     );
   }
 
-  /** Returns only requested translations for installed local libraries. */
+  /**
+   * Returns only requested translations for installed local libraries. */
   private function translations(string $method, string $language): JsonResponse {
     if ($method !== 'POST' || !preg_match('/^[a-zA-Z0-9_-]{2,12}$/D', $language)) {
       throw new NotFoundHttpException();
@@ -202,7 +211,8 @@ final class aculta_H5PEditorAjaxController implements ContainerInjectionInterfac
     return new JsonResponse(['success' => TRUE, 'data' => (object) $data]);
   }
 
-  /** Applies the installed library's H5P semantics filter without saving content. */
+  /**
+   * Applies the installed library's H5P semantics filter without saving content. */
   private function filter(string $method): JsonResponse {
     if ($method !== 'POST') {
       throw new NotFoundHttpException();
@@ -234,7 +244,8 @@ final class aculta_H5PEditorAjaxController implements ContainerInjectionInterfac
     return new JsonResponse(['success' => TRUE, 'data' => $parameters]);
   }
 
-  /** Accepts an H5P media file through Drupal's managed private upload API. */
+  /**
+   * Accepts an H5P media file through Drupal's managed private upload API. */
   private function files(string $method, int $routeContentId): JsonResponse {
     if ($method !== 'POST') {
       throw new NotFoundHttpException();
@@ -258,7 +269,8 @@ final class aculta_H5PEditorAjaxController implements ContainerInjectionInterfac
     return new JsonResponse($result, ($result['success'] ?? TRUE) === FALSE ? 400 : 200);
   }
 
-  /** Explicit JSON failure for upload and remote library actions still closed. */
+  /**
+   * Explicit JSON failure for upload and remote library actions still closed. */
   private function unavailable(string $method): JsonResponse {
     if ($method !== 'POST') {
       throw new NotFoundHttpException();
