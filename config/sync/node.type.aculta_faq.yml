@@ -1,0 +1,22 @@
+uuid: ad3b1208-d468-4532-9bd0-0d7febed91cf
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - menu_ui
+  enforced:
+    module:
+      - aculta_faq
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+_core:
+  default_config_hash: HZxVoMif1PePvB0_ltfl5VrypC1c9FUcVcgJjBntx_s
+name: 'Pergunta frequente'
+type: aculta_faq
+description: 'Pergunta no título e resposta em texto formatado e sanitizado.'
+help: ''
+new_revision: true
+preview_mode: 0
+display_submitted: false

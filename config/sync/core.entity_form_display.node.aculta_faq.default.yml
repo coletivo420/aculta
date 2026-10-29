@@ -1,0 +1,87 @@
+uuid: ef3381f1-251e-4fb6-b130-53f88af5b813
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.field.node.aculta_faq.body
+    - field.field.node.aculta_faq.field_domain_source
+    - node.type.aculta_faq
+  module:
+    - content_moderation
+    - path
+    - text
+_core:
+  default_config_hash: gwH0Qe22q01d-M0QQxPuRc4vxzwKoKXEoh3HqL3gSeE
+id: node.aculta_faq.default
+targetEntityType: node
+bundle: aculta_faq
+mode: default
+content:
+  body:
+    type: text_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 8
+      placeholder: ''
+    third_party_settings: {  }
+  co_authors:
+    type: entity_reference_autocomplete_tags
+    weight: 17
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  simple_sitemap:
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 2
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: Pergunta
+    third_party_settings: {  }
+  url_redirects:
+    weight: 50
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  created: true
+  field_domain_source: true
+  promote: true
+  sticky: true
+  uid: true

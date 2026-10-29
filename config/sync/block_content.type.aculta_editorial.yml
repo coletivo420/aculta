@@ -1,0 +1,10 @@
+uuid: 421749e6-5ea2-41e7-ac8e-450bb190d402
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: LZVsFDTkd6ErMWzqnKpodsufdHUu6_yOimVDAZk0Srk
+id: aculta_editorial
+label: 'Bloco editorial ACULTA'
+revision: true
+description: 'Texto reutilizável, limitado ao formato seguro Texto editorial ACULTA.'

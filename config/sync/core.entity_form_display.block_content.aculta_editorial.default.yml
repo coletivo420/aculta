@@ -1,0 +1,34 @@
+uuid: cab3eaec-529f-4f67-9a3e-34160bb0c715
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_editorial
+    - field.field.block_content.aculta_editorial.body
+  module:
+    - text
+_core:
+  default_config_hash: ewAPOUvWUyxzJK_fWQ6BGNir3KbOOEaFfaMV9pRaEuY
+id: block_content.aculta_editorial.default
+targetEntityType: block_content
+bundle: aculta_editorial
+mode: default
+content:
+  body:
+    type: text_textarea
+    weight: 0
+    region: content
+    settings:
+      rows: 8
+      placeholder: ''
+    third_party_settings: {  }
+  info:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  langcode: true

@@ -1,0 +1,26 @@
+uuid: c9408a91-f9e2-4eae-b66e-14c99a8e7481
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_editorial
+    - field.storage.block_content.body
+    - filter.format.aculta_editorial
+  module:
+    - text
+_core:
+  default_config_hash: u1knnsHRNv8ArrgAMyvbji7MgMPFuj-b6SIFByh9MXc
+id: block_content.aculta_editorial.body
+field_name: body
+entity_type: block_content
+bundle: aculta_editorial
+label: Texto
+description: 'Aceita negrito, itálico, listas e links seguros.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats:
+    - aculta_editorial
+field_type: text_with_summary
