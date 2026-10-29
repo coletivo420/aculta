@@ -1,3 +1,7 @@
+## Frente arquitetural aprovada ARQ-01 a ARQ-09 (2026-10-29)
+
+[Plano normativo de implementação seletiva](PLANO-ARQUITETURAL-OPENCULTURAS-ACULTA-ARQ-01-09.md): ARQ-01 ACL e privacidade de locais; ARQ-02 catálogo/ocorrências performático; ARQ-03 busca cultural via Index/Search API; ARQ-04 dados de locais/eventos; ARQ-05 organizações/reivindicação; ARQ-06 UGC/moderação; ARQ-07 salvos/recomendações; ARQ-08 imprensa/apoiadores/metadados/teasers; ARQ-09 homologação. Separado da frente visual OCS e do mobile-first global THEME-MF; dependências, decisões e estado definidos no plano. **Não confundir planejamento com implementação.**
+
 # Plano de incorporação do OpenCulturas no ACULTA — status
 
 Documento vivo. Mostra o que do código do OpenCulturas já foi reescrito no ACULTA, o que falta e o que foi
