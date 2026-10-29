@@ -92,6 +92,15 @@
   --aculta-page-content-max: 80rem;
   --aculta-main-space-block: 1.5rem;
   --aculta-main-space-block-compact: 0.5rem;
+  /* OpenCulturas Next 3.1.5 reference values, consumed only inside Studio CSS. */
+  --aculta-studio-fidelity-primary: #9d1980;
+  --aculta-studio-fidelity-link: #a1167f;
+  --aculta-studio-fidelity-interaction: #16635e;
+  --aculta-studio-fidelity-text: #1f1f1f;
+  --aculta-studio-fidelity-muted: #7b7d85;
+  --aculta-studio-fidelity-surface: #ffffff;
+  --aculta-studio-fidelity-surface-muted: #f6f6f6;
+  --aculta-studio-fidelity-divider: #e8e9eb;
   --aculta-focus: var(--aculta-focus-ring);
   --aculta-motion-fast: 180ms;
   --aculta-motion-quick: 150ms;
@@ -225,6 +234,15 @@
 
 [data-bs-theme="dark"] {
   /* The same ACULTA420 uses warm charcoal surfaces in dark mode. */
+  /* OpenCulturas Next 3.1.5 dark reference values, consumed only in Studio. */
+  --aculta-studio-fidelity-primary: #9d1980;
+  --aculta-studio-fidelity-link: #ffdd00;
+  --aculta-studio-fidelity-interaction: #74eaea;
+  --aculta-studio-fidelity-text: #efefef;
+  --aculta-studio-fidelity-muted: #9b9d9a;
+  --aculta-studio-fidelity-surface: #16181a;
+  --aculta-studio-fidelity-surface-muted: #303236;
+  --aculta-studio-fidelity-divider: #38393b;
   --aculta-surface-page: #171513;
   --aculta-surface-page-rgb: 23, 21, 19;
   --aculta-surface-raised: #211e1b;
@@ -377,6 +395,14 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-bs-theme="light"]) {
     /* The same ACULTA420 uses warm charcoal surfaces in dark mode. */
+    --aculta-studio-fidelity-primary: #9d1980;
+    --aculta-studio-fidelity-link: #ffdd00;
+    --aculta-studio-fidelity-interaction: #74eaea;
+    --aculta-studio-fidelity-text: #efefef;
+    --aculta-studio-fidelity-muted: #9b9d9a;
+    --aculta-studio-fidelity-surface: #16181a;
+    --aculta-studio-fidelity-surface-muted: #303236;
+    --aculta-studio-fidelity-divider: #38393b;
     --aculta-surface-page: #171513;
     --aculta-surface-page-rgb: 23, 21, 19;
     --aculta-surface-raised: #211e1b;

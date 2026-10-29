@@ -26,6 +26,8 @@
   display: flex;
   align-items: flex-start;
   gap: 1.5rem;
+  color: var(--aculta-studio-fidelity-text);
+  background-color: var(--aculta-studio-fidelity-surface);
 }
 
 .studio__sidebar {
@@ -48,6 +50,28 @@
 
 .studio__subtabs {
   margin-bottom: 1rem;
+}
+
+/* OpenCulturas Next tab treatment; navigation remains ordinary authorized links. */
+.studio__tabs .studio__tab,
+.studio__subtabs .studio__link {
+  padding: 0.25em 1em;
+  color: var(--aculta-studio-fidelity-interaction);
+  text-decoration: none;
+  border-block-end: 1px solid var(--aculta-studio-fidelity-divider);
+  background-color: transparent;
+}
+
+.studio__tabs .studio__tab[aria-current="page"],
+.studio__subtabs .studio__link[aria-current="page"] {
+  border-block-end: 2px solid var(--aculta-studio-fidelity-interaction);
+}
+
+.studio__tabs .studio__tab:is(:hover, :focus-visible),
+.studio__subtabs .studio__link:is(:hover, :focus-visible) {
+  color: var(--aculta-studio-fidelity-link);
+  border-block-end: 2px solid var(--aculta-studio-fidelity-interaction);
+  background-color: transparent;
 }
 
 @media (max-width: 767.98px) {

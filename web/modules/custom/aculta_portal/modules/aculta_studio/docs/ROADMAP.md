@@ -615,3 +615,10 @@ Studio autenticado além das rotas registradas no baseline OCS; a raiz ACCOUNT
 leva ao login e o Domain Header faltou em oito purposes públicos, apesar da
 Institution Bar presente em todos. Ver `mobile-first-audit.md` para Pede-A,
 limites por purpose e estados vazios.
+
+OCS-F1 iniciou a camada visual de fidelidade com tokens de cor OpenCulturas
+3.1.5 e acabamento das abas nos seletores de apresentação Studio já existentes.
+O SDC `context-tabs` foi reutilizado; nenhum contrato funcional foi alterado.
+Tipografia aguarda licença verificável e captura pós-alteração no checkout
+servido; F1 permanece parcial. Referência e contraste registrado em
+`studio-visual/upstream-inventory.md`.

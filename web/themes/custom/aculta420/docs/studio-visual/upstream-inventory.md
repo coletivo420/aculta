@@ -27,6 +27,24 @@ documenta a fonte visual; não certifica paridade das telas autenticadas.
 | Componentes e ícones | `templates/block/`, `templates/media/`, `templates/paragraph/`, `templates/node/`, `sprite/README.md`, `sprite/svg/LICENSE_phosphor-icons.md` | Templates de block, media, parágrafo, node, SVG sprite e atribuição Phosphor | Não copiar markup, ícones ou assets; preferência por SDC ACULTA atual e seus slots |
 | Bibliotecas e JS | `opcult.libraries.yml`, `js/opcult.js`, `opcult.breakpoints.yml`, `package.json`, `gulpfile.mjs` | CSS compilado, biblioteca de fonte, dependências Drupal, behavior de UI e breakpoints | Não ativar o tema nem criar pipeline Sass paralelo; tamanhos de referência: 480, 768, 992, 1100 e 1600 px |
 
+### OCS-F1 — tokens de fidelidade iniciais
+
+Tokens com prefixo `--aculta-studio-fidelity-*` registram as cores observadas
+em `sass/abstracts/_colors.scss` e os estados de navegação de `css/opcult.css`
+(regras `.tabs a`, `.tabs a.is-active` e hover/focus). São consumidos somente
+por `.studio__layout`, `.studio__tabs` e `.studio__subtabs`; outras áreas e
+purposes não recebem esses acabamentos. Nenhum CSS upstream foi copiado.
+
+Os pares aplicados ao layout e às abas têm contraste calculado acima de 7:1 no
+claro e acima de 12:1 no escuro. A cor muted clara upstream `#7b7d85` tem
+4,11:1 sobre branco; foi registrada como referência, mas não é usada como texto
+normal. A validação final continua pendente no Firefox e com componentes reais.
+
+Montserrat/Open Sans continuam sem uso: o pacote contém arquivos de fonte mas
+não licença comprovável. Tipografia fiel, cartões, formulários e demais
+componentes permanecem pendentes. Esta fase F1 é parcial e não possui captura
+pós-alteração no checkout servido.
+
 ## Referências visuais e limites
 
 O site público `www.openculturas.org/en` usa a folha de estilo exata que acompanha o pacote e serve como referência verificável da linguagem visual geral. A captura do site não equivale a uma instalação limpa, porque há CSS agrupado e asset injector próprio. A página autenticada do dashboard OpenCulturas não foi disponibilizada para esta auditoria; sua estrutura foi mapeada pelo `user-dashboard-views.scss`, sem afirmar equivalência pixel-perfect.

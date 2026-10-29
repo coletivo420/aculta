@@ -437,3 +437,11 @@ existente de 1280px. A escala H1 agora começa em 2rem em 320px para reduzir
 quebras forçadas de títulos longos. Esta fundação estática ainda não foi
 renderizada no checkout servido e não conclui MF1 nem inicia MF2. Ver
 `mobile-first-audit.md`.
+
+### OCS-F1 — tokens de fidelidade iniciais
+
+Mapeados ao prefixo `--aculta-studio-fidelity-*` os valores de cor e tabulação
+do `opcult` 3.1.5, aplicados somente ao layout Studio de Marley. Nenhuma fonte
+ou folha upstream foi copiada. A tipografia aguarda licença verificável, e a
+captura visual pós-alteração está pendente; F1 segue parcial. Detalhes em
+`studio-visual/upstream-inventory.md`.

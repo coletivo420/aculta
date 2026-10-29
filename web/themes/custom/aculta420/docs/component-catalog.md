@@ -216,6 +216,14 @@ Novo inventário estático no HEAD da PR #299: **54 arquivos `.component.yml`** 
 - Acessibilidade: modo escuro/claro, 320 px, zoom 200%, teclado, contraste WCAG 2.2 AA, no-JS quando aplicável e Olivero. Não marcar "concluído" sem evidência no Runtime.
 
 Fonte: [auditoria OpenCulturas 3.1.5](../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md).
+
+## OCS-F1 — reutilização de navegação
+
+O acabamento inicial de fidelidade Studio reutiliza o SDC
+`patterns/context-tabs` e os contratos de `studio__tabs`/`studio__subtabs` já
+fornecidos pelo consumidor. Nenhum SDC, prop, slot ou story novo foi necessário
+nesta camada; a matriz de paridade e o inventário upstream registram os estados
+pendentes de captura.
 # Retificação de escopo visual (2026-10-29)
 
 O inventário deste catálogo é uma referência histórica de componentes, não uma
