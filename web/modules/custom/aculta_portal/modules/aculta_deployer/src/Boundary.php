@@ -11,14 +11,17 @@ namespace AcultaDeployer;
  */
 final class Boundary {
 
-  /** @param array<string, mixed> $rules Conteúdo de config/boundary.json. */
+  /**
+   * @param array<string, mixed> $rules
+   *   Conteúdo de config/boundary.json. .*/
   public function __construct(
     private readonly string $repoRoot,
     private readonly string $toolRoot,
     private readonly array $rules,
   ) {}
 
-  /** @return string[] Violações encontradas. */
+  /**
+   * @return string[] Violações encontradas. */
   public function check(): array {
     $violations = [];
     foreach ($this->rules['consumers'] as $dir) {
@@ -91,7 +94,8 @@ final class Boundary {
     return FALSE;
   }
 
-  /** @return string[] */
+  /**
+   * @return string[] */
   private function files(string $dir): array {
     $out = [];
     $it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS));
@@ -103,6 +107,9 @@ final class Boundary {
     return $out;
   }
 
+  /**
+   *
+   */
   private function rel(string $abs): string {
     return ltrim(str_replace($this->repoRoot, '', $abs), '/');
   }

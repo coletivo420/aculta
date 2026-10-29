@@ -13,28 +13,32 @@ final class Registry {
   public const KINDS = ['canonical', 'sitemap', 'link', 'redirect', 'other'];
   public const STATUSES = ['open', 'resolved'];
 
-  /** @var array<int, array<string, mixed>> */
+  /**
+   * @var array<int, array<string, mixed>> */
   private array $entries;
 
-  /** Digest SHA-256 do arquivo no momento da leitura, para detectar gravação concorrente. */
+  /**
+   * Digest SHA-256 do arquivo no momento da leitura, para detectar gravação concorrente. */
   private string $loadedDigest;
 
   public function __construct(private readonly string $path) {
     $raw = (string) file_get_contents($path);
-    $data = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
-    if (($data['schema'] ?? null) !== 1 || !is_array($data['entries'] ?? null)) {
+    $data = json_decode($raw, TRUE, 512, JSON_THROW_ON_ERROR);
+    if (($data['schema'] ?? NULL) !== 1 || !is_array($data['entries'] ?? NULL)) {
       throw new \RuntimeException('Registro inválido: schema 1 com lista "entries" é obrigatório.');
     }
     $this->entries = $data['entries'];
     $this->loadedDigest = hash('sha256', $raw);
   }
 
-  /** @return array<int, array<string, mixed>> */
+  /**
+   * @return array<int, array<string, mixed>> */
   public function entries(): array {
     return $this->entries;
   }
 
-  /** @return string[] Erros de validação; vazio quando o registro está correto. */
+  /**
+   * @return string[] Erros de validação; vazio quando o registro está correto. */
   public function validate(): array {
     $errors = [];
     $ids = [];
@@ -48,14 +52,14 @@ final class Registry {
       if (isset($e['id']) && preg_match('/^DEP-\d{4}$/', (string) $e['id']) !== 1) {
         $errors[] = "$where: id deve seguir DEP-NNNN";
       }
-      if (isset($e['id']) && in_array($e['id'], $ids, true)) {
+      if (isset($e['id']) && in_array($e['id'], $ids, TRUE)) {
         $errors[] = "$where: id duplicado";
       }
-      $ids[] = $e['id'] ?? null;
-      if (isset($e['kind']) && !in_array($e['kind'], self::KINDS, true)) {
+      $ids[] = $e['id'] ?? NULL;
+      if (isset($e['kind']) && !in_array($e['kind'], self::KINDS, TRUE)) {
         $errors[] = "$where: kind inválido: {$e['kind']}";
       }
-      if (isset($e['status']) && !in_array($e['status'], self::STATUSES, true)) {
+      if (isset($e['status']) && !in_array($e['status'], self::STATUSES, TRUE)) {
         $errors[] = "$where: status inválido: {$e['status']}";
       }
       if (isset($e['blocking']) && !is_bool($e['blocking'])) {
@@ -65,14 +69,16 @@ final class Registry {
     return $errors;
   }
 
-  /** @return array<int, array<string, mixed>> Entradas abertas. */
+  /**
+   * @return array<int, array<string, mixed>> Entradas abertas. */
   public function open(): array {
     return array_values(array_filter($this->entries, static fn(array $e): bool => ($e['status'] ?? '') === 'open'));
   }
 
-  /** @return array<int, array<string, mixed>> Entradas abertas e bloqueantes. */
+  /**
+   * @return array<int, array<string, mixed>> Entradas abertas e bloqueantes. */
   public function openBlocking(): array {
-    return array_values(array_filter($this->open(), static fn(array $e): bool => ($e['blocking'] ?? false) === true));
+    return array_values(array_filter($this->open(), static fn(array $e): bool => ($e['blocking'] ?? FALSE) === TRUE));
   }
 
   /**
@@ -83,7 +89,7 @@ final class Registry {
    */
   public function save(): void {
     $lock = fopen($this->path . '.lock', 'c');
-    if ($lock === false || !flock($lock, LOCK_EX)) {
+    if ($lock === FALSE || !flock($lock, LOCK_EX)) {
       throw new \RuntimeException('Não foi possível obter o bloqueio do registro.');
     }
     try {
@@ -92,7 +98,7 @@ final class Registry {
       }
       $json = json_encode(['schema' => 1, 'entries' => $this->entries], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n";
       $tmp = $this->path . '.tmp-' . getmypid();
-      if (file_put_contents($tmp, $json) === false || !rename($tmp, $this->path)) {
+      if (file_put_contents($tmp, $json) === FALSE || !rename($tmp, $this->path)) {
         @unlink($tmp);
         throw new \RuntimeException('Falha ao gravar o registro.');
       }
@@ -108,6 +114,7 @@ final class Registry {
    * inválido, nada é gravado. Campos desconhecidos são descartados.
    *
    * @param array<int, array<string, mixed>> $findings
+   *
    * @return string[] Ids criados.
    */
   public function addMany(array $findings): array {
@@ -123,14 +130,14 @@ final class Registry {
         $max = max($max, (int) substr((string) $e['id'], 4));
       }
       $entry = ['id' => sprintf('DEP-%04d', $max + 1)] + [
-        'kind' => $f['kind'] ?? null,
+        'kind' => $f['kind'] ?? NULL,
         'status' => 'open',
-        'blocking' => (bool) ($f['blocking'] ?? false),
-        'page' => $f['page'] ?? null,
-        'current' => $f['current'] ?? null,
-        'expected_production' => $f['expected_production'] ?? null,
-        'reason' => $f['reason'] ?? null,
-        'owner' => $f['owner'] ?? null,
+        'blocking' => (bool) ($f['blocking'] ?? FALSE),
+        'page' => $f['page'] ?? NULL,
+        'current' => $f['current'] ?? NULL,
+        'expected_production' => $f['expected_production'] ?? NULL,
+        'reason' => $f['reason'] ?? NULL,
+        'owner' => $f['owner'] ?? NULL,
         'decision' => 'pendente',
       ];
       $this->entries[] = $entry;
@@ -145,13 +152,14 @@ final class Registry {
     return $ids;
   }
 
-  /** Acrescenta uma entrada e grava o arquivo. Retorna o id criado. */
+  /**
+   * Acrescenta uma entrada e grava o arquivo. Retorna o id criado. */
   public function add(array $fields): string {
     $max = 0;
     foreach ($this->entries as $e) {
       $max = max($max, (int) substr((string) $e['id'], 4));
     }
-    $fields = ['id' => sprintf('DEP-%04d', $max + 1)] + $fields + ['status' => 'open', 'blocking' => false, 'decision' => 'pendente'];
+    $fields = ['id' => sprintf('DEP-%04d', $max + 1)] + $fields + ['status' => 'open', 'blocking' => FALSE, 'decision' => 'pendente'];
     $this->entries[] = $fields;
     $errors = $this->validate();
     if ($errors !== []) {

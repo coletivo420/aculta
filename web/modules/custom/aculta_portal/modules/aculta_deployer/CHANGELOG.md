@@ -11,7 +11,7 @@
 - `boundaries` permite referências ao manifesto de domínios somente nos adaptadores read-only já usados por Portal, Calendar e Events; arquivos vizinhos continuam proibidos e os arquivos permitidos continuam sem comandos de execução/importação.
 - A fixture de limites verifica inclusão por arquivo exato e rejeição de execução. A política de robôs inclui Eventos entre os dez domínios de produção declarados.
 - `tests/run.php`: 119 verificações PASS. `boundaries`, `check` e `cookies` PASS; `cookies` mantém o aviso não bloqueante de `services.local.yml` com `.aculta.test`. Nenhuma escrita no Runtime ou produção.
-- PHPCS Drupal do módulo permanece com baseline de 331 erros / 56 avisos em arquivos existentes; esta microfase não fez limpeza de estilo ampla.
+- PHPCS Drupal do módulo caiu de 331 para 101 erros; os 56 avisos permanecem. Foram aplicadas correções automáticas de estilo em sete arquivos PHP, sem mudança intencional de comportamento. A suíte funcional continua passando.
 - A dívida de cookie local, PHPCS e a conclusão dos gates de segurança continuam antes de RC.
 
 ## Não lançado — correções de configuração (agente executor 2)

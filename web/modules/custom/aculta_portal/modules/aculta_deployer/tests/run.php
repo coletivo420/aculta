@@ -537,9 +537,9 @@ $mailTest = is_file($outTest . '/config/sync/system.mail.yml') ? (string) file_g
 $assert($btrc === 0 && str_contains($mailTest, '  default: aculta_mailer'), 'build --target=test: system.mail na camada de envio E-Mails ACULTA');
 $assert(!is_file($outTest . '/config/sync/smtp.settings.yml'), 'build --target=test: smtp.settings legado não é gerado');
 // Escrita atômica dos relatórios: existem, são JSON válido e não sobra temporário oculto.
-$reportsOk = true;
+$reportsOk = TRUE;
 foreach (['deploy-policy.json', 'deploy-report.json'] as $report) {
-  $reportsOk = $reportsOk && is_file($outTest . '/' . $report) && json_decode((string) file_get_contents($outTest . '/' . $report), true) !== null;
+  $reportsOk = $reportsOk && is_file($outTest . '/' . $report) && json_decode((string) file_get_contents($outTest . '/' . $report), TRUE) !== NULL;
 }
 $assert($reportsOk && (glob($outTest . '/.*.tmp') ?: []) === [], 'build: relatórios gravados de forma atômica, sem temporário sobrando');
 // Alvo e ambiente divergentes são recusados sem gerar saída.

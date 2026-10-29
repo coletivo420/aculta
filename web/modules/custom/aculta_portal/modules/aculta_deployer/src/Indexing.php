@@ -31,18 +31,20 @@ final class Indexing {
   /**
    * Resumo para o relatório de status. Retorna null quando o arquivo não existe ou não é do schema 1.
    *
-   * @param mixed $data conteúdo decodificado de indexing.json
+   * @param mixed $data
+   *   conteúdo decodificado de indexing.json.
+   *
    * @return array{environment: string, checked_at: string, ok: bool, passed: int, failed: int, failed_urls: list<string>}|null
    */
   public static function summarize(mixed $data): ?array {
-    if (!is_array($data) || ($data['schema'] ?? null) !== 1) {
-      return null;
+    if (!is_array($data) || ($data['schema'] ?? NULL) !== 1) {
+      return NULL;
     }
-    $checks = is_array($data['checks'] ?? null) ? $data['checks'] : [];
+    $checks = is_array($data['checks'] ?? NULL) ? $data['checks'] : [];
     $failed = [];
     $passed = 0;
     foreach ($checks as $check) {
-      if (is_array($check) && ($check['ok'] ?? false) === true) {
+      if (is_array($check) && ($check['ok'] ?? FALSE) === TRUE) {
         $passed++;
         continue;
       }
@@ -51,7 +53,7 @@ final class Indexing {
     return [
       'environment' => (string) ($data['environment'] ?? ''),
       'checked_at' => (string) ($data['checked_at'] ?? ''),
-      'ok' => ($data['ok'] ?? false) === true,
+      'ok' => ($data['ok'] ?? FALSE) === TRUE,
       'passed' => $passed,
       'failed' => count($failed),
       'failed_urls' => $failed,

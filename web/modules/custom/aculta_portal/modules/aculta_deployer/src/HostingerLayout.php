@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace AcultaDeployer;
 
-/** Safely points a Hostinger domain's public_html at the Drupal web directory. */
+/**
+ * Safely points a Hostinger domain's public_html at the Drupal web directory. */
 final class HostingerLayout {
 
-  /** @return array{domain_root: string, installation_root: string, public_root: string, status: string} */
+  /**
+   * @return array{domain_root: string, installation_root: string, public_root: string, status: string} */
   public function inspect(string $domainRoot): array {
     $root = realpath($domainRoot);
-    if ($root === false || !is_dir($root) || $root === DIRECTORY_SEPARATOR) {
+    if ($root === FALSE || !is_dir($root) || $root === DIRECTORY_SEPARATOR) {
       throw new \RuntimeException('informe --domain-root apontando para uma pasta de domínio existente');
     }
     foreach ([
@@ -40,7 +42,8 @@ final class HostingerLayout {
     $status = 'absent';
     if ($existing && is_link($publicRoot) && readlink($publicRoot) === 'web') {
       $status = 'already_linked';
-    } elseif ($existing) {
+    }
+    elseif ($existing) {
       $status = is_link($publicRoot) ? 'symlink' : 'directory';
     }
 
@@ -52,7 +55,9 @@ final class HostingerLayout {
     ];
   }
 
-  /** @param array{domain_root: string, installation_root: string, public_root: string, status: string} $plan */
+  /**
+   * @param array{domain_root: string, installation_root: string, public_root: string, status: string} $plan
+   *   */
   public function activate(array $plan): string {
     if ($plan['status'] === 'already_linked') {
       return 'public_html já aponta para a raiz web da instalação';
@@ -61,7 +66,7 @@ final class HostingerLayout {
       throw new \RuntimeException('a função symlink do PHP está desabilitada; habilite-a na configuração PHP do hPanel e tente novamente');
     }
     $lock = fopen($plan['domain_root'] . DIRECTORY_SEPARATOR . '.aculta-deployer-layout.lock', 'c');
-    if ($lock === false) {
+    if ($lock === FALSE) {
       throw new \RuntimeException('não foi possível abrir o bloqueio da operação na pasta do domínio');
     }
     try {
@@ -76,12 +81,12 @@ final class HostingerLayout {
       $suffix = bin2hex(random_bytes(6));
       $temporary = $current['domain_root'] . DIRECTORY_SEPARATOR . '.public_html.aculta-deployer-link-' . $suffix;
       $previous = $current['domain_root'] . DIRECTORY_SEPARATOR . '.public_html.aculta-deployer-old-' . $suffix;
-      $moved = false;
+      $moved = FALSE;
       if ($current['status'] !== 'absent') {
         if (!rename($current['public_root'], $previous)) {
           throw new \RuntimeException('não foi possível mover o public_html anterior para substituí-lo');
         }
-        $moved = true;
+        $moved = TRUE;
       }
       try {
         if (!symlink('web', $temporary)) {
@@ -90,7 +95,8 @@ final class HostingerLayout {
         if (!rename($temporary, $current['public_root'])) {
           throw new \RuntimeException('não foi possível ativar public_html como symlink');
         }
-      } catch (\Throwable $e) {
+      }
+      catch (\Throwable $e) {
         if (is_link($temporary)) {
           unlink($temporary);
         }
@@ -110,6 +116,9 @@ final class HostingerLayout {
     }
   }
 
+  /**
+   *
+   */
   private function removePath(string $path): void {
     if (is_link($path) || is_file($path)) {
       if (!unlink($path)) {

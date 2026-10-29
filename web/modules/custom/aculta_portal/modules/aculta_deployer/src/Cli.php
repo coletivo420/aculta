@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace AcultaDeployer;
 
-/** Comandos da ferramenta. Não usa Drupal, Drush nem vendor. */
+/**
+ * Comandos da ferramenta. Não usa Drupal, Drush nem vendor. */
 final class Cli {
 
   public const VERSION = '0.1.28';
@@ -18,7 +19,9 @@ final class Cli {
     $this->repoRoot = dirname($toolRoot, 6);
   }
 
-  /** @param string[] $argv */
+  /**
+   * @param string[] $argv
+   *   */
   public function run(array $argv): int {
     $command = $argv[1] ?? 'help';
     $options = $this->options(array_slice($argv, 2));
@@ -44,6 +47,9 @@ final class Cli {
     };
   }
 
+  /**
+   *
+   */
   private function check(bool $strict): int {
     $code = 0;
     $registry = $this->registry();
@@ -99,6 +105,9 @@ final class Cli {
     return $code;
   }
 
+  /**
+   *
+   */
   private function boundaries(): int {
     $violations = $this->boundaryViolations();
     foreach ($violations as $v) {
@@ -112,9 +121,12 @@ final class Cli {
     return 0;
   }
 
+  /**
+   *
+   */
   private function list(): int {
     foreach ($this->registry()->entries() as $e) {
-      $this->say(sprintf('%s [%s] %s%s — %s', $e['id'], $e['status'], $e['kind'], ($e['blocking'] ?? false) ? ' (bloqueante)' : '', $e['page']));
+      $this->say(sprintf('%s [%s] %s%s — %s', $e['id'], $e['status'], $e['kind'], ($e['blocking'] ?? FALSE) ? ' (bloqueante)' : '', $e['page']));
     }
     return 0;
   }
@@ -127,8 +139,8 @@ final class Cli {
    */
   private function robots(array $o): int {
     $env = $this->activeEnvironment($o);
-    $policy = $this->json($this->toolRoot . '/config/deploy.json')['robots_policy'][$env] ?? null;
-    if ($policy === null) {
+    $policy = $this->json($this->toolRoot . '/config/deploy.json')['robots_policy'][$env] ?? NULL;
+    if ($policy === NULL) {
       $this->err("robots: ambiente desconhecido: $env");
       return 1;
     }
@@ -136,9 +148,9 @@ final class Cli {
     $checks = [];
     foreach ($policy['hosts'] as $url) {
       $res = Verify::fetchWithHeaders((string) $url);
-      if ($res === null) {
+      if ($res === NULL) {
         $this->say("FAIL $url: sem resposta");
-        $checks[] = ['kind' => 'host', 'url' => (string) $url, 'ok' => false, 'observed' => 'sem resposta'];
+        $checks[] = ['kind' => 'host', 'url' => (string) $url, 'ok' => FALSE, 'observed' => 'sem resposta'];
         $code = 1;
         continue;
       }
@@ -153,13 +165,13 @@ final class Cli {
       $indexUrl = (string) ($this->json($this->toolRoot . '/config/deploy.json')['sitemap']['production']['index_url'] ?? '');
       foreach ($policy['hosts'] as $url) {
         $res = Verify::fetchWithHeaders(rtrim((string) $url, '/') . '/robots.txt');
-        if ($res === null || Verify::statusCode($res['headers']) !== 200) {
+        if ($res === NULL || Verify::statusCode($res['headers']) !== 200) {
           $this->say("FAIL $url robots.txt: sem resposta 200");
-          $checks[] = ['kind' => 'robots_txt', 'url' => (string) $url, 'ok' => false, 'observed' => 'sem resposta 200'];
+          $checks[] = ['kind' => 'robots_txt', 'url' => (string) $url, 'ok' => FALSE, 'observed' => 'sem resposta 200'];
           $code = 1;
           continue;
         }
-        $advertised = in_array($indexUrl, Verify::sitemapDirectives($res['body']), true);
+        $advertised = in_array($indexUrl, Verify::sitemapDirectives($res['body']), TRUE);
         $blocked = Verify::disallowsRoot($res['body']);
         $ok = $advertised && !$blocked;
         $this->say(sprintf('%s %s robots.txt: Sitemap=%s, Disallow: / %s', $ok ? 'PASS' : 'FAIL', $url, $advertised ? 'índice' : 'ausente', $blocked ? 'presente' : 'ausente'));
@@ -169,9 +181,9 @@ final class Cli {
     }
     foreach ($policy['private_probes'] ?? [] as $url) {
       $res = Verify::fetchWithHeaders((string) $url);
-      if ($res === null) {
+      if ($res === NULL) {
         $this->say("FAIL $url: sem resposta (caminho privado)");
-        $checks[] = ['kind' => 'private', 'url' => (string) $url, 'ok' => false, 'observed' => 'sem resposta'];
+        $checks[] = ['kind' => 'private', 'url' => (string) $url, 'ok' => FALSE, 'observed' => 'sem resposta'];
         $code = 1;
         continue;
       }
@@ -202,8 +214,8 @@ final class Cli {
   private function sitemap(array $o): int {
     $env = $this->activeEnvironment($o);
     $cfg = $this->json($this->toolRoot . '/config/deploy.json');
-    $policy = $cfg['sitemap'][$env] ?? null;
-    if ($policy === null) {
+    $policy = $cfg['sitemap'][$env] ?? NULL;
+    if ($policy === NULL) {
       $this->err("sitemap: ambiente desconhecido: $env");
       return 1;
     }
@@ -216,8 +228,8 @@ final class Cli {
     $base = Verify::hostOf((string) $policy['index_base']);
     $code = 0;
     $index = Verify::fetchWithHeaders((string) $policy['index_url']);
-    $indexLocs = $index === null ? null : Verify::xmlLocs($index['body']);
-    if ($indexLocs === null || $indexLocs === []) {
+    $indexLocs = $index === NULL ? NULL : Verify::xmlLocs($index['body']);
+    if ($indexLocs === NULL || $indexLocs === []) {
       $this->say("FAIL {$policy['index_url']}: índice ausente, sem resposta ou sem <loc>");
       $this->say("sitemap ($env): FAIL");
       return 1;
@@ -231,19 +243,19 @@ final class Cli {
       }
       $this->say(sprintf('%s índice aponta para %s (base do ambiente: %s)', $sameBase ? 'PASS' : 'FAIL', $child, $base));
       $res = Verify::fetchWithHeaders($child);
-      $locs = $res === null || Verify::statusCode($res['headers']) !== 200 ? null : Verify::xmlLocs($res['body']);
-      if ($locs === null || $locs === []) {
+      $locs = $res === NULL || Verify::statusCode($res['headers']) !== 200 ? NULL : Verify::xmlLocs($res['body']);
+      if ($locs === NULL || $locs === []) {
         $this->say("FAIL $child: filho sem resposta 200 ou sem <loc>");
         $code = 1;
         continue;
       }
       foreach ($locs as $u) {
         $h = Verify::hostOf($u);
-        if ($h !== null && !in_array($h, $allowed, true)) {
+        if ($h !== NULL && !in_array($h, $allowed, TRUE)) {
           $this->say("FAIL $u: host fora da política de produção");
           $code = 1;
         }
-        $contentHosts[$h] = true;
+        $contentHosts[$h] = TRUE;
       }
       $this->say(sprintf('PASS %s: %d URL(s) de conteúdo', $child, count($locs)));
     }
@@ -251,8 +263,8 @@ final class Cli {
       // No servidor de desenvolvimento, o host de conteúdo é verificado pelo equivalente de teste.
       $target = $env === 'test' ? Verify::testEquivalent((string) $h) : (string) $h;
       $probe = Verify::fetchWithHeaders("https://$target/");
-      $ok = $probe !== null && (Verify::statusCode($probe['headers']) ?? 500) < 400;
-      $this->say(sprintf('%s host de conteúdo %s (%s) responde %s', $ok ? 'PASS' : 'FAIL', $h, $target, $probe === null ? 'sem resposta' : (string) Verify::statusCode($probe['headers'])));
+      $ok = $probe !== NULL && (Verify::statusCode($probe['headers']) ?? 500) < 400;
+      $this->say(sprintf('%s host de conteúdo %s (%s) responde %s', $ok ? 'PASS' : 'FAIL', $h, $target, $probe === NULL ? 'sem resposta' : (string) Verify::statusCode($probe['headers'])));
       $code = $ok ? $code : 1;
     }
     $this->say("sitemap ($env): " . ($code === 0 ? 'PASS' : 'FAIL'));
@@ -266,10 +278,10 @@ final class Cli {
    */
   private function currentEnvironment(): ?array {
     $file = $this->repoRoot . '/var/deployer/environment.json';
-    $data = is_file($file) ? json_decode((string) file_get_contents($file), true) : null;
-    return is_array($data) && ($data['schema'] ?? null) === 1 && isset($data['environment'], $data['site'], $data['changed_at'])
+    $data = is_file($file) ? json_decode((string) file_get_contents($file), TRUE) : NULL;
+    return is_array($data) && ($data['schema'] ?? NULL) === 1 && isset($data['environment'], $data['site'], $data['changed_at'])
       ? ['environment' => (string) $data['environment'], 'site' => (string) $data['site'], 'changed_at' => (string) $data['changed_at']]
-      : null;
+      : NULL;
   }
 
   /**
@@ -281,11 +293,11 @@ final class Cli {
    */
   private function activeEnvironment(array $o): string {
     $sites = $this->json($this->toolRoot . '/config/deploy.json')['environments'] ?? [];
-    if (is_string($o['env'] ?? null) && isset($sites[$o['env']])) {
+    if (is_string($o['env'] ?? NULL) && isset($sites[$o['env']])) {
       return (string) $o['env'];
     }
     $current = $this->currentEnvironment();
-    return $current !== null && isset($sites[$current['environment']]) ? $current['environment'] : 'test';
+    return $current !== NULL && isset($sites[$current['environment']]) ? $current['environment'] : 'test';
   }
 
   /**
@@ -298,7 +310,7 @@ final class Cli {
   private function environment(string $sub, array $o): int {
     if ($sub === '' || $sub === 'show') {
       $current = $this->currentEnvironment();
-      $this->say($current === null
+      $this->say($current === NULL
         ? 'environment: não definido (o Portal usa a configuração local)'
         : sprintf('environment: %s — %s (definido em %s)', $current['environment'], $current['site'], $current['changed_at']));
       return 0;
@@ -307,14 +319,14 @@ final class Cli {
       $this->err('uso: environment [show] | environment set --to=production|test');
       return 1;
     }
-    $to = is_string($o['to'] ?? null) ? $o['to'] : '';
+    $to = is_string($o['to'] ?? NULL) ? $o['to'] : '';
     $sites = $this->json($this->toolRoot . '/config/deploy.json')['environments'] ?? [];
     if (!isset($sites[$to])) {
       $this->err('environment: ambiente desconhecido: ' . $to);
       return 1;
     }
     $dir = $this->repoRoot . '/var/deployer';
-    if (!is_dir($dir) && !mkdir($dir, 0750, true)) {
+    if (!is_dir($dir) && !mkdir($dir, 0750, TRUE)) {
       $this->err('environment: não foi possível criar var/deployer');
       return 1;
     }
@@ -322,7 +334,7 @@ final class Cli {
     $target = $dir . '/environment.json';
     $temp = $dir . '/.environment-' . bin2hex(random_bytes(6)) . '.tmp';
     $fh = @fopen($temp, 'xb');
-    if ($fh === false) {
+    if ($fh === FALSE) {
       $this->err('environment: não foi possível gravar');
       return 1;
     }
@@ -339,10 +351,11 @@ final class Cli {
     return $this->report([]);
   }
 
-  /** Grava o resultado da verificação de robots em var/deployer/indexing.json (só URLs públicas e estados). */
+  /**
+   * Grava o resultado da verificação de robots em var/deployer/indexing.json (só URLs públicas e estados). */
   private function writeIndexing(string $env, array $checks, bool $ok): void {
     $dir = $this->repoRoot . '/var/deployer';
-    if (!is_dir($dir) && !mkdir($dir, 0750, true)) {
+    if (!is_dir($dir) && !mkdir($dir, 0750, TRUE)) {
       $this->err('robots: não foi possível criar a pasta de destino do resultado de indexação');
       return;
     }
@@ -350,9 +363,10 @@ final class Cli {
     file_put_contents($dir . '/' . Indexing::FILE, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n");
   }
 
-  /** @return mixed */
+  /**
+   * @return mixed */
   private function readJsonFile(string $path): mixed {
-    return is_file($path) ? json_decode((string) file_get_contents($path), true) : null;
+    return is_file($path) ? json_decode((string) file_get_contents($path), TRUE) : NULL;
   }
 
   /**
@@ -363,7 +377,7 @@ final class Cli {
    * @param array<string, string|bool> $o
    */
   private function report(array $o): int {
-    $out = is_string($o['out'] ?? null) ? $o['out'] : $this->repoRoot . '/var/deployer/status.json';
+    $out = is_string($o['out'] ?? NULL) ? $o['out'] : $this->repoRoot . '/var/deployer/status.json';
     $registry = $this->registry();
     $open = $registry->open();
     $boundary = $this->boundaryViolations();
@@ -387,13 +401,13 @@ final class Cli {
       'not_included' => ['network' => 'execute aculta-deployer sitemap e robots', 'values' => 'nunca incluídos'],
     ];
     $dir = dirname($out);
-    if (!is_dir($dir) && !mkdir($dir, 0750, true)) {
+    if (!is_dir($dir) && !mkdir($dir, 0750, TRUE)) {
       $this->err('report: não foi possível criar a pasta de destino');
       return 1;
     }
     $temp = $dir . DIRECTORY_SEPARATOR . '.status-' . bin2hex(random_bytes(6)) . '.tmp';
     $fh = @fopen($temp, 'xb');
-    if ($fh === false) {
+    if ($fh === FALSE) {
       $this->err('report: não foi possível gravar o relatório');
       return 1;
     }
@@ -409,8 +423,12 @@ final class Cli {
     return 0;
   }
 
-  /** Fase 5: GET somente leitura nas entradas com probe e expect. */
-  /** @param array<string, string|bool> $o */
+  /**
+   * Fase 5: GET somente leitura nas entradas com probe e expect. */
+
+  /**
+   * @param array<string, string|bool> $o
+   *   */
   private function verify(array $o): int {
     $env = $this->activeEnvironment($o);
     $code = 0;
@@ -430,14 +448,15 @@ final class Cli {
       $probe = $env === 'test' ? Verify::toTestEnvironment((string) $e['probe']) : (string) $e['probe'];
       $expect = $env === 'test' ? Verify::toTestEnvironment((string) $e['expect']) : (string) $e['expect'];
       $body = Verify::fetch($probe);
-      if ($body === null) {
+      if ($body === NULL) {
         $this->say("FAIL {$e['id']}: não foi possível ler {$probe} (URL inválida ou sem resposta)");
         $code = 1;
         continue;
       }
       if (Verify::evaluate($body, $expect)) {
         $this->say("PASS {$e['id']}: {$probe} contém o valor esperado ({$env})");
-      } else {
+      }
+      else {
         $this->say("FAIL {$e['id']}: {$probe} não contém o valor esperado ({$env})");
         $code = 1;
       }
@@ -446,14 +465,16 @@ final class Cli {
     return $code;
   }
 
-  /** @param array<string, string|bool> $o */
+  /**
+   * @param array<string, string|bool> $o
+   *   */
   private function register(array $o): int {
     if (isset($o['from-json'])) {
       return $this->importFindings((string) $o['from-json']);
     }
     $required = ['kind', 'page', 'current', 'expected', 'reason', 'owner'];
     foreach ($required as $k) {
-      if (!isset($o[$k]) || $o[$k] === true || trim((string) $o[$k]) === '') {
+      if (!isset($o[$k]) || $o[$k] === TRUE || trim((string) $o[$k]) === '') {
         $this->err("register: --$k é obrigatório");
         return 1;
       }
@@ -468,7 +489,8 @@ final class Cli {
         'owner' => (string) $o['owner'],
         'blocking' => isset($o['blocking']),
       ]);
-    } catch (\InvalidArgumentException $e) {
+    }
+    catch (\InvalidArgumentException $e) {
       $this->err('register: ' . $e->getMessage());
       return 1;
     }
@@ -476,7 +498,8 @@ final class Cli {
     return 0;
   }
 
-  /** Fase 3: importa achados de um JSON (lista de objetos), tudo ou nada. */
+  /**
+   * Fase 3: importa achados de um JSON (lista de objetos), tudo ou nada. */
   private function importFindings(string $path): int {
     if ($path === '' || !is_file($path) || is_link($path)) {
       $this->err('register: --from-json precisa apontar para um arquivo regular');
@@ -487,8 +510,9 @@ final class Cli {
       return 1;
     }
     try {
-      $findings = json_decode((string) file_get_contents($path), true, 64, JSON_THROW_ON_ERROR);
-    } catch (\JsonException) {
+      $findings = json_decode((string) file_get_contents($path), TRUE, 64, JSON_THROW_ON_ERROR);
+    }
+    catch (\JsonException) {
       $this->err('register: JSON de achados inválido');
       return 1;
     }
@@ -498,7 +522,8 @@ final class Cli {
     }
     try {
       $ids = $this->registry()->addMany($findings);
-    } catch (\InvalidArgumentException $e) {
+    }
+    catch (\InvalidArgumentException $e) {
       $this->err('register: nenhum achado foi gravado: ' . $e->getMessage());
       return 1;
     }
@@ -506,18 +531,20 @@ final class Cli {
     return 0;
   }
 
-  /** @param array<string, string|bool> $o */
+  /**
+   * @param array<string, string|bool> $o
+   *   */
   private function build(array $o): int {
-    $target = is_string($o['target'] ?? null) ? $o['target'] : 'production';
-    if (!in_array($target, ['production', 'test'], true)) {
+    $target = is_string($o['target'] ?? NULL) ? $o['target'] : 'production';
+    if (!in_array($target, ['production', 'test'], TRUE)) {
       $this->err('build: --target aceita production ou test');
       return 1;
     }
-    if (is_string($o['env'] ?? null) && $o['env'] !== $target) {
+    if (is_string($o['env'] ?? NULL) && $o['env'] !== $target) {
       $this->err("build: --env={$o['env']} diverge de --target=$target");
       return 1;
     }
-    $out = $o['out'] ?? null;
+    $out = $o['out'] ?? NULL;
     if (!is_string($out) || $out === '') {
       $this->err('build: --out=DIR é obrigatório');
       return 1;
@@ -554,12 +581,12 @@ final class Cli {
     }
     $maxBytes = (int) ($this->json($this->toolRoot . '/config/deploy.json')['max_bytes'] ?? 2097152);
     $robots = $this->json($this->toolRoot . '/config/deploy.json')['robots_policy']['production'] ?? [];
-    if ($target === 'production' && Verify::isNoindex($robots['x_robots_tag'] ?? null)) {
+    if ($target === 'production' && Verify::isNoindex($robots['x_robots_tag'] ?? NULL)) {
       $this->err('build: a política de produção envia noindex; o build de produção não é gerado');
       return 1;
     }
     $report = ['tool' => 'aculta-deployer ' . self::VERSION, 'target' => $target, 'files' => [], 'dropped' => [], 'skipped_binary' => [], 'replacements' => 0, 'profile_rules' => 0];
-    if (!is_dir($outAbs) && !mkdir($outAbs, 0775, true)) {
+    if (!is_dir($outAbs) && !mkdir($outAbs, 0775, TRUE)) {
       $this->err('build: não foi possível criar o diretório de saída');
       return 1;
     }
@@ -582,9 +609,11 @@ final class Cli {
           $content = $raw;
           $count = 0;
           $report['skipped_binary'][] = $rel;
-        } elseif ($target === 'production') {
+        }
+        elseif ($target === 'production') {
           [$content, $count] = $transform->applyHosts($raw);
-        } else {
+        }
+        else {
           $content = $raw;
           $count = 0;
         }
@@ -594,7 +623,7 @@ final class Cli {
           $report['profile_rules'] += count($profileRules);
         }
         $file = $outAbs . '/' . $rel;
-        if (!is_dir(dirname($file)) && !mkdir(dirname($file), 0775, true)) {
+        if (!is_dir(dirname($file)) && !mkdir(dirname($file), 0775, TRUE)) {
           throw new \RuntimeException("não foi possível criar diretório para $rel");
         }
         file_put_contents($file, $content);
@@ -603,14 +632,15 @@ final class Cli {
       }
       // Autoverificação: nenhum host de teste pode restar nos arquivos gerados de produção.
       foreach ($target === 'production' ? $report['files'] : [] as $f) {
-        if (in_array($f['path'], $report['skipped_binary'], true)) {
+        if (in_array($f['path'], $report['skipped_binary'], TRUE)) {
           continue;
         }
         if ($transform->countTestHosts((string) file_get_contents($outAbs . '/' . $f['path'])) > 0) {
           throw new \RuntimeException('host de teste restou no arquivo gerado: ' . $f['path']);
         }
       }
-    } catch (\RuntimeException $e) {
+    }
+    catch (\RuntimeException $e) {
       $this->removeTree($outAbs);
       $this->err('build: ' . $e->getMessage() . ' (saída removida)');
       return 1;
@@ -628,19 +658,19 @@ final class Cli {
    * Não altera nenhum Runtime.
    */
   private function transition(array $o): int {
-    $target = is_string($o['target'] ?? null) ? $o['target'] : '';
-    if (!in_array($target, ['production', 'test'], true)) {
+    $target = is_string($o['target'] ?? NULL) ? $o['target'] : '';
+    if (!in_array($target, ['production', 'test'], TRUE)) {
       $this->err('transition: informe --target=production ou --target=test');
       return 1;
     }
-    $out = $o['out'] ?? null;
+    $out = $o['out'] ?? NULL;
     if (!is_string($out) || $out === '') {
       $this->err('transition: --out=DIR é obrigatório');
       return 1;
     }
     $buildOptions = ['target' => $target, 'out' => $out];
     if (isset($o['allow-open-blocking'])) {
-      $buildOptions['allow-open-blocking'] = true;
+      $buildOptions['allow-open-blocking'] = TRUE;
     }
     if ($this->build($buildOptions) !== 0) {
       return 1;
@@ -676,9 +706,10 @@ final class Cli {
     return 0;
   }
 
-  /** Prepara public_html para servir web/; por padrão, somente simula. */
+  /**
+   * Prepara public_html para servir web/; por padrão, somente simula. */
   private function hostingerLayout(array $o): int {
-    $domainRoot = $o['domain-root'] ?? null;
+    $domainRoot = $o['domain-root'] ?? NULL;
     if (!is_string($domainRoot) || $domainRoot === '' || $domainRoot[0] !== '/') {
       $this->err('hostinger-layout: --domain-root absoluto é obrigatório (pasta do domínio na Hostinger)');
       return 1;
@@ -695,7 +726,8 @@ final class Cli {
       }
       $this->say($layout->activate($plan));
       return 0;
-    } catch (\RuntimeException $e) {
+    }
+    catch (\RuntimeException $e) {
       $this->err('hostinger-layout: ' . $e->getMessage());
       return 1;
     }
@@ -715,6 +747,9 @@ final class Cli {
     }
   }
 
+  /**
+   *
+   */
   private function removeTree(string $dir): void {
     if (!is_dir($dir)) {
       return;
@@ -726,7 +761,8 @@ final class Cli {
     rmdir($dir);
   }
 
-  /** @return string[] */
+  /**
+   * @return string[] */
   private function boundaryViolations(): array {
     $rules = $this->json($this->toolRoot . '/config/boundary.json');
     return (new Boundary($this->repoRoot, $this->toolRoot, $rules))->check();
@@ -742,7 +778,7 @@ final class Cli {
     $bound = array_map(static fn(array $e): string => (string) ($e['file'] ?? ''), $config['environment_bound'] ?? []);
     $found = [];
     foreach ($this->scopeFiles() as $rel) {
-      if (in_array($rel, $bound, true)) {
+      if (in_array($rel, $bound, TRUE)) {
         continue;
       }
       $raw = (string) file_get_contents($this->repoRoot . '/' . $rel);
@@ -770,7 +806,8 @@ final class Cli {
         }
         try {
           $transform->applyProfile((string) file_get_contents($file), [['pattern' => (string) $rule['pattern'], 'with' => (string) $rule['with']]], (string) $rule['file']);
-        } catch (\RuntimeException $e) {
+        }
+        catch (\RuntimeException $e) {
           $errors[] = "$target regra $i: " . $e->getMessage();
         }
       }
@@ -778,15 +815,22 @@ final class Cli {
     return $errors;
   }
 
+  /**
+   *
+   */
   private function transform(): Transform {
     return new Transform($this->json($this->toolRoot . '/config/deploy.json'));
   }
 
+  /**
+   *
+   */
   private function registry(): Registry {
     return new Registry($this->toolRoot . '/registry/deploy-registry.json');
   }
 
-  /** @return string[] Caminhos relativos ao repositório, dentro do escopo. */
+  /**
+   * @return string[] Caminhos relativos ao repositório, dentro do escopo. */
   private function scopeFiles(): array {
     $files = [];
     foreach (['config/sync', 'scripts/content'] as $dir) {
@@ -808,7 +852,8 @@ final class Cli {
     return $files;
   }
 
-  /** @return array{scope: int, with_test_host: int, dropped: int, outside_scope: string[]} */
+  /**
+   * @return array{scope: int, with_test_host: int, dropped: int, outside_scope: string[]} */
   private function scan(Transform $transform): array {
     $scope = $this->scopeFiles();
     $withTest = 0;
@@ -834,8 +879,11 @@ final class Cli {
     return ['scope' => count($scope), 'with_test_host' => $withTest, 'dropped' => $dropped, 'outside_scope' => $outside];
   }
 
-  /** @return array<string, mixed> */
-  /** Confere, somente leitura, a tabela domain_transition contra os registros de domínio em config/sync. */
+  /**
+   * @return array<string, mixed> */
+  /**
+   * Confere, somente leitura, a tabela domain_transition contra os registros de domínio em config/sync. */
+
   /**
    * Confere (somente leitura) os webhooks de external_webhooks: URL por ambiente, segredo no contrato e estado do cadastro.
    *
@@ -844,7 +892,7 @@ final class Cli {
   private function webhooks(): int {
     $config = $this->json($this->toolRoot . '/config/deploy.json');
     $environments = $config['environments'] ?? [];
-    $hooks = $config['external_webhooks'] ?? null;
+    $hooks = $config['external_webhooks'] ?? NULL;
     if (!is_array($hooks) || $hooks === []) {
       $this->err('webhooks: external_webhooks ausente ou vazio em config/deploy.json');
       return 1;
@@ -856,22 +904,22 @@ final class Cli {
         continue;
       }
       $secret = (string) $hook['auth']['secret'];
-      $variable = null;
+      $variable = NULL;
       foreach ($contract as $item) {
-        if (($item['name'] ?? null) === $secret) {
+        if (($item['name'] ?? NULL) === $secret) {
           $variable = $item;
         }
       }
       foreach ($hook['environments'] ?? [] as $env => $spec) {
-        $site = $environments[$env]['site'] ?? null;
-        if ($site === null) {
+        $site = $environments[$env]['site'] ?? NULL;
+        if ($site === NULL) {
           $this->err("webhooks: $name: ambiente $env sem environments.$env.site");
           $code = 1;
           continue;
         }
         $url = rtrim($site, '/') . $hook['path'];
-        $required = $variable !== null && in_array($env, (array) ($variable['required_in'] ?? []), true);
-        $inContract = $variable !== null && in_array($env, (array) ($variable['environments'] ?? []), true);
+        $required = $variable !== NULL && in_array($env, (array) ($variable['required_in'] ?? []), TRUE);
+        $inContract = $variable !== NULL && in_array($env, (array) ($variable['environments'] ?? []), TRUE);
         if (!$inContract) {
           $this->err("webhooks: $name/$env: segredo $secret não declarado para o ambiente $env no contrato");
           $code = 1;
@@ -920,15 +968,15 @@ final class Cli {
     $url = rtrim((string) $site, '/') . $hook['path'];
     $contract = $this->json($this->repoRoot . '/config/secrets-contract.json')['variables'] ?? [];
     $required = [];
-    foreach (\AcultaDeployer\Provision::GENERATED as $name => $format) {
+    foreach (Provision::GENERATED as $name => $format) {
       foreach ($contract as $item) {
-        if (($item['name'] ?? NULL) === $name && in_array($env, (array) ($item['required_in'] ?? []), true)) {
+        if (($item['name'] ?? NULL) === $name && in_array($env, (array) ($item['required_in'] ?? []), TRUE)) {
           $required[] = $name;
         }
       }
     }
-    $missing = \AcultaDeployer\Provision::missing(\AcultaDeployer\Provision::namesIn($secrets), $required);
-    $apiKey = \AcultaDeployer\Provision::valueOf($secrets, 'BREVO_API_KEY');
+    $missing = Provision::missing(Provision::namesIn($secrets), $required);
+    $apiKey = Provision::valueOf($secrets, 'BREVO_API_KEY');
     if ($apiKey === NULL || $apiKey === '') {
       $this->err('provision: BREVO_API_KEY ausente no arquivo de segredos');
       return 1;
@@ -945,8 +993,8 @@ final class Cli {
       }
     }
     $testId = isset($o['remove-test']) && is_numeric($o['remove-test']) ? (int) $o['remove-test'] : NULL;
-    $tokenChanged = in_array('BREVO_WEBHOOK_TOKEN', $missing, true);
-    foreach (\AcultaDeployer\Provision::plan($missing, $found, $tokenChanged, $testId) as $action) {
+    $tokenChanged = in_array('BREVO_WEBHOOK_TOKEN', $missing, TRUE);
+    foreach (Provision::plan($missing, $found, $tokenChanged, $testId) as $action) {
       $this->say(($apply ? 'executar: ' : 'plano: ') . $action);
     }
     if (!$apply) {
@@ -955,13 +1003,13 @@ final class Cli {
 
     $values = [];
     foreach ($missing as $name) {
-      $values[$name] = \AcultaDeployer\Provision::generate($name);
+      $values[$name] = Provision::generate($name);
     }
     if ($values !== []) {
-      \AcultaDeployer\Provision::append($secrets, $values);
+      Provision::append($secrets, $values);
       $this->say('ok: segredos gravados: ' . implode(', ', array_keys($values)));
     }
-    $token = \AcultaDeployer\Provision::valueOf($secrets, 'BREVO_WEBHOOK_TOKEN');
+    $token = Provision::valueOf($secrets, 'BREVO_WEBHOOK_TOKEN');
     $auth = ['type' => 'bearer', 'token' => (string) $token];
     if ($found === NULL) {
       $created = $this->brevoCall('POST', '/v3/webhooks', $apiKey, [
@@ -1033,7 +1081,7 @@ final class Cli {
    */
   private function cookies(): int {
     $config = $this->json($this->toolRoot . '/config/deploy.json');
-    $environments = $config['session_cookie']['environments'] ?? null;
+    $environments = $config['session_cookie']['environments'] ?? NULL;
     if (!is_array($environments) || $environments === []) {
       $this->err('cookies: session_cookie.environments ausente ou vazio em config/deploy.json');
       return 1;
@@ -1056,7 +1104,7 @@ final class Cli {
           continue;
         }
       }
-      $found = preg_match("/^\s*cookie_domain:\s*['\"]?([^'\"\s]+)['\"]?\s*$/m", (string) file_get_contents($check), $m) === 1 ? $m[1] : null;
+      $found = preg_match("/^\s*cookie_domain:\s*['\"]?([^'\"\s]+)['\"]?\s*$/m", (string) file_get_contents($check), $m) === 1 ? $m[1] : NULL;
       if ($found === $expected) {
         $this->say("ok $name: $label {$spec['source']} define cookie_domain $expected");
       }
@@ -1067,16 +1115,19 @@ final class Cli {
     }
     // Arquivos de serviços versionados com cookie_domain fora da política.
     foreach (glob($this->repoRoot . '/web/sites/default/services*.yml') ?: [] as $file) {
-      if (preg_match("/^\s*cookie_domain:\s*['\"]?([^'\"\s]+)/m", (string) file_get_contents($file), $m) === 1 && !in_array($m[1], $declared, true)) {
+      if (preg_match("/^\s*cookie_domain:\s*['\"]?([^'\"\s]+)/m", (string) file_get_contents($file), $m) === 1 && !in_array($m[1], $declared, TRUE)) {
         $this->say('dívida ' . basename($file) . ": cookie_domain {$m[1]} não corresponde a nenhum ambiente declarado (ver docs/COOKIES-AMBIENTE.md)");
       }
     }
     return $code;
   }
 
+  /**
+   *
+   */
   private function domains(): int {
     $config = $this->json($this->toolRoot . '/config/deploy.json');
-    $table = $config['domain_transition']['entries'] ?? null;
+    $table = $config['domain_transition']['entries'] ?? NULL;
     if (!is_array($table) || $table === []) {
       $this->err('domains: domain_transition.entries ausente ou vazio em config/deploy.json');
       return 1;
@@ -1095,14 +1146,16 @@ final class Cli {
       [$byRule] = $transform->applyHosts($test);
       $rule = $byRule === $prod ? 'regra de host' : "exceção declarada (regra daria $byRule)";
       $record = $this->repoRoot . '/config/sync/domain.record.' . $id . '.yml';
-      $current = is_file($record) && preg_match('/^hostname: (.+)$/m', (string) file_get_contents($record), $m) === 1 ? trim($m[1]) : null;
-      if ($current === null) {
+      $current = is_file($record) && preg_match('/^hostname: (.+)$/m', (string) file_get_contents($record), $m) === 1 ? trim($m[1]) : NULL;
+      if ($current === NULL) {
         $pending++;
         $this->say("pendente $id: sem registro de domínio em config/sync (destino $prod)");
-      } elseif ($current === $prod) {
+      }
+      elseif ($current === $prod) {
         $aligned++;
         $this->say("ok $id: config/sync = $prod ($rule)");
-      } else {
+      }
+      else {
         $pending++;
         $this->say("pendente $id: config/sync diz $current; destino de produção $prod ($rule); muda na troca de domínio no Alpha");
       }
@@ -1111,26 +1164,37 @@ final class Cli {
     return 0;
   }
 
+  /**
+   *
+   */
   private function json(string $path): array {
-    return json_decode((string) file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
+    return json_decode((string) file_get_contents($path), TRUE, 512, JSON_THROW_ON_ERROR);
   }
 
+  /**
+   *
+   */
   private function absolute(string $path): string {
     return str_starts_with($path, '/') ? rtrim($path, '/') : rtrim(getcwd() . '/' . $path, '/');
   }
 
-  /** @param string[] $args @return array<string, string|bool> */
+  /**
+   * @param string[] $args
+   * @return array<string, string|bool> .*/
   private function options(array $args): array {
     $out = [];
     foreach ($args as $a) {
       if (str_starts_with($a, '--')) {
-        [$k, $v] = array_pad(explode('=', substr($a, 2), 2), 2, true);
+        [$k, $v] = array_pad(explode('=', substr($a, 2), 2), 2, TRUE);
         $out[$k] = $v;
       }
     }
     return $out;
   }
 
+  /**
+   *
+   */
   private function help(): int {
     $this->say(<<<TXT
 aculta-deployer {version} — substitui hosts de teste (*.aculta.toca.net.br) por produção (*.aculta.org) no build de deploy.
@@ -1163,11 +1227,17 @@ TXT . "\n", ['{version}' => self::VERSION]);
     return 0;
   }
 
+  /**
+   *
+   */
   private function say(string $line): int {
     fwrite(STDOUT, $line . "\n");
     return 0;
   }
 
+  /**
+   *
+   */
   private function err(string $line): void {
     fwrite(STDERR, $line . "\n");
   }
