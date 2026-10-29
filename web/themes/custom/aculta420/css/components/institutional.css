@@ -1,5 +1,6 @@
 /* Institutional composition: content lives in nodes, blocks and Views. */
-.aculta-actions { display: flex; flex-wrap: wrap; gap: 0.75rem 1rem; margin-top: 1.25rem; }
+.aculta-actions { display: flex; flex-direction: column; align-items: stretch; flex-wrap: wrap; gap: 0.75rem 1rem; margin-top: 1.25rem; }
+.aculta-actions .btn { text-align: center; }
 .aculta-actions .btn-primary { color: var(--aculta-interactive-text); background: var(--aculta-interactive-bg); border: 1px solid var(--aculta-interactive-border); }
 .aculta-actions .btn-outline-primary { color: var(--aculta-text-primary); background: transparent; border: 2px solid var(--aculta-border-strong); }
 .aculta-actions .btn-primary:is(:hover, :focus-visible, :active),
@@ -12,7 +13,7 @@
 .aculta-mission { margin-block: 1.5rem var(--aculta-space-section); padding: clamp(1rem, 2vw, 1.5rem); border-inline-start: 4px solid var(--aculta-border-accent); background: var(--aculta-surface-raised); }
 .aculta-main .aculta-mission h2 { margin-top: 0; font-size: clamp(1.375rem, 2vw, 1.75rem); }
 .aculta-mission p { max-width: 72ch; margin-bottom: 0; }
-.aculta-areas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 3rem; margin-top: 1.5rem; }
+.aculta-areas { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
 .aculta-areas > section { padding: 1.5rem; border: 1px solid var(--aculta-border-default); border-inline-start: 3px solid var(--aculta-border-accent); border-radius: var(--bs-border-radius); background: var(--aculta-surface-raised); }
 .aculta-areas > section:is(:hover, :focus-within) { border-inline-start-color: var(--aculta-interactive-active-bg); }
 .aculta-main .aculta-areas h3 { font-size: 1.375rem; margin-top: 0; }
@@ -26,7 +27,7 @@
 .aculta-callout { font-size: clamp(1.25rem, 2vw, 1.5rem); font-weight: 600; }
 .aculta-institutional-note { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--aculta-border-default); font-size: 0.9375rem; }
 .aculta-institution-details { display: grid; gap: 0.875rem; margin: 0; }
-.aculta-institution-details > div { display: grid; grid-template-columns: minmax(9rem, 0.4fr) minmax(0, 1fr); gap: 0.25rem 1rem; }
+.aculta-institution-details > div { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.25rem 1rem; }
 .aculta-institution-details dt { font-weight: 600; }
 .aculta-institution-details dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
 .aculta-institution-details .field--name-field-legal-nature { display: inline; }
@@ -42,11 +43,17 @@
 .aculta-editorial-section.aculta-city { color: var(--aculta-text-inverse); background: var(--aculta-green-dark); }
 .aculta-editorial-section.aculta-city h2 { color: inherit; }
 
-@media (max-width: 767.98px) {
-  .aculta-areas, .aculta-project-list .view-content { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
-  .aculta-institution-details > div { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 48rem) {
+  .aculta-areas { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 3rem; }
+  .aculta-institution-details > div { grid-template-columns: minmax(9rem, 0.4fr) minmax(0, 1fr); }
 }
-@media (max-width: 575.98px) {
-  .aculta-actions { flex-direction: column; align-items: stretch; }
-  .aculta-actions .btn { text-align: center; }
+
+@media (min-width: 36rem) {
+  .aculta-actions { flex-direction: row; }
+}
+
+/* Keep the View override scoped to the mobile consumer: the content-grid SDC
+   owns its 2/3-column desktop variants and has a more specific contract. */
+@media (max-width: 767.98px) {
+  .aculta-project-list .view-content { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
 }

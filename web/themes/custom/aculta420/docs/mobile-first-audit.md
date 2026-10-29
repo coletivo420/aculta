@@ -1,11 +1,35 @@
 # Auditoria mobile-first ACULTA420 — THEME-MF0
 
-**Estado em 2026-10-29: inventário estático parcial, sem implementação ou aceite.**
+**Estado em 2026-10-29: inventário estático parcial; MF2 tem migrações incrementais abaixo, mas o gate global MF3 não foi aprovado.**
 A auditoria original foi registrada no checkout servidor `ded8a6181`. Em
 2026-10-29, a recontagem foi executada na branch atualizada
 `0a479dde3` em `/home/piradopirata/worktrees/opencultures-f0-adm8-e8`; a
 varredura abaixo cobre os arquivos atuais do tema, mas não altera a evidência
 de runtime. Nenhuma escrita persistente foi executada no Runtime.
+
+### THEME-MF2 — composição institucional (2026-10-29)
+
+`css/components/institutional.css` agora define primeiro a pilha vertical para
+CTAs do hero, as áreas institucionais e os pares de dados do bloco de
+instituição. `min-width: 36rem` restaura CTAs em linha; `min-width: 48rem`
+restaura duas colunas nas áreas/detalhes. O override mobile da View de projetos
+foi mantido por atuar sobre o consumer do SDC `content-grid`; suas variantes
+desktop permanecem sob ownership do SDC.
+
+`tests/browser/aculta-theme-mobile-first/institutional-layout.py` usou Firefox
+ESR visível para comparar o CSS anterior com o candidato em 320/360/390/575/576/
+599/600/767/768/1024/1280/1440 px. As 24 verificações passaram: estilos
+computados iguais ao baseline, capturas PNG idênticas e nenhum overflow do
+documento. Fixture sintético verifica somente a composição CSS, não substitui
+render de conteúdo institucional no Runtime. Evidências em
+`/home/piradopirata/aculta-suite-out/aculta-theme-institutional-layout/`.
+
+`npm run lint:css`, SDC schema (54 componentes/734 checks), Design Foundations
+(2434 checks), browser validators (21 checks) e Foundation via Drush/Runtime
+(348 checks) passaram. O Foundation leu a árvore candidata do worktree com o
+container Drupal do Runtime; a folha ainda não foi servida por cache rebuild.
+Inspeção de páginas reais, teclado, zoom e cobertura por purpose ficam
+pendentes. MF2 segue parcial e MF3 não foi aprovado.
 
 ## Escopo quantificado
 

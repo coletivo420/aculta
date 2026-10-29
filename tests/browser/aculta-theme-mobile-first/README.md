@@ -196,3 +196,24 @@ DISPLAY=:0 python3 tests/browser/aculta-theme-mobile-first/account-orders.py
 ```
 
 `ACCOUNT_ORDERS_BASE_URL`, `ACCOUNT_ORDERS_LOGIN_URI` e `ACCOUNT_ORDERS_UID` selecionam o host e a conta autorizada; `ACCOUNT_ORDERS_WIDTHS` permite rodadas focais. `ACCOUNT_ORDERS_CSS_OVERRIDE=1` injeta `css/components/portal-account.css` do checkout do script. O runtime usado nesta rodada só tinha pedidos em rascunho para a conta autorizada, portanto não havia linha real de pedido para verificar a emissão de `data-label`; o teste registra essa parte como DEFERRED. Não cobre zoom, teclado completo, claro/escuro, reduced motion ou WCAG 2.2 AA.
+
+## Composição institucional mobile-first
+
+`institutional-layout.py` roda em Firefox ESR visível com fixture sintético,
+comparando o CSS anterior (Git `HEAD^` por padrão) ao candidato em
+320/360/390/575/576/599/600/767/768/1024/1280/1440 px. Mede direction/alinhamento
+de CTAs, tracks da grade institucional e pares de detalhes; guarda PNGs e
+`summary.json` fora do repositório. Não acessa Runtime, não envia dados e não
+substitui a inspeção das páginas reais nem a cobertura de zoom, teclado,
+claro/escuro, reduced motion ou WCAG completa.
+
+```sh
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-theme-institutional-layout
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/institutional-layout.py
+```
+
+`INSTITUTIONAL_BASELINE_REF` escolhe o commit do CSS de baseline; use `HEAD` ao
+rodar antes de criar o commit e mantenha o padrão `HEAD^` após a publicação.
+`INSTITUTIONAL_LAYOUT_WIDTHS` permite uma lista focal separada por vírgulas.

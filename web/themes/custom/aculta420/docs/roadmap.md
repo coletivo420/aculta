@@ -9,6 +9,15 @@
   design no código dos módulos: zero. Eventos, calendário e mapa precisam de
   revisão visual Firefox ESR depois que o candidato for servido.
 
+## THEME-MF2 — composição institucional responsiva — 2026-10-29 (dev.13)
+
+CTAs, áreas institucionais e pares de detalhes agora usam regras mobile-first,
+com retorno gradual às colunas atuais em `min-width`. Firefox ESR comparou o
+layout e as capturas antes/depois em 12 larguras (24/24 PASS); lint CSS, SDC,
+Design Foundations, browser validators e Foundation via Drush/Runtime também
+passaram. A inspeção das páginas reais servidas após publicar este candidato
+permanece pendente.
+
 **Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../docs/operations/RELEASE-LIFECYCLE.md). Todo requisito de código, testes, gates e revisão visual aplicável deve estar pronto antes de RC; Alpha é validação pós-deploy no servidor de desenvolvimento. Após Alpha aprovado, preparar a migração para produção e realizar checks específicos pós-deploy.
 
 | Versão | Estado | Marcação | Conteúdo |

@@ -507,6 +507,17 @@ Header e zero overflow. A validação integrada após publicação/cache e os de
 purposes continuam pendentes; MF2 segue parcial. Ver detalhes em
 `mobile-first-audit.md`.
 
+### THEME-MF2 — composição institucional mobile-first (2026-10-29)
+
+CTAs do hero e as grades institucionais/detalhes agora declaram primeiro o
+reflow móvel; `min-width: 36rem` restaura os CTAs em linha e `min-width: 48rem`
+restaura duas colunas. O CSS anterior e o candidato foram comparados em Firefox
+ESR visível, com fixture sintético: 24/24 checks em 12 larguras, screenshots
+idênticas e sem overflow. Lint CSS, SDC schemas, Design Foundations e browser
+validators passaram. As páginas reais ainda não foram conferidas com este
+candidato servido; THEME-MF3 segue pendente. Ver `mobile-first-audit.md` e
+`tests/browser/aculta-theme-mobile-first/institutional-layout.py`.
+
 ### THEME-MF2 — Institution Bar global (2026-10-29)
 
 As dimensões compactas agora são CSS base; `min-width: 768px` recupera o layout

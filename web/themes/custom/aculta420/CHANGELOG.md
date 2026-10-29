@@ -1,3 +1,9 @@
+# 0.7.0-dev.13 — reflow mobile-first da composição institucional (2026-10-29)
+
+- CTAs de hero, grade de áreas institucionais e pares de detalhes da instituição passam a usar layout móvel como base; as colunas largas são aprimoradas em `min-width`.
+- Firefox ESR visível comparou baseline e candidato em 12 larguras: 24/24 verificações passaram, capturas idênticas e sem overflow no fixture; ver `docs/mobile-first-audit.md`.
+- `npm run lint:css`, SDC schema (734), Design Foundations (2434), browser validators (21) e Foundation via Drush/Runtime (348) PASS. A validação visual das páginas servidas após sincronizar o HEAD continua pendente.
+
 # 0.7.0-dev.12 — corrigir deslocamento da barra multidomínio no mobile (2026-10-29)
 
 - A barra top-bar do Drupal Navigation em fluxo normal já não desloca a Institution Bar sticky no mobile; em desktop fixo, mantém o deslocamento real.
