@@ -1,3 +1,7 @@
+## Priorização arquitetural vinculante - 2026-10-29
+
+O [plano ARQ-01 a ARQ-09](PLANO-ARQUITETURAL-OPENCULTURAS-ACULTA-ARQ-01-09.md) orienta a incorporação de capacidades, sem portar módulos inteiros ou substituir o `aculta_index`. P0: ACL/precisão geográfica de locais, catálogo de ocorrências escalável e descoberta cultural com ACL; P1: eventos/locais estruturados, organizações, UGC, salvos; P2: menções, apoiadores, teasers e metadados. **Continua separada a implementação visual do Studio e o mobile-first de todo o tema.** Fonte quantitativa verificada é a auditoria 3.1.5, não inventário de versões diferentes.
+
 # Comparativo OpenCulturas × ACULTA — ideias, visuais e destinos
 
 **Retificação em 2026-10-29:** para o pacote **3.1.5** e prioridades aprovadas, consulte [a nova auditoria](AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md). Contagens, propostas de licença obrigatória, Honeypot e criação de papel `organizador` abaixo são **históricas**, supersedidas por decisões D-01/D-10/D-11. Não executar itens I-xx sem reconciliar com o programa OC315.
