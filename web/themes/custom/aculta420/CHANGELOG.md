@@ -6,6 +6,7 @@
 - `editorial-card.css` usa altura e espaçamento compactos como base e só amplia em `min-width: 48.0625rem`. Lint CSS e auditoria estática SDC passaram; Firefox/consumer real permanecem DEFERRED.
 - `wiki-entry.css` usa uma coluna como base para verbetes públicos, com o aside antes do texto; em `48rem` restaura duas colunas. O smoke da Wiki mede a grade e aceita ambas as folhas candidatas; Firefox/Runtime seguem DEFERRED.
 - `layouts/page-columns` empilha as variantes 1/2/3 colunas como base e restaura a configuração em `48rem`. Foi criado smoke Firefox comparativo da fixture SDC; execução visual ainda pendente.
+- `album-slideshow.css` usa o palco de uma coluna e miniaturas recolhidas como base; em `30rem` restaura a galeria ampla. Sem JavaScript as miniaturas continuam disponíveis. O smoke verifica 479/480px e o toggle; Firefox/Runtime pendente.
 
 # 0.7.0-dev.26 — migrar navegação interna do Studio para mobile-first (2026-10-29)
 

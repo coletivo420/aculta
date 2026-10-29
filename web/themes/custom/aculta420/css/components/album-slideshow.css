@@ -4,8 +4,9 @@
 [data-aculta-album-stage] {
   display: grid;
   width: 100%;
-  grid-template-columns: minmax(0, 1fr) 15rem;
+  grid-template-columns: minmax(0, 1fr);
   align-items: stretch;
+  position: relative;
   background: var(--aculta-media-stage-bg);
   color: var(--aculta-text-inverse);
   min-height: 0;
@@ -21,7 +22,7 @@
    landscape images. The child images keep their aspect ratio via object-fit. */
 [data-aculta-album-stage] vvjs-slideshow {
   width: 100%;
-  height: min(80vh, 40rem) !important;
+  height: min(60vh, 25rem) !important;
   padding: 0;
   color: var(--aculta-text-inverse);
 }
@@ -59,7 +60,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  max-height: min(80vh, 40rem);
+  max-height: min(60vh, 25rem);
   object-fit: contain;
   background: var(--aculta-media-stage-bg);
 }
@@ -122,7 +123,7 @@
   align-content: start;
   padding: 0.5rem;
   overflow-y: auto;
-  max-height: min(80vh, 40rem);
+  max-height: 60vh;
   background: var(--aculta-media-stage-bg);
   scrollbar-width: thin;
   scrollbar-color: var(--aculta-text-muted) var(--aculta-media-stage-bg);
@@ -157,53 +158,57 @@
 }
 
 [data-aculta-album-toggle] {
+  position: absolute;
+  z-index: 3;
+  inset-block-start: 0.5rem;
+  inset-inline-end: 0.5rem;
   display: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--aculta-border-strong);
+  border-radius: var(--bs-border-radius-pill);
+  background: var(--aculta-surface-interactive);
+  color: var(--aculta-text-primary);
+  cursor: pointer;
 }
 
-@media (max-width: 479.98px) {
+@media (min-width: 30rem) {
   [data-aculta-album-stage] {
-    grid-template-columns: minmax(0, 1fr);
-    position: relative;
+    grid-template-columns: minmax(0, 1fr) 15rem;
+    position: static;
   }
 
   [data-aculta-album-stage] vvjs-slideshow {
-    height: min(60vh, 25rem) !important;
-  }
-
-  [data-aculta-album-stage] .vvjs-inner,
-  [data-aculta-album-stage] .vvjs-items,
-  [data-aculta-album-stage] .vvjs-item,
-  [data-aculta-album-stage] .vvjs-item-inner {
-    height: 100%;
+    height: min(80vh, 40rem) !important;
   }
 
   [data-aculta-album-stage] .vvjs img {
-    max-height: min(60vh, 25rem);
+    max-height: min(80vh, 40rem);
   }
 
   [data-aculta-album-thumbs] {
-    display: none;
-    max-height: 60vh;
-  }
-
-  [data-aculta-album-stage][data-aculta-album-open] [data-aculta-album-thumbs] {
     display: grid;
+    max-height: min(80vh, 40rem);
   }
 
-  [data-aculta-album-toggle] {
-    position: absolute;
-    z-index: 3;
-    inset-block-start: 0.5rem;
-    inset-inline-end: 0.5rem;
-    display: inline-flex;
-    width: 2.5rem;
-    height: 2.5rem;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--aculta-border-strong);
-    border-radius: var(--bs-border-radius-pill);
-    background: var(--aculta-surface-interactive);
-    color: var(--aculta-text-primary);
-    cursor: pointer;
+}
+
+[data-aculta-album-stage]:has([data-aculta-album-toggle]):not([data-aculta-album-open]) [data-aculta-album-thumbs] {
+  display: none;
+}
+
+[data-aculta-album-stage]:has([data-aculta-album-toggle])[data-aculta-album-open] [data-aculta-album-thumbs] {
+  display: grid;
+}
+
+[data-aculta-album-stage]:has([data-aculta-album-toggle]) [data-aculta-album-toggle] {
+  display: inline-flex;
+}
+
+@media (min-width: 30rem) {
+  [data-aculta-album-stage]:has([data-aculta-album-toggle]) [data-aculta-album-toggle] {
+    display: none;
   }
 }

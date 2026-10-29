@@ -20,14 +20,23 @@ existentes no Runtime; o teste não altera Fórum, Revista ou galerias.
 
 O teste também valida que a barra administrativa top-bar mantém suas ações
 visíveis em cada viewport; essa parte é regressão da integração mobile-first do
-tema ACULTA420 no contexto de uma galeria.
+tema ACULTA420 no contexto de uma galeria. Nas páginas de álbum, confere que a
+galeria começa em uma coluna, com miniaturas recolhidas e botão de alternância
+em 320/390/479px; em 480px ou mais, volta à grade com miniaturas visíveis.
+Com `SUITE_NO_JS=1`, espera a grade de miniaturas disponível sem depender do
+toggle criado por JavaScript.
 
 Para avaliar uma regra CSS ainda não publicada no Runtime, SUITE_THEME_CSS pode
 apontar para a folha local. O script injeta o conteúdo somente no documento
 atual do Firefox, sem alterar o servidor; esse resultado é prototipagem e não
-substitui repetir o teste após o cache rebuild do candidato.
+substitui repetir o teste após o cache rebuild do candidato. Para testar apenas
+os álbuns públicos sem abrir o editor, defina `SUITE_SKIP_EDITOR=1`; nesse caso
+`SUITE_NODE_ID` deixa de ser necessário, mas o login autorizado continua sendo
+usado para conferir a barra administrativa.
 
 `SUITE_SKIP_EDITOR=1` omite somente o fluxo de diálogo e mantém login e álbum
 público, para isolar regressões da top-bar sem depender de uma fixture editorial
 editável. `SUITE_LOGIN_URL` pode receber um link único gerado pelo Drush do
 checkout do servidor de teste; o script captura esse valor sem imprimi-lo.
+`SUITE_NO_JS=1` desativa JavaScript no Firefox para validar o fallback de
+miniaturas visíveis; o roteiro continua somente leitura.

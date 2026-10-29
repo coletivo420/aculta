@@ -658,3 +658,15 @@ ambos os lados da fronteira 768/769px e preserva DOM e slots. Lint CSS e os
 gates estáticos SDC passaram; Firefox/inspeção do consumer
 `node--editorial-highlight` estão DEFERRED sem `DISPLAY` e com 13 sessões
 geckodriver ativas. THEME-MF3 permanece pendente.
+
+### THEME-MF2 — galeria pública de álbuns
+
+`album-slideshow.css` agora declara o palco em uma coluna, miniaturas recolhidas
+e botão de alternância como base. `min-width: 30rem` (480px) restaura duas
+colunas, miniaturas visíveis e oculta o botão. `tests/browser/aculta-gallery/
+visual.py` mede 320/390/479/480/600/1280px nos fixtures públicos dos domains
+principal e Fórum, incluindo uso do toggle e retorno ao estado fechado. Lint CSS
+e sintaxe Python passam; Firefox/Runtime DEFERRED por `DISPLAY` ausente e
+sessões concorrentes. THEME-MF3 segue pendente.
+Com JavaScript desativado, a CSS mantém as miniaturas visíveis; o botão de
+recolhimento só existe após o behavior inserir o controle acessível.

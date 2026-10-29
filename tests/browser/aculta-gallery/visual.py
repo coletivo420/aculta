@@ -17,9 +17,14 @@ from wdlib import Driver  # noqa: E402
 BASE = "https://aculta.toca.net.br"
 FORUM = "https://growroom420.aculta.toca.net.br"
 ACCOUNT = "https://conta.aculta.toca.net.br"
-NODE_ID = os.environ["SUITE_NODE_ID"]
+SKIP_EDITOR = os.environ.get("SUITE_SKIP_EDITOR") == "1"
+NO_JS = os.environ.get("SUITE_NO_JS") == "1"
+NODE_ID = os.environ.get("SUITE_NODE_ID")
 OUT = Path(os.environ["SUITE_OUT"])
-WIDTHS = [(1280, "desktop"), (390, "mobile-390"), (320, "mobile-320")]
+WIDTHS = [
+    (1280, "desktop"), (600, "tablet-600"), (480, "tablet-480"),
+    (479, "mobile-479"), (390, "mobile-390"), (320, "mobile-320"),
+]
 ALBUM = "/albuns/marcha-da-maconha-de-goiania-2025-registros-antiproibicionistas"
 THEME_CSS = os.environ.get("SUITE_THEME_CSS")
 THEME_CSS_CONTENT = Path(THEME_CSS).read_text() if THEME_CSS else None
@@ -122,12 +127,14 @@ def navigate(url):
 
 
 try:
-    driver = Driver(bidi=True)
+    driver = Driver(prefs={"javascript.enabled": False} if NO_JS else None, bidi=True)
     bidi = connect(driver.websocket_url)
     navigate(login)
     check("login de uso único concluiu", wait_for("document.readyState === 'complete'"))
 
-    if os.environ.get("SUITE_SKIP_EDITOR") != "1":
+    if not SKIP_EDITOR:
+        if not NODE_ID:
+            raise SystemExit("SUITE_NODE_ID é obrigatório para o fluxo opcional do editor.")
         navigate(f"{BASE}/node/{NODE_ID}/edit")
         editor_open = wait_for("!!document.querySelector('.ck-editor')")
         check("formulário descartável da Revista abriu", editor_open,
@@ -210,6 +217,23 @@ try:
                 const rect = title.getBoundingClientRect();
                 return rect.left >= 0 && rect.right <= window.innerWidth;
               })(),
+              stageColumns: (() => {
+                const stage = document.querySelector('[data-aculta-album-stage]');
+                return stage ? getComputedStyle(stage).gridTemplateColumns.trim().split(/\\s+/).length : null;
+              })(),
+              thumbnailsDisplay: (() => {
+                const thumbs = document.querySelector('[data-aculta-album-thumbs]');
+                return thumbs ? getComputedStyle(thumbs).display : null;
+              })(),
+              toggleDisplay: (() => {
+                const toggle = document.querySelector('[data-aculta-album-toggle]');
+                return toggle ? getComputedStyle(toggle).display : null;
+              })(),
+              toggleAccessible: (() => {
+                const toggle = document.querySelector('[data-aculta-album-toggle]');
+                return !!toggle && toggle.tagName === 'BUTTON' &&
+                  !!toggle.getAttribute('aria-label') && toggle.getAttribute('aria-expanded') === 'false';
+              })(),
               images: document.querySelectorAll('main img').length,
               topBarActionsVisible: (() => {
                 const actions = document.querySelector('.top-bar__actions');
@@ -229,12 +253,38 @@ try:
                 })),
             };""")
             screenshot(f"album-{label}-{width_label}")
+            mobile_gallery = width < 480
+            expected_columns = 1 if mobile_gallery else 2
+            expected_thumbnails = "grid" if NO_JS or not mobile_gallery else "none"
+            expected_toggle = "inline-flex" if mobile_gallery and not NO_JS else "none"
             check(f"álbum {label} reflow em {width}px",
                   actual == width and metrics["document"] <= width and metrics["h1"] and
-                  metrics["images"] > 0 and metrics["topBarActionsVisible"],
+                  metrics["images"] > 0 and metrics["topBarActionsVisible"] and
+                  metrics["stageColumns"] == expected_columns and
+                  metrics["thumbnailsDisplay"] == expected_thumbnails and
+                  metrics["toggleDisplay"] == expected_toggle and
+                  (not mobile_gallery or NO_JS or metrics["toggleAccessible"]),
                   f"viewport={actual}, document={metrics['document']}, h1={metrics['h1']}, "
-                  f"images={metrics['images']}, topBarActionsVisible={metrics['topBarActionsVisible']}; "
+                  f"images={metrics['images']}, stageColumns={metrics['stageColumns']}, "
+                  f"thumbs={metrics['thumbnailsDisplay']}, toggle={metrics['toggleDisplay']}, "
+                  f"toggleAccessible={metrics['toggleAccessible']}, "
+                  f"topBarActionsVisible={metrics['topBarActionsVisible']}; "
                   f"overflow={metrics['overflow']}")
+            if width == 390 and not NO_JS:
+                toggle_state = driver.js("""const stage=document.querySelector('[data-aculta-album-stage]');
+                  const toggle=stage?.querySelector('[data-aculta-album-toggle]');
+                  if (!stage || !toggle) return {opened:false,closed:false};
+                  toggle.click();
+                  const opened=stage.hasAttribute('data-aculta-album-open') &&
+                    toggle.getAttribute('aria-expanded') === 'true' &&
+                    getComputedStyle(stage.querySelector('[data-aculta-album-thumbs]')).display === 'grid';
+                  toggle.click();
+                  const closed=!stage.hasAttribute('data-aculta-album-open') &&
+                    toggle.getAttribute('aria-expanded') === 'false' &&
+                    getComputedStyle(stage.querySelector('[data-aculta-album-thumbs]')).display === 'none';
+                  return {opened,closed};""")
+                check(f"álbum {label} alternância de miniaturas em 390px",
+                      toggle_state["opened"] and toggle_state["closed"], toggle_state)
 finally:
     if bidi:
         bidi.close()

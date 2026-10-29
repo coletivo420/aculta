@@ -92,6 +92,13 @@ Studio. O mobile usa coluna única como base e recupera a sidebar lateral em
 padding compactos são a base, com composição ampla em `48.0625rem`. A validação
 visual do consumer real `node--editorial-highlight` segue pendente.
 
+A galeria de álbuns usa markup e estado do módulo `aculta_gallery`; o tema faz
+o palco de uma coluna e miniaturas recolhidas desde a base, restaurando a grade
+lateral em `30rem`. O smoke reutiliza fixtures públicas dos domains principais
+e do Fórum; não cria SDC nem duplicação de componente.
+Sem JavaScript, as miniaturas continuam visíveis e navegáveis; o botão de
+recolhimento só aparece quando o behavior insere o controle.
+
 A barra de progresso de comentários é CSS compartilhada de Fórum/Wiki/Revista,
 com markup e ações emitidos pelo Portal; a grade começa compacta e cresce em
 `22.5rem` e `36rem`. O harness e os limites por consumer estão documentados em

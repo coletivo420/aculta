@@ -699,3 +699,10 @@ O card editorial usa altura mínima e padding compactos como base; em
 768/769px e o consumer real ainda precisam de validação visual; não aprova
 THEME-MF3. Ver `mobile-first-audit.md` e
 `components/content/editorial-card/README.md`.
+
+### THEME-MF2 — galeria de álbuns
+
+O palco usa uma coluna e miniaturas recolhidas como base; a partir de `30rem`
+restaura a composição ampla. `tests/browser/aculta-gallery/visual.py` mede os
+estados mobile/desktop e a fronteira 479/480px em dois domains públicos,
+incluindo a alternância de miniaturas; Firefox/Runtime permanecem pendentes.
