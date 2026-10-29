@@ -149,9 +149,12 @@ Fonte de verdade dos dados: [data-ownership.md](data-ownership.md).
   autorizados e cacheáveis.
 - O avatar do acervo é imagem institucional, não dado pessoal; por isso pode
   aparecer sem opt-in.
-- Cache: conta e Profile são dependências; o cartão carrega tags/contextos da
-  identidade. Feedback do LMS acrescenta a resposta e o curso (e a tag de lista
-  de membros do curso) para o rótulo de educador não ficar preso em cache.
+- Cache: `AvatarResolver` sempre incorpora a conta e o arquivo resolvido à
+  metadata, de modo que Fórum, perfil público e demais consumidores invalidem a
+  identidade quando `user_picture` mudar. O cartão também incorpora o Profile e
+  os contextos da identidade. Feedback do LMS acrescenta a resposta e o curso
+  (e a tag de lista de membros do curso) para o rótulo de educador não ficar
+  preso em cache.
 - A foto personalizada importada do Google é tratada como foto pessoal; a
   remoção devolve a conta ao acervo. Reimportar a foto do Google depois da
   criação e importar avatares do Growroom são decisões operacionais registradas

@@ -28,6 +28,9 @@ class AvatarResolverTest extends UnitTestCase {
    */
   public function testReturnsNullWithoutPhotoOrPool(): void {
     $account = $this->createMock(UserInterface::class);
+    $account->method('getCacheContexts')->willReturn([]);
+    $account->method('getCacheTags')->willReturn(['user:42']);
+    $account->method('getCacheMaxAge')->willReturn(-1);
     $account->method('hasField')->with('user_picture')->willReturn(FALSE);
 
     $resolver = new AvatarResolver(
@@ -48,10 +51,12 @@ class AvatarResolverTest extends UnitTestCase {
       new ImageRenderer(new ImageCatalog(), $this->createMock(EntityTypeManagerInterface::class)),
     );
 
-    $build = $resolver->build($account, 'Ana', FALSE, new CacheableMetadata());
+    $cacheability = new CacheableMetadata();
+    $build = $resolver->build($account, 'Ana', FALSE, $cacheability);
 
     self::assertSame('image_style', $build['#theme']);
     self::assertSame(AvatarPool::DIRECTORY . '/avatar-17.png', $build['#uri']);
+    self::assertContains('user:42', $cacheability->getCacheTags());
   }
 
   /**
@@ -78,6 +83,10 @@ class AvatarResolverTest extends UnitTestCase {
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('__get')->with('entity')->willReturn($file);
     $account = $this->createMock(UserInterface::class);
+    $account->method('id')->willReturn('42');
+    $account->method('getCacheContexts')->willReturn([]);
+    $account->method('getCacheTags')->willReturn(['user:42']);
+    $account->method('getCacheMaxAge')->willReturn(-1);
     $account->method('hasField')->with('user_picture')->willReturn(TRUE);
     $account->method('get')->with('user_picture')->willReturn($field);
     return $account;

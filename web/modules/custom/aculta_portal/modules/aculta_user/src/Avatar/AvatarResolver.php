@@ -35,6 +35,12 @@ final class AvatarResolver {
    *   Atributos extras do elemento de avatar (por exemplo, data-portal-ui).
    */
   public function build(?UserInterface $account, string $name, bool $showPhoto, CacheableMetadata $cacheability, array $attributes = []): ?array {
+    // Every consumer must invalidate the rendered identity when the canonical
+    // user_picture changes, including callers that only add profile cache tags.
+    if ($account !== NULL) {
+      $cacheability->addCacheableDependency($account);
+    }
+
     if ($account !== NULL && $account->hasField('user_picture') && !$account->get('user_picture')->isEmpty()) {
       $file = $account->get('user_picture')->entity;
       if ($file !== NULL) {
