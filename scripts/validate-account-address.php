@@ -1,12 +1,15 @@
 <?php
 
 /**
- * Gate do endereço da conta (Minha conta > Meus dados > Endereço). Tolerância zero.
+ * @file
+ * Gate do formulário unificado de endereço. Tolerância zero.
  *
- * Protege o comportamento aprovado pelo responsável (2026-10-18). Cada regra abaixo corresponde a uma regressão que já
- * aconteceu. Se um desses trechos sumir, o gate falha e a mudança não deve ser mesclada.
+ * Protege o comportamento aprovado pelo responsável. Cada regra abaixo
+ * corresponde a uma regressão anterior; se falhar, a mudança não deve ser
+ * mesclada.
  *
- * Verificação completa no navegador (Firefox, X11): scripts/test-account-address-browser.py (não roda neste gate).
+ * O navegador Firefox é executado separadamente pelo teste documentado em
+ * tests/browser/aculta-theme-mobile-first/README.md.
  */
 
 $root = dirname(__DIR__);
@@ -32,6 +35,10 @@ $fieldConfig = $read('config/sync/field.field.profile.authenticated.field_addres
 $accountShell = $read('web/modules/custom/aculta_portal/src/AccountShellBuilder.php');
 $routes = $read('web/modules/custom/aculta_portal/aculta_portal.routing.yml');
 $form = $read('web/modules/custom/aculta_portal/src/Account/AccountAddressForm.php');
+$eventWizard = $read('web/modules/custom/aculta_portal/modules/aculta_events_openstreetmap/src/Form/OpenStreetMapImportWizard.php');
+$accountAddressHooks = $read('web/modules/custom/aculta_portal/src/Hook/AccountAddressHooks.php');
+$eventLocation = $read('web/modules/custom/aculta_portal/modules/aculta_events/src/Entity/EventLocation.php');
+$osmWizard = $read('web/modules/custom/aculta_portal/modules/aculta_events_openstreetmap/src/Form/OpenStreetMapImportWizard.php');
 
 // 1. O bloco de papel não pode capturar a edição de endereço do Portal
 // NEM a rota equivalente do Studio: ambas usam o mesmo Profile Commerce.
@@ -49,6 +56,19 @@ $check(
   'decisão: implementação central de endereço no Portal usa a integração CEP oficial',
 );
 $check(
+  str_contains($form, "'aculta_event_location'")
+    && str_contains($form, "'field_endereco'")
+    && str_contains($eventWizard, 'AccountAddressForm::apply(')
+    && str_contains($eventWizard, 'AccountAddressForm::LIBRARY'),
+  'D-54/D-55: EventLocation e revisão OSM reutilizam o adaptador e a biblioteca CEP centrais',
+);
+$check(
+  str_contains($eventWizard, "'country_code' => 'BR'")
+    && str_contains($eventWizard, "'addr:postcode'")
+    && !str_contains($eventWizard, "'country_code' => 'select'"),
+  'D-55: endereço de local/evento fica restrito ao Brasil, sem seletor de país',
+);
+$check(
   str_contains($routes, 'path: /conta-legada')
     && str_contains($routes, 'path: /dados/endereco')
     && str_contains($accountShell, "'aculta_portal.my_data_address' => 'aculta_portal.my_data'")
@@ -62,8 +82,8 @@ $check(
     && str_contains($callbacks, '$formState->setRedirect($route)'),
   'PortalFormCallbacks: submissão retorna ao mesmo editor sem perder o legado',
 );
-// 2. País fixo em Brasil: campo oculto (não #access FALSE, que faz o módulo Address descartar a entrada inteira).
-//    O tratamento é único (AccountAddressForm) e usado por Minha conta, checkout, loja e perfis de equipe.
+// 2. País fixo em Brasil: campo oculto. #access FALSE faria Address descartar
+// a entrada inteira. AccountAddressForm atende Conta, checkout, loja e equipe.
 $check(
   str_contains($form, "['#type'] = 'hidden'") && !str_contains($form, "country_code']['#access'] = FALSE"),
   'AccountAddressForm: país oculto como campo hidden, sem #access FALSE',
@@ -83,11 +103,28 @@ $check(
   'loja e perfis de equipe usam o formulário único',
 );
 $check(
+  str_contains($form, "'aculta_event_location'") && str_contains($form, "return 'field_endereco'")
+    && str_contains($accountAddressHooks, 'AccountAddressForm::apply(')
+    && str_contains($form, "hasField('field_endereco') ? 'field_endereco'"),
+  'entidade de local de evento usa o formulário e o entity builder centrais',
+);
+$check(
+  str_contains($eventLocation, "->setSetting('available_countries', ['BR'])"),
+  'endereço de local de evento aceita somente Brasil',
+);
+$check(
+  str_contains($osmWizard, 'AccountAddressForm::apply(')
+    && str_contains($osmWizard, 'AccountAddressForm::LIBRARY')
+    && str_contains($osmWizard, "'#type' => 'address'")
+    && str_contains($osmWizard, 'reviewedTags('),
+  'revisão OSM usa o widget Address central, CEP Portal e adaptador de tags',
+);
+$check(
   (bool) preg_match("/available_countries:\\s*\\n\\s+BR: BR\\s*\\n/", $fieldConfig),
   'config: field_address do authenticated aceita só BR',
 );
 
-// Perfis de equipe usam o formulário padrão de endereço (widget address_default, sem ocultar field_address).
+// Perfis de equipe usam address_default e mantêm field_address visível.
 foreach (['administrator', 'associado', 'gerente_loja', 'lms_teacher'] as $team) {
   $display = $read("config/sync/core.entity_form_display.profile.$team.default.yml");
   $check(
@@ -96,7 +133,8 @@ foreach (['administrator', 'associado', 'gerente_loja', 'lms_teacher'] as $team)
   );
 }
 
-// 3. Cliente ViaCEP do contrib não carregado; o Portal faz a busca com o cabeçalho que o endpoint exige.
+// 3. O cliente ViaCEP do contrib não é carregado; o Portal envia o cabeçalho
+// exigido pelo endpoint próprio.
 $check(
   !str_contains($editorial, "'cep_autocomplete'") && !str_contains($cep, 'viacep'),
   'sem dependência do cep_autocomplete (módulo desinstalado e portado)',
@@ -114,26 +152,27 @@ $check(
   'CepLookupController: endpoint continua exigindo AJAX',
 );
 
-// 4. Troca de CEP: o CEP resolvido fica por campo (sobrevive ao AJAX) e a troca escreve o endereço inteiro.
+// 4. O CEP resolvido sobrevive ao AJAX; trocar o CEP substitui o endereço todo.
 $check(str_contains($cep, 'const resolvedCep = new Map()'), 'cep-address.js: CEP resolvido guardado por campo');
 $check(str_contains($cep, 'function keysToWrite') && str_contains($cep, 'if (replace) return values;'), 'cep-address.js: troca de CEP substitui o endereço');
 $check(str_contains($cep, 'pendingFill.delete(prefix)'), 'cep-address.js: preenchimento pendente vale só para o próprio rebuild');
 
-// 4b. Campos vindos do CEP ficam bloqueados (somente leitura) e o que falta continua editável.
+// 4b. Campos preenchidos pelo CEP ficam somente leitura; campos restantes
+// continuam editáveis.
 $check(
   str_contains($cep, 'applyLocks') && str_contains($cep, "readOnly = locked") && str_contains($cep, "'aculta-cep-locked'"),
   'cep-address.js: campos vindos do CEP bloqueados, sem bloquear número e complemento',
 );
 
-// 5. Alias `address` nos perfis: campo computado, sem armazenamento, lendo o field_address (o contrib do Mercado Pago lê
-// `address`). Campo com armazenamento, ou cópia, seria dado duplicado.
+// 5. Alias `address` é computado e lê field_address, pois o contrib do Mercado
+// Pago o consome. Campo armazenado criaria dados duplicados.
 $alias = $read('web/modules/custom/aculta_portal/src/Hook/ProfileAddressAliasHooks.php');
 $aliasList = $read('web/modules/custom/aculta_portal/src/Commerce/MercadoPago/BillingAddressAliasItemList.php');
 $check(str_contains($alias, "setComputed(TRUE)") && str_contains($alias, "BillingAddressAliasItemList::class"), 'alias address é campo computado (sem armazenamento)');
 $check(str_contains($aliasList, "ComputedItemListTrait") && str_contains($aliasList, "'field_address'"), 'alias address lê o field_address do mesmo perfil');
 
-// 5b. Base local de CEPs: o controlador consulta a base local antes das APIs externas, e a base não entra no Git.
-// A lógica de consulta mora em CepLookupService (compartilhada). O controlador só delega e não pode duplicá-la.
+// 5b. A base local de CEPs é consultada antes das APIs externas e não entra no
+// Git. A consulta compartilhada mora em CepLookupService.
 $lookupService = $read('web/modules/custom/aculta_portal/modules/aculta_portal_cep/src/Lookup/CepLookupService.php');
 $check(
   str_contains($lookupService, 'aculta_portal_cep.local_store') && strpos($lookupService, '->local->lookup(') < strpos($lookupService, 'fromViaCep('),

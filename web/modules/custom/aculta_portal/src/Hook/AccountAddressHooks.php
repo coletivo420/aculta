@@ -10,9 +10,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
 /**
- * Leva o formulário de endereço único (AccountAddressForm) à loja e aos perfis de equipe.
+ * Leva o formulário de endereço único aos seus consumidores de entidade.
  *
- * A Minha conta e o checkout usam o mesmo formulário pelos próprios caminhos (PortalHooks e BillingAddressPane).
+ * Minha conta e checkout chamam o helper por PortalHooks e BillingAddressPane.
  */
 final class AccountAddressHooks {
 
@@ -20,7 +20,9 @@ final class AccountAddressHooks {
     private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
-  /** Cadastro da loja e perfis de equipe: o mesmo endereço, com CEP, Número, S/N e país fixo. */
+  /**
+   * Loja, equipe e locais de evento usam endereço BR com o mesmo formulário.
+   */
   #[Hook('form_alter')]
   public function formAlter(array &$form, FormStateInterface $formState, string $formId): void {
     $formObject = $formState->getFormObject();

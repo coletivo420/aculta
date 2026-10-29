@@ -1,5 +1,15 @@
 # ACULTA Eventos (`aculta_events`)
 
+## Contrato obrigatório para campos de endereço
+
+Por decisão D-54/D-55 do responsável, toda captura/edição de endereço de
+eventos e locais deve reutilizar `AccountAddressForm` ou adaptador central de
+`aculta_portal`, com `aculta_portal_cep/cep-address`. O país é sempre `BR`, sem
+seletor. Preserve os campos e entidades próprios de evento/local; não crie
+formulário paralelo nem replique consulta, endpoint ou cliente de CEP. Isso
+também vale para etapas de revisão de endereços importados que exibam um
+formulário à pessoa.
+
 Eventos, datas e locais do purpose `eventos` (ADR-015). Usa o `aculta_calendar` para recorrência, agenda e `.ics`, e o `aculta_maps` para o mapa de locais. Ingressos pagos ficam fora da v1 e seguem plano próprio.
 
 - Roadmap e fases: [docs/ROADMAP.md](docs/ROADMAP.md)
@@ -12,6 +22,11 @@ Eventos, datas e locais do purpose `eventos` (ADR-015). Usa o `aculta_calendar` 
 - Histórico de alterações: [CHANGELOG.md](CHANGELOG.md)
 
 ## Validação visual (2026-10-29)
+
+Endereços dos locais são Brasil-only e usam o formulário central de `aculta_portal`
+com `aculta_portal_cep`; o assistente OpenStreetMap adapta o widget para as tags
+OSM e mantém confirmação explícita antes de qualquer escrita externa. Decisão
+D-55 e contrato em [`ACCOUNT-ADDRESS.md`](../../../../../../docs/portal/ACCOUNT-ADDRESS.md).
 
 O smoke do purpose `eventos` passou 129/129 verificações no candidato atual
 `a4f878d55` (events dev.3), servido no checkout de teste, em 1280/390/320 px

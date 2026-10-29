@@ -4,26 +4,34 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Account;
 
+use Drupal\address\Element\Address;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Formulário de endereço único do site.
  *
- * É o mesmo formulário de Minha conta > Endereço, usado também no checkout (cobrança), no cadastro da loja e nos
- * perfis de equipe. O tratamento fica aqui: país fixo em Brasil (sem seletor), rótulos em português, Número e S/N
- * (StreetNumberField) e a biblioteca do CEP. Os dados continuam em cada entidade (perfil do cliente, perfil de equipe,
- * loja); só o formulário é compartilhado. Ver docs/portal/ACCOUNT-ADDRESS.md.
+ * É o mesmo formulário de Minha conta > Endereço, checkout, loja, equipe e
+ * locais de evento. O tratamento fica aqui: país fixo em Brasil, rótulos em
+ * português, Número/S/N e biblioteca CEP. Os dados continuam nas respectivas
+ * entidades; só o formulário é compartilhado. Ver ACCOUNT-ADDRESS.md.
  */
 final class AccountAddressForm {
 
-  /** Biblioteca do CEP (módulo aculta_portal_cep). */
+  /**
+   * Biblioteca do CEP (módulo aculta_portal_cep).
+   */
   public const LIBRARY = 'aculta_portal_cep/cep-address';
 
-  /** Perfis de equipe (ver PerfilDoPapel) que editam o endereço pelo painel administrativo. */
+  /**
+   * Perfis de equipe que editam endereço pelo painel administrativo.
+   */
   public const TEAM_PROFILE_TYPES = ['administrator', 'associado', 'gerente_loja', 'lms_teacher'];
 
-  /** Rótulos do formulário de endereço, por chave do elemento. */
+  /**
+   * Rótulos do formulário de endereço, por chave do elemento.
+   */
   private const LABELS = [
     'address_line1' => 'Endereço / Logradouro',
     'address_line2' => 'Complemento',
@@ -35,34 +43,72 @@ final class AccountAddressForm {
   ];
 
   /**
-   * Campo de endereço do formulário da entidade, ou NULL quando a entidade não usa o endereço compartilhado.
+   * Obtém o campo de endereço da entidade que usa o formulário compartilhado.
    *
-   * Loja (commerce_store) usa o campo `address`. Perfil de equipe usa `field_address`.
+   * Loja usa `address`, equipe usa `field_address` e evento usa
+   * `field_endereco`.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Entidade cujo campo é identificado.
+   *
+   * @return string|null
+   *   Nome do campo ou NULL quando não há mapeamento.
    */
   public static function fieldOf(EntityInterface $entity): ?string {
     if ($entity->getEntityTypeId() === 'commerce_store') {
       return 'address';
     }
-    if ($entity->getEntityTypeId() === 'profile' && in_array($entity->bundle(), self::TEAM_PROFILE_TYPES, TRUE)) {
+    if ($entity->getEntityTypeId() === 'aculta_event_location') {
+      return 'field_endereco';
+    }
+    if ($entity->getEntityTypeId() === 'profile'
+      && in_array($entity->bundle(), self::TEAM_PROFILE_TYPES, TRUE)) {
       return 'field_address';
     }
     return NULL;
   }
 
   /**
-   * Aplica o formulário de endereço a cada elemento de endereço da árvore. Retorna TRUE quando encontrou um.
+   * Aplica o formulário central ao primeiro elemento address encontrado.
    *
    * @param array<string, mixed> $tree
+   *   Árvore do formulário que contém o elemento address.
+   * @param string $number
+   *   Número salvo para preencher no elemento.
+   * @param bool $sn
+   *   TRUE quando o endereço salvo é sem número.
+   * @param bool $withStreetNumber
+   *   TRUE para incluir os controles e validação de número da Conta.
+   *
+   * @return bool
+   *   TRUE quando um elemento address foi encontrado e alterado.
    */
-  public static function apply(array &$tree, string $number, bool $sn): bool {
+  public static function apply(
+    array &$tree,
+    string $number = '',
+    bool $sn = FALSE,
+    bool $withStreetNumber = TRUE,
+  ): bool {
     if (($tree['#type'] ?? NULL) === 'address') {
       $tree['#default_value']['country_code'] ??= 'BR';
-      StreetNumberField::attach($tree, $number, $sn);
+      if ($withStreetNumber) {
+        StreetNumberField::attach($tree, $number, $sn);
+      }
+      else {
+        // External address adapters (such as OSM tag review) have their own
+        // number vocabulary; they still share the Address widget and CEP
+        // lookup without applying the account's numeric-only number rule.
+        $tree['#process'] = [
+          [Address::class, 'processAddress'],
+          [Address::class, 'processGroup'],
+        ];
+      }
       $tree['#process'][] = [self::class, 'finish'];
       return TRUE;
     }
     foreach ($tree as $key => &$child) {
-      if (is_array($child) && !str_starts_with((string) $key, '#') && self::apply($child, $number, $sn)) {
+      if (is_array($child) && !str_starts_with((string) $key, '#')
+        && self::apply($child, $number, $sn, $withStreetNumber)) {
         unset($child);
         return TRUE;
       }
@@ -72,9 +118,15 @@ final class AccountAddressForm {
   }
 
   /**
-   * Número e S/N do endereço salvo, para o formulário ao abrir. Lê do armazenamento, não do formulário em edição.
+   * Obtém Número e S/N salvos para abrir o formulário.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface|null $saved
+   *   Entidade persistida que contém o endereço.
+   * @param string $field
+   *   Campo de endereço lido.
    *
    * @return array{street: string, number: string, sn: bool}
+   *   Rua, número e indicador de sem número.
    */
   public static function savedParts(?EntityInterface $saved, string $field): array {
     if ($saved === NULL || !$saved->hasField($field) || $saved->get($field)->isEmpty()) {
@@ -86,42 +138,66 @@ final class AccountAddressForm {
   /**
    * Entity builder: junta rua e número (ou S/N) no logradouro antes do save.
    *
+   * @param string $entityTypeId
+   *   Tipo da entidade salva.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Entidade que recebe o endereço.
    * @param array<string, mixed> $form
+   *   Formulário submetido.
+   * @param \Drupal\Core\Form\FormStateInterface $formState
+   *   Estado do formulário submetido.
    */
-  public static function buildStreetNumber(string $entityTypeId, EntityInterface $entity, array &$form, FormStateInterface $formState): void {
-    // Perfil (Minha conta, checkout e equipe) usa field_address; a loja usa address.
-    $field = $entity->hasField('field_address') ? 'field_address' : 'address';
+  public static function buildStreetNumber(
+    string $entityTypeId,
+    EntityInterface $entity,
+    array &$form,
+    FormStateInterface $formState,
+  ): void {
+    // Perfis usam field_address; eventos, field_endereco; lojas, address.
+    $field = $entity->hasField('field_address') ? 'field_address'
+      : ($entity->hasField('field_endereco') ? 'field_endereco' : 'address');
     if (!$entity->hasField($field) || $entity->get($field)->isEmpty()) {
       return;
     }
     [$number, $sn] = StreetNumberField::values($form, $formState);
     $address = $entity->get($field)->first();
     $value = $address->getValue();
-    $value['address_line1'] = StreetNumberField::join((string) $address->getAddressLine1(), $number, $sn);
+    $value['address_line1'] = StreetNumberField::join(
+      (string) $address->getAddressLine1(),
+      $number,
+      $sn,
+    );
     $address->setValue($value);
   }
 
   /**
    * Process callback final: país fixo em Brasil e rótulos em português.
    *
-   * Roda depois do processamento do endereço (Address::processAddress), quando os subcampos já existem.
+   * Roda após Address::processAddress, quando os subcampos já existem.
    *
    * @param array<string, mixed> $element
+   *   Elemento address após o processamento de seus subcampos.
    *
    * @return array<string, mixed>
+   *   Elemento atualizado com país fixo e rótulos em português.
    */
   public static function finish(array $element): array {
     if (isset($element['country_code'])) {
-      // Campo oculto, e não #access FALSE: o módulo Address descarta toda a entrada do formulário quando o
-      // country_code não vem no POST, e a lista de cidades passa a usar o endereço salvo (ver o teste de CEP).
+      // Campo oculto, e não #access FALSE: o módulo Address descarta a entrada
+      // toda quando country_code não vem no POST; ver o teste de CEP.
       $element['country_code']['#type'] = 'hidden';
-      unset($element['country_code']['#options'], $element['country_code']['#ajax'], $element['country_code']['#empty_value']);
+      unset(
+        $element['country_code']['#options'],
+        $element['country_code']['#ajax'],
+        $element['country_code']['#empty_value'],
+      );
       $element['country_code']['#default_value'] = 'BR';
       $element['country_code']['#value'] = 'BR';
     }
     foreach (self::LABELS as $key => $label) {
       if (isset($element[$key])) {
-        $element[$key]['#title'] = t($label);
+        // phpcs:ignore Drupal.Semantics.FunctionT.NotLiteralString -- labels are fixed constants above.
+        $element[$key]['#title'] = new TranslatableMarkup($label);
       }
     }
     return $element;

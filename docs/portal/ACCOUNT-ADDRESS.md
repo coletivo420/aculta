@@ -2,6 +2,8 @@
 
 **Decisão do responsável (2026-10-29):** o site deve ter uma única implementação central de formulário para captura e edição de endereço, mantida em `aculta_portal` e baseada na biblioteca/serviço do módulo `aculta_portal_cep`. Todos os módulos e fluxos que capturam ou editam endereços devem chamar/adaptar esse formulário central; é proibido criar um formulário paralelo de endereço ou duplicar sua integração CEP. Esta é a arquitetura esperada, não apenas uma proteção contra regressões.
 
+**Escopo confirmado:** a decisão inclui endereços de locais e eventos em `aculta_maps` e `aculta_events`, além de Conta, Studio, checkout, lojas, perfis de equipe e quaisquer outros consumidores encontrados. Para locais/eventos o país é sempre Brasil, sem seletor de país; o adaptador usa o widget e a biblioteca CEP centrais, enquanto os dados permanecem nas entidades próprias. Importadores podem mapear endereços de fontes externas, mas qualquer formulário de captura/revisão apresentado à pessoa deve usar o contrato central.
+
 A decisão amplia e consolida o comportamento aprovado em 2026-10-18. Qualquer mudança no formulário, CEP, perfil `authenticated`, checkout ou consumidor de endereço deve preservar o contrato descrito aqui. Não repetir mudanças sem atualizar esta decisão e executar os gates pertinentes.
 
 ## Comportamento esperado
@@ -25,10 +27,13 @@ A decisão amplia e consolida o comportamento aprovado em 2026-10-18. Qualquer m
   - Minha conta > Endereço (`/dados/endereco`, `PortalHooks`);
   - checkout, pane de cobrança `aculta_billing_address` (`BillingAddressPane`, inline `customer_profile` do perfil `authenticated`);
   - cadastro da loja (`commerce_store`, campo `address`) e perfis de equipe (`administrator`, `associado`, `gerente_loja`, `lms_teacher`, campo `field_address`), pelo hook `AccountAddressHooks`.
+- locais de evento (`aculta_event_location.field_endereco`), pelo mesmo hook; o campo limita os países a BR e o formulário oculta o código de país.
+- revisão de endereço no assistente OSM: usa o elemento `address` e `aculta_portal_cep/cep-address`, depois adapta os valores às tags selecionadas. Número de residência mantém o formato OSM (inclusive alfanumérico); não altera a validação numérica de Conta.
 - Conta legada (`/conta-legada` → Meus Dados → `/dados/endereco`) e o editor equivalente do Studio usam a mesma implementação central.
 - Os dados continuam nos respectivos modelos/entidades (perfil do cliente, pedido, loja, perfil de equipe ou entidade de local); só a interface e o contrato de captura são compartilhados. Adaptadores podem mapear campos, mas não criar uma segunda experiência Form API.
 - Formulários de configuração de integração logística que só recebem CEP de origem e importadores que mapeiam dados externos não são uma segunda interface de endereço para pessoas; se passarem a capturar/editar endereço completo, devem migrar para o formulário central.
 - Endereços estruturados pertencentes a entidades de local/evento/instituição exigem preservar seu modelo e semântica. Qualquer formulário de edição desses endereços também deve reutilizar o componente central, com adaptador de entidade quando necessário; a decisão não autoriza fundir modelos de dados distintos.
+- Em formulários de endereços de locais/eventos, configure o país como `BR` e não renderize seletor de país. Busca/preenchimento por CEP deve anexar `aculta_portal_cep/cep-address` por meio do adaptador central. Restrição de busca geográfica do mapa e formato de importação OSM não substituem nem duplicam a captura de endereço.
 - Perfis de equipe (`administrator`, `associado`, `gerente_loja`, `lms_teacher`) exibem `field_address` com o widget padrão `address_default`, igual ao perfil `authenticated` (configuração em `core.entity_form_display.profile.*.default.yml`). Antes estava oculto.
 - O checkout anexa a biblioteca `cep-address` ao formulário da página (`$complete_form`), não ao `#attached` do pane, que o Commerce não leva à página.
 - Verificação no Runtime de teste (2026-10-18): loja e equipe montam com país oculto, biblioteca do CEP e Número/S/N; checkout renderiza o formulário padrão e carrega a biblioteca do CEP. Teste de navegador da Minha conta 30/30 na entrega anterior; conferência visual e teste de navegador do checkout pendentes (ver CHANGELOG 0.4.0-dev.147).

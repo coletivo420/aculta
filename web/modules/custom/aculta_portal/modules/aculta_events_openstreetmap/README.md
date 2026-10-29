@@ -1,5 +1,13 @@
 # ACULTA Eventos OpenStreetMap
 
+## Endereço no assistente de revisão
+
+Por decisão D-54/D-55, a revisão de tags de endereço usa o formulário/adaptador
+central de `aculta_portal` e `aculta_portal_cep/cep-address`, com país `BR`
+fixo e sem seletor. Preserve a representação de tags OSM (incluindo
+`addr:housenumber`) e o modelo de local/evento; essa adaptação não cria outro
+formulário de endereço nem duplica a integração de CEP.
+
 Submódulo de integração do `aculta_events` com OAuth2 do OpenStreetMap.
 
 ## Estado
@@ -18,6 +26,12 @@ versionada. A autorização OAuth ainda não foi concluída e nenhum envio real 
 Cada envio à API ativa pode alterar o mapa público. Use dados fictícios no ensaio, revise as
 alterações no assistente e confirme cada envio explicitamente. A seleção live no servidor de
 teste não autoriza alterações automáticas ou sem revisão.
+
+Na revisão de tags de endereço, o assistente usa o elemento `address` e o
+preenchimento CEP do `aculta_portal`/`aculta_portal_cep`, com país BR oculto.
+Os valores preenchidos são apenas proposta no formulário: só as tags marcadas
+e confirmadas são enviadas ao OSM. `addr:housenumber` conserva valores OSM
+alfanuméricos e não altera a validação de número da Conta.
 
 Páginas da integração: `/integracoes/openstreetmap/configuracao` e
 `/integracoes/openstreetmap/importar`. OAuth usa `/autorizar` e `/retorno`, em popup,

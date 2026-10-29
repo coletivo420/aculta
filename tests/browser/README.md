@@ -158,3 +158,4 @@ README local para execução e limites.
 `account-address.py` verifica por GET o formulário unificado da Conta, sua
 navegação legada, a biblioteca CEP executada, os campos e o reflow com e sem
 JavaScript; não submete dados. Veja o README local para variáveis e limites.
+`maps-events-address.py` valida o widget de endereço na revisão do importador OSM, Brasil fixo, CEP e reflow; para antes de salvar/enviar. Execução dependente de Firefox ESR visível e permissão de integração; ver README local e estado DEFERRED quando DISPLAY/runtime não estiver disponível.

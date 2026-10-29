@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events_openstreetmap\Form;
 
+use Drupal\aculta_portal\Account\AccountAddressForm;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events_openstreetmap\OAuth\OpenStreetMapOAuthException;
 use Drupal\aculta_events_openstreetmap\Osm\OpenStreetMapApiClient;
@@ -30,6 +31,18 @@ final class OpenStreetMapImportWizard extends FormBase {
     'addr:state' => 'Estado',
     'addr:postcode' => 'CEP',
     'opening_hours' => 'Horário de funcionamento',
+  ];
+
+  /**
+   * OpenStreetMap tags mapped through the shared Brazilian address widget.
+   */
+  private const ADDRESS_TAGS = [
+    'addr:street' => 'address_line1',
+    'addr:unit' => 'address_line2',
+    'addr:suburb' => 'dependent_locality',
+    'addr:city' => 'locality',
+    'addr:state' => 'administrative_area',
+    'addr:postcode' => 'postal_code',
   ];
 
   /**
@@ -176,8 +189,33 @@ final class OpenStreetMapImportWizard extends FormBase {
       '#markup' => $element['lat'] . ', ' . $element['lon'],
     ];
     $saved_values = $form_state->get('osm_review_values') ?? [];
+    $selectedAddressTags = array_intersect(array_merge(array_keys(self::ADDRESS_TAGS), ['addr:housenumber']), $selected);
+    if ($selectedAddressTags !== []) {
+      $address = ['country_code' => 'BR'];
+      foreach (self::ADDRESS_TAGS as $tag => $key) {
+        $address[$key] = $saved_values[$tag] ?? $element['tags'][$tag] ?? '';
+      }
+      $form['review']['address'] = [
+        '#type' => 'address',
+        '#title' => $this->t('Endereço do local'),
+        '#default_value' => $address,
+      ];
+      AccountAddressForm::apply($form['review']['address'], '', FALSE, FALSE);
+      $form['#attached']['library'][] = AccountAddressForm::LIBRARY;
+
+      // OSM aceita números alfanuméricos. Mantém o número em seu vocabulário,
+      // enquanto os demais campos usam o widget central e a busca CEP.
+      if (in_array('addr:housenumber', $selected, TRUE)) {
+        $form['review']['housenumber'] = [
+          '#type' => 'textfield',
+          '#title' => $this->tagLabel('addr:housenumber'),
+          '#maxlength' => 64,
+          '#default_value' => $saved_values['addr:housenumber'] ?? $element['tags']['addr:housenumber'] ?? '',
+        ];
+      }
+    }
     foreach ($selected as $tag) {
-      if (!isset(self::EDITABLE_TAGS[$tag])) {
+      if (!isset(self::EDITABLE_TAGS[$tag]) || isset(self::ADDRESS_TAGS[$tag]) || $tag === 'addr:housenumber') {
         continue;
       }
       $form['review'][$tag] = [
@@ -252,10 +290,11 @@ final class OpenStreetMapImportWizard extends FormBase {
       return;
     }
     $review = (array) $form_state->getValue('review');
+    $reviewTags = $this->reviewedTags($selected, $review);
     $changes = [];
     foreach ($selected as $tag) {
       if (isset(self::EDITABLE_TAGS[$tag])) {
-        $value = trim((string) ($review[$tag] ?? ''));
+        $value = $reviewTags[$tag] ?? '';
         if ($value !== ($element['tags'][$tag] ?? '')) {
           $changes[$tag] = $value;
         }
@@ -301,12 +340,7 @@ final class OpenStreetMapImportWizard extends FormBase {
    * Saves only approved address tags and coordinates into an event location.
    */
   private function createLocation(array $element, array $selected, array $review, string $version): EventLocation {
-    $tags = [];
-    foreach ($selected as $key) {
-      if (isset(self::EDITABLE_TAGS[$key])) {
-        $tags[$key] = trim((string) ($review[$key] ?? ''));
-      }
-    }
+    $tags = $this->reviewedTags($selected, $review);
     $street = trim(($tags['addr:street'] ?? '') . ' ' . ($tags['addr:housenumber'] ?? ''));
     $location = $this->entityTypeManager->getStorage('aculta_event_location')->create([
       'title' => $tags['name'] ?? 'Local OpenStreetMap ' . $element['type'] . '/' . $element['id'],
@@ -333,6 +367,36 @@ final class OpenStreetMapImportWizard extends FormBase {
       throw new \RuntimeException('Could not create the event location entity.');
     }
     return $location;
+  }
+
+  /**
+   * Maps the shared address widget's values back to the selected OSM tags.
+   *
+   * @param string[] $selected
+   *   OSM address tags selected for import/update.
+   * @param array<string, mixed> $review
+   *   Submitted values of the review step.
+   *
+   * @return array<string, string>
+   *   Selected tag names mapped to reviewed values.
+   */
+  private function reviewedTags(array $selected, array $review): array {
+    $address = (array) ($review['address'] ?? []);
+    $tags = [];
+    foreach ($selected as $key) {
+      if (isset(self::EDITABLE_TAGS[$key])) {
+        if (isset(self::ADDRESS_TAGS[$key])) {
+          $tags[$key] = trim((string) ($address[self::ADDRESS_TAGS[$key]] ?? ''));
+        }
+        elseif ($key === 'addr:housenumber') {
+          $tags[$key] = trim((string) ($review['housenumber'] ?? ''));
+        }
+        else {
+          $tags[$key] = trim((string) ($review[$key] ?? ''));
+        }
+      }
+    }
+    return $tags;
   }
 
   /**

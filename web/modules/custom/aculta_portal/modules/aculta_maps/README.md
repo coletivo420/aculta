@@ -1,5 +1,15 @@
 # ACULTA Maps
 
+## Contrato obrigatório para campos de endereço
+
+Por decisão D-54/D-55 do responsável, qualquer formulário de captura ou edição
+de endereço consumido por Maps deve reutilizar `AccountAddressForm`/adaptador
+central de `aculta_portal` e a biblioteca `aculta_portal_cep/cep-address`.
+O país é fixo em `BR`, sem seletor de país. Os dados continuam no modelo
+próprio de local/mapa; não crie um formulário paralelo nem replique consulta,
+endpoint ou cliente de CEP. Busca geográfica Nominatim restrita ao Brasil não
+substitui o preenchimento de endereço por CEP.
+
 `aculta_maps` é o serviço compartilhado de mapas, geocodificação e links de rota.
 Consumidores passam dados e render arrays por seus serviços; não chamam Google,
 OpenStreetMap ou Nominatim diretamente.
@@ -38,6 +48,11 @@ serviços acima. Não devem definir engine, expor segredos, modificar dados OSM,
 geocodificar a cada visualização nem incluir endereço de contato em links ou
 exportações sem autorização. `aculta_events` mantém o catálogo e a rota `/mapa`;
 `aculta_maps` mantém renderização, geocodificação e link de rota.
+
+Map Settings não captura endereço. A geocodificação do serviço restringe a
+Nominatim ao Brasil (`countrycodes=br`); os locais de Eventos fornecem seus
+endereços pelo `AccountAddressForm` central do `aculta_portal`, com país fixo
+BR e preenchimento CEP do `aculta_portal_cep`.
 
 Leaflet 1.9.4 é distribuído em `assets/vendor/leaflet/` sob BSD-2-Clause. O
 mapa público não foi ativado no Runtime: o smoke visual aguarda a revisão de
