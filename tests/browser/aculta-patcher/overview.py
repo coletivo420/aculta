@@ -71,6 +71,16 @@ def wait_for(script, timeout=25):
     return False
 
 
+def close_mobile_admin_menu(width):
+    if width > 767:
+        return
+    visible = driver.js("""const button = document.querySelector('button.admin-toolbar__close-button');
+      return !!button && button.getClientRects().length > 0;""")
+    if visible:
+        driver.js("document.querySelector('button.admin-toolbar__close-button')?.click()")
+        time.sleep(0.25)
+
+
 try:
     driver = Driver(bidi=True)
     bidi = connect(driver.websocket_url)
@@ -131,16 +141,25 @@ try:
 
         for width, label in WIDTHS:
             actual = set_width(width)
+            close_mobile_admin_menu(width)
             metrics = driver.js("""return {
               viewport: window.innerWidth,
               document: document.documentElement.scrollWidth,
               body: document.body.scrollWidth,
+              mainTitleVisible: (() => {
+                const title = document.querySelector('main h1');
+                if (!title) return false;
+                const rect = title.getBoundingClientRect();
+                const topElement = document.elementFromPoint(rect.left + 2, rect.top + 2);
+                return rect.left >= 0 && rect.right <= window.innerWidth &&
+                  (topElement === title || title.contains(topElement));
+              })(),
             };""")
             screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
             (OUT / f"list-{label}.png").write_bytes(base64.b64decode(screenshot))
-            check(f"listagem sem overflow em {width}px",
-                  actual == width and metrics["document"] <= width,
-                  f"viewport={actual}, document={metrics['document']}")
+            check(f"listagem visível e sem overflow em {width}px",
+                  actual == width and metrics["document"] <= width and metrics["mainTitleVisible"],
+                  f"viewport={actual}, document={metrics['document']}, titleVisible={metrics['mainTitleVisible']}")
 
         driver.get(BASE_URL + ADD_PATH)
         form_loaded = wait_for("!!document.querySelector('main form')")
@@ -160,12 +179,23 @@ try:
 
         for width, label in WIDTHS:
             actual = set_width(width)
-            metrics = driver.js("return {document: document.documentElement.scrollWidth};")
+            close_mobile_admin_menu(width)
+            metrics = driver.js("""return {
+              document: document.documentElement.scrollWidth,
+              mainTitleVisible: (() => {
+                const title = document.querySelector('main h1');
+                if (!title) return false;
+                const rect = title.getBoundingClientRect();
+                const topElement = document.elementFromPoint(rect.left + 2, rect.top + 2);
+                return rect.left >= 0 && rect.right <= window.innerWidth &&
+                  (topElement === title || title.contains(topElement));
+              })(),
+            };""")
             screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
             (OUT / f"form-{label}.png").write_bytes(base64.b64decode(screenshot))
-            check(f"formulário sem overflow em {width}px",
-                  actual == width and metrics["document"] <= width,
-                  f"viewport={actual}, document={metrics['document']}")
+            check(f"formulário visível e sem overflow em {width}px",
+                  actual == width and metrics["document"] <= width and metrics["mainTitleVisible"],
+                  f"viewport={actual}, document={metrics['document']}, titleVisible={metrics['mainTitleVisible']}")
 finally:
     if bidi:
         bidi.close()

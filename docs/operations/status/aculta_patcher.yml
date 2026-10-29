@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.3
 state: Dev
-progress_note: 'Em 2026-10-28: Unit 38/65 PASS; lint 12/12 e PHPCS Drupal PASS. Runtime de teste: `aculta:patcher-export --check` validou 1 registro ativo sem gravar artefatos. Cópia isolada: `patches-relock` e duas aplicações Composer PASS; hashes dos quatro pacotes, lock, patches e assets permaneceram idênticos; rede desabilitada.'
-next_phase: 'Revisar visualmente o formulário administrativo e concluir auditoria final antes de avaliar RC ([README](web/modules/custom/aculta_portal/modules/aculta_patcher/README.md))'
+progress_note: 'Em 2026-10-28: Unit 38/65 PASS; lint 12/12 e PHPCS Drupal PASS. Runtime de teste: `aculta:patcher-export --check` validou 1 registro ativo sem gravar artefatos. Cópia isolada: `patches-relock` e duas aplicações Composer PASS; hashes dos quatro pacotes, lock, patches e assets permaneceram idênticos; rede desabilitada. Firefox ESR: listagem e formulário visíveis em 1280px; listagem excede 390px e menu lateral encobre títulos em 320px na lista e 390px no formulário.'
+next_phase: 'Corrigir/revisar o overflow da tabela e o menu lateral que encobre títulos em 320/390px; depois concluir auditoria final antes de avaliar RC ([README](web/modules/custom/aculta_portal/modules/aculta_patcher/README.md))'
