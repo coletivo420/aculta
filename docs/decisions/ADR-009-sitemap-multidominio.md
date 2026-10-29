@@ -100,6 +100,7 @@ Qualquer endpoint novo precisa de teste de precedência de rotas antes de ser pu
 
 - **Microfase C (2026-10-09):** `domain_simple_sitemap` 3.0.0-rc3 não adotado. Adaptador mínimo em `aculta_portal_sitemap` aprovado pelo responsável. Ver `ADR-009-avaliacao-domain-simple-sitemap-0.1.0-C.md`.
 - **Microfase D (2026-10-09):** política de indexação aceita. Ver `ADR-009-politica-indexacao-0.1.0-D.md`.
+- **Decisão do responsável D-49 (2026-10-29):** incluir `/wiki/verbetes` no sitemap da variante `wiki`; a rota continua sujeita à política de indexação do ambiente. Implementado em `PurposeNodeUrlGenerator::PUBLIC_PATHS` e coberto por `IndexingPolicyTest`.
 
 - **Registro histórico (2026-10-09):** a decisão original adiava deploy até RC geral. O fluxo foi atualizado em 2026-10-20: todos os requisitos ficam prontos antes de RC; depois há deploy/validação Alpha no servidor de desenvolvimento e, após aprovação, migração para produção. Ver [ciclo vigente](../operations/RELEASE-LIFECYCLE.md).
 
@@ -108,6 +109,6 @@ Qualquer endpoint novo precisa de teste de precedência de rotas antes de ser pu
 - Microfases A a J concluídas no servidor de testes; submódulo `aculta_portal_sitemap` 0.1.1.
 - Índice central em `/sitemap.xml` com as variantes `main`, `support`, `wiki`, `magazine` e `courses`; `default` desabilitada.
 - Endereço por ambiente: a `base_url` segue o site definido pelo `aculta_deployer` (`environment.json`).
-- Decisão do responsável ainda pendente: indexar `/wiki/verbetes`.
+- `/wiki/verbetes` incluído na variante `wiki` conforme D-49 (2026-10-29).
 - Nós de teste 69 e 70 removidos (2026-10-09, autorizado).
 - Produção (RC): DEP-0002 (apoio cross-host) e verificação no Search Console.

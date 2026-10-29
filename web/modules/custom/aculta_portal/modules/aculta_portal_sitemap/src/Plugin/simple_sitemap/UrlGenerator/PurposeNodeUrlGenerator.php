@@ -65,6 +65,7 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
    */
   public const PUBLIC_PATHS = [
     'main' => ['/contato'],
+    'wiki' => ['/wiki/verbetes'],
     // Listagens de eventos; cada evento publicado é tratado à parte.
     'eventos' => ['/eventos', '/calendario', '/locais', '/mapa'],
   ];

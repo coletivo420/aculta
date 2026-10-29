@@ -5,7 +5,7 @@ ADR-009 em `docs/decisions/`).
 
 ## Estado (0.1.2: sitemap multidomínio completo no servidor de testes)
 
-Versão do `info.yml` e do CHANGELOG: `0.1.2`. Verificações executadas: `php tests/run.php`, suíte Unit e Kernel. O Kernel valida descoberta do plugin e registro da entidade do Simple XML Sitemap em MariaDB dedicado; a execução atual passou (2 testes, 3 assertions), com depreciações em Core/contrib.
+Versão do `info.yml` e do CHANGELOG: `0.1.2`. Verificações recentes: `php tests/run.php` (13 verificações), homologação `url.site` (5 ciclos, 6 hosts, 2 caminhos) e leitura HTTP local do checkout servido (código `662c62d43`, anterior à implementação D-49) do índice e de seus sete filhos. Todos responderam `200`, com `X-Robots-Tag: noindex`; as 29 URLs listadas usam hosts de teste registrados no ACULTA Deployer. Não foi feita validação externa no Search Console nem acesso a hosts de produção.
 
 - Endereço por ambiente: a `base_url` segue o site definido pelo ACULTA Deployer (`var/deployer/environment.json`).
 
@@ -51,3 +51,11 @@ Versão do `info.yml` e do CHANGELOG: `0.1.2`. Verificações executadas: `php t
 ## Próximas etapas
 
 - Deploy: o candidato completo precisa estar em RC antes do deploy/validação Alpha; após aprovação Alpha, segue para produção conforme [ciclo vigente](../../../../../../docs/operations/RELEASE-LIFECYCLE.md).
+
+## Verificação de desenvolvimento — 2026-10-29
+
+- `php tests/run.php`: 13 verificações PASS.
+- `tests/homologacao-url-site.sh 5 127.0.0.1`: PASS, 5 ciclos, 6 hosts e 2 caminhos.
+- GET somente em `127.0.0.1`, com Host dos testes: `/sitemap.xml` e sete sitemaps filhos retornaram HTTP 200 e `X-Robots-Tag: noindex, nofollow, noarchive`; os filhos continham 29 URLs ao todo, todas em hosts de teste declarados pelo Deployer.
+- A checagem comparou os hosts com `domain_transition.entries` e `robots_policy.test.hosts`; o segundo inventário isolado não contém todos os purposes, como `cursos`.
+- D-49 (2026-10-29) decidiu incluir `/wiki/verbetes` na variante `wiki`; a rota foi adicionada à allowlist pública e coberta pela suíte. Permanecem pendentes DEP-0002 e validação Search Console no ciclo Alpha/Beta apropriado. O módulo continua em Dev.

@@ -24,6 +24,18 @@
 
 # Changelog — ACULTA Portal Sitemap
 
+## 0.1.2 — decisão D-49 e listagem da Wiki — 2026-10-29
+
+- Incluído `/wiki/verbetes` em `PUBLIC_PATHS` da variante `wiki`, conforme decisão do responsável D-49.
+- Suíte Unit/Kernel: 7 testes, 14 assertions, 46 depreciações; PHPCS Drupal/DrupalPractice e PHP lint dos arquivos alterados PASS.
+- DEP-0002 e a validação no Search Console permanecem pendentes; sem validação de produção.
+
+## 0.1.2 — evidência HTTP dos hosts de teste — 2026-10-29
+
+- `php tests/run.php`: 13 verificações PASS; homologação `url.site`: 5 ciclos, 6 hosts, 2 caminhos PASS.
+- GET local do checkout servido em `662c62d43` (antes da alteração D-49), índice e sete sitemaps filhos: HTTP 200, `X-Robots-Tag: noindex, nofollow, noarchive`; 29 URLs nos filhos, todas em hosts de teste declarados no ACULTA Deployer.
+- Sem consulta a hosts de produção ou Search Console. O estado continua Dev; DEP-0002 e a validação externa permanecem pendentes.
+
 ## 0.1.1 — endereço do sitemap por ambiente (acabamento) — 2026-10-09
 
 - A `base_url` do sitemap segue o endereço do site que o ACULTA Deployer define (`var/deployer/environment.json`),
