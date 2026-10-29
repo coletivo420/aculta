@@ -216,6 +216,13 @@ binários documentados, depois de liberar `shell_exec`.
 
 Revalidação documental em 2026-10-29: a página oficial [What image optimization tools are supported at Hostinger](https://www.hostinger.com/support/3738441-what-image-optimization-tools-are-supported/) lista `optipng`, `jpegoptim`, `jpegtran`, `gifsicle` e `libwebp-tools`, com uso via SSH e `shell_exec` sujeito à configuração; ela não lista ImageMagick/Ghostscript. A página [Which media, compression, and web applications are supported at Hostinger](https://www.hostinger.com/support/which-media-compression-and-web-applications-are-supported/) cobre codecs/FFmpeg/GCC e também não confirma esses binários. Ausência na documentação não prova que estejam indisponíveis no plano contratado. A miniatura PDF continua sem validação para produção; confirmar com o plano/painel ou suporte antes do RC.
 
+Verificação no servidor de desenvolvimento em 2026-10-29: `convert`, `magick`,
+`identify`, `gs`, `optipng`, `jpegoptim`, `jpegtran`, `gifsicle` e `cwebp`
+existem em `/usr/bin`; ImageMagick reporta `7.1.1-43`, e PHP tem GD e Imagick.
+Isso comprova somente o servidor de desenvolvimento; não valida o plano da
+Hostinger nem permite concluir a disponibilidade de ImageMagick/Ghostscript em
+produção. Nenhum comando foi executado contra produção.
+
 ## 8. Paridade do Homelab (2026-10-17)
 
 - ImageMagick 7.1.1 com Ghostscript 10.05; `optipng`, `jpegoptim`, `gifsicle` e `cwebp`; `php8.4-soap`.
