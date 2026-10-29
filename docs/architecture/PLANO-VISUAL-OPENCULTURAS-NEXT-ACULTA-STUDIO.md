@@ -1,3 +1,35 @@
+## RETIFICAÇÃO VIGENTE - Green Stash integrado e ACULTA420 integralmente mobile-first (2026-10-29)
+
+**Esta seção substitui TODAS as afirmações históricas conflitantes neste documento.** Green Stash **não é uma experiência independente do Aculta Studio**. É a **área funcional de gestão comercial integrada ao Aculta Studio**, sob responsabilidade operacional de `aculta_commerce`. Um `GreenStashExperienceProvider` ou ID `green_stash` no código é um **adaptador de registro/entrada do Studio**, e não autorização para criar shell, produto, plataforma, login, navegação global ou identidade independentes. Conservar os contratos comerciais e o registry existentes enquanto se audita sua semântica; não renomear IDs/rotas em uma mudança visual. As expressões anteriores "experiência independente" ficam expressamente revogadas.
+
+**Exigência global:** TODO o tema `web/themes/custom/aculta420/` deve adotar **mobile-first** como regra arquitetural, em **todos os purposes**, SDCs, layouts, CSS, templates, navegação, formulários, media, modais e bibliotecas, e não apenas no Studio ou Green Stash. OpenCulturas Next é referência de fidelidade visual na área Studio; suas decisões de design devem ser adaptadas à fundação mobile-first global do ACULTA420 sem copiar breakpoints ou regras desktop-first inadvertidamente.
+
+### Resultados de reinspeção estática
+
+- Tarball `openculturas-3.1.5.tar.gz` reaberto: o Next está em `openculturas/profile/themes/opcult/`, com Sass, CSS compilado, templates e Montserrat local; **não** confundir `openculturas_base` com Next.
+- ACULTA420 atual: `aculta420.info.yml` utiliza base theme `bootstrap`, bibliotecas globais e SDCs; `css/components/header.css` usa media queries `min-width:1100px` e `max-width:1099.98px`; `navigation.css` usa CSS do navbar e variáveis Bootstrap. Isso demonstra necessidade de **auditoria de cascata e breakpoints**, não comprova que todo o tema já seja desktop-first nem que a conversão seja uma substituição mecânica de `max-width`.
+- Fonte funcional do Green Stash: `aculta_commerce/docs/GREEN-STASH-OPERATIONS-CONTRACT.md` exige Form API/Commerce, ACL por loja/operação e nenhum atalho para admin Commerce. `GREEN-STASH-UX-MOBILE-FIRST.md` já exige UI móvel própria, mas sua descrição como "experiência independente" está **superada pela decisão do responsável**. Distinguir provider/entrypoint técnico de posição na arquitetura do produto.
+
+### Microfases normativas revisadas
+
+| Fase | Responsabilidade / entrega | Gate |
+| --- | --- | --- |
+| **OCS-F0 + THEME-MF0** | Reescanear todos os providers/abas do Studio **e todo o tema ACULTA420**, com inventário de `@media`, containers, unidades, overflow, ordem DOM, bibliotecas, telas, estado de JS/no-JS e SDCs; revisar `opcult` real | matriz de inventário com criticidade, owners e referências de arquivos, incluindo Green Stash integrado e todos os purposes |
+| **THEME-MF1** | Definir fundação mobile-first global: estilos-base a 320px, aprimoramentos progressivos por `min-width` ou container queries quando apropriado, sem reordenamento visual que contradiga DOM/foco | sem overflow ou regressão do Institution Bar/Domain Header |
+| **THEME-MF2** | Migrar por grupos todos os estilos/SDCs/layouts/componentes do `aculta420` para estratégia mobile-first, respeitando Bootstrap 5, UI Patterns e tokens. Não fazer substituições cegas de media queries. | regressão proporcional por propósito, componentes, formulários, tabelas, modais, menus, media e estados |
+| **THEME-MF3** | Gate global de tema: mobile 320/360/390/599/600/768/1024/1280/1440 px, zoom 200%/400%, teclado, leitor de tela quando disponível, no-JS, RTL quando suportado, claro/escuro, reduced motion, browser visível, Unit/Kernel/Functional aplicáveis | **não declarar ACULTA420 mobile-first completo sem evidências transversais** |
+| **OCS-F1-F3** | Fidelidade `opcult` escopada ao Studio sobre a fundação mobile-first; SDCs reutilizados, navegação contextual sem segundo shell global | tokens, schemas, stories e consumers validados |
+| **OCS-F4** | Hub Studio, com Green Stash integrado segundo autorização e registry existentes | sem cards ou ações fictícios |
+| **OCS-F5** | Marley | owner editorial preservado |
+| **OCS-F6** | GanjaLab | ACL LMS/matrículas preservadas |
+| **OCS-F7** | WE Sativa | autoria e moderação preservadas |
+| **OCS-F8** | **Área Green Stash integrada ao Studio**, com UX operacional de comércio compatível com o Studio, navegação contextual mobile-first e permissões Commerce | sem shell ou plataforma comercial paralelos; telas somente para funcionalidades existentes |
+| **OCS-F9** | Conta e Perfil distintos | S-R4/S-R5, `/conta-legada` |
+| **OCS-F10** | Todas as áreas restantes encontradas nos registros e consumidores reais | paridade por área |
+| **OCS-F11** | Gate Fidelity de TODO o Studio, **dependente de THEME-MF3** | sem regressões em outros purposes; só após aprovação iniciar OCS-A1-A4 |
+| **OCS-A1-A4** | Identidade própria Aculta Studio reaproveitando a mesma base SDC; Green Stash segue integrado, fundação mobile-first global permanece | comparação Fidelity/Identity + regressão de todo tema |
+
+**Sequenciamento:** começar por F0+MF0 e corrigir bloqueadores críticos globais antes da homologação visual. Permite trabalho paralelo em stories/tokens quando sem conflito; proíbe declarar F11 se MF3 não passou. Frentes A/B e microcommits continuam valendo. Contratos de interface/rotas de áreas opcionais não são inventados. Quando alteração global afetar outro dono funcional, registrar `Pede-A`. Não exigir uma nova identidade visual OpenCulturas em todo o portal: o **requisito global é mobile-first**, enquanto **a fidelidade visual à marca Next é restrita ao Studio**.
 ## Correção normativa 2026-10-29 - Green Stash e cobertura completa
 
 **Esta correção prevalece sobre a numeração OCS-F0-F10 anterior, inclusive quando repetida nas seções históricas.** Green Stash é uma experiência independente e obrigatória da cobertura visual transversal do Studio, não uma função do Marley ou da Loja pública. Código verificado: `aculta_commerce/src/Experience/GreenStashExperienceProvider.php`, ID `green_stash`, route `aculta_commerce.green_stash`, purpose `account`, ACL `GreenStashAccessPolicy`. A presença do provider **não** significa que todas as operações de loja estejam implementadas: o método `build()` atual ainda fornece mensagem de preparação. Conferir estado da rota e dos consumidores no HEAD antes de marcar implementação.
