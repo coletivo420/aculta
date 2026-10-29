@@ -1,3 +1,15 @@
+## Frente Studio: Fidelity → Identity - OCS-F/OCS-A (2026-10-29)
+
+[Plano de implementação e critérios](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md). **Tema de origem é `opcult` (OpenCulturas Next)**; `openculturas_base` é legado. Etapa F reproduz estrutura, tipografia, espaçamento, componentes, cards, navegação e formulários do Next, mas somente **no contexto interno do Studio**. Etapa A substitui a identidade visual por tokens institucionais, sem reimplementar contratos funcionais.
+
+- [ ] F0 inventário `opcult` → SDC/consumer, matriz de paridade e telas-benchmark.
+- [ ] F1 tokens e fundação de fidelidade escopados; F2 navegação/contexto; F3 reaproveitar `patterns/card`, `context-header`, `context-tabs`, `empty-state`, `content-section` e SDCs de Perfil antes de criar componentes.
+- [ ] F4 dashboard e F5 Marley com dados reais; F6 Conta e Perfil respeitando S-R4/S-R5 e `/conta-legada`.
+- [ ] F7 aprovar fidelidade em capturas, UI Patterns, Firefox ESR, acessibilidade, privacidade, claro/escuro e demais purposes.
+- [ ] A1-A4 identidade Aculta, ajuste visual e limpeza de overrides sem alteração de slots/props.
+
+**Não modificar Institution Bar ou Domain Header**, nem globalizar os estilos OpenCulturas; não ativar `opcult`, não criar CSS/Sass build paralelo. Auditar licença de fontes, ícones e SVGs antes de qualquer porte. A frente B detém tema, SDCs e CSS; arquivos de serviços/controladores/rotas pertencem à frente A.
+
 # ACULTA420 — Roadmap visual transversal (planejamento)
 
 **Linha de planejamento:** THEME-UX 0.8 · **Data:** 2026-10-22 · **Estado:** plano, sem implementação e sem gates Runtime aprovados.
