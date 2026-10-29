@@ -38,6 +38,10 @@ Status: D6 implementada no Runtime de teste; as rotas públicas do calendário t
 ## CA6 — Documentação para agentes
 - [x] README com a API, o que cada área pode e não pode fazer, e onde ficam as regras.
 
+## ADM8 — consulta de hosts para incorporação
+- [x] Painel somente leitura em `/painel-administrativo/calendario/incorporacao`, consumindo os hosts de teste e produção declarados pelo ACULTA Deployer.
+- [x] Permissão própria; Kernel confirma negação para usuário comum e acesso autorizado. Nenhuma opção de edição da allowlist é oferecida.
+
 ## DH — DHTMLX Scheduler (visão interativa)
 
 Decisão do responsável em 2026-10-28; detalhes, origem e hashes em `DHTMLX.md` e `ESTUDO-DHTMLX-SCHEDULER.md`.

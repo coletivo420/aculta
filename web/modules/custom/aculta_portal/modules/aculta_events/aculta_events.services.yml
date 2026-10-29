@@ -26,12 +26,9 @@ services:
       - { name: aculta_calendar.item_provider }
   aculta_events.embed_frame_subscriber:
     class: Drupal\aculta_events\EventSubscriber\EmbedFrameSubscriber
-    arguments: ['@aculta_events.embed_hosts']
+    arguments: ['@aculta_calendar.embed_hosts']
     tags:
       - { name: event_subscriber }
-  aculta_events.embed_hosts:
-    class: Drupal\aculta_events\Embed\EmbedHostAllowlist
-    arguments: ['@extension.list.module']
   aculta_events.admin_export_route_subscriber:
     class: Drupal\aculta_events\EventSubscriber\AdministrativeExportRouteSubscriber
     tags:

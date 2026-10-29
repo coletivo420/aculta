@@ -7,3 +7,13 @@ aculta_calendar.import_review:
     _permission: 'administer aculta calendar imports'
   options:
     _admin_route: true
+
+aculta_calendar.embed_hosts:
+  path: '/painel-administrativo/calendario/incorporacao'
+  defaults:
+    _controller: '\Drupal\aculta_calendar\Controller\EmbedHostsController::page'
+    _title: 'Incorporação do calendário'
+  requirements:
+    _permission: 'administer aculta calendar embedding'
+  options:
+    _admin_route: true

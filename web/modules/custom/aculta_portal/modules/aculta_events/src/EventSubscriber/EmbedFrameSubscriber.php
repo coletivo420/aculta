@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\EventSubscriber;
 
-use Drupal\aculta_events\Embed\EmbedHostAllowlist;
+use Drupal\aculta_calendar\Embed\DeployerHostDirectory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -27,7 +27,7 @@ final class EmbedFrameSubscriber implements EventSubscriberInterface {
    * Construtor.
    */
   public function __construct(
-    private readonly EmbedHostAllowlist $hostsAutorizados,
+    private readonly DeployerHostDirectory $hostsAutorizados,
   ) {}
 
   /**

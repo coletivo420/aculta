@@ -1,4 +1,7 @@
 services:
+  aculta_calendar.embed_hosts:
+    class: Drupal\aculta_calendar\Embed\DeployerHostDirectory
+    arguments: ['@extension.list.module']
   aculta_calendar.recurrence_expander:
     class: Drupal\aculta_calendar\Recurrence\RecurrenceExpander
   aculta_calendar.item_source:

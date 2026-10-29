@@ -1,3 +1,7 @@
 administer aculta calendar imports:
   title: 'Revisar itens importados de calendário'
   restrict access: true
+
+administer aculta calendar embedding:
+  title: 'Consultar hosts de incorporação do calendário'
+  restrict access: true
