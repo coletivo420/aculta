@@ -43,3 +43,12 @@ texto antigo. O OAuth do OSM foi validado no Runtime e o ensaio de escrita
 fictícia foi concluído com limpeza (nó `14331309082`, changesets `191197897`,
 `191197899` e `191197900`). Próxima etapa: validação Alpha após autorização de
 release.
+
+## Incremento de Locais - planejado em 2026-10-29
+
+[Plano de implementação](../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md) e [roadmap](docs/ROADMAP.md).
+Entidade existente preservada; faltam CRUD nativo, seleção/criação inline no
+editor de Data, detalhe com agenda e navegação. A integração com aculta_index
+inclui canônicos, relações Evento > Local, ACL, consultas paginadas e manutenção
+incremental. O RC acima é evidência histórica; o novo escopo está Dev/planejado,
+sem mudança de manifesto ou teste Runtime nesta revisão.

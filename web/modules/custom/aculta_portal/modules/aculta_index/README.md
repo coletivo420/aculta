@@ -347,3 +347,13 @@ O [OpenCulturas 3.1.5](../../../../../../docs/architecture/AUDITORIA-OPENCULTURA
 - **OC-IDX4 / P1:** testes de duas contas e propósito de domínio diferente, invalidação por atualização/remoção e benchmark de volume. Sem `accessCheck(FALSE)` propagado à vitrine pública.
 
 Estado: **planejado; nenhum provider, índice, schema ou configuração modificados**.
+
+## Events e Locais - contrato IDX-LOC planejado (2026-10-29)
+
+[Plano LOC](../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), seção 6, e
+[roadmap do Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
+Providers Event/Location já registrados não comprovam descoberta integrada.
+O incremento prevê canônicos, indexabilidade pública, relação event_location
+via Datas, busca paginada, fila/remoção e testes reais de acesso/Domain/cache.
+Sem novo índice, provider por ocorrência ou duplicação da fonte; adapters no
+Events. Nenhuma implementação, rebuild ou nova homologação neste registro.

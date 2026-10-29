@@ -1,7 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-rc.1
-state: RC
+state: Dev
 progress_note: >-
+  Planejamento LOC-00 a LOC-08 publicado em 2026-10-29; CRUD, criação inline, página/agenda e integração IDX-LOC ainda pendentes. O escopo ampliado está Dev; o manifesto RC anterior permanece histórico e inalterado.
   RC 0.1.0-rc.1 (2026-10-29): candidato 89efeb5b7 servido no checkout de teste
   com drush cr. Smoke do purpose eventos 129/129 verificações PASS em
   1280/390/320 px reais com modo escuro; o mapa não exibe mais o texto inline de
@@ -11,4 +12,4 @@ progress_note: >-
   fictícia concluído com limpeza (nó 14331309082; changesets 191197897,
   191197899 e 191197900). Runtime sem atualização de configuração; a conta e o
   conteúdo de teste foram removidos.
-next_phase: 'Aguardar autorização explícita de release para validar o candidato em Alpha (*.aculta.org) e registrar as evidências do ambiente; nenhum item de código permanece aberto no RC.'
+next_phase: "Executar LOC-00/01 antes de CRUD/inline e IDX-LOC; concluir LOC-02 a LOC-08 com integração aculta_index, migração e homologação antes de novo RC. [Plano LOC](docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md)."

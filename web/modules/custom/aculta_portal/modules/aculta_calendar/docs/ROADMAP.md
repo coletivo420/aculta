@@ -1,3 +1,14 @@
+## Incremento planejado LOC - agenda por Local (2026-10-29)
+
+[Plano LOC-00 a LOC-08](../../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md). Calendar mantém o motor/RC anterior; nenhuma integração nova foi homologada aqui.
+
+- [ ] LOC-05: suportar agenda do Local pelo contrato de itens/provedor existente; Events filtra a associação Data > Local e autoriza registros.
+- [ ] LOC-04/05: Index descobre eventos relacionados, sem transformar arestas em ocorrências nem duplicar RRULE/overrides.
+- [ ] LOC-01/08: revisar nome/endereço do Local em agenda e ICS, registros negados, cache e purposes main/eventos.
+- [ ] Cobrir futuros/em andamento, recorrência/cancelamento/reagendamento, links canônicos e acesso A/B.
+
+Não importar classes Events no núcleo independente, criar segundo calendário, promover versão ou executar Runtime por efeito deste plano.
+
 # Roadmap — ACULTA Calendário (`aculta_calendar`)
 
 Roadmap único do submódulo. Plano: `PLANO-IMPLANTACAO.md`. Arquitetura: ADR-031 (D-20).

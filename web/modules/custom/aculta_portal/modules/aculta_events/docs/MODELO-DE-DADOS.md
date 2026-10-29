@@ -56,25 +56,41 @@ Regras:
 - Cancelamento mantém a página (com aviso), não apaga a data.
 - O fuso é o do site (`America/Sao_Paulo`, decisão D9).
 
-## Local — `aculta_event_location`
+## Local - aculta_event_location
 
-Lugar físico ou virtual onde ocorrem eventos.
+Estado revalidado no HEAD-base do [plano LOC](../../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md). Esta seção distingue
+campos de código de requisitos futuros; as demais tabelas históricas não são
+inventário automático do schema ativo.
 
-| Campo | Tipo Drupal | Origem OpenCulturas | Observação |
-| --- | --- | --- | --- |
-| `title` | string | `title` | Nome do local |
-| `field_tipo` | entity_reference (`aculta_location_type`) | `location_type` | Vocabulário próprio |
-| `field_endereco` | address (paragrafo ou campo) | `field_address_data` (paragraph `address_data`) | Avaliar `drupal/address` |
-| `field_coordenadas` | geofield | `field_address_location` (paragraph) | Lat/long para o mapa |
-| `field_precisao` | list_string | Sem origem no OpenCulturas (o `field_location_precision` de lá marca áreas desenhadas à mão, não privacidade) | Exato ou aproximado; campo próprio (auditoria, achado T9) |
-| `field_horario` | office_hours ou texto | `field_office_hours` / `field_opening_hours` | Escolher uma forma |
-| `field_contato` | entity_reference_revisions | `field_contact_data` | Telefone, e-mail, site |
-| `field_imagem` | image | `field_mood_image`, `field_gallery` | Galeria opcional |
+| Campo presente em EventLocation | Tipo no código | Contrato |
+| --- | --- | --- |
+| title | string | Nome obrigatório, máximo 255 |
+| field_tipo | entity_reference taxonomy_term | Vocabulário aculta_location_type |
+| field_endereco | address | BR; formulário/adaptador postal central obrigatório |
+| field_coordenadas | geofield | Maps geocodifica no salvamento conforme política existente |
+| field_precisao | list_string | exato/aproximado; não representa visibilidade privada |
+| field_horario | string_long | Texto; horário estruturado continua backlog próprio |
+| field_osm_id / field_osm_version | string | Proveniência opcional; OSM não é requisito do cadastro manual |
+| field_allow_claiming | boolean | Padrão fechado; serviço de reivindicação existente |
+| field_organizador | entity_reference user | Responsável; não equivale automaticamente a Perfil ou Organização |
 
-Regras de privacidade:
+**Planejado em LOC-01/02, ausente nessa definição:** estado próprio de
+publicação/visibilidade e descrição/telefone/site/contatos. Mapear contratos
+existentes antes de criar campos; não tratar field_contato ou field_imagem
+mencionados no desenho anterior como implementados.
 
-- Local em residência particular: exibir somente o bairro/município, com `field_precisao = aproximado`. Regra a definir pelo responsável; o OpenCulturas não a fornece.
-- Coordenadas não exibidas como texto; só no mapa.
+A Data mantém field_local apontando ao mesmo ID reutilizável de Local. CRUD
+independente e inline compartilham Forms/validação. Remover referência não
+exclui Local; exclusão referenciada exige regra explícita.
+
+Precisão aproximada omite rua/CEP e reduz coordenadas nas saídas públicas.
+Visibilidade/autorização devem ser aplicadas antes da renderização e da
+projeção pública no Index. Plano proposto de rascunho/público/privado será
+formalizado em LOC-01, preservando registros existentes por migração controlada.
+
+Index armazena projeção mínima por entidade/idioma e relação derivada
+Evento > Local, não endereço mestre ou ocorrência duplicada; detalhes e gates
+IDX-LOC na seção 6 do plano.
 
 ## Relações
 

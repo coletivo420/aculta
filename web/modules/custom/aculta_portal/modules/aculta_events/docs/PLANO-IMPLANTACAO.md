@@ -1,3 +1,7 @@
+## Aditivo vigente - gestão de Locais (2026-10-29)
+
+[Plano LOC-00 a LOC-08](../../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md) define o incremento LOC e integração obrigatória com aculta_index. O restante deste documento preserva o desenho e decisões históricas; não usar referências antigas de branch/PR, Smart Date, Google como padrão ou ausência de OSM como estado atual. Executar na PR #299/branch refactor/opencultures-codigo-visual; core daterange, Maps com OSM/Leaflet padrão e IEF existente a avaliar. Nenhum código/Runtime alterado nesta revisão. CRUD/inline/página de Local/descoberta continuam abertos até LOC-08.
+
 # Plano de implantação — ACULTA Eventos
 
 Escopo: subdomínio de eventos (`eventos.aculta.*`), com **Catálogo de Eventos**, **Locais com

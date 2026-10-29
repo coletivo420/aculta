@@ -1,3 +1,19 @@
+## Incremento vigente - Locais e Content Index (2026-10-29)
+
+[Plano LOC-00 a LOC-08](../../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md). **Planejado; nenhuma microfase LOC implementada nesta publicação.** O RC registrado abaixo é evidência do candidato anterior, não do fluxo completo de Locais. O escopo ampliado retorna a Dev até LOC-08; a versão do manifesto não muda por documentação.
+
+- [ ] LOC-00: confrontar Runtime/sync, inventariar activity versus Events e confirmar ownership.
+- [ ] LOC-01: visibilidade/publicação versus precisão; ACL e cache em todas as saídas.
+- [ ] LOC-02: CRUD nativo de aculta_event_location, dados próprios e operações sem duplicar entidade.
+- [ ] LOC-03: selecionar existente e criar inline via IEF avaliado; Data mantém field_local.
+- [ ] LOC-04 / IDX-LOC: URL canônica, indexabilidade, relações Evento > Local derivadas das Datas, fila e consultas paginadas pelo aculta_index.
+- [ ] LOC-05: detalhe do Local com agenda, diretório pesquisável/paginado, mapa e navegação conectados.
+- [ ] LOC-06: área Eventos/Locais no Studio com formulários e permissões do owner.
+- [ ] LOC-07: reconciliação/migração ensaiada, piloto e rollback, sem import global ou exclusão automática de activity.
+- [ ] LOC-08: testes integrados A/B, Index, Runtime e UX; gates sem DEFERRED apresentados como PASS.
+
+Correção do diagnóstico antigo: LocationCatalogue já verifica access('view') por item no HEAD-base; LOC-01 fecha a política e cache restantes. Provider registrado em ARQ-03 não equivale a URL/relações/busca pública homologadas. F4/RC anteriores não comprovam CRUD, criação inline ou agenda individual. Esta seção prevalece sobre alegações genéricas de conclusão abaixo para esse escopo.
+
 ## Integração arquitetural OpenCulturas - ARQ-01 a ARQ-04 (2026-10-29)
 
 Fonte: [plano normativo](../../../../../../../docs/architecture/PLANO-ARQUITETURAL-OPENCULTURAS-ACULTA-ARQ-01-09.md).

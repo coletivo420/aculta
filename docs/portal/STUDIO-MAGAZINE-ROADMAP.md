@@ -1,3 +1,11 @@
+## Integração Events/Locais - planejamento vigente (2026-10-29)
+
+[Plano LOC](../architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md): LOC-06 prevê
+área Eventos no Marley, condicionada a CRUD do owner e integração IDX-LOC.
+Não implementada. Corrigido o nome aculta_eventos da matriz para aculta_events;
+sem editor paralelo, novo shell ou alteração das experiências Conta/Perfil.
+A publicação deste plano não conclui fases OCS-F/A, THEME-MF ou S-R4/S-R5.
+
 # ACULTA Magazine — Roadmap de realinhamento arquitetural
 
 ### Revalidação da fronteira módulo–tema — 2026-10-29
@@ -335,7 +343,7 @@ O Studio é frontend integrado à Minha Conta. Itens não autorizados não apare
 | Projetos | Node `project`, purpose principal | Gestão institucional e relações com publicações/galerias | User, Gallery, Document Viewer |
 | Biblioteca | Drupal Media/File | Seleção e organização autorizada, documentos | Image, Document Viewer |
 | Métricas | `aculta_statistics` | Painéis e contadores permitidos | Serviços estatísticos existentes |
-| Eventos (futuro) | `aculta_eventos` | Eventos e programação quando o módulo existir | Providers opcionais |
+| Eventos e Locais (planejado LOC-06) | `aculta_events` | Criar/editar Eventos, Datas e Locais pelos formulários do owner; listar por escopo autorizado | aculta_index, Calendar, Maps, User/organizações e Portal/CEP |
 
 ## Entregas mandatórias por fase
 
@@ -343,7 +351,7 @@ O Studio é frontend integrado à Minha Conta. Itens não autorizados não apare
 
 **Depois Studio (0.6.0–1.0.0)**: implementar submódulo `aculta_studio`, shell no frontend e providers independentes por aba, reaproveitando permissões, Forms e Views do proprietário. Não desenvolver duas frentes em paralelo. Testar editorial, moderadores, Wiki, educadores, Domain, Group e usuários de acesso restrito antes de considerar concluído.
 
-**Fronteira funcional:** projetos permanecem no domínio principal; eventos pertencem a `aculta_eventos`; Galeria e Fórum são subkernels independentes; Studio é ferramenta transversal e Magazine é consumidor.
+**Fronteira funcional:** projetos permanecem no domínio principal; eventos e locais pertencem a `aculta_events`; Galeria e Fórum são subkernels independentes; Studio é ferramenta transversal e Magazine é consumidor.
 
 ## Contratos de UX do Studio (2026-10-22; especificação, não implementação)
 

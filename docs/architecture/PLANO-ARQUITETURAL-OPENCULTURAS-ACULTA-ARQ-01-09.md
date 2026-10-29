@@ -1,3 +1,9 @@
+## Incremento LOC - gestão de Locais e descoberta cultural (2026-10-29)
+
+[Plano LOC-00 a LOC-08](PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md) integra ARQ-01 (acesso/cache), ARQ-03 (aculta_index), ARQ-04 (dados), ARQ-05 (vínculos), Studio e ARQ-09 (gate). **Planejado, sem execução funcional nesta publicação.** Entidade Local existente preservada; fechar CRUD/seleção/criação inline/detalhe/agenda/diretório e relações/consulta/manutenção via Index.
+
+Retificação do baseline: LocationCatalogue já filtra access('view') por item no HEAD-base; o achado antigo sem filtro é histórico. A política de visibilidade, propagação de cache, saídas relacionadas e descoberta pública ainda exigem LOC-01/04/08. Providers registrados não concluem integração pública. Registros de RC anteriores não comprovam o escopo ampliado de Locais.
+
 ## Diretriz aprovada para ARQ-08 - concluir Revista existente, sem novos conteúdos (2026-10-29)
 
 **Esta seção substitui ARQ-08/P2 onde sugeria novos modelos de imprensa, apoiadores, teasers ou metadados como entregas obrigatórias.** A Revista existente (`aculta_magazine`, **único bundle `revista`**) é a infraestrutura editorial. Já contém `field_subtitle` (chamada), `field_summary` (resumo), metatags, coautoria, discussões, Views e SDCs: **não duplicar entidades, bundles, campos, workflows ou módulos**. Os recursos OpenCulturas são apenas referências para fechar lacunas reais da Revista e de seus consumidores.

@@ -1,3 +1,15 @@
+## Incremento planejado LOC - Eventos e Locais no Marley (2026-10-29)
+
+[Plano LOC-00 a LOC-08](../../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md). Integração ainda ausente no registro auditado; não marcar área como disponível por este documento.
+
+- [ ] LOC-06: registrar área Eventos pelo contrato vigente, com seções Eventos, Datas e Locais; disponibilidade condicionada ao owner e acesso real das operações.
+- [ ] Reutilizar CRUD/Forms do aculta_events e endereços centrais, com retorno seguro ao Studio; sem editor ou tabela paralela.
+- [ ] Consumir consultas autorizadas/paginadas e relações do aculta_index quando disponível; seleção transacional continua no owner.
+- [ ] Avaliar ações cross-purpose com runInPurpose e URLs do DomainPurposeManager; preservar hub ACCOUNT, /conta-legada e separação Conta/Perfil/Organização.
+- [ ] Handoff para frente visual OCS-F/A e THEME-MF; mobile-first, teclado, no-JS e caches A/B em LOC-08.
+
+Não reabrir shell, mover conteúdo ou declarar OCS-F11/THEME-MF3 aprovados; manter demais frentes e versões.
+
 ## Dependências arquiteturais OpenCulturas - ARQ-01 a ARQ-09 (2026-10-29)
 
 [Plano arquitetural transversal](../../../../../../../docs/architecture/PLANO-ARQUITETURAL-OPENCULTURAS-ACULTA-ARQ-01-09.md): Studio é **consumidor visual e de orquestração** da descoberta, salvos (ARQ-07), vínculos de organização (ARQ-05) e moderação autorizada (ARQ-06); owners são `aculta_index`, User/organizações, UGC e módulos de conteúdo. **Não duplicar** dados/ACL/workflow, não incorporar falsas operações, manter Conta e Perfil separados e Green Stash como área integrada. Fases OCS-F/A e THEME-MF seguem em paralelo, sem confundir gates com ARQ-09.

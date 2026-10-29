@@ -2,6 +2,7 @@
 version: 0.1.0-rc.1
 state: RC
 progress_note: >-
+  Incremento LOC-05/08 de agenda por Local planejado e ainda não homologado; a evidência RC a seguir se refere ao motor/candidato anterior.
   RC 0.1.0-rc.1 (2026-10-29): candidato e36140e63 servido no checkout de teste
   com drush cr. ADM8 autenticada (anônimo 403/autenticado 200, tabela somente
   leitura com 3 cabeçalhos e 10 linhas, sem controles de edição e sem overflow
@@ -13,4 +14,4 @@ progress_note: >-
   cancelamentos importados e a exibição de eventos de vários dias em cada dia
   coberto. Runtime sem config:import; apenas a conta descartável de revisão foi
   criada e removida.
-next_phase: 'Aguardar autorização explícita de release para validar o candidato em Alpha (*.aculta.org) e registrar as evidências do ambiente; nenhum item de código permanece aberto no RC.'
+next_phase: "Preservar RC do motor existente; planejar e validar agenda/ICS por Local em LOC-05/08 pelo provider Events, sem dependência invertida. Alpha do candidato anterior continua sujeito à autorização de release. [Plano LOC](docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md)."
