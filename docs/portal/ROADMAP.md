@@ -1,5 +1,14 @@
 # Roadmap do aculta_portal
 
+## Revalidação documental — 2026-10-29
+
+O manifesto e o status usam `0.4.1-dev.44`. Os metadados do catálogo de helpers
+e implementações apontam para `ADR-032-portal-multi-cart-checkout.md`, que
+contém as decisões vigentes; `ADR-013` é o registro do Content Index, não do
+checkout. O gate Portal Drupal 11+ passou (1.162 verificações); Unit 323/974 e
+Kernel 80/1.530 também passaram, com 96 depreciações Core/contrib. As fases
+funcionais indicadas abaixo continuam abertas; o Portal permanece Dev.
+
 **Ciclo vigente:** este roadmap segue [Dev → RC → deploy/validação Alpha → produção](../operations/RELEASE-LIFECYCLE.md). Todo escopo funcional, gates, testes e revisão visual aplicável devem estar prontos em RC antes do deploy. Alpha é o deploy/validação no servidor de desenvolvimento; após aprovação, preparar a migração do mesmo candidato para produção. Itens de releases anteriores são históricos e não alteram este fluxo.
 
 Base histórica atualizada após os merges das PRs #238 e #239 (2026-10-13 UTC; estado histórico: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md)). Roadmap revisto em 2026-10-22 para refletir o manifesto do Portal, Content Index, Activity e política de limpeza. Substitui o roadmap de modernização

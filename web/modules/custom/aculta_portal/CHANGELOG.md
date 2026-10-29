@@ -1,3 +1,12 @@
+## 0.4.1-dev.44 — reparar referências documentais do Status e do checkout (2026-10-29)
+
+- Os catálogos de helpers e implementações apontam à ADR-032 vigente para
+  resolver checkout, contextos, política e fechamento das rotas globais.
+- O gate Portal Drupal 11+ passou (1.162 verificações); Unit Portal 323/974 e
+  Kernel Portal 80/1.530 passaram, com 96 depreciações Core/contrib.
+- A entrada mantém referência explícita ao padrão Drupal 11+. Nenhuma
+  configuração ou dado Runtime mudou.
+
 ## 0.4.1-dev.43 — URLs do sitemap por ambiente no Deployer (F7) — 2026-10-28
 
 - `DeployerEnvironment` lê o host de cada Domain em `domain_transition.entries`; `DomainPurposeManager` gera URLs de página/caminho para o ambiente ativo. As URLs canônicas de produção existentes permanecem separadas.
@@ -222,9 +231,3 @@
 ## 0.4.1-dev.14 — providers de checkout e leitura do flow nativo (P-CART C) — 2026-10-22
 
 - Novo `OrderTypeCheckoutFlows`: lê o checkout flow associado ao tipo de pedido no Commerce, sem alterá-lo. Serve aos providers de Loja, LMS e Doações. Sem efeito público. RUNTIME STATUS: DEFERRED.
-
-## 0.4.1-dev.13 — contratos centrais de orquestração de checkout (P-CART B) — 2026-10-22
-
-- Novo `Drupal\aculta_portal\Checkout`: `CheckoutContextProviderInterface`, `CheckoutMode`, `CheckoutContextConfiguration`, `CheckoutContextRegistry`, `CheckoutConfigurationResolver` e `CheckoutPolicyManager`, registrados como serviços. Providers entram pela tag `aculta_portal.checkout_provider` (`tagged_iterator`).
-- Somente leitura e sem efeito público: nenhum provider registrado ainda, nenhuma rota, subscriber, carrinho ou checkout alterado (ADR-013).
-- Testes Unit: `Unit/Checkout/CheckoutOrchestrationTest.php`. RUNTIME STATUS: DEFERRED.

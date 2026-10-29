@@ -127,8 +127,8 @@ final class PortalImplementationRegistry {
     ],
     'aculta_portal.commerce_checkout_route_subscriber' => [
       'label' => 'Rotas globais de checkout',
-      'summary' => 'Fecha as rotas globais do Commerce quando o checkout comum está desligado, conforme a ADR-013.',
-      'docs' => 'docs/decisions/ADR-013-portal-multi-cart-checkout.md',
+      'summary' => 'Fecha as rotas globais do Commerce quando o checkout comum está desligado, conforme a ADR-032.',
+      'docs' => 'docs/decisions/ADR-032-portal-multi-cart-checkout.md',
     ],
   ];
 

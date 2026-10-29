@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.4.1-dev.41
+version: 0.4.1-dev.44
 state: Dev
 next_phase: 'Executar testes B1/B2 de Form API CPF/CNPJ, checkout, cache e legado; homologar no Kernel domínio/grants dos providers do Content Index incluindo Activity; avançar relações allowlisted dos vídeos embutidos em Revista, Wiki, Fórum e LMS; homologar as APIs de limpeza compartilhada de Media/File, depois implementar prévia e execução explícita de posts com backup ([Content Index](docs/portal/ACULTA-CONTENT-INDEX.md), [limpeza](docs/portal/CONTENT-CLEANUP-POLICY.md), [roadmap Portal](docs/portal/ROADMAP.md))'
-progress_note: "Dev.41: decisão do responsável autoriza checkout antes da confirmação do e-mail. Acesso mantém propriedade/grants do Commerce e termos obrigatórios. Pedido 131: leitura read-only confirmou owner ativo uid 1, carrinho com item, loja publicada, termos aceitos; o bloqueio era a política anterior. Após drush cr, access_manager.checkNamedRoute(commerce_checkout.form, pedido 131, uid 1) retornou allowed apesar de email_confirmed=false. Portal Unit 280/766 PASS (6 depreciações); Guest Checkout 7/64, CheckoutStepResolver 4/11, ProtectedRouteAccessCheck 7/20; PHPCS Drupal/Practice PASS. Login visual nessa sessão não foi executado."
+progress_note: "Dev.44: manifesto/status alinhados ao changelog e referências dos catálogos corrigidas para ADR-032. Gate Portal Drupal 11+ PASS (1.162 checks); Unit Portal 323/974 e Kernel Portal 80/1.530 PASS, com 96 depreciações Core/contrib. Estado funcional do checkout não foi revalidado nesta rodada. Permanecem fases B1/B2, Content Index, vídeo, limpeza compartilhada, testes e revisão visual listados em next_phase; Portal continua Dev."
 
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.
