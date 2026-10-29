@@ -1,3 +1,10 @@
+## 0.1.0-dev.6 — smoke de acesso editorial — 2026-10-29
+
+- Adicionado smoke Firefox ESR, sem sessão ou escrita, para confirmar que visitante não recebe os formulários de edição de `full_html` nem de criação de `aculta_adm`.
+- Revalidação no banco `aculta_simpletest`: Unit 16/61 e Kernel 8/127 PASS; três depreciações upstream. O Kernel cobre a instalação dos formatos/templates e sanitização.
+- Firefox ESR no servidor de desenvolvimento: 2/2 rotas administrativas negadas para anônimo. Revisão autenticada como editor/admin ainda pendente; o Runtime não tem `qa_editor` e a criação de conta depende da tabela `user_nickname`, ausente no schema atual.
+- PHPCS Drupal do submódulo continua apontando dois avisos preexistentes em `TextFormatPolicyTest.php`; o smoke visual não altera PHP de produção.
+
 ## 0.1.0-dev.5 — Editorial com filtro e tipo de HTML completo — 2026-10-22
 
 - `revista_editorial` (Aculta Editorial) recebe o filtro de HTML de edição (filter_html, align, caption, htmlcorrector), no lugar do HTML sem filtro.

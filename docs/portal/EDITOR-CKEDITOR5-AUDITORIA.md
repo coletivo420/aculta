@@ -199,3 +199,10 @@ Permissão `use text format restricted_html` revogada do papel anônimo.
 - **Drift do full_html (resolvido):** a configuração ativa e o arquivo exportado divergiam no `weight` do formato. O arquivo foi alinhado ao export do Drupal, e a tradução pt-br (`HTML completo`) foi aplicada pela API de idioma.
 - **Papel estudante (resolvido):** o Drupal removeu a única permissão, que era de um módulo inexistente (`view aculta restricted forum estudante`), e recalculou a dependência do papel. O papel exportado não tem permissões funcionais, então nenhum acesso muda.
 - **Mídia com entidade real (verificada em 2026-10-22):** página de teste não publicada no formato Editorial, com `<drupal-media>` apontando para a mídia de imagem existente (id 1). A renderização trouxe a imagem pelo estilo de imagem do site, a legenda, e nenhuma marcação `<drupal-media>` restou. O nó de teste foi removido.
+
+## 15. Revalidação para RC no branch de integração (2026-10-29)
+
+- Versão `aculta_editor` 0.1.0-dev.6. Unit: 16 testes / 61 assertions PASS; Kernel: 8 testes / 127 assertions PASS no MariaDB `aculta_simpletest`, com três depreciações upstream. O Kernel executa a instalação dos formatos/templates e cobre sanitização.
+- Firefox ESR visível no servidor de desenvolvimento: 2/2 verificações anônimas PASS. As rotas de edição de `full_html` e criação de `aculta_adm` não renderizam os formulários para visitantes. Script: `tests/browser/aculta-editor/access.py`.
+- A revisão autenticada com papéis editor e administrator não foi repetida. O Runtime de desenvolvimento não contém a conta QA documentada; uma verificação de schema confirmou ausente a tabela `user_nickname`, necessária pelo hook de criação de conta. Nenhuma conta ou conteúdo foi criado nesta rodada.
+- PHPCS Drupal do módulo ainda sai com dois avisos preexistentes em `TextFormatPolicyTest.php`; nenhum PHP do módulo foi alterado nesta microfase. Estado permanece **Dev** até revisar acesso autenticado e sanitização renderizada no Firefox e limpar/reavaliar os avisos.

@@ -3,7 +3,7 @@
 Submódulo opcional do `aculta_portal`. Reúne os modelos editoriais (templates do CKEditor 5 Plugin Pack) e a
 configuração de formatos de texto do ACULTA. Desabilitado, o Portal não depende dele.
 
-Versão: `0.1.0-dev.5` (estado Dev, igual ao `info.yml`). Papéis e formatos conferidos na auditoria do agente executor 2:
+Versão: `0.1.0-dev.6` (estado Dev, igual ao `info.yml`). Papéis e formatos conferidos na auditoria do agente executor 2:
 `content_editor` tem `revista_editorial` e `wiki`; `email_confirmed` tem `usuario_aculta`, `wiki` e `forum`; `authenticated`
 só tem `webform_default`. Nenhum papel comum recebe `full_html`. Auditoria e decisões: [`docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md`](../../../../../../docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md).
 
@@ -55,11 +55,15 @@ Desabilitados: `html_embed`, `free_wproofreader`, `font`, `emoji`, `todo_documen
 
 ## Validação
 
+- Em 2026-10-29: Unit 16/61 e Kernel 8/127 PASS no banco `aculta_simpletest`; três depreciações upstream. O Kernel exercita instalação e sanitização.
+- Firefox ESR, visitante anônimo: `full_html` e criação de `aculta_adm` não exibem formulários administrativos (2/2). A revisão autenticada como editor/admin ainda falta; o Runtime não possui a conta QA documentada e o schema atual não tem `user_nickname`.
 - Kernel: `tests/src/Kernel/AcultaEditorFormatsKernelTest.php` (7 testes, 87 asserções, OK em 2026-10-22). Três avisos
   de deprecação vêm de `ckeditor5_plugin_pack_templates` (contrib).
 - Navegador (2026-10-22, servidor de testes): ciclo editar, inserir modelo e tabela, salvar, reabrir e renderizar
   com o formato Editorial; colagem Markdown no Editorial.
 - Revisão visual do e-mail: aprovada pelo responsável.
+
+O script reutilizável do smoke anônimo está em `tests/browser/aculta-editor/access.py`.
 
 ## Rollback
 

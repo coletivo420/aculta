@@ -21,7 +21,10 @@ DISPLAY=:0 python3 -I tests/browser/aculta-cpf-checkout/multi-tab-checkout.py
 ```
 
 As senhas nunca são impressas. `wdlib.py` cria um perfil temporário
-`/tmp/aculta-ff-*` e o remove ao fechar a sessão.
+`/tmp/aculta-ff-*` e o remove ao fechar a sessão por padrão. Para manter o perfil
+em uma pasta de artefatos fora do repositório, defina
+`ACULTA_FF_PROFILE_ROOT` antes de criar `Driver`; o diretório e o perfil ficam
+com acesso restrito ao usuário executor.
 
 ## Scripts
 

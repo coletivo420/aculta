@@ -15,7 +15,9 @@ class Driver:
     def __init__(self, prefs=None, bidi=False):
         s = socket.socket(); s.bind(("127.0.0.1", 0)); self.port = s.getsockname()[1]; s.close()
         self.base = f"http://127.0.0.1:{self.port}"
-        self.profile = tempfile.mkdtemp(prefix="aculta-ff-", dir="/tmp")
+        profile_root = os.environ.get("ACULTA_FF_PROFILE_ROOT", "/tmp")
+        os.makedirs(profile_root, mode=0o700, exist_ok=True)
+        self.profile = tempfile.mkdtemp(prefix="aculta-ff-", dir=profile_root)
         self.proc = subprocess.Popen([GECKODRIVER, "--port", str(self.port)],
                                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         self.session = None
