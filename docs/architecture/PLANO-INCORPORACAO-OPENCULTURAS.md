@@ -122,6 +122,6 @@ Cada painel é uma microfase, com permissão própria, teste Kernel de acesso ne
 | ADM5 | Conteúdo geral com filtros | `aculta_content_admin` | D-24 e allowlist confirmada pelo responsável | **Implementado**, `5804517b9`: `/painel-administrativo/conteudo` descobre Views de entidades de conteúdo e usa allowlist para coleções servidas por controllers. Checa o acesso nativo de cada rota; só lista áreas permitidas e nega o painel se nenhuma estiver acessível. Kernel cobre View com/sem permissão e FAQ. |
 | ADM6 | Estado do índice de busca (só leitura) | `aculta_index` | — | **Feito**, commit `867bb05da` |
 | ADM7 | Configuração de mapa (provedor, estado da chave, centro, zoom) e URL de rota configurável | `aculta_maps` | ADR-030 (D-18) e F4 | Implementado em `cac0efbba`; painel `/painel-administrativo/mapas`, Kernel cobre acesso, validação da URL e ausência de credencial na configuração exportável |
-| ADM8 | Painel de embed do calendário | `aculta_calendar` | E5 com rota (F5) | Pendente da F5 |
+| ADM8 | Painel de embed do calendário | `aculta_calendar` | E5 com rota (F5 concluída) | Pendente de decisão de escopo: somente leitura dos hosts do Deployer ou allowlist editável restrita aos hosts do Deployer; a pergunta interativa está aberta. |
 
 ADM2, ADM4 e ADM5 têm decisões registradas em D-22, D-23 e D-24. A confirmação posterior de ADM5 inclui rotas de listagem de controllers e requer allowlist explícita.
