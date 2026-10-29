@@ -9,7 +9,7 @@
   flex-wrap: wrap;
   align-items: end;
   gap: 0.25rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
   border-bottom: 1px solid var(--aculta-border-default);
 }
 
@@ -215,12 +215,10 @@
 .aculta-wiki-card__categories { margin-top: 0.65rem; font-size: 0.875rem; }
 
 @media (min-width: 48rem) {
+  .aculta-wiki-article__tabs { margin-bottom: 1.25rem; }
   .aculta-wiki-article__layout {
     grid-template-columns: minmax(0, 1fr) minmax(13rem, 18rem);
   }
   .aculta-wiki-article__aside { grid-row: auto; }
 }
 
-@media (max-width: 767.98px) {
-  .aculta-wiki-article__tabs { margin-bottom: 1rem; }
-}

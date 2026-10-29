@@ -47,6 +47,8 @@ O consumer público de verbete também foi migrado: `wiki-entry.css` usa uma
 coluna como base e posiciona o aside antes do texto; `min-width: 48rem` restaura
 a composição de duas colunas. `tests/browser/aculta-wiki/visual.py` injeta as
 duas folhas candidatas e mede colunas/posição do aside na fronteira 767/768px.
+O espaçamento inferior das abas também usa `1rem` como base; em `48rem` restaura
+`1.25rem`, com o mesmo smoke medindo o valor calculado no verbete.
 Lint CSS e sintaxe Python PASS; Firefox/Runtime DEFERRED por `DISPLAY` ausente e
 sessões geckodriver concorrentes. MF3 segue pendente.
 

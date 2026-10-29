@@ -78,6 +78,8 @@ Twig/CSS de apresentação, sem SDC novo; inicia em coluna única e aprimora em
 `48rem`. O inventário de rotas e o smoke candidato estão no roadmap transversal.
 O SDC `patterns/wiki-entry` também inicia o verbete em coluna única com o aside
 antes do texto e retorna a duas colunas em `48rem`; o smoke mede esse consumer.
+As abas usam margem inferior compacta como base e restauram o espaçamento amplo
+em `48rem`, validado no mesmo consumer público.
 
 O índice do Fórum usa Twig/Views e classes de apresentação já existentes; linhas
 de tópico empilham seus metadados até `36rem`. Não houve SDC novo nem alteração
