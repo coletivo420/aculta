@@ -1,3 +1,8 @@
+# 0.7.0-dev.24 — migrar busca e listagens Wiki para mobile-first (2026-10-29)
+
+- Header Wiki usa tamanhos compactos na base; `min-width: 36rem` amplia a marca e `min-width: 48rem` restaura dimensões desktop. Formulários de busca e grids começam em uma coluna e passam a duas em 768px.
+- `visual.py` aceita folha candidata local via `WIKI_CSS_ROOT` + `WIKI_CSS_OVERRIDE=1` e cobre 575/576/767/768px. Stylelint e Python compile PASS; Firefox e consumers Studio DEFERRED por sessões concorrentes. THEME-MF3 permanece pendente.
+
 # 0.7.0-dev.23 — migrar controles de discussão para mobile-first (2026-10-29)
 
 - Controles de progresso começam com 2 colunas abaixo de 360px; usam 4 colunas de 360px a 575px e restauram a barra sticky de 7 trilhas em `min-width: 36rem`. O formulário de resposta usa padding compacto como base e volta a 1rem no mesmo breakpoint.

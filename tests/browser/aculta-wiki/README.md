@@ -24,10 +24,12 @@ ficam PNGs e resumo; não versione esses artefatos. `WIKI_BASE_URL` pode apontar
 a outra instalação de teste HTTP, mas o script não altera resolução de DNS nem
 tema.
 
-`WIKI_CSS_OVERRIDE=1` carrega a folha Wiki atual por GET no browser para
-validar CSS recém-editado quando o Runtime ainda serve um agregado antigo. Isso
-valida a folha candidata sobre a página servida; não prova que o agregado ou a
-configuração do Runtime foi atualizado.
+`WIKI_CSS_OVERRIDE=1` injeta no browser a folha `wiki.css` candidata do
+checkout/worktree e valida o layout sobre a página servida. Defina
+`WIKI_CSS_ROOT` se o script estiver sendo executado de outro checkout. As
+larguras incluem as fronteiras 575/576 e 767/768 CSS px. Isso valida a folha
+candidata nos três caminhos públicos; não prova que o agregado ou a configuração
+do Runtime foi atualizado, nem cobre o workspace autenticado do Studio.
 
 ## WE SATIVA autenticado
 

@@ -507,6 +507,13 @@ Header e zero overflow. A validação integrada após publicação/cache e os de
 purposes continuam pendentes; MF2 segue parcial. Ver detalhes em
 `mobile-first-audit.md`.
 
+### THEME-MF2 — Wiki pública
+
+Header, formulários e grids de Wiki usam composição móvel como base e retomam as
+dimensões anteriores em 576/768 CSS px. O smoke público aceita injeção da CSS
+candidata local e mede 575/576/767/768 px; execução Firefox DEFERRED. O workspace
+autenticado de WE Sativa exige rodada própria; ver `mobile-first-audit.md`.
+
 ### THEME-MF2 — composição institucional mobile-first (2026-10-29)
 
 CTAs do hero e as grades institucionais/detalhes agora declaram primeiro o

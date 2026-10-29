@@ -7,20 +7,17 @@ A auditoria original foi registrada no checkout servidor `ded8a6181`. Em
 varredura abaixo cobre os arquivos atuais do tema, mas não altera a evidência
 de runtime. Nenhuma escrita persistente foi executada no Runtime.
 
-### THEME-MF2 — controles da discussão (2026-10-29)
+### THEME-MF2 — busca e listagens Wiki (2026-10-29)
 
-`discussion.css` declara como base o arranjo de 2 colunas abaixo de 360px;
-`min-width: 22.5rem` amplia para 4 colunas e `min-width: 36rem` restaura as 7
-trilhas, as dimensões e a posição sticky anteriores. O formulário de resposta
-usa padding de `0.875rem` como base e restaura `1rem` em `36rem`. A ordem DOM,
-ações, estados e ownership da barra pelo Portal não mudam.
-
-O smoke `tests/browser/aculta-forum/progress-visual.mjs` foi ampliado para
-injetar a folha candidata e conferir geometria, áreas, sticky, foco/teclado,
-alvos de toque, claro/escuro e overflow em 320/360/390/500/575/576/900px.
-`npm run lint:css`, `node --check`, schema SDC, Design Foundations e índice de
-status PASS. A execução Firefox e a validação do formulário real em Fórum,
-Wiki e Revista ficam DEFERRED por sessões concorrentes; MF3 não aprovado.
+`wiki.css` declara tamanhos compactos do header como base; `36rem` reintroduz
+as dimensões intermediárias e `48rem` as proporções desktop anteriores. Busca,
+formulários de resultados e grids de categorias/verbetes começam em uma coluna
+e ampliam a duas em 768px. O harness `tests/browser/aculta-wiki/visual.py`
+injeta a CSS candidata local e verifica propriedades computadas/overflow nas
+rotas públicas em 575/576/767/768px, além das larguras já existentes.
+Stylelint e compilação Python PASS; Firefox/runtime DEFERRED por sessões
+concorrentes. Hub autenticado do Studio não foi alterado nem homologado; MF3
+permanece pendente.
 
 ### THEME-MF2 — controles da discussão (2026-10-29)
 

@@ -73,6 +73,10 @@ com markup e ações emitidos pelo Portal; a grade começa compacta e cresce em
 `22.5rem` e `36rem`. O harness e os limites por consumer estão documentados em
 `tests/browser/aculta-forum/README.md` e `mobile-first-audit.md`.
 
+A composição pública de Wiki (header, formulários e grids de Views) permanece
+Twig/CSS de apresentação, sem SDC novo; inicia em coluna única e aprimora em
+`48rem`. O inventário de rotas e o smoke candidato estão no roadmap transversal.
+
 A barra de progresso de comentários é CSS compartilhada de Fórum/Wiki/Revista,
 com markup e ações emitidos pelo Portal; a grade começa compacta e cresce em
 `22.5rem` e `36rem`. O harness e os limites por consumer estão documentados em

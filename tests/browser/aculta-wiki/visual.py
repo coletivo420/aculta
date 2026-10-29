@@ -15,6 +15,7 @@ from websockets.sync.client import connect
 
 HERE = Path(__file__).resolve().parent
 PROJECT = HERE.parents[2]
+CSS_ROOT = Path(os.environ.get("WIKI_CSS_ROOT", str(PROJECT)))
 sys.path.insert(0, str(PROJECT / "tests/browser/aculta-cpf-checkout"))
 from wdlib import Driver, WDError  # noqa: E402
 
@@ -23,7 +24,9 @@ HOST = urlparse(BASE).hostname
 OUT = Path(os.environ.get("SUITE_OUT", "/tmp/aculta-wiki-visual"))
 OUT.mkdir(parents=True, exist_ok=True)
 WIDTHS = [(1440, "wide-1440"), (1280, "desktop"), (1024, "tablet-1024"),
-          (768, "tablet-768"), (640, "zoom-200-equiv"), (390, "mobile-390"), (360, "mobile-360"),
+          (768, "tablet-768"), (767, "tablet-767"), (640, "zoom-200-equiv"),
+          (600, "tablet-600"), (576, "tablet-576"), (575, "tablet-575"),
+          (390, "mobile-390"), (360, "mobile-360"),
           (320, "mobile-320")]
 PAGES = [
     ("home", "/"),
@@ -81,11 +84,12 @@ def inspect_page(name, path, width_name, expected_width):
         return
     time.sleep(1.2)
     if os.environ.get("WIKI_CSS_OVERRIDE") == "1":
+        candidate_css = (CSS_ROOT / "web/themes/custom/aculta420/css/components/wiki.css").read_text()
         css_loaded = driver.req("POST", session + "/execute/async", {
-            "script": "const done = arguments[arguments.length - 1]; const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = '/themes/custom/aculta420/css/components/wiki.css?visual=' + Date.now(); link.onload = () => done(true); link.onerror = () => done(false); document.head.appendChild(link);",
-            "args": [],
+            "script": "const done = arguments[arguments.length - 1]; const style = document.createElement('style'); style.id = 'aculta-wiki-css-candidate'; style.textContent = arguments[0]; document.head.appendChild(style); requestAnimationFrame(() => done(!!style.sheet && style.sheet.cssRules.length > 0));",
+            "args": [candidate_css],
         })
-        check(f"{name}/{width_name}: CSS atual do tema carregado", css_loaded is True)
+        check(f"{name}/{width_name}: CSS candidata do tema injetada", css_loaded is True)
     actual_width = set_width(expected_width)
     time.sleep(0.4)
     metrics = driver.js("""return (() => {
@@ -110,6 +114,10 @@ def inspect_page(name, path, width_name, expected_width):
         documentWidth: document.documentElement.scrollWidth,
         rootClientWidth: document.documentElement.clientWidth,
         bodyWidth: document.body.scrollWidth,
+        headerBrandBasis: getComputedStyle(document.querySelector('.aculta-header--wiki .aculta-branding')).flexBasis,
+        headerSearchGap: getComputedStyle(document.querySelector('.aculta-wiki-header-search form')).gap,
+        searchFormColumns: (() => { const form = document.querySelector('.aculta-wiki-search, .aculta-wiki-search-results form'); return form ? getComputedStyle(form).gridTemplateColumns.split(' ').length : null; })(),
+        contentGridColumns: (() => { const grid = document.querySelector('.aculta-wiki-home .view-wiki-categories .view-content, .aculta-wiki-home .view-wiki-entries .view-content, .aculta-wiki-search-results .view-content'); return grid ? getComputedStyle(grid).gridTemplateColumns.split(' ').length : null; })(),
         overflowingElements,
         errors: visibleErrors,
       };
@@ -117,6 +125,14 @@ def inspect_page(name, path, width_name, expected_width):
     check(f"{name}/{width_name}: main e h1", metrics["hasMain"] and bool(metrics["heading"]), metrics["heading"][:100])
     check(f"{name}/{width_name}: viewport solicitado", metrics["viewport"] == expected_width,
           f"esperado={expected_width} medido={metrics['viewport']}")
+    expected_basis = "112px" if expected_width < 576 else "136px" if expected_width < 768 else "192px"
+    expected_gap = "6px" if expected_width < 576 else "8px"
+    expected_columns = 1 if expected_width < 768 else 2
+    check(f"{name}/{width_name}: layout mobile-first", metrics["headerBrandBasis"] == expected_basis
+          and metrics["headerSearchGap"] == expected_gap
+          and metrics["searchFormColumns"] in (None, expected_columns)
+          and metrics["contentGridColumns"] in (None, expected_columns),
+          f"brand={metrics['headerBrandBasis']} searchGap={metrics['headerSearchGap']} formColumns={metrics['searchFormColumns']} contentColumns={metrics['contentGridColumns']}")
     check(f"{name}/{width_name}: sem overflow horizontal", metrics["documentWidth"] <= metrics["viewport"],
           f"viewport={metrics['viewport']} document={metrics['documentWidth']} root={metrics['rootClientWidth']} body={metrics['bodyWidth']} elements={metrics['overflowingElements']}")
     check(f"{name}/{width_name}: sem erro visível", not metrics["errors"], metrics["errors"])
