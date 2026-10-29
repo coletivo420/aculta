@@ -16,9 +16,9 @@ só então Composer aplica os patches como parte do build. `--check` valida sem
 escrever arquivos.
 
 O exportador recusa `patches/` ou `patches/aculta_patcher/` quando forem
-symlinks, para manter os artefatos dentro da raiz do projeto. O Unit cobre essa
-fronteira; a execução completa com registros ativos e `composer patches-repatch`
-continua pendente.
+symlinks, para manter os artefatos dentro da raiz do projeto. Também valida os
+ancestrais dos arquivos fonte e faz preflight dos destinos do manifesto e dos
+patches antes de escrever.
 
 ```sh
 php vendor/drush/drush/drush.php aculta:patcher-export --check
@@ -58,6 +58,21 @@ código executável. Não usar o formulário como editor de produção.
   conta comum foi negada e o papel administrator autorizado. O comando
   `aculta:patcher-export --check` não grava artefatos. Nenhum artefato foi
   exportado no Runtime e nenhum `composer require`/`composer update` foi feito.
+
+## Revisão de RC — 2026-10-29
+
+- Revisão do candidato local `0.1.0-dev.6`: Unit 41/73 PASS, PHP lint 12/12 e
+  PHPCS Drupal PASS. O ciclo completo com registros ativos foi repetido em cópia
+  isolada, com rede desabilitada; a segunda execução permaneceu byte a byte
+  estável. Não existem testes Kernel no módulo.
+- Firefox ESR no Runtime de teste em 2026-10-29: 13/13 PASS para listagem e
+  formulário em 1280/390/320px. O Runtime ainda serve dev.4; portanto esse
+  resultado não valida o seletor semântico introduzido em dev.6.
+- O candidato permanece em Dev até o gate módulo–tema global ficar verde e o
+  CSS/código atual poder ser validado no Runtime. O gate está bloqueado por
+  referências em Events/Calendar e por uma classe em teste da Revista, fora do
+  escopo do Patcher. Depois da publicação, repetir a revisão visual e então
+  avaliar RC. Nenhum arquivo dessas frentes foi alterado.
 
 ## Patch H5P inicial
 
