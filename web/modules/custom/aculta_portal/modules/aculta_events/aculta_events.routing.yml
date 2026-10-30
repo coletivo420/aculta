@@ -17,6 +17,8 @@ aculta_events.event_add:
     _entity_create_access: 'aculta_event'
   options:
     _admin_route: true
+    _aculta_domain_purpose: eventos
+    _aculta_domain_purpose_authoritative: true
 
 aculta_events.event_edit:
   path: '/painel-administrativo/eventos/{aculta_event}/editar'
@@ -28,6 +30,8 @@ aculta_events.event_edit:
     aculta_event: '\d+'
   options:
     _admin_route: true
+    _aculta_domain_purpose: eventos
+    _aculta_domain_purpose_authoritative: true
 
 aculta_events.page:
   path: '/eventos/{slug}'
@@ -49,6 +53,8 @@ aculta_events.locations:
     _permission: 'administer aculta events,access content overview'
   options:
     _admin_route: true
+    _aculta_domain_purpose: eventos
+    _aculta_domain_purpose_authoritative: true
 
 aculta_events.location_canonical:
   path: '/locais/{aculta_event_location}'
@@ -70,6 +76,8 @@ aculta_events.location_add:
     _entity_create_access: 'aculta_event_location'
   options:
     _admin_route: true
+    _aculta_domain_purpose: eventos
+    _aculta_domain_purpose_authoritative: true
 
 aculta_events.location_edit:
   path: '/painel-administrativo/eventos/locais/{aculta_event_location}/editar'
@@ -81,6 +89,8 @@ aculta_events.location_edit:
     aculta_event_location: '\d+'
   options:
     _admin_route: true
+    _aculta_domain_purpose: eventos
+    _aculta_domain_purpose_authoritative: true
 
 aculta_events.location_delete:
   path: '/painel-administrativo/eventos/locais/{aculta_event_location}/excluir'
@@ -92,6 +102,8 @@ aculta_events.location_delete:
     aculta_event_location: '\d+'
   options:
     _admin_route: true
+    _aculta_domain_purpose: eventos
+    _aculta_domain_purpose_authoritative: true
 
 aculta_events.event_date_add:
   path: '/painel-administrativo/eventos/{aculta_event}/datas/adicionar'
@@ -103,6 +115,8 @@ aculta_events.event_date_add:
     aculta_event: '\d+'
   options:
     _admin_route: true
+    _aculta_domain_purpose: eventos
+    _aculta_domain_purpose_authoritative: true
 
 aculta_events.event_date_edit:
   path: '/painel-administrativo/eventos/{aculta_event}/datas/{aculta_event_date}/editar'
@@ -116,6 +130,8 @@ aculta_events.event_date_edit:
     aculta_event_date: '\d+'
   options:
     _admin_route: true
+    _aculta_domain_purpose: eventos
+    _aculta_domain_purpose_authoritative: true
 
 aculta_events.event_date_delete:
   path: '/painel-administrativo/eventos/{aculta_event}/datas/{aculta_event_date}/excluir'
@@ -129,6 +145,8 @@ aculta_events.event_date_delete:
     aculta_event_date: '\d+'
   options:
     _admin_route: true
+    _aculta_domain_purpose: eventos
+    _aculta_domain_purpose_authoritative: true
 
 aculta_events.map:
   path: '/mapa'
@@ -160,6 +178,8 @@ aculta_events.date_rule:
     aculta_event_date: '\d+'
   options:
     _admin_route: true
+    _aculta_domain_purpose: eventos
+    _aculta_domain_purpose_authoritative: true
 
 aculta_events.occurrence:
   path: '/painel-administrativo/eventos/datas/{aculta_event_date}/ocorrencia/{inicio}'
@@ -172,6 +192,8 @@ aculta_events.occurrence:
     inicio: '\d+'
   options:
     _admin_route: true
+    _aculta_domain_purpose: eventos
+    _aculta_domain_purpose_authoritative: true
 
 aculta_events.agenda:
   path: '/calendario'
@@ -253,6 +275,8 @@ aculta_events.admin_overview:
     _permission: 'administer aculta events,access content overview'
   options:
     _admin_route: true
+    _aculta_domain_purpose: eventos
+    _aculta_domain_purpose_authoritative: true
 
 aculta_events.settings:
   path: '/painel-administrativo/eventos/configuracoes'
@@ -263,6 +287,8 @@ aculta_events.settings:
     _permission: 'administer aculta events'
   options:
     _admin_route: true
+    _aculta_domain_purpose: eventos
+    _aculta_domain_purpose_authoritative: true
 
 aculta_events.location_modal:
   path: '/painel-administrativo/eventos/locais/modal'
@@ -273,6 +299,8 @@ aculta_events.location_modal:
     _custom_access: '\Drupal\aculta_events\Form\EventLocationModalForm::access'
   options:
     _admin_route: true
+    _aculta_domain_purpose: eventos
+    _aculta_domain_purpose_authoritative: true
 
 aculta_events.location_widget_clear:
   path: '/painel-administrativo/eventos/locais/widget-clear'
@@ -282,4 +310,6 @@ aculta_events.location_widget_clear:
     _permission: 'access content'
   options:
     _admin_route: true
+    _aculta_domain_purpose: eventos
+    _aculta_domain_purpose_authoritative: true
 

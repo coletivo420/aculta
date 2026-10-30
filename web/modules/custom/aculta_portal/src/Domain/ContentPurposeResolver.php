@@ -42,10 +42,19 @@ final class ContentPurposeResolver {
     Request $request,
     array $matched = [],
   ): ?string {
+    // Uma rota pode declarar que seu purpose é autoritativo mesmo sendo
+    // administrativa. É usado por áreas editoriais com domínio próprio, como
+    // Eventos em eventos.aculta. Sem o opt-in explícito, a política existente
+    // continua: `_admin_route` pertence a MAIN.
+    $explicitPurpose = $route->getOption('_aculta_domain_purpose');
+    if ($explicitPurpose !== NULL
+      && (bool) $route->getOption('_aculta_domain_purpose_authoritative')) {
+      return $explicitPurpose;
+    }
+
     // Platform-level route metadata is authoritative and precedes content
     // ownership (Wiki, Courses, etc.).
-    if ($route->getOption('_admin_route')
-      || $route->getOption('_aculta_domain_purpose') === 'main') {
+    if ($route->getOption('_admin_route') || $explicitPurpose === 'main') {
       return 'main';
     }
 
@@ -124,7 +133,12 @@ final class ContentPurposeResolver {
     }
 
     // Tipos do módulo de eventos (aculta_events) pertencem ao purpose eventos (MODELO-DE-DADOS.md).
-    if (in_array($routeName, ['entity.aculta_event.canonical', 'entity.aculta_event_date.canonical', 'entity.aculta_event_location.canonical'], TRUE)) {
+    $eventRoutes = [
+      'entity.aculta_event.canonical',
+      'entity.aculta_event_date.canonical',
+      'entity.aculta_event_location.canonical',
+    ];
+    if (in_array($routeName, $eventRoutes, TRUE)) {
       return 'eventos';
     }
 

@@ -27,6 +27,7 @@ final class AdministrativeExportRouteSubscriber extends RouteSubscriberBase {
       [
         '_admin_route' => TRUE,
         '_aculta_domain_purpose' => 'eventos',
+        '_aculta_domain_purpose_authoritative' => TRUE,
       ],
     ));
   }

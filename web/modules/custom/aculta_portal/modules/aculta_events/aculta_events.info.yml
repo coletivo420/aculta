@@ -5,6 +5,7 @@ description: 'Eventos, datas e locais do purpose eventos. Modelo em docs/MODELO-
 package: 'ACULTA Portal'
 core_version_requirement: ^11.3
 dependencies:
+  - drupal:block
   - drupal:datetime
   - drupal:datetime_range
   - drupal:link
