@@ -138,7 +138,7 @@ def load_candidate_fixture(context, width):
     fixture = """<!doctype html><html lang="pt-BR"><head><title>Prévia de busca</title></head><body>
       <main><form role="search">
         <label for="wiki-search" class="visually-hidden">Pesquisar na Wiki420</label>
-        <input id="wiki-search" class="aculta-search-preview-input" type="search" name="q"
+        <input id="wiki-search" data-portal-ui="search-preview-input" type="search" name="q"
           data-preview-url="/preview" data-preview-target="aculta-wiki-search-preview" data-min-chars="3">
         <section id="aculta-wiki-search-preview" role="region" aria-label="Prévia dos resultados da busca" aria-live="polite" hidden></section>
         <button type="submit">Buscar</button>
@@ -295,6 +295,14 @@ try:
                 preview is not None and preview["focusPreserved"] and not preview["hidden"] and preview["links"] > 0,
                 preview or "campo ou região de prévia ausente",
             )
+
+            if not preview or preview["hidden"] or preview["links"] == 0:
+                # Report missing/stale behavior without querying an element that
+                # was never rendered or leaving this viewport's failure opaque.
+                summary["sizes"][name] = {"width": width, "focus_stops": stops,
+                                          "search": search, "preview": preview,
+                                          "submit": None}
+                continue
 
             # Search suggestions are ordinary links. Tab reaches each result,
             # then continues to the form submit without triggering navigation.

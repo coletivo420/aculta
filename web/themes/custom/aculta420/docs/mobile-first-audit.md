@@ -9,9 +9,10 @@ de runtime. Nenhuma escrita persistente foi executada no Runtime.
 
 ### Estado integrado dos gates (2026-10-30)
 
-O Firefox ESR visível ficou `DEFERRED` nesta sessão porque `DISPLAY` está vazio;
-não se atualizou a evidência de runtime para a nova microfase da rota `/noticias`.
-Os checks estáticos focais dessa microfase passaram (sintaxe Python,
+Na auditoria inicial, Firefox ESR ficou `DEFERRED` porque `DISPLAY` estava
+indisponível. Em 2026-10-30 a sessão X11 foi usada para retestes focais do Fórum
+e de quatro rotas públicas Wiki; isso atualiza evidência dessas consumers, não
+homologa o tema inteiro. Os checks estáticos focais passaram (sintaxe Python,
 `git diff --check`, schema SDC e Design Foundations). A execução atual de
 `validate-module-theme-boundary.php` falha em 1/3422 verificações por classes
 de apresentação (`button`, `actions-bar`, `mb-3`, `button--primary` e
@@ -135,6 +136,34 @@ O espaçamento inferior das abas também usa `1rem` como base; em `48rem` restau
 `1.25rem`, com o mesmo smoke medindo o valor calculado no verbete.
 Lint CSS e sintaxe Python PASS; Firefox/Runtime DEFERRED por `DISPLAY` ausente e
 sessões geckodriver concorrentes. MF3 segue pendente.
+
+#### Reteste THEME-MF2 — Firefox ESR público (2026-10-30)
+
+Com `WIKI_CSS_OVERRIDE=1`, Firefox ESR visível mediu as quatro rotas públicas
+(home, listagem, busca e verbete canônico) em 320/360/390/575/576/600/640/767/
+768/1024/1280/1440px: **302/302 verificações PASS**, sem overflow, erro visível
+ou regressão nos breakpoints de 576 e 768px. No verbete, o aside fica antes do
+texto abaixo de 768px e volta à grade de duas colunas em 768px. Capturas de
+320px e 1440px foram inspecionadas. Evidência: `/home/piradopirata/aculta-suite-out/theme-mf2-wiki-visual-20261030-r2/`.
+
+Com JavaScript desativado, home/listagem/busca/verbete passaram 16/16 checks,
+incluindo um H1, resultados e links renderizados no servidor. A fixture do
+behavior de prévia foi alinhada ao contrato atual do Portal e passou 14/14
+checks de role, foco, região viva e links por teclado em 320/1280px.
+Evidências e logs: `/home/piradopirata/aculta-suite-out/theme-mf2-wiki-no-js-final-20261030/`,
+`/home/piradopirata/aculta-suite-out/theme-mf2-wiki-keyboard-candidate-final-20261030/`
+e `/home/piradopirata/aculta-suite-out/theme-mf2-wiki-keyboard-live-final-20261030/`.
+
+A integração de teclado na página pública **não foi aprovada**: o HTML atualmente
+servido pelo Runtime ainda traz a classe antiga da busca e não inclui
+`data-portal-ui="search-preview-input"`, embora o builder desta branch use esse
+atributo para anexar o behavior. A rodada pública marcou 36/40: os dois checks
+de prévia falharam em cada largura (1280 e 320px), enquanto foco visível e
+alcance do campo passaram; o harness agora registra o estado e segue sem abortar.
+Os checks de integração continuam DEFERRED até alinhar e repetir o Runtime; não
+alterei o módulo Portal nesta microfase visual. O smoke sem JavaScript e a
+fixture sintética não substituem essa integração nem os gates de acessibilidade
+completos. THEME-MF3 permanece pendente.
 
 ### THEME-MF2 — layout SDC page-columns
 

@@ -14,7 +14,8 @@ somente GET. Larguras padrão: 320, 360, 390, 768, 1024, 1280 e 1440 CSS px.
 
 ```sh
 cd /home/piradopirata/projetos/aculta
-SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-wiki-visual DISPLAY=:0 \
+SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-wiki-visual
+DISPLAY=:0 ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles" SUITE_OUT="$SUITE_OUT" \
   python3 -I tests/browser/aculta-wiki/visual.py
 ```
 
@@ -45,7 +46,8 @@ altera preferências ou conteúdo; grava capturas e resumo fora do repositório.
 
 ```sh
 cd /home/piradopirata/projetos/aculta
-SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-wiki-we-sativa DISPLAY=:0 \
+SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-wiki-we-sativa
+DISPLAY=:0 ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles" SUITE_OUT="$SUITE_OUT" \
   python3 -I tests/browser/aculta-wiki/we-sativa.py
 ```
 
@@ -89,7 +91,8 @@ permissões de proposta presentes em `config/sync`.
 
 ```sh
 cd /home/piradopirata/projetos/aculta
-SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-wiki-moderation DISPLAY=:0 WIKI_STUDIO_UID=1 \
+SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-wiki-moderation
+DISPLAY=:0 ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles" SUITE_OUT="$SUITE_OUT" WIKI_STUDIO_UID=1 \
   python3 -I tests/browser/aculta-wiki/moderation.py
 ```
 
@@ -103,7 +106,8 @@ autentica nem altera o Runtime. Resultado medido em dev.117: 16/16.
 
 ```sh
 cd /home/piradopirata/projetos/aculta
-SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-wiki-no-js DISPLAY=:0 \
+SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-wiki-no-js
+DISPLAY=:0 ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles" SUITE_OUT="$SUITE_OUT" \
   python3 -I tests/browser/aculta-wiki/no-js.py
 ```
 
@@ -124,9 +128,19 @@ roda a integração pública no host definido por `WIKI_BASE_URL`.
 
 ```sh
 cd /home/piradopirata/projetos/aculta
-SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-wiki-keyboard DISPLAY=:0 \
+SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-wiki-keyboard
+DISPLAY=:0 ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles" SUITE_OUT="$SUITE_OUT" \
   python3 -I tests/browser/aculta-wiki/keyboard.py
 ```
+
+O fixture local usa o mesmo contrato de anexação do `WikiSearchFormBuilder`
+(`data-portal-ui="search-preview-input"`). `WIKI_CANDIDATE_ONLY=1` verifica
+somente o behavior do checkout em uma fixture; não prova a integração carregada
+na página pública. Em execução da página, compare os atributos servidos com o
+contrato da branch e registre divergências de versão do Runtime sem atribuí-las
+à CSS candidata. Se a prévia não carregar na página pública, o harness registra
+os checks de integração que falharam e continua para a próxima largura, sem
+procurar links que não foram renderizados nem abortar com erro WebDriver.
 
 Para aplicar a folha Wiki atual por GET do browser quando o agregado do Runtime
 estiver desatualizado, defina também `WIKI_CSS_OVERRIDE=1`; isso mede o CSS
