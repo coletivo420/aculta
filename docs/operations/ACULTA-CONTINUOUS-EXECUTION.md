@@ -1773,3 +1773,9 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
 - Reexecução correta no HEAD `73afdee49`: lint CSS/JS PASS; SDC (55 componentes, 756 checks) PASS; Design Foundations (2452 checks) PASS; Browser Validators (21) PASS; `validate-module-theme-boundary.php` (3432) PASS; `validate-module-theme-map.php` (210) PASS; dependências de extensão (1671; 1523 arquivos) PASS; `git diff --check` PASS.
 - PHPUnit focal PASS: Gallery (1 teste/3 assertions), Studio Hub (4/12), WE Sativa (4/4) e `PortalUiHooksTest` (17/106). PHP lint e PHPCS Drupal/DrupalPractice da Gallery PASS. PHPUnit emitiu somente o aviso de diretório HTML de browser output não gravável; as suítes finalizaram com código zero.
 - Uma primeira chamada não executou o validator de browser porque o nome do script foi digitado incorretamente; repetida com `scripts/validate-browser-validators.php`, que passou. Nenhuma falha válida ficou aberta nessa rodada estática.
+
+## Kernel focal após carregar a configuração de teste (2026-10-30)
+
+- `WikiLeadImageLifecycleKernelTest` executado com `SIMPLETEST_DB` carregado de `/home/aculta/secrets/simpletest-db.env` sem imprimir valores, usando a base dedicada `aculta_simpletest`: PASS, 29 testes e 1758 assertions. Houve 369 depreciações repetidas, principalmente `webform_score_entity_field_access()` (parâmetro nullable implícito), além de avisos de APIs Core/contrib obsoletas. Nenhuma falha ou assertion vermelha.
+- `EventLocationModalAndAdminKernelTest`, com a mesma base dedicada: PASS, 5 testes e 75 assertions, 24 depreciações de Core/Address/Symfony. O teste não usou `aculta_runtime`.
+- Uma tentativa inicial do Kernel Wiki sem exportar `SIMPLETEST_DB` resultou em 29 erros de harness (“There is no database connection”), zero assertions. Foi repetida pelo procedimento documentado acima e passou; a tentativa inicial não representa falha de código.
