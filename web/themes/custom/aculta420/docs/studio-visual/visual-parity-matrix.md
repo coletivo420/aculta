@@ -8,7 +8,7 @@ As rotas abaixo seguem o mapa canônico ADR-038, os providers/owners atuais e os
 
 | Área/estado | Purpose e path canônicos | Provider/owner funcional | Evidência atual | Pendência visual/aceite |
 |---|---|---|---|---|
-| Entrada da plataforma Studio e links para Suites | `account:/` e `account:/conta` | `AccountExperienceProvider`; links absolutos resolvidos por `DomainPurposeManager` | Capturas autenticadas anteriores em 390/1440px; CSS candidata de cartões e reflow passou 45/45 checks em fixture local nas nove larguras; shell anterior presente | Não criar Hub `/studio` nem menu global paralelo; fixture não prova render Runtime; revisar teclado, zoom e estado com Suite opcional ausente |
+| Entrada da plataforma Studio e links para Suites | `account:/` e `account:/conta` | `AccountExperienceProvider`; links absolutos resolvidos por `DomainPurposeManager` | Capturas autenticadas anteriores em 390/1440px; a fixture local `studio-card-fidelity.py` passou novamente 45/45 no HEAD `c00666e87` em nove larguras, com captura 320px inspecionada; shell anterior presente | Não criar Hub `/studio` nem menu global paralelo; fixture não prova render Runtime; revisar teclado, zoom e estado com Suite opcional ausente |
 | Marley e navegação editorial | `account:/marley`, `/marley/{aba}[/{secao}[/{sub}]]` | `MarleyExperienceProvider`; `aculta_studio` compõe, plugins/owners mantêm ações e conteúdo | Capturado em 390/1440px; sem overflow e com shell presente; baseline não é comparação pareada com dashboard autenticado Next | Cobrir formulários, filtros, edição, estados, teclado/no-JS e conteúdos de dois titulares |
 | Ganjalab — jornada LMS | `courses:/ganjalab` | `GanjalabExperienceProvider` → `aculta_lms.student_dashboard`; LMS mantém dados, matrícula e ACL | Capturado em 390/1440px; sem overflow; o título e a rota são do purpose Courses | Autorizações e estados de matrícula/turma/cursos, widgets de aprendizagem, no-JS e comparação visual por consumer ainda pendentes |
 | WE SATIVA — workspace Wiki | `wiki:/wesativa`, `/wesativa/inicio`; ações Wiki em suas rotas próprias | `WeSativaExperienceProvider`; `aculta_wiki` mantém autoria, revisão, moderação e acesso | HTTPS e sessão autenticada capturados em 390/1440px; sem overflow; visitante anônimo recebe 403 | Separar visualmente autoria/revisão/moderação com fixtures autorizadas; teste A/B de grants, no-JS e teclado |
@@ -152,3 +152,15 @@ capturas). Light e auto/default Firefox: `prefers-color-scheme: dark` e
 verdadeiros em 27/27. Tokens claro/escuro permaneceram `#f2f7f0`/`#0c3c29` e
 `#171513`/`#f4efe8`, respectivamente. Nenhum overflow foi medido. Isto não
 substitui contraste AA, nem cobre outras rotas/purposes.
+
+
+### OCS-F3/F4 — reteste local dos cartões Fidelity (2026-10-30)
+
+`studio-card-fidelity.py` foi reexecutado em Firefox ESR visível no HEAD local
+`c00666e87`. Passaram 45/45 verificações nas larguras 320/360/390/599/600/768/
+1024/1280/1440px: uma coluna até 600px, duas a partir de 768px, dois cartões,
+geometria Fidelity e zero overflow. A captura de 320px foi inspecionada.
+Evidência: `/home/piradopirata/aculta-suite-out/studio-card-fidelity-current-20261030/`.
+A fixture incorpora a CSS local e markup equivalente; não comprova render Drupal,
+ACL, cache, estados de módulo opcional ou comparação pareada com Hub OpenCulturas
+autenticado. OCS-F3/F4 seguem parciais e OCS-F11 não está aprovado.
