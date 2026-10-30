@@ -426,6 +426,30 @@ os templates Twig/HTML são incluídos sem tentar resolver condições. Isso nã
 resolve expressões dinâmicas nem relaciona cada attach à rota/purpose e
 consumer; declaração em YAML não prova carregamento em runtime.
 
+### Ativos de apresentação fora de `*.libraries.yml` — THEME-MF0
+
+O cruzamento recursivo encontrou 149 fontes CSS/JS de tema e módulos
+customizados, sem `vendor/` ou `node_modules/` (105 no tema e 44 nos módulos).
+Os 20 manifests declaram 96 caminhos de asset locais; 94 pertencem a esse
+conjunto de fontes, dois são os arquivos Leaflet em `assets/vendor/` excluídos
+da varredura. Há também um path de biblioteca gerenciada externa
+(`/libraries/tabulator/dist/tabulator.min.css`) e nenhum caminho relativo
+declarado ausente.
+
+Dos 55 arquivos sem referência direta nesses manifests: 46 vivem em diretórios
+SDC (45 CSS e um JS, ainda dependentes de consumer real); sete pertencem a
+módulos, um é `css/ckeditor5.css`, incluído por `ckeditor5_stylesheets`, e um é
+o teste JS do contador do Messenger. Os sete arquivos de módulo são
+`pdf-viewer-wrapper.css`, `docx-frame.js` e `sheet-frame.js` (iframes do
+`aculta_document_viewer`); `h5p-integration.js`,
+`h5p-admin-integration.js` e `h5peditor-application.js` (bibliotecas registradas
+dinamicamente por `aculta_H5PLibraryHooks`); e
+`h5p_drupal_custom.css`, para o qual a árvore custom não contém referência
+literal e a associação de runtime segue `DEFERRED`. Assets encontrados não são
+por si só prova de execução. A cobertura de rota/purpose e a inspeção visual
+desses consumers ainda são necessárias; módulos proprietários não foram
+alterados nesta auditoria.
+
 ## Breakpoints de referência (comparação estática em `0a479dde3`)
 
 | Origem | Breakpoints declarados | Leitura para MF1/MF2 |
