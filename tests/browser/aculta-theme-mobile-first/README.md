@@ -1,5 +1,32 @@
 # ACULTA420 — SDC responsivos do tema
 
+## Capa pública da Revista no Runtime
+
+`magazine-cover-runtime.py` abre a raiz `https://revista.aculta.toca.net.br/`
+no Firefox ESR visível, em modo anônimo e somente GET. Um proxy local restrito
+ao host da Revista encaminha TLS para Apache em `127.0.0.1:443`; SNI e Host
+permanecem iguais ao domínio canônico. Qualquer outro CONNECT HTTPS é negado.
+Isso evita alterar `/etc/hosts` e não acessa outros domínios.
+
+O teste mede View, chamada hero, número de publicações, imagem da primeira
+capa, colunas responsivas, presença única de Institution Bar/Domain Header e
+overflow em 320/360/390/599/600/768/1024/1280/1440px. Não autentica, não cria
+conteúdo, não verifica o gate de acessibilidade e não substitui comparação
+pareada com o OpenCulturas Next.
+
+```sh
+cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/magazine-cover-runtime
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/magazine-cover-runtime.py
+```
+
+`MAGAZINE_COVER_WIDTHS` seleciona larguras focais. O perfil Firefox temporário
+e screenshots/`report.json` ficam em `$SUITE_OUT` e são removidos/preservados
+conforme o ciclo de vida documentado pelo harness; nenhum artefato visual é
+gravado no repositório.
+
 ## Publicação editorial da Revista
 
 `revista-article-layout.py` compara o artigo editorial antes/depois da folha

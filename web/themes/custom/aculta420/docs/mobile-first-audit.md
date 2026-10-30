@@ -699,18 +699,22 @@ editorial legível, mas não substitui um consumer de entidade `revista`. As
 capturas 320/1440 foram inspecionadas em
 `/home/piradopirata/aculta-suite-out/aculta-revista-noticias-20261030/`.
 
-Reteste de estado dos dados no Runtime (2026-10-30): `views.view.revista_sessoes`
-está ativa, a exibição `page_revista` mantém o path canônico `revista`, a View
-executa quatro resultados e existem quatro nós publicados do bundle `revista`
-(NIDs 599–602, conteúdo de teste visual autorizado). O Theme Registry descobre
-`views-view--revista-sessoes--page-revista.html.twig` no diretório do tema. Isso
-substitui a hipótese anterior de falta de conteúdo/consumer, mas não prova que
-o HTML visível da capa esteja correto. A captura sem conteúdo em
-`aculta-purposes-mobile-baseline-20261030-3c1691fc5` é um baseline antigo e não
-deve ser usada como aceite da implementação atual. O reteste comparativo da
-capa com Firefox ESR continua DEFERRED nesta sessão porque `DISPLAY=:0` não está
-disponível; não declarar a Revista homologada nem criar outro conteúdo de teste.
-`/noticias` permanece um estado estático distinto e visível.
+Reteste visual real da capa no Runtime, Firefox ESR visível em HEAD `2493d7535`
+(2026-10-30): `magazine-cover-runtime.py` passou 10/10 verificações na raiz
+canônica em modo anônimo. A View `revista_sessoes` renderizou hero “Revista
+420”, quatro teasers e as quatro imagens de capa; Institution Bar e Domain
+Header apareceram uma vez cada em todos os viewports. 320/360/390/599px
+renderizaram uma coluna; 600/768px, duas; 1024/1280/1440px, três. A primeira
+publicação assumiu a composição de destaque em grid a partir de 992px. Não houve
+overflow horizontal. Capturas 320px e 1440px foram inspecionadas visualmente.
+Firefox 153.5.1esr / geckodriver 0.37.1. Evidências em
+`/home/piradopirata/aculta-suite-out/magazine-cover-runtime-20261030/`.
+
+Esse reteste substitui o baseline antigo sem conteúdo em
+`aculta-purposes-mobile-baseline-20261030-3c1691fc5`; ele cobria outro HEAD e
+não representa a capa atual. A página estática `/noticias` permanece um estado
+distinto. O reteste não cobre zoom, teclado, claro/escuro, reduced motion,
+comparação pareada com dashboard OpenCulturas nem WCAG; não aprova THEME-MF3.
 
 ### Composição do Domain Header por purpose — Pede-A resolvido
 
@@ -743,17 +747,13 @@ Pede-A aberto.
 
 ### Revista — dados da capa verificados; captura visual pendente
 
-A auditoria read-only do Runtime confirmou a View ativa `revista_sessoes`,
-display `page_revista` no path canônico `revista` e quatro rows acessíveis no
-contexto de execução usado pelo Drush. Os quatro nós de teste autorizados
-(NIDs 599–602) estão publicados e cada um tem uma imagem em
-`field_media_image`. O Theme Registry descobre o override de View do tema.
-Assim, o antigo Pede-A sobre ausência de publicação/consumer está resolvido;
-nenhuma alteração é solicitada ao owner do Magazine. A inspeção visual da capa
-preenchida em Firefox ESR, nos viewports 320/390/768/1440px, ainda está
-DEFERRED por `DISPLAY=:0` indisponível. Preservar a página estática `/noticias`
-como estado distinto; não criar conteúdo nem declarar a capa homologada com
-base apenas nos dados ou na descoberta do template.
+A auditoria read-only confirmou View ativa, quatro publicações com imagens e
+template descoberto; o teste Firefox acima verificou o consumer visual real em
+nove viewports. O antigo Pede-A sobre ausência de publicação/consumer está
+resolvido e nenhuma alteração é solicitada ao owner do Magazine. Preservar a
+página estática `/noticias` como estado distinto. Não criar conteúdo de teste
+adicional; os limites de zoom, acessibilidade e comparação upstream continuam
+registrados como pendentes.
 
 O registro anterior do `ReportQueueController` foi um handoff já resolvido: o
 controller emite `forum-report-queue` e `forum-report-pager`, e o tema mapeia
