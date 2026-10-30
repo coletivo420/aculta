@@ -42,15 +42,14 @@
 /* The Webform behavior requests minWidth: 600px. Keep that minimum on desktop,
    but let it shrink with the viewport so it cannot force horizontal scrolling. */
 .webform-confirmation-modal {
+  width: min(
+    37.5rem,
+    calc(100vw - var(--aculta-page-gutter) - var(--aculta-page-gutter))
+  ) !important;
   min-width: min(
     37.5rem,
     calc(100vw - var(--aculta-page-gutter) - var(--aculta-page-gutter))
   ) !important;
-}
-
-/* Preserve the existing mobile width adjustment; the fluid min-width above lets it take effect. */
-@media only screen and (max-width: 650px) {
-  .webform-confirmation-modal { width: 90% !important; }
 }
 
 /*

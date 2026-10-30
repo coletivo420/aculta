@@ -848,3 +848,16 @@ Evidências em
 `/home/piradopirata/aculta-suite-out/institution-bar-scroll-anonymous-3c1691fc5/`.
 O cenário autenticado segue inconclusivo porque a sessão administrativa não foi
 estabelecida. Estes resultados focais não cobrem toda a matriz THEME-MF3.
+
+
+### THEME-MF2 — largura do modal Webform sem breakpoint inverso (2026-10-30)
+
+`webform-confirmation-modal` agora declara na base a largura fluida limitada
+por 600px e pelo gutter de cada lado. Removi a regra `max-width: 650px`; a
+largura mínima responsiva mantém o mesmo contrato. Firefox ESR visível comparou
+baseline e candidata em 14 viewports (320 a 1440px): 62/62 checks passaram,
+com métricas e PNGs idênticos em todos os tamanhos, sem overflow. O harness
+mede o gutter computado em pixels, corrigindo uma conversão que antes falhava
+com tokens `rem`. Evidências em
+`/home/piradopirata/aculta-suite-out/webform-mobile-first-7453cf6eb-rerun/`.
+Não foi exercitada uma submissão Webform real; THEME-MF3 permanece pendente.

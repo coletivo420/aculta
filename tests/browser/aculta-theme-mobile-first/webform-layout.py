@@ -77,6 +77,8 @@ if os.environ.get("DISPLAY") != ":0":
 fixture = """<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <style>:root{--bs-border-radius:4px;--aculta-page-gutter:1rem}*{box-sizing:border-box}
 body{margin:0;font:16px sans-serif}.fixture{width:100%;padding:1rem}
+#gutter-probe{position:fixed;inset:0 auto auto 0;visibility:hidden;pointer-events:none;
+padding-inline-start:var(--aculta-page-gutter)}
 .hidden{display:none!important}.webform-likert-help,.webform-likert-description{padding:.5rem;background:#eee}
 @media(min-width:48rem){:root{--aculta-page-gutter:clamp(1.5rem,3vw,2rem)}}
 .ui-dialog.webform-confirmation-modal{width:600px;min-width:600px;margin:1rem auto;padding:1rem;background:#ddd}</style>
@@ -84,7 +86,7 @@ body{margin:0;font:16px sans-serif}.fixture{width:100%;padding:1rem}
 <p class="webform-likert-help hidden">Ajuda da escala Likert para a pessoa respondente.</p>
 <p class="webform-likert-description hidden">Descrição da pergunta em formato de escala.</p></section>
 <div class="ui-dialog webform-confirmation-modal" style="width:600px;min-width:600px">Confirmação de envio do formulário.</div>
-</main></body></html>"""
+<div id="gutter-probe" aria-hidden="true"></div></main></body></html>"""
 
 measure = """const help=document.querySelector('.webform-likert-help');
 const description=document.querySelector('.webform-likert-description');
@@ -98,7 +100,7 @@ modalCssWidth:getComputedStyle(modal).width,
 modalMinWidth:getComputedStyle(modal).minWidth,
 modalLeft:modal.getBoundingClientRect().left,
 modalRight:modal.getBoundingClientRect().right,
-pageGutter:getComputedStyle(document.documentElement).getPropertyValue('--aculta-page-gutter').trim()};"""
+pageGutter:getComputedStyle(document.querySelector('#gutter-probe')).paddingInlineStart};"""
 
 driver = Driver(bidi=True)
 viewport = Viewport(driver)
@@ -130,18 +132,24 @@ try:
             and after["modalLeft"] >= gutter - 1
             and after["modalRight"] <= width - gutter + 1
         )
-        baseline_exposes_min_width = (
-            abs(float(before["modalMinWidth"].replace("px", "")) - 600) < 1
-            and (before["documentWidth"] > width) == (width < 616)
+        baseline_gutter = float(before["pageGutter"].replace("px", ""))
+        baseline_expected_width = min(600, width - (2 * baseline_gutter))
+        baseline_matches_responsive_contract = (
+            abs(before["modalWidth"] - baseline_expected_width) < 1
+            and abs(float(before["modalMinWidth"].replace("px", "")) - baseline_expected_width) < 1
+            and before["documentWidth"] <= width
         )
         no_overflow = after["documentWidth"] <= width
-        record(f"{width}px: baseline representa minWidth:600 do Webform", baseline_exposes_min_width,
+        record(f"{width}px: baseline preserva a largura responsiva", baseline_matches_responsive_contract,
                {"baselineModalWidth": before["modalWidth"], "baselineMinWidth": before["modalMinWidth"],
-                "baselineDocumentWidth": before["documentWidth"]})
+                "baselineDocumentWidth": before["documentWidth"],
+                "expectedWidth": baseline_expected_width})
         record(f"{width}px: modal cabe com o minWidth responsivo", actual_width == width and modal_fits and no_overflow,
                {"documentWidth": after["documentWidth"], "modalWidth": after["modalWidth"],
                 "modalMinWidth": after["modalMinWidth"], "modalLeft": after["modalLeft"],
                 "modalRight": after["modalRight"], "expectedWidth": expected_modal_width})
+        record(f"{width}px: sem mudança visual no modal e no Likert", before == after and same_pixels,
+               {"sameMetrics": before == after, "sameScreenshot": same_pixels})
         if width > 650:
             record(f"{width}px: largura desktop dinâmica preservada", before == after and same_pixels,
                    {"modalWidth": after["modalWidth"], "sameScreenshot": same_pixels})

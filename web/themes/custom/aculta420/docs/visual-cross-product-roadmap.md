@@ -794,3 +794,12 @@ autenticada segue inconclusiva: a sessão ULI não foi estabelecida. Evidências
 em `/home/piradopirata/aculta-suite-out/institution-bar-scroll-anonymous-3c1691fc5/`.
 Ainda falta homologar navegação e shell autenticados, teclado/zoom/modos/AA;
 THEME-MF3 não aprovado.
+
+
+### THEME-MF2 — modal de confirmação Webform
+
+A regra móvel `max-width: 650px` foi removida. A largura fluida `min(600px,
+100vw - gutters)` passa a ser a base e preserva o mínimo adaptativo existente.
+Firefox ESR comparou baseline/candidata em 14 larguras: 62/62 checks, sem
+diferença de métricas ou pixels e sem overflow. Artefatos e limites constam em
+`mobile-first-audit.md`; fluxo Webform real e THEME-MF3 seguem pendentes.

@@ -389,9 +389,11 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/editorial-carousel
 `webform-layout.py` compara os auxiliares Likert e o modal de confirmação nas
 larguras 320/360/390/575/576/599/600/650/651/768/769/1024/1280/1440 px. A
 fixture reproduz o `minWidth: 600` configurado pelo behavior do Webform; o teste
-confirma o overflow da baseline abaixo de 616px, a correção candidata e a mesma
-largura dinâmica em desktop. Não submete conteúdo nem depende de configuração
-particular. Requer Firefox ESR visível em `DISPLAY=:0`, geckodriver e
+valida que a baseline atende o contrato de largura responsiva, que o CSS
+candidato mantém a geometria e as capturas pixel a pixel em toda a grade, sem
+overflow e com 600px em desktop. Não submete conteúdo nem depende de configuração
+particular. O gutter é medido em pixels computados, inclusive quando definido
+por `rem` ou `clamp()` no token. Requer Firefox ESR visível em `DISPLAY=:0`, geckodriver e
 `websockets`; arquivos vão para `$SUITE_OUT`. `WEBFORM_BASELINE_REF` e
 `WEBFORM_WIDTHS` selecionam baseline e larguras.
 

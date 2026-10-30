@@ -1,3 +1,4 @@
+- `webform.css` agora limita a largura do modal por gutter na base, sem breakpoint `max-width`; Firefox ESR confirmou equivalência de pixels e métricas em 14 larguras (62/62 checks). O fluxo real e THEME-MF3 seguem pendentes.
 # Alterações pendentes de validação visual — ainda sem nova marcação de versão
 
 - HTTP 500 da Wiki foi rastreado a dois providers do tema registrados para `preprocess_item_list`; a adaptação do SDC Event card agora está no hook único `PortalUiHooks::preprocess`. Testes Unit cobrem o contrato e a unicidade do hook; commit e8e674d75 foi publicado na branch; após aplicar o reparo no checkout de desenvolvimento e reconstruir o cache, GET anônimo à home Wiki respondeu HTTP 200.
