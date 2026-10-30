@@ -162,3 +162,8 @@ adapter mínimo.
 - [ ] Validar relações e autorização com `aculta_index`, sem indexar endereço exato ou dados privados.
 
 Ver [ADR-033](../decisions/ADR-033-endereco-busca-e-locais.md) e [plano LOC](../architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md). Activity permanece Dev até integração completa e evidências próprias.
+
+
+### Comportamento obrigatório do modal de Local
+
+Modal aqui significa popup Drupal sobre o formulário, não bloco inline ou página inteira. O trabalho de Activity deve abrir o popup de busca/seleção e permitir abrir o popup de cadastro. Selecionar/salvar atualiza por AJAX a referência de Local no formulário pai, mantendo estado e validações. Events é owner do Local; Maps consome a mesma entidade por contrato e não duplica cadastro/dados.
