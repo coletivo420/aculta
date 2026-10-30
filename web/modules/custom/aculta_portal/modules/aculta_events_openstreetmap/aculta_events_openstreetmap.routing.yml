@@ -7,6 +7,8 @@ aculta_events_openstreetmap.status:
     _permission: 'administer aculta events'
   options:
     _admin_route: true
+    _aculta_domain_purpose: eventos
+    _aculta_domain_purpose_authoritative: true
     no_cache: true
   methods: [GET]
 
@@ -19,6 +21,7 @@ aculta_events_openstreetmap.oauth_authorize:
     _permission: 'administer aculta events'
   options:
     no_cache: true
+    _aculta_domain_purpose: eventos
   methods: [GET]
 
 aculta_events_openstreetmap.oauth_callback:
@@ -30,6 +33,7 @@ aculta_events_openstreetmap.oauth_callback:
     _permission: 'administer aculta events'
   options:
     no_cache: true
+    _aculta_domain_purpose: eventos
   methods: [GET]
 
 aculta_events_openstreetmap.import:
@@ -41,5 +45,7 @@ aculta_events_openstreetmap.import:
     _permission: 'administer aculta events'
   options:
     _admin_route: true
+    _aculta_domain_purpose: eventos
+    _aculta_domain_purpose_authoritative: true
     no_cache: true
   methods: [GET, POST]

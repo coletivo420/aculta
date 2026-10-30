@@ -32,7 +32,7 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
   protected static $modules = [
     'system', 'user', 'field', 'key', 'options', 'link', 'text', 'filter',
     'taxonomy', 'datetime', 'datetime_range', 'address', 'geofield', 'domain',
-    'aculta_calendar', 'aculta_maps', 'aculta_events',
+    'aculta_calendar', 'aculta_maps', 'aculta_events', 'aculta_events_openstreetmap',
   ];
 
   /**
@@ -84,6 +84,26 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
       self::assertTrue((bool) $route->getOption('_admin_route'), $name);
       self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'main'), $name);
       self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'eventos'), $name);
+    }
+  }
+
+  /**
+   * The OpenStreetMap integration also belongs to the eventos purpose.
+   */
+  public function testOpenStreetMapIntegrationBelongsToEventosPurpose(): void {
+    $routeProvider = $this->container->get('router.route_provider');
+
+    foreach (['aculta_events_openstreetmap.status', 'aculta_events_openstreetmap.import'] as $name) {
+      $route = $routeProvider->getRouteByName($name);
+      self::assertSame('eventos', $route->getOption('_aculta_domain_purpose'), $name);
+      self::assertTrue((bool) $route->getOption('_aculta_domain_purpose_authoritative'), $name);
+      self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'main'), $name);
+    }
+
+    foreach (['aculta_events_openstreetmap.oauth_authorize', 'aculta_events_openstreetmap.oauth_callback'] as $name) {
+      $route = $routeProvider->getRouteByName($name);
+      self::assertSame('eventos', $route->getOption('_aculta_domain_purpose'), $name);
+      self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'main'), $name);
     }
   }
 
