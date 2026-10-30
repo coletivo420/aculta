@@ -93,16 +93,42 @@ aculta_events.location_delete:
   options:
     _admin_route: true
 
-aculta_events.date_add:
-  path: '/painel-administrativo/eventos/datas/adicionar'
+aculta_events.event_date_add:
+  path: '/painel-administrativo/eventos/{aculta_event}/datas/adicionar'
   defaults:
     _form: '\Drupal\aculta_events\Form\EventDateCreateForm'
-    _title: 'Adicionar data de evento'
+    _title: 'Adicionar data ao evento'
   requirements:
-    _permission: 'administer aculta events'
+    _entity_access: 'aculta_event.update'
+    aculta_event: '\d+'
   options:
     _admin_route: true
-    _aculta_domain_purpose: eventos
+
+aculta_events.event_date_edit:
+  path: '/painel-administrativo/eventos/{aculta_event}/datas/{aculta_event_date}/editar'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateEditForm'
+    _title: 'Editar data do evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    _custom_access: '\Drupal\aculta_events\Access\EventDateRouteAccess::access'
+    aculta_event: '\d+'
+    aculta_event_date: '\d+'
+  options:
+    _admin_route: true
+
+aculta_events.event_date_delete:
+  path: '/painel-administrativo/eventos/{aculta_event}/datas/{aculta_event_date}/excluir'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateDeleteForm'
+    _title: 'Excluir data do evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    _custom_access: '\Drupal\aculta_events\Access\EventDateRouteAccess::access'
+    aculta_event: '\d+'
+    aculta_event_date: '\d+'
+  options:
+    _admin_route: true
 
 aculta_events.map:
   path: '/mapa'
@@ -225,6 +251,16 @@ aculta_events.admin_overview:
     _title: 'Gestão de Eventos'
   requirements:
     _permission: 'administer aculta events,access content overview'
+  options:
+    _admin_route: true
+
+aculta_events.settings:
+  path: '/painel-administrativo/eventos/configuracoes'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventSettingsForm'
+    _title: 'Configurações de eventos e locais'
+  requirements:
+    _permission: 'administer aculta events'
   options:
     _admin_route: true
 

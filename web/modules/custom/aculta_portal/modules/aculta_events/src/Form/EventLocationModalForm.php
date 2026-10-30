@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Form;
 
+use Drupal\aculta_events\Access\EventPermissionPolicy;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Plugin\Field\FieldWidget\EventLocationModalWidget;
 use Drupal\aculta_portal\Account\AccountAddressForm;
+use Drupal\aculta_portal\Account\StreetNumberField;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
@@ -26,6 +28,8 @@ final class EventLocationModalForm extends FormBase {
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    #[Autowire(service: 'aculta_events.permission_policy')]
+    private readonly EventPermissionPolicy $permissionPolicy,
   ) {}
 
   /**
@@ -39,11 +43,15 @@ final class EventLocationModalForm extends FormBase {
    * Controle de acesso à rota do modal.
    */
   public function access(AccountInterface $account): AccessResult {
+    $policy = \Drupal::service('aculta_events.permission_policy');
     $canManage = $account->hasPermission('administer aculta events')
-      || in_array('content_editor', $account->getRoles(), TRUE)
-      || in_array('administrator', $account->getRoles(), TRUE);
+      || $policy->canCreateLocation($account)
+      || $policy->canCreateEvent($account);
 
-    return AccessResult::allowedIf($canManage)->cachePerPermissions();
+    return AccessResult::allowedIf($canManage)
+      ->cachePerPermissions()
+      ->addCacheContexts(['user.roles'])
+      ->addCacheTags(['config:aculta_events.settings']);
   }
 
   /**
@@ -52,7 +60,13 @@ final class EventLocationModalForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $request = $this->getRequest();
     $fieldName = (string) ($form_state->get('field_name') ?? $request->query->get('field_name') ?? 'field_event_location');
+    $defaultWrapper = $fieldName === 'field_event_location'
+      ? 'field-event-location-wrapper'
+      : 'field-' . str_replace('_', '-', $fieldName) . '-wrapper';
+    $wrapperId = (string) ($form_state->get('wrapper_id') ?? $request->query->get('wrapper_id') ?? $defaultWrapper);
+
     $form_state->set('field_name', $fieldName);
+    $form_state->set('wrapper_id', $wrapperId);
 
     $targetId = $form_state->get('target_id') ?? $request->query->get('target_id');
     if ($targetId !== NULL) {
@@ -183,7 +197,10 @@ final class EventLocationModalForm extends FormBase {
 
     $form['actions'] = [
       '#type' => 'actions',
-      'switch_create' => [
+    ];
+
+    if ($this->permissionPolicy->canCreateLocation($this->currentUser())) {
+      $form['actions']['switch_create'] = [
         '#type' => 'submit',
         '#value' => $this->t('Cadastrar novo local'),
         '#name' => 'op_switch_create',
@@ -194,13 +211,14 @@ final class EventLocationModalForm extends FormBase {
         ],
         '#limit_validation_errors' => [],
         '#attributes' => ['data-portal-ui' => 'event-location-button-action'],
-      ],
-      'cancel' => [
-        '#type' => 'button',
-        '#value' => $this->t('Cancelar'),
-        '#ajax' => [
-          'callback' => '::ajaxCloseModal',
-        ],
+      ];
+    }
+
+    $form['actions']['cancel'] = [
+      '#type' => 'button',
+      '#value' => $this->t('Cancelar'),
+      '#ajax' => [
+        'callback' => '::ajaxCloseModal',
       ],
     ];
   }
@@ -296,6 +314,10 @@ final class EventLocationModalForm extends FormBase {
    * Transiciona para a etapa de criação.
    */
   public function switchToCreate(array &$form, FormStateInterface $form_state): void {
+    if (!$this->permissionPolicy->canCreateLocation($this->currentUser())) {
+      $form_state->setErrorByName('', (string) $this->t('Você não tem permissão para cadastrar novos locais.'));
+      return;
+    }
     $form_state->set('mode', 'create');
     $form_state->setRebuild(TRUE);
   }
@@ -314,6 +336,11 @@ final class EventLocationModalForm extends FormBase {
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $triggering = (string) ($form_state->getTriggeringElement()['#name'] ?? '');
     if ($triggering === 'op_create_save') {
+      if (!$this->permissionPolicy->canCreateLocation($this->currentUser())) {
+        $form_state->setErrorByName('', (string) $this->t('Você não tem permissão para cadastrar novos locais.'));
+        return;
+      }
+
       $nome = trim((string) $form_state->getValue('novo_nome'));
       if ($nome === '') {
         $form_state->setErrorByName('novo_nome', (string) $this->t('Informe o nome do local.'));
@@ -334,32 +361,52 @@ final class EventLocationModalForm extends FormBase {
   public function submitSelectLocation(array &$form, FormStateInterface $form_state): void {
     $triggering = $form_state->getTriggeringElement();
     $locationId = (int) ($triggering['#location_id'] ?? 0);
-    $form_state->set('selected_location_id', $locationId);
+    if ($locationId > 0) {
+      $loc = $this->entityTypeManager->getStorage('aculta_event_location')->load($locationId);
+      if ($loc instanceof EventLocation && $loc->access('view', $this->currentUser())) {
+        $form_state->set('selected_location_id', $locationId);
+      }
+      else {
+        $form_state->setErrorByName('', (string) $this->t('Você não tem permissão para selecionar este local.'));
+      }
+    }
   }
 
   /**
    * Submissão de criação de um novo local.
    */
   public function submitCreateLocation(array &$form, FormStateInterface $form_state): void {
+    if (!$this->permissionPolicy->canCreateLocation($this->currentUser())) {
+      $form_state->setErrorByName('', (string) $this->t('Você não tem permissão para cadastrar novos locais.'));
+      return;
+    }
+
     $nome = trim((string) $form_state->getValue('novo_nome'));
     $addressValue = $form_state->getValue(['field_endereco', 0]) ?? [];
 
     $countryCode = 'BR';
     $logradouro = (string) ($addressValue['address_line1'] ?? '');
+    $complemento = (string) ($addressValue['address_line2'] ?? '');
     $bairro = (string) ($addressValue['dependent_locality'] ?? '');
     $cidade = (string) ($addressValue['locality'] ?? '');
     $uf = strtoupper((string) ($addressValue['administrative_area'] ?? ''));
     $cep = (string) ($addressValue['postal_code'] ?? '');
     $precisao = (string) ($form_state->getValue('field_precisao') ?? 'exato');
 
+    [$number, $sn] = StreetNumberField::values($form['field_endereco'], $form_state);
+    $fullStreet = StreetNumberField::join($logradouro, $number, $sn);
+
+    $status = $this->permissionPolicy->canPublishLocation($this->currentUser()) ? 'publicado' : 'rascunho';
+
     $location = EventLocation::create([
       'title' => $nome,
-      'field_status' => 'publicado',
+      'field_status' => $status,
       'field_precisao' => $precisao,
       'field_organizador' => $this->currentUser()->id(),
       'field_endereco' => [
         'country_code' => $countryCode,
-        'address_line1' => $logradouro,
+        'address_line1' => $fullStreet,
+        'address_line2' => $complemento,
         'dependent_locality' => $bairro,
         'locality' => $cidade,
         'administrative_area' => $uf,
@@ -397,9 +444,16 @@ final class EventLocationModalForm extends FormBase {
   /**
    * AJAX callback para selecionar local e atualizar o formulário pai.
    */
-  public function ajaxSelectLocation(array &$form, FormStateInterface $form_state): AjaxResponse {
+  public function ajaxSelectLocation(array &$form, FormStateInterface $form_state): AjaxResponse|array {
+    if ($form_state->hasAnyErrors()) {
+      return $form;
+    }
     $locationId = (int) $form_state->get('selected_location_id');
-    return $this->buildUpdateParentResponse($locationId, (string) $form_state->get('field_name'));
+    return $this->buildUpdateParentResponse(
+      $locationId,
+      (string) $form_state->get('field_name'),
+      (string) $form_state->get('wrapper_id')
+    );
   }
 
   /**
@@ -410,23 +464,36 @@ final class EventLocationModalForm extends FormBase {
       return $form;
     }
     $locationId = (int) $form_state->get('selected_location_id');
-    return $this->buildUpdateParentResponse($locationId, (string) $form_state->get('field_name'));
+    return $this->buildUpdateParentResponse(
+      $locationId,
+      (string) $form_state->get('field_name'),
+      (string) $form_state->get('wrapper_id')
+    );
   }
 
   /**
    * Constrói resposta AJAX que fecha o modal e atualiza o formulário pai.
    */
-  private function buildUpdateParentResponse(int $locationId, string $fieldName): AjaxResponse {
+  private function buildUpdateParentResponse(int $locationId, string $fieldName, string $wrapperId): AjaxResponse {
     $response = new AjaxResponse();
     $response->addCommand(new CloseModalDialogCommand());
 
-    $cardArray = EventLocationModalWidget::buildCardOrEmpty($locationId, $fieldName, 'field-event-location-wrapper');
-    $cardArray['#prefix'] = '<div id="field-event-location-wrapper" class="aculta-event-location-widget">';
+    $cardArray = EventLocationModalWidget::buildCardOrEmpty($locationId, $fieldName, $wrapperId);
+    $cardArray['#prefix'] = '<div id="' . $wrapperId . '" class="aculta-event-location-widget">';
     $cardArray['#suffix'] = '</div>';
 
-    $response->addCommand(new ReplaceCommand('#field-event-location-wrapper', $cardArray));
-    $response->addCommand(new InvokeCommand('#field-event-location-target-id', 'val', [(string) $locationId]));
-    $response->addCommand(new InvokeCommand('#field-event-location-target-id', 'trigger', ['change']));
+    $targetInputId = $wrapperId === 'field-event-location-wrapper'
+      ? '#field-event-location-target-id'
+      : '#' . $wrapperId . '-target-id';
+
+    $response->addCommand(new ReplaceCommand('#' . $wrapperId, $cardArray));
+    $response->addCommand(new InvokeCommand($targetInputId, 'val', [(string) $locationId]));
+    $response->addCommand(new InvokeCommand($targetInputId, 'trigger', ['change']));
+
+    if ($targetInputId !== '#field-event-location-target-id') {
+      $response->addCommand(new InvokeCommand('#field-event-location-target-id', 'val', [(string) $locationId]));
+      $response->addCommand(new InvokeCommand('#field-event-location-target-id', 'trigger', ['change']));
+    }
 
     return $response;
   }

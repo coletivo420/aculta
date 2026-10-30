@@ -21,16 +21,28 @@ final class EventLocationWidgetController extends ControllerBase {
    */
   public function clear(Request $request): AjaxResponse {
     $fieldName = (string) $request->query->get('field_name', 'field_event_location');
-    $wrapperId = 'field-event-location-wrapper';
+    $defaultWrapper = $fieldName === 'field_event_location'
+      ? 'field-event-location-wrapper'
+      : 'field-' . str_replace('_', '-', $fieldName) . '-wrapper';
+    $wrapperId = (string) $request->query->get('wrapper_id', $defaultWrapper);
 
     $cardArray = EventLocationModalWidget::buildCardOrEmpty(0, $fieldName, $wrapperId);
     $cardArray['#prefix'] = '<div id="' . $wrapperId . '" class="aculta-event-location-widget">';
     $cardArray['#suffix'] = '</div>';
 
+    $targetInputId = $wrapperId === 'field-event-location-wrapper'
+      ? '#field-event-location-target-id'
+      : '#' . $wrapperId . '-target-id';
+
     $response = new AjaxResponse();
     $response->addCommand(new ReplaceCommand('#' . $wrapperId, $cardArray));
-    $response->addCommand(new InvokeCommand('#field-event-location-target-id', 'val', ['']));
-    $response->addCommand(new InvokeCommand('#field-event-location-target-id', 'trigger', ['change']));
+    $response->addCommand(new InvokeCommand($targetInputId, 'val', ['']));
+    $response->addCommand(new InvokeCommand($targetInputId, 'trigger', ['change']));
+
+    if ($targetInputId !== '#field-event-location-target-id') {
+      $response->addCommand(new InvokeCommand('#field-event-location-target-id', 'val', ['']));
+      $response->addCommand(new InvokeCommand('#field-event-location-target-id', 'trigger', ['change']));
+    }
 
     return $response;
   }

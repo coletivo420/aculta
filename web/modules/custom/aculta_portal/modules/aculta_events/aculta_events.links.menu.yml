@@ -26,13 +26,6 @@ aculta_events.admin_event_add:
   parent: aculta_events.admin
   weight: 2
 
-aculta_events.admin_date_add:
-  title: 'Adicionar data'
-  description: 'Criar uma nova data ou sessão para um evento existente.'
-  route_name: aculta_events.date_add
-  parent: aculta_events.admin
-  weight: 3
-
 aculta_events.admin_locations:
   title: 'Locais de eventos'
   description: 'Gerenciamento de locais e espaços culturais para eventos.'

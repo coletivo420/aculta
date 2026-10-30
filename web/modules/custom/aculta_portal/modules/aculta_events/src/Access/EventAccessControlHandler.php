@@ -54,8 +54,7 @@ final class EventAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL): AccessResult {
-    return AccessResult::allowedIfHasPermission($account, 'administer aculta events')
-      ->orIf(AccessResult::allowedIf(in_array('content_editor', $account->getRoles(), TRUE)));
+    return \Drupal::service('aculta_events.permission_policy')->createEventAccessResult($account);
   }
 
 }

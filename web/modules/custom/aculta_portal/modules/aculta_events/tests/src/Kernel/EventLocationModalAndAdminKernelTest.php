@@ -11,6 +11,7 @@ use Drupal\aculta_events\EventSubscriber\ActivityRetiredRouteSubscriber;
 use Drupal\aculta_events\Form\EventForm;
 use Drupal\aculta_events\Form\EventLocationForm;
 use Drupal\aculta_events\Form\EventLocationModalForm;
+use Drupal\aculta_events\Hook\ActivityRetirementHooks;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
@@ -162,11 +163,12 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
 
     $form = $this->container->get('form_builder')->buildForm($formObject, $formState);
 
-    self::assertArrayHasKey('local_id', $form['date_location']);
+    self::assertArrayHasKey('dates', $form['date_location']);
+    self::assertArrayHasKey('local_id', $form['date_location']['dates'][0]);
     self::assertArrayNotHasKey('cadastrar_novo_local', $form['date_location']);
     self::assertArrayNotHasKey('novo_local', $form['date_location']);
 
-    $formState->setValue('local_id', (string) $location->id());
+    $formState->setValue(['date_location', 'dates', 0, 'local_id', 'target_id'], (string) $location->id());
     $formObject->save($form, $formState);
     self::assertFalse($event->isNew());
   }
@@ -182,6 +184,27 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
 
     $this->expectException(NotFoundHttpException::class);
     $subscriber->onKernelRequest($event);
+  }
+
+  /**
+   * Valida que o link legado de criação de atividade é removido do menu Criar e eventos são adicionados.
+   */
+  public function testActivityNavigationLinkRemoved(): void {
+    $hooks = new ActivityRetirementHooks();
+    $links = [
+      'navigation.create' => ['title' => 'Criar'],
+      'navigation.content.node_type.activity' => ['title' => 'Atividade / evento'],
+      'navigation.content.node_type.article' => ['title' => 'Artigo'],
+    ];
+
+    $hooks->menuLinksDiscoveredAlter($links);
+
+    self::assertArrayNotHasKey('navigation.content.node_type.activity', $links);
+    self::assertArrayHasKey('navigation.content.node_type.article', $links);
+    self::assertArrayHasKey('navigation.content.aculta_event.create', $links);
+    self::assertSame('aculta_events.event_add', $links['navigation.content.aculta_event.create']['route_name']);
+    self::assertArrayHasKey('navigation.content.aculta_event_location.create', $links);
+    self::assertSame('aculta_events.location_add', $links['navigation.content.aculta_event_location.create']['route_name']);
   }
 
   /**
@@ -207,7 +230,10 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     ]);
     $existing->save();
 
-    $modalForm = new EventLocationModalForm($this->container->get('entity_type.manager'));
+    $modalForm = new EventLocationModalForm(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('aculta_events.permission_policy'),
+    );
 
     // 1. Etapa de busca
     $formStateSearch = new FormState();

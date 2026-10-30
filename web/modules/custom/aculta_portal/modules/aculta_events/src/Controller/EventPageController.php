@@ -159,8 +159,7 @@ final class EventPageController extends ControllerBase {
     $prefix = '';
     if ($evento->access('update')) {
       $editUrl = Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $evento->id()])->toString();
-      $addDateUrl = Url::fromRoute('aculta_events.date_add', [], ['query' => ['event_id' => $evento->id()]])->toString();
-      $prefix = '<div class="event-admin-actions mb-4"><a href="' . Html::escape($editUrl) . '" class="button button--secondary me-2">' . $this->t('Editar evento') . '</a> <a href="' . Html::escape($addDateUrl) . '" class="button button--primary">' . $this->t('+ Adicionar data/local') . '</a></div>';
+      $prefix = '<div class="event-admin-actions mb-4"><a href="' . Html::escape($editUrl) . '" class="button button--primary">' . $this->t('Editar evento e datas') . '</a></div>';
     }
 
     $organizador = $evento->get('field_organizador')->entity;

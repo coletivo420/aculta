@@ -78,11 +78,6 @@ final class EventAdminOverviewController extends ControllerBase {
           ],
           [
             '#type' => 'link',
-            '#title' => $this->t('Adicionar data para evento existente'),
-            '#url' => Url::fromRoute('aculta_events.date_add'),
-          ],
-          [
-            '#type' => 'link',
             '#title' => $this->t('Cadastrar novo local'),
             '#url' => Url::fromRoute('aculta_events.location_add'),
           ],
@@ -106,14 +101,20 @@ final class EventAdminOverviewController extends ControllerBase {
             '#title' => $this->t('Mapa de locais'),
             '#url' => Url::fromRoute('aculta_events.map'),
           ],
+          [
+            '#type' => 'link',
+            '#title' => $this->t('Configurar permissões de criação'),
+            '#url' => Url::fromRoute('aculta_events.settings'),
+          ],
         ],
       ],
       '#cache' => [
-        'contexts' => ['user.permissions'],
+        'contexts' => ['user.permissions', 'user.roles'],
         'tags' => [
           'aculta_event_list',
           'aculta_event_date_list',
           'aculta_event_location_list',
+          'config:aculta_events.settings',
         ],
       ],
     ];

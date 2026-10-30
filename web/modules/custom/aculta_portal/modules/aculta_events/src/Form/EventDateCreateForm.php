@@ -4,28 +4,32 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Form;
 
+use Drupal\aculta_events\Entity\Event;
+use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\aculta_events\Plugin\Field\FieldWidget\EventLocationModalWidget;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\CloseModalDialogCommand;
+use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\aculta_events\Entity\Event;
-use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Creates an event date and optionally preselects an editable event.
+ * Cria uma Data dentro do contexto de um Evento.
  *
- * E4 is a new ACULTA form. It uses no code from `nodePrepareForm` and copies
- * only the `field_evento` reference after checking update access.
+ * A Data não é uma tarefa editorial independente: o Evento de origem vem da
+ * rota, é obrigatório e a autorização é revalidada no servidor no submit.
  */
-final class EventDateCreateForm extends FormBase {
+class EventDateCreateForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entities,
-    private readonly AccountProxyInterface $currentUserAccount,
-    private readonly RequestStack $eventRequestStack,
+    protected readonly EntityTypeManagerInterface $entities,
+    protected readonly AccountProxyInterface $currentUserAccount,
   ) {}
 
   /**
@@ -35,7 +39,6 @@ final class EventDateCreateForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('current_user'),
-      $container->get('request_stack'),
     );
   }
 
@@ -47,22 +50,33 @@ final class EventDateCreateForm extends FormBase {
   }
 
   /**
-   * Builds a date form with no extra copy beyond the checked event reference.
+   * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state): array {
-    $event = $this->editableEventFromQuery();
+  public function buildForm(array $form, FormStateInterface $form_state, ?Event $aculta_event = NULL): array {
+    $event = $aculta_event ?? $this->eventFromState($form_state);
+    if (!$event instanceof Event || !$this->canEditEvent($event)) {
+      throw new NotFoundHttpException();
+    }
+
+    $form_state->set('event_id', (int) $event->id());
+
     $form['event_id'] = [
-      '#type' => 'entity_autocomplete',
-      '#title' => $this->t('Evento'),
-      '#target_type' => 'aculta_event',
-      '#required' => TRUE,
-      '#default_value' => $event,
+      '#type' => 'hidden',
+      '#value' => (string) $event->id(),
     ];
+
+    $form['event_summary'] = [
+      '#type' => 'item',
+      '#title' => $this->t('Evento'),
+      '#markup' => (string) $event->label(),
+    ];
+
     $form['title'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Título da data'),
       '#maxlength' => 255,
       '#required' => TRUE,
+      '#default_value' => (string) $event->label(),
     ];
     $form['starts_at'] = [
       '#type' => 'datetime',
@@ -81,71 +95,89 @@ final class EventDateCreateForm extends FormBase {
       '#open' => TRUE,
     ];
 
+    $localId = 0;
+    $rawLocal = $form_state->getValue('local_id');
+    if (is_array($rawLocal)) {
+      $localId = (int) ($rawLocal['target_id'] ?? 0);
+    }
+    elseif (is_numeric($rawLocal)) {
+      $localId = (int) $rawLocal;
+    }
+
+    $wrapperId = 'event-date-local-wrapper';
     $form['local_section']['local_id'] = [
-      '#type' => 'entity_autocomplete',
-      '#title' => $this->t('Selecionar local cadastrado'),
-      '#target_type' => 'aculta_event_location',
-      '#description' => $this->t('Pesquise pelo nome do local cadastrado. O endereço e geolocalização são gerenciados exclusivamente na entidade Local.'),
-    ];
+      '#type' => 'container',
+      '#attributes' => ['id' => $wrapperId, 'class' => ['aculta-event-location-widget']],
+      '#attached' => ['library' => ['core/drupal.dialog.ajax']],
+    ] + EventLocationModalWidget::buildCardOrEmpty($localId, 'local_id', $wrapperId);
 
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Criar data'),
+      '#ajax' => [
+        'callback' => '::ajaxSubmit',
+      ],
     ];
+
     return $form;
   }
 
   /**
-   * Validates that the selected event is editable and the interval is valid.
+   * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
-    $event = $this->selectedEditableEvent((string) $form_state->getValue('event_id'));
-    if ($event === NULL) {
-      $form_state->setErrorByName('event_id', $this->t('Selecione um evento que você possa editar.'));
+    $event = $this->eventFromState($form_state);
+    if (!$event instanceof Event || !$this->canEditEvent($event)) {
+      $form_state->setErrorByName('', (string) $this->t('Selecione um evento que você possa editar.'));
       return;
     }
+
     $start = $this->utcValue($form_state->getValue('starts_at'));
     $end = $this->utcValue($form_state->getValue('ends_at'));
     if ($start === NULL || $end === NULL || $end <= $start) {
-      $form_state->setErrorByName('ends_at', $this->t('O fim deve ser posterior ao início.'));
+      $form_state->setErrorByName('ends_at', (string) $this->t('O fim deve ser posterior ao início.'));
     }
 
     $selectedLocal = $form_state->getValue('local_id');
-    if (!empty($selectedLocal)) {
-      if (!is_numeric($selectedLocal) || (int) $selectedLocal < 1) {
-        $form_state->setErrorByName('local_id', $this->t('O local selecionado é inválido.'));
+    $localId = is_array($selectedLocal) ? ($selectedLocal['target_id'] ?? 0) : $selectedLocal;
+    if (!empty($localId)) {
+      if (!is_numeric($localId) || (int) $localId < 1) {
+        $form_state->setErrorByName('local_id', (string) $this->t('O local selecionado é inválido.'));
       }
       else {
-        $loc = $this->entities->getStorage('aculta_event_location')->load((int) $selectedLocal);
-        if (!$loc instanceof EventLocation) {
-          $form_state->setErrorByName('local_id', $this->t('O local selecionado não existe.'));
+        $loc = $this->entities->getStorage('aculta_event_location')->load((int) $localId);
+        if (!$loc instanceof EventLocation || !$loc->access('view', $this->currentUserAccount)) {
+          $form_state->setErrorByName('local_id', (string) $this->t('O local selecionado não existe ou não é acessível.'));
         }
       }
     }
   }
 
   /**
-   * Saves only the selected event reference and the fields entered here.
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $event = $this->selectedEditableEvent((string) $form_state->getValue('event_id'));
+    $event = $this->eventFromState($form_state);
     $start = $this->utcValue($form_state->getValue('starts_at'));
     $end = $this->utcValue($form_state->getValue('ends_at'));
-    if ($event === NULL || $start === NULL || $end === NULL || $end <= $start) {
+    if (!$event instanceof Event || !$this->canEditEvent($event) || $start === NULL || $end === NULL || $end <= $start) {
       $this->messenger()->addError($this->t('Não foi possível validar o evento e o intervalo da data.'));
       return;
     }
 
     $locationId = NULL;
     $selectedLocal = $form_state->getValue('local_id');
-    if (!empty($selectedLocal) && is_numeric($selectedLocal)) {
+    if (is_array($selectedLocal)) {
+      $selectedLocal = $selectedLocal['target_id'] ?? 0;
+    }
+    if (!empty($selectedLocal) && is_numeric($selectedLocal) && (int) $selectedLocal > 0) {
       $locationId = (int) $selectedLocal;
     }
 
     $dateData = [
       'title' => (string) $form_state->getValue('title'),
-      'field_evento' => $event->id(),
+      'field_evento' => (int) $event->id(),
       'field_quando' => ['value' => $start, 'end_value' => $end],
     ];
     if ($locationId !== NULL && $locationId > 0) {
@@ -155,39 +187,49 @@ final class EventDateCreateForm extends FormBase {
     $date = $this->entities->getStorage('aculta_event_date')->create($dateData);
     $date->save();
     $this->messenger()->addStatus($this->t('A data foi criada.'));
-    $form_state->setRedirect('aculta_events.date_add');
+    $form_state->setRedirect('aculta_events.event_edit', ['aculta_event' => $event->id()]);
   }
 
   /**
-   * Loads the query event only when this account may edit it.
+   * Fecha o diálogo e retorna ao Evento de origem.
    */
-  private function editableEventFromQuery(): ?Event {
-    $raw_id = $this->eventRequestStack->getCurrentRequest()?->query->get('event_id');
-    if (!is_scalar($raw_id) || !ctype_digit((string) $raw_id) || (int) $raw_id < 1) {
-      return NULL;
+  public function ajaxSubmit(array &$form, FormStateInterface $form_state): AjaxResponse|array {
+    if ($form_state->hasAnyErrors()) {
+      return $form;
     }
-    return $this->selectedEditableEvent((string) $raw_id);
+
+    $eventId = (int) ($form_state->get('event_id') ?? 0);
+    $response = new AjaxResponse();
+    $response->addCommand(new CloseModalDialogCommand());
+    $response->addCommand(new RedirectCommand(
+      Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $eventId])->toString()
+    ));
+    return $response;
   }
 
   /**
-   * Loads an event and returns it only if update access is allowed.
+   * Carrega o Evento guardado no estado do formulário.
    */
-  private function selectedEditableEvent(string $raw_id): ?Event {
-    if (!ctype_digit($raw_id) || (int) $raw_id < 1) {
+  protected function eventFromState(FormStateInterface $form_state): ?Event {
+    $rawId = $form_state->get('event_id') ?? $form_state->getValue('event_id');
+    if (!is_scalar($rawId) || !ctype_digit((string) $rawId) || (int) $rawId < 1) {
       return NULL;
     }
-    $event = $this->entities->getStorage('aculta_event')->load((int) $raw_id);
-    if (!$event instanceof Event
-      || !$event->access('update', $this->currentUserAccount, TRUE)->isAllowed()) {
-      return NULL;
-    }
-    return $event;
+    $event = $this->entities->getStorage('aculta_event')->load((int) $rawId);
+    return $event instanceof Event ? $event : NULL;
   }
 
   /**
-   * Normalizes a date element value to the entity's UTC storage form.
+   * Confirma que a conta atual pode atualizar o Evento.
    */
-  private function utcValue(mixed $value): ?string {
+  protected function canEditEvent(Event $event): bool {
+    return $event->access('update', $this->currentUserAccount, TRUE)->isAllowed();
+  }
+
+  /**
+   * Normaliza um valor de data para o formato UTC da entidade.
+   */
+  protected function utcValue(mixed $value): ?string {
     if ($value instanceof DrupalDateTime) {
       return $value->getPhpDateTime()
         ->setTimezone(new \DateTimeZone('UTC'))

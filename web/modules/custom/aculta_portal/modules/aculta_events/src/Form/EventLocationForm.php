@@ -34,6 +34,15 @@ final class EventLocationForm extends ContentEntityForm {
       $form['#entity_builders'][] = [AccountAddressForm::class, 'buildStreetNumber'];
     }
 
+    // Ao criar, quem não pode publicar fica restrito a rascunho. A edição de
+    // um Local já publicado não é rebaixada por efeito colateral.
+    if ($entity->isNew() && isset($form['field_status'])
+      && !\Drupal::service('aculta_events.permission_policy')->canPublishLocation($this->currentUser())) {
+      unset($form['field_status']['widget']['#options']['publicado']);
+      $form['field_status']['widget']['#default_value'] = 'rascunho';
+      $entity->set('field_status', 'rascunho');
+    }
+
     return $form;
   }
 
@@ -59,6 +68,11 @@ final class EventLocationForm extends ContentEntityForm {
   public function save(array $form, FormStateInterface $form_state): int {
     /** @var \Drupal\aculta_events\Entity\EventLocation $entity */
     $entity = $this->entity;
+
+    if ($entity->isNew() && !\Drupal::service('aculta_events.permission_policy')->canPublishLocation($this->currentUser())) {
+      $entity->set('field_status', 'rascunho');
+    }
+
     $status = $entity->save();
 
     if ($status === SAVED_NEW) {

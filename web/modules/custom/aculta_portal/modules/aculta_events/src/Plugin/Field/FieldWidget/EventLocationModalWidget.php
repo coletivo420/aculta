@@ -55,12 +55,17 @@ final class EventLocationModalWidget extends WidgetBase {
   public static function buildCardOrEmpty(int $targetId, string $fieldName, string $wrapperId): array {
     $element = [];
 
-    // Guarda o target_id para a submissão regular do formulário pai.
+    $targetInputId = $wrapperId === 'field-event-location-wrapper'
+      ? 'field-event-location-target-id'
+      : $wrapperId . '-target-id';
+
+    // Campo oculto que guarda o target_id para a submissão regular do formulário pai.
     $element['target_id'] = [
       '#type' => 'hidden',
       '#value' => $targetId > 0 ? (string) $targetId : '',
       '#attributes' => [
-        'id' => 'field-event-location-target-id',
+        'id' => $targetInputId,
+        'class' => ['aculta-location-target-id'],
       ],
     ];
 
@@ -81,12 +86,13 @@ final class EventLocationModalWidget extends WidgetBase {
         if ($location->hasField('field_endereco') && !$location->get('field_endereco')->isEmpty()) {
           $addr = $location->get('field_endereco')->first();
           if ($addr) {
+            $cidadeUf = array_filter([$addr->locality, $addr->administrative_area]);
             $parts = array_filter([
               $addr->address_line1,
+              $addr->address_line2,
               $addr->dependent_locality,
-              $addr->locality,
-              $addr->administrative_area,
-              $addr->postal_code,
+              implode(' - ', $cidadeUf),
+              $addr->postal_code ? 'CEP ' . $addr->postal_code : '',
             ]);
             $enderecoStr = implode(', ', $parts);
           }
@@ -120,6 +126,7 @@ final class EventLocationModalWidget extends WidgetBase {
 
         $modalUrl = Url::fromRoute('aculta_events.location_modal', [
           'field_name' => $fieldName,
+          'wrapper_id' => $wrapperId,
           'target_id' => $location->id(),
         ]);
 
@@ -139,7 +146,8 @@ final class EventLocationModalWidget extends WidgetBase {
           'remove' => [
             '#type' => 'button',
             '#value' => t('Remover local'),
-            '#name' => 'remove_location_button',
+            '#name' => 'remove_location_' . preg_replace('/[^a-zA-Z0-9_]/', '_', $wrapperId),
+            '#limit_validation_errors' => [],
             '#ajax' => [
               'callback' => [self::class, 'ajaxClearWidget'],
               'wrapper' => $wrapperId,
@@ -156,6 +164,7 @@ final class EventLocationModalWidget extends WidgetBase {
         ];
         $modalUrl = Url::fromRoute('aculta_events.location_modal', [
           'field_name' => $fieldName,
+          'wrapper_id' => $wrapperId,
         ]);
         $element['select'] = [
           '#type' => 'link',
@@ -173,6 +182,7 @@ final class EventLocationModalWidget extends WidgetBase {
     else {
       $modalUrl = Url::fromRoute('aculta_events.location_modal', [
         'field_name' => $fieldName,
+        'wrapper_id' => $wrapperId,
       ]);
 
       $element['empty_state'] = [
@@ -214,13 +224,13 @@ final class EventLocationModalWidget extends WidgetBase {
     $parents = array_slice($triggering['#array_parents'], 0, -2);
     $widget = NestedArray::getValue($form, $parents);
 
-    $fieldName = $parents[0] ?? 'field_event_location';
-    $wrapperId = 'field-event-location-wrapper';
+    $fieldName = $parents[count($parents) - 1] ?? 'field_event_location';
+    $wrapperId = $widget['#attributes']['id'] ?? ('field-' . str_replace('_', '-', $fieldName) . '-wrapper');
 
     $widget['target_id']['#value'] = '';
     unset($widget['summary'], $widget['actions']);
 
-    $widget += self::buildCardOrEmpty(0, $fieldName, $wrapperId);
+    $widget += self::buildCardOrEmpty(0, (string) $fieldName, (string) $wrapperId);
     return $widget;
   }
 

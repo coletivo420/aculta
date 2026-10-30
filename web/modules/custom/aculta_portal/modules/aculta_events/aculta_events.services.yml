@@ -2,6 +2,9 @@ services:
   aculta_events.occurrences:
     class: Drupal\aculta_events\Occurrence\EventDateOccurrences
     arguments: ['@entity_type.manager']
+  aculta_events.permission_policy:
+    class: Drupal\aculta_events\Access\EventPermissionPolicy
+    arguments: ['@config.factory', '@entity_type.manager']
   aculta_events.slug:
     class: Drupal\aculta_events\Slug\EventSlugGenerator
     arguments: ['@entity_type.manager']

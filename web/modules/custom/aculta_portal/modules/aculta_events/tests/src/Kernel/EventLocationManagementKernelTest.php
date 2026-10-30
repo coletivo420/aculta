@@ -190,7 +190,7 @@ final class EventLocationManagementKernelTest extends KernelTestBase {
   }
 
   /**
-   * Valida criação inline e reuso de local no formulário de data (LOC-03).
+   * Valida vinculação e reuso de local no formulário de data (LOC-03).
    */
   public function testLocationCreationAndReuseInDateForm(): void {
     $event1 = Event::create(['title' => 'Festival Primavera', 'field_status' => 'publicado']);
@@ -200,7 +200,22 @@ final class EventLocationManagementKernelTest extends KernelTestBase {
 
     $this->container->get('current_user')->setAccount($this->adminUser);
 
-    // 1. Cria nova data com cadastro inline de local.
+    // Cria previamente a entidade canônica de local.
+    $newLoc = EventLocation::create([
+      'title' => 'Parque das Flores',
+      'field_status' => 'publicado',
+      'field_precisao' => 'exato',
+      'field_endereco' => [
+        'country_code' => 'BR',
+        'address_line1' => 'Av. Central, 500',
+        'locality' => 'Goiânia',
+        'administrative_area' => 'GO',
+        'postal_code' => '74000-000',
+      ],
+    ]);
+    $newLoc->save();
+
+    // 1. Cria nova data vinculando o local selecionado.
     $form1 = EventDateCreateForm::create($this->container);
     $formState1 = new FormState();
     $formState1->setValues([
@@ -208,23 +223,16 @@ final class EventLocationManagementKernelTest extends KernelTestBase {
       'title' => 'Abertura do Festival',
       'starts_at' => new DrupalDateTime('2026-11-10 14:00:00'),
       'ends_at' => new DrupalDateTime('2026-11-10 18:00:00'),
-      'create_new_location' => 1,
-      'new_location_name' => 'Parque das Flores',
-      'new_location_precision' => 'exato',
-      'new_location_city' => 'Goiânia',
-      'new_location_state' => 'GO',
-      'new_location_address' => 'Av. Central, 500',
+      'local_id' => (string) $newLoc->id(),
     ]);
 
     $rawForm1 = [];
     $form1->submitForm($rawForm1, $formState1);
 
-    // Verifica que o local foi criado e vinculado à data do Evento 1.
+    // Verifica que a data do Evento 1 foi criada e vinculada ao local.
     $locStorage = $this->container->get('entity_type.manager')->getStorage('aculta_event_location');
     $createdLocations = $locStorage->loadByProperties(['title' => 'Parque das Flores']);
     $this->assertCount(1, $createdLocations);
-    /** @var \Drupal\aculta_events\Entity\EventLocation $newLoc */
-    $newLoc = reset($createdLocations);
     $this->assertSame('Parque das Flores', (string) $newLoc->label());
     $this->assertSame('publicado', (string) $newLoc->get('field_status')->value);
 
@@ -242,7 +250,6 @@ final class EventLocationManagementKernelTest extends KernelTestBase {
       'title' => 'Dia Principal da Feira',
       'starts_at' => new DrupalDateTime('2026-11-15 09:00:00'),
       'ends_at' => new DrupalDateTime('2026-11-15 17:00:00'),
-      'create_new_location' => 0,
       'local_id' => (string) $newLoc->id(),
     ]);
 
@@ -405,7 +412,8 @@ final class EventLocationManagementKernelTest extends KernelTestBase {
     $this->assertArrayHasKey('field_tipo', $form);
     $this->assertArrayHasKey('field_status', $form);
     $this->assertArrayHasKey('date_location', $form);
-    $this->assertArrayHasKey('local_id', $form['date_location']);
+    $this->assertArrayHasKey('dates', $form['date_location']);
+    $this->assertArrayHasKey('local_id', $form['date_location']['dates'][0]);
     $this->assertArrayNotHasKey('cadastrar_novo_local', $form['date_location']);
     $this->assertArrayNotHasKey('novo_local', $form['date_location']);
 
@@ -413,9 +421,16 @@ final class EventLocationManagementKernelTest extends KernelTestBase {
     $formState->setValues([
       'title' => [['value' => 'Concerto Noturno']],
       'field_status' => [['value' => 'publicado']],
-      'local_id' => (string) $loc->id(),
-      'starts_at' => new DrupalDateTime('2026-12-15 20:00:00'),
-      'ends_at' => new DrupalDateTime('2026-12-15 22:00:00'),
+      'date_location' => [
+        'dates' => [
+          0 => [
+            'title' => 'Sessão única',
+            'local_id' => ['target_id' => (string) $loc->id()],
+            'starts_at' => new DrupalDateTime('2026-12-15 20:00:00'),
+            'ends_at' => new DrupalDateTime('2026-12-15 22:00:00'),
+          ],
+        ],
+      ],
     ]);
 
     $formObject->validateForm($form, $formState);
