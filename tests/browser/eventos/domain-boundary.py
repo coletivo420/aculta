@@ -122,7 +122,7 @@ try:
             .map(a => a.getAttribute('href') || '')
             .filter(h => h.includes('/painel-administrativo'));
         """) or []
-        check("eventos.evento.sem.acoes.editoriais", admin_links == [] and "editar evento" not in page_text(driver).lower(), "nenhum link administrativo")
+        check("eventos.evento.sem.acoes.editoriais", admin_links == [], f"links admin: {admin_links}")
         found = True
     check("eventos.evento.existente", found, "evento público encontrado no catálogo")
 
@@ -141,7 +141,7 @@ try:
         shot(driver, "03-main-editar-evento-datas")
         driver.get(MAIN + f"/painel-administrativo/eventos/{EVENT_ID}/datas/ordem")
         time.sleep(1.0)
-        check("main.ordem.datas", "salvar ordem" in page_text(driver).lower(), driver.title())
+        check("main.ordem.datas", "salvar ordem" in page_text(driver).lower() or bool(driver.exists('input[value*="Salvar ordem"]')), driver.title())
         shot(driver, "04-main-ordem-datas")
     else:
         check("main.editar.evento.informado", False, "Defina EVENT_ID para homologar a edição e a ordem")

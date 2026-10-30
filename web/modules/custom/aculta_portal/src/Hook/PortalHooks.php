@@ -113,6 +113,19 @@ final class PortalHooks {
   ) {}
 
   /**
+   * Implements hook_contextual_links_view_alter().
+   */
+  #[Hook('contextual_links_view_alter')]
+  public function contextualLinksViewAlter(array &$element, array $items): void {
+    // A interface administrativa vive no MAIN; nos subdomínios não há links
+    // contextuais de edição.
+    if ($this->domainPurposeManager->getCurrentPurpose() !== 'main') {
+      $element['#links'] = [];
+      $element['#access'] = FALSE;
+    }
+  }
+
+  /**
    * Implements hook_preprocess_page().
    */
   #[Hook('preprocess_page')]
