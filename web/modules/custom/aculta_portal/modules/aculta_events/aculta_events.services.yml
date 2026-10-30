@@ -65,3 +65,13 @@ services:
   aculta_events.editorial_presenter:
     class: Drupal\aculta_events\Editorial\EventEditorialPresenter
     arguments: ['@string_translation']
+  logger.channel.aculta_events:
+    parent: logger.channel_base
+    arguments: ['aculta_events']
+  aculta_events.activity_location_migrator:
+    class: Drupal\aculta_events\Migration\ActivityLocationMigrator
+    arguments:
+      - '@entity_type.manager'
+      - '@database'
+      - '@state'
+      - '@logger.channel.aculta_events'

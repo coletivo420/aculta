@@ -1,5 +1,18 @@
 # Changelog — aculta_events
 
+## 2026-10-30 — Fase 2: Migração e Rollback de Endereços Legados de Activity para Locais
+
+- Implementado o serviço central de migração `ActivityLocationMigrator` (`aculta_events.activity_location_migrator`):
+  - `getLegacyCandidates()` e `hasLegacyAddressData()`: identifica de forma segura nós `activity` que contêm campos de endereço legados e ainda não possuem referência preenchida em `field_event_location`.
+  - `inspect()`: auditoria e diagnóstico em tempo real, informando total de atividades, já vinculadas, candidatas elegíveis, registros incompletos e estimativa de locais únicos após deduplicação.
+  - `migrate(bool $dryRun)`: migração idempotente. Em modo `$dryRun = TRUE`, simula o processo sem gravar no banco; em modo persistente (`FALSE`), cria instâncias de `EventLocation` respeitando as regras de endereço (país fixo `BR`, precisão `exato`, status conforme publicação do nó pai, proprietário herdado), vincula `field_event_location` no nó e reutiliza locais idênticos através de chave normalizada (nome + CEP).
+  - `rollback()`: reversão atômica e segura que desvincula as Activities e deleta exatamente as entidades `EventLocation` criadas pela migração, utilizando proveniência persistida no Drupal State (`aculta_events.migrated_activity_locations`).
+- Implementado o update hook `aculta_events_update_10010()` em `aculta_events.install`.
+- Disponibilizado o script CLI `scripts/migrate-activity-locations.php` com suporte aos modos `--inspect`, `--dry-run`, `--execute` e `--rollback`.
+- Cobertura de testes:
+  - `ActivityLocationMigrationKernelTest`: 3 testes e 79 asserções cobrindo auditoria diagnóstica, garantia de isolamento do dry-run, criação idempotente, deduplicação de múltiplos nós para a mesma entidade de local e reversão íntegra via rollback.
+
+
 ## 2026-10-30 — Regra de domínio: admin no MAIN, público em Eventos
 
 - **Decisão do responsável:** todo `/painel-administrativo/` responde somente no MAIN. Isso inclui a área de Eventos, as rotas de Datas e Locais e a integração OpenStreetMap. A regra é validada no servidor e prevalece sobre o aditivo anterior que restringia o editorial ao host `eventos`.
