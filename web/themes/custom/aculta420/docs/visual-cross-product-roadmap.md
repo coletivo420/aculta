@@ -1082,3 +1082,13 @@ primeiros links compartilham a linha e o quarto continua na linha seguinte.
 Evidência visual e JSON: `/home/piradopirata/aculta-suite-out/ocs-context-tabs-final-links-20261030/`.
 Esta é validação da folha candidata sobre o markup servido; não homologa todos
 os fluxos Wiki, OCS-F11, THEME-MF3 ou OCS-A1–A4.
+
+### THEME-MF2 — reteste focado MAIN e autenticação (2026-10-30)
+
+A home MAIN passou novamente 15/15 checks Firefox ESR visível em 12 larguras,
+com a View editorial real hidratada, três slides, um ativo e visível, dimensões
+responsivas e sem overflow; capturas 320/1440 inspecionadas. `/entrar` passou
+12/12 checks anônimos em 11 larguras com CSS candidato injetado apenas na sessão,
+sem submissão. Evidências, comandos e limites em `mobile-first-audit.md` e no
+README dos testes browser. Isto amplia a evidência de MF2, mas não valida todos
+os purposes, interações, acessibilidade ou THEME-MF3.

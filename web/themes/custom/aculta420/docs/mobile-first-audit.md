@@ -1660,3 +1660,20 @@ medem 44px em 320 e 390px, sem bordas ou overflow. Conta e Perfil autenticados
 não renderizaram `context-tabs` nesses caminhos, portanto não foram tratados
 como consumidores. Evidência em
 `/home/piradopirata/aculta-suite-out/ocs-context-tabs-marley-retake-20261030/`.
+
+### Reteste visual MAIN e autenticação (2026-10-30)
+
+Firefox ESR visível voltou a validar a rota anônima `/entrar` com CSS candidato:
+12/12 checks (markup real, formulário, estado anônimo e paddings corretos em
+320–1440px; sem scroll horizontal, com `overflow-x: clip` onde a gaveta fechada
+amplia a scrollWidth). Nenhum formulário foi enviado. O carrossel editorial da
+home MAIN passou 15/15 em 320/360/390/575/576/599/600/768/769/1024/1280/1440px:
+View real com três slides, hidratação VVJB após entrada no viewport, um item
+ativo e conteúdo visível, limites esperados de largura e sem overflow. As
+capturas 320/1440 foram inspecionadas manualmente. Evidências em
+`/home/piradopirata/aculta-suite-out/auth-route-runtime-resume-20261030/` e
+`/home/piradopirata/aculta-suite-out/editorial-carousel-runtime-resume-20261030/`.
+O CSS de autenticação foi injetado só no navegador; a captura não prova o
+stylesheet instalado no Runtime. A execução do carrossel também não valida
+teclado, reduced motion, alto contraste ou WCAG 2.2 AA. THEME-MF3 permanece
+pendente.
