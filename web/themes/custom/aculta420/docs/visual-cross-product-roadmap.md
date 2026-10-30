@@ -1150,3 +1150,14 @@ estável e `auth-route-runtime.py` passou 12/12 checks na rota anônima real. O
 SUPPORT atual passou 37/37 em 11 larguras, sem campos/submit não implementados;
 `page-columns` passou 70/70 como fixture (sem consumer). Resultados detalhados e
 limites em `mobile-first-audit.md`; não aprova fluxos completos nem THEME-MF3.
+
+### OCS-F9/THEME-MF2 — Conta e endereço canônico (2026-10-30)
+
+A navegação autenticada de Conta passou 33/33 checks no Firefox ESR, com CSS
+candidato, em dez larguras: 13 seções desktop/mobile consistentes, breakpoint
+correto e sem overflow. O formulário único `/dados/endereco`, aberto por GET na
+Conta legada com UID sintético 5, passou 29/29 em JavaScript e no-JS; campos,
+país oculto, integração de behavior CEP e navegação Endereço foram confirmados,
+sem submeter dados. Evidências e limitações em `mobile-first-audit.md`.
+Isso não homologa ACL entre contas, lookup ao vivo do CEP, WCAG completa nem
+OCS-F11/THEME-MF3.

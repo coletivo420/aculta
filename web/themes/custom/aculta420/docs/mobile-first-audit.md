@@ -1780,3 +1780,24 @@ homologado. Evidências em `/home/piradopirata/aculta-suite-out/`:
 `auth-layout-default-baseline-20261030`, `auth-route-runtime-resume-20261030` e
 `page-columns-resume-20261030`. Esses resultados não validam formulários reais de
 cadastro/recuperação, autorização, consumo Drupal do SDC ou THEME-MF3.
+
+### Conta autenticada e endereço unificado — reteste 2026-10-30
+
+Com a conta sintética UID 5 e Firefox ESR visível, `account-shell.py` passou
+33/33 checks em 320/360/390/599/600/767/768/1024/1280/1440px, com CSS candidato
+injetado apenas na sessão: as 13 seções aparecem iguais no menu desktop e no
+acordeão mobile, a coluna/layout mudam no breakpoint esperado e não há overflow.
+A Institution Bar permaneceu única. A sessão GET-only não salvou preferências.
+Evidência: `/home/piradopirata/aculta-suite-out/account-shell-runtime-retest-20261030/`.
+
+`account-address.py` foi executado contra o Runtime confirmado no HEAD
+`4307e6fe9`, com UID sintético 5: 29/29 checks em JavaScript e sem JavaScript.
+`/dados/endereco` apresentou uma instância do formulário canônico, todos os
+campos esperados, país oculto e behavior de `aculta_portal_cep`; `/dados` e a
+aba Endereço estavam ativos no shell legado. A geometria do agrupamento existente
+coube no conteúdo e não houve overflow em 320/360/390/599/600/768/1024/1280/1440px;
+o fallback sem JS passou em 320/390/768/1440px. Nada foi submetido/salvo; as
+capturas mascaram valores e ficam fora do Git em
+`/home/piradopirata/aculta-suite-out/account-address-head-4307-20261030/`.
+Isto não cobre lookup CEP ao vivo, ACL entre contas, teclado completo, zoom ou
+WCAG 2.2 AA.
