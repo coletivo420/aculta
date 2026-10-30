@@ -1677,3 +1677,16 @@ O CSS de autenticação foi injetado só no navegador; a captura não prova o
 stylesheet instalado no Runtime. A execução do carrossel também não valida
 teclado, reduced motion, alto contraste ou WCAG 2.2 AA. THEME-MF3 permanece
 pendente.
+
+### Leitor de documentos — DOCX e planilhas (2026-10-30)
+
+O Firefox ESR visível executou `office-options.py` sobre fixtures locais em
+memória nos temas ACULTA420 e Olivero: 55 checks, zero falhas. Nos dois temas,
+verificou opções e rótulos, propagação ao leitor DOCX/planilha, conteúdo de
+cabeçalho/rodapé/notas e quebra de página, modo Tabela somente leitura,
+paginação de 25 linhas e navegação por teclado. ACULTA420 manteve iframe com
+mínimo 450px e padding 12px até 575px, 540px e 16px a partir de 576px; em
+320/360/390/575/576/600/768/1024/1280/1440px não houve overflow. Capturas e
+`summary.json`: `/home/piradopirata/aculta-suite-out/aculta-document-viewer-office-resume-20261030/`.
+O harness é local e não modifica o Runtime; não testa PDF embutido real,
+fullscreen, leitores de tela ou WCAG 2.2 AA. THEME-MF3 continua pendente.

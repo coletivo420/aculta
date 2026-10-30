@@ -1092,3 +1092,12 @@ responsivas e sem overflow; capturas 320/1440 inspecionadas. `/entrar` passou
 sem submissão. Evidências, comandos e limites em `mobile-first-audit.md` e no
 README dos testes browser. Isto amplia a evidência de MF2, mas não valida todos
 os purposes, interações, acessibilidade ou THEME-MF3.
+
+### THEME-MF2 — leitores DOCX/planilha locais e multi-tema (2026-10-30)
+
+`office-options.py` passou 55/55 checks no Firefox ESR visível, com fixtures
+OOXML/CSV locais, nos temas ACULTA420 e Olivero. Confirmou preferências D-48,
+subabas e rótulos, renderização configurada dos documentos, planilha em modo
+Tabela somente leitura, foco visível, e reflow do iframe DOCX de 320 a 1440px;
+zero overflow em ambos os temas. Evidências e limitações no `mobile-first-audit.md`.
+Essa fixture não valida documento incorporado público nem THEME-MF3.
