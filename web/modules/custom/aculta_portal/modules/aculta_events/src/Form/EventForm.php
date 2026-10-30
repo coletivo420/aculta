@@ -52,72 +52,7 @@ final class EventForm extends ContentEntityForm {
         '#type' => 'entity_autocomplete',
         '#title' => $this->t('Selecionar local já cadastrado'),
         '#target_type' => 'aculta_event_location',
-        '#description' => $this->t('Pesquise pelo nome para reutilizar um local já existente.'),
-      ];
-
-      $form['date_location']['cadastrar_novo_local'] = [
-        '#type' => 'checkbox',
-        '#title' => $this->t('Cadastrar um novo local para este evento (inline)'),
-        '#description' => $this->t('Marque se o espaço ou local ainda não estiver cadastrado acima.'),
-      ];
-
-      $form['date_location']['novo_local'] = [
-        '#type' => 'fieldset',
-        '#title' => $this->t('Dados do novo local'),
-        '#states' => [
-          'visible' => [
-            ':input[name="cadastrar_novo_local"]' => ['checked' => TRUE],
-          ],
-        ],
-      ];
-
-      $form['date_location']['novo_local']['novo_local_nome'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('Nome do local'),
-        '#maxlength' => 255,
-      ];
-
-      $form['date_location']['novo_local']['novo_local_tipo'] = [
-        '#type' => 'entity_autocomplete',
-        '#title' => $this->t('Tipo de local'),
-        '#target_type' => 'taxonomy_term',
-        '#selection_settings' => [
-          'target_bundles' => ['aculta_location_type' => 'aculta_location_type'],
-        ],
-      ];
-
-      $form['date_location']['novo_local']['novo_local_precisao'] = [
-        '#type' => 'select',
-        '#title' => $this->t('Precisão do endereço'),
-        '#options' => [
-          'exato' => $this->t('Exato (número e rua visíveis)'),
-          'aproximado' => $this->t('Aproximado (apenas bairro e município públicos)'),
-        ],
-        '#default_value' => 'exato',
-      ];
-
-      $form['date_location']['novo_local']['novo_local_logradouro'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('Logradouro e número'),
-        '#maxlength' => 255,
-      ];
-
-      $form['date_location']['novo_local']['novo_local_municipio'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('Município'),
-        '#maxlength' => 255,
-      ];
-
-      $form['date_location']['novo_local']['novo_local_uf'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('UF (Estado)'),
-        '#maxlength' => 2,
-      ];
-
-      $form['date_location']['novo_local']['novo_local_cep'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('CEP'),
-        '#maxlength' => 9,
+        '#description' => $this->t('Pesquise pelo nome para associar um local reutilizável a este evento. O endereço é gerenciado exclusivamente na entidade Local.'),
       ];
     }
     else {
@@ -139,24 +74,15 @@ final class EventForm extends ContentEntityForm {
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
 
-    $cadastrarNovoLocal = (bool) $form_state->getValue('cadastrar_novo_local');
-    if ($cadastrarNovoLocal) {
-      $nomeNovo = trim((string) $form_state->getValue('novo_local_nome'));
-      if ($nomeNovo === '') {
-        $form_state->setErrorByName('novo_local_nome', $this->t('Informe o nome do novo local.'));
+    $selectedLocal = $form_state->getValue('local_id');
+    if (!empty($selectedLocal)) {
+      if (!is_numeric($selectedLocal) || (int) $selectedLocal < 1) {
+        $form_state->setErrorByName('local_id', $this->t('O local selecionado é inválido.'));
       }
-    }
-    else {
-      $selectedLocal = $form_state->getValue('local_id');
-      if (!empty($selectedLocal)) {
-        if (!is_numeric($selectedLocal) || (int) $selectedLocal < 1) {
-          $form_state->setErrorByName('local_id', $this->t('O local selecionado é inválido.'));
-        }
-        else {
-          $loc = $this->entityTypeManager->getStorage('aculta_event_location')->load((int) $selectedLocal);
-          if (!$loc instanceof EventLocation) {
-            $form_state->setErrorByName('local_id', $this->t('O local selecionado não existe.'));
-          }
+      else {
+        $loc = $this->entityTypeManager->getStorage('aculta_event_location')->load((int) $selectedLocal);
+        if (!$loc instanceof EventLocation) {
+          $form_state->setErrorByName('local_id', $this->t('O local selecionado não existe.'));
         }
       }
     }

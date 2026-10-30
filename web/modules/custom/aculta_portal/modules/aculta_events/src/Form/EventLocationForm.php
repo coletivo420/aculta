@@ -40,6 +40,22 @@ final class EventLocationForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
+    parent::validateForm($form, $form_state);
+    $values = $form_state->getValue('field_endereco');
+    if (is_array($values)) {
+      foreach ($values as $delta => $item) {
+        $country = is_array($item) ? ($item['country_code'] ?? ($item['address']['country_code'] ?? NULL)) : NULL;
+        if ($country !== NULL && $country !== '' && $country !== 'BR') {
+          $form_state->setErrorByName('field_endereco', (string) $this->t('Apenas endereços no Brasil (BR) são suportados.'));
+        }
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function save(array $form, FormStateInterface $form_state): int {
     /** @var \Drupal\aculta_events\Entity\EventLocation $entity */
     $entity = $this->entity;

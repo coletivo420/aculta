@@ -54,6 +54,14 @@ final class EventLocation extends ContentEntityBase {
    */
   public function preSave(EntityStorageInterface $storage): void {
     parent::preSave($storage);
+    // Força normalização do país para Brasil em qualquer persistência.
+    if ($this->hasField('field_endereco') && !$this->get('field_endereco')->isEmpty()) {
+      foreach ($this->get('field_endereco') as $item) {
+        if ($item->country_code !== 'BR') {
+          $item->country_code = 'BR';
+        }
+      }
+    }
     // Geocodifica quando o endereço muda ou ainda não há coordenadas.
     // Cada endereço é geocodificado uma vez.
     $mudouEndereco = !$this->isNew() && $this->original !== NULL
