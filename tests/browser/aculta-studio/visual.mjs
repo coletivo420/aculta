@@ -9,13 +9,17 @@ import { join } from 'node:path';
 
 const PROJECT = fileURLToPath(new URL('../../../', import.meta.url));
 const PAGE = process.env.STUDIO_PAGE || 'https://conta.aculta.toca.net.br/studio/marley';
+const ACCOUNT_CONTEXT_PAGE = process.env.STUDIO_ACCOUNT_CONTEXT_PAGE || '';
 const LOGIN_URI = process.env.STUDIO_LOGIN_URI || 'https://conta.aculta.toca.net.br';
+const DRUSH_ROOT = process.env.STUDIO_DRUSH_ROOT || PROJECT;
 const USER = process.env.STUDIO_USER || 'teste.comum';
-const OUT = process.env.SUITE_OUT || '/tmp/aculta-studio-visual';
+const OUT = process.env.SUITE_OUT;
 const GD = process.env.GECKODRIVER || 'http://127.0.0.1:4444';
 const CSS_OVERRIDE = process.env.STUDIO_CSS_OVERRIDE === '1';
 const CSS_ROOT = process.env.STUDIO_CSS_ROOT || PROJECT;
 const USER_ID = Number(process.env.STUDIO_USER_ID || '5');
+if (!OUT) throw new Error('Defina SUITE_OUT em armazenamento fora do repositório.');
+const CANDIDATE_CSS = CSS_OVERRIDE ? readFileSync(join(CSS_ROOT, 'web/themes/custom/aculta420/css/components/studio.css'), 'utf8') : '';
 mkdirSync(OUT, { recursive: true });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const results = [];
@@ -27,7 +31,7 @@ async function wd(method, path, body) {
   if (json.value && json.value.error) throw new Error(`${json.value.error}: ${String(json.value.message).split('\n')[0]}`);
   return json.value;
 }
-const oneTimeLogin = () => execFileSync('php', ['vendor/drush/drush/drush.php', 'uli', '--no-browser', `--name=${USER}`, `--uri=${LOGIN_URI}`], { cwd: PROJECT }).toString().trim().split('\n').pop();
+const oneTimeLogin = () => execFileSync('php', ['vendor/drush/drush/drush.php', 'uli', '--no-browser', `--name=${USER}`, `--uri=${LOGIN_URI}`], { cwd: DRUSH_ROOT }).toString().trim().split('\n').pop();
 
 const moz = { prefs: { 'network.dns.localDomains': [new URL(PAGE).hostname].join(',') } };
 const { value: session } = await wd('POST', '/session', { capabilities: { alwaysMatch: { browserName: 'firefox', acceptInsecureCerts: true, webSocketUrl: true, 'moz:firefoxOptions': moz } } }).then((v) => ({ value: { sessionId: v.sessionId, webSocketUrl: v.capabilities.webSocketUrl } }));
@@ -35,6 +39,12 @@ const sid = session.sessionId;
 const p = (path) => `/session/${sid}${path}`;
 const exec = (script, args = []) => wd('POST', p('/execute/sync'), { script, args });
 const shot = async (name) => writeFileSync(join(OUT, `${name}.png`), Buffer.from(await wd('GET', p('/screenshot')), 'base64'));
+const injectCandidateCss = async () => exec(`if(document.getElementById('aculta-studio-css-candidate'))return true;const style=document.createElement('style');style.id='aculta-studio-css-candidate';style.textContent=arguments[0];document.head.append(style);return !!style.sheet&&style.sheet.cssRules.length>0;`, [CANDIDATE_CSS]);
+const navigateTo = async (url) => {
+  await wd('POST', p('/url'), { url });
+  await sleep(1000);
+  if (CSS_OVERRIDE) check('CSS candidata reinjetada após navegação', await injectCandidateCss());
+};
 
 const bidi = new WebSocket(session.webSocketUrl);
 let bid = 0; const bpend = new Map();
@@ -54,7 +64,7 @@ try {
   await setViewport(1280, 900);
   await wd('POST', p('/url'), { url: oneTimeLogin() });
   await sleep(2500);
-  await wd('POST', p('/url'), { url: PAGE });
+  await navigateTo(PAGE);
   const pageReady = await waitFor(`document.querySelector('[data-aculta-studio="tabs"]')`, 'abas');
   check('página do Estúdio carrega logada', pageReady);
   if (!pageReady) {
@@ -63,9 +73,23 @@ try {
     throw new Error(`Página sem navegação do Studio: ${pageState}`);
   }
   if (CSS_OVERRIDE) {
-    const css = readFileSync(join(CSS_ROOT, 'web/themes/custom/aculta420/css/components/studio.css'), 'utf8');
-    const loaded = await exec(`const style=document.createElement('style');style.id='aculta-studio-css-candidate';style.textContent=arguments[0];document.head.append(style);return !!style.sheet&&style.sheet.cssRules.length>0;`, [css]);
-    check('CSS candidata do Studio injetada', loaded);
+    check('CSS candidata do Studio injetada', await injectCandidateCss());
+    const navStyles = JSON.parse(await exec(`return JSON.stringify({
+      primary: [...document.querySelectorAll('[data-aculta-studio="tab"]')].map((link) => { const s=getComputedStyle(link); return { tag:link.tagName, className:link.className, parent:link.parentElement?.tagName, parentClass:link.parentElement?.className, top:s.borderTopWidth, left:s.borderLeftWidth, right:s.borderRightWidth, bottom:s.borderBottomWidth, radius:s.borderRadius, current:link.getAttribute('aria-current')==='page' }; }),
+      secondary: [...document.querySelectorAll('[data-aculta-studio="subtab"]')].map((link) => { const s=getComputedStyle(link); return { tag:link.tagName, className:link.className, parent:link.parentElement?.tagName, parentClass:link.parentElement?.className, top:s.borderTopWidth, left:s.borderLeftWidth, right:s.borderRightWidth, bottom:s.borderBottomWidth, radius:s.borderRadius, current:link.getAttribute('aria-current')==='page' }; }),
+      lists: [...document.querySelectorAll('[data-aculta-studio="tabs"],[data-aculta-studio="subtabs"]')].map((list) => { const s=getComputedStyle(list); const r=list.getBoundingClientRect(); return { className:list.className, width:r.width, height:r.height, top:s.borderTopWidth, left:s.borderLeftWidth, right:s.borderRightWidth, bottom:s.borderBottomWidth }; }),
+      primaryItems: [...document.querySelectorAll('[data-aculta-studio="tabs"] > *')].map((item) => { const s=getComputedStyle(item); return { tag:item.tagName, className:item.className, top:s.borderTopWidth, left:s.borderLeftWidth, right:s.borderRightWidth, bottom:s.borderBottomWidth, radius:s.borderRadius, padding:s.padding, background:s.backgroundColor }; }),
+      secondaryItems: [...document.querySelectorAll('[data-aculta-studio="subtabs"] > *')].map((item) => { const s=getComputedStyle(item); return { tag:item.tagName, className:item.className, top:s.borderTopWidth, left:s.borderLeftWidth, right:s.borderRightWidth, bottom:s.borderBottomWidth, radius:s.borderRadius, padding:s.padding, background:s.backgroundColor }; }),
+      separatorAtViewportBottom: (() => { const el=document.elementFromPoint(1000,848); if(!el)return null; const s=getComputedStyle(el); return {tag:el.tagName,className:el.className,bottom:s.borderBottomWidth,borderColor:s.borderBottomColor}; })()
+    })`));
+    const cleanPrimary = navStyles.primary.length > 0 && navStyles.primary.every((s) => s.top === '0px' && s.left === '0px' && s.right === '0px' && s.radius === '0px');
+    const cleanSecondary = navStyles.secondary.length > 0 && navStyles.secondary.every((s) => s.top === '0px' && s.left === '0px' && s.right === '0px' && s.radius === '0px');
+    const cleanItems = (items) => items.length > 0 && items.every((s) => s.top === '0px' && s.left === '0px' && s.right === '0px' && s.bottom === '0px' && s.radius === '0px' && s.padding === '0px' && s.background === 'rgba(0, 0, 0, 0)');
+    const cleanLists = navStyles.lists.length > 0 && navStyles.lists.every((s) => s.top === '0px' && s.left === '0px' && s.right === '0px' && s.bottom === '0px');
+    check('abas primárias sem moldura Bootstrap (somente indicador inferior)', cleanPrimary, JSON.stringify(navStyles.primary));
+    check('abas secundárias sem moldura Bootstrap', cleanSecondary, JSON.stringify(navStyles.secondary));
+    check('itens das listas de abas sem moldura list-group', cleanItems(navStyles.primaryItems) && cleanItems(navStyles.secondaryItems), JSON.stringify({ primary: navStyles.primaryItems, secondary: navStyles.secondaryItems }));
+    check('listas de navegação sem borda contínua Bootstrap', cleanLists, JSON.stringify({ lists: navStyles.lists, separator: navStyles.separatorAtViewportBottom }));
   }
   await exec(`window.__errs = []; window.addEventListener('error', (e) => window.__errs.push(String(e.message))); window.__marker = 'sem-recarga';`);
   await sleep(1000);
@@ -103,6 +127,7 @@ try {
   await setViewport(390, 844);
   await exec(`location.reload(); return 1;`);
   await waitFor(`document.querySelector('[data-aculta-studio="tabs"]')`, 'abas no celular');
+  if (CSS_OVERRIDE) check('CSS candidata reinjetada após recarga mobile', await injectCandidateCss());
   await sleep(1000);
   const m = JSON.parse(await exec(`return JSON.stringify({ w: window.innerWidth, overflow: document.documentElement.scrollWidth > window.innerWidth })`));
   check('celular em 390 px (viewport emulado)', m.w === 390, `innerWidth=${m.w}`);
@@ -120,10 +145,14 @@ try {
   await setViewport(1280, 900);
 
   // Teclado: o link de uma seção recebe foco e Enter (tecla real do WebDriver) troca o nível pela URL dele.
-  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/marley/revista/criar' });
+  await navigateTo(PAGE.replace(/\/studio.*$/, '') + '/studio/marley/revista/criar');
   await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'abas da seção');
   const subLink = await wd('POST', p('/element'), { using: 'css selector', value: '[data-aculta-studio="subtab"]' });
   const subId = Object.values(subLink)[0];
+  await wd('POST', p('/execute/sync'), { script: "document.querySelector('[data-aculta-studio=\"subtab\"]').focus(); return 1;", args: [] });
+  await wd('POST', p(`/element/${subId}/value`), { text: '\uE004' });
+  const focusVisual = JSON.parse(await exec(`const e=document.activeElement;const s=getComputedStyle(e);return JSON.stringify({subtab:e.matches('[data-aculta-studio="subtab"]'),visible:e.matches(':focus-visible'),outlineWidth:s.outlineWidth,outlineStyle:s.outlineStyle});`));
+  check('foco visível após navegação por Tab', focusVisual.visible && Number.parseFloat(focusVisual.outlineWidth) >= 3 && focusVisual.outlineStyle !== 'none', JSON.stringify(focusVisual));
   await wd('POST', p('/execute/sync'), { script: "document.querySelector('[data-aculta-studio=\"subtab\"]').focus(); return 1;", args: [] });
   await wd('POST', p(`/element/${subId}/value`), { text: '\uE007' });
   await sleep(2500);
@@ -138,7 +167,7 @@ try {
     const items = [...document.querySelectorAll('[data-aculta-studio="tab"],[data-aculta-studio="section"],[data-aculta-studio="subtab"],[data-aculta-studio="action"],[data-aculta-studio="heading"]')];
     return items.map((el) => { const fg = parse(getComputedStyle(el).color); const bg = bgOf(el); const L1 = lum(fg), L2 = lum(bg); const ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05); return Math.round(ratio * 100) / 100; });
   `;
-  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/marley/revista/criar' });
+  await navigateTo(PAGE.replace(/\/studio.*$/, '') + '/studio/marley/revista/criar');
   await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'contraste (claro)');
   const contrastLight = JSON.parse(JSON.stringify(await exec(contrastScript)));
   const minLight = Math.min(...contrastLight);
@@ -146,15 +175,16 @@ try {
 
   // Paridade claro/escuro: mesma geometria nos dois modos. A preferência da conta de teste é trocada e restaurada.
   const boxesFor = () => exec(`return JSON.stringify([...document.querySelectorAll('[data-aculta-studio="tab"],[data-aculta-studio="section"],[data-aculta-studio="subtab"],[data-aculta-studio="action"],[data-aculta-studio="panel"]')].map((e) => { const r = e.getBoundingClientRect(); return [Math.round(r.x), Math.round(r.y), Math.round(r.width), Math.round(r.height)]; }));`);
-  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/marley/revista/criar' });
+  await navigateTo(PAGE.replace(/\/studio.*$/, '') + '/studio/marley/revista/criar');
   await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'abas (claro)');
   const lightBoxes = JSON.parse(await boxesFor());
   const lightMode = await exec(`return document.documentElement.getAttribute('data-bs-theme') || 'none';`);
-  const drushRun = (code) => execFileSync('php', ['vendor/drush/drush/drush.php', 'php:eval', code, `--uri=${LOGIN_URI}`], { cwd: PROJECT, env: { ...process.env, STUDIO_USER_ID: String(USER_ID) } }).toString().trim();
+  const drushRun = (code) => execFileSync('php', ['vendor/drush/drush/drush.php', 'php:eval', code, `--uri=${LOGIN_URI}`], { cwd: DRUSH_ROOT, env: { ...process.env, STUDIO_USER_ID: String(USER_ID) } }).toString().trim();
   const original = drushRun(`echo json_encode(\\Drupal::service('aculta_portal.color_mode_preference')->forUser((int) getenv('STUDIO_USER_ID')));`);
   drushRun(`\\Drupal::service('aculta_portal.color_mode_preference')->save((int) getenv('STUDIO_USER_ID'), 'dark'); echo 'ok';`);
   await wd('POST', p('/refresh'), {});
   await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'abas (escuro)');
+  if (CSS_OVERRIDE) check('CSS candidata reinjetada no modo escuro', await injectCandidateCss());
   await sleep(800);
   const darkBoxes = JSON.parse(await boxesFor());
   const contrastDark = JSON.parse(JSON.stringify(await exec(contrastScript)));
@@ -165,20 +195,20 @@ try {
   check('mesma geometria nos modos claro e escuro', JSON.stringify(lightBoxes) === JSON.stringify(darkBoxes), `${lightBoxes.length} elemento(s) comparado(s)`);
 
   // Galerias: navegação visual da área (acesso concedido ao papel de editor no Runtime de teste).
-  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/marley/galerias/criar' });
+  await navigateTo(PAGE.replace(/\/studio.*$/, '') + '/studio/marley/galerias/criar');
   await waitFor(`document.querySelector('[data-aculta-studio="action"]')`, 'Galerias');
   const gal = await exec(`return [...document.querySelectorAll('[data-aculta-studio="action"]')].map((a) => a.textContent.trim());`);
   check('área Galerias com a ação Nova galeria', gal.includes('Nova galeria'), gal.join(' | '));
   await shot('04-galerias');
 
   // Fila de moderação do Fórum: comentários de teste aguardando moderação aparecem para a conta.
-  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/marley/forum/moderacao/fila' });
+  await navigateTo(PAGE.replace(/\/studio.*$/, '') + '/studio/marley/forum/moderacao/fila');
   await waitFor(`document.querySelector('[data-aculta-studio="listing"]')`, 'fila do Fórum');
   const queueRows = await exec(`return [...document.querySelectorAll('[data-aculta-studio="listing"] tr')].filter((r) => r.querySelector('td')).length;`);
   check('fila de moderação do Fórum lista comentários aguardando moderação', queueRows >= 1, `${queueRows} linha(s)`);
 
   // Listagem da Revista na aba Publicados: tabela com as linhas que a conta pode ver.
-  await wd('POST', p('/url'), { url: PAGE.replace(/\/studio.*$/, '') + '/studio/marley/revista/publicacoes/publicados' });
+  await navigateTo(PAGE.replace(/\/studio.*$/, '') + '/studio/marley/revista/publicacoes/publicados');
   await waitFor(`document.querySelector('[data-aculta-studio="listing"]')`, 'listagem');
   const listingState = JSON.parse(await exec(`return JSON.stringify({ rows: [...document.querySelectorAll('[data-aculta-studio="listing"] tbody tr')].filter((row) => row.querySelector('td') && !row.querySelector('td[colspan]')).length, empty: !!document.querySelector('[data-aculta-studio="listing"] td[colspan]') });`));
   check('listagem da Revista apresenta conteúdo ou estado vazio', listingState.rows > 0 || listingState.empty, `${listingState.rows} conteúdo(s); estado vazio=${listingState.empty}`);
@@ -197,6 +227,21 @@ try {
 
   const errs = await exec(`return (window.__errs || []).slice(0, 10);`);
   check('sem erros de JavaScript na página', errs.length === 0, errs.join(' | '));
+
+  if (ACCOUNT_CONTEXT_PAGE) {
+    await navigateTo(ACCOUNT_CONTEXT_PAGE);
+    const navReady = await waitFor(`document.querySelector('.studio__subtabs')`, 'navegação contextual da Conta');
+    check('Conta renderiza navegação contextual do Studio', navReady);
+    if (navReady) {
+      const navAudit = JSON.parse(await exec(`const nav=document.querySelector('.studio__subtabs');const links=[...nav.querySelectorAll('a')];return JSON.stringify({links:links.length,current:links.filter((a)=>a.getAttribute('aria-current')==='page').length,direction:getComputedStyle(nav).flexDirection,wrap:getComputedStyle(nav).flexWrap,items:[...nav.children].map((item)=>{const s=getComputedStyle(item);return [s.borderTopWidth,s.borderRightWidth,s.borderBottomWidth,s.borderLeftWidth,s.borderRadius,s.padding,s.backgroundColor]})});`));
+      check('Conta preserva links e estado atual sem moldura de list-group', navAudit.links > 0 && navAudit.current === 1 && navAudit.direction === 'row' && navAudit.wrap === 'wrap' && navAudit.items.every((style) => style.join('|') === '0px|0px|0px|0px|0px|0px|rgba(0, 0, 0, 0)'), JSON.stringify(navAudit));
+      for (const width of [320, 390, 768, 1280]) {
+        await setViewport(width, width < 500 ? 844 : 900);
+        const dimensions = JSON.parse(await exec(`const nav=document.querySelector('.studio__subtabs');return JSON.stringify({width:window.innerWidth,page:document.documentElement.scrollWidth,nav:nav?.scrollWidth,client:nav?.clientWidth});`));
+        check(`Conta sem overflow com abas em ${width}px`, dimensions.page <= width && dimensions.nav <= dimensions.client + 1, JSON.stringify(dimensions));
+      }
+    }
+  }
 } catch (e) {
   check('execução da revisão', false, String(e.message || e));
 } finally {

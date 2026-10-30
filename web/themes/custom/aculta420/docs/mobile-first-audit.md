@@ -1028,8 +1028,15 @@ A base de `.studio__tabs.nav` e `.studio__subtabs.nav` permanece horizontal com
 quebra de linha, espaçamento compacto e sem largura fixa; estilos de tela larga
 não mudam a ordem DOM nem os destinos. A distinção visual entre áreas primárias
 e abas secundárias foi adaptada dos estilos `templates/navigation/tabs.scss` do
-OpenCulturas 3.1.5 e está confinada ao CSS Studio. `git diff --check`, lint CSS
-e Design Foundations passaram. Não houve captura de consumer autenticado nem
-teste de interação em Runtime nesta microfase; OCS-F2 continua parcial e essa
-verificação está DEFERRED. A norma mobile-first global continua obrigatória
-para cada purpose; esta alteração focal não declara THEME-MF3 aprovado.
+OpenCulturas 3.1.5 e está confinada ao CSS Studio. O CSS de lista neutraliza as
+molduras herdadas de `.list-group-item`, confirmadas por estilo computado no
+Firefox. Marley e a navegação contextual de Conta passaram 57/57 checks
+executáveis com CSS candidata reinjetada após navegação: foco visível após Tab,
+teclado, AJAX, histórico, contraste, claro/escuro e geometria invariável em
+Marley; os 9 links, estado atual e ausência de overflow na navegação de Conta em
+320/390/768/1280px. Marley cobriu 320/390/767/768/1024/1280/1440px. Edição de
+publicação ficou SKIP por falta de fixture própria. Resultados:
+`/home/piradopirata/aculta-suite-out/ocs-f2-marley-account-border-final-20261030/`.
+A comparação com dashboard OpenCulturas e a cobertura das outras experiências
+Studio permanecem DEFERRED. OCS-F2 continua parcial e esta evidência não aprova
+THEME-MF3.

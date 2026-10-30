@@ -50,18 +50,30 @@ parcial.
 
 ### OCS-F2 — navegação interna do Studio (implementação parcial)
 
-`templates/navigation/tabs.scss` do pacote 3.1.5 diferencia `.tabs` primárias
-das `.tabs.secondary`: as primeiras usam indicador inferior discreto por link;
-as secundárias usam cor de link e indicador de página ativa mais espesso. O tema
-adapta esse padrão nos seletores existentes `.studio__tabs` e `.studio__subtabs`,
-com tokens `--aculta-studio-fidelity-*`, flex-wrap como base mobile e contraste
-compatível nos modos claro/escuro. A navegação permanece composta por links
-comuns autorizados do Studio; nenhum destino, rota, registry ou SDC foi criado.
+`templates/navigation/tabs.scss` do pacote 3.1.5 (tarball oficial conferido pelo
+SHA-256 `2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`)
+diferencia `.tabs` primárias de `.tabs.secondary`: as primeiras usam indicador
+inferior discreto por link; as secundárias usam cor de link e indicador de
+página ativa mais espesso. O tema adapta o padrão nos seletores existentes
+`.studio__tabs` e `.studio__subtabs`, remove as molduras Bootstrap dos links e
+dos `<li class="list-group-item">`, e mantém flex-wrap como base mobile. A
+interação secundária usa os tokens de superfície/interação em claro e escuro.
+Não foi copiado CSS upstream. A navegação permanece composta por links comuns
+autorizados; nenhum destino, rota, registry ou SDC foi criado.
 
-`npm run lint:css` e `validate-aculta420-design-foundations.php` passaram após a
-adaptação. A captura Firefox autenticada do consumer local, a validação de links
-e estados em todas as experiências Studio e a comparação pareada com o upstream
-permanecem pendentes; F2 não está homologada.
+No Firefox ESR visível, Marley e a navegação contextual de Conta passaram
+57/57 verificações executáveis com CSS candidato reinjetado em cada navegação:
+estrutura e links dos três níveis, estilo computado sem moldura list-group/nav,
+AJAX/URL/histórico, foco visível após Tab, teclado, nomes acessíveis, contraste,
+claro/escuro com geometria igual e overflow em Marley (320, 390, 767, 768, 1024,
+1280 e 1440 px) e Conta (320, 390, 768 e 1280 px). A Conta manteve seus 9 links
+e exatamente um estado atual; nenhum screenshot de dados privados foi salvo.
+Uma verificação de edição foi ignorada por não haver publicação própria na
+conta. Resultados estão em
+`/home/piradopirata/aculta-suite-out/ocs-f2-marley-account-border-final-20261030/`.
+A comparação pareada com dashboard autenticado OpenCulturas e cobertura de
+GanjaLab, WE Sativa, Green Stash e demais consumers Studio continuam pendentes;
+F2 permanece parcial.
 
 ## Referências visuais e limites
 

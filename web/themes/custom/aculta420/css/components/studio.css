@@ -63,8 +63,11 @@
   padding: 0.25em 1em;
   color: var(--aculta-studio-fidelity-interaction);
   text-decoration: none;
+  border: 0;
   border-block-end: 1px solid var(--aculta-studio-fidelity-divider);
+  border-radius: 0;
   background-color: transparent;
+  box-shadow: none;
 }
 
 .studio__tabs .studio__tab[aria-current="page"],
@@ -102,6 +105,7 @@
 /* O item_list do tema acrescenta list-group (vertical). Áreas e abas da seção são barras horizontais. */
 .studio__tabs.nav,
 .studio__subtabs.nav {
+  display: inline-flex;
   flex-direction: row;
   flex-wrap: wrap;
   gap: 0.5rem 1rem;
@@ -110,7 +114,6 @@
 }
 
 .studio__tabs.nav {
-  display: inline-flex;
   list-style: none;
 }
 
@@ -124,11 +127,21 @@
   margin-block: 0.5rem;
 }
 
+.studio__tabs.nav > .list-group-item,
+.studio__subtabs.nav > .list-group-item {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
 /* opCult's secondary tabs use link color and a thicker current marker, not the primary interaction color. */
 .studio__subtabs .studio__link {
   color: var(--aculta-studio-fidelity-link);
   border: 0;
   font-weight: 600;
+  background: transparent;
+  box-shadow: none;
 }
 
 .studio__subtabs .studio__link[aria-current="page"] {
@@ -138,11 +151,8 @@
 }
 
 .studio__subtabs .studio__link:is(:hover, :focus-visible) {
-  color: var(--aculta-studio-fidelity-link);
-  border: 0;
-  border-block-end: 3px solid var(--aculta-studio-fidelity-link);
-  background: transparent;
-  text-decoration: underline;
+  color: var(--aculta-studio-fidelity-surface);
+  background-color: var(--aculta-studio-fidelity-interaction);
 }
 
 .studio__sections > li {

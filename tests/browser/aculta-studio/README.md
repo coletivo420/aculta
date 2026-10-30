@@ -13,12 +13,22 @@ O wrapper consulta a rota `aculta_studio.home` antes de abrir o Firefox e interr
 A listagem deve mostrar conteúdo ou seu estado vazio; a checagem de link de edição fica `SKIP` quando a conta não possui publicação própria publicada.
 
 ```sh
+export SUITE_OUT=/caminho/externo-ao-repositorio/aculta-studio-visual
 DISPLAY=:0 geckodriver --port 4444 &
 DISPLAY=:0 tests/browser/aculta-studio/run-visual.sh
 ```
 
-Variáveis: `STUDIO_PAGE` (padrão `https://conta.aculta.toca.net.br/studio/marley`), `STUDIO_LOGIN_URI`, `STUDIO_USER`,
-`SUITE_OUT` (padrão `/tmp/aculta-studio-visual`), `STUDIO_USER_ID` (padrão `5`) e `GECKODRIVER`. O geckodriver cria perfil temporário por sessão. O wrapper usa `trap` para restaurar a preferência de cor mesmo quando a suíte falha; não executar diretamente o `.mjs`.
+`SUITE_OUT` é obrigatório e deve ficar fora do repositório, em armazenamento
+persistente; não usar `/tmp`. Outras variáveis: `STUDIO_PAGE` (padrão
+`https://conta.aculta.toca.net.br/studio/marley`), `STUDIO_LOGIN_URI`,
+`STUDIO_ACCOUNT_CONTEXT_PAGE` (opcional; verifica a navegação interna de Conta,
+por exemplo `/studio/conta/endereco` no domínio Account),
+`STUDIO_USER`, `STUDIO_DRUSH_ROOT` (padrão o checkout da suíte; para testar CSS
+de outro worktree no servidor de desenvolvimento, use
+`/home/piradopirata/projetos/aculta`) e `STUDIO_USER_ID` (padrão `5`). O
+geckodriver cria perfil temporário por sessão. O wrapper usa `trap` para
+restaurar a preferência de cor mesmo quando a suíte falha; não executar
+diretamente o `.mjs`.
 
 Os seletores usam atributos de comportamento `data-aculta-studio*`, porque o tema troca os tokens `data-portal-ui`
 por classes na renderização.

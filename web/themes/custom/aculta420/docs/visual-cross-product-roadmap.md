@@ -592,10 +592,13 @@ Runtime DEFERRED. Isso não fecha a fidelidade OCS-F11 nem o gate global MF3.
 
 O CSS existente diferencia `.studio__tabs` e `.studio__subtabs` a partir do
 tratamento de abas primárias/secundárias do OpenCulturas Next. A composição usa
-wrap desde a base móvel e segue restrita ao Studio; links, ordem DOM, registry e
-ACL permanecem no contrato atual. Lint CSS e Design Foundations passaram. A
-captura autenticada e a comparação integral dos consumers Studio seguem
-DEFERRED; OCS-F2 não está homologada.
+wrap desde a base móvel e remove as molduras Bootstrap de links e itens de lista;
+links, ordem DOM, registry e ACL permanecem no contrato atual. Marley e a
+navegação contextual de Conta passaram 57/57 checks executáveis em Firefox com
+CSS candidata, incluindo foco visível, sete larguras de 320 a 1440px em Marley,
+quatro larguras na Conta e contraste claro/escuro. A comparação com OpenCulturas
+autenticado e os demais consumers Studio seguem DEFERRED; OCS-F2 não está
+homologada.
 
 ### THEME-MF2 — composição institucional mobile-first (2026-10-29)
 
