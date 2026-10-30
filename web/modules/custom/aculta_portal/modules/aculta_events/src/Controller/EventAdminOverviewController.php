@@ -21,13 +21,12 @@ final class EventAdminOverviewController extends ControllerBase {
   ) {}
 
   /**
-   * Renderiza a visão geral de eventos, datas, locais e atividades culturais.
+   * Renderiza a visão geral de eventos, datas e locais de eventos.
    */
   public function overview(): array {
     $eventCount = 0;
     $dateCount = 0;
     $locationCount = 0;
-    $activityCount = 0;
 
     if ($this->entities->hasDefinition('aculta_event')) {
       $eventCount = (int) $this->entities->getStorage('aculta_event')->getQuery()
@@ -50,21 +49,13 @@ final class EventAdminOverviewController extends ControllerBase {
         ->execute();
     }
 
-    if ($this->entities->hasDefinition('node')) {
-      $activityCount = (int) $this->entities->getStorage('node')->getQuery()
-        ->accessCheck(TRUE)
-        ->condition('type', 'activity')
-        ->count()
-        ->execute();
-    }
-
     $build = [
       '#type' => 'container',
       '#attributes' => ['class' => ['aculta-events-admin-overview']],
       'intro' => [
         '#type' => 'html_tag',
         '#tag' => 'p',
-        '#value' => (string) $this->t('Gestão centralizada de eventos culturais, sessões/datas, locais físicos e atividades do ACULTA.'),
+        '#value' => (string) $this->t('Gestão centralizada de eventos culturais, sessões/datas e locais do ACULTA.'),
       ],
       'metrics' => [
         '#type' => 'table',
@@ -74,7 +65,6 @@ final class EventAdminOverviewController extends ControllerBase {
           [$this->t('Eventos estruturados'), (string) $eventCount],
           [$this->t('Datas e sessões agendadas'), (string) $dateCount],
           [$this->t('Locais de eventos'), (string) $locationCount],
-          [$this->t('Atividades editoriais'), (string) $activityCount],
         ],
       ],
       'quick_actions' => [
@@ -124,7 +114,6 @@ final class EventAdminOverviewController extends ControllerBase {
           'aculta_event_list',
           'aculta_event_date_list',
           'aculta_event_location_list',
-          'node_list:activity',
         ],
       ],
     ];

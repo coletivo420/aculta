@@ -80,6 +80,7 @@ def type_into(name, text):
         try:
             call('POST', f'/session/{SID}/element/{el}/clear')
             call('POST', f'/session/{SID}/element/{el}/value', {'text': text})
+            js('var e=document.querySelector(arguments[0]); if(e){ e.dispatchEvent(new Event("input", {bubbles:true})); e.dispatchEvent(new Event("change", {bubbles:true})); }', f'[name="{F}[{name}]"]')
             return True
         except urllib.error.HTTPError:
             time.sleep(0.4)
@@ -99,11 +100,14 @@ try:
         timeout=90).read()
     SID = json.loads(session)['value']['sessionId']
     call('POST', f'/session/{SID}/url', {'url': ULI})
-    time.sleep(3)
+    wait_for(lambda: 'reset' not in (call('GET', f'/session/{SID}/url') or ''), timeout=15)
+    time.sleep(2)
     call('POST', f'/session/{SID}/url', {'url': ACCOUNT})
     if not wait_for(lambda: find(f'[name="{F}[postal_code]"]')):
         print('URL atual:', call('GET', f'/session/{SID}/url'), flush=True)
         print('Título:', call('GET', f'/session/{SID}/title'), flush=True)
+        src = call('GET', f'/session/{SID}/source') or ''
+        print('Fonte:', src[:500], flush=True)
         raise SystemExit('campo de CEP não apareceu na página')
 
     # Estrutura do formulário
@@ -120,6 +124,10 @@ try:
     check('CEP é o primeiro campo visível no formulário', len(visible_names) > 0 and visible_names[0] == f'{F}[postal_code]', visible_names[0] if visible_names else '')
 
     # Cadastro novo: rua e bairro começam vazios (o primeiro CEP preenche o que está vazio)
+    # Se S/N estiver marcado de execução anterior, desmarca para reabilitar o número
+    if js('return document.querySelector(arguments[0]) ? document.querySelector(arguments[0]).checked : false;', f'[name="{F}[street_number_sn]"]'):
+        js('var el=document.querySelector(arguments[0]); if(el){ el.click(); }', f'[name="{F}[street_number_sn]"]')
+        time.sleep(0.5)
     type_into('address_line1', '')
     type_into('dependent_locality', '')
     # Primeiro CEP
@@ -142,7 +150,7 @@ try:
     check('2º CEP atualiza estado para RJ', value_of('administrative_area') == 'RJ', value_of('administrative_area') or '')
     check('2º CEP atualiza rua', 'Pio X' in (value_of('address_line1') or ''), value_of('address_line1') or '')
     check('2º CEP atualiza bairro', value_of('dependent_locality') == 'Centro', value_of('dependent_locality') or '')
-    check('número digitado é mantido após troca de CEP', value_of('street_number') == '100', value_of('street_number') or '')
+    check('número digitado é mantido após troca de CEP', value_of('street_number') == '100', repr(value_of('street_number')))
 
     # Terceira troca, mesmo estado: o endereço continua acompanhando o CEP
     type_into('postal_code', '01310100')
@@ -150,17 +158,15 @@ try:
     check('3º CEP (mesmo estado) atualiza rua para Avenida Paulista', bool(ok), value_of('address_line1') or '')
     check('3º CEP atualiza bairro para Bela Vista', wait_for(lambda: value_of('dependent_locality') == 'Bela Vista') is not None and value_of('dependent_locality') == 'Bela Vista', value_of('dependent_locality') or '')
     check('3º CEP mantém cidade São Paulo', wait_for(lambda: value_of('locality') == 'São Paulo') is not None and value_of('locality') == 'São Paulo', value_of('locality') or '')
-    check('número digitado continua após a 3ª troca', value_of('street_number') == '100', value_of('street_number') or '')
+    check('número digitado continua após a 3ª troca', value_of('street_number') == '100', repr(value_of('street_number')))
 
     # S/N: desabilita o número e limpa
-    el = find(f'[name="{F}[street_number_sn]"]')
-    call('POST', f'/session/{SID}/element/{el}/click')
+    js('var el=document.querySelector(arguments[0]); if(el){ el.click(); }', f'[name="{F}[street_number_sn]"]')
     time.sleep(1)
-    check('S/N desabilita o número', js('return document.querySelector(arguments[0]).disabled;', f'[name="{F}[street_number]"]') is True)
-    el = find(f'[name="{F}[street_number_sn]"]')
-    call('POST', f'/session/{SID}/element/{el}/click')
+    check('S/N desabilita o número', js('return document.querySelector(arguments[0]).disabled;', f'[name="{F}[street_number]"]') is True, f"sn_checked={js('return document.querySelector(arguments[0]).checked;', f'[name=\"{F}[street_number_sn]\"]')}")
+    js('var el=document.querySelector(arguments[0]); if(el){ el.click(); }', f'[name="{F}[street_number_sn]"]')
     time.sleep(1)
-    check('desmarcar S/N reabilita o número', js('return document.querySelector(arguments[0]).disabled;', f'[name="{F}[street_number]"]') is False)
+    check('desmarcar S/N reabilita o número', js('return document.querySelector(arguments[0]).disabled;', f'[name="{F}[street_number]"]') is False, f"sn_checked={js('return document.querySelector(arguments[0]).checked;', f'[name=\"{F}[street_number_sn]\"]')}")
     # Número volta a ser digitado (ligar S/N limpa o número; sem S/N ele é obrigatório)
     type_into('street_number', '100')
     type_into('address_line2', 'Apto 42')

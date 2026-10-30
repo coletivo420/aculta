@@ -23,9 +23,13 @@ services:
       - '@entity_type.manager'
       - '@?aculta_index.work_manager'
       - '@?aculta_index.provider_registry'
-  Drupal\aculta_events\Hook\ActivityLocationFormHooks:
-    class: Drupal\aculta_events\Hook\ActivityLocationFormHooks
+  Drupal\aculta_events\Hook\ActivityRetirementHooks:
+    class: Drupal\aculta_events\Hook\ActivityRetirementHooks
     autowire: true
+  aculta_events.activity_retired_route_subscriber:
+    class: Drupal\aculta_events\EventSubscriber\ActivityRetiredRouteSubscriber
+    tags:
+      - { name: event_subscriber }
   aculta_events.event_filter:
     class: Drupal\aculta_events\Agenda\EventFilter
   aculta_events.item_provider:

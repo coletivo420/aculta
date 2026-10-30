@@ -144,6 +144,8 @@
     if (snInput && !snInput.dataset.acultaSnBound) {
       snInput.dataset.acultaSnBound = 'true';
       snInput.addEventListener('change', () => syncStreetNumber(numInput, snInput));
+      snInput.addEventListener('click', () => syncStreetNumber(numInput, snInput));
+      snInput.addEventListener('input', () => syncStreetNumber(numInput, snInput));
     }
     syncStreetNumber(numInput, snInput);
   }
@@ -186,6 +188,10 @@
       if (pending) {
         pendingFill.delete(prefix);
         applyFieldValues(prefix, container, pending.values, pending.isReplacement);
+        if (pending.number && numInput && !numInput.value && !numInput.disabled) {
+          numInput.value = pending.number;
+          dispatchInput(numInput);
+        }
         announce(statusFor(postal), Drupal.t('Endereço localizado. Confira os dados e complete o número manualmente.'));
       }
       const complement = getField(prefix, 'address_line2', container);
@@ -223,7 +229,8 @@
             applyFieldValues(prefix, container, values, isReplacement);
 
             if (needsStateChange) {
-              pendingFill.set(prefix, { values, isReplacement });
+              const currentNumber = numInput && !numInput.disabled ? numInput.value : '';
+              pendingFill.set(prefix, { values, isReplacement, number: currentNumber });
               state.value = values.administrative_area;
               dispatchInput(state);
             }

@@ -179,7 +179,7 @@ final class EventLocationModalWidget extends WidgetBase {
         'message' => [
           '#type' => 'html_tag',
           '#tag' => 'p',
-          '#value' => (string) t('Nenhum local selecionado para esta atividade.'),
+          '#value' => (string) t('Nenhum local selecionado para este evento.'),
         ],
         'select_button' => [
           '#type' => 'link',

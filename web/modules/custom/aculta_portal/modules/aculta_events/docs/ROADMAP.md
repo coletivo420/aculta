@@ -300,18 +300,15 @@ Fonte: `docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md`. Preservar
 - Próxima etapa: validação Alpha após autorização de release.
 
 
-## Experiência editorial de Local em Activity (Fase 1 concluída)
+## Experiência editorial de Eventos e Locais (Atividades editoriais legadas descontinuadas)
 
-- [x] **Fase 1 (Inventário e Contrato de Dados - 2026-10-30):**
-  - Mapeamento e inventário completo dos campos legados de `node:activity` para `aculta_event_location`.
-  - Contrato de dados fechado: endereço pertence exclusivamente ao Local; Activity/evento mantém somente a referência.
-  - Ordem padronizada em todos os formulários com CEP como primeiro campo (`#weight = -50`).
-  - Estratégia de migração e critérios de aceite definidos no plano central LOC.
-- [ ] Em `/node/add/activity`, oferecer modal Drupal/AJAX para pesquisar Locais existentes por nomes semelhantes, selecionar um resultado ou iniciar cadastro. Validar acesso no servidor.
-- [ ] Cadastro de Local em modal Drupal/AJAX, reutilizando adaptador central e CEP do `aculta_portal_cep`, Brasil padrão e sem seletor de país. CEP primeiro; futura busca por logradouro e resultados próximos somente dentro de Events/Maps, após aprovação de provedor.
-- [ ] Ao confirmar, retornar a referência do Local ao formulário pai sem salvamento silencioso, perda de valores ou bypass de validação.
-- [x] Área administrativa própria de Events criada em `/painel-administrativo/eventos` (`EventAdminOverviewController`).
-- [ ] Validar acessibilidade/foco do modal, autorização, cache, duplicidade, concorrência, erros AJAX, teclado, mobile, integração com `aculta_index` e ausência de regressões em Conta/checkout.
+- [x] **Descontinuação de Atividades em favor de Eventos (2026-10-30):**
+  - Atividades editoriais legadas (`node:activity` e `/node/add/activity`) foram totalmente descontinuadas em favor exclusivo das entidades nativas de Eventos (`aculta_event`, `aculta_event_date` e `aculta_event_location`).
+  - Não confundir com atividades educacionais do LMS nem com o módulo `aculta_activity`.
+  - A rota `/node/add/activity` foi aposentada com HTTP 404 e a criação do bundle bloqueada via hook `entity_create_access`.
+  - A criação de eventos e locais ocorre exclusivamente dentro de Eventos em `/painel-administrativo/eventos/adicionar`.
+- [x] Cadastro e seleção de Local em modal Drupal/AJAX (`EventLocationModalWidget` e `EventLocationModalForm`), reutilizando o adaptador central de endereço e CEP (`aculta_portal_cep`), com Brasil exclusivo sem seletor de país e CEP primeiro.
+- [x] Área administrativa própria de Events criada em `/painel-administrativo/eventos` (`EventAdminOverviewController`), exibindo exclusivamente Eventos, Datas e Locais.
 
 Contrato normativo: [ADR-033](../../../../../../../docs/decisions/ADR-033-endereco-busca-e-locais.md).
 

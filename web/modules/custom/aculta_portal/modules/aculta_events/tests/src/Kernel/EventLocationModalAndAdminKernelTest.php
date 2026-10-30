@@ -4,27 +4,30 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_events\Kernel;
 
+use Drupal\aculta_events\Controller\EventAdminOverviewController;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\aculta_events\EventSubscriber\ActivityRetiredRouteSubscriber;
 use Drupal\aculta_events\Form\EventForm;
 use Drupal\aculta_events\Form\EventLocationForm;
 use Drupal\aculta_events\Form\EventLocationModalForm;
-use Drupal\aculta_events\Controller\EventAdminOverviewController;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\node\Entity\Node;
-use Drupal\node\Entity\NodeType;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
- * Testes integrados para o vínculo de locais em Activity, modal e painel administrativo.
+ * Testes integrados para o painel administrativo de eventos, exclusão de atividades e modal de locais.
  */
 #[Group('aculta_events')]
 #[RunTestsInSeparateProcesses]
@@ -51,7 +54,6 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     'aculta_calendar',
     'aculta_maps',
     'aculta_events',
-    'aculta_activity',
   ];
 
   private User $adminUser;
@@ -71,43 +73,6 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     $this->installSchema('system', ['sequences']);
     $this->installSchema('node', ['node_access']);
     $this->installConfig(['system']);
-
-    if (!NodeType::load('activity')) {
-      NodeType::create([
-        'type' => 'activity',
-        'name' => 'Atividade',
-      ])->save();
-    }
-
-    $this->createField('node', 'activity', 'field_modality', 'list_string');
-    $this->createField('node', 'activity', 'field_place_name', 'string');
-    $this->createField('node', 'activity', 'field_event_street', 'string');
-    $this->createField('node', 'activity', 'field_event_city', 'string');
-    $this->createField('node', 'activity', 'field_event_region', 'string');
-    $this->createField('node', 'activity', 'field_event_postal', 'string');
-    $this->createField('node', 'activity', 'field_event_country', 'string');
-    $this->createField('node', 'activity', 'field_online_url', 'string');
-    $this->createField('node', 'activity', 'field_event_start', 'string');
-    $this->createField('node', 'activity', 'field_event_end', 'string');
-
-    // Instala field_event_location referenciando aculta_event_location.
-    if (!FieldStorageConfig::loadByName('node', 'field_event_location')) {
-      FieldStorageConfig::create([
-        'field_name' => 'field_event_location',
-        'entity_type' => 'node',
-        'type' => 'entity_reference',
-        'settings' => ['target_type' => 'aculta_event_location'],
-        'cardinality' => 1,
-      ])->save();
-    }
-    if (!FieldConfig::loadByName('node', 'activity', 'field_event_location')) {
-      FieldConfig::create([
-        'field_name' => 'field_event_location',
-        'entity_type' => 'node',
-        'bundle' => 'activity',
-        'label' => 'Local do evento',
-      ])->save();
-    }
 
     $this->adminUser = User::create([
       'name' => 'admin_test',
@@ -207,54 +172,20 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
   }
 
   /**
-   * Valida sincronização e regras de validação de local em Activity.
+   * Valida que rotas legadas de atividade (/node/add/activity) respondem 404 e são bloqueadas.
    */
-  public function testActivityFormLocationIntegration(): void {
-    $location = EventLocation::create([
-      'title' => 'Espaço Cultural 420',
-      'field_status' => 'publicado',
-      'field_endereco' => [
-        'country_code' => 'BR',
-        'address_line1' => 'Av. Paulista, 1000',
-        'locality' => 'São Paulo',
-        'administrative_area' => 'SP',
-        'postal_code' => '01310-100',
-      ],
-    ]);
-    $location->save();
+  public function testActivityRouteIsRetiredAndBlocked(): void {
+    $request = Request::create('/node/add/activity');
+    $subscriber = new ActivityRetiredRouteSubscriber();
+    $kernel = $this->createMock(HttpKernelInterface::class);
+    $event = new RequestEvent($kernel, $request, HttpKernelInterface::MAIN_REQUEST);
 
-    $activity = Node::create([
-      'type' => 'activity',
-      'title' => 'Oficina de Plantio',
-      'field_modality' => 'presencial',
-      'field_event_location' => $location->id(),
-    ]);
-    $activity->save();
-
-    self::assertSame('Espaço Cultural 420', $activity->get('field_place_name')->value);
-    self::assertSame('Av. Paulista, 1000', $activity->get('field_event_street')->value);
-    self::assertSame('São Paulo', $activity->get('field_event_city')->value);
-    self::assertSame('SP', $activity->get('field_event_region')->value);
-    self::assertSame('01310-100', $activity->get('field_event_postal')->value);
-    self::assertSame('BR', $activity->get('field_event_country')->value);
-
-    // Validação rejeita presencial sem local
-    $emptyActivity = Node::create([
-      'type' => 'activity',
-      'title' => 'Sem Local',
-      'field_modality' => 'presencial',
-    ]);
-    $formObject = $this->container->get('entity_type.manager')->getFormObject('node', 'default');
-    $formObject->setEntity($emptyActivity);
-    $formState = new FormState();
-    $formState->setFormObject($formObject);
-    $form = [];
-    $this->container->get('aculta_activity.form_callbacks')->validateActivity($form, $formState);
-    self::assertTrue($formState->hasAnyErrors());
+    $this->expectException(NotFoundHttpException::class);
+    $subscriber->onKernelRequest($event);
   }
 
   /**
-   * Valida renderização do painel administrativo de eventos.
+   * Valida renderização do painel administrativo de eventos (somente eventos, datas e locais).
    */
   public function testEventAdminOverviewController(): void {
     $controller = new EventAdminOverviewController($this->container->get('entity_type.manager'));
@@ -262,7 +193,7 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
 
     self::assertArrayHasKey('metrics', $build);
     self::assertArrayHasKey('quick_actions', $build);
-    self::assertCount(4, $build['metrics']['#rows']);
+    self::assertCount(3, $build['metrics']['#rows']);
     self::assertCount(7, $build['quick_actions']['#items']);
   }
 

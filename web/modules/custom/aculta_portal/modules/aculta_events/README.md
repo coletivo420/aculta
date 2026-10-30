@@ -56,6 +56,6 @@ incremental. O RC acima é evidência histórica; o novo escopo está Dev/planej
 sem mudança de manifesto ou teste Runtime nesta revisão.
 
 
-## Fluxo planejado de Local no formulário Activity
+## Descontinuação de Atividades em favor de Eventos
 
-O cadastro/seleção descrito em [ADR-033](../../../../../../docs/decisions/ADR-033-endereco-busca-e-locais.md) ainda não está implementado: modal Drupal/AJAX para localizar por nome, selecionar Local existente ou cadastrar outro; cadastro começa por CEP via adaptador central. Busca por logradouro fica restrita a Events/Maps e aguarda aprovação. Os campos de endereço avulsos de Activity devem ser substituídos somente com plano de migração de dados.
+Conforme diretriz arquitetural, atividades editoriais (`node:activity` e `/node/add/activity`) foram descontinuadas em favor exclusivo das entidades estruturadas de Eventos (`aculta_event`, `aculta_event_date` e `aculta_event_location`). A criação de novos eventos e locais ocorre exclusivamente dentro de Eventos em `/painel-administrativo/eventos/adicionar` (não confundir com as atividades educacionais do LMS).

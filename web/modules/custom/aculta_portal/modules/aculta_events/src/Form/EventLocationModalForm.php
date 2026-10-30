@@ -43,15 +43,7 @@ final class EventLocationModalForm extends FormBase {
       || in_array('content_editor', $account->getRoles(), TRUE)
       || in_array('administrator', $account->getRoles(), TRUE);
 
-    if ($canManage) {
-      return AccessResult::allowed()->cachePerPermissions();
-    }
-
-    $canCreateNode = $account->hasPermission('create activity content')
-      || $account->hasPermission('edit any activity content')
-      || $account->hasPermission('edit own activity content');
-
-    return AccessResult::allowedIf($canCreateNode)->cachePerPermissions();
+    return AccessResult::allowedIf($canManage)->cachePerPermissions();
   }
 
   /**

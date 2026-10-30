@@ -157,8 +157,8 @@ adapter mínimo.
 
 - [x] **Fase 1 (Inventário e Contrato de Dados - 2026-10-30):**
   - Mapeamento completo dos campos legados (`field_place_name`, `field_event_street`, `field_event_postal`, `field_event_city`, `field_event_region`, `field_event_country`) para a entidade `aculta_event_location`.
-  - Formulário editorial de `node:activity` padronizado para referenciar `field_event_location`, com campos legados ocultos no formulário e sincronizados retroativamente no hook `nodePresave`.
-  - Ordem padronizada: o formulário de cadastro de Local tem o CEP como primeiro campo (`#weight = -50`).
+  - Formulário editorial de `node:activity` padronizado para referenciar `field_event_location`, com campos legados ocultos no formulário e preservados integralmente no banco de dados (não removidos nem migrados nesta fase), mantendo sincronização de compatibilidade.
+  - Ordem padronizada: o formulário de cadastro de Local tem o CEP como primeiro campo (`#weight = -50`). Ordem de exibição preserva a convenção postal brasileira (CEP ao final).
   - Estratégia de migração segura e reversível definida, com rollback documentado (sem execução prematura).
 - [ ] **Fase 2 (Homologação do fluxo do modal e migração):**
   - Validação funcional integrada do popup de busca/seleção e popup de cadastro com retorno AJAX para a Activity.

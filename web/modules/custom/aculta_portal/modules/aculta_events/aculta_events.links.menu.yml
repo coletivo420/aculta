@@ -1,13 +1,13 @@
 aculta_events.admin:
   title: 'Eventos'
-  description: 'Gestão de eventos culturais, datas, locais e atividades.'
+  description: 'Gestão de eventos culturais, datas e locais.'
   route_name: aculta_events.admin_overview
   parent: system.admin
   weight: 25
 
 aculta_events.admin_overview:
   title: 'Visão geral'
-  description: 'Painel geral de eventos, datas, locais e atividades.'
+  description: 'Painel geral de eventos, datas e locais.'
   route_name: aculta_events.admin_overview
   parent: aculta_events.admin
   weight: 0
@@ -46,15 +46,6 @@ aculta_events.admin_location_add:
   route_name: aculta_events.location_add
   parent: aculta_events.admin
   weight: 5
-
-aculta_events.admin_activities:
-  title: 'Atividades'
-  description: 'Gestão de nós de atividades editoriais.'
-  route_name: system.admin_content
-  route_parameters:
-    type: activity
-  parent: aculta_events.admin
-  weight: 6
 
 aculta_events.admin_export:
   title: 'Exportar eventos (CSV)'
