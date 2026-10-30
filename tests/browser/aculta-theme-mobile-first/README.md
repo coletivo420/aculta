@@ -672,6 +672,15 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/purpose-browser-zo
 
 `PURPOSE_ZOOM_DEVICE_WIDTH` define a largura inicial (1280px por padrão) e
 `PURPOSE_ZOOM_DOMAIN_ENV=test|production` seleciona os hosts do manifesto.
+`PURPOSE_ZOOM_PURPOSES=account` restringe uma rodada de diagnóstico a um ou mais
+purposes por nome. O resultado lista elementos que ultrapassem o documento para
+ajudar a localizar falhas.
+
+Para comparar a correção candidata do desafio de autenticação somente na Conta,
+defina `PURPOSE_ZOOM_AUTH_CSS_CANDIDATE=1`. O harness injeta `base.css` e
+`components/auth.css` da worktree no DOM e simula o marcador
+`data-portal-ui="challenge-frame"`; isso é uma comparação visual com CSS local,
+não valida o hook Portal renderizado no servidor nem o estado sem JavaScript.
 
 ## Título principal nas dez raízes públicas
 

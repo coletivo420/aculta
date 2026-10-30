@@ -10,6 +10,7 @@ import sys
 import time
 
 ROOT = Path(os.environ.get("ACULTA_PROJECT_ROOT", Path(__file__).resolve().parents[3])).resolve()
+CODE_ROOT = Path(__file__).resolve().parents[3]
 OUT = Path(os.environ["SUITE_OUT"]).resolve()
 OUT.mkdir(parents=True, exist_ok=True)
 os.environ.setdefault("ACULTA_FF_PROFILE_ROOT", str(OUT / "profiles"))
@@ -19,6 +20,7 @@ from wdlib import Driver  # noqa: E402
 WIDTH = int(os.environ.get("PURPOSE_ZOOM_DEVICE_WIDTH", "1280"))
 TARGETS = (2.0, 4.0)
 DOMAIN_ENV = os.environ.get("PURPOSE_ZOOM_DOMAIN_ENV", "test")
+AUTH_CSS_CANDIDATE = os.environ.get("PURPOSE_ZOOM_AUTH_CSS_CANDIDATE") == "1"
 DOMAIN_IDS = {
     "main": "aculta_org",
     "account": "conta_aculta_org",
@@ -55,7 +57,14 @@ def purpose_urls():
     missing = set(DOMAIN_IDS.values()) - set(hosts)
     if missing:
         raise RuntimeError(f"Domain hosts missing: {', '.join(sorted(missing))}")
-    return [(purpose, f"https://{hosts[domain_id]}/") for purpose, domain_id in DOMAIN_IDS.items()]
+    purposes = [(purpose, f"https://{hosts[domain_id]}/") for purpose, domain_id in DOMAIN_IDS.items()]
+    selected = {value.strip() for value in os.environ.get("PURPOSE_ZOOM_PURPOSES", "").split(",") if value.strip()}
+    if selected:
+        unknown = selected - set(DOMAIN_IDS)
+        if unknown:
+            raise RuntimeError(f"Unknown purpose(s): {', '.join(sorted(unknown))}")
+        purposes = [(purpose, url) for purpose, url in purposes if purpose in selected]
+    return purposes
 
 
 def set_viewport(driver, width, height=900):
@@ -100,7 +109,16 @@ return JSON.stringify({
   domainHeaderCount:document.querySelectorAll('.aculta-header').length,
   mainCount:document.querySelectorAll('main#main-content').length,
   visibleH1Count:[...document.querySelectorAll('main#main-content h1')]
-    .filter(node=>node.getClientRects().length && node.innerText.trim()).length
+    .filter(node=>node.getClientRects().length && node.innerText.trim()).length,
+  overflowCandidates:[...document.querySelectorAll('body *')].filter(node=>{
+    const style=getComputedStyle(node), rect=node.getBoundingClientRect();
+    return style.display!=='none' && style.visibility!=='hidden' && rect.width>0 &&
+      (rect.right>d.clientWidth+1 || node.scrollWidth>node.clientWidth+1);
+  }).map(node=>{const rect=node.getBoundingClientRect();return {
+    tag:node.tagName.toLowerCase(),id:node.id,className:typeof node.className==='string'?node.className:'',
+    left:Math.round(rect.left),right:Math.round(rect.right),width:Math.round(rect.width),
+    scrollWidth:node.scrollWidth,clientWidth:node.clientWidth,position:getComputedStyle(node).position
+  };}).slice(0,12)
 });
 """, [device_width]))
 
@@ -125,6 +143,17 @@ def main():
             driver.get(url)
             time.sleep(0.5)
             set_viewport(driver, WIDTH)
+            if AUTH_CSS_CANDIDATE and purpose == "account":
+                css = "\n".join((CODE_ROOT / path).read_text() for path in (
+                    "web/themes/custom/aculta420/css/base.css",
+                    "web/themes/custom/aculta420/css/components/auth.css",
+                ))
+                driver.js("""document.querySelectorAll('.captcha').forEach(frame=>{
+                  const tokens=(frame.getAttribute('data-portal-ui')||'').split(/\\s+/).filter(Boolean);
+                  if(!tokens.includes('challenge-frame'))tokens.push('challenge-frame');
+                  frame.setAttribute('data-portal-ui',tokens.join(' '));
+                });const style=document.createElement('style');style.id='purpose-zoom-auth-candidate';
+                style.textContent=arguments[0];document.head.append(style);return true;""", [css])
             baseline = inspect(driver, WIDTH)
             check(records, f"{purpose}: 100% baseline and unique shell",
                   baseline["width"] == WIDTH and abs(baseline["zoomRatio"] - 1.0) < 0.08
@@ -152,7 +181,8 @@ def main():
                       and data["institutionBarCount"] == 1 and data["domainHeaderCount"] == 1,
                       {key: data[key] for key in ("width", "zoomRatio", "devicePixelRatio",
                          "documentWidth", "documentScrollWidth", "bodyScrollWidth", "overflow",
-                         "institutionBarCount", "domainHeaderCount", "mainCount", "visibleH1Count")})
+                         "institutionBarCount", "domainHeaderCount", "mainCount", "visibleH1Count",
+                         "overflowCandidates")})
                 if reached:
                     shot = driver.req("GET", f"/session/{driver.session}/screenshot")
                     name = f"{purpose}-zoom-{round(target * 100)}.png"
@@ -167,6 +197,7 @@ def main():
         "runtime": "aculta_runtime",
         "domainEnvironment": DOMAIN_ENV,
         "deviceWidth": WIDTH,
+        "authCssCandidate": AUTH_CSS_CANDIDATE,
         "purposes": [purpose for purpose, _ in purpose_urls()],
         "targets": TARGETS,
         "checks": records,

@@ -1751,6 +1751,27 @@ cada interação/página interna, zoom, teclado completo, leitores de tela,
 contraste WCAG 2.2 AA nem a distribuição dos estilos ainda locais da branch.
 THEME-MF3 segue pendente.
 
+#### Reteste posterior — raiz Conta a 400% (2026-10-30)
+
+Reexecutei a matriz inteira depois da captura histórica: Firefox ESR visível,
+Runtime em HEAD `2493d7535`, dez raízes públicas, zoom real a partir de 1280px.
+O resultado atualizado é **29/30**, não 30/30: baseline 100% e zoom 200%/400%
+passaram nas dez raízes, exceto Conta a 400%, quando a viewport equivale a 320
+CSS px e `documentScrollWidth/bodyScrollWidth=328`; o shell e o H1 continuam
+presentes. As outras nove raízes passaram os dois níveis de zoom sem overflow.
+Capturas e relatório: `/home/piradopirata/aculta-suite-out/purpose-browser-zoom-full-20261030/`;
+a captura de Conta/400% foi inspecionada.
+
+Na comparação focal seguinte, `purpose-browser-zoom.py` injetou no DOM da sessão
+Firefox `base.css` e `components/auth.css` da branch, além de simular no wrapper
+CAPTCHA o contrato `data-portal-ui="challenge-frame"`. Conta passou 3/3
+checks, inclusive 400%/320 CSS px sem overflow; evidência em
+`/home/piradopirata/aculta-suite-out/account-zoom-candidate-20261030/` e captura
+400% inspecionada. Isso confirma a candidata de apresentação, mas a falha no
+Runtime permanece até o hook e a folha servidos serem integrados e revalidados;
+no-JS, páginas internas e acessibilidade seguem pendentes. O harness agora
+aceita `PURPOSE_ZOOM_PURPOSES` e registra candidatos a overflow para diagnóstico.
+
 ### Zoom real de 200%/400% nas dez raízes públicas (2026-10-30)
 
 O novo harness reutilizável `purpose-browser-zoom.py` usou Firefox ESR visível e

@@ -1133,6 +1133,13 @@ a validação pós-candidato de H1 e reflow continua pendente. README e
 `mobile-first-audit.md` documentam evidências e limites; o gate THEME-MF3 não
 está aprovado.
 
+Rechecagem posterior no Runtime em HEAD `2493d7535` encontrou uma regressão que
+não aparece na captura histórica: a matriz totalizou 29/30; Conta a 400% (320
+CSS px) mede 328 px de largura e falha, enquanto as outras nove raízes passam
+200%/400%. Com `auth.css` candidata e o marcador visual simulado no DOM, Conta
+passa 3/3 checks a 100/200/400% sem overflow. Esse teste ainda não valida o hook
+server-side nem no-JS. Relatório e limites em `mobile-first-audit.md`.
+
 ### THEME-MF2 — formulário SUPPORT com contrato real (2026-10-30)
 
 A validação Firefox revelou uma premissa obsoleta no harness: o formulário
