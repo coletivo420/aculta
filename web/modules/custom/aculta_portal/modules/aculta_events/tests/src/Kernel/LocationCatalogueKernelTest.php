@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_events\Kernel;
 
 use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\aculta_events\Catalogue\LocationCatalogue;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\taxonomy\Entity\Term;
@@ -106,6 +107,31 @@ final class LocationCatalogueKernelTest extends KernelTestBase {
     $this->assertSame(['Teatro Municipal'], $nomes);
     $todos = array_map(static fn (array $i): string => (string) $i['local']->label(), $servico->busca(NULL));
     $this->assertSame(['Museu da Cidade', 'Sala sem tipo', 'Teatro Municipal'], $todos);
+  }
+
+  /**
+   * Catálogo aplica view access antes de calcular total e paginação, inclusive
+   * quando não há conta de requisição disponível.
+   */
+  public function testBuscaPaginadaFiltraAcessoAntesDaPaginacao(): void {
+    $publico = $this->local('Local público', 'exato');
+    $privado = $this->local('Local privado', 'exato');
+    $privado->set('field_status', 'privado');
+    $privado->save();
+
+    $anonimo = new AnonymousUserSession();
+    $catalogue = new LocationCatalogue($this->container->get('entity_type.manager'));
+    $resultado = $catalogue->buscaPaginada(NULL, NULL, 0, 10, $anonimo);
+
+    $this->assertSame(1, $resultado['total']);
+    $this->assertCount(1, $resultado['items']);
+    $this->assertSame((string) $publico->id(), (string) $resultado['items'][0]['local']->id());
+
+    // Sem conta explícita, a ausência de contexto não pode abrir locais privados.
+    $semConta = new LocationCatalogue($this->container->get('entity_type.manager'));
+    $resultadoSemConta = $semConta->buscaPaginada(NULL, NULL, 0, 10);
+    $this->assertSame(1, $resultadoSemConta['total']);
+    $this->assertSame((string) $publico->id(), (string) $resultadoSemConta['items'][0]['local']->id());
   }
 
   /**
