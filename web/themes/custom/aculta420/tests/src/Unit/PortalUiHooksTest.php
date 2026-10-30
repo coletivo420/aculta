@@ -285,7 +285,7 @@ final class PortalUiHooksTest extends UnitTestCase {
     $variables = [
       'element' => [
         '#attributes' => [
-          'data-portal-ui' => 'event-location-button-primary event-location-button-danger',
+          'data-portal-ui' => 'event-location-button-primary event-location-button-danger event-date-row event-date-actions event-location-widget event-location-target-id event-date-add event-date-delete event-date-cancel',
           'class' => ['use-ajax'],
         ],
       ],
@@ -298,6 +298,10 @@ final class PortalUiHooksTest extends UnitTestCase {
     self::assertContains('button', $attributes['class']);
     self::assertContains('button--primary', $attributes['class']);
     self::assertContains('button--danger', $attributes['class']);
+    self::assertContains('aculta-event-date-row', $attributes['class']);
+    self::assertContains('aculta-event-date-actions', $attributes['class']);
+    self::assertContains('aculta-event-location-widget', $attributes['class']);
+    self::assertContains('aculta-location-target-id', $attributes['class']);
     self::assertContains('use-ajax', $attributes['class']);
   }
 

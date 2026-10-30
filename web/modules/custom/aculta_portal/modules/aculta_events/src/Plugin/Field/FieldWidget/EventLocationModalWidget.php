@@ -41,7 +41,7 @@ final class EventLocationModalWidget extends WidgetBase {
 
     $element['#type'] = 'container';
     $element['#attributes']['id'] = $wrapperId;
-    $element['#attributes']['class'][] = 'aculta-event-location-widget';
+    $element['#attributes']['data-portal-ui'] = 'event-location-widget';
     $element['#attached']['library'][] = 'core/drupal.dialog.ajax';
 
     $element += self::buildCardOrEmpty((int) $targetId, $fieldName, $wrapperId);
@@ -59,13 +59,13 @@ final class EventLocationModalWidget extends WidgetBase {
       ? 'field-event-location-target-id'
       : $wrapperId . '-target-id';
 
-    // Campo oculto que guarda o target_id para a submissão regular do formulário pai.
+    // Campo oculto com target_id para submissão regular do formulário pai.
     $element['target_id'] = [
       '#type' => 'hidden',
       '#value' => $targetId > 0 ? (string) $targetId : '',
       '#attributes' => [
         'id' => $targetInputId,
-        'class' => ['aculta-location-target-id'],
+        'data-portal-ui' => 'event-location-target-id',
       ],
     ];
 

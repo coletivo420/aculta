@@ -107,7 +107,7 @@ class EventDateCreateForm extends FormBase {
     $wrapperId = 'event-date-local-wrapper';
     $form['local_section']['local_id'] = [
       '#type' => 'container',
-      '#attributes' => ['id' => $wrapperId, 'class' => ['aculta-event-location-widget']],
+      '#attributes' => ['id' => $wrapperId, 'data-portal-ui' => 'event-location-widget'],
       '#attached' => ['library' => ['core/drupal.dialog.ajax']],
     ] + EventLocationModalWidget::buildCardOrEmpty($localId, 'local_id', $wrapperId);
 

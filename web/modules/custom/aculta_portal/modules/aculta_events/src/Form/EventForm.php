@@ -95,7 +95,7 @@ final class EventForm extends ContentEntityForm {
 
     $element = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-event-date-row']],
+      '#attributes' => ['data-portal-ui' => 'event-date-row'],
     ];
 
     $element['title'] = [
@@ -116,7 +116,7 @@ final class EventForm extends ContentEntityForm {
     ];
     $element['local_id'] = [
       '#type' => 'container',
-      '#attributes' => ['id' => $wrapperId, 'class' => ['aculta-event-location-widget']],
+      '#attributes' => ['id' => $wrapperId, 'data-portal-ui' => 'event-location-widget'],
       '#attached' => ['library' => ['core/drupal.dialog.ajax']],
     ] + EventLocationModalWidget::buildCardOrEmpty($localId, 'local_id', $wrapperId);
 
@@ -153,7 +153,7 @@ final class EventForm extends ContentEntityForm {
 
       $actions = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-event-date-actions']],
+        '#attributes' => ['data-portal-ui' => 'event-date-actions'],
         'edit' => [
           '#type' => 'link',
           '#title' => $this->t('Editar'),
@@ -200,7 +200,8 @@ final class EventForm extends ContentEntityForm {
       '#title' => $this->t('Adicionar data a este evento'),
       '#url' => Url::fromRoute('aculta_events.event_date_add', ['aculta_event' => $event->id()]),
       '#attributes' => [
-        'class' => ['button', 'button--primary', 'use-ajax'],
+        'data-portal-ui' => 'event-date-add',
+        'class' => ['use-ajax'],
         'data-dialog-type' => 'modal',
         'data-dialog-options' => json_encode(['width' => 720]),
       ],

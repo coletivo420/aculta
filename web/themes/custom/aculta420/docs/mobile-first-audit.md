@@ -1223,6 +1223,18 @@ visuais verificados nas árvores CSS/components/templates/JS, zero caminhos
 faltantes e zero entradas obsoletas. Esta conciliação fecha apenas a cobertura
 do inventário estático consultado; não homologa toda a auditoria MF0 nem MF3.
 
+### THEME-MF2 — hooks de apresentação dos formulários de Eventos (2026-10-30)
+
+Os formulários de datas e locais passaram a emitir tokens `data-portal-ui`; o
+tema `PortalUiHooks` mapeia os tokens para as mesmas classes visuais e conserva
+`use-ajax` como contrato de comportamento do Drupal. O gate módulo/tema agora
+passa com zero classes de design no módulo (3.442 verificações), e o mapa passa
+210 checks. `PortalUiHooksTest` passou (17 testes/110 assertions); os Kernel
+`EventFormDatesKernelTest` e `EventLocationModalAndAdminKernelTest` passaram
+conjuntamente (9 testes/141 assertions, 24 depreciações de Core/contrib). Isso
+valida o contrato de apresentação e os formulários cobertos, mas não substitui
+capturas visuais pós-atualização nem aprova THEME-MF3.
+
 ### THEME-MF0 — recenseamento lexical global da árvore do tema (2026-10-30)
 
 O gerador `scripts/audit-aculta420-responsive-inventory.py` foi executado em

@@ -68,14 +68,14 @@ final class EventDateDeleteForm extends FormBase {
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Remover data'),
-      '#attributes' => ['class' => ['button', 'button--danger']],
+      '#attributes' => ['data-portal-ui' => 'event-date-delete'],
       '#ajax' => ['callback' => '::ajaxSubmit'],
     ];
     $form['actions']['cancel'] = [
       '#type' => 'link',
       '#title' => $this->t('Cancelar'),
       '#url' => Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $event->id()]),
-      '#attributes' => ['class' => ['button']],
+      '#attributes' => ['data-portal-ui' => 'event-date-cancel'],
     ];
 
     return $form;

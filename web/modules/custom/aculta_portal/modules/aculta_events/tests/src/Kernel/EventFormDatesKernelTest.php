@@ -141,6 +141,7 @@ final class EventFormDatesKernelTest extends KernelTestBase {
       'aculta_events.event_date_add',
       $form['event_dates']['add']['#url']->getRouteName()
     );
+    self::assertSame('event-date-add', $form['event_dates']['add']['#attributes']['data-portal-ui']);
     self::assertContains('use-ajax', $form['event_dates']['add']['#attributes']['class']);
   }
 

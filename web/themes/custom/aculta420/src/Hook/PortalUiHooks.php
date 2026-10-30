@@ -33,6 +33,13 @@ final class PortalUiHooks {
     'notice-error' => ['messages', 'messages--error'],
     // Eventos: estrutura neutra do catálogo e leitores de calendário.
     'event-card' => ['event-card'],
+    'event-date-row' => ['aculta-event-date-row'],
+    'event-date-actions' => ['aculta-event-date-actions'],
+    'event-location-widget' => ['aculta-event-location-widget'],
+    'event-location-target-id' => ['aculta-location-target-id'],
+    'event-date-add' => ['button', 'button--primary'],
+    'event-date-delete' => ['button', 'button--danger'],
+    'event-date-cancel' => ['button'],
     'event-supporters' => ['event-supporters', 'sponsor-logos'],
     'event-supporters-list' => ['sponsor-logos-list'],
     'event-supporter-item' => ['sponsor-item'],
