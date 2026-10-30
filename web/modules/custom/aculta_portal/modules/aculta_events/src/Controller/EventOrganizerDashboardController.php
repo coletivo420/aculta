@@ -40,7 +40,9 @@ final class EventOrganizerDashboardController extends ControllerBase {
    */
   public function page(): array {
     $account = $this->currentUser();
-    $canCreate = $this->entities->getAccessControlHandler('aculta_event')->createAccess(NULL, $account);
+    // Request the cacheable AccessResult object in the fourth parameter; the
+    // default return value is a boolean and cannot contribute cache metadata.
+    $canCreate = $this->entities->getAccessControlHandler('aculta_event')->createAccess(NULL, $account, [], TRUE);
     $items = [];
     if ($canCreate->isAllowed()) {
       $items[] = [

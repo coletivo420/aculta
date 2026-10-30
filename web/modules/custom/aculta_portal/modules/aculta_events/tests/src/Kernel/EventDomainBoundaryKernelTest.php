@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_events\Kernel;
 
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
+use Drupal\aculta_events\Controller\EventOrganizerDashboardController;
 use Drupal\aculta_events\Plugin\Block\UpcomingEventsBlock;
 use Drupal\aculta_portal\Domain\ContentPurposeResolver;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -115,6 +116,17 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
       self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'main'), $name);
       self::assertTrue((bool) $route->getOption('no_cache'), $name);
     }
+  }
+
+  /**
+   * The organizer dashboard requests the cacheable create access result.
+   */
+  public function testOrganizerDashboardBuildsWithAccessResultObject(): void {
+    $controller = EventOrganizerDashboardController::create($this->container);
+    $build = $controller->page();
+
+    self::assertSame('container', $build['#type']);
+    self::assertContains('user.permissions', $build['#cache']['contexts']);
   }
 
   /**
