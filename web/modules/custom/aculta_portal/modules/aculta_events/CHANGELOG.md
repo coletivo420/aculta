@@ -1,5 +1,19 @@
 # Changelog — aculta_events
 
+## 2026-10-30 — Datas e Locais geridos dentro do Evento (centralização editorial)
+
+- A rota avulsa `aculta_events.date_add` (`/painel-administrativo/eventos/datas/adicionar`) foi **removida**; a URL responde 404. Não há alias nem redirect temporário.
+- A criação e a edição de Datas passam a viver no contexto do Evento:
+  - `aculta_events.event_date_add` — `/painel-administrativo/eventos/{aculta_event}/datas/adicionar`;
+  - `aculta_events.event_date_edit` — `/painel-administrativo/eventos/{aculta_event}/datas/{aculta_event_date}/editar`;
+  - `aculta_events.event_date_delete` — `/painel-administrativo/eventos/{aculta_event}/datas/{aculta_event_date}/excluir`.
+- As rotas exigem `aculta_event.update` e `EventDateRouteAccess` confirma no servidor que a Data pertence ao Evento da URL. Acesso direto sem Evento autorizado é negado.
+- `EventForm` na criação aceita uma ou mais Datas (com “Adicionar outra data” por AJAX) e um Local por Data; na edição, lista as Datas do Evento com ações de editar/remover abertas em popup Drupal (AJAX). Os formulários de Data retornam ao Evento de origem.
+- O menu administrativo e a visão geral deixam de expor “Adicionar data de evento” como ação independente; o link da página pública passa a abrir a edição do Evento.
+- A entidade técnica `aculta_event_date` permanece no modelo Evento > Data > Local e continua sendo a fonte do calendário, `.ics`, recorrência, embed e página pública.
+- Política configurável de papéis para criar Eventos/Locais (`aculta_events.permission_policy`) aplicada nos access handlers, no modal de Local e no servidor; padrão `content_editor`.
+- Testes: `EventDateManagementKernelTest` (6/88), `EventFormDatesKernelTest` (3/48), suíte Kernel de Events 76/1216, Calendar 127/431 e Unit 8/19 PASS.
+
 ## 0.2.0-dev.1 — centralização exclusiva em Eventos, modal AJAX de Locais e aposentadoria de Atividades (2026-10-30)
 
 - Rebaixamento de versão para a linha de desenvolvimento 0.2.0-dev conforme diretriz do responsável.

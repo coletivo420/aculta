@@ -66,3 +66,17 @@ Precisamos distinguir o preenchimento por CEP, que é infraestrutura comum do Po
 - A administração poderá configurar no painel de Eventos os papéis autorizados a criar Eventos e Locais. O padrão é content_editor; a configuração não substitui autorização de servidor nem deve conceder publicação automaticamente.
 
 Este aditivo complementa os itens anteriores que citavam Activity ou formulários de Data avulsos. Para a interface atual, o fluxo centralizado em Eventos prevalece; o modelo de entidades e o contrato de privacidade permanecem.
+
+
+## Implementação da centralização editorial (2026-10-30)
+
+A centralização descrita acima foi implementada em `aculta_events`:
+
+- A rota global `aculta_events.date_add` foi removida (404, sem alias). A criação, edição e remoção de Datas usam `aculta_events.event_date_add`, `event_date_edit` e `event_date_delete`, sempre com `{aculta_event}` no caminho.
+- `_entity_access: aculta_event.update` e `EventDateRouteAccess` verificam no servidor o acesso ao Evento e o vínculo Data > Evento; acesso direto sem contexto autorizado é negado.
+- `EventForm` cria uma ou mais Datas com Local por Data e, em edição, lista e administra as Datas do Evento por popup Drupal/AJAX, retornando ao Evento de origem.
+- O popup de Local (`EventLocationModalWidget`/`EventLocationModalForm`) recebe `wrapper_id` para funcionar dentro de cada Data e revalida `access('view')` na seleção e no cadastro.
+- A política configurável de papéis (`aculta_events.permission_policy`, padrão `content_editor`) é aplicada nos access handlers e nas submissões.
+- A entidade `aculta_event_date` e o modelo Evento > Data > Local permanecem; calendário, `.ics`, recorrência, embed e página pública continuam consumindo a Data como fonte de dados.
+
+Evidência: `EventDateManagementKernelTest`, `EventFormDatesKernelTest`, suíte Kernel de Events e suíte `aculta_calendar` PASS (ver ROADMAP do módulo). Nenhuma migração de dados ou escrita no Runtime foi executada.

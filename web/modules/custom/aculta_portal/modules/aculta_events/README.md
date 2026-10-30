@@ -14,6 +14,15 @@ endereços importados que exibam um formulário à pessoa.
 
 Eventos, datas e locais do purpose `eventos` (ADR-015). Usa o `aculta_calendar` para recorrência, agenda e `.ics`, e o `aculta_maps` para o mapa de locais. Ingressos pagos ficam fora da v1 e seguem plano próprio.
 
+## Fluxo editorial: Evento é a unidade de trabalho
+
+`aculta_event_date` continua sendo uma entidade interna do modelo Evento > Data > Local e fonte do calendário, mas a gestão editorial é centralizada no Evento:
+
+- Criação: `EventForm` (`/painel-administrativo/eventos/adicionar`) permite configurar uma ou mais Datas e associar um Local a cada uma.
+- Edição: `/painel-administrativo/eventos/{aculta_event}/editar` lista as Datas do Evento e abre as ações em popup Drupal/AJAX.
+- **Não existe** rota global de “Adicionar data de evento”. As rotas `aculta_events.event_date_add`, `event_date_edit` e `event_date_delete` exigem o Evento no caminho, verificam `aculta_event.update` e confirmam no servidor que a Data pertence ao Evento (`EventDateRouteAccess`).
+- A antiga rota `aculta_events.date_add` foi aposentada sem alias ou redirect temporário.
+
 - Roadmap e fases: [docs/ROADMAP.md](docs/ROADMAP.md)
 - Modelo de dados: [docs/MODELO-DE-DADOS.md](docs/MODELO-DE-DADOS.md)
 - Plano de implantação: [docs/PLANO-IMPLANTACAO.md](docs/PLANO-IMPLANTACAO.md)

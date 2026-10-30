@@ -36,3 +36,12 @@ mesmo caminho: `aculta_events` e `aculta_lms_agenda` precisam de agenda, e outra
 | --- | --- |
 | Calendário dentro de `aculta_events` | Acopla a agenda do LMS e de outras áreas a eventos |
 | Biblioteca de calendário de terceiros (FullCalendar etc.) | Dependência de JavaScript pesada, contra a regra de dependências do projeto |
+
+## Aditivo: gestão editorial de Datas no Evento (2026-10-30)
+
+A experiência administrativa de Datas foi centralizada em Eventos (ADR-033), mas esta decisão não muda o contrato do calendário:
+
+- `aculta_event_date` continua sendo a fonte de datas, o provedor `aculta_events.item_provider` continua registrado e `EventDateOccurrences`/RRULE permanecem no fluxo.
+- Agenda, grade, `.ics`, embed e páginas públicas seguem consumindo a Data; a mudança é apenas editorial e de navegação administrativa.
+- Nenhuma rota ou entidade do calendário foi removida. As rotas administrativas de recorrência e ocorrência permanecem técnicas, restritas a quem administra eventos.
+- A rota global de criação de Data (`aculta_events.date_add`) saiu; a criação passou a exigir o Evento de origem no caminho.
