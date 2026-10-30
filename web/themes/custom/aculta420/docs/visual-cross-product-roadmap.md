@@ -1164,10 +1164,14 @@ OCS-F11/THEME-MF3.
 
 ### THEME-MF2 — CAPTCHA estreito e gate de fronteira (2026-10-30)
 
-O reteste do rodapé nos dez purposes passou 259/260 verificações; a única
-falha é o widget Turnstile flexível de 300 px em conteúdo de Conta com 268 px a
-320 CSS px. Não foi mantido CSS que cortaria ou escalaria o desafio. O Pede-A
-para `aculta_portal` e a evidência estão em `mobile-first-audit.md`.
+O reteste atual encontrou o widget de largura mínima 300 px dentro de 268 px em
+Conta/320 px. No Runtime/PR HEAD `2493d7535`, o teste autenticado anonimamente em
+`/entrar` anônimo passou 2/3 checks (320 px falha; 360 px passa); a regressão do rodapé
+em 320 px passou 19/20 nos dez purposes, com apenas Conta falhando. A tentativa
+de CSS direto foi removida porque o validator de foundations proíbe integração
+anti-bot no tema. Pede-A: o Portal deve fornecer marcadores semânticos de
+apresentação para que o tema adapte o conteúdo por container query sem conhecer
+o provedor. Contrato e teste em `mobile-first-audit.md`.
 
 O validator de fronteira tema/módulo continua vermelho por classes visuais nos
 dois formulários do módulo `aculta_events` (1/3482). A Frente B não alterou o

@@ -19,6 +19,10 @@ OUT = Path(os.environ["SUITE_OUT"])
 OUT.mkdir(parents=True, exist_ok=True)
 os.environ.setdefault("ACULTA_FF_PROFILE_ROOT", str(OUT / "profiles"))
 BASE = os.environ.get("AUTH_ROUTE_BASE_URL", "http://default").rstrip("/")
+ROUTE = os.environ.get("AUTH_ROUTE_PATH", "/entrar")
+if not ROUTE.startswith("/") or "?" in ROUTE or "#" in ROUTE:
+    raise SystemExit("AUTH_ROUTE_PATH deve ser um path absoluto simples.")
+EXPECTED_PATH_CLASS = "path-" + ROUTE.strip("/").replace("/", "-")
 WIDTHS = [int(width) for width in os.environ.get(
     "AUTH_ROUTE_WIDTHS", "320,360,390,575,576,599,600,768,1024,1280,1440",
 ).split(",")]
@@ -76,16 +80,17 @@ contentPadding:getComputedStyle(document.querySelector('.aculta-content')).paddi
 challengeWidth:challenge?.getBoundingClientRect().width||0,challengeScrollWidth:challenge?.scrollWidth||0,
 challengeClientWidth:challenge?.clientWidth||0,
 hasHeading:!!document.querySelector('.aculta-page-heading h1'),
-hasLoginForm:!!document.querySelector('.user-login-form'),
+hasAuthForm:!!document.querySelector('.aculta-main form'),
 loggedIn:document.body.classList.contains('user-logged-in')};"""
 driver = Driver(bidi=True)
 viewport = Viewport(driver)
 try:
-    driver.get(f"{BASE}/entrar")
+    driver.get(f"{BASE}{ROUTE}")
     initial = driver.js(measure)
-    record("rota real anônima /entrar", initial["bodyClass"].split() and "path-entrar" in initial["bodyClass"].split()
-           and initial["hasHeading"] and initial["hasLoginForm"] and not initial["loggedIn"],
-           {key: initial[key] for key in ("bodyClass", "hasHeading", "hasLoginForm", "loggedIn")})
+    route_ok = EXPECTED_PATH_CLASS in initial["bodyClass"].split()
+    record(f"rota real anônima {ROUTE}", route_ok and initial["hasHeading"] and initial["hasAuthForm"]
+           and initial["challengeWidth"] > 0 and not initial["loggedIn"],
+           {key: initial[key] for key in ("bodyClass", "hasHeading", "hasAuthForm", "challengeWidth", "loggedIn")})
     driver.js("""const style=document.createElement('style');style.id='auth-candidate';
       style.textContent=arguments[0];document.head.append(style);return true;""", [CSS])
 
@@ -94,18 +99,19 @@ try:
         driver.js("window.scrollTo(8, 0)")
         data = driver.js(measure)
         png = base64.b64decode(driver.req("GET", f"/session/{driver.session}/screenshot"))
-        (OUT / f"candidate-{width}.png").write_bytes(png)
+        path_name = ROUTE.strip("/").replace("/", "-") or "front"
+        (OUT / f"candidate-{path_name}-{width}.png").write_bytes(png)
         expected_heading = "24px 20px 4px" if width < 576 else "32px 32px 4px"
         expected_content = "0px 20px 24px" if width < 576 else "0px 32px 32px"
         horizontal_scroll_blocked = data["documentWidth"] <= width or (
             data["rootOverflowX"] == "clip" and data["scrollX"] == 0
         )
-        valid = (actual_width == width and "path-entrar" in data["bodyClass"].split()
-                 and data["hasHeading"] and data["hasLoginForm"] and not data["loggedIn"]
+        valid = (actual_width == width and EXPECTED_PATH_CLASS in data["bodyClass"].split()
+                 and data["hasHeading"] and data["hasAuthForm"] and data["challengeWidth"] > 0 and not data["loggedIn"]
                  and horizontal_scroll_blocked and data["headingPadding"] == expected_heading
                  and data["contentPadding"] == expected_content
                  and (data["challengeWidth"] == 0 or data["challengeScrollWidth"] <= data["challengeWidth"] + 1))
-        record(f"Runtime /entrar {width}px: estilos candidatos e sem overflow", valid,
+        record(f"Runtime {ROUTE} {width}px: estilos candidatos e sem overflow", valid,
                {key: data[key] for key in ("documentWidth", "bodyWidth", "clientWidth", "rootOverflowX", "scrollX", "headingPadding", "contentPadding", "challengeWidth", "challengeScrollWidth", "challengeClientWidth")})
 finally:
     viewport.close()

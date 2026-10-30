@@ -1802,37 +1802,37 @@ capturas mascaram valores e ficam fora do Git em
 Isto não cobre lookup CEP ao vivo, ACL entre contas, teclado completo, zoom ou
 WCAG 2.2 AA.
 
-### THEME-MF2 — CAPTCHA Turnstile a 320 px e Pede-A
+### THEME-MF2 — overflow do desafio de verificação e Pede-A
 
-Reteste visual anônimo da rota `/entrar` a 320 px no Firefox ESR visível
-confirmou um overflow real do conteúdo: a área `cf-turnstile` tem 268 px, mas o
-widget interno ocupa 300 px; o documento e `body` chegam a 328 px. A tentativa
-de limitar o wrapper por CSS não altera o iframe/viewport interno, e escala CSS
-recorta elementos do desafio, por isso não foi mantida. A configuração do
-Turnstile está em `flexible`, cujo contrato documentado tem largura mínima de
-300 px ([documentação oficial do Turnstile](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/widget-configurations/)).
-Em 360 px, o espaço medido é 308 px e o widget cabe.
+Firefox ESR visível confirmou overflow em `/entrar` a 320 px: o contêiner tem
+268 px e o widget `flexible` exige no mínimo 300 px, conforme a
+[documentação oficial do Turnstile](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/widget-configurations/).
+O documento/body chegam a 328 px. A 360 px, o espaço disponível é 308 px e o
+widget cabe. A reprodução atual passou 2/3 checks (320 px falha; 360 px passa),
+sem submeter o formulário: `/home/piradopirata/aculta-suite-out/auth-route-captcha-current-2493-20261030/`.
 
-Evidência Firefox, sem submissão: 320 px falhou e 360 px passou no teste
-reforçado; resultado em
-`/home/piradopirata/aculta-suite-out/auth-route-captcha-final-20261030/summary.json`.
-O reteste de rodapé em dez purposes passou 259/260 checks; a única falha foi
-Conta a 320 px, causada pelo mesmo desafio (rodapé: 320 px, conteúdo máximo:
-272 px; shell Institution Bar/Domain Header permanecem únicos). Resultado em
-`/home/piradopirata/aculta-suite-out/footer-layout-head-4307-20261030/results.json`.
+O reteste Firefox do rodapé em dez purposes, a 320 px e no Runtime/PR HEAD
+`2493d7535`, passou 19/20 checks; a única falha foi o shell de Conta pelo mesmo
+overflow. Os outros nove purposes preservaram layout e headers: resultado em
+`/home/piradopirata/aculta-suite-out/footer-layout-current-2493-20261030/`.
 
-**Pede-A — apresentação responsiva do Turnstile:** owner de
-`web/modules/custom/aculta_portal` deve definir como o widget `flexible` será
-apresentado quando o campo tiver menos de 300 px, preservando desafio completo,
-teclado, validação server-side e a política atual de exceções. Não mudar a
-configuração global para `compact` sem avaliar o aumento de altura e o impacto
-em formulários largos. O contrato esperado é widget sem corte/overflow em
-320/360 px e tamanho `flexible` preservado quando houver largura suficiente.
-Teste requerido: Firefox visível em `/entrar` e nos demais pontos protegidos,
-com viewport 320/360/390 px, confirmar dimensões e interação completa do
-challenge, submissão de teste autorizada e validação do token; repetir sem CSS
-global injetado. A Frente B não altera Turnstile, CAPTCHA, configuração global
-ou Form API como workaround.
+CSS de apresentação direta para CAPTCHA/Turnstile não passa o guardrail
+`validate-aculta420-design-foundations.php`, que proíbe referência de integração
+anti-bot no tema. A tentativa CSS que cortava o widget foi removida. **Pede-A ao
+owner `web/modules/custom/aculta_portal`:** adicionar ao markup do widget
+marcadores semânticos estáveis, por exemplo `data-portal-ui="challenge-frame"`
+no contêiner com largura limitada e `data-portal-ui="challenge-content"` no
+conteúdo redimensionável. O tema então poderá usar container query nesses
+marcadores sem mencionar integração CAPTCHA/Turnstile. O módulo Portal teve
+alteração recente no HEAD (`892a4d2fe`); a Frente B não o editou.
+
+Contrato/teste requerido: preservar `flexible`, challenge inteiro, teclado,
+validação server-side e política de exceções; Firefox em `/entrar`,
+`/criar-conta` e `/recuperar-senha` em 320/351/352/360 px, sem overflow, e
+auditar também todos os demais `captcha_point` ativos. Validar interação e token
+em ambiente apropriado, `validate-aculta420-design-foundations.php` e
+`validate-module-theme-boundary.php`. Não trocar globalmente para `compact` sem
+avaliar o aumento de altura em todos os formulários.
 
 Reteste posterior no checkout servido `2493d7535`, confirmado por Drush em
 `aculta_runtime` e correspondente ao HEAD da PR antes e depois da rodada:

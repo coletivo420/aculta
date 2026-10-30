@@ -417,18 +417,16 @@ anterior à correção confirmou `path-entrar` e não aplicava os estilos
 específicos de `auth.css`; a verificação do CSS corrigido no Runtime aguarda sua
 publicação e rebuild de cache.
 
-`auth-route-runtime.py` abre anonimamente a rota real `/entrar` e injeta as folhas
+`auth-route-runtime.py` abre anonimamente uma rota real e injeta as folhas
 candidatas de base e autenticação apenas no DOM da sessão de teste, sem enviar
 formulários ou alterar o Runtime. Além de markup, paddings e scroll, mede o
-widget Turnstile. O CSS de tema não deve ocultar nem reduzir artificialmente o
-widget: com largura de conteúdo abaixo de 300 px, a configuração `flexible` do
-Turnstile mantém o mínimo de 300 px. O reteste a 320 px registra esse excesso;
-ele precisa ser resolvido no contrato de apresentação do widget, sem cortar o
-desafio. Em 360 px e acima, o widget observado cabe. Use `AUTH_ROUTE_BASE_URL`
-para o domínio de desenvolvimento e `AUTH_ROUTE_WIDTHS` para focar larguras.
-Evidência da reprodução: `/home/piradopirata/aculta-suite-out/auth-route-captcha-final-20261030/summary.json` (320px falha; 360px passa).
-O check geral de auth anterior, 12/12, não media o conteúdo interno do Turnstile
-e portanto não prova que o CAPTCHA caiba a 320 px.
+widget. `AUTH_ROUTE_BASE_URL` define o domínio, `AUTH_ROUTE_PATH` escolhe
+`/entrar`, `/criar-conta` ou `/recuperar-senha`, e `AUTH_ROUTE_WIDTHS` seleciona
+as larguras. Reprodução no Runtime/PR HEAD `2493d7535`: `/entrar` passou em
+360 px e falhou a 320 px porque o conteúdo de 300 px excede seu contêiner de
+268 px. Evidência: `/home/piradopirata/aculta-suite-out/auth-route-captcha-current-2493-20261030/`.
+Não houve submissão. O Pede-A para permitir styling só por marcadores semânticos
+do Portal está em `web/themes/custom/aculta420/docs/mobile-first-audit.md`.
 
 ```sh
 export DISPLAY=:0
@@ -658,6 +656,11 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/footer-layout.py
 `FOOTER_CSS_OVERRIDE=1` injeta somente a folha candidata do SDC Social Links
 para testar o caso em que os links são gerados pelo LinkGenerator e chegam com
 tokens semânticos no HTML. Os demais estilos continuam servidos pelo site.
+`FOOTER_BASE_CSS_OVERRIDE=1` injeta também a CSS base candidata para verificar
+mudanças globais de tema nos dez purposes.
+`FOOTER_AUTH_CSS_OVERRIDE=1` injeta `css/components/auth.css` para validar uma
+variante candidata de autenticação na rota Conta. Os overrides são opcionais e
+não alteram o Runtime.
 Use `FOOTER_DOMAIN_ENV=production` somente após confirmar ambiente, DNS e TLS;
 `FOOTER_WIDTHS` permite selecionar larguras. Evidência da execução 2026-10-30:
 `/home/piradopirata/aculta-suite-out/footer-layout-20261030-candidate4/`. O teste
@@ -665,9 +668,8 @@ mede somente o layout público do rodapé, shell e overflow; não cobre navegaç
 por teclado, zoom, contraste, leitores de tela, páginas internas nem aprova
 THEME-MF3.
 
-Reteste posterior no Runtime/PR HEAD `4307e6fe9`: 259/260 checks em dez
-purposes e 13 larguras. A falha única foi `/conta` a 320 px: o `body` excedeu
-8 px por causa do Turnstile no formulário de login; a inspeção confirmou o
-widget fixo de 300 px dentro da área de 268 px. Não é falha do grid do rodapé.
-Consulte “CAPTCHA Turnstile a 320 px e Pede-A” em
-`web/themes/custom/aculta420/docs/mobile-first-audit.md`.
+Reteste atual no Runtime/PR HEAD `2493d7535`, 320 px, sem overrides: 19/20
+checks. A única falha foi `/conta` por overflow do widget; os outros nove
+purposes passaram, com shell único. Evidência em
+`/home/piradopirata/aculta-suite-out/footer-layout-current-2493-20261030/`.
+O gate completo de rodapé ainda requer regressão após resolução do Pede-A.
