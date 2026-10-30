@@ -1836,13 +1836,14 @@ ou Form API como workaround.
 
 Reteste posterior no checkout servido `2493d7535`, confirmado por Drush em
 `aculta_runtime` e correspondente ao HEAD da PR antes e depois da rodada:
-`purpose-headings.py` cobriu os dez purposes em 320/1440 px. Todos os 20 H1
-estavam visíveis em `main#main-content`; os 20 pares Institution Bar/Domain
-Header estavam presentes uma vez. O total foi 39/40 checks: a única falha de
-shell/overflow segue Conta a 320 px (`documentWidth=328`), explicada pelo
-Turnstile. Evidência: `/home/piradopirata/aculta-suite-out/purpose-headings-pr-2493-20261030/results.json`.
+`purpose-headings.py` cobriu os dez purposes nos nove viewports exigidos
+(320/360/390/599/600/768/1024/1280/1440). Todos os 90 H1 estavam visíveis em
+`main#main-content`; os 90 pares Institution Bar/Domain Header estavam
+presentes uma vez. O total foi 179/180 checks: a única falha de shell/overflow
+segue Conta a 320 px (`documentWidth=328`), explicada pelo Turnstile. Evidência:
+`/home/piradopirata/aculta-suite-out/purpose-headings-pr-2493-full-20261030/results.json`.
 O achado antigo de H1 ausente em Apoio/Cursos foi resolvido no código servido;
-esta amostra focal não substitui os nove viewports nem aprova THEME-MF3.
+este teste valida headings e shell, não estados internos nem aprova THEME-MF3.
 
 ### THEME-MF3 — gate de fronteira do tema (bloqueado)
 

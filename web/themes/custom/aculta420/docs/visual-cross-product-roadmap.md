@@ -1175,9 +1175,9 @@ módulo. THEME-MF3 permanece não aprovado; este reteste não inicia OCS-A1–A4
 
 ### THEME-MF3 — headings e shell no checkout servido `2493d7535` (2026-10-30)
 
-Firefox visível mediu os dez purposes a 320/1440 px: todos os 20 H1 estão
-visíveis e os dois headers aparecem uma vez em cada tela. Resultado total
-39/40; a única falha é o overflow `/conta` 320 px pelo widget Turnstile. A
-checagem confirma que o defeito anterior de título ausente em Apoio/Cursos não
-está no código atualmente servido. Evidências e escopo em `mobile-first-audit.md`;
-isto não fecha os demais viewports nem THEME-MF3.
+Firefox visível mediu os dez purposes nos nove viewports exigidos: todos os 90
+H1 estão visíveis e os dois headers aparecem uma vez em cada tela. Resultado
+total 179/180; a única falha é o overflow `/conta` 320 px pelo widget Turnstile.
+A checagem confirma que o defeito anterior de título ausente em Apoio/Cursos
+não está no código atualmente servido. Evidências e escopo em
+`mobile-first-audit.md`; isto não testa estados internos nem aprova THEME-MF3.
