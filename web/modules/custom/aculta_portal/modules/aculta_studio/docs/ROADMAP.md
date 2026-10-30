@@ -4,15 +4,21 @@ Marley `conta.aculta.*/marley`; Ganjalab `cursos.aculta.*/ganjalab`; WE SATIVA `
 
 ## Inventário histórico pré-ADR-038
 
-## Incremento planejado LOC - Eventos e Locais no Marley (2026-10-29)
+## ACULTA Studio Culturas - status de integração (2026-10-30)
 
-[Plano LOC-00 a LOC-08](../../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md). Integração ainda ausente no registro auditado; não marcar área como disponível por este documento.
+ACULTA Studio Culturas é uma Suite independente do Marley no purpose `eventos`, com caminho `/culturas` conforme ADR-035/038. Eventos e Locais permanecem no owner `aculta_events`; a conta `account` pode oferecer link absoluto, sem persistência ou POST cross-domain.
 
-- [ ] LOC-06: registrar área Eventos pelo contrato vigente, com seções Eventos, Datas e Locais; disponibilidade condicionada ao owner e acesso real das operações.
-- [ ] Reutilizar CRUD/Forms do aculta_events e endereços centrais, com retorno seguro ao Studio; sem editor ou tabela paralela.
-- [ ] Consumir consultas autorizadas/paginadas e relações do aculta_index quando disponível; seleção transacional continua no owner.
-- [ ] Avaliar ações cross-purpose com runInPurpose e URLs do DomainPurposeManager; preservar hub ACCOUNT, /conta-legada e separação Conta/Perfil/Organização.
-- [ ] Handoff para frente visual OCS-F/A e THEME-MF; mobile-first, teclado, no-JS e caches A/B em LOC-08.
+No HEAD auditado, `aculta_events` já declara dashboard `/culturas`, criação/edição de Evento, gestão contextual de Datas e Locais, modal AJAX de Local e configuração administrativa de papéis. Isso representa implementação parcial, não homologação completa da Suite.
+
+- [x] Rotas e composição inicial do organizador presentes no owner `aculta_events`.
+- [x] Fluxo inicial Evento + Datas; operações de Data mantêm Evento obrigatório e vínculo validado.
+- [x] Popup de seleção/cadastro de Local com CEP e validação de acesso.
+- [x] Configuração administrativa de papéis para criação de Evento e Local; `content_editor` como padrão.
+- [ ] Confirmar purpose, access handlers, POST/AJAX e exposição somente leitura em outros domínios no Runtime.
+- [ ] Evoluir dashboard com filtros e paginação; revisar vínculo de organizadores e criação parcial Evento/Datas.
+- [ ] Homologar acessibilidade, mobile-first, visual, teclado, estado de formulário e cache.
+
+Referências: [plano LOC](../../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), [análise comparativa OpenCulturas](../../../../../../../docs/architecture/ANALISE-COMPARATIVA-OPENCULTURAS-ACULTA-STUDIO-CULTURAS.md) e [ADR-035](../../../../../../../docs/decisions/ADR-035-aculta-studio-culturas.md). Não integrar Culturas como aba do Marley.
 
 Não reabrir shell, mover conteúdo ou declarar OCS-F11/THEME-MF3 aprovados; manter demais frentes e versões.
 
