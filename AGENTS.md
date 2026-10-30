@@ -96,3 +96,12 @@ Modelo fixo **por sessão** escolhido no CLI, não neste arquivo. Busque trechos
 
 ## DeepSeek: bloqueio de pico
 - Se o provedor da sessão for DeepSeek, **não execute chamadas diretas à API**: use o proxy local de `scripts/deepseek-offpeak.py` conforme `docs/operations/DEEPSEEK-OFFPEAK.md`. No pico, o trabalho segue com o Claude padrão (lançador `claude-deepseek`, que escolhe o provedor pelo horário); não chame a API DeepSeek diretamente e não contorne o HTTP 429. A instrução não substitui o bloqueio de rede nem a configuração do endpoint no CLI.
+
+
+## Endereços e Locais (regra para agentes)
+
+- Antes de criar ou alterar qualquer formulário de endereço, consulte `docs/decisions/ADR-033-endereco-busca-e-locais.md`, `docs/portal/ACCOUNT-ADDRESS.md` e `docs/portal/GUARDRAILS.md`. A integração CEP central é padrão para todo formulário de endereço completo do Portal, inclusive módulos ACULTA novos.
+- Não adicione seletor de país a formulários brasileiros. Preserve Conta e checkout: a busca existente por CEP não deve mudar.
+- Busca por logradouro/endereço é uma função planejada e restrita às interfaces de Events e Maps. Não a exponha em Conta, checkout nem em formulário global. Não invente provedor, geocodificação ou endpoint.
+- Para Activity, use Local de `aculta_events`; não reintroduza campos de endereço avulsos. Seletor e cadastro devem seguir o plano de modal Drupal/AJAX, o contrato de autorização e a revisão de privacidade.
+- Ao encontrar formulário completo sem o adaptador, registre como lacuna de integração. Não altere dados/configuração Runtime nem promova versão ao apenas documentar.
