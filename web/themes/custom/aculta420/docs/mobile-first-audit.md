@@ -116,6 +116,16 @@ A linha sintética do índice ainda não substitui a inspeção de tópico real;
 Fórum e demais purposes não estão homologados globalmente e MF3 permanece
 pendente.
 
+O Firefox ESR visível também passou **62/62 verificações** na View pública de
+categorias com 12 cartões reais, em 320/360/390/575/576/600/767/768/1024/1280/
+1440px: reflow, ausência de overflow, link de salto/teclado, e capturas claro/
+escuro. A linha de tópico e a ação da listagem foram fixtures somente no DOM;
+não se enviou conteúdo. Capturas e `results.json`:
+`/home/piradopirata/aculta-suite-out/theme-mf2-forum-index-20261030/`. O tema
+servido no Runtime não foi reconstruído; a barra multidomínio nessa captura
+reflete os assets servidos e não integra a CSS candidata do índice. A validação
+completa de tópico real e shell permanece pendente.
+
 As ações do cabeçalho da View de tópicos também foram migradas da media query
 com limite superior para aprimoramento progressivo: dimensões compactas a
 partir de `36rem` e dimensões originais restauradas em `62rem`. Os mesmos
