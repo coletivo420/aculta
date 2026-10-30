@@ -6,3 +6,6 @@ Herde `AGENTS.md` da raiz. Consulte `docs/AGENT-POLICIES.md` **somente nas seç�
 - Valide DI, Entity API, access, render/cacheability e gates do escopo.
 - Para rotas/domínios, consulte `docs/architecture/AGENT-ROUTES.md` e `docs/architecture/ROUTES-SITEMAP.md`.
 - Regras adicionais de submódulos só se aplicam ao submódulo alterado.
+
+- Antes de criar ou editar captura de endereço, leia `docs/decisions/ADR-033-endereco-busca-e-locais.md` e siga `docs/portal/ACCOUNT-ADDRESS.md`: reutilize o adaptador central e CEP para endereço completo; Brasil padrão, sem seletor.
+- Busca por logradouro é exclusiva de Events/Maps e não está implementada. Preserve o comportamento de Conta/checkout. Para Activity, integre Local de Events em vez de manter campos postais avulsos.
