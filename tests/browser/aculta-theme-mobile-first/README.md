@@ -269,6 +269,25 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/rail-courses.py
 DNS/TLS e o ambiente servido. O teste não cobre conteúdo autenticado, leitores
 de tela, zoom, tema escuro ou WCAG 2.2 AA.
 
+## Cartões reais do catálogo de Eventos
+
+`events-catalogue.py` injeta o CSS candidato do SDC `event_card` no catálogo
+público e mede os wrappers do `item_list`, a moldura do SDC e overflow em
+320/360/390/575/576/600/768/1024/1280/1440px. Captura 320/768/1440 no Firefox
+ESR visível; só faz GET e não altera conteúdo. A injeção verifica a folha local
+contra o consumer real, sem rebuild do stylesheet do Runtime.
+
+```sh
+cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-events-layout
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/events-catalogue.py
+```
+
+`EVENTS_DOMAIN_ENV=production` seleciona o host de produção configurado no
+`deploy.json`; usar somente após conferir DNS/TLS e o ambiente servido.
+
 ## Institution Bar durante scroll e Toolbar administrativa
 
 `institution-bar-scroll.py` compara o comportamento da barra ao carregar e

@@ -462,6 +462,13 @@ ArrowRight funcional quando a trilha excede o viewport. Em desktop os três
 cursos cabem sem scroll horizontal. Isto valida o padrão real, mas não o gate
 global THEME-MF3; detalhes em `mobile-first-audit.md`.
 
+### THEME-MF2 — cartão Eventos sem moldura dupla
+
+O consumer real de `/eventos` foi testado em dez larguras; o wrapper do
+`item_list` não apresenta borda/padding e o SDC preserva uma única moldura,
+sem overflow. A normalização da data já está coberta pelo Unit do hook; revisão
+visual após rebuild da folha e do cache permanece pendente.
+
 ### THEME-MF1 — fundação global inicial
 
 Adicionados tokens mobile-first para gutter, largura máxima e espaçamento

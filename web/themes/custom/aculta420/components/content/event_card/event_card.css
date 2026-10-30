@@ -21,6 +21,13 @@
   min-width: 0;
 }
 
+/* The Drupal item-list wrapper is structural; the SDC owns the visible card border. */
+.event-catalogue__list > ul > li.list-group-item {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
 .event-card,
 .event-card * {
   overflow-wrap: anywhere;

@@ -124,6 +124,10 @@ O catálogo `/eventos` é apresentado pelo SDC `aculta420:event_card`. A hook
 `PortalUiHooks::preprocessEventCatalogue()` só adapta os render arrays que o
 `aculta_events` já entrega; tipos, datas, links, cancelamento, filtros e cache
 continuam no módulo. O local fica ausente enquanto o catálogo não o fornecer.
+O adaptador normaliza a prop `proxima` para data sem prefixo, que o Twig rotula
+uma vez; a CSS do tema remove padding/borda do wrapper estrutural do `item_list`,
+preservando a borda própria do SDC. A composição do wrapper passou Firefox
+320–1440px; a correção da data ainda aguarda visualização após rebuild de cache.
 
 A página `/eventos/{slug}` usa o SDC `aculta420:event-page-five-regions` pelo
 override `templates/aculta-event-page.html.twig`. Título, datas, organizador,

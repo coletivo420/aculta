@@ -65,6 +65,14 @@ ACL, cache, timezone ou regras do módulo. PHP lint e Unit do hook passaram
 este commit e reconstruir o cache. A evidência baseline está em
 `/home/piradopirata/aculta-suite-out/aculta-purposes-mobile-baseline-20261030-3c1691fc5/eventos-320.png`.
 
+A moldura dupla do cartão também foi corrigida na camada visual: o `li`
+`list-group-item` do `item_list` é agora transparente e sem border/padding, e o
+SDC mantém sua única borda. O Firefox injetou a folha candidata no consumer real
+em dez larguras (320–1440px): 20/20 checks passaram, três cards presentes e sem
+overflow. As capturas 320/1440 foram inspecionadas e confirmam a moldura única;
+Runtime CSS continua dependente de servir a folha do commit. Harness e capturas
+em `/home/piradopirata/aculta-suite-out/aculta-events-layout-20261030/`.
+
 ### THEME-MF2 — layout interno do Studio (2026-10-29)
 
 `studio.css` passa a empilhar sidebar e conteúdo como base; `min-width: 48rem`
