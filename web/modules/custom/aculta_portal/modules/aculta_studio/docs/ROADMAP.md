@@ -644,3 +644,20 @@ shell multidomínio. O smoke visual passou a injetar a CSS candidata e verificar
 320/390/767/768/1024/1440px. Stylelint e sintaxe JS PASS; Firefox/Runtime
 DEFERRED por sessões concorrentes. Esta alteração é somente responsividade do
 tema: não conclui F0/F1 nem homologa OCS-F11 ou THEME-MF3.
+
+
+### OCS-F0 — recontagem dos providers no HEAD 3c1691fc5 (2026-10-30)
+
+A revarredura do registry encontrou sete providers registrados diretamente em
+`aculta_studio.services.yml` (Conta, Perfil, Marley, GanjaLab estudante, WE
+Sativa, Planos Mercado Pago e Meus Salvos) e Green Stash registrado
+dinamicamente pelo módulo Commerce. Meus Salvos tem controller e tabs para
+salvos/seguindo/recomendações, com query transversal `SavedContentQueryInterface`;
+a existência desses fluxos no código não encerra os testes ARQ-07B nem o
+baseline visual/A-B no Runtime. Green Stash segue área comercial integrada:
+o provider de entrada ainda declara apresentação preparatória, enquanto
+produtos/envios têm fluxos proprietários a validar por loja. Os detalhes por
+rota, owner, disponibilidade e estado visual foram adicionados à matriz
+`studio-visual/visual-parity-matrix.md` e ao inventário upstream. OCS-F0 segue
+parcial; Hub/LMS, acesso à loja, Domain Header no purpose ACCOUNT e capturas
+pareadas continuam pendentes.

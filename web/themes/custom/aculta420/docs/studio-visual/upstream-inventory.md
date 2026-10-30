@@ -83,17 +83,33 @@ O componente `bookmark-toggle` tem consumer no Fórum; sua presença não autori
 
 ## Cobertura Studio e Green Stash (reescaneamento)
 
-Foram encontrados seis providers declarados pelo `aculta_studio`:
-Conta, Perfil, Marley, GanjaLab, WE Sativa e Planos Mercado Pago. Hub possui
-controller canônico `/studio`; Green Stash é registrado dinamicamente pelo
-Commerce service provider. O LMS é owner da rota `/studio/ganjalab`, que usa
-o compositor de aprendizagem no Studio. Foram encontrados controladores de Hub,
-Marley, GanjaLab, WE Sativa, Conta e Perfil, além dos plugins Marley de Revista,
-Fórum, Galerias, Cursos e Wiki. GanjaLab editorial (MarleyTab/Presenter) e
+No HEAD `3c1691fc5`, o `aculta_studio.services.yml` registra sete providers: Conta, Perfil, Marley, GanjaLab, WE Sativa, Planos Mercado Pago e Meus Salvos. O `aculta_commerce` registra dinamicamente um oitavo provider, Green Stash, quando Studio e Commerce estão disponíveis. O Hub tem controller canônico `/studio`; essa lista é inventário de código, não prova de disponibilidade por usuário no Runtime. O LMS é owner da rota `/studio/ganjalab`, que usa
+o compositor de aprendizagem no Studio. Foram encontrados controladores de Hub, Marley, GanjaLab, WE Sativa, Conta, Perfil e Salvos, além dos plugins Marley de Revista, Fórum, Galerias, Cursos e Wiki. GanjaLab editorial (MarleyTab/Presenter) e
 GanjaLab do estudante/LMS (`/studio/ganjalab`) são experiências distintas.
 O inventário visual e os estados por tela estão em
 [`visual-parity-matrix.md`](visual-parity-matrix.md); rotas, consumers,
 visibilidade por conta e aparência ainda não foram homologados em Runtime.
+
+
+
+### Registro dinâmico Studio confirmado em 2026-10-30
+
+| Provider | ID / rota canônica | Disponibilidade e acesso constatados no código | Estado visual nesta auditoria |
+|---|---|---|---|
+| Conta | `conta` / `/studio/conta` | Sempre disponível; autenticação e `access aculta portal` | Conta privada; S-R5 e visual A/B pendentes |
+| Perfil | `perfil` / `/studio/perfil` | `aculta_user` ativo; autenticação e `access aculta portal` | Editor separado da Conta; S-R4/S-R5 e visual A/B pendentes |
+| Marley | `marley` / `/studio/marley` | Provider sempre disponível; acesso exige login, permissão do Portal e pelo menos uma aba acessível | Editor/listas reais; Runtime anteriormente capturado; equivalência Next pendente |
+| GanjaLab estudante | `ganjalab` / `aculta_lms.student_dashboard` | Provider disponível quando `LearnerDashboardComposer` opcional está injetado; rota e ACL final pertencem ao LMS | Não homologado; baseline anterior mostrou conteúdo de Conta no lugar do painel LMS, Pede-A em aberto |
+| WE Sativa | `we_sativa` / `/studio/we-sativa` | Disponível com `aculta_wiki.contributor_workspace`; acesso delegado ao workspace Wiki | Workspace real do owner; captura/ACL e autoria versus moderação pendentes |
+| Planos Mercado Pago | `mercado_pago_plans` / `aculta_pagamentos_mercadopago.studio_plans` | Módulo opcional ativo; login, Portal e `administrar doacoes` | Condicional; visual e cenário de módulo ausente pendentes |
+| Meus Salvos | `salvos` / `/studio/salvos` | Provider no registry; login e `access aculta portal`; controller usa `SavedContentQueryInterface` | UI de salvos/seguindo/recomendações existe no código; testes de isolamento/cache registrados em ARQ-07B, captura visual e A/B no Runtime pendentes |
+| Green Stash integrado | `green_stash` / `/estudio/loja` | Registro condicional via `AcultaCommerceServiceProvider`; ACL de entrada é `GreenStashAccessPolicy`, além dos grants por loja/operação | Área comercial dentro do Studio. Provider ainda mostra mensagem de preparação; produtos/envios têm fluxos em código, mas acesso autorizado e operação não foram homologados. Não criar shell nem menu global paralelo. |
+
+`aculta_studio.services.yml` registra os sete primeiros providers; Green Stash
+entra dinamicamente pelo service provider de Commerce. Todos usam purpose
+`account`. O módulo e as rotas proprietárias determinam disponibilidade e
+acesso efetivos. A matriz visual permanece parcial: este inventário não altera
+rotas/serviços nem transforma estados de preparação em recursos operacionais.
 
 ### Green Stash integrado — capacidades observadas no código
 
