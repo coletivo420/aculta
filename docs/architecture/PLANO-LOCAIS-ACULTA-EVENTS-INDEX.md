@@ -260,3 +260,18 @@ A entidade `aculta_event_location` e seu ciclo de vida são de `aculta_events`. 
 - **Estado exato dos campos legados de Activity:** Os campos legados (`field_place_name`, `field_event_street`, `field_event_postal`, `field_event_region`, `field_event_city`, `field_event_country`) estão ocultos na interface do formulário em favor de `field_event_location`, mas continuam persistidos e intactos no banco de dados. Eles **não** foram removidos nem migrados; a preservação é mantida para migração segura e reversível na Fase 2.
 - **Contrato Events ↔ Maps confirmado:** `aculta_events` é o proprietário único da entidade `aculta_event_location`, de seu catálogo e de seu ciclo de vida. `aculta_maps` é consumidor técnico neutro (`MapRenderer`, `RouteLinkBuilder`) que não duplica armazenamento nem entidade. Busca por logradouro continua uma capacidade futura restrita a Events/Maps, sem afetar Conta nem checkout.
 - **Editabilidade e autopreenchimento validados:** Validado no navegador X11 Firefox ESR (`test-account-address-browser.py`, 33/33 verificações OK) que após a consulta de CEP específico e CEP geral (`06550-000`), todos os campos permanecem editáveis, a troca de CEP atualiza os dados preservando número digitado e complemento, e a submissão grava sem regressões.
+
+
+## Decisão de fluxo: Eventos centraliza a gestão editorial (2026-10-30)
+
+A interface administrativa deve tratar Evento como unidade editorial. A existência de aculta_event_date como entidade separada no modelo não significa que a Data seja um conteúdo ou tarefa administrativa independente.
+
+- [ ] Na criação de Evento, permitir cadastrar e ordenar uma ou mais Datas e escolher um Local para cada uma, no mesmo fluxo do Evento.
+- [ ] Na edição do Evento, listar e administrar suas Datas, horários e Locais dentro do contexto desse Evento.
+- [ ] Remover do painel menus, botões e ações globais que apresentem “Adicionar data de evento” como operação independente.
+- [ ] Se o formulário/rota técnica de Data for mantido, incorporá-lo ao fluxo do Evento (incluindo popup Drupal/AJAX quando adequado), exigir event_id válido e autorização no servidor, e negar acesso direto sem contexto autorizado.
+- [ ] Remover links de “Adicionar data” que levem a uma tela independente; a partir de qualquer página administrativa, a pessoa deve entrar pelo Evento correspondente.
+- [ ] Integrar o seletor/cadastro de Local ao contexto da Data do Evento e preservar todos os valores não salvos do formulário pai.
+- [ ] Configurar no painel de Eventos os papéis autorizados a criar Eventos e Locais, com content_editor como padrão inicial e checagens servidoras em todas as rotas/submissões.
+
+O item E4/F5 que registra a existência técnica de um formulário de nova Data descreve capacidade de código, não a experiência administrativa desejada. Ele não deve ser considerado concluído como UX enquanto a Data puder ser criada ou gerida como tarefa autônoma. Este aditivo prevalece sobre referências anteriores a criação inline/avulsa de Data e sobre o fluxo legado de Activity.
