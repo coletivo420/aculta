@@ -164,3 +164,15 @@ Executar gates pertinentes: diff --check, lint/PHPCS/PHPUnit dos códigos altera
 A evidência RC anterior do Events permanece histórica e limitada ao candidato registrado. O escopo ampliado de Locais está **Dev/planejado** até LOC-08; manifesto `0.1.0-rc.1` permanece inalterado nesta publicação documental e não comprova o novo fluxo. Calendar mantém seu RC anterior para o motor existente; a integração por Local é incremento pendente. Maps, Studio e Index mantêm versões e evidências atuais.
 
 Atualizar roadmap do owner a cada microfase e status por componente com estado comprovado. README raiz deve ser regenerado a partir de `docs/operations/status/`, nunca editado manualmente na tabela. Nenhuma promoção, nova versão ou release é autorizada pela publicação deste plano.
+
+
+## Aditivo de experiência editorial e endereços (2026-10-30)
+
+- A substituição dos campos de endereço de `node:add/activity` por referência a Local é futura e depende de inventário/mapeamento dos valores legados.
+- Planejar seletor Drupal/AJAX: pesquisa de Locais existentes por nome semelhante, seleção explícita, ação de cadastrar Local e retorno ao formulário pai mantendo seus valores. A autorização deve ser verificada no servidor em cada operação.
+- O cadastro abre modal Drupal/AJAX com CEP como primeira etapa, reaproveitando o adaptador central e `aculta_portal_cep/cep-address`. Brasil fixo, sem seletor. Busca por logradouro e resultados próximos ficam restritos a Events/Maps e aguardam provedor, contrato, termos, privacidade e limites aprovados.
+- O módulo CEP conserva seu comportamento por CEP; Conta/checkout não ganham busca por rua. Geocodificação de Maps não é autocomplete postal.
+- Incluir no roadmap Events uma área administrativa própria em `/painel-administrativo`, com padrão equivalente às áreas de LMS e Fórum, incluindo permissão, navegação, listagem e ações.
+- Manter `aculta_index` como contrato transversal do Local, sem indexar endereço exato/coordenadas privadas. O modal não pode contornar access, status editorial, ACL ou cache.
+
+Consulte [ADR-033](../decisions/ADR-033-endereco-busca-e-locais.md). Este aditivo documenta trabalho futuro; não altera estado de release nem afirma implementação.
