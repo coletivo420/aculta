@@ -73,6 +73,9 @@ escopada ao Studio.
   utilizáveis com teclado virtual, zoom, teclado físico e leitor de tela. Ações
   persistentes não podem cobrir conteúdo ou foco; movimento respeita
   `prefers-reduced-motion`; cor não é o único indicador de estado.
+- Mantenha visível a marca da Institution Bar desde 320 CSS px; não presuma que
+  o Domain Header existe em todos os purposes/rotas. Permita reflow da barra
+  para outra linha antes de ocultar identidade ou links.
 - Claro e escuro mantêm a mesma geometria, hierarquia, navegação e comportamento;
   somente tokens visuais podem variar. O tema apresenta o contrato neutro e não
   passa a decidir acesso, domínio ou regra de negócio para adaptar a interface.

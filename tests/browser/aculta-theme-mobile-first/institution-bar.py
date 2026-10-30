@@ -117,21 +117,23 @@ def expected_geometry(width, purpose):
             "fontSize": "13px",
             "whiteSpace": "normal",
             "brandPosition": "absolute" if narrow else "static",
+            "brandVisible": not narrow,
         }
     else:
         expected = {
-            "innerWrap": "nowrap" if mobile else "wrap",
-            "innerGap": "2px" if mobile else "4px 16px",
+            "innerWrap": "wrap",
+            "innerGap": "4px 8px" if mobile else "4px 16px",
             "logoWidth": "56px" if mobile else "78px",
             "logoHeight": "19px" if mobile else "26px",
             "utilityGap": "2px" if mobile else "8px",
             "utilityMinWidth": "0px" if mobile else "auto",
-            "navWrap": "nowrap" if mobile else "wrap",
+            "navWrap": "wrap",
             "navGap": "0px 4px" if mobile else "normal",
             "linkPadding": "2px" if mobile else "16px",
             "fontSize": "12px" if mobile else "13px",
             "whiteSpace": "nowrap" if mobile else "normal",
-            "brandPosition": "absolute" if narrow else "static",
+            "brandPosition": "static",
+            "brandVisible": True,
         }
     # The social links landing intentionally hides the utility menu in Portal's
     # domain presentation; test the shell dimensions without assuming nav links.
@@ -183,6 +185,7 @@ try:
                 innerWrap:style(inner,'flex-wrap'),
                 innerGap:style(inner,'gap'),
                 brandPosition:style(brand,'position'),
+                brandVisible:!!brand && brand.getBoundingClientRect().width > 1 && brand.getBoundingClientRect().height > 1,
                 logoWidth:style(logo,'width'),
                 logoHeight:style(logo,'height'),
                 utilityGap:style(utility,'gap'),
@@ -222,7 +225,7 @@ try:
                 check(f"{purpose} {width}px: geometria Domain Header", header_geometry,
                       json.dumps(metrics, ensure_ascii=False))
 
-            if purpose in ("main", "support") and width in (320, 768, 1440):
+            if purpose in ("main", "support", "magazine") and width in (320, 768, 1440):
                 image = driver.req("GET", f"/session/{driver.session}/screenshot")
                 (OUT / f"institution-bar-{purpose}-{width}.png").write_bytes(base64.b64decode(image))
 

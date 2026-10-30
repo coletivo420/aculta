@@ -232,7 +232,7 @@ estão em PRs empilhadas (#92 a #95). QA em navegador registrado no Git (commit 
 ```text
 div.aculta-institution-bar          (faixa sticky; offset da Toolbar vem de `displace.js`; não é landmark)
   .container > .aculta-institution-bar__inner
-    p.aculta-institution-bar__brand   logo ACULTA (img 78×26; alt com o nome completo; sem texto visível)
+    p.aculta-institution-bar__brand   logo ACULTA (img 56×19 na base mobile; 78×26 a partir de 768px; alt com nome completo; sem texto visível; sempre presente)
     div.aculta-utility                menu de conta, quando existir
 header.aculta-header                  Domain Header de purpose (0.2-D; rola com a página)
 ```

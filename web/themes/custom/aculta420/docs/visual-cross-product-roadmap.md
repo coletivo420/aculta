@@ -446,6 +446,14 @@ mostra H1 e texto editorial, sem overflow, mas não publica rows da View
 página estática são estados distintos; o owner deve confirmar a expectativa da
 listagem. Capturas e limites no registro MF0.
 
+### THEME-MF2 — marca da Institution Bar desde 320px
+
+A marca institucional agora continua visível na base móvel; utilitários podem
+reflow para outra linha. Firefox candidato passou 147/147 checks nos dez
+purposes e sete viewports, sem overflow. Esta mudança corrige a pressuposição de
+que todas as rotas têm Domain Header. MF3 continua pendente; ver auditoria para
+capturas e limitações.
+
 ### THEME-MF1 — fundação global inicial
 
 Adicionados tokens mobile-first para gutter, largura máxima e espaçamento

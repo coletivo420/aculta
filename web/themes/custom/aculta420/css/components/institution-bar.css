@@ -51,23 +51,21 @@
   }
 }
 
-/* Mobile is the base: keep the shell bar compact from 320px and let larger screens add space. */
-.aculta-institution-bar__inner { flex-wrap: nowrap; gap: 0.125rem; }
+/* Mobile is the base: keep the institutional mark present and wrap utilities as needed. */
+.aculta-institution-bar__inner { flex-wrap: wrap; gap: 0.25rem 0.5rem; }
 .aculta-institution-bar__brand { flex-shrink: 0; }
 .aculta-institution-bar__logo { width: 56px; height: 19px; }
-.aculta-utility { gap: 0.125rem; min-width: 0; }
+.aculta-utility { flex: 1 1 auto; gap: 0.125rem; min-width: 0; }
 .aculta-utility .navbar-nav,
-.aculta-utility .nav { flex-wrap: nowrap; gap: 0 0.25rem; }
+.aculta-utility .nav { flex-wrap: wrap; gap: 0 0.25rem; }
 .aculta-utility .nav-link { padding-inline: 0.125rem; font-size: 0.75rem; white-space: nowrap; }
-
-/* The bar's brand is visually redundant with the Domain Header on the narrowest phones. */
 .aculta-institution-bar__brand {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip-path: none;
+  white-space: normal;
 }
 
 @media (min-width: 768px) {
@@ -80,14 +78,3 @@
   .aculta-utility .nav-link { padding-inline: 1rem; font-size: 0.8125rem; white-space: normal; }
 }
 
-/* Show the bar brand again once its row has room at 375 CSS px. */
-@media (min-width: 23.4375rem) {
-  .aculta-institution-bar__brand {
-    position: static;
-    width: auto;
-    height: auto;
-    overflow: visible;
-    clip-path: none;
-    white-space: normal;
-  }
-}

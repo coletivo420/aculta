@@ -82,7 +82,7 @@ Vale para todos os agentes. Detalhes: docs/operations/AGENTES-PROCEDIMENTO.md.
 - Portal: `docs/portal/GUARDRAILS.md`, `docs/portal/DRUPAL-11-STANDARDS.md` e documentação local.
 - Rotas/domínios: `docs/architecture/ROUTES-SITEMAP.md` e contratos vinculados.
 - Status/releases: `docs/operations/RELEASE-LIFECYCLE.md`; índice gerado, nunca editado manualmente (`php scripts/validate-project-status-index.php`).
-- **Mobile-first é norma global do tema ACULTA420 para todos os agentes que alterem UI**, em todos os purposes e consumers; não é restrito ao Studio. Antes de mudar CSS, Twig, SDC, JS de apresentação ou layout, consulte `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md` e `web/themes/custom/aculta420/AGENTS.md`. A fidelidade OpenCulturas Next é restrita ao Studio; preserve Institution Bar e Domain Header.
+- **Mobile-first é norma global do tema ACULTA420 para todos os agentes que alterem UI**, em todos os purposes e consumers; não é restrito ao Studio. Antes de mudar CSS, Twig, SDC, JS de apresentação ou layout, consulte `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md` e `web/themes/custom/aculta420/AGENTS.md`. A fidelidade OpenCulturas Next é restrita ao Studio; preserve Institution Bar e Domain Header. Não oculte a marca da Institution Bar por presumir que Domain Header existe em todos os purposes; em telas estreitas, quebre a barra em linhas quando necessário.
 - UI: documentação do tema; demais componentes: README/contratos próprios.
 
 ## Economia de contexto

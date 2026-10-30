@@ -20,6 +20,26 @@ visual desta microfase. O PASS histórico de 3418 verificações registrado mais
 abaixo descreve outro HEAD e não aprova o estado integrado atual. Sem corrigir
 o owner e repetir o gate, não publicar os commits locais.
 
+### THEME-MF2 — marca da Institution Bar na base móvel (2026-10-30)
+
+A captura de `/noticias` em 320px mostrou a marca da Institution Bar ausente:
+`institution-bar.css` a escondia abaixo de 375px assumindo que o Domain Header
+sempre fornecia marca equivalente. Essa suposição falha na Magazine e em outras
+rotas sem `.aculta-header`. A base agora mantém a marca institucional de 56×19px
+visível e permite que a barra/utilitários quebrem em linhas; a partir de 768px
+mantém as dimensões de 78×26px. DOM, links, sticky e ownership Portal não mudam.
+
+Firefox ESR visível testou a CSS candidata nos dez purposes e em
+320/374/375/600/767/768/1440px: 147/147 verificações passaram, marca visível em
+todas as larguras, Institution Bar única e sem overflow horizontal. 320/768/
+1440 foram capturados para MAIN, SUPPORT e MAGAZINE; MAIN e SUPPORT foram
+inspecionados visualmente; Magazine/320 também foi inspecionada e confirma a
+marca sem Domain Header. Evidência em
+`/home/piradopirata/aculta-suite-out/institution-bar-brand-mobile-20261030-final/`.
+É teste de folha candidata injetada sobre o Runtime, não rebuild do stylesheet
+servido nem homologação THEME-MF3. Domain Header ausente em vários purposes
+segue registrado como Pede-A para o Portal.
+
 ### THEME-MF2 — layout interno do Studio (2026-10-29)
 
 `studio.css` passa a empilhar sidebar e conteúdo como base; `min-width: 48rem`
@@ -106,14 +126,13 @@ marca em proporção dupla. A ordem DOM, os blocos e a tipografia não mudam.
 Firefox e inspeção das páginas reais estão DEFERRED enquanto sessões visíveis
 concorrentes ocupam o ambiente. Este resultado não aprova THEME-MF3.
 
-### THEME-MF2 — Institution Bar abaixo de 375px (2026-10-29)
+### THEME-MF2 — Institution Bar abaixo de 375px (histórico; revertido em 2026-10-30)
 
-A marca da barra multidomínio agora fica oculta visualmente como estilo-base
-para o viewport mais estreito e reaparece em `min-width: 23.4375rem` (375 CSS
-px). O link permanece acessível; sticky, DOM e contratos de shell não mudam.
-O harness existente cobre a fronteira 374/375 e todos os dez purposes, mas a
-execução Firefox/runtime fica DEFERRED por sessões visíveis concorrentes. Lint
-CSS e validações estáticas são executados. Esta fatia não aprova THEME-MF3.
+Naquele estado, a marca ficava oculta visualmente abaixo de 375px e reaparecia
+em `min-width: 23.4375rem`. A regra foi revertida porque Magazine e outras rotas
+podem não apresentar Domain Header. O registro atualizado está na seção
+“marca da Institution Bar na base móvel” acima; mantenha esta evidência somente
+como histórico, não como contrato vigente.
 
 ### THEME-MF2 — Perfil público (2026-10-29)
 

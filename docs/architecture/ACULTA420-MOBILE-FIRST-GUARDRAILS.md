@@ -8,6 +8,11 @@ Aplicar a CSS/Sass, Twig, SDCs, JavaScript de apresentação, layouts, Views, bi
 
 A fundação mobile-first é global. A fidelidade OpenCulturas Next continua restrita ao interior do Studio. **Institution Bar e Domain Header são contratos do shell e permanecem preservados.**
 
+A marca da Institution Bar deve permanecer visível desde 320 CSS px. Não assuma
+que o Domain Header estará presente para substituí-la: a composição varia por
+purpose e rota. Permita que os utilitários quebrem para outra linha quando
+precisarem de espaço; não esconda a marca para forçar uma única linha.
+
 ## Regras obrigatórias de implementação
 
 1. Começar pela menor largura suportada: 320 CSS px. A base deve oferecer o conteúdo e a operação completos; aumentar espaço por `min-width` ou container query quando a tarefa e o conteúdo pedirem.
