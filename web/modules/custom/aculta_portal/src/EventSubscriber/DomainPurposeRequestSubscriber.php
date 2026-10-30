@@ -375,7 +375,9 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     }
     $path = (string) $route->getPath();
     return $path === '/painel-administrativo'
-      || str_starts_with($path, '/painel-administrativo/');
+      || str_starts_with($path, '/painel-administrativo/')
+      || $path === '/integracoes'
+      || str_starts_with($path, '/integracoes/');
   }
 
   /**

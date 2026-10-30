@@ -313,6 +313,10 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       if ($path === '/painel-administrativo' || str_starts_with($path, '/painel-administrativo/')) {
         $route->setOption('_aculta_domain_purpose', 'main');
       }
+      // Integrações externas existem somente no MAIN.
+      if ($path === '/integracoes' || str_starts_with($path, '/integracoes/')) {
+        $route->setOption('_aculta_domain_purpose', 'main');
+      }
       foreach ($adminSegments as $source => $target) {
         if (preg_match('~^/painel-administrativo/' . preg_quote($source, '~') . '(?:/|$)~', $path)) {
           $route->setPath(preg_replace('~^/painel-administrativo/' . preg_quote($source, '~') . '(?=/|$)~', '/painel-administrativo/' . $target, $path, 1));
