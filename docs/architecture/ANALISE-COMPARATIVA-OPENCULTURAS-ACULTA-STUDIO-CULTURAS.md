@@ -2,9 +2,9 @@
 
 Data da análise: 2026-10-30  
 Fonte OpenCulturas: espelho oficial `openculturas/openculturas-distribution`, branch `3.2.x`, commit `16fc5072780a41f9cd7f993620169834970f5df1`.  
-Fonte ACULTA: PR #299, branch `refactor/opencultures-codigo-visual`, HEAD auditado `63116d1de6e0907c2ab0a2aa9e1fc5de79c054e2`.
+Fonte ACULTA: PR #299, branch `refactor/opencultures-codigo-visual`, HEAD auditado `5a11ff402f474a611ee112cdbb52a2ed1b0bc7e0`.
 
-Esta é uma auditoria estática do código e da configuração. O OpenCulturas foi clonado e inspecionado localmente; a distribuição não foi instalada nem comparada ao vivo. O código da PR #299 foi consultado no HEAD indicado. A existência de testes no repositório não significa que tenham sido executados neste levantamento.
+Esta é uma auditoria estática do código e da configuração. O OpenCulturas foi clonado e inspecionado localmente; a distribuição não foi instalada nem comparada ao vivo. O código da PR #299 foi consultado no HEAD indicado. A existência de testes no repositório não significa que tenham sido executados neste levantamento. O HEAD inclui o filtro de acesso do catálogo (`81b2dde`), cacheabilidade da página canônica (`e711794`) e teste Kernel para filtrar antes da paginação (`178bf3e`); as suítes não foram executadas nesta análise.
 
 ## Conclusão
 
