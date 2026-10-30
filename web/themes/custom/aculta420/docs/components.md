@@ -121,7 +121,7 @@ Pendências da 0.4:
 ### Eventos públicos
 
 O catálogo `/eventos` é apresentado pelo SDC `aculta420:event_card`. A hook
-`ThemeHooks::preprocessEventCatalogue()` só adapta os render arrays que o
+`PortalUiHooks::preprocessEventCatalogue()` só adapta os render arrays que o
 `aculta_events` já entrega; tipos, datas, links, cancelamento, filtros e cache
 continuam no módulo. O local fica ausente enquanto o catálogo não o fornecer.
 

@@ -53,6 +53,18 @@ em 320px, ArrowRight aumentando `scrollLeft` e ausência de overflow da página.
 de leitor de tela, zoom ou THEME-MF3. Harness reutilizável:
 `tests/browser/aculta-theme-mobile-first/rail-courses.py`.
 
+### THEME-MF2 — rótulo de data do cartão Eventos (2026-10-30)
+
+A captura real de `/eventos` em 320px mostrou “Próxima data:” duplicado. O
+controller entrega uma linha localizada com prefixo e data; o adaptador visual
+do tema encaminhava esse texto completo para a prop `proxima`, embora o contrato
+do SDC seja data simples e o Twig já forneça o rótulo. `PortalUiHooks` agora
+extrai o valor `dd/mm/aaaa HH:mm` no adaptador do tema, sem alterar o controller,
+ACL, cache, timezone ou regras do módulo. PHP lint e Unit do hook passaram
+(15 testes/97 assertions); Runtime visual da correção fica `DEFERRED` até servir
+este commit e reconstruir o cache. A evidência baseline está em
+`/home/piradopirata/aculta-suite-out/aculta-purposes-mobile-baseline-20261030-3c1691fc5/eventos-320.png`.
+
 ### THEME-MF2 — layout interno do Studio (2026-10-29)
 
 `studio.css` passa a empilhar sidebar e conteúdo como base; `min-width: 48rem`

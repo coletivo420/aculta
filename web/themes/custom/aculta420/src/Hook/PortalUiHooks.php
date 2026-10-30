@@ -756,7 +756,13 @@ final class PortalUiHooks {
     if (!is_array($items) || !isset($items[0])) {
       return NULL;
     }
-    return (string) $items[0];
+    $rendered = (string) $items[0];
+    // The Events controller currently supplies a localized label plus date,
+    // while the SDC prop contract is a date only and its Twig owns the label.
+    if (preg_match('/(\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2})$/', $rendered, $matches) === 1) {
+      return $matches[1];
+    }
+    return $rendered;
   }
 
   /**

@@ -76,7 +76,7 @@ final class PortalUiHooksTest extends UnitTestCase {
     self::assertSame('Encontro Cultural', $variables['items'][0]['value']['#props']['title']);
     self::assertSame('/eventos/encontro-cultural', $variables['items'][0]['value']['#props']['url']);
     self::assertSame('Cultura & direitos', $variables['items'][0]['value']['#props']['subtitle']);
-    self::assertSame('Próxima data: 30/10/2026 19:00', $variables['items'][0]['value']['#props']['proxima']);
+    self::assertSame('30/10/2026 19:00', $variables['items'][0]['value']['#props']['proxima']);
     self::assertTrue($variables['items'][0]['value']['#props']['cancelado']);
     self::assertSame(['tags' => ['aculta_event_list']], $variables['items'][0]['value']['#cache']);
     self::assertSame('aculta420:event_card', $variables['items'][1]['#component']);
