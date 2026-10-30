@@ -396,6 +396,14 @@ hosts vêm do manifesto de transição; LINKS não exige menu utilitário porque
 Portal o omite deliberadamente. Domain Header apareceu somente em MAIN e Wiki;
 seguem pendentes Pede-A e validação MF3.
 
+Repetição Firefox ESR visível em 2026-10-30 contra o docroot no HEAD remoto
+`3c1691fc5` registrou 90/90 capturas (dez purposes × nove larguras), sem
+overflow horizontal medido: Institution Bar 90/90 e Domain Header 18/90
+(somente MAIN e Wiki). A Revista continuou sem H1 nem corpo editorial visível.
+Esse baseline não valida os nove commits locais ainda não publicados, páginas
+internas, usuários autenticados ou THEME-MF3; detalhes, Pede-A e evidências em
+[`mobile-first-audit.md`](mobile-first-audit.md).
+
 ### THEME-MF2 — Revista e Estatísticas
 
 As figuras editoriais da Revista e os filtros do painel de Estatísticas usam

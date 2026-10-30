@@ -365,7 +365,7 @@ a Frente B não adicionará um header visual paralelo.
 | MAIN | homepage pública renderiza; em 320 px o título “ANTIPROIBICIONISTA” quebra no meio da palavra sem overflow. | Captura somente homepage, sem validar outras páginas/estados. |
 | ACCOUNT | raiz redireciona para `/entrar`; Institution Bar presente. | Não cobre Conta, Perfil ou Studio autenticados; Green Stash autorizado permanece fora. |
 | SUPPORT | formulário público de valor renderiza. | Não submetido; não valida estados Form API/AJAX/erro. |
-| MAGAZINE | título de página presente, corpo visual vazio e rodapé. | Conteúdo editorial não apareceu; layout de listagem/artigo não avaliado. |
+| MAGAZINE | baseline anterior mostrava título e corpo vazio; a repetição 2026-10-30 encontrou document title, sem H1 nem conteúdo no corpo e somente o rodapé. | Página vazia em todos os nove viewports; consumidor/estado editorial precisam de verificação do owner. |
 | WIKI | homepage Wiki420 renderiza; ambos os headers presentes. | Não cobre autoria/revisão/moderação nem grants. |
 | SHOP | vitrine pública de produtos renderiza. | Não cobre variações, carrinho/checkout, estoque ou loja autorizada. |
 | COURSES | catálogo inicial renderiza sem H1 no DOM. | Não valida matrículas, turma, LMS privado nem estado sem conteúdo. |
@@ -381,12 +381,33 @@ precisam ser comparados no head de uma futura rodada. Este resultado é baseline
 público, não prova responsividade semântica, WCAG, zoom, keyboard, modo escuro,
 reduced motion, ausência de overflow em componentes não carregados ou gate MF3.
 
+### Repetição pública nos dez purposes — 2026-10-30
+
+`tests/browser/aculta-studio/purpose-matrix.py` foi executado no Firefox ESR
+visível contra o docroot no HEAD remoto `3c1691fc5`, em 320/360/390/599/600/
+768/1024/1280/1440px. Foram 90/90 capturas, zero deferred e zero registros com
+overflow horizontal medido. A Institution Bar apareceu 90/90; `.aculta-header`
+apareceu 18/90, somente nas nove capturas MAIN e nas nove WIKI. Nos oito outros
+purposes não apareceu em nenhuma raiz capturada. Revista respondeu em 9/9
+larguras com `page-view-revista-sessoes`, mas sem H1/corpo editorial visível;
+somente o rodapé apareceu no screenshot. Esta grade é anônima e cobre apenas a
+raiz de cada purpose; não prova layouts internos, autenticação, teclado, zoom,
+claro/escuro ou gates MF3. PNG/JSON estão em
+`/home/piradopirata/aculta-suite-out/aculta-purposes-mobile-baseline-20261030-3c1691fc5/`.
+
+O docroot foi testado no HEAD remoto, que precede nove commits locais desta
+worktree. Logo, esta captura atualiza o baseline da PR remota e não valida as
+alterações locais não publicadas. O teste do SDC author-card acima é exceção
+focal: seus dois arquivos CSS foram comparados por blob e coincidem com a
+worktree.
+
 ### Pede-A — composição do Domain Header por purpose
 
 | Owner/caminho | Contrato e pergunta técnica | Aceite esperado |
 |---|---|---|
-| Domain/Portal; composição de `AccountShellBuilder`, tema `templates/layout/page.html.twig` e attachments por purpose | Confirmar por que `.aculta-header` aparece somente em MAIN e Wiki nos oito propósitos públicos restantes, embora Institution Bar esteja presente em todos; confirmar se há intentionally hidden/unavailable state ou composição ausente. | Resposta/patch do owner sem duplicar shell; teste Firefox por purpose confirmando Institution Bar e Domain Header conforme decisão, incluindo ACCOUNT anônimo/autenticado e navegação canônica. |
-| Frente A / `aculta_portal`: `src/Presentation/DomainPresentationBuilder.php`, `src/Hook/PortalHooks.php`, contrato `DomainPresentation` e integração de rotas/menus | Toda regra de propósito/rota, disponibilidade, links e dados do Domain Header permanece no Portal; o tema deve somente renderizar o contrato neutro. Hoje `DomainPresentationBuilder` expõe `show_site_header` apenas para Wiki e homepage MAIN e o Twig consome o boolean; confirmar e implementar no Portal a política aprovada para os dez purposes, sem decisão funcional no tema. Usar `DomainPurposeManager`/`aculta_deployer` para hosts, nunca fixar URLs de teste no contrato. | Pede-A: patch do owner Portal, com contrato de apresentação/cache contexts/tags/max-age e testes das dez rotas/purposes; Firefox deve confirmar Institution Bar e Domain Header sem duplicação em test host e durante a migração Alpha para `production_host`. A Frente B não altera rotas, serviços nem regras funcionais do Portal. |
+| Domain/Portal; composição de `DomainPresentationBuilder`, tema `templates/page.html.twig` e attachments por purpose | A captura Firefox de 2026-10-30 fez 90/90 verificações nas dez raízes e nove larguras: `.aculta-header` aparece somente em MAIN e Wiki (18/90), embora Institution Bar apareça em todos (90/90). A decisão vigente exige preservar os dois elementos em todos os purposes. | Atualizar o contrato dono do shell e testar raízes e páginas internas dos dez purposes com Institution Bar e Domain Header exatamente uma vez; sem workaround visual no tema. |
+| `aculta_portal/src/Presentation/DomainPresentationBuilder.php`, `src/Hook/PortalHooks.php`, contrato `DomainPresentation` e integração de purpose/rotas | `DomainPresentationBuilder` hoje expõe `show_site_header` apenas para Wiki e homepage MAIN; Twig só renderiza o boolean recebido. A regra funcional, disponibilidade, links e dados permanecem no Portal, não no tema. Hosts devem derivar de `DomainPurposeManager`/`aculta_deployer`, incluindo MAGAZINE e a migração Alpha→`production_host`; nunca fixar URLs de teste. | Pede-A: ajustar o contrato no Portal, com cache contexts/tags/max-age e testes para todos os 10 purposes, roots e páginas internas; Firefox valida ambos os headers sem duplicação nos test hosts e no host Alpha/produção configurado. A Frente B não altera services, rotas nem regra funcional do Portal. |
+| Owner `aculta_magazine`: View `revista_sessoes`/homepage editorial e seus dados publicados | Em 2026-10-30, `/` respondeu com título do documento “Observatório da Maconha Coletivo 420”, classe `page-view-revista-sessoes`, sem H1 nem conteúdo no body além do rodapé, nas nove larguras. Não se pode atribuir a ausência de artigos ao CSS nem presumir se é ausência de conteúdo publicado ou configuração/ACL da View. | Pede-A: confirmar rows publicadas e acesso da View; fornecer cenário de teste com artigo publicado e cenário vazio com heading/empty state acessível. Testar ambos em 320/390/768/1440px, preservando ACL, cache e markup do owner. A Frente B não inventa conteúdo nem altera a View no tema. |
 | `aculta_portal/modules/aculta_user/src/Controller/ReportQueueController.php` | Resolvido após a microfase da Revista: o controller emite `forum-report-queue` e `forum-report-pager`; o tema mapeia as classes. ACL, pager, conteúdo e cache seguem no owner. | Unit controller 3/13 e PortalUiHooks 12/83 PASS; `validate-module-theme-boundary.php` PASS (3418 verificações). |
 
 ### THEME-MF2 — Institution Bar integrada em todos os dez domains (2026-10-29)
