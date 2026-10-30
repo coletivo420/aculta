@@ -53,6 +53,8 @@ Não use `user_picture` diretamente em consumidores. Use o resolver ou o builder
 ## Consumidores
 
 - **Conta/perfil:** `PublicProfileController`.
+- **Memorial coletivo:** `LegacyMemorialController` obtém o avatar institucional
+  do acervo pelo `AvatarResolver`; não cria foto, campo ou inicial próprios.
 - **Fórum:** `DiscussionCommentAuthorHooks`, `PublicForumTopicAuthorHooks`,
   `PublicForumLastActivityAuthorHooks`.
 - **Revista:** `aculta_magazine` `ArticleAuthorsHooks` (`author_editorial`).

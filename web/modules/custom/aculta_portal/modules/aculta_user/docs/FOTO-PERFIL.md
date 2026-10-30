@@ -82,7 +82,9 @@ Fórum e demais cartões obtêm a imagem por `AvatarResolver` ou
 invalida a tag da conta e a imagem renderizada também carrega a tag do arquivo,
 para que todos esses consumidores mostrem a mesma seleção sem expor foto
 pessoal não autorizada. O gate `validate-aculta-user-photo.php` verifica essa
-fronteira e impede fallback por inicial no SDC privado.
+fronteira e impede fallback por inicial. O memorial coletivo, que não é uma
+conta, também pede seu avatar institucional ao `AvatarResolver`; não persiste
+foto ou campo próprios.
 
 ## Barreiras
 

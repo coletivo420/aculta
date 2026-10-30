@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Gate: regras de estado da foto de perfil (aculta_user). Ver web/modules/custom/aculta_portal/modules/aculta_user/docs/FOTO-PERFIL.md.
  *
  * Regras (invariantes INV-FOTO-*):
@@ -13,7 +14,7 @@
  * - INV-FOTO-8: sortear só troca a prévia do modal; a foto muda ao salvar; fechar sem salvar descarta a escolha.
  * - INV-FOTO-7: o popup não mostra nome nem link da foto atual; "Remover foto" (só personalizada) volta a um avatar sorteado do acervo.
  * - INV-FOTO-10: o acervo é componente obrigatório e o último fallback: catálogo válido e ao menos uma entrada ativa com arquivo.
- * - INV-FOTO-11: `user_picture` é a fonte única; Perfil público e autoria usam o resolver central com cache da conta, e o tema não inventa avatar por inicial.
+ * - INV-FOTO-11: `user_picture` é a fonte única; perfil, autoria e memorial usam o resolver central, com cache da conta e sem fallback visual por inicial.
  *
  * Verificação estática do código-fonte (não depende de servidor). A verificação de navegador está no roteiro do docs.
  */
@@ -39,7 +40,11 @@ $flow = $read('js/photo-flow.js');
 $avatarResolver = $read('src/Avatar/AvatarResolver.php');
 $authorResolver = $read('src/Identity/AuthorIdentityResolver.php');
 $publicProfile = $read('src/Controller/PublicProfileController.php');
+$legacyMemorial = $read('src/Controller/LegacyMemorialController.php');
 $identityTemplate = (string) @file_get_contents($root . '/web/themes/custom/aculta420/components/content/profile-identity/profile-identity.twig');
+$portalUi = (string) file_get_contents($root . '/web/themes/custom/aculta420/src/Hook/PortalUiHooks.php');
+$accountCss = (string) file_get_contents($root . '/web/themes/custom/aculta420/css/components/portal-account.css');
+$profileCss = (string) file_get_contents($root . '/web/themes/custom/aculta420/css/components/public-profile.css');
 
 if ($picture === '' || $crop === '') {
   fwrite(STDERR, "ACULTA USER PHOTO FAIL:\n- arquivos do formulário de foto ausentes\n");
@@ -143,8 +148,13 @@ if (!str_contains($avatarResolver, "get('user_picture')") || !str_contains($avat
 if (!str_contains($authorResolver, '$this->avatars->build(') || !str_contains($publicProfile, '$this->avatars->build(')) {
   $errors[] = 'INV-FOTO-11: autoria e perfil público não usam AvatarResolver';
 }
-if (preg_match('/slice\s*\(\s*0\s*,\s*1\s*\)|profile-identity__avatar--initial/', $identityTemplate)) {
-  $errors[] = 'INV-FOTO-11: SDC de identidade privada inventa avatar por inicial';
+if (!str_contains($legacyMemorial, '$this->avatars->build(') || str_contains($legacyMemorial, "'initial'")) {
+  $errors[] = 'INV-FOTO-11: memorial coletivo não usa AvatarResolver ou cria inicial local';
+}
+if (preg_match('/slice\s*\(\s*0\s*,\s*1\s*\)|profile-identity__avatar--initial/', $identityTemplate)
+  || str_contains($portalUi, 'account-avatar-empty') || str_contains($portalUi, 'public-profile-initial')
+  || str_contains($accountCss, 'portal-account__avatar--empty') || str_contains($profileCss, 'portal-profile__initial')) {
+  $errors[] = 'INV-FOTO-11: tema mantém fallback visual por inicial ou token de avatar vazio';
 }
 
 // INV-FOTO-10: o acervo é componente obrigatório e o último fallback. Exige catálogo válido e ao menos uma entrada ativa com arquivo.

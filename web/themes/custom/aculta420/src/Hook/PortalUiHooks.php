@@ -229,7 +229,6 @@ final class PortalUiHooks {
     'account-course-meta' => ['portal-account-course__meta'],
     // Minha conta.
     'account-avatar' => ['portal-account__avatar'],
-    'account-avatar-empty' => ['portal-account__avatar', 'portal-account__avatar--empty'],
     'account-photo-preview' => ['portal-account-photo__preview'],
     'account-photo-actions' => ['portal-account-photo__actions'],
     'account-bio-card' => ['card', 'card-body', 'portal-account-bio'],
@@ -273,7 +272,6 @@ final class PortalUiHooks {
     'forum-topic-unread' => ['aculta-unread-count'],
     'public-profile-avatar' => ['portal-profile__avatar'],
     'public-profile-avatar-image' => ['portal-profile__avatar-image'],
-    'public-profile-initial' => ['portal-profile__initial'],
     'public-profile-identity' => ['portal-profile__identity'],
     'public-profile-name' => ['portal-profile__name'],
     'public-profile-bio' => ['portal-profile__bio'],

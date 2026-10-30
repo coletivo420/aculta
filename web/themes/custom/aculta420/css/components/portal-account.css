@@ -159,7 +159,6 @@
 .portal-account__identity h3 { margin: 0 0 0.25rem; color: var(--aculta-text-primary); font: 600 1.5rem/1.2 Oswald, sans-serif; }
 .portal-account__identity p { margin: 0; overflow-wrap: anywhere; }
 .portal-account__avatar { display: grid; width: 5rem; height: 5rem; flex: 0 0 5rem; place-items: center; border-radius: 50%; object-fit: cover; }
-.portal-account__avatar--empty { color: var(--aculta-interactive-hover-text); background: var(--aculta-interactive-hover-bg); font: 600 1.75rem/1 Oswald, sans-serif; }
 .portal-account-photo { position: relative; flex: 0 0 5rem; }
 :is(.portal-account-photo__trigger, [data-portal-ui="account-photo-trigger"]) { position: relative; display: grid; width: 5rem; height: 5rem; padding: 0; place-items: center; overflow: hidden; color: var(--aculta-text-inverse); background: transparent; border: 0; border-radius: 50%; cursor: pointer; }
 :is(.portal-account-photo__trigger, [data-portal-ui="account-photo-trigger"]):focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 3px; }

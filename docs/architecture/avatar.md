@@ -46,6 +46,12 @@ Fórum e demais consumidores devem obter avatar e identidade por
 `AvatarResolver`/`AuthorIdentityResolver`/`AuthorCardBuilder`, sem ler ou
 persistir campos paralelos.
 
+O memorial coletivo e as autorias históricas não são contas Drupal e não têm
+campos próprios de foto. Quando o memorial coletivo precisa de uma imagem,
+usa `AvatarResolver` sem conta para receber o fallback institucional do mesmo
+acervo; nunca cria monograma ou avatar local. Cartões de autoria histórica
+continuam sem foto pessoal ou link de conta.
+
 ## 2. Fronteiras e donos
 
 | Capacidade | Dono | Onde |

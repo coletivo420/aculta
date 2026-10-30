@@ -18,8 +18,7 @@
   text-align: center;
 }
 .portal-profile__avatar { flex: 0 0 auto; }
-.portal-profile__avatar img,
-.portal-profile__initial {
+.portal-profile__avatar img {
   display: grid;
   inline-size: 6.5rem;
   block-size: 6.5rem;
@@ -27,7 +26,6 @@
   border: 3px solid var(--aculta-surface-page);
   object-fit: cover;
 }
-.portal-profile__initial { place-items: center; font-size: 2.25rem; font-weight: 600; }
 .portal-profile__identity { min-inline-size: 0; }
 .portal-profile__actions { margin-inline-start: 0; }
 .portal-profile__friendship-form { margin: 0; }

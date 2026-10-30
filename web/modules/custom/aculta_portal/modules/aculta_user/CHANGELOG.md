@@ -1,3 +1,11 @@
+## 0.4.0-dev.93 — memorial coletivo usa avatar central do Portal (2026-10-29)
+
+- `LegacyMemorialController` passa a renderizar o fallback institucional por
+  `AvatarResolver`; remove referência a arte inexistente e fallback pela letra
+  “L”. O memorial segue distinto de contas e autores históricos.
+- Gate de foto `INV-FOTO-11` cobre o resolver do memorial e a ausência de tokens
+  e estilos de avatar vazio/inicial no tema.
+
 ## 0.4.0-dev.92 — tokens neutros na fila de denúncias do Fórum (2026-10-29)
 
 - `ReportQueueController` marca container e pager com `data-portal-ui`; o tema

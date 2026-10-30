@@ -260,7 +260,6 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `account-course` | `portal-account-course` | `web/modules/custom/aculta_portal/src/Controller/AccountCoursesController.php` |
 | `account-course-meta` | `portal-account-course__meta` | `web/modules/custom/aculta_portal/src/Controller/AccountCoursesController.php` |
 | `account-avatar` | `portal-account__avatar` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/AvatarRerollController.php`<br>`web/modules/custom/aculta_portal/modules/aculta_user/src/Form/UserPictureForm.php` |
-| `account-avatar-empty` | `portal-account__avatar`, `portal-account__avatar--empty` | `web/modules/custom/aculta_portal/src/Controller/PortalController.php` |
 | `account-photo-preview` | `portal-account-photo__preview` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/UserPictureForm.php`<br>`web/modules/custom/aculta_portal/src/Controller/PortalController.php` |
 | `account-bio-card` | `card`, `card-body`, `portal-account-bio` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Bio/AccountBioCard.php` |
 | `account-bio-text` | `portal-account-bio__text` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Bio/AccountBioCard.php` |
@@ -292,7 +291,6 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `public-profile` | `portal-profile` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
 | `public-profile-header` | `portal-profile__header` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
 | `public-profile-avatar` | `portal-profile__avatar` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
-| `public-profile-initial` | `portal-profile__initial` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
 | `public-profile-identity` | `portal-profile__identity` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
 | `public-profile-name` | `portal-profile__name` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
 | `public-profile-bio` | `portal-profile__bio` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/PublicProfileController.php` |
