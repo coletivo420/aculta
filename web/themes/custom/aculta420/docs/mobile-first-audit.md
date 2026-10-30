@@ -1937,4 +1937,29 @@ OpenCulturas e sem baseline pareado de conteúdo, não se declara paridade visua
 Antes da inspeção foi produzido snapshot íntegro do `aculta_runtime`
 (624 tabelas), armazenado fora do Git com modo restrito; SHA-256:
 `665c41fcdce303d6bc4d1171ea3421c8e42de53d5261c80e5c23d5a955c1fdae`.
-Nenhuma escrita no Runtime ocorreu nesta rodada.
+Não houve escrita de conteúdo ou configuração no Runtime durante a inspeção da
+capa. A autenticação administrativa descrita abaixo criou metadados transitórios
+de sessão/login no Runtime.
+
+### THEME-MF2 — barra multidomínio com sessão administrativa (2026-10-30)
+
+O Firefox ESR visível autenticou a conta administrativa sintética pelo host de
+Conta e verificou a home MAIN servida no Runtime, sem CSS/JS de override. O
+harness confirmou uma única Institution Bar, o offset da barra superior, a
+estabilização no carregamento e a posição após scroll de 80/240/480 px. Foram
+aprovadas 38/38 verificações em 320/390/1023/1024/1280 px, incluindo mudança de
+viewport 320→1024→320. Em 320/390 px a barra acompanha a barra administrativa
+enquanto ela está visível e ocupa o topo depois que ela sai da viewport; em
+1024/1280 px mantém offset fixo de 64 px. Não houve overflow horizontal nem
+mudança tardia de posição. Capturas móveis inicial e após scroll foram
+inspecionadas em
+`/home/piradopirata/aculta-suite-out/institution-bar-admin-default-login-20261030/`.
+
+O ULI foi iniciado no host de Conta configurado em `deploy.json`; o primeiro
+UID administrativo disponível nesse ambiente redireciona para recuperação, por
+isso o teste permite credencial sintética fornecida pelo ambiente como fallback.
+Credenciais não foram gravadas em artefatos nem impressas. A autenticação criou
+metadados transitórios de sessão/login no Runtime; não houve alteração de
+conteúdo ou configuração. Este teste fecha o cenário de scroll administrativo,
+mas não cobre as demais rotas, zoom, teclado completo ou WCAG 2.2 AA e não aprova
+THEME-MF3.

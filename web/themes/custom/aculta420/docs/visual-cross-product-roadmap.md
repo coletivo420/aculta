@@ -1237,3 +1237,16 @@ família teaser informa padrões de superfície/raio/sombra que podem inspirar
 composição, sem copiar CSS, Twig ou ativos. Não se declara paridade da capa com
 uma homepage upstream não equivalente. Estado, limites e evidências em
 [`mobile-first-audit.md`](mobile-first-audit.md).
+
+### THEME-MF2 — scroll da Institution Bar com administrador (2026-10-30)
+
+Firefox ESR visível passou 38/38 verificações na home MAIN do Runtime, autenticado
+como administrador sintético, em 320/390/1023/1024/1280 px. O cenário cobre
+estabilização após carregamento, offset da barra administrativa, scroll de
+80/240/480 px e resize móvel↔desktop sem CSS/JS de override. Capturas móvel
+inicial e após scroll foram inspecionadas. O login criou metadados transitórios
+de sessão no Runtime; nenhum conteúdo ou configuração foi alterado. O harness
+reutilizável inicia ULI no host de Conta e permite credencial de teste injetada
+somente via ambiente como fallback. O cenário anônimo anterior permanece
+registrado em `mobile-first-audit.md`. Isso não aprova THEME-MF3: ainda faltam
+rotas internas de todos os purposes, zoom, cobertura de teclado e WCAG 2.2 AA.

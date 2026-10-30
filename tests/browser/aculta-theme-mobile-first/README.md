@@ -325,7 +325,10 @@ rolar as homes dos dez purposes em 320/390 px como anônimo e a home MAIN como
 UID administrativo em 320/390/1023/1024/1280 px. Confirma a autenticação antes
 de medir toolbar/deslocamento, testa a mudança de breakpoint sem recarregar a
 página, amostra a estabilização e guarda screenshots em `$SUITE_OUT`. O ULI
-fica em memória; o teste não submete conteúdo nem altera configuração.
+fica em memória; se o ULI redirecionar para recuperação, o teste pode usar
+credenciais do administrador sintético fornecidas pelo ambiente. O teste não
+submete conteúdo nem altera configuração. No cenário administrativo também
+captura o shell móvel antes e depois do scroll.
 Se uma rota retornar sem Institution Bar (por exemplo, página de erro), o teste
 registra a falha daquela rota e continua nos demais purposes.
 
@@ -343,13 +346,28 @@ para injetar o JavaScript candidato, use `INSTITUTION_BAR_SCROLL_JS_OVERRIDE=1`.
 `INSTITUTION_BAR_SCROLL_BASE_URL` restringe o teste a um host e
 `INSTITUTION_BAR_DOMAIN_ENV=test|production` selecionam o host; a conta usada
 é configurável com `INSTITUTION_BAR_ADMIN_UID` e deve ser autorizada para o
-ambiente. `INSTITUTION_BAR_LOGIN_URI` pode apontar ao host de Conta para iniciar
-a sessão antes de voltar à home MAIN. `INSTITUTION_BAR_SCROLL_SCENARIOS` aceita
+ambiente. O login inicia por padrão no host de Conta definido no `deploy.json`;
+`INSTITUTION_BAR_LOGIN_URI` pode sobrescrevê-lo antes de voltar à home MAIN.
+`INSTITUTION_BAR_SCROLL_SCENARIOS` aceita
 `anonymous`, `admin` ou ambos (padrão). O relatório lista os elementos
 `data-offset-top` sem recolher seus textos. A captura usa Firefox ESR visível.
 `INSTITUTION_BAR_SCROLL_DISABLE_JS=1` testa o fallback CSS em um perfil Firefox
 com JavaScript de página desativado. Esse teste focal não substitui a
 matriz completa de larguras, teclado, zoom, dark mode ou WCAG 2.2 AA.
+
+Para a conta administrativa sintética, o ULI é tentado primeiro. Se o site
+encaminhar o ULI para recuperação de conta, o harness aceita login tradicional
+por credenciais fornecidas somente no ambiente e tenta novamente sem imprimir
+ou salvar os valores:
+
+```sh
+set -a
+. /home/aculta/secrets/aculta_visual_admin.env
+set +a
+export INSTITUTION_BAR_ADMIN_UID=257
+export INSTITUTION_BAR_ADMIN_LOGIN_USER="$ACULTA_VISUAL_ADMIN_USER"
+export INSTITUTION_BAR_ADMIN_LOGIN_PASSWORD="$ACULTA_VISUAL_ADMIN_PASSWORD"
+```
 
 
 ## Tabela de pedidos da Conta

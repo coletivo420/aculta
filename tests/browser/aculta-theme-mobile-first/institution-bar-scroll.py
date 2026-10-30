@@ -25,11 +25,14 @@ if DOMAIN_ENV not in ("test", "production"):
     raise SystemExit("INSTITUTION_BAR_DOMAIN_ENV deve ser test ou production.")
 DEPLOY = json.loads((ROOT / "web/modules/custom/aculta_portal/modules/aculta_deployer/config/deploy.json").read_text())
 MAIN = next(entry for entry in DEPLOY["domain_transition"]["entries"] if entry["domain_id"] == "aculta_org")
+ACCOUNT = next(entry for entry in DEPLOY["domain_transition"]["entries"] if entry["domain_id"] == "conta_aculta_org")
 BASE_OVERRIDE = os.environ.get("INSTITUTION_BAR_SCROLL_BASE_URL")
 BASE = (BASE_OVERRIDE or f"https://{MAIN[f'{DOMAIN_ENV}_host']}").rstrip("/")
-LOGIN_URI = os.environ.get("INSTITUTION_BAR_LOGIN_URI", BASE).rstrip("/")
+LOGIN_URI = os.environ.get("INSTITUTION_BAR_LOGIN_URI", f"https://{ACCOUNT[f'{DOMAIN_ENV}_host']}").rstrip("/")
 DRUSH_URI = os.environ.get("INSTITUTION_BAR_DRUSH_URI", "http://default").rstrip("/")
 ADMIN_UID = int(os.environ.get("INSTITUTION_BAR_ADMIN_UID", "1"))
+ADMIN_LOGIN_USER = os.environ.get("INSTITUTION_BAR_ADMIN_LOGIN_USER", "")
+ADMIN_LOGIN_PASSWORD = os.environ.get("INSTITUTION_BAR_ADMIN_LOGIN_PASSWORD", "")
 WIDTHS = [320, 390, 1023, 1024, 1280]
 ANONYMOUS_WIDTHS = [320, 390]
 ANONYMOUS_TARGETS = [
@@ -197,9 +200,43 @@ def run_scenario(scenario, login_url=None):
               messageCount:document.querySelectorAll('[role="alert"], .messages').length,
               readyState:document.readyState
             };""")
-            if auth_state["loggedIn"]:
+            if auth_state["loggedIn"] or auth_state["routePrefix"][:1] == ["recuperar-acesso"]:
                 break
             time.sleep(0.2)
+        if not (auth_state and auth_state["loggedIn"]) and ADMIN_LOGIN_USER and ADMIN_LOGIN_PASSWORD:
+            # Some development accounts are routed through account recovery
+            # instead of consuming a one-time ULI link. Fall back to the
+            # dedicated synthetic administrator credentials supplied by the
+            # caller; never include credentials in test output or artifacts.
+            driver.get(f"{LOGIN_URI}/entrar")
+            form_found = driver.exists("#user-login-form input[name='name']") and driver.exists(
+                "#user-login-form input[name='pass']"
+            )
+            if form_found:
+                driver.type("#user-login-form input[name='name']", ADMIN_LOGIN_USER)
+                driver.type("#user-login-form input[name='pass']", ADMIN_LOGIN_PASSWORD)
+                driver.click("#user-login-form input[type='submit']")
+                deadline = time.monotonic() + 12
+                while time.monotonic() < deadline:
+                    auth_state = driver.js("""return {
+                      loggedIn:document.body.classList.contains('user-logged-in'),
+                      toolbarCount:document.querySelectorAll('#toolbar-administration').length,
+                      host:location.host,
+                      routePrefix:location.pathname.split('/').filter(Boolean).slice(0,2),
+                      routeSegmentCount:location.pathname.split('/').filter(Boolean).length,
+                      loginForms:document.querySelectorAll('#user-login-form, #user-pass').length,
+                      messageCount:document.querySelectorAll('[role=alert], .messages').length,
+                      readyState:document.readyState,
+                      authMethod:'password fallback'
+                    };""")
+                    if auth_state["loggedIn"]:
+                        break
+                    time.sleep(0.2)
+            if auth_state is None:
+                auth_state = {"loggedIn": False, "authMethod": "password fallback", "loginFormFound": form_found}
+            else:
+                auth_state["authMethod"] = "password fallback"
+                auth_state["loginFormFound"] = form_found
         authenticated = bool(auth_state and auth_state["loggedIn"])
         record(f"{scenario}: autenticação confirmada", authenticated, auth_state)
         if not authenticated:
@@ -213,6 +250,11 @@ def run_scenario(scenario, login_url=None):
         initial = metrics()
         record(f"{scenario} {width}px: shell inicial", actual_width == width and initial["barCount"] == 1,
                initial)
+        if scenario == "admin" and width in (320, 390):
+            screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+            (OUT / f"institution-bar-scroll-admin-initial-{width}.png").write_bytes(
+                base64.b64decode(screenshot)
+            )
         if initial["barCount"] != 1 or initial["barTop"] is None:
             # A missing/error page is already a failed shell check. Keep
             # collecting evidence from the remaining purposes and widths.
@@ -294,6 +336,11 @@ def run_scenario(scenario, login_url=None):
             if target == 240 and scenario == "anonymous":
                 screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
                 (OUT / f"institution-bar-scroll-{scenario}-{PURPOSE_CONTEXT}-{width}.png").write_bytes(
+                    base64.b64decode(screenshot)
+                )
+            elif target == 240 and scenario == "admin" and width in (320, 390):
+                screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                (OUT / f"institution-bar-scroll-admin-scrolled-{width}.png").write_bytes(
                     base64.b64decode(screenshot)
                 )
 
