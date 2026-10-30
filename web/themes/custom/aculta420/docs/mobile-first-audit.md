@@ -805,6 +805,19 @@ unicidade de hook. Os testes Unit locais passam. Após aplicar a correção no
 checkout de desenvolvimento e reconstruir o cache, GET anônimo à home Wiki
 respondeu HTTP 200; commit/publicação na branch continuam pendentes.
 
+#### Reteste servido após o avanço da PR para `29961db75` (2026-10-30)
+
+O harness reutilizável foi executado novamente sem injeção de CSS, contra as
+dez homes do ambiente de desenvolvimento, como anônimo em 320/390px. Firefox
+ESR passou 101/101 verificações: barra única e `position: sticky`, topo
+estável no carregamento (`maxTopChange=0`), topo mantido durante scroll e sem
+overflow horizontal. Evidência em
+`/home/piradopirata/aculta-suite-out/aculta-institution-bar-scroll-recheck-20261030/`.
+Este reteste não reproduziu o deslocamento anônimo. Não incluiu sessão
+administrativa/toolbar, nem routes internas autenticadas; portanto não encerra
+essa ocorrência nem aprova THEME-MF3. Não foi feita escrita persistente no
+Runtime.
+
 
 ### THEME-MF2 — tabela de pedidos na Conta (2026-10-29)
 
