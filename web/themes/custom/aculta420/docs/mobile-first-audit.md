@@ -9,6 +9,18 @@ Na rodada inicial não houve escrita no Runtime. O incidente posterior, incluind
 o snapshot e a correção direcionada de `message.settings`, está registrado em
 `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
 
+### THEME-MF2 — Domain Header global para dez purposes (2026-10-30)
+
+O Portal agora marca `show_site_header` como verdadeiro para todos os dez
+purposes com Domain configurado; o mesmo template do tema apresenta o cabeçalho
+antes da página de Links e das demais páginas. Os títulos e URLs seguem o
+contrato `DomainPresentation` e `DomainPurposeManager`; não há hostname nem
+decisão funcional no tema. Teste Kernel candidato: dez purposes, incluindo
+Magazine, Eventos e Links, com home URL e cache tag do Domain configurado.
+Unit/Kernel passou 2/74; PHPCS Drupal/DrupalPractice e PHP lint passaram. Firefox contra o
+checkout servido e checagem de não duplicação nas dez raízes/páginas internas
+estão DEFERRED até a branch/HEAD da PR ser servida. Isso não aprova THEME-MF3.
+
 ### THEME-MF2 — compatibilidade do dropdown na biblioteca SDC (2026-10-30)
 
 A rota administrativa `/painel-administrativo/aparencia/ui/components` lançou

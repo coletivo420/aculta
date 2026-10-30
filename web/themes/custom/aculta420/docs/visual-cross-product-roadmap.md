@@ -414,6 +414,13 @@ Uma repetição instrumentada encontrou Institution Bar presente nas sete rotas
 renderizadas, Domain Header ausente nas oito URLs capturadas e marcadores
 `data-aculta-studio` somente em Marley. Nenhum gate MF3/F11 foi aprovado.
 
+Correção candidata após essa captura: `DomainPresentationBuilder` agora envia
+`show_site_header` para os dez purposes, e o template comum renderiza o mesmo
+Domain Header antes também da página de LINKS. O teste Kernel com dez Domains
+configurados passou (2 testes/74 assertions), incluindo home URL e cache tag
+por Domain, Magazine, Eventos e Links. Essa alteração ainda não foi servida no checkout Runtime; Firefox,
+duplicação por rota e validação por ambiente continuam DEFERRED, sem aprovar MF3.
+
 Consulta somente leitura ao MCP Drupal em 2026-10-30 confirmou Drupal 11.4.10,
 PHP 8.4.27 e URI `http://default`; 47 módulos ACULTA foram listados, dos quais
 42 habilitados. Não há updates de banco pendentes. O MCP reportou 187 diferenças

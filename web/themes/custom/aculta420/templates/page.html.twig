@@ -35,19 +35,8 @@
   </div>
 </div>
 
-{% if domain_presentation.layout.links_page|default(false) %}
-<main id="main-content" class="aculta-main aculta-social-links-shell" tabindex="-1">
-  <div class="container aculta-container">
-    {{ page.content }}
-  </div>
-</main>
-<footer class="aculta-social-links-footer">
-  <div class="container aculta-container">
-    {{ social_links_page_footer }}
-  </div>
-</footer>
-{% else %}
 {% set aculta_show_site_header = domain_presentation.layout.show_site_header|default(false) %}
+{% set aculta_links_page = domain_presentation.layout.links_page|default(false) %}
 {% if aculta_show_site_header %}
 <header class="aculta-header{{ aculta_wiki_search ? ' aculta-header--wiki' : '' }}">
   <div class="navbar aculta-navbar">
@@ -91,6 +80,18 @@
 </header>
 {% endif %}
 
+{% if aculta_links_page %}
+<main id="main-content" class="aculta-main aculta-social-links-shell" tabindex="-1">
+  <div class="container aculta-container">
+    {{ page.content }}
+  </div>
+</main>
+<footer class="aculta-social-links-footer">
+  <div class="container aculta-container">
+    {{ social_links_page_footer }}
+  </div>
+</footer>
+{% else %}
 <main id="main-content" class="aculta-main flex-grow-1{{ not aculta_show_site_header ? ' aculta-main--compact-top' : '' }}" tabindex="-1">
   <div class="container aculta-container">
     {% if aculta_breadcrumb %}

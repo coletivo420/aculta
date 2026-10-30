@@ -148,15 +148,28 @@ domain_presentation
     ├── institution_bar_account  bool  (variante "conta" da barra institucional)
     ├── show_utility_bar         bool  (busca, carrinho, Messenger, avisos e Minha conta; falso em LINKS)
     ├── links_page               bool  (shell da página pública LINKS)
-    └── show_site_header         bool  (cabeçalho de domínio: Wiki sempre; main só na página inicial)
+    └── show_site_header         bool  (cabeçalho de domínio em todos os purposes)
 ```
 
 `layout` existe para que o tema não decida por purpose. O Portal calcula cada flag
-a partir do purpose e, no caso da página inicial, do `path.matcher` da requisição (cache
-`url.path.is_front`). O tema só desenha o que as flags permitem. O gate
+a partir do contexto funcional; `show_site_header` é verdadeiro em todos os
+purposes que tenham um Domain configurado. O `path.matcher` continua sendo usado
+somente para a vitrine da página inicial MAIN (cache `url.path.is_front`). O tema
+só desenha o que as flags permitem. O gate
 `validate-aculta420-shell-contract.php` proíbe comparar `identity.purpose` no tema. Os valores
 ausentes do `layout` valem como falso, exceto `show_utility_bar`, que vale verdadeiro para
 manter a barra visível quando não há apresentação de domínio.
+
+### Decisão vigente — Domain Header nos dez purposes
+
+Institution Bar e Domain Header aparecem uma vez em todas as páginas dos dez
+purposes, incluindo `links` e páginas internas. `DomainPresentationBuilder`
+decide a visibilidade e fornece a identidade e a URL da home a partir do Domain
+resolvido para o ambiente atual. O tema apenas renderiza o contrato neutro; não
+deduz purpose nem fixa hostname. A página pública `links` mantém seu conteúdo e
+rodapé próprios abaixo do mesmo Domain Header; a navegação compartilhada só é
+exibida quando existe no render array do Drupal. Quando não há
+Domain/apresentação, o tema não inventa cabeçalho.
 
 `identity` é **props-ready**: somente escalares/arrays simples que podem ser
 validados por schema quando o shell virar SDC.

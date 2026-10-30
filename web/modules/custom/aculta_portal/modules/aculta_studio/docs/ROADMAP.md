@@ -702,3 +702,9 @@ rota, owner, disponibilidade e estado visual foram adicionados à matriz
 `studio-visual/visual-parity-matrix.md` e ao inventário upstream. OCS-F0 segue
 parcial; Hub/LMS, acesso à loja, Domain Header no purpose ACCOUNT e capturas
 pareadas continuam pendentes.
+
+Após o inventário, a apresentação do Domain Header foi ajustada no contrato do
+Portal para todos os dez purposes, inclusive ACCOUNT. O teste Kernel cobre
+identidade e URL por Domain, mas a alteração ainda aguarda entrega ao checkout
+servido e verificação visual de duplicação nas rotas Studio. OCS-F0 e OCS-F11
+permanecem parciais.

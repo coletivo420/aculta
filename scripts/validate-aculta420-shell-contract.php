@@ -1,6 +1,13 @@
 <?php
 
+/**
+ * @file
+ * Validates ACULTA420 shell consumption with a read-only Runtime bootstrap.
+ */
+
 declare(strict_types=1);
+
+use Drupal\aculta420\Hook\ThemeHooks;
 
 /**
  * Read-only Runtime gate for ACULTA420 0.2-B.3/B.4 shell contract consumption.
@@ -8,8 +15,8 @@ declare(strict_types=1);
 
 $root = dirname(__DIR__);
 
-// O gate usa \Drupal::service(). Chamado com php direto (sem Drupal), delega ao Drush (scr) e repassa a saída
-// e o código de saída, como o gate de Foundation.
+// O gate usa \Drupal::service(). Sem Drupal, delega ao Drush e repassa saída e
+// código de saída, como o gate de Foundation.
 if (!class_exists(\Drupal::class)) {
   $drush = $root . '/vendor/drush/drush/drush.php';
   if (!is_file($drush)) {
@@ -49,6 +56,20 @@ $assert(
     && !str_contains($pageSource, 'aculta-page-top'),
   'Institution Bar is not grouped with the Domain Header in a sticky wrapper.',
 );
+$headerPosition = strpos($pageSource, '<header class="aculta-header');
+$linksPagePosition = strpos($pageSource, '{% if aculta_links_page %}');
+$assert(
+  substr_count($pageSource, '<header class="aculta-header') === 1
+    && $headerPosition !== FALSE
+    && $linksPagePosition !== FALSE
+    && $headerPosition < $linksPagePosition
+    && str_contains(
+      $pageSource,
+      '{% set aculta_links_page = domain_presentation.layout.links_page|default(false) %}',
+    )
+    && str_contains($pageSource, '{% if aculta_show_site_header %}'),
+  'One neutral-contract Domain Header is rendered before every purpose-specific page layout.',
+);
 $assert(
   preg_match('/\.aculta-institution-bar\s*\{[^}]*position:\s*sticky\s*;/s', $institutionBarCss) === 1
     && preg_match('/\.aculta-header\s*\{[^}]*position:\s*sticky\s*;/s', $headerCss) !== 1,
@@ -60,7 +81,7 @@ $assert(
   'ThemeHooks consumes the neutral domain_presentation identity contract.',
 );
 require_once $hookPath;
-$hooks = new \Drupal\aculta420\Hook\ThemeHooks(
+$hooks = new ThemeHooks(
   \Drupal::service('path.matcher'),
   \Drupal::service('config.factory'),
   \Drupal::service('entity_type.manager'),
@@ -164,11 +185,15 @@ $assert(
   'Theme adapter ignores unused logo_alt, empty short_title, and unknown/object fields.',
 );
 
-$portalContract = DRUPAL_ROOT . '/modules/custom/aculta_portal/src/Presentation/DomainPresentationBuilder.php';
+$portalContract = $root . '/web/modules/custom/aculta_portal/src/Presentation/DomainPresentationBuilder.php';
 $portalSource = file_get_contents($portalContract);
 $assert(
   !str_contains($portalSource, 'aculta420:'),
   'Portal presentation builder still has no ACULTA420 SDC dependency.',
+);
+$assert(
+  preg_match("/'show_site_header'\\s*=>\\s*TRUE/", $portalSource) === 1,
+  'Portal provides Domain Header visibility for every supported purpose.',
 );
 
 echo 'ACULTA420 B.4 SHELL CONTRACT: PASS (' . count($checks) . " checks)\n";

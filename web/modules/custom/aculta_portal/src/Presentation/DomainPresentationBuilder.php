@@ -104,8 +104,9 @@ final class DomainPresentationBuilder {
       ])
       ->addCacheableDependency($domain);
 
-    // O Portal decide qual marca o domínio usa e informa só a chave neutra; o asset e a forma da imagem são do tema
-    // (ThemeHooks::brandMediaRender). Sem tema que trate a chave, o cabeçalho usa só o título.
+    // O Portal escolhe a marca e informa uma chave neutra. O asset e a forma
+    // da imagem pertencem ao tema (ThemeHooks::brandMediaRender). Sem tema que
+    // trate a chave, o cabeçalho usa só o título.
     $brandMedia = $purpose === 'wiki' ? ['#brand_key' => 'wiki420', '#alt' => $title] : NULL;
 
     $showcase = $purpose === 'main' && $this->pathMatcher->isFrontPage()
@@ -134,19 +135,26 @@ final class DomainPresentationBuilder {
         'institution_bar_account' => $purpose === 'account',
         'show_utility_bar' => $purpose !== 'links',
         'links_page' => $purpose === 'links',
-        'show_site_header' => $purpose === 'wiki' || ($purpose === 'main' && $this->pathMatcher->isFrontPage()),
+        // Institution Bar and Domain Header are present in every purpose. The
+        // theme renders this flag and never resolves purpose itself.
+        'show_site_header' => TRUE,
       ],
     );
   }
 
   /**
-   * Vitrine da home do MAIN: um link para a raiz de cada purpose com Domain ativo.
+   * Vitrine da home MAIN, com um link por purpose que tenha Domain ativo.
    *
-   * O conteúdo de cada subdomínio continua respondendo somente no próprio host; a vitrine apenas
-   * aponta para ele. A URL vem do DomainPurposeManager, então respeita o ambiente (teste ou produção).
+   * Cada subdomínio responde somente no próprio host; a vitrine apenas aponta
+   * para ele. DomainPurposeManager resolve URLs no ambiente atual.
    * Purposes sem Domain ativo são omitidos.
    *
-   * @return list<array{purpose: string, title: string, url: string}>
+   * @return list<array{
+   *   purpose: string,
+   *   title: string,
+   *   url: string
+   *   }>
+   *   Vínculos da vitrine com os domínios ativos.
    */
   private function buildShowcase(CacheableMetadata $cacheability): array {
     $items = [];
