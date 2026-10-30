@@ -310,14 +310,15 @@ pendentes. MF2 segue parcial e MF3 não foi aprovado.
 ## Escopo quantificado
 
 O inventário foi regenerado em 2026-10-30 por
-`scripts/audit-aculta420-responsive-inventory.py`. O TSV contém 205 arquivos-
+`scripts/audit-aculta420-responsive-inventory.py`. O TSV contém 206 arquivos-
 fonte: 93 folhas CSS/Sass, 12 scripts JavaScript (11 de produção e um de teste)
-e 100 templates Twig/HTML; não inclui documentação ou demais ativos. A busca
+e 101 templates Twig/HTML; não inclui documentação ou demais ativos. A busca
 lexical atual encontra `@media` em 46 folhas (81 blocos), zero `@container`,
-expressões de dimensão em 74 folhas (632 matches) e declarações `overflow`,
-`overflow-x` ou `overflow-y` em 28 folhas (54 declarações). A expressão de
-dimensão inclui width/height/inline-size/block-size, variantes min/max e
-condições de media query. As contagens não analisam cascata nem efeito
+expressões de dimensão em 74 folhas (633 matches) e declarações `overflow`,
+`overflow-x` ou `overflow-y` em 28 folhas (53 declarações). A expressão de
+dimensão inclui width/height/inline-size/block-size e variantes min/max; os
+valores em media queries também aparecem porque o gerador percorre o texto CSS
+sem construir uma árvore sintática. As contagens não analisam cascata nem efeito
 calculado. O inventário é estrutural; não mede overflow renderizado ou prova
 comportamento por tela.
 
@@ -407,7 +408,7 @@ Cobertura de runtime ainda pendente para todos os dez; os outros purposes e
 rotas encontradas não podem ser omitidos se a associação route/library revelar
 consumidores adicionais.
 
-O inventário dos 93 estilos, 12 scripts e 100 templates encontra-se em
+O inventário dos 93 estilos, 12 scripts e 101 templates encontra-se em
 [`theme-mobile-file-inventory.tsv`](theme-mobile-file-inventory.tsv); pode ser
 regenerado com `python3 scripts/audit-aculta420-responsive-inventory.py --write`.
 Ele contém contagens lexicais de media/container/dimensão/overflow por folha de
