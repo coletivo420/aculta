@@ -25,11 +25,13 @@ Cursor, Gemini/Antigravity, OpenCode e Claude Desktop não têm arquivo de confi
 
 Para adicionar o servidor ACULTA a outro Codex, use `codex mcp add aculta --url https://aculta.toca.net.br/mcp`. O acesso ao ACULTA é público e sem OAuth. As ferramentas publicadas são apenas busca/listagem de documentação dos provedores; não leem dados privados nem executam ações financeiras, de frete ou de conta.
 
-O módulo próprio `aculta_mcp_client` implementa as chamadas MCP de saída para os servidores de documentação do Mercado Pago e Melhor Envio. Quatro plugins da Tool API são publicados no ACULTA através do MCP Server Tool Bridge e de suas entidades MCP Tool Configuration. Também publica o Resource estático `aculta://public/mcp/capabilities`, com as ferramentas e os limites do endpoint. Endpoints e nomes das ferramentas remotas são allowlisted; há limite global de chamadas e saída limitada. O servidor não encaminha chamadas de API dos provedores.
+O módulo próprio `aculta_mcp_client` implementa chamadas MCP de saída para os servidores de documentação do Mercado Pago, Melhor Envio e DHTMLX. Seis plugins da Tool API são publicados no ACULTA por meio do MCP Server Tool Bridge e de entidades MCP Tool Configuration. Três Resources estáticos descrevem capacidades, a plataforma ACULTA e as fronteiras das integrações. Endpoints e nomes das ferramentas remotas têm allowlist fixa, limite global de chamadas e saída limitada. O servidor não encaminha chamadas de API de pagamento, frete, mapas ou Drupal.
+
+`osm-mcp` e `aculta-drupal` continuam em `.mcp.json` e na configuração global Codex como conexões locais para agentes. O OSM usa stdio e pode receber dados de localização; `aculta-drupal` fornece metadados operacionais read-only. Esses servidores não são encaminhados pelo endpoint ACULTA público.
 
 ## MCP Client no Drupal
 
-O projeto oficial [MCP Client](https://www.drupal.org/project/mcp_client) não é instalado porque sua versão consultada requer `mcp/sdk ^0.7.1`, em conflito com o MCP Server instalado (`^0.9`), além de Drupal AI/AI Agents que este projeto não usa. `aculta_mcp_client` copia/adapta somente o padrão de transporte HTTP e chamadas com o SDK já instalado; não copia a camada de agentes do contrib. Se o MCP Server alterar a faixa do SDK ou ACULTA adicionar Drupal AI, reavaliar o uso direto do contrib.
+O projeto oficial [MCP Client](https://www.drupal.org/project/mcp_client) não é instalado porque sua versão consultada requer `mcp/sdk ^0.7.1`, em conflito com o MCP Server instalado (`^0.9`), além de Drupal AI/AI Agents que este projeto não usa. `aculta_mcp_client` adapta o padrão de cliente MCP com o SDK já instalado e usa HTTP para os provedores remotos; não copia a camada Drupal AI do contrib. Reavaliar o uso direto do contrib se as versões do SDK forem compatíveis ou o ACULTA adicionar Drupal AI.
 
 ## Regras
 

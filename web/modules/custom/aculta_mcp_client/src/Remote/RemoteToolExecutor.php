@@ -38,6 +38,12 @@ final class RemoteToolExecutor {
       'limit' => 60,
       'window' => 60,
     ],
+    'dhtmlx' => [
+      'endpoint' => 'https://docs.dhtmlx.com/mcp',
+      'tools' => ['Search', 'Inference'],
+      'limit' => 15,
+      'window' => 60,
+    ],
   ];
 
   /**

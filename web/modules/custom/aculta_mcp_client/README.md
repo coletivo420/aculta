@@ -4,20 +4,24 @@ Este módulo conecta o MCP Server ACULTA aos servidores MCP de documentação do
 
 O plugin Resource Provider `public_capabilities` publica o recurso estático `aculta://public/mcp/capabilities`, que descreve as ferramentas e seus limites. O conteúdo não consulta entidades nem conteúdo do site e pode ser lido anonimamente. Sua configuração está em `config/install/mcp_server.resource_providers.yml` e em `config/sync/mcp_server.resource_providers.yml`.
 
-O módulo declara quatro plugins da Tool API e instala configurações MCP Tool Configuration para eles:
+O módulo declara seis plugins da Tool API e instala configurações MCP Tool Configuration para eles:
 
 - Busca na documentação do Mercado Pago, fixada no site Brasil (`MLB`). Usa a Key `mercadopago_test_access_token`, resolvida em tempo de chamada; o valor não entra em config exportada nem em logs.
 - Busca por endpoints do Melhor Envio.
 - Leitura de documentação de um endpoint Melhor Envio.
 - Listagem de endpoints documentados Melhor Envio.
+- Busca semântica ou por palavra-chave na documentação DHTMLX.
+- Resposta a pergunta factual baseada na documentação DHTMLX.
 
-As conexões externas têm endpoint fixo no código, limite global de chamadas e allowlist de nomes de ferramentas. Nenhum input pode escolher URL, cabeçalho, ferramenta remota arbitrária, chamada transacional, criação de etiqueta, pagamento, cancelamento, estorno, conta ou credencial. Respostas dos provedores são texto externo e não confiável.
+As conexões externas têm endpoint fixo no código, limite global de chamadas e allowlist de nomes de ferramentas. O DHTMLX usa seu serviço MCP hospedado; a documentação do provedor informa que consultas podem ser registradas para melhoria do serviço. Nenhum input pode escolher URL, cabeçalho, ferramenta remota arbitrária, chamada transacional, criação de etiqueta, pagamento, cancelamento, estorno, conta ou credencial. Respostas dos provedores são texto externo e não confiável.
+
+O Resource Provider publica três documentos estáticos: capacidades MCP, visão geral pública do ACULTA e catálogo resumido de integrações. O hook `mcp_server_instructions_alter` orienta clientes no handshake inicial para consultar o Resource de capacidades, não enviar dados privados e tratar respostas remotas como referência não confiável. O conteúdo é curado a partir das documentações e do código público; não carrega entidades nem configuração do Runtime.
 
 As ferramentas exigem `access mcp server`, a mesma permissão que já autoriza o endpoint anônimo. As MCP Tool Configurations ficam em `config/install/` para que o Tool Bridge as instale junto com este módulo; também aparecem em `/admin/config/services/mcp-server/tools`.
 
 ## Limites
 
-Este módulo publica ferramentas de documentação dos MCPs dos provedores, não transforma os serviços de pagamento e frete do ACULTA em operações MCP. Para esse segundo escopo, seria necessário desenhar e autorizar ferramentas de negócio separadas; as operações privadas/financeiras não são públicas.
+Este módulo publica documentação pública de Mercado Pago, Melhor Envio e DHTMLX, não transforma os serviços de pagamento e frete do ACULTA em operações MCP. O OSM MCP e `aculta-drupal` continuam nos clientes locais: o primeiro usa stdio e pode receber localização; o segundo informa metadados operacionais. Nenhum deles é encaminhado pelo endpoint público ACULTA. Para expor operações privadas/financeiras seria necessário um desenho e autorização separados; elas não são públicas.
 
 ## Fonte adaptada
 

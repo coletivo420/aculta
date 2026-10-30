@@ -1,0 +1,4 @@
+id: aculta_dhtmlx_documentation_search
+tool_id: 'aculta_mcp_client:dhtmlx_documentation_search'
+description: 'Pesquisa documentação pública DHTMLX; a consulta é enviada ao servidor hospedado, que pode registrar consultas.'
+status: true
