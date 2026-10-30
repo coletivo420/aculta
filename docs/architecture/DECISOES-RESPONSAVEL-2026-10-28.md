@@ -70,6 +70,7 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 
 | # | Assunto | Situação |
 | --- | --- | --- |
+| D-56 | Busca por logradouro e gestão editorial de Locais | A integração CEP → endereço continua padrão e central para formulários completos do Portal; busca por logradouro fica restrita a Events/Maps. Activity migrará de campos avulsos para referência a Local, com seleção/cadastro em modais Drupal/AJAX e CEP primeiro. Conta/checkout preservam o fluxo atual. | ADR-033; `ACCOUNT-ADDRESS.md`; roadmaps de Activity, Events, Maps e Content Index. |
 | P-01 | Endereço de divulgação responsável (I-17) | **Resolvido em 2026-10-28:** `abuso@aculta.org`, publicado no `SECURITY.md` da raiz. Prazos de resposta ainda não fixados. |
 | P-02 | ADR do provedor de mapa (D-08) | **Resolvido em 2026-10-28:** `docs/decisions/ADR-014-provedor-mapa-google-maps.md`. Verificações de termos, cobrança e LGPD continuam listadas no próprio ADR, antes da F4. |
 
@@ -108,3 +109,5 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 - 2026-10-29: D-50 registrada — remover o domínio de cookie `.aculta.test` e manter sessão host-only no ambiente local.
 - 2026-10-29: D-51 registrada — login por CPF em todas as superfícies locais antes do RC, preservando controles e fluxo de autenticação existentes.
 - 2026-10-29: D-52 e D-53 registradas — aviso do mapa sem texto inline de IP (só link da política e atribuição) e credencial OAuth única do OSM para teste/desenvolvimento/produção, documentada em `SECRETS.md`.
+
+- 2026-10-30: D-56 registrada após auditoria estática do HEAD da PR #299. Busca por rua permanece planejada, sem provedor aprovado ou código; lacunas de Activity e instituição seguem abertas.
