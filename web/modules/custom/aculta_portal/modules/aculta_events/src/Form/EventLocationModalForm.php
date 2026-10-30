@@ -109,11 +109,13 @@ final class EventLocationModalForm extends FormBase {
       '#attributes' => ['data-portal-ui' => 'event-location-search-bar'],
     ];
 
+    $searchTerm = trim((string) ($form_state->get('search_term') ?? ''));
+
     $form['search_bar']['search_term'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Nome do local'),
+      '#title' => $this->t('Nome do local ou município'),
       '#title_display' => 'invisible',
-      '#placeholder' => $this->t('Filtrar por nome do local...'),
+      '#placeholder' => $this->t('Filtrar por nome do local ou município...'),
       '#size' => 40,
       '#default_value' => $form_state->get('search_term') ?? '',
     ];
@@ -129,7 +131,19 @@ final class EventLocationModalForm extends FormBase {
       ],
     ];
 
-    $searchTerm = trim((string) ($form_state->get('search_term') ?? ''));
+    if ($searchTerm !== '') {
+      $form['search_bar']['search_clear'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Limpar'),
+        '#name' => 'op_search_clear',
+        '#submit' => ['::submitClearSearch'],
+        '#ajax' => [
+          'callback' => '::ajaxRebuildModal',
+          'wrapper' => 'aculta-location-modal-form-wrapper',
+        ],
+        '#limit_validation_errors' => [],
+      ];
+    }
 
     $query = $this->entityTypeManager->getStorage('aculta_event_location')
       ->getQuery()
@@ -138,7 +152,11 @@ final class EventLocationModalForm extends FormBase {
       ->range(0, 15);
 
     if ($searchTerm !== '') {
-      $query->condition('title', '%' . $searchTerm . '%', 'LIKE');
+      $or = $query->orConditionGroup()
+        ->condition('title', '%' . $searchTerm . '%', 'LIKE')
+        ->condition('field_endereco.locality', '%' . $searchTerm . '%', 'LIKE')
+        ->condition('field_endereco.administrative_area', '%' . $searchTerm . '%', 'LIKE');
+      $query->condition($or);
     }
 
     $ids = $query->execute();
@@ -307,6 +325,15 @@ final class EventLocationModalForm extends FormBase {
   public function submitSearch(array &$form, FormStateInterface $form_state): void {
     $term = trim((string) $form_state->getValue('search_term'));
     $form_state->set('search_term', $term);
+    $form_state->setRebuild(TRUE);
+  }
+
+  /**
+   * Limpa o termo de busca no modal.
+   */
+  public function submitClearSearch(array &$form, FormStateInterface $form_state): void {
+    $form_state->set('search_term', '');
+    $form_state->setValue('search_term', '');
     $form_state->setRebuild(TRUE);
   }
 

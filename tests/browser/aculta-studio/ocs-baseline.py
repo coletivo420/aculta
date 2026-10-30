@@ -27,14 +27,15 @@ WIDTHS = [
 ] or DEFAULT_WIDTHS
 CAPTURES = []
 DEFAULT_STUDIO_PAGES = [
-    ("hub", "/studio"),
-    ("marley", "/marley"),
-    ("ganjalab", "/ganjalab"),
-    ("we-sativa", "/wesativa"),
-    ("conta", "/conta"),
-    ("perfil", "/perfil"),
-    ("green-stash", "/greenstash"),
-    ("planos", "/conta/mercado-pago/planos"),
+    ("account-entry", "account", "/"),
+    ("marley", "account", "/marley"),
+    ("ganjalab", "courses", "/ganjalab"),
+    ("we-sativa", "wiki", "/wesativa"),
+    ("conta", "account", "/conta"),
+    ("perfil", "account", "/perfil"),
+    ("green-stash", "shop", "/greenstash"),
+    ("culturas", "eventos", "/culturas"),
+    ("planos", "account", "/conta/mercado-pago/planos"),
 ]
 
 
@@ -42,7 +43,7 @@ def studio_pages():
     if "STUDIO_ROUTES" not in os.environ:
         if "STUDIO_PAGE" in os.environ:
             return [("custom", PAGE)]
-        return [(name, URI.rstrip("/") + path) for name, path in DEFAULT_STUDIO_PAGES]
+        return [(name, environment_url(purpose, path)) for name, purpose, path in DEFAULT_STUDIO_PAGES]
     pages = []
     for path in os.environ["STUDIO_ROUTES"].split(","):
         path = path.strip()
@@ -52,6 +53,18 @@ def studio_pages():
         name = urlparse(url).path.strip("/").replace("/", "-") or "home"
         pages.append((name, url))
     return pages
+
+
+def environment_url(purpose, path):
+    php = (
+        "$url = \\Drupal::service('aculta_portal.domain_purpose')"
+        f"->environmentPathUrl('{purpose}', '{path}');"
+        "print($url ? $url->toString() : '');"
+    )
+    url = drush("php:eval", php)
+    if not url.startswith(("http://", "https://")):
+        raise RuntimeError(f"DomainPurposeManager não resolveu {purpose}:{path} neste ambiente.")
+    return url
 
 
 def drush(*args):

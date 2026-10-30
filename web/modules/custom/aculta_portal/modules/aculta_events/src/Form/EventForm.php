@@ -238,7 +238,16 @@ final class EventForm extends ContentEntityForm {
         if ($localId > 0) {
           $dateData['field_local'] = $localId;
         }
-        EventDate::create($dateData)->save();
+        try {
+          EventDate::create($dateData)->save();
+        }
+        catch (\Exception $e) {
+          $this->logger('aculta_events')->error('Falha ao gravar data inicial do evento @id: @msg', [
+            '@id' => $entity->id(),
+            '@msg' => $e->getMessage(),
+          ]);
+          $this->messenger()->addWarning($this->t('Houve uma falha ao cadastrar uma das datas iniciais. Você pode revisá-la ou adicioná-la a seguir.'));
+        }
       }
     }
     else {

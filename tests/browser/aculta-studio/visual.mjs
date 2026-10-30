@@ -1,4 +1,4 @@
-// Revisão visual e de navegação do ACULTA Studio (/marley no domínio conta), no Firefox pelo geckodriver.
+// Revisão visual e de navegação do ACULTA Studio Marley (/marley no purpose account), no Firefox/geckodriver.
 // Confere: seção "Estúdio" no shell da conta, abas e painel, navegação AJAX (sem recarregar a página),
 // largura de celular emulada pelo BiDi (390 px) e ausência de erros de JavaScript.
 // Ver README.md desta pasta. Somente no servidor de teste, com sessão de conta de teste.
@@ -161,7 +161,7 @@ try {
   const after = await exec(`return window.__marker || null;`);
   check('clique no submenu troca o conteúdo sem recarregar a página', after === 'sem-recarga');
   check('seção ativa marcada por aria-current', await exec(`return !!document.querySelector('[data-aculta-studio="section"][aria-current="page"]');`));
-  check('URL própria do nível (caminho /marley/área/seção)', (await exec(`return window.location.pathname;`)).startsWith('/studio/'));
+  check('URL própria do nível (caminho /marley/área/seção)', (await exec(`return window.location.pathname;`)).startsWith('/marley/'));
   check('região aria-live presente', await exec(`return !!document.querySelector('[data-aculta-studio="live"][aria-live="polite"]');`));
   await exec(`history.back(); return 1;`);
   await sleep(2500);

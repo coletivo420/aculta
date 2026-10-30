@@ -244,6 +244,31 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     self::assertArrayHasKey('locations_table', $formSearch);
     self::assertArrayHasKey((int) $existing->id(), $formSearch['locations_table']['#rows']);
 
+    // Busca por município / localidade.
+    $locFloripa = EventLocation::create([
+      'title' => 'Espaço Floripa',
+      'field_status' => 'publicado',
+      'field_endereco' => [
+        'country_code' => 'BR',
+        'locality' => 'Florianópolis',
+        'administrative_area' => 'SC',
+      ],
+    ]);
+    $locFloripa->save();
+
+    $formStateByCity = new FormState();
+    $formStateByCity->set('mode', 'search');
+    $formStateByCity->set('search_term', 'Florianópolis');
+    $formSearchByCity = $modalForm->buildForm([], $formStateByCity);
+
+    self::assertArrayHasKey((int) $locFloripa->id(), $formSearchByCity['locations_table']['#rows']);
+    self::assertArrayNotHasKey((int) $existing->id(), $formSearchByCity['locations_table']['#rows']);
+    self::assertArrayHasKey('search_clear', $formSearchByCity['search_bar']);
+
+    // Limpar busca.
+    $modalForm->submitClearSearch($formSearchByCity, $formStateByCity);
+    self::assertSame('', $formStateByCity->get('search_term'));
+
     // Selecionar existente
     $formStateSearch->set('selected_location_id', (int) $existing->id());
     $formStateSearch->set('field_name', 'field_event_location');

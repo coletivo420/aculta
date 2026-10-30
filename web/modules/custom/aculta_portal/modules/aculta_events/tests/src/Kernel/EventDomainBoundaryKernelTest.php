@@ -6,7 +6,9 @@ namespace Drupal\Tests\aculta_events\Kernel;
 
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
+use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Controller\EventOrganizerDashboardController;
+use Drupal\user\Entity\User;
 use Drupal\aculta_events\Plugin\Block\UpcomingEventsBlock;
 use Drupal\aculta_portal\Domain\ContentPurposeResolver;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -59,7 +61,9 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     'aculta_events.admin_export',
   ];
 
-  /** Organizer tools are writable only in the Eventos purpose. */
+  /**
+   * Organizer tools are writable only in the Eventos purpose.
+   */
   private const ORGANIZER_ROUTES = [
     'aculta_events.organizer_dashboard',
     'aculta_events.organizer_event_add',
@@ -116,6 +120,7 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
       self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'main'), $name);
       self::assertTrue((bool) $route->getOption('no_cache'), $name);
     }
+    self::assertSame('/culturas', $routeProvider->getRouteByName('aculta_events.organizer_dashboard')->getPath());
   }
 
   /**
@@ -127,6 +132,84 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
 
     self::assertSame('container', $build['#type']);
     self::assertContains('user.permissions', $build['#cache']['contexts']);
+    self::assertContains('url.query_args', $build['#cache']['contexts']);
+    self::assertArrayHasKey('guide', $build);
+    self::assertSame('details', $build['guide']['#type']);
+    self::assertArrayHasKey('filters', $build);
+    self::assertArrayHasKey('pager', $build);
+    self::assertCount(5, $build['events']['#header']);
+  }
+
+  /**
+   * Valida busca, filtros por status, próxima data e local no dashboard.
+   */
+  public function testOrganizerDashboardFiltersDatesAndLocation(): void {
+    $user = User::create([
+      'name' => 'organizador_test',
+      'mail' => 'organizador@example.com',
+      'status' => 1,
+    ]);
+    $user->save();
+    $this->container->get('current_user')->setAccount($user);
+
+    $local = EventLocation::create([
+      'title' => 'Teatro Central',
+      'field_status' => 'publicado',
+      'field_endereco' => [
+        'country_code' => 'BR',
+        'locality' => 'Curitiba',
+        'administrative_area' => 'PR',
+      ],
+    ]);
+    $local->save();
+
+    $evento1 = Event::create([
+      'title' => 'Show da Primavera',
+      'field_status' => 'publicado',
+      'field_organizador' => (int) $user->id(),
+    ]);
+    $evento1->save();
+
+    EventDate::create([
+      'title' => 'Sessão 1',
+      'field_evento' => (int) $evento1->id(),
+      'field_local' => (int) $local->id(),
+      'field_quando' => ['value' => '2026-11-20T20:00:00', 'end_value' => '2026-11-20T22:00:00'],
+    ])->save();
+
+    $evento2 = Event::create([
+      'title' => 'Oficina de Teatro',
+      'field_status' => 'rascunho',
+      'field_organizador' => (int) $user->id(),
+    ]);
+    $evento2->save();
+
+    // 1. Dashboard sem filtros: ambos aparecem.
+    $controller = EventOrganizerDashboardController::create($this->container);
+    $build = $controller->page();
+    self::assertCount(2, $build['events']['#rows']);
+    $firstRow = $build['events']['#rows'][0];
+    self::assertSame('Oficina de Teatro', $firstRow[0]['data']);
+    $secondRow = $build['events']['#rows'][1];
+    self::assertSame('Show da Primavera', $secondRow[0]['data']);
+    self::assertStringContainsString('Teatro Central (Curitiba/PR)', $secondRow[2]['data']);
+
+    // 2. Filtro por busca 'Primavera'.
+    $request = Request::create('/culturas', 'GET', ['busca' => 'Primavera']);
+    $this->container->get('request_stack')->push($request);
+    $buildFiltered = $controller->page();
+    self::assertCount(1, $buildFiltered['events']['#rows']);
+    self::assertSame('Show da Primavera', $buildFiltered['events']['#rows'][0][0]['data']);
+    self::assertArrayHasKey('reset', $buildFiltered['filters']['form']);
+
+    // 3. Filtro por status 'rascunho'.
+    $this->container->get('request_stack')->pop();
+    $requestStatus = Request::create('/culturas', 'GET', ['status' => 'rascunho']);
+    $this->container->get('request_stack')->push($requestStatus);
+    $buildStatus = $controller->page();
+    self::assertCount(1, $buildStatus['events']['#rows']);
+    self::assertSame('Oficina de Teatro', $buildStatus['events']['#rows'][0][0]['data']);
+    $this->container->get('request_stack')->pop();
   }
 
   /**
