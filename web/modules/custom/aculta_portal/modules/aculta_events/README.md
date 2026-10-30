@@ -52,3 +52,8 @@ editor de Data, detalhe com agenda e navegação. A integração com aculta_inde
 inclui canônicos, relações Evento > Local, ACL, consultas paginadas e manutenção
 incremental. O RC acima é evidência histórica; o novo escopo está Dev/planejado,
 sem mudança de manifesto ou teste Runtime nesta revisão.
+
+
+## Fluxo planejado de Local no formulário Activity
+
+O cadastro/seleção descrito em [ADR-033](../../../../../../docs/decisions/ADR-033-endereco-busca-e-locais.md) ainda não está implementado: modal Drupal/AJAX para localizar por nome, selecionar Local existente ou cadastrar outro; cadastro começa por CEP via adaptador central. Busca por logradouro fica restrita a Events/Maps e aguarda aprovação. Os campos de endereço avulsos de Activity devem ser substituídos somente com plano de migração de dados.
