@@ -15,6 +15,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_events\Route\EventRouteContext;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -91,7 +92,7 @@ final class EventDateOrderForm extends FormBase {
     $form['actions']['cancel'] = [
       '#type' => 'link',
       '#title' => $this->t('Cancelar'),
-      '#url' => Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $aculta_event->id()]),
+      '#url' => Url::fromRoute(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $aculta_event->id()]),
       '#attributes' => ['class' => ['button']],
     ];
 
@@ -131,7 +132,7 @@ final class EventDateOrderForm extends FormBase {
     }
 
     $this->messenger()->addStatus($this->t('A ordem das datas foi atualizada.'));
-    $form_state->setRedirect('aculta_events.event_edit', ['aculta_event' => $event->id()]);
+    $form_state->setRedirect(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $event->id()]);
   }
 
   /**

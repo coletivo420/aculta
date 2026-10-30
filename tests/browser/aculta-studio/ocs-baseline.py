@@ -17,7 +17,7 @@ sys.path.insert(0, str(ROOT / "tests/browser/aculta-cpf-checkout"))
 from wdlib import Driver  # noqa: E402
 
 URI = os.environ.get("STUDIO_LOGIN_URI", "https://conta.aculta.toca.net.br")
-PAGE = os.environ.get("STUDIO_PAGE", URI + "/studio/marley")
+PAGE = os.environ.get("STUDIO_PAGE", URI + "/marley")
 USER = os.environ.get("STUDIO_USER", "teste.comum")
 DEFAULT_WIDTHS = [(1440, 1000), (390, 844)]
 GATE_WIDTHS = (320, 360, 390, 599, 600, 768, 1024, 1280, 1440)
@@ -28,13 +28,13 @@ WIDTHS = [
 CAPTURES = []
 DEFAULT_STUDIO_PAGES = [
     ("hub", "/studio"),
-    ("marley", "/studio/marley"),
-    ("ganjalab", "/studio/ganjalab"),
-    ("we-sativa", "/studio/we-sativa"),
-    ("conta", "/studio/conta"),
-    ("perfil", "/studio/perfil"),
-    ("green-stash", "/studio/green-stash"),
-    ("planos", "/studio/conta/mercado-pago/planos"),
+    ("marley", "/marley"),
+    ("ganjalab", "/ganjalab"),
+    ("we-sativa", "/wesativa"),
+    ("conta", "/conta"),
+    ("perfil", "/perfil"),
+    ("green-stash", "/greenstash"),
+    ("planos", "/conta/mercado-pago/planos"),
 ]
 
 

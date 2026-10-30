@@ -69,7 +69,7 @@ final class AccountExperienceProviderTest extends UnitTestCase {
     $document->method('isAvailable')->willReturn(TRUE);
     $build = (new AccountExperienceProvider($document))->build();
 
-    self::assertSame('studio-account-home', $build['#attributes']['data-portal-ui']);
+    self::assertSame('account-entry', $build['#attributes']['data-portal-ui']);
     self::assertSame('item_list', $build['sections']['#theme']);
     $routes = array_map(static fn (array $link): string =>
       $link['#url']->getRouteName(), $build['sections']['#items']);

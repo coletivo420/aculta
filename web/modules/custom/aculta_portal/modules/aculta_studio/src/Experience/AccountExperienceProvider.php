@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_studio\Experience;
 
 use Drupal\aculta_portal\Account\AccountDocumentInterface;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -18,7 +19,10 @@ use Drupal\Core\Url;
  */
 final class AccountExperienceProvider implements StudioExperienceProviderInterface {
 
-  public function __construct(private readonly ?AccountDocumentInterface $documents = NULL) {}
+  public function __construct(
+    private readonly ?AccountDocumentInterface $documents = NULL,
+    private readonly ?DomainPurposeManager $domainPurposes = NULL,
+  ) {}
 
   /**
    * {@inheritdoc}
@@ -69,15 +73,38 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
    */
   public function build(): array {
     $items = $this->links();
+    $suiteLinks = [];
+    foreach ([
+      ['account', 'aculta_studio.home', 'Marley'],
+      ['courses', 'aculta_lms.student_dashboard', 'Ganjalab'],
+      ['wiki', 'aculta_studio.we_sativa', 'WE SATIVA'],
+      ['shop', 'aculta_commerce.green_stash', 'Green Stash'],
+      ['eventos', 'aculta_events.organizer_dashboard', 'Culturas'],
+    ] as [$purpose, $route, $label]) {
+      $url = $this->domainPurposes?->routeUrl($purpose, $route);
+      if ($url !== NULL) {
+        $suiteLinks[] = [
+          '#type' => 'link',
+          '#title' => new TranslatableMarkup($label),
+          '#url' => $url,
+        ];
+      }
+    }
     return [
       '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'studio-account-home'],
+      '#attributes' => ['data-portal-ui' => 'account-entry'],
       'description' => [
-        '#plain_text' => new TranslatableMarkup('Administre os dados privados e a segurança da sua conta. A interface original da Minha Conta permanece disponível para comparação.'),
+        '#plain_text' => new TranslatableMarkup('Acesse seus dados, segurança e experiências ACULTA.'),
       ],
       'sections' => [
         '#theme' => 'item_list',
         '#items' => $items,
+      ],
+      'suites' => [
+        '#theme' => 'item_list',
+        '#title' => new TranslatableMarkup('Experiências'),
+        '#items' => $suiteLinks,
+        '#attributes' => ['data-portal-ui' => 'account-experiences'],
       ],
       '#cache' => [
         'contexts' => ['user', 'user.permissions', 'url.site'],

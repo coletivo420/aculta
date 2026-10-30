@@ -14,6 +14,7 @@ use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_events\Route\EventRouteContext;
 
 /**
  * Formulário nativo para criação e edição de eventos com suas datas e locais.
@@ -246,12 +247,17 @@ final class EventForm extends ContentEntityForm {
       ]));
     }
 
-    $slug = (string) $entity->get('field_slug')->value;
-    if ($slug !== '') {
-      $form_state->setRedirect('aculta_events.page', ['slug' => $slug]);
+    if (EventRouteContext::route('aculta_events.catalogue', 'aculta_events.organizer_event_edit') === 'aculta_events.organizer_event_edit') {
+      $form_state->setRedirect('aculta_events.organizer_event_edit', ['aculta_event' => $entity->id()]);
     }
     else {
-      $form_state->setRedirect('aculta_events.catalogue');
+      $slug = (string) $entity->get('field_slug')->value;
+      if ($slug !== '') {
+        $form_state->setRedirect('aculta_events.page', ['slug' => $slug]);
+      }
+      else {
+        $form_state->setRedirect('aculta_events.catalogue');
+      }
     }
 
     return $status;

@@ -19,7 +19,7 @@ $checked = 0;
 $obsoletePaths = [
   '/studio/Marley',
   '/studio/inicio',
-  '/ganjalab',
+  '/studio/ganjalab',
   '/ganjalab420',
   '/studio/ganjalab420',
   '/minha-aprendizagem',

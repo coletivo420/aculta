@@ -1,5 +1,5 @@
 aculta_lms.student_dashboard:
-  path: '/studio/ganjalab'
+  path: '/ganjalab'
   defaults:
     _controller: 'aculta_studio.ganjalab_controller:student'
     _title: 'ACULTA Studio Ganjalab'
@@ -8,7 +8,7 @@ aculta_lms.student_dashboard:
     _user_is_logged_in: 'TRUE'
   options:
     no_cache: true
-    _aculta_domain_purpose: account
+    _aculta_domain_purpose: courses
 
 aculta_lms.class_dashboard:
   path: '/painel-administrativo/lms/curso/{course}/turma/{group}/painel'

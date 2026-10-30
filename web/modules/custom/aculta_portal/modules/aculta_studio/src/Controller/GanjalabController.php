@@ -29,7 +29,7 @@ final class GanjalabController {
     if ($provider === NULL || !$provider->available()) {
       throw new NotFoundHttpException();
     }
-    if (!$this->experiences->access('ganjalab', 'account', $this->account)->isAllowed()) {
+    if (!$this->experiences->access('ganjalab', 'courses', $this->account)->isAllowed()) {
       throw new AccessDeniedHttpException();
     }
     return $provider->build();

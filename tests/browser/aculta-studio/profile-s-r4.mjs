@@ -110,12 +110,12 @@ try {
     const browser = await session();
     try {
       await browser.get(loginUrl(users[accountIndex]));
-      await browser.get(`${base}/studio/perfil`);
+      await browser.get(`${base}/perfil`);
       const state = JSON.parse(await browser.eval(stateJs));
-      check(`${label} editor em rota correta`, state.path === '/studio/perfil' && state.ok);
+      check(`${label} editor em rota correta`, state.path === '/perfil' && state.ok);
       check(`${label} quatro SDCs de Perfil`, state.ok && state.identity && state.bio && state.social);
       check(`${label} links com nome acessível`, !state.missingLabel && state.focusable);
-      check(`${label} ações do owner preservadas`, ['/studio/perfil/apelido', '/studio/perfil/bio', '/studio/perfil/privacidade', '/studio/perfil/redes/instagram'].every(path => state.links.some(href => href?.includes(path))));
+      check(`${label} ações do owner preservadas`, ['/perfil/apelido', '/perfil/bio', '/perfil/privacidade', '/perfil/redes/instagram'].every(path => state.links.some(href => href?.includes(path))));
       if (expectations[accountIndex] === 'yes' || expectations[accountIndex] === 'no') {
         check(`${label} perfil público conforme fixture`, !!state.publicLink === (expectations[accountIndex] === 'yes'));
       } else check(`${label} perfil público conforme fixture`, null, 'STUDIO_PROFILE_PUBLIC_A/B não configurado');
@@ -145,10 +145,10 @@ try {
   const noJs = await session(false);
   try {
     await noJs.get(loginUrl(users[0]));
-    await noJs.get(`${base}/studio/perfil`);
+    await noJs.get(`${base}/perfil`);
     const html = await noJs.source();
     check('sem JavaScript SDC do Perfil no HTML', html.includes('aculta-profile-editor') && html.includes('aculta-profile-identity'));
-    await noJs.get(`${base}/studio/perfil/apelido`);
+    await noJs.get(`${base}/perfil/apelido`);
     const formHtml = await noJs.source();
     check('sem JavaScript formulário original carregado', /<form\b/i.test(formHtml) && !/access denied|acesso negado/i.test(formHtml));
   } finally { await noJs.close(); }

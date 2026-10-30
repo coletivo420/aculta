@@ -203,7 +203,7 @@ final class MarleyListingBuilder {
         ? [
           '#type' => 'link',
           '#title' => $this->t('Carregar mais publicações'),
-          '#url' => Url::fromUri('internal:' . ($this->requestStack->getCurrentRequest()?->getPathInfo() ?? '/studio/marley'), [
+          '#url' => Url::fromUri('internal:' . ($this->requestStack->getCurrentRequest()?->getPathInfo() ?? '/marley'), [
             'query' => ['studio_cursor' => $nextCursor],
           ]),
         ]

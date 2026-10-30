@@ -141,10 +141,14 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $event->setResponse(new Response('', Response::HTTP_FORBIDDEN, ['Cache-Control' => 'private, no-store']));
       return;
     }
-    // The technical account prefix is not a public alias in development.
-    // The account home is the root of its purpose and all /minha-conta/*
-    // paths fail closed instead of redirecting.
+    // The former Studio URL family is retired globally. Keep every method,
+    // AJAX request, and purpose fail-closed with a real 404.
     $accountPath = $event->getRequest()->getPathInfo();
+    if ($accountPath === '/studio' || str_starts_with($accountPath, '/studio/')) {
+      $event->setResponse($this->notFoundResponse());
+      return;
+    }
+    // /minha-conta remains a protected technical path, not a public alias.
     if ($accountPath === '/minha-conta' || str_starts_with($accountPath, '/minha-conta/')) {
       $event->setResponse(new Response('', Response::HTTP_NOT_FOUND, ['Cache-Control' => 'private, no-store']));
       return;
@@ -196,19 +200,15 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
         return;
       }
     }
-    // The Account root serves the Studio hub. Its internal /studio path is
-    // unavailable directly; anonymous visitors go to the Account login page.
-    $hubAction = FrontPathPolicy::acaoDoHubNaConta(
+    // The Account root serves its account entry page; anonymous visitors go
+    // to the account login page. The suite framework has no public hub route.
+    $accountAction = FrontPathPolicy::acaoDaContaNaRaiz(
       $this->domainPurposeManager->getCurrentPurpose(),
       $event->getRequest()->getPathInfo(),
       (string) $matched['_route'],
       $this->currentUser->isAuthenticated(),
     );
-    if ($hubAction === FrontPathPolicy::ACAO_NAO_ENCONTRADO) {
-      $event->setResponse($this->notFoundResponse());
-      return;
-    }
-    if ($hubAction === FrontPathPolicy::ACAO_LOGIN) {
+    if ($accountAction === FrontPathPolicy::ACAO_LOGIN) {
       $login = $this->domainPurposeManager->routeUrl('account', 'user.login');
       if ($login !== NULL) {
         $event->setResponse(new TrustedRedirectResponse($login->toString(), Response::HTTP_FOUND));

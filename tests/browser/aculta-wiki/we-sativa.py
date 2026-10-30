@@ -17,7 +17,7 @@ sys.path.insert(0, str(PROJECT / "tests/browser/aculta-cpf-checkout"))
 from wdlib import Driver, WDError  # noqa: E402
 
 PAGE = os.environ.get(
-    "WIKI_STUDIO_PAGE", "https://conta.aculta.toca.net.br/studio/we-sativa/inicio"
+    "WIKI_STUDIO_PAGE", "https://conta.aculta.toca.net.br/wesativa/inicio"
 )
 HOME = os.environ.get("WIKI_HOME_URL", "https://wiki420.aculta.toca.net.br/")
 LOGIN_URI = os.environ.get("WIKI_STUDIO_LOGIN_URI", "https://conta.aculta.toca.net.br")
@@ -119,7 +119,7 @@ try:
           return {href: a.href, path: new URL(a.href).pathname, host: new URL(a.href).host};
         })();""")
         check("CTA da Wiki resolve para o início no host de conta",
-              cta["path"].endswith("/studio/we-sativa/inicio")
+              cta["path"].endswith("/wesativa/inicio")
               and cta["host"] == urlparse(PAGE).netloc, cta["path"])
         driver.get(cta["href"])
     else:
@@ -222,7 +222,7 @@ try:
                   return {path: new URL(a.href).pathname, outlined: a.classList.contains('btn-outline-primary')};
                 })();""")
                 check("retorno leva ao workspace autorizado",
-                      return_link["path"].endswith("/studio/we-sativa"),
+                      return_link["path"].endswith("/wesativa"),
                       return_link["path"])
         (OUT / "summary.json").write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n")
 finally:

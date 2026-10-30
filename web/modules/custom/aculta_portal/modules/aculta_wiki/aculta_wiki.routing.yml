@@ -83,7 +83,7 @@ aculta_wiki.proposal_withdraw:
         type: entity:aculta_wiki_proposal
 
 aculta_wiki.proposal_decide:
-  path: '/studio/marley/wiki/propostas/{proposal}/decidir'
+  path: '/wesativa/propostas/{proposal}/decidir'
   defaults:
     _form: '\Drupal\aculta_wiki\Form\WikiProposalDecisionForm'
     _title: 'Avaliar proposta da Wiki'
@@ -91,7 +91,7 @@ aculta_wiki.proposal_decide:
     _permission: 'moderate wiki proposals'
     _entity_access: 'proposal.update'
   options:
-    _aculta_domain_purpose: account
+    _aculta_domain_purpose: wiki
     parameters:
       proposal:
         type: entity:aculta_wiki_proposal

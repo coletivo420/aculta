@@ -15,6 +15,7 @@ use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_events\Route\EventRouteContext;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -154,7 +155,7 @@ final class EventDateEditForm extends EventDateCreateForm {
     $date->save();
 
     $this->messenger()->addStatus($this->t('A data foi atualizada.'));
-    $form_state->setRedirect('aculta_events.event_edit', ['aculta_event' => $event->id()]);
+    $form_state->setRedirect(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $event->id()]);
   }
 
   /**
@@ -171,7 +172,7 @@ final class EventDateEditForm extends EventDateCreateForm {
       $response = new AjaxResponse();
       $response->addCommand(new CloseModalDialogCommand());
       $response->addCommand(new RedirectCommand(
-        Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $eventId])->toString()
+        Url::fromRoute(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $eventId])->toString()
       ));
       return $response;
     }

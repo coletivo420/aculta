@@ -29,7 +29,7 @@ final class GreenStashExperienceProviderTest extends UnitTestCase {
     self::assertInstanceOf(StudioExperienceProviderInterface::class, $provider);
     self::assertSame('green_stash', $provider->id());
     self::assertSame('ACULTA STUDIO GREEN STASH', $provider->label());
-    self::assertSame('account', $provider->purpose());
+    self::assertSame('shop', $provider->purpose());
     self::assertSame('aculta_commerce.green_stash', $provider->routeName());
     self::assertTrue($provider->available());
 

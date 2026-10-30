@@ -3,7 +3,7 @@
 ## Gestão de planos no Studio
 
 `plan-management.py` valida visualmente a entrada da gestão pelo hub Studio, a
-tela `/studio/conta/mercado-pago/planos` no shell ACULTA420, a listagem e os
+tela `/conta/mercado-pago/planos` no shell ACULTA420, a listagem e os
 campos de plano, a submissão para o domínio MAIN e o reflow em 390 e 1280 px.
 Não envia o formulário e não cria/atualiza plano. Usa Firefox ESR visível em
 `DISPLAY=:0`, geckodriver e o `wdlib.py` compartilhado em

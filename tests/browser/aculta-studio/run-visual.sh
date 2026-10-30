@@ -6,7 +6,7 @@ drush_root="${STUDIO_DRUSH_ROOT:-$project_root}"
 export STUDIO_USER="${STUDIO_USER:-teste.comum}"
 export STUDIO_USER_ID="${STUDIO_USER_ID:-5}"
 export STUDIO_LOGIN_URI="${STUDIO_LOGIN_URI:-https://conta.aculta.toca.net.br}"
-export STUDIO_PAGE="${STUDIO_PAGE:-https://conta.aculta.toca.net.br/studio/marley}"
+export STUDIO_PAGE="${STUDIO_PAGE:-https://conta.aculta.toca.net.br/marley}"
 export SUITE_OUT="${SUITE_OUT:?Defina SUITE_OUT em armazenamento fora do repositório}"
 
 if [[ "${DISPLAY:-}" != ":0" ]]; then
@@ -33,8 +33,8 @@ fi
 studio_runtime="$(php "$drush_root/vendor/drush/drush/drush.php" php:eval '$e = \Drupal::service("extension.list.module")->getExtensionInfo("aculta_studio"); $r = \Drupal::service("router.route_provider")->getRouteByName("aculta_studio.home"); echo ($e["version"] ?? "unknown") . "|" . ($r ? $r->getPath() : "absent");' "--uri=$STUDIO_LOGIN_URI")"
 studio_version="${studio_runtime%%|*}"
 studio_home="${studio_runtime#*|}"
-if [[ "$studio_home" != "/studio/marley" ]]; then
-  echo "Runtime incompatível: aculta_studio=$studio_version; rota aculta_studio.home=$studio_home. Esperado: /studio/marley. Atualize o Runtime de teste para a branch antes da revisão visual." >&2
+if [[ "$studio_home" != "/marley" ]]; then
+  echo "Runtime incompatível: aculta_studio=$studio_version; rota aculta_studio.home=$studio_home. Esperado: /marley. Atualize o Runtime de teste para a branch antes da revisão visual." >&2
   exit 3
 fi
 export STUDIO_COLOR_MODE_STATE="$(php "$drush_root/vendor/drush/drush/drush.php" php:eval 'echo json_encode(\Drupal::service("aculta_portal.color_mode_preference")->forUser((int) getenv("STUDIO_USER_ID")));' "--uri=$STUDIO_LOGIN_URI")"

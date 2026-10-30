@@ -37,7 +37,7 @@ final class GanjalabExperienceProvider implements StudioExperienceProviderInterf
    * {@inheritdoc}
    */
   public function purpose(): string {
-    return 'account';
+    return 'courses';
   }
 
   /**

@@ -1,15 +1,15 @@
 aculta_commerce.green_stash:
-  path: '/studio/green-stash'
+  path: '/greenstash'
   defaults:
     _controller: 'aculta_commerce.green_stash_controller:page'
     _title: 'ACULTA STUDIO GREEN STASH'
   requirements:
     _permission: 'access aculta green stash'
   options:
-    _aculta_domain_purpose: account
+    _aculta_domain_purpose: shop
 
 aculta_commerce.green_stash_area:
-  path: '/studio/green-stash/{secao}'
+  path: '/greenstash/{secao}'
   defaults:
     _controller: 'aculta_commerce.green_stash_controller:page'
     _title: 'ACULTA STUDIO GREEN STASH'
@@ -17,10 +17,10 @@ aculta_commerce.green_stash_area:
     _permission: 'access aculta green stash'
     secao: 'visao-geral|produtos|pedidos|estoque|envios|promocoes|clientes|relatorios|configuracoes'
   options:
-    _aculta_domain_purpose: account
+    _aculta_domain_purpose: shop
 
 aculta_commerce.green_stash_shipment_transition:
-  path: '/studio/green-stash/envios/{aculta_shipment}/transicao/{transition}'
+  path: '/greenstash/envios/{aculta_shipment}/transicao/{transition}'
   defaults:
     _form: '\Drupal\aculta_commerce\Form\GreenStashShipmentTransitionForm'
     _title: 'Transição de remessa'
@@ -29,10 +29,10 @@ aculta_commerce.green_stash_shipment_transition:
     aculta_shipment: '[1-9][0-9]*'
     transition: '[a-z_]+'
   options:
-    _aculta_domain_purpose: account
+    _aculta_domain_purpose: shop
 
 aculta_commerce.green_stash_product_detail:
-  path: '/studio/green-stash/produtos/{produto}'
+  path: '/greenstash/produtos/{produto}'
   defaults:
     _controller: 'aculta_commerce.green_stash_product_controller:detail'
     _title: 'Detalhes do produto'
@@ -40,14 +40,14 @@ aculta_commerce.green_stash_product_detail:
     _permission: 'access aculta green stash'
     produto: '[1-9][0-9]*'
   options:
-    _aculta_domain_purpose: account
+    _aculta_domain_purpose: shop
 
 aculta_commerce.green_stash_product_create:
-  path: '/studio/green-stash/produtos/novo'
+  path: '/greenstash/produtos/novo'
   defaults:
     _form: '\Drupal\aculta_commerce\Form\GreenStashProductCreateForm'
     _title: 'Novo produto'
   requirements:
     _permission: 'access aculta green stash'
   options:
-    _aculta_domain_purpose: account
+    _aculta_domain_purpose: shop

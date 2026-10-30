@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Account-purpose entrypoint for the Wiki contributor experience.
+ * Wiki-purpose entrypoint for the contributor experience.
  */
 final class WeSativaController {
 
@@ -31,7 +31,7 @@ final class WeSativaController {
     if ($provider === NULL || !$provider->available()) {
       throw new NotFoundHttpException();
     }
-    if (!$this->experiences->access('we_sativa', 'account', $this->account)->isAllowed()) {
+    if (!$this->experiences->access('we_sativa', 'wiki', $this->account)->isAllowed()) {
       throw new AccessDeniedHttpException();
     }
     return $provider->build();
@@ -49,7 +49,7 @@ final class WeSativaController {
       || !$provider instanceof StartPageExperienceProviderInterface) {
       throw new NotFoundHttpException();
     }
-    if (!$this->experiences->access('we_sativa', 'account', $this->account)->isAllowed()) {
+    if (!$this->experiences->access('we_sativa', 'wiki', $this->account)->isAllowed()) {
       throw new AccessDeniedHttpException();
     }
     return $provider->buildStart();

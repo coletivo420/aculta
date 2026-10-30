@@ -137,17 +137,17 @@ const inspectJs = `return JSON.stringify((() => {
 })());`;
 
 const cases = [
-  ['cadastro', '/studio/conta/dados', '/dados', 'different'],
-  ['endereco', '/studio/conta/endereco', '/dados/endereco', 'forms'],
-  ['documentos', '/studio/conta/documentos', '/dados/outros-dados', 'optional'],
-  ['seguranca-email', '/studio/conta/seguranca', '/seguranca', 'forms'],
-  ['seguranca-senha', '/studio/conta/seguranca/senha', '/seguranca/senha', 'forms'],
-  ['conexoes', '/studio/conta/conexoes', '/conexoes', 'visual'],
+  ['cadastro', '/conta/dados', '/dados', 'different'],
+  ['endereco', '/conta/endereco', '/dados/endereco', 'forms'],
+  ['documentos', '/conta/documentos', '/dados/outros-dados', 'optional'],
+  ['seguranca-email', '/conta/seguranca', '/seguranca', 'forms'],
+  ['seguranca-senha', '/conta/seguranca/senha', '/seguranca/senha', 'forms'],
+  ['conexoes', '/conta/conexoes', '/conexoes', 'visual'],
   // O Portal não registra uma rota legada /pedidos: usar dashboard como
   // referência visual, sem alegar equivalência funcional de tabelas.
-  ['pedidos', '/studio/conta/pedidos', '/conta-legada', 'reference'],
-  ['apoio', '/studio/conta/apoio', '/meu-apoio', 'visual'],
-  ['preferencias', '/studio/conta/preferencias', '/configuracoes', 'forms'],
+  ['pedidos', '/conta/pedidos', '/conta-legada', 'reference'],
+  ['apoio', '/conta/apoio', '/meu-apoio', 'visual'],
+  ['preferencias', '/conta/preferencias', '/configuracoes', 'forms'],
 ];
 async function inspect(browser, url) {
   await browser.url(url);
@@ -179,7 +179,7 @@ try {
   // Avaliação anônima independente: never accidentally use a logged-in session.
   const anonymous = await firefox();
   try {
-    for (const path of ['/studio/conta','/studio/perfil','/conta-legada']) {
+    for (const path of ['/conta','/perfil','/conta-legada']) {
       const page = await inspect(anonymous, ACCOUNT + path);
       check(`anônimo sem acesso privado ${path}`,
         page.pathname !== path || [401,403].includes(page.status));
@@ -195,10 +195,10 @@ try {
     try {
       await browser.url(oneTimeLogin(USERS[i]));
       const hub = await inspect(browser, ACCOUNT + '/');
-      const entry = await inspect(browser, ACCOUNT + '/studio/conta');
+      const entry = await inspect(browser, ACCOUNT + '/conta');
       const legacyHome = await inspect(browser, ACCOUNT + '/conta-legada');
       check(`${owner}: hub ACCOUNT na raiz`, hub.pathname === '/' && hub.origin === ACCOUNT);
-      check(`${owner}: Conta Studio`, entry.pathname === '/studio/conta' && entry.origin === ACCOUNT);
+      check(`${owner}: Conta Studio`, entry.pathname === '/conta' && entry.origin === ACCOUNT);
       check(`${owner}: HTTP de Conta Studio`, entry.status ? entry.status === 200 : null);
       check(`${owner}: legado permanente`, legacyHome.pathname === '/conta-legada' && legacyHome.origin === ACCOUNT);
       check(`${owner}: acesso ao legado pelo Studio`, entry.anchorHrefs.some(url => url.includes('conta-legada')));
@@ -255,9 +255,9 @@ try {
         }
       }
 
-      const own = await inspect(browser, ACCOUNT + '/studio/perfil');
+      const own = await inspect(browser, ACCOUNT + '/perfil');
       const ownHtml = await browser.source();
-      check(`${owner}: perfil privado no ACCOUNT`, own.profileEditor && own.pathname === '/studio/perfil');
+      check(`${owner}: perfil privado no ACCOUNT`, own.profileEditor && own.pathname === '/perfil');
       check(`${owner}: não inferir apelido do login`, own.privateName !== USERS[i] || own.privateName === SLUGS[i],
         'verificar também fixture sem apelido em rodada S-R4');
       if (PUBLIC[i] === 'yes' || PUBLIC[i] === 'no') {
@@ -301,13 +301,13 @@ try {
         const p = await inspect(browser, MAIN + '/u/' + SLUGS[i]);
         check(`${owner}: reflow perfil público MAIN ${width}px`, p.screenWidth === width && !p.pageOverflow);
         if ([320,390,1440].includes(width)) await browser.screenshot(`${owner}-perfil-main-${width}`);
-        const s = await inspect(browser, ACCOUNT + '/studio/perfil');
+        const s = await inspect(browser, ACCOUNT + '/perfil');
         check(`${owner}: reflow Meu Perfil Studio ${width}px`, s.screenWidth === width && !s.pageOverflow);
         if ([320,390,1440].includes(width)) await browser.screenshot(`${owner}-perfil-studio-${width}`);
       }
       // Alternância local para inspecionar geometria, SEM alterar preferência persistida.
       for (const mode of ['light','dark']) {
-        await inspect(browser, ACCOUNT + '/studio/conta');
+        await inspect(browser, ACCOUNT + '/conta');
         await browser.eval(`document.documentElement.setAttribute('data-bs-theme','${mode}');return true;`);
         const view = JSON.parse(await browser.eval(inspectJs));
         check(`${owner}: modo ${mode} sem overflow`, !view.pageOverflow);
@@ -320,7 +320,7 @@ try {
   const noJs = await firefox(false);
   try {
     await noJs.url(oneTimeLogin(USERS[0]));
-    for (const path of ['/studio/conta/dados','/studio/conta/endereco','/studio/conta/seguranca','/studio/perfil/apelido','/studio/perfil/bio']) {
+    for (const path of ['/conta/dados','/conta/endereco','/conta/seguranca','/perfil/apelido','/perfil/bio']) {
       await noJs.url(ACCOUNT + path);
       const actual = new URL(await noJs.currentUrl());
       const html = await noJs.source();

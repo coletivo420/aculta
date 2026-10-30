@@ -19,6 +19,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_events\Route\EventRouteContext;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -193,7 +194,7 @@ class EventDateCreateForm extends FormBase {
     $date = $this->entities->getStorage('aculta_event_date')->create($dateData);
     $date->save();
     $this->messenger()->addStatus($this->t('A data foi criada.'));
-    $form_state->setRedirect('aculta_events.event_edit', ['aculta_event' => $event->id()]);
+    $form_state->setRedirect(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $event->id()]);
   }
 
   /**
@@ -210,7 +211,7 @@ class EventDateCreateForm extends FormBase {
       $response = new AjaxResponse();
       $response->addCommand(new CloseModalDialogCommand());
       $response->addCommand(new RedirectCommand(
-        Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $eventId])->toString()
+        Url::fromRoute(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $eventId])->toString()
       ));
       return $response;
     }

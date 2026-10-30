@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Guarda do hub do Studio na raiz do ACCOUNT (decisão pura, sem roteamento).
+ * Guarda da entrada da Conta na raiz do ACCOUNT (decisão pura, sem roteamento).
  */
 #[Group('aculta_portal')]
 #[CoversClass(FrontPathPolicy::class)]
@@ -20,21 +20,20 @@ final class DomainPurposeRootGuardTest extends UnitTestCase {
   /**
    * Casos: purpose, caminho original, rota, autenticado, ação esperada.
    */
-  public static function hubActionProvider(): array {
+  public static function accountActionProvider(): array {
     return [
-      'anônimo na raiz da Conta vai ao login' => ['account', '/', 'aculta_studio.hub', FALSE, FrontPathPolicy::ACAO_LOGIN],
-      'logado na raiz da Conta é servido' => ['account', '/', 'aculta_studio.hub', TRUE, NULL],
-      '/studio direto responde 404, mesmo logado' => ['account', '/studio', 'aculta_studio.hub', TRUE, FrontPathPolicy::ACAO_NAO_ENCONTRADO],
-      '/studio direto responde 404, anônimo' => ['account', '/studio', 'aculta_studio.hub', FALSE, FrontPathPolicy::ACAO_NAO_ENCONTRADO],
-      'outro purpose não sofre a guarda' => ['main', '/', 'aculta_studio.hub', FALSE, NULL],
+      'anônimo na raiz da Conta vai ao login' => ['account', '/', 'aculta_studio.account', FALSE, FrontPathPolicy::ACAO_LOGIN],
+      'logado na raiz da Conta é servido' => ['account', '/', 'aculta_studio.account', TRUE, NULL],
+      'rota Conta direta não sofre a guarda da raiz' => ['account', '/conta', 'aculta_studio.account', TRUE, NULL],
       'outra rota na raiz da Conta não sofre a guarda' => ['account', '/', 'aculta_portal.dashboard', FALSE, NULL],
-      'sem purpose não sofre a guarda' => [NULL, '/', 'aculta_studio.hub', FALSE, NULL],
+      'outro purpose não sofre a guarda' => ['main', '/', 'aculta_studio.account', FALSE, NULL],
+      'sem purpose não sofre a guarda' => [NULL, '/', 'aculta_studio.account', FALSE, NULL],
     ];
   }
 
-  #[DataProvider('hubActionProvider')]
-  public function testHubAction(?string $purpose, string $path, string $route, bool $autenticado, ?string $expected): void {
-    self::assertSame($expected, FrontPathPolicy::acaoDoHubNaConta($purpose, $path, $route, $autenticado));
+  #[DataProvider('accountActionProvider')]
+  public function testAccountAction(?string $purpose, string $path, string $route, bool $autenticado, ?string $expected): void {
+    self::assertSame($expected, FrontPathPolicy::acaoDaContaNaRaiz($purpose, $path, $route, $autenticado));
   }
 
 }

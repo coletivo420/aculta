@@ -35,10 +35,10 @@ final class WeSativaExperienceProvider implements StudioExperienceProviderInterf
   }
 
   /**
-   * Returns the purpose used by Studio.
+  * Returns the owner purpose for the Wiki suite.
    */
   public function purpose(): string {
-    return 'account';
+    return 'wiki';
   }
 
   /**

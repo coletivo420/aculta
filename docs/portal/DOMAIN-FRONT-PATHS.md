@@ -3,7 +3,7 @@
 Regra uniforme, implementada em `src/Domain/FrontPathPolicy.php` e aplicada por `DomainPurposeRequestSubscriber`:
 
 1. A raiz de cada subdomínio serve o conteúdo da sua finalidade (`PurposeFrontPathProcessor::FRONT_PATHS`).
-2. O caminho interno da raiz (ex.: `/apoio`, `/wiki`, `/cursos`, `/loja`, `/discussoes`, `/redes-sociais`, `/eventos`) **não é público**. Requisição direta responde **404**, em qualquer método, sem redirecionamento 301. O caminho antigo `/forum` permanece fechado durante a retirada do módulo contribuído.
+2. O caminho interno da raiz (ex.: `/apoio`, `/wiki`, `/cursos`, `/loja`, `/discussoes`, `/redes-sociais`, `/eventos`) **não é público**. Requisição direta responde **404**, em qualquer método, sem redirecionamento 301. Exceção: `/conta` é também a rota pública canônica da entrada de Conta. O caminho antigo `/forum` permanece fechado durante a retirada do módulo contribuído.
 3. Caminho de outra finalidade responde 404 (wrong-purpose público, ver `ADMIN-DOMAIN-POLICY.md`).
 4. Redirecionamentos 301 ficam só para caminhos legados listados abaixo. Não se cria 301 para slug novo.
 
@@ -19,7 +19,7 @@ Regra uniforme, implementada em `src/Domain/FrontPathPolicy.php` e aplicada por 
 | `loja.aculta.toca.net.br` | **404: pendência de conteúdo** | 404 | A página inicial da loja é a rota `/loja` (`aculta_portal.shop_home`), que mostra o nó 372 "Loja da Associação". O nó 372 não é público direto (404). Decisão do responsável: criar o conteúdo |
 | `eventos.aculta.toca.net.br` | 200 (catálogo de eventos) | 404 | Catálogo de eventos na raiz; caminho interno `/eventos` fechado |
 | `aculta.toca.net.br` (principal) | 200 | 404 para `/apoio` (não é finalidade do principal) | Carrinho e checkout pertencem ao principal |
-| `conta.aculta.toca.net.br` | 302 para `/entrar` (anônimo) ou hub do ACULTA Studio (logado) | `/studio` direto: 404 | Caminho interno do hub: `/studio`. A Minha Conta original fica em `/conta-legada`, que não é a raiz |
+| `conta.aculta.toca.net.br` | 302 para `/entrar` (anônimo) ou entrada da Conta (logado) | `/conta` | A raiz resolve à mesma entrada de Conta; `/studio` e todo `/studio/*` retornam 404. A Conta legada permanece em `/conta-legada` |
 
 ## Redirecionamentos 301 permitidos (legado)
 - Caminhos antigos do checkout `/checkout/{pedido}/{etapa}` → `/finalizar-compra/...` (`DomainPurposeRequestSubscriber`).
@@ -46,6 +46,6 @@ A regra atual da raiz continua descrevendo o Runtime existente até o corte. As 
 | `loja.aculta.toca.net.br` | `shop` | Green Stash `/greenstash` e filhas | 404 |
 | `eventos.aculta.toca.net.br` | `eventos` | Culturas `/culturas` e filhas | 404 |
 
-A raiz `conta` passa a ser entrada da Conta, sem reescrita para `/studio`; `/studio` e `/studio/*` retornam 404, sem alias/redirect. Conta e Perfil migram para `/conta/*` e `/perfil/*`; `/conta-legada` permanece. A Wiki ainda usa `wiki420.aculta.toca.net.br`; não trocar até provisionar Domain/Deployer, DNS, TLS/vhost e homologar `wiki.aculta.toca.net.br`.
+A raiz `conta` passa a ser entrada da Conta, resolvida para a rota `/conta`; esse caminho também é público diretamente. Não há reescrita para `/studio`; `/studio` e `/studio/*` retornam 404, sem alias/redirect. Conta e Perfil usam `/conta/*` e `/perfil/*`; `/salvos`, planos de Mercado Pago e `/conta-legada` permanecem separados. A Wiki ainda usa `wiki420.aculta.toca.net.br`; não trocar até provisionar Domain/Deployer, DNS, TLS/vhost e homologar `wiki.aculta.toca.net.br`.
 
 A tabela de runtime acima continua sendo estado presente até o corte. Esta seção documenta o destino aprovado, não prova mudança de host/rota.

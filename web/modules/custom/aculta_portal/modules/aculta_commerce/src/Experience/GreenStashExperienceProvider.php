@@ -39,7 +39,7 @@ final class GreenStashExperienceProvider implements StudioExperienceProviderInte
    * {@inheritdoc}
    */
   public function purpose(): string {
-    return 'account';
+    return 'shop';
   }
 
   /**

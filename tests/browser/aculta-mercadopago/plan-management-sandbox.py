@@ -84,7 +84,7 @@ def main():
         driver.get(LOGIN_URL)
         if not wait_for(driver, lambda: on_test_domain(driver)):
             raise RuntimeError("ACULTA test login did not complete.")
-        driver.get(BASE_URL + "/studio/conta/mercado-pago/planos")
+        driver.get(BASE_URL + "/conta/mercado-pago/planos")
         if not wait_for(driver, lambda: driver.exists("input[name='reason']")):
             raise RuntimeError("Sandbox plan form did not load.")
         action_host = driver.js("return new URL(document.querySelector('form').getAttribute('action'), location.href).hostname;")

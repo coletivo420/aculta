@@ -18,7 +18,7 @@ aculta_pagamentos_mercadopago.plans:
     no_cache: TRUE
 
 aculta_pagamentos_mercadopago.studio_plans:
-  path: '/studio/conta/mercado-pago/planos'
+  path: '/conta/mercado-pago/planos'
   defaults:
     _controller: 'aculta_pagamentos_mercadopago.plan_studio_controller:page'
     _title: 'Planos Mercado Pago'

@@ -17,34 +17,41 @@ use PHPUnit\Framework\Attributes\Group;
 final class StudioIdentityRoutingTest extends UnitTestCase {
 
   /**
-   * All current experience paths have one canonical owner.
+   * Account surfaces and domain suites each have one canonical owner.
    */
   public function testCanonicalPathsHaveOneOwner(): void {
     $routes = $this->routes();
     $expected = [
-      '/studio' => 'aculta_studio.hub',
-      '/studio/conta' => 'aculta_studio.account',
-      '/studio/conta/dados' => 'aculta_studio.account_data',
-      '/studio/conta/endereco' => 'aculta_studio.account_address',
-      '/studio/conta/documentos' => 'aculta_studio.account_documents',
-      '/studio/conta/seguranca' => 'aculta_studio.account_security',
-      '/studio/conta/seguranca/senha' => 'aculta_studio.account_password',
-      '/studio/conta/conexoes' => 'aculta_studio.account_connections',
-      '/studio/conta/pedidos' => 'aculta_studio.account_orders',
-      '/studio/conta/apoio' => 'aculta_studio.account_support',
-      '/studio/conta/preferencias' => 'aculta_studio.account_preferences',
-      '/studio/perfil' => 'aculta_studio.profile',
-      '/studio/perfil/apelido' => 'aculta_studio.profile_nickname',
-      '/studio/perfil/privacidade' => 'aculta_studio.profile_privacy',
-      '/studio/perfil/bio' => 'aculta_studio.profile_bio',
-      '/studio/perfil/redes/{rede}' => 'aculta_studio.profile_social',
-      '/studio/marley' => 'aculta_studio.home',
-      '/studio/marley/{aba}' => 'aculta_studio.area',
-      '/studio/marley/{aba}/{secao}' => 'aculta_studio.section',
-      '/studio/marley/{aba}/{secao}/{sub}' => 'aculta_studio.tab',
-      '/studio/ganjalab' => 'aculta_lms.student_dashboard',
-      '/studio/we-sativa' => 'aculta_studio.we_sativa',
-      '/studio/we-sativa/inicio' => 'aculta_studio.we_sativa_start',
+      '/conta' => 'aculta_studio.account',
+      '/conta/dados' => 'aculta_studio.account_data',
+      '/conta/endereco' => 'aculta_studio.account_address',
+      '/conta/documentos' => 'aculta_studio.account_documents',
+      '/conta/seguranca' => 'aculta_studio.account_security',
+      '/conta/seguranca/senha' => 'aculta_studio.account_password',
+      '/conta/conexoes' => 'aculta_studio.account_connections',
+      '/conta/pedidos' => 'aculta_studio.account_orders',
+      '/conta/apoio' => 'aculta_studio.account_support',
+      '/conta/preferencias' => 'aculta_studio.account_preferences',
+      '/perfil' => 'aculta_studio.profile',
+      '/perfil/apelido' => 'aculta_studio.profile_nickname',
+      '/perfil/privacidade' => 'aculta_studio.profile_privacy',
+      '/perfil/bio' => 'aculta_studio.profile_bio',
+      '/perfil/redes/{rede}' => 'aculta_studio.profile_social',
+      '/marley' => 'aculta_studio.home',
+      '/marley/{aba}' => 'aculta_studio.area',
+      '/marley/{aba}/{secao}' => 'aculta_studio.section',
+      '/marley/{aba}/{secao}/{sub}' => 'aculta_studio.tab',
+      '/wesativa' => 'aculta_studio.we_sativa',
+      '/wesativa/inicio' => 'aculta_studio.we_sativa_start',
+      '/ganjalab' => 'aculta_lms.student_dashboard',
+      '/salvos' => 'aculta_studio.salvos',
+      '/greenstash' => 'aculta_commerce.green_stash',
+      '/greenstash/{secao}' => 'aculta_commerce.green_stash_area',
+      '/greenstash/produtos/novo' => 'aculta_commerce.green_stash_product_create',
+      '/greenstash/produtos/{produto}' => 'aculta_commerce.green_stash_product_detail',
+      '/greenstash/envios/{aculta_shipment}/transicao/{transition}' => 'aculta_commerce.green_stash_shipment_transition',
+      '/conta/mercado-pago/planos' => 'aculta_pagamentos_mercadopago.studio_plans',
+      '/wesativa/propostas/{proposal}/decidir' => 'aculta_wiki.proposal_decide',
     ];
 
     foreach ($expected as $path => $owner) {
@@ -55,12 +62,12 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
   }
 
   /**
-   * Studio hub and personal area are restricted to the account purpose.
+   * Conta and profile are restricted to account; suites use their owner domains.
    */
-  public function testHubAccountAndProfileAccess(): void {
+  public function testAccountProfileAndSuiteAccess(): void {
     $routes = $this->routes();
+    self::assertArrayNotHasKey('aculta_studio.hub', $routes);
     $accountRoutes = [
-      'aculta_studio.hub',
       'aculta_studio.account',
       'aculta_studio.account_data',
       'aculta_studio.account_address',
@@ -90,14 +97,28 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       self::assertSame('account', $route['options']['_aculta_domain_purpose']);
       self::assertSame('aculta_studio.profile_access:access', $route['requirements']['_custom_access']);
     }
+    self::assertSame('account', $routes['aculta_studio.home']['options']['_aculta_domain_purpose']);
+    self::assertSame('wiki', $routes['aculta_studio.we_sativa']['options']['_aculta_domain_purpose']);
+    self::assertSame('wiki', $routes['aculta_studio.we_sativa_start']['options']['_aculta_domain_purpose']);
+    self::assertSame('courses', $routes['aculta_lms.student_dashboard']['options']['_aculta_domain_purpose']);
+    self::assertSame('wiki', $routes['aculta_wiki.proposal_decide']['options']['_aculta_domain_purpose']);
+    foreach ([
+      'aculta_commerce.green_stash',
+      'aculta_commerce.green_stash_area',
+      'aculta_commerce.green_stash_product_create',
+      'aculta_commerce.green_stash_product_detail',
+      'aculta_commerce.green_stash_shipment_transition',
+    ] as $id) {
+      self::assertSame('shop', $routes[$id]['options']['_aculta_domain_purpose']);
+    }
+    self::assertSame('account', $routes['aculta_studio.salvos']['options']['_aculta_domain_purpose']);
+    self::assertSame('/conta/mercado-pago/planos', $routes['aculta_pagamentos_mercadopago.studio_plans']['path']);
     $noCacheRoutes = array_slice($accountRoutes, 2);
     foreach ($noCacheRoutes as $id) {
       self::assertTrue($routes[$id]['options']['no_cache']);
     }
     self::assertTrue($routes['aculta_studio.profile_nickname']['options']['no_cache']);
     self::assertSame('\\Drupal\\aculta_user\\Form\\NicknameForm', $routes['aculta_studio.profile_nickname']['defaults']['_form']);
-    self::assertSame('aculta_studio.hub_controller:page',
-      $routes['aculta_studio.hub']['defaults']['_controller']);
     self::assertSame('aculta_studio.marley_controller:page',
       $routes['aculta_studio.home']['defaults']['_controller']);
   }
@@ -111,15 +132,18 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       self::assertDoesNotMatchRegularExpression('/(?:legacy|old_)/i', $id);
     }
     $obsolete = [
+      '/studio',
+      '/studio/marley',
+      '/studio/ganjalab',
+      '/studio/we-sativa',
+      '/studio/we-sativa/inicio',
+      '/studio/green-stash',
+      '/studio/salvos',
+      '/studio/conta',
+      '/studio/perfil',
       '/studio/pessoal',
-      '/studio/pessoal/perfil',
-      '/studio/pessoal/perfil/dados',
-      '/studio/pessoal/perfil/privacidade',
-      '/studio/pessoal/perfil/bio',
-      '/studio/pessoal/perfil/redes/{rede}',
       '/studio/Marley',
       '/studio/inicio',
-      '/ganjalab',
       '/ganjalab420',
       '/minha-aprendizagem',
       '/studio/ganjalab420',
@@ -132,17 +156,18 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
   }
 
   /**
-   * The original Minha Conta stays available at /conta-legada; the ACCOUNT root serves the Studio hub.
+   * The original Minha Conta stays available at /conta-legada; the ACCOUNT root resolves to the account entry.
    */
   public function testLegacyAccountRouteStillExistsButIsNotExposedAsAlias(): void {
     $root = dirname(__DIR__, 3);
     $portal = Yaml::decode(file_get_contents($root . '/../../aculta_portal.routing.yml'));
     self::assertSame('/conta-legada', $portal['aculta_portal.dashboard']['path']);
     // The technical /minha-conta path is blocked before routing, and the
-    // Studio hub is the ACCOUNT root.
+    // Account purpose root is internally resolved to /conta, never /studio.
     $subscriber = file_get_contents($root . '/../../src/EventSubscriber/DomainPurposeRequestSubscriber.php');
     self::assertStringContainsString("\$accountPath === '/minha-conta'", $subscriber);
     self::assertStringContainsString('Response::HTTP_NOT_FOUND', $subscriber);
+    self::assertStringNotContainsString('aculta_studio.hub', $subscriber);
   }
 
   /**
@@ -154,7 +179,10 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
   private function routes(): array {
     $module = dirname(__DIR__, 3);
     return Yaml::decode(file_get_contents($module . '/aculta_studio.routing.yml'))
-      + Yaml::decode(file_get_contents($module . '/../aculta_lms/aculta_lms.routing.yml'));
+      + Yaml::decode(file_get_contents($module . '/../aculta_lms/aculta_lms.routing.yml'))
+      + Yaml::decode(file_get_contents($module . '/../aculta_wiki/aculta_wiki.routing.yml'))
+      + Yaml::decode(file_get_contents($module . '/../aculta_commerce/aculta_commerce.routing.yml'))
+      + Yaml::decode(file_get_contents($module . '/../aculta_pagamentos_mercadopago/aculta_pagamentos_mercadopago.routing.yml'));
   }
 
 }

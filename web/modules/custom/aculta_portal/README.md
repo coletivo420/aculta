@@ -18,18 +18,22 @@ revisão Firefox do login ainda precisa ser feita depois de servir o commit.
 Portal permanece Dev por fases de B1/B2, Content Index, vídeo e limpeza
 compartilhada listadas no roadmap.
 
-Minha Conta Studio `/studio/conta/dados` reutiliza o Form API de Profile
+Minha Conta em `/conta/dados` reutiliza o Form API de Profile
 do Portal para os dados cadastrais privados (nome e WhatsApp), excluindo
 `field_nickname` apenas nesta rota. A alteração foi feita no hook de
 formulário de acordo com o route ID, sem outra entidade, esquema ou handler.
 
-Meu Perfil Studio `/studio/perfil/apelido` pertence ao ACULTA User e usa
+Meu Perfil em `/perfil/apelido` pertence ao ACULTA User e usa
 o campo `Profile.field_nickname` original, independente da Conta.
 A interface legada em **`/conta-legada` é permanente**: `/dados`
 continua com seu formulário misto e todos os serviços de endereço,
 autenticação, e-mail, CPF/CNPJ, pedidos, checkout e menus intactos.
-A raiz `/` no ACCOUNT serve o hub do Studio; `/studio` direto e
-`/minha-conta` respondem 404. Contrato atual:
+A raiz `/` no ACCOUNT serve a entrada da Conta; `/studio` e qualquer
+`/studio/*` respondem 404 sem alias ou redirect. Conta (`/conta/*`) e Perfil
+(`/perfil/*`) permanecem áreas independentes; salvos usam `/salvos`. As cinco
+Suites usam seus caminhos canônicos no purpose owner conforme o ADR-038. A
+Wiki ainda resolve no Domain configurado como `wiki420`; `wiki.aculta.*` não é
+declarado operacional antes da validação de DNS, TLS e virtual host. Contrato:
 [Conta e Perfil separados](../../../../docs/architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
 
 ## Histórico — Evolução planejada: Conta e Perfil no ACULTA Studio (2026-10-24)

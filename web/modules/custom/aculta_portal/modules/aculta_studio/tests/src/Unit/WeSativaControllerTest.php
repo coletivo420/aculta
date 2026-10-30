@@ -74,7 +74,7 @@ final class WeSativaControllerTest extends UnitTestCase {
        * {@inheritdoc}
        */
       public function purpose(): string {
-        return 'account';
+        return 'wiki';
       }
 
       /**
@@ -149,7 +149,7 @@ final class WeSativaControllerTest extends UnitTestCase {
        * {@inheritdoc}
        */
       public function purpose(): string {
-        return 'account';
+        return 'wiki';
       }
 
       /**

@@ -58,6 +58,21 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     'aculta_events.admin_export',
   ];
 
+  /** Organizer tools are writable only in the Eventos purpose. */
+  private const ORGANIZER_ROUTES = [
+    'aculta_events.organizer_dashboard',
+    'aculta_events.organizer_event_add',
+    'aculta_events.organizer_event_edit',
+    'aculta_events.organizer_event_date_add',
+    'aculta_events.organizer_event_date_edit',
+    'aculta_events.organizer_event_date_delete',
+    'aculta_events.organizer_event_date_order',
+    'aculta_events.organizer_location_add',
+    'aculta_events.organizer_location_edit',
+    'aculta_events.organizer_location_delete',
+    'aculta_events.organizer_location_modal',
+  ];
+
   /**
    * {@inheritdoc}
    */
@@ -84,6 +99,21 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
       self::assertTrue((bool) $route->getOption('_admin_route'), $name);
       self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'eventos'), $name);
       self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'main'), $name);
+    }
+  }
+
+  /**
+   * Organizer routes use owner permissions and never become admin routes.
+   */
+  public function testOrganizerRoutesBelongOnlyToEventsPurpose(): void {
+    $routeProvider = $this->container->get('router.route_provider');
+    foreach (self::ORGANIZER_ROUTES as $name) {
+      $route = $routeProvider->getRouteByName($name);
+      self::assertSame('eventos', $route->getOption('_aculta_domain_purpose'), $name);
+      self::assertFalse((bool) $route->getOption('_admin_route'), $name);
+      self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'eventos'), $name);
+      self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'main'), $name);
+      self::assertTrue((bool) $route->getOption('no_cache'), $name);
     }
   }
 

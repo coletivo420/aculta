@@ -30,7 +30,7 @@ final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
    * - wiki e courses: a raiz serve a página inicial da wiki (`/wiki`) e dos cursos (`/cursos`). Verificado: texto igual.
    * - shop: a raiz serve a página inicial da loja (rota `aculta_portal.shop_home`, `/loja`, que mostra o nó 372).
    * - forum: a raiz serve a View nova de tópicos em `/discussoes`.
-   * - account: a raiz serve o hub do ACULTA Studio (rota `aculta_studio.hub`, `/studio`). A Minha Conta original
+   * - account: a raiz serve a entrada da Conta (rota `aculta_studio.account`, `/conta`). A Conta legada
    *   fica em `/conta-legada`, sem ser a raiz.
    * - magazine e main: sem reescrita. A raiz é o `<front>` (página inicial do site, com a marca do host).
    */
@@ -41,7 +41,7 @@ final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
     'shop' => '/loja',
     'forum' => '/discussoes',
     'links' => '/redes-sociais',
-    'account' => '/studio',
+    'account' => '/conta',
     'eventos' => '/eventos',
   ];
 

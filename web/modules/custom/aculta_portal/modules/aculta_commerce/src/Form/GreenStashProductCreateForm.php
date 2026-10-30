@@ -50,7 +50,7 @@ final class GreenStashProductCreateForm extends FormBase {
    * Checks both the Studio experience and Commerce product-create grants.
    */
   private function assertCreateAccess(): void {
-    $experience_access = $this->experiences->access('green_stash', 'account', $this->account);
+    $experience_access = $this->experiences->access('green_stash', 'shop', $this->account);
     if (!$experience_access->isAllowed()) {
       throw new AccessDeniedHttpException();
     }

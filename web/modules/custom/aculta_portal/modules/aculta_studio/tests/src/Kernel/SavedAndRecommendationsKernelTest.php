@@ -325,7 +325,7 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $user->save();
 
     // Mock request with session and tab=salvos.
-    $request = Request::create('/studio/salvos', 'GET', ['tab' => 'salvos']);
+    $request = Request::create('/salvos', 'GET', ['tab' => 'salvos']);
     $session = new Session(new MockArraySessionStorage());
     $request->setSession($session);
     $this->container->get('request_stack')->push($request);
@@ -387,7 +387,7 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $controller = $this->container->get('aculta_studio.saved_controller');
 
     // Page 0 (items 1 to 15).
-    $request0 = Request::create('/studio/salvos', 'GET', ['tab' => 'salvos', 'page' => '0']);
+    $request0 = Request::create('/salvos', 'GET', ['tab' => 'salvos', 'page' => '0']);
     $request0->setSession(new Session(new MockArraySessionStorage()));
     $this->container->get('request_stack')->push($request0);
 
@@ -397,7 +397,7 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $this->assertNotEmpty($build0['content']['pager']['links']);
 
     // Page 1 (items 16 to 20).
-    $request1 = Request::create('/studio/salvos', 'GET', ['tab' => 'salvos', 'page' => '1']);
+    $request1 = Request::create('/salvos', 'GET', ['tab' => 'salvos', 'page' => '1']);
     $request1->setSession(new Session(new MockArraySessionStorage()));
     $this->container->get('request_stack')->push($request1);
 
@@ -463,7 +463,7 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $this->assertEmpty($items);
 
     $this->setCurrentUser($user);
-    $request = Request::create('/studio/salvos', 'GET', ['tab' => 'salvos']);
+    $request = Request::create('/salvos', 'GET', ['tab' => 'salvos']);
     $request->setSession(new Session(new MockArraySessionStorage()));
     $this->container->get('request_stack')->push($request);
 

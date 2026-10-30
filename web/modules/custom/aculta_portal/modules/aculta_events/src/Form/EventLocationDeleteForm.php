@@ -7,6 +7,7 @@ namespace Drupal\aculta_events\Form;
 use Drupal\Core\Entity\ContentEntityConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_events\Route\EventRouteContext;
 
 /**
  * Formulário de confirmação de exclusão de local de evento (LOC-02).
@@ -104,7 +105,7 @@ final class EventLocationDeleteForm extends ContentEntityConfirmFormBase {
       '%title' => $title,
     ]));
 
-    $form_state->setRedirect('aculta_events.locations');
+      $form_state->setRedirect(EventRouteContext::route('aculta_events.locations', 'aculta_events.organizer_dashboard'));
   }
 
 }

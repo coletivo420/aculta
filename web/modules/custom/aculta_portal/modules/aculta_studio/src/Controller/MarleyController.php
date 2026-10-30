@@ -73,7 +73,7 @@ final class MarleyController {
       $build['welcome'] = $this->welcome($areas);
     }
 
-    // Nível 1: a área pedida, ou a primeira quando a URL é /studio/marley.
+    // Nível 1: a área pedida, ou a primeira quando a URL é /marley.
     if ($aba === '') {
       $aba = (string) array_key_first($areas);
     }

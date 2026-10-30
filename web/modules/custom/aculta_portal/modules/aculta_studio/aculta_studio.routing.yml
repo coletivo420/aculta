@@ -1,7 +1,7 @@
-# Separate Studio experiences. The legacy Portal dashboard stays at the
-# ACCOUNT front (/); direct /minha-conta remains a protected technical path.
+# Conta and Perfil stay separate; the legacy Portal dashboard remains at
+# /conta-legada and the account purpose root serves the Conta entry page.
 aculta_studio.account:
-  path: /studio/conta
+  path: /conta
   defaults:
     _controller: 'aculta_studio.account_controller:page'
     _title: 'Minha Conta'
@@ -13,7 +13,7 @@ aculta_studio.account:
 
 # S-R3-B2: Portal Profile Form API narrowed by route to private account fields.
 aculta_studio.account_data:
-  path: /studio/conta/dados
+  path: /conta/dados
   defaults:
     _controller: 'aculta_studio.account_section_controller:data'
     _title: 'Dados cadastrais'
@@ -28,7 +28,7 @@ aculta_studio.account_data:
 # S-R3-A: Portal-owned private sections inside the Studio shell.
 # Legacy /dados keeps its form. Studio account form excludes public nickname.
 aculta_studio.account_address:
-  path: /studio/conta/endereco
+  path: /conta/endereco
   defaults:
     _controller: 'aculta_studio.account_section_controller:address'
     _title: 'Endereço'
@@ -42,7 +42,7 @@ aculta_studio.account_address:
 # S-R3-B1: CPF/CNPJ remains owned by Portal + optional aculta_id_cpf.
 # No second storage or profile-public exposure.
 aculta_studio.account_documents:
-  path: /studio/conta/documentos
+  path: /conta/documentos
   defaults:
     _controller: 'aculta_studio.account_section_controller:documents'
     _title: 'Documentos'
@@ -54,7 +54,7 @@ aculta_studio.account_documents:
     no_cache: true
 
 aculta_studio.account_security:
-  path: /studio/conta/seguranca
+  path: /conta/seguranca
   defaults:
     _controller: 'aculta_studio.account_section_controller:security'
     _title: 'E-mail e segurança'
@@ -66,7 +66,7 @@ aculta_studio.account_security:
     no_cache: true
 
 aculta_studio.account_password:
-  path: /studio/conta/seguranca/senha
+  path: /conta/seguranca/senha
   defaults:
     _controller: 'aculta_studio.account_section_controller:password'
     _title: 'Senha'
@@ -78,7 +78,7 @@ aculta_studio.account_password:
     no_cache: true
 
 aculta_studio.account_connections:
-  path: /studio/conta/conexoes
+  path: /conta/conexoes
   defaults:
     _controller: 'aculta_studio.account_section_controller:connections'
     _title: 'Contas conectadas'
@@ -92,7 +92,7 @@ aculta_studio.account_connections:
 # S-R3-B3: keep Commerce orders, support history and appearance Form API
 # with their Portal owners, composed under Studio without a second shell.
 aculta_studio.account_orders:
-  path: /studio/conta/pedidos
+  path: /conta/pedidos
   defaults:
     _controller: 'aculta_studio.account_section_controller:orders'
     _title: 'Meus pedidos'
@@ -104,7 +104,7 @@ aculta_studio.account_orders:
     no_cache: true
 
 aculta_studio.account_support:
-  path: /studio/conta/apoio
+  path: /conta/apoio
   defaults:
     _controller: 'aculta_studio.account_section_controller:support'
     _title: 'Meu apoio'
@@ -116,7 +116,7 @@ aculta_studio.account_support:
     no_cache: true
 
 aculta_studio.account_preferences:
-  path: /studio/conta/preferencias
+  path: /conta/preferencias
   defaults:
     _controller: 'aculta_studio.account_section_controller:preferences'
     _title: 'Preferências da conta'
@@ -128,7 +128,7 @@ aculta_studio.account_preferences:
     no_cache: true
 
 aculta_studio.profile:
-  path: /studio/perfil
+  path: /perfil
   defaults:
     _controller: 'aculta_studio.profile_controller:page'
     _title: 'Meu Perfil'
@@ -139,7 +139,7 @@ aculta_studio.profile:
 
 # ACULTA User owns the standalone public-nickname Form API.
 aculta_studio.profile_nickname:
-  path: /studio/perfil/apelido
+  path: /perfil/apelido
   defaults:
     _form: '\Drupal\aculta_user\Form\NicknameForm'
     _title: 'Editar apelido público'
@@ -150,7 +150,7 @@ aculta_studio.profile_nickname:
     no_cache: true
 
 aculta_studio.profile_privacy:
-  path: /studio/perfil/privacidade
+  path: /perfil/privacidade
   defaults:
     _form: '\Drupal\aculta_user\Form\ProfileVisibilityForm'
     _title: 'Privacidade do perfil'
@@ -160,7 +160,7 @@ aculta_studio.profile_privacy:
     _aculta_domain_purpose: account
 
 aculta_studio.profile_bio:
-  path: /studio/perfil/bio
+  path: /perfil/bio
   defaults:
     _form: '\Drupal\aculta_user\Form\AccountBioForm'
     _title: 'Editar biografia'
@@ -170,7 +170,7 @@ aculta_studio.profile_bio:
     _aculta_domain_purpose: account
 
 aculta_studio.profile_social:
-  path: /studio/perfil/redes/{rede}
+  path: /perfil/redes/{rede}
   defaults:
     _form: '\Drupal\aculta_user\Form\SocialLinkForm'
     _title: 'Editar rede social'
@@ -181,27 +181,27 @@ aculta_studio.profile_social:
     _aculta_domain_purpose: account
 
 aculta_studio.we_sativa:
-  path: /studio/we-sativa
+  path: /wesativa
   defaults:
     _controller: 'aculta_studio.we_sativa_controller:page'
     _title: 'ACULTA STUDIO WE SATIVA'
   requirements:
     _permission: access aculta portal
   options:
-    _aculta_domain_purpose: account
+    _aculta_domain_purpose: wiki
 
 aculta_studio.we_sativa_start:
-  path: /studio/we-sativa/inicio
+  path: /wesativa/inicio
   defaults:
     _controller: 'aculta_studio.we_sativa_controller:start'
     _title: 'ACULTA STUDIO WE SATIVA'
   requirements:
     _permission: access aculta portal
   options:
-    _aculta_domain_purpose: account
+    _aculta_domain_purpose: wiki
 
 aculta_studio.home:
-  path: /studio/marley
+  path: /marley
   defaults:
     _controller: 'aculta_studio.marley_controller:page'
     _title: 'ACULTA Studio Marley'
@@ -214,7 +214,7 @@ aculta_studio.home:
     _aculta_domain_purpose: account
 
 aculta_studio.area:
-  path: /studio/marley/{aba}
+  path: /marley/{aba}
   defaults:
     _controller: 'aculta_studio.marley_controller:page'
     _title: 'ACULTA Studio Marley'
@@ -227,7 +227,7 @@ aculta_studio.area:
     _aculta_domain_purpose: account
 
 aculta_studio.section:
-  path: /studio/marley/{aba}/{secao}
+  path: /marley/{aba}/{secao}
   defaults:
     _controller: 'aculta_studio.marley_controller:page'
     _title: 'ACULTA Studio Marley'
@@ -240,7 +240,7 @@ aculta_studio.section:
     _aculta_domain_purpose: account
 
 aculta_studio.tab:
-  path: /studio/marley/{aba}/{secao}/{sub}
+  path: /marley/{aba}/{secao}/{sub}
   defaults:
     _controller: 'aculta_studio.marley_controller:page'
     _title: 'ACULTA Studio Marley'
@@ -252,20 +252,8 @@ aculta_studio.tab:
   options:
     _aculta_domain_purpose: account
 
-# Hub general; no compatibility paths or redirects are registered.
-aculta_studio.hub:
-  path: /studio
-  defaults:
-    _controller: 'aculta_studio.hub_controller:page'
-    _title: 'ACULTA Studio'
-  requirements:
-    _permission: access aculta portal
-    _user_is_logged_in: 'TRUE'
-  options:
-    _aculta_domain_purpose: account
-
 aculta_studio.salvos:
-  path: /studio/salvos
+  path: /salvos
   defaults:
     _controller: 'aculta_studio.saved_controller:page'
     _title: 'Meus Salvos'

@@ -22,6 +22,9 @@ final class FrontPathPolicyTest extends UnitTestCase {
   public static function caminhosInternos(): array {
     $casos = [];
     foreach (PurposeFrontPathProcessor::FRONT_PATHS as $purpose => $path) {
+      if ($purpose === 'account') {
+        continue;
+      }
       $casos[$purpose] = [$purpose, $path];
     }
     return $casos;
@@ -50,6 +53,11 @@ final class FrontPathPolicyTest extends UnitTestCase {
     $this->assertFalse(FrontPathPolicy::bloqueiaCaminhoInterno('support', '/', FALSE));
     $this->assertFalse(FrontPathPolicy::bloqueiaCaminhoInterno('support', '/contato', FALSE));
     $this->assertFalse(FrontPathPolicy::bloqueiaCaminhoInterno('wiki', '/apoio', FALSE));
+  }
+
+  /** The Conta entry path is public directly as well as at the ACCOUNT root. */
+  public function testAccountEntryPathRemainsPublic(): void {
+    $this->assertFalse(FrontPathPolicy::bloqueiaCaminhoInterno('account', '/conta', FALSE));
   }
 
   /**

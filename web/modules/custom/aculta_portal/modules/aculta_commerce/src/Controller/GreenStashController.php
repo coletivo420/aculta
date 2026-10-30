@@ -36,7 +36,7 @@ final class GreenStashController {
     if ($provider === NULL || !$provider->available()) {
       throw new NotFoundHttpException();
     }
-    if (!$this->experiences->access('green_stash', 'account', $this->account)->isAllowed()) {
+    if (!$this->experiences->access('green_stash', 'shop', $this->account)->isAllowed()) {
       throw new AccessDeniedHttpException();
     }
 

@@ -27,7 +27,7 @@ final class GreenStashProductController {
   ) {}
 
   public function detail(string $produto): array {
-    if (!$this->experiences->access('green_stash', 'account', $this->account)->isAllowed()) {
+    if (!$this->experiences->access('green_stash', 'shop', $this->account)->isAllowed()) {
       throw new AccessDeniedHttpException();
     }
     if (!ctype_digit($produto) || $produto === '0') {

@@ -57,11 +57,11 @@ def main():
         if not wait_for(driver, lambda: on_test_domain(driver)):
             raise RuntimeError("ACULTA test login did not complete.")
         driver.get(BASE_URL + "/")
-        if not wait_for(driver, lambda: driver.exists("a[href*='/studio/conta/mercado-pago/planos']")):
+        if not wait_for(driver, lambda: driver.exists("a[href*='/conta/mercado-pago/planos']")):
             raise RuntimeError("The Studio hub did not expose the authorized plans entry.")
         checks.append("studio_entry=PASS")
         screenshot(driver, "01-studio-hub")
-        driver.click("a[href*='/studio/conta/mercado-pago/planos']")
+        driver.click("a[href*='/conta/mercado-pago/planos']")
         if not wait_for(driver, lambda: driver.exists("input[name='reason']")):
             screenshot(driver, "error-plan-form")
             raise RuntimeError(f"The plan management form did not load (title={driver.title()!r}, url={urlparse(driver.url()).path!r}).")

@@ -17,7 +17,7 @@ from wdlib import Driver  # noqa: E402
 
 URI = os.environ.get("STUDIO_LOGIN_URI", "https://conta.aculta.toca.net.br")
 USER = os.environ.get("STUDIO_USER", "teste.comum")
-PAGES = os.environ.get("STUDIO_ROUTES", "/studio/marley,/studio/conta,/studio/perfil").split(",")
+PAGES = os.environ.get("STUDIO_ROUTES", "/marley,/conta,/perfil").split(",")
 WIDTHS = tuple(map(int, os.environ.get("OCS_FOCUS_WIDTHS", "320,360,390,599,600,768,1024,1280,1440").split(",")))
 TAB = "\uE004"
 SHIFT = "\uE008"

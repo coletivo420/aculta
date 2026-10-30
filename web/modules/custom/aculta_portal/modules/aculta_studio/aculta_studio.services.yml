@@ -24,12 +24,9 @@ services:
   aculta_studio.experience.marley:
     class: Drupal\aculta_studio\Experience\MarleyExperienceProvider
     arguments: ['@aculta_studio.marley_presenter', '@current_user']
-  aculta_studio.hub_controller:
-    class: Drupal\aculta_studio\Controller\StudioHubController
-    arguments: ['@aculta_studio.experience_manager', '@current_user', '@router.route_provider']
   aculta_studio.experience.conta:
     class: Drupal\aculta_studio\Experience\AccountExperienceProvider
-    arguments: ['@?aculta_id_cpf.account_document']
+    arguments: ['@?aculta_id_cpf.account_document', '@aculta_portal.domain_purpose']
   aculta_studio.profile_access:
     class: Drupal\aculta_studio\Access\StudioProfileAccess
     arguments: ['@module_handler']

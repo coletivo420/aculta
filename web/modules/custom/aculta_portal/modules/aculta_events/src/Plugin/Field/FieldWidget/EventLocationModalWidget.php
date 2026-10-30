@@ -13,6 +13,7 @@ use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\aculta_events\Route\EventRouteContext;
 
 /**
  * Widget com modal AJAX e resumo para seleção de local reutilizável.
@@ -124,7 +125,7 @@ final class EventLocationModalWidget extends WidgetBase {
           ],
         ];
 
-        $modalUrl = Url::fromRoute('aculta_events.location_modal', [
+        $modalUrl = Url::fromRoute(EventRouteContext::route('aculta_events.location_modal', 'aculta_events.organizer_location_modal'), [
           'field_name' => $fieldName,
           'wrapper_id' => $wrapperId,
           'target_id' => $location->id(),
@@ -162,7 +163,7 @@ final class EventLocationModalWidget extends WidgetBase {
         $element['summary'] = [
           '#markup' => '<div class="messages messages--warning">' . t('O local selecionado anteriormente não é acessível pela sua conta.') . '</div>',
         ];
-        $modalUrl = Url::fromRoute('aculta_events.location_modal', [
+        $modalUrl = Url::fromRoute(EventRouteContext::route('aculta_events.location_modal', 'aculta_events.organizer_location_modal'), [
           'field_name' => $fieldName,
           'wrapper_id' => $wrapperId,
         ]);
@@ -180,7 +181,7 @@ final class EventLocationModalWidget extends WidgetBase {
       }
     }
     else {
-      $modalUrl = Url::fromRoute('aculta_events.location_modal', [
+      $modalUrl = Url::fromRoute(EventRouteContext::route('aculta_events.location_modal', 'aculta_events.organizer_location_modal'), [
         'field_name' => $fieldName,
         'wrapper_id' => $wrapperId,
       ]);
@@ -208,7 +209,7 @@ final class EventLocationModalWidget extends WidgetBase {
           '#type' => 'html_tag',
           '#tag' => 'p',
           '#attributes' => ['data-portal-ui' => 'event-location-fallback'],
-          '#value' => '<a href="' . Url::fromRoute('aculta_events.location_add')->toString() . '" target="_blank" rel="noopener">' . t('Adicionar local em uma nova aba (sem JS)') . '</a>',
+          '#value' => '<a href="' . Url::fromRoute(EventRouteContext::route('aculta_events.location_add', 'aculta_events.organizer_location_add'))->toString() . '" target="_blank" rel="noopener">' . t('Adicionar local em uma nova aba (sem JS)') . '</a>',
         ],
       ];
     }

@@ -39,7 +39,7 @@ do Runtime foi atualizado, nem cobre o workspace autenticado do Studio.
 
 `we-sativa.py` autentica no Runtime de teste com uma URL de login único gerada
 por Drush para a conta autorizada UID 5 (ajustável por variável), abre a home
-Wiki, segue o CTA para `/studio/we-sativa/inicio`, testa o reflow nas oito
+Wiki, segue o CTA para `/wesativa/inicio`, testa o reflow nas oito
 larguras (320/360/390/640/768/1024/1280/1440 px) e percorre “Meu
 Trabalho” até o formulário Node nativo e seu retorno. Não envia formulários nem
 altera preferências ou conteúdo; grava capturas e resumo fora do repositório.
@@ -53,7 +53,7 @@ DISPLAY=:0 ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles" SUITE_OUT="$SUITE_OUT" \
 
 Variáveis: `WIKI_HOME_URL` (padrão `https://wiki420.aculta.toca.net.br/`),
 `WIKI_STUDIO_PAGE` (padrão
-`https://conta.aculta.toca.net.br/studio/we-sativa/inicio`),
+`https://conta.aculta.toca.net.br/wesativa/inicio`),
 `WIKI_STUDIO_LOGIN_URI` (padrão `https://conta.aculta.toca.net.br`),
 `WIKI_STUDIO_UID` (padrão `5`; passe vazio para usar `WIKI_STUDIO_USER`) e
 `WIKI_STUDIO_USER` (padrão vazio; usado quando `WIKI_STUDIO_UID` é vazio) e
@@ -80,7 +80,7 @@ escuro deve ser testado pelo padrão `aculta_portal.appearance.default_mode`
 ## Moderação no ACULTA Studio
 
 `moderation.py` autentica por URL única do Drush e abre
-`/studio/marley/wiki/moderacao/propostas`. Verifica o listing compartilhado,
+`/marley/wiki/moderacao/propostas`. Verifica o listing compartilhado,
 estado vazio e reflow nas oito larguras. Quando há proposta pendente, abre o
 formulário de decisão e confere o Form API, a nota e os links de comparação,
 sem submeter. A rodada dev.117 usou uma proposta temporária como fixture

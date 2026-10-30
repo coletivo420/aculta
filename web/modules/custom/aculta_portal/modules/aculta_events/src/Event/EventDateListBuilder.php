@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_events\Route\EventRouteContext;
 
 /**
  * Builds the list of Dates managed inside an Event.
@@ -75,14 +76,14 @@ final class EventDateListBuilder {
     $build['actions']['add'] = [
       '#type' => 'link',
       '#title' => $this->t('Adicionar data a este evento'),
-      '#url' => Url::fromRoute('aculta_events.event_date_add', ['aculta_event' => $event->id()]),
+      '#url' => Url::fromRoute(EventRouteContext::route('aculta_events.event_date_add', 'aculta_events.organizer_event_date_add'), ['aculta_event' => $event->id()]),
       '#attributes' => $this->dialogAttributes('button button--primary'),
     ];
     if (count($dates) > 1) {
       $build['actions']['order'] = [
         '#type' => 'link',
         '#title' => $this->t('Ordenar datas'),
-        '#url' => Url::fromRoute('aculta_events.event_date_order', ['aculta_event' => $event->id()]),
+        '#url' => Url::fromRoute(EventRouteContext::route('aculta_events.event_date_order', 'aculta_events.organizer_event_date_order'), ['aculta_event' => $event->id()]),
         '#attributes' => $this->dialogAttributes('button'),
       ];
     }
@@ -135,7 +136,7 @@ final class EventDateListBuilder {
       'edit' => [
         '#type' => 'link',
         '#title' => $this->t('Editar'),
-        '#url' => Url::fromRoute('aculta_events.event_date_edit', [
+        '#url' => Url::fromRoute(EventRouteContext::route('aculta_events.event_date_edit', 'aculta_events.organizer_event_date_edit'), [
           'aculta_event' => $event->id(),
           'aculta_event_date' => $date->id(),
         ]),
@@ -144,7 +145,7 @@ final class EventDateListBuilder {
       'delete' => [
         '#type' => 'link',
         '#title' => $this->t('Remover'),
-        '#url' => Url::fromRoute('aculta_events.event_date_delete', [
+        '#url' => Url::fromRoute(EventRouteContext::route('aculta_events.event_date_delete', 'aculta_events.organizer_event_date_delete'), [
           'aculta_event' => $event->id(),
           'aculta_event_date' => $date->id(),
         ]),

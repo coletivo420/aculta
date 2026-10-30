@@ -604,7 +604,7 @@ final class PortalHooks {
       return;
     }
 
-    // Portal (/dados/endereco) e Studio (/studio/conta/endereco) usam o mesmo
+    // Portal (/dados/endereco) e Conta (/conta/endereco) usam o mesmo
     // editor de endereço.
     if ($entity->getEntityTypeId() === 'profile' && $entity->bundle() === 'authenticated'
       && $isAddressRoute

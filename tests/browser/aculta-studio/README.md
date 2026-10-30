@@ -13,7 +13,7 @@ por si só prova de paridade com o OpenCulturas.
 
 Somente no servidor de desenvolvimento, com a conta `teste.comum` (login único por Drush, sem senha no repositório). O
 Studio precisa estar habilitado no Runtime e a conta precisar de uma aba visível (permissão `create revista content`).
-O wrapper consulta a rota `aculta_studio.home` antes de abrir o Firefox e interrompe com diagnóstico se o Runtime ainda não expõe `/studio/marley`.
+O wrapper consulta a rota `aculta_studio.home` antes de abrir o Firefox e interrompe com diagnóstico se o Runtime ainda não expõe `/marley`.
 A listagem deve mostrar conteúdo ou seu estado vazio; a checagem de link de edição fica `SKIP` quando a conta não possui publicação própria publicada.
 
 ```sh
@@ -24,9 +24,9 @@ DISPLAY=:0 tests/browser/aculta-studio/run-visual.sh
 
 `SUITE_OUT` é obrigatório e deve ficar fora do repositório, em armazenamento
 persistente; não usar `/tmp`. Outras variáveis: `STUDIO_PAGE` (padrão
-`https://conta.aculta.toca.net.br/studio/marley`), `STUDIO_LOGIN_URI`,
+`https://conta.aculta.toca.net.br/marley`), `STUDIO_LOGIN_URI`,
 `STUDIO_ACCOUNT_CONTEXT_PAGE` (opcional; verifica a navegação interna de Conta,
-por exemplo `/studio/conta/endereco` no domínio Account),
+por exemplo `/conta/endereco` no domínio Account),
 `STUDIO_USER`, `STUDIO_DRUSH_ROOT` (padrão o checkout da suíte; para testar CSS
 de outro worktree no servidor de desenvolvimento, use
 `/home/piradopirata/projetos/aculta`) e `STUDIO_USER_ID` (padrão `5`). O
@@ -96,8 +96,8 @@ A S-R4 permanece sem homologação; S-R5 continua bloqueada.
 
 Arquivo `parity-s-r5.mjs`: **somente leitura**, no Firefox ESR visível,
 com sessões WebDriver independentes para duas contas sintéticas. Compara
-`/studio/conta`, as nove seções de Conta, os formulários e o legado
-permanente `/conta-legada`, além de `/studio/perfil` no purpose ACCOUNT e
+`/conta`, as nove seções de Conta, os formulários e o legado
+permanente `/conta-legada`, além de `/perfil` no purpose ACCOUNT e
 `/u/{apelido}` no MAIN. A política do MAIN também é examinada em sessão anônima separada, para não confundir informações próprias de um titular logado com conteúdo realmente público. A suíte verifica acesso anônimo e GET sem JavaScript,
 reflow em 320/375/390/768/1024/1440 px e produz screenshots comparativas.
 Nenhuma mudança de banco, permissão, preferência ou envio de formulário.
@@ -162,7 +162,7 @@ Matriz de casos e critérios:
 
 ## OCS-F0 — baseline comparativo
 
-O script `ocs-baseline.py` captura, com Firefox ESR visível, a homepage pública e, por padrão, as entradas de Studio `/studio`, `/studio/marley`, `/studio/ganjalab`, `/studio/we-sativa`, `/studio/conta`, `/studio/perfil`, `/studio/green-stash` e `/studio/conta/mercado-pago/planos`. Requer `DISPLAY=:0`, `SUITE_OUT` fora do repositório e Drush local apontando para `aculta_runtime`; usa perfil temporário em `$SUITE_OUT/profiles`. `STUDIO_PAGE` limita a uma URL customizada; `STUDIO_ROUTES` aceita uma lista separada por vírgulas. Imagens e JSON ficam em `$SUITE_OUT`. `OCS_WIDTHS=320,360,390,599,600,768,1024,1280,1440` captura a grade completa do gate; sem essa variável, o modo rápido usa 1440/390 px. Se ULI falhar, a tentativa vai a `baseline-deferred.json` e preserva a última execução bem-sucedida em `baseline.json`. O screenshot público não representa dashboard autenticado OpenCulturas; rotas com indicação de acesso negado ou sem captura são parciais, não PASS.
+O script `ocs-baseline.py` captura, com Firefox ESR visível, a homepage pública e, por padrão, as entradas de Studio `/studio`, `/marley`, `/ganjalab`, `/wesativa`, `/conta`, `/perfil`, `/greenstash` e `/conta/mercado-pago/planos`. Requer `DISPLAY=:0`, `SUITE_OUT` fora do repositório e Drush local apontando para `aculta_runtime`; usa perfil temporário em `$SUITE_OUT/profiles`. `STUDIO_PAGE` limita a uma URL customizada; `STUDIO_ROUTES` aceita uma lista separada por vírgulas. Imagens e JSON ficam em `$SUITE_OUT`. `OCS_WIDTHS=320,360,390,599,600,768,1024,1280,1440` captura a grade completa do gate; sem essa variável, o modo rápido usa 1440/390 px. Se ULI falhar, a tentativa vai a `baseline-deferred.json` e preserva a última execução bem-sucedida em `baseline.json`. O screenshot público não representa dashboard autenticado OpenCulturas; rotas com indicação de acesso negado ou sem captura são parciais, não PASS.
 
 Execução de referência no servidor de desenvolvimento:
 
@@ -182,7 +182,7 @@ ausência, duplicação ou rota não capturada faz a suíte terminar com erro.
 em outra worktree; Drush e o helper WebDriver são carregados desse checkout. A
 captura expandida posterior completou as oito rotas em 1440/390 (18 imagens
 incluindo a homepage); a tentativa anterior bloqueada no ULI permanece em
-`baseline-deferred.json`. A captura revelou `/studio` vazio, `/studio/ganjalab`
+`baseline-deferred.json`. A captura revelou `/studio` vazio, `/ganjalab`
 renderizando Minha Conta em vez do dashboard LMS esperado e `/estudio/loja`
 negado para a conta sintética sem permissão. Marley, WE Sativa, Conta, Perfil e
 Planos Mercado Pago renderizaram. Ausência de overflow foi observada apenas nas
@@ -215,8 +215,8 @@ o probe não homologa WCAG, todos os componentes, teclado Shift+Tab, modais,
 widgets customizados nem as demais áreas/purposes.
 
 **Execução em 2026-10-29:** `keyboard-focus.py` rodou com Firefox ESR visível
-no servidor de desenvolvimento, em `/studio/marley`, `/studio/conta` e
-`/studio/perfil`, 320/1440 px e 12 pressionamentos de Tab por combinação. Foram
+no servidor de desenvolvimento, em `/marley`, `/conta` e
+`/perfil`, 320/1440 px e 12 pressionamentos de Tab por combinação. Foram
 registrados 72 focos; os 72 correspondiam a `:focus-visible` e tinham outline
 calculado diferente de `none`. As seis capturas estão em
 `$SUITE_OUT/aculta-ocs-f0-keyboard-20261029/`; a de Marley/320 foi inspecionada

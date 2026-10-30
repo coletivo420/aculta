@@ -25,7 +25,7 @@ final class StudioExperienceManagerTest extends UnitTestCase {
   public function testProviderMetadataAndAbsenceOfLms(): void {
     $provider = new GanjalabExperienceProvider(NULL);
     self::assertSame('ganjalab', $provider->id());
-    self::assertSame('account', $provider->purpose());
+    self::assertSame('courses', $provider->purpose());
     self::assertSame('aculta_lms.student_dashboard', $provider->routeName());
     self::assertFalse($provider->available());
     $manager = new StudioExperienceManager();
@@ -33,6 +33,7 @@ final class StudioExperienceManagerTest extends UnitTestCase {
     self::assertSame($provider, $manager->get('ganjalab'));
     self::assertNull($manager->get('missing'));
     $account = $this->createMock(AccountInterface::class);
+    self::assertFalse($manager->access('ganjalab', 'courses', $account)->isAllowed());
     self::assertFalse($manager->access('ganjalab', 'account', $account)->isAllowed());
     self::assertFalse($manager->access('ganjalab', 'wiki', $account)->isAllowed());
   }
@@ -51,7 +52,7 @@ final class StudioExperienceManagerTest extends UnitTestCase {
     self::assertSame($conta, $manager->all()['conta']);
     $account = $this->createMock(AccountInterface::class);
     self::assertFalse($manager->access('conta', 'forum', $account)->isAllowed());
-    self::assertFalse($manager->access('ganjalab', 'account', $account)->isAllowed());
+    self::assertFalse($manager->access('ganjalab', 'courses', $account)->isAllowed());
   }
 
   /**

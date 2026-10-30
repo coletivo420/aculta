@@ -22,7 +22,7 @@ sys.path.insert(0, str(PROJECT / "tests/browser/aculta-cpf-checkout"))
 from wdlib import Driver  # noqa: E402
 
 BASE = os.environ.get(
-    "WIKI_STUDIO_PAGE", "https://conta.aculta.toca.net.br/studio/marley/wiki/moderacao/propostas"
+    "WIKI_STUDIO_PAGE", "https://conta.aculta.toca.net.br/marley/wiki/moderacao/propostas"
 )
 LOGIN_URI = os.environ.get("WIKI_STUDIO_LOGIN_URI", "https://conta.aculta.toca.net.br")
 USER_UID = os.environ.get("WIKI_STUDIO_UID", "5")

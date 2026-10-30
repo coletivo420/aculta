@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 
 const PROJECT = fileURLToPath(new URL('../../../', import.meta.url));
-const PAGE = process.env.STUDIO_PAGE || 'https://conta.aculta.toca.net.br/studio/revista/publicacoes/publicados';
+const PAGE = process.env.STUDIO_PAGE || 'https://conta.aculta.toca.net.br/marley/revista/publicacoes/publicados';
 const LOGIN_URI = process.env.STUDIO_LOGIN_URI || 'https://conta.aculta.toca.net.br';
 const GD = process.env.GECKODRIVER || 'http://127.0.0.1:4455';
 const ORCA_LOG = process.env.ORCA_LOG;

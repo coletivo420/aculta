@@ -8,6 +8,164 @@ aculta_events.catalogue:
   options:
     _aculta_domain_purpose: eventos
 
+aculta_events.organizer_dashboard:
+  path: '/culturas'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventOrganizerDashboardController::page'
+    _title: 'ACULTA Studio Culturas'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
+aculta_events.organizer_event_add:
+  path: '/culturas/eventos/novo'
+  defaults:
+    _entity_form: 'aculta_event.add'
+    _title: 'Cadastrar evento'
+  requirements:
+    _entity_create_access: 'aculta_event'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
+aculta_events.organizer_event_edit:
+  path: '/culturas/eventos/{aculta_event}/editar'
+  defaults:
+    _entity_form: 'aculta_event.edit'
+    _title: 'Editar evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    aculta_event: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event:
+        type: entity:aculta_event
+
+aculta_events.organizer_event_date_add:
+  path: '/culturas/eventos/{aculta_event}/datas/adicionar'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateCreateForm'
+    _title: 'Adicionar data ao evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    aculta_event: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event:
+        type: entity:aculta_event
+
+aculta_events.organizer_event_date_edit:
+  path: '/culturas/eventos/{aculta_event}/datas/{aculta_event_date}/editar'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateEditForm'
+    _title: 'Editar data do evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    _custom_access: '\Drupal\aculta_events\Access\EventDateRouteAccess::access'
+    aculta_event: '\d+'
+    aculta_event_date: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event:
+        type: entity:aculta_event
+      aculta_event_date:
+        type: entity:aculta_event_date
+
+aculta_events.organizer_event_date_delete:
+  path: '/culturas/eventos/{aculta_event}/datas/{aculta_event_date}/excluir'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateDeleteForm'
+    _title: 'Excluir data do evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    _custom_access: '\Drupal\aculta_events\Access\EventDateRouteAccess::access'
+    aculta_event: '\d+'
+    aculta_event_date: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event:
+        type: entity:aculta_event
+      aculta_event_date:
+        type: entity:aculta_event_date
+
+aculta_events.organizer_event_date_order:
+  path: '/culturas/eventos/{aculta_event}/datas/ordem'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateOrderForm'
+    _title: 'Ordenar datas'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    aculta_event: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event:
+        type: entity:aculta_event
+
+aculta_events.organizer_location_add:
+  path: '/culturas/locais/novo'
+  defaults:
+    _entity_form: 'aculta_event_location.add'
+    _title: 'Adicionar local'
+  requirements:
+    _entity_create_access: 'aculta_event_location'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
+aculta_events.organizer_location_edit:
+  path: '/culturas/locais/{aculta_event_location}/editar'
+  defaults:
+    _entity_form: 'aculta_event_location.edit'
+    _title: 'Editar local'
+  requirements:
+    _entity_access: 'aculta_event_location.update'
+    aculta_event_location: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event_location:
+        type: entity:aculta_event_location
+
+aculta_events.organizer_location_delete:
+  path: '/culturas/locais/{aculta_event_location}/excluir'
+  defaults:
+    _entity_form: 'aculta_event_location.delete'
+    _title: 'Excluir local'
+  requirements:
+    _entity_access: 'aculta_event_location.delete'
+    aculta_event_location: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event_location:
+        type: entity:aculta_event_location
+
+aculta_events.organizer_location_modal:
+  path: '/culturas/locais/modal'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventLocationModalForm'
+    _title: 'Selecionar ou cadastrar local'
+  requirements:
+    _custom_access: '\Drupal\aculta_events\Form\EventLocationModalForm::access'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
 aculta_events.event_add:
   path: '/painel-administrativo/eventos/adicionar'
   defaults:

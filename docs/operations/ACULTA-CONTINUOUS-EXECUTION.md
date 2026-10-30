@@ -1,5 +1,12 @@
 # Execução contínua ACULTA — PR #298
 
+## PR #299 — recuperação de rota 500 durante migração de Suites — 2026-10-30
+
+- Servidor `toca`; checkout servido `/home/piradopirata/projetos/aculta`, branch `refactor/opencultures-codigo-visual`, HEAD `8ec034700`; Drush confirmou Drupal 11.4.10, URI `http://default`, root `web` e Runtime `aculta_runtime`.
+- A inspeção do watchdog encontrou erro em 14:40:17: `Route "aculta_events.organizer_dashboard" does not exist.` A rota já estava definida no código da migração, mas ainda não estava na coleção/cache ativo. Reconstruído o cache Drupal com `drush cache:rebuild` (sem `updatedb`, `config:import` ou escrita de conteúdo/configuração).
+- Pós-rebuild, a montagem do controller da entrada da Conta em contexto autenticado de leitura retornou render array; HTTP: MAIN `/` 200, Conta `/entrar` 200, Conta `/studio` 404, Marley anônimo 403 e `/culturas` anônimo 403 (rotas presentes e acesso negado, sem 500). Não foi possível inspecionar o log do PHP-FPM por falta de permissão de leitura; nenhuma falha 500 foi reproduzida nos endpoints verificados.
+- Host novo da Wiki não validado nesta microfase; o Domain ativo permanece `wiki420`. Nenhum update de banco, importação ou mudança de dados Runtime foi executado.
+
 ## QR Code — smoke do Runtime e correção raster candidata — 2026-10-29
 
 - Ambiente verificado: host `toca`, checkout servido em `/home/piradopirata/projetos/aculta`, Drupal 11.4.10, URI Drush `http://default`, banco `aculta_runtime`; antes da fixture havia 607 tabelas e zero entidades `aculta_qr_code`.
