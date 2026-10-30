@@ -366,8 +366,10 @@ em `$SUITE_OUT`.
 A página é `data:` no Firefox ESR visível e não acessa Drupal/Runtime. Os
 limites derivados da fonte 3.1.5 são 48em (768px), 70em (1120px), 85em
 (1360px) e 120em (1920px). O teste exige as larguras exatas esperadas do
-container e seu padding em cada lado dessas transições. Não comprova integração
-do preprocess no servidor, grants, cache real, dark mode, zoom ou WCAG integral.
+container e seu padding em cada lado dessas transições. Confere ainda Montserrat
+carregada nos pesos 400/700 e a escala/line-height de body, H1 e H3. Não comprova
+integração do preprocess no servidor, grants, cache real, dark mode, zoom ou WCAG
+integral.
 Use `DISPLAY=:0`, defina `SUITE_OUT` e
 `ACULTA_FF_PROFILE_ROOT` e execute:
 

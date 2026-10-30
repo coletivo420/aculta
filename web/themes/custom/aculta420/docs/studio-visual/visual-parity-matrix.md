@@ -8,7 +8,7 @@ As rotas abaixo seguem o mapa canônico ADR-038, os providers/owners atuais e os
 
 | Área/estado | Purpose e path canônicos | Provider/owner funcional | Evidência atual | Pendência visual/aceite |
 |---|---|---|---|---|
-| Entrada da plataforma Studio e links para Suites | `account:/` e `account:/conta` | `AccountExperienceProvider`; links absolutos resolvidos por `DomainPurposeManager` | Capturas autenticadas anteriores em 390/1440px; a fixture local `studio-card-fidelity.py` passou 162/162 no HEAD `6b3ac6402`, com os limites upstream e os nove viewports globais, e capturas 320/1440px inspecionadas; shell anterior presente | Não criar Hub `/studio` nem menu global paralelo; fixture não prova render Runtime; revisar teclado, zoom e estado com Suite opcional ausente |
+| Entrada da plataforma Studio e links para Suites | `account:/` e `account:/conta` | `AccountExperienceProvider`; links absolutos resolvidos por `DomainPurposeManager` | Capturas autenticadas anteriores em 390/1440px; a fixture local `studio-card-fidelity.py` passou 216/216 no worktree baseado em `82ff8538d`, cobrindo os limites upstream, nove viewports globais e Montserrat; capturas 320/1440px inspecionadas; shell anterior presente | Não criar Hub `/studio` nem menu global paralelo; fixture não prova render Runtime; revisar teclado, zoom e estado com Suite opcional ausente |
 | Marley e navegação editorial | `account:/marley`, `/marley/{aba}[/{secao}[/{sub}]]` | `MarleyExperienceProvider`; `aculta_studio` compõe, plugins/owners mantêm ações e conteúdo | Capturado em 390/1440px; sem overflow e com shell presente; baseline não é comparação pareada com dashboard autenticado Next | Cobrir formulários, filtros, edição, estados, teclado/no-JS e conteúdos de dois titulares |
 | Ganjalab — jornada LMS | `courses:/ganjalab` | `GanjalabExperienceProvider` → `aculta_lms.student_dashboard`; LMS mantém dados, matrícula e ACL | Capturado em 390/1440px; sem overflow; o título e a rota são do purpose Courses | Autorizações e estados de matrícula/turma/cursos, widgets de aprendizagem, no-JS e comparação visual por consumer ainda pendentes |
 | WE SATIVA — workspace Wiki | `wiki:/wesativa`, `/wesativa/inicio`; ações Wiki em suas rotas próprias | `WeSativaExperienceProvider`; `aculta_wiki` mantém autoria, revisão, moderação e acesso | HTTPS e sessão autenticada capturados em 390/1440px; sem overflow; visitante anônimo recebe 403 | Separar visualmente autoria/revisão/moderação com fixtures autorizadas; teste A/B de grants, no-JS e teclado |
@@ -171,11 +171,13 @@ autenticado. OCS-F3/F4 seguem parciais e OCS-F11 não está aprovado.
 A fixture `studio-card-fidelity.py` agora cobre os limites do layout no pacote
 OpenCulturas 3.1.5: 48em/768px, 70em/1120px, 85em/1360px e 120em/1920px,
 incluindo um viewport de cada lado das mudanças. Firefox ESR visível passou
-162/162 verificações em 27 larguras; mediu sem overflow, grade, geometria do
-SDC, largura e padding calculados do container. Capturas 320/1440 foram
-inspecionadas. Evidência em
-`/home/piradopirata/aculta-suite-out/studio-card-breakpoints-20261030/`.
-A fonte é `openculturas/profile/themes/opcult/sass/abstracts/_mixins.scss` e
-`_layout.scss` no tarball verificado. Esta fixture não valida o consumer Drupal,
-modos claro/escuro nem comparação pareada com dashboard autenticado upstream.
+216/216 verificações em 27 larguras; mediu sem overflow, grade, geometria do
+SDC, largura/padding do container e tipografia. Montserrat carregou nos pesos
+400/700; body ficou 16/24px e H3 em 24px/700. O H1 preserva o clamp mobile de
+32–48px, com 48px no desktop. Capturas 320/1440 foram inspecionadas. Evidência
+em `/home/piradopirata/aculta-suite-out/studio-card-typography-rerun-20261030/`.
+A fonte é `openculturas/profile/themes/opcult/sass/abstracts/_mixins.scss`,
+`_layout.scss` e `_typography.scss` no tarball verificado. Esta fixture não
+valida o consumer Drupal, modo escuro nem comparação pareada com dashboard
+autenticado upstream.
 OCS-F1/F3 seguem parciais.

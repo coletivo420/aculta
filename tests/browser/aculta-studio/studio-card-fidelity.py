@@ -125,6 +125,14 @@ try:
             border: getComputedStyle(card).borderTopWidth,
             shadow: getComputedStyle(card).boxShadow,
             bodyPaddingInline: getComputedStyle(body).paddingInline,
+            fontFamily: getComputedStyle(card).fontFamily,
+            fontLoadedRegular: document.fonts.check('400 16px Montserrat', 'Experiências ACULTA'),
+            fontLoadedBold: document.fonts.check('700 16px Montserrat', 'Experiências ACULTA'),
+            bodyFontSize: getComputedStyle(card).fontSize,
+            bodyLineHeight: getComputedStyle(card).lineHeight,
+            h1FontSize: parseFloat(getComputedStyle(document.querySelector('#hub-title')).fontSize),
+            h3FontSize: getComputedStyle(card.querySelector('h3')).fontSize,
+            h3FontWeight: getComputedStyle(card.querySelector('h3')).fontWeight,
             studioScope: card.closest('.studio') !== null,
           };
         })();""")
@@ -161,6 +169,18 @@ try:
               metrics["radius"] == "24px" and metrics["border"] == "1px"
               and metrics["bodyPaddingInline"] == "32px",
               f"raio={metrics['radius']}, borda={metrics['border']}, padding={metrics['bodyPaddingInline']}")
+        check(f"{width}px: Montserrat 3.1.5 carregada",
+              'Montserrat' in metrics["fontFamily"]
+              and metrics["fontLoadedRegular"] and metrics["fontLoadedBold"],
+              f"family={metrics['fontFamily']}, regular={metrics['fontLoadedRegular']}, "
+              f"bold={metrics['fontLoadedBold']}")
+        expected_h1_size = min(48, max(32, width * 0.07))
+        check(f"{width}px: escala tipográfica Fidelity",
+              metrics["bodyFontSize"] == "16px" and metrics["bodyLineHeight"] == "24px"
+              and abs(metrics["h1FontSize"] - expected_h1_size) <= 0.1
+              and metrics["h3FontSize"] == "24px" and metrics["h3FontWeight"] == "700",
+              f"body={metrics['bodyFontSize']}/{metrics['bodyLineHeight']}, "
+              f"h1={metrics['h1FontSize']}, h3={metrics['h3FontSize']}/{metrics['h3FontWeight']}")
         if width in (320, 390, 768, 1440):
             screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
             (OUT / f"studio-card-{width}.png").write_bytes(base64.b64decode(screenshot))

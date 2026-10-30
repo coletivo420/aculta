@@ -381,7 +381,8 @@ A cobertura permanece restrita a Marley, Conta e Perfil.
 O teste `studio-card-fidelity.py` verifica agora os breakpoints de layout lidos
 diretamente de `sass/abstracts/_mixins.scss` e `_layout.scss`: 48em (768px),
 70em (1120px), 85em (1360px) e 120em (1920px). Firefox ESR visível passou
-162/162 medições no Hub fixture, incluindo largura/padding do container em cada
-fronteira. A CSS não mudou nesta microfase; a validação é do mapeamento atual.
-Render Drupal, tema escuro e comparação de tela autenticada equivalente seguem
+216/216 medições no Hub fixture, incluindo largura/padding do container em cada
+fronteira, Montserrat carregada em 400/700 e escala/line-height de body/H1/H3.
+A CSS não mudou nesta microfase; a validação é do mapeamento atual. Render
+Drupal, modo escuro e comparação de tela autenticada equivalente seguem
 pendentes.
