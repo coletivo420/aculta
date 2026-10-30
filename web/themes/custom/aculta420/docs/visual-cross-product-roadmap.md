@@ -25,17 +25,17 @@ Para Green Stash, usar SDCs compartilhados com variantes adaptadas a operação 
 
 ## Correção da frente visual Studio - todas as experiências (superada)
 
-O roteiro resumido nesta seção foi substituído pela sequência vigente do [plano visual](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md), que define OCS-F0-F11 antes de OCS-A1-A4. É obrigatório aplicar padrões Next ao Hub, Marley, GanjaLab, WE Sativa, Green Stash integrado, Conta, Perfil e demais experiências reais inventariadas.
+O roteiro resumido nesta seção foi substituído pela sequência vigente do [plano visual](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md), que define OCS-F0-F11 antes de OCS-A1-A4. É obrigatório aplicar padrões Next à entrada da Conta e às Suites/áreas reais: Marley, Ganjalab, WE SATIVA, Green Stash integrada, Culturas, Conta, Perfil e demais consumers inventariados. Conforme ADR-038, não existe Hub público `/studio`; consulte a matriz corrente abaixo.
 
 O tema fornece padrões transversais de grid, cards, tabs, edição, seções, estados e navegação contextual; cada experiência expõe render arrays/ACL/links pelos serviços donos. Menu Studio deriva do registro de experiências e permissões, não é uma lista estática no CSS/Twig. Não criar SDCs específicos de GanjaLab/WE Sativa se um componente transversal com variante resolve. Institution Bar e Domain Header continuam invariáveis. **OCS-F11**, dependente da aprovação de THEME-MF3, é o gate de fidelidade; identidade Aculta somente depois dos dois aceites. Testar também outros purposes para evitar vazamento CSS.
 
-## Frente Studio: Fidelity → Identity - OCS-F/OCS-A (2026-10-29)
+## Frente Studio: Fidelity → Identity - OCS-F/OCS-A (2026-10-29; rotas pós-ADR-038)
 
-[Plano de implementação e critérios](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md). **Tema de origem é `opcult` (OpenCulturas Next)**; `openculturas_base` é legado. Etapa F reproduz estrutura, tipografia, espaçamento, componentes, cards, navegação e formulários do Next, mas somente **no contexto interno do Studio**. Etapa A substitui a identidade visual por tokens institucionais, sem reimplementar contratos funcionais.
+[Plano de implementação e critérios](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md). **Tema de origem é `opcult` (OpenCulturas Next)**; `openculturas_base` é legado. Etapa F reproduz estrutura, tipografia, espaçamento, componentes, cards, navegação e formulários do Next somente nas Suites ACULTA Studio. Pelo ADR-038, as Suites residem nos purposes de seus owners; `aculta_studio` permanece framework/registry compartilhado e não há Hub público `/studio`. Etapa A substitui a identidade visual por tokens institucionais, sem reimplementar contratos funcionais.
 
 - [ ] OCS-F0 inventário dinâmico completo `opcult` → SDC/consumer, providers, rotas, estados, matriz de paridade e baselines; THEME-MF0 cobre todo o tema e todos os purposes.
 - [ ] THEME-MF1 fundação global mobile-first; THEME-MF2 migração de todos os grupos do tema; OCS-F1 tokens Next escopados ao Studio, F2 composição/navegação contextual e F3 reuso/variantes SDC com stories e consumers reais.
-- [ ] OCS-F4 Hub; F5 Marley; F6 GanjaLab/LMS; F7 WE Sativa/Wiki; F8 Green Stash integrado; F9 Conta e Perfil separados; F10 demais experiências reais.
+- [ ] OCS-F4 entrada da Conta e links para Suites autorizadas (sem Hub público); F5 Marley; F6 GanjaLab/LMS; F7 WE Sativa/Wiki; F8 Green Stash integrado; F9 Conta e Perfil separados; F10 ACULTA Studio Culturas e demais experiências reais.
 - [ ] THEME-MF3 gate global mobile-first e OCS-F11 gate de fidelidade de todo o Studio, com OCS-F11 dependente de MF3; Firefox ESR, acessibilidade, privacidade, claro/escuro e todos os purposes.
 - [ ] OCS-A1-A4 identidade própria Aculta somente depois dos dois gates, nos mesmos SDCs e contratos de todas as experiências Studio, incluindo Green Stash integrado.
 
@@ -52,6 +52,26 @@ Inventário 3.1.5 e matriz de paridade inicial ficam em
 O escopo permanece no Studio. Institution Bar e Domain Header não entram na
 camada de fidelidade. Nenhuma paridade de tela autenticada está homologada por
 esta documentação.
+
+### Atualização OCS-F0 — mapa de rotas pós-ADR-038 (2026-10-30)
+
+| Suite/área | Purpose:path canônico |
+|---|---|
+| Entrada da Conta e registro de experiências autorizadas | `account:/` e `account:/conta` |
+| Marley | `account:/marley` |
+| Ganjalab | `courses:/ganjalab` |
+| WE SATIVA | `wiki:/wesativa`, no Domain `wiki420` |
+| ACULTA STUDIO GREEN STASH — área comercial integrada | `shop:/greenstash` |
+| ACULTA Studio Culturas | `eventos:/culturas` |
+| Conta privada / Perfil privado | `account:/conta` / `account:/perfil` |
+| Salvos / planos Mercado Pago | `account:/salvos` / `account:/conta/mercado-pago/planos` |
+
+`/studio` e `/studio/*` são paths aposentados, respondem 404 sem alias. F4 não
+inclui Hub: a entrada da Conta apresenta links absolutos às Suites autorizadas.
+Conta e Perfil são separados; Perfil público usa `main:/u/{apelido}`. Green
+Stash continua integrada ao Studio, sem shell próprio. A [matriz de paridade
+visual](studio-visual/visual-parity-matrix.md) registra o estado dos owners,
+consumers e evidências; o baseline autenticado continua parcial.
 
 ## Decisão arquitetural obrigatória
 **Preservar Institution Bar + Domain Header multidomínio existentes em TODAS as áreas.** A evolução visual pode aperfeiçoar responsividade, contraste, espaçamento, navegação mobile e light/dark, mas não substitui, oculta ou duplica o shell. O futuro Context Header é **subcabeçalho de página** e não um cabeçalho global. Domain/purpose, URLs, dados, ACL e cache ficam no Portal/providers; tema somente apresenta.
@@ -882,14 +902,16 @@ em `/home/piradopirata/aculta-suite-out/institution-bar-scroll-anonymous-3c1691f
 Ainda falta homologar navegação e shell autenticados, teclado/zoom/modos/AA;
 THEME-MF3 não aprovado.
 
-### Reparo dos gates de integração e rotas (2026-10-30)
+### Reparo dos gates de integração e rotas (registro histórico; paths superados pelo ADR-038)
 
 No HEAD local `81b275163`, os gates Drupal 11+, mapa módulo/tema, fronteira
 tema/módulo, slugs, aliases, Foundation, shell contract, SDC e Design
 Foundations passaram. O contrato visual de Eventos agora mapeia tokens
 `data-portal-ui` no tema e mantém `use-ajax`; nenhum SDC paralelo foi criado.
-Os nomes oficiais são **ACULTA STUDIO GREEN STASH** (`/studio/green-stash`) e
-**ACULTA STUDIO WE SATIVA** (`/studio/we-sativa`). IDs e owners Commerce/Wiki
+Os nomes oficiais são **ACULTA STUDIO GREEN STASH** e **ACULTA STUDIO WE SATIVA**.
+Os paths então registrados (`/studio/green-stash` e `/studio/we-sativa`) foram
+aposentados pelo ADR-038: os paths canônicos são `shop:/greenstash` e
+`wiki:/wesativa` no Domain `wiki420`, respectivamente. IDs e owners Commerce/Wiki
 permanecem os mesmos. Unit focal 36/389; Kernel Wiki 1/69. Não houve Firefox
 neste HEAD nem homologação visual das rotas no Runtime; THEME-MF3 e OCS-F11
 seguem pendentes. Evidência detalhada em `mobile-first-audit.md`.

@@ -1,8 +1,37 @@
 # Matriz de paridade visual do OpenCulturas Next → ACULTA Studio
 
-**OCS-F0 — 2026-10-29.** Status inicial por inspeção estática; nível visual
-numérico será preenchido depois das capturas pareadas. `Pede-A` indica mudança
-que pertence a código/rota/serviço fora do ownership da Frente B.
+**OCS-F0 — estado corrente reconciliado com ADR-038 no HEAD `1a4de33b6` (2026-10-30).** A fidelidade visual OpenCulturas permanece restrita às experiências ACULTA Studio. As Suites usam o purpose/domain de seus owners; o framework `aculta_studio` e o registry continuam compartilhados, sem Hub público em `/studio`.
+
+### Matriz corrente de rotas e evidências
+
+As rotas abaixo seguem o mapa canônico ADR-038, os providers/owners atuais e o baseline Firefox `aculta-studio-adr038-20261030`. Paths `/studio*` citados na matriz histórica e nos registros posteriores abaixo descrevem estados anteriores: hoje respondem 404 sem redirect. O baseline autenticado foi `PARTIAL` e cobre nove destinos ACULTA em 390/1440px, além da referência pública OpenCulturas; não equivale a um dashboard autenticado upstream.
+
+| Área/estado | Purpose e path canônicos | Provider/owner funcional | Evidência atual | Pendência visual/aceite |
+|---|---|---|---|---|
+| Entrada da plataforma Studio e links para Suites | `account:/` e `account:/conta` | `AccountExperienceProvider`; links absolutos resolvidos por `DomainPurposeManager` | Duas capturas autenticadas por rota em 390/1440px; sem overflow; ambas exibem Institution Bar e Domain Header | Não criar Hub `/studio` nem menu global paralelo; revisar teclado, zoom e estado com Suite opcional ausente |
+| Marley e navegação editorial | `account:/marley`, `/marley/{aba}[/{secao}[/{sub}]]` | `MarleyExperienceProvider`; `aculta_studio` compõe, plugins/owners mantêm ações e conteúdo | Capturado em 390/1440px; sem overflow e com shell presente; baseline não é comparação pareada com dashboard autenticado Next | Cobrir formulários, filtros, edição, estados, teclado/no-JS e conteúdos de dois titulares |
+| Ganjalab — jornada LMS | `courses:/ganjalab` | `GanjalabExperienceProvider` → `aculta_lms.student_dashboard`; LMS mantém dados, matrícula e ACL | Capturado em 390/1440px; sem overflow; o título e a rota são do purpose Courses | Autorizações e estados de matrícula/turma/cursos, widgets de aprendizagem, no-JS e comparação visual por consumer ainda pendentes |
+| WE SATIVA — workspace Wiki | `wiki:/wesativa`, `/wesativa/inicio`; ações Wiki em suas rotas próprias | `WeSativaExperienceProvider`; `aculta_wiki` mantém autoria, revisão, moderação e acesso | HTTPS e sessão autenticada capturados em 390/1440px; sem overflow; visitante anônimo recebe 403 | Separar visualmente autoria/revisão/moderação com fixtures autorizadas; teste A/B de grants, no-JS e teclado |
+| ACULTA STUDIO GREEN STASH — área comercial integrada | `shop:/greenstash` e `/greenstash/*` | `GreenStashExperienceProvider`; `aculta_commerce` mantém loja, produtos, pedidos, estoque e envios | Capturas de `/greenstash` em 390/1440px renderizaram acesso negado para `teste.comum` sem grant; shell presente | Isso não homologa a UI operacional. Exige operador sintético autorizado e teste A/B entre lojas; não mostrar slugs preparatórios como funções prontas nem encaminhar a admin Commerce |
+| ACULTA Studio Culturas | `eventos:/culturas` e rotas `/culturas/eventos/*`, `/culturas/locais/*` | `aculta_events` mantém Eventos, Datas, Locais, grants e operações | Capturado autenticado em 390/1440px após correção de HTTP 500; sem overflow medido no baseline | Grants, fluxos de escrita/AJAX, cache, ACL e estados de erro/sucesso ainda precisam homologação visual/funcional |
+| Conta privada | `account:/conta` e `/conta/{dados,endereco,documentos,seguranca,seguranca/senha,conexoes,pedidos,apoio,preferencias}`; `/conta-legada` permanece | Portal/Commerce/User preservam os formulários e dados donos; `aculta_studio` compõe | Hub `/conta` capturado em 390/1440px; rotas antigas `/studio/conta*` foram aposentadas | S-R5 por formulário, envio Form API, estados AJAX/no-JS, CSRF, foco e comparação com `/conta-legada` pendentes |
+| Perfil privado e identidade pública | `account:/perfil` e `/perfil/{apelido,privacidade,bio,redes/*}`; público em `main:/u/{apelido}` conforme `aculta_user` routing | `ProfileExperienceProvider`; `aculta_user` e `aculta_image`; Conta e Perfil são distintos | `/perfil` capturado em 390/1440px; shell presente; baseline não submete edição nem upload | S-R4/S-R5: privacidade A/B, avatar/foto, crop, fallback, cache, leitor e teclado pendentes |
+| Salvos | `account:/salvos` | `SavedExperienceProvider`; consulta e ACL permanecem nos owners de conteúdo/índice | Provider e rota existem no registry/código; não constam nos nove destinos do baseline autenticado | Conteúdo real, isolamento A/B, cache por UID, estado vazio e feature disponível/ausente precisam de prova; não anunciar recomendações |
+| Planos Mercado Pago | `account:/conta/mercado-pago/planos` | Provider condicional `MercadoPagoPlansExperienceProvider`; owner `aculta_pagamentos_mercadopago` | Capturado em 390/1440px com a conta sintética; shell presente | Módulo/permissão ausente, operação real, estados e comparação detalhada pendentes |
+| Outras áreas e regressão do shell | `main`, `account`, `support`, `magazine`, `wiki`, `shop`, `courses`, `forum`, `links`, `eventos` | Tema/Portal e módulos proprietários por purpose | Matriz Firefox anônima: 90/90 raízes × nove larguras; Institution Bar e Domain Header exatamente uma vez em 90/90, zero overflow medido | Páginas internas, contas autenticadas, zoom, teclado, claro/escuro, reduced motion e WCAG global continuam fora desse baseline |
+
+O pacote oficial do OpenCulturas 3.1.5 permanece a fonte visual: o hash e os
+arquivos concretos inspecionados estão em [`upstream-inventory.md`](upstream-inventory.md).
+Reuso SDC deve ser confirmado por consumer real e story; esta matriz não trata
+classes Bootstrap, markup isolado ou providers como evidência de consumer SDC.
+Organização é um conceito separado de Conta e Perfil; não foi confirmado um
+consumer organizacional operacional no registro atual do Studio. Não exibir
+área de organização, recomendações ou ações ausentes como funcionalidades.
+
+### Matriz inicial histórica — anterior ao ADR-038 (2026-10-29)
+
+Os caminhos desta tabela preservam o baseline da época; não são rotas atuais.
+`Pede-A` indica dependência de código/rota/serviço fora do ownership visual.
 
 | Tela/estado | URL/rota ACULTA | Evidência upstream concreta | Referência/viewport | SDC atual | Alteração candidata | Owner | Fidelidade inicial | Risco/consumer | Teste | Status comprovado |
 |---|---|---|---|---|---|---|---|---|---|---|
