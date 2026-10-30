@@ -1101,3 +1101,13 @@ subabas e rótulos, renderização configurada dos documentos, planilha em modo
 Tabela somente leitura, foco visível, e reflow do iframe DOCX de 320 a 1440px;
 zero overflow em ambos os temas. Evidências e limitações no `mobile-first-audit.md`.
 Essa fixture não valida documento incorporado público nem THEME-MF3.
+
+### THEME-MF2 — retomada de harnesses Firefox de layout (2026-10-30)
+
+Com Firefox ESR visível novamente, oito harnesses que estavam DEFERRED por
+indisponibilidade do display passaram 370/370 checks: Navigation top-bar,
+identidade Perfil, composição institucional, context-tabs, artigo da Revista,
+Webform, composer do Messenger e cartão de autoria do Fórum. Sete usam fixtures;
+`author-card.py` verificou a listagem pública real de tópicos do Fórum. Os
+resultados detalhados, capturas e limitações estão em `mobile-first-audit.md`.
+A bateria fecha somente esses componentes/estados e não aprova THEME-MF3.

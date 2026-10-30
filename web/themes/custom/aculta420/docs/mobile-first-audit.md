@@ -1690,3 +1690,29 @@ mínimo 450px e padding 12px até 575px, 540px e 16px a partir de 576px; em
 `summary.json`: `/home/piradopirata/aculta-suite-out/aculta-document-viewer-office-resume-20261030/`.
 O harness é local e não modifica o Runtime; não testa PDF embutido real,
 fullscreen, leitores de tela ou WCAG 2.2 AA. THEME-MF3 continua pendente.
+
+### Reteste Firefox ESR de componentes com gates anteriormente adiados (2026-10-30)
+
+Com `DISPLAY=:0` disponível, executei oito harnesses fora do repositório. Todos
+passaram, sem falhas:
+
+| Harness | Resultado | Escopo da evidência |
+|---|---:|---|
+| `navigation-top-bar.py` | 40/40 | Fixture Drupal Navigation; uma coluna até 767px e três regiões a partir de 768px, ordem preservada, sem overflow. |
+| `profile-identity-layout.py` | 56/56 | Fixture do SDC; avatares/alinhamento nos breakpoints, ordem DOM e sem overflow em 14 larguras. |
+| `institutional-layout.py` | 24/24 | Fixture de áreas, projetos e detalhes; CSS candidato idêntico à baseline testada nos viewports e sem overflow. |
+| `context-tabs-layout.py` | 70/70 | Fixture com links planos e `item_list`, gaps, estado atual, alvos e overflow em 14 larguras. |
+| `revista-article-layout.py` | 20/20 | Fixture de artigo; tipografia, resumo, categoria, ordem DOM e overflow em 10 larguras. |
+| `webform-layout.py` | 62/62 | Fixtures Likert/modal; minWidth responsivo, breakpoint de 600px, screenshots/medidas preservados e sem overflow. |
+| `messenger-reply-layout.py` | 66/66 | Fixture de composer; densidade mobile/desktop, textarea, alvo de 44px, ordem e overflow em 11 larguras. |
+| `author-card.py` | 32/32 | Consumer público real do Fórum, cinco cartões; alinhamento/avatar no breakpoint de 576px e sem overflow em 10 larguras. |
+
+Artefatos, na mesma ordem: `/home/piradopirata/aculta-suite-out/` nos diretórios
+`navigation-top-bar-resume-20261030`, `profile-identity-resume-20261030`,
+`institutional-layout-resume-20261030`, `context-tabs-layout-resume-20261030`,
+`revista-article-layout-resume-20261030`, `webform-layout-resume-20261030`,
+`messenger-reply-layout-resume-20261030` e `author-card-resume-20261030`.
+Somente `author-card.py` consultou uma rota pública real; os demais usam fixtures
+e não validam integração Drupal/ACL nem todos os estados. A bateria não cobre
+zoom 200/400%, leitor de tela, contraste WCAG 2.2 AA, autenticação em todos os
+purposes ou toda a matriz cross-product. THEME-MF3 continua pendente.
