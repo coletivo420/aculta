@@ -3,7 +3,7 @@
 Data da atualização: 2026-10-30. Estado: **implementação parcial presente no HEAD auditado; homologação do Runtime pendente**.
 Este documento preserva o baseline histórico da auditoria anterior e registra abaixo a reconciliação com o código atual da PR #299. A análise é estática; não altera configuração ativa, banco Runtime, geração do Index ou deploy.
 Repositório: `coletivo420/aculta`; branch `refactor/opencultures-codigo-visual`; PR #299.
-HEAD auditado nesta revisão: `63116d1de6e0907c2ab0a2aa9e1fc5de79c054e2`.
+HEAD auditado nesta revisão: `5a11ff402f474a611ee112cdbb52a2ed1b0bc7e0`.
 Não criar branch/PR, executar merge, force-push, deploy, rebuild do Index ou escrita de Runtime por efeito deste documento.
 
 ## 1. Resultado esperado e escopo
@@ -24,13 +24,13 @@ Esta seção descreve o estado observado no commit indicado na auditoria histór
 
 | Área | Código presente no HEAD auditado | Estado que ainda precisa de evidência |
 | --- | --- | --- |
-| Evento, Data e Local | Entidades e formulários de Events; Data subordinada ao Evento; Local reutilizável; modal Drupal/AJAX para selecionar/cadastrar Local com CEP central | Testes completos no HEAD, fluxos integrados em navegador, migração de conteúdo legado e Runtime |
+| Evento, Data e Local | Entidades e formulários de Events; Data subordinada ao Evento; Local reutilizável; modal Drupal/AJAX para selecionar/cadastrar Local com CEP central; catálogo filtra `access('view')` antes da paginação e falha fechado sem conta; página canônica propaga cacheability do resultado de acesso | Testes completos no HEAD, fluxos integrados em navegador, migração de conteúdo legado e Runtime |
 | Studio Culturas | `/culturas` no purpose `eventos`, dashboard, criação/edição de Evento, operações contextuais de Datas e Locais | Paginação/pesquisa do dashboard, validação de domínio e permissões no Runtime, UX responsiva, acessibilidade e homologação visual |
 | Administração de Eventos | Painel no MAIN em `/painel-administrativo/eventos`, incluindo configuração do papel/capacidades de organizadores; `content_editor` é o padrão configurado | Conferir instalação/valores ativos, permissões efetivas e ausência de escrita por outros purposes |
 | `aculta_index` | Providers de Evento/Local, relação Evento > Local derivada de Datas físicas públicas, manutenção incremental e canonical URLs | Reexecutar suítes no HEAD auditado; nenhuma reconstrução ou troca de geração no Runtime |
 | Migração Activity | Campos textuais legados preservados e referência a Local integrada; ferramenta de reconciliação/migração documentada/implementada | Dry-run com inventário real, contagens, revisão de duplicatas e autorização explícita antes de persistência |
 
-Limite desta revisão: o código foi inspecionado estaticamente. Os resultados de testes e navegador citados em commits anteriores são evidências históricas dos SHAs/ambientes em que foram executados, não uma declaração de que foram repetidos no HEAD `63116d1`. O fix recente do dashboard (commit `95314a5`) inclui teste Kernel novo, não executado nesta revisão.
+Limite desta revisão: o código foi inspecionado estaticamente. Os resultados de testes e navegador citados em commits anteriores são evidências históricas dos SHAs/ambientes em que foram executados, não uma declaração de que foram repetidos no HEAD `5a11ff4`. A suíte `LocationCatalogueKernelTest` foi ampliada e o filtro/cache foram corrigidos nos commits `81b2dde`, `e711794` e `178bf3e`; o teste foi encontrado no repositório, mas não executado nesta revisão. O fix recente do dashboard (`95314a5`) também inclui teste Kernel novo, não executado aqui.
 
 ## 2.2. Baseline: código presente versus experiência pendente
 
@@ -71,12 +71,12 @@ Esta revisão documental registra dependências, não reserva arquivos de implem
 
 ## 4. Microfases, dependências e gates
 
-Estados abaixo refletem o código auditado em `63116d1`; “código presente” não equivale a Runtime ativado nem a homologação concluída.
+Estados abaixo refletem o código auditado em `5a11ff4`; “código presente” não equivale a Runtime ativado nem a homologação concluída.
 
 | Fase | Dependência | Entrega concreta | Gate de saída |
 | --- | --- | --- | --- |
 | LOC-00 / P0 | Nenhuma | Inventário ativo de extensões, schema, Views/displays, rotas e formulário realmente usado; diff active/sync; responsáveis por arquivos | **Parcial:** código estático rechecado. Runtime, config ativa e formulário efetivamente servido ainda exigem evidência por ambiente, sem escrita persistente |
-| LOC-01 / P0 | LOC-00 | Contrato de acesso/publicação/precisão e organização; fechar cache e todas as saídas | **Código e políticas presentes;** executar matriz anônimo/contas/editor/admin e auditar HTML/JSON-LD/ICS/índice/mapa no Runtime |
+| LOC-01 / P0 | LOC-00 | Contrato de acesso/publicação/precisão e organização; fechar cache e todas as saídas | **Hardening localizado presente:** catálogo filtra autorização antes de totais/paginação e falha fechado sem conta; página canônica adiciona cacheability do acesso. Falta matriz integrada anônimo/contas/editor/admin e auditar HTML/JSON-LD/ICS/índice/mapa no Runtime |
 | LOC-02 / P1 | LOC-01 | Formulário nativo de Local, rotas add/edit/delete/canonical e gestão | **Código presente** para CRUD, detalhe e diretório. Testes no HEAD atual, configuração ativa e validação de acesso Runtime pendentes |
 | LOC-03 / P1 | LOC-02 | Seletor de Local e criação contextual no fluxo editorial; modal AJAX Drupal | **Código presente:** `EventLocationModalWidget`/`EventLocationModalForm`, seletor e criação com CEP central. Revisar comportamento em Activity e dados legados; reexecutar testes/homologar |
 | LOC-04 / P0-P1 | LOC-01 + canônico de LOC-02 | Providers, URLs canônicas, relação `event_location` derivada de Datas físicas públicas, fila e joins | **Código presente;** testes Kernel registrados em histórico, não reexecutados nesta revisão. Sem rebuild ou escrita no Runtime |
@@ -184,27 +184,27 @@ Atualizar roadmap do owner a cada microfase e status por componente com estado c
 
 ## Aditivo de experiência editorial e endereços (2026-10-30)
 
-- A substituição dos campos de endereço de `node:add/activity` por referência a Local é futura e depende de inventário/mapeamento dos valores legados.
-- Planejar seletor Drupal/AJAX: pesquisa de Locais existentes por nome semelhante, seleção explícita, ação de cadastrar Local e retorno ao formulário pai mantendo seus valores. A autorização deve ser verificada no servidor em cada operação.
-- O cadastro abre modal Drupal/AJAX com CEP como primeira etapa, reaproveitando o adaptador central e `aculta_portal_cep/cep-address`. Brasil fixo, sem seletor. Busca por logradouro e resultados próximos ficam restritos a Events/Maps e aguardam provedor, contrato, termos, privacidade e limites aprovados.
+- **Retificação de estado:** ADR-037 descontinuou `node:activity` para novas publicações e migrou o tratamento editorial para `aculta_events`. O bundle/config histórico permanece para integridade; o migrador idempotente e rollback têm código e teste, mas dry-run/piloto Runtime, contagens e rollback operacional continuam condicionados a autorização.
+- O seletor Drupal/AJAX de Local já busca e permite seleção/cadastro contextual, retornando ao Evento/Data sem abandonar o formulário pai. A implementação e seus limites atuais estão descritos na matriz LOC-00–08 acima; busca por similaridade/filtro geográfico permanece evolução.
+- O cadastro já abre popup Drupal/AJAX com CEP primeiro, usa `aculta_portal_cep/cep-address` e fixa Brasil sem seletor. Busca por logradouro e resultados próximos continuam restritos a Events/Maps e aguardam provedor, contrato, termos, privacidade e limites aprovados.
 - O módulo CEP conserva seu comportamento por CEP; Conta/checkout não ganham busca por rua. Geocodificação de Maps não é autocomplete postal.
-- Incluir no roadmap Events uma área administrativa própria em `/painel-administrativo`, com padrão equivalente às áreas de LMS e Fórum, incluindo permissão, navegação, listagem e ações.
+- A área administrativa de Eventos está no MAIN em `/painel-administrativo/eventos`, com configuração de papéis/capacidades de criação; `content_editor` é padrão. Validar instalação e permissões efetivas no Runtime.
 - Manter `aculta_index` como contrato transversal do Local, sem indexar endereço exato/coordenadas privadas. O modal não pode contornar access, status editorial, ACL ou cache.
 
 Consulte [ADR-033](../decisions/ADR-033-endereco-busca-e-locais.md). Este aditivo documenta trabalho futuro; não altera estado de release nem afirma implementação.
 
 
-## Especificação do popup e fronteira Events ↔ Maps (2026-10-30)
+## Especificação implementada do popup e fronteira Events ↔ Maps (2026-10-30)
 
-“Modal” neste plano é um popup Drupal sobre a tela de Activity, não conteúdo inline nem página inteira. O fluxo terá popup de pesquisa/seleção de Local e, sob ação explícita, popup de cadastro. O retorno da seleção atualiza a referência no formulário pai por AJAX, mantendo os valores preenchidos.
+“Modal” neste plano é um popup Drupal no contexto do formulário de Evento/Data, não conteúdo inline nem página inteira. O fluxo tem popup de pesquisa/seleção de Local e, sob ação explícita, popup de cadastro. O retorno da seleção atualiza a referência no formulário pai por AJAX, mantendo os valores preenchidos.
 
 A entidade `aculta_event_location` e seu ciclo de vida são de `aculta_events`. Activity/evento referencia Local. `aculta_maps` consome os Locais autorizados por serviços/contratos estáveis para renderizar mapas, geocodificar endereço salvo e criar links. Não duplicar entidade, CRUD, endereço ou catálogo em Maps. Permissões, status, precisão e cache são verificados na fronteira de cada módulo. Ver [ADR-033](../decisions/ADR-033-endereco-busca-e-locais.md).
 
 ## Fase 1 — Fechamento do contrato e inventário de endereços e Locais (2026-10-30)
 
 ### 1. Contrato arquitetural fechado
-1. **Titularidade única do endereço:** o endereço completo pertence exclusivamente ao cadastro da entidade `aculta_event_location`. Events e Activity não mantêm campos próprios de endereço, mantendo unicamente a referência de entidade (`field_local` em `aculta_event_date` e `field_event_location` em `node:activity`) ao Local selecionado.
-2. **Eliminação dos campos avulsos no editor:** no cadastro e edição de Events e Activity, CEP, logradouro, número, complemento, bairro, cidade, UF, país e nome do local não devem continuar como campos editáveis independentes no formulário do evento/atividade.
+1. **Titularidade única do endereço:** o endereço completo pertence exclusivamente ao cadastro da entidade `aculta_event_location`. Datas de Eventos mantêm referência `field_local`; `node:activity` é legado descontinuado, com campos antigos preservados para compatibilidade/migração e sem fluxo novo de cadastro.
+2. **Eliminação dos campos avulsos no editor:** no cadastro e edição de Events, CEP, logradouro, número, complemento, bairro, cidade, UF, país e nome do Local são mantidos apenas na entidade Local. Os campos textuais de `node:activity` são legados e não reabrem o fluxo de publicação descontinuado.
 3. **Fronteira Events ↔ Maps:** `aculta_events` é o único proprietário da entidade Local, seu cadastro, permissões, ciclo editorial e relações. `aculta_maps` é consumidor puro via serviços/contratos neutros (`MapRenderer`, `RouteLinkBuilder`, `GeocodingService`) e consome apenas dados autorizados/minimizados. Maps nunca cria catálogo, formulário, tabela ou entidade paralela de Local.
 4. **Popup Drupal / AJAX:** a seleção e o cadastro de Local ocorrem em popups sobrepostos pelo sistema de diálogos do Drupal (`Drupal.dialog` / AJAX), preservando o contexto e os dados do formulário pai. É proibido o uso de formulário inline, expansão na mesma página ou tela cheia.
 5. **Ordem dos campos com CEP primeiro:** em todo formulário de endereço completo (incluindo o cadastro do Local), o CEP é obrigatoriamente o primeiro campo visível (`#weight = -50`), com país fixo em Brasil (`BR`), sem seletor de país. O autopreenchimento é fornecido por `aculta_portal_cep`. Busca por logradouro permanece como capacidade futura restrita a Events/Maps.
@@ -328,7 +328,7 @@ Evidência: `EventDomainBoundaryKernelTest`, testes do `ContentPurposeResolver`/
 
 ## ACULTA Studio Culturas — decisão de produto e domínio (2026-10-30)
 
-O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota canônica `/culturas` está no purpose `eventos`; `/studio/culturas` foi removida. A rota e o dashboard inicial constam no código, mas a Suite completa permanece parcial. O host vem do DomainPurposeManager. A entrada da Conta pode apresentar apenas link absoluto para essa experiência, sem escrita cross-domain.
+O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota canônica é `/culturas`, atendida no purpose `eventos` (host eventos configurado pelo DomainPurposeManager); `/studio/culturas` não é rota-alvo. A entrada geral do Studio em `account` poderá apenas apresentar um link absoluto para essa experiência.
 
 - A sessão administrativa técnica continua no domínio principal, em `/painel-administrativo/eventos`, restrita a administradores. Configuração global de permissões, auditoria e operações administrativas permanecem ali.
 - ACULTA Studio Culturas é a experiência de organizadores: composição de fluxos do owner `aculta_events`, para criar e gerir Eventos e seus componentes (Datas e Locais), usando Form API, Entity Access e moderação existentes. Não cria entidade, formulário de persistência, permissão ou catálogo duplicado.
@@ -338,4 +338,4 @@ O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas
 - Esta decisão substitui qualquer texto anterior que diga que todo trabalho editorial de Eventos só pode ocorrer no MAIN ou que o purpose `eventos` é exclusivamente público. O painel de administração permanece no MAIN; a área do organizador é a exceção explícita e separada em ACULTA Studio Culturas.
 - Estado: decisão aprovada e implementação parcial presente na PR #299. Autorização/domínio precisam de validação integrada; Runtime e homologação visual permanecem pendentes.
 
-LOC-06 acompanha a implementação parcial de ACULTA Studio Culturas em `/culturas` no purpose `eventos`, mantendo configuração e administração privilegiada no MAIN. A composição já contém operações de Evento/Data/Local e seleção/cadastro contextual de Local em popup Drupal/AJAX; `aculta_events` segue como único owner. Faltam gates listados na tabela LOC-06/08, incluindo validar acesso por purpose, submissões e Dialog/AJAX; portanto não declarar a fase homologada.
+LOC-06 acompanha a implementação parcial de ACULTA Studio Culturas em `/culturas` no purpose `eventos`, mantendo configuração e administração privilegiada no MAIN. A composição já contém operações de Evento/Data/Local e seleção/cadastro contextual de Local em popup Drupal/AJAX; `aculta_events` segue como único owner. Faltam gates listados na tabela LOC-06/08, portanto não declarar a fase homologada.
