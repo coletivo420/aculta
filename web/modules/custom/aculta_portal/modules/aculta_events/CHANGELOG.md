@@ -1,6 +1,25 @@
 # Changelog — aculta_events
 
-## 0.1.0-dev.6 — integração de Locais com Content Index (LOC-04 / IDX-LOC) (2026-10-30)
+## 0.2.0-dev.1 — vínculo de Locais em Activity, modal AJAX e painel de eventos (2026-10-30)
+
+- Rebaixamento de versão para a linha de desenvolvimento 0.2.0-dev conforme diretriz do responsável.
+- Vínculo de Locais no formulário de atividade (`/node/add/activity` e `/node/{node}/edit`):
+  - Adicionado campo `field_event_location` (referência para `aculta_event_location`) em `node:activity`.
+  - Formulário editorial oculta campos legados de endereço (`field_place_name`, `field_event_street`, etc.).
+  - Implementado widget modal AJAX nativo Drupal (`EventLocationModalWidget` e `EventLocationModalForm`):
+    - Etapa 1: busca por nome de locais existentes acessíveis com ação de seleção e retorno AJAX via `ReplaceCommand` e `InvokeCommand`.
+    - Etapa 2: cadastro de novo local reutilizando `AccountAddressForm::apply()` iniciando pelo CEP.
+  - Sincronização automática em `ActivityHooks::nodePresave` alimentando os campos legados de endereço a partir de `field_event_location` para manter intactos displays e relatórios existentes.
+  - Validação estrita no servidor: endereço restrito exclusivamente a Brasil (`BR`), rejeitando submissões adulteradas e normalizando no `preSave` da entidade `EventLocation`.
+- Formulário de Evento (`EventForm`):
+  - Removidos campos próprios e soltos de endereço e CEP (`cadastrar_novo_local`, `novo_local_*`). Endereço é gerenciado exclusivamente em `EventLocation`.
+- Área administrativa independente para Eventos (`/painel-administrativo/eventos`):
+  - Criado `EventAdminOverviewController` e rota `aculta_events.admin_overview` com indicadores de contagem e ações rápidas.
+  - Reorganizados itens de menu sob `aculta_events.admin` (parent: `system.admin`).
+- Cobertura de testes:
+  - `EventLocationModalAndAdminKernelTest` cobrindo 5 fluxos com 81 asserções PASS.
+  - `EventLocationManagementKernelTest` cobrindo 7 fluxos com 147 asserções PASS.
+
 
 - Provedores `EventContentIndexProvider` e `LocationContentIndexProvider` atualizados com DI completa (remoção de chamadas estáticas `\Drupal::`), URLs canônicas geradas via `toUrl('canonical')` e `toCanonicalUrl(?DomainPurposeManager)` apontando para rotas canônicas no propósito `eventos`.
 - Allowlist mínima para Locais no índice: títulos e tipo de local; exclusão estrita de logradouro exato, coordenadas e telefones.

@@ -1,10 +1,11 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-rc.1
+version: 0.2.0-dev.1
 state: Dev
 progress_note: >-
-  Integração LOC-04 / IDX-LOC concluída: providers Event e Location (v2) com injeção de dependência completa,
-  URLs canônicas via DomainPurposeManager (aculta_events.page e aculta_events.location_canonical), allowlist mínima
-  sem logradouro ou telefones privados, relação derivada event_location a partir de datas físicas publicadas com verificação de acesso,
-  enfileiramento por hooks e validação imediata de local via Entity API.
-  Suíte Kernel EventContentIndexProviderKernelTest (6 testes / 141 asserções PASS) e EventLocationManagementKernelTest (7 testes / 148 asserções PASS) no SIMPLETEST_DB.
-next_phase: "Homologação do novo fluxo de locais em navegador real (X11 DISPLAY=:0) e preparação do próximo release candidate (RC-2)."
+  Integração de locais em nós Activity via campo field_event_location, modal AJAX de duas etapas
+  (EventLocationModalWidget e EventLocationModalForm), remoção de campos soltos de endereço de
+  EventForm e node:activity, sincronização idempotente para legado em ActivityHooks::nodePresave,
+  área administrativa própria em /painel-administrativo/eventos (EventAdminOverviewController).
+  País fixado exclusivamente em Brasil (BR) com validação de servidor (ADR-034).
+  12 testes Kernel focais cobrindo modal, painel, sincronização e país (228 asserções PASS).
+next_phase: "Validação em navegador real Firefox ESR visível dos novos modais e painel administrativo de eventos."
