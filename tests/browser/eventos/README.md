@@ -78,3 +78,56 @@ configuração do servidor.
 - Não mede contraste, foco por teclado nem leitor de tela (ver `VISUAL.md` do
   módulo e `docs/operations/NAVEGADOR-TESTES.md`).
 - Roda só no servidor de desenvolvimento; produção fica fora.
+
+## `domain-boundary.py` — fronteira de domínio e Datas no Evento
+
+Homologa, autenticado como administrador no host de Eventos, que a área
+editorial vive somente em `eventos.aculta` e que Datas/Locais são geridos
+dentro do Evento. Não envia formulário nem grava conteúdo.
+
+Cobre:
+
+- visão geral administrativa sem “Adicionar data” e sem link para
+  `/painel-administrativo/eventos/datas/adicionar`;
+- criação de Evento com a seção de Datas/Locais e “Adicionar outra data”;
+- edição de Evento existente listando Datas e com link escopado
+  `/painel-administrativo/eventos/{id}/datas/adicionar`;
+- negação (404) das rotas editoriais de Eventos e do OSM no domínio MAIN;
+- disponibilidade da configuração OSM em Eventos;
+- 404 da rota antiga global de Data.
+
+### Execução
+
+A URL de login de uso único é gerada com Drush **no host de Conta** (o cookie de
+sessão é compartilhado em `.aculta.toca.net.br`) e passada por arquivo, nunca por
+argumento ou saída de terminal:
+
+```bash
+cd /home/piradopirata/projetos/aculta
+OUT=/home/piradopirata/aculta-suite-out/events-domain
+mkdir -p "$OUT"
+umask 077
+vendor/bin/drush user:login --uri=https://conta.aculta.toca.net.br --no-browser \
+  | tail -1 > "$OUT/login-url.txt"
+chmod 600 "$OUT/login-url.txt"
+DISPLAY=:0 SUITE_OUT="$OUT" ACULTA_LOGIN_URL_FILE="$OUT/login-url.txt" \
+  python3 tests/browser/eventos/domain-boundary.py
+rm -f "$OUT/login-url.txt"
+```
+
+| Variável | Padrão | Função |
+| --- | --- | --- |
+| `EVENTOS_BASE` | `https://eventos.aculta.toca.net.br` | host do purpose `eventos` |
+| `MAIN_BASE` | `https://aculta.toca.net.br` | host MAIN, onde o editorial deve ser negado |
+| `ACCOUNT_BASE` | `https://conta.aculta.toca.net.br` | host de Conta; o login de uso único é aberto nele (cookie `.aculta.toca.net.br`) |
+| `SUITE_OUT` | — (obrigatório) | PNGs e `resultado.json` fora do repositório |
+| `ACULTA_LOGIN_URL_FILE` | — (obrigatório) | arquivo com a URL de login de uso único |
+
+### Limites conhecidos
+
+- O link de login expira/é de uso único; gere um novo por execução e apague o
+  arquivo no fim.
+- O script depende de existir ao menos um Evento público no catálogo para a
+  verificação da edição; sem Evento, essa verificação falha explicitamente.
+- Não cobre o salvamento real de uma Data (evita gravar conteúdo no Runtime) nem
+  o popup de Local além da presença do acionador.
