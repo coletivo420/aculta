@@ -20,12 +20,6 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  billing_countries:
-    type: options_select
-    weight: 5
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   default_currency:
     type: options_select
     weight: 2
@@ -95,5 +89,6 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
+  billing_countries: true
   created: true
   uid: true

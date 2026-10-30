@@ -123,6 +123,34 @@ $check(
   (bool) preg_match("/available_countries:\\s*\\n\\s+BR: BR\\s*\\n/", $fieldConfig),
   'config: field_address do authenticated aceita só BR',
 );
+foreach (['administrator', 'associado', 'email_confirmed', 'gerente_loja', 'lms_teacher'] as $bundle) {
+  $bundleField = $read("config/sync/field.field.profile.$bundle.field_address.yml");
+  $check(
+    (bool) preg_match("/available_countries:\\s*\\n\\s+BR: BR\\s*\\n/", $bundleField),
+    "config: field_address do perfil $bundle aceita exclusivamente BR",
+  );
+}
+
+// Loja oculta billing_countries para não permitir seleção de países.
+$storeFormDisplay = $read('config/sync/core.entity_form_display.commerce_store.online.default.yml');
+$check(
+  str_contains($storeFormDisplay, 'billing_countries: true') && !str_contains($storeFormDisplay, "billing_countries:\n    type: options_select"),
+  'config: commerce_store oculta billing_countries',
+);
+
+// Validação no servidor em AccountAddressForm e normalização em buildStreetNumber.
+$check(
+  str_contains($form, 'validateCountryCode') && str_contains($form, 'validateAddressElement') && str_contains($form, "country_code'] = 'BR'"),
+  'AccountAddressForm: validação e confirmação no servidor de country_code = BR',
+);
+
+// ADR-034 e instrução de agentes presentes.
+$agentsMd = $read('AGENTS.md');
+$check(
+  is_file($root . '/docs/decisions/ADR-034-pais-unico-brasil-endereco-central.md')
+    && str_contains($agentsMd, 'Endereço centralizado em `aculta_portal_cep` e país exclusivo Brasil (BR)'),
+  'ADR-034 e instrução global de agentes vigentes',
+);
 
 // Perfis de equipe usam address_default e mantêm field_address visível.
 foreach (['administrator', 'associado', 'gerente_loja', 'lms_teacher'] as $team) {

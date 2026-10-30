@@ -231,7 +231,7 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
       'client_id' => '',
       'client_secret' => '',
       'redirect_mode' => 'redirect',
-      'country' => '',
+      'country' => 'BR',
       'payment_types' => [],
       'payment_method' => [],
       'max_installments' => 12,
@@ -275,18 +275,8 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
 
     $wrapper_id = 'mercado-pago-payment-options-wrapper';
     $form['country'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Store country'),
-      '#description' => $this->t('Country where the store operates. Payment types and methods are filtered by this.'),
-      '#default_value' => $this->configuration['country'],
-      '#options' => ['' => $this->t('- Select -')] + array_map([$this, 't'], self::$supportedCountries),
-      '#empty_value' => '',
-      '#required' => TRUE,
-      '#ajax' => [
-        'callback' => [static::class, 'ajaxRefreshPaymentOptions'],
-        'wrapper' => $wrapper_id,
-        'event' => 'change',
-      ],
+      '#type' => 'value',
+      '#value' => 'BR',
     ];
 
     $form['payment_options_wrapper'] = [
@@ -648,9 +638,10 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
 
     $values = $form_state->getValue($form['#parents']);
 
-    $country = (string) ($values['country'] ?? '');
+    $country = (string) ($values['country'] ?? 'BR');
     if ($country === '') {
-      $form_state->setError($form['country'], $this->t('You must select a store country to save the Mercado Pago payment option.'));
+      $country = 'BR';
+      $form_state->setValue(array_merge($form['#parents'], ['country']), 'BR');
     }
 
     $max_installments = (int) ($values['max_installments'] ?? 0);

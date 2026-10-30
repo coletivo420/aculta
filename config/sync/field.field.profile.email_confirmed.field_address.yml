@@ -22,7 +22,8 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  available_countries: {  }
+  available_countries:
+    BR: BR
   langcode_override: null
   field_overrides:
     addressLine3:

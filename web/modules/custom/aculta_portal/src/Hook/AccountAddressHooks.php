@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Hook;
 
 use Drupal\aculta_portal\Account\AccountAddressForm;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -30,6 +31,12 @@ final class AccountAddressHooks {
       return;
     }
     $entity = $formObject->getEntity();
+    if ($entity->getEntityTypeId() === 'commerce_store' && isset($form['billing_countries'])) {
+      $form['billing_countries']['#access'] = FALSE;
+      if (isset($form['billing_countries']['widget'])) {
+        $form['billing_countries']['widget']['#default_value'] = ['BR'];
+      }
+    }
     $field = AccountAddressForm::fieldOf($entity);
     if ($field === NULL || !isset($form[$field])) {
       return;
@@ -41,6 +48,38 @@ final class AccountAddressHooks {
     }
     $form['#attached']['library'][] = AccountAddressForm::LIBRARY;
     $form['#entity_builders'][] = [AccountAddressForm::class, 'buildStreetNumber'];
+  }
+
+  /**
+   * Normaliza o país para BR no servidor ao salvar entidade com endereço.
+   */
+  #[Hook('entity_presave')]
+  public function entityPresave(EntityInterface $entity): void {
+    if ($entity->getEntityTypeId() === 'commerce_store' && $entity->hasField('billing_countries')) {
+      $entity->set('billing_countries', ['BR']);
+    }
+    $field = AccountAddressForm::fieldOf($entity)
+      ?? ($entity->hasField('field_address') ? 'field_address'
+      : ($entity->hasField('field_endereco') ? 'field_endereco'
+      : ($entity->hasField('address') ? 'address' : NULL)));
+    if ($field !== NULL && $entity->hasField($field) && !$entity->get($field)->isEmpty()) {
+      foreach ($entity->get($field) as $item) {
+        if ($item->country_code !== 'BR') {
+          $item->country_code = 'BR';
+        }
+      }
+    }
+  }
+
+  /**
+   * Garante que elementos de endereço usem BR e validem no servidor.
+   */
+  #[Hook('element_info_alter')]
+  public function elementInfoAlter(array &$types): void {
+    if (isset($types['address'])) {
+      $types['address']['#process'][] = [AccountAddressForm::class, 'finish'];
+      $types['address']['#element_validate'][] = [AccountAddressForm::class, 'validateAddressElement'];
+    }
   }
 
 }

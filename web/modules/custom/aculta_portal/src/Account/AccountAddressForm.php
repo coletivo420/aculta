@@ -90,7 +90,10 @@ final class AccountAddressForm {
     bool $withStreetNumber = TRUE,
   ): bool {
     if (($tree['#type'] ?? NULL) === 'address') {
-      $tree['#default_value']['country_code'] ??= 'BR';
+      $tree['#default_value']['country_code'] = 'BR';
+      $tree['#available_countries'] = ['BR'];
+      $tree['#attached']['library'][] = self::LIBRARY;
+      $tree['#element_validate'][] = [self::class, 'validateAddressElement'];
       if ($withStreetNumber) {
         StreetNumberField::attach($tree, $number, $sn);
       }
@@ -162,6 +165,7 @@ final class AccountAddressForm {
     [$number, $sn] = StreetNumberField::values($form, $formState);
     $address = $entity->get($field)->first();
     $value = $address->getValue();
+    $value['country_code'] = 'BR';
     $value['address_line1'] = StreetNumberField::join(
       (string) $address->getAddressLine1(),
       $number,
@@ -193,6 +197,9 @@ final class AccountAddressForm {
       );
       $element['country_code']['#default_value'] = 'BR';
       $element['country_code']['#value'] = 'BR';
+      $element['country_code']['#element_validate'] = [
+        [self::class, 'validateCountryCode'],
+      ];
     }
     foreach (self::LABELS as $key => $label) {
       if (isset($element[$key])) {
@@ -201,6 +208,53 @@ final class AccountAddressForm {
       }
     }
     return $element;
+  }
+
+  /**
+   * Validação no servidor: o país deve ser exclusivamente Brasil (BR).
+   *
+   * @param array<string, mixed> $element
+   *   Elemento country_code validado.
+   * @param \Drupal\Core\Form\FormStateInterface $formState
+   *   Estado do formulário.
+   * @param array<string, mixed> $completeForm
+   *   Formulário completo.
+   */
+  public static function validateCountryCode(array &$element, FormStateInterface $formState, array &$completeForm): void {
+    $value = $formState->getValue($element['#parents']);
+    if ($value === NULL || $value === '') {
+      $formState->setValue($element['#parents'], 'BR');
+      return;
+    }
+    if ($value !== 'BR') {
+      $formState->setError($element, new TranslatableMarkup('O país de endereço deve ser exclusivamente Brasil (BR).'));
+    }
+  }
+
+  /**
+   * Validação no servidor do elemento de endereço: garante country_code BR.
+   *
+   * @param array<string, mixed> $element
+   *   Elemento address.
+   * @param \Drupal\Core\Form\FormStateInterface $formState
+   *   Estado do formulário.
+   * @param array<string, mixed> $completeForm
+   *   Formulário completo.
+   */
+  public static function validateAddressElement(array &$element, FormStateInterface $formState, array &$completeForm): void {
+    $values = $formState->getValue($element['#parents']);
+    if (!is_array($values)) {
+      return;
+    }
+    $country = $values['country_code'] ?? NULL;
+    if ($country === NULL || $country === '') {
+      $parents = array_merge($element['#parents'], ['country_code']);
+      $formState->setValue($parents, 'BR');
+      return;
+    }
+    if ($country !== 'BR') {
+      $formState->setError($element, new TranslatableMarkup('O país de endereço deve ser exclusivamente Brasil (BR).'));
+    }
   }
 
 }

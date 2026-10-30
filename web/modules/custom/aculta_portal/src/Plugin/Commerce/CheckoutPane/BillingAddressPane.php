@@ -78,7 +78,7 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     $form_state->set(array_merge($pane_form['#parents'], ['profile', 'render']), FALSE);
     $inline_form = $this->inlineFormManager->createInstance('customer_profile', [
       'profile_scope' => 'billing',
-      'available_countries' => $this->order->getStore()->getBillingCountries(),
+      'available_countries' => ['BR'],
       // O perfil só entra na libreta de endereços quando o pedido é concluído.
       'copy_on_save' => FALSE,
     ], $editable);
@@ -111,6 +111,12 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     }
     $profile = $pane_form['profile']['#inline_form']->getEntity();
     $parts = $this->savedParts($profile);
+    if ($profile->hasField('field_address') && !$profile->get('field_address')->isEmpty()) {
+      $address = $profile->get('field_address')->first();
+      if ($address && $address->getCountryCode() !== 'BR') {
+        $form_state->setError($pane_form['profile'], $this->t('O país de cobrança deve ser exclusivamente Brasil (BR).'));
+      }
+    }
     if ($parts['number'] === '' && !$parts['sn']) {
       $form_state->setError($pane_form['profile'], $this->t('Informe o número ou marque S/N.'));
     }
@@ -129,6 +135,7 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
       $address = $profile->get('field_address')->first();
       $value = $address->getValue();
       $value['address_line1'] = StreetNumberField::join((string) $address->getAddressLine1(), $number, $sn);
+      $value['country_code'] = 'BR';
       $address->setValue($value);
     }
     $profile->set('uid', (int) $this->order->getCustomerId());
