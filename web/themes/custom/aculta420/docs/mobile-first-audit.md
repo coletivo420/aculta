@@ -1650,7 +1650,7 @@ Firefox (sem escrita no Runtime) e passou os checks estruturais em
 bordas neutralizadas, links de 48px e largura do documento igual ao viewport.
 Screenshot 390px inspecionado: três estados na primeira linha e o quarto na
 segunda, sem corte ou rolagem horizontal. Evidências em
-`/home/piradopirata/aculta-suite-out/ocs-context-tabs-final-20261030/`.
+`/home/piradopirata/aculta-suite-out/ocs-context-tabs-final-links-20261030/`.
 Este reteste não valida ACL entre contas, operações de revisão, zoom, WCAG 2.2
 AA nem os gates THEME-MF3/OCS-F11.
 

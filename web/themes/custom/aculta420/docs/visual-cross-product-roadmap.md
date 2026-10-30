@@ -1079,6 +1079,6 @@ captura Firefox ESR com a folha candidata, na rota real Wiki420/WE SATIVA,
 confirmou os quatro itens, eixo `row`, wrapping, bordas removidas, alvos de 48px
 e zero overflow em 320/360/390/599/600/768/1024/1280/1440px. A 390px, os três
 primeiros links compartilham a linha e o quarto continua na linha seguinte.
-Evidência visual e JSON: `/home/piradopirata/aculta-suite-out/ocs-context-tabs-final-20261030/`.
+Evidência visual e JSON: `/home/piradopirata/aculta-suite-out/ocs-context-tabs-final-links-20261030/`.
 Esta é validação da folha candidata sobre o markup servido; não homologa todos
 os fluxos Wiki, OCS-F11, THEME-MF3 ou OCS-A1–A4.
