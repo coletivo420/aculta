@@ -57,10 +57,7 @@ No formulário de endereço do local, a pessoa digita o CEP e o Portal CEP
 preenche os campos postais, igual ao formulário geral. Isso já está ativo no
 adaptador de `EventLocation` e na revisão de endereço do importador OSM.
 
-A busca atual por CEP já preenche o endereço. Busca/autocomplete futura pelo
-nome da rua/logradouro ainda não está disponível. Se aprovada, será capacidade
-compartilhada de `aculta_portal_cep`, consumida pelo mesmo formulário central;
-não será uma interface postal própria do Maps. Plano e critérios:
+A busca atual por CEP já preenche o endereço e continua compartilhada. Busca/autocomplete futura pelo nome da rua/logradouro ainda não está disponível e sua interface ficará restrita a Events e Maps. O serviço pode ser fornecido por `aculta_portal_cep`, mas não será ativado em Conta, checkout ou formulário global. Geocodificação de endereço salvo continua distinta da busca postal. Plano e critérios:
 [CEP-ADDRESS-SEARCH-PLAN](../../../../../../docs/portal/CEP-ADDRESS-SEARCH-PLAN.md).
 
 Leaflet 1.9.4 é distribuído em `assets/vendor/leaflet/` sob BSD-2-Clause. O
