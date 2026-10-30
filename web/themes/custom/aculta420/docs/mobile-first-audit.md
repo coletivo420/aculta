@@ -1530,6 +1530,21 @@ O teste cobre apenas as raízes públicas anônimas; não verifica páginas inte
 estados autenticados, teclado, zoom, leitores de tela, contraste ou WCAG 2.2 AA.
 É evidência transversal adicional, não aprovação de THEME-MF3.
 
+### THEME-MF2 — shell global em claro/escuro e reduced motion (2026-10-30)
+
+Firefox ESR visível percorreu as dez raízes públicas nos modos `light` e `dark`,
+com `prefers-reduced-motion` ativo, em nove larguras (320/360/390/599/600/768/
+1024/1280/1440px). Passaram 360/360 verificações de tokens de superfície/texto,
+estado de reduced motion, Institution Bar e Domain Header únicos e ausência de
+overflow horizontal. Foram inspecionadas capturas do Fórum em 320px nos dois
+modos. Evidência completa (JSON e 40 capturas):
+`/home/piradopirata/suite-out/purpose-shell-modes-f22-20261030/`.
+
+O script seleciona o modo pelo atributo DOM apenas na sessão do navegador; não
+altera configuração persistente. Mede tokens e a preferência de movimento, não
+contraste WCAG, cada estado de componente ou animações em todas as telas. É um
+gate focal do shell e não aprova THEME-MF3.
+
 Reteste focal posterior no Firefox ESR visível: claro e escuro + reduced motion
 capturados em 9/9 viewports cada, sem overflow e com os dois headers únicos. O
 script confirmou `prefers-color-scheme`/`prefers-reduced-motion`; isto não mede

@@ -516,3 +516,26 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/purpose-shell-nojs
 `PURPOSE_NOJS_WIDTHS` seleciona as larguras e
 `PURPOSE_NOJS_DOMAIN_ENV=production` só deve ser usado após confirmar ambiente,
 DNS e TLS.
+
+## Shell global em claro/escuro e reduced motion
+
+`purpose-shell-color-modes.py` abre as dez raízes públicas em Firefox ESR e
+alterna `data-bs-theme` somente no DOM da sessão para conferir os tokens claros
+e escuros do tema. Também ativa a preferência `prefers-reduced-motion` do
+Firefox, verifica shell único e overflow em 320/360/390/599/600/768/1024/1280/
+1440px e salva capturas de 320 e 1440px para cada purpose/modo. Não grava
+preferências ou configuração no Drupal. A verificação confirma tokens e o
+estado da media query; não avalia contraste WCAG, todos os componentes,
+assistive technology nem funcionamento de cada animação.
+
+```sh
+cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/suite-out/purpose-shell-color-modes
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/purpose-shell-color-modes.py
+```
+
+`PURPOSE_MODE_WIDTHS` seleciona as larguras e
+`PURPOSE_MODE_DOMAIN_ENV=production` só deve ser usado após confirmar ambiente,
+DNS e TLS.

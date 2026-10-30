@@ -1014,3 +1014,11 @@ do menu principal. O teste usa hosts do manifesto de transição. Não cobre rot
 internas, sessões autenticadas nem gates completos de acessibilidade; THEME-MF3
 segue pendente. Comando e limites em
 `tests/browser/aculta-theme-mobile-first/README.md`.
+
+### Shell global — temas claro/escuro e reduced motion (2026-10-30)
+
+As dez raízes públicas passaram 360/360 checks em nove larguras com tokens
+claro/escuro e `prefers-reduced-motion`: superfície/texto esperados, shell único
+e sem overflow. Capturas do Fórum em 320px foram revisadas nos dois modos. A
+verificação não substitui avaliação de contraste, assistive technology nem
+THEME-MF3. Evidências e limites estão no `mobile-first-audit.md`.
