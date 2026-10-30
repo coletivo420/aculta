@@ -1,6 +1,3 @@
-parameters:
-  mcp_server.base_path: '/integracoes/mcp'
-
 services:
   aculta_mcp.remote_tool_executor:
     class: Drupal\aculta_mcp\Remote\RemoteToolExecutor
