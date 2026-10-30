@@ -1494,6 +1494,21 @@ SHA-256 `89d3f4441e0ab5d5bfdec3100b0ea01b98aa31de4cd2b5b473fdd5b85c130aba`.
 Ajuste foi focal no display `core.entity_view_display.node.revista.teaser`
 para habilitar os campos de capa, subtítulo e resumo que já constam em
 `config/sync`; não foi importado o diff global. O `config:status` global
-continua com 224 diferenças. Este teste não cobre teclado completo, zoom,
-WCAG 2.2 AA, dark mode, reduced motion ou todos os estados editoriais; não
-aprova THEME-MF3.
+continua com 224 diferenças.
+
+Reteste focal posterior no Firefox ESR visível: claro e escuro + reduced motion
+capturados em 9/9 viewports cada, sem overflow e com os dois headers únicos. O
+script confirmou `prefers-color-scheme`/`prefers-reduced-motion`; isto não mede
+contraste WCAG nem prova o comportamento de toda animação do site. A suíte de
+teclado observou 120 passos Tab/Shift+Tab em 320/390/600/1024/1440px: 115 alvos
+focáveis, todos com `:focus-visible` e outline calculado, mais cinco retornos
+esperados ao body. O zoom real do Firefox, em largura inicial de dispositivo de
+1280px, alcançou 200% (640 CSS px) e 400% (320 CSS px); os dois estados tiveram
+zero overflow horizontal, H1 e quatro capas presentes, e Institution Bar e
+Domain Header únicos. Evidências estão em `/home/piradopirata/suite-out/` nos
+subdiretórios `aculta-revista-modes-light-20261030`,
+`aculta-revista-modes-dark-reduced-20261030`,
+`aculta-revista-keyboard-20261030` e `aculta-revista-zoom-final-20261030`.
+Esses checks fecham zoom e parte de teclado/modos somente para a home Magazine,
+não cobrem no-JS, leitor de tela, contraste WCAG 2.2 AA, todos os estados ou a
+matriz de todos os purposes. THEME-MF3 permanece pendente.

@@ -470,3 +470,27 @@ export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-messenger-reply-mobi
 export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
 DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/messenger-reply-layout.py
 ```
+
+
+## Zoom real da capa da Revista
+
+`revista-browser-zoom.py` abre a home pública do purpose Magazine em Firefox ESR
+visível e usa o atalho de sistema Ctrl+plus (`xdotool`) do navegador para alcançar 200% e 400%
+(ou registrar `DEFERRED` se o atalho/escala não chegar ao alvo). Em cada estado
+registra viewport CSS efetivo, DPR, overflow, H1, capas e shell; screenshots e
+`summary.json` ficam em `$SUITE_OUT`. O script não submete formulários nem altera
+conteúdo/configuração. Requer host `toca`, checkout de desenvolvimento,
+`aculta_runtime`, `DISPLAY=:0`, `xdotool` e geckodriver.
+
+```sh
+cd /home/piradopirata/projetos/aculta
+SUITE_OUT=/home/piradopirata/suite-out/aculta-revista-zoom-20261030 \
+ACULTA_FF_PROFILE_ROOT=/home/piradopirata/suite-out/aculta-revista-zoom-20261030/profiles \
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/revista-browser-zoom.py
+```
+
+`REVISTA_BASE_URL` troca a URL dentro do purpose Magazine e
+`REVISTA_ZOOM_DEVICE_WIDTH` define a largura inicial em pixels de dispositivo
+(padrão 1280). O teste mede o zoom do navegador, enquanto a matriz de viewports
+mede larguras CSS; um não substitui o outro. `DEFERRED` exige conferir zoom
+manual no Firefox ESR.

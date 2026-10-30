@@ -983,3 +983,15 @@ publicados foram deixados no Runtime a pedido do responsável para inspeção
 humana. Isso fecha a antiga pendência de ausência de conteúdo de teste, mas não
 homologa todos os fluxos da Revista nem THEME-MF3/OCS-F11. A comparação integral
 com o OpenCulturas e os gates de acessibilidade e interação seguem pendentes.
+
+
+### Revista — reteste focal de modos, teclado e zoom (2026-10-30)
+
+Firefox ESR visível confirmou 9/9 larguras em claro e 9/9 em escuro com
+`prefers-reduced-motion`; a suíte de navegação por teclado observou 120
+passos em cinco larguras, com 115 alvos focáveis e foco visível em todos. O
+zoom real do navegador atingiu 200% e 400% (640 e 320px CSS a partir de janela
+de 1280px), sem overflow. Esses resultados são somente da home Magazine e não
+substituem testes no-JS, leitor de tela, WCAG 2.2 AA nem THEME-MF3. Evidências
+e comandos reutilizáveis estão em `mobile-first-audit.md` e
+`tests/browser/aculta-theme-mobile-first/README.md`.

@@ -1947,3 +1947,24 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
 - Implementação visual própria publicada no commit `0c049fe76`; a documentação
   desta rodada será registrada em commit separado. Nenhum arquivo de Eventos de
   outra frente foi incluído.
+
+
+### Revista — reteste de fidelidade responsiva (2026-10-30)
+
+- A home Magazine foi repetida no Firefox ESR visível em claro e em escuro com
+  reduced motion nos nove viewports do gate: 9/9 em cada conjunto, sem overflow;
+  Institution Bar e Domain Header presentes uma vez por captura. O probe mede
+  preferências/tokens, não atesta por si só contraste ou comportamento de todas
+  as animações.
+- `keyboard-focus.py` percorreu Tab e Shift+Tab em 320/390/600/1024/1440px: 120
+  observações, 115 alvos focáveis, 115 com `:focus-visible` e outline; cinco
+  retornos esperados ao body.
+- `revista-browser-zoom.py` usou Firefox ESR visível e o atalho Ctrl+plus via
+  `xdotool`. Em janela de 1280px, a página passou a 640 CSS px (200%) e 320 CSS
+  px (400%); ambas sem overflow, com quatro capas, H1 e shell institucional
+  únicos. Capturas/JSON estão em
+  `/home/piradopirata/suite-out/aculta-revista-zoom-final-20261030/`.
+- O script novo foi compilado com `python3 -m py_compile`; os artefatos ficam
+  fora do Git. Esses testes são apenas da home da Revista: no-JS, leitor de tela,
+  WCAG 2.2 AA, outros estados e outros purposes continuam pendentes; THEME-MF3
+  não está aprovado.
