@@ -430,13 +430,15 @@ continuam pendentes.
 
 ### THEME-MF0 — raízes públicas por purpose (2026-10-29)
 
-Foram capturadas as dez raízes canônicas nos nove viewports do gate: 90/90
-páginas completaram e não tiveram overflow horizontal medido. Institution Bar
-estava em todas; `.aculta-header` apenas em MAIN e Wiki (18/90), então o shell
-multidomínio precisa de decisão/validação do owner em oito purposes. ACCOUNT
-redirecionou ao login; Revista mostrou corpo vazio; a página MAIN divide a
-palavra longa do título em 320 px. Conteúdo autenticado, formulários e fluxos
-funcionais não foram exercitados. Detalhes e Pede-A em `mobile-first-audit.md`.
+O snapshot de 2026-10-29 capturou as dez raízes canônicas nos nove viewports:
+90/90 páginas completaram sem overflow horizontal medido. A repetição de
+2026-10-30 confirmou Institution Bar 90/90 e `.aculta-header` somente em MAIN e
+Wiki (18/90); composição Portal/Domain segue como Pede-A para os outros oito
+purposes. ACCOUNT redireciona ao login; Revista não mostra conteúdo editorial.
+A captura visível MAIN/320 de 2026-10-30 quebra o H1 entre palavras, mantendo
+“ANTIPROIBICIONISTA” inteiro; a observação anterior de quebra no meio da palavra
+não se reproduziu. Conteúdo autenticado, formulários e fluxos funcionais não
+foram exercitados. Detalhes e Pede-A em `mobile-first-audit.md`.
 
 ### THEME-MF1 — fundação global inicial
 
