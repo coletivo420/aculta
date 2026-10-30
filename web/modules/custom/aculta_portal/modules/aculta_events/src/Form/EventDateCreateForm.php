@@ -10,6 +10,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_events\Entity\Event;
+use Drupal\aculta_events\Entity\EventLocation;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -179,6 +180,20 @@ final class EventDateCreateForm extends FormBase {
       $newName = trim((string) $form_state->getValue('new_location_name'));
       if ($newName === '') {
         $form_state->setErrorByName('new_location_name', $this->t('Informe o nome do novo local.'));
+      }
+    }
+    else {
+      $selectedLocal = $form_state->getValue('local_id');
+      if (!empty($selectedLocal)) {
+        if (!is_numeric($selectedLocal) || (int) $selectedLocal < 1) {
+          $form_state->setErrorByName('local_id', $this->t('O local selecionado é inválido.'));
+        }
+        else {
+          $loc = $this->entities->getStorage('aculta_event_location')->load((int) $selectedLocal);
+          if (!$loc instanceof EventLocation) {
+            $form_state->setErrorByName('local_id', $this->t('O local selecionado não existe.'));
+          }
+        }
       }
     }
   }

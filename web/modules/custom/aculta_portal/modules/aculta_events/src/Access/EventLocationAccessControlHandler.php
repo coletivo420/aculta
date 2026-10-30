@@ -21,7 +21,9 @@ final class EventLocationAccessControlHandler extends EntityAccessControlHandler
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account): AccessResult {
-    $status = (string) ($entity->get('field_status')->value ?? 'publicado');
+    $status = $entity->hasField('field_status') && !$entity->get('field_status')->isEmpty()
+      ? (string) $entity->get('field_status')->value
+      : 'rascunho';
 
     if ($operation === 'view') {
       if ($status === 'publicado') {

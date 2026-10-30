@@ -1,5 +1,15 @@
 # Changelog — aculta_events
 
+## 0.1.0-dev.6 — integração de Locais com Content Index (LOC-04 / IDX-LOC) (2026-10-30)
+
+- Provedores `EventContentIndexProvider` e `LocationContentIndexProvider` atualizados com DI completa (remoção de chamadas estáticas `\Drupal::`), URLs canônicas geradas via `toUrl('canonical')` e `toCanonicalUrl(?DomainPurposeManager)` apontando para rotas canônicas no propósito `eventos`.
+- Allowlist mínima para Locais no índice: títulos e tipo de local; exclusão estrita de logradouro exato, coordenadas e telefones.
+- Relação `event_location` (Evento > Local) projetada a partir de datas físicas com validação de status publicado e verificação de acesso de leitura para anônimo.
+- `EventDateHooks` atualizado com injeção de dependência e hooks para `aculta_event_location_insert/update/delete` enfileirando eventos afetados para reindexação e invalidando tags de cache.
+- Validação imediata de existência do local via Entity API nos formulários `EventForm` e `EventDateCreateForm`.
+- Suíte `EventContentIndexProviderKernelTest` expandida para 6 testes cobrindo metadados, URLs, deduplicação de relações, consultas de relações autorizadas, resiliência de fila e seleção imediata (141 asserções PASS).
+- Suíte `EventLocationManagementKernelTest` validada com 7 testes / 148 asserções PASS.
+
 ## 0.1.0-rc.1 — candidato RC (2026-10-29)
 
 - Candidato `89efeb5b7` servido no checkout de teste com `drush cr`.

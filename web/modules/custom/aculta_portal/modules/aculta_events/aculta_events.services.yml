@@ -16,7 +16,13 @@ services:
     arguments: ['@entity_type.manager', '@aculta_events.occurrences']
   Drupal\aculta_events\Hook\EventDateHooks:
     class: Drupal\aculta_events\Hook\EventDateHooks
-    arguments: ['@datetime.time', '@aculta_events.upcoming', '@router.admin_context']
+    arguments:
+      - '@datetime.time'
+      - '@aculta_events.upcoming'
+      - '@router.admin_context'
+      - '@entity_type.manager'
+      - '@?aculta_index.work_manager'
+      - '@?aculta_index.provider_registry'
   aculta_events.event_filter:
     class: Drupal\aculta_events\Agenda\EventFilter
   aculta_events.item_provider:
@@ -35,10 +41,12 @@ services:
       - { name: event_subscriber }
   aculta_events.index_provider.event:
     class: Drupal\aculta_events\ContentIndex\EventContentIndexProvider
+    arguments: ['@entity_type.manager']
     tags:
       - { name: aculta_index.provider }
   aculta_events.index_provider.location:
     class: Drupal\aculta_events\ContentIndex\LocationContentIndexProvider
+    arguments: ['@entity_type.manager']
     tags:
       - { name: aculta_index.provider }
   aculta_events.editorial_presenter:

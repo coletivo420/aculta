@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_events\ContentIndex;
 
 use Drupal\aculta_events\Entity\Event;
+use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexOwnerResolver;
@@ -12,11 +13,17 @@ use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AnonymousUserSession;
 
 /**
  * Projeta eventos na infraestrutura transversal aculta_index.
  */
 final class EventContentIndexProvider implements ContentIndexProviderInterface, ContentIndexIndexabilityProviderInterface, ContentIndexAccessContextProviderInterface {
+
+  public function __construct(
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+  ) {}
 
   /**
    * {@inheritdoc}
@@ -50,9 +57,11 @@ final class EventContentIndexProvider implements ContentIndexProviderInterface, 
    * {@inheritdoc}
    */
   public function isIndexable(ContentEntityInterface $entity): bool {
-    // Rascunhos são confinados e não entram na descoberta cultural pública.
+    // Apenas eventos publicados são elegíveis à descoberta pública no índice.
     return $entity instanceof Event
-      && (string) $entity->get('field_status')->value !== 'rascunho';
+      && $entity->hasField('field_status')
+      && !$entity->get('field_status')->isEmpty()
+      && (string) $entity->get('field_status')->value === 'publicado';
   }
 
   /**
@@ -95,11 +104,7 @@ final class EventContentIndexProvider implements ContentIndexProviderInterface, 
    *   Vetor de relações acumuladas.
    */
   private function addLocationRelations(ContentEntityInterface $entity, array &$relations): void {
-    if (!\Drupal::hasService('entity_type.manager')) {
-      return;
-    }
-
-    $dateStorage = \Drupal::entityTypeManager()->getStorage('aculta_event_date');
+    $dateStorage = $this->entityTypeManager->getStorage('aculta_event_date');
     $dateIds = $dateStorage->getQuery()
       ->accessCheck(FALSE)
       ->condition('field_evento', (int) $entity->id())
@@ -110,13 +115,26 @@ final class EventContentIndexProvider implements ContentIndexProviderInterface, 
     }
 
     $dates = $dateStorage->loadMultiple($dateIds);
-    $locStorage = \Drupal::entityTypeManager()->getStorage('aculta_event_location');
+    $locStorage = $this->entityTypeManager->getStorage('aculta_event_location');
+    $anonUser = new AnonymousUserSession();
 
     foreach ($dates as $date) {
+      if (!$date instanceof ContentEntityInterface) {
+        continue;
+      }
+      // Datas com modalidade exclusivamente virtual/online não projetam local físico.
+      if ($date->hasField('field_modo') && (string) $date->get('field_modo')->value === 'online') {
+        continue;
+      }
+
+      if (!$date->hasField('field_local') || $date->get('field_local')->isEmpty()) {
+        continue;
+      }
       $localId = (int) ($date->get('field_local')->target_id ?? 0);
       if ($localId <= 0) {
         continue;
       }
+
       $key = 'event_location:aculta_event_location:' . $localId;
       if (isset($relations[$key])) {
         continue;
@@ -125,7 +143,14 @@ final class EventContentIndexProvider implements ContentIndexProviderInterface, 
       /** @var \Drupal\aculta_events\Entity\EventLocation|null $location */
       $location = $locStorage->load($localId);
       // Relação só deve existir para locais publicamente descobríveis (LOC-04).
-      if ($location !== NULL && (string) ($location->get('field_status')->value ?? 'publicado') === 'publicado') {
+      // Trata campo status explicitamente sem presumir publicação em ausência.
+      if (
+        $location instanceof EventLocation
+        && $location->hasField('field_status')
+        && !$location->get('field_status')->isEmpty()
+        && (string) $location->get('field_status')->value === 'publicado'
+        && $location->access('view', $anonUser)
+      ) {
         $relations[$key] = new ContentIndexRelation('event_location', 'aculta_event_location', (string) $localId);
       }
     }

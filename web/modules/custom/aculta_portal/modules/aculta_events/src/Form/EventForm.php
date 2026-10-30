@@ -146,6 +146,20 @@ final class EventForm extends ContentEntityForm {
         $form_state->setErrorByName('novo_local_nome', $this->t('Informe o nome do novo local.'));
       }
     }
+    else {
+      $selectedLocal = $form_state->getValue('local_id');
+      if (!empty($selectedLocal)) {
+        if (!is_numeric($selectedLocal) || (int) $selectedLocal < 1) {
+          $form_state->setErrorByName('local_id', $this->t('O local selecionado é inválido.'));
+        }
+        else {
+          $loc = $this->entityTypeManager->getStorage('aculta_event_location')->load((int) $selectedLocal);
+          if (!$loc instanceof EventLocation) {
+            $form_state->setErrorByName('local_id', $this->t('O local selecionado não existe.'));
+          }
+        }
+      }
+    }
 
     $startsAt = $form_state->getValue('starts_at');
     $endsAt = $form_state->getValue('ends_at');

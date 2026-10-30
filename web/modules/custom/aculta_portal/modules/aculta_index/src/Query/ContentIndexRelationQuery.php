@@ -185,7 +185,7 @@ final class ContentIndexRelationQuery {
       'relation.generation_id = target.generation_id'
         . ' AND relation.target_entity_type = target.entity_type'
         . ' AND relation.target_entity_id = target.entity_id'
-        . ' AND target.langcode = CASE WHEN relation.target_langcode = :index_und THEN :default_langcode ELSE relation.target_langcode END',
+        . ' AND (target.langcode = relation.target_langcode OR (relation.target_langcode = :index_und AND target.langcode = :default_langcode))',
       [':index_und' => 'und', ':default_langcode' => $identity['target_langcode']],
     );
     $currentTargets = $query->orConditionGroup();

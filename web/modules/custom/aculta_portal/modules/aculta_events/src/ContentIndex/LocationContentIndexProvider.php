@@ -12,11 +12,16 @@ use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Projeta locais de evento na infraestrutura transversal aculta_index.
  */
 final class LocationContentIndexProvider implements ContentIndexProviderInterface, ContentIndexIndexabilityProviderInterface, ContentIndexAccessContextProviderInterface {
+
+  public function __construct(
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+  ) {}
 
   /**
    * {@inheritdoc}
@@ -50,8 +55,11 @@ final class LocationContentIndexProvider implements ContentIndexProviderInterfac
    * {@inheritdoc}
    */
   public function isIndexable(ContentEntityInterface $entity): bool {
+    // Apenas locais explicitamente publicados são elegíveis à descoberta pública no índice.
     return $entity instanceof EventLocation
-      && (string) ($entity->get('field_status')->value ?? 'publicado') === 'publicado';
+      && $entity->hasField('field_status')
+      && !$entity->get('field_status')->isEmpty()
+      && (string) $entity->get('field_status')->value === 'publicado';
   }
 
   /**
@@ -65,8 +73,6 @@ final class LocationContentIndexProvider implements ContentIndexProviderInterfac
     $relations = [];
     $this->addRelations($entity, 'field_tipo', 'location_type', 'taxonomy_term', $relations);
 
-    $isPublished = (string) ($entity->get('field_status')->value ?? 'publicado') === 'publicado';
-
     return new ContentIndexProjection(
       'aculta_event_location',
       (string) $entity->id(),
@@ -75,7 +81,7 @@ final class LocationContentIndexProvider implements ContentIndexProviderInterfac
       (string) $entity->uuid(),
       (string) $entity->label(),
       'eventos_aculta_org',
-      $isPublished,
+      TRUE,
       0,
       0,
       relations: array_values($relations),

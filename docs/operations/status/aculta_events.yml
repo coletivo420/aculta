@@ -2,13 +2,9 @@
 version: 0.1.0-rc.1
 state: Dev
 progress_note: >-
-  Implementação completa do plano de locais e integração ao catálogo (LOC-01 a LOC-08):
-  entidade aculta_event_location expandida com status (publicado/rascunho/privado), descrição,
-  telefone e site (LOC-01); formulários nativos de criação/edição e exclusão com proteção contra
-  quebra referencial em datas (LOC-02); criação inline e seleção de local no formulário de data
-  (LOC-03); provedor LocationContentIndexProvider (v2) e relações derivadas event_location no
-  EventContentIndexProvider via work manager do aculta_index (LOC-04); página canônica individual
-  /locais/{id} com agenda de eventos e catálogo paginado com busca e filtro por tipo (LOC-05);
-  atualização de schema aculta_events_update_10007 executada no runtime com 0 pendências.
-  Suíte Kernel aculta_events 58 testes / 885 asserções PASS (100%).
+  Integração LOC-04 / IDX-LOC concluída: providers Event e Location (v2) com injeção de dependência completa,
+  URLs canônicas via DomainPurposeManager (aculta_events.page e aculta_events.location_canonical), allowlist mínima
+  sem logradouro ou telefones privados, relação derivada event_location a partir de datas físicas publicadas com verificação de acesso,
+  enfileiramento por hooks e validação imediata de local via Entity API.
+  Suíte Kernel EventContentIndexProviderKernelTest (6 testes / 141 asserções PASS) e EventLocationManagementKernelTest (7 testes / 148 asserções PASS) no SIMPLETEST_DB.
 next_phase: "Homologação do novo fluxo de locais em navegador real (X11 DISPLAY=:0) e preparação do próximo release candidate (RC-2)."

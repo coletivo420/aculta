@@ -10,6 +10,8 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\views\EntityViewsData;
 
 /**
@@ -73,6 +75,43 @@ final class EventLocation extends ContentEntityBase {
         $this->set('field_coordenadas', NULL);
       }
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function toUrl($rel = 'canonical', array $options = []): Url {
+    if ($rel === 'canonical') {
+      return Url::fromRoute('aculta_events.location_canonical', [
+        'aculta_event_location' => $this->id(),
+      ], $options);
+    }
+    if ($rel === 'edit-form') {
+      return Url::fromRoute('aculta_events.location_edit', [
+        'aculta_event_location' => $this->id(),
+      ], $options);
+    }
+    if ($rel === 'delete-form') {
+      return Url::fromRoute('aculta_events.location_delete', [
+        'aculta_event_location' => $this->id(),
+      ], $options);
+    }
+    return parent::toUrl($rel, $options);
+  }
+
+  /**
+   * Retorna a URL canônica absoluta no purpose/domínio de eventos.
+   */
+  public function toCanonicalUrl(?DomainPurposeManager $purposes = NULL): Url {
+    if ($purposes !== NULL && $this->id() !== NULL) {
+      $canonical = $purposes->canonicalRouteUrl('eventos', 'aculta_events.location_canonical', [
+        'aculta_event_location' => (string) $this->id(),
+      ]);
+      if ($canonical !== NULL) {
+        return $canonical;
+      }
+    }
+    return $this->toUrl('canonical');
   }
 
   /**

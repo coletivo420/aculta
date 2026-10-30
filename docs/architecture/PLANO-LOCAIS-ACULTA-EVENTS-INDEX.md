@@ -28,8 +28,9 @@ Caminhos relativos a `web/modules/custom/aculta_portal/modules/`, salvo indicaç
 | `LocationListController::page()` e `LocationCatalogue::busca()` | Diretório textual sem link individual, busca textual ou paginação; acesso por item já existe e não deve ser reimplementado como se ausente |
 | `views.view.eventos_locais.yml` em config/install | Lista administrativa por papel administrator, título sem link e menu desativado; instalação ativa não comprovada |
 | `EventPageController::page()` | Nome do local em texto e JSON-LD; falta ligação à página individual e revisão explícita de acesso ao local |
-| `LocationContentIndexProvider` v1 | Provider real, relação `location_type`, URL NULL e indexabilidade de todo Local; não equivale a descoberta pública homologada |
-| `EventContentIndexProvider` v1 | Relações de tipo/organizador, sem relação Evento > Local; URL NULL |
+| `EventContentIndexProvider` v2 | Relações de tipo/organizador e relação `event_location` derivada de Datas; implementados canônico purpose/Domain, allowlist estrita, DI sem \Drupal estático, validação de status publicado e deduplicação |
+| `LocationContentIndexProvider` v2 | Provider real com allowlist mínima (sem endereço exato, coordenadas ou contatos privados), DI sem \Drupal estático, validação de status publicado e propósito 'eventos' |
+| `ContentIndexRelationQuery` | Consulta de relações outgoing autorizadas e isolamento por conta/purpose; corrigida junção para alvos de relação sem idioma específico (und) |
 | `config/sync/core.extension.yml` | Não lista Events/Calendar/Maps/OSM; confrontar com Runtime, sem inferir desativação ativa nem importar sync global |
 | `node:activity` e form display em config/sync | Modelo editorial paralelo com nome/endereço em texto; inventariar consumidores e conteúdo antes de escolher migração |
 | `composer.lock` e core.extension | Inline Entity Form 3.0.0 disponível no projeto; validar integração no tipo customizado |
@@ -62,7 +63,7 @@ Todos os itens abaixo permanecem abertos.
 | LOC-01 / P0 | LOC-00 | Contrato de acesso/publicação/precisão e organização; fechar cache e todas as saídas | Anônimo/contas A e B/editor vinculado/admin; HTML/JSON-LD/ICS/índice/mapa/autocomplete sem dados negados |
 | LOC-02 / P1 | LOC-01 | Formulário nativo de Local, rotas add/edit/delete/canonical e gestão; dados próprios mínimos e migração idempotente | CRUD válido, validação Entity API, CSRF, autorização e referências compartilhadas preservadas |
 | LOC-03 / P1 | LOC-02 | Seletor de Local + criação inline no editor de Data/evento; integração IEF existente | Selecionar/criar/reabrir/cancelar sem perder dados; dois eventos reutilizam mesmo ID; no-JS funcional |
-| LOC-04 / P0-P1 | LOC-01 + canônico de LOC-02 | Contrato e implementação Events > Index descritos na seção 6 | CRUD/backfill/relações/negação/revogação/fingerprint/remoção e busca por API com providers reais |
+| LOC-04 / P0-P1 | LOC-01 + canônico de LOC-02 | Contrato e implementação Events > Index descritos na seção 6: providers v2, URLs canônicas via DomainPurposeManager, relação event_location derivada de Datas físicas publicadas, enfileiramento por hooks e correção de joins | Concluído e testado no Kernel (EventContentIndexProviderKernelTest: 6 testes, 141 asserções PASS); sem rebuild ou escrita no Runtime |
 | LOC-05 / P1 | LOC-02 + LOC-04; LOC-01 para saída pública | Detalhe do Local com agenda; diretório paginado e busca; links evento/local/mapa e navegação | Acesso, filtros, resultados e paginação consistentes; mapa alternativo textual; canonical por purpose |
 | LOC-06 / P1 | LOC-02/03/04 + operações disponíveis | Aba Eventos no Marley com seções Eventos, Datas e Locais; listas por escopo e ações do owner | Owner desativado oculta área; acesso real das rotas; retorno ao Studio e fronteira Conta/Perfil |
 | LOC-07 / P1 | LOC-00 a LOC-06 | Reconciliação config/migração e piloto; tratamento explícito de activity legado | Snapshot/hash antes de escrita autorizada, migração ensaiada/idempotente, contagens antes/depois e rollback |

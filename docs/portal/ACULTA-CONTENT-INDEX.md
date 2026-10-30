@@ -1,13 +1,15 @@
-## Incremento planejado IDX-LOC - Events e Locais (2026-10-29)
+## Incremento IDX-LOC - Events e Locais (2026-10-30)
 
-[Plano LOC](../architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), seção 6, é o contrato de implementação deste incremento. **Planejado, não homologado.** Manter versões/evidências anteriores.
+[Plano LOC](../architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), seção 6, é o contrato de implementação deste incremento. Validação executada no ambiente local com banco `SIMPLETEST_DB` (`EventContentIndexProviderKernelTest`: 6 testes, 141 asserções PASS).
 
-- [ ] IDX-LOC-A / LOC-01/04: revalidar providers Events/Local, indexabilidade pública, purpose e grants; privados/rascunhos/LMS restrito não revelam título ou relações.
-- [ ] IDX-LOC-B / LOC-04: canônicos reais e allowlist mínima sem endereço/contato privado; versionar projeção e fingerprint.
-- [ ] IDX-LOC-C / LOC-04: preservar location_type/event_type/organizer e projetar event_location (Evento > Local), distinto por Local, derivado de Datas autorizadas; sem provider por ocorrência.
-- [ ] IDX-LOC-D / LOC-04/05: consulta de relações e busca cultural/diretório paginados por API, filtros/cursors isolados por conta/purpose/geração; agenda temporal segue no owner/Calendar.
-- [ ] IDX-LOC-E / LOC-04/07: eventos de Data invalidam/enfileiram eventos antigo/novo, Local atualiza projeção/consumidores; CRUD/backfill/removal idempotentes com fila e gerações existentes.
-- [ ] IDX-LOC-F / LOC-08: Kernel real Events + Index, negação de origem/alvo, revogação antes do worker, fingerprint/Domain/cache e catálogo representativo.
+- [x] IDX-LOC-A / LOC-01/04: providers Events/Local v2 com DI e sem acesso estático a \Drupal, indexabilidade pública restrita a `field_status === 'publicado'`, purpose `'eventos'` e checagem de acesso.
+- [x] IDX-LOC-B / LOC-04: URLs canônicas via DomainPurposeManager (`toUrl('canonical')` e `toCanonicalUrl()`) e allowlist mínima sem endereço/contato privado; versionamento e fingerprint consistentes.
+- [x] IDX-LOC-C / LOC-04: preservados `location_type`, `event_type` e `organizer`; projeção de `event_location` (Evento > Local) deduplicada por Local e derivada de Datas físicas publicadas e visíveis.
+- [x] IDX-LOC-D / LOC-04/05: consulta de relações outgoing autorizadas via API do Index; `ContentIndexRelationQuery` atualizado para aceitar alvos de relação sem idioma específico (`und`); isolamento por conta e restauração de Domain.
+- [x] IDX-LOC-E / LOC-04/07: hooks de criação, alteração e exclusão de Datas e Locais enfileiram eventos afetados na fila `aculta_index_work` e invalidam tags de cache; proteção contra exclusão da fonte.
+- [x] IDX-LOC-F / LOC-08: suíte Kernel focada `EventContentIndexProviderKernelTest` passando integralmente (6 testes, 141 asserções); autocomplete e seleção com validação Entity API imediata e resiliência com Index indisponível.
+
+Adapters permanecem no aculta_events; aculta_index não ganha entidades de origem nem regras de publicação. Não acessar tabelas internas nos controllers ou reconstruir índice no Studio. Autocomplete revalida Entity API e aceita o Local recém-criado sem depender da fila. Auditoria Runtime running/stale anteriormente registrada requer verificação atual por operador autorizado; nenhum rebuild, avanço de auditoria ou troca de geração nesta revisão.
 
 Adapters permanecem no aculta_events; aculta_index não ganha entidades de origem nem regras de publicação. Não acessar tabelas internas nos controllers ou reconstruir índice no Studio. Autocomplete revalida Entity API e aceita o Local recém-criado sem depender da fila. Auditoria Runtime running/stale anteriormente registrada requer verificação atual por operador autorizado; nenhum rebuild, avanço de auditoria ou troca de geração nesta revisão.
 

@@ -10,6 +10,8 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 
 /**
  * Evento: descrição reutilizável, com uma ou mais datas (MODELO-DE-DADOS.md).
@@ -55,6 +57,34 @@ final class Event extends ContentEntityBase {
       $gerador = \Drupal::service('aculta_events.slug');
       $this->set('field_slug', $gerador->uniqueFor((string) $this->label(), $this->id() ? (int) $this->id() : NULL));
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function toUrl($rel = 'canonical', array $options = []): Url {
+    if ($rel === 'canonical') {
+      $slug = (string) $this->get('field_slug')->value;
+      return Url::fromRoute('aculta_events.page', ['slug' => $slug], $options);
+    }
+    if ($rel === 'edit-form') {
+      return Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $this->id()], $options);
+    }
+    return parent::toUrl($rel, $options);
+  }
+
+  /**
+   * Retorna a URL canônica absoluta no purpose/domínio de eventos.
+   */
+  public function toCanonicalUrl(?DomainPurposeManager $purposes = NULL): Url {
+    $slug = (string) $this->get('field_slug')->value;
+    if ($purposes !== NULL && $slug !== '') {
+      $canonical = $purposes->canonicalRouteUrl('eventos', 'aculta_events.page', ['slug' => $slug]);
+      if ($canonical !== NULL) {
+        return $canonical;
+      }
+    }
+    return $this->toUrl('canonical');
   }
 
   /**

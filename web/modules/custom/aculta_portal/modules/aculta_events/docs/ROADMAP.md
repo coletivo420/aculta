@@ -6,7 +6,7 @@
 - [ ] LOC-01: visibilidade/publicação versus precisão; ACL e cache em todas as saídas.
 - [ ] LOC-02: CRUD nativo de aculta_event_location, dados próprios e operações sem duplicar entidade.
 - [ ] LOC-03: selecionar existente e criar inline via IEF avaliado; Data mantém field_local.
-- [ ] LOC-04 / IDX-LOC: URL canônica, indexabilidade, relações Evento > Local derivadas das Datas, fila e consultas paginadas pelo aculta_index.
+- [x] LOC-04 / IDX-LOC: URL canônica via DomainPurposeManager, indexabilidade pública estrita, relações Evento > Local derivadas das Datas físicas publicadas e visíveis, fila/invalidação via hooks e consultas paginadas via aculta_index com revalidação de acesso e isolamento de propósito (coberto por `EventContentIndexProviderKernelTest`).
 - [ ] LOC-05: detalhe do Local com agenda, diretório pesquisável/paginado, mapa e navegação conectados.
 - [ ] LOC-06: área Eventos/Locais no Studio com formulários e permissões do owner.
 - [ ] LOC-07: reconciliação/migração ensaiada, piloto e rollback, sem import global ou exclusão automática de activity.

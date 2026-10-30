@@ -6,11 +6,15 @@ namespace Drupal\aculta_events\Hook;
 
 use Drupal\aculta_events\Cache\EventCacheTags;
 use Drupal\aculta_events\Entity\EventDate;
+use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Occurrence\UpcomingDates;
+use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
+use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Routing\AdminContext;
 use Drupal\views\ViewExecutable;
@@ -41,6 +45,9 @@ final class EventDateHooks {
     private readonly TimeInterface $tempo,
     private readonly UpcomingDates $proximas,
     private readonly AdminContext $adminContext,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly ?ContentIndexWorkManager $workManager = NULL,
+    private readonly ?ContentIndexProviderRegistry $providerRegistry = NULL,
   ) {}
 
   /**
@@ -98,17 +105,18 @@ final class EventDateHooks {
   #[Hook('aculta_event_override_insert')]
   #[Hook('aculta_event_override_update')]
   #[Hook('aculta_event_override_delete')]
+  #[Hook('aculta_event_location_insert')]
+  #[Hook('aculta_event_location_update')]
+  #[Hook('aculta_event_location_delete')]
   public function invalidarLista(EntityInterface $entity): void {
-    Cache::invalidateTags([EventCacheTags::LISTA]);
+    Cache::invalidateTags([EventCacheTags::LISTA, 'aculta_event_location_list']);
 
     // Quando datas são inseridas, atualizadas ou excluídas, agenda reprojeção
     // do evento pai para atualizar as relações event_location no Content Index (LOC-04).
-    if ($entity instanceof EventDate && \Drupal::hasService('aculta_index.work_manager')) {
-      $entityTypeManager = \Drupal::entityTypeManager();
-
+    if ($entity instanceof EventDate && $this->workManager !== NULL) {
       $eventId = (int) ($entity->get('field_evento')->target_id ?? 0);
       if ($eventId > 0) {
-        $event = $entityTypeManager->getStorage('aculta_event')->load($eventId);
+        $event = $this->entityTypeManager->getStorage('aculta_event')->load($eventId);
         if ($event instanceof ContentEntityInterface) {
           $this->scheduleEventProjection($event);
         }
@@ -119,9 +127,36 @@ final class EventDateHooks {
       if ($original instanceof EventDate) {
         $oldEventId = (int) ($original->get('field_evento')->target_id ?? 0);
         if ($oldEventId > 0 && $oldEventId !== $eventId) {
-          $oldEvent = $entityTypeManager->getStorage('aculta_event')->load($oldEventId);
+          $oldEvent = $this->entityTypeManager->getStorage('aculta_event')->load($oldEventId);
           if ($oldEvent instanceof ContentEntityInterface) {
             $this->scheduleEventProjection($oldEvent);
+          }
+        }
+      }
+    }
+    elseif ($entity instanceof EventLocation && $this->workManager !== NULL) {
+      // Quando um local muda ou é excluído, reprojeta todos os eventos que possuem datas nesse local.
+      $dateIds = $this->entityTypeManager->getStorage('aculta_event_date')
+        ->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('field_local', (int) $entity->id())
+        ->execute();
+
+      if (!empty($dateIds)) {
+        $dates = $this->entityTypeManager->getStorage('aculta_event_date')->loadMultiple($dateIds);
+        $eventIds = [];
+        foreach ($dates as $date) {
+          $eid = (int) ($date->get('field_evento')->target_id ?? 0);
+          if ($eid > 0) {
+            $eventIds[$eid] = $eid;
+          }
+        }
+        if (!empty($eventIds)) {
+          $events = $this->entityTypeManager->getStorage('aculta_event')->loadMultiple($eventIds);
+          foreach ($events as $event) {
+            if ($event instanceof ContentEntityInterface) {
+              $this->scheduleEventProjection($event);
+            }
           }
         }
       }
@@ -132,23 +167,19 @@ final class EventDateHooks {
    * Agenda reprojeção de evento no Content Index work manager.
    */
   private function scheduleEventProjection(ContentEntityInterface $event): void {
-    if (!\Drupal::hasService('aculta_index.work_manager')) {
+    if ($this->workManager === NULL) {
       return;
     }
-    /** @var \Drupal\aculta_index\Queue\ContentIndexWorkManager $workManager */
-    $workManager = \Drupal::service('aculta_index.work_manager');
     $providerId = 'aculta_event';
-    if (\Drupal::hasService('aculta_index.provider_registry')) {
-      /** @var \Drupal\aculta_index\Provider\ContentIndexProviderRegistry $registry */
-      $registry = \Drupal::service('aculta_index.provider_registry');
-      $resolved = $registry->findProviderIdForBundle($event->getEntityTypeId(), $event->bundle());
+    if ($this->providerRegistry !== NULL) {
+      $resolved = $this->providerRegistry->findProviderIdForBundle($event->getEntityTypeId(), $event->bundle());
       if ($resolved !== NULL) {
         $providerId = $resolved;
       }
     }
     foreach ($event->getTranslationLanguages() as $langcode => $language) {
       if ($event->hasTranslation($langcode)) {
-        $workManager->schedule($providerId, $event->getEntityTypeId(), (string) $event->id(), $langcode, 'project');
+        $this->workManager->schedule($providerId, $event->getEntityTypeId(), (string) $event->id(), $langcode, 'project');
       }
     }
   }
