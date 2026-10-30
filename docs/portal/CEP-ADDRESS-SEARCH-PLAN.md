@@ -14,8 +14,7 @@ da funcionalidade futura descrita neste plano.
 
 Estender futuramente o `aculta_portal_cep` para localizar candidatos a partir
 do nome de uma rua/logradouro e permitir que a pessoa escolha um resultado para
-preencher os campos postais do formulário central. A busca deve compor o mesmo
-fluxo de captura já usado por Conta, Eventos e locais consumidos por Maps.
+preencher os campos postais do formulário central. A busca por logradouro deve ser apresentada somente nos fluxos de Events e Maps. Conta e checkout mantêm a consulta atual por CEP, sem busca por logradouro.
 
 ## Arquitetura obrigatória
 
@@ -49,9 +48,7 @@ fluxo de captura já usado por Conta, Eventos e locais consumidos por Maps.
    formulário central, permitir seleção explícita e preencher apenas os
    subcampos postais correspondentes. Não salvar automaticamente nem sobrescrever
    silenciosamente número, complemento ou valores que a pessoa já digitou.
-4. **Consumidores:** ativar primeiro em um consumidor aprovado e verificar que
-   Eventos/locais e quaisquer consumidores futuros continuam usando o mesmo
-   formulário, biblioteca e serviço. Não criar UI exclusiva do produto Maps.
+4. **Consumidores:** implementar a interface somente em Events e Maps, reutilizando formulário/adaptador central e serviço. Não ativar em Conta, checkout ou outros consumidores. A UI de busca por logradouro é específica desses contextos, não um comportamento global do formulário.
 5. **Validação e ativação:** cobrir testes de serviço e interface, cache,
    privacidade, erros/timeouts, acessibilidade por teclado/leitor de tela,
    reduced motion, AJAX/no-JS e viewports móveis. Documentar termos e atribuição
@@ -72,3 +69,12 @@ fora da UI e não deve ser anunciada como funcionalidade. A consulta atual por
 CEP continua sendo a única busca postal disponível. Consulte também
 [`ACCOUNT-ADDRESS.md`](ACCOUNT-ADDRESS.md) e o plano de
 [`aculta_maps`](../../web/modules/custom/aculta_portal/modules/aculta_maps/docs/PLANO-IMPLANTACAO.md).
+
+
+## Limite de produto e integração com Locais
+
+- A consulta CEP → endereço existente continua sendo o comportamento padrão compartilhado. Este plano não altera o endpoint, cliente ou experiência de Conta/checkout.
+- A busca por logradouro/endereço é exclusivamente uma capacidade de Events/Maps, ainda sem provedor aprovado ou implementação disponível. Resultados próximos devem ser retornados por AJAX e selecionados explicitamente; nunca salvar automaticamente um candidato.
+- No cadastro de Local iniciado em `/node/add/activity`, abrir modal Drupal/AJAX com CEP como primeiro campo e reutilizar `AccountAddressForm`/adaptador e `aculta_portal_cep/cep-address`. Busca por logradouro só pode aparecer nesse fluxo de Events e em Maps.
+- A interface de Local deve permitir pesquisar Locais existentes por nome, selecionar um deles ou abrir o cadastro de novo Local. O fluxo pai mantém valores e referência durante rebuilds AJAX.
+- Ver [ADR-033](../decisions/ADR-033-endereco-busca-e-locais.md) e o [plano LOC](../architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md).
