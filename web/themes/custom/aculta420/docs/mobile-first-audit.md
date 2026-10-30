@@ -1863,26 +1863,15 @@ segue Conta a 320 px (`documentWidth=328`), explicada pelo Turnstile. Evidência
 O achado antigo de H1 ausente em Apoio/Cursos foi resolvido no código servido;
 este teste valida headings e shell, não estados internos nem aprova THEME-MF3.
 
-### THEME-MF3 — gate de fronteira do tema (bloqueado)
+### Registro histórico — gates de fronteira e catálogo em Eventos/Índice
 
-`php scripts/validate-module-theme-boundary.php` foi executado novamente e
-falhou em 1 de 3482 verificações: seis classes de apresentação continuam em
-`web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationForm.php`
-e `EventOrganizationMembersForm.php` (`messages`, `messages--warning`,
-`button--primary`, `button`). São arquivos do módulo e não foram alterados pela
-Frente B. **Pede-A:** o owner de Eventos deve trocar classes de design por
-marcadores semânticos `data-portal-ui` e manter o tema como responsável pelo
-acabamento; validar renderização dos dois formulários e repetir o validator até
-PASS. THEME-MF3 segue bloqueado enquanto este gate obrigatório estiver vermelho.
-
-
-O gate `php scripts/validate-portal-ui-docs.php` também foi executado em
-2026-10-30 e falhou em 17 ocorrências: 16 tokens de apresentação de Eventos e
-Índice ausentes de `PortalUiHooks::TOKENS`/famílias documentadas e o atributo
-`data-portal-trigger` ausente do catálogo. Esses consumidores são trabalho de
-owners de módulos com alterações paralelas; não foram editados nesta rodada.
-A correção do contrato de desafio descrita acima não introduziu falhas nesse
-validador.
+A auditoria anterior encontrou classes de design diretamente nos formulários de
+organização de Eventos e tokens de apresentação ausentes do mapa/documentação.
+Esse bloqueio foi corrigido nesta branch no commit `9ea2e45f1`: os módulos usam
+`data-portal-ui`, `PortalUiHooks` traduz os tokens (inclusive em inputs), e a
+apresentação de `RelatedContentBlock` pertence ao tema. O Pede-A histórico para
+essa família está resolvido; evidência atual abaixo. A resolução não aprova o
+gate global THEME-MF3.
 
 ### THEME-MF2 — regressão do carrossel editorial no HEAD local `3a245f1ff` (2026-10-30)
 
@@ -1907,9 +1896,9 @@ alterados permissões, serviços, rotas ou operações funcionais.
 Gates locais executados: fronteira módulo/tema PASS (3.488 checks); catálogo de
 tokens PASS (515 mapeados, 420 usados, 149 atributos); fundamentos PASS (2.429
 checks); schemas SDC PASS (55 componentes, 759 checks); Stylelint PASS; PHP
-lint e PHPCS PASS; Unit PASS (Portal UI 22 testes/132 assertions, Eventos 10/23,
-Índice 51/265). Kernel de Eventos e Índice está DEFERRED porque
-`SIMPLETEST_DB` não está configurado nesta sessão; Runtime não foi alterado.
+lint e PHPCS PASS; Unit PASS (83 testes/420 assertions); Kernel PASS (15
+testes/399 assertions, 34 depreciações de Core/contrib) no banco dedicado
+`aculta_simpletest`. Runtime não foi alterado.
 
 Firefox ESR visível, com o Bootstrap local efetivamente usado pelo tema, passou
 74/74 verificações da fixture em 320/360/390/599/600/768/1024/1280/1440 px,
