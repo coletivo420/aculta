@@ -612,6 +612,9 @@ final class PortalUiHooks {
   #[Hook('preprocess_aculta_portal_photo_editor')]
   public function preprocess(array &$variables): void {
     $this->addAccountUnreadBadges($variables);
+    // Only the Event catalogue emits this semantic item token. Adapt those
+    // render arrays before translating the remaining tokens to classes.
+    $this->preprocessEventCatalogue($variables);
     // #attributes do elemento de render são mesclados em "attributes" depois
     // do preprocess: trata o elemento.
     if (isset($variables['element']) && is_array($variables['element'])) {
@@ -647,6 +650,113 @@ final class PortalUiHooks {
         $this->applyArray($item['#wrapper_attributes'], $variables['items'][$key], '#wrapper_attributes');
       }
     }
+  }
+
+  /**
+   * Presents the neutral Events catalogue items through the existing SDC.
+   *
+   * The Event module owns data, access, links and cache metadata. This theme
+   * hook only maps its render-array contract to the event card component.
+   */
+  private function preprocessEventCatalogue(array &$variables): void {
+    if (!isset($variables['items']) || !is_array($variables['items'])) {
+      return;
+    }
+    $hasEventCard = FALSE;
+    foreach ($variables['items'] as $item) {
+      $value = is_array($item) && is_array($item['value'] ?? NULL)
+        ? $item['value']
+        : $item;
+      $tokens = is_array($value)
+        ? (string) ($value['#attributes']['data-portal-ui'] ?? '')
+        : '';
+      if (preg_match('/(?:^|\\s)event-card(?:\\s|$)/', $tokens)) {
+        $hasEventCard = TRUE;
+        break;
+      }
+    }
+    if (!$hasEventCard) {
+      return;
+    }
+    if (($variables['wrapper_attributes'] ?? NULL) instanceof Attribute) {
+      $variables['wrapper_attributes']->addClass('event-catalogue__list');
+    }
+    elseif (is_array($variables['wrapper_attributes'] ?? NULL)) {
+      $classes = $variables['wrapper_attributes']['class'] ?? [];
+      $classes = is_array($classes) ? $classes : [$classes];
+      $classes[] = 'event-catalogue__list';
+      $variables['wrapper_attributes']['class'] = array_values(array_unique($classes));
+    }
+    foreach ($variables['items'] as &$item) {
+      $wrappedItem = is_array($item) && is_array($item['value'] ?? NULL);
+      $renderArray = $wrappedItem ? $item['value'] : $item;
+      if (!is_array($renderArray)) {
+        continue;
+      }
+      $tokens = (string) ($renderArray['#attributes']['data-portal-ui'] ?? '');
+      if (!preg_match('/(?:^|\\s)event-card(?:\\s|$)/', $tokens)) {
+        continue;
+      }
+
+      $link = $renderArray['title']['link'] ?? [];
+      $url = $link['#url'] ?? NULL;
+      if (!$url instanceof Url) {
+        continue;
+      }
+
+      $component = [
+        '#type' => 'component',
+        '#component' => 'aculta420:event_card',
+        '#props' => [
+          'title' => (string) ($link['#title'] ?? ''),
+          'url' => $url->toString(),
+          'subtitle' => $this->eventCardText($renderArray['subtitle'] ?? []),
+          'tipo' => $this->eventCardText($renderArray['type'] ?? []),
+          'proxima' => $this->eventCardDate($renderArray['meta'] ?? []),
+          // The catalogue render array does not provide the local's name.
+          // Keep this optional prop empty rather than inventing a value.
+          'local' => NULL,
+          'cancelado' => ($renderArray['cancelled']['#access'] ?? FALSE) === TRUE,
+        ],
+      ];
+      $properties = ['#access', '#cache', '#weight', '#attached'];
+      if (!$wrappedItem) {
+        $properties[] = '#wrapper_attributes';
+      }
+      foreach ($properties as $property) {
+        if (array_key_exists($property, $renderArray)) {
+          $component[$property] = $renderArray[$property];
+        }
+      }
+      if ($wrappedItem) {
+        $item['value'] = $component;
+      }
+      else {
+        $item = $component;
+      }
+    }
+    unset($item);
+  }
+
+  /**
+   * Gets a visible, escaped text value from a neutral render element.
+   */
+  private function eventCardText(array $element): ?string {
+    if (($element['#access'] ?? TRUE) === FALSE || !isset($element['#value'])) {
+      return NULL;
+    }
+    return html_entity_decode((string) $element['#value'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+  }
+
+  /**
+   * Gets the formatted next-date string from the catalogue's list element.
+   */
+  private function eventCardDate(array $element): ?string {
+    $items = $element['#items'] ?? [];
+    if (!is_array($items) || !isset($items[0])) {
+      return NULL;
+    }
+    return (string) $items[0];
   }
 
   /**

@@ -571,6 +571,31 @@ Esta rodada confirma o comportamento focal servido, mas não exercita outras
 rotas internas autenticadas, teclado completo, zoom real, contraste, dark mode,
 reduced motion ou WCAG 2.2 AA; portanto THEME-MF3 continua pendente.
 
+### THEME-MF2 — repetição da Institution Bar em todas as homes (2026-10-30)
+
+Com Firefox ESR visível, a CSS candidata foi injetada nas dez homes como
+anônimo em 320/390px. Nas oito homes que responderam normalmente, os testes
+confirmaram Institution Bar única, `position: sticky`, topo estabilizado sem
+salto (`maxTopChange=0`), permanência no topo durante scroll e nenhuma rolagem
+horizontal. Resultado: 87/89 checks passaram. As duas falhas são a home Wiki,
+que retornou HTTP 500 e não entregou Institution Bar em nenhuma largura; a
+resposta foi confirmada por GET separado. Evidências em
+`/home/piradopirata/aculta-suite-out/institution-bar-scroll-anonymous-65da0f287-final/`.
+
+O cenário anônimo não usa Navigation top-bar administrativa. A tentativa de
+cenário autenticado não confirmou a sessão de UID 1 e ficou inconclusiva;
+nenhuma conclusão de regressão autenticada é registrada. A CSS candidata do tema não foi servida nesta rodada; o cache foi reconstruído para validar o reparo do hook. O harness foi ajustado para registrar
+shell ausente e continuar nos outros purposes, sem erro de cálculo com posição
+nula. THEME-MF3 permanece pendente.
+
+O watchdog do Runtime confirmou a causa do HTTP 500: dois providers do tema
+registravam `preprocess_item_list`, gerando `LogicException` no `ThemeManager`
+em toda renderização de lista. A adaptação dos cards de Evento foi consolidada
+no único `PortalUiHooks::preprocess`; foram adicionados testes de conversão e
+unicidade de hook. Os testes Unit locais passam. Após aplicar a correção no
+checkout de desenvolvimento e reconstruir o cache, GET anônimo à home Wiki
+respondeu HTTP 200; commit/publicação na branch continuam pendentes.
+
 
 ### THEME-MF2 — tabela de pedidos na Conta (2026-10-29)
 

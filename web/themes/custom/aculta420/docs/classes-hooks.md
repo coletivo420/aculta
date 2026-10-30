@@ -16,7 +16,6 @@ específicos de Views.
 | `preprocess_views_view_vvjb` | `preprocessViewsViewVvjb()` | Desativa controles e autoplay quando o destaque editorial da home tem um único slide. |
 | `preprocess_views_view_vvjs_fields` | `deferInactiveAlbumSlideImages()` | Adia o `src` das imagens de slides inativos da View `aculta_album_fotos`, display `block_1`. |
 | `preprocess_views_view_vvjs` | `deferInactiveProductSlideImages()` | Adia imagens de slides de produto na View `galeria_produto`. |
-| `preprocess_item_list` | `preprocessEventCatalogue()` | Adapta os itens neutros de `/eventos` para o SDC `aculta420:event_card`, preservando acesso e cache do módulo. |
 | `preprocess_node` | `preprocessNode()` | Constrói o SDC `aculta420:hero` para nós `page` em visualização completa quando há título de hero. |
 | `preprocess_field` | `preprocessField()` | Aplica a classe de prosa aos corpos editoriais e envolve o formulário de resposta privada no SDC `aculta420:messenger-compose`. |
 | `preprocess_page` | `preprocessPage()` | Compõe a página, adapta marca neutra, move blocos de cabeçalho para variáveis dedicadas, suprime o título redundante do detalhe de evento e converte ações neutras do Messenger/Avisos em SDCs. |
@@ -46,7 +45,7 @@ atributo neutro `data-portal-ui` em classes de apresentação do tema. O mapa
 | Hook | Método | Responsabilidade |
 | --- | --- | --- |
 | `preprocess_menu` | `preprocessMenu()` | Converte tokens nos atributos dos links de menu, incluindo itens descendentes. |
-| `preprocess_container`, `preprocess_html_tag`, `preprocess_item_list`, `preprocess_form_element`, `preprocess_image`, `preprocess_aculta_portal_element`, `preprocess_aculta_portal_search_trigger`, `preprocess_aculta_portal_cart_status`, `preprocess_aculta_portal_shell`, `preprocess_aculta_portal_account_terms_modal`, `preprocess_aculta_portal_photo_editor` | `preprocess()` | Converte tokens nos atributos e render arrays desses templates. |
+| `preprocess_container`, `preprocess_html_tag`, `preprocess_item_list`, `preprocess_form_element`, `preprocess_image`, `preprocess_aculta_portal_element`, `preprocess_aculta_portal_search_trigger`, `preprocess_aculta_portal_cart_status`, `preprocess_aculta_portal_shell`, `preprocess_aculta_portal_account_terms_modal`, `preprocess_aculta_portal_photo_editor` | `preprocess()` | Converte tokens nos atributos e render arrays; adapta itens com token `event-card` ao SDC `aculta420:event_card`, preservando acesso e cache do módulo. |
 | `preprocess_details` | `preprocessDetails()` | Aplica o mesmo mapeamento ao elemento `details` depois da preparação do Bootstrap. |
 
 O hook não cria classe para token desconhecido. Novos tokens precisam ser

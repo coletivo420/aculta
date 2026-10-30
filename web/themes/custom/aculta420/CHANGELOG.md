@@ -1,5 +1,6 @@
 # Alterações pendentes de validação visual — ainda sem nova marcação de versão
 
+- HTTP 500 da Wiki foi rastreado a dois providers do tema registrados para `preprocess_item_list`; a adaptação do SDC Event card agora está no hook único `PortalUiHooks::preprocess`. Testes Unit cobrem o contrato e a unicidade do hook; após aplicar a correção no checkout de desenvolvimento e reconstruir o cache, GET anônimo à home Wiki respondeu HTTP 200; commit/publicação na branch continuam pendentes.
 - Links longos da navegação global agora quebram em mobile e retornam a uma linha no desktop; o Firefox visível ainda está pendente.
 - Removidos os estilos e tokens sem consumidor de avatar vazio/inicial; o memorial coletivo recebe a imagem pelo `AvatarResolver` do Portal.
 - `forum-index.css` converteu o tamanho das ações de listagem do Fórum de uma media query limitada por `max-width` para aprimoramento progressivo em `36rem`/`62rem`, preservando as três faixas existentes. O harness de índice agora mede o consumer sintético. Firefox visual DEFERRED.

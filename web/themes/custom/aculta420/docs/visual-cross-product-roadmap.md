@@ -779,6 +779,15 @@ Os links passam a permitir quebra natural até o breakpoint desktop de 1100px;
 no menu horizontal desktop, mantêm uma linha. `navigation.py` acrescenta um
 rótulo longo temporário ao consumer real da home MAIN e mede ajuste no link,
 além do menu Bootstrap e do fallback sem JavaScript. Lint CSS/JS e sintaxe
-Python passaram; Firefox visível/Runtime ficam DEFERRED porque `DISPLAY=:0`
-está ausente e sessões geckodriver estão ativas. O teste cobre só MAIN e não
-homologa a navegação dos outros purposes nem THEME-MF3.
+Python passaram; Firefox ESR visível passou 28/28 checks com a CSS candidata
+em 320–1440px, incluindo 5 larguras sem JavaScript. O teste cobre só MAIN e
+não homologa a navegação dos outros purposes nem THEME-MF3.
+
+### THEME-MF2 — Institution Bar anônima durante scroll
+
+O Firefox ESR passou 87/89 checks com CSS candidata injetada nas dez homes,
+320/390px, sem salto e sem overflow nas oito páginas acessíveis. Wiki retornou
+HTTP 500 nas duas larguras e não apresentou Institution Bar. A tentativa
+autenticada não estabeleceu sessão e permanece inconclusiva. O resumo e PNGs
+estão em `$SUITE_OUT` descrito na auditoria mobile-first; o harness agora
+continua após registrar uma rota sem shell. Após consolidar o hook no checkout de desenvolvimento e reconstruir o cache, GET anônimo à home Wiki respondeu HTTP 200. Ainda falta homologar teclado/zoom/modos/AA; THEME-MF3 não aprovado.

@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta420\Unit;
 
 use Drupal\aculta420\Hook\PortalUiHooks;
+use Drupal\aculta420\Hook\ThemeHooks;
+use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Template\Attribute;
+use Drupal\Core\Url;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -17,6 +20,85 @@ use PHPUnit\Framework\Attributes\Group;
  */
 #[Group('aculta420')]
 final class PortalUiHooksTest extends UnitTestCase {
+
+  /**
+   * The theme registers only one preprocess implementation per hook name.
+   */
+  public function testItemListPreprocessHasOneThemeHookProvider(): void {
+    $implementations = [];
+    foreach ([PortalUiHooks::class, ThemeHooks::class] as $provider) {
+      $reflection = new \ReflectionClass($provider);
+      foreach ($reflection->getMethods() as $method) {
+        foreach ($method->getAttributes(Hook::class) as $attribute) {
+          if ($attribute->newInstance()->hook === 'preprocess_item_list') {
+            $implementations[] = $provider . '::' . $method->getName();
+          }
+        }
+      }
+    }
+
+    self::assertSame([PortalUiHooks::class . '::preprocess'], $implementations);
+  }
+
+  /**
+   * Event catalogue render arrays become the existing event card SDC.
+   */
+  public function testEventCatalogueUsesEventCardComponent(): void {
+    $url = $this->createMock(Url::class);
+    $url->method('toString')->willReturn('/eventos/encontro-cultural');
+    $variables = [
+      'wrapper_attributes' => new Attribute(),
+      'items' => [
+        [
+          'value' => [
+            '#attributes' => ['data-portal-ui' => 'event-card event-card-cancelled'],
+            '#cache' => ['tags' => ['aculta_event_list']],
+            'title' => ['link' => ['#title' => 'Encontro Cultural', '#url' => $url]],
+            'subtitle' => ['#value' => 'Cultura &amp; direitos'],
+            'type' => ['#value' => 'Encontro'],
+            'meta' => ['#items' => ['Próxima data: 30/10/2026 19:00']],
+            'cancelled' => ['#access' => TRUE],
+          ],
+          'attributes' => new Attribute(),
+        ],
+        [
+          '#attributes' => ['data-portal-ui' => 'event-card'],
+          '#wrapper_attributes' => ['class' => ['event-list-item']],
+          'title' => ['link' => ['#title' => 'Outro evento', '#url' => $url]],
+        ],
+      ],
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    self::assertContains('event-catalogue__list', $variables['wrapper_attributes']->getClass());
+    self::assertSame('aculta420:event_card', $variables['items'][0]['value']['#component']);
+    self::assertSame('Encontro Cultural', $variables['items'][0]['value']['#props']['title']);
+    self::assertSame('/eventos/encontro-cultural', $variables['items'][0]['value']['#props']['url']);
+    self::assertSame('Cultura & direitos', $variables['items'][0]['value']['#props']['subtitle']);
+    self::assertSame('Próxima data: 30/10/2026 19:00', $variables['items'][0]['value']['#props']['proxima']);
+    self::assertTrue($variables['items'][0]['value']['#props']['cancelado']);
+    self::assertSame(['tags' => ['aculta_event_list']], $variables['items'][0]['value']['#cache']);
+    self::assertSame('aculta420:event_card', $variables['items'][1]['#component']);
+    self::assertSame(['class' => ['event-list-item']], $variables['items'][1]['#wrapper_attributes']);
+  }
+
+  /**
+   * Lists without the Events card token keep their normal token mapping.
+   */
+  public function testNonEventListsAreNotTransformed(): void {
+    $item = [
+      'value' => 'Section title',
+      'attributes' => new Attribute(['data-portal-ui' => 'event-section-title']),
+    ];
+    $variables = ['items' => [$item]];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    self::assertArrayNotHasKey('#component', $variables['items'][0]);
+    self::assertSame('Section title', $variables['items'][0]['value']);
+    self::assertTrue($variables['items'][0]['attributes']->hasClass('section-title'));
+  }
 
   /**
    * Token conhecido vira classes; o atributo de token é removido.

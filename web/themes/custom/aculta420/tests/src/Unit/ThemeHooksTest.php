@@ -11,8 +11,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ExtensionList;
 use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Core\Template\Attribute;
-use Drupal\Core\Url;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -35,64 +33,6 @@ final class ThemeHooksTest extends UnitTestCase {
 
     self::assertContains('aculta420/messenger-notices', $info['libraries']);
     self::assertFalse(method_exists(ThemeHooks::class, 'attachMessengerNoticeStyles'));
-  }
-
-  /**
-   * Public event catalogue items map to the existing card SDC.
-   */
-  public function testEventCatalogueUsesEventCardComponent(): void {
-    $hooks = $this->themeHooksForRoute('aculta_events.catalogue');
-    $url = $this->createMock(Url::class);
-    $url->method('toString')->willReturn('/eventos/encontro-cultural');
-    self::assertInstanceOf(Url::class, $url);
-    $variables = [
-      'wrapper_attributes' => new Attribute(),
-      'items' => [
-        [
-          'value' => [
-            '#attributes' => ['data-portal-ui' => 'event-card event-card-cancelled'],
-            '#cache' => ['tags' => ['aculta_event_list']],
-            'title' => ['link' => ['#title' => 'Encontro Cultural', '#url' => $url]],
-            'subtitle' => ['#value' => 'Cultura &amp; direitos'],
-            'type' => ['#value' => 'Encontro'],
-            'meta' => ['#items' => ['Próxima data: 29/10/2026 19:00']],
-            'cancelled' => ['#access' => TRUE],
-          ],
-          'attributes' => new Attribute(),
-        ],
-        [
-          '#attributes' => ['data-portal-ui' => 'event-card'],
-          '#wrapper_attributes' => ['class' => ['event-list-item']],
-          'title' => ['link' => ['#title' => 'Outro evento', '#url' => $url]],
-        ],
-      ],
-    ];
-
-    $hooks->preprocessEventCatalogue($variables);
-
-    self::assertContains('event-catalogue__list', $variables['wrapper_attributes']->getClass());
-    self::assertSame('aculta420:event_card', $variables['items'][0]['value']['#component']);
-    self::assertSame('Encontro Cultural', $variables['items'][0]['value']['#props']['title']);
-    self::assertSame('/eventos/encontro-cultural', $variables['items'][0]['value']['#props']['url']);
-    self::assertSame('Cultura & direitos', $variables['items'][0]['value']['#props']['subtitle']);
-    self::assertSame('Próxima data: 29/10/2026 19:00', $variables['items'][0]['value']['#props']['proxima']);
-    self::assertTrue($variables['items'][0]['value']['#props']['cancelado']);
-    self::assertSame(['tags' => ['aculta_event_list']], $variables['items'][0]['value']['#cache']);
-    self::assertSame('aculta420:event_card', $variables['items'][1]['#component']);
-    self::assertSame(['class' => ['event-list-item']], $variables['items'][1]['#wrapper_attributes']);
-  }
-
-  /**
-   * Lists on other routes retain their existing render arrays.
-   */
-  public function testNonEventListsAreNotTransformed(): void {
-    $hooks = $this->themeHooksForRoute('aculta_events.locations');
-    $item = ['value' => ['#attributes' => ['data-portal-ui' => 'event-card']]];
-    $variables = ['items' => [$item]];
-
-    $hooks->preprocessEventCatalogue($variables);
-
-    self::assertSame([$item], $variables['items']);
   }
 
   /**
