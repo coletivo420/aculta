@@ -296,6 +296,7 @@
         "drupal/lms_file_upload": "^1.0",
         "drupal/login_emailusername": "^3.0",
         "drupal/mcp_server": "^2.0@beta",
+        "drupal/mcp_server_oauth": "^1.0@alpha",
         "drupal/mcp_server_tool_bridge": "^1.0@beta",
         "drupal/mcp_server_ui": "^1.0@beta",
         "drupal/media_duplicates": "^2.0.4",

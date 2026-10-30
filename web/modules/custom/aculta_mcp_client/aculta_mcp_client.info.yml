@@ -1,10 +1,7 @@
-name: ACULTA MCP Client
+name: ACULTA MCP Client compatibility shim
 type: module
-description: 'Provides public MCP capabilities and allowlisted provider documentation tools.'
+description: 'Legacy extension retained while ACULTA MCP owns the implementation and configuration.'
 package: ACULTA
 core_version_requirement: ^11
 dependencies:
-  - key:key
-  - mcp_server:mcp_server
-  - mcp_server_tool_bridge:mcp_server_tool_bridge
-  - tool:tool
+  - aculta_mcp:aculta_mcp

@@ -1,0 +1,20 @@
+id: aculta_mcp_access
+name: aculta_mcp_access
+description: Acesso ao endpoint MCP do ACULTA para usuários e clientes OAuth autorizados.
+grant_types:
+  authorization_code:
+    status: true
+    description: Acesso MCP autorizado pela conta Drupal.
+  refresh_token:
+    status: true
+    description: Renovação do acesso MCP concedido pela conta Drupal.
+umbrella: false
+granularity_id: permission
+granularity_configuration:
+  permission: access mcp server
+dependencies:
+  enforced:
+    module:
+    - aculta_mcp
+    - simple_oauth
+langcode: pt-br

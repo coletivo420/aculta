@@ -1,0 +1,22 @@
+parameters:
+  mcp_server.base_path: '/integracoes/mcp'
+
+services:
+  aculta_mcp.remote_tool_executor:
+    class: Drupal\aculta_mcp\Remote\RemoteToolExecutor
+    arguments:
+      - '@key.repository'
+      - '@flood'
+      - '@logger.factory'
+  aculta_mcp.oauth_route_subscriber:
+    class: Drupal\aculta_mcp\Routing\OAuthRouteSubscriber
+    tags:
+      - { name: event_subscriber }
+  aculta_mcp.oauth_resource_metadata_subscriber:
+    class: Drupal\aculta_mcp\EventSubscriber\OAuthResourceMetadataSubscriber
+    tags:
+      - { name: event_subscriber }
+  aculta_mcp.domain_route_subscriber:
+    class: Drupal\aculta_mcp\Routing\DomainRouteSubscriber
+    tags:
+      - { name: event_subscriber }

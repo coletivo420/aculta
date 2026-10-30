@@ -6,7 +6,7 @@ Este documento é o inventário comum. Cada cliente MCP mantém seu próprio arq
 
 | Servidor | Transporte e destino | Uso | Credencial |
 | --- | --- | --- | --- |
-| `aculta` | HTTP; `https://aculta.toca.net.br/mcp` | Ferramentas públicas de consulta à documentação do Mercado Pago e Melhor Envio; sem acesso a dados ou operações da conta ACULTA. | Nenhuma para clientes MCP; o servidor usa uma Key de teste do Mercado Pago nas chamadas remotas. |
+| `aculta` | HTTP; `https://aculta.toca.net.br/integracoes/mcp` | Ferramentas públicas de consulta à documentação do Mercado Pago e Melhor Envio; sem acesso a dados ou operações da conta ACULTA. | OAuth Authorization Code com PKCE; o servidor usa uma Key de teste do Mercado Pago nas chamadas remotas. |
 | `melhorenvio` | HTTP via `mcp-remote`; `https://docs.melhorenvio.com.br/mcp` | Documentação da API do Melhor Envio, somente consulta. | `MELHORENVIO_MCP_TOKEN` no ambiente do cliente. |
 | `mercadopago` | HTTP via `mcp-remote`; `https://mcp.mercadopago.com/mcp` | Documentação e recursos disponíveis ao access token. `get_application`, `create_application` e `get_credentials` exigem OAuth e não aparecem com access token. | `MERCADOPAGO_MCP_TOKEN` no ambiente do cliente. |
 | `dhtmlx-mcp` | HTTP; `https://docs.dhtmlx.com/mcp` | Documentação atual dos produtos DHTMLX. Servidor hospedado e sem autenticação; [a política de integração](https://docs.dhtmlx.com/suite/guides/mcp-server/) informa que consultas podem ser registradas para depuração e melhoria. | Nenhuma. |
@@ -23,15 +23,15 @@ O pacote OpenStreetMap instalado é `osm-mcp-server` **0.1.1**. Em 2026-10-28, e
 
 Cursor, Gemini/Antigravity, OpenCode e Claude Desktop não têm arquivo de configuração MCP local encontrado nesta máquina. Para habilitá-los, use o endpoint/command desta tabela no formato documentado pelo cliente, sem copiar credenciais para o repositório. A configuração local não foi criada para esses clientes.
 
-Para adicionar o servidor ACULTA a outro Codex, use `codex mcp add aculta --url https://aculta.toca.net.br/mcp`. O acesso ao ACULTA é público e sem OAuth. As ferramentas publicadas são apenas busca/listagem de documentação dos provedores; não leem dados privados nem executam ações financeiras, de frete ou de conta.
+O endpoint ACULTA MCP responde somente no domínio principal (`main`), em `/integracoes/mcp`; nos subdomínios responde 404. Clientes externos usam OAuth Authorization Code com PKCE e precisam ser pré-cadastrados como Consumers Drupal. As ferramentas publicadas são apenas busca/listagem de documentação dos provedores; não leem dados privados nem executam ações financeiras, de frete ou de conta.
 
-O módulo próprio `aculta_mcp_client` implementa chamadas MCP de saída para os servidores de documentação do Mercado Pago, Melhor Envio e DHTMLX. Seis plugins da Tool API são publicados no ACULTA por meio do MCP Server Tool Bridge e de entidades MCP Tool Configuration. Três Resources estáticos descrevem capacidades, a plataforma ACULTA e as fronteiras das integrações; três MCP Prompts reutilizam esses Resources anexando-os às mensagens e orientam pesquisa documental sem dados sensíveis. Prompts são modelos e não chamam ferramentas automaticamente. Endpoints e nomes das ferramentas remotas têm allowlist fixa, limite global de chamadas e saída limitada. O servidor não encaminha chamadas de API de pagamento, frete, mapas ou Drupal.
+O módulo próprio `aculta_mcp` implementa chamadas MCP de saída para os servidores de documentação do Mercado Pago, Melhor Envio e DHTMLX. Seis plugins da Tool API são publicados no ACULTA por meio do MCP Server Tool Bridge e de entidades MCP Tool Configuration. Três Resources estáticos descrevem capacidades, a plataforma ACULTA e as fronteiras das integrações; três MCP Prompts reutilizam esses Resources anexando-os às mensagens e orientam pesquisa documental sem dados sensíveis. Prompts são modelos e não chamam ferramentas automaticamente. Endpoints e nomes das ferramentas remotas têm allowlist fixa, limite global de chamadas e saída limitada. O servidor não encaminha chamadas de API de pagamento, frete, mapas ou Drupal.
 
 `osm-mcp` e `aculta-drupal` continuam em `.mcp.json` e na configuração global Codex como conexões locais para agentes. O OSM usa stdio e pode receber dados de localização; `aculta-drupal` fornece metadados operacionais read-only. Esses servidores não são encaminhados pelo endpoint ACULTA público.
 
 ## MCP Client no Drupal
 
-O projeto oficial [MCP Client](https://www.drupal.org/project/mcp_client) não é instalado porque sua versão consultada requer `mcp/sdk ^0.7.1`, em conflito com o MCP Server instalado (`^0.9`), além de Drupal AI/AI Agents que este projeto não usa. `aculta_mcp_client` adapta o padrão de cliente MCP com o SDK já instalado e usa HTTP para os provedores remotos; não copia a camada Drupal AI do contrib. Reavaliar o uso direto do contrib se as versões do SDK forem compatíveis ou o ACULTA adicionar Drupal AI.
+O projeto oficial [MCP Client](https://www.drupal.org/project/mcp_client) não é instalado porque sua versão consultada requer `mcp/sdk ^0.7.1`, em conflito com o MCP Server instalado (`^0.9`), além de Drupal AI/AI Agents que este projeto não usa. `aculta_mcp` adapta o padrão de cliente MCP com o SDK já instalado e usa HTTP para os provedores remotos; não copia a camada Drupal AI do contrib. Reavaliar o uso direto do contrib se as versões do SDK forem compatíveis ou o ACULTA adicionar Drupal AI.
 
 ## Regras
 

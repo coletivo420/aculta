@@ -1,0 +1,10 @@
+aculta_mcp.settings:
+  type: config_object
+  label: 'ACULTA MCP settings'
+  mapping:
+    authorized_user_ids:
+      type: sequence
+      label: 'Authorized Drupal user IDs'
+      sequence:
+        type: integer
+        label: 'Drupal user ID'

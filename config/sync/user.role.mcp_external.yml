@@ -1,0 +1,13 @@
+uuid: cc1c8420-4ee2-4034-81d0-5b95eb622909
+langcode: pt-br
+status: true
+dependencies:
+  enforced:
+    module:
+    - aculta_mcp
+id: mcp_external
+label: ACULTA MCP externo
+weight: 5
+is_admin: false
+permissions:
+- access mcp server

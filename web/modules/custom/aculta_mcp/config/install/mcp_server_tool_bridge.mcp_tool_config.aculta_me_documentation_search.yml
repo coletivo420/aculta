@@ -1,0 +1,4 @@
+id: aculta_me_documentation_search
+tool_id: aculta_mcp:melhorenvio_documentation_search
+description: Pesquisa somente a documentação pública do Melhor Envio; não faz chamadas de operação à conta ACULTA.
+status: true

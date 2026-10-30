@@ -154,12 +154,13 @@ Versões instaladas no `composer.lock` e no `web/themes/custom/aculta420/package
 | `drupal/lms` | 1.2.4 | Composer | Cursos e matrículas do LMS |
 | `drupal/lms_file_upload` | 1.0.2 | Composer | Envio de arquivos de atividades do LMS |
 | `drupal/group` | 3.3.5 | Composer | Turmas e grupos do LMS |
-| `drupal/mcp_server` | 2.0.0-beta7 | Composer; Drupal.org (GPL-2.0-or-later) | Endpoint público e infraestrutura MCP para Drupal |
+| `drupal/mcp_server` | 2.0.0-beta7 | Composer; Drupal.org (GPL-2.0-or-later) | Infraestrutura MCP HTTP e stdio para Drupal |
+| `drupal/mcp_server_oauth` | 1.0.0-alpha2 | Composer; Drupal.org (GPL-2.0-or-later) | OAuth Bearer e metadados protegidos para o endpoint MCP |
 | `drupal/mcp_server_tool_bridge` | 1.0.0-beta5 | Composer; Drupal.org (GPL-2.0-or-later) | Publica plugins Tool API como ferramentas MCP |
 | `drupal/mcp_server_ui` | 1.0.0-beta2 | Composer; Drupal.org (GPL-2.0-or-later) | Interface administrativa de configuração do servidor MCP |
 | `drupal/tool` | 1.0.0-beta12 | Composer; Drupal.org (GPL-2.0-or-later) | API usada pelos plugins de ferramenta MCP ACULTA |
-| `drupal/simple_oauth` | 6.1.3 | Composer; Drupal.org (GPL-2.0-or-later) | OAuth Drupal existente; não protege o endpoint MCP público |
-| `e0ipso/simple_oauth_21` | 1.13.1 | Composer; GitHub (GPL-2.0-or-later) | OAuth 2.1 existente; descoberta/registro de clientes permanecem desativados no Runtime |
+| `drupal/simple_oauth` | 6.1.3 | Composer; Drupal.org (GPL-2.0-or-later) | Emissão e validação OAuth de usuários Drupal para o MCP |
+| `e0ipso/simple_oauth_21` | 1.13.1 | Composer; GitHub (GPL-2.0-or-later) | PKCE S256 e metadados OAuth 2.1; clientes MCP são pré-cadastrados e o registro dinâmico é removido |
 | `drupal/physical` | 1.5.0 | Composer | Dados físicos, como endereço |
 | `drupal/profile` | 1.14.0 | Composer | Perfis de usuário |
 | `drupal/ckeditor5_plugin_pack` | 1.5.6 | Composer | Editor de texto rico |

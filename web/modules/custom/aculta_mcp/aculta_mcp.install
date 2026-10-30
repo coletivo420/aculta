@@ -1,0 +1,157 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for ACULTA MCP.
+ */
+
+use Drupal\Component\Serialization\Yaml;
+
+/**
+ * Migrates the former ACULTA MCP Client module and locks down MCP access.
+ */
+function aculta_mcp_update_10001(): void {
+  _aculta_mcp_install_prompt_configs();
+  _aculta_mcp_migrate_provider_configuration();
+  _aculta_mcp_migrate_tool_configurations();
+  _aculta_mcp_migrate_prompt_dependencies();
+  _aculta_mcp_restrict_anonymous_access();
+  _aculta_mcp_ensure_external_role();
+  _aculta_mcp_enforce_pkce_s256();
+}
+
+/**
+ * Imports prompt configuration that is absent on an existing site.
+ */
+function _aculta_mcp_install_prompt_configs(): void {
+  $prompt_ids = [
+    'aculta_consultar_plataforma',
+    'aculta_planejar_integracao_publica',
+    'aculta_pesquisar_documentacao_mcp',
+  ];
+  $module_path = \Drupal::service('extension.list.module')->getPath('aculta_mcp');
+  $storage = \Drupal::entityTypeManager()->getStorage('mcp_prompt_config');
+
+  foreach ($prompt_ids as $prompt_id) {
+    if ($storage->load($prompt_id)) {
+      continue;
+    }
+
+    $file = $module_path . '/config/install/mcp_server.mcp_prompt_config.' . $prompt_id . '.yml';
+    $contents = file_get_contents($file);
+    if ($contents === FALSE) {
+      throw new \RuntimeException(sprintf('Unable to read MCP prompt config %s.', $file));
+    }
+
+    $configuration = Yaml::decode($contents);
+    if (!is_array($configuration) || ($configuration['id'] ?? NULL) !== $prompt_id) {
+      throw new \RuntimeException(sprintf('Invalid MCP prompt config %s.', $file));
+    }
+
+    $storage->create($configuration)->save();
+  }
+}
+
+/**
+ * Points the MCP Resource Provider configuration at its new plugin ID.
+ */
+function _aculta_mcp_migrate_provider_configuration(): void {
+  $config = \Drupal::configFactory()->getEditable('mcp_server.resource_providers');
+  $plugins = $config->get('plugins') ?? [];
+  $changed = FALSE;
+  foreach ($plugins as &$plugin) {
+    if (($plugin['id'] ?? NULL) === 'aculta_mcp_client:public_capabilities') {
+      $plugin['id'] = 'aculta_mcp:public_capabilities';
+      $changed = TRUE;
+    }
+  }
+  unset($plugin);
+
+  if ($changed) {
+    $config->set('plugins', $plugins)->save();
+  }
+}
+
+/**
+ * Repoints the Tool Bridge configuration entities at the renamed plugins.
+ */
+function _aculta_mcp_migrate_tool_configurations(): void {
+  $tool_ids = [
+    'mercadopago_documentation_search',
+    'melhorenvio_documentation_search',
+    'melhorenvio_endpoint_details',
+    'melhorenvio_endpoint_list',
+    'dhtmlx_documentation_search',
+    'dhtmlx_documentation_answer',
+  ];
+  $storage = \Drupal::entityTypeManager()->getStorage('mcp_tool_config');
+  foreach ($storage->loadMultiple() as $configuration) {
+    $tool_id = $configuration->getToolId();
+    if (in_array($tool_id, array_map(static fn(string $id): string => 'aculta_mcp_client:' . $id, $tool_ids), TRUE)) {
+      $configuration->set('tool_id', preg_replace('/^aculta_mcp_client:/', 'aculta_mcp:', $tool_id));
+      $configuration->save();
+    }
+  }
+}
+
+/**
+ * Replaces the former module dependency on the public MCP prompts.
+ */
+function _aculta_mcp_migrate_prompt_dependencies(): void {
+  $storage = \Drupal::entityTypeManager()->getStorage('mcp_prompt_config');
+  foreach ($storage->loadMultiple() as $prompt) {
+    $dependencies = $prompt->getDependencies();
+    $modules = $dependencies['module'] ?? [];
+    if (!in_array('aculta_mcp_client', $modules, TRUE)) {
+      continue;
+    }
+
+    $prompt->set('dependencies', [
+      'enforced' => ['module' => ['aculta_mcp']],
+    ]);
+    $prompt->save();
+  }
+}
+
+/**
+ * Removes public endpoint access while leaving other anonymous permissions.
+ */
+function _aculta_mcp_restrict_anonymous_access(): void {
+  $anonymous = \Drupal::entityTypeManager()->getStorage('user_role')->load('anonymous');
+  if ($anonymous && $anonymous->hasPermission('access mcp server')) {
+    $anonymous->revokePermission('access mcp server');
+    $anonymous->save();
+  }
+}
+
+/**
+ * Ensures the least-privilege role used for individual external MCP users.
+ */
+function _aculta_mcp_ensure_external_role(): void {
+  $storage = \Drupal::entityTypeManager()->getStorage('user_role');
+  $role = $storage->load('mcp_external');
+  if (!$role) {
+    $role = $storage->create([
+      'id' => 'mcp_external',
+      'label' => 'ACULTA MCP externo',
+      'weight' => 5,
+      'is_admin' => FALSE,
+      'permissions' => ['access mcp server'],
+    ]);
+  }
+  elseif (!$role->hasPermission('access mcp server')) {
+    $role->grantPermission('access mcp server');
+  }
+  $role->save();
+}
+
+/**
+ * Requires the OAuth 2.1 PKCE S256 method and disables plain challenges.
+ */
+function _aculta_mcp_enforce_pkce_s256(): void {
+  \Drupal::configFactory()->getEditable('simple_oauth_pkce.settings')
+    ->set('enforcement', 'mandatory')
+    ->set('s256_enabled', TRUE)
+    ->set('plain_enabled', FALSE)
+    ->save();
+}

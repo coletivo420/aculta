@@ -1,7 +1,0 @@
-services:
-  aculta_mcp_client.remote_tool_executor:
-    class: Drupal\aculta_mcp_client\Remote\RemoteToolExecutor
-    arguments:
-      - '@key.repository'
-      - '@flood'
-      - '@logger.factory'

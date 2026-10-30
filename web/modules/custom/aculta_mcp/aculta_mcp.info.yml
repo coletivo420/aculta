@@ -1,0 +1,13 @@
+name: ACULTA MCP
+type: module
+description: 'Provides the authenticated ACULTA MCP server and allowlisted documentation clients.'
+package: ACULTA
+core_version_requirement: ^11
+dependencies:
+  - aculta_portal:aculta_portal
+  - key:key
+  - mcp_server:mcp_server
+  - mcp_server_oauth:mcp_server_oauth
+  - mcp_server_tool_bridge:mcp_server_tool_bridge
+  - simple_oauth_21:simple_oauth_pkce
+  - tool:tool
