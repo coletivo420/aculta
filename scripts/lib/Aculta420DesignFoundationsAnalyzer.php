@@ -868,7 +868,7 @@ final class Aculta420DesignFoundationsAnalyzer {
    *   TRUE when the breakpoint and scoped declarations are supported.
    */
   private static function isStudioBreakpointBlock(array $node): bool {
-    if (preg_match('/^@media\\s*\\(\\s*min-width\\s*:\\s*(?:48rem|68\\.75rem|100rem)\\s*\\)$/i', trim($node['selector'])) !== 1) {
+    if (preg_match('/^@media\\s*\\(\\s*min-width\\s*:\\s*(?:48rem|70rem|85rem|120rem)\\s*\\)$/i', trim($node['selector'])) !== 1) {
       return FALSE;
     }
     $children = $node['children'];

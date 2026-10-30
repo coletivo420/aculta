@@ -1348,3 +1348,24 @@ estado compartilhado do Portal e o login respondeu 500; após a duplicação dei
 de existir no checkout e novo rebuild, `/` redirecionou a `/entrar` com HTTP 200
 e formulário de login presente. Nenhum código Portal foi alterado por esta
 frente. A preferência da conta sintética foi restaurada para `light`.
+
+### OCS-F1 / OCS-F8 — Green Stash sob a fundação visual Studio (2026-10-30)
+
+O token neutro `green-stash-entry` agora mapeia para `studio` e
+`aculta-green-stash`: a área comercial herda a tipografia e os tokens Fidelity
+Studio mantendo seus estilos específicos. O container principal que contém
+`.studio` ou `.aculta-profile-editor` recebe margens, padding e largura máxima
+baseados no layout do opCult, sem selecionar os containers da Institution Bar
+ou do Domain Header. Breakpoints de Fidelity foram alinhados à fonte
+OpenCulturas 3.1.5 verificada: 48em, 70em, 85em e 120em. A alteração é somente
+no tema; markup funcional, ACL, rotas e navegação do Commerce não mudam.
+
+Fonte verificada: tarball `openculturas-3.1.5.tar.gz`, SHA-256
+`2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`, extraído
+fora do repositório. Stylelint passou; Design Foundations passou 2419 checks;
+fixtures do analisador passaram 159 resultados esperados; PHP lint e PHPCS
+passaram; Unit focal passou 18 testes/113 assertions. Firefox visual fica
+`DEFERRED`: `DISPLAY` não está disponível para esta sessão e há um processo
+geckodriver ativo no host. O Runtime também está com divergência de configuração,
+então não houve rebuild de cache nem alegação de captura candidata publicada.
+Isto não aprova OCS-F8/F11 nem THEME-MF3.

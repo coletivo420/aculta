@@ -26,6 +26,48 @@
   line-height: var(--aculta-studio-fidelity-line-height-default);
 }
 
+/* The Studio root lives inside the shared page container. Match opCult's
+   outer page margin, inner padding and 100rem content width there, while
+   leaving the global shell containers untouched. */
+.aculta-main > .aculta-container:has(.studio),
+.aculta-main > .aculta-container:has(.aculta-profile-editor) {
+  width: calc(100% - 0.5rem);
+  max-width: 102rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+@media (min-width: 48rem) {
+  .aculta-main > .aculta-container:has(.studio),
+  .aculta-main > .aculta-container:has(.aculta-profile-editor) {
+    width: calc(100% - 2.5rem);
+    padding-inline: 1.5rem;
+  }
+}
+
+@media (min-width: 70rem) {
+  .aculta-main > .aculta-container:has(.studio),
+  .aculta-main > .aculta-container:has(.aculta-profile-editor) {
+    max-width: 107rem;
+    padding-inline: 3.5rem;
+  }
+}
+
+@media (min-width: 85rem) {
+  .aculta-main > .aculta-container:has(.studio),
+  .aculta-main > .aculta-container:has(.aculta-profile-editor) {
+    width: calc(100% - 6rem);
+  }
+}
+
+@media (min-width: 120rem) {
+  .aculta-main > .aculta-container:has(.studio),
+  .aculta-main > .aculta-container:has(.aculta-profile-editor) {
+    max-width: 110rem;
+    padding-inline: 5rem;
+  }
+}
+
 .studio :is(h1, h2, h3, h4, h5, h6),
 .aculta-profile-editor :is(h1, h2, h3, h4, h5, h6) {
   font-family: var(--aculta-studio-fidelity-font-family);

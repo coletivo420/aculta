@@ -155,6 +155,21 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
+   * Green Stash inherits the Studio visual scope without losing its own class.
+   */
+  public function testMapsGreenStashEntryToStudioVisualRoot(): void {
+    $variables = [
+      'attributes' => new Attribute(['data-portal-ui' => 'green-stash-entry']),
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    self::assertTrue($variables['attributes']->hasClass('studio'));
+    self::assertTrue($variables['attributes']->hasClass('aculta-green-stash'));
+    self::assertFalse($variables['attributes']->offsetExists('data-portal-ui'));
+  }
+
+  /**
    * Forum dialog tokens map to the theme classes used by dialog.css.
    */
   public function testMapsForumDialogTokens(): void {

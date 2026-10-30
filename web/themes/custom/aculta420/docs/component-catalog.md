@@ -346,6 +346,15 @@ fornecidos pelo consumidor. Nenhum SDC, prop, slot ou story novo foi necessário
 nesta camada; a matriz de paridade e o inventário upstream registram os estados
 pendentes de captura.
 
+### OCS-F8 — área comercial integrada
+
+Green Stash usa o token neutro `green-stash-entry`; o tema o mapeia para a raiz
+visual `.studio.aculta-green-stash`. Assim a área comercial integrada reutiliza
+a fundação de tipografia, superfície e layout do Studio, preservando os
+componentes específicos de Green Stash. Não foi criado SDC, shell, menu global
+ou fluxo de Commerce paralelo. A renderização candidata ainda requer Firefox
+visível no Runtime para validação.
+
 ## THEME-MF2 — `patterns/content-grid`
 
 O SDC experimental tem consumidores de duas colunas em Marley, LMS e Wiki; os

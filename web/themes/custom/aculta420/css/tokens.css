@@ -276,7 +276,7 @@
   }
 }
 
-@media (min-width: 68.75rem) {
+@media (min-width: 70rem) {
   .studio,
   .aculta-profile-editor {
     --aculta-studio-fidelity-page-padding-inline: 3.5rem;
@@ -285,10 +285,18 @@
   }
 }
 
-@media (min-width: 100rem) {
+@media (min-width: 85rem) {
   .studio,
   .aculta-profile-editor {
     --aculta-studio-fidelity-page-margin-sides: 3rem;
+  }
+}
+
+@media (min-width: 120rem) {
+  .studio,
+  .aculta-profile-editor {
+    --aculta-studio-fidelity-page-padding-inline: 5rem;
+    --aculta-studio-fidelity-section-spacing: 5rem;
   }
 }
 

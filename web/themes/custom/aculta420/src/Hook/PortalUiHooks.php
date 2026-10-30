@@ -251,7 +251,9 @@ final class PortalUiHooks {
     'wiki-proposal-link' => ['aculta-wiki-proposal-link', 'btn', 'btn-outline-primary'],
     'wiki-proposal-decision' => ['aculta-wiki-proposal-decision'],
     'wiki-proposal-status' => ['aculta-wiki-proposal-status'],
-    'green-stash-entry' => ['aculta-green-stash'],
+    // Green Stash is a Studio area; keep its product styles while inheriting
+    // the Studio-scoped OpenCulturas fidelity foundation.
+    'green-stash-entry' => ['studio', 'aculta-green-stash'],
     'green-stash-product-create' => ['aculta-green-stash__product-create'],
     'green-stash-navigation-link' => ['nav-link', 'aculta-green-stash__navigation-link'],
     'green-stash-navigation' => ['nav', 'aculta-green-stash__navigation'],
