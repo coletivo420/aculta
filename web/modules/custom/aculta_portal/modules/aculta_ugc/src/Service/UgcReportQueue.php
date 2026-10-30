@@ -72,13 +72,15 @@ final class UgcReportQueue {
     if ($db !== NULL && $db->schema()->tableExists('aculta_ugc_report')) {
       // 1. Identifica TODOS os legacy_flag_id já presentes na base UGC.
       // Impede reincorporação de flags já analisadas ou decididas.
-      $migratedFlagIds = $db->select('aculta_ugc_report', 'r')
-        ->fields('r', ['legacy_flag_id'])
-        ->condition('legacy_flag_id', 0, '>')
-        ->condition('purpose', 'forum')
-        ->distinct()
-        ->execute()
-        ->fetchCol();
+      if ($db->schema()->fieldExists('aculta_ugc_report', 'legacy_flag_id')) {
+        $migratedFlagIds = $db->select('aculta_ugc_report', 'r')
+          ->fields('r', ['legacy_flag_id'])
+          ->condition('legacy_flag_id', 0, '>')
+          ->condition('purpose', 'forum')
+          ->distinct()
+          ->execute()
+          ->fetchCol();
+      }
 
       // Alvos já decididos não devem ser reabertos via flags legadas.
       if ($status === 'pendente' && in_array('forum', $allowedPurposes, TRUE)) {
