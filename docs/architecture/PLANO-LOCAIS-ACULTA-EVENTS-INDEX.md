@@ -176,3 +176,10 @@ Atualizar roadmap do owner a cada microfase e status por componente com estado c
 - Manter `aculta_index` como contrato transversal do Local, sem indexar endereço exato/coordenadas privadas. O modal não pode contornar access, status editorial, ACL ou cache.
 
 Consulte [ADR-033](../decisions/ADR-033-endereco-busca-e-locais.md). Este aditivo documenta trabalho futuro; não altera estado de release nem afirma implementação.
+
+
+## Especificação do popup e fronteira Events ↔ Maps (2026-10-30)
+
+“Modal” neste plano é um popup Drupal sobre a tela de Activity, não conteúdo inline nem página inteira. O fluxo terá popup de pesquisa/seleção de Local e, sob ação explícita, popup de cadastro. O retorno da seleção atualiza a referência no formulário pai por AJAX, mantendo os valores preenchidos.
+
+A entidade `aculta_event_location` e seu ciclo de vida são de `aculta_events`. Activity/evento referencia Local. `aculta_maps` consome os Locais autorizados por serviços/contratos estáveis para renderizar mapas, geocodificar endereço salvo e criar links. Não duplicar entidade, CRUD, endereço ou catálogo em Maps. Permissões, status, precisão e cache são verificados na fronteira de cada módulo. Ver [ADR-033](../decisions/ADR-033-endereco-busca-e-locais.md).
