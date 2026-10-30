@@ -84,6 +84,32 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
+   * Real Hub links use the shared card SDC without losing metadata.
+   */
+  public function testStudioHubAdaptsLinksToSharedCardComponent(): void {
+    $url = $this->createMock(Url::class);
+    $link = [
+      '#type' => 'link',
+      '#title' => 'Marley',
+      '#url' => $url,
+      '#cache' => ['contexts' => ['user.permissions'], 'tags' => ['studio:hub']],
+    ];
+    $variables = [
+      'wrapper_attributes' => new Attribute(['data-portal-ui' => 'studio-experiences']),
+      'items' => [['value' => $link, 'attributes' => new Attribute()]],
+      'attributes' => new Attribute(),
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    $component = $variables['items'][0]['value'];
+    self::assertSame('aculta420:card', $component['#component']);
+    self::assertSame('default', $component['#props']['variant']);
+    self::assertSame($link, $component['#slots']['content']);
+    self::assertSame($link['#cache'], $component['#cache']);
+  }
+
+  /**
    * Lists without the Events card token keep their normal token mapping.
    */
   public function testNonEventListsAreNotTransformed(): void {

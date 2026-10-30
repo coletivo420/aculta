@@ -62,6 +62,17 @@ A API e ACL comerciais permanecem no `aculta_commerce`; alterações de services
 - [ ] **OCS-F10:** **gate final da fidelidade**, com matriz interexperiências, screenshots e testes; **somente então** iniciar OCS-A1-A4.
 - [ ] **OCS-A1-A4:** tokens e identidade Aculta, componentes, aplicação **a todas as experiências** e consolidação sem alterar contratos funcionais.
 
+### Registro de implementação visual F4 — 2026-10-30
+
+O tema adapta os links já autorizados pelo Hub ao SDC `aculta420:card` e aplica
+grade de uma coluna na base mobile, ampliada para duas colunas em `48rem`.
+`StudioHubController` continua dono do registry, da disponibilidade e dos
+links. Unit do adaptador foi acrescentado; Runtime, Firefox visível e
+comparação upstream seguem pendentes. O `user-dashboard-views.scss` upstream é
+referência somente para listas de perfis/salvos, pois não foi encontrada uma
+home autenticada equivalente. Portanto F4 está parcialmente implementada e
+não homologada; nenhuma fase ou gate é marcado como concluído.
+
 Não substituir o conteúdo de uma experiência pelo de outra. O Studio compõe e apresenta; LMS/Wiki/editorial/User/Portal continuam os donos de dados, formulários, permissões, eventos e workflow. Itens ausentes não devem ser renderizados nem anunciados como existentes. Nenhuma fase está concluída por esta retificação.
 
 ## Frente visual aprovada - OCS-F → OCS-A (2026-10-29)

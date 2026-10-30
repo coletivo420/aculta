@@ -482,7 +482,7 @@ final class PortalUiHooks {
     'studio-account-section' => ['studio', 'studio__layout'],
     'studio-account-nav-link' => ['nav-link', 'studio__link'],
     'studio-account-contextual-nav' => ['nav', 'nav-tabs', 'studio__subtabs'],
-    'studio-hub' => ['studio'],
+    'studio-hub' => ['studio', 'studio-hub'],
     'studio-experiences' => ['studio__actions', 'list-unstyled', 'd-grid', 'gap-2'],
     'studio-tabs' => ['nav', 'nav-tabs', 'studio__tabs'],
     'studio-tab' => ['nav-link', 'studio__tab'],
@@ -612,6 +612,7 @@ final class PortalUiHooks {
   #[Hook('preprocess_aculta_portal_photo_editor')]
   public function preprocess(array &$variables): void {
     $this->addAccountUnreadBadges($variables);
+    $this->preprocessStudioHub($variables);
     // Only the Event catalogue emits this semantic item token. Adapt those
     // render arrays before translating the remaining tokens to classes.
     $this->preprocessEventCatalogue($variables);
@@ -650,6 +651,57 @@ final class PortalUiHooks {
         $this->applyArray($item['#wrapper_attributes'], $variables['items'][$key], '#wrapper_attributes');
       }
     }
+  }
+
+  /**
+   * Renders the real Studio Hub links through the shared theme card SDC.
+   *
+   * The link render array remains intact inside the card slot, so route access,
+   * link attributes, translations and cache metadata keep Drupal's contracts.
+   *
+   * @param array<string, mixed> $variables
+   *   Item list preprocess variables, altered in place.
+   */
+  private function preprocessStudioHub(array &$variables): void {
+    $element = $variables['element'] ?? NULL;
+    $tokens = is_array($element) ? (string) ($element['#attributes']['data-portal-ui'] ?? '') : '';
+    $wrapperAttributes = $variables['wrapper_attributes'] ?? NULL;
+    if ($tokens === '' && $wrapperAttributes instanceof Attribute) {
+      $tokens = (string) ($wrapperAttributes['data-portal-ui'] ?? '');
+    }
+    elseif ($tokens === '' && is_array($wrapperAttributes)) {
+      $tokens = (string) ($wrapperAttributes['data-portal-ui'] ?? '');
+    }
+    if (!preg_match('/(?:^|\\s)studio-experiences(?:\\s|$)/', $tokens) || !is_array($variables['items'] ?? NULL)) {
+      return;
+    }
+
+    foreach ($variables['items'] as &$item) {
+      $wrappedItem = is_array($item) && is_array($item['value'] ?? NULL);
+      $link = $wrappedItem ? $item['value'] : $item;
+      if (!is_array($link) || ($link['#type'] ?? NULL) !== 'link') {
+        continue;
+      }
+
+      $card = [
+        '#type' => 'component',
+        '#component' => 'aculta420:card',
+        '#props' => ['variant' => 'default'],
+        '#slots' => ['content' => $link],
+      ];
+      foreach (['#access', '#cache', '#weight', '#attached'] as $property) {
+        if (array_key_exists($property, $link)) {
+          $card[$property] = $link[$property];
+        }
+      }
+      if ($wrappedItem) {
+        $item['value'] = $card;
+      }
+      else {
+        $item = $card;
+      }
+    }
+    unset($item);
   }
 
   /**

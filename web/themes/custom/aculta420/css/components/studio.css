@@ -21,6 +21,26 @@
   margin: 0;
 }
 
+/* Hub: one readable card per row on narrow screens; wider grids are progressive. */
+.studio-hub .studio__actions {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.studio-hub .studio__actions > li,
+.studio-hub .studio__actions .aculta-card {
+  min-width: 0;
+  height: 100%;
+}
+
+.studio-hub .studio__actions .card-body {
+  overflow-wrap: anywhere;
+}
+
+.studio-hub .studio__actions a:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 3px;
+}
+
 /* Três níveis: áreas no topo (.studio__tabs), submenu à esquerda e abas da seção à direita. */
 .studio__layout {
   display: flex;
@@ -83,6 +103,10 @@
 }
 
 @media (min-width: 48rem) {
+  .studio-hub .studio__actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .studio__layout {
     flex-direction: row;
   }

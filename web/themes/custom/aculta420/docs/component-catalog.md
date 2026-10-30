@@ -109,6 +109,14 @@ permissões e cache continuam no Portal/UGC.
 Studio. O mobile usa coluna única como base e recupera a sidebar lateral em
 `48rem`; nenhum SDC paralelo ou novo contrato foi criado.
 
+O Hub `/studio` passou a consumir o SDC existente `patterns/card` para cada
+link real emitido pelo registry do Studio. `PortalUiHooks` mantém o render
+array do link dentro do slot `content` e propaga acesso/cache ao cartão; nenhum
+destino ou experiência é inventado. A lista permanece em uma coluna na base
+mobile e usa duas colunas a partir de `48rem`. A folha upstream citada na
+matriz descreve listas de perfil/salvos, não uma home autenticada; a paridade
+visual do Hub continua sem baseline upstream e aguarda captura/runtime.
+
 Na navegação interna, `.studio__tabs` e `.studio__subtabs` preservam os links e
 estados autorizados existentes. A apresentação distingue áreas primárias de
 abas secundárias no padrão OpenCulturas Next; ambas quebram linha na base
