@@ -6,10 +6,15 @@ documenta a fonte visual; não certifica paridade das telas autenticadas.
 ## Proveniência e verificação
 
 - Pacote oficial Drupal.org: `https://ftp.drupal.org/files/projects/openculturas-3.1.5.tar.gz`.
-- SHA-256 recebido: `2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`.
+- Em 2026-10-30, o tarball oficial foi baixado e validado localmente:
+  SHA-256 `2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`.
+  O inventário de nomes confirma `openculturas/profile/themes/opcult/`; a cópia
+  de trabalho e a extração ficam fora do repositório em
+  `/home/piradopirata/aculta-suite-out/openculturas-3.1.5-source/`.
 - Raiz do tema moderno: `openculturas/profile/themes/opcult/`.
 - `profile/openculturas.info.yml` declara `version: '3.1.5'`; `composer.json` declara GPL-2.0-or-later e requer Drupal Core `~11.4.11`.
 - Verificação da referência pública em `https://www.openculturas.org/en`: HTML carrega o tema `opcult`; o `css/opcult.css` servido tem SHA-256 `1441f91a50e1461825c676e9fd1f33b08a176b0c7c897033a1e1432c5b3315b9`, idêntico ao CSS compilado no pacote 3.1.5. Isso confirma a identidade dessa folha servida, mas não prova que todos os módulos ou configurações do site estejam no pacote.
+- A verificação local repetiu o SHA-256 de `profile/themes/opcult/css/opcult.css` e obteve o mesmo valor da referência pública acima; versão e path foram conferidos diretamente nos arquivos do tarball. Nenhum arquivo upstream foi copiado para ACULTA.
 - Capturas Firefox ESR visível: `$SUITE_OUT/openculturas-1440.png` e `$SUITE_OUT/openculturas-390.png`. O perfil temporário fica em `$SUITE_OUT/profiles/` e é removido ao encerrar a sessão. Capturas autenticadas do Studio ficam em `$SUITE_OUT/aculta-studio-*.png`.
 - O manifesto do pacote declara GPL-2.0-or-later; `sprite/svg/LICENSE_phosphor-icons.md` registra a licença do sprite Phosphor. Os diretórios Montserrat e Open Sans contêm WOFF2/CSS, mas o pacote não inclui licença desses arquivos. Não copiar fontes, logos, imagens ou SVGs. Não derivar CSS de terceiros sem registrar origem/licença e atribuição do trecho específico.
 
