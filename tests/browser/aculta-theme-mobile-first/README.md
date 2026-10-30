@@ -494,3 +494,25 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/revista-browser-zo
 (padrão 1280). O teste mede o zoom do navegador, enquanto a matriz de viewports
 mede larguras CSS; um não substitui o outro. `DEFERRED` exige conferir zoom
 manual no Firefox ESR.
+
+## Shell dos dez purposes sem JavaScript
+
+`purpose-shell-nojs.py` desativa JavaScript no perfil Firefox e abre as dez
+raízes públicas mapeadas pelo `aculta_deployer/config/deploy.json`. Confere
+Institution Bar e Domain Header únicos, ausência de overflow e disponibilidade
+da navegação em 320/390/599/600/768/1024/1440px. A Wiki usa busca contextual no
+cabeçalho no lugar do menu primário, e o teste verifica que o campo de busca
+continua visível. O teste é anônimo e somente leitura; não exercita páginas
+internas, estados autenticados, teclado, zoom, leitor de tela nem WCAG completa.
+
+```sh
+cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/suite-out/purpose-shell-nojs
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/purpose-shell-nojs.py
+```
+
+`PURPOSE_NOJS_WIDTHS` seleciona as larguras e
+`PURPOSE_NOJS_DOMAIN_ENV=production` só deve ser usado após confirmar ambiente,
+DNS e TLS.

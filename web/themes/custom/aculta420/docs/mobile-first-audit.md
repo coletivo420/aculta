@@ -1514,6 +1514,22 @@ anônimo e somente leitura; não cobre leitores de tela, zoom, autenticação,
 contraste WCAG 2.2 AA ou outros consumers do rail. Esta evidência focal não
 fecha THEME-MF3.
 
+### THEME-MF2 — shell sem JavaScript nas dez raízes públicas (2026-10-30)
+
+O teste reutilizável `tests/browser/aculta-theme-mobile-first/purpose-shell-nojs.py`
+usa os domínios de teste do manifesto `aculta_deployer` e Firefox ESR visível
+com JavaScript desativado. Em MAIN, Conta, SUPPORT, Revista, Wiki, Loja, Cursos,
+Fórum, Links e Eventos, passou 210/210 verificações em 320/390/599/600/768/
+1024/1440px: Institution Bar e Domain Header únicos, sem overflow horizontal,
+menu primário expandido e disponível sem JS. Na Wiki, que substitui o menu
+primário pela busca contextual no cabeçalho, o campo de busca também ficou
+visível. Evidências e `results.json`:
+`/home/piradopirata/suite-out/purpose-shell-nojs-f22-20261030-rerun/`.
+
+O teste cobre apenas as raízes públicas anônimas; não verifica páginas internas,
+estados autenticados, teclado, zoom, leitores de tela, contraste ou WCAG 2.2 AA.
+É evidência transversal adicional, não aprovação de THEME-MF3.
+
 Reteste focal posterior no Firefox ESR visível: claro e escuro + reduced motion
 capturados em 9/9 viewports cada, sem overflow e com os dois headers únicos. O
 script confirmou `prefers-color-scheme`/`prefers-reduced-motion`; isto não mede

@@ -1004,3 +1004,13 @@ com os demais cartões alcançáveis. Firefox ESR visível passou 11/11 checks e
 320/390/768/1440px, incluindo rótulo acessível, foco, `ArrowRight` e ausência de
 overflow de página. Capturas/resultados: `/home/piradopirata/suite-out/course-rail-validation-f22-20261030/`.
 Isso valida somente o catálogo público e não aprova THEME-MF3.
+
+### Shell global — fallback sem JavaScript (2026-10-30)
+
+Firefox ESR visível com JavaScript desativado passou 210/210 verificações nas
+dez raízes públicas e sete larguras (320–1440px): shell único, sem overflow e
+nav visível. Na Wiki, o campo de busca contextual permaneceu disponível no lugar
+do menu principal. O teste usa hosts do manifesto de transição. Não cobre rotas
+internas, sessões autenticadas nem gates completos de acessibilidade; THEME-MF3
+segue pendente. Comando e limites em
+`tests/browser/aculta-theme-mobile-first/README.md`.
