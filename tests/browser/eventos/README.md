@@ -137,3 +137,38 @@ rm -f "$OUT/login-url.txt"
   teste Kernel.
 - Sem `EVENT_ID`, a verificação de edição/ordem falha explicitamente; as demais
   continuam.
+
+## `location-modal.py` — homologação do popup AJAX de Locais e cadastro por CEP
+
+Homologa o fluxo do modal AJAX nativo Drupal Dialog para busca, seleção e cadastro de Locais a partir do formulário de Eventos no MAIN (`/painel-administrativo/eventos/adicionar`).
+
+Cobre, autenticado como administrador pelo host de Conta:
+
+- carregamento do widget de Local no formulário de Evento com botão de acionamento modal;
+- preenchimento prévio de campos do formulário pai (ex.: título do evento);
+- abertura do diálogo sobreposto via Drupal AJAX (`role="dialog"`, `.ui-dialog`);
+- etapa 1 (busca): input de pesquisa por nome e ação de "Cadastrar novo local";
+- transição para etapa 2 (cadastro) via AJAX;
+- campo de CEP posicionado como primeiro campo do endereço (`#weight = -50`);
+- validação de país fixo exclusivamente em Brasil (`BR`), sem seletor de países;
+- presença de campos de endereço (logradouro, bairro, cidade, UF);
+- verificação responsiva com capturas de tela em 1280px (desktop), 390px (mobile) e 320px (menor resolução);
+- fechamento do modal e garantia de que os dados digitados no formulário pai continuam intactos.
+
+### Execução
+
+```bash
+cd /home/piradopirata/projetos/aculta
+OUT=/home/piradopirata/aculta-suite-out/location-modal
+mkdir -p "$OUT"
+umask 077
+vendor/bin/drush user:login --uri=https://conta.aculta.toca.net.br --no-browser \
+  | tail -1 > "$OUT/login-url.txt"
+chmod 600 "$OUT/login-url.txt"
+DISPLAY=:0 SUITE_OUT="$OUT" ACULTA_LOGIN_URL_FILE="$OUT/login-url.txt" \
+  python3 tests/browser/eventos/location-modal.py
+rm -f "$OUT/login-url.txt"
+```
+
+Resultado: 5 capturas de tela (`01-modal-search-step.png`, `02-modal-create-desktop-1280.png`, `03-modal-create-mobile-390.png`, `04-modal-create-mobile-320.png`, `05-parent-form-preserved.png`) e `resultado.json` com 14/14 verificações PASS.
+
