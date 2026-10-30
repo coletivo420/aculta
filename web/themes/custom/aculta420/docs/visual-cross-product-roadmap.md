@@ -486,6 +486,14 @@ reutilizável confirmou a correção: 32/32 checks, consumer presente, alinhamen
 mobile/inline correto e zero overflow em 320/360/390/575/576/600/768/1024/1280/
 1440px. Capturas/JSON em `/home/piradopirata/suite-out/aculta-theme-author-card-892f803d5/`.
 
+Nova revalidação em 2026-10-30 executou o teste contra `/discussoes/novas` no
+Firefox ESR visível: cinco cartões reais, 35/35 checks em onze larguras,
+alinhamento `flex-start` até 575px e centralizado a partir de 576px, sem
+overflow do documento. `author-card.css` e `forum-index.css` no docroot
+`3c1691fc5` têm os mesmos blobs do HEAD auditado. Evidências em
+`/home/piradopirata/aculta-suite-out/author-card-mobile-first-20261030/`.
+O cenário é anônimo e não aprova teclado completo, zoom real ou WCAG.
+
 ### THEME-MF2 — navegação `portal-account`
 
 Migradas as regras do shell autenticado para mobile-first: sanfona e coluna única

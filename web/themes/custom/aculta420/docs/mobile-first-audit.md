@@ -471,6 +471,18 @@ flex-start a 320/360/390/575 e central a partir de 576px, e sem overflow em
 reutilizável `tests/browser/aculta-theme-mobile-first/author-card.py` registra
 consumer e breakpoint; não cobre teclado, zoom real ou WCAG completa.
 
+**Revalidação Firefox ESR visível (2026-10-30):** a rota pública real
+`/discussoes/novas` renderizou cinco cartões e passou 35/35 verificações em
+320/360/390/575/576/599/600/768/1024/1280/1440px. Não houve overflow do
+documento; o alinhamento mudou de `flex-start`/avatar 32px em 575px para
+`center`/avatar 48px em 576px, conforme o breakpoint do SDC. Os hashes dos
+arquivos `author-card.css` e `forum-index.css` no docroot `3c1691fc5` coincidem
+com os do HEAD auditado, então esses dois estilos da captura correspondem ao
+código atual da worktree. Evidências em
+`/home/piradopirata/aculta-suite-out/author-card-mobile-first-20261030/`.
+É um cenário anônimo de um consumer; não cobre ACL autenticada, teclado, zoom
+real nem WCAG completa.
+
 ### THEME-MF2 — menu responsivo do shell da Conta
 
 O layout do shell passou a usar uma coluna, navegação em sanfona e controles
