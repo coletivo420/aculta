@@ -201,6 +201,9 @@ dados, pagamento, cache, permissões ou WCAG completa.
 `navigation.py` verifica a navegação da home MAIN em Firefox ESR visível,
 incluindo o breakpoint desktop em 1100px, o espaçamento aos lados de 576px,
 abertura do menu Bootstrap e sua apresentação sem JavaScript. É somente leitura.
+O teste também acrescenta temporariamente um rótulo longo à lista no DOM e
+confere que ele quebra dentro do link em telas abaixo de 1100px, enquanto o
+menu desktop mantém a apresentação em uma linha.
 
 ```sh
 export DISPLAY=:0

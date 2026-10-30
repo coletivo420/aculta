@@ -205,6 +205,17 @@ Esta tabela não é evidência de cobertura homologada. Cada purpose ainda exige
 inventário de biblioteca anexada por controller/View/form, estados vazio/erro/
 sucesso/carregando e capturas em navegador visível.
 
+### THEME-MF2 — rótulos longos da navegação global
+
+Os links da navegação usam quebra de texto como base até 1099px e preservam
+uma linha no menu desktop a partir de 1100px. Isso evita que nomes extensos de
+áreas ou traduções empurrem o viewport horizontalmente. `navigation.py` injeta
+um rótulo longo temporário no consumer real da home MAIN e verifica a quebra,
+além dos estados Bootstrap com e sem JavaScript e dos viewports existentes.
+Stylelint e sintaxe Python foram executados; Firefox visível/Runtime ficam
+DEFERRED enquanto `DISPLAY=:0` não estiver disponível e houver sessões
+geckodriver concorrentes. O teste não homologa a navegação nos demais purposes.
+
 ### Domínios/purposes estáveis encontrados
 
 O contrato multidomínio e `DomainPurposeManager::DOMAIN_IDS` declaram dez

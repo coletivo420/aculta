@@ -772,3 +772,13 @@ restaurado em `62rem`. O harness `forum-index-visual.mjs` inclui um fixture DOM
 do consumer e verifica 575/576 e 991/992px entre as onze larguras existentes.
 Lint CSS e sintaxe JavaScript passam; Firefox/runtime ficam DEFERRED sem
 `DISPLAY=:0`. Ver `mobile-first-audit.md`; THEME-MF3 continua pendente.
+
+### THEME-MF2 — rótulos longos da navegação global
+
+Os links passam a permitir quebra natural até o breakpoint desktop de 1100px;
+no menu horizontal desktop, mantêm uma linha. `navigation.py` acrescenta um
+rótulo longo temporário ao consumer real da home MAIN e mede ajuste no link,
+além do menu Bootstrap e do fallback sem JavaScript. Lint CSS/JS e sintaxe
+Python passaram; Firefox visível/Runtime ficam DEFERRED porque `DISPLAY=:0`
+está ausente e sessões geckodriver estão ativas. O teste cobre só MAIN e não
+homologa a navegação dos outros purposes nem THEME-MF3.

@@ -88,12 +88,30 @@ try:
         driver.get(f"{BASE}/?aculta_navigation_viewport={width}")
         time.sleep(0.5)
         apply_candidate(driver)
+        driver.js("""const navbar=document.querySelector('.aculta-navbar');
+          const list=navbar?.querySelector('.navbar-nav');
+          if(list && !list.querySelector('[data-navigation-wrap-fixture]')){
+            const item=document.createElement('li');item.className='nav-item';
+            const link=document.createElement('a');link.className='nav-link';
+            link.href='#navigation-wrap-fixture';
+            link.dataset.navigationWrapFixture='true';
+            link.textContent='Programa de formação e desenvolvimento comunitário antiproibicionista';
+            item.append(link);list.append(item);
+            const menu=navbar.querySelector('#aculta-primary-menu');
+            const wasShown=menu?.classList.contains('show') ?? false;
+            menu?.classList.add('show');
+            link.dataset.measuredWhiteSpace=getComputedStyle(link).whiteSpace;
+            link.dataset.measuredFits=String(link.scrollWidth <= link.clientWidth + 1);
+            if(menu && !wasShown)menu.classList.remove('show');
+          }
+          return true;""")
         time.sleep(0.1)
         metrics = driver.js("""return (() => {
           const navbar=document.querySelector('.aculta-navbar');
           const toggle=navbar?.querySelector('.aculta-menu-toggle');
           const menu=navbar?.querySelector('#aculta-primary-menu');
           const link=menu?.querySelector('.navbar-nav .nav-link');
+          const wrapFixture=navbar?.querySelector('[data-navigation-wrap-fixture]');
           const container=navbar?.querySelector(':scope > .container');
           return {
             width:innerWidth,
@@ -106,6 +124,8 @@ try:
             columnGap:container ? getComputedStyle(container).columnGap : null,
             linkMinHeight:link ? getComputedStyle(link).minHeight : null,
             linkDisplay:link ? getComputedStyle(link).display : null,
+            wrapWhiteSpace:wrapFixture?.dataset.measuredWhiteSpace ?? null,
+            wrapFits:wrapFixture?.dataset.measuredFits === 'true',
             menuMaxHeight:menu ? getComputedStyle(menu).maxHeight : null,
             documentWidth:document.documentElement.scrollWidth,
             institutionBar:document.querySelectorAll('.aculta-institution-bar').length,
@@ -124,6 +144,8 @@ try:
             and metrics["columnGap"] == expected_gap
             and metrics["linkMinHeight"] == ("0px" if desktop else "44px")
             and metrics["linkDisplay"] == ("block" if desktop else "flex")
+            and metrics["wrapWhiteSpace"] == ("nowrap" if desktop else "normal")
+            and (desktop or metrics["wrapFits"])
             and ((metrics["menuMaxHeight"] == "none") if desktop
                  else (metrics["menuMaxHeight"] != "none"))
             and metrics["documentWidth"] <= width
