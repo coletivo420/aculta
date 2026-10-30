@@ -157,8 +157,26 @@ O smoke `tests/browser/aculta-forum/progress-visual.mjs` foi ampliado para
 injetar a folha candidata e conferir geometria, áreas, sticky, foco/teclado,
 alvos de toque, claro/escuro e overflow em 320/360/390/500/575/576/900px.
 `npm run lint:css`, `node --check`, schema SDC, Design Foundations e índice de
-status PASS. A execução Firefox e a validação do formulário real em Fórum,
-Wiki e Revista ficam DEFERRED por sessões concorrentes; MF3 não aprovado.
+status PASS. A validação Firefox e formulário real em Fórum, Wiki e Revista
+ficaram então DEFERRED por sessões concorrentes; MF3 não aprovado.
+
+#### Reteste THEME-MF2 — Firefox ESR visível (2026-10-30)
+
+No host de teste público do Fórum, o harness adicionou somente seis mensagens
+sintéticas ao DOM, sem autenticação, submissão ou gravação. A primeira execução
+reproduziu overflow a 576px ao ativar as sete trilhas sticky: os rótulos e gaps
+excediam o espaço interno. `discussion.css` agora permite encolher a barra,
+usa gaps e padding compacto entre 576–767px, preserva controles com altura de
+44px e restaura o padding amplo em 768px. O ajuste não muda DOM, lógica ou
+contrato do Portal.
+
+Firefox ESR visível com `DISCUSSION_CSS_OVERRIDE=1`: 35/35 verificações PASS em
+320/360/390/500/575/576/900px; sem overflow incremental, com áreas e sticky
+esperados, interação por Enter/setas/botões, anúncio de estado, ação Não lidas,
+contraste claro/escuro e alvo de toque de 44px nas larguras móveis medidas.
+Evidências privadas: `/home/piradopirata/aculta-suite-out/theme-mf2-discussion-progress-check3-20261030/`.
+Esta evidência cobre o consumer de Fórum com DOM sintético; Wiki, Revista,
+assistive technology e MF3 global continuam pendentes.
 
 ### THEME-MF2 — rodapé global (2026-10-29)
 
