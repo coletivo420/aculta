@@ -860,6 +860,18 @@ em `/home/piradopirata/aculta-suite-out/institution-bar-scroll-anonymous-3c1691f
 Ainda falta homologar navegação e shell autenticados, teclado/zoom/modos/AA;
 THEME-MF3 não aprovado.
 
+### Reparo dos gates de integração e rotas (2026-10-30)
+
+No HEAD local `81b275163`, os gates Drupal 11+, mapa módulo/tema, fronteira
+tema/módulo, slugs, aliases, Foundation, shell contract, SDC e Design
+Foundations passaram. O contrato visual de Eventos agora mapeia tokens
+`data-portal-ui` no tema e mantém `use-ajax`; nenhum SDC paralelo foi criado.
+Os nomes oficiais são **ACULTA STUDIO GREEN STASH** (`/studio/green-stash`) e
+**ACULTA STUDIO WE SATIVA** (`/studio/we-sativa`). IDs e owners Commerce/Wiki
+permanecem os mesmos. Unit focal 36/389; Kernel Wiki 1/69. Não houve Firefox
+neste HEAD nem homologação visual das rotas no Runtime; THEME-MF3 e OCS-F11
+seguem pendentes. Evidência detalhada em `mobile-first-audit.md`.
+
 
 ### THEME-MF2 — modal de confirmação Webform
 

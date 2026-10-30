@@ -1,25 +1,33 @@
 # Auditoria mobile-first ACULTA420 — THEME-MF0
 
 **Estado em 2026-10-30: inventário estático parcial; MF2 tem migrações incrementais abaixo, mas o gate global MF3 não foi aprovado.**
-A auditoria original foi registrada no checkout servidor `ded8a6181`. Em
-2026-10-30, a recontagem foi executada na branch atualizada
-`e1634a6eb` em `/home/piradopirata/worktrees/opencultures-f0-adm8-e8`; a
-varredura abaixo cobre os arquivos atuais do tema, mas não altera a evidência
-de runtime. Nenhuma escrita persistente foi executada no Runtime.
+A auditoria original foi registrada no checkout servidor `ded8a6181`. A
+recontagem mais recente foi executada na branch atualizada
+`81b275163` em `/home/piradopirata/worktrees/opencultures-f0-adm8-e8`; a
+varredura cobre o tema da branch, não altera a evidência de páginas servidas.
+Nenhuma escrita persistente foi executada no Runtime.
 
 ### Estado integrado dos gates (2026-10-30)
 
 Na auditoria inicial, Firefox ESR ficou `DEFERRED` porque `DISPLAY` estava
-indisponível. Em 2026-10-30 a sessão X11 foi usada para retestes focais do Fórum
-e de quatro rotas públicas Wiki; isso atualiza evidência dessas consumers, não
-homologa o tema inteiro. Os checks estáticos focais passaram (sintaxe Python,
-`git diff --check`, schema SDC e Design Foundations). A execução atual de
-`validate-module-theme-boundary.php` falha em 1/3422 verificações por classes
-de apresentação (`button`, `actions-bar`, `mb-3`, `button--primary` e
-`aculta-locations-list-page`) em `aculta_events` — arquivos fora do ownership
-visual desta microfase. O PASS histórico de 3418 verificações registrado mais
-abaixo descreve outro HEAD e não aprova o estado integrado atual. Sem corrigir
-o owner e repetir o gate, não publicar os commits locais.
+indisponível. Retestes focais de Fórum, Wiki e shell foram registrados nas
+seções abaixo, mas não homologam o tema inteiro. No HEAD `81b275163`, a
+fronteira tema/módulo passou em 3427 verificações, sem tokens de apresentação
+nem classes de design no módulo. Os validadores de slugs (393 rotas), aliases
+(35 arquivos), mapa módulo/tema (209 checks), Portal Drupal 11+ (1188 checks),
+Foundation (349 checks) e shell contract (11 checks) também passaram. Lint
+CSS/JS, SDC (54 componentes/745 checks) e Design Foundations (2445 checks)
+passaram; Unit focal: 36 testes/389 assertions; Kernel Wiki focal: 1/69.
+
+O Foundation e o shell contract foram executados por Drush no checkout servidor
+`d56343a6d`, usando os scripts e arquivos do worktree `81b275163`; são gates
+read-only e não significam que esse HEAD foi publicado ou servido. A fronteira
+foi corrigida movendo classes visuais de render arrays de Eventos para tokens
+`data-portal-ui` mapeados no tema, preservando `use-ajax`. O gate Drupal 11 foi
+ajustado para contar o hook legítimo de endereço do Portal e continuar
+reprovando hook de gateway Mercado Pago no Portal. Esta evidência não substitui
+Firefox visível, a matriz global, zoom, WCAG ou a validação de páginas servidas;
+THEME-MF3 permanece pendente.
 
 ### THEME-MF2 — marca da Institution Bar na base móvel (2026-10-30)
 
@@ -1104,3 +1112,18 @@ publicação ficou SKIP por falta de fixture própria. Resultados:
 A comparação com dashboard OpenCulturas e a cobertura das outras experiências
 Studio permanecem DEFERRED. OCS-F2 continua parcial e esta evidência não aprova
 THEME-MF3.
+
+### Gates de rotas e fronteira tema/módulo — 2026-10-30
+
+O `aculta_events` deixou de emitir classes de tema em render arrays; o tema
+restaura as classes pelo contrato `data-portal-ui`, com regressão Unit que
+confirma também a preservação de AJAX. `validate-module-theme-boundary.php`
+passa 3427 checks. A allowlist Foundation inclui o override
+`aculta-event-page.html.twig`; o gate do Portal conta o hook de endereço
+legítimo e mantém a proibição específica para hooks de pagamento. Os paths
+oficiais passaram a `/studio/green-stash` e `/studio/we-sativa`, com os nomes
+ACULTA STUDIO correspondentes; IDs internos e ownership Commerce/Wiki foram
+preservados. Unit focal: 36/389; Kernel Wiki focal: 1/69; PHPCS Drupal e
+DrupalPractice sem erros/avisos. Os commits `c9e02d281` e `81b275163` estão
+somente na branch local. Runtime visual, Firefox neste HEAD e THEME-MF3 seguem
+DEFERRED.
