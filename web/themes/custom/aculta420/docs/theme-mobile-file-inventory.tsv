@@ -79,6 +79,7 @@ estilo	web/themes/custom/aculta420/components/patterns/context-header/context-he
 template	web/themes/custom/aculta420/components/patterns/context-header/context-header.twig	—	—	—	—	—
 estilo	web/themes/custom/aculta420/components/patterns/context-tabs/context-tabs.css	1	(min-width: 23.0625rem)	0	max-width: 100% | min-height: 2.75rem | min-width: 23.0625rem)	—
 template	web/themes/custom/aculta420/components/patterns/context-tabs/context-tabs.twig	—	—	—	—	—
+template	web/themes/custom/aculta420/components/patterns/dropdown/dropdown.twig	—	—	—	—	—
 estilo	web/themes/custom/aculta420/components/patterns/figure/figure.css	0	—	0	max-width: 100% | height: auto	—
 template	web/themes/custom/aculta420/components/patterns/figure/figure.twig	—	—	—	—	—
 estilo	web/themes/custom/aculta420/components/patterns/hero/hero.css	0	—	0	max-width: 22ch | max-width: 60ch	—

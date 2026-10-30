@@ -1174,3 +1174,12 @@ preservados. Unit focal: 36/389; Kernel Wiki focal: 1/69; PHPCS Drupal e
 DrupalPractice sem erros/avisos. Os commits `c9e02d281` e `81b275163` estão
 somente na branch local. Runtime visual, Firefox neste HEAD e THEME-MF3 seguem
 DEFERRED.
+
+### THEME-MF0 — reconciliação do inventário em HEAD `e5a799816`
+
+A comparação recursiva dos CSS, Twig e JavaScript do tema encontrou um template
+Twig SDC sem linha no TSV: `components/patterns/dropdown/dropdown.twig`. A linha
+foi adicionada. Rechecagem: 206 caminhos únicos no inventário, 201 arquivos
+visuais verificados nas árvores CSS/components/templates/JS, zero caminhos
+faltantes e zero entradas obsoletas. Esta conciliação fecha apenas a cobertura
+do inventário estático consultado; não homologa toda a auditoria MF0 nem MF3.
