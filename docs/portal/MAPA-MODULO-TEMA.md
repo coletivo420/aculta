@@ -132,6 +132,7 @@ customizado próprio". A regra de cobertura do gate vale para cada nome de máqu
 | --- | --- | --- | --- |
 | `ckeditor5_plugin_pack` | Plugins adicionais do editor CKEditor 5 | Sem contraparte própria do tema; controles integram a interface do editor | Ativo |
 | `google_tag` | Integração de tags de medição | Sem contraparte visual própria do tema | Ativo |
+| `geofield` | Campo geográfico usado pelos dados de localização | Sem apresentação própria; os widgets e formatters seguem a infraestrutura de Field API/Core | Ativo |
 | `address` | Campo de endereço (perfil do cliente, checkout) | `css/components/portal-address-number.css`; `js/address-layout.js`; entrada em `aculta420.libraries.yml` | Ativo |
 | `commerce`, `commerce_cart`, `commerce_checkout`, `commerce_order`, `commerce_payment`, `commerce_price`, `commerce_store`, `commerce_number_pattern` | Loja, carrinho, checkout e pedidos | Template `commerce-product--produto-loja`; SDC `content/product-buy`, `content/product-details`, `patterns/product-tabs`; `css/components/product.css`; `css/components/portal-cart.css` e `portal-account.css` (tabela de pedidos); cartão `portal-cart-status` (Portal) | Ativo |
 | `commerce_shipping` | Envio (pane "Envio" do checkout) | Mesma apresentação do checkout (`portal-address-number.css`); sem template próprio | Ativo |
