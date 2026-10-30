@@ -1883,3 +1883,13 @@ O gate `php scripts/validate-portal-ui-docs.php` também foi executado em
 owners de módulos com alterações paralelas; não foram editados nesta rodada.
 A correção do contrato de desafio descrita acima não introduziu falhas nesse
 validador.
+
+### THEME-MF2 — regressão do carrossel editorial no HEAD local `3a245f1ff` (2026-10-30)
+
+Reexecutei `editorial-carousel-layout.py` em Firefox ESR visível depois dos commits
+locais desta rodada. Baseline (`HEAD^`) e candidata renderizaram capturas idênticas
+em 320/360/390/575/576/599/600/768/769/1024/1280/1440 px; 24/24 verificações
+passaram, sem overflow. Evidência em
+`/home/piradopirata/aculta-suite-out/editorial-carousel-retest-20261030/`.
+Como este HEAD não alterou a CSS do carrossel, a repetição é regressão do estado
+atual, não nova prova de paridade editorial nem aprovação THEME-MF3.

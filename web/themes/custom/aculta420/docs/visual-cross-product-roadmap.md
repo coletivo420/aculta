@@ -1207,3 +1207,12 @@ remota ausente, enquanto `refs/pull/299/head` ainda resolve para `2493d7535`.
 Revalidar após publicação. O validator módulo/tema segue bloqueado por classes
 visuais de Eventos; `validate-portal-ui-docs.php` segue vermelho por 16 tokens
 de Eventos/Índice e `data-portal-trigger` não documentados.
+
+### THEME-MF2 — regressão do carrossel editorial (2026-10-30)
+
+No HEAD local `3a245f1ff`, `editorial-carousel-layout.py` passou 24/24 em
+Firefox ESR visível, cobrindo 12 viewports de 320 a 1440 px. Capturas baseline e
+candidata foram idênticas e não houve overflow. É somente regressão da CSS atual;
+não é uma alteração do carrossel, uma comparação completa com OpenCulturas ou
+aprovação THEME-MF3. Evidência em
+`/home/piradopirata/aculta-suite-out/editorial-carousel-retest-20261030/`.
