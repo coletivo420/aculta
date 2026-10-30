@@ -136,7 +136,7 @@ O estado atual continua sem ticketing interno: `field_gratuito`, `field_pricing`
 - **Gratuito (proposta):** RSVP sem cobrança, nome e e-mail (D-33/D-40), sem CPF, pedido Commerce, carrinho ou Mercado Pago. Confirmar capacidade atomicamente e emitir credencial consumível uma vez no check-in. Não coletar dados reais em produção antes da revisão LGPD/base legal/aviso/retenção.
 - **Pago (proposta):** lote ligado a Evento e Data; pedido Commerce `ingresso`; Checkout Pro; somente confirmação de pagamento validada e idempotente emite o ingresso. Sem frete. Somente pedidos pagos participam do carrinho integrado e seguem a precedência D-39. Em pedidos mistos, o ingresso não exige endereço nem compõe frete.
 - **Credencial compartilhada:** RSVP e compra paga convergem em participante/credencial e check-in móvel, preservando estados financeiros distintos. QR leva apenas token opaco assinado; validar no servidor, exigir autorização contextual, gravar uma entrada e bloquear reuso. Não indexar pedido, PII ou token em `aculta_index`.
-- **Domínios e interface:** inscrições e compras iniciadas em `eventos`; escrita validada no servidor e nunca intermediada pelo purpose `account`. Administração técnica/global fica no MAIN. Gestão do organizador pertence ao ACULTA Studio Culturas planejado no purpose `eventos`.
+- **Domínios e interface:** inscrições e compras iniciadas em `eventos`; escrita validada no servidor e nunca intermediada pelo purpose `account`. Administração técnica/global fica no MAIN. Gestão do organizador pertence ao ACULTA Studio Culturas em `/culturas`; sua implementação é parcial e aguarda homologação.
 - **Gates financeiros:** venda paga bloqueada até parecer fiscal/jurídico (D-31/D-35), políticas de taxa, estorno e repasse (D-32 a D-34), LGPD e testes em sandbox. Repasse manual por evento; sem marketplace/split na primeira versão.
 - **Compatibilidade:** preservar os campos informativos atuais sem migração destrutiva. Quando houver lotes internos, definir precedência de exibição e migração antes de ativar; não inferir uma transação do booleano de gratuidade.
 
@@ -151,7 +151,7 @@ A paridade desejada é comportamental, não cópia de código: [Event Tickets of
 | Pedido e confirmação de pagamento | Drupal Commerce + gateway Mercado Pago existente; emissão só após confirmação validada, sem gateway paralelo. |
 | Cadastro e consulta de participantes | `aculta_events` é owner dos registros de participante/inscrição; autorização por evento, privacidade e retenção configurada. |
 | Validação de entrada | Check-in móvel por QR/código opaco, entrada registrada uma vez e credencial não reutilizável. |
-| Gestão editorial pelo organizador | ACULTA Studio Culturas planejado em `eventos`; configuração global e administração técnica ficam no MAIN. |
+| Gestão editorial pelo organizador | ACULTA Studio Culturas em `/culturas`, com código parcial; configuração global e administração técnica ficam no MAIN. |
 
 Não replicar contratos internos do plugin, tabelas, código, gateways ou UI WordPress. Preservar os guardrails e a licença de cada dependência; implementar nativamente em Drupal.
 
@@ -167,7 +167,7 @@ RSVP obrigatório ou opcional; limite por pessoa e prevenção de duplicidade; c
 4. Ingresso pago como item Commerce em pedido do tipo `ingresso`; Mercado Pago confirma o pagamento antes da emissão. Aplicar idempotência no webhook, retorno, emissão e reentrega.
 5. Incluir apenas os pedidos pagos de Eventos no carrinho atual, precedência LMS > Loja > Eventos > Doações. Ingresso é não-envio inclusive em carrinho misto. RSVP gratuito permanece fora do carrinho.
 6. Operações de cancelamento, estorno, liberação/retenção de capacidade, taxa e repasse manual; relatórios de ingresso/receita separados por contexto.
-7. Gestão do organizador no ACULTA Studio Culturas planejado; configuração global e auditoria no painel administrativo de Eventos no MAIN.
+7. Gestão do organizador no ACULTA Studio Culturas (`/culturas`); configuração global e auditoria no painel administrativo de Eventos no MAIN. A experiência possui implementação parcial e precisa ser homologada.
 
 ### Nova sequência de implementação
 
