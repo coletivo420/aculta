@@ -1568,7 +1568,8 @@ docroot manualmente.
 
 Gates estáticos no candidato local: SDC schema PASS (55 componentes, 759 checks),
 Design Foundations PASS (2424), Browser Validators PASS (21), CSS lint PASS,
-análise estática do shell PASS e parser Twig PASS. O validador global de
+análise estática do shell PASS, parser Twig PASS, PHP lint/PHPCS PASS e
+`PageTitleVisibilityTest` PASS (11 testes/26 assertions). O validador global de
 fronteira tema/módulo segue vermelho (1/3482): classes `messages`,
 `messages--warning`, `button--primary` e `button` em
 `aculta_events/src/Form/EventOrganizationForm.php` e
