@@ -1165,14 +1165,23 @@ OCS-F11/THEME-MF3.
 ### THEME-MF2 — CAPTCHA estreito e gate de fronteira (2026-10-30)
 
 O reteste atual encontrou o widget de largura mínima 300 px dentro de 268 px em
-Conta/320 px. No Runtime/PR HEAD `2493d7535`, o teste autenticado anonimamente em
-`/entrar` anônimo passou 2/3 checks (320 px falha; 360 px passa); a regressão do rodapé
+Conta/320 px. No Runtime/PR HEAD `2493d7535`, o teste anônimo de `/entrar`
+passou 2/3 checks (320 px falha; 360 px passa); a regressão do rodapé
 em 320 px passou 19/20 nos dez purposes, com apenas Conta falhando. A tentativa
 de CSS direto foi removida porque o validator de foundations proíbe integração
 anti-bot no tema. A entrega local subsequente adicionou ao Portal um marcador
 semântico neutro e um reflow de formulário por container query; veja a entrada
 "contrato visual neutro para widgets de verificação" em `mobile-first-audit.md`.
 A instalação servida no Runtime ainda não foi validada.
+
+Rechecagem local posterior, em Firefox ESR visível contra Apache do Runtime:
+`auth-route-runtime.py` passou 3/3 (rota + CSS candidata em 320/360 px). Com o
+marcador visual simulado, o desafio mede 300 px em viewport 320 e 308 px em
+360, com `documentWidth` igual à viewport e `scrollX=0`. O teste injeta CSS e
+simula o atributo no DOM; o hook PHP ainda não está instalado no Runtime. A
+captura de 320 px foi inspecionada. A falha da instalação corrente permanece
+aberta até teste integrado, server-side e sem JavaScript; detalhes em
+`mobile-first-audit.md`.
 
 O validator de fronteira tema/módulo continua vermelho por classes visuais nos
 dois formulários do módulo `aculta_events` (resultado atualizado: 1/3486).
@@ -1184,7 +1193,8 @@ este reteste não inicia OCS-A1–A4.
 
 Firefox visível mediu os dez purposes nos nove viewports exigidos: todos os 90
 H1 estão visíveis e os dois headers aparecem uma vez em cada tela. Resultado
-total 179/180; a única falha é o overflow `/conta` 320 px pelo widget Turnstile.
+total 179/180; a única falha é o overflow em `/entrar` do purpose Conta a 320 px
+(`documentWidth=328`, desafio de 300 px).
 A checagem confirma que o defeito anterior de título ausente em Apoio/Cursos
 não está no código atualmente servido. Evidências e escopo em
 `mobile-first-audit.md`; isto não testa estados internos nem aprova THEME-MF3.

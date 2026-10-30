@@ -1858,10 +1858,29 @@ Reteste posterior no checkout servido `2493d7535`, confirmado por Drush em
 (320/360/390/599/600/768/1024/1280/1440). Todos os 90 H1 estavam visíveis em
 `main#main-content`; os 90 pares Institution Bar/Domain Header estavam
 presentes uma vez. O total foi 179/180 checks: a única falha de shell/overflow
-segue Conta a 320 px (`documentWidth=328`), explicada pelo Turnstile. Evidência:
+segue Conta a 320 px (`documentWidth=328`), na rota de entrada com desafio de
+300 px. Evidência:
 `/home/piradopirata/aculta-suite-out/purpose-headings-pr-2493-full-20261030/results.json`.
 O achado antigo de H1 ausente em Apoio/Cursos foi resolvido no código servido;
 este teste valida headings e shell, não estados internos nem aprova THEME-MF3.
+
+### THEME-MF2 — rechecagem do formulário de entrada estreito (2026-10-30)
+
+Reexecutei `auth-route-runtime.py` em Firefox ESR visível contra o Apache local
+do Runtime, em 320/360 px, com folhas candidatas injetadas apenas na sessão. O
+markup anônimo real de `/entrar` foi confirmado; depois de acrescentar ao DOM o
+marcador `data-portal-ui="challenge-frame"` (simulação explícita do hook PHP),
+as duas larguras passaram junto com a checagem de rota: **3/3**. A 320 px, o
+widget mede 300 px, o documento fica em 320 px e `scrollX=0`; a 360 px o widget
+se ajusta a 308 px e o documento fica em 360 px. Capturas foram gravadas em
+`/home/piradopirata/aculta-suite-out/auth-overflow-recheck-20261030/`; a captura
+de 320 px foi inspecionada.
+
+O resultado confirma a CSS candidata com o contrato simulado; não valida o hook
+do Portal no Runtime nem a CSS servida sem override. Portanto a falha anterior
+de 320 px continua aberta na instalação corrente até que a branch seja servida,
+o cache reconstruído e a mesma rota seja retestada com o marcador produzido
+server-side, inclusive sem JavaScript. Não aprova THEME-MF3.
 
 ### Registro histórico — gates de fronteira e catálogo em Eventos/Índice
 
