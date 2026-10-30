@@ -1,6 +1,6 @@
 ## Incremento IDX-LOC - Events e Locais (2026-10-30)
 
-[Plano LOC](../architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), seção 6, é o contrato de implementação deste incremento. A suíte `EventContentIndexProviderKernelTest` passou historicamente no ambiente local com banco `SIMPLETEST_DB` (6 testes, 141 asserções); esses resultados não foram repetidos no HEAD `63116d1` durante esta revisão. Nenhum rebuild ou escrita no Runtime foi executado.
+[Plano LOC](../architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), seção 6, é o contrato de implementação deste incremento. A suíte `EventContentIndexProviderKernelTest` passou historicamente no ambiente local com banco `SIMPLETEST_DB` (6 testes, 141 asserções); esses resultados não foram repetidos no HEAD `5a11ff4` durante esta revisão. Nenhum rebuild ou escrita no Runtime foi executado.
 
 - [x] IDX-LOC-A / LOC-01/04: providers Events/Local v2 com DI e sem acesso estático a \Drupal, indexabilidade pública restrita a `field_status === 'publicado'`, purpose `'eventos'` e checagem de acesso.
 - [x] IDX-LOC-B / LOC-04: URLs canônicas via DomainPurposeManager (`toUrl('canonical')` e `toCanonicalUrl()`) e allowlist mínima sem endereço/contato privado; versionamento e fingerprint consistentes.
