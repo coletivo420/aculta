@@ -183,3 +183,72 @@ Consulte [ADR-033](../decisions/ADR-033-endereco-busca-e-locais.md). Este aditiv
 “Modal” neste plano é um popup Drupal sobre a tela de Activity, não conteúdo inline nem página inteira. O fluxo terá popup de pesquisa/seleção de Local e, sob ação explícita, popup de cadastro. O retorno da seleção atualiza a referência no formulário pai por AJAX, mantendo os valores preenchidos.
 
 A entidade `aculta_event_location` e seu ciclo de vida são de `aculta_events`. Activity/evento referencia Local. `aculta_maps` consome os Locais autorizados por serviços/contratos estáveis para renderizar mapas, geocodificar endereço salvo e criar links. Não duplicar entidade, CRUD, endereço ou catálogo em Maps. Permissões, status, precisão e cache são verificados na fronteira de cada módulo. Ver [ADR-033](../decisions/ADR-033-endereco-busca-e-locais.md).
+
+## Fase 1 — Fechamento do contrato e inventário de endereços e Locais (2026-10-30)
+
+### 1. Contrato arquitetural fechado
+1. **Titularidade única do endereço:** o endereço completo pertence exclusivamente ao cadastro da entidade `aculta_event_location`. Events e Activity não mantêm campos próprios de endereço, mantendo unicamente a referência de entidade (`field_local` em `aculta_event_date` e `field_event_location` em `node:activity`) ao Local selecionado.
+2. **Eliminação dos campos avulsos no editor:** no cadastro e edição de Events e Activity, CEP, logradouro, número, complemento, bairro, cidade, UF, país e nome do local não devem continuar como campos editáveis independentes no formulário do evento/atividade.
+3. **Fronteira Events ↔ Maps:** `aculta_events` é o único proprietário da entidade Local, seu cadastro, permissões, ciclo editorial e relações. `aculta_maps` é consumidor puro via serviços/contratos neutros (`MapRenderer`, `RouteLinkBuilder`, `GeocodingService`) e consome apenas dados autorizados/minimizados. Maps nunca cria catálogo, formulário, tabela ou entidade paralela de Local.
+4. **Popup Drupal / AJAX:** a seleção e o cadastro de Local ocorrem em popups sobrepostos pelo sistema de diálogos do Drupal (`Drupal.dialog` / AJAX), preservando o contexto e os dados do formulário pai. É proibido o uso de formulário inline, expansão na mesma página ou tela cheia.
+5. **Ordem dos campos com CEP primeiro:** em todo formulário de endereço completo (incluindo o cadastro do Local), o CEP é obrigatoriamente o primeiro campo visível (`#weight = -50`), com país fixo em Brasil (`BR`), sem seletor de país. O autopreenchimento é fornecido por `aculta_portal_cep`. Busca por logradouro permanece como capacidade futura restrita a Events/Maps.
+6. **Persistência explícita:** o Local só é persistido após confirmação deliberada do usuário no modal. A referência selecionada e os valores do formulário pai sobrevivem a rebuilds AJAX e erros de validação.
+7. **Privacidade e Index:** `aculta_index` indexa somente títulos, URLs canônicas e relações públicas (`event_location`). Endereço exato, CEP, coordenadas privadas ou Locais não publicados nunca são projetados no índice transversal.
+
+### 2. Tabela de mapeamento de campos legados (Activity → EventLocation)
+
+| Campo legado (`node:activity`) | Tipo / Armazenamento legado | Campo de destino (`aculta_event_location`) | Tipo de destino | Status do mapeamento | Regra de migração / Preservação |
+|---|---|---|---|---|---|
+| `field_place_name` | `string` (255) | `title` | `string` (255) | Confirmado | Mapeia para o nome do Local. Se Local correspondente já existir pelo mesmo nome e endereço, reutiliza; senão, cria novo Local. |
+| `field_event_street` | `string` (255) | `field_endereco.address_line1` | `address` | Confirmado | Rua e número são normalizados pelo `StreetNumberField::split()` / `join()`. |
+| `field_event_postal` | `string` (255) | `field_endereco.postal_code` | `address` | Confirmado | Normalizado para 8 dígitos sem máscara antes de gravar. |
+| `field_event_city` | `string` (255) | `field_endereco.locality` | `address` | Confirmado | Mapeia para a cidade da subdivisão BR do Drupal Address. |
+| `field_event_region` | `string` (255) | `field_endereco.administrative_area` | `address` | Confirmado | Mapeia para a sigla UF de 2 letras (ex.: SP, RJ). |
+| `field_event_country` | `string` (255) | `field_endereco.country_code` | `address` | Confirmado | Fixo em `BR`. Valores vazios ou divergentes são normalizados para `BR`. |
+| *(sem campo legado de bairro)* | — | `field_endereco.dependent_locality` | `address` | Sem correspondência | Preenchido via consulta ao CEP durante a migração assistida quando disponível. |
+| *(sem campo legado de precisão)* | — | `field_precisao` | `list_string` | Confirmado | Assume default `'exato'` para registros migrados. |
+| *(sem campo legado de coordenadas)* | — | `field_coordenadas` | `geofield` | Confirmado | Geocodificado no salvamento via `GeocodingService` quando houver endereço válido. |
+| *(sem campo legado de status)* | — | `field_status` | `list_string` | Confirmado | Mapeia como `'publicado'` se a atividade estiver publicada (`status = 1`); senão `'rascunho'`. |
+| `field_event_location` | `entity_reference` | `id` (chave primária) | ID numérico | Confirmado | Campo da Activity que armazena a referência direta ao Local criado ou reutilizado. |
+
+### 3. Estratégia de migração segura e reversível
+
+1. **Fase 1 (Atual - Não executiva):** inventário fechado e mapeamento formalizado. Nenhuma tabela alterada, nenhum campo removido e nenhuma migração executada nesta fase.
+2. **Fase 2 (Preparação):**
+   - Criação de comando Drush e update hook idempotente dedicado (`aculta_events_update_migrate_activity_locations`).
+   - Verificação e registro prévio de contagens e tabela de hash de snapshot no banco Runtime.
+3. **Fase 3 (Ensaio em lote / Dry-run):**
+   - Execução com flag `--dry-run` para identificar potenciais duplicidades (ex.: duas atividades com mesmo nome de local e mesmo CEP).
+   - Registros sem CEP ou com dados incompletos são agrupados em log auditável para revisão antes de persistência.
+4. **Fase 4 (Execução reversível):**
+   - Criação das entidades `aculta_event_location` correspondentes.
+   - Atribuição do ID do Local a `node.field_event_location`.
+   - Preservação temporária dos campos textuais antigos (`nodePresave` mantém os valores preenchidos para não quebrar integrações legadas).
+5. **Fase 5 (Rollback garantido):**
+   - Script de rollback capaz de desfazer o vínculo de `field_event_location` e remover exclusivamente as entidades de Local geradas pelo lote de migração (rastreadas por metadado de proveniência), restaurando o estado exato anterior.
+
+### 4. Critérios de aceite verificáveis
+
+1. **Seleção de Local:**
+   - O formulário de Activity exibe o widget modal de seleção de Local (`aculta_event_location_modal`).
+   - A pesquisa por nome retorna apenas Locais que a conta atual tem permissão de leitura (`access('view')`).
+   - A seleção de um Local atualiza a referência na Activity via AJAX sem recarregar a página e sem perder nenhum dado já digitado nos demais campos da Activity.
+2. **Popup de cadastro por CEP:**
+   - O popup de cadastro abre em diálogo Drupal sobreposto e tem o CEP como **primeiro campo** (`#weight = -50`).
+   - País é fixo em Brasil (`BR`), sem opção ou seletor de país.
+   - Digitar um CEP válido de 8 dígitos preenche automaticamente rua, bairro, cidade e estado.
+   - Todos os campos permanecem editáveis para ajustes manuais ou complemento em CEPs gerais.
+   - A confirmação explícita no botão de salvar cria a entidade `aculta_event_location` e devolve seu ID ao formulário pai.
+3. **Acessibilidade e Usabilidade:**
+   - O popup retém o foco de navegação por teclado, suporta fechamento por `Escape` e botão de fechar, e retorna o foco ao elemento acionador do formulário pai.
+   - Diálogo possui atributos ARIA adequados (`role="dialog"`, `aria-modal="true"`, `aria-labelledby`).
+   - Anúncios de status de CEP utilizam `role="status"` ou `aria-live="polite"`.
+4. **Permissões e Segurança:**
+   - Usuário sem permissão de criar Local não visualiza a opção de cadastrar no modal.
+   - Submissão valida autorização no servidor (rejeitando IDs forjados ou não autorizados).
+5. **Integração Events ↔ Maps:**
+   - Locais com coordenadas válidas aparecem no mapa `/mapa` respeitando a precisão (`exato` vs `aproximado`).
+   - Coordenadas aproximadas são arredondadas para 2 casas decimais no `MapRenderer`, sem vazar rua ou CEP de locais privados.
+6. **Integração com `aculta_index`:**
+   - Locais publicados geram projeção com título e URL canônica.
+   - Endereço físico exato, CEP e contatos privados permanecem estritamente fora do índice.

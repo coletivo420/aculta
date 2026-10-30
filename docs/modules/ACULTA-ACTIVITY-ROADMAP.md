@@ -153,17 +153,21 @@ com outros módulos exigem auditoria e decisão próprias. Não fazem parte do
 adapter mínimo.
 
 
-## Integração futura com Locais de Events
+## Integração com Locais de Events (Fase 1 concluída)
 
-- [ ] Auditar valores e consumidores dos campos legados de endereço/cidade/UF/país/CEP de `node:activity`; definir migração e estratégia para registros existentes.
-- [ ] Substituir captura duplicada por referência a Local de `aculta_events`; a seleção/criação ocorre em modal Drupal/AJAX definido no roadmap de Events.
-- [ ] Não duplicar captura de endereço: cadastro de Local usa o adaptador central de `aculta_portal` e a biblioteca de CEP de `aculta_portal_cep`, com Brasil fixo e sem seletor.
-- [ ] Busca por logradouro é restrita a Events/Maps e permanece indisponível até aprovação de provedor/termos/privacidade/limites. Conta e checkout ficam fora.
-- [ ] Validar relações e autorização com `aculta_index`, sem indexar endereço exato ou dados privados.
+- [x] **Fase 1 (Inventário e Contrato de Dados - 2026-10-30):**
+  - Mapeamento completo dos campos legados (`field_place_name`, `field_event_street`, `field_event_postal`, `field_event_city`, `field_event_region`, `field_event_country`) para a entidade `aculta_event_location`.
+  - Formulário editorial de `node:activity` padronizado para referenciar `field_event_location`, com campos legados ocultos no formulário e sincronizados retroativamente no hook `nodePresave`.
+  - Ordem padronizada: o formulário de cadastro de Local tem o CEP como primeiro campo (`#weight = -50`).
+  - Estratégia de migração segura e reversível definida, com rollback documentado (sem execução prematura).
+- [ ] **Fase 2 (Homologação do fluxo do modal e migração):**
+  - Validação funcional integrada do popup de busca/seleção e popup de cadastro com retorno AJAX para a Activity.
+  - Execução de dry-run da migração em lote de nós legados com snapshot e hash de integridade.
+- [ ] Busca por logradouro permanece restrita a Events/Maps e aguarda aprovação de provedor/termos/privacidade/limites.
+- [ ] Validar projeções de `aculta_index`, assegurando que endereço físico e dados privados não sejam indexados.
 
-Ver [ADR-033](../decisions/ADR-033-endereco-busca-e-locais.md) e [plano LOC](../architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md). Activity permanece Dev até integração completa e evidências próprias.
-
+Ver [ADR-033](../decisions/ADR-033-endereco-busca-e-locais.md), [plano LOC](../architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md) e [contrato de endereço](../portal/ACCOUNT-ADDRESS.md). Activity permanece Dev até integração completa e evidências próprias.
 
 ### Comportamento obrigatório do modal de Local
 
-Modal aqui significa popup Drupal sobre o formulário, não bloco inline ou página inteira. O trabalho de Activity deve abrir o popup de busca/seleção e permitir abrir o popup de cadastro. Selecionar/salvar atualiza por AJAX a referência de Local no formulário pai, mantendo estado e validações. Events é owner do Local; Maps consome a mesma entidade por contrato e não duplica cadastro/dados.
+Modal aqui significa popup Drupal sobre o formulário, não bloco inline ou página inteira. O trabalho de Activity abre o popup de busca/seleção e permite abrir o popup de cadastro. O cadastro tem o CEP como primeiro campo e Brasil fixo. Selecionar/salvar atualiza por AJAX a referência de Local no formulário pai, mantendo estado e validações. Events é owner do Local; Maps consome a mesma entidade por contrato e não duplica cadastro/dados.

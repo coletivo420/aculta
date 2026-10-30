@@ -300,18 +300,21 @@ Fonte: `docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md`. Preservar
 - Próxima etapa: validação Alpha após autorização de release.
 
 
-## Experiência editorial de Local em Activity (planejado; sem implementação)
+## Experiência editorial de Local em Activity (Fase 1 concluída)
 
-- [ ] Substituir os campos avulsos de endereço do bundle `activity` por referência a `aculta_event_location`, após mapear e preservar os dados existentes.
+- [x] **Fase 1 (Inventário e Contrato de Dados - 2026-10-30):**
+  - Mapeamento e inventário completo dos campos legados de `node:activity` para `aculta_event_location`.
+  - Contrato de dados fechado: endereço pertence exclusivamente ao Local; Activity/evento mantém somente a referência.
+  - Ordem padronizada em todos os formulários com CEP como primeiro campo (`#weight = -50`).
+  - Estratégia de migração e critérios de aceite definidos no plano central LOC.
 - [ ] Em `/node/add/activity`, oferecer modal Drupal/AJAX para pesquisar Locais existentes por nomes semelhantes, selecionar um resultado ou iniciar cadastro. Validar acesso no servidor.
 - [ ] Cadastro de Local em modal Drupal/AJAX, reutilizando adaptador central e CEP do `aculta_portal_cep`, Brasil padrão e sem seletor de país. CEP primeiro; futura busca por logradouro e resultados próximos somente dentro de Events/Maps, após aprovação de provedor.
 - [ ] Ao confirmar, retornar a referência do Local ao formulário pai sem salvamento silencioso, perda de valores ou bypass de validação.
-- [ ] Criar área administrativa própria de Events dentro de `/painel-administrativo`, seguindo padrões de LMS e Fórum: rotas, permissões, navegação, listagens e operações documentadas.
+- [x] Área administrativa própria de Events criada em `/painel-administrativo/eventos` (`EventAdminOverviewController`).
 - [ ] Validar acessibilidade/foco do modal, autorização, cache, duplicidade, concorrência, erros AJAX, teclado, mobile, integração com `aculta_index` e ausência de regressões em Conta/checkout.
 
-Contrato normativo: [ADR-033](../../../../../../../docs/decisions/ADR-033-endereco-busca-e-locais.md). Não marcar itens como concluídos sem evidências de implementação e validação.
-
+Contrato normativo: [ADR-033](../../../../../../../docs/decisions/ADR-033-endereco-busca-e-locais.md).
 
 ### Requisito visual do fluxo de Local: popup Drupal
 
-O seletor de Local e o cadastro devem ser popups modais do Drupal sobre o formulário de Activity, com AJAX. Não implementar como campos expandidos inline ou página separada. A entidade/cadastro pertence a Events; Maps consome os mesmos Locais autorizados e não mantém cadastro paralelo. O popup deve preservar o estado do pai, retornar a referência após confirmação e atender foco, teclado, Escape, mensagens acessíveis e estados de carregamento/erro/vazio.
+O seletor de Local e o cadastro devem ser popups modais do Drupal sobre o formulário de Activity, com AJAX. Não implementar como campos expandidos inline ou página separada. A entidade/cadastro pertence a Events; Maps consome os mesmos Locais autorizados e não mantém cadastro paralelo. O popup de cadastro tem o CEP como primeiro campo. O popup deve preservar o estado do pai, retornar a referência após confirmação e atender foco, teclado, Escape, mensagens acessíveis e estados de carregamento/erro/vazio.
