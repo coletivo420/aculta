@@ -7,7 +7,7 @@
 - **Gratuito:** RSVP sem cobrança, nome/e-mail (D-33/D-40), sem CPF, Commerce order, carrinho ou gateway; valida capacidade e emite credencial única. Não coletar em produção antes de base legal, aviso, retenção e revisão LGPD.
 - **Pago:** lote associado ao Evento/Data, order type `ingresso` e item identificável, checkout Mercado Pago; emitir somente após pagamento confirmado/idempotente. Sem frete. Só pedido pago de Eventos entra no carrinho integrado.
 - **Credencial:** trilha gratuita e paga converge na emissão e check-in móvel, mas mantém estados financeiros separados. QR contém token opaco, validado no servidor e sem PII; uma entrada confirmada não pode ser reutilizada.
-- **Domínios:** escrita de inscrição/compra no purpose `eventos`; nunca fazer POST por `account`. Administração técnica/global no MAIN. Gestão do organizador em ACULTA Studio Culturas, experiência planejada no purpose `eventos`.
+- **Domínios:** escrita de inscrição/compra no purpose `eventos`; nunca fazer POST por `account`. Administração técnica/global no MAIN. Gestão do organizador em ACULTA Studio Culturas (`/culturas`), cuja implementação está parcial e ainda requer homologação.
 - **Financeiro:** taxa, estorno e repasse seguem D-31 a D-34; repasse manual, sem split/marketplace inicialmente. Venda paga bloqueada por parecer fiscal/jurídico (D-35), LGPD e homologação sandbox.
 - **Compatibilidade:** preservar `field_gratuito`, `field_pricing`, `field_pricing_info` e `field_ticketing`; definir fonte/precedência e migração antes de ativar lotes internos.
 - **Interpretação proposta à ADR-032/D-39:** somente pedidos pagos integram o carrinho. RSVP gratuito não é pedido e fica fora do carrinho. Requer revisão antes de codificar.
