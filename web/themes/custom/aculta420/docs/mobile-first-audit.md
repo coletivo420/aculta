@@ -852,6 +852,11 @@ envia o formulário e não cobre tabelas, teclado completo, A/B, zoom real ou
 WCAG. Após publicar e reconstruir caches, a repetição sem override também passou
 33/33, confirmando a folha CSS agregada no Runtime. Evidência em
 `/home/piradopirata/suite-out/aculta-account-shell-8768825cf/`.
+Reteste em 2026-10-30 no host de desenvolvimento, com UID sintético 5 e a folha
+candidata atual injetada: 33/33 novamente em 320–1440px, sem overflow e com
+13 seções equivalentes entre menu desktop e sanfona. As capturas 320/768/1440px
+foram inspecionadas. Não houve submissão nem gravação de preferências. Evidência:
+`/home/piradopirata/aculta-suite-out/account-shell-20261030-final/`.
 
 ### THEME-MF0 — purpose SUPPORT e SDC `donation-quick` (2026-10-29)
 

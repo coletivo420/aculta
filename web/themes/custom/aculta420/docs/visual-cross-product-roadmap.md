@@ -715,6 +715,17 @@ estão registrados em `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`. A implem
 da THEME-MF2 e não homologa o gate THEME-MF3. Detalhes e limites em
 `mobile-first-audit.md`.
 
+### THEME-MF2 — menu responsivo da Conta autenticada
+
+Firefox ESR visível abriu `/configuracoes` com a conta sintética UID 5 e CSS
+candidata do tema, em 320/360/390/599/600/767/768/1024/1280/1440px. Passaram
+33/33 verificações: a sanfona substitui o menu desktop abaixo de 768px, as 13
+seções permanecem equivalentes, a Institution Bar é única e não há overflow.
+As capturas 320/768/1440px foram inspecionadas. O formulário não foi submetido;
+teclado completo, zoom, ACL entre contas e WCAG 2.2 AA seguem fora desta rodada.
+Evidência: `/home/piradopirata/aculta-suite-out/account-shell-20261030-final/`.
+Esta validação focal não aprova THEME-MF3.
+
 ### THEME-MF2 — Perfil público (2026-10-29)
 
 `public-profile.css` passa a usar o perfil empilhado como base e recupera o
