@@ -27,7 +27,7 @@
 | **OCS-F7** | WE Sativa | autoria e moderação preservadas |
 | **OCS-F8** | **Área Green Stash integrada ao Studio**, com UX operacional de comércio compatível com o Studio, navegação contextual mobile-first e permissões Commerce | sem shell ou plataforma comercial paralelos; telas somente para funcionalidades existentes |
 | **OCS-F9** | Conta e Perfil distintos | S-R4/S-R5, `/conta-legada` |
-| **OCS-F10** | Todas as áreas restantes encontradas nos registros e consumidores reais | paridade por área |
+| **OCS-F10** | ACULTA Studio Culturas e demais áreas encontradas no inventário F0 | paridade própria por experiência; Culturas depende dos contratos de Events, Index e Organização |
 | **OCS-F11** | Gate Fidelity de TODO o Studio, **dependente de THEME-MF3** | sem regressões em outros purposes; só após aprovação iniciar OCS-A1-A4 |
 | **OCS-A1-A4** | Identidade própria Aculta Studio reaproveitando a mesma base SDC; Green Stash segue integrado, fundação mobile-first global permanece | comparação Fidelity/Identity + regressão de todo tema |
 
@@ -52,7 +52,8 @@ Código verificado historicamente: `aculta_commerce/src/Experience/GreenStashExp
 - **OCS-F7:** WE Sativa e autoria Wiki.
 - **OCS-F8:** **Green Stash integrado ao Studio** e operações de loja realmente disponíveis. Aplicar os mesmos padrões visuais/SDC e navegação contextual do Studio às funcionalidades comerciais existentes. Auditar produtos/pedidos/estoque/envios/promoções/clientes/relatórios/configurações contra seus marcos GS: **não renderizar operações planejadas como prontas**, não incluir links administrativos de edição, não contornar grants nem duplicar checkout.
 - **OCS-F9:** Conta privada e Perfil público distintos; S-R4/S-R5 e `/conta-legada`.
-- **OCS-F10:** demais experiências do registry e opções ausentes, com estados honestos.
+- **OCS-F10:** **ACULTA Studio Culturas** e demais experiências do registry e opções ausentes, com estados honestos. Para Culturas, comparar os padrões de gestão do OpenCulturas e compor uma dashboard de organizador sobre `aculta_events`: Eventos como fonte principal, Datas dentro do Evento, Locais reutilizáveis com seleção/criação contextual, e descoberta pelo `aculta_index`. Não portar Paragraphs, Views, Search API/Facets, papéis ou armazenamento do upstream.
+- **Culturas - entregas de fidelidade:** entrada em `eventos.aculta.*/culturas`; lista limitada aos Eventos editáveis pela conta; ações de criar/editar/publicar separadas e autorizadas no servidor; edição de Datas no contexto do Evento; seleção de Local existente e criação contextual; estados vazios, rascunho, publicado, cancelado e sem permissão; links públicos canônicos de Evento/Local. O painel administrativo permanece no MAIN. A relação de organizador aponta hoje para conta `user`; perfil público/organização só vira destino de busca após contrato seguro de identidade e URL canônica no Index.
 - **OCS-F11:** gate de fidelidade transversal, incluindo testes de Green Stash autorizados/não autorizados, ACL loja/produtos/pedidos, mobile 320 px, sem JS, cache por usuário e isolamento de purpose.
 
 **OCS-F11 substitui OCS-F10 como gate obrigatório antes de OCS-A1.** As fases OCS-A1-A4 abrangem expressamente **Green Stash**, além de todas as experiências já listadas. Qualquer menção histórica de F7 ou F10 como gate final está revogada. Nova experiência descoberta não deve depender de o usuário nomeá-la: inventário dinâmico obrigatório em F0.
@@ -67,7 +68,7 @@ A frente visual não deve alterar `GreenStashAccessPolicy`, `GreenStashExperienc
 
 ### Catálogo dinâmico obrigatório
 
-F0 deve inventariar, pelo código em HEAD e não por uma lista fechada, todo registro de `StudioTab`, providers/registry, rotas, presenters, permissões, states e consumers do Studio. Cobertura inicial conhecida: **hub Studio, Marley, GanjaLab, WE Sativa, Conta privada e Perfil público**. Adicionar as demais experiências que forem descobertas, inclusive as opcionais; classificar cada uma como presente/condicional/planejada e não criar interface falsa para a última categoria.
+F0 deve inventariar, pelo código em HEAD e não por uma lista fechada, todo registro de `StudioTab`, providers/registry, rotas, presenters, permissões, states e consumers do Studio. Cobertura inicial conhecida: **hub Studio, Marley, GanjaLab, WE Sativa, Green Stash integrado, ACULTA Studio Culturas, Conta privada e Perfil público**. Adicionar as demais experiências que forem descobertas, inclusive as opcionais; classificar cada uma como presente/condicional/planejada e não criar interface falsa para a última categoria.
 
 A navegação deve **derivar da disponibilidade/autorização do registry existente**, nunca de menu hardcoded com Marley/GanjaLab/WE Sativa. Uma experiência ausente não aparece; entrada permitida e link canônico são calculados pelo provider do módulo dono. Não transferir para o Studio a propriedade dos cursos, matrículas, Wiki, revisão, publicação, loja, notificações ou dados privados. GanjaLab segue o ACL LMS, WE Sativa segue o ACL Wiki e Marley segue contratos editoriais. **Conta, Perfil público e organização nunca são sinônimos.**
 
@@ -85,14 +86,24 @@ A navegação deve **derivar da disponibilidade/autorização do registry existe
 | **OCS-F7** | WE Sativa: autoria Wiki, verbetes, revisão e acompanhamento realmente disponíveis | ACL de autoria versus moderação, sem confundir GanjaLab e Wiki |
 | **OCS-F8** | Green Stash como área comercial integrada ao Studio, com UX dos recursos realmente disponíveis | SDCs e navegação contextual compartilhados; sem shell/produtos paralelos, sem fluxo Commerce administrativo para operadores |
 | **OCS-F9** | Conta privada e Perfil público como experiências separadas | S-R4/S-R5, `/conta-legada`, foto e privacidade A/B, sem confundir entidades |
-| **OCS-F10** | Outras experiências encontradas em F0, com fallback e ausência de módulo | matriz de paridade fechada para cada provider real; nenhuma aba inventada |
+| **OCS-F10** | ACULTA Studio Culturas e outras experiências encontradas em F0, com fallback e ausência de módulo | matriz de paridade fechada por provider real; Culturas integrada ao owner Events e sem aba fictícia |
 | **OCS-F11** | Gate transversal de fidelidade, screenshots e testes completos, dependente de THEME-MF3 | aprovação antes de começar OCS-A1; nenhum PASS sem execução real |
 
 **OCS-F11 é o gate de entrada da Etapa 2.** As fases OCS-A1 a OCS-A4 continuam iguais em propósito, mas sua aplicação e regressão devem abranger **todas as experiências identificadas no F0**, inclusive Green Stash integrado, e todos os purposes afetados pela fundação mobile-first.
 
+
+
+### Recorte de produto para ACULTA Studio Culturas (2026-10-30)
+
+A leitura do OpenCulturas é referência de jornada editorial e descoberta, não de arquitetura a portar. O Studio Culturas deve funcionar como camada de trabalho sobre os contratos existentes de `aculta_events`, `aculta_calendar`, `aculta_maps`, `aculta_user` e `aculta_index`. O modelo ACULTA continua Evento > Data > Local; Data não ganha catálogo/entidade independente e Local permanece reutilizável. O submódulo `aculta_studio` não passa a ser owner de conteúdo.
+
+**Estado no HEAD desta revisão:** a rota `/culturas` no purpose `eventos` e um dashboard básico de Eventos estão no código. Isso é implementação parcial, não aceite da Suite. Faltam comprovação de fluxo completo e revisão visual no Runtime, cobertura de todas as capacidades organizadoras, UX coesa para Datas e Locais, validação dos limites de domínio e a identidade pública pesquisável do Organizador. `/studio` e `/studio/*` não são destinos para novas implementações.
+
+**Critérios de paridade específicos:** (1) workspace de organizador com lista filtrada por acesso e estados claros; (2) criação e edição de Eventos pelas rotas/formulários do owner; (3) Datas administradas sob o Evento; (4) escolha/reutilização e criação contextual de Local; (5) links públicos de Evento e Local autorizados; (6) apresentação de Organizador apenas por Perfil/Organização com autorização e URL canônica; (7) dashboard, formulários, vazios, cache e mensagens funcionais em mobile-first. Cada item exige teste de acesso e evidência visual; sem simular funções indisponíveis.
+
 ### Matriz de aceite por experiência
 
-Para cada experiência inventariada exigir: provider e módulos donos, rota canônica, condição de disponibilidade, ACL para usuário anônimo/autenticado/editor/matriculado/autor/revisor quando aplicável, library CSS carregada, SDC/consumer, screenshots desktop/mobile/light/dark, teclado/no-JS, cache, estados vazios e limites de acesso cruzado. Para uma experiência indisponível no ambiente, marcar `DEFERRED` com motivo e evidência, não `PASS`. Um provider planejado sem código executável fica `PLANEJADO` e não bloqueia visual de funcionalidades existentes, mas não será simulado.
+Para cada experiência inventariada exigir: provider e módulos donos, rota canônica, condição de disponibilidade, ACL para usuário anônimo/autenticado/editor/matriculado/autor/revisor quando aplicável, library CSS carregada, SDC/consumer, screenshots desktop/mobile/light/dark, teclado/no-JS, cache, estados vazios e limites de acesso cruzado. Em Culturas, cobrir contas organizadoras A/B, usuário sem vínculo, administrador, eventos de LMS, Local público/privado/aproximado, operação em domínio incorreto, Datas e vínculos; não exibir dados ou ações sem autorização. Para uma experiência indisponível no ambiente, marcar `DEFERRED` com motivo e evidência, não `PASS`. Um provider planejado sem código executável fica `PLANEJADO` e não bloqueia visual de funcionalidades existentes, mas não será simulado.
 
 ### Protocolo de atualização documental
 
