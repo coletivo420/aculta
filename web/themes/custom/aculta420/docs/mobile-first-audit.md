@@ -106,8 +106,15 @@ não mudam.
 somente no DOM mais categorias reais em 320/360/390/575/576/600/767/768/1024/
 1280/1440px. `search-visual.mjs` injeta a mesma folha e mede a busca real nas
 fronteiras 575/576 e 991/992, além das larguras de regressão. Stylelint e
-sintaxe JS PASS; Firefox/runtime DEFERRED por sessões concorrentes. A linha
-sintética não substitui a inspeção de tópico real; MF3 permanece pendente.
+sintaxe JS PASS. O Firefox ESR público da busca passou 38/38 verificações em
+320/360/390/575/576/600/767/768/991/992/1024/1280px; light/dark em 390/1024,
+contraste do botão acima de 12:1 e CSS candidata sem overflow. A suíte detectou
+que o media query de 576px sobrescrevia a grade de 3 colunas de 992px por ordem
+na cascata; os blocos foram reordenados e o reteste passou. Capturas e
+`results.json`: `/home/piradopirata/aculta-suite-out/theme-mf2-forum-search-final-20261030/`.
+A linha sintética do índice ainda não substitui a inspeção de tópico real; Wiki,
+Fórum e demais purposes não estão homologados globalmente e MF3 permanece
+pendente.
 
 As ações do cabeçalho da View de tópicos também foram migradas da media query
 com limite superior para aprimoramento progressivo: dimensões compactas a

@@ -195,16 +195,6 @@
   min-width: 7rem;
   min-height: 2.75rem;
 }
-@media (min-width: 992px) {
-  #views-exposed-form-aculta-forum-search-page-search > .d-flex {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
-  }
-  #views-exposed-form-aculta-forum-search-page-search #edit-actions {
-    grid-column: auto;
-    align-self: start;
-    margin-block-start: 1.85rem;
-  }
-}
 @media (min-width: 576px) {
   #views-exposed-form-aculta-forum-search-page-search > .d-flex {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -221,6 +211,16 @@
     border-inline-start: 1px solid var(--aculta-border-subtle);
   }
   .aculta-forum-topic-list-row__last-author { grid-column: 2; justify-content: flex-end; }
+}
+@media (min-width: 992px) {
+  #views-exposed-form-aculta-forum-search-page-search > .d-flex {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  }
+  #views-exposed-form-aculta-forum-search-page-search #edit-actions {
+    grid-column: auto;
+    align-self: start;
+    margin-block-start: 1.85rem;
+  }
 }
 
 /* Chamada para visitante (tópico) e contagem de respostas no título da seção. */
