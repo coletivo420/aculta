@@ -102,9 +102,16 @@ socket.onmessage = (event) => {
             break
         time.sleep(0.2)
     time.sleep(1)
-    detail = driver.js("const text=document.body.innerText;const title=document.title;const elementCount=document.documentElement.querySelectorAll('*').length;return JSON.stringify({title,url:location.href,width:innerWidth,height:innerHeight,documentWidth:document.documentElement.clientWidth,documentScrollWidth:document.documentElement.scrollWidth,bodyScrollWidth:document.body.scrollWidth,documentScrollHeight:document.documentElement.scrollHeight,documentElementCount:elementCount,htmlLength:document.documentElement.innerHTML.length,contentType:document.contentType,readyState:document.readyState,body:text.slice(0,120),bodyClasses:Array.from(document.body.classList),studioMarkers:Array.from(document.querySelectorAll('[data-aculta-studio]'),element=>element.getAttribute('data-aculta-studio')).slice(0,60),institutionBar:!!document.querySelector('.aculta-institution-bar'),domainHeader:!!document.querySelector('.aculta-header'),emptyDocumentHint:elementCount<=2&&!text.trim(),accessDeniedHint:/^(?:acesso negado|access denied|forbidden)(?:\\s*\\|.*)?$/im.test(title)||/Você não está autorizado a acessar esta página\\./i.test(text)})")
+    css_override = os.environ.get("OCS_CONTEXT_TABS_CSS_OVERRIDE") == "1"
+    if css_override:
+        css_root = Path(os.environ.get("OCS_CONTEXT_TABS_CSS_ROOT", ROOT)).resolve()
+        css_path = css_root / "web/themes/custom/aculta420/components/patterns/context-tabs/context-tabs.css"
+        css = css_path.read_text()
+        driver.js("const style=document.createElement('style');style.dataset.ocsContextTabsCandidate='true';style.textContent=arguments[0];document.head.append(style);return true", [css])
+    detail = driver.js("const text=document.body.innerText;const title=document.title;const elementCount=document.documentElement.querySelectorAll('*').length;const tab=document.querySelector('.aculta-context-tabs__items');const list=tab?.querySelector('ul');const tabItems=Array.from(list?.querySelectorAll('li')||[]);return JSON.stringify({title,url:location.href,width:innerWidth,height:innerHeight,documentWidth:document.documentElement.clientWidth,documentScrollWidth:document.documentElement.scrollWidth,bodyScrollWidth:document.body.scrollWidth,documentScrollHeight:document.documentElement.scrollHeight,documentElementCount:elementCount,htmlLength:document.documentElement.innerHTML.length,contentType:document.contentType,readyState:document.readyState,body:text.slice(0,120),bodyClasses:Array.from(document.body.classList),studioMarkers:Array.from(document.querySelectorAll('[data-aculta-studio]'),element=>element.getAttribute('data-aculta-studio')).slice(0,60),institutionBar:!!document.querySelector('.aculta-institution-bar'),domainHeader:!!document.querySelector('.aculta-header'),contextTabs:tab?{count:tabItems.length,listTag:list.tagName,listClass:list.className,parentTag:list.parentElement.tagName,parentClass:list.parentElement.className,flexDirection:getComputedStyle(list).flexDirection,flexWrap:getComputedStyle(list).flexWrap,candidateRules:document.querySelector('style[data-ocs-context-tabs-candidate]')?.sheet?.cssRules.length||0,matchingSelector:!!list.matches('.aculta-context-tabs__items > ul, .aculta-context-tabs__items > .item-list > ul'),itemClasses:tabItems.map(item=>item.className),itemBorders:tabItems.map(item=>getComputedStyle(item).borderTopWidth+' '+getComputedStyle(item).borderTopStyle),linkMinHeights:tabItems.map(item=>Math.round(item.getBoundingClientRect().height))}:null,emptyDocumentHint:elementCount<=2&&!text.trim(),accessDeniedHint:/^(?:acesso negado|access denied|forbidden)(?:\\s*\\|.*)?$/im.test(title)||/Você não está autorizado a acessar esta página\\./i.test(text)})")
     screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
     record = json.loads(detail)
+    record["cssOverride"] = css_override
     target = OUT / f"{prefix}-{width}.png"
     target.write_bytes(base64.b64decode(screenshot))
     record["screenshot"] = target.name
@@ -117,8 +124,9 @@ def main():
         raise RuntimeError("Use Firefox ESR visível com DISPLAY=:0.")
     driver = Driver(bidi=True)
     try:
-        for width, height in WIDTHS:
-            capture(driver, "https://www.openculturas.org/en", "openculturas", width, height)
+        if os.environ.get("OCS_SKIP_OPENCULTURAS") != "1":
+            for width, height in WIDTHS:
+                capture(driver, "https://www.openculturas.org/en", "openculturas", width, height)
 
         try:
             verify_runtime()

@@ -91,6 +91,11 @@ O SDC existente `context-tabs` mantém links e semântica em layouts mobile-firs
 gap compacto é a base até 368px e a separação ampla retorna em 369px. A regra
 cobre stories com links estáticos e o `<ul>` gerado por `item_list`;
 `context-tabs.provider-list.story.yml` registra essa estrutura.
+O `item_list` também pode receber classes Bootstrap `list-group` e
+`list-group-item`; o SDC neutraliza esses estilos apenas dentro da navegação e
+define o eixo horizontal explicitamente, mantendo quebra de linha e alvos de
+link com pelo menos 44px. Firefox ESR visível confirmou quatro filtros em
+WE SATIVA em 320–1440px, sem overflow, com wrapping natural em telas estreitas.
 
 A Institution Bar multidomínio também pertence ao shell, não ao catálogo SDC; em
 viewports abaixo de 375px a marca é ocultada visualmente como base, preservando

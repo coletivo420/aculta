@@ -34,6 +34,32 @@ geckodriver cria perfil temporário por sessão. O wrapper usa `trap` para
 restaurar a preferência de cor mesmo quando a suíte falha; não executar
 diretamente o `.mjs`.
 
+Para validar o SDC `context-tabs` numa rota real, `OCS_CONTEXT_TABS_CSS_OVERRIDE=1`
+injeta a folha candidata indicada por `OCS_CONTEXT_TABS_CSS_ROOT` (padrão:
+`ACULTA_ROOT`) somente no Firefox. O script mede quantidade de links, eixo e
+wrapping do `<ul>`, bordas dos itens e alturas dos links. `OCS_SKIP_OPENCULTURAS=1`
+pula a captura pública de referência quando o teste é focal. Exemplo no servidor
+de desenvolvimento, usando o checkout da PR como candidato:
+
+```sh
+export DISPLAY=:0
+export ACULTA_ROOT=/home/piradopirata/projetos/aculta
+export OCS_CONTEXT_TABS_CSS_ROOT=/home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export OCS_CONTEXT_TABS_CSS_OVERRIDE=1
+export OCS_SKIP_OPENCULTURAS=1
+export STUDIO_LOGIN_URI=https://conta.aculta.toca.net.br
+export STUDIO_ROUTES=https://wiki420.aculta.toca.net.br/wesativa
+export OCS_WIDTHS=320,360,390,599,600,768,1024,1280,1440
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/ocs-context-tabs
+python3 tests/browser/aculta-studio/ocs-baseline.py
+```
+
+Esse override não modifica o Runtime. A sessão ULI só abre a rota com uma conta
+sintética; nenhum formulário é enviado. `baseline.json` deve indicar
+`studio_capture_status=CAPTURED`, quatro itens, direção `row`, bordas
+neutralizadas, links com pelo menos 44px e largura de scroll igual à largura do
+viewport. A captura requer revisão visual; não prova ACL, WCAG nem o gate OCS-F11.
+
 Os seletores usam atributos de comportamento `data-aculta-studio*`, porque o tema troca os tokens `data-portal-ui`
 por classes na renderização.
 

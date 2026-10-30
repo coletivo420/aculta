@@ -1066,3 +1066,19 @@ candidato chegar ao Runtime. O gate global de fronteira também identificou
 dívida em formulários de Eventos, sem alteração por haver trabalho paralelo no
 módulo. Ver `mobile-first-audit.md` e
 `tests/browser/aculta-theme-mobile-first/README.md`.
+
+### OCS-F3 — abas responsivas do WE SATIVA (2026-10-30)
+
+O workspace real entrega as abas de estado como `item_list`, com classes
+Bootstrap `list-group`/`list-group-item`. A inspeção da rota autenticada mostrou
+que o eixo padrão do Bootstrap empilhava os quatro estados e dava aparência de
+lista de cartões. O SDC `context-tabs` agora define o eixo horizontal, permite
+quebra natural e neutraliza borda, fundo e padding dos itens Bootstrap somente
+dentro do componente; os links preservam o contrato e o foco existentes. Uma
+captura Firefox ESR com a folha candidata, na rota real Wiki420/WE SATIVA,
+confirmou os quatro itens, eixo `row`, wrapping, bordas removidas, alvos de 48px
+e zero overflow em 320/360/390/599/600/768/1024/1280/1440px. A 390px, os três
+primeiros links compartilham a linha e o quarto continua na linha seguinte.
+Evidência visual e JSON: `/home/piradopirata/aculta-suite-out/ocs-context-tabs-final-20261030/`.
+Esta é validação da folha candidata sobre o markup servido; não homologa todos
+os fluxos Wiki, OCS-F11, THEME-MF3 ou OCS-A1–A4.

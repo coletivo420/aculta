@@ -1638,3 +1638,18 @@ subdiretórios `aculta-revista-modes-light-20261030`,
 Esses checks fecham zoom e parte de teclado/modos somente para a home Magazine,
 não cobrem no-JS, leitor de tela, contraste WCAG 2.2 AA, todos os estados ou a
 matriz de todos os purposes. THEME-MF3 permanece pendente.
+
+### OCS-F3 — contexto de WE SATIVA e fallback Bootstrap (2026-10-30)
+
+Firefox ESR visível, conta sintética autorizada, rota real
+`https://wiki420.aculta.toca.net.br/wesativa`: uma captura baseline identificou
+que o `item_list` dos quatro estados herdava `flex-direction: column` e bordas
+Bootstrap. A folha candidata do SDC `context-tabs` foi injetada apenas na sessão
+Firefox (sem escrita no Runtime) e passou os checks estruturais em
+320/360/390/599/600/768/1024/1280/1440px: quatro itens, eixo `row`, wrapping,
+bordas neutralizadas, links de 48px e largura do documento igual ao viewport.
+Screenshot 390px inspecionado: três estados na primeira linha e o quarto na
+segunda, sem corte ou rolagem horizontal. Evidências em
+`/home/piradopirata/aculta-suite-out/ocs-context-tabs-final-20261030/`.
+Este reteste não valida ACL entre contas, operações de revisão, zoom, WCAG 2.2
+AA nem os gates THEME-MF3/OCS-F11.
