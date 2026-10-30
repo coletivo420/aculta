@@ -57,7 +57,7 @@ A experiência administrativa de Datas foi centralizada em Eventos (ADR-033), ma
 
 ## ACULTA Studio Culturas — decisão de produto e domínio (2026-10-30)
 
-O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota planejada é `/studio/culturas`, atendida no purpose `eventos` (host eventos configurado pelo DomainPurposeManager); a entrada geral do Studio em `account` poderá apenas apresentar um link para essa experiência.
+O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota canônica é `/culturas`, atendida no purpose `eventos`; `/studio/culturas` não é rota-alvo. O código está parcialmente presente na PR #299, com validação Runtime pendente. A entrada geral do Studio em `account` poderá apenas apresentar um link absoluto para essa experiência.
 
 - A sessão administrativa técnica continua no domínio principal, em `/painel-administrativo/eventos`, restrita a administradores. Configuração global de permissões, auditoria e operações administrativas permanecem ali.
 - ACULTA Studio Culturas é a experiência de organizadores: composição de fluxos do owner `aculta_events`, para criar e gerir Eventos e seus componentes (Datas e Locais), usando Form API, Entity Access e moderação existentes. Não cria entidade, formulário de persistência, permissão ou catálogo duplicado.
