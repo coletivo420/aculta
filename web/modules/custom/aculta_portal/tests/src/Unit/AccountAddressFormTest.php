@@ -183,4 +183,28 @@ final class AccountAddressFormTest extends UnitTestCase {
     $this->assertContains([AccountAddressForm::class, 'validateCountryCode'], $finished['#element_validate']);
   }
 
+  /**
+   * Tests finish callback sets postal_code as the first visible element.
+   */
+  public function testFinishOrdersPostalCodeFirst(): void {
+    $element = [
+      'country_code' => ['#type' => 'hidden'],
+      'address_line1' => ['#title' => 'Rua'],
+      'street_number' => ['#title' => 'Número'],
+      'street_number_sn' => ['#title' => 'S/N'],
+      'address_line2' => ['#title' => 'Complemento'],
+      'dependent_locality' => ['#title' => 'Bairro'],
+      'postal_code' => ['#title' => 'CEP'],
+      'container6' => ['#type' => 'container'],
+    ];
+
+    $finished = AccountAddressForm::finish($element);
+
+    $this->assertLessThan($finished['address_line1']['#weight'], $finished['postal_code']['#weight']);
+    $this->assertLessThan($finished['street_number']['#weight'], $finished['address_line1']['#weight']);
+    $this->assertLessThan($finished['address_line2']['#weight'], $finished['street_number']['#weight']);
+    $this->assertLessThan($finished['dependent_locality']['#weight'], $finished['address_line2']['#weight']);
+    $this->assertLessThan($finished['container6']['#weight'], $finished['dependent_locality']['#weight']);
+  }
+
 }

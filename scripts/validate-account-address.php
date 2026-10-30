@@ -149,6 +149,10 @@ $check(
     && str_contains($accountAddressHooks, 'system_regional_settings'),
   'AccountAddressHooks: intercepta address_country e fixa regional settings em BR',
 );
+$check(
+  str_contains($form, "['postal_code']['#weight'] = -50") && str_contains($form, "['address_line1']['#weight'] = -40"),
+  'AccountAddressForm: CEP priorizado no servidor como primeiro campo visível',
+);
 
 // ADR-034 e instrução de agentes presentes.
 $agentsMd = $read('AGENTS.md');

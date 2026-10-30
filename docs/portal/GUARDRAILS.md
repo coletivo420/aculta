@@ -37,6 +37,8 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
 
 - O site tem uma única implementação central de formulário para capturar/editar endereços: `aculta_portal` (`AccountAddressForm`), integrada à biblioteca e ao serviço `aculta_portal_cep`.
 - Módulos e fluxos que precisem capturar/editar endereço devem reutilizar essa implementação, criando somente adaptadores para mapear seus campos/entidades. É proibido manter outro formulário paralelo ou duplicar a integração de CEP.
+- O CEP deve ser sempre o primeiro campo visível em qualquer formulário de endereço completo, definido nativamente por `#weight = -50`, para viabilizar o autopreenchimento imediato dos campos subsequentes antes de qualquer outra entrada. Nos fluxos de Maps e Events, uma etapa de busca e seleção de Local existente pode preceder o formulário de endereço; quando o formulário de cadastro/edição do Local aparecer, o CEP permanece obrigatoriamente como o primeiro campo desse formulário.
+- Todos os campos de endereço permanecem editáveis após o preenchimento pelo CEP (inclusive em cidades de CEP geral onde rua e bairro vêm vazios).
 - Os dados e modelos das entidades continuam separados conforme seus contratos; unificar o formulário não autoriza fundir campos, entidades, permissões ou regras de negócio.
 - Busca e preenchimento por CEP via `aculta_portal_cep` são padrão para todo formulário de endereço completo do Portal. Isso não autoriza busca por logradouro fora de Events/Maps nem mudança do comportamento de Conta/checkout. Brasil fixo, sem seletor de país.
 - Activity deve apontar para entidade Local de Events; cadastro/seleção modal com AJAX segue ADR-033. Revalidar autorização no servidor; nunca confiar em IDs submetidos pelo cliente.

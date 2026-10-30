@@ -151,7 +151,7 @@ content:
     third_party_settings: {  }
   field_postal_code:
     type: string_textfield
-    weight: 44
+    weight: 40.5
     region: content
     settings: {  }
     third_party_settings: {  }

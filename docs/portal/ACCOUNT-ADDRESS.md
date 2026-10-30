@@ -17,9 +17,10 @@ A decisão amplia e consolida o comportamento aprovado em 2026-10-18. Qualquer m
 
 - O endereço da conta é o campo `field_address` do perfil `authenticated` (fonte única). A cobrança do checkout lê o mesmo perfil
   (`BillingAddressPane`, perfil `authenticated`); o pedido guarda uma cópia sincronizada.
-- Formulário: CEP, Endereço/Logradouro, Número, S/N, Complemento, Bairro, Cidade, Estado. **Sem seletor de país**: o país é
+- Formulário: CEP (primeiro campo), Endereço/Logradouro, Número, S/N, Complemento, Bairro, Cidade, Estado. **Sem seletor de país**: o país é
   Brasil (campo oculto `country_code = BR`).
-- Depois que um CEP é resolvido, os campos que vieram dele (rua, bairro, cidade e UF) ficam bloqueados para edição, mas visíveis. Os campos que a busca não preencheu (por exemplo, o bairro de um CEP sem bairro na fonte) continuam editáveis. Número, S/N e complemento nunca são bloqueados. Cidade e UF (selects) ficam desabilitados, sem abrir a lista; o valor segue no envio por um input hidden. Digitar outro CEP desbloqueia e refaz o preenchimento.
+- O CEP é sempre o primeiro campo visível do formulário de endereço completo, definido nativamente no Form API via `#weight = -50` pelo `AccountAddressForm`.
+- Autopreenchimento e editabilidade: após a resolução do CEP, os campos preenchidos (rua, bairro, cidade e UF) recebem os valores retornados e permanecem **plenamente editáveis** pelo usuário, garantindo suporte tanto a ajustes finos quanto a municípios com CEP geral/único (onde rua e bairro vêm vazios da consulta postal). Número, S/N e complemento nunca são alterados pela busca. Digitar outro CEP substitui os dados pelo novo endereço mantendo o número digitado.
 - Número: obrigatório, só dígitos, até 10. S/N desabilita o número e o limpa.
 - CEP digitado (8 dígitos) consulta `aculta_portal_cep/{cep}` (endpoint do submódulo `aculta_portal_cep`, que exige o cabeçalho AJAX) e preenche:
   - no **primeiro** preenchimento: só os campos vazios (não apaga o que a pessoa digitou);
@@ -81,3 +82,22 @@ A decisão amplia e consolida o comportamento aprovado em 2026-10-18. Qualquer m
 
 - Mercado Pago (checkout): o contrib lê o campo `address`, que os perfis não têm. Adaptador pendente; não pode ser um campo
   alias (ver acima). Ver `docs/portal/MERCADO-PAGO-PLANO.md`, DT-MP-10.
+
+## Auditoria e padronização da ordem dos campos pelo CEP (2026-10-30)
+
+Regra normativa: em todo formulário que capture ou edite um endereço completo no ACULTA, o CEP deve ser o primeiro campo visível, possibilitando o autopreenchimento imediato de logradouro, bairro, cidade e estado antes dos demais dados. A única exceção de fluxo são as interfaces de Maps e Events, nas quais uma etapa de busca e seleção de Local existente pode preceder o formulário de endereço; quando o formulário de cadastro ou edição do endereço do Local for exibido, o CEP permanece obrigatoriamente como primeiro campo desse formulário.
+
+### Matriz de auditoria de todos os formulários de endereço
+
+| Consumidor | Entidade / Bundle | Rota / Fluxo | Campos de endereço | Ordem padronizada | Origem da implementação / Status |
+|---|---|---|---|---|---|
+| Minha Conta | `profile.authenticated` | `/dados/endereco` | `field_address` (Address + StreetNumberField) | 1. CEP, 2. Logradouro, 3. Número/SN, 4. Complemento, 5. Bairro, 6. Cidade/UF | `AccountAddressForm::apply` via `PortalHooks::formAlter`. CEP primeiro por `#weight = -50`. Validado no Firefox X11 (30/30). |
+| Checkout Cobrança | `profile.customer` / `profile.authenticated` | `/checkout/{order}` | `address` (Address + StreetNumberField) | 1. CEP, 2. Logradouro, 3. Número/SN, 4. Complemento, 5. Bairro, 6. Cidade/UF | `BillingAddressPane::buildPaneForm` chama `AccountAddressForm::apply`. CEP primeiro nativo. |
+| Checkout Entrega | `profile.customer` / Shipment | `/checkout/{order}` | `address` (Commerce Shipping) | 1. CEP, 2. Logradouro, 3. Número/SN, 4. Complemento, 5. Bairro, 6. Cidade/UF | `AcultaShippingInformation` herda `AccountAddressForm::apply` via hook de elemento. CEP primeiro. |
+| Loja | `commerce_store.online` | `/admin/commerce/config/stores/*` | `address` (Address + StreetNumberField) | 1. CEP, 2. Logradouro, 3. Número/SN, 4. Complemento, 5. Bairro, 6. Cidade/UF | `AccountAddressHooks::formAlter` chama `AccountAddressForm::apply`. CEP primeiro. |
+| Perfis de Equipe | `profile` (`administrator`, `associado`, `gerente_loja`, `lms_teacher`) | Edição de perfil em `/admin/people/profiles` | `field_address` (Address + StreetNumberField) | 1. CEP, 2. Logradouro, 3. Número/SN, 4. Complemento, 5. Bairro, 6. Cidade/UF | `AccountAddressHooks::formAlter` chama `AccountAddressForm::apply`. CEP primeiro. |
+| Locais de Evento | `aculta_event_location` | `/locais/adicionar`, `/locais/{id}/editar` | `field_endereco` (Address + StreetNumberField) | 1. CEP, 2. Logradouro, 3. Número/SN, 4. Complemento, 5. Bairro, 6. Cidade/UF | `EventLocationForm::buildForm` chama `AccountAddressForm::apply`. CEP primeiro. |
+| Assistente OpenStreetMap | Import wizard (revisão humana) | `/integracoes/openstreetmap/importar` | `address` (Address) | 1. CEP, 2. Logradouro, 3. Complemento, 4. Bairro, 5. Cidade/UF | `OpenStreetMapImportWizard::buildReviewStep` chama `AccountAddressForm::apply(..., FALSE)`. CEP primeiro. |
+| Bloco Institucional | `block_content.aculta_institution` | `/block/{id}` | `field_postal_code`, `field_street_address`, `field_locality`, `field_address_region`, `field_country`, `field_address` | 1. CEP (`field_postal_code`, weight 40.5), 2. Logradouro (41), 3. Cidade (42), 4. UF (43), 5. País (45) | `core.entity_form_display.block_content.aculta_institution.default.yml`. CEP reordenado para preceder logradouro; `field_address` mantido como resumo editorial para Schema.org. |
+| Atividades (Events) | `node.activity` | `/node/add/activity`, `/node/{id}/edit` | `field_event_location` (referência a Local) | Seleção/modal de Local precede; formulário do Local tem CEP primeiro | Campos textuais legados (`field_event_street`, etc.) ocultos no formulário e sincronizados em `nodePresave` para compatibilidade. |
+

@@ -200,6 +200,42 @@ final class AccountAddressForm {
       $element['country_code']['#element_validate'] = [
         [self::class, 'validateCountryCode'],
       ];
+      $element['country_code']['#weight'] = -100;
+    }
+
+    // O CEP é sempre o primeiro campo visível no formulário de endereço
+    // para permitir o autopreenchimento imediato de rua, bairro, cidade e UF.
+    if (isset($element['postal_code'])) {
+      $element['postal_code']['#weight'] = -50;
+    }
+    if (isset($element['address_line1'])) {
+      $element['address_line1']['#weight'] = -40;
+    }
+    if (isset($element['street_number'])) {
+      $element['street_number']['#weight'] = -35;
+    }
+    if (isset($element['street_number_sn'])) {
+      $element['street_number_sn']['#weight'] = -34;
+    }
+    if (isset($element['address_line2'])) {
+      $element['address_line2']['#weight'] = -30;
+    }
+    if (isset($element['address_line3'])) {
+      $element['address_line3']['#weight'] = -25;
+    }
+    if (isset($element['dependent_locality'])) {
+      $element['dependent_locality']['#weight'] = -20;
+    }
+    foreach (\Drupal\Core\Render\Element::children($element) as $key) {
+      if (str_starts_with((string) $key, 'container')) {
+        $element[$key]['#weight'] = -10;
+      }
+    }
+    if (isset($element['locality'])) {
+      $element['locality']['#weight'] = -10;
+    }
+    if (isset($element['administrative_area'])) {
+      $element['administrative_area']['#weight'] = -9;
     }
     foreach (self::LABELS as $key => $label) {
       if (isset($element[$key])) {
