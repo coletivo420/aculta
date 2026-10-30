@@ -31,6 +31,7 @@ restante do site.
 - **Cache** por provedor e CEP por 30 dias, no `cache.data`, para que uma resposta não seja reutilizada como se viesse de outra fonte. A resposta não é cacheada por página nem por proxy (`private, no-store`).
 - **Limite de consultas:** 60 por minuto por IP (`flood`), para evitar abuso das fontes externas.
 - **JavaScript** (`cep-address.js`, biblioteca `aculta_portal_cep/cep-address`): preenche rua, bairro, cidade e estado. Número, S/N e complemento nunca são alterados pela busca. O comportamento completo e os testes estão em `docs/portal/ACCOUNT-ADDRESS.md`.
+- **Contrato global de país e endereço (ADR-034):** o país é exclusivamente o Brasil (`BR`) em toda a plataforma. Não exiba seleção de país em nenhum formulário. Configure o endereço exclusivamente para `BR` e confirme esse valor também no servidor ao validar e salvar (JavaScript ou campo oculto não substituem validação no servidor). Entradas divergentes de `BR` são rejeitadas. A busca de CEP preserva número, S/N e complemento.
 
 ## Por que é código próprio
 

@@ -29,6 +29,9 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 - [ADR-028 — Contrato neutro de marca entre Portal e tema](ADR-028-marca-neutra-portal-tema.md)
 - [ADR-029 — Participação no LMS sem requisito de e-mail confirmado](ADR-029-lms-sem-requisito-de-email-confirmado.md)
 - [ADR-030 — Provedor de mapa: Leaflet com OpenStreetMap como padrão e Google Maps como opção](ADR-030-provedor-mapa-leaflet-osm-com-google-opcional.md)
+- [ADR-032 — Portal multi-cart e checkout](ADR-032-portal-multi-cart-checkout.md)
+- [ADR-033 — Endereço unificado, busca postal restrita e gestão de Locais em Events](ADR-033-endereco-busca-e-locais.md)
+- [ADR-034 — País exclusivo Brasil (BR) e contrato central de endereço](ADR-034-pais-unico-brasil-endereco-central.md)
 
 ADRs históricos e decisões locais de arquitetura também podem ser encontrados
 neste diretório e em `docs/architecture/`. Para registrar uma decisão nova,
