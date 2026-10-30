@@ -51,3 +51,11 @@ Baseado no módulo `drupal/cep_autocomplete` 1.0.0 (GPL-2.0-or-later). O aviso d
 
 - Gate: `php scripts/validate-account-address.php` (sem navegador).
 - Navegador (Firefox pelo X11, conta de teste): `scripts/test-account-address-browser.py`, 17 verificações. O link de login é de uso único.
+
+
+## Escopo de consumidores e Local de Events
+
+- Módulos ACULTA novos devem reutilizar o formulário/adaptador central de `aculta_portal` e esta biblioteca para CEP; não criar cliente, endpoint, seletor de país ou integração paralela.
+- CEP continua primeiro no fluxo de cadastro de Local. A busca por logradouro/resultados próximos é opt-in apenas para Events/Maps e depende de aprovação do provedor e dos termos.
+- A biblioteca atual continua fazendo somente preenchimento por CEP. Não alterar comportamento de Conta/checkout para habilitar busca por rua.
+- Decisão e critérios: [ADR-033](../../../../../../docs/decisions/ADR-033-endereco-busca-e-locais.md).
