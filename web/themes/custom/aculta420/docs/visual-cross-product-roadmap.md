@@ -654,10 +654,11 @@ sessões concorrentes; fullscreen não é exercitado. Evidência em
 
 Conteúdo de ajuda e descrição ocultado pelo formulário no desktop agora é
 apresentado como base móvel e ocultado novamente acima de 768 CSS px. O modal
-fica com sua única exceção mobile-only porque sua largura vem de opções
-jQuery UI/Webform dinâmicas, sem contrato fixo do tema. Harness comparativo
-Firefox criado em 14 larguras; a execução está DEFERRED por sessões
-concorrentes. Ver `mobile-first-audit.md` e
+de confirmação também foi migrado desde este registro: a largura fluida é base
+em todos os viewports e mantém o limite desktop de 600 px, respeitando o gutter
+do tema. O modal já não é uma exceção mobile-only. O harness comparativo
+Firefox validou baseline/candidata em 14 larguras; a execução mais recente está
+registrada abaixo e em `mobile-first-audit.md`. Ver
 `tests/browser/aculta-theme-mobile-first/webform-layout.py`.
 
 ### THEME-MF2 — gavetas utilitárias do shell
