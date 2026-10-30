@@ -1369,3 +1369,40 @@ passaram; Unit focal passou 18 testes/113 assertions. Firefox visual fica
 geckodriver ativo no host. O Runtime também está com divergência de configuração,
 então não houve rebuild de cache nem alegação de captura candidata publicada.
 Isto não aprova OCS-F8/F11 nem THEME-MF3.
+
+### OCS-F3 / F4 / F8 e THEME-MF2 — cartões Fidelity e links de experiência (2026-10-30)
+
+O SDC existente `patterns/card` ganhou a variante `studio_fidelity`, usada pelo
+adaptador de apresentação nos links reais do Hub e do ponto de entrada
+`account-experiences`. O root `account-entry` também recebe a classe `.studio`,
+mantendo Conta privada dentro do contexto visual próprio do Studio. O adaptador
+preserva `#access`, cache contexts/tags/max-age, attachments e o render array do
+link no slot `content`. Não muda registry, destino, provider ou permissão.
+
+A apresentação da lista pública de próximos eventos e do dashboard de
+organização do Studio Culturas recebeu seletores de tema próprios, com uma
+coluna fluida desde 320px, wrapping, alvo mínimo de 44px e foco visível; não
+altera dados, Form API, ACL ou cache dos owners Eventos. Nenhum CSS funcional
+foi movido ao módulo.
+
+O cartão reexprime a geometria de `templates/node/teasers.scss` e
+`sass/abstracts/_teasers.scss` do OpenCulturas 3.1.5: margem vertical de metade
+do row-gap, padding 1rem/2rem, borda transparente de 1px, raio 1.5rem e sombra
+centrada. Firefox ESR visível usou uma fixture local do markup equivalente e
+as CSS candidatas com as WOFF2 Montserrat do tema. Passou 45/45 checks em
+320/360/390/599/600/768/1024/1280/1440: viewport exato, zero overflow, grade de
+uma coluna abaixo de 768 e duas a partir de 768, dois cartões no contexto
+`.studio` e geometria esperada. A captura inicial encontrou overflow do H1 em
+320/360; `studio.css` agora limita o título com `clamp(2rem, 7vw, 3rem)`, e a
+repetição passou. PNGs e `summary.json` estão em
+`/home/piradopirata/suite-out/aculta-studio-card-fidelity/`; o harness
+reutilizável está em `tests/browser/aculta-studio/`.
+
+Também passaram Stylelint, PHP lint/PHPCS, SDC schema (55 componentes/756
+checks), Design Foundations (2421 checks e 159 fixtures), documentação de
+contratos Portal/tema (464 tokens/371 usados/148 atributos), fronteira
+módulo/tema (3453 checks) e Unit `PortalUiHooks` (20 testes/121 assertions).
+A fixture não acessa o Drupal nem homologa ACL, HTML produzido pelo preprocess,
+cache real, dark mode, zoom ou todos os estados; render do Runtime é
+`DEFERRED` enquanto a configuração do Runtime divergir e não houver rebuild.
+OCS-F3/F8 e THEME-MF2 permanecem parciais; isto não aprova THEME-MF3 ou OCS-F11.

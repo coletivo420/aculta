@@ -56,6 +56,9 @@ final class PortalUiHooks {
     'event-card-subtitle' => ['event-card__subtitulo'],
     'event-card-meta' => ['event-card__meta'],
     'event-card-cancel-status' => ['event-card__aviso'],
+    'events-upcoming-link' => ['aculta-events-upcoming__link'],
+    'events-upcoming-block' => ['aculta-events-upcoming'],
+    'event-organizer-dashboard' => ['aculta-events-organizer-dashboard'],
     // Locais reutilizáveis de Eventos: o Portal envia nomes semânticos; este
     // mapa mantém os tokens visuais existentes fora do módulo proprietário.
     'event-location-search-bar' => ['container-inline', 'mb-3'],
@@ -500,6 +503,8 @@ final class PortalUiHooks {
     'sales-state-voided' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--voided'],
     'sales-state-neutral' => ['badge', 'aculta-sales-panel__state', 'aculta-sales-panel__state--neutral'],
     // ACULTA Studio (aculta_studio): abas, painel e ações da conta.
+    'account-entry' => ['studio', 'aculta-account-entry'],
+    'account-experiences' => ['studio__actions', 'list-unstyled', 'd-grid', 'gap-2'],
     'studio-shell' => ['studio'],
     'studio-marley-entry' => ['btn', 'btn-outline-primary', 'studio__action'],
     'studio-account-home' => ['studio__panel', 'card', 'card-body'],
@@ -721,7 +726,7 @@ final class PortalUiHooks {
     elseif ($tokens === '' && is_array($wrapperAttributes)) {
       $tokens = (string) ($wrapperAttributes['data-portal-ui'] ?? '');
     }
-    if (!preg_match('/(?:^|\\s)studio-experiences(?:\\s|$)/', $tokens) || !is_array($variables['items'] ?? NULL)) {
+    if (!preg_match('/(?:^|\\s)(?:studio-experiences|account-experiences)(?:\\s|$)/', $tokens) || !is_array($variables['items'] ?? NULL)) {
       return;
     }
 
@@ -735,7 +740,7 @@ final class PortalUiHooks {
       $card = [
         '#type' => 'component',
         '#component' => 'aculta420:card',
-        '#props' => ['variant' => 'default'],
+        '#props' => ['variant' => 'studio_fidelity'],
         '#slots' => ['content' => $link],
       ];
       foreach (['#access', '#cache', '#weight', '#attached'] as $property) {

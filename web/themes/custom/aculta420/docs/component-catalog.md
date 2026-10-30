@@ -31,7 +31,7 @@ não requer uma aplicação Storybook separada.
 ## Inventário estático atual — 2026-10-30
 
 Na árvore atual há **55 arquivos `.component.yml`, 55 Twig, 45 CSS,
-3 JS e 99 stories** em `components/`. A contagem inclui componentes experimentais e
+3 JS e 100 stories** em `components/`. A contagem inclui componentes experimentais e
 candidatos abaixo; não demonstra validação do schema no Runtime, renderização na
 UI Patterns Library nem aprovação visual.
 
@@ -65,7 +65,7 @@ renderização autenticada:
 
 | Contrato citado na matriz | Schema encontrado | Uso candidato |
 |---|---|---|
-| `card` | `patterns/card/card.component.yml` | Hub, listagens (inclui `node--revista--teaser`) e produtos com consumer real já existente; revisar variantes disponíveis. |
+| `card` | `patterns/card/card.component.yml` | Entrada da Conta e Hub via `PortalUiHooks`; listagens (inclui `node--revista--teaser`) e produtos com consumers próprios. Variante `studio_fidelity` restrita à raiz Studio. |
 | `context-header`, `context-tabs` | `patterns/context-header/context-header.component.yml`, `patterns/context-tabs/context-tabs.component.yml` | Cabeçalho e navegação contextual Studio/Conta; rota/consumer ainda requer validação. |
 | `dropdown` | `patterns/dropdown/dropdown.component.yml` | Substitui `bootstrap:dropdown` via SDC `replaces`; preserva props/slots e evita passar render array do slot ao nome de bloco Twig. Consumer real: UI Patterns Library. |
 | `content-section`, `content-grid`, `empty-state` | `patterns/content-section/content-section.component.yml`, `patterns/content-grid/content-grid.component.yml`, `feedback/empty-state/empty-state.component.yml` | Composição e estados vazios de telas/listas; validar owner dos dados e estado real. |
@@ -125,13 +125,20 @@ permissões e cache continuam no Portal/UGC.
 Studio. O mobile usa coluna única como base e recupera a sidebar lateral em
 `48rem`; nenhum SDC paralelo ou novo contrato foi criado.
 
-O Hub `/studio` passou a consumir o SDC existente `patterns/card` para cada
-link real emitido pelo registry do Studio. `PortalUiHooks` mantém o render
-array do link dentro do slot `content` e propaga acesso/cache ao cartão; nenhum
-destino ou experiência é inventado. A lista permanece em uma coluna na base
-mobile e usa duas colunas a partir de `48rem`. A folha upstream citada na
-matriz descreve listas de perfil/salvos, não uma home autenticada; a paridade
-visual do Hub continua sem baseline upstream e aguarda captura/runtime.
+O ponto de entrada autenticado do Studio é composto por `AccountExperienceProvider`
+no purpose `account` (`/` e `/conta`), conforme ADR-038; não há Hub público
+`/studio`. Os links reais da lista `account-experiences` reutilizam o SDC
+`patterns/card`. `PortalUiHooks` mantém o render array do link dentro do slot
+`content` e propaga `#access`, cache e attachments ao cartão; nenhum destino ou
+experiência é inventado. A lista usa uma coluna na base mobile e duas a partir
+de `48rem`. A folha upstream citada na matriz descreve listas de perfil/salvos,
+não uma home autenticada; a paridade do conteúdo do Hub não é mensurável.
+
+O cartão do ponto de entrada usa agora a variante `studio_fidelity`. Ela mantém
+o contrato de slots/render array e aproxima margem, padding, raio e sombra dos
+teasers OpenCulturas 3.1.5, escopada à raiz `.studio`. A story é declarativa;
+não cria links funcionais. Firefox visível passou 45/45 medições na fixture
+local em nove larguras; não é captura do Runtime.
 
 Na navegação interna, `.studio__tabs` e `.studio__subtabs` preservam os links e
 estados autorizados existentes. A apresentação distingue áreas primárias de

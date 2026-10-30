@@ -328,3 +328,19 @@ overflow, mas sem marcadores `data-aculta-studio`, portanto não conta como
 validação de consumer Studio. Capturas em
 `$SUITE_OUT/aculta-ocs-mf2-grid-20261029/`. Isso é evidência parcial, não gate
 MF3/F11 ou homologação global.
+
+## Variante Studio Fidelity do SDC Card
+
+`studio-card-fidelity.py` adiciona uma fixture local do Hub e mede as folhas
+candidatas de tokens, Studio e `patterns/card` em 320/360/390/599/600/768/1024/
+1280/1440 CSS px. Confere o reflow da grade, geometria do card e overflow; PNGs
+ficam em `$SUITE_OUT`.
+
+A página é `data:` no Firefox ESR visível e não acessa Drupal/Runtime. Não
+comprova integração do preprocess no servidor, grants, cache real, dark mode,
+zoom ou WCAG integral. Use `DISPLAY=:0`, defina `SUITE_OUT` e
+`ACULTA_FF_PROFILE_ROOT` e execute:
+
+```sh
+DISPLAY=:0 python3 -I tests/browser/aculta-studio/studio-card-fidelity.py
+```

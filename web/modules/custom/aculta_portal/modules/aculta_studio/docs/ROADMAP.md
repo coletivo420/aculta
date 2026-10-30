@@ -1,3 +1,26 @@
+## Status visual consolidado — sequência OCS-F0–F11 e THEME-MF0–MF3 (2026-10-30)
+
+Esta é a sequência aprovada mais recente e substitui numerações incompatíveis
+em registros históricos abaixo: F0 inventário; F1 tokens; F2 navegação;
+F3 SDCs; F4 Hub; F5 Marley; F6 GanjaLab; F7 WE Sativa; F8 Green Stash
+integrado; F9 Conta/Perfil; F10 demais áreas; F11 gate de fidelidade, que
+depende de THEME-MF3. OCS-A1–A4 só começam depois dos dois gates aprovados.
+
+| Fase | Estado verificável neste HEAD |
+|---|---|
+| THEME-MF0 | Parcial: inventário lexical recenseado; consumers por tela/purpose e auditoria de cascata ainda incompletos. |
+| THEME-MF1–MF2 | Implementação incremental; cobertura visual global incompleta. |
+| THEME-MF3 | Pendente; não homologar todo ACULTA420 como mobile-first. |
+| OCS-F0 | Parcial: providers/rotas mapeados; baseline Studio não inclui tela autenticada equivalente do upstream nem todas as áreas/estados. |
+| OCS-F1–F2 | Implementados parcialmente; fidelidade de todos os consumers e Runtime pendente. |
+| OCS-F3 | Variante `studio_fidelity` adicionada ao SDC `patterns/card` com story e consumidor real na entrada da Conta; schema 55/756, Unit 20/121 e CSS fixture Firefox 45/45 passaram; render Drupal/Runtime pendente. |
+| OCS-F4 | Composição adapta links autorizados do registry e da entrada da Conta ao SDC existente; estado funcional vem dos providers. Captura Runtime com o novo adaptador pendente. |
+| OCS-F5–F7 | Parcial/incompleto; exige validação visual/funcional por Marley, LMS e Wiki, sem alterar seus owners. |
+| OCS-F8 | Fundação de tokens/container e raiz visual do Studio entregue também ao Green Stash; telas operacionais por loja e grants não homologados. |
+| OCS-F9–F10 | Pendente de validação abrangente, preservando Conta, Perfil, `/conta-legada` e demais áreas reais. |
+| OCS-F11 | Não aprovado: depende de THEME-MF3 e das evidências de todas as áreas/estados. |
+| OCS-A1–A4 | Não iniciadas; gate anterior permanece fechado. |
+
 ## ADR-038 - caminho aprovado para as Suites (execução parcial, 2026-10-30)
 
 Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. Paths/purposes e rejeição global de `/studio*` foram implementados no código; `aculta_studio` permanece framework compartilhado. A raiz de `account` é entrada da Conta; Conta e Perfil permanecem separados. O Domain Wiki canônico é `wiki420`; o pedido para renomeá-lo a `wiki.aculta.*` foi corrigido pelo responsável e não faz parte do escopo. As seções abaixo são histórico quando descrevem os paths antigos.

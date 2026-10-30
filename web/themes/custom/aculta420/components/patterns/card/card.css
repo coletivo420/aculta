@@ -4,6 +4,20 @@
   border-color: var(--aculta-border-default);
 }
 
+/* opCult 3.1.5 teaser geometry for cards emitted by the Studio Hub adapter. */
+.studio .aculta-card--studio-fidelity {
+  margin-block: calc(0.5 * var(--aculta-studio-fidelity-row-gap));
+  border: 1px solid transparent;
+  border-radius: 1.5rem;
+  background-color: var(--aculta-studio-fidelity-surface);
+  box-shadow: var(--aculta-studio-fidelity-box-shadow);
+}
+
+.studio .aculta-card--studio-fidelity .card-body {
+  padding-block: 1rem;
+  padding-inline: 2rem;
+}
+
 .aculta-card > .card-header,
 .aculta-card > .card-footer,
 .aculta-card .card-header,

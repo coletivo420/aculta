@@ -5,6 +5,8 @@
   {% set card_classes = card_classes|merge(['aculta-card--overlay']) %}
 {% elseif variant == 'horizontal' %}
   {% set card_classes = card_classes|merge(['aculta-card--horizontal']) %}
+{% elseif variant == 'studio_fidelity' %}
+  {% set card_classes = card_classes|merge(['aculta-card--studio-fidelity']) %}
 {% endif %}
 
 <div{{ attributes.addClass(card_classes) }}>

@@ -955,3 +955,19 @@ anterior está nas três regras `min-width` de tokens Studio, escopadas ao Studi
 e ao editor de perfil. Este recenseamento não substitui o mapeamento de
 libraries/consumidores nem a auditoria de cascata; THEME-MF0 e THEME-MF3 seguem
 parciais. Ver [`mobile-first-audit.md`](mobile-first-audit.md).
+
+## OCS-F3 / OCS-F8 — atualização de apresentação no Studio (2026-10-30)
+
+O SDC `patterns/card` ganhou a variante `studio_fidelity` e a adaptação do Hub
+passou a selecioná-la para os links reais do registry, sem alterar slots,
+render arrays, access/cache metadata nem conteúdo. Green Stash herda a classe
+raiz `.studio` por seu token visual do Portal e assim recebe os tokens e o
+container contextual do Studio. Os padrões de espaçamento, borda, raio e sombra
+foram conferidos em `templates/node/teasers.scss` e
+`sass/abstracts/_teasers.scss` do tarball OpenCulturas 3.1.5 SHA-256
+`2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`.
+Schema/discovery passou para 55 componentes/756 checks, a story foi criada,
+Unit passou 20 testes/121 assertions e Firefox ESR visível passou 45/45 checks
+na fixture candidata em nove larguras. Essa evidência não é render Drupal no
+Runtime. OCS-F3/F8 continuam parciais; F11 e THEME-MF3 não aprovados e OCS-A1–A4
+não iniciadas.

@@ -1,0 +1,10 @@
+name: Cartão de experiência no Studio
+description: Variante de cartão com geometria inspirada nos teasers OpenCulturas Next, usada apenas no Studio.
+component: aculta420:card
+props:
+  variant: studio_fidelity
+slots:
+  header:
+    markup: Acesso à experiência
+  content:
+    markup: '<h3><a href="#">Marley</a></h3><p>Gerencie suas atividades editoriais disponíveis.</p>'

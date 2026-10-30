@@ -4,6 +4,45 @@
 .aculta-highlighted:has(.alert, .nav, .button, .help) { margin-bottom: 1.5rem; }
 .aculta-content .view-empty { max-width: 70ch; padding-block: 1rem; }
 
+/* Public upcoming-events block and the organizer workspace begin in one
+   flexible track; text and links can reflow without widening the viewport. */
+.aculta-events-upcoming {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aculta-events-upcoming__link {
+  display: block;
+  min-height: 2.75rem;
+  padding: 0.75rem 1rem;
+  overflow-wrap: anywhere;
+  color: var(--aculta-text-primary);
+  background-color: var(--aculta-surface-raised);
+  border: 1px solid var(--aculta-border-default);
+  border-radius: var(--bs-border-radius);
+  text-decoration: none;
+}
+
+.aculta-events-upcoming__link:is(:hover, :focus-visible) {
+  border-color: var(--aculta-border-strong);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.aculta-events-upcoming__link:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+
+.aculta-events-organizer-dashboard {
+  display: grid;
+  min-width: 0;
+  gap: var(--aculta-page-gutter);
+}
+
 /* Superfícies brancas sobre creme, com pouca ornamentação. */
 .aculta-surface,
 .aculta-content-surface {

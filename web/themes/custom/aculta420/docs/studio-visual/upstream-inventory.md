@@ -71,6 +71,24 @@ igual nos modos e zero overflow nas larguras 320/360/390/599/600/767/768/1024/
 branch; não compara um dashboard autenticado equivalente do upstream e não
 cobre todos os consumers.
 
+### OCS-F3 — variante do SDC de cartão para o Hub (2026-10-30)
+
+`templates/node/teasers.scss` e `sass/abstracts/_teasers.scss` do mesmo tarball
+3.1.5 definem cartões com margem vertical de metade do row-gap, padding de
+1rem/2rem, borda transparente de 1px, raio de 1.5rem e sombra centrada. Esses
+valores foram reexpressos no SDC existente `patterns/card` como variante
+`studio_fidelity`; o consumidor é o adaptador visual da entrada `account`, que
+mantém links, access/cache e slot existentes. A story não adiciona links reais.
+Stylelint, schema (55 componentes/756 checks), Unit (20 testes/121 assertions)
+e fixture Firefox (45/45 em nove larguras) passaram. Captura Drupal/Runtime
+permanece pendente. Nenhum CSS ou Twig upstream foi copiado.
+
+Na fixture Firefox 320px, o H1 de 3rem herdado da escala Next excedeu a largura
+do viewport. O tema agora reduz o H1 progressivamente com `clamp(2rem, 7vw,
+3rem)` até a escala desktop, preservando a hierarquia e sem mudar o texto ou a
+ordem DOM. A correção surgiu do consumer responsivo; será retestada nas nove
+larguras da matriz antes do registro do resultado.
+
 Também passaram lint CSS/JS, SDC schema/discovery (55 componentes, 756 checks),
 Design Foundations (2.418 checks e 159 fixtures), browser validators (21), mapa
 módulo/tema (211), boundary módulo/tema (3.442), Runtime read-only Foundation

@@ -74,9 +74,19 @@
   line-height: var(--aculta-studio-fidelity-line-height-headings);
 }
 
+.studio a:not(.btn):not(.button),
+.aculta-profile-editor a:not(.btn):not(.button) {
+  color: var(--aculta-studio-fidelity-link);
+}
+
+.studio a:not(.btn):not(.button):is(:hover, :focus-visible),
+.aculta-profile-editor a:not(.btn):not(.button):is(:hover, :focus-visible) {
+  color: var(--aculta-studio-fidelity-primary);
+}
+
 .studio h1,
 .aculta-profile-editor h1 {
-  font-size: var(--aculta-studio-fidelity-font-size-xxl);
+  font-size: clamp(2rem, 7vw, var(--aculta-studio-fidelity-font-size-xxl));
   font-weight: var(--aculta-studio-fidelity-font-weight-bold);
 }
 
@@ -129,6 +139,19 @@
 
 .studio__actions > li {
   margin: 0;
+}
+
+.aculta-account-entry {
+  display: grid;
+  min-width: 0;
+  gap: var(--aculta-studio-fidelity-row-gap);
+}
+
+.aculta-account-entry .studio__actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--aculta-studio-fidelity-row-gap);
+  padding: 0;
 }
 
 /* Hub: one readable card per row on narrow screens; wider grids are progressive. */
@@ -213,6 +236,10 @@
 }
 
 @media (min-width: 48rem) {
+  .aculta-account-entry .studio__actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .studio-hub .studio__actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

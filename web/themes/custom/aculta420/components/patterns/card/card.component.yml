@@ -12,6 +12,8 @@ variants:
     title: Horizontal
   overlay:
     title: Imagem sobreposta
+  studio_fidelity:
+    title: Fidelidade Studio
 props:
   type: object
   properties:
@@ -24,6 +26,7 @@ props:
         - compact
         - horizontal
         - overlay
+        - studio_fidelity
       default: default
     image_position:
       type: string

@@ -1,6 +1,6 @@
 # Tokens e atributos do Portal para o tema
 
-> Gerado a partir do código em 2026-10-14 e validado pelo gate `scripts/validate-portal-ui-docs.php`. Quando um token ou atributo novo for criado, ele precisa entrar aqui (o gate reprova o contrário).
+> Reconciliado com o código em 2026-10-30 e validado pelo gate `scripts/validate-portal-ui-docs.php`. Quando um token ou atributo novo for criado, ele precisa entrar aqui (o gate reprova o contrário).
 
 ## Como o contrato funciona
 
@@ -626,6 +626,55 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `studio-listing` | `table table-hover align-middle studio__listing` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php` |
 | `studio-listing-wrap` | `table-responsive studio__listing-wrap` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/MarleyListingBuilder.php` |
 
+| `account-entry` | `studio aculta-account-entry` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `account-experiences` | `studio__actions list-unstyled d-grid gap-2` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `button-ghost` | `button button--ghost` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-catalogue-actions-bar` | `actions-bar my-3` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-date-actions` | `aculta-event-date-actions` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Event/EventDateListBuilder.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-date-add` | `button button--primary` | `web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-date-cancel` | `button` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventDateDeleteForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-date-delete` | `button button--danger` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventDateDeleteForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-date-order` | `aculta-event-date-order` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventDateOrderForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-date-row` | `aculta-event-date-row` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-actions-bar` | `actions-bar mb-3` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationListController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-actions` | `location-actions mt-2 mb-3` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationListController.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php` |
+| `event-location-address` | `aculta-location-address text-muted mb-2` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-admin-actions` | `location-admin-actions` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-agenda-empty` | `location-agenda-empty` | `web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-agenda` | `location-agenda` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-badge-draft` | `badge--warning` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-badge-free` | `badge badge-free` | `web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-badge-public` | `badge--success` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-badge` | `aculta-location-badge badge` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-button-action` | `button button--action` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php` |
+| `event-location-button-danger` | `button button--danger` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-button-primary-action` | `button button--primary button--action` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationListController.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php` |
+| `event-location-button-primary-small` | `button button--small button--primary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-button-primary` | `button button--primary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php` |
+| `event-location-button-secondary-small` | `button button--secondary button--small` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-button-secondary` | `button button--secondary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php` |
+| `event-location-date-time` | `event-date-time` | `web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-empty` | `aculta-location-empty my-2` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-fallback` | `description mt-1` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-header` | `aculta-location-header` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-page` | `aculta-location-page` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-search-bar` | `container-inline mb-3` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-summary-card` | `aculta-location-summary-card card p-3 my-2` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-target-id` | `aculta-location-target-id` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php` |
+| `event-location-title` | `aculta-location-title h5 mb-1` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-type-badge` | `badge badge-location-type` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-location-widget` | `aculta-event-location-widget` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventForm.php`<br>`web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventLocationModalForm.php` |
+| `event-locations-list-page` | `aculta-locations-list-page` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/LocationListController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organizer-dashboard` | `aculta-events-organizer-dashboard` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organizer-filter-form` | `form--inline clearfix` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organizer-filters` | `organizer-dashboard-filters` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organizer-guide` | `culturas-guide` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `events-admin-overview` | `aculta-events-admin-overview` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventAdminOverviewController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `events-upcoming-block` | `aculta-events-upcoming` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Block/UpcomingEventsBlock.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `events-upcoming-link` | `aculta-events-upcoming__link` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Block/UpcomingEventsBlock.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `ugc-admin-purpose-filters` | `aculta-admin-purpose-filters action-links` | `web/modules/custom/aculta_portal/modules/aculta_ugc/src/Controller/UgcModerationDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `ugc-admin-status-filters` | `aculta-admin-status-filters action-links` | `web/modules/custom/aculta_portal/modules/aculta_ugc/src/Controller/UgcModerationDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `user-admin-filters` | `aculta-admin-filters action-links` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Controller/OwnershipClaimAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 ## Painéis de vendas e doações (dev.69 e 0.6.0-dev.67)
 
 | Token | Classes no ACULTA420 | Origem no módulo |
