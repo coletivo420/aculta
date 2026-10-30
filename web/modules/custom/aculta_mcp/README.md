@@ -2,7 +2,7 @@
 
 O módulo `aculta_mcp` é dono do endpoint MCP ACULTA e também funciona como cliente MCP de documentação do Mercado Pago, Melhor Envio e DHTMLX. Reutiliza `mcp/sdk` já instalado pelo `mcp_server` e adapta o fluxo HTTP do Drupal MCP Client 1.0.0-alpha3 (GPL-2.0-or-later), sem instalar o projeto contrib incompatível (`mcp/sdk ^0.7.1` e Drupal AI ausente). A extensão antiga `aculta_mcp_client` permanece como shim vazio para preservar referências de instalação; sua desinstalação exige uma ordem separada.
 
-O plugin Resource Provider `public_capabilities` publica o recurso estático `aculta://public/mcp/capabilities`, que descreve as ferramentas e seus limites. O conteúdo não consulta entidades nem conteúdo do site. Sua leitura exige autenticação e autorização no endpoint MCP. Sua configuração está em `config/install/mcp_server.resource_providers.yml` e em `config/sync/mcp_server.resource_providers.yml`.
+O plugin Resource Provider `public_capabilities` publica o recurso estático `aculta://public/mcp/capabilities`, que descreve as ferramentas e seus limites. O conteúdo não consulta entidades nem conteúdo do site. Sua leitura exige autenticação e autorização no endpoint MCP. Os defaults de Resource e Tools ficam em `config/defaults/`; os IDs habilitados para o site ficam em `config/sync/mcp_server.resource_providers.yml`.
 
 O módulo declara seis plugins da Tool API e instala configurações MCP Tool Configuration para eles:
 
@@ -17,11 +17,11 @@ As conexões externas têm endpoint fixo no código, limite global de chamadas e
 
 O Resource Provider publica três documentos estáticos: capacidades MCP, visão geral pública do ACULTA e catálogo resumido de integrações. O hook `mcp_server_instructions_alter` orienta clientes no handshake inicial para consultar o Resource de capacidades, não enviar dados privados e tratar respostas remotas como referência não confiável. O conteúdo é curado a partir das documentações e do código público; não carrega entidades nem configuração do Runtime.
 
-O módulo também instala três MCP Prompts (`aculta_consultar_plataforma`, `aculta_planejar_integracao_publica` e `aculta_pesquisar_documentacao_mcp`). Eles recebem uma pergunta técnica explícita, anexam como conteúdo MCP o Resource público pertinente e instruem o modelo a não inventar fatos nem enviar dados privados. O prompt de pesquisa orienta o cliente a selecionar e chamar uma ferramenta de documentação; prompts MCP são modelos de mensagens, não executam ferramentas por conta própria. Para manter os anexos sincronizados, ao editar os Resources atualize os respectivos blocos `type: resource` em `config/install/mcp_server.mcp_prompt_config.*.yml`.
+O módulo também instala três MCP Prompts (`aculta_consultar_plataforma`, `aculta_planejar_integracao_publica` e `aculta_pesquisar_documentacao_mcp`). Eles recebem uma pergunta técnica explícita, anexam como conteúdo MCP o Resource público pertinente e instruem o modelo a não inventar fatos nem enviar dados privados. O prompt de pesquisa orienta o cliente a selecionar e chamar uma ferramenta de documentação; prompts MCP são modelos de mensagens, não executam ferramentas por conta própria. Para manter os anexos sincronizados, ao editar os Resources atualize os respectivos blocos `type: resource` em `config/defaults/mcp_server.mcp_prompt_config.*.yml`.
 
 Na atualização de um site onde a extensão antiga já estava habilitada, `aculta_mcp_update_10001()` migra as referências dos plugins e prompts, remove o acesso MCP do papel anônimo e prepara o OAuth. Em uma instalação nova, os arquivos `config/install/` criam as configurações necessárias.
 
-As seis MCP Tool Configurations ficam em `config/install/` para que o Tool Bridge as instale junto com este módulo; também aparecem em `/admin/config/services/mcp-server/tools`.
+As seis MCP Tool Configurations têm defaults em `config/defaults/` e são criadas no install hook somente quando ainda não existem, para preservar configurações de sites migrados. Elas também aparecem em `/admin/config/services/mcp-server/tools`.
 
 ## Autenticação e autorização
 

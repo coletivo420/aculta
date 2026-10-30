@@ -8,16 +8,38 @@
 use Drupal\Component\Serialization\Yaml;
 
 /**
- * Migrates the former ACULTA MCP Client module and locks down MCP access.
+ * Implements hook_install().
  */
-function aculta_mcp_update_10001(): void {
-  _aculta_mcp_install_prompt_configs();
+function aculta_mcp_install(): void {
+  _aculta_mcp_install_default_config();
   _aculta_mcp_migrate_provider_configuration();
   _aculta_mcp_migrate_tool_configurations();
   _aculta_mcp_migrate_prompt_dependencies();
   _aculta_mcp_restrict_anonymous_access();
   _aculta_mcp_ensure_external_role();
   _aculta_mcp_enforce_pkce_s256();
+}
+
+/**
+ * Migrates the former ACULTA MCP Client module and locks down MCP access.
+ */
+function aculta_mcp_update_10001(): void {
+  _aculta_mcp_install_default_config();
+  _aculta_mcp_migrate_provider_configuration();
+  _aculta_mcp_migrate_tool_configurations();
+  _aculta_mcp_migrate_prompt_dependencies();
+  _aculta_mcp_restrict_anonymous_access();
+  _aculta_mcp_ensure_external_role();
+  _aculta_mcp_enforce_pkce_s256();
+}
+
+/**
+ * Installs only missing MCP config, preserving any existing site config.
+ */
+function _aculta_mcp_install_default_config(): void {
+  _aculta_mcp_install_prompt_configs();
+  _aculta_mcp_install_provider_configuration();
+  _aculta_mcp_install_tool_configurations();
 }
 
 /**
@@ -37,7 +59,7 @@ function _aculta_mcp_install_prompt_configs(): void {
       continue;
     }
 
-    $file = $module_path . '/config/install/mcp_server.mcp_prompt_config.' . $prompt_id . '.yml';
+    $file = $module_path . '/config/defaults/mcp_server.mcp_prompt_config.' . $prompt_id . '.yml';
     $contents = file_get_contents($file);
     if ($contents === FALSE) {
       throw new \RuntimeException(sprintf('Unable to read MCP prompt config %s.', $file));
@@ -50,6 +72,61 @@ function _aculta_mcp_install_prompt_configs(): void {
 
     $storage->create($configuration)->save();
   }
+}
+
+/**
+ * Installs the MCP Resource Provider config only when none exists yet.
+ */
+function _aculta_mcp_install_provider_configuration(): void {
+  $config_factory = \Drupal::configFactory();
+  $existing = $config_factory->get('mcp_server.resource_providers');
+  if (!$existing->isNew() && $existing->getRawData() !== []) {
+    return;
+  }
+
+  $file = \Drupal::service('extension.list.module')->getPath('aculta_mcp') . '/config/defaults/mcp_server.resource_providers.yml';
+  $configuration = _aculta_mcp_read_default_config($file);
+  $config_factory->getEditable('mcp_server.resource_providers')
+    ->setData($configuration)
+    ->save();
+}
+
+/**
+ * Installs MCP Tool Configurations that are not present yet.
+ */
+function _aculta_mcp_install_tool_configurations(): void {
+  $module_path = \Drupal::service('extension.list.module')->getPath('aculta_mcp');
+  $files = glob($module_path . '/config/defaults/mcp_server_tool_bridge.mcp_tool_config.*.yml') ?: [];
+  $storage = \Drupal::entityTypeManager()->getStorage('mcp_tool_config');
+
+  foreach ($files as $file) {
+    $configuration = _aculta_mcp_read_default_config($file);
+    if (!isset($configuration['id']) || $storage->load($configuration['id'])) {
+      continue;
+    }
+    $storage->create($configuration)->save();
+  }
+}
+
+/**
+ * Reads a validated YAML config default.
+ *
+ * @param string $file
+ *   Absolute path to the default configuration file.
+ *
+ * @return array
+ *   The decoded configuration data.
+ */
+function _aculta_mcp_read_default_config(string $file): array {
+  $contents = file_get_contents($file);
+  if ($contents === FALSE) {
+    throw new \RuntimeException(sprintf('Unable to read MCP config %s.', $file));
+  }
+  $configuration = Yaml::decode($contents);
+  if (!is_array($configuration)) {
+    throw new \RuntimeException(sprintf('Invalid MCP config %s.', $file));
+  }
+  return $configuration;
 }
 
 /**
