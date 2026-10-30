@@ -44,6 +44,16 @@ nem promove SDCs. Componentes experimentais (`stat-counter`,
 `accessibility-badges`, `sponsor-logos`) só entram em uma tela após validar
 schema, story, consumer real e status no catálogo.
 
+### OCS-F1 — tokens herdados no Studio (2026-10-30)
+
+Os SDCs do Studio herdam tipografia Montserrat e tokens de cor, contraste,
+espaçamento, largura e superfície por meio dos wrappers `.studio` e
+`.aculta-profile-editor`. Props, slots, render arrays e schemas de componentes
+não mudaram; tokens não são definidos no `:root`, evitando efeito nos demais
+purposes. A licença da fonte está junto dos WOFF2 em
+`assets/fonts/montserrat/OFL.txt`. Isso documenta a fundação visual, não a
+homologação de cada consumer nem a conclusão de OCS-F1.
+
 A conferência dos nomes usados na matriz de paridade encontrou estes SDCs em
 `components/`; a existência do arquivo não confirma consumer da rota nem
 renderização autenticada:

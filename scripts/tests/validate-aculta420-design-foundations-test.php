@@ -161,6 +161,30 @@ try {
   }
   file_put_contents($tokens_path, $original_tokens);
 
+  $studio_light_selector = ".studio,\n.aculta-profile-editor {\n";
+  $studio_scoped_tokens = str_replace($studio_light_selector, $studio_light_selector . "  --aculta-studio-fidelity-fixture: 1;\n", $original_tokens, $replacements);
+  if ($studio_scoped_tokens === $original_tokens || $replacements !== 1) {
+    throw new RuntimeException('Could not create Studio scoped-token fixture.');
+  }
+  file_put_contents($tokens_path, $studio_scoped_tokens);
+  [$status, $output] = $run_validator();
+  $fixtures++;
+  if ($status !== 0) {
+    $failures[] = 'an explicitly scoped Studio fidelity token was rejected';
+  }
+  $unscoped_theme_token = str_replace(
+    '--aculta-studio-fidelity-primary: #9d1980;',
+    "--aculta-surface-page: #ffffff;\n  --aculta-studio-fidelity-primary: #9d1980;",
+    $original_tokens,
+  );
+  file_put_contents($tokens_path, $unscoped_theme_token);
+  [$status, $output] = $run_validator();
+  $fixtures++;
+  if ($status === 0 || !str_contains($output, 'Theme and Studio tokens occur only')) {
+    $failures[] = 'a non-fidelity ACULTA token leaked into the scoped Studio block';
+  }
+  file_put_contents($tokens_path, $original_tokens);
+
   $cases = [
     ['.dark selector layout rule', 'css/fixtures/dark.css', '.dark .card { padding: 1rem; }', 'Color mode is token-only'],
     ['.dark-theme selector layout rule', 'css/fixtures/dark.css', '.dark-theme .card { padding: 1rem; }', 'Color mode is token-only'],
@@ -232,7 +256,12 @@ try {
     ['Twig whitespace-control mode branch', 'templates/whitespace-control.html.twig', "{%- if theme == 'dark' -%}different{%- endif -%}", 'Twig has no color-mode branch'],
     ['Dark selector in tokens stylesheet', 'css/tokens.css', "\n[data-bs-theme=\"dark\"] .fixture { padding: 1rem; }\n", 'Color mode is token-only'],
     ['Structural declaration inside dark token block', 'css/tokens.css', "\n[data-bs-theme=\"dark\"] {\n  display: none;\n}\n", 'custom properties only'],
-    ['ordinary structural CSS rule in tokens stylesheet', 'css/tokens.css', "\n.card { color: #ffffff; display: none; }\n", 'Mode selectors and ACULTA/Bootstrap tokens occur only'],
+    [
+      'ordinary structural CSS rule in tokens stylesheet',
+      'css/tokens.css',
+      "\n.card { color: #ffffff; display: none; }\n",
+      'Theme and Studio tokens occur only',
+    ],
     ['Twig inline script cannot branch on color mode', 'templates/inline-script.html.twig', "<script>if (theme === 'dark') { document.body.hidden = true; }</script>", 'JavaScript has no color-mode layout behavior'],
     ['Twig inline script cannot persist color mode', 'templates/inline-storage.html.twig', "<script>localStorage.setItem('theme', 'dark');</script>", 'Twig inline scripts do not persist or initialize color mode prematurely'],
     ['Twig inline script cannot restore persisted color mode', 'templates/inline-storage-read.html.twig', "<script>const saved = localStorage.getItem('theme'); applyTheme(saved);</script>", 'Twig inline scripts do not persist or initialize color mode prematurely'],

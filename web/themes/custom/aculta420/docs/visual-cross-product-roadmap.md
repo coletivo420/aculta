@@ -492,11 +492,14 @@ fundação global nem conclui MF1. Ver `mobile-first-audit.md`.
 ### OCS-F1 — tokens de fidelidade iniciais
 
 Mapeados ao prefixo `--aculta-studio-fidelity-*` os valores de cor e tabulação
-do `opcult` 3.1.5, aplicados somente ao layout Studio de Marley. Nenhuma fonte
-ou folha upstream foi copiada. A tipografia aguarda licença verificável.
-Firefox pós-alteração passou a navegação, contraste e reflow em Marley; a
-comparação não cobre todas as áreas nem um dashboard autenticado upstream, por
-isso F1 segue parcial. Detalhes em `studio-visual/upstream-inventory.md`.
+do `opcult` 3.1.5, aplicados nos wrappers Studio e editor de perfil privado.
+Nenhuma folha CSS upstream foi copiada. Em 2026-10-30, após verificar a licença
+SIL OFL 1.1 da família Montserrat, foram adicionados os WOFF2 Latin e Latin
+Extended locais, os tokens tipográficos e a escala de títulos sob `.studio` e
+`.aculta-profile-editor`. `npm run lint:css` passou; Firefox após esta alteração
+e comparação do Hub autenticado com o dashboard upstream estão pendentes.
+F1 segue parcial. Detalhes e proveniência em
+`studio-visual/upstream-inventory.md` e no README do tema.
 
 ### THEME-MF2 — `content-grid`
 

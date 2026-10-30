@@ -242,11 +242,14 @@ de caminhos. O contrato de modo é:
 O scanner de CSS remove comentários antes de inspecionar seletores e reconhece
 atributos de tema dark/light com os operadores CSS `=`, `~=`, `|=`, `^=`,
 `$=` e `*=`, classes `.dark`/`.light` e variantes explícitas, incluindo
-flags de comparação `i`/`s`, além de `prefers-color-scheme`. Em `tokens.css`, somente os dois blocos
-top-level `:root, [data-bs-theme="light"]` e `[data-bs-theme="dark"]` são
-permitidos; qualquer outra regra, inclusive CSS estrutural sem tokens, é
-rejeitada. Cada bloco pode conter apenas custom properties. Regras ou
-seletores estruturais por modo, inclusive dentro de `tokens.css`, falham.
+flags de comparação `i`/`s`, além de `prefers-color-scheme`. Em `tokens.css`,
+os blocos globais continuam limitados a `:root, [data-bs-theme="light"]` e
+`[data-bs-theme="dark"]`. O escopo OpenCulturas Studio admite somente tokens
+`--aculta-studio-fidelity-*` nos seletores `.studio, .aculta-profile-editor`,
+nos overrides correspondentes de dark e nos breakpoints 48rem, 68.75rem e
+100rem. No modo automático, o bloco dark global pode ter um segundo bloco
+somente para esses mesmos tokens escopados. Regras estruturais, propriedades
+fora desse prefixo ou seletores adicionais continuam rejeitados.
 
 O scanner Twig verifica condições `if`/`elseif` e ternários em tags `{% ... %}`
 e `{{ ... }}`. Em ternários, somente predicados são avaliados; quando há um

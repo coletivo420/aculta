@@ -14,9 +14,9 @@ documenta a fonte visual; não certifica paridade das telas autenticadas.
 - Raiz do tema moderno: `openculturas/profile/themes/opcult/`.
 - `profile/openculturas.info.yml` declara `version: '3.1.5'`; `composer.json` declara GPL-2.0-or-later e requer Drupal Core `~11.4.11`.
 - Verificação da referência pública em `https://www.openculturas.org/en`: HTML carrega o tema `opcult`; o `css/opcult.css` servido tem SHA-256 `1441f91a50e1461825c676e9fd1f33b08a176b0c7c897033a1e1432c5b3315b9`, idêntico ao CSS compilado no pacote 3.1.5. Isso confirma a identidade dessa folha servida, mas não prova que todos os módulos ou configurações do site estejam no pacote.
-- A verificação local repetiu o SHA-256 de `profile/themes/opcult/css/opcult.css` e obteve o mesmo valor da referência pública acima; versão e path foram conferidos diretamente nos arquivos do tarball. Nenhum arquivo upstream foi copiado para ACULTA.
+- A verificação local repetiu o SHA-256 de `profile/themes/opcult/css/opcult.css` e obteve o mesmo valor da referência pública acima; versão e path foram conferidos diretamente nos arquivos do tarball. CSS, Twig, SVGs e ícones upstream não foram copiados. Os dois arquivos WOFF2 de Montserrat foram copiados sem alteração somente depois da verificação independente da licença OFL, registrada abaixo e no README do tema.
 - Capturas Firefox ESR visível: `$SUITE_OUT/openculturas-1440.png` e `$SUITE_OUT/openculturas-390.png`. O perfil temporário fica em `$SUITE_OUT/profiles/` e é removido ao encerrar a sessão. Capturas autenticadas do Studio ficam em `$SUITE_OUT/aculta-studio-*.png`.
-- O manifesto do pacote declara GPL-2.0-or-later; `sprite/svg/LICENSE_phosphor-icons.md` registra a licença do sprite Phosphor. Os diretórios Montserrat e Open Sans contêm WOFF2/CSS, mas o pacote não inclui licença desses arquivos. Não copiar fontes, logos, imagens ou SVGs. Não derivar CSS de terceiros sem registrar origem/licença e atribuição do trecho específico.
+- O manifesto do pacote declara GPL-2.0-or-later; `sprite/svg/LICENSE_phosphor-icons.md` registra a licença do sprite Phosphor. O tarball, por si, não esclarece a licença dos arquivos Montserrat/Open Sans. Antes de incluir Montserrat, a família exata foi verificada no metadata oficial Google Fonts (`OFL`) e o texto SIL OFL 1.1 foi arquivado junto dos WOFF2 locais. Open Sans, logos, imagens, SVGs, CSS e Twig upstream não foram copiados. Nenhum CSS de terceiros foi derivado literalmente.
 
 ## Arquivos concretos inspecionados
 
@@ -27,18 +27,20 @@ documenta a fonte visual; não certifica paridade das telas autenticadas.
 | Dashboard | `templates/views/user-dashboard-views.scss` | Profile finder, “My profiles”, bookmarks, “My content” e pager/carregar mais | Referência de composição. O CSS não prova que cada View esteja habilitada/visível; no ACULTA mostrar apenas tarefas e conteúdo reais |
 | Views e listagens | `templates/views/views-exposed-forms.scss`, `templates/views/view-search.scss`, `templates/views/view-related-*`, `templates/node/node--compact.html.twig`, `templates/node/node--date--compact.html.twig`, `templates/node/node--teaser-unified.html.twig` | Filtros, cards compactos, teasers e resultados | Reutilizar `patterns/card`, `content-grid`, `content-section` e consumers existentes; checar cada consumer antes da mudança |
 | Forms e feedback | `sass/base/_forms.scss`, `sass/base/_buttons.scss`, `sass/base/_messages.scss`, `templates/contrib/password.scss`, `templates/components/status-messages.html.twig` | Controles, botões, mensagens e feedback do Core | Preservar Form API e markup do owner; estilos apenas dentro do Studio |
-| Tipografia e cores | `sass/abstracts/_colors.scss`, `sass/abstracts/_typography.scss`, `sass/base/_custom-properties.scss`, `sass/fonts.scss`, `css/fonts.css` | Roxo `#9d1980`, verde-interação `#16635e`, cores funcionais, tokens, Montserrat/Open Sans | Valores são evidência para F1. Fonte só poderá ser usada após licença verificada; nenhum asset foi copiado |
+| Tipografia e cores | `sass/abstracts/_colors.scss`, `sass/abstracts/_typography.scss`, `sass/base/_custom-properties.scss`, `sass/fonts.scss`, `css/fonts.css` | Roxo `#9d1980`, verde-interação `#16635e`, cores funcionais, tokens, Montserrat/Open Sans | Valores são evidência para F1. Montserrat foi verificada sob OFL e incluída localmente; Open Sans não foi copiada |
 | Dark mode | `sass/dark-mode/_index.scss`, `sass/dark-mode/_misc.scss`, `sass/abstracts/_colors.scss` | Overrides de cores para modo escuro | Derivar escopo com os tokens ACULTA existentes; testar os dois temas sem alterar preferência Runtime |
 | Componentes e ícones | `templates/block/`, `templates/media/`, `templates/paragraph/`, `templates/node/`, `sprite/README.md`, `sprite/svg/LICENSE_phosphor-icons.md` | Templates de block, media, parágrafo, node, SVG sprite e atribuição Phosphor | Não copiar markup, ícones ou assets; preferência por SDC ACULTA atual e seus slots |
 | Bibliotecas e JS | `opcult.libraries.yml`, `js/opcult.js`, `opcult.breakpoints.yml`, `package.json`, `gulpfile.mjs` | CSS compilado, biblioteca de fonte, dependências Drupal, behavior de UI e breakpoints | Não ativar o tema nem criar pipeline Sass paralelo; tamanhos de referência: 480, 768, 992, 1100 e 1600 px |
 
 ### OCS-F1 — tokens de fidelidade iniciais
 
-Tokens com prefixo `--aculta-studio-fidelity-*` registram as cores observadas
-em `sass/abstracts/_colors.scss` e os estados de navegação de `css/opcult.css`
-(regras `.tabs a`, `.tabs a.is-active` e hover/focus). São consumidos somente
-por `.studio__layout`, `.studio__tabs` e `.studio__subtabs`; outras áreas e
-purposes não recebem esses acabamentos. Nenhum CSS upstream foi copiado.
+Tokens com prefixo `--aculta-studio-fidelity-*` registram cores, tipografia,
+espaçamentos e superfícies observados no pacote 3.1.5. Os tokens e a família
+Montserrat ficam limitados aos wrappers `.studio` e `.aculta-profile-editor`;
+Institution Bar, Domain Header e outros purposes não recebem esse acabamento.
+Os estilos são implementados no tema ACULTA, sem copiar CSS, Twig ou markup
+upstream. A declaração local `@font-face` usa apenas os WOFF2 Montserrat
+licenciados e documentados nesta auditoria.
 
 Os pares aplicados ao layout e às abas têm contraste calculado acima de 7:1 no
 claro e acima de 12:1 no escuro. A cor muted clara upstream `#7b7d85` tem
@@ -46,12 +48,33 @@ claro e acima de 12:1 no escuro. A cor muted clara upstream `#7b7d85` tem
 normal. A suíte Firefox no Marley passou contraste e navegação; a validação de
 todos os componentes e áreas permanece pendente.
 
-Montserrat/Open Sans continuam sem uso: o pacote contém arquivos de fonte mas
-não licença comprovável. Tipografia fiel, cartões, formulários e demais
-componentes permanecem pendentes. Firefox pós-alteração no checkout servido
-confirmou abas, contraste e navegação em Marley, mas não compara a experiência
-com dashboard autenticado upstream nem cobre todas as telas; F1 permanece
-parcial.
+Em 2026-10-30, OCS-F1 passou a usar Montserrat variável em WOFF2 local, com os subconjuntos
+Latin/Latin Extended do pacote 3.1.5. A licença foi verificada no
+[metadata oficial do Google Fonts](https://github.com/google/fonts/blob/main/ofl/montserrat/METADATA.pb)
+(`OFL` para Montserrat); o [texto da licença SIL OFL 1.1](https://raw.githubusercontent.com/google/fonts/main/ofl/montserrat/OFL.txt) acompanha os arquivos
+em `web/themes/custom/aculta420/assets/fonts/montserrat/`. Os bins permanecem
+inalterados e não há chamada a CDN. A família está aplicada somente aos
+wrappers `.studio` e `.aculta-profile-editor`; tokens de fidelidade também foram
+movidos para esses escopos. O token de tamanho/cor muted `#7b7d85` segue sem uso
+como texto normal por não atingir AA sobre branco. Open Sans não foi copiada,
+pois não é necessária para a família padrão/head identificada no tema Next.
+
+F1 continua parcial: cartões, formulários e demais componentes precisam de
+acabamento e comparação real. A navegação/captura de Marley anterior confirmou
+abas e contraste **antes** da adição tipográfica, mas não compara Hub
+autenticado ao dashboard upstream nem cobre todas as telas ou tamanhos. A nova
+folha passou lint CSS/JS. Também passaram SDC schema/discovery (55 componentes,
+756 checks), Design Foundations (2.418 checks e 159 fixtures), browser
+validators (21), mapa módulo/tema (210), boundary módulo/tema (3.442), além dos
+gates Runtime read-only Foundation (351) e Shell (11). Unit PortalUiHooks
+passou 17 testes/110 assertions; os dois Kernel de formulários de Eventos
+passaram 9 testes/141 assertions com 24 depreciações de Core/contrib. O PHPCS
+Drupal/DrupalPractice integral dos dois scripts alterados continua vermelho por
+dívida anterior (688 erros/3 avisos; a versão no HEAD-base tinha 692/5); nenhuma
+violação foi identificada nas linhas adicionadas. A validação visual
+pós-tipografia, incluindo Firefox visível, contraste do Studio, overflow e
+geometria mobile, continua pendente; os scripts Runtime foram executados pelo
+checkout servido em 096ecbfae antes deste patch Studio.
 
 ### OCS-F2 — navegação interna do Studio (implementação parcial)
 

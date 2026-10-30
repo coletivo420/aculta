@@ -48,6 +48,15 @@ pendentes.
 Os guias de identidade específicos ficam no [índice de documentação](docs/README.md).
 Cada componente SDC também pode manter seu README local em `components/`.
 
+## Recursos visuais licenciados
+
+| Recurso | Fonte e uso | Licença/atribuição |
+|---|---|---|
+| Montserrat variável, subconjuntos Latin e Latin Extended (`assets/fonts/montserrat/`) | Arquivos WOFF2 inalterados do tema OpenCulturas 3.1.5; usados localmente só dentro do Studio durante OCS-F1 | SIL Open Font License 1.1; licença e copyright em `assets/fonts/montserrat/OFL.txt`; família Montserrat creditada a Julieta Ulanovsky, Sol Matas, Juan Pablo del Peral e Jacques Le Bailly. O CSS de origem credita o gerador `webfont-montserrat`; nenhum código desse gerador foi copiado. |
+
+Os arquivos não são servidos por CDN. Se a identidade OCS-A substituir a tipografia,
+remover os WOFF2 e a declaração `@font-face` caso não reste consumer.
+
 ## Estrutura
 
 - `components/` — componentes SDC reutilizáveis.

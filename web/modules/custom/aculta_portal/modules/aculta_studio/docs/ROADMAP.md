@@ -96,6 +96,18 @@ Não substituir o conteúdo de uma experiência pelo de outra. O Studio compõe 
 
 F0-F3 podem ser implementadas sem desbloquear a homologação de S-R4/S-R5; F4-F6 seguem restrições funcionais existentes. Cada fase: commit independente na PR #299; **documentação não significa implementação**.
 
+### Registro OCS-F1 — tipografia e tokens escopados (2026-10-30)
+
+Adicionados tokens de tipografia, cores, espaçamento e superfícies do `opcult`
+3.1.5 nos wrappers `.studio` e `.aculta-profile-editor`, sem alterar SDCs ou
+contratos funcionais. Montserrat está local e licenciada sob SIL OFL 1.1, com
+atribuição e licença no tema. O lint CSS passou; homologação visual depois da
+mudança, comparação do Hub, demais consumers e cobertura mobile continuam
+pendentes. O validator Design Foundations passou 2.418 checks e 159 fixtures
+após receber regras estritas para tokens Studio escopados; schema SDC, validators
+de browser e gates read-only Runtime Foundation/Shell também passaram.
+**F1 parcial; gate não aprovado.**
+
 ## Melhorias inspiradas no OpenCulturas (2026-10-28)
 
 Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`. Entram depois do fechamento de S-R5.

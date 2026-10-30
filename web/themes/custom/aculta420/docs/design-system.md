@@ -187,17 +187,25 @@ subconjunto reconhecido e seus limites estão descritos em
 [`development.md`](development.md); mudanças na sintaxe do contrato devem vir
 com fixtures negativas correspondentes.
 
+Retificação OCS-F1 (2026-10-30): `tokens.css` também admite os tokens de
+fidelidade `--aculta-studio-fidelity-*` sob `.studio` e
+`.aculta-profile-editor`, com os mesmos escopos para dark/automático e os
+breakpoints registrados em `development.md`. A exceção aceita somente
+custom properties com esse prefixo; não autoriza tokens globais novos nem
+regras de layout ou seletores de modo fora de `tokens.css`.
+
 Estado e sequência:
 
 1. 0.2-A/0.2-A.1 define valores semânticos light/dark por `data-bs-theme`;
 2. 0.2-E/0.2-F valida visualmente o shell nos dois modos;
-3. uma fase posterior adicionará `auto` via `prefers-color-scheme`, seletor e
-   persistência;
+3. `tokens.css` já segue `prefers-color-scheme` quando não há preferência
+   explícita; seletor de usuário e persistência seguem como trabalho futuro;
 4. alto contraste só será considerado após auditoria.
 
 Esta foundation não declara Dark Mode como feature completa e não ativa um modo
-por padrão. Ela prepara tokens para que uma fase posterior possa testar o shell
-e componentes sem mudar markup.
+sem homologação visual dos componentes e das telas representativas. A escolha
+automática segue o sistema quando a preferência não está explícita; isso não
+substitui a validação do shell e dos consumers.
 
 Modo de cor troca tokens, não geometria nem markup do shell. Um logo poderá ter
 asset light e asset dark no futuro somente se a legibilidade exigir; seu espaço,

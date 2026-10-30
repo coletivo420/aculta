@@ -16,6 +16,12 @@ final class Aculta420DesignFoundationsAnalyzer {
 
   private const DARK_SELECTOR = '[data-bs-theme="dark"]';
 
+  private const STUDIO_FIDELITY_SELECTOR = '.studio, .aculta-profile-editor';
+
+  private const STUDIO_DARK_FIDELITY_SELECTOR = '[data-bs-theme="dark"] .studio, [data-bs-theme="dark"] .aculta-profile-editor';
+
+  private const STUDIO_AUTO_DARK_FIDELITY_SELECTOR = ':root:not([data-bs-theme="light"]) .studio, :root:not([data-bs-theme="light"]) .aculta-profile-editor';
+
   private const MODE_CLASSES = [
     'dark', 'light', 'dark-theme', 'light-theme', 'theme-dark', 'theme-light',
     'dark-mode', 'light-mode', 'is-dark', 'is-light', 'color-mode-dark', 'color-mode-light',
@@ -192,10 +198,25 @@ final class Aculta420DesignFoundationsAnalyzer {
     $dark_rules = [];
     $unsupported_token_rules = [];
     $auto_rules = [];
-    $walk = static function (array $nodes, bool $top_level = TRUE) use (&$walk, &$light_rules, &$dark_rules, &$auto_rules, &$unsupported_token_rules): void {
+    $studio_light_rules = [];
+    $studio_dark_rules = [];
+    $studio_auto_rules = [];
+    $studio_breakpoint_rules = [];
+    $walk = static function (array $nodes, bool $top_level = TRUE) use (&$walk, &$light_rules, &$dark_rules, &$auto_rules, &$unsupported_token_rules, &$studio_light_rules, &$studio_dark_rules, &$studio_auto_rules, &$studio_breakpoint_rules): void {
       foreach ($nodes as $node) {
         if ($top_level && self::isAutoModeBlock($node)) {
-          $auto_rules[] = $node['children'][0];
+          foreach ($node['children'] as $auto_child) {
+            if (self::normalizeSelector($auto_child['selector']) === self::normalizeSelector(':root:not([data-bs-theme="light"])')) {
+              $auto_rules[] = $auto_child;
+            }
+            else {
+              $studio_auto_rules[] = $auto_child;
+            }
+          }
+          continue;
+        }
+        if ($top_level && self::isStudioBreakpointBlock($node)) {
+          $studio_breakpoint_rules[] = $node['children'][0];
           continue;
         }
         $selector = self::normalizeSelector($node['selector']);
@@ -205,12 +226,19 @@ final class Aculta420DesignFoundationsAnalyzer {
         elseif ($top_level && $selector === self::normalizeSelector(self::DARK_SELECTOR)) {
           $dark_rules[] = $node;
         }
+        elseif ($top_level && $selector === self::normalizeSelector(self::STUDIO_FIDELITY_SELECTOR) && self::onlyStudioFidelityDeclarations($node['body']) && $node['children'] === []) {
+          $studio_light_rules[] = $node;
+        }
+        elseif ($top_level && $selector === self::normalizeSelector(self::STUDIO_DARK_FIDELITY_SELECTOR) && self::onlyStudioFidelityDeclarations($node['body']) && $node['children'] === []) {
+          $studio_dark_rules[] = $node;
+        }
         else {
           $unsupported_token_rules[] = $node['selector'];
         }
         if (self::containsModeSelector($node['selector'])) {
           $is_supported_root = $top_level && ($selector === self::normalizeSelector(self::LIGHT_SELECTOR)
-            || $selector === self::normalizeSelector(self::DARK_SELECTOR));
+            || $selector === self::normalizeSelector(self::DARK_SELECTOR)
+            || $selector === self::normalizeSelector(self::STUDIO_DARK_FIDELITY_SELECTOR));
           if (!$is_supported_root) {
             $unsupported_token_rules[] = $node['selector'];
           }
@@ -224,7 +252,9 @@ final class Aculta420DesignFoundationsAnalyzer {
     $walk($rules);
     $assert(count($light_rules) === 1, 'Exactly one supported root/light token block exists.');
     $assert(count($dark_rules) === 1, 'Exactly one supported dark token block exists.');
-    $assert($unsupported_token_rules === [], 'Mode selectors and ACULTA/Bootstrap tokens occur only in the two supported top-level token blocks, with no nested rules.');
+    $assert(count($studio_light_rules) === 1 && count($studio_dark_rules) === 1, 'Studio fidelity tokens have one light and one explicit dark scoped block.');
+    $assert(count($studio_auto_rules) <= 1, 'At most one automatic dark Studio fidelity block exists.');
+    $assert($unsupported_token_rules === [], 'Theme and Studio tokens occur only in supported root or explicitly scoped flat token blocks.');
 
     $parse_mode = static function (array $mode_rules, string $mode) use ($assert): array {
       $declarations = [];
@@ -247,6 +277,15 @@ final class Aculta420DesignFoundationsAnalyzer {
     $assert(count($auto_rules) <= 1, 'At most one automatic (prefers-color-scheme) token block exists.');
     if ($auto_rules !== []) {
       $assert($parse_mode($auto_rules, 'auto') === $dark, 'Automatic token block mirrors the dark token block exactly.');
+    }
+    if ($studio_auto_rules !== [] && $studio_dark_rules !== []) {
+      $assert(self::studioDeclarations($studio_auto_rules[0]['body']) === self::studioDeclarations($studio_dark_rules[0]['body']), 'Automatic Studio fidelity block mirrors the explicit dark block exactly.');
+    }
+    elseif ($studio_auto_rules !== []) {
+      $assert(FALSE, 'Automatic Studio fidelity tokens require an explicit dark token block.');
+    }
+    foreach ($studio_breakpoint_rules as $index => $rule) {
+      $assert(self::onlyStudioFidelityDeclarations($rule['body']), 'Responsive Studio token block ' . ($index + 1) . ' contains fidelity properties only.');
     }
 
     foreach (self::REQUIRED_TOKENS as $token) {
@@ -459,10 +498,21 @@ final class Aculta420DesignFoundationsAnalyzer {
         }
         if (self::containsModeSelector($node['selector'])) {
           $selector = self::normalizeSelector($node['selector']);
+          $global_mode_selector = in_array(
+            $selector,
+            [
+              self::normalizeSelector(self::LIGHT_SELECTOR),
+              self::normalizeSelector(self::DARK_SELECTOR),
+            ],
+            TRUE,
+          );
           $allowed = $tokens_file && $top_level
-            && in_array($selector, [self::normalizeSelector(self::LIGHT_SELECTOR), self::normalizeSelector(self::DARK_SELECTOR)], TRUE)
             && $node['children'] === []
-            && self::onlyCustomPropertyDeclarations($node['body']);
+            && (
+              ($global_mode_selector && self::onlyCustomPropertyDeclarations($node['body']))
+              || ($selector === self::normalizeSelector(self::STUDIO_DARK_FIDELITY_SELECTOR)
+                && self::onlyStudioFidelityDeclarations($node['body']))
+            );
           if (!$allowed) {
             $count++;
           }
@@ -704,17 +754,99 @@ final class Aculta420DesignFoundationsAnalyzer {
   }
 
   /**
-   * Bloco automático permitido em tokens.css: @media (prefers-color-scheme: dark) com um único
-   * filho :root:not([data-bs-theme="light"]), sem aninhamento. Tem de espelhar o bloco escuro.
+   * Determines whether an automatic dark token block uses supported selectors.
+   *
+   * @param array $node
+   *   Parsed CSS rule node.
+   *
+   * @return bool
+   *   TRUE when the rule is an allowed automatic dark token block.
    */
   public static function isAutoModeBlock(array $node): bool {
     if (preg_match('/^@media\s*\(\s*prefers-color-scheme\s*:\s*dark\s*\)$/i', trim($node['selector'])) !== 1) {
       return FALSE;
     }
     $children = $node['children'];
+    if (count($children) < 1 || count($children) > 2) {
+      return FALSE;
+    }
+    $root_found = FALSE;
+    $studio_found = FALSE;
+    foreach ($children as $child) {
+      $selector = self::normalizeSelector($child['selector']);
+      if ($selector === self::normalizeSelector(':root:not([data-bs-theme="light"])') && $child['children'] === []) {
+        $root_found = TRUE;
+      }
+      elseif ($selector === self::normalizeSelector(self::STUDIO_AUTO_DARK_FIDELITY_SELECTOR)
+        && $child['children'] === []
+        && self::onlyStudioFidelityDeclarations($child['body'])) {
+        $studio_found = TRUE;
+      }
+      else {
+        return FALSE;
+      }
+    }
+    return $root_found && (count($children) === 1 || $studio_found);
+  }
+
+  /**
+   * Determines whether a media rule contains a progressive Studio token block.
+   *
+   * @param array $node
+   *   Parsed CSS rule node.
+   *
+   * @return bool
+   *   TRUE when the breakpoint and scoped declarations are supported.
+   */
+  private static function isStudioBreakpointBlock(array $node): bool {
+    if (preg_match('/^@media\\s*\\(\\s*min-width\\s*:\\s*(?:48rem|68\\.75rem|100rem)\\s*\\)$/i', trim($node['selector'])) !== 1) {
+      return FALSE;
+    }
+    $children = $node['children'];
     return count($children) === 1
-      && self::normalizeSelector($children[0]['selector']) === self::normalizeSelector(':root:not([data-bs-theme="light"])')
-      && $children[0]['children'] === [];
+      && self::normalizeSelector($children[0]['selector']) === self::normalizeSelector(self::STUDIO_FIDELITY_SELECTOR)
+      && $children[0]['children'] === []
+      && self::onlyStudioFidelityDeclarations($children[0]['body']);
+  }
+
+  /**
+   * Checks that a rule contains only the scoped Studio fidelity properties.
+   *
+   * @param string $body
+   *   CSS declaration block.
+   *
+   * @return bool
+   *   TRUE when all declarations use the fidelity token prefix.
+   */
+  private static function onlyStudioFidelityDeclarations(string $body): bool {
+    $declarations = self::parseDeclarations($body);
+    if ($declarations === []) {
+      return FALSE;
+    }
+    foreach ($declarations as $declaration) {
+      if (preg_match('/^--aculta-studio-fidelity-[a-z0-9_-]+$/i', $declaration['name']) !== 1 || $declaration['value'] === '') {
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+
+  /**
+   * Parses Studio fidelity declarations into a deterministically ordered map.
+   *
+   * @param string $body
+   *   CSS declaration block.
+   *
+   * @return array<string, string>
+   *   Map of token names to values.
+   */
+  private static function studioDeclarations(string $body): array {
+    $declarations = [];
+    foreach (self::parseDeclarations($body) as $declaration) {
+      $declarations[$declaration['name']] = $declaration['value'];
+    }
+    ksort($declarations);
+    return $declarations;
   }
 
   private static function normalizeSelector(string $selector): string {
