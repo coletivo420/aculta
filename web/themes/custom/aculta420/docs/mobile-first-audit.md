@@ -1751,3 +1751,32 @@ seu teste Unit já existe, mas a correção ainda não está no Runtime, então 
 zoom não prova o reflow do conteúdo com título corrigido. O gate de headings
 pós-candidato segue DEFERRED. Esta matriz não valida páginas internas, teclado,
 leitores de tela ou WCAG 2.2 AA e não aprova THEME-MF3.
+
+### Retificação de contrato visual do formulário SUPPORT (2026-10-30)
+
+O teste anterior presumia que a rota pública renderizava `<fieldset>` e ações de
+pagamento; a primeira execução confirmou que esses elementos não existem no
+formulário atual, portanto suas 11 falhas de padding eram um falso negativo do
+harness. `SupportForm::buildForm()` atualmente entrega introdução, estado de
+serviço e bloco de outras formas de apoio, sem campos de cobrança, controles visíveis ou submit. O
+harness agora mede esses consumers reais, a grade `donation-quick` e confirma que
+nenhum controle de pagamento planejado aparece como funcional. Firefox ESR
+visível passou 37/37 checks em 320/360/390/480/481/599/600/768/1024/1280/1440px,
+sem overflow; `formWidth` ficou contido no viewport. Institution Bar e Domain
+Header apareceram uma vez no SUPPORT do Runtime HEAD `30c6770f3`. Evidências em
+`/home/piradopirata/aculta-suite-out/support-form-final-20261030/`.
+Não houve submissão; não cobre checkout, pagamento, ACL, teclado, zoom ou WCAG.
+
+### Reteste de autenticação e `page-columns` (2026-10-30)
+
+`auth-layout.py` passou 28/28 com baseline resolvido pelo commit anterior à
+correção dos seletores reais, em 11 larguras: paddings candidatos, ausência de
+overflow e classes `path-entrar`, `path-criar-conta` e
+`path-recuperar-senha`. `auth-route-runtime.py` também passou 12/12 na rota
+anônima real `/entrar` (CSS candidata injetada, nenhum envio de form). O SDC
+`page-columns` passou 70/70 na fixture em dez larguras para variantes de uma,
+duas e três colunas, ordem DOM e overflow; não possui consumer de produto
+homologado. Evidências em `/home/piradopirata/aculta-suite-out/`:
+`auth-layout-default-baseline-20261030`, `auth-route-runtime-resume-20261030` e
+`page-columns-resume-20261030`. Esses resultados não validam formulários reais de
+cadastro/recuperação, autorização, consumo Drupal do SDC ou THEME-MF3.

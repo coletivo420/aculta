@@ -176,13 +176,13 @@ validação do lookup ao vivo do CEP.
 
 `support-form.py` mede o formulário público e o SDC `donation-quick` em Firefox
 ESR no servidor de desenvolvimento (`https://apoio.aculta.toca.net.br/`).
-Verifica o formulário, cartões, Institution Bar, overflow e limites da grade em
-320/360/390/480/481/599/600/768/1024/1280/1440 CSS px. Confere também o
-fieldset compacto até 480px, seu retorno a 24px em 481px e a largura das ações
-do formulário em mobile e desktop. É somente leitura: não envia formulário nem
-altera configuração. Registra a presença do Domain Header para diagnóstico; o
-Runtime atual não o renderiza nesse purpose, questão registrada no Pede-A
-transversal.
+Verifica formulário, introdução, outras formas de apoio, link de contato,
+cartões, Institution Bar, Domain Header, overflow e limites da grade em
+320/360/390/480/481/599/600/768/1024/1280/1440 CSS px. Confirma também que o
+formulário ainda não apresenta fieldsets, campos de cobrança ou botão de envio
+que fariam parecer operacional um fluxo não implementado. É somente leitura:
+não envia formulário nem altera configuração. No HEAD Runtime `30c6770f3`, os
+dois headers renderizaram uma vez na rota SUPPORT.
 
 ```sh
 export DISPLAY=:0
@@ -409,8 +409,11 @@ Também garante que o CSS contempla as classes das rotas `/criar-conta`
 quando o baseline só tinha seletores `page-route-user-*` que não correspondem ao
 HTML real. Usa fixture, não Runtime. Requer Firefox ESR visível, `DISPLAY=:0`,
 geckodriver e `websockets`; artefatos ficam em `$SUITE_OUT`.
-`AUTH_BASELINE_REF` e `AUTH_WIDTHS` selecionam baseline e larguras. A captura do
-Runtime anterior à correção confirmou `path-entrar` e não aplicava os estilos
+`AUTH_BASELINE_REF` e `AUTH_WIDTHS` selecionam baseline e larguras. Sem override,
+o teste localiza o commit `fix(theme): aplica estilos nas rotas reais de
+autenticação` e usa o pai como baseline, evitando que commits posteriores de
+documentação tornem `HEAD^` equivalente ao candidato. A captura do Runtime
+anterior à correção confirmou `path-entrar` e não aplicava os estilos
 específicos de `auth.css`; a verificação do CSS corrigido no Runtime aguarda sua
 publicação e rebuild de cache.
 

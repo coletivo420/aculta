@@ -1132,3 +1132,21 @@ candidato local trata esse defeito via `page_title_block`, mas não está servid
 a validação pós-candidato de H1 e reflow continua pendente. README e
 `mobile-first-audit.md` documentam evidências e limites; o gate THEME-MF3 não
 está aprovado.
+
+### THEME-MF2 — formulário SUPPORT com contrato real (2026-10-30)
+
+A validação Firefox revelou uma premissa obsoleta no harness: o formulário
+público não renderiza fieldset nem ações de cobrança; a apresentação atual tem
+introdução, outras formas de apoio e contato. O teste foi ajustado para medir
+esses elementos e verificar que nenhum campo/submit de fluxo ainda não
+implementado é exibido. No Runtime HEAD `30c6770f3`, 37/37 checks passaram em 11
+larguras; grade, formulário e os dois headers ficaram contidos/únicos, sem
+overflow. O teste não submete nem homologa checkout ou WCAG.
+
+### THEME-MF2 — autenticação, SUPPORT e page-columns (2026-10-30)
+
+No Firefox ESR visível, `auth-layout.py` passou 28/28 com baseline histórico
+estável e `auth-route-runtime.py` passou 12/12 checks na rota anônima real. O
+SUPPORT atual passou 37/37 em 11 larguras, sem campos/submit não implementados;
+`page-columns` passou 70/70 como fixture (sem consumer). Resultados detalhados e
+limites em `mobile-first-audit.md`; não aprova fluxos completos nem THEME-MF3.
