@@ -71,7 +71,8 @@ final class EventPageController extends ControllerBase {
       ->doEvento($evento, $agora, self::HORIZONTE_DIAS);
 
     $linhas = [];
-    $podeEditarRecorrencia = $this->currentUser()->hasPermission('administer aculta events');
+    $podeEditarRecorrencia = $this->currentUser()->hasPermission('administer aculta events')
+      && $this->purposes?->getCurrentPurpose() === 'main';
     // A tag de lista cobre data criada, editada ou excluída.
     // Evita cache longo com um conjunto de datas desatualizado.
     $tags = array_merge($evento->getCacheTags(), [EventCacheTags::LISTA]);
