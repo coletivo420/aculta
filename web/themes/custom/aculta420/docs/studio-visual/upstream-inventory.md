@@ -130,7 +130,7 @@ visibilidade por conta e aparência ainda não foram homologados em Runtime.
 | WE Sativa | `we_sativa` / `/studio/we-sativa` | Disponível com `aculta_wiki.contributor_workspace`; acesso delegado ao workspace Wiki | Workspace real do owner; captura/ACL e autoria versus moderação pendentes |
 | Planos Mercado Pago | `mercado_pago_plans` / `aculta_pagamentos_mercadopago.studio_plans` | Módulo opcional ativo; login, Portal e `administrar doacoes` | Condicional; visual e cenário de módulo ausente pendentes |
 | Meus Salvos | `salvos` / `/studio/salvos` | Provider no registry; login e `access aculta portal`; controller usa `SavedContentQueryInterface` | UI de salvos/seguindo/recomendações existe no código; testes de isolamento/cache registrados em ARQ-07B, captura visual e A/B no Runtime pendentes |
-| Green Stash integrado | `green_stash` / `/estudio/loja` | Registro condicional via `AcultaCommerceServiceProvider`; ACL de entrada é `GreenStashAccessPolicy`, além dos grants por loja/operação | Área comercial dentro do Studio. Provider ainda mostra mensagem de preparação; produtos/envios têm fluxos em código, mas acesso autorizado e operação não foram homologados. Não criar shell nem menu global paralelo. |
+| ACULTA STUDIO GREEN STASH | `green_stash` / `/studio/green-stash` | Registro condicional via `AcultaCommerceServiceProvider`; ACL de entrada é `GreenStashAccessPolicy`, além dos grants por loja/operação | Área comercial integrada ao Studio. Provider ainda mostra mensagem de preparação; produtos/envios têm fluxos em código, mas acesso autorizado e operação não foram homologados. Não criar shell nem menu global paralelo. |
 
 `aculta_studio.services.yml` registra os sete primeiros providers; Green Stash
 entra dinamicamente pelo service provider de Commerce. Todos usam purpose
@@ -140,8 +140,11 @@ rotas/serviços nem transforma estados de preparação em recursos operacionais.
 
 ### Green Stash integrado — capacidades observadas no código
 
-Rotas em `aculta_commerce.routing.yml` ficam em `/estudio/loja` no purpose
-`account`, protegidas pela permissão comercial. O módulo Commerce registra
+As rotas canônicas em `aculta_commerce.routing.yml` ficam em
+`/studio/green-stash` no purpose `account`, protegidas pela permissão comercial.
+O nome público é **ACULTA STUDIO GREEN STASH**. Os antigos paths
+`/estudio/loja/*` foram aposentados sem alias/redirect em 2026-10-30; os IDs
+internos de rota e contratos Commerce foram preservados. O módulo Commerce registra
 `GreenStashExperienceProvider` no registry compartilhado do Studio. Esse uso
 técnico não é evidência de plataforma independente: a apresentação deverá
 permanecer contextual ao shell/navegação ACULTA Studio e Commerce continuará
@@ -219,8 +222,8 @@ precise do Runtime.
 |---|---|---|
 | `aculta_studio/src/Controller/StudioHubController.php` e rota `aculta_studio.hub` | GET autenticado de `/studio` carregou documento HTML de apenas 26 caracteres, sem título/corpo nem links; Firefox registrou 2 elementos. O controle não foi contornado na Frente B. | Diagnosticar a resposta vazia; Functional/Kernel deve comprovar render do hub com links às experiências existentes, filtradas por provider/ACL/rota, e vazio explícito quando nenhuma estiver disponível. Repetir smoke HTTP autenticado sem mudança de rota/ACL. |
 | `aculta_lms.routing.yml` e consumer de `/studio/ganjalab` | Captura autenticada mostrou título/conteúdo de Minha Conta, não painel de estudante; rota não tinha elemento `[data-aculta-studio]`. | Confirmar rota canônica e encaminhamento do dashboard LMS sem alterar ACL/contratos visuais; Functional para aluno matriculado e usuário sem matrícula, mais browser smoke autenticado. |
-| `aculta_commerce/src/Access/GreenStashAccessPolicy.php` e fixture de loja | `/estudio/loja` respondeu “Acesso negado” para a conta sintética `teste.comum`; esta conta não é evidência de operador autorizado. | Disponibilizar no ambiente de teste um operador sintético com loja autorizada, sem dados pessoais/loja real; testar leitura positiva e negativa entre duas lojas, incluindo listagem e operações de produtos/envios, sem ampliar permissão em Runtime pela Frente B. |
-| Contrato Domain Header / apresentação ACCOUNT | Captura autenticada em `/studio/marley`, GanjaLab, WE Sativa, Conta, Perfil, Planos e `/estudio/loja` mostrou Institution Bar (`.aculta-institution-bar`) presente, mas `.aculta-header` ausente em todas as oito rotas. | Owner de Domain/Portal deve confirmar se a ausência do Domain Header é intencional no purpose `account` ou corrigir a composição para preservá-lo conforme a decisão visual. Teste browser autenticado por purpose que confira Institution Bar e Domain Header sem duplicá-los; não introduzir workaround visual da Frente B. |
+| `aculta_commerce/src/Access/GreenStashAccessPolicy.php` e fixture de loja | Captura histórica de `/estudio/loja` respondeu “Acesso negado” para a conta sintética `teste.comum`; esta conta não é evidência de operador autorizado. A rota oficial atual é `/studio/green-stash`. | Disponibilizar no ambiente de teste um operador sintético com loja autorizada, sem dados pessoais/loja real; testar leitura positiva e negativa entre duas lojas, incluindo listagem e operações de produtos/envios, sem ampliar permissão em Runtime pela Frente B. |
+| Contrato Domain Header / apresentação ACCOUNT | Captura autenticada histórica em `/studio/marley`, GanjaLab, WE Sativa, Conta, Perfil, Planos e `/estudio/loja` mostrou Institution Bar (`.aculta-institution-bar`) presente, mas `.aculta-header` ausente em todas as oito rotas. A rota comercial oficial atual é `/studio/green-stash`. | Owner de Domain/Portal deve confirmar se a ausência do Domain Header é intencional no purpose `account` ou corrigir a composição para preservá-lo conforme a decisão visual. Teste browser autenticado por purpose que confira Institution Bar e Domain Header sem duplicá-los; não introduzir workaround visual da Frente B. |
 
 As evidências detalhadas e 18 screenshots estão em `baseline.json` e
 `$SUITE_OUT`; a tentativa anterior permanece em `baseline-deferred.json`.

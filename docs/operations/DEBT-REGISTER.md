@@ -254,7 +254,7 @@ Estas tarefas dependem de servidor de testes, configuração ativa ou estado de 
 | ID | Pendência | Critério de aceite |
 | --- | --- | --- |
 | GS-ROUTE-PTBR-01 | Validar URL oficial `/studio/green-stash/*`, domínio purpose account e ausência de colisão; `/estudio/loja/*` deve retornar 404 sem redirect | Drush cr, route:list, HTTP 200/403/404 por perfil e host, navegação no navegador |
-| STUDIO-DOC-PATH-01 | Atualizar inventário visual Studio para `/studio/green-stash` e nomes oficiais ACULTA STUDIO GREEN STASH/WE SATIVA | Sincronizar `docs/studio-visual/*` após concluir a alteração paralela do tema; revisar links e captura de baseline |
+| STUDIO-DOC-PATH-01 | Regravar o baseline F0 usando os paths oficiais de ACULTA STUDIO GREEN STASH e ACULTA STUDIO WE SATIVA | `studio-visual/upstream-inventory.md` e `visual-parity-matrix.md` já refletem os paths atuais; falta Firefox no HEAD publicado e captura com operador autorizado |
 | GS-STUDIO-DI-01 | Verificar descoberta do `AcultaCommerceServiceProvider` | Container compila, ExperienceManager contém green_stash, não duplica providers, GanjaLab420 permanece |
 | GS-LEGACY-01 | Determinar política de redirects das URLs `/green-stash/*` nunca homologadas | Auditoria de links; definir se redirect necessário, sem exposição de acesso |
 
