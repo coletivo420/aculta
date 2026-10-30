@@ -310,3 +310,19 @@ function aculta_user_update_10014(): string {
 
   return (string) t('Installed organization member and ownership claim entity types (ARQ-05).');
 }
+
+/** Instala campos de poderes delegados em vinculos de organizacao (can_manage_members, can_publish). */
+function aculta_user_update_10015(): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $fields = \Drupal\aculta_user\Entity\OrganizationMember::baseFieldDefinitions(
+    \Drupal::entityTypeManager()->getDefinition('aculta_org_member')
+  );
+
+  foreach (['can_manage_members', 'can_publish'] as $fieldName) {
+    if ($manager->getFieldStorageDefinition($fieldName, 'aculta_org_member') === NULL && isset($fields[$fieldName])) {
+      $manager->installFieldStorageDefinition($fieldName, 'aculta_org_member', 'aculta_user', $fields[$fieldName]);
+    }
+  }
+
+  return (string) t('Installed can_manage_members and can_publish on aculta_org_member.');
+}

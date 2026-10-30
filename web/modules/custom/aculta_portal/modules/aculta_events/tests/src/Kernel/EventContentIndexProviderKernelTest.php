@@ -169,13 +169,17 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
     $eventProvider = $this->container->get('aculta_events.index_provider.event');
     $locProvider = $this->container->get('aculta_events.index_provider.location');
 
-    $this->assertSame(3, $eventProvider->getProjectionVersion());
+    $this->assertSame(4, $eventProvider->getProjectionVersion());
     $this->assertSame(2, $locProvider->getProjectionVersion());
+
+    $orgProvider = $this->container->get('aculta_events.index_provider.organization');
+    $this->assertSame(1, $orgProvider->getProjectionVersion());
 
     /** @var \Drupal\aculta_index\Provider\ContentIndexProviderRegistry $registry */
     $registry = $this->container->get('aculta_index.provider_registry');
     $this->assertNotNull($registry->findForBundle('aculta_event', 'aculta_event'));
     $this->assertNotNull($registry->findForBundle('aculta_event_location', 'aculta_event_location'));
+    $this->assertNotNull($registry->findForBundle('aculta_event_organization', 'aculta_event_organization'));
     $this->assertSame(64, strlen($registry->fingerprint()));
 
     // 3. Allowlist de projeção do Local: não inclui telefone, site, endereço exato.

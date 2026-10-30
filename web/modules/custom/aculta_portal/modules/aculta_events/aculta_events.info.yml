@@ -19,3 +19,4 @@ dependencies:
   - drupal:user
   - aculta_portal:aculta_calendar
   - aculta_portal:aculta_maps
+  - aculta_portal:aculta_user

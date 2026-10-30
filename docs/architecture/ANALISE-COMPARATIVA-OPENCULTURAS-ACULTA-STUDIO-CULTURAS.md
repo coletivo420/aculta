@@ -71,7 +71,7 @@ O padrão que não deve ser copiado é a separação de Evento e Data em dois ti
 
 ### P2 - ampliar ownership organizacional e ingresso
 
-1. Definir entidade/referência organizacional, coorganizadores e revogação de vínculo antes de permitir que uma conta administre Eventos em nome de terceiros. *(Bloqueio registrado: UIDs privados de usuário mantidos fora do índice transversal)*
+1. Definir entidade/referência organizacional, coorganizadores e revogação de vínculo antes de permitir que uma conta administre Eventos em nome de terceiros. *(Implementado: entidade EventOrganization com perfil público `/organizacoes/{slug}`, coorganização em Eventos via `field_organizacao` e `field_coorganizadores`, ciclo de reivindicação em `OwnershipClaimService`, suspensão preventiva de membros no pós-reivindicação, delegações de gestão/publicação em `OrganizationMembershipManager`, e projeção segura no `aculta_index` sem expor dados privados ou CEP)*
 2. Fazer o dashboard refletir o escopo de acesso definido pelo owner, sem filtros de usuário que ampliem acesso. *(Implementado)*
 3. Usar o plano ADR-036 para separar gratuidade/RSVP e venda paga; OpenCulturas serve apenas como referência de campos descritivos e links externos. *(Documentado)*
 4. Não abrir transações pagas até fechar os gates fiscais, jurídicos, LGPD, taxas, estornos, sandbox e validação de webhook definidos no plano. *(Pendente conforme ADR-036)*

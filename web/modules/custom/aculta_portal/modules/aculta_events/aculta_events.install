@@ -468,3 +468,28 @@ function aculta_events_update_10012(): string {
     $result['nodes_updated'],
   );
 }
+
+/**
+ * Instala a entidade aculta_event_organization e os campos de organização em eventos (ARQ-05).
+ */
+function aculta_events_update_10013(): string {
+  $updateManager = \Drupal::entityDefinitionUpdateManager();
+  $entityTypeManager = \Drupal::entityTypeManager();
+
+  if (!$updateManager->getEntityType('aculta_event_organization')) {
+    $entityType = $entityTypeManager->getDefinition('aculta_event_organization');
+    $updateManager->installEntityType($entityType);
+  }
+
+  $eventFields = \Drupal\aculta_events\Entity\Event::baseFieldDefinitions(
+    $entityTypeManager->getDefinition('aculta_event')
+  );
+
+  foreach (['field_organizacao', 'field_coorganizadores'] as $fieldName) {
+    if ($updateManager->getFieldStorageDefinition($fieldName, 'aculta_event') === NULL && isset($eventFields[$fieldName])) {
+      $updateManager->installFieldStorageDefinition($fieldName, 'aculta_event', 'aculta_events', $eventFields[$fieldName]);
+    }
+  }
+
+  return 'Entidade aculta_event_organization e campos field_organizacao/field_coorganizadores instalados.';
+}

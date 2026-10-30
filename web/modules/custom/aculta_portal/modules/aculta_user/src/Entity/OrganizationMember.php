@@ -36,6 +36,69 @@ final class OrganizationMember extends ContentEntityBase {
 
   use EntityChangedTrait;
 
+  /**
+   * Verifica se o membro tem poder delegado de gerenciar outros membros.
+   */
+  public function canManageMembers(): bool {
+    return !empty($this->get('can_manage_members')->value);
+  }
+
+  /**
+   * Define o poder delegado de gerenciar outros membros.
+   */
+  public function setCanManageMembers(bool $canManage): static {
+    $this->set('can_manage_members', $canManage);
+    return $this;
+  }
+
+  /**
+   * Verifica se o membro tem permissão de publicar ou despublicar eventos.
+   */
+  public function canPublish(): bool {
+    return !empty($this->get('can_publish')->value);
+  }
+
+  /**
+   * Define a permissão de publicar ou despublicar eventos.
+   */
+  public function setCanPublish(bool $canPublish): static {
+    $this->set('can_publish', $canPublish);
+    return $this;
+  }
+
+  /**
+   * Retorna o papel interno do membro na organização.
+   */
+  public function getRoleInOrg(): string {
+    return (string) $this->get('role_in_org')->value;
+  }
+
+  /**
+   * Define o papel interno do membro na organização.
+   */
+  public function setRoleInOrg(string $role): static {
+    $this->set('role_in_org', $role);
+    return $this;
+  }
+
+  /**
+   * Retorna a situação do vínculo.
+   */
+  public function getStatus(): string {
+    return (string) $this->get('status')->value;
+  }
+
+  /**
+   * Define a situação do vínculo.
+   */
+  public function setStatus(string $status): static {
+    $this->set('status', $status);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 
@@ -60,6 +123,14 @@ final class OrganizationMember extends ContentEntityBase {
       ->setSetting('max_length', 16)
       ->setDefaultValue('pending')
       ->setRequired(TRUE);
+
+    $fields['can_manage_members'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(new TranslatableMarkup('Pode gerenciar acessos e membros'))
+      ->setDefaultValue(FALSE);
+
+    $fields['can_publish'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(new TranslatableMarkup('Pode publicar e despublicar eventos'))
+      ->setDefaultValue(FALSE);
 
     $fields['approved_by'] = BaseFieldDefinition::create('integer')
       ->setLabel(new TranslatableMarkup('Aprovado por (UID do moderador)'));

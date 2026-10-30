@@ -70,6 +70,14 @@ final class EventOrganizerDashboardController extends ControllerBase {
         '#attributes' => ['data-portal-ui' => 'button-secondary'],
       ];
     }
+    if ($canCreateEvent->isAllowed()) {
+      $items[] = [
+        '#type' => 'link',
+        '#title' => $this->t('Cadastrar organização'),
+        '#url' => Url::fromRoute('aculta_events.organizer_organization_add'),
+        '#attributes' => ['data-portal-ui' => 'button-secondary'],
+      ];
+    }
 
     $storage = $this->entities->getStorage('aculta_event');
     $query = $storage->getQuery()->accessCheck(FALSE)->sort('id', 'DESC');
@@ -92,6 +100,7 @@ final class EventOrganizerDashboardController extends ControllerBase {
         'aculta_event_list',
         'aculta_event_date_list',
         'aculta_event_location_list',
+        'aculta_event_organization_list',
         'config:aculta_events.settings',
       ])
       ->addCacheableDependency($canCreateEvent)

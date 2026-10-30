@@ -468,3 +468,67 @@ aculta_events.location_widget_clear:
     _admin_route: true
     _aculta_domain_purpose: main
 
+aculta_events.organization_page:
+  path: '/organizacoes/{slug}'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventOrganizationPageController::page'
+    _title_callback: '\Drupal\aculta_events\Controller\EventOrganizationPageController::title'
+  requirements:
+    _access: 'TRUE'
+    slug: '[a-z0-9]+(-[a-z0-9]+)*'
+  options:
+    _aculta_domain_purpose: eventos
+
+aculta_events.organizer_organization_add:
+  path: '/culturas/organizacoes/nova'
+  defaults:
+    _entity_form: 'aculta_event_organization.add'
+    _title: 'Cadastrar organização'
+  requirements:
+    _entity_create_access: 'aculta_event_organization'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
+aculta_events.organizer_organization_edit:
+  path: '/culturas/organizacoes/{aculta_event_organization}/editar'
+  defaults:
+    _entity_form: 'aculta_event_organization.edit'
+    _title: 'Editar organização'
+  requirements:
+    _entity_access: 'aculta_event_organization.update'
+    aculta_event_organization: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event_organization:
+        type: entity:aculta_event_organization
+
+aculta_events.organizer_organization_members:
+  path: '/culturas/organizacoes/{aculta_event_organization}/membros'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationMembersForm'
+    _title: 'Gestão de membros e acessos'
+  requirements:
+    _custom_access: '\Drupal\aculta_events\Access\EventOrganizationAccessControlHandler::membersAccess'
+    aculta_event_organization: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event_organization:
+        type: entity:aculta_event_organization
+
+aculta_events.admin_organizations:
+  path: '/painel-administrativo/eventos/organizacoes'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventOrganizationAdminController::overview'
+    _title: 'Organizações Culturais'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+

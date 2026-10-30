@@ -62,6 +62,11 @@ services:
     arguments: ['@entity_type.manager']
     tags:
       - { name: aculta_index.provider }
+  aculta_events.index_provider.organization:
+    class: Drupal\aculta_events\ContentIndex\OrganizationContentIndexProvider
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: aculta_index.provider }
   aculta_events.editorial_presenter:
     class: Drupal\aculta_events\Editorial\EventEditorialPresenter
     arguments: ['@string_translation']

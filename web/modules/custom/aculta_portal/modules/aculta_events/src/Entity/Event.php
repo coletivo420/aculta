@@ -81,6 +81,46 @@ final class Event extends ContentEntityBase implements EntityOwnerInterface {
   }
 
   /**
+   * Retorna a entidade da organização principal, se associada.
+   */
+  public function getOrganization(): ?EventOrganization {
+    $entity = $this->get('field_organizacao')->entity;
+    return $entity instanceof EventOrganization ? $entity : NULL;
+  }
+
+  /**
+   * Retorna o ID da organização principal.
+   */
+  public function getOrganizationId(): ?int {
+    $targetId = $this->get('field_organizacao')->target_id;
+    return $targetId !== NULL && $targetId !== '' ? (int) $targetId : NULL;
+  }
+
+  /**
+   * Define o ID da organização principal.
+   */
+  public function setOrganizationId(?int $orgId): static {
+    $this->set('field_organizacao', $orgId);
+    return $this;
+  }
+
+  /**
+   * Retorna os IDs das organizações coorganizadoras.
+   *
+   * @return int[]
+   *   Vetor com os IDs das coorganizadoras.
+   */
+  public function getCoOrganizerIds(): array {
+    $ids = [];
+    foreach ($this->get('field_coorganizadores') as $item) {
+      if ($item->target_id !== NULL && $item->target_id !== '') {
+        $ids[] = (int) $item->target_id;
+      }
+    }
+    return $ids;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function preSave(EntityStorageInterface $storage): void {
@@ -175,6 +215,19 @@ final class Event extends ContentEntityBase implements EntityOwnerInterface {
     $fields['field_organizador'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(new TranslatableMarkup('Organizador'))
       ->setSetting('target_type', 'user');
+
+    $fields['field_organizacao'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(new TranslatableMarkup('Organização principal'))
+      ->setSetting('target_type', 'aculta_event_organization')
+      ->setDisplayOptions('form', ['type' => 'entity_reference_autocomplete', 'weight' => 18])
+      ->setDisplayConfigurable('form', TRUE);
+
+    $fields['field_coorganizadores'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(new TranslatableMarkup('Organizações coorganizadoras'))
+      ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
+      ->setSetting('target_type', 'aculta_event_organization')
+      ->setDisplayOptions('form', ['type' => 'entity_reference_autocomplete', 'weight' => 19])
+      ->setDisplayConfigurable('form', TRUE);
 
     // Status do evento: rascunho não aparece no sitemap; cancelado mantém a
     // página com aviso.
