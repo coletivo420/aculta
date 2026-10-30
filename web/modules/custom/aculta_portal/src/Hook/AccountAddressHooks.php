@@ -26,6 +26,14 @@ final class AccountAddressHooks {
    */
   #[Hook('form_alter')]
   public function formAlter(array &$form, FormStateInterface $formState, string $formId): void {
+    if ($formId === 'system_regional_settings') {
+      if (isset($form['locale']['site_default_country'])) {
+        $form['locale']['site_default_country']['#default_value'] = 'BR';
+        $form['locale']['site_default_country']['#disabled'] = TRUE;
+      }
+      return;
+    }
+
     $formObject = $formState->getFormObject();
     if (!method_exists($formObject, 'getEntity')) {
       return;
@@ -77,8 +85,15 @@ final class AccountAddressHooks {
   #[Hook('element_info_alter')]
   public function elementInfoAlter(array &$types): void {
     if (isset($types['address'])) {
+      $types['address']['#available_countries'] = ['BR'];
       $types['address']['#process'][] = [AccountAddressForm::class, 'finish'];
       $types['address']['#element_validate'][] = [AccountAddressForm::class, 'validateAddressElement'];
+    }
+    if (isset($types['address_country'])) {
+      $types['address_country']['#available_countries'] = ['BR'];
+      $types['address_country']['#default_value'] = 'BR';
+      $types['address_country']['#process'][] = [AccountAddressForm::class, 'finishCountryElement'];
+      $types['address_country']['#element_validate'][] = [AccountAddressForm::class, 'validateCountryCode'];
     }
   }
 

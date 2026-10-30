@@ -9,6 +9,7 @@ use Drupal\aculta_portal\Account\StreetNumberField;
 use Drupal\address\Element\Address;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -157,6 +158,29 @@ final class AccountAddressFormTest extends UnitTestCase {
     $this->assertArrayNotHasKey('#options', $finished['country_code']);
     $this->assertArrayNotHasKey('#ajax', $finished['country_code']);
     $this->assertContains([AccountAddressForm::class, 'validateCountryCode'], $finished['country_code']['#element_validate']);
+  }
+
+  /**
+   * Elemento avulso address_country é convertido para hidden fixo em BR.
+   */
+  public function testFinishCountryElementSetsHiddenAndValidator(): void {
+    $element = [
+      '#type' => 'address_country',
+      '#options' => ['BR' => 'Brazil', 'AR' => 'Argentina'],
+      '#ajax' => ['callback' => 'foo'],
+      '#empty_value' => '',
+    ];
+    $formState = new FormState();
+    $completeForm = [];
+
+    $finished = AccountAddressForm::finishCountryElement($element, $formState, $completeForm);
+
+    $this->assertSame('hidden', $finished['#type']);
+    $this->assertSame('BR', $finished['#value']);
+    $this->assertSame('BR', $finished['#default_value']);
+    $this->assertArrayNotHasKey('#options', $finished);
+    $this->assertArrayNotHasKey('#ajax', $finished);
+    $this->assertContains([AccountAddressForm::class, 'validateCountryCode'], $finished['#element_validate']);
   }
 
 }

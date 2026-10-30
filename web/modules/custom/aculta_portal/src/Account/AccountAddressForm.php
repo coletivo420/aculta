@@ -211,6 +211,44 @@ final class AccountAddressForm {
   }
 
   /**
+   * Finaliza elemento de país avulso para campo oculto fixo em BR.
+   *
+   * @param array<string, mixed> $element
+   *   Elemento address_country sendo processado.
+   * @param \Drupal\Core\Form\FormStateInterface $formState
+   *   Estado do formulário.
+   * @param array<string, mixed> $completeForm
+   *   Estrutura do formulário completo.
+   *
+   * @return array<string, mixed>
+   *   Elemento modificado.
+   */
+  public static function finishCountryElement(array &$element, FormStateInterface $formState, array &$completeForm): array {
+    $element['#type'] = 'hidden';
+    $element['#value'] = 'BR';
+    $element['#default_value'] = 'BR';
+    if (isset($element['country_code'])) {
+      $element['country_code']['#type'] = 'hidden';
+      $element['country_code']['#value'] = 'BR';
+      $element['country_code']['#default_value'] = 'BR';
+      unset(
+        $element['country_code']['#options'],
+        $element['country_code']['#ajax'],
+        $element['country_code']['#empty_value'],
+      );
+    }
+    unset(
+      $element['#options'],
+      $element['#ajax'],
+      $element['#empty_value'],
+    );
+    $element['#element_validate'] = [
+      [self::class, 'validateCountryCode'],
+    ];
+    return $element;
+  }
+
+  /**
    * Validação no servidor: o país deve ser exclusivamente Brasil (BR).
    *
    * @param array<string, mixed> $element

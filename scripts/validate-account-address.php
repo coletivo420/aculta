@@ -143,6 +143,12 @@ $check(
   str_contains($form, 'validateCountryCode') && str_contains($form, 'validateAddressElement') && str_contains($form, "country_code'] = 'BR'"),
   'AccountAddressForm: validação e confirmação no servidor de country_code = BR',
 );
+$check(
+  str_contains($form, 'finishCountryElement')
+    && str_contains($accountAddressHooks, "types['address_country']")
+    && str_contains($accountAddressHooks, 'system_regional_settings'),
+  'AccountAddressHooks: intercepta address_country e fixa regional settings em BR',
+);
 
 // ADR-034 e instrução de agentes presentes.
 $agentsMd = $read('AGENTS.md');
