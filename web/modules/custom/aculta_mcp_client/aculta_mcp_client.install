@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for ACULTA MCP Client.
+ */
+
+use Drupal\Component\Serialization\Yaml;
+
+/**
+ * Installs the public ACULTA MCP prompt templates.
+ */
+function aculta_mcp_client_update_10001(): void {
+  $prompt_ids = [
+    'aculta_consultar_plataforma',
+    'aculta_planejar_integracao_publica',
+    'aculta_pesquisar_documentacao_mcp',
+  ];
+  $module_path = \Drupal::service('extension.list.module')
+    ->getPath('aculta_mcp_client');
+  $storage = \Drupal::entityTypeManager()->getStorage('mcp_prompt_config');
+
+  foreach ($prompt_ids as $prompt_id) {
+    if ($storage->load($prompt_id)) {
+      continue;
+    }
+
+    $file = $module_path . '/config/install/mcp_server.mcp_prompt_config.' . $prompt_id . '.yml';
+    $contents = file_get_contents($file);
+    if ($contents === FALSE) {
+      throw new \RuntimeException(sprintf('Unable to read MCP prompt config %s.', $file));
+    }
+
+    $configuration = Yaml::decode($contents);
+    if (!is_array($configuration) || ($configuration['id'] ?? NULL) !== $prompt_id) {
+      throw new \RuntimeException(sprintf('Invalid MCP prompt config %s.', $file));
+    }
+
+    $storage->create($configuration)->save();
+  }
+}

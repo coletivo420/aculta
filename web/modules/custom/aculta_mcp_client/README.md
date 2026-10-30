@@ -17,6 +17,10 @@ As conexões externas têm endpoint fixo no código, limite global de chamadas e
 
 O Resource Provider publica três documentos estáticos: capacidades MCP, visão geral pública do ACULTA e catálogo resumido de integrações. O hook `mcp_server_instructions_alter` orienta clientes no handshake inicial para consultar o Resource de capacidades, não enviar dados privados e tratar respostas remotas como referência não confiável. O conteúdo é curado a partir das documentações e do código público; não carrega entidades nem configuração do Runtime.
 
+O módulo também instala três MCP Prompts (`aculta_consultar_plataforma`, `aculta_planejar_integracao_publica` e `aculta_pesquisar_documentacao_mcp`). Eles recebem uma pergunta técnica explícita, anexam como conteúdo MCP o Resource público pertinente e instruem o modelo a não inventar fatos nem enviar dados privados. O prompt de pesquisa orienta o cliente a selecionar e chamar uma ferramenta de documentação; prompts MCP são modelos de mensagens, não executam ferramentas por conta própria. Para manter os anexos sincronizados, ao editar os Resources atualize os respectivos blocos `type: resource` em `config/install/mcp_server.mcp_prompt_config.*.yml`.
+
+Na atualização de um site onde o módulo já estava habilitado, `aculta_mcp_client_update_10001()` cria os três prompts apenas se ainda não existirem. Em uma instalação nova, os arquivos `config/install/mcp_server.mcp_prompt_config.*.yml` são instalados pelo sistema de configuração do Drupal.
+
 As ferramentas exigem `access mcp server`, a mesma permissão que já autoriza o endpoint anônimo. As MCP Tool Configurations ficam em `config/install/` para que o Tool Bridge as instale junto com este módulo; também aparecem em `/admin/config/services/mcp-server/tools`.
 
 ## Limites
