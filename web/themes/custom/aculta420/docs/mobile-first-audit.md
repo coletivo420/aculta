@@ -106,8 +106,9 @@ inspecionados visualmente; Magazine/320 também foi inspecionada e confirma a
 marca sem Domain Header. Evidência em
 `/home/piradopirata/aculta-suite-out/institution-bar-brand-mobile-20261030-final/`.
 É teste de folha candidata injetada sobre o Runtime, não rebuild do stylesheet
-servido nem homologação THEME-MF3. Domain Header ausente em vários purposes
-segue registrado como Pede-A para o Portal.
+servido nem homologação THEME-MF3. A ausência do Domain Header em vários
+purposes foi uma observação anterior; a presença nas dez raízes está resolvida
+e confirmada no reteste 90/90 do HEAD `9ad2b86b9` registrado abaixo.
 
 O harness de sticky/scroll foi repetido com a CSS candidata em Firefox ESR nos
 dez purposes, anônimo, 320/390px: 101/101 checks passaram, `maxTopChange=0`,
@@ -666,6 +667,11 @@ raiz de cada purpose; não prova layouts internos, autenticação, teclado, zoom
 claro/escuro ou gates MF3. PNG/JSON estão em
 `/home/piradopirata/aculta-suite-out/aculta-purposes-mobile-baseline-20261030-3c1691fc5/`.
 
+O resultado de shell acima pertence ao snapshot antigo `3c1691fc5`; foi
+substituído pelo reteste do checkout `9ad2b86b9` registrado na seção
+“Composição do Domain Header por purpose — Pede-A resolvido”. O diagnóstico
+editorial da Revista permanece válido para essa captura.
+
 O docroot foi testado no HEAD remoto, que precede nove commits locais desta
 worktree. Logo, esta captura atualiza o baseline da PR remota e não valida as
 alterações locais não publicadas. O teste do SDC author-card acima é exceção
@@ -683,19 +689,46 @@ editorial legível, mas não substitui um consumer de entidade `revista`. As
 capturas 320/1440 foram inspecionadas em
 `/home/piradopirata/aculta-suite-out/aculta-revista-noticias-20261030/`.
 
-O `Pede-A` abaixo fica restrito à expectativa da raiz/listagem: confirmar se a
-View vazia em `/` é intencional e fornecer uma entidade `revista` publicada
-como fixture caso publicações devam aparecer. A página estática `/noticias` já
-é um estado distinto e visível; não criar conteúdo no tema.
+Para a Revista, permanece a pendência de confirmar se a View vazia em `/` é
+intencional e fornecer uma entidade `revista` publicada como fixture caso
+publicações devam aparecer. A página estática `/noticias` já é um estado
+distinto e visível; não criar conteúdo no tema.
 
-### Pede-A — composição do Domain Header por purpose
+### Composição do Domain Header por purpose — Pede-A resolvido
 
-| Owner/caminho | Contrato e pergunta técnica | Aceite esperado |
+O Pede-A histórico foi aberto por capturas de heads anteriores, que
+mostravam o Domain Header apenas em MAIN e Wiki. Está resolvido no contrato
+Portal vigente: `DomainPresentationBuilder` fornece `show_site_header` em todos
+os purposes reconhecidos, o Twig apenas o apresenta, e
+`DomainPresentationBuilderKernelTest` valida os dez purposes, URLs de domínio e
+cache tags. A Revista permanece na matriz pelo purpose `magazine`.
+
+No reteste em Firefox ESR visível, contra o checkout servido no HEAD
+`9ad2b86b9`, a matriz pública `purpose-matrix.py` completou 90/90 capturas
+(10 purposes × 9 larguras: 320/360/390/599/600/768/1024/1280/1440px): cada
+captura apresentou exatamente uma Institution Bar e um Domain Header; zero
+overflow horizontal e zero páginas com erro. O teste Kernel do contrato passou
+com 2 testes e 74 assertions (uma depreciação upstream de EntityType). Os PNGs,
+JSON e logs estão em
+`/home/piradopirata/suite-out/domain-header-purpose-9ad2b86b9/`.
+
+Esta evidência encerra somente o handoff sobre a presença dos dois headers nas
+raízes anônimas. Não cobre páginas internas, conteúdo autorizado, zoom,
+teclado, WCAG 2.2 AA nem THEME-MF3. As diferenças visuais registradas em
+snapshots anteriores são evidência de heads antigos, não estado vigente nem
+Pede-A aberto.
+
+### Pede-A — conteúdo editorial da Revista
+
+| Owner/caminho | Contrato e evidência | Aceite esperado |
 |---|---|---|
-| Domain/Portal; composição de `DomainPresentationBuilder`, tema `templates/page.html.twig` e attachments por purpose | A captura Firefox de 2026-10-30 fez 90/90 verificações nas dez raízes e nove larguras: `.aculta-header` aparece somente em MAIN e Wiki (18/90), embora Institution Bar apareça em todos (90/90). A decisão vigente exige preservar os dois elementos em todos os purposes. | Atualizar o contrato dono do shell e testar raízes e páginas internas dos dez purposes com Institution Bar e Domain Header exatamente uma vez; sem workaround visual no tema. |
-| `aculta_portal/src/Presentation/DomainPresentationBuilder.php`, `src/Hook/PortalHooks.php`, contrato `DomainPresentation` e integração de purpose/rotas | `DomainPresentationBuilder` hoje expõe `show_site_header` apenas para Wiki e homepage MAIN; Twig só renderiza o boolean recebido. A regra funcional, disponibilidade, links e dados permanecem no Portal, não no tema. Hosts devem derivar de `DomainPurposeManager`/`aculta_deployer`, incluindo MAGAZINE e a migração Alpha→`production_host`; nunca fixar URLs de teste. | Pede-A: ajustar o contrato no Portal, com cache contexts/tags/max-age e testes para todos os 10 purposes, roots e páginas internas; Firefox valida ambos os headers sem duplicação nos test hosts e no host Alpha/produção configurado. A Frente B não altera services, rotas nem regra funcional do Portal. |
 | Owner `aculta_magazine`: View `revista_sessoes`/homepage editorial e seus dados publicados | Em 2026-10-30, `/` respondeu sem H1 ou corpo além do rodapé em nove larguras. O sitemap inclui `/noticias`, página pública comum com H1/texto, mas sem rows da View `aculta-news`; não foi comprovado consumer de entidade `revista`. | Pede-A: confirmar se a raiz/listagem vazia é intencional e fornecer uma entidade `revista` publicada como fixture se a listagem deve mostrar publicações. Testar estado preenchido e vazio em 320/390/768/1440px, preservando ACL, cache e markup do owner. A página `/noticias` existente deve permanecer distinta; a Frente B não inventa conteúdo nem altera Views no tema. |
-| `aculta_portal/modules/aculta_user/src/Controller/ReportQueueController.php` | Resolvido após a microfase da Revista: o controller emite `forum-report-queue` e `forum-report-pager`; o tema mapeia as classes. ACL, pager, conteúdo e cache seguem no owner. | Unit controller 3/13 e PortalUiHooks 12/83 PASS; `validate-module-theme-boundary.php` PASS (3418 verificações). |
+
+O registro anterior do `ReportQueueController` foi um handoff já resolvido: o
+controller emite `forum-report-queue` e `forum-report-pager`, e o tema mapeia
+essas classes. ACL, pager, conteúdo e cache continuam no owner; Unit do
+controller (3 testes/13 assertions), `PortalUiHooks` (12/83) e fronteira
+módulo/tema (3418 checks) passaram naquela rodada.
 
 ### THEME-MF2 — Institution Bar integrada em todos os dez domains (2026-10-29)
 
@@ -710,9 +743,10 @@ sem exigir um menu ausente.
 
 O seletor `.aculta-header` esteve presente somente em MAIN e Wiki (14/70
 combinações por purpose/largura; 2/10 propósitos), ausente em Conta, SUPPORT,
-Revista, Loja, Cursos, Fórum, Links e Eventos. Isso confirma o Pede-A acima: não
-é correção CSS; o owner Portal deve decidir/aplicar o contrato funcional e o
-tema só o renderiza. Evidência: `/home/piradopirata/aculta-suite-out/aculta-institution-bar-integrated-all-domains-4d8993645-final/`.
+Revista, Loja, Cursos, Fórum, Links e Eventos no snapshot antigo do checkout
+`4d8993645`. A composição foi posteriormente corrigida no Portal e validada no
+retorno vigente descrito acima. Evidência histórica:
+`/home/piradopirata/aculta-suite-out/aculta-institution-bar-integrated-all-domains-4d8993645-final/`.
 O smoke não cobre rotas internas de cada área, autenticação, zoom, teclado
 completo nem WCAG 2.2 AA; THEME-MF3 permanece pendente.
 
@@ -818,8 +852,9 @@ documento. A grade usou 2/3/3/4/4/5/5/6/8/10/10 tracks respectivamente. PNGs e
 O markup do formulário corrente não possui `fieldset` ou input de ação; por
 isso as regras correspondentes em `css/components/portal-support.css` não foram
 validadas com este consumer. A captura confirmou `.aculta-header` ausente no
-purpose SUPPORT e a Institution Bar presente. O Pede-A transversal de composição
-do Domain Header permanece aberto; não foi criado shell visual paralelo. A
+purpose SUPPORT e a Institution Bar presente naquele snapshot. O Pede-A de
+composição foi encerrado pelo reteste vigente registrado acima; não foi criado
+shell visual paralelo. A
 rodada é baseline para o purpose e não valida zoom, teclado, modo escuro,
 reduced motion, Form API submetido, checkout nem WCAG completa.
 
@@ -852,8 +887,9 @@ cada no Firefox ESR visível: seis páginas (MAIN, Conta, SUPPORT, Wiki, Loja,
 Fórum), sete larguras (320/374/375/600/767/768/1440px), Institution Bar única e
 sem overflow. Evidências em
 `/home/piradopirata/aculta-suite-out/aculta-institution-bar-{baseline,candidate}/`.
-O Domain Header não aparece em SUPPORT, Conta, Loja ou Fórum nestas rotas; essa
-lacuna permanece Pede-A. Este slice não valida outros caminhos por purpose, zoom,
+O Domain Header não aparecia em SUPPORT, Conta, Loja ou Fórum neste snapshot
+histórico; a presença nas dez raízes foi posteriormente confirmada no reteste
+90/90 registrado acima. Este slice não valida outros caminhos por purpose, zoom,
 teclado completo, modo escuro, reduced motion ou WCAG 2.2 AA e não aprova MF3.
 Teste reutilizável: `tests/browser/aculta-theme-mobile-first/institution-bar.py`.
 

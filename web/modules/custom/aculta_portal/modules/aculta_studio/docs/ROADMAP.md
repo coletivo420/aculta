@@ -8,10 +8,10 @@ depende de THEME-MF3. OCS-A1–A4 só começam depois dos dois gates aprovados.
 
 | Fase | Estado verificável neste HEAD |
 |---|---|
-| THEME-MF0 | Parcial: inventário lexical recenseado; consumers por tela/purpose e auditoria de cascata ainda incompletos. |
+| THEME-MF0 | Parcial: inventários lexicais/libraries recenseados e shell verificado em 10 raízes anônimas × 9 larguras no Firefox (90/90; ambos os headers uma vez, sem overflow); consumers por tela/purpose e cascata continuam incompletos. |
 | THEME-MF1–MF2 | Implementação incremental; cobertura visual global incompleta. |
 | THEME-MF3 | Pendente; não homologar todo ACULTA420 como mobile-first. |
-| OCS-F0 | Parcial: providers/rotas mapeados; baseline Studio não inclui tela autenticada equivalente do upstream nem todas as áreas/estados. |
+| OCS-F0 | Parcial: providers/rotas mapeados; contrato de shell no Portal e captura das raízes em 10 purposes verificados em `9ad2b86b9`; baseline Studio ainda não inclui tela autenticada equivalente do upstream nem todas as áreas/estados. |
 | OCS-F1–F2 | Implementados parcialmente; fidelidade de todos os consumers e Runtime pendente. |
 | OCS-F3 | Variante `studio_fidelity` adicionada ao SDC `patterns/card` com story e consumidor real na entrada da Conta; schema 55/756, Unit 20/121 e CSS fixture Firefox 45/45 passaram; render Drupal/Runtime pendente. |
 | OCS-F4 | Composição adapta links autorizados do registry e da entrada da Conta ao SDC existente; estado funcional vem dos providers. Captura Runtime com o novo adaptador pendente. |
