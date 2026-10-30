@@ -1172,3 +1172,12 @@ para `aculta_portal` e a evidência estão em `mobile-first-audit.md`.
 O validator de fronteira tema/módulo continua vermelho por classes visuais nos
 dois formulários do módulo `aculta_events` (1/3482). A Frente B não alterou o
 módulo. THEME-MF3 permanece não aprovado; este reteste não inicia OCS-A1–A4.
+
+### THEME-MF3 — headings e shell no checkout servido `2493d7535` (2026-10-30)
+
+Firefox visível mediu os dez purposes a 320/1440 px: todos os 20 H1 estão
+visíveis e os dois headers aparecem uma vez em cada tela. Resultado total
+39/40; a única falha é o overflow `/conta` 320 px pelo widget Turnstile. A
+checagem confirma que o defeito anterior de título ausente em Apoio/Cursos não
+está no código atualmente servido. Evidências e escopo em `mobile-first-audit.md`;
+isto não fecha os demais viewports nem THEME-MF3.
