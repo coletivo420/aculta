@@ -5,7 +5,11 @@ conteúdo, publicação e mídia.
 
 ## Estado
 
-**0.5.0-dev.13:** PHPCS Drupal/DrupalPractice integral PASS; Unit + Kernel
+**0.5.0-dev.14:** central administrativa e adaptadores editoriais no Marley
+implementados no código e Config Sync. Esta entrega não está homologada em
+Runtime nem em Firefox/X11. Testes e pendências constam do CHANGELOG.
+
+**Base 0.5.0-dev.13:** PHPCS Drupal/DrupalPractice integral PASS; Unit + Kernel
 39/610 PASS sem depreciações; PHP lint 2/2 e `node --check` PASS. A revisão
 visual móvel do rótulo de categoria colorido ainda depende de servir o
 candidato atual. O gate global de fronteira módulo–tema continua vermelho por
@@ -31,13 +35,13 @@ e o [mapa módulo–tema](../../../../../../docs/portal/MAPA-MODULO-TEMA.md).
 
 ## Contratos editoriais para o Studio
 
-O Magazine não mantém interface própria para o Studio. O fluxo editorial do
-bundle `revista` é consumido pelos contratos do Core — `node.add`,
-`entity.node.edit_form`, `entity.node.canonical`, revisões,
-`content_moderation_control` e `StateTransitionValidation` — e cada operação é
-decidida por Entity Access/Revision Access, nunca por permissão genérica. As
-operações de escrita resolvem no purpose `main`, porque o Core marca toda rota
-de operação de Node como rota administrativa. Os detalhes estão em
+O Magazine fornece adaptadores de Form API em `/marley/revista/*`, no purpose
+`account`, para que o trabalho editorial fique na Suite sem POST cross-domain.
+Criação e edição usam o Entity Form Builder; transições consultam
+`StateTransitionValidation` e salvam uma revisão pela Entity API. Entity
+Access, Revision Access e permissões Drupal continuam obrigatórias. A central
+administrativa fica em `/painel-administrativo/revista`, no purpose `main`.
+Os detalhes estão em
 [STUDIO-INTEGRATION-CONTRACT.md](docs/STUDIO-INTEGRATION-CONTRACT.md) e
 [ROUTES-DOMAIN-CONTRACT.md](docs/ROUTES-DOMAIN-CONTRACT.md); a matriz de acesso
 e a matriz ator × estado × ação descrevem quem pode o quê, sem alterar estados,
@@ -48,12 +52,18 @@ transições ou permissões.
 O único bundle de publicação é `revista`. Os Nodes legados foram migrados com
 preservação de NID, UUID, revisão e aliases; os bundles `article` e `blog` foram
 aposentados. O migrador e o comando Drush foram removidos após a execução; o
-documento de migração é apenas um registro histórico. Publicações e comentários são organizados juntos em
-`/painel-administrativo/conteudo/revista`. A View de comentários é renderizada
-como bloco na mesma página e filtra por tipo, campo, entidade e bundles editoriais.
-Não existe uma rota separada `/painel-administrativo/revista/comentarios`. A
-colocação do bloco é configuração de site em Config Sync; a instalação do
-módulo fornece as Views e o caminho editorial.
+documento de migração é apenas um registro histórico.
+
+`/painel-administrativo/revista` concentra visão geral e configuração; as
+publicações administrativas ficam em `/painel-administrativo/revista/publicacoes`
+e a fila em `/painel-administrativo/revista/comentarios`. A View
+`aculta_magazine_admin_comments` e seu bloco estão em Config Sync e
+`config/install`. Studio Marley apresenta fila contextual no purpose `account`,
+revalidando acesso ao Node, ao campo e ao Comment. `aculta_magazine.settings`
+seleciona papéis para autoria, revisão/publicação e comentários/moderação; os
+padrões são `content_editor`, `content_editor` e `administrator`. A capacidade
+ACULTA não substitui permissões Drupal, Entity/Revision/Field Access ou workflow.
+Somente administradores alteram esses controles.
 
 ## Avisos da Revista
 

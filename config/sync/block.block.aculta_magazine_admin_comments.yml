@@ -29,8 +29,7 @@ visibility:
     id: request_path
     negate: false
     pages: |-
-      /painel-administrativo/conteudo/revista
-      /admin/content/revista
+      /painel-administrativo/revista/comentarios
   aculta_domain_purpose:
     id: aculta_domain_purpose
     purpose: main

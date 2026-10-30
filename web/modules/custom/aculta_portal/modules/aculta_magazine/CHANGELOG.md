@@ -380,3 +380,26 @@ Classificação: PATCH (correção de cache; sem mudança de contrato).
 - O sniff PHP de constantes aplicado a JavaScript fica desativado localmente no arquivo do behavior; `true`/`false` permanecem literais JavaScript válidos.
 - PHPCS Drupal/DrupalPractice do módulo, PHP lint e `node --check` PASS. Unit + Kernel completos: 39 testes / 610 assertions PASS, sem depreciações. A revisão visual móvel da cor segue pendente.
 
+## 0.5.0-dev.14 — central administrativa e Studio Marley
+
+- Added administrator-only `/painel-administrativo/revista` with a capabilities
+  form and distinct publication/comment oversight routes on purpose `main`.
+- Moved the Magazine content View away from `/admin/content/revista` and removed
+  its generic `system.admin_content` tab. The comments View/block remains
+  reproducible in `config/install` and Config Sync at the central queue path.
+- Added configurable authoring, review/publication, and comment/moderation role
+  groups with the approved `content_editor`, `content_editor`, and
+  `administrator` defaults. Drupal entity, revision, field, comment, and
+  workflow checks remain required.
+- Added account-purpose Form API adapters under `/marley/revista/*` for
+  publication inventory/filtering, native Node forms, valid workflow
+  transitions, contextual Comment participation, and moderation. Comments use
+  `DiscussionContextResolver` and the `PublicationContextProvider`; ForumPost,
+  Growroom queues, and duplicate comment storage are not used.
+- Magazine/Forum/Studio Unit suites PASS (285 tests, 2,040 assertions), including
+  route/configuration, role, context boundary, and moderation access checks.
+  `SharedDiscussionFieldKernelTest` PASS (1 test, 18 assertions) on
+  `aculta_simpletest`; PHPCS and PHP lint PASS.
+- Read-only Runtime inspection found the previous View and block still active;
+  the Config Sync diff has not been imported. Firefox/X11 role-based
+  homologation remains pending, and no Runtime write was performed.

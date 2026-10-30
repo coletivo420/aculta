@@ -1,13 +1,14 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.5.0-dev.13
+version: 0.5.0-dev.14
 state: Dev
 progress_note: >-
-  Dev.13: PHPCS Drupal/DrupalPractice integral PASS. Corrigidos comentários,
-  quebra de linhas e chamada de tradução no PostPresentation; JS preserva os
-  booleanos JavaScript e documenta o falso positivo do sniff PHP. Unit + Kernel
-  completo 39/610 PASS, sem depreciações; PHP lint 2/2 e node --check PASS.
-  Fronteira módulo–tema não reporta Magazine, mas ainda falha em Calendar,
-  Events e Maps fora deste escopo. A revisão visual móvel do rótulo colorido
-  segue pendente; Runtime/SMTP, migração e revisão de permissões continuam
-  pendentes.
-next_phase: 'MAG 0.5-B concluída; Content Index usa purpose canônico `magazine` e referência estruturada Revista→Gallery. A migração tem prévia e lotes; importar configuração, revisar NIDs com múltiplos embeds e homologar antes da execução. MAG 0.5-C não iniciada; pendências E-B.2-T, E-B.3, E-C e E-D no contrato Studio ([roadmap](docs/portal/STUDIO-MAGAZINE-ROADMAP.md)). MAG 0.5-H: publishers e Flag `seguir_publicacao` presentes; avisos de submissão e resultados editoriais implementados em dev.10. Runtime/SMTP ainda não homologados. Testar transições no Kernel e revisar permissões/configuração por purpose antes de RC.'
+  Dev.14: central administrativa `/painel-administrativo/revista` e rotas
+  editoriais `/marley/revista/*` implementadas, incluindo configuração de
+  capacidades, Forms, transições do workflow e discussão contextual Comment via
+  `aculta_forum`. Unit Magazine/Forum/Studio 285/285 (2040 assertions), PHP
+  lint e PHPCS PASS; Kernel do campo compartilhado 1/1 (18 assertions) PASS no
+  `aculta_simpletest`.
+  O `config:status` somente leitura confirma que View/bloco do Runtime ainda
+  diferem do Config Sync; import global e escrita Runtime não realizados.
+  Firefox/X11 não executado; homologação funcional permanece pendente.
+next_phase: 'Rever e aprovar o diff de Config Sync antes de qualquer janela autorizada; depois verificar a nova central/View/bloco no Runtime sem importar configuração global. Homologar no Firefox ESR/X11 com dados sintéticos após ambiente de teste isolado autorizado. Referências: contratos `aculta_magazine/docs/STUDIO-INTEGRATION-CONTRACT.md` e `docs/portal/STUDIO-MAGAZINE-ROADMAP.md`.'

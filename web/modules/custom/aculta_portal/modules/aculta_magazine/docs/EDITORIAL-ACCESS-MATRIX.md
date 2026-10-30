@@ -1,5 +1,22 @@
 # Matriz de acesso editorial — `revista`
 
+## Capacidades ACULTA (dev.14, código e Config Sync)
+
+`aculta_magazine.settings` configura os grupos Autoria, Revisão/Publicação e
+Comentários/Moderação. Os papéis iniciais são `content_editor`,
+`content_editor` e `administrator`. A capacidade é uma condição adicional e
+nunca substitui as permissões Drupal, Entity Access, Revision Access, Field
+Access, Comment Access nem `StateTransitionValidation`. Os formulários e rotas
+Studio reavaliam a capacidade no acesso direto e no submit; `EditorialCommentAccessHooks`
+também impede que uma ação direta de Comment contorne a configuração. Config
+tags e `user.roles` fazem a mudança invalidar a apresentação em cache.
+
+Discussão contextual Magazine usa `DiscussionContextResolver` e o
+`PublicationContextProvider` de `aculta_forum`. O host precisa ser um Node
+`revista` acessível, o campo `field_aculta_discussion` visível e as permissões
+de Comment aplicáveis. Growroom/ForumPost não são considerados por esse
+provider.
+
 **Status:** levantamento de contratos reais (MAG 0.5-B.2). A matriz descreve o
 que o Core, o `node_co_authors` e a configuração desta branch efetivamente
 permitem hoje. Ela não propõe novas regras editoriais: estados, transições e

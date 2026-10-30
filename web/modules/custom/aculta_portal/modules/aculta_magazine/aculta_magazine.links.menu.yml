@@ -1,7 +1,31 @@
-aculta_magazine.admin_content:
+aculta_magazine.admin:
   title: 'Revista'
-  description: 'Gerenciar publicações e comentários editoriais.'
-  route_name: view.aculta_magazine_admin_content.page_magazine
-  parent: system.admin_content
+  description: 'Administração da Revista ACULTA.'
+  route_name: aculta_magazine.admin
+  parent: system.admin
   menu_name: admin
-  weight: 20
+  weight: 24
+
+aculta_magazine.admin_overview:
+  title: 'Visão geral'
+  route_name: aculta_magazine.admin
+  parent: aculta_magazine.admin
+  weight: 0
+
+aculta_magazine.admin_capabilities:
+  title: 'Capacidades e papéis'
+  route_name: aculta_magazine.capabilities
+  parent: aculta_magazine.admin
+  weight: 1
+
+aculta_magazine.admin_publications:
+  title: 'Publicações'
+  route_name: view.aculta_magazine_admin_content.page_magazine
+  parent: aculta_magazine.admin
+  weight: 2
+
+aculta_magazine.admin_comments:
+  title: 'Comentários e moderação'
+  route_name: aculta_magazine.admin_comments
+  parent: aculta_magazine.admin
+  weight: 3

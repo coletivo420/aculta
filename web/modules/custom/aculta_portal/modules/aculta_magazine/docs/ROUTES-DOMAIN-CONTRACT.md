@@ -7,6 +7,14 @@ opção de rota, purpose, permissão ou configuração foi alterada para produzi
 **Data da verificação:** 2026-10-22, branch `docs/aculta-forum-0.1.0-dev.1`,
 base `bb67917b`, Runtime local `aculta_runtime` (simulação do servidor de testes).
 
+**Atualização de código 2026-10-30 (dev.14):** as rotas Core de edição/criação
+continuam administrativas em `main`. O Magazine agora fornece adaptadores de
+Form API em `/marley/revista/*`, purpose `account`, para o Studio Marley, com
+Entity Access/Revision Access revalidados. A central é `/painel-administrativo/revista`;
+publicações e comentários administrativos ficam em subrotas próprias `main`.
+O path `/admin/content/revista` foi removido da View. Esta atualização é de
+código/Config Sync; não implica importação no Runtime nem homologação visual.
+
 ## 1. Fontes
 
 | Fonte | O que foi verificado |

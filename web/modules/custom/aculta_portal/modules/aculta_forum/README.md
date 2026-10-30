@@ -187,7 +187,9 @@ em `core.extension.yml` nem em `web/modules/contrib`; Node `forum`, vocabulário
 ## Versão e execução
 
 A dev.5 completou a limpeza e a retirada contrib no Runtime de teste. Os
-Comments contextuais da Revista e as categorias ACULTA são independentes do
+Comments contextuais da Revista usam o `PublicationContextProvider` e o Comment
+compartilhado em `/painel-administrativo/revista`/ACULTA Studio Marley; não são
+ForumPosts e não entram na fila Growroom. As categorias ACULTA são independentes do
 Forum antigo. Um restore point pós-limpeza e pré-uninstall foi criado e validado
 por `gzip -t`; contém zero conteúdo antigo. A configuração versionada foi
 limpa sem importar Config Sync integral, bloqueado pelo drift preexistente. O índice

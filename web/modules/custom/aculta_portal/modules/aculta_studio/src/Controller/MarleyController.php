@@ -50,7 +50,10 @@ final class MarleyController {
         'data-portal-ui' => 'studio-shell',
       ],
       '#attached' => ['library' => ['aculta_studio/navigation']],
-      '#cache' => ['contexts' => ['user.permissions', 'url.path']],
+      '#cache' => [
+        'contexts' => ['user.permissions', 'user.roles', 'url.path'],
+        'tags' => ['config:aculta_magazine.settings'],
+      ],
     ];
     // JavaScript reports navigation status and errors in this live region.
     $build['live'] = [

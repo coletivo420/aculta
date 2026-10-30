@@ -4,6 +4,27 @@
 
 # ACULTA Magazine — Roadmap de realinhamento arquitetural
 
+### Central administrativa e Revista no ACULTA Studio Marley — dev.14 (2026-10-30)
+
+O código declara `/painel-administrativo/revista` no purpose `main` para
+administradores, com capacidades configuráveis e páginas administrativas de
+publicações/comentários. As rotas `/marley/revista/*` pertencem ao purpose
+`account` e delegam a criação/edição ao Node Form API, transições ao workflow
+`revista` e leitura/participação/moderação ao campo Comment contextual resolvido
+por `aculta_forum`. Papéis iniciais: `content_editor` em autoria e
+revisão/publicação, `administrator` em comentários/moderação. A configuração é
+adicional às permissões, Entity/Revision/Field/Comment Access e validações do
+workflow. View de publicações e bloco/View de comentários estão no Config Sync.
+
+Suítes Unit de Magazine/Forum/Studio passaram (285 testes / 2040 assertions),
+PHP lint e PHPCS PASS. O Kernel de `aculta_forum` confirmou a associação do campo
+compartilhado no `aculta_simpletest` (1 teste / 18 assertions). A consulta
+somente leitura do Runtime confirmou a pendência: a View ativa ainda usa
+`/admin/content/revista` e o bloco antigo; o Config Sync contém os novos
+caminhos. `updatedb:status` não aponta updates. Nenhuma escrita Runtime ou
+importação global foi realizada. Homologação Firefox ESR/X11 com dados
+sintéticos e validação das ações por papel continuam pendentes.
+
 ### Revalidação da fronteira módulo–tema — 2026-10-29
 
 O teste Unit da paleta editorial usa a classe de integração `field-name` do

@@ -11,6 +11,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
@@ -18,6 +19,7 @@ use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Tests the central Forum administration overview without route aliases.
@@ -72,6 +74,12 @@ final class ForumAdminOverviewControllerTest extends UnitTestCase {
    *   Controller and its two count queries.
    */
   private function controller(): array {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('hasPermission')->willReturn(FALSE);
+    $container = new ContainerBuilder();
+    $container->set('current_user', $account);
+    \Drupal::setContainer($container);
+
     $forumDomain = $this->createMock(DomainInterface::class);
     $forumDomain->method('id')->willReturn('forum_aculta_org');
     $forumDomain->method('getPath')->willReturn('https://forum.test');

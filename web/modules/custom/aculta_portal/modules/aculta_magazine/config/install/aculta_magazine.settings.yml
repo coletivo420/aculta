@@ -1,0 +1,6 @@
+authoring_roles:
+  - content_editor
+review_roles:
+  - content_editor
+comments_roles:
+  - administrator

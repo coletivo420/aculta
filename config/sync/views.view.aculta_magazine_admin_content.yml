@@ -340,7 +340,7 @@ display:
       access:
         type: perm
         options:
-          perm: access content overview
+          perm: administer site configuration
       cache:
         type: tag
       empty:
@@ -667,15 +667,9 @@ display:
     position: 1
     display_options:
       display_extenders: {}
-      path: admin/content/revista
+      path: painel-administrativo/revista/publicacoes
       menu:
-        type: tab
-        title: Revista
-        description: Publicações e gestão editorial da Revista
-        weight: 12
-        menu_name: admin
-        parent: system.admin_content
-        context: '0'
+        type: none
       tab_options:
         type: normal
         title: Conteúdo

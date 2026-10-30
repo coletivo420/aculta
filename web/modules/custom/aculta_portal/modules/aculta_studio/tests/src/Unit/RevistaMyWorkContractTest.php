@@ -21,7 +21,7 @@ final class RevistaMyWorkContractTest extends UnitTestCase {
     self::assertIsString($source);
     self::assertStringContainsString("'scope' => 'mine'", $source);
     self::assertStringContainsString("Meu trabalho", $source);
-    self::assertStringContainsString("Meus conteúdos", $source);
+    self::assertStringContainsString("Publicações acessíveis", $source);
   }
 
   /**

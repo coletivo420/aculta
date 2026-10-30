@@ -10,7 +10,7 @@ services:
     arguments: ['@aculta_studio.marley_presenter', '@current_user', '@aculta_studio.marley_listing', '@string_translation']
   aculta_studio.marley_listing:
     class: Drupal\aculta_studio\MarleyListingBuilder
-    arguments: ['@entity_type.manager', '@date.formatter', '@aculta_portal.domain_purpose', '@current_user', '@string_translation', '@request_stack', '@?aculta_wiki.editorial_queue']
+    arguments: ['@entity_type.manager', '@date.formatter', '@aculta_portal.domain_purpose', '@current_user', '@string_translation', '@request_stack', '@?aculta_wiki.editorial_queue', '@?aculta_forum.discussion_context_resolver']
   aculta_studio.experience_manager:
     class: Drupal\aculta_studio\Experience\StudioExperienceManager
     calls:

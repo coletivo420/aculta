@@ -1,4 +1,20 @@
 services:
+  Drupal\aculta_magazine\Controller\EditorialAdminController:
+    class: Drupal\aculta_magazine\Controller\EditorialAdminController
+    arguments: ['@aculta_magazine.capability']
+
+  aculta_magazine.capability:
+    class: Drupal\aculta_magazine\Access\EditorialCapability
+    arguments: ['@config.factory']
+
+  Drupal\aculta_magazine\Hook\EditorialCommentAccessHooks:
+    class: Drupal\aculta_magazine\Hook\EditorialCommentAccessHooks
+    arguments: ['@aculta_magazine.capability', '@aculta_forum.discussion_context_resolver']
+
+  aculta_magazine.editorial_workspace:
+    class: Drupal\aculta_magazine\Controller\EditorialWorkspaceController
+    arguments: ['@entity_type.manager', '@entity.form_builder', '@form_builder', '@aculta_forum.discussion_context_resolver', '@aculta_magazine.capability', '@current_user', '@request_stack', '@date.formatter']
+
   Drupal\aculta_magazine\Hook\MagazineNoticeEventPublisher:
     class: Drupal\aculta_magazine\Hook\MagazineNoticeEventPublisher
     arguments: ['@flag', '@aculta_portal.domain_purpose', '@entity_type.manager', '@aculta_messenger.notice_event_publisher', '@config.factory', '@datetime.time']

@@ -1,9 +1,10 @@
 # Contrato de integração Studio ↔ Magazine
 
-**Status:** inventário real (MAG 0.5-B.1), revisado na conclusão de MAG 0.5-B
-(0.5-B.9/B.R, 2026-10-22). Este documento descreve somente contratos que
-existem no código e na configuração desta branch. O que ainda não existe está
-marcado como lacuna, não como API.
+**Status:** contrato atualizado para a central administrativa e ACULTA Studio
+Marley (MAG 0.5.0-dev.14, 2026-10-30). As seções históricas abaixo registram o
+contrato Core anterior à fronteira ADR-038; as rotas atuais `/marley/revista/*`
+delegam às mesmas APIs de entidade, Form API, Content Moderation, Comment e
+`aculta_forum` no purpose `account`.
 
 **Propriedade:** `aculta_magazine` é dono do conteúdo, campos, validações,
 workflow e apresentação editorial. `aculta_studio` é dono da navegação,
@@ -64,8 +65,9 @@ Observações verificadas:
 | Bundle e histórico | `src/Revista/RevistaPublications.php`, `docs/MIGRATION-ARTICLE-BLOG-TO-REVISTA.md` | Bundle canônico e registro histórico; o migrador foi removido | Entity API |
 | Campos e displays | `config/sync/field.field.node.revista.*`, `core.entity_view_display.node.revista.*` | Modelo editorial, SEO, Pathauto, Metatag, listagens | Config Sync |
 
-O Magazine **não** expõe hoje um serviço de consulta editorial, um serviço de
-ações permitidas nem um adaptador de acesso para o Studio. `RevistaPublications`
+O Magazine **não** expõe um storage editorial paralelo. A implementação dev.14
+adiciona adaptadores de apresentação/Forms no owner, que não substituem Entity
+Access, Revision Access, Field Access nem o workflow. `RevistaPublications`
 não é um contrato de listagem do Studio: ele lê o bundle e serve ao comando de
 migração/inventário, não a telas.
 
@@ -74,15 +76,44 @@ opcional do Portal. Esse provider só descreve metadados e relações; ele não 
 API de listagem do Studio e não altera a checagem de acesso/revisão do fluxo
 editorial.
 
-## 3. Contratos consumidores no Studio
+## 3. Rotas atuais no ACULTA Studio Marley (dev.14)
+
+Marley é `account:/marley` conforme ADR-038. As rotas de escrita não chamam
+POST, AJAX de persistência nem formulário em outro purpose:
+
+| Ação | Rota | Owner e controles |
+| --- | --- | --- |
+| Lista e filtros | `/marley/revista/publicacoes` | `aculta_magazine`; query `accessCheck(TRUE)`, revisão visível e paginação limitada |
+| Criar | `/marley/revista/nova` | Entity Form Builder de Node; capability Autoria + `create revista content` |
+| Editar | `/marley/revista/{node}/editar` | Entity Form Builder; capability Autoria + `update` na publicação/revisão |
+| Revisar/publicar/arquivar | `/marley/revista/{node}/transicao` | `StateTransitionValidationInterface`, capacidade Revisão + `update` + `view revision`; revalida transição no submit |
+| Discussão e participação | `/marley/revista/{node}/discussao` | Renderiza o campo Comment do Node; `DiscussionContextResolver`/`PublicationContextProvider` avaliam host, campo, leitura e escrita |
+| Moderação contextual | `/marley/revista/comentarios/{comment}/moderacao` | capacidade Comentários + `administer comments` + contexto Magazine e access do Comment/campo; aprovar, despublicar ou remover |
+
+As rotas administrativas são `/painel-administrativo/revista`,
+`/painel-administrativo/revista/configuracoes`,
+`/painel-administrativo/revista/publicacoes` e
+`/painel-administrativo/revista/comentarios`, todas no purpose `main` e restritas
+a administradores. A View de publicações não usa mais o path Core
+`/admin/content/revista` nem a aba genérica `system.admin_content`.
+
+`aculta_forum` continua owner da resolução de contexto, integração e políticas
+compartilhadas. A discussão usa Comment `aculta_discussion_post` associado a
+`field_aculta_discussion`; não cria `ForumPost`, tópico público, nem fila
+Growroom. `ForumModerationHooks` mantém comentários contextuais fora da fila
+genérica Core. A fila administrativa da Revista é configurada na própria
+central; a fila contextual do Studio filtra host `revista` e valida o provider.
+
+## 4. Contratos consumidores no Studio
 
 | Peça | Onde | Uso verificado |
 | --- | --- | --- |
-| Aba Revista | `src/Plugin/StudioTab/RevistaTab.php` | `isAvailable()` exige `aculta_magazine`; `access()` exige `create revista content` **ou** `edit any revista content`; seções `publicacoes` (todos, rascunhos, em revisão, publicados, arquivados) e `criar` |
-| Ação de criação | `StudioTabBase::routeAction()` | Resolve `node.add` com `node_type => revista` no purpose `main`, com `Url::fromRoute(...)->access($account)` |
-| Listagem | `src/StudioListingBuilder.php` | `scope: mine` (uid da conta), `accessCheck(TRUE)`, paginação por cursor, `canViewRevision()` = `view` **e** `view revision`; cache contexts `user`, `user.permissions`, `url.query_args:studio_cursor`, tag `node_list:revista` |
-| Apresentação | `src/StudioPresenter.php`, `src/Controller/StudioController.php` | Filtra abas/seções por acesso e por ações/listagens disponíveis; renderiza com cache contexts `user.permissions`, `url.path` |
-| Rota do Studio | `aculta_studio.routing.yml` | `/studio/ganjalab/...` canônica, aliases legadas, `_permission: access aculta portal`, `_aculta_domain_purpose: account` |
+| Aba Revista | `aculta_studio/src/Plugin/MarleyTab/RevistaTab.php` | exige uma capacidade configurada de autoria, revisão ou comentários; separa publicações, criação e moderação contextual |
+| Painel de publicações | `aculta_magazine/src/Controller/EditorialWorkspaceController.php` | `accessCheck(TRUE)`, verificação `view revision`, filtros de título/categoria/autoria/idioma/estado e paginação limitada |
+| Criação e edição | rotas `aculta_magazine.studio_add` e `aculta_magazine.studio_edit` | Node Entity Form API e capacidade de autoria junto a permissões/Entity Access Drupal; no purpose `account` |
+| Revisão e publicação | rota `aculta_magazine.studio_transition` | `StateTransitionValidationInterface`; opções vêm das transições válidas para a revisão e usuário atuais, revalidadas no submit |
+| Discussão contextual | rota `aculta_magazine.studio_discussion` | Renderiza `field_aculta_discussion` do Node `revista`; `aculta_forum` resolve o contexto e valida publicação, campo, participação e moderação |
+| Fila contextual | `aculta_studio/src/MarleyListingBuilder.php` | Query Comment access-checked por tipo/campo/host; apenas contexto `publication`; links e ações permanecem em Marley; Growroom segue separado |
 
 ## 4. Lacunas reais (0.5-B)
 

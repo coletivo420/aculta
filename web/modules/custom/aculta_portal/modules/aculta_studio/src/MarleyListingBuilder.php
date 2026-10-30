@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Drupal\aculta_studio;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_wiki\Service\WikiEditorialQueue;
+use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\aculta_wiki\Service\WikiEditorialQueue;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -37,6 +38,7 @@ final class MarleyListingBuilder {
     TranslationInterface $stringTranslation,
     private readonly RequestStack $requestStack,
     private readonly ?WikiEditorialQueue $wikiEditorialQueue = NULL,
+    private readonly ?DiscussionContextResolver $discussionContexts = NULL,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -176,6 +178,18 @@ final class MarleyListingBuilder {
       if (!empty($listing['editable'])) {
         $row['edit'] = $this->editLink($node, $listing['purpose'] ?? 'main');
       }
+      if ($node instanceof NodeInterface && $node->bundle() === 'revista') {
+        $transition = Url::fromRoute('aculta_magazine.studio_transition', ['node' => $node->id()]);
+        if ($transition->access($account)) {
+          $row['review'] = [
+            'data' => [
+              '#type' => 'link',
+              '#title' => $this->t('Revisar ou publicar'),
+              '#url' => $transition,
+            ],
+          ];
+        }
+      }
       $rows[] = $row;
     }
 
@@ -188,6 +202,9 @@ final class MarleyListingBuilder {
     ];
     if (!empty($listing['editable'])) {
       $header['edit'] = $this->t('Ações');
+    }
+    if (($listing['bundle'] ?? '') === 'revista') {
+      $header['review'] = $this->t('Revisão');
     }
     $build = [
       '#type' => 'container',
@@ -395,29 +412,55 @@ final class MarleyListingBuilder {
       ->accessCheck(TRUE)
       ->condition('comment_type', $listing['bundle'])
       ->condition('status', (int) $listing['status'])
+      ->condition('entity_type', 'node')
+      ->condition('field_name', 'field_aculta_discussion')
       ->sort('created', 'DESC')
       ->range(0, self::LIMIT)
       ->execute();
     $rows = [];
+    $cacheability = new CacheableMetadata();
     foreach ($storage->loadMultiple($ids) as $comment) {
       $node = $comment->getCommentedEntity();
+      $discussionContext = $node && $this->discussionContexts
+        ? $this->discussionContexts->resolve($node, $this->account)
+        : NULL;
+      if (!$node instanceof NodeInterface || $node->bundle() !== ($listing['host_bundle'] ?? '')
+        || $discussionContext === NULL || $discussionContext->getType() !== 'publication'
+        || !$discussionContext->getReadAccess()->isAllowed()
+        || !$comment->access('view', $this->account)) {
+        continue;
+      }
       $rows[] = [
         'title' => [
           'data' => [
             '#type' => 'link',
             '#title' => $comment->label() ?: $this->t('(sem assunto)'),
-            '#url' => $comment->toUrl(),
+            '#url' => Url::fromRoute('aculta_magazine.studio_discussion', ['node' => $node->id()], [
+              'fragment' => 'comment-' . $comment->id(),
+            ]),
           ],
         ],
         'state' => $this->t('Aguardando moderação'),
         'author' => $comment->getOwner()?->getDisplayName() ?? '',
         'changed' => $this->dateFormatter->format($comment->getChangedTime(), 'short'),
-        'node' => $node
-          ? ['data' => ['#type' => 'link', '#title' => $node->label(), '#url' => $node->toUrl()]]
-          : '',
+        'node' => [
+          'data' => [
+            '#type' => 'link',
+            '#title' => $node->label(),
+            '#url' => Url::fromRoute('aculta_magazine.studio_discussion', ['node' => $node->id()]),
+          ],
+        ],
+        'action' => [
+          'data' => [
+            '#type' => 'link',
+            '#title' => $this->t('Moderar'),
+            '#url' => Url::fromRoute('aculta_magazine.studio_comment_moderate', ['comment' => $comment->id()]),
+          ],
+        ],
       ];
+      $cacheability->addCacheableDependency($discussionContext);
     }
-    return [
+    $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'studio-listing-wrap', 'data-aculta-studio' => 'listing-wrap'],
       'table' => [
@@ -428,13 +471,19 @@ final class MarleyListingBuilder {
           'author' => $this->t('Autor'),
           'changed' => $this->t('Atualizado em'),
           'node' => $this->t('Discussão'),
+          'action' => $this->t('Ação'),
         ],
         '#rows' => $rows,
         '#empty' => $this->t('Nenhum item nesta aba.'),
         '#attributes' => ['data-portal-ui' => 'studio-listing', 'data-aculta-studio' => 'listing'],
       ],
-      '#cache' => ['contexts' => ['user', 'user.permissions'], 'tags' => ['comment_list']],
+      '#cache' => [
+        'contexts' => ['user', 'user.permissions', 'user.roles'],
+        'tags' => ['comment_list', 'config:aculta_magazine.settings'],
+      ],
     ];
+    $cacheability->applyTo($build);
+    return $build;
   }
 
   /**
@@ -575,6 +624,16 @@ final class MarleyListingBuilder {
    * the main domain is kept for listings that are not tied to a purpose.
    */
   private function editLink(object $node, string $purpose = 'main'): array {
+    if ($node instanceof NodeInterface && $node->bundle() === 'revista') {
+      if (!$node->access('update', $this->account)) {
+        return ['data' => ''];
+      }
+      $url = Url::fromRoute('aculta_magazine.studio_edit', ['node' => $node->id()]);
+      if (!$url->access($this->account)) {
+        return ['data' => ''];
+      }
+      return ['data' => ['#type' => 'link', '#title' => $this->t('Editar'), '#url' => $url]];
+    }
     $url = $this->domainPurposes->routeUrl($purpose, 'entity.node.edit_form', ['node' => $node->id()]);
     if ($url === NULL) {
       return ['data' => ''];

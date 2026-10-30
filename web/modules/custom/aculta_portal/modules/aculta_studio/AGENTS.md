@@ -100,6 +100,22 @@ workspace service and WE SATIVA routes.
 
 ## ACULTA Studio Culturas (implementação em andamento)
 
+### Revista no Studio Marley (MAG dev.14)
+
+- A experiência editorial é ACULTA Studio Marley em `account:/marley`; use as
+  rotas owner `/marley/revista/*`. Não encaminhe usuários editoriais para
+  `/admin/content/revista` nem para `/painel-administrativo/revista`.
+- `aculta_magazine` continua owner do Node `revista`, fields, Form API e
+  workflow. Revalide Entity/Revision Access e a capability ACULTA no acesso
+  direto e no submit; transições vêm de `StateTransitionValidation`.
+- Discussão é o Comment `aculta_discussion_post` em
+  `field_aculta_discussion`. Use `aculta_forum.discussion_context_resolver` e
+  `PublicationContextProvider`; preserve acesso host/campo, política de Comment
+  e isolamento do Growroom. Não crie ForumPost, tópico ou fila paralela.
+- Administração/capacidades ficam em `/painel-administrativo/revista`, purpose
+  `main`, somente para administradores. Papéis configurados são uma condição
+  adicional e não substituem permissões Drupal ou access handlers.
+
 O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**, com rota `/culturas` no purpose `eventos`. A entrada da Conta pode linkar por `DomainPurposeManager`, mas não grava Eventos. A área administrativa permanece no MAIN em `/painel-administrativo/eventos`, restrita a administradores. Usar `aculta_events` para persistência e autorização; Datas e Locais pertencem ao Evento. Não duplicar o painel administrativo na interface de organizadores.
 
 ## Contrato de migração das Suites (ADR-038)

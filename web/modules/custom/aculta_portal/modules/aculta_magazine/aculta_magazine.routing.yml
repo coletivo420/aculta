@@ -1,0 +1,114 @@
+aculta_magazine.admin:
+  path: '/painel-administrativo/revista'
+  defaults:
+    _controller: 'Drupal\aculta_magazine\Controller\EditorialAdminController::overview'
+    _title: 'Revista'
+  requirements:
+    _custom_access: 'Drupal\aculta_magazine\Controller\EditorialAdminController::access'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_magazine.capabilities:
+  path: '/painel-administrativo/revista/configuracoes'
+  defaults:
+    _form: 'Drupal\aculta_magazine\Form\EditorialCapabilitiesForm'
+    _title: 'Capacidades editoriais'
+  requirements:
+    _custom_access: 'Drupal\aculta_magazine\Controller\EditorialAdminController::access'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_magazine.admin_comments:
+  path: '/painel-administrativo/revista/comentarios'
+  defaults:
+    _controller: 'Drupal\aculta_magazine\Controller\EditorialAdminController::comments'
+    _title: 'Comentários da Revista'
+  requirements:
+    _custom_access: 'Drupal\aculta_magazine\Controller\EditorialAdminController::access'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_magazine.studio_list:
+  path: '/marley/revista/publicacoes'
+  defaults:
+    _controller: 'aculta_magazine.editorial_workspace:listing'
+    _title: 'Publicações'
+  requirements:
+    _custom_access: 'aculta_magazine.editorial_workspace:accessWorkspace'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+aculta_magazine.studio_add:
+  path: '/marley/revista/nova'
+  defaults:
+    _controller: 'aculta_magazine.editorial_workspace:create'
+    _title: 'Nova publicação'
+  requirements:
+    _custom_access: 'aculta_magazine.editorial_workspace:accessCreate'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+aculta_magazine.studio_transition:
+  path: '/marley/revista/{node}/transicao'
+  defaults:
+    _form: 'Drupal\aculta_magazine\Form\EditorialTransitionForm'
+    _title: 'Revisar publicação'
+  requirements:
+    _custom_access: 'aculta_magazine.editorial_workspace:accessReview'
+    node: '\d+'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+    parameters:
+      node:
+        type: entity:node
+
+aculta_magazine.studio_comment_moderate:
+  path: '/marley/revista/comentarios/{comment}/moderacao'
+  defaults:
+    _form: 'Drupal\aculta_magazine\Form\EditorialCommentModerationForm'
+    _title: 'Moderar comentário'
+  requirements:
+    _custom_access: 'aculta_magazine.editorial_workspace:accessComment'
+    comment: '\d+'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+    parameters:
+      comment:
+        type: entity:comment
+
+aculta_magazine.studio_edit:
+  path: '/marley/revista/{node}/editar'
+  defaults:
+    _controller: 'aculta_magazine.editorial_workspace:edit'
+    _title: 'Editar publicação'
+  requirements:
+    _custom_access: 'aculta_magazine.editorial_workspace:accessEdit'
+    node: '\d+'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+    parameters:
+      node:
+        type: entity:node
+
+aculta_magazine.studio_discussion:
+  path: '/marley/revista/{node}/discussao'
+  defaults:
+    _controller: 'aculta_magazine.editorial_workspace:discussion'
+    _title: 'Discussão da publicação'
+  requirements:
+    _custom_access: 'aculta_magazine.editorial_workspace:accessDiscussion'
+    node: '\d+'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+    parameters:
+      node:
+        type: entity:node
