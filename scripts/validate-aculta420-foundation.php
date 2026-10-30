@@ -313,6 +313,8 @@ $expectedTemplates = [
   'aculta-donation-quick.html.twig',
   'aculta-donation-summary-container.html.twig',
   'aculta-donation-summary.html.twig',
+  // Event detail page composes the shared five-region event SDC.
+  'aculta-event-page.html.twig',
   'aculta-portal-account-terms-modal.html.twig',
   'aculta-portal-photo-editor.html.twig',
   'aculta-portal-shell.html.twig',

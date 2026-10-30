@@ -302,9 +302,14 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/seguranca/email/cancelar/{user}` | Cancelamento de alteração de e-mail | Condicional a token válido; `{user}` é validado no fluxo. |
 | `conta.aculta` | `/identidade/editar` | Edição técnica/legada do perfil próprio | Navegação redirecionada para `/seguranca`; acesso alheio é negado. |
 | `conta.aculta` | `/identidade/{user}` | Perfil técnico/legado de usuário | Para o próprio usuário redireciona à raiz da Conta; perfil alheio não é exibido. |
+| `conta.aculta` | `/identidade/{user}/{profile_type}` | Página de perfil Profile do usuário | Rota `profile.user_page.single`; access do módulo Profile. |
+| `conta.aculta` | `/identidade/{user}/{profile_type}/lista` | Lista de perfis múltiplos do usuário | Rota `profile.user_page.multiple`; access do módulo Profile. |
+| `conta.aculta` | `/identidade/{user}/{profile_type}/adicionar` | Inclusão de perfil múltiplo | Rota `profile.user_page.add_form`; create access do módulo Profile. |
+| `conta.aculta` | `/identidade/{user}/conexoes/oauth` | Perfis OAuth vinculados à conta | Rota `social_auth.user.profiles`; exige `user.update`. |
 | `conta.aculta` | `/confirmar-email/{aculta_mail_confirmer}/{hash}` | Confirmação de endereço de e-mail | Token temporário; usuário e hash precisam ser válidos. |
 | `conta.aculta` | `/confirmar-email/reenviar/{confirmation}` | Reenvio de confirmação de uma solicitação | Registro/token de confirmação validado pelo módulo. |
 | `conta.aculta` | `/conexoes` | Conexões de autenticação social | Conta autenticada; provedores habilitados variam por ambiente. |
+| `conta.aculta` | `/meus-formularios/{user}/{submission_view}` | Submissões Webform da conta | Rota `entity.webform_submission.user`; acesso conferido por `WebformAccountAccess`. |
 | `conta.aculta` | `/meus-cursos` | Lista de cursos da pessoa | Conta autenticada; depende de matrícula/conteúdo. |
 | `conta.aculta` | `/studio` | Caminho técnico do hub | Rota interna `aculta_studio.hub`; acesso HTTP direto 404, use `/`. |
 | `conta.aculta` | `/studio/conta` | **Minha Conta Studio** | `aculta_studio.account`, autenticação + Portal; composição de serviços cadastrais privados. Não retira a Conta legada. |
@@ -328,8 +333,18 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/studio/marley/{aba}/{secao}` | Seção editorial Marley | Declarada em `aculta_studio`; segmento inexistente ou sem acesso retorna 404; purpose `account`. |
 | `conta.aculta` | `/studio/marley/{aba}/{secao}/{sub}` | Aba interna editorial Marley | Declarada em `aculta_studio`; ações revalidam o acesso do módulo dono; purpose `account`. |
 | `conta.aculta` | `/studio/ganjalab` | Dashboard pessoal ACULTA Studio Ganjalab | Declarada em `aculta_lms`; conta autenticada, dados limitados à própria pessoa; purpose `account`. Runtime não verificado nesta refatoração. |
-| `conta.aculta` | `/studio/we-sativa` | Experiência de contribuição WE SATIVA | Declarada em `aculta_studio`; disponibilidade/access e dados delegados à Wiki; purpose `account`. Estado Runtime permanece conforme status do Studio. |
-| `conta.aculta` | `/studio/we-sativa/inicio` | Página inicial de contribuição WE SATIVA | Declarada em `aculta_studio`; acesso delegado ao workspace proprietário da Wiki; purpose `account`. |
+| `conta.aculta` | `/studio/we-sativa` | Entrada **ACULTA STUDIO WE SATIVA**, experiência de contribuição | Declarada em `aculta_studio`; disponibilidade/access e dados delegados à Wiki; purpose `account`. Estado Runtime permanece conforme status do Studio. |
+| `conta.aculta` | `/studio/we-sativa/inicio` | Página inicial de contribuição **ACULTA STUDIO WE SATIVA** | Declarada em `aculta_studio`; acesso delegado ao workspace proprietário da Wiki; purpose `account`. |
+| `conta.aculta` | `/studio/green-stash` | Entrada de gestão comercial integrada **ACULTA STUDIO GREEN STASH** | Rota `aculta_commerce.green_stash`; purpose `account`; acesso pelo provider Studio e permissão Green Stash. |
+| `conta.aculta` | `/studio/green-stash/{secao}` | Áreas contextuais de gestão Green Stash | Rota `aculta_commerce.green_stash_area`; somente slugs definidos pelo owner Commerce; não anuncia operações ainda planejadas. |
+| `conta.aculta` | `/studio/green-stash/produtos/novo` | Criar rascunho de produto | Rota `aculta_commerce.green_stash_product_create`; Form API Commerce; create access e loja revalidados. |
+| `conta.aculta` | `/studio/green-stash/produtos/{produto}` | Detalhe de produto administrável | Rota `aculta_commerce.green_stash_product_detail`; acesso à entidade e store revalidado. |
+| `conta.aculta` | `/studio/green-stash/envios/{aculta_shipment}/transicao/{transition}` | Confirmar transição de remessa | Rota `aculta_commerce.green_stash_shipment_transition`; permissão de operação e estado/workflow revalidado. |
+| `conta.aculta` | `/estudio/loja` | Rota anterior de entrada Green Stash | Removida; sem alias/redirect; deve responder 404. |
+| `conta.aculta` | `/estudio/loja/{secao}` | Rota anterior das áreas Green Stash | Removida; sem alias/redirect; deve responder 404. |
+| `conta.aculta` | `/estudio/loja/produtos/novo` | Rota anterior de criação de rascunho | Removida; sem alias/redirect; deve responder 404. |
+| `conta.aculta` | `/estudio/loja/produtos/{produto}` | Rota anterior de detalhe de produto | Removida; sem alias/redirect; deve responder 404. |
+| `conta.aculta` | `/estudio/loja/envios/{aculta_shipment}/transicao/{transition}` | Rota anterior de transição de remessa | Removida; sem alias/redirect; deve responder 404. |
 | `conta.aculta` | `/atividades-interativas` | Atividades H5P dos cursos acessíveis pela pessoa estudante | Rota `aculta_lms_h5p`, purpose `account`, exige papel `estudante`; lista vazia quando não há curso com H5P acessível. Runtime corrigido após detectar o redirect de `/minha-conta/*` sem rota final. |
 | `conta.aculta` | `/avisos/educacionais/{message}/abrir` | Marca aviso LMS próprio como lido e abre matrícula ou certificado após revalidar acesso | Declarada no adapter opcional `aculta_lms_messenger`; ativa no Runtime de teste após habilitação em 2026-10-21; exige titular autenticado e origem ainda acessível; redireciona por `DomainPurposeManager`; ainda sem mensagem de teste criada. |
 | `conta.aculta` | `/avisos/revista/{message}/abrir` | Marca aviso próprio da Revista como lido e abre a publicação após revalidar revisão, assinatura e acesso | Declarada pelo adapter opcional `aculta_magazine` no `aculta_messenger`; ativa somente com Magazine habilitado e configuração de integração aplicada; Runtime ainda não validado. |
@@ -360,7 +375,7 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/avisos-mensagens` | Página de avisos e mensagens | Condicional ao Messenger; conteúdo filtrado por access. |
 | `conta.aculta` | `/avisos-mensagens/{aba}` | Aba específica de avisos ou mensagens | Condicional ao Messenger; `{aba}` limitado às opções válidas. |
 | `conta.aculta` | `/oauth/{provedor}` | Início de autenticação com provedor externo | Endpoint técnico; depende do provedor habilitado. |
-| `conta.aculta` | `/oauth/{provedor}/retorno` | Retorno/callback de autenticação externa | Endpoint técnico; URI cadastrada e validada por ambiente. |
+| `conta.aculta` | `/integracoes/{provedor}/retorno` | Retorno/callback de autenticação externa | Endpoint técnico; URI cadastrada e validada por ambiente. |
 | `apoio.aculta` | `/` | Página de apoio com formulário e valores sugeridos | Ativo; fluxo de pagamento continua em `main.aculta`. |
 | `main.aculta` | `/{titulo}` | Página institucional por alias editorial | Dinâmico; depende de nó publicado e domínio associado. |
 | `main.aculta` | `/atividades/{titulo}` | Página de uma atividade cultural | Dinâmico; depende de atividade publicada e domínio. |
@@ -376,6 +391,13 @@ correspondentes estão habilitados no ambiente.
 | `wiki.aculta` | `/wiki/busca` | Busca de verbetes | Ativo conforme View/feature; a raiz interna `/wiki` responde `404` diretamente. |
 | `wiki.aculta` | `/wiki/busca/previa` | Prévia de resultados da busca da Wiki | Endpoint de interface; access/cache conforme busca. |
 | `cursos.aculta` | `/curso/{alias}` | Página de um curso | Dinâmico; depende de curso publicado e acesso. O caminho interno `/cursos` responde `404` diretamente. |
+| `cursos.aculta` | `/curso/{group}/iniciar` | Início de curso | Rota `lms.course.start`; propósito `courses` e `group.take`. |
+| `cursos.aculta` | `/curso/{group}/reiniciar-avaliacao` | Reinício de progresso de avaliação | Rota `lms.course.reset_test`; exige `group.update` e CSRF. |
+| `cursos.aculta` | `/grupo/{group}/resultados-curso` | Resultados próprios do curso | Rota `lms.group.self_results`; acesso Group revalidado. |
+| `cursos.aculta` | `/resposta/{lms_answer}/{js}/detalhes` | Detalhes de resposta LMS (no-JS/AJAX) | Rota `lms.answer.details`; acesso `lms_answer.see_details`. |
+| `cursos.aculta` | `/resposta/{lms_answer}/avaliar` | Avaliação de resposta LMS | Rota `entity.lms_answer.edit_form`; acesso do owner LMS. |
+| `cursos.aculta` | `/grupo/{group}/entrar` | Entrada em grupo/curso permitido | Rota `entity.group.join`; exige permissão de entrada e grupo ainda não associado. |
+| `cursos.aculta` | `/grupo/{group}/sair` | Saída de grupo/curso permitido | Rota `entity.group.leave`; exige permissão de saída e membership ativo. |
 | `cursos.aculta` | `/educador/atividades-interativas` | Cursos administrados pelo educador que têm atividades H5P | Rota `aculta_lms_h5p`, purpose `courses`, exige papel `lms_teacher`; lista vazia quando os cursos não têm atividades H5P. |
 | `cursos.aculta` | `/h5p-ajax/{group_id}/set-finished.json` | Salvar conclusão e pontuação H5P vinculada à turma | Endpoint POST autenticado; valida matrícula/curso e conteúdo H5P associado ao Group. |
 | `cursos.aculta` | `/h5p-ajax/{group_id}/content-user-data/{content_main_id}/{data_id}/{sub_content_id}` | Ler ou salvar estado de tentativa H5P da pessoa na turma | Endpoint GET/POST autenticado; valida curso, conteúdo e titularidade do estado. |
@@ -443,7 +465,7 @@ correspondente e sua proteção deve ser mantida no dono da feature.
 | `courses.aculta` | `/modules/custom/aculta_portal/modules/aculta_document_viewer/viewer-wrapper.html?file={url}&locale={locale}&scroll={vertical|horizontal}&spread={0|1}&spread_mobile={0|1}` | Wrapper same-origin para documentos privados de turma | Asset estático condicional ao submódulo `aculta_document_viewer`; não serve arquivos; `file` continua pela rota privada do Core, que revalida acesso da turma. |
 | `main.aculta` | `/aculta_portal_cep/{cep}` | Consulta AJAX de CEP | Condicional ao submódulo CEP; endpoint técnico com resposta controlada. |
 | `main.aculta` | `/integracoes/pagamentos/{commerce_payment_gateway}/notificacao` | Notificação enviada pelo gateway de pagamento | Callback técnico, sem navegação humana; endereço declarado por ambiente e validado pelo gateway. |
-| `conta.aculta` | `/oauth/{provedor}/retorno` | Callback de autenticação OAuth | Endpoint técnico, restrito a provedores e URIs configurados. |
+| `conta.aculta` | `/integracoes/{provedor}/retorno` | Callback de autenticação OAuth | Endpoint técnico, restrito a provedores e URIs configurados. |
 | `cursos.aculta` | `/resposta/{lms_answer}/baixar-arquivo` | Download de anexo de resposta | Condicional; verifica access à resposta e matrícula. |
 | `conta.aculta` | `/avatar/foto` | Modal de foto de perfil (formulário de envio, prévia e remoção) | Exige `access aculta portal`; sem purpose fixo, aberto pelo painel da conta. |
 | `conta.aculta` | `/avatar/recortar` | Modal de recorte do arquivo recém-enviado | Exige `access aculta portal`; aceita só o arquivo temporário do próprio usuário. |
@@ -470,6 +492,14 @@ módulos instalados: módulos desabilitados não expõem rotas ativas.
 | `/conta-legada` | `conta.aculta` | Minha Conta original (`aculta_portal.dashboard`) | Rota pública preservada; anônimo vai ao login, logado acessa a visão geral. |
 | `/studio` | `conta.aculta` | Caminho interno do hub do Studio (`aculta_studio.hub`) | A raiz `/` serve o hub; acesso direto responde `404`, sem redirect. |
 | `/conta-interna` | `conta.aculta` | Antigo caminho interno do painel da conta | Removido; visitante recebe `404`; comportamento para usuário autenticado segue política documentada. |
+| `/group/{group}/join` e `/group/{group}/leave` | `cursos.aculta` quando Group é curso | Paths contrib aposentados para entrada/saída de Group | Substituídos por `/grupo/{group}/entrar` e `/grupo/{group}/sair`; sem alias. |
+| `/course/{group}/start` e `/course/{group}/reset-test` | `cursos.aculta` | Paths LMS em inglês aposentados | Substituídos por `/curso/{group}/iniciar` e `/curso/{group}/reiniciar-avaliacao`; sem alias. |
+| `/answer/{lms_answer}/{js}/details` e `/answer/{lms_answer}/evaluate` | `cursos.aculta` | Paths contrib de detalhes/avaliação de resposta | Substituídos por `/resposta/{lms_answer}/{js}/detalhes` e `/resposta/{lms_answer}/avaliar`; sem alias. |
+| `/user/{user}/{profile_type}*` | `conta.aculta` | Paths técnicos de páginas Profile contrib | Substituídos pela família `/identidade/{user}/{profile_type}*`; sem alias. |
+| `/user/{user}/social-auth/profiles` | `conta.aculta` | Path antigo de perfis OAuth | Substituído por `/identidade/{user}/conexoes/oauth`; sem alias. |
+| `/user/{user}/submissions/{submission_view}` | `conta.aculta` | Lista Webform contrib por usuário | Substituída por `/meus-formularios/{user}/{submission_view}`; sem alias. |
+| `/user/login/{network}` | `conta.aculta` | Início OAuth Social Auth antigo | Substituído por `/oauth/{network}`; sem alias. |
+| `/user/login/{network}/callback` e `/oauth/{network}/retorno` | `conta.aculta` | Callback OAuth Social Auth antigo | Substituído por `/integracoes/{network}/retorno`; sem alias. |
 | `/cart` | `main.aculta` | Antigo alias inglês do carrinho | Removido; `404`, sem redirect de slug. |
 | `/donate` | `main.aculta` | Antigo caminho inglês do formulário de doação | Removido; `404`, sem redirect de slug. |
 | `/donate/{valor}/now` | `main.aculta` | Antigo caminho inglês de doação rápida | Removido; `404`, sem redirect de slug. |

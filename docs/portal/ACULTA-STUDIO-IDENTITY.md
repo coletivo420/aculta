@@ -25,6 +25,12 @@ aplicar sempre este contrato vigente.
 
 ## Identidades atuais — Conta/Perfil separados (dev.13)
 
+Nomes oficiais das áreas integradas: **ACULTA STUDIO WE SATIVA** em
+`/studio/we-sativa` (início em `/studio/we-sativa/inicio`) e **ACULTA STUDIO
+GREEN STASH** em `/studio/green-stash`. Os providers continuam adaptadores do
+Studio; Wiki e Commerce mantêm seus dados, permissões e operações. Paths
+anteriores aposentados respondem 404, sem alias temporário.
+
 - `/studio` — hub;
 - `/studio/conta` — **Minha Conta Studio**, dados privados;
 - `/studio/perfil` — **Meu Perfil Studio**, identidade pública editável;
@@ -118,12 +124,19 @@ formulário, dado pessoal ou shell foi migrado.
 
 ## Identidades
 
+**Nomes e caminhos oficiais das áreas integradas ao Studio:** ACULTA STUDIO
+GREEN STASH (`/studio/green-stash`) e ACULTA STUDIO WE SATIVA
+(`/studio/we-sativa`). Green Stash é gestão comercial dentro do Studio;
+WE SATIVA é contribuição Wiki dentro do Studio. Os IDs técnicos e os owners
+Commerce/Wiki permanecem, sem shell ou armazenamento paralelos.
+
 | Experiência | Nome público | Machine ID | Responsabilidade |
 | --- | --- | --- | --- |
 | Plataforma | ACULTA Studio | `aculta_studio` | Infraestrutura transversal de interface; permanece inalterada. |
 | Editorial | ACULTA Studio Marley | `marley` | Criação, edição e moderação, com abas Revista, Wiki, Cursos, Fórum e Galerias. |
 | Aprendizagem | ACULTA Studio Ganjalab | `ganjalab` | Dashboard e interface estudantil; regras e dados acadêmicos permanecem no LMS. |
-| Contribuição Wiki | WE SATIVA | `we_sativa` | Experiência independente de contribuição, preservando ownership da Wiki. |
+| Gestão comercial | ACULTA STUDIO GREEN STASH | `green_stash` | Área integrada de administração da Loja; Commerce mantém o ownership operacional. |
+| Contribuição Wiki | ACULTA STUDIO WE SATIVA | `we_sativa` | Área integrada de contribuição; Wiki mantém dados, formulários e decisões de acesso. |
 
 WE SATIVA e os demais módulos mantêm suas identidades. Marley e Ganjalab compartilham a plataforma, não dados, privilégios ou regras de negócio. Nenhuma entidade, matrícula, avaliação, permissão ou armazenamento foi criado ou migrado por esta refatoração.
 

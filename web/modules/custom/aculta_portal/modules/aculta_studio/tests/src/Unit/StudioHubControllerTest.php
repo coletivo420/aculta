@@ -56,7 +56,7 @@ final class StudioHubControllerTest extends UnitTestCase {
     $manager->addProvider($this->provider('perfil', 'Meu Perfil', TRUE, TRUE));
     $manager->addProvider($this->provider('marley', 'Marley', FALSE, TRUE));
     $manager->addProvider($this->provider('ganjalab', 'Ganjalab', TRUE, FALSE));
-    $manager->addProvider($this->provider('we_sativa', 'WE SATIVA', TRUE, TRUE));
+    $manager->addProvider($this->provider('we_sativa', 'ACULTA STUDIO WE SATIVA', TRUE, TRUE));
 
     $controller = new StudioHubController(
       $manager,

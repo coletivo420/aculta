@@ -107,7 +107,7 @@ Execução somente leitura em `https://loja.aculta.toca.net.br`:
 - Entidades `aculta_shipment`, `aculta_shipping_method` e `aculta_shipment_type`; IDs, tabelas, campos e plugins sem colisão com o contrib.
 - Campo `shipments` do pedido e trait de variação com IDs ACULTA; workflow próprio.
 - Checkout pane `aculta_shipping_information` no `aculta_commerce`; o pane antigo do Portal foi removido.
-- Green Stash `/estudio/loja/envios` com leitura de remessas e transições confirmadas do workflow, sem interface nativa.
+- **ACULTA STUDIO GREEN STASH** `/studio/green-stash/envios` com leitura de remessas e transições confirmadas do workflow, sem interface nativa.
 - Config Sync substituído onde o contrib era referenciado; atribuições GPL registradas nos arquivos portados.
 - **Não incluído no porte original:** promoções de remessa, tipo de imposto de envio, e-mails de confirmação, formulários administrativos nativos e contratação de etiquetas/rastreamento externo.
 - **Estado integrado na PR #298 (2026-10-26):** porte e provider Melhor Envio usam o motor próprio; `commerce_shipping` foi removido do Composer e a instalação limpa foi verificada. A classe `MelhorEnvioWiringKernelTest` foi reexecutada com 11 testes / 57 assertions PASS; Unit Melhor Envio passou com 85 / 204. Checkout no navegador, validação externa do sandbox e cutover do Runtime compartilhado permanecem pendentes; Runtime não foi alterado nesta integração.

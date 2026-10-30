@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Entrypoint for the independent Green Stash Studio experience.
+ * Entrypoint for the integrated ACULTA Studio Green Stash area.
  */
 final class GreenStashController {
 

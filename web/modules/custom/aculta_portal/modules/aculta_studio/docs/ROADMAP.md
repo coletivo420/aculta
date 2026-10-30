@@ -1,3 +1,10 @@
+## Decisão vigente — nomes e caminhos das áreas do Studio (2026-10-30)
+
+- **ACULTA STUDIO WE SATIVA** usa `/studio/we-sativa` e `/studio/we-sativa/inicio`.
+- **ACULTA STUDIO GREEN STASH** usa `/studio/green-stash` e suas rotas filhas.
+- Ambas são áreas integradas ao ACULTA Studio, sem shell, autenticação ou navegação global independentes. Preservar os IDs de provider e os owners funcionais Wiki e Commerce.
+- Nomes históricos não criam aliases: rotas anteriores respondem 404.
+
 ## Incremento planejado LOC - Eventos e Locais no Marley (2026-10-29)
 
 [Plano LOC-00 a LOC-08](../../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md). Integração ainda ausente no registro auditado; não marcar área como disponível por este documento.

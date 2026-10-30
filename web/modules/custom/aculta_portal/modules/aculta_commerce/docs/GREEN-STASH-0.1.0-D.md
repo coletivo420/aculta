@@ -1,5 +1,10 @@
 # ACULTA Commerce 0.1.0-D — Green Stash, fundação de segurança
 
+**Retificação vigente (2026-10-30):** Green Stash é a área integrada **ACULTA
+STUDIO GREEN STASH**. A rota oficial atual é `/studio/green-stash`; qualquer
+referência abaixo a `/green-stash` registra o caminho técnico/histórico da
+fundação, não um alias ativo.
+
 **Status:** preparação parcial, sem rota nem provider Studio ativados. Data: 2026-10-22.
 
 ## Evidência da API Studio

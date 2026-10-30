@@ -125,6 +125,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->installEntitySchema('media');
     $this->installEntitySchema('node');
     $this->installEntitySchema('aculta_wiki_proposal');
+    $this->installSchema('aculta_user', ['aculta_user_nickname']);
     $this->installSchema('user', ['users_data']);
     $this->installSchema('history', ['history']);
     $this->installSchema('file', ['file_usage']);
@@ -1305,7 +1306,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $build = $workspace->build($author);
     self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
     self::assertContains('user', $build['#cache']['contexts']);
-    self::assertSame('WE SATIVA', $build['header']['#props']['title']);
+    self::assertSame('ACULTA STUDIO WE SATIVA', $build['header']['#props']['title']);
     self::assertSame('context-header', $build['header']['#name']);
     self::assertSame('Meus verbetes', $build['entries']['#props']['title']);
     self::assertSame('content-section', $build['entries']['#name']);

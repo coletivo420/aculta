@@ -124,7 +124,7 @@ final class WikiContributorWorkspace {
         '#name' => 'context-header',
         '#props' => [
           'eyebrow' => (string) $this->t('Wiki420'),
-          'title' => (string) $this->t('WE SATIVA'),
+          'title' => (string) $this->t('ACULTA STUDIO WE SATIVA'),
           'subtitle' => (string) $this->t('Acompanhe seus verbetes e propostas para a Wiki420.'),
         ],
       ],
@@ -136,7 +136,7 @@ final class WikiContributorWorkspace {
       if ($startAccess instanceof AccessResultInterface) {
         $cacheability->addCacheableDependency($startAccess);
         if ($startAccess->isAllowed()) {
-          $build['header']['#slots']['back_link'] = Link::fromTextAndUrl($this->t('Início WE SATIVA'), $startUrl)->toRenderable();
+          $build['header']['#slots']['back_link'] = Link::fromTextAndUrl($this->t('Início ACULTA STUDIO WE SATIVA'), $startUrl)->toRenderable();
         }
       }
     }

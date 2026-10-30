@@ -1,6 +1,6 @@
-# Green Stash — Contrato de operações sem painel administrativo
+# ACULTA STUDIO GREEN STASH — Contrato de operações sem painel administrativo
 
-**Decisão 2026-10-23 — normativa.** Green Stash é a experiência operacional integral de Loja dentro do ACULTA Studio. A edição administrativa padrão de Commerce não é a interface de uso de operadores de loja.
+**Decisão vigente, retificada em 2026-10-30.** ACULTA STUDIO GREEN STASH é a área operacional/comercial integrada ao ACULTA Studio. Sua entrada oficial é `/studio/green-stash`; não é plataforma separada. A edição administrativa padrão de Commerce não é a interface de uso de operadores de loja.
 
 ## Proibições e fronteiras
 
@@ -14,17 +14,17 @@
 
 | Operação | Rota PT-BR | Autorizações |
 |---|---|---|
-| Catalogar | `/estudio/loja/produtos` | Entrada Studio + acesso à(s) loja(s) |
-| Novo produto | `/estudio/loja/produtos/novo` | create commerce_product + store |
-| Produto | `/estudio/loja/produtos/{produto}` | view entity + store |
-| Editar | `/estudio/loja/produtos/{produto}/editar` | update entity + store, CSRF em POST |
-| Variações | `/estudio/loja/produtos/{produto}/variacoes` | update/product variation |
-| Estoque | `/estudio/loja/estoque` e `.../movimentacoes` | Commerce Stock, grants e auditoria |
-| Pedido | `/estudio/loja/pedidos/{pedido}` | view order + store |
-| Preparar | `/estudio/loja/pedidos/{pedido}/preparar` | transição do workflow + store |
-| Envios | `/estudio/loja/envios` | Commerce Shipping |
-| Etiqueta | `/estudio/loja/envios/{remessa}/etiqueta` | remessa + operação financeira confirmada + Melhor Envio |
-| Configurações | `/estudio/loja/configuracoes` | grants específicos por opção |
+| Catalogar | `/studio/green-stash/produtos` | Entrada Studio + acesso à(s) loja(s) |
+| Novo produto | `/studio/green-stash/produtos/novo` | create commerce_product + store |
+| Produto | `/studio/green-stash/produtos/{produto}` | view entity + store |
+| Editar | `/studio/green-stash/produtos/{produto}/editar` | update entity + store, CSRF em POST |
+| Variações | `/studio/green-stash/produtos/{produto}/variacoes` | update/product variation |
+| Estoque | `/studio/green-stash/estoque` e `.../movimentacoes` | Commerce Stock, grants e auditoria |
+| Pedido | `/studio/green-stash/pedidos/{pedido}` | view order + store |
+| Preparar | `/studio/green-stash/pedidos/{pedido}/preparar` | transição do workflow + store |
+| Envios | `/studio/green-stash/envios` | Commerce Shipping |
+| Etiqueta | `/studio/green-stash/envios/{remessa}/etiqueta` | remessa + operação financeira confirmada + Melhor Envio |
+| Configurações | `/studio/green-stash/configuracoes` | grants específicos por opção |
 
 Não adicionar rotas com placeholders perigosos antes de implementar controladores, verificação de proprietário da entidade/store, parâmetros convertidos e formulários de destino válidos. `/painel-administrativo` permanece para manutenção Drupal por administradores técnicos, fora do fluxo cotidiano.
 

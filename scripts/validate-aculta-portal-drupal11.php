@@ -1,14 +1,19 @@
 <?php
 
-declare(strict_types=1);
-
 /**
+ * @file
  * Progressive static gate for the aculta_portal Drupal 11+ standard.
  *
  * The gate started as a P1 debt freeze and is now progressively hardened as
  * modernization phases remove legacy patterns. Resolved debt must not return,
  * while remaining ceilings stay explicit until later phases eliminate them.
  */
+
+declare(strict_types=1);
+
+use Drupal\Component\Serialization\Yaml;
+use Drupal\aculta_portal\Status\PortalHelperRegistry;
+use Drupal\aculta_portal\Status\PortalImplementationRegistry;
 
 $root = dirname(__DIR__);
 if (is_file($root . '/vendor/autoload.php')) {
@@ -94,7 +99,6 @@ foreach ($requiredDocs as $path => $needle) {
 $portalReadme = $read($moduleRoot . '/README.md');
 $requirementsController = $read($srcRoot . '/Controller/PortalRequirementsController.php');
 $services = $read($moduleRoot . '/aculta_portal.services.yml');
-$helperRegistrySource = $read($srcRoot . '/Status/PortalHelperRegistry.php');
 $implementationRegistrySource = $read($srcRoot . '/Status/PortalImplementationRegistry.php');
 $check(
   str_contains($portalReadme, 'Capacidades e extensões ativas')
@@ -132,16 +136,16 @@ $check(
     && str_contains($read($root . '/docs/portal/IMPLEMENTATIONS.md'), 'service_id_collector'),
   'Portal Status must expose documented helper and applied implementation inventories sourced from active service tags.',
 );
-if (class_exists(Drupal\Component\Serialization\Yaml::class)) {
-  $serviceData = Drupal\Component\Serialization\Yaml::decode($services) ?: [];
+if (class_exists(Yaml::class)) {
+  $serviceData = Yaml::decode($services) ?: [];
   // Optional submodules own their services; Status collects active IDs only.
   foreach (glob($moduleRoot . '/modules/*/*.services.yml') ?: [] as $submoduleServicesPath) {
-    $submoduleServices = Drupal\Component\Serialization\Yaml::decode($read($submoduleServicesPath)) ?: [];
+    $submoduleServices = Yaml::decode($read($submoduleServicesPath)) ?: [];
     $serviceData['services'] = array_merge($serviceData['services'] ?? [], $submoduleServices['services'] ?? []);
   }
   foreach ([
-    'aculta_portal.helper' => Drupal\aculta_portal\Status\PortalHelperRegistry::definitions(),
-    'aculta_portal.implementation' => Drupal\aculta_portal\Status\PortalImplementationRegistry::definitions(),
+    'aculta_portal.helper' => PortalHelperRegistry::definitions(),
+    'aculta_portal.implementation' => PortalImplementationRegistry::definitions(),
   ] as $tagName => $definitions) {
     $tagged = [];
     foreach (($serviceData['services'] ?? []) as $serviceId => $definition) {
@@ -188,19 +192,14 @@ $check(
   is_int($legacySubscriberTags) && $legacySubscriberTags === 0,
   'Portal subscribers must use the canonical event_subscriber tag; legacy kernel.event_subscriber is not allowed.',
 );
-// DT-P21 adds LmsFriendlyRouteSubscriber (route path for LMS slugs). The count is pinned so
-// that every new subscriber is a deliberate change. 0.2.0-dev.16 adds EmailConfirmationSubscriber
-// (OAuth login and user creation mark the email as confirmed; política de confirmação de e-mail).
-// 0.3.0-dev.4 adds CartFriendlyRouteSubscriber (cart route path /carrinho, slug em português).
-// 0.3.0-dev.5 adds DonationFriendlyRouteSubscriber (donation route paths /apoiar, slug em português).
-// 0.4.0-dev.18 adds UploadedFilenameExtensionSubscriber after Core's configured filename sanitizer.
-// 0.4.0-dev.19 adjusts the account-owned Messenger conversation presentation.
-// 0.4.0-dev.90 adds AdministrativeRouteSubscriber (every /painel-administrativo route uses the administrative theme; runs last).
-// 0.4.0-dev.145 moves CepLookupRateLimitSubscriber to the aculta_portal_cep submodule (its own services.yml), so the Portal registers twelve.
-// 0.4.0-dev.153 adds RefundEligibilitySubscriber (nega estorno de doação e de curso no gateway Mercado Pago), so the Portal registers thirteen.
-// ADR-013 (P-CART D) adds CommerceCheckoutRouteSubscriber (rotas globais do Commerce).
-// The external integration contract adds SocialAuthCallbackRouteSubscriber for
-// /integracoes/{network}/retorno. Mercado Pago owns its webhook subscriber.
+// DT-P21 adds the LMS route subscriber. The count is pinned so each new
+// subscriber is a deliberate change. Later additions cover email confirmation,
+// cart/donation slugs, filename sanitizing and account conversation UI.
+// Administrative routes receive the administrative theme. Rate limiting moved
+// to aculta_portal_cep; refund eligibility and Commerce checkout are registered
+// here. Social Auth callback handles /integracoes/{network}/retorno.
+// ADR-013 (P-CART D) adds CommerceCheckoutRouteSubscriber.
+// Mercado Pago owns its webhook subscriber.
 $check(
   preg_match_all('/name:\s*event_subscriber\b/', $services) === 15
     && str_contains($services, 'aculta_portal.social_auth_callback_route_subscriber:')
@@ -208,8 +207,6 @@ $check(
     && str_contains($read($srcRoot . '/EventSubscriber/SocialAuthCallbackRouteSubscriber.php'), "'/integracoes/{network}/retorno'"),
   'Portal must register exactly fifteen canonical subscribers, including the canonical Social Auth callback route; CEP rate limiting remains owned by aculta_portal_cep.',
 );
-
-$legacyProceduralFunctions = [];
 
 $tokenHooks = $srcRoot . '/Hook/TokenHooks.php';
 $tokenHooksSource = $read($tokenHooks);
@@ -332,8 +329,9 @@ $mpClientFactorySource = $read($mpSrcRoot . '/MercadoPago/MercadoPagoClientFacto
 $mpClientFactoryTestSource = $read($mpModuleRoot . '/tests/src/Unit/MercadoPago/MercadoPagoClientFactoryTest.php');
 $check(is_file($entitySaveHooks), 'P4.3 EntitySaveHooks class must exist.');
 $check(
-  substr_count($hookRuntimeSources, "#[Hook('entity_presave')]") === 0,
-  'P4.3 Portal must not retain the Mercado Pago entity_presave hook.',
+  substr_count($hookRuntimeSources, "#[Hook('entity_presave')]") === 1
+    && !str_contains($hookRuntimeSources, 'commerce_payment_gateway'),
+  'P4.3 Portal must keep its address hook and no Mercado Pago gateway hook.',
 );
 $check(
   preg_match(
@@ -480,9 +478,9 @@ foreach ([
   );
 }
 
-// Module-wide totals: owning class + the pre-existing PortalHooks concern. form_alter ganha AccountAddressHooks: o
-// formulário de endereço único (loja e perfis de equipe), ver docs/portal/ACCOUNT-ADDRESS.md.
-foreach (['form_alter' => 3, 'metatags_alter' => 2, 'entity_access' => 1, 'entity_presave' => 0] as $hookName => $expected) {
+// Module-wide totals: owning classes, PortalHooks and AccountAddressHooks.
+// The latter owns the shared store/team address form; see ACCOUNT-ADDRESS.md.
+foreach (['form_alter' => 3, 'metatags_alter' => 2, 'entity_access' => 1, 'entity_presave' => 1] as $hookName => $expected) {
   $check(
     substr_count($hookRuntimeSources, "#[Hook('" . $hookName . "')]") === $expected,
     'Hook implementation count drifted for ' . $hookName . ' (expected ' . $expected . ').',
@@ -743,7 +741,7 @@ $check(
 
 // P5.2-B/P5.3/P5.4-E: Wiki uses injected Views factory, node storage queries
 // with explicit access checks, and keeps the WIKI Domain/status filters.
-// O controller de Wiki foi movido para o submódulo aculta_wiki (commit 8208243b).
+// O controller de Wiki está no submódulo aculta_wiki.
 $wikiSource = $read($moduleRoot . '/modules/aculta_wiki/src/Controller/WikiController.php');
 $check(
   !str_contains($wikiSource, 'Views::')
@@ -766,7 +764,7 @@ $check(
   'P5.3 Wiki queries must keep explicit access checks, WIKI Domain/status filters and per-entity access.',
 );
 $wikiNodeType = $read($root . '/config/sync/node.type.wiki_entry.yml');
-// Autoria de verbete publicado é pública (AGENTS, seção Wiki; base legal de consentimento na política de privacidade).
+// A autoria publicada é pública (AGENTS Wiki e política de privacidade).
 $check(
   str_contains($wikiNodeType, 'display_submitted: true'),
   'Wiki entry type displays its published authorship (AGENTS, Wiki: autoria pública).',
@@ -774,7 +772,14 @@ $check(
 
 // P5.4-A/B/C/E: account controllers receive every collaborator explicitly.
 $portalControllerSource = $read($srcRoot . '/Controller/PortalController.php');
-foreach (["'plugin.manager.block'", "'aculta_mail_confirmer'", "'current_route_match'", "'current_user'", "'module_handler'", "'config.factory'"] as $serviceId) {
+foreach ([
+  "'plugin.manager.block'",
+  "'aculta_mail_confirmer'",
+  "'current_route_match'",
+  "'current_user'",
+  "'module_handler'",
+  "'config.factory'",
+] as $serviceId) {
   $check(
     substr_count($portalControllerSource, '$container->get(' . $serviceId . ')') === 1,
     'P5.4 PortalController must inject ' . $serviceId . ' exactly once.',
@@ -871,12 +876,9 @@ $check(
   'Account menu block must vary by url.path and url.query_args so login destinations are per page.',
 );
 
-$serviceLocatorCeilings = [
-];
-$viewsWrapperCeilings = [
-];
-$staticLoadCeilings = [
-];
+$serviceLocatorCeilings = [];
+$viewsWrapperCeilings = [];
+$staticLoadCeilings = [];
 // S2 (DT-P02): teto vazio. Todo arquivo de src/ declara strict_types=1.
 $strictTypesDebt = [];
 
@@ -929,8 +931,8 @@ foreach ($phpFiles as $path) {
   }
 }
 
-// S1 (DT-P01): templates do módulo não usam classes do tema (aculta-*). A apresentação do Portal usa
-// nomes neutros de contrato (portal-*). Atributos data-aculta-* são contrato de JS e ficam fora desta regra.
+// S1 (DT-P01): module templates do not use theme classes. Portal presentation
+// uses neutral contract names (portal-*). data-aculta-* remains a JS contract.
 $templateDir = $moduleRoot . '/templates';
 foreach (glob($templateDir . '/*.twig') ?: [] as $template) {
   $source = (string) file_get_contents($template);

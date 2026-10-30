@@ -2,6 +2,8 @@
 
 **Esta seção substitui TODAS as afirmações históricas conflitantes neste documento.** Green Stash **não é uma experiência independente do Aculta Studio**. É a **área funcional de gestão comercial integrada ao Aculta Studio**, sob responsabilidade operacional de `aculta_commerce`. Um `GreenStashExperienceProvider` ou ID `green_stash` no código é um **adaptador de registro/entrada do Studio**, e não autorização para criar shell, produto, plataforma, login, navegação global ou identidade independentes. Conservar os contratos comerciais e o registry existentes enquanto se audita sua semântica; não renomear IDs/rotas em uma mudança visual. As expressões anteriores "experiência independente" ficam expressamente revogadas.
 
+**Decisão posterior do responsável (2026-10-30):** os nomes apresentados e caminhos oficiais são **ACULTA STUDIO GREEN STASH** (`/studio/green-stash`) e **ACULTA STUDIO WE SATIVA** (`/studio/we-sativa`, início em `/studio/we-sativa/inicio`). Esta decisão autoriza a migração dos paths antigos dessas áreas, sem aliases/redirects temporários; os IDs de rota internos, providers e owners Commerce/Wiki permanecem preservados. A restrição acima continua valendo para outras rotas e IDs.
+
 **Exigência global:** TODO o tema `web/themes/custom/aculta420/` deve adotar **mobile-first** como regra arquitetural, em **todos os purposes**, SDCs, layouts, CSS, templates, navegação, formulários, media, modais e bibliotecas, e não apenas no Studio ou Green Stash. OpenCulturas Next é referência de fidelidade visual na área Studio; suas decisões de design devem ser adaptadas à fundação mobile-first global do ACULTA420 sem copiar breakpoints ou regras desktop-first inadvertidamente.
 
 ### Resultados de reinspeção estática

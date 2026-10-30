@@ -25,11 +25,12 @@ Dev.13 implementada no código Git, ainda sem homologação Drupal/Runtime.
 | Plataforma | ACULTA Studio | `aculta_studio` |
 | Editorial | ACULTA Studio Marley | `marley` |
 | Aprendizagem | ACULTA Studio Ganjalab | `ganjalab` |
-| Contribuição Wiki | WE SATIVA | `we_sativa` |
+| Gestão comercial | ACULTA STUDIO GREEN STASH | `green_stash` |
+| Contribuição Wiki | ACULTA STUDIO WE SATIVA | `we_sativa` |
 
-Rotas canônicas: Marley em `/studio/marley` e níveis aninhados; Ganjalab em `/studio/ganjalab`; WE SATIVA em `/studio/we-sativa` e `/studio/we-sativa/inicio`. Todas ficam no purpose `account`, resolvido pelo Portal. `/studio/ganjalab` pertence exclusivamente ao dashboard estudantil, portanto a antiga entrada editorial não pode ser preservada nesse endereço. Aliases e histórico estão em [contrato de identidade](../portal/ACULTA-STUDIO-IDENTITY.md).
+Rotas canônicas: Marley em `/studio/marley` e níveis aninhados; Ganjalab em `/studio/ganjalab`; ACULTA STUDIO WE SATIVA em `/studio/we-sativa` e `/studio/we-sativa/inicio`; ACULTA STUDIO GREEN STASH em `/studio/green-stash`. Todas ficam no purpose `account`, resolvido pelo Portal. `/studio/ganjalab` pertence exclusivamente ao dashboard estudantil, portanto a antiga entrada editorial não pode ser preservada nesse endereço. Aliases e histórico estão em [contrato de identidade](../portal/ACULTA-STUDIO-IDENTITY.md).
 
-**Registros abaixo de 2026-10-24 são históricos.** Menções a GanjaLab editorial e GanjaLab420 estudantil descrevem nomenclaturas anteriores; a plataforma, ownership de negócio e WE SATIVA permanecem conforme o contrato vigente.
+**Registros abaixo de 2026-10-24 são históricos.** Menções a GanjaLab editorial e GanjaLab420 estudantil descrevem nomenclaturas anteriores; a plataforma, ownership de negócio, ACULTA STUDIO GREEN STASH e ACULTA STUDIO WE SATIVA permanecem conforme o contrato vigente.
 
 ## Entrada vigente Studio — P1-C, dev.10 (2026-10-24)
 

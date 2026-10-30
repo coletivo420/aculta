@@ -64,13 +64,41 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       'aculta_mail_confirmer_user.cancel_email_change' => '/seguranca/email/cancelar/{user}',
       'social_auth.network.redirect' => '/oauth/{network}',
       'social_auth.network.callback' => '/oauth/{network}/retorno',
+      'social_auth.user.profiles' => '/identidade/{user}/conexoes/oauth',
+      'entity.group.join' => '/grupo/{group}/entrar',
+      'entity.group.leave' => '/grupo/{group}/sair',
+      'lms.course.start' => '/curso/{group}/iniciar',
+      'lms.course.reset_test' => '/curso/{group}/reiniciar-avaliacao',
+      'lms.group.self_results' => '/grupo/{group}/resultados-curso',
+      'lms.answer.details' => '/resposta/{lms_answer}/{js}/detalhes',
+      'entity.lms_answer.edit_form' => '/resposta/{lms_answer}/avaliar',
+      'profile.user_page.single' => '/identidade/{user}/{profile_type}',
+      'profile.user_page.multiple' => '/identidade/{user}/{profile_type}/lista',
+      'profile.user_page.add_form' => '/identidade/{user}/{profile_type}/adicionar',
+      'entity.webform_submission.user' => '/meus-formularios/{user}/{submission_view}',
       'commerce_payment.notify' => '/integracoes/pagamentos/{commerce_payment_gateway}/notificacao',
     ];
     $accountRoutes = array_fill_keys(array_keys($pathChanges), TRUE);
     unset(
       $accountRoutes['commerce_payment.notify'],
       $accountRoutes['entity.user.edit_form'],
+      // Purpose is resolved from the Group for membership actions. LMS route
+      // families are explicitly assigned below instead of ACCOUNT.
+      $accountRoutes['entity.group.join'],
+      $accountRoutes['entity.group.leave'],
+      $accountRoutes['lms.course.start'],
+      $accountRoutes['lms.course.reset_test'],
+      $accountRoutes['lms.group.self_results'],
+      $accountRoutes['lms.answer.details'],
+      $accountRoutes['entity.lms_answer.edit_form'],
     );
+    $courseRoutes = array_fill_keys([
+      'lms.course.start',
+      'lms.course.reset_test',
+      'lms.group.self_results',
+      'lms.answer.details',
+      'entity.lms_answer.edit_form',
+    ], TRUE);
 
     // Browser Form API is the supported password-authentication surface.
     // Core's JSON login/password endpoints bypass Form API and therefore the
@@ -92,6 +120,9 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
         $route->setPath($path);
         if (isset($accountRoutes[$name])) {
           $route->setOption('_aculta_domain_purpose', 'account');
+        }
+        elseif (isset($courseRoutes[$name])) {
+          $route->setOption('_aculta_domain_purpose', 'courses');
         }
         elseif ($name === 'commerce_payment.notify') {
           $route->setOption('_aculta_domain_purpose', 'main');

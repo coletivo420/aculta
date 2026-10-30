@@ -11,7 +11,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Independent Studio experience for store management.
+ * Integrated ACULTA Studio area for commercial store management.
  *
  * No order/product listing is exposed until entity-level ACL is integrated.
  */
@@ -21,30 +21,51 @@ final class GreenStashExperienceProvider implements StudioExperienceProviderInte
     private readonly GreenStashAccessPolicy $accessPolicy,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public function id(): string {
     return 'green_stash';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function label(): string {
-    return 'Green Stash';
+    return 'ACULTA STUDIO GREEN STASH';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function purpose(): string {
     return 'account';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function routeName(): string {
     return 'aculta_commerce.green_stash';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function available(): bool {
     return TRUE;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function access(AccountInterface $account): AccessResultInterface {
     return $this->accessPolicy->access($account);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function build(): array {
     return [
       '#type' => 'container',

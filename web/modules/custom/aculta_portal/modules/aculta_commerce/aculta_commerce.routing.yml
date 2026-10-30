@@ -1,18 +1,18 @@
 aculta_commerce.green_stash:
-  path: '/estudio/loja'
+  path: '/studio/green-stash'
   defaults:
     _controller: 'aculta_commerce.green_stash_controller:page'
-    _title: 'Green Stash'
+    _title: 'ACULTA STUDIO GREEN STASH'
   requirements:
     _permission: 'access aculta green stash'
   options:
     _aculta_domain_purpose: account
 
 aculta_commerce.green_stash_area:
-  path: '/estudio/loja/{secao}'
+  path: '/studio/green-stash/{secao}'
   defaults:
     _controller: 'aculta_commerce.green_stash_controller:page'
-    _title: 'Green Stash'
+    _title: 'ACULTA STUDIO GREEN STASH'
   requirements:
     _permission: 'access aculta green stash'
     secao: 'visao-geral|produtos|pedidos|estoque|envios|promocoes|clientes|relatorios|configuracoes'
@@ -20,7 +20,7 @@ aculta_commerce.green_stash_area:
     _aculta_domain_purpose: account
 
 aculta_commerce.green_stash_shipment_transition:
-  path: '/estudio/loja/envios/{aculta_shipment}/transicao/{transition}'
+  path: '/studio/green-stash/envios/{aculta_shipment}/transicao/{transition}'
   defaults:
     _form: '\Drupal\aculta_commerce\Form\GreenStashShipmentTransitionForm'
     _title: 'Transição de remessa'
@@ -32,7 +32,7 @@ aculta_commerce.green_stash_shipment_transition:
     _aculta_domain_purpose: account
 
 aculta_commerce.green_stash_product_detail:
-  path: '/estudio/loja/produtos/{produto}'
+  path: '/studio/green-stash/produtos/{produto}'
   defaults:
     _controller: 'aculta_commerce.green_stash_product_controller:detail'
     _title: 'Detalhes do produto'
@@ -43,7 +43,7 @@ aculta_commerce.green_stash_product_detail:
     _aculta_domain_purpose: account
 
 aculta_commerce.green_stash_product_create:
-  path: '/estudio/loja/produtos/novo'
+  path: '/studio/green-stash/produtos/novo'
   defaults:
     _form: '\Drupal\aculta_commerce\Form\GreenStashProductCreateForm'
     _title: 'Novo produto'

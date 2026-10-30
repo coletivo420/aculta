@@ -31,7 +31,7 @@ final class WeSativaExperienceProvider implements StudioExperienceProviderInterf
    * Returns the experience name.
    */
   public function label(): string {
-    return 'WE SATIVA';
+    return 'ACULTA STUDIO WE SATIVA';
   }
 
   /**

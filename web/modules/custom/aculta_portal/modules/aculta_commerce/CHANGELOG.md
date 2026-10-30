@@ -1,3 +1,10 @@
+## ACULTA STUDIO GREEN STASH — nome e caminho canônicos (2026-10-30)
+
+- Nome oficial: **ACULTA STUDIO GREEN STASH**, área comercial integrada ao ACULTA Studio.
+- Entrada movida para `/studio/green-stash`; produtos, envios e ações de remessa usam esse prefixo. IDs de rota e contratos internos foram preservados.
+- `/estudio/loja` e seus caminhos filhos foram removidos sem alias ou redirect; devem responder 404 conforme a política global de URLs.
+- A etapa só entra no Runtime após os gates de rotas, acesso, funcionalidade e regressão por purpose.
+
 ## 0.1.0-dev.15 — Não validado — simulador de frete no submódulo Melhor Envio — 2026-10-27
 
 - Submódulo `aculta_commerce_melhorenvio` 0.1.0-dev.6: simulador de frete por CEP com estados explícitos, carrinho guardado na sessão e recálculo ao mudar o carrinho (ver `modules/aculta_commerce_melhorenvio/CHANGELOG.md`).

@@ -115,10 +115,10 @@ Essas rotas não devem aparecer como navegação principal do usuário quando um
 rota pública amigável existir.
 
 Exceção específica ACULTA: o fluxo OAuth do Social Auth usa
-`/oauth/{provedor}` para iniciar e `/oauth/{provedor}/retorno` para callback.
-Para o Google, os caminhos são `/oauth/google` e `/oauth/google/retorno`. O
-callback continua sendo um endpoint técnico, não um link de navegação; o slug
-`retorno` identifica a conclusão do fluxo em português.
+`/oauth/{provedor}` para iniciar e `/integracoes/{provedor}/retorno` para
+callback. Para o Google, os caminhos são `/oauth/google` e
+`/integracoes/google/retorno`. O callback é endpoint técnico, não link de
+navegação. O antigo `/oauth/{provedor}/retorno` não permanece como alias.
 
 ## ACCOUNT
 
@@ -447,6 +447,37 @@ DT-P20 ficou vazio; exceções antigas foram removidas após o próprio gate con
 resolvidas.
 
 - Exceção aprovada pelo responsável (2026-10-21): `/studio` no domínio de conta (`conta.aculta.*/studio`). O nome do Estúdio é o nome do produto e já aparece no roadmap e no módulo `aculta_studio`; o slug é estável, sem redirecionamento.
+- Exceção aprovada pelo responsável (2026-10-30): `/studio/green-stash`, rota oficial da área integrada **ACULTA STUDIO GREEN STASH**. O nome da marca determina o slug estável, sem alias ou redirect para `/estudio/loja`; o caminho anterior retorna 404. A mesma convenção Studio se aplica a ACULTA STUDIO WE SATIVA em `/studio/we-sativa`.
+
+## Overrides de rotas contrib — paths canônicos (2026-10-30)
+
+O Portal substitui o path da rota contrib mantendo o ID, access e Form API do
+owner. Os paths anteriores não permanecem registrados como aliases. `diff` de
+revisão e remoção de revisão do Group têm `_admin_route`/contrato de revisão e
+são endpoints técnicos; não são navegação pública. O gate inspeciona cada
+módulo contrib habilitado uma única vez, mesmo quando o checkout contém cópia
+arquivada em `web/modules/contrib/contrib/`.
+
+| Route ID | Path canônico |
+|---|---|
+| `entity.group.join` | `/grupo/{group}/entrar` |
+| `entity.group.leave` | `/grupo/{group}/sair` |
+| `lms.course.start` | `/curso/{group}/iniciar` |
+| `lms.course.reset_test` | `/curso/{group}/reiniciar-avaliacao` |
+| `lms.group.self_results` | `/grupo/{group}/resultados-curso` |
+| `lms.answer.details` | `/resposta/{lms_answer}/{js}/detalhes` |
+| `entity.lms_answer.edit_form` | `/resposta/{lms_answer}/avaliar` |
+| `profile.user_page.single` | `/identidade/{user}/{profile_type}` |
+| `profile.user_page.multiple` | `/identidade/{user}/{profile_type}/lista` |
+| `profile.user_page.add_form` | `/identidade/{user}/{profile_type}/adicionar` |
+| `social_auth.network.redirect` | `/oauth/{network}` |
+| `social_auth.network.callback` | `/integracoes/{network}/retorno` |
+| `social_auth.user.profiles` | `/identidade/{user}/conexoes/oauth` |
+| `entity.webform_submission.user` | `/meus-formularios/{user}/{submission_view}` |
+
+Os paths antigos em inglês respondem 404 após rebuild de rotas; a descoberta e
+resposta HTTP no Runtime ainda dependem de homologação e não são declaradas
+como verificadas por este gate estático.
 
 ## Etapas do checkout (decisão do responsável, 2026-10-28)
 

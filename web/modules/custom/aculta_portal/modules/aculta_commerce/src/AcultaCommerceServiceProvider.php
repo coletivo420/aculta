@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
- * Registers the independent Green Stash experience in ACULTA Studio.
+ * Registers the integrated Green Stash area in ACULTA Studio.
  */
 final class AcultaCommerceServiceProvider extends ServiceProviderBase {
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_studio\Unit;
 
 use Drupal\aculta_studio\Controller\WeSativaController;
+use Drupal\aculta_studio\Experience\WeSativaExperienceProvider;
 use Drupal\aculta_studio\Experience\StartPageExperienceProviderInterface;
 use Drupal\aculta_studio\Experience\StudioExperienceManager;
 use Drupal\aculta_studio\Experience\StudioExperienceProviderInterface;
@@ -23,6 +24,15 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 #[CoversClass(WeSativaController::class)]
 #[Group('aculta_studio')]
 final class WeSativaControllerTest extends UnitTestCase {
+
+  /**
+   * The Studio registry exposes the approved experience name.
+   */
+  public function testProviderUsesOfficialName(): void {
+    $provider = new WeSativaExperienceProvider(NULL, $this->createMock(AccountInterface::class));
+
+    self::assertSame('ACULTA STUDIO WE SATIVA', $provider->label());
+  }
 
   /**
    * The owner start page renders when access is allowed.

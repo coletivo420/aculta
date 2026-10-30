@@ -33,7 +33,7 @@ DEFAULT_STUDIO_PAGES = [
     ("we-sativa", "/studio/we-sativa"),
     ("conta", "/studio/conta"),
     ("perfil", "/studio/perfil"),
-    ("green-stash", "/estudio/loja"),
+    ("green-stash", "/studio/green-stash"),
     ("planos", "/studio/conta/mercado-pago/planos"),
 ]
 

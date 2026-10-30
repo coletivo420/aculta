@@ -49,7 +49,7 @@ Nenhum arquivo em `web/modules/contrib/` foi modificado.
 | `PackageType`, `PackageTypeManager`, `Plugin/Commerce/PackageType/*`, `PackageTypeDeriver` | `Shipping/PackageType` + `PackageTypeManager` com `custom_box`/`letter` |
 | `Plugin/Field/FieldWidget/ShippingRateWidget`, `ShippingProfileWidget`, `ShipmentItemDefaultWidget` | Radios no pane próprio; sem widget de campo |
 | `Plugin/Field/FieldFormatter/*` | Sem formatação administrativa nesta fase |
-| `src/Form/*`, `src/Controller/ShipmentController.php`, rotas administrativas | Green Stash `/estudio/loja/envios` (leitura) |
+| `src/Form/*`, `src/Controller/ShipmentController.php`, rotas administrativas | ACULTA STUDIO GREEN STASH `/studio/green-stash/envios` (leitura) |
 | Entity displays, form modes, views | Removidos do Config Sync; a operação fica no Studio |
 | `OrderShipmentSummary`, `ShippingMethodListBuilder`, `ShipmentListBuilder`, `ShipmentPermissionProvider`, `ShipmentRouteProvider`, `ShipmentViewsData` | Não necessários para o checkout/Green Stash inicial |
 

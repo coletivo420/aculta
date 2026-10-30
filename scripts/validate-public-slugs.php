@@ -1,13 +1,14 @@
 <?php
 
 /**
- * Static gate for the public URL directive (AGENTS.md, "URLs e slugs públicos em português").
+ * @file
+ * Static gate for the public URL directive in AGENTS.md.
  *
- * Reads the routing files of the customised modules and reprova public paths that:
- * - contain a purely numeric segment (an internal ID or a position), except inside parameters;
- * - use an English term from the forbidden list in a public segment.
+ * Reads custom module routes and rejects public paths that contain numeric
+ * segments outside parameters or forbidden English terms.
  *
- * Administrative and technical paths are exempt: /admin, /ajax, /api, /_ and *.json.
+ * Administrative and technical paths are exempt: /admin, /ajax, /api, /_,
+ * and *.json.
  * The gate does not bootstrap Drupal, so it runs in any checkout.
  */
 
@@ -19,32 +20,38 @@ use Symfony\Component\Yaml\Yaml;
 
 $root = dirname(__DIR__);
 
-// Ceiling for contributed public routes (DT-P20). It may only shrink: a route leaves this list when it is
-// fixed, and a new violation outside this list fails the gate.
-$contribBaseline = [
-];
+// Ceiling for contributed public routes (DT-P20). It may only shrink when
+// routes are fixed; a new violation outside this list fails the gate.
+$contribBaseline = [];
 
-$forbidden = ['course', 'courses_', 'group', 'node', 'user', 'lesson', 'activity', 'answer', 'taxonomy', 'comment', 'forum_', 'block', 'views'];
+$forbidden = [
+  'course', 'courses_', 'group', 'node', 'user', 'lesson', 'activity',
+  'answer', 'taxonomy', 'comment', 'forum_', 'block', 'views',
+];
 $exempt = ['/admin', '/ajax', '/api', '/_', '.json'];
 
 $customRouting = glob($root . '/web/modules/custom/*/*.routing.yml') ?: [];
-// Only contributed modules enabled in the exported configuration serve public routes. Submodules that
-// are present in the code but not enabled (e.g. message_subscribe_ui) register no route on the site,
-// so their path cannot be a public violation. Enabling one adds it to core.extension and to this scan.
+// Only enabled contributed modules serve public routes. Disabled submodules do
+// not register routes; enabling one adds it to core.extension and this scan.
 $enabledModules = [];
 $extension = Yaml::parseFile($root . '/config/sync/core.extension.yml');
 foreach (array_keys($extension['module'] ?? []) as $module) {
   $enabledModules[$module] = TRUE;
 }
-$contribRouting = [];
+$contribRoutingByModule = [];
 foreach (array_merge(
   glob($root . '/web/modules/contrib/*/*.routing.yml') ?: [],
   glob($root . '/web/modules/contrib/*/*/*.routing.yml') ?: [],
 ) as $file) {
-  if (isset($enabledModules[basename($file, '.routing.yml')])) {
-    $contribRouting[] = $file;
+  $module = basename($file, '.routing.yml');
+  if (isset($enabledModules[$module])
+    && (!isset($contribRoutingByModule[$module]) || strlen($file) < strlen($contribRoutingByModule[$module]))) {
+    // Some development checkouts contain an archived duplicate tree at
+    // web/modules/contrib/contrib. Inspect each enabled module only once.
+    $contribRoutingByModule[$module] = $file;
   }
 }
+$contribRouting = array_values($contribRoutingByModule);
 $themeRouting = glob($root . '/web/themes/custom/*/*.routing.yml') ?: [];
 
 $violations = function (string $path) use ($exempt, $forbidden): array {
@@ -83,8 +90,8 @@ foreach (array_merge($customRouting, $themeRouting) as $file) {
   }
 }
 
-// Contributed routes whose public path the Portal replaces (DT-P21). The override must exist and
-// carry the friendly path; the contributed path is then no longer a violation.
+// Contributed routes whose public path the Portal replaces (DT-P21). The
+// override must exist and carry the friendly path.
 $portalOverrides = [
   'lms.group.answer_form' => [
     'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/LmsFriendlyRouteSubscriber.php',
@@ -94,6 +101,68 @@ $portalOverrides = [
     'file' => $root . '/web/modules/custom/aculta_portal/modules/aculta_lms/src/EventSubscriber/UploadedAnswerRouteSubscriber.php',
     'path' => '/resposta/{lms_answer}/baixar-arquivo',
   ],
+  'social_auth.network.redirect' => [
+    'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainRouteSubscriber.php',
+    'path' => '/oauth/{network}',
+  ],
+  'social_auth.network.callback' => [
+    'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/SocialAuthCallbackRouteSubscriber.php',
+    'path' => '/integracoes/{network}/retorno',
+  ],
+  'social_auth.user.profiles' => [
+    'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainRouteSubscriber.php',
+    'path' => '/identidade/{user}/conexoes/oauth',
+  ],
+  'entity.group.join' => [
+    'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainRouteSubscriber.php',
+    'path' => '/grupo/{group}/entrar',
+  ],
+  'entity.group.leave' => [
+    'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainRouteSubscriber.php',
+    'path' => '/grupo/{group}/sair',
+  ],
+  'lms.course.start' => [
+    'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainRouteSubscriber.php',
+    'path' => '/curso/{group}/iniciar',
+  ],
+  'lms.course.reset_test' => [
+    'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainRouteSubscriber.php',
+    'path' => '/curso/{group}/reiniciar-avaliacao',
+  ],
+  'lms.group.self_results' => [
+    'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainRouteSubscriber.php',
+    'path' => '/grupo/{group}/resultados-curso',
+  ],
+  'lms.answer.details' => [
+    'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainRouteSubscriber.php',
+    'path' => '/resposta/{lms_answer}/{js}/detalhes',
+  ],
+  'entity.lms_answer.edit_form' => [
+    'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainRouteSubscriber.php',
+    'path' => '/resposta/{lms_answer}/avaliar',
+  ],
+  'profile.user_page.single' => [
+    'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainRouteSubscriber.php',
+    'path' => '/identidade/{user}/{profile_type}',
+  ],
+  'profile.user_page.multiple' => [
+    'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainRouteSubscriber.php',
+    'path' => '/identidade/{user}/{profile_type}/lista',
+  ],
+  'profile.user_page.add_form' => [
+    'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainRouteSubscriber.php',
+    'path' => '/identidade/{user}/{profile_type}/adicionar',
+  ],
+  'entity.webform_submission.user' => [
+    'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainRouteSubscriber.php',
+    'path' => '/meus-formularios/{user}/{submission_view}',
+  ],
+];
+
+// Drupal internals whose route names and access contracts are intentionally
+// retained for moderation/revision workflows; these are not human URLs.
+$technicalRouteExemptions = [
+  'entity.group.revision_delete_form' => 'Group revision deletion operation; entity revision access controls it.',
 ];
 
 foreach ($contribRouting as $file) {
@@ -103,6 +172,12 @@ foreach ($contribRouting as $file) {
       continue;
     }
     $checks++;
+    if (isset($route['options']['_admin_route']) && $route['options']['_admin_route']) {
+      continue;
+    }
+    if (isset($technicalRouteExemptions[$name])) {
+      continue;
+    }
     if (isset($portalOverrides[$name])) {
       $override = $portalOverrides[$name];
       $source = is_file($override['file']) ? (string) file_get_contents($override['file']) : '';

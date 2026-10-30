@@ -4,21 +4,21 @@
 
 **O requisito mobile-first é global ao tema `aculta420`**, abrangendo todos os purposes; Green Stash é um consumidor especializado dessa fundação global. Consultar `docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md` e `web/themes/custom/aculta420/docs/visual-cross-product-roadmap.md`. Nenhuma mudança funcional/Commerce decorre desta retificação.
 
-# Green Stash — Arquitetura de experiência e navegação mobile-first
+# ACULTA STUDIO GREEN STASH — Arquitetura de navegação mobile-first
 
 Status: **projeto visual e funcional**, não interface operacional implementada. 2026-10-23. Branch `docs/aculta-forum-0.1.0-dev.1`.
 
 ## Contratos existentes examinados
 
-- `aculta_studio/src/Experience/StudioExperienceProviderInterface.php`: experiências independentes têm `id/label/purpose/routeName/available/access/build`; Green Stash já existe como provider `green_stash` com rota `/green-stash` e purpose `account`.
-- `aculta_studio/src/StudioPresenter.php`: **GanjaLab** usa área > seção > aba; sua navegação não deve ser copiada como novos `StudioTab` no Green Stash. Reaproveitar **padrão visual e modelo mental**, mas implementar navegação própria da experiência.
+- `aculta_studio/src/Experience/StudioExperienceProviderInterface.php`: providers integram áreas autorizadas ao Studio; Green Stash usa o ID técnico `green_stash` e o caminho oficial `/studio/green-stash`, no purpose `account`.
+- `aculta_studio/src/StudioPresenter.php`: **GanjaLab** usa área > seção > aba; Green Stash usa navegação comercial contextual dentro do mesmo ACULTA Studio, sem um shell ou menu global próprio.
 - `aculta420` fornece Bootstrap, tokens, SDC/UI Suite, light/dark, componentes existentes e **cabeçalho multidomínio imutável**; não criar shell nem tema novo.
 - `aculta_commerce` mantém propriedade da Loja; Portal administra checkout transversal. `aculta_commerce_melhorenvio` pertence à integração logística; `aculta_statistics` fornece métricas.
 
 ## Princípios
 
 1. **Mobile-first**, uma tarefa operacional primária por tela, sem tabela ampla no telefone. De 320px a desktop, com estados vazios, foco e teclado. Desktop enriquece sem mudar semântica.
-2. **Experiência Studio independente**, mesmo shell global e linguagem visual de GanjaLab/GanjaLab420, mas com sua própria navegação comercial.
+2. **Área comercial integrada ao ACULTA Studio**, no mesmo shell multidomínio e com navegação comercial contextual; não é plataforma independente.
 3. **Uma única hierarquia**: área principal (navegação), seção (subnavegação contextual) e abas/filtros internos. Não usar mais de dois níveis visíveis simultaneamente no telefone.
 4. O **carrinho do usuário no cabeçalho multidomínio permanece intacto**; Green Stash nunca vira aba pública do checkout.
 5. Form API/Render API e Views com accessCheck/Commerce access handlers, paginação/cursores e cache metadata. SDC/UI Suite **só no tema**; não renderizar dados privados em cache público.

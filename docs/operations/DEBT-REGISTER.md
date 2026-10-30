@@ -253,7 +253,8 @@ Estas tarefas dependem de servidor de testes, configuração ativa ou estado de 
 
 | ID | Pendência | Critério de aceite |
 | --- | --- | --- |
-| GS-ROUTE-PTBR-01 | Validar URLs PT-BR `/estudio/loja/*`, domínio purpose account e ausência de colisão | Drush cr, route:list, HTTP 200/403/404 por perfil e host, navegação no navegador |
+| GS-ROUTE-PTBR-01 | Validar URL oficial `/studio/green-stash/*`, domínio purpose account e ausência de colisão; `/estudio/loja/*` deve retornar 404 sem redirect | Drush cr, route:list, HTTP 200/403/404 por perfil e host, navegação no navegador |
+| STUDIO-DOC-PATH-01 | Atualizar inventário visual Studio para `/studio/green-stash` e nomes oficiais ACULTA STUDIO GREEN STASH/WE SATIVA | Sincronizar `docs/studio-visual/*` após concluir a alteração paralela do tema; revisar links e captura de baseline |
 | GS-STUDIO-DI-01 | Verificar descoberta do `AcultaCommerceServiceProvider` | Container compila, ExperienceManager contém green_stash, não duplica providers, GanjaLab420 permanece |
 | GS-LEGACY-01 | Determinar política de redirects das URLs `/green-stash/*` nunca homologadas | Auditoria de links; definir se redirect necessário, sem exposição de acesso |
 
@@ -276,7 +277,7 @@ Estas tarefas dependem de servidor de testes, configuração ativa ou estado de 
 
 | ID | Dívida | Encerramento |
 | --- | --- | --- |
-| GS-EDITOR-01 | Detalhe e formulários próprios de criação/edição/variações de produtos | Operador autorizado trabalha via `/estudio/loja`, sem acesso a `/painel-administrativo`; CRUD, ACL por store, testes Kernel/Functional e SDC |
+| GS-EDITOR-01 | Detalhe e formulários próprios de criação/edição/variações de produtos | Operador autorizado trabalha via `/studio/green-stash`, sem acesso a `/painel-administrativo`; CRUD, ACL por store, testes Kernel/Functional e SDC |
 | GS-EDITOR-02 | Fluxos de estoque/expedição/etiquetas integralmente no Studio | Commerce Stock/Shipping/Melhor Envio operam via controles Green Stash com confirmação/autorização, testes de integração |
 | GS-EDITOR-03 | Auditoria de links administrativos diretos nas experiências Green Stash | Nenhuma ação visível da loja aponta a edit-form administrativa ou `/admin/commerce`, teste regressivo |
 

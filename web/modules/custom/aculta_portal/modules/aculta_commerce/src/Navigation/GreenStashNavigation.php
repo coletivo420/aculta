@@ -7,7 +7,7 @@ namespace Drupal\aculta_commerce\Navigation;
 use Drupal\Core\Url;
 
 /**
- * Safe, read-only navigation skeleton for Green Stash.
+ * Safe, read-only contextual navigation for ACULTA Studio Green Stash.
  *
  * Operational data and actions belong to authorized Commerce providers,
  * not to the navigation layer.
@@ -38,6 +38,15 @@ final class GreenStashNavigation {
     'configuracoes' => 'settings',
   ];
 
+  /**
+   * Builds safe navigation and a non-operational notice for the selected area.
+   *
+   * @param string $section
+   *   Public area slug.
+   *
+   * @return array
+   *   Navigation render array.
+   */
   public function build(string $section = 'visao-geral'): array {
     $section = self::SLUGS[$section] ?? '';
     if (!isset(self::AREAS[$section])) {
@@ -70,7 +79,7 @@ final class GreenStashNavigation {
         '#type' => 'container',
         '#attributes' => [
           'role' => 'navigation',
-          'aria-label' => 'Áreas do Green Stash',
+          'aria-label' => 'Áreas do ACULTA STUDIO GREEN STASH',
           'data-portal-ui' => 'green-stash-navigation',
         ],
         'items' => $links,
