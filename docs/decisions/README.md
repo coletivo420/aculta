@@ -6,6 +6,8 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 
 ## ADRs
 
+- [ADR-033 — Endereço unificado, busca postal restrita e gestão de Locais em Events](ADR-033-endereco-busca-e-locais.md)
+
 - [ADR-010 — Hostinger LiteSpeed](ADR-010-hostinger-litespeed.md)
 - [ADR-011 — Kernels ACULTA e Studio](ADR-011-aculta-kernels-studio.md)
 - [ADR-012 — ACULTA420 Mobile First](ADR-012-aculta420-mobile-first.md)
