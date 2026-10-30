@@ -750,14 +750,16 @@ seção THEME-MF0/OCS-F0 de 2026-10-30 acima. Ambas documentam fontes e regras
 literais, sem medir layout computado ou declarar cobertura de runtime. Fonte detalhada em
 `mobile-first-audit.md` e `theme-mobile-file-inventory.tsv`.
 
-### THEME-MF2 — carrossel editorial da home MAIN (2026-10-29)
+### THEME-MF2 — carrossel editorial da home MAIN (2026-10-30)
 
-O consumidor real `view-home-editorial-highlights` declara primeiro o layout
-compacto, e restaura largura ampla do wrapper e dos slides em
-`min-width: 48.0625rem` (após 768 CSS px). Harness comparativo em 12 viewports
-criado; execução Firefox e conferência da rota servida estão DEFERRED por
-sessões concorrentes. Não aprova MF3. Evidência e limites em `mobile-first-audit.md`
-e `tests/browser/aculta-theme-mobile-first/editorial-carousel-layout.py`.
+O consumidor real `view-home-editorial-highlights` foi validado na home MAIN
+com Firefox ESR visível. O VVJB só hidrata depois que a View entra no viewport;
+o harness espera esse estado, confirma o slide ativo com conteúdo, os controles,
+o reflow em 12 larguras e ausência de rolagem horizontal: 15/15 checks. A
+fixture baseline/candidata passou 24/24. Não houve delta CSS neste commit: a
+folha no checkout servido, branch remota e worktree tem o mesmo hash. Evidência
+e limites em `mobile-first-audit.md` e
+`tests/browser/aculta-theme-mobile-first/README.md`. Não aprova THEME-MF3.
 
 ### THEME-MF2 — leitor PDF de Media
 

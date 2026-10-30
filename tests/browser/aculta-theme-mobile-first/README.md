@@ -458,6 +458,27 @@ export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
 DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/editorial-carousel-layout.py
 ```
 
+`editorial-carousel-runtime.py` abre a home MAIN pública em Firefox ESR visível,
+traz a View ao viewport para disparar a hidratação lazy do VVJB, e injeta a folha
+candidata apenas na sessão de navegador. Confere a View real, inicialização,
+conteúdo ativo, limites físicos dos slides e ausência de rolagem horizontal em
+320/360/390/575/576/599/600/768/769/1024/1280/1440px. Em 2026-10-30 passou
+15/15 verificações; capturas ficam em
+`/home/piradopirata/aculta-suite-out/editorial-carousel-runtime-20261030-final5/`.
+A folha no candidato, no checkout servido (HEAD `4399627c4`) e em
+HEAD atual da PR #299 tem o mesmo SHA-256
+`843691e4d1326c5d902829a240a184350cc21ea65d935b24c2c82f8becf2598a`. Esta
+validação cobre layout/estado inicial visível, não teclado, reduced motion,
+claro/escuro ou WCAG 2.2 AA.
+
+```sh
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/editorial-carousel-runtime
+export EDITORIAL_CAROUSEL_BASE_URL=https://aculta.toca.net.br
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/editorial-carousel-runtime.py
+```
+
 ## Webform Likert e modal de confirmação
 
 `webform-layout.py` compara os auxiliares Likert e o modal de confirmação nas

@@ -1029,16 +1029,22 @@ confirmaram ausência de rolagem horizontal. Evidência:
 Como CSS foi injetado no navegador, a revalidação pós-publicação e rebuild de
 cache permanece DEFERRED; essa branch ainda não está servida.
 
-### THEME-MF2 — carrossel editorial da home MAIN (2026-10-29)
+### THEME-MF2 — carrossel editorial da home MAIN (2026-10-30)
 
-`editorial-carousel.css` agora usa o limite compacto de 390px e itens fluidos
-como base; `min-width: 48.0625rem` restaura o limite de 764px e itens de até
-370px, preservando a transição original em 768px. O consumer é a View de
-Destaques editoriais da home MAIN. Foi criado
-`tests/browser/aculta-theme-mobile-first/editorial-carousel-layout.py` para
-comparar geometria e capturas baseline/candidato em 12 larguras; Firefox e a
-página servida estão DEFERRED pelas sessões concorrentes visíveis. THEME-MF3
-segue pendente.
+`editorial-carousel.css` usa limite compacto de 390px e itens fluidos como base;
+`min-width: 48.0625rem` restaura wrapper de até 764px e slides de até 370px.
+O harness sintético existente passou 24/24 checks em 12 larguras. No Firefox ESR
+visível, a home MAIN real passou 15/15 checks em 12 larguras: a View contém três
+slides, o VVJB hidrata após entrar no viewport, há um slide ativo com conteúdo,
+os demais ficam ocultos, e as larguras renderizadas não geram rolagem horizontal.
+A captura foi posicionada sobre o card editorial real. O CSS do worktree, do
+checkout servido em HEAD `4399627c4` e do HEAD atual da PR #299 tem o mesmo SHA-256
+`843691e4d1326c5d902829a240a184350cc21ea65d935b24c2c82f8becf2598a`; a injeção
+no harness garante a folha revisada, mas não corresponde a uma mudança nova de
+CSS. Evidências em
+`/home/piradopirata/aculta-suite-out/editorial-carousel-runtime-20261030-final5/`
+e `editorial-carousel-20261030-final5/`. Teclado, reduced motion, claro/escuro e WCAG
+2.2 AA não foram exercitados. THEME-MF3 segue pendente.
 
 ### THEME-MF2 — leitor PDF de Media (2026-10-29)
 
