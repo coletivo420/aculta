@@ -1,35 +1,73 @@
+aculta_events.admin:
+  title: 'Eventos'
+  description: 'Gestão de eventos culturais, datas, locais e atividades.'
+  route_name: aculta_events.admin_overview
+  parent: system.admin
+  weight: 25
+
+aculta_events.admin_overview:
+  title: 'Visão geral'
+  description: 'Painel geral de eventos, datas, locais e atividades.'
+  route_name: aculta_events.admin_overview
+  parent: aculta_events.admin
+  weight: 0
+
+aculta_events.admin_events_list:
+  title: 'Eventos'
+  description: 'Catálogo de eventos culturais cadastrados.'
+  route_name: aculta_events.catalogue
+  parent: aculta_events.admin
+  weight: 1
+
 aculta_events.admin_event_add:
   title: 'Cadastrar evento'
   description: 'Criar um novo evento cultural com data e local.'
   route_name: aculta_events.event_add
-  parent: system.admin_content
-  weight: 29
+  parent: aculta_events.admin
+  weight: 2
 
 aculta_events.admin_date_add:
-  title: 'Adicionar data de evento'
+  title: 'Adicionar data'
   description: 'Criar uma nova data ou sessão para um evento existente.'
   route_name: aculta_events.date_add
-  parent: system.admin_content
-  weight: 30
-
-aculta_events.admin_export:
-  title: 'Exportar eventos (CSV)'
-  description: 'Baixa datas de eventos publicados por período, com campos administrativos mínimos.'
-  route_name: aculta_events.admin_export
-  parent: system.admin_content
-  weight: 31
+  parent: aculta_events.admin
+  weight: 3
 
 aculta_events.admin_locations:
   title: 'Locais de eventos'
   description: 'Gerenciamento de locais e espaços culturais para eventos.'
   route_name: aculta_events.locations
-  parent: system.admin_content
-  weight: 32
+  parent: aculta_events.admin
+  weight: 4
 
 aculta_events.admin_location_add:
   title: 'Adicionar local'
   description: 'Cadastrar um novo local de evento.'
   route_name: aculta_events.location_add
-  parent: system.admin_content
-  weight: 33
+  parent: aculta_events.admin
+  weight: 5
 
+aculta_events.admin_activities:
+  title: 'Atividades'
+  description: 'Gestão de nós de atividades editoriais.'
+  route_name: system.admin_content
+  route_parameters:
+    type: activity
+  parent: aculta_events.admin
+  weight: 6
+
+aculta_events.admin_activity_add:
+  title: 'Cadastrar atividade'
+  description: 'Criar uma nova atividade editorial.'
+  route_name: node.add
+  route_parameters:
+    node_type: activity
+  parent: aculta_events.admin
+  weight: 7
+
+aculta_events.admin_export:
+  title: 'Exportar eventos (CSV)'
+  description: 'Baixa datas de eventos publicados por período, com campos administrativos mínimos.'
+  route_name: aculta_events.admin_export
+  parent: aculta_events.admin
+  weight: 8

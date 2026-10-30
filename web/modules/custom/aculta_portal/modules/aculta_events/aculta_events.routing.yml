@@ -220,3 +220,31 @@ aculta_events.embed:
     _access: 'TRUE'
   options:
     _aculta_domain_purpose: eventos
+
+aculta_events.admin_overview:
+  path: '/painel-administrativo/eventos'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventAdminOverviewController::overview'
+    _title: 'Gestão de Eventos'
+  requirements:
+    _permission: 'administer aculta events,access content overview'
+  options:
+    _admin_route: true
+
+aculta_events.location_modal:
+  path: '/eventos/locais/modal'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventLocationModalForm'
+    _title: 'Selecionar ou cadastrar local'
+  requirements:
+    _custom_access: '\Drupal\aculta_events\Form\EventLocationModalForm::access'
+  options:
+    _admin_route: true
+
+aculta_events.location_widget_clear:
+  path: '/eventos/locais/widget-clear'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventLocationWidgetController::clear'
+  requirements:
+    _permission: 'access content'
+
