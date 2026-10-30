@@ -23,7 +23,11 @@ OUT = Path(OUT_VALUE)
 OUT.mkdir(parents=True, exist_ok=True)
 os.environ.setdefault("ACULTA_FF_PROFILE_ROOT", str(OUT / "profiles"))
 
-WIDTHS = [320, 360, 390, 599, 600, 768, 1024, 1280, 1440]
+WIDTHS = [
+    320, 360, 390, 479, 480, 481, 599, 600, 767, 768,
+    991, 992, 1024, 1099, 1100, 1119, 1120, 1279, 1280,
+    1359, 1360, 1439, 1440, 1599, 1600, 1919, 1920,
+]
 results = []
 
 
@@ -114,6 +118,7 @@ try:
             viewport,
             document: document.documentElement.scrollWidth,
             containerWidth: Math.round(rect.width),
+            containerPaddingInline: getComputedStyle(container).paddingInlineStart,
             columns: getComputedStyle(list).gridTemplateColumns.trim().split(/\\s+/).length,
             cardCount: cards.length,
             radius: getComputedStyle(card).borderRadius,
@@ -124,9 +129,29 @@ try:
           };
         })();""")
         mobile = width < 768
+        if width < 768:
+            expected_container_width = width - 8
+            expected_container_padding = "16px"
+        elif width < 1120:
+            expected_container_width = width - 40
+            expected_container_padding = "24px"
+        elif width < 1360:
+            expected_container_width = width - 40
+            expected_container_padding = "56px"
+        elif width < 1920:
+            expected_container_width = min(width - 96, 1712)
+            expected_container_padding = "56px"
+        else:
+            expected_container_width = min(width - 96, 1760)
+            expected_container_padding = "80px"
         check(f"{width}px: viewport CSS exato", metrics["viewport"] == width, metrics["viewport"])
         check(f"{width}px: sem overflow", metrics["document"] <= width,
               f"viewport={width}, documento={metrics['document']}")
+        check(f"{width}px: layout fidelity do container",
+              metrics["containerWidth"] == expected_container_width
+              and metrics["containerPaddingInline"] == expected_container_padding,
+              f"largura={metrics['containerWidth']}/{expected_container_width}, "
+              f"padding={metrics['containerPaddingInline']}/{expected_container_padding}")
         check(f"{width}px: grade mobile-first", metrics["columns"] == (1 if mobile else 2),
               f"colunas={metrics['columns']}")
         check(f"{width}px: consumidor e SDC presentes",

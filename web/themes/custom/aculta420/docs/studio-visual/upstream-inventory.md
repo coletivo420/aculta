@@ -374,3 +374,14 @@ nove viewports nos modos light, dark+reduced e auto: 81 PNG/JSON records.
 continuaram coerentes por modo e não houve overflow medido em nenhuma captura.
 Artefatos ficam em `$SUITE_OUT/aculta-ocs-f0-mode-{light-full,dark-reduced-full,auto-full}-20261029/`.
 A cobertura permanece restrita a Marley, Conta e Perfil.
+
+
+### OCS-F1 — revalidação dos breakpoints do container (2026-10-30)
+
+O teste `studio-card-fidelity.py` verifica agora os breakpoints de layout lidos
+diretamente de `sass/abstracts/_mixins.scss` e `_layout.scss`: 48em (768px),
+70em (1120px), 85em (1360px) e 120em (1920px). Firefox ESR visível passou
+162/162 medições no Hub fixture, incluindo largura/padding do container em cada
+fronteira. A CSS não mudou nesta microfase; a validação é do mapeamento atual.
+Render Drupal, tema escuro e comparação de tela autenticada equivalente seguem
+pendentes.

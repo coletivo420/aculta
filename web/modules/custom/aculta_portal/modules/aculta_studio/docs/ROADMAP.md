@@ -13,7 +13,7 @@ depende de THEME-MF3. OCS-A1–A4 só começam depois dos dois gates aprovados.
 | THEME-MF3 | Pendente; não homologar todo ACULTA420 como mobile-first. |
 | OCS-F0 | Parcial: providers/rotas mapeados; contrato de shell no Portal e captura pós-migration das raízes em 10 purposes verificados em `4eb116482`; baseline Studio ainda não inclui tela autenticada equivalente do upstream nem todas as áreas/estados. |
 | OCS-F1–F2 | Implementados parcialmente; fidelidade de todos os consumers e Runtime pendente. |
-| OCS-F3 | Variante `studio_fidelity` adicionada ao SDC `patterns/card` com story e consumidor real na entrada da Conta; schema 55/756, Unit 20/121 e CSS fixture Firefox 45/45 passaram. Repetição visual local no HEAD `c00666e87` também passou 45/45 e teve captura 320px inspecionada; HTML do preprocess e render Drupal/Runtime seguem pendentes. |
+| OCS-F3 | Variante `studio_fidelity` adicionada ao SDC `patterns/card` com story e consumidor real na entrada da Conta; schema 55/756, Unit 20/121 e CSS fixture Firefox 45/45 passaram. Repetição local no HEAD `6b3ac6402` passou 162/162, acrescentando limites upstream 48/70/85/120em e larguras esperadas do container; capturas 320/1440px inspecionadas. HTML do preprocess e render Drupal/Runtime seguem pendentes. |
 | OCS-F4 | Composição adapta links autorizados do registry e da entrada da Conta ao SDC existente; estado funcional vem dos providers. Captura Runtime com o novo adaptador pendente. |
 | OCS-F5–F7 | Parcial/incompleto; exige validação visual/funcional por Marley, LMS e Wiki, sem alterar seus owners. |
 | OCS-F8 | Fundação de tokens/container e raiz visual do Studio entregue também ao Green Stash; telas operacionais por loja e grants não homologados. |

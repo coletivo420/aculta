@@ -358,13 +358,17 @@ MF3/F11 ou homologação global.
 ## Variante Studio Fidelity do SDC Card
 
 `studio-card-fidelity.py` adiciona uma fixture local do Hub e mede as folhas
-candidatas de tokens, Studio e `patterns/card` em 320/360/390/599/600/768/1024/
-1280/1440 CSS px. Confere o reflow da grade, geometria do card e overflow; PNGs
-ficam em `$SUITE_OUT`.
+candidatas de tokens, Studio e `patterns/card` nos viewports de aceite, nos
+limites 48/70/85/120em do layout opCult e nas fronteiras vizinhas. Confere
+container, padding, reflow da grade, geometria do cartão e overflow; PNGs ficam
+em `$SUITE_OUT`.
 
-A página é `data:` no Firefox ESR visível e não acessa Drupal/Runtime. Não
-comprova integração do preprocess no servidor, grants, cache real, dark mode,
-zoom ou WCAG integral. Use `DISPLAY=:0`, defina `SUITE_OUT` e
+A página é `data:` no Firefox ESR visível e não acessa Drupal/Runtime. Os
+limites derivados da fonte 3.1.5 são 48em (768px), 70em (1120px), 85em
+(1360px) e 120em (1920px). O teste exige as larguras exatas esperadas do
+container e seu padding em cada lado dessas transições. Não comprova integração
+do preprocess no servidor, grants, cache real, dark mode, zoom ou WCAG integral.
+Use `DISPLAY=:0`, defina `SUITE_OUT` e
 `ACULTA_FF_PROFILE_ROOT` e execute:
 
 ```sh
