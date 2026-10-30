@@ -50,4 +50,5 @@ A experiência administrativa de Datas foi centralizada em Eventos (ADR-033), ma
 
 - A gestão editorial de Eventos, Datas e Locais fica restrita ao purpose `eventos` (rotas com `_aculta_domain_purpose: eventos` + `_aculta_domain_purpose_authoritative: true`). O `DomainPurposeRequestSubscriber` nega o acesso em outros domínios.
 - Outros domínios apenas exibem o bloco somente leitura `aculta_events_upcoming`, que consulta Eventos publicados e acessíveis e aponta para as URLs canônicas de `eventos`.
+- A integração OpenStreetMap, que cria Locais, também pertence ao purpose `eventos`.
 - O contrato do calendário não muda: agenda, grade, `.ics`, embed e recorrência continuam consumindo `aculta_event_date` como fonte de dados.

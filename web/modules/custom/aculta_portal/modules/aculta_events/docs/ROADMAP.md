@@ -344,5 +344,7 @@ Eventos, Datas e Locais são administrados exclusivamente no purpose `eventos`. 
 - [x] A caixa consulta somente Eventos publicados e acessíveis, com cache/canonical corretos. (`EventCatalogue::busca()` com `access('view')`; cache contexts `user`/`url.site` e tags `aculta_event_list`/`aculta_event_date_list`; links canônicos de `eventos`.)
 - [x] Eventos privados do LMS ou sem acesso público não vazam. (`hook_entity_access` do LMS + `access('view')` no catálogo/bloco; coberto pelas suítes do LMS e pela ausência de rascunhos no bloco.)
 - [x] Não duplicar entidades, catálogos ou armazenamento por domínio. (Origem única em `aculta_events`.)
+- [x] Mover a integração OpenStreetMap para o purpose `eventos`. (`aculta_events_openstreetmap` com purpose `eventos` autoritativo na configuração/importação e purpose `eventos` na autorização/retorno OAuth.)
+- [x] `DomainRouteSubscriber` respeita o opt-in autoritativo em vez de forçar `main` em toda rota administrativa/`/painel-administrativo`. (`DomainRouteSubscriberAuthoritativePurposeTest`.)
 
-**Evidência:** `EventDomainBoundaryKernelTest` 4/121 PASS; `ContentPurposeResolverTest`, `ContentPurposeResolverEventsUnitTest` e `DomainRoutePolicyTest` 25/43 PASS. A colocação do bloco em cada domínio é configuração de site (não executada nesta entrega, sem escrita no Runtime).
+**Evidência:** `EventDomainBoundaryKernelTest` 6/177 PASS; `DomainRouteSubscriberAuthoritativePurposeTest`, `ContentPurposeResolverTest`, `ContentPurposeResolverEventsUnitTest` e `DomainRoutePolicyTest` PASS; homologação Firefox ESR (`tests/browser/eventos/domain-boundary.py`) 18/18 PASS no servidor de desenvolvimento. A colocação do bloco em cada domínio é configuração de site (não executada nesta entrega).

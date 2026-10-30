@@ -5,10 +5,13 @@
 - Criação, edição e publicação de Eventos, Datas e Locais ficam restritas ao purpose/domínio `eventos`:
   - as rotas administrativas de Eventos declaram `_aculta_domain_purpose: eventos` + `_aculta_domain_purpose_authoritative: true` (incluindo `aculta_events.admin_export`);
   - `ContentPurposeResolver` honra o purpose autoritativo declarado na rota, mantendo a política padrão de que `_admin_route` pertence a MAIN sem o opt-in;
+  - `DomainRouteSubscriber` não sobrescreve mais para `main` as rotas administrativas ou de `/painel-administrativo` que declaram o opt-in autoritativo — era isso que mantinha a área de Eventos presa ao MAIN;
   - `DomainPurposeRequestSubscriber` nega (404) a rota em qualquer outro domínio, inclusive em acesso direto e submissão POST.
+- A integração OpenStreetMap (`aculta_events_openstreetmap`) passou para o purpose `eventos`: configuração e importação com opt-in autoritativo, autorização/retorno OAuth com purpose `eventos`. O redirect URI do app OAuth deve usar o host de Eventos.
 - Novo bloco somente leitura `aculta_events_upcoming` (“Próximos eventos”): pode ser exibido em qualquer domínio, consulta apenas Eventos publicados e acessíveis via `EventCatalogue`, aponta para as URLs canônicas de `eventos` e não oferece controles editoriais.
 - O bloco declara cache por `user` e `url.site`, com as tags `aculta_event_list`/`aculta_event_date_list`; eventos de turma do LMS permanecem sujeitos ao `hook_entity_access` e não vazam.
-- Testes: `EventDomainBoundaryKernelTest` (4/121) e `ContentPurposeResolverTest`/`ContentPurposeResolverEventsUnitTest`/`DomainRoutePolicyTest` (25/43) PASS.
+- Menu e roteamento dependem de rebuild de cache após o deploy; com o código novo, a rota antiga e o item “Adicionar data” deixam de existir.
+- Testes: `EventDomainBoundaryKernelTest` (6/177), `DomainRouteSubscriberAuthoritativePurposeTest` + `ContentPurposeResolver*` + `DomainRoutePolicy` (PASS) e homologação Firefox ESR `tests/browser/eventos/domain-boundary.py` (18/18).
 
 ## 2026-10-30 — Datas e Locais geridos dentro do Evento (centralização editorial)
 

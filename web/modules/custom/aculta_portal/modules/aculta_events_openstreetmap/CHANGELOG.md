@@ -1,5 +1,11 @@
 # Changelog — aculta_events_openstreetmap
 
+## Não lançado — integração restrita ao purpose eventos (2026-10-30)
+
+- Configuração e importação passam a exigir o purpose `eventos` com opt-in autoritativo; autorização e retorno OAuth declaram purpose `eventos`.
+- `DomainRouteSubscriber` preserva o opt-in e o `DomainPurposeRequestSubscriber` nega a integração em outros domínios.
+- O redirect URI do app OAuth deve usar o host de Eventos do ambiente.
+
 ## 0.1.0-dev.2 — escrita fictícia validada e limpa (2026-10-29)
 
 - Ensaio no OSM de produção, autorizado e revisado: nó fictício `14331309082`

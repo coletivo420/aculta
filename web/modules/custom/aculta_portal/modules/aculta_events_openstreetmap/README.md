@@ -37,6 +37,15 @@ Páginas da integração: `/integracoes/openstreetmap/configuracao` e
 `/integracoes/openstreetmap/importar`. OAuth usa `/autorizar` e `/retorno`, em popup,
 com `no_cache`. Todas exigem `administer aculta events`.
 
+## Fronteira de domínio (2026-10-30)
+
+As quatro rotas pertencem ao purpose `eventos` (as administrativas com
+`_aculta_domain_purpose_authoritative: true`). O `DomainPurposeRequestSubscriber`
+nega a integração em outros domínios, inclusive POST direto. O redirect URI do
+app OAuth do OpenStreetMap deve apontar para o host de Eventos do ambiente; o
+callback é montado com `Url::fromRoute(..., ['absolute' => TRUE])`, então usa o
+host atual (Eventos).
+
 ## Credenciais e ambientes (exceção única)
 
 Uma única aplicação OAuth do OpenStreetMap atende teste, desenvolvimento e
