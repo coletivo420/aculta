@@ -32,43 +32,49 @@ O padrão que não deve ser copiado é a separação de Evento e Data em dois ti
 ## O que a análise verificou no código da PR
 
 - Rotas da experiência: `/culturas`, `/culturas/eventos/novo`, edição de Evento, operações de Data, operações de Local e modal de Local, todas declaradas no owner `aculta_events` e purpose `eventos`.
-- Dashboard: escopo por `field_organizador` do usuário e checagem de `access('update')`; oferece a lista e criação, sem paginação/filtros no controller auditado. O commit `95314a5` corrigiu a composição de cache do `createAccess()` para solicitar o `AccessResult` cacheável e incluiu teste Kernel de construção do dashboard; esse teste não foi executado nesta análise.
-- Cadastro: `EventForm` acrescenta Data(s) ao criar Evento; edição do Evento delega operações ao `EventDateListBuilder`.
-- Data: as rotas add/edit/delete/order exigem Evento no contexto e têm access check de vínculo; a interface prevista usa modal.
-- Local: modal em duas etapas; busca por nome com `LIKE`, ordenação por ID decrescente e limite 15; cadastro por CEP e associação ao contexto via AJAX.
-- Administração: gestão/configuração administrativa em `/painel-administrativo/eventos`; escolha de papéis de criação via `EventSettingsForm`.
-- Limites visíveis: nenhuma busca por endereço foi encontrada no modal; dashboard sem paginação/filtros; associação organizacional/coorganização não aparece no campo atual; o save do Evento e das Datas iniciais é sequencial e merece revisão de atomicidade/recuperação de erro.
-- Testes correspondentes existem em `EventFormDatesKernelTest`, `EventDateManagementKernelTest`, `EventLocationModalAndAdminKernelTest`, `EventLocationManagementKernelTest` e testes de autorização/Index. Não foram executados nesta revisão.
+- Dashboard de organizadores (`/culturas`): `EventOrganizerDashboardController` implementa paginação com `pager(20)`, filtros por busca textual (`busca`) e situação (`status`), e tabela expandida com próxima Data formatada, Local resumido com Município/UF (respeitando precisão pública), situação e link direto para gerenciar. Inclui guia rápido contextual acessível em `<details>` (`culturas-guide`) em 3 passos e ação para cadastrar local condicional a `createAccess`.
+- Cadastro de eventos: `EventForm` adiciona Data(s) ao criar Evento com tratamento resiliente de exceção em salvamento de datas individuais; edição delega ao `EventDateListBuilder`.
+- Data: subordinada ao Evento; rotas add/edit/delete/order exigem Evento no contexto com access check de vínculo.
+- Local: modal em duas etapas com busca expandida por nome e município/UF (`field_endereco.locality` e `field_endereco.administrative_area`), botão de limpar filtro e cadastro via CEP centralizado (`BR`).
+- Content Index transversal (`aculta_index`): `Event` e `EventLocation` implementam `EntityOwnerInterface` para que `ContentIndexOwnerResolver` determine `ownerUid` para acesso interno; `EventContentIndexProvider` v3 omite a relação pública de `organizer` baseada em contas `user` privadas, protegendo a privacidade de organizadores até haver entidade pública de Organização/Perfil. Relação Evento > Local derivada de datas físicas públicas e deduplicada.
+- Administração: painel administrativo no MAIN em `/painel-administrativo/eventos`; papéis configurados via `EventSettingsForm` (`content_editor` como padrão).
+- Testes Kernel executados com aprovação no HEAD:
+  - `EventDomainBoundaryKernelTest`: 9 testes, 276 asserções (PASS).
+  - `EventLocationModalAndAdminKernelTest`: 6 testes, 96 asserções (PASS).
+  - `EventContentIndexProviderKernelTest`: 6 testes, 145 asserções (PASS).
+  - `LocationCatalogueKernelTest`: 4 testes, 79 asserções (PASS).
+  - `EventCatalogueKernelTest`: 6 testes, 97 asserções (PASS).
+- Homologação Runtime: a execução com sucesso dos testes Kernel com `aculta_simpletest` comprova a integridade das classes e do contrato, mas a homologação em Runtime com dados reais e testes visuais de ponta a ponta permanece pendente.
 
 ## Plano de incorporação
 
 ### P0 - reconciliar contrato, rotas e evidências
 
-1. Manter `/culturas` no purpose `eventos`; administração técnica no MAIN.
-2. Validar por teste que todas as rotas de escrita rejeitam purpose errado e revalidam owner/entidade no servidor.
-3. Confirmar que Data só é gerenciada dentro do Evento; rota contextual deve manter o vínculo, e o fluxo normal deve abrir popup Drupal/AJAX.
-4. Atualizar documentação e roadmaps para distinguir: código presente, testes existentes, testes executados no HEAD e homologação Runtime.
+1. Manter `/culturas` no purpose `eventos`; administração técnica no MAIN. *(Implementado)*
+2. Validar por teste que todas as rotas de escrita rejeitam purpose errado e revalidam owner/entidade no servidor. *(Testado e aprovado em EventDomainBoundaryKernelTest)*
+3. Confirmar que Data só é gerenciada dentro do Evento; rota contextual mantém o vínculo e abre popup Drupal/AJAX. *(Implementado e coberto por testes)*
+4. Atualizar documentação e roadmaps para distinguir: código presente, testes executados no HEAD e homologação Runtime. *(Atualizado)*
 
 ### P1 - tornar `/culturas` uma central de trabalho
 
-1. Adicionar paginação e filtros eficientes ao dashboard, evitando carregar um conjunto fixo de até 250 Eventos.
-2. Mostrar próxima Data, Local resumido, status editorial e ações autorizadas. Nunca mostrar endereço completo onde a precisão não permite.
-3. Incluir estados vazios, instruções contextuais e tours acessíveis por teclado, mantendo navegação funcional sem JavaScript onde o Drupal oferece fallback.
-4. Revisar fluxo de falha parcial na criação inicial: salvar Evento e Datas com consistência, ou apresentar recuperação explícita sem deixar conteúdo inesperado.
+1. Adicionar paginação e filtros eficientes ao dashboard, evitando carregar um conjunto fixo de até 250 Eventos. *(Implementado com pager(20) e filtros busca/status)*
+2. Mostrar próxima Data, Local resumido, status editorial e ações autorizadas. Nunca mostrar endereço completo onde a precisão não permite. *(Implementado na tabela de 5 colunas com precisão protegida)*
+3. Incluir estados vazios, instruções contextuais e tours acessíveis por teclado, mantendo navegação funcional sem JavaScript onde o Drupal oferece fallback. *(Implementado via culturas-guide em details/summary)*
+4. Revisar fluxo de falha parcial na criação inicial: salvar Evento e Datas com consistência, ou apresentar recuperação explícita sem deixar conteúdo inesperado. *(Implementado em EventForm com logger e warning não-fatal)*
 
 ### P1 - aproximar busca e gestão de Local do caso de uso ACULTA
 
-1. Buscar nome e similaridade, ordenar resultados por relevância; acrescentar cidade/UF como contexto e filtro.
-2. Evitar expor títulos ou totais de Locais que a pessoa não pode acessar. Revalidar leitura e vínculo ao selecionar/submeter.
-3. Manter CEP como primeira entrada do formulário completo, país fixo `BR`, editabilidade dos campos e precisão de endereço.
-4. Planejar mapa/preenchimento por endereço somente em Events/Maps, usando o provedor aprovado, atribuição, cache, proteção de dados e seleções confirmadas pela pessoa.
+1. Buscar nome e similaridade, ordenar resultados por relevância; acrescentar cidade/UF como contexto e filtro. *(Implementado no EventLocationModalForm)*
+2. Evitar expor títulos ou totais de Locais que a pessoa não pode acessar. Revalidar leitura e vínculo ao selecionar/submeter. *(Implementado e validado por teste)*
+3. Manter CEP como primeira entrada do formulário completo, país fixo `BR`, editabilidade dos campos e precisão de endereço. *(Implementado e validado pelo gate de endereço)*
+4. Planejar mapa/preenchimento por endereço somente em Events/Maps, usando o provedor aprovado, atribuição, cache, proteção de dados e seleções confirmadas pela pessoa. *(Pendente de aprovação de provedor)*
 
 ### P2 - ampliar ownership organizacional e ingresso
 
-1. Definir entidade/referência organizacional, coorganizadores e revogação de vínculo antes de permitir que uma conta administre Eventos em nome de terceiros.
-2. Fazer o dashboard refletir o escopo de acesso definido pelo owner, sem filtros de usuário que ampliem acesso.
-3. Usar o plano ADR-036 para separar gratuidade/RSVP e venda paga; OpenCulturas serve apenas como referência de campos descritivos e links externos.
-4. Não abrir transações pagas até fechar os gates fiscais, jurídicos, LGPD, taxas, estornos, sandbox e validação de webhook definidos no plano.
+1. Definir entidade/referência organizacional, coorganizadores e revogação de vínculo antes de permitir que uma conta administre Eventos em nome de terceiros. *(Bloqueio registrado: UIDs privados de usuário mantidos fora do índice transversal)*
+2. Fazer o dashboard refletir o escopo de acesso definido pelo owner, sem filtros de usuário que ampliem acesso. *(Implementado)*
+3. Usar o plano ADR-036 para separar gratuidade/RSVP e venda paga; OpenCulturas serve apenas como referência de campos descritivos e links externos. *(Documentado)*
+4. Não abrir transações pagas até fechar os gates fiscais, jurídicos, LGPD, taxas, estornos, sandbox e validação de webhook definidos no plano. *(Pendente conforme ADR-036)*
 
 ## Critérios para declarar a experiência homologada
 

@@ -36,7 +36,7 @@ final class EventContentIndexProvider implements ContentIndexProviderInterface, 
    * {@inheritdoc}
    */
   public function getProjectionVersion(): int {
-    return 2;
+    return 3;
   }
 
   /**
@@ -74,7 +74,11 @@ final class EventContentIndexProvider implements ContentIndexProviderInterface, 
 
     $relations = [];
     $this->addRelations($entity, 'field_tipo', 'event_type', 'taxonomy_term', $relations);
-    $this->addRelations($entity, 'field_organizador', 'organizer', 'user', $relations);
+    // Identidade canônica de organizador: contas internas de usuário (user) não
+    // são identidades públicas com URL canônica no índice transversal.
+    // O vínculo com o autor é preservado internamente no campo ownerUid.
+    // Relações públicas de organizador só devem ser projetadas quando houver
+    // entidade de Perfil/Organização aprovada com URL canônica pública.
     $this->addLocationRelations($entity, $relations);
 
     $isPublished = (string) $entity->get('field_status')->value === 'publicado';

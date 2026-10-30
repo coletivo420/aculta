@@ -169,7 +169,7 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
     $eventProvider = $this->container->get('aculta_events.index_provider.event');
     $locProvider = $this->container->get('aculta_events.index_provider.location');
 
-    $this->assertSame(2, $eventProvider->getProjectionVersion());
+    $this->assertSame(3, $eventProvider->getProjectionVersion());
     $this->assertSame(2, $locProvider->getProjectionVersion());
 
     /** @var \Drupal\aculta_index\Provider\ContentIndexProviderRegistry $registry */
@@ -179,14 +179,32 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
     $this->assertSame(64, strlen($registry->fingerprint()));
 
     // 3. Allowlist de projeção do Local: não inclui telefone, site, endereço exato.
+    $locAuthor = User::create(['name' => 'autor-local', 'status' => 1]);
+    $locAuthor->save();
+    $location->set('field_organizador', $locAuthor->id());
+    $location->save();
+
     $locProj = $locProvider->project($location);
     $this->assertNotNull($locProj);
     $this->assertSame('aculta_event_location', $locProj->entityTypeId);
     $this->assertSame((string) $location->id(), $locProj->entityId);
     $this->assertSame('Galeria de Belas Artes', $locProj->label);
     $this->assertTrue($locProj->published);
+    $this->assertSame((int) $locAuthor->id(), $locProj->ownerUid);
     $this->assertCount(1, $locProj->relations);
     $this->assertSame('location_type', $locProj->relations[0]->type);
+
+    // Projeção do Evento: não vaza conta de usuário como relação pública.
+    $eventAuthor = User::create(['name' => 'autor-evento', 'status' => 1]);
+    $eventAuthor->save();
+    $event->set('field_organizador', $eventAuthor->id());
+    $event->save();
+
+    $eventProj = $eventProvider->project($event);
+    $this->assertNotNull($eventProj);
+    $this->assertSame((int) $eventAuthor->id(), $eventProj->ownerUid);
+    $organizerRelations = array_filter($eventProj->relations, static fn ($r) => $r->type === 'organizer');
+    $this->assertEmpty($organizerRelations);
 
     // 4. Ausência de status trata como não publicável (falha fechada).
     $locSemStatus = EventLocation::create(['title' => 'Local sem status']);

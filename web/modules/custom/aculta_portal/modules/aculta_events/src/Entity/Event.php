@@ -12,6 +12,8 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\user\EntityOwnerInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Evento: descrição reutilizável, com uma ou mais datas (MODELO-DE-DADOS.md).
@@ -45,7 +47,38 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
     'edit-form' => '/painel-administrativo/eventos/{aculta_event}/editar',
   ],
 )]
-final class Event extends ContentEntityBase {
+final class Event extends ContentEntityBase implements EntityOwnerInterface {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOwner(): ?UserInterface {
+    return $this->get('field_organizador')->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOwnerId(): ?int {
+    $targetId = $this->get('field_organizador')->target_id;
+    return $targetId !== NULL && $targetId !== '' ? (int) $targetId : NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwnerId($uid): static {
+    $this->set('field_organizador', $uid);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwner(UserInterface $account): static {
+    $this->set('field_organizador', $account->id());
+    return $this;
+  }
 
   /**
    * {@inheritdoc}

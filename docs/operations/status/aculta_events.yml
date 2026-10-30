@@ -2,14 +2,5 @@
 version: 0.2.0-dev.1
 state: Dev
 progress_note: >-
-  Fase 2 de Locais concluída: serviço central ActivityLocationMigrator para migração e rollback
-  idempotentes de nós legados de Activity para EventLocation com deduplicação por nome e CEP,
-  update hook 10012, CLI scripts/migrate-activity-locations.php e testes de Kernel dedicados
-  (ActivityLocationMigrationKernelTest: 3 testes/79 asserções PASS). Gestão editorial de Eventos,
-  Datas e Locais disponível a administradores no MAIN e parcialmente a organizadores em
-  ACULTA Studio Culturas (`/culturas`, purpose eventos). O código inclui dashboard, criação inicial
-  de Datas no Evento, gestão contextual em popup Drupal/AJAX, modal de Local em 2 etapas com CEP
-  primeiro e país exclusivamente BR, além de seleção de papéis de criação. O HEAD auditado contém
-  testes focalizados, mas esta revisão documental não os executou. A ativação/homologação Runtime
-  de Culturas e a validação visual integrada continuam pendentes.
-next_phase: "Executar os gates Kernel no HEAD consolidado e homologar no Runtime Firefox ESR: acesso por purpose, dashboard, Evento/Datas, popup de Local, papéis, teclado, mobile e estado do formulário pai."
+  Fase 2 de Locais e replicação útil do OpenCulturas concluídas no código: dashboard de organizadores em `/culturas` com busca, filtros por situação, paginação pager(20), guia contextual de 3 passos, ação de cadastrar local e tabela de 5 colunas com resumo de próxima data e local (precisão protegida). Modal de Local em 2 etapas com CEP centralizado (BR), busca por nome e município/UF e botão de limpar filtro. Event e EventLocation implementam EntityOwnerInterface; EventContentIndexProvider v3 mantém contas privadas de usuário fora do índice transversal. Testes Kernel executados com aprovação no HEAD consolidado: EventDomainBoundaryKernelTest (9/276 PASS), EventLocationModalAndAdminKernelTest (6/96 PASS), EventContentIndexProviderKernelTest (6/145 PASS), LocationCatalogueKernelTest (4/79 PASS) e EventCatalogueKernelTest (6/97 PASS). A homologação Runtime e os testes visuais integrados permanecem pendentes.
+next_phase: "Homologar no Runtime com Firefox ESR visível e perfil temporário: acesso por purpose, dashboard Culturas, criação de Evento/Datas, popup de Local, papéis, teclado, responsividade mobile e estado do formulário pai."
