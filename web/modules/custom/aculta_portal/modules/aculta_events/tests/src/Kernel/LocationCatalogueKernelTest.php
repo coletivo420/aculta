@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_events\Kernel;
 
-use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Catalogue\LocationCatalogue;
+use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\taxonomy\Entity\Term;
