@@ -1,3 +1,4 @@
+- Criados guardrails mobile-first globais para todos os agentes e purposes do ACULTA420; referências adicionadas a `AGENTS.md`, `CLAUDE.md` e ao índice de políticas. Não altera status de MF0–MF3.
 - `webform.css` agora limita a largura do modal por gutter na base, sem breakpoint `max-width`; Firefox ESR confirmou equivalência de pixels e métricas em 14 larguras (62/62 checks). O fluxo real e THEME-MF3 seguem pendentes.
 # Alterações pendentes de validação visual — ainda sem nova marcação de versão
 

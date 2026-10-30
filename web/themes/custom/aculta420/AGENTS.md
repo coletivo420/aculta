@@ -37,6 +37,12 @@ Evitar dependências JavaScript desnecessárias.
 
 ### Orientações mobile-first
 
+A norma global está em
+`docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md` e prevalece para
+todo purpose e consumer do tema, incluindo MAGAZINE/Revista. Ela é obrigatória
+para todo agente que edite UI; a referência OpenCulturas Next permanece
+escopada ao Studio.
+
 - Trate mobile-first como estratégia de implementação: a base CSS deve ser útil
   na menor largura suportada, e regras para mais espaço devem ser acrescentadas
   progressivamente quando o conteúdo justificar. Não basta reduzir ou empilhar
@@ -71,8 +77,10 @@ Evitar dependências JavaScript desnecessárias.
   somente tokens visuais podem variar. O tema apresenta o contrato neutro e não
   passa a decidir acesso, domínio ou regra de negócio para adaptar a interface.
 - Ao alterar componente responsivo, registre evidência por viewport e interação
-  aplicáveis. Use 320, 375/390, 768, 1024 e 1440 px como matriz inicial, não como
-  declaração automática de cobertura. Confira ausência de overflow da página,
+  aplicáveis. Use a grade transversal
+  320/360/390/599/600/768/1024/1280/1440 px e fronteiras adicionais do
+  componente; ela não é declaração automática de cobertura. Confira ausência
+  de overflow da página,
   foco, estados, zoom, modos claro/escuro e consumidores afetados; diferencie
   validação local de Runtime de teste e de dispositivo real.
 - No ACULTA Studio, consulte primeiro o contrato e o roadmap do Studio. Preserve

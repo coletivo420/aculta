@@ -11,7 +11,7 @@ O arquivo `docs/operations/AGENT-GUARDRAILS-FULL.md` é **arquivo histórico de 
 | Studio | `web/modules/custom/aculta_portal/modules/aculta_studio/AGENTS.md` |
 | Usuários | `web/modules/custom/aculta_portal/modules/aculta_user/AGENTS.md` |
 | Avatar e identidade de autoria | `docs/architecture/avatar.md`; detalhe do módulo em `web/modules/custom/aculta_portal/modules/aculta_user/docs/AVATAR-PADRAO.md` |
-| Tema | `web/themes/custom/aculta420/AGENTS.md` |
+| Tema / mobile-first global | `web/themes/custom/aculta420/AGENTS.md`; norma transversal em `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md`, obrigatória para todos os agentes que alterem UI no tema |
 | Runtime e Git | `docs/operations/AGENT-OPERATIONS.md` |
 | Rotas e domínios | `docs/architecture/AGENT-ROUTES.md` |
 | Conteúdo institucional e Wiki | `docs/operations/AGENT-CONTENT.md` |

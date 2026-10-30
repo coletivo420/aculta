@@ -9,6 +9,7 @@ Plataforma Drupal 11 da ACULTA (PHP conforme `docs/architecture/environments.md`
 3. Para entender o projeto, leia `docs/operations/MAPA-PARA-AGENTES.md` (módulos por área, decisões, ambientes, onde está cada coisa).
 4. Confirme o estado no código e no git antes de afirmar status. Planos e roadmaps podem estar desatualizados.
 5. Decisões do responsável: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md` (D-01 a D-43) e as ADRs em `docs/decisions/`. Quando um plano conflitar com uma decisão registrada, a decisão vale; registre o conflito.
+6. Em qualquer alteração visual do ACULTA420, siga `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md` e `web/themes/custom/aculta420/AGENTS.md`: mobile-first global em todos os purposes; fidelidade Next somente dentro do Studio; preservar Institution Bar e Domain Header.
 
 ## Regras que prevalecem (decisões do responsável)
 

@@ -861,3 +861,14 @@ mede o gutter computado em pixels, corrigindo uma conversão que antes falhava
 com tokens `rem`. Evidências em
 `/home/piradopirata/aculta-suite-out/webform-mobile-first-7453cf6eb-rerun/`.
 Não foi exercitada uma submissão Webform real; THEME-MF3 permanece pendente.
+
+
+## Guardrails para agentes — 2026-10-30
+
+Criada a norma transversal
+[`ACULTA420-MOBILE-FIRST-GUARDRAILS.md`](../../../../docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md). O `AGENTS.md` raiz e o `CLAUDE.md` agora
+exigem sua consulta por todo agente que altere UI do tema; o AGENTS local do
+tema aponta para a mesma norma. Ela formaliza base 320 CSS px, aprimoramento
+progressivo, escopo de todos os purposes, preservação dos dois headers,
+ownership, evidência Firefox e linguagem `PASS`/`DEFERRED`. A norma não altera
+o status de THEME-MF0–MF3, que segue parcial até os gates transversais reais.
