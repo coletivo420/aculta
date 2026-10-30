@@ -272,4 +272,47 @@ final class OrganizationClaimKernelTest extends KernelTestBase {
     $this->assertFalse($eventOther->access('update', $this->commonUser));
   }
 
+  public function testOwnershipClaimAdminControllerAndDecisionForm(): void {
+    $event = Event::create([
+      'title' => 'Festival Comunitário Reivindicável',
+      'field_status' => 'publicado',
+      'field_allow_claiming' => 1,
+    ]);
+    $event->save();
+
+    /** @var \Drupal\aculta_user\Organization\OwnershipClaimService $claimService */
+    $claimService = $this->container->get('aculta_user.ownership_claim_service');
+    $claim = $claimService->submitClaim($event, $this->commonUser, 'Sou o produtor executivo do festival.');
+
+    // 1. Controller overview.
+    $controller = \Drupal\aculta_user\Controller\OwnershipClaimAdminController::create($this->container);
+    $request = \Symfony\Component\HttpFoundation\Request::create('/painel-administrativo/pessoas/reivindicacoes');
+    $build = $controller->overview($request);
+    $this->assertArrayHasKey('table', $build);
+    $this->assertCount(1, $build['table']['#rows']);
+    $this->assertSame($claim->id(), $build['table']['#rows'][0]['id']);
+
+    // 2. Decision form build & submission.
+    $formObject = \Drupal\aculta_user\Form\OwnershipClaimDecisionForm::create($this->container);
+    $formState = new \Drupal\Core\Form\FormState();
+    $form = $formObject->buildForm([], $formState, $claim);
+    $this->assertArrayHasKey('decision', $form);
+
+    // Test form submit with approval.
+    $formState->setValue('decision', 'approved');
+    $formState->setValue('decision_notes', 'Aprovado com base no contrato social apresentado.');
+    $this->container->get('current_user')->setAccount($this->adminUser);
+    $formObject->submitForm($form, $formState);
+
+    // Verify claim status and event organizer update.
+    $reloadedClaim = OwnershipClaim::load($claim->id());
+    $this->assertNotNull($reloadedClaim);
+    $this->assertSame('approved', $reloadedClaim->get('status')->value);
+    $this->assertSame((int) $this->adminUser->id(), (int) $reloadedClaim->get('decided_by')->value);
+
+    $reloadedEvent = Event::load($event->id());
+    $this->assertNotNull($reloadedEvent);
+    $this->assertSame((int) $this->commonUser->id(), (int) $reloadedEvent->get('field_organizador')->target_id);
+  }
+
 }

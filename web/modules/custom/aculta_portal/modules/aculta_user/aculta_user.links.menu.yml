@@ -19,3 +19,10 @@ aculta_user.people:
   route_name: aculta_user.people
   parent: aculta_portal.admin
   weight: 6
+
+aculta_user.ownership_claims:
+  title: 'Reivindicações de posse'
+  description: 'Moderação e acompanhamento de pedidos de titularidade de organizações e conteúdos.'
+  route_name: aculta_user.ownership_claims
+  parent: aculta_portal.admin
+  weight: 7

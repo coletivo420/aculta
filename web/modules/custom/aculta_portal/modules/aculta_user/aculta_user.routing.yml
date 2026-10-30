@@ -38,6 +38,26 @@ aculta_user.people:
   options:
     _admin_route: true
 
+aculta_user.ownership_claims:
+  path: '/painel-administrativo/pessoas/reivindicacoes'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\OwnershipClaimAdminController::overview'
+    _title: 'Reivindicações de posse'
+  requirements:
+    _permission: 'administer aculta claims'
+  options:
+    _admin_route: true
+
+aculta_user.ownership_claim_decide:
+  path: '/painel-administrativo/pessoas/reivindicacoes/{aculta_ownership_claim}/decidir'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\OwnershipClaimDecisionForm'
+    _title: 'Decidir reivindicação de posse'
+  requirements:
+    _permission: 'administer aculta claims'
+  options:
+    _admin_route: true
+
 aculta_user.participacao_settings:
   path: '/painel-administrativo/aculta/participacao'
   defaults:

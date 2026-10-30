@@ -2,9 +2,9 @@ uuid: 4e4a5eab-c9d6-41c7-ad8f-35b36a4599d0
 langcode: pt-br
 status: true
 dependencies: {  }
-name: 'Atividade / evento'
+name: 'Atividade / evento [LEGADO]'
 type: activity
-description: 'Atividades reais com data e horário, local ou participação online. Alimenta próximas atividades e registros realizados.'
+description: '[LEGADO - Descontinuado em favor do módulo aculta_events] Tipo de conteúdo do OpenCulturas descontinuado no ACULTA. Novos eventos e locais usam aculta_events.'
 help: null
 new_revision: true
 preview_mode: 1
