@@ -4,7 +4,7 @@
 
 ### Matriz corrente de rotas e evidências
 
-As rotas abaixo seguem o mapa canônico ADR-038, os providers/owners atuais e o baseline Firefox `aculta-studio-adr038-20261030`. Paths `/studio*` citados na matriz histórica e nos registros posteriores abaixo descrevem estados anteriores: hoje respondem 404 sem redirect. O baseline autenticado foi `PARTIAL` e cobre nove destinos ACULTA em 390/1440px, além da referência pública OpenCulturas; não equivale a um dashboard autenticado upstream.
+As rotas abaixo seguem o mapa canônico ADR-038, os providers/owners atuais e os baselines Firefox `aculta-studio-adr038-20261030` e `ocs-f0-rerun-20261030`. Paths `/studio*` citados na matriz histórica e nos registros posteriores abaixo descrevem estados anteriores: hoje respondem 404 sem redirect. A revalidação autenticada cobriu os nove destinos ACULTA em 390/1440px; não equivale a um dashboard autenticado upstream.
 
 | Área/estado | Purpose e path canônicos | Provider/owner funcional | Evidência atual | Pendência visual/aceite |
 |---|---|---|---|---|
@@ -19,6 +19,32 @@ As rotas abaixo seguem o mapa canônico ADR-038, os providers/owners atuais e o 
 | Salvos | `account:/salvos` | `SavedExperienceProvider`; consulta e ACL permanecem nos owners de conteúdo/índice | Provider e rota existem no registry/código; não constam nos nove destinos do baseline autenticado | Conteúdo real, isolamento A/B, cache por UID, estado vazio e feature disponível/ausente precisam de prova; não anunciar recomendações |
 | Planos Mercado Pago | `account:/conta/mercado-pago/planos` | Provider condicional `MercadoPagoPlansExperienceProvider`; owner `aculta_pagamentos_mercadopago` | Capturado em 390/1440px com a conta sintética; shell presente | Módulo/permissão ausente, operação real, estados e comparação detalhada pendentes |
 | Outras áreas e regressão do shell | `main`, `account`, `support`, `magazine`, `wiki`, `shop`, `courses`, `forum`, `links`, `eventos` | Tema/Portal e módulos proprietários por purpose | Reteste Firefox ESR pós-migration no HEAD `4eb116482`: 90/90 raízes anônimas × nove larguras; Institution Bar e Domain Header uma vez cada em 90/90, zero overflow e zero erro 500 | Páginas internas, contas autenticadas, zoom, teclado, claro/escuro, reduced motion e WCAG global continuam fora desse baseline |
+
+### Revalidação OCS-F0 — rotas canônicas, Firefox ESR visível (2026-10-30)
+
+No checkout servido `/home/piradopirata/projetos/aculta` em HEAD `4399627c4`,
+`ocs-baseline.py` capturou 20 páginas em 390×844 e 1440×1000: a homepage
+pública OpenCulturas mais nove destinos ACULTA (`account:/`, Marley, Ganjalab,
+WE SATIVA, Conta, Perfil, Green Stash, Culturas e Planos). Os 18 screenshots
+ACULTA não tiveram overflow horizontal; cada um apresentou exatamente uma
+Institution Bar e um Domain Header. Marley emitiu 23 marcadores
+`data-aculta-studio`; os demais destinos não emitiram esse marcador no baseline.
+
+Green Stash retornou acesso negado para `teste.comum` nas duas larguras. Isso
+registra a falta de grant dessa conta de teste; não é inspeção visual da área
+comercial e não demonstra disponibilidade das operações. As capturas móveis de
+Marley, Ganjalab, WE SATIVA, Conta e Perfil foram inspecionadas; em WE SATIVA os
+quatro filtros de estado quebram em linhas separadas a 390px, e sua equivalência
+com o padrão Next ainda precisa de revisão. Capturas e `baseline.json`:
+`/home/piradopirata/aculta-suite-out/ocs-f0-rerun-20261030/`.
+
+A referência pública OpenCulturas em 390/1440px carrega `opcult.css` com o hash
+do pacote 3.1.5 validado em [`upstream-inventory.md`](upstream-inventory.md),
+mas é homepage pública, não dashboard autenticado. A comparação pareada de
+dashboard, grants/estados de loja, demais breakpoints e gates de acessibilidade
+continuam pendentes. O Runtime não estava no HEAD remoto da PR `88063e76b` durante
+esta captura; portanto, estes resultados são baseline do checkout servido, não
+homologação da cabeça candidata nem aceite OCS-F0/F11.
 
 O pacote oficial do OpenCulturas 3.1.5 permanece a fonte visual: o hash e os
 arquivos concretos inspecionados estão em [`upstream-inventory.md`](upstream-inventory.md).
