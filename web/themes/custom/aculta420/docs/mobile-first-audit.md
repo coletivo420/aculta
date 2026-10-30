@@ -712,6 +712,11 @@ com 2 testes e 74 assertions (uma depreciação upstream de EntityType). Os PNGs
 JSON e logs estão em
 `/home/piradopirata/suite-out/domain-header-purpose-9ad2b86b9/`.
 
+Repetição pós-migration no HEAD `4eb116482`: 90/90 capturas novamente passaram,
+com os dois headers exatamente uma vez, zero overflow e zero erro 500,
+incluindo `eventos` em 320–1440px. Evidência em
+`/home/piradopirata/suite-out/domain-header-purpose-4eb116482-post-updb/`.
+
 Esta evidência encerra somente o handoff sobre a presença dos dois headers nas
 raízes anônimas. Não cobre páginas internas, conteúdo autorizado, zoom,
 teclado, WCAG 2.2 AA nem THEME-MF3. As diferenças visuais registradas em
@@ -1442,3 +1447,22 @@ A fixture não acessa o Drupal nem homologa ACL, HTML produzido pelo preprocess,
 cache real, dark mode, zoom ou todos os estados; render do Runtime é
 `DEFERRED` enquanto a configuração do Runtime divergir e não houver rebuild.
 OCS-F3/F8 e THEME-MF2 permanecem parciais; isto não aprova THEME-MF3 ou OCS-F11.
+
+### THEME-MF2 — sticky com Navigation top-bar após migration de Events (2026-10-30)
+
+No Firefox ESR visível, `institution-bar-scroll.py` passou 142/142 checks no
+Runtime após o checkout `4eb116482` e as migrations de schema. O cenário
+anônimo cobriu as dez homes em 320/390px: a Institution Bar inicia no topo,
+estabiliza sem salto (`maxTopChange=0`), permanece no topo durante scroll e não
+causa overflow. No cenário administrativo autenticado via conta de teste, em
+320/390/1023/1024/1280px, a Navigation top-bar fica em fluxo no mobile e a
+Institution Bar acompanha sua altura enquanto visível; após scroll, assume
+`top: 0`. A 1024/1280px a top-bar fica fixa em 64px e o Domain displacement e a
+Institution Bar respeitam esse offset, inclusive ao redimensionar. O percurso
+administrativo confirmou a sessão e não submeteu conteúdo.
+
+Capturas e `results.json` estão em
+`/home/piradopirata/suite-out/institution-bar-scroll-4eb116482/`. Esta
+verificação fecha o defeito focal de salto/posição no shell nas rotas e viewports
+exercitados; não cobre todas as páginas internas, zoom real, leitor de tela,
+WCAG completa ou THEME-MF3.
