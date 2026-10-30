@@ -33,7 +33,14 @@ final class EventOrganizationModalWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {
-    return $element;
+    $multi = $this->formMultipleElements($items, $form, $form_state);
+    if (isset($multi['#attributes'])) {
+      $element['#attributes'] = array_merge($element['#attributes'] ?? [], $multi['#attributes']);
+    }
+    if (isset($multi['#attached'])) {
+      $element['#attached'] = array_merge_recursive($element['#attached'] ?? [], $multi['#attached']);
+    }
+    return $multi + $element;
   }
 
   /**

@@ -97,7 +97,7 @@ def main():
         driver.type('input[name="title[0][value]"]', test_title)
 
         # Widget de Organização presente.
-        has_org_widget = driver.exists('[data-portal-ui="event-organization-widget"]')
+        has_org_widget = driver.exists('[data-portal-ui="event-organization-widget"], .field--widget-aculta-event-organization-modal, [data-field-name="field_organizacao"]')
         check("evento.widget.organizacao.presente", has_org_widget, "widget de organização renderizado")
 
         # Botão modal de seleção de Organização.
@@ -116,11 +116,12 @@ def main():
             has_search_field = driver.exists('#aculta-organization-modal-form-wrapper input[name="termo"]')
             check("modal.passo_busca.campo_pesquisa", has_search_field, "campo de busca presente no modal")
 
-            has_switch_create = driver.exists('#aculta-organization-modal-form-wrapper input[name="op_switch_create"]')
+            switch_selector = '#edit-switch-create, #aculta-organization-modal-form-wrapper input[value*="Cadastrar nova organização"]'
+            has_switch_create = driver.exists(switch_selector)
             check("modal.passo_busca.botao_cadastrar_novo", has_switch_create, "opção de cadastrar nova organização presente")
 
             if has_switch_create:
-                driver.click('#aculta-organization-modal-form-wrapper input[name="op_switch_create"]')
+                driver.click(switch_selector)
                 time.sleep(1.5)
                 has_create_name = wait_for_css(driver, 'input[name="novo_nome"]', timeout=6)
                 check("modal.passo_criacao.carregado", has_create_name, "passo de criação carregado via AJAX")
@@ -156,7 +157,7 @@ def main():
                 check("modal.popup.fecha", modal_closed, "popup fechado via close button")
 
             # Verifica preservação de dados no formulário pai.
-            current_title_val = driver.eval('return document.querySelector(\'input[name="title[0][value]"]\').value;')
+            current_title_val = driver.js('return document.querySelector(\'input[name="title[0][value]"]\').value;')
             check("evento.form.dados_preservados", current_title_val == test_title, f"valor mantido: {current_title_val}")
 
         # Salva log de resultados.

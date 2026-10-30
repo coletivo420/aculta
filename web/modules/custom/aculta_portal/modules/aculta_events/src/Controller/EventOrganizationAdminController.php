@@ -255,12 +255,14 @@ final class EventOrganizationAdminController extends ControllerBase {
           '#attributes' => ['class' => ['container-inline']],
           'nome' => [
             '#type' => 'textfield',
+            '#name' => 'nome',
             '#title' => $this->t('Nome'),
             '#default_value' => $filterNome,
             '#size' => 25,
           ],
           'reivindicada' => [
             '#type' => 'select',
+            '#name' => 'reivindicada',
             '#title' => $this->t('Reivindicação'),
             '#options' => [
               '' => $this->t('- Todos -'),
@@ -272,6 +274,7 @@ final class EventOrganizationAdminController extends ControllerBase {
           ],
           'revisao' => [
             '#type' => 'select',
+            '#name' => 'revisao',
             '#title' => $this->t('Acessos'),
             '#options' => [
               '' => $this->t('- Todos -'),
@@ -282,6 +285,7 @@ final class EventOrganizationAdminController extends ControllerBase {
           ],
           'com_denuncias' => [
             '#type' => 'select',
+            '#name' => 'com_denuncias',
             '#title' => $this->t('Denúncias'),
             '#options' => [
               '' => $this->t('- Todas -'),
