@@ -587,6 +587,28 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/purpose-shell-colo
 `PURPOSE_MODE_DOMAIN_ENV=production` só deve ser usado após confirmar ambiente,
 DNS e TLS.
 
+## Zoom real nos dez purposes
+
+`purpose-browser-zoom.py` abre as dez raízes públicas no Firefox ESR visível,
+confirma a composição em 100% e usa `xdotool` para testar zoom real do navegador
+em 200% e 400%. Mede a largura CSS efetiva, rolagem/overflow horizontal, shell
+único e presença de `main#main-content`; salva uma captura por purpose/alvo em
+`SUITE_OUT`. O perfil Firefox temporário é removido ao final. É somente leitura
+e requer `hostname=toca`, Drush confirmando `aculta_runtime`, `DISPLAY=:0`,
+`xdotool` e geckodriver. Não cobre páginas internas, estados autenticados,
+zoom do sistema operacional, leitores de tela nem WCAG completa.
+
+```sh
+export DISPLAY=:0
+export ACULTA_PROJECT_ROOT=/home/piradopirata/projetos/aculta
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/purpose-browser-zoom
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/purpose-browser-zoom.py
+```
+
+`PURPOSE_ZOOM_DEVICE_WIDTH` define a largura inicial (1280px por padrão) e
+`PURPOSE_ZOOM_DOMAIN_ENV=test|production` seleciona os hosts do manifesto.
+
 ## Título principal nas dez raízes públicas
 
 `purpose-headings.py` confere um H1 visível dentro de `main#main-content`, o

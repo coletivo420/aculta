@@ -1734,3 +1734,20 @@ Essas matrizes auditam o que estava servido no HEAD registrado; não comprovam
 cada interação/página interna, zoom, teclado completo, leitores de tela,
 contraste WCAG 2.2 AA nem a distribuição dos estilos ainda locais da branch.
 THEME-MF3 segue pendente.
+
+### Zoom real de 200%/400% nas dez raízes públicas (2026-10-30)
+
+O novo harness reutilizável `purpose-browser-zoom.py` usou Firefox ESR visível e
+atalhos reais do navegador, viewport inicial de dispositivo 1280px e perfil
+temporário; verificação somente leitura em `toca/aculta_runtime`. As dez raízes
+passaram 30/30 checks: 100% inicial, 200% (640px CSS) e 400% (320px CSS), shell
+único, `main#main-content` e zero overflow horizontal. Capturas mostram o
+reflow em cada purpose; resumo em
+`/home/piradopirata/aculta-suite-out/purpose-browser-zoom-20261030/`.
+**A inspeção de headings na mesma captura registrou zero H1 em SUPPORT e
+COURSES no Runtime**, enquanto as outras oito raízes tinham um. O template
+candidato local inclui a preservação do `page_title_block` nesses purposes e
+seu teste Unit já existe, mas a correção ainda não está no Runtime, então esse
+zoom não prova o reflow do conteúdo com título corrigido. O gate de headings
+pós-candidato segue DEFERRED. Esta matriz não valida páginas internas, teclado,
+leitores de tela ou WCAG 2.2 AA e não aprova THEME-MF3.

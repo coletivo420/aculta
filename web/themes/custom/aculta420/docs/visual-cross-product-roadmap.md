@@ -1121,3 +1121,14 @@ em sete larguras, com shell e navegação/fallback presentes e sem overflow.
 Detalhes e limitações em `mobile-first-audit.md`. É evidência apenas das raízes
 públicas; MF3 ainda requer rotas internas, estados autenticados, formulários,
 interações, zoom, teclado e WCAG para todos os purposes.
+
+### THEME-MF3 — zoom real nas dez raízes (2026-10-30)
+
+O novo harness `purpose-browser-zoom.py` passou 30/30 checks Firefox ESR no
+Runtime HEAD `30c6770f3`: 10 purposes em 200% e 400% reais, escala efetiva de
+640/320 CSS px, shell único, `<main>` presente e sem overflow. Contudo, as
+mesmas capturas confirmaram ausência de H1 em SUPPORT e COURSES no Runtime. O
+candidato local trata esse defeito via `page_title_block`, mas não está servido;
+a validação pós-candidato de H1 e reflow continua pendente. README e
+`mobile-first-audit.md` documentam evidências e limites; o gate THEME-MF3 não
+está aprovado.
