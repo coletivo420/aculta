@@ -6,13 +6,15 @@ namespace Drupal\aculta_events\Form;
 
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Event\EventDateListBuilder;
 use Drupal\aculta_events\Plugin\Field\FieldWidget\EventLocationModalWidget;
+use Drupal\aculta_events\Route\EventRouteContext;
+use Drupal\aculta_user\Organization\OrganizationAccessService;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\aculta_events\Route\EventRouteContext;
 
 /**
  * Formulário nativo para criação e edição de eventos com suas datas e locais.
@@ -29,11 +31,19 @@ final class EventForm extends ContentEntityForm {
   protected EventDateListBuilder $dateListBuilder;
 
   /**
+   * Serviço de acesso a organizações.
+   */
+  protected ?OrganizationAccessService $organizationAccessService = NULL;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     $instance = parent::create($container);
     $instance->dateListBuilder = $container->get('aculta_events.date_list_builder');
+    if ($container->has('aculta_user.organization_access_service')) {
+      $instance->organizationAccessService = $container->get('aculta_user.organization_access_service');
+    }
     return $instance;
   }
 
@@ -165,6 +175,37 @@ final class EventForm extends ContentEntityForm {
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
+
+    // Validação de segurança no servidor para Organizações.
+    $orgValues = $form_state->getValue('field_organizacao');
+    $primaryOrgId = 0;
+    if (is_array($orgValues) && isset($orgValues[0]['target_id']) && $orgValues[0]['target_id'] !== '') {
+      $primaryOrgId = (int) $orgValues[0]['target_id'];
+    }
+
+    $currentUser = $this->currentUser();
+    $isAdmin = $currentUser->hasPermission('administer aculta events');
+
+    if ($primaryOrgId > 0) {
+      $primaryOrg = $this->entityTypeManager->getStorage('aculta_event_organization')->load($primaryOrgId);
+      if ($primaryOrg instanceof EventOrganization && $primaryOrg->isClaimed()) {
+        if (!$isAdmin && $this->organizationAccessService !== NULL) {
+          if (!$this->organizationAccessService->canActOnBehalf($currentUser, (string) $primaryOrgId)) {
+            $form_state->setErrorByName('field_organizacao', (string) $this->t('A organização principal selecionada é reivindicada e sua conta não possui permissão para utilizá-la.'));
+          }
+        }
+      }
+    }
+
+    $coOrgValues = $form_state->getValue('field_coorganizadores');
+    if (is_array($coOrgValues)) {
+      foreach ($coOrgValues as $val) {
+        $coId = is_array($val) ? (int) ($val['target_id'] ?? 0) : (int) $val;
+        if ($coId > 0 && $coId === $primaryOrgId) {
+          $form_state->setErrorByName('field_coorganizadores', (string) $this->t('Uma organização não pode ser simultaneamente a organizadora principal e coorganizadora.'));
+        }
+      }
+    }
 
     /** @var \Drupal\aculta_events\Entity\Event $entity */
     $entity = $this->entity;

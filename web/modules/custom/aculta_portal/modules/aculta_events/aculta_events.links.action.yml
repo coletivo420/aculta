@@ -1,0 +1,5 @@
+aculta_events.admin_organization_add:
+  route_name: aculta_events.admin_organization_add
+  title: 'Cadastrar organização'
+  appears_on:
+    - aculta_events.admin_organizations

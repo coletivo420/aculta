@@ -27,6 +27,7 @@ final class EventAdminOverviewController extends ControllerBase {
     $eventCount = 0;
     $dateCount = 0;
     $locationCount = 0;
+    $orgCount = 0;
 
     if ($this->entities->hasDefinition('aculta_event')) {
       $eventCount = (int) $this->entities->getStorage('aculta_event')->getQuery()
@@ -49,13 +50,20 @@ final class EventAdminOverviewController extends ControllerBase {
         ->execute();
     }
 
+    if ($this->entities->hasDefinition('aculta_event_organization')) {
+      $orgCount = (int) $this->entities->getStorage('aculta_event_organization')->getQuery()
+        ->accessCheck(TRUE)
+        ->count()
+        ->execute();
+    }
+
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'events-admin-overview'],
       'intro' => [
         '#type' => 'html_tag',
         '#tag' => 'p',
-        '#value' => (string) $this->t('Gestão centralizada de eventos culturais, sessões/datas e locais do ACULTA.'),
+        '#value' => (string) $this->t('Gestão centralizada de eventos culturais, sessões/datas, locais e organizações do ACULTA.'),
       ],
       'metrics' => [
         '#type' => 'table',
@@ -65,6 +73,7 @@ final class EventAdminOverviewController extends ControllerBase {
           [$this->t('Eventos estruturados'), (string) $eventCount],
           [$this->t('Datas e sessões agendadas'), (string) $dateCount],
           [$this->t('Locais de eventos'), (string) $locationCount],
+          [$this->t('Organizações culturais'), (string) $orgCount],
         ],
       ],
       'quick_actions' => [
@@ -75,6 +84,16 @@ final class EventAdminOverviewController extends ControllerBase {
             '#type' => 'link',
             '#title' => $this->t('Cadastrar novo evento'),
             '#url' => Url::fromRoute('aculta_events.event_add'),
+          ],
+          [
+            '#type' => 'link',
+            '#title' => $this->t('Cadastrar nova organização'),
+            '#url' => Url::fromRoute('aculta_events.admin_organization_add'),
+          ],
+          [
+            '#type' => 'link',
+            '#title' => $this->t('Gerenciar organizações'),
+            '#url' => Url::fromRoute('aculta_events.admin_organizations'),
           ],
           [
             '#type' => 'link',
@@ -114,6 +133,7 @@ final class EventAdminOverviewController extends ControllerBase {
           'aculta_event_list',
           'aculta_event_date_list',
           'aculta_event_location_list',
+          'aculta_event_organization_list',
           'config:aculta_events.settings',
         ],
       ],

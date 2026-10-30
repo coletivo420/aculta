@@ -531,4 +531,86 @@ aculta_events.admin_organizations:
     _admin_route: true
     _aculta_domain_purpose: main
 
+aculta_events.admin_organization_add:
+  path: '/painel-administrativo/eventos/organizacoes/cadastrar'
+  defaults:
+    _entity_form: 'aculta_event_organization.add'
+    _title: 'Cadastrar organização'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+
+aculta_events.admin_organization_edit:
+  path: '/painel-administrativo/eventos/organizacoes/{aculta_event_organization}/editar'
+  defaults:
+    _entity_form: 'aculta_event_organization.edit'
+    _title: 'Editar organização'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_event_organization: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+    parameters:
+      aculta_event_organization:
+        type: entity:aculta_event_organization
+
+aculta_events.admin_organization_members:
+  path: '/painel-administrativo/eventos/organizacoes/{aculta_event_organization}/membros'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationMembersForm'
+    _title: 'Gestão de membros e acessos'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_event_organization: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+    parameters:
+      aculta_event_organization:
+        type: entity:aculta_event_organization
+
+aculta_events.admin_organization_recovery:
+  path: '/painel-administrativo/eventos/organizacoes/{aculta_event_organization}/recuperar'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationRecoveryForm'
+    _title: 'Recuperação administrativa de titularidade'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_event_organization: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+    parameters:
+      aculta_event_organization:
+        type: entity:aculta_event_organization
+
+aculta_events.organization_modal:
+  path: '/painel-administrativo/eventos/organizacoes/modal'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationModalForm'
+    _title: 'Selecionar ou cadastrar organização'
+  requirements:
+    _custom_access: '\Drupal\aculta_events\Form\EventOrganizationModalForm::access'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.organizer_organization_modal:
+  path: '/culturas/organizacoes/modal'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationModalForm'
+    _title: 'Selecionar ou cadastrar organização'
+  requirements:
+    _custom_access: '\Drupal\aculta_events\Form\EventOrganizationModalForm::access'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
 

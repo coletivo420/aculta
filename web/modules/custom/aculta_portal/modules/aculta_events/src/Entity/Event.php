@@ -219,14 +219,14 @@ final class Event extends ContentEntityBase implements EntityOwnerInterface {
     $fields['field_organizacao'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(new TranslatableMarkup('Organização principal'))
       ->setSetting('target_type', 'aculta_event_organization')
-      ->setDisplayOptions('form', ['type' => 'entity_reference_autocomplete', 'weight' => 18])
+      ->setDisplayOptions('form', ['type' => 'aculta_event_organization_modal', 'weight' => 18])
       ->setDisplayConfigurable('form', TRUE);
 
     $fields['field_coorganizadores'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(new TranslatableMarkup('Organizações coorganizadoras'))
       ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
       ->setSetting('target_type', 'aculta_event_organization')
-      ->setDisplayOptions('form', ['type' => 'entity_reference_autocomplete', 'weight' => 19])
+      ->setDisplayOptions('form', ['type' => 'aculta_event_organization_modal', 'weight' => 19])
       ->setDisplayConfigurable('form', TRUE);
 
     // Status do evento: rascunho não aparece no sitemap; cancelado mantém a

@@ -243,10 +243,14 @@ final class EventOrganizationMembersForm extends FormBase {
       }
     }
 
+    $isAdmin = str_contains((string) $this->getRouteMatch()->getRouteName(), 'admin');
+    $backRoute = $isAdmin ? 'aculta_events.admin_organizations' : 'aculta_events.organizer_dashboard';
+    $backTitle = $isAdmin ? $this->t('Voltar às organizações') : $this->t('Voltar ao Studio Culturas');
     $form['back'] = [
       '#type' => 'link',
-      '#title' => $this->t('Voltar ao Studio Culturas'),
-      '#url' => Url::fromRoute('aculta_events.organizer_dashboard'),
+      '#title' => $backTitle,
+      '#url' => Url::fromRoute($backRoute),
+      '#attributes' => ['class' => ['button']],
     ];
 
     return $form;

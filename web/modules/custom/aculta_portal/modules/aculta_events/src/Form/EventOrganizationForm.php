@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Form;
 
-use Drupal\Component\Utility\Html;
+use Drupal\aculta_events\Slug\EventSlugGenerator;
+use Drupal\aculta_user\Organization\OrganizationMembershipManager;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\aculta_events\Entity\EventOrganization;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -16,10 +16,19 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class EventOrganizationForm extends ContentEntityForm {
 
   /**
+   * Gerenciador de membros de organização.
+   */
+  protected ?OrganizationMembershipManager $membershipManager = NULL;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return parent::create($container);
+    $instance = parent::create($container);
+    if ($container->has('aculta_user.organization_membership_manager')) {
+      $instance->membershipManager = $container->get('aculta_user.organization_membership_manager');
+    }
+    return $instance;
   }
 
   /**
@@ -67,10 +76,7 @@ final class EventOrganizationForm extends ContentEntityForm {
     $currentUid = (int) $this->currentUser()->id();
 
     if ($entity->get('field_slug')->isEmpty()) {
-      $slug = Html::cleanCssIdentifier(mb_strtolower((string) $entity->label()));
-      $slug = preg_replace('/[^a-z0-9\-]+/', '-', $slug) ?? 'org';
-      $slug = trim($slug, '-');
-      $entity->set('field_slug', $slug);
+      $entity->set('field_slug', EventSlugGenerator::fromTitle((string) $entity->label()));
     }
 
     if ($isNew) {
@@ -92,15 +98,19 @@ final class EventOrganizationForm extends ContentEntityForm {
     $result = parent::save($form, $form_state);
 
     if ($isNew && $entity->isClaimed() && $currentUid > 0) {
-      if (\Drupal::hasService('aculta_user.organization_membership_manager')) {
-        /** @var \Drupal\aculta_user\Organization\OrganizationMembershipManager $membershipManager */
-        $membershipManager = \Drupal::service('aculta_user.organization_membership_manager');
-        $membershipManager->addMembership($currentUid, (string) $entity->id(), 'owner', 'approved', TRUE, TRUE);
+      if ($this->membershipManager !== NULL) {
+        $this->membershipManager->addMembership($currentUid, (string) $entity->id(), 'owner', 'approved', TRUE, TRUE);
       }
     }
 
     $this->messenger()->addStatus($this->t('Organização %label salva com sucesso.', ['%label' => $entity->label()]));
-    $form_state->setRedirect('aculta_events.organizer_dashboard');
+    $currentRoute = (string) $this->getRouteMatch()->getRouteName();
+    if (str_contains($currentRoute, 'admin')) {
+      $form_state->setRedirect('aculta_events.admin_organizations');
+    }
+    else {
+      $form_state->setRedirect('aculta_events.organizer_dashboard');
+    }
 
     return $result;
   }
