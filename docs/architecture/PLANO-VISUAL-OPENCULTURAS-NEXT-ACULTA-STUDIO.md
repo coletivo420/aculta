@@ -30,9 +30,11 @@
 | **OCS-A1-A4** | Identidade própria Aculta Studio reaproveitando a mesma base SDC; Green Stash segue integrado, fundação mobile-first global permanece | comparação Fidelity/Identity + regressão de todo tema |
 
 **Sequenciamento:** começar por F0+MF0 e corrigir bloqueadores críticos globais antes da homologação visual. Permite trabalho paralelo em stories/tokens quando sem conflito; proíbe declarar F11 se MF3 não passou. Frentes A/B e microcommits continuam valendo. Contratos de interface/rotas de áreas opcionais não são inventados. Quando alteração global afetar outro dono funcional, registrar `Pede-A`. Não exigir uma nova identidade visual OpenCulturas em todo o portal: o **requisito global é mobile-first**, enquanto **a fidelidade visual à marca Next é restrita ao Studio**.
-## Correção normativa 2026-10-29 - Green Stash e cobertura completa
+## Registro histórico de correção — Green Stash e cobertura (2026-10-29; superado)
 
-**Esta correção prevalece sobre a numeração OCS-F0-F10 anterior, inclusive quando repetida nas seções históricas.** Green Stash é uma experiência independente e obrigatória da cobertura visual transversal do Studio, não uma função do Marley ou da Loja pública. Código verificado: `aculta_commerce/src/Experience/GreenStashExperienceProvider.php`, ID `green_stash`, route `aculta_commerce.green_stash`, purpose `account`, ACL `GreenStashAccessPolicy`. A presença do provider **não** significa que todas as operações de loja estejam implementadas: o método `build()` atual ainda fornece mensagem de preparação. Conferir estado da rota e dos consumidores no HEAD antes de marcar implementação.
+**Este registro é mantido para rastreabilidade e não é instrução vigente.** A expressão histórica “experiência independente” está revogada pela retificação vigente no início deste documento: Green Stash é a área comercial integrada ao Aculta Studio. `GreenStashExperienceProvider`, o ID `green_stash` e sua rota são mecanismos técnicos de integração, não justificativa para shell, identidade, plataforma, autenticação, checkout ou navegação global independentes. A numeração vigente é OCS-F0 a OCS-F11 conforme a retificação vigente e a sequência executável abaixo.
+
+Código verificado historicamente: `aculta_commerce/src/Experience/GreenStashExperienceProvider.php`, ID `green_stash`, route `aculta_commerce.green_stash`, purpose `account`, ACL `GreenStashAccessPolicy`. A presença do provider **não** significa que todas as operações de loja estejam implementadas. Conferir estado das rotas e consumers no HEAD antes de marcar implementação.
 
 **Fontes contratuais indispensáveis:** `web/modules/custom/aculta_portal/modules/aculta_commerce/docs/GREEN-STASH-UX-MOBILE-FIRST.md`, `GREEN-STASH-OPERATIONS-CONTRACT.md` e `GREEN-STASH-0.1.0-D.md`. Green Stash usa Commerce, Commerce Stock, Commerce Shipping/Melhor Envio e Statistics nos respectivos estágios; não duplica entities nem usa telas administrativas nativas para operadores. Preservar carrinho/checkout multidomínio, ACL por loja/entidade/operação, formulários próprios em Form API, PT-BR, navegação própria mobile-first dentro do shell do Studio, sem bottom-nav global adicional.
 
@@ -46,7 +48,7 @@
 - **OCS-F5:** Marley e edição editorial.
 - **OCS-F6:** GanjaLab e jornada LMS.
 - **OCS-F7:** WE Sativa e autoria Wiki.
-- **OCS-F8:** **Green Stash** e operações de loja realmente disponíveis. Aplicar layout mobile-first, navegação comercial independente, listagens e estados reais. Auditar produtos/pedidos/estoque/envios/promoções/clientes/relatórios/configurações contra seus marcos GS: **não renderizar operações planejadas como prontas**, não incluir links administrativos de edição, não contornar grants nem duplicar checkout.
+- **OCS-F8:** **Green Stash integrado ao Studio** e operações de loja realmente disponíveis. Aplicar os mesmos padrões visuais/SDC e navegação contextual do Studio às funcionalidades comerciais existentes. Auditar produtos/pedidos/estoque/envios/promoções/clientes/relatórios/configurações contra seus marcos GS: **não renderizar operações planejadas como prontas**, não incluir links administrativos de edição, não contornar grants nem duplicar checkout.
 - **OCS-F9:** Conta privada e Perfil público distintos; S-R4/S-R5 e `/conta-legada`.
 - **OCS-F10:** demais experiências do registry e opções ausentes, com estados honestos.
 - **OCS-F11:** gate de fidelidade transversal, incluindo testes de Green Stash autorizados/não autorizados, ACL loja/produtos/pedidos, mobile 320 px, sem JS, cache por usuário e isolamento de purpose.
@@ -79,11 +81,12 @@ A navegação deve **derivar da disponibilidade/autorização do registry existe
 | **OCS-F5** | Marley: listagens/editor/formulários e estados de publicação | sem mudar ownership editorial |
 | **OCS-F6** | GanjaLab: cursos, turmas, biblioteca, painel, ações de aprendizagem que já existirem | matrícula/grants LMS, limite entre portal público e área do Studio, nenhuma ação simulada |
 | **OCS-F7** | WE Sativa: autoria Wiki, verbetes, revisão e acompanhamento realmente disponíveis | ACL de autoria versus moderação, sem confundir GanjaLab e Wiki |
-| **OCS-F8** | Conta privada e Perfil público como experiências separadas | S-R4/S-R5, `/conta-legada`, foto e privacidade A/B, sem confundir entidades |
-| **OCS-F9** | Outras experiências encontradas em F0, com fallback e ausência de módulo | matriz de paridade fechada para cada provider real; nenhuma aba inventada |
-| **OCS-F10** | Gate transversal de fidelidade, screenshots e testes completos | aprovação antes de começar OCS-A1; nenhum PASS sem execução real |
+| **OCS-F8** | Green Stash como área comercial integrada ao Studio, com UX dos recursos realmente disponíveis | SDCs e navegação contextual compartilhados; sem shell/produtos paralelos, sem fluxo Commerce administrativo para operadores |
+| **OCS-F9** | Conta privada e Perfil público como experiências separadas | S-R4/S-R5, `/conta-legada`, foto e privacidade A/B, sem confundir entidades |
+| **OCS-F10** | Outras experiências encontradas em F0, com fallback e ausência de módulo | matriz de paridade fechada para cada provider real; nenhuma aba inventada |
+| **OCS-F11** | Gate transversal de fidelidade, screenshots e testes completos, dependente de THEME-MF3 | aprovação antes de começar OCS-A1; nenhum PASS sem execução real |
 
-**OCS-F10 substitui OCS-F7 como gate de entrada da Etapa 2.** As fases OCS-A1 a OCS-A4 continuam iguais em propósito, mas sua aplicação e regressão devem abranger **todas as experiências identificadas no F0**, não só hub/Marley/Conta/Perfil.
+**OCS-F11 é o gate de entrada da Etapa 2.** As fases OCS-A1 a OCS-A4 continuam iguais em propósito, mas sua aplicação e regressão devem abranger **todas as experiências identificadas no F0**, inclusive Green Stash integrado, e todos os purposes afetados pela fundação mobile-first.
 
 ### Matriz de aceite por experiência
 
@@ -137,13 +140,13 @@ F0–F3 podem avançar em documentação, CSS e histórias enquanto S-R4/S-R5 ag
 
 ## 5. Etapa 2: OCS-A - ACULTA Identity
 
-Somente após F7 aprovada. Não duplicar controllers, rotas, caches, formulários ou SDCs.
+Somente após **THEME-MF3 e OCS-F11 aprovados**. Não duplicar controllers, rotas, caches, formulários ou SDCs. Aplicar a identidade a todas as áreas do Studio, incluindo Green Stash integrado, sobre os mesmos contratos e componentes da Etapa 1.
 
 | Fase | Entrega | Aceite |
 | --- | --- | --- |
 | **A1** | retokenização institucional (verde-escuro, verde, amarelo, vermelho conforme decisões, superfície claro/escuro) | contraste e sem perda de hierarquia |
 | **A2** | acabamento próprio de cards, ícones, campos, alertas, navegação e tipografia | mesmos contratos/consumers, stories equivalentes |
-| **A3** | identidade visual do Studio no dashboard, editor, Conta e Perfil | benchmark lado a lado Fidelity × Identity, sem mudança funcional |
+| **A3** | identidade visual do Studio inteiro, incluindo dashboard, Marley, GanjaLab, WE Sativa, Green Stash, Conta, Perfil e demais áreas inventariadas | benchmark lado a lado Fidelity × Identity, sem mudança funcional |
 | **A4** | remover estilos temporários, consolidar biblioteca, licença e documentação | CI, lint, teste visual, gate de regressão sem overrides mortos |
 
 **Separação de implementação:** preferir arquivo de fundação e variantes escopadas Fidelity/Identity dentro do mecanismo existente de libraries/tokens do tema, evitando inventar nomes de bibliotecas ou variáveis antes de auditar o repositório.
@@ -161,4 +164,4 @@ Somente após F7 aprovada. Não duplicar controllers, rotas, caches, formulário
 
 Branch única existente: `refactor/opencultures-codigo-visual`, PR [#299](https://github.com/coletivo420/aculta/pull/299). Um microcommit por fase, `git add` específico e `git pull --rebase` antes de publicar, push fast-forward. Frente visual edita `web/themes/custom/aculta420/**`, templates/CSS/JS/blocos autorizados e documentação de seu assunto; PHP/rotas/serviços ficam com a frente de código e exigem handoff. Não alterar trabalho de outros agentes, nem mergear a PR. Bloqueio de integração deve ser descrito, sem contorno fictício.
 
-**Estado inicial:** plano aprovado, implementação **não iniciada por este documento**, evidência de Runtime pendente.
+**Status deste documento:** especificação normativa; o andamento e as evidências de cada microfase ficam registrados nos roadmaps e matrizes vinculados. A existência do plano não significa que qualquer gate tenha sido aprovado.
