@@ -92,7 +92,7 @@ final class EventLocationModalForm extends FormBase {
 
     $form['search_bar'] = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['container-inline', 'mb-3']],
+      '#attributes' => ['data-portal-ui' => 'event-location-search-bar'],
     ];
 
     $form['search_bar']['search_term'] = [
@@ -163,7 +163,7 @@ final class EventLocationModalForm extends FormBase {
             '#ajax' => [
               'callback' => '::ajaxSelectLocation',
             ],
-            '#attributes' => ['class' => ['button', 'button--small', 'button--primary']],
+            '#attributes' => ['data-portal-ui' => 'event-location-button-primary-small'],
           ],
         ],
       ];
@@ -193,7 +193,7 @@ final class EventLocationModalForm extends FormBase {
           'wrapper' => 'aculta-location-modal-form-wrapper',
         ],
         '#limit_validation_errors' => [],
-        '#attributes' => ['class' => ['button', 'button--action']],
+        '#attributes' => ['data-portal-ui' => 'event-location-button-action'],
       ],
       'cancel' => [
         '#type' => 'button',
@@ -206,7 +206,7 @@ final class EventLocationModalForm extends FormBase {
   }
 
   /**
-   * Constrói o passo de cadastro de novo local iniciando pelo endereço brasileiro.
+   * Constrói o passo de cadastro do endereço brasileiro.
    */
   private function buildCreateStep(array &$form, FormStateInterface $form_state): void {
     $form['intro'] = [
@@ -259,7 +259,7 @@ final class EventLocationModalForm extends FormBase {
         '#ajax' => [
           'callback' => '::ajaxCreateLocation',
         ],
-        '#attributes' => ['class' => ['button', 'button--primary']],
+        '#attributes' => ['data-portal-ui' => 'event-location-button-primary'],
       ],
       'back_to_search' => [
         '#type' => 'submit',
@@ -271,7 +271,7 @@ final class EventLocationModalForm extends FormBase {
           'wrapper' => 'aculta-location-modal-form-wrapper',
         ],
         '#limit_validation_errors' => [],
-        '#attributes' => ['class' => ['button', 'button--secondary']],
+        '#attributes' => ['data-portal-ui' => 'event-location-button-secondary'],
       ],
       'cancel' => [
         '#type' => 'button',
@@ -395,7 +395,7 @@ final class EventLocationModalForm extends FormBase {
   }
 
   /**
-   * AJAX callback para confirmar a seleção de local existente e atualizar o pai.
+   * AJAX callback para selecionar local e atualizar o formulário pai.
    */
   public function ajaxSelectLocation(array &$form, FormStateInterface $form_state): AjaxResponse {
     $locationId = (int) $form_state->get('selected_location_id');
@@ -414,7 +414,7 @@ final class EventLocationModalForm extends FormBase {
   }
 
   /**
-   * Constrói a resposta AJAX comum que fecha o modal e atualiza o widget no formulário pai.
+   * Constrói resposta AJAX que fecha o modal e atualiza o formulário pai.
    */
   private function buildUpdateParentResponse(int $locationId, string $fieldName): AjaxResponse {
     $response = new AjaxResponse();

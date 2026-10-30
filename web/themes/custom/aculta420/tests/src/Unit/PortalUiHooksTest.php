@@ -279,6 +279,29 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
+   * Event location tokens map to the original theme classes and preserve AJAX.
+   */
+  public function testEventLocationTokensMapClassesAndKeepAjaxBehavior(): void {
+    $variables = [
+      'element' => [
+        '#attributes' => [
+          'data-portal-ui' => 'event-location-button-primary event-location-button-danger',
+          'class' => ['use-ajax'],
+        ],
+      ],
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    $attributes = $variables['element']['#attributes'];
+    self::assertArrayNotHasKey('data-portal-ui', $attributes);
+    self::assertContains('button', $attributes['class']);
+    self::assertContains('button--primary', $attributes['class']);
+    self::assertContains('button--danger', $attributes['class']);
+    self::assertContains('use-ajax', $attributes['class']);
+  }
+
+  /**
    * Messenger notice filters and empty state receive theme classes.
    */
   public function testMapsMessengerNoticeFilterAndEmptyStateTokens(): void {

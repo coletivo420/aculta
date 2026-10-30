@@ -71,12 +71,12 @@ final class EventCatalogueController extends ControllerBase {
     if ($this->entityTypeManager()->getAccessControlHandler('aculta_event')->createAccess(NULL, $this->currentUser())) {
       $itens[] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['actions-bar', 'my-3']],
+        '#attributes' => ['data-portal-ui' => 'event-catalogue-actions-bar'],
         'add_btn' => [
           '#type' => 'link',
           '#title' => $this->t('+ Cadastrar novo evento'),
           '#url' => Url::fromRoute('aculta_events.event_add'),
-          '#attributes' => ['class' => ['button', 'button--primary', 'button--action']],
+          '#attributes' => ['data-portal-ui' => 'event-location-button-primary-action'],
         ],
       ];
     }

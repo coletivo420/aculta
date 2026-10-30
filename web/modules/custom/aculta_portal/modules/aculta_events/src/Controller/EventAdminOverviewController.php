@@ -51,7 +51,7 @@ final class EventAdminOverviewController extends ControllerBase {
 
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-events-admin-overview']],
+      '#attributes' => ['data-portal-ui' => 'events-admin-overview'],
       'intro' => [
         '#type' => 'html_tag',
         '#tag' => 'p',

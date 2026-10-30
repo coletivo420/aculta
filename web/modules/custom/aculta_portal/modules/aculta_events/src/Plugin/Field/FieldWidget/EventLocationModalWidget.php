@@ -55,7 +55,7 @@ final class EventLocationModalWidget extends WidgetBase {
   public static function buildCardOrEmpty(int $targetId, string $fieldName, string $wrapperId): array {
     $element = [];
 
-    // Campo oculto que guarda o target_id para a submissão regular do formulário pai.
+    // Guarda o target_id para a submissão regular do formulário pai.
     $element['target_id'] = [
       '#type' => 'hidden',
       '#value' => $targetId > 0 ? (string) $targetId : '',
@@ -97,24 +97,24 @@ final class EventLocationModalWidget extends WidgetBase {
 
         $element['summary'] = [
           '#type' => 'container',
-          '#attributes' => ['class' => ['aculta-location-summary-card', 'card', 'p-3', 'my-2']],
+          '#attributes' => ['data-portal-ui' => 'event-location-summary-card'],
           'title' => [
             '#type' => 'html_tag',
             '#tag' => 'h4',
             '#value' => (string) $location->label(),
-            '#attributes' => ['class' => ['aculta-location-title', 'h5', 'mb-1']],
+            '#attributes' => ['data-portal-ui' => 'event-location-title'],
           ],
           'address' => [
             '#type' => 'html_tag',
             '#tag' => 'p',
             '#value' => $enderecoStr !== '' ? $enderecoStr : (string) t('Endereço não informado.'),
-            '#attributes' => ['class' => ['aculta-location-address', 'text-muted', 'mb-2']],
+            '#attributes' => ['data-portal-ui' => 'event-location-address'],
           ],
           'badge' => [
             '#type' => 'html_tag',
             '#tag' => 'span',
             '#value' => (string) $statusLabel,
-            '#attributes' => ['class' => ['aculta-location-badge', 'badge', $isPublic ? 'badge--success' : 'badge--warning']],
+            '#attributes' => ['data-portal-ui' => 'event-location-badge ' . ($isPublic ? 'event-location-badge-public' : 'event-location-badge-draft')],
           ],
         ];
 
@@ -130,7 +130,8 @@ final class EventLocationModalWidget extends WidgetBase {
             '#title' => t('Trocar local'),
             '#url' => $modalUrl,
             '#attributes' => [
-              'class' => ['button', 'button--secondary', 'use-ajax'],
+              'class' => ['use-ajax'],
+              'data-portal-ui' => 'event-location-button-secondary',
               'data-dialog-type' => 'modal',
               'data-dialog-options' => json_encode(['width' => 720]),
             ],
@@ -144,7 +145,7 @@ final class EventLocationModalWidget extends WidgetBase {
               'wrapper' => $wrapperId,
             ],
             '#attributes' => [
-              'class' => ['button', 'button--danger'],
+              'data-portal-ui' => 'event-location-button-danger',
             ],
           ],
         ];
@@ -161,7 +162,8 @@ final class EventLocationModalWidget extends WidgetBase {
           '#title' => t('Selecionar outro local'),
           '#url' => $modalUrl,
           '#attributes' => [
-            'class' => ['button', 'button--primary', 'use-ajax'],
+            'class' => ['use-ajax'],
+            'data-portal-ui' => 'event-location-button-primary',
             'data-dialog-type' => 'modal',
             'data-dialog-options' => json_encode(['width' => 720]),
           ],
@@ -175,7 +177,7 @@ final class EventLocationModalWidget extends WidgetBase {
 
       $element['empty_state'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-location-empty', 'my-2']],
+        '#attributes' => ['data-portal-ui' => 'event-location-empty'],
         'message' => [
           '#type' => 'html_tag',
           '#tag' => 'p',
@@ -186,7 +188,8 @@ final class EventLocationModalWidget extends WidgetBase {
           '#title' => t('Selecionar ou cadastrar local'),
           '#url' => $modalUrl,
           '#attributes' => [
-            'class' => ['button', 'button--primary', 'use-ajax'],
+            'class' => ['use-ajax'],
+            'data-portal-ui' => 'event-location-button-primary',
             'data-dialog-type' => 'modal',
             'data-dialog-options' => json_encode(['width' => 720]),
           ],
@@ -194,7 +197,7 @@ final class EventLocationModalWidget extends WidgetBase {
         'fallback' => [
           '#type' => 'html_tag',
           '#tag' => 'p',
-          '#attributes' => ['class' => ['description', 'mt-1']],
+          '#attributes' => ['data-portal-ui' => 'event-location-fallback'],
           '#value' => '<a href="' . Url::fromRoute('aculta_events.location_add')->toString() . '" target="_blank" rel="noopener">' . t('Adicionar local em uma nova aba (sem JS)') . '</a>',
         ],
       ];

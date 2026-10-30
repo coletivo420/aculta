@@ -79,7 +79,7 @@ final class LocationListController extends ControllerBase {
 
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-locations-list-page']],
+      '#attributes' => ['data-portal-ui' => 'event-locations-list-page'],
       '#cache' => [
         'contexts' => ['url.query_args', 'user.permissions'],
         'tags' => ['aculta_event_location_list'],
@@ -91,12 +91,12 @@ final class LocationListController extends ControllerBase {
     if ($this->entityTypeManager()->getAccessControlHandler('aculta_event_location')->createAccess(NULL, $this->currentUser())) {
       $build['top_actions'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['actions-bar', 'mb-3']],
+        '#attributes' => ['data-portal-ui' => 'event-location-actions-bar'],
         'add_btn' => [
           '#type' => 'link',
           '#title' => $this->t('+ Cadastrar local'),
           '#url' => Url::fromRoute('aculta_events.location_add'),
-          '#attributes' => ['class' => ['button', 'button--primary', 'button--action']],
+          '#attributes' => ['data-portal-ui' => 'event-location-button-primary-action'],
         ],
       ];
     }

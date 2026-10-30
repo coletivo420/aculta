@@ -69,7 +69,7 @@ final class LocationPageController extends ControllerBase {
 
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-location-page']],
+      '#attributes' => ['data-portal-ui' => 'event-location-page'],
       '#cache' => [
         'tags' => $aculta_event_location->getCacheTags(),
         'contexts' => ['user.permissions'],
@@ -78,7 +78,7 @@ final class LocationPageController extends ControllerBase {
 
     $build['header'] = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-location-header']],
+      '#attributes' => ['data-portal-ui' => 'event-location-header'],
       'title' => [
         '#type' => 'html_tag',
         '#tag' => 'h1',
@@ -91,21 +91,21 @@ final class LocationPageController extends ControllerBase {
         '#type' => 'html_tag',
         '#tag' => 'span',
         '#value' => Html::escape($tipoLabel),
-        '#attributes' => ['class' => ['badge', 'badge-location-type']],
+        '#attributes' => ['data-portal-ui' => 'event-location-type-badge'],
       ];
     }
 
     if ($aculta_event_location->access('update', $this->currentUser())) {
       $build['header']['actions'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['location-actions', 'mt-2', 'mb-3']],
+        '#attributes' => ['data-portal-ui' => 'event-location-actions'],
         'edit_link' => [
           '#type' => 'link',
           '#title' => $this->t('Editar este local'),
           '#url' => Url::fromRoute('aculta_events.location_edit', [
             'aculta_event_location' => $aculta_event_location->id(),
           ]),
-          '#attributes' => ['class' => ['button', 'button--secondary', 'button--small']],
+          '#attributes' => ['data-portal-ui' => 'event-location-button-secondary-small'],
         ],
       ];
     }
@@ -161,12 +161,12 @@ final class LocationPageController extends ControllerBase {
     if ($aculta_event_location->access('update', $this->currentUser())) {
       $build['actions'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['location-admin-actions']],
+        '#attributes' => ['data-portal-ui' => 'event-location-admin-actions'],
         'edit' => [
           '#type' => 'link',
           '#title' => $this->t('Editar local'),
           '#url' => Url::fromRoute('aculta_events.location_edit', ['aculta_event_location' => $aculta_event_location->id()]),
-          '#attributes' => ['class' => ['button', 'button--action']],
+          '#attributes' => ['data-portal-ui' => 'event-location-button-action'],
         ],
       ];
     }
@@ -194,7 +194,7 @@ final class LocationPageController extends ControllerBase {
     if (empty($dateIds)) {
       return [
         '#type' => 'container',
-        '#attributes' => ['class' => ['location-agenda']],
+        '#attributes' => ['data-portal-ui' => 'event-location-agenda'],
         'title' => [
           '#type' => 'html_tag',
           '#tag' => 'h2',
@@ -254,7 +254,7 @@ final class LocationPageController extends ControllerBase {
 
     return [
       '#type' => 'container',
-      '#attributes' => ['class' => ['location-agenda']],
+      '#attributes' => ['data-portal-ui' => 'event-location-agenda'],
       'title' => [
         '#type' => 'html_tag',
         '#tag' => 'h2',

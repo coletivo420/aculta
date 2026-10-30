@@ -69,7 +69,7 @@ final class EventLocationDeleteForm extends ContentEntityConfirmFormBase {
             '#type' => 'link',
             '#title' => $this->t('Voltar'),
             '#url' => $this->getCancelUrl(),
-            '#attributes' => ['class' => ['button']],
+            '#attributes' => ['data-portal-ui' => 'button'],
           ],
         ],
       ];
