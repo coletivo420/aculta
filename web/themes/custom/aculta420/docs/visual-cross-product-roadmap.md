@@ -919,6 +919,13 @@ candidata nas dez homes e em 320/390px. Todas mantiveram Institution Bar
 após o reparo do hook e cache rebuild, passou nos dois tamanhos. A tentativa
 autenticada segue inconclusiva: a sessão ULI não foi estabelecida. Evidências
 em `/home/piradopirata/aculta-suite-out/institution-bar-scroll-anonymous-3c1691fc5/`.
+Para investigar o relato intermitente de deslocamento anônimo, MAIN foi
+repetido três vezes com CSS e JS candidatos em 320/390px: 36/36 checks
+passaram. Em cada rodada, a barra permaneceu no fluxo inicial e colada em
+`top: 0` após scroll 80/240/480px, sem toolbar, salto ou overflow. Evidências
+privadas: `/home/piradopirata/aculta-suite-out/institution-bar-anonymous-repeat-{1,2,3}/`.
+O defeito não foi reproduzido nestas repetições focais; isso não elimina falhas
+raras nem testa a interação autenticada com a toolbar.
 Ainda falta homologar navegação e shell autenticados, teclado/zoom/modos/AA;
 THEME-MF3 não aprovado.
 
