@@ -43,10 +43,9 @@ final class EventLocationModalForm extends FormBase {
    * Controle de acesso à rota do modal.
    */
   public function access(AccountInterface $account): AccessResult {
-    $policy = \Drupal::service('aculta_events.permission_policy');
     $canManage = $account->hasPermission('administer aculta events')
-      || $policy->canCreateLocation($account)
-      || $policy->canCreateEvent($account);
+      || $this->permissionPolicy->canCreateLocation($account)
+      || $this->permissionPolicy->canCreateEvent($account);
 
     return AccessResult::allowedIf($canManage)
       ->cachePerPermissions()

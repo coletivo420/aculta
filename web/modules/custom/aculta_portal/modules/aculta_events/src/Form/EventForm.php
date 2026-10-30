@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Form;
 
-use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Event\EventDateListBuilder;
@@ -13,7 +12,6 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Url;
 use Drupal\aculta_events\Route\EventRouteContext;
 
 /**
@@ -270,23 +268,6 @@ final class EventForm extends ContentEntityForm {
     }
 
     return $status;
-  }
-
-  /**
-   * Formata um valor UTC armazenado no fuso do site para exibição.
-   */
-  private function formatDate(?string $value): string {
-    if ($value === NULL || $value === '') {
-      return '';
-    }
-    try {
-      return (new \DateTimeImmutable($value, new \DateTimeZone('UTC')))
-        ->setTimezone(new \DateTimeZone(date_default_timezone_get()))
-        ->format('d/m/Y H:i');
-    }
-    catch (\Exception) {
-      return $value;
-    }
   }
 
   /**

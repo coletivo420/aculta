@@ -218,7 +218,6 @@ final class EventOrganizerDashboardController extends ControllerBase {
         '#title' => $this->t('Como organizar eventos no ACULTA Studio Culturas (Guia rápido)'),
         '#open' => empty($rows) && !$hasFilters,
         '#attributes' => [
-          'class' => ['culturas-guide'],
           'data-portal-ui' => 'event-organizer-guide',
         ],
         'steps' => [
@@ -240,7 +239,6 @@ final class EventOrganizerDashboardController extends ControllerBase {
       'filters' => [
         '#type' => 'container',
         '#attributes' => [
-          'class' => ['organizer-dashboard-filters'],
           'data-portal-ui' => 'event-organizer-filters',
         ],
         'form' => [
@@ -249,7 +247,7 @@ final class EventOrganizerDashboardController extends ControllerBase {
           '#attributes' => [
             'method' => 'get',
             'action' => Url::fromRoute('aculta_events.organizer_dashboard')->toString(),
-            'class' => ['form--inline', 'clearfix'],
+            'data-portal-ui' => 'event-organizer-filter-form',
           ],
           'busca' => [
             '#type' => 'textfield',
@@ -279,7 +277,7 @@ final class EventOrganizerDashboardController extends ControllerBase {
             '#value' => $this->t('Filtrar'),
             '#attributes' => [
               'type' => 'submit',
-              'class' => ['button', 'button--secondary'],
+              'data-portal-ui' => 'button-secondary',
             ],
           ],
         ],
@@ -308,7 +306,7 @@ final class EventOrganizerDashboardController extends ControllerBase {
         '#type' => 'link',
         '#title' => $this->t('Limpar filtros'),
         '#url' => Url::fromRoute('aculta_events.organizer_dashboard'),
-        '#attributes' => ['class' => ['button', 'button--ghost']],
+        '#attributes' => ['data-portal-ui' => 'button-ghost'],
       ];
     }
 

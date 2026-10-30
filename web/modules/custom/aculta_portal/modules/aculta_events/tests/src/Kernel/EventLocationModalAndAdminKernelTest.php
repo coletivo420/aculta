@@ -8,8 +8,6 @@ use Drupal\aculta_events\Controller\EventAdminOverviewController;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\EventSubscriber\ActivityRetiredRouteSubscriber;
-use Drupal\aculta_events\Form\EventForm;
-use Drupal\aculta_events\Form\EventLocationForm;
 use Drupal\aculta_events\Form\EventLocationModalForm;
 use Drupal\aculta_events\Hook\ActivityRetirementHooks;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
@@ -17,8 +15,6 @@ use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -28,7 +24,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
- * Testes integrados para o painel administrativo de eventos, exclusão de atividades e modal de locais.
+ * Testes integrados de Eventos.
+ *
+ * Cobrem administração, remoção de atividades legadas e modal de Locais.
  */
 #[Group('aculta_events')]
 #[RunTestsInSeparateProcesses]
@@ -57,7 +55,14 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     'aculta_events',
   ];
 
+  /**
+   * Administrador sintético do teste.
+   */
   private User $adminUser;
+
+  /**
+   * Usuário comum sintético do teste.
+   */
   private User $regularUser;
 
   /**
@@ -90,24 +95,6 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     $this->regularUser->save();
 
     $this->container->get('current_user')->setAccount($this->adminUser);
-  }
-
-  private function createField(string $entityType, string $bundle, string $fieldName, string $type): void {
-    if (!FieldStorageConfig::loadByName($entityType, $fieldName)) {
-      FieldStorageConfig::create([
-        'field_name' => $fieldName,
-        'entity_type' => $entityType,
-        'type' => $type,
-      ])->save();
-    }
-    if (!FieldConfig::loadByName($entityType, $bundle, $fieldName)) {
-      FieldConfig::create([
-        'field_name' => $fieldName,
-        'entity_type' => $entityType,
-        'bundle' => $bundle,
-        'label' => $fieldName,
-      ])->save();
-    }
   }
 
   /**
@@ -147,7 +134,7 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
   }
 
   /**
-   * Valida remoção de campos de endereço do EventForm e preservação do local_id.
+   * Valida remoção de campos de endereço e preservação do local_id.
    */
   public function testEventFormAddressRemoval(): void {
     $location = EventLocation::create([
@@ -174,7 +161,7 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
   }
 
   /**
-   * Valida que rotas legadas de atividade (/node/add/activity) respondem 404 e são bloqueadas.
+   * Valida que a rota legada /node/add/activity responde 404.
    */
   public function testActivityRouteIsRetiredAndBlocked(): void {
     $request = Request::create('/node/add/activity');
@@ -187,7 +174,7 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
   }
 
   /**
-   * Valida que o link legado de criação de atividade é removido do menu Criar e eventos são adicionados.
+   * Valida a remoção do link de atividade e os novos links de Eventos.
    */
   public function testActivityNavigationLinkRemoved(): void {
     $hooks = new ActivityRetirementHooks();
@@ -208,7 +195,7 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
   }
 
   /**
-   * Valida renderização do painel administrativo de eventos (somente eventos, datas e locais).
+   * Valida a renderização do painel administrativo de Eventos.
    */
   public function testEventAdminOverviewController(): void {
     $controller = new EventAdminOverviewController($this->container->get('entity_type.manager'));
@@ -269,25 +256,25 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     $modalForm->submitClearSearch($formSearchByCity, $formStateByCity);
     self::assertSame('', $formStateByCity->get('search_term'));
 
-    // Selecionar existente
+    // Selecionar existente.
     $formStateSearch->set('selected_location_id', (int) $existing->id());
     $formStateSearch->set('field_name', 'field_event_location');
     $ajaxResponse = $modalForm->ajaxSelectLocation($formSearch, $formStateSearch);
 
     $commands = $ajaxResponse->getCommands();
     self::assertNotEmpty($commands);
-    $closeFound = false;
-    $replaceFound = false;
-    $invokeFound = false;
+    $closeFound = FALSE;
+    $replaceFound = FALSE;
+    $invokeFound = FALSE;
     foreach ($commands as $cmd) {
       if ($cmd instanceof CloseModalDialogCommand || ($cmd['command'] ?? '') === 'closeDialog') {
-        $closeFound = true;
+        $closeFound = TRUE;
       }
       if ($cmd instanceof ReplaceCommand || ($cmd['command'] ?? '') === 'insert') {
-        $replaceFound = true;
+        $replaceFound = TRUE;
       }
       if ($cmd instanceof InvokeCommand || ($cmd['command'] ?? '') === 'invoke') {
-        $invokeFound = true;
+        $invokeFound = TRUE;
       }
     }
     self::assertTrue($closeFound);
