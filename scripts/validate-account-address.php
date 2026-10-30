@@ -13,6 +13,9 @@
  */
 
 $root = dirname(__DIR__);
+if (file_exists($root . '/vendor/autoload.php')) {
+  require_once $root . '/vendor/autoload.php';
+}
 $failures = 0;
 
 $check = static function (bool $ok, string $message) use (&$failures): void {
@@ -152,6 +155,48 @@ $check(
 $check(
   str_contains($form, "['postal_code']['#weight'] = -50") && str_contains($form, "['address_line1']['#weight'] = -40"),
   'AccountAddressForm: CEP priorizado no servidor como primeiro campo visível',
+);
+
+// Formulário institucional (block_content.aculta_institution):
+// O CEP (field_postal_code) deve anteceder rigorosamente todos os campos de endereço visíveis,
+// inclusive o campo geral textual de endereço (field_address). Um campo antes do CEP faz o gate falhar.
+$institutionFormYaml = $read('config/sync/core.entity_form_display.block_content.aculta_institution.default.yml');
+$instData = class_exists(\Symfony\Component\Yaml\Yaml::class) ? \Symfony\Component\Yaml\Yaml::parse($institutionFormYaml) : [];
+$instContent = $instData['content'] ?? [];
+$postalWeight = $instContent['field_postal_code']['weight'] ?? NULL;
+$institutionOrderOk = ($postalWeight !== NULL);
+$failedAddressFields = [];
+foreach (['field_address', 'field_street_address', 'field_locality', 'field_address_region', 'field_country'] as $addrField) {
+  if (isset($instContent[$addrField]['weight']) && (float) $instContent[$addrField]['weight'] <= (float) $postalWeight) {
+    $institutionOrderOk = FALSE;
+    $failedAddressFields[] = "$addrField (peso {$instContent[$addrField]['weight']} <= {$postalWeight})";
+  }
+}
+$check(
+  $institutionOrderOk,
+  'config: formulário institucional coloca field_postal_code antes de todos os campos de endereço (incluindo field_address)'
+    . ($failedAddressFields ? ': ' . implode(', ', $failedAddressFields) : ''),
+);
+
+// Separação estrita entre ordem de formulário (CEP primeiro) e ordem de exibição (convencional: CEP ao final).
+$locationCatalogue = $read('web/modules/custom/aculta_portal/modules/aculta_events/src/Catalogue/LocationCatalogue.php');
+$modalWidget = $read('web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventLocationModalWidget.php');
+$institutionViewDisplay = $read('config/sync/core.entity_view_display.block_content.aculta_institution.default.yml');
+$partesPos = strpos($locationCatalogue, '$partes = array_filter([');
+$catAddressPos = $partesPos !== FALSE ? strpos($locationCatalogue, 'address_line1', $partesPos) : FALSE;
+$catCepPos = $partesPos !== FALSE ? strpos($locationCatalogue, 'cepFormatado', $partesPos) : FALSE;
+$catalogueOrderOk = ($partesPos !== FALSE && $catAddressPos !== FALSE && $catCepPos !== FALSE && $catAddressPos < $catCepPos);
+
+$widgetPartsPos = strpos($modalWidget, '$parts = array_filter([');
+$widgetAddressPos = $widgetPartsPos !== FALSE ? strpos($modalWidget, 'address_line1', $widgetPartsPos) : FALSE;
+$widgetPostalPos = $widgetPartsPos !== FALSE ? strpos($modalWidget, 'postal_code', $widgetPartsPos) : FALSE;
+$widgetOrderOk = ($widgetPartsPos !== FALSE && $widgetAddressPos !== FALSE && $widgetPostalPos !== FALSE && $widgetAddressPos < $widgetPostalPos);
+
+$institutionViewOk = (bool) preg_match('/hidden:\n(?:.*\n)*?  field_postal_code: true\n/', $institutionViewDisplay);
+
+$check(
+  $catalogueOrderOk && $widgetOrderOk && $institutionViewOk,
+  'separação estrita: formulários têm CEP primeiro, mas exibição preserva ordem convencional (CEP ao final)',
 );
 
 // ADR-034 e instrução de agentes presentes.

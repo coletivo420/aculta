@@ -103,11 +103,6 @@ final class EventAdminOverviewController extends ControllerBase {
           ],
           [
             '#type' => 'link',
-            '#title' => $this->t('Cadastrar atividade editorial'),
-            '#url' => Url::fromRoute('node.add', ['node_type' => 'activity']),
-          ],
-          [
-            '#type' => 'link',
             '#title' => $this->t('Exportar eventos (CSV)'),
             '#url' => Url::fromRoute('aculta_events.admin_export'),
           ],

@@ -263,7 +263,7 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     self::assertArrayHasKey('metrics', $build);
     self::assertArrayHasKey('quick_actions', $build);
     self::assertCount(4, $build['metrics']['#rows']);
-    self::assertCount(8, $build['quick_actions']['#items']);
+    self::assertCount(7, $build['quick_actions']['#items']);
   }
 
   /**

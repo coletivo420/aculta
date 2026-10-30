@@ -207,4 +207,28 @@ final class AccountAddressFormTest extends UnitTestCase {
     $this->assertLessThan($finished['container6']['#weight'], $finished['dependent_locality']['#weight']);
   }
 
+  /**
+   * Tests finish callback hides personal name and redundant complement fields.
+   */
+  public function testFinishSuppressesPersonalNameAndRedundantComplementLine(): void {
+    $element = [
+      'given_name' => ['#title' => 'Nome'],
+      'family_name' => ['#title' => 'Sobrenome'],
+      'additional_name' => ['#title' => 'Nome do meio'],
+      'organization' => ['#title' => 'Organização'],
+      'address_line1' => ['#title' => 'Endereço'],
+      'address_line2' => ['#title' => 'Complemento'],
+      'address_line3' => ['#title' => 'Logradouro, linha 3'],
+    ];
+
+    $finished = AccountAddressForm::finish($element);
+
+    $this->assertFalse($finished['given_name']['#access']);
+    $this->assertFalse($finished['family_name']['#access']);
+    $this->assertFalse($finished['additional_name']['#access']);
+    $this->assertFalse($finished['organization']['#access']);
+    $this->assertFalse($finished['address_line3']['#access']);
+    $this->assertTrue($finished['address_line2']['#access'] ?? TRUE);
+  }
+
 }

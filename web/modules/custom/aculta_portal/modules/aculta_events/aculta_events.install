@@ -377,3 +377,54 @@ function aculta_events_update_10008(): string {
 
   return 'Campo field_event_location instalado com sucesso em node:activity.';
 }
+
+/**
+ * Atualiza os displays de formulário e exibição de node:activity para field_event_location (LOC-05).
+ */
+function aculta_events_update_10009(): string {
+  $entityTypeManager = \Drupal::entityTypeManager();
+  if (!$entityTypeManager->hasDefinition('entity_form_display') || !$entityTypeManager->hasDefinition('node')) {
+    return 'Entity display ou node não disponíveis.';
+  }
+
+  /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface|null $formDisplay */
+  $formDisplay = $entityTypeManager->getStorage('entity_form_display')->load('node.activity.default');
+  if ($formDisplay !== NULL) {
+    $formDisplay->setComponent('field_event_location', [
+      'type' => 'aculta_event_location_modal',
+      'weight' => 15,
+      'region' => 'content',
+      'settings' => [],
+      'third_party_settings' => [],
+    ]);
+    foreach ([
+      'field_place_name',
+      'field_event_street',
+      'field_event_postal',
+      'field_event_region',
+      'field_event_city',
+      'field_event_country',
+    ] as $fieldName) {
+      $formDisplay->removeComponent($fieldName);
+    }
+    $formDisplay->save();
+  }
+
+  /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface|null $viewDisplay */
+  $viewDisplay = $entityTypeManager->getStorage('entity_view_display')->load('node.activity.default');
+  if ($viewDisplay !== NULL) {
+    $viewDisplay->setComponent('field_event_location', [
+      'type' => 'entity_reference_label',
+      'label' => 'above',
+      'weight' => 15,
+      'region' => 'content',
+      'settings' => [
+        'link' => TRUE,
+      ],
+      'third_party_settings' => [],
+    ]);
+    $viewDisplay->save();
+  }
+
+  return 'Displays de formulário e exibição de node:activity atualizados com field_event_location.';
+}

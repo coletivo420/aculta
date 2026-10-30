@@ -23,6 +23,9 @@ services:
       - '@entity_type.manager'
       - '@?aculta_index.work_manager'
       - '@?aculta_index.provider_registry'
+  Drupal\aculta_events\Hook\ActivityLocationFormHooks:
+    class: Drupal\aculta_events\Hook\ActivityLocationFormHooks
+    autowire: true
   aculta_events.event_filter:
     class: Drupal\aculta_events\Agenda\EventFilter
   aculta_events.item_provider:

@@ -184,14 +184,14 @@ final class EventCatalogueKernelTest extends KernelTestBase {
     $this->assertContains('user.permissions', $page['#cache']['contexts']);
     $adminMarkup = $page['#datas'][0]['#markup'];
     $id = (string) $data->id();
-    $this->assertStringContainsString('/eventos/datas/' . $id . '/recorrencia', $adminMarkup);
-    $this->assertStringContainsString('/eventos/datas/' . $id . '/ocorrencia/' . $inicio->getTimestamp(), $adminMarkup);
+    $this->assertStringContainsString('/painel-administrativo/eventos/datas/' . $id . '/recorrencia', $adminMarkup);
+    $this->assertStringContainsString('/painel-administrativo/eventos/datas/' . $id . '/ocorrencia/' . $inicio->getTimestamp(), $adminMarkup);
     $this->assertStringContainsString('Editar recorrência', $adminMarkup);
     $this->assertStringContainsString('Editar esta ocorrência', $adminMarkup);
 
     $this->container->get('current_user')->setAccount(new UserSession(['uid' => 0]));
     $publicPage = EventPageController::create($this->container)->page('oficina-recorrente');
-    $this->assertStringNotContainsString('/eventos/datas/' . $id . '/recorrencia', $publicPage['#datas'][0]['#markup']);
+    $this->assertStringNotContainsString('/painel-administrativo/eventos/datas/' . $id . '/recorrencia', $publicPage['#datas'][0]['#markup']);
     $this->assertContains('user.permissions', $publicPage['#cache']['contexts']);
   }
 

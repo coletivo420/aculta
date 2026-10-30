@@ -73,9 +73,18 @@ def wait_for(fn, timeout=20):
 
 
 def type_into(name, text):
-    el = field(name)
-    call('POST', f'/session/{SID}/element/{el}/clear')
-    call('POST', f'/session/{SID}/element/{el}/value', {'text': text})
+    def _attempt():
+        el = field(name)
+        if not el:
+            return False
+        try:
+            call('POST', f'/session/{SID}/element/{el}/clear')
+            call('POST', f'/session/{SID}/element/{el}/value', {'text': text})
+            return True
+        except urllib.error.HTTPError:
+            time.sleep(0.4)
+            return False
+    wait_for(_attempt, timeout=15)
 
 
 SID = None
@@ -101,6 +110,14 @@ try:
     names = js('return Array.from(document.querySelectorAll("[name]")).map(e=>e.name).filter(n=>n.indexOf("%s")===0);' % F)
     check('formulário tem Número (street_number) e S/N', any('street_number]' in n for n in names) and any('street_number_sn' in n for n in names))
     check('sem seletor de país visível', not any('country_code' in n and js('return document.querySelector(\'[name="%s"]\').offsetParent!==null;' % n) for n in names), 'país fixo BR, oculto')
+
+    # Ordem visual/DOM no formulário: o CEP deve ser o primeiro campo visível
+    visible_names = js('''
+        return Array.from(document.querySelectorAll("input, select, textarea"))
+            .filter(e => e.name && e.name.indexOf(arguments[0]) === 0 && e.offsetParent !== null)
+            .map(e => e.name);
+    ''', F)
+    check('CEP é o primeiro campo visível no formulário', len(visible_names) > 0 and visible_names[0] == f'{F}[postal_code]', visible_names[0] if visible_names else '')
 
     # Cadastro novo: rua e bairro começam vazios (o primeiro CEP preenche o que está vazio)
     type_into('address_line1', '')
@@ -146,12 +163,15 @@ try:
     check('desmarcar S/N reabilita o número', js('return document.querySelector(arguments[0]).disabled;', f'[name="{F}[street_number]"]') is False)
     # Número volta a ser digitado (ligar S/N limpa o número; sem S/N ele é obrigatório)
     type_into('street_number', '100')
+    type_into('address_line2', 'Apto 42')
+    check('complemento aceita digitação', value_of('address_line2') == 'Apto 42')
     # Salvar: o endereço gravado tem que ser o do último CEP, com o número digitado
     btn = find('[name="op"][value="Salvar endereço"]')
     call('POST', f'/session/{SID}/element/{btn}/click')
     time.sleep(4)
     saved_ok = js('return document.querySelector("[role=alert]") === null;') is True and value_of('street_number') == '100'
     check('salvar endereço responde sem erro', saved_ok)
+    check('complemento salvo é mantido', value_of('address_line2') == 'Apto 42')
 
     # Página recarregada com endereço salvo: um CEP diferente troca o endereço inteiro (sem salvar)
     call('POST', f'/session/{SID}/url', {'url': ACCOUNT})

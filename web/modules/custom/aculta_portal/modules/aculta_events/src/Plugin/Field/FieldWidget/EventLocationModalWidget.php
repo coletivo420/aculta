@@ -195,7 +195,7 @@ final class EventLocationModalWidget extends WidgetBase {
           '#type' => 'html_tag',
           '#tag' => 'p',
           '#attributes' => ['class' => ['description', 'mt-1']],
-          '#value' => '<a href="/locais/adicionar" target="_blank" rel="noopener">' . t('Adicionar local em uma nova aba (sem JS)') . '</a>',
+          '#value' => '<a href="' . Url::fromRoute('aculta_events.location_add')->toString() . '" target="_blank" rel="noopener">' . t('Adicionar local em uma nova aba (sem JS)') . '</a>',
         ],
       ];
     }

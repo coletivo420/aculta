@@ -42,9 +42,9 @@ use Drupal\views\EntityViewsData;
   ],
   links: [
     'canonical' => '/locais/{aculta_event_location}',
-    'add-form' => '/locais/adicionar',
-    'edit-form' => '/locais/{aculta_event_location}/editar',
-    'delete-form' => '/locais/{aculta_event_location}/excluir',
+    'add-form' => '/painel-administrativo/eventos/locais/adicionar',
+    'edit-form' => '/painel-administrativo/eventos/locais/{aculta_event_location}/editar',
+    'delete-form' => '/painel-administrativo/eventos/locais/{aculta_event_location}/excluir',
   ],
 )]
 final class EventLocation extends ContentEntityBase {
@@ -179,6 +179,13 @@ final class EventLocation extends ContentEntityBase {
     $fields['field_endereco'] = BaseFieldDefinition::create('address')
       ->setLabel(new TranslatableMarkup('Endereço'))
       ->setSetting('available_countries', ['BR'])
+      ->setSetting('field_overrides', [
+        'givenName' => ['override' => 'hidden'],
+        'familyName' => ['override' => 'hidden'],
+        'additionalName' => ['override' => 'hidden'],
+        'organization' => ['override' => 'hidden'],
+        'addressLine3' => ['override' => 'hidden'],
+      ])
       ->setDisplayOptions('form', ['type' => 'address_default', 'weight' => 20])
       ->setDisplayConfigurable('form', TRUE);
 

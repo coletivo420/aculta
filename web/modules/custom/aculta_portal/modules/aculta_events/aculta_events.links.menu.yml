@@ -56,15 +56,6 @@ aculta_events.admin_activities:
   parent: aculta_events.admin
   weight: 6
 
-aculta_events.admin_activity_add:
-  title: 'Cadastrar atividade'
-  description: 'Criar uma nova atividade editorial.'
-  route_name: node.add
-  route_parameters:
-    node_type: activity
-  parent: aculta_events.admin
-  weight: 7
-
 aculta_events.admin_export:
   title: 'Exportar eventos (CSV)'
   description: 'Baixa datas de eventos publicados por período, com campos administrativos mínimos.'

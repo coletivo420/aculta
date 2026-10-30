@@ -31,7 +31,7 @@ final class LocationPurposeAccessKernelTest extends KernelTestBase {
   protected static $modules = ['system', 'user', 'key', 'options', 'link', 'text', 'filter', 'taxonomy', 'datetime', 'datetime_range', 'address', 'geofield', 'aculta_calendar', 'aculta_events'];
 
   public function testLocationCatalogIsNotServedFromAnotherPurpose(): void {
-    $route = $this->container->get('router.route_provider')->getRouteByName('aculta_events.locations');
+    $route = $this->container->get('router.route_provider')->getRouteByName('aculta_events.location_canonical');
     $this->assertSame('eventos', $route->getOption('_aculta_domain_purpose'));
 
     $domainNegotiator = $this->createMock(DomainNegotiatorInterface::class);
@@ -43,9 +43,9 @@ final class LocationPurposeAccessKernelTest extends KernelTestBase {
       new RequestStack(),
     );
     $matcher = $this->createMock(RequestMatcherInterface::class);
-    $matcher->method('matchRequest')->willReturn(['_route' => 'aculta_events.locations']);
+    $matcher->method('matchRequest')->willReturn(['_route' => 'aculta_events.location_canonical']);
     $routes = $this->createMock(RouteProviderInterface::class);
-    $routes->method('getRouteByName')->with('aculta_events.locations')->willReturn($route);
+    $routes->method('getRouteByName')->with('aculta_events.location_canonical')->willReturn($route);
     $currentUser = $this->createMock(AccountProxyInterface::class);
     $currentUser->method('isAuthenticated')->willReturn(FALSE);
     $resolver = new ContentPurposeResolver($this->container->get('entity_type.manager'), $purpose);
@@ -56,7 +56,7 @@ final class LocationPurposeAccessKernelTest extends KernelTestBase {
       $routes,
       $resolver,
     );
-    $request = Request::create('/locais');
+    $request = Request::create('/locais/1');
     $event = new RequestEvent($this->createMock(HttpKernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST);
 
     $subscriber->onRequestBeforeRouter($event);

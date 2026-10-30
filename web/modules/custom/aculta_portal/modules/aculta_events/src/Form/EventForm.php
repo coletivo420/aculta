@@ -109,40 +109,11 @@ final class EventForm extends ContentEntityForm {
         '%label' => $entity->label(),
       ]));
 
-      // Trata criação opcional da primeira data e local inline.
-      $cadastrarNovoLocal = (bool) $form_state->getValue('cadastrar_novo_local');
+      // Trata associação opcional da primeira data com local já cadastrado.
       $localId = NULL;
-
-      if ($cadastrarNovoLocal) {
-        $nomeNovo = trim((string) $form_state->getValue('novo_local_nome'));
-        if ($nomeNovo !== '') {
-          $locationData = [
-            'title' => $nomeNovo,
-            'field_precisao' => (string) ($form_state->getValue('novo_local_precisao') ?? 'exato'),
-            'field_status' => 'publicado',
-            'field_organizador' => $this->currentUser()->id(),
-            'field_endereco' => [
-              'country_code' => 'BR',
-              'address_line1' => (string) $form_state->getValue('novo_local_logradouro'),
-              'locality' => (string) $form_state->getValue('novo_local_municipio'),
-              'administrative_area' => strtoupper((string) $form_state->getValue('novo_local_uf')),
-              'postal_code' => (string) $form_state->getValue('novo_local_cep'),
-            ],
-          ];
-          $tipoNovo = $form_state->getValue('novo_local_tipo');
-          if (!empty($tipoNovo)) {
-            $locationData['field_tipo'] = (int) $tipoNovo;
-          }
-          $location = EventLocation::create($locationData);
-          $location->save();
-          $localId = $location->id();
-        }
-      }
-      else {
-        $selectedId = $form_state->getValue('local_id');
-        if (!empty($selectedId) && is_numeric($selectedId)) {
-          $localId = (int) $selectedId;
-        }
+      $selectedId = $form_state->getValue('local_id');
+      if (!empty($selectedId) && is_numeric($selectedId)) {
+        $localId = (int) $selectedId;
       }
 
       $startsAt = $form_state->getValue('starts_at');

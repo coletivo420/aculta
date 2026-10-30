@@ -41,8 +41,8 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
   ],
   links: [
     'canonical' => '/eventos/{slug}',
-    'add-form' => '/eventos/adicionar',
-    'edit-form' => '/eventos/{aculta_event}/editar',
+    'add-form' => '/painel-administrativo/eventos/adicionar',
+    'edit-form' => '/painel-administrativo/eventos/{aculta_event}/editar',
   ],
 )]
 final class Event extends ContentEntityBase {

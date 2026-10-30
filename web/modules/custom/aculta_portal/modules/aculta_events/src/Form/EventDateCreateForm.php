@@ -83,73 +83,9 @@ final class EventDateCreateForm extends FormBase {
 
     $form['local_section']['local_id'] = [
       '#type' => 'entity_autocomplete',
-      '#title' => $this->t('Selecionar local existente'),
+      '#title' => $this->t('Selecionar local cadastrado'),
       '#target_type' => 'aculta_event_location',
-      '#description' => $this->t('Pesquise pelo nome do local para reutilizar um cadastro existente.'),
-    ];
-
-    $form['local_section']['create_new_location'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Cadastrar um novo local para esta data'),
-      '#description' => $this->t('Marque se o local não existir na lista acima.'),
-    ];
-
-    $form['local_section']['new_location_fields'] = [
-      '#type' => 'container',
-      '#states' => [
-        'visible' => [
-          ':input[name="create_new_location"]' => ['checked' => TRUE],
-        ],
-      ],
-    ];
-
-    $form['local_section']['new_location_fields']['new_location_name'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Nome do novo local'),
-      '#maxlength' => 255,
-    ];
-
-    $form['local_section']['new_location_fields']['new_location_tipo'] = [
-      '#type' => 'entity_autocomplete',
-      '#title' => $this->t('Tipo de local'),
-      '#target_type' => 'taxonomy_term',
-      '#selection_settings' => [
-        'target_bundles' => ['aculta_location_type' => 'aculta_location_type'],
-      ],
-    ];
-
-    $form['local_section']['new_location_fields']['new_location_precision'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Precisão do endereço'),
-      '#options' => [
-        'exato' => $this->t('Exato (número e rua visíveis)'),
-        'aproximado' => $this->t('Aproximado (apenas bairro e município públicos)'),
-      ],
-      '#default_value' => 'exato',
-    ];
-
-    $form['local_section']['new_location_fields']['new_location_address'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Logradouro e número'),
-      '#maxlength' => 255,
-    ];
-
-    $form['local_section']['new_location_fields']['new_location_city'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Município'),
-      '#maxlength' => 255,
-    ];
-
-    $form['local_section']['new_location_fields']['new_location_state'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('UF (Estado)'),
-      '#maxlength' => 2,
-    ];
-
-    $form['local_section']['new_location_fields']['new_location_postal_code'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('CEP'),
-      '#maxlength' => 9,
+      '#description' => $this->t('Pesquise pelo nome do local cadastrado. O endereço e geolocalização são gerenciados exclusivamente na entidade Local.'),
     ];
 
     $form['actions'] = ['#type' => 'actions'];
@@ -175,24 +111,15 @@ final class EventDateCreateForm extends FormBase {
       $form_state->setErrorByName('ends_at', $this->t('O fim deve ser posterior ao início.'));
     }
 
-    $createNew = (bool) $form_state->getValue('create_new_location');
-    if ($createNew) {
-      $newName = trim((string) $form_state->getValue('new_location_name'));
-      if ($newName === '') {
-        $form_state->setErrorByName('new_location_name', $this->t('Informe o nome do novo local.'));
+    $selectedLocal = $form_state->getValue('local_id');
+    if (!empty($selectedLocal)) {
+      if (!is_numeric($selectedLocal) || (int) $selectedLocal < 1) {
+        $form_state->setErrorByName('local_id', $this->t('O local selecionado é inválido.'));
       }
-    }
-    else {
-      $selectedLocal = $form_state->getValue('local_id');
-      if (!empty($selectedLocal)) {
-        if (!is_numeric($selectedLocal) || (int) $selectedLocal < 1) {
-          $form_state->setErrorByName('local_id', $this->t('O local selecionado é inválido.'));
-        }
-        else {
-          $loc = $this->entities->getStorage('aculta_event_location')->load((int) $selectedLocal);
-          if (!$loc instanceof EventLocation) {
-            $form_state->setErrorByName('local_id', $this->t('O local selecionado não existe.'));
-          }
+      else {
+        $loc = $this->entities->getStorage('aculta_event_location')->load((int) $selectedLocal);
+        if (!$loc instanceof EventLocation) {
+          $form_state->setErrorByName('local_id', $this->t('O local selecionado não existe.'));
         }
       }
     }
@@ -211,43 +138,9 @@ final class EventDateCreateForm extends FormBase {
     }
 
     $locationId = NULL;
-    $createNew = (bool) $form_state->getValue('create_new_location');
-    if ($createNew) {
-      $newName = trim((string) $form_state->getValue('new_location_name'));
-      $locationStorage = $this->entities->getStorage('aculta_event_location');
-      $locationData = [
-        'title' => $newName,
-        'field_precisao' => (string) ($form_state->getValue('new_location_precision') ?: 'exato'),
-        'field_status' => 'publicado',
-        'field_organizador' => $this->currentUserAccount->id(),
-      ];
-      $tipo = $form_state->getValue('new_location_tipo');
-      if (!empty($tipo)) {
-        $locationData['field_tipo'] = $tipo;
-      }
-      $addressLine = trim((string) $form_state->getValue('new_location_address'));
-      $city = trim((string) $form_state->getValue('new_location_city'));
-      $state = trim((string) $form_state->getValue('new_location_state'));
-      $cep = trim((string) $form_state->getValue('new_location_postal_code'));
-      if ($addressLine !== '' || $city !== '' || $state !== '' || $cep !== '') {
-        $locationData['field_endereco'] = [
-          'country_code' => 'BR',
-          'address_line1' => $addressLine,
-          'locality' => $city,
-          'administrative_area' => $state,
-          'postal_code' => $cep,
-        ];
-      }
-      $newLocation = $locationStorage->create($locationData);
-      $newLocation->save();
-      $locationId = (int) $newLocation->id();
-      $this->messenger()->addStatus($this->t('O novo local %name foi cadastrado.', ['%name' => $newName]));
-    }
-    else {
-      $selectedLocal = $form_state->getValue('local_id');
-      if (!empty($selectedLocal) && is_numeric($selectedLocal)) {
-        $locationId = (int) $selectedLocal;
-      }
+    $selectedLocal = $form_state->getValue('local_id');
+    if (!empty($selectedLocal) && is_numeric($selectedLocal)) {
+      $locationId = (int) $selectedLocal;
     }
 
     $dateData = [

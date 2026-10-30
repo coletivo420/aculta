@@ -92,6 +92,13 @@ final class AccountAddressForm {
     if (($tree['#type'] ?? NULL) === 'address') {
       $tree['#default_value']['country_code'] = 'BR';
       $tree['#available_countries'] = ['BR'];
+      $tree['#field_overrides'] = array_merge($tree['#field_overrides'] ?? [], [
+        'givenName' => 'hidden',
+        'familyName' => 'hidden',
+        'additionalName' => 'hidden',
+        'organization' => 'hidden',
+        'addressLine3' => 'hidden',
+      ]);
       $tree['#attached']['library'][] = self::LIBRARY;
       $tree['#element_validate'][] = [self::class, 'validateAddressElement'];
       if ($withStreetNumber) {
@@ -201,6 +208,15 @@ final class AccountAddressForm {
         [self::class, 'validateCountryCode'],
       ];
       $element['country_code']['#weight'] = -100;
+    }
+
+    // Oculta campos de nome de pessoa física e linhas extras de complemento.
+    // Nome e sobrenome pertencem ao perfil do usuário ou não se aplicam (locais, lojas).
+    // Complemento possui apenas uma linha canônica (address_line2).
+    foreach (['given_name', 'family_name', 'additional_name', 'organization', 'address_line3'] as $hiddenKey) {
+      if (isset($element[$hiddenKey])) {
+        $element[$hiddenKey]['#access'] = FALSE;
+      }
     }
 
     // O CEP é sempre o primeiro campo visível no formulário de endereço

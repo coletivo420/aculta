@@ -37,7 +37,7 @@ mode: default
 content:
   field_address:
     type: string_textarea
-    weight: 5
+    weight: 46
     region: content
     settings:
       rows: 5

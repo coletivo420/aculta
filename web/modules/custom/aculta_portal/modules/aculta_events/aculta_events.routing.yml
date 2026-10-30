@@ -9,17 +9,17 @@ aculta_events.catalogue:
     _aculta_domain_purpose: eventos
 
 aculta_events.event_add:
-  path: '/eventos/adicionar'
+  path: '/painel-administrativo/eventos/adicionar'
   defaults:
     _entity_form: 'aculta_event.add'
     _title: 'Cadastrar evento'
   requirements:
     _entity_create_access: 'aculta_event'
   options:
-    _aculta_domain_purpose: eventos
+    _admin_route: true
 
 aculta_events.event_edit:
-  path: '/eventos/{aculta_event}/editar'
+  path: '/painel-administrativo/eventos/{aculta_event}/editar'
   defaults:
     _entity_form: 'aculta_event.edit'
     _title: 'Editar evento'
@@ -27,7 +27,7 @@ aculta_events.event_edit:
     _entity_access: 'aculta_event.update'
     aculta_event: '\d+'
   options:
-    _aculta_domain_purpose: eventos
+    _admin_route: true
 
 aculta_events.page:
   path: '/eventos/{slug}'
@@ -41,14 +41,14 @@ aculta_events.page:
     _aculta_domain_purpose: eventos
 
 aculta_events.locations:
-  path: '/locais'
+  path: '/painel-administrativo/eventos/locais'
   defaults:
     _controller: '\Drupal\aculta_events\Controller\LocationListController::page'
     _title: 'Locais'
   requirements:
-    _access: 'TRUE'
+    _permission: 'administer aculta events,access content overview'
   options:
-    _aculta_domain_purpose: eventos
+    _admin_route: true
 
 aculta_events.location_canonical:
   path: '/locais/{aculta_event_location}'
@@ -62,7 +62,7 @@ aculta_events.location_canonical:
     _aculta_domain_purpose: eventos
 
 aculta_events.location_add:
-  path: '/locais/adicionar'
+  path: '/painel-administrativo/eventos/locais/adicionar'
   defaults:
     _entity_form: 'aculta_event_location.add'
     _title: 'Adicionar local'
@@ -70,10 +70,9 @@ aculta_events.location_add:
     _entity_create_access: 'aculta_event_location'
   options:
     _admin_route: true
-    _aculta_domain_purpose: eventos
 
 aculta_events.location_edit:
-  path: '/locais/{aculta_event_location}/editar'
+  path: '/painel-administrativo/eventos/locais/{aculta_event_location}/editar'
   defaults:
     _entity_form: 'aculta_event_location.edit'
     _title: 'Editar local'
@@ -82,10 +81,9 @@ aculta_events.location_edit:
     aculta_event_location: '\d+'
   options:
     _admin_route: true
-    _aculta_domain_purpose: eventos
 
 aculta_events.location_delete:
-  path: '/locais/{aculta_event_location}/excluir'
+  path: '/painel-administrativo/eventos/locais/{aculta_event_location}/excluir'
   defaults:
     _entity_form: 'aculta_event_location.delete'
     _title: 'Excluir local'
@@ -94,7 +92,6 @@ aculta_events.location_delete:
     aculta_event_location: '\d+'
   options:
     _admin_route: true
-    _aculta_domain_purpose: eventos
 
 aculta_events.date_add:
   path: '/painel-administrativo/eventos/datas/adicionar'
@@ -128,7 +125,7 @@ aculta_events.ics:
     _aculta_domain_purpose: eventos
 
 aculta_events.date_rule:
-  path: '/eventos/datas/{aculta_event_date}/recorrencia'
+  path: '/painel-administrativo/eventos/datas/{aculta_event_date}/recorrencia'
   defaults:
     _form: '\Drupal\aculta_events\Form\EventDateRuleForm'
     _title: 'Recorrência da data'
@@ -136,10 +133,10 @@ aculta_events.date_rule:
     _permission: 'administer aculta events'
     aculta_event_date: '\d+'
   options:
-    _aculta_domain_purpose: eventos
+    _admin_route: true
 
 aculta_events.occurrence:
-  path: '/eventos/datas/{aculta_event_date}/ocorrencia/{inicio}'
+  path: '/painel-administrativo/eventos/datas/{aculta_event_date}/ocorrencia/{inicio}'
   defaults:
     _form: '\Drupal\aculta_events\Form\EventDateOccurrenceForm'
     _title: 'Editar ocorrência'
@@ -148,7 +145,7 @@ aculta_events.occurrence:
     aculta_event_date: '\d+'
     inicio: '\d+'
   options:
-    _aculta_domain_purpose: eventos
+    _admin_route: true
 
 aculta_events.agenda:
   path: '/calendario'
@@ -232,7 +229,7 @@ aculta_events.admin_overview:
     _admin_route: true
 
 aculta_events.location_modal:
-  path: '/eventos/locais/modal'
+  path: '/painel-administrativo/eventos/locais/modal'
   defaults:
     _form: '\Drupal\aculta_events\Form\EventLocationModalForm'
     _title: 'Selecionar ou cadastrar local'
@@ -242,9 +239,11 @@ aculta_events.location_modal:
     _admin_route: true
 
 aculta_events.location_widget_clear:
-  path: '/eventos/locais/widget-clear'
+  path: '/painel-administrativo/eventos/locais/widget-clear'
   defaults:
     _controller: '\Drupal\aculta_events\Controller\EventLocationWidgetController::clear'
   requirements:
     _permission: 'access content'
+  options:
+    _admin_route: true
 
