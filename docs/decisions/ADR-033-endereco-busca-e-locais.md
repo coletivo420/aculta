@@ -45,3 +45,12 @@ Precisamos distinguir o preenchimento por CEP, que é infraestrutura comum do Po
 - [Plano da busca por logradouro](../portal/CEP-ADDRESS-SEARCH-PLAN.md)
 - [Plano Locais e Content Index](PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md)
 - [Guardrails do Portal](../portal/GUARDRAILS.md)
+
+
+## Aditivo: modal em popup e integração Events/Maps (2026-10-30)
+
+- “Modal” significa popup sobreposto à tela atual, aberto pelo sistema de diálogo/modal do Drupal. Não é painel inline, formulário expandido na página, nova rota de página inteira nem off-canvas.
+- O popup deve manter contexto e dados da Activity pai, abrir a busca de Local e permitir seguir para outro popup de cadastro. Após seleção/salvamento confirmado, fechar o popup filho e atualizar a referência no formulário pai via AJAX.
+- `aculta_events` é dono da entidade Local, seu cadastro, ciclo editorial, permissões e vínculo com Events/Activity. `aculta_maps` consome a mesma entidade e seus dados autorizados para mapa, geocodificação e links; não cria entidade ou cadastro paralelo de Local.
+- Os contratos entre módulos devem ser explícitos por serviços/contratos neutros. Maps não deve depender de detalhes internos de formulário de Events, e Events não deve duplicar geocodificação/renderização de Maps.
+- Critérios do popup: foco inicial e retorno ao acionador, fechamento por controles e Escape conforme padrão Drupal, navegação por teclado, erros acessíveis, loading/empty state, proteção contra submissão duplicada e persistência do formulário pai em rebuild/error AJAX.
