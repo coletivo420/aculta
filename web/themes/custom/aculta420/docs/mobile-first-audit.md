@@ -1545,6 +1545,24 @@ altera configuração persistente. Mede tokens e a preferência de movimento, n�
 contraste WCAG, cada estado de componente ou animações em todas as telas. É um
 gate focal do shell e não aprova THEME-MF3.
 
+### THEME-MF2 — título principal em Apoio e Cursos
+
+A matriz pública no Runtime (Firefox ESR, 320px) registrou oito purposes com
+H1 e duas exceções: Apoio (`Apoie a Associação`) e Cursos (`Cursos`) tinham título
+de página no `<title>`, mas nenhum H1 em `main#main-content`. O bloco core
+`page_title_block` já é extraído pelo tema para `aculta_page_title`; a condição
+da home o suprimia. O template agora o exibe também nos purposes `support` e
+`courses`, preservando os títulos geridos pelo Drupal e sem alterar módulos,
+rotas, dados ou contrato do shell. O teste reutilizável é
+`tests/browser/aculta-theme-mobile-first/purpose-headings.py`.
+
+Validação estática do candidato: parser Twig do pacote instalado PASS,
+`py_compile` do teste PASS e `git diff --check` PASS. O teste real de headings e
+reflow está **DEFERRED**: o Runtime servido está em `a1e1a4a71`, sem este template
+candidato; a branch remota da PR não está publicada como `refs/heads` para levar
+o candidato ao checkout, e não editei o docroot manualmente. A matriz da versão
+servida ainda deve ser repetida após a atualização do head. Não é gate aprovado.
+
 Reteste focal posterior no Firefox ESR visível: claro e escuro + reduced motion
 capturados em 9/9 viewports cada, sem overflow e com os dois headers únicos. O
 script confirmou `prefers-color-scheme`/`prefers-reduced-motion`; isto não mede

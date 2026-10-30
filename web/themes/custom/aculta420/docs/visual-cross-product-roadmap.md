@@ -1022,3 +1022,11 @@ claro/escuro e `prefers-reduced-motion`: superfície/texto esperados, shell úni
 e sem overflow. Capturas do Fórum em 320px foram revisadas nos dois modos. A
 verificação não substitui avaliação de contraste, assistive technology nem
 THEME-MF3. Evidências e limites estão no `mobile-first-audit.md`.
+
+### Apoio e Cursos — título principal
+
+A auditoria das raízes encontrou H1 ausente em Apoio e Cursos. O tema agora
+preserva o `page_title_block` gerido pelo Drupal nesses dois purposes, onde a
+home não tem título editorial próprio. Twig parse, sintaxe do teste e diff
+passaram; o browser gate está DEFERRED até o candidato chegar ao Runtime. Ver
+`mobile-first-audit.md` e `tests/browser/aculta-theme-mobile-first/README.md`.

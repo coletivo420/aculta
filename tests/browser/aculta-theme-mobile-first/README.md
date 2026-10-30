@@ -539,3 +539,19 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/purpose-shell-colo
 `PURPOSE_MODE_WIDTHS` seleciona as larguras e
 `PURPOSE_MODE_DOMAIN_ENV=production` só deve ser usado após confirmar ambiente,
 DNS e TLS.
+
+## Título principal nas dez raízes públicas
+
+`purpose-headings.py` confere um H1 visível dentro de `main#main-content`, o
+shell único e ausência de overflow em 320/390/600/768/1024/1440px nos dez
+purposes. Usa somente GET em Firefox ESR. Captura Apoio e Cursos em 320/1440px
+para revisão visual. `PURPOSE_HEADING_WIDTHS` escolhe as larguras e
+`PURPOSE_HEADING_DOMAIN_ENV` seleciona os hosts do manifesto (`test` por padrão).
+Não valida hierarquia completa, leitores de tela nem WCAG 2.2 AA.
+
+```sh
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/suite-out/purpose-headings
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/purpose-headings.py
+```

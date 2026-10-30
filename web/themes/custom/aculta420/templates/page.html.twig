@@ -111,7 +111,15 @@
     {% if page.highlighted or aculta_help %}
       <div class="aculta-highlighted">{{ page.highlighted }}{{ aculta_help }}</div>
     {% endif %}
-    {% if aculta_page_title and (not institutional_home or aculta_show_page_title_on_front) %}
+    {# Apoio and Cursos have no content-owned H1 on their public home screens.
+       Keep their Drupal page title visible, as with other purposes. #}
+    {% set page_purpose = domain_presentation.identity.purpose|default('') %}
+    {% set show_domain_home_title = page_purpose in ['support', 'courses'] %}
+    {% if aculta_page_title and (
+      not institutional_home
+      or aculta_show_page_title_on_front
+      or show_domain_home_title
+    ) %}
       <div class="aculta-page-heading">{{ aculta_page_title }}</div>
     {% endif %}
     <div class="row g-4 g-xl-5">
