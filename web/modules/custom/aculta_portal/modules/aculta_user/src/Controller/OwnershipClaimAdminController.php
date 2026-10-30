@@ -38,6 +38,8 @@ final class OwnershipClaimAdminController extends ControllerBase {
    */
   public function overview(Request $request): array {
     $statusFilter = $request->query->get('status');
+    $targetTypeFilter = $request->query->get('target_type');
+    $targetIdFilter = $request->query->get('target_id');
     $validStatuses = ['pending' => 'Pendentes', 'approved' => 'Aprovadas', 'rejected' => 'Rejeitadas'];
 
     $storage = $this->entityTypeMgr->getStorage('aculta_ownership_claim');
@@ -48,6 +50,12 @@ final class OwnershipClaimAdminController extends ControllerBase {
 
     if ($statusFilter !== NULL && array_key_exists($statusFilter, $validStatuses)) {
       $query->condition('status', $statusFilter);
+    }
+    if ($targetTypeFilter !== NULL && $targetTypeFilter !== '') {
+      $query->condition('target_type', (string) $targetTypeFilter);
+    }
+    if ($targetIdFilter !== NULL && is_numeric($targetIdFilter)) {
+      $query->condition('target_id', (int) $targetIdFilter);
     }
 
     $claimIds = $query->execute();
@@ -183,7 +191,12 @@ final class OwnershipClaimAdminController extends ControllerBase {
       ],
       '#cache' => [
         'tags' => ['aculta_ownership_claim_list'],
-        'contexts' => ['user.permissions', 'url.query_args:status'],
+        'contexts' => [
+          'user.permissions',
+          'url.query_args:status',
+          'url.query_args:target_type',
+          'url.query_args:target_id',
+        ],
       ],
     ];
   }

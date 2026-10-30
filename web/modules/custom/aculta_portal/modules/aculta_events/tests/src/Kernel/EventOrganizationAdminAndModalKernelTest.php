@@ -15,6 +15,7 @@ use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_ugc\Entity\UgcReport;
+use Drupal\aculta_user\Controller\OwnershipClaimAdminController;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -287,6 +288,24 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     ]);
     $org4->save();
 
+    // Adiciona reivindicações de teste para org4 e org1.
+    $claimStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ownership_claim');
+    $claimStorage->create([
+      'target_type' => 'aculta_event_organization',
+      'target_id' => (int) $org4->id(),
+      'uid' => (int) $this->commonUser->id(),
+      'justificativa' => 'Pedido para Delta',
+      'status' => 'pending',
+    ])->save();
+
+    $claimStorage->create([
+      'target_type' => 'aculta_event_organization',
+      'target_id' => (int) $org1->id(),
+      'uid' => (int) $this->commonUser->id(),
+      'justificativa' => 'Pedido para Alfa',
+      'status' => 'pending',
+    ])->save();
+
     // Adiciona denúncia UGC em org3.
     UgcReport::create([
       'target_type' => 'aculta_event_organization',
@@ -324,6 +343,30 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $this->assertNotNull($deltaRow);
     $deltaBadges = array_map(static fn(array $item) => (string) ($item['#value'] ?? ''), $deltaRow['status']['data']);
     $this->assertContains('Reivindicação pendente', $deltaBadges);
+
+    // Organização com reivindicação pendente possui link de reivindicações
+    // com filtros pré-aplicados.
+    $this->assertArrayHasKey('claims', $deltaRow['actions']['data']['#links']);
+    $claimsUrl = $deltaRow['actions']['data']['#links']['claims']['url'];
+    $this->assertEquals('aculta_user.ownership_claims', $claimsUrl->getRouteName());
+    $this->assertEquals([
+      'target_type' => 'aculta_event_organization',
+      'target_id' => $org4->id(),
+    ], $claimsUrl->getOption('query'));
+
+    // Valida filtragem no controlador de reivindicações do aculta_user.
+    $claimsController = OwnershipClaimAdminController::create($this->container);
+    $claimsRequest = Request::create(
+      '/painel-administrativo/pessoas/reivindicacoes',
+      'GET',
+      [
+        'target_type' => 'aculta_event_organization',
+        'target_id' => (string) $org4->id(),
+      ]
+    );
+    $claimsRender = $claimsController->overview($claimsRequest);
+    $this->assertArrayHasKey('table', $claimsRender);
+    $this->assertCount(1, $claimsRender['table']['#rows']);
 
     // Operações apontam para rotas administrativas no MAIN.
     $operations = $betaRow['actions']['data']['#links'];

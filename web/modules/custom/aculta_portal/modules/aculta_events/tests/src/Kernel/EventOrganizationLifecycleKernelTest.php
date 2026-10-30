@@ -25,7 +25,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Valida o ciclo de vida completo de Organizações Culturais e Coorganização (ARQ-05).
+ * Valida ciclo de vida de Organizações Culturais e Coorganização (ARQ-05).
  */
 #[Group('aculta_events')]
 #[RunTestsInSeparateProcesses]
@@ -187,7 +187,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
-   * Valida criação e edição de organização não reivindicada e visualização pública.
+   * Valida criação/edição de organização não reivindicada e visão pública.
    */
   public function testUnclaimedOrganizationCreationAndPublicView(): void {
     $org = EventOrganization::create([
@@ -210,7 +210,8 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     // Leitura pública permitida para todos.
     $this->assertTrue($org->access('view', $this->commonUser));
 
-    // Qualquer usuário com permissão de criar eventos pode editar perfil de organização não reivindicada.
+    // Qualquer usuário com permissão de criar eventos pode editar perfil de
+    // organização não reivindicada.
     $this->assertTrue($org->access('update', $this->editorUser));
     $this->assertTrue($org->access('update', $this->anotherEditorUser));
 
@@ -219,7 +220,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
-   * Valida reivindicação, aprovação administrativa e suspensão temporária dos acessos anteriores.
+   * Valida reivindicação, aprovação e suspensão preventiva dos acessos.
    */
   public function testClaimSubmissionAndApprovalWithSuspension(): void {
     /** @var \Drupal\aculta_user\Organization\OrganizationMembershipManager $memberManager */
@@ -265,7 +266,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $reloadedMember = $this->container->get('entity_type.manager')->getStorage('aculta_org_member')->load($memberPrior->id());
     $this->assertSame('suspended', $reloadedMember->get('status')->value);
 
-    // Titular revisa e confirma o membro anterior como editor com poderes explícitos.
+    // Titular revisa e confirma membro anterior como editor com poderes.
     $memberManager->confirmSuspendedMember($reloadedMember, 'editor', FALSE, FALSE, $this->commonUser);
     $this->assertTrue($memberManager->hasApprovedMembership($this->anotherEditorUser, (string) $org->id()));
 
@@ -276,7 +277,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
-   * Valida papéis definidos, publicação separada e poderes configuráveis de coproprietários.
+   * Valida papéis, publicação separada e poderes de coproprietários.
    */
   public function testRolesAndDelegatedPermissions(): void {
     /** @var \Drupal\aculta_user\Organization\OrganizationMembershipManager $memberManager */
@@ -330,7 +331,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     ]);
     $event->save();
 
-    // Todos podem editar o evento.
+    // Cada membro com papel ativo pode editar o evento.
     $this->assertTrue($event->access('update', $this->editorUser));
     $this->assertTrue($event->access('update', $coOwner));
     $this->assertTrue($event->access('update', $publisher));
@@ -344,7 +345,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
-   * Valida transferência de titularidade para coproprietário com aceite e recuperação administrativa.
+   * Valida transferência de titularidade e recuperação administrativa.
    */
   public function testOwnershipTransferLifecycleAndAdministrativeRecovery(): void {
     /** @var \Drupal\aculta_user\Organization\OrganizationMembershipManager $memberManager */
@@ -388,7 +389,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
-   * Valida coorganização de eventos: edição concedida, publicação negada e revogação por remoção.
+   * Valida coorganização de eventos: acesso de edição e revogação.
    */
   public function testEventCoOrganizationAccessAndRevocation(): void {
     /** @var \Drupal\aculta_user\Organization\OrganizationMembershipManager $memberManager */
@@ -465,12 +466,12 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $this->assertSame('aculta_event_organization', $report->get('target_type')->value);
     $this->assertSame((int) $org->id(), (int) $report->get('target_id')->value);
 
-    // O perfil permanece acessível publicamente durante a análise administrativa.
+    // O perfil fica acessível publicamente durante análise administrativa.
     $this->assertTrue($org->access('view', $this->commonUser));
   }
 
   /**
-   * Valida projeção do índice transversal: ID canônico da organização, ocultação de cidade/UF e exclusão de CEP.
+   * Valida projeção do índice: ID canônico, ocultação de cidade/UF e sem CEP.
    */
   public function testContentIndexOrganizationProjectionAndPrivacy(): void {
     $eventProvider = $this->container->get('aculta_events.index_provider.event');
@@ -498,7 +499,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $this->assertSame('Centro Cultural Protegido', $orgProj->label);
     $this->assertSame((int) $this->editorUser->id(), $orgProj->ownerUid);
 
-    // Ocultar localidade foi marcado: nenhuma relação de localidade/UF é projetada.
+    // Ocultar localidade marcado: nenhuma relação de localidade é projetada.
     $ufRelations = array_filter($orgProj->relations, static fn ($r) => $r->type === 'location_uf');
     $this->assertEmpty($ufRelations);
 
@@ -510,7 +511,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $ufRelationsVisible = array_filter($orgProjVisible->relations, static fn ($r) => $r->type === 'location_uf');
     $this->assertCount(1, $ufRelationsVisible);
 
-    // Projeção do Evento associado: utiliza relação organizer com ID canônico da organização, NUNCA UID!
+    // Projeção do Evento associado: relação organizer com ID canônico da org.
     $event = Event::create([
       'title' => 'Espetáculo de Dança Contemporânea',
       'field_status' => 'publicado',
@@ -530,6 +531,76 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     // Garante que nenhuma relação vazou o UID do usuário como organizer.
     $leakedUserRelations = array_filter($eventProj->relations, static fn ($r) => $r->targetEntityTypeId === 'user');
     $this->assertEmpty($leakedUserRelations);
+  }
+
+  /**
+   * Valida rejeição de reivindicação e resolução de pedidos concorrentes.
+   */
+  public function testClaimRejectionAndConcurrentClaimsResolution(): void {
+    /** @var \Drupal\aculta_user\Organization\OwnershipClaimService $claimService */
+    $claimService = $this->container->get('aculta_user.ownership_claim_service');
+
+    // Caso 1: Rejeição de pedido único restaura status para nao_reivindicada.
+    $org1 = EventOrganization::create([
+      'title' => 'Galpão Cultural Solitário',
+      'reivindicada' => FALSE,
+      'reivindicacao_status' => 'pendente',
+      'field_status' => 'publicado',
+      'status' => 1,
+    ]);
+    $org1->save();
+
+    $claimSingle = $claimService->submitClaim(
+      $org1,
+      $this->editorUser,
+      'Tentativa de reivindicação com documento incompleto.'
+    );
+    $this->assertSame('pending', (string) $claimSingle->get('status')->value);
+
+    // Administrador rejeita o pedido.
+    $claimService->decideClaim($claimSingle, $this->adminUser, FALSE, 'Documentação comprobatória insuficiente.');
+
+    $reloadedOrg1 = EventOrganization::load($org1->id());
+    $this->assertNotNull($reloadedOrg1);
+    $this->assertFalse($reloadedOrg1->isClaimed());
+    $this->assertSame('nao_reivindicada', $reloadedOrg1->getClaimStatus(), 'Status restaurado para nao_reivindicada.');
+    $this->assertSame('rejected', (string) $claimSingle->get('status')->value);
+
+    // Caso 2: Resolução de pedidos concorrentes.
+    $org2 = EventOrganization::create([
+      'title' => 'Associação em Disputa Fraterna',
+      'reivindicada' => FALSE,
+      'reivindicacao_status' => 'pendente',
+      'field_status' => 'publicado',
+      'status' => 1,
+    ]);
+    $org2->save();
+
+    $claimA = $claimService->submitClaim($org2, $this->editorUser, 'Sou o diretor eleito.');
+    $claimB = $claimService->submitClaim($org2, $this->anotherEditorUser, 'Sou o coordenador fundador.');
+
+    $this->assertSame('pending', (string) $claimA->get('status')->value);
+    $this->assertSame('pending', (string) $claimB->get('status')->value);
+
+    // Administrador aprova o pedido A.
+    $claimService->decideClaim($claimA, $this->adminUser, TRUE, 'Ata oficial de eleição apresentada.');
+
+    // Pedido A foi aprovado.
+    $this->assertSame('approved', (string) $claimA->get('status')->value);
+
+    // Pedido B concorrente foi automaticamente rejeitado/encerrado.
+    $reloadedClaimB = $this->container->get('entity_type.manager')
+      ->getStorage('aculta_ownership_claim')
+      ->load($claimB->id());
+    $this->assertNotNull($reloadedClaimB);
+    $this->assertSame('rejected', (string) $reloadedClaimB->get('status')->value);
+    $this->assertStringContainsString('Pedido concorrente encerrado', (string) $reloadedClaimB->get('decision_notes')->value);
+
+    // Organização foi atribuída ao titular A.
+    $reloadedOrg2 = EventOrganization::load($org2->id());
+    $this->assertNotNull($reloadedOrg2);
+    $this->assertTrue($reloadedOrg2->isClaimed());
+    $this->assertSame((int) $this->editorUser->id(), $reloadedOrg2->getOwnerId());
   }
 
 }

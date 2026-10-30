@@ -117,9 +117,10 @@ final class OwnershipClaimService {
     $claim->set('decision_notes', trim($notes));
     $claim->save();
 
+    $targetType = (string) $claim->get('target_type')->value;
+    $targetId = (int) $claim->get('target_id')->value;
+
     if ($approved) {
-      $targetType = (string) $claim->get('target_type')->value;
-      $targetId = (int) $claim->get('target_id')->value;
       $applicantUid = (int) $claim->get('uid')->target_id;
 
       $targetEntity = $this->entityTypeManager->getStorage($targetType)->load($targetId);
@@ -142,6 +143,50 @@ final class OwnershipClaimService {
             $targetEntity->set('reivindicacao_status', 'em_revisao');
           }
           $targetEntity->save();
+        }
+      }
+
+      // Rejeita automaticamente pedidos concorrentes pendentes para a mesma
+      // entidade.
+      $concurrentClaimIds = $this->entityTypeManager->getStorage('aculta_ownership_claim')->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('target_type', $targetType)
+        ->condition('target_id', $targetId)
+        ->condition('status', 'pending')
+        ->condition('id', (int) $claim->id(), '<>')
+        ->execute();
+
+      if (!empty($concurrentClaimIds)) {
+        /** @var \Drupal\aculta_user\Entity\OwnershipClaim[] $concurrentClaims */
+        $concurrentClaims = $this->entityTypeManager->getStorage('aculta_ownership_claim')->loadMultiple($concurrentClaimIds);
+        foreach ($concurrentClaims as $otherClaim) {
+          $otherClaim->set('status', 'rejected');
+          $otherClaim->set('decided_by', (int) $moderator->id());
+          $otherClaim->set('decided_at', $this->time->getRequestTime());
+          $otherClaim->set('decision_notes', sprintf('Pedido concorrente encerrado: titularidade da entidade concedida na reivindicação #%d.', $claim->id()));
+          $otherClaim->save();
+        }
+      }
+    }
+    else {
+      // Rejeição: se não restarem outros pedidos pendentes, restaura o status
+      // nao_reivindicada na entidade alvo.
+      $remainingPending = (int) $this->entityTypeManager->getStorage('aculta_ownership_claim')->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('target_type', $targetType)
+        ->condition('target_id', $targetId)
+        ->condition('status', 'pending')
+        ->condition('id', (int) $claim->id(), '<>')
+        ->count()
+        ->execute();
+
+      if ($remainingPending === 0) {
+        $targetEntity = $this->entityTypeManager->getStorage($targetType)->load($targetId);
+        if ($targetEntity !== NULL && $targetEntity->hasField('reivindicacao_status')) {
+          if ((string) $targetEntity->get('reivindicacao_status')->value === 'pendente') {
+            $targetEntity->set('reivindicacao_status', 'nao_reivindicada');
+            $targetEntity->save();
+          }
         }
       }
     }
@@ -214,7 +259,7 @@ final class OwnershipClaimService {
   }
 
   /**
-   * Executa recuperação administrativa excepcional de titularidade por administrador.
+   * Executa recuperação administrativa de titularidade por administrador.
    */
   public function administrativeRecovery(EntityInterface $entity, AccountInterface $admin, AccountInterface $newOwner, string $notes): void {
     if (!$admin->hasPermission('administer aculta claims') && !$admin->hasPermission('administer aculta events')) {

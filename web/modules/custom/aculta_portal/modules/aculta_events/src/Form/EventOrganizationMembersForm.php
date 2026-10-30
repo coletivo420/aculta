@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Form;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_events\Entity\EventOrganization;
-use Drupal\user\Entity\User;
+use Drupal\aculta_user\Organization\OrganizationMembershipManager;
+use Drupal\aculta_user\Organization\OwnershipClaimService;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -16,11 +19,45 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class EventOrganizationMembersForm extends FormBase {
 
+  public function __construct(
+    #[Autowire(service: 'entity_type.manager')]
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    #[Autowire(service: 'aculta_user.organization_membership_manager')]
+    private readonly ?OrganizationMembershipManager $memberManager = NULL,
+    #[Autowire(service: 'aculta_user.ownership_claim_service')]
+    private readonly ?OwnershipClaimService $claimService = NULL,
+  ) {}
+
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new static();
+    return new static(
+      $container->get('entity_type.manager'),
+      $container->has('aculta_user.organization_membership_manager') ? $container->get('aculta_user.organization_membership_manager') : NULL,
+      $container->has('aculta_user.ownership_claim_service') ? $container->get('aculta_user.ownership_claim_service') : NULL,
+    );
+  }
+
+  /**
+   * Obtém o serviço de gestão de membros.
+   */
+  private function getMemberManager(): ?OrganizationMembershipManager {
+    return $this->memberManager;
+  }
+
+  /**
+   * Obtém o serviço de reivindicação de posse.
+   */
+  private function getClaimService(): ?OwnershipClaimService {
+    return $this->claimService;
+  }
+
+  /**
+   * Obtém o gerenciador de tipos de entidade.
+   */
+  private function getEntityTypeMgr(): EntityTypeManagerInterface {
+    return $this->entityTypeManager;
   }
 
   /**
@@ -69,9 +106,8 @@ final class EventOrganizationMembersForm extends FormBase {
       ];
     }
 
-    if (\Drupal::hasService('aculta_user.organization_membership_manager')) {
-      /** @var \Drupal\aculta_user\Organization\OrganizationMembershipManager $memberManager */
-      $memberManager = \Drupal::service('aculta_user.organization_membership_manager');
+    $memberManager = $this->getMemberManager();
+    if ($memberManager !== NULL) {
 
       // 1. Membros suspensos em revisão pós-reivindicação.
       $suspended = $memberManager->getOrgMembers($orgId, 'suspended');
@@ -86,7 +122,7 @@ final class EventOrganizationMembersForm extends FormBase {
         ];
 
         foreach ($suspended as $member) {
-          $memberUser = User::load($member->get('uid')->target_id);
+          $memberUser = $this->getEntityTypeMgr()->getStorage('user')->load($member->get('uid')->target_id);
           $name = $memberUser ? $memberUser->getDisplayName() : ('UID ' . $member->get('uid')->target_id);
           $mId = $member->id();
 
@@ -144,7 +180,7 @@ final class EventOrganizationMembersForm extends FormBase {
       $rows = [];
       $coOwners = [];
       foreach ($approved as $member) {
-        $memberUser = User::load($member->get('uid')->target_id);
+        $memberUser = $this->getEntityTypeMgr()->getStorage('user')->load($member->get('uid')->target_id);
         $name = $memberUser ? $memberUser->getDisplayName() : ('UID ' . $member->get('uid')->target_id);
         $roleLabel = match ($member->getRoleInOrg()) {
           'owner' => $this->t('Titular'),
@@ -272,9 +308,8 @@ final class EventOrganizationMembersForm extends FormBase {
     $canManage = (bool) $form_state->getValue('new_can_manage', FALSE);
     $canPublish = (bool) $form_state->getValue('new_can_publish', FALSE);
 
-    if ($uid > 0 && \Drupal::hasService('aculta_user.organization_membership_manager')) {
-      /** @var \Drupal\aculta_user\Organization\OrganizationMembershipManager $memberManager */
-      $memberManager = \Drupal::service('aculta_user.organization_membership_manager');
+    $memberManager = $this->getMemberManager();
+    if ($uid > 0 && $memberManager !== NULL) {
       $memberManager->addMembership($uid, (string) $org->id(), $role, 'approved', $canManage, $canPublish);
       $this->messenger()->addStatus($this->t('Membro adicionado com sucesso.'));
     }
@@ -286,11 +321,10 @@ final class EventOrganizationMembersForm extends FormBase {
   public function submitConfirmSuspended(array &$form, FormStateInterface $form_state): void {
     $trigger = (string) ($form_state->getTriggeringElement()['#name'] ?? '');
     $mId = (int) str_replace('btn_confirm_', '', $trigger);
-    if ($mId > 0 && \Drupal::hasService('aculta_user.organization_membership_manager')) {
-      /** @var \Drupal\aculta_user\Organization\OrganizationMembershipManager $memberManager */
-      $memberManager = \Drupal::service('aculta_user.organization_membership_manager');
+    $memberManager = $this->getMemberManager();
+    if ($mId > 0 && $memberManager !== NULL) {
       /** @var \Drupal\aculta_user\Entity\OrganizationMember|null $member */
-      $member = \Drupal::entityTypeManager()->getStorage('aculta_org_member')->load($mId);
+      $member = $this->getEntityTypeMgr()->getStorage('aculta_org_member')->load($mId);
       if ($member !== NULL) {
         $role = (string) $form_state->getValue('role_' . $mId, 'editor');
         $canManage = (bool) $form_state->getValue('can_manage_' . $mId, FALSE);
@@ -307,11 +341,10 @@ final class EventOrganizationMembersForm extends FormBase {
   public function submitRevokeMember(array &$form, FormStateInterface $form_state): void {
     $trigger = (string) ($form_state->getTriggeringElement()['#name'] ?? '');
     $mId = (int) str_replace('btn_revoke_', '', $trigger);
-    if ($mId > 0 && \Drupal::hasService('aculta_user.organization_membership_manager')) {
-      /** @var \Drupal\aculta_user\Organization\OrganizationMembershipManager $memberManager */
-      $memberManager = \Drupal::service('aculta_user.organization_membership_manager');
+    $memberManager = $this->getMemberManager();
+    if ($mId > 0 && $memberManager !== NULL) {
       /** @var \Drupal\aculta_user\Entity\OrganizationMember|null $member */
-      $member = \Drupal::entityTypeManager()->getStorage('aculta_org_member')->load($mId);
+      $member = $this->getEntityTypeMgr()->getStorage('aculta_org_member')->load($mId);
       if ($member !== NULL) {
         $memberManager->revokeMembership($member, $this->currentUser(), 'Revogado pelo titular durante revisão.');
         $this->messenger()->addStatus($this->t('Acesso revogado com sucesso.'));
@@ -337,10 +370,9 @@ final class EventOrganizationMembersForm extends FormBase {
     /** @var \Drupal\aculta_events\Entity\EventOrganization $org */
     $org = $form_state->get('organization');
     $coOwnerUid = (int) $form_state->getValue('transfer_coowner');
-    if ($coOwnerUid > 0 && \Drupal::hasService('aculta_user.ownership_claim_service')) {
-      /** @var \Drupal\aculta_user\Organization\OwnershipClaimService $claimService */
-      $claimService = \Drupal::service('aculta_user.ownership_claim_service');
-      $coOwner = User::load($coOwnerUid);
+    $claimService = $this->getClaimService();
+    if ($coOwnerUid > 0 && $claimService !== NULL) {
+      $coOwner = $this->getEntityTypeMgr()->getStorage('user')->load($coOwnerUid);
       if ($coOwner !== NULL) {
         $claimService->initiateOwnershipTransfer($org, $this->currentUser(), $coOwner);
         $this->messenger()->addStatus($this->t('Convite de transferência de titularidade enviado ao coproprietário.'));
@@ -354,9 +386,8 @@ final class EventOrganizationMembersForm extends FormBase {
   public function submitAcceptTransfer(array &$form, FormStateInterface $form_state): void {
     /** @var \Drupal\aculta_events\Entity\EventOrganization $org */
     $org = $form_state->get('organization');
-    if (\Drupal::hasService('aculta_user.ownership_claim_service')) {
-      /** @var \Drupal\aculta_user\Organization\OwnershipClaimService $claimService */
-      $claimService = \Drupal::service('aculta_user.ownership_claim_service');
+    $claimService = $this->getClaimService();
+    if ($claimService !== NULL) {
       $claimService->acceptOwnershipTransfer($org, $this->currentUser());
       $this->messenger()->addStatus($this->t('Você assumiu a titularidade desta organização com sucesso.'));
     }
@@ -368,9 +399,8 @@ final class EventOrganizationMembersForm extends FormBase {
   public function submitRejectTransfer(array &$form, FormStateInterface $form_state): void {
     /** @var \Drupal\aculta_events\Entity\EventOrganization $org */
     $org = $form_state->get('organization');
-    if (\Drupal::hasService('aculta_user.ownership_claim_service')) {
-      /** @var \Drupal\aculta_user\Organization\OwnershipClaimService $claimService */
-      $claimService = \Drupal::service('aculta_user.ownership_claim_service');
+    $claimService = $this->getClaimService();
+    if ($claimService !== NULL) {
       $claimService->rejectOwnershipTransfer($org, $this->currentUser());
       $this->messenger()->addStatus($this->t('Você recusou o convite de titularidade.'));
     }
