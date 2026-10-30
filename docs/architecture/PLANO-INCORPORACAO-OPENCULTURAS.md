@@ -92,8 +92,8 @@ integrações). Não há `/admin` nas telas novas.
 
 | OpenCulturas | Função | ACULTA hoje | Ação |
 | --- | --- | --- | --- |
-| `flagged_content` (`/admin/content/reports`) | Denúncias de qualquer conteúdo | Só fórum: `/painel-administrativo/forum/denuncias` | ADM1: painel geral de denúncias, em `aculta_ugc` (plano U4) |
-| `moderated_content` | Conteúdo moderado | Só fórum e wiki por workflow | ADM1: mesmo painel, com filtro por área |
+| `flagged_content` (`/admin/content/reports`) | Denúncias de qualquer conteúdo | `/painel-administrativo/moderacao/denuncias` (geral) e `/painel-administrativo/forum/denuncias` (fórum) | ADM1: painel geral de denúncias concluído em `aculta_ugc` |
+| `moderated_content` | Conteúdo moderado | `/painel-administrativo/moderacao/denuncias` com filtro de status/área | ADM1: painel unificado com filtros por purpose e status |
 | `legal_terms`, `legal_users` | Histórico de termos e aceites | `/painel-administrativo/termos/aceites` | Já existe. Sem ação |
 | `user_admin_people` | Lista de pessoas | Não há painel geral (há `contas/nao-confirmadas`) | ADM2: lista administrativa mínima, sem dado sensível; revisão de LGPD antes |
 | `media`, `media_library`, `files` (uso de arquivo) | Mídia e uso de arquivos | `/painel-administrativo/imagens` e `/painel-administrativo/imagens/{file}/usos` | ADM3: consulta somente leitura, restrita a quem administra imagens (commit `d80b4a748`) |
@@ -119,7 +119,7 @@ Cada painel é uma microfase, com permissão própria, teste Kernel de acesso ne
 
 | Id | Painel | Módulo dono | Dependência | Situação |
 | --- | --- | --- | --- | --- |
-| ADM1 | Denúncias e conteúdo moderado, todas as áreas | `aculta_ugc` | Plano U1–U4 de `aculta_ugc` | Planejado |
+| ADM1 | Denúncias e conteúdo moderado, todas as áreas | `aculta_ugc` | Plano U1–U4 de `aculta_ugc` | **Implementado**: `/painel-administrativo/moderacao/denuncias` e `/painel-administrativo/moderacao/denuncias/{aculta_ugc_report}/decidir` com julgamento individual e em lote, restrito a moderadores de escopo. |
 | ADM2 | Lista administrativa de pessoas (mínima) | `aculta_user` | D-22 | **Implementado**, `701fa1d87`: `/painel-administrativo/pessoas`, restrita a `administer users`; só nome do perfil, apelido e situação. Kernel: rota negada a usuário comum e conteúdo minimizado. |
 | ADM3 | Uso de arquivos em `imagens` | `aculta_image` | — | **Feito**, commit `d80b4a748` |
 | ADM4 | FAQ e blocos editáveis | `aculta_faq` | D-23 | **Implementado**, `f34dbe5b5`: painel `/painel-administrativo/faq`; pergunta/resposta e bloco reutilizável limitados ao formato `aculta_editorial`; Kernel cobre XSS e negação para usuário comum. Minuta editorial (`5b3284bec`) revisada tecnicamente; aprovação editorial e cadastro/publicação continuam pendentes. |

@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.1
+version: 0.1.0-dev.2
 state: Dev
 progress_note: >-
-  Dev.1 consolida a infraestrutura transversal de moderação, fila de denúncias agregadas e destinatários por purpose (ARQ-06). Suíte Kernel UgcModerationKernelTest PASS com 4 testes e 68 asserções.
-next_phase: 'Integrar fila de moderação aos painéis administrativos transversais do Portal.'
+  Dev.2 conclui ADM1 (painel unificado de moderação em /painel-administrativo/moderacao/denuncias e formulário de parecer /painel-administrativo/moderacao/denuncias/{aculta_ugc_report}/decidir com suporte a julgamento individual e em lote). Suíte Kernel UgcModerationKernelTest PASS com 5 testes e 93 asserções; conjunto completo de 38 testes e 631 asserções PASS.
+next_phase: 'Homologação operacional e acompanhamento de denúncias no Runtime.'

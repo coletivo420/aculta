@@ -1,0 +1,19 @@
+aculta_ugc.admin_reports:
+  path: '/painel-administrativo/moderacao/denuncias'
+  defaults:
+    _controller: '\Drupal\aculta_ugc\Controller\UgcModerationDashboardController::overview'
+    _title: 'Fila de denúncias'
+  requirements:
+    _custom_access: '\Drupal\aculta_ugc\Controller\UgcModerationDashboardController::access'
+  options:
+    _admin_route: true
+
+aculta_ugc.report_decide:
+  path: '/painel-administrativo/moderacao/denuncias/{aculta_ugc_report}/decidir'
+  defaults:
+    _form: '\Drupal\aculta_ugc\Form\UgcReportDecisionForm'
+    _title: 'Decidir denúncia de conteúdo'
+  requirements:
+    _custom_access: '\Drupal\aculta_ugc\Form\UgcReportDecisionForm::access'
+  options:
+    _admin_route: true

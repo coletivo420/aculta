@@ -229,4 +229,56 @@ final class UgcModerationKernelTest extends KernelTestBase {
     $this->assertArrayHasKey('ignoradas_duplicadas', $stats);
   }
 
+  /**
+   * Valida o dashboard de moderação e o formulário de decisão (ADM1, ARQ-06).
+   */
+  public function testUgcModerationDashboardControllerAndDecisionForm(): void {
+    /** @var \Drupal\aculta_ugc\Service\ReportService $reportService */
+    $reportService = $this->container->get('aculta_ugc.report_service');
+
+    $event = Event::create(['title' => 'Oficina Cultural Sob Análise', 'field_status' => 'publicado']);
+    $event->save();
+
+    $report = $reportService->createReport($event, $this->reporterUser, 'spam', 'eventos');
+
+    // 1. Acesso ao dashboard.
+    $controller = \Drupal\aculta_ugc\Controller\UgcModerationDashboardController::create($this->container);
+    $accessDenied = $controller->access($this->commonUser);
+    $this->assertFalse($accessDenied->isAllowed());
+
+    $accessAllowed = $controller->access($this->adminModerator);
+    $this->assertTrue($accessAllowed->isAllowed());
+
+    // 2. Renderização do dashboard.
+    $this->container->get('current_user')->setAccount($this->adminModerator);
+    $request = \Symfony\Component\HttpFoundation\Request::create('/painel-administrativo/moderacao/denuncias');
+    $build = $controller->overview($request);
+
+    $this->assertArrayHasKey('table', $build);
+    $this->assertCount(1, $build['table']['#rows']);
+    $this->assertSame('Eventos', (string) $build['table']['#rows'][0]['purpose']);
+    $this->assertSame(1, $build['table']['#rows'][0]['total']);
+
+    // 3. Formulário de decisão.
+    $formObject = \Drupal\aculta_ugc\Form\UgcReportDecisionForm::create($this->container);
+    $this->assertFalse($formObject->access($this->commonUser, $report)->isAllowed());
+    $this->assertTrue($formObject->access($this->adminModerator, $report)->isAllowed());
+
+    $formState = new \Drupal\Core\Form\FormState();
+    $form = $formObject->buildForm([], $formState, $report);
+    $this->assertArrayHasKey('decision', $form);
+    $this->assertArrayHasKey('decision_notes', $form);
+
+    $formState->setValue('decision', 'procedente');
+    $formState->setValue('decision_notes', 'Denúncia confirmada após verificação de conteúdo indevido.');
+    $formObject->submitForm($form, $formState);
+
+    // 4. Verificação pós-decisão.
+    $reloadedReport = UgcReport::load($report->id());
+    $this->assertNotNull($reloadedReport);
+    $this->assertSame('procedente', $reloadedReport->get('status')->value);
+    $this->assertSame((int) $this->adminModerator->id(), (int) $reloadedReport->get('decided_by')->value);
+    $this->assertSame('Denúncia confirmada após verificação de conteúdo indevido.', $reloadedReport->get('decision_notes')->value);
+  }
+
 }
