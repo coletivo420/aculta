@@ -362,7 +362,7 @@ a Frente B não adicionará um header visual paralelo.
 
 | Purpose | Estado capturado | Limite da evidência |
 |---|---|---|
-| MAIN | homepage pública renderiza; em 320 px o título “ANTIPROIBICIONISTA” quebra no meio da palavra sem overflow. | Captura somente homepage, sem validar outras páginas/estados. |
+| MAIN | homepage pública renderiza; na captura visível de 2026-10-30 a 320 px, o H1 quebra entre palavras e “ANTIPROIBICIONISTA” permanece inteiro, sem overflow. | A captura atual cobre somente a homepage e não substitui as demais páginas/estados; a observação antiga de quebra no meio da palavra não se reproduziu. |
 | ACCOUNT | raiz redireciona para `/entrar`; Institution Bar presente. | Não cobre Conta, Perfil ou Studio autenticados; Green Stash autorizado permanece fora. |
 | SUPPORT | formulário público de valor renderiza. | Não submetido; não valida estados Form API/AJAX/erro. |
 | MAGAZINE | baseline anterior mostrava título e corpo vazio; a repetição 2026-10-30 encontrou document title, sem H1 nem conteúdo no corpo e somente o rodapé. | Página vazia em todos os nove viewports; consumidor/estado editorial precisam de verificação do owner. |
