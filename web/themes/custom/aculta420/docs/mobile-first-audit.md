@@ -1,9 +1,9 @@
 # Auditoria mobile-first ACULTA420 — THEME-MF0
 
-**Estado em 2026-10-29: inventário estático parcial; MF2 tem migrações incrementais abaixo, mas o gate global MF3 não foi aprovado.**
+**Estado em 2026-10-30: inventário estático parcial; MF2 tem migrações incrementais abaixo, mas o gate global MF3 não foi aprovado.**
 A auditoria original foi registrada no checkout servidor `ded8a6181`. Em
-2026-10-29, a recontagem foi executada na branch atualizada
-`0a479dde3` em `/home/piradopirata/worktrees/opencultures-f0-adm8-e8`; a
+2026-10-30, a recontagem foi executada na branch atualizada
+`e1634a6eb` em `/home/piradopirata/worktrees/opencultures-f0-adm8-e8`; a
 varredura abaixo cobre os arquivos atuais do tema, mas não altera a evidência
 de runtime. Nenhuma escrita persistente foi executada no Runtime.
 
@@ -141,12 +141,12 @@ pendentes. MF2 segue parcial e MF3 não foi aprovado.
 
 ## Escopo quantificado
 
-O inventário foi regenerado em 2026-10-29 por
+O inventário foi regenerado em 2026-10-30 por
 `scripts/audit-aculta420-responsive-inventory.py`. O TSV contém 205 arquivos-
 fonte: 93 folhas CSS/Sass, 12 scripts JavaScript (11 de produção e um de teste)
 e 100 templates Twig/HTML; não inclui documentação ou demais ativos. A busca
-lexical atual encontra `@media` em 46 folhas (82 blocos), zero `@container`,
-expressões de dimensão em 74 folhas (633 matches) e declarações `overflow`,
+lexical atual encontra `@media` em 46 folhas (81 blocos), zero `@container`,
+expressões de dimensão em 74 folhas (632 matches) e declarações `overflow`,
 `overflow-x` ou `overflow-y` em 28 folhas (54 declarações). A expressão de
 dimensão inclui width/height/inline-size/block-size, variantes min/max e
 condições de media query. As contagens não analisam cascata nem efeito
@@ -169,7 +169,7 @@ declarações por bloco):
 
 | Grupo observado | Arquivos com `@media` | Risco inicial a verificar |
 |---|---:|---|
-| `css/components/` | 27 | 59 blocos. Cascata carregada globalmente; breakpoints em portal-account (6), forum-index (5), institutional (4), wiki, discussion, institution-bar, navigation e portal-support (3 cada). |
+| `css/components/` | 27 | 58 blocos. Cascata carregada globalmente; breakpoints em portal-account (6), forum-index (5), institutional (4), wiki, discussion, institution-bar, navigation e portal-support (3 cada). |
 | `components/**` (SDC) | 16 de 45 | 19 blocos `@media`; variantes locais devem ser testadas em consumers reais e contra a cascata global. |
 | Bootstrap distribuído | 2 | Regras do tema base; não substituir infraestrutura nem alterar a cópia do Core/contrib. |
 | `css/tokens.css` | 1 | Preferência light/dark não deve alterar geometria ou ocultar conteúdo. |
@@ -273,7 +273,8 @@ e captura Firefox visível antes e depois da migração.
 
 ### Maior frequência de media queries encontradas
 
-Recontagem lexical de 82 blocos em 46 folhas de estilo do tema. `@media`
+Snapshot histórico da recontagem lexical de 82 blocos em 46 folhas de estilo
+do tema, registrado antes da migração mobile-first do modal Webform. `@media`
 contém também preferências/recursos de acessibilidade, não só breakpoints:
 
 | Query literal | Blocos | Arquivos |
@@ -293,8 +294,19 @@ contém também preferências/recursos de acessibilidade, não só breakpoints:
 Há outras 17 expressões literais de uso único, incluindo limites estreitos,
 `forced-colors`, `hover` e `prefers-color-scheme`. As contagens mostram onde há
 mais regras, mas não provam conflito visual; a cascata precisa ser lida por
-consumer. A saída completa atual está no TSV gerado por
+consumer. A saída completa daquela fotografia está no TSV gerado por
 `scripts/audit-aculta420-responsive-inventory.py`.
+
+### Recontagem THEME-MF0 em 2026-10-30
+
+No head `e1634a6eb`, o scanner atual encontrou 81 blocos `@media` em 46 folhas,
+632 correspondências lexicais de dimensões em 74 folhas, zero blocos
+`@container` e 54 declarações de overflow em 28 folhas. `css/components/`
+passou a conter 58 blocos `@media` em 27 folhas. A queda de um bloco e uma
+correspondência acompanha a conversão do modal Webform para largura fluida na
+regra-base. O TSV `theme-mobile-file-inventory.tsv` foi regenerado na mesma
+revisão. Esta é uma contagem estática; não altera o status parcial de MF0 nem
+aprova MF3.
 
 ## Regras para a migração
 
