@@ -105,3 +105,10 @@ Modelo fixo **por sessão** escolhido no CLI, não neste arquivo. Busque trechos
 - Busca por logradouro/endereço é uma função planejada e restrita às interfaces de Events e Maps. Não a exponha em Conta, checkout nem em formulário global. Não invente provedor, geocodificação ou endpoint.
 - Para Activity, use Local de `aculta_events`; não reintroduza campos de endereço avulsos. Seletor e cadastro devem seguir o plano de modal Drupal/AJAX, o contrato de autorização e a revisão de privacidade.
 - Ao encontrar formulário completo sem o adaptador, registre como lacuna de integração. Não altere dados/configuração Runtime nem promova versão ao apenas documentar.
+
+
+## Regra para popup de Local e integração entre módulos
+
+Agentes devem interpretar “modal” como popup sobreposto criado pelo sistema de diálogo do Drupal, com AJAX. Não trocar por formulário inline, off-canvas ou rota de tela inteira sem decisão explícita. Preservar o estado do formulário pai, retornar foco, suportar teclado/Escape, anunciar erros/estados e atualizar a referência do Local após confirmação.
+
+Para Locais, `aculta_events` é o owner da entidade e do ciclo editorial; `aculta_maps` consome os mesmos Locais autorizados para mapas e geocodificação. Não criar catálogo ou formulário paralelo em Maps. Consulte ADR-033 e o plano LOC antes de alterar os módulos.
