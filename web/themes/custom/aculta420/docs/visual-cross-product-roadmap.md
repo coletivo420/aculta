@@ -733,7 +733,9 @@ rota real `/entrar` tem classe `path-entrar`, não `page-route-user-login`. Os
 seletores foram alinhados também a `/criar-conta` (`path-criar-conta`) e
 `/recuperar-senha` (`path-recuperar-senha`). A fixture aprovada passou 28/28
 checks em 11 larguras, com a aplicação dos paddings previstos e sem overflow.
-A confirmação pós-publicação/cache no Runtime segue DEFERRED; esta fatia não
+A rota real anônima `/entrar` também passou 12/12 verificações em 11 larguras
+com a folha candidata injetada na sessão Firefox, sem mutação persistente; a
+confirmação do CSS servido após publicação/cache segue DEFERRED. Esta fatia não
 homologa THEME-MF3. Evidência e limites em `mobile-first-audit.md` e no README
 de `tests/browser/aculta-theme-mobile-first/`.
 

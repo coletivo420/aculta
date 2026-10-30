@@ -1019,9 +1019,15 @@ A fixture Firefox ESR visível passou 28/28 verificações em 11 larguras
 compactos até 575 px, painel amplo a partir de 576 px, seletor para as três
 classes reais e ausência de overflow. Evidência:
 `/home/piradopirata/aculta-suite-out/auth-selector-fix-20261030-rerun/summary.json`.
-Isto valida o candidato em fixture, não o CSS servido: após a correção, a
-revalidação das páginas no Runtime e o rebuild de cache permanecem DEFERRED,
-pois a branch de trabalho ainda não está publicada/servida.
+A validação do markup real anônimo em `https://conta.aculta.toca.net.br/entrar`
+passou 12/12 checks no Firefox ESR, com a folha candidata injetada somente no
+DOM da sessão, em 11 larguras (320/360/390/575/576/599/600/768/1024/1280/1440
+px). Classes reais, H1, formulário e paddings passaram; em 320 px o scrollWidth
+foi 328 por causa do offcanvas fechado, enquanto `overflow-x: clip` e `scrollX=0`
+confirmaram ausência de rolagem horizontal. Evidência:
+`/home/piradopirata/aculta-suite-out/auth-route-runtime-20261030-final/summary.json`.
+Como CSS foi injetado no navegador, a revalidação pós-publicação e rebuild de
+cache permanece DEFERRED; essa branch ainda não está servida.
 
 ### THEME-MF2 — carrossel editorial da home MAIN (2026-10-29)
 

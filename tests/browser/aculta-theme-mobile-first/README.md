@@ -414,6 +414,26 @@ Runtime anterior à correção confirmou `path-entrar` e não aplicava os estilo
 específicos de `auth.css`; a verificação do CSS corrigido no Runtime aguarda sua
 publicação e rebuild de cache.
 
+`auth-route-runtime.py` abre anonimamente a rota real `/entrar` e injeta a folha
+candidata apenas no DOM da sessão de teste, sem enviar formulários ou alterar o
+Runtime. Confere markup, classes do body, paddings, largura e possibilidade de
+rolagem horizontal em 11 larguras. A `scrollWidth` pode exceder 320 px por
+conteúdo da gaveta Bootstrap fechada; o teste também confirma `overflow-x: clip`
+e `scrollX=0`, isto é, que não existe faixa horizontal rolável. Use
+`AUTH_ROUTE_BASE_URL` para o domínio de desenvolvimento e `AUTH_ROUTE_WIDTHS`
+para focar larguras. Evidência local candidata em
+`/home/piradopirata/aculta-suite-out/auth-route-runtime-20261030-final/summary.json`:
+12/12 PASS. Como o CSS candidato foi injetado no navegador, isso não substitui
+verificação após publicar a branch e reconstruir o cache.
+
+```sh
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/auth-route-runtime
+export AUTH_ROUTE_BASE_URL=https://conta.aculta.toca.net.br
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/auth-route-runtime.py
+```
+
 ```sh
 export DISPLAY=:0
 export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-auth-mobile-first
