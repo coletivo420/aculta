@@ -699,10 +699,18 @@ editorial legível, mas não substitui um consumer de entidade `revista`. As
 capturas 320/1440 foram inspecionadas em
 `/home/piradopirata/aculta-suite-out/aculta-revista-noticias-20261030/`.
 
-Para a Revista, permanece a pendência de confirmar se a View vazia em `/` é
-intencional e fornecer uma entidade `revista` publicada como fixture caso
-publicações devam aparecer. A página estática `/noticias` já é um estado
-distinto e visível; não criar conteúdo no tema.
+Reteste de estado dos dados no Runtime (2026-10-30): `views.view.revista_sessoes`
+está ativa, a exibição `page_revista` mantém o path canônico `revista`, a View
+executa quatro resultados e existem quatro nós publicados do bundle `revista`
+(NIDs 599–602, conteúdo de teste visual autorizado). O Theme Registry descobre
+`views-view--revista-sessoes--page-revista.html.twig` no diretório do tema. Isso
+substitui a hipótese anterior de falta de conteúdo/consumer, mas não prova que
+o HTML visível da capa esteja correto. A captura sem conteúdo em
+`aculta-purposes-mobile-baseline-20261030-3c1691fc5` é um baseline antigo e não
+deve ser usada como aceite da implementação atual. O reteste comparativo da
+capa com Firefox ESR continua DEFERRED nesta sessão porque `DISPLAY=:0` não está
+disponível; não declarar a Revista homologada nem criar outro conteúdo de teste.
+`/noticias` permanece um estado estático distinto e visível.
 
 ### Composição do Domain Header por purpose — Pede-A resolvido
 
