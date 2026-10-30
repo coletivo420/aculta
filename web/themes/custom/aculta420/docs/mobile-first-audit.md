@@ -741,11 +741,19 @@ teclado, WCAG 2.2 AA nem THEME-MF3. As diferenças visuais registradas em
 snapshots anteriores são evidência de heads antigos, não estado vigente nem
 Pede-A aberto.
 
-### Pede-A — conteúdo editorial da Revista
+### Revista — dados da capa verificados; captura visual pendente
 
-| Owner/caminho | Contrato e evidência | Aceite esperado |
-|---|---|---|
-| Owner `aculta_magazine`: View `revista_sessoes`/homepage editorial e seus dados publicados | Em 2026-10-30, `/` respondeu sem H1 ou corpo além do rodapé em nove larguras. O sitemap inclui `/noticias`, página pública comum com H1/texto, mas sem rows da View `aculta-news`; não foi comprovado consumer de entidade `revista`. | Pede-A: confirmar se a raiz/listagem vazia é intencional e fornecer uma entidade `revista` publicada como fixture se a listagem deve mostrar publicações. Testar estado preenchido e vazio em 320/390/768/1440px, preservando ACL, cache e markup do owner. A página `/noticias` existente deve permanecer distinta; a Frente B não inventa conteúdo nem altera Views no tema. |
+A auditoria read-only do Runtime confirmou a View ativa `revista_sessoes`,
+display `page_revista` no path canônico `revista` e quatro rows acessíveis no
+contexto de execução usado pelo Drush. Os quatro nós de teste autorizados
+(NIDs 599–602) estão publicados e cada um tem uma imagem em
+`field_media_image`. O Theme Registry descobre o override de View do tema.
+Assim, o antigo Pede-A sobre ausência de publicação/consumer está resolvido;
+nenhuma alteração é solicitada ao owner do Magazine. A inspeção visual da capa
+preenchida em Firefox ESR, nos viewports 320/390/768/1440px, ainda está
+DEFERRED por `DISPLAY=:0` indisponível. Preservar a página estática `/noticias`
+como estado distinto; não criar conteúdo nem declarar a capa homologada com
+base apenas nos dados ou na descoberta do template.
 
 O registro anterior do `ReportQueueController` foi um handoff já resolvido: o
 controller emite `forum-report-queue` e `forum-report-pager`, e o tema mapeia
