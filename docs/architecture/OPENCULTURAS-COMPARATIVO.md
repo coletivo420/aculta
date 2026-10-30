@@ -144,9 +144,7 @@ Referência: `oc_organizer`, `oc_member`, `claim_ownership`, `profile` com ender
 Referência: `related_article`, `related_event`, `related_location`, `related_profile`, `related_sponsor`,
 `related_pages`, `recommended_by`.
 
-- **I-02:** o `aculta_index` já guarda relações nomeadas. O bloco "Conteúdo relacionado" consulta o índice,
-  respeita o acesso por entidade e por purpose, e cai para uma lista vazia sem erro. O bloco nunca faz
-  consulta direta às entidades de origem.
+- **I-02 (implementado):** o `aculta_index` já guarda relações nomeadas. O bloco "Conteúdo relacionado" (`RelatedContentBlock`, ID `aculta_index_related_content`) consulta o índice via `ContentIndexRelationQuery`, respeita o acesso por entidade e por purpose, e cai para uma lista vazia sem casca HTML (falha fechada). O bloco nunca faz consulta direta às tabelas de origem; cache tags incluem a entidade fonte e os alvos vinculados. Testado por `RelatedContentBlockKernelTest` (7 testes / 146 asserções PASS).
 - Uma relação nova exige um nome e um dono, como hoje. Não criar relação por texto livre.
 - O cache do bloco usa as tags das entidades relacionadas, sem contexto de usuário.
 

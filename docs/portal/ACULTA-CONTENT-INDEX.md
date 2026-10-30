@@ -1,3 +1,7 @@
+## Incremento IDX-BLK - Bloco de Conteúdo Relacionado I-02 (2026-10-30)
+
+Implementado o plugin de bloco `RelatedContentBlock` (`aculta_index_related_content`) consumindo `ContentIndexRelationQuery`. Resolve a entidade fonte por contexto ou por parâmetro da rota atual, consulta relações autorizadas na geração ativa do catálogo sem queries diretas a tabelas fonte, preserva cacheability por tags de entidades vinculadas e falha fechada para array vazio sem casca HTML quando não há relações ou alvos são privados. Estilização mobile-first desacoplada na biblioteca `aculta_index/related_content`. Suíte `RelatedContentBlockKernelTest` validada no banco `aculta_simpletest` (7 testes, 146 asserções PASS).
+
 ## Incremento IDX-LOC - Events e Locais (2026-10-30)
 
 [Plano LOC](../architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), seção 6, é o contrato de implementação deste incremento. A suíte `EventContentIndexProviderKernelTest` foi reexecutada no HEAD com banco `SIMPLETEST_DB` (6 testes, 145 asserções PASS). Nenhum rebuild ou escrita no Runtime foi executado.
