@@ -49,7 +49,7 @@ final class EventOrganizerDashboardController extends ControllerBase {
         '#type' => 'link',
         '#title' => $this->t('Criar evento'),
         '#url' => Url::fromRoute('aculta_events.organizer_event_add'),
-        '#attributes' => ['class' => ['button', 'button--primary']],
+        '#attributes' => ['data-portal-ui' => 'button-primary'],
       ];
     }
 

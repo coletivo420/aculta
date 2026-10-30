@@ -77,7 +77,7 @@ final class EventDateListBuilder {
       '#type' => 'link',
       '#title' => $this->t('Adicionar data a este evento'),
       '#url' => Url::fromRoute(EventRouteContext::route('aculta_events.event_date_add', 'aculta_events.organizer_event_date_add'), ['aculta_event' => $event->id()]),
-      '#attributes' => $this->dialogAttributes('button button--primary'),
+      '#attributes' => $this->dialogAttributes('button-primary'),
     ];
     if (count($dates) > 1) {
       $build['actions']['order'] = [
@@ -118,9 +118,10 @@ final class EventDateListBuilder {
   /**
    * Attributes for a link that opens the Drupal dialog.
    */
-  public function dialogAttributes(string $classes = 'button'): array {
+  public function dialogAttributes(string $token = 'button'): array {
     return [
-      'class' => array_values(array_filter(explode(' ', $classes . ' use-ajax'))),
+      'data-portal-ui' => $token,
+      'class' => ['use-ajax'],
       'data-dialog-type' => 'modal',
       'data-dialog-options' => json_encode(['width' => 720]),
     ];
@@ -132,7 +133,7 @@ final class EventDateListBuilder {
   private function buildActions(Event $event, EventDate $date): array {
     return [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-event-date-actions']],
+      '#attributes' => ['data-portal-ui' => 'event-date-actions'],
       'edit' => [
         '#type' => 'link',
         '#title' => $this->t('Editar'),

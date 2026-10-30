@@ -122,7 +122,7 @@ final class OwnershipClaimDecisionForm extends FormBase {
           '#type' => 'link',
           '#title' => $this->t('Voltar para a lista'),
           '#url' => Url::fromRoute('aculta_user.ownership_claims'),
-          '#attributes' => ['class' => ['button']],
+          '#attributes' => ['data-portal-ui' => 'button'],
         ],
       ];
       return $form;
@@ -158,7 +158,7 @@ final class OwnershipClaimDecisionForm extends FormBase {
         '#type' => 'link',
         '#title' => $this->t('Cancelar'),
         '#url' => Url::fromRoute('aculta_user.ownership_claims'),
-        '#attributes' => ['class' => ['button']],
+        '#attributes' => ['data-portal-ui' => 'button'],
       ],
     ];
 

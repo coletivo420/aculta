@@ -161,7 +161,7 @@ final class OwnershipClaimAdminController extends ControllerBase {
       'filters' => [
         '#theme' => 'links',
         '#links' => $filterLinks,
-        '#attributes' => ['class' => ['aculta-admin-filters', 'action-links']],
+        '#attributes' => ['data-portal-ui' => 'user-admin-filters'],
       ],
       'table' => [
         '#type' => 'table',

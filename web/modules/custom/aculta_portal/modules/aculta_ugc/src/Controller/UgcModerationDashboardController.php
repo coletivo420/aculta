@@ -203,12 +203,12 @@ final class UgcModerationDashboardController extends ControllerBase {
       'status_filters' => [
         '#theme' => 'links',
         '#links' => $statusFilterLinks,
-        '#attributes' => ['class' => ['aculta-admin-status-filters', 'action-links']],
+        '#attributes' => ['data-portal-ui' => 'ugc-admin-status-filters'],
       ],
       'purpose_filters' => [
         '#theme' => 'links',
         '#links' => $purposeFilterLinks,
-        '#attributes' => ['class' => ['aculta-admin-purpose-filters', 'action-links']],
+        '#attributes' => ['data-portal-ui' => 'ugc-admin-purpose-filters'],
       ],
       'table' => [
         '#type' => 'table',

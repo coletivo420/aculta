@@ -142,7 +142,7 @@ final class UgcReportDecisionForm extends FormBase {
           '#type' => 'link',
           '#title' => $this->t('Voltar para a fila'),
           '#url' => Url::fromRoute('aculta_ugc.admin_reports'),
-          '#attributes' => ['class' => ['button']],
+          '#attributes' => ['data-portal-ui' => 'button'],
         ],
       ];
       return $form;
@@ -202,7 +202,7 @@ final class UgcReportDecisionForm extends FormBase {
         '#type' => 'link',
         '#title' => $this->t('Cancelar'),
         '#url' => Url::fromRoute('aculta_ugc.admin_reports'),
-        '#attributes' => ['class' => ['button']],
+        '#attributes' => ['data-portal-ui' => 'button'],
       ],
     ];
 

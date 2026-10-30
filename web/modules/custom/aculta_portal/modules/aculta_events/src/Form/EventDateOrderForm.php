@@ -66,7 +66,7 @@ final class EventDateOrderForm extends FormBase {
     $form['weights'] = [
       '#type' => 'container',
       '#tree' => TRUE,
-      '#attributes' => ['class' => ['aculta-event-date-order']],
+      '#attributes' => ['data-portal-ui' => 'event-date-order'],
     ];
     foreach ($this->dateListBuilder->loadDates($aculta_event) as $date) {
       $quando = $date->get('field_quando')->first();
@@ -93,7 +93,7 @@ final class EventDateOrderForm extends FormBase {
       '#type' => 'link',
       '#title' => $this->t('Cancelar'),
       '#url' => Url::fromRoute(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $aculta_event->id()]),
-      '#attributes' => ['class' => ['button']],
+      '#attributes' => ['data-portal-ui' => 'button'],
     ];
 
     return $form;
