@@ -1161,3 +1161,14 @@ país oculto, integração de behavior CEP e navegação Endereço foram confirm
 sem submeter dados. Evidências e limitações em `mobile-first-audit.md`.
 Isso não homologa ACL entre contas, lookup ao vivo do CEP, WCAG completa nem
 OCS-F11/THEME-MF3.
+
+### THEME-MF2 — CAPTCHA estreito e gate de fronteira (2026-10-30)
+
+O reteste do rodapé nos dez purposes passou 259/260 verificações; a única
+falha é o widget Turnstile flexível de 300 px em conteúdo de Conta com 268 px a
+320 CSS px. Não foi mantido CSS que cortaria ou escalaria o desafio. O Pede-A
+para `aculta_portal` e a evidência estão em `mobile-first-audit.md`.
+
+O validator de fronteira tema/módulo continua vermelho por classes visuais nos
+dois formulários do módulo `aculta_events` (1/3482). A Frente B não alterou o
+módulo. THEME-MF3 permanece não aprovado; este reteste não inicia OCS-A1–A4.

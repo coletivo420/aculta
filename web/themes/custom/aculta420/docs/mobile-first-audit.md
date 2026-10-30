@@ -1801,3 +1801,47 @@ capturas mascaram valores e ficam fora do Git em
 `/home/piradopirata/aculta-suite-out/account-address-head-4307-20261030/`.
 Isto não cobre lookup CEP ao vivo, ACL entre contas, teclado completo, zoom ou
 WCAG 2.2 AA.
+
+### THEME-MF2 — CAPTCHA Turnstile a 320 px e Pede-A
+
+Reteste visual anônimo da rota `/entrar` a 320 px no Firefox ESR visível
+confirmou um overflow real do conteúdo: a área `cf-turnstile` tem 268 px, mas o
+widget interno ocupa 300 px; o documento e `body` chegam a 328 px. A tentativa
+de limitar o wrapper por CSS não altera o iframe/viewport interno, e escala CSS
+recorta elementos do desafio, por isso não foi mantida. A configuração do
+Turnstile está em `flexible`, cujo contrato documentado tem largura mínima de
+300 px ([documentação oficial do Turnstile](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/widget-configurations/)).
+Em 360 px, o espaço medido é 308 px e o widget cabe.
+
+Evidência Firefox, sem submissão: 320 px falha no teste reforçado e 360–1440 px
+passam; resultado em
+`/home/piradopirata/aculta-suite-out/auth-route-captcha-original-20261030/summary.json`.
+O reteste de rodapé em dez purposes passou 259/260 checks; a única falha foi
+Conta a 320 px, causada pelo mesmo desafio (rodapé: 320 px, conteúdo máximo:
+272 px; shell Institution Bar/Domain Header permanecem únicos). Resultado em
+`/home/piradopirata/aculta-suite-out/footer-layout-head-4307-20261030/results.json`.
+
+**Pede-A — apresentação responsiva do Turnstile:** owner de
+`web/modules/custom/aculta_portal` deve definir como o widget `flexible` será
+apresentado quando o campo tiver menos de 300 px, preservando desafio completo,
+teclado, validação server-side e a política atual de exceções. Não mudar a
+configuração global para `compact` sem avaliar o aumento de altura e o impacto
+em formulários largos. O contrato esperado é widget sem corte/overflow em
+320/360 px e tamanho `flexible` preservado quando houver largura suficiente.
+Teste requerido: Firefox visível em `/entrar` e nos demais pontos protegidos,
+com viewport 320/360/390 px, confirmar dimensões e interação completa do
+challenge, submissão de teste autorizada e validação do token; repetir sem CSS
+global injetado. A Frente B não altera Turnstile, CAPTCHA, configuração global
+ou Form API como workaround.
+
+### THEME-MF3 — gate de fronteira do tema (bloqueado)
+
+`php scripts/validate-module-theme-boundary.php` foi executado novamente e
+falhou em 1 de 3482 verificações: seis classes de apresentação continuam em
+`web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationForm.php`
+e `EventOrganizationMembersForm.php` (`messages`, `messages--warning`,
+`button--primary`, `button`). São arquivos do módulo e não foram alterados pela
+Frente B. **Pede-A:** o owner de Eventos deve trocar classes de design por
+marcadores semânticos `data-portal-ui` e manter o tema como responsável pelo
+acabamento; validar renderização dos dois formulários e repetir o validator até
+PASS. THEME-MF3 segue bloqueado enquanto este gate obrigatório estiver vermelho.

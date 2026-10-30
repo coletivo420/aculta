@@ -417,17 +417,18 @@ anterior à correção confirmou `path-entrar` e não aplicava os estilos
 específicos de `auth.css`; a verificação do CSS corrigido no Runtime aguarda sua
 publicação e rebuild de cache.
 
-`auth-route-runtime.py` abre anonimamente a rota real `/entrar` e injeta a folha
-candidata apenas no DOM da sessão de teste, sem enviar formulários ou alterar o
-Runtime. Confere markup, classes do body, paddings, largura e possibilidade de
-rolagem horizontal em 11 larguras. A `scrollWidth` pode exceder 320 px por
-conteúdo da gaveta Bootstrap fechada; o teste também confirma `overflow-x: clip`
-e `scrollX=0`, isto é, que não existe faixa horizontal rolável. Use
-`AUTH_ROUTE_BASE_URL` para o domínio de desenvolvimento e `AUTH_ROUTE_WIDTHS`
-para focar larguras. Evidência local candidata em
-`/home/piradopirata/aculta-suite-out/auth-route-runtime-20261030-final/summary.json`:
-12/12 PASS. Como o CSS candidato foi injetado no navegador, isso não substitui
-verificação após publicar a branch e reconstruir o cache.
+`auth-route-runtime.py` abre anonimamente a rota real `/entrar` e injeta as folhas
+candidatas de base e autenticação apenas no DOM da sessão de teste, sem enviar
+formulários ou alterar o Runtime. Além de markup, paddings e scroll, mede o
+widget Turnstile. O CSS de tema não deve ocultar nem reduzir artificialmente o
+widget: com largura de conteúdo abaixo de 300 px, a configuração `flexible` do
+Turnstile mantém o mínimo de 300 px. O reteste a 320 px registra esse excesso;
+ele precisa ser resolvido no contrato de apresentação do widget, sem cortar o
+desafio. Em 360 px e acima, o widget observado cabe. Use `AUTH_ROUTE_BASE_URL`
+para o domínio de desenvolvimento e `AUTH_ROUTE_WIDTHS` para focar larguras.
+Evidência da reprodução: `/home/piradopirata/aculta-suite-out/auth-route-captcha-original-20261030/summary.json`.
+O check geral de auth anterior, 12/12, não media o conteúdo interno do Turnstile
+e portanto não prova que o CAPTCHA caiba a 320 px.
 
 ```sh
 export DISPLAY=:0
@@ -663,3 +664,10 @@ Use `FOOTER_DOMAIN_ENV=production` somente após confirmar ambiente, DNS e TLS;
 mede somente o layout público do rodapé, shell e overflow; não cobre navegação
 por teclado, zoom, contraste, leitores de tela, páginas internas nem aprova
 THEME-MF3.
+
+Reteste posterior no Runtime/PR HEAD `4307e6fe9`: 259/260 checks em dez
+purposes e 13 larguras. A falha única foi `/conta` a 320 px: o `body` excedeu
+8 px por causa do Turnstile no formulário de login; a inspeção confirmou o
+widget fixo de 300 px dentro da área de 268 px. Não é falha do grid do rodapé.
+Consulte “CAPTCHA Turnstile a 320 px e Pede-A” em
+`web/themes/custom/aculta420/docs/mobile-first-audit.md`.

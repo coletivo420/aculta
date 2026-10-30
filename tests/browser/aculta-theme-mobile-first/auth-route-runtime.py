@@ -22,7 +22,10 @@ BASE = os.environ.get("AUTH_ROUTE_BASE_URL", "http://default").rstrip("/")
 WIDTHS = [int(width) for width in os.environ.get(
     "AUTH_ROUTE_WIDTHS", "320,360,390,575,576,599,600,768,1024,1280,1440",
 ).split(",")]
-CSS = (ROOT / "web/themes/custom/aculta420/css/components/auth.css").read_text()
+CSS = "\n".join((ROOT / path).read_text() for path in (
+    "web/themes/custom/aculta420/css/base.css",
+    "web/themes/custom/aculta420/css/components/auth.css",
+))
 results = []
 
 
@@ -64,11 +67,14 @@ class Viewport:
 if os.environ.get("DISPLAY") != ":0":
     raise SystemExit("Execute com DISPLAY=:0 e Firefox ESR visível.")
 
-measure = """return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth,clientWidth:document.documentElement.clientWidth,
+measure = """const challenge=document.querySelector('.captcha-type-challenge--turnstile .cf-turnstile');
+return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth,clientWidth:document.documentElement.clientWidth,
 rootOverflowX:getComputedStyle(document.documentElement).overflowX,scrollX:window.scrollX,
 bodyClass:document.body.className,
 headingPadding:getComputedStyle(document.querySelector('.aculta-page-heading')).padding,
 contentPadding:getComputedStyle(document.querySelector('.aculta-content')).padding,
+challengeWidth:challenge?.getBoundingClientRect().width||0,challengeScrollWidth:challenge?.scrollWidth||0,
+challengeClientWidth:challenge?.clientWidth||0,
 hasHeading:!!document.querySelector('.aculta-page-heading h1'),
 hasLoginForm:!!document.querySelector('.user-login-form'),
 loggedIn:document.body.classList.contains('user-logged-in')};"""
@@ -97,9 +103,10 @@ try:
         valid = (actual_width == width and "path-entrar" in data["bodyClass"].split()
                  and data["hasHeading"] and data["hasLoginForm"] and not data["loggedIn"]
                  and horizontal_scroll_blocked and data["headingPadding"] == expected_heading
-                 and data["contentPadding"] == expected_content)
+                 and data["contentPadding"] == expected_content
+                 and (data["challengeWidth"] == 0 or data["challengeScrollWidth"] <= data["challengeWidth"] + 1))
         record(f"Runtime /entrar {width}px: estilos candidatos e sem overflow", valid,
-               {key: data[key] for key in ("documentWidth", "bodyWidth", "clientWidth", "rootOverflowX", "scrollX", "headingPadding", "contentPadding")})
+               {key: data[key] for key in ("documentWidth", "bodyWidth", "clientWidth", "rootOverflowX", "scrollX", "headingPadding", "contentPadding", "challengeWidth", "challengeScrollWidth", "challengeClientWidth")})
 finally:
     viewport.close()
     driver.close()
