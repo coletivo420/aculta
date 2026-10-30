@@ -204,3 +204,31 @@ Os critérios de entrada e saída estão no `ROADMAP.md`.
 | `MODELO-DE-DADOS.md` | Entidades, campos e relações |
 | `VISUAL.md` | Esquema visual, tokens e componentes |
 | `upstream-openculturas/` | Cópia da documentação de origem (README, DEVELOPMENT, CONTRIBUTING, SECURITY, CHANGELOG, LICENSE.txt) |
+
+
+## 12. ACULTA Studio Culturas - incorporação seletiva da jornada OpenCulturas
+
+Esta seção revalida o plano para a Suite de organizadores. OpenCulturas funciona como referência de jornada e descoberta; seu backend Drupal não deve ser copiado. ACULTA mantém aculta_events como owner de Evento, Data e Local, aculta_index como índice derivado e os access handlers do módulo como autoridade de acesso.
+
+### Estado e destino
+
+No HEAD, a rota /culturas em purpose eventos e um dashboard inicial de Eventos já existem. Tratar como **parcial** até revisão do fluxo completo e homologação. O destino é eventos.aculta.*/culturas; /studio e /studio/* não serão caminhos novos. O painel técnico e as configurações de administradores permanecem no MAIN.
+
+### Fases de implementação
+
+| Fase | Entrega | Gate |
+| --- | --- | --- |
+| CUL-01 | Auditar o dashboard e as rotas atuais, mapear cada ação para formulário/serviço do owner e construir matriz de criar/editar/publicar por conta, editor escopado e admin | rota no purpose correto; negação para conta sem vínculo; nenhum acesso concedido apenas por configuração |
+| CUL-02 | Workspace organizador com lista de Eventos realmente editáveis, estado, Datas, Locais e chamadas de ação autorizadas | filtros por access('update'), cache por usuário/permissões e ausência de eventos de outra conta |
+| CUL-03 | Fluxo do Evento e Datas subordinadas ao Evento, reaproveitando Form API e gestão já existentes | não criar entidade Data, persistência Studio nem lifecycle paralelo |
+| CUL-04 | Seleção de Local existente e criação contextual, com revalidação de acesso, precisão e links para página pública | contas A/B, anônimo, Local privado/rascunho/aproximado; não vazar endereço/ID negado |
+| CUL-05 | Relações/discovery pelo aculta_index para Eventos/Locais; resolver identidade pública do Organizador antes de expor resultados | revalidação de origem e destino, purpose canônico, paginação, cache; sem indexar conta user como se fosse Perfil público |
+| CUL-06 | Fidelidade visual, acessibilidade e estados de uso, mantendo shell global e aplicando navegação contextual no interior da Suite | ACULTA420/Olivero, mobile-first, teclado, no-JS, estados vazios/erro/sem acesso e browser visível |
+| CUL-07 | Aceite integrado e atualização do status do módulo/versão | PHPUnit/Kernel/Functional + Firefox ESR/Runtime executados; sem DEFERRED declarado PASS |
+
+### Decisões de adaptação
+
+- Preservar Evento > Data > Local; Data é parte do Evento e Local é entidade reutilizável com página/diretório próprios.
+- O campo field_organizador atualmente referencia uma conta. Não transformar conta em perfil, nem publicar username/UID; a descoberta pública de organizadores requer vínculo verificado com Perfil ou Organização e URL canônica de perfil integrada ao contrato de resultado do Index.
+- aculta_index já tem providers de Evento e Local e consulta ACL da entidade fonte e alvos; o Studio consome essa infraestrutura e não cria Search API/Views/Facets em paralelo.
+- Não criar papel global “organizador”. Reivindicação e vínculo organizacional continuam aprovados por moderação, e ações são verificadas no servidor.
