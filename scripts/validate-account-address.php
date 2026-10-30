@@ -188,14 +188,13 @@ $check(
 
 // 4. O CEP resolvido sobrevive ao AJAX; trocar o CEP substitui o endereço todo.
 $check(str_contains($cep, 'const resolvedCep = new Map()'), 'cep-address.js: CEP resolvido guardado por campo');
-$check(str_contains($cep, 'function keysToWrite') && str_contains($cep, 'if (replace) return values;'), 'cep-address.js: troca de CEP substitui o endereço');
+$check(str_contains($cep, 'isReplacement'), 'cep-address.js: troca de CEP substitui o endereço');
 $check(str_contains($cep, 'pendingFill.delete(prefix)'), 'cep-address.js: preenchimento pendente vale só para o próprio rebuild');
 
-// 4b. Campos preenchidos pelo CEP ficam somente leitura; campos restantes
-// continuam editáveis.
+// 4b. Campos preenchidos pelo CEP continuam editáveis (permitindo cidades com CEP geral e ajustes).
 $check(
-  str_contains($cep, 'applyLocks') && str_contains($cep, "readOnly = locked") && str_contains($cep, "'aculta-cep-locked'"),
-  'cep-address.js: campos vindos do CEP bloqueados, sem bloquear número e complemento',
+  !str_contains($cep, 'readOnly =') && !str_contains($cep, 'field.disabled = true') && str_contains($cep, 'applyFieldValues'),
+  'cep-address.js: campos continuam editáveis após autopreenchimento do CEP',
 );
 
 // 5. Alias `address` é computado e lê field_address, pois o contrib do Mercado

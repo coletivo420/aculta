@@ -103,8 +103,8 @@ try:
     check("CEP preenche cidade", wait_for(lambda: value("locality") == "São Paulo"), value("locality") or "")
     check("CEP preenche estado", wait_for(lambda: value("administrative_area") == "SP"), value("administrative_area") or "")
     print("Aviso CEP:", D.js("return document.querySelector('[data-aculta-cep-status]')?.innerText || ''"), flush=True)
-    check("rua preenchida fica somente leitura", wait_for(lambda: D.js(
-        "var e=document.querySelector(arguments[0]); return e && e.readOnly;",
+    check("rua preenchida continua editável", wait_for(lambda: D.js(
+        "var e=document.querySelector(arguments[0]); return e && !e.readOnly;",
         [f'[name="{ADDRESS}[address_line1]"]'],
     )))
     check("número permanece editável", not D.js(

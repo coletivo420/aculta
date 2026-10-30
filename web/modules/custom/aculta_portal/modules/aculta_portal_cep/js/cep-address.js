@@ -67,98 +67,62 @@
     return result;
   }
 
-  function dispatchChange(field) {
+  function dispatchInput(field) {
     if (!field) return;
     field.dispatchEvent(new Event('input', { bubbles: true }));
     field.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
-  // Preenchimento do CEP. O Estado dispara um rebuild AJAX do endereço, que substitui os campos do markup. Por isso
-  // os campos vêm primeiro, e o Estado por último. O preenchimento fica guardado e é reaplicado nos campos vazios
-  // do markup novo (attach), sem disparar outro rebuild.
+  // Preenchimento do CEP. Quando o Estado muda, o Drupal Address dispara um rebuild AJAX do endereço,
+  // substituindo os elementos no DOM. O preenchimento pendente é guardado aqui e aplicado aos novos
+  // campos no attach seguinte, sem re-disparar o rebuild.
   const pendingFill = new Map();
-  // CEP já resolvido por endereço (prefixo do campo). Fica no módulo, e não no elemento: o AJAX troca o elemento.
+  // CEP já resolvido por prefixo do campo.
   const resolvedCep = new Map();
-  // Campos do endereço que vieram do CEP (banco) ficam bloqueados para edição, mas visíveis. Número, S/N e complemento
-  // nunca são bloqueados. Campos que a busca não preencheu continuam editáveis.
-  const LOCKABLE = ['address_line1', 'dependent_locality', 'locality', 'administrative_area'];
-  const lockedValues = new Map();
 
-  function applyLocks(prefix, container) {
-    const locks = lockedValues.get(prefix) || {};
-    LOCKABLE.forEach((key) => {
+  /**
+   * Aplica valores aos campos de endereço (rua, bairro e cidade).
+   * Todos os campos continuam editáveis pelo usuário (inclusive em CEP geral onde rua e bairro vêm vazios).
+   */
+  function applyFieldValues(prefix, container, values, isReplacement = false) {
+    ['address_line1', 'dependent_locality'].forEach((key) => {
       const field = getField(prefix, key, container);
       if (!field) return;
-      const locked = Object.prototype.hasOwnProperty.call(locks, key);
-      field.classList.toggle('aculta-cep-locked', locked);
-      if (field.tagName === 'SELECT') {
-        // Select travado: desabilitado (não abre nem mostra as outras opções). Um input hidden com o mesmo nome leva o
-        // valor no envio, já que campo desabilitado não é enviado. Ao destravar, o hidden sai.
-        let mirror = field.parentNode.querySelector(`input[type="hidden"][data-aculta-lock-mirror="1"][name="${field.name}"]`);
-        if (locked) {
-          field.disabled = true;
-          field.setAttribute('aria-disabled', 'true');
-          if (!mirror) {
-            mirror = document.createElement('input');
-            mirror.type = 'hidden';
-            mirror.name = field.name;
-            mirror.dataset.acultaLockMirror = '1';
-            field.insertAdjacentElement('afterend', mirror);
+      const val = values[key];
+      if (val !== undefined && val !== null && val !== '') {
+        field.value = val;
+        dispatchInput(field);
+      }
+      else if (isReplacement) {
+        field.value = '';
+        dispatchInput(field);
+      }
+    });
+
+    const city = getField(prefix, 'locality', container);
+    if (city && values.locality) {
+      if (city.tagName === 'SELECT') {
+        city.value = values.locality;
+        if (city.value !== values.locality) {
+          const norm = (s) => (s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          const target = norm(values.locality);
+          const match = Array.from(city.options).find(
+            (opt) => norm(opt.value) === target || norm(opt.text) === target
+          );
+          if (match) {
+            city.value = match.value;
           }
-          mirror.value = field.value;
         }
-        else {
-          field.disabled = false;
-          field.removeAttribute('aria-disabled');
-          if (mirror) mirror.remove();
-        }
-        // Mudança desfeita se alguma outra rotina alterar o select travado.
-        if (!field.dataset.acultaLockBound) {
-          field.dataset.acultaLockBound = 'true';
-          field.addEventListener('change', () => {
-            const current = lockedValues.get(prefix) || {};
-            if (Object.prototype.hasOwnProperty.call(current, key) && field.value !== current[key]) {
-              field.value = current[key];
-            }
-          });
-        }
+        dispatchInput(city);
       }
       else {
-        field.readOnly = locked;
-        if (locked) field.setAttribute('aria-readonly', 'true');
-        else field.removeAttribute('aria-readonly');
+        city.value = values.locality;
+        dispatchInput(city);
       }
-    });
-  }
-
-  function clearLocks(prefix, container) {
-    lockedValues.delete(prefix);
-    applyLocks(prefix, container);
-  }
-
-  // Campos que a busca deve escrever: a troca de CEP escreve o endereço inteiro; o primeiro preenchimento só os vazios.
-  function keysToWrite(prefix, container, values, replace) {
-    if (replace) return values;
-    const out = {};
-    Object.keys(values).forEach((key) => {
-      const field = getField(prefix, key, container);
-      if (field && field.value === '' && values[key] !== undefined && values[key] !== null) out[key] = values[key];
-    });
-    return out;
-  }
-
-  function applyFill(prefix, container, values, { onlyEmpty = false } = {}) {
-    Object.keys(values).filter((key) => key !== 'administrative_area').forEach((key) => {
-      const field = getField(prefix, key, container);
-      const value = values[key];
-      if (field && value !== undefined && value !== null && (!onlyEmpty || field.value === '')) {
-        field.value = value;
-      }
-    });
-    const state = getField(prefix, 'administrative_area', container);
-    if (state && values.administrative_area && (!onlyEmpty || state.value === '')) {
-      state.value = values.administrative_area;
-      dispatchChange(state);
+    }
+    else if (city && isReplacement && !values.locality) {
+      city.value = '';
+      dispatchInput(city);
     }
   }
 
@@ -220,13 +184,10 @@
       }
       const pending = pendingFill.get(prefix);
       if (pending) {
-        applyFill(prefix, container, pending, { onlyEmpty: false });
-        // Vale só para o rebuild que a própria busca disparou: depois disso, o que a pessoa editar fica como está.
         pendingFill.delete(prefix);
-        // O rebuild apaga o aviso de status: anuncia de novo, para leitor de tela.
+        applyFieldValues(prefix, container, pending.values, pending.isReplacement);
         announce(statusFor(postal), Drupal.t('Endereço localizado. Confira os dados e complete o número manualmente.'));
       }
-      applyLocks(prefix, container);
       const complement = getField(prefix, 'address_line2', container);
       if (complement) complement.setAttribute('placeholder', Drupal.t('Complemento'));
 
@@ -240,7 +201,6 @@
           const requestedCep = digits(postal.value);
           if (requestedCep.length !== 8 || requestedCep === resolvedCep.get(prefix)) return;
           activeCep = requestedCep;
-          clearLocks(prefix, container);
           announce(status, Drupal.t('Consultando o CEP.'));
           try {
             const result = await lookup(requestedCep);
@@ -248,31 +208,37 @@
             const data = result.data;
             // Campos do Commerce/Address: bairro em dependent_locality. O complemento do ViaCEP não é usado.
             const values = {
-              administrative_area: data.administrative_area,
-              locality: data.locality,
-              address_line1: data.address_line1,
+              administrative_area: data.administrative_area || '',
+              locality: data.locality || '',
+              address_line1: data.address_line1 || '',
               dependent_locality: data.dependent_locality || '',
             };
-            // Primeiro CEP: só preenche campos vazios, sem apagar o que a pessoa já digitou. Se o CEP mudou depois de um
-            // preenchimento, o endereço é do novo CEP: rua, bairro, cidade e estado são substituídos. Número, S/N e
-            // complemento não fazem parte de values e nunca são alterados.
             const previous = resolvedCep.get(prefix) || '';
-            const replace = previous !== '' && previous !== requestedCep;
-            const toWrite = keysToWrite(prefix, container, values, replace);
-            pendingFill.set(prefix, toWrite);
-            applyFill(prefix, container, toWrite, { onlyEmpty: false });
+            const isReplacement = previous !== '' && previous !== requestedCep;
             resolvedCep.set(prefix, requestedCep);
-            const locks = {};
-            Object.keys(toWrite).forEach((key) => {
-              if (LOCKABLE.includes(key) && toWrite[key]) locks[key] = toWrite[key];
-            });
-            lockedValues.set(prefix, locks);
-            applyLocks(prefix, container);
+
+            const state = getField(prefix, 'administrative_area', container);
+            const needsStateChange = state && values.administrative_area && state.value !== values.administrative_area;
+
+            applyFieldValues(prefix, container, values, isReplacement);
+
+            if (needsStateChange) {
+              pendingFill.set(prefix, { values, isReplacement });
+              state.value = values.administrative_area;
+              dispatchInput(state);
+            }
+
             postal.value = formatCep(requestedCep);
             postal.dataset.acultaCepResolved = requestedCep;
             announce(status, Drupal.t('Endereço localizado. Confira os dados e complete o número manualmente.'));
+
             const street = getField(prefix, 'address_line1', container);
-            if (street) street.focus();
+            if (values.address_line1 && numInput && !numInput.disabled) {
+              numInput.focus();
+            }
+            else if (street) {
+              street.focus();
+            }
           }
           catch (error) {
             if (digits(postal.value) === requestedCep) {
