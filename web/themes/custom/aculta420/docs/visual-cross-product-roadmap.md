@@ -1,4 +1,4 @@
-## DECISÃO GLOBAL - ACULTA420 inteiramente mobile-first (2026-10-29)
+## DECISÃO GLOBAL - ACULTA420 inteiramente mobile-first (2026-10-29; atualizada em 2026-10-30)
 
 **Regra obrigatória para todo o tema, sem exceção por purpose:** definir a apresentação base a partir do viewport móvel (mínimo 320 px), com aprimoramento progressivo desktop, preservando ordem DOM, foco, acessibilidade, semântica, shell institucional e Domain Header. Converter progressivamente os estilos, layouts, componentes SDC, formulários, navegação, mídia, tabelas, overlays, modal e UI Patterns do ACULTA420, não apenas CSS de Studio.
 
@@ -20,23 +20,23 @@ Para Green Stash, usar SDCs compartilhados com variantes adaptadas a operação 
 
 O roteiro resumido nesta seção foi substituído pela sequência vigente do [plano visual](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md), que define OCS-F0-F11 antes de OCS-A1-A4. É obrigatório aplicar padrões Next ao Hub, Marley, GanjaLab, WE Sativa, Green Stash integrado, Conta, Perfil e demais experiências reais inventariadas.
 
-O tema fornece padrões transversais de grid, cards, tabs, edição, seções, estados e navegação contextual; cada experiência expõe render arrays/ACL/links pelos serviços donos. Menu Studio deriva do registro de experiências e permissões, não é uma lista estática no CSS/Twig. Não criar SDCs específicos de GanjaLab/WE Sativa se um componente transversal com variante resolve. Instituição/Domain Header continuam invariáveis. **OCS-F10** é o gate de fidelidade; identidade Aculta apenas após aceite. Testar também outros purposes para evitar vazamento CSS.
+O tema fornece padrões transversais de grid, cards, tabs, edição, seções, estados e navegação contextual; cada experiência expõe render arrays/ACL/links pelos serviços donos. Menu Studio deriva do registro de experiências e permissões, não é uma lista estática no CSS/Twig. Não criar SDCs específicos de GanjaLab/WE Sativa se um componente transversal com variante resolve. Institution Bar e Domain Header continuam invariáveis. **OCS-F11**, dependente da aprovação de THEME-MF3, é o gate de fidelidade; identidade Aculta somente depois dos dois aceites. Testar também outros purposes para evitar vazamento CSS.
 
 ## Frente Studio: Fidelity → Identity - OCS-F/OCS-A (2026-10-29)
 
 [Plano de implementação e critérios](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md). **Tema de origem é `opcult` (OpenCulturas Next)**; `openculturas_base` é legado. Etapa F reproduz estrutura, tipografia, espaçamento, componentes, cards, navegação e formulários do Next, mas somente **no contexto interno do Studio**. Etapa A substitui a identidade visual por tokens institucionais, sem reimplementar contratos funcionais.
 
-- [ ] F0 inventário `opcult` → SDC/consumer, matriz de paridade e telas-benchmark.
-- [ ] F1 tokens e fundação de fidelidade escopados; F2 navegação/contexto; F3 reaproveitar `patterns/card`, `context-header`, `context-tabs`, `empty-state`, `content-section` e SDCs de Perfil antes de criar componentes.
-- [ ] F4 dashboard e F5 Marley com dados reais; F6 Conta e Perfil respeitando S-R4/S-R5 e `/conta-legada`.
-- [ ] F7 aprovar fidelidade em capturas, UI Patterns, Firefox ESR, acessibilidade, privacidade, claro/escuro e demais purposes.
-- [ ] A1-A4 identidade Aculta, ajuste visual e limpeza de overrides sem alteração de slots/props.
+- [ ] OCS-F0 inventário dinâmico completo `opcult` → SDC/consumer, providers, rotas, estados, matriz de paridade e baselines; THEME-MF0 cobre todo o tema e todos os purposes.
+- [ ] THEME-MF1 fundação global mobile-first; THEME-MF2 migração de todos os grupos do tema; OCS-F1 tokens Next escopados ao Studio, F2 composição/navegação contextual e F3 reuso/variantes SDC com stories e consumers reais.
+- [ ] OCS-F4 Hub; F5 Marley; F6 GanjaLab/LMS; F7 WE Sativa/Wiki; F8 Green Stash integrado; F9 Conta e Perfil separados; F10 demais experiências reais.
+- [ ] THEME-MF3 gate global mobile-first e OCS-F11 gate de fidelidade de todo o Studio, com OCS-F11 dependente de MF3; Firefox ESR, acessibilidade, privacidade, claro/escuro e todos os purposes.
+- [ ] OCS-A1-A4 identidade própria Aculta somente depois dos dois gates, nos mesmos SDCs e contratos de todas as experiências Studio, incluindo Green Stash integrado.
 
 **Não modificar Institution Bar ou Domain Header**, nem globalizar os estilos OpenCulturas; não ativar `opcult`, não criar CSS/Sass build paralelo. Auditar licença de fontes, ícones e SVGs antes de qualquer porte. A frente B detém tema, SDCs e CSS; arquivos de serviços/controladores/rotas pertencem à frente A.
 
 # ACULTA420 — Roadmap visual transversal (planejamento)
 
-**Linha de planejamento:** THEME-UX 0.8 · **Data:** 2026-10-22 · **Estado:** plano; OCS-F0 documental em andamento, sem alteração visual nem gates Runtime aprovados.
+**Linha de planejamento:** THEME-UX 0.8 · **Atualização:** 2026-10-30 · **Estado:** auditorias estáticas F0/MF0 parciais e migrações mobile-first incrementais; gates THEME-MF3 e OCS-F11 não aprovados.
 
 ## OCS-F0 — OpenCulturas Next → Studio (2026-10-29)
 
@@ -394,11 +394,11 @@ inventário estático não prova responsividade. MF1–MF3, o gate OCS-F11 e
 OCS-A1–A4 continuam pendentes; consultar o plano e a matriz de paridade atual.
 
 
-## THEME-MF0 e OCS-F0 — evidência parcial (2026-10-29)
+## THEME-MF0 e OCS-F0 — evidência parcial (2026-10-30)
 
-O inventário estático inclui 92 folhas CSS/Sass, 11 scripts, 98 templates,
-20 bibliotecas e 85 pontos custom de anexação; os 10 purposes declarados estão
-mapeados. A captura Firefox visível cobre homepage pública OpenCulturas e oito
+O inventário estático atual contém 205 arquivos-fonte: 93 folhas CSS/Sass, 12
+scripts JavaScript e 100 templates Twig/HTML; os 10 purposes declarados estão
+mapeados. A captura Firefox visível anterior cobre homepage pública OpenCulturas e oito
 URLs Studio a 390/1440, não o conjunto de purposes. `/studio` está vazio,
 GanjaLab aponta conteúdo de Conta e Green Stash requer fixture autorizada. Ver
 [`mobile-first-audit.md`](mobile-first-audit.md) e
@@ -406,6 +406,14 @@ GanjaLab aponta conteúdo de Conta e Green Stash requer fixture autorizada. Ver
 Uma repetição instrumentada encontrou Institution Bar presente nas sete rotas
 renderizadas, Domain Header ausente nas oito URLs capturadas e marcadores
 `data-aculta-studio` somente em Marley. Nenhum gate MF3/F11 foi aprovado.
+
+Consulta somente leitura ao MCP Drupal em 2026-10-30 confirmou Drupal 11.4.10,
+PHP 8.4.27 e URI `http://default`; 47 módulos ACULTA foram listados, dos quais
+42 habilitados. Não há updates de banco pendentes. O MCP reportou 187 diferenças
+entre configuração ativa e `config/sync` (39 somente no Sync, 50 somente no DB,
+98 diferentes); o servidor não expõe valores nem conteúdo. Esses dados não
+homologam telas autenticadas, contratos de acesso ou aparência renderizada, e
+nenhuma escrita no Runtime foi feita nesta consulta.
 
 ### Evidência Studio ampliada — 2026-10-29
 
@@ -622,14 +630,15 @@ DEFERRED por falta de recursos enquanto a suíte visível da Revista está ativa
 Não é gate MF3. Ver `mobile-first-audit.md` e
 `tests/browser/aculta-theme-mobile-first/auth-layout.py`.
 
-### THEME-MF0 — inventário estático regenerável (2026-10-29)
+### THEME-MF0 — inventário estático regenerável (snapshot histórico 2026-10-29)
 
 `scripts/audit-aculta420-responsive-inventory.py --write` refaz o inventário
 lexical do tema e inclui styles, JavaScript e Twig/HTML atuais. O snapshot atual
-encontra 541 arquivos no tema, 92 folhas de estilo, 12 scripts JS e 98 templates;
-44 folhas têm 77 blocos `@media`, sem `@container`, com 599 matches dimensionais
-e 54 declarações overflow. Isso documenta fontes e regras literais, sem medir
-layout computado ou declarar cobertura de runtime. Fonte detalhada em
+daquela data encontrou 541 arquivos no tema, 92 folhas de estilo, 12 scripts JS
+e 98 templates; 44 folhas tinham 77 blocos `@media`, sem `@container`, com 599
+matches dimensionais e 54 declarações overflow. A recontagem atual está na
+seção THEME-MF0/OCS-F0 de 2026-10-30 acima. Ambas documentam fontes e regras
+literais, sem medir layout computado ou declarar cobertura de runtime. Fonte detalhada em
 `mobile-first-audit.md` e `theme-mobile-file-inventory.tsv`.
 
 ### THEME-MF2 — carrossel editorial da home MAIN (2026-10-29)
