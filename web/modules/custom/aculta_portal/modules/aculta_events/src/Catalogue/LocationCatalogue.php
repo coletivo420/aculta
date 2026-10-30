@@ -7,6 +7,7 @@ namespace Drupal\aculta_events\Catalogue;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AnonymousUserSession;
 
 /**
  * Lista pública de locais (/locais), com filtro por tipo (F4).
@@ -60,7 +61,9 @@ final class LocationCatalogue {
     int $limit = 12,
     ?AccountInterface $account = NULL,
   ): array {
-    $conta = $account ?? $this->currentUser;
+    // Falha fechado quando o serviço for usado sem conta explícita nem contexto
+    // de requisição: locais privados/rascunhos nunca entram por ausência de ACL.
+    $conta = $account ?? $this->currentUser ?? new AnonymousUserSession();
     $storage = $this->entityTypeManager->getStorage('aculta_event_location');
     $consulta = $storage->getQuery()->sort('title', 'ASC')->accessCheck(FALSE);
 
@@ -81,7 +84,7 @@ final class LocationCatalogue {
     $validos = [];
 
     foreach ($locais as $local) {
-      if ($local instanceof EventLocation && ($conta === NULL || $local->access('view', $conta))) {
+      if ($local instanceof EventLocation && $local->access('view', $conta)) {
         $validos[] = [
           'local' => $local,
           'endereco' => $this->enderecoPublico($local),
