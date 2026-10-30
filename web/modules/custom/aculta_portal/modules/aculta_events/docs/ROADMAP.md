@@ -298,3 +298,15 @@ Fonte: `docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md`. Preservar
 - OAuth do OSM validado e ensaio de escrita fictícia com limpeza: nó
   `14331309082`, changesets `191197897`, `191197899` e `191197900`.
 - Próxima etapa: validação Alpha após autorização de release.
+
+
+## Experiência editorial de Local em Activity (planejado; sem implementação)
+
+- [ ] Substituir os campos avulsos de endereço do bundle `activity` por referência a `aculta_event_location`, após mapear e preservar os dados existentes.
+- [ ] Em `/node/add/activity`, oferecer modal Drupal/AJAX para pesquisar Locais existentes por nomes semelhantes, selecionar um resultado ou iniciar cadastro. Validar acesso no servidor.
+- [ ] Cadastro de Local em modal Drupal/AJAX, reutilizando adaptador central e CEP do `aculta_portal_cep`, Brasil padrão e sem seletor de país. CEP primeiro; futura busca por logradouro e resultados próximos somente dentro de Events/Maps, após aprovação de provedor.
+- [ ] Ao confirmar, retornar a referência do Local ao formulário pai sem salvamento silencioso, perda de valores ou bypass de validação.
+- [ ] Criar área administrativa própria de Events dentro de `/painel-administrativo`, seguindo padrões de LMS e Fórum: rotas, permissões, navegação, listagens e operações documentadas.
+- [ ] Validar acessibilidade/foco do modal, autorização, cache, duplicidade, concorrência, erros AJAX, teclado, mobile, integração com `aculta_index` e ausência de regressões em Conta/checkout.
+
+Contrato normativo: [ADR-033](../../../../../../../docs/decisions/ADR-033-endereco-busca-e-locais.md). Não marcar itens como concluídos sem evidências de implementação e validação.
