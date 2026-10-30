@@ -33,6 +33,22 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
   decisão de access.
 - Não criar CMS, catálogo, carrinho, pedido, pagamento ou LMS paralelo a Core ou contrib.
 
+## Domínio administrativo e integrações
+
+- Toda rota `/painel-administrativo/**` e `/integracoes/**` responde somente no
+  domínio principal (MAIN). Em subdomínio, o resultado é **404** para todos os
+  métodos, nunca 302.
+- Não criar painel, alias, redirect, toolbar, link contextual ou ação
+  administrativa em subdomínio; ocultar no cliente não substitui o 404 de
+  servidor.
+- Rota administrativa ou de integração não declara
+  `_aculta_domain_purpose` diferente de `main` nem
+  `_aculta_domain_purpose_authoritative`.
+- A escrita do organizador no ACULTA Studio Culturas ocorre no purpose
+  `eventos` fora de `/painel-administrativo`; não é exceção a esta regra.
+- Política: [ADMIN-DOMAIN-POLICY.md](ADMIN-DOMAIN-POLICY.md). Gate:
+  `php scripts/validate-admin-routes-main-domain.php`.
+
 ## Formulário de endereço unificado
 
 - O site tem uma única implementação central de formulário para capturar/editar endereços: `aculta_portal` (`AccountAddressForm`), integrada à biblioteca e ao serviço `aculta_portal_cep`.

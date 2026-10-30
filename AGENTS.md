@@ -131,3 +131,12 @@ O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas
 - As telas públicas de Eventos continuam no purpose `eventos`. Outros domínios podem compor exibição somente leitura de Eventos publicados e acessíveis, sempre com link canônico de Eventos e sem expor Eventos privados do LMS.
 - Esta decisão substitui qualquer texto anterior que diga que todo trabalho editorial de Eventos só pode ocorrer no MAIN ou que o purpose `eventos` é exclusivamente público. O painel de administração permanece no MAIN; a área do organizador é a exceção explícita e separada em ACULTA Studio Culturas.
 - Estado: decisão e planejamento documental; implementação, autorização por domínio, navegação e homologação ainda precisam ser concluídas.
+
+
+## Rotas administrativas e integrações: sempre no MAIN (guardrail)
+
+- **Toda rota administrativa e de integração responde somente no domínio principal (MAIN):** `/painel-administrativo/**` (Eventos, Datas, Locais, configurações, exportação) e `/integracoes/**` (OpenStreetMap, Melhor Envio, Mercado Pago, MCP e futuras). Em qualquer subdomínio, essas rotas retornam **404** (nunca 302), para todos os métodos.
+- Não renderize toolbar do Navigation, links contextuais ou qualquer ação administrativa em subdomínio. `DomainRouteSubscriber`, `DomainPurposeRequestSubscriber`, `AppearanceHooks` e `hook_contextual_links_view_alter` aplicam a regra no servidor; ocultar no cliente não substitui a checagem.
+- Não declare `_aculta_domain_purpose` diferente de `main` nem `_aculta_domain_purpose_authoritative` em rota administrativa ou de integração. Não crie alias, redirect ou segundo painel.
+- A experiência de organizadores do ACULTA Studio Culturas é uma superfície de escrita separada no purpose `eventos` (quando implementada); não usa `/painel-administrativo` nem `/integracoes` e não é exceção a esta regra.
+- Política: `docs/portal/ADMIN-DOMAIN-POLICY.md`. Gate: `php scripts/validate-admin-routes-main-domain.php`. Testes: `EventDomainBoundaryKernelTest`, `DomainRouteSubscriberIntegrationPurposeTest` e `DomainRoutePolicyTest`.

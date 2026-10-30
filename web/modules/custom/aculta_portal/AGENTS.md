@@ -6,6 +6,7 @@ Herde `AGENTS.md` da raiz. Consulte `docs/AGENT-POLICIES.md` **somente nas seç�
 - Endereço e CEP: use exclusivamente o contrato central em `AccountAddressForm` e `aculta_portal_cep`. O país é sempre Brasil (`BR`), sem seletor de país em formulário algum. Validação no servidor obrigatória (`country_code = BR`). Preserve número, S/N e complemento no CEP. Ver ADR-034 e `docs/portal/ACCOUNT-ADDRESS.md`.
 - Valide DI, Entity API, access, render/cacheability e gates do escopo.
 - Para rotas/domínios, consulte `docs/architecture/AGENT-ROUTES.md` e `docs/architecture/ROUTES-SITEMAP.md`.
+- **Administração e integrações somente no MAIN:** `/painel-administrativo/**` e `/integracoes/**` respondem somente no domínio principal; em subdomínios, 404 (nunca 302). Não renderize toolbar, links contextuais ou ações administrativas em subdomínio. Política: `docs/portal/ADMIN-DOMAIN-POLICY.md`; gate: `php scripts/validate-admin-routes-main-domain.php`.
 - Regras adicionais de submódulos só se aplicam ao submódulo alterado.
 
 - Antes de criar ou editar captura de endereço, leia `docs/decisions/ADR-033-endereco-busca-e-locais.md` e siga `docs/portal/ACCOUNT-ADDRESS.md`: reutilize o adaptador central e CEP para endereço completo; Brasil padrão, sem seletor.

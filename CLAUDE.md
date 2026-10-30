@@ -23,6 +23,7 @@ Plataforma Drupal 11 da ACULTA (PHP conforme `docs/architecture/environments.md`
 - **Credenciais:** em produção, as chaves ficam no banco, criptografadas, e são provisionadas pelo `aculta_deployer` após o deploy. Arquivos em `secrets/` são só do servidor de desenvolvimento. Nunca grave credencial em arquivo versionado.
 - **Mercado Pago:** o prefixo do token (`APP_USR-`) não identifica o ambiente. Decida pelo modo configurado e pelo `live_mode` do pagamento.
 - **Pesquisa na web:** liberada, sem pedir permissão. Não publique nem envie conteúdo para fora sem confirmação.
+- **Rotas administrativas e integrações:** toda rota `/painel-administrativo/**` e `/integracoes/**` responde somente no domínio principal (MAIN); em qualquer subdomínio retorna 404 (nunca 302). Não crie painel, toolbar, link contextual ou ação administrativa em subdomínio. Gate: `php scripts/validate-admin-routes-main-domain.php`. Política: `docs/portal/ADMIN-DOMAIN-POLICY.md`.
 - **Testes de Portal, Revista e Fórum:** rode também com o tema Olivero, além do ACULTA420. Tudo que é do módulo deve funcionar sem o tema.
 - **Navegador de testes:** Firefox ESR visível em `DISPLAY=:0`, via geckodriver. Não use Chromium nem headless. Perfil temporário e artefatos vão para `$SUITE_OUT`, fora do repositório. Scripts de teste visual ficam em `tests/browser/<frente>/` com `README.md`.
 - **Dúvida ou ordem fora deste texto:** pare e pergunte ao responsável. Faça antes o que for independente.

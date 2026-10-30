@@ -25,6 +25,24 @@ Estas regras foram realocadas do arquivo histórico de instruções; aplique som
   políticas de domínio/redirect, menus e links gerados. Use `/` nos exemplos de
   path e preserve os parâmetros dinâmicos entre chaves.
 
+## Administração e integrações somente no MAIN (obrigatório)
+
+- `/painel-administrativo/**` e `/integracoes/**` existem somente no purpose
+  `main`. Em qualquer subdomínio respondem **404** para todos os métodos
+  (GET, HEAD, POST), sem 302 e sem canonicalização cross-domain.
+- `DomainRouteSubscriber` marca essas rotas como `main`; não declare
+  `_aculta_domain_purpose` diferente de `main` nem
+  `_aculta_domain_purpose_authoritative` em rota administrativa ou de
+  integração.
+- Não crie painel, alias, redirect, toolbar do Navigation, link contextual ou
+  ação editorial em subdomínio. `DomainPurposeRequestSubscriber` aplica o 404 e
+  `AppearanceHooks`/`contextual_links_view_alter` removem affordances
+  administrativas fora do MAIN.
+- A experiência de organizador do ACULTA Studio Culturas é escrita no purpose
+  `eventos`, mas não usa `/painel-administrativo` nem `/integracoes`.
+- Política: `docs/portal/ADMIN-DOMAIN-POLICY.md`. Gate:
+  `php scripts/validate-admin-routes-main-domain.php`.
+
 ## URLs e slugs públicos em português (obrigatório)
 
 - Toda URL pública navegável de conteúdo ou de ação humana usa slug em português: minúsculas, palavras separadas por hífen, sem acentos e sem IDs numéricos quando existir título estável.

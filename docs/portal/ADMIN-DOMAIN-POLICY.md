@@ -30,6 +30,8 @@ ambiente. Código funcional nunca hardcoda `aculta.org` ou hostname Homelab.
 - toda rota com `_admin_route`;
 - toda rota cujo path final seja `/painel-administrativo` ou esteja abaixo
   desse prefixo;
+- toda rota cujo path seja `/integracoes` ou esteja abaixo desse prefixo
+  (OpenStreetMap, Melhor Envio, Mercado Pago, MCP e integrações futuras);
 - rotas técnicas explicitamente administrativas já conhecidas pelo Portal.
 
 Essa classificação não muda access/permissão. Core/contrib continuam decidindo
@@ -65,37 +67,37 @@ X-Robots-Tag: noindex, nofollow
 
 A política fail-closed existente permanece.
 
-### Administração no purpose errado
+### Administração e integrações no purpose errado
 
-Para navegação segura `GET`/`HEAD`:
+Rotas administrativas e de integração existem somente no MAIN. Em qualquer
+outro purpose, elas respondem **404** para todos os métodos, sem redirect:
 
 ```text
-https://wiki420.aculta.org/painel-administrativo/conteudo
-                           ↓
-DomainPurposeManager::pathUrl('main', ...)
-                           ↓
-https://aculta.org/painel-administrativo/conteudo
+https://wiki420.aculta.org/painel-administrativo/conteudo      → 404
+https://eventos.aculta.org/painel-administrativo/eventos        → 404
+https://eventos.aculta.org/integracoes/openstreetmap/autorizar  → 404
 ```
 
-Path e query string são preservados. O hostname nunca é montado manualmente.
-
-Para métodos mutáveis como `POST`, `PUT`, `PATCH` e `DELETE`, não há
-redirect cross-domain. O request falha fechado com 404. Um formulário
-administrativo normal deve ter sido carregado originalmente em MAIN e,
-portanto, submeter no mesmo host; repetir um request mutável em outro Domain
-introduziria risco de semântica, sessão e CSRF.
+`DomainPurposeRequestSubscriber` trata `/painel-administrativo/**` e
+`/integracoes/**` como áreas administrativas e fail-closed. Não há
+canonicalização cross-domain de rota administrativa. O
+`canonicalMainNavigationResponse` permanece apenas para navegação MAIN-owned
+não administrativa marcada com `_aculta_cross_domain_canonical_purpose`.
 
 ## Edição e exclusão de conteúdo a partir do painel
 
-- O painel é MAIN. A listagem de conteúdo gera o link "Editar" para o host de origem do conteúdo (revista, fórum, wiki,
-  loja, links). Esse host não tem o formulário de administração: a navegação GET/HEAD é canonicalizada para MAIN.
-- **Motivo da regra:** o Core (`RedirectResponseSubscriber`) substitui a URL de qualquer redirecionamento pelo parâmetro
-  `destination` da requisição, resolvido no host atual. Por isso o Portal remove `destination` da requisição antes de
-  canonicalizar e leva o retorno já absoluto para MAIN (`DomainPurposeRequestSubscriber::canonicalMainNavigationResponse`).
-- Métodos que mudam estado (POST de exclusão) em host errado respondem 404 e não são redirecionados.
-- A autoria nas listagens não linka para `/identidade/{usuário}` (página pública da Conta). O item "Editar perfil" do
-  painel aponta para `aculta_portal.admin_self_edit` (`/painel-administrativo/perfil/editar`), que leva ao formulário do
-  próprio usuário em MAIN.
+- O painel é MAIN. Links administrativos de edição, exclusão e configuração
+  gerados na listagem apontam para o host MAIN; não se gera link
+  administrativo para o host de origem do conteúdo.
+- Requisições a rotas administrativas em qualquer outro host respondem 404,
+  inclusive GET/HEAD e POST.
+- O tema não expõe affordance administrativa em subdomínio:
+  `AppearanceHooks` remove o toolbar do Navigation e o hook
+  `contextual_links_view_alter` remove os links contextuais fora do MAIN.
+- A autoria nas listagens não linka para `/identidade/{usuário}` (página
+  pública da Conta). O item "Editar perfil" do painel aponta para
+  `aculta_portal.admin_self_edit` (`/painel-administrativo/perfil/editar`),
+  que leva ao formulário do próprio usuário em MAIN.
 
 ## Exceção técnica: reset de senha
 
@@ -148,7 +150,10 @@ Nunca:
 - redirecionar métodos mutáveis cross-domain;
 - remover a exceção de reset sem substituir o fluxo Core;
 - mover essa política para Twig, tema ou JavaScript;
-- usar a canonicalização administrativa para contornar permission/access.
+- usar canonicalização administrativa para contornar permission/access;
+- publicar rota `/integracoes/**` em subdomínio ou canonicalizá-la com 302;
+- declarar `_aculta_domain_purpose_authoritative` para rota administrativa;
+- renderizar toolbar, links contextuais ou ações editoriais em subdomínio.
 
 ## Gate
 
@@ -160,7 +165,15 @@ A política deve provar:
 4. URL MAIN é construída por `DomainPurposeManager`;
 5. GET/HEAD podem redirecionar;
 6. métodos mutáveis permanecem fail-closed;
-7. query string é preservada;
+7. query string é preservada para navegação não administrativa;
 8. reset Core permanece explicitamente excepcionado;
 9. wrong-purpose público continua 404;
-10. ACULTA420 não participa da política.
+10. ACULTA420 não participa da política;
+11. todas as rotas `/integracoes/**` pertencem a MAIN e respondem 404 fora dele;
+12. nenhuma rota administrativa declara purpose diferente de `main` nem o opt-in
+    `_aculta_domain_purpose_authoritative`.
+
+Gate: `php scripts/validate-admin-routes-main-domain.php`.
+Testes: `EventDomainBoundaryKernelTest` (rotas, 404 e bloco),
+`DomainRouteSubscriberIntegrationPurposeTest` (integrações em MAIN) e
+`DomainRoutePolicyTest`.
