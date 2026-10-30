@@ -1,8 +1,8 @@
 # ACULTA — agentes CLI
 
-## ADR-038 - caminho aprovado para as Suites (implementação futura)
+## ADR-038 - caminhos atuais das Suites (implementados)
 
-Marley `conta.aculta.*/marley`; Ganjalab `cursos.aculta.*/ganjalab`; WE SATIVA `wiki.aculta.*/wesativa`; Green Stash `loja.aculta.*/greenstash`; Culturas `eventos.aculta.*/culturas`. `/studio` e todo `/studio/*` serão removidos e responderão 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `conta` será entrada de Conta, fora de `/studio`; Conta e Perfil permanecem separados. As referências de rota anteriores neste arquivo descrevem o estado pré-migração e não são destino para implementação nova. Consulte ADR-038.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. O Domain Wiki canônico é `wiki420`, conforme configuração ativa; a menção a `wiki.aculta.*` no pedido original foi erro corrigido pelo responsável. `/studio` e todo `/studio/*` foram removidos e respondem 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `account` apresenta a entrada da Conta; Conta e Perfil permanecem separados. As referências anteriores neste arquivo descrevem o estado pré-migração. Consulte ADR-038.
 
 
 ## REGRA GERAL PARA AGENTES (vale para todos, sem exceção)
@@ -154,7 +154,7 @@ Cada Suite responde em seu próprio domínio/purpose e sob o caminho-base abaixo
 | --- | --- | --- | --- | --- |
 | Marley | `account` | configurado no Domain | configurado no Domain | `/marley` |
 | Ganjalab | `courses` | configurado no Domain | configurado no Domain | `/ganjalab` |
-| WE SATIVA | `wiki` | alvo `wiki.aculta.*` | Domain ativo `wiki420` até validação | `/wesativa` |
+| WE SATIVA | `wiki` | configurado no Domain (`wiki420`) | configurado no Domain (`wiki420`) | `/wesativa` |
 | Green Stash | `shop` | configurado no Domain | configurado no Domain | `/greenstash` |
 | Culturas | `eventos` | configurado no Domain | configurado no Domain | `/culturas` |
 
@@ -164,9 +164,9 @@ Regras de implementação:
 - Rotas declaram o purpose correto e validam usuário, módulo owner e permissão no servidor. Purpose incorreto responde 404, inclusive POST. Links cross-domain são absolutos via `DomainPurposeManager`; não enviar POST/proxy de escrita entre purposes.
 - Preservar route IDs e owners sempre que possível. Rotas de negócio podem ser declaradas pelo módulo owner e ter path/purpose ajustados conforme a Suite responsável.
 - Novas Suites escolhem host/purpose e slug próprio antes de declarar rotas; não introduzir `/studio/{suite}`.
-- Hosts de Conta, Cursos, Loja e Eventos já constam nos registros atuais. Wiki ainda usa `wiki420.aculta.org` e `wiki420.aculta.toca.net.br`; migração para `wiki.aculta.*` depende de config Deployer/Domain, DNS, TLS/vhost e homologação.
-- Atualizar `PurposeFrontPathProcessor`, `FrontPathPolicy`, subscriber de propósito, navegação e testes para a raiz de cada purpose e as rotas da Suite. Os cinco caminhos da matriz são rotas válidas apenas no purpose respectivo.
-- Remover todas as rotas `/studio` e `/studio/*` após mover destinos. Sem redirects legados; canonical e links apontam diretamente aos novos hosts/caminhos.
-- Migrar links internos/externos, login/retorno, e-mail, notificações, sitemap, canonical, cache e testes. A troca de URL não transfere ownership de entidades, formulários, ACL ou workflows.
+- Hosts são lidos da configuração ativa por ambiente e URLs absolutas passam pelo `DomainPurposeManager`. Wiki mantém o Domain configurado `wiki420`; não renomear para `wiki.aculta.*`.
+- `PurposeFrontPathProcessor`, `FrontPathPolicy`, subscriber de propósito, navegação e testes já usam os caminhos canônicos. Preservar a matriz de propósitos e as respostas 404 cross-purpose, inclusive escritas.
+- `/studio` e `/studio/*` estão removidos, sem redirects legados; canonical e links apontam aos hosts e caminhos resolvidos pela configuração do ambiente.
+- A migração de links, login/retorno, e-mail, notificações, sitemap, canonical, cache e testes foi feita nos consumidores inventariados. Continuar verificando novos consumidores sem transferir ownership de entidades, formulários, ACL ou workflows.
 
-Estado em 2026-10-30: caminhos canônicos e bloqueio de `/studio*` implementados e testados após rebuild de cache. A Wiki ainda usa o Domain ativo `wiki420`; DNS, TLS, vhost/Deployer e homologação de `wiki.aculta.*` são bloqueios externos.
+Estado em 2026-10-30: caminhos canônicos e bloqueio de `/studio*` testados após rebuild de cache; matriz HTTP 275/275 e baseline Firefox ESR capturado em 1440/390 px. Wiki usa o Domain canônico `wiki420`; HTTPS e captura autenticada foram verificados no ambiente de desenvolvimento. DNS de produção `wiki420.aculta.org` não foi verificado com sucesso neste ambiente.
