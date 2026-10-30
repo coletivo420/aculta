@@ -97,6 +97,12 @@ Estado em 0.4.0. Todos experimentais por política, até consumo estável e vali
 | `aculta420:carousel` | `components/patterns/carousel/` | `views-view-vvjb.html.twig` | engine VVJB, sem alteração |
 | `aculta420:rail` | `components/patterns/rail/` | `views-view-unformatted--courses-catalog.html.twig` | linhas do catálogo de cursos (card do LMS) |
 
+O consumer real do `rail` foi verificado no Firefox ESR em 320/390/768/1440px.
+Em 320px a região acessível recebe foco e ArrowRight avança a trilha; em 1440px
+os três cards cabem sem rolagem horizontal. O padrão usa rolagem nativa sem JS,
+sem overflow da página; limitações e capturas em
+[`docs/mobile-first-audit.md`](mobile-first-audit.md).
+
 Ao migrar, o HTML antigo das seções (`section.aculta-editorial-section`) passou a ser
 estrutura de campos. O texto rico interno permaneceu no corpo, e o texto de cada seção
 foi conferido contra o original antes da gravação.

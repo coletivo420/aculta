@@ -248,6 +248,27 @@ teste continue sendo canônico depois dessa migração. Não testa menus autenti
 completos, teclado, zoom real, tema escuro ou WCAG 2.2 AA; registra a presença do
 Domain Header para o Pede-A de composição.
 
+## Rail real do catálogo de Cursos
+
+`rail-courses.py` verifica `/` no purpose COURSES: overflow da página, consumer
+real do SDC `rail`, papel e nome acessível, foco por teclado e rolagem com
+ArrowRight a 320px. Captura 320/1440 e o estado após a seta em 320px no Firefox
+ESR visível. Só faz GET, foco e tecla; não altera dados. O conteúdo publicado
+precisa conter ao menos dois cursos para testar a rolagem. URLs derivam de
+`aculta_deployer/config/deploy.json`.
+
+```sh
+cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-courses-rail
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/rail-courses.py
+```
+
+`RAIL_DOMAIN_ENV=production` escolhe o host de produção somente após confirmar
+DNS/TLS e o ambiente servido. O teste não cobre conteúdo autenticado, leitores
+de tela, zoom, tema escuro ou WCAG 2.2 AA.
+
 ## Institution Bar durante scroll e Toolbar administrativa
 
 `institution-bar-scroll.py` compara o comportamento da barra ao carregar e

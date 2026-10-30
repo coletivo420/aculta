@@ -454,6 +454,14 @@ purposes e sete viewports, sem overflow. Esta mudança corrige a pressuposição
 que todas as rotas têm Domain Header. MF3 continua pendente; ver auditoria para
 capturas e limitações.
 
+### THEME-MF2 — rolagem nativa do rail de Cursos
+
+O consumer público do catálogo passou 11/11 verificações no Firefox em
+320/390/768/1440px: sem overflow da página, região rotulada e teclado
+ArrowRight funcional quando a trilha excede o viewport. Em desktop os três
+cursos cabem sem scroll horizontal. Isto valida o padrão real, mas não o gate
+global THEME-MF3; detalhes em `mobile-first-audit.md`.
+
 ### THEME-MF1 — fundação global inicial
 
 Adicionados tokens mobile-first para gutter, largura máxima e espaçamento

@@ -40,6 +40,19 @@ marca sem Domain Header. Evidência em
 servido nem homologação THEME-MF3. Domain Header ausente em vários purposes
 segue registrado como Pede-A para o Portal.
 
+### THEME-MF2 — SDC rail no catálogo real de Cursos (2026-10-30)
+
+O `views-view-unformatted--courses-catalog.html.twig` consome `aculta420:rail`
+com cursos reais publicados. Firefox ESR verificou 320/390/768/1440px: 11/11
+checks passaram, incluindo região nomeada/focável, três itens, trilha rolável
+em 320px, ArrowRight aumentando `scrollLeft` e ausência de overflow da página.
+1440px mostra os três cards sem rolagem horizontal; as capturas 320/1440 e
+320 após a seta foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/aculta-courses-rail-20261030-final/`.
+É navegação horizontal interna deliberada, sem JavaScript; não substitui teste
+de leitor de tela, zoom ou THEME-MF3. Harness reutilizável:
+`tests/browser/aculta-theme-mobile-first/rail-courses.py`.
+
 ### THEME-MF2 — layout interno do Studio (2026-10-29)
 
 `studio.css` passa a empilhar sidebar e conteúdo como base; `min-width: 48rem`
