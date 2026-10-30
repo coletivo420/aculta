@@ -2,6 +2,8 @@
 
 Este módulo conecta o MCP Server ACULTA aos servidores MCP de documentação do Mercado Pago e do Melhor Envio. Ele reutiliza a biblioteca oficial `mcp/sdk` já exigida pelo `mcp_server` e adapta o fluxo HTTP de conexão, descoberta e chamada do projeto Drupal MCP Client 1.0.0-alpha3 (GPL-2.0-or-later). O pacote Drupal MCP Client não é instalado porque sua release exige `mcp/sdk ^0.7.1`, incompatível com `mcp_server` 2.0.0-beta7 (`mcp/sdk ^0.9`), além de exigir Drupal AI e AI Agents, ausentes no projeto. A adaptação usa somente ferramentas públicas de documentação e o token de teste já mantido pela Key API.
 
+O plugin Resource Provider `public_capabilities` publica o recurso estático `aculta://public/mcp/capabilities`, que descreve as ferramentas e seus limites. O conteúdo não consulta entidades nem conteúdo do site e pode ser lido anonimamente. Sua configuração está em `config/install/mcp_server.resource_providers.yml` e em `config/sync/mcp_server.resource_providers.yml`.
+
 O módulo declara quatro plugins da Tool API e instala configurações MCP Tool Configuration para eles:
 
 - Busca na documentação do Mercado Pago, fixada no site Brasil (`MLB`). Usa a Key `mercadopago_test_access_token`, resolvida em tempo de chamada; o valor não entra em config exportada nem em logs.

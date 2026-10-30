@@ -1,0 +1,5 @@
+plugins:
+  - id: aculta_mcp_client:public_capabilities
+    enabled: true
+    configuration:
+      enabled: false

@@ -25,7 +25,7 @@ Cursor, Gemini/Antigravity, OpenCode e Claude Desktop não têm arquivo de confi
 
 Para adicionar o servidor ACULTA a outro Codex, use `codex mcp add aculta --url https://aculta.toca.net.br/mcp`. O acesso ao ACULTA é público e sem OAuth. As ferramentas publicadas são apenas busca/listagem de documentação dos provedores; não leem dados privados nem executam ações financeiras, de frete ou de conta.
 
-O módulo próprio `aculta_mcp_client` implementa as chamadas MCP de saída para os servidores de documentação do Mercado Pago e Melhor Envio. Quatro plugins da Tool API são publicados no ACULTA através do MCP Server Tool Bridge e de suas entidades MCP Tool Configuration. Endpoints e nomes das ferramentas remotas são allowlisted; há limite global de chamadas e saída limitada. O servidor não encaminha chamadas de API dos provedores.
+O módulo próprio `aculta_mcp_client` implementa as chamadas MCP de saída para os servidores de documentação do Mercado Pago e Melhor Envio. Quatro plugins da Tool API são publicados no ACULTA através do MCP Server Tool Bridge e de suas entidades MCP Tool Configuration. Também publica o Resource estático `aculta://public/mcp/capabilities`, com as ferramentas e os limites do endpoint. Endpoints e nomes das ferramentas remotas são allowlisted; há limite global de chamadas e saída limitada. O servidor não encaminha chamadas de API dos provedores.
 
 ## MCP Client no Drupal
 

@@ -1,6 +1,6 @@
 name: ACULTA MCP Client
 type: module
-description: 'Connects the public ACULTA MCP endpoint to allowlisted provider documentation tools.'
+description: 'Provides public MCP capabilities and allowlisted provider documentation tools.'
 package: ACULTA
 core_version_requirement: ^11
 dependencies:
