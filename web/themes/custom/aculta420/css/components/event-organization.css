@@ -1,0 +1,269 @@
+/* Organizer forms and organization references: 320px is the base layout. */
+#aculta-organization-modal-form-wrapper,
+.aculta-event-org-widget,
+.aculta-events-organization-admin-overview {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+.search-box,
+.aculta-event-organization-location-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: end;
+  gap: 0.75rem;
+  min-inline-size: 0;
+}
+
+.search-box > *,
+.aculta-event-organization-location-fields > * {
+  min-inline-size: 0;
+}
+
+.search-box input,
+.aculta-event-organization-location-fields input {
+  inline-size: 100%;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+.search-box .button,
+.search-box .button--primary,
+.search-box .button--secondary {
+  inline-size: 100%;
+  min-block-size: 2.75rem;
+  margin: 0;
+}
+
+.org-modal-results-table {
+  display: block;
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+.org-modal-results-table table {
+  min-inline-size: 34rem;
+}
+
+.event-org-card,
+.event-org-empty {
+  min-inline-size: 0;
+  padding: 1rem;
+  border: 1px solid var(--aculta-border-subtle);
+  border-radius: var(--bs-border-radius);
+  background: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+}
+
+.event-org-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 0.75rem;
+}
+
+.event-org-card__title {
+  min-inline-size: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.event-org-card__badge {
+  justify-self: start;
+}
+
+.event-org-card__locality {
+  margin: 0;
+  color: var(--aculta-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.event-org-empty {
+  margin-block: 0.75rem;
+}
+
+.coorganizers-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  min-inline-size: 0;
+}
+
+.coorganizer-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  min-inline-size: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--aculta-border-subtle);
+  border-radius: var(--bs-border-radius);
+  background: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.coorganizer-item__title {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.aculta-events-organization-admin-overview {
+  overflow-wrap: anywhere;
+}
+
+.aculta-events-organization-admin-overview .form--inline {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+.aculta-events-organization-admin-overview .aculta-event-organization-admin-filter-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  min-inline-size: 0;
+}
+
+.aculta-events-organization-admin-overview :is(input, select) {
+  inline-size: 100%;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+.aculta-related-content {
+  min-inline-size: 0;
+}
+
+.aculta-organization-profile {
+  display: grid;
+  gap: 1rem;
+  min-inline-size: 0;
+  max-inline-size: 72rem;
+  margin-inline: auto;
+}
+
+.organization-header,
+.organization-body,
+.organization-links,
+.organization-badge {
+  min-inline-size: 0;
+  padding: 1rem;
+  border: 1px solid var(--aculta-border-subtle);
+  border-radius: var(--bs-border-radius);
+  background: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+}
+
+.organization-header :is(h1, h2, h3),
+.organization-links :is(h2, h3) {
+  margin-block-start: 0;
+  overflow-wrap: anywhere;
+}
+
+.organization-title {
+  margin-block: 0 0.75rem;
+}
+
+.organization-location {
+  margin-block: 0;
+  color: var(--aculta-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.organization-header p,
+.organization-body,
+.organization-links {
+  overflow-wrap: anywhere;
+}
+
+.organization-links a {
+  overflow-wrap: anywhere;
+}
+
+.organization-description,
+.organization-links p {
+  white-space: pre-line;
+}
+
+.organization-event-item,
+.organization-admin-link {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.organization-footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  min-inline-size: 0;
+}
+
+.organization-badge--unclaimed {
+  border-inline-start: 0.25rem solid var(--aculta-status-warning-border);
+  background: var(--aculta-status-warning-surface);
+}
+
+.organization-events ul {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.organization-events li {
+  min-inline-size: 0;
+}
+
+@media (min-width: 36rem) {
+  .search-box {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .search-box .button,
+  .search-box .button--primary,
+  .search-box .button--secondary {
+    inline-size: auto;
+  }
+
+  .aculta-event-organization-location-fields {
+    grid-template-columns: minmax(0, 1fr) 6rem;
+  }
+
+  .event-org-card {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .event-org-card__title {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 48rem) {
+  .search-box {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
+
+  .aculta-events-organization-admin-overview .form--inline,
+  .aculta-events-organization-admin-overview .aculta-event-organization-admin-filter-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .coorganizers-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 62rem) {
+  .aculta-events-organization-admin-overview .form--inline,
+  .aculta-events-organization-admin-overview .aculta-event-organization-admin-filter-fields {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .coorganizers-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

@@ -98,7 +98,7 @@ final class EventOrganizationModalForm extends FormBase {
 
     $mode = (string) ($form_state->get('mode') ?? 'search');
 
-    $form['#prefix'] = '<div id="aculta-organization-modal-form-wrapper" class="aculta-org-modal">';
+    $form['#prefix'] = '<div id="aculta-organization-modal-form-wrapper">';
     $form['#suffix'] = '</div>';
 
     $form['status_messages'] = [
@@ -129,12 +129,12 @@ final class EventOrganizationModalForm extends FormBase {
       '#type' => 'html_tag',
       '#tag' => 'p',
       '#value' => (string) $heading,
-      '#attributes' => ['class' => ['lead']],
+      '#attributes' => ['data-portal-ui' => 'event-organization-intro'],
     ];
 
     $form['search_box'] = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['container-inline', 'search-box']],
+      '#attributes' => ['data-portal-ui' => 'event-organization-search'],
       'termo' => [
         '#type' => 'textfield',
         '#title' => $this->t('Buscar organização'),
@@ -151,7 +151,7 @@ final class EventOrganizationModalForm extends FormBase {
           'callback' => '::ajaxRebuildModal',
           'wrapper' => 'aculta-organization-modal-form-wrapper',
         ],
-        '#attributes' => ['class' => ['button--secondary']],
+        '#attributes' => ['data-portal-ui' => 'event-organization-search-action'],
       ],
       'switch_create' => [
         '#type' => 'submit',
@@ -162,7 +162,7 @@ final class EventOrganizationModalForm extends FormBase {
           'callback' => '::ajaxRebuildModal',
           'wrapper' => 'aculta-organization-modal-form-wrapper',
         ],
-        '#attributes' => ['class' => ['button', 'button--primary']],
+        '#attributes' => ['data-portal-ui' => 'event-organization-add-action'],
       ],
     ];
 
@@ -186,15 +186,18 @@ final class EventOrganizationModalForm extends FormBase {
 
     if (!empty($ids)) {
       $form['results'] = [
-        '#type' => 'table',
-        '#header' => [
-          $this->t('Organização'),
-          $this->t('Localidade'),
-          $this->t('Situação'),
-          $this->t('Ação'),
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'event-organization-results-table'],
+        'table' => [
+          '#type' => 'table',
+          '#header' => [
+            $this->t('Organização'),
+            $this->t('Localidade'),
+            $this->t('Situação'),
+            $this->t('Ação'),
+          ],
+          '#empty' => $this->t('Nenhuma organização encontrada para este termo.'),
         ],
-        '#empty' => $this->t('Nenhuma organização encontrada para este termo.'),
-        '#attributes' => ['class' => ['org-modal-results-table']],
       ];
 
       /** @var \Drupal\aculta_events\Entity\EventOrganization[] $orgs */
@@ -214,7 +217,7 @@ final class EventOrganizationModalForm extends FormBase {
         $badgeText = $org->isClaimed() ? $this->t('Reivindicada') : $this->t('Não reivindicada');
         $badgeClass = $org->isClaimed() ? 'badge--success' : 'badge--warning';
 
-        $form['results'][$oid] = [
+        $form['results']['table'][$oid] = [
           'title' => [
             '#markup' => '<strong>' . htmlspecialchars((string) $org->label(), ENT_QUOTES, 'UTF-8') . '</strong>',
           ],
@@ -234,7 +237,7 @@ final class EventOrganizationModalForm extends FormBase {
               'callback' => '::ajaxSelectOrganization',
               'wrapper' => 'aculta-organization-modal-form-wrapper',
             ],
-            '#attributes' => ['class' => ['button', 'button--small']],
+            '#attributes' => ['data-portal-ui' => 'event-organization-small-button'],
           ],
         ];
       }
@@ -242,7 +245,7 @@ final class EventOrganizationModalForm extends FormBase {
     else {
       $form['empty_notice'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['messages', 'messages--status']],
+        '#attributes' => ['data-portal-ui' => 'notice-status'],
         'message' => [
           '#markup' => '<p>' . $this->t('Nenhuma organização encontrada. Você pode cadastrar uma nova organização imediatamente no botão acima.') . '</p>',
         ],
@@ -271,7 +274,7 @@ final class EventOrganizationModalForm extends FormBase {
       '#type' => 'html_tag',
       '#tag' => 'p',
       '#value' => (string) $this->t('Preencha os dados da organização cultural. Endereço completo e CEP não são solicitados nem expostos publicamente.'),
-      '#attributes' => ['class' => ['lead']],
+      '#attributes' => ['data-portal-ui' => 'event-organization-intro'],
     ];
 
     // Se houver candidatos semelhantes detectados na validação.
@@ -282,7 +285,7 @@ final class EventOrganizationModalForm extends FormBase {
 
       $form['duplicate_warning'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['messages', 'messages--warning']],
+        '#attributes' => ['data-portal-ui' => 'notice-warning'],
         'heading' => [
           '#markup' => '<h4>' . $this->t('Atenção: Organizações com nomes semelhantes já cadastradas') . '</h4><p>' . $this->t('Para evitar duplicidade, verifique se a organização desejada já existe antes de criar uma nova:') . '</p>',
         ],
@@ -309,7 +312,7 @@ final class EventOrganizationModalForm extends FormBase {
               'callback' => '::ajaxSelectOrganization',
               'wrapper' => 'aculta-organization-modal-form-wrapper',
             ],
-            '#attributes' => ['class' => ['button', 'button--small']],
+            '#attributes' => ['data-portal-ui' => 'event-organization-small-button'],
           ],
         ];
       }
@@ -340,7 +343,7 @@ final class EventOrganizationModalForm extends FormBase {
 
     $form['loc_container'] = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['container-inline']],
+      '#attributes' => ['data-portal-ui' => 'event-organization-location-fields'],
       'novo_localidade' => [
         '#type' => 'textfield',
         '#title' => $this->t('Cidade'),
@@ -423,7 +426,7 @@ final class EventOrganizationModalForm extends FormBase {
           'callback' => '::ajaxCreateOrganization',
           'wrapper' => 'aculta-organization-modal-form-wrapper',
         ],
-        '#attributes' => ['class' => ['button', 'button--primary']],
+        '#attributes' => ['data-portal-ui' => 'event-organization-add-action'],
       ],
       'back_search' => [
         '#type' => 'submit',
@@ -434,7 +437,7 @@ final class EventOrganizationModalForm extends FormBase {
           'callback' => '::ajaxRebuildModal',
           'wrapper' => 'aculta-organization-modal-form-wrapper',
         ],
-        '#attributes' => ['class' => ['button']],
+        '#attributes' => ['data-portal-ui' => 'event-organization-back-action'],
       ],
     ];
   }
@@ -662,7 +665,7 @@ final class EventOrganizationModalForm extends FormBase {
     if (!$isMultiple) {
       // Caso simples: substitui o card e valor do target_id.
       $cardArray = EventOrganizationModalWidget::buildSingleCardOrEmpty($orgId, $fieldName, $wrapperId);
-      $cardArray['#prefix'] = '<div id="' . $wrapperId . '" class="aculta-event-org-widget" data-portal-ui="event-organization-widget" data-field-name="' . $fieldName . '">';
+      $cardArray['#prefix'] = '<div id="' . $wrapperId . '" data-portal-ui="event-organization-widget" data-field-name="' . $fieldName . '">';
       $cardArray['#suffix'] = '</div>';
 
       $targetInputId = '#' . $wrapperId . '-target-id';
@@ -674,7 +677,7 @@ final class EventOrganizationModalForm extends FormBase {
       // Caso múltiplo: obtém o elemento do form_state ou adiciona à lista.
       $currentIds = [$orgId];
       $cardArray = EventOrganizationModalWidget::buildMultipleCards($currentIds, $fieldName, $wrapperId);
-      $cardArray['#prefix'] = '<div id="' . $wrapperId . '" class="aculta-event-org-widget" data-portal-ui="event-organization-widget" data-field-name="' . $fieldName . '">';
+      $cardArray['#prefix'] = '<div id="' . $wrapperId . '" data-portal-ui="event-organization-widget" data-field-name="' . $fieldName . '">';
       $cardArray['#suffix'] = '</div>';
 
       $response->addCommand(new ReplaceCommand('#' . $wrapperId, $cardArray));

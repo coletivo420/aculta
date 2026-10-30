@@ -1893,3 +1893,29 @@ passaram, sem overflow. Evidência em
 `/home/piradopirata/aculta-suite-out/editorial-carousel-retest-20261030/`.
 Como este HEAD não alterou a CSS do carrossel, a repetição é regressão do estado
 atual, não nova prova de paridade editorial nem aprovação THEME-MF3.
+
+### THEME-MF2 — organização de Eventos e bloco de conteúdo relacionado (2026-10-30)
+
+Os consumidores reais de organizações de Eventos e `RelatedContentBlock` foram
+migrados para contratos visuais `data-portal-ui` renderizados pelo tema. Removi
+a biblioteca CSS inativa de `aculta_index` e centralizei a apresentação no tema;
+a tabela do modal agora rola em seu contêiner, e os botões da busca têm alvo
+mínimo de 44 px. Em `EventOrganizationPageController`, os links passaram a ser
+render arrays tipados em vez de HTML de lista montado manualmente. Não foram
+alterados permissões, serviços, rotas ou operações funcionais.
+
+Gates locais executados: fronteira módulo/tema PASS (3.488 checks); catálogo de
+tokens PASS (515 mapeados, 420 usados, 149 atributos); fundamentos PASS (2.429
+checks); schemas SDC PASS (55 componentes, 759 checks); Stylelint PASS; PHP
+lint e PHPCS PASS; Unit PASS (Portal UI 22 testes/132 assertions, Eventos 10/23,
+Índice 51/265). Kernel de Eventos e Índice está DEFERRED porque
+`SIMPLETEST_DB` não está configurado nesta sessão; Runtime não foi alterado.
+
+Firefox ESR visível, com o Bootstrap local efetivamente usado pelo tema, passou
+74/74 verificações da fixture em 320/360/390/599/600/768/1024/1280/1440 px,
+claro/escuro: zero overflow horizontal, grids progressivos, rolagem isolada da
+tabela, botão de 44 px, superfície em ambos os modos e foco de teclado visível.
+Capturas de 320 e 1440 px foram inspecionadas. Evidência:
+`/home/piradopirata/aculta-suite-out/aculta-events-organization-layout-r6/`.
+A fixture cobre CSS e markup representativo, não markup renderizado/ACL/AJAX de
+Drupal. THEME-MF3 permanece pendente até os gates globais e de integração real.

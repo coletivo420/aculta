@@ -114,7 +114,7 @@ final class EventOrganizationAdminController extends ControllerBase {
             '#type' => 'html_tag',
             '#tag' => 'span',
             '#value' => (string) $this->t('Reivindicada (@status)', ['@status' => $org->getClaimStatus()]),
-            '#attributes' => ['class' => ['badge', 'badge--success']],
+            '#attributes' => ['data-portal-ui' => 'event-organization-status-success'],
           ];
         }
         else {
@@ -123,7 +123,7 @@ final class EventOrganizationAdminController extends ControllerBase {
               '#type' => 'html_tag',
               '#tag' => 'span',
               '#value' => (string) $this->t('Reivindicação pendente'),
-              '#attributes' => ['class' => ['badge', 'badge--warning']],
+              '#attributes' => ['data-portal-ui' => 'event-organization-status-warning'],
             ];
           }
           else {
@@ -131,7 +131,7 @@ final class EventOrganizationAdminController extends ControllerBase {
               '#type' => 'html_tag',
               '#tag' => 'span',
               '#value' => (string) $this->t('Não reivindicada'),
-              '#attributes' => ['class' => ['badge', 'badge--warning']],
+              '#attributes' => ['data-portal-ui' => 'event-organization-status-warning'],
             ];
           }
         }
@@ -141,7 +141,7 @@ final class EventOrganizationAdminController extends ControllerBase {
             '#type' => 'html_tag',
             '#tag' => 'span',
             '#value' => (string) $this->t('Acessos suspensos pendentes de revisão'),
-            '#attributes' => ['class' => ['badge', 'badge--info']],
+            '#attributes' => ['data-portal-ui' => 'event-organization-status-info'],
           ];
         }
 
@@ -159,7 +159,7 @@ final class EventOrganizationAdminController extends ControllerBase {
               '#type' => 'html_tag',
               '#tag' => 'span',
               '#value' => (string) $this->t('@count denúncia(s) pendente(s)', ['@count' => $ugcCount]),
-              '#attributes' => ['class' => ['badge', 'badge--danger']],
+              '#attributes' => ['data-portal-ui' => 'event-organization-status-danger'],
             ];
           }
         }
@@ -243,16 +243,16 @@ final class EventOrganizationAdminController extends ControllerBase {
           '#type' => 'link',
           '#title' => $this->t('+ Cadastrar organização'),
           '#url' => Url::fromRoute('aculta_events.admin_organization_add'),
-          '#attributes' => ['class' => ['button', 'button--primary']],
+          '#attributes' => ['data-portal-ui' => 'event-organization-add-action'],
         ],
       ],
       'filters' => [
         '#type' => 'form',
         '#method' => 'get',
-        '#attributes' => ['class' => ['form--inline', 'clearfix'], 'data-portal-ui' => 'admin-org-filters'],
+        '#attributes' => ['data-portal-ui' => 'admin-org-filters'],
         'wrapper' => [
           '#type' => 'container',
-          '#attributes' => ['class' => ['container-inline']],
+          '#attributes' => ['data-portal-ui' => 'event-organization-admin-filter-fields'],
           'nome' => [
             '#type' => 'textfield',
             '#name' => 'nome',
@@ -298,13 +298,13 @@ final class EventOrganizationAdminController extends ControllerBase {
             'submit' => [
               '#type' => 'submit',
               '#value' => $this->t('Filtrar'),
-              '#attributes' => ['class' => ['button']],
+              '#attributes' => ['data-portal-ui' => 'button'],
             ],
             'reset' => [
               '#type' => 'link',
               '#title' => $this->t('Limpar'),
               '#url' => Url::fromRoute('aculta_events.admin_organizations'),
-              '#attributes' => ['class' => ['button']],
+              '#attributes' => ['data-portal-ui' => 'button'],
             ],
           ],
         ],

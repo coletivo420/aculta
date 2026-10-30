@@ -231,11 +231,7 @@ final class RelatedContentBlock extends BlockBase implements ContainerFactoryPlu
       '#title' => $heading,
       '#items' => $items,
       '#attributes' => [
-        'class' => ['aculta-related-content'],
         'data-portal-ui' => 'related-content-block',
-      ],
-      '#attached' => [
-        'library' => ['aculta_index/related_content'],
       ],
     ];
 
@@ -327,7 +323,7 @@ final class RelatedContentBlock extends BlockBase implements ContainerFactoryPlu
     $item = [
       '#type' => 'container',
       '#attributes' => [
-        'class' => ['aculta-related-content__item'],
+        'data-portal-ui' => 'related-content-item',
         'data-entity-type' => $target->getEntityTypeId(),
         'data-entity-id' => (string) $target->id(),
       ],
@@ -348,7 +344,7 @@ final class RelatedContentBlock extends BlockBase implements ContainerFactoryPlu
         '#title' => $label,
         '#url' => $url,
         '#attributes' => [
-          'class' => ['aculta-related-content__link'],
+          'data-portal-ui' => 'related-content-link',
         ],
       ];
     }
@@ -358,7 +354,7 @@ final class RelatedContentBlock extends BlockBase implements ContainerFactoryPlu
         '#tag' => 'span',
         '#value' => $label,
         '#attributes' => [
-          'class' => ['aculta-related-content__title'],
+          'data-portal-ui' => 'related-content-title',
         ],
       ];
     }
@@ -369,7 +365,7 @@ final class RelatedContentBlock extends BlockBase implements ContainerFactoryPlu
       '#tag' => 'span',
       '#value' => $typeLabel,
       '#attributes' => [
-        'class' => ['aculta-related-content__badge'],
+        'data-portal-ui' => 'related-content-badge',
       ],
     ];
 
@@ -381,7 +377,7 @@ final class RelatedContentBlock extends BlockBase implements ContainerFactoryPlu
           '#tag' => 'p',
           '#value' => $summary,
           '#attributes' => [
-            'class' => ['aculta-related-content__summary'],
+            'data-portal-ui' => 'related-content-summary',
           ],
         ];
       }

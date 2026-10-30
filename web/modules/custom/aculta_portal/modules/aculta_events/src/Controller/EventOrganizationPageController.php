@@ -6,8 +6,8 @@ namespace Drupal\aculta_events\Controller;
 
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -56,7 +56,7 @@ final class EventOrganizationPageController extends ControllerBase {
 
     $build = [
       '#theme' => 'container',
-      '#attributes' => ['class' => ['aculta-organization-profile']],
+      '#attributes' => ['data-portal-ui' => 'event-organization-profile'],
       '#cache' => [
         'tags' => $org->getCacheTags(),
         'contexts' => ['user.permissions'],
@@ -67,18 +67,23 @@ final class EventOrganizationPageController extends ControllerBase {
     if ($isUnclaimed) {
       $build['unclaimed_badge'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['organization-badge', 'organization-badge--unclaimed']],
+        '#attributes' => ['data-portal-ui' => 'event-organization-unclaimed'],
         'text' => [
-          '#markup' => '<div class="alert alert-info">' . $this->t('<strong>Perfil não reivindicado</strong>: Esta organização cultural ainda não possui titular verificado. Se você é responsável legal ou produtor desta organização, solicite a titularidade.') . '</div>',
+          '#type' => 'html_tag',
+          '#tag' => 'div',
+          '#value' => $this->t('<strong>Perfil não reivindicado</strong>: Esta organização cultural ainda não possui titular verificado. Se você é responsável legal ou produtor desta organização, solicite a titularidade.'),
         ],
       ];
     }
 
     $build['header'] = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['organization-header']],
+      '#attributes' => ['data-portal-ui' => 'event-organization-header'],
       'title' => [
-        '#markup' => '<h1 class="organization-title">' . htmlspecialchars((string) $org->label(), ENT_QUOTES, 'UTF-8') . '</h1>',
+        '#type' => 'html_tag',
+        '#tag' => 'h1',
+        '#value' => (string) $org->label(),
+        '#attributes' => ['data-portal-ui' => 'event-organization-title'],
       ],
     ];
 
@@ -89,7 +94,10 @@ final class EventOrganizationPageController extends ControllerBase {
       if ($cidade !== '' || $uf !== '') {
         $locStr = trim($cidade . ($uf !== '' ? ' / ' . $uf : ''));
         $build['header']['location'] = [
-          '#markup' => '<p class="organization-location">📍 ' . htmlspecialchars($locStr, ENT_QUOTES, 'UTF-8') . '</p>',
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#value' => '📍 ' . $locStr,
+          '#attributes' => ['data-portal-ui' => 'event-organization-location'],
         ];
       }
     }
@@ -99,9 +107,12 @@ final class EventOrganizationPageController extends ControllerBase {
     if ($body !== '') {
       $build['body'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['organization-body']],
+        '#attributes' => ['data-portal-ui' => 'event-organization-body'],
         'content' => [
-          '#markup' => '<div class="organization-description">' . nl2br(htmlspecialchars($body, ENT_QUOTES, 'UTF-8')) . '</div>',
+          '#type' => 'html_tag',
+          '#tag' => 'div',
+          '#value' => Markup::create(nl2br(htmlspecialchars($body, ENT_QUOTES, 'UTF-8'))),
+          '#attributes' => ['data-portal-ui' => 'event-organization-description'],
         ],
       ];
     }
@@ -111,9 +122,17 @@ final class EventOrganizationPageController extends ControllerBase {
     if ($links !== '') {
       $build['links'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['organization-links']],
-        'title' => ['#markup' => '<h3>' . $this->t('Canais oficiais') . '</h3>'],
-        'content' => ['#markup' => '<p>' . nl2br(htmlspecialchars($links, ENT_QUOTES, 'UTF-8')) . '</p>'],
+        '#attributes' => ['data-portal-ui' => 'event-organization-links'],
+        'title' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h3',
+          '#value' => $this->t('Canais oficiais'),
+        ],
+        'content' => [
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#value' => Markup::create(nl2br(htmlspecialchars($links, ENT_QUOTES, 'UTF-8'))),
+        ],
       ];
     }
 
@@ -131,13 +150,20 @@ final class EventOrganizationPageController extends ControllerBase {
       $eventItems = [];
       foreach ($events as $event) {
         $eventItems[] = [
-          '#markup' => '<li class="organization-event-item"><a href="' . $event->toUrl()->toString() . '">' . htmlspecialchars((string) $event->label(), ENT_QUOTES, 'UTF-8') . '</a></li>',
+          '#type' => 'link',
+          '#title' => (string) $event->label(),
+          '#url' => $event->toUrl(),
+          '#attributes' => ['data-portal-ui' => 'event-organization-event-link'],
         ];
       }
       $build['events'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['organization-events']],
-        'title' => ['#markup' => '<h2>' . $this->t('Eventos organizados') . '</h2>'],
+        '#attributes' => ['data-portal-ui' => 'event-organization-events'],
+        'title' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h2',
+          '#value' => $this->t('Eventos organizados'),
+        ],
         'list' => [
           '#theme' => 'item_list',
           '#items' => $eventItems,
@@ -148,12 +174,15 @@ final class EventOrganizationPageController extends ControllerBase {
     // Ações públicas e administrativas contextuais.
     $build['actions'] = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['organization-footer-actions']],
+      '#attributes' => ['data-portal-ui' => 'event-organization-actions'],
     ];
 
     if ($isUnclaimed) {
       $build['actions']['claim_info'] = [
-        '#markup' => '<p class="text-muted small">' . $this->t('Responsáveis pela organização podem cadastrar eventos em seu nome ou solicitar titularidade formal à moderação.') . '</p>',
+        '#type' => 'html_tag',
+        '#tag' => 'p',
+        '#value' => $this->t('Responsáveis pela organização podem cadastrar eventos em seu nome ou solicitar titularidade formal à moderação.'),
+        '#attributes' => ['data-portal-ui' => 'event-organization-admin-link'],
       ];
     }
 
@@ -161,7 +190,10 @@ final class EventOrganizationPageController extends ControllerBase {
       $adminClaimsUrl = $this->purposes->environmentPathUrl('main', '/painel-administrativo/pessoas/reivindicacoes?target_type=aculta_event_organization&target_id=' . $org->id());
       if ($adminClaimsUrl !== NULL) {
         $build['actions']['admin_claims'] = [
-          '#markup' => '<p><a class="btn btn-outline-secondary btn-sm" href="' . Html::escape($adminClaimsUrl->toString()) . '">' . $this->t('Ver pedidos de reivindicação desta organização') . '</a></p>',
+          '#type' => 'link',
+          '#title' => $this->t('Ver pedidos de reivindicação desta organização'),
+          '#url' => $adminClaimsUrl,
+          '#attributes' => ['data-portal-ui' => 'event-organization-admin-action'],
         ];
       }
     }
@@ -170,7 +202,10 @@ final class EventOrganizationPageController extends ControllerBase {
       $reportsUrl = $this->purposes->environmentPathUrl('main', '/painel-administrativo/moderacao/denuncias');
       if ($reportsUrl !== NULL) {
         $build['actions']['admin_reports'] = [
-          '#markup' => '<p><a class="text-muted small" href="' . Html::escape($reportsUrl->toString()) . '">' . $this->t('Ver fila de denúncias da moderação') . '</a></p>',
+          '#type' => 'link',
+          '#title' => $this->t('Ver fila de denúncias da moderação'),
+          '#url' => $reportsUrl,
+          '#attributes' => ['data-portal-ui' => 'event-organization-admin-link'],
         ];
       }
     }

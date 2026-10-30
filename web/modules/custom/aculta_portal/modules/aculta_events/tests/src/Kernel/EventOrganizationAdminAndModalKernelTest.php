@@ -482,9 +482,10 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     // Constrói novamente o form pós-busca com termo no estado.
     $formSearchResults = $modalForm->buildForm([], $formState);
     $this->assertArrayHasKey('results', $formSearchResults);
-    $this->assertArrayHasKey((int) $existing->id(), $formSearchResults['results']);
+    $this->assertArrayHasKey((int) $existing->id(), $formSearchResults['results']['table']);
+    $this->assertSame('event-organization-results-table', $formSearchResults['results']['#attributes']['data-portal-ui']);
 
-    $row = $formSearchResults['results'][(int) $existing->id()];
+    $row = $formSearchResults['results']['table'][(int) $existing->id()];
     $this->assertStringContainsString('Ponto Cultural Esperança', (string) $row['title']['#markup']);
     $this->assertStringContainsString('Reivindicada', (string) $row['badge']['#markup']);
 

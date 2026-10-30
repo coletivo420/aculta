@@ -129,8 +129,6 @@ final class EventOrganizationModalWidget extends WidgetBase {
 
     if ($org !== NULL) {
       $badgeText = $org->isClaimed() ? t('Reivindicada') : t('Não reivindicada');
-      $badgeClass = $org->isClaimed() ? 'badge--success' : 'badge--warning';
-
       $localidadeStr = '';
       if (!$org->shouldHideLocation()) {
         $locParts = array_filter([(string) $org->get('localidade')->value, (string) $org->get('uf')->value]);
@@ -141,7 +139,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
 
       $element['summary'] = [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'event-org-summary-card', 'class' => ['event-org-card']],
+        '#attributes' => ['data-portal-ui' => 'event-org-summary-card'],
         'title' => [
           '#type' => 'html_tag',
           '#tag' => 'h4',
@@ -152,7 +150,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
           '#type' => 'html_tag',
           '#tag' => 'span',
           '#value' => (string) $badgeText,
-          '#attributes' => ['class' => ['badge', $badgeClass], 'data-portal-ui' => 'event-org-badge'],
+          '#attributes' => ['data-portal-ui' => 'event-org-badge ' . ($org->isClaimed() ? 'event-location-badge-public' : 'event-location-badge-draft')],
         ],
       ];
 
@@ -179,7 +177,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
           '#title' => t('Trocar organização'),
           '#url' => $modalUrl,
           '#attributes' => [
-            'class' => ['use-ajax', 'button'],
+            'class' => ['use-ajax'],
             'data-portal-ui' => 'event-org-button-secondary',
             'data-portal-trigger' => $wrapperId,
             'data-dialog-type' => 'modal',
@@ -196,7 +194,6 @@ final class EventOrganizationModalWidget extends WidgetBase {
             'wrapper' => $wrapperId,
           ],
           '#attributes' => [
-            'class' => ['button', 'button--danger'],
             'data-portal-ui' => 'event-org-button-danger',
           ],
         ],
@@ -222,7 +219,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
           '#title' => t('Selecionar ou cadastrar organização'),
           '#url' => $modalUrl,
           '#attributes' => [
-            'class' => ['use-ajax', 'button', 'button--primary'],
+            'class' => ['use-ajax'],
             'data-portal-ui' => 'event-org-button-primary',
             'data-portal-trigger' => $wrapperId,
             'data-dialog-type' => 'modal',
@@ -232,7 +229,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
         'fallback' => [
           '#type' => 'html_tag',
           '#tag' => 'p',
-          '#attributes' => ['class' => ['text-muted', 'small']],
+          '#attributes' => ['data-portal-ui' => 'event-organization-fallback'],
           '#value' => '<a href="' . Url::fromRoute(EventRouteContext::route('aculta_events.admin_organization_add', 'aculta_events.organizer_organization_add'))->toString() . '" target="_blank" rel="noopener">' . t('Cadastrar organização em nova aba (sem JS)') . '</a>',
         ],
       ];
@@ -248,7 +245,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
     $element = [];
     $element['items'] = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['coorganizers-list']],
+      '#attributes' => ['data-portal-ui' => 'coorganizers-list'],
     ];
 
     if (!empty($targetIds)) {
@@ -262,8 +259,6 @@ final class EventOrganizationModalWidget extends WidgetBase {
         }
 
         $badgeText = $org->isClaimed() ? t('Reivindicada') : t('Não reivindicada');
-        $badgeClass = $org->isClaimed() ? 'badge--success' : 'badge--warning';
-
         $localidadeStr = '';
         if (!$org->shouldHideLocation()) {
           $locParts = array_filter([(string) $org->get('localidade')->value, (string) $org->get('uf')->value]);
@@ -275,7 +270,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
         $rowKey = 'row_' . $id;
         $element['items'][$rowKey] = [
           '#type' => 'container',
-          '#attributes' => ['class' => ['coorganizer-item', 'clearfix'], 'data-portal-ui' => 'coorganizer-card'],
+          '#attributes' => ['data-portal-ui' => 'coorganizer-card'],
           'target_id' => [
             '#type' => 'hidden',
             '#value' => (string) $id,
@@ -291,7 +286,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
             '#type' => 'html_tag',
             '#tag' => 'span',
             '#value' => ' (' . (string) $badgeText . ')',
-            '#attributes' => ['class' => ['badge', $badgeClass]],
+            '#attributes' => ['data-portal-ui' => 'coorganizer-badge ' . ($org->isClaimed() ? 'event-location-badge-public' : 'event-location-badge-draft')],
           ],
           'remove' => [
             '#type' => 'button',
@@ -304,7 +299,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
               'wrapper' => $wrapperId,
             ],
             '#attributes' => [
-              'class' => ['button', 'button--small', 'button--danger'],
+              'data-portal-ui' => 'event-org-button-danger event-organization-small-button',
             ],
           ],
         ];
@@ -314,7 +309,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
             '#type' => 'html_tag',
             '#tag' => 'small',
             '#value' => ' — ' . $localidadeStr,
-            '#attributes' => ['class' => ['text-muted']],
+            '#attributes' => ['data-portal-ui' => 'event-org-locality'],
           ];
         }
       }
@@ -324,7 +319,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
         '#type' => 'html_tag',
         '#tag' => 'p',
         '#value' => (string) t('Nenhuma organização coorganizadora vinculada.'),
-        '#attributes' => ['class' => ['text-muted']],
+        '#attributes' => ['data-portal-ui' => 'event-org-empty'],
       ];
     }
 
@@ -341,7 +336,7 @@ final class EventOrganizationModalWidget extends WidgetBase {
         '#title' => t('+ Adicionar coorganizadora'),
         '#url' => $modalUrl,
         '#attributes' => [
-          'class' => ['use-ajax', 'button', 'button--secondary'],
+          'class' => ['use-ajax'],
           'data-portal-ui' => 'event-coorg-button-add',
           'data-portal-trigger' => $wrapperId,
           'data-dialog-type' => 'modal',

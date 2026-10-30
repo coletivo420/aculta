@@ -526,3 +526,14 @@ imagem e conteúdo. Stories e schema dos SDCs permanecem inalterados porque
 não houve mudança de contrato. O consumer foi capturado no Firefox ESR visível
 no Runtime em 320–1440px; a evidência e os limites estão em
 `mobile-first-audit.md`.
+
+### THEME-MF2 — organizações de Eventos e conteúdo relacionado
+
+A apresentação dos formulários de organização, cartões de organização e bloco
+de conteúdo relacionado usa os contratos `data-portal-ui` existentes. O tema
+centraliza CSS responsivo em `css/components/event-organization.css` e
+`content.css`; a biblioteca CSS desativada do módulo Índice foi removida. Não
+houve SDC novo nem mudança de props/slots: formulários e bloco preservam seus
+consumidores e contratos Drupal. A fixture Firefox reutiliza Bootstrap local e
+passa 74/74 checks; Kernel dos módulos está DEFERRED sem `SIMPLETEST_DB`. Veja
+`mobile-first-audit.md` para detalhes e limites.

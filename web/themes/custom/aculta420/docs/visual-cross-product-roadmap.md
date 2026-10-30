@@ -1216,3 +1216,12 @@ candidata foram idênticas e não houve overflow. É somente regressão da CSS a
 não é uma alteração do carrossel, uma comparação completa com OpenCulturas ou
 aprovação THEME-MF3. Evidência em
 `/home/piradopirata/aculta-suite-out/editorial-carousel-retest-20261030/`.
+
+### THEME-MF2 — Eventos e conteúdo relacionado (2026-10-30)
+
+Apresentação de organizações de Eventos e `RelatedContentBlock` centralizada no
+tema por tokens `data-portal-ui`, sem criar SDC adicional nem mover contratos
+funcionais. Firefox ESR candidato passou 74/74 na fixture responsiva; lint,
+fronteira, docs UI e schemas passaram. Testes Kernel aguardam configuração do
+banco dedicado e Runtime/markup real ainda não homologados. Este avanço parcial
+não fecha THEME-MF2 nem THEME-MF3.

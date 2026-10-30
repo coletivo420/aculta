@@ -336,6 +336,28 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
+   * Input/button preprocess maps presentational tokens without removing AJAX.
+   */
+  public function testInputTokensMapToButtonClassesAndPreserveAjax(): void {
+    $variables = [
+      'element' => [
+        '#attributes' => [
+          'data-portal-ui' => 'event-organization-add-action',
+          'class' => ['use-ajax'],
+        ],
+      ],
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    $attributes = $variables['element']['#attributes'];
+    self::assertArrayNotHasKey('data-portal-ui', $attributes);
+    self::assertContains('button', $attributes['class']);
+    self::assertContains('button--primary', $attributes['class']);
+    self::assertContains('use-ajax', $attributes['class']);
+  }
+
+  /**
    * Event location tokens map to the original theme classes and preserve AJAX.
    */
   public function testEventLocationTokensMapClassesAndKeepAjaxBehavior(): void {
@@ -360,6 +382,30 @@ final class PortalUiHooksTest extends UnitTestCase {
     self::assertContains('aculta-event-location-widget', $attributes['class']);
     self::assertContains('aculta-location-target-id', $attributes['class']);
     self::assertContains('use-ajax', $attributes['class']);
+  }
+
+  /**
+   * Organization Studio/public profile and related-content tokens map in theme.
+   */
+  public function testEventOrganizationAndRelatedContentTokensMapToThemeClasses(): void {
+    $variables = [
+      'element' => [
+        '#attributes' => [
+          'data-portal-ui' => 'event-organization-profile event-organization-header event-org-summary-card event-org-button-danger related-content-item related-content-link',
+        ],
+      ],
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    $attributes = $variables['element']['#attributes'];
+    self::assertArrayNotHasKey('data-portal-ui', $attributes);
+    self::assertContains('aculta-organization-profile', $attributes['class']);
+    self::assertContains('organization-header', $attributes['class']);
+    self::assertContains('event-org-card', $attributes['class']);
+    self::assertContains('button--danger', $attributes['class']);
+    self::assertContains('aculta-related-content__item', $attributes['class']);
+    self::assertContains('aculta-related-content__link', $attributes['class']);
   }
 
   /**

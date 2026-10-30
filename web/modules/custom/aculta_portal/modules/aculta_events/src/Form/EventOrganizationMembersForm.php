@@ -89,7 +89,7 @@ final class EventOrganizationMembersForm extends FormBase {
     if ($pendingOwnerUid > 0 && $pendingOwnerUid === $currentUid) {
       $form['transfer_invite'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['messages', 'messages--warning']],
+        '#attributes' => ['data-portal-ui' => 'notice-warning'],
         'notice' => [
           '#markup' => '<p>' . $this->t('<strong>Convite de titularidade:</strong> Você foi convidado a assumir a titularidade desta organização.') . '</p>',
         ],
@@ -170,7 +170,7 @@ final class EventOrganizationMembersForm extends FormBase {
             '#type' => 'submit',
             '#value' => $this->t('Concluir revisão de acessos'),
             '#submit' => ['::submitCompleteReview'],
-            '#attributes' => ['class' => ['button--primary']],
+            '#attributes' => ['data-portal-ui' => 'button-primary'],
           ];
         }
       }
@@ -286,7 +286,7 @@ final class EventOrganizationMembersForm extends FormBase {
       '#type' => 'link',
       '#title' => $backTitle,
       '#url' => Url::fromRoute($backRoute),
-      '#attributes' => ['class' => ['button']],
+      '#attributes' => ['data-portal-ui' => 'button'],
     ];
 
     return $form;
