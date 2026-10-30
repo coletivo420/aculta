@@ -1,6 +1,6 @@
 # Plano de implementação - Locais no ACULTA Events e integração com Content Index
 
-Data: 2026-10-29. Estado: **PLANEJADO, sem implementação ou homologação nesta revisão**.
+Data inicial: 2026-10-29. **Retificação em 2026-10-30:** LOC-02/03/04/05 têm implementação no branch; LOC-06 tem rota e dashboard básico presentes, mas permanece PARCIAL e não homologado. LOC-00, fechamento de LOC-01, LOC-07 e LOC-08 continuam pendentes.
 Pedido do responsável: elaborar o plano, publicá-lo na PR aberta e alinhar roadmaps/documentação, incluindo `aculta_index`.
 Repositório: `coletivo420/aculta`; branch `refactor/opencultures-codigo-visual`; PR #299.
 Base revalidada: `3250e4b4f940a9a33008206885bdb6e33125f7a2`.
@@ -65,7 +65,7 @@ Todos os itens abaixo permanecem abertos.
 | LOC-03 / P1 | LOC-02 | Seletor de Local + criação inline no editor de Data/evento e no nó Activity; modal AJAX nativo Drupal (`EventLocationModalWidget` e `EventLocationModalForm`) | Concluído e testado no Kernel (`EventLocationModalAndAdminKernelTest`): seleção/criação em 2 etapas, BR fixo (ADR-034), campos soltos removidos de `EventForm` e `node:activity`, sincronização legada em `ActivityHooks` |
 | LOC-04 / P0-P1 | LOC-01 + canônico de LOC-02 | Contrato e implementação Events > Index descritos na seção 6: providers v2, URLs canônicas via DomainPurposeManager, relação event_location derivada de Datas físicas publicadas, enfileiramento por hooks e correção de joins | Concluído e testado no Kernel (EventContentIndexProviderKernelTest: 6 testes, 141 asserções PASS); sem rebuild ou escrita no Runtime |
 | LOC-05 / P1 | LOC-02 + LOC-04; LOC-01 para saída pública | Detalhe do Local com agenda; diretório paginado e busca; área administrativa própria em `/painel-administrativo/eventos` e links | Concluído e testado: canônico `/locais/{id}`, diretório `/locais`, painel `/painel-administrativo/eventos` (`EventAdminOverviewController`) e menu sob `system.admin` |
-| LOC-06 / P1 | LOC-02/03/04 + operações disponíveis | ACULTA Studio Culturas para organizadores em /studio/culturas no purpose eventos; administração/configuração privilegiada no MAIN | Não é aba do Marley; owner aculta_events; escrita somente em eventos; papéis e capacidades validados no servidor; implementação pendente |
+| LOC-06 / P1 | LOC-02/03/04 + contratos de Index, identidade e operações disponíveis | ACULTA Studio Culturas em `eventos.aculta.*/culturas` (path `/culturas`), purpose `eventos`; evoluir a rota/dashboard básicos existentes em Suite completa sobre `aculta_events` | PARCIAL no HEAD: route e dashboard básicos existem; falta homologar ACL/capacidades, Datas/Locais, descoberta/identidade do Organizador e experiência mobile-first. Administração privilegiada permanece no MAIN |
 | LOC-07 / P1 | LOC-00 a LOC-06 | Reconciliação config/migração e piloto; tratamento explícito de activity legado | Snapshot/hash antes de escrita autorizada, migração ensaiada/idempotente, contagens antes/depois e rollback |
 | LOC-08 / gate | Todas anteriores | Homologação integrada, revisão e atualização de release | Sem PASS com DEFERRED; evidências do HEAD consolidado, RC somente após fechar escopo obrigatório |
 
@@ -308,11 +308,29 @@ O item E4/F5 que registra a existência técnica de um formulário de nova Data 
 
 Evidência: `EventDomainBoundaryKernelTest`, testes do `ContentPurposeResolver`/`DomainRoutePolicy` e homologação Firefox ESR PASS. A regra substitui o aditivo anterior que restringia o editorial ao host `eventos`.
 
+
+
+## Plano derivado da comparação OpenCulturas para a Suite Culturas (2026-10-30)
+
+O OpenCulturas orienta os fluxos de cadastro e gestão de Evento, Datas, Local e Organizador; não define a arquitetura de armazenamento do ACULTA. O Studio Culturas será uma interface de trabalho sobre as entidades, formulários e regras do `aculta_events`. Preservar Evento > Data > Local, Local reutilizável e catálogo transversal `aculta_index`. Não portar Paragraphs, Views/Facets, Search API, papéis genéricos ou storage upstream.
+
+### Entregas LOC-06
+
+1. **Workspace:** entrada em `eventos.aculta.*/culturas`; lista limitada a Eventos nos quais a conta tem permissão efetiva; criação só quando autorizada; mostrar estados de rascunho/publicado/cancelado e estado vazio real.
+2. **Evento e Datas:** criação/edição pelo owner, com Datas geridas no contexto do Evento. Criar, editar e publicar permanecem capacidades separadas verificadas no servidor; não criar Data como catálogo de primeira classe no Studio.
+3. **Locais:** buscar/selecionar Local reutilizável e criar contextual sem perder o formulário; aplicar `access('view')` e checagens de criação; preservar publicação, precisão do endereço e cacheabilidade em página, catálogo, mapa e relações Index.
+4. **Organizador:** manter referência atual à conta sem indexar conta como identidade pública. Projetar busca de Pessoa/Organização somente após decisão de entidade/Perfil, política de visibilidade e URL canônica do resultado estarem implementadas.
+5. **Fidelidade visual:** reaproveitar SDCs elegíveis e navegação contextual Studio; nenhum segundo shell administrativo. Mobile-first, estados sem JavaScript e testes por duas contas, administrador, anônimo, Local privado/aproximado e purpose incorreto.
+
+### Aceite e dependências
+
+A conclusão exige testes Unit/Kernel para criação e acesso, testes de rota/purpose e cache, fluxo browser autenticado de criação de Evento/Data/Local e evidências Firefox ESR/Olivero e ACULTA420. `aculta_index` não deve ser reconstruído no Runtime como parte do plano. LOC-06 depende da resolução do contrato público de Organizador e das pendências de ACL/cache de LOC-01; o gate LOC-08 só passa com evidências executadas, não apenas código ou plano.
+
 ## Decisão de experiência dos organizadores — ADR-035
 
 ## ACULTA Studio Culturas — decisão de produto e domínio (2026-10-30)
 
-O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota planejada é `/studio/culturas`, atendida no purpose `eventos` (host eventos configurado pelo DomainPurposeManager); a entrada geral do Studio em `account` poderá apenas apresentar um link para essa experiência.
+O nome aprovado é **ACULTA Studio Culturas**, em `eventos.aculta.*/culturas` (path `/culturas`) no purpose `eventos`. A rota e um dashboard básico constam no HEAD; a Suite completa permanece parcial. A raiz de Conta pode apresentar apenas link absoluto para essa experiência via `DomainPurposeManager`.
 
 - A sessão administrativa técnica continua no domínio principal, em `/painel-administrativo/eventos`, restrita a administradores. Configuração global de permissões, auditoria e operações administrativas permanecem ali.
 - ACULTA Studio Culturas é a experiência de organizadores: composição de fluxos do owner `aculta_events`, para criar e gerir Eventos e seus componentes (Datas e Locais), usando Form API, Entity Access e moderação existentes. Não cria entidade, formulário de persistência, permissão ou catálogo duplicado.
@@ -320,6 +338,6 @@ O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas
 - Escritas só são aceitas no purpose `eventos` através de rotas canônicas da experiência. O domínio `account` pode linkar para ela, mas não pode fazer POST nem gravar conteúdo de Eventos. Não introduzir proxy de escrita, alias de rota ou redirect de compatibilidade.
 - As telas públicas de Eventos continuam no purpose `eventos`. Outros domínios podem compor exibição somente leitura de Eventos publicados e acessíveis, sempre com link canônico de Eventos e sem expor Eventos privados do LMS.
 - Esta decisão substitui qualquer texto anterior que diga que todo trabalho editorial de Eventos só pode ocorrer no MAIN ou que o purpose `eventos` é exclusivamente público. O painel de administração permanece no MAIN; a área do organizador é a exceção explícita e separada em ACULTA Studio Culturas.
-- Estado: decisão e planejamento documental; implementação, autorização por domínio, navegação e homologação ainda precisam ser concluídas.
+- Estado revalidado em 2026-10-30: a rota `/culturas` e o dashboard básico de Eventos estão implementados no branch. A integração visual/funcional completa, autorização para todas as operações, composição de Datas/Locais, navegação e homologação continuam pendentes.
 
-Atualizar LOC-06 para planejar ACULTA Studio Culturas em `/studio/culturas` no purpose `eventos`, mantendo configuração e administração privilegiada no MAIN. A composição deve oferecer seleção/cadastro contextual de Local em popup Drupal/AJAX e manter aculta_events como único owner. A fase está planejada, não concluída.
+LOC-06 deve evoluir o dashboard existente em `/culturas` no purpose `eventos` para uma Suite de organizador. A composição deve oferecer Datas dentro do Evento e seleção/reutilização/criação contextual de Local, mantendo `aculta_events` como único owner. `/studio` e `/studio/*` não são rotas-alvo. A fase está parcial, não concluída.
