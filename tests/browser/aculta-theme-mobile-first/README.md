@@ -548,6 +548,10 @@ purposes. Usa somente GET em Firefox ESR. Captura Apoio e Cursos em 320/1440px
 para revisão visual. `PURPOSE_HEADING_WIDTHS` escolhe as larguras e
 `PURPOSE_HEADING_DOMAIN_ENV` seleciona os hosts do manifesto (`test` por padrão).
 Não valida hierarquia completa, leitores de tela nem WCAG 2.2 AA.
+No HEAD servido `a1e1a4a71` antes da correção de tema, a baseline foi 108/120:
+as 12 falhas são somente a ausência do H1 em SUPPORT e COURSES nas seis larguras.
+Repita depois que o template candidato estiver no Runtime; a execução baseline
+não valida o candidato.
 
 ```sh
 export DISPLAY=:0

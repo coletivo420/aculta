@@ -1558,10 +1558,23 @@ rotas, dados ou contrato do shell. O teste reutilizável é
 
 Validação estática do candidato: parser Twig do pacote instalado PASS,
 `py_compile` do teste PASS e `git diff --check` PASS. O teste real de headings e
-reflow está **DEFERRED**: o Runtime servido está em `a1e1a4a71`, sem este template
-candidato; a branch remota da PR não está publicada como `refs/heads` para levar
-o candidato ao checkout, e não editei o docroot manualmente. A matriz da versão
-servida ainda deve ser repetida após a atualização do head. Não é gate aprovado.
+reflow baseline foi executado no Runtime HEAD `a1e1a4a71`: 108/120 checks; as
+12 falhas foram exatamente ausência de H1 em SUPPORT e COURSES nas seis
+larguras, sem falhas de shell ou overflow. Este resultado documenta o defeito
+antes do candidato, não é aprovação do candidato. O teste pós-correção está
+**DEFERRED**: o Runtime não contém este template; a branch remota da PR não está
+publicada como `refs/heads` para levar o candidato ao checkout, e não editei o
+docroot manualmente.
+
+Gates estáticos no candidato local: SDC schema PASS (55 componentes, 759 checks),
+Design Foundations PASS (2424), Browser Validators PASS (21), CSS lint PASS,
+análise estática do shell PASS e parser Twig PASS. O validador global de
+fronteira tema/módulo segue vermelho (1/3482): classes `messages`,
+`messages--warning`, `button--primary` e `button` em
+`aculta_events/src/Form/EventOrganizationForm.php` e
+`EventOrganizationMembersForm.php`. Há mudança paralela não commitada no módulo
+`aculta_events` no docroot; preservei-a sem editar esse módulo. Este gate impede
+publicação até resolução pelo owner do módulo. Nenhum resultado aprova THEME-MF3.
 
 Reteste focal posterior no Firefox ESR visível: claro e escuro + reduced motion
 capturados em 9/9 viewports cada, sem overflow e com os dois headers únicos. O

@@ -1028,5 +1028,9 @@ THEME-MF3. Evidências e limites estão no `mobile-first-audit.md`.
 A auditoria das raízes encontrou H1 ausente em Apoio e Cursos. O tema agora
 preserva o `page_title_block` gerido pelo Drupal nesses dois purposes, onde a
 home não tem título editorial próprio. Twig parse, sintaxe do teste e diff
-passaram; o browser gate está DEFERRED até o candidato chegar ao Runtime. Ver
-`mobile-first-audit.md` e `tests/browser/aculta-theme-mobile-first/README.md`.
+passaram. A baseline Runtime teve 108/120 checks, com as 12 ausências de H1
+restritas a essas duas raízes; a validação pós-correção está DEFERRED até o
+candidato chegar ao Runtime. O gate global de fronteira também identificou
+dívida em formulários de Eventos, sem alteração por haver trabalho paralelo no
+módulo. Ver `mobile-first-audit.md` e
+`tests/browser/aculta-theme-mobile-first/README.md`.
