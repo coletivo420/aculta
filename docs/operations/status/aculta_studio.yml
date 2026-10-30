@@ -4,10 +4,10 @@ state: Dev
 progress_note: >-
   ACULTA Studio Culturas em `/culturas` (purpose eventos) tem implementação parcial no owner
   aculta_events: dashboard, formulários de Evento/Data/Local, modal AJAX e configuração de papéis.
-  Runtime, autorização por purpose, navegação e homologação visual ainda pendentes; não tratar
+  A homologação integral de grants e fluxos de escrita ainda está pendente; não tratar
   presença de código como release homologada. Eventos e Locais não são implementados pelo módulo Studio.
-  ADR-038 (2026-10-30): caminhos das cinco Suites, Conta/Perfil/salvos/Mercado Pago, entrada de `account` e 404 de `/studio*` implementados; commits publicados. Matriz HTTP: 275/275 respostas GET/POST/AJAX conforme o purpose e os paths aposentados. Firefox ESR/X11 capturou 20 páginas em 1440/390; Culturas autenticada carregou HTTP 200. Green Stash foi bloqueada pelos grants da conta de teste, então escrita não foi homologada. Wiki mantém o Domain canônico `wiki420`; o pedido inicial por `wiki.aculta.*` foi corrigido pelo responsável e não requer DNS/TLS/vhost novo. Testes Kernel aguardam `SIMPLETEST_DB`; grants/fluxos completos e S-R4/S-R5 permanecem pendentes.
-next_phase: 'Homologar grants e fluxos de escrita das Suites, especialmente Green Stash; executar Kernel de métodos/AJAX quando SIMPLETEST_DB estiver configurado; ampliar validação de acessibilidade além do baseline. Preservar os históricos S-R4/S-R5 e seguir docs/decisions/ADR-038-aculta-studio-suites-por-dominio.md.'
+  ADR-038 (2026-10-30): caminhos das cinco Suites, Conta/Perfil/salvos/Mercado Pago, entrada de `account` e 404 de `/studio*` implementados; commits publicados. Matriz HTTP: 275/275 respostas GET/POST/AJAX conforme o purpose e os paths aposentados. Firefox ESR/X11 capturou 20 páginas em 1440/390; Culturas autenticada carregou HTTP 200. Green Stash foi bloqueada pelos grants da conta de teste, então escrita não foi homologada. Wiki mantém o Domain canônico `wiki420`; o pedido inicial por `wiki.aculta.*` foi corrigido pelo responsável e não requer DNS/TLS/vhost novo. Kernels EventDomainBoundary e EventLocationModalAndAdmin passaram em `aculta_simpletest` (15 testes/373 assertions; 29 depreciações upstream). Grants/fluxos completos e S-R4/S-R5 permanecem pendentes.
+next_phase: 'Homologar grants e fluxos de escrita das Suites, especialmente Green Stash; ampliar validação de acessibilidade além do baseline. Preservar os históricos S-R4/S-R5 e seguir docs/decisions/ADR-038-aculta-studio-suites-por-dominio.md.'
 
 # 2026-10-24: P1-B em codigo: bridge Marley e preview /studio/inicio;
 # a home /studio continua legado Marley, sem Runtime homologado.

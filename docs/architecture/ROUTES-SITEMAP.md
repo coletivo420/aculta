@@ -578,8 +578,8 @@ Caminhos e purposes foram atualizados no código; Wiki mantém o Domain canônic
 | --- | --- | --- | --- | --- |
 | `conta.aculta.*` | `/marley` | Marley | `account` | Caminho canônico; host vem do Domain ativo |
 | `cursos.aculta.*` | `/ganjalab` | Ganjalab | `courses` | Caminho canônico; host vem do Domain ativo |
-| Domain `wiki` ativo (`wiki420`) | `/wesativa` | WE SATIVA | `wiki` | Rota canônica implementada; host novo pendente de infraestrutura |
+| Domain `wiki` ativo (`wiki420`) | `/wesativa` | WE SATIVA | `wiki` | Rota canônica implementada; HTTPS e navegação autenticada verificados no ambiente de desenvolvimento; DNS de produção não verificado |
 | `loja.aculta.*` | `/greenstash` | Green Stash | `shop` | Caminho canônico; host vem do Domain ativo |
-| `eventos.aculta.*` | `/culturas` | ACULTA Studio Culturas | `eventos` | Rota inicial implementada; homologação pendente |
+| `eventos.aculta.*` | `/culturas` | ACULTA Studio Culturas | `eventos` | Página autenticada verificada; grants e fluxos integrais de escrita ainda pendentes |
 
-A raiz `conta` apresenta a Conta; rotas Conta, Perfil, Salvos e Mercado Pago usam paths próprios conforme tabela de correspondência no ADR-038. `/studio` e `/studio/*` respondem 404, sem alias/redirect. A troca do host Wiki depende de DNS/TLS/Deployer e homologação.
+A raiz `conta` apresenta a Conta; rotas Conta, Perfil, Salvos e Mercado Pago usam paths próprios conforme tabela de correspondência no ADR-038. `/studio` e `/studio/*` respondem 404, sem alias/redirect. O Domain canônico da Wiki permanece `wiki420`; a referência a `wiki.aculta.*` foi corrigida pelo responsável e não há troca de host planejada. A disponibilidade DNS de produção `wiki420.aculta.org` não foi verificada deste ambiente.
