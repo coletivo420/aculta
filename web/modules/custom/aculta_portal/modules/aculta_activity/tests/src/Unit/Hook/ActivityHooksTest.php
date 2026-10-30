@@ -49,6 +49,7 @@ final class ActivityHooksTest extends UnitTestCase {
       'field_gallery' => [],
       'field_related_activity' => [],
       'field_meta_tags' => [],
+      'field_event_location' => [],
       'author' => [],
       'options' => [],
     ];
@@ -56,6 +57,7 @@ final class ActivityHooksTest extends UnitTestCase {
     $hooks->formNodeFormAlter($form, $formState, 'node_activity_form');
 
     self::assertSame('editorial_content', $form['title']['#group']);
+    self::assertSame('editorial_content', $form['field_event_location']['#group']);
     self::assertSame('editorial_image', $form['field_media_image']['#group']);
     self::assertSame('editorial_relations', $form['field_related_activity']['#group']);
     self::assertSame('editorial_seo', $form['field_meta_tags']['#group']);

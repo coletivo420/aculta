@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.activity.field_event_city
     - field.field.node.activity.field_event_country
     - field.field.node.activity.field_event_end
+    - field.field.node.activity.field_event_location
     - field.field.node.activity.field_event_postal
     - field.field.node.activity.field_event_region
     - field.field.node.activity.field_event_start
@@ -59,6 +60,14 @@ content:
       format_type: medium
     third_party_settings: {  }
     weight: 2
+    region: content
+  field_event_location:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 3
     region: content
   field_event_start:
     type: datetime_default

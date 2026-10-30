@@ -326,3 +326,54 @@ function aculta_events_update_10007(): string {
     ? 'Campos de LOC-01/02 já existiam em aculta_event_location.'
     : 'Campos instalados: ' . implode(', ', $installed) . '.';
 }
+
+/**
+ * Instala o campo field_event_location no nó activity (LOC-05).
+ */
+function aculta_events_update_10008(): string {
+  if (!\Drupal::entityTypeManager()->hasDefinition('node')) {
+    return 'Entidade node não disponível.';
+  }
+
+  $fieldStorageConfigClass = '\Drupal\field\Entity\FieldStorageConfig';
+  $fieldConfigClass = '\Drupal\field\Entity\FieldConfig';
+
+  if (!class_exists($fieldStorageConfigClass) || !class_exists($fieldConfigClass)) {
+    return 'Módulo field não carregado.';
+  }
+
+  $storage = $fieldStorageConfigClass::loadByName('node', 'field_event_location');
+  if (!$storage) {
+    $fieldStorageConfigClass::create([
+      'field_name' => 'field_event_location',
+      'entity_type' => 'node',
+      'type' => 'entity_reference',
+      'settings' => [
+        'target_type' => 'aculta_event_location',
+      ],
+      'cardinality' => 1,
+      'translatable' => FALSE,
+    ])->save();
+  }
+
+  $field = $fieldConfigClass::loadByName('node', 'activity', 'field_event_location');
+  if (!$field) {
+    $fieldConfigClass::create([
+      'field_name' => 'field_event_location',
+      'entity_type' => 'node',
+      'bundle' => 'activity',
+      'label' => 'Local do evento',
+      'description' => 'Selecione ou cadastre o local do evento reutilizável.',
+      'required' => FALSE,
+      'settings' => [
+        'handler' => 'default:aculta_event_location',
+        'handler_settings' => [
+          'target_bundles' => NULL,
+          'auto_create' => FALSE,
+        ],
+      ],
+    ])->save();
+  }
+
+  return 'Campo field_event_location instalado com sucesso em node:activity.';
+}

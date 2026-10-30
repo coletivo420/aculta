@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_activity\Hook;
 
+use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -41,28 +43,55 @@ final class ActivityHooks {
 
     $locations = [];
     $mode = $node->get('field_modality')->value;
-    if (in_array($mode, ['presencial', 'hibrido'], TRUE)
-      && !$node->get('field_place_name')->isEmpty()) {
-      $place = [
-        '@type' => 'Place',
-        'name' => $node->get('field_place_name')->value,
-      ];
-      $address = ['@type' => 'PostalAddress'];
-      foreach ([
-        'streetAddress' => 'field_event_street',
-        'addressLocality' => 'field_event_city',
-        'addressRegion' => 'field_event_region',
-        'postalCode' => 'field_event_postal',
-        'addressCountry' => 'field_event_country',
-      ] as $key => $field) {
-        if (!$node->get($field)->isEmpty()) {
-          $address[$key] = $node->get($field)->value;
+    if (in_array($mode, ['presencial', 'hibrido'], TRUE)) {
+      $placeEntity = NULL;
+      if ($node->hasField('field_event_location') && !$node->get('field_event_location')->isEmpty()) {
+        $placeEntity = $node->get('field_event_location')->entity;
+      }
+
+      if ($placeEntity instanceof EventLocation) {
+        $place = [
+          '@type' => 'Place',
+          'name' => $placeEntity->label(),
+        ];
+        if ($placeEntity->hasField('field_endereco') && !$placeEntity->get('field_endereco')->isEmpty()) {
+          $addr = $placeEntity->get('field_endereco')->first();
+          if ($addr) {
+            $address = [
+              '@type' => 'PostalAddress',
+              'streetAddress' => (string) $addr->address_line1,
+              'addressLocality' => (string) $addr->locality,
+              'addressRegion' => (string) $addr->administrative_area,
+              'postalCode' => (string) $addr->postal_code,
+              'addressCountry' => (string) ($addr->country_code ?: 'BR'),
+            ];
+            $place['address'] = array_filter($address);
+          }
         }
+        $locations[] = $place;
       }
-      if (count($address) > 1) {
-        $place['address'] = $address;
+      elseif (!$node->get('field_place_name')->isEmpty()) {
+        $place = [
+          '@type' => 'Place',
+          'name' => $node->get('field_place_name')->value,
+        ];
+        $address = ['@type' => 'PostalAddress'];
+        foreach ([
+          'streetAddress' => 'field_event_street',
+          'addressLocality' => 'field_event_city',
+          'addressRegion' => 'field_event_region',
+          'postalCode' => 'field_event_postal',
+          'addressCountry' => 'field_event_country',
+        ] as $key => $field) {
+          if (!$node->get($field)->isEmpty()) {
+            $address[$key] = $node->get($field)->value;
+          }
+        }
+        if (count($address) > 1) {
+          $place['address'] = $address;
+        }
+        $locations[] = $place;
       }
-      $locations[] = $place;
     }
 
     if (in_array($mode, ['online', 'hibrido'], TRUE)
@@ -78,6 +107,76 @@ final class ActivityHooks {
       $tags['schema_event_location'] = SchemaMetatagManager::serialize(
         count($locations) === 1 ? $locations[0] : $locations,
       );
+    }
+  }
+
+  /**
+   * Sincroniza campos de endereço legado a partir de field_event_location.
+   */
+  #[Hook('node_presave')]
+  public function nodePresave(NodeInterface $node): void {
+    if ($node->bundle() !== 'activity') {
+      return;
+    }
+
+    if ($node->hasField('field_event_location') && !$node->get('field_event_location')->isEmpty()) {
+      $location = $node->get('field_event_location')->entity;
+      if ($location instanceof EventLocation) {
+        if ($node->hasField('field_place_name')) {
+          $node->set('field_place_name', $location->label());
+        }
+        if ($location->hasField('field_endereco') && !$location->get('field_endereco')->isEmpty()) {
+          $addr = $location->get('field_endereco')->first();
+          if ($addr) {
+            if ($node->hasField('field_event_street')) {
+              $node->set('field_event_street', (string) $addr->address_line1);
+            }
+            if ($node->hasField('field_event_city')) {
+              $node->set('field_event_city', (string) $addr->locality);
+            }
+            if ($node->hasField('field_event_region')) {
+              $node->set('field_event_region', (string) $addr->administrative_area);
+            }
+            if ($node->hasField('field_event_postal')) {
+              $node->set('field_event_postal', (string) $addr->postal_code);
+            }
+            if ($node->hasField('field_event_country')) {
+              $node->set('field_event_country', (string) ($addr->country_code ?: 'BR'));
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Renderiza o local referenciado em atividades.
+   */
+  #[Hook('node_view')]
+  public function nodeView(array &$build, NodeInterface $node, EntityViewDisplayInterface $display, string $viewMode): void {
+    if ($node->bundle() !== 'activity') {
+      return;
+    }
+
+    if ($display->getComponent('field_event_location') && $node->hasField('field_event_location') && !$node->get('field_event_location')->isEmpty()) {
+      $location = $node->get('field_event_location')->entity;
+      if ($location instanceof EventLocation) {
+        $currentUser = \Drupal::currentUser();
+        if ($location->access('view', $currentUser)) {
+          $build['field_event_location'] = [
+            '#theme' => 'item_list',
+            '#title' => $this->translation->translate('Local do evento'),
+            '#items' => [
+              [
+                '#type' => 'link',
+                '#title' => $location->label(),
+                '#url' => $location->toUrl(),
+              ],
+            ],
+            '#weight' => $display->getComponent('field_event_location')['weight'] ?? 10,
+          ];
+        }
+      }
     }
   }
 
@@ -106,6 +205,7 @@ final class ActivityHooks {
           'field_editorial_author',
           'field_credits',
           'field_references',
+          'field_event_location',
         ],
       ],
       'editorial_image' => [

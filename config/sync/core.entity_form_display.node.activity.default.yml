@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.activity.field_event_city
     - field.field.node.activity.field_event_country
     - field.field.node.activity.field_event_end
+    - field.field.node.activity.field_event_location
     - field.field.node.activity.field_event_postal
     - field.field.node.activity.field_event_region
     - field.field.node.activity.field_event_start
@@ -25,6 +26,7 @@ dependencies:
     - field.field.node.activity.field_summary
     - node.type.activity
   module:
+    - aculta_events
     - content_moderation
     - datetime
     - link
@@ -69,43 +71,17 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_event_city:
-    type: string_textfield
+  field_event_location:
+    type: aculta_event_location_modal
     weight: 15
     region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_event_country:
-    type: string_textfield
-    weight: 15
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
+    settings: {  }
     third_party_settings: {  }
   field_event_end:
     type: datetime_default
     weight: 15
     region: content
     settings: {  }
-    third_party_settings: {  }
-  field_event_postal:
-    type: string_textfield
-    weight: 15
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_event_region:
-    type: string_textfield
-    weight: 15
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
     third_party_settings: {  }
   field_event_start:
     type: datetime_default
@@ -118,14 +94,6 @@ content:
     weight: 15
     region: content
     settings: {  }
-    third_party_settings: {  }
-  field_event_street:
-    type: string_textfield
-    weight: 15
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
     third_party_settings: {  }
   field_free:
     type: boolean_checkbox
@@ -164,14 +132,6 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
   field_organizer:
-    type: string_textfield
-    weight: 15
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_place_name:
     type: string_textfield
     weight: 15
     region: content
@@ -251,6 +211,12 @@ content:
     third_party_settings: {  }
 hidden:
   field_activity_date: true
+  field_event_city: true
+  field_event_country: true
+  field_event_postal: true
+  field_event_region: true
+  field_event_street: true
+  field_place_name: true
   promote: true
   sticky: true
 
