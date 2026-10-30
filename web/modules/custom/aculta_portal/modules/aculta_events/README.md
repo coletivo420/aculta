@@ -26,7 +26,7 @@ Eventos, datas e locais do purpose `eventos` (ADR-015). Usa o `aculta_calendar` 
 ## Regra de domínio
 
 - **Todo `/painel-administrativo/` responde somente no MAIN** — inclusive Eventos, Datas, Locais e a integração OpenStreetMap. Em subdomínios, essas rotas retornam **404** (nunca 302), o toolbar do Navigation não é renderizado e nenhuma ação editorial é exposta.
-- O purpose `eventos` serve as páginas públicas (catálogo, Evento, calendário, `.ics`, embed) sem toolbar, sem links administrativos e sem ação de edição.
+- O purpose `eventos` serve as páginas públicas (catálogo, Evento, calendário, `.ics`, embed) e a superfície autenticada de organizadores ACULTA Studio Culturas em `/culturas`. Esta área é separada do painel administrativo e só executa escrita nas rotas canônicas de `aculta_events`, com validação de acesso no servidor.
 - O bloco somente leitura `aculta_events_upcoming` ("Próximos eventos") está na sidebar do MAIN, visível apenas no purpose `main`, e não oferece ações editoriais.
 - Salvar/editar/remover/reordenar Data atualiza a lista do Evento por AJAX, sem perder os campos não salvos. A ordem usa `field_peso`.
 - Nenhuma entidade, catálogo ou armazenamento é duplicado por domínio; a origem continua sendo `aculta_events`.
@@ -54,25 +54,28 @@ fictícia foi concluído com limpeza (nó `14331309082`, changesets `191197897`,
 `191197899` e `191197900`). Próxima etapa: validação Alpha após autorização de
 release.
 
-## Incremento de Locais - planejado em 2026-10-29
+## Revalidação de Locais e Studio Culturas no HEAD da PR #299 (2026-10-30)
 
-[Plano de implementação](../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md) e [roadmap](docs/ROADMAP.md).
-Entidade existente preservada; faltam CRUD nativo, seleção/criação inline no
-editor de Data, detalhe com agenda e navegação. A integração com aculta_index
-inclui canônicos, relações Evento > Local, ACL, consultas paginadas e manutenção
-incremental. O RC acima é evidência histórica; o novo escopo está Dev/planejado,
-sem mudança de manifesto ou teste Runtime nesta revisão.
+[Plano LOC-00 a LOC-08](../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), [roadmap](docs/ROADMAP.md) e [análise comparativa OpenCulturas](../../../../../../docs/architecture/ANALISE-COMPARATIVA-OPENCULTURAS-ACULTA-STUDIO-CULTURAS.md).
+
+O código do HEAD auditado contém CRUD e páginas de Local, modal Drupal/AJAX
+para selecionar ou cadastrar Local com CEP primeiro, relações e providers de
+`aculta_index`, e a base do ACULTA Studio Culturas. LOC-00 a LOC-06 têm código
+presente, com LOC-06 ainda parcial. Migrador e testes de migração também existem;
+nenhuma migração de Runtime foi executada nesta revisão. LOC-08, validação de
+domínio, UX e homologação permanecem pendentes. Não inferir execução de teste
+pela presença de arquivo de teste.
 
 
 ## Descontinuação de Atividades em favor de Eventos
 
-Conforme diretriz arquitetural, atividades editoriais (`node:activity` e `/node/add/activity`) foram descontinuadas em favor exclusivo das entidades estruturadas de Eventos (`aculta_event`, `aculta_event_date` e `aculta_event_location`). A criação de novos eventos e locais ocorre exclusivamente dentro de Eventos em `/painel-administrativo/eventos/adicionar` (não confundir com as atividades educacionais do LMS).
+Conforme diretriz arquitetural, atividades editoriais (`node:activity` e `/node/add/activity`) foram descontinuadas em favor exclusivo das entidades estruturadas de Eventos (`aculta_event`, `aculta_event_date` e `aculta_event_location`). Administradores usam `/painel-administrativo/eventos`; organizadores autorizados usam ACULTA Studio Culturas em `/culturas`, purpose `eventos`. Datas permanecem subordinadas ao Evento. Não confundir com atividades educacionais do LMS.
 
 ## Experiência de organizadores — planejamento ADR-035
 
 ## ACULTA Studio Culturas — decisão de produto e domínio (2026-10-30)
 
-O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota planejada é `/culturas` no purpose `eventos` (host eventos configurado pelo DomainPurposeManager); a entrada geral do Studio em `account` poderá apenas apresentar um link para essa experiência.
+O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota `/culturas` está declarada no código do owner `aculta_events`, no purpose `eventos`; hosts são resolvidos pela configuração e `DomainPurposeManager`. A entrada do Studio em `account` pode apenas apresentar link absoluto, sem escrita cruzada.
 
 - A sessão administrativa técnica continua no domínio principal, em `/painel-administrativo/eventos`, restrita a administradores. Configuração global de permissões, auditoria e operações administrativas permanecem ali.
 - ACULTA Studio Culturas é a experiência de organizadores: composição de fluxos do owner `aculta_events`, para criar e gerir Eventos e seus componentes (Datas e Locais), usando Form API, Entity Access e moderação existentes. Não cria entidade, formulário de persistência, permissão ou catálogo duplicado.
@@ -80,7 +83,7 @@ O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas
 - Escritas só são aceitas no purpose `eventos` através de rotas canônicas da experiência. O domínio `account` pode linkar para ela, mas não pode fazer POST nem gravar conteúdo de Eventos. Não introduzir proxy de escrita, alias de rota ou redirect de compatibilidade.
 - As telas públicas de Eventos continuam no purpose `eventos`. Outros domínios podem compor exibição somente leitura de Eventos publicados e acessíveis, sempre com link canônico de Eventos e sem expor Eventos privados do LMS.
 - Esta decisão substitui qualquer texto anterior que diga que todo trabalho editorial de Eventos só pode ocorrer no MAIN ou que o purpose `eventos` é exclusivamente público. O painel de administração permanece no MAIN; a área do organizador é a exceção explícita e separada em ACULTA Studio Culturas.
-- Estado: decisão e planejamento documental; implementação, autorização por domínio, navegação e homologação ainda precisam ser concluídas.
+- Estado: código parcial presente no HEAD auditado. Execução dos testes no HEAD, autorização/domínio no Runtime, navegação integrada e homologação visual permanecem pendentes.
 
 
 ## Ingressos gratuitos e pagos - proposta de integração (ADR-036)
@@ -91,7 +94,7 @@ O estado atual continua sem ticketing interno: `field_gratuito`, `field_pricing`
 - **Gratuito (proposta):** RSVP sem cobrança, nome e e-mail (D-33/D-40), sem CPF, pedido Commerce, carrinho ou Mercado Pago. Confirmar capacidade atomicamente e emitir credencial consumível uma vez no check-in. Não coletar dados reais em produção antes da revisão LGPD/base legal/aviso/retenção.
 - **Pago (proposta):** lote ligado a Evento e Data; pedido Commerce `ingresso`; Checkout Pro; somente confirmação de pagamento validada e idempotente emite o ingresso. Sem frete. Somente pedidos pagos participam do carrinho integrado e seguem a precedência D-39. Em pedidos mistos, o ingresso não exige endereço nem compõe frete.
 - **Credencial compartilhada:** RSVP e compra paga convergem em participante/credencial e check-in móvel, preservando estados financeiros distintos. QR leva apenas token opaco assinado; validar no servidor, exigir autorização contextual, gravar uma entrada e bloquear reuso. Não indexar pedido, PII ou token em `aculta_index`.
-- **Domínios e interface:** inscrições e compras iniciadas em `eventos`; escrita validada no servidor e nunca intermediada pelo purpose `account`. Administração técnica/global fica no MAIN. Gestão do organizador pertence ao ACULTA Studio Culturas planejado no purpose `eventos`.
+- **Domínios e interface:** inscrições e compras iniciadas em `eventos`; escrita validada no servidor e nunca intermediada pelo purpose `account`. Administração técnica/global fica no MAIN. Gestão do organizador pertence ao ACULTA Studio Culturas em `/culturas`; o código é parcial e a homologação está pendente.
 - **Gates financeiros:** venda paga bloqueada até parecer fiscal/jurídico (D-31/D-35), políticas de taxa, estorno e repasse (D-32 a D-34), LGPD e testes em sandbox. Repasse manual por evento; sem marketplace/split na primeira versão.
 - **Compatibilidade:** preservar os campos informativos atuais sem migração destrutiva. Quando houver lotes internos, definir precedência de exibição e migração antes de ativar; não inferir uma transação do booleano de gratuidade.
 
@@ -101,4 +104,4 @@ RSVP obrigatório ou opcional; limite por pessoa e prevenção de duplicidade; c
 
 ## ACULTA Studio Culturas em domínio próprio - ADR-038
 
-A Suite mantém o nome ACULTA Studio Culturas, mas o caminho de destino é `eventos.aculta.*/culturas`, purpose `eventos`. `/culturas` foi supersedido e responderá 404 após a migração. O painel administrativo continua no MAIN. A rota do organizador permanece planejada até implementação e homologação.
+A Suite mantém o nome ACULTA Studio Culturas e usa `/culturas` no purpose `eventos`, conforme ADR-038. O código da rota existe no HEAD; sua ativação só é declarada após validação do Runtime. `/studio/culturas` não é rota-alvo e responderá 404 após a migração do prefixo. O painel administrativo continua no MAIN.
