@@ -37,39 +37,11 @@ Páginas da integração: `/integracoes/openstreetmap/configuracao` e
 `/integracoes/openstreetmap/importar`. OAuth usa `/autorizar` e `/retorno`, em popup,
 com `no_cache`. Todas exigem `administer aculta events`.
 
-## Fronteira de domínio (2026-10-30)
+## Regra de domínio (decisão do responsável, 2026-10-30)
 
-As quatro rotas pertencem ao purpose `eventos` (as administrativas com
-`_aculta_domain_purpose_authoritative: true`). O `DomainPurposeRequestSubscriber`
-nega a integração em outros domínios, inclusive POST direto. O redirect URI do
-app OAuth do OpenStreetMap deve apontar para o host de Eventos do ambiente; o
-callback é montado com `Url::fromRoute(..., ['absolute' => TRUE])`, então usa o
-host atual (Eventos).
-
-## Credenciais e ambientes (exceção única)
-
-Uma única aplicação OAuth do OpenStreetMap atende teste, desenvolvimento e
-produção. Em `secrets/` ficam `OSM_PRODUCTION_CLIENT_ID`,
-`OSM_PRODUCTION_CLIENT_SECRET` e `ACULTA_OSM_TOKEN_ENCRYPTION_KEY`; as variáveis
-`OSM_TEST_*` do contrato não estão provisionadas. O site de teste só resolve a
-credencial de produção com `aculta_openstreetmap_environment=production` (D-45);
-sem essa seleção usa a API de desenvolvimento e não tem credencial.
-
-O token do usuário é cifrado no State por ambiente. Em 2026-10-29 a conta
-autorizada conectou o app (`site=test`, ambiente efetivo `production`) e o
-ensaio de escrita foi concluído com limpeza. Cada escrita no mapa público exige
-revisão e confirmação explícita (D-45). Nenhum valor de credencial é versionado
-nem exibido em log.
-
-## Testes
-
-Kernel: `tests/src/Kernel/OpenStreetMapOAuthSafetyKernelTest.php` cobre permissão de rotas,
-ambiente de desenvolvimento, recusa de ambiente cruzado, recusa sem credenciais,
-armazenamento cifrado do token e escrita simulada no endpoint configurado.
-
-Ensaio real de 2026-10-29: nó fictício `14331309082` criado no Atlântico Sul
-(changeset `191197897`), atualizado pelo `OpenStreetMapApiClient::update`
-(changeset `191197899`, versão 2) e removido (changeset `191197900`); a leitura
-posterior confirmou a ausência do nó. Nenhum token ou corpo sensível foi
-impresso. Um envio fora do teste continua dependendo da revisão de termos ODbL
-e atribuição.
+As quatro rotas pertencem ao purpose `main`, junto da área administrativa de
+Eventos. O `DomainPurposeRequestSubscriber` nega a integração no host de
+Eventos e nos demais domínios, inclusive POST direto. O redirect URI do app
+OAuth do OpenStreetMap deve apontar para o host MAIN do ambiente; o callback é
+montado com `Url::fromRoute(..., ['absolute' => TRUE])`, então usa o host
+atual (MAIN).

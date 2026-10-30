@@ -14,6 +14,9 @@ services:
   aculta_events.locations:
     class: Drupal\aculta_events\Catalogue\LocationCatalogue
     arguments: ['@entity_type.manager', '@current_user']
+  aculta_events.date_list_builder:
+    class: Drupal\aculta_events\Event\EventDateListBuilder
+    arguments: ['@entity_type.manager', '@string_translation']
   aculta_events.upcoming:
     class: Drupal\aculta_events\Occurrence\UpcomingDates
     arguments: ['@entity_type.manager', '@aculta_events.occurrences']
@@ -62,3 +65,13 @@ services:
   aculta_events.editorial_presenter:
     class: Drupal\aculta_events\Editorial\EventEditorialPresenter
     arguments: ['@string_translation']
+  logger.channel.aculta_events:
+    parent: logger.channel_base
+    arguments: ['aculta_events']
+  aculta_events.activity_location_migrator:
+    class: Drupal\aculta_events\Migration\ActivityLocationMigrator
+    arguments:
+      - '@entity_type.manager'
+      - '@database'
+      - '@state'
+      - '@logger.channel.aculta_events'

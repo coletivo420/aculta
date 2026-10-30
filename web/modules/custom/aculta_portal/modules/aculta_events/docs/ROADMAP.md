@@ -333,18 +333,20 @@ A conclusão técnica de E4 não fecha esta experiência editorial. O gate de co
 **Evidência de implementação (2026-10-30):** `EventDateManagementKernelTest` 6/88 PASS, `EventFormDatesKernelTest` 3/48 PASS, suíte Kernel de Events 76/1216 PASS, `aculta_calendar` 127/431 PASS e Unit de Events 8/19 PASS. A entidade `aculta_event_date` permanece como fonte de calendário, `.ics`, recorrência, embed e página pública. Nenhuma migração de dados foi executada; o Runtime não foi alterado.
 
 
-## Fronteira de domínio: editorial em Eventos, exibição somente leitura (decisão 2026-10-30)
+## Regra de domínio: admin no MAIN, público em Eventos (decisão 2026-10-30)
 
-Eventos, Datas e Locais são administrados exclusivamente no purpose `eventos`. Outros domínios apenas consomem a apresentação, de forma somente leitura.
+**Decisão do responsável:** todo `/painel-administrativo/` responde somente no MAIN. O purpose `eventos` serve as páginas públicas e o calendário; os demais domínios exibem o bloco somente leitura.
 
-- [x] Restringir rotas, formulários e operações de criação/edição ao purpose `eventos`, com validação no servidor. (`_aculta_domain_purpose: eventos` + `_aculta_domain_purpose_authoritative: true` nas rotas editoriais; `ContentPurposeResolver` honra o opt-in; `DomainPurposeRequestSubscriber` nega a rota em outros domínios.)
-- [x] Datas e Locais seguem o Evento proprietário, inclusive no contexto de domínio. (`event_date_*`/`location_*` exigem acesso ao Evento e purpose `eventos`; `EventDateRouteAccess` valida o vínculo.)
-- [x] Preservar os mecanismos centrais de troca de domínio/purpose e URLs canônicas, sem aliases/redirects temporários. (Nenhum alias criado; URLs canônicas via `DomainPurposeManager`.)
-- [x] Em outros domínios, exibir apenas blocos somente leitura, sem ações editoriais. (Bloco `aculta_events_upcoming`, categoria ACULTA Eventos.)
-- [x] A caixa consulta somente Eventos publicados e acessíveis, com cache/canonical corretos. (`EventCatalogue::busca()` com `access('view')`; cache contexts `user`/`url.site` e tags `aculta_event_list`/`aculta_event_date_list`; links canônicos de `eventos`.)
-- [x] Eventos privados do LMS ou sem acesso público não vazam. (`hook_entity_access` do LMS + `access('view')` no catálogo/bloco; coberto pelas suítes do LMS e pela ausência de rascunhos no bloco.)
-- [x] Não duplicar entidades, catálogos ou armazenamento por domínio. (Origem única em `aculta_events`.)
-- [x] Mover a integração OpenStreetMap para o purpose `eventos`. (`aculta_events_openstreetmap` com purpose `eventos` autoritativo na configuração/importação e purpose `eventos` na autorização/retorno OAuth.)
-- [x] `DomainRouteSubscriber` respeita o opt-in autoritativo em vez de forçar `main` em toda rota administrativa/`/painel-administrativo`. (`DomainRouteSubscriberAuthoritativePurposeTest`.)
+- [x] Todo `/painel-administrativo/` (Eventos, Datas, Locais) declara purpose `main` e é negado no host de Eventos com **404** (nunca 302), inclusive POST. (`_admin_route` + `_aculta_domain_purpose: main`; `DomainPurposeRequestSubscriber`.)
+- [x] Subdomínios não renderizam o toolbar do Navigation nem ações editoriais. (`AppearanceHooks` remove `navigation`/`top_bar`; catálogo e página do Evento não expõem criar/editar.)
+- [x] A integração OpenStreetMap também pertence ao MAIN, junto da área administrativa. (Rotas OSM com purpose `main`.)
+- [x] Datas e Locais seguem o Evento proprietário; `EventDateRouteAccess` valida o vínculo e o acesso ao Evento.
+- [x] As páginas públicas em Eventos não expõem ações editoriais; o admin é acessado no MAIN.
+- [x] Bloco somente leitura `aculta_events_upcoming` colocado na sidebar do MAIN. (Config `block.block.aculta420_aculta_events_upcoming`, visibilidade por `aculta_domain_purpose: main`.)
+- [x] A caixa consulta somente Eventos publicados e acessíveis, com cache e URLs do ambiente. (`EventCatalogue` + `environmentPathUrl`; cache `user`/`url.site` e tags de evento.)
+- [x] Eventos privados do LMS não vazam. (`hook_entity_access` + `access('view')`.)
+- [x] Sem duplicação de entidade/catálogo e sem alias/redirect.
+- [x] Salvar, editar, remover ou reordenar Data atualiza a lista do Evento por AJAX, preservando os campos não salvos. (`ReplaceCommand('#event-dates-list', ...)`.)
+- [x] Ordem editorial por peso (`field_peso`, update `10011`), com a tela "Ordenar datas" no popup.
 
-**Evidência:** `EventDomainBoundaryKernelTest` 6/177 PASS; `DomainRouteSubscriberAuthoritativePurposeTest`, `ContentPurposeResolverTest`, `ContentPurposeResolverEventsUnitTest` e `DomainRoutePolicyTest` PASS; homologação Firefox ESR (`tests/browser/eventos/domain-boundary.py`) 18/18 PASS no servidor de desenvolvimento. A colocação do bloco em cada domínio é configuração de site (não executada nesta entrega).
+**Evidência:** `EventDomainBoundaryKernelTest`, `EventDateManagementKernelTest` (AJAX e ordem), `EventFormDatesKernelTest`, suíte Kernel de Events 84/1438 PASS, `aculta_calendar` 127/431 PASS, Unit de `aculta_portal` PASS e homologação Firefox ESR. Update `10011` aplicado no Runtime com snapshot `8e7ee699…`.

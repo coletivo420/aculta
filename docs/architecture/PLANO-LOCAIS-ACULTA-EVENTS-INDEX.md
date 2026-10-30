@@ -262,6 +262,24 @@ A entidade `aculta_event_location` e seu ciclo de vida são de `aculta_events`. 
 - **Editabilidade e autopreenchimento validados:** Validado no navegador X11 Firefox ESR (`test-account-address-browser.py`, 33/33 verificações OK) que após a consulta de CEP específico e CEP geral (`06550-000`), todos os campos permanecem editáveis, a troca de CEP atualiza os dados preservando número digitado e complemento, e a submissão grava sem regressões.
 
 
+## Fase 2 — Migração idempotente e reversível de endereços legados de Activity para Locais (2026-10-30)
+
+1. **Serviço de Migração Idempotente e Reversível (`ActivityLocationMigrator`):**
+   - Registrado como serviço de container `aculta_events.activity_location_migrator` com logger channel próprio `logger.channel.aculta_events`.
+   - `getLegacyCandidates()` e `hasLegacyAddressData()`: identifica com segurança nós `activity` com campos legados preenchidos que ainda não referenciam um Local.
+   - `inspect()`: diagnóstico detalhado com contagem de nós elegíveis, campos faltantes e previsão de locais únicos após deduplicação.
+   - `migrate(bool $dryRun)`: suporta simulação sem gravação (`$dryRun = TRUE`) e execução persistente com deduplicação por chave normalizada (nome + CEP), vinculando `field_event_location` aos nós, fixando país `BR` e mapeando o status de publicação.
+   - `rollback()`: reversão íntegra e atômica baseada no rastreamento de proveniência em Drupal State (`aculta_events.migrated_activity_locations`), desvinculando os nós e removendo exclusivamente os locais criados no lote.
+2. **Automação Operacional e Deploy:**
+   - Script CLI `scripts/migrate-activity-locations.php` com suporte a `--inspect`, `--dry-run`, `--execute` e `--rollback`.
+   - Update hook `aculta_events_update_10012()` em `aculta_events.install` pronto para execução controlada no pipeline de deployment.
+3. **Evidências de Teste:**
+   - Suíte Kernel dedicada `ActivityLocationMigrationKernelTest`: 3 testes e 79 asserções cobrindo auditoria diagnóstica, garantia de isolamento do dry-run, criação idempotente, deduplicação de múltiplos nós para a mesma entidade de local e reversão completa via rollback.
+   - Suíte Kernel completa do módulo `aculta_events`: 85 testes e 1476 asserções PASS (0 falhas, 0 erros).
+   - Gates do projeto validados: `validate-account-address.php`, `validate-single-acceptance.php`, `validate-no-temporary-route-aliases.php` e `validate-project-status-index.php` todos PASS.
+
+
+
 ## Decisão de fluxo: Eventos centraliza a gestão editorial (2026-10-30)
 
 A interface administrativa deve tratar Evento como unidade editorial. A existência de aculta_event_date como entidade separada no modelo não significa que a Data seja um conteúdo ou tarefa administrativa independente.
@@ -279,12 +297,13 @@ O item E4/F5 que registra a existência técnica de um formulário de nova Data 
 **Evidência (2026-10-30):** `EventDateManagementKernelTest` 6/88, `EventFormDatesKernelTest` 3/48, Kernel de Events 76/1216, Calendar 127/431 e Unit de Events 8/19 PASS. Nenhuma migração de dados, mudança de esquema ou escrita no Runtime foi executada.
 
 
-## Fronteira de domínio para Locais e Eventos (2026-10-30)
+## Regra de domínio para Locais e Eventos (decisão do responsável, 2026-10-30)
 
-- [x] Operações editoriais de Eventos, Datas e Locais restritas ao purpose `eventos`, com negação no servidor em outros domínios. (`_aculta_domain_purpose: eventos` + `_aculta_domain_purpose_authoritative: true`; `DomainPurposeRequestSubscriber` nega inclusão por URL/POST.)
+- **Todo `/painel-administrativo/` responde somente no MAIN** — inclusive Eventos, Datas, Locais e a integração OSM. Em subdomínios, essas rotas retornam **404** (nunca 302), o toolbar do Navigation não é renderizado e não há ações editoriais. O host `eventos.aculta` serve as páginas públicas; os demais domínios exibem o bloco somente leitura.
+- [x] Operações editoriais de Eventos, Datas e Locais no MAIN, com negação no servidor em outros domínios, inclusive POST.
 - [x] Locais seguem o Evento proprietário: seleção/cadastro via modal revalidam `access('view')`/criação e vivem no contexto do Evento.
-- [x] Exibição em outros domínios é somente leitura (bloco `aculta_events_upcoming`), sem ações de cadastrar Local, editar, excluir ou publicar.
-- [x] Sem duplicação de entidade/catálogo por domínio e sem alias/redirect temporário.
+- [x] Exibição em outros domínios é somente leitura (bloco `aculta_events_upcoming` na sidebar do MAIN), sem ações de cadastrar Local, editar, excluir ou publicar.
+- [x] Sem duplicação de entidade/catálogo por domínio e sem alias/redirect.
 - [x] Eventos de turma do LMS e Locais privados permanecem fora da exibição pública, busca e indexação cruzada.
 
-Evidência: `EventDomainBoundaryKernelTest` e testes do `ContentPurposeResolver`/`DomainRoutePolicy` PASS. A colocação do bloco por domínio é configuração de site e não foi executada (sem escrita no Runtime).
+Evidência: `EventDomainBoundaryKernelTest`, testes do `ContentPurposeResolver`/`DomainRoutePolicy` e homologação Firefox ESR PASS. A regra substitui o aditivo anterior que restringia o editorial ao host `eventos`.

@@ -2,10 +2,11 @@
 version: 0.2.0-dev.1
 state: Dev
 progress_note: >-
-  Integração de locais em nós Activity via campo field_event_location, modal AJAX de duas etapas
-  (EventLocationModalWidget e EventLocationModalForm), remoção de campos soltos de endereço de
-  EventForm e node:activity, sincronização idempotente para legado em ActivityHooks::nodePresave,
-  área administrativa própria em /painel-administrativo/eventos (EventAdminOverviewController).
-  País fixado exclusivamente em Brasil (BR) com validação de servidor (ADR-034).
-  12 testes Kernel focais cobrindo modal, painel, sincronização e país (228 asserções PASS).
-next_phase: "Validação em navegador real Firefox ESR visível dos novos modais e painel administrativo de eventos."
+  Fase 2 de Locais concluída: serviço central ActivityLocationMigrator para migração e rollback
+  idempotentes de nós legados de Activity para EventLocation com deduplicação por nome e CEP,
+  update hook 10012, CLI scripts/migrate-activity-locations.php e testes de Kernel dedicados
+  (ActivityLocationMigrationKernelTest: 3 testes/79 asserções PASS). Gestão editorial de Eventos,
+  Datas e Locais centralizada no MAIN sob /painel-administrativo/eventos, com reordenação AJAX,
+  modal de Locais em 2 etapas com CEP primeiro (#weight = -50) e país exclusivamente BR.
+  Suíte Kernel completa: 85 testes / 1476 asserções PASS.
+next_phase: "Homologação de ponta a ponta em navegador real Firefox ESR visível dos novos fluxos de cadastro e seleção de Locais."

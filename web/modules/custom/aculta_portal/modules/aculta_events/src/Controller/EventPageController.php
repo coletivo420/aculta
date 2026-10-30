@@ -8,6 +8,7 @@ use Drupal\aculta_events\Cache\EventCacheTags;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Occurrence\UpcomingDates;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
@@ -41,6 +42,7 @@ final class EventPageController extends ControllerBase {
     private readonly EntityTypeManagerInterface $entities,
     private readonly UpcomingDates $proximas,
     private readonly TimeInterface $tempo,
+    private readonly ?DomainPurposeManager $purposes = NULL,
   ) {}
 
   /**
@@ -51,6 +53,7 @@ final class EventPageController extends ControllerBase {
       $container->get('entity_type.manager'),
       $container->get('aculta_events.upcoming'),
       $container->get('datetime.time'),
+      $container->has('aculta_portal.domain_purpose') ? $container->get('aculta_portal.domain_purpose') : NULL,
     );
   }
 
@@ -157,8 +160,12 @@ final class EventPageController extends ControllerBase {
     }
 
     $prefix = '';
-    if ($evento->access('update')) {
-      $editUrl = Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $evento->id()])->toString();
+    if ($this->purposes?->getCurrentPurpose() === 'main' && $evento->access('update')) {
+      // A administração vive no MAIN; a página pública no purpose eventos.
+      $adminPath = '/painel-administrativo/eventos/' . $evento->id() . '/editar';
+      $adminUrl = $this->purposes?->environmentPathUrl('main', $adminPath);
+      $editUrl = $adminUrl?->toString()
+        ?? Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $evento->id()])->toString();
       $prefix = '<div class="event-admin-actions mb-4"><a href="' . Html::escape($editUrl) . '" class="button button--primary">' . $this->t('Editar evento e datas') . '</a></div>';
     }
 

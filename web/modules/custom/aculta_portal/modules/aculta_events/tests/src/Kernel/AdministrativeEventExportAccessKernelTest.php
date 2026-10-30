@@ -33,7 +33,7 @@ final class AdministrativeEventExportAccessKernelTest extends KernelTestBase {
     $route = $this->container->get('router.route_provider')->getRouteByName('aculta_events.admin_export');
     $this->assertSame('/painel-administrativo/eventos/exportar', $route->getPath());
     $this->assertSame('administer aculta events', $route->getRequirement('_permission'));
-    $this->assertSame('eventos', $route->getOption('_aculta_domain_purpose'));
+    $this->assertSame('main', $route->getOption('_aculta_domain_purpose'));
     $visitor = new UserSession(['uid' => 2, 'roles' => ['authenticated']]);
     $this->assertFalse($this->container->get('access_manager')->checkNamedRoute('aculta_events.admin_export', [], $visitor));
   }

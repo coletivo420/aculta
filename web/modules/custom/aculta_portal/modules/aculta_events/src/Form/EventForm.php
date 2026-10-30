@@ -7,10 +7,12 @@ namespace Drupal\aculta_events\Form;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\aculta_events\Event\EventDateListBuilder;
 use Drupal\aculta_events\Plugin\Field\FieldWidget\EventLocationModalWidget;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Url;
 
 /**
@@ -21,6 +23,20 @@ use Drupal\Core\Url;
  * administradas por popups Drupal/AJAX, sem formulário avulso de Data.
  */
 final class EventForm extends ContentEntityForm {
+
+  /**
+   * Construtor da lista de Datas gerida dentro do Evento.
+   */
+  protected EventDateListBuilder $dateListBuilder;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): static {
+    $instance = parent::create($container);
+    $instance->dateListBuilder = $container->get('aculta_events.date_list_builder');
+    return $instance;
+  }
 
   /**
    * {@inheritdoc}
@@ -38,7 +54,14 @@ final class EventForm extends ContentEntityForm {
       $this->buildDateCreationSection($form, $form_state);
     }
     else {
-      $form['event_dates'] = $this->buildEventDatesSection($entity);
+      $form['event_dates'] = [
+        '#type' => 'details',
+        '#title' => $this->t('Datas e locais deste evento'),
+        '#open' => TRUE,
+        '#weight' => 22,
+        '#attached' => ['library' => ['core/drupal.dialog.ajax']],
+      ];
+      $form['event_dates']['list'] = $this->dateListBuilder->build($entity);
     }
 
     return $form;
@@ -124,108 +147,6 @@ final class EventForm extends ContentEntityForm {
   }
 
   /**
-   * Lista as Datas do Evento em edição, com ações dentro do contexto.
-   */
-  private function buildEventDatesSection(Event $event): array {
-    $section = [
-      '#type' => 'details',
-      '#title' => $this->t('Datas e locais deste evento'),
-      '#open' => TRUE,
-      '#weight' => 22,
-      '#attached' => ['library' => ['core/drupal.dialog.ajax']],
-    ];
-
-    $storage = $this->entityTypeManager->getStorage('aculta_event_date');
-    $ids = $storage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('field_evento', (int) $event->id())
-      ->execute();
-    /** @var \Drupal\aculta_events\Entity\EventDate[] $dates */
-    $dates = $storage->loadMultiple($ids);
-    usort($dates, static function (EventDate $a, EventDate $b): int {
-      return (string) $a->get('field_quando')->value <=> (string) $b->get('field_quando')->value;
-    });
-
-    $rows = [];
-    foreach ($dates as $date) {
-      $quando = $date->get('field_quando')->first();
-      $local = $date->get('field_local')->entity;
-
-      $actions = [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'event-date-actions'],
-        'edit' => [
-          '#type' => 'link',
-          '#title' => $this->t('Editar'),
-          '#url' => Url::fromRoute('aculta_events.event_date_edit', [
-            'aculta_event' => $event->id(),
-            'aculta_event_date' => $date->id(),
-          ]),
-          '#attributes' => $this->dialogAttributes(),
-        ],
-        'delete' => [
-          '#type' => 'link',
-          '#title' => $this->t('Remover'),
-          '#url' => Url::fromRoute('aculta_events.event_date_delete', [
-            'aculta_event' => $event->id(),
-            'aculta_event_date' => $date->id(),
-          ]),
-          '#attributes' => $this->dialogAttributes(),
-        ],
-      ];
-
-      $rows[] = [
-        (string) $date->label(),
-        $this->formatDate($quando?->value),
-        $this->formatDate($quando?->end_value),
-        $local instanceof EventLocation ? (string) $local->label() : '',
-        ['data' => $actions],
-      ];
-    }
-
-    $section['list'] = [
-      '#type' => 'table',
-      '#header' => [
-        $this->t('Título'),
-        $this->t('Início'),
-        $this->t('Fim'),
-        $this->t('Local'),
-        $this->t('Ações'),
-      ],
-      '#rows' => $rows,
-      '#empty' => $this->t('Este evento ainda não tem datas.'),
-    ];
-    $section['add'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Adicionar data a este evento'),
-      '#url' => Url::fromRoute('aculta_events.event_date_add', ['aculta_event' => $event->id()]),
-      '#attributes' => [
-        'data-portal-ui' => 'event-date-add',
-        'class' => ['use-ajax'],
-        'data-dialog-type' => 'modal',
-        'data-dialog-options' => json_encode(['width' => 720]),
-      ],
-    ];
-    $section['#cache'] = [
-      'tags' => ['aculta_event_date_list'],
-      'contexts' => ['user.permissions'],
-    ];
-
-    return $section;
-  }
-
-  /**
-   * Atributos de link que abrem o popup Drupal.
-   */
-  private function dialogAttributes(): array {
-    return [
-      'class' => ['use-ajax'],
-      'data-dialog-type' => 'modal',
-      'data-dialog-options' => json_encode(['width' => 720]),
-    ];
-  }
-
-  /**
    * Adiciona uma nova linha de Data (rebuild AJAX).
    */
   public function addDateRow(array &$form, FormStateInterface $form_state): void {
@@ -294,7 +215,7 @@ final class EventForm extends ContentEntityForm {
       ]));
 
       $dates = (array) $form_state->getValue(['date_location', 'dates'], []);
-      foreach ($dates as $row) {
+      foreach ($dates as $index => $row) {
         $start = $this->utcValue($row['starts_at'] ?? NULL);
         $end = $this->utcValue($row['ends_at'] ?? NULL);
         $rawLocal = $row['local_id'] ?? NULL;
@@ -311,6 +232,7 @@ final class EventForm extends ContentEntityForm {
           'title' => trim((string) ($row['title'] ?? '')) !== '' ? (string) $row['title'] : (string) $entity->label(),
           'field_evento' => (int) $entity->id(),
           'field_quando' => ['value' => $start, 'end_value' => $end],
+          'field_peso' => (int) $index,
         ];
         if ($localId > 0) {
           $dateData['field_local'] = $localId;

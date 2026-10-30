@@ -6,8 +6,11 @@ namespace Drupal\aculta_events\Form;
 
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
+use Drupal\aculta_events\Event\EventDateListBuilder;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
+use Drupal\Core\Ajax\MessageCommand;
+use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
@@ -23,13 +26,17 @@ final class EventDateDeleteForm extends FormBase {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entities,
+    private readonly EventDateListBuilder $dateListBuilder,
   ) {}
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('entity_type.manager'));
+    return new static(
+      $container->get('entity_type.manager'),
+      $container->get('aculta_events.date_list_builder'),
+    );
   }
 
   /**
@@ -107,12 +114,21 @@ final class EventDateDeleteForm extends FormBase {
     if ($form_state->hasAnyErrors()) {
       return $form;
     }
-    $eventId = (int) ($form_state->get('event_id') ?? 0);
+    $event = $this->entityFromState($form_state, 'event_id', 'aculta_event');
+    if (!$event instanceof Event) {
+      $eventId = (int) ($form_state->get('event_id') ?? 0);
+      $response = new AjaxResponse();
+      $response->addCommand(new CloseModalDialogCommand());
+      $response->addCommand(new RedirectCommand(
+        Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $eventId])->toString()
+      ));
+      return $response;
+    }
+
     $response = new AjaxResponse();
     $response->addCommand(new CloseModalDialogCommand());
-    $response->addCommand(new RedirectCommand(
-      Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $eventId])->toString()
-    ));
+    $response->addCommand(new MessageCommand($this->t('A data foi removida.')));
+    $response->addCommand(new ReplaceCommand('#event-dates-list', $this->dateListBuilder->build($event)));
     return $response;
   }
 

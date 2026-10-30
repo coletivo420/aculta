@@ -241,6 +241,12 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       if ($requiredPurpose === 'main'
         && ($this->isAdministrativeRoute($route)
           || $route->getOption('_aculta_cross_domain_canonical_purpose') === 'main')) {
+        // Toda a interface administrativa responde somente no MAIN. Em
+        // subdomínios, a rota administrativa é negada (404), sem redirect.
+        if ($this->isAdministrativeRoute($route)) {
+          $event->setResponse($this->notFoundResponse());
+          return;
+        }
         $event->setResponse($this->canonicalMainNavigationResponse($event->getRequest()));
         return;
       }
@@ -337,6 +343,12 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       if ($requiredPurpose === 'main'
         && ($this->isAdministrativeRoute($route)
           || $route->getOption('_aculta_cross_domain_canonical_purpose') === 'main')) {
+        // Toda a interface administrativa responde somente no MAIN. Em
+        // subdomínios, a rota administrativa é negada (404), sem redirect.
+        if ($this->isAdministrativeRoute($route)) {
+          $event->setResponse($this->notFoundResponse());
+          return;
+        }
         $event->setResponse($this->canonicalMainNavigationResponse($request));
         return;
       }

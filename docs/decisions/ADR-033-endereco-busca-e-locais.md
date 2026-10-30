@@ -74,7 +74,7 @@ A centralização descrita acima foi implementada em `aculta_events`:
 
 - A rota global `aculta_events.date_add` foi removida (404, sem alias). A criação, edição e remoção de Datas usam `aculta_events.event_date_add`, `event_date_edit` e `event_date_delete`, sempre com `{aculta_event}` no caminho.
 - `_entity_access: aculta_event.update` e `EventDateRouteAccess` verificam no servidor o acesso ao Evento e o vínculo Data > Evento; acesso direto sem contexto autorizado é negado.
-- `EventForm` cria uma ou mais Datas com Local por Data e, em edição, lista e administra as Datas do Evento por popup Drupal/AJAX, retornando ao Evento de origem.
+- `EventForm` cria uma ou mais Datas com Local por Data e, em edição, lista e administra as Datas do Evento por popup Drupal/AJAX. Salvar, editar, remover ou reordenar uma Data atualiza a lista do formulário pai por AJAX, sem recarregar o Evento nem perder valores não salvos. A ordem usa `field_peso` (update `10010`).
 - O popup de Local (`EventLocationModalWidget`/`EventLocationModalForm`) recebe `wrapper_id` para funcionar dentro de cada Data e revalida `access('view')` na seleção e no cadastro.
 - A política configurável de papéis (`aculta_events.permission_policy`, padrão `content_editor`) é aplicada nos access handlers e nas submissões.
 - A entidade `aculta_event_date` e o modelo Evento > Data > Local permanecem; calendário, `.ics`, recorrência, embed e página pública continuam consumindo a Data como fonte de dados.
@@ -82,12 +82,12 @@ A centralização descrita acima foi implementada em `aculta_events`:
 Evidência: `EventDateManagementKernelTest`, `EventFormDatesKernelTest`, suíte Kernel de Events e suíte `aculta_calendar` PASS (ver ROADMAP do módulo). Nenhuma migração de dados ou escrita no Runtime foi executada.
 
 
-## Fronteira de domínio para Eventos, Datas e Locais (2026-10-30)
+## Regra de domínio para Eventos, Datas e Locais (decisão do responsável, 2026-10-30)
 
-- Criar, editar e publicar Eventos, Datas e Locais é exclusivo do purpose `eventos`. As rotas editoriais declaram `_aculta_domain_purpose: eventos` e `_aculta_domain_purpose_authoritative: true`; o `ContentPurposeResolver` honra esse opt-in e o `DomainPurposeRequestSubscriber` nega a rota em qualquer outro domínio, inclusive em acesso direto e submissão POST. Ocultar links no cliente não substitui essa checagem.
-- Datas e Locais seguem o Evento proprietário: as rotas exigem o Evento no caminho e `aculta_event.update`; `EventDateRouteAccess` confirma o vínculo. Não há formulário editorial de Data/Local aberto em outro domínio.
-- Outros domínios podem exibir somente leitura o bloco `aculta_events_upcoming`. Ele consulta `EventCatalogue` (publicados e com `access('view')`), aponta para as URLs canônicas de `eventos`, declara cache por `user`/`url.site` e não expõe ações editoriais. Eventos de turma do LMS permanecem protegidos pelo `hook_entity_access` e não vazam para caixas, busca, calendário ou indexação.
-- A integração OpenStreetMap (`aculta_events_openstreetmap`), que cria Locais, também passou para o purpose `eventos`; o redirect URI do app OAuth deve apontar para o host de Eventos.
-- `DomainRouteSubscriber` não sobrescreve para `main` as rotas que declaram `_aculta_domain_purpose_authoritative`; as demais rotas administrativas continuam em MAIN.
-- Nenhuma entidade, catálogo ou armazenamento é duplicado por domínio; a origem continua sendo `aculta_events`. Não há alias nem redirect temporário para escrita cruzada.
-- Evidência: `EventDomainBoundaryKernelTest` (rotas, resolver e bloco), `DomainRouteSubscriberAuthoritativePurposeTest`, testes do `ContentPurposeResolver`/`DomainRoutePolicy` e homologação Firefox ESR (`tests/browser/eventos/domain-boundary.py`, 18/18) PASS.
+- **Todo `/painel-administrativo/` responde somente no MAIN** — inclusive a área de Eventos, as rotas de Datas e Locais e a integração OpenStreetMap. Em qualquer subdomínio, essas rotas retornam **404** (nunca 302), o toolbar do Navigation não é renderizado e nenhuma ação editorial é exposta. A regra é validada no servidor (`DomainPurposeRequestSubscriber` e `AppearanceHooks`); ocultar links no cliente não substitui a checagem. Esta decisão prevalece sobre o aditivo anterior que restringia o editorial ao host `eventos`.
+- O purpose `eventos` serve as páginas públicas (catálogo, página do Evento, calendário, `.ics`, embed) sem toolbar, sem links administrativos e sem ação de edição.
+- Datas e Locais seguem o Evento proprietário: as rotas exigem o Evento no caminho e `aculta_event.update`; `EventDateRouteAccess` confirma o vínculo. Acesso ao editorial em outro domínio é negado.
+- Outros domínios podem exibir somente leitura o bloco `aculta_events_upcoming` (sidebar do MAIN nesta entrega). Ele consulta `EventCatalogue` (publicados e com `access('view')`), aponta para as URLs de `eventos` no ambiente, declara cache por `user`/`url.site` e não expõe ações editoriais. Eventos de turma do LMS permanecem protegidos pelo `hook_entity_access`.
+- A integração OpenStreetMap (`aculta_events_openstreetmap`) também pertence ao MAIN, junto da área administrativa que a utiliza.
+- Nenhuma entidade, catálogo ou armazenamento é duplicado por domínio; a origem continua sendo `aculta_events`. Não há alias nem redirect temporário.
+- Evidência: `EventDomainBoundaryKernelTest`, testes do `ContentPurposeResolver`/`DomainRoutePolicy` e homologação Firefox ESR (`tests/browser/eventos/domain-boundary.py`) PASS.

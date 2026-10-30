@@ -82,10 +82,14 @@ final class UpcomingEventsBlock extends BlockBase implements ContainerFactoryPlu
       if (!empty($resultado['proxima']['cancelada'])) {
         $rotulo .= ' (' . $this->t('cancelado') . ')';
       }
+      $slug = (string) $evento->get('field_slug')->value;
+      $url = $slug !== ''
+        ? $this->purposes->environmentPathUrl('eventos', '/eventos/' . $slug)
+        : NULL;
       $itens[] = [
         '#type' => 'link',
         '#title' => $rotulo,
-        '#url' => $evento->toCanonicalUrl($this->purposes),
+        '#url' => $url ?? $evento->toUrl('canonical'),
         '#attributes' => ['data-portal-ui' => 'events-upcoming-link'],
       ];
     }

@@ -42,19 +42,10 @@ final class ContentPurposeResolver {
     Request $request,
     array $matched = [],
   ): ?string {
-    // Uma rota pode declarar que seu purpose é autoritativo mesmo sendo
-    // administrativa. É usado por áreas editoriais com domínio próprio, como
-    // Eventos em eventos.aculta. Sem o opt-in explícito, a política existente
-    // continua: `_admin_route` pertence a MAIN.
-    $explicitPurpose = $route->getOption('_aculta_domain_purpose');
-    if ($explicitPurpose !== NULL
-      && (bool) $route->getOption('_aculta_domain_purpose_authoritative')) {
-      return $explicitPurpose;
-    }
-
     // Platform-level route metadata is authoritative and precedes content
-    // ownership (Wiki, Courses, etc.).
-    if ($route->getOption('_admin_route') || $explicitPurpose === 'main') {
+    // ownership (Wiki, Courses, etc.). Toda rota administrativa pertence a MAIN.
+    if ($route->getOption('_admin_route')
+      || $route->getOption('_aculta_domain_purpose') === 'main') {
       return 'main';
     }
 

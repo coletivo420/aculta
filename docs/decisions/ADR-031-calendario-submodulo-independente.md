@@ -46,9 +46,9 @@ A experiência administrativa de Datas foi centralizada em Eventos (ADR-033), ma
 - Nenhuma rota ou entidade do calendário foi removida. As rotas administrativas de recorrência e ocorrência permanecem técnicas, restritas a quem administra eventos.
 - A rota global de criação de Data (`aculta_events.date_add`) saiu; a criação passou a exigir o Evento de origem no caminho.
 
-## Aditivo: fronteira de domínio (2026-10-30)
+## Aditivo: regra de domínio (decisão do responsável, 2026-10-30)
 
-- A gestão editorial de Eventos, Datas e Locais fica restrita ao purpose `eventos` (rotas com `_aculta_domain_purpose: eventos` + `_aculta_domain_purpose_authoritative: true`). O `DomainPurposeRequestSubscriber` nega o acesso em outros domínios.
-- Outros domínios apenas exibem o bloco somente leitura `aculta_events_upcoming`, que consulta Eventos publicados e acessíveis e aponta para as URLs canônicas de `eventos`.
-- A integração OpenStreetMap, que cria Locais, também pertence ao purpose `eventos`.
+- **Todo `/painel-administrativo/` responde somente no MAIN** — inclusive Eventos, Datas, Locais e OSM. Em subdomínios, as rotas administrativas retornam **404** (nunca 302), o toolbar do Navigation não é renderizado e não há ações editoriais. O purpose `eventos` serve as páginas públicas e o calendário.
+- A página pública de Eventos não expõe ação de edição; o admin é acessado no MAIN.
+- Outros domínios apenas exibem o bloco somente leitura `aculta_events_upcoming`, que consulta Eventos publicados e acessíveis e aponta para as URLs de `eventos` no ambiente.
 - O contrato do calendário não muda: agenda, grade, `.ics`, embed e recorrência continuam consumindo `aculta_event_date` como fonte de dados.

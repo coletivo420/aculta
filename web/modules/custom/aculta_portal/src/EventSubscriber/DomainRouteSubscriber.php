@@ -276,10 +276,8 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     }
 
     foreach ($collection as $name => $route) {
-      // Rotas administrativas pertencem a MAIN, exceto quando declaram um
-      // purpose autoritativo próprio (ex.: área editorial de Eventos).
-      if ($route->getOption('_admin_route')
-        && !$route->getOption('_aculta_domain_purpose_authoritative')) {
+      // Toda rota administrativa pertence a MAIN.
+      if ($route->getOption('_admin_route')) {
         $route->setOption('_aculta_domain_purpose', 'main');
       }
       if (DomainRoutePolicy::isDonationFlowRouteName((string) $name)) {
@@ -312,8 +310,7 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
     ];
     foreach ($collection as $route) {
       $path = $route->getPath();
-      if (($path === '/painel-administrativo' || str_starts_with($path, '/painel-administrativo/'))
-        && !$route->getOption('_aculta_domain_purpose_authoritative')) {
+      if ($path === '/painel-administrativo' || str_starts_with($path, '/painel-administrativo/')) {
         $route->setOption('_aculta_domain_purpose', 'main');
       }
       foreach ($adminSegments as $source => $target) {

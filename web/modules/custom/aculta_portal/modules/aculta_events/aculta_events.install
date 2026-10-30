@@ -428,3 +428,43 @@ function aculta_events_update_10009(): string {
 
   return 'Displays de formulário e exibição de node:activity atualizados com field_event_location.';
 }
+
+/**
+ * Instala o campo de ordem editorial das Datas de evento.
+ */
+function aculta_events_update_10011(): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  if ($manager->getFieldStorageDefinition('field_peso', 'aculta_event_date') !== NULL) {
+    return 'Campo field_peso de aculta_event_date já existia.';
+  }
+
+  $definitions = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_event_date');
+  $definition = $definitions['field_peso'] ?? NULL;
+  if ($definition === NULL) {
+    throw new \RuntimeException('field_peso não está declarado em aculta_event_date.');
+  }
+
+  $manager->installFieldStorageDefinition('field_peso', 'aculta_event_date', 'aculta_events', $definition);
+  return 'Campo field_peso instalado em aculta_event_date.';
+}
+
+/**
+ * Executa a migração idempotente de endereços legados de Activity para Locais (Fase 2).
+ */
+function aculta_events_update_10012(): string {
+  if (!\Drupal::hasService('aculta_events.activity_location_migrator')) {
+    return 'Serviço de migração de locais de atividade não encontrado.';
+  }
+
+  /** @var \Drupal\aculta_events\Migration\ActivityLocationMigrator $migrator */
+  $migrator = \Drupal::service('aculta_events.activity_location_migrator');
+  $result = $migrator->migrate(FALSE);
+
+  return sprintf(
+    'Migração de locais de Activity: %d candidatos processados, %d locais criados, %d reaproveitados, %d nós atualizados.',
+    $result['candidates_total'],
+    $result['locations_created'],
+    $result['locations_reused'],
+    $result['nodes_updated'],
+  );
+}

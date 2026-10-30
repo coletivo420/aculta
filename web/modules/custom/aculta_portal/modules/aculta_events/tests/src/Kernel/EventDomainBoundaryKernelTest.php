@@ -44,6 +44,7 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     'aculta_events.event_date_add',
     'aculta_events.event_date_edit',
     'aculta_events.event_date_delete',
+    'aculta_events.event_date_order',
     'aculta_events.locations',
     'aculta_events.location_add',
     'aculta_events.location_edit',
@@ -73,51 +74,55 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
   }
 
   /**
-   * Editorial event routes declare the eventos purpose on the server.
+   * Every /painel-administrativo route declares the MAIN purpose.
    */
-  public function testEditorialRoutesBelongToEventosPurpose(): void {
+  public function testEditorialRoutesBelongToMainPurpose(): void {
     $routeProvider = $this->container->get('router.route_provider');
     foreach (self::EDITORIAL_ROUTES as $name) {
       $route = $routeProvider->getRouteByName($name);
-      self::assertSame('eventos', $route->getOption('_aculta_domain_purpose'), $name);
-      self::assertTrue((bool) $route->getOption('_aculta_domain_purpose_authoritative'), $name);
+      self::assertSame('main', $route->getOption('_aculta_domain_purpose'), $name);
       self::assertTrue((bool) $route->getOption('_admin_route'), $name);
-      self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'main'), $name);
-      self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'eventos'), $name);
+      self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'eventos'), $name);
+      self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'main'), $name);
     }
   }
 
   /**
-   * The OpenStreetMap integration also belongs to the eventos purpose.
+   * The OpenStreetMap integration belongs to MAIN like the editorial area.
    */
-  public function testOpenStreetMapIntegrationBelongsToEventosPurpose(): void {
+  public function testOpenStreetMapIntegrationBelongsToMainPurpose(): void {
     $routeProvider = $this->container->get('router.route_provider');
 
     foreach (['aculta_events_openstreetmap.status', 'aculta_events_openstreetmap.import'] as $name) {
       $route = $routeProvider->getRouteByName($name);
-      self::assertSame('eventos', $route->getOption('_aculta_domain_purpose'), $name);
-      self::assertTrue((bool) $route->getOption('_aculta_domain_purpose_authoritative'), $name);
-      self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'main'), $name);
+      self::assertSame('main', $route->getOption('_aculta_domain_purpose'), $name);
+      self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'eventos'), $name);
+      self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'main'), $name);
     }
 
     foreach (['aculta_events_openstreetmap.oauth_authorize', 'aculta_events_openstreetmap.oauth_callback'] as $name) {
       $route = $routeProvider->getRouteByName($name);
-      self::assertSame('eventos', $route->getOption('_aculta_domain_purpose'), $name);
-      self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'eventos', 'main'), $name);
+      self::assertSame('main', $route->getOption('_aculta_domain_purpose'), $name);
+      self::assertFalse(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'eventos'), $name);
+      self::assertTrue(DomainRoutePolicy::allowsSharedPurpose($route, 'main', 'main'), $name);
     }
   }
 
   /**
-   * The central resolver honors the declared purpose even for admin routes.
+   * Administrative routes resolve to MAIN; public event routes to eventos.
    */
-  public function testResolverKeepsDeclaredPurposeForAdminRoutes(): void {
+  public function testResolverKeepsAdministrativeRoutesOnMain(): void {
     $resolver = new ContentPurposeResolver(
       $this->container->get('entity_type.manager'),
       $this->purposes(),
     );
-    $route = $this->container->get('router.route_provider')->getRouteByName('aculta_events.event_add');
+    $routeProvider = $this->container->get('router.route_provider');
 
-    self::assertSame('eventos', $resolver->requiredPurpose($route, 'aculta_events.event_add', new Request()));
+    $admin = $routeProvider->getRouteByName('aculta_events.event_add');
+    self::assertSame('main', $resolver->requiredPurpose($admin, 'aculta_events.event_add', new Request()));
+
+    $public = $routeProvider->getRouteByName('aculta_events.page');
+    self::assertSame('eventos', $resolver->requiredPurpose($public, 'aculta_events.page', new Request()));
 
     $plainAdmin = new Route('/painel-administrativo/exemplo', [], [], ['_admin_route' => TRUE]);
     self::assertSame('main', $resolver->requiredPurpose($plainAdmin, 'exemplo', new Request()));
@@ -162,7 +167,7 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     $this->date($event, '2026-12-03T19:00:00');
 
     $build = $this->block()->build();
-    $routes = $this->collectRouteNames($build);
+    $links = $this->collectLinks($build);
 
     $forbiddenRoutes = [
       'aculta_events.event_edit',
@@ -172,9 +177,11 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
       'aculta_events.event_add',
     ];
     foreach ($forbiddenRoutes as $forbidden) {
-      self::assertNotContains($forbidden, $routes, 'O bloco não deve oferecer ' . $forbidden);
+      self::assertNotContains($forbidden, $links, 'O bloco não deve oferecer ' . $forbidden);
     }
-    self::assertContains('aculta_events.page', $routes);
+    $hasEventLink = in_array('aculta_events.page', $links, TRUE)
+      || array_filter($links, static fn (string $link): bool => str_contains($link, '/eventos/')) !== [];
+    self::assertTrue($hasEventLink, 'O bloco deve apontar para a página pública do Evento.');
   }
 
   /**
@@ -221,22 +228,24 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
   }
 
   /**
-   * Recursively collects route names used by links in a render array.
+   * Recursively collects route names or URIs used by links.
    *
    * @return string[]
-   *   Route names found.
+   *   Route names (for route URLs) or absolute URIs (for external URLs).
    */
-  private function collectRouteNames(array $element): array {
-    $names = [];
+  private function collectLinks(array $element): array {
+    $links = [];
     if (isset($element['#url']) && $element['#url'] instanceof Url) {
-      $names[] = (string) $element['#url']->getRouteName();
+      $links[] = $element['#url']->isExternal()
+        ? (string) $element['#url']->getUri()
+        : (string) $element['#url']->getRouteName();
     }
     foreach ($element as $child) {
       if (is_array($child)) {
-        $names = array_merge($names, $this->collectRouteNames($child));
+        $links = array_merge($links, $this->collectLinks($child));
       }
     }
-    return $names;
+    return $links;
   }
 
 }

@@ -153,16 +153,19 @@ com outros módulos exigem auditoria e decisão próprias. Não fazem parte do
 adapter mínimo.
 
 
-## Integração com Locais de Events (Fase 1 concluída)
+## Integração com Locais de Events (Fase 1 e Fase 2 concluídas)
 
 - [x] **Fase 1 (Inventário e Contrato de Dados - 2026-10-30):**
   - Mapeamento completo dos campos legados (`field_place_name`, `field_event_street`, `field_event_postal`, `field_event_city`, `field_event_region`, `field_event_country`) para a entidade `aculta_event_location`.
   - Formulário editorial de `node:activity` padronizado para referenciar `field_event_location`, com campos legados ocultos no formulário e preservados integralmente no banco de dados (não removidos nem migrados nesta fase), mantendo sincronização de compatibilidade.
   - Ordem padronizada: o formulário de cadastro de Local tem o CEP como primeiro campo (`#weight = -50`). Ordem de exibição preserva a convenção postal brasileira (CEP ao final).
   - Estratégia de migração segura e reversível definida, com rollback documentado (sem execução prematura).
-- [ ] **Fase 2 (Homologação do fluxo do modal e migração):**
-  - Validação funcional integrada do popup de busca/seleção e popup de cadastro com retorno AJAX para a Activity.
-  - Execução de dry-run da migração em lote de nós legados com snapshot e hash de integridade.
+- [x] **Fase 2 (Migração idempotente e reversível com rollback e diagnóstico - 2026-10-30):**
+  - Implementado o serviço `ActivityLocationMigrator` (`aculta_events.activity_location_migrator`) com métodos de auditoria/diagnóstico (`inspect()`), ensaio (`migrate(dryRun: TRUE)`), execução persistente idempotente com deduplicação por nome e CEP (`migrate(dryRun: FALSE)`), e reversão integral rastreada (`rollback()`).
+  - Rastreamento de proveniência persistido via Drupal State (`aculta_events.migrated_activity_locations`), registrando quais nós de Activity originaram cada Local criado.
+  - Disponibilizado o script CLI `scripts/migrate-activity-locations.php` com suporte a `--inspect`, `--dry-run`, `--execute` e `--rollback`.
+  - Implementado o hook `aculta_events_update_10012()` em `aculta_events.install` para execução controlada em deploy.
+  - Cobertura completa com o teste de Kernel `ActivityLocationMigrationKernelTest` (3 testes e 79 asserções cobrindo auditoria, integridade de dry-run, criação idempotente, deduplicação de múltiplos nós para o mesmo local e rollback completo).
 - [ ] Busca por logradouro permanece restrita a Events/Maps e aguarda aprovação de provedor/termos/privacidade/limites.
 - [ ] Validar projeções de `aculta_index`, assegurando que endereço físico e dados privados não sejam indexados.
 

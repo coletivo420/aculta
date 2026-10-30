@@ -1,17 +1,28 @@
 # Changelog — aculta_events
 
-## 2026-10-30 — Fronteira de domínio: editorial em Eventos, exibição somente leitura
+## 2026-10-30 — Fase 2: Migração e Rollback de Endereços Legados de Activity para Locais
 
-- Criação, edição e publicação de Eventos, Datas e Locais ficam restritas ao purpose/domínio `eventos`:
-  - as rotas administrativas de Eventos declaram `_aculta_domain_purpose: eventos` + `_aculta_domain_purpose_authoritative: true` (incluindo `aculta_events.admin_export`);
-  - `ContentPurposeResolver` honra o purpose autoritativo declarado na rota, mantendo a política padrão de que `_admin_route` pertence a MAIN sem o opt-in;
-  - `DomainRouteSubscriber` não sobrescreve mais para `main` as rotas administrativas ou de `/painel-administrativo` que declaram o opt-in autoritativo — era isso que mantinha a área de Eventos presa ao MAIN;
-  - `DomainPurposeRequestSubscriber` nega (404) a rota em qualquer outro domínio, inclusive em acesso direto e submissão POST.
-- A integração OpenStreetMap (`aculta_events_openstreetmap`) passou para o purpose `eventos`: configuração e importação com opt-in autoritativo, autorização/retorno OAuth com purpose `eventos`. O redirect URI do app OAuth deve usar o host de Eventos.
-- Novo bloco somente leitura `aculta_events_upcoming` (“Próximos eventos”): pode ser exibido em qualquer domínio, consulta apenas Eventos publicados e acessíveis via `EventCatalogue`, aponta para as URLs canônicas de `eventos` e não oferece controles editoriais.
-- O bloco declara cache por `user` e `url.site`, com as tags `aculta_event_list`/`aculta_event_date_list`; eventos de turma do LMS permanecem sujeitos ao `hook_entity_access` e não vazam.
-- Menu e roteamento dependem de rebuild de cache após o deploy; com o código novo, a rota antiga e o item “Adicionar data” deixam de existir.
-- Testes: `EventDomainBoundaryKernelTest` (6/177), `DomainRouteSubscriberAuthoritativePurposeTest` + `ContentPurposeResolver*` + `DomainRoutePolicy` (PASS) e homologação Firefox ESR `tests/browser/eventos/domain-boundary.py` (18/18).
+- Implementado o serviço central de migração `ActivityLocationMigrator` (`aculta_events.activity_location_migrator`):
+  - `getLegacyCandidates()` e `hasLegacyAddressData()`: identifica de forma segura nós `activity` que contêm campos de endereço legados e ainda não possuem referência preenchida em `field_event_location`.
+  - `inspect()`: auditoria e diagnóstico em tempo real, informando total de atividades, já vinculadas, candidatas elegíveis, registros incompletos e estimativa de locais únicos após deduplicação.
+  - `migrate(bool $dryRun)`: migração idempotente. Em modo `$dryRun = TRUE`, simula o processo sem gravar no banco; em modo persistente (`FALSE`), cria instâncias de `EventLocation` respeitando as regras de endereço (país fixo `BR`, precisão `exato`, status conforme publicação do nó pai, proprietário herdado), vincula `field_event_location` no nó e reutiliza locais idênticos através de chave normalizada (nome + CEP).
+  - `rollback()`: reversão atômica e segura que desvincula as Activities e deleta exatamente as entidades `EventLocation` criadas pela migração, utilizando proveniência persistida no Drupal State (`aculta_events.migrated_activity_locations`).
+- Implementado o update hook `aculta_events_update_10012()` em `aculta_events.install`.
+- Disponibilizado o script CLI `scripts/migrate-activity-locations.php` com suporte aos modos `--inspect`, `--dry-run`, `--execute` e `--rollback`.
+- Cobertura de testes:
+  - `ActivityLocationMigrationKernelTest`: 3 testes e 79 asserções cobrindo auditoria diagnóstica, garantia de isolamento do dry-run, criação idempotente, deduplicação de múltiplos nós para a mesma entidade de local e reversão íntegra via rollback.
+
+
+## 2026-10-30 — Regra de domínio: admin no MAIN, público em Eventos
+
+- **Decisão do responsável:** todo `/painel-administrativo/` responde somente no MAIN. Isso inclui a área de Eventos, as rotas de Datas e Locais e a integração OpenStreetMap. A regra é validada no servidor e prevalece sobre o aditivo anterior que restringia o editorial ao host `eventos`.
+- O purpose `eventos` serve as páginas públicas (catálogo, página do Evento, calendário, `.ics`, embed) sem toolbar, sem links administrativos e sem ação de edição.
+- Todas as rotas `/painel-administrativo/eventos/*` declaram `_aculta_domain_purpose: main`; em subdomínios elas retornam **404** (nunca 302), inclusive POST. `AppearanceHooks` remove o toolbar do Navigation fora do MAIN.
+- A integração OpenStreetMap voltou para o MAIN, junto da área administrativa que a utiliza; o redirect URI do app OAuth deve usar o host MAIN.
+- Bloco somente leitura `aculta_events_upcoming` colocado na sidebar do MAIN (`block.block.aculta420_aculta_events_upcoming`), visível apenas no purpose `main`, com URLs de Eventos no ambiente e sem controles editoriais.
+- Salvar, editar, remover ou reordenar uma Data atualiza a lista do Evento por AJAX (`ReplaceCommand('#event-dates-list', ...)`), preservando os campos não salvos do Evento.
+- Ordem editorial das Datas por `field_peso` (update `10011`), com a tela "Ordenar datas" em popup.
+- Testes: suíte Kernel de Events 84/1438 PASS; `aculta_calendar` 127/431 PASS; Unit de `aculta_portal` PASS; homologação Firefox ESR no servidor de desenvolvimento.
 
 ## 2026-10-30 — Datas e Locais geridos dentro do Evento (centralização editorial)
 
