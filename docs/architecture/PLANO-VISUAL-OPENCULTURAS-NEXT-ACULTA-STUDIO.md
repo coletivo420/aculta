@@ -4,6 +4,8 @@
 
 **Decisão posterior do responsável (2026-10-30):** os nomes apresentados e caminhos oficiais são **ACULTA STUDIO GREEN STASH** (`/studio/green-stash`) e **ACULTA STUDIO WE SATIVA** (`/studio/we-sativa`, início em `/studio/we-sativa/inicio`). Esta decisão autoriza a migração dos paths antigos dessas áreas, sem aliases/redirects temporários; os IDs de rota internos, providers e owners Commerce/Wiki permanecem preservados. A restrição acima continua valendo para outras rotas e IDs.
 
+**Retificação de rotas posterior — ADR-038 aceita (2026-10-30):** o mapa de paths acima foi substituído pela distribuição das Suites nos purposes de seus owners. Os caminhos públicos `/studio` e `/studio/*` foram aposentados sem redirect; não há Hub público. Use o mapa canônico da [ADR-038](../decisions/ADR-038-aculta-studio-suites-por-dominio.md) e a matriz corrente de [paridade visual](../../web/themes/custom/aculta420/docs/studio-visual/visual-parity-matrix.md). Os nomes ACULTA STUDIO GREEN STASH e ACULTA STUDIO WE SATIVA permanecem; Green Stash segue integrada ao Studio.
+
 **Exigência global:** TODO o tema `web/themes/custom/aculta420/` deve adotar **mobile-first** como regra arquitetural, em **todos os purposes**, SDCs, layouts, CSS, templates, navegação, formulários, media, modais e bibliotecas, e não apenas no Studio ou Green Stash. OpenCulturas Next é referência de fidelidade visual na área Studio; suas decisões de design devem ser adaptadas à fundação mobile-first global do ACULTA420 sem copiar breakpoints ou regras desktop-first inadvertidamente.
 
 ### Resultados de reinspeção estática

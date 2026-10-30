@@ -1,7 +1,6 @@
 # Inventário visual OpenCulturas Next 3.1.5
 
-**OCS-F0 — 2026-10-29.** Auditoria estática e baseline inicial. Esta captura
-documenta a fonte visual; não certifica paridade das telas autenticadas.
+**OCS-F0 — fonte upstream verificada em 2026-10-29; ACULTA route notes históricas.** Auditoria estática e baseline inicial. Este documento documenta a fonte visual e capturas históricas; não certifica paridade das telas autenticadas. Para rotas, owners e estado de captura atuais, consulte a [matriz de paridade reconciliada com ADR-038](visual-parity-matrix.md). Todas as referências `/studio*` abaixo são anteriores à migração e não são instruções de roteamento vigentes.
 
 ## Proveniência e verificação
 
@@ -142,7 +141,13 @@ executado `updatedb` ou `config:import`.
 
 O componente `bookmark-toggle` tem consumer no Fórum; sua presença não autoriza exibir uma lista “Meus salvos” no Studio. Conta privada, Perfil público e organização continuam experiências distintas.
 
-## Cobertura Studio e Green Stash (reescaneamento)
+## Cobertura Studio e Green Stash (reescaneamento histórico pré-ADR-038)
+
+O inventário de providers e rotas desta seção registra o código inspecionado
+em `3c1691fc5`; a migração posterior ADR-038 distribuiu as Suites entre seus
+purposes donos e aposentou `/studio*`. Não use as URLs abaixo como mapa atual;
+a matriz corrente vinculada no cabeçalho registra rotas, evidências e
+pendências verificadas na árvore posterior.
 
 No HEAD `3c1691fc5`, o `aculta_studio.services.yml` registra sete providers: Conta, Perfil, Marley, GanjaLab, WE Sativa, Planos Mercado Pago e Meus Salvos. O `aculta_commerce` registra dinamicamente um oitavo provider, Green Stash, quando Studio e Commerce estão disponíveis. O Hub tem controller canônico `/studio`; essa lista é inventário de código, não prova de disponibilidade por usuário no Runtime. O LMS é owner da rota `/studio/ganjalab`, que usa
 o compositor de aprendizagem no Studio. Foram encontrados controladores de Hub, Marley, GanjaLab, WE Sativa, Conta, Perfil e Salvos, além dos plugins Marley de Revista, Fórum, Galerias, Cursos e Wiki. GanjaLab editorial (MarleyTab/Presenter) e
