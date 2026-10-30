@@ -673,7 +673,7 @@ A árvore visual alvo é **Curso → Módulo → Item pedagógico**; **não** pr
 
 ## Ajuste de rota estudantil — ACULTA Studio Ganjalab
 
-A rota canônica do dashboard estudante `aculta_lms.student_dashboard` agora é `/studio/ganjalab`, no purpose account. `/ganjalab420`, `/minha-aprendizagem` e `/studio/ganjalab420` são aliases 302 limitados a GET/HEAD. Nenhuma mudança de storage, matrícula, LMS ou permissões foi feita. Validar roteamento, autorização e Domain purpose antes de operação em Runtime. Documento vigente: [ACULTA-STUDIO-IDENTITY.md](../portal/ACULTA-STUDIO-IDENTITY.md).
+**Histórico pré-ADR-038:** o dashboard `aculta_lms.student_dashboard` foi `/studio/ganjalab` no purpose `account`; aliases antigos foram posteriormente removidos sem compatibilidade. A ADR-038 migrou a rota canônica para `/ganjalab` no purpose `courses`; `/studio/ganjalab` responde 404. Nenhuma mudança de storage, matrícula ou permissões decorre da troca de path. Contrato atual: [ACULTA-STUDIO-IDENTITY.md](../portal/ACULTA-STUDIO-IDENTITY.md).
 
 ## Interfaces GanjaLab420 — especificações visuais de 2026-10-22
 

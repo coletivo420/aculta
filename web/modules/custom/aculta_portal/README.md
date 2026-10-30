@@ -44,10 +44,11 @@ Portal conserva Domain/Purpose, formulários, confirmação de e-mail, seguranç
 endereços e os contratos compartilhados de checkout. User/Profile e os
 demais owners não mudam de fonte de verdade.
 
-**Estado:** a raiz `/` de `account` serve o hub do Studio; a Minha Conta
-original está em `/conta-legada`; o `AccountShellBuilder`, os formulários e
-caminhos antigos continuam ativos; `/minha-conta` não é rota e responde 404. O Studio não deverá aninhar seu
-shell dentro do shell Conta; o corte fica para fases testadas e autorizadas.
+**Snapshot histórico pré-ADR-038:** a raiz `/` de `account` servia o hub do
+Studio; agora apresenta a entrada da Conta. `/conta-legada` continua preservada,
+`/minha-conta` e `/studio*` respondem 404, e Conta/Perfil usam `/conta/*` e
+`/perfil/*`. Não use os paths descritos na proposta P0–P7 abaixo como destinos
+atuais.
 O perfil público `/u/{apelido}` permanece em `main`.
 
 [Contrato e roadmap canônico](../../../../docs/architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md)

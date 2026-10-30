@@ -3,18 +3,18 @@
 ## Studio separado por Conta e Perfil — contrato atual
 
 - [Conta e Perfil independentes e legado permanente](../architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md)
-- `/studio/conta`: dados de conta privada; `/studio/perfil`:
-  identidade comunitária. O antigo `/studio/pessoal` foi eliminado
-  sem alias.
-- **Minha Conta original permanece em `/` do domínio ACCOUNT**, inclusive
-  depois de avaliar e aprovar o Studio. O caminho técnico
-  `/minha-conta` continua 404. Os documentos de migração P0–P7
-  anteriores são apenas históricos.
+- **Paths atuais pela ADR-038:** Conta `/conta/*`, Perfil `/perfil/*`,
+  separados por owner; a raiz de `account` apresenta a entrada da Conta.
+  `/conta-legada` preserva a Minha Conta original; `/minha-conta` responde 404.
+  As Suites estão em `/marley`, `/ganjalab`, `/wesativa`, `/greenstash` e
+  `/culturas` nos purposes respectivos. `/studio` e `/studio/*` respondem 404.
+- [ADR-038](../decisions/ADR-038-aculta-studio-suites-por-dominio.md) registra
+  a correspondência antiga → nova e o bloqueio externo do host `wiki.aculta.*`.
 
 
 Índice do `aculta_portal`. Só documentos normativos e de referência vigentes.
 
-## ACULTA Studio — Hub e Meu Espaço (planejamento P0, 2026-10-24)
+## Histórico pré-ADR-038 — ACULTA Studio Hub e Meu Espaço (2026-10-24)
 
 - [Hub geral e migração de Minha Conta e Meu Perfil](../architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md) — contrato-alvo, fases P0–P7, ownership, navegação e anti-regressão; P1-A possui entrada pessoal mínima no código, ainda sem homologação Runtime.
 - [Identidade atual do Studio](ACULTA-STUDIO-IDENTITY.md) — Marley, Ganjalab e WE SATIVA e seus caminhos já existentes, com distinção explícita do futuro hub.

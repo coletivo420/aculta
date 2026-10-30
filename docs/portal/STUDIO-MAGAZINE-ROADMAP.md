@@ -36,6 +36,14 @@ sem token.
 
 **MAG 0.5-R · 2026-10-22 · Planejamento, sem alteração funcional ou homologação.**
 
+# Paths históricos pré-ADR-038
+
+Este roadmap preserva evidências e decisões históricas do Studio. Em 2026-10-30,
+a ADR-038 retirou o prefixo público `/studio`; todas as ocorrências desse path
+abaixo descrevem o estado à época, não rotas atuais. Hoje Conta e Perfil usam
+`/conta/*` e `/perfil/*`; as Suites usam seus paths por purpose conforme o
+[contrato vigente](../decisions/ADR-038-aculta-studio-suites-por-dominio.md).
+
 ### Meu Perfil Studio — S-R4 em SDCs (dev.21)
 
 A experiência `/studio/perfil` consome os quatro SDCs de

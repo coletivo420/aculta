@@ -2,6 +2,10 @@
 **Versão:** 0.2.0-dev.1 · **Estado:** especificação UX/UI; nenhuma funcionalidade implementada por este texto.
 **Documento pai:** [Conceito visual](STUDIO-VISUAL-CONCEPT.md). **Direção arquitetural:** [ADR-011](../decisions/ADR-011-aculta-kernels-studio.md).
 
+> Paths atualizados pela ADR-038 (2026-10-30): esta especificação precede a
+> migração. Referências `/studio/*` abaixo são históricas, não rotas válidas;
+> consulte o [mapa vigente](../decisions/ADR-038-aculta-studio-suites-por-dominio.md).
+
 ## 1. Jornada centrada em conteúdo próprio
 **Entrada padrão:** Área → “Minhas publicações” (ou o equivalente conforme o provider) → Criar/Continuar/Editar. Mesmo roles com acesso amplo começam no seu espaço pessoal; “Equipe”, “Fila de revisão”, “Moderação” e “Todos autorizados” são contextos separados. Um editor que abre conteúdo de outra pessoa deve ver “Editando conteúdo de [autor]” e um link de volta para a fila/equipe; ações continuam condicionadas a Entity Access e workflow.
 

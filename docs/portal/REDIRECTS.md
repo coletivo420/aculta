@@ -9,14 +9,17 @@ Validar via `php scripts/validate-no-temporary-route-aliases.php`.
 
 **Removidos em código nesta frente:** aliases antigos de Studio/Marley,
 LMS/Ganjalab, Fórum administrativo e troca de e-mail do User;
-`/minha-conta/*` passa a 404 (continua como path técnico interno do
-front da Conta); os endpoints Commerce de address-book e `/pagamentos`
-não são mais publicados. As interfaces válidas são `/studio`,
-`/studio/marley`, `/studio/pessoal`, `/studio/ganjalab`,
-`/dados/endereco`, `/pedidos` e as rotas de segurança existentes.
-**Resta executar os testes do Runtime**. Tabelas históricas abaixo são
-registros do estado anterior e **não descrevem os aliases atualmente
-implementados**.
+`/minha-conta/*` é caminho aposentado e responde 404; os endpoints Commerce de address-book e `/pagamentos`
+não são mais publicados. **Esse inventário de 2026-10-24 foi superado pela
+ADR-038 em 2026-10-30.** Os caminhos públicos `/studio` e `/studio/*`
+foram retirados e respondem 404. Os caminhos atuais das Suites são `/marley`
+(`account`), `/ganjalab` (`courses`), `/wesativa` (`wiki`), `/greenstash`
+(`shop`) e `/culturas` (`eventos`). Conta e Perfil usam `/conta/*` e
+`/perfil/*`; salvos usam `/salvos`, planos Mercado Pago
+`/conta/mercado-pago/planos`, e `/conta-legada` permanece. A Wiki ainda usa o
+Domain `wiki420`; `wiki.aculta.*` não está operacional sem DNS/TLS/vhost e
+homologação. Tabelas abaixo marcadas como históricas preservam medições do
+estado anterior.
 
 **Fora desta proibição:** autenticação, logout, recuperação de conta,
 callbacks OAuth, purpose correto para carrinho/checkout, confirmação de
@@ -35,7 +38,7 @@ Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualqu
 
 1. **Caminho antigo responde 404; não há redirecionamento de slug**, salvo exceções administrativas registradas neste documento. É o padrão do projeto, antes e depois da versão estável (`AGENTS.md`, seção de slugs). Por isso `/apoie` responde 404.
 2. **Redirecionamento entre purposes** usa `DomainPurposeManager` + `TrustedRedirectResponse`, nunca `RedirectResponse` cru para outro host (`DomainPurposeRequestSubscriber::retargetRedirect`).
-3. **Conta:** a raiz `/` do host de conta é o ponto de entrada da área logada. Visitante não logado é redirecionado (302) para `/entrar` do próprio host de conta; a visão geral (`/minha-conta` internamente) não é acessível diretamente. Após logout, o destino também é o login (`DomainPurposeRequestSubscriber`, `onRequestBeforeRouter` e bloco de `user.logout`).
+3. **Conta:** a raiz `/` do host de conta é a entrada da Conta. Visitante não logado é redirecionado (302) para `/entrar` do próprio host; a rota interna `/conta` não é acessível diretamente a anônimos. Após logout, o destino também é o login (`DomainPurposeRequestSubscriber`, `onRequestBeforeRouter` e bloco de `user.logout`).
 4. **Login com destino salvo** volta ao purpose de origem, validado por `isSafeLoginDestinationPath` (`LOGIN_DESTINATION_SESSION_KEY`).
 5. **Usuário legado:** `/user/{id}` antigo pode ser redirecionado por `PortalController::legacyUserPageRedirect` (rota `user.page`, para o painel da conta).
 6. **Wrong-purpose público continua 404** e não vira redirect genérico (`ADMIN-DOMAIN-POLICY.md`).
@@ -45,7 +48,7 @@ Medida no servidor de testes em 2026-10-11. Atualize esta tabela ao mudar qualqu
 10. **Exceção única:** visitante não logado na raiz do host de conta vai (302) para `/entrar` (`DomainPurposeRequestSubscriber::onRequestBeforeRouter`). A raiz `/` de cada host é a página inicial daquele purpose, por dois mecanismos:
    - MAIN: página inicial do site (`system.site:page.front` = `/node/1`).
    - Apoio, revista, wiki e cursos: nó com `field_domain_source` apontando para o domínio, que o módulo `domain_source` usa como página inicial desse host.
-   - Conta: `system.site:page.front` na coleção de configuração `domain.conta_aculta_org` = `/minha-conta` (exportada em `config/sync/domain/conta_aculta_org/system.site.yml`). `/minha-conta` é a rota interna da visão geral: requisição direta responde 404; o público é a raiz `/`.
+   - Conta: `system.site:page.front` na coleção `domain.conta_aculta_org` usa a entrada canônica `/conta`. O acesso público é pela raiz `/`; a Minha Conta original permanece em `/conta-legada`; `/minha-conta` responde 404.
 
 ## Matriz de comportamento (2026-10-11)
 
