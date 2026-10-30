@@ -65,7 +65,7 @@ Todos os itens abaixo permanecem abertos.
 | LOC-03 / P1 | LOC-02 | Seletor de Local + criação inline no editor de Data/evento e no nó Activity; modal AJAX nativo Drupal (`EventLocationModalWidget` e `EventLocationModalForm`) | Concluído e testado no Kernel (`EventLocationModalAndAdminKernelTest`): seleção/criação em 2 etapas, BR fixo (ADR-034), campos soltos removidos de `EventForm` e `node:activity`, sincronização legada em `ActivityHooks` |
 | LOC-04 / P0-P1 | LOC-01 + canônico de LOC-02 | Contrato e implementação Events > Index descritos na seção 6: providers v2, URLs canônicas via DomainPurposeManager, relação event_location derivada de Datas físicas publicadas, enfileiramento por hooks e correção de joins | Concluído e testado no Kernel (EventContentIndexProviderKernelTest: 6 testes, 141 asserções PASS); sem rebuild ou escrita no Runtime |
 | LOC-05 / P1 | LOC-02 + LOC-04; LOC-01 para saída pública | Detalhe do Local com agenda; diretório paginado e busca; área administrativa própria em `/painel-administrativo/eventos` e links | Concluído e testado: canônico `/locais/{id}`, diretório `/locais`, painel `/painel-administrativo/eventos` (`EventAdminOverviewController`) e menu sob `system.admin` |
-| LOC-06 / P1 | LOC-02/03/04 + operações disponíveis | Aba Eventos no Marley com seções Eventos, Datas e Locais; listas por escopo e ações do owner | Owner desativado oculta área; acesso real das rotas; retorno ao Studio e fronteira Conta/Perfil |
+| LOC-06 / P1 | LOC-02/03/04 + operações disponíveis | ACULTA Studio Culturas para organizadores em /studio/culturas no purpose eventos; administração/configuração privilegiada no MAIN | Não é aba do Marley; owner aculta_events; escrita somente em eventos; papéis e capacidades validados no servidor; implementação pendente |
 | LOC-07 / P1 | LOC-00 a LOC-06 | Reconciliação config/migração e piloto; tratamento explícito de activity legado | Snapshot/hash antes de escrita autorizada, migração ensaiada/idempotente, contagens antes/depois e rollback |
 | LOC-08 / gate | Todas anteriores | Homologação integrada, revisão e atualização de release | Sem PASS com DEFERRED; evidências do HEAD consolidado, RC somente após fechar escopo obrigatório |
 
@@ -307,3 +307,19 @@ O item E4/F5 que registra a existência técnica de um formulário de nova Data 
 - [x] Eventos de turma do LMS e Locais privados permanecem fora da exibição pública, busca e indexação cruzada.
 
 Evidência: `EventDomainBoundaryKernelTest`, testes do `ContentPurposeResolver`/`DomainRoutePolicy` e homologação Firefox ESR PASS. A regra substitui o aditivo anterior que restringia o editorial ao host `eventos`.
+
+## Decisão de experiência dos organizadores — ADR-035
+
+## ACULTA Studio Culturas — decisão de produto e domínio (2026-10-30)
+
+O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota planejada é `/studio/culturas`, atendida no purpose `eventos` (host eventos configurado pelo DomainPurposeManager); a entrada geral do Studio em `account` poderá apenas apresentar um link para essa experiência.
+
+- A sessão administrativa técnica continua no domínio principal, em `/painel-administrativo/eventos`, restrita a administradores. Configuração global de permissões, auditoria e operações administrativas permanecem ali.
+- ACULTA Studio Culturas é a experiência de organizadores: composição de fluxos do owner `aculta_events`, para criar e gerir Eventos e seus componentes (Datas e Locais), usando Form API, Entity Access e moderação existentes. Não cria entidade, formulário de persistência, permissão ou catálogo duplicado.
+- A autorização para criar/editar/publicar Eventos e cadastrar Locais deve ser configurável pela administração de Eventos, com `content_editor` como padrão inicial. A configuração não concede acesso sozinha: permissões efetivas e access handlers do servidor continuam obrigatórios; criar, editar e publicar são capacidades distintas.
+- Escritas só são aceitas no purpose `eventos` através de rotas canônicas da experiência. O domínio `account` pode linkar para ela, mas não pode fazer POST nem gravar conteúdo de Eventos. Não introduzir proxy de escrita, alias de rota ou redirect de compatibilidade.
+- As telas públicas de Eventos continuam no purpose `eventos`. Outros domínios podem compor exibição somente leitura de Eventos publicados e acessíveis, sempre com link canônico de Eventos e sem expor Eventos privados do LMS.
+- Esta decisão substitui qualquer texto anterior que diga que todo trabalho editorial de Eventos só pode ocorrer no MAIN ou que o purpose `eventos` é exclusivamente público. O painel de administração permanece no MAIN; a área do organizador é a exceção explícita e separada em ACULTA Studio Culturas.
+- Estado: decisão e planejamento documental; implementação, autorização por domínio, navegação e homologação ainda precisam ser concluídas.
+
+Atualizar LOC-06 para planejar ACULTA Studio Culturas em `/studio/culturas` no purpose `eventos`, mantendo configuração e administração privilegiada no MAIN. A composição deve oferecer seleção/cadastro contextual de Local em popup Drupal/AJAX e manter aculta_events como único owner. A fase está planejada, não concluída.

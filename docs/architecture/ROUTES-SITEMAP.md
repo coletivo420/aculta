@@ -563,3 +563,7 @@ acesso por domínio ou páginas iniciais, o agente deve:
 Não declarar o mapa completo enquanto houver rotas ativas do escopo alterado
 sem registro, nem marcar rota desabilitada como ativa porque o YAML ainda
 existe. Alterações somente documentais não avançam versões de módulo/tema.
+
+## Rota planejada — ACULTA Studio Culturas (ADR-035)
+
+| `eventos.aculta` | `/studio/culturas` | Experiência autenticada de organizadores para gerir Eventos, Datas e Locais no contexto do Evento | **Planejada; ainda não implementada.** Purpose `eventos`; owner `aculta_events`; autorização do servidor obrigatória. Escritas apenas neste purpose. O link pode ser apresentado pelo Studio em `account` via `DomainPurposeManager`, sem POST cruzado. A administração privilegiada/configuração permanece em `main.aculta` → `/painel-administrativo/eventos`, para administradores. Consulte ADR-035.

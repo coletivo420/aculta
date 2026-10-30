@@ -1,10 +1,6 @@
-## Integração Events/Locais - planejamento vigente (2026-10-29)
+## Integração Events/Locais — planejamento vigente (2026-10-30)
 
-[Plano LOC](../architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md): LOC-06 prevê
-área Eventos no Marley, condicionada a CRUD do owner e integração IDX-LOC.
-Não implementada. Corrigido o nome aculta_eventos da matriz para aculta_events;
-sem editor paralelo, novo shell ou alteração das experiências Conta/Perfil.
-A publicação deste plano não conclui fases OCS-F/A, THEME-MF ou S-R4/S-R5.
+[Plano LOC](../architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md): LOC-06 planeja **ACULTA Studio Culturas**, experiência de organizadores no purpose `eventos`, independente do Marley. Persistência e autorização permanecem no owner `aculta_events`; painel técnico e configuração de papéis permanecem no MAIN. A experiência não está implementada. Consulte ADR-035. A decisão não altera Conta/Perfil nem conclui outras frentes deste roadmap.
 
 # ACULTA Magazine — Roadmap de realinhamento arquitetural
 
@@ -366,3 +362,19 @@ O planejamento específico [Course Builder mobile-first](STUDIO-LMS-COURSE-BUILD
 ## Identidade ACULTA Studio Marley / Ganjalab
 
 A experiência editorial é **ACULTA Studio Marley** (`marley`); a experiência estudantil é **ACULTA Studio Ganjalab** (`ganjalab`). A infraestrutura segue `aculta_studio`. Consultar [contrato de identidade e rotas](ACULTA-STUDIO-IDENTITY.md) e [UX de aprendizagem](GANJALAB-LEARNING-UX.md). Nomes funcionais das áreas e regras dos módulos proprietários permanecem inalterados.
+
+## Frente planejada — ACULTA Studio Culturas (ADR-035)
+
+## ACULTA Studio Culturas — decisão de produto e domínio (2026-10-30)
+
+O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota planejada é `/studio/culturas`, atendida no purpose `eventos` (host eventos configurado pelo DomainPurposeManager); a entrada geral do Studio em `account` poderá apenas apresentar um link para essa experiência.
+
+- A sessão administrativa técnica continua no domínio principal, em `/painel-administrativo/eventos`, restrita a administradores. Configuração global de permissões, auditoria e operações administrativas permanecem ali.
+- ACULTA Studio Culturas é a experiência de organizadores: composição de fluxos do owner `aculta_events`, para criar e gerir Eventos e seus componentes (Datas e Locais), usando Form API, Entity Access e moderação existentes. Não cria entidade, formulário de persistência, permissão ou catálogo duplicado.
+- A autorização para criar/editar/publicar Eventos e cadastrar Locais deve ser configurável pela administração de Eventos, com `content_editor` como padrão inicial. A configuração não concede acesso sozinha: permissões efetivas e access handlers do servidor continuam obrigatórios; criar, editar e publicar são capacidades distintas.
+- Escritas só são aceitas no purpose `eventos` através de rotas canônicas da experiência. O domínio `account` pode linkar para ela, mas não pode fazer POST nem gravar conteúdo de Eventos. Não introduzir proxy de escrita, alias de rota ou redirect de compatibilidade.
+- As telas públicas de Eventos continuam no purpose `eventos`. Outros domínios podem compor exibição somente leitura de Eventos publicados e acessíveis, sempre com link canônico de Eventos e sem expor Eventos privados do LMS.
+- Esta decisão substitui qualquer texto anterior que diga que todo trabalho editorial de Eventos só pode ocorrer no MAIN ou que o purpose `eventos` é exclusivamente público. O painel de administração permanece no MAIN; a área do organizador é a exceção explícita e separada em ACULTA Studio Culturas.
+- Estado: decisão e planejamento documental; implementação, autorização por domínio, navegação e homologação ainda precisam ser concluídas.
+
+A frente é de Eventos e Cultura, não uma aba do Marley. Planejar provider e experiência próprios no Studio; o módulo `aculta_studio` compõe navegação e formulários do owner `aculta_events`. A rota proposta é `/studio/culturas` no purpose `eventos`; verificar colisões e registrar rota definitiva no sitemap antes da implementação.

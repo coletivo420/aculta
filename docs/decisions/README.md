@@ -6,6 +6,8 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 
 ## ADRs
 
+- [ADR-035 — ACULTA Studio Culturas para organizadores de Eventos](ADR-035-aculta-studio-culturas.md) — aceita; implementação pendente.
+
 - [ADR-033 — Endereço unificado, busca postal restrita e gestão de Locais em Events](ADR-033-endereco-busca-e-locais.md)
 
 - [ADR-010 — Hostinger LiteSpeed](ADR-010-hostinger-litespeed.md)
