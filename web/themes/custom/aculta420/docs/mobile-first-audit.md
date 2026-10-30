@@ -1183,3 +1183,19 @@ foi adicionada. Rechecagem: 206 caminhos únicos no inventário, 201 arquivos
 visuais verificados nas árvores CSS/components/templates/JS, zero caminhos
 faltantes e zero entradas obsoletas. Esta conciliação fecha apenas a cobertura
 do inventário estático consultado; não homologa toda a auditoria MF0 nem MF3.
+
+### THEME-MF0 — recenseamento lexical global da árvore do tema (2026-10-30)
+
+O gerador `scripts/audit-aculta420-responsive-inventory.py` foi executado em
+modo de leitura e sua saída foi comparada byte a byte ao TSV versionado: PASS.
+O arquivo cobre 206 fontes encontradas recursivamente no tema: 93 CSS/SCSS/Sass,
+12 JavaScript e 101 Twig/HTML. A contagem lexical registrou 81 ocorrências de
+`@media`, nenhuma de `@container`, 633 declarações dimensionais e 53 de
+`overflow` nos estilos. Essas contagens servem como índice para revisão, não
+como análise semântica: podem incluir comentários e valores não equivalem a
+breakpoints, larguras fixas ou defeitos distintos. O gerador não examina
+libraries YAML, código PHP consumidor, CSS de módulos, proveniência de regras,
+cascata efetiva ou renderização por purpose. O TSV agora inclui a regra de
+48rem do CSS de discussão e declarações dimensionais adicionais nos CSS de
+Studio, discussão e Institution Bar. A matriz de telas/purposes e THEME-MF3
+continuam parciais; esta reconciliação não é aprovação mobile-first global.

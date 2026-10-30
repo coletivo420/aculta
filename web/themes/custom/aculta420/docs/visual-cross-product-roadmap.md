@@ -6,6 +6,13 @@
 
 A fidelidade visual ao OpenCulturas Next (`opcult`) continua **escopada ao Studio**; a fundação mobile-first é **global**. O Green Stash é uma **área integrada ao Studio**, não uma experiência independente ou shell próprio; utiliza Commerce como owner funcional e componentes do tema. Dependência: THEME-MF3 aprovado antes de OCS-F11. [Plano vigente](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md).
 
+**Atualização de THEME-MF0 (2026-10-30):** o índice lexical global do tema foi
+regenerado e comparado byte a byte com o gerador; cobre 206 fontes (93 estilos,
+12 JS e 101 Twig/HTML). A auditoria completa de consumidores, libraries,
+purposes e comportamento renderizado segue parcial; não altera o status de
+THEME-MF0 nem aprova THEME-MF3. Evidência e limites em
+[`mobile-first-audit.md`](mobile-first-audit.md).
+
 ## Green Stash na frente visual Studio - correção inicial (superada)
 
 Este registro preserva uma retificação intermediária que foi corrigida pelo
