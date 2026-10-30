@@ -402,11 +402,17 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/public-profile-lay
 
 ## Formulários públicos de autenticação
 
-`auth-layout.py` compara espaçamentos computados e screenshots dos estilos de
-login/registro/recuperação antes e depois da migração, em 320/360/390/575/576/
-599/600/768/1024/1280/1440 px. Usa fixture, não Runtime. Requer Firefox ESR
-visível, `DISPLAY=:0`, geckodriver e `websockets`; artefatos ficam em `$SUITE_OUT`.
-`AUTH_BASELINE_REF` e `AUTH_WIDTHS` selecionam baseline e larguras.
+`auth-layout.py` verifica o painel de login com a classe Drupal observada em
+`/entrar` (`path-entrar`) em 320/360/390/575/576/599/600/768/1024/1280/1440 px.
+Também garante que o CSS contempla as classes das rotas `/criar-conta`
+(`path-criar-conta`) e `/recuperar-senha` (`path-recuperar-senha`), e registra
+quando o baseline só tinha seletores `page-route-user-*` que não correspondem ao
+HTML real. Usa fixture, não Runtime. Requer Firefox ESR visível, `DISPLAY=:0`,
+geckodriver e `websockets`; artefatos ficam em `$SUITE_OUT`.
+`AUTH_BASELINE_REF` e `AUTH_WIDTHS` selecionam baseline e larguras. A captura do
+Runtime anterior à correção confirmou `path-entrar` e não aplicava os estilos
+específicos de `auth.css`; a verificação do CSS corrigido no Runtime aguarda sua
+publicação e rebuild de cache.
 
 ```sh
 export DISPLAY=:0

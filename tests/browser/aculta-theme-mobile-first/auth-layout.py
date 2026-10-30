@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Compare Drupal authentication layout before/after its mobile-first CSS migration."""
+"""Validate Drupal authentication route selectors and mobile-first layout in Firefox."""
 
 import base64
-import hashlib
 import json
 import os
 import subprocess
@@ -80,7 +79,7 @@ fixture = """<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 body{margin:0;font:16px sans-serif}.aculta-main{width:100%;padding:16px}
 .row{display:flex;justify-content:center}.aculta-page-heading,.aculta-content{width:100%;
 background:#f4f4f4;border-inline-start:4px solid #145c39}.aculta-page-heading h1{margin:0}
-.form-item{margin-block-end:1rem}.form-control{width:100%;min-height:44px}</style></head><body>
+.form-item{margin-block-end:1rem}.form-control{width:100%;min-height:44px}</style></head><body class="path-entrar">
 <main class="aculta-main"><div class="aculta-page-heading"><h1>Entrar na conta ACULTA420</h1></div>
 <div class="row"><section class="aculta-content"><form class="user-login-form">
 <label class="form-item">Usuário ou endereço de e-mail<input class="form-control"></label>
@@ -118,13 +117,20 @@ try:
         after_png = base64.b64decode(driver.req("GET", f"/session/{driver.session}/screenshot"))
         (OUT / f"candidate-{width}.png").write_bytes(after_png)
         no_overflow = before["documentWidth"] <= width and after["documentWidth"] <= width
-        same_pixels = hashlib.sha256(before_png).hexdigest() == hashlib.sha256(after_png).hexdigest()
-        record(f"{width}px: geometria e captura preservadas", actual_width == width and before == after and no_overflow and same_pixels,
-               {"documentWidth": after["documentWidth"], "headingPadding": after["headingPadding"],
-                "contentPadding": after["contentPadding"], "sameScreenshot": same_pixels})
-        expected = after["headingPadding"] == ("24px 20px 4px" if width < 576 else "32px 32px 4px")
+        expected_padding = "24px 20px 4px" if width < 576 else "32px 32px 4px"
+        candidate_padding = after["headingPadding"] == expected_padding
+        record(f"{width}px: layout real de autenticação sem overflow",
+               actual_width == width and no_overflow and candidate_padding,
+               {"documentWidth": after["documentWidth"], "baselineHeadingPadding": before["headingPadding"],
+                "candidateHeadingPadding": after["headingPadding"], "contentPadding": after["contentPadding"]})
+        expected = candidate_padding
         record(f"{width}px: aprimoramento mobile-first correto", expected,
                {"expectedMobilePadding": width < 576, "actual": after["headingPadding"]})
+
+    for selector in ("body.path-entrar", "body.path-criar-conta", "body.path-recuperar-senha"):
+        record(f"CSS contempla a classe de rota {selector}", selector in candidate)
+    for selector in ("body.path-entrar", "body.path-criar-conta", "body.path-recuperar-senha"):
+        record(f"baseline não dependia da classe de rota real {selector}", selector not in baseline)
 finally:
     viewport.close()
     driver.close()

@@ -1,13 +1,13 @@
 /* Drupal-native account forms use semantic page and raised surfaces. */
-body.page-route-user-login,
-body.page-route-user-register,
-body.page-route-user-pass {
+body.path-entrar,
+body.path-criar-conta,
+body.path-recuperar-senha {
   background-color: var(--aculta-surface-page);
 }
 
-body.page-route-user-login .aculta-page-heading,
-body.page-route-user-register .aculta-page-heading,
-body.page-route-user-pass .aculta-page-heading {
+body.path-entrar .aculta-page-heading,
+body.path-criar-conta .aculta-page-heading,
+body.path-recuperar-senha .aculta-page-heading {
   max-width: 34rem;
   padding: 1.5rem 1.25rem 0.25rem;
   margin: 1.5rem auto 0;
@@ -16,17 +16,17 @@ body.page-route-user-pass .aculta-page-heading {
   border-radius: 0.375rem 0.375rem 0 0;
 }
 
-body.page-route-user-login .aculta-page-heading h1,
-body.page-route-user-register .aculta-page-heading h1,
-body.page-route-user-pass .aculta-page-heading h1 {
+body.path-entrar .aculta-page-heading h1,
+body.path-criar-conta .aculta-page-heading h1,
+body.path-recuperar-senha .aculta-page-heading h1 {
   margin: 0;
   color: var(--aculta-text-primary);
   font-family: var(--aculta-font-display);
 }
 
-body.page-route-user-login .aculta-main .row:has(.user-login-form) .aculta-content,
-body.page-route-user-register .aculta-main .row:has(.user-register-form) .aculta-content,
-body.page-route-user-pass .aculta-main .row:has(.user-pass) .aculta-content {
+body.path-entrar .aculta-main .row:has(.user-login-form) .aculta-content,
+body.path-criar-conta .aculta-main .row:has(.user-register-form) .aculta-content,
+body.path-recuperar-senha .aculta-main .row:has(.user-pass) .aculta-content {
   max-width: 34rem;
   padding: 0 1.25rem 1.5rem;
   margin: 0 auto 3rem;
@@ -35,42 +35,42 @@ body.page-route-user-pass .aculta-main .row:has(.user-pass) .aculta-content {
   border-radius: 0 0 0.375rem 0.375rem;
 }
 
-body.page-route-user-login .user-login-form,
-body.page-route-user-register .user-register-form,
-body.page-route-user-pass .user-pass {
+body.path-entrar .user-login-form,
+body.path-criar-conta .user-register-form,
+body.path-recuperar-senha .user-pass {
   color: var(--aculta-text-primary);
   font-family: var(--aculta-font-body);
 }
 
-body.page-route-user-login .user-login-form .form-item,
-body.page-route-user-register .user-register-form .form-item,
-body.page-route-user-pass .user-pass .form-item {
+body.path-entrar .user-login-form .form-item,
+body.path-criar-conta .user-register-form .form-item,
+body.path-recuperar-senha .user-pass .form-item {
   margin-block-end: 1rem;
 }
 
-body.page-route-user-login .user-login-form .form-control,
-body.page-route-user-register .user-register-form .form-control,
-body.page-route-user-pass .user-pass .form-control {
+body.path-entrar .user-login-form .form-control,
+body.path-criar-conta .user-register-form .form-control,
+body.path-recuperar-senha .user-pass .form-control {
   width: 100%;
   border-color: var(--aculta-border-strong);
   color: var(--aculta-text-primary);
   background-color: var(--aculta-surface-interactive);
 }
 
-body.page-route-user-login .user-login-form .form-control:focus,
-body.page-route-user-register .user-register-form .form-control:focus,
-body.page-route-user-pass .user-pass .form-control:focus {
+body.path-entrar .user-login-form .form-control:focus,
+body.path-criar-conta .user-register-form .form-control:focus,
+body.path-recuperar-senha .user-pass .form-control:focus {
   border-color: var(--aculta-border-accent);
   box-shadow: 0 0 0 0.2rem var(--aculta-focus-ring);
 }
 
-body.page-route-user-login .user-login-form .form-actions .button,
-body.page-route-user-register .user-register-form .form-actions .button,
-body.page-route-user-pass .user-pass .form-actions .button {
+body.path-entrar .user-login-form .form-actions .button,
+body.path-criar-conta .user-register-form .form-actions .button,
+body.path-recuperar-senha .user-pass .form-actions .button {
   width: 100%;
 }
 
-body.page-route-user-login .aculta-login__reset-link {
+body.path-entrar .aculta-login__reset-link {
   display: inline-block;
   margin-block: 0.25rem 1rem;
   color: var(--aculta-text-primary);
@@ -79,7 +79,7 @@ body.page-route-user-login .aculta-login__reset-link {
   text-underline-offset: 0.2em;
 }
 
-body.page-route-user-login .aculta-login__divider {
+body.path-entrar .aculta-login__divider {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -89,13 +89,13 @@ body.page-route-user-login .aculta-login__divider {
   text-transform: uppercase;
 }
 
-body.page-route-user-login .aculta-login__divider span {
+body.path-entrar .aculta-login__divider span {
   height: 1px;
   flex: 1;
   background-color: var(--aculta-border-accent);
 }
 
-body.page-route-user-login .aculta-login__registration {
+body.path-entrar .aculta-login__registration {
   margin-block-start: 1.25rem;
   padding-block-start: 1rem;
   border-block-start: 1px solid var(--aculta-border-default);
@@ -103,7 +103,7 @@ body.page-route-user-login .aculta-login__registration {
   font: 400 0.875rem/1.5 var(--aculta-font-body);
 }
 
-body.page-route-user-login .aculta-login__registration a {
+body.path-entrar .aculta-login__registration a {
   color: var(--aculta-text-primary);
   font-weight: 600;
   text-decoration: underline;
@@ -112,24 +112,24 @@ body.page-route-user-login .aculta-login__registration a {
 }
 
 @media (min-width: 36rem) {
-  body.page-route-user-login .aculta-page-heading,
-  body.page-route-user-register .aculta-page-heading,
-  body.page-route-user-pass .aculta-page-heading {
+  body.path-entrar .aculta-page-heading,
+  body.path-criar-conta .aculta-page-heading,
+  body.path-recuperar-senha .aculta-page-heading {
     padding: 2rem 2rem 0.25rem;
     margin-block-start: clamp(2rem, 8vh, 5rem);
   }
 
-  body.page-route-user-login .aculta-main .row:has(.user-login-form) .aculta-content,
-  body.page-route-user-register .aculta-main .row:has(.user-register-form) .aculta-content,
-  body.page-route-user-pass .aculta-main .row:has(.user-pass) .aculta-content {
+  body.path-entrar .aculta-main .row:has(.user-login-form) .aculta-content,
+  body.path-criar-conta .aculta-main .row:has(.user-register-form) .aculta-content,
+  body.path-recuperar-senha .aculta-main .row:has(.user-pass) .aculta-content {
     padding: 0 2rem 2rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body.page-route-user-login *,
-  body.page-route-user-register *,
-  body.page-route-user-pass * {
+  body.path-entrar *,
+  body.path-criar-conta *,
+  body.path-recuperar-senha * {
     scroll-behavior: auto;
   }
 }

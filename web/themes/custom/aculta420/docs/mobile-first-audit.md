@@ -1004,15 +1004,24 @@ e gates do Runtime estão em `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
 Esta rodada integrada também não aprova THEME-MF3. Teste reutilizável:
 `tests/browser/aculta-theme-mobile-first/account-orders.py`.
 
-### THEME-MF2 — autenticação pública (2026-10-29)
+### THEME-MF2 — autenticação pública (2026-10-30)
 
-`auth.css` declara padding compacto para cabeçalho e formulário como base e
-restaura o painel amplo em `min-width: 36rem`, preservando os mesmos valores
-computados em cada lado do breakpoint. A fixture
-`tests/browser/aculta-theme-mobile-first/auth-layout.py` foi criada para
-comparar candidato/baseline em 11 larguras; a execução Firefox está DEFERRED
-enquanto sessões da Revista mantêm geckodriver e memória ocupados. Rotas reais
-e páginas servidas após cache rebuild também permanecem pendentes.
+A inspeção Firefox ESR visível de `/entrar` encontrou que o `<body>` real usa a
+classe `path-entrar`, enquanto `auth.css` selecionava classes inexistentes
+`page-route-user-*`; por isso os estilos próprios do painel não eram aplicados
+na rota real. As rotas canônicas vêm de `DomainRouteSubscriber`: `/entrar`,
+`/criar-conta` e `/recuperar-senha`. Os seletores foram corrigidos para as
+classes `path-*` correspondentes, preservando os seletores de formulário por
+contexto.
+
+A fixture Firefox ESR visível passou 28/28 verificações em 11 larguras
+(320/360/390/575/576/599/600/768/1024/1280/1440 px), confirmando espaçamentos
+compactos até 575 px, painel amplo a partir de 576 px, seletor para as três
+classes reais e ausência de overflow. Evidência:
+`/home/piradopirata/aculta-suite-out/auth-selector-fix-20261030-rerun/summary.json`.
+Isto valida o candidato em fixture, não o CSS servido: após a correção, a
+revalidação das páginas no Runtime e o rebuild de cache permanecem DEFERRED,
+pois a branch de trabalho ainda não está publicada/servida.
 
 ### THEME-MF2 — carrossel editorial da home MAIN (2026-10-29)
 
