@@ -6,7 +6,7 @@
 
 Nos formulários de local usados por Maps/Events, a pessoa informa o CEP no mesmo campo postal e a consulta existente de `aculta_portal_cep` preenche rua, bairro, cidade e UF. Isso já está implementado por `EventLocation.field_endereco` e pela revisão do importador OSM; não é uma capacidade pendente.
 
-**Plano futuro (não implementado):** busca/autocomplete pelo nome da rua/logradouro será avaliada no `aculta_portal_cep` e integrada ao mesmo formulário central. A consulta atual de CEP já funciona; a futura busca por rua é uma capacidade distinta. Não é uma interface própria do Maps. O plano, incluindo critérios de provedor, privacidade e ativação, está em [`CEP-ADDRESS-SEARCH-PLAN.md`](CEP-ADDRESS-SEARCH-PLAN.md).
+**Plano futuro (não implementado):** a busca/autocomplete por nome de rua/logradouro e resultados próximos é uma interface restrita a Events e Maps. O serviço postal compartilhado pode residir em `aculta_portal_cep`, mas não deve ativar busca por rua na Conta, checkout ou formulário global. A consulta CEP → endereço já existente permanece padrão e não muda nesses fluxos. Provedor, termos, atribuição, privacidade e limites ainda precisam de aprovação. Veja [`CEP-ADDRESS-SEARCH-PLAN.md`](CEP-ADDRESS-SEARCH-PLAN.md) e [ADR-033](../decisions/ADR-033-endereco-busca-e-locais.md).
 
 A decisão amplia e consolida o comportamento aprovado em 2026-10-18. Qualquer mudança no formulário, CEP, perfil `authenticated`, checkout ou consumidor de endereço deve preservar o contrato descrito aqui. Não repetir mudanças sem atualizar esta decisão e executar os gates pertinentes.
 
@@ -41,6 +41,12 @@ A decisão amplia e consolida o comportamento aprovado em 2026-10-18. Qualquer m
 - Perfis de equipe (`administrator`, `associado`, `gerente_loja`, `lms_teacher`) exibem `field_address` com o widget padrão `address_default`, igual ao perfil `authenticated` (configuração em `core.entity_form_display.profile.*.default.yml`). Antes estava oculto.
 - O checkout anexa a biblioteca `cep-address` ao formulário da página (`$complete_form`), não ao `#attached` do pane, que o Commerce não leva à página.
 - Verificação no Runtime de teste (2026-10-18): loja e equipe montam com país oculto, biblioteca do CEP e Número/S/N; checkout renderiza o formulário padrão e carrega a biblioteca do CEP. Teste de navegador da Minha conta 30/30 na entrega anterior; conferência visual e teste de navegador do checkout pendentes (ver CHANGELOG 0.4.0-dev.147).
+
+## Lacunas registradas para implementação futura
+
+- `node:add/activity` ainda apresenta campos textuais separados de endereço. Remover esses campos somente junto da integração da Activity com a entidade Local de Events, preservando/mapeando dados existentes.
+- `block_content.aculta_institution` mantém campos estruturados textuais de endereço sem evidência de adaptador central. Fazer inventário de usos, renderização e Schema.org; depois adaptar o formulário central sem fundir ou apagar campos.
+- Events precisa do seletor/cadastro modal de Local com AJAX, CEP primeiro, resultados existentes por nome e eventual busca por logradouro/resultados próximos restrita a Events/Maps. A funcionalidade de busca por logradouro não existe ainda.
 
 ## Por que cada regra existe (regressões já ocorridas)
 
