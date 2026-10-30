@@ -1,13 +1,26 @@
 # Auditoria mobile-first ACULTA420 — THEME-MF0
 
-**Estado em 2026-10-30: inventário estático parcial; MF2 tem migrações incrementais abaixo, mas o gate global MF3 não foi aprovado.**
-A auditoria original foi registrada no checkout servidor `ded8a6181`. A
-recontagem mais recente foi executada na branch atualizada
-`81b275163` em `/home/piradopirata/worktrees/opencultures-f0-adm8-e8`; a
-varredura cobre o tema da branch, não altera a evidência de páginas servidas.
-Na rodada inicial não houve escrita no Runtime. O incidente posterior, incluindo
-o snapshot e a correção direcionada de `message.settings`, está registrado em
+**Estado em HEAD `1a4de33b6` (2026-10-30): inventário lexical regenerado; THEME-MF0 continua parcial, MF2 tem migrações incrementais e THEME-MF3 não está aprovado.**
+A auditoria inicial foi registrada no checkout servidor `ded8a6181`. Esta
+recontagem foi executada na branch `refactor/opencultures-codigo-visual` em
+`/home/piradopirata/worktrees/opencultures-f0-adm8-e8`; ela cobre fontes do
+tema, não altera a evidência de páginas servidas. Na rodada inicial não houve
+escrita no Runtime. O incidente posterior, incluindo o snapshot e a correção
+direcionada de `message.settings`, está registrado em
 `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
+
+### THEME-MF0 — recontagem lexical em HEAD `1a4de33b6` (2026-10-30)
+
+O gerador oficial foi executado com `--write` e repetido sem escrita; a segunda
+saída corresponde byte a byte a `theme-mobile-file-inventory.tsv`. São 206
+fontes rastreadas: 93 CSS/Sass, 12 JavaScript e 101 Twig/HTML. O índice aponta
+84 blocos `@media` em 46 folhas, zero `@container`, 636 correspondências
+lexicais de dimensões em 75 folhas e 53 declarações de overflow em 28 folhas.
+As três novas media queries em `css/tokens.css` usam `min-width` e limitam os
+tokens de fidelidade a `.studio` e `.aculta-profile-editor`; não alteram a
+composição global. Esses números são lexicais, incluem possíveis comentários e
+não medem cascata, uso efetivo ou falhas de layout. A enumeração completa de
+consumidores por rota/purpose e o gate THEME-MF3 continuam pendentes.
 
 ### Atualização THEME-MF0/OCS-F0 — shell multidomínio em todas as raízes (2026-10-30)
 

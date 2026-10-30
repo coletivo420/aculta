@@ -149,7 +149,7 @@ estilo	web/themes/custom/aculta420/css/components/webform.css	1	(min-width: 48.0
 estilo	web/themes/custom/aculta420/css/components/wiki.css	3	(min-width: 36rem) | (min-width: 48rem) | (min-width: 48rem)	0	width: min(100%, 76rem) | width: min(100%, 12rem) | max-height: 3.85rem | min-width: 0 | max-width: 44rem | width: 100% | min-width: 0 | width: 100% | min-height: 2.75rem | max-height: min(28rem, 60vh) | width: auto | min-height: 2.75rem | min-width: 36rem) | min-width: 48rem) | max-width: 76ch | max-width: 50rem | min-height: 2.75rem | min-height: 2.75rem | height: 100% | height: 100% | min-height: 3.25rem | min-width: 0 | min-width: 48rem)	overflow-y: auto
 estilo	web/themes/custom/aculta420/css/drupal-bootstrap.css	2	(min-width: 48rem) | (prefers-reduced-motion: reduce)	0	min-width: 0 | min-width: 0 | max-width: 100% | min-width: 0 | max-width: 100% | min-width: 48rem) | min-width: auto | min-width: auto | max-width: none | min-width: auto | max-width: none | min-height: 2.75rem | min-height: 0 | width: 0.75rem | height: 0.75rem | min-width: 1.5rem | min-height: 1.5rem	—
 estilo	web/themes/custom/aculta420/css/layout.css	1	(min-width: 48rem)	0	min-width: 48rem) | width: 100% | max-width: var(--aculta-page-content-max) | min-width: 0	—
-estilo	web/themes/custom/aculta420/css/tokens.css	1	(prefers-color-scheme: dark)	0	—	—
+estilo	web/themes/custom/aculta420/css/tokens.css	4	(min-width: 48rem) | (min-width: 68.75rem) | (min-width: 100rem) | (prefers-color-scheme: dark)	0	min-width: 48rem) | min-width: 68.75rem) | min-width: 100rem)	—
 javascript	web/themes/custom/aculta420/js/address-layout.js	—	—	—	—	—
 javascript	web/themes/custom/aculta420/js/album-slideshow.js	—	—	—	—	—
 javascript	web/themes/custom/aculta420/js/alerts-dismiss.js	—	—	—	—	—

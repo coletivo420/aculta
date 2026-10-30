@@ -914,3 +914,14 @@ O Pede-A de presença do Domain Header nos purposes de desenvolvimento está
 resolvido. Host Alpha/produção e páginas internas não foram exercitados. A
 evidência e limitações estão em [`mobile-first-audit.md`](mobile-first-audit.md);
 THEME-MF3 e OCS-F11 continuam pendentes.
+
+### THEME-MF0 — inventário lexical reconciliado em HEAD `1a4de33b6` (2026-10-30)
+
+O scanner oficial regenerou o TSV e a repetição sem escrita correspondeu
+byte a byte. A árvore rastreada tem 206 fontes (93 estilos, 12 JS e 101
+Twig/HTML); o índice contabiliza 84 blocos `@media`, zero `@container`, 636
+matches dimensionais e 53 declarações de overflow. A diferença desde o snapshot
+anterior está nas três regras `min-width` de tokens Studio, escopadas ao Studio
+e ao editor de perfil. Este recenseamento não substitui o mapeamento de
+libraries/consumidores nem a auditoria de cascata; THEME-MF0 e THEME-MF3 seguem
+parciais. Ver [`mobile-first-audit.md`](mobile-first-audit.md).
