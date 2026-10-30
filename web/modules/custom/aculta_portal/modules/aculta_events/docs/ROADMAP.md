@@ -247,7 +247,7 @@ Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`.
 
 ## Pós-v1 (sem data)
 
-- Venda de ingressos pagos dentro do ACULTA (D-30 a D-41). Usa só `aculta_commerce` e `aculta_pagamentos_mercadopago`, sem repasse automático e com repasse manual por evento. Checkout próprio de Eventos, com entrada no carrinho integrado (precedência LMS > Loja > Eventos > Doações), conforme o aditivo à ADR-013. Sem frete; pagamento na etapa final do Mercado Pago (D-42). CPF só em evento pago. Fases P0 a P7 em `docs/PLANO-INGRESSOS-PAGOS.md`. Depende de parecer fiscal e de LGPD antes de qualquer venda, e a fase P1 (caracterização do carrinho e das rotas globais) precede qualquer mudança no integrado.
+- Ingressos e inscrições: campos informativos atuais não são ticketing. RSVP gratuito e venda paga dentro do ACULTA são frentes futuras distintas; pedidos pagos usam Commerce/Mercado Pago e entram no carrinho integrado conforme D-39, enquanto RSVP não usa checkout na proposta ADR-036. Venda paga bloqueada por parecer fiscal/jurídico e LGPD. Plano atualizado em `docs/PLANO-INGRESSOS-PAGOS.md`.
 - Calendário pessoal na conta do usuário.
 - Integração com a Revista e o Studio (referência a eventos).
 
@@ -371,3 +371,19 @@ O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas
 - [ ] Compor criação/edição de Evento e gestão contextual de Datas/Locais sem entidade Data independente nem CRUD duplicado.
 - [ ] Testar bloqueio de escrita em `account` e outros purposes, links absolutos via DomainPurposeManager, exibição pública somente leitura e proteção dos Eventos privados do LMS.
 - [ ] Homologar fluxos e documentação antes de marcar LOC-06 concluída.
+
+## Ingressos gratuitos e pagos - proposta de integração (ADR-036)
+
+O estado atual continua sem ticketing interno: `field_gratuito`, `field_pricing` e `field_pricing_info` são informativos; `field_ticketing` é link externo. Não há RSVP com emissão, venda Commerce, lote/estoque ligado a Data, emissão pós-pagamento ou check-in integrado.
+
+- **Ownership:** `aculta_events` é dono das ofertas/lotes, inscrições/participantes, emissão e check-in. `aculta_commerce` mantém pedidos e order items pagos; `aculta_pagamentos_mercadopago` mantém o gateway; `aculta_portal` coordena os tipos/contextos no carrinho já existente. Sem gateway, carrinho ou storage financeiro paralelo.
+- **Gratuito (proposta):** RSVP sem cobrança, nome e e-mail (D-33/D-40), sem CPF, pedido Commerce, carrinho ou Mercado Pago. Confirmar capacidade atomicamente e emitir credencial consumível uma vez no check-in. Não coletar dados reais em produção antes da revisão LGPD/base legal/aviso/retenção.
+- **Pago (proposta):** lote ligado a Evento e Data; pedido Commerce `ingresso`; Checkout Pro; somente confirmação de pagamento validada e idempotente emite o ingresso. Sem frete. Somente pedidos pagos participam do carrinho integrado e seguem a precedência D-39. Em pedidos mistos, o ingresso não exige endereço nem compõe frete.
+- **Credencial compartilhada:** RSVP e compra paga convergem em participante/credencial e check-in móvel, preservando estados financeiros distintos. QR leva apenas token opaco assinado; validar no servidor, exigir autorização contextual, gravar uma entrada e bloquear reuso. Não indexar pedido, PII ou token em `aculta_index`.
+- **Domínios e interface:** inscrições e compras iniciadas em `eventos`; escrita validada no servidor e nunca intermediada pelo purpose `account`. Administração técnica/global fica no MAIN. Gestão do organizador pertence ao ACULTA Studio Culturas planejado no purpose `eventos`.
+- **Gates financeiros:** venda paga bloqueada até parecer fiscal/jurídico (D-31/D-35), políticas de taxa, estorno e repasse (D-32 a D-34), LGPD e testes em sandbox. Repasse manual por evento; sem marketplace/split na primeira versão.
+- **Compatibilidade:** preservar os campos informativos atuais sem migração destrutiva. Quando houver lotes internos, definir precedência de exibição e migração antes de ativar; não inferir uma transação do booleano de gratuidade.
+
+### Decisões ainda abertas
+
+RSVP obrigatório ou opcional; limite por pessoa e prevenção de duplicidade; capacidade por lote versus Data; reserva temporária/expiração/fila; cancelamento e liberação de vaga; abrangência por série; transferência; entrega/acessibilidade do ingresso; retenção/base legal; critérios para migrar links externos.

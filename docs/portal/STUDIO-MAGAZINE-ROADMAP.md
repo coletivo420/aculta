@@ -378,3 +378,8 @@ O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas
 - Estado: decisão e planejamento documental; implementação, autorização por domínio, navegação e homologação ainda precisam ser concluídas.
 
 A frente é de Eventos e Cultura, não uma aba do Marley. Planejar provider e experiência próprios no Studio; o módulo `aculta_studio` compõe navegação e formulários do owner `aculta_events`. A rota proposta é `/studio/culturas` no purpose `eventos`; verificar colisões e registrar rota definitiva no sitemap antes da implementação.
+
+
+## Ingressos no ACULTA Studio Culturas - proposta ADR-036
+
+Planejar para organizadores: configurar ofertas/lotes/capacidade, acompanhar RSVP gratuito e compras pagas, consultar participantes e operar check-in móvel. Escritas no purpose `eventos`; administração técnica/global no MAIN. A interface não duplica owner nem pedido Commerce. RSVP não chama checkout; pagamentos usam Commerce/Mercado Pago. Esta experiência de ingressos não está implementada. Ver [ADR-036](../decisions/ADR-036-ingressos-gratuitos-e-pagos.md) e plano do [aculta_events](../../web/modules/custom/aculta_portal/modules/aculta_events/docs/PLANO-INGRESSOS-PAGOS.md).

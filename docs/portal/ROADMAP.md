@@ -356,3 +356,8 @@ Referências: [auditoria](../architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-2
 - [ ] OC-F: testes de acesso/cache, regressão, provenance, WCAG e validação visual.
 
 Não altera fases atuais, status Dev, nem autoriza Facets/Office Hours, Drush, Config Sync, deploy ou escrita OSM.
+
+
+## Checkout para ingressos - proposta ADR-036
+
+O Portal deve registrar no `CheckoutSettings` e no carrinho existente somente pedidos pagos de Eventos, preservando D-39 e os fluxos de Loja, LMS e Doações. RSVP gratuito não gera pedido nem passa pelo checkout. Sem novo carrinho/aba administrativa. Integração pendente de caracterização, tipo de pedido/item `ingresso`, testes de pedido misto sem frete para ingressos e homologação sandbox. Ver [ADR-036](../decisions/ADR-036-ingressos-gratuitos-e-pagos.md) e [plano ticketing](../../web/modules/custom/aculta_portal/modules/aculta_events/docs/PLANO-INGRESSOS-PAGOS.md).

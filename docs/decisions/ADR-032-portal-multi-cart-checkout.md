@@ -148,3 +148,8 @@ Decisão do responsável (D-38 a D-41 em `docs/architecture/DECISOES-RESPONSAVEL
 5. **Classificação:** o pedido de Eventos é classificado pelo tipo de pedido e pelo tipo de item (ADR-013, item 5), não pelo domínio.
 6. **Preservação:** o carrinho da barra e o checkout atual de Loja, LMS e Doações não mudam de comportamento. A inclusão de Eventos exige testes de caracterização antes e regressão depois, conforme as fases P-CART.
 
+
+
+## Aditivo proposto - RSVP gratuito e carrinho de Eventos (ADR-036)
+
+Para implementação, recomenda-se interpretar D-39 como integração dos pedidos pagos de ingressos ao carrinho atual. O RSVP gratuito não cria pedido Commerce nem entra no carrinho, evitando pedido de valor zero, CPF indevido e efeito nos checkouts existentes. Esta interpretação está proposta para revisão na ADR-036; não deve ser considerada aceita até validação do responsável. Não altera Loja, LMS ou Doações.
