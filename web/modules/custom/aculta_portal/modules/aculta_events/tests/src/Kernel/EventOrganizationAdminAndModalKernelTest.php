@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_events\Kernel;
 use Drupal\aculta_events\ContentIndex\OrganizationContentIndexProvider;
 use Drupal\aculta_events\Controller\EventAdminOverviewController;
 use Drupal\aculta_events\Controller\EventOrganizationAdminController;
+use Drupal\aculta_events\Controller\EventOrganizerDashboardController;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Form\EventOrganizationModalForm;
@@ -754,6 +755,117 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $projectionApproved = $indexProvider->project($reloadedOrg);
     $this->assertNotNull($projectionApproved);
     $this->assertSame((int) $this->editorUser->id(), $projectionApproved->ownerUid, 'Organização reivindicada projeta ownerUid correto no índice.');
+  }
+
+  /**
+   * Valida visibilidade e escopo de eventos no dashboard por organização.
+   */
+  public function testOrganizerDashboardVisibilityForOrganizationMembers(): void {
+    /** @var \Drupal\aculta_user\Organization\OrganizationMembershipManager $membershipManager */
+    $membershipManager = $this->container->get('aculta_user.organization_membership_manager');
+
+    // Cria organização reivindicada com titular outro editor.
+    $otherEditor = User::create([
+      'name' => 'other_editor',
+      'mail' => 'other@example.com',
+      'status' => 1,
+      'roles' => ['content_editor'],
+    ]);
+    $otherEditor->save();
+
+    $unrelatedEditor = User::create([
+      'name' => 'unrelated_editor',
+      'mail' => 'unrelated@example.com',
+      'status' => 1,
+      'roles' => ['content_editor'],
+    ]);
+    $unrelatedEditor->save();
+
+    /** @var \Drupal\aculta_events\Entity\EventOrganization $org */
+    $org = EventOrganization::create([
+      'name' => 'Coletivo das Artes',
+      'field_slug' => 'coletivo-das-artes',
+      'reivindicada' => TRUE,
+      'reivindicacao_status' => 'confirmada',
+      'titular' => (int) $otherEditor->id(),
+    ]);
+    $org->save();
+
+    // Outro editor é titular e tem membership owner.
+    $membershipManager->addMembership($otherEditor, (string) $org->id(), 'owner', 'approved', TRUE, TRUE);
+
+    // Adiciona editorUser como membro aprovado com papel 'editor'.
+    $membershipManager->addMembership($this->editorUser, (string) $org->id(), 'editor', 'approved', FALSE, FALSE);
+
+    // Cria Evento 1 associado à organização (field_organizador é otherEditor).
+    $event1 = Event::create([
+      'title' => 'Festival Coletivo das Artes',
+      'field_status' => 'publicado',
+      'field_organizador' => (int) $otherEditor->id(),
+      'field_organizacao' => (int) $org->id(),
+    ]);
+    $event1->save();
+
+    // 1. Visão do editorUser (membro aprovado da organização):
+    // Deve gerenciar Festival Coletivo das Artes no dashboard.
+    $this->container->get('current_user')->setAccount($this->editorUser);
+    $controller = EventOrganizerDashboardController::create($this->container);
+    $buildEditor = $controller->page();
+
+    $this->assertNotEmpty($buildEditor['events']['#rows'], 'Editor vinculado enxerga os eventos da organização.');
+    $foundEvent1 = FALSE;
+    foreach ($buildEditor['events']['#rows'] as $row) {
+      if (isset($row[0]['data']) && $row[0]['data'] === 'Festival Coletivo das Artes') {
+        $foundEvent1 = TRUE;
+        break;
+      }
+    }
+    $this->assertTrue($foundEvent1, 'Evento da organização está listado no dashboard do membro aprovado.');
+
+    // 2. Visão do unrelatedEditor (sem vínculo com a organização):
+    // Não deve enxergar o evento da organização alheia.
+    $this->container->get('current_user')->setAccount($unrelatedEditor);
+    $buildUnrelated = $controller->page();
+    $foundForUnrelated = FALSE;
+    foreach ($buildUnrelated['events']['#rows'] as $row) {
+      if (isset($row[0]['data']) && $row[0]['data'] === 'Festival Coletivo das Artes') {
+        $foundForUnrelated = TRUE;
+        break;
+      }
+    }
+    $this->assertFalse($foundForUnrelated, 'Editor sem vínculo não enxerga eventos de organização alheia.');
+
+    // 3. Testa coorganizadores:
+    // Cria organização secundária em que o editorUser é titular.
+    $coOrg = EventOrganization::create([
+      'name' => 'Associação Parceira',
+      'field_slug' => 'associacao-parceira',
+      'reivindicada' => TRUE,
+      'reivindicacao_status' => 'confirmada',
+      'titular' => (int) $this->editorUser->id(),
+    ]);
+    $coOrg->save();
+
+    // Evento 2 criado pelo otherEditor com Associação Parceira como parceira.
+    $event2 = Event::create([
+      'title' => 'Encontro Parcerias Culturais',
+      'field_status' => 'publicado',
+      'field_organizador' => (int) $otherEditor->id(),
+      'field_coorganizadores' => [(int) $coOrg->id()],
+    ]);
+    $event2->save();
+
+    // editorUser deve enxergar o Evento 2 no dashboard via coorganização.
+    $this->container->get('current_user')->setAccount($this->editorUser);
+    $buildCoOrg = $controller->page();
+    $foundEvent2 = FALSE;
+    foreach ($buildCoOrg['events']['#rows'] as $row) {
+      if (isset($row[0]['data']) && $row[0]['data'] === 'Encontro Parcerias Culturais') {
+        $foundEvent2 = TRUE;
+        break;
+      }
+    }
+    $this->assertTrue($foundEvent2, 'Evento com coorganização associada ao usuário está listado no dashboard.');
   }
 
 }

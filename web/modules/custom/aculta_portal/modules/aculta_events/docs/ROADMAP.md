@@ -371,7 +371,7 @@ O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas
 - [x] Configuração administrativa separada e seleção de papéis para criação de Evento e Local presentes em `EventSettingsForm`; `content_editor` permanece padrão inicial.
 - [x] Criação inicial de Evento com Datas; operações de Data contextualizadas ao Evento; seleção/cadastro de Local em popup Drupal/AJAX.
 - [ ] Completar autorização efetiva por purpose e revalidar acesso no Runtime, incluindo GET/POST/AJAX e dados de Eventos restritos do LMS.
-- [ ] Melhorar o dashboard com busca, filtros e paginação; mostrar próxima Data/Local sem quebrar privacidade.
+- [x] Melhorar o dashboard com busca, filtros e paginação; mostrar próxima Data/Local sem quebrar privacidade; escopo ampliado para membros aprovados de organizações e coorganizações.
 - [ ] Revisar consistência/recuperação quando Evento e Datas iniciais são persistidos em sequência.
 - [ ] Homologar fluxos, acessibilidade, teclado, mobile e atualização documental antes de marcar LOC-06 concluída.
 

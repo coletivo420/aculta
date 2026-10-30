@@ -6,6 +6,7 @@ namespace Drupal\aculta_events\Controller;
 
 use Drupal\aculta_events\Access\EventPermissionPolicy;
 use Drupal\aculta_events\Entity\Event;
+use Drupal\aculta_user\Organization\OrganizationMembershipManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -22,6 +23,7 @@ final class EventOrganizerDashboardController extends ControllerBase {
     private readonly EntityTypeManagerInterface $entities,
     private readonly EventPermissionPolicy $permissions,
     private readonly ?RequestStack $requestStack = NULL,
+    private readonly ?OrganizationMembershipManager $membershipManager = NULL,
   ) {}
 
   /**
@@ -32,6 +34,7 @@ final class EventOrganizerDashboardController extends ControllerBase {
       $container->get('entity_type.manager'),
       $container->get('aculta_events.permission_policy'),
       $container->get('request_stack'),
+      $container->has('aculta_user.organization_membership_manager') ? $container->get('aculta_user.organization_membership_manager') : NULL,
     );
   }
 
@@ -82,7 +85,52 @@ final class EventOrganizerDashboardController extends ControllerBase {
     $storage = $this->entities->getStorage('aculta_event');
     $query = $storage->getQuery()->accessCheck(FALSE)->sort('id', 'DESC');
     if (!$account->hasPermission('administer aculta events')) {
-      $query->condition('field_organizador', (int) $account->id());
+      $uid = (int) $account->id();
+      $userOrgIds = [];
+
+      if ($this->entities->hasDefinition('aculta_event_organization')) {
+        try {
+          $orgStorage = $this->entities->getStorage('aculta_event_organization');
+          $titularOrgIds = $orgStorage->getQuery()
+            ->accessCheck(FALSE)
+            ->condition('titular', $uid)
+            ->execute();
+          foreach ($titularOrgIds as $orgId) {
+            $userOrgIds[(int) $orgId] = (int) $orgId;
+          }
+        }
+        catch (\Throwable) {
+          // Schema may not be installed in isolated environments.
+        }
+      }
+
+      if ($this->membershipManager !== NULL) {
+        try {
+          $memberships = $this->membershipManager->getMemberships($account, 'approved');
+          foreach ($memberships as $member) {
+            $role = (string) ($member->get('role_in_org')->value ?? '');
+            if (in_array($role, ['owner', 'co_owner', 'publisher', 'editor', 'admin'], TRUE)) {
+              $orgId = (int) ($member->get('org_id')->value ?? 0);
+              if ($orgId > 0) {
+                $userOrgIds[$orgId] = $orgId;
+              }
+            }
+          }
+        }
+        catch (\Throwable) {
+          // Membership schema may not be installed in isolated environments.
+        }
+      }
+
+      $scopeCondition = $query->orConditionGroup();
+      $scopeCondition->condition('field_organizador', $uid);
+
+      if (!empty($userOrgIds)) {
+        $scopeCondition->condition('field_organizacao', array_values($userOrgIds), 'IN');
+        $scopeCondition->condition('field_coorganizadores', array_values($userOrgIds), 'IN');
+      }
+
+      $query->condition($scopeCondition);
     }
     if ($busca !== '') {
       $query->condition('title', '%' . $busca . '%', 'LIKE');
@@ -101,6 +149,7 @@ final class EventOrganizerDashboardController extends ControllerBase {
         'aculta_event_date_list',
         'aculta_event_location_list',
         'aculta_event_organization_list',
+        'aculta_org_member_list',
         'config:aculta_events.settings',
       ])
       ->addCacheableDependency($canCreateEvent)

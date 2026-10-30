@@ -59,6 +59,11 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     'aculta_events.date_rule',
     'aculta_events.occurrence',
     'aculta_events.admin_export',
+    'aculta_events.admin_organizations',
+    'aculta_events.admin_organization_add',
+    'aculta_events.admin_organization_edit',
+    'aculta_events.admin_organization_members',
+    'aculta_events.admin_organization_recovery',
   ];
 
   /**
@@ -76,6 +81,10 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     'aculta_events.organizer_location_edit',
     'aculta_events.organizer_location_delete',
     'aculta_events.organizer_location_modal',
+    'aculta_events.organizer_organization_add',
+    'aculta_events.organizer_organization_edit',
+    'aculta_events.organizer_organization_members',
+    'aculta_events.organizer_organization_modal',
   ];
 
   /**
@@ -89,6 +98,7 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_event');
     $this->installEntitySchema('aculta_event_date');
     $this->installEntitySchema('aculta_event_location');
+    $this->installEntitySchema('aculta_event_organization');
     $this->installEntitySchema('domain');
     $this->container->get('current_user')->setAccount(new AnonymousUserSession());
   }

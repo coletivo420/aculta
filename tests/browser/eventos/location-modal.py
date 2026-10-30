@@ -77,7 +77,7 @@ try:
     check("evento.form.titulo_preenchido", True, test_title)
 
     # 4. Localiza o acionador do modal de Local.
-    modal_btn_selector = 'a.use-ajax[data-dialog-type="modal"]'
+    modal_btn_selector = 'a.use-ajax[href*="/locais/modal"]'
     has_modal_btn = driver.exists(modal_btn_selector)
     check("evento.form.tem_botao_modal", has_modal_btn, "botão modal encontrado no formulário")
 

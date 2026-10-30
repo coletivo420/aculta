@@ -141,8 +141,16 @@ final class OrganizationAccessService {
       $orgField = $entity->get('field_organizacao');
       if (!$orgField->isEmpty()) {
         $targetOrg = $orgField->entity;
-        if ($targetOrg !== NULL && $targetOrg->hasField('reivindicada') && empty($targetOrg->get('reivindicada')->value)) {
-          return TRUE;
+        if ($targetOrg !== NULL) {
+          if ($targetOrg->hasField('reivindicada') && empty($targetOrg->get('reivindicada')->value)) {
+            return TRUE;
+          }
+          if ($targetOrg->hasField('titular')) {
+            $titularId = (int) $targetOrg->get('titular')->target_id;
+            if ($titularId > 0 && $titularId === $uid) {
+              return TRUE;
+            }
+          }
         }
 
         $orgId = (string) ($orgField->target_id ?? $orgField->value);
@@ -156,6 +164,13 @@ final class OrganizationAccessService {
     if ($entity->hasField('field_coorganizadores')) {
       $coOrgsField = $entity->get('field_coorganizadores');
       foreach ($coOrgsField as $item) {
+        $coOrgEntity = $item->entity;
+        if ($coOrgEntity !== NULL && $coOrgEntity->hasField('titular')) {
+          $titularId = (int) $coOrgEntity->get('titular')->target_id;
+          if ($titularId > 0 && $titularId === $uid) {
+            return TRUE;
+          }
+        }
         $coOrgId = (string) ($item->target_id ?? $item->value);
         if ($coOrgId !== '' && $this->canActOnBehalf($account, $coOrgId)) {
           return TRUE;
