@@ -12,7 +12,7 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 
 - [ADR-036 - Ingressos gratuitos e pagos no ACULTA Events](ADR-036-ingressos-gratuitos-e-pagos.md) - proposta para revisão.
 
-- [ADR-035 — ACULTA Studio Culturas para organizadores de Eventos](ADR-035-aculta-studio-culturas.md) — aceita; implementação pendente.
+- [ADR-035 — ACULTA Studio Culturas para organizadores de Eventos](ADR-035-aculta-studio-culturas.md) — aceita; código parcial na PR #299, validação Runtime/homologação pendentes.
 
 - [ADR-033 — Endereço unificado, busca postal restrita e gestão de Locais em Events](ADR-033-endereco-busca-e-locais.md)
 
