@@ -227,4 +227,13 @@ Commerce será owner de pedidos e itens transacionais pagos do tipo `ingresso`; 
 
 ## Migrar Green Stash ao purpose Shop - ADR-038
 
-Planejar rotas `/greenstash...` em `shop` para transição de remessas e operações de produto, incluindo provider, navegação, login/retorno, canonical/cache e ACL. Preservar Commerce como owner e não tocar checkout. Remover `/studio/*` só após homologação no host `loja`, sem aliases.
+Rotas `/greenstash...` em `shop` foram declaradas para operações de produto e remessa, preservando Commerce como owner e sem alterar checkout. `/studio/*` foi removido sem aliases; seguem pendentes os gates de POST/AJAX por purpose e a homologação da UI autenticada no Domain configurado para Loja.
+# ADR-038 — Green Stash no purpose Shop (2026-10-30)
+
+As rotas da suíte agora usam `/greenstash` e filhas no purpose `shop`; as
+referências `/studio/green-stash` nos registros anteriores são históricas.
+`aculta_commerce` continua dono de produtos, pedidos e remessas. Acesso e
+escrita continuam condicionados a permissões Commerce e ao Domain correto.
+`DomainPurposeManager` gera links absolutos entre purposes. Gate de paths
+antigos, wrong-purpose POST/AJAX e UI em `loja` continuam na homologação.
+

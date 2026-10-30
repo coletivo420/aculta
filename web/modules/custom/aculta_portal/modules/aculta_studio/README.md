@@ -1,27 +1,29 @@
-## ADR-038 - caminho aprovado para as Suites (implementação futura)
+# ACULTA Studio (`aculta_studio`)
 
-Marley `conta.aculta.*/marley`; Ganjalab `cursos.aculta.*/ganjalab`; WE SATIVA `wiki.aculta.*/wesativa`; Green Stash `loja.aculta.*/greenstash`; Culturas `eventos.aculta.*/culturas`. `/studio` e todo `/studio/*` serão removidos e responderão 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `conta` será entrada de Conta, fora de `/studio`; Conta e Perfil permanecem separados. As referências de rota anteriores neste arquivo descrevem o estado pré-migração e não são destino para implementação nova. Consulte ADR-038.
+## ADR-038 — implementação em andamento
 
-## Estado S-R5 — comparação preparada, sem homologação (2026-10-25)
+`aculta_studio` permanece como framework compartilhado, registry e camada de composição. Não existe hub público `/studio`; `/studio` e todas as rotas públicas `/studio/*` devem responder 404, sem alias nem redirect.
 
-## ADR-038 - caminho aprovado para as Suites (implementação futura)
+| Suite | Purpose | Caminho |
+| --- | --- | --- |
+| Marley | `account` | `/marley` |
+| Ganjalab | `courses` | `/ganjalab` |
+| WE SATIVA | `wiki` | `/wesativa` |
+| Green Stash | `shop` | `/greenstash` |
+| Culturas | `eventos` | `/culturas` |
 
-Marley `conta.aculta.*/marley`; Ganjalab `cursos.aculta.*/ganjalab`; WE SATIVA `wiki.aculta.*/wesativa`; Green Stash `loja.aculta.*/greenstash`; Culturas `eventos.aculta.*/culturas`. `/studio` e todo `/studio/*` serão removidos e responderão 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `conta` será entrada de Conta, fora de `/studio`; Conta e Perfil permanecem separados. As referências de rota anteriores neste arquivo descrevem o estado pré-migração e não são destino para implementação nova. Consulte ADR-038.
+A raiz de `account` apresenta a entrada da Conta; Conta (`/conta/*`) e Perfil (`/perfil/*`) permanecem separados. Salvos usam `/salvos`, Mercado Pago usa `/conta/mercado-pago/planos` e `/conta-legada` permanece. URLs absolutas são resolvidas pelo `DomainPurposeManager`; o Domain da Wiki ainda é `wiki420`, pois `wiki.aculta.*` não passou por validação de DNS/TLS/vhost.
 
+Microfase publicada em `faefae9ee`: gates focados Studio/Portal/Commerce 89 testes / 653 assertions PASS; gate de aliases PASS; teste amplo 457 testes teve uma falha de configuração de checkout do curso (`curso`: esperado `default`, atual `curso`), fora dos arquivos desta migração. Runtime route cache foi reconstruído; MAIN e entrada da Conta HTTP 200, `/studio` HTTP 404. A experiência Culturas ainda requer validação de acesso e escrita nos endpoints auxiliares.
 
-A [matriz de paridade S-R5](docs/S-R5-MATRIZ-COMPARACAO.md) e
-`tests/browser/aculta-studio/parity-s-r5.mjs` cobrem a comparação preparatória
-da Conta Studio com `/conta-legada` e do Perfil Studio com `/u/{apelido}` no
-purpose MAIN, incluindo duas contas e casos de privacidade. Ainda não houve
-execução Firefox ESR/Drush/Runtime; a S-R4 mantém seus gates pendentes.
-Nenhuma versão foi promovida; não remover `/conta-legada`.
+## Histórico de S-R5 (2026-10-25)
 
 # ACULTA Studio (`aculta_studio`)
 
 
-## Situação vigente — S-R4 dev.22 (revisão estática / não homologada)
+## Histórico — S-R4 dev.22 (antes do ADR-038)
 
-O editor `/studio/perfil` usa os quatro SDCs do tema; na ausência
+O editor histórico `/studio/perfil` usa os quatro SDCs do tema; na ausência
 de apelido fornecido pelo User, apresenta agora o rótulo neutro
 `Apelido não informado` em vez do nome/usuário cadastral. Testes
 Unit e Kernel preparados, mas não executados; ver
@@ -29,7 +31,7 @@ Unit e Kernel preparados, mas não executados; ver
 
 ## Histórico — S-R4, Studio dev.21
 
-A tela `/studio/perfil` consome os quatro componentes experimentais
+A tela histórica `/studio/perfil` consome os quatro componentes experimentais
 `aculta420:profile-editor`, `profile-identity`, `profile-bio` e
 `profile-social` via render arrays `#type: component` e slots Core.
 O ACULTA User mantém a identidade, os valores de bio e redes, privacidade,
@@ -272,27 +274,36 @@ O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas
 
 A composição deve seguir o registry/provider atual de Studio e manter ownership, formulários e autorização em `aculta_events`. Criar experiência de Cultura própria, não adicioná-la como seção de Marley. Atualizar este README e o sitemap após implementação/homologação.
 
-## Contrato futuro: Suites do ACULTA Studio por domínio (ADR-038)
+## ADR-038 — caminhos canônicos das Suites (implementação parcial)
 
-Cada Suite responde em seu próprio domínio/purpose e sob o caminho-base abaixo. O prefixo público `/studio` e todas as rotas `/studio/*` serão retirados e responderão 404, sem alias ou redirect. `aculta_studio` permanece como infraestrutura compartilhada de composição e registry, não como raiz de URL.
+`aculta_studio` permanece framework compartilhado, registry e camada de
+composição. `/studio` e todas as rotas públicas `/studio/*` foram removidos,
+sem alias ou redirect.
 
-| Suite | Purpose | Host de produção | Host de teste | Caminho-base |
-| --- | --- | --- | --- | --- |
-| Marley | `account` | `conta.aculta.org` | `conta.aculta.toca.net.br` | `/marley` |
-| Ganjalab | `courses` | `cursos.aculta.org` | `cursos.aculta.toca.net.br` | `/ganjalab` |
-| WE SATIVA | `wiki` | `wiki.aculta.org` | `wiki.aculta.toca.net.br` | `/wesativa` |
-| Green Stash | `shop` | `loja.aculta.org` | `loja.aculta.toca.net.br` | `/greenstash` |
-| Culturas | `eventos` | `eventos.aculta.org` | `eventos.aculta.toca.net.br` | `/culturas` |
+| Suite | Purpose | Caminho |
+| --- | --- | --- |
+| Marley | `account` | `/marley` |
+| Ganjalab | `courses` | `/ganjalab` |
+| WE SATIVA | `wiki` | `/wesativa` |
+| Green Stash | `shop` | `/greenstash` |
+| Culturas | `eventos` | `/culturas` |
 
-Manter Conta e Perfil como experiências diferentes, fora das Suites. A raiz de `conta` passa a uma página de entrada da Conta com navegação para Marley e links absolutos às outras Suites; não aponta internamente para `/studio`. A Conta legada continua em `/conta-legada`. Planejar caminhos `/conta/*`, `/perfil/*` e `/salvos` para absorver as rotas pessoais atuais, preservando owners e sem misturar dados.
+Conta (`/conta/*`) e Perfil (`/perfil/*`) permanecem separados; salvos usam
+`/salvos`, Mercado Pago `/conta/mercado-pago/planos` e o legado
+`/conta-legada` permanece. URLs entre purposes são produzidas pelo
+`DomainPurposeManager`. A raiz `account` apresenta a entrada da Conta sem
+rewrite para `/studio`.
 
-Regras de implementação:
-- Rotas declaram o purpose correto e validam usuário, módulo owner e permissão no servidor. Purpose incorreto responde 404, inclusive POST. Links cross-domain são absolutos via `DomainPurposeManager`; não enviar POST/proxy de escrita entre purposes.
-- Preservar route IDs e owners sempre que possível. Rotas de negócio podem ser declaradas pelo módulo owner e ter path/purpose ajustados conforme a Suite responsável.
-- Novas Suites escolhem host/purpose e slug próprio antes de declarar rotas; não introduzir `/studio/{suite}`.
-- Hosts de Conta, Cursos, Loja e Eventos já constam nos registros atuais. Wiki ainda usa `wiki420.aculta.org` e `wiki420.aculta.toca.net.br`; migração para `wiki.aculta.*` depende de config Deployer/Domain, DNS, TLS/vhost e homologação.
-- Atualizar `PurposeFrontPathProcessor`, `FrontPathPolicy`, subscriber de propósito, navegação e testes para a raiz de cada purpose e as rotas da Suite. Os cinco caminhos da matriz são rotas válidas apenas no purpose respectivo.
-- Remover todas as rotas `/studio` e `/studio/*` após mover destinos. Sem redirects legados; canonical e links apontam diretamente aos novos hosts/caminhos.
-- Migrar links internos/externos, login/retorno, e-mail, notificações, sitemap, canonical, cache e testes. A troca de URL não transfere ownership de entidades, formulários, ACL ou workflows.
+O Domain Wiki ativo ainda é `wiki420`. `wiki.aculta.toca.net.br` não resolve
+no DNS e não foi homologado com TLS/vhost; não desative `wiki420.aculta.*`
+até concluir Domain/Deployer, DNS, TLS/proxy e teste de ambiente controlado.
+A matriz de correspondência completa está no
+[ADR-038](../../../../../../docs/decisions/ADR-038-aculta-studio-suites-por-dominio.md).
 
-Estado em 2026-10-30: decisão e plano aprovados; nenhum corte de rotas, configuração de domínio, DNS ou validação de Runtime é declarado por este documento.
+Validação 2026-10-30: Firefox ESR autenticado capturou 20 páginas (homepage e
+nove páginas ACULTA em 1440/390), sem documentos vazios ou overflow. Green
+Stash deu acesso negado à conta de teste sem permissão, portanto não é
+homologação de escrita. A jornada de Culturas mostrou HTTP 500 na primeira
+captura e foi corrigida em `95314a5a7`; a captura repetida carregou HTTP 200.
+Os gates de POST/AJAX por purpose e operações administrativas permanecem
+pendentes de Kernel, que não foi executado sem `SIMPLETEST_DB`.

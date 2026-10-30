@@ -4,7 +4,7 @@ Gateway Mercado Pago Checkout Pro do Commerce, código próprio do Portal. Subst
 
 ## O que faz
 
-- Gestão administrativa de planos pelo ACULTA Studio em `/studio/conta/mercado-pago/planos`; a submissão usa `/integracoes/mercadopago/planos`. Lista, cria e atualiza modelos remotos somente por gateway ativo em sandbox; requer `access aculta portal` e `administrar doacoes`, sem armazenamento paralelo.
+- Gestão de planos da Conta em `/conta/mercado-pago/planos` no purpose `account`; a submissão usa `/integracoes/mercadopago/planos` no MAIN. Lista, cria e atualiza modelos remotos somente por gateway ativo em sandbox; requer `access aculta portal` e `administrar doacoes`, sem armazenamento paralelo. A URL antiga `/studio/conta/mercado-pago/planos` não possui alias.
 
 - Plugin de gateway `aculta_mercadopago_checkout_pro` (classe `CheckoutPro`), tipo de meio de pagamento `aculta_mercadopago_checkout_pro` e formulário de redirecionamento (`RedirectCheckoutForm`). O gateway associa pagamentos ao tipo Commerce `aculta_mercadopago`, cujo workflow inclui `pending` para aguardarem a confirmação do provedor.
 - Configuração nativa do gateway com modo e opções de pagamento; as chaves são fornecidas exclusivamente pelo ambiente ativo e não são editáveis nem exibidas no formulário. O antigo controle `autofee` foi removido: o gateway não calcula taxas de adquirência, e ao salvar a configuração limpa o valor legado sem efeito.

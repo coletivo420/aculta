@@ -1,6 +1,6 @@
-## ADR-038 - caminho aprovado para as Suites (implementação futura)
+## ADR-038 - caminho aprovado para as Suites (execução parcial, 2026-10-30)
 
-Marley `conta.aculta.*/marley`; Ganjalab `cursos.aculta.*/ganjalab`; WE SATIVA `wiki.aculta.*/wesativa`; Green Stash `loja.aculta.*/greenstash`; Culturas `eventos.aculta.*/culturas`. `/studio` e todo `/studio/*` serão removidos e responderão 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `conta` será entrada de Conta, fora de `/studio`; Conta e Perfil permanecem separados. As referências de rota anteriores neste arquivo descrevem o estado pré-migração e não são destino para implementação nova. Consulte ADR-038.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. Paths/purposes e rejeição global de `/studio*` foram implementados no código; `aculta_studio` permanece framework compartilhado. A raiz de `account` é entrada da Conta; Conta e Perfil permanecem separados. O domínio Wiki continua `wiki420` enquanto DNS/TLS/vhost de `wiki.aculta.*` não forem validados. As seções abaixo são histórico quando descrevem os paths antigos.
 
 ## Inventário histórico pré-ADR-038
 
@@ -716,15 +716,15 @@ permanecem parciais.
 
 ## OCS-F12 - Residência das Suites por domínio (ADR-038)
 
-**Estado: planejado, não implementado.** Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. A marca e registry `aculta_studio` permanecem como infraestrutura compartilhada; `/studio` e `/studio/*` são retirados. A raiz de `account` vira entrada de Conta, sem hub Studio.
+**Estado: parcial.** As rotas canônicas das cinco Suites, paths de Conta/Perfil/salvos/Mercado Pago, entrada da Conta e 404 global de `/studio*` estão no código. `aculta_studio` continua framework/registry sem hub. Host Wiki novo e homologação full-stack permanecem pendentes.
 
-- [ ] F12-A inventariar as 31 declarações `/studio*`, route IDs, links, callbacks, login destinations, canonical/cache/sitemap e owners.
-- [ ] F12-B definir paths de Conta, Perfil, Salvos e planos Mercado Pago fora de `/studio`, sem fundir Conta/Perfil nem trocar owners.
-- [ ] F12-C migrar rotas/providers e navegação Marley e Ganjalab; Ganjalab passa de `account` para `courses`.
-- [ ] F12-D migrar WE SATIVA, Green Stash e Culturas a `wiki`, `shop` e `eventos`.
+- [x] F12-A registrar a correspondência de rotas e ownership inicial em ADR-038; consumidores/docs restantes seguem no inventário de trabalho.
+- [x] F12-B definir paths de Conta, Perfil, Salvos e planos Mercado Pago fora de `/studio`, sem fundir Conta/Perfil nem trocar owners.
+- [x] F12-C migrar declarações e providers Marley e Ganjalab; Ganjalab passa de `account` para `courses`.
+- [x] F12-D mover entradas WE SATIVA, Green Stash e Culturas a `wiki`, `shop` e `eventos`.
 - [ ] F12-E provisionar host Wiki `wiki.aculta.*`: Domain/Deployer, DNS, TLS/vhost, fallback e rollback. Config atual usa `wiki420.aculta.*`.
-- [ ] F12-F retirar rewrite `account` para `/studio`, implementar entrada da Conta e retirar todas rotas `/studio*`; 404 sem redirects/aliases.
-- [ ] F12-G atualizar front-path policy, links absolutos via DomainPurposeManager, login/retorno, canonical, cache, SEO, sitemap e gates.
-- [ ] F12-H testar os cinco hosts, purpose correto/incorreto para GET/POST, `/studio*` 404, owners, permissões, acessibilidade e telas mobile.
+- [x] F12-F retirar rewrite `account` para `/studio`, implementar entrada da Conta e retirar as rotas públicas `/studio*`; cache de rotas reconstruído e caminhos antigos verificados como 404.
+- [ ] F12-G terminar consumidores, mapas, canonical/cache/SEO e gates; validação atual cobre `DomainPurposeManager` e caminhos de navegação focal.
+- [ ] F12-H testar os cinco Domains, purpose correto/incorreto para GET/POST/AJAX, `/studio*` 404, owners, permissões, acessibilidade e telas mobile.
 
-Gate: não cortar parcialmente nem declarar concluído antes de testes e homologação por host/Runtime.
+Bloqueio residual: F12-E depende de Domain/Deployer, DNS, TLS/vhost e acesso a ambiente; Wiki continua no host `wiki420`. F12-G/H não estão concluídas. Não declarar ADR-038 implementado integralmente antes de testes por host/Runtime.

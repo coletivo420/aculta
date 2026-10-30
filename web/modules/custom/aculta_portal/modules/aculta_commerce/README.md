@@ -1,5 +1,12 @@
 # ACULTA Commerce — 0.1.0-dev.14
 
+## Green Stash Suite (ADR-038)
+
+The management entry is `/greenstash` in purpose `shop`, including its
+product and shipment operations. `/studio/green-stash` and children are
+removed without compatibility routes. Commerce remains owner of products,
+orders and shipment state; cross-purpose links use `DomainPurposeManager`.
+
 Submódulo proprietário das integrações da loja, em estado Dev. O motor de envios ACULTA está integrado aqui, sem módulo adicional ou alteração em contrib. O Config Sync versionado aponta para `aculta_shipment`, os plugins próprios e o pane `aculta_shipping_information`; `drupal/commerce_shipping` foi removido de `composer.json`/`composer.lock` e `drupal/physical` é dependência explícita.
 
 **Evidência reexecutada nesta PR (2026-10-26):** Unit Commerce 55 testes/272 asserções PASS; `ShippingEngineKernelTest` 7/237 PASS; Unit Melhor Envio 85/204 PASS; `MelhorEnvioWiringKernelTest` 11/57 PASS em MariaDB dedicado, sem rede externa; instalação limpa Standard + `aculta_commerce` + `aculta_commerce_melhorenvio` em prefixo descartável PASS, com provider descoberto e `commerce_shipping` ausente; `drush cr` e `updatedb:status` PASS. PHPCS Drupal/DrupalPractice nos quatro arquivos PHP integrados do Melhor Envio: zero erros, avisos de linhas longas; PHP lint PASS. Checkout funcional, Firefox ESR e validação externa no sandbox permanecem pendentes.

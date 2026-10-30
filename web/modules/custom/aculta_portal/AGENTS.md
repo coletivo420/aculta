@@ -1,8 +1,8 @@
 # Portal — regras locais
 
-## ADR-038 - caminho aprovado para as Suites (implementação futura)
+## ADR-038 - caminho aprovado para as Suites (migração em andamento)
 
-Marley `conta.aculta.*/marley`; Ganjalab `cursos.aculta.*/ganjalab`; WE SATIVA `wiki.aculta.*/wesativa`; Green Stash `loja.aculta.*/greenstash`; Culturas `eventos.aculta.*/culturas`. `/studio` e todo `/studio/*` serão removidos e responderão 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `conta` será entrada de Conta, fora de `/studio`; Conta e Perfil permanecem separados. As referências de rota anteriores neste arquivo descrevem o estado pré-migração e não são destino para implementação nova. Consulte ADR-038.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. `/studio` e todo `/studio/*` foram removidos e respondem 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `conta` é entrada de Conta; Conta e Perfil permanecem separados. Veja ADR-038 para o host Wiki pendente.
 
 
 Herde `AGENTS.md` da raiz. Consulte `docs/AGENT-POLICIES.md` **somente nas seções relevantes** e os contratos `docs/portal/GUARDRAILS.md` e `docs/portal/DRUPAL-11-STANDARDS.md` quando a alteração exigir.
@@ -21,7 +21,7 @@ Herde `AGENTS.md` da raiz. Consulte `docs/AGENT-POLICIES.md` **somente nas seç�
 
 ## ACULTA Studio Culturas — decisão de produto e domínio (2026-10-30)
 
-O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota canônica `/culturas` no purpose `eventos` e os fluxos iniciais estão declarados no código da PR #299; isso não prova ativação no Runtime. A entrada geral do Studio em `account` pode apenas apresentar link absoluto via `DomainPurposeManager`.
+O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. `/culturas` e os fluxos iniciais estão declarados no purpose `eventos`; o host e links absolutos vêm do `DomainPurposeManager`. A entrada de Conta pode apenas linkar, sem escrita cross-domain. A jornada não está homologada até validar permissões por operação e rotas auxiliares.
 
 - A sessão administrativa técnica continua no domínio principal, em `/painel-administrativo/eventos`, restrita a administradores. Configuração global de permissões, auditoria e operações administrativas permanecem ali.
 - ACULTA Studio Culturas é a experiência de organizadores: composição de fluxos do owner `aculta_events`, para criar e gerir Eventos e seus componentes (Datas e Locais), usando Form API, Entity Access e moderação existentes. Não cria entidade, formulário de persistência, permissão ou catálogo duplicado.
@@ -29,21 +29,21 @@ O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas
 - Escritas só são aceitas no purpose `eventos` através de rotas canônicas da experiência. O domínio `account` pode linkar para ela, mas não pode fazer POST nem gravar conteúdo de Eventos. Não introduzir proxy de escrita, alias de rota ou redirect de compatibilidade.
 - As telas públicas de Eventos continuam no purpose `eventos`. Outros domínios podem compor exibição somente leitura de Eventos publicados e acessíveis, sempre com link canônico de Eventos e sem expor Eventos privados do LMS.
 - Esta decisão substitui qualquer texto anterior que diga que todo trabalho editorial de Eventos só pode ocorrer no MAIN ou que o purpose `eventos` é exclusivamente público. O painel de administração permanece no MAIN; a área do organizador é a exceção explícita e separada em ACULTA Studio Culturas.
-- A implementação atual é parcial: dashboard, formulários de Evento/Data/Local e configuração de papéis existem em `aculta_events`. Não declarar a experiência homologada antes de executar os testes no HEAD e validar purpose, autorização, acessibilidade e navegação no Runtime.
+- A implementação atual é parcial: dashboard, formulários de Evento/Data/Local e configuração de papéis existem em `aculta_events`. Não declarar a experiência homologada antes de validar purpose, autorização, acessibilidade, navegação e submissões no Runtime.
 
-## Contrato futuro: Suites do ACULTA Studio por domínio (ADR-038)
+## Contrato vigente em implementação: Suites do ACULTA Studio por domínio (ADR-038)
 
-Cada Suite responde em seu próprio domínio/purpose e sob o caminho-base abaixo. O prefixo público `/studio` e todas as rotas `/studio/*` serão retirados e responderão 404, sem alias ou redirect. `aculta_studio` permanece como infraestrutura compartilhada de composição e registry, não como raiz de URL.
+Cada Suite responde em seu próprio domínio/purpose e sob o caminho-base abaixo. O prefixo público `/studio` e todas as rotas `/studio/*` foram retirados e respondem 404, sem alias ou redirect. `aculta_studio` permanece como infraestrutura compartilhada de composição e registry, não como raiz de URL.
 
 | Suite | Purpose | Host de produção | Host de teste | Caminho-base |
 | --- | --- | --- | --- | --- |
-| Marley | `account` | `conta.aculta.org` | `conta.aculta.toca.net.br` | `/marley` |
-| Ganjalab | `courses` | `cursos.aculta.org` | `cursos.aculta.toca.net.br` | `/ganjalab` |
-| WE SATIVA | `wiki` | `wiki.aculta.org` | `wiki.aculta.toca.net.br` | `/wesativa` |
-| Green Stash | `shop` | `loja.aculta.org` | `loja.aculta.toca.net.br` | `/greenstash` |
-| Culturas | `eventos` | `eventos.aculta.org` | `eventos.aculta.toca.net.br` | `/culturas` |
+| Marley | `account` | configurado no Domain | configurado no Domain | `/marley` |
+| Ganjalab | `courses` | configurado no Domain | configurado no Domain | `/ganjalab` |
+| WE SATIVA | `wiki` | `wiki.aculta.*` (após provisionamento) | Domain ativo `wiki420` até validação | `/wesativa` |
+| Green Stash | `shop` | configurado no Domain | configurado no Domain | `/greenstash` |
+| Culturas | `eventos` | configurado no Domain | configurado no Domain | `/culturas` |
 
-Manter Conta e Perfil como experiências diferentes, fora das Suites. A raiz de `conta` passa a uma página de entrada da Conta com navegação para Marley e links absolutos às outras Suites; não aponta internamente para `/studio`. A Conta legada continua em `/conta-legada`. Planejar caminhos `/conta/*`, `/perfil/*` e `/salvos` para absorver as rotas pessoais atuais, preservando owners e sem misturar dados.
+Manter Conta e Perfil como experiências diferentes, fora das Suites. A raiz de `conta` apresenta uma página de entrada da Conta e não reescreve para `/studio`. `/conta/*`, `/perfil/*` e `/salvos` preservam seus owners e dados separados; `/conta-legada` continua.
 
 Regras de implementação:
 - Rotas declaram o purpose correto e validam usuário, módulo owner e permissão no servidor. Purpose incorreto responde 404, inclusive POST. Links cross-domain são absolutos via `DomainPurposeManager`; não enviar POST/proxy de escrita entre purposes.
@@ -54,6 +54,6 @@ Regras de implementação:
 - Remover todas as rotas `/studio` e `/studio/*` após mover destinos. Sem redirects legados; canonical e links apontam diretamente aos novos hosts/caminhos.
 - Migrar links internos/externos, login/retorno, e-mail, notificações, sitemap, canonical, cache e testes. A troca de URL não transfere ownership de entidades, formulários, ACL ou workflows.
 
-Estado em 2026-10-30: decisão e plano aprovados; nenhum corte de rotas, configuração de domínio, DNS ou validação de Runtime é declarado por este documento.
+Estado em 2026-10-30: caminhos novos e rejeição global de `/studio*` implementados; Runtime testado após rebuild de cache. A URL gerada para Wiki ainda usa o Domain ativo `wiki420`; DNS, TLS/vhost/Deployer e homologação de `wiki.aculta.*` são bloqueios externos.
 
 Ao revisar rotas, trate ADR-038 como decisão vigente e consulte `docs/architecture/ROUTES-SITEMAP.md`.

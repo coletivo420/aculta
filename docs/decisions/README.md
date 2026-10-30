@@ -6,7 +6,7 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 
 ## ADRs
 
-- [ADR-038 — Suites do ACULTA Studio por domínio e remoção de `/studio`](ADR-038-aculta-studio-suites-por-dominio.md) — aceita; implementação planejada por fases.
+- [ADR-038 — Suites do ACULTA Studio por domínio e remoção de `/studio`](ADR-038-aculta-studio-suites-por-dominio.md) — aceita; paths e guards implementados em parte, homologação/host Wiki pendentes.
 
 - [ADR-037 — Descontinuação do tipo de conteúdo Atividade em favor de Eventos](ADR-037-descontinuacao-atividades-em-favor-de-eventos.md) — aceita; vigência imediata.
 

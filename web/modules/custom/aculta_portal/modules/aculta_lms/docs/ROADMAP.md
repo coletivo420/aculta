@@ -75,3 +75,11 @@ O provider `Group:lms_course` vive em `aculta_lms_resources`, junto das referên
 - Flow de checkout próprio do LMS, sem cálculo de frete (D-43); tipo de pedido `curso` e matrícula inalterados. Não compartilha o flow `default` da Loja.
 - Matrícula continua dependendo do pagamento concluído. CPF/CNPJ cadastrado não libera matrícula.
 - Política central implementada em `aculta_portal`; Unit da política e Kernel do pane passaram. Regressão de UX do checkout gratuito em Functional/Browser isolado e homologação Runtime ainda pendentes. Ver `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`.
+# ADR-038 — Suite Ganjalab no purpose Courses (2026-10-30)
+
+O dashboard de estudante agora usa `/ganjalab` no purpose `courses`; a rota
+antiga `/studio/ganjalab` foi removida. LMS permanece dono das matrículas,
+progresso, certificados e permissões. O host é o Domain ativo em cada
+ambiente. Testes de purpose incorreto para GET/POST/AJAX e homologação visual
+no Domain de Cursos continuam pendentes.
+

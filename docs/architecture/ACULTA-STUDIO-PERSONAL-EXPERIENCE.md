@@ -8,6 +8,11 @@
 > Documento atual:
 > [Conta e Perfil separados](ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
 
+> **Paths superados pela ADR-038 (2026-10-30):** todas as referências
+> `/studio/*` neste documento são históricas. O prefixo público foi removido;
+> Conta e Perfil usam `/conta/*` e `/perfil/*`, e as cinco Suites têm paths
+> próprios por purpose. Consulte [ADR-038](../decisions/ADR-038-aculta-studio-suites-por-dominio.md).
+
 
 ## STUDIO-P2-A — página de edição privada adicionada (dev.12)
 

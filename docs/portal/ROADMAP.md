@@ -4,6 +4,18 @@
 
 # Roadmap do aculta_portal
 
+## ADR-038 — mudança de caminhos das Suites (2026-10-30)
+
+Os caminhos públicos `/studio*` foram removidos; as rotas owner agora estão
+em `/marley` (`account`), `/ganjalab` (`courses`), `/wesativa` (`wiki`),
+`/greenstash` (`shop`) e `/culturas` (`eventos`). A raiz de Conta apresenta
+`/conta`; Perfil, salvos e Mercado Pago mantêm caminhos/owners separados.
+`DomainPurposeManager` gera URLs entre purposes. Config exportada de Conta
+aponta para `/conta`; não foi importada no Runtime. Permanecem pendentes os
+gates de consumo/documentação residual, autorização POST/AJAX integrada e
+homologação completa dos cinco Domains. O Domain Wiki ativo ainda é `wiki420`;
+DNS/TLS/vhost/Deployer de `wiki.aculta.*` são bloqueio externo.
+
 ## Inventário de helpers de imagem — 2026-10-29
 
 `PortalHelperRegistry` agora inclui `aculta_image.capabilities` e

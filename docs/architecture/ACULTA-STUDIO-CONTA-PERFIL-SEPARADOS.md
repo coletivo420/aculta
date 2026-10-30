@@ -1,6 +1,6 @@
 # ACULTA Studio — Minha Conta e Meu Perfil independentes
 
-**Contrato arquitetural vigente desde 2026-10-24.** Substitui o antigo
+**Contrato de ownership vigente; paths atualizados pela ADR-038 em 2026-10-30.** Substitui o antigo
 planejamento que agrupava Conta e Perfil em `/studio/pessoal` e a hipótese
 de retirar o legado. Entregas de código são distintas de homologação Runtime.
 
@@ -8,14 +8,14 @@ de retirar o legado. Entregas de código são distintas de homologação Runtime
 
 | Área | Entrada canônica | Dono dos dados | O que apresenta |
 | --- | --- | --- | --- |
-| Hub Studio | **`/` no Domain ACCOUNT** | `aculta_studio` | Catálogo autorizado; route ID `aculta_studio.hub`, caminho técnico `/studio` (404 em acesso direto) |
-| **Minha Conta Studio** | `/studio/conta` | Portal, Core User/Profile, Commerce, Auth | Cadastro, endereço, documentos, segurança, conexões, apoio, pedidos e preferências da conta |
-| **Meu Perfil Studio** | `/studio/perfil` | `aculta_user`, User/Profile, `aculta_image` | Nome público/apelido, foto, avatar, biografia, redes e visibilidade pública |
+| Entrada da Conta | **`/` e `/conta` no Domain ACCOUNT** | Portal + `aculta_studio` | Página própria da Conta, sem hub ou rewrite para `/studio` |
+| **Minha Conta** | `/conta` e filhos | Portal, Core User/Profile, Commerce, Auth | Cadastro, endereço, documentos, segurança, conexões, apoio, pedidos e preferências da conta |
+| **Meu Perfil** | `/perfil` e filhos | `aculta_user`, User/Profile, `aculta_image` | Nome público/apelido, foto, avatar, biografia, redes e visibilidade pública |
 | **Minha Conta legada — PERMANENTE** | **`/conta-legada` no Domain ACCOUNT** | `aculta_portal` e owners existentes | Shell, menus, AJAX e formulários atuais, sem alterações |
 | Perfil público | `/u/{apelido}` em MAIN | `aculta_user` e `PublicProfilePolicy` | Apenas informações autorizadas publicamente |
-| Marley | `/studio/marley` | Owners editoriais | Trabalho editorial |
-| Ganjalab | `/studio/ganjalab` | LMS | Aprendizagem |
-| WE SATIVA | `/studio/we-sativa` | Wiki | Contribuição |
+| Marley | `/marley` · `account` | Owners editoriais | Trabalho editorial |
+| Ganjalab | `/ganjalab` · `courses` | LMS | Aprendizagem |
+| WE SATIVA | `/wesativa` · `wiki` | Wiki | Contribuição |
 
 ### Garantia permanente do legado
 

@@ -153,8 +153,8 @@ principal não serve apoio.
 - Canonical do produto: sempre no host da loja (token absoluto da metatag, na requisição atual).
 - Deployer: `domain_transition.shop` em `web/modules/custom/aculta_portal/modules/aculta_deployer/config/deploy.json`.
 
-## Planejamento ADR-038 - Suites Studio distribuídas por purpose
+## ADR-038 - Suites Studio distribuídas por purpose (implementação em andamento)
 
-Marley em `account:/marley`, Ganjalab em `courses:/ganjalab`, WE SATIVA em `wiki:/wesativa`, Green Stash em `shop:/greenstash` e Culturas em `eventos:/culturas`. O módulo `aculta_studio` continua compartilhado; não haverá path público `/studio` ou `/studio/*`. A raiz de `account` será entrada da Conta, sem rewrite para Studio.
+Marley em `account:/marley`, Ganjalab em `courses:/ganjalab`, WE SATIVA em `wiki:/wesativa`, Green Stash em `shop:/greenstash` e Culturas em `eventos:/culturas`. Os paths e boundaries estão declarados; o módulo `aculta_studio` continua compartilhado e não publica `/studio` ou `/studio/*`. A raiz de `account` apresenta a entrada da Conta sem rewrite para Studio. As rotas nomeadas usam `DomainPurposeManager` para endereços absolutos; hosts não são codificados nas definições de rota.
 
-A tabela acima descreve hosts atuais. Wiki permanece configurada como `wiki420.aculta.*` até migração controlada para `wiki.aculta.*`, com Domain/Deployer, DNS, TLS/vhost e homologação. Ver [ADR-038](../decisions/ADR-038-aculta-studio-suites-por-dominio.md).
+A tabela acima descreve hosts atuais. Wiki permanece configurada como `wiki420.aculta.*`; `wiki.aculta.toca.net.br` não resolve no DNS e precisa de Domain/Deployer, DNS, TLS/vhost e homologação antes de qualquer corte. O host antigo permanece ativo. Ver [ADR-038](../decisions/ADR-038-aculta-studio-suites-por-dominio.md).

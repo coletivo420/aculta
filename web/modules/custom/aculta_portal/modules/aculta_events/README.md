@@ -1,5 +1,19 @@
 # ACULTA Eventos (`aculta_events`)
 
+## ACULTA Studio Culturas — caminhos de organizadores (ADR-038)
+
+A experiência de organizadores começa em `/culturas`, no purpose `eventos`.
+Criação/edição de Eventos e ferramentas de Datas/Locais continuam sob este
+módulo e reutilizam Entity Access, Form API, moderação e widgets existentes.
+Escritas só ocorrem no purpose `eventos`; a Conta pode linkar via
+`DomainPurposeManager`, sem proxy de POST. A administração privilegiada segue
+no MAIN em `/painel-administrativo/eventos`. `/studio/culturas` e todos os
+demais `/studio/*` foram removidos sem alias.
+
+As rotas iniciais de organizador estão implementadas. Access por rota, POST em
+purpose incorreto e integração Drupal Dialog/AJAX ainda precisam de validação
+de integração/kernel antes da homologação da jornada.
+
 ## Contrato obrigatório para campos de endereço
 
 Por decisão D-54/D-55 do responsável, toda captura/edição de endereço de

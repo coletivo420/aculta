@@ -355,9 +355,9 @@ A conclusão técnica de E4 não fecha esta experiência editorial. O gate de co
 
 ## Experiência de organizadores — ACULTA Studio Culturas (ADR-035)
 
-## ACULTA Studio Culturas — decisão de produto e domínio (2026-10-30)
+## ACULTA Studio Culturas — decisão e implementação parcial (2026-10-30)
 
-O nome aprovado é **ACULTA Studio Culturas**, em `/culturas` no purpose `eventos`; a raiz geral do Studio em `account` pode oferecer link absoluto pelo `DomainPurposeManager`, sem escrita cruzada. O código desta experiência está parcialmente implementado na branch auditada; rota no Runtime e homologação ainda não são declaradas.
+O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota inicial `/culturas` e rotas auxiliares estão declaradas no purpose `eventos`; o host é escolhido pelo DomainPurposeManager. A entrada da Conta pode apresentar apenas link para essa experiência, sem escrita cross-domain. `/studio/culturas` foi removida conforme ADR-038.
 
 - A sessão administrativa técnica continua no domínio principal, em `/painel-administrativo/eventos`, restrita a administradores. Configuração global de permissões, auditoria e operações administrativas permanecem ali.
 - ACULTA Studio Culturas é a experiência de organizadores: composição de fluxos do owner `aculta_events`, para criar e gerir Eventos e seus componentes (Datas e Locais), usando Form API, Entity Access e moderação existentes. Não cria entidade, formulário de persistência, permissão ou catálogo duplicado.
@@ -393,4 +393,4 @@ RSVP obrigatório ou opcional; limite por pessoa e prevenção de duplicidade; c
 
 ## Rota da Suite Culturas - ADR-038
 
-LOC-06 passa a acompanhar código implementado e gates de integração pendentes para ACULTA Studio Culturas em `/culturas` no purpose `eventos`. Não criar alias. Testes e homologação continuam pendentes no HEAD auditado.
+LOC-06 passa a acompanhar código implementado e gates de integração pendentes para ACULTA Studio Culturas em `/culturas` no purpose `eventos`. Não criar alias. Rota e dashboard têm implementação inicial; atualizar consumidores e validar permissões por operação, POST incorreto, Dialog/AJAX e navegação antes da homologação. O painel administrativo continua no MAIN.

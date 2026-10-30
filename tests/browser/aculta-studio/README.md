@@ -1,6 +1,6 @@
 # Revisão visual e de navegação do ACULTA Studio
 
-Suíte no Firefox ESR visível na sessão X11 local (`DISPLAY=:0`), pelo geckodriver (WebDriver W3C e BiDi). Não usar headless para validação. Confere a seção "Estúdio" no menu da conta, as abas e o painel, a navegação AJAX
+Suíte no Firefox ESR visível na sessão X11 local (`DISPLAY=:0`), pelo geckodriver (WebDriver W3C e BiDi). Não usar headless para validação. Confere a navegação da Suite Marley, as abas e o painel, a navegação AJAX
 (troca de aba sem recarregar a página), `aria-current`, largura de 320 a 1440 px emulada pelo BiDi, contraste claro/escuro,
 navegação por teclado, ausência de rolagem horizontal e de erros de JavaScript.
 Também confere a composição vertical/horizontal em 320/360/390/599/600/767/768/1024/1280/1440px.
@@ -162,7 +162,7 @@ Matriz de casos e critérios:
 
 ## OCS-F0 — baseline comparativo
 
-O script `ocs-baseline.py` captura, com Firefox ESR visível, a homepage pública e, por padrão, as entradas de Studio `/studio`, `/marley`, `/ganjalab`, `/wesativa`, `/conta`, `/perfil`, `/greenstash` e `/conta/mercado-pago/planos`. Requer `DISPLAY=:0`, `SUITE_OUT` fora do repositório e Drush local apontando para `aculta_runtime`; usa perfil temporário em `$SUITE_OUT/profiles`. `STUDIO_PAGE` limita a uma URL customizada; `STUDIO_ROUTES` aceita uma lista separada por vírgulas. Imagens e JSON ficam em `$SUITE_OUT`. `OCS_WIDTHS=320,360,390,599,600,768,1024,1280,1440` captura a grade completa do gate; sem essa variável, o modo rápido usa 1440/390 px. Se ULI falhar, a tentativa vai a `baseline-deferred.json` e preserva a última execução bem-sucedida em `baseline.json`. O screenshot público não representa dashboard autenticado OpenCulturas; rotas com indicação de acesso negado ou sem captura são parciais, não PASS.
+O script `ocs-baseline.py` captura, com Firefox ESR visível, a homepage pública e, por padrão, a entrada da Conta, Marley, Ganjalab, WE SATIVA, Conta, Perfil, Green Stash, Culturas e planos Mercado Pago. Para cada Suite resolve a URL no Domain ativo por `DomainPurposeManager::environmentPathUrl()`; não assume que paths de Suites diferentes funcionem no host da Conta. Requer `DISPLAY=:0`, `SUITE_OUT` fora do repositório e Drush local apontando para `aculta_runtime`; usa perfil temporário em `$SUITE_OUT/profiles`. `STUDIO_PAGE` limita a uma URL customizada; `STUDIO_ROUTES` aceita URLs completas ou caminhos no host `STUDIO_LOGIN_URI`. Imagens e JSON ficam em `$SUITE_OUT`. `OCS_WIDTHS=320,360,390,599,600,768,1024,1280,1440` captura a grade completa do gate; sem essa variável, o modo rápido usa 1440/390 px. Se ULI falhar, a tentativa vai a `baseline-deferred.json` e preserva a última execução bem-sucedida em `baseline.json`. A captura autentica somente a conta de teste e não homologa a operação do novo host Wiki.
 
 Execução de referência no servidor de desenvolvimento:
 
@@ -179,15 +179,11 @@ Também registra classes de `body`, marcadores `data-aculta-studio` e conta a
 Institution Bar/Domain Header. Cada captura exige exatamente um de cada; uma
 ausência, duplicação ou rota não capturada faz a suíte terminar com erro.
 `ACULTA_ROOT` pode apontar para o checkout servido quando o script é executado
-em outra worktree; Drush e o helper WebDriver são carregados desse checkout. A
-captura expandida posterior completou as oito rotas em 1440/390 (18 imagens
-incluindo a homepage); a tentativa anterior bloqueada no ULI permanece em
-`baseline-deferred.json`. A captura revelou `/studio` vazio, `/ganjalab`
-renderizando Minha Conta em vez do dashboard LMS esperado e `/estudio/loja`
-negado para a conta sintética sem permissão. Marley, WE Sativa, Conta, Perfil e
-Planos Mercado Pago renderizaram. Ausência de overflow foi observada apenas nas
-rotas/estados e larguras capturados. Essas evidências não aceitam MF3, WCAG,
-todas as larguras ou paridade visual do Studio.
+em outra worktree; Drush e o helper WebDriver são carregados desse checkout. A captura comparativa anterior encontrou o hub `/studio` vazio e rotas de
+Suite no purpose errado; esses caminhos foram aposentados por ADR-038. A
+execução mais recente fica em `$SUITE_OUT/baseline.json`; estados negados são
+parciais, não PASS. Ausência de overflow vale somente para rotas/estados e
+larguras realmente capturados, e não aceita MF3, WCAG ou paridade visual.
 
 ### THEME-MF0 — shell nas raízes dos dez purposes (2026-10-30)
 

@@ -328,7 +328,7 @@ Evidência: `EventDomainBoundaryKernelTest`, testes do `ContentPurposeResolver`/
 
 ## ACULTA Studio Culturas — decisão de produto e domínio (2026-10-30)
 
-O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota canônica é `/culturas`, atendida no purpose `eventos` (host eventos configurado pelo DomainPurposeManager); `/studio/culturas` não é rota-alvo. A entrada geral do Studio em `account` poderá apenas apresentar um link absoluto para essa experiência.
+O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota canônica `/culturas` está no purpose `eventos`; `/studio/culturas` foi removida. A rota e o dashboard inicial constam no código, mas a Suite completa permanece parcial. O host vem do DomainPurposeManager. A entrada da Conta pode apresentar apenas link absoluto para essa experiência, sem escrita cross-domain.
 
 - A sessão administrativa técnica continua no domínio principal, em `/painel-administrativo/eventos`, restrita a administradores. Configuração global de permissões, auditoria e operações administrativas permanecem ali.
 - ACULTA Studio Culturas é a experiência de organizadores: composição de fluxos do owner `aculta_events`, para criar e gerir Eventos e seus componentes (Datas e Locais), usando Form API, Entity Access e moderação existentes. Não cria entidade, formulário de persistência, permissão ou catálogo duplicado.
@@ -338,4 +338,4 @@ O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas
 - Esta decisão substitui qualquer texto anterior que diga que todo trabalho editorial de Eventos só pode ocorrer no MAIN ou que o purpose `eventos` é exclusivamente público. O painel de administração permanece no MAIN; a área do organizador é a exceção explícita e separada em ACULTA Studio Culturas.
 - Estado: decisão aprovada e implementação parcial presente na PR #299. Autorização/domínio precisam de validação integrada; Runtime e homologação visual permanecem pendentes.
 
-LOC-06 acompanha a implementação parcial de ACULTA Studio Culturas em `/culturas` no purpose `eventos`, mantendo configuração e administração privilegiada no MAIN. A composição já contém operações de Evento/Data/Local e seleção/cadastro contextual de Local em popup Drupal/AJAX; `aculta_events` segue como único owner. Faltam gates listados na tabela LOC-06/08, portanto não declarar a fase homologada.
+LOC-06 acompanha a implementação parcial de ACULTA Studio Culturas em `/culturas` no purpose `eventos`, mantendo configuração e administração privilegiada no MAIN. A composição já contém operações de Evento/Data/Local e seleção/cadastro contextual de Local em popup Drupal/AJAX; `aculta_events` segue como único owner. Faltam gates listados na tabela LOC-06/08, incluindo validar acesso por purpose, submissões e Dialog/AJAX; portanto não declarar a fase homologada.

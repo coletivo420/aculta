@@ -1,6 +1,6 @@
 # ACULTA Studio — plataforma transversal de interfaces próprias
 
-## ADR-038 - caminho aprovado para as Suites (implementação futura)
+## ADR-038 - caminho aprovado para as Suites (implementação parcial, 2026-10-30)
 
 Marley `conta.aculta.*/marley`; Ganjalab `cursos.aculta.*/ganjalab`; WE SATIVA `wiki.aculta.*/wesativa`; Green Stash `loja.aculta.*/greenstash`; Culturas `eventos.aculta.*/culturas`. `/studio` e todo `/studio/*` serão removidos e responderão 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `conta` será entrada de Conta, fora de `/studio`; Conta e Perfil permanecem separados. As referências de rota anteriores neste arquivo descrevem o estado pré-migração e não são destino para implementação nova. Consulte ADR-038.
 
@@ -8,10 +8,11 @@ Marley `conta.aculta.*/marley`; Ganjalab `cursos.aculta.*/ganjalab`; WE SATIVA `
 
 O restante deste documento inclui descrições das rotas anteriores à ADR-038. Leia-as como histórico/estado pré-migração; não como padrão para novas implementações.
 
-## Contrato atual de identidade — substitui a antiga experiência pessoal
+## Contrato anterior de identidade — caminhos substituídos pela ADR-038
 
-O Studio mantém **Minha Conta** (`/studio/conta`) e **Meu Perfil**
-(`/studio/perfil`) como providers independentes; não há experiência
+O Studio mantinha **Minha Conta** (`/studio/conta`) e **Meu Perfil**
+(`/studio/perfil`) como providers independentes; esses caminhos agora são
+`/conta` e `/perfil` sem unir os dois owners. Não há experiência
 `pessoal` ou aliases. Conta incorpora serviços de cadastro, segurança
 e pedidos do Portal. Perfil administra exclusivamente identidade
 comunitária por componentes do User e não incorpora dados cadastrais.

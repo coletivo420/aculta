@@ -1,12 +1,14 @@
 # ACULTA Studio — contrato de identidade e rotas
 
-## ADR-038 - caminho aprovado para as Suites (implementação futura)
+## ADR-038 - caminhos canônicos e estado atual (implementação parcial)
 
 Marley `conta.aculta.*/marley`; Ganjalab `cursos.aculta.*/ganjalab`; WE SATIVA `wiki.aculta.*/wesativa`; Green Stash `loja.aculta.*/greenstash`; Culturas `eventos.aculta.*/culturas`. `/studio` e todo `/studio/*` serão removidos e responderão 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `conta` será entrada de Conta, fora de `/studio`; Conta e Perfil permanecem separados. As referências de rota anteriores neste arquivo descrevem o estado pré-migração e não são destino para implementação nova. Consulte ADR-038.
 
 ## Histórico pré-ADR-038
 
-As referências de path no restante deste arquivo registram o estado anterior ao contrato acima.
+As referências de path no restante deste arquivo registram o estado anterior ao contrato acima. Não use `/studio/*` como destino de novas implementações.
+
+Estado verificado em 2026-10-30: os cinco paths canônicos e as rotas de Conta, Perfil, salvos e Mercado Pago estão declarados no código; `/studio` e as rotas antigas respondem 404 após rebuild. A raiz de `account` serve a entrada da Conta. O Domain da Wiki permanece `wiki420`; `wiki.aculta.*` depende de Domain/Deployer, DNS, TLS/vhost e homologação. Consulte a correspondência completa em [ADR-038](../decisions/ADR-038-aculta-studio-suites-por-dominio.md).
 
 ## Contrato histórico — Studio dev.18, Portal dev.30 e User dev.74
 

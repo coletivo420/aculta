@@ -3,7 +3,7 @@
 Regra uniforme, implementada em `src/Domain/FrontPathPolicy.php` e aplicada por `DomainPurposeRequestSubscriber`:
 
 1. A raiz de cada subdomínio serve o conteúdo da sua finalidade (`PurposeFrontPathProcessor::FRONT_PATHS`).
-2. O caminho interno da raiz (ex.: `/apoio`, `/wiki`, `/cursos`, `/loja`, `/discussoes`, `/redes-sociais`, `/eventos`) **não é público**. Requisição direta responde **404**, em qualquer método, sem redirecionamento 301. Exceção: `/conta` é também a rota pública canônica da entrada de Conta. O caminho antigo `/forum` permanece fechado durante a retirada do módulo contribuído.
+2. O caminho interno da raiz (ex.: `/apoio`, `/wiki`, `/cursos`, `/loja`, `/discussoes`, `/redes-sociais`, `/eventos`) **não é público**. Requisição direta responde **404**, em qualquer método, sem redirecionamento 301. Exceções canônicas: `/conta` abre a entrada da Conta; as Suites têm seus caminhos próprios somente no purpose declarado pelo ADR-038. `/studio` e todas as rotas `/studio/*` são 404 para todos os métodos.
 3. Caminho de outra finalidade responde 404 (wrong-purpose público, ver `ADMIN-DOMAIN-POLICY.md`).
 4. Redirecionamentos 301 ficam só para caminhos legados listados abaixo. Não se cria 301 para slug novo.
 
@@ -34,18 +34,18 @@ Qualquer outro 301 novo é regressão, a menos que esta lista seja atualizada co
 - `canonical_url` e `og_url` das raízes usam `[site:url]` (ou a raiz do host, para página de finalidade). Endereço de produção não aparece em sobreposição por domínio: o gate `validate-domain-front-paths` confere.
 - JSON-LD de organização e site: o endereço principal vem do ambiente (`aculta_deployer`); no teste, `settings.local.php` define os valores.
 
-## Suites do ACULTA Studio por domínio - destino ADR-038 (planejado)
+## Suites do ACULTA Studio por domínio - ADR-038 (implementação em andamento)
 
-A regra atual da raiz continua descrevendo o Runtime existente até o corte. As rotas abaixo passam a ser válidas somente no purpose correto; não são redirects da raiz. Atualizar `FrontPathPolicy` e o gate para validar estas exceções.
+As rotas abaixo estão declaradas no código e respondem somente no purpose correto; não são redirects da raiz. A validação automatizada de métodos/purposes continua pendente para todos os fluxos protegidos.
 
 | Host de teste | Purpose | Suite/path permitido | Purpose errado |
 | --- | --- | --- | --- |
 | `conta.aculta.toca.net.br` | `account` | Marley `/marley` e filhas | 404 |
 | `cursos.aculta.toca.net.br` | `courses` | Ganjalab `/ganjalab` e filhas | 404 |
-| `wiki.aculta.toca.net.br` | `wiki` | WE SATIVA `/wesativa` e filhas | 404 |
+| `wiki420.aculta.toca.net.br` (Domain ativo) | `wiki` | WE SATIVA `/wesativa` e filhas | 404 |
 | `loja.aculta.toca.net.br` | `shop` | Green Stash `/greenstash` e filhas | 404 |
 | `eventos.aculta.toca.net.br` | `eventos` | Culturas `/culturas` e filhas | 404 |
 
-A raiz `conta` passa a ser entrada da Conta, resolvida para a rota `/conta`; esse caminho também é público diretamente. Não há reescrita para `/studio`; `/studio` e `/studio/*` retornam 404, sem alias/redirect. Conta e Perfil usam `/conta/*` e `/perfil/*`; `/salvos`, planos de Mercado Pago e `/conta-legada` permanecem separados. A Wiki ainda usa `wiki420.aculta.toca.net.br`; não trocar até provisionar Domain/Deployer, DNS, TLS/vhost e homologar `wiki.aculta.toca.net.br`.
+A raiz `conta` apresenta entrada da Conta, resolvida pela rota `/conta`; esse caminho também é público. Não há reescrita para `/studio`; `/studio` e `/studio/*` retornam 404, sem alias/redirect. Conta e Perfil usam `/conta/*` e `/perfil/*`; `/salvos`, planos de Mercado Pago e `/conta-legada` permanecem separados. O Domain `wiki` ainda usa `wiki420.aculta.toca.net.br`: `wiki.aculta.toca.net.br` não resolve no DNS e não pode ser declarado ativo até provisionar Domain/Deployer, DNS, TLS/vhost e homologação.
 
-A tabela de runtime acima continua sendo estado presente até o corte. Esta seção documenta o destino aprovado, não prova mudança de host/rota.
+O cache de rotas no Runtime foi reconstruído em 2026-10-30 e o site respondeu HTTP 200 na raiz MAIN e na entrada de Conta; `/studio` respondeu 404. Isso não homologa o novo host Wiki.

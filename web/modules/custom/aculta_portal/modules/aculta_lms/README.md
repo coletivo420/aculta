@@ -1,5 +1,13 @@
 # ACULTA LMS
 
+## ACULTA Studio Ganjalab (ADR-038)
+
+The student dashboard is canonically `/ganjalab` in the Domain purpose
+`courses`. Its legacy `/studio/ganjalab` path is removed and must return 404;
+the account purpose does not serve this Suite. Keep course/LMS ownership,
+enrollment and access checks in LMS. Cross-purpose links must use
+`DomainPurposeManager`.
+
 Os Kernels LMS agregados passam com 29 testes / 835 assertions no banco
 dedicado. `AcultaLmsDependencyHarnessTrait` registra somente as classes reais
 de Portal, Messenger, LMS e Studio necessárias para compilar os cenários

@@ -1,6 +1,6 @@
 # ADR-038 - Suites do ACULTA Studio distribuídas por domínio
 
-- **Status:** Aceita; implementação em andamento. A tabela abaixo registra o contrato de migração; rotas e hosts só passam a constar como ativos após validação no Runtime.
+- **Status:** Aceita; paths e bloqueio das rotas antigas implementados; homologação e host Wiki pendentes. Só declarar host ou fluxo como operacional após validação no ambiente correspondente.
 - **Data:** 2026-10-30.
 - **Decisor:** responsável pelo produto.
 - **Contexto:** As experiências do Studio estão concentradas no host `conta` sob `/studio/*`, apesar de pertencerem a domínios funcionais distintos.
@@ -64,3 +64,12 @@ Os destinos abaixo preservam os IDs de rota quando possível e movem a URL para 
 | `/` no purpose `account` | entrada da Conta via front do purpose | Não aponta ao Studio; `/conta-legada` permanece |
 
 Os nomes de host não são parte das rotas: links absolutos entre purposes devem ser gerados pelo `DomainPurposeManager`. O propósito `wiki` conserva o Domain ativo `wiki420` até que `wiki.aculta.*` seja provisionado e validado em DNS, TLS, vhost/Deployer e HTTP.
+
+## Estado da execução (2026-10-30)
+
+- **Implementado no código:** caminhos das cinco Suites; rotas separadas de Conta, Perfil, salvos e Mercado Pago; raiz do purpose `account` como entrada da Conta; bloqueio global de `/studio` e `/studio/*` sem alias/redirect. A configuração exportada de front path da Conta aponta para `/conta`.
+- **Verificado no servidor de desenvolvimento:** após rebuild de cache, `/studio` e amostras de `/studio/*` responderam 404; a matriz de GET/POST retornou 404 nos purposes errados; os caminhos canônicos resolveram no purpose correto. A rota Culturas autenticada foi validada em Firefox depois da correção publicada em `95314a5a7`.
+- **Não concluído:** auditoria integral dos consumidores residuais, testes Kernel POST/AJAX em `aculta_simpletest`, grants/fluxos completos das Suites, validação de escrita para loja/eventos e homologação dos cinco Domains.
+- **Bloqueio externo da Wiki:** o Domain instalado continua `wiki420`; `wiki.aculta.toca.net.br` não resolve no DNS deste ambiente e nenhum TLS/vhost do host novo foi validado. Domain/Deployer, DNS, certificado TLS, proxy/vhost/CDN e smoke em ambiente controlado precisam ser provisionados antes de trocar/desativar `wiki420`.
+
+Os commits de implementação e correção de Culturas estão publicados na branch da PR #299. Os detalhes e saídas dos comandos da sessão devem ficar no registro operacional, distinguindo validação local de homologação externa.
