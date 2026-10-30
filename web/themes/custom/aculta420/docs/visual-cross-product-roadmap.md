@@ -588,6 +588,15 @@ Sidebar e conteúdo usam uma coluna como base e retomam a composição horizonta
 em 768px; o smoke do Hub injeta CSS candidata e cobre 767/768px. Firefox e
 Runtime DEFERRED. Isso não fecha a fidelidade OCS-F11 nem o gate global MF3.
 
+### OCS-F2 — distinção das abas Studio (2026-10-30)
+
+O CSS existente diferencia `.studio__tabs` e `.studio__subtabs` a partir do
+tratamento de abas primárias/secundárias do OpenCulturas Next. A composição usa
+wrap desde a base móvel e segue restrita ao Studio; links, ordem DOM, registry e
+ACL permanecem no contrato atual. Lint CSS e Design Foundations passaram. A
+captura autenticada e a comparação integral dos consumers Studio seguem
+DEFERRED; OCS-F2 não está homologada.
+
 ### THEME-MF2 — composição institucional mobile-first (2026-10-29)
 
 CTAs do hero e as grades institucionais/detalhes agora declaram primeiro o

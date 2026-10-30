@@ -109,6 +109,12 @@ permissões e cache continuam no Portal/UGC.
 Studio. O mobile usa coluna única como base e recupera a sidebar lateral em
 `48rem`; nenhum SDC paralelo ou novo contrato foi criado.
 
+Na navegação interna, `.studio__tabs` e `.studio__subtabs` preservam os links e
+estados autorizados existentes. A apresentação distingue áreas primárias de
+abas secundárias no padrão OpenCulturas Next; ambas quebram linha na base
+mobile, sem criar navegação ou destinos adicionais. A revisão autenticada do
+consumer e a comparação pareada permanecem pendentes (OCS-F2 parcial).
+
 `content/editorial-card` mantém os slots e o consumer atuais; altura mínima e
 padding compactos são a base, com composição ampla em `48.0625rem`. A validação
 visual do consumer real `node--editorial-highlight` segue pendente.

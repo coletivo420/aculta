@@ -1021,3 +1021,15 @@ tema aponta para a mesma norma. Ela formaliza base 320 CSS px, aprimoramento
 progressivo, escopo de todos os purposes, preservação dos dois headers,
 ownership, evidência Firefox e linguagem `PASS`/`DEFERRED`. A norma não altera
 o status de THEME-MF0–MF3, que segue parcial até os gates transversais reais.
+
+### OCS-F2 — abas internas do Studio (2026-10-30)
+
+A base de `.studio__tabs.nav` e `.studio__subtabs.nav` permanece horizontal com
+quebra de linha, espaçamento compacto e sem largura fixa; estilos de tela larga
+não mudam a ordem DOM nem os destinos. A distinção visual entre áreas primárias
+e abas secundárias foi adaptada dos estilos `templates/navigation/tabs.scss` do
+OpenCulturas 3.1.5 e está confinada ao CSS Studio. `git diff --check`, lint CSS
+e Design Foundations passaram. Não houve captura de consumer autenticado nem
+teste de interação em Runtime nesta microfase; OCS-F2 continua parcial e essa
+verificação está DEFERRED. A norma mobile-first global continua obrigatória
+para cada purpose; esta alteração focal não declara THEME-MF3 aprovado.

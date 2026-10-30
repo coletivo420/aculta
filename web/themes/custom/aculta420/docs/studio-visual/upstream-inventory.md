@@ -48,6 +48,21 @@ confirmou abas, contraste e navegação em Marley, mas não compara a experiênc
 com dashboard autenticado upstream nem cobre todas as telas; F1 permanece
 parcial.
 
+### OCS-F2 — navegação interna do Studio (implementação parcial)
+
+`templates/navigation/tabs.scss` do pacote 3.1.5 diferencia `.tabs` primárias
+das `.tabs.secondary`: as primeiras usam indicador inferior discreto por link;
+as secundárias usam cor de link e indicador de página ativa mais espesso. O tema
+adapta esse padrão nos seletores existentes `.studio__tabs` e `.studio__subtabs`,
+com tokens `--aculta-studio-fidelity-*`, flex-wrap como base mobile e contraste
+compatível nos modos claro/escuro. A navegação permanece composta por links
+comuns autorizados do Studio; nenhum destino, rota, registry ou SDC foi criado.
+
+`npm run lint:css` e `validate-aculta420-design-foundations.php` passaram após a
+adaptação. A captura Firefox autenticada do consumer local, a validação de links
+e estados em todas as experiências Studio e a comparação pareada com o upstream
+permanecem pendentes; F2 não está homologada.
+
 ## Referências visuais e limites
 
 O site público `www.openculturas.org/en` usa a folha de estilo exata que acompanha o pacote e serve como referência verificável da linguagem visual geral. A captura do site não equivale a uma instalação limpa, porque há CSS agrupado e asset injector próprio. A página autenticada do dashboard OpenCulturas não foi disponibilizada para esta auditoria; sua estrutura foi mapeada pelo `user-dashboard-views.scss`, sem afirmar equivalência pixel-perfect.
