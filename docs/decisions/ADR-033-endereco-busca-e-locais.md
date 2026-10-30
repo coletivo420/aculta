@@ -54,3 +54,15 @@ Precisamos distinguir o preenchimento por CEP, que é infraestrutura comum do Po
 - `aculta_events` é dono da entidade Local, seu cadastro, ciclo editorial, permissões e vínculo com Events/Activity. `aculta_maps` consome a mesma entidade e seus dados autorizados para mapa, geocodificação e links; não cria entidade ou cadastro paralelo de Local.
 - Os contratos entre módulos devem ser explícitos por serviços/contratos neutros. Maps não deve depender de detalhes internos de formulário de Events, e Events não deve duplicar geocodificação/renderização de Maps.
 - Critérios do popup: foco inicial e retorno ao acionador, fechamento por controles e Escape conforme padrão Drupal, navegação por teclado, erros acessíveis, loading/empty state, proteção contra submissão duplicada e persistência do formulário pai em rebuild/error AJAX.
+
+
+## Aditivo: Eventos como centro editorial de Datas e Locais (2026-10-30)
+
+- A gestão editorial de eventos é centralizada em Eventos. aculta_event_date continua sendo uma entidade interna do modelo Evento > Data > Local, mas não deve ser apresentada como conteúdo independente nem como uma tarefa separada “Adicionar data de evento”.
+- Na criação do Evento, o formulário deve permitir organizar uma ou mais datas e associar um Local a cada uma. Na edição, a pessoa administra datas, horários e Locais dentro do contexto do Evento.
+- A interface administrativa lista Eventos como unidade de trabalho. Ações de criar, editar ou remover datas ficam dentro do Evento correspondente; não deve haver item de menu, botão global ou formulário de conteúdo que inicie uma Data sem o contexto do Evento.
+- Rotas técnicas de Data, se necessárias internamente, devem receber o Evento de origem e validar no servidor o acesso de criação/edição ao Evento e à Data. Não podem funcionar como operação editorial autônoma. Acesso direto sem contexto autorizado deve ser negado; rotas aposentadas seguem a política sem aliases/redirects temporários.
+- O popup Drupal/AJAX de Local é iniciado a partir da edição da Data dentro do Evento e retorna a referência ao mesmo contexto, preservando os dados ainda não salvos do Evento e da Data.
+- A administração poderá configurar no painel de Eventos os papéis autorizados a criar Eventos e Locais. O padrão é content_editor; a configuração não substitui autorização de servidor nem deve conceder publicação automaticamente.
+
+Este aditivo complementa os itens anteriores que citavam Activity ou formulários de Data avulsos. Para a interface atual, o fluxo centralizado em Eventos prevalece; o modelo de entidades e o contrato de privacidade permanecem.
