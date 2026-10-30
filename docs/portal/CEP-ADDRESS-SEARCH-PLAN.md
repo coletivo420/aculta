@@ -12,19 +12,14 @@ da funcionalidade futura descrita neste plano.
 
 ## Objetivo
 
-Estender futuramente o `aculta_portal_cep` para localizar candidatos a partir
-do nome de uma rua/logradouro e permitir que a pessoa escolha um resultado para
-preencher os campos postais do formulário central. A busca por logradouro deve ser apresentada somente nos fluxos de Events e Maps. Conta e checkout mantêm a consulta atual por CEP, sem busca por logradouro.
+Estender futuramente `aculta_portal_cep` com um serviço postal de candidatos por rua/logradouro. A interface e ativação dessa busca ficam restritas aos fluxos de Events e Maps. Conta e checkout mantêm a consulta atual por CEP, sem busca por logradouro. O componente central continua responsável pela captura do endereço; o consumidor controla se a busca restrita é apresentada.
 
 ## Arquitetura obrigatória
 
 - `aculta_portal` continua dono do único formulário completo de endereço
   (`AccountAddressForm`) e dos adaptadores para entidades. Nenhum módulo cria
   uma segunda Form API, widget completo ou cliente de CEP.
-- `aculta_portal_cep` continua dono dos serviços/clientes de consulta postal e
-  da biblioteca de preenchimento. A futura busca pelo nome da rua será uma
-  capacidade adicional compartilhada desse módulo, consumida pelo formulário
-  central. A consulta CEP → endereço que já existe continua disponível.
+- `aculta_portal_cep` continua dono do serviço de CEP existente e da biblioteca de preenchimento. Uma futura API postal por logradouro pode ser implementada no módulo, mas sua interface será habilitada exclusivamente nos contextos de Events/Maps. Conta e checkout não a consomem.
 - `aculta_events` mantém os dados de local/evento; `aculta_maps` consome esses
   dados e oferece renderização/geocodificação conforme seus contratos. Maps
   não passa a armazenar endereço nem a manter uma interface postal paralela.
@@ -44,10 +39,7 @@ preencher os campos postais do formulário central. A busca por logradouro deve 
   `aculta_portal_cep`, com normalização, resultados limitados, erros claros,
   timeouts, cache e limites de consulta. Separar a busca por nome de rua da
   consulta por CEP já existente e do serviço de coordenadas de `aculta_maps`.
-3. **Integração do formulário:** apresentar candidatos de forma acessível no
-   formulário central, permitir seleção explícita e preencher apenas os
-   subcampos postais correspondentes. Não salvar automaticamente nem sobrescrever
-   silenciosamente número, complemento ou valores que a pessoa já digitou.
+3. **Integração contextual:** apresentar candidatos de forma acessível apenas nos fluxos de Events/Maps, permitindo seleção explícita e preenchendo somente subcampos postais. Não salvar automaticamente nem sobrescrever número, complemento ou valores digitados. Não mostrar o controle na Conta ou checkout.
 4. **Consumidores:** implementar a interface somente em Events e Maps, reutilizando formulário/adaptador central e serviço. Não ativar em Conta, checkout ou outros consumidores. A UI de busca por logradouro é específica desses contextos, não um comportamento global do formulário.
 5. **Validação e ativação:** cobrir testes de serviço e interface, cache,
    privacidade, erros/timeouts, acessibilidade por teclado/leitor de tela,
@@ -61,8 +53,7 @@ preencher os campos postais do formulário central. A busca por logradouro deve 
 - Limites, timeout, cache e proteção contra enumeração/abuso definidos.
 - Plano de testes de não sobrescrita, teclado, mensagens de erro e ausência de
   JavaScript aprovado.
-- Nenhuma alteração nos modelos de local/evento ou no armazenamento da Conta
-  necessária para apresentar a busca.
+- Integração opt-in apenas para Events/Maps. A implementação não pode exigir alteração do armazenamento da Conta/checkout nem mudar sua UI atual.
 
 Até esses critérios serem satisfeitos, a busca por nome de rua deve permanecer
 fora da UI e não deve ser anunciada como funcionalidade. A consulta atual por
