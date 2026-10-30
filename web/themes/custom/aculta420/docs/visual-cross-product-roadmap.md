@@ -440,6 +440,12 @@ A captura visível MAIN/320 de 2026-10-30 quebra o H1 entre palavras, mantendo
 não se reproduziu. Conteúdo autenticado, formulários e fluxos funcionais não
 foram exercitados. Detalhes e Pede-A em `mobile-first-audit.md`.
 
+A rota pública Magazine `/noticias` foi testada separadamente em nove larguras:
+mostra H1 e texto editorial, sem overflow, mas não publica rows da View
+`aculta-news` nem comprova consumer de entidade `revista`. A raiz vazia e a
+página estática são estados distintos; o owner deve confirmar a expectativa da
+listagem. Capturas e limites no registro MF0.
+
 ### THEME-MF1 — fundação global inicial
 
 Adicionados tokens mobile-first para gutter, largura máxima e espaçamento

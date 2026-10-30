@@ -404,6 +404,12 @@ Esse baseline não valida os nove commits locais ainda não publicados, páginas
 internas, usuários autenticados ou THEME-MF3; detalhes, Pede-A e evidências em
 [`mobile-first-audit.md`](mobile-first-audit.md).
 
+Como complemento, a rota pública Magazine `/noticias` foi capturada em nove
+larguras no Firefox visível: 9/9 completas, H1/texto editorial presentes e sem
+overflow. A rota é uma página comum, não uma publicação `revista`; a View de
+notícias não retornou cards. A raiz segue vazia. Capturas em
+`/home/piradopirata/aculta-suite-out/aculta-revista-noticias-20261030/`.
+
 ### THEME-MF2 — Revista e Estatísticas
 
 As figuras editoriais da Revista e os filtros do painel de Estatísticas usam
@@ -416,6 +422,14 @@ No artigo da Revista, texto, resumo e metadados também usam composição legív
 desde 320px: alinhamento à esquerda e padding reduzido como base, com
 justificação editorial e espaçamento amplo a partir de 576px. O conteúdo do
 SDC `revista-publication` mantém a mesma ordem e os mesmos slots.
+
+Firefox ESR visível confirmou a fixture editorial em 22/22 checks nas onze
+larguras de 320 a 1440px, incluindo a transição 575/576px e ausência de
+overflow. As capturas de 320/1440 foram inspecionadas. A folha CSS atual e a
+referência remota têm o mesmo blob; não há mudança a atribuir a esta comparação,
+que não substitui consumer/artigo real, acessibilidade ou THEME-MF3. Evidências
+em `/home/piradopirata/aculta-suite-out/revista-article-current-20261030/` e
+limites em [`mobile-first-audit.md`](mobile-first-audit.md).
 
 O SDC `patterns/card` mantém as variantes atuais e aceita também
 `data-card-variation="compact"` emitido pelo contrato neutro do Portal; nenhuma

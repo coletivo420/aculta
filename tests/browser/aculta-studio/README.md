@@ -246,6 +246,10 @@ ESR visível (`DISPLAY=:0`), `SUITE_OUT` externo e hosts do servidor de
 Desenvolvimento. O purpose ACCOUNT pode redirecionar ao login; isso não é
 contornado e não representa Conta/Studio autenticado ou Green Stash autorizado.
 O script não cria conteúdo nem submete forms; os artefatos ficam fora do Git.
+`OCS_EXTRA_ROUTES` aceita rotas adicionais no formato
+`purpose=https://host-do-purpose/caminho;...`; o script rejeita hosts diferentes
+dos dez hosts conhecidos. `OCS_EXTRA_ROUTES_ONLY=1` roda somente essas rotas,
+com nomes de PNG distintos pelo path, sem repetir as raízes padrão.
 
 **Snapshot THEME-MF0 de 2026-10-29:** as dez raízes canônicas foram
 capturadas anonimamente nos nove viewports (90/90 páginas concluídas, sem
@@ -271,6 +275,14 @@ e “ANTIPROIBICIONISTA” inteiro, sem overflow. PNG/JSON em
 O docroot estava no HEAD remoto `3c1691fc5`; a worktree tinha nove commits
 locais adicionais. Portanto a execução atualiza o baseline remoto, não valida
 esses commits locais, páginas internas, áreas autenticadas nem THEME-MF3.
+
+**Rota extra Magazine `/noticias` (2026-10-30):** o modo de rotas adicionais
+capturou a página em nove larguras (9/9, sem overflow). É um node Page público
+com H1 “Notícias” e conteúdo editorial institucional; a View `aculta-news` não
+renderizou rows. 320/1440 foram inspecionados visualmente. Artefatos em
+`/home/piradopirata/aculta-suite-out/aculta-revista-noticias-20261030/`.
+Essa rota não altera a evidência de que a raiz da Revista tem a View vazia nem
+constitui teste de um node `revista`.
 
 ### Execução pós-MF1/OCS-F1 e content-grid (2026-10-29)
 

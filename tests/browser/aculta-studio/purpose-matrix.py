@@ -30,6 +30,24 @@ PURPOSES = [
     ("links", "https://links.aculta.toca.net.br"),
     ("eventos", "https://eventos.aculta.toca.net.br"),
 ]
+KNOWN_HOSTS = {purpose: urlparse(url).hostname for purpose, url in PURPOSES}
+EXTRA_ROUTES = []
+for item in os.environ.get("OCS_EXTRA_ROUTES", "").split(";"):
+    item = item.strip()
+    if not item:
+        continue
+    if "=" not in item:
+        raise SystemExit("OCS_EXTRA_ROUTES usa purpose=https://host/path;...")
+    purpose, url = item.split("=", 1)
+    parsed = urlparse(url)
+    if purpose not in KNOWN_HOSTS or parsed.scheme != "https" or parsed.hostname != KNOWN_HOSTS[purpose]:
+        raise SystemExit(f"Rota extra deve usar o host HTTPS conhecido do purpose: {item}")
+    EXTRA_ROUTES.append((purpose, url))
+if len({(purpose, urlparse(url).path) for purpose, url in EXTRA_ROUTES}) != len(EXTRA_ROUTES):
+    raise SystemExit("OCS_EXTRA_ROUTES contém rotas repetidas para o mesmo purpose/path")
+if os.environ.get("OCS_EXTRA_ROUTES_ONLY") == "1" and not EXTRA_ROUTES:
+    raise SystemExit("OCS_EXTRA_ROUTES_ONLY=1 requer ao menos uma OCS_EXTRA_ROUTES")
+ROUTES = ([] if os.environ.get("OCS_EXTRA_ROUTES_ONLY") == "1" else PURPOSES) + EXTRA_ROUTES
 
 
 def set_viewport(driver, width, height):
@@ -63,7 +81,8 @@ def capture(driver, purpose, url, width):
 const d=document.documentElement,b=document.body;
 return JSON.stringify({url:location.href,title:document.title,width:innerWidth,height:innerHeight,documentWidth:d.clientWidth,documentScrollWidth:d.scrollWidth,bodyScrollWidth:b.scrollWidth,scrollHeight:d.scrollHeight,bodyClasses:Array.from(b.classList),institutionBar:!!document.querySelector('.aculta-institution-bar'),domainHeader:!!document.querySelector('.aculta-header'),h1:Array.from(document.querySelectorAll('h1'),x=>x.innerText.trim()).slice(0,5),bodyText:b.innerText.slice(0,160),readyState:document.readyState});
 """))
-    name = f"{purpose}-{width}.png"
+    route_suffix = urlparse(url).path.strip("/").replace("/", "-")
+    name = f"{purpose}-{route_suffix + '-' if route_suffix else ''}{width}.png"
     shot = driver.req("GET", f"/session/{driver.session}/screenshot")
     (OUT / name).write_bytes(base64.b64decode(shot))
     info.update({"purpose": purpose, "requestedUrl": url, "screenshot": name})
@@ -77,7 +96,7 @@ def main():
     driver = Driver(bidi=True)
     records = []
     try:
-        for purpose, url in PURPOSES:
+        for purpose, url in ROUTES:
             for width in WIDTHS:
                 try:
                     records.append(capture(driver, purpose, url, width))

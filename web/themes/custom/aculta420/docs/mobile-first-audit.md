@@ -401,13 +401,29 @@ alterações locais não publicadas. O teste do SDC author-card acima é exceç�
 focal: seus dois arquivos CSS foram comparados por blob e coincidem com a
 worktree.
 
+### Rota interna da Revista — `/noticias` (2026-10-30)
+
+O sitemap público aponta `/noticias` como rota da Revista. A execução adicional
+de `purpose-matrix.py` com `OCS_EXTRA_ROUTES_ONLY=1` capturou essa URL em nove
+viewports: 9/9 completos, zero overflow. A tela é uma página pública comum com
+H1 “Notícias” e texto sobre as iniciativas de comunicação da Associação; a
+View `aculta-news` não renderizou rows de publicações. Isso demonstra uma tela
+editorial legível, mas não substitui um consumer de entidade `revista`. As
+capturas 320/1440 foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/aculta-revista-noticias-20261030/`.
+
+O `Pede-A` abaixo fica restrito à expectativa da raiz/listagem: confirmar se a
+View vazia em `/` é intencional e fornecer uma entidade `revista` publicada
+como fixture caso publicações devam aparecer. A página estática `/noticias` já
+é um estado distinto e visível; não criar conteúdo no tema.
+
 ### Pede-A — composição do Domain Header por purpose
 
 | Owner/caminho | Contrato e pergunta técnica | Aceite esperado |
 |---|---|---|
 | Domain/Portal; composição de `DomainPresentationBuilder`, tema `templates/page.html.twig` e attachments por purpose | A captura Firefox de 2026-10-30 fez 90/90 verificações nas dez raízes e nove larguras: `.aculta-header` aparece somente em MAIN e Wiki (18/90), embora Institution Bar apareça em todos (90/90). A decisão vigente exige preservar os dois elementos em todos os purposes. | Atualizar o contrato dono do shell e testar raízes e páginas internas dos dez purposes com Institution Bar e Domain Header exatamente uma vez; sem workaround visual no tema. |
 | `aculta_portal/src/Presentation/DomainPresentationBuilder.php`, `src/Hook/PortalHooks.php`, contrato `DomainPresentation` e integração de purpose/rotas | `DomainPresentationBuilder` hoje expõe `show_site_header` apenas para Wiki e homepage MAIN; Twig só renderiza o boolean recebido. A regra funcional, disponibilidade, links e dados permanecem no Portal, não no tema. Hosts devem derivar de `DomainPurposeManager`/`aculta_deployer`, incluindo MAGAZINE e a migração Alpha→`production_host`; nunca fixar URLs de teste. | Pede-A: ajustar o contrato no Portal, com cache contexts/tags/max-age e testes para todos os 10 purposes, roots e páginas internas; Firefox valida ambos os headers sem duplicação nos test hosts e no host Alpha/produção configurado. A Frente B não altera services, rotas nem regra funcional do Portal. |
-| Owner `aculta_magazine`: View `revista_sessoes`/homepage editorial e seus dados publicados | Em 2026-10-30, `/` respondeu com título do documento “Observatório da Maconha Coletivo 420”, classe `page-view-revista-sessoes`, sem H1 nem conteúdo no body além do rodapé, nas nove larguras. Não se pode atribuir a ausência de artigos ao CSS nem presumir se é ausência de conteúdo publicado ou configuração/ACL da View. | Pede-A: confirmar rows publicadas e acesso da View; fornecer cenário de teste com artigo publicado e cenário vazio com heading/empty state acessível. Testar ambos em 320/390/768/1440px, preservando ACL, cache e markup do owner. A Frente B não inventa conteúdo nem altera a View no tema. |
+| Owner `aculta_magazine`: View `revista_sessoes`/homepage editorial e seus dados publicados | Em 2026-10-30, `/` respondeu sem H1 ou corpo além do rodapé em nove larguras. O sitemap inclui `/noticias`, página pública comum com H1/texto, mas sem rows da View `aculta-news`; não foi comprovado consumer de entidade `revista`. | Pede-A: confirmar se a raiz/listagem vazia é intencional e fornecer uma entidade `revista` publicada como fixture se a listagem deve mostrar publicações. Testar estado preenchido e vazio em 320/390/768/1440px, preservando ACL, cache e markup do owner. A página `/noticias` existente deve permanecer distinta; a Frente B não inventa conteúdo nem altera Views no tema. |
 | `aculta_portal/modules/aculta_user/src/Controller/ReportQueueController.php` | Resolvido após a microfase da Revista: o controller emite `forum-report-queue` e `forum-report-pager`; o tema mapeia as classes. ACL, pager, conteúdo e cache seguem no owner. | Unit controller 3/13 e PortalUiHooks 12/83 PASS; `validate-module-theme-boundary.php` PASS (3418 verificações). |
 
 ### THEME-MF2 — Institution Bar integrada em todos os dez domains (2026-10-29)
@@ -741,8 +757,9 @@ homologação do painel real e THEME-MF3 permanece pendente.
 `min-width: 36rem` as larguras pequenas/padrão e os modelos larga/destaque
 centralizados. A regra móvel redundante para o subtítulo foi removida. A
 alteração foi commitada em `e40c39265`. O lint CSS foi executado posteriormente
-na raiz correta do tema e PASS; não houve ainda comparação Firefox nem revisão
-visual do consumer real, que seguem DEFERRED.
+na raiz correta do tema e PASS. A comparação Firefox da fixture está registrada
+abaixo; a revisão visual do artigo real segue pendente porque a homepage da
+Revista não expôs conteúdo editorial nesta rodada.
 
 ### THEME-MF2 — leitura e metadados do artigo da Revista (2026-10-29)
 
@@ -754,9 +771,20 @@ os contratos do módulo permanecem iguais. O smoke reutilizável
 `tests/browser/aculta-theme-mobile-first/revista-article-layout.py` compara
 baseline/candidato em 320–1440px e mede alinhamento, padding, ordem e overflow.
 Lint CSS, schema SDC, Design Foundations, sintaxe Python e `git diff --check`
-PASS. Execução Firefox segue DEFERRED enquanto `DISPLAY` estiver vazio e
-sessões geckodriver concorrentes estiverem ativas. Não homologa artigo real nem
-THEME-MF3.
+PASS na execução original. O Firefox daquela rodada ficou DEFERRED por DISPLAY
+ausente e sessões concorrentes; a revalidação posterior está abaixo. Nenhuma
+fixture homologa artigo real ou THEME-MF3.
+
+**Revalidação Firefox ESR visível (2026-10-30):**
+`revista-article-layout.py` comparou o CSS de `origin/refactor/opencultures-codigo-visual`
+com o CSS atual da worktree em 320/360/390/575/576/599/600/768/1024/1280/1440px.
+22/22 checks passaram: estilo esperado mobile até 575px, editorial amplo desde
+576px, ordem de conteúdo estável e `scrollWidth` igual ao viewport. Os blobs da
+folha comparada são idênticos; o teste confirma os contratos calculados e não
+prova alteração visual nem substitui consumer editorial real. Capturas em
+`/home/piradopirata/aculta-suite-out/revista-article-current-20261030/`;
+320/1440 foram inspecionadas. Teclado, zoom real, tema claro/escuro e WCAG AA
+continuam sem cobertura nesta fixture.
 
 ### THEME-MF2 — SDC editorial-card
 
