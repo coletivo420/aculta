@@ -66,6 +66,6 @@ CEP continua sendo a única busca postal disponível. Consulte também
 
 - A consulta CEP → endereço existente continua sendo o comportamento padrão compartilhado. Este plano não altera o endpoint, cliente ou experiência de Conta/checkout.
 - A busca por logradouro/endereço é exclusivamente uma capacidade de Events/Maps, ainda sem provedor aprovado ou implementação disponível. Resultados próximos devem ser retornados por AJAX e selecionados explicitamente; nunca salvar automaticamente um candidato.
-- No cadastro de Local iniciado em `/node/add/activity`, abrir modal Drupal/AJAX com CEP como primeiro campo e reutilizar `AccountAddressForm`/adaptador e `aculta_portal_cep/cep-address`. Busca por logradouro só pode aparecer nesse fluxo de Events e em Maps.
+- Conforme ADR-037, a rota legada `/node/add/activity` foi aposentada com HTTP 404 em favor de `aculta_events`. No cadastro de Local em Eventos (`/painel-administrativo/eventos/locais/adicionar` ou modal de eventos), abrir modal Drupal/AJAX com CEP como primeiro campo e reutilizar `AccountAddressForm`/adaptador e `aculta_portal_cep/cep-address`. Busca por logradouro só pode aparecer nesse fluxo de Events e em Maps.
 - A interface de Local deve permitir pesquisar Locais existentes por nome, selecionar um deles ou abrir o cadastro de novo Local. O fluxo pai mantém valores e referência durante rebuilds AJAX.
 - Ver [ADR-033](../decisions/ADR-033-endereco-busca-e-locais.md) e o [plano LOC](../architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md).
