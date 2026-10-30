@@ -6,7 +6,10 @@ progress_note: >-
   idempotentes de nós legados de Activity para EventLocation com deduplicação por nome e CEP,
   update hook 10012, CLI scripts/migrate-activity-locations.php e testes de Kernel dedicados
   (ActivityLocationMigrationKernelTest: 3 testes/79 asserções PASS). Gestão editorial de Eventos,
-  Datas e Locais centralizada no MAIN sob /painel-administrativo/eventos, com reordenação AJAX,
-  modal de Locais em 2 etapas com CEP primeiro (#weight = -50) e país exclusivamente BR.
-  Suíte Kernel completa: 85 testes / 1476 asserções PASS.
-next_phase: "Homologação de ponta a ponta em navegador real Firefox ESR visível dos novos fluxos de cadastro e seleção de Locais."
+  Datas e Locais disponível a administradores no MAIN e parcialmente a organizadores em
+  ACULTA Studio Culturas (`/culturas`, purpose eventos). O código inclui dashboard, criação inicial
+  de Datas no Evento, gestão contextual em popup Drupal/AJAX, modal de Local em 2 etapas com CEP
+  primeiro e país exclusivamente BR, além de seleção de papéis de criação. O HEAD auditado contém
+  testes focalizados, mas esta revisão documental não os executou. A ativação/homologação Runtime
+  de Culturas e a validação visual integrada continuam pendentes.
+next_phase: "Executar os gates Kernel no HEAD consolidado e homologar no Runtime Firefox ESR: acesso por purpose, dashboard, Evento/Datas, popup de Local, papéis, teclado, mobile e estado do formulário pai."
