@@ -162,7 +162,7 @@ Entrada: F3 concluída.
 - [x] Allowlist do `source_uri` do embed (E5, commit `7985bc36f`). Rota `/calendario/incorporar` entregue em `224c3925e`, com o purpose `eventos` ativo no servidor de teste.
 - [x] Validador (R1) e expansão de série na janela (R2) da recorrência (commits `5f3b61ee7`, `1caa5fc7d`).
 - [x] Interface da recorrência (M4, commit `b9144b142`): regra da série em `/eventos/datas/{data}/recorrencia` e edição de uma ocorrência em `/eventos/datas/{data}/ocorrencia/{inicio}` (cancelar, reagendar, restaurar), só para `administer aculta events`. A página do evento liga as duas ações só para administradores e varia o cache por permissões (commit `c4919bbb3`).
-- [x] E4 (D-28): formulário administrativo de nova data em `/painel-administrativo/eventos/datas/adicionar`; preenche somente referência a evento com acesso de atualização autorizado. Kernel cobre editor, usuário comum, ID inexistente e rascunho não editável.
+- [x] E4 (D-28): existe uma capacidade técnica de criação de Data pré-preenchida a partir de um Evento, com autorização para a referência. **Isso não representa a UX final**: Data não deve ser tarefa editorial independente. A centralização da gestão de Datas no contexto do Evento permanece pendente na seção “Centralização administrativa de Eventos e Datas” abaixo.
 - [x] Incorporação por iframe em `/calendario/incorporar`, com `Content-Security-Policy: frame-ancestors` explícito (lista dos hosts `*.aculta.org` e `*.aculta.toca.net.br`) e `noindex` no ambiente de teste (commit `224c3925e`).
 - [x] Smoke visual em `1280`, `390` e `320` px reais na lista de eventos, na página de evento, na agenda, na grade do mês, no dia e na incorporação, com modo escuro: `tests/browser/eventos/agenda-embed.mjs`, 126 ok, 3 ignoradas e 0 falhas (EV-M4, commit `e33636144`). O mapa depende de local com coordenadas (ignorado sem uma).
 - [x] Calendário também no `main` (D6): agenda, mês, dia, `.ics`, embed e visão interativa; canonical do purpose `eventos` pelo ACULTA Deployer no ambiente ativo. Runtime de teste: seis rotas HTTP 200 nos dois hosts, canonical único, sitemap lista apenas a URL canônica de `eventos`. Código: `9800e0d62`.
@@ -315,3 +315,17 @@ Contrato normativo: [ADR-033](../../../../../../../docs/decisions/ADR-033-endere
 ### Requisito visual do fluxo de Local: popup Drupal
 
 O seletor de Local e o cadastro devem ser popups modais do Drupal sobre o formulário de Activity, com AJAX. Não implementar como campos expandidos inline ou página separada. A entidade/cadastro pertence a Events; Maps consome os mesmos Locais autorizados e não mantém cadastro paralelo. O popup de cadastro tem o CEP como primeiro campo. O popup deve preservar o estado do pai, retornar a referência após confirmação e atender foco, teclado, Escape, mensagens acessíveis e estados de carregamento/erro/vazio.
+
+
+## Centralização administrativa de Eventos e Datas (decisão 2026-10-30)
+
+Evento é a unidade editorial e administrativa. aculta_event_date permanece uma entidade interna do modelo Evento > Data > Local, mas não deve aparecer como conteúdo independente nem como fluxo separado de “Adicionar data de evento”.
+
+- [ ] Na criação de Evento, permitir configurar uma ou mais Datas e associar um Local a cada uma.
+- [ ] Na edição do Evento, administrar suas Datas, horários e Locais dentro do próprio contexto do Evento.
+- [ ] Remover da navegação e do painel ações globais para adicionar Data sem partir de um Evento.
+- [ ] Eliminar os links que abrem um formulário de Data como tela editorial independente. Se uma rota técnica for necessária, ela só pode ser usada dentro do fluxo do Evento, com Evento de origem explícito, autorização no servidor e acesso direto sem contexto negado.
+- [ ] Abrir o popup Drupal/AJAX de Local no contexto da Data do Evento e preservar os valores não salvos de Evento e Data.
+- [ ] Configurar no painel de Eventos os papéis autorizados a criar Eventos e Locais, mantendo content_editor como padrão inicial e aplicando a regra também em submissões diretas.
+
+A conclusão técnica de E4 não fecha esta experiência editorial. O gate de conclusão exige ausência de criação/listagem de Datas como tarefas independentes e administração integral a partir do Evento.
