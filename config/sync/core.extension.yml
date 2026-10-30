@@ -1,10 +1,15 @@
 _core:
   default_config_hash: 4GIX5Esnc_umpXUBj4IIocRX7Mt5fPhm4AgXfE3E56E
 module:
+  aculta_calendar: 0
   aculta_commerce: 0
+  aculta_commerce_melhorenvio: 0
+  aculta_content_admin: 0
   aculta_editor: 0
   aculta_donation: 0
   aculta_document_viewer: 0
+  aculta_events: 0
+  aculta_events_openstreetmap: 0
   aculta_faq: 0
   aculta_forum: 0
   aculta_forum_lms: 0
@@ -15,11 +20,14 @@ module:
   aculta_index: 0
   aculta_image: 0
   aculta_lms: 0
+  aculta_lms_agenda: 0
   aculta_lms_h5p: 0
+  aculta_lms_messenger: 0
   aculta_links: 0
   aculta_lms_resources: 0
   aculta_magazine: 0
   aculta_mailer: 0
+  aculta_maps: 0
   aculta_messenger: 0
   aculta_pagamentos_mercadopago: 0
   aculta_patcher: 0
@@ -27,8 +35,10 @@ module:
   aculta_portal_cep: 0
   aculta_portal_sitemap: 0
   aculta_qrcode: 0
+  aculta_secrets_manager: 0
   aculta_statistics: 0
   aculta_studio: 0
+  aculta_ugc: 0
   aculta_user: 0
   aculta_wiki: 0
   address: 0
@@ -104,6 +114,7 @@ module:
   fraction: 0
   freelinking: 0
   gnode: 0
+  geofield: 0
   group: 0
   google_tag: 0
   help: 0
