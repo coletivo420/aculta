@@ -1,0 +1,59 @@
+library	css_asset_count	js_asset_count	dependencies	literal_reference_count	reference_type	source_file	line
+aculta420/album-slideshow	1	1	core/drupal|core/once	1	extension default library	web/themes/custom/aculta420/aculta420.info.yml	11
+aculta420/bootstrap-icons	1	0		0	—	—	—
+aculta420/editorial-carousel	1	1	core/drupal|core/once	1	Twig attach_library	web/themes/custom/aculta420/templates/views-view-vvjb.html.twig	3
+aculta420/editorial-content	1	0		2	Twig attach_library	web/themes/custom/aculta420/templates/node--revista--full.html.twig	3
+aculta420/editorial-content	1	0		2	Twig attach_library	web/themes/custom/aculta420/components/patterns/quote/quote.twig	1
+aculta420/global	41	5	bootstrap/bootstrap|bootstrap/global-styling|aculta420/bootstrap-icons|core/drupal|core/once|core/drupal.displace	1	extension default library	web/themes/custom/aculta420/aculta420.info.yml	10
+aculta420/messenger-drawers	3	1	core/drupal|core/drupal.dialog|core/once|bootstrap/bootstrap	2	Twig attach_library	web/themes/custom/aculta420/components/patterns/messenger-trigger/messenger-trigger.twig	5
+aculta420/messenger-drawers	3	1	core/drupal|core/drupal.dialog|core/once|bootstrap/bootstrap	2	Twig attach_library	web/themes/custom/aculta420/components/patterns/alerts-trigger/alerts-trigger.twig	8
+aculta420/messenger-notices	1	0		1	extension default library	web/themes/custom/aculta420/aculta420.info.yml	12
+aculta420/revista-listing	1	0		1	Twig attach_library	web/themes/custom/aculta420/templates/node--revista--teaser.html.twig	2
+aculta_calendar/agenda	1	0	core/drupal	2	render-array/library	web/modules/custom/aculta_portal/modules/aculta_calendar/src/Controller/AgendaController.php	138
+aculta_calendar/agenda	1	0	core/drupal	2	render-array/library	web/modules/custom/aculta_portal/modules/aculta_calendar/src/Controller/AgendaController.php	209
+aculta_calendar/dhtmlx	3	2	core/drupal|core/drupalSettings	1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_calendar/src/Controller/InteractiveController.php	99
+aculta_commerce_melhorenvio/shipping-calculator	1	1	core/drupal|core/once	1	literal-reference	web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Hook/ShippingCalculatorThemeHooks.php	17
+aculta_document_viewer/aculta_document_viewer_doc	0	1	core/drupal|core/once	1	literal-reference	web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Docx/DocxViewerBuilder.php	30
+aculta_document_viewer/aculta_document_viewer_pdf	0	1	core/drupal	1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Pdf/PdfViewerBuilder.php	233
+aculta_document_viewer/aculta_document_viewer_sheet	1	1	core/drupal|core/once	1	literal-reference	web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Spreadsheet/SpreadsheetViewerBuilder.php	30
+aculta_forum/ckeditor5.attachment	0	1	core/ckeditor5|core/drupal.ajax|core/drupal.dialog.ajax|entity_embed/entity_embed	1	literal-reference	web/modules/custom/aculta_portal/modules/aculta_forum/src/Plugin/CKEditor5Plugin/ForumAttachment.php	24
+aculta_forum/discussion-progress	0	1	core/drupal|core/once	2	render-array/library	web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/ForumPostThreadBuilder.php	74
+aculta_forum/discussion-progress	0	1	core/drupal|core/once	2	render-array/library	web/modules/custom/aculta_portal/modules/aculta_forum/src/Hook/DiscussionProgressHooks.php	31
+aculta_forum/forum-post-history	0	1	core/jquery|core/once|core/drupal|history/api	1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/ForumPostThreadBuilder.php	76
+aculta_gallery/ckeditor5.create	0	1	core/ckeditor5|core/drupal.ajax|core/drupal.dialog.ajax|entity_embed/entity_embed	1	literal-reference	web/modules/custom/aculta_portal/modules/aculta_gallery/src/Plugin/CKEditor5Plugin/CreateGallery.php	28
+aculta_image/ckeditor5.image_model	0	1	core/ckeditor5|core/ckeditor5.image|ckeditor5/internal.drupal.ckeditor5.image	0	—	—	—
+aculta_links/micropagina	1	0		1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_links/src/Controller/LinkPagePublicController.php	265
+aculta_lms/admin_toolbar_icon	1	0		1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/AdminToolbarIconHooks.php	26
+aculta_magazine/revista-form	0	1	core/drupal|core/once	1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/RevistaFormHooks.php	49
+aculta_mailer/admin	1	0		2	render-array/library	web/modules/custom/aculta_portal/modules/aculta_mailer/src/Controller/MailLogListController.php	119
+aculta_mailer/admin	1	0		2	render-array/library	web/modules/custom/aculta_portal/modules/aculta_mailer/src/Controller/MailDashboardController.php	417
+aculta_maps/map	2	2	core/drupal|core/drupalSettings	1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_maps/src/MapRenderer.php	74
+aculta_pagamentos_mercadopago/checkout_popup	0	1	core/drupal|core/once	1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_pagamentos_mercadopago/src/PluginForm/Checkout/RedirectCheckoutForm.php	393
+aculta_pagamentos_mercadopago/checkout_pro_review	0	1	core/drupalSettings|core/drupal|core/jquery|core/once|aculta_pagamentos_mercadopago/mp_sdk	0	—	—	—
+aculta_pagamentos_mercadopago/mp_sdk	0	1		0	—	—	—
+aculta_patcher/admin	1	0		1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_patcher/src/Entity/AcultaPatchListBuilder.php	25
+aculta_portal/account-navigation	0	1	core/drupal|core/once	2	render-array/library	web/modules/custom/aculta_portal/src/Hook/PortalHooks.php	487
+aculta_portal/account-navigation	0	1	core/drupal|core/once	2	render-array/library	web/modules/custom/aculta_portal/src/AccountShellBuilder.php	107
+aculta_portal/account-password-modal	0	1	core/drupal|core/once|core/drupal.dialog	2	render-array/library	web/modules/custom/aculta_portal/src/Hook/FormHooks.php	240
+aculta_portal/account-password-modal	0	1	core/drupal|core/once|core/drupal.dialog	2	render-array/library	web/modules/custom/aculta_portal/src/Controller/SimplifiedAccountPasswordController.php	58
+aculta_portal/account-terms-modal	0	1	core/drupal|core/once|core/drupal.dialog	1	render-array/library	web/modules/custom/aculta_portal/src/Hook/AcultaUserAgreementHooks.php	77
+aculta_portal/cart-status	0	1	core/drupal|core/once	1	literal-reference	web/modules/custom/aculta_portal/src/Cart/AddToCartAjax.php	74
+aculta_portal/integration-popup	0	1	core/drupal|core/once	2	render-array/library	web/modules/custom/aculta_portal/modules/aculta_events_openstreetmap/src/Controller/OpenStreetMapStatusController.php	59
+aculta_portal/integration-popup	0	1	core/drupal|core/once	2	render-array/library	web/modules/custom/aculta_portal/modules/aculta_commerce/modules/aculta_commerce_melhorenvio/src/Controller/MelhorEnvioStatusController.php	71
+aculta_portal/search-preview	0	1	core/drupal|core/once	5	render-array/library	web/modules/custom/aculta_portal/src/Search/Form/SearchPopupForm.php	44
+aculta_portal/search-preview	0	1	core/drupal|core/once	5	render-array/library	web/modules/custom/aculta_portal/modules/aculta_messenger/src/Hook/MessengerBarHooks.php	133
+aculta_portal/search-preview	0	1	core/drupal|core/once	5	render-array/library	web/modules/custom/aculta_portal/modules/aculta_wiki/src/Hook/WikiSearchAssetsHooks.php	25
+aculta_portal/search-preview	0	1	core/drupal|core/once	5	render-array/library	web/modules/custom/aculta_portal/modules/aculta_wiki/src/Controller/WikiController.php	129
+aculta_portal/search-preview	0	1	core/drupal|core/once	5	render-array/library	web/modules/custom/aculta_portal/modules/aculta_wiki/src/Presentation/WikiSearchFormBuilder.php	40
+aculta_portal_cep/cep-address	0	1	core/drupal|core/drupalSettings|core/once	1	literal-reference	web/modules/custom/aculta_portal/src/Account/AccountAddressForm.php	25
+aculta_secrets_manager/secrets-tabs	1	1	core/drupal|core/once	1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_secrets_manager/src/Controller/SecretsController.php	80
+aculta_statistics/consent	0	1	core/drupal|core/once	1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_statistics/src/Hook/ConsentBannerHooks.php	50
+aculta_statistics/dashboard	1	0		1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_statistics/src/Controller/StatisticsDashboardController.php	109
+aculta_statistics/wiki-read	0	1	core/drupal|core/once	1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_statistics/src/Hook/WikiReadHooks.php	32
+aculta_studio/navigation	0	1	core/drupal|core/drupal.ajax|core/once	1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php	52
+aculta_user/account-bio-form	0	1	core/drupal|core/once|core/drupal.dialog	2	render-array/library	web/modules/custom/aculta_portal/modules/aculta_user/src/Form/SocialLinkForm.php	73
+aculta_user/account-bio-form	0	1	core/drupal|core/once|core/drupal.dialog	2	render-array/library	web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AccountBioForm.php	70
+aculta_user/photo-flow	0	1	core/drupal|core/once|core/drupal.ajax|core/drupal.dialog.ajax	4	render-array/library	web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/PhotoEditorHooks.php	71
+aculta_user/photo-flow	0	1	core/drupal|core/once|core/drupal.ajax|core/drupal.dialog.ajax	4	render-array/library	web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/PhotoEditorHooks.php	94
+aculta_user/photo-flow	0	1	core/drupal|core/once|core/drupal.ajax|core/drupal.dialog.ajax	4	render-array/library	web/modules/custom/aculta_portal/modules/aculta_user/src/Hook/PhotoFlowPageHooks.php	37
+aculta_user/photo-flow	0	1	core/drupal|core/once|core/drupal.ajax|core/drupal.dialog.ajax	4	render-array/library	web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php	109

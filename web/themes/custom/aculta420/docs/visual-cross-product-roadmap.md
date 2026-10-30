@@ -13,6 +13,14 @@ purposes e comportamento renderizado segue parcial; não altera o status de
 THEME-MF0 nem aprova THEME-MF3. Evidência e limites em
 [`mobile-first-audit.md`](mobile-first-audit.md).
 
+**Rastreio adicional THEME-MF0 (2026-10-30):** o inventário estático de
+bibliotecas customizadas registra 42 definições e 54 referências literais em
+2.474 fontes. Ele confirma ligações específicas da Revista (teaser, artigo,
+citações e carrossel) e do Studio (navegação Marley), além da biblioteca global
+do tema. Não prova execução condicional nem completa a matriz rota/purpose; veja
+[`theme-library-consumer-inventory.tsv`](theme-library-consumer-inventory.tsv)
+e as limitações detalhadas em `mobile-first-audit.md`.
+
 ## Green Stash na frente visual Studio - correção inicial (superada)
 
 Este registro preserva uma retificação intermediária que foi corrigida pelo

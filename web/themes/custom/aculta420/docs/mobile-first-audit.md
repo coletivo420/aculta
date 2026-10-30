@@ -414,6 +414,30 @@ Esta tabela não é evidência de cobertura homologada. Cada purpose ainda exige
 inventário de biblioteca anexada por controller/View/form, estados vazio/erro/
 sucesso/carregando e capturas em navegador visível.
 
+### THEME-MF0 — anexação literal de bibliotecas e consumers (2026-10-30)
+
+O scanner `scripts/audit-aculta420-library-consumers.php` correlaciona as
+definições das bibliotecas customizadas com referências literais em arquivos de
+código, templates e SDCs fora de diretórios de teste/documentação. A saída
+versionada [`theme-library-consumer-inventory.tsv`](theme-library-consumer-inventory.tsv)
+registra 42 libraries customizadas, 54 referências literais em 2.474 arquivos
+de fonte e seus CSS/JS declarados, dependências, arquivo e linha do consumer.
+É possível regenerá-la com `php scripts/audit-aculta420-library-consumers.php
+--write`; a execução padrão escreve TSV em stdout para comparação reproduzível.
+
+O rastreio confirmou, por exemplo, que `aculta420/global` é declarada como
+biblioteca default do tema (41 assets CSS e 5 JS); `revista-listing` é anexada
+ao teaser de `revista`; `editorial-content` aparece no template de artigo e no
+SDC de citação; `editorial-carousel` é anexada pelo template de View; e
+`aculta_studio/navigation` é anexada pelo controller Marley. Isso identifica
+owners e pontos de ligação relevantes para revisar escopo global e telas da
+Revista/Studio, mas **não prova que cada caminho condicional foi renderizado**,
+nem associa automaticamente cada consumer a uma rota/purpose. Referências
+construídas dinamicamente, dependências transitivas Core/contrib e anexações
+resolvidas apenas em Runtime exigem inspeção Drupal/HTTP. A matriz por purpose,
+View/Form API, estados e validação visual continuam parciais; MF0/MF3 não são
+aprovados por este scanner.
+
 ### THEME-MF2 — rótulos longos da navegação global
 
 Os links da navegação usam quebra de texto como base até 1099px e preservam
