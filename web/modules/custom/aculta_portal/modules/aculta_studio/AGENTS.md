@@ -97,9 +97,9 @@ workspace service and WE SATIVA routes.
   `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/validate-project-status-index.php` e a suíte
   `tests/browser/aculta-studio/visual.mjs`, com o resultado registrado.
 
-## ACULTA Studio Culturas (planejado)
+## ACULTA Studio Culturas (código parcial; homologação pendente)
 
-O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**, com rota planejada `/culturas` no purpose `eventos`. A experiência geral do Studio em `account` pode linkar para lá, mas não grava Eventos. A área administrativa e sua configuração permanecem no MAIN em `/painel-administrativo/eventos`, restrita a administradores. Até a implementação, não documente a rota como ativa nem crie experiência/owner paralelo. Usar `aculta_events` para persistência e autorização; Datas e Locais pertencem ao Evento.
+O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**, com rota `/culturas` declarada no código do owner `aculta_events`, no purpose `eventos`. O HEAD da PR #299 já contém dashboard inicial, formulários e configuração de papéis; não declare essa experiência ativa no Runtime sem validação. A experiência geral do Studio em `account` pode linkar para lá, mas não grava Eventos. A área administrativa/configuração permanece no MAIN em `/painel-administrativo/eventos`, restrita a administradores. Não crie experiência ou owner paralelo; Datas permanecem subordinadas ao Evento e Locais pertencem a `aculta_events`.
 
 ## Contrato futuro: Suites do ACULTA Studio por domínio (ADR-038)
 
