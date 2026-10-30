@@ -90,7 +90,7 @@ try:
         apply_candidate(driver)
         driver.js("""const navbar=document.querySelector('.aculta-navbar');
           const list=navbar?.querySelector('.navbar-nav');
-          if(list && !list.querySelector('[data-navigation-wrap-fixture]')){
+          if(list && innerWidth < 1100 && !list.querySelector('[data-navigation-wrap-fixture]')){
             const item=document.createElement('li');item.className='nav-item';
             const link=document.createElement('a');link.className='nav-link';
             link.href='#navigation-wrap-fixture';
@@ -124,8 +124,9 @@ try:
             columnGap:container ? getComputedStyle(container).columnGap : null,
             linkMinHeight:link ? getComputedStyle(link).minHeight : null,
             linkDisplay:link ? getComputedStyle(link).display : null,
-            wrapWhiteSpace:wrapFixture?.dataset.measuredWhiteSpace ?? null,
-            wrapFits:wrapFixture?.dataset.measuredFits === 'true',
+            wrapWhiteSpace:wrapFixture?.dataset.measuredWhiteSpace ?? (link ? getComputedStyle(link).whiteSpace : null),
+            wrapFits:wrapFixture ? wrapFixture.dataset.measuredFits === 'true'
+              : (link ? link.scrollWidth <= link.clientWidth + 1 : false),
             menuMaxHeight:menu ? getComputedStyle(menu).maxHeight : null,
             documentWidth:document.documentElement.scrollWidth,
             institutionBar:document.querySelectorAll('.aculta-institution-bar').length,

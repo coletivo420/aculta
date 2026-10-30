@@ -115,12 +115,15 @@ def apply_candidate():
           style.dataset.institutionBarScrollCandidate='true';
           style.textContent=arguments[0];document.head.append(style);return true;""", [css])
     if os.environ.get("INSTITUTION_BAR_SCROLL_JS_OVERRIDE") == "1" and not DISABLE_JS:
+        if not driver.js("return !!(window.Drupal && window.once)"):
+            return False
         js = (ROOT / "web/themes/custom/aculta420/js/navigation-top-bar-displace.js").read_text()
         driver.js("""const script=document.createElement('script');
           script.dataset.institutionBarScrollCandidate='true';
           script.textContent=arguments[0];document.head.append(script);
           Drupal.behaviors.aculta420NavigationTopBarDisplace.attach(document, drupalSettings);
           return true;""", [js])
+    return True
 
 
 def metrics():
@@ -204,6 +207,10 @@ def run_scenario(scenario, login_url=None):
         initial = metrics()
         record(f"{scenario} {width}px: shell inicial", actual_width == width and initial["barCount"] == 1,
                initial)
+        if initial["barCount"] != 1 or initial["barTop"] is None:
+            # A missing/error page is already a failed shell check. Keep
+            # collecting evidence from the remaining purposes and widths.
+            continue
         if scenario == "admin":
             admin_bar_present = initial["toolbarCount"] == 1 or initial["topBarCount"] == 1
             record(f"{scenario} {width}px: barra administrativa presente",

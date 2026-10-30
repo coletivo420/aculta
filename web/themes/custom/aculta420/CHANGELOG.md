@@ -1,7 +1,7 @@
 # Alterações pendentes de validação visual — ainda sem nova marcação de versão
 
-- HTTP 500 da Wiki foi rastreado a dois providers do tema registrados para `preprocess_item_list`; a adaptação do SDC Event card agora está no hook único `PortalUiHooks::preprocess`. Testes Unit cobrem o contrato e a unicidade do hook; após aplicar a correção no checkout de desenvolvimento e reconstruir o cache, GET anônimo à home Wiki respondeu HTTP 200; commit/publicação na branch continuam pendentes.
-- Links longos da navegação global agora quebram em mobile e retornam a uma linha no desktop; o Firefox visível ainda está pendente.
+- HTTP 500 da Wiki foi rastreado a dois providers do tema registrados para `preprocess_item_list`; a adaptação do SDC Event card agora está no hook único `PortalUiHooks::preprocess`. Testes Unit cobrem o contrato e a unicidade do hook; commit e8e674d75 foi publicado na branch; após aplicar o reparo no checkout de desenvolvimento e reconstruir o cache, GET anônimo à home Wiki respondeu HTTP 200.
+- Links longos da navegação global quebram em mobile e retornam a uma linha no desktop; Firefox ESR visível confirmou 28/28 checks focais de navegação e 101/101 de Institution Bar anônima nas dez homes (320/390px); a sessão administrativa não foi estabelecida e THEME-MF3 segue pendente.
 - Removidos os estilos e tokens sem consumidor de avatar vazio/inicial; o memorial coletivo recebe a imagem pelo `AvatarResolver` do Portal.
 - `forum-index.css` converteu o tamanho das ações de listagem do Fórum de uma media query limitada por `max-width` para aprimoramento progressivo em `36rem`/`62rem`, preservando as três faixas existentes. O harness de índice agora mede o consumer sintético. Firefox visual DEFERRED.
 - `profile-identity` não cria inicial nem placeholder quando o slot de avatar está vazio; o AvatarResolver central é a única fonte da imagem. Atualizado schema, story, catálogo e Kernel para impedir fallback paralelo. Firefox visual DEFERRED.

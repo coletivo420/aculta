@@ -780,14 +780,17 @@ no menu horizontal desktop, mantêm uma linha. `navigation.py` acrescenta um
 rótulo longo temporário ao consumer real da home MAIN e mede ajuste no link,
 além do menu Bootstrap e do fallback sem JavaScript. Lint CSS/JS e sintaxe
 Python passaram; Firefox ESR visível passou 28/28 checks com a CSS candidata
-em 320–1440px, incluindo 5 larguras sem JavaScript. O teste cobre só MAIN e
-não homologa a navegação dos outros purposes nem THEME-MF3.
+em 320–1440px, incluindo 5 larguras sem JavaScript. Repetido em 2026-10-30
+no HEAD 3c1691fc5: 28/28 novamente. O teste cobre só MAIN e não homologa
+a navegação dos outros purposes nem THEME-MF3.
 
 ### THEME-MF2 — Institution Bar anônima durante scroll
 
-O Firefox ESR passou 87/89 checks com CSS candidata injetada nas dez homes,
-320/390px, sem salto e sem overflow nas oito páginas acessíveis. Wiki retornou
-HTTP 500 nas duas larguras e não apresentou Institution Bar. A tentativa
-autenticada não estabeleceu sessão e permanece inconclusiva. O resumo e PNGs
-estão em `$SUITE_OUT` descrito na auditoria mobile-first; o harness agora
-continua após registrar uma rota sem shell. Após consolidar o hook no checkout de desenvolvimento e reconstruir o cache, GET anônimo à home Wiki respondeu HTTP 200. Ainda falta homologar teclado/zoom/modos/AA; THEME-MF3 não aprovado.
+A rodada de 2026-10-30 passou 101/101 checks no Firefox ESR visível, com CSS
+candidata nas dez homes e em 320/390px. Todas mantiveram Institution Bar
+única, sticky no topo sem salto, sem toolbar anônima e sem overflow. A Wiki,
+após o reparo do hook e cache rebuild, passou nos dois tamanhos. A tentativa
+autenticada segue inconclusiva: a sessão ULI não foi estabelecida. Evidências
+em `/home/piradopirata/aculta-suite-out/institution-bar-scroll-anonymous-3c1691fc5/`.
+Ainda falta homologar navegação e shell autenticados, teclado/zoom/modos/AA;
+THEME-MF3 não aprovado.

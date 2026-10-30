@@ -831,3 +831,20 @@ CSS, sintaxe do harness, Design Foundations (2.442 verificações), índice do
 projeto e `git diff --check` passaram. Firefox visível fica DEFERRED sem
 `DISPLAY=:0`; o fixture não cobre envio, ACL nem a gaveta real no Runtime.
 THEME-MF3 continua pendente.
+
+
+### THEME-MF2 — repetição após reparo da Wiki (2026-10-30)
+
+No HEAD 3c1691fc5, Firefox ESR visível passou novamente 28/28 checks da
+navegação global em 320/360/390/575/576/599/600/768/1024/1099/1100/1280/1440px,
+com CSS candidata, cinco larguras sem JavaScript e rótulo longo temporário no
+consumer. Evidências em
+`/home/piradopirata/aculta-suite-out/aculta-navigation-mobile-first-3c1691fc5/`.
+
+A Institution Bar passou 101/101 checks anônimos nas dez homes, em 320/390px,
+com CSS candidata: aparece uma vez, fica sticky no topo sem salto, sem toolbar
+e sem overflow durante scroll. A Wiki passou depois do reparo e cache rebuild.
+Evidências em
+`/home/piradopirata/aculta-suite-out/institution-bar-scroll-anonymous-3c1691fc5/`.
+O cenário autenticado segue inconclusivo porque a sessão administrativa não foi
+estabelecida. Estes resultados focais não cobrem toda a matriz THEME-MF3.

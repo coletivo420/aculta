@@ -252,6 +252,8 @@ UID administrativo em 320/390/1023/1024/1280 px. Confirma a autenticação antes
 de medir toolbar/deslocamento, testa a mudança de breakpoint sem recarregar a
 página, amostra a estabilização e guarda screenshots em `$SUITE_OUT`. O ULI
 fica em memória; o teste não submete conteúdo nem altera configuração.
+Se uma rota retornar sem Institution Bar (por exemplo, página de erro), o teste
+registra a falha daquela rota e continua nos demais purposes.
 
 ```sh
 export DISPLAY=:0
