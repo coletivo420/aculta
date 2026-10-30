@@ -445,15 +445,32 @@ específicos de `auth.css`; a verificação do CSS corrigido no Runtime aguarda 
 publicação e rebuild de cache.
 
 `auth-route-runtime.py` abre anonimamente uma rota real e injeta as folhas
-candidatas de base e autenticação apenas no DOM da sessão de teste, sem enviar
-formulários ou alterar o Runtime. Além de markup, paddings e scroll, mede o
-widget. `AUTH_ROUTE_BASE_URL` define o domínio, `AUTH_ROUTE_PATH` escolhe
+candidatas de base e autenticação somente no DOM da sessão, sem enviar
+formulários. Além de markup, paddings e scroll, mede o widget e seu contêiner.
+`AUTH_ROUTE_BASE_URL` define o domínio, `AUTH_ROUTE_PATH` escolhe
 `/entrar`, `/criar-conta` ou `/recuperar-senha`, e `AUTH_ROUTE_WIDTHS` seleciona
-as larguras. Reprodução no Runtime/PR HEAD `2493d7535`: `/entrar` passou em
-360 px e falhou a 320 px porque o conteúdo de 300 px excede seu contêiner de
-268 px. Evidência: `/home/piradopirata/aculta-suite-out/auth-route-captcha-current-2493-20261030/`.
-Não houve submissão. O Pede-A para permitir styling só por marcadores semânticos
-do Portal está em `web/themes/custom/aculta420/docs/mobile-first-audit.md`.
+as larguras.
+
+Para direcionar o hostname HTTPS ao Apache local sem alterar `/etc/hosts`, use
+`AUTH_ROUTE_LOCAL_RUNTIME=1` e
+`AUTH_ROUTE_BASE_URL=https://conta.aculta.toca.net.br`. O túnel CONNECT aceita
+somente esse host local. O widget externo exige também
+`AUTH_ROUTE_ALLOW_CLOUDFLARE=1`, que libera apenas
+`challenges.cloudflare.com:443`; qualquer outro host é recusado. Para testar a
+CSS antes de servir o novo hook do Portal, `AUTH_ADD_MARKER_CANDIDATE=1` acrescenta
+temporariamente `data-portal-ui="challenge-frame"` ao wrapper renderizado; isso
+simula o contrato e não valida a instalação da alteração PHP no Runtime.
+
+Execução candidata de 2026-10-30, Firefox ESR 153.5.1esr: login 12/12,
+cadastro 10/10 e recuperação 10/10 checks passaram, com widget completo e sem
+overflow de página em 320/360/390/599/600/768/1024/1280/1440px. A reprodução
+anterior sem a ampliação do conteúdo em 320px mediu `documentWidth=328` e
+`challengeScrollWidth=300`. Capturas/relatórios ficam em
+`/home/piradopirata/aculta-suite-out/auth-captcha-frame-candidate-20261030/`,
+`auth-register-captcha-candidate-20261030/` e
+`auth-reset-captcha-candidate-20261030/`. Como o marcador foi simulado e o CSS
+foi injetado, ainda é necessário retestar após servir a mudança Portal/Tema e
+reconstruir o cache.
 
 ```sh
 export DISPLAY=:0

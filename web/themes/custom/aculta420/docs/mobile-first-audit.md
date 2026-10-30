@@ -1818,37 +1818,39 @@ capturas mascaram valores e ficam fora do Git em
 Isto não cobre lookup CEP ao vivo, ACL entre contas, teclado completo, zoom ou
 WCAG 2.2 AA.
 
-### THEME-MF2 — overflow do desafio de verificação e Pede-A
+### THEME-MF2 — contrato visual neutro para widgets de verificação (2026-10-30)
 
-Firefox ESR visível confirmou overflow em `/entrar` a 320 px: o contêiner tem
-268 px e o widget `flexible` exige no mínimo 300 px, conforme a
-[documentação oficial do Turnstile](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/widget-configurations/).
-O documento/body chegam a 328 px. A 360 px, o espaço disponível é 308 px e o
-widget cabe. A reprodução atual passou 2/3 checks (320 px falha; 360 px passa),
-sem submeter o formulário: `/home/piradopirata/aculta-suite-out/auth-route-captcha-current-2493-20261030/`.
+Firefox ESR visível reproduziu o overflow real em `/entrar` a 320 px: o conteúdo
+disponível era 268 px, o widget flexível mede 300 px e a página chegava a 328 px;
+a 360 px, o espaço disponível era 308 px. A folha não tenta redimensionar,
+cortar nem identificar o provedor.
 
-O reteste Firefox do rodapé em dez purposes, a 320 px e no Runtime/PR HEAD
-`2493d7535`, passou 19/20 checks; a única falha foi o shell de Conta pelo mesmo
-overflow. Os outros nove purposes preservaram layout e headers: resultado em
-`/home/piradopirata/aculta-suite-out/footer-layout-current-2493-20261030/`.
+Implementação local: `CaptchaPresentationHooks` no Portal, executado depois do
+hook contrib `captcha`, acrescenta o token neutro
+`data-portal-ui="challenge-frame"` ao elemento de apresentação, inclusive em
+formulários aninhados e sem duplicar tokens existentes. O tema usa esse contrato
+para tornar `.aculta-content` um query container apenas quando existe o elemento
+e amplia o formulário em 2rem somente quando a largura disponível é menor que
+300 px. A ordem DOM, o widget `flexible`, seu token, sua validação e a política
+de exceções não mudam. Não há referência a CAPTCHA/Turnstile em CSS.
 
-CSS de apresentação direta para CAPTCHA/Turnstile não passa o guardrail
-`validate-aculta420-design-foundations.php`, que proíbe referência de integração
-anti-bot no tema. A tentativa CSS que cortava o widget foi removida. **Pede-A ao
-owner `web/modules/custom/aculta_portal`:** adicionar ao markup do widget
-marcadores semânticos estáveis, por exemplo `data-portal-ui="challenge-frame"`
-no contêiner com largura limitada e `data-portal-ui="challenge-content"` no
-conteúdo redimensionável. O tema então poderá usar container query nesses
-marcadores sem mencionar integração CAPTCHA/Turnstile. O módulo Portal teve
-alteração recente no HEAD (`892a4d2fe`); a Frente B não o editou.
+PHP lint passou; Unit do hook passou 2 testes/4 assertions. Em Firefox ESR
+visível, o CSS local foi injetado e o marcador foi simulado apenas no DOM, sem
+submeter formulário: `/entrar` passou 12/12, `/criar-conta` 10/10 e
+`/recuperar-senha` 10/10 verificações nas larguras 320/360/390/599/600/768/1024/
+1280/1440px, sem overflow e mantendo o widget completo. As capturas em 320px
+foram inspecionadas. Evidências em
+`/home/piradopirata/aculta-suite-out/auth-captcha-frame-candidate-20261030/`,
+`auth-register-captcha-candidate-20261030/` e
+`auth-reset-captcha-candidate-20261030/`.
 
-Contrato/teste requerido: preservar `flexible`, challenge inteiro, teclado,
-validação server-side e política de exceções; Firefox em `/entrar`,
-`/criar-conta` e `/recuperar-senha` em 320/351/352/360 px, sem overflow, e
-auditar também todos os demais `captcha_point` ativos. Validar interação e token
-em ambiente apropriado, `validate-aculta420-design-foundations.php` e
-`validate-module-theme-boundary.php`. Não trocar globalmente para `compact` sem
-avaliar o aumento de altura em todos os formulários.
+O Runtime servido em `2493d7535` ainda não tem o novo hook do Portal: a suíte
+validou a CSS candidata com marcador simulado, não sua instalação real. Após
+servir o código e reconstruir cache, repetir as três rotas com o marcador do
+Portal efetivo, conferir estados com JavaScript/no-JS e formularios/`captcha_point`
+ativos. Não homologa THEME-MF3. A investigação inicial do rodapé em dez purposes
+(19/20) permanece evidência do mesmo overflow no CSS antigo; reteste após servir
+o contrato novo ainda pendente.
 
 Reteste posterior no checkout servido `2493d7535`, confirmado por Drush em
 `aculta_runtime` e correspondente ao HEAD da PR antes e depois da rodada:

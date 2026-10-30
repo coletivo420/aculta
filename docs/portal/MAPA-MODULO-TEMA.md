@@ -123,6 +123,7 @@ Estas regras valem para qualquer contraparte listada aqui. A fonte normativa é 
 
 | Caminho | Entrega (módulo) | Contraparte no tema | Estado |
 | --- | --- | --- | --- |
+| `web/modules/custom/aculta_mcp` | Endpoint MCP autenticado e cliente de documentação allowlistado para Mercado Pago, Melhor Envio e DHTMLX | Sem contraparte visual; a administração do acesso e das configurações usa a interface administrativa do Drupal | Ativo; conteúdo MCP é documental, sem operação comercial/transacional |
 | `web/modules/custom/aculta_mcp_client` | Cliente de documentação MCP com ferramentas remotas allowlistadas para Mercado Pago e Melhor Envio | Sem contraparte visual; a configuração dos serviços usa a interface administrativa do Drupal | Ativo |
 
 ## Módulos contrib habilitados

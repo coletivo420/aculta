@@ -73,6 +73,9 @@ Quando uma rota é a página inicial de um Domain e o tema normalmente omite o b
 - O tema traduz os tokens em classes em `web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` (`TOKENS`). Os hooks
   de pré-processamento (`container`, `html_tag`, `item_list`, `input`, `form_element`, `image` e os templates
   `aculta_portal_*`) leem os atributos do elemento (inclusive os que o núcleo ainda não mesclou) e trocam os tokens.
+- Exceção sem classe: elementos de terceiro podem receber um token semântico pelo Portal para ancorar layout responsivo.
+  `CaptchaPresentationHooks` acrescenta `challenge-frame` após a inserção do elemento contrib; o ACULTA420 usa o token
+  diretamente em uma container query, sem identificar o provedor nem alterar seu markup/validação.
 - Elementos de texto ou link do módulo usam o template neutro `aculta_portal_element` (`#tag`, `#value`,
   `#element_attributes`). Links com token passam por `Drupal\aculta_portal\Render\PortalLinkElement::build()`, que
   preserva o `href` e a cacheabilidade de `Url::toString(TRUE)`. O gerador de links do núcleo não tem template de tema,

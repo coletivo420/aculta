@@ -126,6 +126,22 @@ body.path-entrar .aculta-login__registration a {
   }
 }
 
+/* Embedded verification widgets need a fixed-width content slot on very narrow forms. */
+body.path-entrar .aculta-main .row:has(.user-login-form) .aculta-content:has([data-portal-ui~="challenge-frame"]),
+body.path-criar-conta .aculta-main .row:has(.user-register-form) .aculta-content:has([data-portal-ui~="challenge-frame"]),
+body.path-recuperar-senha .aculta-main .row:has(.user-pass) .aculta-content:has([data-portal-ui~="challenge-frame"]) {
+  container: portal-auth-challenge / inline-size;
+}
+
+@container portal-auth-challenge (max-width: 18.6875rem) {
+  .user-login-form,
+  .user-register-form,
+  .user-pass {
+    inline-size: calc(100% + 2rem);
+    margin-inline: -1rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   body.path-entrar *,
   body.path-criar-conta *,

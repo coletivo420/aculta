@@ -4,7 +4,11 @@
 import base64
 import json
 import os
+import selectors
+import socket
+import socketserver
 import sys
+import threading
 import time
 from pathlib import Path
 
@@ -18,7 +22,12 @@ from wdlib import Driver  # noqa: E402
 OUT = Path(os.environ["SUITE_OUT"])
 OUT.mkdir(parents=True, exist_ok=True)
 os.environ.setdefault("ACULTA_FF_PROFILE_ROOT", str(OUT / "profiles"))
-BASE = os.environ.get("AUTH_ROUTE_BASE_URL", "http://default").rstrip("/")
+LOCAL_RUNTIME = os.environ.get("AUTH_ROUTE_LOCAL_RUNTIME") == "1"
+AUTH_HOST = "conta.aculta.toca.net.br"
+BASE = os.environ.get(
+    "AUTH_ROUTE_BASE_URL",
+    f"https://{AUTH_HOST}" if LOCAL_RUNTIME else "http://default",
+).rstrip("/")
 ROUTE = os.environ.get("AUTH_ROUTE_PATH", "/entrar")
 if not ROUTE.startswith("/") or "?" in ROUTE or "#" in ROUTE:
     raise SystemExit("AUTH_ROUTE_PATH deve ser um path absoluto simples.")
@@ -68,10 +77,63 @@ class Viewport:
         self.socket.close()
 
 
+class LocalRuntimeProxyHandler(socketserver.StreamRequestHandler):
+    """Allow only the canonical Account host and route it to local Apache."""
+
+    def handle(self):
+        request = self.rfile.readline(4096).decode("ascii", "replace").strip()
+        parts = request.split(" ", 2)
+        while self.rfile.readline(8192).strip():
+            pass
+        authority = parts[1].lower() if len(parts) >= 2 else ""
+        if parts[0] != "CONNECT":
+            self.wfile.write(b"HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n")
+            return
+        if authority == f"{AUTH_HOST}:443":
+            upstream_address = ("127.0.0.1", 443)
+        elif (os.environ.get("AUTH_ROUTE_ALLOW_CLOUDFLARE") == "1"
+              and authority == "challenges.cloudflare.com:443"):
+            upstream_address = ("challenges.cloudflare.com", 443)
+        else:
+            self.wfile.write(b"HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n")
+            return
+        try:
+            upstream = socket.create_connection(upstream_address, timeout=5)
+        except OSError:
+            self.wfile.write(b"HTTP/1.1 502 Bad Gateway\r\nConnection: close\r\n\r\n")
+            return
+        self.wfile.write(b"HTTP/1.1 200 Connection Established\r\n\r\n")
+        self.wfile.flush()
+        self.connection.setblocking(False)
+        upstream.setblocking(False)
+        selector = selectors.DefaultSelector()
+        selector.register(self.connection, selectors.EVENT_READ, upstream)
+        selector.register(upstream, selectors.EVENT_READ, self.connection)
+        try:
+            while True:
+                for key, _ in selector.select(timeout=10):
+                    data = key.fileobj.recv(65536)
+                    if not data:
+                        return
+                    key.data.sendall(data)
+        except (ConnectionError, OSError):
+            return
+        finally:
+            selector.close()
+            upstream.close()
+
+
+class LocalRuntimeProxy(socketserver.ThreadingTCPServer):
+    allow_reuse_address = True
+    daemon_threads = True
+
+
 if os.environ.get("DISPLAY") != ":0":
     raise SystemExit("Execute com DISPLAY=:0 e Firefox ESR visível.")
 
 measure = """const challenge=document.querySelector('.captcha-type-challenge--turnstile .cf-turnstile');
+const frame=document.querySelector('[data-portal-ui~="challenge-frame"]');
+const rect=(element)=>{if(!element)return null;const r=element.getBoundingClientRect();return {left:r.left,right:r.right,width:r.width,scrollWidth:element.scrollWidth,clientWidth:element.clientWidth};};
 return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth,clientWidth:document.documentElement.clientWidth,
 rootOverflowX:getComputedStyle(document.documentElement).overflowX,scrollX:window.scrollX,
 bodyClass:document.body.className,
@@ -79,10 +141,31 @@ headingPadding:getComputedStyle(document.querySelector('.aculta-page-heading')).
 contentPadding:getComputedStyle(document.querySelector('.aculta-content')).padding,
 challengeWidth:challenge?.getBoundingClientRect().width||0,challengeScrollWidth:challenge?.scrollWidth||0,
 challengeClientWidth:challenge?.clientWidth||0,
+challengeRect:rect(challenge),challengeFrameRect:rect(frame),
 hasHeading:!!document.querySelector('.aculta-page-heading h1'),
 hasAuthForm:!!document.querySelector('.aculta-main form'),
 loggedIn:document.body.classList.contains('user-logged-in')};"""
-driver = Driver(bidi=True)
+proxy = None
+if LOCAL_RUNTIME:
+    from urllib.parse import urlparse
+    parsed = urlparse(BASE)
+    if parsed.scheme != "https" or parsed.hostname != AUTH_HOST:
+        raise SystemExit(f"AUTH_ROUTE_LOCAL_RUNTIME=1 exige https://{AUTH_HOST}.")
+    proxy = LocalRuntimeProxy(("127.0.0.1", 0), LocalRuntimeProxyHandler)
+    threading.Thread(target=proxy.serve_forever, daemon=True).start()
+    proxy_port = proxy.server_address[1]
+    driver = Driver(prefs={
+        "network.proxy.type": 1,
+        "network.proxy.http": "127.0.0.1",
+        "network.proxy.http_port": proxy_port,
+        "network.proxy.ssl": "127.0.0.1",
+        "network.proxy.ssl_port": proxy_port,
+        "network.proxy.no_proxies_on": "",
+        "network.captive-portal-service.enabled": False,
+        "network.dns.disablePrefetch": True,
+    }, bidi=True)
+else:
+    driver = Driver(bidi=True)
 viewport = Viewport(driver)
 try:
     driver.get(f"{BASE}{ROUTE}")
@@ -91,6 +174,12 @@ try:
     record(f"rota real anônima {ROUTE}", route_ok and initial["hasHeading"] and initial["hasAuthForm"]
            and initial["challengeWidth"] > 0 and not initial["loggedIn"],
            {key: initial[key] for key in ("bodyClass", "hasHeading", "hasAuthForm", "challengeWidth", "loggedIn")})
+    if os.environ.get("AUTH_ADD_MARKER_CANDIDATE") == "1":
+        driver.js("""document.querySelectorAll('.captcha').forEach((frame) => {
+          const tokens=(frame.getAttribute('data-portal-ui')||'').split(/\\s+/).filter(Boolean);
+          if (!tokens.includes('challenge-frame')) tokens.push('challenge-frame');
+          frame.setAttribute('data-portal-ui', tokens.join(' '));
+        });return true;""")
     driver.js("""const style=document.createElement('style');style.id='auth-candidate';
       style.textContent=arguments[0];document.head.append(style);return true;""", [CSS])
 
@@ -110,12 +199,16 @@ try:
                  and data["hasHeading"] and data["hasAuthForm"] and data["challengeWidth"] > 0 and not data["loggedIn"]
                  and horizontal_scroll_blocked and data["headingPadding"] == expected_heading
                  and data["contentPadding"] == expected_content
-                 and (data["challengeWidth"] == 0 or data["challengeScrollWidth"] <= data["challengeWidth"] + 1))
+                 and (data["challengeWidth"] == 0 or data["challengeScrollWidth"] <= data["challengeWidth"] + 1)
+                 and (not os.environ.get("AUTH_ADD_MARKER_CANDIDATE") == "1" or data["challengeFrameRect"] is not None))
         record(f"Runtime {ROUTE} {width}px: estilos candidatos e sem overflow", valid,
                {key: data[key] for key in ("documentWidth", "bodyWidth", "clientWidth", "rootOverflowX", "scrollX", "headingPadding", "contentPadding", "challengeWidth", "challengeScrollWidth", "challengeClientWidth")})
 finally:
     viewport.close()
     driver.close()
+    if proxy:
+        proxy.shutdown()
+        proxy.server_close()
 
 (OUT / "summary.json").write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n")
 failed = [result for result in results if not result["passed"]]
