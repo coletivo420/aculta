@@ -1,0 +1,4 @@
+id: aculta_me_endpoint_details
+tool_id: 'aculta_mcp_client:melhorenvio_endpoint_details'
+description: 'Lê documentação de um endpoint do Melhor Envio. O método e caminho selecionam documentação e não executam chamadas à API.'
+status: true

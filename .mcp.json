@@ -35,6 +35,10 @@
       "args": [
         "${CLAUDE_PROJECT_DIR}/scripts/mcp/aculta-drupal/server.py"
       ]
+    },
+    "aculta": {
+      "type": "http",
+      "url": "https://aculta.toca.net.br/mcp"
     }
   }
 }

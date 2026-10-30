@@ -6,6 +6,7 @@ Este documento é o inventário comum. Cada cliente MCP mantém seu próprio arq
 
 | Servidor | Transporte e destino | Uso | Credencial |
 | --- | --- | --- | --- |
+| `aculta` | HTTP; `https://aculta.toca.net.br/mcp` | Ferramentas públicas de consulta à documentação do Mercado Pago e Melhor Envio; sem acesso a dados ou operações da conta ACULTA. | Nenhuma para clientes MCP; o servidor usa uma Key de teste do Mercado Pago nas chamadas remotas. |
 | `melhorenvio` | HTTP via `mcp-remote`; `https://docs.melhorenvio.com.br/mcp` | Documentação da API do Melhor Envio, somente consulta. | `MELHORENVIO_MCP_TOKEN` no ambiente do cliente. |
 | `mercadopago` | HTTP via `mcp-remote`; `https://mcp.mercadopago.com/mcp` | Documentação e recursos disponíveis ao access token. `get_application`, `create_application` e `get_credentials` exigem OAuth e não aparecem com access token. | `MERCADOPAGO_MCP_TOKEN` no ambiente do cliente. |
 | `dhtmlx-mcp` | HTTP; `https://docs.dhtmlx.com/mcp` | Documentação atual dos produtos DHTMLX. Servidor hospedado e sem autenticação; [a política de integração](https://docs.dhtmlx.com/suite/guides/mcp-server/) informa que consultas podem ser registradas para depuração e melhoria. | Nenhuma. |
@@ -16,11 +17,20 @@ O pacote OpenStreetMap instalado é `osm-mcp-server` **0.1.1**. Em 2026-10-28, e
 
 ## Arquivos de conexão verificados
 
+- `.mcp.json` registra o endpoint público `aculta` para o Claude Code. O usuário pode aprovar o servidor de projeto na primeira utilização interativa.
 - `.mcp.json` na raiz é a configuração de projeto do Claude Code e inclui `aculta-drupal`. O script usa `${CLAUDE_PROJECT_DIR}`, portanto cada checkout resolve o próprio servidor; o cliente pode pedir aprovação do servidor de projeto no primeiro uso interativo. O executável OSM continua apontando para a instalação local versionada em `~/.local/share/codex-mcp/osm-mcp-server-0.1.1/`; outro computador precisará instalar esse pacote e ajustar o caminho.
 - `~/.codex/config.toml` é a configuração global local do Codex. Nesta máquina contém `aculta-drupal`, `osm-mcp` e `dhtmlx-mcp`; o caminho de Drupal aponta para o script versionado no checkout de desenvolvimento. Os servidores de Melhor Envio e Mercado Pago não foram adicionados ao Codex porque dependem de tokens de ambiente que não foram provisionados nessa configuração. Reinicie sessões existentes para redescobrir ferramentas MCP.
 - `~/.claude.json` é a configuração global do Claude Code e contém o MCP separado `pesquisa`. Ele não substitui a lista de projeto do `.mcp.json`.
 
 Cursor, Gemini/Antigravity, OpenCode e Claude Desktop não têm arquivo de configuração MCP local encontrado nesta máquina. Para habilitá-los, use o endpoint/command desta tabela no formato documentado pelo cliente, sem copiar credenciais para o repositório. A configuração local não foi criada para esses clientes.
+
+Para adicionar o servidor ACULTA a outro Codex, use `codex mcp add aculta --url https://aculta.toca.net.br/mcp`. O acesso ao ACULTA é público e sem OAuth. As ferramentas publicadas são apenas busca/listagem de documentação dos provedores; não leem dados privados nem executam ações financeiras, de frete ou de conta.
+
+O módulo próprio `aculta_mcp_client` implementa as chamadas MCP de saída para os servidores de documentação do Mercado Pago e Melhor Envio. Quatro plugins da Tool API são publicados no ACULTA através do MCP Server Tool Bridge e de suas entidades MCP Tool Configuration. Endpoints e nomes das ferramentas remotas são allowlisted; há limite global de chamadas e saída limitada. O servidor não encaminha chamadas de API dos provedores.
+
+## MCP Client no Drupal
+
+O projeto oficial [MCP Client](https://www.drupal.org/project/mcp_client) não é instalado porque sua versão consultada requer `mcp/sdk ^0.7.1`, em conflito com o MCP Server instalado (`^0.9`), além de Drupal AI/AI Agents que este projeto não usa. `aculta_mcp_client` copia/adapta somente o padrão de transporte HTTP e chamadas com o SDK já instalado; não copia a camada de agentes do contrib. Se o MCP Server alterar a faixa do SDK ou ACULTA adicionar Drupal AI, reavaliar o uso direto do contrib.
 
 ## Regras
 

@@ -1,0 +1,10 @@
+name: ACULTA MCP Client
+type: module
+description: 'Connects the public ACULTA MCP endpoint to allowlisted provider documentation tools.'
+package: ACULTA
+core_version_requirement: ^11
+dependencies:
+  - key:key
+  - mcp_server:mcp_server
+  - mcp_server_tool_bridge:mcp_server_tool_bridge
+  - tool:tool
