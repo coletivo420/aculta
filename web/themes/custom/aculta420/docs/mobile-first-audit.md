@@ -1496,6 +1496,24 @@ para habilitar os campos de capa, subtítulo e resumo que já constam em
 `config/sync`; não foi importado o diff global. O `config:status` global
 continua com 224 diferenças.
 
+### THEME-MF2 — rail do catálogo de Cursos em viewport móvel (2026-10-30)
+
+A inspeção da matriz de purposes mostrou parte do segundo cartão visível na
+captura de 320px. A verificação do DOM confirmou que isso é o rail horizontal
+intencional do SDC `patterns/rail`: os três cartões são mantidos, a região tem
+`role=region`, nome acessível `Cursos disponíveis` e `tabindex=0`, e o indicador
+de rolagem nativo aparece. Não é overflow do documento nem perda de conteúdo.
+O teste de navegador reutilizável `tests/browser/aculta-theme-mobile-first/rail-courses.py`
+confirmou que `ArrowRight` desloca o rail de `scrollLeft=12` para `266` a 320px.
+
+Firefox ESR visível, Runtime no HEAD `f22c8f08d`, passou 11/11 checks a
+320/390/768/1440px: página sem overflow, região rotulada/focável, trilha
+rolável e navegação por teclado. Capturas e resultados estão em
+`/home/piradopirata/suite-out/course-rail-validation-f22-20261030/`. O teste é
+anônimo e somente leitura; não cobre leitores de tela, zoom, autenticação,
+contraste WCAG 2.2 AA ou outros consumers do rail. Esta evidência focal não
+fecha THEME-MF3.
+
 Reteste focal posterior no Firefox ESR visível: claro e escuro + reduced motion
 capturados em 9/9 viewports cada, sem overflow e com os dois headers únicos. O
 script confirmou `prefers-color-scheme`/`prefers-reduced-motion`; isto não mede

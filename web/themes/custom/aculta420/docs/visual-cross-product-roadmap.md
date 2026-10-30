@@ -995,3 +995,12 @@ de 1280px), sem overflow. Esses resultados são somente da home Magazine e não
 substituem testes no-JS, leitor de tela, WCAG 2.2 AA nem THEME-MF3. Evidências
 e comandos reutilizáveis estão em `mobile-first-audit.md` e
 `tests/browser/aculta-theme-mobile-first/README.md`.
+
+### Cursos — rail responsivo e teclado (2026-10-30)
+
+A inspeção da captura 320px foi esclarecida pelo teste real do rail: o segundo
+cartão parcialmente visível é a indicação de continuidade do padrão horizontal,
+com os demais cartões alcançáveis. Firefox ESR visível passou 11/11 checks em
+320/390/768/1440px, incluindo rótulo acessível, foco, `ArrowRight` e ausência de
+overflow de página. Capturas/resultados: `/home/piradopirata/suite-out/course-rail-validation-f22-20261030/`.
+Isso valida somente o catálogo público e não aprova THEME-MF3.
