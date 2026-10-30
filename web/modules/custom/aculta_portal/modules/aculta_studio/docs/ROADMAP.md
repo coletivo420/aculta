@@ -21,6 +21,17 @@ depende de THEME-MF3. OCS-A1–A4 só começam depois dos dois gates aprovados.
 | OCS-F11 | Não aprovado: depende de THEME-MF3 e das evidências de todas as áreas/estados. |
 | OCS-A1–A4 | Não iniciadas; gate anterior permanece fechado. |
 
+### THEME-MF2 — desafio de verificação responsivo (2026-10-30)
+
+No commit local `7dbca2b8a`, o Portal fornece o token de apresentação neutro
+`challenge-frame` e o tema adapta o formulário estreito com container query.
+Unit (2/2), PHP lint/PHPCS, Stylelint, Design Foundations e SDC schemas passaram.
+Firefox validou CSS candidata e marcador simulado nas três rotas de autenticação,
+320–1440 px; a integração ainda não foi servida no Runtime. A publicação está
+pendente porque a referência de branch no GitHub não foi encontrada pelo fetch,
+e o PR #299 permanece em `2493d7535`. O gate global permanece vermelho por
+classes/tokens visuais de Eventos e Índice; não aprova THEME-MF3 nem OCS-F11.
+
 ## ADR-038 - caminho aprovado para as Suites (execução parcial, 2026-10-30)
 
 Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. Paths/purposes e rejeição global de `/studio*` foram implementados no código; `aculta_studio` permanece framework compartilhado. A raiz de `account` é entrada da Conta; Conta e Perfil permanecem separados. O Domain Wiki canônico é `wiki420`; o pedido para renomeá-lo a `wiki.aculta.*` foi corrigido pelo responsável e não faz parte do escopo. As seções abaixo são histórico quando descrevem os paths antigos.

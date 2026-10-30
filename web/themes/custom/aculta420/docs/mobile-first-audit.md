@@ -1874,3 +1874,12 @@ Frente B. **Pede-A:** o owner de Eventos deve trocar classes de design por
 marcadores semânticos `data-portal-ui` e manter o tema como responsável pelo
 acabamento; validar renderização dos dois formulários e repetir o validator até
 PASS. THEME-MF3 segue bloqueado enquanto este gate obrigatório estiver vermelho.
+
+
+O gate `php scripts/validate-portal-ui-docs.php` também foi executado em
+2026-10-30 e falhou em 17 ocorrências: 16 tokens de apresentação de Eventos e
+Índice ausentes de `PortalUiHooks::TOKENS`/famílias documentadas e o atributo
+`data-portal-trigger` ausente do catálogo. Esses consumidores são trabalho de
+owners de módulos com alterações paralelas; não foram editados nesta rodada.
+A correção do contrato de desafio descrita acima não introduziu falhas nesse
+validador.

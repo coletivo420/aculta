@@ -1169,13 +1169,16 @@ Conta/320 px. No Runtime/PR HEAD `2493d7535`, o teste autenticado anonimamente e
 `/entrar` anônimo passou 2/3 checks (320 px falha; 360 px passa); a regressão do rodapé
 em 320 px passou 19/20 nos dez purposes, com apenas Conta falhando. A tentativa
 de CSS direto foi removida porque o validator de foundations proíbe integração
-anti-bot no tema. Pede-A: o Portal deve fornecer marcadores semânticos de
-apresentação para que o tema adapte o conteúdo por container query sem conhecer
-o provedor. Contrato e teste em `mobile-first-audit.md`.
+anti-bot no tema. A entrega local subsequente adicionou ao Portal um marcador
+semântico neutro e um reflow de formulário por container query; veja a entrada
+"contrato visual neutro para widgets de verificação" em `mobile-first-audit.md`.
+A instalação servida no Runtime ainda não foi validada.
 
 O validator de fronteira tema/módulo continua vermelho por classes visuais nos
-dois formulários do módulo `aculta_events` (1/3482). A Frente B não alterou o
-módulo. THEME-MF3 permanece não aprovado; este reteste não inicia OCS-A1–A4.
+dois formulários do módulo `aculta_events` (resultado atualizado: 1/3486).
+`validate-portal-ui-docs.php` também aponta tokens não mapeados de Eventos e
+Índice. A Frente B não alterou esses módulos. THEME-MF3 permanece não aprovado;
+este reteste não inicia OCS-A1–A4.
 
 ### THEME-MF3 — headings e shell no checkout servido `2493d7535` (2026-10-30)
 
@@ -1185,3 +1188,22 @@ total 179/180; a única falha é o overflow `/conta` 320 px pelo widget Turnstil
 A checagem confirma que o defeito anterior de título ausente em Apoio/Cursos
 não está no código atualmente servido. Evidências e escopo em
 `mobile-first-audit.md`; isto não testa estados internos nem aprova THEME-MF3.
+
+### THEME-MF2 — reflow responsivo do desafio de autenticação (2026-10-30)
+
+O commit local `7dbca2b8a` adiciona `CaptchaPresentationHooks` no Portal para
+acrescentar `data-portal-ui="challenge-frame"` após o hook contrib e usa uma
+container query em `auth.css` para acomodar o formulário quando o conteúdo mede
+menos de 300 px. O widget permanece inteiro e sem regras específicas de
+provedor. PHP lint/PHPCS, Unit (2 testes/4 assertions), Stylelint, Design
+Foundations (2426) e SDC schemas (55/759) passaram. Firefox ESR visível com CSS
+candidata e marcador simulado passou 32 verificações nas rotas de login,
+cadastro e recuperação, em 320–1440 px. Não houve submissão.
+
+O Runtime ainda serve `2493d7535`, sem o hook local; portanto não há validação
+de integração real nem do estado sem JavaScript. O commit não foi publicado:
+`git fetch origin refactor/openculturas-codigo-visual` falhou com referência
+remota ausente, enquanto `refs/pull/299/head` ainda resolve para `2493d7535`.
+Revalidar após publicação. O validator módulo/tema segue bloqueado por classes
+visuais de Eventos; `validate-portal-ui-docs.php` segue vermelho por 16 tokens
+de Eventos/Índice e `data-portal-trigger` não documentados.
