@@ -331,3 +331,18 @@ Evento é a unidade editorial e administrativa. aculta_event_date permanece uma 
 A conclusão técnica de E4 não fecha esta experiência editorial. O gate de conclusão exige ausência de criação/listagem de Datas como tarefas independentes e administração integral a partir do Evento.
 
 **Evidência de implementação (2026-10-30):** `EventDateManagementKernelTest` 6/88 PASS, `EventFormDatesKernelTest` 3/48 PASS, suíte Kernel de Events 76/1216 PASS, `aculta_calendar` 127/431 PASS e Unit de Events 8/19 PASS. A entidade `aculta_event_date` permanece como fonte de calendário, `.ics`, recorrência, embed e página pública. Nenhuma migração de dados foi executada; o Runtime não foi alterado.
+
+
+## Fronteira de domínio: editorial em Eventos, exibição somente leitura (decisão 2026-10-30)
+
+Eventos, Datas e Locais são administrados exclusivamente no purpose `eventos`. Outros domínios apenas consomem a apresentação, de forma somente leitura.
+
+- [x] Restringir rotas, formulários e operações de criação/edição ao purpose `eventos`, com validação no servidor. (`_aculta_domain_purpose: eventos` + `_aculta_domain_purpose_authoritative: true` nas rotas editoriais; `ContentPurposeResolver` honra o opt-in; `DomainPurposeRequestSubscriber` nega a rota em outros domínios.)
+- [x] Datas e Locais seguem o Evento proprietário, inclusive no contexto de domínio. (`event_date_*`/`location_*` exigem acesso ao Evento e purpose `eventos`; `EventDateRouteAccess` valida o vínculo.)
+- [x] Preservar os mecanismos centrais de troca de domínio/purpose e URLs canônicas, sem aliases/redirects temporários. (Nenhum alias criado; URLs canônicas via `DomainPurposeManager`.)
+- [x] Em outros domínios, exibir apenas blocos somente leitura, sem ações editoriais. (Bloco `aculta_events_upcoming`, categoria ACULTA Eventos.)
+- [x] A caixa consulta somente Eventos publicados e acessíveis, com cache/canonical corretos. (`EventCatalogue::busca()` com `access('view')`; cache contexts `user`/`url.site` e tags `aculta_event_list`/`aculta_event_date_list`; links canônicos de `eventos`.)
+- [x] Eventos privados do LMS ou sem acesso público não vazam. (`hook_entity_access` do LMS + `access('view')` no catálogo/bloco; coberto pelas suítes do LMS e pela ausência de rascunhos no bloco.)
+- [x] Não duplicar entidades, catálogos ou armazenamento por domínio. (Origem única em `aculta_events`.)
+
+**Evidência:** `EventDomainBoundaryKernelTest` 4/121 PASS; `ContentPurposeResolverTest`, `ContentPurposeResolverEventsUnitTest` e `DomainRoutePolicyTest` 25/43 PASS. A colocação do bloco em cada domínio é configuração de site (não executada nesta entrega, sem escrita no Runtime).

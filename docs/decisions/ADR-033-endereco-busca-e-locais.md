@@ -80,3 +80,12 @@ A centralização descrita acima foi implementada em `aculta_events`:
 - A entidade `aculta_event_date` e o modelo Evento > Data > Local permanecem; calendário, `.ics`, recorrência, embed e página pública continuam consumindo a Data como fonte de dados.
 
 Evidência: `EventDateManagementKernelTest`, `EventFormDatesKernelTest`, suíte Kernel de Events e suíte `aculta_calendar` PASS (ver ROADMAP do módulo). Nenhuma migração de dados ou escrita no Runtime foi executada.
+
+
+## Fronteira de domínio para Eventos, Datas e Locais (2026-10-30)
+
+- Criar, editar e publicar Eventos, Datas e Locais é exclusivo do purpose `eventos`. As rotas editoriais declaram `_aculta_domain_purpose: eventos` e `_aculta_domain_purpose_authoritative: true`; o `ContentPurposeResolver` honra esse opt-in e o `DomainPurposeRequestSubscriber` nega a rota em qualquer outro domínio, inclusive em acesso direto e submissão POST. Ocultar links no cliente não substitui essa checagem.
+- Datas e Locais seguem o Evento proprietário: as rotas exigem o Evento no caminho e `aculta_event.update`; `EventDateRouteAccess` confirma o vínculo. Não há formulário editorial de Data/Local aberto em outro domínio.
+- Outros domínios podem exibir somente leitura o bloco `aculta_events_upcoming`. Ele consulta `EventCatalogue` (publicados e com `access('view')`), aponta para as URLs canônicas de `eventos`, declara cache por `user`/`url.site` e não expõe ações editoriais. Eventos de turma do LMS permanecem protegidos pelo `hook_entity_access` e não vazam para caixas, busca, calendário ou indexação.
+- Nenhuma entidade, catálogo ou armazenamento é duplicado por domínio; a origem continua sendo `aculta_events`. Não há alias nem redirect temporário para escrita cruzada.
+- Evidência: `EventDomainBoundaryKernelTest` (rotas, resolver e bloco) e os testes do `ContentPurposeResolver`/`DomainRoutePolicy` PASS.

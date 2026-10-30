@@ -23,6 +23,12 @@ Eventos, datas e locais do purpose `eventos` (ADR-015). Usa o `aculta_calendar` 
 - **Não existe** rota global de “Adicionar data de evento”. As rotas `aculta_events.event_date_add`, `event_date_edit` e `event_date_delete` exigem o Evento no caminho, verificam `aculta_event.update` e confirmam no servidor que a Data pertence ao Evento (`EventDateRouteAccess`).
 - A antiga rota `aculta_events.date_add` foi aposentada sem alias ou redirect temporário.
 
+## Fronteira de domínio
+
+- Editorial (criar/editar/publicar Eventos, Datas e Locais) existe **somente** no purpose `eventos`. As rotas administrativas usam `_aculta_domain_purpose: eventos` + `_aculta_domain_purpose_authoritative: true`; o `DomainPurposeRequestSubscriber` do Portal nega a rota em qualquer outro domínio, inclusive em acesso direto e POST.
+- Outros domínios podem exibir o bloco somente leitura `aculta_events_upcoming` (`/admin/structure/block` → “Próximos eventos (somente leitura)”). Ele lista apenas Eventos publicados e acessíveis, aponta para as URLs canônicas de `eventos` e não oferece ações editoriais.
+- Nenhuma entidade, catálogo ou armazenamento é duplicado por domínio; a origem continua sendo `aculta_events`.
+
 - Roadmap e fases: [docs/ROADMAP.md](docs/ROADMAP.md)
 - Modelo de dados: [docs/MODELO-DE-DADOS.md](docs/MODELO-DE-DADOS.md)
 - Plano de implantação: [docs/PLANO-IMPLANTACAO.md](docs/PLANO-IMPLANTACAO.md)

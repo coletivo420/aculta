@@ -45,3 +45,9 @@ A experiência administrativa de Datas foi centralizada em Eventos (ADR-033), ma
 - Agenda, grade, `.ics`, embed e páginas públicas seguem consumindo a Data; a mudança é apenas editorial e de navegação administrativa.
 - Nenhuma rota ou entidade do calendário foi removida. As rotas administrativas de recorrência e ocorrência permanecem técnicas, restritas a quem administra eventos.
 - A rota global de criação de Data (`aculta_events.date_add`) saiu; a criação passou a exigir o Evento de origem no caminho.
+
+## Aditivo: fronteira de domínio (2026-10-30)
+
+- A gestão editorial de Eventos, Datas e Locais fica restrita ao purpose `eventos` (rotas com `_aculta_domain_purpose: eventos` + `_aculta_domain_purpose_authoritative: true`). O `DomainPurposeRequestSubscriber` nega o acesso em outros domínios.
+- Outros domínios apenas exibem o bloco somente leitura `aculta_events_upcoming`, que consulta Eventos publicados e acessíveis e aponta para as URLs canônicas de `eventos`.
+- O contrato do calendário não muda: agenda, grade, `.ics`, embed e recorrência continuam consumindo `aculta_event_date` como fonte de dados.

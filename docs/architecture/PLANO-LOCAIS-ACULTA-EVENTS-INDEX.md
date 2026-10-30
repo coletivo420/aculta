@@ -277,3 +277,14 @@ A interface administrativa deve tratar Evento como unidade editorial. A existên
 O item E4/F5 que registra a existência técnica de um formulário de nova Data descreve capacidade de código, não a experiência administrativa desejada. Ele não deve ser considerado concluído como UX enquanto a Data puder ser criada ou gerida como tarefa autônoma. Este aditivo prevalece sobre referências anteriores a criação inline/avulsa de Data e sobre o fluxo legado de Activity.
 
 **Evidência (2026-10-30):** `EventDateManagementKernelTest` 6/88, `EventFormDatesKernelTest` 3/48, Kernel de Events 76/1216, Calendar 127/431 e Unit de Events 8/19 PASS. Nenhuma migração de dados, mudança de esquema ou escrita no Runtime foi executada.
+
+
+## Fronteira de domínio para Locais e Eventos (2026-10-30)
+
+- [x] Operações editoriais de Eventos, Datas e Locais restritas ao purpose `eventos`, com negação no servidor em outros domínios. (`_aculta_domain_purpose: eventos` + `_aculta_domain_purpose_authoritative: true`; `DomainPurposeRequestSubscriber` nega inclusão por URL/POST.)
+- [x] Locais seguem o Evento proprietário: seleção/cadastro via modal revalidam `access('view')`/criação e vivem no contexto do Evento.
+- [x] Exibição em outros domínios é somente leitura (bloco `aculta_events_upcoming`), sem ações de cadastrar Local, editar, excluir ou publicar.
+- [x] Sem duplicação de entidade/catálogo por domínio e sem alias/redirect temporário.
+- [x] Eventos de turma do LMS e Locais privados permanecem fora da exibição pública, busca e indexação cruzada.
+
+Evidência: `EventDomainBoundaryKernelTest` e testes do `ContentPurposeResolver`/`DomainRoutePolicy` PASS. A colocação do bloco por domínio é configuração de site e não foi executada (sem escrita no Runtime).
