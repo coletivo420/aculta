@@ -1225,3 +1225,15 @@ funcionais. Firefox ESR candidato passou 74/74 na fixture responsiva; lint,
 fronteira, docs UI e schemas passaram. Testes Kernel aguardam configuração do
 banco dedicado e Runtime/markup real ainda não homologados. Este avanço parcial
 não fecha THEME-MF2 nem THEME-MF3.
+
+### Revista — capa pública e reuso visual (2026-10-30)
+
+A raiz da Revista no Runtime serve uma chamada editorial e quatro publicações
+sintéticas autorizadas, usando `patterns/hero` e `patterns/card` existentes.
+Firefox ESR anônimo passou 10/10 verificações em 320–1440px; capturas móveis e
+desktop foram inspecionadas. O tema OpenCulturas 3.1.5 (`opcult`) foi verificado
+pelo tarball SHA-256 documentado em `studio-visual/upstream-inventory.md`; a
+família teaser informa padrões de superfície/raio/sombra que podem inspirar
+composição, sem copiar CSS, Twig ou ativos. Não se declara paridade da capa com
+uma homepage upstream não equivalente. Estado, limites e evidências em
+[`mobile-first-audit.md`](mobile-first-audit.md).

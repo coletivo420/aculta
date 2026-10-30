@@ -1908,3 +1908,33 @@ Capturas de 320 e 1440 px foram inspecionadas. Evidência:
 `/home/piradopirata/aculta-suite-out/aculta-events-organization-layout-r6/`.
 A fixture cobre CSS e markup representativo, não markup renderizado/ACL/AJAX de
 Drupal. THEME-MF3 permanece pendente até os gates globais e de integração real.
+
+### Revista — capa editorial servida e referência OpenCulturas verificada (2026-10-30)
+
+A raiz pública `https://revista.aculta.toca.net.br/` foi aberta no Firefox ESR
+visível, anônima e somente GET, contra o docroot de desenvolvimento em
+`2493d7535`. O Runtime já contém quatro publicações sintéticas autorizadas para
+inspeção humana (NIDs 599–602); esta rodada não criou nem alterou conteúdo. A
+View e sua chamada hero, os quatro teasers, as imagens carregadas, Institution
+Bar e Domain Header passaram **10/10 verificações** em 320/360/390/599/600/768/
+1024/1280/1440px, sem overflow. Capturas de 320 e 1440px foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/magazine-cover-runtime-current-20261030/`.
+O shell e o estado servido foram lidos; as alterações locais de Eventos no
+docroot permaneceram intactas.
+
+O tarball oficial OpenCulturas 3.1.5 foi conferido novamente: SHA-256
+`2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`. Para os
+teasers, `openculturas/profile/themes/opcult/sass/abstracts/_teasers.scss`
+documenta uma família configurável de superfície, raio, padding e sombra; o
+Twig `templates/node/node--teaser-unified.html.twig` delega ao teaser unificado.
+Isso é referência de composição, não autorização para copiar folhas, imagens,
+SVGs ou template. A capa ACULTA atual reutiliza os SDCs `patterns/hero` e
+`patterns/card`, apresenta publicação destaque e lista editorial real, empilha
+imagem/conteúdo no móvel e amplia para grade progressiva em telas maiores. A
+captura valida o consumer servido; sem uma homepage equivalente autenticada do
+OpenCulturas e sem baseline pareado de conteúdo, não se declara paridade visual.
+
+Antes da inspeção foi produzido snapshot íntegro do `aculta_runtime`
+(624 tabelas), armazenado fora do Git com modo restrito; SHA-256:
+`665c41fcdce303d6bc4d1171ea3421c8e42de53d5261c80e5c23d5a955c1fdae`.
+Nenhuma escrita no Runtime ocorreu nesta rodada.
