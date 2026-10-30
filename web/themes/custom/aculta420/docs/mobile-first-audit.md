@@ -1716,3 +1716,21 @@ Somente `author-card.py` consultou uma rota pública real; os demais usam fixtur
 e não validam integração Drupal/ACL nem todos os estados. A bateria não cobre
 zoom 200/400%, leitor de tela, contraste WCAG 2.2 AA, autenticação em todos os
 purposes ou toda a matriz cross-product. THEME-MF3 continua pendente.
+
+### Shell global repetido no HEAD atual da PR (2026-10-30)
+
+O docroot de desenvolvimento (`toca`, `/home/piradopirata/projetos/aculta`,
+`http://default`, `aculta_runtime`) e `refs/pull/299/head` foram observados em
+`30c6770f3` antes desta rodada e confirmados no mesmo SHA ao final. No Firefox
+ESR visível, as dez raízes públicas passaram 360/360 checks em claro/escuro e
+reduced-motion (320/360/390/599/600/768/1024/1280/1440px): tokens computados,
+shell único e sem overflow. A alternância de tema ocorreu somente no DOM local
+da sessão Firefox. Separadamente, sem JavaScript, as dez raízes passaram
+210/210 checks em 320/390/599/600/768/1024/1440px: Institution Bar e Domain
+Header únicos, navegação (ou busca Wiki) visível e sem overflow. Evidências em
+`/home/piradopirata/aculta-suite-out/purpose-modes-head-30c-20261030/` e
+`/home/piradopirata/aculta-suite-out/purpose-nojs-head-30c-20261030/`.
+Essas matrizes auditam o que estava servido no HEAD registrado; não comprovam
+cada interação/página interna, zoom, teclado completo, leitores de tela,
+contraste WCAG 2.2 AA nem a distribuição dos estilos ainda locais da branch.
+THEME-MF3 segue pendente.

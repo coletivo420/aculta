@@ -1111,3 +1111,13 @@ Webform, composer do Messenger e cartão de autoria do Fórum. Sete usam fixture
 `author-card.py` verificou a listagem pública real de tópicos do Fórum. Os
 resultados detalhados, capturas e limitações estão em `mobile-first-audit.md`.
 A bateria fecha somente esses componentes/estados e não aprova THEME-MF3.
+
+### THEME-MF3 — revalidação parcial do shell no HEAD `30c6770f3` (2026-10-30)
+
+No Runtime confirmado no mesmo HEAD da PR antes/depois da rodada, as dez raízes
+públicas passaram 360/360 checks Firefox ESR em claro/escuro e
+`prefers-reduced-motion`, nove larguras; a matriz sem JavaScript passou 210/210
+em sete larguras, com shell e navegação/fallback presentes e sem overflow.
+Detalhes e limitações em `mobile-first-audit.md`. É evidência apenas das raízes
+públicas; MF3 ainda requer rotas internas, estados autenticados, formulários,
+interações, zoom, teclado e WCAG para todos os purposes.
