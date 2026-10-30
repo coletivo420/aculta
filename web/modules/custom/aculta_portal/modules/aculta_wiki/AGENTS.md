@@ -1,8 +1,8 @@
 - Dev.117: `FileReferenceInspector` (Portal) ignora tipo registrado sem tabela
 
-## ADR-038 - caminho aprovado para as Suites (implementação futura)
+## ADR-038 - caminhos atuais das Suites (implementados)
 
-Marley `conta.aculta.*/marley`; Ganjalab `cursos.aculta.*/ganjalab`; WE SATIVA `wiki.aculta.*/wesativa`; Green Stash `loja.aculta.*/greenstash`; Culturas `eventos.aculta.*/culturas`. `/studio` e todo `/studio/*` serão removidos e responderão 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `conta` será entrada de Conta, fora de `/studio`; Conta e Perfil permanecem separados. As referências de rota anteriores neste arquivo descrevem o estado pré-migração e não são destino para implementação nova. Consulte ADR-038.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. O Domain Wiki canônico é `wiki420`, conforme configuração ativa; a menção a `wiki.aculta.*` no pedido inicial foi erro corrigido pelo responsável. `/studio` e todo `/studio/*` foram removidos e respondem 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `account` apresenta a entrada da Conta; Conta e Perfil permanecem separados. Consulte ADR-038.
 
   base e `ContentEntityNullStorage` sem converter falha real em exclusão; a
   classe Kernel de imagem passou 29/1.642 e a suíte Kernel Wiki 31/1.692. O
@@ -551,4 +551,4 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
 
 ## ADR-038 - residência futura da Suite WE SATIVA
 
-WE SATIVA responderá em `wiki.aculta.*/wesativa`, purpose `wiki`. O host atual continua `wiki420.aculta.*` até migração de Domain/Deployer/DNS/TLS e homologação. Wiki mantém ownership de verbetes, propostas e permissões. Rotas de moderação que pertencem à Suite Marley continuam em `conta.aculta.*/marley/...`, purpose `account`; não mova toda rota Wiki automaticamente para WE SATIVA. `/studio/*` será removido sem alias.
+WE SATIVA responde em `/wesativa`, purpose `wiki`, no Domain canônico `wiki420`. Wiki mantém ownership de verbetes, propostas e permissões. Rotas de moderação que pertencem à Suite Marley continuam em `account:/marley/...`; não mova toda rota Wiki automaticamente para WE SATIVA. `/studio/*` foi removido sem alias.

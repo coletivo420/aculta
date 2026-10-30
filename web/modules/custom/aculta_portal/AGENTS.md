@@ -1,8 +1,8 @@
 # Portal — regras locais
 
-## ADR-038 - caminho aprovado para as Suites (migração em andamento)
+## ADR-038 - caminhos atuais das Suites (implementados)
 
-Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. `/studio` e todo `/studio/*` foram removidos e respondem 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `conta` é entrada de Conta; Conta e Perfil permanecem separados. Veja ADR-038 para o host Wiki pendente.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. O Domain Wiki canônico é `wiki420`; a menção a `wiki.aculta.*` no pedido original foi erro corrigido pelo responsável. `/studio` e todo `/studio/*` foram removidos e respondem 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `conta` é entrada de Conta; Conta e Perfil permanecem separados. Veja ADR-038.
 
 
 Herde `AGENTS.md` da raiz. Consulte `docs/AGENT-POLICIES.md` **somente nas seções relevantes** e os contratos `docs/portal/GUARDRAILS.md` e `docs/portal/DRUPAL-11-STANDARDS.md` quando a alteração exigir.
@@ -39,7 +39,7 @@ Cada Suite responde em seu próprio domínio/purpose e sob o caminho-base abaixo
 | --- | --- | --- | --- | --- |
 | Marley | `account` | configurado no Domain | configurado no Domain | `/marley` |
 | Ganjalab | `courses` | configurado no Domain | configurado no Domain | `/ganjalab` |
-| WE SATIVA | `wiki` | `wiki.aculta.*` (após provisionamento) | Domain ativo `wiki420` até validação | `/wesativa` |
+| WE SATIVA | `wiki` | configurado no Domain (`wiki420`) | configurado no Domain (`wiki420`) | `/wesativa` |
 | Green Stash | `shop` | configurado no Domain | configurado no Domain | `/greenstash` |
 | Culturas | `eventos` | configurado no Domain | configurado no Domain | `/culturas` |
 
@@ -49,11 +49,11 @@ Regras de implementação:
 - Rotas declaram o purpose correto e validam usuário, módulo owner e permissão no servidor. Purpose incorreto responde 404, inclusive POST. Links cross-domain são absolutos via `DomainPurposeManager`; não enviar POST/proxy de escrita entre purposes.
 - Preservar route IDs e owners sempre que possível. Rotas de negócio podem ser declaradas pelo módulo owner e ter path/purpose ajustados conforme a Suite responsável.
 - Novas Suites escolhem host/purpose e slug próprio antes de declarar rotas; não introduzir `/studio/{suite}`.
-- Hosts de Conta, Cursos, Loja e Eventos já constam nos registros atuais. Wiki ainda usa `wiki420.aculta.org` e `wiki420.aculta.toca.net.br`; migração para `wiki.aculta.*` depende de config Deployer/Domain, DNS, TLS/vhost e homologação.
+- Hosts são lidos da configuração ativa por ambiente e URLs absolutas passam pelo `DomainPurposeManager`. Wiki mantém o Domain configurado `wiki420`; não renomear para `wiki.aculta.*`.
 - Atualizar `PurposeFrontPathProcessor`, `FrontPathPolicy`, subscriber de propósito, navegação e testes para a raiz de cada purpose e as rotas da Suite. Os cinco caminhos da matriz são rotas válidas apenas no purpose respectivo.
 - Remover todas as rotas `/studio` e `/studio/*` após mover destinos. Sem redirects legados; canonical e links apontam diretamente aos novos hosts/caminhos.
 - Migrar links internos/externos, login/retorno, e-mail, notificações, sitemap, canonical, cache e testes. A troca de URL não transfere ownership de entidades, formulários, ACL ou workflows.
 
-Estado em 2026-10-30: caminhos novos e rejeição global de `/studio*` implementados; Runtime testado após rebuild de cache. A URL gerada para Wiki ainda usa o Domain ativo `wiki420`; DNS, TLS/vhost/Deployer e homologação de `wiki.aculta.*` são bloqueios externos.
+Estado em 2026-10-30: caminhos novos e rejeição global de `/studio*` testados após rebuild; matriz HTTP 275/275 e captura Firefox ESR em 1440/390 px. Wiki usa o Domain canônico `wiki420`; HTTPS e navegação autenticada foram verificados no ambiente de desenvolvimento. DNS de produção `wiki420.aculta.org` não foi resolvido neste ambiente.
 
 Ao revisar rotas, trate ADR-038 como decisão vigente e consulte `docs/architecture/ROUTES-SITEMAP.md`.
