@@ -310,3 +310,8 @@ Fonte: `docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md`. Preservar
 - [ ] Validar acessibilidade/foco do modal, autorização, cache, duplicidade, concorrência, erros AJAX, teclado, mobile, integração com `aculta_index` e ausência de regressões em Conta/checkout.
 
 Contrato normativo: [ADR-033](../../../../../../../docs/decisions/ADR-033-endereco-busca-e-locais.md). Não marcar itens como concluídos sem evidências de implementação e validação.
+
+
+### Requisito visual do fluxo de Local: popup Drupal
+
+O seletor de Local e o cadastro devem ser popups modais do Drupal sobre o formulário de Activity, com AJAX. Não implementar como campos expandidos inline ou página separada. A entidade/cadastro pertence a Events; Maps consome os mesmos Locais autorizados e não mantém cadastro paralelo. O popup deve preservar o estado do pai, retornar a referência após confirmação e atender foco, teclado, Escape, mensagens acessíveis e estados de carregamento/erro/vazio.
