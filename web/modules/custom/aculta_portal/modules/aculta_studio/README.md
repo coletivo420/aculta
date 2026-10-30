@@ -251,20 +251,16 @@ Documentos e changelogs anteriores podem usar os nomes antigos para registrar de
 
 Gates do escopo: PHP lint, PHPCS disponível, Unit/Kernel/Functional aplicáveis, `php scripts/validate-module-theme-boundary.php`, `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/validate-project-status-index.php` e `git diff --check`. Testes visuais seguem `tests/browser/aculta-studio/visual.mjs` com Firefox ESR/X11 autorizado.
 
-## Eventos e Locais - integração planejada (2026-10-29)
+## Eventos e Locais - integração e ACULTA Studio Culturas (2026-10-30)
 
-[Plano LOC](../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), especialmente LOC-06.
-Área Eventos no Marley com seções Eventos, Datas e Locais, condicionada a owner
-e permissões reais. aculta_events fornece Forms/CRUD; aculta_index fornece
-projeções/relações/consulta derivada. Studio apenas compõe e mantém retorno aos
-fluxos do owner. Não implementado nesta publicação; preservados S-R4/S-R5,
-hub ACCOUNT e /conta-legada.
+[Plano LOC](../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), especialmente LOC-06, e [análise comparativa com OpenCulturas](../../../../../../docs/architecture/ANALISE-COMPARATIVA-OPENCULTURAS-ACULTA-STUDIO-CULTURAS.md).
+Eventos não são uma aba de Marley. O HEAD auditado contém dashboard e fluxos iniciais em `/culturas`, enquanto `aculta_events` mantém Forms/CRUD e `aculta_index` fornece projeções/relações. Implementação parcial; testes no HEAD atual, validação Runtime e homologação visual pendentes. S-R4/S-R5, hub ACCOUNT e `/conta-legada` seguem seus roadmaps próprios.
 
-## ACULTA Studio Culturas — direção aprovada, implementação pendente
+## ACULTA Studio Culturas — implementação parcial, homologação pendente
 
 ## ACULTA Studio Culturas — decisão de produto e domínio (2026-10-30)
 
-O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota planejada é `/culturas` no purpose `eventos` (host eventos configurado pelo DomainPurposeManager); a entrada geral do Studio em `account` poderá apenas apresentar um link para essa experiência.
+O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota canônica `/culturas` está declarada no código de `aculta_events` no purpose `eventos`; o Runtime ainda precisa ser validado. `/studio/culturas` não é rota-alvo. A entrada geral do Studio em `account` poderá apenas apresentar um link absoluto para essa experiência.
 
 - A sessão administrativa técnica continua no domínio principal, em `/painel-administrativo/eventos`, restrita a administradores. Configuração global de permissões, auditoria e operações administrativas permanecem ali.
 - ACULTA Studio Culturas é a experiência de organizadores: composição de fluxos do owner `aculta_events`, para criar e gerir Eventos e seus componentes (Datas e Locais), usando Form API, Entity Access e moderação existentes. Não cria entidade, formulário de persistência, permissão ou catálogo duplicado.
@@ -272,7 +268,7 @@ O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas
 - Escritas só são aceitas no purpose `eventos` através de rotas canônicas da experiência. O domínio `account` pode linkar para ela, mas não pode fazer POST nem gravar conteúdo de Eventos. Não introduzir proxy de escrita, alias de rota ou redirect de compatibilidade.
 - As telas públicas de Eventos continuam no purpose `eventos`. Outros domínios podem compor exibição somente leitura de Eventos publicados e acessíveis, sempre com link canônico de Eventos e sem expor Eventos privados do LMS.
 - Esta decisão substitui qualquer texto anterior que diga que todo trabalho editorial de Eventos só pode ocorrer no MAIN ou que o purpose `eventos` é exclusivamente público. O painel de administração permanece no MAIN; a área do organizador é a exceção explícita e separada em ACULTA Studio Culturas.
-- Estado: decisão e planejamento documental; implementação, autorização por domínio, navegação e homologação ainda precisam ser concluídas.
+- Estado: decisão aprovada e implementação parcial presente na PR #299. Faltam completar experiência do dashboard e gates de testes, autorização/domínio em ambiente integrado e homologação visual/acessível.
 
 A composição deve seguir o registry/provider atual de Studio e manter ownership, formulários e autorização em `aculta_events`. Criar experiência de Cultura própria, não adicioná-la como seção de Marley. Atualizar este README e o sitemap após implementação/homologação.
 
