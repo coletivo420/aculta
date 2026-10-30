@@ -334,7 +334,7 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/marley/{aba}/{secao}` | Seção editorial Marley | Declarada em `aculta_studio`; segmento inexistente ou sem acesso retorna 404; purpose `account`. |
 | `conta.aculta` | `/marley/{aba}/{secao}/{sub}` | Aba interna editorial Marley | Declarada em `aculta_studio`; ações revalidam o acesso do módulo dono; purpose `account`. |
 | `cursos.aculta` | `/ganjalab` | Dashboard pessoal ACULTA Studio Ganjalab | Declarada em `aculta_lms`; conta autenticada, dados limitados à própria pessoa; purpose `courses`. |
-| `wiki420.aculta` (Domain ativo) | `/wesativa` | Entrada **ACULTA STUDIO WE SATIVA**, experiência de contribuição | Declarada em `aculta_studio`; disponibilidade/access e dados delegados à Wiki; purpose `wiki`. Host `wiki.aculta.*` depende de infraestrutura externa. |
+| `wiki420.aculta` (Domain ativo) | `/wesativa` | Entrada **ACULTA STUDIO WE SATIVA**, experiência de contribuição | Declarada em `aculta_studio`; disponibilidade/access e dados delegados à Wiki; purpose `wiki`. Host vem do Domain configurado; não há renomeação para `wiki.aculta.*`. |
 | `wiki420.aculta` (Domain ativo) | `/wesativa/inicio` | Página inicial de contribuição **ACULTA STUDIO WE SATIVA** | Declarada em `aculta_studio`; acesso delegado ao workspace proprietário da Wiki; purpose `wiki`. |
 | `loja.aculta` | `/greenstash` | Entrada de gestão comercial integrada **ACULTA STUDIO GREEN STASH** | Rota `aculta_commerce.green_stash`; purpose `shop`; acesso pelo provider e permissão Commerce. |
 | `loja.aculta` | `/greenstash/{secao}` | Áreas contextuais de gestão Green Stash | Rota `aculta_commerce.green_stash_area`; somente slugs definidos pelo owner Commerce. |
@@ -572,7 +572,7 @@ existe. Alterações somente documentais não avançam versões de módulo/tema.
 
 ## Mapa canônico das Suites - ADR-038
 
-Caminhos e purposes foram atualizados no código; Wiki mantém o Domain ativo `wiki420` até que `wiki.aculta.*` seja provisionado e validado:
+Caminhos e purposes foram atualizados no código; Wiki mantém o Domain canônico configurado `wiki420`:
 
 | Host | Path base | Suite | Purpose | Estado |
 | --- | --- | --- | --- | --- |

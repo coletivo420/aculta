@@ -1,6 +1,6 @@
 ## ADR-038 - caminho aprovado para as Suites (execução parcial, 2026-10-30)
 
-Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. Paths/purposes e rejeição global de `/studio*` foram implementados no código; `aculta_studio` permanece framework compartilhado. A raiz de `account` é entrada da Conta; Conta e Perfil permanecem separados. O domínio Wiki continua `wiki420` enquanto DNS/TLS/vhost de `wiki.aculta.*` não forem validados. As seções abaixo são histórico quando descrevem os paths antigos.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. Paths/purposes e rejeição global de `/studio*` foram implementados no código; `aculta_studio` permanece framework compartilhado. A raiz de `account` é entrada da Conta; Conta e Perfil permanecem separados. O Domain Wiki canônico é `wiki420`; o pedido para renomeá-lo a `wiki.aculta.*` foi corrigido pelo responsável e não faz parte do escopo. As seções abaixo são histórico quando descrevem os paths antigos.
 
 ## Inventário histórico pré-ADR-038
 
@@ -716,15 +716,16 @@ permanecem parciais.
 
 ## OCS-F12 - Residência das Suites por domínio (ADR-038)
 
-**Estado: parcial.** As rotas canônicas das cinco Suites, paths de Conta/Perfil/salvos/Mercado Pago, entrada da Conta e 404 global de `/studio*` estão no código. `aculta_studio` continua framework/registry sem hub. Host Wiki novo e homologação full-stack permanecem pendentes.
+**Estado: paths implementados; homologação funcional parcial.** As rotas canônicas das cinco Suites, paths de Conta/Perfil/salvos/Mercado Pago, entrada da Conta e 404 global de `/studio*` estão no código. `aculta_studio` continua framework/registry sem hub. A matriz HTTP verificou 275 respostas e Firefox ESR capturou 20 páginas em 1440/390 px; grants de escrita, testes Kernel e acessibilidade ampla permanecem pendentes. Wiki usa o Domain `wiki420` sem mudança de host planejada.
 
 - [x] F12-A registrar a correspondência de rotas e ownership inicial em ADR-038; consumidores/docs restantes seguem no inventário de trabalho.
 - [x] F12-B definir paths de Conta, Perfil, Salvos e planos Mercado Pago fora de `/studio`, sem fundir Conta/Perfil nem trocar owners.
 - [x] F12-C migrar declarações e providers Marley e Ganjalab; Ganjalab passa de `account` para `courses`.
 - [x] F12-D mover entradas WE SATIVA, Green Stash e Culturas a `wiki`, `shop` e `eventos`.
-- [ ] F12-E provisionar host Wiki `wiki.aculta.*`: Domain/Deployer, DNS, TLS/vhost, fallback e rollback. Config atual usa `wiki420.aculta.*`.
+- [x] F12-E confirmar o Domain Wiki canônico (`wiki420`) e retirar do escopo a referência equivocada a `wiki.aculta.*`, conforme correção do responsável em 2026-10-30.
 - [x] F12-F retirar rewrite `account` para `/studio`, implementar entrada da Conta e retirar as rotas públicas `/studio*`; cache de rotas reconstruído e caminhos antigos verificados como 404.
-- [ ] F12-G terminar consumidores, mapas, canonical/cache/SEO e gates; validação atual cobre `DomainPurposeManager` e caminhos de navegação focal.
-- [ ] F12-H testar os cinco Domains, purpose correto/incorreto para GET/POST/AJAX, `/studio*` 404, owners, permissões, acessibilidade e telas mobile.
+- [x] F12-G auditar consumidores de rotas ativas e atualizar mapas, canonical/cache/SEO e documentação de rotas; manter links absolutos pelo `DomainPurposeManager`.
+- [x] F12-H1 verificar por HTTP os cinco Domains, paths canônicos, purpose errado para GET/POST/AJAX e `/studio*` 404 (275/275 respostas esperadas em 2026-10-30).
+- [ ] F12-H2 homologar grants e formulários de escrita das Suites, especialmente Green Stash, e ampliar acessibilidade/zoom/teclado/mobile além do baseline 1440/390.
 
-Bloqueio residual: F12-E depende de Domain/Deployer, DNS, TLS/vhost e acesso a ambiente; Wiki continua no host `wiki420`. F12-G/H não estão concluídas. Não declarar ADR-038 implementado integralmente antes de testes por host/Runtime.
+Pendências residuais: F12-H2 e testes Kernel de integração para métodos/AJAX permanecem sem execução porque `SIMPLETEST_DB` não está configurado. O usuário de teste não tem grants de Green Stash, portanto a captura visual não homologa escrita na Loja. Não declarar homologação funcional integral antes de validar essas permissões e fluxos.

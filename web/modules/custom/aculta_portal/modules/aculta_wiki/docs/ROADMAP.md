@@ -1390,11 +1390,11 @@ WE SATIVA is an ACULTA Studio user experience hosted within the Wiki purpose, dr
 D-A.2-T2: aculta_studio não enumera mais todas as entidades content_moderation_state; o estado usa a revisão mais recente visível por item. Isso não fornece fila confiável/paginada: aculta_wiki ainda deve implementar provider próprio de revisões com grants e workflow. STUDIO 0.1-B separa providers de experiência WE SATIVA (purpose Wiki) da navegação GanjaLab (account).
 # ADR-038 — WE SATIVA no purpose Wiki (2026-10-30)
 
-O workspace e a decisão de propostas agora usam caminhos `/wesativa...` no
-purpose `wiki`; o ownership de conteúdo, grants e moderação permanece em
-`aculta_wiki`. O código de Domain continua apontando para `wiki420`.
-`wiki.aculta.toca.net.br` não resolve no DNS nesta validação; Domain/Deployer,
-DNS, TLS, virtual host/proxy e homologação do novo host são bloqueios externos.
-Manter `wiki420.aculta.*` até validar a substituição. Os históricos
-`/studio/we-sativa...` abaixo descrevem apenas estado anterior.
+O workspace e a decisão de propostas usam caminhos `/wesativa...` no purpose
+`wiki`; o ownership de conteúdo, grants e moderação permanece em `aculta_wiki`.
+O Domain canônico é `wiki420`, conforme correção do responsável de que a
+referência a `wiki.aculta.*` no pedido inicial estava errada. HTTPS e captura
+autenticada foram verificados em `wiki420.aculta.toca.net.br`; a disponibilidade
+de produção (`wiki420.aculta.org`) não foi confirmada neste ambiente. Os
+históricos `/studio/we-sativa...` abaixo descrevem apenas estado anterior.
 

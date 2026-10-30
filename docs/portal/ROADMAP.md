@@ -13,8 +13,9 @@ em `/marley` (`account`), `/ganjalab` (`courses`), `/wesativa` (`wiki`),
 `DomainPurposeManager` gera URLs entre purposes. Config exportada de Conta
 aponta para `/conta`; não foi importada no Runtime. Permanecem pendentes os
 gates de consumo/documentação residual, autorização POST/AJAX integrada e
-homologação completa dos cinco Domains. O Domain Wiki ativo ainda é `wiki420`;
-DNS/TLS/vhost/Deployer de `wiki.aculta.*` são bloqueio externo.
+homologação funcional completa das cinco Suites. O Domain Wiki canônico é
+`wiki420`; a referência inicial a `wiki.aculta.*` foi corrigida pelo
+responsável e não há migração de host planejada.
 
 ## Inventário de helpers de imagem — 2026-10-29
 

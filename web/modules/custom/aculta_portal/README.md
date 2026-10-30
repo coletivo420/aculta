@@ -32,8 +32,8 @@ A raiz `/` no ACCOUNT serve a entrada da Conta; `/studio` e qualquer
 `/studio/*` respondem 404 sem alias ou redirect. Conta (`/conta/*`) e Perfil
 (`/perfil/*`) permanecem áreas independentes; salvos usam `/salvos`. As cinco
 Suites usam seus caminhos canônicos no purpose owner conforme o ADR-038. A
-Wiki ainda resolve no Domain configurado como `wiki420`; `wiki.aculta.*` não é
-declarado operacional antes da validação de DNS, TLS e virtual host. Contrato:
+Wiki resolve no Domain canônico configurado como `wiki420`; a referência a
+`wiki.aculta.*` no pedido inicial foi corrigida pelo responsável. Contrato:
 [Conta e Perfil separados](../../../../docs/architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
 
 ## Histórico — Evolução planejada: Conta e Perfil no ACULTA Studio (2026-10-24)

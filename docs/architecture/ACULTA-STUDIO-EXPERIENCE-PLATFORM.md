@@ -1,8 +1,8 @@
 # ACULTA Studio — plataforma transversal de interfaces próprias
 
-## ADR-038 - caminho aprovado para as Suites (implementação parcial, 2026-10-30)
+## ADR-038 - caminhos atuais das Suites (2026-10-30)
 
-Marley `conta.aculta.*/marley`; Ganjalab `cursos.aculta.*/ganjalab`; WE SATIVA `wiki.aculta.*/wesativa`; Green Stash `loja.aculta.*/greenstash`; Culturas `eventos.aculta.*/culturas`. `/studio` e todo `/studio/*` serão removidos e responderão 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `conta` será entrada de Conta, fora de `/studio`; Conta e Perfil permanecem separados. As referências de rota anteriores neste arquivo descrevem o estado pré-migração e não são destino para implementação nova. Consulte ADR-038.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa` no Domain `wiki420`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. `/studio` e todo `/studio/*` foram removidos e respondem 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `account` apresenta a entrada de Conta; Conta e Perfil permanecem separados. A menção a `wiki.aculta.*` no pedido inicial foi corrigida pelo responsável; não há migração de host Wiki planejada.
 
 ## Contratos anteriores
 

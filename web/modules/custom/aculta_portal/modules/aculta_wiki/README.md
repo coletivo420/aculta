@@ -755,4 +755,4 @@ descrição, URL ou arquivo. Homologação Runtime continua separada.
 
 ## WE SATIVA em Wiki - migração ADR-038
 
-Destino: `wiki.aculta.*/wesativa`, purpose `wiki`. O host atual é `wiki420.aculta.*`; a mudança depende de Domain/Deployer, DNS, TLS/vhost e homologação. Wiki mantém ownership de verbetes, propostas e permissões. Rotas Marley de moderação continuam na Suite Marley (`account:/marley/...`) quando esse for o contexto owner. `/studio/*` sai sem alias.
+Registro histórico do plano: o destino proposto para `/wesativa` era `wiki.aculta.*`, mas o responsável corrigiu que essa referência estava errada. O Domain canônico permanece `wiki420`. Wiki mantém ownership de verbetes, propostas e permissões. Rotas Marley de moderação continuam na Suite Marley (`account:/marley/...`) quando esse for o contexto owner. `/studio/*` saiu sem alias.

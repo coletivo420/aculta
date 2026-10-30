@@ -17,8 +17,8 @@ foram retirados e respondem 404. Os caminhos atuais das Suites são `/marley`
 (`shop`) e `/culturas` (`eventos`). Conta e Perfil usam `/conta/*` e
 `/perfil/*`; salvos usam `/salvos`, planos Mercado Pago
 `/conta/mercado-pago/planos`, e `/conta-legada` permanece. A Wiki ainda usa o
-Domain `wiki420`; `wiki.aculta.*` não está operacional sem DNS/TLS/vhost e
-homologação. Tabelas abaixo marcadas como históricas preservam medições do
+Domain canônico `wiki420`; a referência a `wiki.aculta.*` foi corrigida pelo
+responsável e não implica mudança de Domain. Tabelas abaixo marcadas como históricas preservam medições do
 estado anterior.
 
 **Fora desta proibição:** autenticação, logout, recuperação de conta,

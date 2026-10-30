@@ -12,7 +12,7 @@
 | Green Stash | `shop` | `/greenstash` |
 | Culturas | `eventos` | `/culturas` |
 
-A raiz de `account` apresenta a entrada da Conta; Conta (`/conta/*`) e Perfil (`/perfil/*`) permanecem separados. Salvos usam `/salvos`, Mercado Pago usa `/conta/mercado-pago/planos` e `/conta-legada` permanece. URLs absolutas são resolvidas pelo `DomainPurposeManager`; o Domain da Wiki ainda é `wiki420`, pois `wiki.aculta.*` não passou por validação de DNS/TLS/vhost.
+A raiz de `account` apresenta a entrada da Conta; Conta (`/conta/*`) e Perfil (`/perfil/*`) permanecem separados. Salvos usam `/salvos`, Mercado Pago usa `/conta/mercado-pago/planos` e `/conta-legada` permanece. URLs absolutas são resolvidas pelo `DomainPurposeManager`; o Domain Wiki canônico é `wiki420`, sem migração de host planejada.
 
 Microfase publicada em `faefae9ee`: gates focados Studio/Portal/Commerce 89 testes / 653 assertions PASS; gate de aliases PASS; teste amplo 457 testes teve uma falha de configuração de checkout do curso (`curso`: esperado `default`, atual `curso`), fora dos arquivos desta migração. Runtime route cache foi reconstruído; MAIN e entrada da Conta HTTP 200, `/studio` HTTP 404. A experiência Culturas ainda requer validação de acesso e escrita nos endpoints auxiliares.
 
@@ -294,9 +294,10 @@ Conta (`/conta/*`) e Perfil (`/perfil/*`) permanecem separados; salvos usam
 `DomainPurposeManager`. A raiz `account` apresenta a entrada da Conta sem
 rewrite para `/studio`.
 
-O Domain Wiki ativo ainda é `wiki420`. `wiki.aculta.toca.net.br` não resolve
-no DNS e não foi homologado com TLS/vhost; não desative `wiki420.aculta.*`
-até concluir Domain/Deployer, DNS, TLS/proxy e teste de ambiente controlado.
+O Domain Wiki canônico é `wiki420`. O responsável corrigiu a referência a
+`wiki.aculta.*` no pedido inicial; não há mudança de host planejada. HTTPS e
+captura autenticada foram verificados no ambiente de desenvolvimento; a
+resolução de produção `wiki420.aculta.org` não foi confirmada neste ambiente.
 A matriz de correspondência completa está no
 [ADR-038](../../../../../../docs/decisions/ADR-038-aculta-studio-suites-por-dominio.md).
 
@@ -305,5 +306,7 @@ nove páginas ACULTA em 1440/390), sem documentos vazios ou overflow. Green
 Stash deu acesso negado à conta de teste sem permissão, portanto não é
 homologação de escrita. A jornada de Culturas mostrou HTTP 500 na primeira
 captura e foi corrigida em `95314a5a7`; a captura repetida carregou HTTP 200.
-Os gates de POST/AJAX por purpose e operações administrativas permanecem
-pendentes de Kernel, que não foi executado sem `SIMPLETEST_DB`.
+Uma matriz HTTP focal verificou 275 respostas GET/POST/AJAX nos cinco hosts
+configurados pelo `DomainPurposeManager`, com 404 no purpose errado e nas
+rotas antigas. Testes Kernel seguem pendentes porque `SIMPLETEST_DB` não está
+configurado.

@@ -1,14 +1,14 @@
 # ACULTA Studio — contrato de identidade e rotas
 
-## ADR-038 - caminhos canônicos e estado atual (implementação parcial)
+## ADR-038 - caminhos canônicos implementados; homologação funcional parcial
 
-Marley `conta.aculta.*/marley`; Ganjalab `cursos.aculta.*/ganjalab`; WE SATIVA `wiki.aculta.*/wesativa`; Green Stash `loja.aculta.*/greenstash`; Culturas `eventos.aculta.*/culturas`. `/studio` e todo `/studio/*` serão removidos e responderão 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `conta` será entrada de Conta, fora de `/studio`; Conta e Perfil permanecem separados. As referências de rota anteriores neste arquivo descrevem o estado pré-migração e não são destino para implementação nova. Consulte ADR-038.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa` no Domain canônico `wiki420`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. `/studio` e todo `/studio/*` foram removidos e respondem 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `account` apresenta a entrada de Conta; Conta e Perfil permanecem separados. A referência a `wiki.aculta.*` no pedido original foi corrigida pelo responsável; não há migração de host Wiki planejada.
 
 ## Histórico pré-ADR-038
 
 As referências de path no restante deste arquivo registram o estado anterior ao contrato acima. Não use `/studio/*` como destino de novas implementações.
 
-Estado verificado em 2026-10-30: os cinco paths canônicos e as rotas de Conta, Perfil, salvos e Mercado Pago estão declarados no código; `/studio` e as rotas antigas respondem 404 após rebuild. A raiz de `account` serve a entrada da Conta. O Domain da Wiki permanece `wiki420`; `wiki.aculta.*` depende de Domain/Deployer, DNS, TLS/vhost e homologação. Consulte a correspondência completa em [ADR-038](../decisions/ADR-038-aculta-studio-suites-por-dominio.md).
+Estado verificado em 2026-10-30: os cinco paths canônicos e as rotas de Conta, Perfil, salvos e Mercado Pago estão declarados no código; a matriz HTTP de GET/POST/AJAX foi 275/275 e `/studio*` retorna 404 após rebuild. Firefox ESR capturou Conta, Marley, Ganjalab, WE SATIVA, Green Stash, Culturas e planos em 1440/390 px; o usuário de teste não tem permissão para Green Stash, que exibiu acesso negado. O Domain Wiki é `wiki420`; HTTPS e captura autenticada foram verificados no host de desenvolvimento. Consulte a correspondência completa em [ADR-038](../decisions/ADR-038-aculta-studio-suites-por-dominio.md).
 
 ## Contrato histórico — Studio dev.18, Portal dev.30 e User dev.74
 
@@ -178,7 +178,7 @@ Registros e documentos de fases anteriores podem mencionar GanjaLab como identid
 
 ## Contrato futuro de identidade e paths - ADR-038
 
-## Contrato futuro: Suites do ACULTA Studio por domínio (ADR-038)
+## Contrato vigente: Suites do ACULTA Studio por domínio (ADR-038)
 
 Cada Suite responde em seu próprio domínio/purpose e sob o caminho-base abaixo. O prefixo público `/studio` e todas as rotas `/studio/*` serão retirados e responderão 404, sem alias ou redirect. `aculta_studio` permanece como infraestrutura compartilhada de composição e registry, não como raiz de URL.
 
@@ -186,7 +186,7 @@ Cada Suite responde em seu próprio domínio/purpose e sob o caminho-base abaixo
 | --- | --- | --- | --- | --- |
 | Marley | `account` | `conta.aculta.org` | `conta.aculta.toca.net.br` | `/marley` |
 | Ganjalab | `courses` | `cursos.aculta.org` | `cursos.aculta.toca.net.br` | `/ganjalab` |
-| WE SATIVA | `wiki` | `wiki.aculta.org` | `wiki.aculta.toca.net.br` | `/wesativa` |
+| WE SATIVA | `wiki` | configurado no Domain (`wiki420`) | configurado no Domain (`wiki420`) | `/wesativa` |
 | Green Stash | `shop` | `loja.aculta.org` | `loja.aculta.toca.net.br` | `/greenstash` |
 | Culturas | `eventos` | `eventos.aculta.org` | `eventos.aculta.toca.net.br` | `/culturas` |
 
@@ -196,11 +196,11 @@ Regras de implementação:
 - Rotas declaram o purpose correto e validam usuário, módulo owner e permissão no servidor. Purpose incorreto responde 404, inclusive POST. Links cross-domain são absolutos via `DomainPurposeManager`; não enviar POST/proxy de escrita entre purposes.
 - Preservar route IDs e owners sempre que possível. Rotas de negócio podem ser declaradas pelo módulo owner e ter path/purpose ajustados conforme a Suite responsável.
 - Novas Suites escolhem host/purpose e slug próprio antes de declarar rotas; não introduzir `/studio/{suite}`.
-- Hosts de Conta, Cursos, Loja e Eventos já constam nos registros atuais. Wiki ainda usa `wiki420.aculta.org` e `wiki420.aculta.toca.net.br`; migração para `wiki.aculta.*` depende de config Deployer/Domain, DNS, TLS/vhost e homologação.
+- Hosts são resolvidos da configuração ativa por ambiente. Wiki usa o Domain canônico `wiki420`; não renomear para `wiki.aculta.*`.
 - Atualizar `PurposeFrontPathProcessor`, `FrontPathPolicy`, subscriber de propósito, navegação e testes para a raiz de cada purpose e as rotas da Suite. Os cinco caminhos da matriz são rotas válidas apenas no purpose respectivo.
 - Remover todas as rotas `/studio` e `/studio/*` após mover destinos. Sem redirects legados; canonical e links apontam diretamente aos novos hosts/caminhos.
 - Migrar links internos/externos, login/retorno, e-mail, notificações, sitemap, canonical, cache e testes. A troca de URL não transfere ownership de entidades, formulários, ACL ou workflows.
 
-Estado em 2026-10-30: decisão e plano aprovados; nenhum corte de rotas, configuração de domínio, DNS ou validação de Runtime é declarado por este documento.
+Estado em 2026-10-30: paths canônicos implementados; o host Wiki mantém `wiki420`. A disponibilidade de produção (`wiki420.aculta.org`) não foi confirmada a partir deste ambiente.
 
 O conteúdo histórico abaixo descreve o estado anterior e não deve orientar novas rotas.
