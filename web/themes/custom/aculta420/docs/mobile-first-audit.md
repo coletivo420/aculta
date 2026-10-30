@@ -7,6 +7,19 @@ A auditoria original foi registrada no checkout servidor `ded8a6181`. Em
 varredura abaixo cobre os arquivos atuais do tema, mas não altera a evidência
 de runtime. Nenhuma escrita persistente foi executada no Runtime.
 
+### Estado integrado dos gates (2026-10-30)
+
+O Firefox ESR visível ficou `DEFERRED` nesta sessão porque `DISPLAY` está vazio;
+não se atualizou a evidência de runtime para a nova microfase da rota `/noticias`.
+Os checks estáticos focais dessa microfase passaram (sintaxe Python,
+`git diff --check`, schema SDC e Design Foundations). A execução atual de
+`validate-module-theme-boundary.php` falha em 1/3422 verificações por classes
+de apresentação (`button`, `actions-bar`, `mb-3`, `button--primary` e
+`aculta-locations-list-page`) em `aculta_events` — arquivos fora do ownership
+visual desta microfase. O PASS histórico de 3418 verificações registrado mais
+abaixo descreve outro HEAD e não aprova o estado integrado atual. Sem corrigir
+o owner e repetir o gate, não publicar os commits locais.
+
 ### THEME-MF2 — layout interno do Studio (2026-10-29)
 
 `studio.css` passa a empilhar sidebar e conteúdo como base; `min-width: 48rem`
