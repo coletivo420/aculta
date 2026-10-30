@@ -1,0 +1,47 @@
+# ADR-033 — Endereço unificado, busca postal restrita e gestão de Locais em Events
+
+- Status: aprovado como contrato para implementação futura
+- Data: 2026-10-30
+- Escopo: `aculta_portal`, `aculta_portal_cep`, `aculta_events`, `aculta_maps`, Activity e formulários institucionais
+
+## Contexto
+
+O Portal já possui consulta CEP → endereço em `aculta_portal_cep` e um formulário/adaptador central em `aculta_portal`. A auditoria do HEAD da PR #299 encontrou essa integração nos fluxos centrais de Conta/checkout/equipe/loja e nos Locais de Events/Maps. Encontrou também campos legados de endereço em `node:add/activity` e um formulário institucional com campos textuais sem evidência de uso do adaptador.
+
+Precisamos distinguir o preenchimento por CEP, que é infraestrutura comum do Portal, da busca por logradouro e da experiência de escolha/cadastro de Local, que pertencem ao fluxo de Eventos.
+
+## Decisão normativa
+
+1. Todo formulário do Portal que capture ou edite endereço completo deve reutilizar o componente/adaptador central de `aculta_portal` e a consulta por CEP de `aculta_portal_cep`. Novos módulos ACULTA herdam esta regra desde o início. Adaptadores preservam entidade, armazenamento, permissões e semântica próprios.
+2. O Brasil é o país padrão. Não renderizar seleção de país nos formulários brasileiros. Preservar os fluxos atuais de Conta e checkout, inclusive o comportamento atual por CEP.
+3. A busca por nome de rua/logradouro é uma capacidade adicional, distinta da consulta CEP → endereço. Sua interface fica restrita a `aculta_events` e `aculta_maps`; não integrar essa busca à Conta, checkout ou a um formulário global. O módulo `aculta_portal_cep` pode fornecer contrato/serviço postal compartilhado, sem ativar a interface em outros consumidores.
+4. A busca por logradouro não está implementada nem tem provedor aprovado. Antes de código/ativação, documentar fonte, cobertura, atribuição/termos, privacidade, limites, cache, timeouts, abuso e comportamento sem JavaScript. Não confundir busca postal com geocodificação de endereço salvo para coordenadas.
+5. Em `/node/add/activity`, a implementação futura deve remover os campos de endereço avulsos e relacionar a Activity a uma entidade Local de `aculta_events`. O fluxo editorial terá modal Drupal com AJAX para pesquisar Locais existentes, exibir correspondências por nome e selecionar um resultado; haverá ação explícita para cadastrar Local. O formulário pai não deve salvar Local silenciosamente.
+6. O cadastro de Local será um modal Drupal com AJAX, começando pelo CEP. Reutilizar o adaptador central e a biblioteca `aculta_portal_cep/cep-address`; manter número e complemento sob controle editorial e Brasil fixo. A busca postal opcional por logradouro/endereço e os resultados próximos via AJAX só aparecem em Events/Maps. A seleção confirma o Local e atualiza a referência na Activity.
+7. O trabalho deve considerar a seção administrativa de Eventos em `/painel-administrativo`, seguindo os padrões de áreas administrativas próprias do LMS e Fórum. Definir rotas, permissões, navegação, listagens e operações no roadmap de Events, sem ampliar acesso por simples conveniência do modal.
+8. O formulário institucional continua dono dos campos e significados institucionais existentes. Integrar o adaptador central sem fundir campos, apagar dados, expor endereço privado ou impor migração sem análise do mapeamento e plano de dados.
+
+## Guardrails de implementação
+
+- AJAX nunca substitui validação e autorização no servidor. Revalidar acesso de leitura ao Local selecionado e permissão de criação/edição no submit; proteger contra IDs forjados, CSRF, duplicidade e condições de corrida.
+- Resultados mostram apenas Locais que a conta pode consultar. Respeitar publicação, access handlers, propósito de domínio, cache tags/contexts e privacidade da precisão/endereço.
+- Estado do modal e valores do formulário pai sobrevivem a rebuilds AJAX e erros de validação. Teclado, foco, anúncios acessíveis, fechamento/retorno ao pai, erros e viewport móvel precisam de critérios de aceite.
+- O serviço de CEP existente e sua UI em Conta/checkout não mudam como efeito colateral. Nenhuma busca postal em cada tecla pelo Nominatim; geocodificação continua sob o contrato de Maps.
+- Não alterar Runtime, configuração ativa, catálogo de Content Index, versão ou estado de release ao apenas registrar este plano. Estados permanecem Dev/planejado até implementação e validação próprias.
+
+## Sequência documental de implementação futura
+
+1. Auditar entidade/campos de Activity, Local e relações; definir cardinalidade, ciclo de vida, idioma, status, ownership e migração dos campos legados.
+2. Especificar UI Drupal/AJAX e acessibilidade; pesquisa de existentes por nome; seleção; caminho de cadastro; CEP primeiro; eventual busca por logradouro e candidatos próximos.
+3. Aprovar provedor e contrato postal para busca por logradouro, limites/privacidade/atribuição, antes de implementar.
+4. Implementar e testar Local e seletor no Events, com autorizações, cache, persistência, reparenting, deduplicação e estados AJAX.
+5. Implementar painel administrativo de Eventos e integração com `aculta_index` conforme roadmap LOC, sem incluir endereços privados no índice.
+6. Integrar os formulários institucionais ao adaptador central após mapear os campos estruturados e seu uso em renderização/Schema.org.
+7. Atualizar changelog, status e roadmaps apenas com evidências executadas; validar Conta/checkout para provar ausência de regressão.
+
+## Referências
+
+- [Contrato central de endereços](../portal/ACCOUNT-ADDRESS.md)
+- [Plano da busca por logradouro](../portal/CEP-ADDRESS-SEARCH-PLAN.md)
+- [Plano Locais e Content Index](PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md)
+- [Guardrails do Portal](../portal/GUARDRAILS.md)
