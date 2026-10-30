@@ -386,3 +386,22 @@ fronteira, Montserrat carregada em 400/700 e escala/line-height de body/H1/H3.
 A CSS não mudou nesta microfase; a validação é do mapeamento atual. Render
 Drupal, modo escuro e comparação de tela autenticada equivalente seguem
 pendentes.
+
+
+### OCS-F1 / F5–F7 / F9 — formulários e botões (2026-10-30)
+
+O pacote verificado define os estilos em `sass/base/_forms.scss`,
+`sass/abstracts/_forms.scss`, `sass/base/_buttons.scss` e
+`sass/abstracts/_buttons.scss`: form-area levemente elevada, padding 1.25rem,
+labels semibold, campo com padding .5rem 1rem, borda inferior mais forte e sem
+raio, botão padrão 2px com padding .5em 2em, primário em link e danger separado.
+Esses contratos foram mapeados para tokens `--aculta-studio-fidelity-*` e CSS
+restrito a `.studio__main form`/`.aculta-profile-editor form`. O tema preserva
+o foco visível global e exclui inputs checkbox/radio/image da regra de campos.
+
+Firefox ESR visível passou 42/42 verificações em 320/390/768/1440px, nos modos
+claro e escuro; formulário fora do wrapper ficou sem as regras de fidelidade.
+Stylelint e Design Foundations (2426 checks) passaram. Capturas 320px foram
+inspecionadas em `/home/piradopirata/aculta-suite-out/studio-form-fidelity-final2-20261030/`.
+A fixture não é um consumer Drupal: render, AJAX/no-JS, states e ACL dos owners
+seguem pendentes. Nenhum SDC ou contrato Form API novo foi criado.

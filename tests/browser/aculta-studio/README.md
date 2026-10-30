@@ -388,3 +388,24 @@ sem overflow medido nem violação de contagem dos headers. Essa execução
 complementar não altera o escopo da matriz Studio nem substitui os gates
 THEME-MF3/OCS-F11. Artefatos do Runtime ficam em
 `/home/piradopirata/suite-out/aculta-revista-capa-visual-20261030/runtime-after-layout/`.
+
+
+## Formulários Studio — fidelidade OpenCulturas 3.1.5
+
+`studio-form-fidelity.py` injeta apenas as folhas locais de tokens, botões,
+formulários e Studio em uma fixture Drupal-like. Verifica formulário, labels,
+fieldset, campos, bordas/estados de erro, controles de imagem, botões default,
+primário, reset e destrutivo, foco via teclado e ausência de vazamento fora dos
+wrappers Studio/Perfil. Cobre 320/390/768/1440px em claro e escuro, sem enviar
+formulários.
+
+```sh
+SUITE_OUT=/caminho/fora-do-repositorio/studio-form-fidelity \
+ACULTA_FF_PROFILE_ROOT=/caminho/fora-do-repositorio/studio-form-fidelity/profiles \
+DISPLAY=:0 python3 -I tests/browser/aculta-studio/studio-form-fidelity.py
+```
+
+Em 2026-10-30 passou 42/42 checks; as capturas clara/escura em 320px foram
+inspecionadas. Evidência: `/home/piradopirata/aculta-suite-out/studio-form-fidelity-final2-20261030/`.
+É fixture sem Drupal/Runtime: não homologa Form API real, AJAX, estados no-JS,
+ACL, cache ou fluxos dos módulos Marley/LMS/Wiki/Conta.

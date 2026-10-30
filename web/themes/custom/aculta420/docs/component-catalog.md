@@ -358,6 +358,16 @@ fornecidos pelo consumidor. Nenhum SDC, prop, slot ou story novo foi necessário
 nesta camada; a matriz de paridade e o inventário upstream registram os estados
 pendentes de captura.
 
+### OCS-F1/F5–F7/F9 — estilos de Form API no tema
+
+Os formulários existentes continuam sendo renderizados pelos módulos e pelo
+Form API; o tema aplica a aparência Next somente sob `.studio__main form` e
+`.aculta-profile-editor form`. Não foi criado SDC de formulário paralelo. A
+fixture reutilizável `tests/browser/aculta-studio/studio-form-fidelity.py`
+passou 42/42 verificações em claro/escuro, inclui foco de teclado e confirma
+que um formulário externo ao Studio não recebe esses estilos. Ela não substitui
+a homologação dos consumers reais ou dos estados AJAX/no-JS dos owners.
+
 ### OCS-F8 — área comercial integrada
 
 Green Stash usa o token neutro `green-stash-entry`; o tema o mapeia para a raiz

@@ -234,6 +234,26 @@
   --aculta-studio-fidelity-surface: #ffffff;
   --aculta-studio-fidelity-surface-muted: #f6f6f6;
   --aculta-studio-fidelity-divider: #e8e9eb;
+  --aculta-studio-fidelity-form-surface: color-mix(in oklab, #303236 3%, #fff);
+  --aculta-studio-fidelity-fieldset-surface: color-mix(in oklab, #16635e 5%, transparent);
+  --aculta-studio-fidelity-input-background: #fff;
+  --aculta-studio-fidelity-input-border-top: #e8e9eb;
+  --aculta-studio-fidelity-input-border-inline: #e8e9eb;
+  --aculta-studio-fidelity-input-border-bottom: #7b7d85;
+  --aculta-studio-fidelity-input-placeholder: #7b7d85;
+  --aculta-studio-fidelity-input-focus: #1f71b8;
+  --aculta-studio-fidelity-input-error: #d41317;
+  --aculta-studio-fidelity-button-background: #fff;
+  --aculta-studio-fidelity-button-border: #16635e;
+  --aculta-studio-fidelity-button-text: #16635e;
+  --aculta-studio-fidelity-button-hover-background: #a1167f;
+  --aculta-studio-fidelity-button-hover-border: #a1167f;
+  --aculta-studio-fidelity-button-hover-text: #fff;
+  --aculta-studio-fidelity-button-primary-background: #a1167f;
+  --aculta-studio-fidelity-button-primary-border: #a1167f;
+  --aculta-studio-fidelity-button-primary-text: #fff;
+  --aculta-studio-fidelity-button-danger-border: #d41317;
+  --aculta-studio-fidelity-button-danger-text: color-mix(in oklab, #d41317 60%, #303236);
 
   --aculta-studio-fidelity-font-family: "Montserrat", "Segoe UI", "Roboto", sans-serif;
   --aculta-studio-fidelity-font-size-xxl: 3rem;
@@ -460,6 +480,26 @@
   --aculta-studio-fidelity-surface: #16181a;
   --aculta-studio-fidelity-surface-muted: #303236;
   --aculta-studio-fidelity-divider: #38393b;
+  --aculta-studio-fidelity-form-surface: color-mix(in oklab, #e6e6e6 8%, #16181a);
+  --aculta-studio-fidelity-fieldset-surface: color-mix(in oklab, #74eaea 5%, transparent);
+  --aculta-studio-fidelity-input-background: #16181a;
+  --aculta-studio-fidelity-input-border-top: #38393b;
+  --aculta-studio-fidelity-input-border-inline: #38393b;
+  --aculta-studio-fidelity-input-border-bottom: #8b8d95;
+  --aculta-studio-fidelity-input-placeholder: #9b9d9a;
+  --aculta-studio-fidelity-input-focus: #8ccaff;
+  --aculta-studio-fidelity-input-error: #f38183;
+  --aculta-studio-fidelity-button-background: #16181a;
+  --aculta-studio-fidelity-button-border: #74eaea;
+  --aculta-studio-fidelity-button-text: #74eaea;
+  --aculta-studio-fidelity-button-hover-background: #fd0;
+  --aculta-studio-fidelity-button-hover-border: #fd0;
+  --aculta-studio-fidelity-button-hover-text: #191919;
+  --aculta-studio-fidelity-button-primary-background: #fd0;
+  --aculta-studio-fidelity-button-primary-border: #efefef;
+  --aculta-studio-fidelity-button-primary-text: #191919;
+  --aculta-studio-fidelity-button-danger-border: #f38183;
+  --aculta-studio-fidelity-button-danger-text: color-mix(in oklab, #f38183 60%, #e6e6e6);
 }
 
 /* Automático: sem atributo, o tema segue prefers-color-scheme. */
@@ -474,6 +514,26 @@
     --aculta-studio-fidelity-surface: #16181a;
     --aculta-studio-fidelity-surface-muted: #303236;
     --aculta-studio-fidelity-divider: #38393b;
+    --aculta-studio-fidelity-form-surface: color-mix(in oklab, #e6e6e6 8%, #16181a);
+    --aculta-studio-fidelity-fieldset-surface: color-mix(in oklab, #74eaea 5%, transparent);
+    --aculta-studio-fidelity-input-background: #16181a;
+    --aculta-studio-fidelity-input-border-top: #38393b;
+    --aculta-studio-fidelity-input-border-inline: #38393b;
+    --aculta-studio-fidelity-input-border-bottom: #8b8d95;
+    --aculta-studio-fidelity-input-placeholder: #9b9d9a;
+    --aculta-studio-fidelity-input-focus: #8ccaff;
+    --aculta-studio-fidelity-input-error: #f38183;
+    --aculta-studio-fidelity-button-background: #16181a;
+    --aculta-studio-fidelity-button-border: #74eaea;
+    --aculta-studio-fidelity-button-text: #74eaea;
+    --aculta-studio-fidelity-button-hover-background: #fd0;
+    --aculta-studio-fidelity-button-hover-border: #fd0;
+    --aculta-studio-fidelity-button-hover-text: #191919;
+    --aculta-studio-fidelity-button-primary-background: #fd0;
+    --aculta-studio-fidelity-button-primary-border: #efefef;
+    --aculta-studio-fidelity-button-primary-text: #191919;
+    --aculta-studio-fidelity-button-danger-border: #f38183;
+    --aculta-studio-fidelity-button-danger-text: color-mix(in oklab, #f38183 60%, #e6e6e6);
   }
 
   :root:not([data-bs-theme="light"]) {

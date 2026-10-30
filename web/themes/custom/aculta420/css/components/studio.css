@@ -137,6 +137,128 @@
   margin-bottom: 1rem;
 }
 
+/* OpenCulturas Next 3.1.5 form treatment, limited to Studio form consumers. */
+.studio__main form,
+.aculta-profile-editor form {
+  margin-block: var(--aculta-studio-fidelity-row-gap);
+  padding: var(--aculta-studio-fidelity-row-gap) var(--aculta-studio-fidelity-gutter);
+  color: var(--aculta-studio-fidelity-text);
+  background: var(--aculta-studio-fidelity-form-surface);
+}
+
+.studio__main form :is(.form-item, .form-actions),
+.aculta-profile-editor form :is(.form-item, .form-actions) {
+  padding-block: 1rem;
+}
+
+.studio__main form .form-item .form-item,
+.aculta-profile-editor form .form-item .form-item {
+  padding-block: 0;
+}
+
+.studio__main form fieldset,
+.aculta-profile-editor form fieldset {
+  margin-block: var(--aculta-studio-fidelity-row-gap);
+  padding: var(--aculta-studio-fidelity-row-gap) var(--aculta-studio-fidelity-gutter);
+  border: 2px solid transparent;
+  background: var(--aculta-studio-fidelity-fieldset-surface);
+}
+
+.studio__main form fieldset fieldset,
+.aculta-profile-editor form fieldset fieldset {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.studio__main form label,
+.aculta-profile-editor form label {
+  display: block;
+  max-inline-size: 80ch;
+  padding: 0.25rem;
+  font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
+}
+
+.studio__main form label.option,
+.aculta-profile-editor form label.option {
+  display: inline-block;
+}
+
+.studio__main form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), .form-select),
+.aculta-profile-editor form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), .form-select) {
+  padding: 0.5rem 1rem;
+  color: var(--aculta-studio-fidelity-text);
+  border: 1px solid var(--aculta-studio-fidelity-input-border-bottom);
+  border-color: var(--aculta-studio-fidelity-input-border-top) var(--aculta-studio-fidelity-input-border-inline) var(--aculta-studio-fidelity-input-border-bottom);
+  border-radius: 0;
+  background-color: var(--aculta-studio-fidelity-input-background);
+  font: inherit;
+}
+
+.studio__main form :is(input, select, textarea, .form-control, .form-select)::placeholder,
+.aculta-profile-editor form :is(input, select, textarea, .form-control, .form-select)::placeholder {
+  color: var(--aculta-studio-fidelity-input-placeholder);
+  font-family: var(--aculta-studio-fidelity-font-family);
+}
+
+.studio__main form :is(input, select, textarea, .form-control, .form-select):is(:focus, :focus-visible),
+.aculta-profile-editor form :is(input, select, textarea, .form-control, .form-select):is(:focus, :focus-visible) {
+  border-color: var(--aculta-studio-fidelity-input-focus);
+  background-color: var(--aculta-studio-fidelity-input-background);
+}
+
+.studio__main form .error,
+.aculta-profile-editor form .error {
+  border-color: var(--aculta-studio-fidelity-input-error);
+}
+
+.studio__main form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button),
+.aculta-profile-editor form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button) {
+  display: inline-block;
+  margin-block-end: 1em;
+  padding: 0.5em 2em;
+  color: var(--aculta-studio-fidelity-button-text);
+  border: 0.125rem solid var(--aculta-studio-fidelity-button-border);
+  border-radius: 0.25rem;
+  background: var(--aculta-studio-fidelity-button-background);
+  box-shadow: none;
+  font-family: var(--aculta-studio-fidelity-font-family);
+  font-size: 1rem;
+  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
+  line-height: 1.5;
+  text-decoration: none;
+  text-transform: none;
+  cursor: pointer;
+}
+
+.studio__main form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button):not([disabled]):is(:hover, :focus-visible),
+.aculta-profile-editor form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button):not([disabled]):is(:hover, :focus-visible) {
+  color: var(--aculta-studio-fidelity-button-hover-text);
+  border-color: var(--aculta-studio-fidelity-button-hover-border);
+  background: var(--aculta-studio-fidelity-button-hover-background);
+}
+
+.studio__main form :is(.form-submit, .button--cta, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.btn-close):not(.accordion-button),
+.aculta-profile-editor form :is(.form-submit, .button--cta, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.btn-close):not(.accordion-button) {
+  color: var(--aculta-studio-fidelity-button-primary-text);
+  border-color: var(--aculta-studio-fidelity-button-primary-border);
+  background: var(--aculta-studio-fidelity-button-primary-background);
+}
+
+.studio__main form :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button),
+.aculta-profile-editor form :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button) {
+  color: var(--aculta-studio-fidelity-button-danger-text);
+  border-color: var(--aculta-studio-fidelity-button-danger-border);
+  background: var(--aculta-studio-fidelity-button-background);
+}
+
+.studio__main form :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button):is(:hover, :focus-visible),
+.aculta-profile-editor form :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button):is(:hover, :focus-visible) {
+  color: var(--aculta-studio-fidelity-button-hover-text);
+  border-color: var(--aculta-studio-fidelity-button-danger-border);
+  background: var(--aculta-studio-fidelity-button-danger-border);
+}
+
 .studio__actions > li {
   margin: 0;
 }

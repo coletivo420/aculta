@@ -15,9 +15,9 @@ depende de THEME-MF3. OCS-A1–A4 só começam depois dos dois gates aprovados.
 | OCS-F1–F2 | Implementados parcialmente; fidelidade de todos os consumers e Runtime pendente. |
 | OCS-F3 | Variante `studio_fidelity` adicionada ao SDC `patterns/card` com story e consumidor real na entrada da Conta; schema 55/756, Unit 20/121 e CSS fixture Firefox 45/45 passaram. A repetição no worktree baseado em `82ff8538d` passou 216/216, cobrindo limites upstream 48/70/85/120em, container e tipografia Montserrat; capturas 320/1440px inspecionadas. HTML do preprocess e render Drupal/Runtime seguem pendentes. |
 | OCS-F4 | Composição adapta links autorizados do registry e da entrada da Conta ao SDC existente; estado funcional vem dos providers. Captura Runtime com o novo adaptador pendente. |
-| OCS-F5–F7 | Parcial/incompleto; exige validação visual/funcional por Marley, LMS e Wiki, sem alterar seus owners. |
+| OCS-F5–F7 | Parcial/incompleto; o tema agora aplica tokens/forms/buttons Next aos formulários dentro do Studio, com fixture claro/escuro 42/42 e foco visível; validar os consumers reais, AJAX/no-JS e estados por Marley, LMS e Wiki sem alterar seus owners. |
 | OCS-F8 | Fundação de tokens/container e raiz visual do Studio entregue também ao Green Stash; telas operacionais por loja e grants não homologados. |
-| OCS-F9–F10 | Pendente de validação abrangente, preservando Conta, Perfil, `/conta-legada` e demais áreas reais. |
+| OCS-F9–F10 | Estilo candidato dos formulários de Conta/Perfil usa o mesmo contrato do tema; render real e S-R4/S-R5 continuam pendentes, preservando `/conta-legada` e as demais áreas. |
 | OCS-F11 | Não aprovado: depende de THEME-MF3 e das evidências de todas as áreas/estados. |
 | OCS-A1–A4 | Não iniciadas; gate anterior permanece fechado. |
 
@@ -763,3 +763,16 @@ permanecem parciais.
 - [ ] F12-H2 homologar grants e formulários de escrita das Suites, especialmente Green Stash, e ampliar acessibilidade/zoom/teclado/mobile além do baseline 1440/390.
 
 Pendências residuais: F12-H2 e testes Kernel de integração para métodos/AJAX permanecem sem execução porque `SIMPLETEST_DB` não está configurado. O usuário de teste não tem grants de Green Stash, portanto a captura visual não homologa escrita na Loja. Não declarar homologação funcional integral antes de validar essas permissões e fluxos.
+
+
+### OCS-F1/F5–F7/F9 — campos e botões Fidelity (2026-10-30)
+
+O tema agora traduz o tratamento de Form API do OpenCulturas 3.1.5 em tokens e
+seletores restritos a `.studio__main form` e `.aculta-profile-editor form`.
+Firefox ESR visível passou 42/42 checks em 320/390/768/1440px, claro/escuro,
+com botão padrão, primário, reset e destrutivo, foco visível e isolamento do
+formulário fora do Studio. Stylelint e Design Foundations passaram. Capturas
+320px foram inspecionadas; artefatos estão em
+`/home/piradopirata/aculta-suite-out/studio-form-fidelity-final2-20261030/`.
+Não valida Drupal/Form API real, AJAX/no-JS, ACL nem fluxos dos owners; F5–F7/F9
+continuam parciais e não há gate F11.
