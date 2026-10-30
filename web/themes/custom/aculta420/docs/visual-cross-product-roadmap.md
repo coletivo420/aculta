@@ -971,3 +971,15 @@ Unit passou 20 testes/121 assertions e Firefox ESR visível passou 45/45 checks
 na fixture candidata em nove larguras. Essa evidência não é render Drupal no
 Runtime. OCS-F3/F8 continuam parciais; F11 e THEME-MF3 não aprovados e OCS-A1–A4
 não iniciadas.
+
+
+### Revista — consumer editorial e capa da home (2026-10-30)
+
+A raiz pública `magazine:/` agora apresenta H1 `Revista 420`, capa, categoria,
+título, subtítulo, resumo e link, reutilizando os SDCs `hero` e `card`. A
+validação visual focal concluiu 18 capturas no Firefox ESR visível (raiz e
+artigo em nove larguras), com zero overflow medido. Quatro conteúdos sintéticos
+publicados foram deixados no Runtime a pedido do responsável para inspeção
+humana. Isso fecha a antiga pendência de ausência de conteúdo de teste, mas não
+homologa todos os fluxos da Revista nem THEME-MF3/OCS-F11. A comparação integral
+com o OpenCulturas e os gates de acessibilidade e interação seguem pendentes.

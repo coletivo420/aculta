@@ -1906,3 +1906,44 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
 - **Matriz de shell:** `purpose-matrix.py` pós-migration no Firefox ESR: 90/90 capturas (10 purposes × 9 viewports), Institution Bar e Domain Header exatamente uma vez em todas, zero overflow, zero HTTP 500 e zero deferred. Evidência: `/home/piradopirata/suite-out/domain-header-purpose-4eb116482-post-updb/`.
 - **Kernel focal:** `EventOrganizationLifecycleKernelTest` passou em `aculta_simpletest`: 7 testes/196 assertions; 24 depreciações Core/contrib, sem falhas. Não foi usado o Runtime para PHPUnit.
 - **Publicação documental:** esta atualização, a matriz de shell e a auditoria mobile registram evidência do HEAD publicado; somente documentação própria da Frente B será commitada. THEME-MF3 e OCS-F11 permanecem pendentes.
+
+
+## Revista — capa para inspeção humana no Runtime — 2026-10-30
+
+- No checkout servido `/home/piradopirata/projetos/aculta`, `hostname=toca`;
+  Drush confirmou Drupal 11.4.10, URI `http://default` e banco
+  `aculta_runtime`. O HEAD testado foi `0c049fe76` (`feat(theme): add
+  responsive magazine cover layout`). `drush cr` e smoke HTTP nas homes MAIN/SHOP
+  passaram (200). `updatedb:status` não tinha updates; `config:status` indicou
+  224 diferenças globais e não houve import global.
+- O responsável autorizou criar publicações de teste e mantê-las no Runtime.
+  Quatro nós `revista` publicados (NIDs 599–602), quatro mídias (271–274) e
+  quatro arquivos (760–763) usam conteúdo fictício marcado
+  `[TESTE VISUAL 20261030]`, sem dados pessoais ou recursos do upstream. Capas
+  originais estão em `public://revista-test-20261030/`. Snapshot íntegro anterior
+  à criação: `/home/piradopirata/aculta-backups/aculta-runtime-revista-visual-20261030/aculta_runtime-before-revista-visual.sql`;
+  SHA-256 `89d3f4441e0ab5d5bfdec3100b0ea01b98aa31de4cd2b5b473fdd5b85c130aba`.
+  O conteúdo fica intencionalmente no Runtime para inspeção humana.
+- A conta administrativa sintética de teste `aculta_visual_admin` (UID 257,
+  papel administrator; email reservado `example.test`) foi criada por ordem do
+  responsável. Credencial gerada aleatoriamente fica apenas no arquivo local
+  ignorado `secrets/aculta_visual_admin.env`, com modo 0600; esse arquivo não
+  é versionado nem anexado a commits. Não reutilizar a conta como associação de
+  loja ou bypass de grants. Snapshot pré-criação:
+  `/home/piradopirata/aculta-backups/aculta-runtime-test-admin-20261030/aculta_runtime-before-test-admin.sql`;
+  SHA-256 `d793cdea5fd874f1610eed0cc60c36c0940fd581453323532b91d954b62df814`.
+- Foi aplicada somente a configuração focal do display de teaser da Revista,
+  já representada no Sync, para mostrar imagem, subtítulo e resumo. Uma tentativa
+  de import parcial foi rejeitada por dependências globais de módulos ausentes;
+  nada foi aplicado por essa tentativa. A configuração focal foi então alinhada
+  sem desativar extensões nem executar `pm:uninstall`.
+- Firefox ESR visível: `purpose-matrix.py` capturou Magazine `/` e `/node/599`
+  em 320/360/390/599/600/768/1024/1280/1440 (18 capturas, zero overflow,
+  headers únicos e H1 da listagem presente). Revisão manual em 390/600/1440.
+  Evidência em `/home/piradopirata/suite-out/aculta-revista-capa-visual-20261030/runtime-after-layout/`.
+  CSS lint, parser Twig e `git diff --check` passaram. Não foram executados
+  zoom 200/400%, keyboard completo, WCAG 2.2 AA, modo escuro, reduced motion
+  nem a matriz completa de propósitos; THEME-MF3 e OCS-F11 continuam pendentes.
+- Implementação visual própria publicada no commit `0c049fe76`; a documentação
+  desta rodada será registrada em commit separado. Nenhum arquivo de Eventos de
+  outra frente foi incluído.

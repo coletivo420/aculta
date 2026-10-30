@@ -499,3 +499,15 @@ fallback sem JavaScript usa o token de altura existente. A Navigation top-bar
 empilha título, contexto e ações como base mobile-first e restaura a grade de
 três regiões em 768px. Comportamento, testes e limites estão em
 [`mobile-first-audit.md`](mobile-first-audit.md).
+
+
+### Consumer real — capa da Revista (2026-10-30)
+
+A página da View `revista_sessoes` reutiliza `patterns/hero` para o título
+contextual e o `patterns/card` existente para os teasers editoriais, sem novo
+SDC nem alteração dos contratos de conteúdo. A capa principal muda para
+composição horizontal em desktop por CSS da View; em telas menores empilha
+imagem e conteúdo. Stories e schema dos SDCs permanecem inalterados porque
+não houve mudança de contrato. O consumer foi capturado no Firefox ESR visível
+no Runtime em 320–1440px; a evidência e os limites estão em
+`mobile-first-audit.md`.

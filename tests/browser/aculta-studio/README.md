@@ -344,3 +344,15 @@ zoom ou WCAG integral. Use `DISPLAY=:0`, defina `SUITE_OUT` e
 ```sh
 DISPLAY=:0 python3 -I tests/browser/aculta-studio/studio-card-fidelity.py
 ```
+
+
+## Purpose Magazine — captura complementar (2026-10-30)
+
+A suíte `purpose-matrix.py` também foi executada no Firefox ESR visível com
+`OCS_EXTRA_ROUTES` apontando para `magazine:/` e `/node/599`, para revisar a
+View `revista_sessoes` e uma publicação sintética. Executou nove viewports
+(320/360/390/599/600/768/1024/1280/1440), totalizando 18 páginas/capturas;
+sem overflow medido nem violação de contagem dos headers. Essa execução
+complementar não altera o escopo da matriz Studio nem substitui os gates
+THEME-MF3/OCS-F11. Artefatos do Runtime ficam em
+`/home/piradopirata/suite-out/aculta-revista-capa-visual-20261030/runtime-after-layout/`.

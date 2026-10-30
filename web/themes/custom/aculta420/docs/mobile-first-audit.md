@@ -1466,3 +1466,34 @@ Capturas e `results.json` estão em
 verificação fecha o defeito focal de salto/posição no shell nas rotas e viewports
 exercitados; não cobre todas as páginas internas, zoom real, leitor de tela,
 WCAG completa ou THEME-MF3.
+
+
+### THEME-MF2 — capa responsiva da Revista e fixture editorial (2026-10-30)
+
+A rota `/` do purpose `magazine` renderiza a View `revista_sessoes`. Após
+inspecionar a versão servida, a listagem tinha cartões sem imagem, subtítulo ou
+resumo por divergência focal de configuração no Runtime. O responsável autorizou
+a criação de conteúdo sintético para inspeção humana. Foram criados quatro nós
+públicos publicados, marcados `[TESTE VISUAL 20261030]`, com capas geométricas
+originais sem ativos do OpenCulturas. A apresentação foi corrigida usando o
+template da View, o SDC existente `patterns/hero` para o título da página e
+`patterns/card` nos teasers existentes. O CSS é mobile-first: uma coluna na
+base, duas a partir de 600px e três a partir de 992px; a primeira publicação
+usa capa em destaque horizontal a partir de 992px. O DOM, a View, os dados, a
+ACL e a paginação permanecem no Drupal/módulo proprietário.
+
+Firefox ESR visível no Runtime capturou `/` e `/node/599` em 320, 360, 390,
+599, 600, 768, 1024, 1280 e 1440px: 18/18 capturas; zero overflow medido,
+Institution Bar e Domain Header presentes uma vez e H1 `Revista 420` na raiz.
+As capturas de 390, 600 e 1440px foram inspecionadas manualmente. Evidências:
+`/home/piradopirata/suite-out/aculta-revista-capa-visual-20261030/runtime-after-layout/`.
+`npm run lint:css`, parser Twig e `git diff --check` passaram. Snapshot de banco
+pré-fixture: `/home/piradopirata/aculta-backups/aculta-runtime-revista-visual-20261030/aculta_runtime-before-revista-visual.sql`,
+SHA-256 `89d3f4441e0ab5d5bfdec3100b0ea01b98aa31de4cd2b5b473fdd5b85c130aba`.
+
+Ajuste foi focal no display `core.entity_view_display.node.revista.teaser`
+para habilitar os campos de capa, subtítulo e resumo que já constam em
+`config/sync`; não foi importado o diff global. O `config:status` global
+continua com 224 diferenças. Este teste não cobre teclado completo, zoom,
+WCAG 2.2 AA, dark mode, reduced motion ou todos os estados editoriais; não
+aprova THEME-MF3.
