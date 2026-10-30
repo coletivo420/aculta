@@ -122,8 +122,13 @@ final class EventPageController extends ControllerBase {
     $eventosLd = [];
     $urlEvento = Url::fromRoute('aculta_events.page', ['slug' => (string) $evento->get('field_slug')->value], ['absolute' => TRUE])->toString();
     $descricao = mb_substr(trim(strip_tags((string) $evento->get('body')->value)), 0, 500);
+    $organizador = $evento->get('field_organizador')->entity;
+    $org = $evento->getOrganization();
+
     foreach (array_slice($ocorrencias, 0, 20) as $ocorrencia) {
       $local = $ocorrencia['data']->get('field_local')->entity;
+      $modo = (string) ($ocorrencia['data']->get('field_modo')->value ?? 'presencial');
+
       $entrada = [
         '@type' => 'Event',
         'name' => (string) $evento->label(),
@@ -136,9 +141,117 @@ final class EventPageController extends ControllerBase {
       if ($descricao !== '') {
         $entrada['description'] = $descricao;
       }
-      if ($local !== NULL) {
-        $entrada['location'] = ['@type' => 'Place', 'name' => (string) $local->label()];
+
+      if ($modo === 'online') {
+        $entrada['eventAttendanceMode'] = 'https://schema.org/OnlineEventAttendanceMode';
       }
+      elseif ($modo === 'hibrido') {
+        $entrada['eventAttendanceMode'] = 'https://schema.org/MixedEventAttendanceMode';
+      }
+      else {
+        $entrada['eventAttendanceMode'] = 'https://schema.org/OfflineEventAttendanceMode';
+      }
+
+      // Link virtual para modalidades online ou híbrida.
+      if (in_array($modo, ['online', 'hibrido'], TRUE) && !$ocorrencia['data']->get('field_link_virtual')->isEmpty()) {
+        $virtualUrl = (string) $ocorrencia['data']->get('field_link_virtual')->uri;
+        if ($virtualUrl !== '') {
+          $entrada['location'] = [
+            '@type' => 'VirtualLocation',
+            'url' => $virtualUrl,
+          ];
+        }
+      }
+
+      // Local físico.
+      if ($local instanceof EventLocation) {
+        $placeData = [
+          '@type' => 'Place',
+          'name' => (string) $local->label(),
+        ];
+        if ($local->access('view', $this->currentUser())) {
+          $placeData['url'] = Url::fromRoute('aculta_events.location_canonical', [
+            'aculta_event_location' => $local->id(),
+          ], ['absolute' => TRUE])->toString();
+        }
+
+        $addressItem = $local->get('field_endereco')->first();
+        if ($addressItem !== NULL) {
+          $locality = (string) $addressItem->locality;
+          $adminArea = (string) $addressItem->administrative_area;
+          if ($locality !== '' || $adminArea !== '') {
+            $postalAddress = [
+              '@type' => 'PostalAddress',
+              'addressCountry' => 'BR',
+            ];
+            if ($locality !== '') {
+              $postalAddress['addressLocality'] = $locality;
+            }
+            if ($adminArea !== '') {
+              $postalAddress['addressRegion'] = $adminArea;
+            }
+            $precisao = (string) ($local->get('field_precisao')->value ?? 'exato');
+            if ($precisao !== 'aproximado') {
+              $street = (string) $addressItem->address_line1;
+              $postalCode = (string) $addressItem->postal_code;
+              if ($street !== '') {
+                $postalAddress['streetAddress'] = $street;
+              }
+              if ($postalCode !== '') {
+                $postalAddress['postalCode'] = $postalCode;
+              }
+            }
+            $placeData['address'] = $postalAddress;
+          }
+        }
+
+        if (isset($entrada['location']) && is_array($entrada['location']) && ($entrada['location']['@type'] ?? '') === 'VirtualLocation') {
+          $entrada['location'] = [$entrada['location'], $placeData];
+        }
+        else {
+          $entrada['location'] = $placeData;
+        }
+      }
+
+      // Organizador: prioriza Organização pública; fallback para usuário.
+      if ($org !== NULL && $org->access('view')) {
+        $orgSlug = (string) $org->get('field_slug')->value;
+        $orgLd = [
+          '@type' => 'Organization',
+          'name' => (string) $org->label(),
+        ];
+        if ($orgSlug !== '') {
+          $orgLd['url'] = Url::fromRoute('aculta_events.organization_page', ['slug' => $orgSlug], ['absolute' => TRUE])->toString();
+        }
+        $entrada['organizer'] = $orgLd;
+      }
+      elseif ($organizador !== NULL) {
+        $entrada['organizer'] = [
+          '@type' => 'Person',
+          'name' => $organizador->getDisplayName(),
+        ];
+      }
+
+      // Ingressos e ofertas.
+      if (!$ocorrencia['data']->get('field_gratuito')->isEmpty() && !empty($ocorrencia['data']->get('field_gratuito')->value)) {
+        $entrada['offers'] = [
+          '@type' => 'Offer',
+          'price' => '0',
+          'priceCurrency' => 'BRL',
+          'availability' => 'https://schema.org/InStock',
+        ];
+      }
+      elseif (!$ocorrencia['data']->get('field_ticketing')->isEmpty()) {
+        $ticketingUrl = (string) $ocorrencia['data']->get('field_ticketing')->uri;
+        if ($ticketingUrl !== '') {
+          $entrada['offers'] = [
+            '@type' => 'Offer',
+            'url' => $ticketingUrl,
+            'availability' => 'https://schema.org/InStock',
+          ];
+        }
+      }
+
       $eventosLd[] = $entrada;
     }
     $anexos = [];

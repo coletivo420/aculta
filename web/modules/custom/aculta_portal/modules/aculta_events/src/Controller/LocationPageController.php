@@ -182,6 +182,87 @@ final class LocationPageController extends ControllerBase {
       $build['agenda'] = $agenda;
     }
 
+    // Dados estruturados schema.org (Place).
+    $placeLd = [
+      '@context' => 'https://schema.org',
+      '@type' => 'Place',
+      'name' => (string) $aculta_event_location->label(),
+      'url' => Url::fromRoute('aculta_events.location_canonical', [
+        'aculta_event_location' => $aculta_event_location->id(),
+      ], ['absolute' => TRUE])->toString(),
+    ];
+
+    if ($descricao !== '') {
+      $placeLd['description'] = mb_substr(trim(strip_tags($descricao)), 0, 500);
+    }
+
+    if ($telefone !== '') {
+      $placeLd['telephone'] = $telefone;
+    }
+
+    if ($site !== '') {
+      $placeLd['sameAs'] = $site;
+    }
+
+    if ($horario !== '') {
+      $placeLd['openingHours'] = $horario;
+    }
+
+    $addressItem = $aculta_event_location->get('field_endereco')->first();
+    if ($addressItem !== NULL) {
+      $locality = (string) $addressItem->locality;
+      $adminArea = (string) $addressItem->administrative_area;
+      if ($locality !== '' || $adminArea !== '') {
+        $postalAddress = [
+          '@type' => 'PostalAddress',
+          'addressCountry' => 'BR',
+        ];
+        if ($locality !== '') {
+          $postalAddress['addressLocality'] = $locality;
+        }
+        if ($adminArea !== '') {
+          $postalAddress['addressRegion'] = $adminArea;
+        }
+        $precisao = (string) ($aculta_event_location->get('field_precisao')->value ?? 'exato');
+        if ($precisao !== 'aproximado') {
+          $street = (string) $addressItem->address_line1;
+          $postalCode = (string) $addressItem->postal_code;
+          if ($street !== '') {
+            $postalAddress['streetAddress'] = $street;
+          }
+          if ($postalCode !== '') {
+            $postalAddress['postalCode'] = $postalCode;
+          }
+        }
+        $placeLd['address'] = $postalAddress;
+      }
+    }
+
+    $precisao = (string) ($aculta_event_location->get('field_precisao')->value ?? 'exato');
+    if ($precisao !== 'aproximado' && !$aculta_event_location->get('field_coordenadas')->isEmpty()) {
+      $lat = $aculta_event_location->get('field_coordenadas')->lat;
+      $lon = $aculta_event_location->get('field_coordenadas')->lon;
+      if ($lat !== NULL && $lon !== NULL) {
+        $placeLd['geo'] = [
+          '@type' => 'GeoCoordinates',
+          'latitude' => (float) $lat,
+          'longitude' => (float) $lon,
+        ];
+      }
+    }
+
+    $jsonLd = json_encode($placeLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $json = str_replace('</', '<\\/', (string) $jsonLd);
+    $build['#attached']['html_head'][] = [
+      [
+        '#type' => 'html_tag',
+        '#tag' => 'script',
+        '#attributes' => ['type' => 'application/ld+json'],
+        '#value' => $json,
+      ],
+      'aculta_events_location_jsonld',
+    ];
+
     return $build;
   }
 

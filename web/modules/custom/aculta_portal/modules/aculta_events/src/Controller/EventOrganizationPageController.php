@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Controller;
 
+use Drupal\aculta_events\Entity\EventOrganization;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
-use Drupal\aculta_events\Entity\EventOrganization;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -15,11 +17,17 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 final class EventOrganizationPageController extends ControllerBase {
 
+  public function __construct(
+    private readonly ?DomainPurposeManager $purposes = NULL,
+  ) {}
+
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new static();
+    return new static(
+      $container->has('aculta_portal.domain_purpose') ? $container->get('aculta_portal.domain_purpose') : NULL,
+    );
   }
 
   /**
@@ -61,7 +69,7 @@ final class EventOrganizationPageController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['class' => ['organization-badge', 'organization-badge--unclaimed']],
         'text' => [
-          '#markup' => '<div class="alert alert-info"><strong>' . $this->t('Perfil não reivindicado') . '</strong>: ' . $this->t('Esta organização cultural ainda não possui titular verificado. Se você é responsável legal ou produtor desta organização, solicite a titularidade.') . '</div>',
+          '#markup' => '<div class="alert alert-info">' . $this->t('<strong>Perfil não reivindicado</strong>: Esta organização cultural ainda não possui titular verificado. Se você é responsável legal ou produtor desta organização, solicite a titularidade.') . '</div>',
         ],
       ];
     }
@@ -137,23 +145,88 @@ final class EventOrganizationPageController extends ControllerBase {
       ];
     }
 
-    // Ações públicas: Denunciar perfil e Reivindicar titularidade.
+    // Ações públicas e administrativas contextuais.
     $build['actions'] = [
       '#type' => 'container',
       '#attributes' => ['class' => ['organization-footer-actions']],
     ];
 
-    if ($isUnclaimed && $this->currentUser()->isAuthenticated()) {
-      $build['actions']['claim_link'] = [
-        '#markup' => '<p><a class="btn btn-outline-primary" href="/painel-administrativo/pessoas/reivindicacoes">' . $this->t('Reivindicar posse desta organização') . '</a></p>',
+    if ($isUnclaimed) {
+      $build['actions']['claim_info'] = [
+        '#markup' => '<p class="text-muted small">' . $this->t('Responsáveis pela organização podem cadastrar eventos em seu nome ou solicitar titularidade formal à moderação.') . '</p>',
       ];
     }
 
-    if ($this->currentUser()->isAuthenticated()) {
-      $build['actions']['report_link'] = [
-        '#markup' => '<p class="text-muted small">' . $this->t('Encontrou algo incorreto? <a href="/painel-administrativo/ugc/denuncias">Denunciar este perfil à moderação</a>.') . '</p>',
-      ];
+    if ($this->currentUser()->hasPermission('administer aculta claims') && $this->purposes !== NULL) {
+      $adminClaimsUrl = $this->purposes->environmentPathUrl('main', '/painel-administrativo/pessoas/reivindicacoes?target_type=aculta_event_organization&target_id=' . $org->id());
+      if ($adminClaimsUrl !== NULL) {
+        $build['actions']['admin_claims'] = [
+          '#markup' => '<p><a class="btn btn-outline-secondary btn-sm" href="' . Html::escape($adminClaimsUrl->toString()) . '">' . $this->t('Ver pedidos de reivindicação desta organização') . '</a></p>',
+        ];
+      }
     }
+
+    if ($this->currentUser()->hasPermission('moderar denuncias ugc') && $this->purposes !== NULL) {
+      $reportsUrl = $this->purposes->environmentPathUrl('main', '/painel-administrativo/moderacao/denuncias');
+      if ($reportsUrl !== NULL) {
+        $build['actions']['admin_reports'] = [
+          '#markup' => '<p><a class="text-muted small" href="' . Html::escape($reportsUrl->toString()) . '">' . $this->t('Ver fila de denúncias da moderação') . '</a></p>',
+        ];
+      }
+    }
+
+    // Dados estruturados schema.org (Organization).
+    $orgLd = [
+      '@context' => 'https://schema.org',
+      '@type' => 'Organization',
+      'name' => (string) $org->label(),
+      'url' => Url::fromRoute('aculta_events.organization_page', ['slug' => $slug], ['absolute' => TRUE])->toString(),
+    ];
+
+    if ($body !== '') {
+      $orgLd['description'] = mb_substr(trim(strip_tags($body)), 0, 500);
+    }
+
+    if (!$hideLocation) {
+      $cidade = trim((string) $org->get('localidade')->value);
+      $uf = trim((string) $org->get('uf')->value);
+      if ($cidade !== '' || $uf !== '') {
+        $postalAddress = [
+          '@type' => 'PostalAddress',
+          'addressCountry' => 'BR',
+        ];
+        if ($cidade !== '') {
+          $postalAddress['addressLocality'] = $cidade;
+        }
+        if ($uf !== '') {
+          $postalAddress['addressRegion'] = $uf;
+        }
+        $orgLd['address'] = $postalAddress;
+      }
+    }
+
+    $linksRaw = (string) $org->get('links')->value;
+    if ($linksRaw !== '') {
+      $lines = array_filter(
+        array_map('trim', explode("\n", $linksRaw)),
+        static fn($line) => $line !== '' && filter_var($line, FILTER_VALIDATE_URL) !== FALSE,
+      );
+      if (!empty($lines)) {
+        $orgLd['sameAs'] = array_values($lines);
+      }
+    }
+
+    $jsonLd = json_encode($orgLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $json = str_replace('</', '<\\/', (string) $jsonLd);
+    $build['#attached']['html_head'][] = [
+      [
+        '#type' => 'html_tag',
+        '#tag' => 'script',
+        '#attributes' => ['type' => 'application/ld+json'],
+        '#value' => $json,
+      ],
+      'aculta_events_organization_jsonld',
+    ];
 
     return $build;
   }
