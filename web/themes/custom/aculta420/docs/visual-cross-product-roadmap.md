@@ -585,8 +585,13 @@ DEFERRED. Ver `mobile-first-audit.md`.
 ### THEME-MF2 — layout interno do Studio
 
 Sidebar e conteúdo usam uma coluna como base e retomam a composição horizontal
-em 768px; o smoke do Hub injeta CSS candidata e cobre 767/768px. Firefox e
-Runtime DEFERRED. Isso não fecha a fidelidade OCS-F11 nem o gate global MF3.
+em 768px. O reteste visível injetou a folha do worktree `800c37cda` na rota real
+`/studio/marley` do Runtime `29961db75`: 50 PASS, 0 FAIL, 1 SKIP sem conteúdo
+próprio publicado, reflow em 320/390/767/768/1024/1280/1440px, foco, AJAX,
+contraste e geometria claro/escuro. Capturas foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/aculta-studio-candidate-800c37cda/`.
+O Runtime não recebeu a CSS candidata e só Marley foi coberta. Isso não fecha
+OCS-F11 nem o gate global MF3.
 
 ### OCS-F2 — distinção das abas Studio (2026-10-30)
 

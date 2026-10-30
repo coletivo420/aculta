@@ -1113,6 +1113,20 @@ A comparação com dashboard OpenCulturas e a cobertura das outras experiências
 Studio permanecem DEFERRED. OCS-F2 continua parcial e esta evidência não aprova
 THEME-MF3.
 
+#### Reteste candidato de layout Marley (2026-10-30)
+
+Firefox ESR visível testou `studio.css` do worktree (`800c37cda`) injetado na
+rota real `/studio/marley` do Runtime servido em `29961db75`. A suíte registrou
+50 PASS, 0 FAIL e 1 SKIP (edição sem publicação própria publicada). Mediu
+320/390/767/768/1024/1280/1440px; confirmou reflow de coluna até 767px, duas
+colunas a partir de 768px, ausência de overflow, foco por Tab, Enter, AJAX,
+histórico, `aria-current`, contraste claro/escuro e geometria preservada entre
+modos. Inspecionei as capturas desktop e móvel. Evidência privada em
+`/home/piradopirata/aculta-suite-out/aculta-studio-candidate-800c37cda/`.
+O Runtime não recebeu a CSS candidata e o teste cobre apenas Marley; a matriz
+restante de Studio, Conta/Perfil e a comparação com dashboard OpenCulturas
+continuam pendentes. Não aprova OCS-F11 nem THEME-MF3.
+
 ### Gates de rotas e fronteira tema/módulo — 2026-10-30
 
 O `aculta_events` deixou de emitir classes de tema em render arrays; o tema
