@@ -28,10 +28,10 @@ não requer uma aplicação Storybook separada.
 - Ao criar um SDC, atualizar o índice de componentes e seu story no mesmo
   commit.
 
-## Inventário estático atual — 2026-10-29
+## Inventário estático atual — 2026-10-30
 
-Na árvore em `f2708e60f` há **54 arquivos `.component.yml`, 54 Twig, 45 CSS,
-3 JS e 97 stories** em `components/`. A contagem inclui componentes experimentais e
+Na árvore atual há **55 arquivos `.component.yml`, 55 Twig, 45 CSS,
+3 JS e 99 stories** em `components/`. A contagem inclui componentes experimentais e
 candidatos abaixo; não demonstra validação do schema no Runtime, renderização na
 UI Patterns Library nem aprovação visual.
 
@@ -52,6 +52,7 @@ renderização autenticada:
 |---|---|---|
 | `card` | `patterns/card/card.component.yml` | Hub, listagens (inclui `node--revista--teaser`) e produtos com consumer real já existente; revisar variantes disponíveis. |
 | `context-header`, `context-tabs` | `patterns/context-header/context-header.component.yml`, `patterns/context-tabs/context-tabs.component.yml` | Cabeçalho e navegação contextual Studio/Conta; rota/consumer ainda requer validação. |
+| `dropdown` | `patterns/dropdown/dropdown.component.yml` | Substitui `bootstrap:dropdown` via SDC `replaces`; preserva props/slots e evita passar render array do slot ao nome de bloco Twig. Consumer real: UI Patterns Library. |
 | `content-section`, `content-grid`, `empty-state` | `patterns/content-section/content-section.component.yml`, `patterns/content-grid/content-grid.component.yml`, `feedback/empty-state/empty-state.component.yml` | Composição e estados vazios de telas/listas; validar owner dos dados e estado real. |
 | `wiki-entry` | `patterns/wiki-entry/wiki-entry.component.yml` | Lista/entrada Wiki; consumer e estado de revisão/moderação pendentes de homologação. |
 | `profile-editor`, `profile-identity`, `profile-bio`, `profile-social` | `patterns/profile-editor/profile-editor.component.yml`, `content/profile-identity/profile-identity.component.yml`, `content/profile-bio/profile-bio.component.yml`, `content/profile-social/profile-social.component.yml` | Reuso separado para edição privada e perfil público; grants, campos opt-in e cache precisam passar S-R4/S-R5. |

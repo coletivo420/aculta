@@ -1,0 +1,9 @@
+name: Dropdown com conteúdo de slot
+description: 'Verifica o slot do menu sem usar o render array como nome de bloco Twig.'
+component: aculta420:dropdown
+props:
+  dropdown_text: Mais ações
+  items: []
+slots:
+  dropdown_menu:
+    markup: '<a class="dropdown-item" href="#">Abrir item</a>'

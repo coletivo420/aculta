@@ -5,7 +5,27 @@ A auditoria original foi registrada no checkout servidor `ded8a6181`. A
 recontagem mais recente foi executada na branch atualizada
 `81b275163` em `/home/piradopirata/worktrees/opencultures-f0-adm8-e8`; a
 varredura cobre o tema da branch, não altera a evidência de páginas servidas.
-Nenhuma escrita persistente foi executada no Runtime.
+Na rodada inicial não houve escrita no Runtime. O incidente posterior, incluindo
+o snapshot e a correção direcionada de `message.settings`, está registrado em
+`docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
+
+### THEME-MF2 — compatibilidade do dropdown na biblioteca SDC (2026-10-30)
+
+A rota administrativa `/painel-administrativo/aparencia/ui/components` lançou
+`TypeError` ao renderizar `bootstrap:dropdown`: o template do tema-base chamava
+`block(dropdown_menu)` e entregava o render array do slot como nome de bloco.
+ACULTA420 agora substitui o componente por `aculta420:dropdown` via `replaces`,
+com o mesmo contrato de props/slots e uma condição que trata o slot como valor;
+story inclui menu via slot. Não foi alterado código Bootstrap contrib.
+
+Validação candidata: gate SDC 55 componentes/756 checks PASS; compatibilidade
+com o schema upstream conferida por `SchemaCompatibilityChecker` PASS; Twig
+isolado renderiza o slot PASS; Design Foundations 2452 PASS. O componente ainda
+não foi servido pelo checkout Runtime; a rota administrativa precisa de reteste
+após publicação/rebuild. O Foundation Drupal executado pelo checkout servido
+não descobriu `aculta420:dropdown`, pois o Runtime ainda usa o código antigo;
+esse resultado é `DEFERRED` para integração candidata, não aprovação nem falha
+do schema estático. Não declara OCS-F3/F11 nem THEME-MF3.
 
 ### Estado integrado dos gates (2026-10-30)
 

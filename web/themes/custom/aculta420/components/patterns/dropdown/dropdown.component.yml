@@ -1,0 +1,42 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Dropdown
+status: experimental
+group: Interactive
+description: 'ACULTA420 compatible replacement for Bootstrap dropdown slots.'
+replaces: 'bootstrap:dropdown'
+props:
+  type: object
+  properties:
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes
+      description: Button attributes.
+    dropdown_text:
+      type: string
+      title: Dropdown text
+    items:
+      type: array
+      title: Dropdown items
+      item:
+        type: object
+        title: Breadcrumb
+        properties:
+          listAttributes:
+            type: Drupal\Core\Template\Attribute
+            title: List attributes
+          attributes:
+            type: Drupal\Core\Template\Attribute
+            title: Link attributes
+          url:
+            type: string
+            title: URL
+          text:
+            type: string
+            title: Text
+slots:
+  dropdown_button:
+    title: Dropdown button
+    required: false
+  dropdown_menu:
+    title: Dropdown menu
+    required: false

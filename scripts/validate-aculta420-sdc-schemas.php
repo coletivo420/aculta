@@ -1,18 +1,24 @@
 <?php
 
 /**
- * Static schema gate for ACULTA420 SDC components. Read-only; no Drupal bootstrap.
+ * @file
+ * Static schema gate for ACULTA420 SDC components.
+ *
+ * This is read-only and does not bootstrap Drupal.
  *
  * Checks, for every components/**\/<name>/<name>.component.yml:
- * - required metadata: name, status (stable|experimental|deprecated), group, description;
- * - props: an object schema; each property declares a supported type; enum values match the type;
+ * - Required metadata: name, status (stable|experimental|deprecated), group,
+ *   description.
+ * - Props: an object schema; each property declares a supported type; enum
+ *   values match the type;
  *   a default is one of the enum values when an enum exists;
- * - slots: a map (may be empty); each slot declares a title;
- * - stable components keep a non-empty description.
+ * - Slots: a map (may be empty); each slot declares a title.
+ * - Stable components keep a non-empty description.
  *
- * And, for every include('aculta420:<name>', {...}) call in templates/ and components/:
- * - the component exists;
- * - every variable passed is a declared prop or slot.
+ * Also checks, for every include('aculta420:<name>', {...}) call in templates/
+ * and components/:
+ * - The component exists.
+ * - Every variable passed is a declared prop or slot.
  */
 
 declare(strict_types=1);
@@ -39,6 +45,9 @@ $typeMap = [
   'boolean' => 'is_bool',
   'array' => 'is_array',
   'object' => 'is_array',
+];
+$supportedClassTypes = [
+  'Drupal\\Core\\Template\\Attribute',
 ];
 
 $components = [];
@@ -68,7 +77,7 @@ foreach ($iterator as $file) {
     $types = is_array($type) ? $type : [$type];
     $ok = TRUE;
     foreach ($types as $t) {
-      if ($t !== 'null' && !isset($typeMap[(string) $t])) {
+      if ($t !== 'null' && !isset($typeMap[(string) $t]) && !in_array((string) $t, $supportedClassTypes, TRUE)) {
         $ok = FALSE;
       }
     }
@@ -100,7 +109,11 @@ foreach (['templates', 'components'] as $dir) {
     $source = file_get_contents($file->getPathname());
     preg_match_all("/include\\(\\s*'aculta420:([a-z0-9-]+)'\\s*,\\s*\\{(.*?)\\}\\s*,/s", $source, $matches, PREG_SET_ORDER);
     foreach ($matches as $match) {
-      $calls[] = ['component' => $match[1], 'keys' => $match[2], 'file' => str_replace($root . '/', '', $file->getPathname())];
+      $calls[] = [
+        'component' => $match[1],
+        'keys' => $match[2],
+        'file' => str_replace($root . '/', '', $file->getPathname()),
+      ];
     }
   }
 }
@@ -111,7 +124,8 @@ foreach ($calls as $call) {
   if (!isset($components[$call['component']])) {
     continue;
   }
-  // Ternary branches (`? value :`) are values, not keys: drop them before matching keys.
+  // Ternary branches (`? value :`) are values, not keys. Drop them before
+  // matching keys.
   $objectKeys = preg_replace('/\?\s*[^,?]*?\s*:/', '?', $call['keys']);
   preg_match_all('/([a-z_][a-z0-9_]*)\s*:/', $objectKeys, $keys);
   foreach (array_unique($keys[1]) as $key) {
