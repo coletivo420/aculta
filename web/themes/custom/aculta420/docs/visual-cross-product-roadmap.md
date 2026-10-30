@@ -926,8 +926,10 @@ passaram. Em cada rodada, a barra permaneceu no fluxo inicial e colada em
 privadas: `/home/piradopirata/aculta-suite-out/institution-bar-anonymous-repeat-{1,2,3}/`.
 O defeito não foi reproduzido nestas repetições focais; isso não elimina falhas
 raras nem testa a interação autenticada com a toolbar.
-Ainda falta homologar navegação e shell autenticados, teclado/zoom/modos/AA;
-THEME-MF3 não aprovado.
+O ensaio administrativo anterior em `4eb116482` confirmou a conta de teste e
+passou 142/142 checks; a tentativa ULI posterior em `3c1691fc5` não confirmou a
+sessão e estas três repetições foram anônimas. Ainda falta repetir autenticação
+no candidato atual e homologar teclado/zoom/modos/AA; THEME-MF3 não aprovado.
 
 ### Reparo dos gates de integração e rotas (registro histórico; paths superados pelo ADR-038)
 

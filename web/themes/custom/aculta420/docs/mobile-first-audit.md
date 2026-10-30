@@ -1275,8 +1275,17 @@ com CSS candidata: aparece uma vez, fica sticky no topo sem salto, sem toolbar
 e sem overflow durante scroll. A Wiki passou depois do reparo e cache rebuild.
 Evidências em
 `/home/piradopirata/aculta-suite-out/institution-bar-scroll-anonymous-3c1691fc5/`.
-O cenário autenticado segue inconclusivo porque a sessão administrativa não foi
-estabelecida. Estes resultados focais não cobrem toda a matriz THEME-MF3.
+Para investigar o relato intermitente de deslocamento anônimo, MAIN foi
+repetido três vezes com CSS e JS candidatos em 320/390px: 36/36 checks
+passaram. A barra permaneceu no fluxo inicial e colada em `top: 0` após scroll
+80/240/480px, sem toolbar, salto ou overflow. Evidências privadas:
+`/home/piradopirata/aculta-suite-out/institution-bar-anonymous-repeat-{1,2,3}/`.
+O problema não foi reproduzido nesta repetição focal; isto não exclui falhas
+raras nem substitui o teste de interação autenticada com a toolbar.
+Um ensaio anterior, no checkout `4eb116482`, confirmou a sessão de teste e
+passou 142/142 checks autenticados; uma tentativa posterior de repetir ULI no
+HEAD `3c1691fc5` não estabeleceu sessão. Portanto, a autenticação não foi
+retestada junto com estas três rodadas. Isto não cobre toda a matriz THEME-MF3.
 
 
 ### THEME-MF2 — largura do modal Webform sem breakpoint inverso (2026-10-30)
