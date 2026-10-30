@@ -2,7 +2,10 @@
 version: 0.1.0-dev.24
 state: Dev
 progress_note: >-
-  Incremento LOC-06 planejado: área Eventos com Datas/Locais, Forms do owner e consultas via aculta_index; não implementado nem homologado.
+  ACULTA Studio Culturas em `/culturas` (purpose eventos) tem implementação parcial no owner
+  aculta_events: dashboard, formulários de Evento/Data/Local, modal AJAX e configuração de papéis.
+  Runtime, autorização por purpose, navegação e homologação visual ainda pendentes; não tratar
+  presença de código como release homologada. Eventos e Locais não são implementados pelo módulo Studio.
   Dev.24 adiciona provider e apresentação Studio para administração de planos Mercado Pago. Suíte Studio 62/502 PASS; gate Portal Drupal 11 PASS (1.155 verificações) após alinhar invariantes à política aprovada para gateway e credenciais; fronteira módulo/tema PASS. Firefox ESR/X11 verificou a rota Studio no ACULTA420, lista remota, labels e reflow 390/1280px. As homologações visuais S-R4/S-R5 permanecem pendentes.
 next_phase: 'Concluir S-R4/S-R5 em 320-1440px, no-JS/AJAX, domínio ACCOUNT e comparar /studio/perfil e /conta-legada. Handoff: web/modules/custom/aculta_portal/modules/aculta_studio/docs/HANDOFF-S-R4-S-R5-2026-10-25.md. Sem merge/deploy. Incluir o incremento LOC/IDX-LOC conforme [plano](docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), sem substituir os gates anteriores.'
 
