@@ -902,3 +902,15 @@ A regra móvel `max-width: 650px` foi removida. A largura fluida `min(600px,
 Firefox ESR comparou baseline/candidata em 14 larguras: 62/62 checks, sem
 diferença de métricas ou pixels e sem overflow. Artefatos e limites constam em
 `mobile-first-audit.md`; fluxo Webform real e THEME-MF3 seguem pendentes.
+
+### THEME-MF0/MF2 — shell em todas as raízes de purpose (2026-10-30)
+
+Atualiza a evidência histórica de que o Domain Header só aparecia em MAIN e
+Wiki: após publicar a composição comum e reconstruir cache, Firefox ESR visível
+contra o Runtime no docroot `44946347d` capturou dez raízes em nove larguras
+(90/90). Institution Bar e Domain Header apareceram exatamente uma vez em
+90/90; não houve overflow horizontal medido nem indicador visível de HTTP 500.
+O Pede-A de presença do Domain Header nos purposes de desenvolvimento está
+resolvido. Host Alpha/produção e páginas internas não foram exercitados. A
+evidência e limitações estão em [`mobile-first-audit.md`](mobile-first-audit.md);
+THEME-MF3 e OCS-F11 continuam pendentes.

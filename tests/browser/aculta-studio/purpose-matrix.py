@@ -79,7 +79,9 @@ def capture(driver, purpose, url, width):
     time.sleep(0.5)
     info = json.loads(driver.js("""
 const d=document.documentElement,b=document.body;
-return JSON.stringify({url:location.href,title:document.title,width:innerWidth,height:innerHeight,documentWidth:d.clientWidth,documentScrollWidth:d.scrollWidth,bodyScrollWidth:b.scrollWidth,scrollHeight:d.scrollHeight,bodyClasses:Array.from(b.classList),institutionBar:!!document.querySelector('.aculta-institution-bar'),domainHeader:!!document.querySelector('.aculta-header'),h1:Array.from(document.querySelectorAll('h1'),x=>x.innerText.trim()).slice(0,5),bodyText:b.innerText.slice(0,160),readyState:document.readyState});
+const institutionBarCount=document.querySelectorAll('.aculta-institution-bar').length;
+const domainHeaderCount=document.querySelectorAll('.aculta-header').length;
+return JSON.stringify({url:location.href,title:document.title,width:innerWidth,height:innerHeight,documentWidth:d.clientWidth,documentScrollWidth:d.scrollWidth,bodyScrollWidth:b.scrollWidth,scrollHeight:d.scrollHeight,bodyClasses:Array.from(b.classList),institutionBar:institutionBarCount===1,institutionBarCount,domainHeader:domainHeaderCount===1,domainHeaderCount,h1:Array.from(document.querySelectorAll('h1'),x=>x.innerText.trim()).slice(0,5),bodyText:b.innerText.slice(0,160),readyState:document.readyState});
 """))
     route_suffix = urlparse(url).path.strip("/").replace("/", "-")
     name = f"{purpose}-{route_suffix + '-' if route_suffix else ''}{width}.png"
@@ -106,7 +108,15 @@ def main():
                     print(json.dumps(record, ensure_ascii=False))
         (OUT / "purpose-matrix.json").write_text(json.dumps(records, indent=2, ensure_ascii=False) + "\n")
         overflows = sum(r.get("documentScrollWidth", 0) > r.get("documentWidth", 0) or r.get("bodyScrollWidth", 0) > r.get("width", 0) for r in records)
-        print(json.dumps({"captures": len(records), "deferred": sum(r.get("status") == "DEFERRED" for r in records), "overflow_records": overflows, "output": str(OUT / "purpose-matrix.json")}))
+        deferred = sum(r.get("status") == "DEFERRED" for r in records)
+        shell_violations = [
+            {"purpose": r.get("purpose"), "width": r.get("width"), "institutionBarCount": r.get("institutionBarCount"), "domainHeaderCount": r.get("domainHeaderCount")}
+            for r in records
+            if r.get("status") == "DEFERRED" or r.get("institutionBarCount") != 1 or r.get("domainHeaderCount") != 1
+        ]
+        print(json.dumps({"captures": len(records), "deferred": deferred, "overflow_records": overflows, "shell_violations": shell_violations, "output": str(OUT / "purpose-matrix.json")}))
+        if shell_violations:
+            raise SystemExit(1)
     finally:
         driver.close()
 

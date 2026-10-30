@@ -175,8 +175,9 @@ python3 tests/browser/aculta-studio/ocs-baseline.py
 As capturas e os dois JSONs ficam fora do Git. Cada imagem usa slug da rota e
 largura, por exemplo `openculturas-1440.png` e `studio-marley-390.png`. O JSON
 registra `innerWidth`, largura de documento/scroll e altura do conteúdo.
-Também registra classes de `body`, marcadores `data-aculta-studio` e presença
-da Institution Bar/Domain Header para mapear o escopo sem alterar contratos.
+Também registra classes de `body`, marcadores `data-aculta-studio` e conta a
+Institution Bar/Domain Header. Cada captura exige exatamente um de cada; uma
+ausência, duplicação ou rota não capturada faz a suíte terminar com erro.
 `ACULTA_ROOT` pode apontar para o checkout servido quando o script é executado
 em outra worktree; Drush e o helper WebDriver são carregados desse checkout. A
 captura expandida posterior completou as oito rotas em 1440/390 (18 imagens
@@ -187,6 +188,18 @@ negado para a conta sintética sem permissão. Marley, WE Sativa, Conta, Perfil 
 Planos Mercado Pago renderizaram. Ausência de overflow foi observada apenas nas
 rotas/estados e larguras capturados. Essas evidências não aceitam MF3, WCAG,
 todas as larguras ou paridade visual do Studio.
+
+### THEME-MF0 — shell nas raízes dos dez purposes (2026-10-30)
+
+`purpose-matrix.py` rodou em Firefox ESR visível contra o servidor de
+desenvolvimento; o docroot estava no commit `44946347d`. Foram 90 capturas
+(dez raízes × 320/360/390/599/600/768/1024/1280/1440px), todas completas:
+Institution Bar 90/90, Domain Header exatamente uma vez 90/90, sem overflow
+horizontal medido e sem página/título indicador de erro 500. Artefatos em
+`/home/piradopirata/aculta-suite-out/domain-header-purpose-matrix-20261030/`.
+O resultado cobre apenas raízes anônimas e dimensões medidas; não valida rotas
+internas, contas autenticadas, zoom, teclado, WCAG ou o gate THEME-MF3. Não é
+paridade visual Studio nem aprovação OCS-F11.
 
 ### Probe de foco por teclado
 

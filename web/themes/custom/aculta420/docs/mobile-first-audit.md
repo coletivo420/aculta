@@ -9,6 +9,21 @@ Na rodada inicial não houve escrita no Runtime. O incidente posterior, incluind
 o snapshot e a correção direcionada de `message.settings`, está registrado em
 `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
 
+### Atualização THEME-MF0/OCS-F0 — shell multidomínio em todas as raízes (2026-10-30)
+
+A evidência posterior substitui os registros abaixo que diziam que o Domain
+Header aparecia somente em MAIN/Wiki ou que aguardava deploy para validação.
+No Runtime servido pelo docroot em `44946347d`, Firefox ESR visível capturou
+as dez raízes públicas/anônimas em nove viewports (90/90). A Institution Bar e
+o Domain Header apareceram **exatamente uma vez em cada captura (90/90 cada)**;
+nenhuma captura teve overflow horizontal medido ou título/texto indicador de
+HTTP 500. O antigo Pede-A para habilitar o header nos demais purposes fica
+resolvido no ambiente de desenvolvimento; não foi testado hostname de produção
+ou Alpha. A suíte mede somente raízes e viewport CSS, sem rotas internas,
+sessões autenticadas, zoom, teclado, WCAG nem estados claro/escuro. Artefatos:
+`/home/piradopirata/aculta-suite-out/domain-header-purpose-matrix-20261030/`.
+Isso é evidência parcial de MF0/MF2 e não aprova THEME-MF3 ou OCS-F11.
+
 ### THEME-MF2 — Domain Header global para dez purposes (2026-10-30)
 
 O Portal agora marca `show_site_header` como verdadeiro para todos os dez
