@@ -104,6 +104,15 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
   }
 
   /**
+   * The read-only block is discoverable by the block plugin manager.
+   */
+  public function testUpcomingBlockIsDiscoverable(): void {
+    $definitions = $this->container->get('plugin.manager.block')->getDefinitions();
+    self::assertArrayHasKey('aculta_events_upcoming', $definitions);
+    self::assertSame('ACULTA Eventos', (string) $definitions['aculta_events_upcoming']['category']);
+  }
+
+  /**
    * The block lists only published, viewable events.
    */
   public function testUpcomingBlockListsOnlyPublishedAndViewableEvents(): void {
