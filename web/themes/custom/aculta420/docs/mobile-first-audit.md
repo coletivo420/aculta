@@ -40,6 +40,17 @@ marca sem Domain Header. Evidência em
 servido nem homologação THEME-MF3. Domain Header ausente em vários purposes
 segue registrado como Pede-A para o Portal.
 
+O harness de sticky/scroll foi repetido com a CSS candidata em Firefox ESR nos
+dez purposes, anônimo, 320/390px: 101/101 checks passaram, `maxTopChange=0`,
+barra fixa no topo após scroll e zero overflow. O cenário administrativo foi
+tentado com ULI, mas a autenticação não se confirmou (`recuperar-acesso/1`, sem
+toolbar); geometria admin fica `DEFERRED`, sem reprovação visual. A snapshot de
+`aculta_runtime` anterior ao teste ficou fora do Git em
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-institution-bar-admin-20261030.sql`
+(SHA-256 `e6f03b9256a37cca57a83bee3de68251c3071784eca273c230b406a3b5b76dec`).
+Evidência anônima em
+`/home/piradopirata/aculta-suite-out/institution-bar-brand-scroll-mobile-20261030/`.
+
 ### THEME-MF2 — SDC rail no catálogo real de Cursos (2026-10-30)
 
 O `views-view-unformatted--courses-catalog.html.twig` consome `aculta420:rail`

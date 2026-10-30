@@ -247,6 +247,9 @@ para ler os `production_host` da mesma tabela. O teste não presume que o host d
 teste continue sendo canônico depois dessa migração. Não testa menus autenticados
 completos, teclado, zoom real, tema escuro ou WCAG 2.2 AA; registra a presença do
 Domain Header para o Pede-A de composição.
+No cenário `admin`, `INSTITUTION_BAR_DRUSH_URI` deve apontar para a URI interna
+do Drush (`http://default` no servidor documentado); `INSTITUTION_BAR_LOGIN_URI`
+continua sendo o host HTTPS aberto pelo Firefox.
 
 ## Rail real do catálogo de Cursos
 
@@ -304,6 +307,7 @@ export DISPLAY=:0
 export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-institution-bar-scroll
 export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
 export ACULTA_PROJECT_ROOT=/home/piradopirata/projetos/aculta
+export INSTITUTION_BAR_DRUSH_URI=http://default
 DISPLAY=:0 python3 tests/browser/aculta-theme-mobile-first/institution-bar-scroll.py
 ```
 

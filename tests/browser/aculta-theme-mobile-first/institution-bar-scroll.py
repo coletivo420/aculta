@@ -8,6 +8,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+from urllib.parse import urlsplit, urlunsplit
 from websockets.sync.client import connect
 
 HERE = Path(__file__).resolve().parent
@@ -27,6 +28,7 @@ MAIN = next(entry for entry in DEPLOY["domain_transition"]["entries"] if entry["
 BASE_OVERRIDE = os.environ.get("INSTITUTION_BAR_SCROLL_BASE_URL")
 BASE = (BASE_OVERRIDE or f"https://{MAIN[f'{DOMAIN_ENV}_host']}").rstrip("/")
 LOGIN_URI = os.environ.get("INSTITUTION_BAR_LOGIN_URI", BASE).rstrip("/")
+DRUSH_URI = os.environ.get("INSTITUTION_BAR_DRUSH_URI", "http://default").rstrip("/")
 ADMIN_UID = int(os.environ.get("INSTITUTION_BAR_ADMIN_UID", "1"))
 WIDTHS = [320, 390, 1023, 1024, 1280]
 ANONYMOUS_WIDTHS = [320, 390]
@@ -61,7 +63,7 @@ def admin_login_url():
     env = os.environ.copy()
     env.pop("DISPLAY", None)
     process = subprocess.run(
-        ["php", "vendor/drush/drush/drush.php", "uli", "/", "--no-browser", f"--uid={ADMIN_UID}", f"--uri={LOGIN_URI}"],
+        ["php", "vendor/drush/drush/drush.php", "uli", "/", "--no-browser", f"--uid={ADMIN_UID}", f"--uri={DRUSH_URI}"],
         cwd=PROJECT,
         check=True,
         capture_output=True,
@@ -69,7 +71,11 @@ def admin_login_url():
         timeout=30,
         env=env,
     )
-    return process.stdout.strip().splitlines()[-1]
+    generated = urlsplit(process.stdout.strip().splitlines()[-1])
+    browser = urlsplit(LOGIN_URI)
+    if not browser.scheme or not browser.netloc:
+        raise RuntimeError("INSTITUTION_BAR_LOGIN_URI deve conter URL HTTPS completa.")
+    return urlunsplit((browser.scheme, browser.netloc, generated.path, generated.query, generated.fragment))
 
 
 if os.environ.get("DISPLAY") != ":0":

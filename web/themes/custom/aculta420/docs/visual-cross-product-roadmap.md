@@ -454,6 +454,10 @@ purposes e sete viewports, sem overflow. Esta mudança corrige a pressuposição
 que todas as rotas têm Domain Header. MF3 continua pendente; ver auditoria para
 capturas e limitações.
 
+O teste anônimo de scroll com CSS candidata passou 101/101 em dez purposes,
+320/390px, sem salto e sem overflow. O caso administrativo permanece deferred:
+o ULI não confirmou sessão, então a barra administrativa não foi medida.
+
 ### THEME-MF2 — rolagem nativa do rail de Cursos
 
 O consumer público do catálogo passou 11/11 verificações no Firefox em
