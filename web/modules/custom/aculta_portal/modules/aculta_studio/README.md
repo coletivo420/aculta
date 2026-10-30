@@ -14,7 +14,7 @@
 
 A raiz de `account` apresenta a entrada da Conta; Conta (`/conta/*`) e Perfil (`/perfil/*`) permanecem separados. Salvos usam `/salvos`, Mercado Pago usa `/conta/mercado-pago/planos` e `/conta-legada` permanece. URLs absolutas são resolvidas pelo `DomainPurposeManager`; o Domain Wiki canônico é `wiki420`, sem migração de host planejada.
 
-Implementado e publicado na PR #299 até `bf47c961a`. Gates focados Studio/Portal/Commerce: 89 testes / 653 assertions; Kernels EventDomainBoundary e EventLocationModalAndAdmin: 15 testes / 373 assertions; aliases: PASS. Matriz HTTP: 275/275 respostas GET/POST/AJAX esperadas; Firefox ESR autenticado verificou Culturas em 200. Permanecem pendentes homologação integral de grants e fluxos de escrita, sobretudo Shop, e auditoria ampliada de acessibilidade. As seções de histórico abaixo preservam os caminhos `/studio/*` usados antes do ADR-038 e não definem rotas atuais.
+Implementado e publicado na PR #299 até `999a889ab`. Gates focados Studio/Portal/Commerce: 89 testes / 653 assertions; Kernels EventDomainBoundary e EventLocationModalAndAdmin: 15 testes / 373 assertions; cobertura focal de rotas, Conta/Perfil e políticas Green Stash: 30 testes / 391 assertions; aliases: PASS. Matriz HTTP: 275/275 respostas GET/POST/AJAX esperadas; Firefox ESR autenticado verificou Culturas em 200. Permanecem pendentes homologação integral de grants e fluxos de escrita, sobretudo Shop, e auditoria ampliada de acessibilidade. As seções de histórico abaixo preservam os caminhos `/studio/*` usados antes do ADR-038 e não definem rotas atuais.
 
 ## Histórico de S-R5 (2026-10-25)
 
