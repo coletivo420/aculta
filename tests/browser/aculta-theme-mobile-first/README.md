@@ -426,7 +426,7 @@ Turnstile mantém o mínimo de 300 px. O reteste a 320 px registra esse excesso;
 ele precisa ser resolvido no contrato de apresentação do widget, sem cortar o
 desafio. Em 360 px e acima, o widget observado cabe. Use `AUTH_ROUTE_BASE_URL`
 para o domínio de desenvolvimento e `AUTH_ROUTE_WIDTHS` para focar larguras.
-Evidência da reprodução: `/home/piradopirata/aculta-suite-out/auth-route-captcha-original-20261030/summary.json`.
+Evidência da reprodução: `/home/piradopirata/aculta-suite-out/auth-route-captcha-final-20261030/summary.json` (320px falha; 360px passa).
 O check geral de auth anterior, 12/12, não media o conteúdo interno do Turnstile
 e portanto não prova que o CAPTCHA caiba a 320 px.
 

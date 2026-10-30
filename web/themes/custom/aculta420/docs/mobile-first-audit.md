@@ -1813,9 +1813,9 @@ Turnstile está em `flexible`, cujo contrato documentado tem largura mínima de
 300 px ([documentação oficial do Turnstile](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/widget-configurations/)).
 Em 360 px, o espaço medido é 308 px e o widget cabe.
 
-Evidência Firefox, sem submissão: 320 px falha no teste reforçado e 360–1440 px
-passam; resultado em
-`/home/piradopirata/aculta-suite-out/auth-route-captcha-original-20261030/summary.json`.
+Evidência Firefox, sem submissão: 320 px falhou e 360 px passou no teste
+reforçado; resultado em
+`/home/piradopirata/aculta-suite-out/auth-route-captcha-final-20261030/summary.json`.
 O reteste de rodapé em dez purposes passou 259/260 checks; a única falha foi
 Conta a 320 px, causada pelo mesmo desafio (rodapé: 320 px, conteúdo máximo:
 272 px; shell Institution Bar/Domain Header permanecem únicos). Resultado em
