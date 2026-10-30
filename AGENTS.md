@@ -117,3 +117,12 @@ Modelo fixo **por sessão** escolhido no CLI, não neste arquivo. Busque trechos
 Agentes devem interpretar “modal” como popup sobreposto criado pelo sistema de diálogo do Drupal, com AJAX. Não trocar por formulário inline, off-canvas ou rota de tela inteira sem decisão explícita. Preservar o estado do formulário pai, retornar foco, suportar teclado/Escape, anunciar erros/estados e atualizar a referência do Local após confirmação.
 
 Para Locais, `aculta_events` é o owner da entidade e do ciclo editorial; `aculta_maps` consome os mesmos Locais autorizados para mapas e geocodificação. Não criar catálogo ou formulário paralelo em Maps. Consulte ADR-033 e o plano LOC antes de alterar os módulos.
+
+
+## Centralização administrativa de Eventos, Datas e Locais
+
+- A interface administrativa de Eventos é o ponto único de entrada para criar e gerir eventos, datas e locais. Datas (aculta_event_date) são componentes de um Evento, não uma tarefa editorial ou conteúdo administrativo independente.
+- A criação inicial do Evento deve permitir configurar suas datas e associar um Local a cada data. Na edição, datas, horários e Locais devem ser geridos dentro do contexto do Evento, sem ação global “Adicionar data de evento” ou formulário apresentado como conteúdo separado.
+- Um endpoint ou formulário técnico de Data só pode permanecer se estiver integrado ao fluxo do Evento, receber e validar a referência do Evento no servidor e não for exposto como operação independente. Acesso direto sem contexto autorizado deve ser negado. Não criar alias ou redirect temporário para rotas aposentadas.
+- A seleção/cadastro de Local continua em popup Drupal com AJAX, aberto a partir do contexto de edição da Data do Evento. aculta_events é o owner; aculta_maps consome os mesmos Locais. Não duplicar formulários ou catálogos.
+- Opções administrativas de criação de Eventos e Locais devem ser configuráveis no painel de Eventos, com padrão content_editor e autorização aplicada também no servidor.
