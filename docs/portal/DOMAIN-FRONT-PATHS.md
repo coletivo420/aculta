@@ -34,18 +34,18 @@ Qualquer outro 301 novo é regressão, a menos que esta lista seja atualizada co
 - `canonical_url` e `og_url` das raízes usam `[site:url]` (ou a raiz do host, para página de finalidade). Endereço de produção não aparece em sobreposição por domínio: o gate `validate-domain-front-paths` confere.
 - JSON-LD de organização e site: o endereço principal vem do ambiente (`aculta_deployer`); no teste, `settings.local.php` define os valores.
 
-## Suites do ACULTA Studio por domínio - ADR-038 (implementação em andamento)
+## Suites do ACULTA Studio por domínio - ADR-038 (paths implementados)
 
-As rotas abaixo estão declaradas no código e respondem somente no purpose correto; não são redirects da raiz. A validação automatizada de métodos/purposes continua pendente para todos os fluxos protegidos.
+As rotas abaixo estão declaradas no código e respondem somente no purpose correto; não são redirects da raiz. Em 2026-10-30, a matriz HTTP fez 275 requisições GET, POST e AJAX contra hosts resolvidos pelo `DomainPurposeManager`; paths canônicos no purpose certo chegaram ao controle de acesso (403 anônimo) e todos os purposes errados e paths aposentados responderam 404.
 
 | Host de teste | Purpose | Suite/path permitido | Purpose errado |
 | --- | --- | --- | --- |
 | `conta.aculta.toca.net.br` | `account` | Marley `/marley` e filhas | 404 |
 | `cursos.aculta.toca.net.br` | `courses` | Ganjalab `/ganjalab` e filhas | 404 |
-| `wiki420.aculta.toca.net.br` (Domain ativo) | `wiki` | WE SATIVA `/wesativa` e filhas | 404 |
+| `wiki420.aculta.toca.net.br` (Domain canônico ativo) | `wiki` | WE SATIVA `/wesativa` e filhas | 404 |
 | `loja.aculta.toca.net.br` | `shop` | Green Stash `/greenstash` e filhas | 404 |
 | `eventos.aculta.toca.net.br` | `eventos` | Culturas `/culturas` e filhas | 404 |
 
-A raiz `conta` apresenta entrada da Conta, resolvida pela rota `/conta`; esse caminho também é público. Não há reescrita para `/studio`; `/studio` e `/studio/*` retornam 404, sem alias/redirect. Conta e Perfil usam `/conta/*` e `/perfil/*`; `/salvos`, planos de Mercado Pago e `/conta-legada` permanecem separados. O Domain `wiki` ainda usa `wiki420.aculta.toca.net.br`: `wiki.aculta.toca.net.br` não resolve no DNS e não pode ser declarado ativo até provisionar Domain/Deployer, DNS, TLS/vhost e homologação.
+A raiz `conta` apresenta entrada da Conta, resolvida pela rota `/conta`; esse caminho também é público. Não há reescrita para `/studio`; `/studio` e `/studio/*` retornam 404, sem alias/redirect. Conta e Perfil usam `/conta/*` e `/perfil/*`; `/salvos`, planos de Mercado Pago e `/conta-legada` permanecem separados. O Domain `wiki` é `wiki420`, conforme configuração; a referência a `wiki.aculta.*` foi retirada por correção do responsável.
 
-O cache de rotas no Runtime foi reconstruído em 2026-10-30 e o site respondeu HTTP 200 na raiz MAIN e na entrada de Conta; `/studio` respondeu 404. Isso não homologa o novo host Wiki.
+O cache de rotas no Runtime foi reconstruído em 2026-10-30 e o site respondeu HTTP 200 na raiz MAIN e na entrada de Conta; `/studio` respondeu 404. A rota `/wesativa` foi capturada autenticada em Firefox ESR visível no host `wiki420.aculta.toca.net.br`; produção (`wiki420.aculta.org`) não foi validada.

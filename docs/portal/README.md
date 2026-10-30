@@ -9,7 +9,7 @@
   As Suites estão em `/marley`, `/ganjalab`, `/wesativa`, `/greenstash` e
   `/culturas` nos purposes respectivos. `/studio` e `/studio/*` respondem 404.
 - [ADR-038](../decisions/ADR-038-aculta-studio-suites-por-dominio.md) registra
-  a correspondência antiga → nova e o bloqueio externo do host `wiki.aculta.*`.
+  a correspondência antiga → nova e confirma o Domain Wiki canônico `wiki420`.
 
 
 Índice do `aculta_portal`. Só documentos normativos e de referência vigentes.

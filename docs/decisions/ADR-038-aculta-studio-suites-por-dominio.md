@@ -1,6 +1,6 @@
 # ADR-038 - Suites do ACULTA Studio distribuídas por domínio
 
-- **Status:** Aceita; paths e bloqueio das rotas antigas implementados; homologação e host Wiki pendentes. Só declarar host ou fluxo como operacional após validação no ambiente correspondente.
+- **Status:** Aceita; paths e bloqueio das rotas antigas implementados. O Domain Wiki canônico permanece `wiki420`, conforme correção do responsável em 2026-10-30; não há migração de host Wiki neste escopo. Grants e fluxos completos ainda requerem homologação.
 - **Data:** 2026-10-30.
 - **Decisor:** responsável pelo produto.
 - **Contexto:** As experiências do Studio estão concentradas no host `conta` sob `/studio/*`, apesar de pertencerem a domínios funcionais distintos.
@@ -8,7 +8,7 @@
 - **Retirada do prefixo:** `/studio` e todas as rotas públicas `/studio/*` deixam de existir após a migração e respondem 404, sem aliases/redirects. A marca ACULTA Studio e o módulo `aculta_studio` permanecem como plataforma/registry, sem hub URL sob `/studio`.
 - **Conta e Perfil:** seguem independentes das Suites. A raiz `account` será uma página de entrada da Conta e não reescreve para `/studio`; `/conta-legada` continua. Rotas atuais `/studio/conta/*`, `/studio/perfil/*`, `/studio/salvos` e `/studio/conta/mercado-pago/planos` migram para caminhos próprios sem `/studio`, preservando owners e separação Conta/Perfil.
 - **Ownership:** `aculta_lms`, `aculta_wiki`, `aculta_commerce` e `aculta_events` mantêm dados, formulários, ACL e workflows. `aculta_studio` compõe interfaces; não duplica seus dados ou operações.
-- **Host Wiki:** alvo `wiki.aculta.org` / `wiki.aculta.toca.net.br`. Configuração atual ainda usa `wiki420.aculta.*`; mudança depende de Domain/Deployer, DNS, TLS/vhost e corte testado.
+- **Host Wiki:** o host canônico é o Domain configurado `wiki420` (`wiki420.aculta.*`). A referência a `wiki.aculta.*` no pedido inicial foi corrigida pelo responsável; preservar a configuração atual, sem novo Domain, DNS, TLS ou corte de host.
 - **Fronteira:** escrita ocorre somente no purpose da Suite; host errado responde 404, inclusive POST. Navegação usa URL absoluta via `DomainPurposeManager`, sem POST cross-domain.
 - **Novas Suites:** toda implementação futura escolhe domínio/purpose e caminho próprios; não criar novo `/studio/{suite}`.
 - **Plano:** [contrato da plataforma](../architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md), [sitemap](../architecture/ROUTES-SITEMAP.md), [front paths](../portal/DOMAIN-FRONT-PATHS.md) e roadmap `aculta_studio`.
@@ -19,7 +19,7 @@
 2. Definir caminhos de Conta, Perfil, Salvos e planos Mercado Pago fora de `/studio`.
 3. Mover rotas/providers às cinco purposes, mantendo IDs quando possível; Ganjalab passa de `account` para `courses`.
 4. Retirar reescrita da raiz `account` para `/studio` e criar sua entrada de Conta.
-5. Planejar host `wiki.aculta.*` com DNS/TLS/vhost antes do corte.
+5. Confirmar que links para o purpose `wiki` usam o Domain ativo `wiki420`, resolvido pelo `DomainPurposeManager`.
 6. Atualizar navegação, login/retorno, canonical, cache, metatags, sitemap, guardrails e gates.
 7. Homologar os cinco hosts, propósitos certos/errados, GET/POST, anônimo/autenticado, owners, acessibilidade, mobile e URLs antigas.
 
@@ -63,13 +63,13 @@ Os destinos abaixo preservam os IDs de rota quando possível e movem a URL para 
 | `/studio` | removida | Hub público retirado; `aculta_studio` continua como framework/registry |
 | `/` no purpose `account` | entrada da Conta via front do purpose | Não aponta ao Studio; `/conta-legada` permanece |
 
-Os nomes de host não são parte das rotas: links absolutos entre purposes devem ser gerados pelo `DomainPurposeManager`. O propósito `wiki` conserva o Domain ativo `wiki420` até que `wiki.aculta.*` seja provisionado e validado em DNS, TLS, vhost/Deployer e HTTP.
+Os nomes de host não são parte das rotas: links absolutos entre purposes devem ser gerados pelo `DomainPurposeManager`. O propósito `wiki` usa o Domain configurado `wiki420` em cada ambiente. Não renomear o host para `wiki.aculta.*`.
 
 ## Estado da execução (2026-10-30)
 
 - **Implementado no código:** caminhos das cinco Suites; rotas separadas de Conta, Perfil, salvos e Mercado Pago; raiz do purpose `account` como entrada da Conta; bloqueio global de `/studio` e `/studio/*` sem alias/redirect. A configuração exportada de front path da Conta aponta para `/conta`.
 - **Verificado no servidor de desenvolvimento:** após rebuild de cache, `/studio` e amostras de `/studio/*` responderam 404; a matriz de GET/POST retornou 404 nos purposes errados; os caminhos canônicos resolveram no purpose correto. A rota Culturas autenticada foi validada em Firefox depois da correção publicada em `95314a5a7`.
 - **Não concluído:** auditoria integral dos consumidores residuais, testes Kernel POST/AJAX em `aculta_simpletest`, grants/fluxos completos das Suites, validação de escrita para loja/eventos e homologação dos cinco Domains.
-- **Bloqueio externo da Wiki:** o Domain instalado continua `wiki420`; `wiki.aculta.toca.net.br` não resolve no DNS deste ambiente e nenhum TLS/vhost do host novo foi validado. Domain/Deployer, DNS, certificado TLS, proxy/vhost/CDN e smoke em ambiente controlado precisam ser provisionados antes de trocar/desativar `wiki420`.
+- **Validação do host Wiki:** `wiki420.aculta.toca.net.br/wesativa` foi acessado por HTTPS em 2026-10-30 e retornou 403 anônimo (rota protegida; TLS e host alcançados). Firefox autenticado capturou WE SATIVA em `/wesativa`. `wiki420.aculta.org` não resolveu por DNS a partir deste ambiente de desenvolvimento; disponibilidade de produção não foi verificada. Nenhuma troca de host está planejada.
 
 Os commits de implementação e correção de Culturas estão publicados na branch da PR #299. Os detalhes e saídas dos comandos da sessão devem ficar no registro operacional, distinguindo validação local de homologação externa.
