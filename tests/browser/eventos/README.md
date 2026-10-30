@@ -79,28 +79,29 @@ configuração do servidor.
   módulo e `docs/operations/NAVEGADOR-TESTES.md`).
 - Roda só no servidor de desenvolvimento; produção fica fora.
 
-## `domain-boundary.py` — fronteira de domínio e Datas no Evento
+## `domain-boundary.py` — admin no MAIN, público em Eventos
 
-Homologa, autenticado como administrador no host de Eventos, que a área
-editorial vive somente em `eventos.aculta` e que Datas/Locais são geridos
-dentro do Evento. Não envia formulário nem grava conteúdo.
+Homologa a regra vigente: **todo `/painel-administrativo/` responde somente no
+MAIN**. O purpose `eventos` serve as páginas públicas e o bloco somente leitura
+"Próximos eventos" fica na sidebar do MAIN. O script não envia formulário nem
+grava conteúdo.
 
-Cobre:
+Cobre, autenticado como administrador:
 
-- visão geral administrativa sem “Adicionar data” e sem link para
-  `/painel-administrativo/eventos/datas/adicionar`;
-- criação de Evento com a seção de Datas/Locais e “Adicionar outra data”;
-- edição de Evento existente listando Datas e com link escopado
-  `/painel-administrativo/eventos/{id}/datas/adicionar`;
-- negação (404) das rotas editoriais de Eventos e do OSM no domínio MAIN;
-- disponibilidade da configuração OSM em Eventos;
-- 404 da rota antiga global de Data.
+- admin de Eventos no MAIN sem "Adicionar data" e sem a rota antiga global;
+- criação de Evento com Datas/Locais e "Adicionar outra data";
+- edição de Evento listando Datas, inclusão escopada e ordem por peso;
+- página pública de `eventos` sem toolbar, sem links administrativos e sem ação de edição;
+- negação (404) do admin, do OSM e das Datas no host de `eventos`, sem 302;
+- OSM disponível no MAIN;
+- bloco "Próximos eventos" presente no MAIN e ausente em `eventos`;
+- rota antiga global de Data com 404 no MAIN.
 
 ### Execução
 
-A URL de login de uso único é gerada com Drush **no host de Conta** (o cookie de
-sessão é compartilhado em `.aculta.toca.net.br`) e passada por arquivo, nunca por
-argumento ou saída de terminal:
+A URL de login de uso único é gerada com Drush no host de Conta (cookie
+compartilhado `.aculta.toca.net.br`) e passada por arquivo, nunca por argumento
+ou saída de terminal:
 
 ```bash
 cd /home/piradopirata/projetos/aculta
@@ -110,18 +111,20 @@ umask 077
 vendor/bin/drush user:login --uri=https://conta.aculta.toca.net.br --no-browser \
   | tail -1 > "$OUT/login-url.txt"
 chmod 600 "$OUT/login-url.txt"
-DISPLAY=:0 SUITE_OUT="$OUT" ACULTA_LOGIN_URL_FILE="$OUT/login-url.txt" \
+EVENT_ID=$(vendor/bin/drush php:eval '$ids=\Drupal::entityQuery("aculta_event")->accessCheck(FALSE)->condition("field_status","publicado")->execute(); print reset($ids);')
+DISPLAY=:0 SUITE_OUT="$OUT" ACULTA_LOGIN_URL_FILE="$OUT/login-url.txt" EVENT_ID="$EVENT_ID" \
   python3 tests/browser/eventos/domain-boundary.py
 rm -f "$OUT/login-url.txt"
 ```
 
 | Variável | Padrão | Função |
 | --- | --- | --- |
-| `EVENTOS_BASE` | `https://eventos.aculta.toca.net.br` | host do purpose `eventos` |
-| `MAIN_BASE` | `https://aculta.toca.net.br` | host MAIN, onde o editorial deve ser negado |
-| `ACCOUNT_BASE` | `https://conta.aculta.toca.net.br` | host de Conta; o login de uso único é aberto nele (cookie `.aculta.toca.net.br`) |
+| `EVENTOS_BASE` | `https://eventos.aculta.toca.net.br` | host público do purpose `eventos` |
+| `MAIN_BASE` | `https://aculta.toca.net.br` | host MAIN, onde vive todo `/painel-administrativo/` |
+| `ACCOUNT_BASE` | `https://conta.aculta.toca.net.br` | host de Conta; o login de uso único é aberto nele |
 | `SUITE_OUT` | — (obrigatório) | PNGs e `resultado.json` fora do repositório |
 | `ACULTA_LOGIN_URL_FILE` | — (obrigatório) | arquivo com a URL de login de uso único |
+| `EVENT_ID` | — | ID de um Evento publicado para homologar a edição e a ordem no MAIN |
 
 ### Limites conhecidos
 
@@ -129,5 +132,8 @@ rm -f "$OUT/login-url.txt"
   arquivo no fim.
 - O script depende de existir ao menos um Evento público no catálogo para a
   verificação da edição; sem Evento, essa verificação falha explicitamente.
-- Não cobre o salvamento real de uma Data (evita gravar conteúdo no Runtime) nem
-  o popup de Local além da presença do acionador.
+- Não cobre o salvamento real de uma Data (evita gravar conteúdo no Runtime).
+- A ordem por peso é verificada pela tela; o salvamento da ordem é coberto por
+  teste Kernel.
+- Sem `EVENT_ID`, a verificação de edição/ordem falha explicitamente; as demais
+  continuam.

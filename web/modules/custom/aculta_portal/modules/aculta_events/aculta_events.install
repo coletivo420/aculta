@@ -428,3 +428,22 @@ function aculta_events_update_10009(): string {
 
   return 'Displays de formulário e exibição de node:activity atualizados com field_event_location.';
 }
+
+/**
+ * Instala o campo de ordem editorial das Datas de evento.
+ */
+function aculta_events_update_10011(): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  if ($manager->getFieldStorageDefinition('field_peso', 'aculta_event_date') !== NULL) {
+    return 'Campo field_peso de aculta_event_date já existia.';
+  }
+
+  $definitions = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_event_date');
+  $definition = $definitions['field_peso'] ?? NULL;
+  if ($definition === NULL) {
+    throw new \RuntimeException('field_peso não está declarado em aculta_event_date.');
+  }
+
+  $manager->installFieldStorageDefinition('field_peso', 'aculta_event_date', 'aculta_events', $definition);
+  return 'Campo field_peso instalado em aculta_event_date.';
+}

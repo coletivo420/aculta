@@ -279,12 +279,13 @@ O item E4/F5 que registra a existência técnica de um formulário de nova Data 
 **Evidência (2026-10-30):** `EventDateManagementKernelTest` 6/88, `EventFormDatesKernelTest` 3/48, Kernel de Events 76/1216, Calendar 127/431 e Unit de Events 8/19 PASS. Nenhuma migração de dados, mudança de esquema ou escrita no Runtime foi executada.
 
 
-## Fronteira de domínio para Locais e Eventos (2026-10-30)
+## Regra de domínio para Locais e Eventos (decisão do responsável, 2026-10-30)
 
-- [x] Operações editoriais de Eventos, Datas e Locais restritas ao purpose `eventos`, com negação no servidor em outros domínios. (`_aculta_domain_purpose: eventos` + `_aculta_domain_purpose_authoritative: true`; `DomainPurposeRequestSubscriber` nega inclusão por URL/POST.)
+- **Todo `/painel-administrativo/` responde somente no MAIN** — inclusive Eventos, Datas, Locais e a integração OSM. Em subdomínios, essas rotas retornam **404** (nunca 302), o toolbar do Navigation não é renderizado e não há ações editoriais. O host `eventos.aculta` serve as páginas públicas; os demais domínios exibem o bloco somente leitura.
+- [x] Operações editoriais de Eventos, Datas e Locais no MAIN, com negação no servidor em outros domínios, inclusive POST.
 - [x] Locais seguem o Evento proprietário: seleção/cadastro via modal revalidam `access('view')`/criação e vivem no contexto do Evento.
-- [x] Exibição em outros domínios é somente leitura (bloco `aculta_events_upcoming`), sem ações de cadastrar Local, editar, excluir ou publicar.
-- [x] Sem duplicação de entidade/catálogo por domínio e sem alias/redirect temporário.
+- [x] Exibição em outros domínios é somente leitura (bloco `aculta_events_upcoming` na sidebar do MAIN), sem ações de cadastrar Local, editar, excluir ou publicar.
+- [x] Sem duplicação de entidade/catálogo por domínio e sem alias/redirect.
 - [x] Eventos de turma do LMS e Locais privados permanecem fora da exibição pública, busca e indexação cruzada.
 
-Evidência: `EventDomainBoundaryKernelTest` e testes do `ContentPurposeResolver`/`DomainRoutePolicy` PASS. A colocação do bloco por domínio é configuração de site e não foi executada (sem escrita no Runtime).
+Evidência: `EventDomainBoundaryKernelTest`, testes do `ContentPurposeResolver`/`DomainRoutePolicy` e homologação Firefox ESR PASS. A regra substitui o aditivo anterior que restringia o editorial ao host `eventos`.

@@ -119,6 +119,12 @@ final class EventDate extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Abertura de portas'))
       ->setSetting('max_length', 255);
 
+    // Ordem editorial da Data dentro do Evento. Zero mantém a ordem pelo início.
+    $fields['field_peso'] = BaseFieldDefinition::create('integer')
+      ->setLabel(new TranslatableMarkup('Ordem'))
+      ->setDescription(new TranslatableMarkup('Ordem editorial desta data dentro do evento. Valores menores aparecem primeiro; em empate, vale o início.'))
+      ->setDefaultValue(0);
+
     return $fields;
   }
 

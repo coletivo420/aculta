@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
-"""Homologa a fronteira de domínio de Eventos e a gestão de Datas no Evento.
+"""Homologa a regra de domínio de Eventos e a gestão de Datas no Evento.
 
-Verifica, autenticado como administrador no host de Eventos:
-- a visão geral administrativa de Eventos não expõe "Adicionar data" nem a
-  antiga rota global `/painel-administrativo/eventos/datas/adicionar`;
-- o formulário de criação de Evento oferece Datas/Locais no próprio fluxo;
-- a edição de Evento lista as Datas e abre a inclusão de Data em popup
-  escopado ao Evento;
-- a mesma rota editorial é negada (404) no domínio MAIN;
-- a integração OpenStreetMap está disponível em Eventos e negada em MAIN.
+Regra vigente: todo `/painel-administrativo/` responde somente no MAIN. O
+purpose `eventos` serve as páginas públicas; o bloco somente leitura
+"Próximos eventos" fica na sidebar do MAIN.
+
+Verifica, autenticado como administrador pelo host de Conta:
+- o admin de Eventos no MAIN carrega e não expõe "Adicionar data" nem a rota
+  antiga global;
+- a criação de Evento oferece Datas/Locais no próprio fluxo;
+- a edição de Evento lista as Datas, abre a inclusão escopada e a ordem;
+- a página pública em eventos aponta a ação de edição para o MAIN;
+- o admin, o OSM e as Datas são negados (404) no host de Eventos;
+- o OSM carrega no MAIN e o bloco "Próximos eventos" aparece no MAIN e não em
+  eventos;
+- a rota antiga global de Data responde 404.
 
 Ambiente: servidor de desenvolvimento (*.aculta.toca.net.br), Firefox ESR
 visível em DISPLAY=:0 via geckodriver. A URL de login de uso único é lida de
@@ -18,6 +24,7 @@ ACULTA_LOGIN_URL_FILE e nunca é impressa. Artefatos vão para $SUITE_OUT.
 import base64
 import json
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -34,6 +41,7 @@ EVENTOS = os.environ.get("EVENTOS_BASE", "https://eventos.aculta.toca.net.br")
 MAIN = os.environ.get("MAIN_BASE", "https://aculta.toca.net.br")
 ACCOUNT = os.environ.get("ACCOUNT_BASE", "https://conta.aculta.toca.net.br")
 LOGIN_FILE = Path(os.environ["ACULTA_LOGIN_URL_FILE"])
+EVENT_ID = os.environ.get("EVENT_ID", "")
 OLD_ROUTE = "/painel-administrativo/eventos/datas/adicionar"
 
 checks = []
@@ -75,29 +83,28 @@ try:
     logged = "/entrar" not in driver.url() and "/recuperar-acesso/" not in driver.url()
     check("login.admin.conta", logged, driver.url())
 
-    # 1. Visão geral administrativa de Eventos.
-    driver.get(EVENTOS + "/painel-administrativo/eventos")
+    # 1. Admin de Eventos no MAIN.
+    driver.get(MAIN + "/painel-administrativo/eventos")
     time.sleep(1.2)
     text = page_text(driver)
     hrefs = driver.js("return Array.from(document.querySelectorAll('a')).map(a => a.getAttribute('href') || '');") or []
-    check("overview.carrega", "gestão de eventos" in (driver.title() + " " + text).lower(), driver.title())
-    check("overview.sem.adicionar.data", "adicionar data" not in text.lower(), "texto sem 'Adicionar data'")
-    check("overview.sem.rota.antiga", not any(OLD_ROUTE in h for h in hrefs), "nenhum link para a rota antiga")
-    check("overview.tem.cadastrar.evento", any("eventos/adicionar" in h for h in hrefs), "link de cadastro de Evento")
-    check("overview.tem.locais", any("eventos/locais" in h for h in hrefs), "link de Locais")
-    shot(driver, "01-overview-eventos")
+    check("main.overview.carrega", "gestão de eventos" in (driver.title() + " " + text).lower(), driver.title())
+    check("main.overview.sem.adicionar.data", "adicionar data" not in text.lower(), "texto sem 'Adicionar data'")
+    check("main.overview.sem.rota.antiga", not any(OLD_ROUTE in h for h in hrefs), "nenhum link para a rota antiga")
+    check("main.overview.tem.cadastrar.evento", any("eventos/adicionar" in h for h in hrefs), "link de cadastro de Evento")
+    check("main.overview.tem.locais", any("eventos/locais" in h for h in hrefs), "link de Locais")
+    shot(driver, "01-main-overview-eventos")
 
-    # 2. Formulário de criação de Evento com Datas/Locais no fluxo.
-    driver.get(EVENTOS + "/painel-administrativo/eventos/adicionar")
+    # 2. Criação de Evento no MAIN com Datas/Locais no fluxo.
+    driver.get(MAIN + "/painel-administrativo/eventos/adicionar")
     time.sleep(1.2)
     text = page_text(driver)
-    check("criar.carrega", "datas e locais do evento" in text.lower(), driver.title())
-    check("criar.adicionar.outra.data", bool(driver.exists('input[value*="Adicionar outra data"]')) or "adicionar outra data" in text.lower(), "botão de nova Data")
-    check("criar.seletor.local", "selecionar ou cadastrar local" in text.lower(), "popup de Local")
-    shot(driver, "02-criar-evento")
+    check("main.criar.carrega", "datas e locais do evento" in text.lower(), driver.title())
+    check("main.criar.adicionar.outra.data", bool(driver.exists('input[value*="Adicionar outra data"]')) or "adicionar outra data" in text.lower(), "botão de nova Data")
+    check("main.criar.seletor.local", "selecionar ou cadastrar local" in text.lower(), "popup de Local")
+    shot(driver, "02-main-criar-evento")
 
-    # 3. Edição de um Evento existente com Datas no contexto.
-    # A raiz do purpose eventos serve o catálogo; /eventos é caminho interno.
+    # 3. Página pública em eventos sem ações editoriais; admin no MAIN.
     driver.get(EVENTOS + "/")
     time.sleep(1.2)
     paths = driver.js("""
@@ -110,47 +117,63 @@ try:
     if paths:
         driver.get(EVENTOS + paths[0])
         time.sleep(1.2)
-        edit_href = driver.js("""
+        admin_links = driver.js("""
+          return Array.from(document.querySelectorAll('a[href]'))
+            .map(a => a.getAttribute('href') || '')
+            .filter(h => h.includes('/painel-administrativo'));
+        """) or []
+        check("eventos.evento.sem.acoes.editoriais", admin_links == [] and "editar evento" not in page_text(driver).lower(), "nenhum link administrativo")
+        found = True
+    check("eventos.evento.existente", found, "evento público encontrado no catálogo")
+
+    if EVENT_ID:
+        driver.get(MAIN + f"/painel-administrativo/eventos/{EVENT_ID}/editar")
+        time.sleep(1.2)
+        text = page_text(driver)
+        check("main.editar.lista.datas", "datas e locais deste evento" in text.lower(), "seção de Datas")
+        add_href = driver.js("""
           const a = Array.from(document.querySelectorAll('a[href]'))
-            .find(a => /\\/painel-administrativo\\/eventos\\/\\d+\\/editar$/.test(a.getAttribute('href') || ''));
+            .find(a => /\\/painel-administrativo\\/eventos\\/\\d+\\/datas\\/adicionar$/.test(a.getAttribute('href') || ''));
           return a ? a.getAttribute('href') : '';
         """) or ""
-        check("evento.tem.acao.editar", bool(edit_href), edit_href)
-        if edit_href:
-            driver.get(EVENTOS + edit_href)
-            time.sleep(1.2)
-            text = page_text(driver)
-            check("editar.lista.datas", "datas e locais deste evento" in text.lower(), "seção de Datas")
-            add_href = driver.js("""
-              const a = Array.from(document.querySelectorAll('a[href]'))
-                .find(a => /\\/painel-administrativo\\/eventos\\/\\d+\\/datas\\/adicionar$/.test(a.getAttribute('href') || ''));
-              return a ? a.getAttribute('href') : '';
-            """) or ""
-            check("editar.data.escopada", bool(add_href) and OLD_ROUTE not in add_href, add_href)
-            check("editar.sem.rota.antiga", not (driver.js("return document.documentElement.innerHTML;") or "").count(OLD_ROUTE), "nenhuma referência à rota antiga")
-            shot(driver, "03-editar-evento-datas")
-            found = True
-    check("evento.existente.para.editar", found, "evento público encontrado no catálogo")
-
-    # 4. A mesma rota é negada no domínio MAIN.
-    for path in ["/painel-administrativo/eventos/adicionar", "/integracoes/openstreetmap/configuracao"]:
-        driver.get(MAIN + path)
+        check("main.editar.data.escopada", bool(add_href) and OLD_ROUTE not in add_href, add_href)
+        check("main.editar.sem.rota.antiga", not (driver.js("return document.documentElement.innerHTML;") or "").count(OLD_ROUTE), "nenhuma referência à rota antiga")
+        shot(driver, "03-main-editar-evento-datas")
+        driver.get(MAIN + f"/painel-administrativo/eventos/{EVENT_ID}/datas/ordem")
         time.sleep(1.0)
-        check("main.nega" + path.replace("/", "."), is_denied(driver, path), "titulo=" + driver.title())
-        shot(driver, "04-main-nega" + path.replace("/", "-"))
+        check("main.ordem.datas", "salvar ordem" in page_text(driver).lower(), driver.title())
+        shot(driver, "04-main-ordem-datas")
+    else:
+        check("main.editar.evento.informado", False, "Defina EVENT_ID para homologar a edição e a ordem")
 
-    # 5. Integração OSM disponível em Eventos.
-    driver.get(EVENTOS + "/integracoes/openstreetmap/configuracao")
+    # 4. O editorial e o OSM são negados no host de Eventos.
+    for path in ["/painel-administrativo/eventos", "/painel-administrativo/eventos/adicionar", "/integracoes/openstreetmap/configuracao", OLD_ROUTE]:
+        driver.get(EVENTOS + path)
+        time.sleep(1.0)
+        check("eventos.nega" + path.replace("/", "."), is_denied(driver, path), "titulo=" + driver.title())
+        shot(driver, "05-eventos-nega" + path.replace("/", "-"))
+
+    # 5. OSM disponível no MAIN.
+    driver.get(MAIN + "/integracoes/openstreetmap/configuracao")
     time.sleep(1.2)
     text = (driver.title() + " " + page_text(driver)).lower()
-    check("eventos.osm.disponivel", "openstreetmap para eventos" in text, driver.title())
-    shot(driver, "05-eventos-osm")
+    check("main.osm.disponivel", "openstreetmap para eventos" in text, driver.title())
+    shot(driver, "06-main-osm")
 
-    # 6. A antiga rota global responde 404 em Eventos.
-    driver.get(EVENTOS + OLD_ROUTE)
+    # 6. Bloco somente leitura no MAIN e ausente em eventos.
+    driver.get(MAIN + "/")
+    time.sleep(1.2)
+    check("main.bloco.proximos.eventos", "próximos eventos" in page_text(driver).lower(), "bloco na sidebar")
+    shot(driver, "07-main-bloco-eventos")
+    driver.get(EVENTOS + "/")
+    time.sleep(1.2)
+    check("eventos.sem.bloco.eventos", "próximos eventos" not in page_text(driver).lower(), "bloco ausente")
+
+    # 7. Rota antiga global também no MAIN.
+    driver.get(MAIN + OLD_ROUTE)
     time.sleep(1.0)
-    check("rota.antiga.404", is_denied(driver, OLD_ROUTE), "titulo=" + driver.title())
-    shot(driver, "06-rota-antiga-404")
+    check("main.rota.antiga.404", is_denied(driver, OLD_ROUTE), "titulo=" + driver.title())
+    shot(driver, "08-main-rota-antiga-404")
 
 finally:
     driver.close()

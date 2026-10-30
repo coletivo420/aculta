@@ -115,6 +115,9 @@ final class EventFormDatesKernelTest extends KernelTestBase {
     $titles = array_map(static fn (EventDate $date): string => (string) $date->label(), $dates);
     sort($titles);
     self::assertSame(['Primeira sessão', 'Segunda sessão'], $titles);
+    $weights = array_map(static fn (EventDate $date): int => (int) $date->get('field_peso')->value, $dates);
+    sort($weights);
+    self::assertSame([0, 1], $weights);
   }
 
   /**
@@ -136,13 +139,14 @@ final class EventFormDatesKernelTest extends KernelTestBase {
     $form = $this->container->get('form_builder')->buildForm($formObject, $state);
 
     self::assertArrayHasKey('event_dates', $form);
-    self::assertCount(1, $form['event_dates']['list']['#rows']);
+    $list = $form['event_dates']['list'];
+    self::assertSame('event-dates-list', $list['#attributes']['id']);
+    self::assertCount(1, $list['table']['#rows']);
     self::assertSame(
       'aculta_events.event_date_add',
-      $form['event_dates']['add']['#url']->getRouteName()
+      $list['actions']['add']['#url']->getRouteName()
     );
-    self::assertSame('event-date-add', $form['event_dates']['add']['#attributes']['data-portal-ui']);
-    self::assertContains('use-ajax', $form['event_dates']['add']['#attributes']['class']);
+    self::assertContains('use-ajax', $list['actions']['add']['#attributes']['class']);
   }
 
 }

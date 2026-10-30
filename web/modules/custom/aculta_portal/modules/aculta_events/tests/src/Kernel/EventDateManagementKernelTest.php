@@ -11,6 +11,7 @@ use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Form\EventDateCreateForm;
 use Drupal\aculta_events\Form\EventDateDeleteForm;
 use Drupal\aculta_events\Form\EventDateEditForm;
+use Drupal\aculta_events\Form\EventDateOrderForm;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
@@ -132,6 +133,12 @@ final class EventDateManagementKernelTest extends KernelTestBase {
     $redirect = $state->getRedirect();
     self::assertSame('aculta_events.event_edit', $redirect->getRouteName());
     self::assertSame((string) $event->id(), (string) $redirect->getRouteParameters()['aculta_event']);
+
+    $response = $form->ajaxSubmit($formArray, $state);
+    [$closed, $replaced] = $this->ajaxCommands($response);
+    self::assertTrue($closed);
+    self::assertNotEmpty($replaced);
+    self::assertSame('#event-dates-list', $replaced[0]['selector']);
   }
 
   /**
@@ -211,6 +218,93 @@ final class EventDateManagementKernelTest extends KernelTestBase {
     $storage->resetCache([$date->id()]);
     self::assertNull($storage->load($date->id()));
     self::assertSame('aculta_events.event_edit', $state->getRedirect()->getRouteName());
+  }
+
+  /**
+   * Reordering dates saves each weight and refreshes the parent list.
+   */
+  public function testOrderFormSavesWeightsAndRefreshesList(): void {
+    $event = $this->event('publicado');
+    $first = $this->date($event, 'Primeira');
+    $second = $this->date($event, 'Segunda');
+    $third = $this->date($event, 'Terceira');
+    $this->setAccount($this->editor);
+
+    $form = EventDateOrderForm::create($this->container);
+    $state = new FormState();
+    $state->set('event_id', (int) $event->id());
+    $state->setValues([
+      'event_id' => (string) $event->id(),
+      'weights' => [
+        $first->id() => 2,
+        $second->id() => 0,
+        $third->id() => 1,
+      ],
+    ]);
+    $formArray = [];
+    $form->submitForm($formArray, $state);
+
+    $storage = $this->container->get('entity_type.manager')->getStorage('aculta_event_date');
+    $storage->resetCache([$first->id(), $second->id(), $third->id()]);
+    self::assertSame(2, (int) $storage->load($first->id())->get('field_peso')->value);
+    self::assertSame(0, (int) $storage->load($second->id())->get('field_peso')->value);
+    self::assertSame(1, (int) $storage->load($third->id())->get('field_peso')->value);
+    self::assertSame('aculta_events.event_edit', $state->getRedirect()->getRouteName());
+
+    $response = $form->ajaxSubmit($formArray, $state);
+    [$closed, $replaced] = $this->ajaxCommands($response);
+    self::assertTrue($closed);
+    self::assertNotEmpty($replaced);
+  }
+
+  /**
+   * Dates from another event are ignored when reordering.
+   */
+  public function testOrderFormIgnoresDatesFromAnotherEvent(): void {
+    $event = $this->event('publicado');
+    $own = $this->date($event, 'Própria');
+    $other = $this->date($this->event('publicado'), 'Alheia');
+    $this->setAccount($this->editor);
+
+    $form = EventDateOrderForm::create($this->container);
+    $state = new FormState();
+    $state->set('event_id', (int) $event->id());
+    $state->setValues([
+      'event_id' => (string) $event->id(),
+      'weights' => [
+        $own->id() => 5,
+        $other->id() => 9,
+      ],
+    ]);
+    $formArray = [];
+    $form->submitForm($formArray, $state);
+
+    $storage = $this->container->get('entity_type.manager')->getStorage('aculta_event_date');
+    $storage->resetCache([$own->id(), $other->id()]);
+    self::assertSame(5, (int) $storage->load($own->id())->get('field_peso')->value);
+    self::assertSame(0, (int) $storage->load($other->id())->get('field_peso')->value);
+  }
+
+  /**
+   * Extracts close and replace commands from an AJAX response.
+   *
+   * AjaxResponse stores rendered command arrays, not command objects.
+   *
+   * @return array{0: bool, 1: array<int, array>}
+   *   Whether the dialog closes and the replace-with commands.
+   */
+  private function ajaxCommands($response): array {
+    $closed = FALSE;
+    $replaced = [];
+    foreach ($response->getCommands() as $command) {
+      if (($command['command'] ?? '') === 'closeDialog') {
+        $closed = TRUE;
+      }
+      if (($command['command'] ?? '') === 'insert' && ($command['method'] ?? '') === 'replaceWith') {
+        $replaced[] = $command;
+      }
+    }
+    return [$closed, $replaced];
   }
 
   /**

@@ -6,9 +6,12 @@ namespace Drupal\aculta_events\Form;
 
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\aculta_events\Event\EventDateListBuilder;
 use Drupal\aculta_events\Plugin\Field\FieldWidget\EventLocationModalWidget;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
+use Drupal\Core\Ajax\MessageCommand;
+use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -30,6 +33,7 @@ class EventDateCreateForm extends FormBase {
   public function __construct(
     protected readonly EntityTypeManagerInterface $entities,
     protected readonly AccountProxyInterface $currentUserAccount,
+    protected readonly EventDateListBuilder $dateListBuilder,
   ) {}
 
   /**
@@ -39,6 +43,7 @@ class EventDateCreateForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('current_user'),
+      $container->get('aculta_events.date_list_builder'),
     );
   }
 
@@ -179,6 +184,7 @@ class EventDateCreateForm extends FormBase {
       'title' => (string) $form_state->getValue('title'),
       'field_evento' => (int) $event->id(),
       'field_quando' => ['value' => $start, 'end_value' => $end],
+      'field_peso' => $this->nextWeight($event),
     ];
     if ($locationId !== NULL && $locationId > 0) {
       $dateData['field_local'] = $locationId;
@@ -198,13 +204,38 @@ class EventDateCreateForm extends FormBase {
       return $form;
     }
 
-    $eventId = (int) ($form_state->get('event_id') ?? 0);
+    $event = $this->eventFromState($form_state);
+    if (!$event instanceof Event) {
+      $eventId = (int) ($form_state->get('event_id') ?? 0);
+      $response = new AjaxResponse();
+      $response->addCommand(new CloseModalDialogCommand());
+      $response->addCommand(new RedirectCommand(
+        Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $eventId])->toString()
+      ));
+      return $response;
+    }
+
     $response = new AjaxResponse();
     $response->addCommand(new CloseModalDialogCommand());
-    $response->addCommand(new RedirectCommand(
-      Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $eventId])->toString()
-    ));
+    $response->addCommand(new MessageCommand($this->t('A data foi criada.')));
+    $response->addCommand(new ReplaceCommand('#event-dates-list', $this->dateListBuilder->build($event)));
     return $response;
+  }
+
+  /**
+   * Próximo peso editorial para uma nova Data do Evento.
+   */
+  protected function nextWeight(Event $event): int {
+    $storage = $this->entities->getStorage('aculta_event_date');
+    $ids = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('field_evento', (int) $event->id())
+      ->execute();
+    $max = 0;
+    foreach ($storage->loadMultiple($ids) as $date) {
+      $max = max($max, (int) $date->get('field_peso')->value);
+    }
+    return $max + 1;
   }
 
   /**

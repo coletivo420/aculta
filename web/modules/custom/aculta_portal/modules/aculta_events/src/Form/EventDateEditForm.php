@@ -9,6 +9,8 @@ use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Plugin\Field\FieldWidget\EventLocationModalWidget;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
+use Drupal\Core\Ajax\MessageCommand;
+use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormStateInterface;
@@ -163,12 +165,21 @@ final class EventDateEditForm extends EventDateCreateForm {
       return $form;
     }
 
-    $eventId = (int) ($form_state->get('event_id') ?? 0);
+    $event = $this->eventFromState($form_state);
+    if (!$event instanceof Event) {
+      $eventId = (int) ($form_state->get('event_id') ?? 0);
+      $response = new AjaxResponse();
+      $response->addCommand(new CloseModalDialogCommand());
+      $response->addCommand(new RedirectCommand(
+        Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $eventId])->toString()
+      ));
+      return $response;
+    }
+
     $response = new AjaxResponse();
     $response->addCommand(new CloseModalDialogCommand());
-    $response->addCommand(new RedirectCommand(
-      Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $eventId])->toString()
-    ));
+    $response->addCommand(new MessageCommand($this->t('A data foi atualizada.')));
+    $response->addCommand(new ReplaceCommand('#event-dates-list', $this->dateListBuilder->build($event)));
     return $response;
   }
 

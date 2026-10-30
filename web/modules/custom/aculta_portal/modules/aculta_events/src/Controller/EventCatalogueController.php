@@ -6,6 +6,7 @@ namespace Drupal\aculta_events\Controller;
 
 use Drupal\aculta_events\Cache\EventCacheTags;
 use Drupal\aculta_events\Catalogue\EventCatalogue;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_events\Occurrence\UpcomingDates;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Controller\ControllerBase;
@@ -35,6 +36,7 @@ final class EventCatalogueController extends ControllerBase {
     private readonly UpcomingDates $proximas,
     private readonly TimeInterface $tempo,
     private readonly Request $requisicao,
+    private readonly ?DomainPurposeManager $purposes = NULL,
   ) {}
 
   /**
@@ -46,6 +48,7 @@ final class EventCatalogueController extends ControllerBase {
       $container->get('aculta_events.upcoming'),
       $container->get('datetime.time'),
       $container->get('request_stack')->getCurrentRequest(),
+      $container->has('aculta_portal.domain_purpose') ? $container->get('aculta_portal.domain_purpose') : NULL,
     );
   }
 
@@ -68,7 +71,9 @@ final class EventCatalogueController extends ControllerBase {
     $validade = $this->proximas->validade($fins, $agoraSegundos) ?? self::VALIDADE_PADRAO;
 
     $itens = [];
-    if ($this->entityTypeManager()->getAccessControlHandler('aculta_event')->createAccess(NULL, $this->currentUser())) {
+    // Ações editoriais existem somente no MAIN; o catálogo em eventos é público.
+    if ($this->purposes?->getCurrentPurpose() === 'main'
+      && $this->entityTypeManager()->getAccessControlHandler('aculta_event')->createAccess(NULL, $this->currentUser())) {
       $itens[] = [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'event-catalogue-actions-bar'],
