@@ -72,6 +72,98 @@
   outline-offset: 2px;
 }
 
+/* Editorial masthead and responsive cover for the Revista landing page. */
+.page-view-revista-sessoes .view-display-id-page_revista .view-header {
+  margin-block-end: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.page-view-revista-sessoes .view-display-id-page_revista .view-content.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1rem, 2vw, 1.75rem);
+  margin: 0;
+}
+
+.page-view-revista-sessoes .view-display-id-page_revista .view-content.row > .views-row {
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child {
+  grid-column: 1 / -1;
+}
+
+.page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .aculta-card {
+  overflow: hidden;
+  border-radius: 1.25rem;
+}
+
+@media (min-width: 600px) {
+  .page-view-revista-sessoes .view-display-id-page_revista .view-content.row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 992px) {
+  .page-view-revista-sessoes .view-display-id-page_revista .view-content.row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .aculta-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    min-height: clamp(24rem, 36vw, 32rem);
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .card-img-top {
+    grid-column: 1;
+    grid-row: 1 / 4;
+    min-width: 0;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .card-img-top > div,
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .card-img-top .field__item {
+    height: 100%;
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .card-img-top img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    object-fit: cover;
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .card-header {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+    padding: clamp(1.25rem, 2.5vw, 2.5rem) clamp(1.25rem, 2.5vw, 2.5rem) 0.5rem;
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .card-body {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+    padding: 0.75rem clamp(1.25rem, 2.5vw, 2.5rem);
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .card-footer {
+    grid-column: 2;
+    grid-row: 3;
+    padding: 0.5rem clamp(1.25rem, 2.5vw, 2.5rem) clamp(1.25rem, 2.5vw, 2.5rem);
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .aculta-revista-teaser__title {
+    font-size: clamp(1.5rem, 2.2vw, 2.25rem);
+  }
+}
+
 @media (min-width: 768px) {
   .aculta-revista-teaser__title {
     font-size: 1.25rem;
