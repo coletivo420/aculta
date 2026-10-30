@@ -7,6 +7,7 @@ namespace Drupal\aculta_portal\Hook;
 use Drupal\aculta_portal\Account\AccountAddressForm;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
@@ -63,6 +64,9 @@ final class AccountAddressHooks {
    */
   #[Hook('entity_presave')]
   public function entityPresave(EntityInterface $entity): void {
+    if (!$entity instanceof FieldableEntityInterface) {
+      return;
+    }
     if ($entity->getEntityTypeId() === 'commerce_store' && $entity->hasField('billing_countries')) {
       $entity->set('billing_countries', ['BR']);
     }
