@@ -367,7 +367,7 @@ A experiência editorial é **ACULTA Studio Marley** (`marley`); a experiência 
 
 ## ACULTA Studio Culturas — decisão de produto e domínio (2026-10-30)
 
-O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota planejada é `/studio/culturas`, atendida no purpose `eventos` (host eventos configurado pelo DomainPurposeManager); a entrada geral do Studio em `account` poderá apenas apresentar um link para essa experiência.
+O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota planejada é `/culturas` no purpose `eventos` (host eventos configurado pelo DomainPurposeManager); a entrada geral do Studio em `account` poderá apenas apresentar um link para essa experiência.
 
 - A sessão administrativa técnica continua no domínio principal, em `/painel-administrativo/eventos`, restrita a administradores. Configuração global de permissões, auditoria e operações administrativas permanecem ali.
 - ACULTA Studio Culturas é a experiência de organizadores: composição de fluxos do owner `aculta_events`, para criar e gerir Eventos e seus componentes (Datas e Locais), usando Form API, Entity Access e moderação existentes. Não cria entidade, formulário de persistência, permissão ou catálogo duplicado.
@@ -377,9 +377,13 @@ O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas
 - Esta decisão substitui qualquer texto anterior que diga que todo trabalho editorial de Eventos só pode ocorrer no MAIN ou que o purpose `eventos` é exclusivamente público. O painel de administração permanece no MAIN; a área do organizador é a exceção explícita e separada em ACULTA Studio Culturas.
 - Estado: decisão e planejamento documental; implementação, autorização por domínio, navegação e homologação ainda precisam ser concluídas.
 
-A frente é de Eventos e Cultura, não uma aba do Marley. Planejar provider e experiência próprios no Studio; o módulo `aculta_studio` compõe navegação e formulários do owner `aculta_events`. A rota proposta é `/studio/culturas` no purpose `eventos`; verificar colisões e registrar rota definitiva no sitemap antes da implementação.
+A frente é de Eventos e Cultura, não uma aba do Marley. Planejar provider e experiência próprios no Studio; o módulo `aculta_studio` compõe navegação e formulários do owner `aculta_events`. A rota proposta é `/culturas` no purpose `eventos`; verificar colisões e registrar rota definitiva no sitemap antes da implementação.
 
 
 ## Ingressos no ACULTA Studio Culturas - proposta ADR-036
 
 Planejar para organizadores: configurar ofertas/lotes/capacidade, acompanhar RSVP gratuito e compras pagas, consultar participantes e operar check-in móvel. Escritas no purpose `eventos`; administração técnica/global no MAIN. A interface não duplica owner nem pedido Commerce. RSVP não chama checkout; pagamentos usam Commerce/Mercado Pago. Esta experiência de ingressos não está implementada. Ver [ADR-036](../decisions/ADR-036-ingressos-gratuitos-e-pagos.md) e plano do [aculta_events](../../web/modules/custom/aculta_portal/modules/aculta_events/docs/PLANO-INGRESSOS-PAGOS.md).
+
+## Residência das Suites por domínio - ADR-038
+
+Marley em `conta:/marley`, Ganjalab em `cursos:/ganjalab`, WE SATIVA em `wiki:/wesativa`, Green Stash em `loja:/greenstash` e Culturas em `eventos:/culturas`. O framework `aculta_studio` permanece transversal; `/studio` e `/studio/*` deixam de existir. A raiz Conta passa a uma entrada de Conta, não um hub de Suites. Ver [ADR-038](../decisions/ADR-038-aculta-studio-suites-por-dominio.md) e OCS-F12. DNS/TLS Wiki são dependências externas; status segue planejado até homologação.

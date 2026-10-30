@@ -72,7 +72,7 @@ Conforme diretriz arquitetural, atividades editoriais (`node:activity` e `/node/
 
 ## ACULTA Studio Culturas — decisão de produto e domínio (2026-10-30)
 
-O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota planejada é `/studio/culturas`, atendida no purpose `eventos` (host eventos configurado pelo DomainPurposeManager); a entrada geral do Studio em `account` poderá apenas apresentar um link para essa experiência.
+O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota planejada é `/culturas` no purpose `eventos` (host eventos configurado pelo DomainPurposeManager); a entrada geral do Studio em `account` poderá apenas apresentar um link para essa experiência.
 
 - A sessão administrativa técnica continua no domínio principal, em `/painel-administrativo/eventos`, restrita a administradores. Configuração global de permissões, auditoria e operações administrativas permanecem ali.
 - ACULTA Studio Culturas é a experiência de organizadores: composição de fluxos do owner `aculta_events`, para criar e gerir Eventos e seus componentes (Datas e Locais), usando Form API, Entity Access e moderação existentes. Não cria entidade, formulário de persistência, permissão ou catálogo duplicado.
@@ -98,3 +98,7 @@ O estado atual continua sem ticketing interno: `field_gratuito`, `field_pricing`
 ### Decisões ainda abertas
 
 RSVP obrigatório ou opcional; limite por pessoa e prevenção de duplicidade; capacidade por lote versus Data; reserva temporária/expiração/fila; cancelamento e liberação de vaga; abrangência por série; transferência; entrega/acessibilidade do ingresso; retenção/base legal; critérios para migrar links externos.
+
+## ACULTA Studio Culturas em domínio próprio - ADR-038
+
+A Suite mantém o nome ACULTA Studio Culturas, mas o caminho de destino é `eventos.aculta.*/culturas`, purpose `eventos`. `/culturas` foi supersedido e responderá 404 após a migração. O painel administrativo continua no MAIN. A rota do organizador permanece planejada até implementação e homologação.

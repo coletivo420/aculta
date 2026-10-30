@@ -740,3 +740,7 @@ descrição, URL ou arquivo. Homologação Runtime continua separada.
 ## Frente planejada: WE SATIVA
 
 [Fundação do WE SATIVA](docs/WE-SATIVA-FOUNDATION.md): experiência editorial própria da Wiki420 com contribuição contextual a partir do verbete, fluxos progressivos mobile-first, Drupal Form API/revisões e autorização por capacidade, independente do GanjaLab/GanjaLab420. A fundação é documental, não altera rotas ou permissões. Autosave Form fica somente para consideração futura.
+
+## WE SATIVA em Wiki - migração ADR-038
+
+Destino: `wiki.aculta.*/wesativa`, purpose `wiki`. O host atual é `wiki420.aculta.*`; a mudança depende de Domain/Deployer, DNS, TLS/vhost e homologação. Wiki mantém ownership de verbetes, propostas e permissões. Rotas Marley de moderação continuam na Suite Marley (`account:/marley/...`) quando esse for o contexto owner. `/studio/*` sai sem alias.

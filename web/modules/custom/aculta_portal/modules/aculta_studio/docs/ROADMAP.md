@@ -1,9 +1,8 @@
-## Decisão vigente — nomes e caminhos das áreas do Studio (2026-10-30)
+## ADR-038 - caminho aprovado para as Suites (implementação futura)
 
-- **ACULTA STUDIO WE SATIVA** usa `/studio/we-sativa` e `/studio/we-sativa/inicio`.
-- **ACULTA STUDIO GREEN STASH** usa `/studio/green-stash` e suas rotas filhas.
-- Ambas são áreas integradas ao ACULTA Studio, sem shell, autenticação ou navegação global independentes. Preservar os IDs de provider e os owners funcionais Wiki e Commerce.
-- Nomes históricos não criam aliases: rotas anteriores respondem 404.
+Marley `conta.aculta.*/marley`; Ganjalab `cursos.aculta.*/ganjalab`; WE SATIVA `wiki.aculta.*/wesativa`; Green Stash `loja.aculta.*/greenstash`; Culturas `eventos.aculta.*/culturas`. `/studio` e todo `/studio/*` serão removidos e responderão 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `conta` será entrada de Conta, fora de `/studio`; Conta e Perfil permanecem separados. As referências de rota anteriores neste arquivo descrevem o estado pré-migração e não são destino para implementação nova. Consulte ADR-038.
+
+## Inventário histórico pré-ADR-038
 
 ## Incremento planejado LOC - Eventos e Locais no Marley (2026-10-29)
 
@@ -708,3 +707,18 @@ Portal para todos os dez purposes, inclusive ACCOUNT. O teste Kernel cobre
 identidade e URL por Domain, mas a alteração ainda aguarda entrega ao checkout
 servido e verificação visual de duplicação nas rotas Studio. OCS-F0 e OCS-F11
 permanecem parciais.
+
+## OCS-F12 - Residência das Suites por domínio (ADR-038)
+
+**Estado: planejado, não implementado.** Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. A marca e registry `aculta_studio` permanecem como infraestrutura compartilhada; `/studio` e `/studio/*` são retirados. A raiz de `account` vira entrada de Conta, sem hub Studio.
+
+- [ ] F12-A inventariar as 31 declarações `/studio*`, route IDs, links, callbacks, login destinations, canonical/cache/sitemap e owners.
+- [ ] F12-B definir paths de Conta, Perfil, Salvos e planos Mercado Pago fora de `/studio`, sem fundir Conta/Perfil nem trocar owners.
+- [ ] F12-C migrar rotas/providers e navegação Marley e Ganjalab; Ganjalab passa de `account` para `courses`.
+- [ ] F12-D migrar WE SATIVA, Green Stash e Culturas a `wiki`, `shop` e `eventos`.
+- [ ] F12-E provisionar host Wiki `wiki.aculta.*`: Domain/Deployer, DNS, TLS/vhost, fallback e rollback. Config atual usa `wiki420.aculta.*`.
+- [ ] F12-F retirar rewrite `account` para `/studio`, implementar entrada da Conta e retirar todas rotas `/studio*`; 404 sem redirects/aliases.
+- [ ] F12-G atualizar front-path policy, links absolutos via DomainPurposeManager, login/retorno, canonical, cache, SEO, sitemap e gates.
+- [ ] F12-H testar os cinco hosts, purpose correto/incorreto para GET/POST, `/studio*` 404, owners, permissões, acessibilidade e telas mobile.
+
+Gate: não cortar parcialmente nem declarar concluído antes de testes e homologação por host/Runtime.

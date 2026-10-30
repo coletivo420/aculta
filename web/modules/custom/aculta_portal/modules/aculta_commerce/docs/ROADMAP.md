@@ -224,3 +224,7 @@ componentes permanecem Dev e sem decisão RC.
 ## Ingressos pagos - proposta ADR-036
 
 Commerce será owner de pedidos e itens transacionais pagos do tipo `ingresso`; o catálogo/oferta, RSVP, participante, emissão e check-in continuam no owner `aculta_events`. Preservar checkout e gateway de Loja, LMS e Doações. RSVP gratuito não cria pedido, carrinho ou pagamento. A futura integração exige item/order type explícitos, provider/contexto no Portal, regressão do carrinho consolidado e frete misto. Ainda não implementado; ver [ADR-036](../../../../../../../docs/decisions/ADR-036-ingressos-gratuitos-e-pagos.md) e [plano Events](../../../../../aculta_events/docs/PLANO-INGRESSOS-PAGOS.md).
+
+## Migrar Green Stash ao purpose Shop - ADR-038
+
+Planejar rotas `/greenstash...` em `shop` para transição de remessas e operações de produto, incluindo provider, navegação, login/retorno, canonical/cache e ACL. Preservar Commerce como owner e não tocar checkout. Remover `/studio/*` só após homologação no host `loja`, sem aliases.

@@ -495,3 +495,6 @@ Runtime/Homelab não faz parte do teste.
 
 [Contrato e inventário histórico da migração](../../../../../../docs/architecture/GANJALAB420-TO-ACULTA-STUDIO-MIGRATION.md). A identidade e os caminhos descritos nas seções anteriores refletem o estado daquela fase. O nome vigente é **ACULTA Studio Ganjalab**, ID `ganjalab`, com rota canônica `/studio/ganjalab`; aliases legados GET/HEAD redirecionam temporariamente para ela. O controller de experiência é `aculta_studio.ganjalab_controller`. LMS continua dono de dados, progresso, matrículas, certificados, autorização e cache.
 
+## Ganjalab em Cursos - migração ADR-038
+
+Destino: `cursos.aculta.*/ganjalab`, purpose `courses`. A rota atual `/studio/ganjalab` está em `account`; mover purpose/path mantendo LMS como owner de matrículas, progresso, dados, certificados e permissões. A rota antiga será 404 sem alias após o corte. Testar no host correto e negar outros purposes.

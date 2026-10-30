@@ -34,3 +34,18 @@ Qualquer outro 301 novo é regressão, a menos que esta lista seja atualizada co
 - `canonical_url` e `og_url` das raízes usam `[site:url]` (ou a raiz do host, para página de finalidade). Endereço de produção não aparece em sobreposição por domínio: o gate `validate-domain-front-paths` confere.
 - JSON-LD de organização e site: o endereço principal vem do ambiente (`aculta_deployer`); no teste, `settings.local.php` define os valores.
 
+## Suites do ACULTA Studio por domínio - destino ADR-038 (planejado)
+
+A regra atual da raiz continua descrevendo o Runtime existente até o corte. As rotas abaixo passam a ser válidas somente no purpose correto; não são redirects da raiz. Atualizar `FrontPathPolicy` e o gate para validar estas exceções.
+
+| Host de teste | Purpose | Suite/path permitido | Purpose errado |
+| --- | --- | --- | --- |
+| `conta.aculta.toca.net.br` | `account` | Marley `/marley` e filhas | 404 |
+| `cursos.aculta.toca.net.br` | `courses` | Ganjalab `/ganjalab` e filhas | 404 |
+| `wiki.aculta.toca.net.br` | `wiki` | WE SATIVA `/wesativa` e filhas | 404 |
+| `loja.aculta.toca.net.br` | `shop` | Green Stash `/greenstash` e filhas | 404 |
+| `eventos.aculta.toca.net.br` | `eventos` | Culturas `/culturas` e filhas | 404 |
+
+A raiz `conta` passa a ser entrada da Conta, sem reescrita para `/studio`; `/studio` e `/studio/*` retornam 404, sem alias/redirect. Conta e Perfil migram para `/conta/*` e `/perfil/*`; `/conta-legada` permanece. A Wiki ainda usa `wiki420.aculta.toca.net.br`; não trocar até provisionar Domain/Deployer, DNS, TLS/vhost e homologar `wiki.aculta.toca.net.br`.
+
+A tabela de runtime acima continua sendo estado presente até o corte. Esta seção documenta o destino aprovado, não prova mudança de host/rota.

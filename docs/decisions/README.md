@@ -6,6 +6,8 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 
 ## ADRs
 
+- [ADR-038 — Suites do ACULTA Studio por domínio e remoção de `/studio`](ADR-038-aculta-studio-suites-por-dominio.md) — aceita; implementação planejada por fases.
+
 - [ADR-037 — Descontinuação do tipo de conteúdo Atividade em favor de Eventos](ADR-037-descontinuacao-atividades-em-favor-de-eventos.md) — aceita; vigência imediata.
 
 - [ADR-036 - Ingressos gratuitos e pagos no ACULTA Events](ADR-036-ingressos-gratuitos-e-pagos.md) - proposta para revisão.

@@ -1,5 +1,10 @@
 # Regras específicas — consulta sob demanda
 
+## ADR-038 - caminho aprovado para as Suites (implementação futura)
+
+Marley `conta.aculta.*/marley`; Ganjalab `cursos.aculta.*/ganjalab`; WE SATIVA `wiki.aculta.*/wesativa`; Green Stash `loja.aculta.*/greenstash`; Culturas `eventos.aculta.*/culturas`. `/studio` e todo `/studio/*` serão removidos e responderão 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `conta` será entrada de Conta, fora de `/studio`; Conta e Perfil permanecem separados. As referências de rota anteriores neste arquivo descrevem o estado pré-migração e não são destino para implementação nova. Consulte ADR-038.
+
+
 ## Contrato de rota vigente após migração da raiz
 
 A raiz pública `/` no purpose ACCOUNT apresenta
@@ -94,4 +99,31 @@ workspace service and WE SATIVA routes.
 
 ## ACULTA Studio Culturas (planejado)
 
-O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**, com rota planejada `/studio/culturas` no purpose `eventos`. A experiência geral do Studio em `account` pode linkar para lá, mas não grava Eventos. A área administrativa e sua configuração permanecem no MAIN em `/painel-administrativo/eventos`, restrita a administradores. Até a implementação, não documente a rota como ativa nem crie experiência/owner paralelo. Usar `aculta_events` para persistência e autorização; Datas e Locais pertencem ao Evento.
+O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**, com rota planejada `/culturas` no purpose `eventos`. A experiência geral do Studio em `account` pode linkar para lá, mas não grava Eventos. A área administrativa e sua configuração permanecem no MAIN em `/painel-administrativo/eventos`, restrita a administradores. Até a implementação, não documente a rota como ativa nem crie experiência/owner paralelo. Usar `aculta_events` para persistência e autorização; Datas e Locais pertencem ao Evento.
+
+## Contrato futuro: Suites do ACULTA Studio por domínio (ADR-038)
+
+Cada Suite responde em seu próprio domínio/purpose e sob o caminho-base abaixo. O prefixo público `/studio` e todas as rotas `/studio/*` serão retirados e responderão 404, sem alias ou redirect. `aculta_studio` permanece como infraestrutura compartilhada de composição e registry, não como raiz de URL.
+
+| Suite | Purpose | Host de produção | Host de teste | Caminho-base |
+| --- | --- | --- | --- | --- |
+| Marley | `account` | `conta.aculta.org` | `conta.aculta.toca.net.br` | `/marley` |
+| Ganjalab | `courses` | `cursos.aculta.org` | `cursos.aculta.toca.net.br` | `/ganjalab` |
+| WE SATIVA | `wiki` | `wiki.aculta.org` | `wiki.aculta.toca.net.br` | `/wesativa` |
+| Green Stash | `shop` | `loja.aculta.org` | `loja.aculta.toca.net.br` | `/greenstash` |
+| Culturas | `eventos` | `eventos.aculta.org` | `eventos.aculta.toca.net.br` | `/culturas` |
+
+Manter Conta e Perfil como experiências diferentes, fora das Suites. A raiz de `conta` passa a uma página de entrada da Conta com navegação para Marley e links absolutos às outras Suites; não aponta internamente para `/studio`. A Conta legada continua em `/conta-legada`. Planejar caminhos `/conta/*`, `/perfil/*` e `/salvos` para absorver as rotas pessoais atuais, preservando owners e sem misturar dados.
+
+Regras de implementação:
+- Rotas declaram o purpose correto e validam usuário, módulo owner e permissão no servidor. Purpose incorreto responde 404, inclusive POST. Links cross-domain são absolutos via `DomainPurposeManager`; não enviar POST/proxy de escrita entre purposes.
+- Preservar route IDs e owners sempre que possível. Rotas de negócio podem ser declaradas pelo módulo owner e ter path/purpose ajustados conforme a Suite responsável.
+- Novas Suites escolhem host/purpose e slug próprio antes de declarar rotas; não introduzir `/studio/{suite}`.
+- Hosts de Conta, Cursos, Loja e Eventos já constam nos registros atuais. Wiki ainda usa `wiki420.aculta.org` e `wiki420.aculta.toca.net.br`; migração para `wiki.aculta.*` depende de config Deployer/Domain, DNS, TLS/vhost e homologação.
+- Atualizar `PurposeFrontPathProcessor`, `FrontPathPolicy`, subscriber de propósito, navegação e testes para a raiz de cada purpose e as rotas da Suite. Os cinco caminhos da matriz são rotas válidas apenas no purpose respectivo.
+- Remover todas as rotas `/studio` e `/studio/*` após mover destinos. Sem redirects legados; canonical e links apontam diretamente aos novos hosts/caminhos.
+- Migrar links internos/externos, login/retorno, e-mail, notificações, sitemap, canonical, cache e testes. A troca de URL não transfere ownership de entidades, formulários, ACL ou workflows.
+
+Estado em 2026-10-30: decisão e plano aprovados; nenhum corte de rotas, configuração de domínio, DNS ou validação de Runtime é declarado por este documento.
+
+Não declare a troca implementada pela documentação. A rota/domínio permanece pendente até corte e homologação.

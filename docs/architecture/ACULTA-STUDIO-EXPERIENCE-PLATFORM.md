@@ -1,5 +1,13 @@
 # ACULTA Studio — plataforma transversal de interfaces próprias
 
+## ADR-038 - caminho aprovado para as Suites (implementação futura)
+
+Marley `conta.aculta.*/marley`; Ganjalab `cursos.aculta.*/ganjalab`; WE SATIVA `wiki.aculta.*/wesativa`; Green Stash `loja.aculta.*/greenstash`; Culturas `eventos.aculta.*/culturas`. `/studio` e todo `/studio/*` serão removidos e responderão 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `conta` será entrada de Conta, fora de `/studio`; Conta e Perfil permanecem separados. As referências de rota anteriores neste arquivo descrevem o estado pré-migração e não são destino para implementação nova. Consulte ADR-038.
+
+## Contratos anteriores
+
+O restante deste documento inclui descrições das rotas anteriores à ADR-038. Leia-as como histórico/estado pré-migração; não como padrão para novas implementações.
+
 ## Contrato atual de identidade — substitui a antiga experiência pessoal
 
 O Studio mantém **Minha Conta** (`/studio/conta`) e **Meu Perfil**
@@ -184,7 +192,7 @@ continuam pendentes.
 
 ## ACULTA Studio Culturas — decisão de produto e domínio (2026-10-30)
 
-O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota planejada é `/studio/culturas`, atendida no purpose `eventos` (host eventos configurado pelo DomainPurposeManager); a entrada geral do Studio em `account` poderá apenas apresentar um link para essa experiência.
+O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota canônica futura é `/culturas`, atendida no purpose `eventos` (host eventos configurado pelo DomainPurposeManager). A rota antiga `/studio/culturas` será removida sem alias ou redirect, conforme ADR-038.
 
 - A sessão administrativa técnica continua no domínio principal, em `/painel-administrativo/eventos`, restrita a administradores. Configuração global de permissões, auditoria e operações administrativas permanecem ali.
 - ACULTA Studio Culturas é a experiência de organizadores: composição de fluxos do owner `aculta_events`, para criar e gerir Eventos e seus componentes (Datas e Locais), usando Form API, Entity Access e moderação existentes. Não cria entidade, formulário de persistência, permissão ou catálogo duplicado.
@@ -195,3 +203,11 @@ O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas
 - Estado: decisão e planejamento documental; implementação, autorização por domínio, navegação e homologação ainda precisam ser concluídas.
 
 É uma exceção explícita ao padrão atual das experiências do Studio em `account`: sua interface de organizadores pertence ao purpose `eventos`. A identidade/navigation global pode apontar para essa área usando serviço multidomínio; a autorização e mutações continuam no host de Eventos.
+
+## Contrato de rotas atualizado - ADR-038
+
+## Contrato futuro: Suites do ACULTA Studio por domínio (ADR-038)
+
+Cada Suite responde em seu próprio domínio/purpose e sob o caminho-base abaixo. O prefixo público `/studio` e todas as rotas `/studio/*` serão retirados e responderão 404, sem alias ou redirect. `aculta_studio` permanece como infraestrutura compartilhada de composição e registry, não como raiz de URL.
+
+A tabela de rotas antiga deste documento descreve o estado antes da migração; use a matriz abaixo e o sitemap como destino. Implementação pendente.

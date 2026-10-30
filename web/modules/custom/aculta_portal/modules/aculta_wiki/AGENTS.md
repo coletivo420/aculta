@@ -1,4 +1,9 @@
 - Dev.117: `FileReferenceInspector` (Portal) ignora tipo registrado sem tabela
+
+## ADR-038 - caminho aprovado para as Suites (implementação futura)
+
+Marley `conta.aculta.*/marley`; Ganjalab `cursos.aculta.*/ganjalab`; WE SATIVA `wiki.aculta.*/wesativa`; Green Stash `loja.aculta.*/greenstash`; Culturas `eventos.aculta.*/culturas`. `/studio` e todo `/studio/*` serão removidos e responderão 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `conta` será entrada de Conta, fora de `/studio`; Conta e Perfil permanecem separados. As referências de rota anteriores neste arquivo descrevem o estado pré-migração e não são destino para implementação nova. Consulte ADR-038.
+
   base e `ContentEntityNullStorage` sem converter falha real em exclusão; a
   classe Kernel de imagem passou 29/1.642 e a suíte Kernel Wiki 31/1.692. O
   enumerador do Index trata tipo sem schema instalado como vazio; o Index foi
@@ -543,3 +548,7 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
 - Retirada (dev.28): apenas autoria autenticada com acesso de leitura pode
   retirar estados `submitted` ou `needs_changes`; revalidar VID sob lock e gravar
   nova revisão `withdrawn`, preservando versões e sem apagar a proposta.
+
+## ADR-038 - residência futura da Suite WE SATIVA
+
+WE SATIVA responderá em `wiki.aculta.*/wesativa`, purpose `wiki`. O host atual continua `wiki420.aculta.*` até migração de Domain/Deployer/DNS/TLS e homologação. Wiki mantém ownership de verbetes, propostas e permissões. Rotas de moderação que pertencem à Suite Marley continuam em `conta.aculta.*/marley/...`, purpose `account`; não mova toda rota Wiki automaticamente para WE SATIVA. `/studio/*` será removido sem alias.

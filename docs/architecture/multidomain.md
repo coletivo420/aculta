@@ -152,3 +152,9 @@ principal não serve apoio.
 - Carrinho e checkout: purpose `main` (`DomainRoutePolicy`). A compra começa no host da loja e segue para o carrinho do principal.
 - Canonical do produto: sempre no host da loja (token absoluto da metatag, na requisição atual).
 - Deployer: `domain_transition.shop` em `web/modules/custom/aculta_portal/modules/aculta_deployer/config/deploy.json`.
+
+## Planejamento ADR-038 - Suites Studio distribuídas por purpose
+
+Marley em `account:/marley`, Ganjalab em `courses:/ganjalab`, WE SATIVA em `wiki:/wesativa`, Green Stash em `shop:/greenstash` e Culturas em `eventos:/culturas`. O módulo `aculta_studio` continua compartilhado; não haverá path público `/studio` ou `/studio/*`. A raiz de `account` será entrada da Conta, sem rewrite para Studio.
+
+A tabela acima descreve hosts atuais. Wiki permanece configurada como `wiki420.aculta.*` até migração controlada para `wiki.aculta.*`, com Domain/Deployer, DNS, TLS/vhost e homologação. Ver [ADR-038](../decisions/ADR-038-aculta-studio-suites-por-dominio.md).

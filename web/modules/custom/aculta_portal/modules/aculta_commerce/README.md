@@ -115,3 +115,6 @@ Novo formulário Studio em `/studio/green-stash/produtos/novo`: cria rascunho de
 ## Loja unica
 O Green Stash utiliza somente a loja comercial existente. Novo produto solicita apenas nome e associa automaticamente a unica Commerce store, apos verificar permissao. LMS e Doacoes nao sao novas lojas nem opcoes do formulario. Nenhum ID de loja fixo; configuracoes ambiguas falham fechadas.
 
+## Green Stash em domínio próprio - ADR-038
+
+Destino futuro: `loja.aculta.*/greenstash`, purpose `shop`. As rotas atuais `/studio/green-stash...` serão removidas no corte, sem redirects/aliases. Commerce mantém ownership de produtos, remessas, permissões e workflows; `aculta_studio` somente compõe a experiência.

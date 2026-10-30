@@ -566,4 +566,18 @@ existe. Alterações somente documentais não avançam versões de módulo/tema.
 
 ## Rota planejada — ACULTA Studio Culturas (ADR-035)
 
-| `eventos.aculta` | `/studio/culturas` | Experiência autenticada de organizadores para gerir Eventos, Datas e Locais no contexto do Evento | **Planejada; ainda não implementada.** Purpose `eventos`; owner `aculta_events`; autorização do servidor obrigatória. Escritas apenas neste purpose. O link pode ser apresentado pelo Studio em `account` via `DomainPurposeManager`, sem POST cruzado. A administração privilegiada/configuração permanece em `main.aculta` → `/painel-administrativo/eventos`, para administradores. Consulte ADR-035.
+| `eventos.aculta` | `/culturas` | Experiência autenticada de organizadores para gerir Eventos, Datas e Locais no contexto do Evento | **Planejada; ainda não implementada.** Purpose `eventos`; owner `aculta_events`; autorização do servidor obrigatória. Escritas apenas neste purpose. O link pode ser apresentado pelo Studio em `account` via `DomainPurposeManager`, sem POST cruzado. A administração privilegiada/configuração permanece em `main.aculta` → `/painel-administrativo/eventos`, para administradores. Consulte ADR-035.
+
+## Mapa futuro das Suites - ADR-038
+
+As rotas atuais descritas acima são inventário, não alvo. Após implementação/homologação, o destino é:
+
+| Host | Path base | Suite | Purpose | Estado |
+| --- | --- | --- | --- | --- |
+| `conta.aculta.*` | `/marley` | Marley | `account` | Planejado; atual `/studio/marley` |
+| `cursos.aculta.*` | `/ganjalab` | Ganjalab | `courses` | Planejado; atual `/studio/ganjalab` em `account` |
+| `wiki.aculta.*` | `/wesativa` | WE SATIVA | `wiki` | Planejado; atual host `wiki420.aculta.*` |
+| `loja.aculta.*` | `/greenstash` | Green Stash | `shop` | Planejado; atual `/studio/green-stash` em `account` |
+| `eventos.aculta.*` | `/culturas` | ACULTA Studio Culturas | `eventos` | Planejado; substitui `/studio/culturas` |
+
+A raiz `conta` será entrada de Conta sem rewrite para `/studio`. Migrar também Conta, Perfil, Salvos e planos Mercado Pago para caminhos próprios fora de `/studio`, conforme inventário ADR-038. Preservar route IDs/owners quando possível. `/studio` e `/studio/*` responderão 404, sem aliases/redirects. A troca de host Wiki depende de DNS/TLS/Deployer.
