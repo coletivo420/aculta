@@ -9,6 +9,7 @@ use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
@@ -54,9 +55,12 @@ final class LocationPageController extends ControllerBase {
    * Renderiza a página pública do local.
    */
   public function page(EventLocation $aculta_event_location): array {
-    if (!$aculta_event_location->access('view', $this->currentUser())) {
+    $viewAccess = $aculta_event_location->access('view', $this->currentUser(), TRUE);
+    if (!$viewAccess->isAllowed()) {
       throw new NotFoundHttpException();
     }
+    $cacheability = CacheableMetadata::createFromObject($aculta_event_location)
+      ->merge(CacheableMetadata::createFromObject($viewAccess));
 
     $endereco = $this->catalogue->enderecoPublico($aculta_event_location);
     $tipoLabel = '';
@@ -71,8 +75,9 @@ final class LocationPageController extends ControllerBase {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'event-location-page'],
       '#cache' => [
-        'tags' => $aculta_event_location->getCacheTags(),
-        'contexts' => ['user.permissions'],
+        'tags' => $cacheability->getCacheTags(),
+        'contexts' => $cacheability->getCacheContexts(),
+        'max-age' => $cacheability->getCacheMaxAge(),
       ],
     ];
 
