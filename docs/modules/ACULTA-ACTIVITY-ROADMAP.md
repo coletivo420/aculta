@@ -151,3 +151,14 @@ release independente enquanto o módulo for apenas o adapter e sua fronteira.
 Workflow editorial, campos, experiência de edição, migração de dados e relações
 com outros módulos exigem auditoria e decisão próprias. Não fazem parte do
 adapter mínimo.
+
+
+## Integração futura com Locais de Events
+
+- [ ] Auditar valores e consumidores dos campos legados de endereço/cidade/UF/país/CEP de `node:activity`; definir migração e estratégia para registros existentes.
+- [ ] Substituir captura duplicada por referência a Local de `aculta_events`; a seleção/criação ocorre em modal Drupal/AJAX definido no roadmap de Events.
+- [ ] Não duplicar captura de endereço: cadastro de Local usa o adaptador central de `aculta_portal` e a biblioteca de CEP de `aculta_portal_cep`, com Brasil fixo e sem seletor.
+- [ ] Busca por logradouro é restrita a Events/Maps e permanece indisponível até aprovação de provedor/termos/privacidade/limites. Conta e checkout ficam fora.
+- [ ] Validar relações e autorização com `aculta_index`, sem indexar endereço exato ou dados privados.
+
+Ver [ADR-033](../decisions/ADR-033-endereco-busca-e-locais.md) e [plano LOC](../architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md). Activity permanece Dev até integração completa e evidências próprias.
