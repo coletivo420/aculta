@@ -1653,3 +1653,10 @@ segunda, sem corte ou rolagem horizontal. Evidências em
 `/home/piradopirata/aculta-suite-out/ocs-context-tabs-final-20261030/`.
 Este reteste não valida ACL entre contas, operações de revisão, zoom, WCAG 2.2
 AA nem os gates THEME-MF3/OCS-F11.
+
+Reuso cruzado do mesmo SDC confirmado no Studio Marley: o `<ul>` conserva
+classes `nav-tabs` e `list-group`, mas, com a folha candidata, os quatro links
+medem 44px em 320 e 390px, sem bordas ou overflow. Conta e Perfil autenticados
+não renderizaram `context-tabs` nesses caminhos, portanto não foram tratados
+como consumidores. Evidência em
+`/home/piradopirata/aculta-suite-out/ocs-context-tabs-marley-retake-20261030/`.
