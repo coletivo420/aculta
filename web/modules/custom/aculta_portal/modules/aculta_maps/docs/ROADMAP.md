@@ -129,3 +129,8 @@ Nenhuma autorização de escrita OSM, deploy ou substituição de geocodificador
 - [ ] Aprovar provedor, termos/atribuição, privacidade, limites e contrato antes de iniciar código. Manter distinta a geocodificação de endereços salvos para coordenadas, já existente em Maps. Não criar autocomplete Nominatim por tecla.
 
 Detalhes e critérios de entrada: [`docs/portal/CEP-ADDRESS-SEARCH-PLAN.md`](../../../../../../../docs/portal/CEP-ADDRESS-SEARCH-PLAN.md).
+
+
+### Integração de Local com Events por popup
+
+Maps consome a entidade Local mantida por `aculta_events`; não implementa CRUD ou armazenamento próprio de Local. Na criação de Activity, busca/seleção e cadastro acontecem em popups Drupal/AJAX sobre o formulário pai. O cadastro do Local usa CEP primeiro. A seleção retorna a referência ao pai sem perder dados. A busca por logradouro permanece restrita aos contextos de Events e Maps.
