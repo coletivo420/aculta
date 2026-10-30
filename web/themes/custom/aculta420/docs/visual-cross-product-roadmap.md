@@ -796,9 +796,15 @@ dimensões largas voltam em 576px, com assertions desktop/mobile na suíte. Ver
 
 A grade do rodapé passa a uma coluna como base, duas colunas em `min-width:
 36rem` e quatro colunas em `min-width: 62rem`, mantendo ordem DOM e conteúdo.
-Lint CSS/validação estática executados; comparação no Firefox e páginas reais
-DEFERRED por sessões concorrentes. Não aprova THEME-MF3; ver
-`mobile-first-audit.md`.
+Firefox ESR visível verificou dez raízes públicas em 13 viewports (320–1440px),
+incluindo 576/992px. Os nove rodapés comuns usam 1/2/4 colunas. LINKS mantém o
+footer social de `aculta_links`; como o LinkGenerator não passa pelo
+`preprocess_link`, a folha candidata do SDC estiliza seus tokens semânticos
+diretamente e valida links/ícones de 44px. Resultado: 260/260 checks, sem
+overflow e com shell único. A execução usou CSS candidato só em LINKS. Detalhes
+e limites em `mobile-first-audit.md` e
+`tests/browser/aculta-theme-mobile-first/README.md`. Esta checagem isolada não
+aprova THEME-MF3.
 
 ### THEME-MF2 — Institution Bar em viewport estreito
 

@@ -299,9 +299,19 @@ assistive technology e MF3 global continuam pendentes.
 `36rem` (576 CSS px), a grade passa a duas colunas; a partir de `62rem`
 (992 CSS px), restaura a composição anterior de quatro colunas com a coluna da
 marca em proporção dupla. A ordem DOM, os blocos e a tipografia não mudam.
-`npm run lint:css` e validações estáticas são executados. Comparação visual
-Firefox e inspeção das páginas reais estão DEFERRED enquanto sessões visíveis
-concorrentes ocupam o ambiente. Este resultado não aprova THEME-MF3.
+`npm run lint:css` e validações estáticas são executados. Em 2026-10-30, o
+Firefox ESR visível verificou os dez purposes públicos em 13 larguras de 320 a
+1440px, incluindo os limites de 576 e 992px. Os nove rodapés comuns renderizados
+pelo servidor tiveram 1/2/4 colunas, alvos de navegação de pelo menos 44px e
+nenhum overflow; Institution Bar e Domain Header apareceram uma vez. No LINKS,
+o Presenter do Portal envia links via LinkGenerator, que não executa o hook
+`preprocess_link`; por isso seus tokens permaneciam no HTML sem classes. A
+folha candidata do SDC aplica esses tokens semânticos diretamente aos estilos
+do canal/ícone. Com `FOOTER_CSS_OVERRIDE=1`, os links e ícones do footer passaram
+na medição de altura/alvo e não houve overflow. Execução 260/260; evidência em
+`/home/piradopirata/aculta-suite-out/footer-layout-20261030-candidate4/`.
+É uma validação de layout público com CSS candidato apenas no LINKS; não cobre
+páginas internas, teclado, zoom, contraste/WCAG ou THEME-MF3.
 
 ### THEME-MF2 — Institution Bar abaixo de 375px (histórico; revertido em 2026-10-30)
 

@@ -606,3 +606,35 @@ export SUITE_OUT=/home/piradopirata/suite-out/purpose-headings
 export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
 DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/purpose-headings.py
 ```
+
+## Rodapé responsivo nas dez experiências
+
+`footer-layout.py` verifica o rodapé servido nas dez raízes públicas lidas de
+`aculta_deployer/config/deploy.json`: MAIN, Conta, SUPPORT, Revista, Wiki,
+Loja, Cursos, Fórum, Links e Eventos. Usa Firefox ESR visível e somente GET.
+Nos nove purposes com `.aculta-footer`, mede a grade em 1 coluna abaixo de
+576px, 2 colunas entre 576 e 991px e 4 colunas a partir de 992px. Links tem um
+footer próprio (`.aculta-social-links-footer`) fornecido por `aculta_links`;
+nesse purpose, mede os anchors reais do footer e sua área mínima de 44px. Para
+todos, confere o shell único e ausência de overflow. Captura a página rolada
+até o rodapé em 320 e 1440px. Larguras padrão: 320/360/390/575/576/599/600/
+768/991/992/1024/1280/1440px.
+
+```sh
+cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/footer-layout
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+export FOOTER_CSS_OVERRIDE=1
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/footer-layout.py
+```
+
+`FOOTER_CSS_OVERRIDE=1` injeta somente a folha candidata do SDC Social Links
+para testar o caso em que os links são gerados pelo LinkGenerator e chegam com
+tokens semânticos no HTML. Os demais estilos continuam servidos pelo site.
+Use `FOOTER_DOMAIN_ENV=production` somente após confirmar ambiente, DNS e TLS;
+`FOOTER_WIDTHS` permite selecionar larguras. Evidência da execução 2026-10-30:
+`/home/piradopirata/aculta-suite-out/footer-layout-20261030-candidate4/`. O teste
+mede somente o layout público do rodapé, shell e overflow; não cobre navegação
+por teclado, zoom, contraste, leitores de tela, páginas internas nem aprova
+THEME-MF3.
