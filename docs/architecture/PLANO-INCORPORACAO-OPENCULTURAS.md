@@ -157,3 +157,29 @@ Fonte de verdade: [auditoria 3.1.5](AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md).
 - [ ] **OC-F (aceite):** testes Unit/Kernel/Functional, cache/acesso, proveniência e revisão visual com UI Patterns, Firefox ESR, acessibilidade e Olivero quando aplicável.
 
 Inventário retificado para `profile/config/install` do 3.1.5: **42 Views** (7 desabilitadas), **9 vocabulários**, **3 workflows**, **19 tipos de parágrafo**, **3 facets** e **5 flags**. `archive`, `glossary` e `content_recent` estão desabilitadas. Nenhuma evidência confirmou funcionalidade de polígonos ou declaração de uso de IA nesta versão: estudar separadamente, sem contar como paridade. Facets e Office Hours são candidatos, **não dependências automaticamente autorizadas**. Respeitar D-10, D-11, D-13/D-14, D-17/D-20 e D-45.
+
+
+## ACULTA Studio Culturas — aplicação da comparação OpenCulturas (2026-10-30)
+
+A comparação não encontrou equivalência direta de produto para o Studio: OpenCulturas fornece padrões de gestão e descoberta cultural, enquanto o Studio Culturas é a camada autenticada de trabalho do ACULTA. A incorporação será seletiva e seguirá os owners existentes.
+
+| Padrão identificado | Adaptação no Studio Culturas | Estado / limite |
+| --- | --- | --- |
+| Jornada de autoria e gestão de Eventos | Workspace em eventos.aculta.*/culturas, sobre entidades e formulários de aculta_events | Rota /culturas e dashboard inicial existem no HEAD; suíte completa parcial e sem homologação |
+| Datas e ocorrências associadas | Datas permanecem subordinadas ao Evento e usam recorrência ACULTA/aculta_calendar | Não criar entidade/catálogo independente nem trocar motor aprovado |
+| Cadastro e reutilização de Local | Seletor contextual para Locais existentes, criação pelo owner, página pública, agenda e diretório próprios | Local reutilizável; acesso e precisão devem valer em catálogo, mapa, relações e páginas |
+| Organizador e Organização | Relações verificáveis entre conta, Perfil público, Organização e conteúdo administrado | field_organizador referencia user; não há resultado público de Organizador no Index sem contrato de URL canônica e visibilidade |
+| Busca cultural e conteúdo relacionado | Reutilizar providers, relações, filtros por purpose e revalidação de acesso do aculta_index | Não importar Search API/Views/Facets ou duplicar catálogo; indexação de Evento/Local não implica identidade de Organizador |
+| Operação administrativa e moderação | Painel administrativo permanece no MAIN; Studio compõe fluxos do owner e deixa decisões de publicação/moderação em seus serviços | Sem papel genérico de organizador ou permissões paralelas |
+
+### Sequência de trabalho
+
+1. **CUL-01 - mapear o dashboard existente** contra EventPermissionPolicy, Entity Access, criação, edição e publicação; identificar ações habilitadas somente por grants efetivos.
+2. **CUL-02 - completar o workspace** com Eventos realmente editáveis, estados e ações autorizadas, evitando listagem global de entidades privadas.
+3. **CUL-03 - integrar Eventos e Datas** em fluxo contextual, sem segunda fonte de verdade.
+4. **CUL-04 - integrar Locais** com busca/seleção, criação contextual, ACL fail-closed, cacheability e endereço conforme precisão.
+5. **CUL-05 - fechar descoberta no Index** para Eventos/Locais e especificar identidade pública/canônica de Organizador antes de criar provider de Perfil/Organização.
+6. **CUL-06 - fechar fidelidade visual** com SDCs elegíveis, navegação contextual sem shell duplicado, mobile-first, teclado/no-JS e estados sem acesso.
+7. **CUL-07 - executar gates integrados** de duas contas, administrador, anônimo, purpose incorreto, cache e Runtime; atualizar a situação de LOC-06/LOC-08 só com evidências.
+
+A rota e dashboard básicos não equivalem a conclusão de LOC-06. A Suite passa a homologação quando as operações dependem do owner, cada resultado respeita acesso e purpose, não há URL/identidade pública de conta inventada, e os testes/fluxos browser foram executados. Ver também [Plano LOC/Index](PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), [Roadmap Events](../../web/modules/custom/aculta_portal/modules/aculta_events/docs/ROADMAP.md) e [Plano visual do Studio](PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md).
