@@ -1,6 +1,6 @@
 # ACULTA Studio (`aculta_studio`)
 
-## ADR-038 — implementação em andamento
+## ADR-038 — estado atual
 
 `aculta_studio` permanece como framework compartilhado, registry e camada de composição. Não existe hub público `/studio`; `/studio` e todas as rotas públicas `/studio/*` devem responder 404, sem alias nem redirect.
 
@@ -14,7 +14,7 @@
 
 A raiz de `account` apresenta a entrada da Conta; Conta (`/conta/*`) e Perfil (`/perfil/*`) permanecem separados. Salvos usam `/salvos`, Mercado Pago usa `/conta/mercado-pago/planos` e `/conta-legada` permanece. URLs absolutas são resolvidas pelo `DomainPurposeManager`; o Domain Wiki canônico é `wiki420`, sem migração de host planejada.
 
-Microfase publicada em `faefae9ee`: gates focados Studio/Portal/Commerce 89 testes / 653 assertions PASS; gate de aliases PASS; teste amplo 457 testes teve uma falha de configuração de checkout do curso (`curso`: esperado `default`, atual `curso`), fora dos arquivos desta migração. Runtime route cache foi reconstruído; MAIN e entrada da Conta HTTP 200, `/studio` HTTP 404. A experiência Culturas ainda requer validação de acesso e escrita nos endpoints auxiliares.
+Implementado e publicado na PR #299 até `bf47c961a`. Gates focados Studio/Portal/Commerce: 89 testes / 653 assertions; Kernels EventDomainBoundary e EventLocationModalAndAdmin: 15 testes / 373 assertions; aliases: PASS. Matriz HTTP: 275/275 respostas GET/POST/AJAX esperadas; Firefox ESR autenticado verificou Culturas em 200. Permanecem pendentes homologação integral de grants e fluxos de escrita, sobretudo Shop, e auditoria ampliada de acessibilidade. As seções de histórico abaixo preservam os caminhos `/studio/*` usados antes do ADR-038 e não definem rotas atuais.
 
 ## Histórico de S-R5 (2026-10-25)
 
@@ -262,7 +262,7 @@ Eventos não são uma aba de Marley. O HEAD auditado contém dashboard e fluxos 
 
 ## ACULTA Studio Culturas — decisão de produto e domínio (2026-10-30)
 
-O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota canônica `/culturas` está declarada no código de `aculta_events` no purpose `eventos`; o Runtime ainda precisa ser validado. `/studio/culturas` não é rota-alvo. A entrada geral do Studio em `account` poderá apenas apresentar um link absoluto para essa experiência.
+O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota canônica `/culturas` está declarada em `aculta_events` no purpose `eventos` e a página autenticada foi verificada em HTTP 200 no Runtime de desenvolvimento. `/studio/culturas` e demais caminhos públicos `/studio/*` foram removidos sem alias/redirect. A entrada geral da Conta pode apresentar somente um link absoluto para essa experiência; grants e fluxos integrais de escrita ainda exigem homologação.
 
 - A sessão administrativa técnica continua no domínio principal, em `/painel-administrativo/eventos`, restrita a administradores. Configuração global de permissões, auditoria e operações administrativas permanecem ali.
 - ACULTA Studio Culturas é a experiência de organizadores: composição de fluxos do owner `aculta_events`, para criar e gerir Eventos e seus componentes (Datas e Locais), usando Form API, Entity Access e moderação existentes. Não cria entidade, formulário de persistência, permissão ou catálogo duplicado.

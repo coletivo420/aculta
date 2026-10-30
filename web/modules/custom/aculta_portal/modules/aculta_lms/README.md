@@ -501,8 +501,8 @@ Runtime/Homelab não faz parte do teste.
 
 ## Registro histórico: identidade estudantil anterior (G420-A)
 
-[Contrato e inventário histórico da migração](../../../../../../docs/architecture/GANJALAB420-TO-ACULTA-STUDIO-MIGRATION.md). A identidade e os caminhos descritos nas seções anteriores refletem o estado daquela fase. O nome vigente é **ACULTA Studio Ganjalab**, ID `ganjalab`, com rota canônica `/studio/ganjalab`; aliases legados GET/HEAD redirecionam temporariamente para ela. O controller de experiência é `aculta_studio.ganjalab_controller`. LMS continua dono de dados, progresso, matrículas, certificados, autorização e cache.
+[Contrato e inventário histórico da migração](../../../../../../docs/architecture/GANJALAB420-TO-ACULTA-STUDIO-MIGRATION.md). O trecho a seguir registra a fase anterior ao ADR-038. O nome vigente é **ACULTA Studio Ganjalab**, ID `ganjalab`, com rota canônica `/ganjalab` no purpose `courses`; `/studio/ganjalab` não possui alias ou redirect e retorna 404. O controller de experiência é `aculta_studio.ganjalab_controller`. LMS continua dono de dados, progresso, matrículas, certificados, autorização e cache.
 
 ## Ganjalab em Cursos - migração ADR-038
 
-Destino: `cursos.aculta.*/ganjalab`, purpose `courses`. A rota atual `/studio/ganjalab` está em `account`; mover purpose/path mantendo LMS como owner de matrículas, progresso, dados, certificados e permissões. A rota antiga será 404 sem alias após o corte. Testar no host correto e negar outros purposes.
+Estado ADR-038: `/ganjalab` em purpose `courses` está implementada; a antiga `/studio/ganjalab` foi removida sem alias. LMS mantém ownership de matrículas, progresso, dados, certificados e permissões. O bloqueio de purpose incorreto foi incluído na matriz HTTP de 275 requisições.

@@ -10,9 +10,11 @@ Escritas só ocorrem no purpose `eventos`; a Conta pode linkar via
 no MAIN em `/painel-administrativo/eventos`. `/studio/culturas` e todos os
 demais `/studio/*` foram removidos sem alias.
 
-As rotas iniciais de organizador estão implementadas. Access por rota, POST em
-purpose incorreto e integração Drupal Dialog/AJAX ainda precisam de validação
-de integração/kernel antes da homologação da jornada.
+As rotas de organizador e o bloqueio de purpose incorreto foram verificados na
+matriz HTTP (GET/POST/AJAX); os Kernels de fronteira e modal passaram (15 testes,
+373 assertions), e a página autenticada `/culturas` carregou em HTTP 200. A
+homologação integral de criação/edição/publicação com grants próprios de
+organizador e a jornada visual completa ainda está pendente.
 
 ## Contrato obrigatório para campos de endereço
 
@@ -118,4 +120,4 @@ RSVP obrigatório ou opcional; limite por pessoa e prevenção de duplicidade; c
 
 ## ACULTA Studio Culturas em domínio próprio - ADR-038
 
-A Suite mantém o nome ACULTA Studio Culturas e usa `/culturas` no purpose `eventos`, conforme ADR-038. O código da rota existe no HEAD; sua ativação só é declarada após validação do Runtime. `/studio/culturas` não é rota-alvo e responderá 404 após a migração do prefixo. O painel administrativo continua no MAIN.
+A Suite mantém o nome ACULTA Studio Culturas e usa `/culturas` no purpose `eventos`, conforme ADR-038. A rota está ativa e foi verificada no Runtime de desenvolvimento; `/studio/culturas` e demais rotas públicas `/studio/*` foram removidas sem alias/redirect. O painel administrativo continua no MAIN.

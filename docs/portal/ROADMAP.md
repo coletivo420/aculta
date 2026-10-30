@@ -11,9 +11,10 @@ em `/marley` (`account`), `/ganjalab` (`courses`), `/wesativa` (`wiki`),
 `/greenstash` (`shop`) e `/culturas` (`eventos`). A raiz de Conta apresenta
 `/conta`; Perfil, salvos e Mercado Pago mantêm caminhos/owners separados.
 `DomainPurposeManager` gera URLs entre purposes. Config exportada de Conta
-aponta para `/conta`; não foi importada no Runtime. Permanecem pendentes os
-gates de consumo/documentação residual, autorização POST/AJAX integrada e
-homologação funcional completa das cinco Suites. O Domain Wiki canônico é
+aponta para `/conta`; não foi importada no Runtime. A fronteira HTTP (GET/POST/
+AJAX cross-purpose e paths retirados) passou em 275/275 checks; testes Kernels
+de Events passaram em 15/373. Permanecem pendentes homologação autenticada dos
+grants e dos fluxos completos de escrita das Suites. O Domain Wiki canônico é
 `wiki420`; a referência inicial a `wiki.aculta.*` foi corrigida pelo
 responsável e não há migração de host planejada.
 
