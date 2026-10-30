@@ -192,7 +192,7 @@ continuam pendentes.
 
 ## ACULTA Studio Culturas — decisão de produto e domínio (2026-10-30)
 
-O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota canônica futura é `/culturas`, atendida no purpose `eventos` (host eventos configurado pelo DomainPurposeManager). A rota antiga `/studio/culturas` será removida sem alias ou redirect, conforme ADR-038.
+O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota canônica `/culturas` está declarada parcialmente no owner `aculta_events`, atendida no purpose `eventos`; Runtime e homologação permanecem pendentes. `/studio/culturas` não é rota-alvo e será removida sem alias ou redirect, conforme ADR-038.
 
 - A sessão administrativa técnica continua no domínio principal, em `/painel-administrativo/eventos`, restrita a administradores. Configuração global de permissões, auditoria e operações administrativas permanecem ali.
 - ACULTA Studio Culturas é a experiência de organizadores: composição de fluxos do owner `aculta_events`, para criar e gerir Eventos e seus componentes (Datas e Locais), usando Form API, Entity Access e moderação existentes. Não cria entidade, formulário de persistência, permissão ou catálogo duplicado.
