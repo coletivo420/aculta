@@ -38,6 +38,8 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
 - O site tem uma única implementação central de formulário para capturar/editar endereços: `aculta_portal` (`AccountAddressForm`), integrada à biblioteca e ao serviço `aculta_portal_cep`.
 - Módulos e fluxos que precisem capturar/editar endereço devem reutilizar essa implementação, criando somente adaptadores para mapear seus campos/entidades. É proibido manter outro formulário paralelo ou duplicar a integração de CEP.
 - Os dados e modelos das entidades continuam separados conforme seus contratos; unificar o formulário não autoriza fundir campos, entidades, permissões ou regras de negócio.
+- Busca e preenchimento por CEP via `aculta_portal_cep` são padrão para todo formulário de endereço completo do Portal. Isso não autoriza busca por logradouro fora de Events/Maps nem mudança do comportamento de Conta/checkout. Brasil fixo, sem seletor de país.
+- Activity deve apontar para entidade Local de Events; cadastro/seleção modal com AJAX segue ADR-033. Revalidar autorização no servidor; nunca confiar em IDs submetidos pelo cliente.
 - Mudanças nesse contrato devem atualizar `docs/portal/ACCOUNT-ADDRESS.md` e executar `scripts/validate-account-address.php`; mudanças de renderização também executam o teste Firefox documentado em `tests/browser/aculta-theme-mobile-first/README.md`.
 
 ## Views e CTools
