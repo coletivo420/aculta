@@ -3,9 +3,13 @@
 Suíte no Firefox ESR visível na sessão X11 local (`DISPLAY=:0`), pelo geckodriver (WebDriver W3C e BiDi). Não usar headless para validação. Confere a seção "Estúdio" no menu da conta, as abas e o painel, a navegação AJAX
 (troca de aba sem recarregar a página), `aria-current`, largura de 320 a 1440 px emulada pelo BiDi, contraste claro/escuro,
 navegação por teclado, ausência de rolagem horizontal e de erros de JavaScript.
-Também confere a composição vertical/horizontal em 320/390/767/768/1024/1440px.
-`STUDIO_CSS_OVERRIDE=1` injeta `studio.css` do checkout indicado por
-`STUDIO_CSS_ROOT` antes das medições responsivas.
+Também confere a composição vertical/horizontal em 320/360/390/599/600/767/768/1024/1280/1440px.
+`STUDIO_CSS_OVERRIDE=1` injeta somente o bloco de tokens de fidelidade escopado
+ao Studio e `studio.css` do checkout indicado por `STUDIO_CSS_ROOT`, incluindo
+as fontes WOFF2 em data URIs, antes das medições. Também confirma que o gutter
+global do shell não muda. Esse modo verifica os estilos candidatos sobre o markup servido e
+**não** comprova que a versão candidata está implantada no Runtime nem constitui
+por si só prova de paridade com o OpenCulturas.
 
 Somente no servidor de desenvolvimento, com a conta `teste.comum` (login único por Drush, sem senha no repositório). O
 Studio precisa estar habilitado no Runtime e a conta precisar de uma aba visível (permissão `create revista content`).

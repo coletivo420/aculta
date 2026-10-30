@@ -22,8 +22,8 @@ Um registro marcado como "Verificar" ou "Sem contraparte" não autoriza suposiç
 ## Regras para manter o mapa
 
 1. **Cobertura.** Todo módulo customizado (diretório com `*.info.yml` em `web/modules/custom/**`) precisa de uma linha nas
-   tabelas do Portal, com o caminho completo em crase. Em `web/modules/custom/` só há `aculta_portal` no nível superior;
-   os demais são submódulos e entram com o próprio caminho. Todo módulo **contrib habilitado** (em
+   tabelas correspondentes, com o caminho completo em crase. Os módulos do Portal ficam nas tabelas acima;
+   módulos ACULTA fora do Portal têm tabela própria abaixo. Todo módulo **contrib habilitado** (em
    `config/sync/core.extension.yml`, com diretório em `web/modules/contrib/`) precisa aparecer pelo nome de máquina,
    em crase, na seção "Módulos contrib habilitados". O gate falha se algum módulo ficar de fora.
    Um módulo sem contraparte visual também precisa ser listado, com o motivo.
@@ -118,6 +118,12 @@ Estas regras valem para qualquer contraparte listada aqui. A fonte normativa é 
 | `web/modules/custom/aculta_portal/modules/aculta_faq` | 0.1.0-dev.2 | Perguntas frequentes e blocos editáveis com texto sanitizado | Conteúdo segue renderização genérica de Node/Block do Drupal; sem componente visual próprio identificado | Dev |
 | `web/modules/custom/aculta_portal/modules/aculta_lms_agenda` | 0.1.0-dev.1 | Provedor de prazos e eventos de turma, restrito às matrículas | Sem contraparte própria; agenda apresentada pelo `aculta_calendar` | Dev; acesso de matrícula coberto no roadmap LMS Agenda |
 | `web/modules/custom/aculta_portal/modules/aculta_maps` | 0.1.0-dev.5 | API compartilhada de mapas e geocodificação | Tokens `map-*` mapeados em `PortalUiHooks`; motor Leaflet e atribuição alimentam a marcação neutra | Dev; fronteira módulo–tema e Kernel passam; revisão editorial/visual pendente |
+
+### Módulos ACULTA fora do Aculta Portal
+
+| Caminho | Entrega (módulo) | Contraparte no tema | Estado |
+| --- | --- | --- | --- |
+| `web/modules/custom/aculta_mcp_client` | Cliente de documentação MCP com ferramentas remotas allowlistadas para Mercado Pago e Melhor Envio | Sem contraparte visual; a configuração dos serviços usa a interface administrativa do Drupal | Ativo |
 
 ## Módulos contrib habilitados
 

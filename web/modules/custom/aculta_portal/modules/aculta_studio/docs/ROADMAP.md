@@ -101,12 +101,23 @@ F0-F3 podem ser implementadas sem desbloquear a homologação de S-R4/S-R5; F4-F
 Adicionados tokens de tipografia, cores, espaçamento e superfícies do `opcult`
 3.1.5 nos wrappers `.studio` e `.aculta-profile-editor`, sem alterar SDCs ou
 contratos funcionais. Montserrat está local e licenciada sob SIL OFL 1.1, com
-atribuição e licença no tema. O lint CSS passou; homologação visual depois da
-mudança, comparação do Hub, demais consumers e cobertura mobile continuam
-pendentes. O validator Design Foundations passou 2.418 checks e 159 fixtures
-após receber regras estritas para tokens Studio escopados; schema SDC, validators
-de browser e gates read-only Runtime Foundation/Shell também passaram.
-**F1 parcial; gate não aprovado.**
+atribuição e licença no tema. A suíte Firefox ESR visível sobre o consumer real
+Marley, com a folha candidata do worktree injetada no Runtime, passou 63/63
+checks executáveis, incluindo Montserrat carregada, gutter global do shell
+inalterado, contraste medido (6,49:1 claro; 11,51:1 escuro), mesma geometria
+nos modos e ausência de overflow em 320/360/390/599/600/767/768/1024/1280/1440.
+Uma verificação de link de edição foi `SKIP`, pois a conta sintética não tem
+publicação própria; nenhuma ação foi aprovada por esse skip. Capturas estão em
+`/home/piradopirata/aculta-suite-out/ocs-f1-candidate-20261030-after-500-fix/`.
+
+Design Foundations passou 2.418 checks e 159 fixtures; schema SDC, mapa/boundary
+tema-módulo e Foundation/Shell read-only passaram. Isto testa CSS candidata
+sobre markup servido, não implantação no Runtime, equivalência com dashboard
+OpenCulturas autenticado, todos os consumers ou o gate F7. PHPCS Drupal e
+DrupalPractice dos dois scripts do Design Foundations passou após formatação e
+documentação das funções. OCS-F1 está implementada e parcialmente validada;
+comparação de referência e gates restantes permanecem pendentes, sem declarar
+OCS-F11.
 
 ## Melhorias inspiradas no OpenCulturas (2026-10-28)
 

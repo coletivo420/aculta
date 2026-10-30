@@ -19,7 +19,33 @@ const CSS_OVERRIDE = process.env.STUDIO_CSS_OVERRIDE === '1';
 const CSS_ROOT = process.env.STUDIO_CSS_ROOT || PROJECT;
 const USER_ID = Number(process.env.STUDIO_USER_ID || '5');
 if (!OUT) throw new Error('Defina SUITE_OUT em armazenamento fora do repositório.');
-const CANDIDATE_CSS = CSS_OVERRIDE ? readFileSync(join(CSS_ROOT, 'web/themes/custom/aculta420/css/components/studio.css'), 'utf8') : '';
+const candidateThemePath = 'web/themes/custom/aculta420';
+const candidateFont = (name) => `data:font/woff2;base64,${readFileSync(join(CSS_ROOT, candidateThemePath, 'assets/fonts/montserrat', name)).toString('base64')}`;
+const extractCssRule = (css, selector) => {
+  const start = css.indexOf(selector);
+  if (start < 0) throw new Error(`Regra CSS candidata ausente: ${selector}`);
+  const open = css.indexOf('{', start);
+  let depth = 0;
+  for (let i = open; i < css.length; i += 1) {
+    if (css[i] === '{') depth += 1;
+    if (css[i] === '}' && --depth === 0) return css.slice(start, i + 1);
+  }
+  throw new Error(`Regra CSS candidata sem fechamento: ${selector}`);
+};
+const fidelityTokenCss = (css) => {
+  const start = css.indexOf('/* OpenCulturas Next 3.1.5 tokens are scoped to Studio-owned visual roots. */');
+  const end = css.indexOf('\n[data-bs-theme="dark"] {', start);
+  if (start < 0 || end < 0) throw new Error('Bloco de tokens Studio não encontrado em tokens.css.');
+  const lightAndResponsive = css.slice(start, end);
+  const dark = extractCssRule(css, '[data-bs-theme="dark"] .studio,');
+  const automatic = extractCssRule(css, ':root:not([data-bs-theme="light"]) .studio,');
+  return `${lightAndResponsive}\n${dark}\n@media (prefers-color-scheme: dark) {\n${automatic}\n}`;
+};
+const CANDIDATE_CSS = CSS_OVERRIDE
+  ? `${fidelityTokenCss(readFileSync(join(CSS_ROOT, candidateThemePath, 'css/tokens.css'), 'utf8'))}\n${readFileSync(join(CSS_ROOT, candidateThemePath, 'css/components/studio.css'), 'utf8')}`
+    .replaceAll('../../assets/fonts/montserrat/Montserrat-latin.woff2', candidateFont('Montserrat-latin.woff2'))
+    .replaceAll('../../assets/fonts/montserrat/Montserrat-latin-ext.woff2', candidateFont('Montserrat-latin-ext.woff2'))
+  : '';
 mkdirSync(OUT, { recursive: true });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const results = [];
@@ -73,7 +99,13 @@ try {
     throw new Error(`Página sem navegação do Studio: ${pageState}`);
   }
   if (CSS_OVERRIDE) {
+    const globalGutterBefore = await exec(`return getComputedStyle(document.documentElement).getPropertyValue('--aculta-page-gutter').trim();`);
     check('CSS candidata do Studio injetada', await injectCandidateCss());
+    const globalGutterAfter = await exec(`return getComputedStyle(document.documentElement).getPropertyValue('--aculta-page-gutter').trim();`);
+    check('tokens de fidelidade não alteram o gutter global do shell', globalGutterBefore === globalGutterAfter, `${globalGutterBefore} -> ${globalGutterAfter}`);
+    await waitFor(`document.fonts.check('400 16px Montserrat')`, 'fonte Montserrat candidata');
+    const candidateTypography = JSON.parse(await exec(`const root=document.querySelector('.studio, .aculta-profile-editor');const heading=root?.querySelector('h1,h2,h3,h4,h5,h6');return JSON.stringify({family:getComputedStyle(root).fontFamily,loaded:document.fonts.check('400 16px Montserrat'),headingSize:heading?getComputedStyle(heading).fontSize:null,headingFamily:heading?getComputedStyle(heading).fontFamily:null});`));
+    check('tokens e tipografia candidatos aplicados apenas ao Studio', candidateTypography.family.includes('Montserrat') && candidateTypography.loaded && candidateTypography.headingFamily.includes('Montserrat') && candidateTypography.headingSize !== null, JSON.stringify(candidateTypography));
     const navStyles = JSON.parse(await exec(`return JSON.stringify({
       primary: [...document.querySelectorAll('[data-aculta-studio="tab"]')].map((link) => { const s=getComputedStyle(link); return { tag:link.tagName, className:link.className, parent:link.parentElement?.tagName, parentClass:link.parentElement?.className, top:s.borderTopWidth, left:s.borderLeftWidth, right:s.borderRightWidth, bottom:s.borderBottomWidth, radius:s.borderRadius, current:link.getAttribute('aria-current')==='page' }; }),
       secondary: [...document.querySelectorAll('[data-aculta-studio="subtab"]')].map((link) => { const s=getComputedStyle(link); return { tag:link.tagName, className:link.className, parent:link.parentElement?.tagName, parentClass:link.parentElement?.className, top:s.borderTopWidth, left:s.borderLeftWidth, right:s.borderRightWidth, bottom:s.borderBottomWidth, radius:s.borderRadius, current:link.getAttribute('aria-current')==='page' }; }),
@@ -101,14 +133,25 @@ try {
     sidebar: document.querySelectorAll('[data-aculta-studio="section"]').length,
     subtabs: document.querySelectorAll('[data-aculta-studio="subtab"]').length,
     actions: [...document.querySelectorAll('[data-aculta-studio="action"]')].map((a) => a.textContent.trim()),
-    overflow: document.documentElement.scrollWidth > window.innerWidth
+    viewportWidth: window.innerWidth,
+    pageWidth: document.documentElement.scrollWidth,
+    bodyWidth: document.body.scrollWidth,
+    bodyOverflowX: getComputedStyle(document.body).overflowX,
+    rootFontSize: getComputedStyle(document.documentElement).fontSize,
+    media48rem: matchMedia('(min-width: 48rem)').matches,
+    pageGutterToken: getComputedStyle(document.documentElement).getPropertyValue('--aculta-page-gutter').trim(),
+    overflow: document.documentElement.scrollWidth > window.innerWidth,
+    studioWidth: document.querySelector('.studio')?.scrollWidth,
+    studioClientWidth: document.querySelector('.studio')?.clientWidth,
+    overflowNodes: [...document.querySelectorAll('body *')].filter((e) => !e.closest('.offcanvas:not(.show)') && (e.getBoundingClientRect().right > window.innerWidth + 1 || e.getBoundingClientRect().left < -1)).slice(0, 8).map((e) => ({ tag:e.tagName, className:String(e.className).slice(0, 70), left:Math.round(e.getBoundingClientRect().left), right:Math.round(e.getBoundingClientRect().right), width:Math.round(e.getBoundingClientRect().width) })),
+    overflowChain: (() => { const e=[...document.querySelectorAll('body *')].find((n)=>!n.closest('.offcanvas:not(.show)')&&(n.getBoundingClientRect().right>window.innerWidth+1||n.getBoundingClientRect().left< -1));const a=[];for(let n=e;n&&a.length<8;n=n.parentElement){const r=n.getBoundingClientRect(),s=getComputedStyle(n);a.push({tag:n.tagName,className:String(n.className).slice(0,70),left:Math.round(r.left),right:Math.round(r.right),width:Math.round(r.width),scrollWidth:n.scrollWidth,clientWidth:n.clientWidth,padding:[s.paddingLeft,s.paddingRight],margin:[s.marginLeft,s.marginRight],boxSizing:s.boxSizing,display:s.display,position:s.position,minWidth:s.minWidth,maxWidth:s.maxWidth})}return a})()
   })`));
   check('página própria do Studio (sem shell nem menu da conta)', d.root && !d.accountShell);
   check('áreas em abas superiores', d.areas >= 1, `${d.areas} área(s)`);
   check('submenu à esquerda com as seções da área', d.sidebar >= 1, `${d.sidebar} seção(ões)`);
   check('abas próprias da seção', d.subtabs >= 1, `${d.subtabs} aba(s)`);
   check('abas internas da seção (Todos, Rascunhos, Em revisão, Publicados, Arquivados)', d.subtabs >= 5, `${d.subtabs} aba(s)`);
-  check('sem rolagem horizontal em 1280 px', !d.overflow);
+  check('sem rolagem horizontal em 1280 px', !d.overflow, `page=${d.pageWidth}px body=${d.bodyWidth}px viewport=${d.viewportWidth}px root-font=${d.rootFontSize} media48rem=${d.media48rem} gutter=${d.pageGutterToken} body-overflow-x=${d.bodyOverflowX} Studio=${d.studioWidth}/${d.studioClientWidth}px offenders=${JSON.stringify(d.overflowNodes)} chain=${JSON.stringify(d.overflowChain)}`);
   await shot('01-desktop');
 
   // Navegação AJAX: clicar na aba mantém a página (sem recarga) e atualiza a URL.
@@ -135,7 +178,7 @@ try {
   const offenders = m.overflow ? await exec(`return [...document.querySelectorAll('body *')].filter((e) => e.getBoundingClientRect().right > window.innerWidth + 1 && !e.closest('.offcanvas, [data-aculta-studio="listing-wrap"]')).slice(0, 6).map((e) => e.tagName + '.' + String(e.className).slice(0, 50) + ' ' + Math.round(e.getBoundingClientRect().right));`) : [];
   check('sem rolagem horizontal em 390 px', !m.overflow, offenders.join(' | '));
   await shot('02-celular');
-  for (const width of [320, 767, 768, 1024, 1440]) {
+  for (const width of [320, 360, 390, 599, 600, 767, 768, 1024, 1280, 1440]) {
     await setViewport(width, width < 500 ? 844 : 900);
     await sleep(300);
     const responsive = JSON.parse(await exec(`const layout=document.querySelector('.studio__layout');const sidebar=layout?.querySelector('.studio__sidebar');const main=layout?.querySelector('.studio__main');const lr=layout?.getBoundingClientRect();const sr=sidebar?.getBoundingClientRect();const mr=main?.getBoundingClientRect();return JSON.stringify({w:window.innerWidth,overflow:document.documentElement.scrollWidth>window.innerWidth,direction:layout?getComputedStyle(layout).flexDirection:null,layoutWidth:lr?.width,sidebarWidth:sr?.width,mainWidth:mr?.width,childrenFit:!!lr&&!!sr&&!!mr&&sr.right<=lr.right+1&&mr.right<=lr.right+1});`));
@@ -144,16 +187,19 @@ try {
   }
   await setViewport(1280, 900);
 
-  // Teclado: o link de uma seção recebe foco e Enter (tecla real do WebDriver) troca o nível pela URL dele.
+  // Teclado: valida foco visível e Enter no destino real de criação da Revista.
   await navigateTo(PAGE.replace(/\/studio.*$/, '') + '/studio/marley/revista/criar');
   await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'abas da seção');
-  const subLink = await wd('POST', p('/element'), { using: 'css selector', value: '[data-aculta-studio="subtab"]' });
+  const subTabs = JSON.parse(await exec(`return JSON.stringify([...document.querySelectorAll('[data-aculta-studio="subtab"]')].map((a)=>({text:a.textContent.trim(),href:a.getAttribute('href')})));`));
+  const createTab = subTabs.find((tab) => (tab.href || '').includes('nova-publicacao'));
+  check('aba de criação aponta para destino real', !!createTab, JSON.stringify(subTabs));
+  const subLink = await wd('POST', p('/element'), { using: 'css selector', value: '[data-aculta-studio="subtab"][href*="nova-publicacao"]' });
   const subId = Object.values(subLink)[0];
   await wd('POST', p('/execute/sync'), { script: "document.querySelector('[data-aculta-studio=\"subtab\"]').focus(); return 1;", args: [] });
   await wd('POST', p(`/element/${subId}/value`), { text: '\uE004' });
   const focusVisual = JSON.parse(await exec(`const e=document.activeElement;const s=getComputedStyle(e);return JSON.stringify({subtab:e.matches('[data-aculta-studio="subtab"]'),visible:e.matches(':focus-visible'),outlineWidth:s.outlineWidth,outlineStyle:s.outlineStyle});`));
   check('foco visível após navegação por Tab', focusVisual.visible && Number.parseFloat(focusVisual.outlineWidth) >= 3 && focusVisual.outlineStyle !== 'none', JSON.stringify(focusVisual));
-  await wd('POST', p('/execute/sync'), { script: "document.querySelector('[data-aculta-studio=\"subtab\"]').focus(); return 1;", args: [] });
+  await wd('POST', p('/execute/sync'), { script: "document.querySelector('[data-aculta-studio=\"subtab\"][href*=\"nova-publicacao\"]').focus(); return 1;", args: [] });
   await wd('POST', p(`/element/${subId}/value`), { text: '\uE007' });
   await sleep(2500);
   const kbPath = await exec(`return window.location.pathname;`);

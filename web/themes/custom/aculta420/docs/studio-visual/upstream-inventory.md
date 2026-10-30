@@ -60,21 +60,27 @@ como texto normal por não atingir AA sobre branco. Open Sans não foi copiada,
 pois não é necessária para a família padrão/head identificada no tema Next.
 
 F1 continua parcial: cartões, formulários e demais componentes precisam de
-acabamento e comparação real. A navegação/captura de Marley anterior confirmou
-abas e contraste **antes** da adição tipográfica, mas não compara Hub
-autenticado ao dashboard upstream nem cobre todas as telas ou tamanhos. A nova
-folha passou lint CSS/JS. Também passaram SDC schema/discovery (55 componentes,
-756 checks), Design Foundations (2.418 checks e 159 fixtures), browser
-validators (21), mapa módulo/tema (210), boundary módulo/tema (3.442), além dos
-gates Runtime read-only Foundation (351) e Shell (11). Unit PortalUiHooks
-passou 17 testes/110 assertions; os dois Kernel de formulários de Eventos
-passaram 9 testes/141 assertions com 24 depreciações de Core/contrib. O PHPCS
-Drupal/DrupalPractice integral dos dois scripts alterados continua vermelho por
-dívida anterior (688 erros/3 avisos; a versão no HEAD-base tinha 692/5); nenhuma
-violação foi identificada nas linhas adicionadas. A validação visual
-pós-tipografia, incluindo Firefox visível, contraste do Studio, overflow e
-geometria mobile, continua pendente; os scripts Runtime foram executados pelo
-checkout servido em 096ecbfae antes deste patch Studio.
+acabamento e comparação real. Em Firefox ESR visível, a folha candidata de
+tokens Studio e `studio.css` foi injetada no consumer Marley do Runtime. Passou
+63/63 checks executáveis; uma verificação de edição foi `SKIP` sem fixture de
+publicação própria. Foram confirmados Montserrat carregada, gutter global
+inalterado, contraste mínimo medido de 6,49:1 claro e 11,51:1 escuro, geometria
+igual nos modos e zero overflow nas larguras 320/360/390/599/600/767/768/1024/
+1280/1440. As capturas 1280/390 foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/ocs-f1-candidate-20261030-after-500-fix/`.
+É validação da folha candidata sobre markup servido, não da implantação desta
+branch; não compara um dashboard autenticado equivalente do upstream e não
+cobre todos os consumers.
+
+Também passaram lint CSS/JS, SDC schema/discovery (55 componentes, 756 checks),
+Design Foundations (2.418 checks e 159 fixtures), browser validators (21), mapa
+módulo/tema (211), boundary módulo/tema (3.442), Runtime read-only Foundation
+(351) e Shell (11). Unit PortalUiHooks: 17/110; dois Kernel de formulários de
+Eventos: 9/141 com 24 depreciações de Core/contrib. PHP lint passou. PHPCS
+Drupal/DrupalPractice dos dois scripts do Design Foundations passou após
+formatação e documentação das funções. CSS/JS lint e schema permanecem verdes.
+Zoom 200/400, no-JS, reduced motion, A/B, revisão de todos os consumers e o gate
+Fidelity F7 continuam pendentes.
 
 ### OCS-F2 — navegação interna do Studio (implementação parcial)
 

@@ -51,8 +51,13 @@ espaçamento, largura e superfície por meio dos wrappers `.studio` e
 `.aculta-profile-editor`. Props, slots, render arrays e schemas de componentes
 não mudaram; tokens não são definidos no `:root`, evitando efeito nos demais
 purposes. A licença da fonte está junto dos WOFF2 em
-`assets/fonts/montserrat/OFL.txt`. Isso documenta a fundação visual, não a
-homologação de cada consumer nem a conclusão de OCS-F1.
+`assets/fonts/montserrat/OFL.txt`. Em Firefox ESR visível, o consumer Marley
+recebeu a folha candidata injetada: 63/63 checks executáveis passaram, a fonte
+carregou, o gutter global ficou idêntico antes/depois e a tipografia computada do
+Studio foi Montserrat. As capturas privadas ficam em
+`/home/piradopirata/aculta-suite-out/ocs-f1-candidate-20261030-after-500-fix/`.
+Isto não homologa cada consumer, não substitui o stylesheet publicado e não
+aprova OCS-F1 integral/F7.
 
 A conferência dos nomes usados na matriz de paridade encontrou estes SDCs em
 `components/`; a existência do arquivo não confirma consumer da rota nem

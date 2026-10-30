@@ -1250,3 +1250,37 @@ cascata efetiva ou renderização por purpose. O TSV agora inclui a regra de
 48rem do CSS de discussão e declarações dimensionais adicionais nos CSS de
 Studio, discussão e Institution Bar. A matriz de telas/purposes e THEME-MF3
 continuam parciais; esta reconciliação não é aprovação mobile-first global.
+
+### OCS-F1 — folha candidata no consumer Marley (2026-10-30)
+
+Firefox ESR visível, Runtime de desenvolvimento e CSS candidata do worktree
+injetada somente nos wrappers Studio: 63/63 verificações executáveis passaram,
+com uma edição `SKIP` sem publicação própria na conta sintética. Foram medidos
+zero overflow em 320/360/390/599/600/767/768/1024/1280/1440 px; flexão vertical
+abaixo de 768 px e lateral a partir de 768 px; Montserrat computada e carregada;
+gutter global antes/depois idêntico; contraste calculado mínimo de 6,49:1 claro
+e 11,51:1 escuro; geometria de dez elementos igual entre modos; navegação AJAX
+e Enter em link real; sem erros JavaScript. As capturas Marley/1280 e /390
+foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/ocs-f1-candidate-20261030-after-500-fix/`.
+
+O harness injeta somente os tokens Fidelity escopados e `studio.css`, com as
+fontes WOFF2 inline, sobre markup servido no checkout `096ecbfae`; portanto a
+execução não prova que o CSS da branch esteja publicado no Runtime nem valida
+outras telas/purposes. A preferência color mode da conta de teste foi restaurada
+para `light`. Não cobre zoom 200/400, no-JS, reduced motion, leitores de tela,
+matriz A/B ou comparação equivalente com o dashboard autenticado upstream. Não
+declara THEME-MF3, OCS-F1 integral ou OCS-F7.
+
+Antes da sessão autenticada, o Runtime foi identificado no host `toca`, checkout
+`/home/piradopirata/projetos/aculta` em `096ecbfae`, URI `http://default`, banco
+`aculta_runtime`, 620 tabelas. O snapshot íntegro anterior à sessão está fora do
+Git em `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-ocs-f1-browser-20261030.sql`
+(104.586.620 bytes, SHA-256
+`b904551cc2181cb75acc9299df422f0aee9e8f8c5328aceac2ca2a013df04f10`). `updatedb:status`
+mostrou o update `aculta_events 10010`; nenhum update ou config import foi
+executado. `drush cr` expôs temporariamente uma duplicação `preprocess_page` no
+estado compartilhado do Portal e o login respondeu 500; após a duplicação deixar
+de existir no checkout e novo rebuild, `/` redirecionou a `/entrar` com HTTP 200
+e formulário de login presente. Nenhum código Portal foi alterado por esta
+frente. A preferência da conta sintética foi restaurada para `light`.
