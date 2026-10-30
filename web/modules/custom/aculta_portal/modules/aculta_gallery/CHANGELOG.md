@@ -1,5 +1,10 @@
 # Changelog — ACULTA Gallery
 
+## 0.1.0-dev.21 — correção do contrato do Alias Manager
+
+- O list builder administrativo injeta `Drupal\path_alias\AliasManagerInterface`, que é o contrato implementado pelo serviço `path_alias.manager`; a interface anterior apontava para um namespace incompatível e causava HTTP 500 na coleção de galerias.
+- Teste Unit cobre a criação do list builder pelo contrato do container Drupal.
+
 ## 0.1.0-dev.20 — revalidação visual com o reflow candidato do tema
 
 - Firefox ESR abriu o formulário real da Revista com campos obrigatórios válidos e o diálogo Gallery; nenhum envio foi feito.
