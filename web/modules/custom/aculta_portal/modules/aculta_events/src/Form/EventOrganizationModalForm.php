@@ -10,6 +10,7 @@ use Drupal\aculta_events\Plugin\Field\FieldWidget\EventOrganizationModalWidget;
 use Drupal\aculta_events\Slug\EventSlugGenerator;
 use Drupal\aculta_user\Organization\OrganizationAccessService;
 use Drupal\aculta_user\Organization\OrganizationMembershipManager;
+use Drupal\aculta_user\Organization\OwnershipClaimService;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
@@ -39,6 +40,8 @@ final class EventOrganizationModalForm extends FormBase {
     private readonly OrganizationAccessService $orgAccessService,
     #[Autowire(service: 'aculta_user.organization_membership_manager')]
     private readonly OrganizationMembershipManager $membershipManager,
+    #[Autowire(service: 'aculta_user.ownership_claim_service')]
+    private readonly ?OwnershipClaimService $claimService = NULL,
   ) {}
 
   /**
@@ -50,6 +53,7 @@ final class EventOrganizationModalForm extends FormBase {
       $container->get('aculta_events.permission_policy'),
       $container->get('aculta_user.organization_access_service'),
       $container->get('aculta_user.organization_membership_manager'),
+      $container->has('aculta_user.ownership_claim_service') ? $container->get('aculta_user.ownership_claim_service') : NULL,
     );
   }
 
@@ -358,14 +362,54 @@ final class EventOrganizationModalForm extends FormBase {
       '#default_value' => (bool) ($form_state->getValue('novo_ocultar_localidade') ?? FALSE),
     ];
 
+    $isAdmin = $this->currentUser()->hasPermission('administer aculta events');
+    if ($isAdmin) {
+      $claimOptions = [
+        'unclaimed' => $this->t('Cadastrar como organização não reivindicada (coletivo aberto ou parceiro sem titular cadastrado)'),
+        'claimed' => $this->t('Cadastrar com titularidade imediata (administrador)'),
+        'request_claim' => $this->t('Cadastrar e registrar solicitação de titularidade pendente para moderação'),
+      ];
+    }
+    else {
+      $claimOptions = [
+        'unclaimed' => $this->t('Cadastrar como organização não reivindicada (coletivo aberto ou parceiro sem titular cadastrado)'),
+        'request_claim' => $this->t('Cadastrar e solicitar titularidade à moderação (análise prévia)'),
+      ];
+    }
+
     $form['is_claimed_choice'] = [
       '#type' => 'radios',
       '#title' => $this->t('Tipo de cadastro da organização'),
-      '#options' => [
-        'unclaimed' => $this->t('Cadastrar como organização não reivindicada (coletivo público ou parceiro sem titular no site)'),
-        'claimed' => $this->t('Cadastrar como minha organização (assumir titularidade imediata)'),
-      ],
+      '#options' => $claimOptions,
       '#default_value' => (string) ($form_state->getValue('is_claimed_choice') ?? 'unclaimed'),
+    ];
+
+    $form['justificativa_reivindicacao'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Justificativa da solicitação de titularidade'),
+      '#description' => $this->t('Explique seu vínculo ou representação oficial da organização para análise da moderação.'),
+      '#rows' => 3,
+      '#default_value' => (string) ($form_state->getValue('justificativa_reivindicacao') ?? ''),
+      '#states' => [
+        'visible' => [
+          ':input[name="is_claimed_choice"]' => ['value' => 'request_claim'],
+        ],
+        'required' => [
+          ':input[name="is_claimed_choice"]' => ['value' => 'request_claim'],
+        ],
+      ],
+    ];
+
+    $form['contato_reivindicacao'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Contato institucional / Comprovação (opcional)'),
+      '#description' => $this->t('Link oficial, e-mail institucional ou telefone para confirmação.'),
+      '#default_value' => (string) ($form_state->getValue('contato_reivindicacao') ?? ''),
+      '#states' => [
+        'visible' => [
+          ':input[name="is_claimed_choice"]' => ['value' => 'request_claim'],
+        ],
+      ],
     ];
 
     $form['create_actions'] = [
@@ -440,6 +484,18 @@ final class EventOrganizationModalForm extends FormBase {
         return;
       }
 
+      $choice = (string) $form_state->getValue('is_claimed_choice', 'unclaimed');
+      $isAdmin = $this->currentUser()->hasPermission('administer aculta events');
+      if ($choice === 'claimed' && !$isAdmin) {
+        $form_state->setErrorByName('is_claimed_choice', (string) $this->t('Apenas administradores podem conceder titularidade imediata no cadastro. Solicite a titularidade para análise da moderação.'));
+      }
+      if ($choice === 'request_claim') {
+        $justificativa = trim((string) $form_state->getValue('justificativa_reivindicacao'));
+        if ($justificativa === '') {
+          $form_state->setErrorByName('justificativa_reivindicacao', (string) $this->t('Informe a justificativa da solicitação de titularidade para análise da moderação.'));
+        }
+      }
+
       $duplicateConfirmed = (bool) $form_state->get('duplicate_confirmed');
       if (!$duplicateConfirmed) {
         $storage = $this->entityTypeManager->getStorage('aculta_event_organization');
@@ -505,7 +561,9 @@ final class EventOrganizationModalForm extends FormBase {
 
     $slug = EventSlugGenerator::fromTitle($nome);
 
-    $isClaimed = ($choice === 'claimed');
+    $isAdmin = $this->currentUser()->hasPermission('administer aculta events');
+    $isClaimedImmediate = ($choice === 'claimed' && $isAdmin);
+    $isPendingClaim = ($choice === 'request_claim');
 
     /** @var \Drupal\aculta_events\Entity\EventOrganization $org */
     $org = $this->entityTypeManager->getStorage('aculta_event_organization')->create([
@@ -517,15 +575,23 @@ final class EventOrganizationModalForm extends FormBase {
       'uf' => $uf,
       'ocultar_localidade' => $ocultarLoc,
       'field_status' => 'publicado',
-      'reivindicada' => $isClaimed,
-      'reivindicacao_status' => $isClaimed ? 'confirmada' : 'nao_reivindicada',
-      'titular' => $isClaimed ? $currentUid : NULL,
+      'reivindicada' => $isClaimedImmediate,
+      'reivindicacao_status' => $isClaimedImmediate ? 'confirmada' : ($isPendingClaim ? 'pendente' : 'nao_reivindicada'),
+      'titular' => $isClaimedImmediate ? $currentUid : NULL,
       'field_organizador' => $currentUid,
     ]);
     $org->save();
 
-    if ($isClaimed && $currentUid > 0) {
+    if ($isClaimedImmediate && $currentUid > 0) {
       $this->membershipManager->addMembership($currentUid, (string) $org->id(), 'owner', 'approved', TRUE, TRUE);
+    }
+    elseif ($isPendingClaim && $currentUid > 0) {
+      $justificativa = trim((string) $form_state->getValue('justificativa_reivindicacao'));
+      $contato = trim((string) $form_state->getValue('contato_reivindicacao'));
+      if ($this->claimService !== NULL) {
+        $this->claimService->submitClaim($org, $this->currentUser(), $justificativa, $contato !== '' ? $contato : NULL);
+      }
+      $this->messenger()->addStatus($this->t('Organização cadastrada. Sua solicitação de titularidade foi enviada para análise da moderação.'));
     }
 
     $form_state->set('selected_org_id', (int) $org->id());

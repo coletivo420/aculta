@@ -394,3 +394,11 @@ RSVP obrigatório ou opcional; limite por pessoa e prevenção de duplicidade; c
 ## Rota da Suite Culturas - ADR-038
 
 LOC-06 passa a acompanhar código implementado e gates de integração pendentes para ACULTA Studio Culturas em `/culturas` no purpose `eventos`. Não criar alias. Rota e dashboard têm implementação inicial; atualizar consumidores e validar permissões por operação, POST incorreto, Dialog/AJAX e navegação antes da homologação. O painel administrativo continua no MAIN.
+
+## Organizações Culturais e Governança de Titularidade (ARQ-05 / D-02 / C-02)
+
+- **Owner:** `aculta_events` é dono da entidade `aculta_event_organization`. `aculta_user` gerencia membros (`OrganizationMember`) e a fila transversal de reivindicações (`OwnershipClaim`).
+- **Gestão administrativa:** Restrita ao MAIN em `/painel-administrativo/eventos/organizacoes`, com paginação `pager(20)` e filtros (nome, reivindicação inclusive pendente, revisão de acessos e denúncias UGC). Recuperação emergencial de posse em `/painel-administrativo/eventos/organizacoes/{id}/recuperar`.
+- **Modal de seleção e cadastro:** `EventOrganizationModalWidget` e `EventOrganizationModalForm` utilizam o sistema de diálogos nativo do Drupal com AJAX, busca com prevenção de duplicidades, devolução de foco ao gatilho (`data-portal-trigger`), cadastro sem CEP/rua e respeito a `ocultar_localidade`.
+- **Governança estrita de reivindicação:** Usuários não-administradores não podem assumir titularidade imediata no cadastro; podem criar organizações como não-reivindicadas ou submeter uma solicitação com justificativa obrigatória (`reivindicada = FALSE`, `reivindicacao_status = 'pendente'`, `titular = NULL`), registrando o pedido em `aculta_ownership_claim` para deliberação da moderação. Nenhum papel de proprietário (`owner`) é concedido antes do deferimento administrativo formal.
+- **Projeção segura no Content Index:** `OrganizationContentIndexProvider` projeta o perfil da organização preservando a privacidade: o criador técnico nunca é vinculado como titular/owner no índice de entidades não-reivindicadas ou pendentes; o `ownerUid` reflete estritamente o titular oficial deferido. Localidade (UF) é omitida caso `ocultar_localidade` esteja ativo. Endereço postal e CEP nunca são coletados ou projetados para organizações.

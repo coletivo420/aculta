@@ -7,7 +7,6 @@ namespace Drupal\aculta_events\ContentIndex;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
-use Drupal\aculta_portal\ContentIndex\ContentIndexOwnerResolver;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
@@ -15,7 +14,7 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
- * Projeta organizações culturais na infraestrutura transversal aculta_index (ARQ-05).
+ * Projeta organizações culturais no aculta_index (ARQ-05).
  */
 final class OrganizationContentIndexProvider implements ContentIndexProviderInterface, ContentIndexIndexabilityProviderInterface, ContentIndexAccessContextProviderInterface {
 
@@ -72,8 +71,8 @@ final class OrganizationContentIndexProvider implements ContentIndexProviderInte
 
     $relations = [];
 
-    // Localidade: só entra na projeção se a organização não optou por ocultá-la.
-    // Endereço completo e CEP nunca entram na projeção pública padrão.
+    // Localidade: só entra na projeção se a organização não optou
+    // por ocultá-la. Endereço completo e CEP nunca entram no índice padrão.
     if (!$entity->shouldHideLocation()) {
       $uf = (string) $entity->get('uf')->value;
       if ($uf !== '') {
@@ -84,6 +83,12 @@ final class OrganizationContentIndexProvider implements ContentIndexProviderInte
         );
       }
     }
+
+    // Para organização, o proprietário no índice representa a titularidade
+    // oficial (campo titular). Organizações não reivindicadas ou pendentes
+    // possuem titular NULL e não devem vincular o criador técnico no índice.
+    $titularId = $entity->get('titular')->target_id;
+    $ownerUid = !empty($titularId) ? (int) $titularId : NULL;
 
     return new ContentIndexProjection(
       'aculta_event_organization',
@@ -97,7 +102,7 @@ final class OrganizationContentIndexProvider implements ContentIndexProviderInte
       0,
       0,
       relations: array_values($relations),
-      ownerUid: ContentIndexOwnerResolver::resolve($entity),
+      ownerUid: $ownerUid,
     );
   }
 

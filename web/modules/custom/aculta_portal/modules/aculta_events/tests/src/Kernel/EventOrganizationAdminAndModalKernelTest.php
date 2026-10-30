@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_events\Kernel;
 
+use Drupal\aculta_events\ContentIndex\OrganizationContentIndexProvider;
 use Drupal\aculta_events\Controller\EventAdminOverviewController;
 use Drupal\aculta_events\Controller\EventOrganizationAdminController;
 use Drupal\aculta_events\Entity\Event;
@@ -275,6 +276,17 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     ]);
     $org3->save();
 
+    $org4 = EventOrganization::create([
+      'title' => 'Coletivo Pendente Delta',
+      'localidade' => 'Porto Alegre',
+      'uf' => 'RS',
+      'reivindicada' => FALSE,
+      'reivindicacao_status' => 'pendente',
+      'revisao_acesso_status' => 'regular',
+      'status' => 1,
+    ]);
+    $org4->save();
+
     // Adiciona denúncia UGC em org3.
     UgcReport::create([
       'target_type' => 'aculta_event_organization',
@@ -292,18 +304,26 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $request = Request::create('/painel-administrativo/eventos/organizacoes');
     $render = $controller->overview($request);
     $this->assertArrayHasKey('table', $render);
-    $this->assertCount(3, $render['table']['#rows']);
+    $this->assertCount(4, $render['table']['#rows']);
 
     // Ocultar localidade respeitado.
     $betaRow = NULL;
+    $deltaRow = NULL;
     foreach ($render['table']['#rows'] as $row) {
       if (str_contains((string) $row['title']['data']['#markup'], 'Beta')) {
         $betaRow = $row;
-        break;
+      }
+      if (str_contains((string) $row['title']['data']['#markup'], 'Delta')) {
+        $deltaRow = $row;
       }
     }
     $this->assertNotNull($betaRow);
     $this->assertStringContainsString('Ocultada', (string) $betaRow['localidade']);
+
+    // Organização pendente exibe badge de reivindicação pendente.
+    $this->assertNotNull($deltaRow);
+    $deltaBadges = array_map(static fn(array $item) => (string) ($item['#value'] ?? ''), $deltaRow['status']['data']);
+    $this->assertContains('Reivindicação pendente', $deltaBadges);
 
     // Operações apontam para rotas administrativas no MAIN.
     $operations = $betaRow['actions']['data']['#links'];
@@ -321,6 +341,17 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $requestReiv = Request::create('/painel-administrativo/eventos/organizacoes', 'GET', ['reivindicada' => 'reivindicada']);
     $renderReiv = $controller->overview($requestReiv);
     $this->assertCount(1, $renderReiv['table']['#rows']);
+
+    // Filtro por reivindicada: 'pendente'.
+    $requestPend = Request::create('/painel-administrativo/eventos/organizacoes', 'GET', ['reivindicada' => 'pendente']);
+    $renderPend = $controller->overview($requestPend);
+    $this->assertCount(1, $renderPend['table']['#rows']);
+    $this->assertStringContainsString('Delta', (string) $renderPend['table']['#rows'][0]['title']['data']['#markup']);
+
+    // Filtro por reivindicada: 'nao_reivindicada'.
+    $requestNaoReiv = Request::create('/painel-administrativo/eventos/organizacoes', 'GET', ['reivindicada' => 'nao_reivindicada']);
+    $renderNaoReiv = $controller->overview($requestNaoReiv);
+    $this->assertCount(3, $renderNaoReiv['table']['#rows']);
 
     // Filtro por denúncias UGC: '1'.
     $requestDen = Request::create('/painel-administrativo/eventos/organizacoes', 'GET', ['com_denuncias' => '1']);
@@ -560,6 +591,126 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $this->assertTrue($formState2->hasAnyErrors());
     $errors2 = $formState2->getErrors();
     $this->assertArrayHasKey('field_coorganizadores', $errors2);
+  }
+
+  /**
+   * Valida solicitação de titularidade por não-admin e projeção no índice.
+   */
+  public function testNonAdminModalClaimRequestLifecycleAndIndex(): void {
+    $this->container->get('current_user')->setAccount($this->editorUser);
+
+    $modalForm = new EventOrganizationModalForm(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('aculta_events.permission_policy'),
+      $this->container->get('aculta_user.organization_access_service'),
+      $this->container->get('aculta_user.organization_membership_manager'),
+      $this->container->get('aculta_user.ownership_claim_service'),
+    );
+
+    // 1. Não-admin tentando assumir titularidade imediata falha na validação.
+    $stateClaimImmediate = new FormState();
+    $stateClaimImmediate->set('mode', 'create');
+    $stateClaimImmediate->setTriggeringElement(['#name' => 'op_create_save']);
+    $stateClaimImmediate->setValue('novo_nome', 'Coletivo Nova Esperança');
+    $stateClaimImmediate->setValue('is_claimed_choice', 'claimed');
+
+    $buildImmediate = $modalForm->buildForm([], $stateClaimImmediate);
+    $modalForm->validateForm($buildImmediate, $stateClaimImmediate);
+    $this->assertTrue($stateClaimImmediate->hasAnyErrors());
+    $this->assertArrayHasKey('is_claimed_choice', $stateClaimImmediate->getErrors());
+
+    // 2. Não-admin escolhendo request_claim sem justificativa falha.
+    $stateClaimNoJust = new FormState();
+    $stateClaimNoJust->set('mode', 'create');
+    $stateClaimNoJust->setTriggeringElement(['#name' => 'op_create_save']);
+    $stateClaimNoJust->setValue('novo_nome', 'Coletivo Nova Esperança');
+    $stateClaimNoJust->setValue('is_claimed_choice', 'request_claim');
+    $stateClaimNoJust->setValue('justificativa_reivindicacao', '');
+
+    $buildNoJust = $modalForm->buildForm([], $stateClaimNoJust);
+    $modalForm->validateForm($buildNoJust, $stateClaimNoJust);
+    $this->assertTrue($stateClaimNoJust->hasAnyErrors());
+    $this->assertArrayHasKey('justificativa_reivindicacao', $stateClaimNoJust->getErrors());
+
+    // 3. Não-admin com request_claim e justificativa cria org pendente.
+    $stateValid = new FormState();
+    $stateValid->set('mode', 'create');
+    $stateValid->set('field_name', 'field_organizacao');
+    $stateValid->set('wrapper_id', 'org-wrapper-test');
+    $stateValid->set('is_multiple', FALSE);
+    $stateValid->setTriggeringElement(['#name' => 'op_create_save']);
+
+    $stateValid->setValue('novo_nome', 'Coletivo Vanguarda Singular');
+    $stateValid->setValue('novo_localidade', 'Campinas');
+    $stateValid->setValue('novo_uf', 'SP');
+    $stateValid->setValue('is_claimed_choice', 'request_claim');
+    $stateValid->setValue('justificativa_reivindicacao', 'Sou fundador e coordenador da entidade.');
+    $stateValid->setValue('contato_reivindicacao', 'contato@vanguardasingular.org');
+
+    $buildValid = $modalForm->buildForm([], $stateValid);
+    $modalForm->validateForm($buildValid, $stateValid);
+    $this->assertSame([], $stateValid->getErrors());
+
+    $modalForm->submitCreateOrganization($buildValid, $stateValid);
+
+    // Confirma que a organização foi criada com reivindicada = FALSE.
+    $storage = $this->container->get('entity_type.manager')->getStorage('aculta_event_organization');
+    $orgs = $storage->loadByProperties(['title' => 'Coletivo Vanguarda Singular']);
+    $this->assertCount(1, $orgs);
+    /** @var \Drupal\aculta_events\Entity\EventOrganization $org */
+    $org = reset($orgs);
+
+    $this->assertFalse($org->isClaimed(), 'Organização NÃO é reivindicada imediatamente.');
+    $this->assertSame('pendente', $org->getClaimStatus(), 'Status de reivindicação é pendente.');
+    $this->assertNull($org->get('titular')->target_id, 'Titular permanece NULL até aprovação.');
+
+    // Confirma criação do registro de solicitação em aculta_ownership_claim.
+    $claimStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ownership_claim');
+    $claims = $claimStorage->loadByProperties([
+      'target_type' => 'aculta_event_organization',
+      'target_id' => (int) $org->id(),
+    ]);
+    $this->assertCount(1, $claims);
+    /** @var \Drupal\aculta_user\Entity\OwnershipClaim $claim */
+    $claim = reset($claims);
+    $this->assertSame('pending', (string) $claim->get('status')->value);
+    $this->assertSame((int) $this->editorUser->id(), (int) $claim->get('uid')->target_id);
+    $this->assertSame('Sou fundador e coordenador da entidade.', (string) $claim->get('justificativa')->value);
+
+    // Papel owner NÃO foi concedido enquanto a reivindicação estiver pendente.
+    /** @var \Drupal\aculta_user\Organization\OrganizationMembershipManager $membershipManager */
+    $membershipManager = $this->container->get('aculta_user.organization_membership_manager');
+    $this->assertFalse($membershipManager->hasApprovedMembership($this->editorUser, (string) $org->id()), 'Nenhum vínculo de membro ativo antes da aprovação da moderação.');
+    $this->assertNull($membershipManager->getMemberRole($this->editorUser, (string) $org->id()), 'Nenhum papel atribuído antes do deferimento.');
+
+    // Valida projeção no Content Index enquanto pendente:
+    // Não deve conter ownerUid para organizações pendentes.
+    $indexProvider = new OrganizationContentIndexProvider($this->container->get('entity_type.manager'));
+    $projectionPending = $indexProvider->project($org);
+    $this->assertNotNull($projectionPending);
+    $this->assertNull($projectionPending->ownerUid, 'Organização pendente não projeta ownerUid no índice.');
+
+    // 4. Moderação administrativa aprova a solicitação de reivindicação.
+    /** @var \Drupal\aculta_user\Organization\OwnershipClaimService $claimService */
+    $claimService = $this->container->get('aculta_user.ownership_claim_service');
+    $claimService->decideClaim($claim, $this->adminUser, TRUE, 'Documentação verificada e aceita pela moderação.');
+
+    // Recarrega organização do banco e confere atualização.
+    $reloadedOrg = $storage->load($org->id());
+    $this->assertInstanceOf(EventOrganization::class, $reloadedOrg);
+    $this->assertTrue($reloadedOrg->isClaimed(), 'Organização agora é reivindicada.');
+    $this->assertSame('em_revisao', $reloadedOrg->getClaimStatus(), 'Status pós-aprovação passa a em_revisao conforme ARQ-05.');
+    $this->assertEquals((int) $this->editorUser->id(), (int) $reloadedOrg->get('titular')->target_id, 'Titular atribuído ao solicitante.');
+
+    // Membro 'owner' agora existe e está ativo.
+    $this->assertTrue($membershipManager->hasApprovedMembership($this->editorUser, (string) $org->id()), 'Vínculo ativado pós-deferimento.');
+    $this->assertSame('owner', $membershipManager->getMemberRole($this->editorUser, (string) $org->id()), 'Papel owner concedido após aprovação.');
+
+    // Projeção no Content Index pós-aprovação:
+    // Agora projeta ownerUid apontando ao titular aprovado.
+    $projectionApproved = $indexProvider->project($reloadedOrg);
+    $this->assertNotNull($projectionApproved);
+    $this->assertSame((int) $this->editorUser->id(), $projectionApproved->ownerUid, 'Organização reivindicada projeta ownerUid correto no índice.');
   }
 
 }

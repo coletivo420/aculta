@@ -44,6 +44,9 @@ final class EventOrganizationAdminController extends ControllerBase {
     if ($filterReivindicada === 'reivindicada') {
       $query->condition('reivindicada', 1);
     }
+    elseif ($filterReivindicada === 'pendente') {
+      $query->condition('reivindicacao_status', 'pendente');
+    }
     elseif ($filterReivindicada === 'nao_reivindicada') {
       $query->condition('reivindicada', 0);
     }
@@ -115,12 +118,22 @@ final class EventOrganizationAdminController extends ControllerBase {
           ];
         }
         else {
-          $statusItems[] = [
-            '#type' => 'html_tag',
-            '#tag' => 'span',
-            '#value' => (string) $this->t('Não reivindicada'),
-            '#attributes' => ['class' => ['badge', 'badge--warning']],
-          ];
+          if ($org->getClaimStatus() === 'pendente') {
+            $statusItems[] = [
+              '#type' => 'html_tag',
+              '#tag' => 'span',
+              '#value' => (string) $this->t('Reivindicação pendente'),
+              '#attributes' => ['class' => ['badge', 'badge--warning']],
+            ];
+          }
+          else {
+            $statusItems[] = [
+              '#type' => 'html_tag',
+              '#tag' => 'span',
+              '#value' => (string) $this->t('Não reivindicada'),
+              '#attributes' => ['class' => ['badge', 'badge--warning']],
+            ];
+          }
         }
 
         if ($org->getClaimStatus() === 'em_revisao') {
@@ -182,7 +195,7 @@ final class EventOrganizationAdminController extends ControllerBase {
           if ($claimCount > 0) {
             $operations['claims'] = [
               'title' => $this->t('Reivindicações (@count)', ['@count' => $claimCount]),
-              'url' => Url::fromRoute('aculta_user.ownership_claim_admin', [], [
+              'url' => Url::fromRoute('aculta_user.ownership_claims', [], [
                 'query' => [
                   'target_type' => 'aculta_event_organization',
                   'target_id' => $org->id(),
@@ -252,6 +265,7 @@ final class EventOrganizationAdminController extends ControllerBase {
             '#options' => [
               '' => $this->t('- Todos -'),
               'reivindicada' => $this->t('Reivindicadas'),
+              'pendente' => $this->t('Com reivindicação pendente'),
               'nao_reivindicada' => $this->t('Não reivindicadas'),
             ],
             '#default_value' => $filterReivindicada,
