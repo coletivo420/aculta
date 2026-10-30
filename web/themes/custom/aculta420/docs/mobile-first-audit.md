@@ -417,8 +417,9 @@ substituem análise de cascata. A enumeração de bibliotecas anexadas
 dinamicamente por Views e módulos consumidores continua pendente. As 20
 manifestações custom `*.libraries.yml` foram enumeradas em
 [`theme-library-inventory.tsv`](theme-library-inventory.tsv), incluindo
-dependências e assets. Os 85 call sites de produção custom (80 usos de
-`#attached` e cinco de `attach_library()`) estão indexados em
+dependências e assets. Os 91 pontos lexicais de anexação em código de produção
+(85 linhas com `#attached` e seis chamadas Twig `attach_library()`) estão
+indexados em
 [`theme-library-attachment-sites.tsv`](theme-library-attachment-sites.tsv).
 O inventário inclui um arquivo JS de teste por registrar todas as fontes `.js`;
 os templates Twig/HTML são incluídos sem tentar resolver condições. Isso não
@@ -517,6 +518,19 @@ caminhos/linhas ainda existem e cada linha continua contendo o call site de
 anexação declarado. Isso confirma apenas que o índice está referenciando linhas
 válidas; chamadas dinâmicas, condições de execução, associação à rota/purpose e
 carregamento efetivo no browser permanecem sem comprovação.
+
+**Atualização em 2026-10-30, após rebase sobre `44ba133a1`:** reconciliei o
+índice com os consumers de Eventos adicionados na branch. O parser YAML conferiu
+todos os 20 manifests custom e todos os IDs de library: 20/20 arquivos, zero
+IDs ausentes ou obsoletos. A varredura lexical dos consumers de produção
+enumerou 91 pontos em 70 arquivos (85 linhas `#attached`, seis
+`attach_library()` em Twig); caminhos, linhas e tipos coincidem com o TSV, sem
+ausências ou entradas obsoletas. Foram atualizados offsets e incluídos os
+formulários de data/local de Eventos. O scanner exclui testes e não interpreta
+condições, chamadas indiretas, anexos providos por Views/Core/contrib ou a
+rota/purpose efetivamente renderizada. Portanto, isto fecha a consistência
+estática destes dois índices, não a matriz de consumers dinâmicos nem a
+homologação visual por purpose.
 
 ## THEME-MF0 — baseline público dos dez purposes
 
