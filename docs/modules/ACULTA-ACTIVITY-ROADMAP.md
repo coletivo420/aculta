@@ -164,7 +164,7 @@ adapter mínimo.
   - Implementado o serviço `ActivityLocationMigrator` (`aculta_events.activity_location_migrator`) com métodos de auditoria/diagnóstico (`inspect()`), ensaio (`migrate(dryRun: TRUE)`), execução persistente idempotente com deduplicação por nome e CEP (`migrate(dryRun: FALSE)`), e reversão integral rastreada (`rollback()`).
   - Rastreamento de proveniência persistido via Drupal State (`aculta_events.migrated_activity_locations`), registrando quais nós de Activity originaram cada Local criado.
   - Disponibilizado o script CLI `scripts/migrate-activity-locations.php` com suporte a `--inspect`, `--dry-run`, `--execute` e `--rollback`.
-  - Implementado o hook `aculta_events_update_10010()` em `aculta_events.install` para execução controlada em deploy.
+  - Implementado o hook `aculta_events_update_10012()` em `aculta_events.install` para execução controlada em deploy.
   - Cobertura completa com o teste de Kernel `ActivityLocationMigrationKernelTest` (3 testes e 79 asserções cobrindo auditoria, integridade de dry-run, criação idempotente, deduplicação de múltiplos nós para o mesmo local e rollback completo).
 - [ ] Busca por logradouro permanece restrita a Events/Maps e aguarda aprovação de provedor/termos/privacidade/limites.
 - [ ] Validar projeções de `aculta_index`, assegurando que endereço físico e dados privados não sejam indexados.

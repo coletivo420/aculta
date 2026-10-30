@@ -347,6 +347,6 @@ A conclusão técnica de E4 não fecha esta experiência editorial. O gate de co
 - [x] Eventos privados do LMS não vazam. (`hook_entity_access` + `access('view')`.)
 - [x] Sem duplicação de entidade/catálogo e sem alias/redirect.
 - [x] Salvar, editar, remover ou reordenar Data atualiza a lista do Evento por AJAX, preservando os campos não salvos. (`ReplaceCommand('#event-dates-list', ...)`.)
-- [x] Ordem editorial por peso (`field_peso`, update `10010`), com a tela "Ordenar datas" no popup.
+- [x] Ordem editorial por peso (`field_peso`, update `10011`), com a tela "Ordenar datas" no popup.
 
-**Evidência:** `EventDomainBoundaryKernelTest`, `EventDateManagementKernelTest` (AJAX e ordem), `EventFormDatesKernelTest`, suíte Kernel de Events 84/1438 PASS, `aculta_calendar` 127/431 PASS, Unit de `aculta_portal` PASS e homologação Firefox ESR. Update `10010` aplicado no Runtime com snapshot `8e7ee699…`.
+**Evidência:** `EventDomainBoundaryKernelTest`, `EventDateManagementKernelTest` (AJAX e ordem), `EventFormDatesKernelTest`, suíte Kernel de Events 84/1438 PASS, `aculta_calendar` 127/431 PASS, Unit de `aculta_portal` PASS e homologação Firefox ESR. Update `10011` aplicado no Runtime com snapshot `8e7ee699…`.

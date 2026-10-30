@@ -430,27 +430,6 @@ function aculta_events_update_10009(): string {
 }
 
 /**
- * Executa a migração idempotente de endereços legados de Activity para Locais (Fase 2).
- */
-function aculta_events_update_10010(): string {
-  if (!\Drupal::hasService('aculta_events.activity_location_migrator')) {
-    return 'Serviço de migração de locais de atividade não encontrado.';
-  }
-
-  /** @var \Drupal\aculta_events\Migration\ActivityLocationMigrator $migrator */
-  $migrator = \Drupal::service('aculta_events.activity_location_migrator');
-  $result = $migrator->migrate(FALSE);
-
-  return sprintf(
-    'Migração de locais de Activity: %d candidatos processados, %d locais criados, %d reaproveitados, %d nós atualizados.',
-    $result['candidates_total'],
-    $result['locations_created'],
-    $result['locations_reused'],
-    $result['nodes_updated'],
-  );
-}
-
-/**
  * Instala o campo de ordem editorial das Datas de evento.
  */
 function aculta_events_update_10011(): string {
@@ -467,4 +446,25 @@ function aculta_events_update_10011(): string {
 
   $manager->installFieldStorageDefinition('field_peso', 'aculta_event_date', 'aculta_events', $definition);
   return 'Campo field_peso instalado em aculta_event_date.';
+}
+
+/**
+ * Executa a migração idempotente de endereços legados de Activity para Locais (Fase 2).
+ */
+function aculta_events_update_10012(): string {
+  if (!\Drupal::hasService('aculta_events.activity_location_migrator')) {
+    return 'Serviço de migração de locais de atividade não encontrado.';
+  }
+
+  /** @var \Drupal\aculta_events\Migration\ActivityLocationMigrator $migrator */
+  $migrator = \Drupal::service('aculta_events.activity_location_migrator');
+  $result = $migrator->migrate(FALSE);
+
+  return sprintf(
+    'Migração de locais de Activity: %d candidatos processados, %d locais criados, %d reaproveitados, %d nós atualizados.',
+    $result['candidates_total'],
+    $result['locations_created'],
+    $result['locations_reused'],
+    $result['nodes_updated'],
+  );
 }

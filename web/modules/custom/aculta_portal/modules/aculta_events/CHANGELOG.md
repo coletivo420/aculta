@@ -7,7 +7,7 @@
   - `inspect()`: auditoria e diagnóstico em tempo real, informando total de atividades, já vinculadas, candidatas elegíveis, registros incompletos e estimativa de locais únicos após deduplicação.
   - `migrate(bool $dryRun)`: migração idempotente. Em modo `$dryRun = TRUE`, simula o processo sem gravar no banco; em modo persistente (`FALSE`), cria instâncias de `EventLocation` respeitando as regras de endereço (país fixo `BR`, precisão `exato`, status conforme publicação do nó pai, proprietário herdado), vincula `field_event_location` no nó e reutiliza locais idênticos através de chave normalizada (nome + CEP).
   - `rollback()`: reversão atômica e segura que desvincula as Activities e deleta exatamente as entidades `EventLocation` criadas pela migração, utilizando proveniência persistida no Drupal State (`aculta_events.migrated_activity_locations`).
-- Implementado o update hook `aculta_events_update_10010()` em `aculta_events.install`.
+- Implementado o update hook `aculta_events_update_10012()` em `aculta_events.install`.
 - Disponibilizado o script CLI `scripts/migrate-activity-locations.php` com suporte aos modos `--inspect`, `--dry-run`, `--execute` e `--rollback`.
 - Cobertura de testes:
   - `ActivityLocationMigrationKernelTest`: 3 testes e 79 asserções cobrindo auditoria diagnóstica, garantia de isolamento do dry-run, criação idempotente, deduplicação de múltiplos nós para a mesma entidade de local e reversão íntegra via rollback.
