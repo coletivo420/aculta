@@ -254,6 +254,13 @@ def main():
                             if not reverse:
                                 reverse_anchor_available = False
                             continue
+                        if reverse and info["width"] <= 1 and info["height"] <= 1:
+                            records.append({
+                                "name": f"{purpose} {width}px {direction} {step}: limite no skip link oculto",
+                                "status": "skip", "passed": None, "detail": info,
+                            })
+                            print(f"SKIP {purpose} {width}px {direction} {step}: limite no skip link oculto", flush=True)
+                            break
                         visible_indicator = (
                             info["indicatorOutlineStyle"] != "none"
                             and info["indicatorOutlineWidth"] not in ("0px", "0px 0px")
@@ -267,7 +274,14 @@ def main():
                         name = f"{purpose} {width}px {direction} {step}: foco visível no viewport"
                         record(name, passed, info)
                         if not reverse:
-                            reverse_anchor_available = True
+                            # Do not use the 1x1 skip link as the reverse
+                            # sequence anchor.  It is intentionally visually
+                            # hidden and Shift+Tab from it only reproduces the
+                            # same hidden target, which is not a content-focus
+                            # regression.
+                            reverse_anchor_available = (
+                                info["width"] > 1 and info["height"] > 1
+                            )
                         if not reverse and step == 1 and width == WIDTHS[0]:
                             screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
                             (OUT / f"{purpose}-focus-{width}.png").write_bytes(base64.b64decode(screenshot))

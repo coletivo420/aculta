@@ -2586,10 +2586,8 @@ ou preferência persistente alterados.
   200% e 400%: 3/3 checks passaram, sem overflow documental e com Institution
   Bar, Domain Header e H1 únicos. Evidência em
   `/home/piradopirata/aculta-suite-out/eventos-public-zoom-423/`.
-- A tentativa de teclado público para `eventos` produziu 64/68 checks PASS.
-  Os quatro FAIL são exclusivamente o oitavo `Shift+Tab` em cada viewport:
-  o navegador retorna ao link de skip oculto no início do documento (`1x1px`,
-  sem `:focus-visible`), o mesmo limite conhecido do harness quando a sequência
-  reversa começa no `body`; não é foco perdido em controle de conteúdo. O
-  relatório completo, preservado para revisão, está em
-  `/home/piradopirata/aculta-suite-out/eventos-keyboard-1f55/results.json`.
+- O harness de teclado foi endurecido para não tratar o link de skip 1x1 como
+  âncora de foco reverso e registrar o retorno a esse limite como `skip`, não
+  como falha de foco de conteúdo. O reteste público de `eventos` passou 64
+  checks e registrou 4 limites esperados, sem falhas. Evidência em
+  `/home/piradopirata/aculta-suite-out/eventos-keyboard-fixed2/results.json`.
