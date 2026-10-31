@@ -1051,6 +1051,17 @@ o aviso já havia se fechado). CSS não integrada, sem matrícula/curso criado;
 OCS-F6/F11 e THEME-MF3 permanecem parciais. Evidência e snapshots no log de
 `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
 
+### OCS-F10 — captura autenticada de Culturas (2026-10-31)
+
+O host de teste de Eventos respondeu à captura autenticada da rota canônica
+`/culturas`. O probe `culturas-runtime.py` cobriu claro/escuro em
+320/390/768/1440px, confirmou Institution Bar e Domain Header únicos, dashboard
+e três ações reais, alvos de 44px, filtros de uma coluna e tabela com rolagem
+confinada sem overflow documental. Evidência em
+`/home/piradopirata/aculta-suite-out/culturas-runtime-followup-98f69/`.
+Esta captura não submete eventos nem Locais, não valida ACL por operação ou o
+popup AJAX de Local; F10 permanece parcial e não altera a aprovação de MF3/F11.
+
 ### OCS-F3/F4 — acabamento dos cards do Hub de Conta (2026-10-31)
 
 Corrigida a moldura duplicada dos cinco cards de experiências: os wrappers

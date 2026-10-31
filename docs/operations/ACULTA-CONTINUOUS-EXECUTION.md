@@ -2560,3 +2560,12 @@ ou preferência persistente alterados.
   `/home/piradopirata/aculta-suite-out/global-axe-986c92f97/results.json`.
   A execução é automatizada e não substitui inspeção X11, teclado, zoom real,
   ACL ou testes de submissão.
+- O host de teste de Eventos tornou-se alcançável para o probe autenticado:
+  `culturas-runtime.py` executou a rota canônica `/culturas` com o usuário de
+  inspeção, em claro/escuro e 320/390/768/1440px. Foram capturados 10 estados
+  (incluindo os estados finais de cada modo), com Institution Bar e Domain
+  Header únicos, dashboard presente, ações de 44px, filtros responsivos e
+  tabela com rolagem confinada, sem largura documental excedente. Evidência em
+  `/home/piradopirata/aculta-suite-out/culturas-runtime-followup-98f69/`.
+  Isso melhora a evidência OCS-F10, mas ainda não homologa escrita, ACL por
+  operação, popup AJAX de Local ou THEME-MF3/OCS-F11.
