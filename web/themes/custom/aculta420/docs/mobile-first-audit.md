@@ -4463,3 +4463,15 @@ shell, não contraste/conteúdo de todos os componentes, estados de foco complet
 leitor de tela ou a avaliação integral WCAG 2.2 AA. Logo, não substitui o gate
 de acessibilidade e não aprova THEME-MF3/OCS-F11.
 
+### THEME-MF3 — fallback global sem JavaScript (2026-10-31)
+
+No Runtime destacado em `1151b3352`, Firefox ESR visível com JavaScript
+desativado percorreu as dez raízes públicas em 320/360/390/599/600/768/1024/
+1280/1440 px. Passaram **270/270 checks**, verificando Institution Bar e
+Domain Header únicos, ausência de overflow e navegação ou busca da Wiki visível
+sem JavaScript. O resultado cobre somente as raízes públicas e o shell; não
+avalia todos os componentes interativos, formulários submetidos, leitores de
+tela ou WCAG 2.2 AA completa. Relatório:
+`/home/piradopirata/aculta-suite-out/purpose-shell-nojs-1151b3352-20261031/`.
+THEME-MF3/OCS-F11 continuam pendentes.
+
