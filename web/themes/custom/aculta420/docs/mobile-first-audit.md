@@ -4692,6 +4692,31 @@ pré-validação e não o gate integrado. Capturas e JSON:
 Snapshot pré-ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-keyboard-candidate5-20261031.sql`,
 56.515.783 bytes, modo 0600, SHA-256
 `33a030371e032425ba45499d04eded50d729e17cfd5804929abcde7c0538fcf0`;
-Runtime `aculta_runtime`, 611 tabelas. O gate final ainda requer executar a
-mesma verificação sem injeção após integrar a revisão; esta rodada não aprova
-THEME-MF3 nem OCS-F11.
+Runtime `aculta_runtime`, 611 tabelas. Esta pré-validação não aprovou os gates
+globais; o reteste integrado sem injeção está registrado abaixo.
+
+Reteste integrado após o commit `ca70dfaf6`, sem CSS/JS candidatos: Firefox ESR
+visível capturou os dois formulários em 320/360/390/599/600/768/1024/1280/1440px,
+**18/18 páginas**, shell presente, zero overflow e zero falhas. Tab alcançou
+17/17 controles do evento e 18/18 do local, todos com foco visível; alvos nativos
+e labels associados cumpriram 44px, complemento 204×44px e alvo S/N 66×44px.
+Evidência: `/home/piradopirata/aculta-suite-out/culturas-keyboard-integrated-ca70dfaf6-20261031/`.
+Snapshot pré-ULI: `aculta_runtime-before-culturas-keyboard-integrated-20261031.sql`,
+50.991.672 bytes, modo 0600, SHA-256
+`9619d330e27a706380506e38d1207c229ac2b309abf524399ca1128db42214cc`.
+
+O mesmo conjunto de páginas passou **18/18** em modo escuro com JavaScript e
+**18/18** sem JavaScript, sem falhas ou overflow; no-JS os campos e ações
+observados mantiveram ao menos 44px de altura. Evidências em
+`/home/piradopirata/aculta-suite-out/culturas-dark-integrated-ca70dfaf6-20261031/`
+e `/home/piradopirata/aculta-suite-out/culturas-nojs-keyboard-integrated-ca70dfaf6-20261031/`.
+Snapshots pré-ULI, ambos com 611 tabelas e modo 0600:
+`aculta_runtime-before-culturas-keyboard-dark-integrated-20261031.sql`,
+56.576.153 bytes, SHA-256
+`56ecb16d9fbdf4cc083838a547a6897ca804b9407a093a7f2d13cd6bb12b7906`; e
+`aculta_runtime-before-culturas-keyboard-nojs-integrated-20261031.sql`,
+56.682.982 bytes, SHA-256
+`51ff77e9818cf2e79a52069d86fb8399971a2b0844b10feb1a8b85555bae31c5`.
+Esses resultados fecham a regressão visual responsiva/teclado deste ajuste;
+contraste WCAG integral, zoom, ACL, AJAX e os gates globais THEME-MF3/OCS-F11
+continuam separados e pendentes.

@@ -399,3 +399,10 @@ label S/N mede alvo de 66×44px. Como a candidata foi injetada sobre a página
 servida, isto não é prova de CSS integrada nem fecha OCS-F11. Evidências,
 snapshot e limitações em `../mobile-first-audit.md` e
 `/home/piradopirata/aculta-suite-out/culturas-keyboard-candidate5-320-b2479397f-20261031/`.
+
+Após integrar `ca70dfaf6`, os mesmos formulários passaram **18/18** capturas
+reais sem injeção, em nove larguras, e **35/35** controles passaram Tab/foco
+visível/alvos no Firefox ESR. Modo escuro com JS e modo sem JS passaram também
+18/18 cada, todos sem overflow. Isso valida somente a regressão responsiva desta
+mudança; veja hashes, evidências e limites em `../mobile-first-audit.md`. Não
+aprova por si só OCS-F11 ou THEME-MF3.
