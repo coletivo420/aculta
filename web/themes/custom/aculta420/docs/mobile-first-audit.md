@@ -1920,6 +1920,17 @@ segue Conta a 320 px (`documentWidth=328`), na rota de entrada com desafio de
 O achado antigo de H1 ausente em Apoio/Cursos foi resolvido no código servido;
 este teste valida headings e shell, não estados internos nem aprova THEME-MF3.
 
+Nova matriz anônima em 2026-10-30, ainda no HEAD servido `2493d7535`, repetiu
+90/90 raízes × nove larguras; os dois headers apareceram uma vez em todos os
+casos. Ela reproduziu o mesmo overflow isolado de Conta/320px (`328px`), sem
+outros registros com largura excedente. Em seguida, a CSS candidata e o
+marcador simulado foram reaplicados à rota real: `auth-route-runtime.py` passou
+3/3 em `/entrar`/320/360px. Artefatos em
+`/home/piradopirata/aculta-suite-out/purpose-matrix-continued-20261030/` e
+`/home/piradopirata/aculta-suite-out/auth-captcha-fix-recheck-20261030/`.
+O Runtime ainda não tem o hook PHP que fornece o marcador, logo o overflow
+servido permanece aberto até integração e reteste sem override/no-JS.
+
 ### THEME-MF2 — rechecagem do formulário de entrada estreito (2026-10-30)
 
 Reexecutei `auth-route-runtime.py` em Firefox ESR visível contra o Apache local
