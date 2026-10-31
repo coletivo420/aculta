@@ -777,6 +777,10 @@ capturas 320/1440px foram revisadas; veja os diretórios documentados no
 `mobile-first-audit.md`. A mensagem de login único é temporária e o conteúdo Wiki
 observado estava vazio; a captura não prova conteúdo preenchido ou a rota oficial.
 
+### Reteste canônico WE SATIVA — 2026-10-31
+
+Baseline autenticado com `STUDIO_PAGE=https://wiki420.aculta.toca.net.br/studio/we-sativa`, usuário `teste.comum`, Firefox ESR/X11 e oito larguras. A rota respondeu **Acesso negado** em 8/8 capturas; o shell preservou Institution Bar e Domain Header sem overflow, mas nenhum consumer Wiki foi servido. Evidência: `/home/piradopirata/aculta-suite-out/studio-we-sativa-baseline-recheck-8d4dcc07d-20261031/`. Isso é bloqueio de autorização/instalação do Runtime, não aprovação visual. Não substituir pelo path legado `/wesativa`; repetir após liberar o acesso canônico e executar ACL, conteúdo real, no-JS/AJAX, teclado, zoom e WCAG.
+
 ## ACULTA Studio Culturas — dashboard responsivo candidato
 
 `culturas-dashboard.py` renderiza um fixture estrutural baseado no dashboard

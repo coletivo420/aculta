@@ -1,5 +1,9 @@
 # Execução contínua ACULTA — PR #298
 
+### WE SATIVA canônico — evidência adicional (2026-10-31)
+
+O baseline Firefox ESR/X11 autenticado de `https://wiki420.aculta.toca.net.br/studio/we-sativa` foi executado em 320/390/599/600/768/1024/1280/1440px. As 8 capturas retornaram `Acesso negado`; Institution Bar, Domain Header e ausência de overflow foram observados, mas nenhum consumer Wiki foi servido. Evidência: `/home/piradopirata/aculta-suite-out/studio-we-sativa-baseline-recheck-8d4dcc07d-20261031/`. O resultado é DEFERRED por autorização/instalação do Runtime e mantém OCS-F7/OCS-F11 pendentes; não usar `/wesativa` como substituto da rota canônica.
+
 ## PR #299 — WE SATIVA: formulário de criação no purpose Wiki (2026-10-31)
 
 - O CTA de autoria apontava para `node.add` (`/node/add/wiki_entry`), uma rota
