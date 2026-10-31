@@ -3325,3 +3325,19 @@ As capturas de Conta em 320px foram inspecionadas. Esses resultados isolam a
 causa e verificam a candidata sobre o Runtime, mas não confirmam hook/CSS
 instalados nem resolvem as demais coberturas de MF3. O Runtime segue no baseline;
 THEME-MF3 permanece pendente.
+### THEME-MF3 — revalidação de foco global e overflow de Conta (2026-10-31)
+
+Firefox ESR visível percorreu Tab/Shift+Tab nas dez raízes anônimas, em
+320/390/768/1280px. O JSON registrou 674 resultados: **663 PASS, 10 SKIP e um
+FAIL**. O único FAIL é o overflow documentado de `/entrar` a 320px
+(`documentWidth=328px`). Os SKIPs cobrem sequência curta ou foco delegado ao
+CAPTCHA de terceiro; não foram contados como aprovação. Evidência:
+`/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-followup-20261031/`.
+
+Em A/B focal de Conta, a suíte injetou `auth.css` e o marcador neutro candidato
+somente na sessão Firefox. Passou **72/72**, com quatro SKIPs de limite de
+sequência, em 320/390/768/1280px; a largura do documento coincidiu com o
+viewport também a 320px. Evidência:
+`/home/piradopirata/aculta-suite-out/account-keyboard-candidate-followup-20261031/`.
+O resultado exercita CSS/markup candidato, não o hook instalado. O Runtime segue
+com o overflow e THEME-MF3 permanece pendente.

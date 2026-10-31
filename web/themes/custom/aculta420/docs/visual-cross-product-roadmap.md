@@ -1703,3 +1703,10 @@ candidato injetados apenas em `/entrar`, a matriz passou 576/576 e o contraste
 medido ficou entre 11,34:1 e 12,4:1. O Runtime continua servindo o baseline, logo
 este A/B não aprova THEME-MF3; evidências e limites estão em
 `mobile-first-audit.md`.
+### THEME-MF3 — revalidação de foco global e overflow de Conta (2026-10-31)
+
+Revalidação do teclado nos dez purposes: 663 PASS, 10 SKIP e um FAIL em 674
+registros; a única falha foi o overflow de `/entrar` a 320px. A injeção candidata
+em Conta passou 72/72, com quatro SKIPs de sequência, nas larguras 320/390/768/
+1280px e sem overflow. O Runtime ainda não serve o candidato; THEME-MF3 segue
+pendente. Detalhes e limitações em `mobile-first-audit.md`.

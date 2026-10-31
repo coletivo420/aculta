@@ -984,3 +984,10 @@ Relatórios em `/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-ba
 e `/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-candidate-followup-20261031/`.
 É evidência com CSS/markup candidato injetado, não integração instalada no Runtime
 nem aprovação de THEME-MF3.
+Reteste global de 2026-10-31: 663 PASS, 10 SKIP (limite de sequência/foco interno
+do CAPTCHA) e um FAIL de overflow de Conta a 320px em 674 registros. A rodada
+candidata focal de Conta passou 72/72, com quatro SKIPs, em 320/390/768/1280px.
+Relatórios em `/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-followup-20261031/`
+e `/home/piradopirata/aculta-suite-out/account-keyboard-candidate-followup-20261031/`.
+O segundo resultado injeta CSS/marcador no navegador e não valida integração
+instalada no Runtime.
