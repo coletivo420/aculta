@@ -2686,3 +2686,11 @@ ou preferência persistente alterados.
   320/390/768/1440px: 16 estados HTTP 200, zero overflow; axe passou em quatro
   auditorias, zero violações e um `incomplete` por modo apenas na listagem.
   Evidência em `/home/piradopirata/aculta-suite-out/greenstash-fixture-14/`.
+- O submit real do formulário `/greenstash/produtos/novo` foi exercitado com
+  WebDriver usando a conta `gerente_loja`, sem persistir um novo produto. O
+  formulário retornou a mensagem de erro esperada pelo handler de validação;
+  a inspeção direta das violações mostrou `stores.0.target_id` não referenciável
+  e `variations` nulo. Isso revela uma pendência funcional do catálogo (a forma
+  inicial promete rascunho sem variação, mas o tipo Commerce exige ambas), que
+  impede declarar persistência/rollback ou F8/F11 concluídos. Nenhum workaround
+  visual foi criado.
