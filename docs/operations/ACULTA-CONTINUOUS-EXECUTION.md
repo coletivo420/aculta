@@ -2809,3 +2809,4 @@ ou preferência persistente alterados.
 - Lint oficial do tema executado com os scripts declarados em `web/themes/custom/aculta420/package.json`: `npm run lint:css` e `npm run lint:js` — ambos **PASS**. O comando inexistente `npm run lint` não foi considerado gate.
 - Lint PHP dos hooks/testes do tema: sem erros de sintaxe. Suíte Unit visual `web/themes/custom/aculta420/tests/src/Unit`: **47 testes, 346 assertions, PASS**. PHPUnit repetiu apenas o aviso não bloqueante sobre `sites/simpletest/browser_output` não gravável.
 - Integridade documental verificada com `php scripts/validate-project-status-index.php`: **PASS** (48 componentes; índice derivado de `docs/operations/status`).
+- Runtime verificado antes da próxima rodada: `drush status` confirmou `aculta_runtime` no docroot servido; `updatedb:status` retornou “No database updates required” e `config:status` retornou “No differences between DB and sync directory”. Nenhuma escrita foi executada.
