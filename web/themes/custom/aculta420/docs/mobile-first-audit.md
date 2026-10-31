@@ -4762,7 +4762,7 @@ do filtro de situação sem nome acessível. Um contraste adicional ficou como
 `incomplete` para revisão humana. Isso é uma **pendência real**, não aprovação
 WCAG 2.2 AA. O select é montado em
 `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`:
-**Pede-A**: emitir nome programático associado ao select (label visível quando
+pendente de correção: emitir nome programático associado ao select (label visível quando
 compatível com a composição, ou `aria-label` traduzível); manter os mesmos
 valores e GET `status`; teste de acessibilidade/functional deve confirmar o
 nome no DOM e a filtragem existente. Contraste e landmarks pertencem à revisão
