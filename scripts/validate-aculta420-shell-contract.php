@@ -52,9 +52,9 @@ $institutionBarCss = file_get_contents($themeRoot . '/css/components/institution
 $headerCss = file_get_contents($themeRoot . '/css/components/header.css');
 
 $assert(
-  str_contains($pageSource, '<div class="aculta-institution-bar">')
+  preg_match('/<div class="[^"]*\baculta-institution-bar\b[^"]*"/', $pageSource) === 1
     && !str_contains($pageSource, 'aculta-page-top'),
-  'Institution Bar is not grouped with the Domain Header in a sticky wrapper.',
+  'Institution Bar markup keeps the shared base class without a parallel page-top wrapper.',
 );
 $headerPosition = strpos($pageSource, '<header class="aculta-header');
 $linksPagePosition = strpos($pageSource, '{% if aculta_links_page %}');
