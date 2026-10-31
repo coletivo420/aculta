@@ -1,6 +1,6 @@
 # Auditoria mobile-first ACULTA420 — THEME-MF0
 
-### THEME-MF0/MF2 — agenda e calendário de Eventos (2026-11-01)
+### THEME-MF0/MF2 — agenda e calendário de Eventos (2026-10-31)
 
 Firefox ESR visível percorreu `/calendario`, a grade do mês atual e
 `/calendario/interativo` no host de teste de Eventos, em 320/360/390/599/600/
@@ -21,6 +21,19 @@ envio de formulário ou gravação persistente. Portanto esta evidência caracte
 o baseline servido e os comportamentos existentes, não valida a integração da
 branch nem conclui THEME-MF0, THEME-MF3 ou OCS-F11. Zoom, teclado, acessibilidade,
 formulários de Eventos e os demais fluxos do purpose continuam por validar.
+
+### THEME-MF2 — cartões do catálogo público de Eventos (2026-10-31)
+
+O teste reutilizável `events-catalogue.py` aplicou a folha local do SDC
+`event_card` somente na sessão Firefox e percorreu o catálogo real `/eventos`
+em dez larguras (320/360/390/575/576/600/768/1024/1280/1440px). Resultado:
+**30/30 checks**. Os três cartões de teste permaneceram sem overflow; os títulos
+tinham alvos de 44px; a borda ficou no SDC enquanto o wrapper estrutural Drupal
+permaneceu sem borda/padding. Capturas em
+`/home/piradopirata/aculta-suite-out/events-catalogue-followup-20261101/`.
+Esta é validação da CSS candidata contra markup servido, somente GET. Não prova
+que o CSS esteja integrado/servido no Runtime, não cobre filtros ou detalhe do
+evento e não fecha THEME-MF3.
 
 **Estado em 2026-11-01, na árvore atual de `refactor/opencultures-codigo-visual`: inventário lexical regenerado; THEME-MF0 continua parcial, MF2 tem migrações incrementais e THEME-MF3 não está aprovado.**
 A auditoria inicial foi registrada no checkout servidor `ded8a6181`. Esta

@@ -1911,7 +1911,7 @@ O CSS ainda não está servido; a validação integrada após rebuild permanece
 pendente e THEME-MF3 não foi aprovado. Evidências, capturas e snapshots estão
 em `mobile-first-audit.md`.
 
-### THEME-MF0/MF2 — agenda e calendário de Eventos (2026-11-01)
+### THEME-MF0/MF2 — agenda e calendário de Eventos (2026-10-31)
 
 O Firefox ESR visível passou 108/108 verificações de agenda, grade mensal e
 calendário interativo em nove larguras, dois modos de cor e sessões com/sem
@@ -1920,3 +1920,11 @@ o scheduler inicializado ocupa a apresentação a partir de 768px. O controle
 existente de contraste também foi exercitado. A execução foi somente GET sobre
 o baseline do Runtime `2493d7535`, sem CSS candidata; não homologa a branch nem
 fecha THEME-MF0/MF3. Os detalhes e limites estão em `mobile-first-audit.md`.
+
+### THEME-MF2 — cartões do catálogo público de Eventos (2026-10-31)
+
+`events-catalogue.py` passou 30/30 checks em dez larguras, comparando a folha
+candidata do SDC com o catálogo real: três cartões, sem overflow, títulos com
+alvos de 44px e moldura no componente, não no wrapper Drupal. A CSS foi injetada
+apenas na sessão visível Firefox; Runtime não foi alterado e THEME-MF3 segue
+pendente. A evidência e os limites estão em `mobile-first-audit.md`.
