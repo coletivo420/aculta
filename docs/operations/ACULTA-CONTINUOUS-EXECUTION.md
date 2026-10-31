@@ -2363,3 +2363,33 @@ ou preferência persistente alterados.
 - A conta não possui matrículas nem certificados; cartões preenchidos, ACL A/B,
   no-JS/AJAX, teclado/zoom, modo escuro e WCAG permanecem pendentes. OCS-F6,
   THEME-MF3 e OCS-F11 continuam abertos.
+
+## 2026-10-31 — correção do formulário Green Stash e defaults Messenger
+
+- A matriz Firefox ESR/X11 genérica do projeto encontrou HTTP 500 em
+  `/studio/green-stash/produtos/novo`. A causa foi `createAccess()` chamado sem
+  `return_as_object=TRUE` e tratado como `AccessResult`. O fix publicado em
+  `1161fd046` corrige a chamada e seu teste Unit; 2 testes/11 assertions passaram.
+- A mesma rodada apontou exceções `QueryException` nos contadores de avisos
+  opcionais de amizade e conquistas. O Runtime tinha os storages de leitura
+  ausentes. Uma primeira tentativa de update 10013 via
+  `installDefaultConfig()` foi abortada pelo campo legado
+  `message.field_aculta_friendship_event` (`string` ativo, `list_string` no
+  default). O Drupal já havia criado parte dos defaults antes de abortar: o
+  Runtime agora reporta 619 tabelas e diferenças de configuração. Não houve
+  importação de `config/sync` nem remoção de conteúdo/configuração.
+- A revisão do update 10013 substitui a importação ampla por criação seletiva e
+  idempotente apenas dos três storages e três instâncias necessários aos
+  contadores; configs existentes são preservadas e tipos incompatíveis geram
+  log sem substituição. A correção foi publicada em `fb7bd2859`; ainda falta
+  aplicá-la ao Runtime e validar os contadores. Snapshot anterior à tentativa:
+  `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-update-10013-1161fd046-20261031.sql`,
+  48.087.711 bytes, modo 0600, SHA-256
+  `161a5c41575fae939a94d7330e80f94cd519fae58e09a9411afdd7714fe9c497`.
+- PHPUnit Unit dos dois módulos: 10 testes/46 assertions passaram; PHP lint,
+  PHPCS Drupal e `git diff --check` passaram. O re-teste de navegador do GET de
+  criação de produto e a validação pós-update Messenger ainda faltam.
+- A tentativa de delegação read-only ao Qwen3-Coder 30B foi iniciada pelo CLI
+  configurado, mas o gateway remoto retornou HTTP 502; a análise delegada ficou
+  indisponível nesta rodada. O servidor e processo remoto existentes foram
+  preservados.
