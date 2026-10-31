@@ -2591,3 +2591,11 @@ ou preferência persistente alterados.
   como falha de foco de conteúdo. O reteste público de `eventos` passou 64
   checks e registrou 4 limites esperados, sem falhas. Evidência em
   `/home/piradopirata/aculta-suite-out/eventos-keyboard-fixed2/results.json`.
+- A matriz global foi repetida com o harness corrigido nos dez purposes, quatro
+  larguras e oito passos por direção: 609 checks PASS, 45 limites esperados e
+  4 FAIL concentrados em `links` a 320/390px (passos 7/8), já isolados como
+  problema específico da superfície Links, não do tratamento de `Shift+Tab`.
+  Evidência completa em
+  `/home/piradopirata/aculta-suite-out/global-keyboard-fixed-8a26/results.json`;
+  THEME-MF3 continua sem aprovação enquanto esses quatro casos não forem
+  corrigidos ou formalmente revisados.
