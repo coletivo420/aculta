@@ -2785,3 +2785,7 @@ ou preferência persistente alterados.
 - A auditoria axe da entrada WE SATIVA repetiu 8/8 viewports responsivos, com
   zero violações e um resultado `incomplete` por modo para revisão manual.
   Evidência em `/home/piradopirata/aculta-suite-out/wesativa-axe-final-20261031200958/`.
+- A matriz autenticada do GanjaLab em `/ganjalab` passou 8/8 estados em
+  320/390/768/1280px, claro/escuro, sem overflow e com zero violações axe;
+  permanece um `incomplete` por modo. Evidência em
+  `/home/piradopirata/aculta-suite-out/ganjalab-auth-axe-final-20261031201023/`.
