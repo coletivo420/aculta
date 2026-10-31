@@ -2646,3 +2646,13 @@ ou preferência persistente alterados.
   de rotas administrativas 154 rotas — todos PASS. Esses resultados confirmam
   a integridade estrutural do tema, mas não convertem F8/F11 em PASS enquanto
   as operações protegidas não tiverem uma conta/grant funcional homologável.
+- Por decisão explícita do responsável, o papel `gerente_loja` agora inclui
+  `access aculta green stash`. A alteração foi publicada em `ce5a8fcaa`, com
+  snapshot Runtime SHA-256
+  `21d76a769a59213af20ca941320244a354e64033bb98e51b382acc0d40f708e6` em
+  `/home/piradopirata/aculta-runtime-snapshots/20261031-greenstash-grant/`,
+  importada no Runtime e normalizada em `827ecd736`; `config:status` ficou
+  limpo. A checagem Drush confirmou permissão e acesso do UID 5. O probe
+  browser cross-domain ainda retorna 403 para o usuário, indicando uma camada
+  adicional de sessão/purpose ou grant de loja a investigar antes de declarar
+  operações homologadas.
