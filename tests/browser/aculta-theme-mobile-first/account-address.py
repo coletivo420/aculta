@@ -167,8 +167,16 @@ def run(no_js=False):
                 contained = bool(row and content and row["left"] >= content["left"] - 2
                                  and row["right"] <= content["right"] + 2)
                 pieces = [metrics["number"], metrics["sn"], metrics["complement"]]
-                ordered = all(pieces) and pieces[0]["right"] <= pieces[1]["left"] + 4 \
-                    and pieces[1]["right"] <= pieces[2]["left"] + 4
+                # Mobile wrapping is expected when the Complemento control cannot
+                # fit beside Número/S-N. Preserve DOM/visual order across rows,
+                # while still rejecting overlap when controls share a row.
+                def follows(previous, current):
+                    if current["top"] > previous["top"] + 4:
+                        return True
+                    return current["left"] >= previous["right"] - 4
+
+                ordered = all(pieces) and follows(pieces[0], pieces[1]) \
+                    and follows(pieces[1], pieces[2])
                 check(f"JS {width}px: agrupamento existente cabe no conteúdo", metrics["addressLayoutRow"]
                       and contained and ordered,
                       {"row": row, "content": content, "number": pieces[0], "sn": pieces[1], "complement": pieces[2]})
