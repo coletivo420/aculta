@@ -1104,6 +1104,11 @@ somente na Conta; as outras rotas mediram o Runtime servido. A execução não
 aprova THEME-MF3, pois páginas internas, gates funcionais, integração da CSS e
 WCAG transversal seguem pendentes.
 
+Reteste sem JavaScript em 2026-10-31: 270/270 checks nas dez raízes dos
+purposes e nove larguras; shell único, navegação (ou busca da Wiki) disponível
+e sem overflow. Somente páginas raiz foram medidas, logo isto não fecha
+THEME-MF3.
+
 Reteste do botão Google em `/entrar`: `auth.css` candidata passou 90/90 checks
 em nove larguras, claro/escuro e reduced motion; contraste escuro 12,40:1
 normal e 11,34:1 em hover. CSS ainda não integrada no Runtime, logo a correção

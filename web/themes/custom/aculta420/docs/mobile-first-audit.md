@@ -1648,6 +1648,17 @@ real. Evidências em `/home/piradopirata/aculta-suite-out/profile-identity-f9-20
 e `/home/piradopirata/aculta-suite-out/public-profile-f9-20261030/`.
 THEME-MF3 continua pendente.
 
+### THEME-MF3 — shell dos dez purposes sem JavaScript (2026-10-31)
+
+Firefox ESR visível, com JavaScript desativado, passou **270/270 checks** nas
+dez raízes Main, Conta, Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e
+Eventos, em 320/360/390/599/600/768/1024/1280/1440 px. Institution Bar e Domain
+Header foram únicos, sem overflow; navegação primária permaneceu disponível e
+a Wiki manteve sua busca contextual visível. A execução mediu o Runtime servido,
+sem CSS candidata e sem escrita. Não cobre páginas internas, estado autenticado,
+teclado, zoom ou WCAG integral, portanto não aprova THEME-MF3. Evidência em
+`/home/piradopirata/aculta-suite-out/purpose-shell-nojs-followup-20261031/`.
+
 ### THEME-MF2 — menu de opções do Messenger mobile-first (2026-10-29)
 
 `messenger-drawer.css` agora oculta o rótulo “Opções” e usa o controle compacto
