@@ -2684,3 +2684,26 @@ abre `/salvos` no Runtime, não prova HTML final, privacidade/cache A/B, ACL por
 entidade, disponibilidade de módulos opcionais, zoom nem WCAG integral. Não se
 afirma paridade direta de uma biblioteca pessoal com uma página upstream
 autenticada. THEME-MF3 e OCS-F11 permanecem pendentes.
+
+### THEME-MF3 / OCS-F11 — reconciliação dos gates no HEAD atual (2026-10-31)
+
+No worktree da branch, os gates estáticos executados passaram: fronteira
+módulo/tema (3489 verificações), mapa módulo/tema (213), documentação Portal UI
+(518 tokens no mapa, 421 usados, 149 atributos), Design Foundations (2429) e
+schemas SDC (55 componentes, 27 includes, 759 verificações). Stylelint também
+passou depois da tela Salvos.
+
+O validador de fundação integrado não pôde ser executado nesse worktree, pois
+ele não tem bootstrap/DB; a execução direta terminou sem container Drupal.
+Read-only no checkout servido, Drush confirmou Runtime `aculta_runtime`, URI
+`http://default` e HEAD `2493d7535`. O validador desse HEAD falhou ao comparar
+templates: a versão servida ainda não inclui em sua allowlist
+`views/views-view--revista-sessoes--page-revista.html.twig`, que está presente
+no checkout; a versão fonte da branch já lista os 47 templates e sua comparação
+estática não encontrou extras ou ausências. Não houve troca de HEAD nem escrita
+no Runtime. O checkout servido também tem quatro arquivos de Eventos com
+alterações locais paralelas, preservadas intactas.
+
+O estado de validação integrada é **DEFERRED/BLOCKED pela revisão servida**, e
+esta amostra não aprova THEME-MF3 nem OCS-F11. A validação visual recente de
+Meus Salvos continua sendo fixture local, não consumer integrado.
