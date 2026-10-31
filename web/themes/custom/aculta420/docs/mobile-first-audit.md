@@ -2598,3 +2598,14 @@ parcial e THEME-MF3 não está aprovado. Firefox ESR visível passou 10/10 check
 em `/entrar` com CSS da branch e token de apresentação simulado; o checkout
 servido continua em HEAD `2493d7535`, anterior ao hook CAPTCHA da branch.
 Nenhuma alteração foi feita no Runtime.
+
+### THEME-MF3 — reteste sem JavaScript das dez raízes públicas (2026-10-31)
+
+`purpose-shell-nojs.py` foi executado em Firefox ESR visível com JavaScript
+desativado no navegador, usando os dez domínios de teste configurados. Passou
+**210/210 checks** em 320/390/599/600/768/1024/1440px: Institution Bar e Domain
+Header únicos, documento sem overflow e navegação renderizada (ou busca própria
+da Wiki) disponível. As rotas são as raízes públicas; isto não cobre páginas
+internas, modos com JavaScript, formulários, zoom, teclado ou WCAG 2.2 AA e não
+aprova THEME-MF3. Relatório em
+`/home/piradopirata/aculta-suite-out/purpose-nojs-retest-20261031/results.json`.
