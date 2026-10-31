@@ -330,7 +330,8 @@ de tela, zoom, tema escuro ou WCAG 2.2 AA.
 público e mede os wrappers do `item_list`, a moldura do SDC e overflow em
 320/360/390/575/576/600/768/1024/1280/1440px. Captura 320/768/1440 no Firefox
 ESR visível; só faz GET e não altera conteúdo. A injeção verifica a folha local
-contra o consumer real, sem rebuild do stylesheet do Runtime.
+contra o consumer real, sem rebuild do stylesheet do Runtime. Também mede se
+cada link de título do cartão tem ao menos 44px de altura.
 
 ```sh
 cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8

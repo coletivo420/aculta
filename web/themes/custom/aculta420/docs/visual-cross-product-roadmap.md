@@ -606,6 +606,17 @@ Header e zero overflow. A validação integrada após publicação/cache e os de
 purposes continuam pendentes; MF2 segue parcial. Ver detalhes em
 `mobile-first-audit.md`.
 
+### THEME-MF2 — alvo de toque do título do cartão de Eventos (2026-10-30)
+
+O SDC existente `event_card` mantém o link de título com pelo menos 44px de
+altura. A suíte Firefox ESR visível injetou o CSS candidato em `/eventos` e
+passou 30/30 checks em dez larguras (320–1440px): três cards reais, moldura
+única no SDC, títulos alcançáveis com alvo de 44px e zero overflow. Não houve
+alteração do consumer, dos dados, da ACL nem do shell. O CSS não foi publicado
+no Runtime por esta validação; seguem pendentes rebuild, detalhe do evento,
+teclado, zoom e WCAG completa. Evidência em
+`/home/piradopirata/aculta-suite-out/events-title-touch-targets-20261030/`.
+
 ### THEME-MF2 — Wiki pública
 
 Header, formulários e grids de Wiki usam composição móvel como base e retomam as

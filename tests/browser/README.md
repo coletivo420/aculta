@@ -143,8 +143,11 @@ pagamento. Ver `aculta-mercadopago/README.md`.
 ### `aculta-theme-mobile-first/`
 
 `author-card.py` valida o breakpoint do cartão de autoria no consumer público do
-Fórum (`/discussoes/novas`), além de overflow horizontal em 320–1440 px. Roda no
-servidor de desenvolvimento, Firefox ESR visível, sem escrita. `account-shell.py`
+Fórum (`/discussoes/novas`), alvos sociais candidatos e overflow horizontal em
+320–1440 px. `events-catalogue.py` verifica os cartões reais de `/eventos`, seus
+links de título com alvos mínimos de 44px e overflow na mesma grade. Ambos rodam
+no servidor de desenvolvimento, Firefox ESR visível, por GET e sem escrita.
+`account-shell.py`
 confere a navegação autenticada da Conta por GET com link Drush efêmero e compara
 o CSS servido com a folha candidata opcional. Consulte o README local para
 variáveis e limitações. `support-form.py` registra o baseline do formulário de

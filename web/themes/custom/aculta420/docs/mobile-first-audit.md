@@ -2119,6 +2119,17 @@ Studio. Stylelint também passou. Evidências em
 É uma fixture de CSS/markup, não uma homologação de Form API real, AJAX/no-JS,
 ACL, contraste WCAG completo ou de todos os consumers Studio.
 
+### THEME-MF2 — alvo móvel dos links no cartão de Eventos (2026-10-30)
+
+O link de título do SDC `event_card` agora mantém altura mínima de 44px, com
+largura fluida e texto capaz de quebrar. Firefox ESR visível injetou a folha
+candidata sobre `/eventos`, que renderizou três cards reais, em
+320/360/390/575/576/600/768/1024/1280/1440px. Foram 30/30 verificações, sem
+overflow e com os três alvos medindo 44px em cada largura. Capturas 320/768/1440
+estão em `/home/piradopirata/aculta-suite-out/events-title-touch-targets-20261030/`.
+Isso valida CSS candidata no consumer servido, não a implantação após rebuild,
+o detalhe do evento ou WCAG completa; THEME-MF3 continua pendente.
+
 ### THEME-MF2 — alvos de links sociais do SDC author-card (2026-10-30)
 
 Os links sociais do SDC `author-card` agora têm área interativa de 44×44 CSS px,

@@ -1,5 +1,5 @@
 name: Evento
-description: Exemplo estático. Dados reais vêm do ACULTA Eventos (datas em horário de Brasília).
+description: Exemplo estático; o link do título mantém alvo mínimo de toque de 44px. Dados reais vêm do ACULTA Eventos (datas em horário de Brasília).
 component: aculta420:event_card
 props:
   title: Oficina de cerâmica
