@@ -99,8 +99,9 @@ Estado em 0.4.0. Todos experimentais por política, até consumo estável e vali
 
 O consumer real do `rail` foi verificado no Firefox ESR em 320/390/768/1440px.
 Em 320px a região acessível recebe foco e ArrowRight avança a trilha; em 1440px
-os três cards cabem sem rolagem horizontal. O padrão usa rolagem nativa sem JS,
-sem overflow da página; limitações e capturas em
+os três cards cabem sem rolagem horizontal. Snap por proximidade mantém a
+rolagem incremental com teclado a 400% de zoom. O padrão usa rolagem nativa sem
+JS e não cria overflow da página; limitações e capturas em
 [`docs/mobile-first-audit.md`](mobile-first-audit.md).
 
 Ao migrar, o HTML antigo das seções (`section.aculta-editorial-section`) passou a ser

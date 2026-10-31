@@ -30,6 +30,8 @@ PAGE = os.environ.get("RAIL_PAGE", f"https://{entry[f'{DOMAIN_ENV}_host']}/")
 if urlparse(PAGE).scheme != "https" or urlparse(PAGE).hostname != entry[f"{DOMAIN_ENV}_host"]:
     raise SystemExit("RAIL_PAGE deve usar o host de Cursos configurado no deploy.json.")
 WIDTHS = [320, 390, 768, 1440]
+RAIL_CSS_OVERRIDE = os.environ.get("RAIL_CSS_OVERRIDE") == "1"
+RAIL_DISABLE_JS = os.environ.get("RAIL_DISABLE_JS") == "1"
 checks = []
 
 
@@ -92,6 +94,25 @@ def test_zoom_400(driver, viewport):
               f"scrollLeft {rail_metrics['railScrollLeft']} → {after}")
         image = driver.req("GET", f"/session/{driver.session}/screenshot")
         (OUT / "courses-rail-zoom-400.png").write_bytes(base64.b64decode(image))
+        for _ in range(12):
+            driver.req("POST", f"/session/{driver.session}/actions", {
+                "actions": [{"type": "key", "id": "rail-zoom-keyboard-end", "actions": [
+                    {"type": "keyDown", "value": "\ue014"},
+                    {"type": "keyUp", "value": "\ue014"},
+                ]}],
+            })
+            time.sleep(0.05)
+        end_metrics = driver.js("""const rail=document.querySelector('.aculta-rail');
+          const last=rail?.querySelector('.views-row:last-child');
+          const railRect=rail?.getBoundingClientRect();
+          const lastRect=last?.getBoundingClientRect();
+          return {scrollLeft:rail?.scrollLeft||0,maxScroll:(rail?.scrollWidth||0)-(rail?.clientWidth||0),
+            lastCardVisible:!!(railRect&&lastRect&&lastRect.right<=railRect.right+1)};""")
+        check("400% zoom: sequência ArrowRight alcança último cartão",
+              end_metrics["scrollLeft"] >= end_metrics["maxScroll"] - 2
+              and end_metrics["lastCardVisible"], json.dumps(end_metrics, ensure_ascii=False))
+        image = driver.req("GET", f"/session/{driver.session}/screenshot")
+        (OUT / "courses-rail-zoom-400-end.png").write_bytes(base64.b64decode(image))
     browser_key("ctrl+0")
 
 
@@ -127,7 +148,7 @@ if os.environ.get("DISPLAY") != ":0":
 if subprocess.run(["which", "xdotool"], capture_output=True).returncode:
     raise SystemExit("xdotool é necessário para testar o zoom real do Firefox.")
 
-driver = Driver(bidi=True)
+driver = Driver(prefs={"javascript.enabled": False} if RAIL_DISABLE_JS else {}, bidi=True)
 viewport = Viewport(driver)
 try:
     for width in WIDTHS:
@@ -135,6 +156,11 @@ try:
         viewport.set(width)
         driver.get(PAGE)
         time.sleep(0.8)
+        if RAIL_CSS_OVERRIDE:
+            rail_css = (ROOT / "web/themes/custom/aculta420/components/patterns/rail/rail.css").read_text()
+            driver.js("""const style=document.createElement('style');
+              style.dataset.railCssCandidate='true';style.textContent=arguments[0];
+              document.head.append(style);return true;""", [rail_css])
         metrics = driver.js("""return (() => {
           const rail=document.querySelector('.aculta-rail');
           const rect=rail?.getBoundingClientRect();
@@ -180,7 +206,13 @@ finally:
     viewport.close()
     driver.close()
 
-(OUT / "results.json").write_text(json.dumps({"page": PAGE, "widths": WIDTHS, "checks": checks}, ensure_ascii=False, indent=2) + "\n")
+(OUT / "results.json").write_text(json.dumps({
+    "page": PAGE,
+    "widths": WIDTHS,
+    "cssOverride": RAIL_CSS_OVERRIDE,
+    "javascriptDisabled": RAIL_DISABLE_JS,
+    "checks": checks,
+}, ensure_ascii=False, indent=2) + "\n")
 failed = [result for result in checks if not result["passed"]]
 print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed; evidence: {OUT}")
 sys.exit(1 if failed else 0)

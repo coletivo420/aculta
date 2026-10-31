@@ -1818,9 +1818,24 @@ Firefox ESR visível, Runtime no HEAD `f22c8f08d`, passou 11/11 checks a
 320/390/768/1440px: página sem overflow, região rotulada/focável, trilha
 rolável e navegação por teclado. Capturas e resultados estão em
 `/home/piradopirata/suite-out/course-rail-validation-f22-20261030/`. O teste é
-anônimo e somente leitura; não cobre leitores de tela, zoom, autenticação,
-contraste WCAG 2.2 AA ou outros consumers do rail. Esta evidência focal não
-fecha THEME-MF3.
+anônimo e somente leitura; leitores de tela, autenticação, contraste WCAG 2.2 AA
+ou outros consumers do rail permanecem fora desta evidência focal.
+
+Revalidação Firefox ESR em `2493d7535` adicionou zoom real de 400% e revelou
+regressão no baseline: 13/14 checks passaram, mas ArrowRight deixou
+`scrollLeft=12` a 400%, impedindo progressão por teclado. O SDC alterou
+`scroll-snap-type` de `mandatory` para `proximity`, preservando o scroll nativo
+sem JS e os pontos de encaixe sem bloquear setas incrementais. Com CSS candidata
+injetada apenas na sessão, foram **15/15 checks** com JavaScript e **15/15** com
+JavaScript da página desativado, em 320/390/768/1440px e zoom real 400%. A seta
+moveu o rail de 12 para 62,5px; uma sequência de 12 setas revelou o último cartão
+em `scrollLeft=439,25px`, sem overflow documental. Capturas de referência,
+candidata, fim do rail e relatórios em
+`/home/piradopirata/aculta-suite-out/courses-rail-400-recheck-20261031/`,
+`/home/piradopirata/aculta-suite-out/courses-rail-proximity-sequence-20261031/`
+e `/home/piradopirata/aculta-suite-out/courses-rail-proximity-nojs-20261031/`.
+As capturas candidatas foram inspecionadas. Este ajuste do consumer real não
+prova CSS servida, outros consumers ou WCAG completa; THEME-MF3 continua pendente.
 
 ### THEME-MF2 — shell sem JavaScript nas dez raízes públicas (2026-10-30)
 

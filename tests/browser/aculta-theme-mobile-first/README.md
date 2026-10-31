@@ -394,9 +394,10 @@ continua sendo o host HTTPS aberto pelo Firefox.
 real do SDC `rail`, papel e nome acessível, foco por teclado e rolagem com
 ArrowRight a 320px e 400% de zoom real. A 400%, a janela começa em 1280px e
 Firefox deve reflowar para viewport CSS de 320px; o teste confirma que a página
-continua contida e que a trilha interna ainda rola e recebe ArrowRight. Captura
-320/1440, o estado após a seta em 320px e a trilha após seta a 400% no Firefox
-ESR visível. Só faz GET, foco, tecla e ajuste de zoom; não altera dados. O
+continua contida, que uma seta avança e que uma sequência de setas alcança o
+último cartão. Captura 320/1440, o estado após a seta em 320px e o rail antes e
+depois da sequência de teclado a 400% no Firefox ESR visível. Só faz GET, foco,
+tecla e ajuste de zoom; não altera dados. O
 conteúdo publicado precisa conter ao menos dois cursos para testar a rolagem.
 Requer `xdotool` para zoom real. URLs derivam de
 `aculta_deployer/config/deploy.json`.
@@ -411,7 +412,11 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/rail-courses.py
 
 `RAIL_DOMAIN_ENV=production` escolhe o host de produção somente após confirmar
 DNS/TLS e o ambiente servido. O teste não cobre conteúdo autenticado, leitores
-de tela, modo escuro ou WCAG 2.2 AA.
+de tela, modo escuro ou WCAG 2.2 AA. `RAIL_CSS_OVERRIDE=1` injeta a folha local
+`components/patterns/rail/rail.css` somente na sessão Firefox para validar uma
+mudança do padrão sem tocar no Runtime. `RAIL_DISABLE_JS=1` desativa o JavaScript
+da página no Firefox para conferir o fallback nativo do rail; WebDriver continua
+apto a medir DOM e enviar teclas.
 
 ## Cartões reais do catálogo de Eventos
 

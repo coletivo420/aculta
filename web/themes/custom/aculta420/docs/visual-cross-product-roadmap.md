@@ -1844,3 +1844,13 @@ captura em 320/390/768/1440px, sem falhas, com as cinco áreas presentes e scrol
 local aprovado em 320/390px. Isso retira um falso FAIL do harness, não fecha
 OCS-F11/THEME-MF3 nem a homologação de todas as telas. Detalhes e evidências em
 `mobile-first-audit.md`.
+
+### THEME-MF2 — navegação por teclado no rail de Cursos a 400% (2026-10-31)
+
+Firefox ESR encontrou que snap `mandatory` impedia ArrowRight de avançar o rail
+no zoom real de 400%. O SDC existente `patterns/rail` agora usa snap
+`proximity`, sem JavaScript ou mudança de markup/contrato. O consumidor real
+passou 15/15 checks com e 15/15 sem JavaScript da página, incluindo seta única,
+sequência até o último curso, 320/390/768/1440px e zero overflow. A CSS foi
+injetada apenas na sessão; implantação e homologação integrada ainda pendentes.
+Evidências e capturas revisadas em `mobile-first-audit.md`.

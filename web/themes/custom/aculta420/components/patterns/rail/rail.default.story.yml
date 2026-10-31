@@ -1,5 +1,7 @@
 name: Padrão
-description: Trilho horizontal com rótulo e itens.
+description: >-
+  Trilho com snap por proximidade, rótulo acessível e rolagem por teclado,
+  inclusive em zoom ampliado.
 component: aculta420:rail
 props:
   label: Cursos

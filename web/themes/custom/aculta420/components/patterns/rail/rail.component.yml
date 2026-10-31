@@ -2,7 +2,10 @@ $schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schema
 name: Rail
 status: experimental
 group: Patterns
-description: 'Horizontal rail of items with native scrolling and snap points. No JavaScript: keyboard scrolling and focus come from the browser. Shares the carousel focus and token language.'
+description: >-
+  Horizontal rail with native scrolling and proximity snap points. Keyboard
+  scrolling remains incremental at high zoom without JavaScript; focus comes
+  from the browser.
 props:
   type: object
   properties:

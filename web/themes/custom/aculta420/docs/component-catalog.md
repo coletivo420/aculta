@@ -312,9 +312,10 @@ consumidores, modos claro/escuro e renderização no Firefox ESR.
 
 ## B8 — composições de página em colunas
 
-`patterns/rail` oferece rolagem horizontal, `content-section` é um frame de
-conteúdo único e `ui_patterns_layouts` adapta SDCs para Layout Builder sem
-fornecer por si só um arranjo 1/2/3 colunas. O candidato
+`patterns/rail` oferece rolagem horizontal nativa com snap por proximidade para
+preservar navegação incremental por teclado em zoom alto; `content-section` é
+um frame de conteúdo único e `ui_patterns_layouts` adapta SDCs para Layout
+Builder sem fornecer por si só um arranjo 1/2/3 colunas. O candidato
 `layouts/page-columns` fornece regiões principal, secundária e complementar;
 tem stories de 1, 2 e 3 colunas e empilha as regiões pela ordem do DOM abaixo de
 768 px. As três variações foram capturadas no Runtime em 320 px e dark. Drawers
