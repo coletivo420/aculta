@@ -75,6 +75,34 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/revista-article-la
 `REVISTA_ARTICLE_WIDTHS` aceita larguras focais. Requer Firefox ESR visível,
 geckodriver e `websockets`; PNGs e `summary.json` são gravados fora do Git.
 
+## Artigo editorial da Revista no Runtime
+
+`revista-browser-zoom.py` verifica a raiz pública da Revista e um artigo
+sintético autorizado. No Firefox ESR visível, mede título, corpo renderizado,
+capa carregada, shell único e overflow do artigo em 320/360/390/599/600/768/
+1024/1280/1440px; também aplica zoom real de 200% e 400%. Capturas do título e
+do primeiro bloco do corpo em 320 e 1440px, e nos dois níveis de zoom, vão para
+`$SUITE_OUT`. A execução de 2026-10-31 passou 15/15 checks com o conteúdo
+sintético no formato editorial ativo.
+
+```sh
+cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/revista-article
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+ACULTA_PROJECT_ROOT=/home/piradopirata/projetos/aculta \
+  DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/revista-browser-zoom.py
+```
+
+`REVISTA_BASE_URL`, `REVISTA_ARTICLE_URL` e `REVISTA_ARTICLE_WIDTHS`
+selecionam host, publicação e larguras. Com
+`REVISTA_POST_CSS_CANDIDATE=1`, as folhas locais indicadas por
+`REVISTA_CSS_ROOT` são injetadas somente na sessão do navegador para comparar
+a aparência; isso não altera o Runtime nem prova que ele serve o HEAD do
+worktree. O teste não submete comentários, não homologa acesso entre contas,
+teclado completo, leitor de tela, reduced motion ou WCAG 2.2 AA integral, e não
+é comparação pareada de fidelidade com o OpenCulturas Next.
+
 ## Navigation top-bar mobile-first
 
 `navigation-top-bar.py` compara a composição do Drupal Navigation top-bar antes

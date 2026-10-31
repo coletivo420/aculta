@@ -19,6 +19,36 @@ from wdlib import Driver  # noqa: E402
 URL = os.environ.get("REVISTA_BASE_URL", "https://revista.aculta.toca.net.br/")
 WIDTH = int(os.environ.get("REVISTA_ZOOM_DEVICE_WIDTH", "1280"))
 TARGETS = (2.0, 4.0)
+ARTICLE_WIDTHS = tuple(map(int, os.environ.get(
+    "REVISTA_ARTICLE_WIDTHS", "320,360,390,599,600,768,1024,1280,1440",
+).split(",")))
+CSS_ROOT = Path(os.environ.get(
+    "REVISTA_CSS_ROOT", Path(__file__).resolve().parents[3],
+)).resolve()
+
+
+def inject_candidate_css(driver):
+    theme = CSS_ROOT / "web/themes/custom/aculta420"
+    paths = (
+        theme / "css/components/revista-post.css",
+        theme / "css/components/editorial-content.css",
+        theme / "components/patterns/revista-publication/revista-publication.css",
+    )
+    candidate = "\n".join(path.read_text(encoding="utf-8") for path in paths)
+    driver.js("""const style=document.createElement('style');
+style.id='revista-article-css-candidate';style.textContent=arguments[0];
+document.head.append(style);return true;""", [candidate])
+
+
+def article_overflows(data):
+    return (
+        data["documentScrollWidth"] > data["documentWidth"]
+        or data["bodyScrollWidth"] > data["innerWidth"]
+        or (data["article"] and data["article"]["right"] > data["documentWidth"] + 1)
+        or (data["body"] and data["body"]["right"] > data["documentWidth"] + 1)
+        or (data["bodyPresent"] and data["bodyScrollWidth"] > data["bodyClientWidth"] + 1)
+        or any(image["right"] > data["documentWidth"] + 1 for image in data["coverImages"])
+    )
 
 
 def set_viewport(driver, width, height):
@@ -172,6 +202,8 @@ def main():
             set_viewport(driver, WIDTH, 900)
             driver.get(article_url)
             time.sleep(0.8)
+            if os.environ.get("REVISTA_POST_CSS_CANDIDATE") == "1":
+                inject_candidate_css(driver)
             initial = inspect_article(driver)
             article_base_ok = (
                 initial["articlePresent"] and initial["bodyPresent"]
@@ -184,6 +216,33 @@ def main():
             )
             records.append({"view": "article", "targetZoom": 1.0,
                             "passed": article_base_ok, **initial})
+            for article_width in ARTICLE_WIDTHS:
+                set_viewport(driver, article_width, 900)
+                data = inspect_article(driver)
+                data["view"] = "article-viewport"
+                data["targetWidth"] = article_width
+                data["overflow"] = article_overflows(data)
+                data["passed"] = (
+                    data["innerWidth"] == article_width
+                    and data["articlePresent"] and data["publicationPresent"]
+                    and data["bodyPresent"] and data["bodyTextLength"] > 0
+                    and data["body"]["height"] > 0 and data["headingCount"] == 1
+                    and data["institutionBarCount"] == 1 and data["domainHeaderCount"] == 1
+                    and len(data["coverImages"]) > 0
+                    and all(image["loaded"] for image in data["coverImages"])
+                    and not data["overflow"]
+                )
+                records.append(data)
+                if article_width in (320, 1440):
+                    driver.js("document.querySelector('main#main-content h1')?.scrollIntoView({block:'start'}); return true")
+                    time.sleep(0.2)
+                    shot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                    (OUT / f"revista-article-viewport-{article_width}-heading.png").write_bytes(base64.b64decode(shot))
+                    driver.js("document.querySelector('.aculta-revista-publication__body > *')?.scrollIntoView({block:'start'}); return true")
+                    time.sleep(0.2)
+                    shot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                    (OUT / f"revista-article-viewport-{article_width}-body.png").write_bytes(base64.b64decode(shot))
+            set_viewport(driver, WIDTH, 900)
             for target in TARGETS:
                 reset_zoom(driver)
                 set_viewport(driver, WIDTH, 900)
@@ -199,14 +258,7 @@ def main():
                 data["view"] = "article"
                 data["targetZoom"] = target
                 data["reachedZoom"] = current
-                data["overflow"] = (
-                    data["documentScrollWidth"] > data["documentWidth"]
-                    or data["bodyScrollWidth"] > data["innerWidth"]
-                    or (data["article"] and data["article"]["right"] > data["documentWidth"] + 1)
-                    or (data["body"] and data["body"]["right"] > data["documentWidth"] + 1)
-                    or (data["bodyPresent"] and data["bodyScrollWidth"] > data["bodyClientWidth"] + 1)
-                    or any(image["right"] > data["documentWidth"] + 1 for image in data["coverImages"])
-                )
+                data["overflow"] = article_overflows(data)
                 data["passed"] = (
                     current >= target - 0.08 and data["innerWidth"] <= int(WIDTH / target) + 8
                     and data["articlePresent"] and data["publicationPresent"]

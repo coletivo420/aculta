@@ -2749,3 +2749,22 @@ mediram 44px, Montserrat e tokens de texto esperados; não houve overflow. O
 formulário não foi enviado. A fixture simula o resultado de `PortalUiHooks`, não
 prova CSS servida ou diálogo AJAX real; não cobre ACL, cache, no-JS, zoom nem
 WCAG integral. OCS-F9, S-R5 e OCS-F11 continuam pendentes.
+
+### THEME-MF3 / OCS-F9 — artigo da Revista, viewports e zoom (2026-10-31)
+
+`revista-browser-zoom.py` executou no Firefox ESR visível contra o Runtime, com
+o conteúdo sintético autorizado no formato editorial ativo. Passou **15/15
+checks**: raiz pública e artigo com corpo realmente renderizado, capa carregada,
+Institution Bar e Domain Header únicos, sem overflow em 320/360/390/599/600/768/
+1024/1280/1440px, e artigo legível sem overflow horizontal a zoom 200% e 400%.
+Capturas do título e do corpo em 320/1440px e nos dois níveis de zoom ficam em
+`/home/piradopirata/aculta-suite-out/revista-article-matrix-20261031/`.
+
+Uma rodada adicional passou os mesmos 15 checks com folhas da branch injetadas
+somente na sessão do browser. A geometria medida em 1440px permaneceu igual à
+folha servida pelo Runtime; portanto essa rodada não evidencia diferença de
+CSS, nem que o Runtime esteja no HEAD da branch. Os dois testes são focais: não
+validam ACL/privacidade entre contas, envio de comentários, teclado completo,
+leitor de tela ou WCAG 2.2 AA integral. Não aprovam THEME-MF3 nem OCS-F11.
+Relatório da sessão candidata em
+`/home/piradopirata/aculta-suite-out/revista-article-candidate-20261031/`.
