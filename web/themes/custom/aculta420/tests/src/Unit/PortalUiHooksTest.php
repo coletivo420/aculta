@@ -245,16 +245,16 @@ final class PortalUiHooksTest extends UnitTestCase {
     self::assertFalse($variables['attributes']->offsetExists('data-portal-ui'));
 
     $back = [
-      'element' => [
-        '#attributes' => [
-          'data-portal-ui' => 'studio-action studio-course-authoring-back',
-        ],
-      ],
+      'element_attributes' => new Attribute([
+        'data-portal-ui' => 'studio-action studio-course-authoring-back',
+      ]),
     ];
     (new PortalUiHooks())->preprocess($back);
 
-    self::assertContains('studio__action', $back['element']['#attributes']['class']);
-    self::assertContains('studio-course-authoring__back', $back['element']['#attributes']['class']);
+    self::assertTrue($back['element_attributes']->hasClass('btn'));
+    self::assertTrue($back['element_attributes']->hasClass('studio__action'));
+    self::assertTrue($back['element_attributes']->hasClass('studio-course-authoring__back'));
+    self::assertFalse($back['element_attributes']->offsetExists('data-portal-ui'));
   }
 
   /**
