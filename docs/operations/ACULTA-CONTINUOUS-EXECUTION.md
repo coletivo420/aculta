@@ -2707,3 +2707,10 @@ ou preferência persistente alterados.
   A capa pública continua validada em headless; a matriz editorial autenticada
   fica DEFERRED até usar uma conta de homologação existente, sem criar usuário
   ou conteúdo nesta rodada.
+- A mesma rota revelou e corrigiu um erro 500 real: `EditorialWorkspaceController`
+  chamava `t()` sem serviço de tradução e sua definição de serviço não o
+  injetava. O controller agora usa `StringTranslationTrait` com
+  `@string_translation`; após rebuild explícito do container, a matriz
+  autenticada com a conta existente UID 5 passou 18/18 viewports, em claro e
+  escuro, sem overflow. Evidência em
+  `/home/piradopirata/aculta-suite-out/revista-marley-reader-fixed3-20261031194409/`.
