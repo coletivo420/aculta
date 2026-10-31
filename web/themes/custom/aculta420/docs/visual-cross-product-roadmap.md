@@ -2240,3 +2240,13 @@ observados. Evidência e limitações detalhadas em `mobile-first-audit.md`; cob
 raízes anônimas e não substitui páginas internas, formulários, ACL, teclado,
 zoom real, no-JS ou WCAG 2.2 AA. THEME-MF3 continua pendente de homologação
 transversal completa e OCS-F11 permanece bloqueado por esse gate.
+
+### THEME-MF3 — matriz headless da capa pública da Revista (2026-10-31)
+
+A página pública de Revista (`revista.aculta.toca.net.br/`) passou 18/18
+combinações Firefox ESR headless em 320/360/390/599/600/768/1024/1280/1440px,
+nos modos claro e escuro, com HTTP 200 e sem overflow horizontal. Evidência em
+`/home/piradopirata/aculta-suite-out/revista-public-matrix-20261031194141/`.
+Esta verificação cobre a capa pública e não fecha o gate: publicação real,
+rotas editoriais autenticadas, comentários, zoom visível, teclado e axe ainda
+exigem suas matrizes próprias.
