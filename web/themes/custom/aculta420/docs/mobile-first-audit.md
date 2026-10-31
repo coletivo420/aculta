@@ -38,7 +38,7 @@ evento e não fecha THEME-MF3.
 Na mesma sessão, o link de detalhe existente `/eventos/feira-do-livro-teste`
 respondeu HTTP 500, confirmado por `curl` e pelo log Drupal no Runtime
 `2493d7535`. O erro registrado é `Call to undefined method
-Drupal\\aculta_events\\Entity\\Event::getCoOrganizers()` em
+Drupal\aculta_events\Entity\Event::getCoOrganizers()` em
 `EventPageController::page()` (linha 306 do arquivo servido). A chamada está em
 uma alteração não commitada no checkout servido; esse mesmo controller e outros
 arquivos de `aculta_events` já estavam modificados antes desta inspeção. Para
