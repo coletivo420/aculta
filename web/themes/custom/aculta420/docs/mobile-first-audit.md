@@ -4158,3 +4158,19 @@ Conta; os demais purposes usaram CSS servida. As capturas de Conta e Revista a
 zoom de páginas internas, WCAG integral nem validação da folha integrada.
 Evidência em
 `/home/piradopirata/aculta-suite-out/purpose-zoom-global-followup-20261031/`.
+
+### THEME-MF2 — formulário unificado de endereço da Conta (2026-10-31)
+
+Firefox ESR autenticado abriu `/dados/endereco` no Runtime servido. O smoke GET
+passou **50/50 verificações**: único formulário canônico, contrato de campos,
+país BR oculto e behavior CEP; nove larguras com JavaScript, quatro sem
+JavaScript e zoom real de 200/400% nos dois modos, sem overflow e com CEP
+visível. A captura JS de 320px e a captura de zoom 400% foram inspecionadas; os
+inputs permaneceram mascarados. Não houve submit, gravação de endereço ou
+consulta CEP. Runtime `2493d7535`, 624 tabelas antes/depois; apenas as sessões
+ULI temporárias foram criadas. Snapshot anterior: 66.848.723 bytes, modo 0600,
+SHA-256 `764fac824376c8f3dfab49b0f5378093c10fa20b21910180ab397ef7400c21fa`.
+Resultados em
+`/home/piradopirata/aculta-suite-out/account-address-visual-followup-20261031/`.
+Não substitui teste de preenchimento CEP, submissão, privacidade A/B ou WCAG
+integral; THEME-MF3 segue pendente.

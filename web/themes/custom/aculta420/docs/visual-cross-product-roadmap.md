@@ -1988,3 +1988,9 @@ revisadas; gates de páginas internas e WCAG continuam pendentes.
 conteúdo visível. O reteste autenticado passou nove larguras com CSS candidata,
 sem overflow e com tabela rolável localmente. O resultado corrige falso FAIL do
 harness, não homologa integração servida. Detalhes em `mobile-first-audit.md`.
+
+O formulário unificado de endereço em `/dados/endereco` passou 50/50 checks
+autenticados: nove larguras com JS, quatro sem JS, zoom 200/400%, campos e CEP
+visíveis, país BR fixo e zero overflow. Inputs foram mascarados nas capturas e
+nada foi enviado/salvo; o teste não consulta o serviço CEP. Snapshot Runtime
+antes do ULI e detalhes em `mobile-first-audit.md`.
