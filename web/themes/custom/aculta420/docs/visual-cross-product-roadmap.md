@@ -1261,6 +1261,14 @@ sem submeter dados. Evidências e limitações em `mobile-first-audit.md`.
 Isso não homologa ACL entre contas, lookup ao vivo do CEP, WCAG completa nem
 OCS-F11/THEME-MF3.
 
+Em 2026-10-31 o smoke foi fortalecido para enquadrar os campos reais nas
+capturas, inclusive quando o JavaScript do site está desativado. O reteste
+Firefox passou 42/42 em `/dados/endereco`: nove larguras com JS e quatro sem JS,
+campo CEP visível e inputs mascarados; capturas 320/1440px foram inspecionadas.
+Os snapshots anteriores às duas sessões ULI e seus hashes estão no registro
+`mobile-first-audit.md`. Isto amplia a evidência de apresentação, sem validar
+submissão, lookup CEP ao vivo, ACL, acessibilidade completa ou THEME-MF3.
+
 ### THEME-MF2 — CAPTCHA estreito e gate de fronteira (2026-10-30)
 
 O reteste atual encontrou o widget de largura mínima 300 px dentro de 268 px em

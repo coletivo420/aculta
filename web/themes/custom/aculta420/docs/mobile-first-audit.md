@@ -1918,6 +1918,32 @@ capturas mascaram valores e ficam fora do Git em
 Isto não cobre lookup CEP ao vivo, ACL entre contas, teclado completo, zoom ou
 WCAG 2.2 AA.
 
+### THEME-MF3 — captura dos campos do endereço em JS/no-JS (2026-10-31)
+
+O harness foi ajustado após inspeção das capturas anteriores, que mostravam o
+topo do shell em vez do formulário. Agora o WebDriver enquadra o campo CEP com
+scroll não dependente do JavaScript do site; os valores de input permanecem
+mascarados. Firefox ESR visível repetiu `/dados/endereco` no Runtime `2493d7535`
+com UID sintético 5 e passou **42/42 verificações**: nove viewports (320/360/
+390/599/600/768/1024/1280/1440px) com JS, mais quatro (320/390/768/1440px) sem
+JS, campo CEP visível nas capturas, formulário único, oito campos, país oculto,
+behavior CEP carregado na sessão JS, navegação Meus Dados/Endereço, agrupamento
+Número/S/N/Complemento dentro do conteúdo e zero overflow. Capturas 320/1440px
+foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/account-address-field-capture-20261031/`.
+Nenhum campo foi digitado ou submetido. Isso valida a apresentação servida do
+formulário unificado nesse HEAD, não o lookup CEP ao vivo, ACL entre contas,
+zoom, teclado completo ou WCAG 2.2 AA.
+
+Autenticação por ULI criou somente metadados transitórios de sessão. Antes das
+duas rodadas, os snapshots íntegros de `aculta_runtime` (624 tabelas) foram
+guardados fora do Git, modo 0600: `aculta_runtime-before-account-address-visual-20261031.sql`,
+65.355.195 bytes, SHA-256
+`c82bb54739111d42513d1a65a951f93604fe4442e56a9004538164deb627fdab`; e
+`aculta_runtime-before-account-address-visual-field-capture-20261031.sql`,
+65.407.231 bytes, SHA-256
+`2e2cf0be97789aac044c226bc6e312cf13d474f5f39616f8e9a6dee2a0f2ac1a`.
+
 Reteste independente da Conta em 2026-10-30, com Runtime no HEAD `2493d7535`:
 `account-shell.py` passou 33/33 checks em 320/360/390/599/600/767/768/1024/
 1280/1440px com a folha candidata injetada no Firefox, sem submit ou gravação

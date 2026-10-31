@@ -242,8 +242,11 @@ acessado no shell legado pela navegação Meus Dados → Endereço. Confere uma
 única instância do formulário, os campos acordados, país oculto, carregamento
 do behavior de `aculta_portal_cep`, agrupamento de Número/S/N/Complemento e
 overflow em 320/360/390/599/600/768/1024/1280/1440 px. Repete a verificação de
-layout sem JavaScript em 320/390/768/1440 px. Não submete nem salva o endereço;
-valores digitados são mascarados nas capturas, que ficam fora do repositório.
+layout sem JavaScript em 320/390/768/1440 px. O WebDriver enquadra o campo CEP
+na captura sem depender do JavaScript da página; valores de input são mascarados.
+Não submete nem salva o endereço; as capturas ficam fora do repositório.
+O ULI abre uma sessão autenticada temporária e grava metadados de sessão no
+Runtime; antes de executar, siga a regra de snapshot em `AGENTS.md`.
 
 ```sh
 cd /home/piradopirata/projetos/aculta

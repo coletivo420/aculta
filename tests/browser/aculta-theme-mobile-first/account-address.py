@@ -105,7 +105,7 @@ def form_metrics(driver):
         hiddenCountry: countryHidden,
         cepLibrary: lib.includes('aculta_portal_cep/cep-address')
           || scripts.some((src) => src.includes('cep-address')) || cepBehavior,
-        addressLayoutRow: !!row, content: rect(content), row: rect(row),
+        addressLayoutRow: !!row, content: rect(content), row: rect(row), postal: rect(postal),
         number: rect(number?.closest('.form-item, .js-form-item') || number),
         sn: rect(sn?.closest('.form-check, .form-item, .js-form-item') || sn),
         complement: rect(complement?.closest('.form-item, .js-form-item') || complement),
@@ -157,6 +157,17 @@ def run(no_js=False):
                 check(f"JS {width}px: agrupamento existente cabe no conteúdo", metrics["addressLayoutRow"]
                       and contained and ordered,
                       {"row": row, "content": content, "number": pieces[0], "sn": pieces[1], "complement": pieces[2]})
+            # Scroll only through WebDriver-injected test code so captures show
+            # the actual address fields, including in the site's no-JS run.
+            postal_view = driver.js("""const field=document.querySelector('input[name$="[postal_code]"]');
+              field?.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
+              if (!field) return null;
+              const box=field.getBoundingClientRect();
+              return {top:Math.round(box.top*100)/100,bottom:Math.round(box.bottom*100)/100,
+                viewport:innerHeight};""")
+            postal_visible = bool(postal_view and postal_view["top"] >= 0
+                                  and postal_view["bottom"] <= postal_view["viewport"])
+            check(f"{label} {width}px: campo CEP visível na captura", postal_visible, postal_view)
             # Mask typed values in screenshots; captures stay outside the repository.
             driver.js("""if (!document.querySelector('[data-address-visual-mask]')) {
               const style=document.createElement('style'); style.dataset.addressVisualMask='true';
