@@ -51,6 +51,15 @@ suíte Unit do hook (3 testes/8 assertions), além de Stylelint em `auth.css`.
 atributos). Esses checks verificam a árvore local; não substituem discovery nem
 integração no Runtime.
 
+O `validate-aculta420-foundation.php` do checkout servido `/home/aculta` em
+HEAD `2493d7535` falhou na comparação da allowlist Twig. O único item adicional
+é `views/views-view--revista-sessoes--page-revista.html.twig`, consumer real da
+home da Revista; a allowlist da branch já o inclui. O Drush do worktree
+apontou para o próprio root do worktree e não informou `db-name`, então não
+executei o gate candidato contra esse bootstrap. A validação Foundation
+integrada fica **DEFERRED** até executar com a árvore correta e conexão
+`aculta_runtime` confirmada; nenhuma escrita foi feita no banco.
+
 O lint completo do tema também passou em `npm run lint:css` e
 `npm run lint:js`. A auditoria lexical foi regenerada e o TSV agora corresponde
 byte a byte à árvore: são 208 fontes (94 CSS/Sass, 12 JS e 102 Twig/HTML), 99
