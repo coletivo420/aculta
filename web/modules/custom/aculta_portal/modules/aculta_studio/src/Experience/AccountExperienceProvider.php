@@ -105,9 +105,13 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
         '#theme' => 'item_list',
         '#items' => $items,
       ],
+      'suites_heading' => [
+        '#type' => 'html_tag',
+        '#tag' => 'h2',
+        '#value' => 'Experiências',
+      ],
       'suites' => [
         '#theme' => 'item_list',
-        '#title' => new TranslatableMarkup('Experiências'),
         '#items' => $suiteLinks,
         '#attributes' => ['data-portal-ui' => 'account-experiences'],
       ],
