@@ -2021,3 +2021,14 @@ específico da View da Revista. O script publicado `aa6479f6b`, executado via
 Drush contra `aculta_runtime` em `http://default`, passou 352 checks. Foi
 somente leitura e não alterou as mudanças locais de Events. Confirma a fundação
 candidata/SDC, não a folha visual servida nem THEME-MF3 ou OCS-F11.
+
+### 2026-10-31 — barra multidomínio em scroll no mobile
+
+No Runtime servido, o Firefox visível passou 130/130 checks anônimos nas dez
+raízes (320/390 px) e 40/40 checks administrativos em cinco larguras. Não houve
+deslocamento instável; contudo, a Institution Bar autenticada ainda percorre o
+fluxo da Navigation top-bar antes de colar ao topo: em 320 px fica a 115 px após
+scroll 80 e chega a 0 após scroll 240. Esse comportamento não satisfaz a fixação
+imediata solicitada. Não escondi controles da toolbar; a regra final de
+coexistência depende da decisão pendente. Snapshot, hash e capturas estão em
+`mobile-first-audit.md`. THEME-MF3 continua pendente.

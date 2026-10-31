@@ -4235,3 +4235,27 @@ O resultado confirma a fundação candidata e descoberta SDC no contexto Drupal
 ativo, mas não substitui Firefox com o HEAD servido, os testes dos consumers,
 WCAG integral, comparação pareada nem homologação. THEME-MF3 e OCS-F11 seguem
 pendentes.
+
+### THEME-MF2 — Institution Bar móvel: scroll anônimo e administrativo (2026-10-31)
+
+O Firefox ESR visível abriu as dez raízes de domínio do Runtime. Em sessão
+anônima, **130/130 checks** passaram em 320/390 px: a Institution Bar começou
+em `top: 0`, estabilizou sem salto e permaneceu contínua ao longo de 55 amostras
+de scroll para baixo e para cima. Na conta administrativa sintética (UID 257),
+**40/40 checks** passaram em 320/390/1023/1024/1280 px, inclusive a troca do
+breakpoint e o alinhamento com Navigation top-bar em desktop.
+
+A captura administrativa em 320 px também confirma a lacuna de comportamento
+relatada: a Navigation top-bar é relativa e ocupa 136 px; com a barra global
+iniciando a 185 px, ela segue o fluxo quando começa a rolagem (top 115 px a
+scroll 80) e só fica em `top: 0` após a toolbar sair da viewport (scroll 240).
+Não ocorreu salto intermediário nesta sessão. Os checks atuais validam a
+transição sticky natural, não o requisito de fixação imediata depois do primeiro
+scroll. Não alterei a hierarquia nem escondi ações administrativas; a decisão
+sobre manter esses controles acessíveis enquanto a Institution Bar fixa está
+pendente.
+
+Snapshot antes do ULI sintético: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-institution-admin-scroll-20261031.sql`, 67.182.031 bytes, modo 0600, SHA-256 `104c6dc36046099a6258edc9574218582f79a152cb03e9885cbcc787d378f991`. O teste não submeteu conteúdo nem alterou configuração; a contagem foi 624 tabelas antes/depois. Resultados/capturas estão em
+`/home/piradopirata/aculta-suite-out/institution-bar-anonymous-baseline-20261031/`
+e `/home/piradopirata/aculta-suite-out/institution-bar-admin-baseline-20261031/`.
+A folha/JS candidata não foi injetada; este resultado não aprova THEME-MF3.
