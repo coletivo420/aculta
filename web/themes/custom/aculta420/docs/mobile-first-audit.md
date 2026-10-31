@@ -2389,3 +2389,17 @@ completa passou **14/14 checks** nos viewports 320/390/768/1440px mais o cenári
 de zoom. Isso confirma esse rail e seu teclado, não os carrosséis/listas de
 outros purposes. Evidência em
 `/home/piradopirata/aculta-suite-out/courses-rail-zoom-resume-20261031/`.
+
+### THEME-MF3 — Revista: capa e publicação a 200%/400% (2026-10-31)
+
+`revista-browser-zoom.py` foi ampliado para seguir o primeiro link público da
+home e medir também o corpo da publicação, além da capa. Firefox ESR visível
+passou **6/6 checks** entre home/publicação a 100%, 200% e 400%; a publicação
+teve H1 único, capa carregada, shell único e nenhum overflow do documento ou
+corpo. A 400%, viewport e documento permaneceram em 320px. As capturas de 400%
+foram inspecionadas. O artigo era conteúdo sintético autorizado no Runtime; o
+teste só fez GET e não submeteu comentários ou formulários. Evidência em
+`/home/piradopirata/aculta-suite-out/revista-article-zoom-resume-20261031/`.
+Isso verifica o reflow desta publicação, sem cobrir outras páginas editoriais,
+interação com comentários, comparação pareada de fidelidade ou WCAG 2.2 AA;
+THEME-MF3 e OCS-F11 continuam pendentes.

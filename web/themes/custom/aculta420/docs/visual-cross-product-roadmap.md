@@ -1326,6 +1326,12 @@ composição, sem copiar CSS, Twig ou ativos. Não se declara paridade da capa c
 uma homepage upstream não equivalente. Estado, limites e evidências em
 [`mobile-first-audit.md`](mobile-first-audit.md).
 
+O reteste responsivo de 2026-10-31 também abriu uma publicação sintética da
+home em Firefox ESR e confirmou reflow sem overflow a 100%, 200% e 400% (320px
+CSS no último caso), com capa carregada e corpo contido. O roteiro é somente
+leitura; esse resultado cobre uma publicação e não representa homologação de
+todas as páginas da Revista nem paridade global com OpenCulturas.
+
 ### THEME-MF2 — scroll da Institution Bar com administrador (2026-10-30)
 
 Firefox ESR visível passou 38/38 verificações na home MAIN do Runtime, autenticado

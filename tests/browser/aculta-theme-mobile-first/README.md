@@ -656,10 +656,13 @@ WCAG 2.2 AA.
 ## Zoom real da capa da Revista
 
 `revista-browser-zoom.py` abre a home pública do purpose Magazine em Firefox ESR
-visível e usa o atalho de sistema Ctrl+plus (`xdotool`) do navegador para alcançar 200% e 400%
-(ou registrar `DEFERRED` se o atalho/escala não chegar ao alvo). Em cada estado
-registra viewport CSS efetivo, DPR, overflow, H1, capas e shell; screenshots e
-`summary.json` ficam em `$SUITE_OUT`. O script não submete formulários nem altera
+visível e usa Ctrl+plus/Ctrl+0 via `xdotool` para conferir 100%, 200% e 400%.
+Além da capa, segue o primeiro link público de publicação e testa a página
+completa: artigo, corpo, capa carregada, H1, shell, overflow e conteúdo que
+ultrapasse o próprio corpo. Não segue links para outro host e registra
+`DEFERRED` se não houver publicação. Salva capturas da capa e do artigo em 200%
+e 400%, além das medições sem texto editorial em `summary.json`, tudo em
+`$SUITE_OUT`. O script é somente leitura: não submete formulários nem altera
 conteúdo/configuração. Requer host `toca`, checkout de desenvolvimento,
 `aculta_runtime`, `DISPLAY=:0`, `xdotool` e geckodriver.
 
@@ -674,7 +677,10 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/revista-browser-zo
 `REVISTA_ZOOM_DEVICE_WIDTH` define a largura inicial em pixels de dispositivo
 (padrão 1280). O teste mede o zoom do navegador, enquanto a matriz de viewports
 mede larguras CSS; um não substitui o outro. `DEFERRED` exige conferir zoom
-manual no Firefox ESR.
+manual no Firefox ESR. Essa rodada mede uma publicação pública real por vez;
+comentários são apenas detectados no DOM, sem participação ou moderação. Ela não
+substitui a matriz de larguras, inspeção editorial, teclado integral, leitores
+de tela ou homologação WCAG 2.2 AA.
 
 ## Shell dos dez purposes sem JavaScript
 
