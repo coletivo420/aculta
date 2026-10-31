@@ -4661,3 +4661,19 @@ Snapshot pré-ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta
 `cae1dcf5a9f446cd3f1b08131c997bcd7ca061cc3cc07e4bb46b19b4996abe7e`.
 Isto verifica reflow e superfícies do tema escuro neste fluxo, não contraste
 WCAG integral, interações AJAX, ACL ou teclado; os gates globais seguem abertos.
+
+### OCS-F10 / THEME-MF2 — Culturas escuro com JavaScript habilitado (2026-10-31)
+
+Firefox ESR visível capturou `/culturas` e os dois formulários reais de Eventos
+em nove larguras, com JavaScript ativo e modo escuro selecionado somente no
+documento da sessão: 27 capturas, `CAPTURED`, zero falhas e nenhum overflow.
+Institution Bar e Domain Header permaneceram presentes; os formulários
+mantiveram 16 campos observáveis e ações com altura mínima de 44px. Captura
+escura de 320px revisada. Nenhum formulário foi submetido e nenhuma preferência
+foi salva. Evidência:
+`/home/piradopirata/aculta-suite-out/culturas-js-dark-integrated-f1f50a7ea-20261031/`.
+Snapshot pré-ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-js-dark-20261031.sql`,
+54.642.017 bytes, modo 0600, SHA-256
+`da201177dda07fd685594a9cd35c0d3afc1f8ca3cecbdc796c61e1f9ac8b9217`.
+A amostra valida modo escuro e reflow, não contraste WCAG integral, teclado,
+zoom, ACL nem OCS-F11/THEME-MF3.

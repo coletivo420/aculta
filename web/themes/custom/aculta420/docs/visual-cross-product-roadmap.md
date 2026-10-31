@@ -2197,3 +2197,11 @@ presentes com campos e ações de pelo menos 44px. `data-bs-theme` foi alterado
 somente no documento da sessão WebDriver. Evidência e snapshot em
 `mobile-first-audit.md`. Não substitui contraste WCAG completa, ACL, teclado ou
 AJAX, nem encerra THEME-MF3/OCS-F11.
+
+### OCS-F10 / THEME-MF2 — Culturas escuro com scripts ativos (2026-10-31)
+
+Hub e formulários reais passaram por 27 capturas autenticadas no Runtime, em
+nove larguras, com JavaScript ativo e modo escuro local à sessão: zero falhas,
+sem overflow, shell presente e campos/ações dos forms com 44px ou mais. Captura
+de 320px revisada. Evidência e snapshot em `mobile-first-audit.md`. Isso não
+encerra contraste WCAG, ACL, teclado/zoom ou os gates F11/MF3.
