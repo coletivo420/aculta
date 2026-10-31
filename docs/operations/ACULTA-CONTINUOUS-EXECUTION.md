@@ -2746,3 +2746,6 @@ ou preferência persistente alterados.
   violações; três resultados `incomplete` por modo permanecem para revisão
   manual. Evidência em
   `/home/piradopirata/aculta-suite-out/revista-marley-create-axe-fixed-20261031200255/`.
+- O lint Stylelint do tema foi repetido após os ajustes do formulário:
+  `web/themes/custom/aculta420/node_modules/.bin/stylelint` sobre todos os CSS
+  do tema passou sem erros.
