@@ -2545,3 +2545,11 @@ ou preferência persistente alterados.
   administrativas MAIN passou (154 rotas). Esses gates fortalecem MF1/MF2 e a
   higiene de rotas, mas não substituem MF3/F11, que ainda exigem cobertura
   visual global e os hosts Green Stash/Eventos.
+- A matriz genérica `tests/browser/aculta-smoke/page-matrix.py` foi executada
+  em Firefox ESR headless contra cinco superfícies acessíveis do Runtime
+  (`aculta`, Conta, Ganjalab, Revista e WE SATIVA), em claro/escuro e 320/390/
+  768/1440px: 40/40 observações, zero overflow horizontal e nenhum status
+  inesperado. Evidência fora do Git em
+  `/home/piradopirata/aculta-suite-out/global-page-matrix-02f5-run2/`.
+  Esta matriz confirma reflow/reachability, mas não substitui ACL, submit,
+  zoom real ou a homologação dos hosts ainda indisponíveis.
