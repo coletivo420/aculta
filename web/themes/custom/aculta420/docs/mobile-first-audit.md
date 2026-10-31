@@ -9,6 +9,33 @@ escrita no Runtime. O incidente posterior, incluindo o snapshot e a correção
 direcionada de `message.settings`, está registrado em
 `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
 
+### THEME-MF2 — shell sem JavaScript e navegação por teclado (2026-11-01)
+
+No Runtime de desenvolvimento em HEAD `2493d7535`, Firefox ESR visível, sessão
+anônima e JavaScript desativado, a matriz reutilizável passou **210/210 checks**
+nas dez raízes/purposes (`main`, `account`, `support`, `magazine`, `wiki`,
+`shop`, `courses`, `forum`, `links`, `eventos`) e sete larguras (320/390/599/
+600/768/1024/1440px). Cada caso verificou headers globais únicos, ausência de
+overflow horizontal e visibilidade da navegação ou busca da Wiki. Evidência em
+`/home/piradopirata/aculta-suite-out/purpose-shell-nojs-resume-20261101/`.
+
+A matriz de teclado cobriu os mesmos dez purposes em 320/390/768/1280px, com
+oito passos em cada sentido por largura. **663 verificações passaram, 10 foram
+SKIP** por o foco ser delegado ao desafio externo Turnstile e uma falhou: a
+página Conta `/entrar` mede 328px de documento em viewport de 320px. Todos os
+demais casos de foco visível e overflow passaram. Relatório e capturas em
+`/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-resume-20261101/`.
+
+Na repetição focal da Conta com o CSS `auth.css` e o marcador neutro de desafio
+injetados apenas na sessão do Firefox, passaram **72 verificações e 4 foram
+SKIP** (foco delegado ao iframe/integração externa); o documento ficou em
+320px/320px na largura crítica de 320px. Evidência em
+`/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-account-candidate-20261101/`.
+Essa injeção demonstra o efeito do candidato sem modificar o Runtime; ela não
+valida a integração do hook Portal servido, o CAPTCHA externo por dentro, nem
+substitui a repetição após integração. O overflow servido em Conta continua
+aberto e THEME-MF3 permanece pendente.
+
 ### THEME-MF2 — barra multidomínio e scroll móvel (2026-10-31)
 
 Firefox ESR visível no Runtime `2493d7535` passou 42/42 checks anônimos em
