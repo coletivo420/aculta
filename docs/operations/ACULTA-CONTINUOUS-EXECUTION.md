@@ -2782,3 +2782,6 @@ ou preferência persistente alterados.
 - A matriz autenticada da entrada WE SATIVA em `wiki420` passou 8/8 estados em
   320/390/768/1280px, claro/escuro, HTTP 200 e sem overflow. Evidência em
   `/home/piradopirata/aculta-suite-out/wesativa-auth-final-20261031200935/`.
+- A auditoria axe da entrada WE SATIVA repetiu 8/8 viewports responsivos, com
+  zero violações e um resultado `incomplete` por modo para revisão manual.
+  Evidência em `/home/piradopirata/aculta-suite-out/wesativa-axe-final-20261031200958/`.
