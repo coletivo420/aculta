@@ -25,6 +25,7 @@ TABS = int(os.environ.get("PURPOSE_KEYBOARD_TABS", "8"))
 DOMAIN_ENV = os.environ.get("PURPOSE_KEYBOARD_DOMAIN_ENV", "test")
 SELECTED_PURPOSES = {value.strip() for value in os.environ.get("PURPOSE_KEYBOARD_PURPOSES", "").split(",") if value.strip()}
 AUTH_CANDIDATE = os.environ.get("PURPOSE_KEYBOARD_AUTH_CANDIDATE") == "1"
+DIAGNOSTICS = os.environ.get("PURPOSE_KEYBOARD_DIAGNOSTICS") == "1"
 AUTH_CSS = CODE_ROOT / "web/themes/custom/aculta420/css/components/auth.css"
 DOMAIN_IDS = {
     "main": "aculta_org",
@@ -130,8 +131,34 @@ return JSON.stringify({
   indicatorBoxShadow:ringStyle.boxShadow,
   left:Math.round(r.left), right:Math.round(r.right), top:Math.round(r.top), bottom:Math.round(r.bottom),
   width:Math.round(r.width), height:Math.round(r.height), viewportWidth:innerWidth,
-  viewportHeight:innerHeight, documentWidth:document.documentElement.scrollWidth, scrollY
-});"""))
+  viewportHeight:innerHeight, documentWidth:document.documentElement.scrollWidth,
+  documentClientWidth:document.documentElement.clientWidth,
+  bodyScrollWidth:document.body.scrollWidth, visualViewportWidth:visualViewport?.width,
+  htmlOverflowX:getComputedStyle(document.documentElement).overflowX,
+  bodyOverflowX:getComputedStyle(document.body).overflowX,
+  scrollY,
+  scrollingElements:arguments[0]&&document.documentElement.scrollWidth>innerWidth
+    ?Array.from(document.querySelectorAll('body *')).map(node=>{
+      const r=node.getBoundingClientRect(),s=getComputedStyle(node);
+      return {tag:node.tagName,id:node.id,className:typeof node.className==='string'?node.className:'',
+        left:Math.round(r.left),right:Math.round(r.right),width:Math.round(r.width),
+        scrollWidth:node.scrollWidth,clientWidth:node.clientWidth,overflowX:s.overflowX,
+        position:s.position,insideHiddenOffcanvas:!!node.closest('.offcanvas:not(.show)')};
+    }).filter(x=>x.scrollWidth>x.clientWidth+1).sort((a,b)=>b.scrollWidth-a.scrollWidth).slice(0,20)
+    :[],
+  overflowElements:arguments[0]&&document.documentElement.scrollWidth>innerWidth
+    ?Array.from(document.querySelectorAll('body *')).map(node=>{
+      const r=node.getBoundingClientRect(),s=getComputedStyle(node);
+      return {tag:node.tagName,id:node.id,className:typeof node.className==='string'?node.className:'',
+        left:Math.round(r.left),right:Math.round(r.right),width:Math.round(r.width),
+        scrollWidth:node.scrollWidth,clientWidth:node.clientWidth,overflowX:s.overflowX,
+        position:s.position,display:s.display,
+        insideHiddenOffcanvas:!!node.closest('.offcanvas:not(.show)')};
+    }).filter(x=>x.width>0&&(x.left < -1||x.right > innerWidth+1)
+      &&!x.insideHiddenOffcanvas)
+      .sort((a,b)=>b.right-a.right).slice(0,20)
+    :[]
+});""", [DIAGNOSTICS]))
 
 
 def apply_auth_candidate(driver, purpose):
@@ -177,7 +204,15 @@ def main():
                 no_horizontal_overflow = page_state["documentWidth"] <= width
                 record(f"{purpose} {width}px: sem overflow horizontal",
                        no_horizontal_overflow,
-                       {"documentWidth": page_state["documentWidth"], "viewportWidth": width})
+                       {"documentWidth": page_state["documentWidth"],
+                        "documentClientWidth": page_state["documentClientWidth"],
+                        "bodyScrollWidth": page_state["bodyScrollWidth"],
+                        "visualViewportWidth": page_state["visualViewportWidth"],
+                        "htmlOverflowX": page_state["htmlOverflowX"],
+                        "bodyOverflowX": page_state["bodyOverflowX"],
+                        "scrollingElements": page_state["scrollingElements"],
+                        "viewportWidth": width,
+                        "overflowElements": page_state["overflowElements"] if not no_horizontal_overflow else []})
                 for reverse in (False, True):
                     direction = "shift-tab" if reverse else "tab"
                     if reverse:

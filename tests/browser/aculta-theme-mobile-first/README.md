@@ -926,6 +926,16 @@ marcador visual neutro apenas na sessão Firefox quando a Conta redireciona para
 `/entrar`. Serve para comparar a geometria candidata e a navegação por teclado;
 não instala o hook no Runtime nem altera a página servida.
 
+`PURPOSE_KEYBOARD_DIAGNOSTICS=1` acrescenta aos registros de overflow as
+larguras de `html`/`body` e os elementos cujas caixas ou áreas de rolagem
+ultrapassam seus contêineres. O modo fica desligado por padrão para manter
+matrizes sem falha enxutas. Reteste focal em 320px: o baseline identificou o
+Turnstile de 300px dentro de uma coluna de 268px e documentou 328px; CSS e token
+candidatos passaram 5/5, ampliando o formulário para 300px e mantendo o documento
+em 320px. Relatórios em
+`/home/piradopirata/aculta-suite-out/account-overflow-baseline-diagnostic-320-20261031/`
+e `/home/piradopirata/aculta-suite-out/account-overflow-candidate-diagnostic-320-final-20261031/`.
+
 ## Título principal nas dez raízes públicas
 
 `purpose-headings.py` confere um H1 visível dentro de `main#main-content`, o

@@ -3402,6 +3402,16 @@ viewport também a 320px. Evidência:
 `/home/piradopirata/aculta-suite-out/account-keyboard-candidate-followup-20261031/`.
 O resultado exercita CSS/markup candidato, não o hook instalado. O Runtime segue
 com o overflow e THEME-MF3 permanece pendente.
+
+Reprodução diagnóstica focal em 2026-10-31: o iframe Turnstile requer 300px na
+coluna de 268px, elevando `body.scrollWidth` a 328px. Com `challenge-frame` e
+`auth.css` candidatos, o formulário mede 300px e o documento permanece em 320px;
+Firefox passou 5/5 checks focais. O hook de apresentação já está na branch, mas
+não no Runtime `2493d7535`; nenhum fallback de CSS ou mudança funcional foi
+adicionado. O modo diagnóstico reutilizável está documentado no README do
+harness. Relatórios em
+`/home/piradopirata/aculta-suite-out/account-overflow-baseline-diagnostic-320-20261031/`
+e `/home/piradopirata/aculta-suite-out/account-overflow-candidate-diagnostic-320-final-20261031/`.
 ### THEME-MF3 — H1 e shell nas dez raízes públicas (2026-10-31)
 
 `purpose-headings.py` passou **119/120** verificações em Firefox ESR visível,

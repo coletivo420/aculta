@@ -1758,6 +1758,12 @@ registros; a única falha foi o overflow de `/entrar` a 320px. A injeção candi
 em Conta passou 72/72, com quatro SKIPs de sequência, nas larguras 320/390/768/
 1280px e sem overflow. O Runtime ainda não serve o candidato; THEME-MF3 segue
 pendente. Detalhes e limitações em `mobile-first-audit.md`.
+
+Firefox reproduziu o baseline em 320px e identificou o Turnstile de 300px
+excedendo a coluna de 268px; CSS+token candidatos passaram 5/5 checks focais e
+mantiveram o documento em 320px. A aplicação do hook no Runtime ainda está
+pendente; o baseline segue em 328px. Detalhes e relatórios em
+`mobile-first-audit.md`.
 ### THEME-MF3 — hierarquia de títulos nas dez raízes (2026-10-31)
 
 Firefox ESR passou 119/120 checks de H1 e shell nas dez raízes, em seis larguras.
