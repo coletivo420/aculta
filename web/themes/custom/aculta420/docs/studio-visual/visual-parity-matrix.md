@@ -55,10 +55,13 @@ de widgets. A captura Firefox candidata encontrou o formulário real, 23
 controles do editor, duas ações Form API com alvos ≥44×44px e zero overflow
 documental em 320/390/768/1440px. O baseline marca heading e abas do workspace
 como `SKIP` nesta rota porque ela usa o formulário Magazine nativo fora do
-wrapper Studio; os checks próprios de formulário passaram nas quatro larguras.
-Nenhum formulário foi submetido. A CSS candidata ainda não está servida no
-Runtime; OCS-F5/F11 e THEME-MF3 continuam pendentes. Evidência em
-`/home/piradopirata/aculta-suite-out/marley-editor-form-final-20261031/`.
+wrapper Studio; os checks próprios de formulário passaram em claro e escuro nas
+quatro larguras. As duas ações mediram 44px de altura e 248–1152px de largura;
+os 23 controles do editor preservaram a apresentação própria. Nenhum formulário
+foi submetido. A CSS candidata ainda não está servida no Runtime; OCS-F5/F11 e
+THEME-MF3 continuam pendentes. Evidências em
+`/home/piradopirata/aculta-suite-out/marley-editor-form-final-20261031/` e
+`/home/piradopirata/aculta-suite-out/marley-editor-form-dark-20261031/`.
 
 ### Revalidação OCS-F0 — rotas canônicas, Firefox ESR visível (2026-10-30)
 

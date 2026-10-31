@@ -248,8 +248,9 @@ o wrapper de workspace nem suas cinco abas. Nesses casos, as verificações de
 heading e navegação recebem `SKIP`, e o script mede o formulário separadamente:
 alvos de `.form-actions`, botões da toolbar CKEditor e overflow. O cenário é
 somente GET; não envia a publicação. Em 2026-10-31, a folha candidata passou em
-320/390/768/1440px com duas ações de 44px e 23 controles de editor. Evidência em
-`/home/piradopirata/aculta-suite-out/marley-editor-form-final-20261031/`.
+320/390/768/1440px em claro e escuro, com duas ações de 44px e 23 controles de
+editor. Evidências em `/home/piradopirata/aculta-suite-out/marley-editor-form-final-20261031/`
+e `/home/piradopirata/aculta-suite-out/marley-editor-form-dark-20261031/`.
 
 Para captura pública sem sessão, use `OCS_STUDIO_ANONYMOUS=1` junto com uma URL
 pública explícita em `STUDIO_ROUTES`. O modo mantém a checagem do Runtime, não

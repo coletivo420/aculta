@@ -436,9 +436,10 @@ fica restrita aos controles em `.form-actions`. Os botões do CKEditor e de
 widgets mantêm sua própria apresentação; não se cria SDC nem toolbar paralela.
 A captura candidata Firefox do GET `/marley/revista/nova` mediu 23 controles de
 toolbar, duas ações Form API com alvos ≥44px e ausência de overflow em
-320/390/768/1440px. A CSS é injetada apenas no navegador de teste; a folha
-integrada no Runtime ainda precisa ser homologada. Evidência em
-`/home/piradopirata/aculta-suite-out/marley-editor-form-final-20261031/`.
+320/390/768/1440px, em claro e escuro. A CSS é injetada apenas no navegador de
+teste; a folha integrada no Runtime ainda precisa ser homologada. Evidências em
+`/home/piradopirata/aculta-suite-out/marley-editor-form-final-20261031/` e
+`/home/piradopirata/aculta-suite-out/marley-editor-form-dark-20261031/`.
 
 ### OCS-F8 — área comercial integrada
 
