@@ -4513,3 +4513,13 @@ sem overflow. É somente uma simulação CSS no navegador; `field_media_image` �
 obrigatório no bundle e não se criou conteúdo que contornasse essa validação.
 Evidência: `/home/piradopirata/aculta-suite-out/magazine-cover-fallback-candidate-8d7f1d576-20261031/`.
 
+### THEME-MF3 — heading principal nas dez raízes públicas (2026-10-31)
+
+Firefox ESR visível, em GET anônimo e sem injeções, passou **180/180 checks**
+nas raízes MAIN, Conta, Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e
+Eventos em 320/360/390/599/600/768/1024/1280/1440 px. Cada rota teve `<main
+id="main-content">`, exatamente um H1 visível e nenhum overflow do documento.
+Evidência: `/home/piradopirata/aculta-suite-out/purpose-headings-f57c6c93d-20261031/`.
+É validação de hierarquia da raiz; não avalia páginas internas, semântica de
+todos os títulos, leitor de tela ou WCAG completa, portanto não aprova MF3/F11.
+

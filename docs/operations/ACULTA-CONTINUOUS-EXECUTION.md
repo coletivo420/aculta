@@ -2182,3 +2182,9 @@ ou preferência persistente alterados.
 - Após publicar o checkpoint documental `1151b3352`, o checkout servido ficou destacado nesse HEAD. Em `toca`/`aculta_runtime`, `updatedb:status` não encontrou updates, `config:status` não mostrou diferenças, `drush cr` passou e Main/Loja nos hosts de teste responderam HTTP 200.
 - Firefox ESR visível com JavaScript desativado passou **270/270 checks** nas dez raízes públicas e em 320/360/390/599/600/768/1024/1280/1440 px. Foram verificados os headers únicos, overflow do documento e fallback visível da navegação ou busca Wiki.
 - Relatório e log: `/home/piradopirata/aculta-suite-out/purpose-shell-nojs-1151b3352-20261031/`. É cobertura do shell público; não valida submissão dos formulários, cada widget interativo ou acessibilidade integral. THEME-MF3/OCS-F11 continuam pendentes.
+
+## 2026-10-31 — H1 principal e `<main>` nos dez purposes
+
+- No Runtime `f57c6c93d`, Firefox ESR visível e anônimo passou **180/180 checks** nas dez raízes (MAIN, Conta, Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links, Eventos) em 320/360/390/599/600/768/1024/1280/1440 px.
+- Cada rota tinha um `<main id="main-content">`, exatamente um H1 visível dentro do conteúdo principal e nenhum overflow horizontal do documento. Nenhum link foi ativado e nenhum formulário foi enviado.
+- Evidência: `/home/piradopirata/aculta-suite-out/purpose-headings-f57c6c93d-20261031/`. A verificação cobre as raízes públicas, não todas as páginas internas nem WCAG/leitor de tela; não aprova THEME-MF3/OCS-F11.
