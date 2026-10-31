@@ -13,12 +13,25 @@
 {% set card_footer %}
   <a class="aculta-revista-teaser__cta" href="{{ url }}" rel="bookmark">{{ 'Leia a publicação'|t }}<span class="visually-hidden"> {{ label }}</span></a>
 {% endset %}
+{% set card_image = content.field_media_image %}
+{% if node.field_media_image.isEmpty %}
+  {# OpenCulturas renders a cover surface even when editorial media is absent.
+     Keep this fallback decorative and asset-free; the card's image slot and
+     real Drupal media pipeline remain unchanged. #}
+  {% set card_image = {
+    '#type': 'container',
+    '#attributes': {
+      'class': ['aculta-revista-teaser__cover-fallback'],
+      'aria-hidden': 'true'
+    }
+  } %}
+{% endif %}
 <article{{ attributes.addClass('aculta-revista-teaser') }}>
   {{ title_prefix }}
   {{ title_suffix }}
   {{ include('aculta420:card', {
     variant: 'default',
-    image: node.field_media_image.isEmpty ? null : content.field_media_image,
+    image: card_image,
     header: node.field_editorial_category.isEmpty ? null : content.field_editorial_category,
     content: card_content,
     footer: card_footer

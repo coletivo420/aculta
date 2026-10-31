@@ -2203,6 +2203,30 @@ O Runtime continua servindo a baseline; revalidação após publicação/rebuild
 teclado completo, leitores de tela e WCAG 2.2 AA permanecem pendentes. Isto não
 aprova THEME-MF3.
 
+### THEME-MF2 — fallback decorativo de capa sem mídia na Revista (2026-10-30)
+
+O tema upstream 3.1.5 contém `%teaser-image-fallback` em
+`openculturas/profile/themes/opcult/templates/node/teasers.scss` e produz
+`teaser--top.no-image`; os arquivos concretos e a versão estão registrados em
+`studio-visual/upstream-inventory.md` (tarball oficial SHA-256
+`2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`). A Revista
+agora envia um container decorativo no slot `image` de `patterns/card` quando
+`field_media_image` está vazio. A região mantém proporção 16:9 como base e ocupa
+a coluna inteira da capa no desktop, usando gradientes e tokens do ACULTA; não
+foi copiado SVG, imagem, ícone, CSS nem Twig upstream.
+
+Firefox ESR visível verificou o consumer real anônimo em 320/360/390/599/600/768/
+1024/1280/1440px, com CSS candidata injetada e o primeiro media wrapper
+substituído por markup sintético equivalente ao container esperado. Passaram
+19/19 checks: capa existente, variante sem imagem, coluna responsiva, fundo
+calculado em claro/escuro, shell único e ausência de overflow. Capturas de 320 e
+1440px estão em
+`/home/piradopirata/aculta-suite-out/revista-cover-fallback-retest-20261030/`.
+O harness não executa o Twig candidato; a folha e o template também não estão
+implantados no Runtime observado. A integração do markup pelo Drupal, leitores
+de tela, zoom, teclado completo, WCAG 2.2 AA e regressões globais permanecem
+pendentes; THEME-MF3 não está aprovado.
+
 ### THEME-MF3 — reteste global de shell, temas e fallback sem JavaScript (2026-10-31)
 
 Firefox ESR visível repetiu o shell público nas dez raízes definidas em

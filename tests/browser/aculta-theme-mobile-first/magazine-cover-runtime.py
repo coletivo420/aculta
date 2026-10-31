@@ -193,6 +193,51 @@ ctaTargets:[...document.querySelectorAll('.aculta-revista-teaser__cta')].map(el=
                 and all(target["height"] >= 44 for target in metrics["titleTargets"] + metrics["ctaTargets"])
             )
             record(f"capa da Revista em {width}px", passed, metrics)
+
+            if os.environ.get("MAGAZINE_COVER_FALLBACK_CANDIDATE") == "1":
+                fallback = driver.js("""
+const view=document.querySelector('.page-view-revista-sessoes .view-display-id-page_revista');
+const first=view?.querySelector('.views-row:first-child .aculta-card');
+const original=first?.querySelector('.card-img-top');
+if (!first || !original) return {available:false};
+const placeholder=document.createElement('div');
+placeholder.className='card-img-top aculta-revista-teaser__cover-fallback';
+placeholder.setAttribute('aria-hidden','true');
+original.replaceWith(placeholder);
+window.__magazineOriginalCover=original;
+window.__magazineFallbackCover=placeholder;
+document.documentElement.setAttribute('data-bs-theme','light');
+const light=getComputedStyle(placeholder), box=placeholder.getBoundingClientRect();
+const lightMetrics={width:box.width,height:box.height,backgroundColor:light.backgroundColor,
+  backgroundImage:light.backgroundImage,scrollWidth:document.documentElement.scrollWidth};
+document.documentElement.setAttribute('data-bs-theme','dark');
+const dark=getComputedStyle(placeholder), darkColor=dark.backgroundColor, darkImage=dark.backgroundImage;
+const result={available:true,viewportWidth:innerWidth,...lightMetrics,darkBackgroundColor:darkColor,
+  darkBackgroundImage:darkImage,scrollWidth:document.documentElement.scrollWidth,
+  columns:getComputedStyle(view.querySelector('.view-content')).gridTemplateColumns.split(' ').filter(Boolean).length};
+document.documentElement.setAttribute('data-bs-theme','light');
+return result;
+""")
+                fallback_passed = bool(
+                    fallback.get("available")
+                    and fallback.get("viewportWidth") == width
+                    and fallback.get("width") > 0 and fallback.get("height") > 0
+                    and fallback.get("backgroundImage") != "none"
+                    and fallback.get("darkBackgroundImage") != "none"
+                    and fallback.get("scrollWidth") <= width
+                    and fallback.get("columns") == expected_columns
+                )
+                record(f"fallback decorativo sem imagem em {width}px", fallback_passed, fallback)
+                if width in (320, 1440):
+                    screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                    (OUT / f"magazine-cover-fallback-{width}.png").write_bytes(base64.b64decode(screenshot))
+                driver.js("""
+if (window.__magazineFallbackCover?.isConnected && window.__magazineOriginalCover) {
+  window.__magazineFallbackCover.replaceWith(window.__magazineOriginalCover);
+}
+window.__magazineFallbackCover=null;window.__magazineOriginalCover=null;
+document.documentElement.setAttribute('data-bs-theme','light');return true;
+""")
     finally:
         if driver:
             driver.close()

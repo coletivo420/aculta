@@ -28,6 +28,21 @@
   object-fit: cover;
 }
 
+/* Asset-free editorial cover when a publication has no image. OpenCulturas
+   supplies a visual fallback in this state; keep the same 16:9 media region
+   using ACULTA semantic tokens rather than copying upstream artwork. */
+.aculta-revista-teaser__cover-fallback {
+  display: block;
+  width: 100%;
+  min-height: 11rem;
+  aspect-ratio: 16 / 9;
+  background-color: var(--aculta-surface-muted);
+  background-image:
+    radial-gradient(circle at 76% 34%, transparent 0 4rem, var(--aculta-border-strong) 4.06rem 4.2rem, transparent 4.27rem),
+    linear-gradient(135deg, transparent 48%, var(--aculta-interactive-bg) 48.2% 70%, transparent 70.2%),
+    linear-gradient(135deg, var(--aculta-surface-muted), var(--aculta-surface-page));
+}
+
 .aculta-revista-teaser__title {
   margin: 0 0 0.5rem;
   font: 500 1.15rem/1.3 var(--aculta-font-display);
@@ -142,6 +157,12 @@
     height: 100%;
     aspect-ratio: auto;
     object-fit: cover;
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .aculta-revista-teaser__cover-fallback {
+    height: 100%;
+    min-height: 0;
+    aspect-ratio: auto;
   }
 
   .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .card-header {

@@ -1369,6 +1369,14 @@ servido em Firefox ESR, nove larguras, sem overflow e sem alterar markup/SDC.
 Deploy/rebuild, teclado integral e WCAG permanecem pendentes. Evidência em
 `mobile-first-audit.md`.
 
+O slot opcional de mídia do mesmo cartão também recebe fallback decorativo quando
+a publicação não possui `field_media_image`. A região mantém proporção 16:9 no
+mobile e ocupa a coluna da capa em desktop, usando apenas tokens semânticos e
+CSS; o markup conserva o slot `image` e marca a decoração `aria-hidden`. Firefox
+ESR passou 19/19 verificações no consumer Runtime com CSS candidata e markup de
+fallback injetados na sessão, em 320–1440px e nos modos claro/escuro. Isso não
+executa o Twig candidato nem valida a folha instalada; ver `mobile-first-audit.md`.
+
 ### THEME-MF3 — reteste global de shell (2026-10-31)
 
 Dez purposes passaram 210/210 verificações sem JavaScript, com navegação/fallback

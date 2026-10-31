@@ -576,6 +576,13 @@ não houve mudança de contrato. O consumer foi capturado no Firefox ESR visíve
 no Runtime em 320–1440px; a evidência e os limites estão em
 `mobile-first-audit.md`.
 
+Se `field_media_image` estiver vazio, o template envia um container decorativo
+no slot `image` do mesmo `patterns/card`; a CSS cria uma região 16:9 com tokens
+semânticos e gradientes, sem copiar o SVG ou os estilos upstream. O markup
+continua sem texto, ação, novo SDC ou ativo externo. A matriz visual verifica a
+variante sem imagem em markup sintético; renderização do Twig candidato no
+Runtime segue pendente até o CSS/template serem servidos pela cabeça da PR.
+
 ### THEME-MF2 — organizações de Eventos e conteúdo relacionado
 
 A apresentação dos formulários de organização, cartões de organização e bloco
