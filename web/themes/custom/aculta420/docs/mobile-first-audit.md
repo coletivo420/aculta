@@ -4586,3 +4586,13 @@ pelo menos 44 px. Evidência:
 O harness injeta o CSS local do SDC sobre a página real; portanto é validação da
 folha candidata e do markup/conteúdo servido, não prova isolada da CSS integrada.
 Não houve escrita de conteúdo ou submissão de filtros.
+
+### THEME-MF2 — catálogo de Eventos com conteúdo real servido (2026-10-31)
+
+Firefox ESR visível mediu `/eventos` no host de teste, com três cartões já
+publicados, em 320/360/390/575/576/600/768/1024/1280/1440px: **30/30 checks**
+para ausência de overflow, borda pertencente ao SDC e alvos de link de título
+com 44px. Nenhum filtro foi enviado ou conteúdo modificado. O script injeta a
+folha local do SDC sobre o markup real para tornar a comparação repetível; não
+é prova isolada do CSS já servido. Evidência:
+`/home/piradopirata/aculta-suite-out/events-catalogue-candidate-81b6ed4ad-20261031/`.

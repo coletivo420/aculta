@@ -2151,3 +2151,12 @@ apenas no SDC e alvos de link de 44 px. Evidência em
 `/home/piradopirata/aculta-suite-out/events-catalogue-candidate-81b6ed4ad-20261031/`.
 O harness injeta CSS local sobre o markup real, sem editar conteúdo; esta rodada
 não comprova por si só a folha integrada e não fecha THEME-MF3.
+
+### THEME-MF2 — catálogo de Eventos no Runtime (2026-10-31)
+
+A página real `/eventos` e três cartões existentes passaram **30/30 checks** no
+Firefox ESR visível em dez larguras: sem overflow, moldura exclusiva do SDC e
+links de título com alvo de 44px. O harness injeta o CSS local sobre a página
+servida; nenhum filtro ou conteúdo foi submetido. Evidência em
+`/home/piradopirata/aculta-suite-out/events-catalogue-candidate-81b6ed4ad-20261031/`.
+Esta regressão não prova CSS integrada e não conclui THEME-MF3.
