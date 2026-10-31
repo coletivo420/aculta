@@ -2044,6 +2044,17 @@ revistas. CSS/JS foram injetados no navegador; falta repetir com a integração
 servida após publicação. O teste e a sequência de snapshots ULI estão em
 `mobile-first-audit.md`; THEME-MF3 e OCS-F11 seguem pendentes.
 
+### 2026-10-31 — top-bar administrativa validada sem overrides no Runtime
+
+Após o commit `f378d2540` e rebuild do cache, Firefox ESR visível autenticado
+passou **47/47 checks** em 320/390/1023/1024/1280px sem CSS ou JS injetados.
+Runtime `aculta_runtime`, 611 tabelas; `updatedb:status` sem atualizações,
+`config:status` sem diferenças, Main e Loja HTTP 200. A top-bar real fica
+desativada até 1023px, retorna desde 1024px e a Institution Bar fixa em `y=0`
+no primeiro scroll. Capturas foram revisadas; snapshot, hashes e artefatos em
+`mobile-first-audit.md`. O gate focal integrado passou, mas não substitui
+THEME-MF3 ou OCS-F11.
+
 ### 2026-10-31 — medição do aviso ULI na landing Marley
 
 `ocs-baseline.py` agora ignora headings ocultos ao medir se o aviso precede o

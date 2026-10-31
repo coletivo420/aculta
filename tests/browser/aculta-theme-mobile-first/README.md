@@ -528,6 +528,12 @@ sessão; não prova a integração servida. Evidências em
 `/home/piradopirata/aculta-suite-out/admin-topbar-mobile-final-assertion-8e0091a4a-20261031/`
 e `/home/piradopirata/aculta-suite-out/admin-topbar-mobile-nojs-retest-8e0091a4a-20261031/`.
 
+Após o commit `f378d2540`, a rodada integrada sem qualquer override passou
+47/47 checks no Runtime `toca` em 320/390/1023/1024/1280px. Evidência em
+`/home/piradopirata/aculta-suite-out/admin-topbar-mobile-integrated-f378d2540-20261031/`.
+Essa execução confirma os arquivos servidos, diferentemente dos resultados
+candidatos acima.
+
 Para a conta administrativa sintética, o ULI é tentado primeiro. Se o site
 encaminhar o ULI para recuperação de conta, o harness aceita login tradicional
 por credenciais fornecidas somente no ambiente e tenta novamente sem imprimir

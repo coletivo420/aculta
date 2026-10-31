@@ -1,5 +1,23 @@
 # Auditoria mobile-first ACULTA420 — THEME-MF0
 
+### THEME-MF2 — top-bar administrativa integrada no Runtime (2026-10-31)
+
+Após publicar `f378d2540`, o checkout de desenvolvimento em `toca` foi
+atualizado e teve o cache reconstruído. Drush confirmou Drupal 11.4.10,
+`aculta_runtime`, URI `http://default`, **611 tabelas**, nenhuma atualização de
+banco e zero diferenças Config Sync. Main e Loja retornaram HTTP 200.
+
+Firefox ESR visível, conta administrativa sintética UID 257, sem CSS/JS
+injetados: **47/47 checks** em 320/390/1023/1024/1280px. A top-bar real está
+`display:none` até 1023px e volta no desktop; Institution Bar fixa em `y=0` no
+primeiro scroll, sem overflow. Captura 320px revisada. Evidência em
+`/home/piradopirata/aculta-suite-out/admin-topbar-mobile-integrated-f378d2540-20261031/`.
+Snapshot modo 0600 anterior à sessão ULI, 611 tabelas, SHA-256
+`ac7be6520a84dc49aaac6afa14d6198010ff899b5440f5876f494860d66b9906`, em
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-admin-topbar-integrated-f378d2540-20261031.sql`.
+Isto aprova somente esta correção focal; THEME-MF3/OCS-F11 e a validação global
+continuam pendentes.
+
 ### THEME-MF2 — Institution Bar e ações administrativas móveis (2026-10-31)
 
 Retificação da decisão anterior: a pedido do responsável, a Institution Bar
