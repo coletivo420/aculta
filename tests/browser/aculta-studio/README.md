@@ -243,6 +243,12 @@ marcadores reais; isso evita esconder o título em páginas Marley sem esse
 contexto. A navegação real de cinco áreas também é medida: wrapping, ausência
 de overflow e alvos de pelo menos 44×44px.
 
+Para captura pública sem sessão, use `OCS_STUDIO_ANONYMOUS=1` junto com uma URL
+pública explícita em `STUDIO_ROUTES`. O modo mantém a checagem do Runtime, não
+gera ULI e pode receber a CSS candidata para verificar que consumidores MAIN,
+como `/u/{apelido}`, não recebem marcadores nem tokens visuais exclusivos do
+Studio. O relatório omite o texto do perfil; PNGs permanecem em `SUITE_OUT`.
+
 Para exercitar zoom real e teclado no Perfil, combine
 `OCS_PROFILE_ACTION_ZOOM=1` e `OCS_PROFILE_ACTION_KEYBOARD=1` com
 `OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1` e limite a execução a `/perfil` via

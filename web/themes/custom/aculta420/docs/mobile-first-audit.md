@@ -3234,3 +3234,19 @@ harness acrescentou esses invariantes e passou 5/5 por largura em
 Nenhum código CSS foi alterado nesta verificação; a validação do Studio completo,
 contraste, teclado/no-JS, zoom e comparação pareada com OpenCulturas permanecem
 pendentes.
+
+### THEME-MF2 / OCS-F9 — Perfil público anônimo e isolamento de Fidelity (2026-10-31)
+
+A conta sintética de teste já tinha link público; ele foi lido no `/perfil` sem
+submeter formulário, e a URL canônica `/u/pessoa-5` abriu em Firefox ESR numa
+sessão sem login no domínio MAIN. Com a folha Fidelity candidata carregada apenas
+na sessão, o perfil continuou fora do Studio: SDC `.portal-profile` presente,
+zero marcadores `data-aculta-studio`, tokens Fidelity ausentes, fonte Inter
+preservada (sem Montserrat), um H1, Institution Bar/Domain Header únicos e sem
+overflow. **8/8 invariantes passaram** em 320/390/768/1024/1440px. Capturas
+revisadas em 320 e 1440px; relatório em
+`/home/piradopirata/aculta-suite-out/profile-public-anonymous-fidelity-gate-20261031/`.
+O modo anônimo reutilizável `OCS_STUDIO_ANONYMOUS=1` não cria ULI nem registra
+o texto do perfil no JSON. Isto valida uma conta pública sintética, não A/B de
+privacidade/campos, leitor de tela, zoom ou WCAG integral; S-R4/S-R5,
+THEME-MF3 e OCS-F11 seguem pendentes.

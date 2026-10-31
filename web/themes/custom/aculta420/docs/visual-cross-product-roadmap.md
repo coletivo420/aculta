@@ -1655,3 +1655,15 @@ lista não tem overflow interno; em desktop, os cinco itens cabem na mesma linha
 `/home/piradopirata/aculta-suite-out/marley-navigation-targets-20261031/` e
 `/home/piradopirata/aculta-suite-out/marley-navigation-dark-20261031/`.
 Verificação candidata do consumidor autenticado; não aprova F5, MF3 ou F11.
+
+### THEME-MF2 / OCS-F9 — Perfil público sem tokens Fidelity (2026-10-31)
+
+A página canônica `main:/u/pessoa-5`, aberta em Firefox sem sessão autenticada,
+passou 8/8 invariantes em cinco larguras: perfil público e um H1 presentes,
+headers globais únicos, sem overflow, nenhum marcador Studio, nenhum token
+Fidelity e fonte Inter (sem Montserrat) no `.portal-profile`, mesmo com CSS
+candidata carregada. Capturas 320/1440 e relatório em
+`/home/piradopirata/aculta-suite-out/profile-public-anonymous-fidelity-gate-20261031/`.
+Nenhum form foi submetido. A conta sintética era pública antes da captura; o
+resultado não valida grants A/B nem privacidade de outros campos, não homologa
+S-R4/S-R5, THEME-MF3 ou OCS-F11.

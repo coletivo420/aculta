@@ -29,6 +29,7 @@ WIDTHS = [
 CAPTURES = []
 CAPTURE_FAILURES = []
 STUDIO_CSS_OVERRIDE = os.environ.get("OCS_STUDIO_FIDELITY_CSS_OVERRIDE") == "1"
+ANONYMOUS_CAPTURE = os.environ.get("OCS_STUDIO_ANONYMOUS") == "1"
 STUDIO_CSS_ROOT = Path(os.environ.get("OCS_STUDIO_FIDELITY_CSS_ROOT", Path(__file__).resolve().parents[3])).resolve()
 STUDIO_COLOR_MODE = os.environ.get("OCS_STUDIO_COLOR_MODE", "system")
 
@@ -216,6 +217,7 @@ socket.onmessage = (event) => {
     screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
     record = json.loads(detail)
     if "path-perfil" in record.get("bodyClasses", []):
+        record["profilePublicLink"] = driver.js("return document.querySelector('.aculta-profile-identity__public-link a')?.href || null")
         record["profileActionTargets"] = json.loads(driver.js("""return JSON.stringify(
           [...document.querySelectorAll(
             '.aculta-profile-identity__actions a, .aculta-profile-identity__actions button, '
@@ -286,6 +288,36 @@ socket.onmessage = (event) => {
             if record["marleyNavigationStatus"] == "FAIL":
                 CAPTURE_FAILURES.append({"url": url, "width": width,
                                          "checks": checks, "navigation": nav})
+    if ANONYMOUS_CAPTURE and STUDIO_CSS_OVERRIDE:
+        record["anonymousPublicProfile"] = json.loads(driver.js("""return JSON.stringify((() => {
+          const root=document.querySelector('main .portal-profile');
+          const rootToken=root?getComputedStyle(root).getPropertyValue('--aculta-studio-fidelity-primary').trim():null;
+          const fontFamily=root?getComputedStyle(root).fontFamily:'';
+          const headings=[...document.querySelectorAll('main h1')].filter(element=>element.getClientRects().length>0);
+          return {profilePresent:!!root,loggedIn:document.body.classList.contains('user-logged-in'),
+            studioMarkers:document.querySelectorAll('[data-aculta-studio]').length,
+            fidelityToken:rootToken,fontFamily,headingCount:headings.length,
+            institutionBars:document.querySelectorAll('.aculta-institution-bar').length,
+            domainHeaders:document.querySelectorAll('.aculta-header').length,
+            documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth,
+            viewport:document.documentElement.clientWidth};
+        })());"""))
+        public_profile = record["anonymousPublicProfile"]
+        checks = {
+            "profileComponentPresent": public_profile["profilePresent"],
+            "viewerIsAnonymous": not public_profile["loggedIn"],
+            "noStudioMarkers": public_profile["studioMarkers"] == 0,
+            "noStudioFidelityToken": public_profile["fidelityToken"] == "",
+            "noFidelityFont": "Montserrat" not in public_profile["fontFamily"],
+            "singleMainH1": public_profile["headingCount"] == 1,
+            "institutionBarAndDomainHeaderUnique": public_profile["institutionBars"] == 1 and public_profile["domainHeaders"] == 1,
+            "noHorizontalOverflow": public_profile["documentWidth"] <= public_profile["viewport"] and public_profile["bodyWidth"] <= public_profile["viewport"],
+        }
+        record["anonymousPublicProfileChecks"] = checks
+        record["anonymousPublicProfileStatus"] = "PASS" if all(checks.values()) else "FAIL"
+        if record["anonymousPublicProfileStatus"] == "FAIL":
+            CAPTURE_FAILURES.append({"url": url, "width": width,
+                                     "checks": checks, "profile": public_profile})
     is_studio_capture = prefix.startswith("studio-")
     record["missingMainHint"] = is_studio_capture and record.get("mainStructure") is None
     record["emptyDocumentHint"] = record["missingMainHint"] and not record.get("body", "").strip()
@@ -564,7 +596,7 @@ def main():
 
         try:
             verify_runtime()
-            login = drush("uli", "--no-browser", f"--name={USER}", f"--uri={URI}").splitlines()[-1]
+            login = None if ANONYMOUS_CAPTURE else drush("uli", "--no-browser", f"--name={USER}", f"--uri={URI}").splitlines()[-1]
         except (subprocess.CalledProcessError, RuntimeError) as error:
             metadata = {
                 "source": "OpenCulturas public Drupal site; theme stylesheet SHA matches the 3.1.5 tarball",
@@ -576,8 +608,9 @@ def main():
             (OUT / "baseline-deferred.json").write_text(json.dumps(metadata, indent=2) + "\n")
             print("DEFERRED: no authenticated Studio capture; public source screenshots were saved.")
             return 3
-        driver.get(login)
-        time.sleep(2)
+        if login:
+            driver.get(login)
+            time.sleep(2)
         for page_name, page_url in studio_pages():
             for width, height in WIDTHS:
                 try:
@@ -602,7 +635,7 @@ def main():
         "source": "OpenCulturas public Drupal site; theme stylesheet SHA matches the 3.1.5 tarball",
         "runtime_status": "CAPTURED",
         "studio_capture_status": "FAIL" if CAPTURE_FAILURES else ("PARTIAL" if any(capture.get("status") == "DEFERRED" or capture.get("accessDeniedHint") or capture.get("missingMainHint") or capture.get("emptyDocumentHint") for capture in CAPTURES) else "CAPTURED"),
-        "studio_user": USER,
+        "studio_user": "anonymous" if ANONYMOUS_CAPTURE else USER,
         "studio_pages": [url for _, url in studio_pages()],
         "widths": [width for width, _ in WIDTHS],
         "screenshots": [capture["screenshot"] for capture in CAPTURES if "screenshot" in capture],
