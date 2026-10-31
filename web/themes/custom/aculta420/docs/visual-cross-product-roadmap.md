@@ -1859,10 +1859,13 @@ Perfil, Conta e Studio: 208 fontes (94 CSS/Sass, 12 JS, 102 Twig/HTML), com cinc
 registros de estilos atualizados. A lista canônica está em
 `docs/theme-mobile-file-inventory.tsv`; sua análise é lexical e continua exigindo
 verificações visuais por purpose.
-A leitura das 99 media queries distribuídas em 47 estilos identificou apenas
-`min-width` (zero `max-width`). O dado confirma a direção mobile-first da
-cascata, mas não substitui a homologação de breakpoints, containers, estados e
-consumidores; THEME-MF2/MF3 seguem em execução.
+Na fotografia anterior, a leitura das 99 media queries distribuídas em 47
+estilos identificou apenas `min-width`. Após a decisão de desativar a top-bar
+administrativa mobile, o inventário atual soma 101 regras `@media` em 47 estilos:
+83 consultas com `min-width`, uma com `max-width` (a exceção focal da top-bar) e
+uma `@container` em Auth; as outras regras consultam preferências/recursos de
+entrada. O indicador lexical não substitui a homologação de breakpoints,
+containers, estados e consumidores; THEME-MF2/MF3 seguem em execução.
 ### OCS-F5 / THEME-MF2 — captura canônica de Marley (2026-10-31)
 
 Nove viewports de `account:/marley` passaram os invariantes de shell, largura e

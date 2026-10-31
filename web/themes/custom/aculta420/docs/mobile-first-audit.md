@@ -3814,13 +3814,13 @@ estilos, 12 arquivos JS e 102 Twig/HTML. Cinco registros CSS foram atualizados:
 `profile-bio`, `profile-identity`, `profile-social`, `portal-account` e `studio`.
 A inspeção lexical organiza a auditoria, mas não substitui a revisão de cascata
 nem os testes visuais por componente/rota.
-### THEME-MF0/MF2 — perfil das media queries (2026-10-31)
+### THEME-MF0/MF2 — perfil das media queries (fotografia anterior)
 
-Leitura do inventário canônico identificou **99 media queries em 47 arquivos de
-estilo**, todas com `min-width`; nenhuma consulta `max-width` foi encontrada.
-Esse é um indicador estático de aprimoramento progressivo, não comprova o
-comportamento de cada componente, container query, formulário ou estado; MF2/MF3
-continuam dependendo de cobertura visual real.
+A leitura anterior encontrou 99 media queries em 47 arquivos e precede a
+supressão da Navigation top-bar mobile. A regra mobile focal adicionou a única
+consulta `max-width` atual; consultar a auditoria regenerada abaixo para o
+inventário vigente. A classificação lexical não comprova comportamento de
+componente, formulário ou estado; MF2/MF3 dependem de cobertura visual real.
 ### OCS-F5 / THEME-MF2 — Marley canônico autenticado, nove viewports (2026-10-31)
 
 Firefox ESR visível capturou `account:/marley` em 320/360/390/599/600/768/1024/
@@ -4512,6 +4512,23 @@ larguras, a área sem imagem manteve a proporção e o fundo adaptativo claro/es
 sem overflow. É somente uma simulação CSS no navegador; `field_media_image` é
 obrigatório no bundle e não se criou conteúdo que contornasse essa validação.
 Evidência: `/home/piradopirata/aculta-suite-out/magazine-cover-fallback-candidate-8d7f1d576-20261031/`.
+
+### THEME-MF0 — inventário responsivo regenerado após o shell mobile (2026-10-31)
+
+`python3 scripts/audit-aculta420-responsive-inventory.py --write` atualizou
+duas linhas do TSV canônico (CSS `institution-bar.css` e JS
+`navigation-top-bar-displace.js`). A execução sem `--write` foi comparada byte a
+byte e coincidiu. O inventário contém 264 registros: 94 estilos, 12 arquivos
+JavaScript, 102 Twig/HTML, uma library e 55 manifestos SDC; 83 referências locais
+de assets foram verificadas. SHA-256 do TSV:
+`834d194020000f3c949d3bbae8d71c6d8d80b04fe0923d1b4b52856d6c185c04`.
+
+A varredura encontrou 101 regras `@media` em 47 estilos: 83 consultas com
+`min-width`, uma com `max-width` e as demais para preferências/recursos de
+entrada. A única exceção de largura máxima é a decisão focal que oculta as ações
+administrativas em até 1023px. Há uma `@container` em `css/components/auth.css`.
+Isto atualiza a fotografia histórica de 99 consultas somente `min-width` e não
+substitui o inventário visual por componentes e purposes.
 
 ### THEME-MF3 — heading principal nas dez raízes públicas (2026-10-31)
 
