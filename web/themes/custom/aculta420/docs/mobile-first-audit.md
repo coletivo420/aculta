@@ -9,6 +9,26 @@ escrita no Runtime. O incidente posterior, incluindo o snapshot e a correção
 direcionada de `message.settings`, está registrado em
 `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
 
+### THEME-MF2 — barra multidomínio e scroll móvel (2026-10-31)
+
+Firefox ESR visível no Runtime `2493d7535` passou 42/42 checks anônimos em
+MAIN, Conta e Revista, a 320/390 px. Em Conta, `/` redirecionou para `/entrar`
+e o navegador focou o campo `edit-name`, levando a página a `scrollY=585`; a
+Institution Bar permaneceu no topo (`barTop=0`) e acompanhou o scroll sem salto.
+No cenário autenticado MAIN, a autenticação foi confirmada e passaram 40/40
+checks em 320/390/1023/1024/1280 px, incluindo estado inicial, scroll, faixa de
+transição contínua nos dois sentidos e troca de breakpoint. Em desktop, a barra
+permaneceu abaixo do Navigation top-bar fixo (64 px); em móvel, a barra de
+administração permaneceu em fluxo normal e a Institution Bar colou no topo ao
+alcançá-lo. Evidências em
+`/home/piradopirata/aculta-suite-out/institution-scroll-runtime-20261031/` e
+`/home/piradopirata/aculta-suite-out/institution-scroll-admin-20261031/`.
+
+O salto relatado não foi reproduzido nesta captura. A rolagem inicial de Conta
+é causada pelo foco automático no formulário de entrada, enquanto a barra
+continua fixa na borda superior. Esta evidência é focal do Runtime e não aprova
+THEME-MF3; outros purposes, páginas e estados seguem no gate global.
+
 ### THEME-MF0 — recontagem lexical da árvore atual (2026-10-30)
 
 O gerador oficial foi executado com `--write` e repetido sem escrita; a segunda
