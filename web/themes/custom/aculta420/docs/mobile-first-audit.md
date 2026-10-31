@@ -4201,3 +4201,20 @@ não o compositor novo nem sua paridade pareada com o OpenCulturas. Nenhum curso
 ou matrícula foi criado. Evidência em
 `/home/piradopirata/aculta-suite-out/ganjalab-status-flow-candidate-20261031/`.
 OCS-F6, OCS-F11 e THEME-MF3 seguem pendentes.
+
+### THEME-MF2 / OCS-F3 — lint e integridade estática do tema (2026-10-31)
+
+No HEAD `95f7bdffc`, Stylelint (`npm run lint:css`) e ESLint
+(`npm run lint:js`) passaram. `validate-aculta420-sdc-schemas.php` passou com
+55 componentes, 27 includes e 759 verificações; Design Foundations passou
+2.429 checks, com contrastes e foco escuros acima dos limites auditados; a
+auditoria estática de assets encontrou 55 SDCs, 45 folhas CSS, 100 stories e
+nenhum finding. O inventário responsivo leu 264 fontes (94 estilos, 12 JS,
+102 Twig/HTML, 1 arquivo de libraries, 55 manifests e 83 referências a assets)
+sem gravar a saída versionada.
+
+Esta rodada não executou discovery Drupal/UI Patterns contra o Runtime, nem
+Firefox, testes funcionais, WCAG integral ou comparação pareada com o upstream.
+Portanto, é validação estática do HEAD, não integração servida nem aprovação de
+THEME-MF3/OCS-F11. O Runtime tem checkout separado e alterações não commitadas
+de outra frente; não foi trocado.

@@ -2005,3 +2005,11 @@ do LMS real. O aviso ULI cobriu a navegação a 320px no baseline; `content.css`
 candidata o recolocou em fluxo (heading seguinte visível, PASS). A captura
 comprovou ausência dos marcadores novos no Runtime `2493d7535`, logo não prova o
 consumer novo nem integração Fidelity. Sem curso/matrícula criada.
+
+### 2026-10-31 — validação estática do tema no HEAD publicado
+
+Stylelint e ESLint passaram; schema estático SDC passou em 55 componentes/759
+checks, Design Foundations em 2.429 checks e auditoria de assets sem findings.
+O inventário atual contém 264 fontes responsivas. Drupal discovery/UI Patterns,
+Runtime, Firefox, acessibilidade integral e comparação com OpenCulturas continuam
+pendentes; estes resultados não aprovam THEME-MF3 nem OCS-F11.
