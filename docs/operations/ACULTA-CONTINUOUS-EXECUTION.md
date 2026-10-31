@@ -2779,3 +2779,6 @@ ou preferência persistente alterados.
   o mesmo contrato mobile a tabelas Marley/Wiki. Reteste autenticado passou
   8/8 estados em 320/390/768/1280px, claro/escuro, sem overflow. Evidência em
   `/home/piradopirata/aculta-suite-out/marley-revista-listing-fixed2-20261031200910/`.
+- A matriz autenticada da entrada WE SATIVA em `wiki420` passou 8/8 estados em
+  320/390/768/1280px, claro/escuro, HTTP 200 e sem overflow. Evidência em
+  `/home/piradopirata/aculta-suite-out/wesativa-auth-final-20261031200935/`.
