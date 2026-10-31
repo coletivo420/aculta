@@ -42,7 +42,15 @@ este script.
 
 ## Scripts reutilizáveis
 
-Todo script de teste visual deve ser salvo em `tests/browser/<frente>/`, com README local, e não apenas em `/tmp`. O catálogo do que existe hoje, a convenção de pastas e as regras de evidência estão em `tests/browser/README.md`; consulte-o antes de escrever um script novo.
+As regras e o harness genérico são infraestrutura para **todo o projeto ACULTA**:
+qualquer módulo, produto, domínio/purpose ou consumer pode passar suas URLs a
+`smoke-page.py` e `page-matrix.py`. Eles não pressupõem Studio nem tema
+específico. Use suites focadas para complementar a medição quando for necessário
+verificar ACL, operações de formulário, estado persistido, integrações ou
+contratos próprios. Todo script de teste visual deve ser salvo em
+`tests/browser/<frente>/`, com README local, e não apenas em `/tmp`. O catálogo
+do que existe hoje, a convenção de pastas e as regras de evidência estão em
+`tests/browser/README.md`; consulte-o antes de escrever outro script.
 
 ## Hosts e larguras
 

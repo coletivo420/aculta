@@ -1,4 +1,10 @@
-# Testes visuais de navegador
+# Testes visuais de navegador — projeto ACULTA
+
+Esta é a infraestrutura compartilhada de navegador para **todo o projeto
+ACULTA**: todos os módulos, produtos, domínios/purposes e consumidores, incluindo
+interfaces Drupal e integrações frontend. O harness genérico não pertence ao
+tema nem ao Studio. Informe as URLs da área sob teste; escolha a suíte específica
+somente quando precisar validar contratos que uma medição genérica não alcança.
 
 Esta pasta guarda os scripts de teste visual do projeto — navegador, captura de
 tela e medição de renderização — para que outras sessões reaproveitem o que já
@@ -54,14 +60,20 @@ revisão X11. Consulte `docs/operations/NAVEGADOR-TESTES.md` e `AGENTS.md`.
 
 ## Scripts salvos hoje
 
-### `aculta-smoke/`
+### Harness genérico para qualquer módulo/produto/purpose: `aculta-smoke/`
 
-`smoke-page.py` executa smoke GET reutilizável de uma ou mais URLs; `page-matrix.py`
-faz matriz de larguras, claro/escuro e axe opcional em qualquer purpose.
+`smoke-page.py` executa smoke GET reutilizável de uma ou mais URLs de qualquer
+área do projeto; `page-matrix.py` faz matriz de larguras, modos de cor e axe
+opcional em qualquer módulo, produto, domínio/purpose ou consumer que possa ser
+aberto no navegador.
 Executam Firefox visível/X11 ou Firefox/Chrome/Chromium headless, com perfil
 temporário e artefatos privados em `$SUITE_OUT`. A sessão prévia opcional aceita
 uma URL de início sem escrevê-la aos logs. Não provam ACL nem submissão de
-formulário. Instruções completas: [README local](aculta-smoke/README.md).
+formulário, persistência, processamento de dados no servidor, cache Drupal ou
+autorização entre contas/lojas. Instruções completas e comandos genéricos:
+[README local](aculta-smoke/README.md). Para contratos específicos, escolha a
+suíte dona listada abaixo e complemente o harness genérico em vez de tratá-lo
+como substituto.
 
 ### `aculta-cpf-checkout/`
 

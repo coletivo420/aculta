@@ -1,4 +1,9 @@
-# Smoke de páginas WebDriver
+# Harness genérico de navegador para o ACULTA
+
+Esta suíte atende o **projeto inteiro**, não apenas `aculta420` ou Studio.
+Passe URLs dos módulos, produtos, domínios/purposes e consumers que deseja
+inspecionar; os scripts não presumem um host ou shell específico. Rode também
+os testes da área quando precisar provar contratos de aplicação.
 
 O script `tests/browser/aculta-smoke/smoke-page.py` serve como primeiro check reutilizável para páginas
 públicas: carrega URLs por GET, coleta título/estado/documentWidth, landmarks,
