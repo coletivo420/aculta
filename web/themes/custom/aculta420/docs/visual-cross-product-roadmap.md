@@ -1815,5 +1815,7 @@ existentes `.studio__listing` de Marley/Wiki, mantendo a rolagem horizontal dent
 do wrapper responsivo. Fixture Firefox ESR passou 74/74 em nove larguras,
 claro/escuro e foco de teclado, incluindo a linha vazia do template Drupal.
 GET real encontrou conteúdo em todas as quatro abas testadas; o estado vazio
-permanece validado somente na fixture. Não cobre grants, cache ou AJAX/no-JS.
+permanece validado somente na fixture. O HTML da fixture reproduz os dois níveis
+de wrapper do consumer real e verifica o `scrollLeft` do `.table-responsive`
+interno. Não cobre grants, cache ou AJAX/no-JS.
 THEME-MF3 e OCS-F11 seguem pendentes. Detalhes em `mobile-first-audit.md`.

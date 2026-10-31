@@ -3562,9 +3562,11 @@ larguras, claro/escuro, sem overflow documental, com foco por teclado e sem
 alterar DOM/ordem de dados. A fixture inclui agora o estado vazio produzido pelo
 Twig de tabela do Drupal (`<td colspan="6">`), com capturas próprias 320/1440px
 em ambos os temas, e exige que sua mensagem fique contida e visível. A consulta
-GET das abas Marley no Runtime encontrou 1 linha em Rascunhos, 1 em Revisão, 4
+fixture reproduz o wrapper Studio e o `.table-responsive` interno, verificando a
+rolagem no pai direto da tabela como no HTML real. A consulta GET das abas
+Marley no Runtime encontrou 1 linha em Rascunhos, 1 em Revisão, 4
 Publicados e 1 Arquivado; nenhum estava vazio. Evidência da fixture em
-`/home/piradopirata/aculta-suite-out/studio-listing-empty-state-final-20261031/`
+`/home/piradopirata/aculta-suite-out/studio-listing-dom-parity-20261031/`
 e captura real em
 `/home/piradopirata/aculta-suite-out/marley-editor-state-tabs-20261031/`.
 Não valida listagem Drupal renderizada, grants, estados com conteúdo real, cache,

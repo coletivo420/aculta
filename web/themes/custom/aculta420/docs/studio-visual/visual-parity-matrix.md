@@ -45,7 +45,7 @@ disponível. O estado vazio do `#empty` Drupal foi acrescentado à fixture local
 de seis colunas, que passou 74/74 checks em nove larguras, claro/escuro, incluindo
 a mensagem contida, foco de teclado e screenshots vazias 320/1440. Evidências em
 `/home/piradopirata/aculta-suite-out/marley-editor-state-tabs-20261031/` e
-`/home/piradopirata/aculta-suite-out/studio-listing-empty-state-final-20261031/`.
+`/home/piradopirata/aculta-suite-out/studio-listing-dom-parity-20261031/`.
 
 A execução do baseline completo continua **FAIL** em checks de heading
 preexistentes: este Runtime serve somente o H1 genérico “ACULTA Studio Marley”

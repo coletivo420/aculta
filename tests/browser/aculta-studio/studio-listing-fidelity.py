@@ -67,13 +67,13 @@ HTML = """<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <style>*{box-sizing:border-box}body{margin:0;font:16px/1.5 sans-serif}.studio__main{min-width:0;padding:1rem}
 .studio__listing-wrap{width:100%;max-width:100%}</style></head>
 <body class="path-marley"><header class="aculta-container">Institution Bar e Domain Header ficam fora da área Studio.</header>
-<div class="studio"><main class="studio__main"><h1>Publicações</h1><div class="studio__listing-wrap table-responsive" aria-label="Tabela de publicações">
+<div class="studio"><main class="studio__main"><h1>Publicações</h1><div class="studio__listing-wrap" aria-label="Tabela de publicações"><div class="table-responsive">
 <table class="table studio__listing"><thead><tr><th>Título</th><th>Situação</th><th>Autor</th><th>Atualizado em</th><th>Ações</th><th>Revisão</th></tr></thead><tbody>
 <tr><td><a href="#publicacao">Uma publicação editorial com um título suficientemente longo para testar o reflow</a></td><td>Rascunho</td><td>Autora de teste</td><td>31/10/2026 19:30</td><td><a href="#editar">Editar</a></td><td>Não enviada</td></tr>
 <tr><td><a href="#publicacao2">Outra publicação</a></td><td>Publicado</td><td>Outra autora</td><td>30/10/2026 08:15</td><td><a href="#editar2">Editar</a></td><td>Revisada</td></tr>
-</tbody></table></div><div id="empty-listing-wrap" class="studio__listing-wrap table-responsive" aria-label="Publicações arquivadas">
+</tbody></table></div></div><div id="empty-listing-wrap" class="studio__listing-wrap" aria-label="Publicações arquivadas"><div class="table-responsive">
 <table id="empty-listing" class="table studio__listing"><thead><tr><th>Título</th><th>Situação</th><th>Autor</th><th>Atualizado em</th><th>Ações</th><th>Revisão</th></tr></thead>
-<tbody><tr><td colspan="6">Nenhum item nesta aba.</td></tr></tbody></table></div></main></div></body></html>"""
+<tbody><tr><td colspan="6">Nenhum item nesta aba.</td></tr></tbody></table></div></div></main></div></body></html>"""
 
 
 def record(name, passed, detail=None):
@@ -93,22 +93,28 @@ try:
             viewport.set(width)
             time.sleep(0.08)
             data = driver.js("""const wrap=document.querySelector('.studio__listing-wrap'),table=document.querySelector('.studio__listing');
+const scroller=table.parentElement;
 const first=table.querySelector('th'),last=table.querySelector('th:last-child'),head=table.querySelector('thead th');
-const emptyWrap=document.querySelector('#empty-listing-wrap'),emptyTable=document.querySelector('#empty-listing'),emptyCell=emptyTable.querySelector('tbody td');
+const emptyWrap=document.querySelector('#empty-listing-wrap'),emptyTable=document.querySelector('#empty-listing'),emptyScroller=emptyTable.parentElement,emptyCell=emptyTable.querySelector('tbody td');
 const r=e=>e.getBoundingClientRect(),s=e=>getComputedStyle(e);
 const token=s(document.querySelector('.studio')).getPropertyValue('--aculta-studio-fidelity-input-border-bottom').trim();
 const rgb=token.match(/[a-f0-9]{2}/gi).map(value=>parseInt(value,16));
+scroller.scrollLeft=99999;const localScrollMax=scroller.scrollLeft;scroller.scrollLeft=0;
+emptyScroller.scrollLeft=99999;const emptyLocalScrollMax=emptyScroller.scrollLeft;emptyScroller.scrollLeft=0;
 return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,wrapWidth:r(wrap).width,wrapScroll:wrap.scrollWidth,wrapClient:wrap.clientWidth,
+scrollerWidth:r(scroller).width,scrollerScroll:scroller.scrollWidth,scrollerClient:scroller.clientWidth,localScrollMax,
 tableWidth:r(table).width,tableDisplay:s(table).display,tableLayout:s(table).tableLayout,firstPadding:s(first).paddingInlineStart,lastPadding:s(last).paddingInlineEnd,
 cellPadding:s(first).paddingBlockStart,borderCollapse:s(table).borderCollapse,headerWeight:s(head).fontWeight,headerBorder:s(head).borderBottomColor,
 headerBorderToken:`rgb(${rgb.join(', ')})`,bodyColor:s(table).color,
 emptyText:emptyCell.textContent.trim(),emptyCellWidth:r(emptyCell).width,emptyCellHeight:r(emptyCell).height,
 emptyCellPadding:s(emptyCell).paddingBlockStart,emptyWrapWidth:r(emptyWrap).width,
-emptyWrapScroll:emptyWrap.scrollWidth,emptyTableWidth:r(emptyTable).width};""")
+emptyWrapScroll:emptyWrap.scrollWidth,emptyTableWidth:r(emptyTable).width,
+emptyScrollerWidth:r(emptyScroller).width,emptyScrollerScroll:emptyScroller.scrollWidth,
+emptyScrollerClient:emptyScroller.clientWidth,emptyLocalScrollMax};""")
             record(f"{mode}/{width}px sem overflow no documento", data["documentWidth"] <= width, {"documentWidth": data["documentWidth"]})
-            record(f"{mode}/{width}px tabela refluída ou contida no wrapper", data["wrapWidth"] <= width and data["tableWidth"] <= data["wrapScroll"] + 1, data)
+            record(f"{mode}/{width}px tabela rola no contêiner interno", data["wrapWidth"] <= width and data["tableWidth"] <= data["scrollerScroll"] + 1 and ((data["scrollerScroll"] > data["scrollerClient"]) == (data["localScrollMax"] > 0)), data)
             record(f"{mode}/{width}px ritmo de tabela OpenCulturas", data["tableDisplay"] == "table" and data["borderCollapse"] == "collapse" and data["cellPadding"] == "8px" and data["firstPadding"] == "0px" and data["lastPadding"] == "0px" and int(data["headerWeight"]) >= 600 and data["headerBorder"] == data["headerBorderToken"], data)
-            record(f"{mode}/{width}px estado vazio contido e legível", data["emptyText"] == "Nenhum item nesta aba." and data["emptyCellHeight"] > 0 and data["emptyCellWidth"] <= data["emptyWrapScroll"] + 1 and data["emptyTableWidth"] <= data["emptyWrapScroll"] + 1 and data["emptyWrapWidth"] <= width and data["documentWidth"] <= width, data)
+            record(f"{mode}/{width}px estado vazio contido e legível", data["emptyText"] == "Nenhum item nesta aba." and data["emptyCellHeight"] > 0 and data["emptyCellWidth"] <= data["emptyScrollerScroll"] + 1 and data["emptyTableWidth"] <= data["emptyScrollerScroll"] + 1 and data["emptyWrapWidth"] <= width and data["documentWidth"] <= width and ((data["emptyScrollerScroll"] > data["emptyScrollerClient"]) == (data["emptyLocalScrollMax"] > 0)), data)
             if width in (320, 1440):
                 shot = driver.req("GET", f"/session/{driver.session}/screenshot")
                 (OUT / f"listing-{mode}-{width}.png").write_bytes(base64.b64decode(shot))

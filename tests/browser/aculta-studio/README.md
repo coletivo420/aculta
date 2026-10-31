@@ -761,7 +761,9 @@ específico de posição da mensagem.
 `studio-listing` e `studio-listing-wrap`, aplicados pelo hook de apresentação do
 tema. A fixture reproduz a raiz `.studio`, a tabela semanticamente marcada, as
 seis colunas usadas em fluxos editoriais/revisão e a linha vazia do Twig core
-Drupal com `colspan` e “Nenhum item nesta aba.”. Em Firefox ESR visível mede
+Drupal com `colspan` e “Nenhum item nesta aba.”. A estrutura contém o wrapper
+Studio externo e o `.table-responsive` interno, como no HTML renderizado; a
+asserção de rolagem observa o pai direto da tabela. Firefox ESR visível mede
 320/360/390/599/600/768/1024/1280/1440px, claro/escuro, ausência de overflow do
 documento, rolagem horizontal confinada ao wrapper, ritmo, cabeçalho, linha
 vazia e foco real por teclado. Em 2026-10-31 passou 74/74 checks; capturas do
