@@ -611,6 +611,29 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/messenger-reply-la
 ```
 
 
+## Capa da Revista e alvos dos links editoriais
+
+`magazine-cover-runtime.py` abre a raiz pública da Revista em Firefox ESR, somente
+leitura, confirma View, capa, teasers, imagens e shell e mede os links de título e
+ação de cada publicação. Os alvos precisam ter pelo menos 44px de altura; os
+viewports padrão vão de 320 a 1440px. `MAGAZINE_COVER_CSS_OVERRIDE=1` injeta
+`css/components/revista-listing.css` do worktree na sessão para testar uma
+candidata sem alterar o Runtime. Evidência e limites estão em
+`mobile-first-audit.md`.
+
+```sh
+cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/magazine-cover-mobile
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+export MAGAZINE_COVER_CSS_OVERRIDE=1
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/magazine-cover-runtime.py
+```
+
+O teste injeta CSS apenas no navegador e não envia formulários. Ele não valida
+publicação editorial, ACL, teclado completo, leitores de tela ou conformidade
+WCAG 2.2 AA.
+
 ## Zoom real da capa da Revista
 
 `revista-browser-zoom.py` abre a home pública do purpose Magazine em Firefox ESR

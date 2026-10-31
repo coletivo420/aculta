@@ -34,6 +34,8 @@
 }
 
 .aculta-revista-teaser__title a {
+  display: block;
+  min-block-size: 2.75rem;
   color: var(--aculta-text-primary);
   text-decoration: none;
 }
@@ -61,6 +63,9 @@
 }
 
 .aculta-revista-teaser__cta {
+  display: inline-flex;
+  min-block-size: 2.75rem;
+  align-items: center;
   color: var(--aculta-link);
   font-weight: 600;
   text-decoration: underline;

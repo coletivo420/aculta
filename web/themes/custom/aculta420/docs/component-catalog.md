@@ -547,6 +547,13 @@ três regiões em 768px. Comportamento, testes e limites estão em
 [`mobile-first-audit.md`](mobile-first-audit.md).
 
 
+### THEME-MF2 — alvos dos teasers da Revista
+
+Links de título e ação no consumer `revista_sessoes` têm altura mínima de 44px,
+com a mesma composição do SDC `card`. Não foi criado componente nem alterado
+contrato. Teste Firefox Runtime com CSS candidata injetada passou em nove
+larguras; ver evidência e limitações em `mobile-first-audit.md`.
+
 ### Consumer real — capa da Revista (2026-10-30)
 
 A página da View `revista_sessoes` reutiliza `patterns/hero` para o título

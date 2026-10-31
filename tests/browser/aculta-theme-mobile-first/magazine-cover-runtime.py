@@ -24,6 +24,7 @@ OUT.mkdir(parents=True, exist_ok=True)
 os.environ.setdefault("ACULTA_FF_PROFILE_ROOT", str(OUT / "profiles"))
 URL = os.environ.get("MAGAZINE_COVER_URL", "https://revista.aculta.toca.net.br/")
 HOST = "revista.aculta.toca.net.br"
+CSS_CANDIDATE = ROOT / "web/themes/custom/aculta420/css/components/revista-listing.css"
 WIDTHS = tuple(map(int, os.environ.get(
     "MAGAZINE_COVER_WIDTHS", "320,360,390,599,600,768,1024,1280,1440",
 ).split(",")))
@@ -40,7 +41,11 @@ class LoopbackMagazineProxy(socketserver.StreamRequestHandler):
 
     def handle(self):
         request = self.rfile.readline(4096).decode("ascii", "replace").strip()
-        method, authority, *_ = request.split(" ", 2)
+        parts = request.split(" ", 2)
+        if len(parts) < 2:
+            self.wfile.write(b"HTTP/1.1 400 Bad Request\r\nConnection: close\r\n\r\n")
+            return
+        method, authority = parts[:2]
         while self.rfile.readline(8192).strip():
             pass
         if method != "CONNECT" or authority.lower() != f"{HOST}:443":
@@ -134,6 +139,10 @@ def main():
     try:
         driver = Driver(prefs=proxy_prefs, bidi=True)
         driver.get(URL)
+        if os.environ.get("MAGAZINE_COVER_CSS_OVERRIDE") == "1":
+            candidate_css = CSS_CANDIDATE.read_text(encoding="utf-8")
+            driver.js("""const style=document.createElement('style');style.id='magazine-css-candidate';
+              style.textContent=arguments[0];document.head.append(style);return true;""", [candidate_css])
         initial = driver.js("""
 const view=document.querySelector('.page-view-revista-sessoes .view-display-id-page_revista');
 return {url:location.href,statusClass:document.body.className,title:document.title,
@@ -142,7 +151,9 @@ heroText:view?.querySelector('.aculta-hero h1')?.innerText.trim()||'',
 rows:view?.querySelectorAll('.views-row').length||0,
 teasers:view?.querySelectorAll('.aculta-revista-teaser').length||0,
 institutionBar:document.querySelectorAll('.aculta-institution-bar').length,
-domainHeader:document.querySelectorAll('.aculta-header').length};
+domainHeader:document.querySelectorAll('.aculta-header').length,
+titleTargets:[...document.querySelectorAll('.aculta-revista-teaser__title a')].map(el=>{const r=el.getBoundingClientRect();return {width:r.width,height:r.height}}),
+ctaTargets:[...document.querySelectorAll('.aculta-revista-teaser__cta')].map(el=>{const r=el.getBoundingClientRect();return {width:r.width,height:r.height}})};
 """)
         record("Runtime anônimo renderiza a View e a chamada da capa", (
             initial["view"] and initial["hero"] and initial["rows"] > 0
@@ -164,7 +175,9 @@ hero:!!view?.querySelector('.aculta-hero h1'),rows:view?.querySelectorAll('.view
 columns,firstCard:!!card,firstCardGrid:getComputedStyle(card||document.body).display==='grid',
 image:!!image,imageLoaded:!!image&&image.complete&&image.naturalWidth>0,
 institutionBar:document.querySelectorAll('.aculta-institution-bar').length,
-domainHeader:document.querySelectorAll('.aculta-header').length};
+domainHeader:document.querySelectorAll('.aculta-header').length,
+titleTargets:[...document.querySelectorAll('.aculta-revista-teaser__title a')].map(el=>{const r=el.getBoundingClientRect();return {width:r.width,height:r.height}}),
+ctaTargets:[...document.querySelectorAll('.aculta-revista-teaser__cta')].map(el=>{const r=el.getBoundingClientRect();return {width:r.width,height:r.height}})};
 """)
             screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
             (OUT / f"magazine-cover-{width}.png").write_bytes(base64.b64decode(screenshot))
@@ -175,6 +188,9 @@ domainHeader:document.querySelectorAll('.aculta-header').length};
                 and metrics["imageLoaded"] and metrics["columns"] == expected_columns
                 and (width < 992 or metrics["firstCardGrid"])
                 and metrics["institutionBar"] == 1 and metrics["domainHeader"] == 1
+                and len(metrics["titleTargets"]) == metrics["rows"]
+                and len(metrics["ctaTargets"]) == metrics["rows"]
+                and all(target["height"] >= 44 for target in metrics["titleTargets"] + metrics["ctaTargets"])
             )
             record(f"capa da Revista em {width}px", passed, metrics)
     finally:

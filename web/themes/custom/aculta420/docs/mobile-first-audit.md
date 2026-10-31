@@ -2159,3 +2159,23 @@ Stylelint, design foundations, fronteira tema/módulo e schema/discovery SDC
 passaram. A fixture não testa teclado real, contraste em ambos os temas, a folha
 instalada no Runtime nem o comportamento do VVJB sem JavaScript; esses gates
 permanecem pendentes e THEME-MF3 não está aprovado.
+
+
+### THEME-MF2 — alvos de toque dos teasers da Revista (2026-10-31)
+
+A medição no consumer público real encontrou os links “Leia a publicação” com
+19px de altura em todos os nove viewports; os links de título também ficavam
+abaixo de 44px em alguns pontos de quebra. `revista-listing.css` agora dá
+`min-block-size: 2.75rem` aos links de título e de ação. A ação usa alinhamento
+flexível para manter o texto centralizado verticalmente; o markup, ordem DOM,
+SDCs, conteúdo e rotas não mudam.
+
+O Firefox ESR visível reproduziu a falha baseline (9/9 larguras) e, com a CSS
+candidata injetada apenas na sessão, passou 10/10 checks: quatro títulos e
+quatro ações com pelo menos 44px, imagens carregadas, grade responsiva, shell
+único e sem overflow em 320/360/390/599/600/768/1024/1280/1440px. Capturas de
+320 e 1440px foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/magazine-link-targets-candidate-20261031/`.
+O Runtime continua servindo a baseline; revalidação após publicação/rebuild,
+teclado completo, leitores de tela e WCAG 2.2 AA permanecem pendentes. Isto não
+aprova THEME-MF3.

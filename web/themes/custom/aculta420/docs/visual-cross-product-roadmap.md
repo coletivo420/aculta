@@ -1343,3 +1343,12 @@ larguras sem overflow e com a geometria editorial preservada; lint e validadores
 do tema passaram. Evidência e limites em `mobile-first-audit.md` e no README do
 harness. Runtime instalado, teclado/reduced motion em interação e temas claro/
 escuro continuam pendentes; este trabalho não homologa THEME-MF3.
+
+
+### THEME-MF2 — links dos teasers da Revista
+
+O consumer da Revista tinha CTAs de 19px de altura; links editoriais de título e
+ação agora têm área de pelo menos 44px. A CSS candidata passou no consumer real
+servido em Firefox ESR, nove larguras, sem overflow e sem alterar markup/SDC.
+Deploy/rebuild, teclado integral e WCAG permanecem pendentes. Evidência em
+`mobile-first-audit.md`.
