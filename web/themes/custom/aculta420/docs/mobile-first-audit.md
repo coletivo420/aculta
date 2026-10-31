@@ -3351,3 +3351,11 @@ combinações. A falha única foi o overflow já conhecido de `/entrar` a 320px
 `/home/piradopirata/aculta-suite-out/purpose-headings-followup-20261031/`.
 Isso reforça a pendência de validação servida do candidato; não abre outro defeito
 de heading e não aprova THEME-MF3.
+### THEME-MF0 — inventário responsivo regenerado (2026-10-31)
+
+`audit-aculta420-responsive-inventory.py --write` conferiu e atualizou o TSV
+canônico depois de mudanças CSS recentes. O inventário cobre **208 fontes**: 94
+estilos, 12 arquivos JS e 102 Twig/HTML. Cinco registros CSS foram atualizados:
+`profile-bio`, `profile-identity`, `profile-social`, `portal-account` e `studio`.
+A inspeção lexical organiza a auditoria, mas não substitui a revisão de cascata
+nem os testes visuais por componente/rota.

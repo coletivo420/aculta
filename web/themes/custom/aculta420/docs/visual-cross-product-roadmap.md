@@ -1717,3 +1717,10 @@ A falha foi somente o overflow conhecido de `/entrar` a 320px; não houve H1
 ausente ou header duplicado. Evidência em `mobile-first-audit.md`. O gate MF3
 permanece pendente até validar a correção no Runtime servido e concluir os demais
 critérios.
+### THEME-MF0 — sincronização do inventário de arquivos (2026-10-31)
+
+O inventário automatizado foi regenerado após mudanças recentes nos estilos de
+Perfil, Conta e Studio: 208 fontes (94 CSS/Sass, 12 JS, 102 Twig/HTML), com cinco
+registros de estilos atualizados. A lista canônica está em
+`docs/theme-mobile-file-inventory.tsv`; sua análise é lexical e continua exigindo
+verificações visuais por purpose.
