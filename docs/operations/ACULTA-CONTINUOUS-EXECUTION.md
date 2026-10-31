@@ -28,6 +28,8 @@ Matriz HTTP de migração: `wiki420:/wesativa` respondeu 403 anônimo (rota exis
 
 Reteste pós-migração de Conta e Perfil com `teste.comum`: Firefox ESR/X11 em 320/390/768/1440px carregou as duas superfícies privadas separadamente, com shell, Institution Bar e Domain Header presentes, conteúdo real e zero falhas de fidelidade. Nenhuma rota de Suite foi reutilizada para Conta ou Perfil; o resultado não cobre privacidade A/B nem upload/crop.
 
+Matriz genérica autenticada de WE SATIVA com `studio_editor_test` passou **18/18 checks** (320–1440px, claro/escuro), HTTP 200, largura do documento igual ao viewport e sem overflow. Evidência: `/home/piradopirata/aculta-suite-out/wesativa-page-matrix-20261101/`. O runner genérico não habilitou axe nesta execução; WCAG completa permanece pendente.
+
 ### WE SATIVA canônico — evidência adicional (2026-10-31)
 
 O baseline Firefox ESR/X11 autenticado de `https://wiki420.aculta.toca.net.br/studio/we-sativa` foi executado em 320/390/599/600/768/1024/1280/1440px. As 8 capturas retornaram `Acesso negado`; Institution Bar, Domain Header e ausência de overflow foram observados, mas nenhum consumer Wiki foi servido. Evidência: `/home/piradopirata/aculta-suite-out/studio-we-sativa-baseline-recheck-8d4dcc07d-20261031/`. O resultado é DEFERRED por autorização/instalação do Runtime e mantém OCS-F7/OCS-F11 pendentes; não usar `/wesativa` como substituto da rota canônica.
