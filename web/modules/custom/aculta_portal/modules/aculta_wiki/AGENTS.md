@@ -1,8 +1,8 @@
 - Dev.117: `FileReferenceInspector` (Portal) ignora tipo registrado sem tabela
 
-## ADR-038 - caminhos atuais das Suites (implementados)
+## ADR-038 - caminhos atuais das Suites (retificado pelo responsável em 2026-10-30)
 
-Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. O Domain Wiki canônico é `wiki420`, conforme configuração ativa; a menção a `wiki.aculta.*` no pedido inicial foi erro corrigido pelo responsável. `/studio` e todo `/studio/*` foram removidos e respondem 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `account` apresenta a entrada da Conta; Conta e Perfil permanecem separados. Consulte ADR-038.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/studio/we-sativa`; Green Stash `shop:/studio/green-stash`; Culturas `eventos:/culturas`. Os paths oficiais aprovados são ACULTA STUDIO WE SATIVA e ACULTA STUDIO GREEN STASH, cada um no purpose proprietário. `/studio` e os demais prefixos `/studio/*` permanecem 404, sem aliases/redirects. O Domain Wiki canônico é `wiki420`; `aculta_studio` continua framework compartilhado. Conta e Perfil seguem separados. Consulte a retificação de ADR-038.
 
   base e `ContentEntityNullStorage` sem converter falha real em exclusão; a
   classe Kernel de imagem passou 29/1.642 e a suíte Kernel Wiki 31/1.692. O
@@ -551,4 +551,4 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
 
 ## ADR-038 - residência futura da Suite WE SATIVA
 
-WE SATIVA responde em `/wesativa`, purpose `wiki`, no Domain canônico `wiki420`. Wiki mantém ownership de verbetes, propostas e permissões. Rotas de moderação que pertencem à Suite Marley continuam em `account:/marley/...`; não mova toda rota Wiki automaticamente para WE SATIVA. `/studio/*` foi removido sem alias.
+WE SATIVA responde em `/studio/we-sativa`, purpose `wiki`, no Domain canônico `wiki420`, conforme retificação vinculante de ADR-038 em 2026-10-30. Wiki mantém ownership de verbetes, propostas e permissões. Rotas de moderação que pertencem à Suite Marley continuam em `account:/marley/...`; não mova toda rota Wiki automaticamente para WE SATIVA. Somente os prefixos oficiais WE SATIVA e Green Stash podem usar `/studio/*`; os demais continuam 404 sem alias.

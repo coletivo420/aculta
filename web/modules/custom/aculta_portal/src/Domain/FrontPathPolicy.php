@@ -16,6 +16,14 @@ use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
 final class FrontPathPolicy {
 
   /**
+   * Canonical Studio path prefixes and their owning domain purposes.
+   */
+  private const CANONICAL_STUDIO_PATHS = [
+    'shop' => '/studio/green-stash',
+    'wiki' => '/studio/we-sativa',
+  ];
+
+  /**
    * Caminho do nó que é a página inicial do subdomínio (não público).
    */
   private const NO_DA_RAIZ = [
@@ -53,11 +61,26 @@ final class FrontPathPolicy {
     return $noDaRaiz !== NULL && $path === $noDaRaiz;
   }
 
-  /** Ação da guarda da entrada da Conta: levar o visitante anônimo ao login. */
+  /**
+   * Whether a Studio-prefixed path belongs to a real canonical route.
+   *
+   * Route matching and access requirements remain authoritative after this
+   * narrow purpose/path guard. Unknown descendants still resolve to 404.
+   */
+  public static function caminhoStudioCanonicoPermitido(?string $purpose, string $path): bool {
+    $prefix = self::CANONICAL_STUDIO_PATHS[$purpose ?? ''] ?? NULL;
+    return $prefix !== NULL && ($path === $prefix || str_starts_with($path, $prefix . '/'));
+  }
+
+  /**
+   * Ação da guarda da entrada da Conta: levar o visitante anônimo ao login.
+   */
   public const ACAO_LOGIN = 'login';
 
   /**
-   * Decide a guarda da entrada da Conta (`aculta_studio.account`) no Domain ACCOUNT.
+   * Decide a guarda da entrada da Conta.
+   *
+   * A política cobre `aculta_studio.account` no Domain ACCOUNT.
    *
    * A raiz `/` é resolvida como entrada `/conta`; `/studio` não é uma rota.
    * Visitantes anônimos na raiz vão ao login do host de conta. Fora do purpose

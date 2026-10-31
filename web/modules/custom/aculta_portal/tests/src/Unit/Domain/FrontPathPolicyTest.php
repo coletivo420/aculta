@@ -55,7 +55,9 @@ final class FrontPathPolicyTest extends UnitTestCase {
     $this->assertFalse(FrontPathPolicy::bloqueiaCaminhoInterno('wiki', '/apoio', FALSE));
   }
 
-  /** The Conta entry path is public directly as well as at the ACCOUNT root. */
+  /**
+   * The Conta entry path is public directly as well as at the ACCOUNT root.
+   */
   public function testAccountEntryPathRemainsPublic(): void {
     $this->assertFalse(FrontPathPolicy::bloqueiaCaminhoInterno('account', '/conta', FALSE));
   }
@@ -74,6 +76,26 @@ final class FrontPathPolicyTest extends UnitTestCase {
   public function testPurposeSemRaizInternaNaoBloqueia(): void {
     $this->assertFalse(FrontPathPolicy::bloqueiaCaminhoInterno('main', '/apoio', FALSE));
     $this->assertFalse(FrontPathPolicy::bloqueiaCaminhoInterno(NULL, '/apoio', FALSE));
+  }
+
+  /**
+   * Canonical Studio areas are allowed only under their owning purpose.
+   */
+  public function testCanonicalStudioPathsArePurposeScoped(): void {
+    $this->assertTrue(FrontPathPolicy::caminhoStudioCanonicoPermitido('shop', '/studio/green-stash'));
+    $this->assertTrue(FrontPathPolicy::caminhoStudioCanonicoPermitido(
+      'shop', '/studio/green-stash/produtos/novo',
+    ));
+    $this->assertTrue(FrontPathPolicy::caminhoStudioCanonicoPermitido('wiki', '/studio/we-sativa'));
+    $this->assertTrue(FrontPathPolicy::caminhoStudioCanonicoPermitido(
+      'wiki', '/studio/we-sativa/propostas/17/decidir',
+    ));
+
+    $this->assertFalse(FrontPathPolicy::caminhoStudioCanonicoPermitido('account', '/studio/green-stash'));
+    $this->assertFalse(FrontPathPolicy::caminhoStudioCanonicoPermitido('wiki', '/studio/green-stash'));
+    $this->assertFalse(FrontPathPolicy::caminhoStudioCanonicoPermitido('shop', '/studio/we-sativa'));
+    $this->assertFalse(FrontPathPolicy::caminhoStudioCanonicoPermitido('account', '/studio/marley'));
+    $this->assertFalse(FrontPathPolicy::caminhoStudioCanonicoPermitido('wiki', '/studio/we-sativa-legacy'));
   }
 
 }

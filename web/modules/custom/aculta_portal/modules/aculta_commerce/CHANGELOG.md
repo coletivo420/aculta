@@ -1,3 +1,8 @@
+## Retificação de caminho ACULTA STUDIO GREEN STASH — 2026-10-30
+
+- O caminho canônico confirmado pelo responsável é `/studio/green-stash` no purpose `shop`; rotas de produto e remessa usam o mesmo prefixo.
+- `/greenstash` não fica como alias ou redirect. A atualização de rota ainda aguarda homologação no Runtime.
+
 ## ACULTA STUDIO GREEN STASH — nome e caminho canônicos (2026-10-30)
 
 - Nome oficial: **ACULTA STUDIO GREEN STASH**, área comercial integrada ao ACULTA Studio.

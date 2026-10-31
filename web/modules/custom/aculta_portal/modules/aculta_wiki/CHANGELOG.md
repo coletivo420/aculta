@@ -1,3 +1,8 @@
+## Retificação de caminho ACULTA STUDIO WE SATIVA — 2026-10-30
+
+- Rotas e links canônicos usam `/studio/we-sativa` no purpose `wiki`, conforme ADR-038 retificado pelo responsável.
+- `/wesativa` não fica como alias ou redirect. Testes de rota após a retificação e homologação Runtime continuam pendentes.
+
 ## 0.1.0-dev.118 — proteger grants versionados das propostas (2026-10-26)
 
 - Teste Unit `WikiProposalRolePermissionsConfigTest` verifica que submissão e

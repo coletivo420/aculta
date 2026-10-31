@@ -7,7 +7,7 @@ redirecionamentos. Ele complementa o sitemap XML de indexação; não o substitu
 ## Decisão vigente: Conta e Perfil separados, legado mantido
 
 Minha Conta legada fica em `/conta-legada` no Domain ACCOUNT, com
-`aculta_portal.dashboard` como route ID. A raiz `/` do Domain ACCOUNT é a entrada da Conta. O hub público `aculta_studio.hub` foi removido; `/studio` e `/studio/*` respondem 404.
+`aculta_portal.dashboard` como route ID. A raiz `/` do Domain ACCOUNT é a entrada da Conta. O hub público `aculta_studio.hub` foi removido; `/studio` responde 404. A decisão do responsável aprova apenas `/studio/we-sativa/**` no purpose `wiki` e `/studio/green-stash/**` no purpose `shop`.
 O caminho `/minha-conta` não é rota e responde 404. O legado será conservado durante e
 **após** a comparação com `/conta`. As duas experiências
 `/conta` e `/perfil` não possuem um agrupamento
@@ -17,11 +17,13 @@ Runtime ainda não homologado.
 ## Rotas canônicas sem compatibilidade transitória — 2026-10-24
 
 Durante o desenvolvimento não há aliases temporários de rota. `/studio` e
-todas as rotas `/studio/*` foram retiradas; os demais caminhos antigos de
-Ganjalab, Fórum administrativo, User e Conta/Commerce respondem 404, sem redirects.
+os caminhos antigos `/studio/*` permanecem retirados, exceto pelas rotas
+canônicas aprovadas para ACULTA STUDIO WE SATIVA e ACULTA STUDIO GREEN STASH;
+os demais caminhos antigos de Ganjalab, Fórum administrativo, User e
+Conta/Commerce respondem 404, sem redirects.
 Usar `/` no ACCOUNT para a entrada da Conta, `/conta-legada` para a Conta
 original, `/conta` e `/perfil` para as experiências, `/marley`, `/ganjalab`,
-`/wesativa`, `/greenstash`, `/culturas`, `/dados/endereco` e `/pedidos`.
+`/studio/we-sativa`, `/studio/green-stash`, `/culturas`, `/dados/endereco` e `/pedidos`.
 O perfil público `/u/{apelido}` e a raiz técnica da Conta seguem seu
 contrato. **Pathauto e aliases editoriais de conteúdo são URLs de conteúdo,
 não rotas temporárias de compatibilidade.** Redirecionamentos funcionais de
@@ -320,7 +322,7 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/conexoes` | Conexões de autenticação social | Conta autenticada; provedores habilitados variam por ambiente. |
 | `conta.aculta` | `/meus-formularios/{user}/{submission_view}` | Submissões Webform da conta | Rota `entity.webform_submission.user`; acesso conferido por `WebformAccountAccess`. |
 | `conta.aculta` | `/meus-cursos` | Lista de cursos da pessoa | Conta autenticada; depende de matrícula/conteúdo. |
-| `conta.aculta` | `/studio` e `/studio/*` | Prefixo público retirado | Não há rotas, aliases ou redirects; qualquer método/purpose retorna 404. |
+| todos os purposes | `/studio` e demais `/studio/*` | Prefixos retirados | 404 em todos os métodos; exceções canônicas abaixo são purpose-scoped e não aceitam paths desconhecidos. |
 | `conta.aculta` | `/conta` | **Minha Conta Studio** | `aculta_studio.account`, autenticação + Portal; composição de serviços cadastrais privados. Não retira a Conta legada. |
 | `conta.aculta` | `/conta/dados` | Dados cadastrais privados | `aculta_studio.account_data`, Profile Form API do Portal para nome e WhatsApp, sem o campo público de apelido. Legado `/dados` preservado. |
 | `conta.aculta` | `/conta/endereco` | Endereço privado no Studio | `aculta_studio.account_address`; chama `PortalController::address()` e mantém o mesmo Profile Commerce, CEP, Número/S-N e retorno contextual; legado `/dados/endereco` preservado. |
@@ -342,13 +344,14 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/marley/{aba}/{secao}` | Seção editorial Marley | Declarada em `aculta_studio`; segmento inexistente ou sem acesso retorna 404; purpose `account`. |
 | `conta.aculta` | `/marley/{aba}/{secao}/{sub}` | Aba interna editorial Marley | Declarada em `aculta_studio`; ações revalidam o acesso do módulo dono; purpose `account`. |
 | `cursos.aculta` | `/ganjalab` | Dashboard pessoal ACULTA Studio Ganjalab | Declarada em `aculta_lms`; conta autenticada, dados limitados à própria pessoa; purpose `courses`. |
-| `wiki420.aculta` (Domain ativo) | `/wesativa` | Entrada **ACULTA STUDIO WE SATIVA**, experiência de contribuição | Declarada em `aculta_studio`; disponibilidade/access e dados delegados à Wiki; purpose `wiki`. Host vem do Domain configurado; não há renomeação para `wiki.aculta.*`. |
-| `wiki420.aculta` (Domain ativo) | `/wesativa/inicio` | Página inicial de contribuição **ACULTA STUDIO WE SATIVA** | Declarada em `aculta_studio`; acesso delegado ao workspace proprietário da Wiki; purpose `wiki`. |
-| `loja.aculta` | `/greenstash` | Entrada de gestão comercial integrada **ACULTA STUDIO GREEN STASH** | Rota `aculta_commerce.green_stash`; purpose `shop`; acesso pelo provider e permissão Commerce. |
-| `loja.aculta` | `/greenstash/{secao}` | Áreas contextuais de gestão Green Stash | Rota `aculta_commerce.green_stash_area`; somente slugs definidos pelo owner Commerce. |
-| `loja.aculta` | `/greenstash/produtos/novo` | Criar rascunho de produto | Rota `aculta_commerce.green_stash_product_create`; Form API Commerce; create access e loja revalidados. |
-| `loja.aculta` | `/greenstash/produtos/{produto}` | Detalhe de produto administrável | Rota `aculta_commerce.green_stash_product_detail`; acesso à entidade e store revalidado. |
-| `loja.aculta` | `/greenstash/envios/{aculta_shipment}/transicao/{transition}` | Confirmar transição de remessa | Rota `aculta_commerce.green_stash_shipment_transition`; permissão de operação e estado/workflow revalidado. |
+| `wiki420.aculta` (Domain ativo) | `/studio/we-sativa` | Entrada **ACULTA STUDIO WE SATIVA**, experiência de contribuição | Declarada em `aculta_studio`; disponibilidade/access e dados delegados à Wiki; purpose `wiki`. Host vem do Domain configurado; não há renomeação para `wiki.aculta.*`. |
+| `wiki420.aculta` (Domain ativo) | `/studio/we-sativa/inicio` | Página inicial de contribuição **ACULTA STUDIO WE SATIVA** | Declarada em `aculta_studio`; acesso delegado ao workspace proprietário da Wiki; purpose `wiki`. |
+| `wiki420.aculta` (Domain ativo) | `/studio/we-sativa/propostas/{proposal}/decidir` | Decisão autorizada de proposta na área WE SATIVA | Rota `aculta_wiki.proposal_decide`; purpose `wiki`, autorização e revisão permanecem no owner Wiki. |
+| `loja.aculta` | `/studio/green-stash` | Entrada de gestão comercial integrada **ACULTA STUDIO GREEN STASH** | Rota `aculta_commerce.green_stash`; purpose `shop`; acesso pelo provider e permissão Commerce. |
+| `loja.aculta` | `/studio/green-stash/{secao}` | Áreas contextuais de gestão Green Stash | Rota `aculta_commerce.green_stash_area`; somente slugs definidos pelo owner Commerce. |
+| `loja.aculta` | `/studio/green-stash/produtos/novo` | Criar rascunho de produto | Rota `aculta_commerce.green_stash_product_create`; Form API Commerce; create access e loja revalidados. |
+| `loja.aculta` | `/studio/green-stash/produtos/{produto}` | Detalhe de produto administrável | Rota `aculta_commerce.green_stash_product_detail`; acesso à entidade e store revalidado. |
+| `loja.aculta` | `/studio/green-stash/envios/{aculta_shipment}/transicao/{transition}` | Confirmar transição de remessa | Rota `aculta_commerce.green_stash_shipment_transition`; permissão de operação e estado/workflow revalidado. |
 | `eventos.aculta` | `/culturas` | Entrada da experiência de organizadores | `aculta_events.organizer_dashboard`; purpose `eventos`; permissão conferida no owner. Rotas de edição ficam sob `/culturas/**`; painel admin continua no MAIN. |
 | `conta.aculta` | `/salvos` | Itens salvos da pessoa | Composição `aculta_studio`; requer sessão e consulta limitada ao titular. |
 | `conta.aculta` | `/conta/mercado-pago/planos` | Gestão de planos Mercado Pago da conta | Owner `aculta_pagamentos_mercadopago`; requer permissões existentes e submete em `/integracoes/mercadopago/planos` no MAIN. |
@@ -502,7 +505,7 @@ módulos instalados: módulos desabilitados não expõem rotas ativas.
 | `/redes-sociais` | `links.aculta` | Caminho interno da página de links | A raiz `/` é pública; acesso direto responde `404`, sem 301. |
 | `/minha-conta` | `conta.aculta` | Caminho retirado (antiga rota interna da visão geral) | Não é mais rota; acesso direto responde `404`, sem redirect. |
 | `/conta-legada` | `conta.aculta` | Minha Conta original (`aculta_portal.dashboard`) | Rota pública preservada; anônimo vai ao login, logado acessa a visão geral. |
-| `/studio` e `/studio/*` | todos os purposes | Rotas públicas retiradas por ADR-038 | Sem alias/redirect; 404 em todos os métodos. |
+| `/studio` e `/studio/*` fora de WE SATIVA/Green Stash | todos os purposes | Rotas públicas retiradas por ADR-038 | Sem alias/redirect; 404 em todos os métodos. Os paths canônicos abaixo só resolvem no purpose dono. |
 | `/conta-interna` | `conta.aculta` | Antigo caminho interno do painel da conta | Removido; visitante recebe `404`; comportamento para usuário autenticado segue política documentada. |
 | `/group/{group}/join` e `/group/{group}/leave` | `cursos.aculta` quando Group é curso | Paths contrib aposentados para entrada/saída de Group | Substituídos por `/grupo/{group}/entrar` e `/grupo/{group}/sair`; sem alias. |
 | `/course/{group}/start` e `/course/{group}/reset-test` | `cursos.aculta` | Paths LMS em inglês aposentados | Substituídos por `/curso/{group}/iniciar` e `/curso/{group}/reiniciar-avaliacao`; sem alias. |
@@ -586,8 +589,8 @@ Caminhos e purposes foram atualizados no código; Wiki mantém o Domain canônic
 | --- | --- | --- | --- | --- |
 | `conta.aculta.*` | `/marley` | Marley | `account` | Caminho canônico; host vem do Domain ativo |
 | `cursos.aculta.*` | `/ganjalab` | Ganjalab | `courses` | Caminho canônico; host vem do Domain ativo |
-| Domain `wiki` ativo (`wiki420`) | `/wesativa` | WE SATIVA | `wiki` | Rota canônica implementada; HTTPS e navegação autenticada verificados no ambiente de desenvolvimento; DNS de produção não verificado |
-| `loja.aculta.*` | `/greenstash` | Green Stash | `shop` | Caminho canônico; host vem do Domain ativo |
+| Domain `wiki` ativo (`wiki420`) | `/studio/we-sativa` | ACULTA STUDIO WE SATIVA | `wiki` | Path aprovado pelo responsável; host vem do Domain ativo; Runtime precisa ser revalidado |
+| `loja.aculta.*` | `/studio/green-stash` | ACULTA STUDIO GREEN STASH | `shop` | Path aprovado pelo responsável; host vem do Domain ativo; Runtime precisa ser revalidado |
 | `eventos.aculta.*` | `/culturas` | ACULTA Studio Culturas | `eventos` | Página autenticada verificada; grants e fluxos integrais de escrita ainda pendentes |
 
-A raiz `conta` apresenta a Conta; rotas Conta, Perfil, Salvos e Mercado Pago usam paths próprios conforme tabela de correspondência no ADR-038. `/studio` e `/studio/*` respondem 404, sem alias/redirect. O Domain canônico da Wiki permanece `wiki420`; a referência a `wiki.aculta.*` foi corrigida pelo responsável e não há troca de host planejada. A disponibilidade DNS de produção `wiki420.aculta.org` não foi verificada deste ambiente.
+A raiz `conta` apresenta a Conta; rotas Conta, Perfil, Salvos e Mercado Pago usam paths próprios conforme tabela de correspondência no ADR-038. `/studio` e os paths não aprovados sob esse prefixo respondem 404; apenas as rotas canônicas WE SATIVA e Green Stash usam `/studio/`. O Domain canônico da Wiki permanece `wiki420`; a referência a `wiki.aculta.*` foi corrigida pelo responsável e não há troca de host planejada. A disponibilidade DNS de produção `wiki420.aculta.org` não foi verificada deste ambiente.

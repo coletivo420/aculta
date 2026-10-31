@@ -41,17 +41,17 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       '/marley/{aba}' => 'aculta_studio.area',
       '/marley/{aba}/{secao}' => 'aculta_studio.section',
       '/marley/{aba}/{secao}/{sub}' => 'aculta_studio.tab',
-      '/wesativa' => 'aculta_studio.we_sativa',
-      '/wesativa/inicio' => 'aculta_studio.we_sativa_start',
+      '/studio/we-sativa' => 'aculta_studio.we_sativa',
+      '/studio/we-sativa/inicio' => 'aculta_studio.we_sativa_start',
       '/ganjalab' => 'aculta_lms.student_dashboard',
       '/salvos' => 'aculta_studio.salvos',
-      '/greenstash' => 'aculta_commerce.green_stash',
-      '/greenstash/{secao}' => 'aculta_commerce.green_stash_area',
-      '/greenstash/produtos/novo' => 'aculta_commerce.green_stash_product_create',
-      '/greenstash/produtos/{produto}' => 'aculta_commerce.green_stash_product_detail',
-      '/greenstash/envios/{aculta_shipment}/transicao/{transition}' => 'aculta_commerce.green_stash_shipment_transition',
+      '/studio/green-stash' => 'aculta_commerce.green_stash',
+      '/studio/green-stash/{secao}' => 'aculta_commerce.green_stash_area',
+      '/studio/green-stash/produtos/novo' => 'aculta_commerce.green_stash_product_create',
+      '/studio/green-stash/produtos/{produto}' => 'aculta_commerce.green_stash_product_detail',
+      '/studio/green-stash/envios/{aculta_shipment}/transicao/{transition}' => 'aculta_commerce.green_stash_shipment_transition',
       '/conta/mercado-pago/planos' => 'aculta_pagamentos_mercadopago.studio_plans',
-      '/wesativa/propostas/{proposal}/decidir' => 'aculta_wiki.proposal_decide',
+      '/studio/we-sativa/propostas/{proposal}/decidir' => 'aculta_wiki.proposal_decide',
     ];
 
     foreach ($expected as $path => $owner) {
@@ -62,7 +62,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
   }
 
   /**
-   * Conta and profile are restricted to account; suites use their owner domains.
+   * Conta and profile are restricted to account; suites use owner domains.
    */
   public function testAccountProfileAndSuiteAccess(): void {
     $routes = $this->routes();
@@ -135,9 +135,6 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       '/studio',
       '/studio/marley',
       '/studio/ganjalab',
-      '/studio/we-sativa',
-      '/studio/we-sativa/inicio',
-      '/studio/green-stash',
       '/studio/salvos',
       '/studio/conta',
       '/studio/perfil',
@@ -146,6 +143,11 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       '/studio/inicio',
       '/ganjalab420',
       '/minha-aprendizagem',
+      '/wesativa',
+      '/wesativa/inicio',
+      '/wesativa/propostas/{proposal}/decidir',
+      '/greenstash',
+      '/greenstash/{secao}',
       '/studio/ganjalab420',
       '/studio/ganjalab/{aba}/{secao}/{sub}',
     ];
@@ -156,7 +158,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
   }
 
   /**
-   * The original Minha Conta stays available at /conta-legada; the ACCOUNT root resolves to the account entry.
+   * Minha Conta stays at /conta-legada; the ACCOUNT root resolves to Conta.
    */
   public function testLegacyAccountRouteStillExistsButIsNotExposedAsAlias(): void {
     $root = dirname(__DIR__, 3);

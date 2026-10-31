@@ -32,9 +32,9 @@ pendente porque a referência de branch no GitHub não foi encontrada pelo fetch
 e o PR #299 permanece em `2493d7535`. O gate global permanece vermelho por
 classes/tokens visuais de Eventos e Índice; não aprova THEME-MF3 nem OCS-F11.
 
-## ADR-038 - caminho aprovado para as Suites (execução parcial, 2026-10-30)
+## ADR-038 retificado - caminhos oficiais das áreas Studio (execução parcial, 2026-10-30)
 
-Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. Paths/purposes e rejeição global de `/studio*` foram implementados no código; `aculta_studio` permanece framework compartilhado. A raiz de `account` é entrada da Conta; Conta e Perfil permanecem separados. O Domain Wiki canônico é `wiki420`; o pedido para renomeá-lo a `wiki.aculta.*` foi corrigido pelo responsável e não faz parte do escopo. As seções abaixo são histórico quando descrevem os paths antigos.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; **ACULTA STUDIO WE SATIVA** `wiki:/studio/we-sativa`; **ACULTA STUDIO GREEN STASH** `shop:/studio/green-stash`; Culturas `eventos:/culturas`. O responsável retificou ADR-038 para aprovar esses dois paths sob seus purposes próprios; `/studio` e os demais prefixos antigos continuam 404. `aculta_studio` permanece framework compartilhado. A raiz de `account` é entrada da Conta; Conta e Perfil permanecem separados. O Domain Wiki canônico é `wiki420`. As seções abaixo são histórico quando descrevem paths substituídos.
 
 ## Inventário histórico pré-ADR-038
 

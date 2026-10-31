@@ -181,7 +181,7 @@ aculta_studio.profile_social:
     _aculta_domain_purpose: account
 
 aculta_studio.we_sativa:
-  path: /wesativa
+  path: /studio/we-sativa
   defaults:
     _controller: 'aculta_studio.we_sativa_controller:page'
     _title: 'ACULTA STUDIO WE SATIVA'
@@ -191,7 +191,7 @@ aculta_studio.we_sativa:
     _aculta_domain_purpose: wiki
 
 aculta_studio.we_sativa_start:
-  path: /wesativa/inicio
+  path: /studio/we-sativa/inicio
   defaults:
     _controller: 'aculta_studio.we_sativa_controller:start'
     _title: 'ACULTA STUDIO WE SATIVA'

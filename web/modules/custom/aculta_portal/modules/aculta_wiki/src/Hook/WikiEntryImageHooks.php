@@ -323,7 +323,7 @@ final class WikiEntryImageHooks {
     }
 
     $access = $this->workspace->access($this->currentUser);
-    $url = $this->domainPurposes->routeUrl('account', 'aculta_studio.we_sativa');
+    $url = $this->domainPurposes->routeUrl('wiki', 'aculta_studio.we_sativa');
     if ($url === NULL) {
       return;
     }

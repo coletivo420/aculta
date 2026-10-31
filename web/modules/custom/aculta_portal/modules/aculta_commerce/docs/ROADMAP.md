@@ -5,9 +5,10 @@ Escopo iniciado em 2026-10-22; estado revisado em 2026-10-26. Este roadmap é ve
 ## Retificação vigente — ACULTA STUDIO GREEN STASH (2026-10-30)
 
 Green Stash é área comercial integrada ao ACULTA Studio, não produto, shell ou
-experiência independente. Nome oficial: **ACULTA STUDIO GREEN STASH**. Pelo
-ADR-038, a entrada atual é `/greenstash` no purpose `shop`; `/studio/green-stash`
-e o antigo `/estudio/loja` foram retirados sem alias ou redirect. Propostas não
+experiência independente. Nome oficial: **ACULTA STUDIO GREEN STASH**. Por
+retificação explícita do responsável, a entrada canônica é `/studio/green-stash`
+no purpose `shop`, com os fluxos comerciais sob o mesmo prefixo. `/greenstash`
+e `/estudio/loja` ficam retirados sem alias ou redirect. Propostas não
 implementadas não podem ser apresentadas como operações disponíveis. As fases
 abaixo preservam seus paths originais como histórico.
 
@@ -35,7 +36,7 @@ pendentes; nenhum e-mail real foi enviado.
 1. Loja, LMS e doações preservam regras e checkouts próprios; **aculta_portal coordena a configuração administrativa (Comum/Loja/LMS/Doações) e preserva o checkout e a consolidação atual do carrinho público**. Ver [ADR-032](../../../../../../../docs/decisions/ADR-032-portal-multi-cart-checkout.md).
 2. Mercado Pago é um gateway compartilhado centralizado em `aculta_pagamentos_mercadopago` para loja, LMS e doações. Reutilizar a integração e os contratos atuais; alteração de webhook exige regressão nas três áreas.
 3. `aculta_commerce` concentra capacidades próprias da loja e fornece provider de contexto para o orquestrador **no aculta_portal**; Drupal Commerce permanece fonte de verdade. Nenhum armazenamento paralelo de pedidos, carrinhos, pagamentos ou estoque. **Já existe `CartConsolidator` no Portal que consolida pedidos não-recorrentes; preservar essa regra, não projetar outra.**
-4. **ACULTA STUDIO GREEN STASH** é área comercial integrada ao ACULTA Studio, distinta funcionalmente de GanjaLab, GanjaLab420 e ACULTA STUDIO WE SATIVA, mas sem plataforma, shell, login ou identidade independentes. Usar `StudioExperienceProviderInterface` como contrato técnico, com acesso real a serviços e entidades proprietárias. Não pressupor que `account` permita administrar a loja: resolver purpose e grants explicitamente. Entrada oficial `/greenstash` no purpose `shop` (ADR-038).
+4. **ACULTA STUDIO GREEN STASH** é área comercial integrada ao ACULTA Studio, distinta funcionalmente de GanjaLab, GanjaLab420 e ACULTA STUDIO WE SATIVA, mas sem plataforma, shell, login ou identidade independentes. Usar `StudioExperienceProviderInterface` como contrato técnico, com acesso real a serviços e entidades proprietárias. Não pressupor que `account` permita administrar a loja: resolver purpose e grants explicitamente. Entrada oficial `/studio/green-stash` no purpose `shop` (retificação do ADR-038).
 5. ACULTA420 detém o visual, baseado exclusivamente em SDC/UI Suite; mobile-first, sem substituir o cabeçalho multidomínio.
 6. Estatísticas comerciais via `aculta_statistics`. Ler agregados para indicadores; consultas operacionais de pedidos através de Commerce.
 7. Índice transversal apenas para descoberta de produtos e relações públicas autorizadas, jamais para estoque, dados de clientes, carrinhos, transações, segredos ou controle de acesso.

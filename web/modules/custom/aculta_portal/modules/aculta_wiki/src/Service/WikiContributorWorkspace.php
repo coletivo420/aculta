@@ -130,9 +130,9 @@ final class WikiContributorWorkspace {
       ],
     ];
 
-    $startUrl = $this->domainPurposes->routeUrl('account', 'aculta_studio.we_sativa_start');
+    $startUrl = $this->domainPurposes->routeUrl('wiki', 'aculta_studio.we_sativa_start');
     if ($startUrl !== NULL) {
-      $startAccess = $this->domainPurposes->runInPurpose('account', fn () => $startUrl->access($account, TRUE));
+      $startAccess = $this->domainPurposes->runInPurpose('wiki', fn () => $startUrl->access($account, TRUE));
       if ($startAccess instanceof AccessResultInterface) {
         $cacheability->addCacheableDependency($startAccess);
         if ($startAccess->isAllowed()) {
@@ -345,9 +345,9 @@ final class WikiContributorWorkspace {
       break;
     }
 
-    $workUrl = $this->domainPurposes->routeUrl('account', 'aculta_studio.we_sativa');
+    $workUrl = $this->domainPurposes->routeUrl('wiki', 'aculta_studio.we_sativa');
     if ($workUrl !== NULL) {
-      $workAccess = $this->domainPurposes->runInPurpose('account', fn () => $workUrl->access($account, TRUE));
+      $workAccess = $this->domainPurposes->runInPurpose('wiki', fn () => $workUrl->access($account, TRUE));
       if ($workAccess instanceof AccessResultInterface) {
         $cacheability->addCacheableDependency($workAccess);
         if ($workAccess->isAllowed()) {
@@ -519,7 +519,7 @@ final class WikiContributorWorkspace {
   private function entryFilters(string $active): array {
     $links = [];
     foreach (self::ENTRY_FILTERS as $state => $filter) {
-      $url = $this->domainPurposes->routeUrl('account', 'aculta_studio.we_sativa');
+      $url = $this->domainPurposes->routeUrl('wiki', 'aculta_studio.we_sativa');
       if ($url === NULL) {
         continue;
       }
@@ -586,7 +586,7 @@ final class WikiContributorWorkspace {
    *   Renderable link or NULL when the account Domain is unavailable.
    */
   private function nextPageLink(\Stringable|string $label, string $cursorKey, string $cursor): ?array {
-    $url = $this->domainPurposes->routeUrl('account', 'aculta_studio.we_sativa');
+    $url = $this->domainPurposes->routeUrl('wiki', 'aculta_studio.we_sativa');
     if ($url === NULL) {
       return NULL;
     }

@@ -83,7 +83,7 @@ aculta_wiki.proposal_withdraw:
         type: entity:aculta_wiki_proposal
 
 aculta_wiki.proposal_decide:
-  path: '/wesativa/propostas/{proposal}/decidir'
+  path: '/studio/we-sativa/propostas/{proposal}/decidir'
   defaults:
     _form: '\Drupal\aculta_wiki\Form\WikiProposalDecisionForm'
     _title: 'Avaliar proposta da Wiki'

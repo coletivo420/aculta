@@ -1,5 +1,14 @@
 # Roadmap — ACULTA Wiki
 
+## Retificação vigente de caminhos (2026-10-30)
+
+Por decisão vinculante do responsável, **ACULTA STUDIO WE SATIVA** usa
+`/studio/we-sativa` e descendentes no purpose `wiki`, no Domain `wiki420`.
+Entradas históricas abaixo que descrevem `/wesativa` ou purpose `account`
+registram estado anterior e não são o contrato vigente. A rota e os links
+foram atualizados; Kernel e Runtime após a retificação ainda precisam ser
+homologados.
+
 **Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md).
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.

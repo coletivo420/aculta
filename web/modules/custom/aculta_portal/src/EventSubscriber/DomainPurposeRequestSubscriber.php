@@ -141,12 +141,17 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $event->setResponse(new Response('', Response::HTTP_FORBIDDEN, ['Cache-Control' => 'private, no-store']));
       return;
     }
-    // The former Studio URL family is retired globally. Keep every method,
-    // AJAX request, and purpose fail-closed with a real 404.
+    // Only canonical Green Stash and WE SATIVA paths remain under the Studio
+    // prefix. Purpose-scoped routing and entity access still authorize them.
     $accountPath = $event->getRequest()->getPathInfo();
     if ($accountPath === '/studio' || str_starts_with($accountPath, '/studio/')) {
-      $event->setResponse($this->notFoundResponse());
-      return;
+      if (!FrontPathPolicy::caminhoStudioCanonicoPermitido(
+        $this->domainPurposeManager->getCurrentPurpose(),
+        $accountPath,
+      )) {
+        $event->setResponse($this->notFoundResponse());
+        return;
+      }
     }
     // /minha-conta remains a protected technical path, not a public alias.
     if ($accountPath === '/minha-conta' || str_starts_with($accountPath, '/minha-conta/')) {

@@ -20,21 +20,22 @@ final class GreenStashNavigationTest extends UnitTestCase {
   /**
    * Tests canonical paths and the absence of the retired route family.
    */
-  public function testCanonicalRoutesUseShopPurposePathAndNoStudioAliases(): void {
+  public function testCanonicalRoutesUseStudioPathAndShopPurpose(): void {
     $moduleRoot = dirname(__DIR__, 3);
     $routes = Yaml::decode((string) file_get_contents($moduleRoot . '/aculta_commerce.routing.yml'));
 
-    self::assertSame('/greenstash', $routes['aculta_commerce.green_stash']['path']);
-    self::assertSame('/greenstash/{secao}', $routes['aculta_commerce.green_stash_area']['path']);
+    self::assertSame('/studio/green-stash', $routes['aculta_commerce.green_stash']['path']);
+    self::assertSame('/studio/green-stash/{secao}', $routes['aculta_commerce.green_stash_area']['path']);
     self::assertSame('shop', $routes['aculta_commerce.green_stash']['options']['_aculta_domain_purpose']);
     self::assertSame('ACULTA STUDIO GREEN STASH', $routes['aculta_commerce.green_stash']['defaults']['_title']);
-    self::assertSame('/greenstash/produtos/novo', $routes['aculta_commerce.green_stash_product_create']['path']);
-    self::assertSame('/greenstash/produtos/{produto}', $routes['aculta_commerce.green_stash_product_detail']['path']);
-    self::assertSame('/greenstash/envios/{aculta_shipment}/transicao/{transition}', $routes['aculta_commerce.green_stash_shipment_transition']['path']);
+    self::assertSame('/studio/green-stash/produtos/novo', $routes['aculta_commerce.green_stash_product_create']['path']);
+    self::assertSame('/studio/green-stash/produtos/{produto}', $routes['aculta_commerce.green_stash_product_detail']['path']);
+    self::assertSame('/studio/green-stash/envios/{aculta_shipment}/transicao/{transition}', $routes['aculta_commerce.green_stash_shipment_transition']['path']);
 
     foreach ($routes as $route) {
       self::assertFalse(str_starts_with($route['path'], '/estudio/loja'));
     }
+    self::assertNotContains('/greenstash', array_column($routes, 'path'));
   }
 
   /**

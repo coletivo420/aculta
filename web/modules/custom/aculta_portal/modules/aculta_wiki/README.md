@@ -2,15 +2,14 @@
 
 ## WE SATIVA workspace (ADR-038)
 
-The workspace is canonically `/wesativa` in purpose `wiki`, on the configured
-`wiki420` Domain. Its data, proposal decisions and editorial authorization
-remain owned by `aculta_wiki`. The reference to `wiki.aculta.*` in the initial
-ADR-038 request was corrected by the responsible product owner; no Domain or
-host migration is planned. The development host was reached over HTTPS and the
-authenticated workspace was captured in Firefox on 2026-10-30. Production DNS
-for `wiki420.aculta.org` was not resolved from this development environment.
-All `/studio/*` URLs, including the old WE SATIVA path, are removed without
-alias.
+By explicit product-owner decision, ACULTA STUDIO WE SATIVA is canonically
+`/studio/we-sativa` in purpose `wiki`, on the configured `wiki420` Domain.
+Its data, proposal decisions and editorial authorization remain owned by
+`aculta_wiki`. The reference to `wiki.aculta.*` in the initial ADR-038 request
+was corrected by the responsible product owner; no Domain or host migration is
+planned. The approved path retifies ADR-038; `/wesativa` and all other retired
+paths return 404 without aliases. Runtime route verification is pending after
+the path change.
 
 ## Avisos da Wiki
 
