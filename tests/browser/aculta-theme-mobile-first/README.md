@@ -39,8 +39,11 @@ usa Tab real do WebDriver para alcançar o título e o CTA da publicação em 32
 verificando `:focus-visible`, contorno de pelo menos 2px e encaixe no viewport.
 Mede contraste dos links em claro/escuro e aplica zoom real de 200%/400%,
 verificando os alvos, o overflow e se título/CTA podem ser trazidos à área
-visível. Requer `xdotool` para a medição de zoom. Não autentica, não cria
-conteúdo, não verifica o gate completo de acessibilidade e não substitui
+visível. Também desativa JavaScript do site e confere conteúdo renderizado,
+links nativos, colunas, alvos e shell em todas as larguras. No modo candidato,
+WebDriver injeta somente a folha CSS no documento para medir o estilo sem
+reativar scripts da página. Requer `xdotool` para a medição de zoom. Não
+autentica, não cria conteúdo, não verifica o gate completo de acessibilidade e não substitui
 comparação pareada com o OpenCulturas Next.
 
 ```sh
@@ -65,15 +68,17 @@ composição editorial, como a mídia real. Use junto de
 `MAGAZINE_COVER_CSS_OVERRIDE=1`. A injeção não executa o Twig candidato nem
 altera a publicação no Runtime.
 
-Em 2026-10-31, CSS servida pelo Runtime passou cinco checks e falhou 14/19:
-targets e layout nos nove viewports, CTAs de 19px no zoom e encaixe insuficiente
-dos links. Com a folha local injetada, passaram os nove viewports, teclado,
-claro/escuro e zoom com alvos de 44px, sem overflow, e título/CTA rolados para
-dentro do viewport (19/19). Contraste medido: 12,40:1 em claro e 14,50:1 em
-escuro. A evidência avalia o candidato sobre conteúdo real, não publica a folha.
-Relatórios e capturas:
+Em 2026-10-31, a CSS servida pelo Runtime passou 5/28 e falhou 23/28: targets
+nos nove viewports, links no zoom e alvos de CTA (19px), também com JavaScript
+desativado. Com a folha local injetada no Firefox, passaram 28/28, incluindo
+nove larguras com JavaScript do site desativado, teclado, claro/escuro e zoom;
+os alvos mediram pelo menos 44px e não houve overflow. Contraste medido:
+12,40:1 em claro e 14,50:1 em escuro. A evidência avalia o candidato sobre
+conteúdo real, não publica a folha. Relatórios e capturas:
 `/home/piradopirata/aculta-suite-out/revista-cover-zoom-reachability-baseline-final-20261031/`
-e `/home/piradopirata/aculta-suite-out/revista-cover-zoom-final-20261031/`.
+e `/home/piradopirata/aculta-suite-out/revista-cover-nojs-candidate-20261031/`;
+a rodada sem injeção está em
+`/home/piradopirata/aculta-suite-out/revista-cover-nojs-baseline-20261031/`.
 
 ## Publicação editorial da Revista
 

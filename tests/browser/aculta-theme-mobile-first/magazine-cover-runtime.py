@@ -117,6 +117,37 @@ def set_viewport(driver, width):
     time.sleep(0.2)
 
 
+class FirefoxViewport:
+    """Keep one BiDi connection open for a no-JavaScript page session."""
+
+    def __init__(self, driver):
+        self.socket = connect(driver.websocket_url)
+        self.command_id = 0
+        self.context = self.command("browsingContext.getTree")["contexts"][0]["context"]
+
+    def command(self, method, params=None):
+        self.command_id += 1
+        command_id = self.command_id
+        self.socket.send(json.dumps({"id": command_id, "method": method, "params": params or {}}))
+        while True:
+            response = json.loads(self.socket.recv())
+            if response.get("id") != command_id:
+                continue
+            if "error" in response:
+                raise RuntimeError(f"WebDriver BiDi {method}: {response['error']}")
+            return response.get("result", {})
+
+    def set(self, width):
+        self.command("browsingContext.setViewport", {
+            "context": self.context,
+            "viewport": {"width": width, "height": 1000 if width >= 1000 else 844},
+        })
+        time.sleep(0.2)
+
+    def close(self):
+        self.socket.close()
+
+
 def press_tab(driver):
     driver.req("POST", f"/session/{driver.session}/actions", {
         "actions": [{
@@ -400,6 +431,67 @@ return {exists:true,width:innerWidth,height:innerHeight,scrollY,
                 shot = driver.req("GET", f"/session/{driver.session}/screenshot")
                 (OUT / f"magazine-cover-zoom-{round(target * 100)}-{kind}.png").write_bytes(base64.b64decode(shot))
         press_browser_key("ctrl+0")
+
+        # Geckodriver allocates Firefox's BiDi endpoint on a shared local port.
+        # Close the first browser before creating the no-JS session so its
+        # endpoint cannot be mistaken for the previous session's websocket.
+        driver.close()
+        driver = None
+        nojs_driver = Driver(prefs={**proxy_prefs, "javascript.enabled": False}, bidi=True)
+        nojs_viewport = None
+        try:
+            nojs_viewport = FirefoxViewport(nojs_driver)
+            nojs_driver.get(URL)
+            time.sleep(0.4)
+            if os.environ.get("MAGAZINE_COVER_CSS_OVERRIDE") == "1":
+                candidate_css = CSS_CANDIDATE.read_text(encoding="utf-8")
+                nojs_driver.js("""const style=document.createElement('style');
+style.id='magazine-css-candidate-nojs';style.textContent=arguments[0];
+document.head.append(style);return true;""", [candidate_css])
+            for width in WIDTHS:
+                nojs_viewport.set(width)
+                nojs_metrics = nojs_driver.js("""const root=document.documentElement;
+const view=document.querySelector('.page-view-revista-sessoes .view-display-id-page_revista');
+const grid=view?.querySelector('.view-content');
+const rows=[...(view?.querySelectorAll('.views-row')||[])];
+const titles=[...document.querySelectorAll('.aculta-revista-teaser__title a')];
+const ctas=[...document.querySelectorAll('.aculta-revista-teaser__cta')];
+const rect=el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,width:r.width,height:r.height};};
+return {width:innerWidth,documentWidth:root.clientWidth,scrollWidth:root.scrollWidth,
+  bodyScrollWidth:document.body.scrollWidth,hero:!!view?.querySelector('.aculta-hero h1'),
+  rows:rows.length,teasers:document.querySelectorAll('.aculta-revista-teaser').length,
+  columns:getComputedStyle(grid||document.body).gridTemplateColumns.split(' ').filter(Boolean).length,
+  titles:titles.map(el=>({href:el.href,...rect(el)})),
+  ctas:ctas.map(el=>({href:el.href,...rect(el)})),
+  institutionBar:document.querySelectorAll('.aculta-institution-bar').length,
+  domainHeader:document.querySelectorAll('.aculta-header').length};""")
+                expected_columns = 1 if width < 600 else 2 if width < 992 else 3
+                links = nojs_metrics["titles"] + nojs_metrics["ctas"]
+                nojs_passed = (
+                    nojs_metrics["width"] == width
+                    and nojs_metrics["documentWidth"] == width
+                    and nojs_metrics["scrollWidth"] <= width
+                    and nojs_metrics["bodyScrollWidth"] <= width
+                    and nojs_metrics["hero"] and nojs_metrics["rows"] > 0
+                    and nojs_metrics["teasers"] == nojs_metrics["rows"]
+                    and nojs_metrics["columns"] == expected_columns
+                    and len(nojs_metrics["titles"]) == nojs_metrics["rows"]
+                    and len(nojs_metrics["ctas"]) == nojs_metrics["rows"]
+                    and all(item["height"] >= 44 and item["left"] >= -1
+                            and item["right"] <= width + 1
+                            and urlparse(item["href"]).hostname == urlparse(URL).hostname
+                            for item in links)
+                    and nojs_metrics["institutionBar"] == 1
+                    and nojs_metrics["domainHeader"] == 1
+                )
+                record(f"capa sem JavaScript {width}px: conteúdo e links nativos",
+                       nojs_passed, nojs_metrics)
+                screenshot = nojs_driver.req("GET", f"/session/{nojs_driver.session}/screenshot")
+                (OUT / f"magazine-cover-nojs-{width}.png").write_bytes(base64.b64decode(screenshot))
+        finally:
+            if nojs_viewport:
+                nojs_viewport.close()
+            nojs_driver.close()
     finally:
         if driver:
             driver.close()

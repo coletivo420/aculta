@@ -2937,9 +2937,9 @@ pendentes; OCS-F8/F11 e THEME-MF3 não estão aprovados.
 Firefox ESR visível abriu a raiz `magazine:/` no Runtime anônimo, confirmou a
 View real com hero, quatro publicações com capas carregadas e os dois headers
 globais únicos. No CSS servido pelo Runtime em HEAD `2493d7535`, o teste ampliado
-passou 5/19 checks: presença estrutural, foco por teclado, contraste claro/escuro
-e título visível a 400%. Falharam os nove viewports/alvos; os CTAs mediram 19px,
-e os controles não mantiveram o alvo mínimo durante zoom real a 200%/400%.
+passou 5/28 checks e falhou 23/28: presença estrutural, foco por teclado e
+contraste passaram, mas os alvos falharam nos nove viewports, no zoom e com
+JavaScript desativado; os CTAs mediram 19px.
 
 Com `revista-listing.css` do worktree injetada somente na sessão Firefox, os nove
 viewports passaram: grade 1/2/3 colunas, zero overflow, imagens carregadas, shell
@@ -2947,11 +2947,15 @@ viewports passaram: grade 1/2/3 colunas, zero overflow, imagens carregadas, shel
 e CTA em 320px, ambos com `:focus-visible`, outline sólido de 3px e totalmente
 dentro do viewport. Os tokens servidos passaram contraste de 12,40:1 em claro e
 14,50:1 em escuro. A 200% e 400%, os links mantiveram 44px ou mais, sem overflow;
-scroll instantâneo trouxe títulos e CTAs para a área visível. Total candidato:
-19/19. Capturas revisadas em
+scroll instantâneo trouxe títulos e CTAs para a área visível. Com JavaScript do
+site desativado, links nativos, shell, conteúdo, colunas e alvos também passaram
+nas nove larguras. Total candidato: 28/28. Capturas revisadas em
 `/home/piradopirata/aculta-suite-out/revista-cover-zoom-final-20261031/`;
 baseline sem injeção em
 `/home/piradopirata/aculta-suite-out/revista-cover-zoom-reachability-baseline-final-20261031/`.
+Capturas e relatórios da execução expandida sem JavaScript em
+`/home/piradopirata/aculta-suite-out/revista-cover-nojs-candidate-20261031/` e
+`/home/piradopirata/aculta-suite-out/revista-cover-nojs-baseline-20261031/`.
 
 O harness `revista-browser-zoom.py` também foi repetido no Runtime em
 2026-10-31: home e publicação existente passaram 15/15, incluindo zoom real
@@ -2959,6 +2963,6 @@ O harness `revista-browser-zoom.py` também foi repetido no Runtime em
 Capturas e resumo em `/home/piradopirata/aculta-suite-out/revista-cover-zoom-20261031/`.
 Este teste não prova os alvos de link, cobertos separadamente acima.
 
-Estados de erro/vazio, no-JS, reduced motion quando aplicável, leitor de tela e
+Estados de erro/vazio, reduced motion quando aplicável, leitor de tela e
 WCAG 2.2 AA integral continuam sem validação. A folha candidata não foi servida
 pelo Runtime; o resultado não aprova THEME-MF3 nem OCS-F11.
