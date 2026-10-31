@@ -4,7 +4,7 @@ aculta420/bootstrap-icons	1	0		0	—	—	—
 aculta420/editorial-carousel	1	1	core/drupal|core/once	1	Twig attach_library	web/themes/custom/aculta420/templates/views-view-vvjb.html.twig	3
 aculta420/editorial-content	1	0		2	Twig attach_library	web/themes/custom/aculta420/templates/node--revista--full.html.twig	3
 aculta420/editorial-content	1	0		2	Twig attach_library	web/themes/custom/aculta420/components/patterns/quote/quote.twig	1
-aculta420/global	41	5	bootstrap/bootstrap|bootstrap/global-styling|aculta420/bootstrap-icons|core/drupal|core/once|core/drupal.displace	1	extension default library	web/themes/custom/aculta420/aculta420.info.yml	10
+aculta420/global	42	5	bootstrap/bootstrap|bootstrap/global-styling|aculta420/bootstrap-icons|core/drupal|core/once|core/drupal.displace	1	extension default library	web/themes/custom/aculta420/aculta420.info.yml	10
 aculta420/messenger-drawers	3	1	core/drupal|core/drupal.dialog|core/once|bootstrap/bootstrap	2	Twig attach_library	web/themes/custom/aculta420/components/patterns/messenger-trigger/messenger-trigger.twig	5
 aculta420/messenger-drawers	3	1	core/drupal|core/drupal.dialog|core/once|bootstrap/bootstrap	2	Twig attach_library	web/themes/custom/aculta420/components/patterns/alerts-trigger/alerts-trigger.twig	8
 aculta420/messenger-notices	1	0		1	extension default library	web/themes/custom/aculta420/aculta420.info.yml	12

@@ -16,13 +16,19 @@ renderizado segue parcial; não altera o status de THEME-MF0 nem aprova THEME-MF
 Evidência e limites em
 [`mobile-first-audit.md`](mobile-first-audit.md).
 
-**Rastreio adicional THEME-MF0 (2026-10-30):** o inventário estático de
+**Rastreio adicional THEME-MF0 (retificação 2026-10-31):** o inventário estático de
 bibliotecas customizadas registra 42 definições e 54 referências literais em
-2.474 fontes. Ele confirma ligações específicas da Revista (teaser, artigo,
+2.501 fontes. Ele confirma ligações específicas da Revista (teaser, artigo,
 citações e carrossel) e do Studio (navegação Marley), além da biblioteca global
 do tema. Não prova execução condicional nem completa a matriz rota/purpose; veja
 [`theme-library-consumer-inventory.tsv`](theme-library-consumer-inventory.tsv)
 e as limitações detalhadas em `mobile-first-audit.md`.
+
+O inventário lexical dos próprios assets declarados nas libraries também está
+em [`custom-library-responsive-inventory.tsv`](custom-library-responsive-inventory.tsv),
+gerado por `php scripts/audit-aculta420-library-responsive.php --write`.
+Ele cobre CSS/JS customizados e suas dependências conhecidas, sem afirmar
+execução em rota, cobertura visual ou aceite dos gates THEME-MF0/MF3.
 
 ## Green Stash na frente visual Studio - correção inicial (superada)
 

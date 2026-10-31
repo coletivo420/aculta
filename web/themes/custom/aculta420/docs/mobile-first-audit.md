@@ -740,13 +740,13 @@ Esta tabela não é evidência de cobertura homologada. Cada purpose ainda exige
 inventário de biblioteca anexada por controller/View/form, estados vazio/erro/
 sucesso/carregando e capturas em navegador visível.
 
-### THEME-MF0 — anexação literal de bibliotecas e consumers (2026-10-30)
+### THEME-MF0 — anexação literal de bibliotecas e consumers (retificação 2026-10-31)
 
 O scanner `scripts/audit-aculta420-library-consumers.php` correlaciona as
 definições das bibliotecas customizadas com referências literais em arquivos de
 código, templates e SDCs fora de diretórios de teste/documentação. A saída
 versionada [`theme-library-consumer-inventory.tsv`](theme-library-consumer-inventory.tsv)
-registra 42 libraries customizadas, 54 referências literais em 2.474 arquivos
+registra 42 libraries customizadas, 54 referências literais em 2.501 arquivos
 de fonte e seus CSS/JS declarados, dependências, arquivo e linha do consumer.
 É possível regenerá-la com `php scripts/audit-aculta420-library-consumers.php
 --write`; a execução padrão escreve TSV em stdout para comparação reproduzível.
@@ -763,6 +763,28 @@ construídas dinamicamente, dependências transitivas Core/contrib e anexações
 resolvidas apenas em Runtime exigem inspeção Drupal/HTTP. A matriz por purpose,
 View/Form API, estados e validação visual continuam parciais; MF0/MF3 não são
 aprovados por este scanner.
+
+#### Sinais responsivos dos assets de libraries (2026-10-31)
+
+`scripts/audit-aculta420-library-responsive.php` lê os próprios arquivos
+`*.libraries.yml` de `web/modules/custom` e do tema, analisa os CSS/JS locais
+declarados e correlaciona consumers literais e dependências entre libraries.
+`custom-library-responsive-inventory.tsv` contém 103 referências: 65 CSS e 38
+JS; 100 assets locais foram analisados, 3 são externos/gerenciados e nenhuma
+referência local está ausente. Os sinais lexicais incluem `@media`,
+`@container`, declarações dimensionais, overflow, APIs de viewport e scroll.
+Execução determinística: `php scripts/audit-aculta420-library-responsive.php`
+produz TSV em stdout; `--write` regenera o artefato versionado.
+
+O relatório inclui bibliotecas administrativas e assets de terceiros
+declarados por módulos, permitindo priorizar as telas de todos os purposes sem
+misturar apresentação ao tema. Não interpreta cascata, seletor, estado, tamanho
+efetivo do viewport ou execução condicional; um sinal lexical não é defeito nem
+prova de responsividade. As referências remotas de Google Fonts e SDK Mercado
+Pago e o CSS gerenciado do Tabulator requerem verificação própria de integração
+e licença. A correlação de rotas/purposes e a inspeção visual por consumidor
+seguem pendentes; este inventário amplia THEME-MF0, mas não o conclui nem aprova
+THEME-MF3.
 
 ### THEME-MF2 — rótulos longos da navegação global
 
