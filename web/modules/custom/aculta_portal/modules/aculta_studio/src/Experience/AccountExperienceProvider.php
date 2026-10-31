@@ -93,6 +93,11 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
     return [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'account-entry'],
+      'heading' => [
+        '#type' => 'html_tag',
+        '#tag' => 'h1',
+        '#value' => 'Minha Conta',
+      ],
       'description' => [
         '#plain_text' => new TranslatableMarkup('Acesse seus dados, segurança e experiências ACULTA.'),
       ],
