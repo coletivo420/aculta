@@ -1,5 +1,25 @@
 # ACULTA420 — SDC responsivos do tema
 
+## ACULTA STUDIO GREEN STASH — navegação e listagens
+
+`green-stash-layout.py` valida a folha candidata das áreas comerciais integradas
+ao Studio. A fixture replica os wrappers e links emitidos hoje por
+`GreenStashNavigation` e `GreenStashController` para navegação, busca, produto e
+remessa. No Firefox ESR visível, mede overflow, links atuais, áreas tocáveis,
+cartões, foco visível e modos claro/escuro em 320/360/390/599/600/768/1024/1280/
+1440px. É fixture local de CSS: não autentica operadores, não valida grants por
+loja/dados reais e não homologa OCS-F8/F11 nem THEME-MF3.
+
+```sh
+cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/green-stash-layout
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/green-stash-layout.py
+```
+
+PNGs e `report.json` são gravados somente em `$SUITE_OUT`.
+
 ## Capa pública da Revista no Runtime
 
 `magazine-cover-runtime.py` abre a raiz `https://revista.aculta.toca.net.br/`

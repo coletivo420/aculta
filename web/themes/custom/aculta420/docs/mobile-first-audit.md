@@ -2027,3 +2027,18 @@ metadados transitórios de sessão/login no Runtime; não houve alteração de
 conteúdo ou configuração. Este teste fecha o cenário de scroll administrativo,
 mas não cobre as demais rotas, zoom, teclado completo ou WCAG 2.2 AA e não aprova
 THEME-MF3.
+
+### OCS-F8 / THEME-MF2 — navegação e listagens do Green Stash (2026-10-30)
+
+`studio.css` apresenta a navegação contextual existente de nove áreas, busca
+GET, cartões de produto e remessa sob `.studio.aculta-green-stash`. A base
+mobile usa colunas fluidas, links de 48px, foco de 3px e controles de formulário
+de 44px; modo escuro usa tokens Fidelity existentes. Não foram alterados render
+arrays, dados, Form API, ACL, Commerce ou shell. `npm run lint:css` passou.
+Firefox ESR visível passou 74/74 verificações na fixture que replica a
+estrutura renderizada do controller, em 320/360/390/599/600/768/1024/1280/1440px
+e claro/escuro; sem overflow, com links/estados, cartões, formulário e foco
+observados. Capturas revisadas em
+`$SUITE_OUT/green-stash-layout-20261030/`. Evidência da CSS candidata, não de
+rota real, operador ou grants por loja. OCS-F8, OCS-F11 e THEME-MF3 continuam
+pendentes.

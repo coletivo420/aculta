@@ -377,6 +377,26 @@ componentes específicos de Green Stash. Não foi criado SDC, shell, menu global
 ou fluxo de Commerce paralelo. A renderização candidata ainda requer Firefox
 visível no Runtime para validação.
 
+Na atualização visual, `studio.css` compõe a navegação autorizada emitida pelo
+`GreenStashNavigation`, o formulário GET de busca e as listagens de
+produto/remessa emitidas pelo controller. O CSS é escopado pela raiz
+`.studio.aculta-green-stash`, mantém os nove links expostos, permite quebra sem
+rolagem horizontal e dá acabamento de cartão às linhas com H3. Nenhum SDC novo
+foi necessário: os dados atuais são wrappers simples de render arrays e
+continuam pertencendo ao módulo Commerce. A fixture
+`green-stash-layout.py` cobre a aparência candidata; operadores reais, grants
+por loja e fluxos de escrita seguem pendentes.
+
+Na etapa visual atual, `studio.css` compõe a navegação autorizada emitida pelo
+`GreenStashNavigation`, o formulário GET de busca e as listagens de
+produto/remessa emitidas pelo controller. O CSS é escopado pela raiz
+`.studio.aculta-green-stash`, mantém os nove links expostos, permite quebra sem
+rolagem horizontal e dá acabamento de cartão às linhas com H3. Nenhum SDC novo
+foi necessário: os dados operacionais atuais são wrappers simples de render
+arrays e continuam pertencendo ao módulo Commerce. A fixture
+`green-stash-layout.py` cobre a aparência candidata; operadores reais, grants
+por loja e fluxos de escrita seguem pendentes.
+
 ## THEME-MF2 — `patterns/content-grid`
 
 O SDC experimental tem consumidores de duas colunas em Marley, LMS e Wiki; os

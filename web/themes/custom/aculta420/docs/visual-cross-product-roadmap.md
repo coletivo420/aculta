@@ -1004,6 +1004,19 @@ na fixture candidata em nove larguras. Essa evidência não é render Drupal no
 Runtime. OCS-F3/F8 continuam parciais; F11 e THEME-MF3 não aprovados e OCS-A1–A4
 não iniciadas.
 
+### OCS-F8 — navegação e listagens comerciais (2026-10-30)
+
+A CSS do tema aplica apresentação mobile-first à navegação atual de Green Stash,
+ao formulário GET de busca e às listagens de produto/remessa, restrita à raiz
+`.studio.aculta-green-stash`. A navegação permanece contextual e conserva os
+nove destinos existentes; sem novos dados, ações, SDCs ou camada operacional.
+Stylelint passou e a fixture Firefox ESR passou 74/74 checks em nove larguras,
+dois modos de cor, foco e controles. Capturas estão em
+`$SUITE_OUT/green-stash-layout-20261030/`. A conta de teste não tem grants da
+loja: portanto a captura é fixture da folha, e OCS-F8 continua parcial até
+validação com operador autorizado e telas Commerce reais. Não aprova F11 nem
+THEME-MF3.
+
 
 ### Revista — consumer editorial e capa da home (2026-10-30)
 

@@ -455,3 +455,135 @@
 .studio__live:empty {
   display: none;
 }
+
+/* Green Stash is a commercial area inside Studio, not a second shell. */
+.studio.aculta-green-stash {
+  display: grid;
+  min-width: 0;
+  gap: var(--aculta-studio-fidelity-row-gap);
+}
+
+.aculta-green-stash > h2 {
+  margin-block: 0;
+  padding-block-end: 0.5rem;
+  border-block-end: 1px solid var(--aculta-studio-fidelity-divider);
+}
+
+/* Keep every currently exposed area reachable without horizontal scrolling. */
+.aculta-green-stash__navigation {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+  gap: 0.25rem 0.75rem;
+  min-width: 0;
+  margin-block-end: 1rem;
+}
+
+.aculta-green-stash__navigation-link {
+  display: flex;
+  min-width: 0;
+  min-height: 3rem;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  overflow-wrap: anywhere;
+  color: var(--aculta-studio-fidelity-link);
+  text-decoration: none;
+  border-block-end: 1px solid var(--aculta-studio-fidelity-divider);
+}
+
+.aculta-green-stash__navigation-link[aria-current="page"] {
+  color: var(--aculta-studio-fidelity-text);
+  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
+  border-block-end: 3px solid var(--aculta-studio-fidelity-interaction);
+}
+
+.aculta-green-stash__navigation-link:is(:hover, :focus-visible) {
+  color: var(--aculta-studio-fidelity-interaction);
+  border-block-end: 3px solid var(--aculta-studio-fidelity-interaction);
+}
+
+.aculta-green-stash__navigation-link:focus-visible,
+.aculta-green-stash a:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 3px;
+}
+
+.aculta-green-stash__products form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  padding: 1rem;
+  color: var(--aculta-studio-fidelity-text);
+  background: var(--aculta-studio-fidelity-surface-muted);
+}
+
+.aculta-green-stash__products form label {
+  margin: 0;
+}
+
+.aculta-green-stash__products form button {
+  justify-self: start;
+  min-height: 2.75rem;
+  margin: 0;
+  padding: 0.5rem 1.5rem;
+  color: var(--aculta-studio-fidelity-button-primary-text);
+  border: 2px solid var(--aculta-studio-fidelity-button-primary-border);
+  border-radius: 0.25rem;
+  background: var(--aculta-studio-fidelity-button-primary-background);
+  font: inherit;
+  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
+  cursor: pointer;
+}
+
+.aculta-green-stash__products form input[type="search"] {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  color: var(--aculta-studio-fidelity-text);
+  border: 1px solid var(--aculta-studio-fidelity-input-border-bottom);
+  border-color: var(--aculta-studio-fidelity-input-border-top) var(--aculta-studio-fidelity-input-border-inline) var(--aculta-studio-fidelity-input-border-bottom);
+  border-radius: 0;
+  background: var(--aculta-studio-fidelity-input-background);
+  font: inherit;
+}
+
+.aculta-green-stash__products form input[type="search"]:focus-visible,
+.aculta-green-stash__products form button:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 3px;
+}
+
+.aculta-green-stash__products > div:has(> h3),
+.aculta-green-stash__shipments > div:has(> div > h3) {
+  min-width: 0;
+  margin-block: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--aculta-studio-fidelity-divider);
+  border-radius: 0.25rem;
+  background: var(--aculta-studio-fidelity-surface);
+}
+
+.aculta-green-stash__products h3,
+.aculta-green-stash__shipments h3 {
+  margin-block-start: 0;
+  overflow-wrap: anywhere;
+}
+
+.aculta-green-stash__products > div:has(> h3) a,
+.aculta-green-stash__shipments a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+}
+
+@media (min-width: 48rem) {
+  .aculta-green-stash__products form {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+  }
+
+  .aculta-green-stash__products form label {
+    grid-column: 1 / -1;
+  }
+}
