@@ -3549,6 +3549,19 @@ confirma que o hook do Portal ou CSS da branch estejam instalados/servidos. Não
 cobre páginas internas, teclado integral, zoom ou WCAG global; THEME-MF3 segue
 pendente.
 
+Repeti a matriz em Firefox ESR visível no checkout de trabalho: **576/576
+checks passaram** nas dez raízes/purposes, nove larguras, claro/escuro e
+`prefers-reduced-motion`. O reteste da candidata confirmou zero overflow e
+shell único em cada captura, contraste AA nos links medidos; em `/entrar`, CSS
+e marcador de desafio foram injetados somente na sessão do navegador. Revisei
+uma folha de contato com as 20 capturas móveis dos dez purposes nos dois modos.
+Relatório, imagens e capturas completos em
+`/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-branch-20261031/`.
+O Runtime continua no HEAD `2493d7535`; isto confirma a árvore candidata no
+Firefox, não que CSS/hook estejam servidos. A amostra segue focal e não aprova
+THEME-MF3: telas internas, zoom, teclado integral e WCAG global continuam
+pendentes.
+
 ### OCS-F5/F7 — ritmo das tabelas de listagem Marley/Wiki (2026-10-31)
 
 A leitura de `opcult/sass/base/_tables.scss` identificou ritmo de células,

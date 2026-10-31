@@ -1807,6 +1807,12 @@ somente no navegador. A execução observa o Runtime atual; não instala nem
 homologa os arquivos da branch. Gate MF3 continua pendente de páginas internas,
 zoom, teclado, WCAG e integração servida. Evidência em `mobile-first-audit.md` e
 `/home/piradopirata/aculta-suite-out/purpose-shell-colormodes-followup-20261031/`.
+Repetição em 2026-10-31 no HEAD `2493d7535` voltou a passar 576/576; a folha de
+contato das 20 capturas móveis (dez purposes, claro/escuro) foi inspecionada.
+O novo relatório está em
+`/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-branch-20261031/`.
+CSS e marcador de desafio seguem injetados apenas no Firefox para Conta; a
+integração servida e os demais itens do gate continuam pendentes.
 
 ### OCS-F5/F7 — tabelas de listagem no mobile (2026-10-31)
 
