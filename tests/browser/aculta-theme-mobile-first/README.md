@@ -966,6 +966,16 @@ marcador visual neutro apenas na sessão Firefox quando a Conta redireciona para
 `/entrar`. Serve para comparar a geometria candidata e a navegação por teclado;
 não instala o hook no Runtime nem altera a página servida.
 
+O foco delegado ao Turnstile permanece `SKIP`: o diagnóstico registra o
+`DIV` de `tabIndex=-1` dentro do wrapper, mas ele não corresponde a `:focus` nem
+`:focus-visible`, e o wrapper não corresponde a `:focus-within`. Assim, esse
+foco transferido pelo widget externo não pode ser estilizado de modo confiável
+pela folha do tema. A verificação mede retângulo e estado CSS, sem inspecionar
+o conteúdo cross-origin do iframe. No reteste focal de 2026-10-31, Conta passou
+72 checks nas quatro larguras 320/390/768/1440px; os quatro passos transferidos
+ao CAPTCHA permaneceram `SKIP` e nenhum link foi ativado. Evidência em
+`/home/piradopirata/aculta-suite-out/account-captcha-focus-diagnostic-20261031/`.
+
 `PURPOSE_KEYBOARD_DIAGNOSTICS=1` acrescenta aos registros de overflow as
 larguras de `html`/`body` e os elementos cujas caixas ou áreas de rolagem
 ultrapassam seus contêineres. O modo fica desligado por padrão para manter

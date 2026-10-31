@@ -3788,3 +3788,17 @@ mas a folha continua candidata injetada: sua integração no Runtime, estados
 escuro, no-JS/AJAX, CEP, teclado/zoom, ACL entre contas e WCAG completa não foram
 homologados. OCS-F10, OCS-F11 e THEME-MF3 seguem parciais/pendentes.
 
+### THEME-MF3 — diagnóstico do foco transferido ao Turnstile (2026-10-31)
+
+Reteste Firefox ESR candidato da Conta em 320/390/768/1440px percorreu Tab e
+Shift+Tab. Houve 72 checks PASS e quatro `SKIP` no foco delegado ao widget; sem
+falhas. O alvo reportado é um `DIV` de `tabIndex=-1` dentro do wrapper, mas no
+documento ACULTA ele não corresponde a `:focus`/`:focus-visible` e o wrapper
+não corresponde a `:focus-within`. CSS do tema não consegue alcançar o estado
+transferido pelo CAPTCHA externo. O script agora registra essas propriedades
+para distinguir essa limitação de foco normal do shell. O conteúdo interno do
+iframe continua fora da inspeção. Evidência em
+`/home/piradopirata/aculta-suite-out/account-captcha-focus-diagnostic-20261031/`.
+Os quatro casos permanecem `SKIP`; isto não aprova o gate de teclado/WCAG do
+THEME-MF3.
+

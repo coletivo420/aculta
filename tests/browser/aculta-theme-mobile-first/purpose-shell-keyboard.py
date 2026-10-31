@@ -118,12 +118,24 @@ def press_tab(driver, reverse=False):
 def inspect(driver):
     return json.loads(driver.js("""const el=document.activeElement, style=getComputedStyle(el), r=el.getBoundingClientRect();
 const ring=el.closest('.lms-course-card')||el, ringStyle=getComputedStyle(ring);
+const captcha=el.closest('.captcha'),captchaStyle=captcha?getComputedStyle(captcha):null,
+  captchaRect=captcha?.getBoundingClientRect();
 return JSON.stringify({
   tag:el.tagName, id:el.id, className:typeof el.className==='string'?el.className:'',
   focusTarget:el!==document.body&&el!==document.documentElement,
   tabIndex:el.tabIndex, role:el.getAttribute('role'), ariaLabel:el.getAttribute('aria-label'),
   parentClass:el.parentElement?.className?.toString?.()||'',
   captchaAncestor:el.closest('.captcha, .captcha-type-challenge--turnstile')?.className||'',
+  captchaContainsTarget:!!el.closest('.captcha')?.contains(el),
+  focusPseudoMatches:el.matches(':focus'),
+  captchaFocusWithin:captcha?.matches(':focus-within')||false,
+  captchaOutlineStyle:captchaStyle?.outlineStyle||'none',
+  captchaOutlineWidth:captchaStyle?.outlineWidth||'0px',
+  captchaOutlineColor:captchaStyle?.outlineColor||'transparent',
+  captchaLeft:captchaRect?Math.round(captchaRect.left):null,
+  captchaRight:captchaRect?Math.round(captchaRect.right):null,
+  captchaTop:captchaRect?Math.round(captchaRect.top):null,
+  captchaBottom:captchaRect?Math.round(captchaRect.bottom):null,
   focusVisible:el.matches(':focus-visible'), outlineStyle:style.outlineStyle,
   outlineWidth:style.outlineWidth, outlineColor:style.outlineColor, boxShadow:style.boxShadow,
   indicatorClass:typeof ring.className==='string'?ring.className:'',
