@@ -657,13 +657,13 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
     overflow-wrap: anywhere;
   }
 
-  .studio__main table.responsive-enabled {
+  :is(body.path-marley, body.path-wesativa) table.responsive-enabled {
     table-layout: fixed;
     inline-size: 100%;
     max-inline-size: 100%;
   }
 
-  .studio__main table.responsive-enabled :is(td, th) {
+  :is(body.path-marley, body.path-wesativa) table.responsive-enabled :is(td, th) {
     min-inline-size: 0;
     overflow-wrap: anywhere;
   }
