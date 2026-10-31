@@ -507,3 +507,22 @@ use `STUDIO_ROUTES=https://wiki420.aculta.toca.net.br/wesativa` com
 wrapper no path legado, mas não homologa o caminho canônico nem fecha OCS-F7.
 Aplique `OCS_STUDIO_COLOR_MODE=dark` para o teste visual escuro. O teste é GET,
 não altera conteúdo e nunca submete ações da Wiki.
+
+## ACULTA Studio Culturas — dashboard responsivo candidato
+
+`culturas-dashboard.py` renderiza um fixture estrutural baseado no dashboard
+proprietário de `aculta_events` e injeta Bootstrap local e os tokens/CSS do tema
+do checkout. Usa Firefox ESR visível em X11, confere nove viewports de 320 a
+1440px, claro/escuro, reflow mobile-first dos filtros, tabela com rolagem local,
+alvos de 44px, foco de teclado e shell externo fora do escopo Studio. Salva PNG
+e JSON exclusivamente em `SUITE_OUT`.
+
+```sh
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/culturas-dashboard
+DISPLAY=:0 python3 -I tests/browser/aculta-studio/culturas-dashboard.py
+```
+
+Esta fixture não acessa Runtime nem comprova markup Drupal, grants, conteúdo,
+AJAX/no-JS, cache, zoom, WCAG 2.2 AA ou paridade visual com o OpenCulturas.
+Resultados do fixture não aprovam OCS-F10/F11 nem THEME-MF3.

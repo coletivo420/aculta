@@ -47,6 +47,16 @@ O tema fornece padrões transversais de grid, cards, tabs, edição, seções, e
 - [ ] THEME-MF3 gate global mobile-first e OCS-F11 gate de fidelidade de todo o Studio, com OCS-F11 dependente de MF3; Firefox ESR, acessibilidade, privacidade, claro/escuro e todos os purposes.
 - [ ] OCS-A1-A4 identidade própria Aculta somente depois dos dois gates, nos mesmos SDCs e contratos de todas as experiências Studio, incluindo Green Stash integrado.
 
+**OCS-F10 focal — ACULTA Studio Culturas:** composição candidata do dashboard
+real de Eventos implementada somente em `studio.css`, com escopo
+`body.path-culturas`, sem novo SDC ou alteração de controller/render array. O
+fixture Firefox ESR passou 92/92 checks em nove viewports, claro/escuro,
+teclado, ações, tabela e shell; capturas 320/1440px foram revisadas. Runtime,
+ACL, cache, AJAX/no-JS, zoom, WCAG, demais telas da Suite e comparação pareada
+OpenCulturas continuam sem prova. Esta evidência focal não aprova OCS-F10/F11
+nem THEME-MF3. Ver [matriz de paridade](studio-visual/visual-parity-matrix.md)
+e [fixture do Studio](../../../../../tests/browser/aculta-studio/README.md).
+
 **Não modificar Institution Bar ou Domain Header**, nem globalizar os estilos OpenCulturas; não ativar `opcult`, não criar CSS/Sass build paralelo. Auditar licença de fontes, ícones e SVGs antes de qualquer porte. A frente B detém tema, SDCs e CSS; arquivos de serviços/controladores/rotas pertencem à frente A.
 
 # ACULTA420 — Roadmap visual transversal (planejamento)

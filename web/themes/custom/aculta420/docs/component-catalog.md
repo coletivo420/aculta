@@ -225,6 +225,17 @@ contratos e consumidores reais autorizem sua implementação; não são componen
 colunas só entram em `48rem`. `tests/browser/aculta-theme-mobile-first/page-columns.py`
 compara a fixture do SDC em 320–1440px; continua sem consumer de produto.
 
+### ACULTA Studio Culturas — dashboard do owner Eventos
+
+`[data-portal-ui="event-organizer-dashboard"]` é o consumer atual de
+`EventOrganizerDashboardController`, traduzido para a classe
+`.aculta-events-organizer-dashboard` pelo `PortalUiHooks` existente. O CSS em
+`studio.css` compõe intro, guia, ações, filtros e tabela em mobile-first sob
+`body.path-culturas`. Não foi criado SDC porque o controller já fornece a
+estrutura e os render arrays proprietários; não se duplica contrato visual ou
+funcional em um componente paralelo. O fixture e suas limitações estão em
+[`tests/browser/aculta-studio/README.md`](../../../../../tests/browser/aculta-studio/README.md).
+
 As quatro cores fechadas de seção têm tokens, pares de contraste e stories no
 `content-section`. O bloco básico expõe `field_section_color` e preserva
 `field_section_variant` como dimensão visual separada; a hook `aculta_section`

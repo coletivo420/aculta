@@ -21,6 +21,21 @@ depende de THEME-MF3. OCS-A1–A4 só começam depois dos dois gates aprovados.
 | OCS-F11 | Não aprovado: depende de THEME-MF3 e das evidências de todas as áreas/estados. |
 | OCS-A1–A4 | Não iniciadas; gate anterior permanece fechado. |
 
+### OCS-F10 — ACULTA Studio Culturas: composição mobile-first candidata
+
+O tema agora aplica a composição visual ao wrapper real do dashboard
+`aculta_events`: intro, guia, ações autorizadas, filtros, tabela e paginação.
+O controller, suas render arrays, links, filtros GET, permissões e cache não
+foram alterados. CSS mantém escopo em `body.path-culturas`; ações usam os tokens
+Fidelity. Uma fixture estrutural no Firefox ESR passou 92/92 checks em nove
+viewports e claro/escuro; capturas 320/1440px foram inspecionadas. Reuso de
+SDCs: nenhum novo SDC; a composição usa o dashboard/render arrays atuais e
+tokens já existentes. A fixture não valida markup servido, ACL, grants, cache,
+AJAX/no-JS, zoom, WCAG ou paridade com OpenCulturas; não aprova F10/F11/MF3.
+Ver evidências e execução em
+[`tests/browser/aculta-studio/README.md`](../../../../../../../tests/browser/aculta-studio/README.md)
+e [matriz de paridade](../../../../../../themes/custom/aculta420/docs/studio-visual/visual-parity-matrix.md).
+
 ### THEME-MF2 — desafio de verificação responsivo (2026-10-30)
 
 No commit local `7dbca2b8a`, o Portal fornece o token de apresentação neutro

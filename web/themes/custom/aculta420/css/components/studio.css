@@ -264,6 +264,181 @@ body.path-culturas .aculta-main form :is(button, input[type="submit"], .form-sub
   font-weight: var(--aculta-studio-fidelity-font-weight-bold);
 }
 
+/* ACULTA Studio Culturas dashboard: preserve the Events-owned render array,
+   arranging its real actions, guide, filters and table as a small-screen-first
+   workspace. The route body class keeps this treatment out of other purposes. */
+body.path-culturas .aculta-main > .aculta-container:has(.aculta-events-organizer-dashboard) {
+  width: calc(100% - 0.5rem);
+  max-width: 102rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+body.path-culturas .aculta-events-organizer-dashboard {
+  display: grid;
+  min-inline-size: 0;
+  gap: var(--aculta-studio-fidelity-row-gap);
+}
+
+body.path-culturas .aculta-events-organizer-dashboard > p:first-child {
+  max-inline-size: 70ch;
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border-inline-start: 3px solid var(--aculta-studio-fidelity-primary);
+  background: var(--aculta-studio-fidelity-form-surface);
+}
+
+body.path-culturas .aculta-events-organizer-dashboard > .culturas-guide {
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--aculta-studio-fidelity-input-border-bottom);
+  background: var(--aculta-studio-fidelity-form-surface);
+}
+
+body.path-culturas .aculta-events-organizer-dashboard > .culturas-guide > summary {
+  min-block-size: 2.75rem;
+  align-content: center;
+  font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
+  cursor: pointer;
+}
+
+body.path-culturas .aculta-events-organizer-dashboard > .culturas-guide > :not(summary) {
+  max-inline-size: 75ch;
+  padding-block-start: 0.5rem;
+}
+
+body.path-culturas .aculta-events-organizer-dashboard > .actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+body.path-culturas .aculta-events-organizer-dashboard > .actions > a.btn-primary {
+  color: var(--aculta-studio-fidelity-button-primary-text);
+  border: 2px solid var(--aculta-studio-fidelity-button-primary-border);
+  background: var(--aculta-studio-fidelity-button-primary-background);
+  font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
+  text-decoration: none;
+}
+
+body.path-culturas .aculta-events-organizer-dashboard > .actions > a.button--secondary {
+  padding: 0.5rem 1rem;
+  color: var(--aculta-studio-fidelity-button-text);
+  border: 1px solid var(--aculta-studio-fidelity-button-border);
+  background: var(--aculta-studio-fidelity-button-background);
+  text-decoration: none;
+}
+
+body.path-culturas .aculta-events-organizer-dashboard > .actions > a:is(.btn-primary, .button--secondary):is(:hover, :focus-visible) {
+  color: var(--aculta-studio-fidelity-button-hover-text);
+  border-color: var(--aculta-studio-fidelity-button-hover-border);
+  background: var(--aculta-studio-fidelity-button-hover-background);
+}
+
+body.path-culturas .organizer-dashboard-filters {
+  min-inline-size: 0;
+  padding: 1rem;
+  border: 1px solid var(--aculta-studio-fidelity-input-border-bottom);
+  background: var(--aculta-studio-fidelity-form-surface);
+}
+
+body.path-culturas .organizer-dashboard-filters form {
+  display: grid;
+  min-inline-size: 0;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+body.path-culturas .organizer-dashboard-filters form > .form-item {
+  min-inline-size: 0;
+  padding: 0;
+}
+
+body.path-culturas .organizer-dashboard-filters form > .form-item :is(input, select) {
+  inline-size: 100%;
+}
+
+body.path-culturas .organizer-dashboard-filters form > :is(button, a) {
+  min-inline-size: 0;
+  min-block-size: 2.75rem;
+  align-self: end;
+  justify-self: start;
+}
+
+body.path-culturas .aculta-events-organizer-dashboard > table {
+  display: block;
+  max-inline-size: 100%;
+  overflow: auto;
+  border-color: var(--aculta-studio-fidelity-input-border-bottom);
+  background: var(--aculta-studio-fidelity-form-surface);
+  overscroll-behavior-inline: contain;
+}
+
+body.path-culturas .aculta-events-organizer-dashboard > table :is(th, td) {
+  min-inline-size: 8rem;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+body.path-culturas .aculta-events-organizer-dashboard > table td:first-child {
+  min-inline-size: 12rem;
+}
+
+body.path-culturas .aculta-events-organizer-dashboard > table tr:last-child > td:only-child {
+  min-inline-size: 0;
+  padding: 1.25rem;
+  color: var(--aculta-studio-fidelity-text);
+  white-space: normal;
+}
+
+body.path-culturas .aculta-events-organizer-dashboard > .pager {
+  margin-block: 0;
+}
+
+body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, input, select):focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 3px;
+}
+
+@media (min-width: 48rem) {
+  body.path-culturas .aculta-main > .aculta-container:has(.aculta-events-organizer-dashboard) {
+    width: calc(100% - 2.5rem);
+    padding-inline: 1.5rem;
+  }
+
+  body.path-culturas .organizer-dashboard-filters form {
+    grid-template-columns: minmax(0, 2fr) minmax(12rem, 1fr) auto;
+    align-items: end;
+  }
+}
+
+@media (min-width: 70rem) {
+  body.path-culturas .aculta-main > .aculta-container:has(.aculta-events-organizer-dashboard) {
+    max-width: 107rem;
+    padding-inline: 3.5rem;
+  }
+}
+
+@media (min-width: 85rem) {
+  body.path-culturas .aculta-main > .aculta-container:has(.aculta-events-organizer-dashboard) {
+    width: calc(100% - 6rem);
+  }
+}
+
+@media (min-width: 120rem) {
+  body.path-culturas .aculta-main > .aculta-container:has(.aculta-events-organizer-dashboard) {
+    max-width: 110rem;
+    padding-inline: 5rem;
+  }
+}
+
 /* WE SATIVA uses the real Wiki-owned workspace wrapper as its visual root. */
 .aculta-main .we-sativa__workspace {
   color: var(--aculta-studio-fidelity-text);

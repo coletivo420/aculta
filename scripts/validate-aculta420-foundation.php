@@ -358,6 +358,8 @@ $expectedTemplates = [
   'portal-payment-notice.html.twig',
   'portal-search-trigger.html.twig',
   'views-view-unformatted--courses-catalog.html.twig',
+  // Magazine session landing page composes the shared hero SDC.
+  'views/views-view--revista-sessoes--page-revista.html.twig',
   'views-view-vvjb.html.twig',
   // Album fields stay in Drupal; the theme composes the card SDC.
   'views-view-fields--aculta-albuns.html.twig',
