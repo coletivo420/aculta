@@ -1734,3 +1734,11 @@ Nove viewports de `account:/marley` passaram os invariantes de shell, largura e
 navegação de abas com CSS candidata. A mensagem visual do login ULI aparece na
 captura móvel; a referência OpenCulturas foi homepage pública, não dashboard
 autenticado. Não homologa F5/F11/MF3. Evidência detalhada em `mobile-first-audit.md`.
+### OCS-F8 / THEME-MF2 — Green Stash, caminho canônico e reflow (2026-10-31)
+
+A fixture da área integrada passou 186/186 checks e apresenta somente três
+seções atuais. No Runtime antigo, o menu de nove links tem 10px de overflow a
+320px; `/studio/green-stash` ainda não está servido (404) porque esse HEAD declara
+`/greenstash`. Os testes Unit de rota, navegação e provider passaram 10/252; a rota real permanece
+DEFERRED até atualizar o Runtime. Não homologa grants Commerce nem OCS-F8/F11/MF3.
+Ver `mobile-first-audit.md`.

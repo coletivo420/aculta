@@ -995,3 +995,11 @@ Revalidação em 2026-10-31: `purpose-headings.py` passou 119/120 checks. A úni
 falha foi o overflow conhecido de Conta a 320px; H1 visível, `main` e shell único
 passaram em todas as combinações. Relatório:
 `/home/piradopirata/aculta-suite-out/purpose-headings-followup-20261031/`.
+
+### Revalidação Green Stash candidata — 2026-10-31
+
+`green-stash-layout.py` passou 186/186 checks; relatório em
+`/home/piradopirata/aculta-suite-out/green-stash-layout-followup-20261031/`. A
+fixture mostra as três áreas disponíveis e cobre produto, detalhe, criação visual,
+claro/escuro, viewports 320–1440px e zoom 200/400%. É fixture sem operação/save;
+não valida Runtime, grants por loja ou a rota real.

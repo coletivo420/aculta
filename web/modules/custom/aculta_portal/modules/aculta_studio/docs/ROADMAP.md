@@ -941,3 +941,12 @@ consumer Magazine com a mesma classe não recebe tokens/estilos. Não altera
 Form API, SDC, serviço, permissão ou operação editorial. O teste é fixture de
 CSS; Runtime alinhado, submit, AJAX/no-JS, ACL e gate geral OCS-F5 seguem
 pendentes.
+
+### OCS-F8 / F12-H2 — Green Stash visual e caminho canônico (2026-10-31)
+
+O contrato local mantém Green Stash como área comercial integrada em `shop`, no
+caminho `/studio/green-stash`; os testes Unit de rota, navegação e provider passaram 10/252. A fixture visual
+candidata passou 186/186 sem overflow e sem salvar dados, cobrindo somente os
+estados declarados e três áreas. O Runtime no HEAD `2493d7535` ainda serve
+`/greenstash` e retorna 404 para a rota nova; homologação real permanece DEFERRED.
+Grants por loja, formulários e fluxos Commerce reais continuam pendentes.

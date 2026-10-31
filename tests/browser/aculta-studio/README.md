@@ -663,3 +663,13 @@ retirado e responde 404; não usar como Hub. Evidência em
 A CSS candidata foi injetada só no Firefox, e a página pública usada como
 referência upstream não é dashboard autenticado; revisão de fidelidade pareada
 segue pendente.
+
+### Green Stash: rota canônica e baseline Runtime (2026-10-31)
+
+A rota canônica da branch é `shop:/studio/green-stash`; o Runtime `2493d7535`
+ainda usa `/greenstash`, portanto o caminho novo retorna 404 nesse HEAD. O baseline
+legado foi capturado apenas para comparação em 320/390/1440px; document width
+excedeu 10px a viewport de 320px e a página ainda mostrava nove links. Não tratar
+esse menu antigo como contrato operacional atual nem como evidência da rota
+candidata. A fixture candidata e seu limite estão no README mobile-first e no
+`mobile-first-audit.md`.

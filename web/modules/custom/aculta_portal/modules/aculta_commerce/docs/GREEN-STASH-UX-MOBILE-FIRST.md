@@ -124,3 +124,19 @@ Todos com `.component.yml`, Twig, CSS com tokens, stories e gates; sem acesso a 
 ## Dívidas
 
 GS-UX-01: validar provider/rota/container no homelab. GS-UX-02: testar matrizes de roles/store. GS-UX-03: conferir componentes exatos de navegação Studio/tema e histórias disponíveis antes de criar novos. GS-UX-04: KPIs dependem do contrato real Statistics. GS-UX-05: envios e estoque dependem das integrações REST/Stock e testes reais. Não declarar concluído o que está apenas projetado.
+
+## Revalidação da apresentação integrada — 2026-10-31
+
+A rota canônica da implementação local é `shop:/studio/green-stash`. A suíte Unit
+`StudioIdentityRoutingTest`, `GreenStashNavigationTest` e
+`GreenStashExperienceProviderTest` passaram 10 testes/252 assertions. A fixture de browser
+passou 186/186 checks em claro/escuro, larguras 320–1440px e zoom 200/400%,
+exibindo as três áreas candidatas existentes e mantendo zero overflow. A visão
+geral declara que nenhuma operação comercial está disponível nessa tela; os
+estados de produto usados pela fixture não salvam dados.
+
+No Runtime `2493d7535`, a rota nova ainda responde 404 e o caminho legado
+`/greenstash` permanece servido; a captura legacy a 320px mede `documentScrollWidth=330`
+com viewport de 320px. A verificação da rota/UI oficial, controle de acesso por
+loja e operações reais permanece DEFERRED até o Runtime servir o commit da branch.
+A fixture não substitui as dívidas GS-UX-01/02/05 nem homologa OCS-F8/F11.

@@ -284,3 +284,15 @@ estava servida no Runtime. Capturas/JSON em
 `/home/piradopirata/aculta-suite-out/studio-marley-canonical-followup-20261031/`.
 O upstream capturado nesta rodada foi somente a homepage pública; o baseline
 autenticado pareado com dashboard OpenCulturas continua pendente.
+
+### OCS-F8 — Green Stash integrado, rota canônica e menu (2026-10-31)
+
+A branch define `shop:/studio/green-stash`; testes Unit de rota/navegação/provider passaram 10/252. A
+fixture candidata cobre apenas as três áreas disponíveis (Visão geral, Produtos,
+Envios), com 186/186 checks em claro/escuro, grade móvel/desktop, zoom 200/400% e
+sem overflow. A rota real não está no Runtime `2493d7535`, que ainda expõe o
+caminho legado `/greenstash`; o caminho canônico retorna 404 nesse HEAD e a
+validação integrada fica DEFERRED. O baseline legacy ainda mede 10px de overflow
+a 320px. Não prova grants por loja ou fluxos Commerce reais. Evidências em
+`/home/piradopirata/aculta-suite-out/green-stash-layout-followup-20261031/` e
+`/home/piradopirata/aculta-suite-out/green-stash-runtime-legacy-baseline-20261031/`.

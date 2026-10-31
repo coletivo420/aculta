@@ -3380,3 +3380,19 @@ de mensagem. A referência OpenCulturas foi sua homepage pública, não um dashb
 autenticado; isto não prova paridade visual completa, AJAX/no-JS, ACL, WCAG nem
 homologa F5/F11/MF3. `/studio` é 404 intencional segundo ADR-038; a área Marley
 canônica é `account:/marley`.
+### OCS-F8 / THEME-MF2 — navegação Green Stash: baseline e candidata (2026-10-31)
+
+No Runtime `2493d7535`, a rota antiga `shop:/greenstash` foi capturada a
+320/390/1440px: shell único, `documentScrollWidth=330` em 320px e largura correta
+nas outras duas. O DOM legado exibe nove links de área; essa captura não é a rota
+ou o menu da implementação local. No código da branch, a rota canônica
+`shop:/studio/green-stash` é verificada por `StudioIdentityRoutingTest`, `GreenStashNavigationTest` e
+`GreenStashExperienceProviderTest` (10 testes, 252 assertions); o Runtime ainda retorna 404 porque não serve esse contrato.
+
+A fixture visual da implementação candidata manteve somente Visão geral, Produtos
+e Envios e passou **186/186** checks em claro/escuro, viewports 320–1440px e zoom
+200/400%, sem overflow; contém overview explicitamente marcado “em preparação”
+e cenários visuais de produto sem salvar dados. Evidência em
+`/home/piradopirata/aculta-suite-out/green-stash-layout-followup-20261031/`.
+A integração de rota e UI no Runtime e as permissões operacionais por loja ficam
+DEFERRED; isso não aprova OCS-F8, OCS-F11 ou THEME-MF3.
