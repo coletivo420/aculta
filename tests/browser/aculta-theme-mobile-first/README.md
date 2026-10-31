@@ -33,10 +33,12 @@ permanecem iguais ao domínio canônico. Qualquer outro CONNECT HTTPS é negado.
 Isso evita alterar `/etc/hosts` e não acessa outros domínios.
 
 O teste mede View, chamada hero, número de publicações, imagem da primeira
-capa, colunas responsivas, presença única de Institution Bar/Domain Header e
-overflow em 320/360/390/599/600/768/1024/1280/1440px. Não autentica, não cria
-conteúdo, não verifica o gate de acessibilidade e não substitui comparação
-pareada com o OpenCulturas Next.
+capa, colunas responsivas, presença única de Institution Bar/Domain Header,
+alvos de 44px e overflow em 320/360/390/599/600/768/1024/1280/1440px. Também
+usa Tab real do WebDriver para alcançar o título e o CTA da publicação em 320px,
+verificando `:focus-visible`, contorno de pelo menos 2px e encaixe horizontal.
+Não autentica, não cria conteúdo, não verifica o gate completo de acessibilidade
+e não substitui comparação pareada com o OpenCulturas Next.
 
 ```sh
 cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
@@ -59,6 +61,15 @@ capturas de 320/1440px. Em telas a partir de 992px a capa preenche a altura da
 composição editorial, como a mídia real. Use junto de
 `MAGAZINE_COVER_CSS_OVERRIDE=1`. A injeção não executa o Twig candidato nem
 altera a publicação no Runtime.
+
+Em 2026-10-31, CSS servida pelo Runtime passou somente a verificação estrutural
+inicial; nove verificações de viewport falharam porque título/CTA não tinham
+alvos de 44px e a composição candidata não estava servida. O baseline final
+passou 2/11 (estrutura e teclado) e falhou 9/11. Com a folha local injetada,
+passaram os nove viewports e o teste de teclado (11/11); isso verifica o
+candidato sobre conteúdo real, não a publicação da folha. Relatórios e PNGs:
+`/home/piradopirata/aculta-suite-out/revista-cover-keyboard-baseline-20261031/`
+e `/home/piradopirata/aculta-suite-out/revista-cover-keyboard-final-20261031/`.
 
 ## Publicação editorial da Revista
 

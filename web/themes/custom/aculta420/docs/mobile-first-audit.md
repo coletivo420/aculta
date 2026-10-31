@@ -2931,3 +2931,29 @@ de Produtos e Visão geral em 320/390/1440px e zoom 200/400% foram revisadas em
 É fixture local da folha candidata. Runtime com operador autorizado, isolamento
 entre lojas, dados Commerce, fluxos de escrita e WCAG integral continuam
 pendentes; OCS-F8/F11 e THEME-MF3 não estão aprovados.
+
+### THEME-MF2 — capa pública da Revista, alvos e teclado (2026-10-31)
+
+Firefox ESR visível abriu a raiz `magazine:/` no Runtime anônimo, confirmou a
+View real com hero, quatro publicações com capas carregadas e os dois headers
+globais únicos. No CSS servido pelo Runtime em HEAD `2493d7535`, os quatro CTAs
+mediram 19px de altura e títulos chegaram a 23px; por isso a verificação dos
+alvos 44px falhou em todos os nove viewports (320/360/390/599/600/768/1024/1280/
+1440px), embora a grade, o conteúdo e o shell estivessem presentes e sem
+overflow. Depois da ampliação do teste, o baseline completo passou 2/11 checks:
+presença estrutural e foco por teclado; as nove combinações de viewport/alvo
+falharam.
+
+Com `revista-listing.css` do worktree injetada somente na sessão Firefox, os
+nove viewports passaram: grade 1/2/3 colunas, zero overflow, imagens carregadas,
+shell único e todos os títulos/CTAs com pelo menos 44px. A fixture então usou
+Tab real via WebDriver em 320px e alcançou o título e o CTA da publicação, ambos
+com `:focus-visible`, outline sólido de 3px e totalmente dentro do viewport.
+Total da rodada candidata: 11/11. Capturas 320/1440 foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/revista-cover-keyboard-final-20261031/`; o
+baseline final, sem injeção, está em
+`/home/piradopirata/aculta-suite-out/revista-cover-keyboard-baseline-20261031/`.
+
+O contraste completo, estados sem resultados/erro, no-JS, zoom da home e WCAG
+2.2 AA ainda não foram verificados. A folha candidata não foi servida pelo
+Runtime; este avanço não aprova THEME-MF3 nem OCS-F11.

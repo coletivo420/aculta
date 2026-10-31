@@ -115,6 +115,19 @@ def set_viewport(driver, width):
     time.sleep(0.2)
 
 
+def press_tab(driver):
+    driver.req("POST", f"/session/{driver.session}/actions", {
+        "actions": [{
+            "type": "key",
+            "id": "magazine-keyboard",
+            "actions": [
+                {"type": "keyDown", "value": "\uE004"},
+                {"type": "keyUp", "value": "\uE004"},
+            ],
+        }],
+    })
+
+
 def main():
     proxy = ThreadedProxy(("127.0.0.1", 0), LoopbackMagazineProxy)
     threading.Thread(target=proxy.serve_forever, daemon=True).start()
@@ -240,6 +253,32 @@ if (window.__magazineFallbackCover?.isConnected && window.__magazineOriginalCove
 window.__magazineFallbackCover=null;window.__magazineOriginalCover=null;
 document.documentElement.setAttribute('data-bs-theme','light');return true;
 """)
+        set_viewport(driver, 320)
+        driver.js("window.scrollTo(0, 0);document.activeElement?.blur();return true")
+        keyboard_targets = {}
+        for _ in range(100):
+            press_tab(driver)
+            focused = driver.js("""const el=document.activeElement;
+if (!el?.matches('.aculta-revista-teaser__title a,.aculta-revista-teaser__cta')) return null;
+const style=getComputedStyle(el), rect=el.getBoundingClientRect();
+return {selector:el.matches('.aculta-revista-teaser__title a')?'title':'cta',
+  text:el.innerText.trim(),focusVisible:el.matches(':focus-visible'),
+  outlineStyle:style.outlineStyle,outlineWidth:style.outlineWidth,
+  left:rect.left,right:rect.right,top:rect.top,bottom:rect.bottom,
+  viewportWidth:innerWidth,viewportHeight:innerHeight};""")
+            if focused:
+                keyboard_targets.setdefault(focused["selector"], focused)
+                if len(keyboard_targets) == 2:
+                    break
+        keyboard_passed = len(keyboard_targets) == 2 and all(
+            target["focusVisible"] and target["outlineStyle"] != "none"
+            and float(target["outlineWidth"].replace("px", "")) >= 2
+            and target["left"] >= -1 and target["right"] <= target["viewportWidth"] + 1
+            and target["top"] >= -1 and target["bottom"] <= target["viewportHeight"] + 1
+            for target in keyboard_targets.values()
+        )
+        record("teclado alcança título e CTA da publicação com foco visível",
+               keyboard_passed, keyboard_targets)
     finally:
         if driver:
             driver.close()
