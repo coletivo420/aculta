@@ -2727,3 +2727,10 @@ ou preferência persistente alterados.
   revertidas; não foi mantido workaround sem evidência. O formulário editorial
   permanece DEFERRED para inspeção do layout Bootstrap/vertical-tabs no consumer
   correto, sem declarar THEME-MF3 aprovado.
+- A inspeção de geometria confirmou que o overflow não é apenas o offcanvas
+  oculto: em 320px o painel `.entity-meta.vertical-tabs__panes` excede o
+  formulário (direita em 422px para um formulário que termina em 292px), e em
+  1280px o consumer chega a 1332px. O stylesheet agregado servido ao navegador
+  não refletiu as tentativas locais após rebuild, portanto a correção correta
+  precisa ser aplicada no consumer/asset realmente anexado ao formulário e
+  repetida no Runtime; nenhuma regra especulativa foi mantida.
