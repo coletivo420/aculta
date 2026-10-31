@@ -1092,6 +1092,12 @@ resolvido. Host Alpha/produção e páginas internas não foram exercitados. A
 evidência e limitações estão em [`mobile-first-audit.md`](mobile-first-audit.md);
 THEME-MF3 e OCS-F11 continuam pendentes.
 
+Em 2026-10-31, o gate de teclado focal reproduziu `/entrar` a 328px em viewport
+320px no baseline; com `auth.css` candidata, a página coube em 320px e os focos
+verificados permaneceram visíveis. Foram 36 PASS e dois SKIP no foco delegado
+ao Turnstile em 320/390px. A folha não foi integrada ao Runtime; THEME-MF3
+continua pendente. Evidências e limites em `mobile-first-audit.md`.
+
 Reteste adicional do SDC `author-card` na listagem real do Fórum: 43/43 checks
 em dez larguras, com CSS candidata; geometria social de 44×44 px veio de fixture
 invisível. Não altera os contratos nem cobre os links sociais reais. Relatório e

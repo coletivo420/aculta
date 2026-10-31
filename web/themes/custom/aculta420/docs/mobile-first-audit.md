@@ -4101,3 +4101,17 @@ overflow. CSS Fidelity e `content.css` foram injetados somente no navegador;
 isto não valida integração servida, submissão editorial, ACL, estados AJAX/no-JS
 ou WCAG integral. Evidência em
 `/home/piradopirata/aculta-suite-out/marley-landing-followup-20261031/`.
+
+### THEME-MF2/MF3 — Conta `/entrar`, overflow e teclado em 320px (2026-10-31)
+
+O Firefox ESR visível repetiu o gate focado no Runtime: sem CSS candidata,
+`/entrar` mediu 328px de largura documental em viewport de 320px (15/16 checks;
+falha reproduzida). Com `auth.css` candidata e marcador visual neutro do
+challenge injetados apenas no browser, a largura caiu para 320px, sem elementos
+fora da viewport; foram 36 verificações aprovadas em 320/390px e dois skips no
+foco interno delegado ao Turnstile. O screenshot candidato de 320px foi
+inspecionado. Isto comprova a correção geométrica candidata, não a instalação no
+Runtime, nem a operação interna do CAPTCHA. Evidências em
+`/home/piradopirata/aculta-suite-out/account-keyboard-baseline-followup-20261031/`
+e `/home/piradopirata/aculta-suite-out/account-keyboard-candidate-followup-20261031/`.
+THEME-MF3 continua pendente até validar a folha integrada e os demais gates.
