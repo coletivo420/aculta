@@ -584,6 +584,8 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `studio-profile-actions` | `studio__actions list-unstyled d-flex flex-wrap gap-2` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
 | `studio-profile-public-link` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
 | `studio-profile-editor` | `aculta-profile-editor` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
+| `studio-fidelity-scope` | `studio` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Learning/LearnerDashboardComposer.php` |
+| `studio-bio-form`, `studio-social-form` | `studio-profile-form` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AccountBioForm.php`; `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/SocialLinkForm.php` |
 | `studio-saved-content` | `studio studio-saved-page` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-saved-summary` | `studio-saved-summary` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/SavedExperienceProvider.php` |
 | `studio-page-title` | `page-title` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
