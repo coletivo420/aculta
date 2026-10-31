@@ -2091,3 +2091,15 @@ e `/home/piradopirata/aculta-suite-out/studio-ganjalab-full-dark-followup-202610
 Continua CSS candidata sobre o markup Runtime “Minha conta / Área pessoal”; não
 homologa o compositor “Meus cursos” ainda não servido. Sem formulário, matrícula
 ou preferência persistente alterados.
+
+## 2026-10-31 — OCS-F4: captura autenticada do Hub e auditoria do SDC
+
+- **Ambiente confirmado antes das sessões:** host `toca`; checkout servido `/home/piradopirata/projetos/aculta`, HEAD destacado `2493d7535`; Drush root `/home/piradopirata/projetos/aculta/web`, URI `http://default`, banco `aculta_runtime`, 624 tabelas.
+- **Snapshots integrais anteriores a cada ULI:**
+  1. `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-studio-hub-visual-gate-20261031.sql` — 65.897.048 bytes, SHA-256 `21378d202df8c38edd8d55c8620a47238469bda412ec89d8ffdeecefa1d0a684`.
+  2. `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-studio-hub-root-visible-20261031.sql` — 65.950.830 bytes, SHA-256 `faeb7e158103c0c8fb32c27ea1a827d3f295647514cc7523e19df9a1e488c4b7`.
+  3. `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-studio-hub-card-check-20261031.sql` — 66.006.214 bytes, SHA-256 `2597ebac5be92f8a6c591d2999de1f03b7727083f76aa2ca925850c63dd95083`.
+  Todos foram criados por `mysqldump --single-transaction --quick --skip-lock-tables`, modo `0600`. O teste fez GET/ULI em Firefox ESR visível; não enviou formulários nem alterou conteúdo, configurações, permissões ou preferências. A única escrita esperada no Runtime foi a criação das sessões temporárias de autenticação.
+- **Resultado visual:** a raiz Account respondeu com o root `.studio.aculta-account-entry` visível em 320/360/390/599/600/768/1024/1280/1440px; cinco experiências disponíveis apareceram, mas nenhum link foi renderizado no SDC `card` e todos mediram 19px. O novo gate registrou `studio_capture_status=FAIL` em nove capturas. CSS Fidelity foi injetada só no Firefox e não executa o hook PHP.
+- **Resultado no source branch:** `PortalUiHooksTest` passou 26 testes/148 assertions, incluindo o adaptador Studio Hub para o SDC compartilhado. O Runtime segue no HEAD remoto anterior e não contém esse hook; os arquivos não commitados de `aculta_events` permaneceram intactos. Evidências: `/home/piradopirata/aculta-suite-out/studio-hub-cards-20261031/`. Não houve troca de HEAD, `updatedb`, `config:import` ou escrita editorial.
+- **Status:** OCS-F4 parcial; o gate do Hub servido permanece vermelho até o source branch com o preprocess visual ser integrado e validado. THEME-MF3 e OCS-F11 continuam pendentes; OCS-A1–A4 não iniciadas.
