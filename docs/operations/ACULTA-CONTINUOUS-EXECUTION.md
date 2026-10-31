@@ -2694,3 +2694,10 @@ ou preferência persistente alterados.
   inicial promete rascunho sem variação, mas o tipo Commerce exige ambas), que
   impede declarar persistência/rollback ou F8/F11 concluídos. Nenhum workaround
   visual foi criado.
+- Após o registro do bloqueio, a microfase documental foi publicada em
+  `99d426eb6`. No checkout do docroot alinhado a esse HEAD, os gates estáticos
+  foram repetidos: foundation 353, shell contract 13, SDC schemas 55
+  componentes/759 checks, route aliases 38 arquivos, design foundations 2.432
+  checks e admin routes MAIN 154 rotas — todos PASS. Esses gates não substituem
+  a correção do contrato de variações nem autorizam marcar Green Stash/F8 como
+  homologado.
