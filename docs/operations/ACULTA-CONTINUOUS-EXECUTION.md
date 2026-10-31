@@ -2808,3 +2808,4 @@ ou preferência persistente alterados.
 - Gate HTTP vivo de fronteiras de domínio: `validate-domain-front-paths.php --live` — **26/26 checks PASS**, incluindo 404 para purposes incorretos, caminhos canônicos documentados e ausência de front paths internos expostos.
 - Lint oficial do tema executado com os scripts declarados em `web/themes/custom/aculta420/package.json`: `npm run lint:css` e `npm run lint:js` — ambos **PASS**. O comando inexistente `npm run lint` não foi considerado gate.
 - Lint PHP dos hooks/testes do tema: sem erros de sintaxe. Suíte Unit visual `web/themes/custom/aculta420/tests/src/Unit`: **47 testes, 346 assertions, PASS**. PHPUnit repetiu apenas o aviso não bloqueante sobre `sites/simpletest/browser_output` não gravável.
+- Integridade documental verificada com `php scripts/validate-project-status-index.php`: **PASS** (48 componentes; índice derivado de `docs/operations/status`).
