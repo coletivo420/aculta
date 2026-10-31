@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_magazine\Controller;
 
 use Drupal\aculta_magazine\Form\EditorialWorkspaceFilterForm;
-use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Drupal\aculta_magazine\Access\EditorialCapability;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
@@ -23,7 +24,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Studio Marley presentation adapter delegating persistence to Node Form API. */
-final class EditorialWorkspaceController extends ControllerBase {
+final class EditorialWorkspaceController {
+
+  use StringTranslationTrait;
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -34,7 +37,10 @@ final class EditorialWorkspaceController extends ControllerBase {
     private readonly AccountInterface $account,
     private readonly RequestStack $requestStack,
     private readonly DateFormatterInterface $dateFormatter,
-  ) {}
+    TranslationInterface $stringTranslation,
+  ) {
+    $this->setStringTranslation($stringTranslation);
+  }
 
   /**
    * Requires the configured authoring role and Drupal create access.
