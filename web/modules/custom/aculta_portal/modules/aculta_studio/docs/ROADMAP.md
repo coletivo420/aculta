@@ -959,6 +959,15 @@ assertions. Runtime markup still displays “Minha conta / Área pessoal”; bra
 composer outputs “Meus cursos”. The captures therefore do not homologate the new
 consumer or LMS grants/enrollments. OCS-F6/F11 remain partial.
 
+Reteste de 2026-10-31 usou o GET autenticado real `/ganjalab` no Runtime e a
+folha candidata da branch injetada apenas no Firefox: 320/390/768/1440px em
+claro e escuro passaram 92/92 checks focais de tipografia Fidelity, dois estados
+vazios, ausência de overflow, headers do shell, contraste utilitário e tokens
+Fidelity ausentes do shell. As capturas 320/1440 foram inspecionadas. Isto
+confirma o encaixe visual da composição servida; a folha ainda não está
+integrada no HEAD Runtime `2493d7535`, nem foram cobertos ACL/grants,
+matrículas, teclado completo, no-JS ou zoom. OCS-F6 permanece parcial.
+
 Reteste posterior ampliou a cobertura candidata de Ganjalab para 320–1440px, nove
 larguras, em claro/escuro: 18/18 combinações passaram. O Runtime ainda apresenta
 markup anterior ao compositor local; registrar F6 como parcial até validar tela

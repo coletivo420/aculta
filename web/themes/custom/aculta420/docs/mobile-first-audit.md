@@ -3715,3 +3715,19 @@ Firefox autenticado integrado, submit, AJAX/no-JS e acesso real permanecem
 administrativo identifica uma falha visual real na rota antiga, mas não é
 evidência de aprovação OCS-F6, OCS-F11 nem THEME-MF3.
 
+### OCS-F6 — dashboard Ganjalab, CSS candidata em claro/escuro (2026-10-31)
+
+Firefox ESR visível capturou o GET autenticado real `/ganjalab` em
+320/390/768/1440px. Com a folha Fidelity da branch injetada apenas na sessão, o
+dashboard passou 92/92 checks focais combinados em claro e escuro: Montserrat
+no conteúdo/heading/estados, dois estados vazios, sem overflow documental,
+Institution Bar e Domain Header presentes, contraste AA nos links utilitários e
+tokens Fidelity ausentes dos headers. As capturas 320/1440 em claro e 320 em
+escuro foram inspecionadas. O markup e os estados vieram do Runtime; somente a
+CSS era candidata. O HEAD Runtime `2493d7535` ainda não serve a folha da branch.
+Não cobre grants/matrículas entre contas, teclado completo, zoom, no-JS nem
+WCAG 2.2 AA integral; OCS-F6/F11 e THEME-MF3 seguem parciais/pendentes.
+Evidências em
+`/home/piradopirata/aculta-suite-out/ganjalab-dashboard-fidelity-candidate-20261031/`
+e `/home/piradopirata/aculta-suite-out/ganjalab-dashboard-fidelity-dark-20261031/`.
+
