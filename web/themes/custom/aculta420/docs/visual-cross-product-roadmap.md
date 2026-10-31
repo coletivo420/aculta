@@ -1994,3 +1994,8 @@ autenticados: nove larguras com JS, quatro sem JS, zoom 200/400%, campos e CEP
 visíveis, país BR fixo e zero overflow. Inputs foram mascarados nas capturas e
 nada foi enviado/salvo; o teste não consulta o serviço CEP. Snapshot Runtime
 antes do ULI e detalhes em `mobile-first-audit.md`.
+
+A página pública de Apoio passou 37/37 checks em 11 larguras, com o SDC
+`donation-quick` dentro do viewport e sem expor operações de pagamento ainda
+inexistentes. Capturas mobile/desktop revisadas; gates de teclado, zoom, dark
+mode e WCAG seguem pendentes.

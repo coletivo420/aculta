@@ -4174,3 +4174,14 @@ Resultados em
 `/home/piradopirata/aculta-suite-out/account-address-visual-followup-20261031/`.
 Não substitui teste de preenchimento CEP, submissão, privacidade A/B ou WCAG
 integral; THEME-MF3 segue pendente.
+
+### THEME-MF2 — página pública de Apoio e `donation-quick` (2026-10-31)
+
+Firefox ESR visível, somente GET, passou **37/37 verificações** em
+320/360/390/480/481/599/600/768/1024/1280/1440 px. O formulário público e o
+SDC existente mantiveram a grade dentro do viewport, sem overflow e sem expor
+fieldsets, controles de cobrança ou submit inexistentes. Institution Bar e
+Domain Header permaneceram presentes; as capturas de 320 e 1440 px foram
+inspecionadas. Isto é smoke visual da página pública, sem teclado, zoom, tema
+escuro, reduced motion ou WCAG integral; THEME-MF3 continua pendente. Evidência
+em `/home/piradopirata/aculta-suite-out/support-form-followup-20261031/`.

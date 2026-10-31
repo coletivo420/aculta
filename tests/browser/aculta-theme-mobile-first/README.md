@@ -335,6 +335,12 @@ que fariam parecer operacional um fluxo não implementado. É somente leitura:
 não envia formulário nem altera configuração. No HEAD Runtime `30c6770f3`, os
 dois headers renderizaram uma vez na rota SUPPORT.
 
+Reteste visível em 2026-10-31: **37/37 checks** em 11 larguras; o formulário e
+os cartões permaneceram dentro do viewport, sem overflow e sem controles de
+cobrança/submit não implementados. Capturas de 320 e 1440 px revisadas em
+`/home/piradopirata/aculta-suite-out/support-form-followup-20261031/`. Não cobre
+teclado, zoom, modo escuro, reduced motion ou WCAG integral.
+
 ```sh
 export DISPLAY=:0
 export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-support-mobile-first
