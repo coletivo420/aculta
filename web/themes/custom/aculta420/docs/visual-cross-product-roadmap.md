@@ -1308,6 +1308,13 @@ captura de 320 px foi inspecionada. A falha da instalação corrente permanece
 aberta até teste integrado, server-side e sem JavaScript; detalhes em
 `mobile-first-audit.md`.
 
+Reteste candidato ampliado em 2026-10-31: `auth-route-runtime.py` passou 12/12
+checks no mesmo consumer real, cobrindo onze larguras de 320 a 1440px. Em 320px
+o desafio e seu slot mediram 300px, sem overflow documental. CSS e token foram
+injetados/simulados no Firefox; o Runtime servido continua com 328px na
+baseline. PHPUnit do hook (3 testes/8 assertions), PHP lint, PHPCS e Stylelint
+passaram; a integração server-side/no-JS ainda é necessária para fechar o gate.
+
 O validator de fronteira tema/módulo continua vermelho por classes visuais nos
 dois formulários do módulo `aculta_events` (resultado atualizado: 1/3486).
 `validate-portal-ui-docs.php` também aponta tokens não mapeados de Eventos e

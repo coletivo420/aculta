@@ -3040,6 +3040,26 @@ continua sem `CaptchaPresentationHooks` e sem a folha atual. A falha integrada
 permanece aberta, não se considera o baseline substituído e THEME-MF3 continua
 pendente até validar o hook, CSS compilada e formulário servido em toda a matriz.
 
+### Revalidação candidata no Runtime local — Conta/320px e matriz (2026-10-31)
+
+O overflow também apareceu na captura anônima da raiz Conta como
+`documentWidth=328` em viewport 320px. Reabri `/entrar` em Firefox ESR visível
+contra o mesmo Runtime, agora comparando a CSS atual do worktree em
+320/360/390/575/576/599/600/768/1024/1280/1440px. O candidato passou 12/12
+checks: documento e corpo ficaram na largura da viewport; o desafio carregado
+mediu 300px no slot de 300px a 320px e 308px a 360px; o formulário não teve
+scroll horizontal. A captura de 320px foi inspecionada.
+
+Esta rodada injetou `base.css`/`auth.css` e simulou no DOM o token
+`data-portal-ui="challenge-frame"`; ela não comprova a execução do hook PHP no
+Runtime. O `CaptchaPresentationHooksTest` passou 3 testes/8 assertions; PHP
+lint, PHPCS e Stylelint passaram. PHPUnit emitiu o aviso de que
+`sites/simpletest/browser_output` não é gravável, mas terminou com exit 0. O
+Runtime ainda serve a baseline que mede 328px; validação server-side integrada,
+sem JavaScript e após rebuild continuam pendentes, portanto THEME-MF3 não passa.
+Evidência em
+`/home/piradopirata/aculta-suite-out/account-overflow-followup-20261031/`.
+
 ### THEME-MF2 — proporção do fallback de capa da Revista (2026-10-31)
 
 O arquivo concreto do OpenCulturas 3.1.5,

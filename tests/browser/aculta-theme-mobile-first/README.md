@@ -613,6 +613,14 @@ apenas no Firefox; hook Portal e biblioteca instalada seguem sem homologação.
 Evidência em
 `/home/piradopirata/aculta-suite-out/auth-route-runtime-resume-20261031/`.
 
+Repetição de 2026-10-31 após o overflow de 328px ser observado novamente na
+raiz Conta: a rota `/entrar` passou 12/12 checks com a folha do worktree e token
+visual simulado, em 320/360/390/575/576/599/600/768/1024/1280/1440px. A captura
+de 320px foi revisada; relatório e PNGs em
+`/home/piradopirata/aculta-suite-out/account-overflow-followup-20261031/`.
+O Runtime mantém a baseline até o deploy da branch: o teste não exercitou o
+hook PHP servido nem JavaScript desativado e, portanto, não fecha a pendência.
+
 ```sh
 export DISPLAY=:0
 export SUITE_OUT=/home/piradopirata/aculta-suite-out/auth-route-runtime
