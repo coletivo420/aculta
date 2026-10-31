@@ -227,10 +227,12 @@ const grid=view?.querySelector('.view-content');
 const first=view?.querySelector('.views-row:first-child');
 const card=first?.querySelector('.aculta-card');
 const image=first?.querySelector('.card-img-top img');
+const cardStyle=getComputedStyle(card||document.body);
 const columns=getComputedStyle(grid||document.body).gridTemplateColumns.split(' ').filter(Boolean).length;
 return {width:innerWidth,documentWidth:root.clientWidth,scrollWidth:root.scrollWidth,
 hero:!!view?.querySelector('.aculta-hero h1'),rows:view?.querySelectorAll('.views-row').length||0,
 columns,firstCard:!!card,firstCardGrid:getComputedStyle(card||document.body).display==='grid',
+firstCardRadius:cardStyle.borderTopLeftRadius,firstCardShadow:cardStyle.boxShadow,
 image:!!image,imageLoaded:!!image&&image.complete&&image.naturalWidth>0,
 institutionBar:document.querySelectorAll('.aculta-institution-bar').length,
 domainHeader:document.querySelectorAll('.aculta-header').length,
@@ -245,6 +247,7 @@ ctaTargets:[...document.querySelectorAll('.aculta-revista-teaser__cta')].map(el=
                 and metrics["hero"] and metrics["rows"] > 0 and metrics["firstCard"]
                 and metrics["imageLoaded"] and metrics["columns"] == expected_columns
                 and (width < 992 or metrics["firstCardGrid"])
+                and metrics["firstCardRadius"] == "24px" and metrics["firstCardShadow"] != "none"
                 and metrics["institutionBar"] == 1 and metrics["domainHeader"] == 1
                 and len(metrics["titleTargets"]) == metrics["rows"]
                 and len(metrics["ctaTargets"]) == metrics["rows"]

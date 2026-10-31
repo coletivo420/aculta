@@ -3493,3 +3493,23 @@ preferências nem conteúdo. Capturas/JSON em
 Essas rodadas não resolvem o overflow de Conta, não validam a integração do
 stylesheet servido nem equivalem a zoom, teclado completo, leitor de tela,
 contraste ou aceite WCAG 2.2 AA. THEME-MF3 e OCS-F11 continuam pendentes.
+
+### THEME-MF2 — superfície do destaque editorial da Revista (2026-10-31)
+
+A leitura do OpenCulturas 3.1.5 verificou em
+`profile/themes/opcult/sass/abstracts/_teasers.scss` o raio de cartão editorial
+de 1,5 rem e a superfície elevada configurável. O destaque da capa da Revista
+usava 1,25 rem e não tinha elevação. `revista-listing.css` agora aproxima essa
+hierarquia usando raio de 1,5 rem e o token local `--aculta-shadow-raised`,
+restritos ao primeiro cartão da View pública. O SDC `patterns/card`, o markup,
+os campos e os dados editoriais permanecem os existentes; nenhum CSS, imagem,
+SVG ou ícone upstream foi copiado.
+
+Stylelint passou. `magazine-cover-runtime.py`, Firefox ESR visível e CSS
+candidata injetada na sessão passaram **28/28 checks** em 320–1440px, incluindo
+claro/escuro, teclado, sem JavaScript, zoom real de 200%/400%, foco visível,
+alvos mínimos de 44 px e zero overflow. As capturas de 320/1440px foram
+inspecionadas em
+`/home/piradopirata/aculta-suite-out/magazine-cover-depth-candidate-20261031/`.
+O Runtime ainda serve a CSS anterior à branch; este ajuste candidato não está
+instalado e não aprova THEME-MF3.

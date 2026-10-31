@@ -116,7 +116,8 @@
 
 .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .aculta-card {
   overflow: hidden;
-  border-radius: 1.25rem;
+  border-radius: 1.5rem;
+  box-shadow: var(--aculta-shadow-raised);
 }
 
 @media (min-width: 600px) {

@@ -45,7 +45,8 @@ Isso evita alterar `/etc/hosts` e não acessa outros domínios.
 
 O teste mede View, chamada hero, número de publicações, imagem da primeira
 capa, colunas responsivas, presença única de Institution Bar/Domain Header,
-alvos de 44px e overflow em 320/360/390/599/600/768/1024/1280/1440px. Também
+alvos de 44px, geometria de raio/sombra do cartão destaque e overflow em
+320/360/390/599/600/768/1024/1280/1440px. Também
 usa Tab real do WebDriver para alcançar o título e o CTA da publicação em 320px,
 verificando `:focus-visible`, contorno de pelo menos 2px e encaixe no viewport.
 Mede contraste dos links em claro/escuro e aplica zoom real de 200%/400%,
