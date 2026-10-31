@@ -103,6 +103,31 @@ worktree. O teste não submete comentários, não homologa acesso entre contas,
 teclado completo, leitor de tela, reduced motion ou WCAG 2.2 AA integral, e não
 é comparação pareada de fidelidade com o OpenCulturas Next.
 
+## Artigo público da Wiki
+
+`wiki-public-layout.py` abre a home pública e segue o primeiro verbete no mesmo
+host. No Firefox ESR visível, verifica home/cartões, H1 e shell únicos, texto do
+artigo, uma coluna abaixo de 768px, duas colunas a partir de 768px, ordem visual
+do conteúdo principal e do aside, além de overflow, em 320/360/390/599/600/768/
+1024/1280/1440px. Capturas de 320/768/1440px ficam em `$SUITE_OUT`. A suíte
+confirma que o conteúdo principal permanece antes do aside no mobile e que o
+aside fica ao lado no desktop.
+
+```sh
+cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/wiki-public-layout
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/wiki-public-layout.py
+```
+
+`WIKI_BASE_URL` escolhe a raiz HTTPS do purpose e `WIKI_WIDTHS` uma lista de
+larguras. `WIKI_CSS_CANDIDATE=1` injeta `wiki.css` e `wiki-entry.css` de
+`WIKI_CSS_ROOT` somente na sessão do Firefox; não altera o Runtime nem prova
+que ele serve o HEAD do worktree. O teste usa um artigo público por rodada e não
+homologa páginas autenticadas, revisões, ACL, discussão, teclado, zoom, modos de
+cor ou WCAG 2.2 AA integral.
+
 ## Navigation top-bar mobile-first
 
 `navigation-top-bar.py` compara a composição do Drupal Navigation top-bar antes

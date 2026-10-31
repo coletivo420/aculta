@@ -646,7 +646,13 @@ dimensões anteriores em 576/768 CSS px. O smoke público aceita injeção da CS
 candidata local e mede 575/576/767/768 px; execução Firefox DEFERRED. O workspace
 autenticado de WE Sativa exige rodada própria; ver `mobile-first-audit.md`.
 O verbete público também empilha conteúdo/aside como base e volta a duas colunas
-em `48rem`; o mesmo smoke mede as colunas e a posição do aside.
+em `48rem`; `wiki-public-layout.py` agora mede a ordem visual principal/aside no
+consumer real. A auditoria encontrou o aside antes do conteúdo no baseline
+servido; a CSS candidata define `grid-row: auto`, preservando a ordem do DOM no
+mobile. Firefox ESR passou 18/18 checks com CSS candidata em nove larguras; o
+baseline reprovou a ordem em cinco larguras abaixo de 768px. O Runtime ainda
+não serve a correção, e a rodada não cobre o workspace autenticado de WE Sativa,
+teclado, zoom, modos de cor ou WCAG integral.
 
 ### THEME-MF2 — layout SDC page-columns
 
