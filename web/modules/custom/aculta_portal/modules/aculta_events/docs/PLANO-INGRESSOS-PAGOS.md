@@ -1,6 +1,6 @@
 # Plano - ingressos gratuitos e pagos em Eventos
 
-Status: **plano revisado, sem código.** A v1 contém somente campos informativos; RSVP gratuito com emissão e venda interna não estão implementados. D-29 a D-43 continuam sendo base para a trilha paga. Esta revisão propõe o fluxo gratuito derivado de D-33/D-36/D-37/D-40, sem autorizar coleta ou venda pública. Ver ADR-036.
+Status: **plano revisado, sem código.** Decisões atualizadas em 2026-10-31 conforme D-60/D-61; venda paga continua bloqueada por D-35. A v1 contém somente campos informativos; RSVP gratuito com emissão e venda interna não estão implementados. D-29 a D-43 continuam sendo base para a trilha paga. Esta revisão propõe o fluxo gratuito derivado de D-33/D-36/D-37/D-40, sem autorizar coleta ou venda pública. Ver ADR-036.
 
 > **Atenção:** a emissão de documento fiscal (ponto A, D-35) está **sem decisão**. Nenhuma venda pode abrir antes do
 > parecer fiscal e jurídico. Este plano não substitui esse parecer.
@@ -43,6 +43,16 @@ Limite conhecido: o gateway não faz repasse automático nem emite documento fis
 | Carrinho integrado | Eventos entra na barra, com as regras atuais: um pedido por carrinho, fluxo mais exigente. Precedência LMS > Loja > Eventos > Doações | D-39 |
 | Check-in | Organizador, administrador e pessoas cadastradas com acesso, pelo celular, por categoria de operador. O organizador convida e revoga o acesso por evento | D-37 |
 | Frete e pagamento | Eventos não tem frete. Checkout sem painéis de envio, com pagamento na etapa final do Mercado Pago (Checkout Pro). Item de evento não entra no cálculo de frete | D-42 |
+
+## Decisões do responsável — 2026-10-31
+
+- RSVP gratuito é opcional por Evento.
+- O organizador configura por Evento o escopo de capacidade: Evento inteiro, Data ou Lote.
+- Limites, prevenção de duplicidade, reserva/expiração, lista de espera e cancelamento são configuráveis por Evento.
+- Em série recorrente, o organizador escolhe inscrição por ocorrência ou pela série.
+- Transferência de ingresso/credencial é sempre permitida; a transferência deve ser auditável e invalidar a credencial anterior.
+- `aculta_events` é dono das ofertas/lotes; pedidos pagos integram com o Commerce existente. RSVP gratuito não depende de Commerce.
+- Venda paga não pode ser implementada/ativada antes do parecer fiscal/jurídico e da revisão LGPD. Documento fiscal permanece sem decisão (D-35).
 
 ## 4. Integração com `aculta_commerce` e `aculta_portal`
 
@@ -173,7 +183,7 @@ RSVP obrigatório ou opcional; limite por pessoa e prevenção de duplicidade; c
 
 | Fase | Entrega | Gate |
 | --- | --- | --- |
-| P0 | Resolver regras abertas de RSVP, lotação, duplicidade, reserva, cancelamento, séries, transferência, credencial e política de dados | Decisões registradas; LGPD antes de coleta pública. Parecer fiscal/jurídico antes de venda paga. |
+| P0 | Implementar regras de RSVP, lotação, duplicidade, reserva, cancelamento, séries e transferência conforme D-60 | Configuração por Evento; capacidade atômica; LGPD antes de coleta pública. Parecer fiscal/jurídico continua obrigatório antes de venda paga. |
 | P1 | Caracterizar carrinho, checkout, gateway, tipos de pedido/itens, webhook, refund e frete | Baseline e rollback; sem alteração funcional. Regressões Loja/LMS/Doações. |
 | P2 | Fechar modelo de lotes, inscrição e credencial; implementar type/item `ingresso` e contrato com Portal | Capacidade transacional; não reclassificar tipos existentes; sem vendas. |
 | P3 | RSVP/ingresso gratuito e emissão | Sem Commerce, CPF, carrinho ou gateway; nome/e-mail; idempotência, concorrência, cancelamento, privacidade e check-in. |
