@@ -2734,3 +2734,9 @@ ou preferência persistente alterados.
   não refletiu as tentativas locais após rebuild, portanto a correção correta
   precisa ser aplicada no consumer/asset realmente anexado ao formulário e
   repetida no Runtime; nenhuma regra especulativa foi mantida.
+- Correção efetiva publicada em `afe947a73`: o asset global de formulários
+  agora empilha os vertical-tabs no mobile e permite quebra de descrições e
+  legendas longas do painel de metadados. Após limpeza dos agregados CSS,
+  rebuild do cache e nova sessão autenticada, `/marley/revista/nova` passou
+  18/18 viewports em claro/escuro, 320–1440px, sem overflow. Evidência em
+  `/home/piradopirata/aculta-suite-out/revista-marley-create-final-20261031200025/`.
