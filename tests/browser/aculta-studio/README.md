@@ -673,3 +673,15 @@ excedeu 10px a viewport de 320px e a página ainda mostrava nove links. Não tra
 esse menu antigo como contrato operacional atual nem como evidência da rota
 candidata. A fixture candidata e seu limite estão no README mobile-first e no
 `mobile-first-audit.md`.
+
+### Ganjalab em claro/escuro — 2026-10-31
+
+`ocs-baseline.py` com `OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1` e
+`OCS_STUDIO_COLOR_MODE=dark` passou os checks Fidelity em 320/390/1440px nos dois
+modos; relatórios em
+`/home/piradopirata/aculta-suite-out/studio-ganjalab-canonical-followup-20261031/`
+e `/home/piradopirata/aculta-suite-out/studio-ganjalab-dark-canonical-followup-20261031/`.
+A rota Runtime ainda apresenta markup anterior (“Minha conta / Área pessoal”),
+enquanto o compositor atual da branch usa “Meus cursos”; os resultados são
+CSS candidata sobre consumer antigo. Não homologam F6, ACL/enrollment, dashboard
+novo, OCS-F11 ou THEME-MF3.

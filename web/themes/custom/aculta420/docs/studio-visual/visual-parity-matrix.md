@@ -296,3 +296,13 @@ validação integrada fica DEFERRED. O baseline legacy ainda mede 10px de overfl
 a 320px. Não prova grants por loja ou fluxos Commerce reais. Evidências em
 `/home/piradopirata/aculta-suite-out/green-stash-layout-followup-20261031/` e
 `/home/piradopirata/aculta-suite-out/green-stash-runtime-legacy-baseline-20261031/`.
+
+### OCS-F6 — Ganjalab em dois modos (2026-10-31)
+
+CSS candidata passou os invariantes tipográficos, shell, estados vazios, contraste
+e overflow em três larguras nos dois modos (6/6 combinações). Os testes Unit do
+compositor/controller passaram 2 testes/4 assertions. Porém o Runtime ainda serve “Minha conta /
+Área pessoal”, não o título e resumo `Meus cursos` da implementação na branch; a
+captura não homologa o consumer novo. Integrar/validar a tela servida, ACL LMS,
+estados preenchidos, AJAX/no-JS, zoom e WCAG segue pendente. Evidências em
+`mobile-first-audit.md`.

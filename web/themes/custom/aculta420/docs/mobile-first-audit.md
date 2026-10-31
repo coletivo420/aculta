@@ -3396,3 +3396,19 @@ e cenários visuais de produto sem salvar dados. Evidência em
 `/home/piradopirata/aculta-suite-out/green-stash-layout-followup-20261031/`.
 A integração de rota e UI no Runtime e as permissões operacionais por loja ficam
 DEFERRED; isso não aprova OCS-F8, OCS-F11 ou THEME-MF3.
+### OCS-F6 / THEME-MF2 — Ganjalab, claro/escuro e divergência do Runtime (2026-10-31)
+
+Em `courses:/ganjalab`, `ocs-baseline.py` com CSS Fidelity injetada passou
+`ganjalabFidelityStatus` em 320/390/1440px, nos modos claro e escuro (**6/6**
+combinações): Montserrat, contexto, dois estados vazios, shell único, sem overflow,
+contraste AA do shell e tokens Fidelity fora do shell. Capturas/JSON em
+`/home/piradopirata/aculta-suite-out/studio-ganjalab-canonical-followup-20261031/`
+e `/home/piradopirata/aculta-suite-out/studio-ganjalab-dark-canonical-followup-20261031/`.
+
+`LearnerDashboardComposerTest` + `GanjalabControllerTest`: 2 testes/4 assertions.
+O Runtime ainda serve markup “Minha conta / Área pessoal”, enquanto a implementação
+da branch compõe “ACULTA Studio Ganjalab”, “Meus cursos” e seu resumo de
+aprendizagem. As capturas exercitam CSS candidata sobre esse markup antigo; não
+validam o conteúdo/estados do compositor novo, matrícula/ACL LMS, AJAX/no-JS, zoom,
+WCAG integral ou paridade pareada com dashboard OpenCulturas. OCS-F6/F11 e MF3
+permanecem pendentes.

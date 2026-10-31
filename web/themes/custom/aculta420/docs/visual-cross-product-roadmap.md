@@ -1742,3 +1742,10 @@ seções atuais. No Runtime antigo, o menu de nove links tem 10px de overflow a
 `/greenstash`. Os testes Unit de rota, navegação e provider passaram 10/252; a rota real permanece
 DEFERRED até atualizar o Runtime. Não homologa grants Commerce nem OCS-F8/F11/MF3.
 Ver `mobile-first-audit.md`.
+### OCS-F6 / THEME-MF2 — Ganjalab claro/escuro (2026-10-31)
+
+Seis combinações candidatas (3 larguras × 2 modos) passaram CSS Fidelity, shell,
+estados vazios e overflow; Os testes Unit do compositor/controller passaram 2 testes/4 assertions. O Runtime ainda
+renderiza “Minha conta / Área pessoal”, divergente do compositor da branch
+“Meus cursos”; portanto F6 permanece parcial até validar o markup novo servido,
+matrículas/ACL e estados reais. Consulte `mobile-first-audit.md`.

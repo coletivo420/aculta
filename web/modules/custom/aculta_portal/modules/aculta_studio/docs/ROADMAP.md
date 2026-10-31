@@ -950,3 +950,11 @@ candidata passou 186/186 sem overflow e sem salvar dados, cobrindo somente os
 estados declarados e três áreas. O Runtime no HEAD `2493d7535` ainda serve
 `/greenstash` e retorna 404 para a rota nova; homologação real permanece DEFERRED.
 Grants por loja, formulários e fluxos Commerce reais continuam pendentes.
+
+### OCS-F6 — Ganjalab — revisão candidata em claro/escuro (2026-10-31)
+
+Firefox ESR candidate CSS checks passed at 320/390/1440px in both modes.
+`LearnerDashboardComposerTest` and `GanjalabControllerTest` passed 2 tests/4
+assertions. Runtime markup still displays “Minha conta / Área pessoal”; branch
+composer outputs “Meus cursos”. The captures therefore do not homologate the new
+consumer or LMS grants/enrollments. OCS-F6/F11 remain partial.
