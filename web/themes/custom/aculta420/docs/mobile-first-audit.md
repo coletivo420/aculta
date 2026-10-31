@@ -2198,3 +2198,12 @@ bootstrap Drupal. A correção usa o marcador neutro `challenge-frame` e CSS por
 container query no código da branch, mas o Runtime `2493d7535` ainda serve a
 versão anterior. Validação do contrato no Runtime após servir/rebuild permanece
 pendente; THEME-MF3 não está aprovado.
+
+Revalidação focal da correção candidata em `/entrar`: Firefox ESR visível abriu
+o Runtime local, simulou o token neutro no DOM e injetou `base.css` + `auth.css`
+somente na sessão. Passou **3/3** (rota anônima e 320/360px): o widget completo
+mede 300px e cabe no contêiner de 300px a 320px de viewport; a 360px acompanha
+308px. `documentWidth` ficou igual ao viewport e `scrollX=0`. Evidência em
+`/home/piradopirata/aculta-suite-out/auth-overflow-followup-20261031/`. Este teste
+prova o comportamento da candidata sobre markup Runtime, não o hook real ou a
+CSS publicada; o Runtime servido continua com a falha identificada.
