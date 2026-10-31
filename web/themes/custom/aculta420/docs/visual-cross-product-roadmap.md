@@ -1524,7 +1524,9 @@ Com CSS candidata e marcador CAPTCHA simulado, Conta passou 162 checks nas nove
 larguras, com nove SKIPs de foco transferido ao desafio externo e sem overflow.
 Essa comparação não homologa o hook Portal servido. O lint CSS/JS global do tema,
 schemas SDC, fronteira módulo/tema e documentação de tokens passaram na árvore
-da branch. O inventário lexical foi atualizado para 208 fontes e confere
-byte-a-byte; THEME-MF3 continua pendente até a correção integrada e validação de
-todos os estados. Consulte `mobile-first-audit.md` para comandos, capturas e
-limitações.
+da branch. O Foundation atualizado, executado com bootstrap do Runtime, também
+passou 352 checks; o checkout servido ainda tem a allowlist anterior, que falha
+ao comparar o template da home da Revista. O inventário lexical foi atualizado
+para 208 fontes e confere byte-a-byte; THEME-MF3 continua pendente até a
+correção integrada e validação de todos os estados. Consulte
+`mobile-first-audit.md` para comandos, capturas e limitações.
