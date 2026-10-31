@@ -1,5 +1,9 @@
 # Execução contínua ACULTA — PR #298
 
+### Gate de slugs — exceção OAuth técnica (2026-10-31)
+
+`validate-public-slugs.php` encontrou `simple_oauth.userinfo` (`/oauth/userinfo`), endpoint protocolar OAuth 2.0 de módulo contrib. A rota foi adicionada às exceções técnicas nomeadas do gate, sem mudança de URL ou reativação de aliases humanos. Resultado: **PASS**, 425 rotas e zero violações contrib fora da baseline DT-P20.
+
 ### WE SATIVA canônico — evidência adicional (2026-10-31)
 
 O baseline Firefox ESR/X11 autenticado de `https://wiki420.aculta.toca.net.br/studio/we-sativa` foi executado em 320/390/599/600/768/1024/1280/1440px. As 8 capturas retornaram `Acesso negado`; Institution Bar, Domain Header e ausência de overflow foram observados, mas nenhum consumer Wiki foi servido. Evidência: `/home/piradopirata/aculta-suite-out/studio-we-sativa-baseline-recheck-8d4dcc07d-20261031/`. O resultado é DEFERRED por autorização/instalação do Runtime e mantém OCS-F7/OCS-F11 pendentes; não usar `/wesativa` como substituto da rota canônica.
