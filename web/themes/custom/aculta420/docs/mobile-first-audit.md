@@ -44,6 +44,15 @@ suíte Unit do hook (3 testes/8 assertions), além de Stylelint em `auth.css`.
 atributos). Esses checks verificam a árvore local; não substituem discovery nem
 integração no Runtime.
 
+O lint completo do tema também passou em `npm run lint:css` e
+`npm run lint:js`. A auditoria lexical foi regenerada e o TSV agora corresponde
+byte a byte à árvore: são 208 fontes (94 CSS/Sass, 12 JS e 102 Twig/HTML), 99
+blocos `@media` em 47 folhas, um `@container`, 774 correspondências de
+dimensão em 76 folhas e 57 declarações de overflow em 31 folhas. O total de
+dimensões é lexical e inclui também valores das media queries; não descreve a
+cascata renderizada. Comparação reproduzível em
+`/home/piradopirata/aculta-suite-out/mobile-inventory-resume-20261101/`.
+
 ### THEME-MF2 — barra multidomínio e scroll móvel (2026-10-31)
 
 Firefox ESR visível no Runtime `2493d7535` passou 42/42 checks anônimos em
@@ -474,7 +483,7 @@ O inventário foi regenerado em 2026-10-30 por
 fonte: 94 folhas CSS/Sass, 12 scripts JavaScript (11 de produção e um de teste)
 e 102 templates Twig/HTML; não inclui documentação ou demais ativos. A busca
 lexical atual encontra `@media` em 47 folhas (99 blocos), um `@container`,
-expressões de dimensão em 76 folhas (753 matches) e declarações `overflow`,
+expressões de dimensão em 76 folhas (774 matches) e declarações `overflow`,
 `overflow-x` ou `overflow-y` em 31 folhas (57 declarações). A expressão de
 dimensão inclui width/height/inline-size/block-size e variantes min/max; os
 valores em media queries também aparecem porque o gerador percorre o texto CSS
