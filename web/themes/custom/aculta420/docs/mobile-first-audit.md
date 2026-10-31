@@ -9,6 +9,35 @@ escrita no Runtime. O incidente posterior, incluindo o snapshot e a correção
 direcionada de `message.settings`, está registrado em
 `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
 
+### Reteste transversal e fluxos de autenticação — 2026-10-31
+
+Com o Runtime confirmado em `toca`, checkout servido `/home/aculta`, HEAD
+`2493d7535`, URI `http://default` e banco `aculta_runtime`, Firefox ESR visível
+repetiu `purpose-headings.py` nas dez raízes e seis larguras
+(320/390/600/768/1024/1440px). Resultado: **119/120**. Os 60 H1 estavam
+visíveis em `main#main-content`; Institution Bar e Domain Header apareceram uma
+vez nas 60 combinações. A única falha foi Conta/320px, com `documentWidth=328`.
+Apoio e Cursos têm H1 no Runtime; os registros anteriores de ausência foram
+superados. Relatório e capturas em
+`/home/piradopirata/aculta-suite-out/purpose-headings-recheck-20261031/`.
+
+As rotas `/entrar`, `/criar-conta` e `/recuperar-senha` passaram **10/10 cada**
+nas nove larguras 320/360/390/599/600/768/1024/1280/1440px, com o iframe
+Turnstile real carregado. `base.css`/`auth.css` e o marcador Portal foram
+injetados apenas na sessão Firefox: o documento não teve overflow e o slot do
+widget coube no viewport. Nenhum formulário foi enviado e não houve escrita no
+Runtime. Isso valida a CSS candidata sobre o markup servido; não valida o hook
+Portal integrado nem corrige a CSS atualmente servida. Evidências em
+`/home/piradopirata/aculta-suite-out/auth-turnstile-final-20261031/`.
+
+A capa pública da Revista também passou novo reteste candidato **28/28** em
+320–1440px, com quatro publicações/capas, links nativos sem JavaScript, teclado,
+claro/escuro, zoom real 200/400%, contraste de 12,40:1/14,50:1 e shell único.
+Somente a folha candidata foi injetada; nenhuma escrita foi feita no Runtime.
+Capturas e log em
+`/home/piradopirata/aculta-suite-out/revista-cover-recheck-20261031/`.
+Esses resultados focais não aprovam THEME-MF3.
+
 ### THEME-MF2 — shell sem JavaScript e navegação por teclado (2026-11-01)
 
 No Runtime de desenvolvimento em HEAD `2493d7535`, Firefox ESR visível, sessão

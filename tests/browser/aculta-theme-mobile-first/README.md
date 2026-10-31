@@ -885,10 +885,18 @@ purposes. Usa somente GET em Firefox ESR. Captura Apoio e Cursos em 320/1440px
 para revisão visual. `PURPOSE_HEADING_WIDTHS` escolhe as larguras e
 `PURPOSE_HEADING_DOMAIN_ENV` seleciona os hosts do manifesto (`test` por padrão).
 Não valida hierarquia completa, leitores de tela nem WCAG 2.2 AA.
-No HEAD servido `a1e1a4a71` antes da correção de tema, a baseline foi 108/120:
-as 12 falhas são somente a ausência do H1 em SUPPORT e COURSES nas seis larguras.
-Repita depois que o template candidato estiver no Runtime; a execução baseline
-não valida o candidato.
+No Runtime em HEAD `2493d7535`, uma repetição visível com os dez purposes e as
+seis larguras deste script passou 119/120: os 60 H1 estavam visíveis, os 59
+shells sem a única exceção de largura estavam íntegros, e o único erro foi Conta
+a 320px (`documentWidth=328`). Apoio e Cursos já exibem H1; a falha histórica
+dessas páginas foi resolvida no código servido. Para o candidato de autenticação,
+`auth-route-runtime.py` passou 10/10 em `/entrar`, `/criar-conta` e
+`/recuperar-senha`, cada rota em 320/360/390/599/600/768/1024/1280/1440px, com
+widget Turnstile real, CSS e marcador candidatos injetados somente no Firefox.
+Isso não homologa o hook Portal nem elimina o overflow da CSS atualmente servida.
+Relatórios atuais em
+`/home/piradopirata/aculta-suite-out/purpose-headings-recheck-20261031/` e
+`/home/piradopirata/aculta-suite-out/auth-turnstile-final-20261031/`.
 
 ```sh
 export DISPLAY=:0
