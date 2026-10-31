@@ -1,15 +1,24 @@
 // S-R5: comparação somente leitura Conta Studio x legado e Perfil x MAIN.
 // Firefox ESR visível, geckodriver WebDriver + BiDi; NUNCA headless/produção.
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { join } from 'node:path';
+import { join, relative, resolve, sep } from 'node:path';
 
 const ROOT = fileURLToPath(new URL('../../../', import.meta.url));
+const DRUSH_ROOT = resolve(process.env.SR5_DRUSH_ROOT || ROOT);
 const ACCOUNT = (process.env.SR5_ACCOUNT_ORIGIN || 'https://conta.aculta.toca.net.br').replace(/\/$/, '');
 const MAIN = (process.env.SR5_MAIN_ORIGIN || 'https://aculta.toca.net.br').replace(/\/$/, '');
 const DRIVER = process.env.SR5_WEBDRIVER || 'http://127.0.0.1:4444';
-const OUT = process.env.SUITE_OUT || '/tmp/aculta-studio-s-r5';
+if (!process.env.SUITE_OUT) throw Error('SUITE_OUT persistente fora do repositório é obrigatório.');
+const OUT = resolve(process.env.SUITE_OUT);
+const relativeOut = relative(ROOT, OUT);
+if (!relativeOut || (relativeOut !== '..' && !relativeOut.startsWith(`..${sep}`))
+  || OUT === '/tmp' || OUT.startsWith(`/tmp${sep}`)) {
+  throw Error('SUITE_OUT deve ficar fora do checkout e de /tmp.');
+}
+const DRUSH = join(DRUSH_ROOT, 'vendor/drush/drush/drush.php');
+if (!existsSync(DRUSH)) throw Error('Drush ausente em SR5_DRUSH_ROOT.');
 const USERS = [process.env.SR5_USER_A, process.env.SR5_USER_B];
 const SLUGS = [process.env.SR5_APELIDO_A, process.env.SR5_APELIDO_B];
 const SENTINELS = [process.env.SR5_BIO_SENTINELA_A, process.env.SR5_BIO_SENTINELA_B];
@@ -29,6 +38,12 @@ if (SLUGS.some(value => !value || !/^[a-z0-9-]+$/.test(value)) || SLUGS[0] === S
 if (!['', 'enabled', 'disabled'].includes(DOCUMENTS)) throw Error('SR5_DOCUMENTOS: enabled ou disabled.');
 if (PUBLIC.some(value => value && !['yes', 'no'].includes(value))) throw Error('SR5_PERFIL_PUBLICO_A/B: yes ou no.');
 mkdirSync(OUT, { recursive: true, mode: 0o700 });
+chmodSync(OUT, 0o700);
+
+function writePrivateFile(path, contents) {
+  writeFileSync(path, contents, { mode: 0o600 });
+  chmodSync(path, 0o600);
+}
 
 function record(name, status, details = '') {
   if (!['PASS', 'FAIL', 'SKIP'].includes(status)) throw Error('Status inválido');
@@ -48,12 +63,27 @@ async function wd(method, path, body) {
   if (!response.ok || value?.error) throw Error(`WebDriver ${method} ${path}: ${value?.error || response.status}`);
   return value;
 }
+let runtimeVerified = false;
+function drush(...args) {
+  return execFileSync('php', [DRUSH, ...args], {
+    cwd: DRUSH_ROOT,
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+  }).trim();
+}
+function verifyRuntime() {
+  if (runtimeVerified) return;
+  const status = drush('status', '--fields=uri,root,db-name', `--uri=${ACCOUNT}`);
+  if (!status.includes('/home/piradopirata/projetos/aculta/web')
+    || !status.includes('aculta_runtime')) {
+    throw Error('Drush precisa apontar para o checkout de desenvolvimento e aculta_runtime.');
+  }
+  runtimeVerified = true;
+}
 function oneTimeLogin(user) {
   // URL de login usada apenas em memória; nunca gravada no relatório.
-  const stdout = execFileSync('php', [
-    'vendor/drush/drush/drush.php', 'uli', '--no-browser', `--name=${user}`, `--uri=${ACCOUNT}`,
-  ], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
-  const url = stdout.trim().split('\n').at(-1);
+  verifyRuntime();
+  const url = drush('uli', '--no-browser', `--name=${user}`, `--uri=${ACCOUNT}`).split('\n').at(-1);
   if (!url?.startsWith(ACCOUNT + '/')) throw Error('Drush uli retornou origem de login inesperada.');
   return url;
 }
@@ -74,7 +104,7 @@ async function firefox(javascriptEnabled = true) {
     eval: source => wd('POST', base('/execute/sync'), { script: source, args: [] }),
     screenshot: async name => {
       const bytes = Buffer.from(await wd('GET', base('/screenshot')), 'base64');
-      writeFileSync(join(OUT, `${name}.png`), bytes, { mode: 0o600 });
+      writePrivateFile(join(OUT, `${name}.png`), bytes);
     },
     close: () => wd('DELETE', base('')).catch(() => {}),
     ws: result.capabilities.webSocketUrl,
@@ -333,11 +363,11 @@ try {
   check('suíte S-R5 não interrompida', false, `${error.name || 'Error'}: ${(error.message || '').split('\n')[0]}`);
 } finally {
   const totals = Object.fromEntries(['PASS','FAIL','SKIP'].map(status => [status, results.filter(r => r.status === status).length]));
-  writeFileSync(join(OUT, 'results.json'), JSON.stringify({
+  writePrivateFile(join(OUT, 'results.json'), JSON.stringify({
     test: 'S-R5 comparação pré-homologação; sem escrita, sem dados privados em JSON',
     limitations: ['S-R4 ainda depende de gates', 'capturas requerem auditoria humana', 'não há submit/CSRF/AJAX nem zoom/teclado automatizados', 'paridade visual não é igualdade de pixels'],
     totals, results,
-  }, null, 2), { mode: 0o600 });
+  }, null, 2));
   console.log(`S-R5: PASS=${totals.PASS}, FAIL=${totals.FAIL}, SKIP=${totals.SKIP}; evidências privadas em ${OUT}`);
   process.exitCode = totals.FAIL ? 1 : totals.SKIP ? 3 : 0;
 }

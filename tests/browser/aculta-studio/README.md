@@ -153,7 +153,7 @@ foco visível por Tab. `results.json` e capturas 320/1440 ficam em `$SUITE_OUT`.
 O resultado é uma fixture local de CSS/HTML, não a homologação da rota ou do
 gate OCS-F11.
 
-## Meu Perfil — S-R4 (suíte read-only, ainda sem execução no Runtime)
+## Meu Perfil — S-R4 (suíte read-only)
 
 Arquivo: `profile-s-r4.mjs`. Usa **Firefox ESR visível em X11** e geckodriver,
 o mesmo protocolo WebDriver/BiDi do `visual.mjs`. Verifica os quatro SDCs
@@ -162,6 +162,9 @@ e sentinelas distintas, link público condicionado à fixture, reflow em
 320/375/390/768/1024/1440 px e capturas locais claro/escuro. Executa também
 uma sessão separada com JavaScript desabilitado, conferindo HTML do perfil e
 GET da edição de apelido.
+Com `STUDIO_PROFILE_STATUS_CSS_OVERRIDE=1`, injeta `content.css` da raiz
+`STUDIO_PROFILE_STATUS_CSS_ROOT` somente no Firefox e mede o fluxo e o título
+compacto de avisos ULI em 320px; isso não muda a folha servida.
 
 Primeiro, no **Homelab de testes identificado com hostname, branch, Drush e
 banco**, prepare **duas contas sintéticas** A e B com bio de marcador único,
@@ -179,19 +182,26 @@ export STUDIO_PROFILE_SENTINEL_B='marcador-unico-B-no-perfil'
 export STUDIO_PROFILE_PUBLIC_A='yes'
 export STUDIO_PROFILE_PUBLIC_B='no'
 export STUDIO_PROFILE_BASE='https://conta.aculta.toca.net.br'
-export SUITE_OUT='/tmp/aculta-studio-profile-s-r4'
+export STUDIO_PROFILE_DRUSH_ROOT='/home/piradopirata/projetos/aculta'
+export STUDIO_PROFILE_STATUS_CSS_ROOT='/home/piradopirata/worktrees/opencultures-f0-adm8-e8'
+export STUDIO_PROFILE_STATUS_CSS_OVERRIDE=1
+export SUITE_OUT='/home/piradopirata/aculta-suite-out/aculta-studio-profile-s-r4'
 # Em outra sessão X11: DISPLAY=:0 geckodriver --port 4444
 node tests/browser/aculta-studio/profile-s-r4.mjs
 ```
 
 `GECKODRIVER` aceita a URL do servidor WebDriver (padrão
 `http://127.0.0.1:4444`); `STUDIO_PROFILE_DRUSH_URI` aceita override
-somente da mesma origem que `STUDIO_PROFILE_BASE`. A suíte bloqueia hosts
-de produção e exige duas contas distintas. Links temporários de login são
-gerados em memória por Drush e não são gravados no relatório. Evidências
-(`results.json`, PNG) ficam **somente em `$SUITE_OUT`**, fora do Git e
-devem ser tratadas como privadas. Status SKIP produz saída 3, FAIL produz 1,
-PASS total produz 0. Não usar SKIP como aceite.
+somente da mesma origem que `STUDIO_PROFILE_BASE`; `STUDIO_PROFILE_DRUSH_ROOT`
+pode apontar para o checkout configurado do servidor de desenvolvimento. Antes
+de emitir ULI, confirme hostname, HEAD, URI e banco pelo procedimento local e
+faça snapshot quando aplicável. O script exige que Drush identifique o docroot
+de desenvolvimento e `aculta_runtime`, bloqueia hosts de produção e exige duas
+contas distintas. Cada ULI cria uma sessão Drupal temporária; nenhum formulário
+é enviado nem perfil/preferência/configuração persistida é alterado. Links de
+login são gerados em memória e não são gravados no relatório. `SUITE_OUT` deve ser persistente; o script cria a pasta
+com modo 0700 e PNG/JSON com modo 0600, fora do Git. Status SKIP produz saída 3,
+FAIL produz 1, PASS total produz 0. Não usar SKIP como aceite.
 
 **Limitações:** o script não homologa upload/crop/modal AJAX, submissões
 Form API, CSRF, cache HTTP, ACL do perfil público em MAIN, segurança de CPF,
@@ -203,9 +213,24 @@ visíveis no editor privado para demonstrar ausência de mistura entre contas.
 Capturas devem ser inspecionadas manualmente quanto a foco, contraste,
 overflow, zoom e layout, além das asserções automatizadas.
 
-**Situação no commit de inclusão:** script preparado e sintaxe conferida em
-cópia local com `node --check`; **Firefox ESR/Runtime ainda não executados**.
-A S-R4 permanece sem homologação; S-R5 continua bloqueada.
+**Execução focal de 2026-10-31:** no Runtime `aculta_runtime`, com contas
+sintéticas já existentes, o baseline servido completou 28 PASS, 0 FAIL e
+4 SKIP. A versão candidata de `content.css`, injetada apenas no Firefox,
+completou 32 PASS, 0 FAIL e 4 SKIP. Os quatro skips em cada rodada são as
+asserções de estado público e isolamento por sentinelas, pois as fixtures
+disponíveis não têm expectativas público/privado opostas nem marcadores únicos.
+As seis larguras, claro/escuro e no-JS passaram. A captura candidata real de
+320px mostra o aviso ULI em fluxo, sem sobrepor o cartão; o título observado
+na página permanece em uma linha. Não houve submissão de formulário ou
+alteração de perfil. Capturas/resultados privados ficam em
+`/home/piradopirata/aculta-suite-out/aculta-studio-profile-s-r4-layout-20261031/`
+e `/home/piradopirata/aculta-suite-out/aculta-studio-profile-s-r4-content-candidate-20261031/`.
+Snapshots pré-ULI: `runtime-before-sr4-profile-browser-20261031.sql`
+(SHA-256 `cb7f4ceb2459f70e8c65b54837b57fce9bfda776c0145084a762f48bf95ecb86`)
+e `runtime-before-sr4-profile-candidate-browser-20261031.sql`
+(SHA-256 `0be6aa8f305718e015a193f88eb4292b54e28351b87aad49c575ffe200a63ec4`).
+O CSS candidato não foi instalado no Runtime. S-R4 não está homologada; S-R5
+continua bloqueada até haver fixtures A/B apropriadas e S-R4 aprovada.
 
 
 ## S-R5 — comparação de Conta e Perfil (suíte pré-homologação)
@@ -237,10 +262,17 @@ export SR5_BIO_SENTINELA_B=marcador-sintetico-b
 export SR5_PERFIL_PUBLICO_A=yes
 export SR5_PERFIL_PUBLICO_B=no
 export SR5_DOCUMENTOS=enabled  # ou disabled se o owner CPF estiver ausente
-export SUITE_OUT=/tmp/aculta-studio-s-r5
+export SR5_DRUSH_ROOT=/home/piradopirata/projetos/aculta
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/aculta-studio-s-r5
 DISPLAY=:0 geckodriver --port 4444 &
 node tests/browser/aculta-studio/parity-s-r5.mjs
 ```
+
+`SR5_DRUSH_ROOT` aponta para o checkout configurado do servidor de
+desenvolvimento. Antes de emitir ULI, confirme hostname, HEAD, URI e banco pelo
+procedimento local e faça snapshot quando aplicável. O script valida o alvo do
+Drush; `SUITE_OUT` deve ser persistente, fora do checkout e de `/tmp`. O JSON e
+as capturas são escritos com permissões privadas.
 
 `SR5_WEBDRIVER` permite alterar o endpoint WebDriver (padrão
 `http://127.0.0.1:4444`). O script exige explicitamente

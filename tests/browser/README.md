@@ -24,7 +24,8 @@ sessão termina e o trabalho se perde.
   (servidor de desenvolvimento ou local), as variáveis de ambiente, como executar e
   quais são as limitações conhecidas.
 - **Artefatos ficam fora do repositório**: PNG, HTML e logs vão para
-  `$SUITE_OUT` (padrão em `/tmp/...`). O repositório guarda o script, não a
+  `$SUITE_OUT`, que deve ser informado e ficar em armazenamento persistente.
+  Não use `/tmp` nem o próprio checkout. O repositório guarda o script, não a
   evidência — evidência com dado de conta não deve ser versionada.
 - **Sem segredos no script**: credenciais vêm do ambiente (`secrets/*.env`);
   nada de senha, token ou link de uso único hardcoded ou impresso.

@@ -3852,3 +3852,30 @@ iframe continua fora da inspeção. Evidência em
 Os quatro casos permanecem `SKIP`; isto não aprova o gate de teclado/WCAG do
 THEME-MF3.
 
+### OCS-F9 — reteste focal de Meu Perfil no Runtime (2026-10-31)
+
+Firefox ESR visível abriu `/perfil` com duas contas sintéticas existentes. O
+baseline servido passou 28 verificações, teve 0 falhas e 4 skips. Com a
+`content.css` do checkout injetada somente no navegador, o reteste passou
+32 verificações, teve 0 falhas e 4 skips. Os skips são os checks de perfil
+público e isolamento entre sessões: as contas disponíveis não formam um par
+público/privado e não têm sentinelas privadas distintas. A CSS candidata
+posicionou o aviso ULI em fluxo, antes do H1, sem encobrir o cartão a 320px;
+na captura da rota real o título do aviso permanece em uma linha. A CSS
+continua não instalada no Runtime, então o resultado demonstra o efeito do
+candidato sobre o HTML real, não a correção servida nem aprovação S-R4.
+
+Runtime: checkout servido `2493d7535`, `aculta_runtime`, 624 tabelas. Antes
+de cada ULI foi feito snapshot íntegro: `runtime-before-sr4-profile-browser-20261031.sql`
+(107,760,702 bytes; SHA-256
+`cb7f4ceb2459f70e8c65b54837b57fce9bfda776c0145084a762f48bf95ecb86`) e
+`runtime-before-sr4-profile-candidate-browser-20261031.sql` (107,858,706 bytes;
+SHA-256 `0be6aa8f305718e015a193f88eb4292b54e28351b87aad49c575ffe200a63ec4`).
+Resultados e capturas estão fora do repositório, em
+`/home/piradopirata/aculta-suite-out/aculta-studio-profile-s-r4-layout-20261031/`
+e `/home/piradopirata/aculta-suite-out/aculta-studio-profile-s-r4-content-candidate-20261031/`.
+Sem envio de formulário ou gravação de perfil. Permanecem necessários os
+fixtures A/B público/privado, sentinelas únicas, os gates funcionais e de
+acessibilidade da matriz S-R4 e depois a comparação S-R5; OCS-F11/THEME-MF3
+continuam pendentes.
+
