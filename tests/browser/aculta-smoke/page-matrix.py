@@ -118,7 +118,8 @@ try:
                 data = driver.js("""return {url:location.origin+location.pathname,title:document.title,readyState:document.readyState,
 status:performance.getEntriesByType('navigation')[0]?.responseStatus||null,
 width:innerWidth,documentWidth:document.documentElement.scrollWidth,
-horizontalOverflow:document.documentElement.scrollWidth>innerWidth,
+visibleRight:(()=>{let right=innerWidth;for(const el of document.querySelectorAll('body *')){if(el.closest('.offcanvas:not(.show)'))continue;const s=getComputedStyle(el),r=el.getBoundingClientRect();if(s.display==='none'||s.visibility==='hidden'||r.width===0||r.height===0)continue;if(r.right>right)right=r.right;}return Math.ceil(right)})(),
+horizontalOverflow:(()=>{for(const el of document.querySelectorAll('body *')){if(el.closest('.offcanvas:not(.show)'))continue;const s=getComputedStyle(el),r=el.getBoundingClientRect();if(s.display==='none'||s.visibility==='hidden'||r.width===0||r.height===0)continue;if(r.right>innerWidth+1)return true;}return false})(),
 mainCount:document.querySelectorAll('main,[role=main]').length,
 navCount:document.querySelectorAll('nav,[role=navigation]').length,
 focusableCount:document.querySelectorAll('a[href],button,input,select,textarea,summary,[tabindex]:not([tabindex="-1"])').length};""")
