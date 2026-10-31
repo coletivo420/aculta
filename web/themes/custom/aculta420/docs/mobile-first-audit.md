@@ -4462,3 +4462,4 @@ reduzido pela preferência real do Firefox. Este teste cobre tokens e links do
 shell, não contraste/conteúdo de todos os componentes, estados de foco completos,
 leitor de tela ou a avaliação integral WCAG 2.2 AA. Logo, não substitui o gate
 de acessibilidade e não aprova THEME-MF3/OCS-F11.
+
