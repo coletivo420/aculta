@@ -17,7 +17,7 @@ depende de THEME-MF3. OCS-A1–A4 só começam depois dos dois gates aprovados.
 | OCS-F4 | Composição adapta links autorizados do registry e da entrada da Conta ao SDC existente; estado funcional vem dos providers. Captura Runtime com o novo adaptador pendente. |
 | OCS-F5–F7 | Parcial/incompleto; além da fixture de formulários 42/42, Marley foi validado em Firefox ESR com quatro publicações sintéticas próprias, links canônicos `/marley/revista/{id}/editar`, tabela responsiva em 390px (80/80 checks) e GET real dos Form APIs de edição/criação com CSS candidata (87/87 checks, sem submit; título Fidelity e shell preservado). Persistência/submissão, todos os estados, AJAX/no-JS, LMS e Wiki seguem pendentes. |
 | OCS-F8 | Fundação visual Studio e apresentação candidata das listagens integradas; fixture Firefox ESR 74/74 em nove larguras e claro/escuro. Operador autorizado, grants por loja e telas reais continuam sem homologação. |
-| OCS-F9–F10 | Estilo candidato dos formulários de Conta/Perfil usa o mesmo contrato do tema; render real e S-R4/S-R5 continuam pendentes, preservando `/conta-legada` e as demais áreas. |
+| OCS-F9–F10 | Shell da Conta passou reteste Firefox 33/33 em dez larguras; fixtures de identidade e perfil público passaram 56/56 e 22/22. Contas/perfis reais, render do editor privado, ACL A/B e S-R4/S-R5 continuam pendentes; `/conta-legada` segue preservada. |
 | OCS-F11 | Não aprovado: depende de THEME-MF3 e das evidências de todas as áreas/estados. |
 | OCS-A1–A4 | Não iniciadas; gate anterior permanece fechado. |
 

@@ -1238,9 +1238,13 @@ alinhamento central, preservando o breakpoint de composição horizontal em
 `profile-identity-layout.py` compara baseline/candidato em 14 larguras, mede o
 avatar, alinhamento, overflow, ordem DOM e mantém captura de cada estado. Lint
 CSS, sintaxe Python, Design Foundations e índice de status PASS; Firefox visível
-DEFERRED porque `DISPLAY` não está disponível e sessões geckodriver concorrentes
-estão ativas. A fixture não valida conteúdo ou ACL de perfil real. THEME-MF3
-continua pendente.
+passou agora 56/56 checks nas 14 larguras, com baseline e candidato lado a lado;
+captura de 320px inspecionada. `public-profile-layout.py` também passou 22/22
+checks em 11 larguras, comparando geometria e screenshot do consumer com o
+baseline. As duas são fixtures locais: não validam conteúdo ou ACL de perfil
+real. Evidências em `/home/piradopirata/aculta-suite-out/profile-identity-f9-20261030/`
+e `/home/piradopirata/aculta-suite-out/public-profile-f9-20261030/`.
+THEME-MF3 continua pendente.
 
 ### THEME-MF2 — menu de opções do Messenger mobile-first (2026-10-29)
 
