@@ -2456,3 +2456,10 @@ ou preferência persistente alterados.
   larguras, inclusive Conta 320px; mediu um H1 visível no `main`, shell único e
   sem overflow. Evidência em
   `/home/piradopirata/aculta-suite-out/purpose-headings-recheck-768d514ef-20261031/`.
+- O gate estático do shell tinha uma asserção excessivamente literal e rejeitava
+  a variante legítima `aculta-institution-bar--account` por não usar a classe
+  base como primeiro token. O analisador foi ajustado para exigir a classe base
+  em qualquer ordem, preservando a proibição de wrapper paralelo. No Runtime,
+  SDC schema passou (55 componentes/759 checks), shell contract passou (13),
+  Design Foundations passou (2.429) e Revista/parity passou. Correção publicada
+  em `65a064603`.
