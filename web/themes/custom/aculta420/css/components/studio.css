@@ -335,6 +335,10 @@
 /* OpenCulturas Next tab treatment; navigation remains ordinary authorized links. */
 .studio__tabs .studio__tab,
 .studio__subtabs .studio__link {
+  display: inline-flex;
+  min-inline-size: 2.75rem;
+  min-block-size: 2.75rem;
+  align-items: center;
   padding: 0.25em 1em;
   color: var(--aculta-studio-fidelity-interaction);
   text-decoration: none;

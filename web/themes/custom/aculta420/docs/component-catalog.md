@@ -149,7 +149,9 @@ Na navegação interna, `.studio__tabs` e `.studio__subtabs` preservam os links 
 estados autorizados existentes. A apresentação distingue áreas primárias de
 abas secundárias no padrão OpenCulturas Next; ambas quebram linha na base
 mobile e neutralizam as molduras Bootstrap dos links e itens de lista, sem criar
-navegação ou destinos adicionais. Marley e a navegação contextual de Conta
+navegação ou destinos adicionais. Cada link tem alvo mínimo de 44×44 CSS px.
+Firefox ESR visível verificou alvos e reflow numa fixture em 27 larguras, sem
+overflow; não é validação de rota real. Marley e a navegação contextual de Conta
 passaram os checks executáveis em Firefox com CSS candidato; comparação pareada
 e demais consumers permanecem pendentes (OCS-F2 parcial).
 

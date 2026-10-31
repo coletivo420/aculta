@@ -663,6 +663,16 @@ validators passaram. As páginas reais ainda não foram conferidas com este
 candidato servido; THEME-MF3 segue pendente. Ver `mobile-first-audit.md` e
 `tests/browser/aculta-theme-mobile-first/institutional-layout.py`.
 
+### OCS-F2 / THEME-MF2 — alvos de toque das abas internas (2026-10-30)
+
+Os links de áreas e abas secundárias do Studio recebem alvos mínimos de
+44×44 CSS px sem mudar rotas, ordem DOM, estado ativo ou wrapping. Firefox ESR
+visível passou 243/243 checks na fixture reutilizável em 27 larguras de
+320–1920px; stylelint passou e a captura em 320px foi inspecionada. Rota real,
+zoom, modos de cor e acessibilidade completa continuam pendentes; OCS-F2,
+THEME-MF3 e OCS-F11 seguem parciais/não aprovados. Evidência em
+`mobile-first-audit.md` e `tests/browser/aculta-studio/README.md`.
+
 ### THEME-MF2 — Institution Bar global (2026-10-29)
 
 As dimensões compactas agora são CSS base; `min-width: 768px` recupera o layout

@@ -360,8 +360,8 @@ MF3/F11 ou homologação global.
 `studio-card-fidelity.py` adiciona uma fixture local do Hub e mede as folhas
 candidatas de tokens, Studio e `patterns/card` nos viewports de aceite, nos
 limites 48/70/85/120em do layout opCult e nas fronteiras vizinhas. Confere
-container, padding, reflow da grade, geometria do cartão e overflow; PNGs ficam
-em `$SUITE_OUT`.
+container, padding, reflow da grade, geometria do cartão, overflow e alvos de
+44×44px para abas primárias/secundárias; PNGs ficam em `$SUITE_OUT`.
 
 A página é `data:` no Firefox ESR visível e não acessa Drupal/Runtime. Os
 limites derivados da fonte 3.1.5 são 48em (768px), 70em (1120px), 85em

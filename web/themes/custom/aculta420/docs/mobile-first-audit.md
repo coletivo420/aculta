@@ -2042,3 +2042,18 @@ observados. Capturas revisadas em
 `$SUITE_OUT/green-stash-layout-20261030/`. Evidência da CSS candidata, não de
 rota real, operador ou grants por loja. OCS-F8, OCS-F11 e THEME-MF3 continuam
 pendentes.
+
+### OCS-F2 / THEME-MF2 — alvos de toque das abas internas do Studio (2026-10-30)
+
+`.studio__tabs .studio__tab` e `.studio__subtabs .studio__link` agora têm
+alvos mínimos de 44×44 CSS px, com alinhamento central, sem mudar a ordem DOM,
+os destinos, o estado `aria-current` ou o wrapping mobile-first. A fixture
+`tests/browser/aculta-studio/studio-card-fidelity.py` passou 243/243 checks em
+27 larguras entre 320 e 1920 px no Firefox ESR visível; todos os seis links de
+amostra mantiveram alvo mínimo e não houve overflow. Stylelint passou. A captura
+320px foi inspecionada em
+`/home/piradopirata/aculta-suite-out/studio-tabs-targets-20261030/`.
+
+A fixture é sintética e valida apenas as folhas candidatas. Rotas reais, teclado
+no Runtime, zoom, claro/escuro, reduced motion e WCAG completa seguem pendentes;
+OCS-F2, THEME-MF3 e OCS-F11 não estão aprovados por este resultado.

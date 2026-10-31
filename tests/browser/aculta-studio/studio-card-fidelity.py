@@ -71,7 +71,18 @@ body {{ margin: 0; font: 16px/1.5 sans-serif; }}
 @media (min-width: 48rem) {{ .studio-hub .studio__actions {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }} }}
 </style></head><body><main class="aculta-main"><div class="aculta-container">
 <section class="studio studio-hub" aria-labelledby="hub-title">
-<h1 id="hub-title">Experiências ACULTA</h1><ul class="studio__actions">
+<h1 id="hub-title">Experiências ACULTA</h1>
+<ul class="studio__tabs nav" aria-label="Áreas do Studio">
+<li><a class="studio__tab" aria-current="page" href="#marley">Marley</a></li>
+<li><a class="studio__tab" href="#we-sativa">ACULTA STUDIO WE SATIVA</a></li>
+<li><a class="studio__tab" href="#green-stash">ACULTA STUDIO GREEN STASH</a></li>
+</ul>
+<ul class="studio__subtabs nav" aria-label="Seções da área">
+<li><a class="studio__link" aria-current="page" href="#produtos">Produtos</a></li>
+<li><a class="studio__link" href="#remessas">Envios e remessas</a></li>
+<li><a class="studio__link" href="#estoque">Estoque</a></li>
+</ul>
+<ul class="studio__actions">
 <li><article class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><h3><a href="#marley">Marley — acesso editorial</a></h3><p>Gerencie atividades editoriais e conteúdos disponíveis na sua conta.</p></div></article></li>
 <li><article class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><h3><a href="#greenstash">ACULTA STUDIO GREEN STASH</a></h3><p>A área de gestão comercial integrada do Studio.</p></div></article></li>
 </ul></section></div></main></body></html>"""
@@ -113,6 +124,7 @@ try:
           const cards = [...document.querySelectorAll('.aculta-card--studio-fidelity')];
           const card = cards[0];
           const body = card.querySelector('.card-body');
+          const navLinks = [...document.querySelectorAll('.studio__tabs a, .studio__subtabs a')];
           const rect = container.getBoundingClientRect();
           return {
             viewport,
@@ -134,6 +146,10 @@ try:
             h3FontSize: getComputedStyle(card.querySelector('h3')).fontSize,
             h3FontWeight: getComputedStyle(card.querySelector('h3')).fontWeight,
             studioScope: card.closest('.studio') !== null,
+            navigationTargets: navLinks.map((link) => {
+              const target = link.getBoundingClientRect();
+              return {text: link.textContent.trim(), width: Math.round(target.width), height: Math.round(target.height)};
+            }),
           };
         })();""")
         mobile = width < 768
@@ -165,6 +181,11 @@ try:
         check(f"{width}px: consumidor e SDC presentes",
               metrics["studioScope"] and metrics["cardCount"] == 2,
               f"studio={metrics['studioScope']}, cartões={metrics['cardCount']}")
+        check(f"{width}px: abas com alvos mínimos de 44px",
+              len(metrics["navigationTargets"]) == 6
+              and all(target["width"] >= 44 and target["height"] >= 44
+                      for target in metrics["navigationTargets"]),
+              json.dumps(metrics["navigationTargets"], ensure_ascii=False))
         check(f"{width}px: geometria Fidelity aplicada",
               metrics["radius"] == "24px" and metrics["border"] == "1px"
               and metrics["bodyPaddingInline"] == "32px",
