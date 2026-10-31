@@ -249,19 +249,3 @@
   .card:is(:hover, :focus-within),
   .aculta-editorial-list .views-row:is(:hover, :focus-within) { transform: none; }
 }
-/* Editorial node forms: keep Core vertical-tabs panels inside the mobile
-   content column. This file is loaded on Drupal Form API pages where the
-   component forms library is not attached. */
-@media (max-width: 35.999rem) {
-  form.node-form .vertical-tabs,
-  form.node-form .vertical-tabs__panes,
-  form.node-form .entity-meta {
-    inline-size: 100% !important;
-    max-inline-size: 100% !important;
-  }
-
-  form.node-form .entity-meta {
-    flex: 0 0 100% !important;
-    min-inline-size: 0 !important;
-  }
-}
