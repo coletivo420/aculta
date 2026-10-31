@@ -1197,3 +1197,37 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/calendar-agenda.py
 permitem selecionar a matriz ou apontar para outro host de teste explicitamente.
 `CALENDAR_DOMAIN_ENV` aceita somente `test`. Capturas 320/1440px e
 `summary.json` ficam em `$SUITE_OUT`.
+
+### Formulários Culturas em zoom real
+
+`culturas-forms-zoom.py` abre por GET os Form API forms autenticados de novo
+Evento e novo Local, usa um link ULI temporário para `aculta_visual_admin` e
+aplica zoom real do Firefox ESR a 100%, 200% e 400% a partir de uma viewport de
+1280px. Confere ausência de overflow, Institution Bar/Domain Header, renderização
+do formulário, largura do complemento e alvo S/N. Em 200%/400%, percorre por
+Tab o primeiro campo do Evento e, no Local, complemento e S/N, conferindo foco
+visível e que ao menos 85% do controle permaneça no viewport em zoom alto. O
+Firefox pode deixar alguns pixels junto à borda inferior sem ocultar o foco;
+capturas/relatório guardam geometria e nomes
+de controles, não seus valores; nenhum formulário é enviado.
+
+Executar contra o Runtime de desenvolvimento somente após identificar host,
+HEAD, URI, banco e contagem de tabelas; salvar snapshot íntegro com hash antes
+da geração ULI. O navegador é Firefox ESR visível em `DISPLAY=:0`; saída e
+perfil temporário ficam sob `$SUITE_OUT`.
+
+```sh
+export DISPLAY=:0
+export ACULTA_PROJECT_ROOT=/home/piradopirata/projetos/aculta
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/culturas-forms-zoom
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/culturas-forms-zoom.py
+```
+
+`CULTURAS_FORMS_LOGIN_URI`, `CULTURAS_FORMS_DRUSH_URI`,
+`CULTURAS_FORMS_ADMIN_UID`, `CULTURAS_FORMS_ROUTES`,
+`CULTURAS_FORMS_DEVICE_WIDTH`, `CULTURAS_FORMS_DEVICE_HEIGHT` e
+`CULTURAS_FORMS_ZOOM_TARGETS` permitem selecionar o ambiente e a matriz. O
+teste não cobre contraste WCAG integral, leitor de tela, grants entre contas,
+CEP, envio do formulário ou compatibilidade em dispositivo físico; zoom/foco
+neste fluxo não aprova THEME-MF3 nem OCS-F11.
