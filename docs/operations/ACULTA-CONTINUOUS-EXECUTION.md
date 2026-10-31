@@ -2636,3 +2636,8 @@ ou preferência persistente alterados.
   inspeção não recebe grants Commerce indevidos, mas não substitui testes com
   uma conta autorizada de loja nem submissão de formulário. Evidência em
   `/home/piradopirata/aculta-suite-out/greenstash-routes-auth-424/`.
+- A repetição com o usuário existente `teste.comum` (papel `gerente_loja`) teve
+  o mesmo resultado 403 nas três superfícies operacionais, sem overflow e sem
+  violações axe. Isso evidencia que o bloqueio é de autorização de rota/purpose
+  ou grant de loja, não de CSS; não foi criado conteúdo nem alterada ACL.
+  Evidência em `/home/piradopirata/aculta-suite-out/greenstash-operations-manager-424/`.
