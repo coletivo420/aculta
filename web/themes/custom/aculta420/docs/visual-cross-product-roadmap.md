@@ -2134,3 +2134,11 @@ scroll 80 e chega a 0 após scroll 240. Esse comportamento não satisfaz a fixa�
 imediata solicitada. Não escondi controles da toolbar; a regra final de
 coexistência depende da decisão pendente. Snapshot, hash e capturas estão em
 `mobile-first-audit.md`. THEME-MF3 continua pendente.
+
+### THEME-MF2 — reteste responsivo da apresentação de organizações de Eventos (2026-10-31)
+
+O harness local `organization-forms.py` passou **74/74 checks** com Bootstrap e
+CSS atuais do tema, em nove larguras e modos claro/escuro. A evidência está em
+`/home/piradopirata/aculta-suite-out/aculta-events-organization-layout-f2c3b37db-20261031/`.
+É uma regressão da apresentação representativa: não testa markup Drupal, ACL,
+AJAX ou conteúdo do Runtime e não fecha THEME-MF3.

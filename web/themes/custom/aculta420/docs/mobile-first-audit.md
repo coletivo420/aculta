@@ -4564,3 +4564,14 @@ foi enviado e nenhum conteúdo foi alterado. Evidência:
 Este smoke não testa autorização de comentários, ACL entre contas, moderadores,
 teclado completo ou WCAG 2.2 AA; não aprova OCS-F11/THEME-MF3.
 
+
+### THEME-MF2 — reteste da apresentação de organizações de Eventos (2026-10-31)
+
+Firefox ESR visível executou novamente `organization-forms.py` usando o
+Bootstrap local do projeto e os CSS atuais do tema: **74/74 checks** em
+320/360/390/599/600/768/1024/1280/1440 px, claro/escuro. Passaram reflow dos
+formulários e listas, rolagem confinada da tabela, superfície, foco visível e
+alvo de 44 px; sem overflow. Evidência:
+`/home/piradopirata/aculta-suite-out/aculta-events-organization-layout-f2c3b37db-20261031/`.
+Este harness é uma fixture local, não a tela Drupal servida; ACL, AJAX, conteúdo
+e integração no Runtime continuam por validar.

@@ -2195,3 +2195,8 @@ ou preferência persistente alterados.
 - Firefox ESR visível, anônimo e sem injeções, percorreu `/calendario`, a grade mensal e `/calendario/interativo` em 320/360/390/599/600/768/1024/1280/1440 px, claro/escuro, JavaScript ligado/desligado: **108/108 checks**, sem overflow, sem duplicação do shell. A agenda HTML permaneceu utilizável sem JavaScript; o scheduler iniciou com JavaScript a partir de 768 px. Nenhum filtro foi submetido e nenhum conteúdo foi alterado. Evidência: `/home/piradopirata/aculta-suite-out/calendar-agenda-integrated-f2c3b37db-20261031/`.
 - Lint CSS e JS passaram; SDC schemas/discovery: 55 componentes, 27 includes, 759 checks; Design Foundations: 2.429; fronteira tema/módulo: 3.490; mapa tema/módulo: 213; documentação UI: 520 tokens, 421 usados, 149 atributos. Inventário responsivo regenerado e comparado byte a byte.
 - Limite: esta rodada cobre a agenda, não criação/edição de eventos, ACL entre contas, Form API, teclado integral, leitor de tela ou WCAG 2.2 AA completa. THEME-MF3 e OCS-F11 seguem pendentes.
+
+## 2026-10-31 — fixture responsiva do seletor de organizações de Eventos
+
+- Firefox ESR visível executou `tests/browser/aculta-events/organization-forms.py` contra a fixture local, com o Bootstrap do projeto e CSS atual do tema, em nove larguras e modos claro/escuro: **74/74 checks**. Reflow dos formulários/listas, rolagem interna da tabela, superfície, foco de teclado, alvo de 44 px e ausência de overflow passaram.
+- Evidência: `/home/piradopirata/aculta-suite-out/aculta-events-organization-layout-f2c3b37db-20261031/`. Não acessa o Runtime nem valida markup Drupal, ACL ou AJAX; não aprova THEME-MF3/OCS-F11.
