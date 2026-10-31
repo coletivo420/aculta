@@ -2223,6 +2223,13 @@ claro/escuro) e pedem revisão manual. Relatórios, capturas e limites estão em
 axe completo e comparação pareada ainda faltam; **THEME-MF3 e OCS-F11 não
 aprovados**.
 
+### THEME-MF3 — H1 das dez raízes públicas (2026-10-31)
+
+Firefox ESR/X11 passou **120/120 checks** em dez roots e seis larguras: um H1
+visível no `main`, shell único e sem overflow, inclusive Conta a 320px. Detalhes
+e limite a páginas públicas em `mobile-first-audit.md`. Rotas internas e o gate
+integral continuam pendentes.
+
 ### THEME-MF3 — reteste dos dez shells públicos (2026-10-31)
 
 O reteste de Firefox ESR/X11 percorreu as dez raízes dos purposes configurados

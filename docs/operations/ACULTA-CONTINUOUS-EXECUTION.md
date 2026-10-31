@@ -2452,3 +2452,7 @@ ou preferência persistente alterados.
   focalizou o rodapé fora da viewport a 768px. O harness agora parte do último
   foco real da sequência Tab, e o teste focal do Fórum passou 32/32. Nenhuma
   regra visual do tema foi alterada por esse diagnóstico.
+- `purpose-headings.py` também passou **120/120 checks** nas dez roots em seis
+  larguras, inclusive Conta 320px; mediu um H1 visível no `main`, shell único e
+  sem overflow. Evidência em
+  `/home/piradopirata/aculta-suite-out/purpose-headings-recheck-768d514ef-20261031/`.

@@ -5017,3 +5017,14 @@ não foram todas inspecionadas visualmente. Esta evidência amplia o gate, mas n
 cobre rotas internas de cada purpose, ACL A/B, todos os formulários, fluxos AJAX,
 leitores de tela ou comparação pareada integral com `opcult`; portanto THEME-MF3
 e OCS-F11 permanecem pendentes.
+
+### THEME-MF3 — hierarquia de H1 nas dez raízes públicas (2026-10-31)
+
+Firefox ESR/X11 abriu as dez raízes anônimas em 320/390/600/768/1024/1440px:
+**120/120 checks** passaram. Cada página tinha um H1 visível dentro de
+`main#main-content`, Institution Bar e Domain Header únicos, e largura
+documental igual à viewport. A Conta passou a 320px, superando a falha
+histórica daquele viewport. Evidência em
+`/home/piradopirata/aculta-suite-out/purpose-headings-recheck-768d514ef-20261031/`.
+O teste foi somente GET e não injeta CSS; cobre apenas raízes públicas, não a
+hierarquia das páginas internas ou leitor de tela. Não aprova THEME-MF3.
