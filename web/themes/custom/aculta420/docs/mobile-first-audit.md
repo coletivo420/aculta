@@ -2292,6 +2292,17 @@ Isto confirma o comportamento com o provedor externo ativo, não a instalação
 de `CaptchaPresentationHooks`: o Runtime ainda não fornece o token por código.
 THEME-MF3 segue pendente.
 
+Revalidação focal em 2026-10-31 ampliou `/entrar` para as nove larguras
+320/360/390/599/600/768/1024/1280/1440px. Firefox ESR passou **10/10 checks**
+contra o Runtime anônimo. O iframe Turnstile real carregou; a 320px ele mediu
+300px dentro do slot de 300px, e o documento permaneceu em 320px. O marcador
+`data-portal-ui="challenge-frame"` e `base.css`/`auth.css` do worktree foram
+injetados somente na sessão porque o Runtime ainda não contém o hook Portal
+candidato. Assim, o caso candidato está coberto na matriz, mas servir/rebuildar
+o hook e validar a CSS instalada continua pendente. Evidência em
+`/home/piradopirata/aculta-suite-out/auth-route-runtime-resume-20261031/`;
+THEME-MF3 permanece aberto.
+
 ### THEME-MF3 — reteste da candidata de autenticação em toda a matriz de shell (2026-10-30)
 
 O baseline anônimo confirmou o único overflow restante no shell a 320px: a home

@@ -1386,3 +1386,8 @@ por causa do widget de desafio. O hook Portal/CSS `challenge-frame` já está na
 branch e sua suíte Unit passou 2/2, mas Runtime ainda está no HEAD antigo; não
 marcar o gate global como aprovado até validar o marcador real após servir e
 reconstruir cache. Evidência detalhada em `mobile-first-audit.md`.
+
+Revalidação focal em `/entrar` passou 10/10 checks em Firefox ESR nas nove
+larguras da matriz, com o iframe Turnstile real carregado e sem overflow. CSS e
+marcador Portal foram injetados na sessão; o teste não substitui a verificação
+do hook e da biblioteca realmente servidos. THEME-MF3 continua pendente.

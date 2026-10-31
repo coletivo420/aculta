@@ -523,6 +523,14 @@ anterior sem a ampliação do conteúdo em 320px mediu `documentWidth=328` e
 foi injetado, ainda é necessário retestar após servir a mudança Portal/Tema e
 reconstruir o cache.
 
+Revalidação focal de 2026-10-31 no Runtime local: `/entrar` anônima passou
+10/10 checks nas nove larguras da matriz 320–1440px. O iframe Turnstile real
+estava carregado; a 320px, media 300px dentro do slot de 300px, sem overflow de
+documento. CSS candidata e marcador `challenge-frame` continuaram injetados
+apenas no Firefox; hook Portal e biblioteca instalada seguem sem homologação.
+Evidência em
+`/home/piradopirata/aculta-suite-out/auth-route-runtime-resume-20261031/`.
+
 ```sh
 export DISPLAY=:0
 export SUITE_OUT=/home/piradopirata/aculta-suite-out/auth-route-runtime
