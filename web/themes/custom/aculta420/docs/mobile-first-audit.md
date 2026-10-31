@@ -3584,3 +3584,18 @@ anterior, portanto essa evidência não homologa a CSS integrada nem OCS-F5/F11 
 THEME-MF3. Relatórios em
 `/home/piradopirata/aculta-suite-out/marley-editor-form-final-20261031/` e
 `/home/piradopirata/aculta-suite-out/marley-editor-form-dark-20261031/`.
+
+### OCS-F5 — escopo do check de heading nas rotas Marley (2026-10-31)
+
+A inspeção do controller mostrou que o H1 “O que vamos criar hoje?” pertence
+somente à landing `/marley` (`data-aculta-studio="welcome"`). O harness agora
+exige os marcadores `root`, `welcome` e o título contextual para aplicar os
+checks de heading; subrotas com `root` sem `welcome` registram
+`SKIP_NOT_WORKSPACE_LANDING`, em vez de falharem por não renderizar o H1 da
+landing. No Firefox ESR com CSS candidata, `/marley` passou heading e navegação
+em 320/390px; a subrota `/marley/revista/publicacoes/arquivados` foi capturada
+sem falhas em 320/390/768/1440px, com navegação 4/4 e rolagem local aprovada em
+320/390px. Isso corrige a classificação do baseline anterior; não reduz os
+checks de heading na landing nem aprova OCS-F11/THEME-MF3. Evidências em
+`/home/piradopirata/aculta-suite-out/marley-root-heading-final-20261031/` e
+`/home/piradopirata/aculta-suite-out/marley-archived-heading-scope-20261031/`.

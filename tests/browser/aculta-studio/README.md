@@ -236,12 +236,14 @@ botões dentro das ações dos SDCs `profile-identity`, `profile-bio` e
 44px. Esse check valida apenas apresentação; não envia formulários nem testa
 grants ou persistência.
 
-Na rota Marley, o mesmo override mede a hierarquia de H1 e só permite ocultar
-o título genérico quando o marcador do workspace e seu heading estão presentes.
-As verificações exigem um único H1 de workspace, breadcrumb preservado e
-marcadores reais; isso evita esconder o título em páginas Marley sem esse
-contexto. A navegação real de cinco áreas também é medida: wrapping, ausência
-de overflow e alvos de pelo menos 44×44px.
+Na landing `/marley`, o mesmo override mede a hierarquia de H1 e só permite
+ocultar o título genérico quando os marcadores `root`, `welcome` e o heading
+contextual estão presentes. As verificações exigem um único H1 de workspace e
+breadcrumb preservado. Em subrotas com o marcador `root`, mas sem `welcome`, o
+check de heading recebe `SKIP_NOT_WORKSPACE_LANDING`: essas páginas não usam o
+H1 de convite da landing. A navegação real de cinco áreas continua sendo medida
+em todas as rotas Marley: wrapping, ausência de overflow e alvos de pelo menos
+44×44px.
 
 Rotas Form API nativas da Revista, como `/marley/revista/nova`, podem não usar
 o wrapper de workspace nem suas cinco abas. Nesses casos, as verificações de
@@ -778,10 +780,13 @@ que precisa avançar `scrollLeft`. Em viewports de até 600px, a captura exige
 rolagem horizontal local e largura documental limitada ao viewport. O teste
 não usa o `scrollWidth` do wrapper externo como substituto dessa medição.
 Em 2026-10-31, o Runtime servido permitiu 317px de rolagem local a 320px e
-247px a 390px, sem overflow do documento. A suíte total ainda sinaliza a
-falha separada de heading porque o HTML Runtime não possui o heading do
-workspace exigido pela versão atual do check; esse resultado não é aprovação
-do gate OCS-F11.
+247px a 390px, sem overflow do documento. A landing `/marley` foi verificada
+separadamente: com marcadores `root`, `welcome`
+e H1 contextual presentes, o check de heading passou em 320/390px. Na subrota
+`/marley/revista/publicacoes/arquivados`, em 320/390/768/1440px, o heading check
+foi corretamente `SKIP_NOT_WORKSPACE_LANDING`, as cinco abas passaram e o
+scroller local passou onde havia overflow. Essas capturas focais não aprovam o
+gate OCS-F11.
 
 ```sh
 export DISPLAY=:0

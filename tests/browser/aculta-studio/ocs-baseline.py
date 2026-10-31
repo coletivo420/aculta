@@ -424,11 +424,12 @@ socket.onmessage = (event) => {
               return {routeTitleDisplay:routeTitle?getComputedStyle(routeTitle).display:null,
                 visibleH1,breadcrumb:document.querySelector('.aculta-breadcrumb')?.textContent.trim()||'',
                 workspaceRoot:!!document.querySelector('[data-aculta-studio="root"]'),
+                workspaceLanding:!!document.querySelector('[data-aculta-studio="welcome"]'),
                 workspaceTitle:!!document.querySelector('[data-aculta-studio="root"] .aculta-context-header__title')};
             })());"""))
-            if not headings["workspaceRoot"]:
+            if not headings["workspaceRoot"] or not headings["workspaceLanding"]:
                 record["marleyHeadingChecks"] = {}
-                record["marleyHeadingStatus"] = "SKIP_NOT_STUDIO_WORKSPACE"
+                record["marleyHeadingStatus"] = "SKIP_NOT_WORKSPACE_LANDING"
             else:
                 checks = {
                     "genericRouteHeadingHidden": headings["routeTitleDisplay"] == "none",

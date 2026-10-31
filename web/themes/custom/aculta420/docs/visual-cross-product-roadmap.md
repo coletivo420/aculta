@@ -1819,3 +1819,15 @@ permanece validado somente na fixture. O HTML da fixture reproduz os dois nívei
 de wrapper do consumer real e verifica o `scrollLeft` do `.table-responsive`
 interno. Não cobre grants, cache ou AJAX/no-JS.
 THEME-MF3 e OCS-F11 seguem pendentes. Detalhes em `mobile-first-audit.md`.
+
+### OCS-F5 — hierarquia de heading na landing Marley (2026-10-31)
+
+O controller só compõe o contexto “O que vamos criar hoje?” na landing `/marley`
+(`data-aculta-studio="welcome"`). `ocs-baseline.py` agora aplica o check de
+H1/breadcrumb somente quando esse marcador está presente; subrotas com root
+Studio, mas sem welcome, recebem `SKIP_NOT_WORKSPACE_LANDING`. A landing passou
+os checks de heading e navegação em 320/390px. A listagem arquivada passou a
+captura em 320/390/768/1440px, sem falhas, com as cinco áreas presentes e scroll
+local aprovado em 320/390px. Isso retira um falso FAIL do harness, não fecha
+OCS-F11/THEME-MF3 nem a homologação de todas as telas. Detalhes e evidências em
+`mobile-first-audit.md`.

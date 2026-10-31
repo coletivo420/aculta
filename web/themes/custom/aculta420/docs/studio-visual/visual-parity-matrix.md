@@ -47,13 +47,15 @@ a mensagem contida, foco de teclado e screenshots vazias 320/1440. Evidências e
 `/home/piradopirata/aculta-suite-out/marley-editor-state-tabs-20261031/` e
 `/home/piradopirata/aculta-suite-out/studio-listing-dom-parity-20261031/`.
 
-A execução do baseline completo continua **FAIL** em checks de heading
-preexistentes: este Runtime serve somente o H1 genérico “ACULTA Studio Marley”
-e não contém o heading interno exigido pela versão atual da suíte. Isso é
-evidência de divergência entre Runtime e markup da branch, não uma aprovação de
-paridade. Evidências privadas em
-`/home/piradopirata/aculta-suite-out/studio-marley-listing-scroll-final-20261031/`;
-OCS-F11 e THEME-MF3 permanecem pendentes.
+O check de heading é específico da landing. A rota `/marley` no Runtime tem os
+marcadores `root`, `welcome` e H1 contextual e passou em 320/390px. Na subrota
+`/marley/revista/publicacoes/arquivados`, o heading é corretamente `SKIP` e os
+checks de navegação passaram em 320/390/768/1440px; a rolagem local passou em
+320/390px. A captura focal ficou `CAPTURED` sem falhas. Evidências privadas em
+`/home/piradopirata/aculta-suite-out/marley-root-heading-final-20261031/` e
+`/home/piradopirata/aculta-suite-out/marley-archived-heading-scope-20261031/`.
+Isso não substitui comparação OpenCulturas pareada, cobertura total de Studio,
+ACL/A-B, no-JS/AJAX, zoom ou WCAG; OCS-F11 e THEME-MF3 permanecem pendentes.
 
 ### Formulário de criação da Revista — limites dos estilos de ação
 
