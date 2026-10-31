@@ -651,13 +651,28 @@ foram candidatos injetados somente na sessão. Evidências em
 e `/home/piradopirata/aculta-suite-out/account-root-overflow-nojs-candidate-20261031/`.
 Ainda falta servir o CSS/hook Portal no Runtime e repetir sem injeção.
 
+Execução reproduzível para as nove larguras:
+
+```sh
+export DISPLAY=:0
+export AUTH_ROUTE_LOCAL_RUNTIME=1
+export AUTH_ROUTE_ALLOW_CLOUDFLARE=1
+export AUTH_ROUTE_BASE_URL=https://conta.aculta.toca.net.br
+export AUTH_ROUTE_PATH=/
+export AUTH_ROUTE_EXPECTED_PATH_CLASS=path-entrar
+export AUTH_ROUTE_WIDTHS=320,360,390,599,600,768,1024,1280,1440
+export AUTH_ADD_MARKER_CANDIDATE=1
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/account-root-overflow-candidate
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/auth-route-runtime.py
+```
+
 Como a regra da margem também é compartilhada por cadastro e recuperação, as
 duas rotas e `/entrar` foram retestadas com a nova asserção geométrica: 10/10
 checks por rota, nove larguras mais o acesso inicial, sem sobreposição do H1.
 Evidências em
 `/home/piradopirata/aculta-suite-out/auth-login-overlap-candidate-20261031/`,
-`auth-register-overlap-candidate-20261031/` e
-`auth-reset-overlap-candidate-20261031/`.
+`/home/piradopirata/aculta-suite-out/auth-register-overlap-candidate-20261031/`
+e `/home/piradopirata/aculta-suite-out/auth-reset-overlap-candidate-20261031/`.
 
 Repetição de 2026-10-31 após o overflow de 328px ser observado novamente na
 raiz Conta: a rota `/entrar` passou 12/12 checks com a folha do worktree e token
