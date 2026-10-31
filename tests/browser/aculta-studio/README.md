@@ -248,6 +248,11 @@ pública explícita em `STUDIO_ROUTES`. O modo mantém a checagem do Runtime, n�
 gera ULI e pode receber a CSS candidata para verificar que consumidores MAIN,
 como `/u/{apelido}`, não recebem marcadores nem tokens visuais exclusivos do
 Studio. O relatório omite o texto do perfil; PNGs permanecem em `SUITE_OUT`.
+Para validar os alvos públicos, acrescente `OCS_PUBLIC_PROFILE_KEYBOARD=1` e
+`OCS_PUBLIC_PROFILE_ZOOM=1`; o primeiro percorre por Tab cada link exposto e o
+segundo usa zoom real de Firefox em 200%/400%, restaura com Ctrl+0 e registra
+capturas com o primeiro link social enquadrado. Ambas as opções exigem uma URL
+`/u/{apelido}` e modo anônimo.
 
 Para exercitar zoom real e teclado no Perfil, combine
 `OCS_PROFILE_ACTION_ZOOM=1` e `OCS_PROFILE_ACTION_KEYBOARD=1` com

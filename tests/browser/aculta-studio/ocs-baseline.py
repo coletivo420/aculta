@@ -470,6 +470,16 @@ socket.onmessage = (event) => {
     subprocess.run(["node", "-e", node, driver.websocket_url, str(width), str(height)], check=True)
 
 
+def press_browser_key(key):
+    windows = subprocess.check_output(
+        ["xdotool", "search", "--onlyvisible", "--class", "firefox"], text=True,
+    ).splitlines()
+    if not windows:
+        raise RuntimeError("Janela visível do Firefox ESR não encontrada.")
+    subprocess.run(["xdotool", "windowactivate", "--sync", windows[-1]], check=True)
+    subprocess.run(["xdotool", "key", "--clearmodifiers", key], check=True)
+
+
 def profile_action_zoom(driver):
     """Check real Firefox zoom on private Profile action targets."""
     if not STUDIO_CSS_OVERRIDE:
@@ -482,15 +492,6 @@ def profile_action_zoom(driver):
         time.sleep(0.2)
     driver.js("const style=document.createElement('style');style.dataset.ocsStudioFidelityCandidate='true';style.textContent=arguments[0];document.head.append(style);return true", [STUDIO_CANDIDATE_CSS])
     results = []
-
-    def press_browser_key(key):
-        windows = subprocess.check_output(
-            ["xdotool", "search", "--onlyvisible", "--class", "firefox"], text=True,
-        ).splitlines()
-        if not windows:
-            raise RuntimeError("Janela visível do Firefox ESR não encontrada.")
-        subprocess.run(["xdotool", "windowactivate", "--sync", windows[-1]], check=True)
-        subprocess.run(["xdotool", "key", "--clearmodifiers", key], check=True)
 
     for target in (2.0, 4.0):
         press_browser_key("ctrl+0")
@@ -598,12 +599,116 @@ def profile_action_keyboard(driver):
     return result
 
 
+def public_profile_keyboard(driver, url):
+    """Check anonymous keyboard focus on the public profile's social links."""
+    driver.get(url)
+    for _ in range(100):
+        if driver.js("return document.readyState === 'complete'"):
+            break
+        time.sleep(0.2)
+    if STUDIO_CSS_OVERRIDE:
+        driver.js("const style=document.createElement('style');style.dataset.ocsStudioFidelityCandidate='true';style.textContent=arguments[0];document.head.append(style);return true", [STUDIO_CANDIDATE_CSS])
+    set_browser_viewport(driver, 320, 844)
+    expected = driver.js("return [...document.querySelectorAll('main .portal-profile__links a')].map(element=>element.textContent.trim())")
+    observed = {}
+    for _ in range(100):
+        driver.req("POST", f"/session/{driver.session}/actions", {
+            "actions": [{"type": "key", "id": "public-profile-keyboard", "actions": [
+                {"type": "keyDown", "value": "\ue004"},
+                {"type": "keyUp", "value": "\ue004"},
+            ]}],
+        })
+        focus = driver.js("""return (() => {
+          const element=document.activeElement;
+          if (!element?.matches('main .portal-profile__links a')) return null;
+          const rect=element.getBoundingClientRect();const style=getComputedStyle(element);
+          return {label:element.textContent.trim(),focusVisible:element.matches(':focus-visible'),
+            outlineStyle:style.outlineStyle,outlineWidth:style.outlineWidth,
+            width:rect.width,height:rect.height,left:rect.left,right:rect.right,viewport:innerWidth};
+        })();""")
+        if focus:
+            observed[focus["label"]] = focus
+        if set(expected).issubset(observed):
+            break
+    checks = {
+        "allExposedLinksReachable": bool(expected) and set(expected).issubset(observed),
+        "allLinksShowVisibleFocus": bool(expected) and set(expected).issubset(observed) and all(
+            item["focusVisible"] and item["outlineStyle"] == "solid"
+            and float(item["outlineWidth"].removesuffix("px")) >= 2
+            for item in (observed.get(label, {}) for label in expected)
+        ),
+        "allLinksRemain44pxAndInViewport": bool(expected) and set(expected).issubset(observed) and all(
+            item["width"] >= 44 and item["height"] >= 44
+            and item["left"] >= -1 and item["right"] <= item["viewport"] + 1
+            for item in (observed.get(label, {}) for label in expected)
+        ),
+    }
+    result = {"viewport": 320, "checks": checks, "links": observed}
+    result["ok"] = all(checks.values())
+    if not result["ok"]:
+        CAPTURE_FAILURES.append({"url": url, "publicProfileKeyboard": result})
+    print(f"{'PASS' if result['ok'] else 'FAIL'} Public profile keyboard at 320px: {result}")
+    return result
+
+
+def public_profile_zoom(driver, url):
+    """Check real Firefox zoom and touch targets on anonymous public links."""
+    driver.get(url)
+    for _ in range(100):
+        if driver.js("return document.readyState === 'complete'"):
+            break
+        time.sleep(0.2)
+    if STUDIO_CSS_OVERRIDE:
+        driver.js("const style=document.createElement('style');style.dataset.ocsStudioFidelityCandidate='true';style.textContent=arguments[0];document.head.append(style);return true", [STUDIO_CANDIDATE_CSS])
+    results = []
+    for target in (2.0, 4.0):
+        press_browser_key("ctrl+0")
+        time.sleep(0.15)
+        set_browser_viewport(driver, 1280, 1000)
+        zoom = driver.js("return {width:innerWidth}")
+        for _ in range(24):
+            if 1280 / max(1, zoom["width"]) >= target - 0.08:
+                break
+            press_browser_key("ctrl+plus")
+            time.sleep(0.12)
+            zoom = driver.js("return {width:innerWidth}")
+        metrics = driver.js("""return (() => {
+          const links=[...document.querySelectorAll('main .portal-profile__links a')].map(element=>{
+            const rect=element.getBoundingClientRect();return {label:element.textContent.trim(),
+              width:rect.width,height:rect.height,left:rect.left,right:rect.right};});
+          return {width:innerWidth,ratio:1280/innerWidth,documentWidth:document.documentElement.scrollWidth,
+            bodyWidth:document.body.scrollWidth,links};
+        })();""")
+        metrics["targetZoom"] = target
+        metrics["ok"] = (
+            metrics["ratio"] >= target - 0.08
+            and metrics["documentWidth"] <= metrics["width"]
+            and metrics["bodyWidth"] <= metrics["width"]
+            and bool(metrics["links"])
+            and all(item["width"] >= 44 and item["height"] >= 44
+                    and item["left"] >= -1 and item["right"] <= metrics["width"] + 1
+                    for item in metrics["links"])
+        )
+        results.append(metrics)
+        driver.js("document.querySelector('main .portal-profile__links a')?.scrollIntoView({block:'center'});return true")
+        time.sleep(0.15)
+        screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+        (OUT / f"public-profile-zoom-{round(target * 100)}.png").write_bytes(base64.b64decode(screenshot))
+        if not metrics["ok"]:
+            CAPTURE_FAILURES.append({"url": url, "publicProfileZoom": metrics})
+        print(f"{'PASS' if metrics['ok'] else 'FAIL'} Public profile zoom {round(target * 100)}%: {metrics}")
+    press_browser_key("ctrl+0")
+    return results
+
+
 def main():
     if os.environ.get("DISPLAY") != ":0":
         raise RuntimeError("Use Firefox ESR visível com DISPLAY=:0.")
     driver = Driver(bidi=True)
     profile_zoom_results = None
     profile_keyboard_result = None
+    public_profile_zoom_results = None
+    public_profile_keyboard_result = None
     try:
         if os.environ.get("OCS_SKIP_OPENCULTURAS") != "1":
             for width, height in WIDTHS:
@@ -639,6 +744,18 @@ def main():
                         "reason": f"{type(error).__name__}: {error}",
                     })
                     print(f"DEFERRED {page_url} at {width}px: {type(error).__name__}")
+        public_profile_url = next(
+            (page_url for _, page_url in studio_pages() if urlparse(page_url).path.startswith("/u/")),
+            None,
+        )
+        if os.environ.get("OCS_PUBLIC_PROFILE_KEYBOARD") == "1":
+            if not ANONYMOUS_CAPTURE or not public_profile_url:
+                raise RuntimeError("Public profile keyboard check requires anonymous STUDIO_ROUTES /u/{apelido}.")
+            public_profile_keyboard_result = public_profile_keyboard(driver, public_profile_url)
+        if os.environ.get("OCS_PUBLIC_PROFILE_ZOOM") == "1":
+            if not ANONYMOUS_CAPTURE or not public_profile_url:
+                raise RuntimeError("Public profile zoom check requires anonymous STUDIO_ROUTES /u/{apelido}.")
+            public_profile_zoom_results = public_profile_zoom(driver, public_profile_url)
         if os.environ.get("OCS_PROFILE_ACTION_ZOOM") == "1":
             profile_zoom_results = profile_action_zoom(driver)
         if os.environ.get("OCS_PROFILE_ACTION_KEYBOARD") == "1":
@@ -657,6 +774,8 @@ def main():
         "captures": CAPTURES,
         "profile_action_zoom": profile_zoom_results,
         "profile_action_keyboard": profile_keyboard_result,
+        "public_profile_zoom": public_profile_zoom_results,
+        "public_profile_keyboard": public_profile_keyboard_result,
         "fidelity_failures": CAPTURE_FAILURES,
         "limitations": [
             "The public OpenCulturas homepage is not an authenticated dashboard screen.",

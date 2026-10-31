@@ -1663,8 +1663,12 @@ passou 11/11 invariantes em cinco larguras: perfil público e um H1 presentes,
 headers globais únicos, sem overflow, nenhum marcador Studio, nenhum token
 Fidelity e fonte Inter (sem Montserrat) no `.portal-profile`, mesmo com CSS
 candidata carregada. Os quatro links sociais mediram 44,4px em todos os
-viewports. Capturas 320/1440 e relatório em
-`/home/piradopirata/aculta-suite-out/profile-public-touch-targets-20261031/`.
+viewports. O teste por Tab alcançou os quatro links com contorno 3px; zoom real
+200/400% passou sem overflow e mantendo os alvos 44,4px. Relatório e capturas de
+viewport em
+`/home/piradopirata/aculta-suite-out/profile-public-touch-targets-20261031/`;
+teclado/zoom em
+`/home/piradopirata/aculta-suite-out/profile-public-accessibility-final-20261031/`.
 Nenhum form foi submetido. A conta sintética era pública antes da captura; o
 resultado não valida grants A/B nem privacidade de outros campos, não homologa
 S-R4/S-R5, THEME-MF3 ou OCS-F11.
