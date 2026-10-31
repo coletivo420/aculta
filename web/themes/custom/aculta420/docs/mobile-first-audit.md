@@ -19,22 +19,27 @@ nas dez raízes/purposes (`main`, `account`, `support`, `magazine`, `wiki`,
 overflow horizontal e visibilidade da navegação ou busca da Wiki. Evidência em
 `/home/piradopirata/aculta-suite-out/purpose-shell-nojs-resume-20261101/`.
 
-A matriz de teclado cobriu os mesmos dez purposes em 320/390/768/1280px, com
-oito passos em cada sentido por largura. **663 verificações passaram, 10 foram
-SKIP** por o foco ser delegado ao desafio externo Turnstile e uma falhou: a
-página Conta `/entrar` mede 328px de documento em viewport de 320px. Todos os
-demais casos de foco visível e overflow passaram. Relatório e capturas em
+A matriz inicial de teclado cobriu os mesmos dez purposes em
+320/390/768/1280px. **663 verificações passaram, 10 foram SKIP** por o foco ser
+delegado ao Turnstile externo e uma falhou: Conta `/entrar` mediu 328px de
+documento em viewport de 320px. Relatório e capturas em
 `/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-resume-20261101/`.
 
-Na repetição focal da Conta com o CSS `auth.css` e o marcador neutro de desafio
-injetados apenas na sessão do Firefox, passaram **72 verificações e 4 foram
-SKIP** (foco delegado ao iframe/integração externa); o documento ficou em
-320px/320px na largura crítica de 320px. Evidência em
-`/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-account-candidate-20261101/`.
-Essa injeção demonstra o efeito do candidato sem modificar o Runtime; ela não
-valida a integração do hook Portal servido, o CAPTCHA externo por dentro, nem
-substitui a repetição após integração. O overflow servido em Conta continua
-aberto e THEME-MF3 permanece pendente.
+O reteste ampliado cobriu os dez purposes em 320/360/390/599/600/768/1024/
+1280/1440px, também com oito passos em cada sentido. **1.492 passaram; 23
+foram SKIP** (nove transferências ao Turnstile e 14 limites da sequência de
+foco); a única falha permaneceu Conta/320px, `documentWidth=328` contra
+`viewportWidth=320`. Relatório e capturas em
+`/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-9widths-20261101/`.
+
+Na repetição candidata de Conta, com CSS `auth.css` e marcador neutro de desafio
+injetados somente na sessão Firefox, as mesmas nove larguras tiveram **162
+checks aprovados e nove SKIP** pelo foco externo; o documento acompanhou a
+viewport, incluindo 320px. Evidência em
+`/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-account-candidate-9widths-20261101/`.
+A injeção demonstra o efeito do candidato, mas não valida o hook Portal servido
+nem o CAPTCHA externo por dentro. O overflow no Runtime continua aberto e
+THEME-MF3 permanece pendente.
 
 No worktree, o reteste focal do candidato também passou PHP lint, PHPCS e a
 suíte Unit do hook (3 testes/8 assertions), além de Stylelint em `auth.css`.
