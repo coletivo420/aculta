@@ -1982,6 +1982,21 @@ viewport CSS a 400% de 320px, sem overflow e com shell único. CSS candidata de
 autenticação foi injetada somente em Conta. Capturas 400% de Conta e Revista
 revisadas; gates de páginas internas e WCAG continuam pendentes.
 
+### 2026-10-31 — decisão sobre Institution Bar com sessão administrativa móvel
+
+Decisão do responsável: no primeiro scroll móvel não nulo, a Institution Bar
+fica presa em `top: 0`; a Navigation top-bar de ações administrativas fica
+oculta durante o scroll e reaparece ao voltar ao topo. Se uma ação estiver
+focada por teclado, ela permanece visível em camada superior até perder o foco.
+Sem JavaScript permanece o sticky natural. Esta regra vale para os purposes que
+usam o shell compartilhado, sem mudar rotas ou ownership.
+
+A candidata passou 49/49 checks administrativos, 175/175 anônimos (dois SKIPs
+porque Links não tem rolagem vertical na raiz) e 136/136 sem JavaScript em
+Firefox ESR visível. CSS/JS foram injetados somente na sessão de teste; não estão
+integrados no Runtime. Evidências e snapshots estão em `mobile-first-audit.md`.
+THEME-MF3 continua pendente.
+
 ### 2026-10-31 — medição do aviso ULI na landing Marley
 
 `ocs-baseline.py` agora ignora headings ocultos ao medir se o aviso precede o

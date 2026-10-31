@@ -50,6 +50,7 @@ DISABLE_JS = os.environ.get("INSTITUTION_BAR_SCROLL_DISABLE_JS") == "1"
 SIMULATE_STALE_DISPLACEMENT = os.environ.get("INSTITUTION_BAR_SCROLL_STALE_DISPLACEMENT_TEST") == "1"
 results = []
 stale_displacement_skips = []
+first_scroll_skips = []
 
 
 def record(name, passed, detail):
@@ -59,7 +60,8 @@ def record(name, passed, detail):
             'toolbarCount', 'loggedIn', 'readyState', 'routePrefix',
             'loginForms', 'messageCount', 'maxTopChange', 'settledBarTop',
             'aboveToolbar', 'expectedTop', 'documentWidth', 'displacementElements',
-            'topBarCount', 'topBarPosition', 'topBarBottom', 'sampleCount',
+            'topBarCount', 'topBarPosition', 'topBarDisplay', 'topBarVisibility', 'topBarBottom',
+            'barHeight', 'placeholderCount', 'placeholderHeight', 'topBarZIndex', 'shellScrolled', 'sampleCount',
             'maxDeviation', 'failures')
     summary = {key: detail[key] for key in keys if isinstance(detail, dict) and key in detail}
     print(f"{'PASS' if passed else 'FAIL'} {name}: {json.dumps(summary, ensure_ascii=False)}", flush=True)
@@ -133,6 +135,7 @@ def apply_candidate():
         driver.js("""const script=document.createElement('script');
           script.dataset.institutionBarScrollCandidate='true';
           script.textContent=arguments[0];document.head.append(script);
+          once.remove('aculta420NavigationTopBarDisplaceListener', 'html');
           Drupal.behaviors.aculta420NavigationTopBarDisplace.attach(document, drupalSettings);
           return true;""", [js])
     return True
@@ -146,6 +149,7 @@ def metrics():
       const toolbarRect=toolbar?.getBoundingClientRect();
       const topBar=document.querySelector('.top-bar[data-drupal-admin-styles]');
       const topBarRect=topBar?.getBoundingClientRect();
+      const placeholder=document.querySelector('.aculta-institution-bar-placeholder');
       const ancestors=[];
       for (let node=bar?.parentElement; node && ancestors.length<8; node=node.parentElement) {
         const css=getComputedStyle(node);
@@ -178,8 +182,17 @@ def metrics():
         toolbarBottom:toolbarRect ? Math.round(toolbarRect.bottom*100)/100 : null,
         topBarCount:document.querySelectorAll('.top-bar[data-drupal-admin-styles]').length,
         topBarPosition:topBar ? getComputedStyle(topBar).position : null,
+        topBarZIndex:topBar ? getComputedStyle(topBar).zIndex : null,
+        topBarDisplay:topBar ? getComputedStyle(topBar).display : null,
+        topBarVisibility:topBar ? getComputedStyle(topBar).visibility : null,
         topBarTop:topBarRect ? Math.round(topBarRect.top*100)/100 : null,
         topBarBottom:topBarRect ? Math.round(topBarRect.bottom*100)/100 : null,
+        barHeight:rect ? Math.round(rect.height*100)/100 : null,
+        placeholderCount:document.querySelectorAll('.aculta-institution-bar-placeholder').length,
+        placeholderHeight:placeholder ? Math.round(placeholder.getBoundingClientRect().height*100)/100 : 0,
+        shellScrolled:document.documentElement.classList.contains('aculta-institution-bar-scrolled'),
+        topBarFocusWithin:Boolean(topBar && topBar.contains(document.activeElement)),
+        activeElement:document.activeElement ? document.activeElement.tagName + (document.activeElement.className ? '.' + String(document.activeElement.className).replace(/\\s+/g, '.') : '') : null,
         displacementElements:displacementElements,
         bodyClasses:document.body.className,
         ancestors:ancestors
@@ -315,6 +328,73 @@ def run_scenario(scenario, login_url=None):
                 "displacementTop": final_offset, "timeline": timeline})
 
         max_scroll = max(0, settled["documentHeight"] - settled["viewportHeight"] - 2)
+        if width <= 390 and not DISABLE_JS and max_scroll > 0:
+            driver.js("window.scrollTo({top: 1, behavior: 'instant'}); return true;")
+            time.sleep(0.08)
+            immediate = metrics()
+            admin_actions_hidden = (
+                immediate["topBarVisibility"] == "hidden"
+                if immediate["topBarCount"] else immediate["topBarVisibility"] is None
+            )
+            expected_placeholder_count = 1 if initial["barTop"] <= 2 else 0
+            expected_placeholder_height = initial["barHeight"] if expected_placeholder_count else 0
+            record(f"{scenario} {width}px: Institution Bar fixa no primeiro scroll",
+                   immediate["scrollY"] > 0 and immediate["barPosition"] == "fixed"
+                   and abs(immediate["barTop"]) <= 2 and immediate["shellScrolled"]
+                   and admin_actions_hidden
+                   and immediate["placeholderCount"] == expected_placeholder_count
+                   and abs(immediate["placeholderHeight"] - expected_placeholder_height) <= 2,
+                   {**immediate, "expectedPlaceholderHeight": expected_placeholder_height})
+            if scenario == "admin" and width in (320, 390):
+                screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                (OUT / f"institution-bar-scroll-admin-first-scroll-{width}.png").write_bytes(
+                    base64.b64decode(screenshot)
+                )
+                driver.js("window.scrollTo({top: 0, behavior: 'instant'}); return true;")
+                time.sleep(0.05)
+                focused_action = driver.js("""return (() => {
+                  const action=document.querySelector('.top-bar[data-drupal-admin-styles] a, .top-bar[data-drupal-admin-styles] button');
+                  action?.focus({preventScroll:true});
+                  return {found:Boolean(action), active:document.activeElement===action,
+                    within:Boolean(action && action.closest('.top-bar[data-drupal-admin-styles]')?.contains(document.activeElement)),
+                    tag:action?.tagName || null};
+                })();""")
+                driver.js("window.scrollTo({top: 1, behavior: 'instant'}); return true;")
+                time.sleep(0.05)
+                focused_metrics = metrics()
+                record(f"{scenario} {width}px: ação administrativa focada continua visível",
+                       focused_action["found"] and focused_action["active"] and focused_action["within"]
+                       and focused_metrics["topBarVisibility"] == "visible" and not focused_metrics["shellScrolled"]
+                       and focused_metrics["barPosition"] == "fixed" and abs(focused_metrics["barTop"]) <= 2
+                       and int(focused_metrics["topBarZIndex"]) >= 1031,
+                       {**focused_metrics, "focusableAction": focused_action})
+                driver.js("document.activeElement?.blur(); window.scrollTo({top: 1, behavior: 'instant'}); return true;")
+                time.sleep(0.05)
+                blurred_metrics = metrics()
+                record(f"{scenario} {width}px: ações recolhem após o foco sair",
+                       blurred_metrics["topBarVisibility"] == "hidden" and blurred_metrics["shellScrolled"],
+                       blurred_metrics)
+
+            driver.js("window.scrollTo({top: 0, behavior: 'instant'}); return true;")
+            time.sleep(0.08)
+            restored = metrics()
+            record(f"{scenario} {width}px: barra e ações restauradas no topo",
+                   restored["scrollY"] == 0
+                   and restored["barPosition"] == "sticky"
+                   and abs(restored["barTop"] - initial["barTop"]) <= 2
+                   and not restored["shellScrolled"]
+                   and restored["placeholderCount"] == 0
+                   and restored["topBarDisplay"] == initial["topBarDisplay"]
+                   and (restored["topBarVisibility"] in ("visible", None)),
+                   restored)
+        elif width <= 390 and not DISABLE_JS:
+            first_scroll_skips.append({
+                "context": PURPOSE_CONTEXT,
+                "width": width,
+                "reason": "document has no vertical scroll range",
+            })
+            print(f"SKIP {PURPOSE_CONTEXT} {width}px: primeiro scroll (documento sem rolagem vertical)", flush=True)
+
         simulated_target = min(max_scroll, max(320, initial["barTop"] + 24))
         if SIMULATE_STALE_DISPLACEMENT and width == 320:
             if simulated_target >= initial["barTop"] + 20:
@@ -359,7 +439,9 @@ def run_scenario(scenario, login_url=None):
             elif sample["toolbarBottom"] is not None:
                 intended_top = sample["toolbarBottom"]
             expected_y = max(intended_top, initial["barTop"] - sample["scrollY"])
-            stuck = sample["barPosition"] == "sticky" and abs(sample["barTop"] - expected_y) <= 2
+            if sample["barPosition"] == "fixed":
+                expected_y = 0
+            stuck = sample["barPosition"] in ("sticky", "fixed") and abs(sample["barTop"] - expected_y) <= 2
             toolbar_bottom = sample["toolbarBottom"] or 0
             if sample["topBarPosition"] == "fixed" and sample["topBarBottom"] is not None:
                 toolbar_bottom = max(toolbar_bottom, sample["topBarBottom"])
@@ -415,10 +497,10 @@ def run_scenario(scenario, login_url=None):
                     offset = sample["topBarBottom"]
                 elif sample["toolbarBottom"] is not None:
                     offset = sample["toolbarBottom"]
-                expected_top = max(offset, initial["barTop"] - sample["scrollY"])
+                expected_top = 0 if sample["barPosition"] == "fixed" else max(offset, initial["barTop"] - sample["scrollY"])
                 deviation = abs(sample["barTop"] - expected_top) if sample["barTop"] is not None else float("inf")
                 max_deviation = max(max_deviation, deviation)
-                if sample["barPosition"] != "sticky" or deviation > 2:
+                if sample["barPosition"] not in ("sticky", "fixed") or deviation > 2:
                     deviations.append({**sample, "expectedTop": expected_top, "deviation": deviation})
             record(f"{scenario} {width}px: transição sticky contínua para baixo e para cima",
                    not deviations,
@@ -447,6 +529,7 @@ try:
         "jsOverride": os.environ.get("INSTITUTION_BAR_SCROLL_JS_OVERRIDE") == "1",
         "staleDisplacementSimulation": SIMULATE_STALE_DISPLACEMENT,
         "staleDisplacementSkips": stale_displacement_skips,
+        "firstScrollSkips": first_scroll_skips,
         "javascriptDisabled": DISABLE_JS,
         "widths": WIDTHS,
         "results": results,

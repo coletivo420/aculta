@@ -4259,3 +4259,44 @@ Snapshot antes do ULI sintético: `/home/piradopirata/aculta-suite-out/runtime-s
 `/home/piradopirata/aculta-suite-out/institution-bar-anonymous-baseline-20261031/`
 e `/home/piradopirata/aculta-suite-out/institution-bar-admin-baseline-20261031/`.
 A folha/JS candidata não foi injetada; este resultado não aprova THEME-MF3.
+
+### Decisão e implementação candidata — Institution Bar e ações administrativas (2026-10-31)
+
+Decisão posterior do responsável, que substitui a pendência registrada acima:
+em viewports móveis, a Institution Bar assume `top: 0` no primeiro scroll não
+nulo. A Navigation top-bar administrativa fica visualmente oculta durante a
+rolagem e reaparece ao voltar ao topo. Ações com foco de teclado permanecem
+visíveis e recebem camada acima do shell até o foco sair. Sem JavaScript, a
+Institution Bar mantém o sticky natural como melhoria progressiva. O espaço da
+Navigation top-bar é preservado enquanto oculta para estabilizar a altura
+rolável; placeholder só é criado se a Institution Bar já ocupar o topo natural.
+
+Firefox ESR visível, com CSS/JS candidatos injetados somente no navegador,
+passou **49/49 checks autenticados** (320/390/1023/1024/1280 px), **175/175
+checks anônimos** nas dez raízes (320/390 px; dois SKIPs no domínio Links porque
+a raiz não tem rolagem vertical) e **136/136 checks sem JavaScript**. As
+capturas administrativas 320 px foram inspecionadas. Relatórios em
+`/home/piradopirata/aculta-suite-out/institution-bar-focus-layer-validation-20261031/`,
+`/home/piradopirata/aculta-suite-out/institution-bar-anonymous-domains-final-20261031/`
+e `/home/piradopirata/aculta-suite-out/institution-bar-no-js-final-20261031/`.
+
+O Runtime permaneceu no checkout servido destacado `00e6149b0`, host `toca`,
+URI `http://default`, `aculta_runtime`, 624 tabelas. Nenhum arquivo do checkout
+servido foi alterado e nenhum conteúdo/configuração foi submetido; apenas
+sessões ULI temporárias foram criadas. Snapshots modo 0600 anteriores a cada
+sessão autenticada, todos em
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/`:
+
+- `aculta_runtime-before-institution-bar-first-scroll-rerun-20261031.sql` — 67.567.928 bytes; SHA-256 `169868fe8db836282e20d3d83ad2b7fdca3ec67ac2aec793c3c6ec89f08b8e03`.
+- `aculta_runtime-before-institution-bar-keyboard-candidate-20261031.sql` — 67.768.711 bytes; SHA-256 `e99d68282dacf2ee863b36ea2571e2f455a8a4e01a0a66c8fbc844ebc8b49d37`.
+- `aculta_runtime-before-institution-bar-focus-preservation-20261031.sql` — 67.828.514 bytes; SHA-256 `15838dd3d30ccac35efea398b7bfd5fa3821702b70b66344c17ad8da33c2c185`.
+- `aculta_runtime-before-institution-bar-no-gap-20261031.sql` — 67.888.313 bytes; SHA-256 `368894f0a0185ef5bf483c57c12b24078e9a49dd54f119a38319934634e240df`.
+- `aculta_runtime-before-institution-bar-display-suppression-20261031.sql` — 68.007.923 bytes; SHA-256 `6871ebbeb1e1a4468dde0d010f8fd1ae3d60860f9799bca726c0f02ef81edf03`.
+- `aculta_runtime-before-institution-bar-placeholder-validation-20261031.sql` — 68.067.730 bytes; SHA-256 `bc99a05352cd21be4f6dc0cc9fb68d1503bc4d3fc5ab9e3397d01335bd7bd89f`.
+- `aculta_runtime-before-institution-bar-final-scroll-validation-20261031.sql` — 67.948.115 bytes; SHA-256 `bfcb44e6dbeffec995e354a3044c9b57c3aaf6a00ca80d853b1e9fbca94be95d`.
+- `aculta_runtime-before-institution-bar-final-fallback-20261031.sql` — 68.127.532 bytes; SHA-256 `237617489cfe0a0416229a9b461d0c318099af2ef010f8dcdcf0c46bc55780`.
+- `aculta_runtime-before-institution-bar-focus-layer-validation-20261031.sql` — 68.186.787 bytes; SHA-256 `262ad2d2165b016e95f9311e4daebb5213ee164f6b704b27b2a77906d697fa2b`.
+
+Os resultados medem somente a candidata no browser, não uma integração servida.
+THEME-MF3 e OCS-F11 permanecem pendentes; a validação global e a homologação
+visual ainda não foram concluídas.

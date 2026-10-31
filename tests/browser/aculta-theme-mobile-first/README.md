@@ -471,6 +471,12 @@ fica em memória; se o ULI redirecionar para recuperação, o teste pode usar
 credenciais do administrador sintético fornecidas pelo ambiente. O teste não
 submete conteúdo nem altera configuração. No cenário administrativo também
 captura o shell móvel antes e depois do scroll.
+Na candidata mobile, verifica que a Institution Bar fica fixa em `top: 0` no
+primeiro scroll não nulo, que a top-bar de ações administrativas fica oculta
+sem colapsar sua altura de layout e que as ações voltam ao topo. Ações com foco
+de teclado permanecem visíveis até o foco sair. A sessão sem JavaScript preserva
+o fallback sticky natural; a fixação antecipada e a ocultação transitória
+dependem do JavaScript de apresentação.
 Se uma rota retornar sem Institution Bar (por exemplo, página de erro), o teste
 registra a falha daquela rota e continua nos demais purposes.
 
@@ -485,6 +491,8 @@ DISPLAY=:0 python3 tests/browser/aculta-theme-mobile-first/institution-bar-scrol
 
 Para injetar a folha CSS local, defina `INSTITUTION_BAR_SCROLL_CSS_OVERRIDE=1`;
 para injetar o JavaScript candidato, use `INSTITUTION_BAR_SCROLL_JS_OVERRIDE=1`.
+Use ambos os overrides para validar a fixação antecipada contra um Runtime que
+ainda não sirva estes arquivos.
 `INSTITUTION_BAR_SCROLL_STALE_DISPLACEMENT_TEST=1` adiciona uma verificação
 focal a 320px que simula `--drupal-displace-offset-top: 64px` e exige que a
 Institution Bar continue com `top: 0` no mobile. A simulação é removida antes
