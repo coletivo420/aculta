@@ -3533,3 +3533,18 @@ shell externo. Evidências em
 `/home/piradopirata/aculta-suite-out/culturas-dashboard-form-border-20261031/`.
 Como fixture estrutural com CSS candidata, não prova render Drupal, Form API,
 permissões, AJAX/no-JS ou cache; THEME-MF3 e OCS-F11 seguem pendentes.
+
+### THEME-MF3 — reteste global do shell em cor e reduced motion (2026-10-31)
+
+No Runtime de desenvolvimento, o Firefox ESR visível percorreu as dez raízes dos
+purposes Main, Conta, Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e Eventos,
+nove larguras (320–1440px), claro/escuro e `prefers-reduced-motion`: **576/576
+checks passaram**. A medição verificou tokens de cor, shell único, overflow e
+contraste AA dos links do shell; as capturas e o relatório estão em
+`/home/piradopirata/aculta-suite-out/purpose-shell-colormodes-followup-20261031/`.
+Na rota `/entrar`, o harness injetou `auth.css` da worktree e simulou o marcador
+`challenge-frame` somente na sessão Firefox. Portanto esta rodada confirma o
+Runtime baseline e o comportamento visual candidato focal de Conta, mas não
+confirma que o hook do Portal ou CSS da branch estejam instalados/servidos. Não
+cobre páginas internas, teclado integral, zoom ou WCAG global; THEME-MF3 segue
+pendente.

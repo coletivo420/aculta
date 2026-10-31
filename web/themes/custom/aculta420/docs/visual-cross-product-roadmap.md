@@ -1783,3 +1783,13 @@ Extensão da captura: as nove homes com `.aculta-highlighted` passaram 18/18
 verificações em 320/390px. Links não possui essa região e ficou `SKIP` para o
 fixture; `/entrar` conserva overflow documental de 8px a 320px, independente
 do reflow da mensagem. Evidência consolidada em `mobile-first-audit.md`.
+
+### THEME-MF3 — reteste global de cores e reduced motion (2026-10-31)
+
+Firefox ESR visível passou 576/576 checks nas dez raízes e nove larguras, com
+claro/escuro, reduced motion, shell único, overflow e contraste AA dos links
+institucionais. Em `/entrar`, CSS e marcador CAPTCHA candidatos foram injetados
+somente no navegador. A execução observa o Runtime atual; não instala nem
+homologa os arquivos da branch. Gate MF3 continua pendente de páginas internas,
+zoom, teclado, WCAG e integração servida. Evidência em `mobile-first-audit.md` e
+`/home/piradopirata/aculta-suite-out/purpose-shell-colormodes-followup-20261031/`.
