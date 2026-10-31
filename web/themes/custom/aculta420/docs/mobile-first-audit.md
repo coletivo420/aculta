@@ -2543,8 +2543,9 @@ fora deste seletor.
 
 Firefox ESR visível passou **60/60 checks** na fixture com CSS local: bio/redes,
 apelido e privacidade com Montserrat, tokens claro/escuro, campos de texto e
-ações com ao menos 44px, sem overflow em 320/390/768/1440px; Magazine e modal
-Conta ficam sem tokens Fidelity, foco visível. Capturas da fixture em
+ações e rótulos de checkbox com 44px, checkbox de 20px, sem overflow em
+320/390/768/1440px; Magazine e modal Conta ficam sem tokens Fidelity, foco
+visível. Capturas da fixture em
 `/home/piradopirata/aculta-suite-out/studio-profile-forms-fidelity-20261031/`.
 Stylelint/ESLint, SDC schema, Design Foundations, fronteira módulo/tema,
 PHPUnit do hook (24/138), PHP lint, PHPCS e `git diff --check` passaram.

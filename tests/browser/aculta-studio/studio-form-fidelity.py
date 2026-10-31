@@ -87,8 +87,9 @@ markup = """<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <form id="aculta-user-studio-nickname-form"><label for="nickname">Apelido</label>
 <input id="nickname" class="form-control" type="text"><input type="submit" class="form-submit" value="Salvar"></form></main>
 <main class="aculta-main" id="privacy-main"><h1>Privacidade do perfil</h1>
-<form id="aculta-user-profile-visibility-form"><label for="privacy">Mostrar bio</label>
-<input id="privacy" type="checkbox"><input type="submit" class="form-submit" value="Salvar"></form></main>
+<form id="aculta-user-profile-visibility-form"><div class="form-type-checkbox">
+<input id="privacy" type="checkbox"><label class="option" for="privacy">Mostrar bio</label></div>
+<input type="submit" class="form-submit" value="Salvar"></form></main>
 <main class="aculta-main" id="account-main"><form id="account-modal-form" data-portal-ui="account-bio-dialog">
 <input class="form-control" type="text" aria-label="Bio na conta"></form></main></body></html>"""
 
@@ -227,15 +228,18 @@ try:
         driver.js("document.body.className='path-perfil'")
         private_forms = driver.js("""return ['aculta-user-studio-nickname-form','aculta-user-profile-visibility-form'].map(id=>{
           const form=document.getElementById(id);const field=form.querySelector('input:not([type=submit])');
-          const submit=form.querySelector('[type=submit]');return {id, margin:getComputedStyle(form).marginBlockStart,
+          const submit=form.querySelector('[type=submit]');const label=form.querySelector('label.option');
+          return {id, margin:getComputedStyle(form).marginBlockStart,
             padding:getComputedStyle(form).paddingBlockStart, token:getComputedStyle(form).getPropertyValue('--aculta-studio-fidelity-text').trim(),
             font:getComputedStyle(form).fontFamily, submit:submit.getBoundingClientRect().height,
-            field:field.getBoundingClientRect().height};});""")
+            field:field.getBoundingClientRect().height,labelHeight:label?.getBoundingClientRect().height??0};});""")
         record(f"{mode}: apelido e privacidade do Perfil recebem Fidelity",
                all(item["margin"] == "20px" and item["padding"] == "20px"
                    and item["token"] == ("#1f1f1f" if mode == "light" else "#efefef")
                    and "Montserrat" in item["font"] and item["submit"] >= 44
                    and (item["id"] != "aculta-user-studio-nickname-form" or item["field"] >= 44)
+                   and (item["id"] != "aculta-user-profile-visibility-form"
+                        or item["field"] >= 20 and item["labelHeight"] >= 44)
                    for item in private_forms), private_forms)
         driver.js("document.body.className=''")
         profile_scope = driver.js("""const form=document.querySelector('#profile-form');

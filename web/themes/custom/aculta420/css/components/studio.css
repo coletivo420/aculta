@@ -190,6 +190,27 @@ body.path-perfil .aculta-main:has(form#aculta-user-profile-visibility-form) h1 {
   font-weight: var(--aculta-studio-fidelity-font-weight-bold);
 }
 
+body.path-perfil form#aculta-user-profile-visibility-form .form-type-checkbox {
+  display: flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+body.path-perfil form#aculta-user-profile-visibility-form .form-type-checkbox input[type="checkbox"] {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  flex: 0 0 auto;
+}
+
+body.path-perfil form#aculta-user-profile-visibility-form .form-type-checkbox label.option {
+  display: inline-flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+  margin: 0;
+  cursor: pointer;
+}
+
 /* Ganjalab's LMS owns the student content; only its Studio route adopts this
    presentation layer, keeping the account navigation and global shell intact. */
 body.path-ganjalab .aculta-main {

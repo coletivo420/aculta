@@ -388,8 +388,8 @@ tema em `studio-profile-form`. Apelido e privacidade, sem token semântico próp
 usam seus IDs reais somente sob `body.path-perfil`. Em 2026-10-31, a fixture
 Firefox ESR passou 60/60 verificações em claro/escuro e 320/390/768/1440px:
 Fidelity nos formulários Marley/Perfil, ausência de tokens no Magazine e no
-modal de bio da Conta, controles de texto e ações com ao menos 44px e foco
-visível. Não houve novo SDC, slot ou prop.
+modal de bio da Conta, campos de texto e ações com ao menos 44px, checkboxes de 20px com rótulos
+de 44px e foco visível. Não houve novo SDC, slot ou prop.
 A fixture não substitui a homologação dos consumers reais, submissão Form API,
 AJAX/no-JS, grants, cache ou privacidade A/B. Evidência em
 `$SUITE_OUT/studio-form-profile-fidelity-20261031/`.

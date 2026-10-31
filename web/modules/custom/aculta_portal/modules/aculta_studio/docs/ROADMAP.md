@@ -911,7 +911,7 @@ Studio. Apelido e privacidade usam os IDs de formulário reais sob
 Marley/Perfil; nenhum controller, Form API,
 rota, ACL, dado, SDC ou fluxo AJAX da Conta foi alterado. O modal de bio da
 Conta continua sem Fidelity. Firefox ESR fixture com CSS candidata passou
-60/60 checks em claro/escuro, 320/390/768/1440px e foco visível. Runtime servido,
+60/60 checks em claro/escuro, 320/390/768/1440px, foco visível e alvo de 44px nos rótulos checkbox. Runtime servido,
 submit real, privacy A/B, cache, AJAX/no-JS, zoom, WCAG, S-R4/S-R5 e OCS-F11
 permanecem pendentes.
 ### OCS-F5 — isolamento do formulário editorial Marley (2026-10-31)
