@@ -2672,3 +2672,8 @@ ou preferência persistente alterados.
 - Os contratos Unit de Green Stash passaram após o grant: `GreenStashAccessPolicy`,
   leitor/ACL de produtos, criação de produto e navegação — 13 testes e 100
   asserções, sem falhas. A execução não persiste dados Runtime.
+- Os Kernel tests Commerce executados no banco dedicado `aculta_simpletest`
+  passaram: 15 testes, 260 asserções, 7 skips esperados e zero falhas,
+  cobrindo instalação limpa, shipping engine/cutover e permissões do leitor de
+  remessas Green Stash. Foram reportadas 222 depreciações de Drupal/contrib,
+  sem impacto no resultado.
