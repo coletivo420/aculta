@@ -605,9 +605,13 @@ O consumidor visual real é a classe `we-sativa__workspace`, mapeada do token
 coletor mede o wrapper, estados vazios, seções, quatro filtros (`aria-current`,
 wrapping e links de pelo menos 44px), overflow e isolamento dos headers do shell.
 
-No Runtime HEAD `2493d7535`, o caminho oficial atual
-`https://wiki420.aculta.toca.net.br/studio/we-sativa` ainda não é servido; a
-rota instalada é `/wesativa`. Para inspeção **exploratória** do mesmo consumer,
+No checkout servido em `2493d7535`, `aculta_studio.we_sativa` resolve para
+`/wesativa`; o caminho da branch `https://wiki420.aculta.toca.net.br/studio/we-sativa`
+retorna HTTP 404 nesse HEAD. A verificação foi feita por Drush e GET HTTP; o
+Runtime não está no commit da branch sob teste, então essa resposta não avalia
+o controller/template do path canônico. A captura oficial fica DEFERRED até o
+checkout visual executar o HEAD da branch. Para inspeção **exploratória** do
+mesmo consumer enquanto isso,
 use `STUDIO_ROUTES=https://wiki420.aculta.toca.net.br/wesativa` com
 `OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1`. Esse resultado comprova a composição do
 wrapper no path legado, mas não homologa o caminho canônico nem fecha OCS-F7.
@@ -619,7 +623,7 @@ larguras, nos modos claro e escuro, com CSS Fidelity candidata. Os links
 textuais da Institution Bar mediram 11,34:1 e 12,95:1, respectivamente. As
 capturas 320/1440px foram revisadas; veja os diretórios documentados no
 `mobile-first-audit.md`. A mensagem de login único é temporária e o conteúdo Wiki
-estava vazio; a captura não prova conteúdo preenchido ou a rota oficial.
+observado estava vazio; a captura não prova conteúdo preenchido ou a rota oficial.
 
 ## ACULTA Studio Culturas — dashboard responsivo candidato
 
