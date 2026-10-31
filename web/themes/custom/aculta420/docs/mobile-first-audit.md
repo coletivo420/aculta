@@ -2911,3 +2911,22 @@ artefatos da sessão estão em
 É evidência focal do formulário canônico: não verifica lookup ao vivo do CEP,
 submissão, ACL entre contas, teclado completo, leitor de tela ou WCAG 2.2 AA
 integral. Não homologa as demais telas/purposes, THEME-MF3, OCS-F9 ou OCS-F11.
+
+### OCS-F8 / THEME-MF2 — estado visual da Visão geral Green Stash (2026-10-31)
+
+A revisão do fixture existente encontrou que ele exercitava Produtos e Envios,
+mas não verificava o aviso real da Visão geral. O `opcult` 3.1.5 apresenta
+mensagens informativas persistentes como caixas em `_messages.scss`; sua
+hierarquia serviu de referência, sem copiar CSS. `.aculta-green-stash > p` agora
+usa tokens Fidelity, barra de início lógica, padding e wrapping, mantendo a
+mensagem de preparação explícita e sem sugerir ações comerciais ausentes.
+
+Firefox ESR visível passou **110/110 verificações** em nove larguras e claro/
+escuro. Visão geral e Produtos preservaram seus avisos exatos; contraste medido
+foi 15,25:1/11,17:1, sem overflow, com navegação de três áreas e foco visível.
+Capturas de Produtos e Visão geral em 320/390/1440px foram revisadas em
+`/home/piradopirata/aculta-suite-out/green-stash-overview-final-20261031/`.
+
+É fixture local da folha candidata. Runtime com operador autorizado, isolamento
+entre lojas, dados Commerce, fluxos de escrita, zoom e WCAG integral continuam
+pendentes; OCS-F8/F11 e THEME-MF3 não estão aprovados.

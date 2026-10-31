@@ -58,6 +58,13 @@ links = "".join(
         ("envios", "Envios"),
     ]
 )
+overview_links = "".join(
+    f'<a class="nav-link aculta-green-stash__navigation-link" href="#{slug}" aria-current="{"page" if slug == "visao-geral" else "false"}">{label}</a>'
+    for slug, label in [
+        ("visao-geral", "Visão geral"), ("produtos", "Produtos"),
+        ("envios", "Envios"),
+    ]
+)
 markup = f"""<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><style>{css}
 *,*::before,*::after{{box-sizing:border-box}}body{{margin:0;font:16px/1.5 sans-serif}}
@@ -65,12 +72,17 @@ markup = f"""<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 </style></head><body><main class="aculta-main"><div class="aculta-container">
 <section class="studio aculta-green-stash"><h2>Produtos</h2>
 <div class="aculta-green-stash__navigation" role="navigation" aria-label="Áreas do ACULTA STUDIO GREEN STASH">{links}</div>
+<p>Nesta área são exibidos somente produtos autorizados para a loja atual.</p>
 <div class="aculta-green-stash__products"><div class="search"><form><label for="busca">Buscar produtos</label>
 <input id="busca" type="search"><button type="submit">Buscar</button></form></div>
 <div class="item"><h3>Óleo artesanal com nome extenso para testar quebra natural</h3><a href="#detalhe">Ver detalhes</a></div>
 <div class="next"><a href="#proxima">Próxima página</a></div></div>
 <div class="aculta-green-stash__shipments"><div class="item"><div class="content"><h3>Pedido #420-000123</h3>
 <p>Estado: em preparação</p><p>Serviço: envio padrão</p><a href="#rastreio">Ver rastreamento</a></div></div></div>
+</section>
+<section class="studio aculta-green-stash"><h2>Visão geral</h2>
+<div class="aculta-green-stash__navigation" role="navigation" aria-label="Áreas do ACULTA STUDIO GREEN STASH">{overview_links}</div>
+<p>Esta área está em preparação. Nenhuma operação comercial está disponível nesta tela.</p>
 </section></div></main></body></html>"""
 
 driver = Driver(bidi=True)
@@ -101,9 +113,29 @@ try:
               const nav = document.querySelector('.aculta-green-stash__navigation');
               const links = [...nav.querySelectorAll('a')];
               const active = nav.querySelector('[aria-current="page"]');
+              const overviewRoot = document.querySelectorAll('.aculta-green-stash')[1];
+              const overviewNav = overviewRoot.querySelector('.aculta-green-stash__navigation');
+              const overviewLinks = [...overviewNav.querySelectorAll('a')];
+              const overviewActive = overviewNav.querySelector('[aria-current="page"]');
               const product = document.querySelector('.aculta-green-stash__products > div:has(> h3)');
               const shipment = document.querySelector('.aculta-green-stash__shipments > div:has(> div > h3)');
               const search = document.querySelector('.aculta-green-stash__products form');
+              const notices = [...document.querySelectorAll('.aculta-green-stash > p')];
+              const color = (value) => value.match(/[\\d.]+/g).slice(0, 3).map(Number);
+              const luminance = (value) => color(value).map((part) => {
+                const channel = part / 255;
+                return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+              }).reduce((sum, channel, index) => sum + channel * [0.2126, 0.7152, 0.0722][index], 0);
+              const callouts = notices.map((notice) => {
+                const style = getComputedStyle(notice);
+                const colors = [luminance(style.color), luminance(style.backgroundColor)].sort((a,b) => b-a);
+                const contrast = (colors[0] + 0.05) / (colors[1] + 0.05);
+                const rect = notice.getBoundingClientRect();
+                return {text: notice.textContent.trim(), width: rect.width,
+                  background: style.backgroundColor, border: style.borderInlineStartWidth,
+                  padding: style.paddingInlineStart, margin: style.marginBlockStart,
+                  contrast: Math.round(contrast * 100) / 100};
+              });
               const input = search.querySelector('input[type="search"]');
               const button = search.querySelector('button');
               const rect = (el) => el.getBoundingClientRect();
@@ -111,9 +143,13 @@ try:
                 columns: getComputedStyle(nav).gridTemplateColumns.trim().split(/\\s+/).length,
                 linkCount: links.length, links: links.map((el) => el.textContent.trim()),
                 active: active?.textContent.trim(),
+                overviewLinkCount: overviewLinks.length,
+                overviewActive: overviewActive?.textContent.trim(),
+                overviewNotice: overviewRoot.querySelector(':scope > p')?.textContent.trim(),
                 minLinkHeight: Math.min(...links.map((el) => rect(el).height)),
                 productCard: Boolean(product), shipmentCard: Boolean(shipment),
                 searchSurface: getComputedStyle(search).backgroundColor,
+                callouts,
                 inputHeight: rect(input).height, buttonHeight: rect(button).height,
                 cardWidth: product ? rect(product).width : 0,
                 navWidth: rect(nav).width, mode: document.documentElement.dataset.bsTheme};
@@ -122,14 +158,36 @@ try:
             record(f"{mode}/{width}px: somente três áreas implementadas e seção atual marcada",
                    metrics["linkCount"] == 3 and metrics["active"] == "Produtos"
                    and set(metrics["links"]) == {"Visão geral", "Produtos", "Envios"}, metrics)
+            record(f"{mode}/{width}px: visão geral mostra estado real sem ação fictícia",
+                   metrics["overviewLinkCount"] == 3
+                   and metrics["overviewActive"] == "Visão geral"
+                   and metrics["overviewNotice"] == "Esta área está em preparação. Nenhuma operação comercial está disponível nesta tela.",
+                   {"linkCount": metrics["overviewLinkCount"], "active": metrics["overviewActive"],
+                    "notice": metrics["overviewNotice"]})
             record(f"{mode}/{width}px: alvos de navegação e cartões de listagem",
                    metrics["minLinkHeight"] >= 48 and metrics["productCard"] and metrics["shipmentCard"], metrics)
             record(f"{mode}/{width}px: formulário de busca com controles tocáveis",
                    metrics["inputHeight"] >= 44 and metrics["buttonHeight"] >= 44
                    and metrics["searchSurface"] != "rgba(0, 0, 0, 0)", metrics)
+            record(f"{mode}/{width}px: estado informativo de Visão geral e Produtos legível",
+                   len(metrics["callouts"]) == 2
+                   and all(notice["background"] != "rgba(0, 0, 0, 0)"
+                           and notice["border"] == "4px"
+                           and notice["padding"] == "16px"
+                           and notice["margin"] == "0px"
+                           and notice["contrast"] >= 4.5
+                           and notice["width"] <= width
+                           for notice in metrics["callouts"]), metrics["callouts"])
             if width in (320, 390, 1440):
                 screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
                 (OUT / f"green-stash-{mode}-{width}.png").write_bytes(base64.b64decode(screenshot))
+                driver.js("document.querySelectorAll('.aculta-green-stash')[1].scrollIntoView({block: 'start'}); return true;")
+                time.sleep(0.08)
+                overview_screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                (OUT / f"green-stash-overview-{mode}-{width}.png").write_bytes(
+                    base64.b64decode(overview_screenshot)
+                )
+                driver.js("window.scrollTo(0, 0); return true;")
             if width == 320:
                 driver.js("document.querySelector('.aculta-green-stash__navigation-link').focus()")
                 focus = driver.js("""const el=document.activeElement,s=getComputedStyle(el);

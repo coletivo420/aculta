@@ -1208,6 +1208,16 @@ body.path-marley form.node-revista-form :is(.form-submit, .button--cta, .oc-butt
   border-block-end: 1px solid var(--aculta-studio-fidelity-divider);
 }
 
+/* Keep the current operational status visible without implying missing actions exist. */
+.aculta-green-stash > p {
+  margin: 0;
+  padding: 0.875rem 1rem;
+  overflow-wrap: anywhere;
+  color: var(--aculta-studio-fidelity-text);
+  border-inline-start: 0.25rem solid var(--aculta-studio-fidelity-interaction);
+  background: var(--aculta-studio-fidelity-surface-muted);
+}
+
 /* Keep every currently exposed area reachable without horizontal scrolling. */
 .aculta-green-stash__navigation {
   display: grid;

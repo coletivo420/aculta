@@ -4,11 +4,13 @@
 
 `green-stash-layout.py` valida a folha candidata das áreas comerciais integradas
 ao Studio. A fixture replica os wrappers e links emitidos hoje por
-`GreenStashNavigation` e `GreenStashController` para navegação, busca, produto e
-remessa. No Firefox ESR visível, mede overflow, links atuais, áreas tocáveis,
-cartões, foco visível e modos claro/escuro em 320/360/390/599/600/768/1024/1280/
-1440px. É fixture local de CSS: não autentica operadores, não valida grants por
-loja/dados reais e não homologa OCS-F8/F11 nem THEME-MF3.
+`GreenStashNavigation` e `GreenStashController` para Visão geral, busca, produto
+e remessa. No Firefox ESR visível, mede overflow, links atuais, áreas tocáveis,
+cartões, foco visível e os avisos reais de estado/escopo em claro/escuro, em
+320/360/390/599/600/768/1024/1280/1440px. As capturas 320/390/1440 incluem a
+Visão geral, que só informa que operações comerciais ainda não estão disponíveis
+naquela tela. É fixture local de CSS: não autentica operadores, não valida
+grants por loja/dados reais e não homologa OCS-F8/F11 nem THEME-MF3.
 
 ```sh
 cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8

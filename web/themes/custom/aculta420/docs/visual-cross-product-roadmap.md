@@ -1493,3 +1493,12 @@ claro/escuro; campo e ações Limpar/Salvar ficaram em 44px, sem overflow. Não 
 mudança no AJAX, rota, Form API ou dados. A prova é de fixture com mapeamento
 Portal simulado; Runtime e homologação OCS-F9/F11 seguem pendentes. Detalhes em
 `mobile-first-audit.md`.
+
+### OCS-F8 / THEME-MF2 — Visão geral Green Stash (2026-10-31)
+
+A folha Studio agora apresenta o aviso real de preparação da Visão geral e o
+aviso de escopo da lista de Produtos como caixas informativas responsivas com
+tokens Fidelity. A fixture reutilizada passou 110/110 em Firefox ESR, nove
+larguras, claro/escuro; capturas de ambas as áreas foram revistas. Isto não é
+validação integrada do Runtime: operador/store A/B e fluxos reais continuam
+pendentes. Detalhes e limites em `mobile-first-audit.md`.

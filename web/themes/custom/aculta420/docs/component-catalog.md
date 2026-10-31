@@ -448,6 +448,18 @@ passou 74/74 com a navegação limitada às três áreas operacionais, em evidê
 homologação do Runtime. Esta evidência valida somente a folha e a marcação simulada. Operador autorizado, grants por loja,
 rotas reais e fluxos de escrita seguem pendentes.
 
+Reteste focal de 2026-10-31 acrescentou a Visão geral e os avisos informativos
+reais de estado e escopo da raiz ao fixture. O aviso recebeu surface Fidelity,
+barra lógica de 4px e wrapping móvel, sem nova classe de markup ou SDC; o padrão
+de caixa informativa do `opcult` 3.1.5 (`sass/base/_messages.scss`, tarball SHA-256
+`2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`) serviu
+somente de referência hierárquica. Firefox ESR passou **110/110 checks** em
+nove larguras, claro/escuro, incluindo contraste 15,25:1/11,17:1 e aviso exato
+da Visão geral. Capturas da Visão geral em 320/390/1440px estão em
+`/home/piradopirata/aculta-suite-out/green-stash-overview-final-20261031/`.
+Continua fixture da folha candidata; não valida Runtime, operador autorizado,
+grants por loja, dados Commerce ou fluxos de escrita.
+
 ## THEME-MF2 — `patterns/content-grid`
 
 O SDC experimental tem consumidores de duas colunas em Marley, LMS e Wiki; os
