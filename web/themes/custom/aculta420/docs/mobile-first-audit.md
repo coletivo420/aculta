@@ -4918,3 +4918,16 @@ Montserrat e zoom real de 200%/400%; zero falhas e sem overflow. Capturas:
 A captura de 1440px foi revisada. Lint CSS e `git diff --check` passaram. A
 correção candidata ainda precisa ser servida pelo Runtime e retestada; isso não
 aprova THEME-MF3 nem OCS-F11.
+
+### OCS-F3/F4 — confirmação da correção no Runtime (2026-10-31)
+
+A observação anterior foi concluída após publicar `5a9c03b4b`: docroot alinhado,
+cache reconstruído, `updatedb:status` sem updates e `config:status` sem diferenças.
+Firefox ESR/X11 autenticado abriu a entrada da Conta sem CSS override em
+320/360/390/599/600/768/1024/1280/1440px. Os nove viewports exibiram cinco SDCs,
+raio de 24px, largura documental igual à viewport e Institution Bar/Domain
+Header únicos; `CAPTURED`, zero falhas. Captura 1440px revisada; não há segunda
+superfície Bootstrap. Evidência: `/home/piradopirata/aculta-suite-out/studio-account-hub-card-integrated-5a9c03b4b-20261031/`.
+Snapshot prévio modo 0600: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-account-wrapper-5a9c03b4b-20261031.sql`,
+57.414.352 bytes, SHA-256 `1c679a99cbddbad7b3690c0fac5c5a8043165083063efe32bb71df4ee346f16a`.
+Essa confirmação cobre a entrada da Conta; não fecha THEME-MF3 nem OCS-F11.

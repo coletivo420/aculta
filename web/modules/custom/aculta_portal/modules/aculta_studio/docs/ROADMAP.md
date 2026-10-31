@@ -1053,3 +1053,8 @@ Corrigida a moldura duplicada dos cinco cards de experiências: os wrappers
 fixture local Firefox/X11 passou 277/277 checks em 27 larguras, incluindo
 teclado e zoom de 200%/400%. A correção permanece candidata até validação da
 folha servida pelo Runtime; não fecha OCS-F11 nem THEME-MF3.
+
+Follow-up integrado: CSS publicada confirmada no Runtime, sem override, em nove
+larguras. Cinco cards foram renderizados e a largura documental não excedeu a
+viewport. Evidência em `web/themes/custom/aculta420/docs/mobile-first-audit.md`
+e relatório privado em `$SUITE_OUT`; OCS-F11 e THEME-MF3 continuam pendentes.

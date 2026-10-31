@@ -2279,3 +2279,18 @@ ou preferência persistente alterados.
   `/home/piradopirata/aculta-suite-out/studio-card-fidelity-list-wrapper-20261031/`.
 - Limite: CSS candidata testada em fixture local; falta confirmar a folha servida
   pelo Runtime. Não aprova THEME-MF3 ou OCS-F11.
+
+### Follow-up integrado — confirmação após publicação
+
+- Docroot `/home/piradopirata/projetos/aculta` destacado em `5a9c03b4b`; cache
+  reconstruído, sem updates Drupal e sem diferenças config/sync. Snapshot antes
+  da sessão ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-account-wrapper-5a9c03b4b-20261031.sql`,
+  57.414.352 bytes, modo 0600, SHA-256
+  `1c679a99cbddbad7b3690c0fac5c5a8043165083063efe32bb71df4ee346f16a`.
+- Firefox ESR/X11 autenticado, sem CSS override, capturou a entrada da Conta em
+  320/360/390/599/600/768/1024/1280/1440px: `CAPTURED`, zero falhas, cinco SDCs,
+  Institution Bar e Domain Header únicos, largura documental igual à viewport.
+  A captura 1440px foi revisada e mostra somente a superfície arredondada de cada
+  card. Evidências: `/home/piradopirata/aculta-suite-out/studio-account-hub-card-integrated-5a9c03b4b-20261031/`.
+  A sessão não enviou formulários nem alterou conteúdo/configuração. O gate
+  THEME-MF3/OCS-F11 permanece aberto.

@@ -761,3 +761,7 @@ a pele `list-group-item` dos `<li>` que envolvem o SDC, evitando uma segunda
 superfície ao redor do card. A fixture `tests/browser/aculta-studio/studio-card-fidelity.py`
 reproduz o markup Core, verifica 27 viewports, teclado e zoom de 200%/400%;
 a evidência atual é local candidata e está registrada na auditoria mobile-first.
+
+A folha publicada também foi confirmada sem override no Runtime em nove larguras;
+cinco cards foram renderizados sem overflow, com Institution Bar e Domain Header
+únicos. Evidências e limites estão na auditoria mobile-first.
