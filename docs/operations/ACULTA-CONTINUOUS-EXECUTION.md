@@ -2763,3 +2763,8 @@ ou preferência persistente alterados.
   elementos Core/Metatag/CKEditor. Eles não são violações confirmadas pelo
   axe, mas exigem revisão manual/atribuição ao owner do widget antes de
   declarar WCAG completo; não foram mascarados no relatório.
+- O gate vermelho de design foundations detectou que os estilos de contraste
+  adicionados ao menu vertical usavam seletor explícito de modo escuro. O
+  commit `4433d853a` substituiu isso por tokens semânticos compartilhados;
+  depois, Design Foundations passou 2.432 checks e COLOR MODE TOKEN-ONLY
+  passou. Stylelint também permaneceu PASS.
