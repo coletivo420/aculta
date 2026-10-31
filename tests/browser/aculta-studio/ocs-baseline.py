@@ -388,7 +388,7 @@ socket.onmessage = (event) => {
                 record["statusMessageFlowChecks"] = {}
                 record["statusMessageFlowStatus"] = "SKIP_NO_STATUS_NOTICE"
             else:
-                content_after_notice = driver.js("const wrapper=document.querySelector('main#main-content .aculta-highlighted > .alert-wrapper');if(!wrapper)return null;const heading=[...document.querySelectorAll('main#main-content h1,main#main-content h2,main#main-content h3')].find(element=>!wrapper.contains(element)&&(wrapper.compareDocumentPosition(element)&Node.DOCUMENT_POSITION_FOLLOWING));if(!heading)return null;const r=heading.getBoundingClientRect();return {tag:heading.tagName,top:r.top,left:r.left,right:r.right}")
+                content_after_notice = driver.js("const wrapper=document.querySelector('main#main-content .aculta-highlighted > .alert-wrapper');if(!wrapper)return null;const heading=[...document.querySelectorAll('main#main-content h1,main#main-content h2,main#main-content h3')].find(element=>element.getClientRects().length>0&&!wrapper.contains(element)&&(wrapper.compareDocumentPosition(element)&Node.DOCUMENT_POSITION_FOLLOWING));if(!heading)return null;const r=heading.getBoundingClientRect();return {tag:heading.tagName,top:r.top,left:r.left,right:r.right}")
                 flow_checks = {
                     "wrapperPresent": True,
                     "wrapperInDocumentFlow": wrapper["position"] == "static",

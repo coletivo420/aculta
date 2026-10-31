@@ -1954,3 +1954,10 @@ isto não homologa a discussão de comentários nem a integração no Runtime. V
 `mobile-first-audit.md` e evidência externa
 `/home/piradopirata/aculta-suite-out/forum-visual-followup-20261031/`.
 THEME-MF3 e OCS-F11 continuam pendentes.
+
+### 2026-10-31 — medição do aviso ULI na landing Marley
+
+`ocs-baseline.py` agora ignora headings ocultos ao medir se o aviso precede o
+conteúdo visível. O reteste autenticado passou nove larguras com CSS candidata,
+sem overflow e com tabela rolável localmente. O resultado corrige falso FAIL do
+harness, não homologa integração servida. Detalhes em `mobile-first-audit.md`.

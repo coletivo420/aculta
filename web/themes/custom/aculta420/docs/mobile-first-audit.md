@@ -4087,3 +4087,17 @@ overflow e alvos sociais de 44×44 px. A CSS candidata foi injetada no Firefox;
 os links sociais foram uma fixture invisível e não representam links reais do
 perfil. Evidência em
 `/home/piradopirata/aculta-suite-out/forum-author-followup-20261031/`.
+
+### OCS-F5 — landing Marley com aviso ULI e tabela (2026-10-31)
+
+Firefox ESR autenticado capturou `/marley` no Runtime em nove larguras. O
+primeiro ensaio marcou falso FAIL a 320 px porque a checagem encontrou um H1
+oculto antes do aviso ULI no DOM, embora a captura mostre o aviso antes do título
+visível. `ocs-baseline.py` agora exige que o heading de referência tenha uma
+caixa visível. O reteste passou com `CAPTURED`, zero falhas: em 320 px o aviso
+permaneceu estático no fluxo antes do heading visível e a tabela rolou dentro do
+wrapper; nas outras larguras o aviso já havia se autocerrado. A árvore não teve
+overflow. CSS Fidelity e `content.css` foram injetados somente no navegador;
+isto não valida integração servida, submissão editorial, ACL, estados AJAX/no-JS
+ou WCAG integral. Evidência em
+`/home/piradopirata/aculta-suite-out/marley-landing-followup-20261031/`.

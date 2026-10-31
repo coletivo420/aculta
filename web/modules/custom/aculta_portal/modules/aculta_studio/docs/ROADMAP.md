@@ -1023,3 +1023,14 @@ da PR e, portanto, ainda não contém a rota nova. A validação autenticada fin
 submit com curso sintético e regressão no Firefox devem ser executados após a
 rota chegar ao Runtime; nenhum curso foi criado neste trabalho.
 
+### OCS-F5 — landing Marley e ordem do aviso ULI (2026-10-31)
+
+O reteste autenticado no Runtime capturou `/marley` em nove larguras com
+`CAPTURED` e zero falhas; a folha Fidelity continuou candidata, injetada apenas
+no Firefox. Corrigimos o harness para selecionar headings visíveis ao conferir
+que o aviso ULI precede o conteúdo: antes, ele selecionava um heading oculto no
+DOM e gerava falso FAIL em 320 px. A medição atual confirmou o aviso em fluxo e
+a rolagem confinada da tabela. Não homologa a CSS integrada, OCS-F11 nem
+THEME-MF3. Evidência e limitações em
+`web/themes/custom/aculta420/docs/mobile-first-audit.md`.
+
