@@ -28,6 +28,25 @@ Evidências de ACULTA Studio Culturas:
 (rota autenticada, CSS candidata apenas no Firefox, 20/20), incluindo capturas
 Firefox ESR 320/1440px em claro/escuro e `results.json`.
 
+### Revalidação da tabela real de Marley — 2026-10-31
+
+No Runtime em HEAD `2493d7535`, a listagem autenticada de Publicações foi
+capturada por GET em Firefox ESR com CSS Fidelity candidata injetada somente
+na sessão local. A tabela real tem quatro linhas e seis colunas. A 320px, o
+`.table-responsive` interno da tabela mediu 597px de conteúdo, 280px visíveis e
+317px de deslocamento horizontal; a 390px, 597px, 350px e 247px. O documento
+permaneceu com largura igual ao viewport. O wrapper externo `listing-wrap` não
+é o contêiner rolável: ele contém o `.table-responsive` interno do Drupal.
+`ocs-baseline.py` agora verifica o pai direto da tabela em viewports até 600px.
+
+A execução do baseline completo continua **FAIL** em checks de heading
+preexistentes: este Runtime serve somente o H1 genérico “ACULTA Studio Marley”
+e não contém o heading interno exigido pela versão atual da suíte. Isso é
+evidência de divergência entre Runtime e markup da branch, não uma aprovação de
+paridade. Evidências privadas em
+`/home/piradopirata/aculta-suite-out/studio-marley-listing-scroll-final-20261031/`;
+OCS-F11 e THEME-MF3 permanecem pendentes.
+
 ### Revalidação OCS-F0 — rotas canônicas, Firefox ESR visível (2026-10-30)
 
 No checkout servido `/home/piradopirata/projetos/aculta` em HEAD `4399627c4`,

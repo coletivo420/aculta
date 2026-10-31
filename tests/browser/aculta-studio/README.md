@@ -757,6 +757,18 @@ documento, rolagem horizontal confinada ao wrapper, ritmo e cabeçalho de tabela
 e foco real por teclado. Não submete formulários, não acessa conteúdo, não
 valida ACL/cache/AJAX/no-JS nem substitui o GET das listagens Drupal.
 
+`ocs-baseline.py` também mede a tabela real quando a rota capturada é Marley.
+No markup atual do Drupal, o `data-aculta-studio="listing-wrap"` contém um
+segundo `.table-responsive`; é esse elemento interno, pai direto da tabela,
+que precisa avançar `scrollLeft`. Em viewports de até 600px, a captura exige
+rolagem horizontal local e largura documental limitada ao viewport. O teste
+não usa o `scrollWidth` do wrapper externo como substituto dessa medição.
+Em 2026-10-31, o Runtime servido permitiu 317px de rolagem local a 320px e
+247px a 390px, sem overflow do documento. A suíte total ainda sinaliza a
+falha separada de heading porque o HTML Runtime não possui o heading do
+workspace exigido pela versão atual do check; esse resultado não é aprovação
+do gate OCS-F11.
+
 ```sh
 export DISPLAY=:0
 export SUITE_OUT=/caminho/fora-do-repositorio/studio-listing-fidelity

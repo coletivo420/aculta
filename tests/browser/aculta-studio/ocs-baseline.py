@@ -319,6 +319,52 @@ socket.onmessage = (event) => {
           })
         );"""))
     if "path-marley" in record.get("bodyClasses", []):
+        record["studioListing"] = json.loads(driver.js("""return JSON.stringify((() => {
+          const root=document.querySelector('[data-aculta-studio="root"]');
+          const table=document.querySelector('[data-aculta-studio="listing"]');
+          const wrapper=document.querySelector('[data-aculta-studio="listing-wrap"]');
+          if(!table||!wrapper)return {present:false,rootClass:root?String(root.className):null};
+          const scrollContainer=table.parentElement;
+          const head=table.querySelector('thead th'),cell=table.querySelector('tbody td');
+          const rect=element=>{const r=element.getBoundingClientRect();return {width:r.width,left:r.left,right:r.right,scrollWidth:element.scrollWidth,clientWidth:element.clientWidth};};
+          const style=element=>getComputedStyle(element);
+          scrollContainer.scrollLeft=9999;const maxScrollLeft=scrollContainer.scrollLeft;scrollContainer.scrollLeft=0;
+          return {present:true,rootClass:root?String(root.className):null,
+            rootFont:root?style(root).fontFamily:null,
+            rootTextToken:root?style(root).getPropertyValue('--aculta-studio-fidelity-text').trim():null,
+            tableClass:String(table.className),wrapperClass:String(wrapper.className),
+            wrapperOverflowX:style(wrapper).overflowX,wrapperOverflowY:style(wrapper).overflowY,
+            scrollContainerClass:String(scrollContainer.className||''),
+            scrollContainerOverflowX:style(scrollContainer).overflowX,
+            scrollContainerClientWidth:scrollContainer.clientWidth,
+            scrollContainerScrollWidth:scrollContainer.scrollWidth,
+            wrapperDisplay:style(wrapper).display,wrapperMinWidth:style(wrapper).minWidth,
+            wrapperPosition:style(wrapper).position,tablePosition:style(table).position,
+            tableWidth:style(table).width,tableMinWidth:style(table).minWidth,
+            tableLayout:style(table).tableLayout,tableDisplay:style(table).display,
+            tableParentClass:String(table.parentElement?.className||''),
+            tableParentIsWrapper:table.parentElement===wrapper,
+            maxScrollLeft,
+            table:rect(table),wrapper:rect(wrapper),wrapperParent:wrapper.parentElement?rect(wrapper.parentElement):null,
+            rowCount:table.querySelectorAll('tbody tr').length,
+            columnCount:table.querySelectorAll('thead th').length,
+            cellPadding:cell?style(cell).paddingBlockStart:null,
+            headerWeight:head?style(head).fontWeight:null,
+            headerBorder:head?style(head).borderBottomColor:null,
+            headerBorderToken:root?style(root).getPropertyValue('--aculta-studio-fidelity-input-border-bottom').trim():null};
+        })());"""))
+        listing = record["studioListing"]
+        if listing.get("present") and width <= 600:
+            scroll_checks = {
+                "tableHasLocalHorizontalScroll": listing["maxScrollLeft"] > 0,
+                "documentDoesNotScrollHorizontally": record["documentScrollWidth"] <= width,
+            }
+            record["studioListingScrollChecks"] = scroll_checks
+            record["studioListingScrollStatus"] = "PASS" if all(scroll_checks.values()) else "FAIL"
+            if record["studioListingScrollStatus"] == "FAIL":
+                CAPTURE_FAILURES.append({"url": url, "width": width,
+                                         "studioListingScroll": {"checks": scroll_checks,
+                                         "listing": listing}})
         record["studioHeadingHierarchy"] = json.loads(driver.js("""return JSON.stringify(
           [...document.querySelectorAll('main h1, main h2, main h3')].map(element => {
             const rect=element.getBoundingClientRect();const style=getComputedStyle(element);
