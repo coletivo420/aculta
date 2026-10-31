@@ -1728,6 +1728,14 @@ Nenhum form foi submetido. A conta sintética era pública antes da captura; o
 resultado não valida grants A/B nem privacidade de outros campos, não homologa
 S-R4/S-R5, THEME-MF3 ou OCS-F11.
 
+### THEME-MF2 — artigo editorial da Revista, reteste visual (2026-10-31)
+
+Firefox ESR visível passou 20/20 verificações do harness do artigo em dez
+larguras, sem overflow nem mudança de ordem DOM; a captura de 320px foi
+inspecionada. O teste usa fixture e stylesheet candidata, portanto não certifica
+renderização de publicação real nem CSS integrada. Evidência e limites em
+`mobile-first-audit.md`.
+
 ### THEME-MF3 — A/B global de cores e reduced motion (2026-10-31)
 
 Reexecução nos dez purposes, nove larguras, claro/escuro e reduced motion:

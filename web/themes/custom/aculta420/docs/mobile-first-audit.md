@@ -333,6 +333,17 @@ em 320/390/767/768/1024/1440px. Stylelint e sintaxe JS PASS; execução
 Firefox/Runtime DEFERRED por sessões concorrentes. Não homologa OCS-F11 nem
 THEME-MF3.
 
+### THEME-MF2 — artigo editorial da Revista, reteste da fixture (2026-10-31)
+
+O harness `revista-article-layout.py` passou **20/20 checks** em Firefox ESR
+visível nas larguras 320/360/390/575/576/600/768/1024/1280/1440px. A comparação
+da CSS atual com a revisão anterior confirmou alinhamento de leitura mobile,
+resumo e metadados responsivos, ordem DOM estável e ausência de overflow. A
+captura de 320px foi inspecionada. É fixture `data:`; não comprova markup/campos
+de publicação real, CSS integrada ou paridade integral com OpenCulturas, e não
+fecha THEME-MF2/MF3 ou OCS-F11. Relatório/capturas em
+`/home/piradopirata/aculta-suite-out/revista-article-visual-followup-20261031/`.
+
 ### THEME-MF3 — foco de teclado nas raízes públicas (2026-10-30)
 
 `purpose-shell-keyboard.py` percorreu as dez raízes de purpose no Firefox ESR

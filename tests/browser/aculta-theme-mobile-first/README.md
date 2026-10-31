@@ -113,6 +113,13 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/revista-article-la
 `REVISTA_ARTICLE_WIDTHS` aceita larguras focais. Requer Firefox ESR visível,
 geckodriver e `websockets`; PNGs e `summary.json` são gravados fora do Git.
 
+Reteste visível em 2026-10-31: 20/20 verificações passaram em Firefox ESR nas
+dez larguras. A captura de 320 px foi inspecionada; título, resumo, corpo,
+categoria e tags permanecem na ordem do DOM, sem alargar o documento. O teste
+compara CSS sobre fixture sintética; não valida render array, campos ou conteúdo
+de uma publicação real. Capturas e relatório em
+`/home/piradopirata/aculta-suite-out/revista-article-visual-followup-20261031/`.
+
 ## Artigo editorial da Revista no Runtime
 
 `revista-browser-zoom.py` verifica a raiz pública da Revista e um artigo
