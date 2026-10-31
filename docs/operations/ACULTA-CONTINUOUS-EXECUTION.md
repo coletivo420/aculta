@@ -2669,3 +2669,6 @@ ou preferência persistente alterados.
   combinações de rota e modo, sem violações nem incompletos. Não houve submit
   nem criação de produto. Evidência em
   `/home/piradopirata/aculta-suite-out/greenstash-manager-final-528/`.
+- Os contratos Unit de Green Stash passaram após o grant: `GreenStashAccessPolicy`,
+  leitor/ACL de produtos, criação de produto e navegação — 13 testes e 100
+  asserções, sem falhas. A execução não persiste dados Runtime.
