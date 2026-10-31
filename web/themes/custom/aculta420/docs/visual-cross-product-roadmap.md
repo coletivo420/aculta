@@ -1427,10 +1427,11 @@ F5/MF3/F11 seguem pendentes. Nenhum SDC/slot/prop mudou.
 
 ### OCS-F9 — formulários privados do Perfil Studio (2026-10-31)
 
-Os formulários existentes de bio e redes sociais recebem a fundação visual
-Fidelity por tokens semânticos já emitidos pelo módulo. O escopo não alcança o
-modal da Conta nem páginas externas ao Studio. Fixture Firefox ESR passou
-58/58 verificações em claro/escuro e 320/390/768/1440px. Não houve mudança de
+Os formulários existentes de bio, redes, apelido e privacidade recebem a
+fundação visual Fidelity, com tokens existentes ou seletores pelos IDs reais
+sob `body.path-perfil`. O escopo não alcança o modal da Conta nem a rota geral
+de privacidade. Fixture Firefox ESR passou 60/60 verificações em claro/escuro
+e 320/390/768/1440px. Não houve mudança de
 Form API, SDC ou serviço. Runtime servido, fluxos reais, ACL entre contas,
 AJAX/no-JS, zoom, WCAG e homologação global permanecem pendentes; consulte
 `mobile-first-audit.md` e a matriz Studio.

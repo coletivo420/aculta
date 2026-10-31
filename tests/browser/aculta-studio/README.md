@@ -420,8 +420,9 @@ fieldset, campos, bordas/estados de erro, controles de imagem, botões default,
 primário, reset e destrutivo, foco via teclado e isolamento dos roots Studio.
 Como o Form API usa `node-revista-form` fora do Studio, compara
 `body.path-marley` com `body.path-magazine`. Também valida os roots
-`studio-profile-form` dos formulários existentes de bio/redes e confirma que o
-token do modal `account-bio-dialog` não recebe Fidelity. Cobre 320/390/768/1440px
+`studio-profile-form` dos formulários existentes de bio/redes e também os
+Form API de apelido e privacidade, limitados a `body.path-perfil`; confirma que
+o token do modal `account-bio-dialog` não recebe Fidelity. Cobre 320/390/768/1440px
 em claro e escuro, sem enviar formulários.
 
 ```sh
@@ -460,9 +461,9 @@ forma estão sob `body.path-marley`; Magazine conserva tipografia e tokens
 globais. Na mesma fixture, os tokens já emitidos para bio/redes do Perfil agora
 são traduzidos em `studio-profile-form`, que recebe Fidelity sem alterar Form
 API. O modal de bio usado pela Conta permanece no estilo próprio. Firefox passou
-58/58 checks em claro/escuro, quatro larguras, foco, Marley, Perfil, Magazine e
+60/60 checks em claro/escuro, quatro larguras, foco, Marley, Perfil, Magazine e
 modal Conta. Capturas e JSON em
-`/home/piradopirata/aculta-suite-out/studio-form-profile-fidelity-20261031/`.
+`/home/piradopirata/aculta-suite-out/studio-profile-forms-fidelity-20261031/`.
 
 O reteste real anterior do formulário Marley passou 78/78 checks, incluindo
 contagem única do shell e reflow do H1 em duas linhas a 320px. Capturas em

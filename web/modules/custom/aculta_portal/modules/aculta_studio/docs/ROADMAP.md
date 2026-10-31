@@ -905,11 +905,13 @@ validação do path canônico.
 
 Os Form API existentes `AccountBioForm` e `SocialLinkForm` já emitem tokens
 `studio-bio-form`/`studio-social-form` somente nos caminhos privados do Perfil
-Studio. O tema traduz esses tokens para `studio-profile-form` e aplica a mesma
-fundação Fidelity dos formulários Marley/Perfil; nenhum controller, Form API,
+Studio. Apelido e privacidade usam os IDs de formulário reais sob
+`body.path-perfil`. O tema traduz os tokens bio/social para
+`studio-profile-form` e aplica a mesma fundação Fidelity dos formulários
+Marley/Perfil; nenhum controller, Form API,
 rota, ACL, dado, SDC ou fluxo AJAX da Conta foi alterado. O modal de bio da
 Conta continua sem Fidelity. Firefox ESR fixture com CSS candidata passou
-58/58 checks em claro/escuro, 320/390/768/1440px e foco visível. Runtime servido,
+60/60 checks em claro/escuro, 320/390/768/1440px e foco visível. Runtime servido,
 submit real, privacy A/B, cache, AJAX/no-JS, zoom, WCAG, S-R4/S-R5 e OCS-F11
 permanecem pendentes.
 ### OCS-F5 — isolamento do formulário editorial Marley (2026-10-31)

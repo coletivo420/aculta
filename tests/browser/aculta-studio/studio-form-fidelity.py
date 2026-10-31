@@ -83,6 +83,12 @@ markup = """<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <form class="studio-profile-form" id="profile-form"><label for="profile-bio">Biografia</label>
 <textarea id="profile-bio" class="form-control"></textarea>
 <input type="submit" class="form-submit" value="Salvar"></form></main>
+<main class="aculta-main" id="nickname-main"><h1>Editar apelido</h1>
+<form id="aculta-user-studio-nickname-form"><label for="nickname">Apelido</label>
+<input id="nickname" class="form-control" type="text"><input type="submit" class="form-submit" value="Salvar"></form></main>
+<main class="aculta-main" id="privacy-main"><h1>Privacidade do perfil</h1>
+<form id="aculta-user-profile-visibility-form"><label for="privacy">Mostrar bio</label>
+<input id="privacy" type="checkbox"><input type="submit" class="form-submit" value="Salvar"></form></main>
 <main class="aculta-main" id="account-main"><form id="account-modal-form" data-portal-ui="account-bio-dialog">
 <input class="form-control" type="text" aria-label="Bio na conta"></form></main></body></html>"""
 
@@ -217,6 +223,20 @@ try:
                and marley_scope["token"] == ("#1f1f1f" if mode == "light" else "#efefef")
                and "Montserrat" in marley_scope["font"],
                marley_scope)
+        driver.js("document.body.className=''")
+        driver.js("document.body.className='path-perfil'")
+        private_forms = driver.js("""return ['aculta-user-studio-nickname-form','aculta-user-profile-visibility-form'].map(id=>{
+          const form=document.getElementById(id);const field=form.querySelector('input:not([type=submit])');
+          const submit=form.querySelector('[type=submit]');return {id, margin:getComputedStyle(form).marginBlockStart,
+            padding:getComputedStyle(form).paddingBlockStart, token:getComputedStyle(form).getPropertyValue('--aculta-studio-fidelity-text').trim(),
+            font:getComputedStyle(form).fontFamily, submit:submit.getBoundingClientRect().height,
+            field:field.getBoundingClientRect().height};});""")
+        record(f"{mode}: apelido e privacidade do Perfil recebem Fidelity",
+               all(item["margin"] == "20px" and item["padding"] == "20px"
+                   and item["token"] == ("#1f1f1f" if mode == "light" else "#efefef")
+                   and "Montserrat" in item["font"] and item["submit"] >= 44
+                   and (item["id"] != "aculta-user-studio-nickname-form" or item["field"] >= 44)
+                   for item in private_forms), private_forms)
         driver.js("document.body.className=''")
         profile_scope = driver.js("""const form=document.querySelector('#profile-form');
           const field=form.querySelector('textarea');const submit=form.querySelector('[type=submit]');
