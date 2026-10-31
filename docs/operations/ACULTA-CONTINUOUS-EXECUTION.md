@@ -2604,3 +2604,8 @@ ou preferência persistente alterados.
   inativo nos passos 7/8 de 320/390/768px. A regra está presente no agregado
   CSS; o próximo diagnóstico precisa explicar por que o WebDriver não mantém
   `document.activeElement` nessa sequência antes de qualquer nova alteração.
+- Reteste final de `links` após rebuild de cache passou sem falhas: 37 checks
+  de foco/overflow e 7 limites de sequência esperados, em 320/390/768/1280px.
+  A captura diagnóstica também confirmou foco visível real no link de skip, na
+  marca da Institution Bar, no logo, no menu e nos links de conteúdo. Evidência
+  em `/home/piradopirata/aculta-suite-out/links-keyboard-final/results.json`.
