@@ -86,3 +86,7 @@ Nomes em `aculta_qrcode.services.yml`, com injeção de dependência e sem `\Dru
 - Testes Unit do `generator` e dos `presets` (contraste, margens, rejeição de protocolos).
 - Kernel do `manager`, `resolver` e `redirect`: destino, validade, desativação, Entity Access e cache.
 - Gate: `php scripts/validate-aculta-portal-drupal11.php` e `php scripts/validate-module-theme-boundary.php` quando houver código.
+
+## Decisão do responsável — personalização limitada (2026-10-31)
+
+Organizadores podem personalizar QR Codes dentro de limites de contraste, legibilidade e segurança definidos pelo ACULTA. Logos devem continuar usando o pipeline de arquivos do `aculta_image`; não aceitar URLs remotas. O administrador define os limites permitidos.
