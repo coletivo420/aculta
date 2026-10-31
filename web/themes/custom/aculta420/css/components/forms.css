@@ -14,6 +14,13 @@
     inline-size: 100% !important;
     max-inline-size: 100% !important;
   }
+  form.node-form .vertical-tabs {
+    flex-direction: column;
+  }
+  form.node-form .vertical-tabs__menu {
+    inline-size: 100%;
+    flex: 0 0 auto;
+  }
   form.node-form .entity-meta {
     flex: 0 0 100% !important;
     min-inline-size: 0 !important;
