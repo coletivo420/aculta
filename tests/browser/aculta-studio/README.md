@@ -229,6 +229,13 @@ Matriz de casos e critérios:
 
 O script `ocs-baseline.py` captura, com Firefox ESR visível, a homepage pública e, por padrão, a entrada da Conta, Marley, Ganjalab, WE SATIVA, Conta, Perfil, Green Stash, Culturas e planos Mercado Pago. Para cada Suite resolve a URL no Domain ativo por `DomainPurposeManager::environmentPathUrl()`; não assume que paths de Suites diferentes funcionem no host da Conta. Requer `DISPLAY=:0`, `SUITE_OUT` fora do repositório e Drush local apontando para `aculta_runtime`; usa perfil temporário em `$SUITE_OUT/profiles`. `STUDIO_PAGE` limita a uma URL customizada; `STUDIO_ROUTES` aceita URLs completas ou caminhos no host `STUDIO_LOGIN_URI`. Imagens e JSON ficam em `$SUITE_OUT`. `OCS_WIDTHS=320,360,390,599,600,768,1024,1280,1440` captura a grade completa do gate; sem essa variável, o modo rápido usa 1440/390 px. Se ULI falhar, a tentativa vai a `baseline-deferred.json` e preserva a última execução bem-sucedida em `baseline.json`. A captura autentica somente a conta de teste e não homologa a operação do novo host Wiki.
 
+Com `OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1`, a folha candidata do Studio pode ser
+injetada somente no Firefox. Na rota `/perfil`, o relatório mede os links e
+botões dentro das ações dos SDCs `profile-identity`, `profile-bio` e
+`profile-social`, falhando se não encontrar ações ou se alguma medir menos de
+44px. Esse check valida apenas apresentação; não envia formulários nem testa
+grants ou persistência.
+
 Execução de referência no servidor de desenvolvimento:
 
 ```sh

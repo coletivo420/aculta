@@ -701,3 +701,12 @@ revalidada em 27 larguras (243 checks Firefox ESR), com rótulos longos quebrand
 sem overflow e cards em duas colunas a partir de 768px. Não cria SDC nem altera
 contrato. Capturas e limitações em `studio-visual/visual-parity-matrix.md` e
 `mobile-first-audit.md`.
+
+Atualização visual de 2026-10-31: links e botões dentro de
+`profile-identity__actions`, `profile-bio__actions` e `profile-social__actions`
+recebem altura mínima de 44px. A captura autenticada mediu o baseline servido em
+19px e a folha candidata em 44px ou mais nos sete links reais, a
+320/390/768/1024/1440px; modo escuro passou a 320/390px. Nenhum contrato SDC
+mudou. Ver limites e evidências no [roadmap visual](visual-cross-product-roadmap.md)
+e na [auditoria mobile-first](mobile-first-audit.md); validação candidata não
+equivale a homologação Runtime, F11 ou MF3.

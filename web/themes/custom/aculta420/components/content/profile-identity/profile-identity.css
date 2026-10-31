@@ -62,6 +62,12 @@
   min-inline-size: 0;
 }
 
+.aculta-profile-identity__actions :is(a, button) {
+  display: inline-flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+}
+
 .aculta-profile-identity :is(a, button):focus-visible {
   outline: 3px solid var(--aculta-focus-ring);
   outline-offset: 3px;

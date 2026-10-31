@@ -3172,3 +3172,19 @@ zero duplicação de título; shell único e sem overflow. Capturas/relatório e
 `/home/piradopirata/aculta-suite-out/saved-content-heading-candidate-20261031/`.
 Nenhum conteúdo foi alterado e a folha ainda não está servida. Cache privado
 A/B, ACL por entidade, zoom, teclado, no-JS e WCAG integral permanecem pendentes.
+
+### OCS-F9 / THEME-MF2 — alvos de ação do Perfil (2026-10-31)
+
+O baseline autenticado do Runtime encontrou sete links nos SDCs `profile-identity`,
+`profile-bio` e `profile-social` com somente 19px de altura. O CSS dos três
+componentes agora define altura mínima de 44px para links e botões dentro das
+ações. CSS candidato injetado na sessão Firefox ESR passou 7/7 alvos em cada
+largura 320/390/768/1024/1440px (44px; 48px nos três links de identidade em
+768/1024px), sem overflow. Em modo escuro, 320/390 também passaram 7/7. Capturas
+foram revistas em 320/1440px; a de 320px inclui o aviso transitório de login.
+Relatórios em
+`/home/piradopirata/aculta-suite-out/profile-action-target-baseline-20261031/`,
+`/home/piradopirata/aculta-suite-out/profile-action-target-candidate-20261031/`
+e `/home/piradopirata/aculta-suite-out/profile-action-target-dark-20261031/`.
+O CSS ainda não está servido no Runtime. Teclado completo, zoom, no-JS, contraste
+WCAG e regressão entre contas seguem pendentes; não aprova MF3 ou F11.

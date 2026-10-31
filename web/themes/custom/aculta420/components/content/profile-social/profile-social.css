@@ -37,6 +37,12 @@
   gap: 0.5rem;
 }
 
+.aculta-profile-social__actions :is(a, button) {
+  display: inline-flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+}
+
 .aculta-profile-social :is(a, button):focus-visible {
   outline: 3px solid var(--aculta-focus-ring);
   outline-offset: 3px;

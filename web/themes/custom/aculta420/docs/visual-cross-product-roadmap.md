@@ -1599,3 +1599,22 @@ O consumer real `/configuracoes`, autenticado com conta sintética, passou
 e `/home/piradopirata/aculta-suite-out/account-shell-two-column-dark-20261031/`.
 Não houve submissão nem mudança de estado; o CSS foi injetado só no navegador,
 portanto THEME-MF3 continua pendente.
+
+### OCS-F9 / THEME-MF2 — alvos de ação do Perfil (2026-10-31)
+
+Uma captura autenticada de `/perfil` no Runtime mediu os sete links de edição
+de identidade, bio e redes sociais em apenas 19px de altura. Os três SDCs
+existentes agora dão 44px mínimos às ações, sem alterar props, slots, rotas ou
+formulários. `ocs-baseline.py`, com o CSS do worktree injetado somente na sessão
+Firefox ESR, mediu os sete alvos em 44px (ou 48px onde o estilo base já era
+maior) nas larguras 320/390/768/1024/1440px, sem overflow; 320/390 também
+passaram em modo escuro. O baseline Runtime sem override confirmou 19px; o CSS
+candidato passou todas as verificações automáticas e as capturas 320/1440 foram
+revistas. Evidências em
+`/home/piradopirata/aculta-suite-out/profile-action-target-baseline-20261031/`,
+`/home/piradopirata/aculta-suite-out/profile-action-target-candidate-20261031/`
+e `/home/piradopirata/aculta-suite-out/profile-action-target-dark-20261031/`.
+É evidência de apresentação candidata: o Runtime ainda não serve essa alteração,
+e isto não aprova OCS-F9, THEME-MF3, WCAG integral ou OCS-F11. A captura mobile
+contém aviso temporário de login sobre parte da tela, sem interferir na medição
+dos links.
