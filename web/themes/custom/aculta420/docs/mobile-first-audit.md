@@ -34,9 +34,9 @@ ou disponibilidade. A tabela mantém scroll interno com `.table-responsive`.
 Firefox ESR visível com a folha candidata injetada somente na sessão passou
 20/20 verificações: nove viewports (320/360/390/599/600/768/1024/1280/1440)
 em claro/escuro, um dashboard, Institution Bar e Domain Header únicos, sem
-overflow no documento, alvos de 44px e foco de teclado visível em ambos os
-modos. Capturas 320/1440 foram revisadas. Fixture correspondente passou
-110/110 checks. Evidências em
+overflow no documento, campos busca/situação refluídos, alvos de 44px e foco de
+teclado visível em ambos os modos. Capturas 320/1440 foram revisadas. A fixture
+correspondente passou 110/110 checks. Evidências em
 `/home/piradopirata/aculta-suite-out/culturas-runtime-dashboard-20261030/` e
 `/home/piradopirata/aculta-suite-out/culturas-dashboard-20261030/`.
 

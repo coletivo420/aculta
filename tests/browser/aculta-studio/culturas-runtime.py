@@ -8,6 +8,7 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[3]
 RUNTIME_ROOT = Path(os.environ.get("ACULTA_ROOT", "/home/piradopirata/projetos/aculta")).resolve()
@@ -27,6 +28,14 @@ if os.environ.get("DISPLAY") != ":0":
     raise SystemExit("Execute com DISPLAY=:0 e Firefox ESR visível.")
 if subprocess.check_output(["hostname"], text=True).strip() != "toca":
     raise SystemExit("Runtime visual somente no servidor de desenvolvimento toca.")
+if str(RUNTIME_ROOT) != "/home/piradopirata/projetos/aculta":
+    raise SystemExit("Use somente o checkout servido autorizado do servidor de desenvolvimento.")
+runtime_parts = urlparse(RUNTIME_URL)
+login_parts = urlparse(LOGIN_URI)
+if (runtime_parts.scheme, runtime_parts.hostname) != ("https", "eventos.aculta.toca.net.br"):
+    raise SystemExit("CULTURAS_RUNTIME_URL deve apontar somente ao purpose Eventos de teste.")
+if (login_parts.scheme, login_parts.hostname) != ("https", "conta.aculta.toca.net.br"):
+    raise SystemExit("STUDIO_LOGIN_URI deve apontar somente ao domínio Conta de teste.")
 
 drush = ["php", str(RUNTIME_ROOT / "vendor/drush/drush/drush.php")]
 status = subprocess.check_output(drush + ["status", "--fields=uri,root,db-name"], cwd=RUNTIME_ROOT, text=True)
@@ -119,10 +128,12 @@ try:
             data = driver.js("""return (()=>{const q=s=>document.querySelector(s),all=s=>Array.from(document.querySelectorAll(s));
 const root=q('.aculta-events-organizer-dashboard'),main=q('.aculta-main'),actions=root?.querySelector(':scope > .culturas-guide + div');
 const links=Array.from(actions?.querySelectorAll('a')||[]),first=links[0],second=links[1],table=root?.querySelector('table'),tableWrap=root?.querySelector(':scope > .table-responsive');
+const filterForm=root?.querySelector('.organizer-dashboard-filters form'),filterInput=filterForm?.querySelector('input[name="busca"]'),filterSelect=filterForm?.querySelector('select[name="status"]');
 const box=e=>e?{width:e.getBoundingClientRect().width,height:e.getBoundingClientRect().height,background:getComputedStyle(e).backgroundColor,color:getComputedStyle(e).color,border:getComputedStyle(e).borderColor,borderWidth:getComputedStyle(e).borderTopWidth,display:getComputedStyle(e).display}:null;
 return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,bodyClasses:Array.from(document.body.classList),dashboardCount:all('.aculta-events-organizer-dashboard').length,
 rootChildren:Array.from(root?.children||[]).map(e=>({tag:e.tagName,className:String(e.className)})),actionsClass:actions?String(actions.className):null,
 actionCount:links.length,actionChildren:Array.from(actions?.children||[]).map(e=>({tag:e.tagName,className:String(e.className)})),actionLinkClasses:links.map(e=>String(e.className)),firstAction:box(first),secondAction:box(second),tableWidth:tableWrap?.clientWidth||0,tableScrollWidth:tableWrap?.scrollWidth||0,
+filterColumns:getComputedStyle(filterForm).gridTemplateColumns.split(' ').length,filterInput:box(filterInput),filterSelect:box(filterSelect),filterWidth:filterForm?.clientWidth||0,guideMinHeight:parseFloat(getComputedStyle(root?.querySelector('summary')).minBlockSize),
 institutionCount:all('.aculta-institution-bar').length,domainHeaderCount:all('.aculta-header').length,mainWidth:main?.getBoundingClientRect().width||0,
 font:getComputedStyle(root||main).fontFamily,focusables:all('a,button,input,select,summary').length};})();""")
             data["mode"] = mode
@@ -159,6 +170,14 @@ def failed(item):
         or item["firstAction"]["height"] < 44
         or item["firstAction"]["background"] == "rgba(0, 0, 0, 0)"
         or item["secondAction"]["borderWidth"] == "0px"
+        or item["filterInput"] is None
+        or item["filterSelect"] is None
+        or item["filterInput"]["height"] < 44
+        or item["filterSelect"]["height"] < 44
+        or item["filterInput"]["width"] > item["filterWidth"]
+        or item["filterSelect"]["width"] > item["filterWidth"]
+        or item["filterColumns"] != (1 if item["width"] < 768 else 3)
+        or item["guideMinHeight"] < 44
         or (item["width"] < 600 and item["tableScrollWidth"] <= item["tableWidth"])
     )
 
