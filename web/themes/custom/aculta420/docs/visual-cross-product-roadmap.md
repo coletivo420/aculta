@@ -1684,6 +1684,10 @@ As capturas 320/1440px foram revisadas. O Runtime ainda
 serve a CSS anterior à branch, portanto a integração visual e THEME-MF3 ficam
 pendentes. Evidências e comandos em `mobile-first-audit.md` e
 `studio-visual/visual-parity-matrix.md`.
+Reteste em 2026-10-31 repetiu 28/28; capturas mobile/desktop revisadas em
+`/home/piradopirata/aculta-suite-out/revista-cover-resume-20261031/`. Lint CSS/JS,
+schemas SDC, Design Foundations e fronteira módulo/tema passaram na árvore local;
+o Runtime ainda não serve a candidata e os gates gerais permanecem pendentes.
 
 ### OCS-F9 / THEME-MF2 — Perfil em zoom real (2026-10-31)
 

@@ -3445,6 +3445,14 @@ Estados de erro/vazio, reduced motion quando aplicável, leitor de tela e
 WCAG 2.2 AA integral continuam sem validação. A folha candidata não foi servida
 pelo Runtime; o resultado não aprova THEME-MF3 nem OCS-F11.
 
+Reexecução em 2026-10-31 com a mesma folha candidata passou novamente **28/28**.
+As capturas de 320 e 1440 px foram revisadas; os quatro cartões mantêm a grade,
+as imagens carregadas, alvos mínimos e shell global. Relatório e imagens desta
+rodada em `/home/piradopirata/aculta-suite-out/revista-cover-resume-20261031/`.
+Na árvore local, CSS lint, JS lint, schemas SDC (55 componentes/759 checks),
+Design Foundations (2429 checks) e fronteira módulo/tema (3491 verificações)
+também passaram; esses gates estáticos não substituem a integração servida.
+
 ### OCS-F8 / THEME-MF2 — formulários Green Stash em zoom (2026-10-31)
 
 Firefox ESR visível, fixture local do tema: **186/186 checks** no Green Stash
