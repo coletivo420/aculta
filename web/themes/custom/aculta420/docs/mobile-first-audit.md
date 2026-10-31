@@ -3188,3 +3188,17 @@ Relatórios em
 e `/home/piradopirata/aculta-suite-out/profile-action-target-dark-20261031/`.
 O CSS ainda não está servido no Runtime. Teclado completo, zoom, no-JS, contraste
 WCAG e regressão entre contas seguem pendentes; não aprova MF3 ou F11.
+
+### OCS-F9 / THEME-MF2 — Perfil em zoom real (2026-10-31)
+
+O harness `ocs-baseline.py` agora tem modo focal `OCS_PROFILE_ACTION_ZOOM=1`.
+No Firefox ESR visível, com a folha candidata injetada apenas na sessão, o
+Runtime autenticado passou **2/2 níveis de zoom**: 200% (viewport CSS de 640px)
+e 400% (320px). Nos dois níveis, os sete links de identidade, bio e redes
+mediram 44px de altura, ficaram dentro da largura visível e o documento/corpo
+não teve overflow horizontal. Capturas e `baseline.json` em
+`/home/piradopirata/aculta-suite-out/profile-action-zoom-gate-20261031/`.
+A execução não envia formulários e não altera dados; o zoom do Firefox foi
+restaurado pelo script. É CSS candidata, não CSS servida. Navegação por teclado,
+leitor de tela, contraste completo, A/B de privacidade e OCS-F11/THEME-MF3
+continuam pendentes.

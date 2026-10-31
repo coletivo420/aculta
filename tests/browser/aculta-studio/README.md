@@ -236,6 +236,13 @@ botões dentro das ações dos SDCs `profile-identity`, `profile-bio` e
 44px. Esse check valida apenas apresentação; não envia formulários nem testa
 grants ou persistência.
 
+Para exercitar zoom real do navegador no Perfil, combine
+`OCS_PROFILE_ACTION_ZOOM=1` com `OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1` e limite a
+execução a `/perfil` via `STUDIO_ROUTES`. O script usa Firefox ESR visível e
+`xdotool` para Ctrl+0/Ctrl++ até 200% e 400%, mede overflow e os mesmos alvos de
+44px, rola o primeiro alvo para revisão visual e restaura o zoom antes de sair.
+O CSS candidato é injetado apenas na sessão; nenhum formulário é submetido.
+
 Execução de referência no servidor de desenvolvimento:
 
 ```sh

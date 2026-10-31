@@ -257,7 +257,9 @@ socket.onmessage = (event) => {
         targets = record.get("profileActionTargets", [])
         checks = {
             "actionsPresent": len(targets) >= 3,
-            "allActionsAtLeast44px": bool(targets) and all(target["height"] >= 44 for target in targets),
+            "allActionsAtLeast44px": bool(targets) and all(
+                target["width"] >= 44 and target["height"] >= 44 for target in targets
+            ),
         }
         record["profileActionTargetChecks"] = checks
         record["profileActionTargetStatus"] = "PASS" if all(checks.values()) else "FAIL"
@@ -343,10 +345,95 @@ socket.onmessage = (event) => {
     print(f"CAPTURE {target.name}: {detail}")
 
 
+def profile_action_zoom(driver):
+    """Check real Firefox zoom on private Profile action targets."""
+    if not STUDIO_CSS_OVERRIDE:
+        raise RuntimeError("Profile zoom requires OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1.")
+    url = URI.rstrip("/") + "/perfil"
+    driver.get(url)
+    for _ in range(100):
+        if driver.js("return document.readyState === 'complete'"):
+            break
+        time.sleep(0.2)
+    driver.js("const style=document.createElement('style');style.dataset.ocsStudioFidelityCandidate='true';style.textContent=arguments[0];document.head.append(style);return true", [STUDIO_CANDIDATE_CSS])
+    results = []
+
+    def set_viewport(width, height):
+        node = r"""
+const socket = new WebSocket(process.argv[1]);
+socket.onopen = () => socket.send(JSON.stringify({id: 1, method: 'browsingContext.getTree', params: {}}));
+socket.onmessage = (event) => {
+  const message = JSON.parse(event.data);
+  if (message.id === 1) {
+    const context = message.result.contexts[0].context;
+    socket.send(JSON.stringify({id: 2, method: 'browsingContext.setViewport', params: {context, viewport: {width: Number(process.argv[2]), height: Number(process.argv[3])}}}));
+  } else if (message.id === 2) {
+    if (message.error) { console.error(message.error.message); process.exitCode = 1; }
+    socket.close();
+  }
+};
+"""
+        subprocess.run(["node", "-e", node, driver.websocket_url, str(width), str(height)], check=True)
+
+    def press_browser_key(key):
+        windows = subprocess.check_output(
+            ["xdotool", "search", "--onlyvisible", "--class", "firefox"], text=True,
+        ).splitlines()
+        if not windows:
+            raise RuntimeError("Janela visível do Firefox ESR não encontrada.")
+        subprocess.run(["xdotool", "windowactivate", "--sync", windows[-1]], check=True)
+        subprocess.run(["xdotool", "key", "--clearmodifiers", key], check=True)
+
+    for target in (2.0, 4.0):
+        press_browser_key("ctrl+0")
+        time.sleep(0.15)
+        set_viewport(1280, 1000)
+        zoom = driver.js("return {width: innerWidth, dpr: devicePixelRatio}")
+        for _ in range(24):
+            if 1280 / max(1, zoom["width"]) >= target - 0.08:
+                break
+            press_browser_key("ctrl+plus")
+            time.sleep(0.12)
+            zoom = driver.js("return {width: innerWidth, dpr: devicePixelRatio}")
+        metrics = driver.js("""return (() => {
+          const targets=[...document.querySelectorAll(
+            '.aculta-profile-identity__actions a, .aculta-profile-identity__actions button, '
+            + '.aculta-profile-bio__actions a, .aculta-profile-bio__actions button, '
+            + '.aculta-profile-social__actions a, .aculta-profile-social__actions button'
+          )].map(element=>{const rect=element.getBoundingClientRect();return {
+            label:element.textContent.trim(),left:rect.left,right:rect.right,
+            width:rect.width,height:rect.height};});
+          return {width:innerWidth,ratio:1280/innerWidth,
+            documentWidth:document.documentElement.scrollWidth,
+            bodyWidth:document.body.scrollWidth,targets};
+        })();""")
+        metrics["targetZoom"] = target
+        metrics["ok"] = (
+            metrics["ratio"] >= target - 0.08
+            and metrics["documentWidth"] <= metrics["width"]
+            and metrics["bodyWidth"] <= metrics["width"]
+            and len(metrics["targets"]) >= 3
+            and all(item["width"] >= 44 and item["height"] >= 44 and item["left"] >= -1
+                    and item["right"] <= metrics["width"] + 1
+                    for item in metrics["targets"])
+        )
+        results.append(metrics)
+        driver.js("document.querySelector('.aculta-profile-identity__actions a, .aculta-profile-identity__actions button')?.scrollIntoView({block:'center'});return true")
+        time.sleep(0.15)
+        screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+        (OUT / f"studio-perfil-zoom-{round(target * 100)}.png").write_bytes(base64.b64decode(screenshot))
+        print(f"{'PASS' if metrics['ok'] else 'FAIL'} Firefox zoom {round(target * 100)}%: {metrics}")
+        if not metrics["ok"]:
+            CAPTURE_FAILURES.append({"url": url, "profileActionZoom": metrics})
+    press_browser_key("ctrl+0")
+    return results
+
+
 def main():
     if os.environ.get("DISPLAY") != ":0":
         raise RuntimeError("Use Firefox ESR visível com DISPLAY=:0.")
     driver = Driver(bidi=True)
+    profile_zoom_results = None
     try:
         if os.environ.get("OCS_SKIP_OPENCULTURAS") != "1":
             for width, height in WIDTHS:
@@ -381,6 +468,8 @@ def main():
                         "reason": f"{type(error).__name__}: {error}",
                     })
                     print(f"DEFERRED {page_url} at {width}px: {type(error).__name__}")
+        if os.environ.get("OCS_PROFILE_ACTION_ZOOM") == "1":
+            profile_zoom_results = profile_action_zoom(driver)
     finally:
         driver.close()
 
@@ -393,6 +482,7 @@ def main():
         "widths": [width for width, _ in WIDTHS],
         "screenshots": [capture["screenshot"] for capture in CAPTURES if "screenshot" in capture],
         "captures": CAPTURES,
+        "profile_action_zoom": profile_zoom_results,
         "fidelity_failures": CAPTURE_FAILURES,
         "limitations": [
             "The public OpenCulturas homepage is not an authenticated dashboard screen.",

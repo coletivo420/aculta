@@ -1618,3 +1618,15 @@ e `/home/piradopirata/aculta-suite-out/profile-action-target-dark-20261031/`.
 e isto não aprova OCS-F9, THEME-MF3, WCAG integral ou OCS-F11. A captura mobile
 contém aviso temporário de login sobre parte da tela, sem interferir na medição
 dos links.
+
+### OCS-F9 / THEME-MF2 — Perfil em zoom real (2026-10-31)
+
+`ocs-baseline.py` ganhou modo focal para Ctrl+0/Ctrl++ em Firefox ESR. Com CSS
+candidata injetada somente na sessão Runtime autenticada, 200% e 400% passaram:
+viewport CSS de 640px/320px, sete ações com 44px de altura, sem overflow e com
+todos os alvos dentro da largura visível. Capturas e relatório em
+`/home/piradopirata/aculta-suite-out/profile-action-zoom-gate-20261031/`.
+O teste restaura o zoom e não envia formulários. A CSS ainda não é servida; este
+resultado não aprova OCS-F9, THEME-MF3 ou OCS-F11. Consulte também
+`mobile-first-audit.md` para os limites de privacidade e acessibilidade ainda
+pendentes.
