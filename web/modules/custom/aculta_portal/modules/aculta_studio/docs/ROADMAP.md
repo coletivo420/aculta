@@ -1099,6 +1099,12 @@ sem overflow. Axe-core passou nos seis estados operacionais, sem violações ou
 incompletos. Não houve submit nem criação de produto; a validação funcional de
 persistência permanece pendente.
 
+Os contratos Unit e Kernel do módulo Commerce também passaram após o grant:
+13 testes/100 asserções Unit e 15 testes/260 asserções Kernel, com 7 skips
+esperados. A evidência visual/axe das rotas operacionais está verde; falta
+somente submeter um rascunho autorizado e validar persistência/rollback antes
+de considerar F8 e F11 homologados.
+
 Reteste Firefox ESR visível (`DISPLAY=:0`) cobriu claro/escuro em
 320/390/768/1440px, com largura documental igual à viewport e sem overflow em
 todos os oito estados. Evidência em
