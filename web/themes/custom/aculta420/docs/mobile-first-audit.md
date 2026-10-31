@@ -2626,8 +2626,8 @@ A execução sem JavaScript passou **210/210** checks nas dez raízes e larguras
 320/390/599/600/768/1024/1440px, incluindo navegação visível e busca contextual
 da Wiki. Evidências: `/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-continuation-20261031/`
 e `/home/piradopirata/aculta-suite-out/purpose-shell-nojs-continuation-20261031b/`.
-A unidade de `CaptchaPresentationHooks` passou 2 testes/4 assertions com o
-bootstrap Drupal. A correção usa o marcador neutro `challenge-frame` e CSS por
+A unidade de `CaptchaPresentationHooks` passou 3 testes/8 assertions com o
+bootstrap Drupal (reteteste local em 2026-10-31). A correção usa o marcador neutro `challenge-frame` e CSS por
 container query no código da branch, mas o Runtime `2493d7535` ainda serve a
 versão anterior. Validação do contrato no Runtime após servir/rebuild permanece
 pendente; THEME-MF3 não está aprovado.
