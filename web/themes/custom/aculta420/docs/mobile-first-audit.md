@@ -1,6 +1,6 @@
 # Auditoria mobile-first ACULTA420 — THEME-MF0
 
-**Estado em 2026-10-30, na árvore atual de `refactor/opencultures-codigo-visual`: inventário lexical regenerado; THEME-MF0 continua parcial, MF2 tem migrações incrementais e THEME-MF3 não está aprovado.**
+**Estado em 2026-11-01, na árvore atual de `refactor/opencultures-codigo-visual`: inventário lexical regenerado; THEME-MF0 continua parcial, MF2 tem migrações incrementais e THEME-MF3 não está aprovado.**
 A auditoria inicial foi registrada no checkout servidor `ded8a6181`. Esta
 recontagem foi executada na branch `refactor/opencultures-codigo-visual` em
 `/home/piradopirata/worktrees/opencultures-f0-adm8-e8`; ela cobre fontes do
@@ -35,6 +35,14 @@ Essa injeção demonstra o efeito do candidato sem modificar o Runtime; ela não
 valida a integração do hook Portal servido, o CAPTCHA externo por dentro, nem
 substitui a repetição após integração. O overflow servido em Conta continua
 aberto e THEME-MF3 permanece pendente.
+
+No worktree, o reteste focal do candidato também passou PHP lint, PHPCS e a
+suíte Unit do hook (3 testes/8 assertions), além de Stylelint em `auth.css`.
+`validate-aculta420-sdc-schemas.php` passou (55 componentes, 27 includes,
+759 verificações), `validate-module-theme-boundary.php` passou (3489) e
+`validate-portal-ui-docs.php` passou (518 tokens mapeados, 421 usados, 149
+atributos). Esses checks verificam a árvore local; não substituem discovery nem
+integração no Runtime.
 
 ### THEME-MF2 — barra multidomínio e scroll móvel (2026-10-31)
 
