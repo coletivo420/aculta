@@ -1876,3 +1876,12 @@ A CSS foi injetada apenas na sessão; implantação e homologação integrada ai
 O harness foi ampliado para exigir `:focus-visible` com outline sólido de 3px;
 os retestes passaram 17/17 com e sem JavaScript da página. Evidências e capturas
 revisadas em `mobile-first-audit.md`.
+
+### OCS-F10 — descoberta do formulário owner de Galerias (2026-10-31)
+
+`GaleriasTab` aponta para a Form API `entity.media_gallery.add_form` no purpose
+MAIN. A rota aceita a conta de homologação e foi aberta por GET em 320/390/768/
+1440px, sem overflow, mas usa o tema administrativo e não apresenta shell ou
+marcadores Studio. É inventário da tela de owner, não consumer visual Studio;
+qualquer entrada dentro do shell requer contrato explícito do owner. Sem submit,
+criação de galeria ou alteração de configuração. Detalhes em `mobile-first-audit.md`.

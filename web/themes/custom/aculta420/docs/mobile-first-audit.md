@@ -3683,3 +3683,19 @@ sem falhas em 320/390/768/1440px, com navegação 4/4 e rolagem local aprovada e
 checks de heading na landing nem aprova OCS-F11/THEME-MF3. Evidências em
 `/home/piradopirata/aculta-suite-out/marley-root-heading-final-20261031/` e
 `/home/piradopirata/aculta-suite-out/marley-archived-heading-scope-20261031/`.
+
+### OCS-F10 — formulário proprietário de criação de galeria (2026-10-31)
+
+Leitura Drush no Runtime confirmou `entity.media_gallery.add_form`, com
+`_entity_create_access: media_gallery`, `_admin_route: true` e purpose `main`.
+A conta sintética `aculta_visual_admin` (UID 257) tem acesso. Firefox ESR abriu
+por GET `https://aculta.toca.net.br/painel-administrativo/conteudo/media-gallery/add`
+em 320/390/768/1440px; document/body permaneceram sem overflow. As capturas
+320/1440 foram inspecionadas: a página usa o tema administrativo, não emite
+marcadores Studio nem Institution Bar/Domain Header. Nenhum campo foi enviado,
+nenhuma galeria criada e nenhum arquivo alterado. Isso inventaria a tela real do
+owner; não é consumer de ACULTA420/Studio nem evidência de paridade visual.
+Qualquer apresentação dessa Form API dentro do shell Studio exigiria rota/decisão
+explícita do módulo owner; esta fase não alterou a rota nem adicionou interface
+paralela. Relatório e capturas em
+`/home/piradopirata/aculta-suite-out/gallery-create-runtime-visual-20261031/`.
