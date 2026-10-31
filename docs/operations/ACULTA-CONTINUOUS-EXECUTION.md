@@ -2768,3 +2768,9 @@ ou preferência persistente alterados.
   commit `4433d853a` substituiu isso por tokens semânticos compartilhados;
   depois, Design Foundations passou 2.432 checks e COLOR MODE TOKEN-ONLY
   passou. Stylelint também permaneceu PASS.
+- A matriz autenticada do hub Marley revelou overflow real da tabela
+  `.studio__listing` em 320/390px. O commit `b3eb00d51` passou a usar layout
+  fixo e quebra de conteúdo somente no mobile; após limpar agregados CSS,
+  `/marley` passou 8/8 estados em 320/390/768/1280px, claro/escuro, HTTP 200 e
+  sem overflow. Evidência em
+  `/home/piradopirata/aculta-suite-out/marley-auth-listing-fixed-20261031200744/`.
