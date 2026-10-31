@@ -247,7 +247,7 @@ Para captura pública sem sessão, use `OCS_STUDIO_ANONYMOUS=1` junto com uma UR
 pública explícita em `STUDIO_ROUTES`. O modo mantém a checagem do Runtime, não
 gera ULI e pode receber a CSS candidata para verificar que consumidores MAIN,
 como `/u/{apelido}`, não recebem marcadores nem tokens visuais exclusivos do
-Studio. O relatório omite o texto do perfil; PNGs permanecem em `SUITE_OUT`.
+Studio. O relatório JSON substitui o trecho inicial do corpo por um marcador de omissão em perfis públicos anônimos; PNGs permanecem em `SUITE_OUT` e podem conter conteúdo visível, portanto devem ser tratados como evidência privada.
 Para validar os alvos públicos, acrescente `OCS_PUBLIC_PROFILE_KEYBOARD=1` e
 `OCS_PUBLIC_PROFILE_ZOOM=1`; o primeiro percorre por Tab cada link exposto e o
 segundo usa zoom real de Firefox em 200%/400%, restaura com Ctrl+0 e registra

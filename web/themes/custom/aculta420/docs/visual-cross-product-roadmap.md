@@ -1666,9 +1666,9 @@ candidata carregada. Os quatro links sociais mediram 44,4px em todos os
 viewports. O teste por Tab alcançou os quatro links com contorno 3px; zoom real
 200/400% passou sem overflow e mantendo os alvos 44,4px. Relatório e capturas de
 viewport em
-`/home/piradopirata/aculta-suite-out/profile-public-touch-targets-20261031/`;
+`/home/piradopirata/aculta-suite-out/profile-public-accessibility-redacted-20261031/`;
 teclado/zoom em
-`/home/piradopirata/aculta-suite-out/profile-public-accessibility-final-20261031/`.
+`/home/piradopirata/aculta-suite-out/profile-public-accessibility-redacted-20261031/`.
 Nenhum form foi submetido. A conta sintética era pública antes da captura; o
 resultado não valida grants A/B nem privacidade de outros campos, não homologa
 S-R4/S-R5, THEME-MF3 ou OCS-F11.

@@ -3246,12 +3246,12 @@ preservada (sem Montserrat), um H1, Institution Bar/Domain Header únicos e sem
 overflow. **11/11 invariantes passaram** em 320/390/768/1024/1440px; os quatro links
 sociais mediram 44,4px e permaneceram no viewport. Capturas revisadas em 320 e
 1440px; relatório em
-`/home/piradopirata/aculta-suite-out/profile-public-touch-targets-20261031/`.
+`/home/piradopirata/aculta-suite-out/profile-public-accessibility-redacted-20261031/`.
 O teste focal adicional passou por Tab nos quatro links: todos receberam
 `:focus-visible`/contorno sólido de 3px a 320px. Zoom real Firefox 200/400%
 também passou para os quatro links, sem overflow, com viewport CSS de 640/320px;
 evidência em
-`/home/piradopirata/aculta-suite-out/profile-public-accessibility-final-20261031/`.
+`/home/piradopirata/aculta-suite-out/profile-public-accessibility-redacted-20261031/`.
 O modo anônimo reutilizável `OCS_STUDIO_ANONYMOUS=1` não cria ULI nem registra
 o texto do perfil no JSON. Isto valida uma conta pública sintética, não A/B de
 privacidade/campos, leitor de tela, zoom de toda a página ou WCAG integral;
