@@ -8,6 +8,12 @@
 
 A suíte Unit completa de `aculta_wiki` foi executada no checkout visual: **85 testes e 461 assertions, PASS**. Isso cobre contratos do Wiki e não substitui a homologação visual autenticada da rota canônica, que permanece dependente de fixture editorial autorizada.
 
+### Fixture editorial WE SATIVA — Runtime (2026-10-31)
+
+Com autorização explícita, foi criada no `aculta_runtime` a conta `studio_editor_test` (UID 258), com os papéis `content_editor` e `email_confirmed`. A política `EmailConfirmationPolicy::markConfirmed()` foi aplicada; Drush confirmou `createAccess('wiki_entry')=1` e `WikiContributorWorkspace::access()=1`. A credencial não é versionada: fica no arquivo protegido `/home/piradopirata/aculta-runtime-snapshots/20261031-editorial/credentials.txt` (modo 600). Snapshot pré-escrita: `/home/piradopirata/aculta-runtime-snapshots/20261031-editorial/runtime.sql.gz`, SHA-256 `7ef607f54e1ad56801a8c53414310eefb396c107bce4e0ce9ff0a5ce48f23c43`.
+
+O baseline Firefox/X11 ainda recebe `Acesso negado` porque o docroot Runtime está no HEAD antigo `ae3227866`: a ULI emitida para a conta usa `/recuperar-acesso/.../entrar`, que retorna HTTP 404 nesse checkout. A fixture e os grants estão prontos; repetir o baseline após o docroot acompanhar o HEAD da branch, sem alterar ACL ou criar alias temporário.
+
 ### WE SATIVA canônico — evidência adicional (2026-10-31)
 
 O baseline Firefox ESR/X11 autenticado de `https://wiki420.aculta.toca.net.br/studio/we-sativa` foi executado em 320/390/599/600/768/1024/1280/1440px. As 8 capturas retornaram `Acesso negado`; Institution Bar, Domain Header e ausência de overflow foram observados, mas nenhum consumer Wiki foi servido. Evidência: `/home/piradopirata/aculta-suite-out/studio-we-sativa-baseline-recheck-8d4dcc07d-20261031/`. O resultado é DEFERRED por autorização/instalação do Runtime e mantém OCS-F7/OCS-F11 pendentes; não usar `/wesativa` como substituto da rota canônica.
