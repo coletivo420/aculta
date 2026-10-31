@@ -2481,3 +2481,9 @@ ou preferência persistente alterados.
   tabela contida quando não há excedente; os dois viewports passaram no reteste
   sem overflow. Evidência em
   `/home/piradopirata/aculta-suite-out/studio-marley-baseline-retest-599-600-20261031/`.
+- Baselines autenticados adicionais com `teste.comum` capturaram a entrada de
+  Conta (normalizada para a raiz canônica) e Perfil em oito larguras, ambos
+  `CAPTURED` e sem falhas de invariantes. Evidências em
+  `/home/piradopirata/aculta-suite-out/studio-conta-baseline-recheck-e538f5f3d-20261031/`
+  e `/home/piradopirata/aculta-suite-out/studio-profile-baseline-recheck-e538f5f3d-20261031/`.
+  A/B de privacidade, upload/crop e cache entre contas continuam pendentes.

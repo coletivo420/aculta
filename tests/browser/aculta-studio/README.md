@@ -500,6 +500,14 @@ e `/home/piradopirata/aculta-suite-out/studio-theme-light-recheck-70ba54aba-2026
 Nenhuma preferência foi salva; contraste completo e WCAG continuam fora desta
 prova.
 
+Baseline autenticado adicional em 2026-10-31, com `teste.comum`: a entrada de
+Conta (normalizada para a raiz canônica) passou `CAPTURED` em oito larguras, e
+Perfil passou `CAPTURED` em oito larguras, ambos sem invariantes visuais falhas.
+Relatórios e capturas:
+`/home/piradopirata/aculta-suite-out/studio-conta-baseline-recheck-e538f5f3d-20261031/`
+e `/home/piradopirata/aculta-suite-out/studio-profile-baseline-recheck-e538f5f3d-20261031/`.
+Isso não substitui o A/B de privacidade nem a validação de upload/crop.
+
 **Execução de modos em 2026-10-29:** o probe capturou seis combinações de
 rota/largura em cada modo (`light`, `dark` + reduced motion e `auto`): Marley,
 Conta e Perfil em 320/1440 px. `matchMedia` confirmou dark 6/6 no modo escuro e
