@@ -29,6 +29,17 @@ O salto relatado não foi reproduzido nesta captura. A rolagem inicial de Conta
 continua fixa na borda superior. Esta evidência é focal do Runtime e não aprova
 THEME-MF3; outros purposes, páginas e estados seguem no gate global.
 
+Reteste anônimo nas dez raízes em 2026-10-31: as verificações de scroll
+passaram 130/130 em 320/390 px; não houve deslocamento da Institution Bar nos
+outros nove purposes. O relatório também mediu a largura do documento: Conta a
+320 px ficou em 328 px nos cinco pontos medidos. O elemento é o desafio
+Turnstile real do formulário `/entrar`, cujo slot tem 300 px; a correção
+candidata existente usa o marcador neutro do Portal e container query, e passou
+retestes focais com o iframe real, mas o hook ainda não está servido no Runtime
+`2493d7535`. Portanto, os 130 checks confirmam o comportamento sticky, não a
+ausência global de overflow. Evidência:
+`/home/piradopirata/aculta-suite-out/institution-scroll-all-purposes-20261031/`.
+
 ### THEME-MF0 — recontagem lexical da árvore atual (2026-10-30)
 
 O gerador oficial foi executado com `--write` e repetido sem escrita; a segunda
