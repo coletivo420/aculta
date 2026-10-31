@@ -1391,3 +1391,9 @@ Revalidação focal em `/entrar` passou 10/10 checks em Firefox ESR nas nove
 larguras da matriz, com o iframe Turnstile real carregado e sem overflow. CSS e
 marcador Portal foram injetados na sessão; o teste não substitui a verificação
 do hook e da biblioteca realmente servidos. THEME-MF3 continua pendente.
+
+O gate de zoom real nas dez raízes públicas passou 30/30 checks em 200% e 400%,
+com shell único e sem overflow do documento; em Conta, a folha candidata e o
+marcador Portal foram injetados. Isso não cobre formulários/páginas internas nem
+instalação do hook. As evidências e limites estão em `mobile-first-audit.md`; o
+gate global permanece pendente.

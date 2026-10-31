@@ -750,6 +750,13 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/purpose-browser-zo
 purposes por nome. O resultado lista elementos que ultrapassem o documento para
 ajudar a localizar falhas.
 
+Reteste visível em 2026-10-31: 30/30 checks nas dez raízes públicas em 100%,
+200% e 400%, com documento sem overflow e os dois headers presentes uma vez.
+Em Conta, `auth.css` candidata e marcador `challenge-frame` foram injetados;
+os demais purposes usaram o Runtime servido. Não cobre páginas internas nem
+prova o hook Portal instalado. Capturas e relatório em
+`/home/piradopirata/aculta-suite-out/purpose-browser-zoom-resume-20261031/`.
+
 Para comparar a correção candidata do desafio de autenticação somente na Conta,
 defina `PURPOSE_ZOOM_AUTH_CSS_CANDIDATE=1`. O harness injeta `base.css` e
 `components/auth.css` da worktree no DOM e simula o marcador

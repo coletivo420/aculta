@@ -2363,3 +2363,18 @@ CSS do shell foi necessária. O formulário da Wiki não foi enviado; o conteúd
 estava vazio e a mensagem de login único é temporária. A rota oficial
 `/studio/we-sativa`, autoria/revisão/moderação preenchidas, grants A/B, AJAX,
 no-JS, zoom, WCAG completa e OCS-F11 seguem pendentes.
+
+### THEME-MF3 — zoom real das raízes públicas (2026-10-31)
+
+`purpose-browser-zoom.py` passou **30/30 checks** no Firefox ESR visível: as dez
+raízes de purpose mantiveram Institution Bar e Domain Header únicos, um `main`,
+H1 visível e sem overflow do documento a 100%, 200% e 400%. A 400%, o viewport
+CSS efetivo foi 320px. Em Conta, `base.css`/`auth.css` candidata e o marcador
+`challenge-frame` foram injetados na sessão; os outros nove purposes usaram o
+Runtime servido. Capturas de 400% em Conta, Cursos, Wiki, Fórum, Revista e
+Eventos foram inspecionadas. A medição de shell não atesta reflow de todos os
+formulários/listas internos; rails horizontais encontrados em Cursos são áreas
+roláveis e precisam de validação de controles/teclado. O hook Portal candidato
+segue não instalado no Runtime. Evidência em
+`/home/piradopirata/aculta-suite-out/purpose-browser-zoom-resume-20261031/`;
+THEME-MF3 continua pendente.
