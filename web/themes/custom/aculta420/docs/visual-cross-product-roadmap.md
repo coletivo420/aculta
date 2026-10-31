@@ -1419,6 +1419,13 @@ reutilizável inicia ULI no host de Conta e permite credencial de teste injetada
 somente via ambiente como fallback. O cenário anônimo anterior permanece
 registrado em `mobile-first-audit.md`. Isso não aprova THEME-MF3: ainda faltam
 rotas internas de todos os purposes, zoom, cobertura de teclado e WCAG 2.2 AA.
+Reteste em 2026-10-31: anônimo passou 130/130 em dez domínios a 320/390px, com
+amostras de sticky a cada 12px; administrador autenticado passou 40/40 em
+320/390/1023/1024/1280px com CSS/JS da branch injetados apenas na sessão Firefox.
+Nenhum salto ou atraso foi reproduzido. Capturas e relatórios estão em
+`/home/piradopirata/aculta-suite-out/institution-bar-anonymous-recheck-20261031/`
+e `/home/piradopirata/aculta-suite-out/institution-bar-admin-candidate-recheck-20261031/`.
+Essa rodada não substitui a verificação integrada com folhas servidas.
 
 ### THEME-MF3 — teclado nas raízes públicas (2026-10-30)
 

@@ -2314,6 +2314,22 @@ conteúdo ou configuração. Este teste fecha o cenário de scroll administrativ
 mas não cobre as demais rotas, zoom, teclado completo ou WCAG 2.2 AA e não aprova
 THEME-MF3.
 
+Repeti o caso anônimo nos dez domínios em 320/390px com amostragem sticky a
+cada 12px, nos dois sentidos: **130/130 checks passaram**, `barTop=0` após
+ocultar a barra superior e desvio máximo de 0px. Repeti o caso administrativo
+autenticado em 320/390/1023/1024/1280px com `institution-bar.css` e
+`navigation-top-bar-displace.js` da branch injetados somente no Firefox:
+**40/40 passaram**, incluindo resize mobile↔desktop, estabilidade, posição
+durante scroll e amostragem de transição a cada 12px (desvio máximo <0,001px).
+O estado autenticado foi confirmado; no mobile `.top-bar` ficou em fluxo normal,
+e no desktop fixo com offset de 64px. Capturas inspecionadas e relatórios em
+`/home/piradopirata/aculta-suite-out/institution-bar-anonymous-recheck-20261031/`
+e `/home/piradopirata/aculta-suite-out/institution-bar-admin-candidate-recheck-20261031/`.
+O teste administrativo criou apenas metadados transitórios de sessão/login; não
+alterou conteúdo nem configuração. A repetição não reproduziu o salto/delay
+relatado; a integração visual candidata ainda precisa ser servida para fechar
+MF3 e cobrir outros estados e rotas internas.
+
 ### OCS-F8 / THEME-MF2 — navegação e listagens do Green Stash (2026-10-30)
 
 `studio.css` apresenta a navegação contextual de áreas implementadas (Visão
