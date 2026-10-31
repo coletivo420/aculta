@@ -2310,6 +2310,14 @@ o hook e validar a CSS instalada continua pendente. Evidência em
 `/home/piradopirata/aculta-suite-out/auth-route-runtime-resume-20261031/`;
 THEME-MF3 permanece aberto.
 
+Após a repetição da matriz global, executei novamente esse cenário candidato no
+Firefox ESR local com o mesmo iframe externo real: **10/10 checks** nas nove
+larguras, incluindo slot de 300px dentro de viewport de 320px; a captura móvel
+foi inspecionada. Evidência mais recente em
+`/home/piradopirata/aculta-suite-out/auth-challenge-candidate-resume-20261031/`.
+O resultado continua condicionado à CSS e ao marcador candidatos injetados; a
+matriz anônima acima segue registrando o overflow real de 328px no Runtime.
+
 ### THEME-MF3 — reteste da candidata de autenticação em toda a matriz de shell (2026-10-30)
 
 O baseline anônimo confirmou o único overflow restante no shell a 320px: a home
