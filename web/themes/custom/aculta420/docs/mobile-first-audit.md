@@ -3699,3 +3699,19 @@ Qualquer apresentação dessa Form API dentro do shell Studio exigiria rota/deci
 explícita do módulo owner; esta fase não alterou a rota nem adicionou interface
 paralela. Relatório e capturas em
 `/home/piradopirata/aculta-suite-out/gallery-create-runtime-visual-20261031/`.
+### OCS-F6 / THEME-MF2 — formulário de criação de curso no Studio (2026-10-31)
+
+A ação da aba Cursos apontava para a rota administrativa Group em `main`, apesar
+de produzir URL no host `courses`. Firefox ESR autenticado encontrou 404 no
+host Cursos; no host principal o Form API abriu em Claro sem o shell e com
+`documentScrollWidth=403` em viewport 320 px. Nenhum formulário foi enviado.
+
+O código da PR agora declara `/ganjalab/cursos/novo` em `courses`, envolve o
+Group `lms_course` add form original dentro do contexto visual Studio e revalida
+Entity Access antes de construir o formulário. Isso reutiliza os estilos de
+formulário já presentes no tema; não cria campos ou fluxo de persistência.
+Firefox autenticado integrado, submit, AJAX/no-JS e acesso real permanecem
+`DEFERRED` até o Runtime executar o HEAD da PR. O teste de captura do formulário
+administrativo identifica uma falha visual real na rota antiga, mas não é
+evidência de aprovação OCS-F6, OCS-F11 nem THEME-MF3.
+

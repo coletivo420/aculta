@@ -10,6 +10,21 @@ aculta_lms.student_dashboard:
     no_cache: true
     _aculta_domain_purpose: courses
 
+# Keep the Group owner's add Form API inside the Ganjalab purpose and theme.
+# The generated entity.group.add_form is an admin route on purpose main, so a
+# cross-purpose link to it returns 404 on the courses host and drops the shell.
+aculta_lms.course_create:
+  path: '/ganjalab/cursos/novo'
+  defaults:
+    _controller: 'aculta_studio.course_authoring_controller:create'
+    _title: 'Criar curso'
+  requirements:
+    _permission: 'create lms_course group'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+
 aculta_lms.class_dashboard:
   path: '/painel-administrativo/lms/curso/{course}/turma/{group}/painel'
   defaults:

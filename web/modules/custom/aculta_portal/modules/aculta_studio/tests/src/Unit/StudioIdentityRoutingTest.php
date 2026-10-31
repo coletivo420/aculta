@@ -44,6 +44,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       '/studio/we-sativa' => 'aculta_studio.we_sativa',
       '/studio/we-sativa/inicio' => 'aculta_studio.we_sativa_start',
       '/ganjalab' => 'aculta_lms.student_dashboard',
+      '/ganjalab/cursos/novo' => 'aculta_lms.course_create',
       '/salvos' => 'aculta_studio.salvos',
       '/studio/green-stash' => 'aculta_commerce.green_stash',
       '/studio/green-stash/{secao}' => 'aculta_commerce.green_stash_area',
@@ -101,6 +102,10 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     self::assertSame('wiki', $routes['aculta_studio.we_sativa']['options']['_aculta_domain_purpose']);
     self::assertSame('wiki', $routes['aculta_studio.we_sativa_start']['options']['_aculta_domain_purpose']);
     self::assertSame('courses', $routes['aculta_lms.student_dashboard']['options']['_aculta_domain_purpose']);
+    self::assertSame('courses', $routes['aculta_lms.course_create']['options']['_aculta_domain_purpose']);
+    self::assertSame('create lms_course group', $routes['aculta_lms.course_create']['requirements']['_permission']);
+    self::assertTrue($routes['aculta_lms.course_create']['options']['no_cache']);
+    self::assertSame('aculta_studio.course_authoring_controller:create', $routes['aculta_lms.course_create']['defaults']['_controller']);
     self::assertSame('wiki', $routes['aculta_wiki.proposal_decide']['options']['_aculta_domain_purpose']);
     foreach ([
       'aculta_commerce.green_stash',

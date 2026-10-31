@@ -12,7 +12,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Cursos tab. The owner is aculta_lms; the permission is create lms_course group.
+ * Cursos tab; aculta_lms owns the content and create permission.
  */
 #[MarleyTab(
   id: 'cursos',
@@ -60,7 +60,7 @@ final class CursosTab extends MarleyTabBase {
             'label' => $this->t('Novo curso'),
             'weight' => 0,
             'actions' => [
-              $this->routeAction($this->t('Novo curso'), 'entity.group.add_form', ['group_type' => 'lms_course'], $account, 'courses'),
+              $this->routeAction($this->t('Novo curso'), 'aculta_lms.course_create', [], $account, 'courses'),
             ],
           ],
         ],
@@ -69,7 +69,7 @@ final class CursosTab extends MarleyTabBase {
   }
 
   /**
-   * One tab per course the account can see; each lists only the classes linked to that course.
+   * One tab per visible course, listing its linked classes.
    *
    * @return array<string, array{label: \Stringable|string, weight: int, listing: array, actions: array}>
    *   Tabs keyed by class identifier.

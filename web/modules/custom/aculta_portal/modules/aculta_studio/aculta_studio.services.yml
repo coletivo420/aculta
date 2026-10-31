@@ -61,6 +61,9 @@ services:
   aculta_studio.ganjalab_controller:
     class: Drupal\aculta_studio\Controller\GanjalabController
     arguments: ['@aculta_studio.experience_manager', '@current_user']
+  aculta_studio.course_authoring_controller:
+    class: Drupal\aculta_studio\Controller\CourseAuthoringController
+    arguments: ['@entity_type.manager', '@entity.form_builder', '@current_user', '@string_translation']
   aculta_studio.we_sativa_controller:
     class: Drupal\aculta_studio\Controller\WeSativaController
     arguments: ['@aculta_studio.experience_manager', '@current_user']

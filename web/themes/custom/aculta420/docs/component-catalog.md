@@ -442,6 +442,15 @@ teste; a folha integrada no Runtime ainda precisa ser homologada. Evidências em
 `/home/piradopirata/aculta-suite-out/marley-editor-form-final-20261031/` e
 `/home/piradopirata/aculta-suite-out/marley-editor-form-dark-20261031/`.
 
+O Form API de criação de curso também reutiliza o tratamento `.studio__main form`
+existente. O controlador do ACULTA Studio apenas compõe a operação
+`add` do Group `lms_course` e mantém seu formulário/ACL originais. Não foi
+criado SDC de formulário paralelo; a rota canônica é
+`/ganjalab/cursos/novo` em `courses`, com retorno à experiência ACULTA Studio
+Ganjalab. Homologação Firefox integrada está `DEFERRED` até o Runtime carregar
+o HEAD da PR; o GET antigo em `/group/add/lms_course` foi confirmado fora do
+tema como admin Claro e com overflow a 320px.
+
 ### OCS-F8 — área comercial integrada
 
 Green Stash usa o token neutro `green-stash-entry`; o tema o mapeia para a raiz

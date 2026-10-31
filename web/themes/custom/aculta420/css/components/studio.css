@@ -582,6 +582,21 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
   margin-bottom: 2rem;
 }
 
+.studio-course-authoring__back {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  margin-block-end: var(--aculta-studio-fidelity-row-gap);
+  padding: 0.5rem 0.75rem;
+  color: var(--aculta-studio-fidelity-link);
+  text-underline-offset: 0.2em;
+}
+
+.studio-course-authoring__back:focus-visible {
+  outline: 3px solid var(--aculta-studio-fidelity-input-focus);
+  outline-offset: 3px;
+}
+
 .studio__heading {
   margin-bottom: 1rem;
 }

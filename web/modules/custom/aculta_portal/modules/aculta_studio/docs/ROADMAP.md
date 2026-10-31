@@ -963,3 +963,24 @@ Reteste posterior ampliou a cobertura candidata de Ganjalab para 320–1440px, n
 larguras, em claro/escuro: 18/18 combinações passaram. O Runtime ainda apresenta
 markup anterior ao compositor local; registrar F6 como parcial até validar tela
 servida, contratos LMS e ACL.
+# 2026-10-31 — apresentação Studio para criação de cursos
+
+A ação “Novo curso” da aba Cursos Marley apontava para `entity.group.add_form`
+com o purpose `courses`, embora a rota gerada do Group seja administrativa e
+pertença ao purpose `main`. A captura autenticada confirmou 404 no host Cursos;
+no host principal, a mesma rota abriu Claro fora do shell e causou 403 px de
+largura documental em viewport 320 px.
+
+Foi adicionada a rota proprietária `/ganjalab/cursos/novo` no purpose `courses`.
+Ela reusa `EntityFormBuilder` para obter a operação `add` do Group `lms_course`,
+confere `Entity::access('create')` antes de construir o formulário e o envolve
+no marcador visual Studio. A navegação Marley agora usa essa rota pelo
+`DomainPurposeManager`. O tema reutiliza o tratamento de formulário e o layout
+responsivo já existentes; o link de retorno usa o render helper do Portal.
+Nenhum campo, storage, validação, persistência ou submit foi copiado.
+
+O HTTP do Runtime segue em `DEFERRED`: o checkout Runtime está no HEAD anterior
+da PR e, portanto, ainda não contém a rota nova. A validação autenticada final,
+submit com curso sintético e regressão no Firefox devem ser executados após a
+rota chegar ao Runtime; nenhum curso foi criado neste trabalho.
+
