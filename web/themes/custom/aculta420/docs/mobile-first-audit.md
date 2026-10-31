@@ -4420,3 +4420,28 @@ sessão autenticada, todos em
 Os resultados medem somente a candidata no browser, não uma integração servida.
 THEME-MF3 e OCS-F11 permanecem pendentes; a validação global e a homologação
 visual ainda não foram concluídas.
+
+### THEME-MF3 — teclado global e zoom nativo (2026-10-31)
+
+No Runtime destacado em `9af71edb1`, Firefox ESR visível e sem CSS/JS candidatos,
+a navegação por teclado percorreu as dez raízes públicas (MAIN, Conta, Apoio,
+Revista, Wiki, Loja, Cursos, Fórum, Links e Eventos) em
+320/360/390/599/600/768/1024/1280/1440 px. Passaram **1.493 verificações**:
+90 verificações de overflow horizontal e 1.403 verificações de foco visível e
+no viewport. Não houve FAIL. Foram registrados **23 SKIPs** de limites de
+sequência de foco (Conta: 9; Links: 14), porque a sequência terminou antes dos
+oito passos solicitados; esses passos não contam como PASS. Relatório e capturas
+em `/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-f378d2540-20261031/`.
+
+O mesmo Firefox aplicou zoom nativo de 200% e 400% à raiz dos dez purposes,
+com viewport de dispositivo 1280 px. Os **30/30 checks** passaram: baseline,
+zoom atingido, shell único e sem overflow do documento. Capturas e JSON em
+`/home/piradopirata/aculta-suite-out/purpose-browser-zoom-9af71edb1-20261031/`.
+O harness também lista conteúdo interno rolável/visualmente oculto como
+candidato; o critério de PASS considera overflow de documento/body, que ficou
+ausente em todos os casos.
+
+Esta rodada verifica as raízes públicas e não cobre formulários internos,
+zoom em cada template, estados autenticados de cada purpose, leitores de tela,
+WCAG 2.2 AA, tema escuro ou reduced motion. Os 23 SKIPs permanecem lacunas de
+evidência, e THEME-MF3/OCS-F11 não estão aprovados.
