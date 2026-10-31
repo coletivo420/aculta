@@ -3366,3 +3366,17 @@ estilo**, todas com `min-width`; nenhuma consulta `max-width` foi encontrada.
 Esse é um indicador estático de aprimoramento progressivo, não comprova o
 comportamento de cada componente, container query, formulário ou estado; MF2/MF3
 continuam dependendo de cobertura visual real.
+### OCS-F5 / THEME-MF2 — Marley canônico autenticado, nove viewports (2026-10-31)
+
+Firefox ESR visível capturou `account:/marley` em 320/360/390/599/600/768/1024/
+1280/1440px, com CSS Fidelity do worktree injetada somente na sessão. **9/9**
+telas mantiveram Institution Bar e Domain Header únicos, `documentWidth` igual
+ao viewport, cinco abas com exatamente uma ativa e links de aba com altura mínima
+de 44px. Evidência e capturas em
+`/home/piradopirata/aculta-suite-out/studio-marley-canonical-followup-20261031/`.
+A conta de teste não submeteu formulários. O screenshot de 320px inclui a mensagem
+transitória do login ULI; o registro da captura não é uma inspeção limpa de estados
+de mensagem. A referência OpenCulturas foi sua homepage pública, não um dashboard
+autenticado; isto não prova paridade visual completa, AJAX/no-JS, ACL, WCAG nem
+homologa F5/F11/MF3. `/studio` é 404 intencional segundo ADR-038; a área Marley
+canônica é `account:/marley`.

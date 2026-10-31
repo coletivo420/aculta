@@ -651,3 +651,15 @@ claro/escuro, presença única do shell e overflow. A ULI abre sessão
 autenticada, mas não submete operações.
 Uma captura sem overflow não valida ACL entre contas, cache, AJAX/no-JS,
 acessibilidade completa, zoom ou paridade pareada OpenCulturas.
+
+### Reteste canônico de Marley — 2026-10-31
+
+A captura com `STUDIO_PAGE=https://conta.aculta.toca.net.br/marley`, conta sintética
+e `OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1` passou os checks estruturais em nove
+larguras. O modo `STUDIO_PAGE` recebe URL explícita e não resolve automaticamente
+o purpose; usar uma rota oficial do ADR-038. `/studio` é um caminho técnico
+retirado e responde 404; não usar como Hub. Evidência em
+`/home/piradopirata/aculta-suite-out/studio-marley-canonical-followup-20261031/`.
+A CSS candidata foi injetada só no Firefox, e a página pública usada como
+referência upstream não é dashboard autenticado; revisão de fidelidade pareada
+segue pendente.

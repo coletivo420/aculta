@@ -2059,3 +2059,10 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
 - **Validação posterior:** Firefox ESR visível no Runtime, 100/200/400% reais, homepage e artigo 602: **6/6 checks**, agora incluindo `bodyTextLength > 0`, altura renderizada do corpo, capa carregada, H1 e shell únicos e zero overflow. As capturas foram ajustadas para mostrar H1 e corpo em cada zoom e revisadas em `/home/piradopirata/aculta-suite-out/revista-article-zoom-followup-20261031d/`. Nenhum formulário ou comentário foi enviado.
 - **Limite:** esse reparo padroniza apenas conteúdo sintético de homologação para usar um formato editorial válido. Não corrige um problema no Twig/CSS, não altera conteúdo editorial real e não aprova o gate THEME-MF3, a comparação pareada OpenCulturas ou WCAG 2.2 AA.
 
+## 2026-10-31 — captura read-only da área Marley no Runtime
+
+- Ambiente confirmado: `toca`; checkout servido `/home/piradopirata/projetos/aculta`, HEAD destacado `2493d7535`, URI Drush `http://default`, banco `aculta_runtime`, 624 tabelas.
+- Antes de abrir sessão autenticada por ULI, `drush sql:dump` gerou snapshot do banco com 624/624 tabelas em `/home/piradopirata/aculta-suite-out/runtime-studiosnapshot-20261031/aculta_runtime.sql`, modo `600`, 64.774.437 bytes. SHA-256: `537a0b95c5023ce8bbdf6ce94bb76209cedff59ba2719b406e40a3e462d0b261`.
+- Firefox ESR visível capturou `account:/marley` em 320/360/390/599/600/768/1024/1280/1440px com CSS Fidelity candidata injetada somente na sessão. Capturas e JSON: `/home/piradopirata/aculta-suite-out/studio-marley-canonical-followup-20261031/`.
+- Resultado: 9/9 telas capturadas; Institution Bar e Domain Header únicos, sem overflow horizontal, cinco abas com uma ativa e alvos de pelo menos 44px. Nenhum formulário foi enviado nem conteúdo/configuração/permissão alterado. A sessão temporária de ULI foi criada para o teste; credenciais não foram registradas.
+- O GET de `/studio` no purpose Conta retornou 404 vazio, como determina ADR-038; não é defeito. A captura comparativa do upstream foi apenas a homepage pública, não um dashboard autenticado. O resultado é candidato e não homologa OCS-F5/F11 ou THEME-MF3.

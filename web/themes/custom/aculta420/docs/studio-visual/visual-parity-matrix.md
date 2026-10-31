@@ -274,3 +274,13 @@ contextual, nove larguras, claro/escuro, foco e zoom real 200/400%. Capturas em
 `/home/piradopirata/aculta-suite-out/green-stash-detail-create-homologation-20261031/`.
 O formulário de criação não foi submetido e a fixture não cobre grants de lojas
 ou a rota servida; OCS-F8 é parcial e OCS-F11/THEME-MF3 seguem pendentes.
+
+### OCS-F5 — baseline autenticado de Marley na rota canônica (2026-10-31)
+
+A captura read-only em `account:/marley` passou os checks estruturais em nove
+larguras (320–1440px): shell global único, zero overflow, cinco abas, uma ativa e
+alvos de pelo menos 44px. A folha Fidelity foi injetada na sessão Firefox; não
+estava servida no Runtime. Capturas/JSON em
+`/home/piradopirata/aculta-suite-out/studio-marley-canonical-followup-20261031/`.
+O upstream capturado nesta rodada foi somente a homepage pública; o baseline
+autenticado pareado com dashboard OpenCulturas continua pendente.

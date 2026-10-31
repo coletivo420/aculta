@@ -1728,3 +1728,9 @@ A leitura das 99 media queries distribuídas em 47 estilos identificou apenas
 `min-width` (zero `max-width`). O dado confirma a direção mobile-first da
 cascata, mas não substitui a homologação de breakpoints, containers, estados e
 consumidores; THEME-MF2/MF3 seguem em execução.
+### OCS-F5 / THEME-MF2 — captura canônica de Marley (2026-10-31)
+
+Nove viewports de `account:/marley` passaram os invariantes de shell, largura e
+navegação de abas com CSS candidata. A mensagem visual do login ULI aparece na
+captura móvel; a referência OpenCulturas foi homepage pública, não dashboard
+autenticado. Não homologa F5/F11/MF3. Evidência detalhada em `mobile-first-audit.md`.
