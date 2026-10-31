@@ -1858,6 +1858,18 @@ capturas mascaram valores e ficam fora do Git em
 Isto não cobre lookup CEP ao vivo, ACL entre contas, teclado completo, zoom ou
 WCAG 2.2 AA.
 
+Reteste independente da Conta em 2026-10-30, com Runtime no HEAD `2493d7535`:
+`account-shell.py` passou 33/33 checks em 320/360/390/599/600/767/768/1024/
+1280/1440px com a folha candidata injetada no Firefox, sem submit ou gravação
+de preferências. As 13 seções dos menus desktop e mobile coincidiram, não houve
+overflow e a Institution Bar apareceu uma vez. A captura de 320px foi inspecionada.
+Snapshot pré-sessão: 624 tabelas, 58,555,853 bytes, SHA-256
+`ba691089b5237404f4e47b62f746c0d79f0413fe1a67c743aa32f47ff8a6c647`, em
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/runtime-before-account-visual-20261030.sql`.
+Capturas e resumo: `/home/piradopirata/aculta-suite-out/account-shell-f9-candidate-20261030/`.
+Isto valida somente a navegação responsiva autenticada, não os formulários de
+Conta nem S-R4/S-R5, ACL entre titulares, zoom ou WCAG completa.
+
 ### THEME-MF2 — contrato visual neutro para widgets de verificação (2026-10-30)
 
 Firefox ESR visível reproduziu o overflow real em `/entrar` a 320 px: o conteúdo
