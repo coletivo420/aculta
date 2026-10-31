@@ -776,3 +776,29 @@ formulário fora do Studio. Stylelint e Design Foundations passaram. Capturas
 `/home/piradopirata/aculta-suite-out/studio-form-fidelity-final2-20261030/`.
 Não valida Drupal/Form API real, AJAX/no-JS, ACL nem fluxos dos owners; F5–F7/F9
 continuam parciais e não há gate F11.
+
+### OCS-F6 — apresentação candidata do dashboard GanjaLab (2026-10-30)
+
+A área de aprendizagem real em `/ganjalab` usa o dashboard do estudante e os
+SDCs existentes (`context-header`, `card`, `content-grid`, `empty-state`). A
+camada do tema agora estende tokens, geometria do container, headings, cards e
+estado vazio somente a `body.path-ganjalab .aculta-main`; a navegação da Conta,
+Institution Bar e Domain Header ficam fora do escopo Fidelity. Nenhum controller,
+serviço LMS, matrícula, dado ou regra de acesso foi alterado.
+
+Firefox ESR visível capturou a conta sintética autorizada em nove viewports
+(320, 360, 390, 599, 600, 768, 1024, 1280 e 1440 px), com CSS candidata injetada
+no navegador e sem overflow horizontal. As imagens foram revisadas. A amostra
+não cobre tema escuro, zoom, WCAG, ACL entre estudantes, aulas/turmas com dados,
+no-JS/AJAX ou regressão dos outros purposes; F6 permanece parcial. A captura
+anterior consultou o status da fonte antes de ela terminar de carregar, portanto
+não comprova Montserrat; o coletor passou a forçar a requisição e registrar o
+estado de cada `FontFace`, mas essa verificação ainda requer nova execução.
+
+O Runtime observado no HEAD `2493d7535` serve `/ganjalab`, mas a rota oficial
+WE SATIVA `/studio/we-sativa` retorna documento vazio: esse Runtime ainda
+registra `/wesativa`. É divergência de versão/roteamento fora do escopo CSS;
+não se altera roteamento nem se declara F7/OCS-F11 homologado com essa
+superfície incompleta. Evidências e procedimento reproduzível estão em
+[`tests/browser/aculta-studio/README.md`](../../../../../../../tests/browser/aculta-studio/README.md)
+e em `$SUITE_OUT/ganjalab-fidelity-candidate-20261030`.

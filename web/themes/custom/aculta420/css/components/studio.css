@@ -30,7 +30,8 @@
    outer page margin, inner padding and 100rem content width there, while
    leaving the global shell containers untouched. */
 .aculta-main > .aculta-container:has(.studio),
-.aculta-main > .aculta-container:has(.aculta-profile-editor) {
+.aculta-main > .aculta-container:has(.aculta-profile-editor),
+body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header) {
   width: calc(100% - 0.5rem);
   max-width: 102rem;
   margin-inline: auto;
@@ -39,7 +40,8 @@
 
 @media (min-width: 48rem) {
   .aculta-main > .aculta-container:has(.studio),
-  .aculta-main > .aculta-container:has(.aculta-profile-editor) {
+  .aculta-main > .aculta-container:has(.aculta-profile-editor),
+  body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header) {
     width: calc(100% - 2.5rem);
     padding-inline: 1.5rem;
   }
@@ -47,7 +49,8 @@
 
 @media (min-width: 70rem) {
   .aculta-main > .aculta-container:has(.studio),
-  .aculta-main > .aculta-container:has(.aculta-profile-editor) {
+  .aculta-main > .aculta-container:has(.aculta-profile-editor),
+  body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header) {
     max-width: 107rem;
     padding-inline: 3.5rem;
   }
@@ -55,14 +58,16 @@
 
 @media (min-width: 85rem) {
   .aculta-main > .aculta-container:has(.studio),
-  .aculta-main > .aculta-container:has(.aculta-profile-editor) {
+  .aculta-main > .aculta-container:has(.aculta-profile-editor),
+  body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header) {
     width: calc(100% - 6rem);
   }
 }
 
 @media (min-width: 120rem) {
   .aculta-main > .aculta-container:has(.studio),
-  .aculta-main > .aculta-container:has(.aculta-profile-editor) {
+  .aculta-main > .aculta-container:has(.aculta-profile-editor),
+  body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header) {
     max-width: 110rem;
     padding-inline: 5rem;
   }
@@ -135,6 +140,45 @@
 .aculta-main:has(form.node-revista-form) h1 {
   font-size: clamp(2rem, 7vw, var(--aculta-studio-fidelity-font-size-xxl));
   font-weight: var(--aculta-studio-fidelity-font-weight-bold);
+}
+
+/* Ganjalab's LMS owns the student content; only its Studio route adopts this
+   presentation layer, keeping the account navigation and global shell intact. */
+body.path-ganjalab .aculta-main {
+  color: var(--aculta-studio-fidelity-text);
+  font-family: var(--aculta-studio-fidelity-font-family);
+  line-height: var(--aculta-studio-fidelity-line-height-default);
+}
+
+body.path-ganjalab .aculta-main :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--aculta-studio-fidelity-text);
+  font-family: var(--aculta-studio-fidelity-font-family);
+  line-height: var(--aculta-studio-fidelity-line-height-headings);
+}
+
+body.path-ganjalab .aculta-main .aculta-context-header__title {
+  font-size: clamp(2rem, 7vw, var(--aculta-studio-fidelity-font-size-xxl));
+  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
+}
+
+body.path-ganjalab .aculta-main .aculta-card {
+  margin-block: calc(0.5 * var(--aculta-studio-fidelity-row-gap));
+  border: 1px solid transparent;
+  border-radius: 1.5rem;
+  background-color: var(--aculta-studio-fidelity-surface);
+  box-shadow: var(--aculta-studio-fidelity-box-shadow);
+}
+
+body.path-ganjalab .aculta-main .aculta-card .card-body {
+  padding-block: 1rem;
+  padding-inline: 2rem;
+}
+
+body.path-ganjalab .aculta-main .aculta-empty-state {
+  border-color: var(--aculta-studio-fidelity-divider);
+  border-radius: var(--aculta-studio-fidelity-border-radius-tiny);
+  color: var(--aculta-studio-fidelity-text);
+  background-color: var(--aculta-studio-fidelity-form-surface);
 }
 
 .studio__tabs {

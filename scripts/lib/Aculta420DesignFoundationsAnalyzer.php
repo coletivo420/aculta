@@ -17,11 +17,11 @@ final class Aculta420DesignFoundationsAnalyzer {
 
   private const DARK_SELECTOR = '[data-bs-theme="dark"]';
 
-  private const STUDIO_FIDELITY_SELECTOR = '.studio, .aculta-profile-editor, .aculta-main:has(form.node-revista-form), form.node-revista-form';
+  private const STUDIO_FIDELITY_SELECTOR = '.studio, .aculta-profile-editor, .aculta-main:has(form.node-revista-form), form.node-revista-form, body.path-ganjalab .aculta-main';
 
-  private const STUDIO_DARK_FIDELITY_SELECTOR = '[data-bs-theme="dark"] .studio, [data-bs-theme="dark"] .aculta-profile-editor, [data-bs-theme="dark"] .aculta-main:has(form.node-revista-form), [data-bs-theme="dark"] form.node-revista-form';
+  private const STUDIO_DARK_FIDELITY_SELECTOR = '[data-bs-theme="dark"] .studio, [data-bs-theme="dark"] .aculta-profile-editor, [data-bs-theme="dark"] .aculta-main:has(form.node-revista-form), [data-bs-theme="dark"] form.node-revista-form, [data-bs-theme="dark"] body.path-ganjalab .aculta-main';
 
-  private const STUDIO_AUTO_DARK_FIDELITY_SELECTOR = ':root:not([data-bs-theme="light"]) .studio, :root:not([data-bs-theme="light"]) .aculta-profile-editor, :root:not([data-bs-theme="light"]) .aculta-main:has(form.node-revista-form), :root:not([data-bs-theme="light"]) form.node-revista-form';
+  private const STUDIO_AUTO_DARK_FIDELITY_SELECTOR = ':root:not([data-bs-theme="light"]) .studio, :root:not([data-bs-theme="light"]) .aculta-profile-editor, :root:not([data-bs-theme="light"]) .aculta-main:has(form.node-revista-form), :root:not([data-bs-theme="light"]) form.node-revista-form, :root:not([data-bs-theme="light"]) body.path-ganjalab .aculta-main';
 
   private const MODE_CLASSES = [
     'dark', 'light', 'dark-theme', 'light-theme', 'theme-dark', 'theme-light',

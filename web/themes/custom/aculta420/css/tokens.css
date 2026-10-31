@@ -227,7 +227,8 @@
 .studio,
 .aculta-profile-editor,
 .aculta-main:has(form.node-revista-form),
-form.node-revista-form {
+form.node-revista-form,
+body.path-ganjalab .aculta-main {
   --aculta-studio-fidelity-primary: #9d1980;
   --aculta-studio-fidelity-link: #a1167f;
   --aculta-studio-fidelity-interaction: #16635e;
@@ -294,7 +295,8 @@ form.node-revista-form {
   .studio,
   .aculta-profile-editor,
   .aculta-main:has(form.node-revista-form),
-  form.node-revista-form {
+  form.node-revista-form,
+  body.path-ganjalab .aculta-main {
     --aculta-studio-fidelity-page-margin-sides: 1.25rem;
     --aculta-studio-fidelity-page-padding-inline: 1.5rem;
   }
@@ -304,7 +306,8 @@ form.node-revista-form {
   .studio,
   .aculta-profile-editor,
   .aculta-main:has(form.node-revista-form),
-  form.node-revista-form {
+  form.node-revista-form,
+  body.path-ganjalab .aculta-main {
     --aculta-studio-fidelity-page-padding-inline: 3.5rem;
     --aculta-studio-fidelity-gutter: 2rem;
     --aculta-studio-fidelity-section-spacing: 4rem;
@@ -315,7 +318,8 @@ form.node-revista-form {
   .studio,
   .aculta-profile-editor,
   .aculta-main:has(form.node-revista-form),
-  form.node-revista-form {
+  form.node-revista-form,
+  body.path-ganjalab .aculta-main {
     --aculta-studio-fidelity-page-margin-sides: 3rem;
   }
 }
@@ -324,7 +328,8 @@ form.node-revista-form {
   .studio,
   .aculta-profile-editor,
   .aculta-main:has(form.node-revista-form),
-  form.node-revista-form {
+  form.node-revista-form,
+  body.path-ganjalab .aculta-main {
     --aculta-studio-fidelity-page-padding-inline: 5rem;
     --aculta-studio-fidelity-section-spacing: 5rem;
   }
@@ -483,7 +488,8 @@ form.node-revista-form {
 [data-bs-theme="dark"] .studio,
 [data-bs-theme="dark"] .aculta-profile-editor,
 [data-bs-theme="dark"] .aculta-main:has(form.node-revista-form),
-[data-bs-theme="dark"] form.node-revista-form {
+[data-bs-theme="dark"] form.node-revista-form,
+[data-bs-theme="dark"] body.path-ganjalab .aculta-main {
   --aculta-studio-fidelity-primary: #9d1980;
   --aculta-studio-fidelity-link: #ffdd00;
   --aculta-studio-fidelity-interaction: #74eaea;
@@ -519,7 +525,8 @@ form.node-revista-form {
   :root:not([data-bs-theme="light"]) .studio,
   :root:not([data-bs-theme="light"]) .aculta-profile-editor,
   :root:not([data-bs-theme="light"]) .aculta-main:has(form.node-revista-form),
-  :root:not([data-bs-theme="light"]) form.node-revista-form {
+  :root:not([data-bs-theme="light"]) form.node-revista-form,
+  :root:not([data-bs-theme="light"]) body.path-ganjalab .aculta-main {
     --aculta-studio-fidelity-primary: #9d1980;
     --aculta-studio-fidelity-link: #ffdd00;
     --aculta-studio-fidelity-interaction: #74eaea;

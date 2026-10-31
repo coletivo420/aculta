@@ -456,3 +456,31 @@ Capturas desktop/mobile em
 `/home/piradopirata/aculta-suite-out/studio-editorial-create-form-fidelity-retest-20261030/`.
 Não houve submissão; save, preview, no-JS/AJAX, grants e WCAG integral seguem
 fora da evidência.
+
+## GanjaLab — composição Fidelity candidata (OCS-F6 parcial)
+
+`ocs-baseline.py` também mede o painel de aprendizagem do estudante no purpose
+`courses` (`/ganjalab`). `OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1` injeta no Firefox
+os tokens Fidelity e `studio.css` do caminho indicado em
+`OCS_STUDIO_FIDELITY_CSS_ROOT`, sem escrever no Runtime. O coletor força a
+solicitação de Montserrat antes de medir `FontFaceSet`; revise `fontLoaded` e
+`fontFaces` em `baseline.json`, além das capturas. Exemplo de execução focal:
+
+```sh
+export DISPLAY=:0
+export ACULTA_ROOT=/home/piradopirata/projetos/aculta
+export OCS_STUDIO_FIDELITY_CSS_ROOT=/home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1
+export OCS_SKIP_OPENCULTURAS=1
+export STUDIO_LOGIN_URI=https://conta.aculta.toca.net.br
+export STUDIO_ROUTES=https://cursos.aculta.toca.net.br/ganjalab
+export OCS_WIDTHS=320,360,390,599,600,768,1024,1280,1440
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/ocs-f6-ganjalab
+python3 tests/browser/aculta-studio/ocs-baseline.py
+```
+
+O Runtime pode estar em uma revisão anterior às rotas canônicas; confirme a
+rota por purpose e descreva respostas 403/404 como bloqueio de cobertura, sem
+mudar roteamento na Frente B. Capturas autenticadas são leitura; não enviar
+formulários. Uma ausência de overflow nessa tela não homologa THEME-MF3, e a
+injeção candidata não comprova implantação ou paridade completa OCS-F11.
