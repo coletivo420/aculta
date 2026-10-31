@@ -306,3 +306,8 @@ compositor/controller passaram 2 testes/4 assertions. Porém o Runtime ainda ser
 captura não homologa o consumer novo. Integrar/validar a tela servida, ACL LMS,
 estados preenchidos, AJAX/no-JS, zoom e WCAG segue pendente. Evidências em
 `mobile-first-audit.md`.
+
+Reteste ampliado de F6: 18/18 combinações de nove larguras × claro/escuro passaram
+os invariantes Fidelity candidatos. Os screenshots continuam representando markup
+antigo no Runtime; o compositor novo de Ganjalab ainda não foi validado servido.
+Relatórios em `mobile-first-audit.md`.

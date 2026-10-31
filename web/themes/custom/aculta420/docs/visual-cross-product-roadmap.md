@@ -1749,3 +1749,8 @@ estados vazios e overflow; Os testes Unit do compositor/controller passaram 2 te
 renderiza “Minha conta / Área pessoal”, divergente do compositor da branch
 “Meus cursos”; portanto F6 permanece parcial até validar o markup novo servido,
 matrículas/ACL e estados reais. Consulte `mobile-first-audit.md`.
+
+A matriz candidata de Ganjalab foi ampliada para nove larguras nos dois modos:
+18/18 combinações e todos os checks Fidelity passaram. O Runtime ainda não contém
+o markup “Meus cursos” da branch; F6 permanece parcial e o gate geral segue aberto.
+Evidências e limites em `mobile-first-audit.md`.

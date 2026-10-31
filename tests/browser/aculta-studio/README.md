@@ -685,3 +685,10 @@ A rota Runtime ainda apresenta markup anterior (“Minha conta / Área pessoal�
 enquanto o compositor atual da branch usa “Meus cursos”; os resultados são
 CSS candidata sobre consumer antigo. Não homologam F6, ACL/enrollment, dashboard
 novo, OCS-F11 ou THEME-MF3.
+
+**Extensão 2026-10-31:** Ganjalab foi executado nas nove larguras documentadas
+em claro e escuro, com 18/18 captures e todos os invariantes Fidelity `PASS`.
+Relatórios completos em `/home/piradopirata/aculta-suite-out/studio-ganjalab-full-light-followup-20261031/`
+e `/home/piradopirata/aculta-suite-out/studio-ganjalab-full-dark-followup-20261031/`.
+O Runtime continua usando markup anterior; a matriz não homologa o compositor novo
+nem F6/F11/MF3.

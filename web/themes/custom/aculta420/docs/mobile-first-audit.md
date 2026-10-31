@@ -3412,3 +3412,13 @@ aprendizagem. As capturas exercitam CSS candidata sobre esse markup antigo; não
 validam o conteúdo/estados do compositor novo, matrícula/ACL LMS, AJAX/no-JS, zoom,
 WCAG integral ou paridade pareada com dashboard OpenCulturas. OCS-F6/F11 e MF3
 permanecem pendentes.
+
+#### OCS-F6 — extensão à grade completa de viewport (2026-10-31)
+
+A repetição de Ganjalab cobriu 320/360/390/599/600/768/1024/1280/1440px em claro
+e escuro: **18/18 combinações** com `ganjalabFidelityStatus=PASS`, todas as
+verificações internas verdadeiras e `fidelity_failures=[]`. Relatórios em
+`/home/piradopirata/aculta-suite-out/studio-ganjalab-full-light-followup-20261031/`
+e `/home/piradopirata/aculta-suite-out/studio-ganjalab-full-dark-followup-20261031/`.
+A limitação de markup Runtime anterior permanece; o novo consumer da branch ainda
+não foi servido, portanto não homologa F6/F11/MF3.

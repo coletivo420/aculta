@@ -2080,3 +2080,14 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
 - Em todas as seis combinações, `ganjalabFidelityStatus=PASS`: Montserrat em main/heading/estados vazios, contexto presente, dois estados vazios, sem overflow, shell único, contraste AA dos links textuais da Institution Bar e tokens Fidelity ausentes do shell; modo escuro também verificou o token de texto.
 - `LearnerDashboardComposerTest` e `GanjalabControllerTest`: 2 testes/4 assertions. Nenhum formulário, curso ou matrícula foi alterado. As sessões ULI usaram a conta sintética; o snapshot anterior à sessão permanece registrado na entrada acima.
 - **Limite que impede F6:** o markup servido ainda mostra “Minha conta / Área pessoal”; o compositor da branch define “ACULTA Studio Ganjalab / Meus cursos / Acompanhe suas aulas e certificados”. Logo, os checks medem CSS candidata sobre markup antigo, não a tela final da branch. Não homologar OCS-F6/F11/MF3.
+
+### Reteste ampliado Ganjalab — matriz Fidelity (2026-10-31)
+
+Firefox ESR executou novamente `courses:/ganjalab` na grade completa de nove
+larguras (320/360/390/599/600/768/1024/1280/1440px) em claro e escuro: **18/18
+combinações capturadas**, todas com `ganjalabFidelityStatus=PASS` e sem falhas de
+Fidelity. Evidência em `/home/piradopirata/aculta-suite-out/studio-ganjalab-full-light-followup-20261031/`
+e `/home/piradopirata/aculta-suite-out/studio-ganjalab-full-dark-followup-20261031/`.
+Continua CSS candidata sobre o markup Runtime “Minha conta / Área pessoal”; não
+homologa o compositor “Meus cursos” ainda não servido. Sem formulário, matrícula
+ou preferência persistente alterados.

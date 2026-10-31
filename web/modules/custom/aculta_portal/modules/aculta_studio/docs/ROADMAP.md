@@ -958,3 +958,8 @@ Firefox ESR candidate CSS checks passed at 320/390/1440px in both modes.
 assertions. Runtime markup still displays “Minha conta / Área pessoal”; branch
 composer outputs “Meus cursos”. The captures therefore do not homologate the new
 consumer or LMS grants/enrollments. OCS-F6/F11 remain partial.
+
+Reteste posterior ampliou a cobertura candidata de Ganjalab para 320–1440px, nove
+larguras, em claro/escuro: 18/18 combinações passaram. O Runtime ainda apresenta
+markup anterior ao compositor local; registrar F6 como parcial até validar tela
+servida, contratos LMS e ACL.
