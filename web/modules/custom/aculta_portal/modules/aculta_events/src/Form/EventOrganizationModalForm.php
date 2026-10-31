@@ -628,6 +628,11 @@ final class EventOrganizationModalForm extends FormBase {
       return $form;
     }
     $orgId = (int) $form_state->get('selected_org_id');
+    // Defensive check: ensure we have a valid org ID
+    if ($orgId <= 0) {
+      // If no organization was selected, return the form to show any potential errors
+      return $form;
+    }
     return $this->buildUpdateParentResponse(
       $orgId,
       (string) $form_state->get('field_name'),
