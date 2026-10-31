@@ -2641,3 +2641,8 @@ ou preferência persistente alterados.
   violações axe. Isso evidencia que o bloqueio é de autorização de rota/purpose
   ou grant de loja, não de CSS; não foi criado conteúdo nem alterada ACL.
   Evidência em `/home/piradopirata/aculta-suite-out/greenstash-operations-manager-424/`.
+- Reteste final dos gates estáticos após F8: foundation 353, SDC schema 759,
+  shell contract 13, design foundations 2.432, aliases 38 arquivos e política
+  de rotas administrativas 154 rotas — todos PASS. Esses resultados confirmam
+  a integridade estrutural do tema, mas não convertem F8/F11 em PASS enquanto
+  as operações protegidas não tiverem uma conta/grant funcional homologável.
