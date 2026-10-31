@@ -14,6 +14,11 @@ operações comerciais ainda não estão disponíveis naquela tela. É fixture l
 de CSS: não autentica operadores, não valida grants por loja/dados reais e não
 homologa OCS-F8/F11 nem THEME-MF3.
 
+A fixture também verifica que o menu integrado Green Stash mantém suas três
+áreas em uma linha, com links de pelo menos 44px, inclusive a 320px e com zoom
+do navegador, sem alargar o documento. É um teste local do consumer e não
+substitui a captura da rota real.
+
 ```sh
 cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
 export DISPLAY=:0

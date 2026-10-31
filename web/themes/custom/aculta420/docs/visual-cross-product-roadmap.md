@@ -1542,3 +1542,13 @@ raízes, claro/escuro e reduced motion. O baseline Runtime reproduziu contraste
 candidata simula o marcador Portal e injeta CSS somente no navegador; não
 homologa essa CSS servida nem autenticação OAuth. Evidências em
 `mobile-first-audit.md`; THEME-MF3 segue pendente.
+
+### THEME-MF2 / OCS-F8 — navegação integrada Green Stash em telas estreitas (2026-10-31)
+
+Uma captura candidata de Green Stash em 320px mostrou duas abas na primeira
+linha e “Envios” isolada na seguinte. O menu comercial integrado agora distribui
+as três áreas em colunas iguais e mantém cada link em alvo de pelo menos 44px,
+sem rolagem horizontal da página. A alteração é CSS do tema e preserva links,
+rotas e contratos. A fixture local Firefox ESR passou 132/132 em nove larguras,
+claro/escuro, zoom real 200/400%, foco e ausência de overflow; as capturas foram
+revistas. Runtime servido e OCS-F8/F11/THEME-MF3 ainda não estão homologados.

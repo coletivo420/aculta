@@ -158,6 +158,8 @@ try:
               return {width: innerWidth, document: document.documentElement.scrollWidth,
                 columns: getComputedStyle(nav).gridTemplateColumns.trim().split(/\\s+/).length,
                 linkCount: links.length, links: links.map((el) => el.textContent.trim()),
+                navLinkTops: links.map(el => Math.round(el.getBoundingClientRect().top)),
+                navMinLinkHeight: Math.min(...links.map(el => el.getBoundingClientRect().height)),
                 active: active?.textContent.trim(),
                 overviewLinkCount: overviewLinks.length,
                 overviewActive: overviewActive?.textContent.trim(),
@@ -171,6 +173,11 @@ try:
                 navWidth: rect(nav).width, mode: document.documentElement.dataset.bsTheme};
             })();""")
             record(f"{mode}/{width}px: viewport e sem overflow", metrics["width"] == width and metrics["document"] <= width, metrics)
+            record(f"{mode}/{width}px: menu integrado de Green Stash mantém três áreas juntas e tocáveis",
+                   metrics["columns"] == 3 and metrics["linkCount"] == 3
+                   and len(set(metrics["navLinkTops"])) == 1 and metrics["navMinLinkHeight"] >= 44,
+                   {key: metrics[key] for key in ("columns", "linkCount", "navLinkTops",
+                                                   "navMinLinkHeight", "navWidth", "document")})
             record(f"{mode}/{width}px: somente três áreas implementadas e seção atual marcada",
                    metrics["linkCount"] == 3 and metrics["active"] == "Produtos"
                    and set(metrics["links"]) == {"Visão geral", "Produtos", "Envios"}, metrics)

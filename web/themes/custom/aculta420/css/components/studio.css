@@ -1221,7 +1221,7 @@ body.path-marley form.node-revista-form :is(.form-submit, .button--cta, .oc-butt
 /* Keep every currently exposed area reachable without horizontal scrolling. */
 .aculta-green-stash__navigation {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.25rem 0.75rem;
   min-width: 0;
   margin-block-end: 1rem;
@@ -1232,8 +1232,10 @@ body.path-marley form.node-revista-form :is(.form-submit, .button--cta, .oc-butt
   min-width: 0;
   min-height: 3rem;
   align-items: center;
-  padding: 0.5rem 0.75rem;
-  overflow-wrap: anywhere;
+  justify-content: center;
+  padding: 0.5rem 0.25rem;
+  overflow-wrap: normal;
+  text-align: center;
   color: var(--aculta-studio-fidelity-link);
   text-decoration: none;
   border-block-end: 1px solid var(--aculta-studio-fidelity-divider);
