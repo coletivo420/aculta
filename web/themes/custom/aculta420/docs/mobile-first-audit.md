@@ -2278,6 +2278,18 @@ capturas, inclusive o fallback, estão em
 Isto repete o contrato CSS sobre o consumer real, mas ainda não executa o Twig
 candidato nem valida sua integração no Runtime.
 
+Revalidação em 2026-10-31 no Firefox ESR visível: a rota pública anônima serviu
+as quatro publicações sintéticas já existentes, com a Institution Bar e o Domain
+Header únicos. Passaram 19/19 verificações em 320/360/390/599/600/768/1024/1280/
+1440px, incluindo imagens carregadas, grades de uma/duas/três colunas, títulos e
+CTAs com alvo mínimo de 44px e zero overflow. Com a folha candidata injetada,
+o fallback foi novamente simulado apenas no DOM e conferido em claro/escuro.
+As capturas de 320 e 1440px foram revisadas em
+`/home/piradopirata/aculta-suite-out/revista-cover-revalidation-20261031/`.
+Nenhum conteúdo ou configuração foi gravado no Runtime nesta revalidação.
+A folha e o Twig da branch continuam sem integração servida; isto não aprova
+paridade pareada com OpenCulturas, teclado completo, zoom, WCAG 2.2 AA ou THEME-MF3.
+
 ### THEME-MF3 — reteste global de shell, temas e fallback sem JavaScript (2026-10-31)
 
 Firefox ESR visível repetiu o shell público nas dez raízes definidas em
