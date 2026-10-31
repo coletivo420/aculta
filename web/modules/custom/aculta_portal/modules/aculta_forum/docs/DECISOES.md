@@ -45,6 +45,10 @@ conquistas na importação).
   sob DomainPurposeManager/Deployer. A substituição do motor não altera domínio
   por si só.
 
+## Adendo de decisão — URLs individuais de comentários (2026-10-31)
+
+A rota legada `/comment/{cid}` deve responder 404. Comentários permanecem acessíveis somente dentro do contexto da entidade proprietária e após sua autorização. Esta decisão não remove nem altera os campos Comment contextuais da Revista, LMS, Wiki ou Fórum.
+
 ## Aprovado
 
 | ID | Decisão | Consequência |
