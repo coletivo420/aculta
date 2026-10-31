@@ -2014,6 +2014,15 @@ imagem/conteúdo no móvel e amplia para grade progressiva em telas maiores. A
 captura valida o consumer servido; sem uma homepage equivalente autenticada do
 OpenCulturas e sem baseline pareado de conteúdo, não se declara paridade visual.
 
+No mesmo Runtime `2493d7535`, a listagem pública de Eventos recebeu o CSS
+candidato local do SDC `event_card` no Firefox, sem alterar o servidor. Passou
+20/20 checks em 320/360/390/575/576/600/768/1024/1280/1440px: três cartões
+reais, grade responsiva, moldura aplicada uma vez no SDC e zero overflow.
+Captura 320px revisada; evidências em
+`/home/piradopirata/aculta-suite-out/events-catalogue-continuation-20261030/`.
+É uma verificação focal do catálogo; detalhe do evento, teclado, zoom e WCAG
+completa continuam pendentes.
+
 Antes da inspeção foi produzido snapshot íntegro do `aculta_runtime`
 (624 tabelas), armazenado fora do Git com modo restrito; SHA-256:
 `665c41fcdce303d6bc4d1171ea3421c8e42de53d5261c80e5c23d5a955c1fdae`.
