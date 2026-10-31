@@ -2504,6 +2504,17 @@ e `/home/piradopirata/aculta-suite-out/auth-reset-candidate-current-20261031/`.
 Não houve submit ou escrita no Runtime. O teste não confirma o hook PHP real ou
 o stylesheet reconstruído/servido; o baseline continua com overflow de 328px
 em `/entrar` a 320px, até a integração da branch ser instalada e retestada.
+
+Reteste isolado em 2026-10-31: `auth-route-runtime.py` abriu `/entrar` anônimo
+por Firefox ESR visível, com GET via proxy local restrito ao host Conta. Usando
+`auth.css`/`base.css` da branch e token de apresentação simulado no DOM, passou
+**10/10 checks** em 320/360/390/599/600/768/1024/1280/1440px; a 320px o
+documento mede 320px e o slot do desafio 300px. Evidência em
+`/home/piradopirata/aculta-suite-out/auth-route-candidate-resume-20261031/`.
+Nenhum formulário foi submetido. Este reteste continua sendo candidato: não
+valida o hook no formulário servido, nem cadastro/recuperação, JavaScript/no-JS,
+teclado, zoom, leitores de tela, WCAG 2.2 AA ou THEME-MF3.
+
 ### OCS-F5 — isolar Fidelity do editor de Revista ao path Marley (2026-10-31)
 
 A auditoria de cascata encontrou seletores globais em `tokens.css` e
@@ -2583,7 +2594,7 @@ gerada agora coincide com o artefato versionado.
 
 Esta reconciliação atualiza o índice lexical; não analisa cascata, bibliotecas,
 consumidores por purpose ou geometria renderizada, portanto THEME-MF0 continua
-parcial e THEME-MF3 não está aprovado. A repetição do gate Firefox foi adiada
-nesta sessão: `DISPLAY` não está definido, e o checkout servido continua em
-HEAD `2493d7535`, anterior ao hook CAPTCHA da branch. Nenhuma alteração foi
-feita no Runtime.
+parcial e THEME-MF3 não está aprovado. Firefox ESR visível passou 10/10 checks
+em `/entrar` com CSS da branch e token de apresentação simulado; o checkout
+servido continua em HEAD `2493d7535`, anterior ao hook CAPTCHA da branch.
+Nenhuma alteração foi feita no Runtime.
