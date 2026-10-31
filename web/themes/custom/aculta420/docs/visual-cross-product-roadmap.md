@@ -1710,3 +1710,10 @@ registros; a única falha foi o overflow de `/entrar` a 320px. A injeção candi
 em Conta passou 72/72, com quatro SKIPs de sequência, nas larguras 320/390/768/
 1280px e sem overflow. O Runtime ainda não serve o candidato; THEME-MF3 segue
 pendente. Detalhes e limitações em `mobile-first-audit.md`.
+### THEME-MF3 — hierarquia de títulos nas dez raízes (2026-10-31)
+
+Firefox ESR passou 119/120 checks de H1 e shell nas dez raízes, em seis larguras.
+A falha foi somente o overflow conhecido de `/entrar` a 320px; não houve H1
+ausente ou header duplicado. Evidência em `mobile-first-audit.md`. O gate MF3
+permanece pendente até validar a correção no Runtime servido e concluir os demais
+critérios.

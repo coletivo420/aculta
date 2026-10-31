@@ -3341,3 +3341,13 @@ viewport também a 320px. Evidência:
 `/home/piradopirata/aculta-suite-out/account-keyboard-candidate-followup-20261031/`.
 O resultado exercita CSS/markup candidato, não o hook instalado. O Runtime segue
 com o overflow e THEME-MF3 permanece pendente.
+### THEME-MF3 — H1 e shell nas dez raízes públicas (2026-10-31)
+
+`purpose-headings.py` passou **119/120** verificações em Firefox ESR visível,
+nas dez raízes e larguras 320/390/600/768/1024/1440px. H1 visível dentro de
+`main#main-content` e Institution Bar/Domain Header únicos passaram em todas as
+combinações. A falha única foi o overflow já conhecido de `/entrar` a 320px
+(`documentWidth=328px`). Evidência:
+`/home/piradopirata/aculta-suite-out/purpose-headings-followup-20261031/`.
+Isso reforça a pendência de validação servida do candidato; não abre outro defeito
+de heading e não aprova THEME-MF3.

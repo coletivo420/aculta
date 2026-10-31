@@ -991,3 +991,7 @@ Relatórios em `/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-follo
 e `/home/piradopirata/aculta-suite-out/account-keyboard-candidate-followup-20261031/`.
 O segundo resultado injeta CSS/marcador no navegador e não valida integração
 instalada no Runtime.
+Revalidação em 2026-10-31: `purpose-headings.py` passou 119/120 checks. A única
+falha foi o overflow conhecido de Conta a 320px; H1 visível, `main` e shell único
+passaram em todas as combinações. Relatório:
+`/home/piradopirata/aculta-suite-out/purpose-headings-followup-20261031/`.
