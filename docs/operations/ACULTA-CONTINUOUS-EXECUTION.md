@@ -2531,3 +2531,9 @@ ou preferência persistente alterados.
   `/home/piradopirata/aculta-suite-out/studio-conta-baseline-recheck-e538f5f3d-20261031/`
   e `/home/piradopirata/aculta-suite-out/studio-profile-baseline-recheck-e538f5f3d-20261031/`.
   A/B de privacidade, upload/crop e cache entre contas continuam pendentes.
+- O Kernel `WikiLeadImageLifecycleKernelTest` foi atualizado para os caminhos
+  canônicos da Suite WE SATIVA (`/wesativa`, domínio `wiki420`) após a migração
+  ADR-038. A execução completa passou: 29 testes, 1.767 asserções; houve 369
+  depreciações já existentes do Drupal/contrib, sem falhas. A execução focal
+  anterior também passou (1 teste, 76 asserções). Evidência local em
+  `/tmp/wiki-kernel-route4.out` e `/tmp/wiki-kernel-filter.out`.

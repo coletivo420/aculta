@@ -916,7 +916,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame('/wiki/propostas/{proposal}/retirar', $withdrawRoute->getPath());
     self::assertSame('proposal.view', $withdrawRoute->getRequirement('_entity_access'));
     $decisionRoute = $routeProvider->getRouteByName('aculta_wiki.proposal_decide');
-    self::assertSame('/studio/we-sativa/propostas/{proposal}/decidir', $decisionRoute->getPath());
+    self::assertSame('/wesativa/propostas/{proposal}/decidir', $decisionRoute->getPath());
     self::assertSame('moderate wiki proposals', $decisionRoute->getRequirement('_permission'));
     self::assertSame('proposal.update', $decisionRoute->getRequirement('_entity_access'));
 
@@ -1072,7 +1072,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $currentUser->setAccount($studioCreator);
     $studioBuild = $controller->home();
     self::assertSame('aculta_studio.we_sativa_start', $studioBuild['collaboration']['#url']->getRouteName());
-    self::assertSame('conta_aculta_org', $studioBuild['collaboration']['#url']->getOption('domain')->id());
+    self::assertSame('wiki420_aculta_org', $studioBuild['collaboration']['#url']->getOption('domain')->id());
     self::assertContains('user.permissions', $studioBuild['collaboration']['#access']->getCacheContexts());
     self::assertSame('wiki', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
   }
@@ -1278,13 +1278,13 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
 
     $routes = $this->container->get('router.route_provider');
     $route = $routes->getRouteByName('aculta_studio.we_sativa');
-    self::assertSame('/studio/we-sativa', $route->getPath());
+    self::assertSame('/wesativa', $route->getPath());
     self::assertSame('wiki', $route->getOption('_aculta_domain_purpose'));
     $startRoute = $routes->getRouteByName('aculta_studio.we_sativa_start');
-    self::assertSame('/studio/we-sativa/inicio', $startRoute->getPath());
+    self::assertSame('/wesativa/inicio', $startRoute->getPath());
     self::assertSame('wiki', $startRoute->getOption('_aculta_domain_purpose'));
     $createRoute = $routes->getRouteByName('aculta_wiki.studio_entry_create');
-    self::assertSame('/studio/we-sativa/verbetes/novo', $createRoute->getPath());
+    self::assertSame('/wesativa/verbetes/novo', $createRoute->getPath());
     self::assertSame('wiki', $createRoute->getOption('_aculta_domain_purpose'));
     self::assertSame('node:wiki_entry', $createRoute->getRequirement('_entity_create_access'));
     self::assertTrue($this->container->get('access_manager')->checkNamedRoute(
@@ -1298,8 +1298,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       $reader,
     ));
     $exactEntrypoints = array_filter(
-      $routes->getRoutesByPattern('/studio/we-sativa')->all(),
-      static fn ($candidate): bool => $candidate->getPath() === '/studio/we-sativa',
+      $routes->getRoutesByPattern('/wesativa')->all(),
+      static fn ($candidate): bool => $candidate->getPath() === '/wesativa',
     );
     self::assertCount(1, $exactEntrypoints);
 
@@ -1540,8 +1540,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertArrayHasKey('next_page', $firstPage['proposals']['#slots']['body']);
     $entryUrl = $firstPage['entries']['#slots']['body']['next_page']['#url'];
     $proposalUrl = $firstPage['proposals']['#slots']['body']['next_page']['#url'];
-    self::assertSame('conta_aculta_org', $entryUrl->getOption('domain')->id());
-    self::assertSame('conta_aculta_org', $proposalUrl->getOption('domain')->id());
+    self::assertSame('wiki420_aculta_org', $entryUrl->getOption('domain')->id());
+    self::assertSame('wiki420_aculta_org', $proposalUrl->getOption('domain')->id());
     $query = [
       'wiki_node_cursor' => $entryUrl->getOption('query')['wiki_node_cursor'],
       'wiki_proposal_cursor' => $proposalUrl->getOption('query')['wiki_proposal_cursor'],
@@ -1743,7 +1743,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       $filterLinks = $build['entries']['#slots']['body']['filters']['#slots']['items']['#items'];
       self::assertCount(4, $filterLinks);
       foreach ($filterLinks as $link) {
-        self::assertSame('conta_aculta_org', $link['#url']->getOption('domain')->id());
+        self::assertSame('wiki420_aculta_org', $link['#url']->getOption('domain')->id());
         self::assertSame('1720000000-9', $link['#url']->getOption('query')['wiki_proposal_cursor']);
         self::assertArrayNotHasKey('wiki_node_cursor', $link['#url']->getOption('query'));
       }
