@@ -308,6 +308,9 @@ final class PortalUiHooks {
     // Green Stash is a Studio area; keep its product styles while inheriting
     // the Studio-scoped OpenCulturas fidelity foundation.
     'green-stash-entry' => ['studio', 'aculta-green-stash'],
+    // LMS dashboard is composed in the main region without the Studio shell.
+    // Scope only its content root so Studio tokens never reach the global shell.
+    'studio-fidelity-scope' => ['studio'],
     'green-stash-product-create' => ['aculta-green-stash__product-create'],
     'green-stash-navigation-link' => ['nav-link', 'aculta-green-stash__navigation-link'],
     'green-stash-navigation' => ['nav', 'aculta-green-stash__navigation'],

@@ -212,6 +212,23 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
+   * A standalone Studio content consumer gets only the scoped fidelity class.
+   */
+  public function testMapsStudioFidelityScopeWithoutAddingAShellClass(): void {
+    $variables = [
+      'element' => [
+        '#attributes' => ['data-portal-ui' => 'studio-fidelity-scope'],
+      ],
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    $classes = $variables['element']['#attributes']['class'];
+    self::assertSame(['studio'], $classes);
+    self::assertArrayNotHasKey('data-portal-ui', $variables['element']['#attributes']);
+  }
+
+  /**
    * Forum dialog tokens map to the theme classes used by dialog.css.
    */
   public function testMapsForumDialogTokens(): void {

@@ -38,6 +38,7 @@ final class LearnerDashboardComposer {
     $data = $this->dashboards->studentDashboard($this->currentUser);
     $build = [
       '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'studio-fidelity-scope'],
       'context_header' => [
         '#theme' => 'aculta_portal_component',
         '#name' => 'context-header',

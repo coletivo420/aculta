@@ -227,6 +227,12 @@ execução mais recente fica em `$SUITE_OUT/baseline.json`; estados negados são
 parciais, não PASS. Ausência de overflow vale somente para rotas/estados e
 larguras realmente capturados, e não aceita MF3, WCAG ou paridade visual.
 
+O coletor marca `missingMainHint` quando uma captura `studio-*` não contém o
+`main#main-content` esperado; documentos sem `main` e sem texto também recebem
+`emptyDocumentHint`. Qualquer uma dessas condições força o agregado para
+`PARTIAL`, mesmo se o navegador conseguiu salvar uma imagem. Isso evita tratar
+uma resposta 404/blank como captura Studio válida.
+
 ### THEME-MF0 — shell nas raízes dos dez purposes (2026-10-30)
 
 `purpose-matrix.py` rodou em Firefox ESR visível contra o servidor de

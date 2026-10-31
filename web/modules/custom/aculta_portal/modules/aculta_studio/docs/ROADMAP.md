@@ -21,6 +21,31 @@ depende de THEME-MF3. OCS-A1–A4 só começam depois dos dois gates aprovados.
 | OCS-F11 | Não aprovado: depende de THEME-MF3 e das evidências de todas as áreas/estados. |
 | OCS-A1–A4 | Não iniciadas; gate anterior permanece fechado. |
 
+### Reteste de rotas F6/F7/F8 no Runtime — 2026-10-31
+
+No HEAD servido `2493d7535`, a conta sintética abriu `/ganjalab` nas nove
+larguras, mas a tela era Minha Conta, sem workspace/markers Studio LMS. Os paths
+oficiais `/studio/we-sativa` e `/studio/green-stash` retornaram 404 anônimo; em
+27 capturas autenticadas os documentos ficaram vazios. Drush confirma Wiki sem
+rota oficial e Green Stash ainda em `/greenstash`. A source branch local contém
+as rotas canônicas, e a suíte Unit Commerce passou 11 testes/145 assertions;
+isso prova o código do checkout, não a instalação no Runtime. A saída agregada
+`studio_capture_status=CAPTURED` do harness não detectou os documentos vazios e
+não deve ser usada como aceite. Evidência em
+`/home/piradopirata/aculta-suite-out/ocs-studio-routes-resume-20261031/` e
+detalhes na [matriz de paridade visual](../../../../../../themes/custom/aculta420/docs/studio-visual/visual-parity-matrix.md).
+F6/F7/F8 seguem sem homologação Runtime; F11/MF3 não aprovados.
+
+### Escopo Fidelity do painel LMS — implementação candidata
+
+`LearnerDashboardComposer` marca agora o contêiner de conteúdo com o token
+neutro `studio-fidelity-scope`; `PortalUiHooks` o traduz somente para a classe
+`.studio`, necessária aos tokens e estilos OpenCulturas escopados. O shell
+multidomínio não recebe essa classe, e não há novo shell nem alteração dos dados
+ou contratos LMS. Testes Unit cobrem a emissão do token e sua tradução no tema.
+Isto corrige a integração visual no código candidato, mas a rota/runtime estava
+desalinhada no reteste acima; portanto não aprova OCS-F6 nem gates globais.
+
 ### OCS-F10 — ACULTA Studio Culturas: composição mobile-first candidata
 
 O tema agora aplica a composição visual ao wrapper real do dashboard

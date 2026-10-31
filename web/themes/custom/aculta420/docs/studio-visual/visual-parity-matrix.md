@@ -53,6 +53,30 @@ continuam pendentes. O Runtime não estava no HEAD remoto da PR `88063e76b` dura
 esta captura; portanto, estes resultados são baseline do checkout servido, não
 homologação da cabeça candidata nem aceite OCS-F0/F11.
 
+**Reteste de rotas oficiais no Runtime HEAD `2493d7535` (2026-10-31):** com
+conta sintética autorizada, Firefox ESR capturou GanjaLab, WE SATIVA e Green
+Stash em nove larguras (27 registros). GanjaLab `/ganjalab` carregou, mas
+renderizou a Minha Conta, sem marcadores Studio/LMS; não é consumer GanjaLab
+homologado. `/studio/we-sativa` e `/studio/green-stash` produziram documentos
+vazios nas nove capturas. GET anônimo retornou 404 nos dois paths; Drush
+confirmou rota Wiki ausente e Green Stash ainda em `/greenstash`. A source branch
+local define os paths oficiais; o PHPUnit de navegação/provider Commerce passou
+11 testes/145 assertions. `ocs-baseline.py` sinalizou `CAPTURED`, mas essa
+etiqueta agregada não detecta os documentos vazios e não deve ser tratada como
+aceite. Evidência em
+`/home/piradopirata/aculta-suite-out/ocs-studio-routes-resume-20261031/`.
+O snapshot Runtime pré-login é externo ao Git, modo 600, SHA-256
+`0b00e27c827397cdd24019c26c6522f511b89987cc5f8c1387f0d9a6cdd57ec5`; nenhum
+formulário foi enviado ou conteúdo/configuração alterado. A divergência bloqueia
+a homologação visual de F6/F7/F8 até o Runtime servir a source branch e repetir
+as capturas; THEME-MF3/OCS-F11 permanecem pendentes.
+
+**Composição LMS candidata:** `LearnerDashboardComposer` agora emite o token
+semântico `studio-fidelity-scope` na raiz do conteúdo de GanjaLab. O tema o
+traduz para `.studio`, habilitando a fundação Fidelity sem alcançar Institution
+Bar ou Domain Header. Testes Unit verificam emissão e tradução; ainda falta
+repetir a captura no Runtime alinhado para avaliar a aparência renderizada.
+
 O pacote oficial do OpenCulturas 3.1.5 permanece a fonte visual: o hash e os
 arquivos concretos inspecionados estão em [`upstream-inventory.md`](upstream-inventory.md).
 Reuso SDC deve ser confirmado por consumer real e story; esta matriz não trata
