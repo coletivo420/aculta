@@ -278,6 +278,14 @@ As quatro cores fechadas de seção têm tokens, pares de contraste e stories no
 `field_section_variant` como dimensão visual separada; a hook `aculta_section`
 passa a cor escolhida ao SDC com fallback `default`.
 
+Os formulários owner existentes `aculta-event-add-form` e
+`aculta-event-location-add-form` reutilizam os tokens e estilos de formulário
+do tema, sob `body.path-culturas`; não há SDC ou Form API paralelo. Em Firefox
+ESR, a folha candidata foi medida nas rotas reais em 320/390/768/1440px, sem
+overflow e com alvos de campo/ação de 44px ou maiores. Essa captura não prova a
+integração no Runtime nem cobre submit, ACL, CEP, modo escuro ou OCS-F11; veja
+os limites e o comando reproduzível no README da suíte.
+
 ## Gates do tema — 2026-10-28
 
 O tema tem `npm run lint:css` e `npm run lint:js`. Ambos passaram na microfase

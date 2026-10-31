@@ -79,6 +79,39 @@ viewport. A captura requer revisão visual; não prova ACL, WCAG nem o gate OCS-
 Os seletores usam atributos de comportamento `data-aculta-studio*`, porque o tema troca os tokens `data-portal-ui`
 por classes na renderização.
 
+### Culturas owner Event and Location forms — candidate CSS
+
+`ocs-baseline.py` records only geometry and computed presentation for the real
+`aculta-event-add-form` and `aculta-event-location-add-form` forms. It omits
+field values. With `OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1`, it injects the local
+theme tokens and `studio.css` in Firefox and checks form presence, viewport fit,
+Montserrat, field/action targets of at least 44px, and that the primary action
+uses the scoped Fidelity token. It does not submit either Drupal Form API form.
+
+Use the development checkout as `ACULTA_ROOT` when it is the configured Drush
+connection for `aculta_runtime`; keep the candidate theme root separate:
+
+```sh
+export DISPLAY=:0
+export ACULTA_ROOT=/home/piradopirata/projetos/aculta
+export OCS_STUDIO_FIDELITY_CSS_ROOT=/home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1
+export OCS_SKIP_OPENCULTURAS=1
+export STUDIO_LOGIN_URI=https://conta.aculta.toca.net.br
+export STUDIO_USER=aculta_visual_admin
+export STUDIO_ROUTES=https://eventos.aculta.toca.net.br/culturas/eventos/novo,https://eventos.aculta.toca.net.br/culturas/locais/novo
+export OCS_WIDTHS=320,390,768,1440
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/culturas-organizer-forms
+python3 tests/browser/aculta-studio/ocs-baseline.py
+```
+
+`baseline.json` and screenshots remain outside Git in `$SUITE_OUT`. The test
+uses a read-only GET and a temporary login URL; no event, location, address, or
+other field value is saved. Candidate CSS capture is not proof that the Runtime
+serves the branch or that the entire OCS-F11/THEME-MF3 gate passes. The test
+does not cover dark mode, no-JS/AJAX behavior, full keyboard/zoom/WCAG, ACL
+between accounts, or address CEP behavior.
+
 ## Meus Salvos — apresentação Fidelity
 
 Arquivo `saved-content-fidelity.py`. Valida somente a apresentação candidata

@@ -972,6 +972,19 @@ Reteste posterior ampliou a cobertura candidata de Ganjalab para 320–1440px, n
 larguras, em claro/escuro: 18/18 combinações passaram. O Runtime ainda apresenta
 markup anterior ao compositor local; registrar F6 como parcial até validar tela
 servida, contratos LMS e ACL.
+
+### OCS-F10 — formulários owner de Eventos Culturas (2026-10-31)
+
+Os GETs reais `/culturas/eventos/novo` e `/culturas/locais/novo` foram capturados
+no Firefox ESR autenticado, sem envio dos formulários. A CSS Fidelity candidata
+passou 48/48 checks em 320/390/768/1440px, cobrindo existência dos forms
+proprietários, encaixe na viewport, Montserrat, alvos de 44px e uso do token da
+ação primária; Institution Bar e Domain Header permaneceram presentes. O
+harness mede geometria/estilos sem ler valores de campo e documenta a execução
+em `tests/browser/aculta-studio/README.md`. A folha candidata foi injetada no
+navegador: modo escuro, CEP, no-JS/AJAX, submit, ACL, zoom, WCAG e integração no
+Runtime continuam pendentes. Não se criou SDC ou formulário paralelo; F10,
+F11 e THEME-MF3 permanecem parciais/pendentes.
 # 2026-10-31 — apresentação Studio para criação de cursos
 
 A ação “Novo curso” da aba Cursos Marley apontava para `entity.group.add_form`

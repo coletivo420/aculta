@@ -564,6 +564,77 @@ socket.onmessage = (event) => {
         record["profileActionTargetStatus"] = "PASS" if all(checks.values()) else "FAIL"
         if record["profileActionTargetStatus"] == "FAIL":
             CAPTURE_FAILURES.append({"url": url, "width": width, "checks": checks, "targets": targets})
+    if "path-culturas" in record.get("bodyClasses", []):
+        record["culturasForms"] = json.loads(driver.js("""return JSON.stringify(
+          [...document.querySelectorAll('main#main-content form.aculta-event-form, main#main-content form.aculta-event-location-form')].map(form => {
+            const box = element => {
+              const rect = element.getBoundingClientRect();
+              const style = getComputedStyle(element);
+              return {tag: element.tagName, type: element.type || null,
+                className: String(element.className || ''), width: rect.width,
+                height: rect.height, minHeight: style.minHeight,
+                fontFamily: style.fontFamily, color: style.color,
+                background: style.backgroundColor, border: style.borderColor,
+                borderRadius: style.borderRadius};
+            };
+            const fidelity = getComputedStyle(document.documentElement);
+            const tokenProbe = document.createElement('span');
+            tokenProbe.style.backgroundColor = 'var(--aculta-studio-fidelity-button-primary-background)';
+            form.append(tokenProbe);
+            const primaryBackground = getComputedStyle(tokenProbe).backgroundColor;
+            tokenProbe.remove();
+            const primary = form.querySelector('.button--primary');
+            const primaryProbe = primary?.cloneNode(true);
+            if (primaryProbe) {
+              primaryProbe.style.cssText = 'position:fixed;top:-10000px;left:-10000px;opacity:0;pointer-events:none';
+              form.append(primaryProbe);
+            }
+            const primaryActionBackground = primaryProbe ? getComputedStyle(primaryProbe).backgroundColor : '';
+            primaryProbe?.remove();
+            return {id: form.id, className: String(form.className || ''),
+              box: box(form), fieldCount: form.querySelectorAll(
+                'input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),select,textarea').length,
+              fields: [...form.querySelectorAll(
+                'input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),select,textarea')].slice(0, 30).map(box),
+              actionCount: form.querySelectorAll(
+                'button,input[type="submit"],input[type="button"],.form-submit,.button').length,
+              fidelityTokens: {
+                fontFamily: fidelity.getPropertyValue('--aculta-studio-fidelity-font-family').trim(),
+                primaryBackground, primaryActionBackground
+              },
+              actions: [...form.querySelectorAll(
+                'button,input[type="submit"],input[type="button"],.form-submit,.button')].slice(0, 20).map(box)};
+          })
+        );"""))
+        if STUDIO_CSS_OVERRIDE:
+            route_path = urlparse(url).path.rstrip("/")
+            expected_form_id = {
+                "/culturas/eventos/novo": "aculta-event-add-form",
+                "/culturas/locais/novo": "aculta-event-location-add-form",
+            }.get(route_path)
+            if expected_form_id and not any(
+                form["id"] == expected_form_id for form in record["culturasForms"]
+            ):
+                CAPTURE_FAILURES.append({
+                    "url": url, "width": width,
+                    "checks": {"expectedOwnerFormPresent": False},
+                })
+            for form in record["culturasForms"]:
+                checks = {
+                    "formPresent": form["id"] in ("aculta-event-add-form", "aculta-event-location-add-form"),
+                    "formFitsViewport": form["box"]["width"] <= width + 1,
+                    "fidelityFontApplied": "Montserrat" in form["box"]["fontFamily"],
+                    "fieldsAtLeast44px": all(field["height"] >= 44 for field in form["fields"]),
+                    "actionsAtLeast44px": all(action["height"] >= 44 for action in form["actions"]),
+                    "primaryActionUsesFidelityToken": bool(
+                        form["fidelityTokens"]["primaryBackground"]
+                    ) and form["fidelityTokens"]["primaryBackground"]
+                        == form["fidelityTokens"]["primaryActionBackground"],
+                }
+                form["fidelityChecks"] = checks
+                if not all(checks.values()):
+                    CAPTURE_FAILURES.append({"url": url, "width": width,
+                                             "culturasForm": form["id"], "checks": checks})
     record["institutionBarUtilityLinkContrast"] = institution_link_contrast(driver)
     record["cssOverride"] = css_override
     record["studioFidelityCssOverride"] = STUDIO_CSS_OVERRIDE

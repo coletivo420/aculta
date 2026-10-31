@@ -3743,3 +3743,23 @@ não prova CSS integrada no Runtime, reduced motion, foco do botão fechar ou
 WCAG completa. Evidência em
 `/home/piradopirata/aculta-suite-out/culturas-runtime-status-flow-retest-20261031/`.
 
+### OCS-F10 / THEME-MF2 — formulários reais de Eventos Culturas (2026-10-31)
+
+Firefox ESR autenticado abriu por GET `/culturas/eventos/novo` e
+`/culturas/locais/novo` no purpose Eventos. Com `studio.css` e tokens da branch
+injetados somente no navegador, os dois formulários passaram 48/48 checks em
+320/390/768/1440px: formulário presente e contido na viewport, Montserrat,
+campos e ações com pelo menos 44px, botão primário usando o token Fidelity e
+sem overflow documental. Institution Bar e Domain Header permaneceram visíveis.
+As capturas 320/1440 foram revistas; nenhum formulário foi enviado e nenhum
+conteúdo foi alterado. Evidências em
+`/home/piradopirata/aculta-suite-out/culturas-organizer-forms-fidelity-assertions-20261031/`.
+
+O primeiro ensaio apontou falso negativo porque a variável CSS foi lida fora
+do escopo `.aculta-main`; o harness foi corrigido para resolver o token dentro
+do formulário e comparar um clone de medição sem hover/transição. A execução
+final registrou `CAPTURED`, zero falhas e 48 checks focais. São páginas reais,
+mas a folha continua candidata injetada: sua integração no Runtime, estados
+escuro, no-JS/AJAX, CEP, teclado/zoom, ACL entre contas e WCAG completa não foram
+homologados. OCS-F10, OCS-F11 e THEME-MF3 seguem parciais/pendentes.
+
