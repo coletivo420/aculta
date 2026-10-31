@@ -2207,3 +2207,16 @@ mede 300px e cabe no contêiner de 300px a 320px de viewport; a 360px acompanha
 `/home/piradopirata/aculta-suite-out/auth-overflow-followup-20261031/`. Este teste
 prova o comportamento da candidata sobre markup Runtime, não o hook real ou a
 CSS publicada; o Runtime servido continua com a falha identificada.
+
+### OCS-F3 — reteste atual da composição Fidelity do Hub Studio (2026-10-31)
+
+A fixture reutilizável `studio-card-fidelity.py` passou 243/243 verificações em
+27 larguras (320–1920px), incluindo limites 480/768/992/1100/1120/1360/1920px,
+Montserrat regular/negrito, container, escala tipográfica, dois cards, abas,
+alvos mínimos de 44px e ausência de overflow. As capturas 320 e 1440px foram
+inspecionadas: rótulos longos quebram sem alargar a tela, e o desktop mantém as
+abas em linha e cards em duas colunas. Evidência em
+`/home/piradopirata/aculta-suite-out/ocs-studio-card-current-20261031/`.
+A fixture não contém render Drupal, ACL, cache, estados opcionais nem dashboard
+autenticado OpenCulturas pareado; OCS-F3/F4 continuam parciais e OCS-F11 não
+está aprovado.

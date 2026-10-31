@@ -590,3 +590,11 @@ estados, quatro filtros, filtro atual único, wrapping, links de pelo menos 44px
 overflow e isolamento do shell. No modo escuro, 15/15 invariantes passaram nos
 mesmos dois viewports. O path canônico `/studio/we-sativa` ainda não é servido
 pelo Runtime HEAD `2493d7535`; F7 permanece parcial, sem aprovação.
+
+### OCS-F3 — reexecução da fixture do Hub Fidelity
+
+A combinação existente de `studio__tabs`, `studio__subtabs` e SDC `card` foi
+revalidada em 27 larguras (243 checks Firefox ESR), com rótulos longos quebrando
+sem overflow e cards em duas colunas a partir de 768px. Não cria SDC nem altera
+contrato. Capturas e limitações em `studio-visual/visual-parity-matrix.md` e
+`mobile-first-audit.md`.

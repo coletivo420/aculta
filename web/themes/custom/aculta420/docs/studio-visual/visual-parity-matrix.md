@@ -219,3 +219,13 @@ pré-ULI foi `/home/piradopirata/aculta-suite-out/runtime-before-wesativa-dark-2
 SHA-256 `635b80adb3aaff58be98a539c52aeddaf9f133a14bf3336f4a7bd6e5b707ca33`.
 A preferência da conta não foi salva; a captura continua no path legado, sem
 validar a rota canônica ou contraste WCAG integral.
+
+### OCS-F3 — revalidação atual da fixture de card e navegação Fidelity (2026-10-31)
+
+No HEAD local, `studio-card-fidelity.py` passou 243/243 em 27 larguras, cobrindo
+reflow do Hub, SDC card, tipografia Montserrat, container e alvos das abas. As
+capturas 320/1440 foram inspecionadas. As evidências estão em
+`/home/piradopirata/aculta-suite-out/ocs-studio-card-current-20261031/`.
+Resultado é fixture local; Hub Drupal autenticado, autorização, cache e
+comparação pareada com OpenCulturas autenticado seguem sem prova. OCS-F3/F4
+parciais; F11 pendente.
