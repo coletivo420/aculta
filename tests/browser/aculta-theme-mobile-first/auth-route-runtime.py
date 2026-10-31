@@ -31,7 +31,10 @@ BASE = os.environ.get(
 ROUTE = os.environ.get("AUTH_ROUTE_PATH", "/entrar")
 if not ROUTE.startswith("/") or "?" in ROUTE or "#" in ROUTE:
     raise SystemExit("AUTH_ROUTE_PATH deve ser um path absoluto simples.")
-EXPECTED_PATH_CLASS = "path-" + ROUTE.strip("/").replace("/", "-")
+EXPECTED_PATH_CLASS = os.environ.get(
+    "AUTH_ROUTE_EXPECTED_PATH_CLASS",
+    "path-" + ROUTE.strip("/").replace("/", "-"),
+)
 WIDTHS = [int(width) for width in os.environ.get(
     "AUTH_ROUTE_WIDTHS", "320,360,390,575,576,599,600,768,1024,1280,1440",
 ).split(",")]
@@ -137,10 +140,13 @@ const captchaWrapper=document.querySelector('.captcha');
 const frame=document.querySelector('[data-portal-ui~="challenge-frame"]');
 const rect=(element)=>{if(!element)return null;const r=element.getBoundingClientRect();return {left:r.left,right:r.right,width:r.width,scrollWidth:element.scrollWidth,clientWidth:element.clientWidth};};
 return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth,clientWidth:document.documentElement.clientWidth,
-rootOverflowX:getComputedStyle(document.documentElement).overflowX,scrollX:window.scrollX,
+rootOverflowX:getComputedStyle(document.documentElement).overflowX,scrollX:window.scrollX,scrollY:window.scrollY,
 bodyClass:document.body.className,
 headingPadding:getComputedStyle(document.querySelector('.aculta-page-heading')).padding,
 contentPadding:getComputedStyle(document.querySelector('.aculta-content')).padding,
+headingRect:(()=>{const e=document.querySelector('.aculta-page-heading');if(!e)return null;const r=e.getBoundingClientRect();return {top:r.top,bottom:r.bottom}})(),
+contentRect:(()=>{const e=document.querySelector('.aculta-content');if(!e)return null;const r=e.getBoundingClientRect();return {top:r.top,bottom:r.bottom,width:r.width}})(),
+formRect:(()=>{const e=document.querySelector('.aculta-main form');if(!e)return null;const r=e.getBoundingClientRect();return {top:r.top,bottom:r.bottom,width:r.width}})(),
 challengeWidth:challenge?.getBoundingClientRect().width||0,challengeScrollWidth:challenge?.scrollWidth||0,
 challengeClientWidth:challenge?.clientWidth||0,
 challengeRect:rect(challenge),challengeFrameRect:rect(frame),hasCaptchaWrapper:!!captchaWrapper,
@@ -192,7 +198,7 @@ try:
 
     for width in WIDTHS:
         actual_width = viewport.set(driver, width)
-        driver.js("window.scrollTo(8, 0)")
+        driver.js("document.activeElement?.blur();window.scrollTo({left:8,top:0,behavior:'instant'});document.documentElement.scrollTop=0;document.body.scrollTop=0;return true")
         data = driver.js(measure)
         png = base64.b64decode(driver.req("GET", f"/session/{driver.session}/screenshot"))
         path_name = ROUTE.strip("/").replace("/", "-") or "front"
@@ -202,6 +208,9 @@ try:
         horizontal_scroll_blocked = data["documentWidth"] <= width or (
             data["rootOverflowX"] == "clip" and data["scrollX"] == 0
         )
+        heading_form_gap = (data["formRect"]["top"] - data["headingRect"]["bottom"]
+                            if data["headingRect"] and data["formRect"] else None)
+        heading_and_form_do_not_overlap = heading_form_gap is not None and heading_form_gap >= -1
         challenge_frame_fits = (os.environ.get("AUTH_ADD_MARKER_CANDIDATE") != "1"
                                 or (data["challengeFrameRect"] is not None
                                     and data["challengeFrameRect"]["left"] >= -1
@@ -212,10 +221,13 @@ try:
                  and challenge_rendered and not data["loggedIn"]
                  and horizontal_scroll_blocked and data["headingPadding"] == expected_heading
                  and data["contentPadding"] == expected_content
+                 and heading_and_form_do_not_overlap
                  and (data["challengeWidth"] == 0 or data["challengeScrollWidth"] <= data["challengeWidth"] + 1)
                  and challenge_frame_fits)
         record(f"Runtime {ROUTE} {width}px: estilos candidatos e sem overflow", valid,
-               {key: data[key] for key in ("documentWidth", "bodyWidth", "clientWidth", "rootOverflowX", "scrollX", "headingPadding", "contentPadding", "challengeWidth", "challengeScrollWidth", "challengeClientWidth")})
+               {**{key: data[key] for key in ("documentWidth", "bodyWidth", "clientWidth", "rootOverflowX", "scrollX", "scrollY", "headingPadding", "contentPadding", "challengeWidth", "challengeScrollWidth", "challengeClientWidth")},
+                "headingRect": data["headingRect"], "formRect": data["formRect"],
+                "headingFormGap": heading_form_gap})
 finally:
     viewport.close()
     driver.close()

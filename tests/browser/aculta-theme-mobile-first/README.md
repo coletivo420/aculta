@@ -602,8 +602,10 @@ publicação e rebuild de cache.
 candidatas de base e autenticação somente no DOM da sessão, sem enviar
 formulários. Além de markup, paddings e scroll, mede o widget e seu contêiner.
 `AUTH_ROUTE_BASE_URL` define o domínio, `AUTH_ROUTE_PATH` escolhe
-`/entrar`, `/criar-conta` ou `/recuperar-senha`, e `AUTH_ROUTE_WIDTHS` seleciona
-as larguras.
+`/`, `/entrar`, `/criar-conta` ou `/recuperar-senha`, e `AUTH_ROUTE_WIDTHS` seleciona
+as larguras. `AUTH_ROUTE_EXPECTED_PATH_CLASS` substitui o body class esperado
+quando uma rota canônica, como `/` no purpose Conta, renderiza a mesma página
+`/entrar`.
 
 Para direcionar o hostname HTTPS ao Apache local sem alterar `/etc/hosts`, use
 `AUTH_ROUTE_LOCAL_RUNTIME=1` e
@@ -633,6 +635,29 @@ documento. CSS candidata e marcador `challenge-frame` continuaram injetados
 apenas no Firefox; hook Portal e biblioteca instalada seguem sem homologação.
 Evidência em
 `/home/piradopirata/aculta-suite-out/auth-route-runtime-resume-20261031/`.
+
+Para reproduzir a raiz canônica de Conta, que renderiza o mesmo formulário de
+login com `body.path-entrar`, defina `AUTH_ROUTE_PATH=/` e
+`AUTH_ROUTE_EXPECTED_PATH_CLASS=path-entrar`. Em 2026-10-31, o Firefox ESR
+local mediu a baseline sem candidato em 328px para viewport 320px. A folha
+candidata inicialmente ainda sobrepunha o H1: o gutter vertical negativo do
+`.row.g-4`/`.row.g-xl-5` não era compensado pelo título. `auth.css` agora reserva
+24px até 1199px e 48px a partir de 1200px, anulando esse gutter e mantendo os
+dois painéis contíguos. A raiz passou 10/10 checks com JavaScript e 10/10 sem
+JavaScript nas larguras 320/360/390/599/600/768/1024/1280/1440px; o Firefox
+confirmou documento de 320px e H1 sem sobreposição. CSS e marcador CAPTCHA
+foram candidatos injetados somente na sessão. Evidências em
+`/home/piradopirata/aculta-suite-out/account-root-overflow-candidate-20261031/`
+e `/home/piradopirata/aculta-suite-out/account-root-overflow-nojs-candidate-20261031/`.
+Ainda falta servir o CSS/hook Portal no Runtime e repetir sem injeção.
+
+Como a regra da margem também é compartilhada por cadastro e recuperação, as
+duas rotas e `/entrar` foram retestadas com a nova asserção geométrica: 10/10
+checks por rota, nove larguras mais o acesso inicial, sem sobreposição do H1.
+Evidências em
+`/home/piradopirata/aculta-suite-out/auth-login-overlap-candidate-20261031/`,
+`auth-register-overlap-candidate-20261031/` e
+`auth-reset-overlap-candidate-20261031/`.
 
 Repetição de 2026-10-31 após o overflow de 328px ser observado novamente na
 raiz Conta: a rota `/entrar` passou 12/12 checks com a folha do worktree e token

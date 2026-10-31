@@ -9,6 +9,31 @@ escrita no Runtime. O incidente posterior, incluindo o snapshot e a correção
 direcionada de `message.settings`, está registrado em
 `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
 
+### THEME-MF2 — raiz Conta: correção candidata do formulário de login (2026-10-31)
+
+A raiz `https://conta.aculta.toca.net.br/` serve o formulário de Entrar
+(`body.path-entrar`). A matriz servida anterior mediu 328px para viewport de
+320px. A inspeção da captura candidata revelou também sobreposição vertical do
+formulário sobre o H1: o `.row.g-4` e `.row.g-xl-5` aplicam margem superior
+negativa, enquanto o heading da autenticação zerava a margem inferior.
+
+`auth.css` agora compensa o gutter do Bootstrap com 24px até 1199px e 48px a
+partir de 1200px, preservando os painéis unidos. Firefox ESR anônimo no Runtime
+via GET, com CSS candidata e marcador de challenge injetados somente na sessão,
+passou 10/10 checks em nove larguras (320/360/390/599/600/768/1024/1280/1440px),
+tanto com JavaScript como sem JavaScript. Em 320px, documento e viewport ficaram
+em 320px, o challenge coube em 300px e o topo do formulário coincidiu com o fim
+do H1 sem sobreposição. As rotas `/entrar`, `/criar-conta` e `/recuperar-senha`
+também passaram 10/10 cada com a nova asserção geométrica. A captura 320px da
+raiz foi revista. Evidências em
+`/home/piradopirata/aculta-suite-out/account-root-overflow-candidate-20261031/`
+e `/home/piradopirata/aculta-suite-out/account-root-overflow-nojs-candidate-20261031/`,
+além dos três diretórios de rota indicados no README da suíte.
+
+O hook PHP do Portal não foi aplicado ao Runtime e o CSS candidato foi
+injetado; ainda falta validar a versão integrada servida. Portanto a falha da
+matriz atual não está homologada como resolvida e THEME-MF3 continua pendente.
+
 ### Reteste transversal e fluxos de autenticação — 2026-10-31
 
 Com o Runtime confirmado em `toca`, checkout servido `/home/aculta`, HEAD
