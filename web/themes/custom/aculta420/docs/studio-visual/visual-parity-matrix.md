@@ -321,3 +321,13 @@ visível passou 128/128 checks no fixture, em nove larguras e dois modos, inclui
 layout, foco, alvos táteis, shell externo e overflow. CSS candidata e fixture;
 integração Drupal/runtime, Form API e grants não homologados. Evidência:
 `/home/piradopirata/aculta-suite-out/culturas-dashboard-form-border-20261031/`.
+
+### OCS-F5/F7 — apresentação das tabelas Marley/Wiki (2026-10-31)
+
+As tabelas existentes recebem espaçamento de célula, remoção de padding nas
+bordas externas e cabeçalho semibold/divisor Fidelity, conforme o Sass de tabelas
+OpenCulturas 3.1.5. O wrapper mantém a rolagem local no mobile. Fixture Firefox
+ESR: **56/56 checks** em nove larguras e claro/escuro, incluindo foco; captura e
+limitações em `mobile-first-audit.md` e
+`/home/piradopirata/aculta-suite-out/studio-listing-fidelity-final-20261031/`.
+Drupal renderizado, grants, estados reais, cache e AJAX/no-JS seguem sem prova.

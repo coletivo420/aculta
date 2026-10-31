@@ -745,3 +745,21 @@ está implantada. Se um purpose não tiver `.aculta-highlighted`, o fixture
 registra `SKIP_NO_HIGHLIGHTED_REGION`; isso não é falha de reflow. A medição da
 rolagem horizontal permanece no registro da captura, mas não reprova o teste
 específico de posição da mensagem.
+
+## Tabelas de listagem Marley/Wiki — fidelidade e mobile
+
+`studio-listing-fidelity.py` cobre o consumer visual dos elementos Drupal atuais
+`studio-listing` e `studio-listing-wrap`, aplicados pelo hook de apresentação do
+tema. A fixture reproduz a raiz `.studio`, a tabela semanticamente marcada e as
+seis colunas usadas em fluxos editoriais/revisão. Em Firefox ESR visível mede
+320/360/390/599/600/768/1024/1280/1440px, claro/escuro, ausência de overflow do
+documento, rolagem horizontal confinada ao wrapper, ritmo e cabeçalho de tabela
+e foco real por teclado. Não submete formulários, não acessa conteúdo, não
+valida ACL/cache/AJAX/no-JS nem substitui o GET das listagens Drupal.
+
+```sh
+export DISPLAY=:0
+export SUITE_OUT=/caminho/fora-do-repositorio/studio-listing-fidelity
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-studio/studio-listing-fidelity.py
+```

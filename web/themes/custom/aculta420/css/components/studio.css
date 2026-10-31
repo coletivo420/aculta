@@ -586,6 +586,51 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
   margin-bottom: 1rem;
 }
 
+/* OpenCulturas Next table rhythm for the existing Marley/Wiki listings.
+   Keep narrow tables scrollable inside their Drupal wrapper on touch screens. */
+.studio__listing-wrap {
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+.studio__listing {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  margin-block: var(--aculta-studio-fidelity-row-gap);
+  border-collapse: collapse;
+  color: var(--aculta-studio-fidelity-text);
+  font-family: var(--aculta-studio-fidelity-font-family);
+}
+
+.studio__listing :is(td, th) {
+  padding-block: 0.5em;
+  padding-inline: 1em;
+  vertical-align: top;
+  border-block-end: 1px solid var(--aculta-studio-fidelity-divider);
+}
+
+.studio__listing :is(td, th):first-child {
+  padding-inline-start: 0;
+}
+
+.studio__listing :is(td, th):last-child {
+  padding-inline-end: 0;
+}
+
+.studio__listing th {
+  text-align: start;
+  font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
+}
+
+.studio__listing thead th {
+  border-block-end-color: var(--aculta-studio-fidelity-input-border-bottom);
+}
+
+.studio__listing p {
+  margin: 0;
+}
+
 /* OpenCulturas Next 3.1.5 form treatment, limited to Studio form consumers. */
 .studio__main form,
 .aculta-profile-editor form,

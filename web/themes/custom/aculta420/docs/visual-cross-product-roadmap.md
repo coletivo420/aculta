@@ -1793,3 +1793,12 @@ somente no navegador. A execução observa o Runtime atual; não instala nem
 homologa os arquivos da branch. Gate MF3 continua pendente de páginas internas,
 zoom, teclado, WCAG e integração servida. Evidência em `mobile-first-audit.md` e
 `/home/piradopirata/aculta-suite-out/purpose-shell-colormodes-followup-20261031/`.
+
+### OCS-F5/F7 — tabelas de listagem no mobile (2026-10-31)
+
+`studio.css` agora aplica o ritmo de tabela OpenCulturas 3.1.5 aos consumers
+existentes `.studio__listing` de Marley/Wiki, mantendo a rolagem horizontal dentro
+do wrapper responsivo. Fixture no Firefox ESR passou 56/56 em nove larguras,
+claro/escuro e foco de teclado; não cobre HTML Drupal renderizado, grants ou
+estados editoriais reais. THEME-MF3 e OCS-F11 seguem pendentes. Detalhes em
+`mobile-first-audit.md`.

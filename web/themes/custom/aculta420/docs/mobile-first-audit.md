@@ -3548,3 +3548,18 @@ Runtime baseline e o comportamento visual candidato focal de Conta, mas não
 confirma que o hook do Portal ou CSS da branch estejam instalados/servidos. Não
 cobre páginas internas, teclado integral, zoom ou WCAG global; THEME-MF3 segue
 pendente.
+
+### OCS-F5/F7 — ritmo das tabelas de listagem Marley/Wiki (2026-10-31)
+
+A leitura de `opcult/sass/base/_tables.scss` identificou ritmo de células,
+primeira/última coluna sem padding inline e cabeçalho com peso e divisor próprios.
+Os render arrays atuais de `MarleyListingBuilder` já usam tabela Drupal dentro
+de `studio-listing-wrap`; o hook de apresentação do tema fornece as classes sem
+alterar os arrays. `studio.css` agora aplica esse tratamento somente a
+`.studio__listing` e mantém overflow horizontal no wrapper em telas estreitas.
+Firefox ESR visível passou **56/56 checks** na fixture correspondente, em nove
+larguras, claro/escuro, sem overflow documental, com foco por teclado e sem
+alterar DOM/ordem de dados. Evidência em
+`/home/piradopirata/aculta-suite-out/studio-listing-fidelity-final-20261031/`.
+Não valida listagem Drupal renderizada, grants, estados com conteúdo real, cache,
+AJAX/no-JS ou zoom; OCS-F5/F7/F11 e THEME-MF3 permanecem parciais/pendentes.
