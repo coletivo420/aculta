@@ -37,9 +37,11 @@ injetados somente na sessão Firefox, as mesmas nove larguras tiveram **162
 checks aprovados e nove SKIP** pelo foco externo; o documento acompanhou a
 viewport, incluindo 320px. Evidência em
 `/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-account-candidate-9widths-20261101/`.
-A injeção demonstra o efeito do candidato, mas não valida o hook Portal servido
-nem o CAPTCHA externo por dentro. O overflow no Runtime continua aberto e
-THEME-MF3 permanece pendente.
+As capturas de 320px baseline/candidata foram inspecionadas lado a lado; na
+candidata o slot de 300px do desafio cabe na viewport de 320px. A injeção
+demonstra o efeito do candidato, mas não valida o hook Portal servido nem o
+CAPTCHA externo por dentro. O overflow no Runtime continua aberto e THEME-MF3
+permanece pendente.
 
 No worktree, o reteste focal do candidato também passou PHP lint, PHPCS e a
 suíte Unit do hook (3 testes/8 assertions), além de Stylelint em `auth.css`.
