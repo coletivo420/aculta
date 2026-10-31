@@ -2250,3 +2250,13 @@ nos modos claro e escuro, com HTTP 200 e sem overflow horizontal. Evidência em
 Esta verificação cobre a capa pública e não fecha o gate: publicação real,
 rotas editoriais autenticadas, comentários, zoom visível, teclado e axe ainda
 exigem suas matrizes próprias.
+
+### OCS-F5 / THEME-MF3 — formulário editorial Revista (2026-10-31)
+
+O formulário autenticado de nova publicação em `/marley/revista/nova` passou
+18/18 viewports headless em claro/escuro (320–1440px), sem overflow e HTTP 200.
+O axe passou oito combinações reduzidas com zero violações; resultados
+`incomplete` de Core/Metatag/CKEditor permanecem explicitamente pendentes de
+revisão manual. Unit da Revista passou 40 testes/162 asserções e o Kernel
+editorial passou 12 testes/500 asserções. Evidências detalhadas no log de
+execução contínua; isso não aprova THEME-MF3/OCS-F11 transversal.
