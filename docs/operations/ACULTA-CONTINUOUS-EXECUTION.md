@@ -2740,3 +2740,9 @@ ou preferência persistente alterados.
   rebuild do cache e nova sessão autenticada, `/marley/revista/nova` passou
   18/18 viewports em claro/escuro, 320–1440px, sem overflow. Evidência em
   `/home/piradopirata/aculta-suite-out/revista-marley-create-final-20261031200025/`.
+- O refinamento `5a1ce9091` elevou alvos de toque de summaries/token dialog e
+  corrigiu o contraste do menu vertical no modo escuro. A matriz autenticada
+  com axe passou 8/8 viewports (320/390/768/1280px, claro/escuro), zero
+  violações; três resultados `incomplete` por modo permanecem para revisão
+  manual. Evidência em
+  `/home/piradopirata/aculta-suite-out/revista-marley-create-axe-fixed-20261031200255/`.
