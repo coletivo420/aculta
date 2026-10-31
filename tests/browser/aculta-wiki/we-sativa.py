@@ -213,6 +213,44 @@ try:
             screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
             (OUT / f"{name}.png").write_bytes(base64.b64decode(screenshot))
 
+            if create_href:
+                driver.get(create_href)
+                form_loaded = wait_for(
+                    "document.querySelector('form.node-wiki-entry-form "
+                    "input[name=\\\"title[0][value]\\\"]') && "
+                    "document.querySelector('form.node-wiki-entry-form "
+                    "[name=\\\"body[0][value]\\\"]')"
+                )
+                form_metrics = driver.js("""return {
+                  viewport: window.innerWidth,
+                  path: location.pathname,
+                  titleFields: document.querySelectorAll(
+                    'form.node-wiki-entry-form input[name="title[0][value]"]'
+                  ).length,
+                  bodyFields: document.querySelectorAll(
+                    'form.node-wiki-entry-form [name="body[0][value]"]'
+                  ).length,
+                  document: document.documentElement.scrollWidth,
+                  body: document.body.scrollWidth,
+                };""")
+                check(f"{name}: formulário mostra título e corpo",
+                      form_loaded and form_metrics["titleFields"] == 1
+                      and form_metrics["bodyFields"] == 1,
+                      json.dumps(form_metrics, ensure_ascii=False))
+                check(f"{name}: formulário sem overflow horizontal",
+                      form_metrics["document"] <= width and form_metrics["body"] <= width,
+                      f"viewport={width}, document={form_metrics['document']}, body={form_metrics['body']}")
+                if width in (320, 1440) and form_loaded:
+                    screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                    filename = "create-form.png" if width == 320 else "create-form-wide.png"
+                    (OUT / filename).write_bytes(base64.b64decode(screenshot))
+                driver.get(PAGE)
+                workspace_restored = wait_for(
+                    "location.pathname === '/studio/we-sativa/inicio' && "
+                    "document.querySelector('main, #main-content')"
+                )
+                check(f"{name}: volta à página inicial WE SATIVA", workspace_restored)
+
         if metrics["workHref"]:
             driver.get(metrics["workHref"])
             workspace_loaded = wait_for(

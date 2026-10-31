@@ -77,7 +77,9 @@ O fluxo `we-sativa.py` abre a ação de criação em
 formulário nativo e o link de retorno. Não usa `/node/add/wiki_entry` em outro
 purpose e não submete nem salva o formulário. O runner exige que título e corpo
 estejam renderizados; aviso de confirmação sem os campos não passa. Quando o
-formulário abre, salva `create-form.png` em `$SUITE_OUT`.
+formulário abre, salva `create-form.png` (320px) e `create-form-wide.png`
+(1440px) em `$SUITE_OUT`. Workspace e formulário são medidos em cada uma das
+oito larguras da lista; o runner volta ao início WE SATIVA entre as medições.
 
 O script valida raiz, listagem e busca em desktop e larguras móveis, verifica
 presença de `main`/`h1`, erros visíveis e rolagem horizontal, e confirma que o
