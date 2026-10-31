@@ -4646,3 +4646,18 @@ Snapshot pré-ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta
 `c89e7f93401d06b2ae95ccbc242f02a0691ae75703dd1d67d8c3c7d9ae0e20db`; Runtime
 com 611 tabelas. Este é um reteste de renderização/reflow sem script, não cobre
 AJAX, dark mode, teclado/zoom ou WCAG completa; não aprova OCS-F11/THEME-MF3.
+
+### OCS-F10 / THEME-MF2 — Culturas escuro e sem JavaScript (2026-10-31)
+
+Reteste Firefox ESR visível com `data-bs-theme=dark` aplicado apenas ao documento
+via WebDriver e scripts do site desativados: `/culturas` e os dois formulários,
+nove larguras, **27 capturas**, `CAPTURED`, zero falhas, sem overflow. Os
+formulários mantiveram 16 campos observáveis e ações com altura mínima de 44px;
+a captura escura de `/culturas/eventos/novo` a 320px foi revisada. A alteração
+de tema foi local à sessão e nenhuma preferência persistiu. Evidência:
+`/home/piradopirata/aculta-suite-out/culturas-nojs-dark-integrated-ac328d00e-20261031/`.
+Snapshot pré-ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-nojs-dark-20261031.sql`,
+54.387.794 bytes, modo 0600, SHA-256
+`cae1dcf5a9f446cd3f1b08131c997bcd7ca061cc3cc07e4bb46b19b4996abe7e`.
+Isto verifica reflow e superfícies do tema escuro neste fluxo, não contraste
+WCAG integral, interações AJAX, ACL ou teclado; os gates globais seguem abertos.

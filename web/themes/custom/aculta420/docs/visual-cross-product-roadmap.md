@@ -2188,3 +2188,12 @@ Local renderizaram em nove larguras: 27 capturas, zero falhas, nenhum overflow;
 navegação móvel expandiu no fluxo. Evidência e snapshot pré-ULI em
 `mobile-first-audit.md`. Não cobre AJAX/ACL, dark mode, teclado/zoom nem WCAG;
 não encerra THEME-MF3/OCS-F11.
+
+### OCS-F10 / THEME-MF2 — modo escuro no-JS em Eventos Culturas (2026-10-31)
+
+O hub e os formulários reais passaram por 27 capturas no Runtime, nove larguras,
+modo escuro e scripts do site desativados: zero falhas e overflow; formulários
+presentes com campos e ações de pelo menos 44px. `data-bs-theme` foi alterado
+somente no documento da sessão WebDriver. Evidência e snapshot em
+`mobile-first-audit.md`. Não substitui contraste WCAG completa, ACL, teclado ou
+AJAX, nem encerra THEME-MF3/OCS-F11.
