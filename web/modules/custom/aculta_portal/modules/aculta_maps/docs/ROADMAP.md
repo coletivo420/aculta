@@ -121,17 +121,17 @@ Fonte: [auditoria 3.1.5](../../../../../../../docs/architecture/AUDITORIA-OPENCU
 
 Nenhuma autorização de escrita OSM, deploy ou substituição de geocodificador.
 
-## Plano futuro — captura compartilhada e busca postal restrita
+## Plano futuro — captura compartilhada de endereço por CEP
 
 - [x] Registrar que endereços de locais/eventos usam o formulário central de
   `aculta_portal` com o preenchimento CEP de `aculta_portal_cep`; Maps não tem
   um formulário de endereço próprio.
-- [ ] Busca por nome de rua/logradouro e resultados próximos: planejar/implementar somente na UI de Events e Maps. O serviço postal pode ser compartilhado em `aculta_portal_cep`, mas a busca não é global nem deve aparecer em Conta/checkout. CEP → endereço permanece central e já existe; busca por rua ainda não está disponível.
-- [ ] Aprovar provedor, termos/atribuição, privacidade, limites e contrato antes de iniciar código. Manter distinta a geocodificação de endereços salvos para coordenadas, já existente em Maps. Não criar autocomplete Nominatim por tecla.
+- [x] D-57: busca postal por logradouro, autocomplete e resultados próximos descartados. Somente consulta por CEP via `aculta_portal_cep`; não selecionar nem integrar provedor de busca por rua.
+- A geocodificação de endereços já informados permanece distinta da busca postal e segue o contrato existente de Maps.
 
 Detalhes e critérios de entrada: [`docs/portal/CEP-ADDRESS-SEARCH-PLAN.md`](../../../../../../../docs/portal/CEP-ADDRESS-SEARCH-PLAN.md).
 
 
 ### Integração de Local com Events por popup
 
-Maps consome a entidade Local mantida por `aculta_events`; não implementa CRUD ou armazenamento próprio de Local. Nos fluxos de Eventos, busca/seleção e cadastro acontecem em popups Drupal/AJAX (`EventLocationModalWidget` e `EventLocationModalForm`). O cadastro do Local usa CEP primeiro. A ordem de exibição nos mapas e cartões preserva a convenção postal brasileira (CEP ao final). A seleção retorna a referência ao formulário de eventos sem perder dados. A busca por logradouro permanece restrita aos contextos de Events e Maps (sem afetar Conta nem checkout). Atividades editoriais legadas foram descontinuadas em favor exclusivo de Eventos.
+Maps consome a entidade Local mantida por `aculta_events`; não implementa CRUD ou armazenamento próprio de Local. Nos fluxos de Eventos, busca/seleção e cadastro acontecem em popups Drupal/AJAX (`EventLocationModalWidget` e `EventLocationModalForm`). O cadastro do Local usa CEP primeiro. A ordem de exibição nos mapas e cartões preserva a convenção postal brasileira (CEP ao final). A seleção retorna a referência ao formulário de eventos sem perder dados. A busca postal é exclusivamente por CEP conforme D-57 (sem busca por logradouro em qualquer contexto). Atividades editoriais legadas foram descontinuadas em favor exclusivo de Eventos.
