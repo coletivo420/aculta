@@ -7,6 +7,8 @@ dependencies:
   enforced:
     module:
       - aculta_messenger
+_core:
+  default_config_hash: 4dBIzmdazQ3zwik33CdPiJ8j1OOio2A-avtTRs1OBik
 id: message.field_aculta_messenger_source_fr
 field_name: field_aculta_messenger_source_fr
 entity_type: message
@@ -19,6 +21,6 @@ module: core
 locked: false
 cardinality: 1
 translatable: false
-indexes: {}
+indexes: {  }
 persist_with_no_fields: false
 custom_storage: false

@@ -3,8 +3,11 @@ langcode: pt-br
 status: true
 dependencies:
   config:
-    - field.field.message.aculta_msg_friendship.field_aculta_friendship_event
     - core.entity_view_mode.message.mail_subject
+    - field.field.message.aculta_msg_friendship.field_aculta_enqueue_attempts
+    - field.field.message.aculta_msg_friendship.field_aculta_friendship_event
+    - field.field.message.aculta_msg_friendship.field_aculta_friendship_read
+    - field.field.message.aculta_msg_friendship.field_aculta_mailer_managed
     - field.field.message.aculta_msg_friendship.field_aculta_messenger_attempts
     - field.field.message.aculta_msg_friendship.field_aculta_messenger_source_fr
     - field.field.message.aculta_msg_friendship.field_aculta_msg_delivery
@@ -28,6 +31,8 @@ hidden:
   entity_print_view_word_docx: true
   field_aculta_enqueue_attempts: true
   field_aculta_friendship_event: true
+  field_aculta_friendship_read: true
+  field_aculta_mailer_managed: true
   field_aculta_messenger_attempts: true
   field_aculta_messenger_source_fr: true
   field_aculta_msg_delivery: true

@@ -6,7 +6,7 @@ dependencies:
     - node
     - options
 _core:
-  default_config_hash: Y1EZigeiCEbJxOeHAt9x1SU7irThbEvm6OXSWtyHMVo
+  default_config_hash: wii3YAxMPjsQjlHwhDDu65t0Wum-ywozHZchDnpg49w
 id: node.field_aculta_notice_roles
 field_name: field_aculta_notice_roles
 entity_type: node

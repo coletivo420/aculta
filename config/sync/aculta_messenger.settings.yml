@@ -1,3 +1,5 @@
+_core:
+  default_config_hash: 9vFxEUZlWFbkbz7DKzJQU0fzmq9NEsAKo9dwNEktyvs
 group_creation_enabled: true
 group_max_members: 10
 retention_months: 6
@@ -7,31 +9,31 @@ email_modes:
   forum_resposta:
     digest: true
     immediate: true
-    default_mode: off
+    default_mode: 'off'
   forum_atualizacao:
     digest: true
     immediate: true
-    default_mode: off
+    default_mode: 'off'
   aprendizagem:
     digest: true
     immediate: true
-    default_mode: off
+    default_mode: 'off'
   wiki:
     digest: true
     immediate: true
-    default_mode: off
+    default_mode: 'off'
   revista:
     digest: true
     immediate: true
-    default_mode: off
+    default_mode: 'off'
   loja:
     digest: true
     immediate: true
-    default_mode: off
+    default_mode: 'off'
   doacao:
     digest: true
     immediate: true
-    default_mode: off
+    default_mode: 'off'
   mensagens_privadas:
     digest: true
     immediate: true
@@ -45,4 +47,4 @@ magazine_events:
   updated: true
   review_submitted: true
   review_returned: true
-
+private_message_digest_anchor: '2026-10-26'

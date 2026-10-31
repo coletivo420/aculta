@@ -5,6 +5,8 @@ dependencies:
   module:
     - node
     - options
+_core:
+  default_config_hash: vsInh817fm1LZS-S_51Ti1tVOV77b5BzPkv_IyhDsy8
 id: node.field_aculta_notice_type
 field_name: field_aculta_notice_type
 entity_type: node
@@ -28,4 +30,3 @@ translatable: true
 indexes: {  }
 persist_with_no_fields: false
 custom_storage: false
-

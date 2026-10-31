@@ -1,0 +1,24 @@
+uuid: 3969320f-0bdf-4375-9bf7-30beb34a6094
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_game_award_uuid
+    - message.template.aculta_msg_game_award
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: 9u6vzQRSDFoyQw0aYl9ymH4tb9SGyDvYyt7iidkgdYw
+id: message.aculta_msg_game_award.field_aculta_game_award_uuid
+field_name: field_aculta_game_award_uuid
+entity_type: message
+bundle: aculta_msg_game_award
+label: 'Concessão de origem'
+description: 'UUID imutável da entidade BadgeAward proprietária.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

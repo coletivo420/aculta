@@ -2382,13 +2382,29 @@ ou preferência persistente alterados.
   idempotente apenas dos três storages e três instâncias necessários aos
   contadores; configs existentes são preservadas e tipos incompatíveis geram
   log sem substituição. A correção foi publicada em `fb7bd2859`; ainda falta
-  aplicá-la ao Runtime e validar os contadores. Snapshot anterior à tentativa:
+  aplicar a atualização seletiva ao Runtime e validar os contadores. Snapshot anterior à tentativa:
   `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-update-10013-1161fd046-20261031.sql`,
   48.087.711 bytes, modo 0600, SHA-256
   `161a5c41575fae939a94d7330e80f94cd519fae58e09a9411afdd7714fe9c497`.
+- O update 10013 seletivo foi aplicado no docroot `55665601d`; não restam
+  updates pendentes. Os storages boolean/string esperados e as três instâncias
+  foram confirmados, e `unreadCount(257)` respondeu sem exceção nos adapters
+  friendship e game.
+- Para reconciliar a tentativa abortada com o Sync sem remover defaults
+  necessários, foram exportados exatamente os 43 itens Messenger em diferença
+  (31 ausentes no Sync e 12 diferentes); 37 arquivos mudaram, seis já eram
+  idênticos. Nenhum outro módulo entrou no conjunto. A importação completa não
+  foi executada.
+- Firefox ESR/X11 autenticado, pelo harness genérico de todo o ACULTA, verificou
+  as cinco rotas disponíveis do Green Stash em nove larguras e claro/escuro:
+  **90/90**, HTTP 200, sem overflow, axe sem violações nem `incomplete`. Não
+  houve envio de formulário. Capturas e `results.json`:
+  `/home/piradopirata/aculta-suite-out/green-stash-full-fixed-55665601d-20261031/`.
+  Snapshot pré-ULI modo 0600, 54.404.995 bytes, SHA-256
+  `0f5bff8425f0ddca419f2adf4948b6c008ab9625f447740cb1e7eaf2a2d2c180`.
 - PHPUnit Unit dos dois módulos: 10 testes/46 assertions passaram; PHP lint,
-  PHPCS Drupal e `git diff --check` passaram. O re-teste de navegador do GET de
-  criação de produto e a validação pós-update Messenger ainda faltam.
+  PHPCS Drupal, YAML parse e validador de dependências de config (1.702 checks)
+  passaram. A homologação A/B, ACL e demais gates globais continuam pendentes.
 - A tentativa de delegação read-only ao Qwen3-Coder 30B foi iniciada pelo CLI
   configurado, mas o gateway remoto retornou HTTP 502; a análise delegada ficou
   indisponível nesta rodada. O servidor e processo remoto existentes foram

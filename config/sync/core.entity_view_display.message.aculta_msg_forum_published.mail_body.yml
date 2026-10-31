@@ -13,7 +13,7 @@ dependencies:
     module:
       - aculta_messenger
 _core:
-  default_config_hash: U4wAUajOdQXmz0-b4YlHmamIF6u2spX16W0QeSK2pB0
+  default_config_hash: ypkPr3Ew1JXNL-BBlUE4EnwuEDCAARNbuw78UqfhboQ
 id: message.aculta_msg_forum_published.mail_body
 targetEntityType: message
 bundle: aculta_msg_forum_published
