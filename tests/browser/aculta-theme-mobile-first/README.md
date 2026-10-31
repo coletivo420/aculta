@@ -695,7 +695,9 @@ Firefox, verifica shell único e overflow em 320/360/390/599/600/768/1024/1280/
 1440px e salva capturas de 320 e 1440px para cada purpose/modo. Não grava
 preferências ou configuração no Drupal. A verificação confirma tokens e o
 estado da media query; não avalia contraste WCAG, todos os componentes,
-assistive technology nem funcionamento de cada animação.
+assistive technology nem funcionamento de cada animação. Para o purpose Conta
+a 320px, o JSON inclui os primeiros descendentes não fixos cujo conteúdo
+ultrapassa a largura do viewport, sem coletar texto ou valores de campos.
 
 ```sh
 cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
@@ -707,7 +709,11 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/purpose-shell-colo
 
 `PURPOSE_MODE_WIDTHS` seleciona as larguras e
 `PURPOSE_MODE_DOMAIN_ENV=production` só deve ser usado após confirmar ambiente,
-DNS e TLS.
+DNS e TLS. `PURPOSE_MODE_AUTH_CANDIDATE=1` injeta `auth.css` do worktree e
+acrescenta o marcador `data-portal-ui="challenge-frame"` ao wrapper `.captcha`
+somente na página `path-entrar` do purpose Conta. Isso valida a combinação
+CSS/markup candidata no Runtime servido sem instalar o hook Portal; o resto dos
+purposes continua usando CSS e markup servidos.
 
 ## Zoom real nos dez purposes
 

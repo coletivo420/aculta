@@ -10,7 +10,7 @@ depende de THEME-MF3. OCS-A1–A4 só começam depois dos dois gates aprovados.
 |---|---|
 | THEME-MF0 | Parcial: inventários lexicais/libraries recenseados; reteste no HEAD `4eb116482` verificou shell em 10 raízes anônimas × 9 larguras (90/90; ambos os headers uma vez, sem overflow); consumers por tela/purpose e cascata continuam incompletos. |
 | THEME-MF1–MF2 | Implementação incremental; cobertura visual global incompleta. |
-| THEME-MF3 | Pendente; não homologar todo ACULTA420 como mobile-first. |
+| THEME-MF3 | Pendente. Baseline servido teve 358/360 checks por overflow de 8px em `/entrar` a 320px; com `auth.css` candidata e marcador neutro simulado no Firefox, a repetição dos dez purposes passou 360/360 em nove larguras, claro/escuro e reduced motion. O Runtime ainda não serve o hook Portal nem a CSS candidate; validação integrada pós-publicação e gates de acessibilidade/refluxo global continuam pendentes. Não homologar todo ACULTA420 como mobile-first. |
 | OCS-F0 | Parcial: providers/rotas mapeados; contrato de shell no Portal e captura pós-migration das raízes em 10 purposes verificados em `4eb116482`; baseline Studio ainda não inclui tela autenticada equivalente do upstream nem todas as áreas/estados. |
 | OCS-F1–F2 | Implementados parcialmente; CSS candidata verificada em rotas reais, implantação e cobertura total pendentes. |
 | OCS-F3 | Variante `studio_fidelity` adicionada ao SDC `patterns/card` com story e consumidor real na entrada da Conta; schema 55/756, Unit 20/121 e CSS fixture Firefox 45/45 passaram. A repetição no worktree baseado em `82ff8538d` passou 216/216, cobrindo limites upstream 48/70/85/120em, container e tipografia Montserrat; capturas 320/1440px inspecionadas. HTML do preprocess e render Drupal/Runtime seguem pendentes. |

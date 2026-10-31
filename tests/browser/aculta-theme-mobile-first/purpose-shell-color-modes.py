@@ -42,6 +42,8 @@ if missing:
     raise SystemExit(f"Domínios ausentes em deploy.json: {', '.join(sorted(missing))}")
 PURPOSES = [(purpose, f"https://{hosts[domain_id]}/") for purpose, domain_id in DOMAIN_IDS.items()]
 MODES = {"light": ("#f2f7f0", "#0c3c29"), "dark": ("#171513", "#f4efe8")}
+AUTH_CANDIDATE = os.environ.get("PURPOSE_MODE_AUTH_CANDIDATE") == "1"
+AUTH_CSS = ROOT / "web/themes/custom/aculta420/css/components/auth.css"
 checks = []
 
 
@@ -88,6 +90,19 @@ try:
             viewport.set(width)
             driver.get(url)
             time.sleep(0.3)
+            auth_marker_count = 0
+            auth_css_injected = False
+            if AUTH_CANDIDATE and purpose == "account" and "path-entrar" in driver.js("return document.body.className"):
+                driver.js("""const style=document.createElement('style');
+                  style.dataset.purposeAuthCandidate='true';style.textContent=arguments[0];
+                  document.head.append(style);return true;""", [AUTH_CSS.read_text(encoding="utf-8")])
+                auth_css_injected = True
+                auth_marker_count = driver.js("""let count=0;
+                  document.querySelectorAll('.captcha').forEach((frame)=>{
+                    const tokens=(frame.getAttribute('data-portal-ui')||'').split(/\\s+/).filter(Boolean);
+                    if(!tokens.includes('challenge-frame'))tokens.push('challenge-frame');
+                    frame.setAttribute('data-portal-ui',tokens.join(' '));count++;
+                  });return count;""")
             for mode, (expected_surface, expected_text) in MODES.items():
                 driver.js("document.documentElement.setAttribute('data-bs-theme', arguments[0]); return true", [mode])
                 time.sleep(0.05)
@@ -102,13 +117,30 @@ try:
                     documentWidth:document.documentElement.scrollWidth,
                     surface:root.getPropertyValue('--aculta-surface-page').trim(),
                     primaryText:root.getPropertyValue('--aculta-text-primary').trim(),
+                    authCssInjected:arguments[0],authMarkerCount:arguments[1],
                     institutionBar:document.querySelectorAll('.aculta-institution-bar').length,
                     domainHeader:document.querySelectorAll('.aculta-header').length,
                     reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,
                     barBackground:bar ? getComputedStyle(bar).backgroundColor : null,
-                    headerBackground:header ? getComputedStyle(header).backgroundColor : null
+                    headerBackground:header ? getComputedStyle(header).backgroundColor : null,
+                    overflowElements:innerWidth === 320 && location.host.startsWith('conta.')
+                      ? [...document.querySelectorAll('body *')].map(el=>{
+                          const rect=el.getBoundingClientRect(), css=getComputedStyle(el);
+                          return {tag:el.tagName.toLowerCase(),id:el.id,className:String(el.className||''),
+                            left:Math.round(rect.left*100)/100,right:Math.round(rect.right*100)/100,
+                            contentRight:Math.round((rect.left+el.scrollWidth)*100)/100,
+                            width:Math.round(rect.width*100)/100,clientWidth:el.clientWidth,
+                            scrollWidth:el.scrollWidth,position:css.position,display:css.display,
+                            overflowX:css.overflowX,whiteSpace:css.whiteSpace,
+                            insideOffcanvas:!!el.closest('#aculta-cart-offcanvas'),
+                            visuallyHidden:!!el.closest('.visually-hidden,.visually-hidden-focusable')};
+                        }).filter(item=>item.display!=='none'
+                          && item.position!=='fixed' && !item.insideOffcanvas && !item.visuallyHidden
+                          && item.contentRight>innerWidth+1)
+                          .slice(0,20)
+                      : []
                   };
-                })());"""))
+                })());""", [auth_css_injected, auth_marker_count]))
                 context = f"{purpose} {mode} {width}px"
                 check(f"{context}: tokens e reduced motion",
                       metrics["mode"] == mode

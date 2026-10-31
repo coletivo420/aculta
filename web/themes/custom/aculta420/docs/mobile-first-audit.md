@@ -2266,6 +2266,31 @@ Isto confirma o comportamento com o provedor externo ativo, não a instalação
 de `CaptchaPresentationHooks`: o Runtime ainda não fornece o token por código.
 THEME-MF3 segue pendente.
 
+### THEME-MF3 — reteste da candidata de autenticação em toda a matriz de shell (2026-10-30)
+
+O baseline anônimo confirmou o único overflow restante no shell a 320px: a home
+do purpose Conta serve `/entrar`, onde o formulário tinha 268px e o desafio
+Turnstile de 300px elevava `documentWidth` a 328px nos modos claro e escuro.
+Firefox ESR repetiu os dez purposes e nove larguras no Runtime. Somente em
+`path-entrar`, a suíte injetou `auth.css` do worktree e simulou no DOM o marcador
+neutro que `CaptchaPresentationHooks` deve emitir. As outras rotas mantiveram
+CSS e markup servidos sem override.
+
+O reteste passou **360/360** verificações em 320/360/390/599/600/768/1024/1280/
+1440px, nos modos claro/escuro e com reduced motion. Todos os shells mantiveram
+Institution Bar e Domain Header únicos; o documento ficou dentro do viewport.
+Em `/entrar` a 320px, ambos os modos mediram 320px. A captura clara foi
+inspecionada em
+`/home/piradopirata/aculta-suite-out/account-overflow-candidate-320-20261030/`;
+resumo global em
+`/home/piradopirata/aculta-suite-out/purpose-shell-auth-candidate-full-20261030/`.
+
+O teste injeta CSS e marcador no Firefox e não valida a emissão real do hook
+Portal nem o agregado CSS reconstruído no Runtime. O smoke sem JavaScript do
+shell permanece evidência separada e não incluiu esse marcador candidato.
+Zoom, WCAG 2.2 AA, teclado integral e todos os componentes/páginas internas não
+estão cobertos; THEME-MF3 e OCS-F11 continuam pendentes.
+
 ### OCS-F3 — reteste atual da composição Fidelity do Hub Studio (2026-10-31)
 
 A fixture reutilizável `studio-card-fidelity.py` passou 243/243 verificações em
