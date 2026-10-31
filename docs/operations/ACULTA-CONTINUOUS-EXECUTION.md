@@ -16,7 +16,13 @@ O baseline Firefox/X11 ainda recebe `Acesso negado` porque o docroot Runtime est
 
 ### Alinhamento do docroot para reteste (2026-10-31)
 
-O docroot `/home/piradopirata/projetos/aculta` foi alinhado por checkout destacado ao `origin/refactor/openculturas-codigo-visual` em `7c81acfd5`, após criar branch de backup do HEAD `ae3227866` e stash incluindo os arquivos não rastreados. O cache foi reconstruído. `updatedb:status` permaneceu limpo; `config:status` acusou somente `aculta_messenger.settings` diferente, sem importação automática. Mesmo com o código alinhado, a ULI para `studio_editor_test` continua HTTP 404 no host `wiki420`, embora as rotas `user.reset*` existam no router local; o reteste visual permanece DEFERRED até resolver esse bloqueio de domínio/roteamento.
+O docroot foi alinhado por checkout destacado ao `origin/refactor/openculturas-codigo-visual` em `7c81acfd5`, após criar branch de backup do HEAD `ae3227866` e stash incluindo os arquivos não rastreados. O cache foi reconstruído. O primeiro ULI direto no host Wiki retornou 404 por política de domínio; esse diagnóstico histórico foi superado usando ULI no domínio Conta e navegação para o host Wiki, conforme o registro abaixo.
+
+### Rotas canônicas e homologação editorial — 2026-10-31
+
+Após decisão do responsável, as rotas das Suites foram alinhadas para `wiki:/wesativa` e `shop:/greenstash`; `/studio/*` deixou de ser usado para essas experiências. Os testes focais de identidade/navegação passaram (7 testes/246 assertions) e aliases temporários passaram. O Runtime foi atualizado para o `config/sync` após snapshot `c03ffc6ae08fa62aafa3daffe50ec297486040f3b2778c2efc9bda8cca1631a8`; o único diff era `private_message_digest_anchor` em `aculta_messenger.settings`, removido pelo import. `config:status` e `updatedb:status` ficaram limpos.
+
+Com ULI emitida no domínio Conta (`conta.aculta.toca.net.br`) e navegação para `https://wiki420.aculta.toca.net.br/wesativa`, `studio_editor_test` carregou o consumer real WE SATIVA em 320/390/599/600/768/1024/1280/1440px: **8/8 capturas, 0 falhas de fidelidade**, conteúdo/context-header/context-tabs presentes, shell único e sem overflow. Evidência: `/home/piradopirata/aculta-suite-out/studio-wesativa-editorial-accountuli-20261031/`.
 
 ### WE SATIVA canônico — evidência adicional (2026-10-31)
 
