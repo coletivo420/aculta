@@ -3517,3 +3517,19 @@ No bootstrap read-only do Runtime (`toca`, HEAD `2493d7535`, URI
 candidatos da worktree com 352 checks e o contrato de shell passou 13 checks.
 O Runtime ainda serve a CSS anterior à branch; este ajuste candidato não está
 instalado e não aprova THEME-MF3.
+
+### OCS-F10 / THEME-MF2 — bordas dos campos no dashboard Culturas (2026-10-31)
+
+A comparação do Sass OpenCulturas 3.1.5 (`opcult/sass/abstracts/_forms.scss`)
+com a implementação Studio confirmou que o pacote usa bordas claras nas laterais
+e uma borda inferior mais escura, invertidas semanticamente no tema escuro. Os
+tokens Fidelity já representam os dois estados; o formulário de filtros do
+organizador de Eventos ainda aplicava a cor inferior nos quatro lados. O seletor
+escopado de `/culturas` agora usa os tokens superior, lateral e inferior. O
+fixture `culturas-dashboard.py` verifica as quatro bordas em claro/escuro e nove
+larguras; Firefox ESR visível passou **128/128 checks**, incluindo zero overflow
+do documento, reflow dos filtros, rolagem local da tabela, alvos 44px, foco e
+shell externo. Evidências em
+`/home/piradopirata/aculta-suite-out/culturas-dashboard-form-border-20261031/`.
+Como fixture estrutural com CSS candidata, não prova render Drupal, Form API,
+permissões, AJAX/no-JS ou cache; THEME-MF3 e OCS-F11 seguem pendentes.

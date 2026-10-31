@@ -98,10 +98,11 @@ try:
             viewport.set(width)
             time.sleep(0.08)
             data = driver.js("""return (()=>{const q=s=>document.querySelector(s),r=e=>e.getBoundingClientRect();
-const form=q('.organizer-dashboard-filters form'), tableWrap=q('.table-responsive'), table=q('table'), root=q('.aculta-events-organizer-dashboard');
+const form=q('.organizer-dashboard-filters form'), field=q('#busca'), tableWrap=q('.table-responsive'), table=q('table'), root=q('.aculta-events-organizer-dashboard');
 const actions=root?.querySelector(':scope > .culturas-guide + div'),links=Array.from(actions?.querySelectorAll('a')||[]);
 return {width:innerWidth,docWidth:document.documentElement.scrollWidth,rootWidth:r(root).width,
 formColumns:getComputedStyle(form).gridTemplateColumns.split(' ').length,
+fieldBorders:[getComputedStyle(field).borderTopColor,getComputedStyle(field).borderRightColor,getComputedStyle(field).borderBottomColor,getComputedStyle(field).borderLeftColor],
 tableWidth:r(tableWrap).width,tableOverflow:table.scrollWidth>tableWrap.clientWidth,
 guideFocus:getComputedStyle(q('summary')).minBlockSize,buttonHeight:r(links[0]).height,actionCount:links.length,
 primaryBackground:getComputedStyle(links[0]).backgroundColor,secondaryBorderWidth:getComputedStyle(links[1]).borderTopWidth,
@@ -110,6 +111,8 @@ mainFont:getComputedStyle(root).fontFamily};})();""")
             record(f"{mode}/{width}px sem overflow horizontal no documento", data["docWidth"] <= width, data)
             expected_columns = 1 if width < 768 else 3
             record(f"{mode}/{width}px filtro progride mobile-first", data["formColumns"] == expected_columns, {"columns": data["formColumns"]})
+            parsed = [tuple(int(channel) for channel in color.removeprefix("rgb(").removesuffix(")").split(", ")) for color in data["fieldBorders"]]
+            record(f"{mode}/{width}px campo Fidelity mantém laterais claras e base escura", parsed[0] == parsed[1] == parsed[3] and parsed[2] != parsed[0], {"borders": data["fieldBorders"]})
             record(f"{mode}/{width}px tabela contida no dashboard", data["tableWidth"] <= data["rootWidth"] + 1, {"table": data["tableWidth"], "dashboard": data["rootWidth"]})
             record(f"{mode}/{width}px alvos interativos >=44px", data["buttonHeight"] >= 44 and float(data["guideFocus"].replace("px", "")) >= 44, {"action": data["buttonHeight"], "guide": data["guideFocus"]})
             record(f"{mode}/{width}px links do controller recebem tratamento tátil", data["actionCount"] == 2 and data["primaryBackground"] not in ("transparent", "rgba(0, 0, 0, 0)") and data["secondaryBorderWidth"] != "0px", {k: data[k] for k in ("actionCount", "primaryBackground", "secondaryBorderWidth")})

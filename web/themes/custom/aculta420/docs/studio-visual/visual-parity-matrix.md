@@ -311,3 +311,13 @@ Reteste ampliado de F6: 18/18 combinações de nove larguras × claro/escuro pas
 os invariantes Fidelity candidatos. Os screenshots continuam representando markup
 antigo no Runtime; o compositor novo de Ganjalab ainda não foi validado servido.
 Relatórios em `mobile-first-audit.md`.
+
+### OCS-F10 — campos do dashboard Culturas (2026-10-31)
+
+O formulário de filtros agora aplica a hierarquia de bordas do formulário
+OpenCulturas 3.1.5 por meio dos tokens Fidelity já existentes: laterais claras e
+base escura em claro; laterais escuras e base mais clara em dark mode. Firefox ESR
+visível passou 128/128 checks no fixture, em nove larguras e dois modos, incluindo
+layout, foco, alvos táteis, shell externo e overflow. CSS candidata e fixture;
+integração Drupal/runtime, Form API e grants não homologados. Evidência:
+`/home/piradopirata/aculta-suite-out/culturas-dashboard-form-border-20261031/`.

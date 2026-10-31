@@ -313,6 +313,7 @@ body.path-culturas .aculta-main form :is(input:not([type="checkbox"]):not([type=
   padding: 0.5rem 1rem;
   color: var(--aculta-studio-fidelity-text);
   border: 1px solid var(--aculta-studio-fidelity-input-border-bottom);
+  border-color: var(--aculta-studio-fidelity-input-border-top) var(--aculta-studio-fidelity-input-border-inline) var(--aculta-studio-fidelity-input-border-bottom);
   border-radius: 0;
   background: var(--aculta-studio-fidelity-input-background);
   font: inherit;
