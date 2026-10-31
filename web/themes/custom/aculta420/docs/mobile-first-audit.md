@@ -2141,3 +2141,21 @@ links sintéticos mediram 44×44px em todas as larguras. Isto não comprova que 
 rota real tenha links sociais publicados, nem valida WCAG completo, teclado ou
 perfil/ACL. Capturas e resumo em
 `/home/piradopirata/aculta-suite-out/author-card-social-targets-20261030/`.
+
+### THEME-MF2 — alvos do carrossel editorial MAIN (2026-10-30)
+
+Ajustei os botões de anterior/próximo e pausa e os botões dos pontos do VVJB
+para alvos de 44×44 CSS px. Os pontos preservam marcador visual de 10 px via
+pseudo-elemento; foco visível usa contorno de 3 px e a transição do marcador é
+removida em `prefers-reduced-motion`. A folha continua escopada à View editorial
+da home MAIN.
+
+A fixture reutilizável passou 36/36 checks em Firefox ESR visível, nas larguras
+320, 360, 390, 575, 576, 599, 600, 768, 769, 1024, 1280 e 1440 px: cinco
+controles medidos em 44×44, marcador de 10 px, geometria externa preservada e
+sem overflow. Capturas baseline/candidata e `summary.json` estão em
+`/home/piradopirata/worktrees/opencultures-f0-adm8-e8/.suite-out/editorial-carousel/`.
+Stylelint, design foundations, fronteira tema/módulo e schema/discovery SDC
+passaram. A fixture não testa teclado real, contraste em ambos os temas, a folha
+instalada no Runtime nem o comportamento do VVJB sem JavaScript; esses gates
+permanecem pendentes e THEME-MF3 não está aprovado.

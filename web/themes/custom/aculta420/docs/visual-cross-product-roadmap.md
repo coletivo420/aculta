@@ -1334,3 +1334,12 @@ de Conta/Cursos 320px foram revisadas. O teste é focal, não substitui rotas
 internas, menus expandidos, contraste, leitor de tela ou WCAG 2.2 AA; gate global
 permanece aberto. Comando e limitações no README da suíte e em
 `mobile-first-audit.md`.
+
+### THEME-MF2 — alvos de interação do carrossel MAIN
+
+Os controles VVJB (anterior, próximo, pausa e pontos) têm área de 44×44 CSS px,
+com marcador dos pontos de 10 px. Firefox ESR visível passou fixture em 12
+larguras sem overflow e com a geometria editorial preservada; lint e validadores
+do tema passaram. Evidência e limites em `mobile-first-audit.md` e no README do
+harness. Runtime instalado, teclado/reduced motion em interação e temas claro/
+escuro continuam pendentes; este trabalho não homologa THEME-MF3.

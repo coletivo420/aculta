@@ -2,7 +2,6 @@
 """Compare the editorial carousel before/after its mobile-first CSS migration."""
 
 import base64
-import hashlib
 import json
 import os
 import subprocess
@@ -80,19 +79,28 @@ fixture = """<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 --aculta-interactive-hover-bg:#145c39}*{box-sizing:border-box}
 body{margin:0;font:16px sans-serif}.view-home-editorial-highlights{width:100%;padding:12px}
 .vvjb{width:100%}.vvjb-carousel-wrapper{margin:auto}.vvjb-item{height:100px;background:#ddd}
-.vvjb-button,.vvjb-play-pause-button{width:40px;height:40px}</style></head><body>
+.vvjb-carousel-controls,.vvjb-carousel-options,.vvjb-carousel-dots{display:flex;align-items:center;gap:.25rem}
+.vvjb-button,.vvjb-play-pause-button{width:40px;height:40px}
+.vvjb .vvjb-carousel-dot{all:unset;width:10px;height:10px}</style></head><body>
 <section class="view-home-editorial-highlights"><div class="vvjb"><div class="vvjb-carousel-wrapper">
 <div class="vvjb-item">Destaque editorial 1</div><div class="vvjb-item">Destaque editorial 2</div></div>
-<div class="vvjb-carousel-controls"><button class="vvjb-button">Anterior</button></div></div></section></body></html>"""
+<div class="vvjb-carousel-controls"><div class="vvjb-carousel-options">
+<button class="vvjb-button vvjb-prev">Anterior</button><button class="vvjb-button vvjb-next">Próximo</button>
+</div><button class="vvjb-play-pause-button">Pausar</button><div class="vvjb-carousel-dots">
+<button class="vvjb-carousel-dot active-slide" aria-label="Slide 1"></button>
+<button class="vvjb-carousel-dot" aria-label="Slide 2"></button></div></div></div></section></body></html>"""
 
 measure = """const wrapper=document.querySelector('.vvjb-carousel-wrapper');
 const item=document.querySelector('.vvjb-item');
+const size=element=>{const rect=element.getBoundingClientRect();return {width:rect.width,height:rect.height}};
 return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,
 wrapperWidth:wrapper.getBoundingClientRect().width,
 wrapperMax:getComputedStyle(wrapper).maxWidth,
 itemWidth:item.getBoundingClientRect().width,
 itemRule:getComputedStyle(item).width,
-controlsWidth:document.querySelector('.vvjb-carousel-controls').getBoundingClientRect().width};"""
+controlsWidth:document.querySelector('.vvjb-carousel-controls').getBoundingClientRect().width,
+buttons:[...document.querySelectorAll('.vvjb-button,.vvjb-play-pause-button,.vvjb-carousel-dot')].map(size),
+dotMarker:getComputedStyle(document.querySelector('.vvjb-carousel-dot'),'::before').width};"""
 
 driver = Driver(bidi=True)
 viewport = Viewport(driver)
@@ -117,10 +125,18 @@ try:
         after_png = base64.b64decode(driver.req("GET", f"/session/{driver.session}/screenshot"))
         (OUT / f"candidate-{width}.png").write_bytes(after_png)
         no_overflow = before["documentWidth"] <= width and after["documentWidth"] <= width
-        same_pixels = hashlib.sha256(before_png).hexdigest() == hashlib.sha256(after_png).hexdigest()
-        record(f"{width}px: geometria e captura preservadas", actual_width == width and before == after and no_overflow and same_pixels,
+        same_outer_geometry = all(before[key] == after[key] for key in (
+            "documentWidth", "wrapperWidth", "wrapperMax", "itemWidth", "itemRule",
+        ))
+        targets_ok = all(button["width"] >= 44 and button["height"] >= 44 for button in after["buttons"])
+        record(f"{width}px: geometria externa preservada e sem overflow",
+               actual_width == width and same_outer_geometry and no_overflow,
                {"documentWidth": after["documentWidth"], "wrapperMax": after["wrapperMax"],
-                "itemWidth": after["itemWidth"], "sameScreenshot": same_pixels})
+                "itemWidth": after["itemWidth"], "controlsWidthBefore": before["controlsWidth"],
+                "controlsWidthAfter": after["controlsWidth"]})
+        record(f"{width}px: alvos interativos de no mínimo 44px e indicador compacto",
+               targets_ok and after["dotMarker"] == "10px",
+               {"targets": after["buttons"], "dotMarker": after["dotMarker"]})
         compact = width <= 768
         expected_width = after["wrapperWidth"] if compact else min(370, after["wrapperWidth"])
         expected = after["wrapperMax"] == ("390px" if compact else "764px") and after["itemWidth"] == expected_width

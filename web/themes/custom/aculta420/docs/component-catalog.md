@@ -162,6 +162,8 @@ todos os consumers. Comparação pareada e demais rotas permanecem pendentes
 padding compactos são a base, com composição ampla em `48.0625rem`. A validação
 visual do consumer real `node--editorial-highlight` segue pendente.
 
+O carrossel editorial da home MAIN reutiliza os controles do VVJB; anterior/próximo, pausa e pontos têm alvo de 44×44 CSS px, mantendo o ponto visual em 10 px. CSS escopada à View e sem novo SDC. Fixture Firefox passou 36/36 medições em 12 larguras; consulte `mobile-first-audit.md` para evidência e limites. A captura no Runtime com esta folha instalada permanece pendente.
+
 A galeria de álbuns usa markup e estado do módulo `aculta_gallery`; o tema faz
 o palco de uma coluna e miniaturas recolhidas desde a base, restaurando a grade
 lateral em `30rem`. O smoke reutiliza fixtures públicas dos domains principais
