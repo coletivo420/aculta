@@ -2721,3 +2721,9 @@ ou preferência persistente alterados.
 - A suíte Kernel `RevistaEditorialAccessKernelTest` passou no banco dedicado
   `aculta_simpletest`: 12 testes e 500 asserções, sem falhas. O gate cobre
   acesso editorial e discussão contextual e não altera o Runtime.
+- A matriz do formulário `/marley/revista/nova` com UID 5 encontrou overflow
+  real em 320/360/390px e 1280px (10/18 estados). Duas tentativas de contenção
+  apenas no CSS do tema não alteraram a folha efetivamente servida e foram
+  revertidas; não foi mantido workaround sem evidência. O formulário editorial
+  permanece DEFERRED para inspeção do layout Bootstrap/vertical-tabs no consumer
+  correto, sem declarar THEME-MF3 aprovado.
