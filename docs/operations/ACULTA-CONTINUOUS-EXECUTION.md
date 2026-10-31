@@ -2796,3 +2796,4 @@ ou preferência persistente alterados.
   320/390/768/1280px, claro/escuro, HTTP 200 e sem overflow. Evidência em
   `/home/piradopirata/aculta-suite-out/profile-private-final-20261031201100/`.
 - Culturas público: a matriz genérica Firefox headless em `eventos.aculta.toca.net.br/culturas` retornou HTTP 403 em 8/8 estados (320/390/768/1280px, claro/escuro), sem overflow. Isso confirma a fronteira de autorização anônima, mas não substitui a matriz autenticada da experiência; gate visual autenticado permanece pendente até disponibilizar snapshot/sessão homologável.
+- Gato estático repetido após a microfase de Culturas: Foundation 353, SDC schema 55 componentes/759 checks, aliases temporários 38 arquivos, rotas administrativas MAIN 154 rotas e Design Foundations 2432 checks; todos PASS, incluindo COLOR MODE TOKEN-ONLY e contrastes escuros. Isso mantém a base publicável, sem converter os gates globais MF3/F11 em PASS.
