@@ -2774,3 +2774,8 @@ ou preferência persistente alterados.
   `/marley` passou 8/8 estados em 320/390/768/1280px, claro/escuro, HTTP 200 e
   sem overflow. Evidência em
   `/home/piradopirata/aculta-suite-out/marley-auth-listing-fixed-20261031200744/`.
+- A listagem editorial `/marley/revista/publicacoes` tinha tabela responsiva
+  fora da classe `studio__listing`; os commits `82fad15d5`/`cccf7d1db` aplicam
+  o mesmo contrato mobile a tabelas Marley/Wiki. Reteste autenticado passou
+  8/8 estados em 320/390/768/1280px, claro/escuro, sem overflow. Evidência em
+  `/home/piradopirata/aculta-suite-out/marley-revista-listing-fixed2-20261031200910/`.
