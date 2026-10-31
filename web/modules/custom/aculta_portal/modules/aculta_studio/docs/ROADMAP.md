@@ -1066,6 +1066,11 @@ O mesmo cenário passou axe-core em claro/escuro a 320px: duas auditorias, zero
 violações e um resultado `incomplete` por modo. Evidência em
 `/home/piradopirata/aculta-suite-out/culturas-axe-followup-d207/`.
 
+A matriz de zoom real do Firefox ESR validou o purpose `eventos` em 100%, 200%
+e 400%: 3/3 checks passaram, sem overflow documental e com Institution Bar,
+Domain Header e H1 únicos. Evidência em
+`/home/piradopirata/aculta-suite-out/eventos-public-zoom-423/`.
+
 Reteste Firefox ESR visível (`DISPLAY=:0`) cobriu claro/escuro em
 320/390/768/1440px, com largura documental igual à viewport e sem overflow em
 todos os oito estados. Evidência em

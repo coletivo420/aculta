@@ -2582,3 +2582,7 @@ ou preferência persistente alterados.
   `/home/piradopirata/aculta-suite-out/culturas-x11-followup-43ec/`. Esta é
   evidência X11 de geometria, não ainda um teste de zoom real, escrita ou ACL
   operacional.
+- A matriz de zoom real do Firefox ESR validou o purpose `eventos` em 100%,
+  200% e 400%: 3/3 checks passaram, sem overflow documental e com Institution
+  Bar, Domain Header e H1 únicos. Evidência em
+  `/home/piradopirata/aculta-suite-out/eventos-public-zoom-423/`.
