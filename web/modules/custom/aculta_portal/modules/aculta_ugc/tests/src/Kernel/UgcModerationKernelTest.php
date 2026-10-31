@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_ugc\Kernel;
 
+use Drupal\Core\Form\FormState;
+use Drupal\aculta_ugc\Form\UgcReportDecisionForm;
+use Symfony\Component\HttpFoundation\Request;
+use Drupal\aculta_ugc\Controller\UgcModerationDashboardController;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\aculta_events\Entity\Event;
@@ -111,7 +115,7 @@ final class UgcModerationKernelTest extends KernelTestBase {
     UgcRecipientConfig::create([
       'id' => 'eventos',
       'label' => 'Equipe de Eventos',
-      'emails' => ['eventos-mod@aculta.org'],
+      'emails' => ['eventos-mod@example.invalid'],
     ])->save();
 
     $event = Event::create([
@@ -128,21 +132,22 @@ final class UgcModerationKernelTest extends KernelTestBase {
     $this->assertSame('pendente', $report->get('status')->value);
     $this->assertSame('eventos', $report->get('purpose')->value);
 
-    // Validação de Privacidade: A notificação de moderação NÃO contém o UID nem dados do denunciante!
+    // Privacidade: a notificação não contém UID nem dados do denunciante.
     $notifications = $notifier->getDispatchedNotifications();
     $this->assertNotEmpty($notifications);
     $lastNotice = end($notifications);
     $this->assertSame('eventos', $lastNotice['purpose']);
     $this->assertSame('spam', $lastNotice['motivo']);
     $this->assertSame((int) $event->id(), $lastNotice['target_id']);
-    $this->assertSame(['eventos-mod@aculta.org'], $lastNotice['recipients']);
+    $this->assertSame(['eventos-mod@example.invalid'], $lastNotice['recipients']);
     $this->assertArrayNotHasKey('uid', $lastNotice);
 
     // O objeto denunciado NÃO é alterado nem apagado pela criação da denúncia.
     $reloadedEvent = Event::load($event->id());
     $this->assertNotNull($reloadedEvent);
 
-    // Anti-duplicação: o mesmo usuário não pode denunciar de novo o mesmo objeto enquanto pendente.
+    // Anti-duplicação: o usuário não pode denunciar de novo o mesmo objeto
+    // enquanto a denúncia estiver pendente.
     $this->assertFalse($reportService->canReport($event, $this->reporterUser));
     $this->expectException(ReportNotAllowedException::class);
     $reportService->createReport($event, $this->reporterUser, 'spam');
@@ -242,7 +247,7 @@ final class UgcModerationKernelTest extends KernelTestBase {
     $report = $reportService->createReport($event, $this->reporterUser, 'spam', 'eventos');
 
     // 1. Acesso ao dashboard.
-    $controller = \Drupal\aculta_ugc\Controller\UgcModerationDashboardController::create($this->container);
+    $controller = UgcModerationDashboardController::create($this->container);
     $accessDenied = $controller->access($this->commonUser);
     $this->assertFalse($accessDenied->isAllowed());
 
@@ -251,7 +256,7 @@ final class UgcModerationKernelTest extends KernelTestBase {
 
     // 2. Renderização do dashboard.
     $this->container->get('current_user')->setAccount($this->adminModerator);
-    $request = \Symfony\Component\HttpFoundation\Request::create('/painel-administrativo/moderacao/denuncias');
+    $request = Request::create('/painel-administrativo/moderacao/denuncias');
     $build = $controller->overview($request);
 
     $this->assertArrayHasKey('table', $build);
@@ -260,11 +265,11 @@ final class UgcModerationKernelTest extends KernelTestBase {
     $this->assertSame(1, $build['table']['#rows'][0]['total']);
 
     // 3. Formulário de decisão.
-    $formObject = \Drupal\aculta_ugc\Form\UgcReportDecisionForm::create($this->container);
+    $formObject = UgcReportDecisionForm::create($this->container);
     $this->assertFalse($formObject->access($this->commonUser, $report)->isAllowed());
     $this->assertTrue($formObject->access($this->adminModerator, $report)->isAllowed());
 
-    $formState = new \Drupal\Core\Form\FormState();
+    $formState = new FormState();
     $form = $formObject->buildForm([], $formState, $report);
     $this->assertArrayHasKey('decision', $form);
     $this->assertArrayHasKey('decision_notes', $form);

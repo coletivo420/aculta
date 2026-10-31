@@ -1,12 +1,7 @@
 # Multidomínio
 
-Purposes estáveis atuais:
-
-`main`, `account`, `support`, `magazine`, `wiki`, `shop`, `courses`, `links`.
-
-Purpose ativo desde 0.2.0-dev.57:
-
-`forum`.
+Purposes estáveis ativos: `main`, `account`, `support`, `magazine`, `wiki`,
+`shop`, `courses`, `forum`, `links` e `eventos`.
 
 O purpose `forum` foi implementado com os módulos `forum` e `flag`. A condição
 anterior (validação da feature de participação, F3) foi substituída por decisão
@@ -37,6 +32,7 @@ hostname e não recebe entidade `Domain` em Twig/SDC. Ver o contrato planejado e
 | courses | cursos.aculta.org | cursos.aculta.toca.net.br | ativo |
 | forum | growroom420.aculta.org | growroom420.aculta.toca.net.br | ativo (0.2.0-dev.57) |
 | links | links.aculta.org | links.aculta.toca.net.br | Domain/purpose ativo; landing preservadora em `aculta_links`; Runtime de teste HTTP 200/404 confirmado; DNS de produção não provisionado |
+| eventos | eventos.aculta.org | eventos.aculta.toca.net.br | ativo; ACULTA Studio Culturas e catálogo público |
 
 ## Vitrine do MAIN (2026-10-28)
 
@@ -66,12 +62,36 @@ subdomínio continua respondendo somente no próprio host.
 - Conta, fluxo de apoio e checkout continuam nos seus purposes (decisões registradas acima).
 - Sitemap: a vitrine não cria URLs novas.
 
-**Pendências:**
+O calendário no `main` segue como conteúdo de rota, conforme a decisão D6 de
+`aculta_events`; a vitrine não cria atalhos nem canonicals adicionais. A página
+de apresentação só reflete mudanças no checkout servido depois do rebuild de
+cache dessa revisão.
 
-- Purpose `eventos` aparece na vitrine quando tiver Domain ativo (fase F1 de `aculta_events`).
-- Calendário no `main` (decisão D6 de `aculta_events`) é uma rota de conteúdo, não vitrine; entra
-  na fase F5, com as regras de canonical.
-- Mudança de Twig só aparece depois de `drush cr` (cache de templates), que precisa de autorização.
+### Decisão — resolução dos links de domínio no Portal (2026-10-31)
+
+O `aculta_portal` é dono da lista de purposes, dos títulos e da resolução das
+URLs absolutas. `DomainPresentationBuilder` usa `DomainPurposeManager` para
+montar a vitrine da home MAIN a partir dos Domains configurados no ambiente;
+inclui `magazine` (Revista 420) e `eventos` quando seus Domains estão ativos, e
+omite Domains ausentes. O tema recebe somente o contrato neutro e apresenta os
+links, sem hostname, route ID ou escolha de purpose. No Alpha, os hosts vêm da
+configuração ativa do Domain/Deployer; não se troca URL em Twig ou CSS.
+
+O teste Kernel `DomainPresentationBuilderKernelTest` protege a presença dos
+dez purposes, URLs resolvidas por Domain e cache tags dos links da vitrine,
+incluindo a Revista.
+
+Fixtures de teste usam domínios reservados (`example.invalid`) ou obtêm os
+hosts esperados do `DeployerHostDirectory`/`DomainPurposeManager`. Não fixar
+hosts de Homelab ou produção em testes; a validação fica em
+`scripts/validate-environment-addresses.php`.
+
+Validação em 2026-10-31: o gate Domain Presentation no Runtime MAIN passou 249
+checks; a vitrine ficou `DEFERRED` nessa execução porque Drush não cria uma
+requisição roteada para a home. `DomainPresentationBuilderKernelTest` cobre a
+vitrine com todos os Domains de teste. PHPCS/PHP lint passaram, o validador de
+endereços passou em 6.999 arquivos e a suíte combinada passou 41 testes/669
+assertions; Drupal/Core/dependências reportaram 92 depreciações, sem falhas.
 
 ## Redes sociais (LINKS)
 

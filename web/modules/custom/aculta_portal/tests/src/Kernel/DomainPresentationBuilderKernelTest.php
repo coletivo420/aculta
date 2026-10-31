@@ -113,6 +113,61 @@ final class DomainPresentationBuilderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Tests that MAIN links every configured purpose, including Magazine.
+   */
+  public function testMainShowcaseContainsEveryConfiguredPurpose(): void {
+    foreach (self::DOMAINS as $purpose => $domainId) {
+      Domain::create([
+        'id' => $domainId,
+        'hostname' => $purpose . '.example.invalid',
+        'name' => $purpose,
+        'scheme' => 'https',
+        'weight' => 0,
+        'status' => TRUE,
+      ])->save();
+    }
+
+    $purposeManager = new DomainPurposeManager(
+      $this->container->get('entity_type.manager'),
+      $this->container->get(DomainNegotiatorInterface::class),
+      $this->container->get('config.factory'),
+      $this->container->get('request_stack'),
+    );
+    $pathMatcher = $this->createMock(PathMatcherInterface::class);
+    $pathMatcher->method('isFrontPage')->willReturn(TRUE);
+    $builder = new DomainPresentationBuilder(
+      $purposeManager,
+      $this->container->get('string_translation'),
+      NULL,
+      $pathMatcher,
+    );
+
+    $presentation = $builder->build('main');
+    $this->assertNotNull($presentation);
+    $data = $presentation->toThemeArray();
+    $showcase = $data['regions']['showcase'];
+    $expectedPurposes = array_values(array_diff(array_keys(self::DOMAINS), ['main']));
+    $this->assertSame($expectedPurposes, array_column($showcase, 'purpose'));
+
+    foreach ($showcase as $item) {
+      $this->assertSame(
+        'https://' . $item['purpose'] . '.example.invalid/',
+        $item['url'],
+        "O link de {$item['purpose']} deve usar o Domain configurado para este ambiente.",
+      );
+      $this->assertContains(
+        'config:domain.record.' . self::DOMAINS[$item['purpose']],
+        $presentation->getCacheTags(),
+        "A vitrine deve invalidar quando o Domain de {$item['purpose']} mudar.",
+      );
+    }
+
+    $magazine = array_values(array_filter($showcase, static fn (array $item): bool => $item['purpose'] === 'magazine'));
+    $this->assertCount(1, $magazine);
+    $this->assertSame('Revista 420', $magazine[0]['title']);
+  }
+
+  /**
    * Unknown purposes do not receive a presentation contract.
    */
   public function testUnknownPurposeHasNoPresentation(): void {

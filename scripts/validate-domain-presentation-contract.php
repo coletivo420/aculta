@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Validates the bootstrapped Portal-to-theme presentation contract.
+ */
+
 declare(strict_types=1);
 
 /**
@@ -22,6 +27,11 @@ $assert($container->has('aculta_portal.presentation.domain'), 'Domain presentati
 $builder = $container->get('aculta_portal.presentation.domain');
 $assert($builder instanceof DomainPresentationBuilder, 'Domain presentation service uses the canonical builder.');
 $domainPurpose = $container->get('aculta_portal.domain_purpose');
+$isMainFrontPage = $container->get('path.matcher')->isFrontPage();
+$assert(
+  $domainPurpose->getCurrentPurpose() === 'main',
+  'Run this gate with a MAIN purpose URI.',
+);
 
 $expected = [
   'main' => ['ACULTA', 'ACULTA'],
@@ -31,6 +41,9 @@ $expected = [
   'wiki' => ['Wiki420', 'Wiki420'],
   'shop' => ['Loja', 'Loja'],
   'courses' => ['Cursos', 'Cursos'],
+  'forum' => ['Fórum', 'Fórum'],
+  'links' => ['Redes sociais da ACULTA', 'Redes sociais'],
+  'eventos' => ['Eventos da ACULTA', 'Eventos'],
 ];
 
 $containsObject = static function (mixed $value) use (&$containsObject): bool {
@@ -61,10 +74,9 @@ foreach ($expected as $purpose => [$title, $shortTitle]) {
   $assert($layout['institution_bar_account'] === ($purpose === 'account'), 'Account bar variant only for account: ' . $purpose);
   $assert($layout['show_utility_bar'] === ($purpose !== 'links'), 'Utility bar is hidden only for links: ' . $purpose);
   $assert($layout['links_page'] === ($purpose === 'links'), 'Links page layout only for links: ' . $purpose);
-  // A página inicial de main depende da requisição; o gate só confere o tipo, não o valor.
   $assert(
-    is_bool($layout['show_site_header']) && ($purpose === 'main' || $layout['show_site_header'] === ($purpose === 'wiki')),
-    'Site header is shown for wiki (and main front page only): ' . $purpose,
+    $layout['show_site_header'] === TRUE,
+    'Institution Bar and Domain Header are available in every purpose: ' . $purpose,
   );
   $assert(
     array_keys($theme['identity']) === ['purpose', 'title', 'short_title', 'home_url', 'logo_alt'],
@@ -83,7 +95,7 @@ foreach ($expected as $purpose => [$title, $shortTitle]) {
     'Purpose home URL is absolute and prepared by the Portal: ' . $purpose,
   );
   $assert(!$containsObject($theme), 'No object crosses the Portal -> theme boundary: ' . $purpose);
-  // Wiki logo and search have real consumers; navigation and actions stay deferred.
+  // Wiki brand/search have consumers; navigation/actions stay deferred.
   $brand = $theme['regions']['brand_media'];
   $brandIsWiki = $purpose === 'wiki' ? is_array($brand) : $brand === NULL;
   $search = $theme['regions']['wiki_search'];
@@ -103,17 +115,40 @@ foreach ($expected as $purpose => [$title, $shortTitle]) {
       && $theme['regions']['actions'] === NULL,
     'Wiki receives branded media and the shared GET search form; navigation/actions stay deferred: ' . $purpose,
   );
-  // Vitrine só na home do MAIN: outros purposes nunca recebem itens; no MAIN, cada item é uma raiz de purpose.
+  // MAIN showcase only on its front page; roots and cache tags follow Domains.
   $showcase = $theme['regions']['showcase'];
+  $expectedShowcasePurposes = array_values(array_diff(array_keys($expected), ['main']));
+  $showcaseIsValid = $purpose === 'main' && $isMainFrontPage
+    ? is_array($showcase)
+      && array_reduce($showcase, static fn(bool $ok, $item): bool => $ok
+        && is_array($item)
+        && array_keys($item) === ['purpose', 'title', 'url'], TRUE)
+      && array_column($showcase, 'purpose') === $expectedShowcasePurposes
+    : $showcase === NULL;
   $assert(
-    $showcase === NULL
-      || ($purpose === 'main' && is_array($showcase) && array_reduce($showcase, static fn(bool $ok, $item): bool => $ok
-        && is_array($item) && array_keys($item) === ['purpose', 'title', 'url'] && !str_contains($item['purpose'], 'main'), TRUE)),
+    $showcaseIsValid,
     'Showcase is only offered on the MAIN front and lists purpose roots: ' . $purpose,
   );
+  if ($purpose === 'main' && $isMainFrontPage && is_array($showcase)) {
+    foreach ($showcase as $item) {
+      $rootUrl = $domainPurpose->pathUrl($item['purpose'], '/');
+      $assert(
+        $rootUrl !== NULL && $rootUrl->toString() === $item['url'],
+        'Showcase URL is resolved for the configured environment: ' . $item['purpose'],
+      );
+      $targetDomain = $domainPurpose->getDomain($item['purpose']);
+      $assert(
+        $targetDomain !== NULL
+          && array_diff($targetDomain->getCacheTags(), $presentation->getCacheTags()) === [],
+        'MAIN showcase varies with the target Domain configuration: ' . $item['purpose'],
+      );
+    }
+    $magazine = array_values(array_filter($showcase, static fn(array $item): bool => $item['purpose'] === 'magazine'));
+    $assert(count($magazine) === 1 && $magazine[0]['title'] === 'Revista 420', 'MAIN showcase includes Magazine.');
+  }
 
   $contexts = $presentation->getCacheContexts();
-  foreach (['domain', 'languages:language_interface', 'url.site'] as $context) {
+  foreach (['domain', 'languages:language_interface', 'url.site', 'url.path.is_front'] as $context) {
     $assert(in_array($context, $contexts, TRUE), 'Presentation carries cache context ' . $context . ': ' . $purpose);
   }
   $domain = $domainPurpose->getDomain($purpose);
@@ -124,6 +159,10 @@ foreach ($expected as $purpose => [$title, $shortTitle]) {
     array_diff($domainTags, $presentation->getCacheTags()) === [],
     'Presentation includes the actual Domain entity cache tags: ' . $purpose,
   );
+}
+
+if (!$isMainFrontPage) {
+  echo "SHOWCASE: DEFERRED (Drush has no routed MAIN front-page request; Kernel test covers it).\n";
 }
 
 $assert($builder->build('unknown-purpose') === NULL, 'Unknown purpose fails closed without presentation fallback.');

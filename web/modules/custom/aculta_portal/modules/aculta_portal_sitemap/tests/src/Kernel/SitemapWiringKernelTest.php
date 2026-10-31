@@ -222,7 +222,7 @@ final class SitemapWiringKernelTest extends KernelTestBase {
     file_put_contents($environmentFile, json_encode([
       'schema' => 1,
       'environment' => 'test',
-      'site' => 'https://aculta.toca.net.br',
+      'site' => 'https://site.example.invalid',
     ], JSON_THROW_ON_ERROR));
     $purposeManager = new DomainPurposeManager(
       $this->container->get('entity_type.manager'),
@@ -248,7 +248,9 @@ final class SitemapWiringKernelTest extends KernelTestBase {
     try {
       self::assertContains(['purpose' => 'wiki', 'path' => '/wiki/verbetes'], $generator->getDataSets());
       $generated = $generator->generate(['purpose' => 'wiki', 'path' => '/wiki/verbetes']);
-      self::assertSame('https://wiki420.aculta.toca.net.br/wiki/verbetes', $generated[0]['url']);
+      $expectedUrl = $purposeManager->environmentPathUrl('wiki', '/wiki/verbetes');
+      self::assertNotNull($expectedUrl);
+      self::assertSame($expectedUrl->toString(), $generated[0]['url']);
     }
     finally {
       (new Filesystem())->remove($projectRoot);

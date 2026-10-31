@@ -119,7 +119,7 @@ final class OpenStreetMapOAuthSafetyKernelTest extends KernelTestBase {
     );
     $this->assertFalse($client->isConfigured());
     $this->expectException(OpenStreetMapOAuthException::class);
-    $client->authorizationUrl('state', 'https://aculta.toca.net.br/integracoes/openstreetmap/retorno');
+    $client->authorizationUrl('state', 'https://site.example.invalid/integracoes/openstreetmap/retorno');
   }
 
   /**
@@ -246,7 +246,7 @@ final class OpenStreetMapOAuthSafetyKernelTest extends KernelTestBase {
     );
 
     $this->assertTrue($client->isConfigured());
-    $client->exchangeAuthorizationCode('test-code', 'https://aculta.toca.net.br/integracoes/openstreetmap/retorno');
+    $client->exchangeAuthorizationCode('test-code', 'https://site.example.invalid/integracoes/openstreetmap/retorno');
     $this->assertSame($token, $store->load());
     $stored = $this->container->get('state')->get('aculta_events_openstreetmap.oauth_token.test');
     $this->assertIsArray($stored);
