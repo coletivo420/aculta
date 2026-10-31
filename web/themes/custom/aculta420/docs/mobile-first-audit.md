@@ -2820,3 +2820,21 @@ PHP lint e PHPCS passaram. A folha candidata mantém o reflow em formulários
 estreitos, mas o Runtime em `2493d7535` ainda não serve o hook nem o CSS atual.
 Essa regressão de metadados não substitui a validação do formulário renderizado,
 JavaScript/no-JS ou o gate THEME-MF3.
+
+### THEME-MF3 — reteste pareado Conta/320px (2026-10-31)
+
+Firefox ESR visível repetiu o caso anônimo `/entrar` no mesmo Runtime/HEAD
+`2493d7535`: o baseline mediu `documentWidth=328` para viewport de 320px. Na
+sessão candidata, `auth.css` do worktree e o token neutro
+`data-portal-ui="challenge-frame"` foram aplicados somente no browser; a medida
+foi `320px`, sem overflow. Foco no formulário e navegação reversa permaneceram
+visíveis; baseline 2/3 checks (a única falha foi o overflow), candidato 5/5.
+Captura candidata inspecionada. Relatórios e PNGs fora do Git:
+`/home/piradopirata/aculta-suite-out/account-overflow-320-baseline-f6805cf4b/`
+e `/home/piradopirata/aculta-suite-out/account-overflow-320-rerun-f6805cf4b/`.
+
+O pareamento confirma a correção visual quando contrato Portal e CSS estão
+integrados, mas a sessão simulou o token e não prova código servido: o Runtime
+continua sem `CaptchaPresentationHooks` e sem a folha atual. A falha integrada
+permanece aberta, não se considera o baseline substituído e THEME-MF3 continua
+pendente até validar o hook, CSS compilada e formulário servido em toda a matriz.
