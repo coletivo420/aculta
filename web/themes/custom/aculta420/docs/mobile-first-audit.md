@@ -2622,3 +2622,26 @@ hook instalado no Runtime. O teste não valida preferência persistida, páginas
 internas, teclado completo, zoom, tecnologias assistivas ou WCAG 2.2 AA integral,
 portanto THEME-MF3 permanece pendente. Relatório em
 `/home/piradopirata/aculta-suite-out/purpose-modes-retest-20261031/results.json`.
+
+### THEME-MF3 — teclado Conta: baseline servido e CSS candidata (2026-10-31)
+
+O reteste de teclado no Firefox ESR visível, nas dez raízes públicas em 320 e
+1280px, registrou 333 checks aprovados, um reprovado e quatro SKIP (dois limites
+de sequência em Links e dois focos delegados ao CAPTCHA externo na Conta). A
+única reprovação foi a Conta anônima em 320px: o documento servido no Runtime
+mede 328px. Não houve ativação de links nem submissão. Relatório em
+`/home/piradopirata/aculta-suite-out/purpose-keyboard-retest-20261031/results.json`.
+
+Em execução separada, a Conta foi repetida em 320/1280px com `auth.css` da
+branch e o marcador `challenge-frame` injetados somente na sessão Firefox. Os
+36 checks de foco/overflow passaram; dois focos delegados ao CAPTCHA externo
+foram SKIP. Em 320px, o documento ficou com 320px e o slot do desafio com 300px.
+O harness `purpose-shell-keyboard.py` oferece
+`PURPOSE_KEYBOARD_AUTH_CANDIDATE=1` para reproduzir essa comparação; o README
+registra o escopo da injeção. Evidência em
+`/home/piradopirata/aculta-suite-out/account-keyboard-candidate-20261031/results.json`.
+
+A comparação confirma o reflow da folha candidata, mas não demonstra que o hook
+está instalado no Runtime: ele continua no HEAD `2493d7535`, anterior a esta
+correção da branch. O teste também não valida o interior do widget de terceiro,
+zoom, leitor de tela ou WCAG 2.2 AA integral. THEME-MF3 permanece pendente.

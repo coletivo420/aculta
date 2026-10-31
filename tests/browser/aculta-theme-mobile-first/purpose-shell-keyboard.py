@@ -24,6 +24,8 @@ WIDTHS = [int(value) for value in os.environ.get("PURPOSE_KEYBOARD_WIDTHS", "320
 TABS = int(os.environ.get("PURPOSE_KEYBOARD_TABS", "8"))
 DOMAIN_ENV = os.environ.get("PURPOSE_KEYBOARD_DOMAIN_ENV", "test")
 SELECTED_PURPOSES = {value.strip() for value in os.environ.get("PURPOSE_KEYBOARD_PURPOSES", "").split(",") if value.strip()}
+AUTH_CANDIDATE = os.environ.get("PURPOSE_KEYBOARD_AUTH_CANDIDATE") == "1"
+AUTH_CSS = CODE_ROOT / "web/themes/custom/aculta420/css/components/auth.css"
 DOMAIN_IDS = {
     "main": "aculta_org",
     "account": "conta_aculta_org",
@@ -132,6 +134,23 @@ return JSON.stringify({
 });"""))
 
 
+def apply_auth_candidate(driver, purpose):
+    """Inject candidate account CSS only in this browser session for the login route."""
+    if not AUTH_CANDIDATE or purpose != "account":
+        return
+    if "path-entrar" not in driver.js("return document.body.className"):
+        return
+    marker_count = driver.js("""const style=document.createElement('style');
+style.dataset.purposeAuthCandidate='true';style.textContent=arguments[0];document.head.append(style);
+let count=0;document.querySelectorAll('.captcha').forEach((frame)=>{
+  const tokens=(frame.getAttribute('data-portal-ui')||'').split(/\\s+/).filter(Boolean);
+  if(!tokens.includes('challenge-frame'))tokens.push('challenge-frame');
+  frame.setAttribute('data-portal-ui',tokens.join(' '));count++;
+});return count;""", [AUTH_CSS.read_text(encoding="utf-8")])
+    record("account /entrar: CSS e marcador candidatos aplicados na sessão",
+           marker_count > 0, {"challengeMarkers": marker_count})
+
+
 def record(name, passed, detail):
     item = {"name": name, "status": "pass" if passed else "fail", "passed": bool(passed), "detail": detail}
     records.append(item)
@@ -152,6 +171,7 @@ def main():
                 viewport.set(width)
                 driver.get(url)
                 time.sleep(0.35)
+                apply_auth_candidate(driver, purpose)
                 driver.js("window.scrollTo(0,0);document.activeElement?.blur();")
                 page_state = inspect(driver)
                 no_horizontal_overflow = page_state["documentWidth"] <= width
@@ -163,6 +183,7 @@ def main():
                     if reverse:
                         driver.get(url)
                         time.sleep(0.35)
+                        apply_auth_candidate(driver, purpose)
                         driver.js("window.scrollTo({top:0,behavior:'instant'});document.activeElement?.blur();")
                         time.sleep(0.25)
                     for step in range(1, TABS + 1):

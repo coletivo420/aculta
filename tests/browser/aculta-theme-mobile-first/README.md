@@ -802,6 +802,11 @@ componentes, contraste do indicador, leitor de tela ou WCAG 2.2 AA completa.
 O foco interno do CAPTCHA de terceiro não é inspecionável pelo documento ACULTA;
 permanece fora do resultado de foco do tema.
 
+`PURPOSE_KEYBOARD_AUTH_CANDIDATE=1` injeta `auth.css` da árvore testada e o
+marcador visual neutro apenas na sessão Firefox quando a Conta redireciona para
+`/entrar`. Serve para comparar a geometria candidata e a navegação por teclado;
+não instala o hook no Runtime nem altera a página servida.
+
 ## Título principal nas dez raízes públicas
 
 `purpose-headings.py` confere um H1 visível dentro de `main#main-content`, o
