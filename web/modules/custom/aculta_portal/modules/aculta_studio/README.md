@@ -284,8 +284,8 @@ sem alias ou redirect.
 | --- | --- | --- |
 | Marley | `account` | `/marley` |
 | Ganjalab | `courses` | `/ganjalab` |
-| WE SATIVA | `wiki` | `/wesativa` |
-| Green Stash | `shop` | `/greenstash` |
+| ACULTA STUDIO WE SATIVA | `wiki` | `/studio/we-sativa` |
+| ACULTA STUDIO GREEN STASH | `shop` | `/studio/green-stash` |
 | Culturas | `eventos` | `/culturas` |
 
 Conta (`/conta/*`) e Perfil (`/perfil/*`) permanecem separados; salvos usam
