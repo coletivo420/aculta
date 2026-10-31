@@ -4720,3 +4720,25 @@ Snapshots pré-ULI, ambos com 611 tabelas e modo 0600:
 Esses resultados fecham a regressão visual responsiva/teclado deste ajuste;
 contraste WCAG integral, zoom, ACL, AJAX e os gates globais THEME-MF3/OCS-F11
 continuam separados e pendentes.
+
+### OCS-F10 / THEME-MF2 — zoom real dos formulários Culturas (2026-10-31)
+
+Depois do commit `9eae5caf4`, Firefox ESR visível no docroot sincronizado abriu
+por GET `/culturas/eventos/novo` e `/culturas/locais/novo`, sem CSS/JS injetados
+e sem submeter formulários. As duas rotas passaram viewport base de 1280px e
+zoom real a 100%, 200% e 400%: **12/12 checks** de shell, presença dos forms,
+razão de zoom e ausência de overflow horizontal. A Institution Bar e o Domain
+Header apareceram uma vez em cada estado; o Local manteve Complemento ≥44px e
+alvo S/N ≥44×44px. Em 200%/400%, Tab alcançou o campo principal do Evento e,
+no Local, S/N e Complemento; todos mostraram `:focus-visible` com contorno ou
+anel de foco. A métrica exige que ao menos 85% do controle permaneça no
+viewport; Complemento mediu 88,1% a 200% e 96,6% a 400%, com pequeno recorte
+junto à borda inferior, sem ocultar o foco. Evidência:
+`/home/piradopirata/aculta-suite-out/culturas-forms-zoom-postpush-20261031/`
+(10 capturas e `report.json`). Snapshot pré-ULI:
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-forms-zoom-postpush-20261031.sql`,
+51.377.027 bytes, modo 0600, SHA-256
+`663569d5f39646443b19bf1c159ee29fec754293fb8631de133d6b1725bf1407`.
+Este resultado fecha zoom/teclado somente para esses dois formulários; não
+cobre CEP, envio/Form API, grants A/B, AJAX, contraste WCAG integral ou
+THEME-MF3/OCS-F11.

@@ -2168,8 +2168,13 @@ Com Firefox ESR visível e a conta de inspeção, `/culturas/eventos/novo` e
 injetados: **18 capturas**, zero falhas, largura documental igual à viewport e
 Institution Bar/Domain Header presentes. Os dois formulários proprietários
 estavam renderizados; nenhum foi enviado. Evidência e snapshot pré-ULI estão
-registrados em `mobile-first-audit.md`. Isto prova somente renderização atual e
-reflow; dark mode, no-JS/AJAX, teclado/zoom, ACL, CEP e WCAG permanecem pendentes.
+registrados em `mobile-first-audit.md`. Uma rodada integrada posterior passou
+12/12 checks de zoom real 100/200/400% e foco por teclado nos dois formulários;
+Complemento ficou 88,1% visível a 200% e 96,6% a 400%, com o foco visível. O
+script reutilizável é `tests/browser/aculta-theme-mobile-first/culturas-forms-zoom.py`.
+Essas rodadas cobrem renderização, reflow, zoom e foco desta dupla de formulários;
+grants A/B, CEP ao vivo, submissão Form API, AJAX, contraste WCAG integral e os
+gates THEME-MF3/OCS-F11 permanecem pendentes.
 
 ### OCS-F10 — ACULTA Studio Culturas: hub real em mobile (2026-10-31)
 
