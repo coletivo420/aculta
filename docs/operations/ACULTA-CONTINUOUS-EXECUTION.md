@@ -2714,3 +2714,7 @@ ou preferência persistente alterados.
   autenticada com a conta existente UID 5 passou 18/18 viewports, em claro e
   escuro, sem overflow. Evidência em
   `/home/piradopirata/aculta-suite-out/revista-marley-reader-fixed3-20261031194409/`.
+- A suíte Unit da Revista foi repetida após a correção: 40 testes e 162
+  asserções passaram. O parâmetro de tradução permanece opcional para manter
+  os construtores de teste existentes, enquanto o container injeta o serviço
+  real em produção.
