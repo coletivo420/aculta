@@ -2403,6 +2403,14 @@ Firefox ESR local com o mesmo iframe externo real: **10/10 checks** nas nove
 larguras, incluindo slot de 300px dentro de viewport de 320px; a captura móvel
 foi inspecionada. Evidência mais recente em
 `/home/piradopirata/aculta-suite-out/auth-challenge-candidate-resume-20261031/`.
+
+Repetição em 2026-11-01, Firefox ESR visível e iframe Turnstile real, focada em
+320/360px: 3/3 verificações passaram. Com `base.css`/`auth.css` da branch e o
+marcador Portal simulado somente na sessão, o iframe coube em slots de 300/308px;
+`documentWidth` e `bodyWidth` coincidiram com o viewport e `scrollX=0`. Evidência
+em `/home/piradopirata/aculta-suite-out/auth-turnstile-resume-20261101/`. Sem a
+injeção, o Runtime ainda mede 328px em viewport 320px; esta repetição não
+substitui servir o hook, limpar cache e testar a implementação integrada.
 O resultado continua condicionado à CSS e ao marcador candidatos injetados; a
 matriz anônima acima segue registrando o overflow real de 328px no Runtime.
 
