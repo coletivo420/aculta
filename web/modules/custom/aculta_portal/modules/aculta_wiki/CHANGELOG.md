@@ -11,9 +11,10 @@
 - Kernel focal confirmou rota permitida para autoria autorizada, render do
   formulário e ausência de Node salvo (2 testes/200 asserções). Runtime em
   `c7fc57dba`: discovery e `drush cr` passaram; Firefox ESR/X11 com UID 5
-  ativo/autorizado/confirmado passou 37/37 verificações em 1440–320 px,
-  incluindo título, corpo, ausência do aviso de confirmação e retorno.
-  `create-form.png` revisada em 320 px; formulário não submetido. O reteste
+  ativo/autorizado/confirmado passou 61/61 verificações em oito larguras
+  (1440/1280/1024/768/640/390/360/320 px), incluindo título/corpo, retorno e
+  ausência de overflow no workspace e formulário. Capturas `create-form.png`
+  (320 px) e `create-form-wide.png` (1440 px) revisadas; formulário não submetido. O reteste
   inicial UID 257 confirmou corretamente o bloqueio por e-mail não confirmado.
 
 ## 0.1.0-dev.118 — proteger grants versionados das propostas (2026-10-26)

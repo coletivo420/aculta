@@ -9,9 +9,11 @@ nem gravação ao abrir a página. A rota Core `/node/add/wiki_entry` pertence a
 purpose principal e não é mais usada pelo workspace. Kernel focal confirmou
 autorização, render do formulário e ausência de persistência (2 testes/200
 asserções). No Runtime em `c7fc57dba`, `drush cr` e discovery da rota passaram;
-Firefox ESR/X11 com UID 5 ativo, autorizado e confirmado passou 37/37
-verificações em 1440–320 px, incluindo título/corpo, retorno e ausência de
-overflow; formulário não submetido. `create-form.png` revisada em 320 px. A
+Firefox ESR/X11 com UID 5 ativo, autorizado e confirmado passou 61/61
+verificações em 1440/1280/1024/768/640/390/360/320 px; workspace e formulário
+foram verificados em todas as larguras, incluindo título/corpo, retorno e
+ausência de overflow. `create-form.png` (320 px) e `create-form-wide.png`
+(1440 px) revisadas; formulário não submetido. A
 tentativa inicial com UID 257 confirmou o estado bloqueado esperado para conta
 sem e-mail confirmado.
 

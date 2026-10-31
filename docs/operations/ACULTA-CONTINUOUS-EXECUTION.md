@@ -39,14 +39,15 @@
   e-mail; por isso os campos editoriais estavam corretamente bloqueados apesar
   do shell/form retornar. O runner passou a exigir título/corpo. UID 5 foi
   verificado ativo, autorizado e com e-mail confirmado; Firefox ESR/X11 passou
-  37/37 em oito larguras (1440–320 px), incluindo campos editoriais, estado sem
-  aviso de confirmação e retorno. A captura visual `create-form.png` foi
-  inspecionada em 320 px, sem corte horizontal; nada foi submetido. Snapshot
+  61/61 em oito larguras (1440/1280/1024/768/640/390/360/320 px), abrindo
+  também o formulário em cada largura e confirmando campos editoriais, retorno
+  ao início e ausência de overflow. Capturas `create-form.png` (320px) e
+  `create-form-wide.png` (1440px) inspecionadas; nada foi submetido. Snapshot
   pré-ULI modo 0600:
-  `runtime-snapshots/aculta_runtime-before-we-sativa-confirmed-form-f06fadca6-20261031.sql`
-  (47.527.135 bytes; SHA-256
-  `1550da1714bfde0a1e73bf152f9fe0a54bb6d4383c39213276c7c5d97f25b0f7`). Evidência
-  em `/home/piradopirata/aculta-suite-out/we-sativa-confirmed-form-f06fadca6-20261031/`.
+  `runtime-snapshots/aculta_runtime-before-we-sativa-form-matrix-b2d79189a-20261031.sql`
+  (47.614.244 bytes; SHA-256
+  `26958edd662bb6d071edf6f072f948ce0b342903d4936c695849f0d7ad556a4a`). Evidência
+  em `/home/piradopirata/aculta-suite-out/we-sativa-form-matrix-b2d79189a-20261031/`.
   WCAG 2.2 AA completa, leitor de tela e submissão/ACL em matriz de contas
   continuam pendentes.
 
