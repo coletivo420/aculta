@@ -2932,29 +2932,33 @@ de Produtos e Visão geral em 320/390/1440px e zoom 200/400% foram revisadas em
 entre lojas, dados Commerce, fluxos de escrita e WCAG integral continuam
 pendentes; OCS-F8/F11 e THEME-MF3 não estão aprovados.
 
-### THEME-MF2 — capa pública da Revista, alvos e teclado (2026-10-31)
+### THEME-MF2 — capa pública da Revista, teclado e zoom (2026-10-31)
 
 Firefox ESR visível abriu a raiz `magazine:/` no Runtime anônimo, confirmou a
 View real com hero, quatro publicações com capas carregadas e os dois headers
-globais únicos. No CSS servido pelo Runtime em HEAD `2493d7535`, os quatro CTAs
-mediram 19px de altura e títulos chegaram a 23px; por isso a verificação dos
-alvos 44px falhou em todos os nove viewports (320/360/390/599/600/768/1024/1280/
-1440px), embora a grade, o conteúdo e o shell estivessem presentes e sem
-overflow. Na ampliação final do teste, o baseline passou 4/13 checks: presença
-estrutural, foco por teclado e contraste de links nos modos claro/escuro; as
-nove combinações de viewport/alvo falharam.
+globais únicos. No CSS servido pelo Runtime em HEAD `2493d7535`, o teste ampliado
+passou 5/19 checks: presença estrutural, foco por teclado, contraste claro/escuro
+e título visível a 400%. Falharam os nove viewports/alvos; os CTAs mediram 19px,
+e os controles não mantiveram o alvo mínimo durante zoom real a 200%/400%.
 
-Com `revista-listing.css` do worktree injetada somente na sessão Firefox, os
-nove viewports passaram: grade 1/2/3 colunas, zero overflow, imagens carregadas,
-shell único e todos os títulos/CTAs com pelo menos 44px. A fixture então usou
-Tab real via WebDriver em 320px e alcançou o título e o CTA da publicação, ambos
-com `:focus-visible`, outline sólido de 3px e totalmente dentro do viewport.
-Os tokens servidos passaram contraste de 12,40:1 em claro e 14,50:1 em escuro.
-Total da rodada candidata: 13/13. Capturas 320/1440 foram inspecionadas em
-`/home/piradopirata/aculta-suite-out/revista-cover-modes-final-20261031/`; o
-baseline final, sem injeção, está em
-`/home/piradopirata/aculta-suite-out/revista-cover-modes-baseline-20261031/`.
+Com `revista-listing.css` do worktree injetada somente na sessão Firefox, os nove
+viewports passaram: grade 1/2/3 colunas, zero overflow, imagens carregadas, shell
+único e títulos/CTAs com pelo menos 44px. Tab real via WebDriver alcançou título
+e CTA em 320px, ambos com `:focus-visible`, outline sólido de 3px e totalmente
+dentro do viewport. Os tokens servidos passaram contraste de 12,40:1 em claro e
+14,50:1 em escuro. A 200% e 400%, os links mantiveram 44px ou mais, sem overflow;
+scroll instantâneo trouxe títulos e CTAs para a área visível. Total candidato:
+19/19. Capturas revisadas em
+`/home/piradopirata/aculta-suite-out/revista-cover-zoom-final-20261031/`;
+baseline sem injeção em
+`/home/piradopirata/aculta-suite-out/revista-cover-zoom-reachability-baseline-final-20261031/`.
 
-O contraste completo, estados sem resultados/erro, no-JS, zoom da home e WCAG
-2.2 AA ainda não foram verificados. A folha candidata não foi servida pelo
-Runtime; este avanço não aprova THEME-MF3 nem OCS-F11.
+O harness `revista-browser-zoom.py` também foi repetido no Runtime em
+2026-10-31: home e publicação existente passaram 15/15, incluindo zoom real
+200/400%, larguras 320–1440px no artigo, corpo/capa reais e zero overflow.
+Capturas e resumo em `/home/piradopirata/aculta-suite-out/revista-cover-zoom-20261031/`.
+Este teste não prova os alvos de link, cobertos separadamente acima.
+
+Estados de erro/vazio, no-JS, reduced motion quando aplicável, leitor de tela e
+WCAG 2.2 AA integral continuam sem validação. A folha candidata não foi servida
+pelo Runtime; o resultado não aprova THEME-MF3 nem OCS-F11.

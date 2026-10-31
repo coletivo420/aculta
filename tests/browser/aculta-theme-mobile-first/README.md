@@ -36,9 +36,12 @@ O teste mede View, chamada hero, número de publicações, imagem da primeira
 capa, colunas responsivas, presença única de Institution Bar/Domain Header,
 alvos de 44px e overflow em 320/360/390/599/600/768/1024/1280/1440px. Também
 usa Tab real do WebDriver para alcançar o título e o CTA da publicação em 320px,
-verificando `:focus-visible`, contorno de pelo menos 2px e encaixe horizontal.
-Não autentica, não cria conteúdo, não verifica o gate completo de acessibilidade
-e não substitui comparação pareada com o OpenCulturas Next.
+verificando `:focus-visible`, contorno de pelo menos 2px e encaixe no viewport.
+Mede contraste dos links em claro/escuro e aplica zoom real de 200%/400%,
+verificando os alvos, o overflow e se título/CTA podem ser trazidos à área
+visível. Requer `xdotool` para a medição de zoom. Não autentica, não cria
+conteúdo, não verifica o gate completo de acessibilidade e não substitui
+comparação pareada com o OpenCulturas Next.
 
 ```sh
 cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
@@ -62,17 +65,15 @@ composição editorial, como a mídia real. Use junto de
 `MAGAZINE_COVER_CSS_OVERRIDE=1`. A injeção não executa o Twig candidato nem
 altera a publicação no Runtime.
 
-Em 2026-10-31, CSS servida pelo Runtime passou somente a verificação estrutural
-inicial; nove verificações de viewport falharam porque título/CTA não tinham
-alvos de 44px e a composição candidata não estava servida. O baseline final
-passou 4/13 (estrutura, teclado e contraste dos links nos dois modos) e falhou
-9/13. Com a folha local injetada, os nove viewports, teclado e modos passaram
-(13/13); o contraste dos links foi 12,40:1 em claro e 14,50:1 em escuro. Isso
-verifica o candidato sobre conteúdo real, não a publicação da folha. Relatórios e PNGs:
-`/home/piradopirata/aculta-suite-out/revista-cover-keyboard-baseline-20261031/`
-e `/home/piradopirata/aculta-suite-out/revista-cover-modes-final-20261031/`.
-O modo claro/escuro passou também sem injeção, com artefatos em
-`/home/piradopirata/aculta-suite-out/revista-cover-modes-baseline-20261031/`.
+Em 2026-10-31, CSS servida pelo Runtime passou cinco checks e falhou 14/19:
+targets e layout nos nove viewports, CTAs de 19px no zoom e encaixe insuficiente
+dos links. Com a folha local injetada, passaram os nove viewports, teclado,
+claro/escuro e zoom com alvos de 44px, sem overflow, e título/CTA rolados para
+dentro do viewport (19/19). Contraste medido: 12,40:1 em claro e 14,50:1 em
+escuro. A evidência avalia o candidato sobre conteúdo real, não publica a folha.
+Relatórios e capturas:
+`/home/piradopirata/aculta-suite-out/revista-cover-zoom-reachability-baseline-final-20261031/`
+e `/home/piradopirata/aculta-suite-out/revista-cover-zoom-final-20261031/`.
 
 ## Publicação editorial da Revista
 

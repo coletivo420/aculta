@@ -6,8 +6,10 @@ import json
 import os
 from pathlib import Path
 import selectors
+import shutil
 import socket
 import socketserver
+import subprocess
 import sys
 import threading
 import time
@@ -128,7 +130,19 @@ def press_tab(driver):
     })
 
 
+def press_browser_key(key):
+    windows = subprocess.check_output(
+        ["xdotool", "search", "--onlyvisible", "--class", "firefox"], text=True,
+    ).splitlines()
+    if not windows:
+        raise RuntimeError("Janela visível do Firefox ESR não encontrada.")
+    subprocess.run(["xdotool", "windowactivate", "--sync", windows[-1]], check=True)
+    subprocess.run(["xdotool", "key", "--clearmodifiers", key], check=True)
+
+
 def main():
+    if not shutil.which("xdotool"):
+        raise RuntimeError("xdotool é necessário para verificar o zoom real do Firefox.")
     proxy = ThreadedProxy(("127.0.0.1", 0), LoopbackMagazineProxy)
     threading.Thread(target=proxy.serve_forever, daemon=True).start()
     proxy_port = proxy.server_address[1]
@@ -322,6 +336,70 @@ return {mode:root.getAttribute('data-bs-theme'),pageSurface:getComputedStyle(roo
             driver.js("document.documentElement.removeAttribute('data-bs-theme')")
         else:
             driver.js("document.documentElement.setAttribute('data-bs-theme', arguments[0])", [original_theme])
+        set_viewport(driver, 1280)
+        press_browser_key("ctrl+0")
+        time.sleep(0.15)
+        base_width = driver.js("return innerWidth")
+        for target in (2.0, 4.0):
+            press_browser_key("ctrl+0")
+            time.sleep(0.12)
+            current_width = driver.js("return innerWidth")
+            for _ in range(24):
+                if base_width / max(1, current_width) >= target - 0.08:
+                    break
+                press_browser_key("ctrl+plus")
+                time.sleep(0.12)
+                current_width = driver.js("return innerWidth")
+            zoom_metrics = driver.js("""const root=document.documentElement;
+const view=document.querySelector('.page-view-revista-sessoes .view-display-id-page_revista');
+const links=[...document.querySelectorAll('.aculta-revista-teaser__title a,.aculta-revista-teaser__cta')];
+const rect=el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,width:r.width,height:r.height};};
+return {width:innerWidth,documentWidth:root.clientWidth,scrollWidth:root.scrollWidth,
+  bodyScrollWidth:document.body.scrollWidth,rows:view?.querySelectorAll('.views-row').length||0,
+  titleCount:document.querySelectorAll('.aculta-revista-teaser__title a').length,
+  ctaCount:document.querySelectorAll('.aculta-revista-teaser__cta').length,
+  links:links.map(el=>({text:el.innerText.trim(),...rect(el)})),
+  institutionBar:document.querySelectorAll('.aculta-institution-bar').length,
+  domainHeader:document.querySelectorAll('.aculta-header').length};""")
+            ratio = base_width / max(1, zoom_metrics["width"])
+            targets_fit = all(
+                item["left"] >= -1 and item["right"] <= zoom_metrics["width"] + 1
+                and item["height"] >= 44 for item in zoom_metrics["links"]
+            )
+            zoom_passed = (
+                ratio >= target - 0.08 and zoom_metrics["documentWidth"] == zoom_metrics["width"]
+                and zoom_metrics["scrollWidth"] <= zoom_metrics["width"]
+                and zoom_metrics["bodyScrollWidth"] <= zoom_metrics["width"]
+                and zoom_metrics["rows"] > 0
+                and zoom_metrics["titleCount"] == zoom_metrics["rows"]
+                and zoom_metrics["ctaCount"] == zoom_metrics["rows"]
+                and zoom_metrics["institutionBar"] == 1 and zoom_metrics["domainHeader"] == 1
+                and targets_fit
+            )
+            record(f"capa zoom {round(target * 100)}%: links 44px e sem overflow",
+                   zoom_passed, {**zoom_metrics, "target": target, "ratio": ratio,
+                                 "allTargetsFit": targets_fit})
+            for kind, selector in (("title", ".aculta-revista-teaser__title a"),
+                                   ("cta", ".aculta-revista-teaser__cta")):
+                driver.js("const el=document.querySelector(arguments[0]);if(el)el.scrollIntoView({block:'center',behavior:'instant'});return true", [selector])
+                time.sleep(0.25)
+                visible_target = driver.js("""const el=document.querySelector(arguments[0]);
+if (!el) return {exists:false};
+const r=el.getBoundingClientRect();
+return {exists:true,width:innerWidth,height:innerHeight,scrollY,
+  left:r.left,right:r.right,top:r.top,bottom:r.bottom,
+  horizontallyVisible:r.left>=-1&&r.right<=innerWidth+1,
+  verticallyVisible:r.top>=-1&&r.bottom<=innerHeight+1,
+  focusTargetHeight:r.height};""", [selector])
+                visible_passed = (
+                    visible_target["exists"] and visible_target["horizontallyVisible"]
+                    and visible_target["verticallyVisible"] and visible_target["focusTargetHeight"] >= 44
+                )
+                record(f"capa zoom {round(target * 100)}%: {kind} pode ser trazido ao viewport",
+                       visible_passed, visible_target)
+                shot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                (OUT / f"magazine-cover-zoom-{round(target * 100)}-{kind}.png").write_bytes(base64.b64decode(shot))
+        press_browser_key("ctrl+0")
     finally:
         if driver:
             driver.close()
