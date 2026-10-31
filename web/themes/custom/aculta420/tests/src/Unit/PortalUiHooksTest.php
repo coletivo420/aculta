@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta420\Unit;
 
+use Drupal\aculta420\Hook\InputHooks;
 use Drupal\aculta420\Hook\PortalUiHooks;
 use Drupal\aculta420\Hook\ThemeHooks;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -38,6 +39,25 @@ final class PortalUiHooksTest extends UnitTestCase {
     }
 
     self::assertSame([PortalUiHooks::class . '::preprocess'], $implementations);
+  }
+
+  /**
+   * Input presentation stays centralized in InputHooks for Core compatibility.
+   */
+  public function testInputPreprocessHasOneThemeHookProvider(): void {
+    $implementations = [];
+    foreach ([InputHooks::class, PortalUiHooks::class, ThemeHooks::class] as $provider) {
+      $reflection = new \ReflectionClass($provider);
+      foreach ($reflection->getMethods() as $method) {
+        foreach ($method->getAttributes(Hook::class) as $attribute) {
+          if ($attribute->newInstance()->hook === 'preprocess_input') {
+            $implementations[] = $provider . '::' . $method->getName();
+          }
+        }
+      }
+    }
+
+    self::assertSame([InputHooks::class . '::preprocess'], $implementations);
   }
 
   /**

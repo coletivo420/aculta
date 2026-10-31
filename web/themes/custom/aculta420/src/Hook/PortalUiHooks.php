@@ -715,7 +715,6 @@ final class PortalUiHooks {
   #[Hook('preprocess_fieldset')]
   #[Hook('preprocess_table')]
   #[Hook('preprocess_form_element')]
-  #[Hook('preprocess_input')]
   #[Hook('preprocess_image')]
   #[Hook('preprocess_aculta_portal_element')]
   #[Hook('preprocess_aculta_portal_search_trigger')]
