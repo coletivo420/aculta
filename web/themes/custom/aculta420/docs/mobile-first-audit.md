@@ -35,6 +35,18 @@ Esta é validação da CSS candidata contra markup servido, somente GET. Não pr
 que o CSS esteja integrado/servido no Runtime, não cobre filtros ou detalhe do
 evento e não fecha THEME-MF3.
 
+Na mesma sessão, o link de detalhe existente `/eventos/feira-do-livro-teste`
+respondeu HTTP 500, confirmado por `curl` e pelo log Drupal no Runtime
+`2493d7535`. O erro registrado é `Call to undefined method
+Drupal\\aculta_events\\Entity\\Event::getCoOrganizers()` em
+`EventPageController::page()` (linha 306 do arquivo servido). A chamada está em
+uma alteração não commitada no checkout servido; esse mesmo controller e outros
+arquivos de `aculta_events` já estavam modificados antes desta inspeção. Para
+preservar esse trabalho concorrente, não alterei o módulo. O detalhe de Eventos
+fica bloqueado até o owner reconciliar o controller com a entidade e repetir
+o teste HTTP/visual. O catálogo `/` permaneceu HTTP 200 e passou sua matriz
+candidata; isso não torna o purpose Eventos saudável por inteiro.
+
 **Estado em 2026-11-01, na árvore atual de `refactor/opencultures-codigo-visual`: inventário lexical regenerado; THEME-MF0 continua parcial, MF2 tem migrações incrementais e THEME-MF3 não está aprovado.**
 A auditoria inicial foi registrada no checkout servidor `ded8a6181`. Esta
 recontagem foi executada na branch `refactor/opencultures-codigo-visual` em
