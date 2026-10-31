@@ -24,6 +24,8 @@ Após decisão do responsável, as rotas das Suites foram alinhadas para `wiki:/
 
 Com ULI emitida no domínio Conta (`conta.aculta.toca.net.br`) e navegação para `https://wiki420.aculta.toca.net.br/wesativa`, `studio_editor_test` carregou o consumer real WE SATIVA em 320/390/599/600/768/1024/1280/1440px: **8/8 capturas, 0 falhas de fidelidade**, conteúdo/context-header/context-tabs presentes, shell único e sem overflow. Evidência: `/home/piradopirata/aculta-suite-out/studio-wesativa-editorial-accountuli-20261031/`.
 
+Matriz HTTP de migração: `wiki420:/wesativa` respondeu 403 anônimo (rota existente e protegida), `wiki420:/studio/we-sativa` respondeu 404; `loja.aculta.org:/greenstash` e o path antigo não puderam ser alcançados neste ambiente (HTTP 000 por resolução/conectividade do host), portanto Green Stash continua DEFERRED para teste de reachability externo.
+
 ### WE SATIVA canônico — evidência adicional (2026-10-31)
 
 O baseline Firefox ESR/X11 autenticado de `https://wiki420.aculta.toca.net.br/studio/we-sativa` foi executado em 320/390/599/600/768/1024/1280/1440px. As 8 capturas retornaram `Acesso negado`; Institution Bar, Domain Header e ausência de overflow foram observados, mas nenhum consumer Wiki foi servido. Evidência: `/home/piradopirata/aculta-suite-out/studio-we-sativa-baseline-recheck-8d4dcc07d-20261031/`. O resultado é DEFERRED por autorização/instalação do Runtime e mantém OCS-F7/OCS-F11 pendentes; não usar `/wesativa` como substituto da rota canônica.
