@@ -20,7 +20,7 @@ PAGE = os.environ.get(
     "WIKI_STUDIO_PAGE", "https://wiki420.aculta.toca.net.br/studio/we-sativa/inicio"
 )
 HOME = os.environ.get("WIKI_HOME_URL", "https://wiki420.aculta.toca.net.br/")
-LOGIN_URI = os.environ.get("WIKI_STUDIO_LOGIN_URI", "https://wiki420.aculta.toca.net.br")
+LOGIN_URI = os.environ.get("WIKI_STUDIO_LOGIN_URI", "https://conta.aculta.toca.net.br")
 USER_UID = os.environ.get("WIKI_STUDIO_UID", "5")
 USER = os.environ.get("WIKI_STUDIO_USER", "")
 DRUSH_ROOT = Path(os.environ.get("WIKI_STUDIO_DRUSH_ROOT", str(PROJECT))).resolve()
@@ -237,6 +237,9 @@ try:
             };""")
             check("formulário nativo oferece retorno autorizado ao workspace", returned,
                   json.dumps(return_diagnostic, ensure_ascii=False))
+            if returned:
+                screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                (OUT / "create-form.png").write_bytes(base64.b64decode(screenshot))
             if not returned:
                 screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
                 (OUT / "workspace-return-link-missing.png").write_bytes(base64.b64decode(screenshot))

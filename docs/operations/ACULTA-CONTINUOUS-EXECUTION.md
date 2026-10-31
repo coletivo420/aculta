@@ -1,5 +1,44 @@
 # Execução contínua ACULTA — PR #298
 
+## PR #299 — WE SATIVA: formulário de criação no purpose Wiki (2026-10-31)
+
+- O CTA de autoria apontava para `node.add` (`/node/add/wiki_entry`), uma rota
+  do purpose principal que respondia em branco no host Wiki. A mudança
+  `c7fc57dba` adiciona `/studio/we-sativa/verbetes/novo`, protegida por
+  `createAccess('wiki_entry')`; o controller renderiza o formulário Node Form
+  API existente, sem salvar conteúdo. O workspace não envia mais para outra
+  finalidade.
+- Focais MariaDB `aculta_simpletest`: 2 testes/200 asserções PASS (rota Wiki,
+  autoria permitida/leitor negado, formulário nativo e contagem de Nodes
+  inalterada); PHP lint, PHPCS Drupal, YAML/discovery estática e
+  `validate-no-temporary-route-aliases.php` PASS. Kernel em PHP 8.4.27 emitiu
+  365 deprecações Core/contrib/PHPUnit.
+- Checkout de desenvolvimento em `toca`, `/home/piradopirata/projetos/aculta`,
+  destacado em `c7fc57dba`, Drupal 11.4.10, URI `http://default`, DB
+  `aculta_runtime`, 611 tabelas. `updatedb:status` sem pendências;
+  `config:status` sem diferenças; `drush cr` PASS; discovery confirma rota e
+  `_aculta_domain_purpose: wiki`.
+- Antes de cada uma das duas tentativas ULI foram feitos snapshots integrais,
+  modo 0600: `runtime-snapshots/aculta_runtime-before-we-sativa-create-form-c7fc57dba-20261031.sql`
+  (51.604.818 bytes; SHA-256
+  `d626a71f5943c6556c0db22ee9e83747a8d19421354b4d77e87fef50f45ced74`) e
+  `runtime-snapshots/aculta_runtime-before-we-sativa-create-form-account-uli-c7fc57dba-20261031.sql`
+  (53.693.907 bytes; SHA-256
+  `ab749edaca6009afa9426f061210869a9d04a2fa97059d1b7edebeb065a88e87`). A
+  primeira tentativa emitiu ULI pelo host Wiki e ficou anônima; a segunda,
+  emitida pelo host Conta, autenticou corretamente. Ambas foram GET-only e não
+  submeteram nem salvaram conteúdo.
+- Firefox ESR visível/X11 validou o fluxo no host Wiki em 1440, 1280, 1024,
+  768, 640, 390, 360 e 320 px: 36/36 verificações PASS, sem overflow; botão de
+  criação permaneceu visível, formulário `node-wiki-entry-form` e retorno para
+  o workspace foram confirmados. Capturas/resumo privados em
+  `/home/piradopirata/aculta-suite-out/we-sativa-create-form-account-uli-c7fc57dba-20261031/`.
+- O script WE SATIVA agora usa o host Conta para emitir a ULI por padrão e
+  salva `create-form.png` em `$SUITE_OUT`, permitindo inspecionar o formulário.
+  Permanecem pendentes
+  WCAG 2.2 AA completa, leitor de tela e testes de submissão/ACL com matriz de
+  contas.
+
 ## PR #299 — OCS-F3/F4: adapter SDC da entrada da Conta (2026-10-31)
 
 - Preflight no servidor `toca`: `/home/piradopirata/projetos/aculta`, HEAD destacado `6c71c5a13`, Drupal 11.4.10, URI `http://default`, banco `aculta_runtime`, 611 tabelas; `updatedb:status` sem updates e `config:status` sem diferenças. A conta sintética `aculta_visual_admin` (UID 257) estava ativa e tinha `access aculta portal`.

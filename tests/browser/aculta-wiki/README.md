@@ -57,7 +57,8 @@ DISPLAY=:0 ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles" SUITE_OUT="$SUITE_OUT" \
 Variáveis: `WIKI_HOME_URL` (padrão `https://wiki420.aculta.toca.net.br/`),
 `WIKI_STUDIO_PAGE` (padrão
 `https://wiki420.aculta.toca.net.br/studio/we-sativa/inicio`),
-`WIKI_STUDIO_LOGIN_URI` (padrão `https://wiki420.aculta.toca.net.br`),
+`WIKI_STUDIO_LOGIN_URI` (padrão `https://conta.aculta.toca.net.br`, para emitir
+uma sessão compartilhada entre os hosts Account e Wiki),
 `WIKI_STUDIO_UID` (padrão `5`; passe vazio para usar `WIKI_STUDIO_USER`),
 `WIKI_STUDIO_USER` (padrão vazio; usado quando `WIKI_STUDIO_UID` é vazio),
 `WIKI_STUDIO_DRUSH_ROOT` (opcional; raiz do checkout com `web/` e `vendor/`
@@ -75,6 +76,8 @@ O fluxo `we-sativa.py` abre a ação de criação em
 `/studio/we-sativa/verbetes/novo`, dentro do purpose Wiki, e confirma o
 formulário nativo e o link de retorno. Não usa `/node/add/wiki_entry` em outro
 purpose e não submete nem salva o formulário.
+Quando o formulário abre, o runner também salva a captura `create-form.png` em
+`$SUITE_OUT`.
 
 O script valida raiz, listagem e busca em desktop e larguras móveis, verifica
 presença de `main`/`h1`, erros visíveis e rolagem horizontal, e confirma que o

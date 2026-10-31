@@ -6,10 +6,12 @@ O CTA de autoria passa a `/studio/we-sativa/verbetes/novo`, rota própria no
 purpose Wiki, protegida por `createAccess('wiki_entry')`. Seu controller monta
 o formulário Core existente via Entity Form API; não há um formulário paralelo
 nem gravação ao abrir a página. A rota Core `/node/add/wiki_entry` pertence ao
-purpose principal e não é mais usada pelo workspace. Kernel focal confirma
-autorização, render do formulário e ausência de persistência; validação HTTP no
-Runtime e Firefox ESR/X11 continuam pendentes até publicar e sincronizar o
-checkout de teste.
+purpose principal e não é mais usada pelo workspace. Kernel focal confirmou
+autorização, render do formulário e ausência de persistência (2 testes/200
+asserções). No Runtime em `c7fc57dba`, `drush cr` e discovery da rota passaram;
+Firefox ESR/X11 confirmou o fluxo autenticado em 36/36 verificações, 1440–320
+px, sem submeter o formulário. Capturas em
+`/home/piradopirata/aculta-suite-out/we-sativa-create-form-account-uli-c7fc57dba-20261031/`.
 
 ## Retificação vigente de caminhos (2026-10-30)
 
