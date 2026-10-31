@@ -762,6 +762,13 @@ visíveis de candidato autenticado, fallback sem JavaScript e homes anônimas do
 dez purposes passaram; validação pós-publicação/cache e o gate transversal
 THEME-MF3 permanecem pendentes. Evidências e escopo em `mobile-first-audit.md`.
 
+Reteste sem injeção no Runtime atual (2026-10-31): Firefox ESR passou 130/130
+checks nas dez homes anônimas em 320/390px e 40/40 checks administrativas na
+MAIN em 320/390/1023/1024/1280px; scroll e resize não deslocaram a barra. A raiz
+Conta ainda apresenta overflow documental de 328px em viewport de 320px, que
+é acompanhado separadamente como pendência mobile. O relatório detalhado e os
+limites estão em `mobile-first-audit.md`; MF3 permanece pendente.
+
 ### THEME-MF2 — sticky/offset da Institution Bar repetidos no HEAD servido (2026-10-29)
 
 Firefox ESR visível confirmou 99/99 checks anônimos nas dez homes em 320/390px e

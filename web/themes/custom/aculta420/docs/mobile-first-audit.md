@@ -1178,6 +1178,28 @@ Esta rodada confirma o comportamento focal servido, mas não exercita outras
 rotas internas autenticadas, teclado completo, zoom real, contraste, dark mode,
 reduced motion ou WCAG 2.2 AA; portanto THEME-MF3 continua pendente.
 
+### THEME-MF2 — repetição no Runtime atual (2026-10-31)
+
+Repeti o harness no Firefox ESR visível, sem injetar CSS/JS. O Runtime estava
+em `toca`, checkout servido `/home/piradopirata/projetos/aculta`, HEAD
+`2493d7535`, Drupal 11.4.10, URI `http://default`, banco `aculta_runtime` com
+624 tabelas. As dez homes anônimas passaram 130/130 checks em 320/390px. A
+conta `aculta_visual_admin` (UID 257) passou 40/40 checks na MAIN em
+320/390/1023/1024/1280px, incluindo rolagem contínua nos dois sentidos e
+resize 320↔1024 sem recarga. As capturas 320px inicial e após scroll foram
+inspecionadas; não houve salto nem posição intermediária da Institution Bar.
+Relatórios e PNGs em
+`/home/piradopirata/aculta-suite-out/institution-bar-followup-20261031/` e
+`/home/piradopirata/aculta-suite-out/institution-bar-admin-followup-20261031/`.
+
+Separadamente, a raiz do purpose Conta ainda mediu `documentWidth=328` para
+viewport de 320px, embora a barra tenha permanecido estável. Esse overflow é
+uma pendência visual independente e não foi contado como falha no harness
+focal da Institution Bar. A sessão administrativa foi aberta por ULI; não
+houve alteração de conteúdo, configuração, permissões ou preferências. Esta
+captura focal não cobre rotas internas, todos os estados da toolbar, temas,
+zoom, WCAG integral ou THEME-MF3.
+
 ### THEME-MF2 — repetição da Institution Bar em todas as homes (2026-10-30)
 
 Com Firefox ESR visível, a CSS candidata foi injetada nas dez homes como

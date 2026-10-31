@@ -2043,6 +2043,14 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
 - **Snapshot antes da segunda autenticação ULI:** `/home/piradopirata/aculta-suite-out/runtime-snapshots/runtime-before-institution-bar-transition-admin-20261031.sql`, SHA-256 `3747d45e71003b862c5c56da6ac9fc59b7572e2eafe9eaebdfef205a1a70b554`, 67.203.080 bytes, modo 0600. Snapshot realizado após reconfirmar `toca`, HEAD `2493d7535`, URI `http://default`, `aculta_runtime` e 624 tabelas.
 - **Limites:** não houve teste em dispositivo móvel físico nem captura da folha candidata local; mantém-se pendente a validação do CSS/JS da branch no Runtime e o gate THEME-MF3. O checkout servido permanece no HEAD `2493d7535`.
 
+### THEME-MF2 — repetição da Institution Bar — 2026-10-31
+
+- **Preflight:** host `toca`; checkout/docroot `/home/piradopirata/projetos/aculta`; HEAD destacado `2493d7535`; Drupal 11.4.10; URI `http://default`; banco `aculta_runtime`, 624 tabelas. O checkout servido já tinha alterações não commitadas de Eventos, que não foram tocadas.
+- **Firefox ESR visível, CSS/JS servidos sem override:** nas dez homes anônimas, 130/130 checks em 320/390px; na MAIN autenticada como `aculta_visual_admin` UID 257, 40/40 checks em 320/390/1023/1024/1280px, incluindo scroll contínuo e mudança de largura 320↔1024. Capturas revisadas. Resultados em `/home/piradopirata/aculta-suite-out/institution-bar-followup-20261031/` e `/home/piradopirata/aculta-suite-out/institution-bar-admin-followup-20261031/`.
+- **Estado alterado:** a autenticação usou ULI, que criou uma sessão Drupal temporária. Nenhum conteúdo, configuração, permissão ou preferência foi alterado. Nesta repetição não foi feito snapshot imediatamente antes da sessão ULI; por isso, esta execução registra apenas o estado validado e a sessão temporária, sem alegação de snapshot prévio. O preflight consultou o banco e confirmou 624 tabelas.
+- **Achado separado:** a raiz anônima de Conta exibiu `documentWidth=328` em viewport 320px; o harness de sticky não considera overflow documental como critério e passou os checks posicionais. A correção desse overflow continua pendente.
+- **Limites:** esta repetição focal não aprova THEME-MF3, nem cobre rotas internas, zoom, teclado completo, cores, reduced motion ou WCAG integral.
+
 ### THEME-MF3 — corrigir formato dos artigos sintéticos da Revista — 2026-10-31
 
 - **Preflight:** servidor `toca`; checkout servido `/home/piradopirata/projetos/aculta`, HEAD `2493d7535`; URI `https://revista.aculta.toca.net.br`; banco `aculta_runtime`; 624 tabelas. Drush somente leitura confirmou que o formato `revista_editorial` está ativo e que os nós 599–602 são publicações sintéticas da Revista publicadas, com formato `basic_html`. O formato `basic_html` não existe na configuração Runtime/Sync; a renderização pública resultava em `<div class="field--name-body"></div>` apesar do texto armazenado.
