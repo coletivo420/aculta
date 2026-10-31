@@ -1092,6 +1092,11 @@ resolvido. Host Alpha/produção e páginas internas não foram exercitados. A
 evidência e limitações estão em [`mobile-first-audit.md`](mobile-first-audit.md);
 THEME-MF3 e OCS-F11 continuam pendentes.
 
+Reteste adicional do SDC `author-card` na listagem real do Fórum: 43/43 checks
+em dez larguras, com CSS candidata; geometria social de 44×44 px veio de fixture
+invisível. Não altera os contratos nem cobre os links sociais reais. Relatório e
+limitações em `mobile-first-audit.md`.
+
 ### THEME-MF0 — inventário lexical reconciliado em HEAD `1a4de33b6` (2026-10-30)
 
 O scanner oficial regenerou o TSV e a repetição sem escrita correspondeu
@@ -1939,3 +1944,13 @@ candidata do SDC com o catálogo real: três cartões, sem overflow, títulos co
 alvos de 44px e moldura no componente, não no wrapper Drupal. A CSS foi injetada
 apenas na sessão visível Firefox; Runtime não foi alterado e THEME-MF3 segue
 pendente. A evidência e os limites estão em `mobile-first-audit.md`.
+### 2026-10-31 — reteste visual mobile do tópico do Fórum
+
+O tópico público real passou 10/10 checks em nove viewports com a CSS candidata
+do índice/discussão e o SDC de autoria. A captura de 320 px foi revisada; não
+houve overflow e as duas barras institucionais permaneceram únicas. A sessão
+não continha comentários Drupal e a CSS foi injetada somente no Firefox, então
+isto não homologa a discussão de comentários nem a integração no Runtime. Ver
+`mobile-first-audit.md` e evidência externa
+`/home/piradopirata/aculta-suite-out/forum-visual-followup-20261031/`.
+THEME-MF3 e OCS-F11 continuam pendentes.

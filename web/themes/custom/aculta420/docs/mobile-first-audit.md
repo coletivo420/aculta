@@ -4065,3 +4065,25 @@ fixtures A/B público/privado, sentinelas únicas, os gates funcionais e de
 acessibilidade da matriz S-R4 e depois a comparação S-R5; OCS-F11/THEME-MF3
 continuam pendentes.
 
+### THEME-MF2 — tópico público do Fórum, reteste visual (2026-10-31)
+
+Firefox ESR visível abriu um tópico publicado com resposta no purpose Growroom.
+Com `forum-index.css`, `discussion.css` e o SDC `author-card` da branch
+injetados somente na sessão do navegador, a página passou 10/10 verificações
+em 320/360/390/599/600/768/1024/1280/1440 px: título único, corpo, autoria,
+resposta, discussão contextual, ausência de erros visíveis e de overflow, além
+de Institution Bar e Domain Header únicos. A captura de 320 px foi inspecionada.
+O tópico continha zero comentários Drupal, portanto esta rodada é apenas visual
+do tópico e da estrutura de discussão; não testa criação, moderação nem ACL de
+comentários. A folha não foi instalada no Runtime. Evidências em
+`/home/piradopirata/aculta-suite-out/forum-visual-followup-20261031/`.
+Não aprova THEME-MF3 ou OCS-F11; integração servida, acessibilidade completa,
+teclado, zoom, dark mode e validação funcional seguem pendentes.
+
+O SDC `author-card` foi medido separadamente na listagem real `/discussoes/novas`:
+43/43 verificações passaram em 320/360/390/575/576/600/768/1024/1280/1440 px,
+incluindo troca de alinhamento em 576 px, avatar de 32/48 px, ausência de
+overflow e alvos sociais de 44×44 px. A CSS candidata foi injetada no Firefox;
+os links sociais foram uma fixture invisível e não representam links reais do
+perfil. Evidência em
+`/home/piradopirata/aculta-suite-out/forum-author-followup-20261031/`.
