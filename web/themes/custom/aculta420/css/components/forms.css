@@ -6,6 +6,20 @@
   font-weight: 600;
 }
 
+/* Core vertical-tabs metadata must remain inside narrow editorial forms. */
+@media (max-width: 35.999rem) {
+  form.node-form .vertical-tabs,
+  form.node-form .vertical-tabs__panes,
+  form.node-form .entity-meta {
+    inline-size: 100% !important;
+    max-inline-size: 100% !important;
+  }
+  form.node-form .entity-meta {
+    flex: 0 0 100% !important;
+    min-inline-size: 0 !important;
+  }
+}
+
 .webform-submission-form .form-submit {
   min-height: 2.75rem;
   padding: 0.625rem 1.25rem;
