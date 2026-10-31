@@ -1645,3 +1645,13 @@ checks em 320/390/1440px, com H1 único, shell preservado e sem overflow; revis�
 visual em
 `/home/piradopirata/aculta-suite-out/marley-single-heading-final-20261031/`.
 A CSS não está servida no Runtime e não fecha OCS-F5, MF3 ou F11.
+
+### OCS-F5 / THEME-MF2 — navegação móvel das áreas Marley (2026-10-31)
+
+O Firefox ESR mediu as cinco áreas reais de Marley em 320/390/1440px. As abas
+quebram de forma natural em mobile, todos os links têm pelo menos 44×44px e a
+lista não tem overflow interno; em desktop, os cinco itens cabem na mesma linha.
+`ocs-baseline.py` passou cinco invariantes por viewport. Evidências em claro e escuro em
+`/home/piradopirata/aculta-suite-out/marley-navigation-targets-20261031/` e
+`/home/piradopirata/aculta-suite-out/marley-navigation-dark-20261031/`.
+Verificação candidata do consumidor autenticado; não aprova F5, MF3 ou F11.

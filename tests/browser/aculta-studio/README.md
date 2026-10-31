@@ -240,7 +240,8 @@ Na rota Marley, o mesmo override mede a hierarquia de H1 e só permite ocultar
 o título genérico quando o marcador do workspace e seu heading estão presentes.
 As verificações exigem um único H1 de workspace, breadcrumb preservado e
 marcadores reais; isso evita esconder o título em páginas Marley sem esse
-contexto.
+contexto. A navegação real de cinco áreas também é medida: wrapping, ausência
+de overflow e alvos de pelo menos 44×44px.
 
 Para exercitar zoom real e teclado no Perfil, combine
 `OCS_PROFILE_ACTION_ZOOM=1` e `OCS_PROFILE_ACTION_KEYBOARD=1` com

@@ -259,6 +259,33 @@ socket.onmessage = (event) => {
             if record["marleyHeadingStatus"] == "FAIL":
                 CAPTURE_FAILURES.append({"url": url, "width": width,
                                          "checks": checks, "headings": headings})
+            record["marleyNavigation"] = json.loads(driver.js("""return JSON.stringify((() => {
+              const list=document.querySelector('[data-aculta-studio="tabs"]');
+              const links=[...(list?.querySelectorAll('a[data-aculta-studio="tab"]')||[])];
+              return {count:links.length,flexWrap:list?getComputedStyle(list).flexWrap:null,
+                listWidth:list?.clientWidth||0,listScrollWidth:list?.scrollWidth||0,
+                links:links.map(element=>{const rect=element.getBoundingClientRect();return {
+                  label:element.textContent.trim(),width:rect.width,height:rect.height,
+                  left:rect.left,right:rect.right};})};
+            })());"""))
+            nav = record["marleyNavigation"]
+            checks = {
+                "fiveAreaLinksPresent": nav["count"] == 5,
+                "targetsAtLeast44px": bool(nav["links"]) and all(
+                    item["width"] >= 44 and item["height"] >= 44 for item in nav["links"]
+                ),
+                "linksFitViewport": all(
+                    item["left"] >= -1 and item["right"] <= record["documentWidth"] + 1
+                    for item in nav["links"]
+                ),
+                "navigationWraps": nav["flexWrap"] == "wrap",
+                "navigationHasNoInternalOverflow": nav["listScrollWidth"] <= nav["listWidth"],
+            }
+            record["marleyNavigationChecks"] = checks
+            record["marleyNavigationStatus"] = "PASS" if all(checks.values()) else "FAIL"
+            if record["marleyNavigationStatus"] == "FAIL":
+                CAPTURE_FAILURES.append({"url": url, "width": width,
+                                         "checks": checks, "navigation": nav})
     is_studio_capture = prefix.startswith("studio-")
     record["missingMainHint"] = is_studio_capture and record.get("mainStructure") is None
     record["emptyDocumentHint"] = record["missingMainHint"] and not record.get("body", "").strip()

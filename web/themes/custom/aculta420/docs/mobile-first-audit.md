@@ -3221,3 +3221,16 @@ zero overflow. Capturas revisadas em
 O Runtime ainda não serve essa CSS; outros paths Marley, teclado/no-JS e a
 comparação autenticada com OpenCulturas permanecem pendentes. Não aprova F5,
 THEME-MF3 ou F11.
+
+### OCS-F5 / THEME-MF2 — navegação móvel das áreas Marley (2026-10-31)
+
+A captura candidata da rota Marley mediu os cinco links de área (`Revista`,
+`Fórum`, `Wiki`, `Cursos`, `Galerias`) no Runtime autenticado. A 320/390px, a
+lista quebra em duas linhas, os alvos medem 44px de altura ou mais, cabem na
+viewport e não criam overflow interno; em 1440px permanecem na mesma linha. O
+harness acrescentou esses invariantes e passou 5/5 por largura em
+320/390/1440px, sem falhas. Evidência em
+`/home/piradopirata/aculta-suite-out/marley-navigation-targets-20261031/`.
+Nenhum código CSS foi alterado nesta verificação; a validação do Studio completo,
+contraste, teclado/no-JS, zoom e comparação pareada com OpenCulturas permanecem
+pendentes.
