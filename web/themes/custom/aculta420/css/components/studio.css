@@ -208,6 +208,10 @@ body.path-culturas .aculta-main h1 {
 }
 
 body.path-culturas .aculta-main a {
+  display: inline-flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+  margin-inline-end: 0.5rem;
   color: var(--aculta-studio-fidelity-link);
   text-underline-offset: 0.2em;
 }
@@ -222,14 +226,6 @@ body.path-culturas .aculta-main select:focus-visible {
 
 body.path-culturas .aculta-main .row > [class*="col"] > :is(p, details, form) {
   margin-block: var(--aculta-studio-fidelity-row-gap);
-}
-
-body.path-culturas .aculta-main .row > [class*="col"] > a {
-  display: inline-flex;
-  min-block-size: 2.75rem;
-  align-items: center;
-  margin-inline-end: 0.5rem;
-  overflow-wrap: anywhere;
 }
 
 body.path-culturas .aculta-main form {
