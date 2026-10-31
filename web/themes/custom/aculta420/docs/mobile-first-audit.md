@@ -3198,7 +3198,11 @@ e 400% (320px). Nos dois níveis, os sete links de identidade, bio e redes
 mediram 44px de altura, ficaram dentro da largura visível e o documento/corpo
 não teve overflow horizontal. Capturas e `baseline.json` em
 `/home/piradopirata/aculta-suite-out/profile-action-zoom-gate-20261031/`.
+A execução focal separada percorreu por Tab os sete links a 320px; **7/7**
+foram alcançados com `:focus-visible`, contorno sólido de 3px, alvos de pelo
+menos 44×44px e limites horizontais dentro da viewport. Relatório em
+`/home/piradopirata/aculta-suite-out/profile-action-keyboard-20261031/`.
 A execução não envia formulários e não altera dados; o zoom do Firefox foi
-restaurado pelo script. É CSS candidata, não CSS servida. Navegação por teclado,
-leitor de tela, contraste completo, A/B de privacidade e OCS-F11/THEME-MF3
-continuam pendentes.
+restaurado pelo script. É CSS candidata, não CSS servida. Percurso completo de
+teclado, leitor de tela, contraste completo, A/B de privacidade e
+OCS-F11/THEME-MF3 continuam pendentes.

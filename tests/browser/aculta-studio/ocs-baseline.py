@@ -345,21 +345,8 @@ socket.onmessage = (event) => {
     print(f"CAPTURE {target.name}: {detail}")
 
 
-def profile_action_zoom(driver):
-    """Check real Firefox zoom on private Profile action targets."""
-    if not STUDIO_CSS_OVERRIDE:
-        raise RuntimeError("Profile zoom requires OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1.")
-    url = URI.rstrip("/") + "/perfil"
-    driver.get(url)
-    for _ in range(100):
-        if driver.js("return document.readyState === 'complete'"):
-            break
-        time.sleep(0.2)
-    driver.js("const style=document.createElement('style');style.dataset.ocsStudioFidelityCandidate='true';style.textContent=arguments[0];document.head.append(style);return true", [STUDIO_CANDIDATE_CSS])
-    results = []
-
-    def set_viewport(width, height):
-        node = r"""
+def set_browser_viewport(driver, width, height):
+    node = r"""
 const socket = new WebSocket(process.argv[1]);
 socket.onopen = () => socket.send(JSON.stringify({id: 1, method: 'browsingContext.getTree', params: {}}));
 socket.onmessage = (event) => {
@@ -373,7 +360,21 @@ socket.onmessage = (event) => {
   }
 };
 """
-        subprocess.run(["node", "-e", node, driver.websocket_url, str(width), str(height)], check=True)
+    subprocess.run(["node", "-e", node, driver.websocket_url, str(width), str(height)], check=True)
+
+
+def profile_action_zoom(driver):
+    """Check real Firefox zoom on private Profile action targets."""
+    if not STUDIO_CSS_OVERRIDE:
+        raise RuntimeError("Profile zoom requires OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1.")
+    url = URI.rstrip("/") + "/perfil"
+    driver.get(url)
+    for _ in range(100):
+        if driver.js("return document.readyState === 'complete'"):
+            break
+        time.sleep(0.2)
+    driver.js("const style=document.createElement('style');style.dataset.ocsStudioFidelityCandidate='true';style.textContent=arguments[0];document.head.append(style);return true", [STUDIO_CANDIDATE_CSS])
+    results = []
 
     def press_browser_key(key):
         windows = subprocess.check_output(
@@ -387,7 +388,7 @@ socket.onmessage = (event) => {
     for target in (2.0, 4.0):
         press_browser_key("ctrl+0")
         time.sleep(0.15)
-        set_viewport(1280, 1000)
+        set_browser_viewport(driver, 1280, 1000)
         zoom = driver.js("return {width: innerWidth, dpr: devicePixelRatio}")
         for _ in range(24):
             if 1280 / max(1, zoom["width"]) >= target - 0.08:
@@ -429,11 +430,73 @@ socket.onmessage = (event) => {
     return results
 
 
+def profile_action_keyboard(driver):
+    """Verify real Tab navigation and visible focus on profile edit actions."""
+    if not STUDIO_CSS_OVERRIDE:
+        raise RuntimeError("Profile keyboard check requires OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1.")
+    url = URI.rstrip("/") + "/perfil"
+    driver.get(url)
+    for _ in range(100):
+        if driver.js("return document.readyState === 'complete'"):
+            break
+        time.sleep(0.2)
+    driver.js("const style=document.createElement('style');style.dataset.ocsStudioFidelityCandidate='true';style.textContent=arguments[0];document.head.append(style);return true", [STUDIO_CANDIDATE_CSS])
+    set_browser_viewport(driver, 320, 844)
+    expected = {
+        "Editar apelido público", "Alterar foto ou avatar", "Configurar privacidade",
+        "Editar biografia", "Editar Instagram", "Editar Facebook", "Editar Reddit",
+    }
+    observed = {}
+    for _ in range(100):
+        driver.req("POST", f"/session/{driver.session}/actions", {
+            "actions": [{"type": "key", "id": "profile-action-keyboard", "actions": [
+                {"type": "keyDown", "value": "\ue004"},
+                {"type": "keyUp", "value": "\ue004"},
+            ]}],
+        })
+        focus = driver.js("""return (() => {
+          const element=document.activeElement;
+          const selector='.aculta-profile-identity__actions a, .aculta-profile-identity__actions button, '
+            + '.aculta-profile-bio__actions a, .aculta-profile-bio__actions button, '
+            + '.aculta-profile-social__actions a, .aculta-profile-social__actions button';
+          if (!element?.matches(selector)) return null;
+          const rect=element.getBoundingClientRect();const style=getComputedStyle(element);
+          return {label:element.textContent.trim(),focusVisible:element.matches(':focus-visible'),
+            outlineStyle:style.outlineStyle,outlineWidth:style.outlineWidth,
+            width:rect.width,height:rect.height,left:rect.left,right:rect.right,
+            top:rect.top,bottom:rect.bottom,viewport:innerWidth};
+        })();""")
+        if focus:
+            observed[focus["label"]] = focus
+        if expected.issubset(observed):
+            break
+    checks = {
+        "allSevenActionsReachable": expected.issubset(observed),
+        "allSevenShowVisibleFocus": expected.issubset(observed) and all(
+            item["focusVisible"] and item["outlineStyle"] == "solid"
+            and float(item["outlineWidth"].removesuffix("px")) >= 2
+            for item in (observed.get(label, {}) for label in expected)
+        ),
+        "allSevenRemain44pxAndInViewport": expected.issubset(observed) and all(
+            item["width"] >= 44 and item["height"] >= 44
+            and item["left"] >= -1 and item["right"] <= item["viewport"] + 1
+            for item in (observed.get(label, {}) for label in expected)
+        ),
+    }
+    result = {"viewport": 320, "checks": checks, "actions": observed}
+    result["ok"] = all(checks.values())
+    print(f"{'PASS' if result['ok'] else 'FAIL'} Profile keyboard actions at 320px: {result}")
+    if not result["ok"]:
+        CAPTURE_FAILURES.append({"url": url, "profileActionKeyboard": result})
+    return result
+
+
 def main():
     if os.environ.get("DISPLAY") != ":0":
         raise RuntimeError("Use Firefox ESR visível com DISPLAY=:0.")
     driver = Driver(bidi=True)
     profile_zoom_results = None
+    profile_keyboard_result = None
     try:
         if os.environ.get("OCS_SKIP_OPENCULTURAS") != "1":
             for width, height in WIDTHS:
@@ -470,6 +533,8 @@ def main():
                     print(f"DEFERRED {page_url} at {width}px: {type(error).__name__}")
         if os.environ.get("OCS_PROFILE_ACTION_ZOOM") == "1":
             profile_zoom_results = profile_action_zoom(driver)
+        if os.environ.get("OCS_PROFILE_ACTION_KEYBOARD") == "1":
+            profile_keyboard_result = profile_action_keyboard(driver)
     finally:
         driver.close()
 
@@ -483,6 +548,7 @@ def main():
         "screenshots": [capture["screenshot"] for capture in CAPTURES if "screenshot" in capture],
         "captures": CAPTURES,
         "profile_action_zoom": profile_zoom_results,
+        "profile_action_keyboard": profile_keyboard_result,
         "fidelity_failures": CAPTURE_FAILURES,
         "limitations": [
             "The public OpenCulturas homepage is not an authenticated dashboard screen.",

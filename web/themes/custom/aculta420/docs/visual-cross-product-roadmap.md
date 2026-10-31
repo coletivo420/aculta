@@ -1624,7 +1624,11 @@ dos links.
 `ocs-baseline.py` ganhou modo focal para Ctrl+0/Ctrl++ em Firefox ESR. Com CSS
 candidata injetada somente na sessão Runtime autenticada, 200% e 400% passaram:
 viewport CSS de 640px/320px, sete ações com 44px de altura, sem overflow e com
-todos os alvos dentro da largura visível. Capturas e relatório em
+todos os alvos dentro da largura visível. O teste focal de teclado alcançou os
+sete links a 320px, cada um com `:focus-visible`/contorno sólido de 3px e
+dimensão mínima 44×44px; relatório em
+`/home/piradopirata/aculta-suite-out/profile-action-keyboard-20261031/`.
+Capturas e relatório de zoom em
 `/home/piradopirata/aculta-suite-out/profile-action-zoom-gate-20261031/`.
 O teste restaura o zoom e não envia formulários. A CSS ainda não é servida; este
 resultado não aprova OCS-F9, THEME-MF3 ou OCS-F11. Consulte também
