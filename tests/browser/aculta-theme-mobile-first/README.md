@@ -65,11 +65,14 @@ altera a publicação no Runtime.
 Em 2026-10-31, CSS servida pelo Runtime passou somente a verificação estrutural
 inicial; nove verificações de viewport falharam porque título/CTA não tinham
 alvos de 44px e a composição candidata não estava servida. O baseline final
-passou 2/11 (estrutura e teclado) e falhou 9/11. Com a folha local injetada,
-passaram os nove viewports e o teste de teclado (11/11); isso verifica o
-candidato sobre conteúdo real, não a publicação da folha. Relatórios e PNGs:
+passou 4/13 (estrutura, teclado e contraste dos links nos dois modos) e falhou
+9/13. Com a folha local injetada, os nove viewports, teclado e modos passaram
+(13/13); o contraste dos links foi 12,40:1 em claro e 14,50:1 em escuro. Isso
+verifica o candidato sobre conteúdo real, não a publicação da folha. Relatórios e PNGs:
 `/home/piradopirata/aculta-suite-out/revista-cover-keyboard-baseline-20261031/`
-e `/home/piradopirata/aculta-suite-out/revista-cover-keyboard-final-20261031/`.
+e `/home/piradopirata/aculta-suite-out/revista-cover-modes-final-20261031/`.
+O modo claro/escuro passou também sem injeção, com artefatos em
+`/home/piradopirata/aculta-suite-out/revista-cover-modes-baseline-20261031/`.
 
 ## Publicação editorial da Revista
 

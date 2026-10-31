@@ -279,6 +279,49 @@ return {selector:el.matches('.aculta-revista-teaser__title a')?'title':'cta',
         )
         record("teclado alcança título e CTA da publicação com foco visível",
                keyboard_passed, keyboard_targets)
+        original_theme = driver.js("return document.documentElement.getAttribute('data-bs-theme')")
+        mode_results = {}
+        for mode in ("light", "dark"):
+            driver.js("document.documentElement.setAttribute('data-bs-theme', arguments[0]);return true", [mode])
+            driver.js("window.scrollTo(0, 0);return true")
+            time.sleep(0.15)
+            mode_results[mode] = driver.js("""const root=document.documentElement;
+const title=document.querySelector('.aculta-revista-teaser__title a');
+const cta=document.querySelector('.aculta-revista-teaser__cta');
+const card=title?.closest('.aculta-card');
+const color=node=>node?getComputedStyle(node).color:'transparent';
+const background=node=>{for(let current=node;current;current=current.parentElement){
+  const value=getComputedStyle(current).backgroundColor;
+  const rgba=value.match(/[\\d.]+/g)?.map(Number)||[];
+  if(rgba.length<4||rgba[3]>0)return value;
+}return getComputedStyle(document.body).backgroundColor;};
+const luminance=value=>{const rgb=value.match(/[\\d.]+/g)?.slice(0,3).map(Number)||[];
+  if(rgb.length!==3)return NaN;
+  const channels=rgb.map(v=>{v/=255;return v<=0.04045?v/12.92:((v+0.055)/1.055)**2.4;});
+  return 0.2126*channels[0]+0.7152*channels[1]+0.0722*channels[2];};
+const contrast=(foreground,backgroundColor)=>{const a=luminance(foreground),b=luminance(backgroundColor);
+  return (Math.max(a,b)+0.05)/(Math.min(a,b)+0.05);};
+const titleBackground=background(title),ctaBackground=background(cta);
+return {mode:root.getAttribute('data-bs-theme'),pageSurface:getComputedStyle(root).getPropertyValue('--aculta-surface-page').trim(),
+  cardBackground:background(card),titleColor:color(title),titleBackground,
+  titleContrast:contrast(color(title),titleBackground),ctaColor:color(cta),ctaBackground,
+  ctaContrast:contrast(color(cta),ctaBackground),overflow:root.scrollWidth>root.clientWidth};""")
+            screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+            (OUT / f"magazine-cover-mode-{mode}.png").write_bytes(base64.b64decode(screenshot))
+        light_surface = mode_results["light"]["pageSurface"]
+        for mode, metrics in mode_results.items():
+            mode_passed = (
+                metrics["mode"] == mode and metrics["pageSurface"]
+                and metrics["titleContrast"] >= 4.5 and metrics["ctaContrast"] >= 4.5
+                and not metrics["overflow"]
+                and (mode != "dark" or metrics["pageSurface"] != light_surface)
+            )
+            record(f"capa {mode}: tema aplicado, contraste AA em links e sem overflow",
+                   mode_passed, metrics)
+        if original_theme is None:
+            driver.js("document.documentElement.removeAttribute('data-bs-theme')")
+        else:
+            driver.js("document.documentElement.setAttribute('data-bs-theme', arguments[0])", [original_theme])
     finally:
         if driver:
             driver.close()

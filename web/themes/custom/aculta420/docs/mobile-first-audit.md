@@ -2940,19 +2940,20 @@ globais únicos. No CSS servido pelo Runtime em HEAD `2493d7535`, os quatro CTAs
 mediram 19px de altura e títulos chegaram a 23px; por isso a verificação dos
 alvos 44px falhou em todos os nove viewports (320/360/390/599/600/768/1024/1280/
 1440px), embora a grade, o conteúdo e o shell estivessem presentes e sem
-overflow. Depois da ampliação do teste, o baseline completo passou 2/11 checks:
-presença estrutural e foco por teclado; as nove combinações de viewport/alvo
-falharam.
+overflow. Na ampliação final do teste, o baseline passou 4/13 checks: presença
+estrutural, foco por teclado e contraste de links nos modos claro/escuro; as
+nove combinações de viewport/alvo falharam.
 
 Com `revista-listing.css` do worktree injetada somente na sessão Firefox, os
 nove viewports passaram: grade 1/2/3 colunas, zero overflow, imagens carregadas,
 shell único e todos os títulos/CTAs com pelo menos 44px. A fixture então usou
 Tab real via WebDriver em 320px e alcançou o título e o CTA da publicação, ambos
 com `:focus-visible`, outline sólido de 3px e totalmente dentro do viewport.
-Total da rodada candidata: 11/11. Capturas 320/1440 foram inspecionadas em
-`/home/piradopirata/aculta-suite-out/revista-cover-keyboard-final-20261031/`; o
+Os tokens servidos passaram contraste de 12,40:1 em claro e 14,50:1 em escuro.
+Total da rodada candidata: 13/13. Capturas 320/1440 foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/revista-cover-modes-final-20261031/`; o
 baseline final, sem injeção, está em
-`/home/piradopirata/aculta-suite-out/revista-cover-keyboard-baseline-20261031/`.
+`/home/piradopirata/aculta-suite-out/revista-cover-modes-baseline-20261031/`.
 
 O contraste completo, estados sem resultados/erro, no-JS, zoom da home e WCAG
 2.2 AA ainda não foram verificados. A folha candidata não foi servida pelo
