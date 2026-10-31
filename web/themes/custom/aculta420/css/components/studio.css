@@ -880,6 +880,12 @@ body.path-marley form.node-revista-form :is(.form-submit, .button--cta, .oc-butt
   overflow-wrap: anywhere;
 }
 
+/* The saved library supplies its own H1; avoid rendering a second visible
+   Drupal page heading above that content-owned title. */
+body.path-salvos .aculta-main > .aculta-container:has(.studio-saved-page) > .aculta-page-heading {
+  display: none;
+}
+
 .studio-saved-tabs.nav {
   display: flex;
   inline-size: 100%;

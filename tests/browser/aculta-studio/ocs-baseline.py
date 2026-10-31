@@ -218,6 +218,28 @@ socket.onmessage = (event) => {
     record["emptyDocumentHint"] = record["missingMainHint"] and not record.get("body", "").strip()
     if record.get("bodyClasses") and "path-wesativa" in record["bodyClasses"]:
         record["wikiSectionSpacing"] = json.loads(driver.js("""const root=document.querySelector('.we-sativa__workspace');const sections=[...(root?.querySelectorAll('.aculta-editorial-section')||[])];const rects=sections.map(section=>{const rect=section.getBoundingClientRect();const style=getComputedStyle(section);return {top:rect.top,bottom:rect.bottom,marginBlockStart:style.marginBlockStart,marginBlockEnd:style.marginBlockEnd}});return JSON.stringify({rowGap:getComputedStyle(root).rowGap,sections:rects,gaps:rects.slice(1).map((section,index)=>Math.round(section.top-rects[index].bottom))})"""))
+    if "path-salvos" in record.get("bodyClasses", []) and STUDIO_CSS_OVERRIDE:
+        headings = json.loads(driver.js("""return JSON.stringify((() => {
+          const routeTitle = document.querySelector('.aculta-page-heading');
+          const visibleHeadings = [...document.querySelectorAll('main h1')]
+            .filter(element => element.getClientRects().length > 0
+              && getComputedStyle(element).visibility !== 'hidden')
+            .map(element => element.textContent.trim());
+          return {
+            routeTitleDisplay: routeTitle ? getComputedStyle(routeTitle).display : null,
+            visibleHeadings,
+            breadcrumb: document.querySelector('.aculta-breadcrumb')?.textContent.trim() || ''
+          };
+        })());"""))
+        checks = {
+            "duplicateRouteHeadingHidden": headings["routeTitleDisplay"] == "none",
+            "singleContentH1Visible": headings["visibleHeadings"] == ["Meu espaço: salvos e recomendações"],
+            "routeContextRemainsInBreadcrumb": "Meus Salvos" in headings["breadcrumb"],
+        }
+        record["savedContentHeadingChecks"] = checks
+        record["savedContentHeadingStatus"] = "PASS" if all(checks.values()) else "FAIL"
+        if record["savedContentHeadingStatus"] == "FAIL":
+            CAPTURE_FAILURES.append({"url": url, "width": width, "checks": checks, "headings": headings})
     record["institutionBarUtilityLinkContrast"] = institution_link_contrast(driver)
     record["cssOverride"] = css_override
     record["studioFidelityCssOverride"] = STUDIO_CSS_OVERRIDE

@@ -3159,3 +3159,16 @@ viewports 320/360/390/599/600/767/768/1024/1280/1440px. Capturas em
 e `/home/piradopirata/aculta-suite-out/account-shell-two-column-dark-20261031/`.
 É validação de folha injetada; CSS servida, teclado completo, zoom, ACL entre
 contas e WCAG integral seguem pendentes. Não aprova THEME-MF3.
+
+### OCS-F10 / THEME-MF2 — título único em Meus Salvos (2026-10-31)
+
+A captura autenticada de `/salvos` revelou o título genérico da rota junto do
+H1 descritivo da biblioteca na mesma tela. A folha do tema agora oculta o
+heading genérico somente quando o consumer `.studio-saved-page` está presente;
+o H1 do conteúdo e o breadcrumb continuam visíveis. `ocs-baseline.py`, com CSS
+candidata injetada no Firefox ESR, passou os três checks de heading em cada
+largura 320/390/768/1024/1440px: um H1 visível, contexto de rota preservado e
+zero duplicação de título; shell único e sem overflow. Capturas/relatório em
+`/home/piradopirata/aculta-suite-out/saved-content-heading-candidate-20261031/`.
+Nenhum conteúdo foi alterado e a folha ainda não está servida. Cache privado
+A/B, ACL por entidade, zoom, teclado, no-JS e WCAG integral permanecem pendentes.

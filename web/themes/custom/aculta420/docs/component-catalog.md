@@ -90,10 +90,18 @@ a listagem/paginação do controller proprietário. A folha do tema agora
 apresenta suas abas, cartões compactos, metadados, paginação e estado vazio com
 os tokens Fidelity existentes. O trabalho não criou SDC novo nem alterou
 render arrays, consulta, ACL ou cache; a fixture local de 131 checks valida
-somente CSS e markup equivalente, não a rota no Runtime nem o cache privado A/B.
+somente CSS e markup equivalente. Em 2026-10-31, a CSS candidata também foi
+capturada na rota Runtime autenticada em cinco larguras; os checks confirmaram
+um H1 de conteúdo visível, breadcrumb preservado, shell único e zero overflow.
+Esse teste não valida a folha servida nem o cache privado A/B.
 `card`, `context-tabs` e `empty-state` continuam candidatos de reuso, sem
 consumer SDC comprovado nessa tela. Não apresentar módulos opcionais ou ações
 sem consumer autorizado como funcionais.
+
+Na captura, o H1 da rota repetia o título do H1 dentro da lista. A folha agora
+oculta somente o heading genérico da rota quando o consumer `.studio-saved-page`
+está presente, mantendo o H1 do conteúdo visível e o contexto na trilha de
+navegação. Nenhum render array ou contrato do controller foi alterado.
 
 O rodapé global também é composição do tema, não SDC; sua grade móvel começa em
 uma coluna e amplia progressivamente sem alterar blocos ou ordem DOM. A auditoria

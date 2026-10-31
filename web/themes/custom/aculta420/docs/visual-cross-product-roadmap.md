@@ -1484,9 +1484,14 @@ aprimoramento progressivo desde 320px, com superfícies claro/escuro. Sem SDC
 novo, mudança de markup funcional ou alteração de acesso/cache. Firefox ESR
 visível passou 131/131 checks em fixture local, incluindo contraste de
 metadados 16,48:1/15,48:1; capturas 320/1440 foram
-revisadas em ambos os modos. O consumer Runtime, privacidade/cache A/B, ACL por
-entidade, módulos opcionais e WCAG permanecem pendentes. Registro detalhado e
-limitações em `mobile-first-audit.md`.
+revisadas em ambos os modos. Em 2026-10-31, uma captura autenticada do Runtime
+com CSS candidata mostrou duplicação entre o título da rota e o H1 do conteúdo.
+O tema passou a suprimir somente o título genérico quando `.studio-saved-page`
+está presente. A rota candidata passou heading checks em 320/390/768/1024/
+1440px, com um H1 visível, breadcrumb e headers globais preservados e zero
+overflow. A folha ainda não é a servida no Runtime; privacidade/cache A/B, ACL
+por entidade, módulos opcionais, zoom/teclado/no-JS e WCAG permanecem pendentes.
+Registro detalhado e limitações em `mobile-first-audit.md`.
 
 ### OCS-F9 — modal de bio privado (2026-10-31)
 
