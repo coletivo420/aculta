@@ -166,6 +166,12 @@ não cria links funcionais. A fixture anterior passou 45/45 em nove larguras,
 mas seu markup não espelhava o consumer e continha duas instâncias sintéticas;
 seus resultados não são evidência do Hub.
 
+O adapter `PortalUiHooks::preprocessStudioHub()` reconhece o token tanto em
+`wrapper_attributes` quanto em `attributes`: o `AccountExperienceProvider`
+define `#attributes` no `item_list`, que o preprocess do Core expõe como
+`attributes`. O teste do consumer real usa agora esse contrato de Core; os links
+permanecem como render arrays no slot e mantêm `#access`, cache e attachments.
+
 `studio-card-fidelity.py` foi alinhado ao render array real do
 `AccountExperienceProvider` e ao adaptador `PortalUiHooks`: root
 `.studio.aculta-account-entry`, lista `.studio__actions` e cinco cartões com

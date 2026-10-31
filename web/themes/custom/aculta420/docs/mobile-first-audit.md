@@ -4875,3 +4875,31 @@ Evidências privadas: `/home/piradopirata/aculta-suite-out/project-roots-firefox
 Limite: a matriz das dez raízes é anônima; validações de engine/X11 e faixa são
 focais. Não cobrem todas as telas internas, ACLs, submissões, leitor de tela ou
 todos os critérios WCAG 2.2 AA. THEME-MF3 e OCS-F11 permanecem pendentes.
+
+### OCS-F3/F4 — Hub da Conta: reteste do SDC no Runtime e correção candidata (2026-10-31)
+
+No Runtime `toca`, checkout servido e destacado em `6c71c5a13`, Firefox ESR/X11
+autenticado pela conta de teste `aculta_visual_admin` percorreu a entrada da
+Conta em 320/360/390/599/600/768/1024/1280/1440px, sem CSS candidata. A rota
+canônica `/conta` normalizou para `/`, a entrada da Conta. O root e os cinco
+links autorizados apareceram em todas as larguras; Institution Bar e Domain
+Header eram únicos e não houve overflow. Contudo, **9/9 checks falharam**: os
+links não estavam dentro do SDC `patterns/card` e mediam apenas 19px de altura.
+Capturas e relatório: `/home/piradopirata/aculta-suite-out/studio-account-hub-card-retest-6c71c5a13-20261031/`.
+
+A causa foi confirmada nos contratos dos arrays de render: `AccountExperienceProvider`
+define `#attributes` no `item_list`; o preprocess do Core apresenta esse token
+em `attributes`, mas o adapter do tema só consultava `element` e
+`wrapper_attributes`. O adapter agora reconhece ambos os campos de attributes e
+wrapper sem alterar destinos ou links. `PortalUiHooksTest` passou 27 testes/149
+assertions; PHP lint, PHPCS Drupal/DrupalPractice, schema/discovery SDC (55
+componentes, 27 includes, 759 checks) e `git diff --check` passaram. A integração
+Firefox sem override após publicação/cache ainda é necessária antes de marcar o
+consumer como corrigido. Snapshot anterior às sessões ULI: arquivo
+`aculta_runtime-before-studio-hub-card-retest-20261031.sql` (55.599.739 bytes,
+SHA-256 `2a5283018b21e24cc545b1becbb09951a52c4eae6dc60cbb55705f6a522e7b4f`, modo
+0600) e `aculta_runtime-before-studio-account-hub-card-retest-20261031.sql`
+(57.157.968 bytes, SHA-256
+`82b13a97f786dc5882b55f269323a53761c8bdc09fc8f8190ff4f4c66f581e4d`, modo
+0600), ambos em `runtime-snapshots/`. Nenhum formulário foi enviado nem conteúdo
+foi alterado.

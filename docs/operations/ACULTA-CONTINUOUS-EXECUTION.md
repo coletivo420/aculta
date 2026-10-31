@@ -1,5 +1,13 @@
 # Execução contínua ACULTA — PR #298
 
+## PR #299 — OCS-F3/F4: adapter SDC da entrada da Conta (2026-10-31)
+
+- Preflight no servidor `toca`: `/home/piradopirata/projetos/aculta`, HEAD destacado `6c71c5a13`, Drupal 11.4.10, URI `http://default`, banco `aculta_runtime`, 611 tabelas; `updatedb:status` sem updates e `config:status` sem diferenças. A conta sintética `aculta_visual_admin` (UID 257) estava ativa e tinha `access aculta portal`.
+- Antes de cada sessão ULI foram salvos snapshots integrais modo 0600: `runtime-snapshots/aculta_runtime-before-studio-hub-card-retest-20261031.sql` (55.599.739 bytes; SHA-256 `2a5283018b21e24cc545b1becbb09951a52c4eae6dc60cbb55705f6a522e7b4f`) e `runtime-snapshots/aculta_runtime-before-studio-account-hub-card-retest-20261031.sql` (57.157.968 bytes; SHA-256 `82b13a97f786dc5882b55f269323a53761c8bdc09fc8f8190ff4f4c66f581e4d`). As duas sessões fizeram GET apenas; nenhum formulário ou conteúdo foi alterado.
+- Firefox ESR/X11 percorreu a raiz Account em 320/360/390/599/600/768/1024/1280/1440px. Tanto `/` quanto o caminho de rota `/conta` normalizado para `/` exibiram cinco links de experiência, Institution Bar e Domain Header únicos e zero overflow. O teste `OCS_EXPECT_STUDIO_ROOT` encontrou zero SDCs `studio_fidelity`; os cinco links mediram 19px e o gate do Hub falhou 9/9.
+- Causa no source: `AccountExperienceProvider` coloca `data-portal-ui=account-experiences` em `#attributes`; o preprocess de `item_list` do Core entrega isso em `attributes`, enquanto o adapter só lia `element`/`wrapper_attributes`. `PortalUiHooks::preprocessStudioHub()` agora lê também `attributes`; o Unit foi alinhado ao contrato real. PHP lint e PHPCS Drupal/DrupalPractice passaram; `PortalUiHooksTest`: 27 testes/149 assertions; SDC: 55 componentes/27 includes/759 checks; `git diff --check` PASS.
+- A correção ainda precisa ser publicada no HEAD do Runtime, reconstruir cache e passar a mesma captura sem override. Até essa evidência, OCS-F3/F4 seguem parciais; não há homologação global THEME-MF3/OCS-F11.
+
 ## PR #299 — harness de navegador compartilhado e reteste transversal (2026-10-31)
 
 - Documentação e comandos de `tests/browser/` foram explicitamente definidos como infraestrutura para todo o ACULTA: todos os módulos, produtos, domínios/purposes e consumers. As instruções agora exigem reutilizar smoke/matriz genéricos com URLs da área e só criar runner específico para uma lacuna funcional, ACL ou fixture; runners especializados não substituem a camada comum.

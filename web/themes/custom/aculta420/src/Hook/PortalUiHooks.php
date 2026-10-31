@@ -784,6 +784,18 @@ final class PortalUiHooks {
     elseif ($tokens === '' && is_array($wrapperAttributes)) {
       $tokens = (string) ($wrapperAttributes['data-portal-ui'] ?? '');
     }
+    // AccountExperienceProvider sets #attributes on its item_list render
+    // array. Core exposes those as the list's `attributes` variable, while
+    // `wrapper_attributes` represents the outer container. Handle both real
+    // item-list contracts so this adapter sees the provider's token before
+    // the generic token mapper removes it.
+    $attributes = $variables['attributes'] ?? NULL;
+    if ($tokens === '' && $attributes instanceof Attribute) {
+      $tokens = (string) ($attributes['data-portal-ui'] ?? '');
+    }
+    elseif ($tokens === '' && is_array($attributes)) {
+      $tokens = (string) ($attributes['data-portal-ui'] ?? '');
+    }
     if (!preg_match('/(?:^|\\s)(?:studio-experiences|account-experiences)(?:\\s|$)/', $tokens) || !is_array($variables['items'] ?? NULL)) {
       return;
     }

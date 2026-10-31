@@ -141,9 +141,11 @@ final class PortalUiHooksTest extends UnitTestCase {
       '#cache' => ['contexts' => ['user.permissions'], 'tags' => ['commerce_store_list']],
     ];
     $variables = [
-      'wrapper_attributes' => new Attribute(['data-portal-ui' => 'account-experiences']),
+      // The real AccountExperienceProvider sets #attributes on item_list;
+      // Core exposes that token through the `attributes` preprocess variable.
+      'attributes' => new Attribute(['data-portal-ui' => 'account-experiences']),
       'items' => [['value' => $link, 'attributes' => new Attribute()]],
-      'attributes' => new Attribute(),
+      'wrapper_attributes' => new Attribute(),
     ];
 
     (new PortalUiHooks())->preprocess($variables);
