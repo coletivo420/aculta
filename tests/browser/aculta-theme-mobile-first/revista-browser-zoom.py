@@ -73,6 +73,7 @@ return JSON.stringify({innerWidth,devicePixelRatio,documentWidth:d.clientWidth,
 documentScrollWidth:d.scrollWidth,bodyScrollWidth:b.scrollWidth,
 articlePresent:!!article,publicationPresent:!!publication,bodyPresent:!!body,
 article:rect(article),publication:rect(publication),body:rect(body),
+bodyTextLength:body?.innerText.trim().length||0,
 bodyClientWidth:body?.clientWidth||0,bodyScrollWidth:body?.scrollWidth||0,
 headingCount:[...document.querySelectorAll('main#main-content h1')]
  .filter(node=>node.getClientRects().length&&node.innerText.trim()).length,
@@ -174,6 +175,7 @@ def main():
             initial = inspect_article(driver)
             article_base_ok = (
                 initial["articlePresent"] and initial["bodyPresent"]
+                and initial["bodyTextLength"] > 0 and initial["body"]["height"] > 0
                 and initial["headingCount"] == 1
                 and initial["institutionBarCount"] == 1
                 and initial["domainHeaderCount"] == 1
@@ -208,7 +210,8 @@ def main():
                 data["passed"] = (
                     current >= target - 0.08 and data["innerWidth"] <= int(WIDTH / target) + 8
                     and data["articlePresent"] and data["publicationPresent"]
-                    and data["bodyPresent"] and data["headingCount"] == 1
+                    and data["bodyPresent"] and data["bodyTextLength"] > 0
+                    and data["body"]["height"] > 0 and data["headingCount"] == 1
                     and data["institutionBarCount"] == 1 and data["domainHeaderCount"] == 1
                     and not data["overflow"]
                 )
@@ -217,10 +220,15 @@ def main():
                     data["status"] = "DEFERRED"
                     data["reason"] = "Firefox keyboard shortcut did not reach requested page zoom."
                     break
-                driver.js("window.scrollTo(0,0); return true")
+                driver.js("document.querySelector('main#main-content h1')?.scrollIntoView({block:'start'}); return true")
                 time.sleep(0.2)
                 shot = driver.req("GET", f"/session/{driver.session}/screenshot")
-                (OUT / f"revista-article-zoom-{round(target * 100)}.png").write_bytes(base64.b64decode(shot))
+                (OUT / f"revista-article-heading-zoom-{round(target * 100)}.png").write_bytes(base64.b64decode(shot))
+                driver.js("document.querySelector('.aculta-revista-publication__body > *')?.scrollIntoView({block:'start'}); return true")
+                time.sleep(0.2)
+                shot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                (OUT / f"revista-article-body-zoom-{round(target * 100)}.png").write_bytes(base64.b64decode(shot))
+                driver.js("window.scrollTo(0,0); return true")
     finally:
         driver.close()
 

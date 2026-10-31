@@ -2449,6 +2449,19 @@ Isso verifica o reflow desta publicação, sem cobrir outras páginas editoriais
 interação com comentários, comparação pareada de fidelidade ou WCAG 2.2 AA;
 THEME-MF3 e OCS-F11 continuam pendentes.
 
+Ao fortalecer o teste para exigir corpo visível, a primeira execução falhou em
+3/6: o nó sintético tinha 234 caracteres no banco, mas seu campo usava o formato
+`basic_html`, inexistente no Runtime e no Sync, então o formatter entregava um
+campo vazio. O tema e o Twig não foram alterados por essa descoberta. Após
+snapshot íntegro, atualizei somente o formato dos quatro nós sintéticos
+publicados 599–602 para o formato editorial existente e ativo `revista_editorial`;
+título, texto, mídia, publicação e permissões permaneceram iguais. O Firefox ESR
+repetiu 6/6 em 100/200/400%, agora exigindo texto e altura não nulos para o corpo,
+e gravou capturas focadas no H1 e no corpo a 200/400%. Capturas revisadas e JSON:
+`/home/piradopirata/aculta-suite-out/revista-article-zoom-followup-20261031d/`.
+O snapshot, a mudança restrita a dados de teste e as revisões geradas estão no
+registro de execução. Nenhuma configuração foi importada ou alterada.
+
 ### THEME-MF3 — repetição da matriz pública no Runtime (2026-10-31)
 
 No Firefox ESR visível, a matriz anônima cobriu as dez raízes nos nove viewports

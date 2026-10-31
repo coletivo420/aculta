@@ -659,13 +659,13 @@ WCAG 2.2 AA.
 `revista-browser-zoom.py` abre a home pública do purpose Magazine em Firefox ESR
 visível e usa Ctrl+plus/Ctrl+0 via `xdotool` para conferir 100%, 200% e 400%.
 Além da capa, segue o primeiro link público de publicação e testa a página
-completa: artigo, corpo, capa carregada, H1, shell, overflow e conteúdo que
-ultrapasse o próprio corpo. Não segue links para outro host e registra
-`DEFERRED` se não houver publicação. Salva capturas da capa e do artigo em 200%
-e 400%, além das medições sem texto editorial em `summary.json`, tudo em
-`$SUITE_OUT`; as capturas do artigo preservam o topo natural da página, sem
-forçar a publicação sob o cabeçalho fixo. O script é somente leitura: não
-submete formulários nem altera conteúdo/configuração. Requer host `toca`, checkout
+completa: artigo, corpo editorial não vazio, capa carregada, H1, shell, overflow
+e conteúdo que ultrapasse o próprio corpo. Não segue links para outro host e
+registra `DEFERRED` se não houver publicação. Salva capturas da capa e também
+do H1 e do corpo do artigo em 200% e 400%, além das medições em `summary.json`,
+tudo em `$SUITE_OUT`. As capturas do artigo rolam o alvo para a área visível; as
+medições de overflow são coletadas antes desse scroll. O script é somente leitura:
+não submete formulários nem altera conteúdo/configuração. Requer host `toca`, checkout
 de desenvolvimento, `aculta_runtime`, `DISPLAY=:0`, `xdotool` e geckodriver.
 
 ```sh
