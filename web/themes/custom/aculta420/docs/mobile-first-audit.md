@@ -2227,6 +2227,17 @@ implantados no Runtime observado. A integração do markup pelo Drupal, leitores
 de tela, zoom, teclado completo, WCAG 2.2 AA e regressões globais permanecem
 pendentes; THEME-MF3 não está aprovado.
 
+Reteste complementar no Firefox ESR visível confirmou a página real anônima da
+Revista com quatro publicações sintéticas de inspeção: **19/19 checks** nas
+mesmas nove larguras. O CSS desta branch foi injetado na sessão; para o cenário
+sem imagem, a primeira mídia foi substituída no DOM por um container sintético
+com a classe prevista pelo Twig. A captura de 320px confirmou a capa no fluxo
+mobile; a de 1440px confirmou a composição editorial em duas colunas. As duas
+capturas, inclusive o fallback, estão em
+`/home/piradopirata/aculta-suite-out/revista-cover-visual-followup-20261031/`.
+Isto repete o contrato CSS sobre o consumer real, mas ainda não executa o Twig
+candidato nem valida sua integração no Runtime.
+
 ### THEME-MF3 — reteste global de shell, temas e fallback sem JavaScript (2026-10-31)
 
 Firefox ESR visível repetiu o shell público nas dez raízes definidas em
