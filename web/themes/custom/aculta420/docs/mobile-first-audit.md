@@ -458,7 +458,7 @@ terceiros, estilos inline ou comportamento de conteúdo real.
 | Fórum | `discussion.css`, `forum-index.css`, `forum-category`, `messenger-*`, `bookmark-toggle` | Tópicos, respostas, paginação e navegação sem overflow horizontal | CSS/SDCs mapeados; teste em purpose pendente |
 | Revista/editorial | `revista-post.css`, `editorial-content.css`, carousel, editorial-card | Texto, imagens, metadados, carrossel e controles sem JS | CSS/JS/SDCs mapeados; render e estados pendentes |
 | Loja/Commerce | `product.css`, gallery, tabs, cart, shipping, sales panel, product SDCs | Variações, tabelas, checkout, estoque/envios e ACL por loja | Camada de tema mapeada; operação/loja reais pendentes |
-| Green Stash (integrado ao Studio) | UI provider/controladores do módulo Commerce e `studio.css` | Produtos, pedidos, estoque, envios, promoções, clientes, relatórios e configurações | Rotas encontradas; capacidades disponíveis precisam ser distinguidas das planejadas |
+| Green Stash (integrado ao Studio) | UI provider/controladores do módulo Commerce e `studio.css` | Visão geral, produtos e envios existentes; demais áreas planejadas | Navegação só expõe Visão geral/Produtos/Envios; demais slugs agora retornam 404 até implementação e gate |
 | Eventos | `event_card`, `event-page-five-regions`, `statistics.css` | Agenda, datas, participantes e layout com cinco regiões | Catálogo e página de detalhe agora consomem os SDCs; captura real, estados e acessibilidade pendentes |
 | Messenger/alertas | drawers, compose/item/state, `alerts-dismiss.js` | Drawer acessível, lista, teclado, mensagens e fallback sem JS | Componentes/JS mapeados; acesso e cache pendentes |
 | GanjaLab editorial, Galerias e demais abas Marley | Plugins de aba e seus consumers reais | Variação de conteúdo, paginação e formulários owner | Providers/plugins listados; matriz de consumers incompleta |
@@ -2104,8 +2104,9 @@ THEME-MF3.
 
 ### OCS-F8 / THEME-MF2 — navegação e listagens do Green Stash (2026-10-30)
 
-`studio.css` apresenta a navegação contextual existente de nove áreas, busca
-GET, cartões de produto e remessa sob `.studio.aculta-green-stash`. A base
+`studio.css` apresenta a navegação contextual de áreas implementadas (Visão
+geral, Produtos e Envios), busca GET, cartões de produto e remessa sob
+`.studio.aculta-green-stash`. A base
 mobile usa colunas fluidas, links de 48px, foco de 3px e controles de formulário
 de 44px; modo escuro usa tokens Fidelity existentes. Não foram alterados render
 arrays, dados, Form API, ACL, Commerce ou shell. `npm run lint:css` passou.
@@ -2552,3 +2553,20 @@ PHPUnit do hook (24/138), PHP lint, PHPCS e `git diff --check` passaram.
 Isto não homologa CSS servida no Runtime nem submissão Form API, privacy A/B,
 AJAX/no-JS, cache, zoom ou WCAG integral; OCS-F9/F11 e THEME-MF3 continuam
 parciais/pendentes.
+
+
+### OCS-F8 — remover destinos comerciais sem operação implementada (2026-10-31)
+
+A revisão do contrato e do consumer confirmou que Pedidos, Estoque, Promoções,
+Clientes, Relatórios e Configurações eram exibidos como links, apesar de suas
+telas conterem apenas aviso genérico. A navegação agora oferece somente Visão
+geral, Produtos e Envios, que têm consumers/controller reais. O requisito
+dinâmico de `secao` e `GreenStashNavigation::SLUGS` foram limitados a esses
+três caminhos; os outros slugs retornam 404 até implementação, controle de
+acesso por loja e gates. A área permanece integrada no Studio; não foi criado
+menu ou shell separado. Firefox ESR visível passou 74/74 checks em nove larguras e claro/escuro,
+confirmando exatamente três links, estado atual, controles 44px/48px e zero
+overflow. Evidências em
+`/home/piradopirata/aculta-suite-out/green-stash-nav-implemented-only-20261031/`.
+A fixture valida CSS e marcação sintética; o Runtime autenticado continua sem
+homologação.

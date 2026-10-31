@@ -400,20 +400,24 @@ Green Stash usa o token neutro `green-stash-entry`; o tema o mapeia para a raiz
 visual `.studio.aculta-green-stash`. Assim a área comercial integrada reutiliza
 a fundação de tipografia, superfície e layout do Studio, preservando os
 componentes específicos de Green Stash. Não foi criado SDC, shell, menu global
-ou fluxo de Commerce paralelo. A fixture local valida a folha candidata; a
-renderização integrada ainda requer Firefox visível no Runtime.
+ou fluxo de Commerce paralelo. Navegação contextual mostra apenas Visão geral,
+Produtos e Envios; áreas sem operação implementada não são links e respondem
+404. Fixture local valida a folha candidata; renderização integrada requer
+Firefox visível no Runtime.
 
 `studio.css` compõe a navegação autorizada emitida pelo
 `GreenStashNavigation`, o formulário GET de busca e as listagens de
 produto/remessa emitidas pelo controller. O CSS é escopado pela raiz
-`.studio.aculta-green-stash`, mantém os nove links expostos, permite quebra sem
-rolagem horizontal e dá acabamento de cartão às linhas com H3. Nenhum SDC novo
+`.studio.aculta-green-stash`, mantém apenas Visão geral, Produtos e Envios,
+permite quebra sem rolagem horizontal e dá acabamento de cartão às linhas com H3. Nenhum SDC novo
 foi necessário: os dados operacionais atuais são wrappers simples de render
 arrays e continuam pertencendo ao módulo Commerce. A fixture
 `green-stash-layout.py` passou 74/74 checks no Firefox ESR visível em nove
 larguras e claro/escuro; capturas da fixture estão em
-`$SUITE_OUT/green-stash-layout-continuation-20261030/`. Esta evidência valida
-somente a folha e a marcação simulada. Operador autorizado, grants por loja,
+`$SUITE_OUT/green-stash-layout-continuation-20261030/`. Reteste de 2026-10-31
+passou 74/74 com a navegação limitada às três áreas operacionais, em evidência
+`$SUITE_OUT/green-stash-nav-implemented-only-20261031/`. Ambas são fixtures, não
+homologação do Runtime. Esta evidência valida somente a folha e a marcação simulada. Operador autorizado, grants por loja,
 rotas reais e fluxos de escrita seguem pendentes.
 
 ## THEME-MF2 — `patterns/content-grid`

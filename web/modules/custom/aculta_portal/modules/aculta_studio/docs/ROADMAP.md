@@ -691,9 +691,10 @@ somente porque há documentação.
 técnico `GreenStashExperienceProvider` não cria experiência de produto
 independente. Operações de Commerce, ACL, formulários, dados e transições
 permanecem com seus owners; a apresentação só pode promover capacidades
-confirmadas no código. O inventário identificou Produtos e Envios no código;
-Pedidos/Estoque/Promoções/Clientes/Relatórios/Configurações ainda exigem
-verificação individual e não devem ser anunciados como ativos.
+confirmadas no código. O inventário identificou Produtos e Envios no código; a navegação contextual
+expõe Visão geral, Produtos e Envios. Pedidos/Estoque/Promoções/Clientes/
+Relatórios/Configurações foram retirados dos links e seus slugs retornam 404
+enquanto não houver operação, autorização por loja e gates correspondentes.
 
 
 ## OCS-F0 / THEME-MF0 — evidência de execução (2026-10-29)

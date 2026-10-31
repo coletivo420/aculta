@@ -29,14 +29,16 @@ final class GreenStashNavigation {
   public const SLUGS = [
     'visao-geral' => 'overview',
     'produtos' => 'products',
-    'pedidos' => 'orders',
-    'estoque' => 'inventory',
     'envios' => 'shipping',
-    'promocoes' => 'promotions',
-    'clientes' => 'customers',
-    'relatorios' => 'reports',
-    'configuracoes' => 'settings',
   ];
+
+  /**
+   * Navigation sections whose real Studio consumers are implemented.
+   *
+   * Sections without a controller/Form API consumer remain undiscoverable and
+   * their routes return 404 until the operation and its access gates exist.
+   */
+  public const AVAILABLE = ['overview', 'products', 'shipping'];
 
   /**
    * Builds safe navigation and a non-operational notice for the selected area.
@@ -55,6 +57,9 @@ final class GreenStashNavigation {
 
     $links = [];
     foreach (self::SLUGS as $slug => $key) {
+      if (!in_array($key, self::AVAILABLE, TRUE)) {
+        continue;
+      }
       $label = self::AREAS[$key];
       $links[$slug] = [
         '#type' => 'link',

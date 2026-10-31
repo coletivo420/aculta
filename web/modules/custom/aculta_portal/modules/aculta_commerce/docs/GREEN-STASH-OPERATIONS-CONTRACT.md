@@ -28,6 +28,16 @@
 
 Não adicionar rotas com placeholders perigosos antes de implementar controladores, verificação de proprietário da entidade/store, parâmetros convertidos e formulários de destino válidos. `/painel-administrativo` permanece para manutenção Drupal por administradores técnicos, fora do fluxo cotidiano.
 
+## Estado apresentado pela navegação (2026-10-31)
+
+A navegação contextual do ACULTA STUDIO GREEN STASH expõe somente **Visão geral**,
+**Produtos** e **Envios**, que possuem consumidores reais no controller e nos
+serviços Commerce. Pedidos, Estoque, Promoções, Clientes, Relatórios e
+Configurações não aparecem como links e seus slugs retornam 404 até que a
+respectiva operação, acesso por loja, fluxo sem painel Drupal e gates sejam
+implementados. Ter slug ou permissão de entrada não habilita uma operação.
+
+
 ## Organização interna proposta
 
 - **Produtos:** Todos / Rascunhos / Novo / Variações / Imagens / Preços. Assistente de cadastro com passos básicos > variações > imagens > disponibilidade > revisão/publicação, rascunhos persistidos pelo modelo Commerce.

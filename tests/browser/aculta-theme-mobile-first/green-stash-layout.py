@@ -54,9 +54,8 @@ for subset in ("latin", "latin-ext"):
 links = "".join(
     f'<a class="nav-link aculta-green-stash__navigation-link" href="#{slug}" aria-current="{"page" if slug == "produtos" else "false"}">{label}</a>'
     for slug, label in [
-        ("visao-geral", "Visão geral"), ("produtos", "Produtos"), ("pedidos", "Pedidos"),
-        ("estoque", "Estoque"), ("envios", "Envios"), ("promocoes", "Promoções"),
-        ("clientes", "Clientes"), ("relatorios", "Relatórios"), ("configuracoes", "Configurações"),
+        ("visao-geral", "Visão geral"), ("produtos", "Produtos"),
+        ("envios", "Envios"),
     ]
 )
 markup = f"""<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
@@ -110,7 +109,8 @@ try:
               const rect = (el) => el.getBoundingClientRect();
               return {width: innerWidth, document: document.documentElement.scrollWidth,
                 columns: getComputedStyle(nav).gridTemplateColumns.trim().split(/\\s+/).length,
-                linkCount: links.length, active: active?.textContent.trim(),
+                linkCount: links.length, links: links.map((el) => el.textContent.trim()),
+                active: active?.textContent.trim(),
                 minLinkHeight: Math.min(...links.map((el) => rect(el).height)),
                 productCard: Boolean(product), shipmentCard: Boolean(shipment),
                 searchSurface: getComputedStyle(search).backgroundColor,
@@ -119,8 +119,9 @@ try:
                 navWidth: rect(nav).width, mode: document.documentElement.dataset.bsTheme};
             })();""")
             record(f"{mode}/{width}px: viewport e sem overflow", metrics["width"] == width and metrics["document"] <= width, metrics)
-            record(f"{mode}/{width}px: nove links autorizados e seção atual marcada",
-                   metrics["linkCount"] == 9 and metrics["active"] == "Produtos", metrics)
+            record(f"{mode}/{width}px: somente três áreas implementadas e seção atual marcada",
+                   metrics["linkCount"] == 3 and metrics["active"] == "Produtos"
+                   and set(metrics["links"]) == {"Visão geral", "Produtos", "Envios"}, metrics)
             record(f"{mode}/{width}px: alvos de navegação e cartões de listagem",
                    metrics["minLinkHeight"] >= 48 and metrics["productCard"] and metrics["shipmentCard"], metrics)
             record(f"{mode}/{width}px: formulário de busca com controles tocáveis",

@@ -26,6 +26,7 @@ final class GreenStashNavigationTest extends UnitTestCase {
 
     self::assertSame('/studio/green-stash', $routes['aculta_commerce.green_stash']['path']);
     self::assertSame('/studio/green-stash/{secao}', $routes['aculta_commerce.green_stash_area']['path']);
+    self::assertSame('visao-geral|produtos|envios', $routes['aculta_commerce.green_stash_area']['requirements']['secao']);
     self::assertSame('shop', $routes['aculta_commerce.green_stash']['options']['_aculta_domain_purpose']);
     self::assertSame('ACULTA STUDIO GREEN STASH', $routes['aculta_commerce.green_stash']['defaults']['_title']);
     self::assertSame('/studio/green-stash/produtos/novo', $routes['aculta_commerce.green_stash_product_create']['path']);
@@ -41,19 +42,28 @@ final class GreenStashNavigationTest extends UnitTestCase {
   /**
    * Tests that every area has read-only contextual navigation.
    */
-  public function testEachAreaIsReadOnlyAndHasItsOwnRoute(): void {
+  public function testOnlyImplementedAreasAreDiscoverable(): void {
     $navigation = new GreenStashNavigation();
     foreach (GreenStashNavigation::SLUGS as $slug => $key) {
       $label = GreenStashNavigation::AREAS[$key];
       $render = $navigation->build($slug);
       self::assertSame('green-stash-entry', $render['#attributes']['data-portal-ui']);
       self::assertSame($label, $render['heading']['#value']);
-      self::assertCount(count(GreenStashNavigation::AREAS), $render['navigation']['items']);
+      self::assertCount(3, $render['navigation']['items']);
       self::assertSame('page', $render['navigation']['items'][$slug]['#attributes']['aria-current']);
       self::assertSame('aculta_commerce.green_stash_area', $render['navigation']['items'][$slug]['#url']->getRouteName());
       self::assertArrayNotHasKey('orders', $render);
       self::assertArrayNotHasKey('products', $render);
     }
+
+    self::assertSame(['overview', 'products', 'shipping'], GreenStashNavigation::AVAILABLE);
+    self::assertSame(['visao-geral', 'produtos', 'envios'], array_keys(GreenStashNavigation::SLUGS));
+    self::assertArrayNotHasKey('pedidos', GreenStashNavigation::SLUGS);
+    self::assertArrayNotHasKey('estoque', GreenStashNavigation::SLUGS);
+    self::assertArrayNotHasKey('promocoes', GreenStashNavigation::SLUGS);
+    self::assertArrayNotHasKey('clientes', GreenStashNavigation::SLUGS);
+    self::assertArrayNotHasKey('relatorios', GreenStashNavigation::SLUGS);
+    self::assertArrayNotHasKey('configuracoes', GreenStashNavigation::SLUGS);
   }
 
   /**
