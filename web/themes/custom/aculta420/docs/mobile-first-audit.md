@@ -2436,3 +2436,40 @@ passou. Esses testes não instalam a candidata: no Runtime ainda falta o hook e
 o CSS reconstruído; a falha 328px continua real até validar a integração
 servida. Esta matriz cobre apenas raízes públicas, portanto não aprova
 THEME-MF3 nem OCS-F11.
+
+### Institution Bar mobile durante scroll — reteste anônimo (2026-10-31)
+
+No Runtime servido em `2493d7535`, Firefox ESR visível repetiu o harness
+`institution-bar-scroll.py` nas homes anônimas MAIN (`aculta_org`) e Conta
+(`conta_aculta_org`), em 320 e 390px. **24/24 checks passaram**: posição
+`sticky`, topo estabilizado sem salto entre 50/200/500/1000ms, e barra presa ao
+topo após scroll de 80/240/480px. O teste também preservou uma posição de scroll
+restaurada ao navegar para Conta; ainda assim a barra ficou em `top=0`. Evidência
+em `/home/piradopirata/aculta-suite-out/institution-bar-scroll-followup-20261031/`.
+
+Em Conta/320px, o harness confirmou separadamente o overflow conhecido do
+documento (`328px` para viewport de `320px`, causado pelo Turnstile); isso não
+alterou a geometria sticky. Este reteste anônimo não cobre a toolbar do
+administrador. O cenário autenticado permanece DEFERRED até autenticação
+confirmada; portanto não prova nem exclui a falha móvel relatada quando a barra
+administrativa está presente, e THEME-MF3 segue pendente.
+
+**Complemento autenticado e cross-purpose (2026-10-31):** a conta sintética
+administrativa `aculta_visual_admin` (UID 257) autenticou no Firefox ESR. A
+barra administrativa responsiva estava no fluxo normal em 320/390/1023px e
+fixa em 1024/1280px. No mobile, com scroll de 80px a Institution Bar ainda
+subia junto com o conteúdo; após ultrapassar a barra administrativa, ficou em
+`top=0` nos scrolls de 240/480px. A transição estabilizou sem salto (mudança
+máxima observada de 0px). Em desktop, a barra administrativa ficou fixa em
+64px e a Institution Bar respeitou `top=64px`. **38/38 checks passaram**; as
+capturas mobile antes/depois foram revisadas. Evidência em
+`/home/piradopirata/aculta-suite-out/institution-bar-scroll-admin-followup-20261031/`.
+
+Sem CSS/JS candidato injetado, a matriz anônima foi ampliada a todos os sete
+purposes configurados no manifesto de deploy, 320/390px: **112/112 checks
+passaram** quanto à estabilização, scroll e topo sticky. Capturas em
+`/home/piradopirata/aculta-suite-out/institution-bar-scroll-all-anonymous-20261031/`.
+O relato intermitente de a barra ficar no meio da tela não foi reproduzido
+nessas amostras; scroll contínuo em dispositivo móvel físico e versões de
+navegador distintas ainda não foram testados. Isto valida o Runtime servido
+`2493d7535`, não a folha candidata atual da branch nem THEME-MF3.
