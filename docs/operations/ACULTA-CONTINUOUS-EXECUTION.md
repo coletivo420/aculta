@@ -2755,3 +2755,6 @@ ou preferência persistente alterados.
   contraste/alvos: 18/18 estados responsivos passaram em claro/escuro,
   320–1440px, sem overflow e HTTP 200. Evidência em
   `/home/piradopirata/aculta-suite-out/revista-marley-create-final-matrix-20261031200443/`.
+- Após a publicação final, os validadores estáticos no docroot passaram:
+  Foundation 353, SDC schemas 55 componentes/759 checks e route aliases 38
+  arquivos.
