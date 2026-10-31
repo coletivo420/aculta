@@ -466,6 +466,13 @@ focáveis (todos `:focus-visible` e com `outlineStyle` calculado diferente de
 inspecionada. Essa contagem não avalia contraste, ordem semântica completa,
 componentes customizados, toda a página nem todos os estados.
 
+Reteste autenticado em 2026-10-31, com `teste.comum`, repetiu Marley, Conta e
+Perfil nas nove larguras: 648 observações, 621 focos reais com `:focus-visible`
+e outline calculado, e 27 retornos esperados ao `body`. Evidência em
+`/home/piradopirata/aculta-suite-out/studio-keyboard-focus-recheck-8603e2d5b-20261031/`.
+Nenhum formulário foi enviado; ACL entre contas, modais, leitor de tela e
+WCAG completa continuam fora desta prova.
+
 ### Prova de color scheme e reduced motion
 
 `theme-modes.py` captura as rotas `STUDIO_ROUTES` (padrão Marley, Conta e

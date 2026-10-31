@@ -2463,3 +2463,10 @@ ou preferência persistente alterados.
   SDC schema passou (55 componentes/759 checks), shell contract passou (13),
   Design Foundations passou (2.429) e Revista/parity passou. Correção publicada
   em `65a064603`.
+- O probe autenticado `tests/browser/aculta-studio/keyboard-focus.py`, com a
+  conta existente `teste.comum`, percorreu Marley, Conta e Perfil nas nove
+  larguras: 648 observações, 621 focos reais com `:focus-visible` e outline,
+  27 retornos esperados ao body. Evidência em
+  `/home/piradopirata/aculta-suite-out/studio-keyboard-focus-recheck-8603e2d5b-20261031/`.
+  Nenhum formulário foi enviado; ACL A/B, modais e leitores de tela continuam
+  fora desta prova.
