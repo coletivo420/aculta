@@ -294,9 +294,15 @@ socket.onmessage = (event) => {
           const rootToken=root?getComputedStyle(root).getPropertyValue('--aculta-studio-fidelity-primary').trim():null;
           const fontFamily=root?getComputedStyle(root).fontFamily:'';
           const headings=[...document.querySelectorAll('main h1')].filter(element=>element.getClientRects().length>0);
+          const linksContainer=root?.querySelector('.portal-profile__links');
+          const socialLinks=[...(root?.querySelectorAll('.portal-profile__links a')||[])].map(element=>{
+            const rect=element.getBoundingClientRect();return {label:element.textContent.trim(),
+              width:rect.width,height:rect.height,left:rect.left,right:rect.right};
+          });
           return {profilePresent:!!root,loggedIn:document.body.classList.contains('user-logged-in'),
             studioMarkers:document.querySelectorAll('[data-aculta-studio]').length,
             fidelityToken:rootToken,fontFamily,headingCount:headings.length,
+            socialLinks,linksWrap:linksContainer?getComputedStyle(linksContainer).flexWrap:null,
             institutionBars:document.querySelectorAll('.aculta-institution-bar').length,
             domainHeaders:document.querySelectorAll('.aculta-header').length,
             documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth,
@@ -310,6 +316,15 @@ socket.onmessage = (event) => {
             "noStudioFidelityToken": public_profile["fidelityToken"] == "",
             "noFidelityFont": "Montserrat" not in public_profile["fontFamily"],
             "singleMainH1": public_profile["headingCount"] == 1,
+            "publicLinksAreTouchTargets": all(
+                item["width"] >= 44 and item["height"] >= 44
+                for item in public_profile["socialLinks"]
+            ),
+            "publicLinksWrap": public_profile["linksWrap"] in (None, "wrap", "nowrap"),
+            "publicLinksFitViewport": all(
+                item["left"] >= -1 and item["right"] <= public_profile["viewport"] + 1
+                for item in public_profile["socialLinks"]
+            ),
             "institutionBarAndDomainHeaderUnique": public_profile["institutionBars"] == 1 and public_profile["domainHeaders"] == 1,
             "noHorizontalOverflow": public_profile["documentWidth"] <= public_profile["viewport"] and public_profile["bodyWidth"] <= public_profile["viewport"],
         }
