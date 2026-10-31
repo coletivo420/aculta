@@ -2412,7 +2412,11 @@ ou preferência persistente alterados.
   `0f5bff8425f0ddca419f2adf4948b6c008ab9625f447740cb1e7eaf2a2d2c180`.
 - PHPUnit Unit dos dois módulos: 10 testes/46 assertions passaram; PHP lint,
   PHPCS Drupal, YAML parse e validador de dependências de config (1.702 checks)
-  passaram. A homologação A/B, ACL e demais gates globais continuam pendentes.
+  passaram. Kernel `FriendshipNoticePipelineKernelTest` +
+  `GameAchievementNoticePersistenceKernelTest`: 5 testes/69 assertions OK no
+  `aculta_simpletest`; houve duas depreciações upstream de discovery `@EntityType`
+  do Core, sem falhas. A homologação A/B, ACL e demais gates globais continuam
+  pendentes.
 - A tentativa de delegação read-only ao Qwen3-Coder 30B foi iniciada pelo CLI
   configurado, mas o gateway remoto retornou HTTP 502; a análise delegada ficou
   indisponível nesta rodada. O servidor e processo remoto existentes foram

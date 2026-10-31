@@ -4946,3 +4946,20 @@ A conta não possui matrículas nem certificados: cards de conteúdo preenchidos
 ACL entre usuários, no-JS/AJAX, teclado/zoom, dark mode e WCAG não foram
 validados. O reteste confirma o compositor e os estados vazios, não fecha F6,
 THEME-MF3 ou OCS-F11.
+
+### OCS-F8 / THEME-MF2 — Green Stash integrado no Runtime (2026-10-31)
+
+Green Stash permanece a área comercial integrada do ACULTA Studio, sob
+`shop:/studio/green-stash`, com o Institution Bar e Domain Header compartilhados.
+O GET autenticado de criação de produto passou após corrigir o tratamento do
+`createAccess()` que causava HTTP 500. O harness genérico do projeto verificou
+visão geral, produtos, envios, novo produto e detalhe em 320/360/390/599/600/
+768/1024/1280/1440px, claro/escuro: **90/90**, HTTP 200, sem overflow, axe sem
+violações nem `incomplete`. Capturas 320px e 1440px revisadas; nenhum formulário
+foi enviado. Evidência: `/home/piradopirata/aculta-suite-out/green-stash-full-fixed-55665601d-20261031/`.
+O snapshot pré-ULI e limites estão em `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
+
+Isso valida apresentação/reflow e o GET do formulário, não submissão Commerce,
+grants A/B entre lojas, operações fora das telas disponíveis, no-JS/AJAX,
+teclado/zoom ou WCAG 2.2 AA. OCS-F8 permanece parcial; THEME-MF3 e OCS-F11
+continuam pendentes.
