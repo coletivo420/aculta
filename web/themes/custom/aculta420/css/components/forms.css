@@ -25,16 +25,16 @@ form.node-form .token-dialog {
   align-items: center;
 }
 
-html[data-bs-theme="dark"] form.node-form .vertical-tabs__menu-item,
-html[data-bs-theme="dark"] form.node-form .vertical-tabs__menu-item.is-selected {
+form.node-form .vertical-tabs__menu-item,
+form.node-form .vertical-tabs__menu-item.is-selected {
   color: var(--aculta-text-primary);
   background-color: var(--aculta-surface-raised);
   border-color: var(--aculta-border-default);
 }
 
-html[data-bs-theme="dark"] form.node-form .vertical-tabs__menu-item a,
-html[data-bs-theme="dark"] form.node-form .vertical-tabs__menu-item-title,
-html[data-bs-theme="dark"] form.node-form .vertical-tabs__menu-item-summary {
+form.node-form .vertical-tabs__menu-item a,
+form.node-form .vertical-tabs__menu-item-title,
+form.node-form .vertical-tabs__menu-item-summary {
   color: var(--aculta-text-primary);
 }
 
