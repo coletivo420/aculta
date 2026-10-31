@@ -10,11 +10,11 @@
   formulário nativo de Node Form API e não persiste conteúdo ao abrir.
 - Kernel focal confirmou rota permitida para autoria autorizada, render do
   formulário e ausência de Node salvo (2 testes/200 asserções). Runtime em
-  `c7fc57dba`: discovery e `drush cr` passaram; Firefox ESR/X11 confirmou rota,
-  navegação e reflow em 36/36 verificações, 1440–320 px. A conta UID 257 não
-  estava confirmada por e-mail, portanto a captura mostra o aviso e não prova
-  campos editoriais disponíveis. O runner agora exige título/corpo; reteste com
-  UID 5 confirmado pendente. O formulário não foi submetido.
+  `c7fc57dba`: discovery e `drush cr` passaram; Firefox ESR/X11 com UID 5
+  ativo/autorizado/confirmado passou 37/37 verificações em 1440–320 px,
+  incluindo título, corpo, ausência do aviso de confirmação e retorno.
+  `create-form.png` revisada em 320 px; formulário não submetido. O reteste
+  inicial UID 257 confirmou corretamente o bloqueio por e-mail não confirmado.
 
 ## 0.1.0-dev.118 — proteger grants versionados das propostas (2026-10-26)
 

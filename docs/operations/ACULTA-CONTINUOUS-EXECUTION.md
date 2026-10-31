@@ -36,12 +36,19 @@
 - O script WE SATIVA agora usa o host Conta para emitir a ULI por padrão e
   salva `create-form.png` em `$SUITE_OUT`, permitindo inspecionar o formulário.
   A captura da sessão UID 257 mostrou que essa conta estava sem confirmação de
-  e-mail, portanto os campos editoriais estavam corretamente bloqueados apesar
-  do shell/form retornar. A rodada 36/36 prova apenas rota, navegação e reflow;
-  não prova campos disponíveis. O runner passou a exigir campo de título/corpo;
-  UID 5 foi verificado ativo, com permissão e email confirmado, e aguarda novo
-  teste visual. WCAG 2.2 AA completa, leitor de tela e submissão/ACL em matriz de
-  contas continuam pendentes.
+  e-mail; por isso os campos editoriais estavam corretamente bloqueados apesar
+  do shell/form retornar. O runner passou a exigir título/corpo. UID 5 foi
+  verificado ativo, autorizado e com e-mail confirmado; Firefox ESR/X11 passou
+  37/37 em oito larguras (1440–320 px), incluindo campos editoriais, estado sem
+  aviso de confirmação e retorno. A captura visual `create-form.png` foi
+  inspecionada em 320 px, sem corte horizontal; nada foi submetido. Snapshot
+  pré-ULI modo 0600:
+  `runtime-snapshots/aculta_runtime-before-we-sativa-confirmed-form-f06fadca6-20261031.sql`
+  (47.527.135 bytes; SHA-256
+  `1550da1714bfde0a1e73bf152f9fe0a54bb6d4383c39213276c7c5d97f25b0f7`). Evidência
+  em `/home/piradopirata/aculta-suite-out/we-sativa-confirmed-form-f06fadca6-20261031/`.
+  WCAG 2.2 AA completa, leitor de tela e submissão/ACL em matriz de contas
+  continuam pendentes.
 
 ## PR #299 — OCS-F3/F4: adapter SDC da entrada da Conta (2026-10-31)
 

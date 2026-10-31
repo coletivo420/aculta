@@ -9,11 +9,11 @@ nem gravação ao abrir a página. A rota Core `/node/add/wiki_entry` pertence a
 purpose principal e não é mais usada pelo workspace. Kernel focal confirmou
 autorização, render do formulário e ausência de persistência (2 testes/200
 asserções). No Runtime em `c7fc57dba`, `drush cr` e discovery da rota passaram;
-Firefox ESR/X11 confirmou rota, navegação e reflow em 36/36 verificações,
-1440–320 px, sem submeter o formulário. A conta UID 257 não estava confirmada
-por e-mail; a captura mostra o aviso e não os campos de autoria. A suíte foi
-aprimorada para exigir título/corpo e será reexecutada com UID 5, confirmado,
-antes de aprovar o formulário em Runtime.
+Firefox ESR/X11 com UID 5 ativo, autorizado e confirmado passou 37/37
+verificações em 1440–320 px, incluindo título/corpo, retorno e ausência de
+overflow; formulário não submetido. `create-form.png` revisada em 320 px. A
+tentativa inicial com UID 257 confirmou o estado bloqueado esperado para conta
+sem e-mail confirmado.
 
 ## Retificação vigente de caminhos (2026-10-30)
 
