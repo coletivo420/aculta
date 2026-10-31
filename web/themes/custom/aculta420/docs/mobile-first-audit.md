@@ -2486,3 +2486,20 @@ e
 `/home/piradopirata/aculta-suite-out/institution-bar-scroll-admin-transition-20261031/`.
 Isso reduz a lacuna do teste automatizado para transições rápidas; não reproduz
 gestos físicos do navegador móvel.
+
+### THEME-MF3 — formulários anônimos com Turnstile (2026-10-31)
+
+Firefox ESR visível abriu `/entrar`, `/criar-conta` e `/recuperar-senha` no
+Runtime local com o Turnstile real carregado. Para cada GET, injetei na sessão
+as folhas candidatas `base.css`/`auth.css` e simulei no wrapper o marcador
+`data-portal-ui="challenge-frame"`, pois o HEAD servido `2493d7535` ainda não
+contém o hook de apresentação do Portal desta branch. Cada rota passou **10/10
+checks** em 320/360/390/599/600/768/1024/1280/1440px: largura de documento
+igual ao viewport, sem scroll horizontal e slot do desafio com largura máxima
+de 300px em viewport 320px. Capturas/relatórios estão em
+`/home/piradopirata/aculta-suite-out/auth-login-candidate-current-20261031/`,
+`/home/piradopirata/aculta-suite-out/auth-register-candidate-current-20261031/`
+e `/home/piradopirata/aculta-suite-out/auth-reset-candidate-current-20261031/`.
+Não houve submit ou escrita no Runtime. O teste não confirma o hook PHP real ou
+o stylesheet reconstruído/servido; o baseline continua com overflow de 328px
+em `/entrar` a 320px, até a integração da branch ser instalada e retestada.
