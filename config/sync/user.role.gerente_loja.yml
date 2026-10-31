@@ -18,6 +18,7 @@ weight: 9
 is_admin: false
 permissions:
   - 'access administration pages'
+  - 'access aculta green stash'
   - 'access commerce_product overview'
   - 'access commerce_product_attribute overview'
   - 'access site reports'
