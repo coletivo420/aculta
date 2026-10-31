@@ -188,6 +188,86 @@ body.path-ganjalab .aculta-main .aculta-empty-state {
   line-height: var(--aculta-studio-fidelity-line-height-default);
 }
 
+/* ACULTA Studio Culturas lives in the Events purpose without the shared
+   `.studio` wrapper. Scope its fidelity root to that canonical route only. */
+body.path-culturas .aculta-main {
+  color: var(--aculta-studio-fidelity-text);
+  font-family: var(--aculta-studio-fidelity-font-family);
+  line-height: var(--aculta-studio-fidelity-line-height-default);
+}
+
+body.path-culturas .aculta-main :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--aculta-studio-fidelity-text);
+  font-family: var(--aculta-studio-fidelity-font-family);
+  line-height: var(--aculta-studio-fidelity-line-height-headings);
+}
+
+body.path-culturas .aculta-main h1 {
+  font-size: clamp(2rem, 7vw, var(--aculta-studio-fidelity-font-size-xxl));
+  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
+}
+
+body.path-culturas .aculta-main a {
+  color: var(--aculta-studio-fidelity-link);
+  text-underline-offset: 0.2em;
+}
+
+body.path-culturas .aculta-main a:focus-visible,
+body.path-culturas .aculta-main button:focus-visible,
+body.path-culturas .aculta-main input:focus-visible,
+body.path-culturas .aculta-main select:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 3px;
+}
+
+body.path-culturas .aculta-main .row > [class*="col"] > :is(p, details, form) {
+  margin-block: var(--aculta-studio-fidelity-row-gap);
+}
+
+body.path-culturas .aculta-main .row > [class*="col"] > a {
+  display: inline-flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+  margin-inline-end: 0.5rem;
+  overflow-wrap: anywhere;
+}
+
+body.path-culturas .aculta-main form {
+  padding: var(--aculta-studio-fidelity-row-gap) var(--aculta-studio-fidelity-gutter);
+  color: var(--aculta-studio-fidelity-text);
+  background: var(--aculta-studio-fidelity-form-surface);
+}
+
+body.path-culturas .aculta-main form :is(.form-item, .form-actions) {
+  padding-block: 0.75rem;
+}
+
+body.path-culturas .aculta-main form label {
+  display: block;
+  font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
+}
+
+body.path-culturas .aculta-main form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]), select, textarea) {
+  min-block-size: 2.75rem;
+  max-inline-size: 100%;
+  padding: 0.5rem 1rem;
+  color: var(--aculta-studio-fidelity-text);
+  border: 1px solid var(--aculta-studio-fidelity-input-border-bottom);
+  border-radius: 0;
+  background: var(--aculta-studio-fidelity-input-background);
+  font: inherit;
+}
+
+body.path-culturas .aculta-main form :is(button, input[type="submit"], .form-submit) {
+  min-block-size: 2.75rem;
+  padding: 0.5rem 1.5rem;
+  color: var(--aculta-studio-fidelity-button-primary-text);
+  border: 2px solid var(--aculta-studio-fidelity-button-primary-border);
+  background: var(--aculta-studio-fidelity-button-primary-background);
+  font: inherit;
+  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
+}
+
 /* WE SATIVA uses the real Wiki-owned workspace wrapper as its visual root. */
 .aculta-main .we-sativa__workspace {
   color: var(--aculta-studio-fidelity-text);
