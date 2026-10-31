@@ -80,13 +80,33 @@ composição editorial, como a mídia real. Use junto de
 `MAGAZINE_COVER_CSS_OVERRIDE=1`. A injeção não executa o Twig candidato nem
 altera a publicação no Runtime.
 
-Em 2026-10-31, a CSS servida pelo Runtime passou 5/28 e falhou 23/28: targets
-nos nove viewports, links no zoom e alvos de CTA (19px), também com JavaScript
-desativado. Com a folha local injetada no Firefox, passaram 28/28, incluindo
-nove larguras com JavaScript do site desativado, teclado, claro/escuro e zoom;
-os alvos mediram pelo menos 44px e não houve overflow. Contraste medido:
-12,40:1 em claro e 14,50:1 em escuro. A evidência avalia o candidato sobre
-conteúdo real, não publica a folha. Relatórios e capturas:
+Registro histórico: numa versão anterior do Runtime, a CSS servida passou 5/28
+e falhou 23/28 por alvos pequenos em nove larguras, links no zoom e CTA com
+19px, inclusive sem JavaScript. A folha local injetada naquela sessão passou
+28/28, mas não comprovava publicação.
+
+Reteste integrado em 2026-10-31, Runtime destacado em `8d7f1d576`, Firefox ESR
+visível, sem CSS/JS candidatos, passou **28/28** sobre a página pública e seus
+quatro artigos sintéticos já existentes. A CSS servida pelo Runtime e a CSS do
+checkout têm SHA-256 idêntico (`7a6763239db34f26c533b2761a8342ffd9c28b79dc151ee8bc3265a304588b27`).
+O reteste cobriu nove larguras, teclado, claro/escuro, zoom real de 200%/400%,
+JavaScript habilitado/desabilitado, imagem carregada, grade adaptável, alvos de
+44px e ausência de overflow. Contraste dos links: 12,40:1 em claro e 14,50:1
+em escuro. Capturas de 320/1440px e relatório:
+`/home/piradopirata/aculta-suite-out/magazine-cover-served-8d7f1d576-20261031/`.
+Foi uma leitura anônima; não criou nem alterou conteúdo.
+
+Com `MAGAZINE_COVER_FALLBACK_CANDIDATE=1` e
+`MAGAZINE_COVER_CSS_OVERRIDE=1`, passou **37/37 checks**, inclusive nove
+medições sintéticas da área de capa sem imagem em claro/escuro e em todas as
+larguras. O harness substitui o wrapper de mídia no documento por uma `div`
+decorativa; não executa o Twig nessa variante. No Runtime, `field_media_image`
+é obrigatório para `revista`, e todos os quatro artigos de inspeção têm mídia,
+por isso nenhum artigo publicado foi artificialmente salvo sem o campo.
+Capturas e log: `/home/piradopirata/aculta-suite-out/magazine-cover-fallback-candidate-8d7f1d576-20261031/`.
+
+Em rodada anterior, a folha candidata também passou 28/28 sobre conteúdo real.
+Relatórios e capturas:
 `/home/piradopirata/aculta-suite-out/revista-cover-zoom-reachability-baseline-final-20261031/`
 e `/home/piradopirata/aculta-suite-out/revista-cover-nojs-candidate-20261031/`;
 a rodada sem injeção está em

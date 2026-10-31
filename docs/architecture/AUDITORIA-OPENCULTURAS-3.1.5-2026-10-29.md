@@ -81,6 +81,23 @@
 - `aculta_index` já dispõe de providers e consulta paginada com ACL; o problema de descoberta cultural envolve Search API, novas projeções e interfaces de busca, **não** reescrever o índice transversal existente.
 - A validação desta rodada foi **estática e documental**. Nenhuma evidência de Runtime foi criada, nem resultado de PHPUnit alegado.
 
+## 8. Revalidação pontual da fonte visual (2026-10-31)
+
+Como o tarball não estava mais no checkout, ele foi recuperado da distribuição
+oficial em <https://ftp.drupal.org/files/projects/openculturas-3.1.5.tar.gz>.
+O SHA-256 voltou a ser
+`2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`, igual ao
+artefato usado por esta auditoria. A licença declarada no
+`openculturas/composer.json` é GPL-2.0-or-later.
+
+Para revisar a adaptação da capa da Revista foram inspecionados, no tema moderno
+`profile/themes/opcult/`, `templates/node/node--teaser-big.html.twig`,
+`templates/views/views.scss`, `templates/layout/hero-layouts.scss` e
+`sass/abstracts/_teasers.scss`. A matriz e o resultado visual integrado estão
+em `web/themes/custom/aculta420/docs/mobile-first-audit.md`. Esta revisão é
+pontual; não substitui a auditoria arquivo a arquivo de todos os templates,
+bibliotecas, formulários e estados exigidos por OCS-F0.
+
 ## 7. Links locais
 
 - [Comparativo](OPENCULTURAS-COMPARATIVO.md)

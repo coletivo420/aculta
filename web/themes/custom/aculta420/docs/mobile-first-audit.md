@@ -4475,3 +4475,41 @@ tela ou WCAG 2.2 AA completa. Relatório:
 `/home/piradopirata/aculta-suite-out/purpose-shell-nojs-1151b3352-20261031/`.
 THEME-MF3/OCS-F11 continuam pendentes.
 
+### THEME-MF2 — capa integrada da Revista e fonte OpenCulturas verificada (2026-10-31)
+
+O tarball da versão exata foi recuperado da distribuição oficial em
+`https://ftp.drupal.org/files/projects/openculturas-3.1.5.tar.gz`; SHA-256
+`2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`, igual ao
+registrado na auditoria. `openculturas/composer.json` declara GPL-2.0-or-later.
+Na fonte `profile/themes/opcult/`, foram inspecionados os teasers em
+`templates/node/node--teaser-big.html.twig`, `templates/views/views.scss`, a
+composição de hero em `templates/layout/hero-layouts.scss` e os tokens/fallbacks
+de `sass/abstracts/_teasers.scss`. Evidência upstream: teaser editorial com mídia
+dominante e fallback, cartão arredondado com sombra e composição que muda quando
+há espaço horizontal suficiente.
+
+A Revista aplica esses conceitos sem copiar código ou ativos: o Twig usa os
+SDCs locais `aculta420:hero` e `aculta420:card`; `revista-listing.css` usa tokens
+ACULTA e gradientes CSS para uma capa decorativa sem imagem. Na listagem atual,
+há uma coluna abaixo de 600px, duas de 600–991px e três a partir de 992px; o
+destaque muda para composição editorial horizontal em desktop. Nenhuma imagem,
+fonte, ícone, SVG, CSS ou UUID de configuração OpenCulturas foi transplantado
+para esta adaptação.
+
+Firefox ESR visível, anônimo, no Runtime destacado em `8d7f1d576`, sem folhas
+injetadas, passou **28/28 checks**: View e chamada hero, quatro cartões já
+publicados para inspeção, imagem carregada, nove larguras, foco do título/CTA,
+claro/escuro, zoom 200/400%, renderização sem JavaScript, alvos de 44px e overflow.
+Contraste dos links foi 12,40:1 em claro e 14,50:1 em escuro; CSS local e servida
+têm SHA-256 idêntico. Capturas 320/1440px revisadas. Relatório:
+`/home/piradopirata/aculta-suite-out/magazine-cover-served-8d7f1d576-20261031/`.
+Essa é validação da capa Aculta, não comparação pareada de pixel com uma instância
+OpenCulturas. THEME-MF3 e OCS-F11 continuam sem homologação global.
+
+Uma segunda rodada passou **37/37 checks** com a CSS candidata injetada e um
+wrapper de imagem sintético substituído localmente por gradientes. Nas nove
+larguras, a área sem imagem manteve a proporção e o fundo adaptativo claro/escuro,
+sem overflow. É somente uma simulação CSS no navegador; `field_media_image` é
+obrigatório no bundle e não se criou conteúdo que contornasse essa validação.
+Evidência: `/home/piradopirata/aculta-suite-out/magazine-cover-fallback-candidate-8d7f1d576-20261031/`.
+

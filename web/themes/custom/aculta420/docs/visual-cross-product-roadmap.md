@@ -1733,15 +1733,27 @@ em OpenCulturas 3.1.5: os quatro cartões usam raio de 1,5 rem e elevação via 
 local `--aculta-shadow-raised`; o destaque preserva sua composição própria. O SDC,
 conteúdo e contratos permanecem os atuais. Firefox ESR com CSS candidata injetada
 passou 28/28 verificações, incluindo nove larguras, modo claro/escuro, teclado,
-no-JS e zoom 200/400%; o harness também verifica a geometria de todos os cartões.
-As capturas 320/1440px foram revisadas. O Runtime ainda
-serve a CSS anterior à branch, portanto a integração visual e THEME-MF3 ficam
-pendentes. Evidências e comandos em `mobile-first-audit.md` e
+renderização sem JavaScript e zoom 200/400%; o harness também verifica a
+geometria de todos os cartões.
+As capturas 320/1440px foram revisadas. Nesse checkpoint, o Runtime ainda
+servia CSS anterior à branch, portanto a medição era candidata. Evidências e
+comandos em `mobile-first-audit.md` e
 `studio-visual/visual-parity-matrix.md`.
 Reteste em 2026-10-31 repetiu 28/28; capturas mobile/desktop revisadas em
 `/home/piradopirata/aculta-suite-out/revista-cover-resume-20261031/`. Lint CSS/JS,
 schemas SDC, Design Foundations e fronteira módulo/tema passaram na árvore local;
-o Runtime ainda não serve a candidata e os gates gerais permanecem pendentes.
+naquele reteste o Runtime ainda não servia a candidata.
+
+Reteste integrado no Runtime destacado `8d7f1d576`, sem CSS/JS injetados,
+passou **28/28 checks** com os quatro artigos visuais sintéticos já publicados.
+CSS do checkout e CSS servido tiveram o mesmo SHA-256. A capa contém imagem,
+chamada hero, categoria, título, resumo e CTA: uma coluna em 320–599px, duas
+em 600–991px, três a partir de 992px; o primeiro cartão se torna capa editorial
+horizontal em desktop. Contraste, foco, zoom 200/400% e renderização sem JavaScript,
+alvos mínimos de 44px e overflow passaram. A captura 320/1440px foi revisada.
+Isto confirma a integração focal da Revista; não é comparação pareada de pixel
+com OpenCulturas, nem fecha THEME-MF3 ou OCS-F11. Ver o relatório em
+`/home/piradopirata/aculta-suite-out/magazine-cover-served-8d7f1d576-20261031/`.
 
 ### OCS-F9 / THEME-MF2 — Perfil em zoom real (2026-10-31)
 
