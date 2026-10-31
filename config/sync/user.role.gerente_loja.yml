@@ -22,6 +22,7 @@ permissions:
   - 'access commerce_product overview'
   - 'access commerce_product_attribute overview'
   - 'access site reports'
+  - 'administer commerce_store'
   - 'administer aculta donation campaigns'
   - 'administer aculta support settings'
   - 'administrar doacoes'
