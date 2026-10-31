@@ -68,14 +68,16 @@ esta documentação.
 | Entrada da Conta e registro de experiências autorizadas | `account:/` e `account:/conta` |
 | Marley | `account:/marley` |
 | Ganjalab | `courses:/ganjalab` |
-| WE SATIVA | `wiki:/wesativa`, no Domain `wiki420` |
-| ACULTA STUDIO GREEN STASH — área comercial integrada | `shop:/greenstash` |
+| ACULTA STUDIO WE SATIVA | `wiki:/studio/we-sativa`, no Domain `wiki420` |
+| ACULTA STUDIO GREEN STASH — área comercial integrada | `shop:/studio/green-stash` |
 | ACULTA Studio Culturas | `eventos:/culturas` |
 | Conta privada / Perfil privado | `account:/conta` / `account:/perfil` |
 | Salvos / planos Mercado Pago | `account:/salvos` / `account:/conta/mercado-pago/planos` |
 
-`/studio` e `/studio/*` são paths aposentados, respondem 404 sem alias. F4 não
-inclui Hub: a entrada da Conta apresenta links absolutos às Suites autorizadas.
+`/studio` e os caminhos não autorizados `/studio/*` respondem 404 sem alias.
+Os prefixos oficiais de WE SATIVA (`wiki`) e Green Stash (`shop`) são exceções
+vinculantes. F4 não inclui Hub: a entrada da Conta apresenta links absolutos às
+Suites autorizadas.
 Conta e Perfil são separados; Perfil público usa `main:/u/{apelido}`. Green
 Stash continua integrada ao Studio, sem shell próprio. A [matriz de paridade
 visual](studio-visual/visual-parity-matrix.md) registra o estado dos owners,
@@ -942,17 +944,18 @@ passou 142/142 checks; a tentativa ULI posterior em `3c1691fc5` não confirmou a
 sessão e estas três repetições foram anônimas. Ainda falta repetir autenticação
 no candidato atual e homologar teclado/zoom/modos/AA; THEME-MF3 não aprovado.
 
-### Reparo dos gates de integração e rotas (registro histórico; paths superados pelo ADR-038)
+### Reparo dos gates de integração e rotas (registro histórico; paths retificados em 2026-10-30)
 
 No HEAD local `81b275163`, os gates Drupal 11+, mapa módulo/tema, fronteira
 tema/módulo, slugs, aliases, Foundation, shell contract, SDC e Design
 Foundations passaram. O contrato visual de Eventos agora mapeia tokens
 `data-portal-ui` no tema e mantém `use-ajax`; nenhum SDC paralelo foi criado.
 Os nomes oficiais são **ACULTA STUDIO GREEN STASH** e **ACULTA STUDIO WE SATIVA**.
-Os paths então registrados (`/studio/green-stash` e `/studio/we-sativa`) foram
-aposentados pelo ADR-038: os paths canônicos são `shop:/greenstash` e
-`wiki:/wesativa` no Domain `wiki420`, respectivamente. IDs e owners Commerce/Wiki
-permanecem os mesmos. Unit focal 36/389; Kernel Wiki 1/69. Não houve Firefox
+Os paths então registrados em `/greenstash` e `/wesativa` foram aposentados
+pela retificação vinculante de 2026-10-30: os caminhos canônicos são
+`shop:/studio/green-stash` e `wiki:/studio/we-sativa`, no Domain `wiki420` para
+Wiki. IDs e owners Commerce/Wiki permanecem os mesmos. Unit focal 36/389;
+Kernel Wiki 1/69. Não houve Firefox
 neste HEAD nem homologação visual das rotas no Runtime; THEME-MF3 e OCS-F11
 seguem pendentes. Evidência detalhada em `mobile-first-audit.md`.
 
