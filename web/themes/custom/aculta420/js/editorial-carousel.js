@@ -42,11 +42,16 @@
         // Keep it paused after keyboard interaction until the visitor presses Play.
         // This also avoids resuming a deliberately paused or reduced-motion carousel.
       });
-      // VVJB 2.0 labels this dots container but omits a role that permits aria-label.
-      // It groups the slide navigation controls, so expose it as a named group.
+      // VVJB 2.0 labels the dots and arrow-control containers but omits roles that
+      // permit aria-label. Both containers group the slide navigation controls.
       once('aculta-editorial-dots-group', '.view-home-editorial-highlights .vvjb-carousel-dots', context).forEach((dots) => {
         if (!dots.hasAttribute('role')) {
           dots.setAttribute('role', 'group');
+        }
+      });
+      once('aculta-editorial-controls-group', '.view-home-editorial-highlights .vvjb-carousel-options', context).forEach((controls) => {
+        if (!controls.hasAttribute('role')) {
+          controls.setAttribute('role', 'group');
         }
       });
       // The VVJB template hard-codes the region name in English. Translate it here

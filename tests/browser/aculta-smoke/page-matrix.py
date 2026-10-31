@@ -124,7 +124,7 @@ focusableCount:document.querySelectorAll('a[href],button,input,select,textarea,s
                     shot = driver.req("GET", f"/session/{driver.session}/screenshot")
                     (OUT / f"page-{url_index:02d}-{mode}-{width}.png").write_bytes(base64.b64decode(shot))
                 if AXE_ENABLED and width == WIDTHS[0]:
-                    audit = driver.js("return axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa','wcag22aa','best-practice']}}).then(r=>({violations:r.violations.map(v=>({id:v.id,impact:v.impact,help:v.help,nodes:v.nodes.map(n=>({target:n.target,html:n.html,summary:n.failureSummary}))})),incomplete:r.incomplete.map(v=>({id:v.id,impact:v.impact,help:v.help,nodeCount:v.nodes.length}))}))")
+                    audit = driver.js("return axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa','wcag22aa','best-practice']}}).then(r=>({violations:r.violations.map(v=>({id:v.id,impact:v.impact,help:v.help,nodes:v.nodes.map(n=>({target:n.target,html:n.html,summary:n.failureSummary}))})),incomplete:r.incomplete.map(v=>({id:v.id,impact:v.impact,help:v.help,nodes:v.nodes.map(n=>({target:n.target,html:n.html,summary:n.failureSummary}))}))}))")
                     audit.update({"type": "axe", "urlIndex": url_index, "url": public_url(url), "mode": mode, "width": width})
                     RESULTS.append(audit)
                     print(f"axe/page{url_index}/{mode}/{width}px violations={len(audit['violations'])} "
