@@ -3359,3 +3359,10 @@ estilos, 12 arquivos JS e 102 Twig/HTML. Cinco registros CSS foram atualizados:
 `profile-bio`, `profile-identity`, `profile-social`, `portal-account` e `studio`.
 A inspeção lexical organiza a auditoria, mas não substitui a revisão de cascata
 nem os testes visuais por componente/rota.
+### THEME-MF0/MF2 — perfil das media queries (2026-10-31)
+
+Leitura do inventário canônico identificou **99 media queries em 47 arquivos de
+estilo**, todas com `min-width`; nenhuma consulta `max-width` foi encontrada.
+Esse é um indicador estático de aprimoramento progressivo, não comprova o
+comportamento de cada componente, container query, formulário ou estado; MF2/MF3
+continuam dependendo de cobertura visual real.
