@@ -2570,3 +2570,20 @@ overflow. Evidências em
 `/home/piradopirata/aculta-suite-out/green-stash-nav-implemented-only-20261031/`.
 A fixture valida CSS e marcação sintética; o Runtime autenticado continua sem
 homologação.
+
+### THEME-MF0 — reconciliação do inventário lexical (2026-10-31)
+
+Ao retomar a auditoria, a execução de
+`scripts/audit-aculta420-responsive-inventory.py` encontrou 208 fontes no tema
+(94 CSS/SCSS/Sass, 12 JavaScript e 102 Twig/HTML), mas o TSV versionado ainda
+listava 206. O arquivo `theme-mobile-file-inventory.tsv` foi regenerado. A
+contagem estrutural atual é 99 blocos `@media`, 1 `@container`, 761 declarações
+dimensionais e 57 declarações de overflow. `git diff --check` passou e a saída
+gerada agora coincide com o artefato versionado.
+
+Esta reconciliação atualiza o índice lexical; não analisa cascata, bibliotecas,
+consumidores por purpose ou geometria renderizada, portanto THEME-MF0 continua
+parcial e THEME-MF3 não está aprovado. A repetição do gate Firefox foi adiada
+nesta sessão: `DISPLAY` não está definido, e o checkout servido continua em
+HEAD `2493d7535`, anterior ao hook CAPTCHA da branch. Nenhuma alteração foi
+feita no Runtime.
