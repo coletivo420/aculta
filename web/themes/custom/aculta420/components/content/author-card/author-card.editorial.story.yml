@@ -1,5 +1,5 @@
 name: Autoria editorial
-description: Autoria pública de publicação da Revista.
+description: Autoria pública de publicação da Revista; links sociais têm alvos de toque de 44×44px.
 component: aculta420:author-card
 props:
   variant: author_editorial

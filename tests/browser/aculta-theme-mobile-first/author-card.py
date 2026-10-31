@@ -73,6 +73,19 @@ def set_width(width):
 try:
     driver.get(f"{BASE}{PATH}?aculta_check={int(time.time())}")
     time.sleep(1.2)
+    if os.environ.get("AUTHOR_CARD_CSS_OVERRIDE") == "1":
+        stylesheet = PROJECT / "web/themes/custom/aculta420/components/content/author-card/author-card.css"
+        driver.js("""const style=document.createElement('style');
+          style.dataset.authorCardCandidate='true';style.textContent=arguments[0];
+          document.head.append(style);
+          const fixture=document.createElement('section');
+          fixture.className='aculta-author-card';
+          fixture.style.cssText='position:fixed;left:0;bottom:0;opacity:0;pointer-events:none';
+          fixture.innerHTML='<div class="aculta-author-card__identity"><ul class="aculta-author-card__social-links"><li><a href="#" aria-label="Instagram"><i aria-hidden="true">i</i></a></li><li><a href="#" aria-label="Reddit"><i aria-hidden="true">r</i></a></li></ul></div>';
+          document.body.append(fixture);return true;""", [stylesheet.read_text()])
+        check("CSS candidata e fixture com links sociais aplicadas",
+              driver.js("return !!document.querySelector('style[data-author-card-candidate] .unused') || !!document.querySelector('.aculta-author-card__social-links a[aria-label=Instagram]')"),
+              "fixture isolada, sem navegação ou envio")
     initial = driver.js("""return {
       title: document.title,
       count: document.querySelectorAll(
@@ -116,6 +129,10 @@ try:
             firstAvatarWidth: cards[0]?.querySelector('.aculta-author-card__avatar')
               ? Math.round(cards[0].querySelector('.aculta-author-card__avatar').getBoundingClientRect().width)
               : null,
+            socialTargets: [...document.querySelectorAll('.aculta-author-card__social-links a')]
+              .map((link) => { const rect=link.getBoundingClientRect(); return {
+                width: Math.round(rect.width), height: Math.round(rect.height),
+                label: link.getAttribute('aria-label')}; }),
           };
         })();""")
         expected_alignment = "flex-start" if width < 576 else "center"
@@ -125,6 +142,13 @@ try:
         check(f"{width}px: cartões usam alinhamento responsivo",
               metrics["cards"] > 0 and metrics["alignments"] == [expected_alignment],
               f"cards={metrics['cards']}, alinhamentos={metrics['alignments']}, avatar={metrics['firstAvatarWidth']}px")
+        if os.environ.get("AUTHOR_CARD_CSS_OVERRIDE") == "1":
+            fixture_targets = [target for target in metrics["socialTargets"]
+                               if target["label"] in ("Instagram", "Reddit")]
+            check(f"{width}px: links sociais candidatos têm alvo 44×44px",
+                  len(fixture_targets) == 2 and all(target["width"] >= 44 and target["height"] >= 44
+                                                    for target in fixture_targets),
+                  f"alvos={fixture_targets}")
         image = driver.req("GET", f"/session/{driver.session}/screenshot")
         (OUT / f"author-card-{width}.png").write_bytes(base64.b64decode(image))
 

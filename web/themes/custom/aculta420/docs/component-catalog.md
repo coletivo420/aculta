@@ -435,6 +435,15 @@ pode quebrar em colunas estreitas. Firefox ESR passou 32/32 checks, incluindo
 575/576px foi confirmada. Capturas em
 `/home/piradopirata/suite-out/aculta-theme-author-card-892f803d5/`.
 
+Links sociais do cartão agora usam alvos de 44×44px em todos os tamanhos. A
+story Editorial cobre essa variação com dados públicos autorizados. Firefox ESR
+passou 43/43 checks em 320/360/390/575/576/600/768/1024/1280/1440px: a folha
+candidata e dois links sintéticos do SDC mediram 44×44px; o consumer real do
+Fórum manteve cinco cartões e não apresentou overflow. Os links sociais da
+listagem real não foram tratados como disponíveis nem usados para alegar teste
+de dados de perfil. Evidência em
+`$SUITE_OUT/author-card-social-targets-20261030/`.
+
 ## THEME-MF2 — navegação do shell `portal-account`
 
 A sanfona já usada em mobile virou base; o breakpoint de 48rem restaura o menu

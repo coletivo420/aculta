@@ -2118,3 +2118,15 @@ Studio. Stylelint também passou. Evidências em
 `/home/piradopirata/aculta-suite-out/studio-form-touch-target-20261030/`.
 É uma fixture de CSS/markup, não uma homologação de Form API real, AJAX/no-JS,
 ACL, contraste WCAG completo ou de todos os consumers Studio.
+
+### THEME-MF2 — alvos de links sociais do SDC author-card (2026-10-30)
+
+Os links sociais do SDC `author-card` agora têm área interativa de 44×44 CSS px,
+mantendo a lista flexível e sem reordenar o DOM. A suíte Firefox ESR visível
+passou 43/43 verificações em 320/360/390/575/576/600/768/1024/1280/1440px. Ela
+injetou a folha candidata e dois links sintéticos no consumer público de tópicos
+do Fórum; a página real manteve seus cinco cartões e zero overflow, enquanto os
+links sintéticos mediram 44×44px em todas as larguras. Isto não comprova que a
+rota real tenha links sociais publicados, nem valida WCAG completo, teclado ou
+perfil/ACL. Capturas e resumo em
+`/home/piradopirata/aculta-suite-out/author-card-social-targets-20261030/`.

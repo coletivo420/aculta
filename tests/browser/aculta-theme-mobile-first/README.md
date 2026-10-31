@@ -117,7 +117,10 @@ do Fórum. O script usa GETs e mudança de viewport; não autentica, submete
 formulários nem altera dados. Confere o breakpoint de alinhamento em 576 CSS px,
 consumer presente e overflow horizontal em larguras de 320 a 1440 px.
 Na rodada de 2026-10-29, o teste também motivou a quebra natural da data de
-última atividade em colunas estreitas entre 576 e 600 px.
+última atividade em colunas estreitas entre 576 e 600 px. Com
+`AUTHOR_CARD_CSS_OVERRIDE=1`, injeta apenas a folha local do SDC e cria links
+sociais sintéticos invisíveis ao usuário para conferir seus alvos de 44×44px em
+cada viewport; a rota real continua sendo medida para overflow e layout.
 
 ## Ambiente
 
@@ -138,6 +141,8 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/author-card.py
 `FORUM_BASE_URL` pode apontar a outro host de teste com a mesma rota e consumer.
 `AUTHOR_CARD_WIDTHS` aceita uma lista separada por vírgulas para uma rodada
 focal, por exemplo `576,600`; sem ela, o script executa todos os viewports.
+`AUTHOR_CARD_CSS_OVERRIDE=1` ativa a folha candidata e a fixture dos links
+sociais descrita acima; por padrão, a página é medida sem override.
 `SUITE_OUT` recebe screenshots e `summary.json`; o WebDriver remove o perfil
 temporário ao fechar.
 
