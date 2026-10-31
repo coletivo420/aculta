@@ -86,7 +86,11 @@ por classes na renderização.
 field values. With `OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1`, it injects the local
 theme tokens and `studio.css` in Firefox and checks form presence, viewport fit,
 Montserrat, field/action targets of at least 44px, and that the primary action
-uses the scoped Fidelity token. It does not submit either Drupal Form API form.
+uses the scoped Fidelity token. With `OCS_STATUS_FLOW_CSS_OVERRIDE=1`, it also
+injects `content.css` and checks a live ULI notice remains in document flow
+before the next heading. The anonymous fixture can also measure a synthetic
+status title and message; its JSON reports geometry and line counts, not text
+values. It does not submit either Drupal Form API form.
 
 Use the development checkout as `ACULTA_ROOT` when it is the configured Drush
 connection for `aculta_runtime`; keep the candidate theme root separate:
@@ -100,7 +104,8 @@ export OCS_SKIP_OPENCULTURAS=1
 export STUDIO_LOGIN_URI=https://conta.aculta.toca.net.br
 export STUDIO_USER=aculta_visual_admin
 export STUDIO_ROUTES=https://eventos.aculta.toca.net.br/culturas/eventos/novo,https://eventos.aculta.toca.net.br/culturas/locais/novo
-export OCS_WIDTHS=320,390,768,1440
+export OCS_WIDTHS=320,360,390,599,600,768,1024,1280,1440
+export OCS_STATUS_FLOW_CSS_OVERRIDE=1
 export SUITE_OUT=/home/piradopirata/aculta-suite-out/culturas-organizer-forms
 python3 tests/browser/aculta-studio/ocs-baseline.py
 ```
@@ -111,6 +116,19 @@ other field value is saved. Candidate CSS capture is not proof that the Runtime
 serves the branch or that the entire OCS-F11/THEME-MF3 gate passes. The test
 does not cover dark mode, no-JS/AJAX behavior, full keyboard/zoom/WCAG, ACL
 between accounts, or address CEP behavior.
+
+Reteste completo em 2026-10-31: 18 capturas (dois formulários × nove larguras)
+passaram 108/108 checks. O aviso ULI real foi observado em uma captura de 320px:
+`content.css` candidata o manteve estático antes do H1, sem cobrir o formulário
+(1/1 PASS). Nas outras 17 capturas a mensagem já tinha sido autocerrada e os
+checks de fluxo ficaram `SKIP_NO_STATUS_NOTICE`. Capturas e JSON em
+`/home/piradopirata/aculta-suite-out/culturas-organizer-forms-fidelity-9widths-with-status-20261031/`.
+The separate anonymous 320px fixture includes an H2 status title. With the
+candidate `content.css`, Firefox measured it at 18px/22.5px on one line; the
+notice-flow assertion passed and the screenshot was visually inspected. This
+fixture checks the compact-title rule only; it does not replace the real ULI
+capture. Evidence:
+`/home/piradopirata/aculta-suite-out/status-message-compact-title-fixture-20261031/`.
 
 ## Meus Salvos — apresentação Fidelity
 

@@ -18,6 +18,14 @@
   margin-block-end: 1rem;
 }
 
+.aculta-highlighted > .alert-wrapper > .alert :is(h1, h2, h3, h4, h5, h6, .alert-heading) {
+  margin-block: 0 0.5rem;
+  font-size: clamp(1.125rem, 1.5vw, 1.25rem);
+  line-height: 1.25;
+  overflow-wrap: normal;
+  text-wrap: balance;
+}
+
 .aculta-content .view-empty { max-width: 70ch; padding-block: 1rem; }
 
 /* Public upcoming-events block and the organizer workspace begin in one

@@ -281,10 +281,13 @@ passa a cor escolhida ao SDC com fallback `default`.
 Os formulários owner existentes `aculta-event-add-form` e
 `aculta-event-location-add-form` reutilizam os tokens e estilos de formulário
 do tema, sob `body.path-culturas`; não há SDC ou Form API paralelo. Em Firefox
-ESR, a folha candidata foi medida nas rotas reais em 320/390/768/1440px, sem
-overflow e com alvos de campo/ação de 44px ou maiores. Essa captura não prova a
-integração no Runtime nem cobre submit, ACL, CEP, modo escuro ou OCS-F11; veja
-os limites e o comando reproduzível no README da suíte.
+ESR, as folhas candidatas foram medidas nas rotas reais em 320/360/390/599/600/
+768/1024/1280/1440px: 108/108 checks, sem overflow e com alvos de campo/ação de
+44px ou maiores. Um aviso ULI em 320px também permaneceu em fluxo (1/1 check).
+O título do aviso foi medido separadamente num fixture anônimo: 18px/22,5px em
+uma linha a 320px; o screenshot foi revisado.
+Isso não prova integração no Runtime nem cobre submit, ACL, CEP, modo escuro ou
+OCS-F11; veja os limites e o comando reproduzível no README da suíte.
 
 ## Gates do tema — 2026-10-28
 

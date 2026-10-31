@@ -3771,22 +3771,30 @@ WCAG completa. Evidência em
 ### OCS-F10 / THEME-MF2 — formulários reais de Eventos Culturas (2026-10-31)
 
 Firefox ESR autenticado abriu por GET `/culturas/eventos/novo` e
-`/culturas/locais/novo` no purpose Eventos. Com `studio.css` e tokens da branch
-injetados somente no navegador, os dois formulários passaram 48/48 checks em
-320/390/768/1440px: formulário presente e contido na viewport, Montserrat,
-campos e ações com pelo menos 44px, botão primário usando o token Fidelity e
-sem overflow documental. Institution Bar e Domain Header permaneceram visíveis.
-As capturas 320/1440 foram revistas; nenhum formulário foi enviado e nenhum
-conteúdo foi alterado. Evidências em
-`/home/piradopirata/aculta-suite-out/culturas-organizer-forms-fidelity-assertions-20261031/`.
+`/culturas/locais/novo` no purpose Eventos. Com `studio.css`, tokens Fidelity e
+`content.css` candidatos injetados somente no navegador, os dois formulários
+passaram 108/108 checks em 320/360/390/599/600/768/1024/1280/1440px: formulário
+presente e contido na viewport, Montserrat, campos e ações com pelo menos 44px,
+botão primário usando o token Fidelity e sem overflow documental. Institution
+Bar e Domain Header permaneceram visíveis. O aviso ULI real apareceu em uma
+captura a 320px; `content.css` o manteve estático antes do H1 e sem cobrir o
+formulário (1/1 PASS). Nas outras 17 capturas, a mensagem se autocerrou e os
+checks de fluxo foram `SKIP_NO_STATUS_NOTICE`. Capturas 320/1440 revistas; nenhum
+formulário enviado ou conteúdo alterado. Evidências em
+`/home/piradopirata/aculta-suite-out/culturas-organizer-forms-fidelity-9widths-with-status-20261031/`.
 
-O primeiro ensaio apontou falso negativo porque a variável CSS foi lida fora
-do escopo `.aculta-main`; o harness foi corrigido para resolver o token dentro
-do formulário e comparar um clone de medição sem hover/transição. A execução
-final registrou `CAPTURED`, zero falhas e 48 checks focais. São páginas reais,
-mas a folha continua candidata injetada: sua integração no Runtime, estados
-escuro, no-JS/AJAX, CEP, teclado/zoom, ACL entre contas e WCAG completa não foram
-homologados. OCS-F10, OCS-F11 e THEME-MF3 seguem parciais/pendentes.
+Um fixture anônimo posterior incluiu H2 de status e mensagem a 320px. A folha
+`content.css` candidata resultou em título de 18px/22,5px, uma linha; aviso em
+fluxo passou e o screenshot foi inspecionado. Isso valida a regra de título
+compacto no fixture, não reexecuta nem substitui a medição ULI real.
+
+O primeiro ensaio de botão apontou falso negativo porque a variável CSS foi
+lida fora do escopo `.aculta-main`; o harness foi corrigido para resolver o
+token dentro do formulário e comparar um clone de medição sem hover/transição.
+O JSON final registrou 18 capturas, `CAPTURED` e zero falhas. As folhas continuam
+candidatas injetadas: integração no Runtime, modo escuro, no-JS/AJAX, CEP,
+teclado/zoom, ACL entre contas e WCAG completa não foram homologados. OCS-F10,
+OCS-F11 e THEME-MF3 seguem parciais/pendentes.
 
 ### THEME-MF3 — diagnóstico do foco transferido ao Turnstile (2026-10-31)
 

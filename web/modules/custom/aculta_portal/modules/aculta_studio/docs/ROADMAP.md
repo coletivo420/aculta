@@ -976,15 +976,23 @@ servida, contratos LMS e ACL.
 ### OCS-F10 — formulários owner de Eventos Culturas (2026-10-31)
 
 Os GETs reais `/culturas/eventos/novo` e `/culturas/locais/novo` foram capturados
-no Firefox ESR autenticado, sem envio dos formulários. A CSS Fidelity candidata
-passou 48/48 checks em 320/390/768/1440px, cobrindo existência dos forms
-proprietários, encaixe na viewport, Montserrat, alvos de 44px e uso do token da
-ação primária; Institution Bar e Domain Header permaneceram presentes. O
-harness mede geometria/estilos sem ler valores de campo e documenta a execução
-em `tests/browser/aculta-studio/README.md`. A folha candidata foi injetada no
-navegador: modo escuro, CEP, no-JS/AJAX, submit, ACL, zoom, WCAG e integração no
-Runtime continuam pendentes. Não se criou SDC ou formulário paralelo; F10,
-F11 e THEME-MF3 permanecem parciais/pendentes.
+no Firefox ESR autenticado, sem envio dos formulários. As folhas Fidelity e
+`content.css` candidatas passaram 108/108 checks dos forms em nove larguras
+(320/360/390/599/600/768/1024/1280/1440px), cobrindo forms proprietários,
+encaixe, Montserrat, alvos de 44px e token da ação primária; Institution Bar e
+Domain Header permaneceram presentes. Um aviso ULI real passou a medição de
+fluxo em 320px; nas outras 17 capturas ele já tinha se autocerrado e ficou SKIP.
+O harness mede geometria/estilos sem ler valores de campo e está documentado em
+`tests/browser/aculta-studio/README.md`. Folhas injetadas no navegador: modo
+escuro, CEP, no-JS/AJAX, submit, ACL, zoom, WCAG e integração no Runtime seguem
+pendentes. Não se criou SDC ou formulário paralelo; F10, F11 e THEME-MF3 seguem
+parciais/pendentes.
+
+Após essa captura, o aviso sintético anônimo foi ampliado para incluir H2 e
+mensagem e testado em 320px com `content.css` candidata: fluxo PASS; título em
+18px/22,5px, uma linha, também inspecionado visualmente. Esse ensaio geométrico
+da tipografia não substitui o único aviso ULI real observado e não altera o
+status dos gates.
 # 2026-10-31 — apresentação Studio para criação de cursos
 
 A ação “Novo curso” da aba Cursos Marley apontava para `entity.group.add_form`

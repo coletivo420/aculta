@@ -215,7 +215,7 @@ socket.onmessage = (event) => {
           if(!region)return false;
           if(!region.querySelector('.alert-wrapper')){
             region.insertAdjacentHTML('afterbegin',
-              '<div class=\"alert-wrapper\"><div class=\"alert alert-success\" role=\"status\" aria-label=\"Mensagem de status\">Aviso de teste visual, sem dados pessoais.</div></div>');
+              '<div class=\"alert-wrapper\"><div class=\"alert alert-success\" role=\"status\" aria-label=\"Mensagem de status\"><h2 class=\"alert-heading\">Mensagem de status</h2><p>Aviso de teste visual, sem dados pessoais.</p></div></div>');
           }
           return true;
         """
@@ -278,6 +278,29 @@ socket.onmessage = (event) => {
         stylesheets: [...document.styleSheets].map(sheet => sheet.href)
           .filter(Boolean).map(href => href.split('?')[0]).slice(0, 80)
       };
+    })());"""))
+    record["statusMessageLayout"] = json.loads(driver.js("""return JSON.stringify((() => {
+      const alert=document.querySelector('.aculta-highlighted > .alert-wrapper > .alert');
+      if(!alert)return null;
+      const nodes=[alert,...alert.querySelectorAll('h1,h2,h3,h4,h5,h6,.alert-heading,p,button,[role="img"],svg')];
+      return nodes.slice(0,20).map(element=>{
+        const rect=element.getBoundingClientRect(),style=getComputedStyle(element);
+        const lineCounts={};
+        const walker=document.createTreeWalker(element,NodeFilter.SHOW_TEXT);
+        let node;
+        while((node=walker.nextNode()))for(let index=0;index<node.length;index++){
+          const range=document.createRange();range.setStart(node,index);range.setEnd(node,index+1);
+          const charRect=range.getBoundingClientRect();if(charRect.height<=0)continue;
+          const line=Math.round(charRect.top);lineCounts[line]=(lineCounts[line]||0)+1;
+        }
+        return {tag:element.tagName.toLowerCase(),classes:[...element.classList],
+          width:Math.round(rect.width*100)/100,height:Math.round(rect.height*100)/100,
+          display:style.display,position:style.position,flex:style.flex,
+          minWidth:style.minWidth,maxWidth:style.maxWidth,fontSize:style.fontSize,
+          lineHeight:style.lineHeight,overflowWrap:style.overflowWrap,wordBreak:style.wordBreak,
+          textLength:(element.textContent||'').trim().length,
+          lineCharacterCounts:Object.values(lineCounts)};
+      });
     })());"""))
     if STATUS_FLOW_FIXTURE:
         record["statusMessageFlowFixture"] = "INSERTED" if status_flow_fixture_inserted else "SKIP_NO_HIGHLIGHTED_REGION"
