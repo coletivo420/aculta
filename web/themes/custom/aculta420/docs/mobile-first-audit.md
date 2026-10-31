@@ -2410,3 +2410,21 @@ teste só fez GET e não submeteu comentários ou formulários. Evidência em
 Isso verifica o reflow desta publicação, sem cobrir outras páginas editoriais,
 interação com comentários, comparação pareada de fidelidade ou WCAG 2.2 AA;
 THEME-MF3 e OCS-F11 continuam pendentes.
+
+### THEME-MF3 — repetição da matriz pública no Runtime (2026-10-31)
+
+No Firefox ESR visível, a matriz anônima cobriu as dez raízes nos nove viewports
+320/360/390/599/600/768/1024/1280/1440px: **90/90 capturas**, sem rotas
+DEFERRED e com Institution Bar e Domain Header únicos em todas. O único overflow
+foi `/conta` a 320px: documento e corpo chegaram a 328px; a captura mostra o
+iframe Turnstile excedendo a coluna. As outras 89 combinações ficaram dentro da
+largura. Evidência e PNGs em
+`/home/piradopirata/aculta-suite-out/purpose-matrix-resume-20261031/`.
+
+A candidata de mitigação já está no código desta branch: o Portal marca o
+desafio com `data-portal-ui="challenge-frame"` e `auth.css` ajusta o formulário
+em container estreito. O Unit do hook passou 2 testes/4 assertions e o lint CSS
+passou. Esses testes não instalam a candidata: no Runtime ainda falta o hook e
+o CSS reconstruído; a falha 328px continua real até validar a integração
+servida. Esta matriz cobre apenas raízes públicas, portanto não aprova
+THEME-MF3 nem OCS-F11.
