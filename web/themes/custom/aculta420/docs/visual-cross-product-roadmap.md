@@ -2013,3 +2013,11 @@ checks, Design Foundations em 2.429 checks e auditoria de assets sem findings.
 O inventário atual contém 264 fontes responsivas. Drupal discovery/UI Patterns,
 Runtime, Firefox, acessibilidade integral e comparação com OpenCulturas continuam
 pendentes; estes resultados não aprovam THEME-MF3 nem OCS-F11.
+
+### 2026-10-31 — Foundation candidata contra configuração Runtime
+
+O script antigo do checkout servido falhou no allowlist desatualizado do template
+específico da View da Revista. O script publicado `aa6479f6b`, executado via
+Drush contra `aculta_runtime` em `http://default`, passou 352 checks. Foi
+somente leitura e não alterou as mudanças locais de Events. Confirma a fundação
+candidata/SDC, não a folha visual servida nem THEME-MF3 ou OCS-F11.

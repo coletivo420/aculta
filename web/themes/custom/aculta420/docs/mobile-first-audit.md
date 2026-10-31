@@ -4218,3 +4218,20 @@ Firefox, testes funcionais, WCAG integral ou comparação pareada com o upstream
 Portanto, é validação estática do HEAD, não integração servida nem aprovação de
 THEME-MF3/OCS-F11. O Runtime tem checkout separado e alterações não commitadas
 de outra frente; não foi trocado.
+
+### THEME-MF2 / OCS-F3 — Foundation candidato contra o Runtime (2026-10-31)
+
+No Runtime do servidor `toca` (`http://default`, banco `aculta_runtime`, checkout
+`00e6149b0`), a execução do script antigo do checkout servido falhou apenas no
+allowlist de templates: ele não conhece
+`views/views-view--revista-sessoes--page-revista.html.twig`. Em seguida, o
+script de Foundation do HEAD publicado `aa6479f6b` foi executado via Drush do
+Runtime e passou **352 checks** contra a configuração ativa. A diferença é de
+versão do script/template e não foi corrigida editando o Runtime. Ambas as
+leituras foram sem escrita; alterações locais paralelas de Events foram
+preservadas.
+
+O resultado confirma a fundação candidata e descoberta SDC no contexto Drupal
+ativo, mas não substitui Firefox com o HEAD servido, os testes dos consumers,
+WCAG integral, comparação pareada nem homologação. THEME-MF3 e OCS-F11 seguem
+pendentes.
