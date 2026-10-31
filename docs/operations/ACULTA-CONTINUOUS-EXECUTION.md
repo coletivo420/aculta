@@ -2475,3 +2475,9 @@ ou preferência persistente alterados.
   `/home/piradopirata/aculta-suite-out/studio-keyboard-focus-recheck-8603e2d5b-20261031/`.
   Nenhum formulário foi enviado; ACL A/B, modais e leitores de tela continuam
   fora desta prova.
+- O baseline autenticado de Marley encontrou um falso vermelho na regra de
+  tabela responsiva: a listagem real tinha seis colunas, mas cabia integralmente
+  em 599/600px. `ocs-baseline.py` agora aceita scroll local quando necessário ou
+  tabela contida quando não há excedente; os dois viewports passaram no reteste
+  sem overflow. Evidência em
+  `/home/piradopirata/aculta-suite-out/studio-marley-baseline-retest-599-600-20261031/`.

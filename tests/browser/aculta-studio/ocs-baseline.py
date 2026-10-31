@@ -455,7 +455,8 @@ socket.onmessage = (event) => {
         listing = record["studioListing"]
         if listing.get("present") and width <= 600:
             scroll_checks = {
-                "tableHasLocalHorizontalScroll": listing["maxScrollLeft"] > 0,
+                "tableHasLocalScrollOrFits": listing["maxScrollLeft"] > 0
+                    or listing["scrollContainerScrollWidth"] <= listing["scrollContainerClientWidth"],
                 "documentDoesNotScrollHorizontally": record["documentScrollWidth"] <= width,
             }
             record["studioListingScrollChecks"] = scroll_checks

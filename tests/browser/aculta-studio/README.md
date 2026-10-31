@@ -473,6 +473,11 @@ e outline calculado, e 27 retornos esperados ao `body`. Evidência em
 Nenhum formulário foi enviado; ACL entre contas, modais, leitor de tela e
 WCAG completa continuam fora desta prova.
 
+O baseline trata tabelas responsivas corretamente: em larguras estreitas exige
+scroll local quando a tabela excede o contêiner, mas aceita a tabela contida
+quando os dados reais cabem sem overflow. Isso evita transformar uma listagem
+curta em falso vermelho.
+
 ### Prova de color scheme e reduced motion
 
 `theme-modes.py` captura as rotas `STUDIO_ROUTES` (padrão Marley, Conta e
