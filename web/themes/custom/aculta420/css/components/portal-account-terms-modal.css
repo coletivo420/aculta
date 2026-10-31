@@ -3,8 +3,7 @@
   display: none;
 }
 
-/* Mensagens de status (alert-wrapper, z-index 9999) não podem cobrir o botão do modal de senha. */
-/* Acima das mensagens de status (9999). O overlay fica uma camada abaixo: ver js/account-password-modal.js. */
+/* Keep the password dialog above transient messages; its overlay remains a separate layer. */
 .ui-dialog:has(#aculta-account-password) {
   z-index: 10002;
 }

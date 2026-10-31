@@ -3422,3 +3422,33 @@ verificações internas verdadeiras e `fidelity_failures=[]`. Relatórios em
 e `/home/piradopirata/aculta-suite-out/studio-ganjalab-full-dark-followup-20261031/`.
 A limitação de markup Runtime anterior permanece; o novo consumer da branch ainda
 não foi servido, portanto não homologa F6/F11/MF3.
+
+### THEME-MF2 — mensagens de status no fluxo do conteúdo (2026-10-31)
+
+Uma captura autenticada de `/marley` a 320px mostrou o aviso ULI cobrindo o
+conteúdo inferior. Antes da sessão sintética foram conferidos `toca`, o docroot
+servido `/home/piradopirata/projetos/aculta`, HEAD `2493d7535`, URI `http://default`
+e banco `aculta_runtime`; snapshot íntegro:
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/runtime-before-uli-toast-diagnostic-20261031.sql`,
+65.070.871 bytes, modo `600`, SHA-256
+`0962c30f2d1076a3c6943e12a4cf031c1e029cda30ad41df298cb29e36fcc2ae`.
+O Firefox ESR visível mediu `.alert-wrapper` como `position: fixed`, `bottom: 0`,
+`z-index: 9999`, largura 320px e altura 245,6px em viewport 320×844. A folha
+agregada servida continha `.alert-wrapper{position:fixed;bottom:0;left:0;width:100%;max-height:75vh;z-index:9999}`;
+por ser agregada, a captura não atribuiu essa declaração a um arquivo-fonte
+individual.
+
+`css/components/content.css` agora restaura o fluxo normal somente para
+`.aculta-highlighted > .alert-wrapper`, região global acima do conteúdo em todos
+os purposes. O aviso continua no documento, preserva sua classe/role/markup e
+não recebe comportamento de descarte novo. O teste reutilizável
+`ocs-baseline.py` registra apenas classe, geometria e estilos, nunca o texto do
+aviso. Firefox ESR visível, purpose Revista público, fixture anônima sem dados
+pessoais e CSS candidata injetada: **4/4 PASS** em 320/390/768/1280px; wrapper
+estático, mensagem antes do heading seguinte e sem overflow. Screenshot de 320px
+e JSON: `/home/piradopirata/aculta-suite-out/status-message-flow-candidate-verified-20261031/`.
+
+Stylelint do tema e `git diff --check` passaram. O CSS ainda não foi reconstruído
+nem servido pelo Runtime; teclado/foco no botão fechar, temas escuro/claro,
+reduced motion, leitor de tela e regressão completa dos purposes seguem
+pendentes. Esse ajuste não aprova THEME-MF3 nem OCS-F11.

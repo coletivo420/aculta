@@ -2,6 +2,22 @@
 .aculta-page-heading { margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
 .aculta-page-heading h1 { margin: 0; }
 .aculta-highlighted:has(.alert, .nav, .button, .help) { margin-bottom: 1.5rem; }
+/* Status notices in the highlighted region belong in document flow. A fixed
+   alert-wrapper can cover page content and keyboard focus on narrow screens. */
+.aculta-highlighted > .alert-wrapper {
+  position: static;
+  inset: auto;
+  width: auto;
+  max-height: none;
+  z-index: auto;
+}
+
+.aculta-highlighted > .alert-wrapper > .alert {
+  max-height: none;
+  overflow: visible;
+  margin-block-end: 1rem;
+}
+
 .aculta-content .view-empty { max-width: 70ch; padding-block: 1rem; }
 
 /* Public upcoming-events block and the organizer workspace begin in one

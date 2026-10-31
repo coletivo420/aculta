@@ -32,6 +32,8 @@ STUDIO_CSS_OVERRIDE = os.environ.get("OCS_STUDIO_FIDELITY_CSS_OVERRIDE") == "1"
 ANONYMOUS_CAPTURE = os.environ.get("OCS_STUDIO_ANONYMOUS") == "1"
 STUDIO_CSS_ROOT = Path(os.environ.get("OCS_STUDIO_FIDELITY_CSS_ROOT", Path(__file__).resolve().parents[3])).resolve()
 STUDIO_COLOR_MODE = os.environ.get("OCS_STUDIO_COLOR_MODE", "system")
+STATUS_FLOW_CSS_OVERRIDE = os.environ.get("OCS_STATUS_FLOW_CSS_OVERRIDE") == "1"
+STATUS_FLOW_FIXTURE = os.environ.get("OCS_STATUS_FLOW_FIXTURE") == "1"
 
 
 def fidelity_rule(css, selector):
@@ -203,6 +205,21 @@ socket.onmessage = (event) => {
         css_path = css_root / "web/themes/custom/aculta420/components/patterns/context-tabs/context-tabs.css"
         css = css_path.read_text()
         driver.js("const style=document.createElement('style');style.dataset.ocsContextTabsCandidate='true';style.textContent=arguments[0];document.head.append(style);return true", [css])
+    if STATUS_FLOW_CSS_OVERRIDE:
+        css_path = STUDIO_CSS_ROOT / "web/themes/custom/aculta420/css/components/content.css"
+        css = css_path.read_text()
+        driver.js("const style=document.createElement('style');style.dataset.ocsStatusFlowCandidate='true';style.textContent=arguments[0];document.head.append(style);return true", [css])
+    if STATUS_FLOW_FIXTURE:
+        fixture = """
+          const region=document.querySelector('.aculta-highlighted');
+          if(!region)throw new Error('A página não possui .aculta-highlighted para o fixture.');
+          if(!region.querySelector('.alert-wrapper')){
+            region.insertAdjacentHTML('afterbegin',
+              '<div class=\"alert-wrapper\"><div class=\"alert alert-success\" role=\"status\" aria-label=\"Mensagem de status\">Aviso de teste visual, sem dados pessoais.</div></div>');
+          }
+          return true;
+        """
+        driver.js(fixture)
     if STUDIO_CSS_OVERRIDE:
         driver.js("const style=document.createElement('style');style.dataset.ocsStudioFidelityCandidate='true';style.textContent=arguments[0];document.head.append(style);return true", [STUDIO_CANDIDATE_CSS])
         driver.js("document.fonts.load('400 16px Montserrat', 'Meus cursos');return true")
@@ -219,6 +236,68 @@ socket.onmessage = (event) => {
     if ANONYMOUS_CAPTURE and "path-u" in record.get("bodyClasses", []):
         record["body"] = "[conteudo do perfil publico omitido]"
         detail = json.dumps(record, ensure_ascii=False)
+    record["statusMessageDiagnostic"] = json.loads(driver.js("""return JSON.stringify((() => {
+      const selectors = [
+        '[role="status"]', '[role="alert"]', '[data-drupal-messages]',
+        '.messages', '.messages-list', '.alert', '.toast', '.ui-dialog',
+        '[aria-label*="status" i]'
+      ];
+      const elements = [...new Set(selectors.flatMap(selector =>
+        [...document.querySelectorAll(selector)]))].filter(element => {
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden'
+          && style.display !== 'none';
+      });
+      const box = element => {
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return {
+          tag: element.tagName.toLowerCase(), classes: [...element.classList],
+          role: element.getAttribute('role') || '',
+          position: style.position, zIndex: style.zIndex, display: style.display,
+          overflow: style.overflow, transform: style.transform,
+          width: Math.round(rect.width * 100) / 100,
+          height: Math.round(rect.height * 100) / 100,
+          top: Math.round(rect.top * 100) / 100,
+          right: Math.round(rect.right * 100) / 100,
+          bottom: Math.round(rect.bottom * 100) / 100,
+          viewportWidth: innerWidth, viewportHeight: innerHeight
+        };
+      };
+      return {
+        candidates: elements.slice(0, 40).map(element => ({
+          element: box(element),
+          ancestors: [...(function* () {
+            let parent = element.parentElement;
+            for (let depth = 0; parent && depth < 4; depth++, parent = parent.parentElement) yield parent;
+          })()].map(box)
+        })),
+        stylesheets: [...document.styleSheets].map(sheet => sheet.href)
+          .filter(Boolean).map(href => href.split('?')[0]).slice(0, 80)
+      };
+    })());"""))
+    if STATUS_FLOW_CSS_OVERRIDE:
+        diagnostic = record["statusMessageDiagnostic"]
+        diagnostic_boxes = [box for item in diagnostic["candidates"]
+                            for box in [item["element"], *item["ancestors"]]]
+        wrapper = next((box for box in diagnostic_boxes
+                        if "alert-wrapper" in box["classes"]), None)
+        content_after_notice = driver.js("const region=document.querySelector('main#main-content .aculta-highlighted');if(!region)return null;const heading=[...document.querySelectorAll('main#main-content h1,main#main-content h2,main#main-content h3')].find(element=>region.compareDocumentPosition(element)&Node.DOCUMENT_POSITION_FOLLOWING);if(!heading)return null;const r=heading.getBoundingClientRect();return {tag:heading.tagName,top:r.top,left:r.left,right:r.right}")
+        flow_checks = {
+            "wrapperPresent": wrapper is not None,
+            "wrapperInDocumentFlow": wrapper is not None and wrapper["position"] == "static",
+            "noticePrecedesFollowingHeading": wrapper is not None and content_after_notice is not None
+                and wrapper["bottom"] <= content_after_notice["top"] + 1,
+            "noHorizontalOverflow": record["documentScrollWidth"] <= record["documentWidth"]
+                and record["bodyScrollWidth"] <= record["documentWidth"],
+        }
+        record["statusMessageFlowChecks"] = flow_checks
+        record["statusMessageFlowStatus"] = "PASS" if all(flow_checks.values()) else "FAIL"
+        if record["statusMessageFlowStatus"] == "FAIL":
+            CAPTURE_FAILURES.append({"url": url, "width": width,
+                                     "statusMessageFlow": {"checks": flow_checks,
+                                     "wrapper": wrapper, "followingContent": content_after_notice}})
     if "path-perfil" in record.get("bodyClasses", []):
         record["profilePublicLink"] = driver.js("return document.querySelector('.aculta-profile-identity__public-link a')?.href || null")
         record["profileActionTargets"] = json.loads(driver.js("""return JSON.stringify(

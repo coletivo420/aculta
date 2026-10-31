@@ -692,3 +692,53 @@ Relatórios completos em `/home/piradopirata/aculta-suite-out/studio-ganjalab-fu
 e `/home/piradopirata/aculta-suite-out/studio-ganjalab-full-dark-followup-20261031/`.
 O Runtime continua usando markup anterior; a matriz não homologa o compositor novo
 nem F6/F11/MF3.
+
+## Diagnóstico geométrico de mensagens do Drupal
+
+`ocs-baseline.py` também registra `statusMessageDiagnostic` em cada captura:
+elementos visíveis com roles/seletores de mensagem, ancestrais próximos,
+classes, posição, z-index e retângulos. O diagnóstico omite texto e atributos
+de valor para não incluir conteúdo da conta no relatório. A lista de folhas
+CSS carregadas auxilia a identificar a origem; regras de folhas cross-origin
+não são inspecionadas.
+
+Exemplo focal no Runtime de desenvolvimento, depois de verificar host,
+checkout, URI e banco e criar snapshot íntegro antes da sessão ULI:
+
+```sh
+export DISPLAY=:0
+export ACULTA_ROOT=/home/piradopirata/projetos/aculta
+export STUDIO_LOGIN_URI=https://conta.aculta.toca.net.br
+export STUDIO_PAGE=https://conta.aculta.toca.net.br/marley
+export STUDIO_USER=aculta_visual_admin
+export STUDIO_USER_ID=257
+export OCS_SKIP_OPENCULTURAS=1
+export OCS_WIDTHS=320
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/status-message-diagnostic
+python3 tests/browser/aculta-studio/ocs-baseline.py
+```
+
+Para exercitar o reflow de forma não autenticada e sem criar uma sessão, use
+um purpose público, injete a folha candidata local e insira um aviso sintético
+sem dados da conta no browser:
+
+```sh
+export DISPLAY=:0
+export ACULTA_ROOT=/home/piradopirata/projetos/aculta
+export OCS_STUDIO_FIDELITY_CSS_ROOT=/home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export OCS_STATUS_FLOW_CSS_OVERRIDE=1
+export OCS_STATUS_FLOW_FIXTURE=1
+export OCS_STUDIO_ANONYMOUS=1
+export OCS_SKIP_OPENCULTURAS=1
+export STUDIO_PAGE=https://revista.aculta.toca.net.br/
+export OCS_WIDTHS=320,390,768,1280
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/status-message-flow-candidate
+python3 tests/browser/aculta-studio/ocs-baseline.py
+```
+
+O fixture confirma a geometria da candidata, não substitui a captura real do
+aviso ULI. Para registrar o aviso real, a captura autenticada cria uma sessão
+ULI no Runtime: faça snapshot antes, não submeta formulários e registre somente
+metadados geométricos. A coleta omite texto e valores; o resultado identifica
+estilos computados na página servida, sem provar que uma folha candidata local
+está implantada.

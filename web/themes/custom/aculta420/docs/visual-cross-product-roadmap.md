@@ -1754,3 +1754,14 @@ A matriz candidata de Ganjalab foi ampliada para nove larguras nos dois modos:
 18/18 combinações e todos os checks Fidelity passaram. O Runtime ainda não contém
 o markup “Meus cursos” da branch; F6 permanece parcial e o gate geral segue aberto.
 Evidências e limites em `mobile-first-audit.md`.
+
+### THEME-MF2 — avisos Drupal sem sobreposição (2026-10-31)
+
+O Firefox ESR mostrou `.alert-wrapper` fixo no rodapé, cobrindo conteúdo em
+viewport mobile. O tema agora repõe no fluxo o wrapper que Drupal renderiza na
+região global `aculta-highlighted`, sem alterar serviço/markup de mensagens.
+CSS candidata injetada em purpose público com fixture anônima: 4/4 larguras
+(320/390/768/1280px), mensagem antes do heading e sem overflow. Stylelint e
+inventário responsivo atualizados. Runtime ainda serve a folha anterior; foco,
+temas, reduced motion e regressão de todos os purposes estão pendentes. Detalhes
+em `mobile-first-audit.md`; THEME-MF3 continua não aprovado.
