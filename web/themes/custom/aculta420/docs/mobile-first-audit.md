@@ -1,5 +1,23 @@
 # Auditoria mobile-first ACULTA420 — THEME-MF0
 
+### THEME-MF2 — revalidação estática após a decisão da Institution Bar (2026-10-31)
+
+No HEAD `056d49dc9`, Stylelint e ESLint do tema passaram. O schema SDC passou
+com 55 componentes, 27 chamadas include e 759 verificações; a fronteira
+tema/módulo passou 3.491 verificações; Design Foundations passou 2.429 checks;
+e o mapa de UI passou (520 tokens catalogados, 421 usados e 149 atributos).
+O teste Unit existente `CaptchaPresentationHooksTest` passou com 3 testes e 8
+assertions. O aviso PHPUnit sobre `sites/simpletest/browser_output` não gravável
+não impediu a execução nem alterou o resultado.
+
+Este checkpoint revalida somente lint, contratos estáticos e o teste Unit focal
+na árvore da branch. Não executou discovery/UI Patterns no Runtime, nem cobre
+homologação visual servida, zoom, WCAG integral ou toda a matriz de propósitos.
+O Runtime continua num checkout destacado anterior, com alterações paralelas
+preservadas; por isso a Institution Bar e a correção CAPTCHA ainda precisam de
+verificação integrada após o checkout de teste receber este HEAD. THEME-MF3 e
+OCS-F11 seguem pendentes.
+
 ### THEME-MF0/MF2 — agenda e calendário de Eventos (2026-10-31)
 
 Firefox ESR visível percorreu `/calendario`, a grade do mês atual e

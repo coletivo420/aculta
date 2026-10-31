@@ -2130,3 +2130,10 @@ ou preferência persistente alterados.
 - **Validação:** Firefox ESR visível passou 49/49 checks autenticados nas larguras 320/390/1023/1024/1280, 175/175 anônimos nas dez raízes a 320/390 (dois SKIPs de primeiro scroll porque Links não tem rolagem vertical) e 136/136 sem JavaScript. Capturas foram revisadas. CSS e JS candidatos foram injetados apenas no navegador; o Runtime não recebeu esses arquivos.
 - **Efeito no Runtime:** ULI criou uma sessão Drupal temporária. Não houve alteração de conteúdo, configuração, permissões ou preferências; nenhuma troca de HEAD, `updatedb`, `config:import` ou `drush cr` ocorreu. A contagem permaneceu 624 tabelas.
 - **Resultado e limite:** os testes verificam a candidata e não a integração servida. THEME-MF3 e OCS-F11 permanecem pendentes. Relatórios/capturas e inventário integral de snapshots: `web/themes/custom/aculta420/docs/mobile-first-audit.md`.
+
+## 2026-10-31 — revalidação estática THEME-MF2
+
+- Branch `refactor/opencultures-codigo-visual`: antes da atualização documental, HEAD local e remoto coincidiam em `056d49dc9`; worktree limpa e sem alterações prévias nos arquivos da fase.
+- Passaram lint CSS/JS, schema SDC (55 componentes, 27 includes, 759 checks), fronteira tema/módulo (3.491), Design Foundations (2.429), documentação UI (520 tokens, 421 usados, 149 atributos) e `CaptchaPresentationHooksTest` (3 testes/8 assertions). PHPUnit emitiu aviso de diretório de browser output não gravável, mas a suíte focal concluiu com status zero.
+- Nenhum teste browser integrado foi repetido nesta microfase. O Runtime/checkout servido permanece separado, destacado em HEAD anterior e com alterações de outra frente; não foi alterado. A decisão de ocultar a barra administrativa no scroll permanece validada apenas com CSS/JS candidatos injetados no Firefox.
+- Limite: gates estáticos da branch aprovados; THEME-MF0 parcial, THEME-MF3 e OCS-F11 pendentes.

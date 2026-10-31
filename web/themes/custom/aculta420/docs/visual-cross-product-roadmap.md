@@ -4,6 +4,16 @@
 
 **THEME-MF0:** inventariar bibliotecas, estilos, `@media`, `@container`, breakpoints, conflitos Bootstrap e overflow de **todas** as telas e purposes. **THEME-MF1:** tokens, base CSS e guidelines mobile-first. **THEME-MF2:** migrar por famílias com stories reais e correção de cascata; não trocar `max-width` por `min-width` mecanicamente. **THEME-MF3:** testar responsividade 320/360/390/599/600/768/1024/1280/1440, zoom 200/400%, teclado, no-JS, modo claro/escuro, reduced motion, formulários/mídia/tabelas e shell em Fórum, Wiki, Revista, Loja, Eventos, GanjaLab, Conta e demais purposes. Registrar bloqueios por proprietário.
 
+**Checkpoint THEME-MF2 (2026-10-31, HEAD `056d49dc9`):** lint CSS/JS,
+schema SDC (759 checks), fronteira tema/módulo (3.491), Design Foundations
+(2.429), documentação dos tokens UI e o teste Unit do hook de apresentação
+CAPTCHA (3 testes/8 assertions) passaram na branch. Isso não é homologação
+integrada: o Runtime servido continua em checkout destacado anterior e contém
+alterações paralelas que devem ser preservadas. A decisão de fixar a Institution
+Bar e ocultar a barra administrativa durante o scroll está implementada e
+testada como candidata injetada no Firefox, ainda sem comprovação servida.
+THEME-MF0 permanece parcial; THEME-MF3 e OCS-F11 continuam pendentes.
+
 A fidelidade visual ao OpenCulturas Next (`opcult`) continua **escopada ao Studio**; a fundação mobile-first é **global**. O Green Stash é uma **área integrada ao Studio**, não uma experiência independente ou shell próprio; utiliza Commerce como owner funcional e componentes do tema. Dependência: THEME-MF3 aprovado antes de OCS-F11. [Plano vigente](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md).
 
 **Atualização de THEME-MF0 (2026-10-30):** o índice lexical global do tema foi
