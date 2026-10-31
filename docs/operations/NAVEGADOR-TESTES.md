@@ -52,6 +52,13 @@ contratos próprios. Todo script de teste visual deve ser salvo em
 do que existe hoje, a convenção de pastas e as regras de evidência estão em
 `tests/browser/README.md`; consulte-o antes de escrever outro script.
 
+Essa abrangência inclui agentes que trabalham em módulos backend com páginas
+renderizadas, produtos independentes dentro dos domínios existentes e consumers
+de SDC. Não crie uma cópia do runner para cada produto: passe as URLs e as opções
+da área ao harness comum. Um script específico deve cobrir uma lacuna nomeada
+(por exemplo, fixture, ACL entre duas contas, estado AJAX ou submissão) e deve
+continuar independente das demais frentes.
+
 ## Hosts e larguras
 
 - Hosts de teste: `aculta.toca.net.br`, `links.aculta.toca.net.br`, `conta.aculta.toca.net.br/entrar`, `apoio.aculta.toca.net.br`. Controle: `example.com`.
@@ -134,3 +141,17 @@ todos os propósitos, fluxos ou tecnologias assistivas e não aprovam
 THEME-MF3/OCS-F11. Evidências detalhadas e limites estão no registro
 `Reteste axe após correções` de
 `web/themes/custom/aculta420/docs/mobile-first-audit.md`.
+
+### Matriz transversal — dez raízes de purpose — 2026-10-31
+
+No HEAD `3648c50db`, a matriz genérica do projeto foi repetida contra Main,
+Conta, Apoio, Revista, Wiki, Loja, Cursos, Growroom/Fórum, Links e Eventos:
+Firefox ESR headless, 9 larguras × 2 modos = 180/180 respostas HTTP 200, sem
+overflow e sem violações axe. Quatro itens axe `incomplete` permanecem para
+revisão manual (Conta/H1 e Growroom/select em claro/escuro). A rodada adicional
+Chrome headless e Firefox ESR/X11 em Cursos/Eventos passou 36/36 e 16/16,
+respectivamente. O detalhe e os limites estão em
+`tests/browser/README.md` e no registro transversal de
+`web/themes/custom/aculta420/docs/mobile-first-audit.md`. É evidência
+reutilizável de smoke transversal, não aprovação de todas as telas internas,
+WCAG 2.2 AA, THEME-MF3 ou OCS-F11.

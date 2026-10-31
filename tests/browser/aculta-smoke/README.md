@@ -4,6 +4,10 @@ Esta suíte atende o **projeto inteiro**, não apenas `aculta420` ou Studio.
 Passe URLs dos módulos, produtos, domínios/purposes e consumers que deseja
 inspecionar; os scripts não presumem um host ou shell específico. Rode também
 os testes da área quando precisar provar contratos de aplicação.
+Agentes de qualquer frente devem reutilizar estes comandos como ponto de partida
+e registrar no README da própria frente somente limitações ou verificações
+específicas que não possam ser expressas por URL, viewport, tema, sessão ou
+opções do runner comum.
 
 O script `tests/browser/aculta-smoke/smoke-page.py` serve como primeiro check reutilizável para páginas
 públicas: carrega URLs por GET, coleta título/estado/documentWidth, landmarks,
@@ -49,16 +53,19 @@ export BROWSER=chromium HEADLESS=1
 python3 tests/browser/aculta-smoke/smoke-page.py https://aculta.toca.net.br/
 ```
 
-Matriz responsiva genérica em Firefox headless, incluindo uma auditoria axe
-diagnóstica (resultados `incomplete` e violações devem ser revisados):
+Matriz responsiva genérica em Firefox headless. A varredura axe é opcional e
+independente do tema: indique qualquer distribuição local compatível de
+`axe.min.js` por `AXE_SCRIPT`. Se omitido, o runner tenta a cópia de axe-core já
+instalada pelo tema ACULTA420. Resultados `incomplete` e violações devem ser
+revisados; o runner não declara conformidade WCAG.
 
 ```sh
-npm ci --prefix web/themes/custom/aculta420
 export SUITE_OUT=/home/piradopirata/aculta-suite-out/portal-home-matrix
 export BROWSER=firefox HEADLESS=1 ACCESSIBILITY_SCAN=1
+export AXE_SCRIPT=/caminho/para/axe-core/axe.min.js
 export MATRIX_WIDTHS=320,360,390,599,600,768,1024,1280,1440
 export MATRIX_MODES=light,dark
-python3 tests/browser/aculta-smoke/page-matrix.py https://aculta.toca.net.br/
+python3 tests/browser/aculta-smoke/page-matrix.py https://aculta.toca.net.br/ https://revista.aculta.toca.net.br/
 ```
 
 Para usar a matriz no browser visível, selecione `BROWSER=firefox`, remova

@@ -4848,3 +4848,30 @@ como aprovação de contraste. Evidência baseline:
 `/home/piradopirata/aculta-suite-out/project-roots-firefox-matrix-20261031/`.
 O gate é evidência inicial transversal de THEME-MF0, não conclusão do inventário
 ou aprovação THEME-MF3/OCS-F11.
+
+### Reteste transversal após correções — 2026-10-31
+
+No commit servido `3648c50db`, o harness genérico de navegador foi repetido nas
+dez raízes públicas do projeto (Main, Conta, Apoio, Revista, Wiki, Loja, Cursos,
+Growroom/Fórum, Links e Eventos), demonstrando que os runners são
+infraestrutura compartilhada entre todos os módulos/purposes, não somente do
+tema ou Studio. Firefox ESR headless passou **180/180** combinações (10 rotas ×
+9 larguras × claro/escuro), com HTTP 200, sem overflow horizontal e zero
+violações axe. Permanecem quatro resultados axe `incomplete`: H1 da Conta e
+select de categoria do Growroom em claro/escuro; esses itens requerem revisão
+manual e não contam como aprovação automatizada de contraste.
+
+Como validação complementar de engines e inspeção visível, Chrome headless passou
+36/36 checks de Cursos/Eventos (duas rotas × nove larguras × dois modos), e
+Firefox ESR/X11 passou 16/16 (duas rotas × quatro larguras × dois modos). A
+faixa horizontal de Cursos passou 17/17 checks tanto com JavaScript quanto sem
+ele, incluindo zoom real de 400%, foco visível e navegação até todos os cards.
+A captura que mostra parte do próximo card é o convite visual da faixa; não
+significa que os demais cards estejam inacessíveis.
+
+Evidências privadas: `/home/piradopirata/aculta-suite-out/project-roots-firefox-matrix-3648c50db/`,
+`course-event-chrome-matrix-3648c50db/`, `course-event-x11-3648c50db/`,
+`courses-rail-served-3648c50db/` e `courses-rail-nojs-served-3648c50db/`.
+Limite: a matriz das dez raízes é anônima; validações de engine/X11 e faixa são
+focais. Não cobrem todas as telas internas, ACLs, submissões, leitor de tela ou
+todos os critérios WCAG 2.2 AA. THEME-MF3 e OCS-F11 permanecem pendentes.

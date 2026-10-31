@@ -90,9 +90,15 @@ try:
         time.sleep(1)
     axe_source = None
     if AXE_ENABLED:
-        axe_path = ROOT / "web/themes/custom/aculta420/node_modules/axe-core/axe.min.js"
+        axe_value = os.environ.get("AXE_SCRIPT")
+        axe_path = Path(axe_value).expanduser().resolve() if axe_value else (
+            ROOT / "web/themes/custom/aculta420/node_modules/axe-core/axe.min.js"
+        )
         if not axe_path.is_file():
-            raise SystemExit(f"axe-core ausente; execute npm ci em {axe_path.parents[1]}.")
+            raise SystemExit(
+                "axe-core ausente; defina AXE_SCRIPT para axe.min.js ou instale "
+                "a dependência existente do tema ACULTA420."
+            )
         axe_source = axe_path.read_text()
 
     for url_index, url in enumerate(URLS, start=1):

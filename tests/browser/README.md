@@ -5,6 +5,10 @@ ACULTA**: todos os módulos, produtos, domínios/purposes e consumidores, inclui
 interfaces Drupal e integrações frontend. O harness genérico não pertence ao
 tema nem ao Studio. Informe as URLs da área sob teste; escolha a suíte específica
 somente quando precisar validar contratos que uma medição genérica não alcança.
+Essa regra vale para as instruções, scripts, evidências e manutenção deste
+catálogo: qualquer frente deve primeiro adaptar a execução genérica passando suas
+URLs e só adicionar código específico quando houver uma necessidade técnica que
+o harness comum não cubra.
 
 Esta pasta guarda os scripts de teste visual do projeto — navegador, captura de
 tela e medição de renderização — para que outras sessões reaproveitem o que já
@@ -156,6 +160,39 @@ deixou. Servem de referência de fluxo; ao evoluí-los, considere movê-los para
 
 - CPF/checkout, servidor de desenvolvimento: `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`, seção 9.6.
 - Olivero, ambiente local: mesma seção, subseção "Tema Olivero no ambiente local".
+
+## Registro transversal do projeto — 2026-10-31
+
+O runner genérico foi usado em todas as dez raízes públicas atuais listadas no
+manifesto de deploy, não apenas em páginas do tema ou Studio. Após as correções
+de hierarquia de títulos em Eventos e do nome acessível em Cursos, Firefox ESR
+headless passou 180/180 combinações (10 raízes × 9 larguras × claro/escuro),
+com HTTP 200 e sem overflow. Axe não encontrou violações; quatro resultados
+`incomplete` (H1 da Conta e select de categoria do Growroom, nos dois modos)
+continuam para revisão manual e não são reportados como aprovação de contraste.
+Chrome headless passou 36/36 combinações focais de Eventos e Cursos; Firefox
+ESR/X11 passou 16/16 nas mesmas rotas, em quatro larguras e dois modos. No
+consumer Cursos, Firefox/X11 também passou 17/17 checks com JavaScript e 17/17
+sem JavaScript, incluindo zoom nativo de 400%, foco e alcance de todos os cards
+da faixa horizontal. A captura com parte do próximo card visível é o desenho
+intencional da faixa; os cards continuam alcançáveis por teclado e rolagem.
+
+Evidências privadas não versionadas em `$SUITE_OUT`:
+
+- `project-roots-firefox-matrix-3648c50db/`
+- `course-event-chrome-matrix-3648c50db/`
+- `course-event-x11-3648c50db/`
+- `courses-rail-served-3648c50db/` e `courses-rail-nojs-served-3648c50db/`
+
+Este registro demonstra reutilização do harness em múltiplos componentes e
+purposes. As rotas de Eventos/Cursos e a faixa de Cursos são validações focais;
+essa rodada não cobre todos os fluxos autenticados, componentes, ACLs, leitor de
+tela ou critérios WCAG 2.2 AA e não fecha THEME-MF3/OCS-F11.
+
+O parâmetro `AXE_SCRIPT` desacopla a matriz da instalação npm do tema. Validado
+em 2026-10-31 na capa da Revista com Firefox ESR headless, dois viewports e dois
+modos: 4/4 checks, zero overflow, zero violações e zero `incomplete`; artefatos
+em `/home/piradopirata/aculta-suite-out/project-generic-runner-revista-20261031/`.
 
 ### `aculta-mercadopago/`
 
