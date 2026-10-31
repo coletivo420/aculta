@@ -2381,11 +2381,15 @@ ou preferência persistente alterados.
 - A revisão do update 10013 substitui a importação ampla por criação seletiva e
   idempotente apenas dos três storages e três instâncias necessários aos
   contadores; configs existentes são preservadas e tipos incompatíveis geram
-  log sem substituição. A correção foi publicada em `fb7bd2859`; ainda falta
-  aplicar a atualização seletiva ao Runtime e validar os contadores. Snapshot anterior à tentativa:
+  log sem substituição. A correção foi publicada em `fb7bd2859`. Snapshot
+  anterior à primeira tentativa:
   `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-update-10013-1161fd046-20261031.sql`,
   48.087.711 bytes, modo 0600, SHA-256
   `161a5c41575fae939a94d7330e80f94cd519fae58e09a9411afdd7714fe9c497`.
+- Antes da execução seletiva, novo snapshot íntegro:
+  `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-selective-update-10013-55665601d-20261031.sql`,
+  48.283.737 bytes, modo 0600, SHA-256
+  `cb1c9a0cfc19d006589cbdaa496bc8ee4b1c8829c1d91a59bf42680f95d48c86`.
 - O update 10013 seletivo foi aplicado no docroot `55665601d`; não restam
   updates pendentes. Os storages boolean/string esperados e as três instâncias
   foram confirmados, e `unreadCount(257)` respondeu sem exceção nos adapters
@@ -2396,7 +2400,9 @@ ou preferência persistente alterados.
   mudaram, seis já eram idênticos. O comparador também identificou nove
   traduções `pt-br` dos templates na coleção `language`, agora sincronizadas.
   Nenhum outro módulo entrou no conjunto. A importação completa não foi
-  executada.
+  executada. Após publicar `473060304` e `ad2a5c59e`, trocar o docroot e
+  reconstruir cache, `config:status` confirmou zero diferenças e
+  `updatedb:status` zero pendências, com 619 tabelas preservadas.
 - Firefox ESR/X11 autenticado, pelo harness genérico de todo o ACULTA, verificou
   as cinco rotas disponíveis do Green Stash em nove larguras e claro/escuro:
   **90/90**, HTTP 200, sem overflow, axe sem violações nem `incomplete`. Não
