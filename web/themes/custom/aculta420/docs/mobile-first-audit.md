@@ -2168,6 +2168,13 @@ estão em `/home/piradopirata/aculta-suite-out/events-title-touch-targets-202610
 Isso valida CSS candidata no consumer servido, não a implantação após rebuild,
 o detalhe do evento ou WCAG completa; THEME-MF3 continua pendente.
 
+Reexecução em 2026-10-31 com o harness da branch atual repetiu **30/30 checks**
+nas mesmas dez larguras. As capturas móveis (320px) e desktop (1440px) foram
+inspecionadas: cards empilhados no celular, três colunas no desktop, sem moldura
+no wrapper e com a moldura única do SDC. A CSS foi injetada somente no Firefox;
+a versão reconstruída/servida continua pendente. Evidência em
+`/home/piradopirata/aculta-suite-out/events-catalogue-resume-20261031/`.
+
 ### THEME-MF2 — alvos de links sociais do SDC author-card (2026-10-30)
 
 Os links sociais do SDC `author-card` agora têm área interativa de 44×44 CSS px,

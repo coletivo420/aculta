@@ -533,6 +533,12 @@ O consumer real de `/eventos` foi testado em dez larguras; o wrapper do
 sem overflow. A normalização da data já está coberta pelo Unit do hook; revisão
 visual após rebuild da folha e do cache permanece pendente.
 
+Em 2026-10-31, a CSS candidata foi novamente injetada no consumer Runtime e
+passou 30/30 checks nas dez larguras. As capturas 320/1440px confirmam cards
+empilhados no móvel e três colunas no desktop. Isso ainda não valida a folha
+reconstruída/servida; THEME-MF3 permanece pendente. Evidência em
+`/home/piradopirata/aculta-suite-out/events-catalogue-resume-20261031/`.
+
 ### THEME-MF1 — fundação global inicial
 
 Adicionados tokens mobile-first para gutter, largura máxima e espaçamento
