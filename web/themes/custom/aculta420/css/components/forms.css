@@ -6,6 +6,11 @@
   font-weight: 600;
 }
 
+form.node-form .vertical-tabs__panes :is(.description, .details-description, .fieldset-legend) {
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+
 /* Core vertical-tabs metadata must remain inside narrow editorial forms. */
 @media (max-width: 35.999rem) {
   form.node-form .vertical-tabs,
@@ -24,6 +29,11 @@
   form.node-form .entity-meta {
     flex: 0 0 100% !important;
     min-inline-size: 0 !important;
+  }
+  form.node-form .vertical-tabs__panes :is(.description, .details-description, .fieldset-legend) {
+    display: block;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
   }
 }
 
