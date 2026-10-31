@@ -2656,3 +2656,9 @@ ou preferência persistente alterados.
   browser cross-domain ainda retorna 403 para o usuário, indicando uma camada
   adicional de sessão/purpose ou grant de loja a investigar antes de declarar
   operações homologadas.
+- A investigação do segundo 403 confirmou no Runtime que o UID 5 tem a
+  permissão da Suite, mas `GreenStashStoreResolver` exige `commerce_store`
+  `update` e o handler nativo retorna `false` para view/update da única loja.
+  Não foi concedido `administer commerce_store` automaticamente, pois isso
+  ampliaria o contrato funcional além da ordem recebida; é necessário definir
+  o grant de loja proprietário antes da homologação de criar produto/envios.
