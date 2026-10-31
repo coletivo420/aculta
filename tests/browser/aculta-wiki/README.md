@@ -40,10 +40,12 @@ do Runtime foi atualizado, nem cobre o workspace autenticado do Studio.
 
 `we-sativa.py` autentica no Runtime de teste com uma URL de login único gerada
 por Drush para a conta autorizada UID 5 (ajustável por variável), abre a home
-Wiki, segue o CTA para `/wesativa/inicio`, testa o reflow nas oito
-larguras (320/360/390/640/768/1024/1280/1440 px) e percorre “Meu
-Trabalho” até o formulário Node nativo e seu retorno. Não envia formulários nem
-altera preferências ou conteúdo; grava capturas e resumo fora do repositório.
+Wiki, segue o CTA para a rota oficial `/studio/we-sativa/inicio`, testa o
+reflow nas oito larguras (320/360/390/640/768/1024/1280/1440 px) e percorre
+“Meu Trabalho” em `/studio/we-sativa` até o formulário Node nativo e seu
+retorno. Confere que CTA, workspace e criação permanecem no host Wiki. Não envia
+formulários nem altera preferências ou conteúdo; gera uma sessão autenticada
+temporária e grava capturas e resumo fora do repositório.
 
 ```sh
 cd /home/piradopirata/projetos/aculta
@@ -54,12 +56,12 @@ DISPLAY=:0 ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles" SUITE_OUT="$SUITE_OUT" \
 
 Variáveis: `WIKI_HOME_URL` (padrão `https://wiki420.aculta.toca.net.br/`),
 `WIKI_STUDIO_PAGE` (padrão
-`https://conta.aculta.toca.net.br/wesativa/inicio`),
-`WIKI_STUDIO_LOGIN_URI` (padrão `https://conta.aculta.toca.net.br`),
+`https://wiki420.aculta.toca.net.br/studio/we-sativa/inicio`),
+`WIKI_STUDIO_LOGIN_URI` (padrão `https://wiki420.aculta.toca.net.br`),
 `WIKI_STUDIO_UID` (padrão `5`; passe vazio para usar `WIKI_STUDIO_USER`) e
 `WIKI_STUDIO_USER` (padrão vazio; usado quando `WIKI_STUDIO_UID` é vazio) e
-`SUITE_OUT` (padrão `/home/piradopirata/aculta-suite-out/aculta-wiki-we-sativa`). Requer
-Drush funcional e Firefox ESR visível. A conta precisa ter confirmação de e-mail,
+`SUITE_OUT` (padrão `/home/piradopirata/aculta-suite-out/aculta-wiki-we-sativa`).
+Requer Drush funcional e Firefox ESR visível. A conta precisa ter confirmação de e-mail,
 acesso ao Studio e criação Wiki. A rodada autentica e cria uma sessão de navegador;
 não reconstrói caches/configuração, não publica nem grava conteúdo. O resultado
 avalia somente o tema ativo no Runtime de teste; a rodada dev.117 também cobriu

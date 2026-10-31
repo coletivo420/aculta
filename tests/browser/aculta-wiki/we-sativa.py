@@ -17,13 +17,15 @@ sys.path.insert(0, str(PROJECT / "tests/browser/aculta-cpf-checkout"))
 from wdlib import Driver, WDError  # noqa: E402
 
 PAGE = os.environ.get(
-    "WIKI_STUDIO_PAGE", "https://conta.aculta.toca.net.br/wesativa/inicio"
+    "WIKI_STUDIO_PAGE", "https://wiki420.aculta.toca.net.br/studio/we-sativa/inicio"
 )
 HOME = os.environ.get("WIKI_HOME_URL", "https://wiki420.aculta.toca.net.br/")
-LOGIN_URI = os.environ.get("WIKI_STUDIO_LOGIN_URI", "https://conta.aculta.toca.net.br")
+LOGIN_URI = os.environ.get("WIKI_STUDIO_LOGIN_URI", "https://wiki420.aculta.toca.net.br")
 USER_UID = os.environ.get("WIKI_STUDIO_UID", "5")
 USER = os.environ.get("WIKI_STUDIO_USER", "")
-OUT = Path(os.environ.get("SUITE_OUT", "/tmp/aculta-wiki-we-sativa"))
+OUT = Path(os.environ.get(
+    "SUITE_OUT", "/home/piradopirata/aculta-suite-out/aculta-wiki-we-sativa"
+))
 OUT.mkdir(parents=True, exist_ok=True)
 WIDTHS = [(1440, "wide-1440"), (1280, "desktop"), (1024, "tablet-1024"),
           (768, "tablet-768"), (640, "zoom-200-equiv"), (390, "mobile-390"), (360, "mobile-360"),
@@ -118,9 +120,10 @@ try:
             el.innerText.includes('Comece pela WE SATIVA'));
           return {href: a.href, path: new URL(a.href).pathname, host: new URL(a.href).host};
         })();""")
-        check("CTA da Wiki resolve para o início no host de conta",
-              cta["path"].endswith("/wesativa/inicio")
-              and cta["host"] == urlparse(PAGE).netloc, cta["path"])
+        check("CTA da Wiki resolve para a rota oficial no host Wiki",
+              cta["path"] == "/studio/we-sativa/inicio"
+              and cta["host"] == urlparse(PAGE).netloc,
+              f"{cta['host']}{cta['path']}")
         driver.get(cta["href"])
     else:
         home_diagnostic = driver.js("""return {
@@ -138,7 +141,8 @@ try:
         driver.get(PAGE)
     page_loaded = wait_for(
         "!!(document.querySelector('main') || document.querySelector('#main-content')) && "
-        "(document.querySelector('main') || document.querySelector('#main-content')).innerText.includes('Seu espaço de contribuição')"
+        "(document.querySelector('main') || document.querySelector('#main-content')).innerText.includes('Seu espaço de contribuição') && "
+        "location.pathname === '/studio/we-sativa/inicio'"
     )
     check("início WE SATIVA abre autenticado", page_loaded)
     if not page_loaded:
@@ -175,9 +179,17 @@ try:
         check("início contextual tem main e h1", metrics["hasMain"] and metrics["heading"])
         check("guia editorial e link Meu Trabalho presentes",
               metrics["hasGuide"] and bool(metrics["workHref"]))
+        work_url = urlparse(metrics["workHref"])
+        check("Meu Trabalho usa a rota oficial do Studio Wiki",
+              work_url.path == "/studio/we-sativa"
+              and work_url.netloc == urlparse(PAGE).netloc,
+              f"{work_url.netloc}{work_url.path}")
         create_href = metrics["createHref"]
-        check("ação Criar verbete aponta para a rota nativa", "/node/add/wiki_entry" in create_href,
-              urlparse(create_href).path if create_href else "ausente")
+        create_url = urlparse(create_href)
+        check("ação Criar verbete aponta para a rota nativa da Wiki",
+              create_url.path == "/node/add/wiki_entry"
+              and create_url.netloc == urlparse(PAGE).netloc,
+              f"{create_url.netloc}{create_url.path}" if create_href else "ausente")
         check("links de conteúdo têm nome acessível", metrics["unnamedLinks"] == 0,
               f"sem nome={metrics['unnamedLinks']}")
 
@@ -219,11 +231,16 @@ try:
                 return_link = driver.js("""return (() => {
                   const a = [...document.querySelectorAll('a')].find((el) =>
                     el.innerText.includes('Voltar para Meu Trabalho WE SATIVA'));
-                  return {path: new URL(a.href).pathname, outlined: a.classList.contains('btn-outline-primary')};
+                  const url = new URL(a.href);
+                  return {path: url.pathname, host: url.host,
+                    outlined: a.classList.contains('btn-outline-primary')};
                 })();""")
                 check("retorno leva ao workspace autorizado",
-                      return_link["path"].endswith("/wesativa"),
-                      return_link["path"])
+                      return_link["path"] == "/studio/we-sativa",
+                      f"{return_link['host']}{return_link['path']}")
+                check("retorno permanece no host Wiki",
+                      return_link["host"] == urlparse(PAGE).netloc,
+                      return_link["host"])
         (OUT / "summary.json").write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n")
 finally:
     bidi.close()
