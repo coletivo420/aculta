@@ -418,8 +418,10 @@ THEME-MF3/OCS-F11. Artefatos do Runtime ficam em
 formulários e Studio em uma fixture Drupal-like. Verifica formulário, labels,
 fieldset, campos, bordas/estados de erro, controles de imagem, botões default,
 primário, reset e destrutivo, foco via teclado e ausência de vazamento fora dos
-wrappers Studio/Perfil. Cobre 320/390/768/1440px em claro e escuro, sem enviar
-formulários.
+wrappers Studio/Perfil. Como o Form API usa `node-revista-form` em rotas não
+Studio também, a fixture compara `body.path-marley` com `body.path-magazine`:
+Fidelity deve atuar no primeiro e não definir tokens no segundo. Cobre
+320/390/768/1440px em claro e escuro, sem enviar formulários.
 
 ```sh
 SUITE_OUT=/caminho/fora-do-repositorio/studio-form-fidelity \
@@ -449,11 +451,17 @@ O wrapper restaurou a preferência de cor original. O teste não cobre submit,
 save, preview, AJAX/no-JS, ACL completa, zoom nem WCAG integral; não homologa a
 implantação da CSS candidata no Runtime.
 
-No reteste de composição, a folha passou a fornecer tokens ao `main` somente
-quando ele contém `form.node-revista-form`; heading e formulário usam
-Montserrat, sem tokens Fidelity na Institution Bar ou no Domain Header. Foram
-78/78 checks PASS, incluindo contagem única do shell e reflow do H1 em duas
-linhas a 320px. Capturas em
+No reteste de composição, a folha candidata passou a fornecer tokens ao `main`
+quando ele contém `form.node-revista-form`; naquele momento, a ausência de
+`body.path-marley` no seletor permitia que a mesma forma em outro purpose
+herdasse Fidelity. Corrigido em 2026-10-31: tokens, heading e campos dessa
+forma estão sob `body.path-marley`; Magazine conserva tipografia e tokens
+globais. A fixture passou 54/54 checks em claro/escuro, incluindo as duas rotas
+simuladas, quatro larguras, foco e shell. Capturas e JSON em
+`/home/piradopirata/aculta-suite-out/studio-form-fidelity-scope-20261031/`.
+
+O reteste real anterior do formulário Marley passou 78/78 checks, incluindo
+contagem única do shell e reflow do H1 em duas linhas a 320px. Capturas em
 `/home/piradopirata/aculta-suite-out/studio-editorial-heading-fidelity-20261030/`.
 
 A verificação de criação segue o link renderizado na tela de entrada da seção:

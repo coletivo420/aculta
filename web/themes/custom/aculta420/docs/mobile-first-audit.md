@@ -2503,3 +2503,24 @@ e `/home/piradopirata/aculta-suite-out/auth-reset-candidate-current-20261031/`.
 Não houve submit ou escrita no Runtime. O teste não confirma o hook PHP real ou
 o stylesheet reconstruído/servido; o baseline continua com overflow de 328px
 em `/entrar` a 320px, até a integração da branch ser instalada e retestada.
+### OCS-F5 — isolar Fidelity do editor de Revista ao path Marley (2026-10-31)
+
+A auditoria de cascata encontrou seletores globais em `tokens.css` e
+`studio.css` que aplicavam Montserrat, tokens e acabamento Next a todo
+`form.node-revista-form`, e ao `.aculta-main` que o contivesse. A classe do
+Form API é compartilhada e não identifica o purpose. A evidência do GET real
+anterior mostra `body.path-marley` no editor de Publicações; todos esses
+seletores agora também exigem esse contexto. O formulário no purpose Magazine
+mantém o visual global e o editor de Publicações no Marley conserva Fidelity.
+
+Firefox ESR visível executou `tests/browser/aculta-studio/studio-form-fidelity.py`
+com as folhas do worktree injetadas em fixture, claro/escuro, 320/390/768/1440px:
+**54/54 checks**. A verificação confirmou ausência do token e do acabamento no
+formulário sob `body.path-magazine`, presença de Montserrat/tokens sob
+`body.path-marley`, alvos de 44px, foco visível e nenhum overflow na fixture.
+Stylelint, ESLint e `git diff --check` passaram. Artefatos:
+`/home/piradopirata/aculta-suite-out/studio-form-fidelity-scope-20261031/`.
+
+Esta é uma correção de isolamento de CSS e uma fixture, não homologação do CSS
+servido no Runtime, do submit Form API, de AJAX/no-JS, ACL, zoom ou WCAG integral;
+OCS-F5, OCS-F11 e THEME-MF3 permanecem parciais/pendentes.

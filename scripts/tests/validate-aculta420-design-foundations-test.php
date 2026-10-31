@@ -357,6 +357,13 @@ try {
   if ($status !== 0) {
     $failures[] = 'an explicitly scoped Studio fidelity token was rejected';
   }
+  $unscoped_editor_tokens = str_replace('body.path-marley ', '', $original_tokens);
+  file_put_contents($tokens_path, $unscoped_editor_tokens);
+  [$status, $output] = $run_validator();
+  $fixtures++;
+  if ($status === 0 || !str_contains($output, 'Studio fidelity tokens have one light and one explicit dark scoped block')) {
+    $failures[] = 'an editorial-form fidelity selector without the Marley path scope was accepted';
+  }
   $unscoped_theme_token = str_replace(
     '--aculta-studio-fidelity-primary: #9d1980;',
     "--aculta-surface-page: #ffffff;\n  --aculta-studio-fidelity-primary: #9d1980;",

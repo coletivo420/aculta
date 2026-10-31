@@ -75,7 +75,10 @@ markup = """<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <button type="button" class="button--danger">Excluir</button></div></form>
 </div></section>
 <form id="outside-form"><input class="form-control" type="text" aria-label="Fora do Studio"></form>
-</div></main></body></html>"""
+</div></main>
+<main class="aculta-main" id="editor-main"><h1>Editar publicação</h1>
+<form class="node-revista-form" id="editor-form"><label for="editor-title">Título</label>
+<input id="editor-title" class="form-control" type="text"></form></main></body></html>"""
 
 driver = Driver(bidi=True)
 try:
@@ -180,6 +183,35 @@ try:
             if width == 1440:
                 shot = driver.req("GET", f"/session/{driver.session}/screenshot")
                 (OUT / f"studio-form-{mode}-1440.png").write_bytes(base64.b64decode(shot))
+
+        # The same Drupal node form class can appear outside Marley. Fidelity
+        # applies only on the actual Studio route, never to Magazine/public
+        # editorial pages merely because they share the Form API form ID.
+        driver.js("document.body.className='path-magazine'")
+        magazine_scope = driver.js("""const form=document.querySelector('#editor-form');
+          const main=document.querySelector('#editor-main');
+          return {formMargin:getComputedStyle(form).marginBlockStart,
+            formPadding:getComputedStyle(form).paddingBlockStart,
+            token:getComputedStyle(form).getPropertyValue('--aculta-studio-fidelity-text').trim(),
+            mainFont:getComputedStyle(main).fontFamily};""")
+        record(f"{mode}: Fidelity não vaza para Magazine",
+               magazine_scope["formMargin"] == "0px"
+               and magazine_scope["formPadding"] == "0px"
+               and magazine_scope["token"] == "",
+               magazine_scope)
+        driver.js("document.body.className='path-marley'")
+        marley_scope = driver.js("""const form=document.querySelector('#editor-form');
+          return {formMargin:getComputedStyle(form).marginBlockStart,
+            formPadding:getComputedStyle(form).paddingBlockStart,
+            token:getComputedStyle(form).getPropertyValue('--aculta-studio-fidelity-text').trim(),
+            font:getComputedStyle(form).fontFamily};""")
+        record(f"{mode}: formulário Marley recebe Fidelity",
+               marley_scope["formMargin"] == "20px"
+               and marley_scope["formPadding"] == "20px"
+               and marley_scope["token"] == ("#1f1f1f" if mode == "light" else "#efefef")
+               and "Montserrat" in marley_scope["font"],
+               marley_scope)
+        driver.js("document.body.className=''")
 
         # Keyboard tab checks that the existing global focus indicator survives the fidelity treatment.
         actions = {"actions": [{"type": "key", "id": "studio-keyboard", "actions": [

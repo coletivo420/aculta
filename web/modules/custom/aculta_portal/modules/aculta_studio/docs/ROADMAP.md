@@ -900,3 +900,14 @@ pré-ULI `/home/piradopirata/aculta-suite-out/runtime-before-wesativa-dark-20261
 SHA-256 `635b80adb3aaff58be98a539c52aeddaf9f133a14bf3336f4a7bd6e5b707ca33`.
 Essa amostra do path legado não fecha F7, ACL editorial, dados reais, WCAG ou
 validação do path canônico.
+### OCS-F5 — isolamento do formulário editorial Marley (2026-10-31)
+
+A classe compartilhada `form.node-revista-form` não é suficiente para identificar
+uma tela Studio. Os tokens Fidelity e estilos do formulário em `studio.css` e
+`tokens.css` agora exigem `body.path-marley`, que foi observado no GET real do
+editor `/marley/revista/{id}/editar`. A fixture Firefox ESR passou 54/54 em
+claro/escuro e 320/390/768/1440px: o formulário Marley recebe Fidelity e um
+consumer Magazine com a mesma classe não recebe tokens/estilos. Não altera
+Form API, SDC, serviço, permissão ou operação editorial. O teste é fixture de
+CSS; Runtime alinhado, submit, AJAX/no-JS, ACL e gate geral OCS-F5 seguem
+pendentes.

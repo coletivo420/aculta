@@ -130,19 +130,19 @@ body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
   font-weight: var(--aculta-studio-fidelity-font-weight-light);
 }
 
-.aculta-main:has(form.node-revista-form) {
+body.path-marley .aculta-main:has(form.node-revista-form) {
   color: var(--aculta-studio-fidelity-text);
   font-family: var(--aculta-studio-fidelity-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-default);
 }
 
-.aculta-main:has(form.node-revista-form) :is(h1, h2, h3, h4, h5, h6) {
+body.path-marley .aculta-main:has(form.node-revista-form) :is(h1, h2, h3, h4, h5, h6) {
   color: var(--aculta-studio-fidelity-text);
   font-family: var(--aculta-studio-fidelity-font-family);
   line-height: var(--aculta-studio-fidelity-line-height-headings);
 }
 
-.aculta-main:has(form.node-revista-form) h1 {
+body.path-marley .aculta-main:has(form.node-revista-form) h1 {
   font-size: clamp(2rem, 7vw, var(--aculta-studio-fidelity-font-size-xxl));
   font-weight: var(--aculta-studio-fidelity-font-weight-bold);
 }
@@ -646,7 +646,7 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
 }
 
 /* The Form API editor is rendered outside the Marley controller wrapper. */
-form.node-revista-form {
+body.path-marley form.node-revista-form {
   margin-block: var(--aculta-studio-fidelity-row-gap);
   padding: var(--aculta-studio-fidelity-row-gap) var(--aculta-studio-fidelity-gutter);
   color: var(--aculta-studio-fidelity-text);
@@ -655,35 +655,35 @@ form.node-revista-form {
   font-family: var(--aculta-studio-fidelity-font-family);
 }
 
-form.node-revista-form :is(.form-item, .form-actions) {
+body.path-marley form.node-revista-form :is(.form-item, .form-actions) {
   padding-block: 1rem;
 }
 
-form.node-revista-form fieldset {
+body.path-marley form.node-revista-form fieldset {
   margin-block: var(--aculta-studio-fidelity-row-gap);
   padding: var(--aculta-studio-fidelity-row-gap) var(--aculta-studio-fidelity-gutter);
   border: 2px solid transparent;
   background: var(--aculta-studio-fidelity-fieldset-surface);
 }
 
-form.node-revista-form fieldset fieldset {
+body.path-marley form.node-revista-form fieldset fieldset {
   padding: 0;
   border: 0;
   background: transparent;
 }
 
-form.node-revista-form label {
+body.path-marley form.node-revista-form label {
   display: block;
   max-inline-size: 80ch;
   padding: 0.25rem;
   font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
 }
 
-form.node-revista-form label.option {
+body.path-marley form.node-revista-form label.option {
   display: inline-block;
 }
 
-form.node-revista-form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), .form-select) {
+body.path-marley form.node-revista-form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), .form-select) {
   min-block-size: 2.75rem;
   padding: 0.5rem 1rem;
   color: var(--aculta-studio-fidelity-text);
@@ -694,21 +694,21 @@ form.node-revista-form :is(input:not([type="checkbox"]):not([type="radio"]):not(
   font: inherit;
 }
 
-form.node-revista-form :is(input, select, textarea, .form-control, .form-select)::placeholder {
+body.path-marley form.node-revista-form :is(input, select, textarea, .form-control, .form-select)::placeholder {
   color: var(--aculta-studio-fidelity-input-placeholder);
   font-family: var(--aculta-studio-fidelity-font-family);
 }
 
-form.node-revista-form :is(input, select, textarea, .form-control, .form-select):is(:focus, :focus-visible) {
+body.path-marley form.node-revista-form :is(input, select, textarea, .form-control, .form-select):is(:focus, :focus-visible) {
   border-color: var(--aculta-studio-fidelity-input-focus);
   background-color: var(--aculta-studio-fidelity-input-background);
 }
 
-form.node-revista-form .error {
+body.path-marley form.node-revista-form .error {
   border-color: var(--aculta-studio-fidelity-input-error);
 }
 
-form.node-revista-form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button) {
+body.path-marley form.node-revista-form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button) {
   min-block-size: 2.75rem;
   margin-block-end: 1em;
   padding: 0.5em 2em;
@@ -726,13 +726,13 @@ form.node-revista-form :is(button, input[type="submit"], input[type="button"], .
   cursor: pointer;
 }
 
-form.node-revista-form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button):not([disabled]):is(:hover, :focus-visible) {
+body.path-marley form.node-revista-form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button):not([disabled]):is(:hover, :focus-visible) {
   color: var(--aculta-studio-fidelity-button-hover-text);
   border-color: var(--aculta-studio-fidelity-button-hover-border);
   background: var(--aculta-studio-fidelity-button-hover-background);
 }
 
-form.node-revista-form :is(.form-submit, .button--cta, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.btn-close):not(.accordion-button) {
+body.path-marley form.node-revista-form :is(.form-submit, .button--cta, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.btn-close):not(.accordion-button) {
   color: var(--aculta-studio-fidelity-button-primary-text);
   border-color: var(--aculta-studio-fidelity-button-primary-border);
   background: var(--aculta-studio-fidelity-button-primary-background);

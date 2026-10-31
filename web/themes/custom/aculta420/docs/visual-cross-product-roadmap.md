@@ -1414,3 +1414,13 @@ Também foi conferido o consumer público do SDC `rail` de Cursos: 14/14 checks 
 320/390/768/1440px, e ArrowRight continuou rolando o rail a 400% de zoom com
 viewport CSS de 320px e página sem overflow. Só cobre o catálogo COURSES e os
 três itens disponíveis; demais rails e páginas ainda precisam de teste.
+### OCS-F5 — isolamento de tokens Fidelity no editor Marley (2026-10-31)
+
+A revisão da cascata global encontrou que `form.node-revista-form`, presente
+em páginas editoriais que não pertencem ao Studio, acionava tokens e estilos
+OpenCulturas. O tema agora exige `body.path-marley` tanto no formulário quanto
+no `main` que o contém. A fixture Firefox ESR do editor passou 54/54 checks nos
+modos claro/escuro e em 320/390/768/1440px; conferiu o editor Marley estilizado
+e Magazine sem token/estilo Fidelity. Evidência isolada de CSS candidata,
+registrada também em `mobile-first-audit.md`; Runtime servido e os gates gerais
+F5/MF3/F11 seguem pendentes. Nenhum SDC/slot/prop mudou.

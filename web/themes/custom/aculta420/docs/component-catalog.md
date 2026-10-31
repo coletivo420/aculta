@@ -379,14 +379,17 @@ pendentes de captura.
 ### OCS-F1/F5–F7/F9 — estilos de Form API no tema
 
 Os formulários existentes continuam sendo renderizados pelos módulos e pelo
-Form API; o tema aplica a aparência Next somente sob `.studio__main form` e
-`.aculta-profile-editor form`. Não foi criado SDC de formulário paralelo. A
-fixture reutilizável `tests/browser/aculta-studio/studio-form-fidelity.py`
-passou 50/50 verificações em claro/escuro e 320/390/768/1440px. Campos e ações
-medem pelo menos 44px de altura, o foco de teclado permanece visível e um
-formulário externo ao Studio não recebe esses estilos. A fixture não substitui
-a homologação dos consumers reais ou dos estados AJAX/no-JS dos owners. Evidência
-em `$SUITE_OUT/studio-form-touch-target-20261030/`.
+Form API; o tema não cria um SDC de formulário paralelo. Em 2026-10-31, a
+auditoria encontrou que o seletor da criação/edição editorial por
+`form.node-revista-form` deixava tokens Fidelity escapar do Studio. Todos os
+estilos e tokens desse formulário agora exigem `body.path-marley`; um GET real
+confirmou essa classe no editor Marley. A fixture
+`tests/browser/aculta-studio/studio-form-fidelity.py` passou 54/54 verificações
+em claro/escuro e 320/390/768/1440px, validando Fidelity no Marley e ausência de
+tokens/estilos no purpose Magazine. Campos e ações medem ao menos 44px, e o foco
+de teclado permanece visível. A fixture não substitui a homologação dos
+consumers reais ou estados AJAX/no-JS dos owners. Evidência em
+`$SUITE_OUT/studio-form-fidelity-scope-20261031/`.
 
 ### OCS-F8 — área comercial integrada
 
