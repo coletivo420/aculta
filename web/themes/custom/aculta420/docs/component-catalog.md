@@ -144,16 +144,24 @@ não uma home autenticada; a paridade do conteúdo do Hub não é mensurável.
 O cartão do ponto de entrada usa agora a variante `studio_fidelity`. Ela mantém
 o contrato de slots/render array e aproxima margem, padding, raio e sombra dos
 teasers OpenCulturas 3.1.5, escopada à raiz `.studio`. A story é declarativa;
-não cria links funcionais. Firefox visível passou 45/45 medições na fixture
-local em nove larguras; não é captura do Runtime. Reteste da fixture na árvore
-atual, com 27 breakpoints entre 320–1920px, passou 243/243: container, grade,
-duas instâncias de `patterns/card`, Montserrat regular/negrito, escala
-tipográfica e alvos das abas de pelo menos 44px. Capturas 320/1440 foram
-inspecionadas em
-`/home/piradopirata/aculta-suite-out/studio-card-fidelity-current-20261031/`.
-O reteste SDC atual passou 55 componentes/759 checks; `PortalUiHooksTest`
-passou 24 testes/138 assertions. Essas fixtures não representam o HTML servido;
-o Runtime continua no HEAD `2493d7535`.
+não cria links funcionais. A fixture anterior passou 45/45 em nove larguras,
+mas seu markup não espelhava o consumer e continha duas instâncias sintéticas;
+seus resultados não são evidência do Hub.
+
+`studio-card-fidelity.py` foi alinhado ao render array real do
+`AccountExperienceProvider` e ao adaptador `PortalUiHooks`: root
+`.studio.aculta-account-entry`, lista `.studio__actions` e cinco cartões com
+somente os links de Marley, Ganjalab, WE SATIVA, Green Stash e Culturas. O CSS
+agora dá a cada link um alvo de 44×44px, sem alterar o SDC ou seus slots. Firefox
+ESR passou 248/248 medições em 27 larguras (320–1920px), incluindo container,
+grade, Montserrat, escala tipográfica, os cinco destinos e ausência de overflow;
+em 320px, Tab percorreu os cinco links na ordem do provider com `:focus-visible`
+e outline de 3px.
+Capturas 320/1440 foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/studio-card-fidelity-account-entry-20261031/`.
+O reteste SDC passou 55 componentes/759 checks e `PortalUiHooksTest` passou 24
+testes/138 assertions. A fixture não representa o HTML servido; o Runtime
+continua no HEAD `2493d7535`.
 
 Na navegação interna, `.studio__tabs` e `.studio__subtabs` preservam os links e
 estados autorizados existentes. A apresentação distingue áreas primárias de

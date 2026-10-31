@@ -838,6 +838,12 @@ body.path-marley form.node-revista-form :is(.form-submit, .button--cta, .oc-butt
   padding: 0;
 }
 
+.aculta-account-entry .studio__actions .aculta-card--studio-fidelity .card-body > a {
+  display: flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+}
+
 /* Hub: one readable card per row on narrow screens; wider grids are progressive. */
 .studio-hub .studio__actions {
   grid-template-columns: minmax(0, 1fr);

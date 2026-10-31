@@ -1570,6 +1570,23 @@ cache real, dark mode, zoom ou todos os estados; render do Runtime é
 `DEFERRED` enquanto a configuração do Runtime divergir e não houver rebuild.
 OCS-F3/F8 e THEME-MF2 permanecem parciais; isto não aprova THEME-MF3 ou OCS-F11.
 
+#### Retificação do consumer e novo alvo dos links (2026-10-31)
+
+A fixture descrita acima usava markup sintético de duas cartas e não espelhava o
+consumer `account-experiences`; o resultado antigo 45/45 não é evidência do Hub.
+`studio-card-fidelity.py` agora reflete a raiz `.studio.aculta-account-entry`,
+a lista renderizada e os cinco cartões dos destinos que
+`AccountExperienceProvider` fornece. Sem descrições ou operações inventadas.
+O CSS da Conta aumenta cada link a 44×44px, preservando o SDC e os render arrays.
+Firefox ESR passou 248/248 checks em 27 larguras entre 320–1920px; Montserrat,
+container, grade, cinco destinos, geometria e ausência de overflow foram
+verificados. A 320px, Tab percorreu todos os destinos em ordem e cada link
+exibiu `:focus-visible` com outline de 3px. Capturas 320/1440 foram revisadas em
+`/home/piradopirata/aculta-suite-out/studio-card-fidelity-account-entry-20261031/`.
+Stylelint passou. A fixture continua sem HTML Drupal, ACL, cache, modo escuro,
+zoom ou WCAG integral; Runtime permanece em HEAD `2493d7535` e a integração
+servida do adaptador continua pendente.
+
 ### THEME-MF2 — sticky com Navigation top-bar após migration de Events (2026-10-30)
 
 No Firefox ESR visível, `institution-bar-scroll.py` passou 142/142 checks no

@@ -1065,10 +1065,13 @@ foram conferidos em `templates/node/teasers.scss` e
 Schema/discovery passou para 55 componentes/756 checks na execução anterior (o
 reteste atual passou 55/759), a story foi criada, `PortalUiHooksTest` passou
 24 testes/138 assertions e Firefox ESR visível passou 45/45 checks
-na fixture candidata em nove larguras. Reteste na árvore atual passou 243/243
-em 27 larguras (320–1920px), incluindo container, breakpoints, Montserrat,
-escala tipográfica, abas e cartões; capturas 320/1440 foram inspecionadas em
-`/home/piradopirata/aculta-suite-out/studio-card-fidelity-current-20261031/`.
+na fixture anterior em nove larguras; ela continha dois cartões sintéticos e não
+espelhava o consumer, portanto não comprova o Hub. A fixture foi corrigida para
+o render array do `AccountExperienceProvider` com os cinco destinos existentes.
+CSS escopada expande cada link a 44×44px. O reteste atual passou 248/248 em 27
+larguras (320–1920px), incluindo container, breakpoints, Montserrat, escala
+tipográfica, os cinco SDCs, alvos e Tab com foco visível em ordem; capturas 320/1440 foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/studio-card-fidelity-account-entry-20261031/`.
 Essa evidência continua sendo fixture, não render Drupal no Runtime. OCS-F3/F8
 continuam parciais; F11 e THEME-MF3 não aprovados e OCS-A1–A4 não iniciadas.
 

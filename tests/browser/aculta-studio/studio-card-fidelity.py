@@ -36,6 +36,19 @@ def check(name, ok, detail=""):
     print(f"{'PASS' if ok else 'FAIL'}  {name}" + (f" — {detail}" if detail else ""))
 
 
+def press_tab(driver):
+    driver.req("POST", f"/session/{driver.session}/actions", {
+        "actions": [{
+            "type": "key",
+            "id": "studio-card-fidelity",
+            "actions": [
+                {"type": "keyDown", "value": "\ue004"},
+                {"type": "keyUp", "value": "\ue004"},
+            ],
+        }],
+    })
+
+
 css_files = [
     PROJECT / "web/themes/custom/aculta420/css/tokens.css",
     PROJECT / "web/themes/custom/aculta420/css/base.css",
@@ -61,30 +74,18 @@ markup = f"""<!doctype html>
 body {{ margin: 0; font: 16px/1.5 sans-serif; }}
 .aculta-main {{ padding-block: 1rem; }}
 .aculta-container {{ margin-inline: auto; }}
-.studio-hub {{ min-width: 0; }}
-.studio-hub .studio__actions {{ display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; padding: 0; margin: 0; list-style: none; }}
-.studio-hub .studio__actions > li {{ min-width: 0; }}
-.card {{ display: flex; flex-direction: column; min-width: 0; }}
-.card-body {{ flex: 1 1 auto; }}
-.card-body h3 {{ margin-block: 0 .5rem; }}
-.card-body p {{ margin: 0; }}
-@media (min-width: 48rem) {{ .studio-hub .studio__actions {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }} }}
+.list-unstyled {{ padding-inline-start: 0; list-style: none; }}
 </style></head><body><main class="aculta-main"><div class="aculta-container">
-<section class="studio studio-hub" aria-labelledby="hub-title">
-<h1 id="hub-title">Experiências ACULTA</h1>
-<ul class="studio__tabs nav" aria-label="Áreas do Studio">
-<li><a class="studio__tab" aria-current="page" href="#marley">Marley</a></li>
-<li><a class="studio__tab" href="#we-sativa">ACULTA STUDIO WE SATIVA</a></li>
-<li><a class="studio__tab" href="#green-stash">ACULTA STUDIO GREEN STASH</a></li>
-</ul>
-<ul class="studio__subtabs nav" aria-label="Seções da área">
-<li><a class="studio__link" aria-current="page" href="#produtos">Produtos</a></li>
-<li><a class="studio__link" href="#remessas">Envios e remessas</a></li>
-<li><a class="studio__link" href="#estoque">Estoque</a></li>
-</ul>
-<ul class="studio__actions">
-<li><article class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><h3><a href="#marley">Marley — acesso editorial</a></h3><p>Gerencie atividades editoriais e conteúdos disponíveis na sua conta.</p></div></article></li>
-<li><article class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><h3><a href="#greenstash">ACULTA STUDIO GREEN STASH</a></h3><p>A área de gestão comercial integrada do Studio.</p></div></article></li>
+<section class="studio aculta-account-entry" aria-labelledby="hub-title">
+<h1 id="hub-title">Minha Conta</h1>
+<p>Acesse seus dados, segurança e experiências ACULTA.</p>
+<h2>Experiências</h2>
+<ul class="studio__actions list-unstyled d-grid gap-2" aria-label="Experiências">
+<li><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#marley">Marley</a></div></div></li>
+<li><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#ganjalab">Ganjalab</a></div></div></li>
+<li><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#we-sativa">WE SATIVA</a></div></div></li>
+<li><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#green-stash">Green Stash</a></div></div></li>
+<li><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#culturas">Culturas</a></div></div></li>
 </ul></section></div></main></body></html>"""
 
 data_url = "data:text/html;charset=utf-8," + quote(markup)
@@ -121,10 +122,10 @@ try:
           const viewport = window.innerWidth;
           const container = document.querySelector('.aculta-container');
           const list = document.querySelector('.studio__actions');
-          const cards = [...document.querySelectorAll('.aculta-card--studio-fidelity')];
+          const cards = [...document.querySelectorAll('.aculta-account-entry .aculta-card--studio-fidelity')];
           const card = cards[0];
           const body = card.querySelector('.card-body');
-          const navLinks = [...document.querySelectorAll('.studio__tabs a, .studio__subtabs a')];
+          const experienceLinks = cards.map((item) => item.querySelector('.card-body > a'));
           const rect = container.getBoundingClientRect();
           return {
             viewport,
@@ -133,6 +134,11 @@ try:
             containerPaddingInline: getComputedStyle(container).paddingInlineStart,
             columns: getComputedStyle(list).gridTemplateColumns.trim().split(/\\s+/).length,
             cardCount: cards.length,
+            experienceLabels: experienceLinks.map((link) => link?.textContent.trim()),
+            experienceLinkTargets: experienceLinks.map((link) => {
+              const target = link.getBoundingClientRect();
+              return {width: Math.round(target.width), height: Math.round(target.height)};
+            }),
             radius: getComputedStyle(card).borderRadius,
             border: getComputedStyle(card).borderTopWidth,
             shadow: getComputedStyle(card).boxShadow,
@@ -143,13 +149,9 @@ try:
             bodyFontSize: getComputedStyle(card).fontSize,
             bodyLineHeight: getComputedStyle(card).lineHeight,
             h1FontSize: parseFloat(getComputedStyle(document.querySelector('#hub-title')).fontSize),
-            h3FontSize: getComputedStyle(card.querySelector('h3')).fontSize,
-            h3FontWeight: getComputedStyle(card.querySelector('h3')).fontWeight,
+            cardLinkFontSize: getComputedStyle(experienceLinks[0]).fontSize,
+            cardLinkFontWeight: getComputedStyle(experienceLinks[0]).fontWeight,
             studioScope: card.closest('.studio') !== null,
-            navigationTargets: navLinks.map((link) => {
-              const target = link.getBoundingClientRect();
-              return {text: link.textContent.trim(), width: Math.round(target.width), height: Math.round(target.height)};
-            }),
           };
         })();""")
         mobile = width < 768
@@ -178,14 +180,16 @@ try:
               f"padding={metrics['containerPaddingInline']}/{expected_container_padding}")
         check(f"{width}px: grade mobile-first", metrics["columns"] == (1 if mobile else 2),
               f"colunas={metrics['columns']}")
-        check(f"{width}px: consumidor e SDC presentes",
-              metrics["studioScope"] and metrics["cardCount"] == 2,
-              f"studio={metrics['studioScope']}, cartões={metrics['cardCount']}")
-        check(f"{width}px: abas com alvos mínimos de 44px",
-              len(metrics["navigationTargets"]) == 6
+        expected_experiences = ["Marley", "Ganjalab", "WE SATIVA", "Green Stash", "Culturas"]
+        check(f"{width}px: entrada real com cinco SDCs e destinos",
+              metrics["studioScope"] and metrics["cardCount"] == 5
+              and metrics["experienceLabels"] == expected_experiences,
+              f"studio={metrics['studioScope']}, destinos={metrics['experienceLabels']}")
+        check(f"{width}px: destinos com alvo mínimo de 44×44px",
+              len(metrics["experienceLinkTargets"]) == 5
               and all(target["width"] >= 44 and target["height"] >= 44
-                      for target in metrics["navigationTargets"]),
-              json.dumps(metrics["navigationTargets"], ensure_ascii=False))
+                      for target in metrics["experienceLinkTargets"]),
+              json.dumps(metrics["experienceLinkTargets"], ensure_ascii=False))
         check(f"{width}px: geometria Fidelity aplicada",
               metrics["radius"] == "24px" and metrics["border"] == "1px"
               and metrics["bodyPaddingInline"] == "32px",
@@ -199,13 +203,23 @@ try:
         check(f"{width}px: escala tipográfica Fidelity",
               metrics["bodyFontSize"] == "16px" and metrics["bodyLineHeight"] == "24px"
               and abs(metrics["h1FontSize"] - expected_h1_size) <= 0.1
-              and metrics["h3FontSize"] == "24px" and metrics["h3FontWeight"] == "700",
+              and metrics["cardLinkFontSize"] == "16px",
               f"body={metrics['bodyFontSize']}/{metrics['bodyLineHeight']}, "
-              f"h1={metrics['h1FontSize']}, h3={metrics['h3FontSize']}/{metrics['h3FontWeight']}")
+              f"h1={metrics['h1FontSize']}, card-link={metrics['cardLinkFontSize']}/{metrics['cardLinkFontWeight']}")
         if width in (320, 390, 768, 1440):
             screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
             (OUT / f"studio-card-{width}.png").write_bytes(base64.b64decode(screenshot))
-    summary = {"fixture": "Studio Hub card consumer", "widths": WIDTHS, "results": results}
+        if width == 320:
+            for index, expected_label in enumerate(expected_experiences, start=1):
+                press_tab(driver)
+                time.sleep(0.05)
+                focus = json.loads(driver.js("""const link=document.activeElement;const r=link.getBoundingClientRect();const s=getComputedStyle(link);return JSON.stringify({label:link.textContent.trim(),focusVisible:link.matches(':focus-visible'),outlineStyle:s.outlineStyle,outlineWidth:s.outlineWidth,width:Math.round(r.width),height:Math.round(r.height)});"""))
+                visible_ring = focus["outlineStyle"] != "none" and focus["outlineWidth"] not in ("0px", "0px 0px")
+                check(f"320px: Tab {index} foca {expected_label} com indicador e alvo 44×44px",
+                      focus["label"] == expected_label and focus["focusVisible"]
+                      and visible_ring and focus["width"] >= 44 and focus["height"] >= 44,
+                      json.dumps(focus, ensure_ascii=False))
+    summary = {"fixture": "AccountExperienceProvider card consumer (five available Suites)", "widths": WIDTHS, "results": results}
     (OUT / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n")
 finally:
     driver.close()
