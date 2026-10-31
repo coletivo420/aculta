@@ -17,11 +17,11 @@ final class Aculta420DesignFoundationsAnalyzer {
 
   private const DARK_SELECTOR = '[data-bs-theme="dark"]';
 
-  private const STUDIO_FIDELITY_SELECTOR = '.studio, .aculta-profile-editor';
+  private const STUDIO_FIDELITY_SELECTOR = '.studio, .aculta-profile-editor, form.node-revista-form';
 
-  private const STUDIO_DARK_FIDELITY_SELECTOR = '[data-bs-theme="dark"] .studio, [data-bs-theme="dark"] .aculta-profile-editor';
+  private const STUDIO_DARK_FIDELITY_SELECTOR = '[data-bs-theme="dark"] .studio, [data-bs-theme="dark"] .aculta-profile-editor, [data-bs-theme="dark"] form.node-revista-form';
 
-  private const STUDIO_AUTO_DARK_FIDELITY_SELECTOR = ':root:not([data-bs-theme="light"]) .studio, :root:not([data-bs-theme="light"]) .aculta-profile-editor';
+  private const STUDIO_AUTO_DARK_FIDELITY_SELECTOR = ':root:not([data-bs-theme="light"]) .studio, :root:not([data-bs-theme="light"]) .aculta-profile-editor, :root:not([data-bs-theme="light"]) form.node-revista-form';
 
   private const MODE_CLASSES = [
     'dark', 'light', 'dark-theme', 'light-theme', 'theme-dark', 'theme-light',

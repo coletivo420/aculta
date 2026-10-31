@@ -346,8 +346,8 @@ try {
   }
   file_put_contents($tokens_path, $original_tokens);
 
-  $studio_light_selector = ".studio,\n.aculta-profile-editor {\n";
-  $studio_scoped_tokens = str_replace($studio_light_selector, $studio_light_selector . "  --aculta-studio-fidelity-fixture: 1;\n", $original_tokens, $replacements);
+  $studio_light_token = "--aculta-studio-fidelity-primary: #9d1980;\n  --aculta-studio-fidelity-link: #a1167f;";
+  $studio_scoped_tokens = str_replace($studio_light_token, "--aculta-studio-fidelity-fixture: 1;\n  " . $studio_light_token, $original_tokens, $replacements);
   if ($studio_scoped_tokens === $original_tokens || $replacements !== 1) {
     throw new RuntimeException('Could not create Studio scoped-token fixture.');
   }

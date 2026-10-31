@@ -42,7 +42,10 @@ diretamente o `.mjs`.
 Para validar links de edição na listagem editorial, execute como a conta dona
 dos nós sintéticos com `STUDIO_USER=aculta_visual_admin` e
 `STUDIO_USER_ID=257`. A suíte exige o destino canônico
-`/marley/revista/{id}/editar`; não abre nem envia o formulário de edição.
+`/marley/revista/{id}/editar` e faz um GET somente leitura do Form API para
+verificar a presença de campos, tipografia Fidelity e reflow; nunca envia o
+formulário. Com `STUDIO_CSS_OVERRIDE=1`, a CSS candidata do worktree é injetada
+somente no Firefox.
 
 Para validar o SDC `context-tabs` numa rota real, `OCS_CONTEXT_TABS_CSS_OVERRIDE=1`
 injeta a folha candidata indicada por `OCS_CONTEXT_TABS_CSS_ROOT` (padrão:
@@ -419,3 +422,20 @@ Em 2026-10-30 passou 42/42 checks; as capturas clara/escura em 320px foram
 inspecionadas. Evidência: `/home/piradopirata/aculta-suite-out/studio-form-fidelity-final2-20261030/`.
 É fixture sem Drupal/Runtime: não homologa Form API real, AJAX, estados no-JS,
 ACL, cache ou fluxos dos módulos Marley/LMS/Wiki/Conta.
+
+### GET do editor Form API da Revista — 2026-10-30
+
+Com a conta sintética proprietária `aculta_visual_admin` (UID 257), a suíte
+abriu o destino real `/marley/revista/602/editar` sem submeter o formulário.
+No markup servido, `body` expõe `path-marley node--type-revista`, enquanto o
+form tem `node-revista-form node-form`; por isso a folha candidata de tokens e
+componentes usa essa classe exata, sem seletor amplo sobre o purpose Marley.
+Firefox ESR visível passou 76/76 verificações. O GET renderizou campos de
+título, conteúdo e secundários; o formulário computou Montserrat e tokens
+Fidelity; não houve overflow em 320/390/768/1280px. A suíte também repetiu os
+checks de Studio, navegação, teclado, contraste claro/escuro e erros JavaScript.
+Capturas desktop e mobile foram revisadas; resultados estão em
+`/home/piradopirata/aculta-suite-out/studio-editorial-form-fidelity-retest-20261030/`.
+O wrapper restaurou a preferência de cor original. O teste não cobre submit,
+save, preview, AJAX/no-JS, ACL completa, zoom nem WCAG integral; não homologa a
+implantação da CSS candidata no Runtime.

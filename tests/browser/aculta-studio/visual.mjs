@@ -295,19 +295,42 @@ try {
   await waitFor(`document.querySelector('[data-aculta-studio="listing"]')`, 'listagem');
   const listingState = JSON.parse(await exec(`return JSON.stringify({ rows: [...document.querySelectorAll('[data-aculta-studio="listing"] tbody tr')].filter((row) => row.querySelector('td') && !row.querySelector('td[colspan]')).length, empty: !!document.querySelector('[data-aculta-studio="listing"] td[colspan]') });`));
   check('listagem da Revista apresenta conteúdo ou estado vazio', listingState.rows > 0 || listingState.empty, `${listingState.rows} conteúdo(s); estado vazio=${listingState.empty}`);
+  let editorialEditHref = null;
   if (listingState.rows > 0) {
     const editLinks = await exec(`return [...document.querySelectorAll('[data-aculta-studio="listing"] a')].filter((a) => /^editar$/i.test(a.textContent.trim())).map((a) => ({href:a.href,path:new URL(a.href).pathname}));`);
     const canonicalOwnerRoutes = editLinks.filter((link) => /^\/marley\/revista\/\d+\/editar$/.test(link.path));
+    editorialEditHref = canonicalOwnerRoutes[0]?.href || null;
     check('edição aponta para a rota editorial canônica do owner no purpose Conta', canonicalOwnerRoutes.length >= 1, JSON.stringify({links:editLinks,canonical:canonicalOwnerRoutes.length}));
   }
   else {
-    check('edição de publicação pelo formulário do dono (domínio principal)', null, 'sem publicação própria publicada para testar a ação de edição');
+    check('edição aponta para a rota editorial canônica do owner no purpose Conta', null, 'sem publicação própria publicada para testar a ação de edição');
   }
   const unnamed = await exec(`return [...document.querySelectorAll('[data-aculta-studio="tab"],[data-aculta-studio="section"],[data-aculta-studio="subtab"],[data-aculta-studio="action"]')].filter((a) => !(a.textContent || '').trim()).length;`);
   check('todo link do Studio tem nome acessível (texto)', unnamed === 0, `${unnamed} sem nome`);
   const groupsOk = await exec(`return !!document.querySelector('[data-aculta-studio="tabs"][aria-label]') && !!document.querySelector('[data-aculta-studio="live"][role="status"]');`);
   check('áreas com nome (aria-label) e região de status (role=status, aria-live)', groupsOk);
   await shot('03-listagem-revista');
+
+  if (editorialEditHref) {
+    await navigateTo(editorialEditHref);
+    const editFormReady = await waitFor(`document.querySelector('form.node-form, form[id*="node-revista-edit"]')`, 'formulário Form API de edição da Revista');
+    const editForm = JSON.parse(await exec(`const form=document.querySelector('form.node-form, form[id*="node-revista-edit"]');const s=form?getComputedStyle(form):null;return JSON.stringify({ready:!!form,id:form?.id,className:form?.className,bodyClass:document.body.className,titleField:!!form?.querySelector('[name="title[0][value]"]'),secondary:!!form?.querySelector('[data-aculta-revista="secondary"]'),submit:!!form?.querySelector('[type="submit"]'),fontFamily:s?.fontFamily,color:s?.color,width:form?.scrollWidth,clientWidth:form?.clientWidth,page:document.documentElement.scrollWidth});`));
+    check('owner GET renderiza o Form API nativo de edição sem submit', editFormReady && editForm.ready && editForm.titleField && editForm.submit, JSON.stringify(editForm));
+    check('formulário editorial recebe tipografia Fidelity escopada ao Marley', editForm.fontFamily?.includes('Montserrat'), JSON.stringify(editForm));
+    await shot('04-editor-revista-desktop');
+    for (const width of [320, 390, 768, 1280]) {
+      await setViewport(width, width < 500 ? 844 : 900);
+      const formDimensions = JSON.parse(await exec(`const form=document.querySelector('form.node-form, form[id*="node-revista-edit"]');const r=form?.getBoundingClientRect();return JSON.stringify({width:innerWidth,page:document.documentElement.scrollWidth,formWidth:r?.width,formRight:r?.right});`));
+      check(`formulário editorial sem overflow em ${width}px`, formDimensions.page <= width && formDimensions.formRight <= width + 1, JSON.stringify(formDimensions));
+      if (width === 320) await shot('05-editor-revista-mobile');
+    }
+    await setViewport(1280, 900);
+  }
+  else {
+    check('owner GET renderiza o Form API nativo de edição sem submit', null, 'não há link de edição próprio nesta conta');
+    check('formulário editorial recebe tipografia Fidelity escopada ao Marley', null, 'não há link de edição próprio nesta conta');
+    for (const width of [320, 390, 768, 1280]) check(`formulário editorial sem overflow em ${width}px`, null, 'não há link de edição próprio nesta conta');
+  }
 
   const errs = await exec(`return (window.__errs || []).slice(0, 10);`);
   check('sem erros de JavaScript na página', errs.length === 0, errs.join(' | '));
