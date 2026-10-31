@@ -2463,6 +2463,11 @@ ou preferência persistente alterados.
   SDC schema passou (55 componentes/759 checks), shell contract passou (13),
   Design Foundations passou (2.429) e Revista/parity passou. Correção publicada
   em `65a064603`.
+- O probe autenticado de modos do Studio, com `teste.comum`, capturou Marley,
+  Conta e Perfil em 320/1440px: dark + reduced motion confirmou 6/6, e light
+  confirmou 6/6. Nenhuma preferência foi salva. Evidências em
+  `/home/piradopirata/aculta-suite-out/studio-theme-dark-recheck-70ba54aba-20261031/`
+  e `/home/piradopirata/aculta-suite-out/studio-theme-light-recheck-70ba54aba-20261031/`.
 - O probe autenticado `tests/browser/aculta-studio/keyboard-focus.py`, com a
   conta existente `teste.comum`, percorreu Marley, Conta e Perfil nas nove
   larguras: 648 observações, 621 focos reais com `:focus-visible` e outline,

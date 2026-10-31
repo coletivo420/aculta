@@ -486,6 +486,15 @@ separado. Exige Firefox ESR visível, Drush no `aculta_runtime` e conta de teste
 Isso testa tokens e media queries nas rotas/estados capturados, não contraste
 completo, acessibilidade nem todos os purposes.
 
+Reteste autenticado em 2026-10-31, com `teste.comum`, capturou Marley, Conta e
+Perfil em 320/1440px. O modo dark com reduced motion confirmou 6/6 capturas
+com `prefers-color-scheme: dark` e `prefers-reduced-motion: reduce`; o modo
+light confirmou 6/6 capturas sem essas preferências. Evidências:
+`/home/piradopirata/aculta-suite-out/studio-theme-dark-recheck-70ba54aba-20261031/`
+e `/home/piradopirata/aculta-suite-out/studio-theme-light-recheck-70ba54aba-20261031/`.
+Nenhuma preferência foi salva; contraste completo e WCAG continuam fora desta
+prova.
+
 **Execução de modos em 2026-10-29:** o probe capturou seis combinações de
 rota/largura em cada modo (`light`, `dark` + reduced motion e `auto`): Marley,
 Conta e Perfil em 320/1440 px. `matchMedia` confirmou dark 6/6 no modo escuro e
