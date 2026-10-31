@@ -242,11 +242,16 @@ acessado no shell legado pela navegação Meus Dados → Endereço. Confere uma
 única instância do formulário, os campos acordados, país oculto, carregamento
 do behavior de `aculta_portal_cep`, agrupamento de Número/S/N/Complemento e
 overflow em 320/360/390/599/600/768/1024/1280/1440 px. Repete a verificação de
-layout sem JavaScript em 320/390/768/1440 px. O WebDriver enquadra o campo CEP
-na captura sem depender do JavaScript da página; valores de input são mascarados.
+layout sem JavaScript em 320/390/768/1440 px. Também mede zoom real do Firefox
+ESR em 200% e 400%, com JavaScript e no-JS, verificando overflow e visibilidade
+do CEP. O WebDriver enquadra o campo CEP na captura sem depender do JavaScript
+da página; valores de input são mascarados.
 Não submete nem salva o endereço; as capturas ficam fora do repositório.
 O ULI abre uma sessão autenticada temporária e grava metadados de sessão no
-Runtime; antes de executar, siga a regra de snapshot em `AGENTS.md`.
+Runtime; antes de executar, siga a regra de snapshot em `AGENTS.md`. O comando
+de zoom usa `xdotool`; PNGs e `summary.json` ficam em `$SUITE_OUT`. O smoke não
+substitui teste de submissão, acessibilidade completa, ACL entre contas ou
+validação do lookup ao vivo do CEP.
 
 ```sh
 cd /home/piradopirata/projetos/aculta

@@ -2887,3 +2887,27 @@ há overflow. Capturas 320/1440px foram inspecionadas em
 `/home/piradopirata/aculta-suite-out/revista-cover-ratio-20261031-f6805cf4b/`.
 Modo claro/escuro foi medido no fallback. A sessão candidata não executa o Twig
 nem atualiza o CSS servido; integração final e THEME-MF3 continuam pendentes.
+
+### THEME-MF2 / OCS-F9 — endereço canônico com zoom real (2026-10-31)
+
+O harness reutilizável `tests/browser/aculta-theme-mobile-first/account-address.py`
+agora mede zoom real de 200% e 400% no Firefox ESR, com JavaScript e no-JS. No
+Runtime do servidor de desenvolvimento, `/dados/endereco` passou **50/50
+checks**: contrato único de campos e behavior CEP (JS), rotas/menu, ausência de
+overflow em nove larguras JS e quatro no-JS, além de viewport efetivo de 640px
+e 320px em 200%/400%, sem overflow horizontal e com o campo CEP visível. As
+capturas ampliadas foram inspecionadas. Não foram preenchidos nem enviados
+campos; o navegador usou somente ULI da conta sintética UID 5.
+
+Antes da sessão, host `toca`, checkout servido `2493d7535`, URI
+`http://default`, banco `aculta_runtime` e 624 tabelas foram confirmados. O
+snapshot está em
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-account-address-zoom-20261031-full.sql`
+(65.429.156 bytes, modo 0600, SHA-256
+`172736668b42d79534a6d781dda004723374090cdb75c0a1f20914ab5b3c0b3a`). Os
+artefatos da sessão estão em
+`/home/piradopirata/aculta-suite-out/account-address-zoom/`.
+
+É evidência focal do formulário canônico: não verifica lookup ao vivo do CEP,
+submissão, ACL entre contas, teclado completo, leitor de tela ou WCAG 2.2 AA
+integral. Não homologa as demais telas/purposes, THEME-MF3, OCS-F9 ou OCS-F11.

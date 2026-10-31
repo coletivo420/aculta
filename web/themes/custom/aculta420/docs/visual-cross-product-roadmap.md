@@ -786,6 +786,13 @@ estão registrados em `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`. A implem
 da THEME-MF2 e não homologa o gate THEME-MF3. Detalhes e limites em
 `mobile-first-audit.md`.
 
+### THEME-MF2 / OCS-F9 — zoom real no endereço canônico (2026-10-31)
+
+O formulário `/dados/endereco` passou 50/50 checks Firefox ESR em JS/no-JS,
+viewports do harness e zoom real 200%/400%, com CEP visível e sem overflow.
+Não houve entrada/envio de dados. O snapshot Runtime, hash e limites estão no
+`mobile-first-audit.md`; esta validação focal não aprova THEME-MF3 ou OCS-F11.
+
 ### THEME-MF2 — menu responsivo da Conta autenticada
 
 Firefox ESR visível abriu `/configuracoes` com a conta sintética UID 5 e CSS
