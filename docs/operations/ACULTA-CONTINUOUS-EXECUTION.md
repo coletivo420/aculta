@@ -36,6 +36,8 @@ O axe de Conta/Perfil encontrou ausência de H1 e ordem inválida de headings na
 
 O axe de Marley encontrou `scrollable-region-focusable` na tabela responsiva. O comportamento global `studio-table-a11y.js` agora torna `.studio__listing-wrap > .table-responsive` focável e fornece rótulo acessível. Reteste autenticado: **18/18 viewport checks, 0 violações axe**, claro/escuro. Evidência: `/home/piradopirata/aculta-suite-out/marley-axe-fixed2-20261101/`. Commit: `6685ebc3b`.
 
+Reteste conjunto pós-correção de Marley e Ganjalab: **36/36 viewport checks, 0 violações axe**, claro/escuro, HTTP 200 e sem overflow. Evidência: `/home/piradopirata/aculta-suite-out/marley-ganjalab-axe-fixed2-20261101/`.
+
 ### WE SATIVA canônico — evidência adicional (2026-10-31)
 
 O baseline Firefox ESR/X11 autenticado de `https://wiki420.aculta.toca.net.br/studio/we-sativa` foi executado em 320/390/599/600/768/1024/1280/1440px. As 8 capturas retornaram `Acesso negado`; Institution Bar, Domain Header e ausência de overflow foram observados, mas nenhum consumer Wiki foi servido. Evidência: `/home/piradopirata/aculta-suite-out/studio-we-sativa-baseline-recheck-8d4dcc07d-20261031/`. O resultado é DEFERRED por autorização/instalação do Runtime e mantém OCS-F7/OCS-F11 pendentes; não usar `/wesativa` como substituto da rota canônica.
