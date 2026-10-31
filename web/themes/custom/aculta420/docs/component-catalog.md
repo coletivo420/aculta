@@ -562,3 +562,18 @@ houve SDC novo nem mudança de props/slots: formulários e bloco preservam seus
 consumidores e contratos Drupal. A fixture Firefox reutiliza Bootstrap local e
 passa 74/74 checks; Kernel dos módulos está DEFERRED sem `SIMPLETEST_DB`. Veja
 `mobile-first-audit.md` para detalhes e limites.
+
+### OCS-F7 — consumer ACULTA STUDIO WE SATIVA (2026-10-30)
+
+A composição visual do consumer Wiki reutiliza os SDCs existentes
+`context-header`, `content-section`, `context-tabs`, `content-grid`, `card` e
+`empty-state`; não foi criado SDC paralelo nem story fictícia. O wrapper real
+`we-sativa__workspace`, mapeado pelo `PortalUiHooks`, é a raiz de escopo dos
+tokens e estilos Fidelity. O catálogo não declara schema novo nem consumidor
+extra: os render arrays são construídos por `WikiContributorWorkspace`.
+Firefox ESR visível confirmou no consumer real servido (path legado `/wesativa`)
+14 invariantes por viewport em 320/1440px: fonte, wrapper, headings, seções,
+estados, quatro filtros, filtro atual único, wrapping, links de pelo menos 44px,
+overflow e isolamento do shell. No modo escuro, 15/15 invariantes passaram nos
+mesmos dois viewports. O path canônico `/studio/we-sativa` ainda não é servido
+pelo Runtime HEAD `2493d7535`; F7 permanece parcial, sem aprovação.

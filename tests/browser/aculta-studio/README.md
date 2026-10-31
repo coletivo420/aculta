@@ -490,3 +490,20 @@ altera a preferência persistente da conta nem substitui contraste/WCAG. Com o
 override candidato, o `baseline.json` registra checks automáticos de tipografia,
 dois estados vazios, overflow, presença única do shell e isolamento dos tokens;
 em modo dark exige também o token de texto escuro.
+
+## WE SATIVA — consumidor Wiki e caminho legado do Runtime
+
+O consumidor visual real é a classe `we-sativa__workspace`, mapeada do token
+`data-portal-ui` por `PortalUiHooks`; o Wiki fornece `context-header`,
+`content-section`, `context-tabs`, `content-grid`, `card` e `empty-state`. O
+coletor mede o wrapper, estados vazios, seções, quatro filtros (`aria-current`,
+wrapping e links de pelo menos 44px), overflow e isolamento dos headers do shell.
+
+No Runtime HEAD `2493d7535`, o caminho oficial atual
+`https://wiki420.aculta.toca.net.br/studio/we-sativa` ainda não é servido; a
+rota instalada é `/wesativa`. Para inspeção **exploratória** do mesmo consumer,
+use `STUDIO_ROUTES=https://wiki420.aculta.toca.net.br/wesativa` com
+`OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1`. Esse resultado comprova a composição do
+wrapper no path legado, mas não homologa o caminho canônico nem fecha OCS-F7.
+Aplique `OCS_STUDIO_COLOR_MODE=dark` para o teste visual escuro. O teste é GET,
+não altera conteúdo e nunca submete ações da Wiki.

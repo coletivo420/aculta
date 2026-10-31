@@ -808,3 +808,35 @@ não se altera roteamento nem se declara F7/OCS-F11 homologado com essa
 superfície incompleta. Evidências e procedimento reproduzível estão em
 [`tests/browser/aculta-studio/README.md`](../../../../../../../tests/browser/aculta-studio/README.md)
 e em `$SUITE_OUT/ganjalab-fidelity-candidate-20261030`.
+
+### OCS-F7 — consumer Wiki WE SATIVA, estilo Fidelity candidato (2026-10-30)
+
+Reutilizado o wrapper real `.we-sativa__workspace` e os SDCs atuais
+`context-header`, `content-section`, `context-tabs`, `content-grid`, `card` e
+`empty-state`; sem alteração dos serviços Wiki nem criação de outro contrato.
+A folha escopada traz heading e seções tipográficas, superfícies/cartões e
+estados vazios Fidelity inspirados nos tokens já auditados do OpenCulturas Next
+3.1.5. O tarball de referência foi novamente baixado de Drupal.org e validado
+pelo SHA-256 `2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`;
+nenhum CSS, Twig, ícone, imagem ou fonte upstream foi copiado.
+
+Firefox ESR visível, CSS candidata e conta sintética autorizada: path legado
+`/wesativa`, 320/1440px, 14/14 invariantes em cada largura; Montserrat carregada,
+duas seções e estados vazios, filtros com `aria-current` único, wrapping, links
+46px, zero overflow e shell preservado. Capturas em
+`/home/piradopirata/aculta-suite-out/wesativa-legacy-route-final-20261030/`.
+O Runtime `2493d7535` ainda registra `/wesativa`; `/studio/we-sativa` segue
+sem página. Não homologar o path oficial, autoria com verbetes, estados de
+revisão/moderação, grants A/B, no-JS/AJAX, zoom ou WCAG. F7 parcial;
+THEME-MF3 e OCS-F11 continuam sem aprovação.
+
+#### OCS-F7 — modo escuro no consumer servido (2026-10-30)
+
+O reteste escuro de `/wesativa` passou 15/15 invariantes em 320/1440px: texto
+`rgb(239, 239, 239)`, Montserrat, superfícies, quatro filtros, shell isolado e
+zero overflow. Evidência visual e JSON em
+`/home/piradopirata/aculta-suite-out/wesativa-dark-legacy-20261030/`. Snapshot
+pré-ULI `/home/piradopirata/aculta-suite-out/runtime-before-wesativa-dark-20261030.sql`,
+SHA-256 `635b80adb3aaff58be98a539c52aeddaf9f133a14bf3336f4a7bd6e5b707ca33`.
+Essa amostra do path legado não fecha F7, ACL editorial, dados reais, WCAG ou
+validação do path canônico.

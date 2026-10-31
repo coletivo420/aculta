@@ -193,3 +193,28 @@ externo. Evidência e capturas em
 `/home/piradopirata/aculta-suite-out/studio-form-fidelity-final2-20261030/`.
 Ainda não houve comparação pareada com os formulários reais de Marley, LMS, Wiki
 ou Conta no Runtime; essas fases seguem parciais.
+
+### OCS-F7 — consumer Wiki WE SATIVA (2026-10-30)
+
+A folha Fidelity candidata foi aplicada ao wrapper real `.we-sativa__workspace`
+sem mudar domínio, rotas, presenters, ACL ou markup. Firefox ESR visível sobre o
+Runtime em `/wesativa` passou 14/14 invariantes em 320 e 1440px, incluindo
+Montserrat carregada, 2 seções, 2 empty states, 4 filtros com um `aria-current`,
+links com 46px de altura, wrapping e shell único sem tokens Fidelity. Capturas
+revisadas em `/home/piradopirata/aculta-suite-out/wesativa-legacy-route-final-20261030/`.
+Isso testa o consumer servido pelo caminho antigo; o caminho oficial
+`/studio/we-sativa` permanece vazio no Runtime `2493d7535` e não foi homologado.
+Amostra não cobre dados Wiki preenchidos, revisão/moderação, grants A/B,
+no-JS/AJAX, zoom ou WCAG; F7 parcial, OCS-F11 não aprovado.
+
+#### OCS-F7 — modo escuro do consumer legado (2026-10-30)
+
+No documento de teste com `data-bs-theme=dark`, Firefox confirmou texto Fidelity
+`rgb(239, 239, 239)`, Montserrat, superfícies escuras, quatro filtros com link
+mínimo de 44px, shell isolado e zero overflow; 15/15 invariantes passaram em
+320/1440px. Capturas revisadas em
+`/home/piradopirata/aculta-suite-out/wesativa-dark-legacy-20261030/`. O snapshot
+pré-ULI foi `/home/piradopirata/aculta-suite-out/runtime-before-wesativa-dark-20261030.sql`,
+SHA-256 `635b80adb3aaff58be98a539c52aeddaf9f133a14bf3336f4a7bd6e5b707ca33`.
+A preferência da conta não foi salva; a captura continua no path legado, sem
+validar a rota canônica ou contraste WCAG integral.

@@ -31,7 +31,8 @@
    leaving the global shell containers untouched. */
 .aculta-main > .aculta-container:has(.studio),
 .aculta-main > .aculta-container:has(.aculta-profile-editor),
-body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header) {
+body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
+.aculta-main > .aculta-container:has(.we-sativa__workspace) {
   width: calc(100% - 0.5rem);
   max-width: 102rem;
   margin-inline: auto;
@@ -41,7 +42,8 @@ body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header) 
 @media (min-width: 48rem) {
   .aculta-main > .aculta-container:has(.studio),
   .aculta-main > .aculta-container:has(.aculta-profile-editor),
-  body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header) {
+  body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
+  .aculta-main > .aculta-container:has(.we-sativa__workspace) {
     width: calc(100% - 2.5rem);
     padding-inline: 1.5rem;
   }
@@ -50,7 +52,8 @@ body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header) 
 @media (min-width: 70rem) {
   .aculta-main > .aculta-container:has(.studio),
   .aculta-main > .aculta-container:has(.aculta-profile-editor),
-  body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header) {
+  body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
+  .aculta-main > .aculta-container:has(.we-sativa__workspace) {
     max-width: 107rem;
     padding-inline: 3.5rem;
   }
@@ -59,7 +62,8 @@ body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header) 
 @media (min-width: 85rem) {
   .aculta-main > .aculta-container:has(.studio),
   .aculta-main > .aculta-container:has(.aculta-profile-editor),
-  body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header) {
+  body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
+  .aculta-main > .aculta-container:has(.we-sativa__workspace) {
     width: calc(100% - 6rem);
   }
 }
@@ -67,7 +71,8 @@ body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header) 
 @media (min-width: 120rem) {
   .aculta-main > .aculta-container:has(.studio),
   .aculta-main > .aculta-container:has(.aculta-profile-editor),
-  body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header) {
+  body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
+  .aculta-main > .aculta-container:has(.we-sativa__workspace) {
     max-width: 110rem;
     padding-inline: 5rem;
   }
@@ -175,6 +180,68 @@ body.path-ganjalab .aculta-main .aculta-card .card-body {
 }
 
 body.path-ganjalab .aculta-main .aculta-empty-state {
+  border-color: var(--aculta-studio-fidelity-divider);
+  border-radius: var(--aculta-studio-fidelity-border-radius-tiny);
+  color: var(--aculta-studio-fidelity-text);
+  background-color: var(--aculta-studio-fidelity-form-surface);
+  font-family: var(--aculta-studio-fidelity-font-family);
+  line-height: var(--aculta-studio-fidelity-line-height-default);
+}
+
+/* WE SATIVA uses the real Wiki-owned workspace wrapper as its visual root. */
+.aculta-main .we-sativa__workspace {
+  color: var(--aculta-studio-fidelity-text);
+  font-family: var(--aculta-studio-fidelity-font-family);
+  line-height: var(--aculta-studio-fidelity-line-height-default);
+}
+
+.aculta-main .we-sativa__workspace :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--aculta-studio-fidelity-text);
+  font-family: var(--aculta-studio-fidelity-font-family);
+  line-height: var(--aculta-studio-fidelity-line-height-headings);
+}
+
+.aculta-main .we-sativa__workspace .aculta-context-header__title {
+  font-size: clamp(2rem, 7vw, var(--aculta-studio-fidelity-font-size-xxl));
+  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
+}
+
+.aculta-main .we-sativa__workspace .aculta-editorial-section {
+  margin-block: var(--aculta-studio-fidelity-section-spacing);
+}
+
+.aculta-main .we-sativa__workspace .aculta-section-title {
+  justify-content: flex-start;
+  padding: 0 0 0.75rem;
+  margin-block: 0 1rem;
+  border-block-end: 1px solid var(--aculta-studio-fidelity-divider);
+  color: var(--aculta-studio-fidelity-text);
+  background: transparent;
+  font-family: var(--aculta-studio-fidelity-font-family);
+  font-size: var(--aculta-studio-fidelity-font-size-xl);
+  line-height: var(--aculta-studio-fidelity-line-height-headings);
+  text-align: start;
+}
+
+.aculta-main .we-sativa__workspace .aculta-section-title::before,
+.aculta-main .we-sativa__workspace .aculta-section-title::after {
+  display: none;
+}
+
+.aculta-main .we-sativa__workspace .aculta-card {
+  margin-block: calc(0.5 * var(--aculta-studio-fidelity-row-gap));
+  border: 1px solid transparent;
+  border-radius: 1.5rem;
+  background-color: var(--aculta-studio-fidelity-surface);
+  box-shadow: var(--aculta-studio-fidelity-box-shadow);
+}
+
+.aculta-main .we-sativa__workspace .aculta-card .card-body {
+  padding-block: 1rem;
+  padding-inline: 2rem;
+}
+
+.aculta-main .we-sativa__workspace .aculta-empty-state {
   border-color: var(--aculta-studio-fidelity-divider);
   border-radius: var(--aculta-studio-fidelity-border-radius-tiny);
   color: var(--aculta-studio-fidelity-text);
