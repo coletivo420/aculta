@@ -161,14 +161,15 @@ seus resultados não são evidência do Hub.
 `studio-card-fidelity.py` foi alinhado ao render array real do
 `AccountExperienceProvider` e ao adaptador `PortalUiHooks`: root
 `.studio.aculta-account-entry`, lista `.studio__actions` e cinco cartões com
-somente os links de Marley, Ganjalab, WE SATIVA, Green Stash e Culturas. O CSS
-agora dá a cada link um alvo de 44×44px, sem alterar o SDC ou seus slots. Firefox
-ESR passou 248/248 medições em 27 larguras (320–1920px), incluindo container,
-grade, Montserrat, escala tipográfica, os cinco destinos e ausência de overflow;
-em 320px, Tab percorreu os cinco links na ordem do provider com `:focus-visible`
-e outline de 3px.
-Capturas 320/1440 foram inspecionadas em
-`/home/piradopirata/aculta-suite-out/studio-card-fidelity-account-entry-20261031/`.
+somente os links de Marley, Ganjalab, ACULTA STUDIO WE SATIVA, ACULTA STUDIO
+GREEN STASH e Culturas. Os rótulos da Conta privada coincidem agora com os
+providers das duas Suites. O CSS dá a cada link um alvo de 44×44px, sem alterar
+o SDC ou seus slots. Firefox ESR passou 250/250 medições em 27 larguras
+(320–1920px), incluindo container, grade, Montserrat, escala tipográfica, os
+cinco destinos, foco visível e ausência de overflow; zoom real a 200%/400%
+também passou, com viewports CSS de 640px/320px.
+Capturas em
+`/home/piradopirata/aculta-suite-out/studio-card-zoom-official-names-20261031/`.
 O reteste SDC passou 55 componentes/759 checks e `PortalUiHooksTest` passou 24
 testes/138 assertions. A fixture não representa o HTML servido; o Runtime
 continua no HEAD `2493d7535`.

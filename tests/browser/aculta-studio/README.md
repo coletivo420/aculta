@@ -405,18 +405,23 @@ MF3/F11 ou homologação global.
 `studio-card-fidelity.py` usa uma fixture local que espelha o render array de
 `AccountExperienceProvider` e o adaptador `PortalUiHooks`: raiz
 `.studio.aculta-account-entry`, lista `.studio__actions` e cinco cartões
-`patterns/card` com somente os labels existentes (Marley, Ganjalab, WE SATIVA,
-Green Stash e Culturas). Não adiciona descrições, tarefas ou operações. A
-fixture mede as folhas candidatas de tokens, Studio e `patterns/card` nos 27
+`patterns/card` com somente os labels existentes (Marley, Ganjalab, ACULTA
+STUDIO WE SATIVA, ACULTA STUDIO GREEN STASH e Culturas). Não adiciona
+descrições, tarefas ou operações. A fixture mede as folhas candidatas de
+tokens, Studio e `patterns/card` nos 27
 viewports, incluindo limites 48/70/85/120em e vizinhanças. Confere container,
 padding, reflow, geometria, Montserrat, escala tipográfica, overflow e alvos
 mínimos de 44×44px nos cinco links. Em 320px, Tab percorre a ordem dos cinco
 destinos e exige `:focus-visible` com outline visível; PNGs ficam em `$SUITE_OUT`.
 
-A página é `data:` no Firefox ESR visível e não acessa Drupal/Runtime. O teste
+A execução de 2026-10-31 passou 250/250 verificações, incluindo zoom real do
+navegador em 200% e 400% via `xdotool`, nomes oficiais, foco e alvos; os
+viewports CSS medidos nos dois níveis de zoom foram 640px e 320px. A página é
+`data:` no Firefox ESR visível e não acessa Drupal/Runtime. O teste
 carrega somente os CSS do tema e um reset equivalente a `list-unstyled`, pois
 não injeta a biblioteca Bootstrap. Não comprova render do preprocess no
-servidor, links reais, grants, cache, dark mode, zoom ou WCAG integral.
+servidor, links reais, grants, cache, integração Bootstrap ou WCAG integral.
+Claro/escuro não é coberto nesta fixture.
 Use `DISPLAY=:0`, defina `SUITE_OUT` e
 `ACULTA_FF_PROFILE_ROOT` e execute:
 

@@ -1502,3 +1502,14 @@ tokens Fidelity. A fixture reutilizada passou 114/114 em Firefox ESR, nove
 larguras, claro/escuro e zoom 200/400%; capturas de ambas as áreas foram
 revistas. Isto não é validação integrada do Runtime: operador/store A/B e
 fluxos reais continuam pendentes. Detalhes e limites em `mobile-first-audit.md`.
+
+### OCS-F3/F4 / THEME-MF2 — Entrada de Conta e nomes oficiais (2026-10-31)
+
+Os links das Suites na entrada de Conta exibem agora os mesmos nomes fornecidos
+pelos providers: **ACULTA STUDIO WE SATIVA** e **ACULTA STUDIO GREEN STASH**.
+O teste Unitário de `AccountExperienceProvider` verifica labels e rotas
+canônicas. A fixture Firefox ESR visível passou 250/250 checks em 27 larguras,
+foco por teclado e zoom real 200/400%, sem overflow; evidências e limites estão
+em `studio-visual/visual-parity-matrix.md` e
+`tests/browser/aculta-studio/README.md`. A fixture não valida o consumer servido
+no Runtime. A homologação de F4/F11 e THEME-MF3 permanece pendente.

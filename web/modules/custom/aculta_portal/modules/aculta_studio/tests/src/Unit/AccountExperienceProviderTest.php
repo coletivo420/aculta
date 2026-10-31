@@ -5,12 +5,19 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_studio\Unit;
 
 use Drupal\aculta_portal\Account\AccountDocumentInterface;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_studio\Experience\AccountExperienceProvider;
 use Drupal\aculta_studio\Experience\StudioExperienceManager;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\domain\DomainInterface;
+use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Tests the personal experience metadata, access and safe account links.
@@ -86,6 +93,44 @@ final class AccountExperienceProviderTest extends UnitTestCase {
       'aculta_portal.dashboard',
     ], $routes);
     self::assertContains('user', $build['#cache']['contexts']);
+  }
+
+  /**
+   * Official Suite names and canonical routes are kept.
+   */
+  public function testSuiteLinksUseOfficialNamesAndRoutes(): void {
+    $domain = $this->createMock(DomainInterface::class);
+    $domain->method('id')->willReturn('wiki420_aculta_org');
+    $domain->method('isHttps')->willReturn(TRUE);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('load')->willReturn($domain);
+    $entities = $this->createMock(EntityTypeManagerInterface::class);
+    $entities->method('getStorage')->with('domain')->willReturn($storage);
+    $domains = new DomainPurposeManager(
+      $entities,
+      $this->createMock(DomainNegotiatorInterface::class),
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
+    );
+
+    $items = (new AccountExperienceProvider(NULL, $domains))->build()['suites']['#items'];
+    $labels = array_map(static fn (array $item): string => $item['#title']->getUntranslatedString(), $items);
+    $routes = array_map(static fn (array $item): string => $item['#url']->getRouteName(), $items);
+
+    self::assertSame([
+      'Marley',
+      'Ganjalab',
+      'ACULTA STUDIO WE SATIVA',
+      'ACULTA STUDIO GREEN STASH',
+      'Culturas',
+    ], $labels);
+    self::assertSame([
+      'aculta_studio.home',
+      'aculta_lms.student_dashboard',
+      'aculta_studio.we_sativa',
+      'aculta_commerce.green_stash',
+      'aculta_events.organizer_dashboard',
+    ], $routes);
   }
 
   /**

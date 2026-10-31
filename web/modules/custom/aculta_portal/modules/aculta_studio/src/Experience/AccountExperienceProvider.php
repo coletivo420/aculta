@@ -75,17 +75,17 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
     $items = $this->links();
     $suiteLinks = [];
     foreach ([
-      ['account', 'aculta_studio.home', 'Marley'],
-      ['courses', 'aculta_lms.student_dashboard', 'Ganjalab'],
-      ['wiki', 'aculta_studio.we_sativa', 'WE SATIVA'],
-      ['shop', 'aculta_commerce.green_stash', 'Green Stash'],
-      ['eventos', 'aculta_events.organizer_dashboard', 'Culturas'],
+      ['account', 'aculta_studio.home', new TranslatableMarkup('Marley')],
+      ['courses', 'aculta_lms.student_dashboard', new TranslatableMarkup('Ganjalab')],
+      ['wiki', 'aculta_studio.we_sativa', new TranslatableMarkup('ACULTA STUDIO WE SATIVA')],
+      ['shop', 'aculta_commerce.green_stash', new TranslatableMarkup('ACULTA STUDIO GREEN STASH')],
+      ['eventos', 'aculta_events.organizer_dashboard', new TranslatableMarkup('Culturas')],
     ] as [$purpose, $route, $label]) {
       $url = $this->domainPurposes?->routeUrl($purpose, $route);
       if ($url !== NULL) {
         $suiteLinks[] = [
           '#type' => 'link',
-          '#title' => new TranslatableMarkup($label),
+          '#title' => $label,
           '#url' => $url,
         ];
       }

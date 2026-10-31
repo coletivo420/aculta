@@ -4,6 +4,7 @@
 import base64
 import json
 import os
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -28,6 +29,7 @@ WIDTHS = [
     991, 992, 1024, 1099, 1100, 1119, 1120, 1279, 1280,
     1359, 1360, 1439, 1440, 1599, 1600, 1919, 1920,
 ]
+ZOOM_TARGETS = (2.0, 4.0)
 results = []
 
 
@@ -47,6 +49,16 @@ def press_tab(driver):
             ],
         }],
     })
+
+
+def press_browser_key(key):
+    windows = subprocess.check_output(
+        ["xdotool", "search", "--onlyvisible", "--class", "firefox"], text=True,
+    ).splitlines()
+    if not windows:
+        raise RuntimeError("Janela visível do Firefox ESR não encontrada.")
+    subprocess.run(["xdotool", "windowactivate", "--sync", windows[-1]], check=True)
+    subprocess.run(["xdotool", "key", "--clearmodifiers", key], check=True)
 
 
 css_files = [
@@ -83,8 +95,8 @@ body {{ margin: 0; font: 16px/1.5 sans-serif; }}
 <ul class="studio__actions list-unstyled d-grid gap-2" aria-label="Experiências">
 <li><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#marley">Marley</a></div></div></li>
 <li><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#ganjalab">Ganjalab</a></div></div></li>
-<li><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#we-sativa">WE SATIVA</a></div></div></li>
-<li><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#green-stash">Green Stash</a></div></div></li>
+<li><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#we-sativa">ACULTA STUDIO WE SATIVA</a></div></div></li>
+<li><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#green-stash">ACULTA STUDIO GREEN STASH</a></div></div></li>
 <li><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#culturas">Culturas</a></div></div></li>
 </ul></section></div></main></body></html>"""
 
@@ -100,8 +112,10 @@ try:
             tree_id = 1
             await ws.send(json.dumps({"id": tree_id, "method": "browsingContext.getTree", "params": {}}))
             while True:
-                event = json.loads(await ws.recv())
+                event = json.loads(await asyncio.wait_for(ws.recv(), timeout=10))
                 if event.get("id") == tree_id:
+                    if "error" in event:
+                        raise RuntimeError(f"WebDriver BiDi getTree: {event['error']}")
                     context = event["result"]["contexts"][0]["context"]
                     break
             command_id = tree_id + 1
@@ -111,8 +125,10 @@ try:
                 "params": {"context": context, "viewport": {"width": width, "height": 900}},
             }))
             while True:
-                event = json.loads(await ws.recv())
+                event = json.loads(await asyncio.wait_for(ws.recv(), timeout=10))
                 if event.get("id") == command_id:
+                    if "error" in event:
+                        raise RuntimeError(f"WebDriver BiDi setViewport: {event['error']}")
                     break
     driver.get(data_url)
     for width in WIDTHS:
@@ -180,7 +196,7 @@ try:
               f"padding={metrics['containerPaddingInline']}/{expected_container_padding}")
         check(f"{width}px: grade mobile-first", metrics["columns"] == (1 if mobile else 2),
               f"colunas={metrics['columns']}")
-        expected_experiences = ["Marley", "Ganjalab", "WE SATIVA", "Green Stash", "Culturas"]
+        expected_experiences = ["Marley", "Ganjalab", "ACULTA STUDIO WE SATIVA", "ACULTA STUDIO GREEN STASH", "Culturas"]
         check(f"{width}px: entrada real com cinco SDCs e destinos",
               metrics["studioScope"] and metrics["cardCount"] == 5
               and metrics["experienceLabels"] == expected_experiences,
@@ -219,6 +235,48 @@ try:
                       focus["label"] == expected_label and focus["focusVisible"]
                       and visible_ring and focus["width"] >= 44 and focus["height"] >= 44,
                       json.dumps(focus, ensure_ascii=False))
+
+    for target in ZOOM_TARGETS:
+        press_browser_key("ctrl+0")
+        time.sleep(0.12)
+        asyncio.run(set_width(1280))
+        zoom = driver.js("return {width: innerWidth, dpr: devicePixelRatio}")
+        for _ in range(24):
+            if 1280 / max(1, zoom["width"]) >= target - 0.08:
+                break
+            press_browser_key("ctrl+plus")
+            time.sleep(0.12)
+            zoom = driver.js("return {width: innerWidth, dpr: devicePixelRatio}")
+        zoom_metrics = driver.js("""return (() => {
+          const cards=[...document.querySelectorAll('.aculta-account-entry .aculta-card--studio-fidelity')];
+          const links=cards.map(card=>card.querySelector('.card-body > a'));
+          const rect=node=>{const box=node.getBoundingClientRect();return {
+            left:Math.round(box.left*100)/100,right:Math.round(box.right*100)/100,
+            width:Math.round(box.width*100)/100,height:Math.round(box.height*100)/100};};
+          return {width:innerWidth,document:document.documentElement.scrollWidth,
+            body:document.body.scrollWidth,cardCount:cards.length,
+            labels:links.map(link=>link?.textContent.trim()),targets:links.map(rect),
+            container:rect(document.querySelector('.aculta-container'))};
+        })();""")
+        ratio = 1280 / max(1, zoom_metrics["width"])
+        all_fit = all(target_box["left"] >= -1
+                      and target_box["right"] <= zoom_metrics["width"] + 1
+                      and target_box["width"] >= 44 and target_box["height"] >= 44
+                      for target_box in zoom_metrics["targets"])
+        check(f"Firefox zoom {round(target * 100)}%: cards e rótulos oficiais sem overflow",
+              ratio >= target - 0.08
+              and zoom_metrics["document"] <= zoom_metrics["width"]
+              and zoom_metrics["body"] <= zoom_metrics["width"]
+              and zoom_metrics["cardCount"] == 5
+              and zoom_metrics["labels"] == ["Marley", "Ganjalab", "ACULTA STUDIO WE SATIVA",
+                                              "ACULTA STUDIO GREEN STASH", "Culturas"]
+              and zoom_metrics["container"]["left"] >= -1
+              and zoom_metrics["container"]["right"] <= zoom_metrics["width"] + 1
+              and all_fit,
+              {**zoom_metrics, "target": target, "ratio": ratio, "allTargetsFit": all_fit})
+        screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+        (OUT / f"studio-card-zoom-{round(target * 100)}.png").write_bytes(base64.b64decode(screenshot))
+    press_browser_key("ctrl+0")
     summary = {"fixture": "AccountExperienceProvider card consumer (five available Suites)", "widths": WIDTHS, "results": results}
     (OUT / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n")
 finally:
