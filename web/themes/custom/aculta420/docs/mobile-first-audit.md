@@ -3465,3 +3465,31 @@ slot de mensagem nessa página). Relatório consolidado:
 Essa execução não reprova por overflow geral: `/entrar` ainda mede 328px de
 largura documental em viewport 320px, pendência independente da mensagem já
 registrada nos gates MF3. O baseline candidato não foi instalado no Runtime.
+
+### THEME-MF2 — rodapé global e carrossel editorial (2026-10-31)
+
+Firefox ESR visível revalidou o rodapé nas dez raízes dos purposes Main, Conta,
+Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e Eventos em
+320/360/390/575/576/599/600/768/991/992/1024/1280/1440px. Foram **259/260
+checks**: estrutura responsiva, colunas progressivas, links de pelo menos 44px,
+Institution Bar e Domain Header únicos, e sem overflow do rodapé passaram em
+todas as áreas. A única falha foi o overflow conhecido de `/entrar` a 320px
+(`documentWidth=328px`); o contêiner do rodapé mediu 320px e não apresentou
+overflow próprio. Para Links, o SDC `social-links-page` manteve o seu consumer
+próprio. O teste injetou `base.css`, `auth.css` e o CSS candidato do SDC Links
+na sessão do navegador; a folha do rodapé e a página servida não foram
+reconstruídas nem instaladas. Capturas e resultado em
+`/home/piradopirata/aculta-suite-out/footer-cross-purpose-visual-followup-20261031/`.
+
+No mesmo ciclo, a home MAIN e o carrossel editorial real foram revalidados com
+`editorial-carousel-runtime.py`: consumer e inicialização VVJB reais presentes,
+slides com conteúdo visível e **15/15 checks** em 320/360/390/575/576/599/600/
+768/769/1024/1280/1440px. O carrossel não excedeu o viewport, preservou
+controles e usou cartão único no mobile e cartões de até 370px a partir de
+769px. O stylesheet candidato foi injetado na sessão; não houve alteração de
+preferências nem conteúdo. Capturas/JSON em
+`/home/piradopirata/aculta-suite-out/editorial-carousel-visual-followup-20261031/`.
+
+Essas rodadas não resolvem o overflow de Conta, não validam a integração do
+stylesheet servido nem equivalem a zoom, teclado completo, leitor de tela,
+contraste ou aceite WCAG 2.2 AA. THEME-MF3 e OCS-F11 continuam pendentes.
