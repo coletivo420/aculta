@@ -1,6 +1,6 @@
 # Guardrails mobile-first do ACULTA420
 
-**Status:** norma para todos os agentes e contribuidores que alterem apresentação no ACULTA420. A exigência cobre todo o tema e todos os purposes; não é exclusiva do Studio. 2026-10-30.
+**Status:** norma para todos os agentes e contribuidores que alterem apresentação no ACULTA420. A exigência cobre todo o tema e todos os purposes; não é exclusiva do Studio. Atualizado em 2026-11-01.
 
 ## Escopo
 
@@ -20,7 +20,7 @@ precisarem de espaço; não esconda a marca para forçar uma única linha.
 3. Não usar largura/altura rígida para simular responsividade. Permitir shrink de itens Grid/Flex (`min-width: 0` quando apropriado), usar dimensões fluidas e propriedades lógicas, envolver texto longo e manter mídia dentro do container.
 4. Não ordenar visualmente itens de forma diferente da ordem DOM/foco. Scroll bidimensional só pode ficar confinado a dados intrinsecamente tabulares ou conteúdo que realmente exija essa dimensão, sem alargar a página inteira e com alternativa acessível.
 5. Não esconder operação, link, campo ou dado disponível em telas largas para fazer caber no mobile. Pode-se usar apresentação progressiva quando preservar rota, autorização, histórico, teclado, foco, estado, formulário não salvo e fallback sem JavaScript.
-6. Formulários, editores, menus, diálogos, tabelas e barras de ação devem funcionar com teclado virtual e físico, leitor de tela e zoom. Foco e conteúdo não podem ficar cobertos por barras fixas; movimento respeita `prefers-reduced-motion`; cor não é sinal único. Claro/escuro podem trocar tokens, não geometria ou comportamento.
+6. Formulários, editores, menus, diálogos, tabelas e barras de ação devem funcionar com teclado virtual e físico, leitor de tela e zoom. Foco e conteúdo não podem ficar cobertos por barras fixas; movimento respeita `prefers-reduced-motion`; cor não é sinal único. Claro/escuro podem trocar tokens, não geometria ou comportamento. Componentes que mantêm uma superfície fixa entre modos (por exemplo, botões de identidade de provedores externos) devem parear texto, hover e foco com essa superfície em todos os modos; não herdar automaticamente o token global de texto. Medir contraste dos estados normal e hover/foco no Firefox.
 7. O tema apresenta tokens e markup neutros. Não mover para Twig/CSS decisões de rota, purpose, disponibilidade, ACL, dados, cache ou regra de negócio. Recursos sem implementação não viram controles funcionais. Mudança funcional pertence ao owner do módulo e deve seguir o ownership da PR; registrar `Pede-A` em vez de contornar contrato.
 8. A construção deve respeitar Bootstrap 5, UI Patterns e SDC existentes. Reuso na ordem: componente atual, variante/slot, SDC transversal com consumer real, adaptador de apresentação somente quando indispensável. SDC novo exige schema, story e consumer real no mesmo commit.
 

@@ -79,6 +79,10 @@ escopada ao Studio.
 - Claro e escuro mantêm a mesma geometria, hierarquia, navegação e comportamento;
   somente tokens visuais podem variar. O tema apresenta o contrato neutro e não
   passa a decidir acesso, domínio ou regra de negócio para adaptar a interface.
+- Quando um componente mantiver fundo fixo entre modos (como uma ação de login
+  com identidade de provedor), associe texto, hover e foco a essa superfície em
+  claro e escuro. Não reutilize automaticamente `--aculta-text-primary` num
+  fundo claro fixo; verifique contraste computado normal e hover/foco.
 - Ao alterar componente responsivo, registre evidência por viewport e interação
   aplicáveis. Use a grade transversal
   320/360/390/599/600/768/1024/1280/1440 px e fronteiras adicionais do
