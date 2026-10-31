@@ -37,9 +37,11 @@ final class EditorialWorkspaceController {
     private readonly AccountInterface $account,
     private readonly RequestStack $requestStack,
     private readonly DateFormatterInterface $dateFormatter,
-    TranslationInterface $stringTranslation,
+    ?TranslationInterface $stringTranslation = NULL,
   ) {
-    $this->setStringTranslation($stringTranslation);
+    if ($stringTranslation !== NULL) {
+      $this->setStringTranslation($stringTranslation);
+    }
   }
 
   /**
