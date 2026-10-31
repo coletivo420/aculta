@@ -369,6 +369,37 @@ em 320/390/767/768/1024/1440px. Stylelint e sintaxe JS PASS; execução
 Firefox/Runtime DEFERRED por sessões concorrentes. Não homologa OCS-F11 nem
 THEME-MF3.
 
+### THEME-MF3 — validação candidata de autenticação e fronteira visual (2026-10-31)
+
+O Firefox ESR visível abriu `/entrar` anônimo no Runtime de desenvolvimento
+(HEAD servido `2493d7535`, `aculta_runtime`) e recebeu `base.css`/`auth.css` e o
+token `data-portal-ui="challenge-frame"` somente no browser. A rota e as onze
+larguras 320/360/390/575/576/599/600/768/1024/1280/1440px passaram **12/12**
+checks: viewport sem overflow, formulário e widget contidos, H1 sem sobrepor o
+formulário. A captura 320px foi inspecionada. Evidência em
+`/home/piradopirata/aculta-suite-out/auth-runtime-candidate-followup-20261031/`.
+O token foi simulado; o Runtime servido continua com `documentWidth=328px` em
+320px até que hook e CSS sejam integrados e testados nele. Isto não aprova
+THEME-MF3.
+
+No mesmo checkout, `validate-aculta420-foundation.php` executado por Drush no
+Runtime leu a árvore candidata e passou **352 checks**; `npm run lint:css`,
+`npm run lint:js`, `validate-aculta420-sdc-schemas.php` (55 componentes, 27
+includes, 759 checks), `validate-portal-ui-docs.php` (518 tokens, 421 usados,
+149 atributos) e `CaptchaPresentationHooksTest` (3 testes/8 assertions) também
+passaram. `validate-module-theme-boundary.php` falhou em uma de 3491
+verificações porque `CourseAuthoringController.php` emite classes de
+apresentação `studio`, `studio-course-authoring` e `studio__main`.
+
+**Pede-A — módulo `aculta_studio`:** substituir classes visuais no render array
+do `CourseAuthoringController` por tokens `data-portal-ui` consumidos pelo
+`PortalUiHooks` do tema, preservando os marcadores `data-aculta-studio`, a rota,
+o Form API owner, ACL e cacheability. Atualizar a caracterização do render array
+em `CourseAuthoringControllerTest`; provar com o teste Unit e
+`validate-module-theme-boundary.php` sem exceções/allowlist. O arquivo pertence
+ao módulo e foi introduzido por commit desta branch; não foi editado nesta
+frente visual.
+
 ### THEME-MF2 — artigo editorial da Revista, reteste da fixture (2026-10-31)
 
 O harness `revista-article-layout.py` passou **20/20 checks** em Firefox ESR
