@@ -148,6 +148,14 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     self::assertArrayHasKey('filters', $build);
     self::assertArrayHasKey('pager', $build);
     self::assertCount(5, $build['events']['#header']);
+    self::assertSame(
+      'Situação',
+      (string) $build['filters']['form']['status']['#attributes']['aria-label'],
+    );
+    self::assertSame(
+      ['todos', 'publicado', 'rascunho', 'cancelado'],
+      array_keys($build['filters']['form']['status']['#options']),
+    );
   }
 
   /**

@@ -327,6 +327,9 @@ final class EventOrganizerDashboardController extends ControllerBase {
               'rascunho' => $this->t('Rascunho'),
               'cancelado' => $this->t('Cancelado'),
             ],
+            '#attributes' => [
+              'aria-label' => $this->t('Situação'),
+            ],
             '#default_value' => $statusFilter,
           ],
           'submit' => [
