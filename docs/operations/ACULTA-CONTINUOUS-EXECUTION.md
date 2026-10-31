@@ -2629,3 +2629,10 @@ ou preferência persistente alterados.
   sequência esperados, nas larguras 320/390/768/1280px. Evidências em
   `/home/piradopirata/aculta-suite-out/greenstash-zoom-84e/` e
   `/home/piradopirata/aculta-suite-out/greenstash-keyboard-84e/`.
+- A matriz autenticada tentou as superfícies operacionais `/greenstash/produtos/novo`,
+  `/greenstash/produtos/1` e `/greenstash/envios` em 320/768/1440px, claro/escuro.
+  Todas responderam 403 sem overflow; axe-core registrou zero violações e
+  zero incompletos nos seis estados de rota. Isso confirma que o operador de
+  inspeção não recebe grants Commerce indevidos, mas não substitui testes com
+  uma conta autorizada de loja nem submissão de formulário. Evidência em
+  `/home/piradopirata/aculta-suite-out/greenstash-routes-auth-424/`.

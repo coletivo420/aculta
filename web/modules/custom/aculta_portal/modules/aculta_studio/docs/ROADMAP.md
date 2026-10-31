@@ -1087,6 +1087,11 @@ teclado em 64/64 checks, com quatro limites esperados, nas larguras
 `/home/piradopirata/aculta-suite-out/greenstash-zoom-84e/` e
 `/home/piradopirata/aculta-suite-out/greenstash-keyboard-84e/`.
 
+A tentativa autenticada das superfícies operacionais de produtos e envios
+retornou 403 em todos os viewports, sem overflow; axe-core passou nos seis
+estados. Isso confirma a negação para o usuário de inspeção, mas ainda requer
+uma conta com grant Commerce para homologar operações e formulários.
+
 Reteste Firefox ESR visível (`DISPLAY=:0`) cobriu claro/escuro em
 320/390/768/1440px, com largura documental igual à viewport e sem overflow em
 todos os oito estados. Evidência em
