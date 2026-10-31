@@ -975,3 +975,12 @@ checks. A única falha foi `/conta` por overflow do widget; os outros nove
 purposes passaram, com shell único. Evidência em
 `/home/piradopirata/aculta-suite-out/footer-layout-current-2493-20261030/`.
 O gate completo de rodapé ainda requer regressão após resolução do Pede-A.
+
+Na revalidação de 2026-10-31, `purpose-shell-color-modes.py` obteve 565/576 no
+baseline e 576/576 com `PURPOSE_MODE_AUTH_CANDIDATE=1`: foram detectados overflow
+de 8px em `/entrar` a 320px nos dois modos e contraste de 1,14:1 do botão Google
+em modo escuro; a candidata elevou o contraste mínimo medido para 11,34:1.
+Relatórios em `/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-baseline-followup-20261031/`
+e `/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-candidate-followup-20261031/`.
+É evidência com CSS/markup candidato injetado, não integração instalada no Runtime
+nem aprovação de THEME-MF3.

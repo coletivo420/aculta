@@ -1693,3 +1693,13 @@ teclado/zoom em
 Nenhum form foi submetido. A conta sintética era pública antes da captura; o
 resultado não valida grants A/B nem privacidade de outros campos, não homologa
 S-R4/S-R5, THEME-MF3 ou OCS-F11.
+
+### THEME-MF3 — A/B global de cores e reduced motion (2026-10-31)
+
+Reexecução nos dez purposes, nove larguras, claro/escuro e reduced motion:
+Runtime baseline 565/576, com duas falhas de overflow de Conta a 320px e nove de
+contraste do botão Google em modo escuro (1,14:1). Com `auth.css` e marcador
+candidato injetados apenas em `/entrar`, a matriz passou 576/576 e o contraste
+medido ficou entre 11,34:1 e 12,4:1. O Runtime continua servindo o baseline, logo
+este A/B não aprova THEME-MF3; evidências e limites estão em
+`mobile-first-audit.md`.

@@ -257,6 +257,7 @@ reprovando hook de gateway Mercado Pago no Portal. Esta evidência não substitu
 Firefox visível, a matriz global, zoom, WCAG ou a validação de páginas servidas;
 THEME-MF3 permanece pendente.
 
+
 ### THEME-MF2 — marca da Institution Bar na base móvel (2026-10-30)
 
 A captura de `/noticias` em 320px mostrou a marca da Institution Bar ausente:
@@ -3305,3 +3306,22 @@ O modo anônimo reutilizável `OCS_STUDIO_ANONYMOUS=1` não cria ULI nem registr
 o texto do perfil no JSON. Isto valida uma conta pública sintética, não A/B de
 privacidade/campos, leitor de tela, zoom de toda a página ou WCAG integral;
 S-R4/S-R5, THEME-MF3 e OCS-F11 seguem pendentes.
+
+### THEME-MF3 — revalidação completa de modos e reduced motion (2026-10-31)
+
+Nova execução Firefox ESR visível do shell global nos dez purposes, nove larguras
+(320/360/390/599/600/768/1024/1280/1440px), claro/escuro e
+`prefers-reduced-motion`: o Runtime baseline passou **565/576** checks. As 11
+falhas foram o overflow de `/entrar` a 320px em claro e escuro (`documentWidth`
+328px), mais contraste de 1,14:1 no botão Google em tema escuro, nas nove
+larguras. Relatório: `/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-baseline-followup-20261031/`.
+
+Repetindo a matriz com `PURPOSE_MODE_AUTH_CANDIDATE=1`, a combinação candidata
+passou **576/576**. No botão Google, os estados normal e hover ficaram entre
+11,34:1 e 12,4:1. O candidato injeta CSS e marcador neutro somente na rota
+`/entrar`; o restante da matriz usa CSS/markup do Runtime. Relatório:
+`/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-candidate-followup-20261031/`.
+As capturas de Conta em 320px foram inspecionadas. Esses resultados isolam a
+causa e verificam a candidata sobre o Runtime, mas não confirmam hook/CSS
+instalados nem resolvem as demais coberturas de MF3. O Runtime segue no baseline;
+THEME-MF3 permanece pendente.
