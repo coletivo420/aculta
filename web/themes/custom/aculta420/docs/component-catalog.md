@@ -379,28 +379,21 @@ Green Stash usa o token neutro `green-stash-entry`; o tema o mapeia para a raiz
 visual `.studio.aculta-green-stash`. Assim a área comercial integrada reutiliza
 a fundação de tipografia, superfície e layout do Studio, preservando os
 componentes específicos de Green Stash. Não foi criado SDC, shell, menu global
-ou fluxo de Commerce paralelo. A renderização candidata ainda requer Firefox
-visível no Runtime para validação.
+ou fluxo de Commerce paralelo. A fixture local valida a folha candidata; a
+renderização integrada ainda requer Firefox visível no Runtime.
 
-Na atualização visual, `studio.css` compõe a navegação autorizada emitida pelo
-`GreenStashNavigation`, o formulário GET de busca e as listagens de
-produto/remessa emitidas pelo controller. O CSS é escopado pela raiz
-`.studio.aculta-green-stash`, mantém os nove links expostos, permite quebra sem
-rolagem horizontal e dá acabamento de cartão às linhas com H3. Nenhum SDC novo
-foi necessário: os dados atuais são wrappers simples de render arrays e
-continuam pertencendo ao módulo Commerce. A fixture
-`green-stash-layout.py` cobre a aparência candidata; operadores reais, grants
-por loja e fluxos de escrita seguem pendentes.
-
-Na etapa visual atual, `studio.css` compõe a navegação autorizada emitida pelo
+`studio.css` compõe a navegação autorizada emitida pelo
 `GreenStashNavigation`, o formulário GET de busca e as listagens de
 produto/remessa emitidas pelo controller. O CSS é escopado pela raiz
 `.studio.aculta-green-stash`, mantém os nove links expostos, permite quebra sem
 rolagem horizontal e dá acabamento de cartão às linhas com H3. Nenhum SDC novo
 foi necessário: os dados operacionais atuais são wrappers simples de render
 arrays e continuam pertencendo ao módulo Commerce. A fixture
-`green-stash-layout.py` cobre a aparência candidata; operadores reais, grants
-por loja e fluxos de escrita seguem pendentes.
+`green-stash-layout.py` passou 74/74 checks no Firefox ESR visível em nove
+larguras e claro/escuro; capturas da fixture estão em
+`$SUITE_OUT/green-stash-layout-continuation-20261030/`. Esta evidência valida
+somente a folha e a marcação simulada. Operador autorizado, grants por loja,
+rotas reais e fluxos de escrita seguem pendentes.
 
 ## THEME-MF2 — `patterns/content-grid`
 
