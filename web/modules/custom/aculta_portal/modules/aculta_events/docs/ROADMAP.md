@@ -81,7 +81,7 @@ Saída: cadastro funcional em teste, sem view pública.
 Entrada: F2 concluída.
 
 - [x] Catálogo `/eventos` com filtros por tipo e período (dd/mm/aaaa). **Desvio:** controller com formulário de filtro, não View. A View exigiria config e tema, e fica para a etapa visual (F5).
-- [ ] Cartão de evento como SDC em `aculta420` (`VISUAL.md`). Pendente: depende do tema (frente de visual).
+- [x] Cartão de evento como SDC em `aculta420` (`VISUAL.md`), consumido via `PortalUiHooks`; títulos H2 abaixo do H1 do catálogo. O restante da homologação visual continua com a frente do tema.
 - [x] Página `/eventos/{slug}` com datas, local, tipo e organizador. Rascunho e inexistente: 404.
 - [x] Slugs em português, sem alias temporário (`EventSlugGenerator`: transliteração, hífen, sufixo -2 para repetido, estável depois de criado).
 

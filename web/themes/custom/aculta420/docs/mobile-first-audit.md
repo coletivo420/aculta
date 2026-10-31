@@ -4818,3 +4818,33 @@ capturas X11 da home em
 O reteste comprova somente essas rotas, modos, larguras e regras axe observadas.
 Não é auditoria completa WCAG 2.2 AA, não cobre todos os propósitos, fluxos,
 estados, leitores de tela ou interação, e não aprova THEME-MF3 nem OCS-F11.
+
+### THEME-MF0 — baseline anônimo de todas as raízes de purpose (2026-10-31)
+
+Com o checkout de desenvolvimento confirmado em `toca`, HEAD `18f0eabf0`, URI
+`http://default`, banco `aculta_runtime` (611 tabelas), o harness genérico
+`tests/browser/aculta-smoke/page-matrix.py` percorreu as dez raízes atuais
+descritas em `aculta_deployer/config/deploy.json`: Main, Conta, Apoio, Revista,
+Wiki, Loja, Cursos, Growroom/Fórum, Links e Eventos. Firefox ESR headless,
+320/360/390/599/600/768/1024/1280/1440px e claro/escuro: **180/180** páginas
+retornaram HTTP 200 e não apresentaram overflow horizontal. Foi uma leitura
+anônima, somente GET; não valida páginas internas, formulários, ACL, contas A/B,
+teclado, zoom, no-JS, reduced motion nem cache privado.
+
+O axe-core 4.14.0, executado a 320px em cada raiz e modo, registrou quatro
+violações no total: `label-content-name-mismatch` nos dois links de matrícula
+de Cursos, porque o `aria-label` traduzido omitia o texto visível “Login /
+Registro”; e `heading-order` em Eventos, cuja página passa de H1 diretamente
+para H3 nos títulos dos cartões. A tradução do tema agora inclui o rótulo
+visível; o controller de Eventos e seu SDC usam H2, protegido por teste Kernel.
+Essas correções estão no candidato desta branch; precisam de integração e
+reteste servido antes de fechar os achados.
+
+Também houve quatro resultados `incomplete` (Conta/H1 e Growroom/select
+`#edit-categoria`, em claro/escuro), sem violações adicionais. Axe não consegue
+determinar o fundo do H1 por alegada sobreposição, nem do select por gradiente/
+imagem de fundo. Estes dois alvos exigem revisão manual; não são classificados
+como aprovação de contraste. Evidência baseline:
+`/home/piradopirata/aculta-suite-out/project-roots-firefox-matrix-20261031/`.
+O gate é evidência inicial transversal de THEME-MF0, não conclusão do inventário
+ou aprovação THEME-MF3/OCS-F11.

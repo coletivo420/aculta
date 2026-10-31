@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_events\Kernel;
 
+use Drupal\aculta_events\Controller\EventCatalogueController;
 use Drupal\aculta_events\Controller\EventPageController;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
@@ -13,6 +14,7 @@ use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -121,6 +123,25 @@ final class EventCatalogueKernelTest extends KernelTestBase {
     $resultados = $this->container->get('aculta_events.catalogue')->busca(NULL, NULL, NULL, $this->agora);
     $titulos = array_map(static fn (array $r): string => (string) $r['evento']->label(), $resultados);
     $this->assertSame(['Roda cancelada', 'Oficina de cerâmica', 'Feira do livro'], $titulos);
+  }
+
+  /**
+   * Títulos dos cartões do catálogo seguem o H1 da página com H2.
+   */
+  public function testCatalogoUsaHierarquiaDeTitulos(): void {
+    $this->cenario();
+    $controller = new EventCatalogueController(
+      $this->container->get('aculta_events.catalogue'),
+      $this->container->get('aculta_events.upcoming'),
+      $this->container->get('datetime.time'),
+      Request::create('/eventos'),
+    );
+    $page = $controller->page();
+
+    $this->assertNotEmpty($page['#items']);
+    foreach ($page['#items'] as $item) {
+      $this->assertSame('h2', $item['title']['#tag']);
+    }
   }
 
   /**

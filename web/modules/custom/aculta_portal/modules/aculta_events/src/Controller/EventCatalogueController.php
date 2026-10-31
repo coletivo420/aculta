@@ -71,7 +71,8 @@ final class EventCatalogueController extends ControllerBase {
     $validade = $this->proximas->validade($fins, $agoraSegundos) ?? self::VALIDADE_PADRAO;
 
     $itens = [];
-    // Ações editoriais existem somente no MAIN; o catálogo em eventos é público.
+    // Ações editoriais existem somente no MAIN; o catálogo em eventos é
+    // público.
     if ($this->purposes?->getCurrentPurpose() === 'main'
       && $this->entityTypeManager()->getAccessControlHandler('aculta_event')->createAccess(NULL, $this->currentUser())) {
       $itens[] = [
@@ -101,7 +102,7 @@ final class EventCatalogueController extends ControllerBase {
         ],
         'title' => [
           '#type' => 'html_tag',
-          '#tag' => 'h3',
+          '#tag' => 'h2',
           '#attributes' => ['data-portal-ui' => 'event-card-title'],
           'link' => [
             '#type' => 'link',
