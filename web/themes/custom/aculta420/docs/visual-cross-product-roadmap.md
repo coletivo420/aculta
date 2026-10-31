@@ -1063,8 +1063,8 @@ foram conferidos em `templates/node/teasers.scss` e
 `sass/abstracts/_teasers.scss` do tarball OpenCulturas 3.1.5 SHA-256
 `2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`.
 Schema/discovery passou para 55 componentes/756 checks na execução anterior (o
-reteste atual passou 55/759), a story foi criada, Unit passou 20 testes/121
-assertions e Firefox ESR visível passou 45/45 checks
+reteste atual passou 55/759), a story foi criada, `PortalUiHooksTest` passou
+24 testes/138 assertions e Firefox ESR visível passou 45/45 checks
 na fixture candidata em nove larguras. Reteste na árvore atual passou 243/243
 em 27 larguras (320–1920px), incluindo container, breakpoints, Montserrat,
 escala tipográfica, abas e cartões; capturas 320/1440 foram inspecionadas em
