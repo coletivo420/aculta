@@ -26,8 +26,10 @@ WIDTHS = [
     for width in map(int, os.environ.get("OCS_WIDTHS", "").split(",") if os.environ.get("OCS_WIDTHS") else [])
 ] or DEFAULT_WIDTHS
 CAPTURES = []
+CAPTURE_FAILURES = []
 STUDIO_CSS_OVERRIDE = os.environ.get("OCS_STUDIO_FIDELITY_CSS_OVERRIDE") == "1"
 STUDIO_CSS_ROOT = Path(os.environ.get("OCS_STUDIO_FIDELITY_CSS_ROOT", Path(__file__).resolve().parents[3])).resolve()
+STUDIO_COLOR_MODE = os.environ.get("OCS_STUDIO_COLOR_MODE", "system")
 
 
 def fidelity_rule(css, selector):
@@ -157,11 +159,42 @@ socket.onmessage = (event) => {
             if driver.js("return document.fonts.check('400 16px Montserrat', 'Meus cursos')"):
                 break
             time.sleep(0.1)
-    detail = driver.js("const text=document.body.innerText;const title=document.title;const elementCount=document.documentElement.querySelectorAll('*').length;const tab=document.querySelector('.aculta-context-tabs__items');const list=tab?.querySelector('ul');const tabItems=Array.from(list?.querySelectorAll('li')||[]);return JSON.stringify({title,url:location.href,width:innerWidth,height:innerHeight,documentWidth:document.documentElement.clientWidth,documentScrollWidth:document.documentElement.scrollWidth,bodyScrollWidth:document.body.scrollWidth,documentScrollHeight:document.documentElement.scrollHeight,documentElementCount:elementCount,htmlLength:document.documentElement.innerHTML.length,contentType:document.contentType,readyState:document.readyState,body:text.slice(0,120),bodyClasses:Array.from(document.body.classList),studioMarkers:Array.from(document.querySelectorAll('[data-aculta-studio]'),element=>element.getAttribute('data-aculta-studio')).slice(0,60),mainStructure:(()=>{const main=document.querySelector('main#main-content');return main?{className:String(main.className),children:[...main.children].slice(0,16).map(element=>({tag:element.tagName,className:String(element.className),children:[...element.children].slice(0,12).map(child=>({tag:child.tagName,className:String(child.className)}))}))}:null})(),studioComponents:(()=>{const main=document.querySelector('main#main-content');return main?[...main.querySelectorAll('.aculta-context-header,.aculta-card,.aculta-empty-state,.aculta-content-grid')].map(element=>({className:String(element.className),parentClass:String(element.parentElement?.className||''),childClasses:[...element.children].slice(0,8).map(child=>String(child.className))})).slice(0,40):[]})(),fidelityStyles:(()=>{const main=document.querySelector('main#main-content');const heading=main?.querySelector('h1');const empty=main?.querySelector('.aculta-empty-state');const card=main?.querySelector('.aculta-card');const institution=document.querySelector('.aculta-institution-bar');const domainHeader=document.querySelector('.aculta-header');const box=(element)=>{if(!element)return null;const style=getComputedStyle(element);const rect=element.getBoundingClientRect();return {fontFamily:style.fontFamily,color:style.color,background:style.backgroundColor,borderRadius:style.borderRadius,width:rect.width,height:rect.height,right:rect.right}};return {fontLoaded:document.fonts.check('400 16px Montserrat', 'Meus cursos'),fontFaces:Array.from(document.fonts).filter(face=>face.family.replaceAll('\"','')==='Montserrat').map(face=>({status:face.status,weight:face.weight,style:face.style})),main:box(main),heading:box(heading),empty:box(empty),card:box(card),shellFidelityTokens:[institution,domainHeader].map(element=>element?getComputedStyle(element).getPropertyValue('--aculta-studio-fidelity-font-family').trim():null)}})(),institutionBar:!!document.querySelector('.aculta-institution-bar'),domainHeader:!!document.querySelector('.aculta-header'),contextTabs:tab?{count:tabItems.length,listTag:list.tagName,listClass:list.className,parentTag:list.parentElement.tagName,parentClass:list.parentElement.className,flexDirection:getComputedStyle(list).flexDirection,flexWrap:getComputedStyle(list).flexWrap,candidateRules:document.querySelector('style[data-ocs-context-tabs-candidate]')?.sheet?.cssRules.length||0,matchingSelector:!!list.matches('.aculta-context-tabs__items > ul, .aculta-context-tabs__items > .item-list > ul'),itemClasses:tabItems.map(item=>item.className),itemBorders:tabItems.map(item=>getComputedStyle(item).borderTopWidth+' '+getComputedStyle(item).borderTopStyle),linkMinHeights:tabItems.map(item=>Math.round(item.querySelector('a')?.getBoundingClientRect().height||0))}:null,emptyDocumentHint:elementCount<=2&&!text.trim(),accessDeniedHint:/^(?:acesso negado|access denied|forbidden)(?:\\s*\\|.*)?$/im.test(title)||/Você não está autorizado a acessar esta página\\./i.test(text)})")
+        if STUDIO_COLOR_MODE in ("light", "dark"):
+            driver.js("document.documentElement.setAttribute('data-bs-theme', arguments[0]);return true", [STUDIO_COLOR_MODE])
+    detail = driver.js("const text=document.body.innerText;const title=document.title;const elementCount=document.documentElement.querySelectorAll('*').length;const tab=document.querySelector('.aculta-context-tabs__items');const list=tab?.querySelector('ul');const tabItems=Array.from(list?.querySelectorAll('li')||[]);return JSON.stringify({title,url:location.href,width:innerWidth,height:innerHeight,documentWidth:document.documentElement.clientWidth,documentScrollWidth:document.documentElement.scrollWidth,bodyScrollWidth:document.body.scrollWidth,documentScrollHeight:document.documentElement.scrollHeight,documentElementCount:elementCount,htmlLength:document.documentElement.innerHTML.length,contentType:document.contentType,readyState:document.readyState,body:text.slice(0,120),bodyClasses:Array.from(document.body.classList),studioMarkers:Array.from(document.querySelectorAll('[data-aculta-studio]'),element=>element.getAttribute('data-aculta-studio')).slice(0,60),mainStructure:(()=>{const main=document.querySelector('main#main-content');return main?{className:String(main.className),children:[...main.children].slice(0,16).map(element=>({tag:element.tagName,className:String(element.className),children:[...element.children].slice(0,12).map(child=>({tag:child.tagName,className:String(child.className)}))}))}:null})(),studioComponents:(()=>{const main=document.querySelector('main#main-content');return main?[...main.querySelectorAll('.aculta-context-header,.aculta-card,.aculta-empty-state,.aculta-content-grid')].map(element=>({className:String(element.className),parentClass:String(element.parentElement?.className||''),childClasses:[...element.children].slice(0,8).map(child=>String(child.className))})).slice(0,40):[]})(),fidelityStyles:(()=>{const main=document.querySelector('main#main-content');const heading=main?.querySelector('h1');const empty=main?.querySelector('.aculta-empty-state');const card=main?.querySelector('.aculta-card');const institution=document.querySelector('.aculta-institution-bar');const domainHeader=document.querySelector('.aculta-header');const box=(element)=>{if(!element)return null;const style=getComputedStyle(element);const rect=element.getBoundingClientRect();return {fontFamily:style.fontFamily,color:style.color,background:style.backgroundColor,borderRadius:style.borderRadius,width:rect.width,height:rect.height,right:rect.right}};return {fontLoaded:document.fonts.check('400 16px Montserrat', 'Meus cursos'),fontFaces:Array.from(document.fonts).filter(face=>face.family.replaceAll('\"','')==='Montserrat').map(face=>({status:face.status,weight:face.weight,style:face.style})),main:box(main),heading:box(heading),empty:box(empty),emptyStates:Array.from(main?.querySelectorAll('.aculta-empty-state')||[]).map(box),card:box(card),shellFidelityTokens:[institution,domainHeader].map(element=>element?getComputedStyle(element).getPropertyValue('--aculta-studio-fidelity-font-family').trim():null)}})(),institutionBar:!!document.querySelector('.aculta-institution-bar'),domainHeader:!!document.querySelector('.aculta-header'),contextTabs:tab?{count:tabItems.length,listTag:list.tagName,listClass:list.className,parentTag:list.parentElement.tagName,parentClass:list.parentElement.className,flexDirection:getComputedStyle(list).flexDirection,flexWrap:getComputedStyle(list).flexWrap,candidateRules:document.querySelector('style[data-ocs-context-tabs-candidate]')?.sheet?.cssRules.length||0,matchingSelector:!!list.matches('.aculta-context-tabs__items > ul, .aculta-context-tabs__items > .item-list > ul'),itemClasses:tabItems.map(item=>item.className),itemBorders:tabItems.map(item=>getComputedStyle(item).borderTopWidth+' '+getComputedStyle(item).borderTopStyle),linkMinHeights:tabItems.map(item=>Math.round(item.querySelector('a')?.getBoundingClientRect().height||0))}:null,emptyDocumentHint:elementCount<=2&&!text.trim(),accessDeniedHint:/^(?:acesso negado|access denied|forbidden)(?:\\s*\\|.*)?$/im.test(title)||/Você não está autorizado a acessar esta página\\./i.test(text)})")
     screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
     record = json.loads(detail)
     record["cssOverride"] = css_override
     record["studioFidelityCssOverride"] = STUDIO_CSS_OVERRIDE
+    record["studioColorMode"] = STUDIO_COLOR_MODE
+    if "path-ganjalab" in record.get("bodyClasses", []) and STUDIO_CSS_OVERRIDE:
+        components = [component.get("className", "") for component in record.get("studioComponents", [])]
+        styles = record.get("fidelityStyles", {})
+        main_font = (styles.get("main") or {}).get("fontFamily", "")
+        heading_font = (styles.get("heading") or {}).get("fontFamily", "")
+        empty_fonts = [
+            component.get("fontFamily", "")
+            for component in styles.get("emptyStates", [])
+        ]
+        expected_text = "rgb(239, 239, 239)" if STUDIO_COLOR_MODE == "dark" else None
+        checks = {
+            "fontLoaded": styles.get("fontLoaded") is True,
+            "mainMontserrat": "Montserrat" in main_font,
+            "headingMontserrat": "Montserrat" in heading_font,
+            "emptyStateUsesMontserrat": bool(empty_fonts) and all("Montserrat" in font for font in empty_fonts),
+            "contextHeaderPresent": any("aculta-context-header" in component for component in components),
+            "twoEmptyStatesPresent": sum("aculta-empty-state" in component for component in components) == 2,
+            "noDocumentOverflow": record.get("documentScrollWidth") == record.get("documentWidth"),
+            "institutionBarPresent": record.get("institutionBar") is True,
+            "domainHeaderPresent": record.get("domainHeader") is True,
+            "fidelityTokensStayOffShell": styles.get("shellFidelityTokens") == ["", ""],
+        }
+        if expected_text:
+            checks["darkTextTokenApplied"] = (styles.get("main") or {}).get("color") == expected_text
+        record["ganjalabFidelityChecks"] = checks
+        record["ganjalabFidelityStatus"] = "PASS" if all(checks.values()) else "FAIL"
+        if record["ganjalabFidelityStatus"] == "FAIL":
+            CAPTURE_FAILURES.append({"url": url, "width": width, "checks": checks})
     target = OUT / f"{prefix}-{width}.png"
     target.write_bytes(base64.b64decode(screenshot))
     record["screenshot"] = target.name
@@ -219,12 +252,16 @@ def main():
         "widths": [width for width, _ in WIDTHS],
         "screenshots": [capture["screenshot"] for capture in CAPTURES if "screenshot" in capture],
         "captures": CAPTURES,
+        "fidelity_failures": CAPTURE_FAILURES,
         "limitations": [
             "The public OpenCulturas homepage is not an authenticated dashboard screen.",
             "The Studio capture uses one synthetic Runtime account and does not submit forms.",
         ],
     }
     (OUT / "baseline.json").write_text(json.dumps(metadata, indent=2) + "\n")
+    if CAPTURE_FAILURES:
+        print(f"FAIL: {len(CAPTURE_FAILURES)} GanjaLab Fidelity capture(s) did not meet visual invariants.")
+        return 1
 
 
 if __name__ == "__main__":

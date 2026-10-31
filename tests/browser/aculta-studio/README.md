@@ -484,3 +484,9 @@ rota por purpose e descreva respostas 403/404 como bloqueio de cobertura, sem
 mudar roteamento na Frente B. Capturas autenticadas são leitura; não enviar
 formulários. Uma ausência de overflow nessa tela não homologa THEME-MF3, e a
 injeção candidata não comprova implantação ou paridade completa OCS-F11.
+`OCS_STUDIO_COLOR_MODE=light|dark` opcional define `data-bs-theme` somente no
+documento aberto pelo Firefox; `system` mantém o padrão do Runtime. Isso não
+altera a preferência persistente da conta nem substitui contraste/WCAG. Com o
+override candidato, o `baseline.json` registra checks automáticos de tipografia,
+dois estados vazios, overflow, presença única do shell e isolamento dos tokens;
+em modo dark exige também o token de texto escuro.

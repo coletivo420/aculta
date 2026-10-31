@@ -789,11 +789,17 @@ serviço LMS, matrícula, dado ou regra de acesso foi alterado.
 Firefox ESR visível capturou a conta sintética autorizada em nove viewports
 (320, 360, 390, 599, 600, 768, 1024, 1280 e 1440 px), com CSS candidata injetada
 no navegador e sem overflow horizontal. As imagens foram revisadas. A amostra
-não cobre tema escuro, zoom, WCAG, ACL entre estudantes, aulas/turmas com dados,
-no-JS/AJAX ou regressão dos outros purposes; F6 permanece parcial. A captura
-anterior consultou o status da fonte antes de ela terminar de carregar, portanto
-não comprova Montserrat; o coletor passou a forçar a requisição e registrar o
-estado de cada `FontFace`, mas essa verificação ainda requer nova execução.
+não cobre zoom, WCAG, ACL entre estudantes, aulas/turmas com dados,
+no-JS/AJAX ou regressão dos outros purposes; F6 permanece parcial. O coletor
+agora aguarda Montserrat e registra os estados de cada `FontFace`; Firefox
+confirmou a fonte carregada em 320/390/768/1440 px. A medição encontrou Inter
+no estado vazio nas larguras 768/1440 px, e a regra Fidelity foi corrigida. Um
+segundo reteste confirmou Montserrat no estado vazio em 320/390/768/1440 px,
+sem overflow. Reteste escuro forçado no documento confirmou tokens de texto e
+superfície em 320/1440 px. Dez invariantes (fonte, headings, dois estados
+vazios, componentes, overflow e isolamento do shell) passaram em 320/390/768/
+1440 px no modo claro. Onze checks passaram em 320/1440 px no modo escuro,
+incluindo o token de texto escuro. Isso não é auditoria de contraste WCAG.
 
 O Runtime observado no HEAD `2493d7535` serve `/ganjalab`, mas a rota oficial
 WE SATIVA `/studio/we-sativa` retorna documento vazio: esse Runtime ainda

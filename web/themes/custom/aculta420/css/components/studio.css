@@ -179,6 +179,8 @@ body.path-ganjalab .aculta-main .aculta-empty-state {
   border-radius: var(--aculta-studio-fidelity-border-radius-tiny);
   color: var(--aculta-studio-fidelity-text);
   background-color: var(--aculta-studio-fidelity-form-surface);
+  font-family: var(--aculta-studio-fidelity-font-family);
+  line-height: var(--aculta-studio-fidelity-line-height-default);
 }
 
 .studio__tabs {
