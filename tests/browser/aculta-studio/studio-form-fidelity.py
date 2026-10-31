@@ -78,7 +78,13 @@ markup = """<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 </div></main>
 <main class="aculta-main" id="editor-main"><h1>Editar publicação</h1>
 <form class="node-revista-form" id="editor-form"><label for="editor-title">Título</label>
-<input id="editor-title" class="form-control" type="text"></form></main></body></html>"""
+<input id="editor-title" class="form-control" type="text"></form></main>
+<main class="aculta-main" id="profile-main"><h1>Editar biografia</h1>
+<form class="studio-profile-form" id="profile-form"><label for="profile-bio">Biografia</label>
+<textarea id="profile-bio" class="form-control"></textarea>
+<input type="submit" class="form-submit" value="Salvar"></form></main>
+<main class="aculta-main" id="account-main"><form id="account-modal-form" data-portal-ui="account-bio-dialog">
+<input class="form-control" type="text" aria-label="Bio na conta"></form></main></body></html>"""
 
 driver = Driver(bidi=True)
 try:
@@ -212,6 +218,41 @@ try:
                and "Montserrat" in marley_scope["font"],
                marley_scope)
         driver.js("document.body.className=''")
+        profile_scope = driver.js("""const form=document.querySelector('#profile-form');
+          const field=form.querySelector('textarea');const submit=form.querySelector('[type=submit]');
+          return {formMargin:getComputedStyle(form).marginBlockStart,
+            formPadding:getComputedStyle(form).paddingBlockStart,
+            token:getComputedStyle(form).getPropertyValue('--aculta-studio-fidelity-text').trim(),
+            font:getComputedStyle(form).fontFamily,fieldHeight:field.getBoundingClientRect().height,
+            submitHeight:submit.getBoundingClientRect().height};""")
+        record(f"{mode}: bio/links do Perfil recebem Fidelity",
+               profile_scope["formMargin"] == "20px"
+               and profile_scope["formPadding"] == "20px"
+               and profile_scope["token"] == ("#1f1f1f" if mode == "light" else "#efefef")
+               and "Montserrat" in profile_scope["font"]
+               and profile_scope["fieldHeight"] >= 44
+               and profile_scope["submitHeight"] >= 44,
+               profile_scope)
+        account_modal = driver.js("""const form=document.querySelector('#account-modal-form');
+          return {formMargin:getComputedStyle(form).marginBlockStart,
+            formPadding:getComputedStyle(form).paddingBlockStart,
+            token:getComputedStyle(form).getPropertyValue('--aculta-studio-fidelity-text').trim(),
+            font:getComputedStyle(form).fontFamily};""")
+        record(f"{mode}: formulário-modal da Conta mantém estilo próprio",
+               account_modal["formMargin"] == "0px"
+               and account_modal["formPadding"] == "0px"
+               and account_modal["token"] == ""
+               and "Montserrat" not in account_modal["font"],
+               account_modal)
+        driver.js("document.querySelector('#profile-form').scrollIntoView({block:'start'})")
+        shot = driver.req("GET", f"/session/{driver.session}/screenshot")
+        (OUT / f"studio-profile-form-{mode}-1440.png").write_bytes(base64.b64decode(shot))
+        asyncio.run(set_viewport(320))
+        time.sleep(0.1)
+        shot = driver.req("GET", f"/session/{driver.session}/screenshot")
+        (OUT / f"studio-profile-form-{mode}-320.png").write_bytes(base64.b64decode(shot))
+        asyncio.run(set_viewport(1440))
+        driver.js("window.scrollTo(0,0)")
 
         # Keyboard tab checks that the existing global focus indicator survives the fidelity treatment.
         actions = {"actions": [{"type": "key", "id": "studio-keyboard", "actions": [

@@ -48,9 +48,11 @@ schema, story, consumer real e status no catálogo.
 
 Os SDCs do Studio herdam tipografia Montserrat e tokens de cor, contraste,
 espaçamento, largura e superfície por meio dos wrappers `.studio` e
-`.aculta-profile-editor`. Props, slots, render arrays e schemas de componentes
-não mudaram; tokens não são definidos no `:root`, evitando efeito nos demais
-purposes. A licença da fonte está junto dos WOFF2 em
+`.aculta-profile-editor`; os Form API de bio e redes do Perfil usam o root
+`form.studio-profile-form` traduzido dos tokens semânticos já emitidos por
+`aculta_user`. Props, slots, render arrays e schemas de componentes não mudaram;
+tokens não são definidos no `:root`, evitando efeito nos demais purposes. A
+licença da fonte está junto dos WOFF2 em
 `assets/fonts/montserrat/OFL.txt`. Em Firefox ESR visível, o consumer Marley
 recebeu a folha candidata injetada: 63/63 checks executáveis passaram, a fonte
 carregou, o gutter global ficou idêntico antes/depois e a tipografia computada do
@@ -379,17 +381,16 @@ pendentes de captura.
 ### OCS-F1/F5–F7/F9 — estilos de Form API no tema
 
 Os formulários existentes continuam sendo renderizados pelos módulos e pelo
-Form API; o tema não cria um SDC de formulário paralelo. Em 2026-10-31, a
-auditoria encontrou que o seletor da criação/edição editorial por
-`form.node-revista-form` deixava tokens Fidelity escapar do Studio. Todos os
-estilos e tokens desse formulário agora exigem `body.path-marley`; um GET real
-confirmou essa classe no editor Marley. A fixture
-`tests/browser/aculta-studio/studio-form-fidelity.py` passou 54/54 verificações
-em claro/escuro e 320/390/768/1440px, validando Fidelity no Marley e ausência de
-tokens/estilos no purpose Magazine. Campos e ações medem ao menos 44px, e o foco
-de teclado permanece visível. A fixture não substitui a homologação dos
-consumers reais ou estados AJAX/no-JS dos owners. Evidência em
-`$SUITE_OUT/studio-form-fidelity-scope-20261031/`.
+Form API; o tema não cria um SDC de formulário paralelo. O editor de Publicações
+é limitado a `body.path-marley`; os Form API de bio e redes do Perfil reutilizam
+os tokens existentes `studio-bio-form`/`studio-social-form`, traduzidos pelo
+tema em `studio-profile-form`. Em 2026-10-31, a fixture Firefox ESR passou
+58/58 verificações em claro/escuro e 320/390/768/1440px: Fidelity nos roots
+Marley/Perfil, ausência de tokens no Magazine e no modal de bio da Conta,
+controles de ao menos 44px e foco visível. Não houve novo SDC, slot ou prop.
+A fixture não substitui a homologação dos consumers reais, submissão Form API,
+AJAX/no-JS, grants, cache ou privacidade A/B. Evidência em
+`$SUITE_OUT/studio-form-profile-fidelity-20261031/`.
 
 ### OCS-F8 — área comercial integrada
 

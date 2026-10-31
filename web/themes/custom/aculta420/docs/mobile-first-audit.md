@@ -2524,3 +2524,24 @@ Stylelint, ESLint e `git diff --check` passaram. Artefatos:
 Esta é uma correção de isolamento de CSS e uma fixture, não homologação do CSS
 servido no Runtime, do submit Form API, de AJAX/no-JS, ACL, zoom ou WCAG integral;
 OCS-F5, OCS-F11 e THEME-MF3 permanecem parciais/pendentes.
+
+### OCS-F9 — Form API de bio e redes do Perfil (2026-10-31)
+
+`AccountBioForm` e `SocialLinkForm` já emitem `studio-bio-form` e
+`studio-social-form` exclusivamente na composição do Perfil Studio. O tema não
+traduzia esses tokens e os formulários full-page ficavam sem tokens/estilos
+Fidelity. `PortalUiHooks` agora traduz ambos para `studio-profile-form`; os
+roots tipográficos e de Form API reutilizam o acabamento existente, sem mudar
+contratos, storage, Form API, rotas ou SDCs. O modal legado de bio na Conta não
+emite esses tokens e permanece no estilo próprio.
+
+Firefox ESR visível passou **58/58 checks** na fixture com CSS local: bio/rede
+com Montserrat, tokens claro/escuro, campos e ação com ao menos 44px, sem
+overflow em 320/390/768/1440px; formulário Marley mantém Fidelity, Magazine e
+modal Conta ficam sem tokens Fidelity, foco visível. Capturas da fixture em
+`/home/piradopirata/aculta-suite-out/studio-form-profile-fidelity-20261031/`.
+Stylelint/ESLint, SDC schema, Design Foundations, fronteira módulo/tema,
+PHPUnit do hook (24/138), PHP lint, PHPCS e `git diff --check` passaram.
+Isto não homologa CSS servida no Runtime nem submissão Form API, privacy A/B,
+AJAX/no-JS, cache, zoom ou WCAG integral; OCS-F9/F11 e THEME-MF3 continuam
+parciais/pendentes.

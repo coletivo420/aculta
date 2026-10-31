@@ -20,7 +20,8 @@
 }
 
 .studio,
-.aculta-profile-editor {
+.aculta-profile-editor,
+form.studio-profile-form {
   font-family: var(--aculta-studio-fidelity-font-family);
   font-size: var(--aculta-studio-fidelity-font-size-default);
   line-height: var(--aculta-studio-fidelity-line-height-default);
@@ -31,6 +32,7 @@
    leaving the global shell containers untouched. */
 .aculta-main > .aculta-container:has(.studio),
 .aculta-main > .aculta-container:has(.aculta-profile-editor),
+.aculta-main > .aculta-container:has(form.studio-profile-form),
 body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
 .aculta-main > .aculta-container:has(.we-sativa__workspace) {
   width: calc(100% - 0.5rem);
@@ -42,6 +44,7 @@ body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
 @media (min-width: 48rem) {
   .aculta-main > .aculta-container:has(.studio),
   .aculta-main > .aculta-container:has(.aculta-profile-editor),
+  .aculta-main > .aculta-container:has(form.studio-profile-form),
   body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
   .aculta-main > .aculta-container:has(.we-sativa__workspace) {
     width: calc(100% - 2.5rem);
@@ -52,6 +55,7 @@ body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
 @media (min-width: 70rem) {
   .aculta-main > .aculta-container:has(.studio),
   .aculta-main > .aculta-container:has(.aculta-profile-editor),
+  .aculta-main > .aculta-container:has(form.studio-profile-form),
   body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
   .aculta-main > .aculta-container:has(.we-sativa__workspace) {
     max-width: 107rem;
@@ -62,6 +66,7 @@ body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
 @media (min-width: 85rem) {
   .aculta-main > .aculta-container:has(.studio),
   .aculta-main > .aculta-container:has(.aculta-profile-editor),
+  .aculta-main > .aculta-container:has(form.studio-profile-form),
   body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
   .aculta-main > .aculta-container:has(.we-sativa__workspace) {
     width: calc(100% - 6rem);
@@ -71,6 +76,7 @@ body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
 @media (min-width: 120rem) {
   .aculta-main > .aculta-container:has(.studio),
   .aculta-main > .aculta-container:has(.aculta-profile-editor),
+  .aculta-main > .aculta-container:has(form.studio-profile-form),
   body.path-ganjalab .aculta-main > .aculta-container:has(.aculta-context-header),
   .aculta-main > .aculta-container:has(.we-sativa__workspace) {
     max-width: 110rem;
@@ -143,6 +149,23 @@ body.path-marley .aculta-main:has(form.node-revista-form) :is(h1, h2, h3, h4, h5
 }
 
 body.path-marley .aculta-main:has(form.node-revista-form) h1 {
+  font-size: clamp(2rem, 7vw, var(--aculta-studio-fidelity-font-size-xxl));
+  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
+}
+
+.aculta-main:has(form.studio-profile-form) {
+  color: var(--aculta-studio-fidelity-text);
+  font-family: var(--aculta-studio-fidelity-font-family);
+  line-height: var(--aculta-studio-fidelity-line-height-default);
+}
+
+.aculta-main:has(form.studio-profile-form) :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--aculta-studio-fidelity-text);
+  font-family: var(--aculta-studio-fidelity-font-family);
+  line-height: var(--aculta-studio-fidelity-line-height-headings);
+}
+
+.aculta-main:has(form.studio-profile-form) h1 {
   font-size: clamp(2rem, 7vw, var(--aculta-studio-fidelity-font-size-xxl));
   font-weight: var(--aculta-studio-fidelity-font-weight-bold);
 }
@@ -523,7 +546,8 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
 
 /* OpenCulturas Next 3.1.5 form treatment, limited to Studio form consumers. */
 .studio__main form,
-.aculta-profile-editor form {
+.aculta-profile-editor form,
+form.studio-profile-form {
   margin-block: var(--aculta-studio-fidelity-row-gap);
   padding: var(--aculta-studio-fidelity-row-gap) var(--aculta-studio-fidelity-gutter);
   color: var(--aculta-studio-fidelity-text);
@@ -531,17 +555,20 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
 }
 
 .studio__main form :is(.form-item, .form-actions),
-.aculta-profile-editor form :is(.form-item, .form-actions) {
+.aculta-profile-editor form :is(.form-item, .form-actions),
+form.studio-profile-form :is(.form-item, .form-actions) {
   padding-block: 1rem;
 }
 
 .studio__main form .form-item .form-item,
-.aculta-profile-editor form .form-item .form-item {
+.aculta-profile-editor form .form-item .form-item,
+form.studio-profile-form .form-item .form-item {
   padding-block: 0;
 }
 
 .studio__main form fieldset,
-.aculta-profile-editor form fieldset {
+.aculta-profile-editor form fieldset,
+form.studio-profile-form fieldset {
   margin-block: var(--aculta-studio-fidelity-row-gap);
   padding: var(--aculta-studio-fidelity-row-gap) var(--aculta-studio-fidelity-gutter);
   border: 2px solid transparent;
@@ -549,14 +576,16 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
 }
 
 .studio__main form fieldset fieldset,
-.aculta-profile-editor form fieldset fieldset {
+.aculta-profile-editor form fieldset fieldset,
+form.studio-profile-form fieldset fieldset {
   padding: 0;
   border: 0;
   background: transparent;
 }
 
 .studio__main form label,
-.aculta-profile-editor form label {
+.aculta-profile-editor form label,
+form.studio-profile-form label {
   display: block;
   max-inline-size: 80ch;
   padding: 0.25rem;
@@ -564,12 +593,14 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
 }
 
 .studio__main form label.option,
-.aculta-profile-editor form label.option {
+.aculta-profile-editor form label.option,
+form.studio-profile-form label.option {
   display: inline-block;
 }
 
 .studio__main form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), .form-select),
-.aculta-profile-editor form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), .form-select) {
+.aculta-profile-editor form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), .form-select),
+form.studio-profile-form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), .form-select) {
   min-block-size: 2.75rem;
   padding: 0.5rem 1rem;
   color: var(--aculta-studio-fidelity-text);
@@ -581,24 +612,28 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
 }
 
 .studio__main form :is(input, select, textarea, .form-control, .form-select)::placeholder,
-.aculta-profile-editor form :is(input, select, textarea, .form-control, .form-select)::placeholder {
+.aculta-profile-editor form :is(input, select, textarea, .form-control, .form-select)::placeholder,
+form.studio-profile-form :is(input, select, textarea, .form-control, .form-select)::placeholder {
   color: var(--aculta-studio-fidelity-input-placeholder);
   font-family: var(--aculta-studio-fidelity-font-family);
 }
 
 .studio__main form :is(input, select, textarea, .form-control, .form-select):is(:focus, :focus-visible),
-.aculta-profile-editor form :is(input, select, textarea, .form-control, .form-select):is(:focus, :focus-visible) {
+.aculta-profile-editor form :is(input, select, textarea, .form-control, .form-select):is(:focus, :focus-visible),
+form.studio-profile-form :is(input, select, textarea, .form-control, .form-select):is(:focus, :focus-visible) {
   border-color: var(--aculta-studio-fidelity-input-focus);
   background-color: var(--aculta-studio-fidelity-input-background);
 }
 
 .studio__main form .error,
-.aculta-profile-editor form .error {
+.aculta-profile-editor form .error,
+form.studio-profile-form .error {
   border-color: var(--aculta-studio-fidelity-input-error);
 }
 
 .studio__main form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button),
-.aculta-profile-editor form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button) {
+.aculta-profile-editor form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button),
+form.studio-profile-form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button) {
   display: inline-block;
   min-block-size: 2.75rem;
   margin-block-end: 1em;
@@ -618,28 +653,32 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
 }
 
 .studio__main form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button):not([disabled]):is(:hover, :focus-visible),
-.aculta-profile-editor form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button):not([disabled]):is(:hover, :focus-visible) {
+.aculta-profile-editor form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button):not([disabled]):is(:hover, :focus-visible),
+form.studio-profile-form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button):not([disabled]):is(:hover, :focus-visible) {
   color: var(--aculta-studio-fidelity-button-hover-text);
   border-color: var(--aculta-studio-fidelity-button-hover-border);
   background: var(--aculta-studio-fidelity-button-hover-background);
 }
 
 .studio__main form :is(.form-submit, .button--cta, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.btn-close):not(.accordion-button),
-.aculta-profile-editor form :is(.form-submit, .button--cta, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.btn-close):not(.accordion-button) {
+.aculta-profile-editor form :is(.form-submit, .button--cta, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.btn-close):not(.accordion-button),
+form.studio-profile-form :is(.form-submit, .button--cta, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.btn-close):not(.accordion-button) {
   color: var(--aculta-studio-fidelity-button-primary-text);
   border-color: var(--aculta-studio-fidelity-button-primary-border);
   background: var(--aculta-studio-fidelity-button-primary-background);
 }
 
 .studio__main form :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button),
-.aculta-profile-editor form :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button) {
+.aculta-profile-editor form :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button),
+form.studio-profile-form :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button) {
   color: var(--aculta-studio-fidelity-button-danger-text);
   border-color: var(--aculta-studio-fidelity-button-danger-border);
   background: var(--aculta-studio-fidelity-button-background);
 }
 
 .studio__main form :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button):is(:hover, :focus-visible),
-.aculta-profile-editor form :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button):is(:hover, :focus-visible) {
+.aculta-profile-editor form :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button):is(:hover, :focus-visible),
+form.studio-profile-form :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button):is(:hover, :focus-visible) {
   color: var(--aculta-studio-fidelity-button-hover-text);
   border-color: var(--aculta-studio-fidelity-button-danger-border);
   background: var(--aculta-studio-fidelity-button-danger-border);

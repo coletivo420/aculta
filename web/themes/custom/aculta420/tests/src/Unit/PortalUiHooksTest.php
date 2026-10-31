@@ -214,7 +214,7 @@ final class PortalUiHooksTest extends UnitTestCase {
   /**
    * A standalone Studio content consumer gets only the scoped fidelity class.
    */
-  public function testMapsStudioFidelityScopeWithoutAddingAShellClass(): void {
+  public function testMapsStudioFidelityScopeWithoutAddingShellClass(): void {
     $variables = [
       'element' => [
         '#attributes' => ['data-portal-ui' => 'studio-fidelity-scope'],
@@ -226,6 +226,22 @@ final class PortalUiHooksTest extends UnitTestCase {
     $classes = $variables['element']['#attributes']['class'];
     self::assertSame(['studio'], $classes);
     self::assertArrayNotHasKey('data-portal-ui', $variables['element']['#attributes']);
+  }
+
+  /**
+   * Studio-only profile Form API tokens share one visual root class.
+   */
+  public function testMapsStudioProfileFormsToFidelityRoot(): void {
+    foreach (['studio-bio-form', 'studio-social-form'] as $token) {
+      $variables = [
+        'attributes' => new Attribute(['data-portal-ui' => $token]),
+      ];
+
+      (new PortalUiHooks())->preprocess($variables);
+
+      self::assertTrue($variables['attributes']->hasClass('studio-profile-form'), $token);
+      self::assertFalse($variables['attributes']->offsetExists('data-portal-ui'), $token);
+    }
   }
 
   /**

@@ -900,6 +900,18 @@ pré-ULI `/home/piradopirata/aculta-suite-out/runtime-before-wesativa-dark-20261
 SHA-256 `635b80adb3aaff58be98a539c52aeddaf9f133a14bf3336f4a7bd6e5b707ca33`.
 Essa amostra do path legado não fecha F7, ACL editorial, dados reais, WCAG ou
 validação do path canônico.
+
+### OCS-F9 — formulários privados de bio e redes (2026-10-31)
+
+Os Form API existentes `AccountBioForm` e `SocialLinkForm` já emitem tokens
+`studio-bio-form`/`studio-social-form` somente nos caminhos privados do Perfil
+Studio. O tema traduz esses tokens para `studio-profile-form` e aplica a mesma
+fundação Fidelity dos formulários Marley/Perfil; nenhum controller, Form API,
+rota, ACL, dado, SDC ou fluxo AJAX da Conta foi alterado. O modal de bio da
+Conta continua sem Fidelity. Firefox ESR fixture com CSS candidata passou
+58/58 checks em claro/escuro, 320/390/768/1440px e foco visível. Runtime servido,
+submit real, privacy A/B, cache, AJAX/no-JS, zoom, WCAG, S-R4/S-R5 e OCS-F11
+permanecem pendentes.
 ### OCS-F5 — isolamento do formulário editorial Marley (2026-10-31)
 
 A classe compartilhada `form.node-revista-form` não é suficiente para identificar

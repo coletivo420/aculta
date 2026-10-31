@@ -1424,3 +1424,13 @@ modos claro/escuro e em 320/390/768/1440px; conferiu o editor Marley estilizado
 e Magazine sem token/estilo Fidelity. Evidência isolada de CSS candidata,
 registrada também em `mobile-first-audit.md`; Runtime servido e os gates gerais
 F5/MF3/F11 seguem pendentes. Nenhum SDC/slot/prop mudou.
+
+### OCS-F9 — formulários privados do Perfil Studio (2026-10-31)
+
+Os formulários existentes de bio e redes sociais recebem a fundação visual
+Fidelity por tokens semânticos já emitidos pelo módulo. O escopo não alcança o
+modal da Conta nem páginas externas ao Studio. Fixture Firefox ESR passou
+58/58 verificações em claro/escuro e 320/390/768/1440px. Não houve mudança de
+Form API, SDC ou serviço. Runtime servido, fluxos reais, ACL entre contas,
+AJAX/no-JS, zoom, WCAG e homologação global permanecem pendentes; consulte
+`mobile-first-audit.md` e a matriz Studio.

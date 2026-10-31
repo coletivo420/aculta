@@ -309,7 +309,7 @@ final class PortalUiHooks {
     // the Studio-scoped OpenCulturas fidelity foundation.
     'green-stash-entry' => ['studio', 'aculta-green-stash'],
     // LMS dashboard is composed in the main region without the Studio shell.
-    // Scope only its content root so Studio tokens never reach the global shell.
+    // Keep Studio tokens inside its content root, away from the global shell.
     'studio-fidelity-scope' => ['studio'],
     'green-stash-product-create' => ['aculta-green-stash__product-create'],
     'green-stash-navigation-link' => ['nav-link', 'aculta-green-stash__navigation-link'],
@@ -568,6 +568,8 @@ final class PortalUiHooks {
     'studio-profile-actions' => ['studio__actions', 'list-unstyled', 'd-flex', 'flex-wrap', 'gap-2'],
     'studio-profile-public-link' => ['btn', 'btn-outline-primary', 'studio__action'],
     'studio-profile-editor' => ['aculta-profile-editor'],
+    'studio-bio-form' => ['studio-profile-form'],
+    'studio-social-form' => ['studio-profile-form'],
     'studio-saved-content' => ['studio', 'studio-saved-page'],
     'studio-saved-summary' => ['studio-saved-summary'],
     'studio-page-title' => ['page-title'],
