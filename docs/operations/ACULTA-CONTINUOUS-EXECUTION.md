@@ -2751,3 +2751,7 @@ ou preferência persistente alterados.
   do tema passou sem erros.
 - A suíte Unit completa de `aculta_magazine` foi repetida no checkout atual:
   40 testes e 162 asserções, sem falhas.
+- Reteste final do formulário `/marley/revista/nova` após a correção de
+  contraste/alvos: 18/18 estados responsivos passaram em claro/escuro,
+  320–1440px, sem overflow e HTTP 200. Evidência em
+  `/home/piradopirata/aculta-suite-out/revista-marley-create-final-matrix-20261031200443/`.
