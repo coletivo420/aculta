@@ -50,7 +50,7 @@ final class GreenStashProductCreateAccessTest extends UnitTestCase {
     $handler = $this->createMock(EntityAccessControlHandlerInterface::class);
     $handler->expects(self::once())
       ->method('createAccess')
-      ->with('produto_loja', self::isInstanceOf(AccountInterface::class))
+      ->with('produto_loja', self::isInstanceOf(AccountInterface::class), [], TRUE)
       ->willReturn(AccessResult::forbidden());
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     $entities->expects(self::once())

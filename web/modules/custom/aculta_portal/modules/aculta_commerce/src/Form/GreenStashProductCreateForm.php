@@ -56,7 +56,7 @@ final class GreenStashProductCreateForm extends FormBase {
     }
 
     $create_access = $this->entities->getAccessControlHandler('commerce_product')
-      ->createAccess('produto_loja', $this->account);
+      ->createAccess('produto_loja', $this->account, [], TRUE);
     if (!$create_access->isAllowed()) {
       throw new AccessDeniedHttpException();
     }

@@ -159,3 +159,9 @@ function aculta_messenger_update_10011(): void {
 function aculta_messenger_update_10012(): void {
   \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
 }
+
+
+/** Installs missing fields used by friendship and game unread counts. */
+function aculta_messenger_update_10013(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}
