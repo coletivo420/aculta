@@ -70,6 +70,30 @@ dimensões é lexical e inclui também valores das media queries; não descreve 
 cascata renderizada. Comparação reproduzível em
 `/home/piradopirata/aculta-suite-out/mobile-inventory-resume-20261101/`.
 
+### THEME-MF2 — botão de autenticação Google em modo escuro (2026-11-01)
+
+A captura de Conta/320px revelou texto claro sobre o fundo branco fixo do botão
+Google em modo escuro. O CSS usava `--aculta-text-primary`, que vira claro no
+modo escuro, enquanto o botão permanece branco; o hover usava a superfície
+muted escura. No baseline Runtime direcionado (Conta, 320/1440px, claro/escuro,
+normal/hover), **16/20 checks passaram**. As quatro falhas foram overflow de
+Conta/320px em ambos os modos e contraste normal do botão em escuro: 1,14:1 em
+320/1440px. O hover antigo tinha 12,95:1 por inverter a combinação.
+
+Em `auth.css`, o botão e o estado conectado agora mantêm texto verde escuro
+sobre a superfície branca em ambos os modos; hover/foco usam o creme fixo. A
+rodada candidata focal passou **90/90 checks** em nove larguras, claro/escuro e
+reduced motion. No modo escuro, contraste foi 12,40:1 no estado normal e 11,34:1
+em hover. A matriz global candidata passou **576/576 checks** nas dez raízes e
+nove larguras, incluindo shell, reduced motion, overflow, contraste do shell e
+do botão. Capturas 320px foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/auth-google-contrast-candidate-9widths-20261101/`
+e `/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-auth-global-candidate-20261101/`.
+O teste injeta CSS candidata e simula o marcador do Portal apenas na sessão;
+nada foi submetido ou autenticado. O Runtime continua servindo o baseline e
+precisa ser revalidado após integração/rebuild; isto não aprova THEME-MF3 nem a
+auditoria WCAG completa.
+
 ### THEME-MF2 — barra multidomínio e scroll móvel (2026-10-31)
 
 Firefox ESR visível no Runtime `2493d7535` passou 42/42 checks anônimos em

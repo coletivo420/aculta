@@ -778,10 +778,11 @@ Firefox, verifica shell único e overflow em 320/360/390/599/600/768/1024/1280/
 preferências ou configuração no Drupal. A verificação confirma tokens e o
 estado da media query e calcula contraste dos links textuais da Institution Bar
 e Domain Header sobre suas superfícies compostas; não avalia contraste de todos
-os componentes, assistive technology nem funcionamento de cada animação. Para
-o purpose Conta a 320px, o JSON inclui os primeiros descendentes não fixos cujo
-conteúdo ultrapassa a largura do viewport, sem coletar texto ou valores de
-campos.
+os componentes, assistive technology nem funcionamento de cada animação. No
+formulário público de Conta, mede também o contraste do botão Google nos estados
+normal e hover. Para Conta a 320px, o JSON inclui os primeiros descendentes não
+fixos cujo conteúdo ultrapassa a largura do viewport, sem coletar texto ou
+valores de campos.
 
 ```sh
 cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
@@ -791,7 +792,9 @@ export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
 DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/purpose-shell-color-modes.py
 ```
 
-`PURPOSE_MODE_WIDTHS` seleciona as larguras e
+`PURPOSE_MODE_WIDTHS` seleciona as larguras,
+`PURPOSE_MODE_PURPOSES=account` restringe uma rodada de diagnóstico a um ou mais
+purposes, e
 `PURPOSE_MODE_DOMAIN_ENV=production` só deve ser usado após confirmar ambiente,
 DNS e TLS. `PURPOSE_MODE_AUTH_CANDIDATE=1` injeta `auth.css` do worktree e
 acrescenta o marcador `data-portal-ui="challenge-frame"` ao wrapper `.captcha`

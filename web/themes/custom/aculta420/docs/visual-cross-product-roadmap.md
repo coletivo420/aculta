@@ -1530,3 +1530,15 @@ ao comparar o template da home da Revista. O inventário lexical foi atualizado
 para 208 fontes e confere byte-a-byte; THEME-MF3 continua pendente até a
 correção integrada e validação de todos os estados. Consulte
 `mobile-first-audit.md` para comandos, capturas e limitações.
+
+### THEME-MF2 — contraste do botão OAuth Google (2026-11-01)
+
+O botão compartilhado `data-portal-ui="auth-google"` preserva fundo claro
+também no modo escuro. `auth.css` fixa texto verde escuro e hover/foco creme,
+mantendo contraste 12,40:1/11,34:1. A fixture Firefox candidata passou 90/90
+na Conta em nove larguras; o gate global candidato passou 576/576 nas dez
+raízes, claro/escuro e reduced motion. O baseline Runtime reproduziu contraste
+1,14:1 no estado normal escuro e overflow de 8px em Conta/320px. A matriz
+candidata simula o marcador Portal e injeta CSS somente no navegador; não
+homologa essa CSS servida nem autenticação OAuth. Evidências em
+`mobile-first-audit.md`; THEME-MF3 segue pendente.

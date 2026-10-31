@@ -41,6 +41,15 @@ missing = set(DOMAIN_IDS.values()) - set(hosts)
 if missing:
     raise SystemExit(f"Domínios ausentes em deploy.json: {', '.join(sorted(missing))}")
 PURPOSES = [(purpose, f"https://{hosts[domain_id]}/") for purpose, domain_id in DOMAIN_IDS.items()]
+SELECTED_PURPOSES = {
+    value.strip() for value in os.environ.get("PURPOSE_MODE_PURPOSES", "").split(",")
+    if value.strip()
+}
+unknown_purposes = SELECTED_PURPOSES - set(DOMAIN_IDS)
+if unknown_purposes:
+    raise SystemExit(f"PURPOSE_MODE_PURPOSES contém purpose(s) desconhecido(s): {', '.join(sorted(unknown_purposes))}")
+if SELECTED_PURPOSES:
+    PURPOSES = [(purpose, url) for purpose, url in PURPOSES if purpose in SELECTED_PURPOSES]
 MODES = {"light": ("#f2f7f0", "#0c3c29"), "dark": ("#171513", "#f4efe8")}
 AUTH_CANDIDATE = os.environ.get("PURPOSE_MODE_AUTH_CANDIDATE") == "1"
 AUTH_CSS = ROOT / "web/themes/custom/aculta420/css/components/auth.css"
@@ -50,6 +59,31 @@ checks = []
 def check(name, passed, detail):
     checks.append({"name": name, "passed": bool(passed), "detail": detail})
     print(f"{'PASS' if passed else 'FAIL'} {name}: {json.dumps(detail, ensure_ascii=False)}", flush=True)
+
+
+def auth_google_metrics(driver):
+    return driver.js(r"""const element=document.querySelector('a[data-portal-ui="auth-google"]');
+if(!element)return null;
+const style=getComputedStyle(element), rect=element.getBoundingClientRect();
+const luminance=color=>{
+  const channels=color.match(/[\d.]+/g)?.slice(0,3).map(value=>Number(value)/255);
+  if(!channels||channels.length!==3)return null;
+  const linear=channels.map(value=>value<=.04045?value/12.92:((value+.055)/1.055)**2.4);
+  return .2126*linear[0]+.7152*linear[1]+.0722*linear[2];
+};
+const foreground=luminance(style.color), background=luminance(style.backgroundColor);
+return {visible:element.getClientRects().length>0&&style.display!=='none'&&style.visibility!=='hidden',
+  hovered:element.matches(':hover'),foreground:style.color,background:style.backgroundColor,
+  x:rect.x+rect.width/2,y:rect.y+rect.height/2,
+  contrast:foreground===null||background===null?null:
+    Math.round((Math.max(foreground,background)+.05)/(Math.min(foreground,background)+.05)*100)/100};""")
+
+
+def move_pointer(driver, x, y):
+    driver.req("POST", f"/session/{driver.session}/actions", {"actions": [{
+        "type": "pointer", "id": "auth-google-contrast", "parameters": {"pointerType": "mouse"},
+        "actions": [{"type": "pointerMove", "duration": 0, "x": round(x), "y": round(y)}],
+    }]})
 
 
 class Viewport:
@@ -191,6 +225,18 @@ try:
                       bool(metrics["shellTextLinks"])
                       and all(link["contrast"] is not None and link["contrast"] >= 4.5
                               for link in metrics["shellTextLinks"]), metrics["shellTextLinks"])
+                if purpose == "account" and driver.js("return document.body.classList.contains('path-entrar')"):
+                    google = auth_google_metrics(driver)
+                    check(f"{context}: botão Google com contraste AA",
+                          bool(google and google["visible"] and google["contrast"] is not None
+                               and google["contrast"] >= 4.5), google)
+                    if google and google["visible"]:
+                        move_pointer(driver, google["x"], google["y"])
+                        hovered = auth_google_metrics(driver)
+                        check(f"{context}: botão Google em hover com contraste AA",
+                              bool(hovered and hovered["hovered"] and hovered["contrast"] is not None
+                                   and hovered["contrast"] >= 4.5), hovered)
+                        move_pointer(driver, 1, 1)
                 if width in (320, 1440):
                     shot = driver.req("GET", f"/session/{driver.session}/screenshot")
                     (OUT / f"{purpose}-{mode}-{width}.png").write_bytes(base64.b64decode(shot))

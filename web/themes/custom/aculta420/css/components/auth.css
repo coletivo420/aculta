@@ -164,7 +164,8 @@ body.path-recuperar-senha .aculta-main .row:has(.user-pass) .aculta-content:has(
   max-inline-size: 22rem;
   margin-inline: 0;
   padding: 0.5rem 1rem;
-  color: var(--aculta-text-primary);
+  /* The fixed light provider surface uses dark text in both color modes. */
+  color: var(--aculta-green-dark);
   background: var(--aculta-white);
   border: 1px solid var(--aculta-border-default);
   border-radius: 3px;
@@ -176,13 +177,13 @@ body.path-recuperar-senha .aculta-main .row:has(.user-pass) .aculta-content:has(
 a[data-portal-ui="auth-google"],
 a[data-portal-ui="auth-google"]:hover,
 a[data-portal-ui="auth-google"]:focus-visible {
-  color: var(--aculta-text-primary);
+  color: var(--aculta-green-dark);
   text-decoration: none;
 }
 
 a[data-portal-ui="auth-google"]:hover,
 a[data-portal-ui="auth-google"]:focus-visible {
-  background: var(--aculta-surface-muted);
+  background: var(--aculta-cream);
 }
 
 a[data-portal-ui="auth-google"] span,
