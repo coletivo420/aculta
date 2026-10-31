@@ -2160,3 +2160,13 @@ links de título com alvo de 44px. O harness injeta o CSS local sobre a página
 servida; nenhum filtro ou conteúdo foi submetido. Evidência em
 `/home/piradopirata/aculta-suite-out/events-catalogue-candidate-81b6ed4ad-20261031/`.
 Esta regressão não prova CSS integrada e não conclui THEME-MF3.
+
+### OCS-F10 / THEME-MF2 — formulários reais de Eventos sem CSS candidata (2026-10-31)
+
+Com Firefox ESR visível e a conta de inspeção, `/culturas/eventos/novo` e
+`/culturas/locais/novo` foram capturados por GET em nove larguras, sem CSS/JS
+injetados: **18 capturas**, zero falhas, largura documental igual à viewport e
+Institution Bar/Domain Header presentes. Os dois formulários proprietários
+estavam renderizados; nenhum foi enviado. Evidência e snapshot pré-ULI estão
+registrados em `mobile-first-audit.md`. Isto prova somente renderização atual e
+reflow; dark mode, no-JS/AJAX, teclado/zoom, ACL, CEP e WCAG permanecem pendentes.

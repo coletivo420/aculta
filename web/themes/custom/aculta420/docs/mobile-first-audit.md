@@ -4596,3 +4596,21 @@ com 44px. Nenhum filtro foi enviado ou conteúdo modificado. O script injeta a
 folha local do SDC sobre o markup real para tornar a comparação repetível; não
 é prova isolada do CSS já servido. Evidência:
 `/home/piradopirata/aculta-suite-out/events-catalogue-candidate-81b6ed4ad-20261031/`.
+
+### OCS-F10 / THEME-MF2 — formulários de organização de Eventos servidos no Runtime (2026-10-31)
+
+Firefox ESR visível autenticado como conta sintética `aculta_visual_admin` abriu
+por GET `/culturas/eventos/novo` e `/culturas/locais/novo`, sem CSS ou JavaScript
+injetados, em 320/360/390/599/600/768/1024/1280/1440px. Foram gravadas 18
+capturas, com `CAPTURED`, zero falhas e largura documental igual à viewport nas
+18. Institution Bar e Domain Header estavam presentes; o Form API proprietário
+de cada rota estava renderizado. Capturas mobile foram revisadas. Nenhum
+formulário foi submetido, endereço consultado ou conteúdo alterado. Snapshot
+pré-ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-integrated-nooverride-20261031.sql`,
+54.390.833 bytes, modo 0600, SHA-256
+`f9dc3f87efc85947b8d8f72ccc6f277857e3467a504be3e853eaea21a5dca062`; Runtime
+com 611 tabelas antes/depois. Evidência visual:
+`/home/piradopirata/aculta-suite-out/culturas-organizer-integrated-nooverride-e38c1f1f0-20261031/`.
+A rodada valida renderização integrada e overflow, não dark mode, no-JS/AJAX,
+teclado/zoom, grants entre contas, CEP ou WCAG completa; não aprova OCS-F11 nem
+THEME-MF3.

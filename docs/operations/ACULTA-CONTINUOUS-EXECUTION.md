@@ -2211,3 +2211,9 @@ ou preferência persistente alterados.
 
 - No Runtime `81b6ed4ad`, Firefox ESR visível abriu `/eventos` e avaliou três publicações já existentes em 320/360/390/575/576/600/768/1024/1280/1440px: **30/30 checks** para overflow, moldura somente no SDC e alvos de título de 44px.
 - Foi somente GET; o harness injetou a folha local do SDC sobre o markup real. Nenhum filtro foi enviado nem conteúdo foi alterado. Evidência: `/home/piradopirata/aculta-suite-out/events-catalogue-candidate-81b6ed4ad-20261031/`. Não prova isoladamente o CSS integrado e não aprova THEME-MF3/OCS-F11.
+
+## 2026-10-31 — formulários ACULTA Studio Culturas no CSS integrado
+
+- Preflight em `toca`: checkout servido `/home/piradopirata/projetos/aculta`, HEAD destacado `e38c1f1f0`, Drupal 11.4.10, URI `https://conta.aculta.toca.net.br`, banco `aculta_runtime`, 611 tabelas. Antes da ULI, snapshot integral modo 0600: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-integrated-nooverride-20261031.sql`, 54.390.833 bytes, SHA-256 `f9dc3f87efc85947b8d8f72ccc6f277857e3467a504be3e853eaea21a5dca062`.
+- Firefox ESR visível autenticado na conta sintética de inspeção abriu por GET `/culturas/eventos/novo` e `/culturas/locais/novo` em 320/360/390/599/600/768/1024/1280/1440px, sem CSS/JS candidato: **18 capturas**, zero falhas, sem overflow documental; Institution Bar, Domain Header e um formulário proprietário foram encontrados em cada rota. Capturas mobile revisadas. Nenhum formulário/endereço foi enviado e nenhum conteúdo/configuração foi alterado. Evidência: `/home/piradopirata/aculta-suite-out/culturas-organizer-integrated-nooverride-e38c1f1f0-20261031/`. A ULI criou sessão temporária; schema manteve 611 tabelas.
+- Limite: não cobre dark mode, no-JS/AJAX, teclado/zoom, ACL entre contas, CEP ou WCAG completa; não aprova OCS-F11/THEME-MF3.
