@@ -344,6 +344,18 @@ de publicação real, CSS integrada ou paridade integral com OpenCulturas, e nã
 fecha THEME-MF2/MF3 ou OCS-F11. Relatório/capturas em
 `/home/piradopirata/aculta-suite-out/revista-article-visual-followup-20261031/`.
 
+### THEME-MF2 — artigo real da Revista com CSS candidata (2026-10-31)
+
+No Firefox ESR visível, `revista-browser-zoom.py` passou **15/15 checks** no
+Runtime de desenvolvimento: home e publicação sintética já existente, dez
+larguras de 320–1440px e zoom real de 200%/400%. A CSS de publicação da branch
+foi injetada somente na sessão. A capa carregou, houve um H1 e shell único, sem
+overflow. Capturas de 320px e zoom foram inspecionadas; nada foi submetido ou
+alterado no Runtime. Isso valida uma publicação sintética e a apresentação
+candidata no browser, não CSS servida, todas as publicações, comentários, ACL,
+WCAG completa, OCS-F11 ou THEME-MF3. Relatório/capturas em
+`/home/piradopirata/aculta-suite-out/revista-article-runtime-branch-followup-20261031/`.
+
 ### THEME-MF3 — foco de teclado nas raízes públicas (2026-10-30)
 
 `purpose-shell-keyboard.py` percorreu as dez raízes de purpose no Firefox ESR

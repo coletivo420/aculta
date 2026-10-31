@@ -148,6 +148,13 @@ worktree. O teste não submete comentários, não homologa acesso entre contas,
 teclado completo, leitor de tela, reduced motion ou WCAG 2.2 AA integral, e não
 é comparação pareada de fidelidade com o OpenCulturas Next.
 
+Reteste visível em 2026-10-31 com `REVISTA_POST_CSS_CANDIDATE=1`: passou 15/15
+checks na home e no artigo sintético real do Runtime, incluindo CSS candidata
+injetada na sessão, capa carregada, um H1, shell único, dez larguras e zoom real
+de 200%/400%, sem overflow. Conteúdo/configuração não foram alterados; Runtime
+continua sem servir a folha candidata. Capturas e JSON em
+`/home/piradopirata/aculta-suite-out/revista-article-runtime-branch-followup-20261031/`.
+
 ## Navigation top-bar mobile-first
 
 `navigation-top-bar.py` compara a composição do Drupal Navigation top-bar antes

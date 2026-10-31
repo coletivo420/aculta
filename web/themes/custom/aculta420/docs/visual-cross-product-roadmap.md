@@ -1736,6 +1736,12 @@ inspecionada. O teste usa fixture e stylesheet candidata, portanto não certific
 renderização de publicação real nem CSS integrada. Evidência e limites em
 `mobile-first-audit.md`.
 
+Uma rodada complementar em publicação sintética já existente no Runtime passou
+15/15 checks em dez larguras e zoom real 200/400%, com CSS candidata injetada
+somente no Firefox; capa, título e shell permaneceram íntegros, sem overflow.
+Nenhum conteúdo foi alterado. A folha ainda não é servida pelo Runtime e esta
+amostra não fecha OCS-F11/THEME-MF3. Evidência em `mobile-first-audit.md`.
+
 ### THEME-MF3 — A/B global de cores e reduced motion (2026-10-31)
 
 Reexecução nos dez purposes, nove larguras, claro/escuro e reduced motion:
