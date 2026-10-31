@@ -3557,10 +3557,16 @@ Os render arrays atuais de `MarleyListingBuilder` já usam tabela Drupal dentro
 de `studio-listing-wrap`; o hook de apresentação do tema fornece as classes sem
 alterar os arrays. `studio.css` agora aplica esse tratamento somente a
 `.studio__listing` e mantém overflow horizontal no wrapper em telas estreitas.
-Firefox ESR visível passou **56/56 checks** na fixture correspondente, em nove
+Firefox ESR visível passou **74/74 checks** na fixture correspondente, em nove
 larguras, claro/escuro, sem overflow documental, com foco por teclado e sem
-alterar DOM/ordem de dados. Evidência em
-`/home/piradopirata/aculta-suite-out/studio-listing-fidelity-final-20261031/`.
+alterar DOM/ordem de dados. A fixture inclui agora o estado vazio produzido pelo
+Twig de tabela do Drupal (`<td colspan="6">`), com capturas próprias 320/1440px
+em ambos os temas, e exige que sua mensagem fique contida e visível. A consulta
+GET das abas Marley no Runtime encontrou 1 linha em Rascunhos, 1 em Revisão, 4
+Publicados e 1 Arquivado; nenhum estava vazio. Evidência da fixture em
+`/home/piradopirata/aculta-suite-out/studio-listing-empty-state-final-20261031/`
+e captura real em
+`/home/piradopirata/aculta-suite-out/marley-editor-state-tabs-20261031/`.
 Não valida listagem Drupal renderizada, grants, estados com conteúdo real, cache,
 AJAX/no-JS ou zoom; OCS-F5/F7/F11 e THEME-MF3 permanecem parciais/pendentes.
 

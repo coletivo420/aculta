@@ -71,7 +71,9 @@ HTML = """<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <table class="table studio__listing"><thead><tr><th>Título</th><th>Situação</th><th>Autor</th><th>Atualizado em</th><th>Ações</th><th>Revisão</th></tr></thead><tbody>
 <tr><td><a href="#publicacao">Uma publicação editorial com um título suficientemente longo para testar o reflow</a></td><td>Rascunho</td><td>Autora de teste</td><td>31/10/2026 19:30</td><td><a href="#editar">Editar</a></td><td>Não enviada</td></tr>
 <tr><td><a href="#publicacao2">Outra publicação</a></td><td>Publicado</td><td>Outra autora</td><td>30/10/2026 08:15</td><td><a href="#editar2">Editar</a></td><td>Revisada</td></tr>
-</tbody></table></div></main></div></body></html>"""
+</tbody></table></div><div id="empty-listing-wrap" class="studio__listing-wrap table-responsive" aria-label="Publicações arquivadas">
+<table id="empty-listing" class="table studio__listing"><thead><tr><th>Título</th><th>Situação</th><th>Autor</th><th>Atualizado em</th><th>Ações</th><th>Revisão</th></tr></thead>
+<tbody><tr><td colspan="6">Nenhum item nesta aba.</td></tr></tbody></table></div></main></div></body></html>"""
 
 
 def record(name, passed, detail=None):
@@ -92,19 +94,29 @@ try:
             time.sleep(0.08)
             data = driver.js("""const wrap=document.querySelector('.studio__listing-wrap'),table=document.querySelector('.studio__listing');
 const first=table.querySelector('th'),last=table.querySelector('th:last-child'),head=table.querySelector('thead th');
+const emptyWrap=document.querySelector('#empty-listing-wrap'),emptyTable=document.querySelector('#empty-listing'),emptyCell=emptyTable.querySelector('tbody td');
 const r=e=>e.getBoundingClientRect(),s=e=>getComputedStyle(e);
 const token=s(document.querySelector('.studio')).getPropertyValue('--aculta-studio-fidelity-input-border-bottom').trim();
 const rgb=token.match(/[a-f0-9]{2}/gi).map(value=>parseInt(value,16));
 return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,wrapWidth:r(wrap).width,wrapScroll:wrap.scrollWidth,wrapClient:wrap.clientWidth,
 tableWidth:r(table).width,tableDisplay:s(table).display,tableLayout:s(table).tableLayout,firstPadding:s(first).paddingInlineStart,lastPadding:s(last).paddingInlineEnd,
 cellPadding:s(first).paddingBlockStart,borderCollapse:s(table).borderCollapse,headerWeight:s(head).fontWeight,headerBorder:s(head).borderBottomColor,
-headerBorderToken:`rgb(${rgb.join(', ')})`,bodyColor:s(table).color};""")
+headerBorderToken:`rgb(${rgb.join(', ')})`,bodyColor:s(table).color,
+emptyText:emptyCell.textContent.trim(),emptyCellWidth:r(emptyCell).width,emptyCellHeight:r(emptyCell).height,
+emptyCellPadding:s(emptyCell).paddingBlockStart,emptyWrapWidth:r(emptyWrap).width,
+emptyWrapScroll:emptyWrap.scrollWidth,emptyTableWidth:r(emptyTable).width};""")
             record(f"{mode}/{width}px sem overflow no documento", data["documentWidth"] <= width, {"documentWidth": data["documentWidth"]})
             record(f"{mode}/{width}px tabela refluída ou contida no wrapper", data["wrapWidth"] <= width and data["tableWidth"] <= data["wrapScroll"] + 1, data)
             record(f"{mode}/{width}px ritmo de tabela OpenCulturas", data["tableDisplay"] == "table" and data["borderCollapse"] == "collapse" and data["cellPadding"] == "8px" and data["firstPadding"] == "0px" and data["lastPadding"] == "0px" and int(data["headerWeight"]) >= 600 and data["headerBorder"] == data["headerBorderToken"], data)
+            record(f"{mode}/{width}px estado vazio contido e legível", data["emptyText"] == "Nenhum item nesta aba." and data["emptyCellHeight"] > 0 and data["emptyCellWidth"] <= data["emptyWrapScroll"] + 1 and data["emptyTableWidth"] <= data["emptyWrapScroll"] + 1 and data["emptyWrapWidth"] <= width and data["documentWidth"] <= width, data)
             if width in (320, 1440):
                 shot = driver.req("GET", f"/session/{driver.session}/screenshot")
                 (OUT / f"listing-{mode}-{width}.png").write_bytes(base64.b64decode(shot))
+                driver.js("document.querySelector('#empty-listing-wrap').scrollIntoView({block:'center',inline:'nearest'});")
+                time.sleep(0.05)
+                empty_shot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                (OUT / f"listing-empty-{mode}-{width}.png").write_bytes(base64.b64decode(empty_shot))
+                driver.js("window.scrollTo(0,0)")
         driver.js("document.querySelector('.studio__listing-wrap a').focus();")
         driver.req("POST", f"/session/{driver.session}/actions", {"actions": [{"type": "key", "id": "listing-keyboard", "actions": [
             {"type": "keyDown", "value": chr(0xE004)}, {"type": "keyUp", "value": chr(0xE004)}]}]})

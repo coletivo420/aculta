@@ -759,11 +759,14 @@ específico de posição da mensagem.
 
 `studio-listing-fidelity.py` cobre o consumer visual dos elementos Drupal atuais
 `studio-listing` e `studio-listing-wrap`, aplicados pelo hook de apresentação do
-tema. A fixture reproduz a raiz `.studio`, a tabela semanticamente marcada e as
-seis colunas usadas em fluxos editoriais/revisão. Em Firefox ESR visível mede
+tema. A fixture reproduz a raiz `.studio`, a tabela semanticamente marcada, as
+seis colunas usadas em fluxos editoriais/revisão e a linha vazia do Twig core
+Drupal com `colspan` e “Nenhum item nesta aba.”. Em Firefox ESR visível mede
 320/360/390/599/600/768/1024/1280/1440px, claro/escuro, ausência de overflow do
-documento, rolagem horizontal confinada ao wrapper, ritmo e cabeçalho de tabela
-e foco real por teclado. Não submete formulários, não acessa conteúdo, não
+documento, rolagem horizontal confinada ao wrapper, ritmo, cabeçalho, linha
+vazia e foco real por teclado. Em 2026-10-31 passou 74/74 checks; capturas do
+estado vazio em 320/1440px ficam em `listing-empty-{light,dark}-{320,1440}.png`
+sob `$SUITE_OUT`. Não submete formulários, não acessa conteúdo, não
 valida ACL/cache/AJAX/no-JS nem substitui o GET das listagens Drupal.
 
 `ocs-baseline.py` também mede a tabela real quando a rota capturada é Marley.

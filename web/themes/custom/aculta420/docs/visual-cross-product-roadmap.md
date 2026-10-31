@@ -1812,7 +1812,8 @@ zoom, teclado, WCAG e integração servida. Evidência em `mobile-first-audit.md
 
 `studio.css` agora aplica o ritmo de tabela OpenCulturas 3.1.5 aos consumers
 existentes `.studio__listing` de Marley/Wiki, mantendo a rolagem horizontal dentro
-do wrapper responsivo. Fixture no Firefox ESR passou 56/56 em nove larguras,
-claro/escuro e foco de teclado; não cobre HTML Drupal renderizado, grants ou
-estados editoriais reais. THEME-MF3 e OCS-F11 seguem pendentes. Detalhes em
-`mobile-first-audit.md`.
+do wrapper responsivo. Fixture Firefox ESR passou 74/74 em nove larguras,
+claro/escuro e foco de teclado, incluindo a linha vazia do template Drupal.
+GET real encontrou conteúdo em todas as quatro abas testadas; o estado vazio
+permanece validado somente na fixture. Não cobre grants, cache ou AJAX/no-JS.
+THEME-MF3 e OCS-F11 seguem pendentes. Detalhes em `mobile-first-audit.md`.

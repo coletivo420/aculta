@@ -39,6 +39,14 @@ permaneceu com largura igual ao viewport. O wrapper externo `listing-wrap` não
 é o contêiner rolável: ele contém o `.table-responsive` interno do Drupal.
 `ocs-baseline.py` agora verifica o pai direto da tabela em viewports até 600px.
 
+Leitura GET das quatro abas em 390px encontrou 1 linha em Rascunhos, 1 em
+Revisão, 4 em Publicados e 1 em Arquivados; a conta sintética não tem aba vazia
+disponível. O estado vazio do `#empty` Drupal foi acrescentado à fixture local
+de seis colunas, que passou 74/74 checks em nove larguras, claro/escuro, incluindo
+a mensagem contida, foco de teclado e screenshots vazias 320/1440. Evidências em
+`/home/piradopirata/aculta-suite-out/marley-editor-state-tabs-20261031/` e
+`/home/piradopirata/aculta-suite-out/studio-listing-empty-state-final-20261031/`.
+
 A execução do baseline completo continua **FAIL** em checks de heading
 preexistentes: este Runtime serve somente o H1 genérico “ACULTA Studio Marley”
 e não contém o heading interno exigido pela versão atual da suíte. Isso é
