@@ -2,7 +2,7 @@
 
 ## ADR-038 — caminhos vigentes das Suites (retificado pelo responsável em 2026-10-30)
 
-Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/studio/we-sativa`; Green Stash `shop:/studio/green-stash`; Culturas `eventos:/culturas`. Os dois caminhos `/studio/*` oficiais são ACULTA STUDIO WE SATIVA e ACULTA STUDIO GREEN STASH em seus purposes proprietários; `/studio` e os demais caminhos `/studio/*` retornam 404 sem alias/redirect. O Domain Wiki canônico é `wiki420`. `aculta_studio` permanece framework compartilhado. A raiz de `account` apresenta a entrada da Conta; Conta e Perfil permanecem separados. Consulte a retificação vigente do ADR-038.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. O prefixo `/studio` e todos os caminhos `/studio/*` respondem 404 sem alias/redirect. O Domain Wiki canônico é `wiki420`. `aculta_studio` permanece framework compartilhado. A raiz de `account` apresenta a entrada da Conta; Conta e Perfil permanecem separados. Consulte a retificação vigente do ADR-038.
 
 
 ## Contrato histórico antes do ADR-038
