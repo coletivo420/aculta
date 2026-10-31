@@ -2609,3 +2609,16 @@ da Wiki) disponível. As rotas são as raízes públicas; isto não cobre págin
 internas, modos com JavaScript, formulários, zoom, teclado ou WCAG 2.2 AA e não
 aprova THEME-MF3. Relatório em
 `/home/piradopirata/aculta-suite-out/purpose-nojs-retest-20261031/results.json`.
+
+### THEME-MF3 — reteste de modo claro/escuro e movimento reduzido (2026-10-31)
+
+`purpose-shell-color-modes.py` percorreu as mesmas dez raízes de teste em
+320/360/390/599/600/768/1024/1280/1440px, com Firefox ESR visível e
+`prefers-reduced-motion` ativo. Passou **540/540 checks** para tokens de modo,
+shell único, ausência de overflow e contraste AA dos links textuais do shell.
+A alternância claro/escuro ocorreu no DOM da sessão. Na rota Conta, `auth.css` e
+`challenge-frame` candidatos foram injetados no navegador; não correspondem ao
+hook instalado no Runtime. O teste não valida preferência persistida, páginas
+internas, teclado completo, zoom, tecnologias assistivas ou WCAG 2.2 AA integral,
+portanto THEME-MF3 permanece pendente. Relatório em
+`/home/piradopirata/aculta-suite-out/purpose-modes-retest-20261031/results.json`.
