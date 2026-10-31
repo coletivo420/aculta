@@ -1920,7 +1920,12 @@ O resultado confirma a CSS candidata com o contrato simulado; não valida o hook
 do Portal no Runtime nem a CSS servida sem override. Portanto a falha anterior
 de 320 px continua aberta na instalação corrente até que a branch seja servida,
 o cache reconstruído e a mesma rota seja retestada com o marcador produzido
-server-side, inclusive sem JavaScript. Não aprova THEME-MF3.
+server-side, inclusive sem JavaScript. Na repetição atual, o hook passou no
+PHPUnit (**2 testes/4 assertions**) e a comparação Firefox candidatada repetiu
+**3/3** em 320/360 px. Evidência mais recente:
+`/home/piradopirata/aculta-suite-out/auth-overflow-repeat-20261030/`. Como o CSS
+e o marcador foram injetados no DOM, esse resultado confirma a candidata, não a
+instalação servida. Não aprova THEME-MF3.
 
 ### Registro histórico — gates de fronteira e catálogo em Eventos/Índice
 
