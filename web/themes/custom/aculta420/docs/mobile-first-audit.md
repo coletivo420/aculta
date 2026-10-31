@@ -142,6 +142,18 @@ o baseline servido e os comportamentos existentes, não valida a integração da
 branch nem conclui THEME-MF0, THEME-MF3 ou OCS-F11. Zoom, teclado, acessibilidade,
 formulários de Eventos e os demais fluxos do purpose continuam por validar.
 
+### THEME-MF3 — reteste do calendário interno no HEAD publicado (2026-10-31)
+
+No Runtime destacado em `f2c3b37db`, Firefox ESR visível repetiu as três rotas em
+320/360/390/599/600/768/1024/1280/1440px, claro/escuro e JavaScript ligado e
+desligado: **108/108 checks**, sem FAIL, sem overflow e com shell único. A agenda
+HTML serviu sem JavaScript; o scheduler só inicializou com JavaScript e a partir
+de 768px. O controle de contraste existente também foi exercitado. O teste fez
+somente GET e alterações de estado locais no documento; não enviou filtros nem
+alterou conteúdo. Evidência:
+`/home/piradopirata/aculta-suite-out/calendar-agenda-integrated-f2c3b37db-20261031/`.
+Isto não cobre criação/edição de eventos, teclado completo ou WCAG 2.2 AA.
+
 ### THEME-MF2 — cartões do catálogo público de Eventos (2026-10-31)
 
 O teste reutilizável `events-catalogue.py` aplicou a folha local do SDC

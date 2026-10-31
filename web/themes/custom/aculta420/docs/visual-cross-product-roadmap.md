@@ -1998,9 +1998,15 @@ O Firefox ESR visível passou 108/108 verificações de agenda, grade mensal e
 calendário interativo em nove larguras, dois modos de cor e sessões com/sem
 JavaScript. A agenda HTML continua utilizável em telas móveis e sem JavaScript;
 o scheduler inicializado ocupa a apresentação a partir de 768px. O controle
-existente de contraste também foi exercitado. A execução foi somente GET sobre
-o baseline do Runtime `2493d7535`, sem CSS candidata; não homologa a branch nem
-fecha THEME-MF0/MF3. Os detalhes e limites estão em `mobile-first-audit.md`.
+existente de contraste também foi exercitado. A execução original foi GET sobre
+o baseline do Runtime `2493d7535`.
+
+Reteste no HEAD servido `f2c3b37db`, sem CSS candidata, também passou **108/108**
+checks nas três rotas, nove larguras, claro/escuro e JavaScript ligado/desligado.
+Não houve overflow, duplicação do shell nem escrita de conteúdo. Evidência em
+`/home/piradopirata/aculta-suite-out/calendar-agenda-integrated-f2c3b37db-20261031/`.
+Isto atualiza o resultado do baseline para a branch servida, mas não fecha os
+gates de teclado completo, WCAG 2.2 AA ou alterações Form API de Eventos.
 
 ### THEME-MF2 — cartões do catálogo público de Eventos (2026-10-31)
 

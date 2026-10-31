@@ -2188,3 +2188,10 @@ ou preferência persistente alterados.
 - No Runtime `f57c6c93d`, Firefox ESR visível e anônimo passou **180/180 checks** nas dez raízes (MAIN, Conta, Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links, Eventos) em 320/360/390/599/600/768/1024/1280/1440 px.
 - Cada rota tinha um `<main id="main-content">`, exatamente um H1 visível dentro do conteúdo principal e nenhum overflow horizontal do documento. Nenhum link foi ativado e nenhum formulário foi enviado.
 - Evidência: `/home/piradopirata/aculta-suite-out/purpose-headings-f57c6c93d-20261031/`. A verificação cobre as raízes públicas, não todas as páginas internas nem WCAG/leitor de tela; não aprova THEME-MF3/OCS-F11.
+
+## 2026-10-31 — agenda interna de Eventos e validadores de apresentação
+
+- Runtime `toca`, checkout servido `/home/piradopirata/projetos/aculta`, HEAD destacado `f2c3b37db`, Drupal 11.4.10, URI `http://default`, `aculta_runtime`. `updatedb:status` não encontrou atualizações, `config:status` não encontrou diferenças; `drush cr` passou. Os hosts de teste Main e Loja responderam HTTP 200.
+- Firefox ESR visível, anônimo e sem injeções, percorreu `/calendario`, a grade mensal e `/calendario/interativo` em 320/360/390/599/600/768/1024/1280/1440 px, claro/escuro, JavaScript ligado/desligado: **108/108 checks**, sem overflow, sem duplicação do shell. A agenda HTML permaneceu utilizável sem JavaScript; o scheduler iniciou com JavaScript a partir de 768 px. Nenhum filtro foi submetido e nenhum conteúdo foi alterado. Evidência: `/home/piradopirata/aculta-suite-out/calendar-agenda-integrated-f2c3b37db-20261031/`.
+- Lint CSS e JS passaram; SDC schemas/discovery: 55 componentes, 27 includes, 759 checks; Design Foundations: 2.429; fronteira tema/módulo: 3.490; mapa tema/módulo: 213; documentação UI: 520 tokens, 421 usados, 149 atributos. Inventário responsivo regenerado e comparado byte a byte.
+- Limite: esta rodada cobre a agenda, não criação/edição de eventos, ACL entre contas, Form API, teclado integral, leitor de tela ou WCAG 2.2 AA completa. THEME-MF3 e OCS-F11 seguem pendentes.
