@@ -18,6 +18,36 @@ preservadas; por isso a Institution Bar e a correção CAPTCHA ainda precisam de
 verificação integrada após o checkout de teste receber este HEAD. THEME-MF3 e
 OCS-F11 seguem pendentes.
 
+### THEME-MF2 — recuperação dos 500 e Institution Bar integrada (2026-10-31)
+
+Ao atualizar o checkout servido para `b13776abd`, o Firefox revelou HTTP 500
+nas raízes de Apoio, Conta, Wiki e Growroom. O log Drupal identificou
+`LogicException: Theme aculta420 should not implement preprocess_input more
+than once`: `InputHooks` era o provider documentado, mas `PortalUiHooks` também
+havia recebido o atributo do mesmo hook. Removi a inscrição duplicada e
+acrescentei um teste Unit que exige `InputHooks::preprocess()` como provider
+único. A correção foi publicada em `f382ee6f9`.
+
+No Runtime em `toca`, após checkout destacado em `f382ee6f9`, `drush
+updatedb:status` informou `No database updates required`; `config:status`
+continua com 227 itens (116 diferentes, 69 apenas no banco, 42 apenas no Sync).
+Após rebuild de cache, Main, Loja, Revista, Apoio, Conta, Wiki e Growroom
+responderam HTTP 200. Firefox ESR visível sem overrides passou **214/214
+checks**: 166 anônimos nas dez raízes (320/390px) e 48 autenticados em Main
+(320/390/1023/1024/1280px), incluindo fixação no primeiro scroll, foco da ação
+administrativa, breakpoint desktop e rolagem contínua. Dois SKIPs de scroll em
+Links são esperados porque a raiz não tem rolagem vertical. Evidência em
+`/home/piradopirata/aculta-suite-out/institution-bar-runtime-f382ee6f9-20261031/`.
+
+Snapshot anterior à sessão ULI autenticada:
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-institution-bar-browser-f382ee6f9-20261031.sql`,
+57.971.044 bytes, modo 0600, SHA-256
+`c4035ebe2777d8acc9917bc61ab9889dc918c6b7fbdca68c93cad9e93a7f29f1`.
+Runtime permaneceu em 624 tabelas. Nenhuma configuração foi importada nesta
+validação visual. THEME-MF3 e OCS-F11 continuam pendentes: esta matriz não
+substitui zoom global, WCAG integral, páginas internas ou comparação pareada
+OpenCulturas.
+
 ### THEME-MF0/MF2 — agenda e calendário de Eventos (2026-10-31)
 
 Firefox ESR visível percorreu `/calendario`, a grade do mês atual e

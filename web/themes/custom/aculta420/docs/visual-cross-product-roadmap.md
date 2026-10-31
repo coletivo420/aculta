@@ -26,6 +26,16 @@ renderizado segue parcial; não altera o status de THEME-MF0 nem aprova THEME-MF
 Evidência e limites em
 [`mobile-first-audit.md`](mobile-first-audit.md).
 
+**THEME-MF2 — regressão de `preprocess_input` e validação integrada (2026-10-31):**
+o Runtime servia HTTP 500 em Apoio, Conta, Wiki e Growroom porque `InputHooks` e
+`PortalUiHooks` registravam o mesmo hook Drupal. A inscrição duplicada foi
+removida; Unit 27/149 e Kernel 7/19 passaram. Após publicação de `f382ee6f9`,
+rebuild de cache e Firefox ESR sem overrides, as sete áreas amostradas
+retornaram HTTP 200 e a Institution Bar passou 214/214 checks nas dez raízes
+anônimas e Main autenticado. Isto fecha esse defeito, não THEME-MF3: WCAG
+integral, zoom global, páginas internas e fidelidade pareada permanecem
+pendentes. Ver detalhes e snapshot em [`mobile-first-audit.md`](mobile-first-audit.md).
+
 **Rastreio adicional THEME-MF0 (retificação 2026-10-31):** o inventário estático de
 bibliotecas customizadas registra 42 definições e 54 referências literais em
 2.501 fontes. Ele confirma ligações específicas da Revista (teaser, artigo,
