@@ -61,6 +61,8 @@ def record(name, passed, detail):
             'loginForms', 'messageCount', 'maxTopChange', 'settledBarTop',
             'aboveToolbar', 'expectedTop', 'documentWidth', 'displacementElements',
             'topBarCount', 'topBarPosition', 'topBarDisplay', 'topBarVisibility', 'topBarBottom',
+            'topBarInlineStyle', 'mobileBreakpointMatches',
+            'candidateCssPresent',
             'barHeight', 'placeholderCount', 'placeholderHeight', 'topBarZIndex', 'shellScrolled', 'sampleCount',
             'maxDeviation', 'failures')
     summary = {key: detail[key] for key in keys if isinstance(detail, dict) and key in detail}
@@ -125,9 +127,10 @@ def set_viewport(width):
 def apply_candidate():
     if os.environ.get("INSTITUTION_BAR_SCROLL_CSS_OVERRIDE") == "1":
         css = (ROOT / "web/themes/custom/aculta420/css/components/institution-bar.css").read_text()
-        driver.js("""const style=document.createElement('style');
+        driver.js("""const existing=document.querySelector('style[data-institution-bar-scroll-candidate]');
+          const style=existing||document.createElement('style');
           style.dataset.institutionBarScrollCandidate='true';
-          style.textContent=arguments[0];document.head.append(style);return true;""", [css])
+          style.textContent=arguments[0];if(!existing)document.head.append(style);return true;""", [css])
     if os.environ.get("INSTITUTION_BAR_SCROLL_JS_OVERRIDE") == "1" and not DISABLE_JS:
         if not driver.js("return !!(window.Drupal && window.once)"):
             return False
@@ -148,6 +151,7 @@ def metrics():
       const toolbar=document.querySelector('#toolbar-administration');
       const toolbarRect=toolbar?.getBoundingClientRect();
       const topBar=document.querySelector('.top-bar[data-drupal-admin-styles]');
+      const candidateCss=document.querySelector('style[data-institution-bar-scroll-candidate]');
       const topBarRect=topBar?.getBoundingClientRect();
       const placeholder=document.querySelector('.aculta-institution-bar-placeholder');
       const ancestors=[];
@@ -185,6 +189,9 @@ def metrics():
         topBarZIndex:topBar ? getComputedStyle(topBar).zIndex : null,
         topBarDisplay:topBar ? getComputedStyle(topBar).display : null,
         topBarVisibility:topBar ? getComputedStyle(topBar).visibility : null,
+        topBarInlineStyle:topBar?.getAttribute('style')||null,
+        mobileBreakpointMatches:matchMedia('(max-width: 63.999rem)').matches,
+        candidateCssPresent:Boolean(candidateCss),
         topBarTop:topBarRect ? Math.round(topBarRect.top*100)/100 : null,
         topBarBottom:topBarRect ? Math.round(topBarRect.bottom*100)/100 : null,
         barHeight:rect ? Math.round(rect.height*100)/100 : null,
@@ -283,10 +290,18 @@ def run_scenario(scenario, login_url=None):
             displacement_correct = True
             if not DISABLE_JS:
                 displacement_correct = abs(initial["displacementTop"] - expected_displacement) <= 2
-            initial_flow_top = initial["topBarBottom"] if initial["topBarCount"] else 0
+            initial_flow_top = (
+                initial["topBarBottom"]
+                if initial["topBarCount"] and initial["topBarDisplay"] != "none"
+                else initial["barTop"]
+            )
             displacement_correct = displacement_correct and abs(initial["barTop"] - initial_flow_top) <= 2
             record(f"{scenario} {width}px: deslocamento compatível com a barra",
                    displacement_correct, initial)
+            if scenario == "admin" and width <= 1023:
+                record(f"{scenario} {width}px: ações administrativas superiores desativadas",
+                       initial["topBarCount"] == 0 or initial["topBarDisplay"] == "none",
+                       initial)
             if width == 320:
                 desktop_width = set_viewport(1024)
                 time.sleep(0.3)
@@ -301,11 +316,14 @@ def run_scenario(scenario, login_url=None):
                 record(f"{scenario}: deslocamento ao cruzar para desktop",
                        desktop_correct, desktop_metrics)
                 mobile_width = set_viewport(320)
+                if os.environ.get("INSTITUTION_BAR_SCROLL_CSS_OVERRIDE") == "1":
+                    apply_candidate()
                 time.sleep(0.3)
                 mobile_metrics = metrics()
                 mobile_correct = (
                     mobile_width == 320
                     and mobile_metrics["topBarPosition"] != "fixed"
+                    and mobile_metrics["topBarDisplay"] == "none"
                 )
                 if not DISABLE_JS:
                     mobile_correct = mobile_correct and mobile_metrics["displacementTop"] <= 2
@@ -333,12 +351,12 @@ def run_scenario(scenario, login_url=None):
             time.sleep(0.08)
             immediate = metrics()
             admin_actions_hidden = (
-                immediate["topBarVisibility"] == "hidden"
-                if immediate["topBarCount"] else immediate["topBarVisibility"] is None
+                immediate["topBarDisplay"] == "none"
+                if immediate["topBarCount"] else immediate["topBarDisplay"] is None
             )
             expected_placeholder_count = 1 if initial["barTop"] <= 2 else 0
             expected_placeholder_height = initial["barHeight"] if expected_placeholder_count else 0
-            record(f"{scenario} {width}px: Institution Bar fixa no primeiro scroll",
+            record(f"{scenario} {width}px: Institution Bar fixa e ações administrativas móveis desativadas",
                    immediate["scrollY"] > 0 and immediate["barPosition"] == "fixed"
                    and abs(immediate["barTop"]) <= 2 and immediate["shellScrolled"]
                    and admin_actions_hidden
@@ -350,31 +368,6 @@ def run_scenario(scenario, login_url=None):
                 (OUT / f"institution-bar-scroll-admin-first-scroll-{width}.png").write_bytes(
                     base64.b64decode(screenshot)
                 )
-                driver.js("window.scrollTo({top: 0, behavior: 'instant'}); return true;")
-                time.sleep(0.05)
-                focused_action = driver.js("""return (() => {
-                  const action=document.querySelector('.top-bar[data-drupal-admin-styles] a, .top-bar[data-drupal-admin-styles] button');
-                  action?.focus({preventScroll:true});
-                  return {found:Boolean(action), active:document.activeElement===action,
-                    within:Boolean(action && action.closest('.top-bar[data-drupal-admin-styles]')?.contains(document.activeElement)),
-                    tag:action?.tagName || null};
-                })();""")
-                driver.js("window.scrollTo({top: 1, behavior: 'instant'}); return true;")
-                time.sleep(0.05)
-                focused_metrics = metrics()
-                record(f"{scenario} {width}px: ação administrativa focada continua visível",
-                       focused_action["found"] and focused_action["active"] and focused_action["within"]
-                       and focused_metrics["topBarVisibility"] == "visible" and not focused_metrics["shellScrolled"]
-                       and focused_metrics["barPosition"] == "fixed" and abs(focused_metrics["barTop"]) <= 2
-                       and int(focused_metrics["topBarZIndex"]) >= 1031,
-                       {**focused_metrics, "focusableAction": focused_action})
-                driver.js("document.activeElement?.blur(); window.scrollTo({top: 1, behavior: 'instant'}); return true;")
-                time.sleep(0.05)
-                blurred_metrics = metrics()
-                record(f"{scenario} {width}px: ações recolhem após o foco sair",
-                       blurred_metrics["topBarVisibility"] == "hidden" and blurred_metrics["shellScrolled"],
-                       blurred_metrics)
-
             driver.js("window.scrollTo({top: 0, behavior: 'instant'}); return true;")
             time.sleep(0.08)
             restored = metrics()
@@ -385,7 +378,7 @@ def run_scenario(scenario, login_url=None):
                    and not restored["shellScrolled"]
                    and restored["placeholderCount"] == 0
                    and restored["topBarDisplay"] == initial["topBarDisplay"]
-                   and (restored["topBarVisibility"] in ("visible", None)),
+                   and (restored["topBarDisplay"] in ("none", None)),
                    restored)
         elif width <= 390 and not DISABLE_JS:
             first_scroll_skips.append({

@@ -459,7 +459,7 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/events-catalogue.p
 `EVENTS_DOMAIN_ENV=production` seleciona o host de produção configurado no
 `deploy.json`; usar somente após conferir DNS/TLS e o ambiente servido.
 
-## Institution Bar durante scroll e Toolbar administrativa
+## Institution Bar durante scroll e top-bar administrativa móvel
 
 `institution-bar-scroll.py` compara o comportamento da barra ao carregar e
 rolar as homes dos purposes configurados em 320/390 px como anônimo e a home MAIN como
@@ -472,11 +472,15 @@ credenciais do administrador sintético fornecidas pelo ambiente. O teste não
 submete conteúdo nem altera configuração. No cenário administrativo também
 captura o shell móvel antes e depois do scroll.
 Na candidata mobile, verifica que a Institution Bar fica fixa em `top: 0` no
-primeiro scroll não nulo, que a top-bar de ações administrativas fica oculta
-sem colapsar sua altura de layout e que as ações voltam ao topo. Ações com foco
-de teclado permanecem visíveis até o foco sair. A sessão sem JavaScript preserva
-o fallback sticky natural; a fixação antecipada e a ocultação transitória
-dependem do JavaScript de apresentação.
+primeiro scroll não nulo e que a top-bar de ações administrativas fica
+desativada até 1023px, inclusive no topo. A partir de 1024px, a top-bar conserva
+seu comportamento desktop. A sessão sem JavaScript preserva o fallback sticky
+natural; a fixação no primeiro scroll depende do JavaScript de apresentação.
+O harness verifica a disponibilidade visual da top-bar e o shell tanto no
+carregamento quanto após scroll e redimensionamento.
+Com `INSTITUTION_BAR_SCROLL_CSS_OVERRIDE=1`, o harness atualiza a folha
+candidata após a transição desktop→mobile e confirma que a regra do breakpoint
+está presente antes de medir; esses resultados continuam sendo de CSS candidata.
 Se uma rota retornar sem Institution Bar (por exemplo, página de erro), o teste
 registra a falha daquela rota e continua nos demais purposes.
 
@@ -513,6 +517,16 @@ ambiente. O login inicia por padrão no host de Conta definido no `deploy.json`;
 `INSTITUTION_BAR_SCROLL_DISABLE_JS=1` testa o fallback CSS em um perfil Firefox
 com JavaScript de página desativado. Esse teste focal não substitui a
 matriz completa de larguras, teclado, zoom, dark mode ou WCAG 2.2 AA.
+
+Reteste da nova decisão em 2026-10-31: o candidato passou 47/47 checks de uma
+conta administrativa em 320/390/1023/1024/1280px; a top-bar fica `display:none`
+até 1023px, o menu completo continua no desktop e a Institution Bar fixa no
+primeiro scroll. Foi necessário aumentar a especificidade para vencer os
+estilos dinâmicos da Navigation top-bar. A variante sem JavaScript passou 43/43
+checks com a CSS candidata e sticky natural. CSS/JS foram injetados somente na
+sessão; não prova a integração servida. Evidências em
+`/home/piradopirata/aculta-suite-out/admin-topbar-mobile-final-assertion-8e0091a4a-20261031/`
+e `/home/piradopirata/aculta-suite-out/admin-topbar-mobile-nojs-retest-8e0091a4a-20261031/`.
 
 Para a conta administrativa sintética, o ULI é tentado primeiro. Se o site
 encaminhar o ULI para recuperação de conta, o harness aceita login tradicional
@@ -624,6 +638,10 @@ publicação e rebuild de cache.
 `auth-route-runtime.py` abre anonimamente uma rota real e injeta as folhas
 candidatas de base e autenticação somente no DOM da sessão, sem enviar
 formulários. Além de markup, paddings e scroll, mede o widget e seu contêiner.
+Para validar a biblioteca e o hook realmente servidos, use
+`AUTH_ROUTE_INJECT_CANDIDATE=0 AUTH_ROUTE_REQUIRE_MARKER=1`; esse modo não injeta
+CSS nem marcador e exige o token emitido pelo hook. As capturas recebem o prefixo
+`served-`. Sem essas variáveis o teste preserva o modo candidato histórico.
 `AUTH_ROUTE_BASE_URL` define o domínio, `AUTH_ROUTE_PATH` escolhe
 `/`, `/entrar`, `/criar-conta` ou `/recuperar-senha`, e `AUTH_ROUTE_WIDTHS` seleciona
 as larguras. `AUTH_ROUTE_EXPECTED_PATH_CLASS` substitui o body class esperado
@@ -639,6 +657,15 @@ somente esse host local. O widget externo exige também
 CSS antes de servir o novo hook do Portal, `AUTH_ADD_MARKER_CANDIDATE=1` acrescenta
 temporariamente `data-portal-ui="challenge-frame"` ao wrapper renderizado; isso
 simula o contrato e não valida a instalação da alteração PHP no Runtime.
+
+Reteste integrado em 2026-10-31: `/` na Conta de desenvolvimento, HEAD
+`8e0091a4a`, passou 10/10 checks nas nove larguras 320/360/390/599/600/768/
+1024/1280/1440px com `AUTH_ROUTE_INJECT_CANDIDATE=0` e
+`AUTH_ROUTE_REQUIRE_MARKER=1`. CSS, challenge e token vieram do Runtime. O
+documento ficou em 320px no viewport de 320px e heading/form não se sobrepuseram.
+Evidência em `/home/piradopirata/aculta-suite-out/auth-served-runtime-8e0091a4a-20261031/`.
+Para repetir sem JavaScript, acrescente `AUTH_ROUTE_DISABLE_JS=1` e use outro
+`SUITE_OUT`; em `8e0091a4a`, essa execução passou 10/10 nos mesmos viewports.
 
 Execução candidata de 2026-10-30, Firefox ESR 153.5.1esr: login 12/12,
 cadastro 10/10 e recuperação 10/10 checks passaram, com widget completo e sem

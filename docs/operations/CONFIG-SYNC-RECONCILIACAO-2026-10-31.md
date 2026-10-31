@@ -40,6 +40,11 @@ configurações continuam no Sync.
   Drupal.
 - `updatedb:status` não lista atualizações pendentes; `drush cr` concluiu.
 - A contagem de `aculta_faq` permaneceu em seis.
+- O snapshot pós-reconciliação tinha 614 tabelas. Durante a verificação visual
+  read-only em 2026-10-31, a contagem caiu para 611; a comparação entre os dois
+  snapshots mostra que as únicas tabelas removidas foram as três
+  `field_deleted_data_*` descritas acima, pela purga normal do Field API. Não
+  houve `DROP` manual; o snapshot pré-teste atualizado registra as 611 tabelas.
 
 ## Verificações
 

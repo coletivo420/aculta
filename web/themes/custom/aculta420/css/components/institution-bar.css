@@ -31,15 +31,9 @@
     visibility: hidden;
   }
 
-  /* Hide mobile admin actions while retaining layout height and scroll range. */
-  html.aculta-institution-bar-scrolled .top-bar[data-drupal-admin-styles] {
-    visibility: hidden;
-    pointer-events: none;
-  }
-
-  :is(#extra-specificity-hack, [data-drupal-admin-styles]).top-bar:focus-within {
-    position: relative;
-    z-index: 1031;
+  /* Keep the mobile viewport reserved for the multidomain shell. */
+  .top-bar[data-drupal-admin-styles] {
+    display: none !important;
   }
 }
 

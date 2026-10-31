@@ -1,5 +1,59 @@
 # Auditoria mobile-first ACULTA420 — THEME-MF0
 
+### THEME-MF2 — Institution Bar e ações administrativas móveis (2026-10-31)
+
+Retificação da decisão anterior: a pedido do responsável, a Institution Bar
+fica fixa em `top: 0` no primeiro scroll não nulo e a Navigation top-bar de
+ações administrativas fica desativada em todos os viewports até 1023px; no
+desktop (a partir de 1024px) continua disponível. O CSS esconde o elemento
+`[data-drupal-admin-styles].top-bar`; o JavaScript mantém somente a fixação
+imediata e o displacement desktop. O fallback sem JavaScript preserva sticky
+natural. As decisões históricas abaixo sobre reaparecer no topo ou preservar
+foco nesta top-bar estão substituídas.
+
+Firefox ESR visível, com CSS/JS candidatos injetados somente na sessão, passou
+**47/47 checks administrativos** em 320/390/1023/1024/1280px: barra de ações
+ausente em 320/390/1023, mantida em 1024/1280, Institution Bar fixa no primeiro
+scroll e sem overflow; displacement e retorno mobile/desktop permaneceram
+estáveis. Sem JavaScript, passou mais **43/43 checks**; o fallback usa sticky
+natural e mantém a top-bar desativada em mobile. Captura 320px revisada. A
+primeira tentativa falhou 7/47 porque o
+seletor supunha um ancestral `#toolbar-administration` inexistente; uma segunda
+falhou pelas regras mais específicas da top-bar Drupal. A regra final usa o
+atributo real e `!important`, e passou a matriz completa.
+
+As sessões ULI autenticadas foram temporárias e não alteraram conteúdo,
+configuração ou permissões. Antes de cada sessão foi confirmado o Runtime
+`aculta_runtime`, URI `http://default`, host `toca` e 611 tabelas, e salvo um
+snapshot modo 0600 antes de cada sessão. O último SHA-256 é
+`16bd7d715694713cc77f1e6735d0a3873a08e437003a173e092181921c091e35`, em
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-admin-topbar-mobile-assertion-20261031.sql`.
+Capturas e relatório:
+`/home/piradopirata/aculta-suite-out/admin-topbar-mobile-final-8e0091a4a-20261031/`.
+Relatório da última rodada com a asserção de retorno mobile:
+`/home/piradopirata/aculta-suite-out/admin-topbar-mobile-final-assertion-8e0091a4a-20261031/`.
+Como os estilos foram injetados, a integração servida ainda precisa ser
+repetida após publicar este código; THEME-MF3 permanece pendente.
+
+### THEME-MF2 — Conta autenticada visualmente integrada (2026-10-31)
+
+No Runtime de desenvolvimento, HEAD `8e0091a4a`, Firefox ESR visível e sessão
+anônima, a raiz canônica de Conta (`/`, `body.path-entrar`) passou **10/10
+checks** em 320/360/390/599/600/768/1024/1280/1440px. A execução não injetou CSS
+nem marcador: o navegador recebeu a biblioteca do tema e o hook Portal reais.
+O marcador `challenge-frame` estava presente; em 320px o documento mediu
+320px, o challenge 300px coube no slot e o formulário começou exatamente após
+o H1, sem sobreposição. Com JavaScript da página desativado, a mesma rota passou
+outros 10/10 checks nos mesmos viewports; o marcador veio do servidor e o
+documento continuou com 320px. Não houve envio de formulário ou escrita no
+Runtime. Capturas e `summary.json`:
+`/home/piradopirata/aculta-suite-out/auth-served-runtime-8e0091a4a-20261031/`.
+Evidência sem JavaScript:
+`/home/piradopirata/aculta-suite-out/auth-served-nojs-runtime-8e0091a4a-20261031/`.
+Isto supera os registros históricos de overflow/validação candidata para esta
+rota. Não cobre as demais rotas de autenticação, zoom, teclado ou WCAG e não
+aprova THEME-MF3.
+
 ### THEME-MF2 — revalidação estática após a decisão da Institution Bar (2026-10-31)
 
 No HEAD `056d49dc9`, Stylelint e ESLint do tema passaram. O schema SDC passou

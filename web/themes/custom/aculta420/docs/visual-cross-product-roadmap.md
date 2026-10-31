@@ -2017,6 +2017,33 @@ Firefox ESR visível. CSS/JS foram injetados somente na sessão de teste; não e
 integrados no Runtime. Evidências e snapshots estão em `mobile-first-audit.md`.
 THEME-MF3 continua pendente.
 
+### 2026-10-31 — Conta: validação integrada de autenticação no Runtime
+
+No HEAD `8e0091a4a`, Firefox ESR visível acessou `/` em Conta anonimamente e
+passou **10/10 checks** em 320/360/390/599/600/768/1024/1280/1440px. Uma segunda
+rodada sem JavaScript também passou **10/10**. Ambas foram sem injeção de CSS e
+sem simulação do marcador: `auth.css` e o hook
+`challenge-frame` vieram do Runtime. Em 320px o documento mediu 320px, o widget
+ficou dentro do slot e o formulário não sobrepôs o H1. Isso substitui os relatos
+anteriores de overflow candidato/servido desta rota, mas não fecha teclado,
+zoom, WCAG ou as demais telas. Capturas e JSON em
+`/home/piradopirata/aculta-suite-out/auth-served-runtime-8e0091a4a-20261031/`;
+THEME-MF3 e OCS-F11 permanecem pendentes.
+
+### 2026-10-31 — Institution Bar prioritária e top-bar administrativa desativada em mobile
+
+Retificação solicitada pelo responsável: no primeiro scroll móvel não nulo, a
+Institution Bar fica em `top: 0`; a top-bar de ações administrativas fica
+desativada em todos os viewports até 1023px e permanece disponível a partir de
+1024px. O fallback sem JavaScript mantém o sticky natural. Firefox ESR visível
+validou o candidato autenticado em cinco larguras: **47/47 checks**, incluindo
+ocultação no topo e no scroll a 320/390/1023px, preservação desktop em 1024/
+1280px, zero overflow e estabilidade do displacement. A variante sem JavaScript
+passou **43/43 checks** com o fallback sticky natural. As capturas 320px foram
+revistas. CSS/JS foram injetados no navegador; falta repetir com a integração
+servida após publicação. O teste e a sequência de snapshots ULI estão em
+`mobile-first-audit.md`; THEME-MF3 e OCS-F11 seguem pendentes.
+
 ### 2026-10-31 — medição do aviso ULI na landing Marley
 
 `ocs-baseline.py` agora ignora headings ocultos ao medir se o aviso precede o

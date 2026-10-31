@@ -39,6 +39,8 @@ WIDTHS = [int(width) for width in os.environ.get(
     "AUTH_ROUTE_WIDTHS", "320,360,390,575,576,599,600,768,1024,1280,1440",
 ).split(",")]
 DISABLE_PAGE_JS = os.environ.get("AUTH_ROUTE_DISABLE_JS") == "1"
+INJECT_CANDIDATE = os.environ.get("AUTH_ROUTE_INJECT_CANDIDATE", "1") == "1"
+REQUIRE_MARKER = os.environ.get("AUTH_ROUTE_REQUIRE_MARKER") == "1"
 CSS = "\n".join((ROOT / path).read_text() for path in (
     "web/themes/custom/aculta420/css/base.css",
     "web/themes/custom/aculta420/css/components/auth.css",
@@ -149,7 +151,7 @@ contentRect:(()=>{const e=document.querySelector('.aculta-content');if(!e)return
 formRect:(()=>{const e=document.querySelector('.aculta-main form');if(!e)return null;const r=e.getBoundingClientRect();return {top:r.top,bottom:r.bottom,width:r.width}})(),
 challengeWidth:challenge?.getBoundingClientRect().width||0,challengeScrollWidth:challenge?.scrollWidth||0,
 challengeClientWidth:challenge?.clientWidth||0,
-challengeRect:rect(challenge),challengeFrameRect:rect(frame),hasCaptchaWrapper:!!captchaWrapper,
+challengeRect:rect(challenge),challengeFrameRect:rect(frame),challengeFramePresent:!!frame,hasCaptchaWrapper:!!captchaWrapper,
 hasHeading:!!document.querySelector('.aculta-page-heading h1'),
 hasAuthForm:!!document.querySelector('.aculta-main form'),
 loggedIn:document.body.classList.contains('user-logged-in'),
@@ -193,8 +195,9 @@ try:
           if (!tokens.includes('challenge-frame')) tokens.push('challenge-frame');
           frame.setAttribute('data-portal-ui', tokens.join(' '));
         });return true;""")
-    driver.js("""const style=document.createElement('style');style.id='auth-candidate';
-      style.textContent=arguments[0];document.head.append(style);return true;""", [CSS])
+    if INJECT_CANDIDATE:
+        driver.js("""const style=document.createElement('style');style.id='auth-candidate';
+          style.textContent=arguments[0];document.head.append(style);return true;""", [CSS])
 
     for width in WIDTHS:
         actual_width = viewport.set(driver, width)
@@ -202,7 +205,8 @@ try:
         data = driver.js(measure)
         png = base64.b64decode(driver.req("GET", f"/session/{driver.session}/screenshot"))
         path_name = ROUTE.strip("/").replace("/", "-") or "front"
-        (OUT / f"candidate-{path_name}-{width}.png").write_bytes(png)
+        evidence_kind = "candidate" if INJECT_CANDIDATE else "served"
+        (OUT / f"{evidence_kind}-{path_name}-{width}.png").write_bytes(png)
         expected_heading = "24px 20px 4px" if width < 576 else "32px 32px 4px"
         expected_content = "0px 20px 24px" if width < 576 else "0px 32px 32px"
         horizontal_scroll_blocked = data["documentWidth"] <= width or (
@@ -218,14 +222,15 @@ try:
         challenge_rendered = data["challengeWidth"] > 0 or DISABLE_PAGE_JS
         valid = (actual_width == width and EXPECTED_PATH_CLASS in data["bodyClass"].split()
                  and data["hasHeading"] and data["hasAuthForm"] and data["hasCaptchaWrapper"]
+                 and (not REQUIRE_MARKER or data["challengeFramePresent"])
                  and challenge_rendered and not data["loggedIn"]
                  and horizontal_scroll_blocked and data["headingPadding"] == expected_heading
                  and data["contentPadding"] == expected_content
                  and heading_and_form_do_not_overlap
                  and (data["challengeWidth"] == 0 or data["challengeScrollWidth"] <= data["challengeWidth"] + 1)
                  and challenge_frame_fits)
-        record(f"Runtime {ROUTE} {width}px: estilos candidatos e sem overflow", valid,
-               {**{key: data[key] for key in ("documentWidth", "bodyWidth", "clientWidth", "rootOverflowX", "scrollX", "scrollY", "headingPadding", "contentPadding", "challengeWidth", "challengeScrollWidth", "challengeClientWidth")},
+        record(f"Runtime {ROUTE} {width}px: {'CSS candidata' if INJECT_CANDIDATE else 'CSS servida'} e sem overflow", valid,
+               {**{key: data[key] for key in ("documentWidth", "bodyWidth", "clientWidth", "rootOverflowX", "scrollX", "scrollY", "headingPadding", "contentPadding", "challengeWidth", "challengeScrollWidth", "challengeClientWidth", "challengeFramePresent")},
                 "headingRect": data["headingRect"], "formRect": data["formRect"],
                 "headingFormGap": heading_form_gap})
 finally:

@@ -20,12 +20,7 @@
       institutionBarNaturalTop = bar.getBoundingClientRect().top;
     }
     const shouldFix = mobileViewport.matches && window.scrollY > 0;
-    const adminActions = document.querySelector('.top-bar[data-drupal-admin-styles]');
-    const adminActionHasFocus = adminActions?.contains(document.activeElement) ?? false;
-    document.documentElement.classList.toggle(
-      'aculta-institution-bar-scrolled',
-      shouldFix && !adminActionHasFocus,
-    );
+    document.documentElement.classList.toggle('aculta-institution-bar-scrolled', shouldFix);
     let placeholder = bar.previousElementSibling;
     if (!placeholder?.matches('.aculta-institution-bar-placeholder')) {
       placeholder = null;
@@ -76,8 +71,6 @@
         mobileViewport.addEventListener('change', updateInstitutionBarScrollState);
         window.addEventListener('scroll', updateInstitutionBarScrollState, { passive: true });
         window.addEventListener('resize', updateInstitutionBarScrollState, { passive: true });
-        document.addEventListener('focusin', updateInstitutionBarScrollState);
-        document.addEventListener('focusout', updateInstitutionBarScrollState);
         updateInstitutionBarScrollState();
       });
     },
