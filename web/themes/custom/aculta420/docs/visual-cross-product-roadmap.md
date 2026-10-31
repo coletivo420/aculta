@@ -1315,11 +1315,15 @@ injetados/simulados no Firefox; o Runtime servido continua com 328px na
 baseline. PHPUnit do hook (3 testes/8 assertions), PHP lint, PHPCS e Stylelint
 passaram; a integração server-side/no-JS ainda é necessária para fechar o gate.
 
-O validator de fronteira tema/módulo continua vermelho por classes visuais nos
-dois formulários do módulo `aculta_events` (resultado atualizado: 1/3486).
-`validate-portal-ui-docs.php` também aponta tokens não mapeados de Eventos e
-Índice. A Frente B não alterou esses módulos. THEME-MF3 permanece não aprovado;
-este reteste não inicia OCS-A1–A4.
+O resultado vermelho de fronteira e de tokens não mapeados acima é histórico.
+No reteste estático de 2026-10-31, a árvore atual passou o validator de
+fronteira (3489 checks), `validate-portal-ui-docs.php` (518 tokens no mapa,
+421 usados, 149 atributos), design foundations (2429), schemas SDC (55
+componentes/27 includes/759 checks), browser validators (21) e module-theme map
+(213). A execução dos gates Runtime Foundation e Shell Contract com a source
+branch também passou (352 e 13 checks). Isso fecha essas falhas estáticas; não
+aprova THEME-MF3, a integração do CAPTCHA servida ou OCS-F11, e não inicia
+OCS-A1–A4.
 
 ### THEME-MF3 — headings e shell no checkout servido `2493d7535` (2026-10-30)
 
@@ -1343,12 +1347,11 @@ candidata e marcador simulado passou 32 verificações nas rotas de login,
 cadastro e recuperação, em 320–1440 px. Não houve submissão.
 
 O Runtime ainda serve `2493d7535`, sem o hook local; portanto não há validação
-de integração real nem do estado sem JavaScript. O commit não foi publicado:
-`git fetch origin refactor/openculturas-codigo-visual` falhou com referência
-remota ausente, enquanto `refs/pull/299/head` ainda resolve para `2493d7535`.
-Revalidar após publicação. O validator módulo/tema segue bloqueado por classes
-visuais de Eventos; `validate-portal-ui-docs.php` segue vermelho por 16 tokens
-de Eventos/Índice e `data-portal-trigger` não documentados.
+de integração real nem do estado sem JavaScript. A publicação continua
+pendente; o reteste estático de 2026-10-31 confirmou que os gates de fronteira
+tema/módulo e documentação Portal já passam na source branch. O Runtime precisa
+servir o código candidato para fechar o teste integrado; THEME-MF3 permanece
+pendente.
 
 ### THEME-MF2 — regressão do carrossel editorial (2026-10-30)
 
