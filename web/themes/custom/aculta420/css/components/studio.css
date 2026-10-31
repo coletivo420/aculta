@@ -656,6 +656,17 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
     min-inline-size: 0;
     overflow-wrap: anywhere;
   }
+
+  .studio__main table.responsive-enabled {
+    table-layout: fixed;
+    inline-size: 100%;
+    max-inline-size: 100%;
+  }
+
+  .studio__main table.responsive-enabled :is(td, th) {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
 }
 
 /* OpenCulturas Next 3.1.5 form treatment, limited to Studio form consumers. */
