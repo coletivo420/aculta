@@ -1,0 +1,9 @@
+text:
+  -
+    value: 'Novo tópico no fórum'
+    format: plain_text
+  -
+    value: |-
+      Um tópico acompanhado por você foi publicado: @topic_title
+      Acesse: @topic_url
+    format: plain_text

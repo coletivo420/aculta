@@ -2392,9 +2392,11 @@ ou preferência persistente alterados.
   friendship e game.
 - Para reconciliar a tentativa abortada com o Sync sem remover defaults
   necessários, foram exportados exatamente os 43 itens Messenger em diferença
-  (31 ausentes no Sync e 12 diferentes); 37 arquivos mudaram, seis já eram
-  idênticos. Nenhum outro módulo entrou no conjunto. A importação completa não
-  foi executada.
+  da coleção principal (31 ausentes no Sync e 12 diferentes); 37 arquivos
+  mudaram, seis já eram idênticos. O comparador também identificou nove
+  traduções `pt-br` dos templates na coleção `language`, agora sincronizadas.
+  Nenhum outro módulo entrou no conjunto. A importação completa não foi
+  executada.
 - Firefox ESR/X11 autenticado, pelo harness genérico de todo o ACULTA, verificou
   as cinco rotas disponíveis do Green Stash em nove larguras e claro/escuro:
   **90/90**, HTTP 200, sem overflow, axe sem violações nem `incomplete`. Não

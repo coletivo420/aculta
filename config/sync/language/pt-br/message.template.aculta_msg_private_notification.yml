@@ -1,0 +1,7 @@
+text:
+  -
+    value: 'Nova mensagem privada na ACULTA'
+    format: plain_text
+  -
+    value: 'Você recebeu uma nova mensagem privada. Acesse sua conta para ler e responder: @account_url'
+    format: plain_text

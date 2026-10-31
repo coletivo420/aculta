@@ -1,0 +1,7 @@
+text:
+  -
+    value: 'Conquista obtida'
+    format: plain_text
+  -
+    value: 'Uma conquista foi adicionada à sua conta ACULTA.'
+    format: plain_text

@@ -1,0 +1,7 @@
+text:
+  -
+    value: 'Aviso sobre sua aprendizagem na ACULTA'
+    format: plain_text
+  -
+    value: '@summary Acesse: @url'
+    format: plain_text

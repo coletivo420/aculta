@@ -1,0 +1,7 @@
+text:
+  -
+    value: 'Pedido recebido na Loja ACULTA'
+    format: plain_text
+  -
+    value: '@summary Acesse: @url'
+    format: plain_text
