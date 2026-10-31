@@ -175,6 +175,13 @@ de 200%/400%, sem overflow. Conteúdo/configuração não foram alterados; Runti
 continua sem servir a folha candidata. Capturas e JSON em
 `/home/piradopirata/aculta-suite-out/revista-article-runtime-branch-followup-20261031/`.
 
+Reteste integrado posterior em `03a9cd172`, sem CSS candidata, passou **15/15**:
+home e artigo servidos, zoom real de 200%/400%, artigo nas nove larguras
+320/360/390/599/600/768/1024/1280/1440px, H1/shell únicos e zero overflow.
+O artigo tem corpo e discussão contextual renderizados; não foram enviados
+comentários nem alterado conteúdo. Capturas e resumo:
+`/home/piradopirata/aculta-suite-out/revista-browser-zoom-served-03a9cd172-20261031/`.
+
 ## Navigation top-bar mobile-first
 
 `navigation-top-bar.py` compara a composição do Drupal Navigation top-bar antes

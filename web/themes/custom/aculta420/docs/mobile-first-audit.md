@@ -4540,3 +4540,15 @@ Evidência: `/home/piradopirata/aculta-suite-out/purpose-headings-f57c6c93d-2026
 É validação de hierarquia da raiz; não avalia páginas internas, semântica de
 todos os títulos, leitor de tela ou WCAG completa, portanto não aprova MF3/F11.
 
+### THEME-MF2/MF3 — artigo real da Revista servido no Runtime (2026-10-31)
+
+No Runtime destacado em `03a9cd172`, Firefox ESR visível e sem injeção de CSS
+passou **15/15 checks** na home e no artigo editorial ligado a partir dela:
+larguras 320/360/390/599/600/768/1024/1280/1440px, zoom real de 200%/400%,
+corpo editorial, capa, discussão contextual, shell único e zero overflow. As
+capturas de 320px da publicação e do zoom foram revisadas. Nenhum comentário
+foi enviado e nenhum conteúdo foi alterado. Evidência:
+`/home/piradopirata/aculta-suite-out/revista-browser-zoom-served-03a9cd172-20261031/`.
+Este smoke não testa autorização de comentários, ACL entre contas, moderadores,
+teclado completo ou WCAG 2.2 AA; não aprova OCS-F11/THEME-MF3.
+

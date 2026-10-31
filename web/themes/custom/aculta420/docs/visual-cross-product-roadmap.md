@@ -1823,6 +1823,14 @@ somente no Firefox; capa, título e shell permaneceram íntegros, sem overflow.
 Nenhum conteúdo foi alterado. A folha ainda não é servida pelo Runtime e esta
 amostra não fecha OCS-F11/THEME-MF3. Evidência em `mobile-first-audit.md`.
 
+Reteste integrado em `03a9cd172`, sem CSS injetada, passou 15/15 na home e na
+publicação servida: corpo, capa, discussão contextual, shell único, nove
+viewports e zoom 200/400%, sem overflow. Nenhum comentário ou dado foi enviado.
+As capturas 320px foram revisadas em
+`/home/piradopirata/aculta-suite-out/revista-browser-zoom-served-03a9cd172-20261031/`.
+Isto confirma o artigo nesse estado de conteúdo; ACL de comentários,
+moderação e comparação pareada OpenCulturas continuam fora desse smoke.
+
 ### THEME-MF3 — A/B global de cores e reduced motion (2026-10-31)
 
 Reexecução nos dez purposes, nove larguras, claro/escuro e reduced motion:
