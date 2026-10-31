@@ -2179,3 +2179,22 @@ quatro ações com pelo menos 44px, imagens carregadas, grade responsiva, shell
 O Runtime continua servindo a baseline; revalidação após publicação/rebuild,
 teclado completo, leitores de tela e WCAG 2.2 AA permanecem pendentes. Isto não
 aprova THEME-MF3.
+
+### THEME-MF3 — reteste global de shell, temas e fallback sem JavaScript (2026-10-31)
+
+Firefox ESR visível repetiu o shell público nas dez raízes definidas em
+`deploy.json`. Em claro/escuro, com `prefers-reduced-motion`, foram **358/360**
+checks nas larguras 320/360/390/599/600/768/1024/1280/1440px. As únicas falhas
+foram `/conta` a 320px nos dois modos: o runtime atual mede `documentWidth=328`
+para viewport de 320px, com Institution Bar e Domain Header únicos. Nas outras
+358 combinações, tokens, shell e largura passaram.
+
+A execução sem JavaScript passou **210/210** checks nas dez raízes e larguras
+320/390/599/600/768/1024/1440px, incluindo navegação visível e busca contextual
+da Wiki. Evidências: `/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-continuation-20261031/`
+e `/home/piradopirata/aculta-suite-out/purpose-shell-nojs-continuation-20261031b/`.
+A unidade de `CaptchaPresentationHooks` passou 2 testes/4 assertions com o
+bootstrap Drupal. A correção usa o marcador neutro `challenge-frame` e CSS por
+container query no código da branch, mas o Runtime `2493d7535` ainda serve a
+versão anterior. Validação do contrato no Runtime após servir/rebuild permanece
+pendente; THEME-MF3 não está aprovado.

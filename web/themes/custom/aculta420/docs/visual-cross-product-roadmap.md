@@ -1352,3 +1352,13 @@ ação agora têm área de pelo menos 44px. A CSS candidata passou no consumer r
 servido em Firefox ESR, nove larguras, sem overflow e sem alterar markup/SDC.
 Deploy/rebuild, teclado integral e WCAG permanecem pendentes. Evidência em
 `mobile-first-audit.md`.
+
+### THEME-MF3 — reteste global de shell (2026-10-31)
+
+Dez purposes passaram 210/210 verificações sem JavaScript, com navegação/fallback
+Wiki, shell único e sem overflow nas larguras 320–1440px testadas. Em claro,
+escuro e reduced motion, passaram 358/360; somente Conta a 320px excedeu em 8px
+por causa do widget de desafio. O hook Portal/CSS `challenge-frame` já está na
+branch e sua suíte Unit passou 2/2, mas Runtime ainda está no HEAD antigo; não
+marcar o gate global como aprovado até validar o marcador real após servir e
+reconstruir cache. Evidência detalhada em `mobile-first-audit.md`.
