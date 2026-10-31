@@ -694,10 +694,12 @@ e escuros do tema. Também ativa a preferência `prefers-reduced-motion` do
 Firefox, verifica shell único e overflow em 320/360/390/599/600/768/1024/1280/
 1440px e salva capturas de 320 e 1440px para cada purpose/modo. Não grava
 preferências ou configuração no Drupal. A verificação confirma tokens e o
-estado da media query; não avalia contraste WCAG, todos os componentes,
-assistive technology nem funcionamento de cada animação. Para o purpose Conta
-a 320px, o JSON inclui os primeiros descendentes não fixos cujo conteúdo
-ultrapassa a largura do viewport, sem coletar texto ou valores de campos.
+estado da media query e calcula contraste dos links textuais da Institution Bar
+e Domain Header sobre suas superfícies compostas; não avalia contraste de todos
+os componentes, assistive technology nem funcionamento de cada animação. Para
+o purpose Conta a 320px, o JSON inclui os primeiros descendentes não fixos cujo
+conteúdo ultrapassa a largura do viewport, sem coletar texto ou valores de
+campos.
 
 ```sh
 cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8

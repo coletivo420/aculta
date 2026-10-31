@@ -2287,9 +2287,10 @@ Firefox ESR repetiu os dez purposes e nove larguras no Runtime. Somente em
 neutro que `CaptchaPresentationHooks` deve emitir. As outras rotas mantiveram
 CSS e markup servidos sem override.
 
-O reteste passou **360/360** verificações em 320/360/390/599/600/768/1024/1280/
+O reteste passou **540/540** verificações em 320/360/390/599/600/768/1024/1280/
 1440px, nos modos claro/escuro e com reduced motion. Todos os shells mantiveram
-Institution Bar e Domain Header únicos; o documento ficou dentro do viewport.
+Institution Bar e Domain Header únicos, os links textuais do shell passaram a
+medição AA sobre suas superfícies e o documento ficou dentro do viewport.
 Em `/entrar` a 320px, ambos os modos mediram 320px. A captura clara foi
 inspecionada em
 `/home/piradopirata/aculta-suite-out/account-overflow-candidate-320-20261030/`;
@@ -2314,3 +2315,25 @@ abas em linha e cards em duas colunas. Evidência em
 A fixture não contém render Drupal, ACL, cache, estados opcionais nem dashboard
 autenticado OpenCulturas pareado; OCS-F3/F4 continuam parciais e OCS-F11 não
 está aprovado.
+
+### OCS-F7 — WE SATIVA no path legado e contraste do shell (2026-10-31)
+
+Firefox ESR visível repetiu `/wesativa` autenticado com a CSS Fidelity candidata
+nas larguras 320/360/390/599/600/768/1024/1280/1440px, em claro e escuro.
+Passaram **279/279 invariantes**: wrapper e seções Wiki, dois estados vazios,
+quatro filtros com estado atual e links de 46px, shell único, isolamento dos
+tokens Fidelity e zero overflow. A suíte também calcula contraste dos links
+textuais da Institution Bar sobre o fundo composto: **11,34:1** no claro e
+**12,95:1** no escuro.
+
+As capturas 320/1440px dos dois modos foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/ocs-f7-wesativa-full-contrast-final-light-20261031/`
+e
+`/home/piradopirata/aculta-suite-out/ocs-f7-wesativa-full-contrast-final-dark-20261031/`.
+Uma leitura intermediária de 3,75:1 ocorreu antes do fim da transição de cor;
+com a espera de 350 ms, Runtime sem override da Institution Bar e token estável,
+a amostra repetida foi 12,95:1 em todos os viewports escuros. Nenhuma correção
+CSS do shell foi necessária. O formulário da Wiki não foi enviado; o conteúdo
+estava vazio e a mensagem de login único é temporária. A rota oficial
+`/studio/we-sativa`, autoria/revisão/moderação preenchidas, grants A/B, AJAX,
+no-JS, zoom, WCAG completa e OCS-F11 seguem pendentes.

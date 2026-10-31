@@ -489,7 +489,10 @@ documento aberto pelo Firefox; `system` mantém o padrão do Runtime. Isso não
 altera a preferência persistente da conta nem substitui contraste/WCAG. Com o
 override candidato, o `baseline.json` registra checks automáticos de tipografia,
 dois estados vazios, overflow, presença única do shell e isolamento dos tokens;
-em modo dark exige também o token de texto escuro.
+em modo dark exige também o token de texto escuro. A medição do shell inclui o
+contraste dos links textuais da Institution Bar; após alternar o modo, o script
+aguarda 350 ms para medir a cor estável, não um frame da transição. Esta amostra
+focal não substitui a auditoria WCAG 2.2 AA de todas as superfícies e estados.
 
 ## WE SATIVA — consumidor Wiki e caminho legado do Runtime
 
@@ -507,6 +510,13 @@ use `STUDIO_ROUTES=https://wiki420.aculta.toca.net.br/wesativa` com
 wrapper no path legado, mas não homologa o caminho canônico nem fecha OCS-F7.
 Aplique `OCS_STUDIO_COLOR_MODE=dark` para o teste visual escuro. O teste é GET,
 não altera conteúdo e nunca submete ações da Wiki.
+
+Reteste autenticado de `/wesativa` no Runtime: 279/279 invariantes em nove
+larguras, nos modos claro e escuro, com CSS Fidelity candidata. Os links
+textuais da Institution Bar mediram 11,34:1 e 12,95:1, respectivamente. As
+capturas 320/1440px foram revisadas; veja os diretórios documentados no
+`mobile-first-audit.md`. A mensagem de login único é temporária e o conteúdo Wiki
+estava vazio; a captura não prova conteúdo preenchido ou a rota oficial.
 
 ## ACULTA Studio Culturas — dashboard responsivo candidato
 

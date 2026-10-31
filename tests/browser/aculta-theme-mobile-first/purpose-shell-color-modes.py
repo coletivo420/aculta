@@ -110,6 +110,40 @@ try:
                   const root=getComputedStyle(document.documentElement);
                   const bar=document.querySelector('.aculta-institution-bar');
                   const header=document.querySelector('.aculta-header');
+                  const colorChannels=(color)=>{
+                    const parts=color.match(/[\\d.]+/g)?.slice(0,3).map(Number);
+                    if(!parts||parts.length!==3)return null;
+                    return parts;
+                  };
+                  const luminance=(channels)=>{
+                    if(!channels||channels.length!==3)return null;
+                    const linear=channels.map(value=>{
+                      const channel=value/255;
+                      return channel<=0.04045?channel/12.92:((channel+0.055)/1.055)**2.4;
+                    });
+                    return 0.2126*linear[0]+0.7152*linear[1]+0.0722*linear[2];
+                  };
+                  const shellTextLinks=[...document.querySelectorAll(
+                    '.aculta-institution-bar a,.aculta-header a'
+                  )].filter(link=>link.innerText.trim()).map(link=>{
+                    const shell=link.closest('.aculta-institution-bar,.aculta-header');
+                    const foreground=getComputedStyle(link).color;
+                    const shellBackground=getComputedStyle(shell).backgroundColor;
+                    const linkBackground=getComputedStyle(link).backgroundColor;
+                    const shellChannels=colorChannels(shellBackground);
+                    const linkParts=linkBackground.match(/[\\d.]+/g)?.map(Number);
+                    const alpha=linkParts?.[3]??1;
+                    const backgroundChannels=shellChannels&&linkParts
+                      ? shellChannels.map((value,index)=>(linkParts[index]??0)*alpha+value*(1-alpha))
+                      : null;
+                    const background=backgroundChannels
+                      ? `rgb(${backgroundChannels.map(value=>Math.round(value)).join(', ')})`
+                      : shellBackground;
+                    const fg=luminance(colorChannels(foreground)),bg=luminance(backgroundChannels);
+                    return {label:link.innerText.trim().replace(/\\s+/g,' '),foreground,background,
+                      contrast:fg===null||bg===null?null:
+                        Math.round((Math.max(fg,bg)+0.05)/(Math.min(fg,bg)+0.05)*100)/100};
+                  });
                   return {
                     title:document.title,
                     mode:document.documentElement.getAttribute('data-bs-theme'),
@@ -123,6 +157,7 @@ try:
                     reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,
                     barBackground:bar ? getComputedStyle(bar).backgroundColor : null,
                     headerBackground:header ? getComputedStyle(header).backgroundColor : null,
+                    shellTextLinks,
                     overflowElements:innerWidth === 320 && location.host.startsWith('conta.')
                       ? [...document.querySelectorAll('body *')].map(el=>{
                           const rect=el.getBoundingClientRect(), css=getComputedStyle(el);
@@ -152,6 +187,10 @@ try:
                       and metrics["documentWidth"] <= width
                       and metrics["institutionBar"] == 1
                       and metrics["domainHeader"] == 1, metrics)
+                check(f"{context}: links textuais do shell com contraste AA",
+                      bool(metrics["shellTextLinks"])
+                      and all(link["contrast"] is not None and link["contrast"] >= 4.5
+                              for link in metrics["shellTextLinks"]), metrics["shellTextLinks"])
                 if width in (320, 1440):
                     shot = driver.req("GET", f"/session/{driver.session}/screenshot")
                     (OUT / f"{purpose}-{mode}-{width}.png").write_bytes(base64.b64decode(shot))

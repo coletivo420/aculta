@@ -3,6 +3,7 @@
 import base64
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -117,6 +118,53 @@ def drush(*args):
     ).strip()
 
 
+def institution_link_contrast(driver):
+    """Measure visible Institution Bar utility-link contrast without text values."""
+    links = json.loads(driver.js("""return JSON.stringify(
+      [...document.querySelectorAll('.aculta-institution-bar .aculta-utility .nav-link')]
+        .filter(link=>link.innerText.trim()).map(link=>({
+          accountHome:link.classList.contains('aculta-account-home'),
+          foreground:getComputedStyle(link).color,
+          linkBackground:getComputedStyle(link).backgroundColor,
+          shellBackground:getComputedStyle(link.closest('.aculta-institution-bar')).backgroundColor
+        })));
+    """))
+
+    def color(value):
+        parts = [float(part) for part in re.findall(r"[\d.]+", value)]
+        if len(parts) < 3:
+            return None
+        return parts[:3], parts[3] if len(parts) > 3 else 1.0
+
+    def luminance(rgb):
+        channels = [channel / 255 for channel in rgb]
+        linear = [channel / 12.92 if channel <= 0.04045 else ((channel + 0.055) / 1.055) ** 2.4 for channel in channels]
+        return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+
+    result = []
+    for link in links:
+        foreground = color(link["foreground"])
+        background = color(link["linkBackground"])
+        shell = color(link["shellBackground"])
+        if not foreground or not background or not shell:
+            contrast = None
+        else:
+            background_rgb = [
+                background[0][index] * background[1] + shell[0][index] * (1 - background[1])
+                for index in range(3)
+            ]
+            foreground_rgb = [
+                foreground[0][index] * foreground[1] + background_rgb[index] * (1 - foreground[1])
+                for index in range(3)
+            ]
+            foreground_luminance = luminance(foreground_rgb)
+            background_luminance = luminance(background_rgb)
+            contrast = round((max(foreground_luminance, background_luminance) + 0.05)
+                             / (min(foreground_luminance, background_luminance) + 0.05), 2)
+        result.append({**link, "contrast": contrast})
+    return result
+
+
 def verify_runtime():
     host = subprocess.check_output(["hostname"], text=True).strip()
     status = drush("status", "--fields=uri,root,db-name")
@@ -161,9 +209,11 @@ socket.onmessage = (event) => {
             time.sleep(0.1)
         if STUDIO_COLOR_MODE in ("light", "dark"):
             driver.js("document.documentElement.setAttribute('data-bs-theme', arguments[0]);return true", [STUDIO_COLOR_MODE])
+            time.sleep(0.35)
     detail = driver.js("const text=document.body.innerText;const title=document.title;const elementCount=document.documentElement.querySelectorAll('*').length;const tab=document.querySelector('.aculta-context-tabs__items');const list=tab?.querySelector('ul');const tabItems=Array.from(list?.querySelectorAll('li')||[]);return JSON.stringify({title,url:location.href,width:innerWidth,height:innerHeight,documentWidth:document.documentElement.clientWidth,documentScrollWidth:document.documentElement.scrollWidth,bodyScrollWidth:document.body.scrollWidth,documentScrollHeight:document.documentElement.scrollHeight,documentElementCount:elementCount,htmlLength:document.documentElement.innerHTML.length,contentType:document.contentType,readyState:document.readyState,body:text.slice(0,120),bodyClasses:Array.from(document.body.classList),studioMarkers:Array.from(document.querySelectorAll('[data-aculta-studio]'),element=>element.getAttribute('data-aculta-studio')).slice(0,60),mainStructure:(()=>{const main=document.querySelector('main#main-content');return main?{className:String(main.className),children:[...main.children].slice(0,16).map(element=>({tag:element.tagName,className:String(element.className),children:[...element.children].slice(0,12).map(child=>({tag:child.tagName,className:String(child.className)}))}))}:null})(),studioComponents:(()=>{const main=document.querySelector('main#main-content');return main?[...main.querySelectorAll('.aculta-context-header,.aculta-card,.aculta-empty-state,.aculta-content-grid')].map(element=>({className:String(element.className),parentClass:String(element.parentElement?.className||''),childClasses:[...element.children].slice(0,8).map(child=>String(child.className))})).slice(0,40):[]})(),fidelityStyles:(()=>{const main=document.querySelector('main#main-content');const heading=main?.querySelector('h1');const empty=main?.querySelector('.aculta-empty-state');const card=main?.querySelector('.aculta-card');const institution=document.querySelector('.aculta-institution-bar');const domainHeader=document.querySelector('.aculta-header');const box=(element)=>{if(!element)return null;const style=getComputedStyle(element);const rect=element.getBoundingClientRect();return {fontFamily:style.fontFamily,color:style.color,background:style.backgroundColor,borderRadius:style.borderRadius,width:rect.width,height:rect.height,right:rect.right}};return {fontLoaded:document.fonts.check('400 16px Montserrat', 'Meus cursos'),fontFaces:Array.from(document.fonts).filter(face=>face.family.replaceAll('\"','')==='Montserrat').map(face=>({status:face.status,weight:face.weight,style:face.style})),main:box(main),heading:box(heading),empty:box(empty),emptyStates:Array.from(main?.querySelectorAll('.aculta-empty-state')||[]).map(box),card:box(card),wikiRoot:box(main?.querySelector('.we-sativa__workspace')),wikiHeading:box(main?.querySelector('.we-sativa__workspace h1')),wikiEmptyStates:Array.from(main?.querySelectorAll('.we-sativa__workspace .aculta-empty-state')||[]).map(box),wikiCards:Array.from(main?.querySelectorAll('.we-sativa__workspace .aculta-card')||[]).map(box),wikiSectionCount:main?.querySelectorAll('.we-sativa__workspace .aculta-editorial-section').length||0,wikiContextHeaderPresent:!!main?.querySelector('.we-sativa__workspace .aculta-context-header'),shellFidelityTokens:[institution,domainHeader].map(element=>element?getComputedStyle(element).getPropertyValue('--aculta-studio-fidelity-font-family').trim():null)}})(),institutionBar:!!document.querySelector('.aculta-institution-bar'),domainHeader:!!document.querySelector('.aculta-header'),contextTabs:tab?{count:tabItems.length,currentCount:tabItems.filter(item=>item.querySelector('a[aria-current=\"page\"]')).length,listTag:list.tagName,listClass:list.className,parentTag:list.parentElement.tagName,parentClass:list.parentElement.className,flexDirection:getComputedStyle(list).flexDirection,flexWrap:getComputedStyle(list).flexWrap,candidateRules:document.querySelector('style[data-ocs-context-tabs-candidate]')?.sheet?.cssRules.length||0,matchingSelector:!!list.matches('.aculta-context-tabs__items > ul, .aculta-context-tabs__items > .item-list > ul'),itemClasses:tabItems.map(item=>item.className),itemBorders:tabItems.map(item=>getComputedStyle(item).borderTopWidth+' '+getComputedStyle(item).borderTopStyle),linkMinHeights:tabItems.map(item=>Math.round(item.querySelector('a')?.getBoundingClientRect().height||0))}:null,emptyDocumentHint:elementCount<=2&&!text.trim(),accessDeniedHint:/^(?:acesso negado|access denied|forbidden)(?:\\s*\\|.*)?$/im.test(title)||/Você não está autorizado a acessar esta página\\./i.test(text)})")
     screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
     record = json.loads(detail)
+    record["institutionBarUtilityLinkContrast"] = institution_link_contrast(driver)
     record["cssOverride"] = css_override
     record["studioFidelityCssOverride"] = STUDIO_CSS_OVERRIDE
     record["studioColorMode"] = STUDIO_COLOR_MODE
@@ -187,6 +237,9 @@ socket.onmessage = (event) => {
             "noDocumentOverflow": record.get("documentScrollWidth") == record.get("documentWidth"),
             "institutionBarPresent": record.get("institutionBar") is True,
             "domainHeaderPresent": record.get("domainHeader") is True,
+            "institutionBarUtilityLinksContrastAA": bool(record["institutionBarUtilityLinkContrast"])
+            and all(link["contrast"] is not None and link["contrast"] >= 4.5
+                    for link in record["institutionBarUtilityLinkContrast"]),
             "fidelityTokensStayOffShell": styles.get("shellFidelityTokens") == ["", ""],
         }
         if expected_text:
@@ -208,6 +261,9 @@ socket.onmessage = (event) => {
             "emptyStatesUseMontserrat": all("Montserrat" in font for font in wiki_empty_fonts),
             "noDocumentOverflow": record.get("documentScrollWidth") == record.get("documentWidth"),
             "institutionBarPresent": record.get("institutionBar") is True,
+            "institutionBarUtilityLinksContrastAA": bool(record["institutionBarUtilityLinkContrast"])
+            and all(link["contrast"] is not None and link["contrast"] >= 4.5
+                    for link in record["institutionBarUtilityLinkContrast"]),
             "domainHeaderPresent": record.get("domainHeader") is True,
             "fidelityTokensStayOffShell": styles.get("shellFidelityTokens") == ["", ""],
             "fourContextFiltersPresent": (record.get("contextTabs") or {}).get("count") == 4,
@@ -286,7 +342,7 @@ def main():
     }
     (OUT / "baseline.json").write_text(json.dumps(metadata, indent=2) + "\n")
     if CAPTURE_FAILURES:
-        print(f"FAIL: {len(CAPTURE_FAILURES)} GanjaLab Fidelity capture(s) did not meet visual invariants.")
+        print(f"FAIL: {len(CAPTURE_FAILURES)} Fidelity capture(s) did not meet visual invariants.")
         return 1
 
 
