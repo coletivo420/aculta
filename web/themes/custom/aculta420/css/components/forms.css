@@ -5,6 +5,16 @@
   font-family: var(--aculta-font-display);
   font-weight: 600;
 }
+
+/* Drupal editorial forms use Bootstrap's vertical-tabs columns. Their
+   metadata pane must be shrinkable on narrow screens; otherwise its intrinsic
+   description width creates horizontal page overflow even when the editor
+   column itself is fluid. */
+.node-form .entity-meta,
+.node-form .vertical-tabs__panes {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
 .webform-submission-form .form-submit {
   min-height: 2.75rem;
   padding: 0.625rem 1.25rem;
