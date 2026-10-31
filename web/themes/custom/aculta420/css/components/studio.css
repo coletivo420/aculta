@@ -457,7 +457,11 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
 }
 
 .aculta-main .we-sativa__workspace .aculta-editorial-section {
-  margin-block: var(--aculta-studio-fidelity-section-spacing);
+  margin-block: 0;
+}
+
+.aculta-main .we-sativa__workspace {
+  row-gap: var(--aculta-studio-fidelity-section-spacing) !important;
 }
 
 .aculta-main .we-sativa__workspace .aculta-section-title {

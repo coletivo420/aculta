@@ -697,6 +697,21 @@ a Frente B não adicionará um header visual paralelo.
 | LINKS | landing social renderiza. | Apenas homepage, sem explorar links externos/QR. |
 | EVENTOS | listagem pública de evento/data renderiza. | Não cobre mapa, filtros, calendário, RSVP ou editor. |
 
+### Ajuste focal do workspace ACULTA STUDIO WE SATIVA — 2026-10-31
+
+O wrapper Wiki usa `d-grid gap-4`, cuja declaração Bootstrap `gap` é
+`!important`. As seções também recebiam margens verticais de 3–5rem, somando
+espaço duplicado ao gap do grid. O tema agora zera as margens individuais e
+define no wrapper um único `row-gap` pelos tokens responsivos Fidelity; a
+precedência é limitada ao wrapper Wiki para superar `gap-4`. No Firefox ESR
+visível, CSS candidata injetada na sessão, o intervalo efetivo foi 48px em 320px
+e 64px em 1440px, com claro e escuro, quatro capturas sem overflow. Esta é uma
+correção focal de tela, não altera o status THEME-MF3 nem OCS-F11: o path
+canônico `/studio/we-sativa`, estados Wiki preenchidos e acessibilidade ampla
+continuam pendentes. Evidências privadas fora do Git em
+`/home/piradopirata/aculta-suite-out/ocs-wesativa-spacing-candidate-final-20261031/`
+e `ocs-wesativa-spacing-candidate-dark-20261031/`.
+
 As capturas, no Firefox ESR visível, estão fora do Git em
 `$SUITE_OUT/aculta-theme-mf0-purposes-20261029/`. O checkout servidor era
 `75f049fd1`; os arquivos de tema/Studio/Commerce versionados eram iguais aos

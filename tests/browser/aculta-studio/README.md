@@ -15,6 +15,9 @@ as fontes WOFF2 em data URIs, antes das medições. Também confirma que o gutte
 global do shell não muda. Esse modo verifica os estilos candidatos sobre o markup servido e
 **não** comprova que a versão candidata está implantada no Runtime nem constitui
 por si só prova de paridade com o OpenCulturas.
+Nas capturas de WE SATIVA, o teste também mede o `row-gap`, as margens das seções
+e a distância efetiva entre listas; o gap deve corresponder ao token responsivo
+de 3rem, 4rem ou 5rem, sem margens duplicadas.
 
 Somente no servidor de desenvolvimento, com a conta `teste.comum` (login único por Drush, sem senha no repositório). O
 Studio precisa estar habilitado no Runtime e a conta precisar de uma aba visível (permissão `create revista content`).
