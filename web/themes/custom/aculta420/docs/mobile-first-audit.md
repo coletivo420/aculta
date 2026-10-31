@@ -2043,17 +2043,26 @@ observados. Capturas revisadas em
 rota real, operador ou grants por loja. OCS-F8, OCS-F11 e THEME-MF3 continuam
 pendentes.
 
-### OCS-F2 / THEME-MF2 — alvos de toque das abas internas do Studio (2026-10-30)
+### OCS-F2 / THEME-MF2 — reteste real de navegação e alvos (2026-10-30)
 
-`.studio__tabs .studio__tab` e `.studio__subtabs .studio__link` agora têm
-alvos mínimos de 44×44 CSS px, com alinhamento central, sem mudar a ordem DOM,
-os destinos, o estado `aria-current` ou o wrapping mobile-first. A fixture
-`tests/browser/aculta-studio/studio-card-fidelity.py` passou 243/243 checks em
-27 larguras entre 320 e 1920 px no Firefox ESR visível; todos os seis links de
-amostra mantiveram alvo mínimo e não houve overflow. Stylelint passou. A captura
-320px foi inspecionada em
-`/home/piradopirata/aculta-suite-out/studio-tabs-targets-20261030/`.
+`studio.css` aplica alvos de 44×44 CSS px também aos links contextuais de Conta
+sob `.studio__subtabs`, mesmo quando o render não fornece a classe interna
+`.studio__link`. A ordem DOM, destinos, estado `aria-current`, wrap e shell
+permanecem. No Runtime identificado em `toca`, Firefox ESR visível com a folha
+candidata injetada sobre o markup servido passou 79/79 verificações e registrou
+um `SKIP` justificado (a conta não tem publicação própria publicada para testar
+o link de edição). Foram medidos `/marley`, as cinco abas editoriais da seção
+Publicações, criação da Revista, Fórum, Galerias e navegação contextual de
+Conta; todos os alvos examinados tiveram ao menos 44px. Não houve overflow em
+320/360/390/599/600/767/768/1024/1280/1440px no Marley, nem em Conta a
+320/390/768/1280px. Contraste textual medido: 6,59:1 claro e 11,51:1 escuro;
+geometria igual nos dois modos. Capturas estão em
+`/home/piradopirata/aculta-suite-out/studio-visual-candidate-20261030e/` e
+foram revistas em tela móvel e desktop.
 
-A fixture é sintética e valida apenas as folhas candidatas. Rotas reais, teclado
-no Runtime, zoom, claro/escuro, reduced motion e WCAG completa seguem pendentes;
-OCS-F2, THEME-MF3 e OCS-F11 não estão aprovados por este resultado.
+O teste injeta a CSS do worktree no Firefox e não demonstra que ela já esteja
+implantada no Runtime. Também não cobre ausência de JS, zoom 200/400%, todos os
+consumidores, navegação completa por teclado, reduced motion ou auditoria WCAG
+2.2 AA. A conta de teste não permitiu testar edição de conteúdo próprio. OCS-F2
+segue parcial; THEME-MF3 e OCS-F11 continuam pendentes. A fixture sintética
+anterior (243/243 em 27 larguras) continua como evidência complementar.

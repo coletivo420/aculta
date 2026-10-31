@@ -64,12 +64,14 @@ const { value: session } = await wd('POST', '/session', { capabilities: { always
 const sid = session.sessionId;
 const p = (path) => `/session/${sid}${path}`;
 const exec = (script, args = []) => wd('POST', p('/execute/sync'), { script, args });
+const trackPageErrors = () => exec(`window.__errs = []; window.addEventListener('error', (e) => window.__errs.push(String(e.message))); return 1;`);
 const shot = async (name) => writeFileSync(join(OUT, `${name}.png`), Buffer.from(await wd('GET', p('/screenshot')), 'base64'));
 const injectCandidateCss = async () => exec(`if(document.getElementById('aculta-studio-css-candidate'))return true;const style=document.createElement('style');style.id='aculta-studio-css-candidate';style.textContent=arguments[0];document.head.append(style);return !!style.sheet&&style.sheet.cssRules.length>0;`, [CANDIDATE_CSS]);
 const navigateTo = async (url) => {
   await wd('POST', p('/url'), { url });
   await sleep(1000);
   if (CSS_OVERRIDE) check('CSS candidata reinjetada após navegação', await injectCandidateCss());
+  await trackPageErrors();
 };
 
 const bidi = new WebSocket(session.webSocketUrl);
@@ -126,7 +128,7 @@ try {
     check('itens das listas de abas sem moldura list-group', cleanItems(navStyles.primaryItems) && cleanItems(navStyles.secondaryItems), JSON.stringify({ primary: navStyles.primaryItems, secondary: navStyles.secondaryItems }));
     check('listas de navegação sem borda contínua Bootstrap', cleanLists, JSON.stringify({ lists: navStyles.lists, separator: navStyles.separatorAtViewportBottom }));
   }
-  await exec(`window.__errs = []; window.addEventListener('error', (e) => window.__errs.push(String(e.message))); window.__marker = 'sem-recarga';`);
+  await trackPageErrors();
   await sleep(1000);
 
   const d = JSON.parse(await exec(`return JSON.stringify({
@@ -153,19 +155,38 @@ try {
   check('áreas em abas superiores', d.areas >= 1, `${d.areas} área(s)`);
   check('submenu à esquerda com as seções da área', d.sidebar >= 1, `${d.sidebar} seção(ões)`);
   check('abas próprias da seção', d.subtabs >= 1, `${d.subtabs} aba(s)`);
-  check('abas internas da seção (Todos, Rascunhos, Em revisão, Publicados, Arquivados)', d.subtabs >= 5, `${d.subtabs} aba(s)`);
+  // A raiz /marley mostra a primeira aba disponível; a Revista tem cinco
+  // estados somente na seção Publicações. Verificamos essa matriz no destino
+  // real abaixo, sem impor sua estrutura a outras áreas do Studio.
+  check('abas da seção atual renderizadas', d.subtabs >= 1, `${d.subtabs} aba(s)`);
   check('sem rolagem horizontal em 1280 px', !d.overflow, `page=${d.pageWidth}px body=${d.bodyWidth}px viewport=${d.viewportWidth}px root-font=${d.rootFontSize} media48rem=${d.media48rem} gutter=${d.pageGutterToken} body-overflow-x=${d.bodyOverflowX} Studio=${d.studioWidth}/${d.studioClientWidth}px offenders=${JSON.stringify(d.overflowNodes)} chain=${JSON.stringify(d.overflowChain)}`);
   await shot('01-desktop');
 
+  const magazineTabAvailable = await exec(`return [...document.querySelectorAll('[data-aculta-studio="tab"]')].some((a) => (a.getAttribute('href') || '').includes('/marley/revista'));`);
+  if (magazineTabAvailable) {
+    await navigateTo(PAGE.replace(/\/marley.*$/, '') + '/marley/revista/publicacoes/todos');
+    const magazineListTabsReady = await waitFor(`document.querySelectorAll('[data-aculta-studio="subtab"]').length >= 5`, 'cinco estados de Publicações da Revista');
+    const magazineListTabs = await exec(`return [...document.querySelectorAll('[data-aculta-studio="subtab"]')].map((a) => a.textContent.trim());`);
+    check('Revista apresenta os cinco estados editoriais na seção Publicações', magazineListTabsReady && magazineListTabs.length === 5, magazineListTabs.join(' | '));
+    await navigateTo(PAGE);
+  }
+  else {
+    check('Revista apresenta os cinco estados editoriais na seção Publicações', null, 'aba Revista não disponível para esta conta no Runtime; revisar configuração/papel antes da homologação');
+  }
+
   // Navegação AJAX: clicar na aba mantém a página (sem recarga) e atualiza a URL.
   const startPath = await exec(`return window.location.pathname;`);
-  await exec(`document.querySelector('[data-aculta-studio="section"]').click(); return 1;`);
+  const sectionTarget = JSON.parse(await exec(`return JSON.stringify((() => { const a=[...document.querySelectorAll('[data-aculta-studio="section"]')].find((link) => link.getAttribute('aria-current') !== 'page' && new URL(link.href).pathname !== location.pathname); return a ? {href:a.href, text:a.textContent.trim(), ajax:typeof Drupal?.Ajax} : null; })());`));
+  check('há um destino de seção diferente para exercitar navegação', !!sectionTarget, JSON.stringify(sectionTarget));
+  if (sectionTarget) {
+    await exec(`window.__marker='sem-recarga';const a=document.querySelector('[data-aculta-studio="section"][href="${new URL(sectionTarget.href).pathname}"]');const event=new MouseEvent('click',{bubbles:true,cancelable:true,view:window,button:0});a?.dispatchEvent(event);window.__acultaClickPrevented=event.defaultPrevented;return 1;`);
+  }
   await sleep(2500);
-  const after = await exec(`return window.__marker || null;`);
-  check('clique no submenu troca o conteúdo sem recarregar a página', after === 'sem-recarga');
-  check('seção ativa marcada por aria-current', await exec(`return !!document.querySelector('[data-aculta-studio="section"][aria-current="page"]');`));
-  check('URL própria do nível (caminho /marley/área/seção)', (await exec(`return window.location.pathname;`)).startsWith('/marley/'));
-  check('região aria-live presente', await exec(`return !!document.querySelector('[data-aculta-studio="live"][aria-live="polite"]');`));
+  const navigationState = JSON.parse(await exec(`return JSON.stringify({marker:window.__marker||null,prevented:window.__acultaClickPrevented??null,path:location.pathname,live:!!document.querySelector('[data-aculta-studio="live"][aria-live="polite"]'),current:!!document.querySelector('[data-aculta-studio="section"][aria-current="page"]'),behavior:!!Drupal?.behaviors?.acultaStudioNavigation,drupalAjax:typeof Drupal?.Ajax});`));
+  check('clique no submenu troca o conteúdo sem recarregar a página', !!sectionTarget && navigationState.marker === 'sem-recarga', JSON.stringify({target:sectionTarget,state:navigationState}));
+  check('seção ativa marcada por aria-current', navigationState.current, JSON.stringify(navigationState));
+  check('URL própria do nível (caminho /marley/área/seção)', navigationState.path.startsWith('/marley/'), navigationState.path);
+  check('região aria-live presente', navigationState.live, JSON.stringify(navigationState));
   await exec(`history.back(); return 1;`);
   await sleep(2500);
   check('voltar do navegador devolve o caminho anterior', (await exec(`return window.location.pathname;`)) === startPath, `${startPath} -> ${await exec(`return window.location.pathname;`)}`);
@@ -191,22 +212,35 @@ try {
   await setViewport(1280, 900);
 
   // Teclado: valida foco visível e Enter no destino real de criação da Revista.
-  await navigateTo(PAGE.replace(/\/marley.*$/, '') + '/marley/revista/criar');
-  await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'abas da seção');
-  const subTabs = JSON.parse(await exec(`return JSON.stringify([...document.querySelectorAll('[data-aculta-studio="subtab"]')].map((a)=>({text:a.textContent.trim(),href:a.getAttribute('href')})));`));
-  const createTab = subTabs.find((tab) => (tab.href || '').includes('nova-publicacao'));
-  check('aba de criação aponta para destino real', !!createTab, JSON.stringify(subTabs));
-  const subLink = await wd('POST', p('/element'), { using: 'css selector', value: '[data-aculta-studio="subtab"][href*="nova-publicacao"]' });
-  const subId = Object.values(subLink)[0];
-  await wd('POST', p('/execute/sync'), { script: "document.querySelector('[data-aculta-studio=\"subtab\"]').focus(); return 1;", args: [] });
-  await wd('POST', p(`/element/${subId}/value`), { text: '\uE004' });
-  const focusVisual = JSON.parse(await exec(`const e=document.activeElement;const s=getComputedStyle(e);return JSON.stringify({subtab:e.matches('[data-aculta-studio="subtab"]'),visible:e.matches(':focus-visible'),outlineWidth:s.outlineWidth,outlineStyle:s.outlineStyle});`));
-  check('foco visível após navegação por Tab', focusVisual.visible && Number.parseFloat(focusVisual.outlineWidth) >= 3 && focusVisual.outlineStyle !== 'none', JSON.stringify(focusVisual));
-  await wd('POST', p('/execute/sync'), { script: "document.querySelector('[data-aculta-studio=\"subtab\"][href*=\"nova-publicacao\"]').focus(); return 1;", args: [] });
-  await wd('POST', p(`/element/${subId}/value`), { text: '\uE007' });
-  await sleep(2500);
-  const kbPath = await exec(`return window.location.pathname;`);
-  check('Enter no teclado troca a aba pela URL dela', kbPath === '/marley/revista/criar/nova-publicacao' || kbPath.startsWith('/marley/revista/criar/'), kbPath);
+  if (magazineTabAvailable) {
+    await navigateTo(PAGE.replace(/\/marley.*$/, '') + '/marley/revista/criar');
+    const createTabsReady = await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'aba Nova publicação');
+    const subTabs = JSON.parse(await exec(`return JSON.stringify([...document.querySelectorAll('[data-aculta-studio="subtab"]')].map((a)=>({text:a.textContent.trim(),href:a.getAttribute('href')})));`));
+    const createTab = subTabs.find((tab) => /nova publicação/i.test(tab.text) && (tab.href || '').includes('nova-publicacao'));
+    check('aba de criação aponta para destino real', createTabsReady && !!createTab, JSON.stringify(subTabs));
+    if (createTabsReady && createTab) {
+      const subLink = await wd('POST', p('/element'), { using: 'css selector', value: '[data-aculta-studio="subtab"][href*="nova-publicacao"]' });
+      const subId = Object.values(subLink)[0];
+      await wd('POST', p('/execute/sync'), { script: "document.querySelector('[data-aculta-studio=\"subtab\"]').focus(); return 1;", args: [] });
+      await wd('POST', p(`/element/${subId}/value`), { text: '\uE004' });
+      const focusVisual = JSON.parse(await exec(`const e=document.activeElement;const s=getComputedStyle(e);return JSON.stringify({subtab:e.matches('[data-aculta-studio="subtab"]'),visible:e.matches(':focus-visible'),outlineWidth:s.outlineWidth,outlineStyle:s.outlineStyle});`));
+      check('foco visível após navegação por Tab', focusVisual.visible && Number.parseFloat(focusVisual.outlineWidth) >= 3 && focusVisual.outlineStyle !== 'none', JSON.stringify(focusVisual));
+      await wd('POST', p('/execute/sync'), { script: "document.querySelector('[data-aculta-studio=\"subtab\"][href*=\"nova-publicacao\"]').focus(); return 1;", args: [] });
+      await wd('POST', p(`/element/${subId}/value`), { text: '\uE007' });
+      await sleep(2500);
+      const kbPath = await exec(`return window.location.pathname;`);
+      check('Enter no teclado troca a aba pela URL dela', kbPath === '/marley/revista/criar/nova-publicacao' || kbPath.startsWith('/marley/revista/criar/'), kbPath);
+    }
+    else {
+      check('foco visível após navegação por Tab', null, 'aba de criação não disponível');
+      check('Enter no teclado troca a aba pela URL dela', null, 'aba de criação não disponível');
+    }
+  }
+  else {
+    check('aba de criação aponta para destino real', null, 'aba Revista não disponível para esta conta no Runtime');
+    check('foco visível após navegação por Tab', null, 'aba Revista não disponível para esta conta no Runtime');
+    check('Enter no teclado troca a aba pela URL dela', null, 'aba Revista não disponível para esta conta no Runtime');
+  }
 
   // Contraste WCAG: texto do Studio contra o fundo efetivo, com as cores computadas pelo navegador (claro e escuro).
   const contrastScript = `
@@ -216,7 +250,7 @@ try {
     const items = [...document.querySelectorAll('[data-aculta-studio="tab"],[data-aculta-studio="section"],[data-aculta-studio="subtab"],[data-aculta-studio="action"],[data-aculta-studio="heading"]')];
     return items.map((el) => { const fg = parse(getComputedStyle(el).color); const bg = bgOf(el); const L1 = lum(fg), L2 = lum(bg); const ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05); return Math.round(ratio * 100) / 100; });
   `;
-  await navigateTo(PAGE.replace(/\/marley.*$/, '') + '/marley/revista/criar');
+  await navigateTo(magazineTabAvailable ? PAGE.replace(/\/marley.*$/, '') + '/marley/revista/criar' : PAGE);
   await waitFor(`document.querySelector('[data-aculta-studio="subtab"]')`, 'contraste (claro)');
   const contrastLight = JSON.parse(JSON.stringify(await exec(contrastScript)));
   const minLight = Math.min(...contrastLight);

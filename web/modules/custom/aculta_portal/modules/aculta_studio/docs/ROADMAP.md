@@ -12,7 +12,7 @@ depende de THEME-MF3. OCS-A1–A4 só começam depois dos dois gates aprovados.
 | THEME-MF1–MF2 | Implementação incremental; cobertura visual global incompleta. |
 | THEME-MF3 | Pendente; não homologar todo ACULTA420 como mobile-first. |
 | OCS-F0 | Parcial: providers/rotas mapeados; contrato de shell no Portal e captura pós-migration das raízes em 10 purposes verificados em `4eb116482`; baseline Studio ainda não inclui tela autenticada equivalente do upstream nem todas as áreas/estados. |
-| OCS-F1–F2 | Implementados parcialmente; fidelidade de todos os consumers e Runtime pendente. |
+| OCS-F1–F2 | Implementados parcialmente; CSS candidata verificada em rotas reais, implantação e cobertura total pendentes. |
 | OCS-F3 | Variante `studio_fidelity` adicionada ao SDC `patterns/card` com story e consumidor real na entrada da Conta; schema 55/756, Unit 20/121 e CSS fixture Firefox 45/45 passaram. A repetição no worktree baseado em `82ff8538d` passou 216/216, cobrindo limites upstream 48/70/85/120em, container e tipografia Montserrat; capturas 320/1440px inspecionadas. HTML do preprocess e render Drupal/Runtime seguem pendentes. |
 | OCS-F4 | Composição adapta links autorizados do registry e da entrada da Conta ao SDC existente; estado funcional vem dos providers. Captura Runtime com o novo adaptador pendente. |
 | OCS-F5–F7 | Parcial/incompleto; o tema agora aplica tokens/forms/buttons Next aos formulários dentro do Studio, com fixture claro/escuro 42/42 e foco visível; validar os consumers reais, AJAX/no-JS e estados por Marley, LMS e Wiki sem alterar seus owners. |

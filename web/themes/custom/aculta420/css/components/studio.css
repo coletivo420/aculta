@@ -334,7 +334,7 @@
 
 /* OpenCulturas Next tab treatment; navigation remains ordinary authorized links. */
 .studio__tabs .studio__tab,
-.studio__subtabs .studio__link {
+.studio__subtabs a {
   display: inline-flex;
   min-inline-size: 2.75rem;
   min-block-size: 2.75rem;
@@ -350,12 +350,12 @@
 }
 
 .studio__tabs .studio__tab[aria-current="page"],
-.studio__subtabs .studio__link[aria-current="page"] {
+.studio__subtabs a[aria-current="page"] {
   border-block-end: 2px solid var(--aculta-studio-fidelity-interaction);
 }
 
 .studio__tabs .studio__tab:is(:hover, :focus-visible),
-.studio__subtabs .studio__link:is(:hover, :focus-visible) {
+.studio__subtabs a:is(:hover, :focus-visible) {
   color: var(--aculta-studio-fidelity-link);
   border-block-end: 2px solid var(--aculta-studio-fidelity-interaction);
   background-color: transparent;
@@ -423,7 +423,7 @@
 }
 
 /* opCult's secondary tabs use link color and a thicker current marker, not the primary interaction color. */
-.studio__subtabs .studio__link {
+.studio__subtabs a {
   color: var(--aculta-studio-fidelity-link);
   border: 0;
   font-weight: 600;
@@ -431,13 +431,13 @@
   box-shadow: none;
 }
 
-.studio__subtabs .studio__link[aria-current="page"] {
+.studio__subtabs a[aria-current="page"] {
   border: 0;
   border-block-end: 3px solid var(--aculta-studio-fidelity-link);
   border-radius: 0;
 }
 
-.studio__subtabs .studio__link:is(:hover, :focus-visible) {
+.studio__subtabs a:is(:hover, :focus-visible) {
   color: var(--aculta-studio-fidelity-surface);
   background-color: var(--aculta-studio-fidelity-interaction);
 }

@@ -673,6 +673,17 @@ zoom, modos de cor e acessibilidade completa continuam pendentes; OCS-F2,
 THEME-MF3 e OCS-F11 seguem parciais/não aprovados. Evidência em
 `mobile-first-audit.md` e `tests/browser/aculta-studio/README.md`.
 
+### OCS-F2 — reteste das rotas Marley e Conta com CSS candidata (2026-10-30)
+
+Firefox ESR visível no Runtime passou 79/79 checks, com um `SKIP` por ausência
+de conteúdo próprio publicado para exercitar edição. A CSS candidata foi
+injetada somente no navegador; alvos das abas contextuais de Conta passaram a
+44px e não houve overflow nas larguras registradas na auditoria. Navegação AJAX,
+cinco estados editoriais, foco, Enter, contraste claro/escuro e geometria foram
+exercitados. O resultado valida o markup consumidor, não a implantação física
+da folha nem todos os fluxos do Studio. F2 segue parcial; THEME-MF3 e F11 não
+foram aprovados. JSON e capturas revisadas: `/home/piradopirata/aculta-suite-out/studio-visual-candidate-20261030e/`.
+
 ### THEME-MF2 — Institution Bar global (2026-10-29)
 
 As dimensões compactas agora são CSS base; `min-width: 768px` recupera o layout

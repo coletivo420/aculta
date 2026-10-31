@@ -4,6 +4,11 @@ Suíte no Firefox ESR visível na sessão X11 local (`DISPLAY=:0`), pelo geckodr
 (troca de aba sem recarregar a página), `aria-current`, largura de 320 a 1440 px emulada pelo BiDi, contraste claro/escuro, navegação por teclado, alvos mínimos 44×44 CSS px para abas
 do Studio, ausência de rolagem horizontal e erros de JavaScript.
 Também confere a composição vertical/horizontal em 320/360/390/599/600/767/768/1024/1280/1440px.
+Os cinco estados editoriais da Revista são verificados na seção Publicações; a
+raiz `/marley` não é obrigada a exibir esse conjunto de outra seção. Quando a
+aba Revista não estiver autorizada para a conta, esses checks retornam `SKIP`.
+No contexto de Conta, mede cada link contextual em 320/390/768/1280px e exige
+alvo de 44×44 CSS px.
 `STUDIO_CSS_OVERRIDE=1` injeta somente o bloco de tokens de fidelidade escopado
 ao Studio e `studio.css` do checkout indicado por `STUDIO_CSS_ROOT`, incluindo
 as fontes WOFF2 em data URIs, antes das medições. Também confirma que o gutter

@@ -151,9 +151,12 @@ abas secundárias no padrão OpenCulturas Next; ambas quebram linha na base
 mobile e neutralizam as molduras Bootstrap dos links e itens de lista, sem criar
 navegação ou destinos adicionais. Cada link tem alvo mínimo de 44×44 CSS px.
 Firefox ESR visível verificou alvos e reflow numa fixture em 27 larguras, sem
-overflow; não é validação de rota real. Marley e a navegação contextual de Conta
-passaram os checks executáveis em Firefox com CSS candidato; comparação pareada
-e demais consumers permanecem pendentes (OCS-F2 parcial).
+overflow; depois, a CSS candidata também foi verificada no Firefox ESR visível
+sobre as rotas reais servidas de Marley e Conta. A regra inclui âncoras dentro de
+`.studio__subtabs`, mesmo se o markup contextual não tiver `.studio__link`.
+Alvos foram medidos em 44px; a validação não prova implantação do CSS nem cobre
+todos os consumers. Comparação pareada e demais rotas permanecem pendentes
+(OCS-F2 parcial).
 
 `content/editorial-card` mantém os slots e o consumer atuais; altura mínima e
 padding compactos são a base, com composição ampla em `48.0625rem`. A validação
