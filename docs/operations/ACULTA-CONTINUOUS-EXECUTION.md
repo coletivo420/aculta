@@ -2537,3 +2537,11 @@ ou preferência persistente alterados.
   depreciações já existentes do Drupal/contrib, sem falhas. A execução focal
   anterior também passou (1 teste, 76 asserções). Evidência local em
   `/tmp/wiki-kernel-route4.out` e `/tmp/wiki-kernel-filter.out`.
+- Reteste estático após o alinhamento canônico: `validate-aculta420-foundation`
+  passou com 353 checks via Drush no Runtime; SDC schema passou (55
+  componentes, 759 checks); shell contract passou (13); design foundations
+  passou (2.432); module/theme boundary passou (3.492); Revista parity passou;
+  aliases temporários passaram (38 arquivos) e a política de rotas
+  administrativas MAIN passou (154 rotas). Esses gates fortalecem MF1/MF2 e a
+  higiene de rotas, mas não substituem MF3/F11, que ainda exigem cobertura
+  visual global e os hosts Green Stash/Eventos.
