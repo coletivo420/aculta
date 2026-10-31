@@ -4115,3 +4115,10 @@ Runtime, nem a operação interna do CAPTCHA. Evidências em
 `/home/piradopirata/aculta-suite-out/account-keyboard-baseline-followup-20261031/`
 e `/home/piradopirata/aculta-suite-out/account-keyboard-candidate-followup-20261031/`.
 THEME-MF3 continua pendente até validar a folha integrada e os demais gates.
+
+Reteste de cores em 2026-10-31 confirmou o botão real de login Google com
+`auth.css` candidata nas nove larguras, em claro/escuro e reduced motion:
+90/90 checks. Em escuro, o contraste calculado foi 12,40:1 no estado normal e
+11,34:1 em hover; a captura 320px foi inspecionada. Evidência em
+`/home/piradopirata/aculta-suite-out/auth-google-contrast-followup-20261031/`.
+O CSS segue sem integração no Runtime; este resultado não fecha THEME-MF3.
