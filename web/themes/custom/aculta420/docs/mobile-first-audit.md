@@ -164,6 +164,25 @@ em 320/390/767/768/1024/1440px. Stylelint e sintaxe JS PASS; execução
 Firefox/Runtime DEFERRED por sessões concorrentes. Não homologa OCS-F11 nem
 THEME-MF3.
 
+### THEME-MF3 — foco de teclado nas raízes públicas (2026-10-30)
+
+`purpose-shell-keyboard.py` percorreu as dez raízes de purpose no Firefox ESR
+visível, anônimo, em 320/390/768/1280 px. O relatório contém 663 checks PASS,
+uma falha e dez SKIP: 624 paradas de foco do tema exibiram indicador visível
+(incluindo o outline do container `:focus-within` nos títulos dos cards LMS), e
+39/40 telas não tiveram overflow horizontal. A única falha foi Conta/320 px,
+`documentWidth=328`. Quatro SKIPs são foco delegado ao Turnstile externo e seis
+são fins de sequências de foco curtas; não foram contados como PASS.
+
+Capturas de primeiro foco em Conta e Cursos a 320 px foram inspecionadas;
+relatório e capturas estão em
+`/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-accepted-20261030/`.
+Nenhum link foi ativado nem formulário submetido. O teste cobre apenas raízes e
+até oito paradas em cada direção; não testa menus expandidos, páginas internas,
+contraste de foco ou leitor de tela. A validação interna do widget de terceiro
+permanece externa ao documento ACULTA. O overflow da Conta, o CAPTCHA, WCAG 2.2
+AA e os demais gates transversais mantêm THEME-MF3 pendente.
+
 ### THEME-MF2 — busca e linhas de tópicos do Fórum (2026-10-29)
 
 `forum-index.css` usa uma coluna como base na linha de tópico e no formulário

@@ -682,6 +682,33 @@ defina `PURPOSE_ZOOM_AUTH_CSS_CANDIDATE=1`. O harness injeta `base.css` e
 `data-portal-ui="challenge-frame"`; isso é uma comparação visual com CSS local,
 não valida o hook Portal renderizado no servidor nem o estado sem JavaScript.
 
+## Foco de teclado no shell público
+
+`purpose-shell-keyboard.py` percorre por teclado as dez raízes públicas anônimas,
+em Firefox ESR visível, nas larguras 320/390/768/1280 px. Testa até oito paradas
+com `Tab` e `Shift+Tab` por direção, foco visível, indicador no elemento focado
+(inclui o contorno `:focus-within` de cards LMS), interseção com a viewport e
+overflow horizontal separado. Só faz GET e ações de teclado; não ativa links,
+submete formulários ou altera conteúdo. Foco delegado ao desafio CAPTCHA externo
+e fim de sequências curtas ficam como `SKIP`, nunca como PASS. Capturas e
+`results.json` são gravados em `$SUITE_OUT`.
+
+```sh
+export DISPLAY=:0
+export ACULTA_PROJECT_ROOT=/home/piradopirata/projetos/aculta
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/purpose-shell-keyboard
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/purpose-shell-keyboard.py
+```
+
+`PURPOSE_KEYBOARD_WIDTHS`, `PURPOSE_KEYBOARD_TABS` e
+`PURPOSE_KEYBOARD_PURPOSES` selecionam larguras, quantidade máxima de paradas e
+purposes (por exemplo `account,courses`). O teste verifica somente as raízes e
+as primeiras paradas; não percorre menus expandidos, rotas internas, teclado de
+componentes, contraste do indicador, leitor de tela ou WCAG 2.2 AA completa.
+O foco interno do CAPTCHA de terceiro não é inspecionável pelo documento ACULTA;
+permanece fora do resultado de foco do tema.
+
 ## Título principal nas dez raízes públicas
 
 `purpose-headings.py` confere um H1 visível dentro de `main#main-content`, o

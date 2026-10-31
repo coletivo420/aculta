@@ -158,5 +158,9 @@ README local para execução e limites.
 `account-address.py` verifica por GET o formulário unificado da Conta, sua
 navegação legada, a biblioteca CEP executada, os campos e o reflow com e sem
 JavaScript; não submete dados. Veja o README local para variáveis e limites.
+`purpose-shell-keyboard.py` percorre o shell público dos dez purposes com
+Firefox ESR, Tab/Shift+Tab em 320/390/768/1280px, foco visível e overflow. É
+anônimo, somente leitura e registra separadamente o fim da sequência e o foco
+delegado ao CAPTCHA externo; veja o README local para status e limitações.
 `maps-events-address.py` valida o widget de endereço na revisão do importador OSM, Brasil fixo, CEP e reflow; para antes de salvar/enviar. Execução dependente de Firefox ESR visível e permissão de integração; ver README local e estado DEFERRED quando DISPLAY/runtime não estiver disponível. `account-orders.py` verifica a tabela de pedidos em Conta no estado real disponível e uma linha sintética sem dados pessoais, comparando o CSS local candidato e restaurando as métricas desktop. A execução atual não teve pedido não-rascunho na conta autorizada; a validação de linha real está documentada como DEFERRED.
 `institutional-layout.py` compara regras mobile-first de CTA/grade/detalhes com o CSS anterior em fixture no Firefox visível; não acessa Runtime nem substitui a inspeção de páginas reais.

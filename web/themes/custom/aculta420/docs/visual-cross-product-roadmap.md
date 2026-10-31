@@ -1267,3 +1267,15 @@ reutilizável inicia ULI no host de Conta e permite credencial de teste injetada
 somente via ambiente como fallback. O cenário anônimo anterior permanece
 registrado em `mobile-first-audit.md`. Isso não aprova THEME-MF3: ainda faltam
 rotas internas de todos os purposes, zoom, cobertura de teclado e WCAG 2.2 AA.
+
+### THEME-MF3 — teclado nas raízes públicas (2026-10-30)
+
+Firefox ESR visível cobriu as dez raízes anônimas em 320/390/768/1280px com
+Tab/Shift+Tab. Resultado: 663 PASS, 1 FAIL (overflow Conta/320px, 328 CSS px) e
+10 SKIP (quatro focos delegados ao CAPTCHA externo, seis limites de sequência).
+As 624 paradas de foco do tema passaram indicador visível; cursos usa o outline
+do card LMS focado, previsto no CSS, em vez de outline no link filho. Capturas
+de Conta/Cursos 320px foram revisadas. O teste é focal, não substitui rotas
+internas, menus expandidos, contraste, leitor de tela ou WCAG 2.2 AA; gate global
+permanece aberto. Comando e limitações no README da suíte e em
+`mobile-first-audit.md`.
