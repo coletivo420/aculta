@@ -35,6 +35,7 @@ EXPECTED_PATH_CLASS = "path-" + ROUTE.strip("/").replace("/", "-")
 WIDTHS = [int(width) for width in os.environ.get(
     "AUTH_ROUTE_WIDTHS", "320,360,390,575,576,599,600,768,1024,1280,1440",
 ).split(",")]
+DISABLE_PAGE_JS = os.environ.get("AUTH_ROUTE_DISABLE_JS") == "1"
 CSS = "\n".join((ROOT / path).read_text() for path in (
     "web/themes/custom/aculta420/css/base.css",
     "web/themes/custom/aculta420/css/components/auth.css",
@@ -132,6 +133,7 @@ if os.environ.get("DISPLAY") != ":0":
     raise SystemExit("Execute com DISPLAY=:0 e Firefox ESR visível.")
 
 measure = """const challenge=document.querySelector('.captcha-type-challenge--turnstile .cf-turnstile');
+const captchaWrapper=document.querySelector('.captcha');
 const frame=document.querySelector('[data-portal-ui~="challenge-frame"]');
 const rect=(element)=>{if(!element)return null;const r=element.getBoundingClientRect();return {left:r.left,right:r.right,width:r.width,scrollWidth:element.scrollWidth,clientWidth:element.clientWidth};};
 return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth,clientWidth:document.documentElement.clientWidth,
@@ -141,10 +143,11 @@ headingPadding:getComputedStyle(document.querySelector('.aculta-page-heading')).
 contentPadding:getComputedStyle(document.querySelector('.aculta-content')).padding,
 challengeWidth:challenge?.getBoundingClientRect().width||0,challengeScrollWidth:challenge?.scrollWidth||0,
 challengeClientWidth:challenge?.clientWidth||0,
-challengeRect:rect(challenge),challengeFrameRect:rect(frame),
+challengeRect:rect(challenge),challengeFrameRect:rect(frame),hasCaptchaWrapper:!!captchaWrapper,
 hasHeading:!!document.querySelector('.aculta-page-heading h1'),
 hasAuthForm:!!document.querySelector('.aculta-main form'),
-loggedIn:document.body.classList.contains('user-logged-in')};"""
+loggedIn:document.body.classList.contains('user-logged-in'),
+drupalPresent:typeof window.Drupal==='object'};"""
 proxy = None
 if LOCAL_RUNTIME:
     from urllib.parse import urlparse
@@ -155,6 +158,7 @@ if LOCAL_RUNTIME:
     threading.Thread(target=proxy.serve_forever, daemon=True).start()
     proxy_port = proxy.server_address[1]
     driver = Driver(prefs={
+        "javascript.enabled": not DISABLE_PAGE_JS,
         "network.proxy.type": 1,
         "network.proxy.http": "127.0.0.1",
         "network.proxy.http_port": proxy_port,
@@ -165,15 +169,18 @@ if LOCAL_RUNTIME:
         "network.dns.disablePrefetch": True,
     }, bidi=True)
 else:
-    driver = Driver(bidi=True)
+    driver = Driver(prefs={"javascript.enabled": not DISABLE_PAGE_JS}, bidi=True)
 viewport = Viewport(driver)
 try:
     driver.get(f"{BASE}{ROUTE}")
     initial = driver.js(measure)
     route_ok = EXPECTED_PATH_CLASS in initial["bodyClass"].split()
+    challenge_rendered = initial["challengeWidth"] > 0 or DISABLE_PAGE_JS
+    page_js_disabled_confirmed = not initial["drupalPresent"] if DISABLE_PAGE_JS else True
     record(f"rota real anônima {ROUTE}", route_ok and initial["hasHeading"] and initial["hasAuthForm"]
-           and initial["challengeWidth"] > 0 and not initial["loggedIn"],
-           {key: initial[key] for key in ("bodyClass", "hasHeading", "hasAuthForm", "challengeWidth", "loggedIn")})
+           and initial["hasCaptchaWrapper"] and challenge_rendered and page_js_disabled_confirmed and not initial["loggedIn"],
+           {**{key: initial[key] for key in ("bodyClass", "hasHeading", "hasAuthForm", "hasCaptchaWrapper", "challengeWidth", "loggedIn", "drupalPresent")},
+            "pageJavaScriptDisabled": DISABLE_PAGE_JS})
     if os.environ.get("AUTH_ADD_MARKER_CANDIDATE") == "1":
         driver.js("""document.querySelectorAll('.captcha').forEach((frame) => {
           const tokens=(frame.getAttribute('data-portal-ui')||'').split(/\\s+/).filter(Boolean);
@@ -195,12 +202,18 @@ try:
         horizontal_scroll_blocked = data["documentWidth"] <= width or (
             data["rootOverflowX"] == "clip" and data["scrollX"] == 0
         )
+        challenge_frame_fits = (os.environ.get("AUTH_ADD_MARKER_CANDIDATE") != "1"
+                                or (data["challengeFrameRect"] is not None
+                                    and data["challengeFrameRect"]["left"] >= -1
+                                    and data["challengeFrameRect"]["right"] <= width + 1))
+        challenge_rendered = data["challengeWidth"] > 0 or DISABLE_PAGE_JS
         valid = (actual_width == width and EXPECTED_PATH_CLASS in data["bodyClass"].split()
-                 and data["hasHeading"] and data["hasAuthForm"] and data["challengeWidth"] > 0 and not data["loggedIn"]
+                 and data["hasHeading"] and data["hasAuthForm"] and data["hasCaptchaWrapper"]
+                 and challenge_rendered and not data["loggedIn"]
                  and horizontal_scroll_blocked and data["headingPadding"] == expected_heading
                  and data["contentPadding"] == expected_content
                  and (data["challengeWidth"] == 0 or data["challengeScrollWidth"] <= data["challengeWidth"] + 1)
-                 and (not os.environ.get("AUTH_ADD_MARKER_CANDIDATE") == "1" or data["challengeFrameRect"] is not None))
+                 and challenge_frame_fits)
         record(f"Runtime {ROUTE} {width}px: estilos candidatos e sem overflow", valid,
                {key: data[key] for key in ("documentWidth", "bodyWidth", "clientWidth", "rootOverflowX", "scrollX", "headingPadding", "contentPadding", "challengeWidth", "challengeScrollWidth", "challengeClientWidth")})
 finally:

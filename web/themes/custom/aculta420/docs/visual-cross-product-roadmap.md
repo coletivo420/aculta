@@ -1314,6 +1314,10 @@ o desafio e seu slot mediram 300px, sem overflow documental. CSS e token foram
 injetados/simulados no Firefox; o Runtime servido continua com 328px na
 baseline. PHPUnit do hook (3 testes/8 assertions), PHP lint, PHPCS e Stylelint
 passaram; a integração server-side/no-JS ainda é necessária para fechar o gate.
+Uma repetição com JavaScript da página desativado também passou 12/12 checks,
+mas injetou CSS e token pelo WebDriver; valida o reflow CSS sem scripts do site,
+não a integração do hook PHP. O teste confirmou `window.Drupal` ausente. Evidência
+em `/home/piradopirata/aculta-suite-out/account-overflow-nojs-verified-followup-20261031/`.
 
 O resultado vermelho de fronteira e de tokens não mapeados acima é histórico.
 No reteste estático de 2026-10-31, a árvore atual passou o validator de

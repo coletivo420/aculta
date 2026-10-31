@@ -621,6 +621,16 @@ de 320px foi revisada; relatório e PNGs em
 O Runtime mantém a baseline até o deploy da branch: o teste não exercitou o
 hook PHP servido nem JavaScript desativado e, portanto, não fecha a pendência.
 
+Para medir o layout sem JavaScript da página, defina
+`AUTH_ROUTE_DISABLE_JS=1`. WebDriver continua disponível para injetar a CSS e,
+com `AUTH_ADD_MARKER_CANDIDATE=1`, o token no markup já renderizado. Essa
+injeção permite exercitar a regra de layout no estado sem scripts do site, mas
+não simula nem valida o hook PHP. No reteste de 2026-10-31, o modo sem JavaScript
+passou 12/12 checks nas mesmas onze larguras e a captura de 320px foi revisada;
+`window.Drupal` estava ausente, confirmando que os scripts da página não
+executaram. Relatório em
+`/home/piradopirata/aculta-suite-out/account-overflow-nojs-verified-followup-20261031/`.
+
 ```sh
 export DISPLAY=:0
 export SUITE_OUT=/home/piradopirata/aculta-suite-out/auth-route-runtime

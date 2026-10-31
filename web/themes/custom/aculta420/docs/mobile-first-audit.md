@@ -3060,6 +3060,13 @@ sem JavaScript e após rebuild continuam pendentes, portanto THEME-MF3 não pass
 Evidência em
 `/home/piradopirata/aculta-suite-out/account-overflow-followup-20261031/`.
 
+O mesmo candidato passou mais **12/12 checks** com JavaScript da página
+desativado, nas mesmas onze larguras. A CSS e o token foram injetados por
+WebDriver depois da renderização server-side; a medição confirma o reflow sem
+scripts da página (`window.Drupal` estava ausente), mas não a descoberta do hook
+PHP no Runtime. A captura de 320px está em
+`/home/piradopirata/aculta-suite-out/account-overflow-nojs-verified-followup-20261031/`.
+
 ### THEME-MF2 — proporção do fallback de capa da Revista (2026-10-31)
 
 O arquivo concreto do OpenCulturas 3.1.5,
