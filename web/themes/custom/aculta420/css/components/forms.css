@@ -11,6 +11,33 @@ form.node-form .vertical-tabs__panes :is(.description, .details-description, .fi
   overflow-wrap: anywhere;
 }
 
+form.node-form :is(.vertical-tabs__menu-item > a, details > summary, .token-dialog) {
+  min-block-size: 2.75rem;
+}
+
+form.node-form details > summary {
+  display: flex;
+  align-items: center;
+}
+
+form.node-form .token-dialog {
+  display: inline-flex;
+  align-items: center;
+}
+
+html[data-bs-theme="dark"] form.node-form .vertical-tabs__menu-item,
+html[data-bs-theme="dark"] form.node-form .vertical-tabs__menu-item.is-selected {
+  color: var(--aculta-text-primary);
+  background-color: var(--aculta-surface-raised);
+  border-color: var(--aculta-border-default);
+}
+
+html[data-bs-theme="dark"] form.node-form .vertical-tabs__menu-item a,
+html[data-bs-theme="dark"] form.node-form .vertical-tabs__menu-item-title,
+html[data-bs-theme="dark"] form.node-form .vertical-tabs__menu-item-summary {
+  color: var(--aculta-text-primary);
+}
+
 /* Core vertical-tabs metadata must remain inside narrow editorial forms. */
 @media (max-width: 35.999rem) {
   form.node-form .vertical-tabs,
