@@ -2421,3 +2421,34 @@ ou preferência persistente alterados.
   configurado, mas o gateway remoto retornou HTTP 502; a análise delegada ficou
   indisponível nesta rodada. O servidor e processo remoto existentes foram
   preservados.
+
+## Reteste transversal visual e correção do Config Sync (2026-10-31)
+
+- Firefox ESR/X11 percorreu as dez raízes públicas de propósito, em nove
+  larguras, dois modos de cor e reduced motion: **576/576 checks**, zero
+  falhas. Foram verificadas shell única, ausência de overflow e contraste dos
+  links textuais; os limites da cobertura estão em
+  `web/themes/custom/aculta420/docs/mobile-first-audit.md`. A execução foi
+  anônima, somente GET, no docroot destacado `ae3227866`, sem alterar Runtime.
+- A suíte Unit completa do Messenger revelou que o Sync incluía
+  `private_message_digest_anchor`, embora `MessengerModuleInstallConfigTest`
+  exija que esse estado operacional não seja versionado. A chave foi removida
+  exclusivamente de `config/sync/aculta_messenger.settings.yml`; defaults e
+  configuração ativa não foram alterados. O teste focal passou (2/8) e a suíte
+  Messenger completa passou (389/4.295). Atualizar o Sync no docroot exigirá
+  revisão do diff: a âncora ativa permanecerá intencionalmente fora do Sync.
+- A PR #299 foi encontrada como merged em `2493d7535`. A branch remota
+  não existia no primeiro `ls-remote`; um push fast-forward recriou a referência
+  `refactor/openculturas-codigo-visual` em `dbb226ef3`. Isso não abriu PR nem
+  fez merge, mas a referência não está vinculada a uma PR aberta. A delegação
+  Qwen/Ollama foi descartada, conforme orientação do responsável.
+- Continuação da evidência global nas dez raízes públicas: no-JS passou 270/270;
+  teclado passou 609/609 (47 `SKIP` de sequência limitada); zoom real 100/200/
+  400% passou 30/30; axe/page-matrix passou 40/40 checks de viewport, com zero
+  violações e quatro resultados de contraste `incomplete` em Conta/Fórum para
+  revisão manual. Capturas e limites estão em
+  `web/themes/custom/aculta420/docs/mobile-first-audit.md`. A matriz teclado
+  anterior teve dois FAIL porque iniciava Shift+Tab do `body`; a reprodução
+  focalizou o rodapé fora da viewport a 768px. O harness agora parte do último
+  foco real da sequência Tab, e o teste focal do Fórum passou 32/32. Nenhuma
+  regra visual do tema foi alterada por esse diagnóstico.

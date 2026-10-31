@@ -933,6 +933,10 @@ cabeçalho no lugar do menu primário, e o teste verifica que o campo de busca
 continua visível. O teste é anônimo e somente leitura; não exercita páginas
 internas, estados autenticados, teclado, zoom, leitor de tela nem WCAG completa.
 
+Reteste transversal visível em 2026-10-31: **270/270 checks** passaram em nove
+larguras. Evidência em
+`/home/piradopirata/aculta-suite-out/purpose-shell-nojs-recheck-dbb226ef3-20261031/`.
+
 ```sh
 cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
 export DISPLAY=:0
@@ -1029,6 +1033,13 @@ overflow horizontal separado. Só faz GET e ações de teclado; não ativa links
 submete formulários ou altera conteúdo. Foco delegado ao desafio CAPTCHA externo
 e fim de sequências curtas ficam como `SKIP`, nunca como PASS. Capturas e
 `results.json` são gravados em `$SUITE_OUT`.
+
+`Shift+Tab` começa no último foco que a própria sequência `Tab` alcançou, sem
+recarregar a página nem iniciar a partir do `body`. Assim o teste percorre uma
+sequência reversa de foco real dentro do documento; quando `Tab` não encontra
+nenhum foco interno, a direção reversa fica `SKIP`. Reteste nas dez raízes:
+**609/609 checks**, 47 limites `SKIP`, evidência em
+`/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-recheck-corrected-dbb226ef3-20261031/`.
 
 ```sh
 export DISPLAY=:0

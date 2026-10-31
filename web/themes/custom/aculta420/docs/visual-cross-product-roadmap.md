@@ -2210,3 +2210,26 @@ nove larguras, com JavaScript ativo e modo escuro local à sessão: zero falhas,
 sem overflow, shell presente e campos/ações dos forms com 44px ou mais. Captura
 de 320px revisada. Evidência e snapshot em `mobile-first-audit.md`. Isso não
 encerra contraste WCAG, ACL, teclado/zoom ou os gates F11/MF3.
+
+### THEME-MF3 — no-JS, teclado, zoom e axe nas raízes (2026-10-31)
+
+Nas dez raízes públicas, no-JS passou 270/270 checks em nove larguras; teclado
+passou 609/609 em 320/390/768/1280px, com 47 limites `SKIP`; zoom real
+100/200/400% passou 30/30; e a matriz axe/viewport passou 40/40 com zero
+violações. Quatro resultados axe de contraste ficaram `incomplete` (H1 de
+Conta parcialmente coberto e seletor do Fórum sobre gradiente/imagem, em
+claro/escuro) e pedem revisão manual. Relatórios, capturas e limites estão em
+`mobile-first-audit.md`. Rotas internas, ACL, formulários, leitores de tela,
+axe completo e comparação pareada ainda faltam; **THEME-MF3 e OCS-F11 não
+aprovados**.
+
+### THEME-MF3 — reteste dos dez shells públicos (2026-10-31)
+
+O reteste de Firefox ESR/X11 percorreu as dez raízes dos purposes configurados
+em `deploy.json`, em nove larguras e claro/escuro: **576/576 checks**, sem
+falhas. As métricas confirmaram Institution Bar e Domain Header únicos,
+reduced motion, ausência de overflow e contraste AA dos links textuais
+observados. Evidência e limitações detalhadas em `mobile-first-audit.md`; cobre
+raízes anônimas e não substitui páginas internas, formulários, ACL, teclado,
+zoom real, no-JS ou WCAG 2.2 AA. THEME-MF3 continua pendente de homologação
+transversal completa e OCS-F11 permanece bloqueado por esse gate.

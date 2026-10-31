@@ -4963,3 +4963,57 @@ Isso valida apresentação/reflow e o GET do formulário, não submissão Commer
 grants A/B entre lojas, operações fora das telas disponíveis, no-JS/AJAX,
 teclado/zoom ou WCAG 2.2 AA. OCS-F8 permanece parcial; THEME-MF3 e OCS-F11
 continuam pendentes.
+
+### THEME-MF3 — reteste transversal dos shells públicos (2026-10-31)
+
+Firefox ESR visível em `DISPLAY=:0` percorreu as raízes de main, account,
+support, magazine, wiki, shop, courses, forum, links e eventos, nos domínios
+de teste configurados em `aculta_deployer/config/deploy.json`. Em
+320/360/390/599/600/768/1024/1280/1440px, claro/escuro e reduced motion,
+passaram **576/576 checks**: documento sem overflow, Institution Bar e Domain
+Header únicos, tokens de superfície/texto presentes e contraste AA dos links
+textuais do shell medidos. O harness não injetou CSS nem JavaScript candidato;
+40 capturas e `results.json` estão em
+`/home/piradopirata/aculta-suite-out/purpose-shell-recheck-dbb226ef3-20261031/`.
+
+A sessão foi anônima e somente GET. O checkout de desenvolvimento permaneceu
+no HEAD destacado `ae3227866`; nenhuma escrita persistente foi feita no
+Runtime, que estava identificado como `aculta_runtime`, URI `http://default`,
+619 tabelas. A matriz cobre apenas as páginas-raiz públicas e o shell; não
+valida páginas internas, zoom, teclado, foco, leitor de tela, ACL entre contas,
+formulários, no-JS, axe completo ou a fidelidade pareada `opcult`. Portanto
+THEME-MF3 e OCS-F11 continuam sem aprovação.
+
+### THEME-MF3 — no-JS, teclado, zoom e axe nas raízes públicas (2026-10-31)
+
+No mesmo Runtime e docroot destacado `ae3227866`, Firefox ESR/X11 percorreu as
+dez raízes anônimas dos purposes:
+
+- Com JavaScript do perfil desativado, **270/270 checks** passaram em nove
+  larguras; headers únicos, navegação (ou busca contextual da Wiki) disponível
+  e sem overflow. Evidência:
+  `/home/piradopirata/aculta-suite-out/purpose-shell-nojs-recheck-dbb226ef3-20261031/`.
+- Tab e Shift+Tab passaram **609/609 checks** em 320/390/768/1280px, sem
+  falhas; 47 limites de sequência foram registrados como `SKIP`. Shift+Tab
+  percorreu a sequência reversa a partir do último foco real alcançado por Tab.
+  O teste focal do Fórum passou 32/32 checks em 320/768px. Evidência:
+  `/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-recheck-corrected-dbb226ef3-20261031/`.
+- Zoom real do Firefox passou **30/30 checks** em 100%, 200% e 400%, sem
+  overflow horizontal e com Institution Bar, Domain Header e `main` únicos.
+  Evidência:
+  `/home/piradopirata/aculta-suite-out/purpose-browser-zoom-recheck-dbb226ef3-20261031/`.
+- A matriz genérica passou **40/40 checks** de status HTTP, viewport e overflow
+  em 320/1440px e claro/escuro. Os 20 scans axe reportaram zero violações, mas
+  quatro análises `color-contrast` ficaram `incomplete`: H1 de Conta por
+  elemento sobreposto e seletor de categoria do Fórum por gradiente/imagem,
+  cada um em claro/escuro. Capturas e relatório:
+  `/home/piradopirata/aculta-suite-out/purpose-shell-axe-recheck-dbb226ef3-20261031/`.
+  Esses casos requerem revisão manual; não são contados como conformidade WCAG.
+
+As sessões foram anônimas e somente GET. Claro/escuro, axe e tamanho de viewport
+foram aplicados somente à sessão local do Firefox. As capturas 320/1440 da
+Revista no reteste de shell foram revisadas; as demais capturas geradas ainda
+não foram todas inspecionadas visualmente. Esta evidência amplia o gate, mas não
+cobre rotas internas de cada purpose, ACL A/B, todos os formulários, fluxos AJAX,
+leitores de tela ou comparação pareada integral com `opcult`; portanto THEME-MF3
+e OCS-F11 permanecem pendentes.

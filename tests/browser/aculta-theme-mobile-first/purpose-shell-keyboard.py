@@ -225,14 +225,16 @@ def main():
                         "scrollingElements": page_state["scrollingElements"],
                         "viewportWidth": width,
                         "overflowElements": page_state["overflowElements"] if not no_horizontal_overflow else []})
+                reverse_anchor_available = False
                 for reverse in (False, True):
                     direction = "shift-tab" if reverse else "tab"
                     if reverse:
-                        driver.get(url)
-                        time.sleep(0.35)
-                        apply_auth_candidate(driver, purpose)
-                        driver.js("window.scrollTo({top:0,behavior:'instant'});document.activeElement?.blur();")
-                        time.sleep(0.25)
+                        if not reverse_anchor_available:
+                            records.append({"name": f"{purpose} {width}px shift-tab: sem foco inicial válido",
+                                            "status": "skip", "passed": None,
+                                            "detail": {"reason": "nenhum foco interno foi alcançado pela sequência Tab"}})
+                            print(f"SKIP {purpose} {width}px shift-tab: sem foco inicial válido", flush=True)
+                            continue
                     for step in range(1, TABS + 1):
                         press_tab(driver, reverse=reverse)
                         time.sleep(0.15)
@@ -241,12 +243,16 @@ def main():
                             records.append({"name": f"{purpose} {width}px {direction}: limite da sequência de foco",
                                             "status": "skip", "passed": None, "detail": info})
                             print(f"SKIP {purpose} {width}px {direction}: limite da sequência de foco", flush=True)
+                            if not reverse:
+                                reverse_anchor_available = False
                             break
                         if info["captchaAncestor"]:
                             records.append({"name": f"{purpose} {width}px {direction} {step}: foco delegado ao desafio externo",
                                             "status": "skip", "passed": None, "detail": info})
                             print(f"SKIP {purpose} {width}px {direction} {step}: foco delegado ao desafio CAPTCHA externo",
                                   flush=True)
+                            if not reverse:
+                                reverse_anchor_available = False
                             continue
                         visible_indicator = (
                             info["indicatorOutlineStyle"] != "none"
@@ -260,6 +266,8 @@ def main():
                         passed = info["focusVisible"] and visible_indicator and in_viewport
                         name = f"{purpose} {width}px {direction} {step}: foco visível no viewport"
                         record(name, passed, info)
+                        if not reverse:
+                            reverse_anchor_available = True
                         if not reverse and step == 1 and width == WIDTHS[0]:
                             screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
                             (OUT / f"{purpose}-focus-{width}.png").write_bytes(base64.b64decode(screenshot))
