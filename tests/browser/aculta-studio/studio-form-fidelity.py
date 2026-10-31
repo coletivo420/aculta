@@ -90,8 +90,10 @@ markup = """<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <form id="aculta-user-profile-visibility-form"><div class="form-type-checkbox">
 <input id="privacy" type="checkbox"><label class="option" for="privacy">Mostrar bio</label></div>
 <input type="submit" class="form-submit" value="Salvar"></form></main>
-<main class="aculta-main" id="account-main"><form id="account-modal-form" data-portal-ui="account-bio-dialog">
-<input class="form-control" type="text" aria-label="Bio na conta"></form></main></body></html>"""
+<div id="account-dialog-fixture" role="dialog"><form id="account-modal-form" class="aculta-account-bio-dialog studio-profile-form" data-portal-ui="account-bio-dialog">
+<input class="form-control" type="text" aria-label="Bio na conta">
+<div class="portal-account-bio__actions"><button class="button button--secondary" type="button" data-aculta-bio-clear>Limpar</button>
+<input class="form-submit" type="submit" value="Salvar bio"></div></form></div></body></html>"""
 
 driver = Driver(bidi=True)
 try:
@@ -107,6 +109,10 @@ try:
       const primary=form.querySelector('[data-drupal-selector=edit-submit]');
       const reset=form.querySelector('[data-drupal-selector=edit-reset]');
       const danger=form.querySelector('.button--danger');
+      const accountModal=document.querySelector('#account-modal-form');
+      const accountModalField=accountModal.querySelector('.form-control');
+      const accountModalSubmit=accountModal.querySelector('[type=submit]');
+      const accountModalClear=accountModal.querySelector('[data-aculta-bio-clear]');
       const style=(el)=>getComputedStyle(el);
       const box=(el)=>{const s=style(el);return {padding:s.padding,background:s.backgroundColor,color:s.color,
         borderTop:s.borderTopColor,borderBottom:s.borderBottomColor,radius:s.borderRadius,
@@ -122,6 +128,12 @@ try:
           weight:style(form.querySelector('label[for=title]')).fontWeight},
         optionDisplay:style(form.querySelector('label.option')).display,
         normal:box(normal),primary:box(primary),reset:box(reset),danger:box(danger),
+        accountModal:{margin:style(accountModal).marginBlockStart,
+          paddingBlock:style(accountModal).paddingBlock,paddingInline:style(accountModal).paddingInline,
+          token:style(accountModal).getPropertyValue('--aculta-studio-fidelity-text').trim(),
+          font:style(accountModal).fontFamily,fieldHeight:accountModalField.getBoundingClientRect().height,
+          clearHeight:accountModalClear.getBoundingClientRect().height,
+          submitHeight:accountModalSubmit.getBoundingClientRect().height},
         outside:{padding:style(outside).padding,background:style(outside).backgroundColor,
           inputPadding:style(outside.querySelector('input')).padding,
           inputRadius:style(outside.querySelector('input')).borderRadius},
@@ -190,6 +202,16 @@ try:
                    and data["outside"]["background"] == "rgba(0, 0, 0, 0)"
                    and data["outside"]["inputPadding"] != "8px 16px",
                    data["outside"])
+            record(f"{mode}/{width}px: modal bio da Conta reusa Fidelity com alvos acessíveis",
+                   data["accountModal"]["margin"] == "20px"
+                   and data["accountModal"]["paddingBlock"] == "20px"
+                   and data["accountModal"]["paddingInline"] == ("20px" if width < 1120 else "32px")
+                   and data["accountModal"]["token"] == ("#1f1f1f" if mode == "light" else "#efefef")
+                   and "Montserrat" in data["accountModal"]["font"]
+                   and data["accountModal"]["fieldHeight"] >= 44
+                   and data["accountModal"]["clearHeight"] >= 44
+                   and data["accountModal"]["submitHeight"] >= 44,
+                   data["accountModal"])
             if width == 320:
                 shot = driver.req("GET", f"/session/{driver.session}/screenshot")
                 (OUT / f"studio-form-{mode}-320.png").write_bytes(base64.b64decode(shot))
@@ -257,17 +279,6 @@ try:
                and profile_scope["fieldHeight"] >= 44
                and profile_scope["submitHeight"] >= 44,
                profile_scope)
-        account_modal = driver.js("""const form=document.querySelector('#account-modal-form');
-          return {formMargin:getComputedStyle(form).marginBlockStart,
-            formPadding:getComputedStyle(form).paddingBlockStart,
-            token:getComputedStyle(form).getPropertyValue('--aculta-studio-fidelity-text').trim(),
-            font:getComputedStyle(form).fontFamily};""")
-        record(f"{mode}: formulário-modal da Conta mantém estilo próprio",
-               account_modal["formMargin"] == "0px"
-               and account_modal["formPadding"] == "0px"
-               and account_modal["token"] == ""
-               and "Montserrat" not in account_modal["font"],
-               account_modal)
         driver.js("document.querySelector('#profile-form').scrollIntoView({block:'start'})")
         shot = driver.req("GET", f"/session/{driver.session}/screenshot")
         (OUT / f"studio-profile-form-{mode}-1440.png").write_bytes(base64.b64decode(shot))

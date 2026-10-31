@@ -1455,3 +1455,13 @@ metadados 16,48:1/15,48:1; capturas 320/1440 foram
 revisadas em ambos os modos. O consumer Runtime, privacidade/cache A/B, ACL por
 entidade, módulos opcionais e WCAG permanecem pendentes. Registro detalhado e
 limitações em `mobile-first-audit.md`.
+
+### OCS-F9 — modal de bio privado (2026-10-31)
+
+O token `account-bio-dialog` passa a combinar a classe de dimensionamento do
+diálogo com a classe visual já usada nos formulários privados do Perfil. A
+fixture de Form API candidata passou 66/66 checks em 320/390/768/1440px e
+claro/escuro; campo e ações Limpar/Salvar ficaram em 44px, sem overflow. Não houve submit nem
+mudança no AJAX, rota, Form API ou dados. A prova é de fixture com mapeamento
+Portal simulado; Runtime e homologação OCS-F9/F11 seguem pendentes. Detalhes em
+`mobile-first-audit.md`.

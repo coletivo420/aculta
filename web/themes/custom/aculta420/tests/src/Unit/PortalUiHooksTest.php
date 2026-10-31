@@ -245,6 +245,21 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
+   * Account bio dialog reuses the Studio profile form presentation contract.
+   */
+  public function testMapsAccountBioDialogToFidelityRoot(): void {
+    $variables = [
+      'attributes' => new Attribute(['data-portal-ui' => 'account-bio-dialog']),
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    self::assertTrue($variables['attributes']->hasClass('aculta-account-bio-dialog'));
+    self::assertTrue($variables['attributes']->hasClass('studio-profile-form'));
+    self::assertFalse($variables['attributes']->offsetExists('data-portal-ui'));
+  }
+
+  /**
    * Forum dialog tokens map to the theme classes used by dialog.css.
    */
   public function testMapsForumDialogTokens(): void {

@@ -2707,3 +2707,20 @@ alterações locais paralelas, preservadas intactas.
 O estado de validação integrada é **DEFERRED/BLOCKED pela revisão servida**, e
 esta amostra não aprova THEME-MF3 nem OCS-F11. A validação visual recente de
 Meus Salvos continua sendo fixture local, não consumer integrado.
+
+### OCS-F9 — modal privado de bio da Conta (2026-10-31)
+
+O token existente `account-bio-dialog` mantém a classe de tema
+`aculta-account-bio-dialog`, usada para dimensionar o diálogo, e agora também
+recebe a classe de apresentação reutilizada `studio-profile-form`. Assim o
+campo e as ações Limpar/Salvar do modal compartilham tipografia, superfícies e geometria dos
+formulários privados de bio do Perfil. A mudança ficou no mapa visual do tema;
+Form API, rota JSON/AJAX, estado, dados e comportamento de Conta não mudaram.
+Magazine e formulários sem esse token seguem sem Fidelity.
+
+`studio-form-fidelity.py` passou **66/66 checks** no Firefox ESR em 320/390/
+768/1440px, claro/escuro. Em todas as combinações o campo e as ações Limpar/Salvar do modal
+mediram 44px, Montserrat e tokens de texto esperados; não houve overflow. O
+formulário não foi enviado. A fixture simula o resultado de `PortalUiHooks`, não
+prova CSS servida ou diálogo AJAX real; não cobre ACL, cache, no-JS, zoom nem
+WCAG integral. OCS-F9, S-R5 e OCS-F11 continuam pendentes.

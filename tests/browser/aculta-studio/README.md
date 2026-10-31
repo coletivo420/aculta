@@ -447,7 +447,8 @@ Como o Form API usa `node-revista-form` fora do Studio, compara
 `body.path-marley` com `body.path-magazine`. Também valida os roots
 `studio-profile-form` dos formulários existentes de bio/redes e também os
 Form API de apelido e privacidade, limitados a `body.path-perfil`; confirma que
-o token do modal `account-bio-dialog` não recebe Fidelity. Cobre 320/390/768/1440px
+o modal privado `account-bio-dialog` mantém seu marcador de diálogo e reusa a
+classe de apresentação `studio-profile-form`. Cobre 320/390/768/1440px
 em claro e escuro, sem enviar formulários.
 
 ```sh
@@ -456,8 +457,10 @@ ACULTA_FF_PROFILE_ROOT=/caminho/fora-do-repositorio/studio-form-fidelity/profile
 DISPLAY=:0 python3 -I tests/browser/aculta-studio/studio-form-fidelity.py
 ```
 
-Em 2026-10-30 passou 42/42 checks; as capturas clara/escura em 320px foram
-inspecionadas. Evidência: `/home/piradopirata/aculta-suite-out/studio-form-fidelity-final2-20261030/`.
+Em 2026-10-30 passou 42/42 checks antes da inclusão do modal. O reteste atual
+acrescenta geometria, tipografia Fidelity e confirma que o campo e as ações
+Limpar/Salvar medem 44px em cada viewport e tema, sem submeter o formulário. Evidência anterior:
+`/home/piradopirata/aculta-suite-out/studio-form-fidelity-final2-20261030/`.
 É fixture sem Drupal/Runtime: não homologa Form API real, AJAX, estados no-JS,
 ACL, cache ou fluxos dos módulos Marley/LMS/Wiki/Conta.
 

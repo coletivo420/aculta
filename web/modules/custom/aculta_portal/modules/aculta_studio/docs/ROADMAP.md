@@ -920,10 +920,12 @@ Os Form API existentes `AccountBioForm` e `SocialLinkForm` já emitem tokens
 Studio. Apelido e privacidade usam os IDs de formulário reais sob
 `body.path-perfil`. O tema traduz os tokens bio/social para
 `studio-profile-form` e aplica a mesma fundação Fidelity dos formulários
-Marley/Perfil; nenhum controller, Form API,
-rota, ACL, dado, SDC ou fluxo AJAX da Conta foi alterado. O modal de bio da
-Conta continua sem Fidelity. Firefox ESR fixture com CSS candidata passou
-60/60 checks em claro/escuro, 320/390/768/1440px, foco visível e alvo de 44px nos rótulos checkbox. Runtime servido,
+Marley/Perfil. O token do modal de bio da Conta agora também mapeia essa classe
+existente, preservando a classe de dimensionamento do diálogo. Nenhum controller,
+Form API, rota, ACL, dado, SDC ou fluxo AJAX foi alterado. A fixture Firefox ESR
+com CSS candidata passou 66/66 checks em claro/escuro, 320/390/768/1440px,
+incluindo campo e ações Limpar/Salvar de 44px no modal, foco visível e rótulos
+checkbox de 44px. Runtime servido,
 submit real, privacy A/B, cache, AJAX/no-JS, zoom, WCAG, S-R4/S-R5 e OCS-F11
 permanecem pendentes.
 ### OCS-F5 — isolamento do formulário editorial Marley (2026-10-31)

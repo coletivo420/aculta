@@ -446,7 +446,7 @@ final class PortalUiHooks {
     // (dialog.css).
     'photo-dialog' => ['aculta-photo-dialog'],
     'avatar-crop-dialog' => ['aculta-avatar-crop-dialog'],
-    'account-bio-dialog' => ['aculta-account-bio-dialog'],
+    'account-bio-dialog' => ['aculta-account-bio-dialog', 'studio-profile-form'],
     'social-link-dialog' => ['aculta-social-link-dialog'],
     'secret-dialog' => ['aculta-secret-dialog'],
     'messenger-preview' => ['aculta-messenger-preview'],
