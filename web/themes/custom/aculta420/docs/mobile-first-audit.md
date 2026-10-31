@@ -4575,3 +4575,14 @@ alvo de 44 px; sem overflow. Evidência:
 `/home/piradopirata/aculta-suite-out/aculta-events-organization-layout-f2c3b37db-20261031/`.
 Este harness é uma fixture local, não a tela Drupal servida; ACL, AJAX, conteúdo
 e integração no Runtime continuam por validar.
+
+### THEME-MF2 — catálogo público real de Eventos (2026-10-31)
+
+O Firefox ESR visível abriu `/eventos` no host de teste e mediu três publicações
+existentes em 320/360/390/575/576/600/768/1024/1280/1440 px. **30/30 checks**
+passaram: zero overflow, moldura visual aplicada somente ao SDC e links de
+pelo menos 44 px. Evidência:
+`/home/piradopirata/aculta-suite-out/events-catalogue-candidate-81b6ed4ad-20261031/`.
+O harness injeta o CSS local do SDC sobre a página real; portanto é validação da
+folha candidata e do markup/conteúdo servido, não prova isolada da CSS integrada.
+Não houve escrita de conteúdo ou submissão de filtros.

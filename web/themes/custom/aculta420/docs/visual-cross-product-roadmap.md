@@ -2142,3 +2142,12 @@ CSS atuais do tema, em nove larguras e modos claro/escuro. A evidência está em
 `/home/piradopirata/aculta-suite-out/aculta-events-organization-layout-f2c3b37db-20261031/`.
 É uma regressão da apresentação representativa: não testa markup Drupal, ACL,
 AJAX ou conteúdo do Runtime e não fecha THEME-MF3.
+
+### THEME-MF2 — catálogo público de Eventos: regressão visual com dados existentes (2026-10-31)
+
+Firefox ESR visível mediu `/eventos` no host de teste em dez larguras com três
+publicações já existentes: **30/30 checks** de ausência de overflow, moldura
+apenas no SDC e alvos de link de 44 px. Evidência em
+`/home/piradopirata/aculta-suite-out/events-catalogue-candidate-81b6ed4ad-20261031/`.
+O harness injeta CSS local sobre o markup real, sem editar conteúdo; esta rodada
+não comprova por si só a folha integrada e não fecha THEME-MF3.

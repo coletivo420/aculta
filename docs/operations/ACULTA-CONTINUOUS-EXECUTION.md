@@ -2200,3 +2200,9 @@ ou preferência persistente alterados.
 
 - Firefox ESR visível executou `tests/browser/aculta-events/organization-forms.py` contra a fixture local, com o Bootstrap do projeto e CSS atual do tema, em nove larguras e modos claro/escuro: **74/74 checks**. Reflow dos formulários/listas, rolagem interna da tabela, superfície, foco de teclado, alvo de 44 px e ausência de overflow passaram.
 - Evidência: `/home/piradopirata/aculta-suite-out/aculta-events-organization-layout-f2c3b37db-20261031/`. Não acessa o Runtime nem valida markup Drupal, ACL ou AJAX; não aprova THEME-MF3/OCS-F11.
+
+## 2026-10-31 — catálogo público de Eventos e limpeza de referências locais publicadas
+
+- No Runtime destacado em `81b6ed4ad`, Firefox ESR visível percorreu a raiz `/eventos` no host de teste em 320/360/390/575/576/600/768/1024/1280/1440 px. **30/30 checks** passaram com três publicações existentes, sem overflow, SDC como único wrapper visual e links com 44 px. O harness injeta o CSS local do SDC na página real; não enviou filtros nem alterou conteúdo. Evidência: `/home/piradopirata/aculta-suite-out/events-catalogue-candidate-81b6ed4ad-20261031/`.
+- A pedido do responsável, foram removidas 72 branches locais cujos commits eram alcançáveis em referências `origin` após `git fetch`; ficaram preservados `main`, a branch ativa, branches não publicadas e qualquer branch atualmente em worktree. Foi removido o worktree MCP limpo cujo commit estava em `origin/main`; `git worktree prune` retirou seu registro obsoleto. Worktrees de outras frentes com arquivos modificados e diretórios de snapshots/evidência foram preservados.
+- Limite do teste: a folha foi injetada; esta medição não substitui validação isolada do CSS servido nem fecha THEME-MF3/OCS-F11.
