@@ -2179,3 +2179,12 @@ ficou no fluxo e o estado do hub foi revisado em 320px. Nenhuma ação de
 conteúdo foi usada. Capturas e snapshot pré-ULI estão no `mobile-first-audit.md`.
 A rodada cobre somente apresentação servida do hub; não encerra ACL, operações,
 WCAG ou OCS-F11/THEME-MF3.
+
+### OCS-F10 / THEME-MF2 — no-JS em ACULTA Studio Culturas (2026-10-31)
+
+Com o JavaScript do site desativado, o hub e os formulários de novo Evento e
+Local renderizaram em nove larguras: 27 capturas, zero falhas, nenhum overflow;
+16 campos observáveis e ações dos formulários mediram pelo menos 44px. A
+navegação móvel expandiu no fluxo. Evidência e snapshot pré-ULI em
+`mobile-first-audit.md`. Não cobre AJAX/ACL, dark mode, teclado/zoom nem WCAG;
+não encerra THEME-MF3/OCS-F11.

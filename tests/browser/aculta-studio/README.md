@@ -114,8 +114,11 @@ python3 tests/browser/aculta-studio/ocs-baseline.py
 uses a read-only GET and a temporary login URL; no event, location, address, or
 other field value is saved. Candidate CSS capture is not proof that the Runtime
 serves the branch or that the entire OCS-F11/THEME-MF3 gate passes. The test
-does not cover dark mode, no-JS/AJAX behavior, full keyboard/zoom/WCAG, ACL
-between accounts, or address CEP behavior.
+uses JavaScript by default; set `OCS_JAVASCRIPT_ENABLED=0` to disable site
+scripts while retaining WebDriver inspection and use the same capture flow for
+no-JS reflow. This does not test AJAX in the disabled mode. The test does not
+cover dark mode, full keyboard/zoom/WCAG, ACL between accounts, or address CEP
+behavior.
 
 Reteste completo em 2026-10-31: 18 capturas (dois formulários × nove larguras)
 passaram 108/108 checks. O aviso ULI real foi observado em uma captura de 320px:

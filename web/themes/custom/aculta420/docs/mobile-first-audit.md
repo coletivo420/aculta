@@ -4630,3 +4630,19 @@ Snapshot anterior à ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots
 permaneceu em 611 tabelas. Esta captura verifica reflow e shell do hub, não
 CRUD, grants entre contas, teclado/zoom, dark mode ou WCAG completa; não aprova
 OCS-F11/THEME-MF3.
+
+### OCS-F10 / THEME-MF2 — ACULTA Studio Culturas sem JavaScript (2026-10-31)
+
+Com JavaScript do site desativado no Firefox ESR visível, `/culturas`,
+`/culturas/eventos/novo` e `/culturas/locais/novo` renderizaram por GET em nove
+larguras (27 capturas, `CAPTURED`, zero falhas), sem overflow documental.
+Institution Bar e Domain Header permaneceram presentes. Os dois Form API forms
+continuaram visíveis; seus 16 campos observáveis e ações mediram pelo menos
+44px nas larguras testadas. A navegação sem JavaScript expande no fluxo; a
+captura de 320px foi revisada. Nenhuma operação foi enviada. Evidência:
+`/home/piradopirata/aculta-suite-out/culturas-nojs-integrated-5702e4ffc-20261031/`.
+Snapshot pré-ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-nojs-integrated-20261031.sql`,
+54.545.379 bytes, modo 0600, SHA-256
+`c89e7f93401d06b2ae95ccbc242f02a0691ae75703dd1d67d8c3c7d9ae0e20db`; Runtime
+com 611 tabelas. Este é um reteste de renderização/reflow sem script, não cobre
+AJAX, dark mode, teclado/zoom ou WCAG completa; não aprova OCS-F11/THEME-MF3.

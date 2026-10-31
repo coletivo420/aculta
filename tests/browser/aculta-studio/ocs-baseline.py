@@ -32,6 +32,7 @@ STUDIO_CSS_OVERRIDE = os.environ.get("OCS_STUDIO_FIDELITY_CSS_OVERRIDE") == "1"
 ANONYMOUS_CAPTURE = os.environ.get("OCS_STUDIO_ANONYMOUS") == "1"
 STUDIO_CSS_ROOT = Path(os.environ.get("OCS_STUDIO_FIDELITY_CSS_ROOT", Path(__file__).resolve().parents[3])).resolve()
 STUDIO_COLOR_MODE = os.environ.get("OCS_STUDIO_COLOR_MODE", "system")
+SITE_JAVASCRIPT_ENABLED = os.environ.get("OCS_JAVASCRIPT_ENABLED", "1") != "0"
 EXPECTED_STUDIO_ROOT = os.environ.get("OCS_EXPECT_STUDIO_ROOT", "").strip()
 STATUS_FLOW_CSS_OVERRIDE = os.environ.get("OCS_STATUS_FLOW_CSS_OVERRIDE") == "1"
 STATUS_FLOW_FIXTURE = os.environ.get("OCS_STATUS_FLOW_FIXTURE") == "1"
@@ -1056,7 +1057,7 @@ def public_profile_zoom(driver, url):
 def main():
     if os.environ.get("DISPLAY") != ":0":
         raise RuntimeError("Use Firefox ESR visível com DISPLAY=:0.")
-    driver = Driver(bidi=True)
+    driver = Driver(prefs={"javascript.enabled": SITE_JAVASCRIPT_ENABLED}, bidi=True)
     profile_zoom_results = None
     profile_keyboard_result = None
     public_profile_zoom_results = None
@@ -1120,6 +1121,7 @@ def main():
         "runtime_status": "CAPTURED",
         "studio_capture_status": "FAIL" if CAPTURE_FAILURES else ("PARTIAL" if any(capture.get("status") == "DEFERRED" or capture.get("accessDeniedHint") or capture.get("missingMainHint") or capture.get("emptyDocumentHint") for capture in CAPTURES) else "CAPTURED"),
         "studio_user": "anonymous" if ANONYMOUS_CAPTURE else USER,
+        "site_javascript_enabled": SITE_JAVASCRIPT_ENABLED,
         "studio_pages": [url for _, url in studio_pages()],
         "expected_studio_root_selector": EXPECTED_STUDIO_ROOT or None,
         "widths": [width for width, _ in WIDTHS],
