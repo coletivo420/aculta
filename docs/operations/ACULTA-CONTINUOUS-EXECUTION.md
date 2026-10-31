@@ -2553,3 +2553,10 @@ ou preferência persistente alterados.
   `/home/piradopirata/aculta-suite-out/global-page-matrix-02f5-run2/`.
   Esta matriz confirma reflow/reachability, mas não substitui ACL, submit,
   zoom real ou a homologação dos hosts ainda indisponíveis.
+- A mesma matriz executou axe-core em Firefox ESR headless nos cinco URLs,
+  claro/escuro e viewport mínimo de cada modo: 10 auditorias, zero violações
+  WCAG reportadas e dois resultados `incomplete` sem impacto/violação. O
+  relatório está em
+  `/home/piradopirata/aculta-suite-out/global-axe-986c92f97/results.json`.
+  A execução é automatizada e não substitui inspeção X11, teclado, zoom real,
+  ACL ou testes de submissão.
