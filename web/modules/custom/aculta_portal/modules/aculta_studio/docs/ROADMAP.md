@@ -1,4 +1,4 @@
-## Status visual consolidado — sequência OCS-F0–F11 e THEME-MF0–MF3 (2026-10-30)
+## Status visual consolidado — sequência OCS-F0–F11 e THEME-MF0–MF3 (2026-10-31)
 
 Esta é a sequência aprovada mais recente e substitui numerações incompatíveis
 em registros históricos abaixo: F0 inventário; F1 tokens; F2 navegação;
@@ -10,14 +10,15 @@ depende de THEME-MF3. OCS-A1–A4 só começam depois dos dois gates aprovados.
 |---|---|
 | THEME-MF0 | Parcial: inventários lexicais/libraries recenseados; reteste no HEAD `4eb116482` verificou shell em 10 raízes anônimas × 9 larguras (90/90; ambos os headers uma vez, sem overflow); consumers por tela/purpose e cascata continuam incompletos. |
 | THEME-MF1–MF2 | Implementação incremental; cobertura visual global incompleta. |
-| THEME-MF3 | Pendente. Baseline servido no reteste de teclado mais recente registrou 333 checks aprovados, 1 falha e 4 SKIP: overflow de 8px em `/entrar` a 320px, dois limites de sequência em Links e dois focos delegados ao CAPTCHA. CSS candidata + marcador simulado passou 36/36 checks de Conta em 320/1280px (dois focos de CAPTCHA SKIP); o reflow candidato eliminou o overflow na sessão, mas não prova implantação do hook no Runtime. Retestes anteriores passaram 540/540 checks em dez purposes, nove larguras, claro/escuro e reduced motion, e 30/30 em zoom real 200%/400%, com candidato injetado na Conta. Cursos passou 14/14 em 320/390/768/1440px e ArrowRight a 400%. Páginas internas, integração servida, acessibilidade integral e reflow global continuam pendentes; não homologar todo ACULTA420 como mobile-first. |
+| THEME-MF3 | Pendente. Matriz pública servida de claro/escuro + reduced motion passou 358/360; as duas falhas são `/conta` a 320px (documento com 328px). Sem JavaScript: 210/210. Zoom real das dez raízes: 30/30, com CSS/marcador candidatos injetados em Conta. O reteste de teclado do baseline servido marcou 333 PASS, 1 FAIL e 4 SKIP; limites de sequência em Links e foco delegado do CAPTCHA continuam sob revisão. A correção candidata `challenge-frame` passou 10/10 nas nove larguras com CSS e marcador injetados, mas o Runtime ainda não instala o hook; portanto o overflow integrado permanece aberto. Cursos passou 14/14 e a Revista tem cobertura focal de zoom/capa. Páginas internas, integração servida e acessibilidade transversal completa seguem pendentes; não homologar todo ACULTA420 como mobile-first. |
 | OCS-F0 | Parcial: providers/rotas mapeados; contrato de shell no Portal e captura pós-migration das raízes em 10 purposes verificados em `4eb116482`; baseline Studio ainda não inclui tela autenticada equivalente do upstream nem todas as áreas/estados. |
 | OCS-F1–F2 | Implementados parcialmente; CSS candidata verificada em rotas reais, implantação e cobertura total pendentes. |
 | OCS-F3 | Variante `studio_fidelity` adicionada ao SDC `patterns/card` com story e consumer real na entrada da Conta; o reteste atual do schema registrou 55/759 e PHPUnit `PortalUiHooksTest` passou 24/138. CSS escopada à lista `.aculta-account-entry` expande os cinco links existentes para alvos de 44×44px. Fixture Firefox ESR fiel ao render array passou 248/248 em 27 larguras (320–1920px), incluindo limites 480/768/992/1100/1120/1360/1600/1920px, container, Montserrat, ausência de overflow e foco por Tab em cada destino; capturas 320/1440px inspecionadas em `/home/piradopirata/aculta-suite-out/studio-card-fidelity-account-entry-20261031/`. É fixture CSS/SDC, não o HTML do Runtime. Render Drupal, teste A/B e implantação continuam pendentes. |
 | OCS-F4 | Composição adapta links autorizados do registry e da entrada da Conta ao SDC existente; estado funcional vem dos providers. Captura Runtime com o novo adaptador pendente. |
 | OCS-F5–F7 | Parcial/incompleto; Marley foi validado com publicações sintéticas, tabela responsiva e GET dos Form APIs sem submit. WE SATIVA no path legado `/wesativa` passou 279/279 invariantes autenticados em nove larguras, claro/escuro, incluindo Institution Bar textual com contraste 11,34:1/12,95:1. Correção candidata removeu a duplicação entre margens de seção e `gap-4`; Firefox ESR mediu 48px em 320px e 64px em 1440px (claro/escuro), sem overflow, com CSS injetada apenas no navegador. O Runtime ainda não serve `/studio/we-sativa`; Wiki preenchida, grants A/B, autoria/revisão/moderação, persistência/submissão, AJAX/no-JS, LMS e os demais estados continuam pendentes. |
 | OCS-F8 | Fundação visual Studio e apresentação candidata das listagens integradas; fixture Firefox ESR 74/74 em nove larguras e claro/escuro. Operador autorizado, grants por loja e telas reais continuam sem homologação. |
-| OCS-F9–F10 | Shell da Conta passou reteste Firefox 33/33 em dez larguras; fixtures de identidade e perfil público passaram 56/56 e 22/22. Contas/perfis reais, render do editor privado, ACL A/B e S-R4/S-R5 continuam pendentes; `/conta-legada` segue preservada. |
+| OCS-F9 | Conta privada e Perfil público seguem separados e `/conta-legada` preservada. Shell da Conta passou Firefox 33/33 em dez larguras; fixtures de identidade e perfil público passaram 56/56 e 22/22; formulário privado e modal de bio passaram 66/66 em claro/escuro e 320/390/768/1440px. Integração servida, A/B de privacidade, avatar/foto, crop, cache, S-R4/S-R5 e acessibilidade completa continuam pendentes. |
+| OCS-F10 | Culturas passou fixture 110/110 e rota com CSS candidata 20/20 em nove larguras e claro/escuro, shell único e zero overflow. A CSS não está servida no Runtime; grants A/B, estados completos de Eventos/Locais, demais providers/opcionais e paridade pareada ainda pendentes. |
 | OCS-F11 | Não aprovado: depende de THEME-MF3 e das evidências de todas as áreas/estados. |
 | OCS-A1–A4 | Não iniciadas; gate anterior permanece fechado. |
 
@@ -147,16 +148,19 @@ A API e ACL comerciais permanecem no `aculta_commerce`; alterações de services
 
 **Substitui o bloco inicial "Frente visual aprovada" onde limita F5 ao Marley e encerra fidelidade em F7.** A fonte normativa agora é [plano visual atualizado](../../../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md), seção "Retificação vinculante de escopo transversal".
 
-- [ ] **OCS-F0:** auditar todo `StudioTab`, providers, rotas e consumidores. Cobertura inicial: hub, Marley, GanjaLab, WE Sativa, Conta, Perfil e **demais experiências efetivamente registradas**; distinguir existentes, opcionais e planejadas.
-- [ ] **OCS-F1-F3:** tokens Next escopados, navegação interna **derivada do registry/ACL**, SDCs e histórias reutilizáveis, sem shell institucional paralelo.
-- [ ] **OCS-F4:** hub e grade dinâmica de experiências autorizadas, links reais e estados de ausência.
-- [ ] **OCS-F5:** Marley e experiências editoriais proprietárias.
-- [ ] **OCS-F6:** GanjaLab, cursos, turmas, biblioteca e jornada educacional nos limites do LMS existente.
-- [ ] **OCS-F7:** WE Sativa, autoria Wiki e fluxos realmente presentes; autoria não é moderação.
-- [ ] **OCS-F8:** Conta privada e Perfil público em separados; S-R4/S-R5 e `/conta-legada` preservados.
-- [ ] **OCS-F9:** experiências adicionais inventariadas em F0, incluindo módulos opcionais e estados desligados.
-- [ ] **OCS-F10:** **gate final da fidelidade**, com matriz interexperiências, screenshots e testes; **somente então** iniciar OCS-A1-A4.
-- [ ] **OCS-A1-A4:** tokens e identidade Aculta, componentes, aplicação **a todas as experiências** e consolidação sem alterar contratos funcionais.
+A sequência abaixo retifica a numeração desta lista histórica e alinha o roadmap ao plano vigente:
+
+- [ ] **OCS-F0:** auditar todos os providers, rotas e consumers reais, opcionais e planejados; revisar `opcult`, licenças, matriz de paridade e baselines.
+- [ ] **OCS-F1-F3:** tokens Next escopados, navegação contextual e SDCs/stories com consumers reais.
+- [ ] **OCS-F4:** hub dinâmico com experiências autorizadas e estados reais.
+- [ ] **OCS-F5:** Marley e fluxos editoriais.
+- [ ] **OCS-F6:** GanjaLab e jornada LMS.
+- [ ] **OCS-F7:** ACULTA STUDIO WE SATIVA e autoria Wiki, respeitando ACL de revisão/moderação.
+- [ ] **OCS-F8:** ACULTA STUDIO GREEN STASH integrado, com operações realmente existentes e grants Commerce.
+- [ ] **OCS-F9:** Conta privada e Perfil público distintos; S-R4/S-R5 e `/conta-legada` preservados.
+- [ ] **OCS-F10:** ACULTA Studio Culturas e demais providers encontrados no inventário.
+- [ ] **OCS-F11:** gate de fidelidade de todo Studio, obrigatório depois de THEME-MF3 e antes de OCS-A1.
+- [ ] **OCS-A1-A4:** identidade Aculta aplicada sobre os mesmos SDCs e contratos, somente após OCS-F11/THEME-MF3 aprovados.
 
 ### Registro de implementação visual F4 — 2026-10-30
 
@@ -175,15 +179,13 @@ Não substituir o conteúdo de uma experiência pelo de outra. O Studio compõe 
 
 **Ordem obrigatória:** primeiro reproduzir fielmente a aparência OpenCulturas **Next** (`opcult`, não `openculturas_base`); só depois do gate de fidelidade passar para identidade própria Aculta Studio. Plano técnico: [PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md](../../../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md).
 
-- [ ] **OCS-F0:** inventário, baseline e matriz visual por tela/estado, auditoria de licenças e consumers SDC.
-- [ ] **OCS-F1-F3:** tokens de fidelidade escopados, shell/navegação internos e variantes de SDCs existentes; não mudar Institution Bar/Domain Header nem CSS global.
-- [ ] **OCS-F4:** dashboard fiel, dados e ações reais; sem salvos/recomendações/organização simulados.
-- [ ] **OCS-F5:** Marley e ferramentas editoriais com a mesma aparência; módulos mantêm dados e operações.
-- [ ] **OCS-F6:** Conta privada e Perfil público com apresentação consistente, mas contratos distintos, sem retirar `/conta-legada`; respeitar gates S-R4/S-R5.
-- [ ] **OCS-F7 (gate):** screenshots de paridade e aceite de acessibilidade, cache, acesso A/B, no-JS, mobile e SDC Runtime.
-- [ ] **OCS-A1-A4:** aplicar identidade institucional Aculta, refinar componentes, revisar as telas e remover estilos provisórios sem trocar props/slots/rotas.
-
-F0-F3 podem ser implementadas sem desbloquear a homologação de S-R4/S-R5; F4-F6 seguem restrições funcionais existentes. Cada fase: commit independente na PR #299; **documentação não significa implementação**.
+**Registro histórico:** a numeração e a divisão F0-F7 deste plano inicial foram
+substituídas pela sequência OCS-F0–F11 e THEME-MF0–MF3 descrita no status
+consolidado no início deste documento e no plano visual vigente. Para execução e
+status, usar somente a sequência atual: Green Stash em F8, Conta/Perfil em F9,
+demais áreas em F10 e gate Fidelity em F11, condicionado a THEME-MF3. O princípio
+aprovado em duas etapas continua válido: primeiro OpenCulturas Next, depois a
+identidade própria Aculta; documentação não significa implementação.
 
 ### Registro OCS-F1 — tipografia e tokens escopados (2026-10-30)
 
