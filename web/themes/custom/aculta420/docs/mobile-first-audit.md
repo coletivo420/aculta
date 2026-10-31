@@ -223,7 +223,8 @@ contraste do botão acima de 12:1 e CSS candidata sem overflow. A suíte detecto
 que o media query de 576px sobrescrevia a grade de 3 colunas de 992px por ordem
 na cascata; os blocos foram reordenados e o reteste passou. Capturas e
 `results.json`: `/home/piradopirata/aculta-suite-out/theme-mf2-forum-search-final-20261030/`.
-A linha sintética do índice ainda não substitui a inspeção de tópico real; Wiki,
+A inspeção focal de um tópico real com uma resposta está registrada abaixo; ela
+não substitui cobertura de outras discussões, páginas internas e estados. Wiki,
 Fórum e demais purposes não estão homologados globalmente e MF3 permanece
 pendente.
 
@@ -234,8 +235,8 @@ escuro. A linha de tópico e a ação da listagem foram fixtures somente no DOM;
 não se enviou conteúdo. Capturas e `results.json`:
 `/home/piradopirata/aculta-suite-out/theme-mf2-forum-index-20261030/`. O tema
 servido no Runtime não foi reconstruído; a barra multidomínio nessa captura
-reflete os assets servidos e não integra a CSS candidata do índice. A validação
-completa de tópico real e shell permanece pendente.
+reflete os assets servidos e não integra a CSS candidata do índice. A validação completa do tópico e do shell permanece pendente; a suíte focal de
+2026-10-31 cobre um tópico publicado com uma resposta, sem autenticação.
 
 As ações do cabeçalho da View de tópicos também foram migradas da media query
 com limite superior para aprimoramento progressivo: dimensões compactas a
@@ -2791,3 +2792,20 @@ revisão autenticada, ACL, discussão, teclado, zoom real, modos de cor ou WCAG
 Stylelint passou; Design Foundations passou 2429 checks; schemas SDC passaram
 55 componentes/27 includes/759 verificações; fronteira módulo/tema passou 3489
 verificações; mapa módulo/tema passou 213 checks.
+
+
+### THEME-MF2 — tópico e resposta real do Fórum (2026-10-31)
+
+`forum-topic-layout.py` descobriu na home pública um tópico publicado com uma
+resposta e passou **10/10 verificações** em Firefox ESR visível, com as folhas
+`forum-index.css`, `discussion.css` e `author-card.css` injetadas somente na
+sessão. Em 320/360/390/599/600/768/1024/1280/1440px, o artigo manteve corpo e
+autoria visíveis, resposta presente, Institution Bar e Domain Header únicos,
+sem erro visível ou overflow horizontal. Capturas 320/768/1440px em
+`/home/piradopirata/aculta-suite-out/forum-topic-layout-candidate-final2-20261031/`
+foram inspecionadas. O script só faz GETs e não envia comentários.
+
+A prova cobre um tópico público pequeno e não valida tópicos longos, paginação,
+formulário de resposta, usuários autenticados, privacidade, teclado, zoom, claro/
+escuro ou WCAG 2.2 AA; o Runtime continua servindo o CSS anterior à branch.
+THEME-MF3 permanece pendente.
