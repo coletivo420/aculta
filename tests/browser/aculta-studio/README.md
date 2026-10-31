@@ -446,3 +446,13 @@ Montserrat, sem tokens Fidelity na Institution Bar ou no Domain Header. Foram
 78/78 checks PASS, incluindo contagem única do shell e reflow do H1 em duas
 linhas a 320px. Capturas em
 `/home/piradopirata/aculta-suite-out/studio-editorial-heading-fidelity-20261030/`.
+
+A verificação de criação segue o link renderizado na tela de entrada da seção:
+`/marley/revista/criar/nova-publicacao` leva à ação proprietária real
+`/marley/revista/nova`, onde o Form API compartilha a classe
+`node-revista-form`. GET somente leitura no Firefox ESR passou 87/87 checks,
+com tokens e Montserrat em título/formulário e sem overflow a 320/390/768/1280px.
+Capturas desktop/mobile em
+`/home/piradopirata/aculta-suite-out/studio-editorial-create-form-fidelity-retest-20261030/`.
+Não houve submissão; save, preview, no-JS/AJAX, grants e WCAG integral seguem
+fora da evidência.

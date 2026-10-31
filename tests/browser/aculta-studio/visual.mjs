@@ -327,6 +327,31 @@ try {
       if (width === 320) await shot('05-editor-revista-mobile');
     }
     await setViewport(1280, 900);
+
+    await navigateTo(PAGE.replace(/\/marley.*$/, '') + '/marley/revista/criar/nova-publicacao');
+    const createActionHref = await exec(`const action=[...document.querySelectorAll('[data-aculta-studio="action"]')].find((link)=>/nova publicação/i.test(link.textContent));return action?.href||null;`);
+    const createActionPath = createActionHref ? new URL(createActionHref).pathname : null;
+    check('ação Nova publicação aponta para a rota Form API proprietária', createActionPath === '/marley/revista/nova', JSON.stringify({href:createActionHref,path:createActionPath}));
+    if (createActionHref) {
+      await navigateTo(createActionHref);
+      const createFormReady = await waitFor(`document.querySelector('form.node-revista-form')`, 'formulário Form API de criação da Revista');
+      const createForm = JSON.parse(await exec(`const form=document.querySelector('form.node-revista-form');const main=document.querySelector('.aculta-main');const heading=main?.querySelector('h1');return JSON.stringify({ready:!!form,id:form?.id,fontFamily:form?getComputedStyle(form).fontFamily:null,mainFamily:main?getComputedStyle(main).fontFamily:null,headingFamily:heading?getComputedStyle(heading).fontFamily:null,titleField:!!form?.querySelector('[name="title[0][value]"]'),page:document.documentElement.scrollWidth});`));
+      check('owner GET renderiza formulário Form API de criação sem submit', createFormReady && createForm.ready && createForm.titleField, JSON.stringify(createForm));
+      check('formulário e título de criação recebem tipografia Fidelity', createForm.fontFamily?.includes('Montserrat') && createForm.mainFamily?.includes('Montserrat') && createForm.headingFamily?.includes('Montserrat'), JSON.stringify(createForm));
+      await shot('06-criar-revista-desktop');
+      for (const width of [320, 390, 768, 1280]) {
+        await setViewport(width, width < 500 ? 844 : 900);
+        const createDimensions = JSON.parse(await exec(`const form=document.querySelector('form.node-revista-form');const r=form?.getBoundingClientRect();return JSON.stringify({width:innerWidth,page:document.documentElement.scrollWidth,formWidth:r?.width,formRight:r?.right});`));
+        check(`formulário de criação sem overflow em ${width}px`, createDimensions.page <= width && createDimensions.formRight <= width + 1, JSON.stringify(createDimensions));
+        if (width === 320) await shot('07-criar-revista-mobile');
+      }
+      await setViewport(1280, 900);
+    }
+    else {
+      check('owner GET renderiza formulário Form API de criação sem submit', null, 'ação de criação ausente para esta conta');
+      check('formulário e título de criação recebem tipografia Fidelity', null, 'ação de criação ausente para esta conta');
+      for (const width of [320, 390, 768, 1280]) check(`formulário de criação sem overflow em ${width}px`, null, 'ação de criação ausente para esta conta');
+    }
   }
   else {
     check('owner GET renderiza o Form API nativo de edição sem submit', null, 'não há link de edição próprio nesta conta');
@@ -334,6 +359,10 @@ try {
     check('título e composição do editor recebem tipografia Fidelity', null, 'não há link de edição próprio nesta conta');
     check('Institution Bar e Domain Header permanecem únicos e fora dos tokens Studio', null, 'não há link de edição próprio nesta conta');
     for (const width of [320, 390, 768, 1280]) check(`formulário editorial sem overflow em ${width}px`, null, 'não há link de edição próprio nesta conta');
+    check('ação Nova publicação aponta para a rota Form API proprietária', null, 'não há publicação própria para iniciar inspeção de formulário');
+    check('owner GET renderiza formulário Form API de criação sem submit', null, 'não há publicação própria para iniciar inspeção de formulário');
+    check('formulário e título de criação recebem tipografia Fidelity', null, 'não há publicação própria para iniciar inspeção de formulário');
+    for (const width of [320, 390, 768, 1280]) check(`formulário de criação sem overflow em ${width}px`, null, 'não há publicação própria para iniciar inspeção de formulário');
   }
 
   const errs = await exec(`return (window.__errs || []).slice(0, 10);`);
