@@ -2758,3 +2758,8 @@ ou preferência persistente alterados.
 - Após a publicação final, os validadores estáticos no docroot passaram:
   Foundation 353, SDC schemas 55 componentes/759 checks e route aliases 38
   arquivos.
+- A revisão dos três resultados `incomplete` restantes do axe no formulário
+  identifica `aria-valid-attr-value`, `color-contrast` e `target-size` em
+  elementos Core/Metatag/CKEditor. Eles não são violações confirmadas pelo
+  axe, mas exigem revisão manual/atribuição ao owner do widget antes de
+  declarar WCAG completo; não foram mascarados no relatório.
