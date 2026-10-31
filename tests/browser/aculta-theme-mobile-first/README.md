@@ -662,9 +662,10 @@ completa: artigo, corpo, capa carregada, H1, shell, overflow e conteúdo que
 ultrapasse o próprio corpo. Não segue links para outro host e registra
 `DEFERRED` se não houver publicação. Salva capturas da capa e do artigo em 200%
 e 400%, além das medições sem texto editorial em `summary.json`, tudo em
-`$SUITE_OUT`. O script é somente leitura: não submete formulários nem altera
-conteúdo/configuração. Requer host `toca`, checkout de desenvolvimento,
-`aculta_runtime`, `DISPLAY=:0`, `xdotool` e geckodriver.
+`$SUITE_OUT`; as capturas do artigo preservam o topo natural da página, sem
+forçar a publicação sob o cabeçalho fixo. O script é somente leitura: não
+submete formulários nem altera conteúdo/configuração. Requer host `toca`, checkout
+de desenvolvimento, `aculta_runtime`, `DISPLAY=:0`, `xdotool` e geckodriver.
 
 ```sh
 cd /home/piradopirata/projetos/aculta

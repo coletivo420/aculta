@@ -185,6 +185,7 @@ def main():
             for target in TARGETS:
                 reset_zoom(driver)
                 set_viewport(driver, WIDTH, 900)
+                driver.js("window.scrollTo(0,0); return true")
                 current = inspect_article(driver)["devicePixelRatio"]
                 for _ in range(24):
                     if current >= target - 0.08:
@@ -216,7 +217,7 @@ def main():
                     data["status"] = "DEFERRED"
                     data["reason"] = "Firefox keyboard shortcut did not reach requested page zoom."
                     break
-                driver.js("document.querySelector('.node--type-revista.node--view-mode-full')?.scrollIntoView({block:'start'}); return true")
+                driver.js("window.scrollTo(0,0); return true")
                 time.sleep(0.2)
                 shot = driver.req("GET", f"/session/{driver.session}/screenshot")
                 (OUT / f"revista-article-zoom-{round(target * 100)}.png").write_bytes(base64.b64decode(shot))
