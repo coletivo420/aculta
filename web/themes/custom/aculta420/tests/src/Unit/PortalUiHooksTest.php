@@ -229,6 +229,35 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
+   * Course authoring tokens map to the established Studio presentation.
+   */
+  public function testMapsStudioCourseAuthoringTokens(): void {
+    $variables = [
+      'attributes' => new Attribute([
+        'data-portal-ui' => 'studio-shell studio-course-authoring',
+      ]),
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    self::assertTrue($variables['attributes']->hasClass('studio'));
+    self::assertTrue($variables['attributes']->hasClass('studio-course-authoring'));
+    self::assertFalse($variables['attributes']->offsetExists('data-portal-ui'));
+
+    $back = [
+      'element' => [
+        '#attributes' => [
+          'data-portal-ui' => 'studio-action studio-course-authoring-back',
+        ],
+      ],
+    ];
+    (new PortalUiHooks())->preprocess($back);
+
+    self::assertContains('studio__action', $back['element']['#attributes']['class']);
+    self::assertContains('studio-course-authoring__back', $back['element']['#attributes']['class']);
+  }
+
+  /**
    * Studio-only profile Form API tokens share one visual root class.
    */
   public function testMapsStudioProfileFormsToFidelityRoot(): void {

@@ -560,6 +560,8 @@ final class PortalUiHooks {
     'account-entry' => ['studio', 'aculta-account-entry'],
     'account-experiences' => ['studio__actions', 'list-unstyled', 'd-grid', 'gap-2'],
     'studio-shell' => ['studio'],
+    'studio-course-authoring' => ['studio-course-authoring'],
+    'studio-course-authoring-back' => ['studio-course-authoring__back'],
     'studio-marley-entry' => ['btn', 'btn-outline-primary', 'studio__action'],
     'studio-account-home' => ['studio__panel', 'card', 'card-body'],
     'studio-profile-entry' => ['btn', 'btn-outline-primary', 'studio__action'],

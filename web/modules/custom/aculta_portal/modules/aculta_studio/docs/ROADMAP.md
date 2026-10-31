@@ -1,5 +1,14 @@
 ## Status visual consolidado — sequência OCS-F0–F11 e THEME-MF0–MF3 (2026-10-31)
 
+### Fronteira visual do formulário de criação Ganjalab
+
+`CourseAuthoringController` entrega `studio-shell studio-course-authoring`,
+`studio-main` e `studio-action studio-course-authoring-back` como tokens
+semânticos. O ACULTA420 mapeia os tokens às classes Fidelity existentes; o
+controller mantém o Form API e o ACL do Group `lms_course`. Testes Unit
+cobrem a emissão e o mapeamento. A homologação visual integrada continua
+dependente do gate de Runtime e não altera o status geral THEME-MF3/OCS-F11.
+
 Esta é a sequência aprovada mais recente e substitui numerações incompatíveis
 em registros históricos abaixo: F0 inventário; F1 tokens; F2 navegação;
 F3 SDCs; F4 Hub; F5 Marley; F6 GanjaLab; F7 WE Sativa; F8 Green Stash

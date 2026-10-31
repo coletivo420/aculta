@@ -51,9 +51,8 @@ final class CourseAuthoringController {
     return [
       '#type' => 'container',
       '#attributes' => [
-        'class' => ['studio', 'studio-course-authoring'],
         'data-aculta-studio' => 'course-authoring',
-        'data-portal-ui' => 'studio-shell',
+        'data-portal-ui' => 'studio-shell studio-course-authoring',
       ],
       '#cache' => [
         'contexts' => ['user', 'user.permissions', 'url.site', 'route'],
@@ -63,16 +62,15 @@ final class CourseAuthoringController {
         $this->t('Voltar ao ACULTA Studio Ganjalab'),
         Url::fromRoute('aculta_lms.student_dashboard'),
         [
-          'class' => 'studio-course-authoring__back',
           'data-aculta-studio' => 'course-create-back',
-          'data-portal-ui' => 'studio-action',
+          'data-portal-ui' => 'studio-action studio-course-authoring-back',
         ],
       ),
       'content' => [
         '#type' => 'container',
         '#attributes' => [
-          'class' => ['studio__main'],
           'data-aculta-studio' => 'course-form',
+          'data-portal-ui' => 'studio-main',
         ],
         'form' => $this->entityFormBuilder->getForm($course, 'add'),
       ],

@@ -576,6 +576,8 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `document-download-item` | `aculta-download-meta-item` | `web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Plugin/Field/FieldFormatter/DownloadWithMetaFormatter.php` |
 | `document-download-link` | `download-link` | `web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Plugin/Field/FieldFormatter/DownloadWithMetaFormatter.php` |
 | `studio-shell` | `studio` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-course-authoring` | `studio-course-authoring` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/CourseAuthoringController.php` |
+| `studio-course-authoring-back` | `studio-course-authoring__back` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/CourseAuthoringController.php` |
 | `studio-marley-entry` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/MarleyExperienceProvider.php` |
 | `studio-account-home` | `studio__panel card card-body` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php` |
 | `studio-profile-entry` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/ProfileExperienceProvider.php` |

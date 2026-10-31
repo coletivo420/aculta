@@ -676,6 +676,18 @@ emite `studio`, `studio-course-authoring` e `studio__main`; essa mudança já
 pertence ao commit `1fb521c57`. Nenhum arquivo funcional do módulo foi alterado
 nesta etapa; o gate continua impedindo publicação.
 
+#### Retificação — contrato de tokens de autoria de curso (2026-10-31)
+
+A dívida acima foi corrigida no trabalho visual subsequente. `CourseAuthoringController`
+agora emite tokens semânticos para shell, raiz específica, conteúdo e ação de
+retorno; deixou de escrever classes de design. `PortalUiHooks` mapeia esses
+tokens para as classes Fidelity existentes. O teste Unit do controller
+verifica tokens sem classes, e `PortalUiHooksTest` verifica o mapeamento. O
+resultado do gate global após esta correção será registrado com as evidências
+da execução. O gate focal passou em 3.491 verificações, sem tokens de
+apresentação ou classes de design no módulo. Isto resolve a dívida de fronteira,
+mas não aprova THEME-MF3.
+
 | Camada | Arquivos identificados | Observação da auditoria |
 |---|---|---|
 | Fundação | `css/base.css`, `css/layout.css`, `css/tokens.css`, `css/drupal-bootstrap.css` | `base.css`/`layout.css` quase sem media queries; tokens têm preferência de tema; Bootstrap injeta regras próprias. |

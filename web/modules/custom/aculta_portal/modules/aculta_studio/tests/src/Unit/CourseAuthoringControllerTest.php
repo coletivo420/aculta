@@ -67,8 +67,15 @@ final class CourseAuthoringControllerTest extends UnitTestCase {
       $this->getStringTranslationStub(),
     ))->create();
 
-    self::assertSame(['studio', 'studio-course-authoring'], $build['#attributes']['class']);
+    self::assertSame('studio-shell studio-course-authoring', $build['#attributes']['data-portal-ui']);
+    self::assertArrayNotHasKey('class', $build['#attributes']);
     self::assertSame('course-authoring', $build['#attributes']['data-aculta-studio']);
+    self::assertSame('studio-main', $build['content']['#attributes']['data-portal-ui']);
+    self::assertArrayNotHasKey('class', $build['content']['#attributes']);
+    self::assertSame(
+      'studio-action studio-course-authoring-back',
+      (string) $build['back']['#element_attributes']['data-portal-ui'],
+    );
     self::assertSame('form', $build['content']['form']['#type']);
     self::assertSame('group-lms-course-add-form', $build['content']['form']['#id']);
     self::assertSame(0, $build['#cache']['max-age']);

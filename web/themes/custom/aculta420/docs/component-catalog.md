@@ -454,7 +454,10 @@ teste; a folha integrada no Runtime ainda precisa ser homologada. Evidências em
 `/home/piradopirata/aculta-suite-out/marley-editor-form-dark-20261031/`.
 
 O Form API de criação de curso também reutiliza o tratamento `.studio__main form`
-existente. O controlador do ACULTA Studio apenas compõe a operação
+existente; a classe vem do token `studio-main`, mapeado pelo tema. A raiz e o
+link de retorno usam tokens de apresentação (`studio-course-authoring` e
+`studio-course-authoring-back`) mapeados para classes já existentes. O
+controlador do ACULTA Studio apenas compõe a operação
 `add` do Group `lms_course` e mantém seu formulário/ACL originais. Não foi
 criado SDC de formulário paralelo; a rota canônica é
 `/ganjalab/cursos/novo` em `courses`, com retorno à experiência ACULTA Studio

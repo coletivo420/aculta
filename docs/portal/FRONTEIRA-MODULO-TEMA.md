@@ -68,6 +68,18 @@ Quando uma rota é a página inicial de um Domain e o tema normalmente omite o b
 
 ## Mecanismo (como o módulo entrega design sem classes)
 
+### Retificação Studio Ganjalab (2026-10-31)
+
+O `CourseAuthoringController` marca a composição com `studio-shell`,
+`studio-course-authoring`, `studio-main` e `studio-action` mais
+`studio-course-authoring-back`. `PortalUiHooks` mapeia esses tokens para as
+classes de apresentação do ACULTA420. O controller conserva apenas o
+marcador funcional `data-aculta-studio`, o Form API do Group `lms_course`, o
+controle de acesso e a cacheabilidade. O teste Unit do controller e o teste
+Unit do mapa visual cobrem essa fronteira. Após a retificação, o gate global
+passou em 3.491 verificações, sem tokens de apresentação ou classes de design
+no módulo.
+
 - O módulo marca o elemento com `data-portal-ui="token [token2]"`. O token é um nome semântico (ex.: `account-avatar`,
   `button-primary`, `requirements-status status-ok`), nunca uma classe de design.
 - O tema traduz os tokens em classes em `web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` (`TOKENS`). Os hooks
