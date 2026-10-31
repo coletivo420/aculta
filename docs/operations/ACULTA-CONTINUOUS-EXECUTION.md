@@ -14,6 +14,10 @@ Com autorização explícita, foi criada no `aculta_runtime` a conta `studio_edi
 
 O baseline Firefox/X11 ainda recebe `Acesso negado` porque o docroot Runtime está no HEAD antigo `ae3227866`: a ULI emitida para a conta usa `/recuperar-acesso/.../entrar`, que retorna HTTP 404 nesse checkout. A fixture e os grants estão prontos; repetir o baseline após o docroot acompanhar o HEAD da branch, sem alterar ACL ou criar alias temporário.
 
+### Alinhamento do docroot para reteste (2026-10-31)
+
+O docroot `/home/piradopirata/projetos/aculta` foi alinhado por checkout destacado ao `origin/refactor/openculturas-codigo-visual` em `7c81acfd5`, após criar branch de backup do HEAD `ae3227866` e stash incluindo os arquivos não rastreados. O cache foi reconstruído. `updatedb:status` permaneceu limpo; `config:status` acusou somente `aculta_messenger.settings` diferente, sem importação automática. Mesmo com o código alinhado, a ULI para `studio_editor_test` continua HTTP 404 no host `wiki420`, embora as rotas `user.reset*` existam no router local; o reteste visual permanece DEFERRED até resolver esse bloqueio de domínio/roteamento.
+
 ### WE SATIVA canônico — evidência adicional (2026-10-31)
 
 O baseline Firefox ESR/X11 autenticado de `https://wiki420.aculta.toca.net.br/studio/we-sativa` foi executado em 320/390/599/600/768/1024/1280/1440px. As 8 capturas retornaram `Acesso negado`; Institution Bar, Domain Header e ausência de overflow foram observados, mas nenhum consumer Wiki foi servido. Evidência: `/home/piradopirata/aculta-suite-out/studio-we-sativa-baseline-recheck-8d4dcc07d-20261031/`. O resultado é DEFERRED por autorização/instalação do Runtime e mantém OCS-F7/OCS-F11 pendentes; não usar `/wesativa` como substituto da rota canônica.
