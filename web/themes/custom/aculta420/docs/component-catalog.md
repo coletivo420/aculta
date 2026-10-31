@@ -582,6 +582,11 @@ semânticos e gradientes, sem copiar o SVG ou os estilos upstream. O markup
 continua sem texto, ação, novo SDC ou ativo externo. A matriz visual verifica a
 variante sem imagem em markup sintético; renderização do Twig candidato no
 Runtime segue pendente até o CSS/template serem servidos pela cabeça da PR.
+No reteste complementar, o consumer real anônimo manteve quatro publicações
+sintéticas e passou 19/19 checks em nove larguras com o CSS candidato injetado.
+A ausência de mídia foi simulada no DOM, portanto o resultado não muda o estado
+pendente de integração do Twig no Runtime; capturas revisadas e detalhes estão
+em `mobile-first-audit.md`.
 
 ### THEME-MF2 — organizações de Eventos e conteúdo relacionado
 
