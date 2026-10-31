@@ -646,6 +646,18 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
   margin: 0;
 }
 
+@media (max-width: 35.999rem) {
+  .studio__listing {
+    table-layout: fixed;
+    overflow-wrap: anywhere;
+  }
+
+  .studio__listing :is(td, th) {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
 /* OpenCulturas Next 3.1.5 form treatment, limited to Studio form consumers. */
 .studio__main form,
 .aculta-profile-editor form,
