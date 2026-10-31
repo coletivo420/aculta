@@ -10,9 +10,11 @@
   formulário nativo de Node Form API e não persiste conteúdo ao abrir.
 - Kernel focal confirmou rota permitida para autoria autorizada, render do
   formulário e ausência de Node salvo (2 testes/200 asserções). Runtime em
-  `c7fc57dba`: discovery e `drush cr` passaram; Firefox ESR/X11 confirmou fluxo
-  autenticado em 36/36 verificações, 1440–320 px. Formulário não submetido.
-  Evidência: `/home/piradopirata/aculta-suite-out/we-sativa-create-form-account-uli-c7fc57dba-20261031/`.
+  `c7fc57dba`: discovery e `drush cr` passaram; Firefox ESR/X11 confirmou rota,
+  navegação e reflow em 36/36 verificações, 1440–320 px. A conta UID 257 não
+  estava confirmada por e-mail, portanto a captura mostra o aviso e não prova
+  campos editoriais disponíveis. O runner agora exige título/corpo; reteste com
+  UID 5 confirmado pendente. O formulário não foi submetido.
 
 ## 0.1.0-dev.118 — proteger grants versionados das propostas (2026-10-26)
 

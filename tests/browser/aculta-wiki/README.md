@@ -75,9 +75,9 @@ do escopo do script.
 O fluxo `we-sativa.py` abre a ação de criação em
 `/studio/we-sativa/verbetes/novo`, dentro do purpose Wiki, e confirma o
 formulário nativo e o link de retorno. Não usa `/node/add/wiki_entry` em outro
-purpose e não submete nem salva o formulário.
-Quando o formulário abre, o runner também salva a captura `create-form.png` em
-`$SUITE_OUT`.
+purpose e não submete nem salva o formulário. O runner exige que título e corpo
+estejam renderizados; aviso de confirmação sem os campos não passa. Quando o
+formulário abre, salva `create-form.png` em `$SUITE_OUT`.
 
 O script valida raiz, listagem e busca em desktop e larguras móveis, verifica
 presença de `main`/`h1`, erros visíveis e rolagem horizontal, e confirma que o

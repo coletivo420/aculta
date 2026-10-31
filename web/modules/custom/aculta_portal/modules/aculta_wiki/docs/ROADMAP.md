@@ -9,9 +9,11 @@ nem gravação ao abrir a página. A rota Core `/node/add/wiki_entry` pertence a
 purpose principal e não é mais usada pelo workspace. Kernel focal confirmou
 autorização, render do formulário e ausência de persistência (2 testes/200
 asserções). No Runtime em `c7fc57dba`, `drush cr` e discovery da rota passaram;
-Firefox ESR/X11 confirmou o fluxo autenticado em 36/36 verificações, 1440–320
-px, sem submeter o formulário. Capturas em
-`/home/piradopirata/aculta-suite-out/we-sativa-create-form-account-uli-c7fc57dba-20261031/`.
+Firefox ESR/X11 confirmou rota, navegação e reflow em 36/36 verificações,
+1440–320 px, sem submeter o formulário. A conta UID 257 não estava confirmada
+por e-mail; a captura mostra o aviso e não os campos de autoria. A suíte foi
+aprimorada para exigir título/corpo e será reexecutada com UID 5, confirmado,
+antes de aprovar o formulário em Runtime.
 
 ## Retificação vigente de caminhos (2026-10-30)
 

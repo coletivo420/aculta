@@ -35,9 +35,13 @@
   `/home/piradopirata/aculta-suite-out/we-sativa-create-form-account-uli-c7fc57dba-20261031/`.
 - O script WE SATIVA agora usa o host Conta para emitir a ULI por padrão e
   salva `create-form.png` em `$SUITE_OUT`, permitindo inspecionar o formulário.
-  Permanecem pendentes
-  WCAG 2.2 AA completa, leitor de tela e testes de submissão/ACL com matriz de
-  contas.
+  A captura da sessão UID 257 mostrou que essa conta estava sem confirmação de
+  e-mail, portanto os campos editoriais estavam corretamente bloqueados apesar
+  do shell/form retornar. A rodada 36/36 prova apenas rota, navegação e reflow;
+  não prova campos disponíveis. O runner passou a exigir campo de título/corpo;
+  UID 5 foi verificado ativo, com permissão e email confirmado, e aguarda novo
+  teste visual. WCAG 2.2 AA completa, leitor de tela e submissão/ACL em matriz de
+  contas continuam pendentes.
 
 ## PR #299 — OCS-F3/F4: adapter SDC da entrada da Conta (2026-10-31)
 

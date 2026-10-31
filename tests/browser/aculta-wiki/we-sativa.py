@@ -231,12 +231,26 @@ try:
               path: location.pathname,
               title: document.title,
               form: document.querySelector('form.node-wiki-entry-form')?.id || null,
+              titleFields: document.querySelectorAll(
+                'form.node-wiki-entry-form input[name="title[0][value]"]'
+              ).length,
+              bodyFields: document.querySelectorAll(
+                'form.node-wiki-entry-form [name="body[0][value]"]'
+              ).length,
+              confirmationNotice: [...document.querySelectorAll('main, #main-content')]
+                .some((el) => el.innerText.includes('precisa confirmar seu e-mail')),
               returnLinkCount: [...document.querySelectorAll('a')]
                 .filter((a) => a.textContent.includes('Voltar para Meu Trabalho WE SATIVA')).length,
               formActionCount: document.querySelectorAll('form').length,
             };""")
             check("formulário nativo oferece retorno autorizado ao workspace", returned,
                   json.dumps(return_diagnostic, ensure_ascii=False))
+            fields_ready = return_diagnostic["titleFields"] == 1 and return_diagnostic["bodyFields"] == 1
+            check("autoria confirmada recebe os campos de título e corpo", fields_ready,
+                  json.dumps({"title": return_diagnostic["titleFields"],
+                              "body": return_diagnostic["bodyFields"],
+                              "confirmationNotice": return_diagnostic["confirmationNotice"]},
+                            ensure_ascii=False))
             if returned:
                 screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
                 (OUT / "create-form.png").write_bytes(base64.b64decode(screenshot))
