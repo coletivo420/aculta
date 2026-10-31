@@ -1062,6 +1062,10 @@ confinada sem overflow documental. Evidência em
 Esta captura não submete eventos nem Locais, não valida ACL por operação ou o
 popup AJAX de Local; F10 permanece parcial e não altera a aprovação de MF3/F11.
 
+O mesmo cenário passou axe-core em claro/escuro a 320px: duas auditorias, zero
+violações e um resultado `incomplete` por modo. Evidência em
+`/home/piradopirata/aculta-suite-out/culturas-axe-followup-d207/`.
+
 ### OCS-F3/F4 — acabamento dos cards do Hub de Conta (2026-10-31)
 
 Corrigida a moldura duplicada dos cinco cards de experiências: os wrappers

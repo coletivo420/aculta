@@ -2569,3 +2569,9 @@ ou preferência persistente alterados.
   `/home/piradopirata/aculta-suite-out/culturas-runtime-followup-98f69/`.
   Isso melhora a evidência OCS-F10, mas ainda não homologa escrita, ACL por
   operação, popup AJAX de Local ou THEME-MF3/OCS-F11.
+- A mesma captura autenticada de Culturas recebeu axe-core em Firefox ESR
+  headless nos modos claro/escuro a 320px: duas auditorias, zero violações e
+  um resultado `incomplete` por modo. O relatório está em
+  `/home/piradopirata/aculta-suite-out/culturas-axe-followup-d207/results.json`.
+  O resultado não substitui a validação de teclado, zoom X11, submissão e ACL
+  por operação.
