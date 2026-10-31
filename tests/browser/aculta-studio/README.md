@@ -761,6 +761,11 @@ registra `SKIP_NO_HIGHLIGHTED_REGION`; isso não é falha de reflow. A medição
 rolagem horizontal permanece no registro da captura, mas não reprova o teste
 específico de posição da mensagem.
 
+O teste procura o próximo heading fora do próprio aviso, pois alguns avisos
+acessíveis têm um `<h2>` interno. Na captura real, o aviso ULI pode se descartar
+durante a matriz de viewports; capturas posteriores sem aviso recebem
+`SKIP_NO_STATUS_NOTICE`, não `FAIL`.
+
 ## Tabelas de listagem Marley/Wiki — fidelidade e mobile
 
 `studio-listing-fidelity.py` cobre o consumer visual dos elementos Drupal atuais

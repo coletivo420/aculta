@@ -293,19 +293,25 @@ socket.onmessage = (event) => {
                                 for box in [item["element"], *item["ancestors"]]]
             wrapper = next((box for box in diagnostic_boxes
                             if "alert-wrapper" in box["classes"]), None)
-            content_after_notice = driver.js("const region=document.querySelector('main#main-content .aculta-highlighted');if(!region)return null;const heading=[...document.querySelectorAll('main#main-content h1,main#main-content h2,main#main-content h3')].find(element=>region.compareDocumentPosition(element)&Node.DOCUMENT_POSITION_FOLLOWING);if(!heading)return null;const r=heading.getBoundingClientRect();return {tag:heading.tagName,top:r.top,left:r.left,right:r.right}")
-            flow_checks = {
-                "wrapperPresent": wrapper is not None,
-                "wrapperInDocumentFlow": wrapper is not None and wrapper["position"] == "static",
-                "noticePrecedesFollowingHeading": wrapper is not None and content_after_notice is not None
-                    and wrapper["bottom"] <= content_after_notice["top"] + 1,
-            }
-            record["statusMessageFlowChecks"] = flow_checks
-            record["statusMessageFlowStatus"] = "PASS" if all(flow_checks.values()) else "FAIL"
-            if record["statusMessageFlowStatus"] == "FAIL":
-                CAPTURE_FAILURES.append({"url": url, "width": width,
-                                         "statusMessageFlow": {"checks": flow_checks,
-                                         "wrapper": wrapper, "followingContent": content_after_notice}})
+            if wrapper is None:
+                # An authenticated ULI notice can dismiss itself while the
+                # viewport matrix is running. Absence is not a layout failure.
+                record["statusMessageFlowChecks"] = {}
+                record["statusMessageFlowStatus"] = "SKIP_NO_STATUS_NOTICE"
+            else:
+                content_after_notice = driver.js("const wrapper=document.querySelector('main#main-content .aculta-highlighted > .alert-wrapper');if(!wrapper)return null;const heading=[...document.querySelectorAll('main#main-content h1,main#main-content h2,main#main-content h3')].find(element=>!wrapper.contains(element)&&(wrapper.compareDocumentPosition(element)&Node.DOCUMENT_POSITION_FOLLOWING));if(!heading)return null;const r=heading.getBoundingClientRect();return {tag:heading.tagName,top:r.top,left:r.left,right:r.right}")
+                flow_checks = {
+                    "wrapperPresent": True,
+                    "wrapperInDocumentFlow": wrapper["position"] == "static",
+                    "noticePrecedesFollowingHeading": content_after_notice is not None
+                        and wrapper["bottom"] <= content_after_notice["top"] + 1,
+                }
+                record["statusMessageFlowChecks"] = flow_checks
+                record["statusMessageFlowStatus"] = "PASS" if all(flow_checks.values()) else "FAIL"
+                if record["statusMessageFlowStatus"] == "FAIL":
+                    CAPTURE_FAILURES.append({"url": url, "width": width,
+                                             "statusMessageFlow": {"checks": flow_checks,
+                                             "wrapper": wrapper, "followingContent": content_after_notice}})
     if "path-perfil" in record.get("bodyClasses", []):
         record["profilePublicLink"] = driver.js("return document.querySelector('.aculta-profile-identity__public-link a')?.href || null")
         record["profileActionTargets"] = json.loads(driver.js("""return JSON.stringify(

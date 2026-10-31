@@ -3731,3 +3731,15 @@ Evidências em
 `/home/piradopirata/aculta-suite-out/ganjalab-dashboard-fidelity-candidate-20261031/`
 e `/home/piradopirata/aculta-suite-out/ganjalab-dashboard-fidelity-dark-20261031/`.
 
+### THEME-MF2 / OCS-F10 — aviso ULI no dashboard Culturas (2026-10-31)
+
+Nova captura Firefox ESR autenticada em `/culturas` usou `content.css` e
+`studio.css` candidatas injetadas somente no navegador. Em 320px, o aviso ULI
+real teve `position: static`, permaneceu no fluxo antes do H1 e deixou de cobrir
+o painel; sem overflow documental. A matriz de aviso retornou 1/1 PASS em 320px
+e `SKIP_NO_STATUS_NOTICE` nas capturas 390/768/1440px, quando o aviso já havia
+se autocerrado. A revisão visual confirmou a captura 320px. Esta verificação
+não prova CSS integrada no Runtime, reduced motion, foco do botão fechar ou
+WCAG completa. Evidência em
+`/home/piradopirata/aculta-suite-out/culturas-runtime-status-flow-retest-20261031/`.
+
