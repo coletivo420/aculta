@@ -675,32 +675,34 @@ três regiões em 768px. Comportamento, testes e limites estão em
 ### THEME-MF2 — alvos dos teasers da Revista
 
 Links de título e ação no consumer `revista_sessoes` têm altura mínima de 44px,
-com a mesma composição do SDC `card`. Não foi criado componente nem alterado
-contrato. Teste Firefox Runtime com CSS candidata injetada passou em nove
-larguras; ver evidência e limitações em `mobile-first-audit.md`.
+com a mesma composição do SDC `card`. O primeiro resultado usou CSS candidata
+injetada na sessão; o reteste integrado do consumer está registrado logo abaixo.
+Não foi criado componente nem alterado contrato. Evidências e limites em
+`mobile-first-audit.md`.
 
-### Consumer real — capa da Revista (2026-10-30)
+### Consumer real — capa da Revista (2026-10-31)
 
 A página da View `revista_sessoes` reutiliza `patterns/hero` para o título
 contextual e o `patterns/card` existente para os teasers editoriais, sem novo
 SDC nem alteração dos contratos de conteúdo. A capa principal muda para
 composição horizontal em desktop por CSS da View; em telas menores empilha
-imagem e conteúdo. Stories e schema dos SDCs permanecem inalterados porque
-não houve mudança de contrato. O consumer foi capturado no Firefox ESR visível
-no Runtime em 320–1440px; a evidência e os limites estão em
+imagem e conteúdo. Stories e schema permanecem inalterados: o consumer continua
+usando os slots existentes e não adiciona props/variantes. A página foi validada
+no Firefox ESR visível no Runtime, sem injeções, em 320–1440px, claro/escuro,
+teclado, JavaScript ligado/desligado e zoom 200/400%; passou 28/28 checks. CSS
+servida e do checkout têm SHA-256 igual. Capturas e limites em
 `mobile-first-audit.md`.
 
 Se `field_media_image` estiver vazio, o template envia um container decorativo
 no slot `image` do mesmo `patterns/card`; a CSS cria uma região 16:9 com tokens
 semânticos e gradientes, sem copiar o SVG ou os estilos upstream. O markup
-continua sem texto, ação, novo SDC ou ativo externo. A matriz visual verifica a
-variante sem imagem em markup sintético; renderização do Twig candidato no
-Runtime segue pendente até o CSS/template serem servidos pela cabeça da PR.
-No reteste complementar, o consumer real anônimo manteve quatro publicações
-sintéticas e passou 19/19 checks em nove larguras com o CSS candidato injetado.
-A ausência de mídia foi simulada no DOM, portanto o resultado não muda o estado
-pendente de integração do Twig no Runtime; capturas revisadas e detalhes estão
-em `mobile-first-audit.md`.
+continua sem texto, ação, novo SDC ou ativo externo. O template e a CSS agora
+estão servidos no Runtime; `magazine-cover-runtime.py` passou 28/28 verificações
+na capa real. A simulação complementar do slot sem mídia passou 37/37 checks de
+geometria em nove larguras, mas substitui o wrapper no DOM e injeta a CSS; não
+executa o Twig vazio. Como `field_media_image` é obrigatório e os quatro artigos
+de inspeção têm mídia, não se criou conteúdo que contornasse a validação. Não
+há caso real sem imagem homologado; ver `mobile-first-audit.md`.
 
 ### THEME-MF2 — organizações de Eventos e conteúdo relacionado
 
