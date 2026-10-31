@@ -4185,3 +4185,19 @@ Domain Header permaneceram presentes; as capturas de 320 e 1440 px foram
 inspecionadas. Isto é smoke visual da página pública, sem teclado, zoom, tema
 escuro, reduced motion ou WCAG integral; THEME-MF3 continua pendente. Evidência
 em `/home/piradopirata/aculta-suite-out/support-form-followup-20261031/`.
+
+### OCS-F6 / THEME-MF2 — dashboard Ganjalab e aviso ULI (2026-10-31)
+
+Firefox ESR autenticado capturou o dashboard real `/ganjalab` em nove larguras.
+Com Fidelity e `content.css` candidatas injetadas apenas no navegador, a captura
+passou `CAPTURED`, zero falhas, root `.aculta-context-header` visível e sem
+overflow. O LMS real mostrou estados vazios de cursos e certificados. No
+baseline, porém, o aviso ULI estava `position: fixed` a 320px e cobria a
+navegação; com `content.css` candidata, ficou no fluxo antes do heading visível
+(1/1 PASS). Nas oito larguras seguintes já havia se autocerrado (SKIP). Capturas
+de 320/1440px foram inspecionadas. Runtime `2493d7535` ainda não emite os
+marcadores novos `data-aculta-studio`; o resultado mede a tela servida anterior,
+não o compositor novo nem sua paridade pareada com o OpenCulturas. Nenhum curso
+ou matrícula foi criado. Evidência em
+`/home/piradopirata/aculta-suite-out/ganjalab-status-flow-candidate-20261031/`.
+OCS-F6, OCS-F11 e THEME-MF3 seguem pendentes.

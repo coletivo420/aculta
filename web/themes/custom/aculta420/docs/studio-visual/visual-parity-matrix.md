@@ -376,3 +376,15 @@ ESR: **56/56 checks** em nove larguras e claro/escuro, incluindo foco; captura e
 limitações em `mobile-first-audit.md` e
 `/home/piradopirata/aculta-suite-out/studio-listing-fidelity-final-20261031/`.
 Drupal renderizado, grants, estados reais, cache e AJAX/no-JS seguem sem prova.
+
+### Reteste OCS-F6 — dashboard Ganjalab (2026-10-31)
+
+No Runtime `2493d7535`, `/ganjalab` continua servindo o dashboard LMS anterior
+sem marcadores `data-aculta-studio`. O root visual atual `.aculta-context-header`
+foi capturado em nove larguras com Fidelity candidata e zero overflow; cursos e
+certificados estavam nos estados vazios reais. `content.css` candidata manteve
+o aviso ULI no fluxo e antes do heading visível a 320px (1 PASS; oito capturas
+posteriores SKIP pela autoclosure). Isso é evidência responsiva da tela atual,
+não do compositor novo, nem paridade com o dashboard autenticado upstream.
+Sem criação de matrícula ou curso. Ver `../mobile-first-audit.md` e os
+registros de snapshot operacionais.

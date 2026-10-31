@@ -1999,3 +1999,9 @@ A página pública de Apoio passou 37/37 checks em 11 larguras, com o SDC
 `donation-quick` dentro do viewport e sem expor operações de pagamento ainda
 inexistentes. Capturas mobile/desktop revisadas; gates de teclado, zoom, dark
 mode e WCAG seguem pendentes.
+
+Reteste OCS-F6 em `/ganjalab`: nove larguras, sem overflow e dois estados vazios
+do LMS real. O aviso ULI cobriu a navegação a 320px no baseline; `content.css`
+candidata o recolocou em fluxo (heading seguinte visível, PASS). A captura
+comprovou ausência dos marcadores novos no Runtime `2493d7535`, logo não prova o
+consumer novo nem integração Fidelity. Sem curso/matrícula criada.

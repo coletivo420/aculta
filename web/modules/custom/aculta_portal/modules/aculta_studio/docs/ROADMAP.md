@@ -1034,3 +1034,14 @@ a rolagem confinada da tabela. Não homologa a CSS integrada, OCS-F11 nem
 THEME-MF3. Evidência e limitações em
 `web/themes/custom/aculta420/docs/mobile-first-audit.md`.
 
+### OCS-F6 — dashboard Ganjalab servido e aviso móvel (2026-10-31)
+
+Captura autenticada de `/ganjalab` no Runtime `2493d7535`, nove larguras,
+Fidelity candidata, sem overflow e dois estados vazios LMS. O Runtime não emite
+os marcadores `data-aculta-studio` da implementação atual, então não valida o
+novo compositor. O aviso ULI cobriu a navegação a 320px no baseline; `content.css`
+candidata o moveu para o fluxo antes do heading seguinte (1 PASS; 8 SKIP porque
+o aviso já havia se fechado). CSS não integrada, sem matrícula/curso criado;
+OCS-F6/F11 e THEME-MF3 permanecem parciais. Evidência e snapshots no log de
+`docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
+
