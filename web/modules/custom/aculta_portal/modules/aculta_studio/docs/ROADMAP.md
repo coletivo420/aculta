@@ -1071,6 +1071,16 @@ e 400%: 3/3 checks passaram, sem overflow documental e com Institution Bar,
 Domain Header e H1 únicos. Evidência em
 `/home/piradopirata/aculta-suite-out/eventos-public-zoom-423/`.
 
+### OCS-F8 — Green Stash alcançável no host de teste (2026-10-31)
+
+Com ULI de inspeção no domínio Conta, a rota canônica `/greenstash` respondeu
+HTTP 200 em claro/escuro e 320/390/768/1440px, sem overflow. O mesmo cenário
+passou axe-core autenticado nos dois modos, sem violações nem incompletos.
+Evidências em `/home/piradopirata/aculta-suite-out/greenstash-page-matrix-auth-879/`
+e `/home/piradopirata/aculta-suite-out/greenstash-axe-auth-879/`.
+Operações Commerce, grants por loja e formulários não foram submetidos; F8
+continua parcial e F11 não é aprovado por esta captura.
+
 Reteste Firefox ESR visível (`DISPLAY=:0`) cobriu claro/escuro em
 320/390/768/1440px, com largura documental igual à viewport e sem overflow em
 todos os oito estados. Evidência em

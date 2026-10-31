@@ -2616,3 +2616,11 @@ ou preferência persistente alterados.
   `/home/piradopirata/aculta-suite-out/global-keyboard-final-fc2/results.json`.
   Isso remove o bloqueio de teclado do THEME-MF3; permanecem os demais gates
   transversais e a homologação funcional de F11.
+- O host autenticado de Green Stash respondeu ao ULI de inspeção e a matriz
+  genérica cobriu `/greenstash` em claro/escuro e 320/390/768/1440px: 8/8
+  estados HTTP 200, título canônico do Studio e zero overflow. A camada axe
+  autenticada passou nos dois modos, sem violações nem incompletos. Evidências:
+  `/home/piradopirata/aculta-suite-out/greenstash-page-matrix-auth-879/` e
+  `/home/piradopirata/aculta-suite-out/greenstash-axe-auth-879/`. Isso remove o
+  bloqueio de reachability de F8, mas não homologa operações Commerce, grants
+  por loja, formulários, ACL de operador ou OCS-F11.
