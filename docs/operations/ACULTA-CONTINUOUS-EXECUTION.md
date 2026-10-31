@@ -2749,3 +2749,5 @@ ou preferência persistente alterados.
 - O lint Stylelint do tema foi repetido após os ajustes do formulário:
   `web/themes/custom/aculta420/node_modules/.bin/stylelint` sobre todos os CSS
   do tema passou sem erros.
+- A suíte Unit completa de `aculta_magazine` foi repetida no checkout atual:
+  40 testes e 162 asserções, sem falhas.
