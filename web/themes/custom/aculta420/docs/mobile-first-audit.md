@@ -2049,20 +2049,25 @@ pendentes.
 sob `.studio__subtabs`, mesmo quando o render não fornece a classe interna
 `.studio__link`. A ordem DOM, destinos, estado `aria-current`, wrap e shell
 permanecem. No Runtime identificado em `toca`, Firefox ESR visível com a folha
-candidata injetada sobre o markup servido passou 79/79 verificações e registrou
-um `SKIP` justificado (a conta não tem publicação própria publicada para testar
-o link de edição). Foram medidos `/marley`, as cinco abas editoriais da seção
-Publicações, criação da Revista, Fórum, Galerias e navegação contextual de
-Conta; todos os alvos examinados tiveram ao menos 44px. Não houve overflow em
-320/360/390/599/600/767/768/1024/1280/1440px no Marley, nem em Conta a
-320/390/768/1280px. Contraste textual medido: 6,59:1 claro e 11,51:1 escuro;
-geometria igual nos dois modos. Capturas estão em
-`/home/piradopirata/aculta-suite-out/studio-visual-candidate-20261030e/` e
-foram revistas em tela móvel e desktop.
+candidata injetada sobre o markup servido passou 79/79 verificações na conta
+editorial comum (um `SKIP` por não haver publicação própria para testar edição)
+e 80/80 com a conta sintética `aculta_visual_admin`, proprietária dos quatro
+artigos fictícios autorizados. A lista real mostrou quatro linhas com links
+canônicos `/marley/revista/{id}/editar`. Foram medidos `/marley`, as cinco abas
+editoriais da seção Publicações, criação da Revista, Fórum, Galerias e navegação
+contextual de Conta; todos os alvos examinados tiveram ao menos 44px. Não houve
+overflow em 320/360/390/599/600/767/768/1024/1280/1440px no Marley, nem em
+Conta a 320/390/768/1280px. Contraste textual medido: 6,59:1 claro e 11,51:1
+escuro; geometria igual nos dois modos. Capturas estão em
+`/home/piradopirata/aculta-suite-out/studio-visual-candidate-20261030e/`,
+`/home/piradopirata/aculta-suite-out/studio-editorial-rows-retest-20261030/` e
+`/home/piradopirata/aculta-suite-out/studio-editorial-mobile-20261030/`;
+desktop e mobile foram revistos.
 
 O teste injeta a CSS do worktree no Firefox e não demonstra que ela já esteja
 implantada no Runtime. Também não cobre ausência de JS, zoom 200/400%, todos os
 consumidores, navegação completa por teclado, reduced motion ou auditoria WCAG
-2.2 AA. A conta de teste não permitiu testar edição de conteúdo próprio. OCS-F2
-segue parcial; THEME-MF3 e OCS-F11 continuam pendentes. A fixture sintética
-anterior (243/243 em 27 larguras) continua como evidência complementar.
+2.2 AA. A captura da tabela a 390px mantém `table-responsive` e scroll dentro
+do componente, sem overflow do documento. OCS-F2/F5 seguem parciais; THEME-MF3
+e OCS-F11 continuam pendentes. A fixture sintética anterior (243/243 em 27
+larguras) continua como evidência complementar.

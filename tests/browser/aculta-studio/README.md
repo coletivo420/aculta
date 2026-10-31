@@ -39,6 +39,11 @@ geckodriver cria perfil temporário por sessão. O wrapper usa `trap` para
 restaurar a preferência de cor mesmo quando a suíte falha; não executar
 diretamente o `.mjs`.
 
+Para validar links de edição na listagem editorial, execute como a conta dona
+dos nós sintéticos com `STUDIO_USER=aculta_visual_admin` e
+`STUDIO_USER_ID=257`. A suíte exige o destino canônico
+`/marley/revista/{id}/editar`; não abre nem envia o formulário de edição.
+
 Para validar o SDC `context-tabs` numa rota real, `OCS_CONTEXT_TABS_CSS_OVERRIDE=1`
 injeta a folha candidata indicada por `OCS_CONTEXT_TABS_CSS_ROOT` (padrão:
 `ACULTA_ROOT`) somente no Firefox. O script mede quantidade de links, eixo e

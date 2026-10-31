@@ -296,8 +296,9 @@ try {
   const listingState = JSON.parse(await exec(`return JSON.stringify({ rows: [...document.querySelectorAll('[data-aculta-studio="listing"] tbody tr')].filter((row) => row.querySelector('td') && !row.querySelector('td[colspan]')).length, empty: !!document.querySelector('[data-aculta-studio="listing"] td[colspan]') });`));
   check('listagem da Revista apresenta conteúdo ou estado vazio', listingState.rows > 0 || listingState.empty, `${listingState.rows} conteúdo(s); estado vazio=${listingState.empty}`);
   if (listingState.rows > 0) {
-    const editLinks = await exec(`return [...document.querySelectorAll('[data-aculta-studio="listing"] a')].filter((a) => (a.getAttribute('href') || '').includes('/node/') && (a.getAttribute('href') || '').endsWith('/edit')).length;`);
-    check('edição de publicação pelo formulário do dono (domínio principal)', editLinks >= 1, `${editLinks} link(s)`);
+    const editLinks = await exec(`return [...document.querySelectorAll('[data-aculta-studio="listing"] a')].filter((a) => /^editar$/i.test(a.textContent.trim())).map((a) => ({href:a.href,path:new URL(a.href).pathname}));`);
+    const canonicalOwnerRoutes = editLinks.filter((link) => /^\/marley\/revista\/\d+\/editar$/.test(link.path));
+    check('edição aponta para a rota editorial canônica do owner no purpose Conta', canonicalOwnerRoutes.length >= 1, JSON.stringify({links:editLinks,canonical:canonicalOwnerRoutes.length}));
   }
   else {
     check('edição de publicação pelo formulário do dono (domínio principal)', null, 'sem publicação própria publicada para testar a ação de edição');

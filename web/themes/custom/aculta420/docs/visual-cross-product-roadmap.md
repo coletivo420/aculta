@@ -675,14 +675,21 @@ THEME-MF3 e OCS-F11 seguem parciais/não aprovados. Evidência em
 
 ### OCS-F2 — reteste das rotas Marley e Conta com CSS candidata (2026-10-30)
 
-Firefox ESR visível no Runtime passou 79/79 checks, com um `SKIP` por ausência
-de conteúdo próprio publicado para exercitar edição. A CSS candidata foi
+Firefox ESR visível no Runtime passou 79/79 checks na conta editorial comum
+(um `SKIP` por ausência de conteúdo próprio para exercitar edição) e 80/80 na
+conta sintética `aculta_visual_admin`. A CSS candidata foi
 injetada somente no navegador; alvos das abas contextuais de Conta passaram a
 44px e não houve overflow nas larguras registradas na auditoria. Navegação AJAX,
 cinco estados editoriais, foco, Enter, contraste claro/escuro e geometria foram
-exercitados. O resultado valida o markup consumidor, não a implantação física
-da folha nem todos os fluxos do Studio. F2 segue parcial; THEME-MF3 e F11 não
-foram aprovados. JSON e capturas revisadas: `/home/piradopirata/aculta-suite-out/studio-visual-candidate-20261030e/`.
+exercitados. A conta dona apresentou quatro linhas reais com o destino canônico
+de edição `/marley/revista/{id}/editar` no purpose Conta. A captura da tabela a
+390px mantém `table-responsive` e scroll interno, sem overflow do documento. O
+resultado valida o markup consumidor, não a implantação física da folha nem
+todos os fluxos do Studio. F2/F5 seguem parciais; THEME-MF3 e F11 não foram
+aprovados. Capturas revisadas:
+`/home/piradopirata/aculta-suite-out/studio-visual-candidate-20261030e/`,
+`/home/piradopirata/aculta-suite-out/studio-editorial-rows-retest-20261030/` e
+`/home/piradopirata/aculta-suite-out/studio-editorial-mobile-20261030/`.
 
 ### THEME-MF2 — Institution Bar global (2026-10-29)
 
