@@ -3145,3 +3145,17 @@ inspecionadas; em 1440px a composição LMS completa está visível. Evidência 
 A CSS foi injetada em uma página Runtime apenas para avaliação: não prova entrega
 servida, cursos matriculados, ACL de turma, zoom, teclado, no-JS ou WCAG integral.
 OCS-F6/F11 e THEME-MF3 permanecem pendentes.
+
+### THEME-MF2 — navegação do shell de Conta em duas colunas (2026-10-31)
+
+Uma captura mobile do shell autenticado mostrou 12 entradas contextuais em uma
+coluna antes do conteúdo da experiência. A sanfona nativa existente agora usa
+uma grade de duas colunas abaixo de 768px; a seção aberta e Sair ocupam toda a
+linha, a ordem DOM permanece igual ao menu desktop e os alvos medem 56px. A
+composição observada reduziu 12 itens para 7 linhas sem overflow. `account-shell.py`
+passou 39/39 checks com CSS candidata em modo claro e 39/39 em escuro, nos dez
+viewports 320/360/390/599/600/767/768/1024/1280/1440px. Capturas em
+`/home/piradopirata/aculta-suite-out/account-shell-two-column-final2-20261031/`
+e `/home/piradopirata/aculta-suite-out/account-shell-two-column-dark-20261031/`.
+É validação de folha injetada; CSS servida, teclado completo, zoom, ACL entre
+contas e WCAG integral seguem pendentes. Não aprova THEME-MF3.

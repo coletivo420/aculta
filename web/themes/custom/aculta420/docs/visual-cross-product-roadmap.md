@@ -797,12 +797,16 @@ Não houve entrada/envio de dados. O snapshot Runtime, hash e limites estão no
 
 Firefox ESR visível abriu `/configuracoes` com a conta sintética UID 5 e CSS
 candidata do tema, em 320/360/390/599/600/767/768/1024/1280/1440px. Passaram
-33/33 verificações: a sanfona substitui o menu desktop abaixo de 768px, as 13
-seções permanecem equivalentes, a Institution Bar é única e não há overflow.
-As capturas 320/768/1440px foram inspecionadas. O formulário não foi submetido;
-teclado completo, zoom, ACL entre contas e WCAG 2.2 AA seguem fora desta rodada.
-Evidência: `/home/piradopirata/aculta-suite-out/account-shell-20261030-final/`.
-Esta validação focal não aprova THEME-MF3.
+O reteste de 2026-10-31 reorganizou a sanfona abaixo de 768px em duas colunas,
+sem alterar as 13 seções ou o DOM; a seção aberta e logout ocupam a linha
+completa. Firefox ESR passou 39/39 verificações em modo claro e 39/39 em
+escuro, incluindo ordem consistente, alvos de 56px e ausência de overflow em
+320/360/390/599/600/767/768/1024/1280/1440px. As capturas de 320px foram
+inspecionadas; o formulário não foi submetido. Teclado completo, zoom, ACL entre
+contas e WCAG 2.2 AA permanecem pendentes. Evidências:
+`/home/piradopirata/aculta-suite-out/account-shell-two-column-final2-20261031/`
+e `/home/piradopirata/aculta-suite-out/account-shell-two-column-dark-20261031/`.
+Este reteste candidato não aprova THEME-MF3.
 
 ### THEME-MF2 — Perfil público (2026-10-29)
 
@@ -1578,3 +1582,15 @@ Capturas/relatório em
 O estado observado não continha cursos/certificados matriculados. ACL de turma,
 cursos ativos, teclado, zoom, no-JS, CSS servida e comparação pareada com o
 OpenCulturas autenticado seguem pendentes; isso não aprova OCS-F6/F11 ou THEME-MF3.
+
+### THEME-MF2 — menu mobile da Conta (2026-10-31)
+
+A sanfona do Portal passou de lista longa a grade de duas colunas abaixo de
+768px, preservando DOM e conteúdo: a seção aberta e Sair usam a largura total.
+O consumer real `/configuracoes`, autenticado com conta sintética, passou
+39/39 invariantes em Firefox ESR nos dez viewports, em claro e escuro; alvos de
+56px, 13 labels na mesma ordem e zero overflow. Capturas candidatas em
+`/home/piradopirata/aculta-suite-out/account-shell-two-column-final2-20261031/`
+e `/home/piradopirata/aculta-suite-out/account-shell-two-column-dark-20261031/`.
+Não houve submissão nem mudança de estado; o CSS foi injetado só no navegador,
+portanto THEME-MF3 continua pendente.

@@ -528,6 +528,16 @@ em dez larguras e sem overflow. A repetição integrada sem CSS override passou
 33/33 após commit e `drush cr`; a agregação ativa foi verificada. Evidência em
 `/home/piradopirata/suite-out/aculta-account-shell-8768825cf/`.
 
+Em 2026-10-31, a sanfona mobile foi organizada em duas colunas sem duplicar
+markup ou mudar a ordem das 13 seções. A seção aberta e o logout ocupam a linha
+completa; em 320–767px os alvos continuam com 56px e a navegação cai de 12 para
+7 linhas no caso capturado. Firefox ESR passou 39/39 verificações na folha
+candidata em modo claro e 39/39 em escuro; capturas 320px revisadas em
+`/home/piradopirata/aculta-suite-out/account-shell-two-column-final2-20261031/`
+e `/home/piradopirata/aculta-suite-out/account-shell-two-column-dark-20261031/`.
+Não houve submissão nem gravação de preferências; gates de teclado, zoom,
+privacidade A/B e WCAG integral continuam pendentes.
+
 ## THEME-MF0 — `donation-quick` no purpose SUPPORT
 
 O purpose público SUPPORT consome o SDC existente `donation-quick`, que compõe
