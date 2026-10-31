@@ -71,7 +71,10 @@
 }
 
 .aculta-institution-bar__home { display: inline-flex; line-height: 0; }
-.aculta-institution-bar__home:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
+.aculta-institution-bar__home:is(:focus, :focus-visible) {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
 
 /* Preserve separation from the fixed Drupal Navigation top-bar without JS. */
 @media (min-width: 64rem) {
