@@ -17,15 +17,15 @@
 }
 
 @media (max-width: 35.999rem) {
-  .node-form .vertical-tabs,
-  .node-form .vertical-tabs__panes,
-  .node-form .entity-meta {
-    inline-size: 100%;
-    max-inline-size: 100%;
+  form.node-form .vertical-tabs,
+  form.node-form .vertical-tabs__panes,
+  form.node-form .entity-meta {
+    inline-size: 100% !important;
+    max-inline-size: 100% !important;
   }
 
-  .node-form .entity-meta {
-    flex: 0 0 100%;
+  form.node-form .entity-meta {
+    flex: 0 0 100% !important;
   }
 }
 .webform-submission-form .form-submit {
