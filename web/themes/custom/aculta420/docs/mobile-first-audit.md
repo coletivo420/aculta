@@ -1837,6 +1837,13 @@ e `/home/piradopirata/aculta-suite-out/courses-rail-proximity-nojs-20261031/`.
 As capturas candidatas foram inspecionadas. Este ajuste do consumer real não
 prova CSS servida, outros consumers ou WCAG completa; THEME-MF3 continua pendente.
 
+A suíte reutilizável passou a exigir também `:focus-visible`, outline sólido de
+3px e foco ativo após as setas. As rodadas candidatas ampliadas passaram **17/17
+checks** com JavaScript e **17/17** com JavaScript da página desativado; a 320px
+e a 400% o outline mediu 3px/3px de offset. Evidências e capturas em
+`/home/piradopirata/aculta-suite-out/courses-rail-focus-candidate-20261031/` e
+`/home/piradopirata/aculta-suite-out/courses-rail-focus-nojs-20261031/`.
+
 ### THEME-MF2 — shell sem JavaScript nas dez raízes públicas (2026-10-30)
 
 O teste reutilizável `tests/browser/aculta-theme-mobile-first/purpose-shell-nojs.py`

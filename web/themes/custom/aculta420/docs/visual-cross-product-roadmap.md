@@ -1850,7 +1850,9 @@ OCS-F11/THEME-MF3 nem a homologação de todas as telas. Detalhes e evidências 
 Firefox ESR encontrou que snap `mandatory` impedia ArrowRight de avançar o rail
 no zoom real de 400%. O SDC existente `patterns/rail` agora usa snap
 `proximity`, sem JavaScript ou mudança de markup/contrato. O consumidor real
-passou 15/15 checks com e 15/15 sem JavaScript da página, incluindo seta única,
-sequência até o último curso, 320/390/768/1440px e zero overflow. A CSS foi
-injetada apenas na sessão; implantação e homologação integrada ainda pendentes.
-Evidências e capturas revisadas em `mobile-first-audit.md`.
+passou inicialmente 15/15 checks com e 15/15 sem JavaScript da página, incluindo
+seta única, sequência até o último curso, 320/390/768/1440px e zero overflow.
+A CSS foi injetada apenas na sessão; implantação e homologação integrada ainda pendentes.
+O harness foi ampliado para exigir `:focus-visible` com outline sólido de 3px;
+os retestes passaram 17/17 com e sem JavaScript da página. Evidências e capturas
+revisadas em `mobile-first-audit.md`.

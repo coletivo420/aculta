@@ -394,10 +394,11 @@ continua sendo o host HTTPS aberto pelo Firefox.
 real do SDC `rail`, papel e nome acessível, foco por teclado e rolagem com
 ArrowRight a 320px e 400% de zoom real. A 400%, a janela começa em 1280px e
 Firefox deve reflowar para viewport CSS de 320px; o teste confirma que a página
-continua contida, que uma seta avança e que uma sequência de setas alcança o
-último cartão. Captura 320/1440, o estado após a seta em 320px e o rail antes e
-depois da sequência de teclado a 400% no Firefox ESR visível. Só faz GET, foco,
-tecla e ajuste de zoom; não altera dados. O
+continua contida, que uma seta avança, mantém indicador de foco visível com
+outline de 3px e que uma sequência de setas alcança o último cartão. Captura
+320/1440, o estado após a seta em 320px e o rail antes e depois da sequência de
+teclado a 400% no Firefox ESR visível. Só faz GET, foco, tecla e ajuste de zoom;
+não altera dados. O
 conteúdo publicado precisa conter ao menos dois cursos para testar a rolagem.
 Requer `xdotool` para zoom real. URLs derivam de
 `aculta_deployer/config/deploy.json`.

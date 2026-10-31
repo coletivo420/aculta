@@ -50,6 +50,16 @@ def browser_key(keys):
     subprocess.run(["xdotool", "key", "--clearmodifiers", keys], check=True)
 
 
+def rail_focus_metrics(driver):
+    return driver.js("""const rail=document.querySelector('.aculta-rail');
+      const style=rail?getComputedStyle(rail):null;
+      return {focused:!!rail&&document.activeElement===rail,
+        focusVisible:!!rail&&rail.matches(':focus-visible'),
+        outlineStyle:style?.outlineStyle||'none',
+        outlineWidth:Number.parseFloat(style?.outlineWidth||'0'),
+        outlineOffset:style?.outlineOffset||'0px'};""")
+
+
 def test_zoom_400(driver, viewport):
     browser_key("ctrl+0")
     viewport.set(1280)
@@ -92,6 +102,11 @@ def test_zoom_400(driver, viewport):
         after = driver.js("return document.querySelector('.aculta-rail').scrollLeft;")
         check("400% zoom: ArrowRight percorre a trilha", after > rail_metrics["railScrollLeft"],
               f"scrollLeft {rail_metrics['railScrollLeft']} → {after}")
+        focus_metrics = rail_focus_metrics(driver)
+        check("400% zoom: foco de teclado tem indicador visível",
+              focus_metrics["focused"] and focus_metrics["focusVisible"]
+              and focus_metrics["outlineStyle"] != "none"
+              and focus_metrics["outlineWidth"] >= 3, json.dumps(focus_metrics, ensure_ascii=False))
         image = driver.req("GET", f"/session/{driver.session}/screenshot")
         (OUT / "courses-rail-zoom-400.png").write_bytes(base64.b64decode(image))
         for _ in range(12):
@@ -199,6 +214,11 @@ try:
             time.sleep(0.2)
             after = driver.js("return document.querySelector('.aculta-rail').scrollLeft;")
             check("320px: ArrowRight percorre a trilha", after > metrics["railScrollLeft"], f"scrollLeft {metrics['railScrollLeft']} → {after}")
+            focus_metrics = rail_focus_metrics(driver)
+            check("320px: foco de teclado tem indicador visível",
+                  focus_metrics["focused"] and focus_metrics["focusVisible"]
+                  and focus_metrics["outlineStyle"] != "none"
+                  and focus_metrics["outlineWidth"] >= 3, json.dumps(focus_metrics, ensure_ascii=False))
             image = driver.req("GET", f"/session/{driver.session}/screenshot")
             (OUT / "courses-rail-320-after-arrow.png").write_bytes(base64.b64decode(image))
             test_zoom_400(driver, viewport)
