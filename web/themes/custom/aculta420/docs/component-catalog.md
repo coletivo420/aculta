@@ -369,9 +369,11 @@ Os formulários existentes continuam sendo renderizados pelos módulos e pelo
 Form API; o tema aplica a aparência Next somente sob `.studio__main form` e
 `.aculta-profile-editor form`. Não foi criado SDC de formulário paralelo. A
 fixture reutilizável `tests/browser/aculta-studio/studio-form-fidelity.py`
-passou 42/42 verificações em claro/escuro, inclui foco de teclado e confirma
-que um formulário externo ao Studio não recebe esses estilos. Ela não substitui
-a homologação dos consumers reais ou dos estados AJAX/no-JS dos owners.
+passou 50/50 verificações em claro/escuro e 320/390/768/1440px. Campos e ações
+medem pelo menos 44px de altura, o foco de teclado permanece visível e um
+formulário externo ao Studio não recebe esses estilos. A fixture não substitui
+a homologação dos consumers reais ou dos estados AJAX/no-JS dos owners. Evidência
+em `$SUITE_OUT/studio-form-touch-target-20261030/`.
 
 ### OCS-F8 — área comercial integrada
 

@@ -15,7 +15,7 @@ depende de THEME-MF3. OCS-A1–A4 só começam depois dos dois gates aprovados.
 | OCS-F1–F2 | Implementados parcialmente; CSS candidata verificada em rotas reais, implantação e cobertura total pendentes. |
 | OCS-F3 | Variante `studio_fidelity` adicionada ao SDC `patterns/card` com story e consumidor real na entrada da Conta; schema 55/756, Unit 20/121 e CSS fixture Firefox 45/45 passaram. A repetição no worktree baseado em `82ff8538d` passou 216/216, cobrindo limites upstream 48/70/85/120em, container e tipografia Montserrat; capturas 320/1440px inspecionadas. HTML do preprocess e render Drupal/Runtime seguem pendentes. |
 | OCS-F4 | Composição adapta links autorizados do registry e da entrada da Conta ao SDC existente; estado funcional vem dos providers. Captura Runtime com o novo adaptador pendente. |
-| OCS-F5–F7 | Parcial/incompleto; além da fixture de formulários 42/42, Marley foi validado em Firefox ESR com quatro publicações sintéticas próprias, links canônicos `/marley/revista/{id}/editar`, tabela responsiva em 390px (80/80 checks) e GET real dos Form APIs de edição/criação com CSS candidata (87/87 checks, sem submit; título Fidelity e shell preservado). Persistência/submissão, todos os estados, AJAX/no-JS, LMS e Wiki seguem pendentes. |
+| OCS-F5–F7 | Parcial/incompleto; além da fixture de formulários 50/50 (inclui alvos mínimos de 44px), Marley foi validado em Firefox ESR com quatro publicações sintéticas próprias, links canônicos `/marley/revista/{id}/editar`, tabela responsiva em 390px (80/80 checks) e GET real dos Form APIs de edição/criação com CSS candidata (87/87 checks, sem submit; título Fidelity e shell preservado). Persistência/submissão, todos os estados, AJAX/no-JS, LMS e Wiki seguem pendentes. |
 | OCS-F8 | Fundação visual Studio e apresentação candidata das listagens integradas; fixture Firefox ESR 74/74 em nove larguras e claro/escuro. Operador autorizado, grants por loja e telas reais continuam sem homologação. |
 | OCS-F9–F10 | Shell da Conta passou reteste Firefox 33/33 em dez larguras; fixtures de identidade e perfil público passaram 56/56 e 22/22. Contas/perfis reais, render do editor privado, ACL A/B e S-R4/S-R5 continuam pendentes; `/conta-legada` segue preservada. |
 | OCS-F11 | Não aprovado: depende de THEME-MF3 e das evidências de todas as áreas/estados. |
@@ -776,6 +776,16 @@ formulário fora do Studio. Stylelint e Design Foundations passaram. Capturas
 `/home/piradopirata/aculta-suite-out/studio-form-fidelity-final2-20261030/`.
 Não valida Drupal/Form API real, AJAX/no-JS, ACL nem fluxos dos owners; F5–F7/F9
 continuam parciais e não há gate F11.
+
+### Reteste OCS-F1/F5–F7/F9 — alvos de formulário (2026-10-30)
+
+Campos e botões dentro de `.studio__main form` e `.aculta-profile-editor form`
+agora têm altura mínima de 44px. A mesma fixture Firefox ESR passou 50/50 em
+claro/escuro e 320/390/768/1440px; o estilo continua isolado de formulários
+externos ao Studio. Stylelint passou. Evidências em
+`/home/piradopirata/aculta-suite-out/studio-form-touch-target-20261030/`.
+Permanece validação de fixture CSS/markup, sem homologar Drupal/Form API, owners,
+AJAX/no-JS, ACL ou gates OCS-F11/THEME-MF3.
 
 ### OCS-F6 — apresentação candidata do dashboard GanjaLab (2026-10-30)
 

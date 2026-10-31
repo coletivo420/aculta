@@ -2107,3 +2107,14 @@ consumidores, navegação completa por teclado, reduced motion ou auditoria WCAG
 do componente, sem overflow do documento. OCS-F2/F5 seguem parciais; THEME-MF3
 e OCS-F11 continuam pendentes. A fixture sintética anterior (243/243 em 27
 larguras) continua como evidência complementar.
+
+### Studio — alvos mínimos nos formulários Fidelity (2026-10-30)
+
+Firefox ESR visível executou `studio-form-fidelity.py` com a CSS candidata local
+em claro e escuro, nos viewports 320/390/768/1440px. Foram 50/50 verificações:
+campos de texto e ações têm ao menos 44px de altura, foco de teclado está
+visível, não houve overflow e um formulário externo não recebeu os estilos do
+Studio. Stylelint também passou. Evidências em
+`/home/piradopirata/aculta-suite-out/studio-form-touch-target-20261030/`.
+É uma fixture de CSS/markup, não uma homologação de Form API real, AJAX/no-JS,
+ACL, contraste WCAG completo ou de todos os consumers Studio.

@@ -94,7 +94,8 @@ try:
       const style=(el)=>getComputedStyle(el);
       const box=(el)=>{const s=style(el);return {padding:s.padding,background:s.backgroundColor,color:s.color,
         borderTop:s.borderTopColor,borderBottom:s.borderBottomColor,radius:s.borderRadius,
-        weight:s.fontWeight,outlineStyle:s.outlineStyle,outlineWidth:s.outlineWidth};};
+        blockSize:el.getBoundingClientRect().height,weight:s.fontWeight,
+        outlineStyle:s.outlineStyle,outlineWidth:s.outlineWidth};};
       return {width:innerWidth,scrollWidth:document.documentElement.scrollWidth,
         form:{padding:style(form).padding,margin:style(form).marginBlockStart,background:style(form).backgroundColor},
         formPaddingBlock:style(form).paddingBlock,formPaddingInline:style(form).paddingInline,
@@ -152,6 +153,11 @@ try:
                    and data["fieldset"]["padding"] == ("20px" if width < 1120 else "20px 32px")
                    and data["fieldset"]["border"] == "2px",
                    {"form": data["form"], "field": data["field"], "fieldset": data["fieldset"], "imageInputPadding": data["imageInputPadding"]})
+            record(f"{mode}/{width}px: alvos do formulário com mínimo de 44px",
+                   data["field"]["blockSize"] >= 44
+                   and all(data[name]["blockSize"] >= 44 for name in ("normal", "primary", "reset", "danger")),
+                   {"field": data["field"]["blockSize"], "buttons": {name: data[name]["blockSize"]
+                    for name in ("normal", "primary", "reset", "danger")}})
             record(f"{mode}/{width}px: label e opção",
                    data["label"] == {"display": "block", "weight": "600"}
                    and data["optionDisplay"] == "inline-block",

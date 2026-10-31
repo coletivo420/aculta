@@ -392,6 +392,7 @@ body.path-culturas .aculta-main form :is(button, input[type="submit"], .form-sub
 
 .studio__main form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), .form-select),
 .aculta-profile-editor form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), .form-select) {
+  min-block-size: 2.75rem;
   padding: 0.5rem 1rem;
   color: var(--aculta-studio-fidelity-text);
   border: 1px solid var(--aculta-studio-fidelity-input-border-bottom);
@@ -421,6 +422,7 @@ body.path-culturas .aculta-main form :is(button, input[type="submit"], .form-sub
 .studio__main form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button),
 .aculta-profile-editor form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button) {
   display: inline-block;
+  min-block-size: 2.75rem;
   margin-block-end: 1em;
   padding: 0.5em 2em;
   color: var(--aculta-studio-fidelity-button-text);
