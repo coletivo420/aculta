@@ -145,7 +145,13 @@ O cartão do ponto de entrada usa agora a variante `studio_fidelity`. Ela manté
 o contrato de slots/render array e aproxima margem, padding, raio e sombra dos
 teasers OpenCulturas 3.1.5, escopada à raiz `.studio`. A story é declarativa;
 não cria links funcionais. Firefox visível passou 45/45 medições na fixture
-local em nove larguras; não é captura do Runtime.
+local em nove larguras; não é captura do Runtime. Reteste da fixture na árvore
+atual, com 27 breakpoints entre 320–1920px, passou 243/243: container, grade,
+duas instâncias de `patterns/card`, Montserrat regular/negrito, escala
+tipográfica e alvos das abas de pelo menos 44px. Capturas 320/1440 foram
+inspecionadas em
+`/home/piradopirata/aculta-suite-out/studio-card-fidelity-current-20261031/`.
+O reteste não representa o HTML servido; o Runtime continua no HEAD `2493d7535`.
 
 Na navegação interna, `.studio__tabs` e `.studio__subtabs` preservam os links e
 estados autorizados existentes. A apresentação distingue áreas primárias de

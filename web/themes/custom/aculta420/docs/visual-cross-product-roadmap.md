@@ -1064,9 +1064,12 @@ foram conferidos em `templates/node/teasers.scss` e
 `2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`.
 Schema/discovery passou para 55 componentes/756 checks, a story foi criada,
 Unit passou 20 testes/121 assertions e Firefox ESR visível passou 45/45 checks
-na fixture candidata em nove larguras. Essa evidência não é render Drupal no
-Runtime. OCS-F3/F8 continuam parciais; F11 e THEME-MF3 não aprovados e OCS-A1–A4
-não iniciadas.
+na fixture candidata em nove larguras. Reteste na árvore atual passou 243/243
+em 27 larguras (320–1920px), incluindo container, breakpoints, Montserrat,
+escala tipográfica, abas e cartões; capturas 320/1440 foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/studio-card-fidelity-current-20261031/`.
+Essa evidência continua sendo fixture, não render Drupal no Runtime. OCS-F3/F8
+continuam parciais; F11 e THEME-MF3 não aprovados e OCS-A1–A4 não iniciadas.
 
 ### OCS-F8 — navegação e listagens comerciais (2026-10-30)
 
