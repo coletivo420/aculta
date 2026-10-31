@@ -46,6 +46,7 @@ use Drupal\workflows\Entity\Workflow;
 use Drupal\aculta_mailer\Queue\MailQueue;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\aculta_wiki\Controller\WikiController;
+use Drupal\aculta_wiki\Controller\WikiEntryCreateController;
 use Drupal\aculta_wiki\Service\WikiProposalSubmission;
 use Drupal\aculta_wiki\Service\WikiEditorialQueue;
 use Drupal\aculta_wiki\Service\WikiProposalDecision;
@@ -1282,12 +1283,19 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $startRoute = $routes->getRouteByName('aculta_studio.we_sativa_start');
     self::assertSame('/studio/we-sativa/inicio', $startRoute->getPath());
     self::assertSame('wiki', $startRoute->getOption('_aculta_domain_purpose'));
-    $nodeAddRoute = $routes->getRouteByName('node.add');
-    self::assertSame('/node/add/{node_type}', $nodeAddRoute->getPath());
+    $createRoute = $routes->getRouteByName('aculta_wiki.studio_entry_create');
+    self::assertSame('/studio/we-sativa/verbetes/novo', $createRoute->getPath());
+    self::assertSame('wiki', $createRoute->getOption('_aculta_domain_purpose'));
+    self::assertSame('node:wiki_entry', $createRoute->getRequirement('_entity_create_access'));
     self::assertTrue($this->container->get('access_manager')->checkNamedRoute(
-      'node.add',
-      ['node_type' => 'wiki_entry'],
+      'aculta_wiki.studio_entry_create',
+      [],
       $author,
+    ));
+    self::assertFalse($this->container->get('access_manager')->checkNamedRoute(
+      'aculta_wiki.studio_entry_create',
+      [],
+      $reader,
     ));
     $exactEntrypoints = array_filter(
       $routes->getRoutesByPattern('/studio/we-sativa')->all(),
@@ -1323,14 +1331,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertTrue($this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', fn () => $this->container
       ->get('access_manager')->checkNamedRoute('entity.node.edit_form', ['node' => $own->id()], $author)));
     $createLink = $build['header']['#slots']['actions'];
-    self::assertSame('node.add', $createLink['#url']->getRouteName());
-    self::assertSame(['node_type' => 'wiki_entry'], $createLink['#url']->getRouteParameters());
+    self::assertSame('aculta_wiki.studio_entry_create', $createLink['#url']->getRouteName());
+    self::assertSame([], $createLink['#url']->getRouteParameters());
     self::assertSame('wiki420_aculta_org', $createLink['#url']->getOption('domain')->id());
     self::assertSame('content-grid', $build['entries']['#slots']['body']['items']['#name']);
     $startBuild = $workspace->buildStart($author);
     self::assertSame('Seu espaço de contribuição', $startBuild['header']['#props']['title']);
     self::assertSame('context-header', $startBuild['header']['#name']);
-    self::assertSame('node.add', $startBuild['header']['#slots']['actions']['#url']->getRouteName());
+    self::assertSame('aculta_wiki.studio_entry_create', $startBuild['header']['#slots']['actions']['#url']->getRouteName());
     self::assertSame('content-section', $startBuild['guide']['#name']);
     $this->container->get('theme_installer')->install(['aculta420']);
     $this->container->get('config.factory')->getEditable('system.theme')
@@ -1861,10 +1869,20 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertFalse($participation->hasPublishedContribution());
     self::assertTrue($participation->requiresReview());
     self::assertTrue($this->container->get('access_manager')->checkNamedRoute(
-      'node.add',
-      ['node_type' => 'wiki_entry'],
+      'aculta_wiki.studio_entry_create',
+      [],
       $author,
     ));
+
+    $nodeStorage = $this->container->get('entity_type.manager')->getStorage('node');
+    $nodeCountBefore = $nodeStorage->getQuery()->accessCheck(FALSE)->count()->execute();
+    $contextualForm = WikiEntryCreateController::create($this->container)->createEntry();
+    self::assertSame('node-wiki-entry-form', $contextualForm['#id']);
+    self::assertArrayHasKey('title', $contextualForm);
+    self::assertArrayHasKey('body', $contextualForm);
+    self::assertArrayHasKey('wiki_workspace_return', $contextualForm);
+    self::assertSame('aculta_studio.we_sativa', $contextualForm['wiki_workspace_return']['#url']->getRouteName());
+    self::assertSame($nodeCountBefore, $nodeStorage->getQuery()->accessCheck(FALSE)->count()->execute());
 
     $node = Node::create(['type' => 'wiki_entry', 'uid' => $author->id()]);
     $formObject = $this->container->get('entity_type.manager')->getFormObject('node', 'default');
@@ -1875,7 +1893,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $form = $formBuilder->buildForm($formObject, $formState);
     self::assertSame('link', $form['wiki_workspace_return']['#type']);
     self::assertSame('aculta_studio.we_sativa', $form['wiki_workspace_return']['#url']->getRouteName());
-    self::assertSame('conta_aculta_org', $form['wiki_workspace_return']['#url']->getOption('domain')->id());
+    self::assertSame('wiki420_aculta_org', $form['wiki_workspace_return']['#url']->getOption('domain')->id());
     self::assertArrayHasKey('title', $form);
     self::assertArrayHasKey('body', $form);
     self::assertArrayHasKey('actions', $form);

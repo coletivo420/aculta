@@ -58,8 +58,11 @@ Variáveis: `WIKI_HOME_URL` (padrão `https://wiki420.aculta.toca.net.br/`),
 `WIKI_STUDIO_PAGE` (padrão
 `https://wiki420.aculta.toca.net.br/studio/we-sativa/inicio`),
 `WIKI_STUDIO_LOGIN_URI` (padrão `https://wiki420.aculta.toca.net.br`),
-`WIKI_STUDIO_UID` (padrão `5`; passe vazio para usar `WIKI_STUDIO_USER`) e
-`WIKI_STUDIO_USER` (padrão vazio; usado quando `WIKI_STUDIO_UID` é vazio) e
+`WIKI_STUDIO_UID` (padrão `5`; passe vazio para usar `WIKI_STUDIO_USER`),
+`WIKI_STUDIO_USER` (padrão vazio; usado quando `WIKI_STUDIO_UID` é vazio),
+`WIKI_STUDIO_DRUSH_ROOT` (opcional; raiz do checkout com `web/` e `vendor/`
+quando o script roda de um worktree, mas o ULI deve ser emitido pelo docroot
+Runtime), e
 `SUITE_OUT` (padrão `/home/piradopirata/aculta-suite-out/aculta-wiki-we-sativa`).
 Requer Drush funcional e Firefox ESR visível. A conta precisa ter confirmação de e-mail,
 acesso ao Studio e criação Wiki. A rodada autentica e cria uma sessão de navegador;
@@ -67,6 +70,11 @@ não reconstrói caches/configuração, não publica nem grava conteúdo. O resu
 avalia somente o tema ativo no Runtime de teste; a rodada dev.117 também cobriu
 Olivero e modo escuro. Leitor de tela e WCAG 2.2 AA completa permanecem fora
 do escopo do script.
+
+O fluxo `we-sativa.py` abre a ação de criação em
+`/studio/we-sativa/verbetes/novo`, dentro do purpose Wiki, e confirma o
+formulário nativo e o link de retorno. Não usa `/node/add/wiki_entry` em outro
+purpose e não submete nem salva o formulário.
 
 O script valida raiz, listagem e busca em desktop e larguras móveis, verifica
 presença de `main`/`h1`, erros visíveis e rolagem horizontal, e confirma que o

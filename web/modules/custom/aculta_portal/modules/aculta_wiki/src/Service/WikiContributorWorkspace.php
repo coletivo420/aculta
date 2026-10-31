@@ -146,7 +146,7 @@ final class WikiContributorWorkspace {
     $create ??= AccessResult::forbidden()->addCacheContexts(['user', 'user.permissions', 'domain']);
     $cacheability->addCacheableDependency($create);
     if ($create->isAllowed()) {
-      $url = $this->domainPurposes->routeUrl('wiki', 'node.add', ['node_type' => 'wiki_entry']);
+      $url = $this->domainPurposes->routeUrl('wiki', 'aculta_wiki.studio_entry_create');
       if ($url !== NULL) {
         $createLink = Link::fromTextAndUrl($this->t('Criar verbete'), $url)->toRenderable();
         $createLink['#attributes']['data-portal-ui'] = 'we-sativa-create';
@@ -288,7 +288,7 @@ final class WikiContributorWorkspace {
     if ($create instanceof AccessResultInterface) {
       $cacheability->addCacheableDependency($create);
       if ($create->isAllowed()) {
-        $createUrl = $this->domainPurposes->routeUrl('wiki', 'node.add', ['node_type' => 'wiki_entry']);
+        $createUrl = $this->domainPurposes->routeUrl('wiki', 'aculta_wiki.studio_entry_create');
         if ($createUrl !== NULL) {
           $routeAccess = $this->domainPurposes->runInPurpose('wiki', fn () => $createUrl->access($account, TRUE));
           if ($routeAccess instanceof AccessResultInterface) {

@@ -69,6 +69,17 @@ aculta_wiki.proposal_status:
       proposal:
         type: entity:aculta_wiki_proposal
 
+aculta_wiki.studio_entry_create:
+  path: '/studio/we-sativa/verbetes/novo'
+  defaults:
+    _controller: '\Drupal\aculta_wiki\Controller\WikiEntryCreateController::createEntry'
+    _title: 'Criar verbete'
+  requirements:
+    _entity_create_access: 'node:wiki_entry'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: wiki
+
 aculta_wiki.proposal_withdraw:
   path: '/wiki/propostas/{proposal}/retirar'
   defaults:

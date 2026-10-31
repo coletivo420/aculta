@@ -11,6 +11,13 @@ planned. The approved path retifies ADR-038; `/wesativa` and all other retired
 paths return 404 without aliases. Runtime route verification is pending after
 the path change.
 
+Wiki entry creation from WE SATIVA uses
+`/studio/we-sativa/verbetes/novo` (`aculta_wiki.studio_entry_create`) in the
+Wiki purpose. The route and controller require the existing
+`createAccess('wiki_entry')` decision and render Drupal's native Node Form API;
+they do not create a second editorial form. The Main-purpose
+`/node/add/wiki_entry` route is not used as a cross-purpose link.
+
 ## Avisos da Wiki
 
 O `aculta_wiki` publica eventos editoriais e seleciona destinatários de acordo

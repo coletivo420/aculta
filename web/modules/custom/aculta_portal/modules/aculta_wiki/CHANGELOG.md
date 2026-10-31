@@ -3,6 +3,15 @@
 - Rotas e links canônicos usam `/studio/we-sativa` no purpose `wiki`, conforme ADR-038 retificado pelo responsável.
 - `/wesativa` não fica como alias ou redirect. Testes de rota após a retificação e homologação Runtime continuam pendentes.
 
+## 0.1.0-dev.119 — criação WE SATIVA no purpose Wiki
+
+- O CTA usa `/studio/we-sativa/verbetes/novo`, protegido por
+  `createAccess('wiki_entry')` no purpose Wiki. O controller renderiza o
+  formulário nativo de Node Form API e não persiste conteúdo ao abrir.
+- Kernel focal confirmou rota permitida para autoria autorizada, render do
+  formulário e ausência de Node salvo. HTTP/Firefox ESR no Runtime seguem
+  pendentes até publicar a microfase.
+
 ## 0.1.0-dev.118 — proteger grants versionados das propostas (2026-10-26)
 
 - Teste Unit `WikiProposalRolePermissionsConfigTest` verifica que submissão e

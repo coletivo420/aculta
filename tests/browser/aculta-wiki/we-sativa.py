@@ -23,6 +23,7 @@ HOME = os.environ.get("WIKI_HOME_URL", "https://wiki420.aculta.toca.net.br/")
 LOGIN_URI = os.environ.get("WIKI_STUDIO_LOGIN_URI", "https://wiki420.aculta.toca.net.br")
 USER_UID = os.environ.get("WIKI_STUDIO_UID", "5")
 USER = os.environ.get("WIKI_STUDIO_USER", "")
+DRUSH_ROOT = Path(os.environ.get("WIKI_STUDIO_DRUSH_ROOT", str(PROJECT))).resolve()
 OUT = Path(os.environ.get(
     "SUITE_OUT", "/home/piradopirata/aculta-suite-out/aculta-wiki-we-sativa"
 ))
@@ -51,7 +52,7 @@ def one_time_login():
     login_args.append(f"--uri={LOGIN_URI}")
     result = subprocess.run(
         login_args,
-        cwd=PROJECT,
+        cwd=DRUSH_ROOT,
         check=True,
         capture_output=True,
         text=True,
@@ -186,8 +187,8 @@ try:
               f"{work_url.netloc}{work_url.path}")
         create_href = metrics["createHref"]
         create_url = urlparse(create_href)
-        check("ação Criar verbete aponta para a rota nativa da Wiki",
-              create_url.path == "/node/add/wiki_entry"
+        check("ação Criar verbete mantém a criação dentro de WE SATIVA",
+              create_url.path == "/studio/we-sativa/verbetes/novo"
               and create_url.netloc == urlparse(PAGE).netloc,
               f"{create_url.netloc}{create_url.path}" if create_href else "ausente")
         check("links de conteúdo têm nome acessível", metrics["unnamedLinks"] == 0,
@@ -226,7 +227,19 @@ try:
                 "[...document.querySelectorAll('a')].some((a) => "
                 "a.innerText.includes('Voltar para Meu Trabalho WE SATIVA'))"
             )
-            check("formulário nativo oferece retorno autorizado ao workspace", returned)
+            return_diagnostic = driver.js("""return {
+              path: location.pathname,
+              title: document.title,
+              form: document.querySelector('form.node-wiki-entry-form')?.id || null,
+              returnLinkCount: [...document.querySelectorAll('a')]
+                .filter((a) => a.textContent.includes('Voltar para Meu Trabalho WE SATIVA')).length,
+              formActionCount: document.querySelectorAll('form').length,
+            };""")
+            check("formulário nativo oferece retorno autorizado ao workspace", returned,
+                  json.dumps(return_diagnostic, ensure_ascii=False))
+            if not returned:
+                screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                (OUT / "workspace-return-link-missing.png").write_bytes(base64.b64decode(screenshot))
             if returned:
                 return_link = driver.js("""return (() => {
                   const a = [...document.querySelectorAll('a')].find((el) =>

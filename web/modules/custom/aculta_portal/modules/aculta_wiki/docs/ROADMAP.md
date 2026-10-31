@@ -1,5 +1,16 @@
 # Roadmap — ACULTA Wiki
 
+### Incremento dev.119 — criação WE SATIVA no purpose Wiki
+
+O CTA de autoria passa a `/studio/we-sativa/verbetes/novo`, rota própria no
+purpose Wiki, protegida por `createAccess('wiki_entry')`. Seu controller monta
+o formulário Core existente via Entity Form API; não há um formulário paralelo
+nem gravação ao abrir a página. A rota Core `/node/add/wiki_entry` pertence ao
+purpose principal e não é mais usada pelo workspace. Kernel focal confirma
+autorização, render do formulário e ausência de persistência; validação HTTP no
+Runtime e Firefox ESR/X11 continuam pendentes até publicar e sincronizar o
+checkout de teste.
+
 ## Retificação vigente de caminhos (2026-10-30)
 
 Por decisão vinculante do responsável, **ACULTA STUDIO WE SATIVA** usa
@@ -13,7 +24,7 @@ homologados.
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.118**. No Runtime de teste,
+Linha do projeto `aculta_wiki`: **0.1.0-dev.119**. No Runtime de teste,
 `aculta_wiki`, `aculta_studio` e `aculta_index` estão ativos. `drush cr` e o
 update autorizado 10001 foram aplicados; as rotas WE SATIVA existem e as quatro
 tabelas da entidade de proposta foram instaladas. Em dev.117 o Index foi
