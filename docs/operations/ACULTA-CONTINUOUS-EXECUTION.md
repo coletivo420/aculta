@@ -2609,3 +2609,10 @@ ou preferência persistente alterados.
   A captura diagnóstica também confirmou foco visível real no link de skip, na
   marca da Institution Bar, no logo, no menu e nos links de conteúdo. Evidência
   em `/home/piradopirata/aculta-suite-out/links-keyboard-final/results.json`.
+- A matriz global final, após a correção da Institution Bar e rebuild, passou
+  **609/609 checks de foco** nos dez purposes, quatro larguras e oito passos
+  por direção, com 47 limites de sequência explicitamente registrados como
+  `skip`. Evidência em
+  `/home/piradopirata/aculta-suite-out/global-keyboard-final-fc2/results.json`.
+  Isso remove o bloqueio de teclado do THEME-MF3; permanecem os demais gates
+  transversais e a homologação funcional de F11.
