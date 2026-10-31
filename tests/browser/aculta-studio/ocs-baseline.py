@@ -212,14 +212,16 @@ socket.onmessage = (event) => {
     if STATUS_FLOW_FIXTURE:
         fixture = """
           const region=document.querySelector('.aculta-highlighted');
-          if(!region)throw new Error('A página não possui .aculta-highlighted para o fixture.');
+          if(!region)return false;
           if(!region.querySelector('.alert-wrapper')){
             region.insertAdjacentHTML('afterbegin',
               '<div class=\"alert-wrapper\"><div class=\"alert alert-success\" role=\"status\" aria-label=\"Mensagem de status\">Aviso de teste visual, sem dados pessoais.</div></div>');
           }
           return true;
         """
-        driver.js(fixture)
+        status_flow_fixture_inserted = driver.js(fixture)
+    else:
+        status_flow_fixture_inserted = None
     if STUDIO_CSS_OVERRIDE:
         driver.js("const style=document.createElement('style');style.dataset.ocsStudioFidelityCandidate='true';style.textContent=arguments[0];document.head.append(style);return true", [STUDIO_CANDIDATE_CSS])
         driver.js("document.fonts.load('400 16px Montserrat', 'Meus cursos');return true")
@@ -277,27 +279,33 @@ socket.onmessage = (event) => {
           .filter(Boolean).map(href => href.split('?')[0]).slice(0, 80)
       };
     })());"""))
+    if STATUS_FLOW_FIXTURE:
+        record["statusMessageFlowFixture"] = "INSERTED" if status_flow_fixture_inserted else "SKIP_NO_HIGHLIGHTED_REGION"
     if STATUS_FLOW_CSS_OVERRIDE:
-        diagnostic = record["statusMessageDiagnostic"]
-        diagnostic_boxes = [box for item in diagnostic["candidates"]
-                            for box in [item["element"], *item["ancestors"]]]
-        wrapper = next((box for box in diagnostic_boxes
-                        if "alert-wrapper" in box["classes"]), None)
-        content_after_notice = driver.js("const region=document.querySelector('main#main-content .aculta-highlighted');if(!region)return null;const heading=[...document.querySelectorAll('main#main-content h1,main#main-content h2,main#main-content h3')].find(element=>region.compareDocumentPosition(element)&Node.DOCUMENT_POSITION_FOLLOWING);if(!heading)return null;const r=heading.getBoundingClientRect();return {tag:heading.tagName,top:r.top,left:r.left,right:r.right}")
-        flow_checks = {
-            "wrapperPresent": wrapper is not None,
-            "wrapperInDocumentFlow": wrapper is not None and wrapper["position"] == "static",
-            "noticePrecedesFollowingHeading": wrapper is not None and content_after_notice is not None
-                and wrapper["bottom"] <= content_after_notice["top"] + 1,
-            "noHorizontalOverflow": record["documentScrollWidth"] <= record["documentWidth"]
-                and record["bodyScrollWidth"] <= record["documentWidth"],
-        }
-        record["statusMessageFlowChecks"] = flow_checks
-        record["statusMessageFlowStatus"] = "PASS" if all(flow_checks.values()) else "FAIL"
-        if record["statusMessageFlowStatus"] == "FAIL":
-            CAPTURE_FAILURES.append({"url": url, "width": width,
-                                     "statusMessageFlow": {"checks": flow_checks,
-                                     "wrapper": wrapper, "followingContent": content_after_notice}})
+        if STATUS_FLOW_FIXTURE and not status_flow_fixture_inserted:
+            record["statusMessageFlowStatus"] = "SKIP"
+            record["statusMessageFlowChecks"] = {}
+            wrapper = None
+            content_after_notice = None
+        else:
+            diagnostic = record["statusMessageDiagnostic"]
+            diagnostic_boxes = [box for item in diagnostic["candidates"]
+                                for box in [item["element"], *item["ancestors"]]]
+            wrapper = next((box for box in diagnostic_boxes
+                            if "alert-wrapper" in box["classes"]), None)
+            content_after_notice = driver.js("const region=document.querySelector('main#main-content .aculta-highlighted');if(!region)return null;const heading=[...document.querySelectorAll('main#main-content h1,main#main-content h2,main#main-content h3')].find(element=>region.compareDocumentPosition(element)&Node.DOCUMENT_POSITION_FOLLOWING);if(!heading)return null;const r=heading.getBoundingClientRect();return {tag:heading.tagName,top:r.top,left:r.left,right:r.right}")
+            flow_checks = {
+                "wrapperPresent": wrapper is not None,
+                "wrapperInDocumentFlow": wrapper is not None and wrapper["position"] == "static",
+                "noticePrecedesFollowingHeading": wrapper is not None and content_after_notice is not None
+                    and wrapper["bottom"] <= content_after_notice["top"] + 1,
+            }
+            record["statusMessageFlowChecks"] = flow_checks
+            record["statusMessageFlowStatus"] = "PASS" if all(flow_checks.values()) else "FAIL"
+            if record["statusMessageFlowStatus"] == "FAIL":
+                CAPTURE_FAILURES.append({"url": url, "width": width,
+                                         "statusMessageFlow": {"checks": flow_checks,
+                                         "wrapper": wrapper, "followingContent": content_after_notice}})
     if "path-perfil" in record.get("bodyClasses", []):
         record["profilePublicLink"] = driver.js("return document.querySelector('.aculta-profile-identity__public-link a')?.href || null")
         record["profileActionTargets"] = json.loads(driver.js("""return JSON.stringify(

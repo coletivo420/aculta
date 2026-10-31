@@ -3452,3 +3452,16 @@ Stylelint do tema e `git diff --check` passaram. O CSS ainda não foi reconstru�
 nem servido pelo Runtime; teclado/foco no botão fechar, temas escuro/claro,
 reduced motion, leitor de tela e regressão completa dos purposes seguem
 pendentes. Esse ajuste não aprova THEME-MF3 nem OCS-F11.
+
+#### Cobertura das raízes por purpose
+
+O mesmo fixture foi exercitado em 320/390px nas homes de Main, Conta (`/entrar`),
+Apoio, Revista, Wiki, Loja, Cursos, Growroom e Eventos: **18/18** verificações
+de posição passaram. O purpose Links também foi capturado nas duas larguras;
+sua composição usa `.aculta-social-links-shell` e não contém `.aculta-highlighted`,
+portanto a inserção do fixture foi corretamente marcada como `SKIP` (não há
+slot de mensagem nessa página). Relatório consolidado:
+`/home/piradopirata/aculta-suite-out/status-message-flow-all-purposes-verified-20261031/`.
+Essa execução não reprova por overflow geral: `/entrar` ainda mede 328px de
+largura documental em viewport 320px, pendência independente da mensagem já
+registrada nos gates MF3. O baseline candidato não foi instalado no Runtime.

@@ -741,4 +741,7 @@ aviso ULI. Para registrar o aviso real, a captura autenticada cria uma sessão
 ULI no Runtime: faça snapshot antes, não submeta formulários e registre somente
 metadados geométricos. A coleta omite texto e valores; o resultado identifica
 estilos computados na página servida, sem provar que uma folha candidata local
-está implantada.
+está implantada. Se um purpose não tiver `.aculta-highlighted`, o fixture
+registra `SKIP_NO_HIGHLIGHTED_REGION`; isso não é falha de reflow. A medição da
+rolagem horizontal permanece no registro da captura, mas não reprova o teste
+específico de posição da mensagem.

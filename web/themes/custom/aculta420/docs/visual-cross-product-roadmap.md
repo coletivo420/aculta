@@ -1765,3 +1765,8 @@ CSS candidata injetada em purpose público com fixture anônima: 4/4 larguras
 inventário responsivo atualizados. Runtime ainda serve a folha anterior; foco,
 temas, reduced motion e regressão de todos os purposes estão pendentes. Detalhes
 em `mobile-first-audit.md`; THEME-MF3 continua não aprovado.
+
+Extensão da captura: as nove homes com `.aculta-highlighted` passaram 18/18
+verificações em 320/390px. Links não possui essa região e ficou `SKIP` para o
+fixture; `/entrar` conserva overflow documental de 8px a 320px, independente
+do reflow da mensagem. Evidência consolidada em `mobile-first-audit.md`.
