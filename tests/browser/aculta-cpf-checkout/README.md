@@ -7,31 +7,34 @@ checkout compartilhado Loja/LMS", no servidor de desenvolvimento
 
 ## Pré-requisitos
 
-- Firefox ESR instalado em `/usr/bin/firefox-esr` e `geckodriver` no PATH
-  (os dois podem ser trocados por `FIREFOX` e `GECKODRIVER`);
-- sessão X11 local acessível em `DISPLAY=:0` — Firefox visível, nunca headless
-  nem Chromium;
+- Firefox ESR e geckodriver (sobrescreva com `FIREFOX` e `GECKODRIVER`);
+- para revisão visual, Firefox visível em `DISPLAY=:0`; para matrizes repetitivas
+  `wdlib` também aceita Firefox, Chrome e Chromium headless, selecionados
+  explicitamente por `browser=` e `headless=True`;
+- `$SUITE_OUT` em armazenamento persistente fora do repositório e de `/tmp`;
 - credenciais da conta `teste.comum` em variáveis de ambiente, carregadas de
   `secrets/teste_comum.env` (uid 5, ver `docs/operations/TESTE-COMUM.md`).
 
 ```bash
 cd /home/piradopirata/projetos/aculta
 set -a; . secrets/teste_comum.env; set +a
-DISPLAY=:0 python3 -I tests/browser/aculta-cpf-checkout/multi-tab-checkout.py
+DISPLAY=:0 SUITE_OUT=/home/piradopirata/aculta-suite-out/cpf-checkout python3 -I tests/browser/aculta-cpf-checkout/multi-tab-checkout.py
 ```
 
-As senhas nunca são impressas. `wdlib.py` cria um perfil temporário
-`/tmp/aculta-ff-*` e o remove ao fechar a sessão por padrão. Para manter o perfil
-em uma pasta de artefatos fora do repositório, defina
-`ACULTA_FF_PROFILE_ROOT` antes de criar `Driver`; o diretório e o perfil ficam
-com acesso restrito ao usuário executor.
+As senhas nunca são impressas. `wdlib.py` cria um perfil descartável dentro de
+`$SUITE_OUT/profiles` (ou do caminho informado por
+`ACULTA_FF_PROFILE_ROOT`) e remove-o ao fechar a sessão. Ele rejeita perfis em
+`/tmp`; os artefatos também ficam no `$SUITE_OUT` persistente. A interface é
+mantida compatível com `Driver()` visível por padrão; novos runners podem
+selecionar `Driver(browser="firefox|chrome|chromium", headless=True)`.
 
 ## Scripts
 
 ### `wdlib.py`
 
-Biblioteca mínima: sobe o geckodriver em uma porta livre, inicia o Firefox ESR
-com `-profile` e `-no-remote`, e expõe `get`, `js`, `find`, `exists`, `type`,
+Biblioteca mínima: sobe geckodriver ou ChromeDriver em uma porta livre e inicia
+Firefox ESR, Chrome ou Chromium com perfil descartável. Exibe por padrão; o
+modo headless exige `headless=True`. Expõe `get`, `js`, `find`, `exists`, `type`,
 `click`, `submit`, `title`, `url`, `source`, `new_tab`, `switch`, `handles` e
 `close`. `Driver(bidi=True)` também negocia WebDriver BiDi e disponibiliza
 `websocket_url` para recursos como viewport móvel sem depender do tamanho mínimo
@@ -63,7 +66,8 @@ Fluxo principal da frente:
 5. aba C: curso `cursos.aculta.toca.net.br/group/1`, procurando CTAs de
    matrícula/compra.
 
-Evidências (PNG e um HTML) em `$SUITE_OUT`, padrão `/tmp/aculta-cpf-checkout`.
+Evidências (PNG e um HTML) em `$SUITE_OUT`, informado pelo operador em
+armazenamento persistente fora do repositório e de `/tmp`.
 
 ### `olivero-smoke.py`
 
@@ -88,7 +92,7 @@ DISPLAY=:0 python3 -I tests/browser/aculta-cpf-checkout/olivero-smoke.py
 Páginas medidas: raiz do Portal (`aculta.toca.net.br/`), raiz do Fórum
 (`growroom420.aculta.toca.net.br/`, que serve a view `/discussoes`) e raiz
 da Revista (`revista420.../`; `/revista` responde 301 para `/`). Saída em
-`$SUITE_OUT`, padrão `/tmp/aculta-olivero`.
+`$SUITE_OUT`, informado pelo operador em armazenamento persistente.
 
 O resultado prova que o tema carrega e renderiza sem erro; não prova o
 conteúdo completo — o banco local não tem tópicos de fórum nem matérias de

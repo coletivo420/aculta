@@ -1231,3 +1231,58 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/culturas-forms-zoo
 teste não cobre contraste WCAG integral, leitor de tela, grants entre contas,
 CEP, envio do formulário ou compatibilidade em dispositivo físico; zoom/foco
 neste fluxo não aprova THEME-MF3 nem OCS-F11.
+
+### Gate headless rápido de Culturas
+
+Para repetir a matriz responsiva de `/culturas` com uma sessão autenticada, use
+o comando intermediário `culturas-fast-gate.sh`. Ele valida o hash do snapshot,
+abre uma única sessão e percorre nove larguras, claro/escuro e foco; o JSON
+registra todas as larguras e as screenshots ficam limitadas a 320/1440px.
+Firefox ESR é o padrão headless. `CULTURAS_RUNTIME_BROWSER=chrome` ou `chromium`
+seleciona um motor suplementar e exige ChromeDriver compatível. O pre-gate não
+substitui inspeção visual X11; zoom real continua em
+`culturas-forms-zoom.py`.
+
+Antes de executar contra Runtime, confirme host, checkout, URI `http://default`,
+`aculta_runtime`, updates e config status conforme `AGENTS.md`; tire snapshot
+com hash e modo 0600 antes de emitir o ULI. O script não grava conteúdo nem
+envia formulários; cada execução só autentica para leitura da página.
+
+Para repetir o mesmo gate nos três engines em sequência, sem sobrepor processos,
+use o orquestrador. Cada engine recebe seu `$SUITE_OUT/<browser>`:
+
+```sh
+export ACULTA_ROOT=/home/piradopirata/projetos/aculta
+export CULTURAS_RUNTIME_URL=https://eventos.aculta.toca.net.br/culturas
+export STUDIO_LOGIN_URI=https://conta.aculta.toca.net.br
+export STUDIO_USER=aculta_visual_admin
+export CULTURAS_RUNTIME_SNAPSHOT=/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-axe-headless-20261031.sql
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/culturas-runtime-matrix
+bash tests/browser/aculta-theme-mobile-first/culturas-browser-matrix.sh
+```
+
+`CULTURAS_BROWSER_MATRIX=firefox` roda somente Firefox; qualquer lista
+separada por vírgulas pode selecionar os motores disponíveis. O comando
+retorna diferente de zero se algum gate de geometria/teclado falhar.
+
+O gate é responsivo/teclado e não mistura esses resultados com o diagnóstico
+axe. Para executar axe-core 4.14.0 localmente e guardar violações e itens
+`incomplete` em `results.json`, use `CULTURAS_AXE=1`. A varredura cobre regras
+automatizáveis WCAG 2.0/2.1/2.2 A/AA e boas práticas, mas não equivale a WCAG
+2.2 AA nem a teste com leitor de tela. Ela atualmente encontra violações na
+página `/culturas` (contraste, landmark e nome acessível de select); trate-as
+como pendências reais de acessibilidade, não como aprovação do gate global.
+`CULTURAS_AXE_STRICT=1` faz essas violações retornarem código diferente de zero;
+use enquanto não houver triagem da baseline.
+
+```sh
+export ACULTA_ROOT=/home/piradopirata/projetos/aculta
+export CULTURAS_RUNTIME_URL=https://eventos.aculta.toca.net.br/culturas
+export STUDIO_LOGIN_URI=https://conta.aculta.toca.net.br
+export STUDIO_USER=aculta_visual_admin
+# Diagnóstico de acessibilidade opcional; atualmente reporta pendências existentes.
+# export CULTURAS_AXE=1
+export CULTURAS_RUNTIME_SNAPSHOT=/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-axe-headless-20261031.sql
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/culturas-runtime-headless
+bash tests/browser/aculta-theme-mobile-first/culturas-fast-gate.sh
+```

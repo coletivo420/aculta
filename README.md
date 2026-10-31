@@ -135,6 +135,12 @@ resultados de testes e status de PR continuam apenas nos changelogs e no GitHub.
 
 Versões instaladas no `composer.lock` e no `web/themes/custom/aculta420/package-lock.json`; as restrições declaradas estão no `composer.json` e no `package.json`. A lista completa de pacotes Composer (inclusive transitivos) está no `composer.json`/`composer.lock`. Esta seção cobre o que o projeto usa diretamente, separado por tipo.
 
+### Ferramentas de desenvolvimento do tema
+
+| Biblioteca | Versão instalada | Origem | Uso no projeto |
+| --- | --- | --- | --- |
+| `axe-core` | 4.14.0 | npm; [axe-core no GitHub](https://github.com/dequelabs/axe-core) (MPL-2.0) | Auditoria automatizada complementar em runners WebDriver do projeto para qualquer purpose; não substitui testes manuais nem avaliação completa WCAG. |
+
 ### Drupal core
 
 | Biblioteca | Versão instalada | Origem | Uso no projeto |

@@ -4742,3 +4742,42 @@ junto à borda inferior, sem ocultar o foco. Evidência:
 Este resultado fecha zoom/teclado somente para esses dois formulários; não
 cobre CEP, envio/Form API, grants A/B, AJAX, contraste WCAG integral ou
 THEME-MF3/OCS-F11.
+
+### Ferramentas rápidas e diagnóstico axe de Culturas (2026-10-31)
+
+O runner WebDriver foi ampliado com Firefox ESR, Chrome e Chromium headless
+opt-in e screenshots de borda (320/1440px), preservando o Firefox ESR/X11 para
+inspeção visual e zoom real. A matriz responsiva do dashboard `/culturas`
+passou 20/20 verificações em Firefox ESR headless (13,5s), Chrome headless
+(9,7s) e Chromium headless (11,3s), cobrindo nove larguras, claro/escuro,
+overflow, estrutura e foco. Candidata de CSS foi injetada localmente; a medição
+não equivale a validação do CSS servido nem fecha THEME-MF3/OCS-F11. A receita
+reutilizável está em `tests/browser/aculta-theme-mobile-first/README.md`.
+
+O diagnóstico axe-core 4.14.0 em 320px identificou nos dois modos de cor:
+contraste 3,58:1 em `.aculta-footer-cnpj`, `.field--name-field-cnpj` e
+`.field--name-field-headquarters`; conteúdo sem landmark em
+`.aculta-institution-bar__brand` e `.use-ajax > .visually-hidden`; e um select
+do filtro de situação sem nome acessível. Um contraste adicional ficou como
+`incomplete` para revisão humana. Isso é uma **pendência real**, não aprovação
+WCAG 2.2 AA. O select é montado em
+`web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`:
+**Pede-A**: emitir nome programático associado ao select (label visível quando
+compatível com a composição, ou `aria-label` traduzível); manter os mesmos
+valores e GET `status`; teste de acessibilidade/functional deve confirmar o
+nome no DOM e a filtragem existente. Contraste e landmarks pertencem à revisão
+do shell/institucional do tema, sem mudanças funcionais nesta microfase.
+Resultados JSON e capturas estão em
+`/home/piradopirata/aculta-suite-out/culturas-runtime-axe-firefox-20261031/`.
+
+O runner genérico validou também `https://aculta.toca.net.br/` em
+320/390/1280px, claro/escuro e Firefox/Chrome headless: 6/6 viewports por
+motor, sem overflow. axe reportou três regras por modo na página inicial:
+`aria-prohibited-attr` em `.vvjb-carousel-dots`, contraste no bloco institucional
+do footer (3,58:1) e conteúdo sem landmark no shell (`.aculta-institution-bar__brand`
+e `.aculta-search-utility > .visually-hidden`). O primeiro nó é emitido pelo
+carrossel de destaques; identificar seu owner e corrigir a semântica preservando
+controles reais do carrossel. Contraste e landmark precisam de correção na
+revisão global do tema. Evidência: `/home/piradopirata/aculta-suite-out/generic-page-matrix-firefox-20261031/`
+e `.../generic-page-matrix-chrome-20261031/`. Estes achados permanecem pendentes;
+a auditoria foi diagnóstica e não constitui PASS de acessibilidade.

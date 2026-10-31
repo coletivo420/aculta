@@ -11,20 +11,28 @@ import time
 from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[3]
+os.umask(0o077)
 RUNTIME_ROOT = Path(os.environ.get("ACULTA_ROOT", "/home/piradopirata/projetos/aculta")).resolve()
 RUNTIME_URL = os.environ.get("CULTURAS_RUNTIME_URL", "https://eventos.aculta.toca.net.br/culturas")
 LOGIN_URI = os.environ.get("STUDIO_LOGIN_URI", "https://conta.aculta.toca.net.br")
 USER = os.environ.get("STUDIO_USER", "aculta_visual_admin")
+HEADLESS = os.environ.get("CULTURAS_RUNTIME_HEADLESS") == "1"
+BROWSER = os.environ.get("CULTURAS_RUNTIME_BROWSER", "firefox").lower()
+AXE_ENABLED = os.environ.get("CULTURAS_AXE") == "1"
+AXE_STRICT = os.environ.get("CULTURAS_AXE_STRICT") == "1"
 OUT_VALUE = os.environ.get("SUITE_OUT")
 if not OUT_VALUE:
     raise SystemExit("Defina SUITE_OUT fora do Git.")
 OUT = Path(OUT_VALUE).resolve()
-OUT.mkdir(parents=True, exist_ok=True)
+if OUT.is_relative_to(ROOT):
+    raise SystemExit("SUITE_OUT deve ficar fora do repositório.")
+OUT.mkdir(parents=True, exist_ok=True, mode=0o700)
+os.chmod(OUT, 0o700)
 os.environ.setdefault("ACULTA_FF_PROFILE_ROOT", str(OUT / "profiles"))
 sys.path.insert(0, str(ROOT / "tests/browser/aculta-cpf-checkout"))
 from wdlib import Driver  # noqa: E402
 
-if os.environ.get("DISPLAY") != ":0":
+if not HEADLESS and os.environ.get("DISPLAY") != ":0":
     raise SystemExit("Execute com DISPLAY=:0 e Firefox ESR visível.")
 if subprocess.check_output(["hostname"], text=True).strip() != "toca":
     raise SystemExit("Runtime visual somente no servidor de desenvolvimento toca.")
@@ -109,7 +117,7 @@ class Viewport:
 WIDTHS = tuple(map(int, os.environ.get("CULTURAS_WIDTHS", "320,360,390,599,600,768,1024,1280,1440").split(",")))
 MODES = tuple(os.environ.get("CULTURAS_MODES", "light,dark").split(","))
 RESULTS = []
-driver = Driver(bidi=True)
+driver = Driver(bidi=True, headless=HEADLESS, browser=BROWSER)
 viewport = Viewport(driver)
 try:
     driver.get(login)
@@ -120,6 +128,11 @@ try:
             break
         time.sleep(0.2)
     driver.js("const s=document.createElement('style');s.dataset.culturasCandidate='true';s.textContent=arguments[0];document.head.append(s);return true", [fidelity_css()])
+    if AXE_ENABLED:
+        axe_path = ROOT / "web/themes/custom/aculta420/node_modules/axe-core/axe.min.js"
+        if not axe_path.is_file():
+            raise SystemExit(f"axe-core ausente: instale as dependências do tema ({axe_path}).")
+        driver.js("const s=document.createElement('script');s.dataset.acultaAxe=true;s.textContent=arguments[0];document.head.append(s);return true", [axe_path.read_text()])
     for mode in MODES:
         driver.js("document.documentElement.setAttribute('data-bs-theme', arguments[0])", [mode])
         for width in WIDTHS:
@@ -138,9 +151,20 @@ institutionCount:all('.aculta-institution-bar').length,domainHeaderCount:all('.a
 font:getComputedStyle(root||main).fontFamily,focusables:all('a,button,input,select,summary').length};})();""")
             data["mode"] = mode
             RESULTS.append(data)
-            print(json.dumps(data, ensure_ascii=False), flush=True)
-            shot = driver.req("GET", f"/session/{driver.session}/screenshot")
-            (OUT / f"culturas-runtime-{mode}-{width}.png").write_bytes(base64.b64decode(shot))
+            print(
+                f"{mode}/{width}px doc={data['documentWidth']}px "
+                f"cols={data['filterColumns']} actions={data['actionCount']} "
+                f"table={data['tableWidth']}/{data['tableScrollWidth']}px",
+                flush=True,
+            )
+            if width in (WIDTHS[0], WIDTHS[-1]):
+                shot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                (OUT / f"culturas-runtime-{mode}-{width}.png").write_bytes(base64.b64decode(shot))
+            if AXE_ENABLED and width == WIDTHS[0]:
+                audit = driver.js("return axe.run(document, {runOnly: {type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']}}).then(r => ({url:r.url, violations:r.violations.map(v => ({id:v.id,impact:v.impact,help:v.help,nodes:v.nodes.map(n => ({target:n.target,html:n.html,summary:n.failureSummary}))})),incomplete:r.incomplete.map(v => ({id:v.id,impact:v.impact,help:v.help,nodeCount:v.nodes.length}))}))")
+                audit.update({"type": "axe", "mode": mode, "width": width})
+                RESULTS.append(audit)
+                print(f"axe/{mode}/{width}px violations={len(audit['violations'])} incomplete={len(audit['incomplete'])}", flush=True)
         driver.js("document.querySelector('.organizer-dashboard-filters input')?.focus();return true")
         driver.req("POST", f"/session/{driver.session}/actions", {"actions": [{"type": "key", "id": "culturas-keyboard", "actions": [
             {"type": "keyDown", "value": chr(0xE004)}, {"type": "keyUp", "value": chr(0xE004)}]}]})
@@ -157,6 +181,8 @@ finally:
 
 
 def failed(item):
+    if item.get("type") == "axe":
+        return AXE_STRICT and bool(item["violations"])
     if item.get("type") == "keyboard":
         return not item["passed"]
     return (
@@ -182,6 +208,10 @@ def failed(item):
     )
 
 
-bad = [item for item in RESULTS if failed(item)]
-print(f"\n{len(RESULTS) - len(bad)}/{len(RESULTS)} route checks passed; evidence: {OUT}")
-sys.exit(1 if bad else 0)
+gate_results = [item for item in RESULTS if item.get("type") != "axe"]
+bad = [item for item in gate_results if failed(item)]
+axe_violations = sum(len(item["violations"]) for item in RESULTS if item.get("type") == "axe")
+axe_summary = f"{axe_violations} violation(s)" if AXE_ENABLED else "disabled"
+print(f"\n{len(gate_results) - len(bad)}/{len(gate_results)} route gate checks passed; "
+      f"axe={axe_summary}; evidence: {OUT}")
+sys.exit(1 if bad or (AXE_STRICT and axe_violations) else 0)

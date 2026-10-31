@@ -39,11 +39,29 @@ sessão termina e o trabalho se perde.
   qualquer estado compartilhado, o comando de execução deve restaurar o estado
   com `trap`, no mesmo comando, e o README deve mostrar como.
 
-Regra vigente de navegador: Firefox ESR visível em `DISPLAY=:0`, via
-geckodriver; nunca Chromium nem headless (`docs/operations/NAVEGADOR-TESTES.md`
-e `AGENTS.md`).
+Algumas instruções históricas de suítes ainda mostram `/tmp` como saída. Use o
+armazenamento persistente `/home/piradopirata/aculta-suite-out/<nome-da-suite>`
+no servidor, e configure
+`ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"`. O `wdlib` atual rejeita perfis
+sob `/tmp`.
+
+Firefox ESR visível em `DISPLAY=:0` é usado para revisão humana, capturas de
+aceite e zoom real. Por autorização do responsável em 2026-10-31, o Firefox ESR
+headless executa matrizes automatizadas repetitivas quando reduz setup/tempo;
+Chrome/Chromium headless são motores complementares, com driver compatível e
+resultado registrado. Declare browser/headless explicitamente e mantenha a
+revisão X11. Consulte `docs/operations/NAVEGADOR-TESTES.md` e `AGENTS.md`.
 
 ## Scripts salvos hoje
+
+### `aculta-smoke/`
+
+`smoke-page.py` executa smoke GET reutilizável de uma ou mais URLs; `page-matrix.py`
+faz matriz de larguras, claro/escuro e axe opcional em qualquer purpose.
+Executam Firefox visível/X11 ou Firefox/Chrome/Chromium headless, com perfil
+temporário e artefatos privados em `$SUITE_OUT`. A sessão prévia opcional aceita
+uma URL de início sem escrevê-la aos logs. Não provam ACL nem submissão de
+formulário. Instruções completas: [README local](aculta-smoke/README.md).
 
 ### `aculta-cpf-checkout/`
 
