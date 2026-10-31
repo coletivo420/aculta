@@ -8,8 +8,9 @@ A fidelidade visual ao OpenCulturas Next (`opcult`) continua **escopada ao Studi
 
 **Atualização de THEME-MF0 (2026-10-30):** o índice lexical global do tema foi
 regenerado e comparado byte a byte com o gerador; a árvore atual contém 208
-fontes (94 estilos, 12 JS e 102 Twig/HTML), 99 blocos `@media`, um
-`@container`, 753 correspondências dimensionais e 57 declarações de overflow.
+fontes (94 estilos, 12 JS e 102 Twig/HTML), 100 blocos `@media`, um
+`@container`, 798 correspondências dimensionais e 59 declarações de overflow
+na recontagem de 2026-10-31.
 A auditoria completa de consumidores, libraries, purposes e comportamento
 renderizado segue parcial; não altera o status de THEME-MF0 nem aprova THEME-MF3.
 Evidência e limites em

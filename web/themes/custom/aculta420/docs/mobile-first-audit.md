@@ -124,6 +124,17 @@ dimensões é lexical e inclui também valores das media queries; não descreve 
 cascata renderizada. Comparação reproduzível em
 `/home/piradopirata/aculta-suite-out/mobile-inventory-resume-20261101/`.
 
+### THEME-MF0 — recontagem do inventário no HEAD `00b938203` (2026-10-31)
+
+Reexecutei `scripts/audit-aculta420-responsive-inventory.py --write` e comparei
+o TSV produzido byte a byte com uma segunda saída do gerador. A árvore mantém
+208 fontes (94 estilos, 12 JS e 102 Twig/HTML). O total atual é 100 ocorrências
+`@media` em 47 folhas, um `@container`, 798 matches dimensionais e 59
+declarações de `overflow`. As duas alterações desde a contagem anterior estão
+em `auth.css` e `studio.css`; o índice é lexical, não análise de cascade ou
+comportamento. A auditoria semântica por consumer, purpose e breakpoint continua
+parcial e THEME-MF0/MF3 não ficam aprovados por esta recontagem.
+
 ### THEME-MF2 — botão de autenticação Google em modo escuro (2026-11-01)
 
 A captura de Conta/320px revelou texto claro sobre o fundo branco fixo do botão
