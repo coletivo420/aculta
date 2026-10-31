@@ -3563,3 +3563,14 @@ alterar DOM/ordem de dados. Evidência em
 `/home/piradopirata/aculta-suite-out/studio-listing-fidelity-final-20261031/`.
 Não valida listagem Drupal renderizada, grants, estados com conteúdo real, cache,
 AJAX/no-JS ou zoom; OCS-F5/F7/F11 e THEME-MF3 permanecem parciais/pendentes.
+
+### OCS-F5 / THEME-MF2 — toolbar do editor de Revista (2026-10-31)
+
+A captura candidata do GET `/marley/revista/nova` mostrou que o seletor de ação
+do Form API também estiliza os 23 botões do CKEditor. A regra foi estreitada
+para `.form-actions`, preservando a toolbar e widgets em seus estilos próprios.
+Firefox ESR com a folha candidata passou os checks de alvos das duas ações,
+toolbar e overflow em 320/390/768/1440px; as capturas 320/1440 foram inspecionadas.
+Nenhum formulário foi submetido. O runtime serve uma folha anterior, portanto
+essa evidência não homologa a CSS integrada nem OCS-F5/F11 ou THEME-MF3. Relatório
+em `/home/piradopirata/aculta-suite-out/marley-editor-form-final-20261031/`.

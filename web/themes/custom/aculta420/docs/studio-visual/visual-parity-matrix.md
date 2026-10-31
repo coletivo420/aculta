@@ -47,6 +47,19 @@ paridade. Evidências privadas em
 `/home/piradopirata/aculta-suite-out/studio-marley-listing-scroll-final-20261031/`;
 OCS-F11 e THEME-MF3 permanecem pendentes.
 
+### Formulário de criação da Revista — limites dos estilos de ação
+
+No GET canônico `/marley/revista/nova`, a regra Fidelity do tema agora se
+aplica aos controles de `.form-actions`, sem capturar os botões do CKEditor ou
+de widgets. A captura Firefox candidata encontrou o formulário real, 23
+controles do editor, duas ações Form API com alvos ≥44×44px e zero overflow
+documental em 320/390/768/1440px. O baseline marca heading e abas do workspace
+como `SKIP` nesta rota porque ela usa o formulário Magazine nativo fora do
+wrapper Studio; os checks próprios de formulário passaram nas quatro larguras.
+Nenhum formulário foi submetido. A CSS candidata ainda não está servida no
+Runtime; OCS-F5/F11 e THEME-MF3 continuam pendentes. Evidência em
+`/home/piradopirata/aculta-suite-out/marley-editor-form-final-20261031/`.
+
 ### Revalidação OCS-F0 — rotas canônicas, Firefox ESR visível (2026-10-30)
 
 No checkout servido `/home/piradopirata/projetos/aculta` em HEAD `4399627c4`,

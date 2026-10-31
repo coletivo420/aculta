@@ -628,6 +628,19 @@ Header e zero overflow. A validação integrada após publicação/cache e os de
 purposes continuam pendentes; MF2 segue parcial. Ver detalhes em
 `mobile-first-audit.md`.
 
+### OCS-F5 / THEME-MF2 — botões do Form API e toolbar do CKEditor (2026-10-31)
+
+No editor de Publicações, a regra de aparência Fidelity foi limitada a
+`.form-actions`; os controles do CKEditor e widgets mantêm seus próprios
+estilos. A captura Firefox do GET `/marley/revista/nova`, com CSS candidata
+injetada apenas na sessão, passou 4/4 larguras (320/390/768/1440px): 23 botões
+da toolbar não recebem a pele de ação, as duas ações Form API têm pelo menos
+44×44px e não há overflow documental. As capturas mobile/desktop foram
+inspecionadas. Nenhum formulário foi submetido. A CSS candidata não está
+integrada ao Runtime; OCS-F5/F11 e THEME-MF3 continuam pendentes. Detalhes em
+`mobile-first-audit.md` e evidência em
+`/home/piradopirata/aculta-suite-out/marley-editor-form-final-20261031/`.
+
 ### THEME-MF2 — alvo de toque do título do cartão de Eventos (2026-10-30)
 
 O SDC existente `event_card` mantém o link de título com pelo menos 44px de

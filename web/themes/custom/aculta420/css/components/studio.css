@@ -837,7 +837,8 @@ body.path-marley form.node-revista-form .error {
   border-color: var(--aculta-studio-fidelity-input-error);
 }
 
-body.path-marley form.node-revista-form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button) {
+/* Keep the editor toolbar and widget buttons on their own UI styles. */
+body.path-marley form.node-revista-form .form-actions :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button) {
   min-block-size: 2.75rem;
   margin-block-end: 1em;
   padding: 0.5em 2em;
@@ -855,13 +856,13 @@ body.path-marley form.node-revista-form :is(button, input[type="submit"], input[
   cursor: pointer;
 }
 
-body.path-marley form.node-revista-form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button):not([disabled]):is(:hover, :focus-visible) {
+body.path-marley form.node-revista-form .form-actions :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button):not([disabled]):is(:hover, :focus-visible) {
   color: var(--aculta-studio-fidelity-button-hover-text);
   border-color: var(--aculta-studio-fidelity-button-hover-border);
   background: var(--aculta-studio-fidelity-button-hover-background);
 }
 
-body.path-marley form.node-revista-form :is(.form-submit, .button--cta, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.btn-close):not(.accordion-button) {
+body.path-marley form.node-revista-form .form-actions :is(.form-submit, .button--cta, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.btn-close):not(.accordion-button) {
   color: var(--aculta-studio-fidelity-button-primary-text);
   border-color: var(--aculta-studio-fidelity-button-primary-border);
   background: var(--aculta-studio-fidelity-button-primary-background);

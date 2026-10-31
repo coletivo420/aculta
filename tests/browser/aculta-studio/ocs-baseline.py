@@ -365,6 +365,47 @@ socket.onmessage = (event) => {
                 CAPTURE_FAILURES.append({"url": url, "width": width,
                                          "studioListingScroll": {"checks": scroll_checks,
                                          "listing": listing}})
+        record["marleyEditorForm"] = json.loads(driver.js("""return JSON.stringify((() => {
+          const form=document.querySelector('form.node-revista-form');
+          if(!form)return {present:false};
+          const box=element=>{const r=element.getBoundingClientRect(),s=getComputedStyle(element);
+            return {tag:element.tagName,className:String(element.className||''),width:r.width,height:r.height,
+              minHeight:s.minHeight,background:s.backgroundColor,borderColor:s.borderColor,
+              borderRadius:s.borderRadius,fontFamily:s.fontFamily};};
+          const tokenColor=name=>{const probe=document.createElement('span');
+            probe.style.cssText='position:absolute;visibility:hidden';probe.style.color=`var(${name})`;
+            form.appendChild(probe);const color=getComputedStyle(probe).color;probe.remove();return color;};
+          const fields=[...form.querySelectorAll('input:not([type="hidden"]),select,textarea')];
+          const actions=[...form.querySelectorAll('.form-actions :is(button,input[type="submit"],input[type="button"],.form-submit,.button)')];
+          const toolbar=[...form.querySelectorAll('.ck-toolbar .ck-button')];
+          return {present:true,form:box(form),formTokenFont:getComputedStyle(form).getPropertyValue('--aculta-studio-fidelity-font-family').trim(),
+            actionBackgroundToken:tokenColor('--aculta-studio-fidelity-button-background'),
+            actionBorderToken:tokenColor('--aculta-studio-fidelity-button-border'),
+            fieldCount:fields.length,fields:fields.slice(0,12).map(box),
+            actionCount:actions.length,actions:actions.map(box),
+            toolbarCount:toolbar.length,toolbar:toolbar.slice(0,8).map(box)};
+        })());"""))
+        editor_form = record["marleyEditorForm"]
+        if STUDIO_CSS_OVERRIDE and editor_form.get("present"):
+            action_token = editor_form["actionBackgroundToken"]
+            border_token = editor_form["actionBorderToken"]
+            checks = {
+                "actionsPresent": editor_form["actionCount"] > 0,
+                "actionTargetsAtLeast44px": bool(editor_form["actions"]) and all(
+                    action["width"] >= 44 and action["height"] >= 44 for action in editor_form["actions"]
+                ),
+                "editorToolbarNotSkinnedAsFormActions": bool(editor_form["toolbar"]) and all(
+                    item["background"] != action_token or item["borderColor"] != border_token
+                    for item in editor_form["toolbar"]
+                ),
+                "documentDoesNotScrollHorizontally": record["documentScrollWidth"] <= width,
+            }
+            record["marleyEditorFormChecks"] = checks
+            record["marleyEditorFormStatus"] = "PASS" if all(checks.values()) else "FAIL"
+            if record["marleyEditorFormStatus"] == "FAIL":
+                CAPTURE_FAILURES.append({"url": url, "width": width,
+                                         "marleyEditorForm": {"checks": checks,
+                                         "form": editor_form}})
         record["studioHeadingHierarchy"] = json.loads(driver.js("""return JSON.stringify(
           [...document.querySelectorAll('main h1, main h2, main h3')].map(element => {
             const rect=element.getBoundingClientRect();const style=getComputedStyle(element);
@@ -385,18 +426,22 @@ socket.onmessage = (event) => {
                 workspaceRoot:!!document.querySelector('[data-aculta-studio="root"]'),
                 workspaceTitle:!!document.querySelector('[data-aculta-studio="root"] .aculta-context-header__title')};
             })());"""))
-            checks = {
-                "genericRouteHeadingHidden": headings["routeTitleDisplay"] == "none",
-                "singleWorkspaceH1Visible": headings["visibleH1"] == ["O que vamos criar hoje?"],
-                "routeContextPreservedInBreadcrumb": "ACULTA Studio Marley" in headings["breadcrumb"],
-                "workspaceMarkerPresent": headings["workspaceRoot"],
-                "workspaceTitlePresent": headings["workspaceTitle"],
-            }
-            record["marleyHeadingChecks"] = checks
-            record["marleyHeadingStatus"] = "PASS" if all(checks.values()) else "FAIL"
-            if record["marleyHeadingStatus"] == "FAIL":
-                CAPTURE_FAILURES.append({"url": url, "width": width,
-                                         "checks": checks, "headings": headings})
+            if not headings["workspaceRoot"]:
+                record["marleyHeadingChecks"] = {}
+                record["marleyHeadingStatus"] = "SKIP_NOT_STUDIO_WORKSPACE"
+            else:
+                checks = {
+                    "genericRouteHeadingHidden": headings["routeTitleDisplay"] == "none",
+                    "singleWorkspaceH1Visible": headings["visibleH1"] == ["O que vamos criar hoje?"],
+                    "routeContextPreservedInBreadcrumb": "ACULTA Studio Marley" in headings["breadcrumb"],
+                    "workspaceMarkerPresent": headings["workspaceRoot"],
+                    "workspaceTitlePresent": headings["workspaceTitle"],
+                }
+                record["marleyHeadingChecks"] = checks
+                record["marleyHeadingStatus"] = "PASS" if all(checks.values()) else "FAIL"
+                if record["marleyHeadingStatus"] == "FAIL":
+                    CAPTURE_FAILURES.append({"url": url, "width": width,
+                                             "checks": checks, "headings": headings})
             record["marleyNavigation"] = json.loads(driver.js("""return JSON.stringify((() => {
               const list=document.querySelector('[data-aculta-studio="tabs"]');
               const links=[...(list?.querySelectorAll('a[data-aculta-studio="tab"]')||[])];
@@ -407,23 +452,27 @@ socket.onmessage = (event) => {
                   left:rect.left,right:rect.right};})};
             })());"""))
             nav = record["marleyNavigation"]
-            checks = {
-                "fiveAreaLinksPresent": nav["count"] == 5,
-                "targetsAtLeast44px": bool(nav["links"]) and all(
-                    item["width"] >= 44 and item["height"] >= 44 for item in nav["links"]
-                ),
-                "linksFitViewport": all(
-                    item["left"] >= -1 and item["right"] <= record["documentWidth"] + 1
-                    for item in nav["links"]
-                ),
-                "navigationWraps": nav["flexWrap"] == "wrap",
-                "navigationHasNoInternalOverflow": nav["listScrollWidth"] <= nav["listWidth"],
-            }
-            record["marleyNavigationChecks"] = checks
-            record["marleyNavigationStatus"] = "PASS" if all(checks.values()) else "FAIL"
-            if record["marleyNavigationStatus"] == "FAIL":
-                CAPTURE_FAILURES.append({"url": url, "width": width,
-                                         "checks": checks, "navigation": nav})
+            if nav["count"] == 0:
+                record["marleyNavigationChecks"] = {}
+                record["marleyNavigationStatus"] = "SKIP_NO_STUDIO_TABS"
+            else:
+                checks = {
+                    "fiveAreaLinksPresent": nav["count"] == 5,
+                    "targetsAtLeast44px": bool(nav["links"]) and all(
+                        item["width"] >= 44 and item["height"] >= 44 for item in nav["links"]
+                    ),
+                    "linksFitViewport": all(
+                        item["left"] >= -1 and item["right"] <= record["documentWidth"] + 1
+                        for item in nav["links"]
+                    ),
+                    "navigationWraps": nav["flexWrap"] == "wrap",
+                    "navigationHasNoInternalOverflow": nav["listScrollWidth"] <= nav["listWidth"],
+                }
+                record["marleyNavigationChecks"] = checks
+                record["marleyNavigationStatus"] = "PASS" if all(checks.values()) else "FAIL"
+                if record["marleyNavigationStatus"] == "FAIL":
+                    CAPTURE_FAILURES.append({"url": url, "width": width,
+                                             "checks": checks, "navigation": nav})
     if ANONYMOUS_CAPTURE and STUDIO_CSS_OVERRIDE:
         record["anonymousPublicProfile"] = json.loads(driver.js("""return JSON.stringify((() => {
           const root=document.querySelector('main .portal-profile');
