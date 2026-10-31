@@ -6,6 +6,8 @@ namespace Drupal\Tests\aculta_portal\Unit\Hook;
 
 use Drupal\aculta_portal\Hook\CaptchaPresentationHooks;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Hook\Order\OrderAfter;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -14,6 +16,20 @@ use PHPUnit\Framework\Attributes\Group;
  */
 #[Group('aculta_portal')]
 final class CaptchaPresentationHooksTest extends UnitTestCase {
+
+  /**
+   * The presentation marker is added after CAPTCHA contributes its element.
+   */
+  public function testFormAlterRunsAfterCaptchaModule(): void {
+    $method = new \ReflectionMethod(CaptchaPresentationHooks::class, 'formAlter');
+    $attributes = $method->getAttributes(Hook::class);
+
+    self::assertCount(1, $attributes);
+    $hook = $attributes[0]->newInstance();
+    self::assertSame('form_alter', $hook->hook);
+    self::assertInstanceOf(OrderAfter::class, $hook->order);
+    self::assertSame(['captcha'], $hook->order->modules);
+  }
 
   /**
    * The hook adds the token after the contributed form alter inserts CAPTCHA.

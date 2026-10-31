@@ -2809,3 +2809,14 @@ A prova cobre um tópico público pequeno e não valida tópicos longos, pagina�
 formulário de resposta, usuários autenticados, privacidade, teclado, zoom, claro/
 escuro ou WCAG 2.2 AA; o Runtime continua servindo o CSS anterior à branch.
 THEME-MF3 permanece pendente.
+
+### THEME-MF2 — contrato de apresentação do CAPTCHA no Portal (2026-10-31)
+
+O hook neutro `CaptchaPresentationHooks` já marca o elemento `#type=captcha`
+com `data-portal-ui="challenge-frame"` após o alter do módulo `captcha`, sem
+alterar Form API ou comportamento do desafio. A cobertura Unit foi ampliada para
+proteger também essa ordem de execução; PHPUnit passou **3 testes/8 assertions**,
+PHP lint e PHPCS passaram. A folha candidata mantém o reflow em formulários
+estreitos, mas o Runtime em `2493d7535` ainda não serve o hook nem o CSS atual.
+Essa regressão de metadados não substitui a validação do formulário renderizado,
+JavaScript/no-JS ou o gate THEME-MF3.
