@@ -479,6 +479,15 @@ DISPLAY=:0 python3 tests/browser/aculta-theme-mobile-first/institution-bar-scrol
 
 Para injetar a folha CSS local, defina `INSTITUTION_BAR_SCROLL_CSS_OVERRIDE=1`;
 para injetar o JavaScript candidato, use `INSTITUTION_BAR_SCROLL_JS_OVERRIDE=1`.
+`INSTITUTION_BAR_SCROLL_STALE_DISPLACEMENT_TEST=1` adiciona uma verificação
+focal a 320px que simula `--drupal-displace-offset-top: 64px` e exige que a
+Institution Bar continue com `top: 0` no mobile. A simulação é removida antes
+das medições normais e não altera o Runtime. Use em conjunto com
+`INSTITUTION_BAR_SCROLL_CSS_OVERRIDE=1` para verificar o CSS candidato; sem o
+override, a mesma verificação atua como controle negativo da regra servida.
+O JSON lista em `staleDisplacementSkips` as rotas sem altura de rolagem
+suficiente para chegar ao limiar sticky; isso não conta como aprovação dessa
+asserção.
 `INSTITUTION_BAR_SCROLL_BASE_URL` restringe o teste a um host e
 `INSTITUTION_BAR_DOMAIN_ENV=test|production` selecionam o host; a conta usada
 é configurável com `INSTITUTION_BAR_ADMIN_UID` e deve ser autorizada para o

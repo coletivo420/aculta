@@ -8,6 +8,15 @@
   border-bottom: 1px solid var(--aculta-shell-border);
   font: 500 0.8125rem/1.4 var(--aculta-font-body);
 }
+
+/* The admin Navigation top-bar is in normal flow below its desktop breakpoint.
+   Keep the Institution Bar at viewport top without a displacement measurement. */
+@media (max-width: 63.999rem) {
+  .aculta-institution-bar {
+    top: 0;
+  }
+}
+
 .aculta-institution-bar__inner {
   display: flex;
   flex-wrap: wrap;

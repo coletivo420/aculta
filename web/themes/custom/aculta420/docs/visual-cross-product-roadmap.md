@@ -1886,3 +1886,17 @@ MAIN. A rota aceita a conta de homologação e foi aberta por GET em 320/390/768
 marcadores Studio. É inventário da tela de owner, não consumer visual Studio;
 qualquer entrada dentro do shell requer contrato explícito do owner. Sem submit,
 criação de galeria ou alteração de configuração. Detalhes em `mobile-first-audit.md`.
+
+### THEME-MF2 — Institution Bar com offset mobile determinístico (2026-10-31)
+
+Em viewports abaixo de 64rem, `institution-bar.css` fixa `top: 0`, pois a
+Navigation top-bar administrativa está no fluxo e não precisa deslocar o shell.
+No desktop o offset dinâmico continua ativo. Firefox ESR passou 180/180 checks
+com CSS candidata nas homes anônimas e conta administrativa; uma simulação de
+offset Drupal stale a 64px manteve a barra no topo em nove homes e no admin. O
+controle sem CSS candidata falhou somente nessa nova asserção, medindo 64px.
+Sem JavaScript, a matriz anônima candidata passou 146/146 checks; Links, sem
+rolagem suficiente para disparar a simulação, é listado como skip específico.
+O CSS ainda não está servido; a validação integrada após rebuild permanece
+pendente e THEME-MF3 não foi aprovado. Evidências, capturas e snapshots estão
+em `mobile-first-audit.md`.

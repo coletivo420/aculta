@@ -2861,6 +2861,48 @@ e
 Isso reduz a lacuna do teste automatizado para transições rápidas; não reproduz
 gestos físicos do navegador móvel.
 
+### THEME-MF2 — offset sticky mobile independente do Drupal (2026-10-31)
+
+`institution-bar.css` agora fixa `top: 0` abaixo de 64rem. Nesse breakpoint a
+Navigation top-bar administrativa está no fluxo normal; no desktop continua
+valendo `--drupal-displace-offset-top`, inclusive os 64px da barra fixa. Isso
+evita que uma medição Drupal atrasada/stale desloque a Institution Bar depois
+de iniciado o scroll.
+
+Firefox ESR visível nas páginas do Runtime `2493d7535`, com CSS candidata
+injetada somente na sessão, passou 170/170 checks nos dez purposes anônimos a
+320/390px e na conta administrativa MAIN a 320/390/1023/1024/1280px. O reteste
+com a nova asserção de atraso passou
+180/180; em nove homes anônimas e na conta admin, uma variável de deslocamento
+forçada a 64px deixou a barra em `top=0` durante scroll a 320px. A home Links
+não tem rolagem suficiente para alcançar o limiar e aparece explicitamente em
+`staleDisplacementSkips`. Sem JavaScript, os propósitos anônimos passaram
+146/146 checks, incluindo a mesma simulação onde havia altura de rolagem.
+Como controle, sem CSS candidata o cenário no MAIN anônimo passou 14/15:
+somente a nova
+asserção falhou, medindo `top=64px`. O estado normal servido não reproduziu o
+offset stale; a falha de controle demonstra que a regra candidata neutraliza
+esse estado. Capturas foram revisadas, inclusive admin antes e depois do
+scroll. Evidências em
+`/home/piradopirata/aculta-suite-out/institution-bar-top-mobile-candidate-20261031/`,
+`/home/piradopirata/aculta-suite-out/institution-bar-stale-displacement-candidate-20261031/`
+e `/home/piradopirata/aculta-suite-out/institution-bar-stale-displacement-baseline-control-20261031/`.
+Depois da instrumentação explícita dos skips, a home MAIN repetiu a simulação
+focal 15/15 e produziu `staleDisplacementSkips=[]` em
+`/home/piradopirata/aculta-suite-out/institution-bar-stale-displacement-main-retest-20261031/`.
+
+Antes dos dois testes autenticados no Runtime foram salvos snapshots íntegros
+de `aculta_runtime`: `runtime-before-institution-bar-top-mobile-candidate-20261031.sql`
+(SHA-256 `c9b72e9ef41300fcc134c73d27cbeabf2f62803d8f2bf6743b1810c1c9907c11`)
+e `runtime-before-institution-bar-stale-displacement-test-20261031.sql`
+(SHA-256 `18e7d25bfe0fd84dc3c66e6409311faf6d025e36831963a51887ae1ffc8ded68`).
+O stylesheet candidato não está servido no Runtime. O ensaio não reproduz
+gestos físicos nem valida integração/cache após publicação; THEME-MF3 continua
+pendente. A suíte de 146 checks sem JavaScript está em
+`/home/piradopirata/aculta-suite-out/institution-bar-stale-displacement-nojs-20261031/`;
+a verificação focal de página curta, em
+`/home/piradopirata/aculta-suite-out/institution-bar-stale-displacement-short-page-20261031/`.
+
 ### THEME-MF3 — formulários anônimos com Turnstile (2026-10-31)
 
 Firefox ESR visível abriu `/entrar`, `/criar-conta` e `/recuperar-senha` no

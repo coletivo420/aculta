@@ -47,7 +47,9 @@ if domain_filter:
 PURPOSE_CONTEXT = "main"
 SCENARIOS = {item.strip() for item in os.environ.get("INSTITUTION_BAR_SCROLL_SCENARIOS", "anonymous,admin").split(",") if item.strip()}
 DISABLE_JS = os.environ.get("INSTITUTION_BAR_SCROLL_DISABLE_JS") == "1"
+SIMULATE_STALE_DISPLACEMENT = os.environ.get("INSTITUTION_BAR_SCROLL_STALE_DISPLACEMENT_TEST") == "1"
 results = []
+stale_displacement_skips = []
 
 
 def record(name, passed, detail):
@@ -313,6 +315,38 @@ def run_scenario(scenario, login_url=None):
                 "displacementTop": final_offset, "timeline": timeline})
 
         max_scroll = max(0, settled["documentHeight"] - settled["viewportHeight"] - 2)
+        simulated_target = min(max_scroll, max(320, initial["barTop"] + 24))
+        if SIMULATE_STALE_DISPLACEMENT and width == 320:
+            if simulated_target >= initial["barTop"] + 20:
+                stale_metrics = driver.js("""return (() => {
+                  const root=document.documentElement;
+                  const previous=root.style.getPropertyValue('--drupal-displace-offset-top');
+                  const priority=root.style.getPropertyPriority('--drupal-displace-offset-top');
+                  const start=window.scrollY;
+                  root.style.setProperty('--drupal-displace-offset-top','64px');
+                  const target=Math.min(arguments[0],Math.max(320,arguments[1]+24));
+                  window.scrollTo({top:target,behavior:'instant'});
+                  const bar=document.querySelector('.aculta-institution-bar');
+                  const rect=bar?.getBoundingClientRect();
+                  const result={target,scrollY:window.scrollY,
+                    barTop:rect ? Math.round(rect.top*100)/100 : null,
+                    computedTop:bar ? getComputedStyle(bar).top : null,
+                    simulatedDisplacement:getComputedStyle(root).getPropertyValue('--drupal-displace-offset-top').trim()};
+                  if (previous) root.style.setProperty('--drupal-displace-offset-top',previous,priority);
+                  else root.style.removeProperty('--drupal-displace-offset-top');
+                  window.scrollTo({top:start,behavior:'instant'});
+                  return result;
+                })();""", [max_scroll, initial["barTop"]])
+                record(f"{scenario} 320px: top mobile ignora deslocamento Drupal stale simulado",
+                       stale_metrics["computedTop"] == "0px" and stale_metrics["barTop"] is not None
+                       and abs(stale_metrics["barTop"]) <= 2,
+                       stale_metrics)
+            else:
+                stale_displacement_skips.append({
+                    "context": PURPOSE_CONTEXT,
+                    "width": 320,
+                    "reason": "document height does not provide enough scroll to reach sticky threshold",
+                })
         for target in (80, 240, 480):
             if target > max_scroll:
                 continue
@@ -411,6 +445,8 @@ try:
         "adminUid": ADMIN_UID,
         "cssOverride": os.environ.get("INSTITUTION_BAR_SCROLL_CSS_OVERRIDE") == "1",
         "jsOverride": os.environ.get("INSTITUTION_BAR_SCROLL_JS_OVERRIDE") == "1",
+        "staleDisplacementSimulation": SIMULATE_STALE_DISPLACEMENT,
+        "staleDisplacementSkips": stale_displacement_skips,
         "javascriptDisabled": DISABLE_JS,
         "widths": WIDTHS,
         "results": results,
