@@ -1098,6 +1098,12 @@ verificados permaneceram visíveis. Foram 36 PASS e dois SKIP no foco delegado
 ao Turnstile em 320/390px. A folha não foi integrada ao Runtime; THEME-MF3
 continua pendente. Evidências e limites em `mobile-first-audit.md`.
 
+Reteste global do shell em 2026-10-31: 576/576 checks nas dez raízes, nove
+larguras, claro/escuro e reduced motion. `auth.css` candidata foi injetada
+somente na Conta; as outras rotas mediram o Runtime servido. A execução não
+aprova THEME-MF3, pois páginas internas, gates funcionais, integração da CSS e
+WCAG transversal seguem pendentes.
+
 Reteste do botão Google em `/entrar`: `auth.css` candidata passou 90/90 checks
 em nove larguras, claro/escuro e reduced motion; contraste escuro 12,40:1
 normal e 11,34:1 em hover. CSS ainda não integrada no Runtime, logo a correção

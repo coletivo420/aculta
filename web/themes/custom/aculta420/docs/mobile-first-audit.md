@@ -4116,6 +4116,18 @@ Runtime, nem a operação interna do CAPTCHA. Evidências em
 e `/home/piradopirata/aculta-suite-out/account-keyboard-candidate-followup-20261031/`.
 THEME-MF3 continua pendente até validar a folha integrada e os demais gates.
 
+### THEME-MF3 — reteste global do shell, cor e reduced motion (2026-10-31)
+
+Firefox ESR visível repetiu a matriz nas dez raízes dos purposes Main, Conta,
+Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e Eventos, em nove larguras e
+claro/escuro: **576/576 checks passaram**. A CSS e o marcador de autenticação
+foram injetados apenas em `/entrar`; as demais páginas refletem o shell servido
+no Runtime. A captura focal de Conta/320px foi revisada separadamente. O teste
+cobre shell único, overflow e contraste institucional, reduced motion e botão
+Google, mas não telas internas, teclado completo, zoom, WCAG integral nem CSS
+instalada. Portanto é reteste focal/misto, não aprovação THEME-MF3. Evidência em
+`/home/piradopirata/aculta-suite-out/purpose-shell-global-followup-20261031/`.
+
 Reteste de cores em 2026-10-31 confirmou o botão real de login Google com
 `auth.css` candidata nas nove larguras, em claro/escuro e reduced motion:
 90/90 checks. Em escuro, o contraste calculado foi 12,40:1 no estado normal e
