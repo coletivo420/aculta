@@ -48,7 +48,7 @@ export OCS_CONTEXT_TABS_CSS_ROOT=/home/piradopirata/worktrees/opencultures-f0-ad
 export OCS_CONTEXT_TABS_CSS_OVERRIDE=1
 export OCS_SKIP_OPENCULTURAS=1
 export STUDIO_LOGIN_URI=https://conta.aculta.toca.net.br
-export STUDIO_ROUTES=https://wiki420.aculta.toca.net.br/wesativa
+export STUDIO_ROUTES=https://wiki420.aculta.toca.net.br/studio/we-sativa
 export OCS_WIDTHS=320,360,390,599,600,768,1024,1280,1440
 export SUITE_OUT=/home/piradopirata/aculta-suite-out/ocs-context-tabs
 python3 tests/browser/aculta-studio/ocs-baseline.py

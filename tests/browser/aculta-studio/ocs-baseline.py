@@ -30,10 +30,10 @@ DEFAULT_STUDIO_PAGES = [
     ("account-entry", "account", "/"),
     ("marley", "account", "/marley"),
     ("ganjalab", "courses", "/ganjalab"),
-    ("we-sativa", "wiki", "/wesativa"),
+    ("we-sativa", "wiki", "/studio/we-sativa"),
     ("conta", "account", "/conta"),
     ("perfil", "account", "/perfil"),
-    ("green-stash", "shop", "/greenstash"),
+    ("green-stash", "shop", "/studio/green-stash"),
     ("culturas", "eventos", "/culturas"),
     ("planos", "account", "/conta/mercado-pago/planos"),
 ]
