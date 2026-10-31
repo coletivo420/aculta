@@ -1397,3 +1397,8 @@ com shell único e sem overflow do documento; em Conta, a folha candidata e o
 marcador Portal foram injetados. Isso não cobre formulários/páginas internas nem
 instalação do hook. As evidências e limites estão em `mobile-first-audit.md`; o
 gate global permanece pendente.
+
+Também foi conferido o consumer público do SDC `rail` de Cursos: 14/14 checks em
+320/390/768/1440px, e ArrowRight continuou rolando o rail a 400% de zoom com
+viewport CSS de 320px e página sem overflow. Só cobre o catálogo COURSES e os
+três itens disponíveis; demais rails e páginas ainda precisam de teste.

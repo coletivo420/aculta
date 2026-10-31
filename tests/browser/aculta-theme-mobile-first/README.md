@@ -314,9 +314,13 @@ continua sendo o host HTTPS aberto pelo Firefox.
 
 `rail-courses.py` verifica `/` no purpose COURSES: overflow da página, consumer
 real do SDC `rail`, papel e nome acessível, foco por teclado e rolagem com
-ArrowRight a 320px. Captura 320/1440 e o estado após a seta em 320px no Firefox
-ESR visível. Só faz GET, foco e tecla; não altera dados. O conteúdo publicado
-precisa conter ao menos dois cursos para testar a rolagem. URLs derivam de
+ArrowRight a 320px e 400% de zoom real. A 400%, a janela começa em 1280px e
+Firefox deve reflowar para viewport CSS de 320px; o teste confirma que a página
+continua contida e que a trilha interna ainda rola e recebe ArrowRight. Captura
+320/1440, o estado após a seta em 320px e a trilha após seta a 400% no Firefox
+ESR visível. Só faz GET, foco, tecla e ajuste de zoom; não altera dados. O
+conteúdo publicado precisa conter ao menos dois cursos para testar a rolagem.
+Requer `xdotool` para zoom real. URLs derivam de
 `aculta_deployer/config/deploy.json`.
 
 ```sh
@@ -329,7 +333,7 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/rail-courses.py
 
 `RAIL_DOMAIN_ENV=production` escolhe o host de produção somente após confirmar
 DNS/TLS e o ambiente servido. O teste não cobre conteúdo autenticado, leitores
-de tela, zoom, tema escuro ou WCAG 2.2 AA.
+de tela, modo escuro ou WCAG 2.2 AA.
 
 ## Cartões reais do catálogo de Eventos
 

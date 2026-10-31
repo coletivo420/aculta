@@ -2378,3 +2378,14 @@ roláveis e precisam de validação de controles/teclado. O hook Portal candidat
 segue não instalado no Runtime. Evidência em
 `/home/piradopirata/aculta-suite-out/purpose-browser-zoom-resume-20261031/`;
 THEME-MF3 continua pendente.
+
+### THEME-MF3 — trilha acessível de Cursos a 400% (2026-10-31)
+
+O consumer real público do SDC `rail` foi revalidado com Firefox ESR: `rail`
+permanece uma região rotulada, focável e internamente rolável a 400% de zoom
+(viewport CSS de 320px), enquanto o documento permanece contido em 320px.
+`ArrowRight` moveu a trilha depois do foco, com três cursos publicados. A rodada
+completa passou **14/14 checks** nos viewports 320/390/768/1440px mais o cenário
+de zoom. Isso confirma esse rail e seu teclado, não os carrosséis/listas de
+outros purposes. Evidência em
+`/home/piradopirata/aculta-suite-out/courses-rail-zoom-resume-20261031/`.
