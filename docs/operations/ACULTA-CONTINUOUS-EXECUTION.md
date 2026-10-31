@@ -2677,3 +2677,12 @@ ou preferência persistente alterados.
   cobrindo instalação limpa, shipping engine/cutover e permissões do leitor de
   remessas Green Stash. Foram reportadas 222 depreciações de Drupal/contrib,
   sem impacto no resultado.
+- Foi criado no Runtime o produto rascunho de inspeção NID 14, título
+  `TESTE VISUAL Green Stash — rascunho`, vinculado à loja 1, não publicado e
+  sem venda. Snapshot pré-escrita em
+  `/home/piradopirata/aculta-runtime-snapshots/20261031-greenstash-fixture/`,
+  SHA-256 `64d08f228cb869840b2c7ac07b19decd71e89cf3e80b016b201a8fea6ec474d5`.
+  A captura autenticada do gerente cobriu listagem e detalhe em claro/escuro e
+  320/390/768/1440px: 16 estados HTTP 200, zero overflow; axe passou em quatro
+  auditorias, zero violações e um `incomplete` por modo apenas na listagem.
+  Evidência em `/home/piradopirata/aculta-suite-out/greenstash-fixture-14/`.

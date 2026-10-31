@@ -1136,3 +1136,8 @@ O resultado integrado, os nove viewports, as duas capturas revisadas, o snapshot
 e os limites da cobertura de Ganjalab estão em
 `web/themes/custom/aculta420/docs/mobile-first-audit.md`, sob “OCS-F6 — Ganjalab
 integrado no HEAD atual”.
+
+Fixture Runtime autorizada do Green Stash: produto rascunho NID 14, não
+publicado, renderizado na listagem e no detalhe em 16 estados responsivos, sem
+overflow e com axe sem violações. O conteúdo é exclusivamente de teste e foi
+preservado para inspeção humana; submit e rollback permanecem pendentes.
