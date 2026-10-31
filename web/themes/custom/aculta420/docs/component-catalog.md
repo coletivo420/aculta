@@ -74,6 +74,13 @@ renderização autenticada:
 | `wiki-entry` | `patterns/wiki-entry/wiki-entry.component.yml` | Lista/entrada Wiki; consumer e estado de revisão/moderação pendentes de homologação. |
 | `profile-editor`, `profile-identity`, `profile-bio`, `profile-social` | `patterns/profile-editor/profile-editor.component.yml`, `content/profile-identity/profile-identity.component.yml`, `content/profile-bio/profile-bio.component.yml`, `content/profile-social/profile-social.component.yml` | Reuso separado para edição privada e perfil público; grants, campos opt-in e cache precisam passar S-R4/S-R5. |
 
+A capa da Revista reutiliza `patterns/card` pelo template `node--revista--teaser`;
+não há SDC paralelo. A primeira publicação ocupa a composição de capa. Mídia e
+fallback decorativo mantêm proporção 16:9 abaixo de 992px; no desktop a imagem
+preenche a coluna principal. O fallback não copia SVG/imagem/CSS do upstream.
+`magazine-cover-runtime.py` mede esse contrato sobre a página real, simulando
+somente o markup de ausência de mídia no DOM.
+
 Institution Bar e Domain Header são elementos do shell ACULTA, não substitutos
 para SDC de conteúdo Studio. Seus contratos e consumers continuam independentes
 desta lista.

@@ -1403,6 +1403,11 @@ CSS; o markup conserva o slot `image` e marca a decoração `aria-hidden`. Firef
 ESR passou 19/19 verificações no consumer Runtime com CSS candidata e markup de
 fallback injetados na sessão, em 320–1440px e nos modos claro/escuro. Isso não
 executa o Twig candidato nem valida a folha instalada; ver `mobile-first-audit.md`.
+Na revisão do contrato, a altura mínima do placeholder foi removida para
+corresponder ao `aspect-ratio: 16/9` de `opcult` também a 320px. O novo check de
+proporção passou nos nove viewports (erro máximo <0,01px abaixo de 992px), sem
+overflow; capturas 320/1440px foram inspecionadas. O CSS e o Twig desta branch
+continuam sem integração servida no Runtime.
 
 ### THEME-MF3 — reteste global de shell (2026-10-31)
 

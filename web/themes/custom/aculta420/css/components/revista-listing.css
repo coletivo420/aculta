@@ -34,7 +34,6 @@
 .aculta-revista-teaser__cover-fallback {
   display: block;
   width: 100%;
-  min-height: 11rem;
   aspect-ratio: 16 / 9;
   background-color: var(--aculta-surface-muted);
   background-image:

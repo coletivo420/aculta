@@ -209,7 +209,8 @@ window.__magazineFallbackCover=placeholder;
 document.documentElement.setAttribute('data-bs-theme','light');
 const light=getComputedStyle(placeholder), box=placeholder.getBoundingClientRect();
 const lightMetrics={width:box.width,height:box.height,backgroundColor:light.backgroundColor,
-  backgroundImage:light.backgroundImage,scrollWidth:document.documentElement.scrollWidth};
+  backgroundImage:light.backgroundImage,scrollWidth:document.documentElement.scrollWidth,
+  aspectErrorPx:innerWidth<992?Math.abs(box.height-box.width*9/16):0};
 document.documentElement.setAttribute('data-bs-theme','dark');
 const dark=getComputedStyle(placeholder), darkColor=dark.backgroundColor, darkImage=dark.backgroundImage;
 const result={available:true,viewportWidth:innerWidth,...lightMetrics,darkBackgroundColor:darkColor,
@@ -222,6 +223,7 @@ return result;
                     fallback.get("available")
                     and fallback.get("viewportWidth") == width
                     and fallback.get("width") > 0 and fallback.get("height") > 0
+                    and fallback.get("aspectErrorPx", float("inf")) <= 1
                     and fallback.get("backgroundImage") != "none"
                     and fallback.get("darkBackgroundImage") != "none"
                     and fallback.get("scrollWidth") <= width

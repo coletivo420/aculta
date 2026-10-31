@@ -2838,3 +2838,26 @@ integrados, mas a sessão simulou o token e não prova código servido: o Runtim
 continua sem `CaptchaPresentationHooks` e sem a folha atual. A falha integrada
 permanece aberta, não se considera o baseline substituído e THEME-MF3 continua
 pendente até validar o hook, CSS compilada e formulário servido em toda a matriz.
+
+### THEME-MF2 — proporção do fallback de capa da Revista (2026-10-31)
+
+O arquivo concreto do OpenCulturas 3.1.5,
+`profile/themes/opcult/templates/node/teasers.scss`, define a capa sem imagem com
+`inline-size: 100%` e `aspect-ratio` paisagem; o placeholder de fundo não impõe
+altura mínima. O CSS compilado define `--oc-aspect-ratio-landscape: 16/9`. A
+comparação usou o tarball oficial SHA-256
+`2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`.
+
+A capa decorativa ACULTA também declarava 16:9, mas `min-height: 11rem` elevava
+286×176px a 320px, enquanto a imagem real media 286×161px. Removi essa altura
+mínima conflitante. O fallback continua preenchendo a coluna principal na
+composição desktop a partir de 992px. O harness agora mede erro de proporção
+máximo de 1 CSS px abaixo de 992px, além de claro/escuro, grade e overflow.
+Firefox ESR visível com CSS candidata injetada e markup fallback sintético
+passou **19/19 verificações** nos nove viewports: em 320px o fallback mede
+286×160,88px (erro de 0,01px); as imagens editoriais reais continuam carregadas,
+as colunas seguem 1/2/3 conforme os breakpoints, o shell permanece único e não
+há overflow. Capturas 320/1440px foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/revista-cover-ratio-20261031-f6805cf4b/`.
+Modo claro/escuro foi medido no fallback. A sessão candidata não executa o Twig
+nem atualiza o CSS servido; integração final e THEME-MF3 continuam pendentes.

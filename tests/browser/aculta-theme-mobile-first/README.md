@@ -50,9 +50,11 @@ gravado no repositório.
 `MAGAZINE_COVER_FALLBACK_CANDIDATE=1` testa também a capa sem imagem: substitui
 temporariamente o primeiro media wrapper por markup sintético equivalente ao
 render array decorativo do template candidato, verifica fundo em claro/escuro,
-dimensão e overflow nos mesmos viewports, e grava capturas de 320/1440px. Use
-junto de `MAGAZINE_COVER_CSS_OVERRIDE=1`. A injeção não executa o Twig candidato
-nem altera a publicação no Runtime.
+dimensão, proporção 16:9 abaixo de 992px e overflow nos mesmos viewports, e grava
+capturas de 320/1440px. Em telas a partir de 992px a capa preenche a altura da
+composição editorial, como a mídia real. Use junto de
+`MAGAZINE_COVER_CSS_OVERRIDE=1`. A injeção não executa o Twig candidato nem
+altera a publicação no Runtime.
 
 ## Publicação editorial da Revista
 
