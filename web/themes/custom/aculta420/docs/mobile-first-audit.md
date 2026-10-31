@@ -3131,3 +3131,17 @@ com `min-width:0`. Evidência e capturas em
 `/home/piradopirata/aculta-suite-out/green-stash-detail-create-homologation-20261031/`.
 É CSS candidata em fixture, sem submissão, acesso a Runtime, teste de grants por
 loja ou validação de conteúdo real; não aprova THEME-MF3 nem OCS-F11.
+
+### OCS-F6 / THEME-MF2 — Ganjalab LMS no Runtime (2026-10-31)
+
+A rota de propósito resolvida pelo `DomainPurposeManager` é
+`https://cursos.aculta.toca.net.br/ganjalab`. Com CSS Fidelity da branch injetada
+somente no Firefox, a conta sintética `teste.comum` passou 11/11 invariantes em
+cada uma das larguras 320/390/768/1024/1440px: Montserrat e headings aplicados,
+duas mensagens vazias de curso/certificados, shell multidomínio único,
+contraste AA nos links utilitários e nenhum overflow. As cinco capturas foram
+inspecionadas; em 1440px a composição LMS completa está visível. Evidência em
+`/home/piradopirata/aculta-suite-out/ganjalab-card-candidate-correct-domain-20261031/`.
+A CSS foi injetada em uma página Runtime apenas para avaliação: não prova entrega
+servida, cursos matriculados, ACL de turma, zoom, teclado, no-JS ou WCAG integral.
+OCS-F6/F11 e THEME-MF3 permanecem pendentes.

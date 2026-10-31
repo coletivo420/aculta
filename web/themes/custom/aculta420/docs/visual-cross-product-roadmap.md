@@ -1565,3 +1565,16 @@ Capturas/relatório: `/home/piradopirata/aculta-suite-out/green-stash-detail-cre
 Esta validação é de CSS e markup equivalentes; Runtime, operador autorizado,
 grants por loja, dados Commerce e submissão real permanecem pendentes, portanto
 OCS-F8/F11 e THEME-MF3 continuam sem homologação.
+
+### OCS-F6 / THEME-MF2 — rechecagem visual Ganjalab (2026-10-31)
+
+A rota canônica de Cursos foi resolvida pelo `DomainPurposeManager` e capturada
+no Firefox ESR autenticado no Runtime, com CSS Fidelity local injetada apenas na
+sessão. Passaram 11 invariantes em cinco larguras (320/390/768/1024/1440px):
+fontes e títulos corretos, mensagens reais de estado vazio, Institution Bar e
+Domain Header preservados, contraste AA para links utilitários e zero overflow.
+Capturas/relatório em
+`/home/piradopirata/aculta-suite-out/ganjalab-card-candidate-correct-domain-20261031/`.
+O estado observado não continha cursos/certificados matriculados. ACL de turma,
+cursos ativos, teclado, zoom, no-JS, CSS servida e comparação pareada com o
+OpenCulturas autenticado seguem pendentes; isso não aprova OCS-F6/F11 ou THEME-MF3.
