@@ -1634,3 +1634,14 @@ O teste restaura o zoom e não envia formulários. A CSS ainda não é servida; 
 resultado não aprova OCS-F9, THEME-MF3 ou OCS-F11. Consulte também
 `mobile-first-audit.md` para os limites de privacidade e acessibilidade ainda
 pendentes.
+
+### OCS-F5 / THEME-MF2 — título único no workspace Marley (2026-10-31)
+
+A tela real tinha o H1 genérico da rota acima do H1 “O que vamos criar hoje?”
+do workspace. O tema esconde o título genérico apenas quando o marcador real
+`data-aculta-studio="root"` e o título do workspace existem; o breadcrumb mantém
+o contexto ACULTA Studio Marley. A captura candidata Firefox ESR passou 5/5
+checks em 320/390/1440px, com H1 único, shell preservado e sem overflow; revisão
+visual em
+`/home/piradopirata/aculta-suite-out/marley-single-heading-final-20261031/`.
+A CSS não está servida no Runtime e não fecha OCS-F5, MF3 ou F11.

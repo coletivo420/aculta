@@ -886,6 +886,11 @@ body.path-salvos .aculta-main > .aculta-container:has(.studio-saved-page) > .acu
   display: none;
 }
 
+/* Marley supplies its own workspace H1; keep the route context in the breadcrumb. */
+body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"] .aculta-context-header__title) > .aculta-page-heading {
+  display: none;
+}
+
 .studio-saved-tabs.nav {
   display: flex;
   inline-size: 100%;

@@ -3206,3 +3206,18 @@ A execução não envia formulários e não altera dados; o zoom do Firefox foi
 restaurado pelo script. É CSS candidata, não CSS servida. Percurso completo de
 teclado, leitor de tela, contraste completo, A/B de privacidade e
 OCS-F11/THEME-MF3 continuam pendentes.
+
+### OCS-F5 / THEME-MF2 — título duplicado do Marley (2026-10-31)
+
+A captura autenticada detectou dois H1 no painel Marley: o título genérico da
+rota `ACULTA Studio Marley` e o H1 próprio do workspace `O que vamos criar hoje?`.
+O tema agora oculta somente `.aculta-page-heading` quando `body.path-marley`
+contém o marcador real `[data-aculta-studio="root"]` e o título de contexto do
+workspace. `ocs-baseline.py`, com CSS candidata injetada apenas no Firefox ESR,
+passou 5/5 verificações por largura em 320/390/1440px: um H1 do workspace,
+título genérico oculto, marcador e heading presentes, breadcrumb preservado e
+zero overflow. Capturas revisadas em
+`/home/piradopirata/aculta-suite-out/marley-single-heading-final-20261031/`.
+O Runtime ainda não serve essa CSS; outros paths Marley, teclado/no-JS e a
+comparação autenticada com OpenCulturas permanecem pendentes. Não aprova F5,
+THEME-MF3 ou F11.

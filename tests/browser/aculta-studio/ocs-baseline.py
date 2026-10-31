@@ -226,6 +226,39 @@ socket.onmessage = (event) => {
             return {label: element.textContent.trim(), width: rect.width, height: rect.height};
           })
         );"""))
+    if "path-marley" in record.get("bodyClasses", []):
+        record["studioHeadingHierarchy"] = json.loads(driver.js("""return JSON.stringify(
+          [...document.querySelectorAll('main h1, main h2, main h3')].map(element => {
+            const rect=element.getBoundingClientRect();const style=getComputedStyle(element);
+            return {tag:element.tagName,text:element.textContent.trim(),className:String(element.className),
+              parentClass:String(element.parentElement?.className||''),fontSize:style.fontSize,
+              display:style.display,visible:rect.width>0&&rect.height>0,top:rect.top,bottom:rect.bottom};
+          })
+        );"""))
+        if STUDIO_CSS_OVERRIDE:
+            headings = json.loads(driver.js("""return JSON.stringify((() => {
+              const routeTitle=document.querySelector('.aculta-page-heading');
+              const visibleH1=[...document.querySelectorAll('main h1')]
+                .filter(element=>element.getClientRects().length>0
+                  && getComputedStyle(element).visibility!=='hidden')
+                .map(element=>element.textContent.trim());
+              return {routeTitleDisplay:routeTitle?getComputedStyle(routeTitle).display:null,
+                visibleH1,breadcrumb:document.querySelector('.aculta-breadcrumb')?.textContent.trim()||'',
+                workspaceRoot:!!document.querySelector('[data-aculta-studio="root"]'),
+                workspaceTitle:!!document.querySelector('[data-aculta-studio="root"] .aculta-context-header__title')};
+            })());"""))
+            checks = {
+                "genericRouteHeadingHidden": headings["routeTitleDisplay"] == "none",
+                "singleWorkspaceH1Visible": headings["visibleH1"] == ["O que vamos criar hoje?"],
+                "routeContextPreservedInBreadcrumb": "ACULTA Studio Marley" in headings["breadcrumb"],
+                "workspaceMarkerPresent": headings["workspaceRoot"],
+                "workspaceTitlePresent": headings["workspaceTitle"],
+            }
+            record["marleyHeadingChecks"] = checks
+            record["marleyHeadingStatus"] = "PASS" if all(checks.values()) else "FAIL"
+            if record["marleyHeadingStatus"] == "FAIL":
+                CAPTURE_FAILURES.append({"url": url, "width": width,
+                                         "checks": checks, "headings": headings})
     is_studio_capture = prefix.startswith("studio-")
     record["missingMainHint"] = is_studio_capture and record.get("mainStructure") is None
     record["emptyDocumentHint"] = record["missingMainHint"] and not record.get("body", "").strip()
