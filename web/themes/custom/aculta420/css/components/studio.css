@@ -308,7 +308,7 @@ body.path-culturas .aculta-events-organizer-dashboard > .culturas-guide > :not(s
   padding-block-start: 0.5rem;
 }
 
-body.path-culturas .aculta-events-organizer-dashboard > .actions {
+body.path-culturas .aculta-events-organizer-dashboard > .culturas-guide + div {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -316,23 +316,17 @@ body.path-culturas .aculta-events-organizer-dashboard > .actions {
   margin: 0;
 }
 
-body.path-culturas .aculta-events-organizer-dashboard > .actions > a.btn-primary {
-  color: var(--aculta-studio-fidelity-button-primary-text);
-  border: 2px solid var(--aculta-studio-fidelity-button-primary-border);
-  background: var(--aculta-studio-fidelity-button-primary-background);
-  font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
-  text-decoration: none;
-}
-
-body.path-culturas .aculta-events-organizer-dashboard > .actions > a.button--secondary {
+body.path-culturas .aculta-events-organizer-dashboard > .culturas-guide + div a {
+  min-block-size: 2.75rem;
   padding: 0.5rem 1rem;
   color: var(--aculta-studio-fidelity-button-text);
   border: 1px solid var(--aculta-studio-fidelity-button-border);
   background: var(--aculta-studio-fidelity-button-background);
+  font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
   text-decoration: none;
 }
 
-body.path-culturas .aculta-events-organizer-dashboard > .actions > a:is(.btn-primary, .button--secondary):is(:hover, :focus-visible) {
+body.path-culturas .aculta-events-organizer-dashboard > .culturas-guide + div a:is(:hover, :focus-visible) {
   color: var(--aculta-studio-fidelity-button-hover-text);
   border-color: var(--aculta-studio-fidelity-button-hover-border);
   background: var(--aculta-studio-fidelity-button-hover-background);
@@ -372,8 +366,7 @@ body.path-culturas .organizer-dashboard-filters form > :is(button, a) {
   justify-self: start;
 }
 
-body.path-culturas .aculta-events-organizer-dashboard > table {
-  display: block;
+body.path-culturas .aculta-events-organizer-dashboard > .table-responsive {
   max-inline-size: 100%;
   overflow: auto;
   border-color: var(--aculta-studio-fidelity-input-border-bottom);
@@ -381,17 +374,23 @@ body.path-culturas .aculta-events-organizer-dashboard > table {
   overscroll-behavior-inline: contain;
 }
 
-body.path-culturas .aculta-events-organizer-dashboard > table :is(th, td) {
+body.path-culturas .aculta-events-organizer-dashboard > .table-responsive > table {
+  margin-block-end: 0;
+  border-color: var(--aculta-studio-fidelity-input-border-bottom);
+  background: var(--aculta-studio-fidelity-form-surface);
+}
+
+body.path-culturas .aculta-events-organizer-dashboard > .table-responsive > table :is(th, td) {
   min-inline-size: 8rem;
   vertical-align: middle;
   overflow-wrap: anywhere;
 }
 
-body.path-culturas .aculta-events-organizer-dashboard > table td:first-child {
+body.path-culturas .aculta-events-organizer-dashboard > .table-responsive > table td:first-child {
   min-inline-size: 12rem;
 }
 
-body.path-culturas .aculta-events-organizer-dashboard > table tr:last-child > td:only-child {
+body.path-culturas .aculta-events-organizer-dashboard > .table-responsive > table tr:last-child > td:only-child {
   min-inline-size: 0;
   padding: 1.25rem;
   color: var(--aculta-studio-fidelity-text);

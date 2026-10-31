@@ -526,3 +526,24 @@ DISPLAY=:0 python3 -I tests/browser/aculta-studio/culturas-dashboard.py
 Esta fixture não acessa Runtime nem comprova markup Drupal, grants, conteúdo,
 AJAX/no-JS, cache, zoom, WCAG 2.2 AA ou paridade visual com o OpenCulturas.
 Resultados do fixture não aprovam OCS-F10/F11 nem THEME-MF3.
+
+Para inspecionar a rota autenticada sem enviar formulários, `culturas-runtime.py`
+usa a ULI da conta sintética e injeta apenas a CSS candidata na sessão
+Firefox. A execução confirma host/checkout/`aculta_runtime` por Drush e salva
+as capturas fora do Git. Não cria nem altera conteúdo, configuração ou
+preferência persistente de cor.
+
+```sh
+export DISPLAY=:0
+export ACULTA_ROOT=/home/piradopirata/projetos/aculta
+export CULTURAS_RUNTIME_URL=https://eventos.aculta.toca.net.br/culturas
+export STUDIO_LOGIN_URI=https://conta.aculta.toca.net.br
+export STUDIO_USER=aculta_visual_admin
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/culturas-runtime
+DISPLAY=:0 python3 -I tests/browser/aculta-studio/culturas-runtime.py
+```
+
+O teste lê e registra classes/estilos computados do dashboard, presença única
+do shell e overflow. A ULI abre sessão autenticada, mas não submete operações.
+Uma captura sem overflow não valida ACL entre contas, cache, AJAX/no-JS,
+acessibilidade completa, zoom ou paridade pareada OpenCulturas.

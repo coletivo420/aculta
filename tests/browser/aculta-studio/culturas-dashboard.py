@@ -42,13 +42,13 @@ HTML = """<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <main class="aculta-main"><div class="aculta-container"><section class="aculta-events-organizer-dashboard" data-portal-ui="event-organizer-dashboard">
 <p>Crie e gerencie seus eventos, datas e locais. A edição usa as permissões de Eventos.</p>
 <details class="culturas-guide"><summary>Como organizar eventos no ACULTA Studio Culturas</summary><ol><li>Crie evento</li><li>Adicione datas</li></ol></details>
-<div class="actions"><a class="btn btn-primary" href="#novo">Criar evento</a><a class="button button--secondary" href="#local">Cadastrar local</a></div>
+<div><a href="#novo">Criar evento</a><a href="#local">Cadastrar local</a></div>
 <div class="organizer-dashboard-filters"><form method="get"><div class="form-item"><label for="busca">Buscar por nome</label><input id="busca" name="busca" placeholder="Nome do evento"></div>
 <div class="form-item"><label for="status">Situação</label><select id="status"><option>Todas as situações</option><option>Publicado</option></select></div>
 <button class="button button--secondary" type="submit">Filtrar</button><a href="#limpar">Limpar filtros</a></form></div>
-<table class="table"><thead><tr><th>Evento</th><th>Próxima data</th><th>Local</th><th>Situação</th><th>Ações</th></tr></thead><tbody>
+<div class="table-responsive"><table class="table"><thead><tr><th>Evento</th><th>Próxima data</th><th>Local</th><th>Situação</th><th>Ações</th></tr></thead><tbody>
 <tr><td>Uma publicação cultural extensa com um título longo</td><td>30/10/2026 19:30</td><td>São Paulo (SP)</td><td>Publicado</td><td><a href="#editar">Gerenciar</a></td></tr>
-<tr><td>Outro evento comunitário</td><td>Sem datas agendadas</td><td>Não definido</td><td>Rascunho</td><td><a href="#editar2">Gerenciar</a></td></tr></tbody></table>
+<tr><td>Outro evento comunitário</td><td>Sem datas agendadas</td><td>Não definido</td><td>Rascunho</td><td><a href="#editar2">Gerenciar</a></td></tr></tbody></table></div>
 <nav class="pager"><a href="#proxima">Próxima página</a></nav></section></div></main></body></html>"""
 
 
@@ -98,11 +98,13 @@ try:
             viewport.set(width)
             time.sleep(0.08)
             data = driver.js("""return (()=>{const q=s=>document.querySelector(s),r=e=>e.getBoundingClientRect();
-const form=q('.organizer-dashboard-filters form'), table=q('table'), root=q('.aculta-events-organizer-dashboard');
+const form=q('.organizer-dashboard-filters form'), tableWrap=q('.table-responsive'), table=q('table'), root=q('.aculta-events-organizer-dashboard');
+const actions=root?.querySelector(':scope > .culturas-guide + div'),links=Array.from(actions?.querySelectorAll('a')||[]);
 return {width:innerWidth,docWidth:document.documentElement.scrollWidth,rootWidth:r(root).width,
 formColumns:getComputedStyle(form).gridTemplateColumns.split(' ').length,
-tableWidth:r(table).width,tableOverflow:table.scrollWidth>table.clientWidth,
-guideFocus:getComputedStyle(q('summary')).minBlockSize,buttonHeight:r(q('.actions a')).height,
+tableWidth:r(tableWrap).width,tableOverflow:table.scrollWidth>tableWrap.clientWidth,
+guideFocus:getComputedStyle(q('summary')).minBlockSize,buttonHeight:r(links[0]).height,actionCount:links.length,
+primaryBackground:getComputedStyle(links[0]).backgroundColor,secondaryBorderWidth:getComputedStyle(links[1]).borderTopWidth,
 shellPosition:getComputedStyle(q('header')).position,normalLinkDisplay:getComputedStyle(q('header')).display,
 mainFont:getComputedStyle(root).fontFamily};})();""")
             record(f"{mode}/{width}px sem overflow horizontal no documento", data["docWidth"] <= width, data)
@@ -110,6 +112,7 @@ mainFont:getComputedStyle(root).fontFamily};})();""")
             record(f"{mode}/{width}px filtro progride mobile-first", data["formColumns"] == expected_columns, {"columns": data["formColumns"]})
             record(f"{mode}/{width}px tabela contida no dashboard", data["tableWidth"] <= data["rootWidth"] + 1, {"table": data["tableWidth"], "dashboard": data["rootWidth"]})
             record(f"{mode}/{width}px alvos interativos >=44px", data["buttonHeight"] >= 44 and float(data["guideFocus"].replace("px", "")) >= 44, {"action": data["buttonHeight"], "guide": data["guideFocus"]})
+            record(f"{mode}/{width}px links do controller recebem tratamento tátil", data["actionCount"] == 2 and data["primaryBackground"] not in ("transparent", "rgba(0, 0, 0, 0)") and data["secondaryBorderWidth"] != "0px", {k: data[k] for k in ("actionCount", "primaryBackground", "secondaryBorderWidth")})
             record(f"{mode}/{width}px Institution/Domain shell intactos", data["shellPosition"] == "static" and data["normalLinkDisplay"] == "block", {"position": data["shellPosition"], "display": data["normalLinkDisplay"]})
             if width in (320, 1440):
                 shot = driver.req("GET", f"/session/{driver.session}/screenshot")

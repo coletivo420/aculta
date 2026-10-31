@@ -50,12 +50,15 @@ O tema fornece padrões transversais de grid, cards, tabs, edição, seções, e
 **OCS-F10 focal — ACULTA Studio Culturas:** composição candidata do dashboard
 real de Eventos implementada somente em `studio.css`, com escopo
 `body.path-culturas`, sem novo SDC ou alteração de controller/render array. O
-fixture Firefox ESR passou 92/92 checks em nove viewports, claro/escuro,
-teclado, ações, tabela e shell; capturas 320/1440px foram revisadas. Runtime,
-ACL, cache, AJAX/no-JS, zoom, WCAG, demais telas da Suite e comparação pareada
-OpenCulturas continuam sem prova. Esta evidência focal não aprova OCS-F10/F11
+fixture Firefox ESR passou 110/110 checks em nove viewports, claro/escuro,
+teclado, ações, tabela e shell. A rota autenticada real `/culturas`, com CSS
+candidata injetada somente no Firefox, passou 18/18 medidas em nove viewports e
+claro/escuro, com um dashboard, headers únicos e sem overflow do documento;
+capturas 320/1440px foram revisadas. O CSS ainda não foi servido no Runtime.
+ACL A/B, cache, AJAX/no-JS, zoom, WCAG, demais telas da Suite e comparação
+pareada OpenCulturas seguem sem prova. Esta evidência focal não aprova OCS-F10/F11
 nem THEME-MF3. Ver [matriz de paridade](studio-visual/visual-parity-matrix.md)
-e [fixture do Studio](../../../../../tests/browser/aculta-studio/README.md).
+e [harnesses do Studio](../../../../../tests/browser/aculta-studio/README.md).
 
 **Não modificar Institution Bar ou Domain Header**, nem globalizar os estilos OpenCulturas; não ativar `opcult`, não criar CSS/Sass build paralelo. Auditar licença de fontes, ícones e SVGs antes de qualquer porte. A frente B detém tema, SDCs e CSS; arquivos de serviços/controladores/rotas pertencem à frente A.
 
