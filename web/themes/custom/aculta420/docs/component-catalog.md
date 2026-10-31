@@ -453,10 +453,11 @@ reais de estado e escopo da raiz ao fixture. O aviso recebeu surface Fidelity,
 barra lógica de 4px e wrapping móvel, sem nova classe de markup ou SDC; o padrão
 de caixa informativa do `opcult` 3.1.5 (`sass/base/_messages.scss`, tarball SHA-256
 `2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`) serviu
-somente de referência hierárquica. Firefox ESR passou **110/110 checks** em
-nove larguras, claro/escuro, incluindo contraste 15,25:1/11,17:1 e aviso exato
-da Visão geral. Capturas da Visão geral em 320/390/1440px estão em
-`/home/piradopirata/aculta-suite-out/green-stash-overview-final-20261031/`.
+somente de referência hierárquica. Firefox ESR passou **114/114 checks** em
+nove larguras, claro/escuro e zoom real 200%/400%, incluindo contraste
+15,25:1/11,17:1, aviso exato da Visão geral e encaixe dos elementos a 320px
+CSS. Capturas de estado em 320/390/1440px e zoom ficam em
+`/home/piradopirata/aculta-suite-out/green-stash-zoom-rerun-20261031/`.
 Continua fixture da folha candidata; não valida Runtime, operador autorizado,
 grants por loja, dados Commerce ou fluxos de escrita.
 

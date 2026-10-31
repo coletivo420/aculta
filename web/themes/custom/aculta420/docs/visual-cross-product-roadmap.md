@@ -1498,7 +1498,7 @@ Portal simulado; Runtime e homologação OCS-F9/F11 seguem pendentes. Detalhes e
 
 A folha Studio agora apresenta o aviso real de preparação da Visão geral e o
 aviso de escopo da lista de Produtos como caixas informativas responsivas com
-tokens Fidelity. A fixture reutilizada passou 110/110 em Firefox ESR, nove
-larguras, claro/escuro; capturas de ambas as áreas foram revistas. Isto não é
-validação integrada do Runtime: operador/store A/B e fluxos reais continuam
-pendentes. Detalhes e limites em `mobile-first-audit.md`.
+tokens Fidelity. A fixture reutilizada passou 114/114 em Firefox ESR, nove
+larguras, claro/escuro e zoom 200/400%; capturas de ambas as áreas foram
+revistas. Isto não é validação integrada do Runtime: operador/store A/B e
+fluxos reais continuam pendentes. Detalhes e limites em `mobile-first-audit.md`.

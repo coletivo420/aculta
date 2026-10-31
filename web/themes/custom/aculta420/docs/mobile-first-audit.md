@@ -2921,12 +2921,13 @@ hierarquia serviu de referência, sem copiar CSS. `.aculta-green-stash > p` agor
 usa tokens Fidelity, barra de início lógica, padding e wrapping, mantendo a
 mensagem de preparação explícita e sem sugerir ações comerciais ausentes.
 
-Firefox ESR visível passou **110/110 verificações** em nove larguras e claro/
-escuro. Visão geral e Produtos preservaram seus avisos exatos; contraste medido
-foi 15,25:1/11,17:1, sem overflow, com navegação de três áreas e foco visível.
-Capturas de Produtos e Visão geral em 320/390/1440px foram revisadas em
-`/home/piradopirata/aculta-suite-out/green-stash-overview-final-20261031/`.
+Firefox ESR visível passou **114/114 verificações** em nove larguras, claro/
+escuro e zoom real 200%/400%. Visão geral e Produtos preservaram seus avisos
+exatos; contraste medido foi 15,25:1/11,17:1, sem overflow, com todos os seis
+links, dois cartões, busca e avisos dentro de viewport CSS 640px/320px. Capturas
+de Produtos e Visão geral em 320/390/1440px e zoom 200/400% foram revisadas em
+`/home/piradopirata/aculta-suite-out/green-stash-zoom-rerun-20261031/`.
 
 É fixture local da folha candidata. Runtime com operador autorizado, isolamento
-entre lojas, dados Commerce, fluxos de escrita, zoom e WCAG integral continuam
+entre lojas, dados Commerce, fluxos de escrita e WCAG integral continuam
 pendentes; OCS-F8/F11 e THEME-MF3 não estão aprovados.
