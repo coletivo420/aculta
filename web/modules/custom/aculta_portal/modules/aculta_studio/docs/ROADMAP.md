@@ -24,8 +24,14 @@ depende de THEME-MF3. OCS-A1–A4 só começam depois dos dois gates aprovados.
 ### Reteste de rotas F6/F7/F8 no Runtime — 2026-10-31
 
 No HEAD servido `2493d7535`, a conta sintética abriu `/ganjalab` nas nove
-larguras, mas a tela era Minha Conta, sem workspace/markers Studio LMS. Os paths
-oficiais `/studio/we-sativa` e `/studio/green-stash` retornaram 404 anônimo; em
+larguras. Correção após inspeção dos artefatos: o shell compartilhado mostra os
+links de Minha Conta, mas o conteúdo principal é o dashboard LMS real:
+`Aprendizagem`, `ACULTA Studio Ganjalab`, `Meus cursos` e estados vazios de
+cursos/certificados. A conta não tinha matrícula nem certificado; a captura não
+é conteúdo de Conta substituindo o LMS. O Runtime ainda não continha o token
+raiz `studio-fidelity-scope` da source branch; a CSS candidata injetada não
+homologa a integração nova. Os paths oficiais `/studio/we-sativa` e
+`/studio/green-stash` retornaram 404 anônimo; em
 27 capturas autenticadas os documentos ficaram vazios. Drush confirma Wiki sem
 rota oficial e Green Stash ainda em `/greenstash`. A source branch local contém
 as rotas canônicas, e a suíte Unit Commerce passou 11 testes/145 assertions;
