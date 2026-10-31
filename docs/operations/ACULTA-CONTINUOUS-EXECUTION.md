@@ -2662,3 +2662,10 @@ ou preferência persistente alterados.
   Não foi concedido `administer commerce_store` automaticamente, pois isso
   ampliaria o contrato funcional além da ordem recebida; é necessário definir
   o grant de loja proprietário antes da homologação de criar produto/envios.
+- Após a autorização explícita e a inclusão de `administer commerce_store`, a
+  matriz autenticada do gerente passou a responder HTTP 200 em `/greenstash`,
+  `/greenstash/produtos/novo` e `/greenstash/envios`, nos modos claro/escuro e
+  320/768/1440px: 18/18 estados sem overflow. Axe-core passou as seis
+  combinações de rota e modo, sem violações nem incompletos. Não houve submit
+  nem criação de produto. Evidência em
+  `/home/piradopirata/aculta-suite-out/greenstash-manager-final-528/`.

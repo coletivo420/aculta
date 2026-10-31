@@ -1092,6 +1092,13 @@ retornou 403 em todos os viewports, sem overflow; axe-core passou nos seis
 estados. Isso confirma a negação para o usuário de inspeção, mas ainda requer
 uma conta com grant Commerce para homologar operações e formulários.
 
+Após o grant explícito de `administer commerce_store` ao `gerente_loja`, a
+matriz autenticada passou HTTP 200 em `/greenstash`, `/greenstash/produtos/novo`
+e `/greenstash/envios`, nos modos claro/escuro e 320/768/1440px: 18/18 estados,
+sem overflow. Axe-core passou nos seis estados operacionais, sem violações ou
+incompletos. Não houve submit nem criação de produto; a validação funcional de
+persistência permanece pendente.
+
 Reteste Firefox ESR visível (`DISPLAY=:0`) cobriu claro/escuro em
 320/390/768/1440px, com largura documental igual à viewport e sem overflow em
 todos os oito estados. Evidência em
