@@ -123,6 +123,9 @@ def inspect_page(name, path, width_name, expected_width):
         contentGridColumns: (() => { const grid = document.querySelector('.aculta-wiki-home .view-wiki-categories .view-content, .aculta-wiki-home .view-wiki-entries .view-content, .aculta-wiki-search-results .view-content'); return grid ? getComputedStyle(grid).gridTemplateColumns.split(' ').length : null; })(),
         wikiArticleColumns: (() => { const grid = document.querySelector('.aculta-wiki-article__layout'); return grid ? getComputedStyle(grid).gridTemplateColumns.trim().split(/\\s+/).length : null; })(),
         wikiAsideRow: (() => { const aside = document.querySelector('.aculta-wiki-article__aside'); return aside ? getComputedStyle(aside).gridRowStart : null; })(),
+        wikiMainRect: (() => { const main = document.querySelector('.aculta-wiki-article__main'); if (!main) return null; const r = main.getBoundingClientRect(); return {top: r.top, left: r.left}; })(),
+        wikiAsideRect: (() => { const aside = document.querySelector('.aculta-wiki-article__aside'); if (!aside) return null; const r = aside.getBoundingClientRect(); return {top: r.top, left: r.left}; })(),
+        wikiMainBeforeAside: (() => { const main = document.querySelector('.aculta-wiki-article__main'); const aside = document.querySelector('.aculta-wiki-article__aside'); return !!main && !!aside && !!(main.compareDocumentPosition(aside) & Node.DOCUMENT_POSITION_FOLLOWING); })(),
         wikiTabsMarginBottom: (() => { const tabs = document.querySelector('.aculta-wiki-article__tabs'); return tabs ? getComputedStyle(tabs).marginBottom : null; })(),
         overflowingElements,
         errors: visibleErrors,
@@ -141,13 +144,21 @@ def inspect_page(name, path, width_name, expected_width):
           f"brand={metrics['headerBrandBasis']} searchGap={metrics['headerSearchGap']} formColumns={metrics['searchFormColumns']} contentColumns={metrics['contentGridColumns']}")
     if name == "entry":
         expected_article_columns = 1 if expected_width < 768 else 2
-        expected_aside_row = "1" if expected_width < 768 else "auto"
         expected_tabs_margin = "16px" if expected_width < 768 else "20px"
+        mobile_order = expected_width >= 768 or (
+            metrics["wikiMainRect"] and metrics["wikiAsideRect"]
+            and metrics["wikiMainRect"]["top"] <= metrics["wikiAsideRect"]["top"] + 1
+        )
+        desktop_order = expected_width < 768 or (
+            metrics["wikiMainRect"] and metrics["wikiAsideRect"]
+            and metrics["wikiAsideRect"]["left"] > metrics["wikiMainRect"]["left"]
+        )
         check(f"{name}/{width_name}: composição do verbete",
               metrics["wikiArticleColumns"] == expected_article_columns
-              and metrics["wikiAsideRow"] == expected_aside_row
+              and metrics["wikiAsideRow"] == "auto"
+              and metrics["wikiMainBeforeAside"] and mobile_order and desktop_order
               and metrics["wikiTabsMarginBottom"] == expected_tabs_margin,
-              f"columns={metrics['wikiArticleColumns']} asideRow={metrics['wikiAsideRow']} tabsMargin={metrics['wikiTabsMarginBottom']}")
+              f"columns={metrics['wikiArticleColumns']} asideRow={metrics['wikiAsideRow']} main={metrics['wikiMainRect']} aside={metrics['wikiAsideRect']} DOM-order={metrics['wikiMainBeforeAside']} tabsMargin={metrics['wikiTabsMarginBottom']}")
     check(f"{name}/{width_name}: sem overflow horizontal", metrics["documentWidth"] <= metrics["viewport"],
           f"viewport={metrics['viewport']} document={metrics['documentWidth']} root={metrics['rootClientWidth']} body={metrics['bodyWidth']} elements={metrics['overflowingElements']}")
     check(f"{name}/{width_name}: sem erro visível", not metrics["errors"], metrics["errors"])

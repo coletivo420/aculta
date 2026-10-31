@@ -2778,14 +2778,16 @@ ordem visual em 320/360/390/599/600px; os nove viewports mantiveram shell e
 documento sem overflow. A CSS do tema define agora `grid-row: auto` na base,
 preservando a ordem de leitura no mobile e a coluna lateral a partir de 768px.
 
-Com as folhas locais injetadas somente na sessão Firefox, a home e o primeiro
-artigo público passaram **18/18 checks** em 320/360/390/599/600/768/1024/1280/
-1440px. Capturas de 320/768/1440px foram revisadas em
-`/home/piradopirata/aculta-suite-out/wiki-order-candidate-final-20261031/`.
-O baseline servido reprovou 5/18 checks pela inversão visual em larguras abaixo
-de 768px; isto confirma que o Runtime ainda não recebeu a correção. A prova é
-focal em um artigo público: não cobre revisão autenticada, ACL, discussão,
-teclado, zoom, modos de cor ou WCAG 2.2 AA integral, e não aprova THEME-MF3.
+Depois, a verificação foi consolidada no harness Wiki existente. Com as folhas
+locais injetadas somente na sessão Firefox, home, listagem, busca e verbete
+passaram **302/302 verificações** em doze larguras (320/360/390/575/576/600/640/
+767/768/1024/1280/1440px), incluindo a ordem visual do main/aside e o 404 do
+caminho interno `/wiki`. Capturas foram revisadas em
+`/home/piradopirata/aculta-suite-out/aculta-wiki-full-candidate-20261031/`.
+O baseline servido reprovou a ordem visual em cinco larguras abaixo de 768px;
+isto confirma que o Runtime ainda não recebeu a correção. A rodada não cobre
+revisão autenticada, ACL, discussão, teclado, zoom real, modos de cor ou WCAG
+2.2 AA integral, e não aprova THEME-MF3.
 Stylelint passou; Design Foundations passou 2429 checks; schemas SDC passaram
 55 componentes/27 includes/759 verificações; fronteira módulo/tema passou 3489
 verificações; mapa módulo/tema passou 213 checks.

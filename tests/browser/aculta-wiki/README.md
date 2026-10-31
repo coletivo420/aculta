@@ -27,12 +27,13 @@ tema.
 
 `WIKI_CSS_OVERRIDE=1` injeta no browser as folhas `wiki.css` e
 `patterns/wiki-entry/wiki-entry.css` candidatas do checkout/worktree e valida
-o layout sobre as páginas servidas. No verbete público, o teste mede a grade
-de uma coluna com aside primeiro e margem compacta das abas abaixo de 768px;
-em 768px restaura a grade de duas colunas e a margem anterior. Defina
+o layout sobre as páginas servidas. No verbete público, o teste mede uma
+coluna abaixo de 768px preservando o conteúdo principal antes do aside na ordem
+visual e no DOM, além da margem compacta das abas. Em 768px restaura a grade de
+duas colunas e a margem anterior, com o aside à direita do conteúdo. Defina
 `WIKI_CSS_ROOT` se o script estiver sendo executado de outro checkout. As
 larguras incluem as fronteiras 575/576 e 767/768 CSS px. Isso valida a folha
-candidata nos três caminhos públicos; não prova que o agregado ou a configuração
+candidata nos três caminhos principais e no verbete; não prova que o agregado ou a configuração
 do Runtime foi atualizado, nem cobre o workspace autenticado do Studio.
 
 ## WE SATIVA autenticado
