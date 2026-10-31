@@ -1910,3 +1910,13 @@ rolagem suficiente para disparar a simulação, é listado como skip específico
 O CSS ainda não está servido; a validação integrada após rebuild permanece
 pendente e THEME-MF3 não foi aprovado. Evidências, capturas e snapshots estão
 em `mobile-first-audit.md`.
+
+### THEME-MF0/MF2 — agenda e calendário de Eventos (2026-11-01)
+
+O Firefox ESR visível passou 108/108 verificações de agenda, grade mensal e
+calendário interativo em nove larguras, dois modos de cor e sessões com/sem
+JavaScript. A agenda HTML continua utilizável em telas móveis e sem JavaScript;
+o scheduler inicializado ocupa a apresentação a partir de 768px. O controle
+existente de contraste também foi exercitado. A execução foi somente GET sobre
+o baseline do Runtime `2493d7535`, sem CSS candidata; não homologa a branch nem
+fecha THEME-MF0/MF3. Os detalhes e limites estão em `mobile-first-audit.md`.

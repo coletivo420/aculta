@@ -1093,3 +1093,31 @@ passaram em todas as combinações. Relatório:
 fixture mostra as três áreas disponíveis e cobre produto, detalhe, criação visual,
 claro/escuro, viewports 320–1440px e zoom 200/400%. É fixture sem operação/save;
 não valida Runtime, grants por loja ou a rota real.
+
+### Agenda e calendário interativo de Eventos
+
+`calendar-agenda.py` abre somente por GET a agenda (`/calendario`), a grade do
+mês atual e a visão interativa (`/calendario/interativo`) no host de teste
+derivado de `deploy.json`. No Firefox ESR visível, mede viewport e overflow,
+Institution Bar, Domain Header, `main`, grade de sete colunas, fallback HTML e
+presença/estado do calendário interativo. Percorre 320/360/390/599/600/768/1024/
+1280/1440px, claro/escuro e sessões separadas com JavaScript ligado/desligado.
+No modo escuro o harness aplica `data-bs-theme="dark"` apenas no documento de
+teste e aciona o botão existente para validar o token `contrast-black` do
+DHTMLX; isso não altera preferência persistente. Os arquivos de evidência
+contêm somente geometrias, marcadores e contagens; nenhum texto de evento é
+registrado. Não envia filtros, não modifica eventos e não constitui sozinho
+aceite de THEME-MF3.
+
+```sh
+cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/calendar-agenda
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/calendar-agenda.py
+```
+
+`CALENDAR_WIDTHS`, `CALENDAR_MODES`, `CALENDAR_ROUTES` e `CALENDAR_BASE_URL`
+permitem selecionar a matriz ou apontar para outro host de teste explicitamente.
+`CALENDAR_DOMAIN_ENV` aceita somente `test`. Capturas 320/1440px e
+`summary.json` ficam em `$SUITE_OUT`.

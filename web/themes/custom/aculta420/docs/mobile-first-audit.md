@@ -1,5 +1,27 @@
 # Auditoria mobile-first ACULTA420 — THEME-MF0
 
+### THEME-MF0/MF2 — agenda e calendário de Eventos (2026-11-01)
+
+Firefox ESR visível percorreu `/calendario`, a grade do mês atual e
+`/calendario/interativo` no host de teste de Eventos, em 320/360/390/599/600/
+768/1024/1280/1440px, claro/escuro e sessões separadas com JavaScript ativo e
+inativo: **108/108 checks**. Foram medidos overflow, Institution Bar, Domain
+Header, `main`, grade de sete colunas, fallback HTML e alternância entre agenda
+e scheduler interativo. Em viewport móvel a agenda HTML fica disponível; a
+partir de 768px o scheduler inicializado é exibido quando há JavaScript; sem
+JavaScript permanece o fallback e o contêiner interativo vazio não ocupa espaço.
+O botão de contraste existente também foi acionado no navegador; o scheduler
+reportou `contrast-black`, `aria-pressed=true` e o token `#141414` em desktop.
+
+O harness é `tests/browser/aculta-theme-mobile-first/calendar-agenda.py` e os
+comandos reutilizáveis estão no README da suíte. Capturas e `summary.json`:
+`/home/piradopirata/aculta-suite-out/calendar-agenda-homologation/`. A execução
+foi somente GET, no Runtime servido em HEAD `2493d7535`; não houve CSS candidata,
+envio de formulário ou gravação persistente. Portanto esta evidência caracteriza
+o baseline servido e os comportamentos existentes, não valida a integração da
+branch nem conclui THEME-MF0, THEME-MF3 ou OCS-F11. Zoom, teclado, acessibilidade,
+formulários de Eventos e os demais fluxos do purpose continuam por validar.
+
 **Estado em 2026-11-01, na árvore atual de `refactor/opencultures-codigo-visual`: inventário lexical regenerado; THEME-MF0 continua parcial, MF2 tem migrações incrementais e THEME-MF3 não está aprovado.**
 A auditoria inicial foi registrada no checkout servidor `ded8a6181`. Esta
 recontagem foi executada na branch `refactor/opencultures-codigo-visual` em
