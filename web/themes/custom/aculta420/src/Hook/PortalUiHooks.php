@@ -999,6 +999,9 @@ final class PortalUiHooks {
     }
     $existing = $attributes['class'] ?? [];
     $attributes['class'] = array_values(array_unique(array_merge(is_array($existing) ? $existing : [$existing], $classes)));
+    if (in_array('studio-listing-wrap', $tokens, TRUE)) {
+      $attributes['tabindex'] = '0';
+    }
     // Variáveis de template (attributes, title_attributes, content_attributes)
     // são Attribute; elementos guardam array.
     $container[$key] = in_array($key, ['attributes', 'title_attributes', 'content_attributes'], TRUE) ? new Attribute($attributes) : $attributes;
@@ -1016,6 +1019,9 @@ final class PortalUiHooks {
     }
     $tokens = preg_split('/\s+/', trim((string) $attributes[self::ATTRIBUTE]->value())) ?: [];
     $attributes->removeAttribute(self::ATTRIBUTE);
+    if (in_array('studio-listing-wrap', $tokens, TRUE)) {
+      $attributes->setAttribute('tabindex', '0');
+    }
     foreach ($tokens as $token) {
       foreach (self::TOKENS[$token] ?? [] as $class) {
         $attributes->addClass($class);
