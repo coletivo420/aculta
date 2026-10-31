@@ -1066,6 +1066,11 @@ O mesmo cenário passou axe-core em claro/escuro a 320px: duas auditorias, zero
 violações e um resultado `incomplete` por modo. Evidência em
 `/home/piradopirata/aculta-suite-out/culturas-axe-followup-d207/`.
 
+Reteste Firefox ESR visível (`DISPLAY=:0`) cobriu claro/escuro em
+320/390/768/1440px, com largura documental igual à viewport e sem overflow em
+todos os oito estados. Evidência em
+`/home/piradopirata/aculta-suite-out/culturas-x11-followup-43ec/`.
+
 ### OCS-F3/F4 — acabamento dos cards do Hub de Conta (2026-10-31)
 
 Corrigida a moldura duplicada dos cinco cards de experiências: os wrappers

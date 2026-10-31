@@ -2575,3 +2575,10 @@ ou preferência persistente alterados.
   `/home/piradopirata/aculta-suite-out/culturas-axe-followup-d207/results.json`.
   O resultado não substitui a validação de teclado, zoom X11, submissão e ACL
   por operação.
+- O probe autenticado de Culturas foi repetido em Firefox ESR visível (`DISPLAY=:0`)
+  nos modos claro/escuro e 320/390/768/1440px: 8 estados, shell e dashboard
+  presentes, largura documental igual à viewport em todos os estados e sem
+  overflow. Capturas e relatório em
+  `/home/piradopirata/aculta-suite-out/culturas-x11-followup-43ec/`. Esta é
+  evidência X11 de geometria, não ainda um teste de zoom real, escrita ou ACL
+  operacional.
