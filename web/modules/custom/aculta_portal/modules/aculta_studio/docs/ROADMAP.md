@@ -30,8 +30,9 @@ foram alterados. CSS mantém escopo em `body.path-culturas`; como os links reais
 de ação chegam sem classes, a composição dá o mesmo acabamento secundário a
 todos eles sem inferir permissões pelo índice. Fixture estrutural passou
 110/110 checks em nove viewports e claro/escuro. Na rota autenticada real,
-Firefox ESR passou 18/18 combinações de nove viewports e claro/escuro com CSS
-candidata injetada, shell único e sem overflow no documento; capturas
+Firefox ESR passou 20/20 verificações: 18 combinações de nove viewports e
+claro/escuro mais foco por teclado em ambos os modos. CSS candidata injetada,
+shell único e sem overflow no documento; capturas
 320/1440px foram inspecionadas. Reuso de SDCs: nenhum novo SDC; a composição usa
 o dashboard/render arrays atuais e tokens já existentes. ACL A/B, grants
 distintos, cache, AJAX/no-JS, zoom, WCAG e paridade pareada OpenCulturas não

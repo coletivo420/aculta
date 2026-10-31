@@ -1,6 +1,6 @@
 # Auditoria mobile-first ACULTA420 — THEME-MF0
 
-**Estado em HEAD `1a4de33b6` (2026-10-30): inventário lexical regenerado; THEME-MF0 continua parcial, MF2 tem migrações incrementais e THEME-MF3 não está aprovado.**
+**Estado em 2026-10-30, na árvore atual de `refactor/opencultures-codigo-visual`: inventário lexical regenerado; THEME-MF0 continua parcial, MF2 tem migrações incrementais e THEME-MF3 não está aprovado.**
 A auditoria inicial foi registrada no checkout servidor `ded8a6181`. Esta
 recontagem foi executada na branch `refactor/opencultures-codigo-visual` em
 `/home/piradopirata/worktrees/opencultures-f0-adm8-e8`; ela cobre fontes do
@@ -9,18 +9,41 @@ escrita no Runtime. O incidente posterior, incluindo o snapshot e a correção
 direcionada de `message.settings`, está registrado em
 `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
 
-### THEME-MF0 — recontagem lexical em HEAD `1a4de33b6` (2026-10-30)
+### THEME-MF0 — recontagem lexical da árvore atual (2026-10-30)
 
 O gerador oficial foi executado com `--write` e repetido sem escrita; a segunda
-saída corresponde byte a byte a `theme-mobile-file-inventory.tsv`. São 206
-fontes rastreadas: 93 CSS/Sass, 12 JavaScript e 101 Twig/HTML. O índice aponta
-84 blocos `@media` em 46 folhas, zero `@container`, 636 correspondências
-lexicais de dimensões em 75 folhas e 53 declarações de overflow em 28 folhas.
-As três novas media queries em `css/tokens.css` usam `min-width` e limitam os
-tokens de fidelidade a `.studio` e `.aculta-profile-editor`; não alteram a
+saída corresponde byte a byte a `theme-mobile-file-inventory.tsv`. São 208
+fontes rastreadas: 94 CSS/Sass, 12 JavaScript e 102 Twig/HTML. O índice aponta
+99 blocos `@media` em 47 folhas, um `@container`, 753 correspondências lexicais
+de dimensões em 76 folhas e 57 declarações de overflow em 31 folhas. Os tokens
+de fidelidade permanecem escopados a consumidores Studio; não alteram a
 composição global. Esses números são lexicais, incluem possíveis comentários e
 não medem cascata, uso efetivo ou falhas de layout. A enumeração completa de
 consumidores por rota/purpose e o gate THEME-MF3 continuam pendentes.
+
+### THEME-MF2 / OCS-F10 — dashboard real de ACULTA Studio Culturas (2026-10-30)
+
+O wrapper `.aculta-events-organizer-dashboard` é renderizado pelo owner
+`aculta_events` na rota autenticada `/culturas`. `studio.css` agora compõe a
+introdução, guia, ações, filtros e tabela em base móvel, limitado a
+`body.path-culturas`; não foi criado SDC e controller/render arrays não foram
+alterados. Os links de ação chegam sem classes no DOM real, então o tema lhes
+aplica o mesmo acabamento secundário por posição estrutural, sem inferir papel
+ou disponibilidade. A tabela mantém scroll interno com `.table-responsive`.
+
+Firefox ESR visível com a folha candidata injetada somente na sessão passou
+20/20 verificações: nove viewports (320/360/390/599/600/768/1024/1280/1440)
+em claro/escuro, um dashboard, Institution Bar e Domain Header únicos, sem
+overflow no documento, alvos de 44px e foco de teclado visível em ambos os
+modos. Capturas 320/1440 foram revisadas. Fixture correspondente passou
+110/110 checks. Evidências em
+`/home/piradopirata/aculta-suite-out/culturas-runtime-dashboard-20261030/` e
+`/home/piradopirata/aculta-suite-out/culturas-dashboard-20261030/`.
+
+É validação focal da rota/consumer, não publicação da folha. ACL A/B e entre
+lojas, cache, AJAX/no-JS, zoom 200/400%, reduced motion, WCAG 2.2 AA, demais
+telas de Culturas e comparação pareada com OpenCulturas permanecem DEFERRED;
+isto não aprova THEME-MF3, OCS-F10 ou OCS-F11.
 
 ### Atualização THEME-MF0/OCS-F0 — shell multidomínio em todas as raízes (2026-10-30)
 
@@ -380,12 +403,12 @@ pendentes. MF2 segue parcial e MF3 não foi aprovado.
 ## Escopo quantificado
 
 O inventário foi regenerado em 2026-10-30 por
-`scripts/audit-aculta420-responsive-inventory.py`. O TSV contém 206 arquivos-
-fonte: 93 folhas CSS/Sass, 12 scripts JavaScript (11 de produção e um de teste)
-e 101 templates Twig/HTML; não inclui documentação ou demais ativos. A busca
-lexical atual encontra `@media` em 46 folhas (81 blocos), zero `@container`,
-expressões de dimensão em 74 folhas (633 matches) e declarações `overflow`,
-`overflow-x` ou `overflow-y` em 28 folhas (53 declarações). A expressão de
+`scripts/audit-aculta420-responsive-inventory.py`. O TSV contém 208 arquivos-
+fonte: 94 folhas CSS/Sass, 12 scripts JavaScript (11 de produção e um de teste)
+e 102 templates Twig/HTML; não inclui documentação ou demais ativos. A busca
+lexical atual encontra `@media` em 47 folhas (99 blocos), um `@container`,
+expressões de dimensão em 76 folhas (753 matches) e declarações `overflow`,
+`overflow-x` ou `overflow-y` em 31 folhas (57 declarações). A expressão de
 dimensão inclui width/height/inline-size/block-size e variantes min/max; os
 valores em media queries também aparecem porque o gerador percorre o texto CSS
 sem construir uma árvore sintática. As contagens não analisam cascata nem efeito

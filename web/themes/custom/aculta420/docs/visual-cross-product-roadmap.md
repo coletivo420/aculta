@@ -7,10 +7,12 @@
 A fidelidade visual ao OpenCulturas Next (`opcult`) continua **escopada ao Studio**; a fundação mobile-first é **global**. O Green Stash é uma **área integrada ao Studio**, não uma experiência independente ou shell próprio; utiliza Commerce como owner funcional e componentes do tema. Dependência: THEME-MF3 aprovado antes de OCS-F11. [Plano vigente](../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md).
 
 **Atualização de THEME-MF0 (2026-10-30):** o índice lexical global do tema foi
-regenerado e comparado byte a byte com o gerador; cobre 206 fontes (93 estilos,
-12 JS e 101 Twig/HTML). A auditoria completa de consumidores, libraries,
-purposes e comportamento renderizado segue parcial; não altera o status de
-THEME-MF0 nem aprova THEME-MF3. Evidência e limites em
+regenerado e comparado byte a byte com o gerador; a árvore atual contém 208
+fontes (94 estilos, 12 JS e 102 Twig/HTML), 99 blocos `@media`, um
+`@container`, 753 correspondências dimensionais e 57 declarações de overflow.
+A auditoria completa de consumidores, libraries, purposes e comportamento
+renderizado segue parcial; não altera o status de THEME-MF0 nem aprova THEME-MF3.
+Evidência e limites em
 [`mobile-first-audit.md`](mobile-first-audit.md).
 
 **Rastreio adicional THEME-MF0 (2026-10-30):** o inventário estático de
@@ -52,8 +54,9 @@ real de Eventos implementada somente em `studio.css`, com escopo
 `body.path-culturas`, sem novo SDC ou alteração de controller/render array. O
 fixture Firefox ESR passou 110/110 checks em nove viewports, claro/escuro,
 teclado, ações, tabela e shell. A rota autenticada real `/culturas`, com CSS
-candidata injetada somente no Firefox, passou 18/18 medidas em nove viewports e
-claro/escuro, com um dashboard, headers únicos e sem overflow do documento;
+candidata injetada somente no Firefox, passou 20/20 verificações: nove
+viewports em claro/escuro, foco visível por teclado em ambos os modos, um
+dashboard, headers únicos e sem overflow do documento;
 capturas 320/1440px foram revisadas. O CSS ainda não foi servido no Runtime.
 ACL A/B, cache, AJAX/no-JS, zoom, WCAG, demais telas da Suite e comparação
 pareada OpenCulturas seguem sem prova. Esta evidência focal não aprova OCS-F10/F11

@@ -543,7 +543,8 @@ export SUITE_OUT=/home/piradopirata/aculta-suite-out/culturas-runtime
 DISPLAY=:0 python3 -I tests/browser/aculta-studio/culturas-runtime.py
 ```
 
-O teste lê e registra classes/estilos computados do dashboard, presença única
-do shell e overflow. A ULI abre sessão autenticada, mas não submete operações.
+O teste lê classes/estilos computados do dashboard, testa foco visível por
+teclado em claro/escuro, presença única do shell e overflow. A ULI abre sessão
+autenticada, mas não submete operações.
 Uma captura sem overflow não valida ACL entre contas, cache, AJAX/no-JS,
 acessibilidade completa, zoom ou paridade pareada OpenCulturas.

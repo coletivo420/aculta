@@ -130,11 +130,39 @@ font:getComputedStyle(root||main).fontFamily,focusables:all('a,button,input,sele
             print(json.dumps(data, ensure_ascii=False), flush=True)
             shot = driver.req("GET", f"/session/{driver.session}/screenshot")
             (OUT / f"culturas-runtime-{mode}-{width}.png").write_bytes(base64.b64decode(shot))
+        driver.js("document.querySelector('.organizer-dashboard-filters input')?.focus();return true")
+        driver.req("POST", f"/session/{driver.session}/actions", {"actions": [{"type": "key", "id": "culturas-keyboard", "actions": [
+            {"type": "keyDown", "value": chr(0xE004)}, {"type": "keyUp", "value": chr(0xE004)}]}]})
+        focus = driver.js("const e=document.activeElement,s=getComputedStyle(e);return {tag:e.tagName,outline:s.outlineStyle,width:s.outlineWidth,visible:e.matches(':focus-visible')}")
+        keyboard_passed = focus["tag"] == "SELECT" and focus["outline"] == "solid" and focus["width"] == "3px" and focus["visible"]
+        RESULTS.append({"type": "keyboard", "mode": mode, "passed": keyboard_passed, "focus": focus})
+        print(json.dumps({"type": "keyboard", "mode": mode, "passed": keyboard_passed, "focus": focus}, ensure_ascii=False), flush=True)
+        driver.req("DELETE", f"/session/{driver.session}/actions")
 finally:
     viewport.close()
     driver.close()
 
 (OUT / "results.json").write_text(json.dumps(RESULTS, ensure_ascii=False, indent=2) + "\n")
-bad = [item for item in RESULTS if item["documentWidth"] > item["width"] or item["dashboardCount"] != 1 or item["institutionCount"] != 1 or item["domainHeaderCount"] != 1 or item["actionCount"] < 2 or not item["firstAction"] or not item["secondAction"] or item["firstAction"]["height"] < 44 or item["firstAction"]["background"] == "rgba(0, 0, 0, 0)" or item["secondAction"]["borderWidth"] == "0px" or (item["width"] < 600 and item["tableScrollWidth"] <= item["tableWidth"])]
-print(f"\n{len(RESULTS) - len(bad)}/{len(RESULTS)} viewport/shell checks passed; evidence: {OUT}")
+
+
+def failed(item):
+    if item.get("type") == "keyboard":
+        return not item["passed"]
+    return (
+        item["documentWidth"] > item["width"]
+        or item["dashboardCount"] != 1
+        or item["institutionCount"] != 1
+        or item["domainHeaderCount"] != 1
+        or item["actionCount"] < 2
+        or not item["firstAction"]
+        or not item["secondAction"]
+        or item["firstAction"]["height"] < 44
+        or item["firstAction"]["background"] == "rgba(0, 0, 0, 0)"
+        or item["secondAction"]["borderWidth"] == "0px"
+        or (item["width"] < 600 and item["tableScrollWidth"] <= item["tableWidth"])
+    )
+
+
+bad = [item for item in RESULTS if failed(item)]
+print(f"\n{len(RESULTS) - len(bad)}/{len(RESULTS)} route checks passed; evidence: {OUT}")
 sys.exit(1 if bad else 0)
