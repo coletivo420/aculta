@@ -284,6 +284,61 @@ final class EventPageController extends ControllerBase {
     }
 
     $organizador = $evento->get('field_organizador')->entity;
+
+    // Organização verificada e coorganizadores (ARQ-05 / OC-C).
+    $orgData = NULL;
+    if ($org !== NULL && $org->access('view', $this->currentUser())) {
+      $tags = array_merge($tags, $org->getCacheTags());
+      $orgUrl = NULL;
+      try {
+        $orgUrl = $org->toUrl('canonical');
+      }
+      catch (\Throwable) {
+        $orgUrl = NULL;
+      }
+      $orgData = [
+        'label' => (string) $org->label(),
+        'url' => $orgUrl?->toString(),
+      ];
+    }
+
+    $coOrgs = [];
+    foreach ($evento->getCoOrganizers() as $coOrg) {
+      if ($coOrg->access('view', $this->currentUser())) {
+        $tags = array_merge($tags, $coOrg->getCacheTags());
+        $coUrl = NULL;
+        try {
+          $coUrl = $coOrg->toUrl('canonical');
+        }
+        catch (\Throwable) {
+          $coUrl = NULL;
+        }
+        $coOrgs[] = [
+          'label' => (string) $coOrg->label(),
+          'url' => $coUrl?->toString(),
+        ];
+      }
+    }
+
+    // Campos estruturados de acessibilidade, segurança e classificação
+    // (ARQ-04).
+    $acessibilidadeTexto = (string) $evento->get('field_acessibilidade')->value;
+    $selosAcessibilidade = [];
+    if ($acessibilidadeTexto !== '') {
+      $linhasAcess = preg_split('/[\r\n;]+/', $acessibilidadeTexto);
+      if ($linhasAcess !== FALSE) {
+        foreach ($linhasAcess as $item) {
+          $trimmed = trim($item);
+          if ($trimmed !== '') {
+            $selosAcessibilidade[] = $trimmed;
+          }
+        }
+      }
+    }
+
+    $classificacao = (string) $evento->get('field_classificacao_etaria')->value;
+    $seguranca = (string) $evento->get('field_seguranca')->value;
+
     return [
       '#theme' => 'aculta_event_page',
       '#prefix' => $prefix !== '' ? $prefix : NULL,
@@ -292,6 +347,11 @@ final class EventPageController extends ControllerBase {
       '#descricao' => (string) $evento->get('body')->value,
       '#tipo' => $evento->get('field_tipo')->entity?->label(),
       '#organizador' => $organizador?->getDisplayName(),
+      '#organizacao' => $orgData,
+      '#coorganizadores' => $coOrgs,
+      '#classificacao_etaria' => $classificacao !== '' ? $classificacao : NULL,
+      '#selos_acessibilidade' => $selosAcessibilidade,
+      '#seguranca' => $seguranca !== '' ? $seguranca : NULL,
       '#url' => (string) $evento->get('field_url')->value,
       '#datas' => $linhas,
       '#cancelado' => $evento->get('field_status')->value === 'cancelado',
