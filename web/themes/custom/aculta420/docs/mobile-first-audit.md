@@ -4445,3 +4445,20 @@ Esta rodada verifica as raízes públicas e não cobre formulários internos,
 zoom em cada template, estados autenticados de cada purpose, leitores de tela,
 WCAG 2.2 AA, tema escuro ou reduced motion. Os 23 SKIPs permanecem lacunas de
 evidência, e THEME-MF3/OCS-F11 não estão aprovados.
+
+### THEME-MF3 — temas claro/escuro e movimento reduzido no shell (2026-10-31)
+
+Firefox ESR visível, Runtime no HEAD `762c56eb3`, sem folhas candidatas, testou
+MAIN, Conta, Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e Eventos nas
+larguras 320/360/390/599/600/768/1024/1280/1440 px. **576/576 checks passaram**
+em claro e escuro. O teste confirmou os tokens de superfície/texto, shell único,
+ausência de overflow do documento, `prefers-reduced-motion: reduce` e contraste
+de pelo menos 4,5:1 nos links textuais da Institution Bar e Domain Header. Na
+rota de entrada de Conta, também passou o contraste do botão Google normal e
+em hover. Evidência e capturas: `/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-762c56eb3-20261031/`.
+
+O tema escuro foi exercitado pelo estado `data-bs-theme="dark"` e o movimento
+reduzido pela preferência real do Firefox. Este teste cobre tokens e links do
+shell, não contraste/conteúdo de todos os componentes, estados de foco completos,
+leitor de tela ou a avaliação integral WCAG 2.2 AA. Logo, não substitui o gate
+de acessibilidade e não aprova THEME-MF3/OCS-F11.
