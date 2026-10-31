@@ -1513,3 +1513,18 @@ foco por teclado e zoom real 200/400%, sem overflow; evidências e limites estã
 em `studio-visual/visual-parity-matrix.md` e
 `tests/browser/aculta-studio/README.md`. A fixture não valida o consumer servido
 no Runtime. A homologação de F4/F11 e THEME-MF3 permanece pendente.
+
+### THEME-MF0/MF2 — teclado, no-JS e inventário (2026-11-01)
+
+Firefox ESR visível no Runtime anônimo passou 210/210 verificações sem
+JavaScript nas dez raízes e sete larguras. A matriz de teclado expandida para
+320/360/390/599/600/768/1024/1280/1440px passou 1492 checks e registrou 23
+SKIPs; o único erro é o overflow servido de Conta/320px (`328px` de documento).
+Com CSS candidata e marcador CAPTCHA simulado, Conta passou 162 checks nas nove
+larguras, com nove SKIPs de foco transferido ao desafio externo e sem overflow.
+Essa comparação não homologa o hook Portal servido. O lint CSS/JS global do tema,
+schemas SDC, fronteira módulo/tema e documentação de tokens passaram na árvore
+da branch. O inventário lexical foi atualizado para 208 fontes e confere
+byte-a-byte; THEME-MF3 continua pendente até a correção integrada e validação de
+todos os estados. Consulte `mobile-first-audit.md` para comandos, capturas e
+limitações.
