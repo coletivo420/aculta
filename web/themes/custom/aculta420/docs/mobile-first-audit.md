@@ -2231,6 +2231,17 @@ mede 300px e cabe no contêiner de 300px a 320px de viewport; a 360px acompanha
 prova o comportamento da candidata sobre markup Runtime, não o hook real ou a
 CSS publicada; o Runtime servido continua com a falha identificada.
 
+Reteste adicional com o widget externo efetivamente carregado: o proxy
+temporário do harness roteou somente `conta.aculta.toca.net.br` para o Apache
+local e autorizou somente `challenges.cloudflare.com:443`. Com a CSS candidata
+e o marcador ainda simulado no Firefox, `/entrar` passou 3/3 em 320/360px; o
+iframe real mediu 300px dentro de seu slot de 300px a 320px e 308px a 360px,
+sem overflow do documento. A captura 320px foi inspecionada. Evidência em
+`/home/piradopirata/aculta-suite-out/auth-captcha-live-widget-candidate-20261030/`.
+Isto confirma o comportamento com o provedor externo ativo, não a instalação
+de `CaptchaPresentationHooks`: o Runtime ainda não fornece o token por código.
+THEME-MF3 segue pendente.
+
 ### OCS-F3 — reteste atual da composição Fidelity do Hub Studio (2026-10-31)
 
 A fixture reutilizável `studio-card-fidelity.py` passou 243/243 verificações em
