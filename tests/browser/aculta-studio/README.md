@@ -439,3 +439,10 @@ Capturas desktop e mobile foram revisadas; resultados estão em
 O wrapper restaurou a preferência de cor original. O teste não cobre submit,
 save, preview, AJAX/no-JS, ACL completa, zoom nem WCAG integral; não homologa a
 implantação da CSS candidata no Runtime.
+
+No reteste de composição, a folha passou a fornecer tokens ao `main` somente
+quando ele contém `form.node-revista-form`; heading e formulário usam
+Montserrat, sem tokens Fidelity na Institution Bar ou no Domain Header. Foram
+78/78 checks PASS, incluindo contagem única do shell e reflow do H1 em duas
+linhas a 320px. Capturas em
+`/home/piradopirata/aculta-suite-out/studio-editorial-heading-fidelity-20261030/`.

@@ -120,6 +120,23 @@
   font-weight: var(--aculta-studio-fidelity-font-weight-light);
 }
 
+.aculta-main:has(form.node-revista-form) {
+  color: var(--aculta-studio-fidelity-text);
+  font-family: var(--aculta-studio-fidelity-font-family);
+  line-height: var(--aculta-studio-fidelity-line-height-default);
+}
+
+.aculta-main:has(form.node-revista-form) :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--aculta-studio-fidelity-text);
+  font-family: var(--aculta-studio-fidelity-font-family);
+  line-height: var(--aculta-studio-fidelity-line-height-headings);
+}
+
+.aculta-main:has(form.node-revista-form) h1 {
+  font-size: clamp(2rem, 7vw, var(--aculta-studio-fidelity-font-size-xxl));
+  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
+}
+
 .studio__tabs {
   border: 0;
   margin-bottom: 1.5rem;

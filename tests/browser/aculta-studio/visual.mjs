@@ -314,9 +314,11 @@ try {
   if (editorialEditHref) {
     await navigateTo(editorialEditHref);
     const editFormReady = await waitFor(`document.querySelector('form.node-form, form[id*="node-revista-edit"]')`, 'formulário Form API de edição da Revista');
-    const editForm = JSON.parse(await exec(`const form=document.querySelector('form.node-form, form[id*="node-revista-edit"]');const s=form?getComputedStyle(form):null;return JSON.stringify({ready:!!form,id:form?.id,className:form?.className,bodyClass:document.body.className,titleField:!!form?.querySelector('[name="title[0][value]"]'),secondary:!!form?.querySelector('[data-aculta-revista="secondary"]'),submit:!!form?.querySelector('[type="submit"]'),fontFamily:s?.fontFamily,color:s?.color,width:form?.scrollWidth,clientWidth:form?.clientWidth,page:document.documentElement.scrollWidth});`));
+    const editForm = JSON.parse(await exec(`const form=document.querySelector('form.node-form, form[id*="node-revista-edit"]');const main=document.querySelector('.aculta-main');const heading=main?.querySelector('h1');const institution=document.querySelector('.aculta-institution-bar');const domainHeader=document.querySelector('.aculta-header');const s=form?getComputedStyle(form):null;return JSON.stringify({ready:!!form,id:form?.id,className:form?.className,bodyClass:document.body.className,titleField:!!form?.querySelector('[name="title[0][value]"]'),secondary:!!form?.querySelector('[data-aculta-revista="secondary"]'),submit:!!form?.querySelector('[type="submit"]'),fontFamily:s?.fontFamily,color:s?.color,mainFamily:main?getComputedStyle(main).fontFamily:null,headingFamily:heading?getComputedStyle(heading).fontFamily:null,headingSize:heading?getComputedStyle(heading).fontSize:null,institutionCount:document.querySelectorAll('.aculta-institution-bar').length,domainHeaderCount:document.querySelectorAll('.aculta-header').length,shellFidelityTokens:[institution,domainHeader].map((node)=>node?getComputedStyle(node).getPropertyValue('--aculta-studio-fidelity-font-family').trim():null),width:form?.scrollWidth,clientWidth:form?.clientWidth,page:document.documentElement.scrollWidth});`));
     check('owner GET renderiza o Form API nativo de edição sem submit', editFormReady && editForm.ready && editForm.titleField && editForm.submit, JSON.stringify(editForm));
     check('formulário editorial recebe tipografia Fidelity escopada ao Marley', editForm.fontFamily?.includes('Montserrat'), JSON.stringify(editForm));
+    check('título e composição do editor recebem tipografia Fidelity', editForm.mainFamily?.includes('Montserrat') && editForm.headingFamily?.includes('Montserrat') && Number.parseFloat(editForm.headingSize) >= 32, JSON.stringify(editForm));
+    check('Institution Bar e Domain Header permanecem únicos e fora dos tokens Studio', editForm.institutionCount === 1 && editForm.domainHeaderCount === 1 && editForm.shellFidelityTokens.every((value) => value === ''), JSON.stringify(editForm));
     await shot('04-editor-revista-desktop');
     for (const width of [320, 390, 768, 1280]) {
       await setViewport(width, width < 500 ? 844 : 900);
@@ -329,6 +331,8 @@ try {
   else {
     check('owner GET renderiza o Form API nativo de edição sem submit', null, 'não há link de edição próprio nesta conta');
     check('formulário editorial recebe tipografia Fidelity escopada ao Marley', null, 'não há link de edição próprio nesta conta');
+    check('título e composição do editor recebem tipografia Fidelity', null, 'não há link de edição próprio nesta conta');
+    check('Institution Bar e Domain Header permanecem únicos e fora dos tokens Studio', null, 'não há link de edição próprio nesta conta');
     for (const width of [320, 390, 768, 1280]) check(`formulário editorial sem overflow em ${width}px`, null, 'não há link de edição próprio nesta conta');
   }
 
