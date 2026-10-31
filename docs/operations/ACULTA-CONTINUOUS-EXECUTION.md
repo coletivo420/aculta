@@ -2718,3 +2718,6 @@ ou preferência persistente alterados.
   asserções passaram. O parâmetro de tradução permanece opcional para manter
   os construtores de teste existentes, enquanto o container injeta o serviço
   real em produção.
+- A suíte Kernel `RevistaEditorialAccessKernelTest` passou no banco dedicado
+  `aculta_simpletest`: 12 testes e 500 asserções, sem falhas. O gate cobre
+  acesso editorial e discussão contextual e não altera o Runtime.
