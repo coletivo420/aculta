@@ -2624,3 +2624,8 @@ ou preferência persistente alterados.
   `/home/piradopirata/aculta-suite-out/greenstash-axe-auth-879/`. Isso remove o
   bloqueio de reachability de F8, mas não homologa operações Commerce, grants
   por loja, formulários, ACL de operador ou OCS-F11.
+- Green Stash também passou zoom e teclado no Firefox ESR visível: zoom real
+  100/200/400% em 3/3 checks, e teclado em 64/64 checks com 4 limites de
+  sequência esperados, nas larguras 320/390/768/1280px. Evidências em
+  `/home/piradopirata/aculta-suite-out/greenstash-zoom-84e/` e
+  `/home/piradopirata/aculta-suite-out/greenstash-keyboard-84e/`.

@@ -1081,6 +1081,12 @@ e `/home/piradopirata/aculta-suite-out/greenstash-axe-auth-879/`.
 Operações Commerce, grants por loja e formulários não foram submetidos; F8
 continua parcial e F11 não é aprovado por esta captura.
 
+O reteste Firefox ESR da mesma Suite passou zoom real em 100/200/400% (3/3) e
+teclado em 64/64 checks, com quatro limites esperados, nas larguras
+320/390/768/1280px. Evidências em
+`/home/piradopirata/aculta-suite-out/greenstash-zoom-84e/` e
+`/home/piradopirata/aculta-suite-out/greenstash-keyboard-84e/`.
+
 Reteste Firefox ESR visível (`DISPLAY=:0`) cobriu claro/escuro em
 320/390/768/1440px, com largura documental igual à viewport e sem overflow em
 todos os oito estados. Evidência em
