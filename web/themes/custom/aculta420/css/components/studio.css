@@ -864,6 +864,173 @@ body.path-marley form.node-revista-form :is(.form-submit, .button--cta, .oc-butt
   outline-offset: 3px;
 }
 
+/* Personal saved library reuses the Studio fidelity tokens and existing
+   controller markup; it does not expose planned actions or add a new SDC. */
+.studio-saved-page {
+  display: grid;
+  min-inline-size: 0;
+  gap: var(--aculta-studio-fidelity-row-gap);
+  color: var(--aculta-studio-fidelity-text);
+}
+
+.studio-saved-page > .page-title {
+  margin: 0;
+  font-family: var(--aculta-studio-fidelity-font-family);
+  line-height: var(--aculta-studio-fidelity-line-height-headings);
+  overflow-wrap: anywhere;
+}
+
+.studio-saved-tabs.nav {
+  display: flex;
+  inline-size: 100%;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 0;
+  border-block-end: 1px solid var(--aculta-studio-fidelity-divider);
+}
+
+.studio-saved-tabs > li {
+  min-inline-size: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.studio-saved-tabs > li > a {
+  display: inline-flex;
+  min-inline-size: 2.75rem;
+  min-block-size: 2.75rem;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  color: var(--aculta-studio-fidelity-link);
+  border: 0;
+  border-block-end: 3px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.studio-saved-tabs > li > a[aria-current="page"] {
+  border-block-end-color: var(--aculta-studio-fidelity-interaction);
+}
+
+.studio-saved-tabs > li > a:is(:hover, :focus-visible) {
+  color: var(--aculta-studio-fidelity-interaction);
+  border-block-end-color: var(--aculta-studio-fidelity-interaction);
+}
+
+.studio-saved-tabs > li > a:focus-visible,
+.studio-saved-page .compact-card-title:focus-visible,
+.studio-saved-pagination a:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+
+.studio-saved-list-wrapper,
+.studio-saved-list-wrapper .item-list {
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.studio-card-compact-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.studio-card-compact-list > li {
+  min-inline-size: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.studio-saved-page .studio-card-compact {
+  display: grid;
+  min-inline-size: 0;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--aculta-studio-fidelity-divider);
+  border-radius: var(--aculta-studio-fidelity-border-radius-tiny);
+  background: var(--aculta-studio-fidelity-surface);
+}
+
+.studio-saved-page .compact-card-title {
+  display: inline-flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+  justify-self: start;
+  max-inline-size: 100%;
+  font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
+  overflow-wrap: anywhere;
+}
+
+.studio-saved-page .compact-card-meta,
+.studio-saved-page .studio-recommendation-reason {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem 0.75rem;
+  color: var(--aculta-studio-fidelity-text);
+  font-size: var(--aculta-studio-fidelity-font-size-s);
+}
+
+.studio-saved-page .badge-purpose,
+.studio-saved-page [data-portal-ui="studio-recommendation-badge"] {
+  display: inline-flex;
+  min-block-size: 1.5rem;
+  align-items: center;
+  padding-inline: 0.5rem;
+  color: var(--aculta-studio-fidelity-text);
+  border: 1px solid var(--aculta-studio-fidelity-divider);
+  border-radius: var(--aculta-studio-fidelity-border-radius-tiny);
+  background: var(--aculta-studio-fidelity-surface-muted);
+  font-size: var(--aculta-studio-fidelity-font-size-xs);
+  font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
+}
+
+.studio-saved-empty {
+  padding: 1rem;
+  border: 1px dashed var(--aculta-studio-fidelity-divider);
+  border-radius: var(--aculta-studio-fidelity-border-radius-tiny);
+  background: var(--aculta-studio-fidelity-surface-muted);
+}
+
+.studio-saved-empty p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.studio-saved-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-block-start: 1rem;
+}
+
+.studio-saved-pagination a {
+  display: inline-flex;
+  min-inline-size: 2.75rem;
+  min-block-size: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 0.75rem;
+}
+
+.studio-saved-pagination .pager-info {
+  color: var(--aculta-studio-fidelity-text);
+  font-size: var(--aculta-studio-fidelity-font-size-s);
+}
+
 /* Três níveis: áreas no topo (.studio__tabs), submenu à esquerda e abas da seção à direita. */
 .studio__layout {
   display: flex;

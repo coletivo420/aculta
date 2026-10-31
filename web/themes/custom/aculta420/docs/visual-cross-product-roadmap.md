@@ -1442,3 +1442,16 @@ e 320/390/768/1440px. Não houve mudança de
 Form API, SDC ou serviço. Runtime servido, fluxos reais, ACL entre contas,
 AJAX/no-JS, zoom, WCAG e homologação global permanecem pendentes; consulte
 `mobile-first-audit.md` e a matriz Studio.
+
+### OCS-F10 / THEME-MF2 — tela Meus Salvos (2026-10-31)
+
+A apresentação de `account:/salvos` foi completada no tema usando os tokens
+neutros já emitidos pelo controller e o wrapper Fidelity existente. Abas,
+cartões compactos, metadados, badges, paginação, estado vazio e foco têm
+aprimoramento progressivo desde 320px, com superfícies claro/escuro. Sem SDC
+novo, mudança de markup funcional ou alteração de acesso/cache. Firefox ESR
+visível passou 131/131 checks em fixture local, incluindo contraste de
+metadados 16,48:1/15,48:1; capturas 320/1440 foram
+revisadas em ambos os modos. O consumer Runtime, privacidade/cache A/B, ACL por
+entidade, módulos opcionais e WCAG permanecem pendentes. Registro detalhado e
+limitações em `mobile-first-audit.md`.

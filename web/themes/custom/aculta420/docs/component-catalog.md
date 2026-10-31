@@ -78,12 +78,15 @@ Institution Bar e Domain Header são elementos do shell ACULTA, não substitutos
 para SDC de conteúdo Studio. Seus contratos e consumers continuam independentes
 desta lista.
 
-Meus Salvos (`/studio/salvos`) já emite tokens neutros `studio-saved-*` e usa
-a listagem/paginação do controller proprietário. Antes de criar ou declarar um
-SDC consumidor nessa tela, confirmar a composição renderizada e testar cache
-privado A/B; `card`, `context-tabs` e `empty-state` são apenas candidatos de
-reuso até essa verificação. Não apresentar módulos opcionais ou ações sem
-consumer autorizado como funcionais.
+Meus Salvos (`account:/salvos`) já emite tokens neutros `studio-saved-*` e usa
+a listagem/paginação do controller proprietário. A folha do tema agora
+apresenta suas abas, cartões compactos, metadados, paginação e estado vazio com
+os tokens Fidelity existentes. O trabalho não criou SDC novo nem alterou
+render arrays, consulta, ACL ou cache; a fixture local de 131 checks valida
+somente CSS e markup equivalente, não a rota no Runtime nem o cache privado A/B.
+`card`, `context-tabs` e `empty-state` continuam candidatos de reuso, sem
+consumer SDC comprovado nessa tela. Não apresentar módulos opcionais ou ações
+sem consumer autorizado como funcionais.
 
 O rodapé global também é composição do tema, não SDC; sua grade móvel começa em
 uma coluna e amplia progressivamente sem alterar blocos ou ordem DOM. A auditoria

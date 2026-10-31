@@ -2662,3 +2662,25 @@ A comparação confirma o reflow da folha candidata, mas não demonstra que o ho
 está instalado no Runtime: ele continua no HEAD `2493d7535`, anterior a esta
 correção da branch. O teste também não valida o interior do widget de terceiro,
 zoom, leitor de tela ou WCAG 2.2 AA integral. THEME-MF3 permanece pendente.
+
+### OCS-F10 / THEME-MF2 — apresentação de Meus Salvos (2026-10-31)
+
+`/salvos` no purpose Conta já emite tokens `studio-saved-*` para abas, lista,
+metadados, badges, paginação e estado vazio. O tema passou a aplicar a esses
+consumers a tipografia, superfícies e foco Fidelity existentes, com base em
+320px e wrapping progressivo. Nenhum SDC foi criado e nenhum controller,
+render array, consulta, permissão, cache ou ação foi alterado.
+
+Firefox ESR visível passou **131/131 checks** na fixture local em 320/360/390/
+599/600/768/1024/1280/1440px, claro/escuro. Foram verificados reflow sem
+overflow, uma aba atual, alvos de pelo menos 44px, cartões, superfícies por modo,
+contraste 16,48:1/15,48:1 para metadados, estado vazio e quatro destinos de
+foco por Tab com outline de 3px. Capturas
+320/1440px de ambos os modos foram inspecionadas; evidências em
+`/home/piradopirata/aculta-suite-out/studio-saved-content-fidelity-20261031/`.
+
+A fixture usa conteúdo demonstrativo e estrutura equivalente ao `item_list`; não
+abre `/salvos` no Runtime, não prova HTML final, privacidade/cache A/B, ACL por
+entidade, disponibilidade de módulos opcionais, zoom nem WCAG integral. Não se
+afirma paridade direta de uma biblioteca pessoal com uma página upstream
+autenticada. THEME-MF3 e OCS-F11 permanecem pendentes.

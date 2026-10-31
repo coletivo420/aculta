@@ -79,6 +79,29 @@ viewport. A captura requer revisão visual; não prova ACL, WCAG nem o gate OCS-
 Os seletores usam atributos de comportamento `data-aculta-studio*`, porque o tema troca os tokens `data-portal-ui`
 por classes na renderização.
 
+## Meus Salvos — apresentação Fidelity
+
+Arquivo `saved-content-fidelity.py`. Valida somente a apresentação candidata
+dos tokens que `SavedContentController` realmente emite: abas, lista,
+metadados, badges, paginação, estado vazio e cartões de recomendação. A fixture
+espelha a estrutura do `item_list` e o wrapper `studio-saved-page`, com itens
+demonstrativos; não acessa conteúdo pessoal, não abre `/salvos` no Runtime e
+não prova consulta, ACL, cache, disponibilidade de módulos opcionais nem
+funcionamento de recomendações.
+
+Com Firefox ESR visível em `DISPLAY=:0`, execute:
+
+```sh
+SUITE_OUT=/home/piradopirata/aculta-suite-out/studio-saved-content-fidelity \
+  python3 tests/browser/aculta-studio/saved-content-fidelity.py
+```
+
+O roteiro mede 320/360/390/599/600/768/1024/1280/1440px, temas claro/escuro,
+overflow, alvos de 44px, aba atual, lista e estado vazio, superfície de cartão e
+foco visível por Tab. `results.json` e capturas 320/1440 ficam em `$SUITE_OUT`.
+O resultado é uma fixture local de CSS/HTML, não a homologação da rota ou do
+gate OCS-F11.
+
 ## Meu Perfil — S-R4 (suíte read-only, ainda sem execução no Runtime)
 
 Arquivo: `profile-s-r4.mjs`. Usa **Firefox ESR visível em X11** e geckodriver,

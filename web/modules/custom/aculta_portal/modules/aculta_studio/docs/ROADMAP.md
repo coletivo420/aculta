@@ -815,6 +815,17 @@ permanecem parciais.
 
 Pendências residuais: F12-H2 e testes Kernel de integração para métodos/AJAX permanecem sem execução porque `SIMPLETEST_DB` não está configurado. O usuário de teste não tem grants de Green Stash, portanto a captura visual não homologa escrita na Loja. Não declarar homologação funcional integral antes de validar essas permissões e fluxos.
 
+### OCS-F10 — apresentação da biblioteca Meus Salvos (2026-10-31)
+
+O tema agora aplica a fundação Fidelity à rota canônica privada `account:/salvos`
+por meio dos tokens `studio-saved-*` já emitidos por este módulo. A fixture
+Firefox ESR passou 131/131 checks em nove larguras (320–1440px), claro/escuro,
+lista preenchida e estado vazio, incluindo contraste AA dos metadados; quatro
+paradas de Tab exibiram foco visível.
+Nenhum SDC, render array, serviço, rota, permissão ou cache foi alterado. Esta
+é evidência local da folha candidata, não homologação do consumer servido, do
+isolamento entre contas nem de OCS-F10/F11/THEME-MF3.
+
 
 ### OCS-F1/F5–F7/F9 — campos e botões Fidelity (2026-10-30)
 
