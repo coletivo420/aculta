@@ -639,18 +639,42 @@ pendentes. MF2 segue parcial e MF3 não foi aprovado.
 
 ## Escopo quantificado
 
-O inventário foi regenerado em 2026-10-30 por
-`scripts/audit-aculta420-responsive-inventory.py`. O TSV contém 208 arquivos-
-fonte: 94 folhas CSS/Sass, 12 scripts JavaScript (11 de produção e um de teste)
-e 102 templates Twig/HTML; não inclui documentação ou demais ativos. A busca
-lexical atual encontra `@media` em 47 folhas (99 blocos), um `@container`,
-expressões de dimensão em 76 folhas (774 matches) e declarações `overflow`,
-`overflow-x` ou `overflow-y` em 31 folhas (57 declarações). A expressão de
-dimensão inclui width/height/inline-size/block-size e variantes min/max; os
-valores em media queries também aparecem porque o gerador percorre o texto CSS
-sem construir uma árvore sintática. As contagens não analisam cascata nem efeito
-calculado. O inventário é estrutural; não mede overflow renderizado ou prova
-comportamento por tela.
+O inventário foi regenerado em 2026-10-31 por
+`scripts/audit-aculta420-responsive-inventory.py`. O TSV contém 264 registros
+(mais o cabeçalho): 208 arquivos-fonte (94 folhas CSS/Sass, 12 scripts JS e
+102 templates Twig/HTML), o manifesto `aculta420.libraries.yml` e 55 manifests SDC
+`.component.yml`. A análise lexical registra 101 blocos `@media` em 47 folhas,
+dois `matchMedia()` em dois scripts JS, um `@container`, 799 correspondências
+dimensionais e 59 declarações de overflow em 31 folhas. O inventário também
+enumera 83 referências CSS/JS das libraries e SDCs; 82 arquivos locais foram
+verificados como existentes e a referência restante é a folha externa de
+fontes Google.
+
+As expressões de dimensão incluem width/height/inline-size/block-size e
+variantes min/max; valores nas próprias media queries também aparecem porque o
+gerador percorre o texto CSS sem construir uma árvore sintática. Os sinais JS
+registram `matchMedia`, APIs de viewport e rolagem. As contagens não analisam
+cascata nem efeito calculado. O inventário é estrutural; não mede overflow
+renderizado ou prova comportamento por tela.
+
+Na árvore `8039c4d7b`, o gerador validou as 83 referências CSS/JS locais ou
+externas das libraries e manifests SDC; nenhum asset local estava ausente. A
+saída padrão repetida foi byte a byte igual ao TSV gravado (SHA-256
+`2226395b53e026ffc759aef144615b0a568d8093cbcf996d9f18d84baa7d39fa`). Foram
+encontrados dois `matchMedia()` e dois sinais de rolagem em JavaScript; isso
+amplia o inventário lexical, mas não substitui a revisão do comportamento dos
+consumidores.
+
+Gates da árvore nessa revisão: SDC schema PASS (55 componentes, 27 includes,
+759 checks), Design Foundations PASS (2.429 checks), Foundation PASS (352) e
+Shell Contract PASS (13) executados com Drush e bootstrap do Runtime. A
+invocação direta por `php` dos dois últimos é inválida porque depende do
+container Drupal. `validate-module-theme-boundary.php` permanece FAIL (1/3.491):
+o controller
+`web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/CourseAuthoringController.php`
+emite `studio`, `studio-course-authoring` e `studio__main`; essa mudança já
+pertence ao commit `1fb521c57`. Nenhum arquivo funcional do módulo foi alterado
+nesta etapa; o gate continua impedindo publicação.
 
 | Camada | Arquivos identificados | Observação da auditoria |
 |---|---|---|

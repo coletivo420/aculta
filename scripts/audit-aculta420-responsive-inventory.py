@@ -16,14 +16,30 @@ SOURCE_SUFFIXES = {
     ".twig": "template",
     ".html": "template",
 }
+LIBRARIES_SUFFIX = ".libraries.yml"
+SDC_MANIFEST_SUFFIX = ".component.yml"
 MEDIA = re.compile(r"@media\s+([^{}]+)\{", re.I)
 CONTAINER = re.compile(r"@container\s+([^{}]+)\{", re.I)
+JS_MEDIA = re.compile(r"matchMedia\s*\(\s*(['\"])(.*?)\1", re.I)
+JS_VIEWPORT = re.compile(
+    r"\b(?:innerWidth|outerWidth|clientWidth|scrollWidth|visualViewport|ResizeObserver|orientationchange)\b",
+    re.I,
+)
+JS_SCROLL = re.compile(r"\b(?:scrollWidth|scrollHeight|scrollTop|scrollLeft|scrollTo|scrollIntoView)\b", re.I)
+LIBRARY_ASSET = re.compile(
+    r"^\s*['\"]?((?:https?://[^'\"\s]+)|(?:[^'\"\s]+\.(?:css|js)(?:\?[^'\"\s]*)?))['\"]?\s*:",
+    re.M | re.I,
+)
 WIDTH = re.compile(
     r"(?<![\w-])(?:(?:min|max)-)?(?:width|height|inline-size|block-size)\s*:\s*[^;{}]+",
     re.I,
 )
 OVERFLOW = re.compile(r"(?<![\w-])overflow(?:-[xy])?\s*:\s*[^;{}]+", re.I)
-HEADER = "tipo\tcaminho\tmedia_count\tmedia_queries\tcontainer_count\twidth_related_matches\toverflow_declarations"
+HEADER = (
+    "tipo\tcaminho\tresponsive_query_count\tresponsive_queries"
+    "\tcontainer_query_count\tdimension_or_viewport_signals"
+    "\toverflow_or_scroll_signals\tlibrary_asset_references"
+)
 
 
 def joined(values):
@@ -33,19 +49,61 @@ def joined(values):
 
 def main():
     rows = [HEADER]
-    counts = {"estilo": 0, "javascript": 0, "template": 0}
+    asset_reference_count = 0
+    counts = {
+        "estilo": 0,
+        "javascript": 0,
+        "template": 0,
+        "biblioteca": 0,
+        "sdc_manifest": 0,
+    }
     for path in sorted(THEME.rglob("*")):
         if not path.is_file() or {"node_modules", "vendor"} & set(path.parts):
             continue
-        kind = SOURCE_SUFFIXES.get(path.suffix.lower())
+        if path.name.endswith(LIBRARIES_SUFFIX):
+            kind = "biblioteca"
+        elif path.name.endswith(SDC_MANIFEST_SUFFIX):
+            kind = "sdc_manifest"
+        else:
+            kind = SOURCE_SUFFIXES.get(path.suffix.lower())
         if kind is None:
             continue
         counts[kind] += 1
         relative = path.relative_to(ROOT).as_posix()
-        if kind != "estilo":
-            rows.append(f"{kind}\t{relative}\t—\t—\t—\t—\t—")
-            continue
         source = path.read_text(errors="replace")
+        if kind in {"biblioteca", "sdc_manifest"}:
+            assets = list(dict.fromkeys(LIBRARY_ASSET.findall(source)))
+            asset_reference_count += len(assets)
+            asset_root = THEME if kind == "biblioteca" else path.parent
+            missing_assets = [
+                asset for asset in assets
+                if not asset.startswith(("http://", "https://"))
+                and not (asset_root / asset).is_file()
+            ]
+            if missing_assets:
+                raise SystemExit(
+                    f"Assets locais ausentes em {relative}: {', '.join(missing_assets)}"
+                )
+            rows.append("\t".join((kind, relative, "—", "—", "—", "—", "—", joined(assets))))
+            continue
+        if kind != "estilo":
+            if kind == "javascript":
+                media_queries = [match.group(2) for match in JS_MEDIA.finditer(source)]
+                viewport_signals = [match.group(0) for match in JS_VIEWPORT.finditer(source)]
+                scroll_signals = [match.group(0) for match in JS_SCROLL.finditer(source)]
+                rows.append("\t".join((
+                    kind,
+                    relative,
+                    str(len(media_queries)),
+                    joined(media_queries),
+                    "0",
+                    joined(list(dict.fromkeys(viewport_signals))),
+                    joined(list(dict.fromkeys(scroll_signals))),
+                    "—",
+                )))
+                continue
+            rows.append(f"{kind}\t{relative}\t—\t—\t—\t—\t—\t—")
+            continue
         media = [match.group(1) for match in MEDIA.finditer(source)]
         containers = [match.group(1) for match in CONTAINER.finditer(source)]
         widths = [match.group(0) for match in WIDTH.finditer(source)]
@@ -58,6 +116,7 @@ def main():
             str(len(containers)),
             joined(widths),
             joined(overflows),
+            "—",
         )))
 
     rendered = "\n".join(rows) + "\n"
@@ -70,7 +129,10 @@ def main():
         raise SystemExit("Uso: scripts/audit-aculta420-responsive-inventory.py [--write]")
     print(
         f"Fontes inventariadas: {sum(counts.values())} "
-        f"({counts['estilo']} estilos, {counts['javascript']} JS, {counts['template']} Twig/HTML)",
+        f"({counts['estilo']} estilos, {counts['javascript']} JS, "
+        f"{counts['template']} Twig/HTML, {counts['biblioteca']} libraries, "
+        f"{counts['sdc_manifest']} SDC manifests, "
+        f"{asset_reference_count} CSS/JS asset references validated)",
         file=sys.stderr,
     )
 

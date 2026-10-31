@@ -444,7 +444,11 @@ do Studio não constitui shell, menu, autenticação ou plataforma independentes
 THEME-MF0 está parcialmente inventariada em
 [`mobile-first-audit.md`](mobile-first-audit.md) e
 [`theme-mobile-file-inventory.tsv`](theme-mobile-file-inventory.tsv). Este
-inventário estático não prova responsividade. MF1–MF3, o gate OCS-F11 e
+TSV agora inclui sinais `matchMedia()` dos scripts, a lista de assets CSS/JS
+de `aculta420.libraries.yml` e dos manifests SDC, com validação de existência
+dos 82 assets locais. No total há 264 registros para 208 fontes e manifests, com
+83 referências CSS/JS mapeadas. O inventário estático não prova responsividade.
+MF1–MF3, o gate OCS-F11 e
 OCS-A1–A4 continuam pendentes; consultar o plano e a matriz de paridade atual.
 
 
