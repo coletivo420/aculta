@@ -2795,3 +2795,4 @@ ou preferência persistente alterados.
 - A Conta Perfil privada em `/perfil` passou 8/8 estados autenticados em
   320/390/768/1280px, claro/escuro, HTTP 200 e sem overflow. Evidência em
   `/home/piradopirata/aculta-suite-out/profile-private-final-20261031201100/`.
+- Culturas público: a matriz genérica Firefox headless em `eventos.aculta.toca.net.br/culturas` retornou HTTP 403 em 8/8 estados (320/390/768/1280px, claro/escuro), sem overflow. Isso confirma a fronteira de autorização anônima, mas não substitui a matriz autenticada da experiência; gate visual autenticado permanece pendente até disponibilizar snapshot/sessão homologável.
