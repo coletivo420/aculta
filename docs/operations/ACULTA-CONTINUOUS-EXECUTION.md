@@ -2701,3 +2701,9 @@ ou preferência persistente alterados.
   checks e admin routes MAIN 154 rotas — todos PASS. Esses gates não substituem
   a correção do contrato de variações nem autorizam marcar Green Stash/F8 como
   homologado.
+- A tentativa de expandir a matriz para `/marley/revista/publicacoes` não
+  criou sessão nem alterou o Runtime: o UID editorial histórico `255` não
+  existe mais no banco atual, e o Drush recusou gerar ULI para conta nula.
+  A capa pública continua validada em headless; a matriz editorial autenticada
+  fica DEFERRED até usar uma conta de homologação existente, sem criar usuário
+  ou conteúdo nesta rodada.
