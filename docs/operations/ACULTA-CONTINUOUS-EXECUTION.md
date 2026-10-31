@@ -2599,3 +2599,8 @@ ou preferência persistente alterados.
   `/home/piradopirata/aculta-suite-out/global-keyboard-fixed-8a26/results.json`;
   THEME-MF3 continua sem aprovação enquanto esses quatro casos não forem
   corrigidos ou formalmente revisados.
+- O fallback visual `:focus` para `.aculta-institution-bar__home` foi publicado
+  em `4f1af872d`, mas o reteste servido do purpose Links ainda reporta foco
+  inativo nos passos 7/8 de 320/390/768px. A regra está presente no agregado
+  CSS; o próximo diagnóstico precisa explicar por que o WebDriver não mantém
+  `document.activeElement` nessa sequência antes de qualquer nova alteração.
