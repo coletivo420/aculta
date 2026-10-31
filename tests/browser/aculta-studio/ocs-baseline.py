@@ -11,6 +11,7 @@ import time
 from urllib.parse import urlparse
 
 ROOT = Path(os.environ.get("ACULTA_ROOT", Path(__file__).resolve().parents[3])).resolve()
+SOURCE_ROOT = Path(__file__).resolve().parents[3]
 OUT = Path(os.environ["SUITE_OUT"]).resolve()
 OUT.mkdir(parents=True, exist_ok=True)
 os.environ.setdefault("ACULTA_FF_PROFILE_ROOT", str(OUT / "profiles"))
@@ -36,6 +37,8 @@ SITE_JAVASCRIPT_ENABLED = os.environ.get("OCS_JAVASCRIPT_ENABLED", "1") != "0"
 EXPECTED_STUDIO_ROOT = os.environ.get("OCS_EXPECT_STUDIO_ROOT", "").strip()
 STATUS_FLOW_CSS_OVERRIDE = os.environ.get("OCS_STATUS_FLOW_CSS_OVERRIDE") == "1"
 STATUS_FLOW_FIXTURE = os.environ.get("OCS_STATUS_FLOW_FIXTURE") == "1"
+OCS_CULTURAS_FORM_KEYBOARD = os.environ.get("OCS_CULTURAS_FORM_KEYBOARD") == "1"
+ADDRESS_LAYOUT_CANDIDATE = os.environ.get("OCS_ADDRESS_LAYOUT_CANDIDATE") == "1"
 
 
 def fidelity_rule(css, selector):
@@ -952,6 +955,129 @@ def profile_action_keyboard(driver):
     return result
 
 
+def culturas_form_keyboard(driver):
+    """Check Tab reachability and visible focus on real organizer form controls."""
+    if not SITE_JAVASCRIPT_ENABLED:
+        raise RuntimeError("Culturas form keyboard check requires site JavaScript enabled.")
+    targets = [
+        url for _, url in studio_pages()
+        if urlparse(url).path.rstrip("/") in (
+            "/culturas/eventos/novo", "/culturas/locais/novo",
+        )
+    ]
+    if not targets:
+        raise RuntimeError("Set STUDIO_ROUTES to include the two Culturas add forms.")
+    results = []
+    for url in targets:
+        path = urlparse(url).path.rstrip("/")
+        expected_id = {
+            "/culturas/eventos/novo": "aculta-event-add-form",
+            "/culturas/locais/novo": "aculta-event-location-add-form",
+        }[path]
+        driver.get(url)
+        for _ in range(100):
+            if driver.js("return document.readyState === 'complete'"):
+                break
+            time.sleep(0.2)
+        set_browser_viewport(driver, 320, 844)
+        if ADDRESS_LAYOUT_CANDIDATE:
+            theme = SOURCE_ROOT / "web/themes/custom/aculta420"
+            address_css = (theme / "css/components/portal-address-number.css").read_text()
+            driver.js("""const style=document.createElement('style');
+              style.dataset.acultaAddressCandidate='';style.textContent=arguments[0];
+              document.head.append(style);
+              document.querySelectorAll('.portal-address-number-row > .col, '
+                +'.portal-address-number-row > .col-12.col-sm').forEach(column=>{
+                  column.className='col-12 col-sm';
+                });
+              document.querySelectorAll('input[name$="[street_number_sn]"]').forEach(input=>{
+                [...(input.labels||[])].forEach(label=>label.classList.add('portal-address-number-label'));
+              });return true;""", [address_css])
+        targets_state = driver.js("""return (() => {
+          const form=document.getElementById(arguments[0]);
+          if(!form)return {present:false,controls:[]};
+          const selector='input:not([type="hidden"]):not([disabled]),select:not([disabled]),'
+            +'textarea:not([disabled]),button:not([disabled]),input[type="submit"]:not([disabled])';
+          return {present:true,controls:[...form.querySelectorAll(selector)]
+            .filter(e=>e.tabIndex>=0&&e.getClientRects().length>0
+              &&getComputedStyle(e).visibility!=='hidden')
+            .map((e,index)=>({index,id:e.id||'',name:e.getAttribute('name')||'',tag:e.tagName}))};
+        })();""", [expected_id])
+        form = {"url": url, "formPresent": targets_state["present"],
+                "expectedControlCount": len(targets_state["controls"]), "observed": {}}
+        if not form["formPresent"] or not targets_state["controls"]:
+            form["ok"] = False
+            form["reason"] = "expected form or visible controls missing"
+            results.append(form)
+            CAPTURE_FAILURES.append({"url": url, "culturasFormKeyboard": form})
+            continue
+        driver.js("document.activeElement.blur();document.body.focus();return true")
+        for _ in range(max(120, len(targets_state["controls"]) * 5)):
+            driver.req("POST", f"/session/{driver.session}/actions", {
+                "actions": [{"type": "key", "id": "culturas-form-keyboard", "actions": [
+                    {"type": "keyDown", "value": "\ue004"},
+                    {"type": "keyUp", "value": "\ue004"},
+                ]}],
+            })
+            focus = driver.js("""return (() => {
+              const form=document.getElementById(arguments[0]),e=document.activeElement;
+              if(!form?.contains(e))return null;
+              const selector='input:not([type="hidden"]):not([disabled]),select:not([disabled]),'
+                +'textarea:not([disabled]),button:not([disabled]),input[type="submit"]:not([disabled])';
+              const controls=[...form.querySelectorAll(selector)].filter(el=>el.tabIndex>=0
+                &&el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden');
+              const index=controls.indexOf(e);if(index<0)return null;
+              const rect=e.getBoundingClientRect(),style=getComputedStyle(e);
+              const check=e.matches('input[type="checkbox"],input[type="radio"]');
+              const labels=e.labels?[...e.labels]:[];
+              const rects=[rect,...(check?labels.map(label=>label.getBoundingClientRect()):[])];
+              const target={left:Math.min(...rects.map(r=>r.left)),
+                right:Math.max(...rects.map(r=>r.right)),top:Math.min(...rects.map(r=>r.top)),
+                bottom:Math.max(...rects.map(r=>r.bottom))};
+              return {index,id:e.id||'',name:e.getAttribute('name')||'',tag:e.tagName,
+                checkbox:check,labels:labels.map(label=>({text:label.textContent.trim(),
+                  className:label.className,display:getComputedStyle(label).display,
+                  minHeight:getComputedStyle(label).minHeight,
+                  width:label.getBoundingClientRect().width,height:label.getBoundingClientRect().height})),
+                focusVisible:e.matches(':focus-visible'),outlineStyle:style.outlineStyle,
+                outlineWidth:style.outlineWidth,boxShadow:style.boxShadow,
+                left:rect.left,right:rect.right,top:rect.top,bottom:rect.bottom,
+                targetLeft:target.left,targetRight:target.right,targetTop:target.top,
+                targetBottom:target.bottom,targetWidth:target.right-target.left,
+                targetHeight:target.bottom-target.top,viewport:innerWidth,
+                height:rect.height,width:rect.width};
+            })();""", [expected_id])
+            if focus:
+                form["observed"][str(focus["index"])] = focus
+            if len(form["observed"]) == len(targets_state["controls"]):
+                break
+        observed = list(form["observed"].values())
+        form["controlsReached"] = len(observed)
+        form["allControlsReachable"] = len(observed) == len(targets_state["controls"])
+        form["allControlsShowFocus"] = form["allControlsReachable"] and all(
+            item["focusVisible"] and (
+                item["outlineStyle"] not in ("none", "")
+                and float(item["outlineWidth"].removesuffix("px")) >= 2
+                or item["boxShadow"] not in ("none", "")
+            ) for item in observed
+        )
+        form["allControlsFitViewport"] = form["allControlsReachable"] and all(
+            (item["targetWidth"] if item["checkbox"] else item["width"]) >= 44
+            and (item["targetHeight"] if item["checkbox"] else item["height"]) >= 44
+            and item["targetLeft"] >= -1 and item["targetRight"] <= item["viewport"] + 1
+            for item in observed
+        )
+        form["ok"] = all((form["allControlsReachable"], form["allControlsShowFocus"],
+                           form["allControlsFitViewport"]))
+        form["addressLayoutCandidateInjected"] = ADDRESS_LAYOUT_CANDIDATE
+        results.append(form)
+        print(f"{'PASS' if form['ok'] else 'FAIL'} Culturas form keyboard at 320px: "
+              f"{path} {form['controlsReached']}/{form['expectedControlCount']}")
+        if not form["ok"]:
+            CAPTURE_FAILURES.append({"url": url, "culturasFormKeyboard": form})
+    return results
+
+
 def public_profile_keyboard(driver, url):
     """Check anonymous keyboard focus on the public profile's social links."""
     driver.get(url)
@@ -1062,6 +1188,7 @@ def main():
     profile_keyboard_result = None
     public_profile_zoom_results = None
     public_profile_keyboard_result = None
+    culturas_form_keyboard_results = None
     try:
         if os.environ.get("OCS_SKIP_OPENCULTURAS") != "1":
             for width, height in WIDTHS:
@@ -1101,6 +1228,8 @@ def main():
             (page_url for _, page_url in studio_pages() if urlparse(page_url).path.startswith("/u/")),
             None,
         )
+        if OCS_CULTURAS_FORM_KEYBOARD:
+            culturas_form_keyboard_results = culturas_form_keyboard(driver)
         if os.environ.get("OCS_PUBLIC_PROFILE_KEYBOARD") == "1":
             if not ANONYMOUS_CAPTURE or not public_profile_url:
                 raise RuntimeError("Public profile keyboard check requires anonymous STUDIO_ROUTES /u/{apelido}.")
@@ -1131,6 +1260,7 @@ def main():
         "profile_action_keyboard": profile_keyboard_result,
         "public_profile_zoom": public_profile_zoom_results,
         "public_profile_keyboard": public_profile_keyboard_result,
+        "culturas_form_keyboard": culturas_form_keyboard_results,
         "fidelity_failures": CAPTURE_FAILURES,
         "limitations": [
             "The public OpenCulturas homepage is not an authenticated dashboard screen.",

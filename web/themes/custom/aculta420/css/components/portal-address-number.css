@@ -13,7 +13,7 @@
 .portal-address-number-row .form-check {
   display: flex;
   align-items: center;
-  min-height: 0;
+  min-height: 44px;
   margin: 0;
   padding: 0;
 }
@@ -38,5 +38,23 @@
 .portal-address-number-row > .col-auto.pb-2 {
   padding-block-end: 0 !important;
   align-self: flex-end;
+}
+
+/* O label S/N também é uma área acionável confortável por toque, não só a caixa nativa. */
+.portal-address-number-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: 0.25rem;
+}
+
+/* O formulário de evento mantém alvos de toque adequados nos checkboxes editoriais. */
+#aculta-event-add-form .form-check > label,
+#aculta-event-location-add-form .form-check > label {
+  display: inline-flex;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding-inline: 0.5rem;
 }
 

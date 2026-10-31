@@ -119,6 +119,16 @@ scripts while retaining WebDriver inspection and use the same capture flow for
 no-JS reflow. Set `OCS_STUDIO_COLOR_MODE=light` or `dark` to force the Drupal
 theme attribute on the document during a read-only capture, with or without
 site JavaScript; this does not persist the preference. Neither mode tests AJAX.
+Set `OCS_CULTURAS_FORM_KEYBOARD=1` and include both organizer add routes to
+Tab through each visible Form API control at 320px. This checks reachability,
+`:focus-visible`, a visible outline/shadow, and control dimensions/viewport. For
+checkboxes and radio buttons it measures the combined native control and its
+associated labels as the pointer target; it
+does not submit the forms or replace a complete keyboard/screen-reader audit.
+During local CSS/JS development, `OCS_ADDRESS_LAYOUT_CANDIDATE=1` injects the
+worktree address component CSS and applies the mobile complement column classes
+to the rendered forms. This is a candidate check; the final gate must run again
+without this override against the integrated Runtime.
 The test does not cover full keyboard/zoom/WCAG, ACL between accounts, or
 address CEP behavior.
 

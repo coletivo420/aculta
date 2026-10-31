@@ -4677,3 +4677,21 @@ Snapshot pré-ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta
 `da201177dda07fd685594a9cd35c0d3afc1f8ca3cecbdc796c61e1f9ac8b9217`.
 A amostra valida modo escuro e reflow, não contraste WCAG integral, teclado,
 zoom, ACL nem OCS-F11/THEME-MF3.
+
+### THEME-MF2 / OCS-F10 — teclado e alvos dos formulários Culturas (2026-10-31)
+
+No Firefox ESR visível, a candidata de layout foi aplicada localmente aos
+formulários reais `/culturas/eventos/novo` e `/culturas/locais/novo`, a 320px.
+Os **35/35 controles** foram alcançados por Tab, mostraram foco visível e
+atenderam às dimensões mínimas do controle/alvo (17 controles no evento, 18 no
+local); não houve overflow. O complemento do endereço no formulário de local
+passou de 35,6px para 204px ao reflowar para uma linha própria, e o alvo S/N
+mediu 66×44px. A candidata injeta somente o CSS/estrutura do worktree; isto é
+pré-validação e não o gate integrado. Capturas e JSON:
+`/home/piradopirata/aculta-suite-out/culturas-keyboard-candidate5-320-b2479397f-20261031/`.
+Snapshot pré-ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-keyboard-candidate5-20261031.sql`,
+56.515.783 bytes, modo 0600, SHA-256
+`33a030371e032425ba45499d04eded50d729e17cfd5804929abcde7c0538fcf0`;
+Runtime `aculta_runtime`, 611 tabelas. O gate final ainda requer executar a
+mesma verificação sem injeção após integrar a revisão; esta rodada não aprova
+THEME-MF3 nem OCS-F11.

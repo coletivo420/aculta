@@ -1,8 +1,8 @@
 /**
  * Layout do bloco de endereço (tema aculta420).
  *
- * Só reposiciona e agrupa campos que o módulo aculta_portal já renderizou: o CEP fica primeiro e Número, S/N e
- * Complemento ficam na mesma linha, logo depois do Logradouro. O comportamento (busca do CEP, preenchimento,
+ * Só reposiciona e agrupa campos que o módulo aculta_portal já renderizou: o CEP fica primeiro; Número, S/N e
+ * Complemento ficam após o Logradouro. Em telas móveis o Complemento ocupa uma linha própria. O comportamento (busca do CEP, preenchimento,
  * validação do número e bloqueio com S/N) fica no módulo, em js/cep-address.js. Sem este arquivo o formulário
  * funciona, só com a ordem e as colunas padrão do Address.
  */
@@ -28,6 +28,7 @@
     const streetRow = rowOf(fieldIn(container, 'address_line1'));
     const complementRow = rowOf(fieldIn(container, 'address_line2'));
     const snRow = snInput ? rowOf(snInput) : null;
+    snInput?.labels?.forEach((label) => label.classList.add('portal-address-number-label'));
     if (numberRow && streetRow && numberRow !== streetRow) {
       streetRow.after(numberRow);
     }
@@ -37,7 +38,7 @@
     if (numberRow.closest('.portal-address-number-row')) {
       return;
     }
-    // Colunas: número e S/N encolhem para caber; o complemento ocupa o resto da linha.
+    // Número e S/N encolhem para caber; em telas móveis o complemento passa para a linha seguinte.
     const row = document.createElement('div');
     row.className = 'row g-2 align-items-end portal-address-number-row';
     const numCol = document.createElement('div');
@@ -45,7 +46,7 @@
     const snCol = document.createElement('div');
     snCol.className = 'col-auto pb-2';
     const compCol = document.createElement('div');
-    compCol.className = 'col';
+    compCol.className = 'col-12 col-sm';
     numberRow.parentElement.insertBefore(row, numberRow);
     numCol.append(numberRow);
     if (snRow) {

@@ -388,3 +388,14 @@ posteriores SKIP pela autoclosure). Isso é evidência responsiva da tela atual,
 não do compositor novo, nem paridade com o dashboard autenticado upstream.
 Sem criação de matrícula ou curso. Ver `../mobile-first-audit.md` e os
 registros de snapshot operacionais.
+
+### OCS-F10 / THEME-MF2 — teclado nos formulários Culturas (2026-10-31)
+
+Pré-validação com CSS e estrutura candidatas do worktree em `/culturas/eventos/novo`
+e `/culturas/locais/novo`, 320px, Firefox ESR visível: 35/35 controles
+alcançáveis por Tab, foco visível e alvos mínimos; zero overflow. O complemento
+de endereço do formulário de local reflowa para a linha própria (204px), e o
+label S/N mede alvo de 66×44px. Como a candidata foi injetada sobre a página
+servida, isto não é prova de CSS integrada nem fecha OCS-F11. Evidências,
+snapshot e limitações em `../mobile-first-audit.md` e
+`/home/piradopirata/aculta-suite-out/culturas-keyboard-candidate5-320-b2479397f-20261031/`.
