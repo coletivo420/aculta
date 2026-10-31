@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_magazine\Controller;
 
 use Drupal\aculta_magazine\Form\EditorialWorkspaceFilterForm;
+use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Drupal\aculta_magazine\Access\EditorialCapability;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
@@ -22,7 +23,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Studio Marley presentation adapter delegating persistence to Node Form API. */
-final class EditorialWorkspaceController {
+final class EditorialWorkspaceController extends ControllerBase {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
