@@ -178,9 +178,11 @@ Implementado endpoint de leitura `/studio/green-stash/produtos/{produto}` (entã
 
 Próxima fase GS-EDITOR-0.3: criação própria de produtos via Form API com API/validações Commerce, destino atual `/studio/green-stash/produtos/novo`; antes de liberar, auditar store access no create, regras de SKU/variações, CSRF, validação de formulário e edição concorrente. SDC/UI Suite mobile-first continua dependência do tema.
 
-## GS-EDITOR-0.3-A — Cadastro próprio de rascunho (2026-10-23)
+## GS-EDITOR-0.3-A — Cadastro próprio de rascunho (2026-10-23; gate de validação atualizado em 2026-10-31)
 
 Criada rota PT-BR `/studio/green-stash/produtos/novo` (inicialmente `/estudio/loja/produtos/novo`), usando Form API próprio `GreenStashProductCreateForm`. O cadastro inicial solicita título e loja, exige autorização de experiência Studio, `createAccess('produto_loja')` do Commerce e `update` na loja selecionada. A seleção é revalidada no submit. Produto salvo como **não publicado**, sem acesso aos formulários admin, checkout, preço ou estoque. Formulário aplica validação da entidade e recusa gravação se houver violations. A listagem fornece link `Novo produto`.
+
+**Gate homelab 2026-10-31 — BLOQUEADO:** a submissão real com `teste.comum` alcança a rota canônica `/greenstash/produtos/novo`, mas não persiste o rascunho porque a configuração sincronizada de `produto_loja` declara `multipleVariations: true` sem `variationTypes`. A validação Commerce retorna `variations: Este valor não pode ser nulo` (e a associação de loja precisa ser revalidada no ambiente após o grant do gerente). Nenhum valor de preço, SKU ou variação foi inventado para contornar o contrato. A ação `Novo produto` não deve ser considerada operacional até definir o tipo de variação e seus campos obrigatórios, implementar a criação transacional correspondente e repetir Functional/Kernel + rollback. A fixture visual NID 14 permanece somente para inspeção e não representa publicação ou venda.
 
 **Limites obrigatórios:** não são cadastradas variações, SKU, preço, imagens, mídia, pesos nem disponibilidade. Não afirmar que o produto está pronto para comercialização; as fases GS-EDITOR-0.3-B/0.4 deverão usar API Commerce/Stock e UI SDC/UI Suite, verificar diferenças entre validação Form API e constraints reais e impedir publicação incompleta. Priorizar testes Kernel/Functional para createAccess por store e aplicação de `stores` na entidade, permissões e CSRF. Nenhum teste homelab executado nesta entrega.
 
