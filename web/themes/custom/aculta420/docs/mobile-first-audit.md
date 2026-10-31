@@ -4745,6 +4745,11 @@ THEME-MF3/OCS-F11.
 
 ### Ferramentas rápidas e diagnóstico axe de Culturas (2026-10-31)
 
+> **Retificação de status em 2026-10-31:** os achados de código abaixo foram
+> corrigidos em `b24d3f67e` e `f68dde925`; a auditoria inicial é preservada como
+> histórico. A seção “Reteste axe após correções” registra os resultados atuais
+> e as limitações restantes.
+
 O runner WebDriver foi ampliado com Firefox ESR, Chrome e Chromium headless
 opt-in e screenshots de borda (320/1440px), preservando o Firefox ESR/X11 para
 inspeção visual e zoom real. A matriz responsiva do dashboard `/culturas`
@@ -4779,5 +4784,37 @@ e `.aculta-search-utility > .visually-hidden`). O primeiro nó é emitido pelo
 carrossel de destaques; identificar seu owner e corrigir a semântica preservando
 controles reais do carrossel. Contraste e landmark precisam de correção na
 revisão global do tema. Evidência: `/home/piradopirata/aculta-suite-out/generic-page-matrix-firefox-20261031/`
-e `.../generic-page-matrix-chrome-20261031/`. Estes achados permanecem pendentes;
-a auditoria foi diagnóstica e não constitui PASS de acessibilidade.
+e `.../generic-page-matrix-chrome-20261031/`. Estes resultados são o baseline
+histórico anterior às correções abaixo; não descrevem o estado atual do código.
+
+### Reteste axe após correções — home pública e Culturas (2026-10-31)
+
+As correções focais foram publicadas em `b24d3f67e` e `f68dde925`: texto
+institucional/CNPJ usa token de contraste adequado no rodapé; Institution Bar
+é uma região nomeada; o filtro de situação de Culturas tem nome acessível
+traduzível sem alterar opções ou semântica GET; os contêineres de pontos e
+controles de seta do carrossel VVJB têm `role="group"`. O teste Kernel de
+Eventos também exige o rótulo e preserva as chaves das opções.
+
+Após essas correções, a página inicial pública passou Firefox ESR headless em
+320/360/390/599/600/768/1024/1280/1440px, claro/escuro: 18/18 viewports, zero
+overflow, zero violações e zero itens `incomplete` do axe nos pontos auditados.
+Chrome headless passou 10/10 nas larguras 320/390/768/1280/1440px nos dois
+modos, também sem violações ou itens incompletos. Em Firefox ESR visível/X11,
+a home passou 4/4 capturas em 390/1280px nos dois modos.
+
+Culturas autenticado passou Firefox ESR headless em 18/18 viewports e Chrome
+headless em 10/10, sem overflow nem violações axe. O axe ainda retorna um item
+`incomplete` por modo para `h1.title`: não conseguiu determinar o fundo por
+alegada sobreposição parcial. A captura de 320px foi revisada e não mostra
+sobreposição; as cores do CSS são `#1f1f1f` sobre `#f2f7f0` no claro (15,18:1)
+e `#efefef` sobre `#171513` no escuro (15,84:1). Esse item foi verificado
+manualmente, mas continua registrado como `incomplete` automatizado, não como
+resultado de axe aprovado. JSON/capturas em
+`/home/piradopirata/aculta-suite-out/axe-a11y-responsive-{home,culturas}-{firefox,chrome}-20261031/`;
+capturas X11 da home em
+`/home/piradopirata/aculta-suite-out/axe-a11y-x11-home-20261031/`.
+
+O reteste comprova somente essas rotas, modos, larguras e regras axe observadas.
+Não é auditoria completa WCAG 2.2 AA, não cobre todos os propósitos, fluxos,
+estados, leitores de tela ou interação, e não aprova THEME-MF3 nem OCS-F11.

@@ -85,14 +85,14 @@ Versões instaladas e execução real: Firefox ESR 153.5.1, geckodriver 0.37.1,
 Google Chrome 156.0.8078.47, Chromium 156.0.8078.73 e ChromeDriver
 156.0.8078.73 (pacote Debian `chromium-driver`, instalado nesta máquina com
 autorização). geckodriver já estava instalado, então não foi reinstalado. Em
-2026-10-31, a matriz de Culturas sem axe concluiu
+2026-10-31, a matriz inicial de Culturas sem axe concluiu
 20/20 verificações em 13,5 s (Firefox ESR headless), 20/20 em 9,7 s (Chrome
 headless) e 20/20 em 11,3 s (Chromium headless). Uma execução separada de axe
 no Firefox registrou 3 violações por tema de cor (contraste, landmark e nome
-acessível do filtro) e 1 item incompleto por tema. O diagnóstico é real e não
-aprova WCAG; contraste da informação institucional e rótulo do filtro precisam
-de correção, e os avisos de landmark precisam de triagem. O orquestrador dos
-três browsers (`culturas-browser-matrix.sh`) completou a mesma matriz em 34,0s,
+acessível do filtro) e 1 item incompleto por tema. A seção abaixo registra o
+reteste posterior; esse diagnóstico inicial não descreve o resultado atual e
+não aprova WCAG. O orquestrador dos três browsers
+(`culturas-browser-matrix.sh`) completou a mesma matriz em 34,0s,
 sequencialmente, com 20/20 em cada engine.
 
 O smoke público X11 (Firefox ESR visível em `DISPLAY=:0`) e Firefox/Chrome/
@@ -113,3 +113,24 @@ axe por modo; Chrome headless passou 6/6 em 3,6s. Evidências em
 Em Firefox ESR visível/X11, o runner genérico passou também 2/2 viewports
 (390/1280px), com captura em
 `/home/piradopirata/aculta-suite-out/generic-page-matrix-x11-20261031/`.
+
+### Reteste axe após correções focais — 2026-10-31
+
+Os achados de contraste do rodapé, landmark da Institution Bar, nome do filtro
+de situação e semântica dos controles VVJB foram corrigidos nos commits
+`b24d3f67e` e `f68dde925`. Após as correções, a home pública passou axe sem
+violações nem itens incompletos: Firefox ESR headless em nove larguras × dois
+modos (18/18), Chrome headless em cinco larguras × dois modos (10/10), e
+Firefox ESR/X11 em 390/1280px × dois modos (4/4). Culturas autenticado passou
+sem violações axe em Firefox ESR headless (18 viewports) e Chrome headless (10).
+Firefox ainda registra `color-contrast` como `incomplete` para o H1 em cada
+modo, pois não consegue calcular o fundo devido a uma alegada sobreposição; a
+captura foi revisada manualmente e os tokens computados dão 15,18:1 no claro e
+15,84:1 no escuro. Isso permanece um item incompleto automatizado e não é
+declarado como resultado axe aprovado.
+
+Esses são gates focais de duas rotas. Não certificam WCAG 2.2 AA, não cobrem
+todos os propósitos, fluxos ou tecnologias assistivas e não aprovam
+THEME-MF3/OCS-F11. Evidências detalhadas e limites estão no registro
+`Reteste axe após correções` de
+`web/themes/custom/aculta420/docs/mobile-first-audit.md`.
