@@ -151,7 +151,8 @@ duas instâncias de `patterns/card`, Montserrat regular/negrito, escala
 tipográfica e alvos das abas de pelo menos 44px. Capturas 320/1440 foram
 inspecionadas em
 `/home/piradopirata/aculta-suite-out/studio-card-fidelity-current-20261031/`.
-O reteste não representa o HTML servido; o Runtime continua no HEAD `2493d7535`.
+O reteste SDC atual passou 55 componentes/759 checks. Essas fixtures não
+representam o HTML servido; o Runtime continua no HEAD `2493d7535`.
 
 Na navegação interna, `.studio__tabs` e `.studio__subtabs` preservam os links e
 estados autorizados existentes. A apresentação distingue áreas primárias de
