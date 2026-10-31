@@ -114,6 +114,7 @@
   grid-column: 1 / -1;
 }
 
+.page-view-revista-sessoes .view-display-id-page_revista .views-row .aculta-card,
 .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .aculta-card {
   overflow: hidden;
   border-radius: 1.5rem;

@@ -1643,11 +1643,12 @@ dos links.
 ### THEME-MF2 — acabamento OpenCulturas na capa da Revista (2026-10-31)
 
 A capa pública da Revista aproxima o acabamento configurável de teaser observado
-em OpenCulturas 3.1.5: o primeiro cartão usa raio de 1,5 rem e elevação via token
-local `--aculta-shadow-raised`. O escopo é somente o destaque editorial; SDC,
+em OpenCulturas 3.1.5: os quatro cartões usam raio de 1,5 rem e elevação via token
+local `--aculta-shadow-raised`; o destaque preserva sua composição própria. O SDC,
 conteúdo e contratos permanecem os atuais. Firefox ESR com CSS candidata injetada
 passou 28/28 verificações, incluindo nove larguras, modo claro/escuro, teclado,
-no-JS e zoom 200/400%; as capturas 320/1440px foram revisadas. O Runtime ainda
+no-JS e zoom 200/400%; o harness também verifica a geometria de todos os cartões.
+As capturas 320/1440px foram revisadas. O Runtime ainda
 serve a CSS anterior à branch, portanto a integração visual e THEME-MF3 ficam
 pendentes. Evidências e comandos em `mobile-first-audit.md` e
 `studio-visual/visual-parity-matrix.md`.

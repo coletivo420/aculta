@@ -3497,19 +3497,23 @@ contraste ou aceite WCAG 2.2 AA. THEME-MF3 e OCS-F11 continuam pendentes.
 ### THEME-MF2 — superfície do destaque editorial da Revista (2026-10-31)
 
 A leitura do OpenCulturas 3.1.5 verificou em
-`profile/themes/opcult/sass/abstracts/_teasers.scss` o raio de cartão editorial
-de 1,5 rem e a superfície elevada configurável. O destaque da capa da Revista
-usava 1,25 rem e não tinha elevação. `revista-listing.css` agora aproxima essa
-hierarquia usando raio de 1,5 rem e o token local `--aculta-shadow-raised`,
-restritos ao primeiro cartão da View pública. O SDC `patterns/card`, o markup,
-os campos e os dados editoriais permanecem os existentes; nenhum CSS, imagem,
-SVG ou ícone upstream foi copiado.
+`profile/themes/opcult/sass/abstracts/_teasers.scss` o raio de 1,5 rem e a
+superfície elevada configurável para a família de cartões editoriais. Os quatro
+cartões da listagem pública da Revista usavam acabamento distinto.
+`revista-listing.css` agora aplica raio de 1,5 rem e o token local
+`--aculta-shadow-raised` a todos os cartões; o destaque preserva seu layout
+próprio. O SDC `patterns/card`, o markup, os campos e os dados editoriais
+permanecem os existentes; nenhum CSS, imagem, SVG ou ícone upstream foi
+copiado.
 
 Stylelint passou. `magazine-cover-runtime.py`, Firefox ESR visível e CSS
-candidata injetada na sessão passaram **28/28 checks** em 320–1440px, incluindo
-claro/escuro, teclado, sem JavaScript, zoom real de 200%/400%, foco visível,
-alvos mínimos de 44 px e zero overflow. As capturas de 320/1440px foram
-inspecionadas em
-`/home/piradopirata/aculta-suite-out/magazine-cover-depth-candidate-20261031/`.
+candidata injetada na sessão passaram **28/28 checks** em 320–1440px; o harness
+verifica raio e sombra em todos os cartões. Também cobre claro/escuro, teclado,
+sem JavaScript, zoom real de 200%/400%, foco visível, alvos mínimos de 44 px e
+zero overflow. As capturas de 320/1440px foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/magazine-cards-family-final-20261031/`.
+No bootstrap read-only do Runtime (`toca`, HEAD `2493d7535`, URI
+`http://default`, banco `aculta_runtime`), a Foundation validou os arquivos
+candidatos da worktree com 352 checks e o contrato de shell passou 13 checks.
 O Runtime ainda serve a CSS anterior à branch; este ajuste candidato não está
 instalado e não aprova THEME-MF3.
