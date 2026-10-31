@@ -765,3 +765,8 @@ a evidência atual é local candidata e está registrada na auditoria mobile-fir
 A folha publicada também foi confirmada sem override no Runtime em nove larguras;
 cinco cards foram renderizados sem overflow, com Institution Bar e Domain Header
 únicos. Evidências e limites estão na auditoria mobile-first.
+
+O SDC `patterns/card`, variante `studio_fidelity`, é também o padrão visual para
+cards de cursos e certificados emitidos pelo compositor Ganjalab. O compositor
+mantém dados, links e acesso sob os contratos LMS; a variante altera somente a
+apresentação.

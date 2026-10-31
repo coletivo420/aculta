@@ -2294,3 +2294,21 @@ ou preferência persistente alterados.
   card. Evidências: `/home/piradopirata/aculta-suite-out/studio-account-hub-card-integrated-5a9c03b4b-20261031/`.
   A sessão não enviou formulários nem alterou conteúdo/configuração. O gate
   THEME-MF3/OCS-F11 permanece aberto.
+
+## 2026-10-31 — OCS-F6: Ganjalab no Runtime atual
+
+- Preflight `toca`: checkout `/home/piradopirata/projetos/aculta`, HEAD
+  destacado `959bc283c`, Drupal 11.4.10, `aculta_runtime`, 611 tabelas, URI
+  `http://default`; sem updates ou diferenças config/sync. Snapshot antes da
+  sessão ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-ganjalab-current-959bc283c-20261031.sql`,
+  51.990.962 bytes, modo 0600, SHA-256
+  `325ec6eae0efde2e9ad5ff76ca86ab0258fd64692235940c58cf9b4e3d1acac4`.
+- Firefox ESR/X11 autenticado abriu `https://cursos.aculta.toca.net.br/ganjalab`
+  sem CSS override nos nove viewports de 320 a 1440px: `CAPTURED`, zero falhas,
+  contexto `.studio`, três SDCs do compositor (cabeçalho e dois estados vazios),
+  Institution Bar/Domain Header únicos e
+  sem overflow. Capturas 320/1440 revisadas. Nenhum curso foi criado e nenhum
+  formulário enviado. Evidência: `/home/piradopirata/aculta-suite-out/ganjalab-dashboard-integrated-959bc283c-20261031/`.
+- A conta não possui matrículas nem certificados; cartões preenchidos, ACL A/B,
+  no-JS/AJAX, teclado/zoom, modo escuro e WCAG permanecem pendentes. OCS-F6,
+  THEME-MF3 e OCS-F11 continuam abertos.

@@ -89,6 +89,7 @@ final class LearnerDashboardComposer {
       $course_items[] = [
         '#theme' => 'aculta_portal_component',
         '#name' => 'card',
+        '#props' => ['variant' => 'studio_fidelity'],
         '#slots' => [
           'header' => $item['title'],
           'content' => [
@@ -135,6 +136,7 @@ final class LearnerDashboardComposer {
       $certificate_items[] = [
         '#theme' => 'aculta_portal_component',
         '#name' => 'card',
+        '#props' => ['variant' => 'studio_fidelity'],
         '#slots' => [
           'header' => $certificate_data['course'],
           'content' => [

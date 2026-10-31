@@ -4931,3 +4931,18 @@ superfície Bootstrap. Evidência: `/home/piradopirata/aculta-suite-out/studio-a
 Snapshot prévio modo 0600: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-account-wrapper-5a9c03b4b-20261031.sql`,
 57.414.352 bytes, SHA-256 `1c679a99cbddbad7b3690c0fac5c5a8043165083063efe32bb71df4ee346f16a`.
 Essa confirmação cobre a entrada da Conta; não fecha THEME-MF3 nem OCS-F11.
+
+### OCS-F6 — Ganjalab integrado no HEAD atual (2026-10-31)
+
+Firefox ESR/X11 autenticado capturou `courses:/ganjalab` no Runtime destacado
+`959bc283c`, sem CSS injetada, em 320/360/390/599/600/768/1024/1280/1440px.
+`CAPTURED`, zero falhas, documento sem overflow; `.studio`, o SDC
+`context-header` e os dois estados vazios do compositor foram encontrados em
+todos os viewports. Institution Bar e Domain Header únicos. Capturas 320 e 1440
+px revisadas. Relatório: `/home/piradopirata/aculta-suite-out/ganjalab-dashboard-integrated-959bc283c-20261031/`.
+Snapshot pré-ULI modo 0600: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-ganjalab-current-959bc283c-20261031.sql`,
+51.990.962 bytes, SHA-256 `325ec6eae0efde2e9ad5ff76ca86ab0258fd64692235940c58cf9b4e3d1acac4`.
+A conta não possui matrículas nem certificados: cards de conteúdo preenchidos,
+ACL entre usuários, no-JS/AJAX, teclado/zoom, dark mode e WCAG não foram
+validados. O reteste confirma o compositor e os estados vazios, não fecha F6,
+THEME-MF3 ou OCS-F11.

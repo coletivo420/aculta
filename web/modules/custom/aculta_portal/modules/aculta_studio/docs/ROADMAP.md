@@ -1058,3 +1058,16 @@ Follow-up integrado: CSS publicada confirmada no Runtime, sem override, em nove
 larguras. Cinco cards foram renderizados e a largura documental não excedeu a
 viewport. Evidência em `web/themes/custom/aculta420/docs/mobile-first-audit.md`
 e relatório privado em `$SUITE_OUT`; OCS-F11 e THEME-MF3 continuam pendentes.
+
+Reteste de F6 no HEAD Runtime `959bc283c` confirmou o compositor atual, os dois
+estados vazios reais e o escopo `.studio` em nove larguras, sem overflow e sem
+CSS override. O usuário de inspeção não possui matrículas nem certificados, por
+isso a captura não contém cards preenchidos. Para esses consumidores, o
+compositor agora escolhe a variante SDC `studio_fidelity` compartilhada com o
+Hub de Conta; conteúdo LMS, certificados, links, ACL e cache permanecem no LMS.
+Renderização de cards preenchidos ainda precisa de fixture/dados autorizados.
+
+O resultado integrado, os nove viewports, as duas capturas revisadas, o snapshot
+e os limites da cobertura de Ganjalab estão em
+`web/themes/custom/aculta420/docs/mobile-first-audit.md`, sob “OCS-F6 — Ganjalab
+integrado no HEAD atual”.
