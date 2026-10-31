@@ -14,6 +14,17 @@
   display: none;
 }
 
+.ui-dialog:has(#aculta-account-terms) {
+  background: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+}
+
+.ui-dialog:has(#aculta-account-terms) .ui-dialog-titlebar,
+.ui-dialog:has(#aculta-account-terms) label {
+  color: var(--aculta-text-primary);
+  background: var(--aculta-surface-raised);
+}
+
 .ui-dialog:has(#aculta-account-terms) a {
   color: var(--aculta-link);
 }
