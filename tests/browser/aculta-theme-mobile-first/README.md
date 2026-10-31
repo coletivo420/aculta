@@ -358,10 +358,11 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/events-catalogue.p
 ## Institution Bar durante scroll e Toolbar administrativa
 
 `institution-bar-scroll.py` compara o comportamento da barra ao carregar e
-rolar as homes dos dez purposes em 320/390 px como anônimo e a home MAIN como
+rolar as homes dos purposes configurados em 320/390 px como anônimo e a home MAIN como
 UID administrativo em 320/390/1023/1024/1280 px. Confirma a autenticação antes
 de medir toolbar/deslocamento, testa a mudança de breakpoint sem recarregar a
-página, amostra a estabilização e guarda screenshots em `$SUITE_OUT`. O ULI
+página, amostra a estabilização e percorre o ponto de fixação sticky em passos
+de 12px nos dois sentidos em mobile; guarda screenshots em `$SUITE_OUT`. O ULI
 fica em memória; se o ULI redirecionar para recuperação, o teste pode usar
 credenciais do administrador sintético fornecidas pelo ambiente. O teste não
 submete conteúdo nem altera configuração. No cenário administrativo também

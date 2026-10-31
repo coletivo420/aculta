@@ -57,7 +57,8 @@ def record(name, passed, detail):
             'toolbarCount', 'loggedIn', 'readyState', 'routePrefix',
             'loginForms', 'messageCount', 'maxTopChange', 'settledBarTop',
             'aboveToolbar', 'expectedTop', 'documentWidth', 'displacementElements',
-            'topBarCount', 'topBarPosition', 'topBarBottom')
+            'topBarCount', 'topBarPosition', 'topBarBottom', 'sampleCount',
+            'maxDeviation', 'failures')
     summary = {key: detail[key] for key in keys if isinstance(detail, dict) and key in detail}
     print(f"{'PASS' if passed else 'FAIL'} {name}: {json.dumps(summary, ensure_ascii=False)}", flush=True)
 
@@ -343,6 +344,52 @@ def run_scenario(scenario, login_url=None):
                 (OUT / f"institution-bar-scroll-admin-scrolled-{width}.png").write_bytes(
                     base64.b64decode(screenshot)
                 )
+
+        # Probe the sticky threshold in both directions at mobile widths. The
+        # coarse checkpoints above can miss a transient mid-screen position.
+        if width <= 390 and max_scroll > 0:
+            sequence_end = min(320, int(max_scroll))
+            targets = list(range(0, sequence_end + 1, 12))
+            if not targets or targets[-1] != sequence_end:
+                targets.append(sequence_end)
+            targets.extend(reversed(targets[:-1]))
+            transition = driver.js("""
+              return arguments[0].map((target) => {
+                window.scrollTo({top: target, behavior: 'instant'});
+                const bar = document.querySelector('.aculta-institution-bar');
+                const topBar = document.querySelector('.top-bar[data-drupal-admin-styles]');
+                const toolbar = document.querySelector('#toolbar-administration');
+                const rect = bar?.getBoundingClientRect();
+                const topRect = topBar?.getBoundingClientRect();
+                const toolbarRect = toolbar?.getBoundingClientRect();
+                return {
+                  requestedScrollY: target,
+                  scrollY: window.scrollY,
+                  barTop: rect ? rect.top : null,
+                  barPosition: bar ? getComputedStyle(bar).position : null,
+                  topBarPosition: topBar ? getComputedStyle(topBar).position : null,
+                  topBarBottom: topRect ? topRect.bottom : null,
+                  toolbarBottom: toolbarRect ? toolbarRect.bottom : null
+                };
+              });
+            """, [targets])
+            deviations = []
+            max_deviation = 0
+            for sample in transition:
+                offset = 0
+                if sample["topBarPosition"] == "fixed" and sample["topBarBottom"] is not None:
+                    offset = sample["topBarBottom"]
+                elif sample["toolbarBottom"] is not None:
+                    offset = sample["toolbarBottom"]
+                expected_top = max(offset, initial["barTop"] - sample["scrollY"])
+                deviation = abs(sample["barTop"] - expected_top) if sample["barTop"] is not None else float("inf")
+                max_deviation = max(max_deviation, deviation)
+                if sample["barPosition"] != "sticky" or deviation > 2:
+                    deviations.append({**sample, "expectedTop": expected_top, "deviation": deviation})
+            record(f"{scenario} {width}px: transição sticky contínua para baixo e para cima",
+                   not deviations,
+                   {"sampleCount": len(transition), "maxDeviation": max_deviation,
+                    "failures": deviations[:5]})
 
 
 try:

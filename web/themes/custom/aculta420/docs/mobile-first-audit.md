@@ -2465,7 +2465,7 @@ máxima observada de 0px). Em desktop, a barra administrativa ficou fixa em
 capturas mobile antes/depois foram revisadas. Evidência em
 `/home/piradopirata/aculta-suite-out/institution-bar-scroll-admin-followup-20261031/`.
 
-Sem CSS/JS candidato injetado, a matriz anônima foi ampliada a todos os sete
+Sem CSS/JS candidato injetado, a matriz anônima foi ampliada aos dez
 purposes configurados no manifesto de deploy, 320/390px: **112/112 checks
 passaram** quanto à estabilização, scroll e topo sticky. Capturas em
 `/home/piradopirata/aculta-suite-out/institution-bar-scroll-all-anonymous-20261031/`.
@@ -2473,3 +2473,16 @@ O relato intermitente de a barra ficar no meio da tela não foi reproduzido
 nessas amostras; scroll contínuo em dispositivo móvel físico e versões de
 navegador distintas ainda não foram testados. Isto valida o Runtime servido
 `2493d7535`, não a folha candidata atual da branch nem THEME-MF3.
+
+O harness foi fortalecido com 55 leituras por viewport móvel, percorrendo em
+passos de 12px os sentidos de descida e subida em torno do limiar sticky. A
+repetição anônima nos dez purposes passou **130/130 checks**; nove homes tinham
+altura suficiente para executar a sequência contínua, todas com desvio máximo
+de 0px. A repetição administrativa em MAIN passou **40/40 checks**; 55 amostras
+por largura móvel mediram desvio máximo de 0,000007px a 320px e 0px a 390px.
+Resultados em
+`/home/piradopirata/aculta-suite-out/institution-bar-scroll-transition-anonymous-20261031/`
+e
+`/home/piradopirata/aculta-suite-out/institution-bar-scroll-admin-transition-20261031/`.
+Isso reduz a lacuna do teste automatizado para transições rápidas; não reproduz
+gestos físicos do navegador móvel.
