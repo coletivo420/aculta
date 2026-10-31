@@ -462,6 +462,16 @@ CSS. Capturas de estado em 320/390/1440px e zoom ficam em
 Continua fixture da folha candidata; não valida Runtime, operador autorizado,
 grants por loja, dados Commerce ou fluxos de escrita.
 
+Em 2026-10-31, a fixture foi expandida aos consumers representativos de detalhe
+de produto e criação de rascunho. O cartão usa os tokens Fidelity; o formulário
+reaproveita os estilos `.studio__main form` existentes. Firefox ESR passou
+186/186 verificações em nove larguras, claro/escuro, foco e zoom real 200/400%.
+A execução local também encontrou e corrigiu `min-width:auto` no formulário de
+criação, que causava overflow a 320px/400%. Capturas e `report.json`:
+`/home/piradopirata/aculta-suite-out/green-stash-detail-create-homologation-20261031/`.
+É evidência de CSS candidata em fixture; grants por loja, renderização Runtime,
+dados reais e submissão do formulário continuam pendentes.
+
 ## THEME-MF2 — `patterns/content-grid`
 
 O SDC experimental tem consumidores de duas colunas em Marley, LMS e Wiki; os

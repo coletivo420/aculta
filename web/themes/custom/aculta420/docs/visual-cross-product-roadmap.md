@@ -1552,3 +1552,16 @@ sem rolagem horizontal da página. A alteração é CSS do tema e preserva links
 rotas e contratos. A fixture local Firefox ESR passou 132/132 em nove larguras,
 claro/escuro, zoom real 200/400%, foco e ausência de overflow; as capturas foram
 revistas. Runtime servido e OCS-F8/F11/THEME-MF3 ainda não estão homologados.
+
+### OCS-F8 / THEME-MF2 — detalhe e criação de produto (2026-10-31)
+
+A tela real de detalhe e o formulário proprietário de criação de rascunho
+reutilizam os mesmos estilos Fidelity do Studio; cartões e estado do produto
+recebem acabamento responsivo sem alterar a Form API, rotas ou salvamento. A
+fixture Firefox ESR foi ampliada para esses consumers e passou **186/186** em
+nove larguras, claro/escuro, teclado e zoom real 200/400%. Corrigiu-se um
+`min-width:auto` no formulário que causava overflow a 320px e zoom 400%.
+Capturas/relatório: `/home/piradopirata/aculta-suite-out/green-stash-detail-create-homologation-20261031/`.
+Esta validação é de CSS e markup equivalentes; Runtime, operador autorizado,
+grants por loja, dados Commerce e submissão real permanecem pendentes, portanto
+OCS-F8/F11 e THEME-MF3 continuam sem homologação.

@@ -3119,3 +3119,15 @@ Este teste não prova os alvos de link, cobertos separadamente acima.
 Estados de erro/vazio, reduced motion quando aplicável, leitor de tela e
 WCAG 2.2 AA integral continuam sem validação. A folha candidata não foi servida
 pelo Runtime; o resultado não aprova THEME-MF3 nem OCS-F11.
+
+### OCS-F8 / THEME-MF2 — formulários Green Stash em zoom (2026-10-31)
+
+Firefox ESR visível, fixture local do tema: **186/186 checks** no Green Stash
+integrado, com listagem, detalhe de produto e formulário de rascunho, em
+320/360/390/599/600/768/1024/1280/1440px, claro/escuro, foco e zoom real
+200/400%. A execução identificou `min-width:auto` no formulário de criação,
+causando overflow a 320px e 400%; o tema agora limita o formulário ao container
+com `min-width:0`. Evidência e capturas em
+`/home/piradopirata/aculta-suite-out/green-stash-detail-create-homologation-20261031/`.
+É CSS candidata em fixture, sem submissão, acesso a Runtime, teste de grants por
+loja ou validação de conteúdo real; não aprova THEME-MF3 nem OCS-F11.

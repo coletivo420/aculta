@@ -265,3 +265,12 @@ capturas 320/1440 foram inspecionadas. As evidências estão em
 Resultado é fixture local; Hub Drupal autenticado, autorização, cache e
 comparação pareada com OpenCulturas autenticado seguem sem prova. OCS-F3/F4
 parciais; F11 pendente.
+
+### OCS-F8 / THEME-MF2 — detalhe e novo rascunho Green Stash (2026-10-31)
+
+A fixture ampliada de `green-stash-layout.py` passou **186/186** checks em
+Firefox ESR visível, com detalhe de produto, formulário de criação, menu
+contextual, nove larguras, claro/escuro, foco e zoom real 200/400%. Capturas em
+`/home/piradopirata/aculta-suite-out/green-stash-detail-create-homologation-20261031/`.
+O formulário de criação não foi submetido e a fixture não cobre grants de lojas
+ou a rota servida; OCS-F8 é parcial e OCS-F11/THEME-MF3 seguem pendentes.

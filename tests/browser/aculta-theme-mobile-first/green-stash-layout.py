@@ -81,10 +81,12 @@ markup = f"""<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><style>{css}
 *,*::before,*::after{{box-sizing:border-box}}body{{margin:0;font:16px/1.5 sans-serif}}
 .aculta-main{{padding-block:1rem}}.aculta-container{{margin-inline:auto;width:100%}}
-</style></head><body><main class="aculta-main"><div class="aculta-container">
+.studio__main{{min-width:0}}
+</style></head><body><main class="aculta-main"><div class="container aculta-container"><div class="studio__main">
 <section class="studio aculta-green-stash"><h2>Produtos</h2>
 <div class="aculta-green-stash__navigation" role="navigation" aria-label="Áreas do ACULTA STUDIO GREEN STASH">{links}</div>
 <p>Nesta área são exibidos somente produtos autorizados para a loja atual.</p>
+<a href="#novo-produto">Novo produto</a>
 <div class="aculta-green-stash__products"><div class="search"><form><label for="busca">Buscar produtos</label>
 <input id="busca" type="search"><button type="submit">Buscar</button></form></div>
 <div class="item"><h3>Óleo artesanal com nome extenso para testar quebra natural</h3><a href="#detalhe">Ver detalhes</a></div>
@@ -95,7 +97,20 @@ markup = f"""<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <section class="studio aculta-green-stash"><h2>Visão geral</h2>
 <div class="aculta-green-stash__navigation" role="navigation" aria-label="Áreas do ACULTA STUDIO GREEN STASH">{overview_links}</div>
 <p>Esta área está em preparação. Nenhuma operação comercial está disponível nesta tela.</p>
-</section></div></main></body></html>"""
+</section>
+<section class="studio aculta-green-stash"><h2>Óleo artesanal</h2>
+<div class="aculta-green-stash__navigation" role="navigation" aria-label="Áreas do ACULTA STUDIO GREEN STASH">{links}</div>
+<p>Detalhes do produto. A edição dentro do Green Stash será disponibilizada na próxima fase.</p>
+<a href="#produtos">Voltar aos produtos</a>
+<div class="aculta-green-stash__product-detail"><p>Produto nº 420001</p><p>Rascunho</p></div>
+</section>
+<section class="studio aculta-green-stash"><h2>Novo produto</h2>
+<div class="aculta-green-stash__navigation" role="navigation" aria-label="Áreas do ACULTA STUDIO GREEN STASH">{links}</div>
+<form class="aculta-green-stash__product-create" data-portal-ui="green-stash-product-create">
+<div class="form-item"><div>Cadastre as informações iniciais. O produto será salvo como rascunho e não estará à venda.</div></div>
+<div class="form-item"><label for="nome-produto">Nome do produto</label><input id="nome-produto" class="form-control"></div>
+<div class="form-actions"><button type="submit">Salvar rascunho</button></div>
+</form></section></div></div></main></body></html>"""
 
 driver = Driver(bidi=True)
 try:
@@ -133,10 +148,21 @@ try:
               const overviewNav = overviewRoot.querySelector('.aculta-green-stash__navigation');
               const overviewLinks = [...overviewNav.querySelectorAll('a')];
               const overviewActive = overviewNav.querySelector('[aria-current="page"]');
+              const roots = [...document.querySelectorAll('.aculta-green-stash')];
+              const detailRoot = roots[2];
+              const detail = detailRoot.querySelector('.aculta-green-stash__product-detail');
+              const detailBack = detailRoot.querySelector(':scope > a');
+              const createRoot = roots[3];
+              const createForm = createRoot.querySelector('form.aculta-green-stash__product-create');
+              const createInput = createForm.querySelector('input');
+              const createButton = createForm.querySelector('button');
+              const menus = roots.map(root => [...root.querySelectorAll('.aculta-green-stash__navigation')]);
+              const menuLinks = roots.map(root => [...root.querySelectorAll('.aculta-green-stash__navigation-link')]);
               const product = document.querySelector('.aculta-green-stash__products > div:has(> h3)');
               const shipment = document.querySelector('.aculta-green-stash__shipments > div:has(> div > h3)');
               const search = document.querySelector('.aculta-green-stash__products form');
               const notices = [...document.querySelectorAll('.aculta-green-stash > p')];
+              const rect = (el) => el.getBoundingClientRect();
               const color = (value) => value.match(/[\\d.]+/g).slice(0, 3).map(Number);
               const luminance = (value) => color(value).map((part) => {
                 const channel = part / 255;
@@ -154,7 +180,6 @@ try:
               });
               const input = search.querySelector('input[type="search"]');
               const button = search.querySelector('button');
-              const rect = (el) => el.getBoundingClientRect();
               return {width: innerWidth, document: document.documentElement.scrollWidth,
                 columns: getComputedStyle(nav).gridTemplateColumns.trim().split(/\\s+/).length,
                 linkCount: links.length, links: links.map((el) => el.textContent.trim()),
@@ -164,8 +189,22 @@ try:
                 overviewLinkCount: overviewLinks.length,
                 overviewActive: overviewActive?.textContent.trim(),
                 overviewNotice: overviewRoot.querySelector(':scope > p')?.textContent.trim(),
+                menuCounts: menus.map(items => items.length),
+                menuColumnCounts: roots.map(root => {
+                  const element = root.querySelector('.aculta-green-stash__navigation');
+                  return element ? getComputedStyle(element).gridTemplateColumns.trim().split(/\\s+/).length : 0;
+                }),
+                menuRows: menuLinks.map(items => [...new Set(items.map(el => Math.round(rect(el).top)))]),
                 minLinkHeight: Math.min(...links.map((el) => rect(el).height)),
                 productCard: Boolean(product), shipmentCard: Boolean(shipment),
+                detailCard: Boolean(detail), detailBackHeight: rect(detailBack).height,
+                detailWidth: detail ? rect(detail).width : 0,
+                detailNumber: detail?.querySelector('p')?.textContent.trim(),
+                detailState: detail?.querySelector('p + p')?.textContent.trim(),
+                detailStateHeight: detail?.querySelector('p + p') ? rect(detail.querySelector('p + p')).height : 0,
+                createForm: Boolean(createForm), createInputHeight: rect(createInput).height,
+                createButtonHeight: rect(createButton).height,
+                createSurface: getComputedStyle(createForm).backgroundColor,
                 searchSurface: getComputedStyle(search).backgroundColor,
                 callouts,
                 inputHeight: rect(input).height, buttonHeight: rect(button).height,
@@ -178,6 +217,10 @@ try:
                    and len(set(metrics["navLinkTops"])) == 1 and metrics["navMinLinkHeight"] >= 44,
                    {key: metrics[key] for key in ("columns", "linkCount", "navLinkTops",
                                                    "navMinLinkHeight", "navWidth", "document")})
+            record(f"{mode}/{width}px: navegação preservada em cada tela implementada",
+                   metrics["menuCounts"] == [1, 1, 1, 1] and metrics["menuColumnCounts"] == [3, 3, 3, 3]
+                   and all(len(rows) == 1 for rows in metrics["menuRows"]),
+                   {key: metrics[key] for key in ("menuCounts", "menuColumnCounts", "menuRows")})
             record(f"{mode}/{width}px: somente três áreas implementadas e seção atual marcada",
                    metrics["linkCount"] == 3 and metrics["active"] == "Produtos"
                    and set(metrics["links"]) == {"Visão geral", "Produtos", "Envios"}, metrics)
@@ -189,11 +232,23 @@ try:
                     "notice": metrics["overviewNotice"]})
             record(f"{mode}/{width}px: alvos de navegação e cartões de listagem",
                    metrics["minLinkHeight"] >= 48 and metrics["productCard"] and metrics["shipmentCard"], metrics)
+            record(f"{mode}/{width}px: detalhe do produto e retorno permanecem visíveis e tocáveis",
+                   metrics["detailCard"] and metrics["detailWidth"] <= width
+                   and metrics["detailBackHeight"] >= 44 and metrics["detailStateHeight"] >= 44
+                   and metrics["detailNumber"] == "Produto nº 420001" and metrics["detailState"] == "Rascunho",
+                   {key: metrics[key] for key in ("detailCard", "detailWidth", "detailBackHeight",
+                                                   "detailStateHeight", "detailNumber", "detailState")})
+            record(f"{mode}/{width}px: criação de rascunho mantém formulário e controles tocáveis",
+                   metrics["createForm"] and metrics["createInputHeight"] >= 44
+                   and metrics["createButtonHeight"] >= 44
+                   and metrics["createSurface"] != "rgba(0, 0, 0, 0)",
+                   {key: metrics[key] for key in ("createForm", "createInputHeight", "createButtonHeight",
+                                                   "createSurface")})
             record(f"{mode}/{width}px: formulário de busca com controles tocáveis",
                    metrics["inputHeight"] >= 44 and metrics["buttonHeight"] >= 44
                    and metrics["searchSurface"] != "rgba(0, 0, 0, 0)", metrics)
             record(f"{mode}/{width}px: estado informativo de Visão geral e Produtos legível",
-                   len(metrics["callouts"]) == 2
+                   len(metrics["callouts"]) == 3
                    and all(notice["background"] != "rgba(0, 0, 0, 0)"
                            and notice["border"] == "4px"
                            and notice["padding"] == "16px"
@@ -210,6 +265,14 @@ try:
                 (OUT / f"green-stash-overview-{mode}-{width}.png").write_bytes(
                     base64.b64decode(overview_screenshot)
                 )
+                driver.js("document.querySelectorAll('.aculta-green-stash')[2].scrollIntoView({block: 'start'}); return true;")
+                time.sleep(0.08)
+                detail_screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                (OUT / f"green-stash-detail-{mode}-{width}.png").write_bytes(base64.b64decode(detail_screenshot))
+                driver.js("document.querySelectorAll('.aculta-green-stash')[3].scrollIntoView({block: 'start'}); return true;")
+                time.sleep(0.08)
+                create_screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                (OUT / f"green-stash-create-{mode}-{width}.png").write_bytes(base64.b64decode(create_screenshot))
                 driver.js("window.scrollTo(0, 0); return true;")
             if width == 320:
                 driver.js("document.querySelector('.aculta-green-stash__navigation-link').focus()")
@@ -237,8 +300,12 @@ try:
               const cards=[...roots[0].querySelectorAll('.aculta-green-stash__products > div:has(> h3), .aculta-green-stash__shipments > div:has(> div > h3)')];
               const notices=[...document.querySelectorAll('.aculta-green-stash > p')];
               const links=roots.flatMap(root=>[...root.querySelectorAll('.aculta-green-stash__navigation-link')]);
+              const detail=roots[2].querySelector('.aculta-green-stash__product-detail');
+              const create=roots[3].querySelector('form.aculta-green-stash__product-create');
               const measured=[...notices,...links,...cards,form,
-                form?.querySelector('input[type="search"]'),form?.querySelector('button')].filter(Boolean);
+                form?.querySelector('input[type="search"]'),form?.querySelector('button'),
+                roots[0].querySelector(':scope > a'),detail,roots[2].querySelector(':scope > a'),
+                roots[3].querySelector('input'),roots[3].querySelector('button'),create].filter(Boolean);
               return {width:innerWidth,document:document.documentElement.scrollWidth,
                 body:document.body.scrollWidth,dpr:devicePixelRatio,
                 boxes:measured.map(rect),noticeCount:notices.length,
@@ -251,9 +318,9 @@ try:
                    ratio >= target - 0.08
                    and zoom_metrics["document"] <= zoom_metrics["width"]
                    and zoom_metrics["body"] <= zoom_metrics["width"]
-                   and zoom_metrics["noticeCount"] == 2
+                   and zoom_metrics["noticeCount"] == 3
                    and zoom_metrics["productCount"] == 2
-                   and zoom_metrics["linkCount"] == 6
+                   and zoom_metrics["linkCount"] == 12
                    and fit,
                    {**zoom_metrics, "target": target, "ratio": ratio, "allElementsFit": fit})
             screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")

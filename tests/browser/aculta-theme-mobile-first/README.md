@@ -4,13 +4,19 @@
 
 `green-stash-layout.py` valida a folha candidata das áreas comerciais integradas
 ao Studio. A fixture replica os wrappers e links emitidos hoje por
-`GreenStashNavigation` e `GreenStashController` para Visão geral, busca, produto
-e remessa. No Firefox ESR visível, mede overflow, links atuais, áreas tocáveis,
-cartões, foco visível e os avisos reais de estado/escopo em claro/escuro, em
+`GreenStashNavigation`, `GreenStashController` e o formulário de rascunho para
+Visão geral, busca, produto/remessa, detalhe e criação inicial. No Firefox ESR
+visível, mede overflow, links atuais, áreas tocáveis, cartões, formulário,
+foco visível e os avisos reais de estado/escopo em claro/escuro, em
 320/360/390/599/600/768/1024/1280/1440px. Também aplica zoom real do Firefox
-em 200%/400% nos dois temas e mede o encaixe do formulário, links, avisos e
-cartões. As capturas 320/390/1440 incluem a Visão geral, que só informa que
-operações comerciais ainda não estão disponíveis naquela tela. É fixture local
+em 200%/400% nos dois temas e mede o encaixe dos formulários, links, avisos,
+cartões e estado do produto. As capturas 320/390/1440 incluem Visão geral,
+detalhe e formulário de criação, que salva somente rascunho. No reteste de
+2026-10-31, passou 186/186 checks; corrigiu-se o `min-width:auto` do formulário
+de criação que causava overflow a 320px e 400%. Evidência em
+`/home/piradopirata/aculta-suite-out/green-stash-detail-create-homologation-20261031/`.
+A Visão geral só informa que operações comerciais ainda não estão disponíveis
+naquela tela. É fixture local
 de CSS: não autentica operadores, não valida grants por loja/dados reais e não
 homologa OCS-F8/F11 nem THEME-MF3.
 
