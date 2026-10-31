@@ -1045,3 +1045,11 @@ o aviso já havia se fechado). CSS não integrada, sem matrícula/curso criado;
 OCS-F6/F11 e THEME-MF3 permanecem parciais. Evidência e snapshots no log de
 `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
 
+### OCS-F3/F4 — acabamento dos cards do Hub de Conta (2026-10-31)
+
+Corrigida a moldura duplicada dos cinco cards de experiências: os wrappers
+`list-group-item` do Drupal são neutralizados somente dentro de
+`.aculta-account-entry`, preservando o SDC reutilizado, os links e o shell. A
+fixture local Firefox/X11 passou 277/277 checks em 27 larguras, incluindo
+teclado e zoom de 200%/400%. A correção permanece candidata até validação da
+folha servida pelo Runtime; não fecha OCS-F11 nem THEME-MF3.

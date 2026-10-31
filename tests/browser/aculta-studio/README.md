@@ -926,3 +926,13 @@ export SUITE_OUT=/caminho/fora-do-repositorio/studio-listing-fidelity
 export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
 DISPLAY=:0 python3 -I tests/browser/aculta-studio/studio-listing-fidelity.py
 ```
+### Account experience card wrapper regression
+
+`studio-card-fidelity.py` is a local Firefox/X11 fixture for the Studio account
+entry cards. It reproduces Drupal Core's `list-group-item` wrappers around the
+five SDC cards and verifies their Bootstrap padding, border, and background are
+flattened so the fidelity card is the only visible surface. It also checks
+responsive layout, target size, keyboard focus, typography, and 200%/400% browser
+zoom. It tests candidate theme CSS locally; it does not submit forms or prove
+Runtime deployment. Run with `DISPLAY=:0`, an active geckodriver on port 4444,
+and `SUITE_OUT` outside the repository.

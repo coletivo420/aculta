@@ -752,3 +752,12 @@ recebem altura mínima de 44px. A captura autenticada mediu o baseline servido e
 mudou. Ver limites e evidências no [roadmap visual](visual-cross-product-roadmap.md)
 e na [auditoria mobile-first](mobile-first-audit.md); validação candidata não
 equivale a homologação Runtime, F11 ou MF3.
+
+### Conta — cards das experiências no Hub
+
+O Hub da Conta reutiliza o SDC `patterns/card` para as experiências disponíveis.
+O adaptador mantém a lista Drupal e seus destinos; `studio.css` neutraliza apenas
+a pele `list-group-item` dos `<li>` que envolvem o SDC, evitando uma segunda
+superfície ao redor do card. A fixture `tests/browser/aculta-studio/studio-card-fidelity.py`
+reproduz o markup Core, verifica 27 viewports, teclado e zoom de 200%/400%;
+a evidência atual é local candidata e está registrada na auditoria mobile-first.

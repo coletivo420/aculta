@@ -2264,3 +2264,18 @@ ou preferência persistente alterados.
 - Runtime em `toca`, checkout `/home/piradopirata/projetos/aculta`, HEAD destacado `f1f50a7ea`, Drupal 11.4.10, `aculta_runtime`, 611 tabelas. Snapshot pré-ULI modo 0600: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-js-dark-20261031.sql`, 54.642.017 bytes, SHA-256 `da201177dda07fd685594a9cd35c0d3afc1f8ca3cecbdc796c61e1f9ac8b9217`.
 - Firefox ESR visível capturou o hub `/culturas` e os formulários de Evento e Local em nove larguras, com scripts ativos e modo escuro no documento WebDriver: 27 capturas, zero falhas, sem overflow; institution bar e domain header presentes; todos os campos/ações observáveis dos formulários mediram pelo menos 44px. Captura a 320px revisada. Nenhum POST nem preferência persistida. Evidência: `/home/piradopirata/aculta-suite-out/culturas-js-dark-integrated-f1f50a7ea-20261031/`.
 - Limite: não valida contraste WCAG integral, ACL, teclado/zoom ou OCS-F11/THEME-MF3.
+
+## 2026-10-31 — OCS-F3/F4: wrappers duplicados no Hub da Conta
+
+- A inspeção da captura integrada do Hub identificou o SDC Fidelity dentro de
+  `li.list-group-item`, com uma segunda borda/padding Bootstrap. `studio.css`
+  agora neutraliza fundo, borda e padding apenas no wrapper da lista da Conta;
+  o SDC `patterns/card` permanece como superfície e nenhum contrato de link foi
+  alterado. A fixture foi ajustada para reproduzir esse markup do Core.
+- `npm run lint:css`, Python compile check e `git diff --check` passaram. Firefox
+  ESR/X11 local passou 277/277 checks em 27 larguras de 320 a 1920px, cinco
+  wrappers, destinos e alvos 44px, teclado/foco, tipografia Montserrat e zoom
+  real de 200%/400%, sem overflow. Captura de 1440px revisada. Evidência:
+  `/home/piradopirata/aculta-suite-out/studio-card-fidelity-list-wrapper-20261031/`.
+- Limite: CSS candidata testada em fixture local; falta confirmar a folha servida
+  pelo Runtime. Não aprova THEME-MF3 ou OCS-F11.

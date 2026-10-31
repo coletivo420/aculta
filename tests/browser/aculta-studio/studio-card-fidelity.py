@@ -93,11 +93,11 @@ body {{ margin: 0; font: 16px/1.5 sans-serif; }}
 <p>Acesse seus dados, segurança e experiências ACULTA.</p>
 <h2>Experiências</h2>
 <ul class="studio__actions list-unstyled d-grid gap-2" aria-label="Experiências">
-<li><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#marley">Marley</a></div></div></li>
-<li><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#ganjalab">Ganjalab</a></div></div></li>
-<li><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#we-sativa">ACULTA STUDIO WE SATIVA</a></div></div></li>
-<li><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#green-stash">ACULTA STUDIO GREEN STASH</a></div></div></li>
-<li><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#culturas">Culturas</a></div></div></li>
+<li class="list-group-item"><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#marley">Marley</a></div></div></li>
+<li class="list-group-item"><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#ganjalab">Ganjalab</a></div></div></li>
+<li class="list-group-item"><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#we-sativa">ACULTA STUDIO WE SATIVA</a></div></div></li>
+<li class="list-group-item"><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#green-stash">ACULTA STUDIO GREEN STASH</a></div></div></li>
+<li class="list-group-item"><div class="aculta-card card aculta-card--studio-fidelity"><div class="card-body"><a href="#culturas">Culturas</a></div></div></li>
 </ul></section></div></main></body></html>"""
 
 data_url = "data:text/html;charset=utf-8," + quote(markup)
@@ -141,6 +141,7 @@ try:
           const cards = [...document.querySelectorAll('.aculta-account-entry .aculta-card--studio-fidelity')];
           const card = cards[0];
           const body = card.querySelector('.card-body');
+          const wrappers = [...list.querySelectorAll(':scope > li')];
           const experienceLinks = cards.map((item) => item.querySelector('.card-body > a'));
           const rect = container.getBoundingClientRect();
           return {
@@ -150,6 +151,11 @@ try:
             containerPaddingInline: getComputedStyle(container).paddingInlineStart,
             columns: getComputedStyle(list).gridTemplateColumns.trim().split(/\\s+/).length,
             cardCount: cards.length,
+            wrapperStyles: wrappers.map((item) => {
+              const style = getComputedStyle(item);
+              return {padding: style.padding, borderWidth: style.borderTopWidth,
+                backgroundColor: style.backgroundColor};
+            }),
             experienceLabels: experienceLinks.map((link) => link?.textContent.trim()),
             experienceLinkTargets: experienceLinks.map((link) => {
               const target = link.getBoundingClientRect();
@@ -201,6 +207,12 @@ try:
               metrics["studioScope"] and metrics["cardCount"] == 5
               and metrics["experienceLabels"] == expected_experiences,
               f"studio={metrics['studioScope']}, destinos={metrics['experienceLabels']}")
+        check(f"{width}px: wrappers Core list-group neutralizados",
+              len(metrics["wrapperStyles"]) == 5
+              and all(item["padding"] == "0px" and item["borderWidth"] == "0px"
+                      and item["backgroundColor"] == "rgba(0, 0, 0, 0)"
+                      for item in metrics["wrapperStyles"]),
+              json.dumps(metrics["wrapperStyles"]))
         check(f"{width}px: destinos com alvo mínimo de 44×44px",
               len(metrics["experienceLinkTargets"]) == 5
               and all(target["width"] >= 44 and target["height"] >= 44

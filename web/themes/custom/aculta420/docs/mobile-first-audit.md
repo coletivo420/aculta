@@ -4903,3 +4903,18 @@ SHA-256 `2a5283018b21e24cc545b1becbb09951a52c4eae6dc60cbb55705f6a522e7b4f`, modo
 `82b13a97f786dc5882b55f269323a53761c8bdc09fc8f8190ff4f4c66f581e4d`, modo
 0600), ambos em `runtime-snapshots/`. Nenhum formulário foi enviado nem conteúdo
 foi alterado.
+
+### OCS-F3/F4 — wrapper dos cards de entrada da Conta (2026-10-31)
+
+A saída real do preprocess Drupal usa cinco `li.list-group-item` ao redor dos
+SDCs `patterns/card`. A primeira captura autenticada integrada mostrou uma
+superfície Bootstrap quadrada em volta de cada card Fidelity arredondado. O CSS
+escopa a neutralização de padding, fundo e borda desses wrappers somente em
+`.aculta-account-entry`; o SDC mantém sua única superfície visual. A fixture
+Firefox ESR/X11 foi atualizada para reproduzir a classe Core. Resultado local:
+277/277 checks em 27 larguras (320–1920px), cinco alvos de 44px, teclado,
+Montserrat e zoom real de 200%/400%; zero falhas e sem overflow. Capturas:
+`/home/piradopirata/aculta-suite-out/studio-card-fidelity-list-wrapper-20261031/`.
+A captura de 1440px foi revisada. Lint CSS e `git diff --check` passaram. A
+correção candidata ainda precisa ser servida pelo Runtime e retestada; isso não
+aprova THEME-MF3 nem OCS-F11.

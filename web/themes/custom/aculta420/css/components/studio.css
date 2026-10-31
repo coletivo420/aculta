@@ -917,6 +917,14 @@ body.path-marley form.node-revista-form .form-actions :is(.form-submit, .button-
   padding: 0;
 }
 
+.aculta-account-entry .studio__actions > li {
+  min-width: 0;
+  padding: 0;
+  color: inherit;
+  background-color: transparent;
+  border: 0;
+}
+
 .aculta-account-entry .studio__actions .aculta-card--studio-fidelity .card-body > a {
   display: flex;
   min-block-size: 2.75rem;
