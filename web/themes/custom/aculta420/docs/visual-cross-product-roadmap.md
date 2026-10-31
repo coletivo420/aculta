@@ -1977,6 +1977,11 @@ isto não homologa a discussão de comentários nem a integração no Runtime. V
 `/home/piradopirata/aculta-suite-out/forum-visual-followup-20261031/`.
 THEME-MF3 e OCS-F11 continuam pendentes.
 
+Reteste de zoom real: 30/30 checks nas dez raízes em 100%, 200% e 400%;
+viewport CSS a 400% de 320px, sem overflow e com shell único. CSS candidata de
+autenticação foi injetada somente em Conta. Capturas 400% de Conta e Revista
+revisadas; gates de páginas internas e WCAG continuam pendentes.
+
 ### 2026-10-31 — medição do aviso ULI na landing Marley
 
 `ocs-baseline.py` agora ignora headings ocultos ao medir se o aviso precede o

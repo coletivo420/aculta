@@ -928,7 +928,9 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/purpose-browser-zo
 `PURPOSE_ZOOM_DOMAIN_ENV=test|production` seleciona os hosts do manifesto.
 `PURPOSE_ZOOM_PURPOSES=account` restringe uma rodada de diagnóstico a um ou mais
 purposes por nome. O resultado lista elementos que ultrapassem o documento para
-ajudar a localizar falhas.
+ajudar a localizar falhas. O Firefox navega primeiro para a página e então
+recebe o reset de zoom, porque GeckoDriver pode mapear a janela somente após a
+primeira navegação.
 
 Reteste visível em 2026-10-31: 30/30 checks nas dez raízes públicas em 100%,
 200% e 400%, com documento sem overflow e os dois headers presentes uma vez.

@@ -139,9 +139,12 @@ def main():
     records = []
     try:
         for purpose, url in purpose_urls():
-            press(driver, "ctrl+0")
             driver.get(url)
             time.sleep(0.5)
+            # GeckoDriver may create the top-level Firefox window lazily on the
+            # first navigation. Map it before sending native zoom shortcuts.
+            press(driver, "ctrl+0")
+            time.sleep(0.12)
             set_viewport(driver, WIDTH)
             if AUTH_CSS_CANDIDATE and purpose == "account":
                 css = "\n".join((CODE_ROOT / path).read_text() for path in (

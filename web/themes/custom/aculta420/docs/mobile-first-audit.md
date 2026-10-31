@@ -4145,3 +4145,16 @@ Reteste de cores em 2026-10-31 confirmou o botão real de login Google com
 11,34:1 em hover; a captura 320px foi inspecionada. Evidência em
 `/home/piradopirata/aculta-suite-out/auth-google-contrast-followup-20261031/`.
 O CSS segue sem integração no Runtime; este resultado não fecha THEME-MF3.
+
+### THEME-MF3 — zoom real nas dez raízes públicas (2026-10-31)
+
+Firefox ESR visível passou **30/30 checks** a 100%, 200% e 400% nas dez raízes
+dos purposes Main, Conta, Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e
+Eventos. Não houve overflow documental; Institution Bar, Domain Header e
+`main#main-content` permaneceram únicos. A 400%, a viewport CSS efetiva foi
+320px. `auth.css` e o marcador neutro do challenge foram injetados apenas na
+Conta; os demais purposes usaram CSS servida. As capturas de Conta e Revista a
+400% foram inspecionadas. Esse gate cobre somente páginas raiz e não substitui
+zoom de páginas internas, WCAG integral nem validação da folha integrada.
+Evidência em
+`/home/piradopirata/aculta-suite-out/purpose-zoom-global-followup-20261031/`.
