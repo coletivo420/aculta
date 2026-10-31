@@ -32,6 +32,7 @@ STUDIO_CSS_OVERRIDE = os.environ.get("OCS_STUDIO_FIDELITY_CSS_OVERRIDE") == "1"
 ANONYMOUS_CAPTURE = os.environ.get("OCS_STUDIO_ANONYMOUS") == "1"
 STUDIO_CSS_ROOT = Path(os.environ.get("OCS_STUDIO_FIDELITY_CSS_ROOT", Path(__file__).resolve().parents[3])).resolve()
 STUDIO_COLOR_MODE = os.environ.get("OCS_STUDIO_COLOR_MODE", "system")
+EXPECTED_STUDIO_ROOT = os.environ.get("OCS_EXPECT_STUDIO_ROOT", "").strip()
 STATUS_FLOW_CSS_OVERRIDE = os.environ.get("OCS_STATUS_FLOW_CSS_OVERRIDE") == "1"
 STATUS_FLOW_FIXTURE = os.environ.get("OCS_STATUS_FLOW_FIXTURE") == "1"
 
@@ -235,6 +236,71 @@ socket.onmessage = (event) => {
     detail = driver.js("const text=document.body.innerText;const title=document.title;const elementCount=document.documentElement.querySelectorAll('*').length;const tab=document.querySelector('.aculta-context-tabs__items');const list=tab?.querySelector('ul');const tabItems=Array.from(list?.querySelectorAll('li')||[]);return JSON.stringify({title,url:location.href,width:innerWidth,height:innerHeight,documentWidth:document.documentElement.clientWidth,documentScrollWidth:document.documentElement.scrollWidth,bodyScrollWidth:document.body.scrollWidth,documentScrollHeight:document.documentElement.scrollHeight,documentElementCount:elementCount,htmlLength:document.documentElement.innerHTML.length,contentType:document.contentType,readyState:document.readyState,body:text.slice(0,120),bodyClasses:Array.from(document.body.classList),studioMarkers:Array.from(document.querySelectorAll('[data-aculta-studio]'),element=>element.getAttribute('data-aculta-studio')).slice(0,60),mainStructure:(()=>{const main=document.querySelector('main#main-content');return main?{className:String(main.className),children:[...main.children].slice(0,16).map(element=>({tag:element.tagName,className:String(element.className),children:[...element.children].slice(0,12).map(child=>({tag:child.tagName,className:String(child.className)}))}))}:null})(),studioComponents:(()=>{const main=document.querySelector('main#main-content');return main?[...main.querySelectorAll('.aculta-context-header,.aculta-card,.aculta-empty-state,.aculta-content-grid')].map(element=>({className:String(element.className),parentClass:String(element.parentElement?.className||''),childClasses:[...element.children].slice(0,8).map(child=>String(child.className))})).slice(0,40):[]})(),fidelityStyles:(()=>{const main=document.querySelector('main#main-content');const heading=main?.querySelector('h1');const empty=main?.querySelector('.aculta-empty-state');const card=main?.querySelector('.aculta-card');const institution=document.querySelector('.aculta-institution-bar');const domainHeader=document.querySelector('.aculta-header');const box=(element)=>{if(!element)return null;const style=getComputedStyle(element);const rect=element.getBoundingClientRect();return {fontFamily:style.fontFamily,color:style.color,background:style.backgroundColor,borderRadius:style.borderRadius,width:rect.width,height:rect.height,right:rect.right}};return {fontLoaded:document.fonts.check('400 16px Montserrat', 'Meus cursos'),fontFaces:Array.from(document.fonts).filter(face=>face.family.replaceAll('\"','')==='Montserrat').map(face=>({status:face.status,weight:face.weight,style:face.style})),main:box(main),heading:box(heading),empty:box(empty),emptyStates:Array.from(main?.querySelectorAll('.aculta-empty-state')||[]).map(box),card:box(card),wikiRoot:box(main?.querySelector('.we-sativa__workspace')),wikiHeading:box(main?.querySelector('.we-sativa__workspace h1')),wikiEmptyStates:Array.from(main?.querySelectorAll('.we-sativa__workspace .aculta-empty-state')||[]).map(box),wikiCards:Array.from(main?.querySelectorAll('.we-sativa__workspace .aculta-card')||[]).map(box),wikiSectionCount:main?.querySelectorAll('.we-sativa__workspace .aculta-editorial-section').length||0,wikiContextHeaderPresent:!!main?.querySelector('.we-sativa__workspace .aculta-context-header'),shellFidelityTokens:[institution,domainHeader].map(element=>element?getComputedStyle(element).getPropertyValue('--aculta-studio-fidelity-font-family').trim():null)}})(),institutionBar:!!document.querySelector('.aculta-institution-bar'),domainHeader:!!document.querySelector('.aculta-header'),contextTabs:tab?{count:tabItems.length,currentCount:tabItems.filter(item=>item.querySelector('a[aria-current=\"page\"]')).length,listTag:list.tagName,listClass:list.className,parentTag:list.parentElement.tagName,parentClass:list.parentElement.className,flexDirection:getComputedStyle(list).flexDirection,flexWrap:getComputedStyle(list).flexWrap,candidateRules:document.querySelector('style[data-ocs-context-tabs-candidate]')?.sheet?.cssRules.length||0,matchingSelector:!!list.matches('.aculta-context-tabs__items > ul, .aculta-context-tabs__items > .item-list > ul'),itemClasses:tabItems.map(item=>item.className),itemBorders:tabItems.map(item=>getComputedStyle(item).borderTopWidth+' '+getComputedStyle(item).borderTopStyle),linkMinHeights:tabItems.map(item=>Math.round(item.querySelector('a')?.getBoundingClientRect().height||0))}:null,emptyDocumentHint:elementCount<=2&&!text.trim(),accessDeniedHint:/^(?:acesso negado|access denied|forbidden)(?:\\s*\\|.*)?$/im.test(title)||/Você não está autorizado a acessar esta página\\./i.test(text)})")
     screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
     record = json.loads(detail)
+    if EXPECTED_STUDIO_ROOT and prefix.startswith("studio-"):
+        root_state = driver.js(
+            """const element=document.querySelector('main#main-content '+arguments[0]);
+              if(!element)return {present:false,visible:false};
+              const rect=element.getBoundingClientRect(),style=getComputedStyle(element);
+              return {present:true,visible:rect.width>0&&rect.height>0
+                &&style.display!=='none'&&style.visibility!=='hidden',
+                display:style.display,visibility:style.visibility,
+                width:Math.round(rect.width*100)/100,height:Math.round(rect.height*100)/100};""",
+            [EXPECTED_STUDIO_ROOT],
+        )
+        root_ok = root_state.get("visible") is True
+        record["expectedStudioRootSelector"] = EXPECTED_STUDIO_ROOT
+        record["expectedStudioRoot"] = root_state
+        record["expectedStudioRootStatus"] = "PASS" if root_ok else "FAIL"
+        if not root_ok:
+            CAPTURE_FAILURES.append({
+                "url": url,
+                "width": width,
+                "expectedStudioRoot": EXPECTED_STUDIO_ROOT,
+                "rootState": root_state,
+                "checks": {"expectedStudioRootVisibleInMain": False},
+            })
+        if EXPECTED_STUDIO_ROOT == ".studio.aculta-account-entry":
+            hub = driver.js(
+                """const root=document.querySelector('main#main-content '+arguments[0]);
+                  const list=root?.querySelector('.studio__actions');
+                  const links=[...(list?.querySelectorAll('a')||[])];
+                  const cards=[...(list?.querySelectorAll('.aculta-card--studio-fidelity')||[])];
+                  const visible=element=>{const rect=element.getBoundingClientRect(),style=getComputedStyle(element);
+                    return rect.width>0&&rect.height>0&&style.display!=='none'&&style.visibility!=='hidden';};
+                  const targets=links.map(link=>{const rect=link.getBoundingClientRect();return {
+                    width:Math.round(rect.width*100)/100,height:Math.round(rect.height*100)/100,
+                    inCard:!!link.closest('.aculta-card--studio-fidelity'),visible:visible(link)};});
+                  return {rootVisible:!!root&&visible(root),listPresent:!!list,
+                    availableLinkCount:links.length,cardCount:cards.length,
+                    visibleCardCount:cards.filter(visible).length,targets};""",
+                [EXPECTED_STUDIO_ROOT],
+            )
+            checks = {
+                "entryRootVisible": hub["rootVisible"],
+                "experienceListPresent": hub["listPresent"],
+                "availableExperiencesRendered": hub["availableLinkCount"] > 0,
+                "eachAvailableExperienceUsesSharedCard": (
+                    hub["availableLinkCount"] > 0
+                    and hub["cardCount"] == hub["availableLinkCount"]
+                    and hub["visibleCardCount"] == hub["availableLinkCount"]
+                    and all(target["inCard"] for target in hub["targets"])
+                ),
+                "experienceLinksAreVisible44pxTargets": (
+                    bool(hub["targets"])
+                    and all(target["visible"] and target["width"] >= 44 and target["height"] >= 44
+                            for target in hub["targets"])
+                ),
+            }
+            record["studioHub"] = hub
+            record["studioHubChecks"] = checks
+            record["studioHubStatus"] = "PASS" if all(checks.values()) else "FAIL"
+            if record["studioHubStatus"] == "FAIL":
+                CAPTURE_FAILURES.append({
+                    "url": url,
+                    "width": width,
+                    "studioHub": hub,
+                    "checks": checks,
+                })
     if ANONYMOUS_CAPTURE and "path-u" in record.get("bodyClasses", []):
         record["body"] = "[conteudo do perfil publico omitido]"
         detail = json.dumps(record, ensure_ascii=False)
@@ -1055,6 +1121,7 @@ def main():
         "studio_capture_status": "FAIL" if CAPTURE_FAILURES else ("PARTIAL" if any(capture.get("status") == "DEFERRED" or capture.get("accessDeniedHint") or capture.get("missingMainHint") or capture.get("emptyDocumentHint") for capture in CAPTURES) else "CAPTURED"),
         "studio_user": "anonymous" if ANONYMOUS_CAPTURE else USER,
         "studio_pages": [url for _, url in studio_pages()],
+        "expected_studio_root_selector": EXPECTED_STUDIO_ROOT or None,
         "widths": [width for width, _ in WIDTHS],
         "screenshots": [capture["screenshot"] for capture in CAPTURES if "screenshot" in capture],
         "captures": CAPTURES,

@@ -2823,6 +2823,37 @@ A fixture não contém render Drupal, ACL, cache, estados opcionais nem dashboar
 autenticado OpenCulturas pareado; OCS-F3/F4 continuam parciais e OCS-F11 não
 está aprovado.
 
+### OCS-F4 — Hub real da Conta e conversão dos destinos em SDC (2026-10-31)
+
+Firefox ESR autenticado no Runtime `2493d7535` percorreu a raiz Account em
+320/360/390/599/600/768/1024/1280/1440px com a CSS Fidelity da branch injetada
+somente na sessão. O root `.studio.aculta-account-entry` esteve visível nas
+nove larguras; os headers institucionais foram únicos e não houve overflow.
+A conta possuía cinco links de experiências em todos os tamanhos. Porém a
+captura marcou **FAIL 9/9** nos invariantes do Hub: nenhum link estava dentro do
+SDC `aculta420:card` com variante `studio_fidelity`, e todos mediram somente
+19px de altura. A captura não observou conteúdo de formulários nem enviou dados.
+
+No source branch, `PortalUiHooks::preprocessStudioHub()` envolve os links reais
+no SDC existente preservando `#access`, cache, attachments e render array; os
+testes `PortalUiHooksTest` passaram **26 testes/148 assertions**. A injeção de
+CSS no Firefox não executa esse hook PHP. Portanto o resultado é uma falha do
+consumer servido, não evidência contra a implementação candidata. Runtime:
+host `toca`, checkout `/home/piradopirata/projetos/aculta` em `2493d7535`, URI
+`http://default`, banco `aculta_runtime`, 624 tabelas. Snapshot anterior ao ULI:
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-studio-hub-card-check-20261031.sql`
+(66.006.214 bytes; SHA-256
+`2597ebac5be92f8a6c591d2999de1f03b7727083f76aa2ca925850c63dd95083`).
+Relatório e capturas em
+`/home/piradopirata/aculta-suite-out/studio-hub-cards-20261031/`.
+
+O harness `ocs-baseline.py` agora pode receber `OCS_EXPECT_STUDIO_ROOT`; para o
+Hub, além de exigir root visível dentro de `main`, verifica lista não vazia,
+correspondência de links e cards compartilhados e alvos de 44×44px. Esta matriz
+falhou de forma explícita (`studio_capture_status=FAIL`); o Studio Hub continua
+pendente de render do source branch no Runtime. OCS-F4/F11 e THEME-MF3 não estão
+aprovados.
+
 ### OCS-F7 — WE SATIVA no path legado e contraste do shell (2026-10-31)
 
 Firefox ESR visível repetiu `/wesativa` autenticado com a CSS Fidelity candidata

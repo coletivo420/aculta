@@ -1576,6 +1576,13 @@ em `studio-visual/visual-parity-matrix.md` e
 `tests/browser/aculta-studio/README.md`. A fixture não valida o consumer servido
 no Runtime. A homologação de F4/F11 e THEME-MF3 permanece pendente.
 
+Reteste OCS-F4 em 2026-10-31 no Runtime `2493d7535`: a raiz `.studio.aculta-account-entry`
+e cinco links estavam disponíveis, mas o consumer servido não os converteu no
+SDC `card`; os cinco alvos mediram 19px. A matriz de nove larguras agora falha
+explicitamente esse contrato. O source branch tem o adaptador e passou
+`PortalUiHooksTest` (26/148); CSS injetada não substitui o hook PHP e não valida
+a integração. Detalhes, snapshot e capturas em `mobile-first-audit.md`.
+
 ### THEME-MF0/MF2 — teclado, no-JS e inventário (2026-11-01)
 
 Firefox ESR visível no Runtime anônimo passou 210/210 verificações sem

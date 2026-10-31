@@ -312,6 +312,31 @@ Matriz de casos e critérios:
 
 O script `ocs-baseline.py` captura, com Firefox ESR visível, a homepage pública e, por padrão, a entrada da Conta, Marley, Ganjalab, WE SATIVA, Conta, Perfil, Green Stash, Culturas e planos Mercado Pago. Para cada Suite resolve a URL no Domain ativo por `DomainPurposeManager::environmentPathUrl()`; não assume que paths de Suites diferentes funcionem no host da Conta. Requer `DISPLAY=:0`, `SUITE_OUT` fora do repositório e Drush local apontando para `aculta_runtime`; usa perfil temporário em `$SUITE_OUT/profiles`. `STUDIO_PAGE` limita a uma URL customizada; `STUDIO_ROUTES` aceita URLs completas ou caminhos no host `STUDIO_LOGIN_URI`. Imagens e JSON ficam em `$SUITE_OUT`. `OCS_WIDTHS=320,360,390,599,600,768,1024,1280,1440` captura a grade completa do gate; sem essa variável, o modo rápido usa 1440/390 px. Se ULI falhar, a tentativa vai a `baseline-deferred.json` e preserva a última execução bem-sucedida em `baseline.json`. A captura autentica somente a conta de teste e não homologa a operação do novo host Wiki.
 
+Para uma rota cuja captura deve corresponder a uma tela Studio específica,
+`OCS_EXPECT_STUDIO_ROOT` exige que o seletor apareça em cada viewport; ausência
+gera `FAIL` em `fidelity_failures` e exit code 1, mesmo que a página Drupal
+tenha `main` e tenha sido capturada. Exemplo para o Hub da Conta:
+
+```sh
+export DISPLAY=:0
+export ACULTA_ROOT=/home/piradopirata/projetos/aculta
+export OCS_STUDIO_FIDELITY_CSS_ROOT=/home/piradopirata/worktrees/opencultures-f0-adm8-e8
+export OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1
+export OCS_SKIP_OPENCULTURAS=1
+export STUDIO_ROUTES=https://conta.aculta.toca.net.br/
+export OCS_EXPECT_STUDIO_ROOT='.studio.aculta-account-entry'
+export OCS_WIDTHS=320,360,390,599,600,768,1024,1280,1440
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/studio-hub-root
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+python3 -I tests/browser/aculta-studio/ocs-baseline.py
+```
+
+No seletor `.studio.aculta-account-entry`, a captura também exige a lista de
+experiências disponível, um SDC `card` compartilhado por link e alvos visíveis
+de ao menos 44×44px. O resultado omite rótulos/URLs dos links. As rotas de outras
+áreas mantêm seus critérios específicos de consumer. A CSS é injetada apenas na
+sessão Firefox e o script usa GET/ULI, sem submeter formulários.
+
 Com `OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1`, a folha candidata do Studio pode ser
 injetada somente no Firefox. Na rota `/perfil`, o relatório mede os links e
 botões dentro das ações dos SDCs `profile-identity`, `profile-bio` e
