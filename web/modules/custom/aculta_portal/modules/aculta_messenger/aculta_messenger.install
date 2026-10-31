@@ -6,6 +6,7 @@
  */
 
 use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
+use Drupal\Core\Config\FileStorage;
 
 /**
  * Implements hook_schema().
@@ -161,7 +162,53 @@ function aculta_messenger_update_10012(): void {
 }
 
 
-/** Installs missing fields used by friendship and game unread counts. */
+/**
+ * Installs only missing unread-count fields without replacing active config.
+ */
 function aculta_messenger_update_10013(): void {
-  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+  $module_path = \Drupal::service('extension.list.module')->getPath('aculta_messenger');
+  $defaults = new FileStorage($module_path . '/config/install');
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $field_storage = $entity_type_manager->getStorage('field_storage_config');
+  $field_config = $entity_type_manager->getStorage('field_config');
+
+  // The existing friendship event field has a legacy string type on some
+  // sites. It is intentionally excluded: these read-state fields are the
+  // only missing dependencies used by the count queries.
+  $storage_names = [
+    'field.storage.message.field_aculta_friendship_read',
+    'field.storage.message.field_aculta_game_award_uuid',
+    'field.storage.message.field_aculta_game_read',
+  ];
+  foreach ($storage_names as $name) {
+    $config = $defaults->read($name);
+    if (!is_array($config) || empty($config['id'])) {
+      throw new \UnexpectedValueException(sprintf('Missing Messenger field default: %s.', $name));
+    }
+    if (!$field_storage->load($config['id'])) {
+      $field_storage->create($config)->save();
+    }
+  }
+
+  $instance_names = [
+    'field.field.message.aculta_msg_friendship.field_aculta_friendship_read',
+    'field.field.message.aculta_msg_game_award.field_aculta_game_award_uuid',
+    'field.field.message.aculta_msg_game_award.field_aculta_game_read',
+  ];
+  foreach ($instance_names as $name) {
+    $config = $defaults->read($name);
+    if (!is_array($config) || empty($config['id'])) {
+      throw new \UnexpectedValueException(sprintf('Missing Messenger field default: %s.', $name));
+    }
+    if ($field_config->load($config['id'])) {
+      continue;
+    }
+    $storage_id = $config['entity_type'] . '.' . $config['field_name'];
+    $storage = $field_storage->load($storage_id);
+    if (!$storage || $storage->getType() !== $config['field_type']) {
+      \Drupal::logger('aculta_messenger')->error('Skipped unread-count field @field because its field storage is missing or has a different type.', ['@field' => $config['field_name']]);
+      continue;
+    }
+    $field_config->create($config)->save();
+  }
 }
