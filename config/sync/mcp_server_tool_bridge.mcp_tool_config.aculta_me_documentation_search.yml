@@ -1,0 +1,10 @@
+uuid: b4fe8431-f174-4103-a4f4-434582049dd1
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: t9Xf80_ZKGfsjUnn8IlNB8ROt9Jg86TmgmOS_QqckUU
+id: aculta_me_documentation_search
+tool_id: 'aculta_mcp:melhorenvio_documentation_search'
+description: 'Pesquisa somente a documentação pública do Melhor Envio; não faz chamadas de operação à conta ACULTA.'
+

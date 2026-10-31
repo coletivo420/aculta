@@ -27,6 +27,14 @@ O endpoint ACULTA MCP responde somente no domínio principal (`main`), em `/inte
 
 O módulo próprio `aculta_mcp` implementa chamadas MCP de saída para os servidores de documentação do Mercado Pago, Melhor Envio e DHTMLX. Seis plugins da Tool API são publicados no ACULTA por meio do MCP Server Tool Bridge e de entidades MCP Tool Configuration. Três Resources estáticos descrevem capacidades, a plataforma ACULTA e as fronteiras das integrações; três MCP Prompts reutilizam esses Resources anexando-os às mensagens e orientam pesquisa documental sem dados sensíveis. Prompts são modelos e não chamam ferramentas automaticamente. Endpoints e nomes das ferramentas remotas têm allowlist fixa, limite global de chamadas e saída limitada. O servidor não encaminha chamadas de API de pagamento, frete, mapas ou Drupal.
 
+**Decisão de configuração (2026-10-31):** os módulos MCP que já estão ativos no
+Runtime permanecem ativos e sua configuração operacional não secreta é mantida
+em `config/sync/`. Isso inclui `aculta_mcp`, `aculta_mcp_client`, MCP Server,
+OAuth, Tool Bridge, Consumers, Serialization e Tool API, além dos prompts,
+ferramentas, bundles OAuth e papel `mcp_external`. Chaves, tokens e credenciais
+de clientes não são exportados para o repositório; continuam nos mecanismos de
+segredos/credenciais do ambiente.
+
 `osm-mcp` e `aculta-drupal` continuam em `.mcp.json` e na configuração global Codex como conexões locais para agentes. O OSM usa stdio e pode receber dados de localização; `aculta-drupal` fornece metadados operacionais read-only. Esses servidores não são encaminhados pelo endpoint ACULTA público.
 
 ## MCP Client no Drupal

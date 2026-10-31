@@ -1,0 +1,31 @@
+uuid: b3fb2a98-69d2-41c2-9b8c-beb40dacd6df
+langcode: pt-br
+status: true
+dependencies:
+  enforced:
+    module:
+      - aculta_mcp
+id: aculta_consultar_plataforma
+label: 'Consultar a plataforma ACULTA'
+title: 'Consultar a plataforma ACULTA'
+description: 'Usa a visão geral pública do ACULTA para responder uma dúvida sobre seus domínios e limites.'
+arguments:
+  -
+    label: Pergunta
+    machine_name: pergunta
+    description: 'Dúvida ou objetivo público sobre a plataforma ACULTA'
+    required: true
+messages:
+  -
+    role: user
+    content:
+      -
+        type: resource
+        resource:
+          uri: 'aculta://public/aculta/overview'
+          mimeType: text/markdown
+          text: "# ACULTA platform overview\n\nACULTA is an institutional and cultural platform built on Drupal. Its public site brings together editorial content, events, educational activities, community participation, and a shop. The Portal provides shared domain services, while the ACULTA420 theme presents the site's experience across mobile and desktop layouts.\n\nEvents are managed in the Events domain, including their dates and associated locations. Maps consume authorized location data for public presentation. The shop handles its own checkout and shipping workflows. These functions are part of the website; the public MCP endpoint does not read their records or execute those workflows.\n\nAddress handling is centralized in the Portal and uses Brazil (`BR`) as the only country. This summary intentionally omits internal routes, runtime configuration, deployment details, and non-public operational data."
+      -
+        type: text
+        text: 'Explique com clareza: {{pergunta}}. Baseie a resposta no Resource anexado e não infira detalhes internos ausentes. Se a pergunta exigir dados do site, contas ou operações, explique que este MCP público não os acessa.'
+

@@ -29,8 +29,8 @@ configuration:
     aculta_shipping_information:
       step: order_information
       weight: 2
-      require_shipping_profile: true
       auto_recalculate: true
+      require_shipping_profile: true
     review:
       step: review
       weight: 3

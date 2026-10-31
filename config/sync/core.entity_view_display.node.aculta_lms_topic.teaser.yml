@@ -29,11 +29,14 @@ content:
     weight: 10
     region: content
 hidden:
-  field_h5p_content: true
   co_authors: true
-  field_lms_activity: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   field_aculta_discussion: true
   field_domain_source: true
+  field_h5p_content: true
+  field_lms_activity: true
   langcode: true
   links: true
   private_message_link: true

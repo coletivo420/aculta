@@ -1,0 +1,10 @@
+uuid: 5c653618-2330-4c39-b031-d47d7ddd3042
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: qhvpqSuqv0f28eAZRPErcB7A5v5OEo7Q5-JdmK9hsE0
+id: aculta_mp_documentation_search
+tool_id: 'aculta_mcp:mercadopago_documentation_search'
+description: 'Pesquisa somente a documentação pública do Mercado Pago para o Brasil; não consulta pagamentos, contas ou credenciais.'
+

@@ -26,6 +26,12 @@ content:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
+  field_section_color:
+    type: options_select
+    weight: 23
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_section_heading:
     type: string_textfield
     weight: 21
@@ -45,12 +51,6 @@ content:
   field_section_variant:
     type: options_select
     weight: 22
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  field_section_color:
-    type: options_select
-    weight: 23
     region: content
     settings: {  }
     third_party_settings: {  }

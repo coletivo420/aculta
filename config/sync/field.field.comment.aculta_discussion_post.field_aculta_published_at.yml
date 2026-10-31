@@ -1,3 +1,4 @@
+uuid: 66b20f5d-b28a-46ac-adf4-028622feddc0
 langcode: pt-br
 status: true
 dependencies:
@@ -15,7 +16,7 @@ label: 'Primeira publicação (marcador interno)'
 description: 'Timestamp interno usado para aplicar a janela de edição do autor; não é exibido.'
 required: false
 translatable: false
-default_value: [ ]
+default_value: {  }
 default_value_callback: ''
 settings:
   min: null

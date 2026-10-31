@@ -59,9 +59,9 @@ datasource_settings:
       default: false
       selected:
         - activity
-        - revista
         - document
         - page
+        - revista
         - wiki_entry
     languages:
       default: true

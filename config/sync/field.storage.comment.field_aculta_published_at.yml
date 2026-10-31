@@ -1,3 +1,4 @@
+uuid: 9e38edeb-1c09-495f-a509-9a0bc4ed6993
 langcode: pt-br
 status: true
 dependencies:
@@ -15,6 +16,6 @@ module: core
 locked: true
 cardinality: 1
 translatable: false
-indexes: { }
+indexes: {  }
 persist_with_no_fields: false
 custom_storage: false

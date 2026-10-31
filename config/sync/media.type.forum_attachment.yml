@@ -1,12 +1,13 @@
+uuid: 15a514ba-52d4-4766-9825-022a3b526372
 langcode: pt-br
 status: true
 dependencies:
-  enforced:
-    module:
-      - aculta_forum
   module:
     - file
     - media
+  enforced:
+    module:
+      - aculta_forum
 id: forum_attachment
 label: 'Anexo do Fórum'
 description: 'Arquivo privado cuja publicação acompanha as referências em comentários públicos do Fórum.'

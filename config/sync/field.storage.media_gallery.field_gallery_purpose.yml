@@ -1,3 +1,4 @@
+uuid: 4a5ee7da-b6b9-4fab-9c04-9e345c8ee01f
 langcode: pt-br
 status: true
 dependencies:
@@ -9,8 +10,8 @@ entity_type: media_gallery
 type: string
 settings:
   max_length: 32
-  is_ascii: false
   case_sensitive: false
+  is_ascii: false
 module: core
 locked: false
 cardinality: 1
