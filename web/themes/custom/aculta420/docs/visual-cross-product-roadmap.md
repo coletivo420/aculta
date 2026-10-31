@@ -2170,3 +2170,12 @@ Institution Bar/Domain Header presentes. Os dois formulários proprietários
 estavam renderizados; nenhum foi enviado. Evidência e snapshot pré-ULI estão
 registrados em `mobile-first-audit.md`. Isto prova somente renderização atual e
 reflow; dark mode, no-JS/AJAX, teclado/zoom, ACL, CEP e WCAG permanecem pendentes.
+
+### OCS-F10 — ACULTA Studio Culturas: hub real em mobile (2026-10-31)
+
+Firefox ESR visível abriu `/culturas` autenticado, sem CSS candidata, em nove
+larguras: nove capturas, zero falhas, shell presente e sem overflow. O aviso ULI
+ficou no fluxo e o estado do hub foi revisado em 320px. Nenhuma ação de
+conteúdo foi usada. Capturas e snapshot pré-ULI estão no `mobile-first-audit.md`.
+A rodada cobre somente apresentação servida do hub; não encerra ACL, operações,
+WCAG ou OCS-F11/THEME-MF3.

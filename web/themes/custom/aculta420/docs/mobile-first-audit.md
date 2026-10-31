@@ -4614,3 +4614,19 @@ com 611 tabelas antes/depois. Evidência visual:
 A rodada valida renderização integrada e overflow, não dark mode, no-JS/AJAX,
 teclado/zoom, grants entre contas, CEP ou WCAG completa; não aprova OCS-F11 nem
 THEME-MF3.
+
+### OCS-F10 — ACULTA Studio Culturas servido no Runtime (2026-10-31)
+
+A rota autenticada `/culturas` foi aberta por GET em Firefox ESR visível, sem
+CSS/JS candidatos, em 320/360/390/599/600/768/1024/1280/1440px. As nove
+capturas ficaram `CAPTURED`, zero falhas; Institution Bar e Domain Header
+estavam presentes e a largura documental igualou a viewport. A captura mobile
+foi revista: o aviso ULI permaneceu em fluxo e a descrição do estado do
+organizador continuou legível. Nenhuma ação de evento/local foi acionada.
+Evidência: `/home/piradopirata/aculta-suite-out/culturas-hub-integrated-bdc8fb4d9-20261031/`.
+Snapshot anterior à ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-hub-integrated-20261031.sql`,
+54.288.530 bytes, modo 0600, SHA-256
+`af918261e2200f41fddf8a9bd249fda7839de055913dfb6408c94b6f3e978d5d`; `aculta_runtime`
+permaneceu em 611 tabelas. Esta captura verifica reflow e shell do hub, não
+CRUD, grants entre contas, teclado/zoom, dark mode ou WCAG completa; não aprova
+OCS-F11/THEME-MF3.
