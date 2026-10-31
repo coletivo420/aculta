@@ -13,20 +13,6 @@
   padding-inline: var(--aculta-page-gutter);
 }
 
-/* Core vertical-tabs metadata must shrink with the node form at mobile widths. */
-@media (max-width: 35.999rem) {
-  form.node-form .vertical-tabs,
-  form.node-form .vertical-tabs__panes,
-  form.node-form .entity-meta {
-    inline-size: 100% !important;
-    max-inline-size: 100% !important;
-  }
-
-  form.node-form .entity-meta {
-    flex: 0 0 100% !important;
-    min-inline-size: 0 !important;
-  }
-}
 .aculta-main { padding-block: var(--aculta-main-space-block); }
 .aculta-main--compact-top { padding-block-start: var(--aculta-main-space-block-compact); }
 .aculta-content, .aculta-sidebar { min-width: 0; }
