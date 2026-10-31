@@ -2789,3 +2789,6 @@ ou preferência persistente alterados.
   320/390/768/1280px, claro/escuro, sem overflow e com zero violações axe;
   permanece um `incomplete` por modo. Evidência em
   `/home/piradopirata/aculta-suite-out/ganjalab-auth-axe-final-20261031201023/`.
+- A Conta Perfil privada em `/perfil` passou 8/8 estados autenticados em
+  320/390/768/1280px, claro/escuro, HTTP 200 e sem overflow. Evidência em
+  `/home/piradopirata/aculta-suite-out/profile-private-final-20261031201100/`.
