@@ -1,5 +1,15 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.12 — política de imagem por integração (configuração do uploader)
+
+- Nova configuração `aculta_file_uploader.settings` (padrão em `config/install`, schema próprio) com política global e `consumers.<integração>` (herança ou restrição).
+- `ConsumerUploadPolicy` (`aculta_file_uploader.consumer_policy`): extensões de imagem restritas ao catálogo central, limite nunca acima de 10 MB e MIME pelo conteúdo. Lista vazia fecha a política.
+- `aculta_file_uploader_update_10001()` copia `aculta_portal.user_upload` para a nova configuração sem apagar a original. Fórum e LMS continuam na política antiga até migrarem.
+- Decisão: a configuração NÃO é exportada para `config/sync`. Uma importação de configuração sobrescreveria consumidores já migrados. Exportar só após o RC.
+- Testes Unit: `ConsumerUploadPolicyTest`.
+
+RUNTIME STATUS: DEFERRED. Validar no Runtime: update_10001 em base com `aculta_portal.user_upload` e instalação limpa.
+
 ## 0.1.0-dev.11 — motor da quarentena movido para o aculta_file_uploader
 
 - `Quarantine\ImageQuarantine` sai do aculta_image. Serviço: `aculta_file_uploader.quarantine`. Tabela `aculta_image_quarantine` e regras de prazo inalteradas.

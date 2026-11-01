@@ -1,4 +1,8 @@
 services:
+  aculta_file_uploader.consumer_policy:
+    class: Drupal\aculta_file_uploader\ConsumerUploadPolicy
+    arguments: ['@config.factory', '@aculta_file_uploader.mime_verifier', '@file_system']
+
   aculta_file_uploader.upload_policy:
     class: Drupal\aculta_file_uploader\UploadPolicy
 

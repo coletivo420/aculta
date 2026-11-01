@@ -1,0 +1,29 @@
+aculta_file_uploader.settings:
+  type: config_object
+  label: 'Política de upload de imagens por integração'
+  mapping:
+    allowed_extensions:
+      type: string
+      label: 'Extensões de imagem permitidas (subconjunto do catálogo central)'
+    max_size_mb:
+      type: integer
+      label: 'Tamanho máximo por arquivo em megabytes (limitado pelo catálogo central)'
+    consumers:
+      type: sequence
+      label: 'Políticas por integração'
+      sequence:
+        type: aculta_file_uploader.consumer
+
+aculta_file_uploader.consumer:
+  type: mapping
+  label: 'Política de uma integração'
+  mapping:
+    inherit_global:
+      type: boolean
+      label: 'Usar a política global'
+    allowed_extensions:
+      type: string
+      label: 'Extensões de imagem permitidas'
+    max_size_mb:
+      type: integer
+      label: 'Tamanho máximo por arquivo em megabytes'
