@@ -1,0 +1,5 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.4.0-dev.3
+state: Dev
+progress_note: 'Candidato com Unit 46/75 e Kernel 18/136 passando; smoke Firefox no Runtime serviu painel, SVG, PDF, prévia e redirecionamento, mas PNG/WebP retornaram 500 na versão instalada. Correção raster passou Kernel 1/9; revalidar PNG/WebP após atualizar o checkout servido.'
+next_phase: 'Atualizar o checkout servido pelo fluxo autorizado e repetir downloads PNG/WebP; integrar prévia ao formulário, fechar logo via aculta_image e componentes ACULTA420 antes de avaliar RC (roadmap: web/modules/custom/aculta_portal/modules/aculta_qrcode/docs/ROADMAP.md).'

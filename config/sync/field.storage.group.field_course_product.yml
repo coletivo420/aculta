@@ -1,0 +1,21 @@
+uuid: 06c8ac2c-5809-49ea-8fa7-07ed9ea61b74
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - commerce_product
+    - group
+id: group.field_course_product
+field_name: field_course_product
+entity_type: group
+type: entity_reference
+settings:
+  target_type: commerce_product
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
+

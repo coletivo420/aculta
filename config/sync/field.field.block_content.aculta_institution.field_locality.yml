@@ -1,0 +1,19 @@
+uuid: 392d1fd8-b8f1-4bae-b1f5-ad96246867b1
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_institution
+    - field.storage.block_content.field_locality
+id: block_content.aculta_institution.field_locality
+field_name: field_locality
+entity_type: block_content
+bundle: aculta_institution
+label: 'Cidade (JSON-LD)'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

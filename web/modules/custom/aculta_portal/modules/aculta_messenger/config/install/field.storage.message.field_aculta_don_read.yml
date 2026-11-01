@@ -1,0 +1,22 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+id: message.field_aculta_don_read
+field_name: field_aculta_don_read
+entity_type: message
+type: boolean
+settings:
+  on_label: 'Lido'
+  off_label: 'Não lido'
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: { }
+persist_with_no_fields: false
+custom_storage: false

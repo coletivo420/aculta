@@ -1,0 +1,11 @@
+uuid: e0135ff1-95d5-4006-a08c-a83fb08bfe16
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - menu_link_content
+id: menu_link_content.menu_link_content
+target_entity_type_id: menu_link_content
+target_bundle: menu_link_content
+default_langcode: site_default
+language_alterable: false

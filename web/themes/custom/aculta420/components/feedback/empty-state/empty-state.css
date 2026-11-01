@@ -1,0 +1,11 @@
+.aculta-empty-state {
+  padding: clamp(1rem, 3vw, 1.75rem);
+  border: 1px solid var(--aculta-border-default);
+  border-radius: var(--bs-border-radius);
+  color: var(--aculta-text-secondary);
+  background: var(--aculta-surface-secondary);
+}
+.aculta-empty-state--compact { padding: .75rem 1rem; }
+.aculta-empty-state__message > :last-child { margin-block-end: 0; }
+.aculta-empty-state__actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-block-start: 1rem; }
+.aculta-empty-state :focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 3px; }

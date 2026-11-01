@@ -1,0 +1,5 @@
+entity.aculta_patch.add_form:
+  route_name: entity.aculta_patch.add_form
+  title: 'Adicionar patch'
+  appears_on:
+    - entity.aculta_patch.collection

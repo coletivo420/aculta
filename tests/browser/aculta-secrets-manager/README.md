@@ -1,0 +1,64 @@
+# Painel de credenciais (aculta_secrets_manager)
+
+Verifica as abas Produção/Testes do painel `/painel-administrativo/aculta/segredos`: estado da aba,
+ausência de botões na aba do outro ambiente, troca de aba sem alterar o ambiente, teclado (setas, Home) e
+ausência de rolagem horizontal em 1280, 390 e 320 px.
+
+- **Ambiente:** servidor de desenvolvimento (`*.aculta.toca.net.br`). Não é o ambiente local.
+- **Execução:** `DISPLAY=:0 SUITE_OUT="$SUITE_OUT/secrets-manager" ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles" python3 tests/browser/aculta-secrets-manager/painel-visual.py`
+- **Variáveis:** `SECRETS_UID` (padrão 205, conta de teste `qa_segredos`), `SUITE_OUT` (capturas, fora do Git), `ACULTA_FF_PROFILE_ROOT` (perfil Firefox fora do Git).
+- **Validação de CSS candidato:** `SECRETS_CANDIDATE_CSS` aponta para o CSS da árvore em revisão; `ACULTA_RUNTIME_PROJECT` aponta para o checkout servido usado apenas para gerar o link de sessão. O script injeta esse CSS na página aberta, sem alterar o servidor, e mede o painel real.
+- **Login:** link de uso único do Drush, gerado no subprocesso e nunca impresso.
+- **Capturas:** o script oculta visualmente a barra administrativa Claro e centraliza a tabela apenas na sessão do navegador; o layout é medido pelo DOM (rolagem, largura das colunas e altura das linhas) e também inspecionado nas capturas.
+- **Critério mobile:** em cada viewport a tabela deve iniciar na primeira coluna (`scrollLeft=0`), manter cinco colunas com largura mínima legível e rolar somente dentro do contêiner. A inspeção das capturas é parte do gate, além das métricas DOM.
+- **Limites:** não altera dados no servidor. A injeção de CSS serve para validar a apresentação candidata sobre o HTML real, mas não confirma cache/build no host. Não cobre o conteúdo das credenciais (isso está no teste HTTP documentado em
+  `docs/operations/SECRETS-SM9-INTEGRACAO.md`), nem o tema Olivero (pendente).
+
+## Popups (somente leitura): `popups-visual.py`
+
+- **Execução:** `DISPLAY=:0 python3 tests/browser/aculta-secrets-manager/popups-visual.py`
+- **Cobre:** olho com token CSRF no link (sem clicar); alterar e apagar abrem com título e fecham pelo botão do
+  diálogo, sem enviar formulário.
+- **Não cobre:** revelar (o olho mostra o valor real do servidor de desenvolvimento), gravar e apagar de fato. Essas ações
+  pedem credenciais sintéticas, em rodada própria.
+
+## Histórico de execução
+
+- 2026-10-26, checkout do servidor de desenvolvimento em `c1e210934`: `painel-visual.py` 16/16 PASS (1280, 390 e 320 px);
+  `popups-visual.py` 7/7 PASS. Conta `qa_segredos` (uid 205).
+- 2026-10-29, servidor de desenvolvimento em `355e48a89` (código do módulo igual
+  ao candidato): HTTP 9/9; `painel-visual.py` 16/16; `popups-visual.py` 7/7;
+  `claro-foco-alvos.py` 28/28. Revisão manual das capturas mostrou conteúdo da
+  tabela esmagado verticalmente em 320 e 1280 px, apesar dos asserts de rolagem
+  passarem. Não considerar revisão visual aprovada até corrigir e atualizar a
+  medição da legibilidade. Artefatos: `/home/piradopirata/private/aculta/test-evidence/secrets-manager-20261029`.
+- Correção do seletor da tabela: o módulo marca o contêiner com `data-portal-ui="secrets-table-scroll"`, e não com a
+  classe. O script procurava a classe e acusava falso "não encontrado" (`excesso=None`). O seletor agora usa o atributo,
+  como o CSS e o teste Unit `SecretsTabsTest` já fazem.
+- 2026-10-29, candidato em `931c364ee`, CSS candidato injetado no painel real do servidor de desenvolvimento:
+  Firefox ESR 28/28 em viewport CSS 1280/390/320 px. Verificados largura mínima das cinco colunas, altura das linhas,
+  rolagem confinada à tabela, ausência de overflow da página, abas e teclado. Inspeção visual confirmou o conteúdo legível.
+  Evidências em `/home/piradopirata/private/aculta/test-evidence/secrets-manager-20261029-candidate-fix`. A injeção não altera o servidor; o CSS ainda precisa ser validado servido pelo candidato.
+- 2026-10-31, CSS candidato da branch `dev` injetado no painel do Runtime de desenvolvimento:
+  Firefox ESR/X11 passou 31/31 em 1280/390/320 px, incluindo a primeira coluna visível, larguras das cinco colunas,
+  altura das linhas e rolagem interna. Capturas em `/home/piradopirata/private/aculta/test-evidence/secrets-manager-20261031-candidate-fix-3`.
+  A captura 320 px foi inspecionada manualmente e começa pela primeira coluna. Isto valida o CSS candidato sobre o DOM servido,
+  mas não comprova que o servidor já serve o CSS nem valida Olivero; esses gates permanecem pendentes.
+
+
+## Foco por teclado, alvos e cor do ícone de apagar (Claro): `claro-foco-alvos.py`
+
+- **Ambiente:** servidor de desenvolvimento (`*.aculta.toca.net.br`), tema Claro. Firefox ESR visível em `DISPLAY=:0`.
+- **Execução:** `DISPLAY=:0 SECRETS_UID=205 python3 tests/browser/aculta-secrets-manager/claro-foco-alvos.py`
+- **Cobre:** Tab alcança revelar, alterar e apagar em 1280, 390 e 320 px, com foco visível (estilo computado);
+  abas recebem foco; alvos de toque ≥ 44 px; cor computada do ícone de apagar (esperado `rgb(179, 38, 30)`).
+- **Não cobre:** clicar em revelar, alterar ou apagar; gravar ou apagar credenciais.
+- **Resultado de 2026-10-26, checkout em `78f5bb199`:** 25/28 PASS. Falha única: a cor do ícone de apagar em 1280,
+  390 e 320 px. A cor computada é `rgb(35, 36, 41)`, a cor do texto. As variáveis `--aculta-status-error-text` e
+  `--color-danger` estão **vazias** na raiz do documento do Claro. A regra CSS cai para `currentColor`. Correção
+  pertence ao Local 2 (definir o token de erro para a página do Claro).
+- Nota de método: a varredura de Tab recarrega a página em cada largura. Sem recarregar, o foco da largura anterior
+  ficava no fim do documento e a varredura seguinte não registrava elementos.
+
+- 2026-10-31, Unit + Kernel Routes: 14/60 PASS (58 deprecações). O Kernel usa
+  `commerce_checkout`, dependência real do resolver da rota; `commerce_shipping` não é necessário.

@@ -1,0 +1,12 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Messenger notification
+status: experimental
+group: Content
+description: 'Presentation wrapper for a Message entity rendered for its owner.'
+props:
+  type: object
+  properties: {}
+slots:
+  content:
+    title: Notification
+    description: 'Rendered Message entity output; the Portal limits it to the current account.'

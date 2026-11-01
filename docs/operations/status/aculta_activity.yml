@@ -1,0 +1,6 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.12
+state: Dev
+progress_note: >-
+  Dev.12: provider projeta a relação allowlisted editorial_image apenas da referência explícita field_media_image (projeção v3), sem corpo, URL ou metadados privados; a validação de Activity lê valores submetidos. Kernel 6/123 e Unit 6/20 PASS em 2026-11-02; Maps Unit + provider Index de Events 13/186 PASS em aculta_simpletest. Depreciações Core/contrib: 121 no Kernel Activity e 19 no conjunto Maps/Events. A checagem Entity Access/purpose main permanece coberta. Homologação visual e Runtime pendentes; sem escrita Runtime.
+next_phase: 'Quando o candidato for servido, revisar formulário e renderização Schema.org no Firefox/Runtime; concluir o adapter junto do Kernel aculta_portal, sem RC independente ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'

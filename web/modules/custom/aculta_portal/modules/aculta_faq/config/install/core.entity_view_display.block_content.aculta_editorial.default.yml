@@ -1,0 +1,22 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_editorial
+    - field.field.block_content.aculta_editorial.body
+  module:
+    - text
+id: block_content.aculta_editorial.default
+targetEntityType: block_content
+bundle: aculta_editorial
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: { }
+    third_party_settings: { }
+    weight: 0
+    region: content
+hidden: { }
+

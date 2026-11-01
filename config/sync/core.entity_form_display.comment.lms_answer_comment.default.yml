@@ -1,0 +1,34 @@
+uuid: 609a7752-a2ba-410b-abb2-194af9768fb6
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - comment.type.lms_answer_comment
+    - field.field.comment.lms_answer_comment.comment_body
+  module:
+    - text
+_core:
+  default_config_hash: HW98-aXorZdd0ekPsonLu05R-qqxYwWQHt-0u2N7arY
+id: comment.lms_answer_comment.default
+targetEntityType: comment
+bundle: lms_answer_comment
+mode: default
+content:
+  comment_body:
+    type: text_textarea
+    weight: 0
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+hidden:
+  author: true
+  subject: true

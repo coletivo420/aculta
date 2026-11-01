@@ -1,0 +1,33 @@
+uuid: 83b125ff-8e0f-423a-afbf-733b56bda5a0
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.media_gallery.field_tags
+    - taxonomy.vocabulary.revista_tags
+  module:
+    - media_gallery
+_core:
+  default_config_hash: JmlFNYSUDYd7SNBq5g5Wlv2q5b6O6N4E3X3rF3Suuws
+id: media_gallery.media_gallery.field_tags
+field_name: field_tags
+entity_type: media_gallery
+bundle: media_gallery
+label: Tags
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      revista_tags: revista_tags
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
+

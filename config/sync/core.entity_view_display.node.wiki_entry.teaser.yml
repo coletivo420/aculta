@@ -1,0 +1,69 @@
+uuid: f21f8231-7cda-4844-9697-6b95fb3607f0
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.wiki_entry.body
+    - field.field.node.wiki_entry.field_domain_source
+    - field.field.node.wiki_entry.field_wiki_categories
+    - field.field.node.wiki_entry.field_wiki_image
+    - field.field.node.wiki_entry.field_wiki_references
+    - field.field.node.wiki_entry.field_wiki_related
+    - field.field.node.wiki_entry.field_wiki_summary
+    - node.type.wiki_entry
+  module:
+    - text
+    - user
+id: node.wiki_entry.teaser
+targetEntityType: node
+bundle: wiki_entry
+mode: teaser
+content:
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
+  field_wiki_categories:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_wiki_image:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_wiki_summary:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  body: true
+  co_authors: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_aculta_discussion: true
+  field_domain_source: true
+  field_wiki_references: true
+  field_wiki_related: true
+  langcode: true
+  private_message_link: true
+  search_api_excerpt: true

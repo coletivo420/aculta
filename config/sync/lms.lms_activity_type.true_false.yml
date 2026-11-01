@@ -1,0 +1,10 @@
+uuid: bfb8194b-44f6-4c09-ae51-820e7a68adbc
+langcode: pt-br
+status: true
+dependencies: {  }
+id: true_false
+name: 'Verdadeiro ou falso'
+description: ''
+pluginId: true_false
+pluginConfiguration: {  }
+defaultMaxScore: 1

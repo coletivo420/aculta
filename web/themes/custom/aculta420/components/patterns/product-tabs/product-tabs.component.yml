@@ -1,0 +1,31 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Abas do produto
+status: experimental
+group: Patterns
+description: 'Abas da página do produto (Descrição, Informações adicionais e Avaliações), no padrão da loja original. Usa as abas do Bootstrap, já carregadas pelo tema; sem JavaScript próprio.'
+props:
+  type: object
+  properties:
+    id:
+      type: string
+      description: 'Identificador único das abas (ids de painel e de aba derivados dele).'
+      default: 'aculta-produto-abas'
+    review_count:
+      type: integer
+      description: 'Quantidade de avaliações exibida no título da aba.'
+      default: 0
+      minimum: 0
+slots:
+  description:
+    title: Descrição
+    description: 'Texto da descrição, já renderizado pelo chamador.'
+  details:
+    title: Informações adicionais
+    description: 'Dados do produto (tamanhos, categoria), já renderizados pelo chamador.'
+  reviews:
+    title: Avaliações
+    description: 'Conteúdo das avaliações, já renderizado pelo chamador.'
+assets:
+  css:
+    component:
+      product-tabs.css: {}

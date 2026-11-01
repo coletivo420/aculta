@@ -1,0 +1,5 @@
+name: Conversa não lida
+description: Estado ilustrativo de leitura para uma mensagem.
+component: aculta420:messenger-read-status
+props:
+  unread: true

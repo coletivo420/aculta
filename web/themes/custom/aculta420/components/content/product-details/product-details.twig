@@ -1,0 +1,13 @@
+{# Tabela da aba Informação adicional. Valores vêm do chamador; sem dados que o Portal não entregue. #}
+<table class="aculta-product-details">
+  <tbody>
+    {% if category %}
+      <tr><th scope="row">Categoria</th><td>{{ category }}</td></tr>
+    {% endif %}
+    <tr><th scope="row">Peso</th><td>{{ weight }}</td></tr>
+    <tr><th scope="row">Dimensões</th><td>{{ dimensions }}</td></tr>
+    {% if sizes %}
+      <tr><th scope="row">Tamanho</th><td>{{ sizes }}</td></tr>
+    {% endif %}
+  </tbody>
+</table>

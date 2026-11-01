@@ -1,0 +1,13 @@
+name: Autoria em destaque
+description: Cartão de autor no tamanho lg, para destaques editoriais.
+component: aculta420:author-card
+props:
+  variant: author_editorial
+  display_name: Maria Antônia
+  profile_url: /u/maria
+  designation: Autora
+  size: lg
+  has_avatar: true
+slots:
+  avatar:
+    markup: <span aria-hidden="true">M</span>

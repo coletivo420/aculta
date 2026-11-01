@@ -1,0 +1,25 @@
+uuid: 56856760-e2b3-48a4-9f2b-90b9b84b7f88
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_wiki_image
+    - media.type.image
+    - node.type.wiki_entry
+id: node.wiki_entry.field_wiki_image
+field_name: field_wiki_image
+entity_type: node
+bundle: wiki_entry
+label: Imagem
+description: 'Imagem associada ao verbete, usando a biblioteca de mídia existente.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+    auto_create: false
+field_type: entity_reference

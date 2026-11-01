@@ -1,0 +1,24 @@
+uuid: 4506699d-0226-4780-81de-2f949a3c88f6
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_exibir_foto
+    - profile.type.email_confirmed
+id: profile.email_confirmed.field_exibir_foto
+field_name: field_exibir_foto
+entity_type: profile
+bundle: email_confirmed
+label: 'Exibir foto no perfil público'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean
+

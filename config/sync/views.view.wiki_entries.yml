@@ -1,0 +1,193 @@
+uuid: 29dfff37-126c-42f0-81e3-d889ab02e33b
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - node.type.wiki_entry
+  module:
+    - node
+    - user
+id: wiki_entries
+label: 'Verbetes da Wiki420'
+module: views
+description: 'Verbetes publicados da Wiki420, em ordem de publicação ou alteração.'
+tag: ''
+base_table: node_field_data
+base_field: nid
+display:
+  default:
+    id: default
+    display_title: Padrão
+    display_plugin: default
+    position: 0
+    display_options:
+      title: Verbetes
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 12
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: tag
+        options: {  }
+      sorts:
+        created:
+          id: created
+          table: node_field_data
+          field: created
+          entity_type: node
+          entity_field: created
+          plugin_id: date
+          order: DESC
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            wiki_entry: wiki_entry
+        field_domain_source_target_id:
+          id: field_domain_source_target_id
+          table: node__field_domain_source
+          field: field_domain_source_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: domain_source
+          operator: or
+          value:
+            _active: _active
+      style:
+        type: default
+        options:
+          default_row_class: true
+      row:
+        type: 'entity:node'
+        options:
+          view_mode: teaser
+      query:
+        type: views_query
+        options: {  }
+      css_class: aculta-wiki-list
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  block_changes:
+    id: block_changes
+    display_title: 'Alterações recentes'
+    display_plugin: block
+    position: 3
+    display_options:
+      title: 'Alterações recentes'
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 5
+      sorts:
+        changed:
+          id: changed
+          table: node_field_data
+          field: changed
+          entity_type: node
+          entity_field: changed
+          plugin_id: date
+          order: DESC
+      display_extenders: {  }
+      block_description: 'Alterações recentes'
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  block_recent:
+    id: block_recent
+    display_title: 'Verbetes recentes'
+    display_plugin: block
+    position: 2
+    display_options:
+      display_extenders: {  }
+      block_description: 'Verbetes recentes'
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  page_1:
+    id: page_1
+    display_title: 'Todos os verbetes'
+    display_plugin: page
+    position: 1
+    display_options:
+      pager:
+        type: full
+        options:
+          offset: 0
+          items_per_page: 12
+          total_pages: null
+          id: 0
+          tags:
+            next: 'Avançar ›'
+            previous: '‹ Voltar'
+            first: '« Primeiro'
+            last: 'Último »'
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Itens por página'
+            items_per_page_options: '10, 20, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: Todos
+            offset: false
+            offset_label: Offset
+          quantity: 9
+      defaults:
+        pager: false
+        header: false
+      header:
+        result:
+          id: result
+          table: views
+          field: result
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: result
+          empty: true
+          content: '@total verbetes publicados'
+      display_extenders: {  }
+      path: wiki/verbetes
+      menu:
+        type: none
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }

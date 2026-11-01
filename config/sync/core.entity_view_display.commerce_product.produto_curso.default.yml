@@ -1,0 +1,29 @@
+uuid: 3e6d4e6e-a829-40a0-a53a-7209bce44e3e
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_type.produto_curso
+  module:
+    - commerce_product
+id: commerce_product.produto_curso.default
+targetEntityType: commerce_product
+bundle: produto_curso
+mode: default
+content:
+  title:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: -5
+    region: content
+hidden:
+  created: true
+  langcode: true
+  search_api_excerpt: true
+  stores: true
+  uid: true
+  variations: true
+

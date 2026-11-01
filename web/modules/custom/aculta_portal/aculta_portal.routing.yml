@@ -1,0 +1,410 @@
+# Visão geral da conta. Caminho interno: o público é a raiz / do Domain ACCOUNT, cujo front aponta para cá
+# (o Core reserva / para a rota <front>). Requisição direta a este caminho responde 404 (DomainPurposeRequestSubscriber).
+# Aceite dos termos (popup e retorno sem JavaScript). Ver docs/integrations/AUTHENTICATION.md.
+aculta_portal.aculta_user_agreement.accept:
+  path: /termos/aceitar
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\AcultaUserAgreementAcceptForm'
+    _title: 'Termos de uso'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+
+aculta_portal.dashboard:
+  path: /conta-legada
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalController::dashboard'
+    _title: Visão geral
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+
+aculta_portal.user_upload_settings:
+  path: /admin/config/aculta/uploads-usuarios
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\UserUploadSettingsForm'
+    _title: 'Envio de arquivos por usuários'
+  requirements:
+    _permission: 'administer site configuration'
+aculta_portal.my_data:
+  path: /dados
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalController::myData'
+    _title: Meus dados
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+aculta_portal.my_data_address:
+  path: /dados/endereco
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalController::address'
+    _title: Endereço
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+aculta_portal.my_data_other:
+  path: /dados/outros-dados
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalController::otherData'
+    _title: Outros Dados
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+aculta_portal.connections:
+  path: /conexoes
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalController::connections'
+    _title: Conexões
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+aculta_portal.security:
+  path: /seguranca
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalController::security'
+    _title: E-mail
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+
+aculta_portal.security_password:
+  path: /seguranca/senha
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalController::securityPassword'
+    _title: Senha
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+
+aculta_portal.account_courses:
+  path: /meus-cursos
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\AccountCoursesController::page'
+    _title: Cursos
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+    _aculta_domain_purpose: account
+
+aculta_portal.support_form:
+  path: /apoio
+  defaults:
+    _form: '\Drupal\aculta_portal\Support\Form\SupportForm'
+    _title: Apoie a Associação
+  requirements:
+    _access: 'TRUE'
+aculta_portal.account_settings:
+  path: /configuracoes
+  defaults:
+    _form: '\Drupal\aculta_portal\Appearance\AppearanceForm'
+    _title: Configurações
+  requirements:
+    _permission: access aculta portal
+  options:
+    no_cache: true
+aculta_portal.appearance_settings:
+  path: /painel-administrativo/aculta/aparencia
+  defaults:
+    _form: '\Drupal\aculta_portal\Appearance\SettingsForm'
+    _title: Aparência do site
+  requirements:
+    _permission: administer aculta appearance settings
+  options:
+    _admin_route: true
+aculta_portal.support_settings:
+  path: /painel-administrativo/aculta/apoio
+  defaults:
+    _form: '\Drupal\aculta_portal\Support\Form\SettingsForm'
+    _title: Formas de apoio
+  requirements:
+    _permission: administer aculta support settings
+  options:
+    _admin_route: true
+aculta_portal.admin:
+  path: /painel-administrativo/aculta
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalRequirementsController::overview'
+    _title: ACULTA Portal
+  requirements:
+    _permission: administer site configuration
+  options:
+    _admin_route: true
+aculta_portal.turnstile_settings:
+  path: /painel-administrativo/aculta/turnstile
+  defaults:
+    _form: '\Drupal\aculta_portal\Captcha\Form\TurnstileSettingsForm'
+    _title: Turnstile
+  requirements:
+    _permission: administer site configuration
+  options:
+    _admin_route: true
+aculta_portal.requirements:
+  path: /painel-administrativo/aculta/requisitos
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PortalRequirementsController::report'
+    _title: Status do Portal Aculta
+  requirements:
+    _permission: administer site configuration
+  options:
+    _admin_route: true
+aculta_portal.support_my:
+  path: /meu-apoio
+  defaults:
+    _controller: '\Drupal\aculta_portal\Support\Controller\SupportController::mySupport'
+    _title: Meu Apoio
+  requirements:
+    _permission: access aculta portal
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+aculta_portal.support_subscription_action:
+  path: '/meu-apoio/assinatura/{commerce_order}/{acao}'
+  defaults:
+    _form: '\Drupal\aculta_portal\Support\Form\SubscriptionActionForm'
+    _title: 'Doação mensal'
+  requirements:
+    _permission: access aculta portal
+    _user_is_logged_in: 'TRUE'
+    acao: 'pausar|reativar|cancelar'
+  options:
+    no_cache: true
+    parameters:
+      commerce_order:
+        type: entity:commerce_order
+
+
+
+
+
+
+aculta_portal.search:
+  path: /busca
+  defaults:
+    _controller: '\Drupal\aculta_portal\Search\SearchPageController::page'
+    _title: Buscar
+  requirements:
+    _permission: access content
+aculta_portal.search_popup:
+  path: /busca/popup
+  defaults:
+    _form: '\Drupal\aculta_portal\Search\Form\SearchPopupForm'
+    _title: Buscar no site
+  requirements:
+    _permission: access content
+aculta_portal.search_preview:
+  path: /busca/previa
+  defaults:
+    _controller: 'aculta_portal.search_preview_controller:preview'
+  requirements:
+    _permission: access content
+aculta_portal.search_suggestions:
+  path: /busca/sugestoes
+  defaults:
+    _controller: '\Drupal\aculta_portal\Search\SearchPageController::suggestions'
+  requirements:
+    _permission: access content
+
+aculta_portal.courses_home:
+  path: /cursos
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\CoursesController::home'
+    _title: Cursos
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: courses
+aculta_portal.shop_home:
+  path: /loja
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\ShopController::home'
+    _title: 'Loja da Associação'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: shop
+aculta_portal.deployer_status:
+  path: /painel-administrativo/aculta/deployer
+  defaults:
+    _controller: '\Drupal\aculta_portal\Deployer\DeployerStatusController::page'
+    _title: ACULTA Deployer
+  requirements:
+    _permission: administer aculta deployer
+  options:
+    _admin_route: true
+aculta_portal.email_resend:
+  path: /confirmar-email/reenviar
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\EmailResendForm'
+    _title: 'Reenviar confirmação de e-mail'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+# Edição do próprio perfil a partir do painel administrativo (MAIN). Redireciona para o formulário do usuário logado
+# (entity.user.edit_form). O item de menu do Navigation aponta para esta rota, porque a rota de identidade da Conta
+# não existe em MAIN.
+aculta_portal.admin_self_edit:
+  path: /painel-administrativo/perfil/editar
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\AdminSelfEditController::redirectToOwnEdit'
+    _title: 'Editar perfil'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    _admin_route: true
+    no_cache: true
+
+# Popup "Entrar" da barra multidomínio (use-ajax modal). Exceção do Turnstile: ver docs/portal/TURNSTILE.md.
+aculta_portal.login_popup:
+  path: /entrar/janela
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\LoginPopupForm'
+    _title: Entrar
+  requirements:
+    _user_is_logged_in: 'FALSE'
+
+# Cadastro em modal (convite do checkout de doação). Sem Turnstile: exceção em TurnstileToggle e docs/portal/TURNSTILE.md.
+aculta_portal.register_popup:
+  path: /criar-conta/janela
+  defaults:
+    _entity_form: 'user.register_popup'
+    _title: 'Criar conta'
+  requirements:
+    _access_user_register: 'TRUE'
+
+aculta_portal.email_confirmacao_pendentes:
+  path: '/painel-administrativo/contas/nao-confirmadas'
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\PendingEmailConfirmationController::list'
+    _title: 'Contas sem e-mail confirmado'
+  requirements:
+    _permission: 'confirmar email de conta manualmente'
+  options:
+    _admin_route: true
+
+aculta_portal.email_confirmar_manual:
+  path: '/painel-administrativo/contas/{user}/confirmar-email'
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\AdminEmailConfirmForm'
+    _title: 'Confirmar e-mail'
+  requirements:
+    _permission: 'confirmar email de conta manualmente'
+    user: '\d+'
+  options:
+    _admin_route: true
+    parameters:
+      user:
+        type: entity:user
+
+aculta_portal.relatorio_vendas_pagamento_atualizar:
+  path: '/painel-administrativo/loja/vendas/pagamento/{commerce_payment}/atualizar'
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\SalesPaymentRefreshForm'
+    _title: 'Atualizar pagamento'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    _admin_route: true
+    parameters:
+      commerce_payment:
+        type: entity:commerce_payment
+
+aculta_portal.relatorio_vendas_pagamento_cancelar:
+  path: '/painel-administrativo/loja/vendas/pagamento/{commerce_payment}/cancelar'
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\SalesPaymentCancelForm'
+    _title: 'Cancelar pagamento'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    _admin_route: true
+    parameters:
+      commerce_payment:
+        type: entity:commerce_payment
+
+aculta_portal.relatorio_doacoes:
+  path: '/painel-administrativo/loja/doacoes'
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\DonationReportController::report'
+    _title: 'Relatório de doações'
+  requirements:
+    _permission: 'administrar doacoes'
+  options:
+    _admin_route: true
+
+aculta_portal.relatorio_vendas:
+  path: '/painel-administrativo/loja/vendas'
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\SalesReportController::report'
+    _title: 'Relatório de vendas'
+  requirements:
+    _permission: 'view commerce_order'
+  options:
+    _admin_route: true
+
+
+aculta_portal.cart_checkout:
+  path: /carrinho/finalizar
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\CartCheckoutController::finalizar'
+    _title: 'Finalizar carrinho'
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: true
+aculta_portal.simplified_account:
+  path: /painel-administrativo/aculta/cadastro-simplificado
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\SimplifiedAccountSettingsForm'
+    _title: 'Cadastro simplificado'
+  requirements:
+    _permission: administer aculta simplified account
+  options:
+    _admin_route: true
+
+aculta_portal.checkout_common:
+  path: /painel-administrativo/aculta/checkout
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\Checkout\CheckoutCommonForm'
+    _title: Carrinhos e checkouts
+  requirements:
+    _permission: administer aculta checkout common
+  options:
+    _admin_route: true
+aculta_portal.checkout_shop:
+  path: /painel-administrativo/aculta/checkout/loja
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\Checkout\CheckoutShopForm'
+    _title: Checkout da Loja
+  requirements:
+    _permission: administer aculta checkout shop
+  options:
+    _admin_route: true
+aculta_portal.checkout_lms:
+  path: /painel-administrativo/aculta/checkout/lms
+  defaults:
+    _form: '\Drupal\aculta_portal\Form\Checkout\CheckoutLmsForm'
+    _title: Checkout do LMS
+  requirements:
+    _permission: administer aculta checkout lms
+  options:
+    _admin_route: true
+
+# Etapa de criação de senha do cadastro simplificado: alcançada depois de confirmar o e-mail.
+aculta_portal.simplified_account.password:
+  path: '/criar-senha'
+  defaults:
+    _controller: '\Drupal\aculta_portal\Controller\SimplifiedAccountPasswordController::page'
+    _title: 'Crie sua senha'
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: TRUE

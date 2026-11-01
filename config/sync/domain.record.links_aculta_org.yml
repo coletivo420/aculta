@@ -1,0 +1,12 @@
+uuid: d00f627c-e7a6-4695-86d6-0f70b8841cb0
+langcode: pt-br
+status: true
+dependencies: {  }
+id: links_aculta_org
+domain_id: 14807906
+hostname: links.aculta.org
+name: 'ACULTA - Redes sociais'
+scheme: https
+weight: 9
+is_default: false
+path_prefix: ''

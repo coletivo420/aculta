@@ -1,0 +1,15 @@
+# Vocabulário específico do LMS que substitui traduções padrão herdadas.
+msgid ""
+msgstr ""
+"Project-Id-Version: ACULTA420 LMS terms\n"
+"Language: pt-BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Lesson"
+msgstr "Aula"
+
+msgid "Lesson type"
+msgstr "Tipo de aula"

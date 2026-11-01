@@ -1,0 +1,11 @@
+name: Categoria pública
+description: Exemplo estático de categoria do Fórum, sem dados reais.
+component: aculta420:forum-category
+props: {}
+slots:
+  parent:
+    markup: Discussões públicas
+  title:
+    markup: Cultura e sociedade
+  description:
+    markup: Conversas e referências culturais da comunidade.

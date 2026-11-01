@@ -1,0 +1,153 @@
+{
+  "generated_at": "2026-10-04T00:21:36Z",
+  "selected_manifest": {
+    "count": 59,
+    "matching": 59,
+    "missing_active": [],
+    "missing_sync": [],
+    "different": []
+  },
+  "full_configuration_policy": "Alternative A: config/sync is the complete desired Drupal configuration; no partial-import strategy, Config Split, or Config Ignore.",
+  "canonical_sync_directory": "config/sync",
+  "last_full_export": {
+    "active_objects": 651,
+    "sync_objects": 651,
+    "differences": 0,
+    "comparison": "temporary full export of active config against canonical config/sync"
+  },
+  "reconciled_before_phase4": {
+    "initial_differences": 49,
+    "objects": {
+      "COMMERCE": {
+        "Only in DB": [
+          "commerce_checkout.commerce_checkout_flow.default",
+          "commerce_number_pattern.commerce_number_pattern.order_default",
+          "commerce_order.commerce_order_type.default",
+          "commerce_order.settings",
+          "commerce_price.commerce_currency.BRL",
+          "commerce_store.commerce_store_type.online",
+          "core.entity_form_display.commerce_order.default.default",
+          "core.entity_form_display.commerce_order.default.order_details",
+          "core.entity_form_display.commerce_store.online.default",
+          "core.entity_form_display.profile.customer.default",
+          "core.entity_form_mode.commerce_order.order_details",
+          "core.entity_form_mode.profile.billing",
+          "core.entity_view_display.commerce_order.default.default",
+          "core.entity_view_display.commerce_order.default.user",
+          "core.entity_view_display.commerce_store.online.default",
+          "core.entity_view_display.profile.customer.admin",
+          "core.entity_view_display.profile.customer.default",
+          "core.entity_view_mode.commerce_order.user",
+          "core.entity_view_mode.profile.admin",
+          "field.field.profile.customer.address",
+          "field.field.user.user.commerce_remote_id",
+          "field.storage.profile.address",
+          "field.storage.user.commerce_remote_id",
+          "profile.type.customer",
+          "system.action.commerce_order_delete_action",
+          "system.action.commerce_order_unlock",
+          "system.action.commerce_store_delete_action"
+        ]
+      },
+      "CORE": {
+        "Different": [
+          "core.entity_view_display.user.user.compact",
+          "user.role.anonymous"
+        ]
+      },
+      "PORTAL": {
+        "Only in DB": [
+          "crop.settings",
+          "image.style.crop_thumbnail",
+          "image_widget_crop.settings"
+        ]
+      },
+      "OUTROS CONTRIB": {
+        "Only in DB": [
+          "system.action.profile_delete_action",
+          "system.action.profile_publish_action",
+          "system.action.profile_unpublish_action"
+        ]
+      },
+      "VIEWS": {
+        "Only in DB": [
+          "views.view.agreements",
+          "views.view.commerce_cart_block",
+          "views.view.commerce_cart_form",
+          "views.view.commerce_carts",
+          "views.view.commerce_checkout_order_summary",
+          "views.view.commerce_order_item_table",
+          "views.view.commerce_order_item_table_admin",
+          "views.view.commerce_order_payments",
+          "views.view.commerce_orders",
+          "views.view.commerce_stores",
+          "views.view.commerce_user_orders",
+          "views.view.profiles",
+          "views.view.social_auth_profiles",
+          "views.view.user_agreements"
+        ]
+      }
+    },
+    "core_decisions": [
+      {
+        "name": "core.entity_view_display.user.user.compact",
+        "decision": "Use active version: hides Commerce remote ID and includes its actual field dependency."
+      },
+      {
+        "name": "user.role.anonymous",
+        "decision": "Use active version: allows guest checkout required by the donation flow while preserving content-only baseline permissions."
+      }
+    ]
+  },
+  "phase4_new_configuration": {
+    "additional_objects": 38,
+    "scope": "Commerce Donation Flow and disabled Mercado Pago gateway configuration; all active desired settings were included."
+  },
+  "portal_account_manifest": {
+    "purpose": "Critical Portal/account audit subset only; not the deploy configuration set.",
+    "object_count": 59,
+    "active_sync_match": 59
+  },
+  "final_verification": {
+    "policy": "Alternative A: config/sync is the complete desired configuration",
+    "canonical_directory": "config/sync",
+    "active_objects": 651,
+    "sync_objects": 651,
+    "differences": 0,
+    "drush_config_status": "No differences between DB and sync directory",
+    "previous_49_differences_resolved": true,
+    "portal_manifest_role": "Critical audit subset only; not deploy scope",
+    "config_split": false,
+    "config_ignore": false,
+    "partial_import_strategy": false,
+    "donation_flow": "1.2.0",
+    "commerce": "3.3.10",
+    "payment_gateway": "mercado_pago disabled; empty credentials",
+    "exported_secret_values": 0,
+    "phase5_webhook_guard": {
+      "sdk": "mercadopago/dx-php 3.16.0",
+      "official_signature_validator": true,
+      "environment_key": "MERCADOPAGO_WEBHOOK_SECRET",
+      "gateway": "mercado_pago disabled",
+      "supported_type": "payment",
+      "legacy_unsigned_ipn": "rejected",
+      "external_network_calls": 0
+    },
+    "phase5_http_smoke": {
+      "public_200": 17,
+      "anonymous_private_403": 6,
+      "removed_profile_route_404": true,
+      "login_200": true,
+      "password_reset_200": true,
+      "local_only": true,
+      "donation_start_route_requested": false
+    },
+    "http_smoke": {
+      "public_200": 13,
+      "anonymous_forbidden": 4,
+      "host": "default",
+      "local_only": true,
+      "donation_start_route_requested": false
+    }
+  }
+}

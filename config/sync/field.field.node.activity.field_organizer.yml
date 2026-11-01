@@ -1,0 +1,21 @@
+uuid: da08bf0c-ebe5-4283-a354-05e6a7343e1b
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_organizer
+    - node.type.activity
+id: node.activity.field_organizer
+field_name: field_organizer
+entity_type: node
+bundle: activity
+label: Organizador
+description: 'Campo editorial administrável: Organizador. Preencha somente com informações verificadas.'
+required: true
+translatable: true
+default_value:
+  -
+    value: 'Associação Cultural Antiproibicionista'
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,28 @@
+uuid: 13c2f217-352e-4069-afe9-43439235dec1
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_don_digest
+    - message.template.aculta_msg_donation_notice
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: vnR0aHdddOeDgYFLHMejIxGncFJ5mJ-LNPSbOH6iumc
+id: message.aculta_msg_donation_notice.field_aculta_don_digest
+field_name: field_aculta_don_digest
+entity_type: message
+bundle: aculta_msg_donation_notice
+label: 'Resumo por e-mail concluído'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean

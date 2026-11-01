@@ -1,0 +1,134 @@
+# ACULTA Image (`aculta_image`)
+
+Sistema único de imagens do site ACULTA. Todo uso de imagem passa por ele: catálogo de finalidades, política de upload,
+renderização responsiva, modelos de imagem no texto, compressão, leitura de dimensões, exclusão controlada, ingestão de
+origem externa, auditoria, quarentena e comparação visual.
+
+| Estado do submódulo | Versão atual | Próximas fases | Classificação |
+| --- | --- | --- | --- |
+| Em desenvolvimento | `0.1.0-dev.46` ([CHANGELOG](CHANGELOG.md)) | M12: inventariar referências e preparar migração reversível do acervo existente; concluir integração Growroom após F3 do Fórum; validar FPM Hostinger e revisão visual/gates antes de RC. Ver [status](../../../../../../docs/operations/status/aculta_image.yml) e [plano](docs/PLANO.md). | **Dev**. Ciclo vigente: Dev → RC → deploy/validação Alpha no servidor de desenvolvimento → produção. |
+**Para retomar o trabalho:** [docs/HANDOFF.md](docs/HANDOFF.md).
+**Plano e fases:** [docs/PLANO.md](docs/PLANO.md). **Modelos no texto:** [docs/MODELOS-DE-IMAGEM.md](docs/MODELOS-DE-IMAGEM.md).
+**Estilos:** [docs/ESTILOS.md](docs/ESTILOS.md). **Importação do Growroom:** [docs/IMPORTACAO-GROWROOM.md](docs/IMPORTACAO-GROWROOM.md).
+
+## Regra
+
+Toda imagem e todo arquivo de imagem do site passa por este módulo (AGENTS, "Imagens e arquivos de imagem"). Módulos e
+temas pedem uma **finalidade**, não um estilo. Novo estilo nasce no catálogo. Novo campo de imagem declara a política
+no `third_party_settings`. Para capas de curso, `capa_curso` alimenta os cartões do LMS na finalidade `destaque`, aceita arquivos até 10 MB e não limita dimensões. Importação externa passa pela ingestão.
+
+## Serviços
+
+Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper` (registro em `PortalHelperRegistry`).
+
+| Serviço | Classe | Função |
+| --- | --- | --- |
+| `aculta_image.catalog` | `ImageCatalog` | Finalidades (`PURPOSES`), estilos (`STYLES`) e modelos de texto (`MODELOS`). Única fonte de nome de estilo. |
+| `aculta_image.upload_policy` | `UploadPolicy` | Política central para png, gif, jpg, jpeg e webp (10 MB padrão). Uploads contextuais podem selecionar subconjunto e ampliar tamanho explicitamente, sem liberar extensões fora do catálogo central. |
+| `aculta_image.render` | `ImageRenderer` | `build()`, `buildManagedImage()` para imagens gerenciadas pré-derivadas, `styleId()`, `styleEntity()`, `displaySettings()`. |
+| `aculta_image.inspector` | `ImageInspector` | Dimensões de arquivo ou de bytes. |
+| `aculta_image.generated_file` | `GeneratedImageFileManager` | Registra derivados de imagem públicos como arquivos temporários sujeitos à limpeza normal. |
+| `aculta_image.file_remover` | `FileRemover` | Exclusão de imagem após checagem de `file_usage` e `entity_usage`; invalida derivados e metadados internos. |
+| `aculta_image.cleanup` | `ImageCleanup` | Fila de imagens substituídas/removidas e limpeza de temporários vencidos, sempre coordenadas pelo Portal; sem coordenador a fila retém itens não verificáveis. |
+| `aculta_image.ingester` | `ImageIngester` | Ingestão de imagem externa (SHA-256, reaproveitamento, origem). |
+| `aculta_image.audit` | `ImageAudit` | Resumo, duplicatas exatas, impressões visuais e candidatas. Somente leitura. |
+| `aculta_image.quarantine` | `ImageQuarantine` | Envio, restauração e exclusão de vencidas à quarentena. |
+| `aculta_image.compressor` | `ImageCompressor` | Processamento inline por Imagick/GD conforme configuração, com redução, qualidade e formatos configuráveis. |
+| `aculta_image.capabilities` | `ImageCapabilities` | Detecta backends PHP, formatos e otimizadores opcionais disponíveis no servidor. |
+| `aculta_image.pdf_thumbnail` | `PdfThumbnailGenerator` | Miniatura JPEG da primeira página de PDF público com a extensão PHP Imagick, sem chamada a `magick`/`convert`; falha fechada quando o formato PDF não está disponível. |
+
+## Texto dos editores (CKEditor 5 e filtro)
+
+- **Upload:** a imagem enviada a um editor vai para `public://inline-images/`. O hook `file_insert` (`InlineImageHooks`)
+  reduz para 1200 px de largura (só se for maior), depois comprime. A validação de dimensão do core foi desligada nos
+  editores com upload: a imagem é aceita e convertida, não recusada.
+- **Modelo:** o plugin `acultaImage.ImageModel` (`js/ckeditor5/aculta-image-model.js`, JavaScript simples, sem build)
+  adiciona um dropdown único na barra, com rótulo do modelo selecionado. A barra quebra em várias linhas em vez de
+  agrupar os itens excedentes no overflow. Grava `data-aculta-modelo` no `<img>`.
+  A lista de modelos oferecidos
+  vem da configuração do editor (classe PHP `Plugin\CKEditor5Plugin\ImageModel`).
+- **Legenda:** o botão contextual “Editar legenda” grava `data-aculta-legenda`; o filtro transforma o atributo em
+  `<figcaption>`. A interface e a serialização foram verificadas no Firefox.
+- **Filtro:** `aculta_imagem_modelo` (`Plugin\Filter\ImagemModelo`, peso 20) transforma o `<img>` em `<figure>` com
+  `srcset` e `sizes` do modelo, e legenda em `<figcaption>` quando houver `data-aculta-legenda`. Crédito não existe.
+- **Modelos:** Pequena (320 e 640), Padrão (480 e 1160), Larga (800 e 1200), Destaque (1024 e 1200). Ver `ImageCatalog::MODELOS`.
+- **Editores:** dropdown de modelo em `revista_editorial` e `usuario_aculta`. `usuario_aculta` oferece Pequena e Padrão e é usado nos tópicos e respostas do Fórum. A permissão direta está em `email_confirmed`; com a herança atual, também chega a `estudante`, `associado`, `lms_teacher` e `content_editor`. `gerente_loja` não a herda. `authenticated` isolado não pode editar esse formato.
+- Configuração: `config/sync/filter.format.{revista_editorial,usuario_aculta}.yml`, `config/sync/editor.editor.{revista_editorial,usuario_aculta}.yml`.
+- Plugin: `aculta_image.ckeditor5.yml` (biblioteca `ckeditor5.image_model`, dependente de `ckeditor5/internal.drupal.ckeditor5.image`).
+
+## Rotas e permissões
+
+- `/painel-administrativo/imagens`: painel com resumo e atalhos administrativos.
+- `/painel-administrativo/imagens/configuracoes`: selecionar backend, processamento, formatos e qualidades.
+- `/painel-administrativo/imagens/relatorio`: resumo, duplicatas exatas, pares visuais e candidatas.
+- `/painel-administrativo/imagens/limpeza`: executar até 100 itens da fila e temporários vencidos.
+- `/painel-administrativo/imagens/quarentena`: enviar candidatas, restaurar e excluir vencidas. Arquivos já quarentenados não voltam a aparecer como candidatas.
+- Permissão: `administer aculta images`.
+- Navegação: ACULTA > Imagens > Processamento e formatos. O painel permanece
+  sob a permissão restrita de administração de imagens.
+- Decisão D-47: backend limitado às bibliotecas detectadas; compressão,
+  formatos aceitos/gerados e WebP são configuráveis. WebP substitui uploads
+  inline com perda, qualidade 82. A opção administrativa não migra arquivos
+  existentes; a migração requer inventário e plano de reversão (M12).
+
+## Dependências
+
+- Core: `file`, `image`, `media`, `ckeditor5`, `filter`, `editor`.
+- Contrib (justificativa em `docs/PLANO.md`): `entity_usage` 5.0.1, `media_duplicates` 2.0.4, `imageapi_optimize` 4.2.0,
+  `imageapi_optimize_binaries` 1.2.0-beta1 (beta, aprovado pelo responsável).
+- Bibliotecas e ferramentas disponíveis variam por ambiente. Miniaturas PDF usam a extensão PHP Imagick; seleção de
+  backend, recursos WebP e ferramentas opcionais são detectados e configurados em `/painel-administrativo/imagens/configuracoes`.
+  Evidência por ambiente: `docs/PLANO.md`, seção 7.
+
+## Regras de negócio
+
+- **Substituição:** ao atualizar ou excluir entidade com campo de arquivo/imagem, ou alterar texto rico com imagem, os arquivos registrados entram na fila. O Portal revalida File Usage, Entity Usage, referências estruturadas e embeds antes de solicitar remoção física ao Image. Referência não verificável mantém o item na fila para nova tentativa após o lease. Sem o coordenador, nenhum arquivo é excluído.
+- **Temporários:** uploads temporários de imagem de qualquer formulário sem referências são removidos após `system.file:temporary_maximum_age` (Runtime atual: 6 horas; fallback: 6 horas), no máximo 100 itens por execução. Arquivos enviados em formulários ainda em andamento não são removidos antes desse prazo. O compressor de inline reduz o próprio arquivo gerenciado, sem criar cópia temporária de conversão.
+- **Derivados:** ao excluir o original elegível, o módulo invalida os derivados dos estilos de imagem do Core para aquele URI.
+- **Quarentena:** 30 dias. Exclusão só depois do prazo e com nova verificação de uso.
+- **Comparação visual:** dHash de 64 bits com GD. Impressões são calculadas no cron, em lotes de 200. Pares com até 6
+  bits de diferença aparecem para revisão. Imagens lisas e não lidas são excluídas dos pares.
+- **Ingestão:** um arquivo por conteúdo (SHA-256). Origem registrada por arquivo e URL. Nunca sobrescreve.
+- **Compressão inline:** via Imagick ou GD em PHP, escolhidos entre os disponíveis. Qualidade JPEG/WebP e nível PNG são configuráveis; WebP substitui o original no upload inline e fica ativo por padrão, em qualidade 82.
+- **Tipos:** o painel escolhe os MIME processados. A saída pode manter o formato, gerar JPEG/PNG ou gerar WebP. As regras de validação de upload dos campos são independentes.
+- **GIF:** Imagick preserva animações; o backend GD ignora GIF para não descartar quadros.
+- **Acervo existente:** ainda não migrado. A migração terá inventário, atualização de referências e reversão antes de qualquer gravação.
+
+## Gates e testes
+
+- `php scripts/validate-aculta-image.php`: tolerância zero (R1 a R8). Deve passar antes de qualquer PR.
+- Testes unitários (28): `ImageCatalogTest`, `ImageIngesterTest`, `DHashTest`, `QuarantineRulesTest`, `ImageCompressorTest`, `ImageCleanupCoordinatorTest`.
+  ```sh
+  php vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_image/tests/src/Unit
+  ```
+- JavaScript do seletor: `node --check web/modules/custom/aculta_portal/modules/aculta_image/js/ckeditor5/aculta-image-model.js`.
+- Runtime de testes: configurações de editor importadas e cache reconstruído. Firefox confirmou a serialização do modelo
+  em `usuario_aculta` e `revista_editorial`, incluindo o overflow a 488 px. Um upload de 1600×800 foi
+  convertido a 1200×600; o arquivo de teste foi removido. Um artigo temporário não publicado preservou o modelo após
+  reabertura e foi excluído. Tema claro/escuro e viewport de 390 px foram confirmados em sessão Firefox com viewport CSS real. Ver o handoff.
+
+## Atualizações de banco
+
+- `aculta_image_update_10001`: `aculta_image_origin`.
+- `aculta_image_update_10002`: `aculta_image_quarantine`.
+- `aculta_image_update_10003`: `aculta_image_fingerprint`.
+- 0.1.0-dev.9 não altera o schema.
+
+## Estrutura do código
+
+```
+src/
+  ImageCatalog.php, UploadPolicy.php, ImageRenderer.php, ImageInspector.php, FileRemover.php, ImageIngester.php
+  Audit/ImageAudit.php
+  Compression/ImageCompressor.php
+  Controller/ImageAuditController.php
+  Form/ImageQuarantineForm.php
+  Hook/   CronHooks, ImageStyleHooks (srcset), SocialImageHooks (og:image), InlineImageHooks (upload do texto)
+  Plugin/CKEditor5Plugin/ImageModel.php
+  Plugin/Filter/ImagemModelo.php
+  Quarantine/ImageQuarantine.php, QuarantineRules.php
+  Visual/DHash.php
+js/ckeditor5/aculta-image-model.js
+config/schema/aculta_image.schema.yml
+aculta_image.{info,install,libraries,routing,services,ckeditor5}.yml
+```

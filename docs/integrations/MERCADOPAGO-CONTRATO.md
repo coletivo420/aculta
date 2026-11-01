@@ -1,0 +1,99 @@
+# Mercado Pago: contrato da integração Checkout Pro
+
+Documento de auditoria da integração. Registra o que a documentação oficial confirma, o que o código faz e o que ainda não foi confirmado. Não contém credenciais.
+
+## Escopo
+
+Checkout Pro é a única forma de pagamento do Portal (`aculta_mercadopago_checkout_pro`). Todos os fluxos passam por ele: loja, doações avulsas, doações recorrentes, cursos, cancelamento, estorno e retorno de notificações. Os clientes do SDK `mercadopago/dx-php` (Point, OAuth, Orders, Customer, Invoice, Chargeback, PreApprovalPlan) são usados como apoio dessa integração, não como formas de pagamento separadas.
+
+A configuração versionada do gateway Commerce aplica-se aos tipos de pedido `curso`, `default` e `doacao`. A condição foi comparada com a configuração ativa do Runtime em 2026-10-28; o `config:status` focal não apresenta divergência e o gateway continua ativo em modo de teste.
+
+## Fontes
+
+Confirmadas por leitura da página oficial:
+- Webhooks, Brasil: https://www.mercadopago.com.br/developers/pt/docs/your-integrations/notifications/webhooks
+- Consulta de contestação (Checkout Pro), Brasil: https://www.mercadopago.com.br/developers/pt/reference/online-payments/checkout-pro-preferences/chargebacks/get-chargeback/get (`GET /v1/chargebacks/{id}`, `X-Caller-Id` obrigatório)
+- Consulta de fatura recorrente (`GET /authorized_payments/{id}`), Brasil: https://www.mercadopago.com.br/developers/pt/reference/online-payments/subscriptions/get-authorized-payment/get
+- Estornos (Checkout Pro), Argentina: https://www.mercadopago.com.ar/developers/en/docs/checkout-pro-preferences/additional-settings/refunds-and-cancellations
+- Assinatura com plano associado, Brasil: https://www.mercadopago.com.br/developers/pt/docs/subscriptions/integration-configuration/subscription-associated-plan
+- Assinatura sem plano com pagamento pendente, Brasil: https://www.mercadopago.com.br/developers/en/docs/subscriptions/integration-configuration/subscription-no-associated-plan/pending-payments
+- Gerenciamento de assinaturas, Brasil: https://www.mercadopago.com.br/developers/pt/docs/subscriptions/subscription-management
+- Atualização de plano de assinatura, Brasil: https://www.mercadopago.com.br/developers/en/reference/online-payments/subscriptions/update-preapproval-plan/put
+- Visão geral dos endpoints de Assinaturas, Brasil: https://www.mercadopago.com.br/developers/pt/reference/online-payments/subscriptions/overview
+- Gerenciamento de planos de assinatura, Brasil: https://www.mercadopago.com.br/developers/pt/docs/subscription-plans/manage-subscription-plan
+
+Encontradas em busca e não lidas por completo (acesso negado ou sem conteúdo):
+- Referência de preferências: https://www.mercadopago.com.br/developers/en/reference/online-payments/checkout-pro-preferences/create-preference/post
+- Exclusão de meios de pagamento: https://www.mercadopago.com.uy/developers/en/docs/checkout-pro-preferences/additional-settings/payment-methods
+- Notificações Checkout Pro: https://www.mercadopago.cl/developers/en/docs/checkout-pro-preferences/additional-content/notifications/webhooks (403 na leitura)
+
+## Confirmado na documentação
+
+**Webhooks**
+- Cabeçalho `x-signature` no formato `ts=<timestamp>,v1=<hash>`. O cabeçalho `x-request-id` acompanha a notificação.
+- Validação pelo SDK oficial com o segredo do aplicativo. O SDK monta o manifesto `id:<data.id>;request-id:<x-request-id>;ts:<ts>;` e compara o HMAC-SHA256. O código do Portal usa `MercadoPago\Webhook\WebhookSignatureValidator` do SDK, então segue o algoritmo oficial.
+- O `data.id` vem da query string nos exemplos oficiais.
+- Tópicos listados na documentação: `orders`, `payment`, `subscription_authorized_payment`, `subscription_preapproval`, `subscription_preapproval_plan`, `topic_merchant_order_wh`, `topic_chargebacks_wh`, entre outros.
+- Para assinaturas, a documentação exige habilitar `subscription_preapproval_plan` quando há plano ou `subscription_preapproval` para assinatura sem plano; também exige o tópico `payments` para conciliar as cobranças associadas. Essa seleção é configuração da aplicação no painel do Mercado Pago e permanece pendente de comprovação em sandbox.
+- Resposta esperada: 200 ou 201 em até 22 segundos. Sem confirmação, o Mercado Pago reenvia a cada 15 minutos.
+- Recomendação oficial: validar, responder, e só então buscar o recurso pela API (`GET /v1/payments/{id}`) antes de atualizar o sistema.
+
+**Estorno**
+- `POST /payments/{id}/refunds`. Estorno total com corpo vazio; parcial com o valor no corpo.
+- Prazo de 180 dias após a aprovação; a conta precisa de saldo disponível.
+- Compras com dois meios geram um `payment_id` por meio. Estorno total do pedido exige estornar cada pagamento vinculado ao `merchant_order`.
+- O SDK gera automaticamente um `X-Idempotency-Key` aleatório para `POST`/`PUT`/`PATCH`; uma chamada nova após timeout recebe outra chave. Os fluxos que precisam repetir a mesma operação passam uma chave determinística nas opções da requisição.
+
+**Assinatura com plano associado**
+- Plano: `POST /preapproval_plan`, com `reason`, `auto_recurring`, `payment_methods_allowed` e `back_url`. O `id` da resposta é o `preapproval_plan_id`.
+- Assinatura: `POST /preapproval` com `preapproval_plan_id`, `payer_email` e `back_url`.
+
+**Assinatura sem plano com pagamento pendente**
+- `POST /preapproval` com `status: "pending"`, sem `card_token_id`. O comprador conclui o pagamento por um link de pagamento compartilhado.
+- Isso confere com o código: `RecurrenceRequestBuilder::assinatura()` envia `status => 'pending'` e não envia cartão.
+
+**Cobrança recorrente**
+- A referência brasileira de `GET /authorized_payments/{id}` documenta `id`, `preapproval_id`, `external_reference`, `currency_id`, `transaction_amount`, `status` e pagamento vinculado com `id`/`status`.
+- O módulo confere IDs retornados com a notificação assinada e com a assinatura guardada no pedido; só `payment.status = approved` cria pagamento Commerce, e exige valor/moeda idênticos ao pedido de assinatura.
+
+## Verificado no código
+
+| Área | Como está | Situação |
+| --- | --- | --- |
+| Webhook | `WebhookGuard` valida a assinatura com o SDK, rejeita IPN legado e encaminha pagamento, assinaturas e `topic_chargebacks_wh`; contestações são buscadas pela API pelo ID assinado e conciliam o pagamento associado com os validadores e lock normais. Tópico suportado sem handler responde `503` para reentrega em vez de ser consumido | Unit cobre assinatura/dispatch, falha de handler `500` e ausência do serviço `503`; Kernel/Runtime e sandbox pendentes |
+| Status pelo webhook | O handler consulta o pagamento remoto e exige referência do pedido, moeda e valor exatos; `pending`, `in_process` e `authorized` persistem como pendentes, `cancelled` e `rejected` encerram um pagamento Commerce existente como `authorization_voided`, e somente `approved` conclui o pagamento | Unit cobre persistência pendente, aprovação, rejeição/cancelamento sem duplicação e referência divergente; Kernel valida o tipo/workflow; Runtime pendente |
+| Idempotência | Retorno, webhook e cobrança recorrente serializam por ID remoto, validam os IDs de pagamento e Merchant Order devolvidos pela API e consultam duplicatas dentro do lock. `onReturn()` e `onNotify()` adquirem o lock antes das consultas remotas e o mantêm até a gravação Commerce; rejeitam ID remoto já associado a outro pedido; uma Merchant Order indicada, mas com ID remoto malformado, não pode cair para associação por `external_reference`; `onReturn()` também rejeita uma referência externa não vazia do pagamento que diverge do pedido local antes do storage Commerce; `subscription_preapproval` pede retry se o webhook chegar antes de persistir o vínculo remoto no pedido. Criação de plano passa um `intentId` único por criação, reutilizado nos retries e distinto para planos iguais; atualização de plano e criação de assinatura usam `X-Idempotency-Key` SHA-256 determinística pelo recurso/intenção e payload, em vez da chave aleatória padrão do SDK | Unit cobre payment/Merchant Order divergentes ou inválidos, lock ocupado sem consulta ao provedor no retorno/notificação, retorno aprovado duplicado, vínculo de pagamento duplicado entre pedidos, race de vínculo de assinatura, chaves estáveis de plano/assinatura e lock de recorrência; Kernel/Runtime pendentes |
+| Criação da preferência | `RedirectCheckoutForm` envia `X-Idempotency-Key` determinística por ID do pedido e payload; usa totais ajustados Commerce nas linhas, incorpora ajustes/descontos gerais e envia frete separadamente, impedindo diferença entre preferência e pedido | Unit confirma totais e chave estável/diferenciada; aceitação pelo endpoint de Preferências e valores exibidos ainda requer homologação sandbox |
+| Falha remota | Consulta remota não confirma estado local quando API/transport falham | Unit: webhook responde 503 em erro HTTP/timeout para reentrega; retorno lança exceção Commerce segura; transação externa não testada |
+| Precisão monetária | `MercadoPagoAmount` usa os dígitos fracionários ISO da moeda no refresh, webhook, retorno, estorno e registro de cobrança recorrente; aceita notação científica e compara com BCMath. Precisão abaixo da unidade monetária, moeda desconhecida, formato inválido e expansão excessiva falham fechados antes da mutação financeira | Unit cobre BRL, JPY (0), BHD (3), notação científica em refresh, webhook, retorno e cobrança recorrente, `0e0`, `120.001`, formatos inválidos, expoentes excessivos e estorno parcial BHD; sem resposta real do provedor |
+| Estorno | `CheckoutPro::refundPayment()` usa cliente do gateway ativo, lock por pagamento e `x-idempotency-key` estável por total acumulado; exige status `approved`, ID de estorno positivo e `payment_id` igual ao pagamento consultado antes de persistir. Status validado funciona com resposta SDK objeto ou array | Unit retry idempotente, concorrência, resposta inválida e status pendente PASS; resposta array aprovada regressiva PASS; sandbox parcial/total pendente |
+| Cancelamento e conciliação manual | `MercadoPagoPaymentService` serializa pela chave compartilhada do pagamento, recarrega Commerce e confere ID remoto, `external_reference` igual ao pedido local, total e moeda antes de atualizar/cancelar; cancelamento aceita apenas `pending`, `in_process` ou `authorized`, e exige resposta `cancelled` com o mesmo ID | [Referência oficial](https://www.mercadopago.com.br/developers/pt/reference/online-payments/checkout-api-payments/create-cancellation/put) confirma `PUT /v1/payments/{payment_id}` e os estados; Unit cobre referência de pedido divergente, cancelamento, reconciliação após timeout e IDs divergentes |
+| Assinatura pendente | `status => 'pending'`, sem cartão | Alinhado |
+| Status de assinatura alteráveis | `RecurrenceRequestBuilder::STATUS_ALTERAVEIS = paused, authorized, canceled` | `paused` e `canceled` são documentados no guia oficial; ações consultam e validam ID, referência externa e status atual/retornado; reativação com `authorized` ainda precisa de homologação sandbox |
+| Concorrência de assinatura | Webhook e ações compartilham lock pelo ID remoto e registram `mp_subscription_version` no `data` do pedido | Versão inferior é ignorada; status conflitante na mesma versão falha para reentrega; Unit cobre lock ocupado, evento atrasado e estado conflitante. A API retorna `version` na resposta de assinatura ([GET](https://www.mercadopago.com.br/developers/en/reference/online-payments/subscriptions/get-preapproval/get), [PUT](https://www.mercadopago.com.br/developers/pt/reference/online-payments/subscriptions/update-preapproval/put)) |
+| Timeout em planos/assinaturas | `MercadoPagoRecurrenceService::executar()` converte exceção de transporte em erro seguro e registra só o nome da operação | Unit com mensagem privada sentinela PASS; nenhuma chamada externa executada |
+| Gateway ativo e credenciais | O hook pré-save sempre força `status: true` e limpa todos os campos secretos antes de persistir, mesmo sem credenciais de runtime. Salvar/importar configuração não depende do estado das credenciais; operações financeiras falham fechadas antes de chamar o provedor quando falta token | Unit cobre limpeza, salvamento sem credenciais e gateway ativo; a fábrica/formulário do gateway recusam operações sem token. Kernel confirma que tentativa de desativação não persiste |
+| Pagamentos pendentes | A montagem da preferência força `binary_mode: false` e `auto_return: approved` antes do diagnóstico e da chamada remota; com modo binário habilitado, o provedor pode rejeitar `pending` e `in_process`. O tipo Commerce próprio adiciona estado `pending` e transições para aprovação/cancelamento posterior | [Documentação oficial](https://www.mercadopago.com.br/developers/pt/docs/checkout-pro-preferences/additional-settings/binary-mode); regressão Unit sobre defaults efetivos e Kernel locais PASS |
+
+## Não confirmado
+
+- **Payload específico de cada tópico de assinatura:** a documentação confirma os tópicos `subscription_preapproval`, `subscription_preapproval_plan`, `subscription_authorized_payment` e `payments`, além dos endpoints de consulta; os exemplos consultados não comprovam ainda todos os formatos de payload recebidos no sandbox.
+- **Cancelamento de plano (verificado em 2026-10-27):** o guia oficial orienta cancelar pelo painel e afirma que a operação é irreversível; os assinantes existentes continuam ativos até serem cancelados individualmente. A [visão geral oficial da API](https://www.mercadopago.com.br/developers/pt/reference/online-payments/subscriptions/overview) lista create/search/get/update para planos, sem endpoint de cancelamento. A operação permanece manual no painel do Mercado Pago.
+- **Efeito do cancelamento sobre a preferência e o pedido:** não documentado na página lida.
+- **Exclusão de meios de pagamento:** a regra "Cash in account não pode ser excluído" vem de uma página de outro país; confirmar para o Brasil.
+- **`notification_url` por preferência:** o código envia a rota nativa `commerce_payment.notify` sem `source_news=ipn`. O guard encaminha webhooks modernos após validar a assinatura; `payment`, assinaturas e contestações passam por seus handlers; demais tópicos assinados são reconhecidos sem chamar o handler legado.
+- **Preferência sandbox e tela do comprador:** criação direta pelo `MercadoPagoClientFactory` produziu um `init_point`; Firefox carregou a seleção de pagamento e, após avançar, a identificação do comprador (HTTP 200, sem CAPTCHA). Isso não exercita `RedirectCheckoutForm`, não associa a preferência a um Commerce Order nem confirma pagamento.
+
+## Próximos passos
+
+1. Ler a referência oficial de pagamentos (cancelamento) e de preapproval (`PUT`), e fechar os itens "não confirmado".
+2. Completar o login do comprador sandbox e homologar pelo checkout ACULTA: aprovação, pendência, rejeição, duplicidade, retorno adulterado, estorno parcial e total, cancelamento de pagamento pendente, assinatura pendente com link de pagamento e recebimento dos tópicos de assinatura.
+3. Só então tratar o Runtime (ver `CHANGELOG` do `aculta_portal`).
+
+## Verificações em 2026-10-19 (registro)
+
+- **Credencial configurada como teste** (`access_token_test`): pertence ao vendedor de teste `3735929876`, aplicativo `8616430635467445`. A API recusa criar pagamento e estorno com ela (401, `Unauthorized use of live credentials`), mesmo com comprador de teste e cartão de teste. Não é possível testar pagamento de sandbox com ela.
+- **Chave de produção salva** (`mercadopago_production_access_token`): pertence ao aplicativo `CheckoutProacultaorg` (`1573840918145296`), dono `3638510484`, conta real da ACULTA. Não enxerga os pagamentos do vendedor de teste (404).
+- **Pagamento real de R$ 1,00** pela preferência de produção `3638510484-a268b814-2f08-4151-8985-0e152c01b163`: pagamento `184952248830`, aprovado (`live_mode=true`), estornado totalmente pelo estorno `3395210317` (status `refunded`).
+- **Pagamentos de teste de R$ 30,00** (pedidos 6, 7 e 13; IDs `183617491071`, `183758594246`, `183741511220`): continuam aprovados no Mercado Pago, sem estorno. Não é possível excluí-los pela API. O registro local do pagamento do pedido 13 foi excluído do Commerce; os pedidos foram mantidos.
+- **Orientação documentada** (MCP, documentação MLB): produto que não exige credenciais de teste deve usar credenciais de produção de uma conta de teste. Essa credencial ainda não está disponível no Runtime.

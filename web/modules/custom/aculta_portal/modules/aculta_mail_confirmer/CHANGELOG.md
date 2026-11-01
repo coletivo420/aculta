@@ -1,0 +1,48 @@
+# Changelog — ACULTA Mail Confirmer
+
+## 0.1.0-dev.4 — proteger a rota de reenvio pela autorização da entidade — 2026-10-26
+
+- A rota `/aculta-mail-confirmer/reenviar/{confirmation}` agora usa o access checker do Entity API para exigir `update` na confirmação, além do token CSRF. Confirmações privadas são restritas ao UID proprietário, conforme o handler existente; o endpoint deixou de depender somente da permissão genérica `access aculta mail confirmer`.
+- Kernel constrói o requisito da rota versionada e o executa pelo `EntityAccessCheck` do Drupal: titular permitido, outra conta negada. Suíte Confirmador: 6 testes / 45 assertions; User Change: 2 / 15 PASS. Sem SMTP externo ou escrita no Runtime.
+
+## 0.1.0-dev.3 — alinhar documentação à política de acesso — 2026-10-26
+
+- Atualizados os contratos: conta sem confirmação permanece ativa e pode entrar; operações protegidas pelo Portal exigem marca de confirmação. Confirmação de cadastro marca o e-mail, mas não inicia sessão; a confirmação de troca de endereço pode iniciar sessão somente para visitante anônimo e usuário ativo.
+- O token tem validade de 24 horas (`hash_expiration` 86400), com a mesma fronteira da política de links de uso único; o texto antigo “sem expiração” foi revogado.
+- Testes Kernel de módulo e submódulo: 7 testes / 53 assertions PASS no MariaDB dedicado, 1 depreciação de `token_requirements` em Core/contrib. Sem envio SMTP externo ou write no Runtime.
+
+## Não lançado — metadados do módulo de teste — 2026-10-22
+
+- `tests/modules/aculta_mail_confirmer_test/aculta_mail_confirmer_test.info.yml` ganhou
+  `core_version_requirement`. Sem a chave, o Drupal 11 aborta a descoberta de extensões ao instalar a
+  configuração de `user`, e qualquer teste Kernel do Portal falha antes de executar as asserções.
+
+## 0.1.0-dev.2 — serviços por injeção, sem `\Drupal::` em src/ — 2026-10-20
+
+- Estado, envio, hash e transições (`getStatus`, `isExpired`, `isPending`, `getHash`, `sendRequest`,
+  `confirmWithHash`, `cancelConfirmation`) saíram da entidade e foram para `AcultaMailConfirmerManager`, que
+  recebe os serviços por injeção. A entidade guarda só os dados.
+- `uid`, `ip` e `created` do pedido novo são preenchidos por `createConfirmation()`; os callbacks estáticos
+  de valor padrão foram removidos.
+- Formulário de resposta, controller e worker da fila recebem o serviço por injeção.
+- Comparação do hash com `hash_equals()`. A chave de assinatura continua a mesma (`private_key`), então links
+  já enviados seguem válidos.
+- Teste Kernel `AcultaMailConfirmerKernelTest` atualizado para a nova API, com asserção exata da fila
+  (1 item). A contagem variável citada na 0.1.0-dev.1 não se reproduziu nesta execução; a causa não foi
+  identificada.
+- Alias `Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface` para o serviço.
+- Expiração: `now - created >= hash_expiration`, a mesma fronteira da consulta `pending` e da
+  `SingleUseLinkPolicy` do Portal. A classe `EmailConfirmationEntity` do Portal, que sobrescrevia `isExpired()`,
+  foi retirada; a regra de 24 h passa a valer pelo `hash_expiration` (86400, verificado pelo gate de links de uso único).
+- Testes: 5/5 neste módulo.
+
+## 0.1.0-dev.1 — incorporação do email_confirmer (contrib) — 2026-10-20
+
+- Código do contrib `drupal/email_confirmer` 1.0.0 incorporado como módulo próprio, com nomes do projeto
+  (`aculta_mail_confirmer`, `AcultaMailConfirmer*`, `/aculta-mail-confirmer/`). Hooks em `src/Hook` com `#[Hook]`.
+- Entidade `aculta_mail_confirmer` (mesmos campos e tabela `aculta_mail_confirmer`); os 28 pedidos do Runtime
+  de teste foram copiados preservando `cid` e `uuid` (27 com o realm novo) e conferidos campo a campo.
+- Textos da confirmação aprovados (pt-BR, prazo de 24 h).
+- Desinstalado o contrib no Runtime de teste; removido do Composer (`drupal/email_confirmer`).
+- Testes: Kernel do módulo 5/5 (pedido, texto aprovado, confirmação, cancelamento, expiração, reenvio na fila).
+- Pendente: validação Browser autenticada de confirmação, troca de e-mail e das capacidades restritas pela política. Login segue permitido para conta ativa sem confirmação.

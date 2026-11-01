@@ -1,0 +1,22 @@
+uuid: d9dc59ef-ff04-4d4a-951a-f4dc9b876f3f
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - aculta420
+_core:
+  default_config_hash: VhBzWb7lMRtIOg9G7VSw_0uopi-7zXeHq4vXqqV1HFE
+id: aculta_breadcrumbs
+theme: aculta420
+region: header
+weight: 0
+provider: null
+plugin: system_breadcrumb_block
+settings:
+  id: system_breadcrumb_block
+  label: Breadcrumbs
+  label_display: '0'
+  provider: system
+visibility: {  }

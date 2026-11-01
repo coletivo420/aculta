@@ -1,0 +1,8 @@
+uuid: 73c8762b-91f2-4fc4-9d7b-c870b97c244e
+langcode: pt-br
+status: true
+dependencies: {  }
+id: aculta-footer-institution
+label: Institucional
+description: 'Navegação institucional do footer: quem somos, projetos e transparência.'
+locked: false

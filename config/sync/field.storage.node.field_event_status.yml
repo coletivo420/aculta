@@ -1,0 +1,36 @@
+uuid: dd4f0c96-1568-4f77-bb65-afd35d81b1e8
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_event_status
+field_name: field_event_status
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: agendado
+      label: Agendado
+    -
+      value: reagendado
+      label: Reagendado
+    -
+      value: adiado
+      label: Adiado
+    -
+      value: cancelado
+      label: Cancelado
+    -
+      value: concluido
+      label: Concluído
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

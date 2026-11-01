@@ -1,0 +1,33 @@
+uuid: dce33cf9-01b7-411f-9edc-91f3fb0e3ec5
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_aculta_discussion
+    - node.type.wiki_entry
+  module:
+    - comment
+id: node.wiki_entry.field_aculta_discussion
+field_name: field_aculta_discussion
+entity_type: node
+bundle: wiki_entry
+label: 'Comentários e discussão'
+description: 'Comentários vinculados diretamente a este verbete.'
+required: true
+translatable: true
+default_value:
+  -
+    status: 2
+    cid: 0
+    last_comment_timestamp: 0
+    last_comment_name: null
+    last_comment_uid: 0
+    comment_count: 0
+default_value_callback: ''
+settings:
+  default_mode: 1
+  per_page: 50
+  anonymous: 0
+  form_location: true
+  preview: 1
+field_type: comment

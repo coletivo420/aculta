@@ -1,0 +1,11 @@
+uuid: 31ebb88d-e2c0-494c-a139-eab641b7c5ab
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - file
+id: file.file
+target_entity_type_id: file
+target_bundle: file
+default_langcode: site_default
+language_alterable: false

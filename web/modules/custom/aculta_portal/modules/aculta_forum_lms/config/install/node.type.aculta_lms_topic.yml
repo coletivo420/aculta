@@ -1,0 +1,14 @@
+uuid: a144aa4c-88e0-479d-93fd-4e2593dbdb8a
+langcode: pt-br
+status: true
+dependencies:
+  enforced:
+    module:
+      - aculta_forum_lms
+name: 'Discussão do ACULTA LMS'
+type: aculta_lms_topic
+description: 'Discussão interna vinculada ao Group de um curso ou turma.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: true

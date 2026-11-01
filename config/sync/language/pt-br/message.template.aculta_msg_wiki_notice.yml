@@ -1,0 +1,7 @@
+text:
+  -
+    value: 'Atualização editorial da Wiki ACULTA'
+    format: plain_text
+  -
+    value: '@summary Acesse: @url'
+    format: plain_text

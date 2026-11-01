@@ -1,0 +1,6 @@
+topico_limite_ativo: true
+topico_comentarios_minimos: 10
+bloqueio_ate_aprovacao: true
+papeis_isentos:
+  - content_editor
+  - administrator

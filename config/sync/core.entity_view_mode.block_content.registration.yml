@@ -1,0 +1,11 @@
+uuid: fdc552e0-dd30-475d-a9de-68339e5a0ebe
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - block_content
+id: block_content.registration
+label: 'Dados cadastrais completos'
+description: null
+targetEntityType: block_content
+cache: true

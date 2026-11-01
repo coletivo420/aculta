@@ -1,0 +1,43 @@
+services:
+  aculta_links.social_links_page:
+    class: Drupal\aculta_links\Service\SocialLinksPagePresenter
+    arguments: ['@config.factory', '@string_translation', '@aculta_portal.domain_purpose']
+  aculta_links.landing_controller:
+    class: Drupal\aculta_links\Controller\LinksLandingController
+    arguments: ['@entity_type.manager', '@current_user', '@path_alias.manager', '@language_manager', '@aculta_portal.domain_purpose', '@aculta_links.social_links_page']
+  aculta_links.dashboard_access:
+    class: Drupal\aculta_links\Access\LinksDashboardAccess
+
+  aculta_links.dashboard_controller:
+    class: Drupal\aculta_links\Controller\LinksDashboardController
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@aculta_links.analytics', '@request_stack']
+
+  aculta_links.public_page_controller:
+    class: Drupal\aculta_links\Controller\LinkPagePublicController
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_user.author_identity_resolver', '@aculta_links.destination_resolver', '@aculta_links.analytics', '@request_stack']
+
+  aculta_links.destination_resolver:
+    class: Drupal\aculta_links\Service\LinkDestinationResolver
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+
+  aculta_links.analytics:
+    class: Drupal\aculta_links\Service\LinkAnalytics
+    arguments: ['@aculta_statistics.recorder', '@aculta_statistics.storage', '@datetime.time', '@config.factory']
+
+  aculta_links.short_code_generator:
+    class: Drupal\aculta_links\Service\LinkShortCodeGenerator
+
+  aculta_links.qr_code_svg_generator:
+    class: Drupal\aculta_links\Service\QrCodeSvgGenerator
+    arguments: ['@aculta_qrcode.payload_validator', '@aculta_qrcode.preset_registry', '@aculta_qrcode.generator']
+
+  aculta_links.page_qr_code_controller:
+    class: Drupal\aculta_links\Controller\LinkPageQrCodeController
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@aculta_links.qr_code_svg_generator']
+
+  aculta_links.short_qr_code_controller:
+    class: Drupal\aculta_links\Controller\LinkShortCodeQrCodeController
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@aculta_links.qr_code_svg_generator']
+
+  aculta_links.social_links_form_callbacks:
+    class: Drupal\aculta_links\Service\SocialLinksFormCallbacks

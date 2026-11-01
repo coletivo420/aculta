@@ -1,0 +1,82 @@
+[
+  {
+    "id": "alien-001-green-chill",
+    "file": "aliens/alien-001-green-chill.png",
+    "family": "aliens",
+    "label": "Alien verde relaxado",
+    "alt": "Alien verde relaxado, com visual cartoon psicodélico.",
+    "active": true
+  },
+  {
+    "id": "alien-002-grey-red-eyes",
+    "file": "aliens/alien-002-grey-red-eyes.png",
+    "family": "aliens",
+    "label": "Alien cinza com olhos vermelhos",
+    "alt": "Alien cinza com grandes olhos vermelhos, em estilo cartoon.",
+    "active": true
+  },
+  {
+    "id": "alien-003-rastafari",
+    "file": "aliens/alien-003-rastafari.png",
+    "family": "aliens",
+    "label": "Extraterrestre rastafari",
+    "alt": "Extraterrestre rastafari com dreadlocks e cores reggae.",
+    "active": true
+  },
+  {
+    "id": "alien-004-space-helmet",
+    "file": "aliens/alien-004-space-helmet.png",
+    "family": "aliens",
+    "label": "Alien de capacete espacial",
+    "alt": "Alien verde usando capacete e traje espacial.",
+    "active": true
+  },
+  {
+    "id": "alien-005-futuristic-bong",
+    "file": "aliens/alien-005-futuristic-bong.png",
+    "family": "aliens",
+    "label": "Alien com bong futurista",
+    "alt": "Alien azul e roxo com bong futurista e brilho neon.",
+    "active": true
+  },
+  {
+    "id": "alien-006-cosmic-creature",
+    "file": "aliens/alien-006-cosmic-creature.png",
+    "family": "aliens",
+    "label": "Criatura cósmica fluorescente",
+    "alt": "Criatura cósmica fluorescente com múltiplos olhos e aparência galáctica.",
+    "active": true
+  },
+  {
+    "id": "alien-007-psychedelic",
+    "file": "aliens/alien-007-psychedelic.png",
+    "family": "aliens",
+    "label": "Ser interdimensional psicodélico",
+    "alt": "Ser interdimensional psicodélico multicolorido, em estilo cartoon.",
+    "active": true
+  },
+  {
+    "id": "alien-008-leaf-antenna",
+    "file": "aliens/alien-008-leaf-antenna.png",
+    "family": "aliens",
+    "label": "Alien com antenas de folha",
+    "alt": "Alien verde com antenas em formato de folhas.",
+    "active": true
+  },
+  {
+    "id": "alien-009-dj",
+    "file": "aliens/alien-009-dj.png",
+    "family": "aliens",
+    "label": "Alien DJ",
+    "alt": "Alien DJ usando fones e controladora, em estilo urbano e psicodélico.",
+    "active": true
+  },
+  {
+    "id": "alien-010-hippie",
+    "file": "aliens/alien-010-hippie.png",
+    "family": "aliens",
+    "label": "Alien hippie espacial",
+    "alt": "Alien hippie espacial com óculos redondos e visual psicodélico.",
+    "active": true
+  }
+]

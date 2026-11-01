@@ -1,0 +1,57 @@
+aculta_mailer.policy:
+  type: config_object
+  label: 'Política de envio do ACULTA Mailer'
+  mapping:
+    global:
+      type: aculta_mailer.policy_values
+      label: 'Ajustes globais'
+    types:
+      type: sequence
+      label: 'Ajustes por tipo de e-mail'
+      sequence:
+        type: aculta_mailer.policy_values
+    quota:
+      type: sequence
+      label: 'Cota diária por transporte (mensagens aceitas nas últimas 24 horas)'
+      sequence:
+        type: integer
+        label: 'Limite'
+    rate_limit:
+      type: sequence
+      label: 'Limite por transporte e janela (modelo Rate Limiting do WP Mail SMTP)'
+      sequence:
+        type: aculta_mailer.rate_limit
+
+aculta_mailer.rate_limit:
+  type: mapping
+  label: 'Limites por janela'
+  mapping:
+    hour:
+      type: integer
+      label: 'Por hora'
+    day:
+      type: integer
+      label: 'Por dia'
+    week:
+      type: integer
+      label: 'Por semana'
+    month:
+      type: integer
+      label: 'Por mês'
+
+aculta_mailer.policy_values:
+  type: mapping
+  label: 'Valores de política'
+  mapping:
+    transport:
+      type: string
+      label: 'Transporte'
+    reply_to:
+      type: email
+      label: 'Responder para'
+    priority:
+      type: integer
+      label: 'Prioridade (1 a 5)'
+    skip:
+      type: boolean
+      label: 'Suspender envio'

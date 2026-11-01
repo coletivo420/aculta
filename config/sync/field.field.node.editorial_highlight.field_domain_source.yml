@@ -1,0 +1,27 @@
+uuid: 7ee7e68f-4c1a-4fa7-a423-267d1ff9358b
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_domain_source
+    - node.type.editorial_highlight
+id: node.editorial_highlight.field_domain_source
+field_name: field_domain_source
+entity_type: node
+bundle: editorial_highlight
+label: 'Domain Source'
+description: 'Select the canonical domain for this content.'
+required: false
+translatable: true
+default_value:
+  -
+    target_id: coletivo420_aculta_org
+default_value_callback: ''
+settings:
+  handler: 'default:domain'
+  handler_settings:
+    target_bundles: null
+    sort:
+      field: weight
+      direction: ASC
+field_type: entity_reference

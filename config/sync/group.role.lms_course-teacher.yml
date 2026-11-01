@@ -1,0 +1,45 @@
+uuid: 2b2142b4-bf9d-4fbc-a9e0-50a43d122638
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - group.type.lms_course
+    - group.relationship_type.lms_course-3abb8caf7f7d526ecedee
+    - user.role.lms_teacher
+  module:
+    - aculta_document_viewer
+    - aculta_forum_lms
+id: lms_course-teacher
+label: Educador
+weight: 10
+admin: false
+scope: insider
+global_role: lms_teacher
+group_type: lms_course
+permissions:
+  - 'administer members'
+  - 'add students'
+  - 'view students'
+  - 'create lms_classes relationship'
+  - 'delete own lms_classes relationship'
+  - 'create aculta_document_viewer:course_document entity'
+  - 'create aculta_document_viewer:course_document relationship'
+  - 'edit group'
+  - 'grade students'
+  - 'revert group revisions'
+  - 'update own group_membership relationship'
+  - 'update any lms_classes relationship'
+  - 'update own lms_classes relationship'
+  - 'view lms_classes relationship'
+  - 'view all group revisions'
+  - 'view any unpublished group'
+  - 'view aculta_document_viewer:course_document entity'
+  - 'view any unpublished aculta_document_viewer:course_document entity'
+  - 'view aculta_document_viewer:course_document relationship'
+  - 'view group_node:aculta_lms_topic entity'
+  - 'view group'
+  - 'view group revisions'
+  - 'view group_membership relationship'
+  - 'view latest group version'
+  - 'view own unpublished group'
+

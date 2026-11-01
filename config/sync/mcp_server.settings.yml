@@ -1,0 +1,12 @@
+_core:
+  default_config_hash: X-5E5ttrkcyeCk7ua_-ucBAscwA1cKMj-srqqDDMBX4
+langcode: pt-br
+server_name: ACULTA
+server_version: 0.1.0
+server_instructions: 'Servidor MCP público da ACULTA. Atualmente não há recursos, ferramentas ou prompts publicados; use apenas capacidades que o servidor listar. Não solicite credenciais nem dados pessoais e respeite os controles de acesso do Drupal.'
+pagination_limit: 50
+pending:
+  poll_interval_ms: 300
+  sampling_timeout: 25
+  elicitation_timeout: 600
+

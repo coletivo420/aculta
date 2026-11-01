@@ -1,0 +1,8 @@
+name: Lista de mensagens
+description: Conteúdo renderizado pelo Drupal, preservando autorização e fallback sem JavaScript.
+component: aculta420:messenger-list
+props:
+  label: Conversas
+slots:
+  content:
+    markup: <ul><li>Exemplo de item de mensagem</li></ul>

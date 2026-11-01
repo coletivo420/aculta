@@ -1,0 +1,13 @@
+uuid: eaaf6b8b-4118-4e80-95a4-f22c43e16cc4
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+_core:
+  default_config_hash: uhACH_XKkZHCWXc_DdovxtfxI2sUKIFxn6Hnl7ZmQeU
+id: message.mail_body
+label: 'Notificar - Corpo do e-mail'
+description: null
+targetEntityType: message
+cache: true

@@ -1,0 +1,49 @@
+.aculta-portal-requirements__status--ok {
+  color: var(--aculta-status-ok-text);
+  background-color: var(--aculta-status-ok-surface);
+  border-inline-start: 0.25rem solid var(--aculta-status-ok-border);
+  font-weight: 600;
+}
+
+.aculta-portal-requirements__status--attention {
+  color: var(--aculta-status-warning-text);
+  background-color: var(--aculta-status-warning-surface);
+  border-inline-start: 0.25rem solid var(--aculta-status-warning-border);
+  font-weight: 600;
+}
+
+.aculta-portal-requirements__status--error {
+  color: var(--aculta-status-error-text);
+  background-color: var(--aculta-status-error-surface);
+  border-inline-start: 0.25rem solid var(--aculta-status-error-border);
+  font-weight: 600;
+}
+
+@media (forced-colors: active) {
+  .aculta-portal-requirements__status--ok,
+  .aculta-portal-requirements__status--attention,
+  .aculta-portal-requirements__status--error {
+    color: CanvasText;
+    background-color: Canvas;
+    border-inline-start-color: CanvasText;
+  }
+}
+
+/* Popup do olho: valor completo, sem quebrar a tela no celular. */
+.aculta-secret-popup__value {
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-family: monospace;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  background-color: var(--aculta-surface-muted);
+}
+
+/* Aviso abaixo do valor, em vermelho. */
+.aculta-secret-popup__hint {
+  color: var(--aculta-status-error-text);
+  font-weight: 600;
+}
+
+/* Relatório de imagens (somente leitura): separa as seções sem caixa própria. */
+.aculta-image-audit > * + * { margin-block-start: 1.5rem; }

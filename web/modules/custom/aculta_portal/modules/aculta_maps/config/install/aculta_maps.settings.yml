@@ -1,0 +1,6 @@
+engine: openstreetmap
+center_lat: -14.235
+center_lng: -51.9253
+zoom_initial: 4
+zoom_location: 15
+route_url_template: 'https://www.google.com/maps/dir/?api=1&destination={destino}'

@@ -1,0 +1,1647 @@
+# Tradução pt-BR das strings do módulo LMS (contrib, não modificado).
+# Catálogo consolidado: 331 traduções ACULTA + catálogo oficial LMS 1.2.4.
+# Importar com `--override=customized` para atualizar apenas traduções
+# customizadas anteriores do LMS e preservar traduções padrão do Drupal.
+# As duas traduções herdadas de "Lesson" e "Lesson type" estão em
+# lms-terms.pt-br.po e devem ser importadas com --override=all.
+msgid ""
+msgstr ""
+"Project-Id-Version: ACULTA420 LMS\n"
+"Language: pt-BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "\"Reset for updates\" button for course editors"
+msgstr "Botão \"Redefinir para atualizações\" para editores do curso"
+
+msgid "* Not installed *"
+msgstr "* Não instalado *"
+
+msgid "- None (Use default image) -"
+msgstr "- Nenhum (usar imagem padrão) -"
+
+msgid "- Original image -"
+msgstr "- Imagem original -"
+
+msgid "-- Select plugin --"
+msgstr "-- Selecionar plugin --"
+
+msgid "<strong>Random activities</strong> - specific number of activities are drawn randomly from this lesson's pool"
+msgstr "<strong>Atividades aleatórias</strong> - um número específico de atividades é sorteado do conjunto desta aula"
+
+msgid "<strong>Random order</strong> - all activities display in random order"
+msgstr "<strong>Ordem aleatória</strong> - todas as atividades são exibidas em ordem aleatória"
+
+msgid "@answered of @total total answered."
+msgstr "@answered de @total respondidas."
+
+msgid "@completed / @total Lessons"
+msgstr "@completed / @total aulas"
+
+msgid "@course results for @user"
+msgstr "Resultados de @course para @user"
+
+msgid "@label (Image Field)"
+msgstr "@label (campo de imagem)"
+
+msgid "@label (Media Reference)"
+msgstr "@label (referência de mídia)"
+
+msgid "@label parameters"
+msgstr "Parâmetros de @label"
+
+msgid "@lesson (@result)"
+msgstr "@lesson (@result)"
+
+msgid "@lesson (completed @completed / @total activities, @result)"
+msgstr "@lesson (concluída: @completed / @total atividades, @result)"
+
+msgid "@lesson (not started)"
+msgstr "@lesson (não iniciada)"
+
+msgid "@min_message @total_message"
+msgstr "@min_message @total_message"
+
+msgid "@student has been added to the @class class."
+msgstr "@student foi adicionado à turma @class."
+
+msgid "@student is already a member of the @class."
+msgstr "@student já é membro da turma @class."
+
+msgid "A boolean indicating whether the answer is evaluated."
+msgstr "Valor booleano que indica se a resposta foi avaliada."
+
+msgid "A boolean indicating whether the lesson status is evaluated."
+msgstr "Valor booleano que indica se o status da aula foi avaliado."
+
+msgid "A flag indicating whether this is the current status."
+msgstr "Indicador que mostra se este é o status atual."
+
+msgid "A higher score on the previous lesson is required to unlock this content."
+msgstr "É necessária uma pontuação maior na aula anterior para liberar este conteúdo."
+
+msgid "A phrase that students can be expected to include in their answer. Use the pipe symbol (|) to separate variations of the same concept (e.g., right answer|correct answer)."
+msgstr "Frase que o aluno deve incluir na resposta. Use o símbolo de barra vertical (|) para separar variações do mesmo conceito (por exemplo, resposta certa|resposta correta)."
+
+msgid "A required earlier lesson must be finished before you can access this one."
+msgstr "É preciso concluir a aula anterior obrigatória antes de acessar esta."
+
+msgid "A required earlier lesson must be started before you can access this one."
+msgstr "É preciso iniciar a aula anterior obrigatória antes de acessar esta."
+
+msgid "Access will be granted to users with the specified course permission."
+msgstr "O acesso será liberado para usuários com a permissão específica do curso."
+
+msgid "Activities for this lesson status"
+msgstr "Atividades para este status de aula"
+
+msgid "Activity - answer plugin"
+msgstr "Atividade - plugin de resposta"
+
+msgid "Activity @label has been created."
+msgstr "A atividade @label foi criada."
+
+msgid "Activity @label has been updated."
+msgstr "A atividade @label foi atualizada."
+
+msgid "Activity entity references plus data specific for this lesson."
+msgstr "Referências de entidades da atividade e dados específicos desta aula."
+
+msgid "Add a checkbox for every row - required to be able to add @label to parent entity in an entity form widget."
+msgstr "Adicionar uma caixa de seleção em cada linha - necessário para adicionar @label a uma entidade pai em um widget de formulário."
+
+msgid "Add existing @label"
+msgstr "Adicionar @label existente"
+
+msgid "Add selected @label"
+msgstr "Adicionar @label selecionado"
+
+msgid "After this much time has passed, the lesson is closed automatically and remaining activities are left unanswered. Set to 0 for no time limit."
+msgstr "Após este tempo, a aula é encerrada automaticamente e as atividades restantes ficam sem resposta. Defina 0 para não ter limite de tempo."
+
+msgid "Allow students to re-enter the course after finishing. They can navigate freely, review content, and change answers without restarting the course."
+msgstr "Permite que os alunos voltem ao curso depois de concluí-lo. Eles podem navegar livremente, rever o conteúdo e alterar respostas sem reiniciar o curso."
+
+msgid "An entity field containing an entity reference with additional serialized data."
+msgstr "Campo de entidade que contém uma referência com dados adicionais serializados."
+
+msgid "An entity field containing an entity revision reference."
+msgstr "Campo de entidade que contém uma referência a uma revisão."
+
+msgid "An error occurred while trying to start training. Please report the issue to your site administrator."
+msgstr "Ocorreu um erro ao tentar iniciar o treinamento. Informe o problema ao administrador do site."
+
+msgid "Answer data"
+msgstr "Dados da resposta"
+
+msgid "Answer details: @activity"
+msgstr "Detalhes da resposta: @activity"
+
+msgid "Answer to @activity by @student"
+msgstr "Resposta de @student para @activity"
+
+msgid "Answered"
+msgstr "Respondida"
+
+msgid "At least one activity needs to be a part of the lesson."
+msgstr "É necessário que pelo menos uma atividade faça parte da aula."
+
+msgid "At least one lesson needs to be added to the course."
+msgstr "É necessário adicionar pelo menos uma aula ao curso."
+
+msgid "Auto-repeat if failed"
+msgstr "Repetir automaticamente se reprovado"
+
+msgid "Awaits grading"
+msgstr "Aguardando correção"
+
+msgid "Awaits grading.."
+msgstr "Aguardando correção.."
+
+msgid "Background Image Field"
+msgstr "Campo de imagem de fundo"
+
+msgid "Background Image Settings"
+msgstr "Configurações da imagem de fundo"
+
+msgid "Changing plugin ID on existing activity types is not possible due to existing config and data. Please create a new activity type if needed."
+msgstr "Não é possível alterar o ID do plugin em tipos de atividade existentes, pois há configuração e dados vinculados. Crie um novo tipo de atividade, se necessário."
+
+msgid "Check Answer"
+msgstr "Verificar resposta"
+
+msgid "Choose whether students can select single or multiple answers."
+msgstr "Escolha se o aluno pode selecionar uma ou várias respostas."
+
+msgid "Class @class_name"
+msgstr "Turma @class_name"
+
+msgid "Class member or all classes` members statuses"
+msgstr "Status dos membros da turma ou de todas as turmas"
+
+msgid "Class parent group statuses for the class members only or course statuses"
+msgstr "Status do grupo pai da turma, apenas para os membros da turma, ou status do curso"
+
+msgid "Coming soon!"
+msgstr "Em breve!"
+
+msgid "Compact (no progress bar)"
+msgstr "Compacto (sem barra de progresso)"
+
+msgid "Completion status:"
+msgstr "Status de conclusão:"
+
+msgid "Continue (ungraded)"
+msgstr "Continuar (sem nota)"
+
+msgid "Continue @title"
+msgstr "Continuar @title"
+
+msgid "Continue @title (ungraded)"
+msgstr "Continuar @title (sem nota)"
+
+msgid "Course - Class permission mappings"
+msgstr "Mapeamento de permissões de curso e turma"
+
+msgid "Course Card"
+msgstr "Cartão do curso"
+
+msgid "Course completed! You achieved a passing score."
+msgstr "Curso concluído! Você atingiu a nota de aprovação."
+
+msgid "Course completed! Your answers are awaiting teacher evaluation."
+msgstr "Curso concluído! Suas respostas aguardam avaliação do professor."
+
+msgid "Course completed. Your score did not meet the passing requirement, so the course is marked as failed."
+msgstr "Curso concluído. Sua nota não atingiu o mínimo para aprovação, por isso o curso foi marcado como reprovado."
+
+msgid "Course free navigation"
+msgstr "Navegação livre no curso"
+
+msgid "Course lessons"
+msgstr "Aulas do curso"
+
+msgid "Course navigation"
+msgstr "Navegação do curso"
+
+msgid "Course not accessible."
+msgstr "Curso não acessível."
+
+msgid "Course not started yet, nothing to reset"
+msgstr "O curso ainda não foi iniciado, nada a redefinir"
+
+msgid "Course permission"
+msgstr "Permissão do curso"
+
+msgid "Course progress"
+msgstr "Progresso no curso"
+
+msgid "Course reset"
+msgstr "Redefinição do curso"
+
+msgid "Course revisit mode"
+msgstr "Modo de revisita do curso"
+
+msgid "Course start link"
+msgstr "Link de início do curso"
+
+msgid "Course status"
+msgstr "Status do curso"
+
+msgid "Course take link"
+msgstr "Link para fazer o curso"
+
+msgid "Create and add"
+msgstr "Criar e adicionar"
+
+msgid "Create new @label"
+msgstr "Criar novo @label"
+
+msgid "Created the %label Activity type."
+msgstr "O tipo de atividade %label foi criado."
+
+msgid "Credits"
+msgstr "Créditos"
+
+msgid "Current activity delta"
+msgstr "Posição da atividade atual"
+
+msgid "Current lesson status"
+msgstr "Status atual da aula"
+
+msgid "Currently editable directly in configuration only. Please use Drush, edit in exported configuration and import or set in project settings.php."
+msgstr "Atualmente editável apenas na configuração. Use o Drush, edite a configuração exportada e importe, ou defina no settings.php do projeto."
+
+msgid "Default class creation"
+msgstr "Criação de turma padrão"
+
+msgid "Default class name pattern"
+msgstr "Padrão de nome da turma padrão"
+
+msgid "Default class names will look like \"@name\"."
+msgstr "Os nomes padrão das turmas terão a forma \"@name\"."
+
+msgid "Default maximum score"
+msgstr "Nota máxima padrão"
+
+msgid "Delete entities"
+msgstr "Excluir entidades"
+
+msgid "Deleting revision of \"@label\""
+msgstr "Excluindo a revisão de \"@label\""
+
+msgid "Description Display Type"
+msgstr "Tipo de exibição da descrição"
+
+msgid "Description Field Settings"
+msgstr "Configurações do campo de descrição"
+
+msgid "Display a link to the student results if the course has been started."
+msgstr "Exibe um link para os resultados do aluno se o curso tiver sido iniciado."
+
+msgid "Display courses as SDC card components."
+msgstr "Exibe os cursos como componentes de cartão SDC."
+
+msgid "Display courses as themed card components."
+msgstr "Exibe os cursos como componentes de cartão do tema."
+
+msgid "Display labels of the referenced entities"
+msgstr "Exibe os rótulos das entidades referenciadas"
+
+msgid "Display the student progress in the course as finished lessons out of the total."
+msgstr "Exibe o progresso do aluno no curso como aulas concluídas sobre o total."
+
+msgid "Drag the words below to fill in the correct blanks in the text."
+msgstr "Arraste as palavras abaixo para preencher as lacunas corretas no texto."
+
+msgid "Edit @entity_type"
+msgstr "Editar @entity_type"
+
+msgid "Enroll"
+msgstr "Matricular-se"
+
+msgid "Enroll in @title"
+msgstr "Matricular-se em @title"
+
+msgid "Enter match phrase (alternative matches can be separated with | symbol)"
+msgstr "Digite a frase esperada (variações podem ser separadas pelo símbolo |)"
+
+msgid "Entity assigned to a published parent must be published"
+msgstr "Entidade vinculada a um pai publicado deve estar publicada"
+
+msgid "Entity autocomplete with additional data."
+msgstr "Campo de autocompletar com dados adicionais."
+
+msgid "Entity selection view"
+msgstr "Visão de seleção de entidades"
+
+msgid "Evaluate"
+msgstr "Avaliar"
+
+msgid "Evaluate / comment"
+msgstr "Avaliar / comentar"
+
+msgid "Evaluation status"
+msgstr "Status da avaliação"
+
+msgid "Example link"
+msgstr "Exemplo de link"
+
+msgid "Feedback if absent"
+msgstr "Retorno se ausente"
+
+msgid "Feedback if phrase is absent"
+msgstr "Retorno se a frase estiver ausente"
+
+msgid "Feedback if phrase is present"
+msgstr "Retorno se a frase estiver presente"
+
+msgid "Feedback if present"
+msgstr "Retorno se presente"
+
+msgid "Feedback to show when the phrase is NOT found in the student answer."
+msgstr "Retorno exibido quando a frase NÃO é encontrada na resposta do aluno."
+
+msgid "Feedback to show when the phrase is found in the student answer."
+msgstr "Retorno exibido quando a frase é encontrada na resposta do aluno."
+
+msgid "Fill in the Blanks (Drag and Drop)"
+msgstr "Preencher lacunas (arrastar e soltar)"
+
+msgid "Fill in the Blanks with Feedback"
+msgstr "Preencher lacunas com retorno"
+
+msgid "Filter activities by their grandparent course."
+msgstr "Filtra as atividades pelo curso avô."
+
+msgid "Filter activities by their parent lesson."
+msgstr "Filtra as atividades pela aula pai."
+
+msgid "Filter lessons by their parent course."
+msgstr "Filtra as aulas pelo curso pai."
+
+msgid "Filter relationships by child class"
+msgstr "Filtra os relacionamentos pela classe filha"
+
+msgid "Finish course"
+msgstr "Concluir curso"
+
+msgid "For fields with a summary, choose whether to display the full text or the summary. Summary recommended."
+msgstr "Para campos com resumo, escolha se exibir o texto completo ou o resumo. Recomendado: resumo."
+
+msgid "Free text"
+msgstr "Texto livre"
+
+msgid "Free text with feedback"
+msgstr "Texto livre com retorno"
+
+msgid "Given answer count"
+msgstr "Quantidade de respostas dadas"
+
+msgid "Group relationships of Course classes"
+msgstr "Relacionamentos de grupo das turmas do curso"
+
+msgid "How many answers were given."
+msgstr "Quantas respostas foram dadas."
+
+msgid "If a student does not achieve the required score on this lesson, the lesson restarts when they attempt to continue to the next one."
+msgstr "Se o aluno não atingir a nota exigida nesta aula, ela reinicia quando ele tentar avançar para a próxima."
+
+msgid "Image Style"
+msgstr "Estilo da imagem"
+
+msgid "Improved LMS entity reference widget."
+msgstr "Widget aprimorado de referência de entidade do LMS."
+
+msgid "Invalid view selected."
+msgstr "Visão selecionada inválida."
+
+msgid "Is content of selected classes"
+msgstr "É o conteúdo das turmas selecionadas"
+
+msgid "Join training"
+msgstr "Participar do treinamento"
+
+msgid "LMS"
+msgstr "LMS"
+
+msgid "LMS Activity"
+msgstr "Atividade do LMS"
+
+msgid "LMS Answer"
+msgstr "Resposta do LMS"
+
+msgid "LMS Component"
+msgstr "Componente do LMS"
+
+msgid "LMS Entity reference"
+msgstr "Referência de entidade do LMS"
+
+msgid "LMS activity access grants"
+msgstr "Permissões de acesso às atividades do LMS"
+
+msgid "LMS answer"
+msgstr "Resposta do LMS"
+
+msgid "LMS lesson access grants"
+msgstr "Permissões de acesso às aulas do LMS"
+
+msgid "LMS phrase feedback"
+msgstr "Retorno de frase do LMS"
+
+msgid "LMS reference"
+msgstr "Referência do LMS"
+
+msgid "LMS reference table"
+msgstr "Tabela de referências do LMS"
+
+msgid "LMS revision reference"
+msgstr "Referência de revisão do LMS"
+
+msgid "LMS selection for adding to parent"
+msgstr "Seleção do LMS para adicionar ao pai"
+
+msgid "Last activity timestamp"
+msgstr "Último registro de atividade"
+
+msgid "Lesson (default)"
+msgstr "Aula (padrão)"
+
+msgid "Lesson @label has been created."
+msgstr "A aula @label foi criada."
+
+msgid "Lesson @label has been updated."
+msgstr "A aula @label foi atualizada."
+
+msgid "Lesson ID"
+msgstr "ID da aula"
+
+msgid "Lesson entity references plus data specific for the lesson."
+msgstr "Referências de entidade da aula e dados específicos da aula."
+
+msgid "Lesson status"
+msgstr "Status da aula"
+
+msgid "Lesson status should always be new when invoking this hook."
+msgstr "O status da aula deve ser sempre novo ao chamar este hook."
+
+msgid "Lessons"
+msgstr "Aulas"
+
+msgid "Match Phrase"
+msgstr "Frase esperada"
+
+msgid "Maximum score"
+msgstr "Nota máxima"
+
+msgid "Media View Mode"
+msgstr "Modo de exibição da mídia"
+
+msgid "Modal subform"
+msgstr "Subformulário modal"
+
+msgid "Modify parameters"
+msgstr "Alterar parâmetros"
+
+msgid "Multiple selection (checkboxes)"
+msgstr "Seleção múltipla (caixas de seleção)"
+
+msgid "Name of the Activity type."
+msgstr "Nome do tipo de atividade."
+
+msgid "Needs grading"
+msgstr "Precisa de correção"
+
+msgid "New owner"
+msgstr "Novo proprietário"
+
+msgid "New tab (_blank)"
+msgstr "Nova aba (_blank)"
+
+msgid "No @label_plural have been added yet. Use the buttons below to create a new @label or add an existing one."
+msgstr "Ainda não há @label_plural. Use os botões abaixo para criar um novo @label ou adicionar um existente."
+
+msgid "No Course context available"
+msgstr "Nenhum contexto de curso disponível"
+
+msgid "No answer"
+msgstr "Sem resposta"
+
+msgid "No implementation"
+msgstr "Sem implementação"
+
+msgid "No lesson access, you have been redirected"
+msgstr "Sem acesso a esta aula; você foi redirecionado"
+
+msgid "No lesson types found."
+msgstr "Nenhum tipo de aula encontrado."
+
+msgid "No open classes"
+msgstr "Nenhuma turma aberta"
+
+msgid "No view selected."
+msgstr "Nenhuma visão selecionada."
+
+msgid "None (Course membership)"
+msgstr "Nenhum (participação no curso)"
+
+msgid "Not a membership group relation"
+msgstr "Não é uma relação de participação em grupo"
+
+msgid "Not selected"
+msgstr "Não selecionado"
+
+msgid "Not started"
+msgstr "Não iniciada"
+
+msgid "Number of answered questions / number of total questions."
+msgstr "Número de perguntas respondidas / número total de perguntas."
+
+msgid "Only orphaned (not attached to any parent)"
+msgstr "Somente órfãos (sem vínculo com nenhum pai)"
+
+msgid "Orphaned"
+msgstr "Órfão"
+
+msgid "Ownership transferred to @name."
+msgstr "Propriedade transferida para @name."
+
+msgid "Parent course"
+msgstr "Curso pai"
+
+msgid "Parent lesson"
+msgstr "Aula pai"
+
+msgid "Pass Percent"
+msgstr "Percentual de aprovação"
+
+msgid "Please drag your answers into the blank spaces."
+msgstr "Arraste suas respostas para os espaços em branco."
+
+msgid "Please fill in all the answers first."
+msgstr "Preencha primeiro todas as respostas."
+
+msgid "Populated all LMS revision reference fields with current revisions."
+msgstr "Todos os campos de referência de revisão do LMS foram atualizados com as revisões atuais."
+
+msgid "Positive reinforcement to give the student for bringing up this concept"
+msgstr "Reforço positivo para dar ao aluno ao trazer este conceito"
+
+msgid "Pressing this button resets your saved course progress, so you can see the latest revisions. This button is not visible to students. Warning! Any answers you have saved will be lost."
+msgstr "Este botão redefine o progresso salvo no curso, para que você veja as revisões mais recentes. Ele não fica visível para os alunos. Atenção! Todas as respostas salvas serão perdidas."
+
+msgid "Previous activity"
+msgstr "Atividade anterior"
+
+msgid "Published entity cannot reference an unpublished child"
+msgstr "Entidade publicada não pode referenciar um filho não publicado"
+
+msgid "Re-entry to courses awaiting grading"
+msgstr "Reentrada em cursos aguardando correção"
+
+msgid "Relate the lesson to the course(s) it belongs to via the course lessons field."
+msgstr "Relacione a aula ao curso ou aos cursos a que ela pertence, pelo campo de aulas do curso."
+
+msgid "Relates memberships to the current Course Status entity. Requires Course (lms_course group bundle) context."
+msgstr "Relaciona as participações ao status de curso atual. Exige contexto de curso (grupo do tipo lms_course)."
+
+msgid "Remaining time:"
+msgstr "Tempo restante:"
+
+msgid "Required for the first phrase match."
+msgstr "Obrigatório para a primeira correspondência de frase."
+
+msgid "Required score"
+msgstr "Nota exigida"
+
+msgid "Reset course progress"
+msgstr "Redefinir o progresso do curso"
+
+msgid "Reset for updates"
+msgstr "Redefinir para atualizações"
+
+msgid "Restart @title"
+msgstr "Reiniciar @title"
+
+msgid "Results transferred to @name."
+msgstr "Resultados transferidos para @name."
+
+msgid "Resume Training"
+msgstr "Retomar treinamento"
+
+msgid "Reverting revision of \"@label\""
+msgstr "Revertendo a revisão de \"@label\""
+
+msgid "Revisit"
+msgstr "Revisitar"
+
+msgid "Revisit @title"
+msgstr "Revisitar @title"
+
+msgid "Revisits after completion"
+msgstr "Revisitas após a conclusão"
+
+msgid "Same tab (_self)"
+msgstr "Mesma aba (_self)"
+
+msgid "Saved the %label Activity type."
+msgstr "O tipo de atividade %label foi salvo."
+
+msgid "Score (0 to @max)"
+msgstr "Nota (de 0 a @max)"
+
+msgid "Score required to complete this lesson (percents)."
+msgstr "Nota exigida para concluir esta aula (percentual)."
+
+msgid "Select @label type"
+msgstr "Selecionar tipo de @label"
+
+msgid "Select a text field to display as the course description in the course cards. You may first have to add a text field to your Course group type."
+msgstr "Selecione um campo de texto para exibir como descrição do curso nos cartões. Talvez seja necessário adicionar um campo de texto ao tipo de grupo Curso."
+
+msgid "Select an Image field or a Media reference field for the course card background. You may first have to add an image field to your Course group type."
+msgstr "Selecione um campo de imagem ou de referência de mídia para o fundo do cartão do curso. Talvez seja necessário adicionar um campo de imagem ao tipo de grupo Curso."
+
+msgid "Select answer(s)"
+msgstr "Selecionar resposta(s)"
+
+msgid "Select answer(s) with feedback"
+msgstr "Selecionar resposta(s) com retorno"
+
+msgid "Select target class"
+msgstr "Selecionar turma de destino"
+
+msgid "Selected user is already a member of a class on this Course."
+msgstr "O usuário selecionado já é membro de uma turma deste curso."
+
+msgid "Selected view: @view (@display)"
+msgstr "Visão selecionada: @view (@display)"
+
+msgid "Should a default class be created when creating a course?"
+msgstr "Criar uma turma padrão ao criar um curso?"
+
+msgid "Show only activities not attached to any lesson."
+msgstr "Mostrar apenas atividades que não estão em nenhuma aula."
+
+msgid "Show only lessons not attached to any course."
+msgstr "Mostrar apenas aulas que não estão em nenhum curso."
+
+msgid "Single selection (radio buttons)"
+msgstr "Seleção única (botões de opção)"
+
+msgid "Skipped: could not load course status."
+msgstr "Ignorado: não foi possível carregar o status do curso."
+
+msgid "Skipped: no course context available."
+msgstr "Ignorado: nenhum contexto de curso disponível."
+
+msgid "Skipped: no course status found."
+msgstr "Ignorado: nenhum status de curso encontrado."
+
+msgid "Skipped: no owner selected."
+msgstr "Ignorado: nenhum proprietário selecionado."
+
+msgid "Skipped: not a course group."
+msgstr "Ignorado: não é um grupo de curso."
+
+msgid "Skipped: not a membership group relation."
+msgstr "Ignorado: não é uma relação de participação em grupo."
+
+msgid "Skipped: the target user already has an in-progress status for this course."
+msgstr "Ignorado: o usuário de destino já tem um status em andamento neste curso."
+
+msgid "Skipped: wrong entity type."
+msgstr "Ignorado: tipo de entidade incorreto."
+
+msgid "Start @title"
+msgstr "Iniciar @title"
+
+msgid "Stores answer and correct / incorrect indicators"
+msgstr "Armazena a resposta e os indicadores de correto / incorreto"
+
+msgid "Stores answer data"
+msgstr "Armazena os dados da resposta"
+
+msgid "Stores phrase match and corresponding feedback"
+msgstr "Armazena a correspondência de frase e o retorno correspondente"
+
+msgid "Student @student has been added to the \"@class\" class."
+msgstr "O aluno @student foi adicionado à turma \"@class\"."
+
+msgid "Student answer"
+msgstr "Resposta do aluno"
+
+msgid "Student results link"
+msgstr "Link para os resultados do aluno"
+
+msgid "Student will be added to the selected class."
+msgstr "O aluno será adicionado à turma selecionada."
+
+msgid "Students are currently taking this course. Choose how your updates will affect them by checking or unchecking the \"Create new revision\" box below."
+msgstr "Há alunos fazendo este curso no momento. Escolha como suas alterações os afetarão, marcando ou desmarcando a caixa \"Criar nova revisão\" abaixo."
+
+msgid "Submit answer"
+msgstr "Enviar resposta"
+
+msgid "Suggestions for the student to look at this concept from another angle"
+msgstr "Sugestões para o aluno observar este conceito por outro ângulo"
+
+msgid "Summary only"
+msgstr "Somente resumo"
+
+msgid "Take course"
+msgstr "Fazer o curso"
+
+msgid "That activity cannot be accessed from here."
+msgstr "Esta atividade não pode ser acessada daqui."
+
+msgid "The Course the status entity refers to."
+msgstr "O curso ao qual o status se refere."
+
+msgid "The ID of the Course Status entity."
+msgstr "O ID da entidade de status do curso."
+
+msgid "The Lesson of this status."
+msgstr "A aula deste status."
+
+msgid "The UUID of the Course Status."
+msgstr "O UUID do status do curso."
+
+msgid "The current lesson status to be started / continued"
+msgstr "O status atual da aula a ser iniciado ou continuado"
+
+msgid "The default score this activity is marked out of when assigned to a lesson. Set to 0 if the activity does not require evaluation."
+msgstr "A nota máxima desta atividade quando atribuída a uma aula. Defina 0 se a atividade não precisar de avaliação."
+
+msgid "The delta of the current activity"
+msgstr "A posição da atividade atual"
+
+msgid "The form you are working on became stale, please reload the page and try again"
+msgstr "O formulário em que você trabalhava expirou. Recarregue a página e tente de novo."
+
+msgid "The label of the activity."
+msgstr "O nome da atividade."
+
+msgid "The label of the answer."
+msgstr "O nome da resposta."
+
+msgid "The learning path status this lesson status belongs to."
+msgstr "O status do percurso de aprendizagem ao qual este status de aula pertence."
+
+msgid "The maximum score that can be obtained for this Lesson (points)."
+msgstr "A nota máxima que pode ser obtida nesta aula (pontos)."
+
+msgid "The minimum percentage a student must score to pass this lesson."
+msgstr "A porcentagem mínima que o aluno precisa atingir para ser aprovado nesta aula."
+
+msgid "The name of the Activity entity."
+msgstr "O nome da entidade Atividade."
+
+msgid "The name of the Lesson entity."
+msgstr "O nome da entidade Aula."
+
+msgid "The number of activities to be randomly selected each time someone takes this lesson."
+msgstr "Número de atividades sorteadas aleatoriamente sempre que alguém faz esta aula."
+
+msgid "The requested course could not be retrieved because the request is invalid."
+msgstr "O curso solicitado não pôde ser carregado porque a requisição é inválida."
+
+msgid "The requested lesson could not be retrieved because the lesson number is invalid."
+msgstr "A aula solicitada não pôde ser carregada porque o número da aula é inválido."
+
+msgid "The score the user obtained for this Lesson (percents)."
+msgstr "A nota obtida pelo usuário nesta aula (percentual)."
+
+msgid "The score the user obtained for this answer"
+msgstr "A nota obtida pelo usuário nesta resposta"
+
+msgid "The score the user obtained on the course."
+msgstr "A nota obtida pelo usuário no curso."
+
+msgid "The score this activity is marked out of. Set to 0 if the activity does not require evaluation."
+msgstr "A nota máxima desta atividade. Defina 0 se a atividade não precisar de avaliação."
+
+msgid "The status of the requested lesson could not be retrieved because the lesson number is invalid."
+msgstr "O status da aula solicitada não pôde ser carregado porque o número da aula é inválido."
+
+msgid "The time of submitting the last answer by the student or starting of the course if there are no answers yet."
+msgstr "O horário da última resposta enviada pelo aluno, ou o início do curso se ainda não houver respostas."
+
+msgid "The time that the Activity was created."
+msgstr "O horário em que a atividade foi criada."
+
+msgid "The time that the Activity was last edited."
+msgstr "O horário da última edição da atividade."
+
+msgid "The time that the Lesson finished."
+msgstr "O horário em que a aula foi concluída."
+
+msgid "The time that the Lesson has started."
+msgstr "O horário em que a aula foi iniciada."
+
+msgid "The time that the Lesson was created."
+msgstr "O horário em que a aula foi criada."
+
+msgid "The time that the Lesson was last edited."
+msgstr "O horário da última edição da aula."
+
+msgid "The time that the course finished."
+msgstr "O horário em que o curso foi concluído."
+
+msgid "The time that the course was started."
+msgstr "O horário em que o curso foi iniciado."
+
+msgid "The training status - in progress / passed / failed."
+msgstr "O status do treinamento: em andamento / aprovado / reprovado."
+
+msgid "The user ID of author of the Answer entity."
+msgstr "O ID do usuário autor da entidade Resposta."
+
+msgid "The user ID of author of the Lesson entity."
+msgstr "O ID do usuário autor da entidade Aula."
+
+msgid "The user ID of the Course Status entity."
+msgstr "O ID do usuário da entidade Status do curso."
+
+msgid "The user who will become the new owner of the selected course statuses and their answers."
+msgstr "O usuário que passará a ser o novo proprietário dos status de curso e respostas selecionados."
+
+msgid "The user who will become the new owner of the selected courses, their lessons and activities."
+msgstr "O usuário que passará a ser o novo proprietário dos cursos, aulas e atividades selecionados."
+
+msgid "There are no views with the \"LMS selection for adding to parent\" field. Please create one or add this field to an existing view."
+msgstr "Não há visões com o campo \"Seleção do LMS para adicionar ao pai\". Crie uma ou adicione esse campo a uma visão existente."
+
+msgid "This activity has been removed from the lesson."
+msgstr "Esta atividade foi removida da aula."
+
+msgid "This answer is already evaluated."
+msgstr "Esta resposta já foi avaliada."
+
+msgid "This answer is under review."
+msgstr "Esta resposta está em revisão."
+
+msgid "This course could not be started. Your account may not have access to it."
+msgstr "Não foi possível iniciar este curso. Sua conta pode não ter acesso a ele."
+
+msgid "This course does not allow going back from this point."
+msgstr "Este curso não permite voltar a partir deste ponto."
+
+msgid "This course does not have any lessons yet. A course creator must add at least one."
+msgstr "Este curso ainda não tem aulas. Um criador do curso precisa adicionar pelo menos uma."
+
+msgid "This course has been removed and is no longer available."
+msgstr "Este curso foi removido e não está mais disponível."
+
+msgid "This course has no lessons."
+msgstr "Este curso não tem aulas."
+
+msgid "This course is complete and awaiting grading. Check back later for your results."
+msgstr "Este curso está concluído e aguarda correção. Volte mais tarde para ver seu resultado."
+
+msgid "This course requires activities to be completed in order. Submit each activity to continue to the next one."
+msgstr "Este curso exige que as atividades sejam concluídas em ordem. Envie cada atividade para avançar para a próxima."
+
+msgid "This field has been disabled by the plugin to guarantee the functionality that's expected of it."
+msgstr "Este campo foi desativado pelo plugin para garantir o funcionamento esperado."
+
+msgid "This filter needs Course ID as an argument to be able to display class options. It works on /group/%group/* URIs as an exposed filter."
+msgstr "Este filtro precisa do ID do curso como argumento para exibir as opções de turma. Funciona nas URLs /group/%group/* como filtro exposto."
+
+msgid "This lesson does not allow returning to previous activities."
+msgstr "Esta aula não permite voltar às atividades anteriores."
+
+msgid "This lesson has been removed from the course."
+msgstr "Esta aula foi removida do curso."
+
+msgid "This lesson has no activities"
+msgstr "Esta aula não tem atividades"
+
+msgid "Tokens related to LMS Activity entities."
+msgstr "Tokens relacionados às entidades Atividade do LMS."
+
+msgid "Tokens related to LMS Answer entities."
+msgstr "Tokens relacionados às entidades Resposta do LMS."
+
+msgid "Transfer course ownership"
+msgstr "Transferir a propriedade do curso"
+
+msgid "Transfer course results"
+msgstr "Transferir os resultados do curso"
+
+msgid "True / false question"
+msgstr "Questão de verdadeiro ou falso"
+
+msgid "True / false with feedback"
+msgstr "Verdadeiro ou falso com retorno"
+
+msgid "Unexpected error occurred, please contact the site administrator."
+msgstr "Ocorreu um erro inesperado; entre em contato com o administrador do site."
+
+msgid "Unpublished activities cannot be a part of a published lesson."
+msgstr "Atividades não publicadas não podem fazer parte de uma aula publicada."
+
+msgid "Unpublished lessons cannot be a part of a published course."
+msgstr "Aulas não publicadas não podem fazer parte de um curso publicado."
+
+msgid "Use revisions"
+msgstr "Usar revisões"
+
+msgid "Was the referenced lesson mandatory when started?"
+msgstr "A aula referenciada era obrigatória quando foi iniciada?"
+
+msgid "Wrong entity type"
+msgstr "Tipo de entidade incorreto"
+
+msgid "You could have another look at:"
+msgstr "Você poderia rever:"
+
+msgid "You have been added to the \"@class\" class."
+msgstr "Você foi adicionado à turma \"@class\"."
+
+msgid "You have reached the end of the course, but some earlier activities are incomplete. Complete them, then return here to finish the course."
+msgstr "Você chegou ao fim do curso, mas algumas atividades anteriores estão incompletas. Conclua-as e volte aqui para finalizar o curso."
+
+msgid "You seem to have a good understanding of:"
+msgstr "Você parece ter uma boa compreensão de:"
+
+msgid "You will be added to the selected class."
+msgstr "Você será adicionado à turma selecionada."
+
+msgid "Your account does not have access to this course."
+msgstr "Sua conta não tem acesso a este curso."
+
+msgid "Your course progress has been reset so you can view the latest updates."
+msgstr "Seu progresso no curso foi redefinido para que você veja as atualizações mais recentes."
+
+msgid "course"
+msgstr "curso"
+
+msgid "finished"
+msgstr "concluída"
+
+msgid "lesson"
+msgstr "aula"
+
+msgid "lessons"
+msgstr "aulas"
+
+msgid "min"
+msgstr "min"
+
+msgid "not all evaluated"
+msgstr "não totalmente avaliado"
+
+msgid "not evaluated"
+msgstr "não avaliado"
+
+msgid "only orphaned"
+msgstr "somente órfãos"
+
+msgid "score: @score%"
+msgstr "nota: @score%"
+
+msgid "score: @score% / @required% required"
+msgstr "nota: @score% / @required% exigido"
+
+# Strings common to Drupal LMS 1.2.4, added from the official pt-BR catalog.
+# Source: https://ftp.drupal.org/files/translations/all/lms/lms-1.2.4.pt-br.po
+
+msgid "Home"
+msgstr "Início"
+
+msgid "Title"
+msgstr "Título"
+
+msgid "Next"
+msgstr "Próximo"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Delete"
+msgstr "Apagar"
+
+msgid "Operations"
+msgstr "Operações"
+
+msgid "Group"
+msgstr "Grupo"
+
+msgid "Type"
+msgstr "Tipo"
+
+msgid "Author"
+msgstr "Autor"
+
+msgid "Actions"
+msgstr "Ações"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Remove"
+msgstr "Remover"
+
+msgid "Description"
+msgstr "Descrição"
+
+msgid "Yes"
+msgstr "Sim"
+
+msgid "No"
+msgstr "Não"
+
+msgid "Edit"
+msgstr "Editar"
+
+msgid "Reset"
+msgstr "Redefinir"
+
+msgid "- None -"
+msgstr "- Nenhum -"
+
+msgid "Weight"
+msgstr "Peso"
+
+msgid "Settings"
+msgstr "Configurações"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "General settings"
+msgstr "Configurações gerais"
+
+msgid "Label"
+msgstr "Rótulo"
+
+msgid "True"
+msgstr "Verdadeiro"
+
+msgid "False"
+msgstr "Falso"
+
+msgid "Default"
+msgstr "Padrão"
+
+msgid "Update"
+msgstr "Atualizar"
+
+msgid "Add"
+msgstr "Adicionar"
+
+msgid "View"
+msgstr "Ver"
+
+msgid "Display mode"
+msgstr "Modo de exibição"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "User"
+msgstr "Usuário"
+
+msgid "Continue"
+msgstr "Continuar"
+
+msgid "Created"
+msgstr "Criado"
+
+msgid "Answer"
+msgstr "Resposta"
+
+msgid "All"
+msgstr "Tudo"
+
+msgid "Page"
+msgstr "Página"
+
+msgid "1 minute"
+msgid_plural "@count minutes"
+msgstr[0] "1 minuto"
+msgstr[1] "@count minutos"
+
+msgid "1 hour"
+msgid_plural "@count hours"
+msgstr[0] "1 hora"
+msgstr[1] "@count horas"
+
+msgid "1 day"
+msgid_plural "@count days"
+msgstr[0] "1 dia"
+msgstr[1] "@count dias"
+
+msgid "Selected"
+msgstr "Selecionado"
+
+msgid "Roles"
+msgstr "Papéis"
+
+msgid "Revision ID"
+msgstr "ID da revisão"
+
+msgid "Comment"
+msgstr "Comentário"
+
+msgid "Score"
+msgstr "Pontuação"
+
+msgid "Published"
+msgstr "Publicado"
+
+msgid "Revisions"
+msgstr "Revisões"
+
+msgid "Warning"
+msgstr "Aviso"
+
+msgid "N/A"
+msgstr "N/D"
+
+msgid "Authored by"
+msgstr "Escrito por"
+
+msgid ", "
+msgstr ", "
+
+msgid "Details"
+msgstr "Detalhes"
+
+msgid "Desc"
+msgstr "Decrescente"
+
+msgid "Owner"
+msgstr "Proprietário"
+
+msgid "Time limit"
+msgstr "tempo limite"
+
+msgid "Start"
+msgstr "Iniciar"
+
+msgid "Link text"
+msgstr "Texto do link"
+
+msgid "Class"
+msgstr "Classe"
+
+msgid "false"
+msgstr "falso"
+
+msgid "true"
+msgstr "verdadeiro"
+
+msgid "Sort by"
+msgstr "Ordenar por"
+
+msgid "Full"
+msgstr "Completo"
+
+msgid "Student"
+msgstr "Estudante"
+
+msgid "Size of textfield"
+msgstr "Tamanho do campo de texto"
+
+msgid "Authored on"
+msgstr "Escrito em"
+
+msgid "Are you sure you want to delete %name?"
+msgstr "Você tem certeza que deseja excluir %name?"
+
+msgid "Full text"
+msgstr "Texto completo"
+
+msgid "Expired"
+msgstr "Expirado"
+
+msgid "Parameters"
+msgstr "Parâmetros"
+
+msgid "activity"
+msgstr "atividade"
+
+msgid "Activity"
+msgstr "Atividade"
+
+msgid "Revert"
+msgstr "Reverter"
+
+msgid "Current status"
+msgstr "Situação atual"
+
+msgid "Results"
+msgstr "Resultados"
+
+msgid "Plugin"
+msgstr "Plugin"
+
+msgid "Changed"
+msgstr "Alterado"
+
+msgid "Failed"
+msgstr "Reprovado(a)"
+
+msgid "New"
+msgstr "Novo"
+
+msgid "Finished"
+msgstr "Concluído"
+
+msgid "Mandatory"
+msgstr "Obrigatório"
+
+msgid "Selection"
+msgstr "Seleção"
+
+msgid "Apply"
+msgstr "Aplicar"
+
+msgid "1 second"
+msgid_plural "@count seconds"
+msgstr[0] "1 segundo"
+msgstr[1] "@count segundos"
+
+msgid "Classes"
+msgstr "Turmas"
+
+msgid "Are you sure you want to revert to the revision from %revision-date?"
+msgstr ""
+"Você tem certeza que deseja reverter para a revisão de "
+"%revision-date?"
+
+msgid "Are you sure you want to delete the revision from %revision-date?"
+msgstr "Você tem certeza que deseja apagar a revisão de %revision-date?"
+
+msgid "Passed"
+msgstr "Aprovado(a)"
+
+msgid "@type: deleted %title revision %revision."
+msgstr "@type: apagada a revisão %revision de %title."
+
+msgid "Offset"
+msgstr "Deslocamento"
+
+msgid "Data"
+msgstr "Dados"
+
+msgid "Selection type"
+msgstr "Tipo de seleção"
+
+msgid "Started"
+msgstr "Iniciada"
+
+msgid "Target"
+msgstr "Alvo"
+
+msgid "Error message"
+msgstr "Mensagem de erro"
+
+msgid "Activities"
+msgstr "Atividades"
+
+msgid "Select references"
+msgstr "Selecionar referências"
+
+msgid "Warning message"
+msgstr "Mensagem de aviso"
+
+msgid "Autocomplete matching"
+msgstr "Busca do autocompletar"
+
+msgid "Bundle"
+msgstr "Pacote"
+
+msgid "In progress"
+msgstr "Em progresso"
+
+msgid "Created by"
+msgstr "Criado por"
+
+msgid "Is one of"
+msgstr "É um de"
+
+msgid "Courses"
+msgstr "Cursos"
+
+msgid "Course"
+msgstr "Curso"
+
+msgid "Lesson"
+msgstr "Aula"
+
+msgid "Correct"
+msgstr "Correta"
+
+msgid "Backwards navigation"
+msgstr "Navegação para trás"
+
+msgid "Maximum Score"
+msgstr "Pontuação máxima"
+
+msgid "@interval ago"
+msgstr "@interval atrás"
+
+msgid "Invalid"
+msgstr "Inválido"
+
+msgid "Items per page"
+msgstr "Itens por página"
+
+msgid "‹‹"
+msgstr "‹‹"
+
+msgid "››"
+msgstr "››"
+
+msgid "Placeholder"
+msgstr "Espaço reservado"
+
+msgid "- All -"
+msgstr "- Todos -"
+
+msgid "Machine-readable name"
+msgstr "Nome legível de máquina"
+
+msgid "Copy of the revision from %date."
+msgstr "Copiar da revisão de %date."
+
+msgid "Revision from %revision-date of @type %title has been deleted."
+msgstr "A revisão de %revision-date do(a) @type %title foi apagada."
+
+msgid "@type: reverted %title revision %revision."
+msgstr "@type: %title revertido para a revisão %revision."
+
+msgid "Last activity"
+msgstr "Última atividade"
+
+msgid "Login / Register"
+msgstr "Login / Registro"
+
+msgid "Random order"
+msgstr "Ordem aleatória"
+
+msgid "Description Field"
+msgstr "Campo de Descrição"
+
+msgid "Activity ID"
+msgstr "ID da atividade"
+
+msgid "Evaluated"
+msgstr "Avaliada"
+
+msgid "No randomization"
+msgstr "Sem randomização"
+
+msgid "Are you sure you want to revert the revision?"
+msgstr "Você tem certeza que deseja reverter a revisão?"
+
+msgid "Are you sure you want to delete the revision?"
+msgstr "Você tem certeza que deseja apagar a revisão?"
+
+msgid "Get Started"
+msgstr "Comece agora"
+
+msgid "Missing plugin"
+msgstr "Plugin faltando"
+
+msgid "UUID"
+msgstr "UUID"
+
+msgid "Weight for @title"
+msgstr "Peso para @title"
+
+msgid "Group permission"
+msgstr "Permissão de grupo"
+
+msgid "Asc"
+msgstr "Ascendente"
+
+msgid "No results text"
+msgstr "Sem resultados de texto"
+
+msgid "Master"
+msgstr "Principal"
+
+msgid "Correct?"
+msgstr "Correto?"
+
+msgid "Link label to the referenced entity"
+msgstr "Linkar rótulo para a entidade referenciada"
+
+msgid "Restart"
+msgstr "Reiniciar"
+
+msgid "Activity type"
+msgstr "Tipo de atividade"
+
+msgid "@view : @display"
+msgstr "@view : @display"
+
+msgid "Lesson type"
+msgstr "Tipo de aula"
+
+msgid "Your answer"
+msgstr "Sua resposta"
+
+msgid "activities"
+msgstr "atividades"
+
+msgid "Activity types"
+msgstr "Tipos de atividade"
+
+msgid "Add activity"
+msgstr "Adicionar atividade"
+
+msgid "Text area (multiple rows) display format settings"
+msgstr ""
+"Configurações de formato de exibição de área de texto (múltiplas "
+"linhas)"
+
+msgid "Score:"
+msgstr "Pontuação:"
+
+msgid "The time that the entity was created."
+msgstr "A hora em que a entidade foi criada."
+
+msgid "The time that the entity was last edited."
+msgstr "A hora em que a entidade foi editada pela última vez."
+
+msgid "@type %title has been reverted to the revision from %revision-date."
+msgstr "@type %title foi revertido para a revisão de %revision-date."
+
+msgid "@label (@type)"
+msgstr "@label (@type)"
+
+msgid "content @type: deleted @label."
+msgstr "conteúdo @type: @label apagado."
+
+msgid "Select this item"
+msgstr "Selecione este item"
+
+msgid "The user ID of author of the Activity entity."
+msgstr "O ID do usuário do autor da Atividade."
+
+msgid "Output the URL as text"
+msgstr "Saída da URL como texto"
+
+msgid "Filter by class"
+msgstr "Filtrar por classe"
+
+msgid "Allow users to go back and revisit activities already answered."
+msgstr "Permita que os usuários voltem e refaçam as atividades."
+
+msgid "Randomize activities"
+msgstr "Randomizar atividades"
+
+msgid "Number of random activities"
+msgstr "Número de atividades aleatórias"
+
+msgid "Random activities"
+msgstr "Atividades aleatórias"
+
+msgid "Create @entity_type"
+msgstr "Criar @entity_type"
+
+msgid "Maximum number of autocomplete suggestions."
+msgstr "Número máximo de sugestões do autocompletar."
+
+msgid "Add course"
+msgstr "Adicionar curso"
+
+msgid "@interval hence"
+msgstr "@interval"
+
+msgid "Free navigation"
+msgstr "Navegação livre"
+
+msgid "Revision of @type %title has been deleted."
+msgstr "A revisão %title de @type foi apagada."
+
+msgid "@type %title has been reverted."
+msgstr "A revisão %title @type foi revertida."
+
+# Interface administrativa do LMS (menus, subpáginas e listagens).
+msgid "Administer LMS."
+msgstr "Gerenciar o LMS."
+
+msgid "Administer Lessons."
+msgstr "Gerenciar aulas."
+
+msgid "Administer Activities."
+msgstr "Gerenciar atividades."
+
+msgid "Administer Activity types."
+msgstr "Gerenciar tipos de atividade."
+
+msgid "LMS Settings"
+msgstr "Configurações do LMS"
+
+msgid "Global LMS Administrative settings."
+msgstr "Configurações administrativas globais do LMS."
+
+msgid "Global LMS settings."
+msgstr "Configurações gerais do LMS."
+
+msgid "Lesson settings"
+msgstr "Configurações das aulas"
+
+msgid "Manage lesson type fields and form display."
+msgstr "Gerenciar campos dos tipos de aula e a apresentação dos formulários."
+
+msgid "Classes settings"
+msgstr "Configurações das turmas"
+
+msgid "Settings related to LMS classes."
+msgstr "Configurações relacionadas às turmas do LMS."
+
+msgid "Administer Classes"
+msgstr "Gerenciar turmas"
+
+msgid "Administer Courses"
+msgstr "Gerenciar cursos"
+
+msgid "Add activity type"
+msgstr "Adicionar tipo de atividade"
+
+msgid "Add lesson"
+msgstr "Adicionar aula"
+
+msgid "Add class"
+msgstr "Adicionar turma"
+
+msgid "This allows students to re-enter finished courses that still need manual grading by a teacher. Students may make changes to their answers.<br />NOTE: If changed on a site with existing courses in progress, <a href=\":cache_url\">caches need to be cleared</a>."
+msgstr "Permite que estudantes retornem a cursos concluídos que ainda aguardam avaliação manual do educador e alterem suas respostas.<br />Observação: se houver cursos em andamento, limpe o cache após alterar esta opção (<a href=\":cache_url\">limpar cache</a>)."
+
+msgid "When this is enabled and a user starts a course, the exact current version of the course is locked in for that user. Making a new revision of the course, or any of its lessons and activities, will not affect the experience of current students in any way.<br />NOTE: A <a href=\":cache_url\">cache clear</a> is advised if changing this setting on a production site with courses in progress.<br />NOTE: course creators and editors will always see the latest revisions of course content, but the course navigation block is not updated unless their course progress is reset."
+msgstr "Quando esta opção está ativa, a versão atual do curso fica registrada para cada estudante no início do curso. Novas revisões do curso, das aulas ou das atividades não alteram a experiência de quem já começou.<br />Observação: recomendamos <a href=\":cache_url\">limpar o cache</a> ao alterar esta opção em produção com cursos em andamento.<br />Criadores e editores sempre veem as revisões mais recentes; o bloco de navegação do curso só é atualizado após redefinir o progresso."
+
+msgid "\"Reset for updates\" button for course editors"
+msgstr "Botão \"Redefinir para atualizações\" para editores de cursos"
+
+msgid "Display a button in the course navigation block that gives course editors a 1-click reset of their course progress, so they can see the latest version. Not visible to students.<br />NOTE: A <a href=\":cache_url\">cache clear</a> is required for changes to this setting to take effect."
+msgstr "Exibe no bloco de navegação um botão que permite aos editores redefinir o progresso do curso com um clique e ver a versão mais recente. O botão não aparece para estudantes.<br />Observação: é necessário <a href=\":cache_url\">limpar o cache</a> para aplicar alterações nesta opção."
+
+msgid "Activity page title pattern"
+msgstr "Padrão do título da página de atividade"
+
+msgid "The title of the page where students answer activities.<br /><b>Available tokens:</b><br />[group:title] - course title,<br />[lms_lesson:label] - lesson title,<br />[lms_activity:label] - activity title,<br />[lms_lesson_status:lesson_number] - lesson number,<br />[lms_lesson_status:activity_number] - activity number."
+msgstr "Título da página em que estudantes respondem às atividades.<br /><b>Tokens disponíveis:</b><br />[group:title] - título do curso,<br />[lms_lesson:label] - título da aula,<br />[lms_activity:label] - título da atividade,<br />[lms_lesson_status:lesson_number] - número da aula,<br />[lms_lesson_status:activity_number] - número da atividade."
+
+msgid "File upload"
+msgstr "Envio de arquivo"
+
+msgid "Default allowed file extensions"
+msgstr "Extensões de arquivo permitidas por padrão"
+
+msgid "Separate extensions with a comma or space. Each extension can contain alphanumeric characters, '.', and '_', and should start and end with an alphanumeric character. <strong>This value can be overridden on a per-activity basis.</strong>"
+msgstr "Separe as extensões com vírgula ou espaço. Cada extensão pode conter letras, números, ponto e sublinhado e deve começar e terminar com letra ou número. <strong>Este valor pode ser substituído em cada atividade.</strong>"
+
+msgid "Upload a file. Allowed extensions: @extensions."
+msgstr "Envie um arquivo. Extensões permitidas: @extensions."
+
+msgid "No file uploaded"
+msgstr "Nenhum arquivo enviado"
+
+msgid "File not accessible."
+msgstr "Arquivo indisponível."
+
+msgid "Quiz answer"
+msgstr "Resposta do questionário"
+
+msgid "Scoring methodology"
+msgstr "Método de pontuação"
+
+msgid "Specify which logic to use to score an answer."
+msgstr "Escolha a regra usada para pontuar uma resposta."
+
+msgid "Expected answers"
+msgstr "Respostas esperadas"
+
+msgid "Please enter the values of the checkboxes that should be checked, separated by commas. If the chosen set matches this set, the answer to this question is considered correct and the full score is awarded."
+msgstr "Informe, separados por vírgula, os valores das opções que devem ser marcadas. Se o conjunto escolhido corresponder a este conjunto, a resposta será considerada correta e receberá a pontuação total."
+
+msgid "Expected answer"
+msgstr "Resposta esperada"
+
+msgid "Score to award when the question is fully answered."
+msgstr "Pontuação concedida quando a questão é respondida integralmente."
+
+msgid "Maximum score"
+msgstr "Pontuação máxima"
+
+msgid "The answer should contain this string to qualify as correct."
+msgstr "A resposta deve conter este texto para ser considerada correta."
+
+msgid "Whether to compare the answer in case sensitive mode."
+msgstr "Define se a comparação diferencia letras maiúsculas de minúsculas."
+
+msgid "Case sensitive?"
+msgstr "Diferenciar maiúsculas e minúsculas?"
+
+msgid "Match"
+msgstr "Correspondência"

@@ -1,0 +1,9 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.1
+state: Dev
+progress_note: >-
+  D-15 revalidado: suíte do módulo 12/227 PASS, 92 depreciações Core/contrib;
+  PHP lint 15/15 e PHPCS Drupal PASS em 2026-10-28; revisão de estilo sem
+  mudança de regra. Dependências `aculta_lms`, `aculta_events` e
+  `aculta_calendar` continuam Dev.
+next_phase: 'Concluir revisão visual integrada e homologar Runtime depois que `aculta_lms`, `aculta_events` e `aculta_calendar` atingirem RC; ver [roadmap](web/modules/custom/aculta_portal/modules/aculta_lms_agenda/docs/ROADMAP.md).'

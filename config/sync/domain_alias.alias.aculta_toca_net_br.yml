@@ -1,0 +1,10 @@
+uuid: f6fd17c1-61d7-4edf-87c1-6e7738cee791
+langcode: pt-br
+status: true
+dependencies: {  }
+id: aculta_toca_net_br
+domain_id: aculta_org
+pattern: aculta.toca.net.br
+redirect: 0
+environment: homelab
+weight: 1

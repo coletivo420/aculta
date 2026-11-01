@@ -1,0 +1,8 @@
+ckeditor5.create:
+  js:
+    js/ckeditor5/acultagallery-create.js: {}
+  dependencies:
+    - core/ckeditor5
+    - core/drupal.ajax
+    - core/drupal.dialog.ajax
+    - entity_embed/entity_embed

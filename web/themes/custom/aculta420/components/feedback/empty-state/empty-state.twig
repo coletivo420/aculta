@@ -1,0 +1,5 @@
+{# Visual-only: consumers must decide whether results are empty and prepare cache-safe content. #}
+<div class="aculta-empty-state{{ compact ? ' aculta-empty-state--compact' : '' }}">
+  <div class="aculta-empty-state__message">{{ message }}</div>
+  {% if actions %}<div class="aculta-empty-state__actions">{{ actions }}</div>{% endif %}
+</div>

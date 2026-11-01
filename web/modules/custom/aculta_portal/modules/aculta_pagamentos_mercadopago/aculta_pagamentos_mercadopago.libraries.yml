@@ -1,0 +1,22 @@
+mp_sdk:
+  js:
+    "https://sdk.mercadopago.com/js/v2": { minified: true }
+
+checkout_pro_review:
+  version: VERSION
+  js:
+    js/mercado_pago.checkoutpro.js: {}
+  dependencies:
+    - core/drupalSettings
+    - core/drupal
+    - core/jquery
+    - core/once
+    - aculta_pagamentos_mercadopago/mp_sdk
+
+checkout_popup:
+  version: VERSION
+  js:
+    js/checkout_popup.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

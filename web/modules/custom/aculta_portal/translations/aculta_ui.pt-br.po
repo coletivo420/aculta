@@ -1,0 +1,92 @@
+# Textos de interface que ainda apareciam em inglês. Importar com:
+# drush locale-import --type=not-customized --override=all pt-br <este arquivo>
+msgid ""
+msgstr ""
+"Project-Id-Version: ACULTA Portal — interface\n"
+"Language: pt-br\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Log out"
+msgstr "Sair"
+
+msgid "I agree."
+msgstr "Li e concordo."
+
+msgid "Create new account"
+msgstr "Criar nova conta"
+
+msgid "Add lowercase letters"
+msgstr "Adicione letras minúsculas"
+
+msgid "Add uppercase letters"
+msgstr "Adicione letras maiúsculas"
+
+msgid "Add numbers"
+msgstr "Adicione números"
+
+msgid "Add punctuation"
+msgstr "Adicione pontuação"
+
+msgid "Confirm password"
+msgstr "Confirmar senha"
+
+msgid "Make it different from your username"
+msgstr "Use uma senha diferente do seu nome de usuário"
+
+msgid "Passwords match"
+msgstr "As senhas coincidem"
+
+msgid "Password strength"
+msgstr "Força da senha"
+
+msgid "Recommendations to make your password stronger"
+msgstr "Recomendações para deixar a sua senha mais forte"
+
+msgid "User account menu"
+msgstr "Menu da conta de usuário"
+
+msgid "Payment"
+msgstr "Pagamento"
+
+msgid "Quantity"
+msgstr "Quantidade"
+
+msgid "Company"
+msgstr "Empresa"
+
+msgid "You have canceled checkout at @gateway but may resume the checkout process here when you are ready."
+msgstr "Você cancelou o pagamento no @gateway, mas pode retomar o checkout aqui quando quiser."
+
+msgid "%label has been saved."
+msgstr "%label foi salvo."
+
+msgid "The profile has been saved."
+msgstr "O perfil foi salvo."
+
+msgid "Billing information"
+msgstr "Endereço"
+
+#: src/Controller/PortalController.php
+msgid "Data"
+msgstr "Data"
+
+msgid "Payment has been successfully processed."
+msgstr "Pagamento processado com sucesso."
+
+msgid "Complete"
+msgstr "Pedido concluído"
+
+msgid "Contact email"
+msgstr "E-mail de contato"
+
+msgid "Completed"
+msgstr "Concluído"
+
+msgid "Placed"
+msgstr "Realizado em"
+
+msgid "Title"
+msgstr "Item"

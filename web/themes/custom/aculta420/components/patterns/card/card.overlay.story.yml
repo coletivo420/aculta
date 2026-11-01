@@ -1,0 +1,14 @@
+name: Cartão com imagem sobreposta
+description: A imagem ocupa o cartão e os metadados aparecem em um painel de contraste alto.
+component: aculta420:card
+props:
+  variant: overlay
+slots:
+  image:
+    markup: '<div class="ratio ratio-16x9 bg-body-secondary" role="img" aria-label="Área reservada para imagem de capa"></div>'
+  header:
+    markup: Data de publicação (exemplo)
+  content:
+    markup: <h3><a href="#">Título do álbum</a></h3>
+  footer:
+    markup: Crédito editorial (exemplo)

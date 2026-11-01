@@ -1,0 +1,10 @@
+uuid: 4a990b3c-7870-4280-90ce-bb13b4eac613
+langcode: pt-br
+status: true
+dependencies: {  }
+id: eventos_aculta_toca_net_br
+domain_id: eventos_aculta_org
+pattern: eventos.aculta.toca.net.br
+redirect: 0
+environment: homelab
+weight: 10

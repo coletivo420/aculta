@@ -1,0 +1,36 @@
+# Origem da expedição (loja, depósito ou local autorizado). Vazia por padrão: as operações bloqueiam até ser preenchida.
+# Mesma estrutura do endereço ACULTA (Drupal Address + StreetNumberField). Editável na administração (fase Green Stash).
+origin:
+  country_code: BR
+  postal_code: ''
+  address_line1: ''
+  address_line2: ''
+  dependent_locality: ''
+  locality: ''
+  administrative_area: ''
+# Pacote padrão da cotação (envelope plástico de e-commerce de roupa). Dimensões em centímetros, peso em quilos.
+# Dimensões: envelope mínimo dos Correios, 16 × 11 cm; altura de 2 cm mantém o formato de envelope (página oficial
+# "Envios pelos Correios", PAC e SEDEX). Peso de 0,3 kg: suposição de uma camiseta, a confirmar pelo responsável.
+# Zero em qualquer campo = não cadastrado; sem pacote o frete fica indisponível.
+package:
+  width: 16
+  height: 2
+  length: 11
+  weight: 0.3
+# Ambiente ativo: sandbox ou production. Valor inválido cai no sandbox.
+environment: sandbox
+# URL de retorno cadastrada no app do Melhor Envio. Vazia até o cadastro do app.
+redirect_uri: ''
+# Escopos OAuth2 separados por espaço. Validados no sandbox (ME-PEND-01): cotação e leitura da conta.
+# `user-read` não existe e faz a autorização falhar com invalid_scope; o nome correto é `users-read`.
+scopes: 'shipping-calculate users-read'
+# E-mail de contato exigido no User-Agent da API. Vazio bloqueia as chamadas.
+contact_email: ''
+# IDs do contrato central de segredos. Os valores não ficam nesta configuração.
+keys:
+  sandbox:
+    client_id: 'melhorenvio_sandbox_client_id'
+    client_secret: 'melhorenvio_sandbox_client_secret'
+  production:
+    client_id: 'melhorenvio_production_client_id'
+    client_secret: 'melhorenvio_production_client_secret'

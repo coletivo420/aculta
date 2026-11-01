@@ -1,0 +1,10 @@
+# Serviços do site que precisam existir antes de qualquer módulo ser ativado (install e import de config).
+#
+# logger.channel.cep_autocomplete: o contrib cep_autocomplete (1.0.0) referencia este canal, mas não o define.
+# O canal só existia quando aculta_portal estava ativo, e o módulo cep_autocomplete é ativado no mesmo lote,
+# então um site novo, montado a partir de config/sync, não subia. Definido aqui, o canal existe sempre.
+# Não altera o contrib. Incluído por $settings['container_yamls'] no settings.local.php de cada ambiente.
+services:
+  logger.channel.cep_autocomplete:
+    parent: logger.channel_base
+    arguments: ['cep_autocomplete']

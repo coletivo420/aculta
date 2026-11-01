@@ -1,0 +1,9 @@
+aculta_mcp.access_settings:
+  path: '/integracoes/mcp/acesso'
+  defaults:
+    _form: '\Drupal\aculta_mcp\Form\McpAccessSettingsForm'
+    _title: 'Usuários autorizados'
+  requirements:
+    _permission: 'administer mcp server'
+  options:
+    _admin_route: true

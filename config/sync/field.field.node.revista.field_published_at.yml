@@ -1,0 +1,21 @@
+uuid: baa2cf8c-0989-4f3b-96fd-ce18b96c7b4a
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_published_at
+    - node.type.revista
+  module:
+    - datetime
+id: node.revista.field_published_at
+field_name: field_published_at
+entity_type: node
+bundle: revista
+label: 'Data efetiva de publicação'
+description: 'Registrada automaticamente na primeira publicação. Altere somente para reproduzir uma data de publicação efetivamente comprovada.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

@@ -1,0 +1,12 @@
+services:
+  aculta_index_representative_test.content_provider:
+    class: Drupal\aculta_index_representative_test\ContentIndex\RepresentativeContentProvider
+    arguments: ['representative_content', 'representative_content', 'representative_related', 'representative_target']
+    tags:
+      - { name: aculta_index.provider }
+
+  aculta_index_representative_test.target_provider:
+    class: Drupal\aculta_index_representative_test\ContentIndex\RepresentativeContentProvider
+    arguments: ['representative_target', 'representative_target']
+    tags:
+      - { name: aculta_index.provider }

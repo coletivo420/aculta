@@ -1,0 +1,321 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_portal\Status;
+
+/**
+ * Curated metadata for reusable Portal services shown in administrative Status. */
+final class PortalHelperRegistry {
+
+  /**
+   * Human-readable metadata keyed by the registered Drupal service ID.
+   *
+   * The service_id_collector supplies only the IDs whose service definitions
+   * are active. Keeping text here makes this registry the single source for the
+   * panel summaries; detailed contracts remain in the linked documentation.
+   *
+   * @var array<string, array{label: string, summary: string, docs: string}>
+   */
+  private const DEFINITIONS = [
+    'aculta_user.achievement_definitions' => [
+      'label' => 'Definições de conquistas',
+      'summary' => 'Preserva o catálogo e as formas de concessão na Config API do User, sem motor de regras executáveis.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_game/docs/EXECUCAO.md',
+    ],
+    'aculta_user.author_identity_resolver' => [
+      'label' => 'Identidade de autoria',
+      'summary' => 'Resolve apelido público e link canônico em view-model mínimo, sem expor entidades ou campos privados.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-API.md',
+    ],
+    'aculta_user.author_card_builder' => [
+      'label' => 'Cartões de autoria',
+      'summary' => 'Prepara identidade, avatar mediado pelo aculta_image e cache para cartões; ações e decisões de acesso permanecem com os consumidores funcionais.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-API.md',
+    ],
+    'aculta_user.author_card_variant_resolver' => [
+      'label' => 'Variantes contextuais de autoria',
+      'summary' => 'Seleciona a variante do cartão pelo host sem conceder acesso ou misturar '
+      . 'Fórum, Revista, LMS e Wiki.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_user/docs/AUTHOR-CARD-VARIANTS.md',
+    ],
+    'aculta_game.mission_progress' => [
+      'label' => 'Missões e progresso',
+      'summary' => 'Apresenta missões iniciais e progresso privado a partir das concessões reais, sem pontuação ou storage paralelo.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_game/docs/EXECUCAO.md',
+    ],
+    'aculta_game.achievement_presentation' => [
+      'label' => 'Exibição de conquistas',
+      'summary' => 'Aplica privacidade, destaques e ordem às conquistas do perfil e da conta, sem expor evidências privadas.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_game/docs/EXECUCAO.md',
+    ],
+    'aculta_image.catalog' => [
+      'label' => 'Catálogo de imagens',
+      'summary' => 'Finalidades de imagem do site mapeadas para os estilos existentes. Única fonte de nome de estilo; o gate proíbe uso fora dele.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.upload_policy' => [
+      'label' => 'Política de upload de imagem',
+      'summary' => 'Extensões e tamanho máximo únicos para imagens do site. A exceção da conquista fica em aculta_game.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.render' => [
+      'label' => 'Renderização de imagem por finalidade',
+      'summary' => 'Entrega imagens pelo catálogo de finalidades (estilo oculto do chamador); configuração de campo e de formulário pelo mesmo ponto.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.inspector' => [
+      'label' => 'Leitura de dimensões de imagem',
+      'summary' => 'Único acesso à leitura de imagens do Drupal no site: dimensões de arquivo em disco ou em memória.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.generated_file' => [
+      'label' => 'Registro de imagens derivadas',
+      'summary' => 'Registra derivados públicos gerados como arquivos temporários para que o ciclo normal do aculta_image os valide e limpe.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.file_remover' => [
+      'label' => 'Exclusão controlada de imagem',
+      'summary' => 'Apaga arquivo de imagem somente quando file_usage e entity_usage não apontam para ele; invalida derivados e metadados.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.capabilities' => [
+      'label' => 'Capacidades de processamento de imagem',
+      'summary' => 'Detecta backends PHP, formatos e otimizadores disponíveis no servidor.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/README.md',
+    ],
+    'aculta_image.pdf_thumbnail' => [
+      'label' => 'Geração de miniaturas de PDF',
+      'summary' => 'Gera JPEG da primeira página de PDFs públicos com PHP Imagick, sem depender do binário de linha de comando.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_portal.unused_file_cleaner' => [
+      'label' => 'Coordenação de limpeza de arquivos sem uso',
+      'summary' => 'Revalida File Usage, Entity Usage, referências estruturadas e embeds versionados; delega imagens ao aculta_image.',
+      'docs' => 'docs/portal/CONTENT-CLEANUP-POLICY.md',
+    ],
+    'aculta_portal.unused_media_cleaner' => [
+      'label' => 'Coordenação de limpeza de Media órfão',
+      'summary' => 'Revalida referências e remove Media não publicado submetido pelo módulo dono.',
+      'docs' => 'docs/portal/CONTENT-CLEANUP-POLICY.md',
+    ],
+    'aculta_portal.content_cleanup_preview' => [
+      'label' => 'Prévia de limpeza de anexos',
+      'summary' => 'Avalia IDs explícitos de File e Media em modo somente leitura; '
+      . 'não inclui nomes, URIs ou conteúdo no relatório.',
+      'docs' => 'docs/portal/CONTENT-CLEANUP-POLICY.md',
+    ],
+    'aculta_image.cleanup' => [
+      'label' => 'Limpeza do ciclo de vida de imagens',
+      'summary' => 'Revalida imagens substituídas e remove uploads temporários vencidos em lotes pelo cron ou painel.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/README.md',
+    ],
+    'aculta_image.ingester' => [
+      'label' => 'Ingestão de imagem externa',
+      'summary' => 'Porta única para imagens de origem externa: valida pela política, calcula SHA-256, reaproveita, nunca sobrescreve e registra a origem.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.upload_ingester' => [
+      'label' => 'Ingestão de upload de imagem',
+      'summary' => 'Aplica UploadPolicy, valida conteúdo raster e cria arquivo gerenciado pela File API sem mover limites de upload para o consumidor.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.packaged_asset_publisher' => [
+      'label' => 'Publicação de imagens estáticas Composer',
+      'summary' => 'Publica assets H5P fixos dos pacotes Composer por caminho estável, valida imagens/SVG e registra uso e proveniência sem aceitar uploads.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.file_usage_manager' => [
+      'label' => 'Referências de imagem H5P',
+      'summary' => 'Registra e remove referências das imagens H5P no File API para a limpeza segura do acervo.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.audit' => [
+      'label' => 'Inventário e auditoria de imagens',
+      'summary' => 'Resumo do acervo, grupos de duplicatas exatas e candidatas à revisão com motivos. Somente leitura.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.quarantine' => [
+      'label' => 'Quarentena de imagens',
+      'summary' => 'Envia candidatas sem referência para área privada, restaura, e exclui só após 30 dias e nova verificação de uso.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
+    ],
+    'aculta_image.compressor' => [
+      'label' => 'Compressão de imagens do texto',
+      'summary' => 'Compressão sem perda (optipng, jpegoptim, gifsicle) dos uploads dos editores, com argumentos fixos e tempo limite.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/ESTILOS.md',
+    ],
+    'aculta_portal.account_courses' => [
+      'label' => 'Cursos da conta',
+      'summary' => 'Consulta participação e situação de cursos a partir das entidades LMS e Group.',
+      'docs' => 'web/modules/custom/aculta_portal/README.md',
+    ],
+    'aculta_portal.account_shell_builder' => [
+      'label' => 'Navegação da conta',
+      'summary' => 'Monta a estrutura neutra da área Minha Conta e aplica access/cache aos itens.',
+      'docs' => 'docs/portal/ACCOUNT-MENU.md',
+    ],
+    'aculta_portal.aculta_user_agreement_policy' => [
+      'label' => 'Política de termos da conta',
+      'summary' => 'Consulta e valida o aceite ACULTA no ledger do aculta_user.',
+      'docs' => 'web/modules/custom/aculta_portal/README.md',
+    ],
+    'aculta_portal.auth_integration' => [
+      'label' => 'Integrações de autenticação',
+      'summary' => 'Resume estado e disponibilidade das integrações de autenticação configuradas.',
+      'docs' => 'web/modules/custom/aculta_portal/README.md',
+    ],
+    'aculta_portal.cart_utility' => [
+      'label' => 'Carrinho Commerce',
+      'summary' => 'Obtém o carrinho ativo e constrói destinos canônicos no purpose MAIN.',
+      'docs' => 'docs/portal/PAYMENT-DOMAIN-POLICY.md',
+    ],
+    'aculta_portal.color_mode_preference' => [
+      'label' => 'Preferência de aparência',
+      'summary' => 'Lê e grava a preferência individual de modo de cor usando User Data.',
+      'docs' => 'docs/portal/IMPLEMENTATIONS.md',
+    ],
+    'aculta_portal.content_purpose_resolver' => [
+      'label' => 'Propósito do conteúdo',
+      'summary' => 'Resolve o Domain purpose responsável por apresentar uma entidade de conteúdo.',
+      'docs' => 'docs/portal/DOMAIN-PRESENTATION-CONTRACT.md',
+    ],
+    'aculta_portal.deployer_status_reader' => [
+      'label' => 'Leitura do estado do Deployer',
+      'summary' => 'Lê o relatório neutro publicado pelo ACULTA Deployer sem executar sua CLI.',
+      'docs' => 'docs/architecture/environments.md',
+    ],
+    'aculta_portal.domain_purpose' => [
+      'label' => 'Domain Purpose Manager',
+      'summary' => 'Resolve propósito atual e URLs canônicas entre Domains.',
+      'docs' => 'docs/portal/DOMAIN-PRESENTATION-CONTRACT.md',
+    ],
+    'aculta_portal.email_confirmation_policy' => [
+      'label' => 'Política de confirmação de e-mail',
+      'summary' => 'Avalia confirmação, acesso e transições de estado da conta.',
+      'docs' => 'docs/portal/SOURCE-OF-TRUTH.md',
+    ],
+    'aculta_portal.email_confirmation_requester' => [
+      'label' => 'Solicitação de confirmação de e-mail',
+      'summary' => 'Solicita a confirmação usando a integração Email Confirmer e User do Drupal.',
+      'docs' => 'docs/portal/SOURCE-OF-TRUTH.md',
+    ],
+    'aculta_portal.lms_friendly_slugs' => [
+      'label' => 'Slugs públicos de cursos',
+      'summary' => 'Converte títulos de cursos, lições e atividades em slugs e os resolve para entidades LMS.',
+      'docs' => 'docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md',
+    ],
+    'aculta_lms.course_completion_publisher' => [
+      'label' => 'Eventos de conclusão do LMS',
+      'summary' => 'Publica fatos de conclusão aprovada já persistidos pelo LMS, sem armazenar progresso ou nota.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_lms/docs/CONTRACT.md',
+    ],
+    'aculta_lms.course_room_builder' => [
+      'label' => 'Sala do curso LMS',
+      'summary' => 'Apresenta o índice de lições com access e cache do Group/LMS nas páginas canônicas de curso.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_lms/README.md',
+    ],
+    'aculta_lms.course_order_enrollment' => [
+      'label' => 'Matrícula de curso pelo Commerce',
+      'summary' => 'Sincroniza matrículas Group com pedidos pagos de curso e preserva memberships manuais e outras compras válidas.',
+      'docs' => 'docs/modules/LMS-GROUP.md',
+    ],
+    'aculta_lms.attempt_archive' => [
+      'label' => 'Histórico de tentativas do LMS',
+      'summary' => 'Preserva respostas, notas e comentários anteriores ao reinício de aula, revalidando acesso pelo curso e pelo usuário.',
+      'docs' => 'web/modules/custom/aculta_portal/modules/aculta_lms/README.md',
+    ],
+    'aculta_portal.registration_mail_policy' => [
+      'label' => 'Política de e-mail de cadastro',
+      'summary' => 'Coordena as mensagens transacionais de cadastro pela infraestrutura de e-mail existente.',
+      'docs' => 'docs/portal/SOURCE-OF-TRUTH.md',
+    ],
+    'aculta_portal.aculta_user_agreement_registration' => [
+      'label' => 'Aceite de Termos no cadastro',
+      'summary' => 'Registra o aceite dos Termos ACULTA no ledger do aculta_user.',
+      'docs' => 'docs/portal/SOURCE-OF-TRUTH.md',
+    ],
+    'aculta_portal.search_results' => [
+      'label' => 'Resultados de busca',
+      'summary' => 'Consulta conteúdo publicado e autorizado usando Entity API e o propósito atual.',
+      'docs' => 'web/modules/custom/aculta_portal/README.md',
+    ],
+    'aculta_portal.search_utility' => [
+      'label' => 'Utilitários de busca',
+      'summary' => 'Prepara links e rótulos da busca respeitando o Domain purpose.',
+      'docs' => 'web/modules/custom/aculta_portal/README.md',
+    ],
+    'aculta_portal.secrets_manager' => [
+      'label' => 'Referências de credenciais',
+      'summary' => 'Lê referências Drupal Key e valores fornecidos pelo ambiente sem expor segredos no Status.',
+      'docs' => 'docs/operations/SECRETS.md',
+    ],
+    'aculta_portal.turnstile_key_override' => [
+      'label' => 'Chaves de ambiente do Turnstile',
+      'summary' => 'Seleciona a referência Drupal Key correspondente ao ambiente declarado.',
+      'docs' => 'web/modules/custom/aculta_portal/README.md',
+    ],
+    'aculta_portal.turnstile_toggle' => [
+      'label' => 'Política Turnstile',
+      'summary' => 'Verifica configuração, credencial e disponibilidade do desafio anti-bot.',
+      'docs' => 'web/modules/custom/aculta_portal/README.md',
+    ],
+    'aculta_portal.checkout_configuration_resolver' => [
+      'label' => 'Resolução da configuração de checkout',
+      'summary' => 'Lê a configuração administrativa de cada contexto de checkout (Loja, LMS, Doações).',
+      'docs' => 'docs/decisions/ADR-032-portal-multi-cart-checkout.md',
+    ],
+    'aculta_portal.checkout_context_registry' => [
+      'label' => 'Registro de contextos de checkout',
+      'summary' => 'Reúne os providers de contexto de checkout por tag, sem dependência circular.',
+      'docs' => 'docs/decisions/ADR-032-portal-multi-cart-checkout.md',
+    ],
+    'aculta_portal.checkout_policy_manager' => [
+      'label' => 'Política de checkout',
+      'summary' => 'Decide disponibilidade do checkout comum e dos fluxos dedicados, e detecta conflitos de tipo de pedido.',
+      'docs' => 'docs/decisions/ADR-032-portal-multi-cart-checkout.md',
+    ],
+    'aculta_portal.checkout_step_resolver' => [
+      'label' => 'Etapa inicial do checkout',
+      'summary' => 'Seleciona uma etapa visível para a sessão atual e evita voltar a um pane de login oculto após autenticação.',
+      'docs' => 'docs/portal/PAYMENT-DOMAIN-POLICY.md',
+    ],
+  ];
+
+  /**
+   * Builds a registry from helper IDs collected from the active container.
+   *
+   * @param string[] $activeHelperIds
+   *   IDs collected from active service definitions.
+   */
+  public function __construct(private readonly array $activeHelperIds) {}
+
+  /**
+   * Returns active helper rows, including missing-metadata state.
+   *
+   * @return array<int, array<string, array<string, mixed>>>
+   *   Render API table rows.
+   */
+  public function rows(): array {
+    $rows = [];
+    $helperIds = $this->activeHelperIds;
+    sort($helperIds);
+    foreach ($helperIds as $id) {
+      $definition = self::DEFINITIONS[$id] ?? NULL;
+      $rows[] = [
+        'helper' => ['data' => ['#plain_text' => $definition['label'] ?? $id]],
+        'summary' => ['data' => ['#plain_text' => $definition['summary'] ?? 'Documentação pendente.']],
+        'service' => ['data' => ['#plain_text' => $id]],
+        'documentation' => ['data' => ['#plain_text' => $definition['docs'] ?? 'Pendente']],
+      ];
+    }
+    return $rows;
+  }
+
+  /**
+   * Exposes curated definitions to the static gate and unit tests. */
+  public static function definitions(): array {
+    return self::DEFINITIONS;
+  }
+
+}

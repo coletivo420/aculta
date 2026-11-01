@@ -1,0 +1,12 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Carousel
+status: experimental
+group: Patterns
+description: 'Carousel frame around the rendered engine markup. The engine (VVJB) and its controls stay unchanged; the accessible label is rendered by the caller so its id keeps matching aria-labelledby.'
+props:
+  type: object
+  properties: {}
+slots:
+  slides:
+    title: Slides
+    description: 'Rendered engine markup, unchanged.'

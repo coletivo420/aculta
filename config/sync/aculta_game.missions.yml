@@ -1,0 +1,20 @@
+langcode: pt-br
+missions:
+  comunidade:
+    enabled: true
+    label: 'Primeira contribuição no Growroom420'
+    description: 'Publique sua primeira resposta em uma discussão atual. Comentários em moderação contam depois da aprovação.'
+    criterion_version: 1
+    badge: primeiro_comentario_forum
+  conhecimento:
+    enabled: true
+    label: 'Contribuição ao conhecimento'
+    description: 'Faça uma revisão de verbete da Wiki420 que seja publicada.'
+    criterion_version: 1
+    badge: primeira_edicao_wiki
+  aprendizagem:
+    enabled: true
+    label: 'Primeira formação concluída'
+    description: 'Conclua seu primeiro curso com aprovação. Matrícula e compra não concluem esta missão.'
+    criterion_version: 1
+    badge: primeiro_curso

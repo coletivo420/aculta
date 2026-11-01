@@ -1,0 +1,6 @@
+name: Composição nativa
+description: O componente apresenta o Form API original sem recriar seus campos ou envio.
+component: aculta420:messenger-compose
+slots:
+  form:
+    markup: <form><label for="message-example">Mensagem</label><textarea id="message-example"></textarea><button>Enviar</button></form>

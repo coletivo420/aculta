@@ -1,0 +1,8 @@
+{#
+  Caixa "pagamentos pelo Mercado Pago" (apresentação ACULTA420). O módulo entrega o texto, o link e a logo (asset do tema).
+  O link abre em nova aba e informa isso a leitores de tela.
+#}
+<section class="portal-payment-notice" data-portal-payment-notice>
+  {% if logo %}<img class="portal-payment-notice__logo" src="{{ logo }}" alt="Mercado Pago" width="150" height="39">{% endif %}
+  <p class="portal-payment-notice__text">{{ intro }}{% if url %} <a class="portal-payment-notice__link" href="{{ url }}" target="_blank" rel="noopener">{{ link_label }}<span class="visually-hidden"> (abre em nova aba)</span></a>{% endif %}</p>
+</section>

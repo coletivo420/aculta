@@ -1,0 +1,10 @@
+uuid: 182f5f3e-bf22-43bf-aee0-67f03a682f2f
+langcode: pt-br
+status: true
+dependencies: {  }
+id: conta_aculta_test_8080
+domain_id: conta_aculta_org
+pattern: 'conta.aculta.test:8080'
+redirect: 0
+environment: local
+weight: 2

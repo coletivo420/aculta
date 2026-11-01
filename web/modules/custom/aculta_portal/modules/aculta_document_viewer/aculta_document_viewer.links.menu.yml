@@ -1,0 +1,6 @@
+aculta_document_viewer.settings:
+  title: 'Leitor de documentos'
+  description: 'Definir os padrões globais de PDF, DOCX e planilhas.'
+  route_name: aculta_document_viewer.settings
+  parent: aculta_portal.admin
+  weight: 8

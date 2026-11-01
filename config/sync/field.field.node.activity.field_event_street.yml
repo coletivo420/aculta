@@ -1,0 +1,19 @@
+uuid: c071327f-0ff0-4e9d-9855-091033891988
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_event_street
+    - node.type.activity
+id: node.activity.field_event_street
+field_name: field_event_street
+entity_type: node
+bundle: activity
+label: 'Logradouro, número e complemento'
+description: 'Campo editorial administrável: Logradouro, número e complemento. Preencha somente com informações verificadas.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

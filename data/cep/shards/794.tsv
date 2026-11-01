@@ -1,0 +1,928 @@
+79400000			Coxim	MS	5003306
+79402000			São Romão	MS	
+79405000			Taquari	MS	
+79406000			Jauru	MS	
+79410000			Pedro Gomes	MS	5006408
+79415000			Sonora	MS	5007935
+79420000			Camapuã	MS	5002605
+79424000			Pontinha do Cocho	MS	
+79428001	Avenida Moises Araujo Galvão	Boa Vida	Figueirão	MS	5003900
+79428003	Rua Cláudio José de Lima	Boa Vida	Figueirão	MS	5003900
+79428005	Rua Clarindo B Silva	Boa Vida	Figueirão	MS	5003900
+79428007	Rua Maria Lemes	Boa Vida	Figueirão	MS	5003900
+79428010	Rua Manoel Bispo Damasceno	Figueirão Velho	Figueirão	MS	5003900
+79428012	Avenida Moises Araujo Galvão	Figueirão Velho	Figueirão	MS	5003900
+79428014	Rua Cláudio José de Lima	Figueirão Velho	Figueirão	MS	5003900
+79428016	Rua Custódio	Figueirão Velho	Figueirão	MS	5003900
+79428018	Rua Maria Lemes	Figueirão Velho	Figueirão	MS	5003900
+79428020	Rua Quinze de Agosto	Figueirão Velho	Figueirão	MS	5003900
+79428022	Rua Vital Batista	Figueirão Velho	Figueirão	MS	5003900
+79428024	Rua Ernesto Solon Borges	Figueirão Velho	Figueirão	MS	5003900
+79428026	Rua Itaporã	Figueirão Velho	Figueirão	MS	5003900
+79428028	Rua Camapuã	Figueirão Velho	Figueirão	MS	5003900
+79428030	Travessa Maranhão	Figueirão Velho	Figueirão	MS	5003900
+79428040	Rua Manoel Bispo Damasceno	Doutor Naldo Luza	Figueirão	MS	5003900
+79428042	Avenida Moises Araujo Galvão	Doutor Naldo Luza	Figueirão	MS	5003900
+79428044	Rua Camapuã	Doutor Naldo Luza	Figueirão	MS	5003900
+79428046	Travessa Doutor Mauro L N Guimarães	Doutor Naldo Luza	Figueirão	MS	5003900
+79428048	Rua Maringá	Doutor Naldo Luza	Figueirão	MS	5003900
+79428050	Rua Maringá	Vila São José	Figueirão	MS	5003900
+79428052	Travessa Ceará	Vila São José	Figueirão	MS	5003900
+79428054	Travessa Bahia	Vila São José	Figueirão	MS	5003900
+79428056	Rua Manoel Bispo Damasceno	Vila São José	Figueirão	MS	5003900
+79428058	Avenida Moises Araujo Galvão	Vila São José	Figueirão	MS	5003900
+79428060	Rua Camapuã	Sabiá II	Figueirão	MS	5003900
+79428062	Rua Pedra Bonita	Sabiá II	Figueirão	MS	5003900
+79428064	Rua Custódio	Sabiá II	Figueirão	MS	5003900
+79428070	Rua Custódio	Vila Rosa	Figueirão	MS	5003900
+79428072	Rua Independência	Vila Rosa	Figueirão	MS	5003900
+79428074	Rua Castro Alves	Vila Rosa	Figueirão	MS	5003900
+79428076	Rua Camapuã	Vila Rosa	Figueirão	MS	5003900
+79428078	Rua Pedra Bonita	Vila Rosa	Figueirão	MS	5003900
+79428080	Rua Camapuã	Jardim Aeroporto	Figueirão	MS	5003900
+79428082	Rua 30 de Setembro	Jardim Aeroporto	Figueirão	MS	5003900
+79428084	Travessa Mauá	Jardim Aeroporto	Figueirão	MS	5003900
+79428086	Avenida Vereador Gilson Pereira de Farias	Jardim Aeroporto	Figueirão	MS	5003900
+79428088	Rua Presidente Dutra	Jardim Aeroporto	Figueirão	MS	5003900
+79428090	Avenida Moises Araujo Galvão	Jardim Aeroporto	Figueirão	MS	5003900
+79428092	Rua Santos Dumont	Jardim Aeroporto	Figueirão	MS	5003900
+79428094	Rua Cláudio José de Lima	Jardim Aeroporto	Figueirão	MS	5003900
+79428100	Rua Cláudio José de Lima	Vila Maria	Figueirão	MS	5003900
+79428102	Rua Custódio	Vila Maria	Figueirão	MS	5003900
+79428104	Rua Independência	Vila Maria	Figueirão	MS	5003900
+79428106	Rua Castro Alves	Vila Maria	Figueirão	MS	5003900
+79428108	Rua Antenor Aguiar Fontoura	Vila Maria	Figueirão	MS	5003900
+79428110	Rua Sucuri	Vila Maria	Figueirão	MS	5003900
+79428112	Avenida Vereador Gilson Pereira de Farias	Vila Maria	Figueirão	MS	5003900
+79428114	Rua Presidente Dutra	Vila Maria	Figueirão	MS	5003900
+79428120	Rua Antenor Aguiar Fontoura	Jardim Cristina I	Figueirão	MS	5003900
+79428122	Rua Castro Alves	Jardim Cristina I	Figueirão	MS	5003900
+79428124	Rua Sucuri	Jardim Cristina I	Figueirão	MS	5003900
+79428130	Rua Sucuri	Jardim Cristina II	Figueirão	MS	5003900
+79428132	Avenida Vereador Gilson Pereira de Farias	Jardim Cristina II	Figueirão	MS	5003900
+79428134	Rua Castro Alves	Jardim Cristina II	Figueirão	MS	5003900
+79428136	Rua Amorim	Jardim Cristina II	Figueirão	MS	5003900
+79428138	Rua Furtado	Jardim Cristina II	Figueirão	MS	5003900
+79428140	Rua Berçó	Jardim Cristina II	Figueirão	MS	5003900
+79428150	Rua Italino Moreira Geraldino	Novo Horizonte	Figueirão	MS	5003900
+79428152	Rua José Zeferino Santana	Novo Horizonte	Figueirão	MS	5003900
+79428154	Rua Furtado	Novo Horizonte	Figueirão	MS	5003900
+79428156	Rua Berçó	Novo Horizonte	Figueirão	MS	5003900
+79428158	Rua dos Galdinos	Novo Horizonte	Figueirão	MS	5003900
+79428160	Rua 9	Bom Jesus	Figueirão	MS	5003900
+79428162	Rua Presidente Dutra	Bom Jesus	Figueirão	MS	5003900
+79428164	Rua 6	Bom Jesus	Figueirão	MS	5003900
+79428166	Rua Amorim	Bom Jesus	Figueirão	MS	5003900
+79428168	Rua Furtado	Bom Jesus	Figueirão	MS	5003900
+79428170	Rua Berçó	Bom Jesus	Figueirão	MS	5003900
+79428172	Rua Assis	Bom Jesus	Figueirão	MS	5003900
+79428174	Rua Pereira	Bom Jesus	Figueirão	MS	5003900
+79428176	Rua dos Galdinos	Bom Jesus	Figueirão	MS	5003900
+79428178	Rua 7	Bom Jesus	Figueirão	MS	5003900
+79428180	Rua Boiadeira	Nova Conquista	Figueirão	MS	5003900
+79428182	Rua dos Galdinos	Nova Conquista	Figueirão	MS	5003900
+79428184	Rua Pereira	Nova Conquista	Figueirão	MS	5003900
+79428186	Rua Assis	Nova Conquista	Figueirão	MS	5003900
+79428188	Rua Furtado	Nova Conquista	Figueirão	MS	5003900
+79428190	Rua Amorim	Nova Conquista	Figueirão	MS	5003900
+79428192	Rua Castro Alves	Nova Conquista	Figueirão	MS	5003900
+79428194	Rua Liberdade	Nova Conquista	Figueirão	MS	5003900
+79428196	Rua Bruschi	Nova Conquista	Figueirão	MS	5003900
+79428198	Rua Projetada	Nova Conquista	Figueirão	MS	5003900
+79428200	Rua Presidente Getúlio Vargas	Nova Conquista	Figueirão	MS	5003900
+79428202	Avenida Nelson Trad	Nova Conquista	Figueirão	MS	5003900
+79428204	Avenida Presidente João Figueiredo	Nova Conquista	Figueirão	MS	5003900
+79428210	Rua Figueira	Pequi	Figueirão	MS	5003900
+79428212	Rua 1	Pequi	Figueirão	MS	5003900
+79428214	Rua 2	Pequi	Figueirão	MS	5003900
+79428216	Rua Iracema Bernardes Faria	Pequi	Figueirão	MS	5003900
+79428218	Avenida Moises Araujo Galvão	Pequi	Figueirão	MS	5003900
+79428220	Rua 3	Pequi	Figueirão	MS	5003900
+79428222	Rua 4	Pequi	Figueirão	MS	5003900
+79428224	Rua 5	Pequi	Figueirão	MS	5003900
+79428226	Rua 6	Pequi	Figueirão	MS	5003900
+79428228	Rua 7	Pequi	Figueirão	MS	5003900
+79428230	Rua Iracema Bernardes Faria	Residencial Figueira	Figueirão	MS	5003900
+79428232	Rua Jatobá	Residencial Figueira	Figueirão	MS	5003900
+79428234	Rua Ipê	Residencial Figueira	Figueirão	MS	5003900
+79428236	Rua Muricy	Residencial Figueira	Figueirão	MS	5003900
+79428238	Avenida Moises Araujo Galvão	Residencial Figueira	Figueirão	MS	5003900
+79428240	Rua Seringueira	Residencial Figueira	Figueirão	MS	5003900
+79428242	Rua Pitanga	Residencial Figueira	Figueirão	MS	5003900
+79428244	Rua Figueira	Residencial Figueira	Figueirão	MS	5003900
+79428899	Área Rural	Área Rural de Figueirão	Figueirão	MS	5003900
+79430001	Rua Paraná	Centro	Bandeirantes	MS	5001508
+79430003	Rua Maximino Jancito Borges	Centro	Bandeirantes	MS	5001508
+79430005	Avenida Vereador Rogério Francisco Santana	Centro	Bandeirantes	MS	5001508
+79430007	Rua Coronel Antonino Gonçalves	Centro	Bandeirantes	MS	5001508
+79430009	Rua Presidente Vargas	Centro	Bandeirantes	MS	5001508
+79430011	Avenida Francisco Antônio de Souza	Centro	Bandeirantes	MS	5001508
+79430013	Rua Rocha Xavier	Centro	Bandeirantes	MS	5001508
+79430015	Rua Artur Bernardes	Centro	Bandeirantes	MS	5001508
+79430017	Rua João Pessoa	Centro	Bandeirantes	MS	5001508
+79430019	Avenida Afonso Pena	Centro	Bandeirantes	MS	5001508
+79430021	Rua Francisco Pereira da Silva	Centro	Bandeirantes	MS	5001508
+79430023	Rua Tenente Germiniano Ribeiro	Centro	Bandeirantes	MS	5001508
+79430025	Rua Iponina Lemes dos Santos	Centro	Bandeirantes	MS	5001508
+79430027	Rua Doutora Jacira Honório Lyrio	Centro	Bandeirantes	MS	5001508
+79430029	Rua Luiz Flores Soares Pinheiro	Centro	Bandeirantes	MS	5001508
+79430031	Rua Pedro Celestino	Centro	Bandeirantes	MS	5001508
+79430033	Rua Altivo José de Lana	Centro	Bandeirantes	MS	5001508
+79430035	Rua Tiradentes	Centro	Bandeirantes	MS	5001508
+79430037	Rua Ipiranga	Centro	Bandeirantes	MS	5001508
+79430039	Rua Joaquim Murtinho	Centro	Bandeirantes	MS	5001508
+79430041	Rua Presidente Dutra	Centro	Bandeirantes	MS	5001508
+79430043	Rua Castro Alves	Centro	Bandeirantes	MS	5001508
+79430045	Rua Vereadora Diva Goelzer Adames	Centro	Bandeirantes	MS	5001508
+79430047	Rua Nova Bandeirantes	Centro	Bandeirantes	MS	5001508
+79430090	Avenida Afonso Pena	Pedro Constantino	Bandeirantes	MS	5001508
+79430092	Rua Carmelinda Prudênciana da Rocha	Pedro Constantino	Bandeirantes	MS	5001508
+79430094	Rua Elpídio de Souza	Pedro Constantino	Bandeirantes	MS	5001508
+79430096	Rua Waldevino Rodrigues Ferreira	Pedro Constantino	Bandeirantes	MS	5001508
+79430098	Rua Izolito Barbosa da Cunha	Pedro Constantino	Bandeirantes	MS	5001508
+79430100	Rua Ilceu Timodeo da Silva	Pedro Constantino	Bandeirantes	MS	5001508
+79430102	Rua Mário Altissimo	Pedro Constantino	Bandeirantes	MS	5001508
+79430104	Rua Dilza Félix dos Santos	Pedro Constantino	Bandeirantes	MS	5001508
+79430106	Rua Gervásio Pereira Marques	Pedro Constantino	Bandeirantes	MS	5001508
+79430108	Rua Bráz José de Souza	Pedro Constantino	Bandeirantes	MS	5001508
+79430110	Rua Ayres Penze	Pedro Constantino	Bandeirantes	MS	5001508
+79430112	Rua Theodolino Faustino de Souza	Pedro Constantino	Bandeirantes	MS	5001508
+79430114	Corredor Público	Pedro Constantino	Bandeirantes	MS	5001508
+79430116	Rua I	Pedro Constantino	Bandeirantes	MS	5001508
+79430120	Rua Theodolino Faustino de Souza	Prefeito Nicanor Antônio de Souza	Bandeirantes	MS	5001508
+79430121	Avenida Afonso Pena	Prefeito Nicanor Antônio de Souza	Bandeirantes	MS	5001508
+79430122	Rua Odila Vieira de Lima	Prefeito Nicanor Antônio de Souza	Bandeirantes	MS	5001508
+79430124	Rua Ernesto Kowalski	Prefeito Nicanor Antônio de Souza	Bandeirantes	MS	5001508
+79430126	Rua Carmelinda Prudênciana da Rocha	Prefeito Nicanor Antônio de Souza	Bandeirantes	MS	5001508
+79430128	Rua Hilário Gonçalves de Medeiros	Prefeito Nicanor Antônio de Souza	Bandeirantes	MS	5001508
+79430130	Rua Benjamim José de Lima	Prefeito Nicanor Antônio de Souza	Bandeirantes	MS	5001508
+79430132	Rua Elpídio de Souza	Prefeito Nicanor Antônio de Souza	Bandeirantes	MS	5001508
+79430180	Rua Vereadora Diva Goelzer Adames	Silvino de Barros	Bandeirantes	MS	5001508
+79430182	Rua Presidente Emílio Gatarrastazu Médici	Silvino de Barros	Bandeirantes	MS	5001508
+79430184	Rua Doutor Nicolau Fragelli	Silvino de Barros	Bandeirantes	MS	5001508
+79430186	Rua José Carlos Alves Rosa	Silvino de Barros	Bandeirantes	MS	5001508
+79430188	Rua Ana Gonçalves Rocha	Silvino de Barros	Bandeirantes	MS	5001508
+79430190	Rua Nossa Senhora Aparecida	Silvino de Barros	Bandeirantes	MS	5001508
+79430192	Rua Santa Rita de Cássia	Silvino de Barros	Bandeirantes	MS	5001508
+79430194	Rua Cristo Redentor	Silvino de Barros	Bandeirantes	MS	5001508
+79430196	Travessa Guaicurus	Silvino de Barros	Bandeirantes	MS	5001508
+79430198	Avenida Erasmo Marques	Silvino de Barros	Bandeirantes	MS	5001508
+79430200	Travessa Santa Tereza	Silvino de Barros	Bandeirantes	MS	5001508
+79430202	Travessa Santa Sofia	Silvino de Barros	Bandeirantes	MS	5001508
+79430204	Rua Artur Bernardes	Silvino de Barros	Bandeirantes	MS	5001508
+79430206	Rua João Pessoa	Silvino de Barros	Bandeirantes	MS	5001508
+79430208	Avenida Afonso Pena	Silvino de Barros	Bandeirantes	MS	5001508
+79430210	Rua Antônio de Paula Orempuller	Silvino de Barros	Bandeirantes	MS	5001508
+79430212	Rua Silvino de Barros	Silvino de Barros	Bandeirantes	MS	5001508
+79430214	Rua David Ferreira	Silvino de Barros	Bandeirantes	MS	5001508
+79430216	Rua Laurindo Lopes da Silva	Silvino de Barros	Bandeirantes	MS	5001508
+79430218	Rua Vicente Pereira do Carmo Neto	Silvino de Barros	Bandeirantes	MS	5001508
+79430220	Rua José de Vasconcelos	Silvino de Barros	Bandeirantes	MS	5001508
+79430222	Rua Antônio Amaro da Rocha	Silvino de Barros	Bandeirantes	MS	5001508
+79430224	Rua Olegário Gonçalves de Oliveira	Silvino de Barros	Bandeirantes	MS	5001508
+79430226	Rua Armando Luiz Arantes	Silvino de Barros	Bandeirantes	MS	5001508
+79430228	Rua Janor Alves de Souza	Silvino de Barros	Bandeirantes	MS	5001508
+79430230	Rua Domingo Marques de Oliveira	Silvino de Barros	Bandeirantes	MS	5001508
+79430232	Rua Projetada D	Silvino de Barros	Bandeirantes	MS	5001508
+79430234	Rua Projetada E	Silvino de Barros	Bandeirantes	MS	5001508
+79430236	Rua Projetada F	Silvino de Barros	Bandeirantes	MS	5001508
+79430238	Rua Projetada G	Silvino de Barros	Bandeirantes	MS	5001508
+79431000	Avenida Vereador Rogério Francisco Santana	Vila Nossa Senhora Aparecida	Bandeirantes	MS	5001508
+79431001	Avenida Francisco Antônio de Souza	Vila Nossa Senhora Aparecida	Bandeirantes	MS	5001508
+79431002	Rua Bom Jesus	Vila Nossa Senhora Aparecida	Bandeirantes	MS	5001508
+79431003	Rua Presidente Vargas	Vila Nossa Senhora Aparecida	Bandeirantes	MS	5001508
+79431004	Rua Pastor Edino Chaves	Vila Nossa Senhora Aparecida	Bandeirantes	MS	5001508
+79431006	Rua São Jorge	Vila Nossa Senhora Aparecida	Bandeirantes	MS	5001508
+79431008	Rua Antônio Fantinato Sobrinho	Vila Nossa Senhora Aparecida	Bandeirantes	MS	5001508
+79431010	Rua Joaquim Murtinho	Jardim Santana	Bandeirantes	MS	5001508
+79431012	Avenida Francisco Antônio de Souza	Jardim Santana	Bandeirantes	MS	5001508
+79431014	Travessa Travessa	Jardim Santana	Bandeirantes	MS	5001508
+79431030	Avenida Francisco Antônio de Souza	Jardim Bela Vista	Bandeirantes	MS	5001508
+79431031	Avenida Francisco Antônio de Souza	Jardim Bela Vista	Bandeirantes	MS	5001508
+79431032	Travessa Pequi	Jardim Bela Vista	Bandeirantes	MS	5001508
+79431034	Rua dos Ipês	Jardim Bela Vista	Bandeirantes	MS	5001508
+79431036	Rua Sucupira	Jardim Bela Vista	Bandeirantes	MS	5001508
+79431040	Rua Angico	Jardim Bela Vista	Bandeirantes	MS	5001508
+79431044	Rua Jatobá	Jardim Bela Vista	Bandeirantes	MS	5001508
+79431046	Travessa Baru	Jardim Bela Vista	Bandeirantes	MS	5001508
+79431048	Travessa Mangaba	Jardim Bela Vista	Bandeirantes	MS	5001508
+79431050	Rua Aroeira	Jardim Bela Vista	Bandeirantes	MS	5001508
+79431052	Rua Vereadora Diva Goelzer Adames	Jardim Bela Vista	Bandeirantes	MS	5001508
+79431054	Travessa Buriti	Jardim Bela Vista	Bandeirantes	MS	5001508
+79431100	Rua Henrique Antônio de Souza	Vila Soares	Bandeirantes	MS	5001508
+79431102	Rua Silvio de Barros	Vila Soares	Bandeirantes	MS	5001508
+79431104	Rua João Cândido de Morais	Vila Soares	Bandeirantes	MS	5001508
+79431106	Rua Projetada 4	Vila Soares	Bandeirantes	MS	5001508
+79431108	Rua Projetada 3	Vila Soares	Bandeirantes	MS	5001508
+79431110	Rua Projetada 2	Vila Soares	Bandeirantes	MS	5001508
+79431112	Avenida Vereador Rogério Francisco Santana	Vila Soares	Bandeirantes	MS	5001508
+79431120	Avenida Vereador Rogério Francisco Santana	Vila Espirito Santo	Bandeirantes	MS	5001508
+79431121	Rua Paraná	Vila Espirito Santo	Bandeirantes	MS	5001508
+79431122	Rua São Sebastião	Vila Espirito Santo	Bandeirantes	MS	5001508
+79431124	Rua Santo Antônio	Vila Espirito Santo	Bandeirantes	MS	5001508
+79431126	Rua Santa Margarida	Vila Espirito Santo	Bandeirantes	MS	5001508
+79431128	Rua Virgina  Paula Dias	Vila Espirito Santo	Bandeirantes	MS	5001508
+79431130	Rua Santa Maria	Vila Espirito Santo	Bandeirantes	MS	5001508
+79431132	Rua São José	Vila Espirito Santo	Bandeirantes	MS	5001508
+79431134	Rua São Pedro	Vila Espirito Santo	Bandeirantes	MS	5001508
+79431136	Rua São João	Vila Espirito Santo	Bandeirantes	MS	5001508
+79431138	Rua Natal	Vila Espirito Santo	Bandeirantes	MS	5001508
+79431140	Rua Maximino Jancito Borges	Vila Espirito Santo	Bandeirantes	MS	5001508
+79431170	Avenida Vereador Rogério Francisco Santana	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431172	Rua Maria Rocha	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431174	Rua Paraná	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431176	Travessa Ferrinho	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431178	Rua 11 de Maio	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431180	Rua Seiti Miyasato	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431182	Rua Esperança Ferreira Dias	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431184	Rua Catharina Alves de Souza	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431186	Rua Padre Luciano Scampini	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431188	Rua Nossa Senhora Auxiliadora	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431190	Rua José Domingos Abdala	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431192	Rua 11 de Outubro	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431194	Rua Doutora Jacira Honório Lyrio	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431196	Rua Nivaldina Furtado Penze	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431198	Rua Silvestre Ribas	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431200	Travessa Municipal	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431202	Travessa Doutor Luis Carlos Vilordo	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431204	Rua Custódio Ferreira	Jardim Nova Bandeirantes	Bandeirantes	MS	5001508
+79431210	Rua Estrela do Sul	Jardim Chico Bandeira	Bandeirantes	MS	5001508
+79431212	Rua Estrela do Norte	Jardim Chico Bandeira	Bandeirantes	MS	5001508
+79431214	Rua Santos Dumont	Jardim Chico Bandeira	Bandeirantes	MS	5001508
+79431216	Rua das Bandeiras	Jardim Chico Bandeira	Bandeirantes	MS	5001508
+79431218	Rua Cruzeiro do Sul	Jardim Chico Bandeira	Bandeirantes	MS	5001508
+79431220	Rua Cruzeiro do Sul	Jardim Alvorada	Bandeirantes	MS	5001508
+79431222	Rua 11 de Maio	Jardim Alvorada	Bandeirantes	MS	5001508
+79431224	Rua Maria Rocha	Jardim Alvorada	Bandeirantes	MS	5001508
+79431226	Rua Vereador Anésio Coelho da Rocha	Jardim Alvorada	Bandeirantes	MS	5001508
+79431228	Rua Aracy Vaz Calado	Jardim Alvorada	Bandeirantes	MS	5001508
+79431230	Rua Seiti Miyasato	Jardim Santa Madalena	Bandeirantes	MS	5001508
+79431231	Rua das Bandeiras	Jardim Santa Madalena	Bandeirantes	MS	5001508
+79431232	Rua 11 de Maio	Jardim Santa Madalena	Bandeirantes	MS	5001508
+79431234	Rua Maria Rocha	Jardim Santa Madalena	Bandeirantes	MS	5001508
+79431236	Rua Jerônimo Coelho	Jardim Santa Madalena	Bandeirantes	MS	5001508
+79431238	Avenida Vereador Rogério Francisco Santana	Jardim Santa Madalena	Bandeirantes	MS	5001508
+79431242	Rua Maria Francisca	Jardim Santa Madalena	Bandeirantes	MS	5001508
+79431244	Travessa 5 de Julho	Jardim Santa Madalena	Bandeirantes	MS	5001508
+79431246	Rua Dezolina Sustisso Bannack	Jardim Santa Madalena	Bandeirantes	MS	5001508
+79431248	Rua Nova Bandeirantes	Jardim Santa Madalena	Bandeirantes	MS	5001508
+79431250	Rua Dezolina Sustisso Bannack	Jardim Dona Rosa	Bandeirantes	MS	5001508
+79431252	Rua Arlene de Souza	Jardim Dona Rosa	Bandeirantes	MS	5001508
+79431254	Rua Almir Coelho Brito	Jardim Dona Rosa	Bandeirantes	MS	5001508
+79431256	Rua Camapuã	Jardim Dona Rosa	Bandeirantes	MS	5001508
+79431258	Rua Pedro Constantino Guimarães	Jardim Dona Rosa	Bandeirantes	MS	5001508
+79431260	Rua da Poesia	Jardim Dona Rosa	Bandeirantes	MS	5001508
+79431262	Avenida Vereador Rogério Francisco Santana	Jardim Dona Rosa	Bandeirantes	MS	5001508
+79431264	Rua Maria Francisca	Jardim Dona Rosa	Bandeirantes	MS	5001508
+79431266	Rua Benício Pires de Freitas	Jardim Dona Rosa	Bandeirantes	MS	5001508
+79431268	Avenida Francisco Antônio de Souza	Jardim Dona Rosa	Bandeirantes	MS	5001508
+79431270	Rua Rita Vieira	Jardim Dona Rosa	Bandeirantes	MS	5001508
+79431272	Rua Nova Bandeirantes	Jardim Dona Rosa	Bandeirantes	MS	5001508
+79432000			Congonhas	MS	
+79432899	Área Rural	Área Rural de Bandeirantes	Bandeirantes	MS	5001508
+79433000	Rodovia BR 163	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433001	Rua Abílio Marques	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433003	Rua Waldomiro Oliveira Rocha	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433005	Rua José Soares Silva	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433007	Avenida Governador Fernando Correia da Costa	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433009	Avenida Governador Fernando Correia da Costa	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433011	Rua Naor Guimarães	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433013	Rua Valdemir Lopes Miralha	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433015	Rua Luiza Albina Garcia	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433017	Rua Ondina Scariot	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433019	Rua Manoel Oliveira Lima	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433020	Travessa do Poeta	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433021	Rua Dinah Mena Barretos	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433023	Rua Edna Lourdes da Rocha	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433025	Rua João Batista Rodrigues	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433027	Rua Cergina Ferreira Candida	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433029	Rua A	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433031	Rua B	Centro (Congonhas)	Bandeirantes	MS	5001508
+79433899	Área Rural	Área Rural de Congonhas	Bandeirantes	MS	5001508
+79440001	Rodovia BR-163	Jatobá	Jaraguari	MS	5004908
+79440003	Rua Geraldo Ferreira Barbosa	Jatobá	Jaraguari	MS	5004908
+79440005	Rua Orlando José Nogueira	Jatobá	Jaraguari	MS	5004908
+79440007	Rua Gonçalves Luiz Martins	Jatobá	Jaraguari	MS	5004908
+79440009	Rua Silvino Espindola	Jatobá	Jaraguari	MS	5004908
+79440011	Rua Mario Xavier Cardoso	Jatobá	Jaraguari	MS	5004908
+79440013	Rua João Ferreira Brandão	Jatobá	Jaraguari	MS	5004908
+79440015	Rua Idelvan de Souza Sandim	Jatobá	Jaraguari	MS	5004908
+79440017	Rua Hugo Gregório	Jatobá	Jaraguari	MS	5004908
+79440019	Rua Doutor Antonio Paniago	Jatobá	Jaraguari	MS	5004908
+79440021	Rua Alencar Gomes Tinoco	Jatobá	Jaraguari	MS	5004908
+79440023	Rua Manoel Ribeiro de Oliveira	Jatobá	Jaraguari	MS	5004908
+79440025	Rua Francisco Antonio de Souza	Jatobá	Jaraguari	MS	5004908
+79440027	Rua Izolino Laves Pereira	Jatobá	Jaraguari	MS	5004908
+79440029	Rua Francisco Ribeiro Guimarães	Jatobá	Jaraguari	MS	5004908
+79440033	Rua Francisco Junqueira	Jatobá	Jaraguari	MS	5004908
+79440035	Rua Américo Ferreira de Souza	Jatobá	Jaraguari	MS	5004908
+79440037	Rua Jones Severo Vieira	Jatobá	Jaraguari	MS	5004908
+79440039	Rua Ruberval Serrou Camy	Jatobá	Jaraguari	MS	5004908
+79440041	Rua Casildo de Souza Brasil	Jatobá	Jaraguari	MS	5004908
+79440043	Rua Abadio Serafim Ribeiro	Jatobá	Jaraguari	MS	5004908
+79440050	Rua Orlando José Nogueira	Conjunto Habitacional Arsenio da Silveira	Jaraguari	MS	5004908
+79440052	Rua Gonçalves Luiz Martins	Conjunto Habitacional Arsenio da Silveira	Jaraguari	MS	5004908
+79440054	Rua Ruberval Serrou Camy	Conjunto Habitacional Arsenio da Silveira	Jaraguari	MS	5004908
+79440056	Rua Marcilio José de Oliveira	Conjunto Habitacional Arsenio da Silveira	Jaraguari	MS	5004908
+79440060	Rua Orlando José Nogueira	Parque das Araras I	Jaraguari	MS	5004908
+79440062	Rua Gonçalves Luiz Martins	Parque das Araras I	Jaraguari	MS	5004908
+79440064	Rua Araras	Parque das Araras I	Jaraguari	MS	5004908
+79440070	Rua Orlando José Nogueira	Residencial Costa	Jaraguari	MS	5004908
+79440072	Rua Dulce Ferreira da Costa	Residencial Costa	Jaraguari	MS	5004908
+79440074	Rua Custodia Costa de Souza	Residencial Costa	Jaraguari	MS	5004908
+79440076	Rua Antonia Coppeti da Costa	Residencial Costa	Jaraguari	MS	5004908
+79440078	Rua Catarina Maria de Oliveira da Costa	Residencial Costa	Jaraguari	MS	5004908
+79440100	Rua Gonçalves Luiz Martins	Santa Rita de Cassia	Jaraguari	MS	5004908
+79440102	Rua José Ferreira Brandão	Santa Rita de Cassia	Jaraguari	MS	5004908
+79440104	Rua Casildo de Souza Brasil	Santa Rita de Cassia	Jaraguari	MS	5004908
+79440106	Rua Jones Severo Vieira	Santa Rita de Cassia	Jaraguari	MS	5004908
+79440108	Rua Antônio Serafim Freitas	Santa Rita de Cassia	Jaraguari	MS	5004908
+79440110	Rua Antonio Garcia Tosta	Santa Rita de Cassia	Jaraguari	MS	5004908
+79440112	Rua Ruberval Serrou Camy	Santa Rita de Cassia	Jaraguari	MS	5004908
+79440120	Rua Casildo de Souza Brasil	Vila Gonçalves Luiz Martins	Jaraguari	MS	5004908
+79440122	Rua Marcolino Nunes Ferreira	Vila Gonçalves Luiz Martins	Jaraguari	MS	5004908
+79440124	Rua Hugo Gregório	Vila Gonçalves Luiz Martins	Jaraguari	MS	5004908
+79440126	Rua Abadio Serafim Ribeiro	Vila Gonçalves Luiz Martins	Jaraguari	MS	5004908
+79440128	Rua Ruberval Serrou Camy	Vila Gonçalves Luiz Martins	Jaraguari	MS	5004908
+79440130	Rua Jones Severo Vieira	Vila Gonçalves Luiz Martins	Jaraguari	MS	5004908
+79440140	Rua Jones Severo Vieira	Cavalari	Jaraguari	MS	5004908
+79440142	Rua Domingos Paulo Cavalari	Cavalari	Jaraguari	MS	5004908
+79440144	Rua João Ferreira Brandão	Cavalari	Jaraguari	MS	5004908
+79440146	Rua João Berco	Cavalari	Jaraguari	MS	5004908
+79440148	Rua Marcolino Nunes Ferreira	Cavalari	Jaraguari	MS	5004908
+79440150	Rua Marcolino Nunes Ferreira	COHAB	Jaraguari	MS	5004908
+79440152	Rua Hugo Gregório	COHAB	Jaraguari	MS	5004908
+79440154	Rua Jones Severo Vieira	COHAB	Jaraguari	MS	5004908
+79440156	Travessa COHAB	COHAB	Jaraguari	MS	5004908
+79440160	Travessa COHAB	Conjunto Social	Jaraguari	MS	5004908
+79440162	Rua Vereador João Rosa Vilela	Conjunto Social	Jaraguari	MS	5004908
+79440164	Rua João Berco	Conjunto Social	Jaraguari	MS	5004908
+79440166	Rua Marcolino Nunes Ferreira	Conjunto Social	Jaraguari	MS	5004908
+79440168	Rua Hugo Gregório	Conjunto Social	Jaraguari	MS	5004908
+79440170	Rua Vereador João Rosa Vilela	Maria Franco	Jaraguari	MS	5004908
+79440172	Rua Francisco Junqueira	Maria Franco	Jaraguari	MS	5004908
+79440174	Rua José Serafim Ribeiro	Maria Franco	Jaraguari	MS	5004908
+79440176	Rua João Fereira Brandão	Maria Franco	Jaraguari	MS	5004908
+79440178	Rua Marcolino Nunes Ferreira	Maria Franco	Jaraguari	MS	5004908
+79440180	Rua Hugo Gregório	Maria Franco	Jaraguari	MS	5004908
+79440190	Rua Hugo Gregório	Ingazeiro	Jaraguari	MS	5004908
+79440192	Rua Benedito Figueiredo	Ingazeiro	Jaraguari	MS	5004908
+79440194	Rua Izolino Laves Pereira	Ingazeiro	Jaraguari	MS	5004908
+79440250	Rua Benedito Figueiredo	Otaviano Pereira	Jaraguari	MS	5004908
+79440252	Rua José Serafim Ribeiro	Otaviano Pereira	Jaraguari	MS	5004908
+79440254	Rua Iolanda Alves de Moraes	Otaviano Pereira	Jaraguari	MS	5004908
+79440256	Rua Porfirio Neto Vilela	Otaviano Pereira	Jaraguari	MS	5004908
+79440258	Rua João Ferreira da Silva Neto	Otaviano Pereira	Jaraguari	MS	5004908
+79440260	Rua Almerinda Pereira Brandão	Otaviano Pereira	Jaraguari	MS	5004908
+79440262	Rua Antonio Barbosa da Silva	Otaviano Pereira	Jaraguari	MS	5004908
+79440264	Rua Cicero Cardoso Alves	Otaviano Pereira	Jaraguari	MS	5004908
+79440266	Rua Sérgio Xavier	Otaviano Pereira	Jaraguari	MS	5004908
+79440268	Rua Carlos Antônio de Souza	Otaviano Pereira	Jaraguari	MS	5004908
+79440270	Rua Idelvan de Souza Sandim	Parque das Araras II	Jaraguari	MS	5004908
+79440272	Rua Hugo Gregório	Parque das Araras II	Jaraguari	MS	5004908
+79440274	Rua Manoel Ribeiro de Oliveira	Parque das Araras II	Jaraguari	MS	5004908
+79440276	Rua Doutor Antonio Paniago	Parque das Araras II	Jaraguari	MS	5004908
+79440280	Rua Doutor Antonio Paniago	Maria Joaquina	Jaraguari	MS	5004908
+79440282	Rua Doutor Altino Paniago	Maria Joaquina	Jaraguari	MS	5004908
+79440284	Rua Benicio Marques	Maria Joaquina	Jaraguari	MS	5004908
+79440286	Rua Gonçalves Luiz Martins	Maria Joaquina	Jaraguari	MS	5004908
+79440288	Rua João Ferreira Brandão	Maria Joaquina	Jaraguari	MS	5004908
+79440290	Rua Idelvan de Souza Sandim	Maria Joaquina	Jaraguari	MS	5004908
+79440292	Rua Hugo Gregório	Maria Joaquina	Jaraguari	MS	5004908
+79440400	Rodovia BR-163	Osvaldo Nunes Ferreira	Jaraguari	MS	5004908
+79440402	Rua A	Osvaldo Nunes Ferreira	Jaraguari	MS	5004908
+79440404	Rua B	Osvaldo Nunes Ferreira	Jaraguari	MS	5004908
+79440406	Rua C	Osvaldo Nunes Ferreira	Jaraguari	MS	5004908
+79440408	Rua D	Osvaldo Nunes Ferreira	Jaraguari	MS	5004908
+79440410	Rua Antonio Goes	Osvaldo Nunes Ferreira	Jaraguari	MS	5004908
+79440700	Rua Barbosa Lima	Recanto dos Pássaros	Jaraguari	MS	5004908
+79440701	Rua Jaraguari	Recanto dos Pássaros	Jaraguari	MS	5004908
+79440702	Rua Ataliba	Recanto dos Pássaros	Jaraguari	MS	5004908
+79440704	Rua dos Guimarães	Recanto dos Pássaros	Jaraguari	MS	5004908
+79440706	Rua do Sol Nascente	Recanto dos Pássaros	Jaraguari	MS	5004908
+79440708	Rua das Margaridas	Recanto dos Pássaros	Jaraguari	MS	5004908
+79440710	Rua Curió	Recanto dos Pássaros	Jaraguari	MS	5004908
+79440712	Rua Uirapuru	Recanto dos Pássaros	Jaraguari	MS	5004908
+79440714	Rua Sabiá Laranjeira	Recanto dos Pássaros	Jaraguari	MS	5004908
+79440716	Rua Bicudo	Recanto dos Pássaros	Jaraguari	MS	5004908
+79440718	Rua Marechal Rondon	Recanto dos Pássaros	Jaraguari	MS	5004908
+79440730	Rua Marechal Rondon	Vila dos Triângulos	Jaraguari	MS	5004908
+79440732	Rua Sabiá Laranjeira	Vila dos Triângulos	Jaraguari	MS	5004908
+79440734	Rua dos Guimarães	Vila dos Triângulos	Jaraguari	MS	5004908
+79440736	Rua Ataliba	Vila dos Triângulos	Jaraguari	MS	5004908
+79440738	Rua Central	Vila dos Triângulos	Jaraguari	MS	5004908
+79440740	Rua Bela Vista	Vila dos Triângulos	Jaraguari	MS	5004908
+79440742	Rua Bandeirantes	Vila dos Triângulos	Jaraguari	MS	5004908
+79442000			Bom Fim	MS	
+79442001	Rodovia BR-34	Mansões Palomar	Jaraguari	MS	5004908
+79442002	Rua da liberdade	Mansões Palomar	Jaraguari	MS	5004908
+79442004	Rua Quinze de Novembro	Mansões Palomar	Jaraguari	MS	5004908
+79442006	Rua Sete de Setembro	Mansões Palomar	Jaraguari	MS	5004908
+79442008	Rua Domingos Bento	Mansões Palomar	Jaraguari	MS	5004908
+79442010	Rua Oswaldo Cruz	Mansões Palomar	Jaraguari	MS	5004908
+79442012	Rua Castro Alves	Mansões Palomar	Jaraguari	MS	5004908
+79442014	Rua Santos Dumont	Mansões Palomar	Jaraguari	MS	5004908
+79442016	Rua Espírito Santo	Mansões Palomar	Jaraguari	MS	5004908
+79442018	Avenida Aquidauana	Mansões Palomar	Jaraguari	MS	5004908
+79442020	Rua 3 de Maio	Mansões Palomar	Jaraguari	MS	5004908
+79442022	Rua da Pátria	Mansões Palomar	Jaraguari	MS	5004908
+79442024	Rua Treze de Maio	Mansões Palomar	Jaraguari	MS	5004908
+79442026	Rua Europa	Mansões Palomar	Jaraguari	MS	5004908
+79442028	Rua Benjamin Constant	Mansões Palomar	Jaraguari	MS	5004908
+79442030	Rua Bela Vista	Mansões Palomar	Jaraguari	MS	5004908
+79442032	Avenida Domingos Gomes	Mansões Palomar	Jaraguari	MS	5004908
+79442034	Rua Itália	Mansões Palomar	Jaraguari	MS	5004908
+79442036	Rua Ipiranga	Mansões Palomar	Jaraguari	MS	5004908
+79442038	Avenida Palomar	Mansões Palomar	Jaraguari	MS	5004908
+79442899	Área Rural	Área Rural de Jaraguari	Jaraguari	MS	5004908
+79443001	Avenida 16 de Janeiro	Vila Bonfim (Bonfim)	Jaraguari	MS	5004908
+79443002	Rua 2	Vila Bonfim (Bonfim)	Jaraguari	MS	5004908
+79443004	Avenida Vilela	Vila Bonfim (Bonfim)	Jaraguari	MS	5004908
+79443006	Rua 1	Vila Bonfim (Bonfim)	Jaraguari	MS	5004908
+79443008	Rua 3	Vila Bonfim (Bonfim)	Jaraguari	MS	5004908
+79443010	Avenida 2	Vila Bonfim (Bonfim)	Jaraguari	MS	5004908
+79443012	Rua 4	Vila Bonfim (Bonfim)	Jaraguari	MS	5004908
+79443014	Avenida 3	Vila Bonfim (Bonfim)	Jaraguari	MS	5004908
+79443016	Rua 5	Vila Bonfim (Bonfim)	Jaraguari	MS	5004908
+79443018	Avenida 4	Vila Bonfim (Bonfim)	Jaraguari	MS	5004908
+79443020	Rua 6	Vila Bonfim (Bonfim)	Jaraguari	MS	5004908
+79443030	Avenida Bonfim	Vila Vilela (Bonfim)	Jaraguari	MS	5004908
+79443899	Área Rural	Área Rural de Bonfim	Jaraguari	MS	5004908
+79450001	Avenida Afonso de Araujo Passos	Centro	Rochedo	MS	5007505
+79450003	Rua Olímpio Lira	Centro	Rochedo	MS	5007505
+79450005	Rua Abdo Cury	Centro	Rochedo	MS	5007505
+79450007	Rua Arnaldo Estevão de Figueiredo	Centro	Rochedo	MS	5007505
+79450009	Rua Joaquim Murtinho	Centro	Rochedo	MS	5007505
+79450011	Avenida Maria Francisca Paim	Centro	Rochedo	MS	5007505
+79450013	Rodovia MS 080	Centro	Rochedo	MS	5007505
+79450015	Rua Rio Branco	Centro	Rochedo	MS	5007505
+79450017	Rua Duque de Caxias	Centro	Rochedo	MS	5007505
+79450019	Rua Albino Coimbra	Centro	Rochedo	MS	5007505
+79450020	Rua Campo Grande	Centro	Rochedo	MS	5007505
+79450021	Rua Bahia	Centro	Rochedo	MS	5007505
+79450023	Rua Mato Grosso	Centro	Rochedo	MS	5007505
+79450025	Travessa Antonio Ribeiro de Oliveira	Centro	Rochedo	MS	5007505
+79450027	Avenida Evangelina Vieira	Centro	Rochedo	MS	5007505
+79450029	Rua Julio Honostório de Resende	Centro	Rochedo	MS	5007505
+79450031	Travessa Neif Nabhan	Centro	Rochedo	MS	5007505
+79450033	Rua Diamante Azul	Centro	Rochedo	MS	5007505
+79450035	Rua dos Garimpeiros	Centro	Rochedo	MS	5007505
+79450037	Rua Hilda de Souza	Centro	Rochedo	MS	5007505
+79450039	Rua Valdemar Rodrigues Arantes	Centro	Rochedo	MS	5007505
+79450050	Rua Julio Honostório de Resende	Novo Horizonte I	Rochedo	MS	5007505
+79450052	Rua Arnaldo Estevão de Figueiredo	Novo Horizonte I	Rochedo	MS	5007505
+79450054	Travessa Ana Gomes	Novo Horizonte I	Rochedo	MS	5007505
+79450056	Rua Joaquim Murtinho	Novo Horizonte I	Rochedo	MS	5007505
+79450058	Rua Diamante Azul	Novo Horizonte I	Rochedo	MS	5007505
+79450060	Rua Diamante Azul	Vale do Aquidauana	Rochedo	MS	5007505
+79450062	Rua Joaquim Murtinho	Vale do Aquidauana	Rochedo	MS	5007505
+79450064	Travessa Olavo de Carvalho	Vale do Aquidauana	Rochedo	MS	5007505
+79450066	Rua Bahia	Vale do Aquidauana	Rochedo	MS	5007505
+79450068	Rua dos Garimpeiros	Vale do Aquidauana	Rochedo	MS	5007505
+79450070	Rua Laudelino Alves de Oliveira	Vale do Aquidauana	Rochedo	MS	5007505
+79450080	Rua Diamante Azul	Antônio Venier	Rochedo	MS	5007505
+79450082	Rua Joaquim Murtinho	Antônio Venier	Rochedo	MS	5007505
+79450084	Rua Altino Lemes da Costa	Antônio Venier	Rochedo	MS	5007505
+79450086	Rua Ana Lucia de Moura Vieira	Antônio Venier	Rochedo	MS	5007505
+79450088	Rua Projetada	Antônio Venier	Rochedo	MS	5007505
+79450090	Rua B	Antônio Venier	Rochedo	MS	5007505
+79450100	Rua Valdemar Rodrigues Arantes	José Carrilho	Rochedo	MS	5007505
+79450102	Rua Joaquim Murtinho	José Carrilho	Rochedo	MS	5007505
+79450104	Rua Hilda de Souza	José Carrilho	Rochedo	MS	5007505
+79450106	Avenida Evangelina Vieira	José Carrilho	Rochedo	MS	5007505
+79450108	Travessa Ana Rita de Lima	José Carrilho	Rochedo	MS	5007505
+79450110	Rua Alvino Leite da Silva	José Carrilho	Rochedo	MS	5007505
+79450112	Rua Severino Mourão de Souza	José Carrilho	Rochedo	MS	5007505
+79450114	Rua Professora Vicência Bezerra de Souza	José Carrilho	Rochedo	MS	5007505
+79450116	Rua Dolirio Alves Rabelo	José Carrilho	Rochedo	MS	5007505
+79450120	Avenida Evangelina Vieira	José de Souza Brandão	Rochedo	MS	5007505
+79450122	Rua Dolirio Alves Rabelo	José de Souza Brandão	Rochedo	MS	5007505
+79450124	Rua Alvino Leite da Silva	José de Souza Brandão	Rochedo	MS	5007505
+79450126	Rua Valdemar Rodrigues Arantes	José de Souza Brandão	Rochedo	MS	5007505
+79450128	Rua Mario Pereira de Moura	José de Souza Brandão	Rochedo	MS	5007505
+79450130	Rua Izidro Cipriano as Cruz	José de Souza Brandão	Rochedo	MS	5007505
+79450132	Rua Jorge Paniago de Carvalho	José de Souza Brandão	Rochedo	MS	5007505
+79450150	Rua Caio Gerônimo Nascimento da Conceição	Maria Ramos	Rochedo	MS	5007505
+79450152	Rua Leontino Alves de Rezende	Maria Ramos	Rochedo	MS	5007505
+79450154	Rua Emídio José Guilherme	Maria Ramos	Rochedo	MS	5007505
+79450156	Rua José Carmo da Silva	Maria Ramos	Rochedo	MS	5007505
+79450160	Rua Jairo Alves de Carvalho	Maria Ramos	Rochedo	MS	5007505
+79450162	Rua Sergio Aparecido Pimenta	Maria Ramos	Rochedo	MS	5007505
+79450164	Rua Filadelfo Alves Ribeiro	Maria Ramos	Rochedo	MS	5007505
+79450166	Rua Claurival Poussan	Maria Ramos	Rochedo	MS	5007505
+79450168	Avenida Evangelina Vieira	Maria Ramos	Rochedo	MS	5007505
+79450170	Rua Projetada 10	Maria Ramos	Rochedo	MS	5007505
+79450172	Rua José de Carvalho	Maria Ramos	Rochedo	MS	5007505
+79450600	Rua Dolirio Alves Rabelo	Parque dos Diamantes	Rochedo	MS	5007505
+79450602	Rua Mauro Pereira de Moura	Parque dos Diamantes	Rochedo	MS	5007505
+79450604	Rua Izidro Cipriano da Cruz	Parque dos Diamantes	Rochedo	MS	5007505
+79450606	Rua Jorge Paniago de Carvalho	Parque dos Diamantes	Rochedo	MS	5007505
+79450608	Rua Orlando Rodrigues de Almeida	Parque dos Diamantes	Rochedo	MS	5007505
+79450610	Rodovia MS 080	Parque dos Diamantes	Rochedo	MS	5007505
+79450611	Rua Vitalina Pereira Ramos	Parque dos Diamantes	Rochedo	MS	5007505
+79450612	Rua Antonio Lucio	Parque dos Diamantes	Rochedo	MS	5007505
+79450614	Rua Otacílio Borges Rezende	Parque dos Diamantes	Rochedo	MS	5007505
+79450616	Rua Joaquim Queiroz	Parque dos Diamantes	Rochedo	MS	5007505
+79450618	Rua Luziano dos Santos	Parque dos Diamantes	Rochedo	MS	5007505
+79450620	Rua Elias Alves de Rezende	Parque dos Diamantes	Rochedo	MS	5007505
+79450622	Rua Oscar Barbosa Souto	Parque dos Diamantes	Rochedo	MS	5007505
+79450624	Rua Edival Dias	Parque dos Diamantes	Rochedo	MS	5007505
+79450626	Rua Jose Alves de Alencar	Parque dos Diamantes	Rochedo	MS	5007505
+79450628	Rua Gumercindo Santana Dias	Parque dos Diamantes	Rochedo	MS	5007505
+79450630	Rua José Adenilson Soares Alencar	Parque dos Diamantes	Rochedo	MS	5007505
+79450632	Rua Paulo Inacio Batista de Melo Alencar	Parque dos Diamantes	Rochedo	MS	5007505
+79450634	Rua Abílio Fernandes Bárbura	Parque dos Diamantes	Rochedo	MS	5007505
+79450635	Rua Arquimedes de Elias	Parque dos Diamantes	Rochedo	MS	5007505
+79450680	Rua Jose Alves de Alencar	João Cordeiro	Rochedo	MS	5007505
+79450682	Rua Resiero Toniasso	João Cordeiro	Rochedo	MS	5007505
+79450684	Rua Maikon Arantes Rodrigues	João Cordeiro	Rochedo	MS	5007505
+79450685	Rua Vitalina Pereira Ramos	João Cordeiro	Rochedo	MS	5007505
+79450686	Rua Izidro Cipriano da Cruz	João Cordeiro	Rochedo	MS	5007505
+79450688	Rua Jaime Alves Sandim	João Cordeiro	Rochedo	MS	5007505
+79450690	Rua Heleodoro Ferreira de Almeida	João Cordeiro	Rochedo	MS	5007505
+79450692	Rua Diomar de Oliveira Silva	João Cordeiro	Rochedo	MS	5007505
+79450694	Rua Alcides João Dilda	João Cordeiro	Rochedo	MS	5007505
+79450696	Rodovia MS 080	João Cordeiro	Rochedo	MS	5007505
+79450720	Rua Hidelbrando Rodrigues de Almeida	Leomar Roberto Theodoro	Rochedo	MS	5007505
+79450722	Rua José Alberto de Azevedo	Leomar Roberto Theodoro	Rochedo	MS	5007505
+79450724	Rua 23 de Novembro	Leomar Roberto Theodoro	Rochedo	MS	5007505
+79450726	Rua Nicola Matricardi	Leomar Roberto Theodoro	Rochedo	MS	5007505
+79450728	Rua Martins Correa da Silva	Leomar Roberto Theodoro	Rochedo	MS	5007505
+79450730	Rua Antonio Menna Gonçalves	Leomar Roberto Theodoro	Rochedo	MS	5007505
+79450732	Rua Alcides Delfino Ferreira	Leomar Roberto Theodoro	Rochedo	MS	5007505
+79450734	Rua Ernani Gomes Luz	Leomar Roberto Theodoro	Rochedo	MS	5007505
+79450736	Rua José Zorandi Nogueira	Leomar Roberto Theodoro	Rochedo	MS	5007505
+79450738	Rua Joaquim Gomes Sandim	Leomar Roberto Theodoro	Rochedo	MS	5007505
+79450740	Rua Eduardo Kyrillus Tebet	Leomar Roberto Theodoro	Rochedo	MS	5007505
+79450741	Rua Delfino Franco	Leomar Roberto Theodoro	Rochedo	MS	5007505
+79450742	Rua Waldir dos Santos Pereira	Leomar Roberto Theodoro	Rochedo	MS	5007505
+79450744	Rua Tadeu Paredes	Leomar Roberto Theodoro	Rochedo	MS	5007505
+79450780	Rua Manoel Alves dos Santos	Santa Monica	Rochedo	MS	5007505
+79450782	Rua Ismain Audi	Santa Monica	Rochedo	MS	5007505
+79450784	Rua Felizardo de Souza Brandão	Santa Monica	Rochedo	MS	5007505
+79450786	Rua Agripino Jose Bernanrdes	Santa Monica	Rochedo	MS	5007505
+79455899	Área Rural	Área Rural de Rochedo	Rochedo	MS	5007505
+79459000			Água Boa	MS	
+79460000			Corguinho	MS	5003108
+79462000			Baianópolis	MS	
+79470000			Rio Negro	MS	5007307
+79472000			Nova Esperança	MS	
+79480000			Rio Verde de Mato Grosso	MS	5007406
+79482000			Juscelândia	MS	
+79490001	Rua Elvino Ramos Nogueira	Centro	São Gabriel do Oeste	MS	5007695
+79490003	Rua Rio Grande do Sul	Centro	São Gabriel do Oeste	MS	5007695
+79490005	Rua Santa Catarina	Centro	São Gabriel do Oeste	MS	5007695
+79490007	Rua Paraná	Centro	São Gabriel do Oeste	MS	5007695
+79490009	Rua São Paulo	Centro	São Gabriel do Oeste	MS	5007695
+79490011	Rua Minas Gerais	Centro	São Gabriel do Oeste	MS	5007695
+79490013	Avenida Mato Grosso do Sul	Centro	São Gabriel do Oeste	MS	5007695
+79490015	Avenida Mato Grosso do Sul	Centro	São Gabriel do Oeste	MS	5007695
+79490017	Rua Goiás	Centro	São Gabriel do Oeste	MS	5007695
+79490018	Travessa Servidão	Centro	São Gabriel do Oeste	MS	5007695
+79490019	Rua Rio de Janeiro	Centro	São Gabriel do Oeste	MS	5007695
+79490021	Rua Bahia	Centro	São Gabriel do Oeste	MS	5007695
+79490023	Rua Espírito Santo	Centro	São Gabriel do Oeste	MS	5007695
+79490025	Avenida São Francisco	Centro	São Gabriel do Oeste	MS	5007695
+79490027	Rua Leocádio Ramos Nogueira	Centro	São Gabriel do Oeste	MS	5007695
+79490029	Rua Estudante Elias Borgman	Centro	São Gabriel do Oeste	MS	5007695
+79490031	Rua Boaventura Ferreira Rosa	Centro	São Gabriel do Oeste	MS	5007695
+79490033	Rua Joaquim Honório Ribeiro Rosa	Centro	São Gabriel do Oeste	MS	5007695
+79490035	Rua João Rodrigues Miranda	Centro	São Gabriel do Oeste	MS	5007695
+79490037	Rua Martimiano Alves Dias	Centro	São Gabriel do Oeste	MS	5007695
+79490039	Avenida Getúlio Vargas	Centro	São Gabriel do Oeste	MS	5007695
+79490041	Avenida Getúlio Vargas	Centro	São Gabriel do Oeste	MS	5007695
+79490043	Rua José Ferreira Rosa	Centro	São Gabriel do Oeste	MS	5007695
+79490045	Rua Ceará	Centro	São Gabriel do Oeste	MS	5007695
+79490047	Rua José Ferreira da Cunha	Centro	São Gabriel do Oeste	MS	5007695
+79490049	Avenida Juscelino Kubitschek	Centro	São Gabriel do Oeste	MS	5007695
+79490051	Avenida Juscelino Kubitschek	Centro	São Gabriel do Oeste	MS	5007695
+79490053	Rua José Honório Sobrinho	Centro	São Gabriel do Oeste	MS	5007695
+79490055	Rua João Evangelista Rosa	Centro	São Gabriel do Oeste	MS	5007695
+79490057	Rua Albino Souza Brandão	Centro	São Gabriel do Oeste	MS	5007695
+79490059	Avenida Castelo Branco	Centro	São Gabriel do Oeste	MS	5007695
+79490070	Avenida Castelo Branco	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490072	Rua Raimundo do Prado	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490074	Rua Eugênio Ferreira da Cunha	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490076	Rua Beira Rio	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490078	Rua Elvino Ramos Nogueira	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490080	Rua Rio Grande do Sul	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490082	Rua Santa Catarina	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490084	Rua Paraná	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490086	Rua São Paulo	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490088	Rua Minas Gerais	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490090	Rua Tocantins	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490092	Avenida Mato Grosso do Sul	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490094	Avenida Mato Grosso do Sul	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490096	Rua Piauí	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490098	Rua Goiás	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490100	Rua Pará	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490102	Rua Rio de Janeiro	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490104	Rua Amazonas	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490106	Rua Bahia	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490108	Rua Espírito Santo	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490110	Avenida São Francisco	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490112	Avenida Dom Pedro I	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490114	Rua Manoel Rosa	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490116	Rua João Ribeiro Guimarães	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490118	Rua Davi Ferreira da Cunha	Amabile Maffissoni	São Gabriel do Oeste	MS	5007695
+79490120	Avenida Castelo Branco	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490122	Rua Raimundo do Prado	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490124	Rua Eugênio Ferreira da Cunha	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490126	Rua Oralino Maffissoni	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490128	Rua Ignes Baratiere Rizzo	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490130	Rua Hilário  Antônio Rolim	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490132	Avenida Dom Pedro I	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490134	Rua das Hortênsias	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490136	Rua das Rosas	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490138	Rua Manoel Rosa	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490140	Travessa Amoreira	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490142	Rua das Margaridas	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490144	Rua das Acácias	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490146	Rua João Ribeiro Guimarães	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490148	Rua das Magnatas	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490150	Rua dos Girassóis	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490152	Rua Davi Ferreira da Cunha	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490154	Rua Ponciano Ribeiro	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490156	Rua Írio Molinari	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490158	Travessa 5 de Maio	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490160	Travessa 26 de Novembro	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490162	Travessa 25 de Fevereiro	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490164	Rua São Jorge	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490166	Rua Gregoriana	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490168	Rua das Oliveiras	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490170	Avenida São Francisco	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490172	Rua Alagoas	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490174	Rua Pernambuco	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490176	Rua Coronel Freitas	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490178	Avenida Primo Maffissoni	Jardim Primavera	São Gabriel do Oeste	MS	5007695
+79490180	Avenida Primo Maffissoni	Santa Luzia	São Gabriel do Oeste	MS	5007695
+79490182	Rua Santa Cecília	Santa Luzia	São Gabriel do Oeste	MS	5007695
+79490184	Avenida Liberato Maffissoni	Santa Luzia	São Gabriel do Oeste	MS	5007695
+79490186	Avenida Castelo Branco	Santa Luzia	São Gabriel do Oeste	MS	5007695
+79490188	Rodovia MS-430	Santa Luzia	São Gabriel do Oeste	MS	5007695
+79490190	Rua Eugênio Ferreira da Cunha	Santa Luzia	São Gabriel do Oeste	MS	5007695
+79490192	Rua Manoel Rosa	Santa Luzia	São Gabriel do Oeste	MS	5007695
+79490194	Rua Davi Ferreira da Cunha	Santa Luzia	São Gabriel do Oeste	MS	5007695
+79490196	Rua Gregoriana	Santa Luzia	São Gabriel do Oeste	MS	5007695
+79490198	Rua Amabile Maffissoni	Santa Luzia	São Gabriel do Oeste	MS	5007695
+79490250	Avenida São Francisco	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490252	Rua Rondônia	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490254	Rua Sergipe	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490256	Rua Acre	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490258	Rua Alagoas	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490260	Rua Pernambuco	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490262	Rua Monteiro Lobato	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490264	Rua Dionísio Moscon	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490266	Rua Menotti Del Picchia	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490268	Rua Pedro Nicaretta	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490270	Avenida Rui Barbosa	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490272	Avenida Rui Barbosa	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490274	Rua Estudante Soni Bortoli	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490276	Rua Deoclécio Zamignan	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490278	Rua Jorge Amado	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490280	Rua Hildo Nicaretta	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490282	Rua Osório Rodrigues da Silva	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490284	Rua Maria Severo	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490286	Rua Fortunato Quintino Zanetti	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490288	Avenida Hilário Nicaretta	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490290	Avenida Primo Maffissoni	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490292	Avenida Castelo Branco	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490294	Rua Albino Souza Brandão	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490296	Rua João Evangelista Rosa	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490298	Rua Fábio Zamignan	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490300	Rua Roque Migliavacca	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490302	Rua José Honório Sobrinho	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490304	Avenida Juscelino Kubitschek	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490306	Avenida Juscelino Kubitschek	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490308	Rua José Ferreira da Cunha	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490310	Rua Ceará	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490312	Rua José Ferreira Rosa	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490314	Avenida Getúlio Vargas	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490316	Avenida Getúlio Vargas	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490318	Rua Martimiano Alves Dias	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490320	Rua João Rodrigues Miranda	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490322	Rua Joaquim Honório Ribeiro Rosa	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490324	Rua Boaventura Ferreira Rosa	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490326	Rua Estudante Elias Borgman	Primo Maffissoni	São Gabriel do Oeste	MS	5007695
+79490330	Rua das Paineiras	Residencial Alto da Boa Vista	São Gabriel do Oeste	MS	5007695
+79490332	Rua das Embaúbas	Residencial Alto da Boa Vista	São Gabriel do Oeste	MS	5007695
+79490334	Praça das Perobas	Residencial Alto da Boa Vista	São Gabriel do Oeste	MS	5007695
+79490336	Área das Guaiçaras	Residencial Alto da Boa Vista	São Gabriel do Oeste	MS	5007695
+79490338	Rua Pau-Brasil	Residencial Alto da Boa Vista	São Gabriel do Oeste	MS	5007695
+79490340	Rua dos Angelins	Residencial Alto da Boa Vista	São Gabriel do Oeste	MS	5007695
+79490342	Rua das Copaíbas	Residencial Alto da Boa Vista	São Gabriel do Oeste	MS	5007695
+79490344	Rua dos Cedros	Residencial Alto da Boa Vista	São Gabriel do Oeste	MS	5007695
+79490346	Rua das Canafístulas	Residencial Alto da Boa Vista	São Gabriel do Oeste	MS	5007695
+79490348	Rua dos Jequitibas	Residencial Alto da Boa Vista	São Gabriel do Oeste	MS	5007695
+79490350	Avenida Rosada	Residencial Rosada	São Gabriel do Oeste	MS	5007695
+79490352	Rua Itália	Residencial Rosada	São Gabriel do Oeste	MS	5007695
+79490354	Rua Alemanha	Residencial Rosada	São Gabriel do Oeste	MS	5007695
+79490356	Rua Portugal	Residencial Rosada	São Gabriel do Oeste	MS	5007695
+79490358	Rua Espanha	Residencial Rosada	São Gabriel do Oeste	MS	5007695
+79490360	Rua Inglaterra	Residencial Rosada	São Gabriel do Oeste	MS	5007695
+79490362	Rua Turquia	Residencial Rosada	São Gabriel do Oeste	MS	5007695
+79490364	Rua França	Residencial Rosada	São Gabriel do Oeste	MS	5007695
+79490366	Rua Suíça	Residencial Rosada	São Gabriel do Oeste	MS	5007695
+79490368	Rua Canadá	Residencial Rosada	São Gabriel do Oeste	MS	5007695
+79490370	Rua México	Residencial Rosada	São Gabriel do Oeste	MS	5007695
+79490372	Rua Estados Unidos	Residencial Rosada	São Gabriel do Oeste	MS	5007695
+79490374	Rua Uruguai	Residencial Rosada	São Gabriel do Oeste	MS	5007695
+79490376	Rua Brasil	Residencial Rosada	São Gabriel do Oeste	MS	5007695
+79490380	Avenida Silvino Bortolini	Residencial Rosada II	São Gabriel do Oeste	MS	5007695
+79490381	Rua Montevideu	Residencial Rosada II	São Gabriel do Oeste	MS	5007695
+79490382	Rua Brasil	Residencial Rosada II	São Gabriel do Oeste	MS	5007695
+79490383	Rua Uruguai	Residencial Rosada II	São Gabriel do Oeste	MS	5007695
+79490384	Rua Estados Unidos	Residencial Rosada II	São Gabriel do Oeste	MS	5007695
+79490385	Rua México	Residencial Rosada II	São Gabriel do Oeste	MS	5007695
+79490386	Rua Buenos Aires	Residencial Rosada II	São Gabriel do Oeste	MS	5007695
+79490387	Rua Santiago	Residencial Rosada II	São Gabriel do Oeste	MS	5007695
+79490388	Rua Missiones	Residencial Rosada II	São Gabriel do Oeste	MS	5007695
+79490390	Avenida San Rafael	Residencial Rosada II	São Gabriel do Oeste	MS	5007695
+79490391	Avenida Silvino Bortolini	Residencial Rosada II	São Gabriel do Oeste	MS	5007695
+79490392	Avenida San Rafael	Residencial Rosada II	São Gabriel do Oeste	MS	5007695
+79490393	Rua Panamá	Residencial Rosada II	São Gabriel do Oeste	MS	5007695
+79491001	Rua João de Almeida Sampaio	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491002	Rua Saracura	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491004	Rua Pelicanos	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491006	Avenida Tuiuiú	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491008	Rua dos Canários	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491010	Rua Curicaca	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491012	Rua Curió	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491014	Rua das Curruíras	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491016	Rua das Anhumas	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491018	Rua das Gaivotas	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491020	Rua Azulão	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491022	Rua dos Patos	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491024	Rua Asa Branca	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491026	Rua dos Tucanos	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491028	Rua Bicudos	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491030	Rua das Águias	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491032	Rua Papagaio	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491034	Avenida Arapongas	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491036	Rua Pica-pau	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491038	Rua Salim Moreira Antônio	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491040	Rua Uirapuru	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491042	Rua Pintassilgo	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491044	Rua dos Sábias	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491046	Rua dos Cardeais	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491048	Rua das Perdizes	Jardim Gramado	São Gabriel do Oeste	MS	5007695
+79491050	Rua das Perdizes	Fênix	São Gabriel do Oeste	MS	5007695
+79491052	Rua Pássaro Preto	Fênix	São Gabriel do Oeste	MS	5007695
+79491054	Rua das Corujas	Fênix	São Gabriel do Oeste	MS	5007695
+79491056	Rua das Andorinhas	Fênix	São Gabriel do Oeste	MS	5007695
+79491058	Rua Quero-Quero	Fênix	São Gabriel do Oeste	MS	5007695
+79491060	Rua das Garças	Fênix	São Gabriel do Oeste	MS	5007695
+79491062	Rua Pedro Segatto	Fênix	São Gabriel do Oeste	MS	5007695
+79491064	Rua dos Pardais	Fênix	São Gabriel do Oeste	MS	5007695
+79491066	Rua das Palmeiras	Fênix	São Gabriel do Oeste	MS	5007695
+79491068	Rua da Seriema	Fênix	São Gabriel do Oeste	MS	5007695
+79491070	Rua João de Almeida Sampaio	Fênix	São Gabriel do Oeste	MS	5007695
+79491072	Rua Saracura	Fênix	São Gabriel do Oeste	MS	5007695
+79491074	Rua Pelicanos	Fênix	São Gabriel do Oeste	MS	5007695
+79491076	Avenida Tuiuiú	Fênix	São Gabriel do Oeste	MS	5007695
+79491078	Rua dos Canários	Fênix	São Gabriel do Oeste	MS	5007695
+79491080	Rua Curicaca	Fênix	São Gabriel do Oeste	MS	5007695
+79491082	Rua Curió	Fênix	São Gabriel do Oeste	MS	5007695
+79491084	Rua Irerê	Fênix	São Gabriel do Oeste	MS	5007695
+79491086	Rua das Curruíras	Fênix	São Gabriel do Oeste	MS	5007695
+79491088	Rua Periquito	Fênix	São Gabriel do Oeste	MS	5007695
+79491090	Rua das Anhumas	Fênix	São Gabriel do Oeste	MS	5007695
+79491092	Rua Juriti	Fênix	São Gabriel do Oeste	MS	5007695
+79491094	Rua das Gaivotas	Fênix	São Gabriel do Oeste	MS	5007695
+79491096	Rua Tico-tico	Fênix	São Gabriel do Oeste	MS	5007695
+79491098	Rua Bem-te-vi	Fênix	São Gabriel do Oeste	MS	5007695
+79491100	Rua Patativa	Fênix	São Gabriel do Oeste	MS	5007695
+79491102	Rua das Araras	Fênix	São Gabriel do Oeste	MS	5007695
+79491104	Rua Azulão	Fênix	São Gabriel do Oeste	MS	5007695
+79491106	Rua Tangará	Fênix	São Gabriel do Oeste	MS	5007695
+79491108	Rua Colibri	Fênix	São Gabriel do Oeste	MS	5007695
+79491110	Rua Fênix	Fênix	São Gabriel do Oeste	MS	5007695
+79491112	Rua 23 de Maio	Fênix	São Gabriel do Oeste	MS	5007695
+79491114	Rua 8 de Abril	Fênix	São Gabriel do Oeste	MS	5007695
+79491116	Rua 5 de Outubro	Fênix	São Gabriel do Oeste	MS	5007695
+79491118	Rua 17 de Agosto	Fênix	São Gabriel do Oeste	MS	5007695
+79491120	Rua Beija-flor	Fênix	São Gabriel do Oeste	MS	5007695
+79491122	Avenida João de Barro	Fênix	São Gabriel do Oeste	MS	5007695
+79491170	Rua Pau-Terra	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491172	Rua Jatobá	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491174	Rua Tarumã	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491176	Rua Sucupira	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491178	Rua da Servidão	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491180	Rua Ipê	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491182	Rua Castanheira	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491184	Rua Cerejeira	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491186	Rua Cambará	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491188	Rua Angico	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491190	Rua Aroeira	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491192	Rua das Perdizes	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491194	Rua Jacarandá	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491196	Rua Oiti	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491198	Rua Araça	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491200	Rua dos Rouxinóis	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491202	Rua Quero-Quero	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491204	Rua dos Pardais	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491206	Rua Azulão	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491208	Rua Guatambú	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491210	Rua Pequi	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491212	Rua Beija-flor	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491214	Rua Ipê Florido	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491216	Rua Ipê Roxo	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491218	Rua Ipê Amarelo	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491220	Rua Ipê Verde	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491222	Rua Ipê Rosa	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491224	Rua Ipê Branco	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491226	Avenida João de Barro	São Cristovão	São Gabriel do Oeste	MS	5007695
+79491270	Avenida João de Barro	Esplanada	São Gabriel do Oeste	MS	5007695
+79491272	Rua Rui Neves Ribas	Esplanada	São Gabriel do Oeste	MS	5007695
+79491274	Rua Flamboyant	Esplanada	São Gabriel do Oeste	MS	5007695
+79491276	Rua Laranjeiras	Esplanada	São Gabriel do Oeste	MS	5007695
+79491278	Rua das Flores	Esplanada	São Gabriel do Oeste	MS	5007695
+79491280	Rua das Palmeiras	Esplanada	São Gabriel do Oeste	MS	5007695
+79492000			Areado	MS	
+79492001	Rua José Augusto Malgarin Buzata	Cidades	São Gabriel do Oeste	MS	5007695
+79492002	Rua Iguatemi	Cidades	São Gabriel do Oeste	MS	5007695
+79492004	Rua Coxim	Cidades	São Gabriel do Oeste	MS	5007695
+79492006	Rua Eldorado	Cidades	São Gabriel do Oeste	MS	5007695
+79492008	Rua Três Lagoas	Cidades	São Gabriel do Oeste	MS	5007695
+79492010	Rua Amambai	Cidades	São Gabriel do Oeste	MS	5007695
+79492012	Rua Pedro Gomes	Cidades	São Gabriel do Oeste	MS	5007695
+79492014	Avenida São Gabriel	Cidades	São Gabriel do Oeste	MS	5007695
+79492016	Rua Camapuã	Cidades	São Gabriel do Oeste	MS	5007695
+79492060	Rua Marechal Floriano	Milani	São Gabriel do Oeste	MS	5007695
+79492062	Rua São Manoel	Milani	São Gabriel do Oeste	MS	5007695
+79492064	Rua Antônio Lambert	Milani	São Gabriel do Oeste	MS	5007695
+79492066	Rua João XXIII	Milani	São Gabriel do Oeste	MS	5007695
+79492068	Rua Francisco Milani	Milani	São Gabriel do Oeste	MS	5007695
+79492070	Rua Dona Elvira	Milani	São Gabriel do Oeste	MS	5007695
+79492072	Rua Conde de Porto Alegre	Milani	São Gabriel do Oeste	MS	5007695
+79492074	Rua Santa Maria	Milani	São Gabriel do Oeste	MS	5007695
+79492076	Travessa Santo Isidoro	Milani	São Gabriel do Oeste	MS	5007695
+79492078	Travessa Ricardo Franco	Milani	São Gabriel do Oeste	MS	5007695
+79492080	Rua 12 de Maio	Milani	São Gabriel do Oeste	MS	5007695
+79492082	Rua José de Anchieta	Milani	São Gabriel do Oeste	MS	5007695
+79492084	Rua da Paz	Milani	São Gabriel do Oeste	MS	5007695
+79492086	Avenida Campo Grande	Milani	São Gabriel do Oeste	MS	5007695
+79492088	Rua das Missões	Milani	São Gabriel do Oeste	MS	5007695
+79492090	Rua Santa Ana	Milani	São Gabriel do Oeste	MS	5007695
+79492092	Rua Santo Ângelo	Milani	São Gabriel do Oeste	MS	5007695
+79492094	Avenida Santo Antônio	Milani	São Gabriel do Oeste	MS	5007695
+79492096	Rua Santa Inês	Milani	São Gabriel do Oeste	MS	5007695
+79492098	Rua Piratini	Milani	São Gabriel do Oeste	MS	5007695
+79492100	Rua Filinto Muller	Milani	São Gabriel do Oeste	MS	5007695
+79492102	Rua Antônio João	Milani	São Gabriel do Oeste	MS	5007695
+79492110	Rua A	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492112	Rua B	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492114	Avenida B	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492116	Rua C	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492118	Avenida C	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492120	Rua D	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492122	Rua E	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492124	Rua F	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492126	Rua G	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492128	Rua H	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492130	Rua I	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492132	Rua J	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492134	Avenida A	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492136	Rua K	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492138	Rua L	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492140	Rua M	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492142	Rua N	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492144	Rua O	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492146	Rua P	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492148	Rua Q	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492150	Rua R	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492152	Rua S	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492154	Rua T	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492156	Rua U	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492157	Rua W	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492158	Rua V	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492160	Rua X	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492162	Rua Y	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79492164	Rua Z	Cidade Jardim	São Gabriel do Oeste	MS	5007695
+79493850	Rua A	Zona Industrial Sul	São Gabriel do Oeste	MS	5007695
+79493851	Rua B	Zona Industrial Sul	São Gabriel do Oeste	MS	5007695
+79493852	Rua C	Zona Industrial Sul	São Gabriel do Oeste	MS	5007695
+79493853	Rua D	Zona Industrial Sul	São Gabriel do Oeste	MS	5007695
+79493854	Rua E	Zona Industrial Sul	São Gabriel do Oeste	MS	5007695
+79493855	Rua F	Zona Industrial Sul	São Gabriel do Oeste	MS	5007695
+79493899	Área Rural	Area Rural de São Gabriel do Oeste	São Gabriel do Oeste	MS	5007695
+79494000			Ponte Vermelha	MS	
+79494001	Rua Um	Centro (Ponte Vermelha)	São Gabriel do Oeste	MS	5007695
+79494002	Rua Dois	Centro (Ponte Vermelha)	São Gabriel do Oeste	MS	5007695
+79494004	Rua Três	Centro (Ponte Vermelha)	São Gabriel do Oeste	MS	5007695
+79494006	Rua Quatro	Centro (Ponte Vermelha)	São Gabriel do Oeste	MS	5007695
+79494008	Avenida B	Centro (Ponte Vermelha)	São Gabriel do Oeste	MS	5007695
+79494010	Rodovia MS-435	Centro (Ponte Vermelha)	São Gabriel do Oeste	MS	5007695
+79494899	Área Rural	Área Rural de Ponte Vermelha	São Gabriel do Oeste	MS	5007695
+79495001	Rua do Lavador	Centro (Areado)	São Gabriel do Oeste	MS	5007695
+79495002	Rodovia MS-142	Centro (Areado)	São Gabriel do Oeste	MS	5007695
+79495004	Rua do Comércio	Centro (Areado)	São Gabriel do Oeste	MS	5007695
+79495006	Rua Mato Grosso	Centro (Areado)	São Gabriel do Oeste	MS	5007695
+79495008	Rua da Aviação	Centro (Areado)	São Gabriel do Oeste	MS	5007695
+79495010	Rua Camapuã	Centro (Areado)	São Gabriel do Oeste	MS	5007695
+79495012	Rua Ernesto de Borges	Centro (Areado)	São Gabriel do Oeste	MS	5007695
+79495014	Rua Bonfim	Centro (Areado)	São Gabriel do Oeste	MS	5007695
+79495016	Rua Ipiranga	Centro (Areado)	São Gabriel do Oeste	MS	5007695
+79495018	Rua Henriqueta de Jesus	Centro (Areado)	São Gabriel do Oeste	MS	5007695
+79495020	Rua Bernardo Ferreira	Centro (Areado)	São Gabriel do Oeste	MS	5007695
+79495899	Área Rural	Área Rural de Areado	São Gabriel do Oeste	MS	5007695

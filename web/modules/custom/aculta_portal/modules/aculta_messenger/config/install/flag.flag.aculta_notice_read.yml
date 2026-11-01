@@ -1,0 +1,30 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - node.type.aculta_notice
+  module:
+    - node
+id: aculta_notice_read
+label: 'Aviso lido'
+bundles:
+  - aculta_notice
+entity_type: node
+global: false
+flag_short: 'Marcar como lido'
+flag_long: 'Marcar este aviso como lido para sua conta.'
+flag_message: 'Aviso marcado como lido.'
+unflag_short: 'Marcar como não lido'
+unflag_long: 'Marcar este aviso como não lido para sua conta.'
+unflag_message: 'Aviso marcado como não lido.'
+unflag_denied_text: ''
+weight: 0
+flag_type: 'entity:node'
+link_type: ajax_link
+flagTypeConfig:
+  show_in_links: { }
+  show_as_field: true
+  show_on_form: false
+  show_contextual_link: false
+  extra_permissions: [ ]
+linkTypeConfig: { }

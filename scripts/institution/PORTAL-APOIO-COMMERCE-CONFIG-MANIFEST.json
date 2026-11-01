@@ -1,0 +1,27 @@
+{
+  "purpose": "Historical manifest for the superseded standalone aculta_apoio configuration export.",
+  "superseded": true,
+  "superseded_on": "2026-10-03",
+  "current_manifest": "PORTAL-ACCOUNT-CONFIG-MANIFEST.json",
+  "historical_configs": [
+    "aculta_apoio.settings",
+    "core.extension",
+    "user.role.authenticated",
+    "profile.type.participante",
+    "core.entity_form_display.profile.participante.default",
+    "core.entity_view_display.profile.participante.default",
+    "field.storage.profile.field_city",
+    "field.storage.profile.field_first_name",
+    "field.storage.profile.field_last_name",
+    "field.storage.profile.field_phone",
+    "field.storage.profile.field_state",
+    "field.storage.profile.field_whatsapp",
+    "field.field.profile.participante.field_city",
+    "field.field.profile.participante.field_first_name",
+    "field.field.profile.participante.field_last_name",
+    "field.field.profile.participante.field_phone",
+    "field.field.profile.participante.field_state",
+    "field.field.profile.participante.field_whatsapp"
+  ],
+  "sensitive_config_values_exported": false
+}

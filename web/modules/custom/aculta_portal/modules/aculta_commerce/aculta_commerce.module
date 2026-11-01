@@ -1,0 +1,12 @@
+<?php
+
+/**
+ * @file
+ * ACULTA Commerce module hooks.
+ *
+ * Studio registration lives in AcultaCommerceServiceProvider. Shipping hooks
+ * implement the in-module engine ported from drupal/commerce_shipping 3.0.5
+ * (GPL-2.0-or-later); they never depend on the contributed module.
+ *
+ * Os hooks de bundle, de campo e de trait estão em `Drupal\aculta_commerce\Hook\CommerceEntityHooks`.
+ */

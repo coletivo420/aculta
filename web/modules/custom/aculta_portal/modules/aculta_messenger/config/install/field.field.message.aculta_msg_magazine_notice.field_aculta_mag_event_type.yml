@@ -1,0 +1,23 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_mag_event_type
+    - message.template.aculta_msg_magazine_notice
+  enforced:
+    module:
+      - aculta_messenger
+id: message.aculta_msg_magazine_notice.field_aculta_mag_event_type
+field_name: field_aculta_mag_event_type
+entity_type: message
+bundle: aculta_msg_magazine_notice
+label: 'Tipo de aviso editorial'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: published
+default_value_callback: ''
+settings: {  }
+field_type: list_string

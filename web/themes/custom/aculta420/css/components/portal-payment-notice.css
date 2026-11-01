@@ -1,0 +1,45 @@
+/* Caixa "pagamentos pelo Mercado Pago" em Meus pedidos. Só tokens semânticos do ACULTA420 (sem cor literal).
+   Destaque: fundo na cor de interação (amarelo) com texto na cor de texto interativo; claro e escuro seguem os tokens. */
+.portal-payment-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-block: 1.25rem 0;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--aculta-interactive-border);
+  border-radius: 0.5rem;
+  background: var(--aculta-interactive-bg);
+  color: var(--aculta-interactive-text);
+}
+
+.portal-payment-notice__logo {
+  display: block;
+  width: 9.5rem;
+  height: auto;
+}
+
+.portal-payment-notice__text {
+  flex: 1 1 14rem;
+  margin: 0;
+  font: 400 0.95rem/1.4 var(--aculta-font-body);
+  color: var(--aculta-interactive-text);
+}
+
+.portal-payment-notice__link {
+  font-weight: 600;
+  color: var(--aculta-interactive-text);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+.portal-payment-notice__link:hover,
+.portal-payment-notice__link:focus-visible {
+  color: var(--aculta-interactive-hover-text);
+  background: var(--aculta-interactive-hover-bg);
+}
+
+.portal-payment-notice__link:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}

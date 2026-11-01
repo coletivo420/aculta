@@ -1,0 +1,5 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-rc.1
+state: RC
+progress_note: '0.1.0-rc.1: Unit 16/61 e Kernel 8/127 PASS em aculta_simpletest (188 assertions); PHPCS Drupal/DrupalPractice 0/0 após ajuste de docblocks. Firefox ESR (DISPLAY=:0, access.py): anônimo negou rotas administrativas e validou sanitização/overflow de nó editorial; editor de conteúdo (uid 15) negou full_html/aculta_adm e validou CKEditor 5 em node/add/revista sem full_html e sem overflow (1280/390/320 px); administrador (uid 1) validou node/add/aculta_adm e CKEditor 5 em node/add/page sem overflow (1280/390/320 px). Nenhuma escrita persistente no Runtime.'
+next_phase: 'Deploy do candidato no servidor de desenvolvimento e validação no ambiente *.aculta.org (Alpha), com posterior migração para Hostinger (Beta) conforme RELEASE-LIFECYCLE.md ([auditoria](docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md))'

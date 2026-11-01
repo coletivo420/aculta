@@ -1,0 +1,8 @@
+ckeditor5.image_model:
+  version: VERSION
+  js:
+    js/ckeditor5/aculta-image-model.js: {}
+  dependencies:
+    - core/ckeditor5
+    - core/ckeditor5.image
+    - ckeditor5/internal.drupal.ckeditor5.image

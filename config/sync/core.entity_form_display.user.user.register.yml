@@ -1,0 +1,32 @@
+uuid: 158103b8-4ad4-4622-9529-fb5716614658
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.user.register
+    - field.field.user.user.commerce_remote_id
+    - field.field.user.user.field_domain_admin
+    - field.field.user.user.user_picture
+  module:
+    - user
+_core:
+  default_config_hash: ''
+id: user.user.register
+targetEntityType: user
+bundle: user
+mode: register
+content:
+  account:
+    weight: -10
+    region: content
+hidden:
+  commerce_remote_id: true
+  customer_profiles: true
+  field_domain_admin: true
+  langcode: true
+  language: true
+  participante_profiles: true
+  path: true
+  social_auth: true
+  timezone: true
+  user_picture: true

@@ -1,0 +1,15 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Messenger list
+status: experimental
+group: Patterns
+description: 'Presentation frame for conversation, message and notification lists; the Portal supplies rendered and access-checked items.'
+props:
+  type: object
+  properties:
+    label:
+      type: [string, 'null']
+      default: null
+slots:
+  content:
+    title: List content
+    description: 'Native Views or Portal render arrays, with their cache and access metadata.'

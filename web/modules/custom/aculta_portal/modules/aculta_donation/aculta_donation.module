@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * @file
+ * Needed hook implementations for aculta_donation (port de commerce_donation_flow, GPL-2.0-or-later).
+ *
+ * Os hooks estão em `Drupal\aculta_donation\Hook`. Este arquivo não declara funções.
+ */

@@ -1,0 +1,10 @@
+uuid: c771aa82-4e23-4063-aca9-333b1b96f62f
+langcode: pt-br
+status: true
+dependencies: {  }
+id: apoio_aculta_toca_net_br
+domain_id: apoio_aculta_org
+pattern: apoio.aculta.toca.net.br
+redirect: 0
+environment: homelab
+weight: 3

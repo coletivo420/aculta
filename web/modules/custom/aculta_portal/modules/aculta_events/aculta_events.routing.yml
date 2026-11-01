@@ -1,0 +1,793 @@
+aculta_events.catalogue:
+  path: '/eventos'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventCatalogueController::page'
+    _title: 'Eventos da ACULTA'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos
+
+aculta_events.organizer_dashboard:
+  path: '/culturas'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventOrganizerDashboardController::page'
+    _title: 'ACULTA Studio Culturas'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
+aculta_events.organizer_contributions:
+  path: '/culturas/propostas'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventContributionWorkspaceController::overview'
+    _title: 'Minhas propostas em Culturas'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
+aculta_events.organizer_contribution_status:
+  path: '/culturas/propostas/{proposal_uuid}'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventContributionWorkspaceController::view'
+    _title: 'Acompanhar proposta em Culturas'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+    proposal_uuid: '[a-f0-9-]{36}'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
+aculta_events.organizer_contribution_revise:
+  path: '/culturas/propostas/{proposal_uuid}/revisar'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventContributionRevisionForm'
+    _title: 'Revisar minha proposta'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+    proposal_uuid: '[a-f0-9-]{36}'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
+aculta_events.organizer_event_add:
+  path: '/culturas/eventos/novo'
+  defaults:
+    _entity_form: 'aculta_event.add'
+    _title: 'Cadastrar evento'
+  requirements:
+    _entity_create_access: 'aculta_event'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
+aculta_events.organizer_event_contribution_add:
+  path: '/culturas/propostas/evento/nova'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventContributionSubmissionForm'
+    _title: 'Propor novo Evento'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
+aculta_events.organizer_event_contribution_update:
+  path: '/culturas/eventos/{aculta_event}/propor-alteracao'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventUpdateContributionSubmissionForm'
+    _title: 'Propor alteração de Evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    _user_is_logged_in: 'TRUE'
+    aculta_event: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event:
+        type: entity:aculta_event
+
+aculta_events.organizer_event_edit:
+  path: '/culturas/eventos/{aculta_event}/editar'
+  defaults:
+    _entity_form: 'aculta_event.edit'
+    _title: 'Editar evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    aculta_event: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event:
+        type: entity:aculta_event
+
+aculta_events.organizer_event_date_add:
+  path: '/culturas/eventos/{aculta_event}/datas/adicionar'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateCreateForm'
+    _title: 'Adicionar data ao evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    aculta_event: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event:
+        type: entity:aculta_event
+
+aculta_events.organizer_event_date_edit:
+  path: '/culturas/eventos/{aculta_event}/datas/{aculta_event_date}/editar'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateEditForm'
+    _title: 'Editar data do evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    _custom_access: '\Drupal\aculta_events\Access\EventDateRouteAccess::access'
+    aculta_event: '\d+'
+    aculta_event_date: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event:
+        type: entity:aculta_event
+      aculta_event_date:
+        type: entity:aculta_event_date
+
+aculta_events.organizer_event_date_delete:
+  path: '/culturas/eventos/{aculta_event}/datas/{aculta_event_date}/excluir'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateDeleteForm'
+    _title: 'Excluir data do evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    _custom_access: '\Drupal\aculta_events\Access\EventDateRouteAccess::access'
+    aculta_event: '\d+'
+    aculta_event_date: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event:
+        type: entity:aculta_event
+      aculta_event_date:
+        type: entity:aculta_event_date
+
+aculta_events.organizer_event_date_order:
+  path: '/culturas/eventos/{aculta_event}/datas/ordem'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateOrderForm'
+    _title: 'Ordenar datas'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    aculta_event: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event:
+        type: entity:aculta_event
+
+aculta_events.organizer_location_add:
+  path: '/culturas/locais/novo'
+  defaults:
+    _entity_form: 'aculta_event_location.add'
+    _title: 'Adicionar local'
+  requirements:
+    _entity_create_access: 'aculta_event_location'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
+aculta_events.organizer_location_edit:
+  path: '/culturas/locais/{aculta_event_location}/editar'
+  defaults:
+    _entity_form: 'aculta_event_location.edit'
+    _title: 'Editar local'
+  requirements:
+    _entity_access: 'aculta_event_location.update'
+    aculta_event_location: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event_location:
+        type: entity:aculta_event_location
+
+aculta_events.organizer_location_delete:
+  path: '/culturas/locais/{aculta_event_location}/excluir'
+  defaults:
+    _entity_form: 'aculta_event_location.delete'
+    _title: 'Excluir local'
+  requirements:
+    _entity_access: 'aculta_event_location.delete'
+    aculta_event_location: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event_location:
+        type: entity:aculta_event_location
+
+aculta_events.organizer_location_modal:
+  path: '/culturas/locais/modal'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventLocationModalForm'
+    _title: 'Selecionar ou cadastrar local'
+  requirements:
+    _custom_access: '\Drupal\aculta_events\Form\EventLocationModalForm::access'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
+aculta_events.event_add:
+  path: '/painel-administrativo/eventos/adicionar'
+  defaults:
+    _entity_form: 'aculta_event.add'
+    _title: 'Cadastrar evento'
+  requirements:
+    _entity_create_access: 'aculta_event'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.event_edit:
+  path: '/painel-administrativo/eventos/{aculta_event}/editar'
+  defaults:
+    _entity_form: 'aculta_event.edit'
+    _title: 'Editar evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    aculta_event: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.page:
+  path: '/eventos/{slug}'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventPageController::page'
+    _title_callback: '\Drupal\aculta_events\Controller\EventPageController::titulo'
+  requirements:
+    _access: 'TRUE'
+    slug: '[a-z0-9]+(-[a-z0-9]+)*'
+  options:
+    _aculta_domain_purpose: eventos
+
+aculta_events.locations:
+  path: '/painel-administrativo/eventos/locais'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\LocationListController::page'
+    _title: 'Locais'
+  requirements:
+    _permission: 'administer aculta events,access content overview'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.location_canonical:
+  path: '/locais/{aculta_event_location}'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\LocationPageController::page'
+    _title_callback: '\Drupal\aculta_events\Controller\LocationPageController::title'
+  requirements:
+    _entity_access: 'aculta_event_location.view'
+    aculta_event_location: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+
+aculta_events.location_add:
+  path: '/painel-administrativo/eventos/locais/adicionar'
+  defaults:
+    _entity_form: 'aculta_event_location.add'
+    _title: 'Adicionar local'
+  requirements:
+    _entity_create_access: 'aculta_event_location'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.location_edit:
+  path: '/painel-administrativo/eventos/locais/{aculta_event_location}/editar'
+  defaults:
+    _entity_form: 'aculta_event_location.edit'
+    _title: 'Editar local'
+  requirements:
+    _entity_access: 'aculta_event_location.update'
+    aculta_event_location: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.location_delete:
+  path: '/painel-administrativo/eventos/locais/{aculta_event_location}/excluir'
+  defaults:
+    _entity_form: 'aculta_event_location.delete'
+    _title: 'Excluir local'
+  requirements:
+    _entity_access: 'aculta_event_location.delete'
+    aculta_event_location: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.event_date_add:
+  path: '/painel-administrativo/eventos/{aculta_event}/datas/adicionar'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateCreateForm'
+    _title: 'Adicionar data ao evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    aculta_event: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.event_date_edit:
+  path: '/painel-administrativo/eventos/{aculta_event}/datas/{aculta_event_date}/editar'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateEditForm'
+    _title: 'Editar data do evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    _custom_access: '\Drupal\aculta_events\Access\EventDateRouteAccess::access'
+    aculta_event: '\d+'
+    aculta_event_date: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.event_date_delete:
+  path: '/painel-administrativo/eventos/{aculta_event}/datas/{aculta_event_date}/excluir'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateDeleteForm'
+    _title: 'Excluir data do evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    _custom_access: '\Drupal\aculta_events\Access\EventDateRouteAccess::access'
+    aculta_event: '\d+'
+    aculta_event_date: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.event_date_order:
+  path: '/painel-administrativo/eventos/{aculta_event}/datas/ordem'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateOrderForm'
+    _title: 'Ordenar datas do evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    aculta_event: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.map:
+  path: '/mapa'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\MapController::page'
+    _title: 'Mapa de locais'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos
+
+aculta_events.ics:
+  path: '/calendario/exportar.ics'
+  defaults:
+    _controller: '\Drupal\aculta_calendar\Controller\IcsController::periodo'
+    _title: 'Exportar eventos'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos
+
+aculta_events.date_rule:
+  path: '/painel-administrativo/eventos/datas/{aculta_event_date}/recorrencia'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateRuleForm'
+    _title: 'Recorrência da data'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_event_date: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.occurrence:
+  path: '/painel-administrativo/eventos/datas/{aculta_event_date}/ocorrencia/{inicio}'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventDateOccurrenceForm'
+    _title: 'Editar ocorrência'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_event_date: '\d+'
+    inicio: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.agenda:
+  path: '/calendario'
+  defaults:
+    _controller: '\Drupal\aculta_calendar\Controller\AgendaController::page'
+    _title: 'Calendário de eventos'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos
+    _aculta_calendar_rotas: {agenda: aculta_events.agenda, month: aculta_events.month, day: aculta_events.day, ics: aculta_events.ics, embed: aculta_events.embed, interactive: aculta_events.interactive}
+
+aculta_events.month:
+  path: '/calendario/mes/{ano}/{mes}'
+  defaults:
+    _controller: '\Drupal\aculta_calendar\Controller\AgendaController::mes'
+    _title_callback: '\Drupal\aculta_calendar\Controller\AgendaController::tituloMes'
+  requirements:
+    _access: 'TRUE'
+    ano: '\d{4}'
+    mes: '\d{1,2}'
+  options:
+    _aculta_domain_purpose: eventos
+    _aculta_calendar_rotas: {agenda: aculta_events.agenda, month: aculta_events.month, day: aculta_events.day, ics: aculta_events.ics, embed: aculta_events.embed, interactive: aculta_events.interactive}
+
+aculta_events.day:
+  path: '/calendario/dia/{ano}/{mes}/{dia}'
+  defaults:
+    _controller: '\Drupal\aculta_calendar\Controller\AgendaController::dia'
+    _title_callback: '\Drupal\aculta_calendar\Controller\AgendaController::tituloDia'
+  requirements:
+    _access: 'TRUE'
+    ano: '\d{4}'
+    mes: '\d{1,2}'
+    dia: '\d{1,2}'
+  options:
+    _aculta_domain_purpose: eventos
+    _aculta_calendar_rotas: {agenda: aculta_events.agenda, month: aculta_events.month, day: aculta_events.day, ics: aculta_events.ics, embed: aculta_events.embed, interactive: aculta_events.interactive}
+
+aculta_events.date_ics:
+  path: '/eventos/{slug}/data/{id}/calendario.ics'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventIcsController::data'
+    _title: 'Exportar data do evento'
+  requirements:
+    _access: 'TRUE'
+    slug: '[a-z0-9]+(-[a-z0-9]+)*'
+    id: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+
+aculta_events.location_ics:
+  path: '/locais/{aculta_event_location}/agenda.ics'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventIcsController::local'
+    _title: 'Exportar agenda do local'
+  requirements:
+    _access: 'TRUE'
+    aculta_event_location: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    parameters:
+      aculta_event_location:
+        type: entity:aculta_event_location
+
+aculta_events.interactive:
+  path: '/calendario/interativo'
+  defaults:
+    _controller: '\Drupal\aculta_calendar\Controller\InteractiveController::page'
+    _title: 'Calendário interativo'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos
+    _aculta_calendar_rotas: {agenda: aculta_events.agenda, month: aculta_events.month, day: aculta_events.day, ics: aculta_events.ics, embed: aculta_events.embed, interactive: aculta_events.interactive}
+
+aculta_events.embed:
+  path: '/calendario/incorporar'
+  defaults:
+    _controller: '\Drupal\aculta_calendar\Controller\EmbedController::page'
+    _title: 'Calendário de eventos da ACULTA'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos
+
+aculta_events.admin_overview:
+  path: '/painel-administrativo/eventos'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventAdminOverviewController::overview'
+    _title: 'Gestão de Eventos'
+  requirements:
+    _permission: 'administer aculta events,access content overview'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.settings:
+  path: '/painel-administrativo/eventos/configuracoes'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventSettingsForm'
+    _title: 'Configurações de eventos e locais'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.location_modal:
+  path: '/painel-administrativo/eventos/locais/modal'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventLocationModalForm'
+    _title: 'Selecionar ou cadastrar local'
+  requirements:
+    _custom_access: '\Drupal\aculta_events\Form\EventLocationModalForm::access'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.location_widget_clear:
+  path: '/painel-administrativo/eventos/locais/widget-clear'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventLocationWidgetController::clear'
+  requirements:
+    _permission: 'access content'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.organization_page:
+  path: '/organizacoes/{slug}'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventOrganizationPageController::page'
+    _title_callback: '\Drupal\aculta_events\Controller\EventOrganizationPageController::title'
+  requirements:
+    _access: 'TRUE'
+    slug: '[a-z0-9]+(-[a-z0-9]+)*'
+  options:
+    _aculta_domain_purpose: eventos
+
+aculta_events.organizer_organization_add:
+  path: '/culturas/organizacoes/nova'
+  defaults:
+    _entity_form: 'aculta_event_organization.add'
+    _title: 'Cadastrar organização'
+  requirements:
+    _entity_create_access: 'aculta_event_organization'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
+aculta_events.organizer_organization_edit:
+  path: '/culturas/organizacoes/{aculta_event_organization}/editar'
+  defaults:
+    _entity_form: 'aculta_event_organization.edit'
+    _title: 'Editar organização'
+  requirements:
+    _custom_access: '\Drupal\aculta_events\Access\EventOrganizationAccessControlHandler::editFormAccess'
+    aculta_event_organization: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event_organization:
+        type: entity:aculta_event_organization
+
+aculta_events.organizer_organization_members:
+  path: '/culturas/organizacoes/{aculta_event_organization}/membros'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationMembersForm'
+    _title: 'Gestão de membros e acessos'
+  requirements:
+    _custom_access: '\Drupal\aculta_events\Access\EventOrganizationAccessControlHandler::membersAccess'
+    aculta_event_organization: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event_organization:
+        type: entity:aculta_event_organization
+
+aculta_events.admin_organizations:
+  path: '/painel-administrativo/eventos/organizacoes'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventOrganizationAdminController::overview'
+    _title: 'Organizações Culturais'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.admin_organization_suggestions:
+  path: '/painel-administrativo/eventos/organizacoes/sugestoes'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventOrganizationSuggestionAdminController::overview'
+    _title: 'Sugestões de alteração de organizações'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.admin_organization_suggestion_review:
+  path: '/painel-administrativo/eventos/organizacoes/sugestoes/{aculta_event_org_suggestion}'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationSuggestionReviewForm'
+    _title: 'Revisar sugestão de organização'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_event_org_suggestion: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+    parameters:
+      aculta_event_org_suggestion:
+        type: entity:aculta_event_org_suggestion
+
+aculta_events.admin_organization_contribution_review:
+  path: '/painel-administrativo/eventos/organizacoes/propostas/{aculta_contribution}'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationContributionReviewForm'
+    _title: 'Revisar proposta de organização'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_contribution: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+    parameters:
+      aculta_contribution:
+        type: entity:aculta_contribution
+
+aculta_events.admin_location_contributions:
+  path: '/painel-administrativo/eventos/locais/propostas'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventLocationContributionAdminController::overview'
+    _title: 'Propostas de Locais'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.admin_event_contributions:
+  path: '/painel-administrativo/eventos/propostas'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventContributionAdminController::overview'
+    _title: 'Propostas de Eventos'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.admin_event_contribution_review:
+  path: '/painel-administrativo/eventos/propostas/{aculta_contribution}'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationContributionReviewForm'
+    _title: 'Revisar proposta de Evento'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_contribution: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+    parameters:
+      aculta_contribution:
+        type: entity:aculta_contribution
+
+aculta_events.admin_location_contribution_review:
+  path: '/painel-administrativo/eventos/locais/propostas/{aculta_contribution}'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationContributionReviewForm'
+    _title: 'Revisar proposta de Local'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_contribution: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+    parameters:
+      aculta_contribution:
+        type: entity:aculta_contribution
+
+aculta_events.admin_organization_add:
+  path: '/painel-administrativo/eventos/organizacoes/cadastrar'
+  defaults:
+    _entity_form: 'aculta_event_organization.add'
+    _title: 'Cadastrar organização'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+
+aculta_events.admin_organization_edit:
+  path: '/painel-administrativo/eventos/organizacoes/{aculta_event_organization}/editar'
+  defaults:
+    _entity_form: 'aculta_event_organization.edit'
+    _title: 'Editar organização'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_event_organization: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+    parameters:
+      aculta_event_organization:
+        type: entity:aculta_event_organization
+
+aculta_events.admin_organization_members:
+  path: '/painel-administrativo/eventos/organizacoes/{aculta_event_organization}/membros'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationMembersForm'
+    _title: 'Gestão de membros e acessos'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_event_organization: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+    parameters:
+      aculta_event_organization:
+        type: entity:aculta_event_organization
+
+aculta_events.admin_organization_recovery:
+  path: '/painel-administrativo/eventos/organizacoes/{aculta_event_organization}/recuperar'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationRecoveryForm'
+    _title: 'Recuperação administrativa de titularidade'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_event_organization: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+    parameters:
+      aculta_event_organization:
+        type: entity:aculta_event_organization
+
+aculta_events.organization_modal:
+  path: '/painel-administrativo/eventos/organizacoes/modal'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationModalForm'
+    _title: 'Selecionar ou cadastrar organização'
+  requirements:
+    _custom_access: '\Drupal\aculta_events\Form\EventOrganizationModalForm::access'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.organizer_organization_modal:
+  path: '/culturas/organizacoes/modal'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationModalForm'
+    _title: 'Selecionar ou cadastrar organização'
+  requirements:
+    _custom_access: '\Drupal\aculta_events\Form\EventOrganizationModalForm::access'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
+

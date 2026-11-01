@@ -1,0 +1,15 @@
+label: 'Submissões de formulários'
+description: 'Consulta administrativa das mensagens e demais submissões do Webform, conforme as permissões de acesso.'
+display:
+  default:
+    display_title: Padrão
+    display_options:
+      title: 'Submissões de formulários'
+  embed_administer:
+    display_title: 'Incorporado: administração'
+  embed_default:
+    display_title: 'Incorporado: padrão'
+  embed_manage:
+    display_title: 'Incorporado: gestão'
+  embed_review:
+    display_title: 'Incorporado: revisão'

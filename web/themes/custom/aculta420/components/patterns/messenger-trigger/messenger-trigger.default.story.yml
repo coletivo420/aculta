@@ -1,0 +1,6 @@
+name: Mensagens com conversas não lidas
+description: Gatilho da barra para abrir o modal de conversas.
+component: aculta420:messenger-trigger
+props:
+  href: /mensagens/resumo
+  count: 3

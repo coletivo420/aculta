@@ -1,0 +1,11 @@
+uuid: 5ab52670-1a92-45f5-a45c-3d69dddaa55c
+langcode: pt-br
+status: true
+dependencies:
+  enforced:
+    module:
+      - webform
+name: 'Webform (Default) - DO NOT EDIT'
+format: webform_default
+weight: 100
+filters: {  }

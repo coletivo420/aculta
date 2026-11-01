@@ -1,0 +1,23 @@
+uuid: acd68331-e593-4384-bc5d-b73887f74c86
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_link
+    - node.type.editorial_highlight
+  module:
+    - link
+id: node.editorial_highlight.field_link
+field_name: field_link
+entity_type: node
+bundle: editorial_highlight
+label: 'Link e texto do CTA'
+description: 'Escolha um destino existente e informe o texto do CTA. Não inserir URL fictícia.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 2
+  link_type: 1
+field_type: link

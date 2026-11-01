@@ -1,0 +1,23 @@
+uuid: dc41ccbf-32f2-45ca-ade2-04fae9f2b244
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - node.type.wiki_entry
+  module:
+    - node
+id: wiki_entry
+label: 'URLs — verbetes Wiki'
+type: 'canonical_entities:node'
+pattern: '/verbete/[node:title]'
+selection_criteria:
+  f08f4ac2-f658-4e76-887d-60e8ef22ea03:
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: node
+    bundles:
+      wiki_entry: wiki_entry
+selection_logic: and
+weight: 0
+relationships: {  }

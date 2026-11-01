@@ -1,0 +1,21 @@
+uuid: 9cf8d657-c037-4da1-8272-c3b59ff2cd9c
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_h5p_activities
+    - group.type.lms_course
+  module:
+    - aculta_lms_h5p
+id: group.lms_course.field_h5p_activities
+field_name: field_h5p_activities
+entity_type: group
+bundle: lms_course
+label: 'Atividades interativas'
+description: 'Atividades H5P apresentadas na sala deste curso para participantes com acesso.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: h5p

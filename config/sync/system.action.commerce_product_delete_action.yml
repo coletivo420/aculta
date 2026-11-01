@@ -1,0 +1,16 @@
+uuid: 56957ff5-98b4-4633-81b4-1ddde3d918c3
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - commerce_product
+  enforced:
+    module:
+      - commerce_product
+_core:
+  default_config_hash: OHXQpgNjqh0nG6rRmaprOm94zIX-wAmSu3TlY2JBn54
+id: commerce_product_delete_action
+label: 'Apagar produto'
+type: commerce_product
+plugin: 'entity:delete_action:commerce_product'
+configuration: {  }

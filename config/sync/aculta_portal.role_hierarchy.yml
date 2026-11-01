@@ -1,0 +1,6 @@
+cadeia:
+  - gerente_loja
+  - content_editor
+  - lms_teacher
+  - email_confirmed
+  - authenticated

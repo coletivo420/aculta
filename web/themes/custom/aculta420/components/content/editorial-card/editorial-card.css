@@ -1,0 +1,73 @@
+/**
+ * Editorial card component.
+ *
+ * The Drupal presenter owns the outer article and adds .aculta-editorial-card.
+ * This SDC owns only the visual contract of that card; shared tokens and the
+ * generic .aculta-category foundation remain global.
+ */
+.aculta-editorial-card {
+  min-height: 0;
+  padding: 1.25rem;
+  border: 1px solid var(--aculta-border-default);
+  border-top: 3px solid var(--aculta-border-accent);
+  border-radius: 3px;
+  background: var(--aculta-surface-raised);
+}
+
+.aculta-editorial-card .aculta-category {
+  color: var(--aculta-text-primary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.045em;
+}
+
+.aculta-main .aculta-editorial-card h3 {
+  font-size: 1.5rem;
+  margin-block: 0.75rem 1rem;
+}
+
+.aculta-editorial-summary,
+.aculta-editorial-complement {
+  margin-bottom: 1rem;
+}
+
+.aculta-editorial-summary a:not(.btn):not(.button):not([role="button"]),
+.aculta-editorial-complement a:not(.btn):not(.button):not([role="button"]),
+.aculta-editorial-cta a:not(.btn):not(.button):not([role="button"]) {
+  color: var(--aculta-text-accent);
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 0.075em;
+}
+
+.aculta-editorial-summary a:not(.btn):not(.button):not([role="button"]):is(:hover, :focus-visible),
+.aculta-editorial-complement a:not(.btn):not(.button):not([role="button"]):is(:hover, :focus-visible),
+.aculta-editorial-cta a:not(.btn):not(.button):not([role="button"]):is(:hover, :focus-visible) {
+  color: var(--aculta-text-primary);
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 0.075em;
+}
+
+.aculta-editorial-summary a:not(.btn):not(.button):not([role="button"]):visited,
+.aculta-editorial-complement a:not(.btn):not(.button):not([role="button"]):visited,
+.aculta-editorial-cta a:not(.btn):not(.button):not([role="button"]):visited {
+  color: var(--aculta-text-accent);
+}
+
+.aculta-editorial-cta a {
+  font: 600 1rem/1.5 var(--aculta-font-display);
+  text-underline-offset: 0.2em;
+}
+
+.aculta-editorial-cta a::after {
+  content: ' →';
+}
+
+@media (min-width: 48.0625rem) {
+  .aculta-editorial-card {
+    min-height: 390px;
+    padding: 1.5rem;
+  }
+}

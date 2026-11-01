@@ -1,0 +1,2 @@
+/* Página do produto: espaçamento do conjunto. Galeria, compra, detalhes e abas têm CSS próprio em components/. */
+.aculta-product { margin-block: var(--aculta-space-section); color: var(--aculta-text-primary); }

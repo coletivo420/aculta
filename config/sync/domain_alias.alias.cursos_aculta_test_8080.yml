@@ -1,0 +1,10 @@
+uuid: e1de5332-25d6-4775-ad3e-e83b0e92e65d
+langcode: pt-br
+status: true
+dependencies: {  }
+id: cursos_aculta_test_8080
+domain_id: cursos_aculta_org
+pattern: 'cursos.aculta.test:8080'
+redirect: 0
+environment: local
+weight: 6

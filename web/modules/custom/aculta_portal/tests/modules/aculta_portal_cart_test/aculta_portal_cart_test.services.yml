@@ -1,0 +1,8 @@
+services:
+  # Aplica o mesmo caminho público da rota do carrinho que o Portal faz em
+  # produção. O módulo aculta_portal não é habilitado inteiro nos testes em
+  # Kernel; o subscriber real é reaproveitado.
+  aculta_portal_cart_test.friendly_routes:
+    class: Drupal\aculta_portal\EventSubscriber\CartFriendlyRouteSubscriber
+    tags:
+      - { name: event_subscriber }

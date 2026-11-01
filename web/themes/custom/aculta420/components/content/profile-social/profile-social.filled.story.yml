@@ -1,0 +1,10 @@
+name: Redes informadas
+description: 'URLs fictícias e estados vêm prontos do owner; o tema apenas apresenta.'
+component: aculta420:profile-social
+props:
+  title: Redes sociais
+slots:
+  items:
+    markup: '<div><a href="#instagram">Instagram</a></div><div><a href="#reddit">Reddit</a></div>'
+  actions:
+    markup: '<a href="#editar-redes">Editar redes</a>'

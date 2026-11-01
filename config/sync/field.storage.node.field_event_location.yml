@@ -1,0 +1,20 @@
+uuid: 4f1a23e5-8a90-4c12-b134-8c8f0e0f9a20
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - aculta_events
+    - node
+id: node.field_event_location
+field_name: field_event_location
+entity_type: node
+type: entity_reference
+settings:
+  target_type: aculta_event_location
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

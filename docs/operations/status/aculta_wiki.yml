@@ -1,0 +1,15 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.124
+state: Dev
+progress_note: >-
+  Dev.121: `WikiEditorialNoticePipelineTest` liga worker, publisher com
+  revalidação de acesso e subscriber Messenger reais; 1/10 PASS. Unit Wiki
+  completa 88/484 PASS. Combinado com Kernels separados de fila e persistência,
+  cobre o pipeline sem envio externo ou escrita Runtime; homologação HTTP pendente.
+  Evidência anterior à dev.121: `WikiEditorialNoticePublisherTest` cobre aviso de revisão somente para editor ativo com permissão e Entity Access à revisão (3 testes / 19 assertions PASS); acesso negado não publica. Suíte Unit Wiki então: 87 testes / 474 assertions PASS. A cadeia em memória agora está coberta pelo teste dev.121 abaixo; fila e persistência continuam cobertas pelos Kernels dedicados.
+  M-0 revalidado em 2026-11-01: consulta read-only ao Runtime `wiki420` confirmou presentes os quatro grants de proposta nos papéis `email_confirmed` e `content_editor`; `config:status` sem divergência. Configuração não foi importada nem alterada. Teste de Config Sync 1/8 PASS; Kernel de submissão privada 1/220 PASS, com 250 depreciações Core/contrib/Webform. Código fail-closed mantido; teste A/B e fluxo ponta a ponta no Runtime aguardam janela autorizada. Revalidação 2026-11-02: Sync Unit 1/8 e Kernel de proposta privada 1/220 PASS; publisher Messenger revisado para audiência/revisão/contexto com payload mínimo, sem teste Kernel de entrega ponta a ponta nesta fase.
+  Revalidação 2026-10-31: suíte completa Unit/Kernel Wiki passou em `aculta_simpletest`, 116 testes / 2.278 assertions, 372 depreciações Core/contrib. A cobertura inclui submissão privada, isolamento por autor/revisor e grants do Config Sync. Nenhuma alteração Runtime.
+  Publishers Wiki→Messenger existentes; eventos e entrega centralizados no Messenger.
+  Dev.122: update 10003 prepara cópia em lotes de proposals para aculta_contributions; preserva ID/UUID/revision ID e reconcilia cada revisão. Runtime não atualizado.
+  Dev.123: a rota de status resolve a contribuição migrada pelo ID estável e recua para a entidade legada; Kernel integrado 1/55 PASS. Dev.124: envio usa o lifecycle compartilhado após gate por checkpoint de migração; fila, workspace, decisão, retirada, status e publisher fazem leitura dual-store. Corte Kernel 2/264 PASS com 250 depreciações Core/contrib; PHPCS e validadores de rotas PASS. Runtime não atualizado.
+next_phase: 'Validar por contas distintas submissão, visibilidade própria, fila editorial e moderação no Runtime Wiki durante janela autorizada; não importar grants se a configuração ativa continuar igual ao Sync ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))'

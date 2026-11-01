@@ -1,0 +1,19 @@
+uuid: f1519267-dc98-45c0-b534-d32dabbb3d05
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_section_color
+    - taxonomy.vocabulary.editorial_category
+id: taxonomy_term.editorial_category.field_section_color
+field_name: field_section_color
+entity_type: taxonomy_term
+bundle: editorial_category
+label: Cor
+description: 'Token visual para o rótulo desta categoria nos cartões da Revista. Escolha uma das cores da paleta ACULTA; deixe vazio para não colorir.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

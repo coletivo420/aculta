@@ -1,0 +1,202 @@
+/* Cartão da Revista nas listagens (revista_sessoes). Mobile first. */
+
+.aculta-revista-teaser {
+  height: 100%;
+}
+
+.aculta-revista-teaser .aculta-card {
+  height: 100%;
+}
+
+.aculta-revista-teaser .aculta-card > .card-header {
+  color: var(--aculta-text-accent);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.aculta-revista-teaser .aculta-card > .card-header a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.aculta-revista-teaser img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+/* Asset-free editorial cover when a publication has no image. OpenCulturas
+   supplies a visual fallback in this state; keep the same 16:9 media region
+   using ACULTA semantic tokens rather than copying upstream artwork. */
+.aculta-revista-teaser__cover-fallback {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: var(--aculta-surface-muted);
+  background-image:
+    radial-gradient(circle at 76% 34%, transparent 0 4rem, var(--aculta-border-strong) 4.06rem 4.2rem, transparent 4.27rem),
+    linear-gradient(135deg, transparent 48%, var(--aculta-interactive-bg) 48.2% 70%, transparent 70.2%),
+    linear-gradient(135deg, var(--aculta-surface-muted), var(--aculta-surface-page));
+}
+
+.aculta-revista-teaser__title {
+  margin: 0 0 0.5rem;
+  font: 500 1.15rem/1.3 var(--aculta-font-display);
+}
+
+.aculta-revista-teaser__title a {
+  display: block;
+  min-block-size: 2.75rem;
+  color: var(--aculta-text-primary);
+  text-decoration: none;
+}
+
+.aculta-revista-teaser__title a:is(:hover, :focus-visible) {
+  color: var(--aculta-link);
+  text-decoration: underline;
+  text-underline-offset: 0.17em;
+}
+
+.aculta-revista-teaser__subtitle {
+  margin: 0 0 0.5rem;
+  color: var(--aculta-text-primary);
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.aculta-revista-teaser__summary {
+  color: var(--aculta-text-secondary);
+  line-height: 1.55;
+}
+
+.aculta-revista-teaser__summary > :last-child {
+  margin-bottom: 0;
+}
+
+.aculta-revista-teaser__cta {
+  display: inline-flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+  color: var(--aculta-link);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.17em;
+}
+
+.aculta-revista-teaser :focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Editorial masthead and responsive cover for the Revista landing page. */
+.page-view-revista-sessoes .view-display-id-page_revista .view-header {
+  margin-block-end: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.page-view-revista-sessoes .view-display-id-page_revista .view-content.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1rem, 2vw, 1.75rem);
+  margin: 0;
+}
+
+.page-view-revista-sessoes .view-display-id-page_revista .view-content.row > .views-row {
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child {
+  grid-column: 1 / -1;
+}
+
+.page-view-revista-sessoes .view-display-id-page_revista .views-row .aculta-card,
+.page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .aculta-card {
+  overflow: hidden;
+  border-radius: 1.5rem;
+  box-shadow: var(--aculta-shadow-raised);
+}
+
+@media (min-width: 600px) {
+  .page-view-revista-sessoes .view-display-id-page_revista .view-content.row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 992px) {
+  .page-view-revista-sessoes .view-display-id-page_revista .view-content.row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .aculta-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    min-height: clamp(24rem, 36vw, 32rem);
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .card-img-top {
+    grid-column: 1;
+    grid-row: 1 / 4;
+    min-width: 0;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .card-img-top > div,
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .card-img-top .field__item {
+    height: 100%;
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .card-img-top img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    object-fit: cover;
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .aculta-revista-teaser__cover-fallback {
+    height: 100%;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .card-header {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+    padding: clamp(1.25rem, 2.5vw, 2.5rem) clamp(1.25rem, 2.5vw, 2.5rem) 0.5rem;
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .card-body {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
+    padding: 0.75rem clamp(1.25rem, 2.5vw, 2.5rem);
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .card-footer {
+    grid-column: 2;
+    grid-row: 3;
+    padding: 0.5rem clamp(1.25rem, 2.5vw, 2.5rem) clamp(1.25rem, 2.5vw, 2.5rem);
+  }
+
+  .page-view-revista-sessoes .view-display-id-page_revista .views-row:first-child .aculta-revista-teaser__title {
+    font-size: clamp(1.5rem, 2.2vw, 2.25rem);
+  }
+}
+
+@media (min-width: 768px) {
+  .aculta-revista-teaser__title {
+    font-size: 1.25rem;
+  }
+
+  .aculta-revista-teaser .aculta-card > .card-body {
+    padding: 1.15rem 1.25rem;
+  }
+}

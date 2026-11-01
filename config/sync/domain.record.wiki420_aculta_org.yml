@@ -1,0 +1,12 @@
+uuid: c1f5877f-3488-43e1-94b0-8d3119894770
+langcode: pt-br
+status: true
+dependencies: {  }
+id: wiki420_aculta_org
+domain_id: 4670494
+hostname: wiki420.aculta.org
+name: Wiki420
+scheme: https
+weight: 4
+is_default: false
+path_prefix: ''

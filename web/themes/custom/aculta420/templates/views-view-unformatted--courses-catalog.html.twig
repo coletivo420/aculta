@@ -1,0 +1,7 @@
+{# Course catalog rows inside the rail pattern; each row keeps the LMS course card. #}
+{% set items %}
+  {% for row in rows %}
+    <div{{ row.attributes.addClass('views-row') }}>{{ row.content }}</div>
+  {% endfor %}
+{% endset %}
+{{ include('aculta420:rail', { label: view.getTitle(), items: items }, with_context = false) }}

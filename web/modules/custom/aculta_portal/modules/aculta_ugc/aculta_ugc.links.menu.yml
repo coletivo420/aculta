@@ -1,0 +1,6 @@
+aculta_ugc.admin_reports:
+  title: 'Fila de denúncias'
+  description: 'Painel central de denúncias e moderação de conteúdo gerado por usuários (UGC).'
+  route_name: aculta_ugc.admin_reports
+  parent: aculta_portal.admin
+  weight: 8

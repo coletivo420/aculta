@@ -1,0 +1,41 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.30
+state: Dev
+progress_note: >-
+  2026-11-01: Correções de runtime no Ganjalab: CourseAuthoringController passa os atributos exigidos por PortalLinkElement::build (ArgumentCountError, teste 3/36); CourseJourneyPresentationHooks recebeu o import de Learning\CourseJourneyComposer (TypeError no container). O Studio possui LearnerDashboardComposer, rotas Ganjalab e CourseJourneyPresentationHooks; o LMS não é dependência. Unit Studio 62/597 e LMS 99/472 PASS; Kernel ContractsInstallTest 1/8 PASS; jornada/sala 74/74 e Educador 200.
+  2026-11-01: A jornada e a sala do Ganjalab consomem o contrato ACULTA CourseJourneyReaderInterface e os DTOs CourseJourney/CourseJourneyLesson; CourseJourneyComposer não importa mais Drupal\lms. O adaptador e a fonte de verdade continuam no aculta_lms/Group/LMS. Unit Studio 60/586 e LMS 92/482 PASS; smoke Firefox ESR/X11 do Ganjalab a 390 px 29/29 OK; inventário em docs/modules/LMS-CONTRIB-DEPENDENCY-INVENTORY.md.
+  2026-11-01: Os dashboards de estudante e educador oferecem atalhos recíprocos somente quando a rota de destino autoriza a conta. Rótulos e rotas mantêm as experiências distintas; nenhum grant ou dado LMS foi alterado. A lista do Educador filtra cursos com acesso de atualização Group. Código commitado; testes automatizados, lint, browser e Runtime seguem pendentes.
+  2026-11-01: Marley foi restrito a Revista, moderação do Fórum e Galerias; Fórum expõe somente a rota owner de denúncias para a permissão de moderação. Ganjalab Estudante segue em `/ganjalab`; Ganjalab Educador usa `/ganjalab/educador`, com novo curso em `/ganjalab/educador/cursos/novo` e retorno ao dashboard educador. Group/LMS mantêm os owners e permissões; código alterado e commitado, sem validação PHPUnit/Runtime após a alteração. Course Builder completo continua planejado.
+  ACULTA Studio Culturas em `/culturas` (purpose eventos) tem implementação parcial no owner
+  aculta_events: dashboard, formulários de Evento/Data/Local, modal AJAX e configuração de papéis.
+  A homologação integral de grants e fluxos de escrita ainda está pendente; não tratar
+  presença de código como release homologada. Eventos e Locais não são implementados pelo módulo Studio.
+  ADR-038 (2026-10-30): caminhos das cinco Suites, Conta/Perfil/salvos/Mercado Pago, entrada de `account` e 404 de `/studio*` implementados; commits publicados. Matriz HTTP: 275/275 respostas GET/POST/AJAX conforme o purpose e os paths aposentados. Firefox ESR/X11 capturou 20 páginas em 1440/390; Culturas autenticada carregou HTTP 200. Green Stash foi bloqueada pelos grants da conta de teste, então escrita não foi homologada. Wiki mantém o Domain canônico `wiki420`; o pedido inicial por `wiki.aculta.*` foi corrigido pelo responsável e não requer DNS/TLS/vhost novo. Kernels EventDomainBoundary e EventLocationModalAndAdmin passaram em `aculta_simpletest` (15 testes/373 assertions; 29 depreciações upstream). Grants/fluxos completos e S-R4/S-R5 permanecem pendentes.
+  OCS-F11 aprovado em 2026-11-01 no Runtime `928acfa4f`, após THEME-MF3 aprovado: matriz 8 áreas × 9 larguras × claro/escuro 144/144 HTTP 200, ACL negativa 403 em 5/5 rotas operacionais com conta sem papéis (UID 261), isolamento de purpose 7/7 404, cache privado por usuário, no-JS a 320px, teclado 648 observações/621 focos, axe 0 violações, Unit 63/582 e Kernel 8/153. DEFERRED aceitos: pareamento com OpenCulturas autenticado, escrita/persistência, duas lojas e leitor de tela.
+  OCS-A1–A4 implementadas e Identity **ligada** em 2026-11-01: reconciliação de `core.extension`/`aculta_contributions.settings` publicada em `627e0754d`, `config:status` limpo; `aculta420.studio_identity=1`, benchmark das 8 áreas em 320/1440 e claro/escuro 32/32 HTTP 200. O 500 anterior de `wiki420:/wesativa` foi corrigido pela frente Wiki.
+next_phase: 'Manter a Identity servida e fechar os DEFERRED de escrita/persistência, duas lojas, pareamento upstream e leitor de tela. Preservar S-R4/S-R5 e a decisão de caminhos de ADR-038.'
+
+# 2026-10-24: P1-B em codigo: bridge Marley e preview /studio/inicio;
+# a home /studio continua legado Marley, sem Runtime homologado.
+# 2026-10-24: STUDIO-P0 documental — proposta de Hub `/studio` e experiencia
+# pessoal `/studio/pessoal`, menu unificado, editor de perfil privado e perfil
+# publico `/u/{apelido}` preservado em main. P1-A codigo adicionado (nao homologado);
+# preservar o estado de testes/Runtime acima e o trabalho de Marley/Ganjalab.
+# Documento: docs/architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md.
+# 2026-10-22: Replanejamento documental STUDIO 0.1-C2-R.
+# G420-C2: SDC composto no código, não homologado em Runtime; G420-C2-T
+# depende de fixtures LMS, contratos UI Suite, browser, cache e Domain.
+# A identidade vigente é ACULTA Studio Marley (marley) e ACULTA Studio
+# Ganjalab (ganjalab); ver contrato em docs/portal/ACULTA-STUDIO-IDENTITY.md.
+# Ver web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md.
+
+# 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
+# Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.
+# Gate: scripts/validate-no-temporary-route-aliases.php.
+
+# 2026-10-25: S-R5 instrumentada com matriz funcional/visual e teste Firefox ESR
+# somente leitura em tests/browser/aculta-studio/parity-s-r5.mjs.
+# Sem homologacao de S-R4 ou S-R5: execucao Drush, PHPUnit e Firefox pendente
+# no Homelab. Versao/estado/next_phase continuam os mesmos, pois nao houve
+# validacao nem nova feature runtime. Detalhes: docs/S-R5-MATRIZ-COMPARACAO.md
+# do submodulo aculta_studio. Sem merge/deploy.

@@ -1,0 +1,21 @@
+uuid: c77c3290-1b8d-4da5-b18a-10bac61e6e49
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_modality
+    - node.type.activity
+  module:
+    - options
+id: node.activity.field_modality
+field_name: field_modality
+entity_type: node
+bundle: activity
+label: Modalidade
+description: 'Campo editorial administrável: Modalidade. Preencha somente com informações verificadas.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

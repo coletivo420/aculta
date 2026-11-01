@@ -1,0 +1,12 @@
+administer aculta events:
+  title: 'Administrar eventos'
+  description: 'Criar, editar e excluir eventos, datas e locais.'
+  restrict access: true
+
+view aculta event drafts:
+  title: 'Ver eventos em rascunho'
+  description: 'Ver eventos ainda não publicados. Sem ela, rascunhos respondem como inexistentes.'
+
+publish aculta events and locations:
+  title: 'Publicar eventos e locais'
+  description: 'Publicar diretamente eventos e locais no portal sem passar por rascunho.'

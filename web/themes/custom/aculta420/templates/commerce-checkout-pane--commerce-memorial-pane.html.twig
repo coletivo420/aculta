@@ -1,0 +1,26 @@
+{#
+/**
+ * @file
+ * Theme implementation for donation flow "memorial" checkout panes.
+ *
+ * Available variables:
+ * - elements: The checkout pane's form elements.
+ *
+ * @ingroup themeable
+ */
+#}
+{{ include('aculta420:donation-dedication', {
+  legend: 'Dedication',
+  dedication_type: elements.field_designation_type|render,
+  honoree_first: elements.field_honoree_first|render,
+  honoree_last: elements.field_honoree_last|render,
+}) }}
+
+{{ include('aculta420:donation-notification', {
+  legend: 'Recipient',
+  notify: elements.field_notify|render,
+  message: elements.field_message|render,
+  notify_first: elements.field_recipient_first_name|render,
+  notify_last: elements.field_recipient_last_name|render,
+  notify_email: elements.field_card_email|render,
+}) }}

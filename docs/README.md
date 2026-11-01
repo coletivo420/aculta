@@ -1,0 +1,92 @@
+# Documentação do ACULTA
+
+Documentação normativa do projeto. Só guardrails e referências vigentes: regras que bloqueiam
+regressão, políticas e procedimentos de operação. Histórico de fases, relatórios e planos
+concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION.md)).
+
+## Começar
+
+- [AGENTS.md](../AGENTS.md) — instruções para agentes e humanos (raiz do repositório).
+- [DOCUMENTATION.md](DOCUMENTATION.md) — política desta documentação: o que é guardrail e o que sai.
+- [operations/DEBT-REGISTER.md](operations/DEBT-REGISTER.md) — dívidas e pendências, com evidência.
+
+## Encontrar a regra ou o procedimento
+
+- Quero mudar uma regra de domínio → [portal/GUARDRAILS.md](portal/GUARDRAILS.md).
+- Quero rodar testes Kernel → [operations/TESTING.md](operations/TESTING.md).
+- Quero localizar a decisão vigente sobre um assunto → [decisions/README.md](decisions/README.md).
+- Quero registrar ou alterar um ADR → [operations/CHANGELOG-POLITICA.md](operations/CHANGELOG-POLITICA.md).
+- Quero saber quais são os roadmaps → [portal/ROADMAP.md](portal/ROADMAP.md).
+
+## Arquitetura e decisões
+
+- [architecture/overview.md](architecture/overview.md) — camadas Core → Portal → tema → Bootstrap.
+- [architecture/avatar.md](architecture/avatar.md) — regra única do avatar (foto → acervo, nunca inicial), classes, hooks e identidade de autoria.
+- [architecture/multidomain.md](architecture/multidomain.md) — purposes, hosts e cookie compartilhado.
+- [architecture/ROUTES-SITEMAP.md](architecture/ROUTES-SITEMAP.md) — inventário de caminhos por domínio, rotas administrativas, desabilitadas e redirecionamentos.
+- [architecture/environments.md](architecture/environments.md) — Homelab Apache e produção Hostinger LiteSpeed.
+- [architecture/data-ownership.md](architecture/data-ownership.md) — quem é dono de cada dado.
+- [architecture/aculta_image.md](architecture/aculta_image.md) — ownership e política central do pipeline de imagens.
+- [architecture/aculta_wiki.md](architecture/aculta_wiki.md) — ownership da Wiki e revisão editorial de propostas.
+- [architecture/aculta_document_viewer.md](architecture/aculta_document_viewer.md) — ownership e autorização dos documentos File/Media (PDF, DOCX e planilhas) pelo Core e Group.
+- [architecture/aculta_forum_lms.md](architecture/aculta_forum_lms.md) — contrato de acesso contextual entre Fórum e LMS.
+- [architecture/aculta_lms.md](architecture/aculta_lms.md) — matrículas, prazos e ciclo de vida de certificados.
+- [architecture/aculta_portal.md](architecture/aculta_portal.md) — fronteiras de contratos transversais do Portal.
+- [architecture/aculta_forum.md](architecture/aculta_forum.md) — ownership, acesso público e conteúdo legado imutável do Fórum.
+- [architecture/aculta_links.md](architecture/aculta_links.md) — ownership de micropáginas e prévias privadas.
+- [architecture/aculta_user.md](architecture/aculta_user.md) — ownership de identidade, papéis, perfis e participação.
+- [architecture/aculta_messenger.md](architecture/aculta_messenger.md) — ownership de mensagens e avisos.
+- [architecture/aculta_mailer.md](architecture/aculta_mailer.md) — políticas e transportes de e-mail.
+- [architecture/aculta_pagamentos_mercadopago.md](architecture/aculta_pagamentos_mercadopago.md) — fronteira do adapter de pagamentos.
+- [architecture/aculta420.md](architecture/aculta420.md) — catálogo visual, SDC, tokens e ícones do tema.
+- [decisions/](decisions/) — ADRs vigentes.
+- [ADR-010](decisions/ADR-010-hostinger-litespeed.md) — LiteSpeed na produção Hostinger Cloud Startup; Apache no Homelab.
+- [ADR-012](decisions/ADR-012-aculta420-mobile-first.md) — direção Mobile First do ACULTA420, mantendo Bootstrap, SDC e fronteiras atuais.
+- [ADR-032](decisions/ADR-032-portal-multi-cart-checkout.md) — Portal orquestra carrinhos e seleção de checkout por contexto; abas Comum/Loja/LMS/Doações, responsabilidades, segurança e fases.
+- [Auditoria Mobile First](../web/themes/custom/aculta420/docs/mobile-first-audit.md) — evidências de responsividade do tema, Studio e Runtime.
+
+## Institucional e compliance
+
+- [Identidade legal da Associação](institution/IDENTIDADE-LEGAL.md): razão social, CNPJ, endereço e canal de privacidade.
+- [Inventário LGPD](compliance/LGPD-INVENTARIO.md): dados pessoais por módulo, operadores e pendências.
+- [Minutas dos Termos de Uso e da Política de Privacidade](compliance/minutas/README.md): cópias para revisão, regra de não estorno e pendências antes de publicar.
+
+## Módulos e integrações
+
+- [modules/README.md](modules/README.md) — referência canônica dos módulos e das regras anti-regressão.
+- [ANTI-REGRESSION.md](ANTI-REGRESSION.md) — camadas de anti-regressão.
+- [integrations/README.md](integrations/README.md) — integrações externas: autenticação, CAPTCHA e Google.
+
+## Portal
+
+- [portal/README.md](portal/README.md) — índice do Portal.
+- [portal/DRUPAL-11-STANDARDS.md](portal/DRUPAL-11-STANDARDS.md) — padrão obrigatório Drupal 11+ para código.
+- [portal/GUARDRAILS.md](portal/GUARDRAILS.md) — regras de Fórum, Revista, Loja, Wiki e Conta.
+- [portal/ROADMAP.md](portal/ROADMAP.md) — saneamento e, depois, features de produto.
+- [portal/CHECKOUT-BILLING.md](portal/CHECKOUT-BILLING.md) — endereço único, envio (Commerce Shipping) e pagamento pelo Mercado Pago.
+- [portal/MERCADO-PAGO-PLANO.md](portal/MERCADO-PAGO-PLANO.md) — contrato e limites da integração de pagamentos.
+- [operations/DEBT-REGISTER.md](operations/DEBT-REGISTER.md) — registro único de pendências transversais.
+
+## Tema
+
+- [../web/themes/custom/aculta420/docs/README.md](../web/themes/custom/aculta420/docs/README.md) — índice do ACULTA420.
+
+## Operação
+
+- [operations/README.md](operations/README.md) — testes, releases, segredos, deploy e dados de teste.
+
+## Estado e histórico
+
+CHANGELOGs e manifests dos componentes descrevem entregas e versões; roadmaps
+descrevem trabalho planejado; `operations/DEBT-REGISTER.md` concentra dívidas e
+pendências. Pull requests, commits e resultados pontuais ficam no Git/GitHub.
+Documentos em `portal/historico/` são snapshots arquivados e nunca substituem as
+referências vigentes.
+
+- [Kernel ACULTA, subkernels e consumidores](architecture/aculta-kernels.md) — contratos normativos de Fórum, Galeria, serviços transversais e Studio.
+- [ADR — Kernel ACULTA e Studio](decisions/ADR-011-aculta-kernels-studio.md) — decisão e limites.
+- [Roadmap Studio/Revista](portal/STUDIO-MAGAZINE-ROADMAP.md) — implementação futura e migração editorial.
+
+## Escopo do ADR-013 (retificação de 2026-10-22)
+
+A coordenação de checkout no Portal e as abas **Comum | Loja | LMS | Doações** são **administrativas**, não uma nova interface pública de carrinho. Preservar integralmente o carrinho já presente na barra multidomínio e o comportamento atual da seleção do checkout. Referência normativa: [ADR-032](decisions/ADR-032-portal-multi-cart-checkout.md).

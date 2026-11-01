@@ -1,0 +1,46 @@
+{# Theme override: data and access remain owned by aculta_events. #}
+{% set title_region %}
+  <h1>{{ titulo }}</h1>
+  {% if subtitulo %}<p class="aculta-event__subtitulo">{{ subtitulo }}</p>{% endif %}
+  {% if cancelado %}
+    <p class="aculta-event__aviso" role="status"><strong>{{ 'Este evento foi cancelado.'|t }}</strong></p>
+  {% endif %}
+{% endset %}
+
+{% set essentials_region = null %}
+{% if tipo or datas or url %}
+  {% set essentials_region %}
+    {% if tipo %}
+      <p><strong>{{ 'Tipo:'|t }}</strong> {{ tipo }}</p>
+    {% endif %}
+    {% if datas %}
+      <h2>{{ 'Datas'|t }}</h2>
+      <ul>
+        {% for linha in datas %}<li>{{ linha }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+    {% if url %}
+      <p><a href="{{ url }}">{{ 'Site do evento'|t }}</a></p>
+    {% endif %}
+  {% endset %}
+{% endif %}
+
+{% set content_region = null %}
+{% if descricao %}
+  {% set content_region %}<div class="aculta-event__descricao">{{ descricao|nl2br }}</div>{% endset %}
+{% endif %}
+
+{% set sidebar_region = null %}
+{% if organizador %}
+  {% set sidebar_region %}
+    <h2>{{ 'Organização'|t }}</h2>
+    <p>{{ organizador }}</p>
+  {% endset %}
+{% endif %}
+
+{{ include('aculta420:event-page-five-regions', {
+  title: title_region,
+  essentials: essentials_region,
+  content: content_region,
+  sidebar: sidebar_region,
+}, with_context = false) }}

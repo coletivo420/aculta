@@ -1,0 +1,15 @@
+uuid: 5c072899-c6fd-4bee-9644-d5a1b0c7e481
+langcode: pt-br
+status: true
+dependencies:
+  enforced:
+    module:
+      - commerce_product
+_core:
+  default_config_hash: 6n6q97CDOCqHGs4Dun3BqVJE6e1o6TA-69qCwoUU-SY
+id: default
+label: Padrão
+traits: {  }
+locked: false
+purchasableEntityType: commerce_product_variation
+orderType: default

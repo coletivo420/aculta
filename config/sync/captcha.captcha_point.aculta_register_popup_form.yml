@@ -1,0 +1,7 @@
+uuid: 28ba0c1f-102e-49a5-a52a-b83372398750
+langcode: pt-br
+status: false
+dependencies: {  }
+formId: aculta_register_popup_form
+captchaType: default
+label: 'Cadastro pelo popup do checkout de doação (exceção do Turnstile)'

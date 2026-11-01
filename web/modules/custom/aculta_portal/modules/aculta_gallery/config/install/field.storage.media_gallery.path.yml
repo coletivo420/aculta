@@ -1,0 +1,17 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - path
+id: media_gallery.path
+field_name: path
+entity_type: media_gallery
+type: path
+settings: {}
+module: path
+locked: false
+cardinality: 1
+translatable: false
+indexes: {}
+persist_with_no_fields: false
+custom_storage: false

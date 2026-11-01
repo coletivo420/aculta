@@ -1,0 +1,20 @@
+uuid: 71ae9630-2988-4956-93ab-810a2f1bd63f
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - node
+    - taxonomy
+id: node.field_wiki_categories
+field_name: field_wiki_categories
+entity_type: node
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

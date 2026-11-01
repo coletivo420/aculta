@@ -1,0 +1,54 @@
+uuid: a9e6dd20-64f3-43dd-b25f-4b219f628978
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - aculta_commerce
+    - aculta_portal
+_core:
+  default_config_hash: 50QUbDL5hfMj6JF3n2JcOsPZtzq8PyU9UR0iXIpVThA
+label: Padrão
+id: default
+plugin: multistep_default
+configuration:
+  display_checkout_progress: true
+  display_checkout_progress_breadcrumb_links: false
+  display_sidebar_checkout_complete: true
+  guest_order_assign: false
+  guest_new_account: true
+  guest_new_account_notify: true
+  panes:
+    login:
+      step: login
+      weight: 0
+      allow_guest_checkout: true
+      allow_registration: false
+    contact_information:
+      step: order_information
+      weight: 1
+      double_entry: true
+    aculta_fiscal_identity:
+      step: review
+      weight: 2
+    review:
+      step: review
+      weight: 3
+    completion_message:
+      step: complete
+      weight: 4
+      message:
+        value: "O número do seu pedido é [commerce_order:order_number].\r\nVocê pode acompanhar seu pedido em Minha conta > Meus pedidos. Cursos são liberados após a confirmação do pagamento."
+        format: plain_text
+      display_pane_summaries: true
+    order_summary:
+      step: _sidebar
+      weight: 5
+      view: commerce_checkout_order_summary
+    aculta_billing_address:
+      step: order_information
+      weight: 2
+    aculta_shipping_information:
+      step: order_information
+      weight: 3
+      auto_recalculate: true
+      require_shipping_profile: true

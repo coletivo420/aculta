@@ -1,0 +1,9 @@
+uuid: 770968d9-92c3-4746-9627-11a8cd425e15
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: XbughDuwgOtc_8ztmYxz84gaXBeR760xH3bGSKD9v1Q
+formId: user_login_form
+captchaType: turnstile/Turnstile
+label: 'Login de usuário'

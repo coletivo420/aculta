@@ -1,0 +1,140 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_forum\Form;
+
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Entity\RevisionLogInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Service\ForumPostThreadBuilder;
+use Drupal\node\NodeInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Contextual submission form for public Forum posts.
+ */
+final class ForumPostSubmissionForm extends ContentEntityForm {
+
+  public function __construct(
+    EntityRepositoryInterface $entity_repository,
+    EntityTypeBundleInfoInterface $entity_type_bundle_info,
+    TimeInterface $time,
+    private readonly MessengerInterface $submissionMessenger,
+    private readonly ForumPostThreadBuilder $threadBuilder,
+  ) {
+    parent::__construct($entity_repository, $entity_type_bundle_info, $time);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('entity.repository'),
+      $container->get('entity_type.bundle.info'),
+      $container->get('datetime.time'),
+      $container->get('messenger'),
+      $container->get('aculta_forum.post_thread_builder'),
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state): array {
+    $form = parent::buildForm($form, $form_state);
+    $parent = $this->entity->get('parent')->entity;
+    $topic = $this->entity->get('topic')->entity;
+    if ($parent === NULL) {
+      return $form;
+    }
+
+    $parentMetadata = CacheableMetadata::createFromObject($parent);
+    if (!$parent->isPublished()
+      || !$parent->isDefaultRevision()
+      || !$topic instanceof NodeInterface
+      || (string) $parent->get('topic')->target_id !== (string) $topic->id()) {
+      $parentMetadata->applyTo($form);
+      return $form;
+    }
+
+    $parentAccess = $parent->access('view', $this->currentUser(), TRUE);
+    $parentMetadata->addCacheableDependency($parentAccess)->applyTo($form);
+    if (!$parentAccess->isAllowed()) {
+      return $form;
+    }
+
+    $form['reply_context'] = [
+      '#type' => 'container',
+      '#weight' => -100,
+      'description' => [
+        '#plain_text' => $this->t('Você está respondendo à publicação: @subject', [
+          '@subject' => $parent->label(),
+        ]),
+      ],
+    ];
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildEntity(array $form, FormStateInterface $form_state) {
+    $entity = parent::buildEntity($form, $form_state);
+    if (!$entity->isNew() && $entity instanceof RevisionLogInterface) {
+      $entity->setNewRevision(TRUE);
+      $entity->setRevisionUserId($this->currentUser()->id());
+      $entity->setRevisionCreationTime($this->time->getRequestTime());
+      $entity->setRevisionLogMessage($this->t('Edição pelo autor.'));
+    }
+    return $entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function actions(array $form, FormStateInterface $form_state): array {
+    $actions = parent::actions($form, $form_state);
+    $actions['submit']['#value'] = $this->entity->isNew()
+      ? $this->t('Enviar publicação')
+      : $this->t('Salvar alterações');
+    return $actions;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save(array $form, FormStateInterface $form_state): int {
+    $wasNew = $this->entity->isNew();
+    $result = parent::save($form, $form_state);
+    $topic = $this->entity->get('topic')->entity;
+    if (!$topic instanceof NodeInterface) {
+      return $result;
+    }
+
+    $message = $wasNew
+      ? ($this->entity->isPublished()
+        ? $this->t('Sua publicação foi adicionada à discussão.')
+        : $this->t('Sua publicação foi enviada para moderação e aparecerá na discussão depois da aprovação.'))
+      : $this->t('Sua publicação foi atualizada.');
+    $this->submissionMessenger->addStatus($message);
+    $url = $topic->toUrl('canonical');
+    if ($this->entity instanceof ForumPost && $this->entity->isPublished()) {
+      $page = $this->threadBuilder->getPageForPost($topic, $this->entity);
+      if ($page !== NULL) {
+        $url->setOption('query', $this->threadBuilder->getTopicPagerQuery($page));
+        $url->setOption('fragment', 'forum-post-' . $this->entity->id());
+      }
+    }
+    $form_state->setRedirectUrl($url);
+    return $result;
+  }
+
+}

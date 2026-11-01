@@ -1,0 +1,19 @@
+uuid: eb795b10-f4ec-410a-97dc-ab7954a15078
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_hero_slogan
+    - node.type.page
+id: node.page.field_hero_slogan
+field_name: field_hero_slogan
+entity_type: node
+bundle: page
+label: 'Hero: slogan'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

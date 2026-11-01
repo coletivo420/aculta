@@ -1,0 +1,50 @@
+access aculta portal:
+  title: Acessar o portal da pessoa usuária
+  description: Consultar e administrar somente as próprias informações de conta no portal.
+administer aculta appearance settings:
+  title: Administrar o modo de cor padrão do site
+  description: Definir se o site abre em claro, escuro ou automático para quem não escolheu um modo.
+  restrict access: true
+administer aculta support settings:
+  title: Administrar configurações editoriais de Apoie
+  description: Alterar o texto público da página Apoie.
+  restrict access: true
+administer aculta simplified account:
+  title: Administrar o cadastro simplificado
+  description: Ligar ou desligar a confirmação de e-mail e a criação de senha ao concluir uma compra.
+  restrict access: true
+
+administer aculta deployer:
+  title: Ver o status do ACULTA Deployer
+  description: Consultar o relatório neutro de fronteiras, correções abertas e credenciais (somente leitura).
+  restrict access: true
+
+confirmar email de conta manualmente:
+  title: Confirmar o e-mail de uma conta manualmente
+  description: Marca o e-mail de uma conta como confirmado pela administração. A ação é registrada no log (administrador e conta, sem o endereço).
+  restrict access: true
+
+gerenciar pagamentos de vendas:
+  title: Cancelar e estornar pagamentos de vendas
+  description: Cancelar pagamento pendente e estornar venda de produto pelo Mercado Pago. Concedido ao gerente de loja. Não inclui doações.
+
+administrar doacoes:
+  title: Administrar doações
+  description: Ver o relatório de doações e executar ações de pagamento de doações pelo Mercado Pago. Concedido ao gerente de loja.
+administer aculta role hierarchy:
+  title: Administrar hierarquia de papéis
+  description: Definir de quais papéis cada papel herda permissões (painel de configurações).
+  restrict access: true
+
+administer aculta checkout common:
+  title: Administrar o checkout comum do ACULTA
+  description: Ligar ou desligar o checkout comum do Commerce e ver o diagnóstico dos contextos de checkout. Não dá acesso aos pedidos.
+  restrict access: true
+administer aculta checkout shop:
+  title: Administrar o checkout da Loja do ACULTA
+  description: Escolher o tipo de pedido e o checkout flow da Loja. Não dá acesso aos pedidos nem ao Green Stash.
+  restrict access: true
+administer aculta checkout lms:
+  title: Administrar o checkout do LMS do ACULTA
+  description: Escolher o tipo de pedido e o checkout flow das compras de curso. Não altera matrículas nem conteúdo pedagógico.
+  restrict access: true

@@ -1,0 +1,25 @@
+uuid: 89e92343-0530-471a-b5f7-e9a2aacfe15f
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_first_name
+    - profile.type.email_confirmed
+  module:
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.email_confirmed.field_first_name
+field_name: field_first_name
+entity_type: profile
+bundle: email_confirmed
+label: Nome
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

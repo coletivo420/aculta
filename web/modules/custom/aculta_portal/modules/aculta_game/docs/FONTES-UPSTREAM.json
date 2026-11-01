@@ -1,0 +1,80 @@
+{
+  "research_date": "2026-10-15",
+  "purpose": "Inspeção de código e licenças para planejamento; nenhum pacote instalado ou código incorporado.",
+  "incorporated_code": [],
+  "packages": [
+    {
+      "project": "drupal/achievements",
+      "version": "3.0.3",
+      "project_url": "https://www.drupal.org/project/achievements",
+      "source_archive": "https://ftp.drupal.org/files/projects/achievements-3.0.3.tar.gz",
+      "bytes": 248114,
+      "sha256": "ab17d9a794ebbdf6f46e4ad999bfce4fcf521d43387401957d4135db6fba97f6",
+      "composer_license": "GPL-2.0-or-later",
+      "license_file": "achievements/LICENSE.txt",
+      "inspected_paths": [
+        "achievements/composer.json",
+        "achievements/achievements.info.yml",
+        "achievements/achievements.install",
+        "achievements/achievements.module",
+        "achievements/achievements.routing.yml",
+        "achievements/src/Entity/AchievementEntity.php"
+      ],
+      "findings": [
+        "Declara Core ^9 || ^10 || ^11 || ^12.",
+        "Não inclui os submódulos Pointless ou Opt-out descritos na página geral.",
+        "Mantém armazenamento e cálculo de ranking; depende de jquery_ui_effects e jquery_ui_dialog.",
+        "achievements_unlocked() usa transação; avaliar conceito sem copiar a arquitetura inteira."
+      ]
+    },
+    {
+      "project": "drupal/eca",
+      "version": "3.1.9",
+      "project_url": "https://www.drupal.org/project/eca",
+      "source_archive": "https://ftp.drupal.org/files/projects/eca-3.1.9.tar.gz",
+      "bytes": 724855,
+      "sha256": "af4f6ae2c9e3ec54649d609e586ee92e141505d45ede0ca14a095dc1048ad739",
+      "composer_license": "GPL-2.0-or-later",
+      "license_file": "eca/LICENSE.txt",
+      "inspected_paths": ["eca/composer.json", "eca/eca.info.yml"],
+      "findings": [
+        "Exige PHP >=8.3, Core ^11.3 || ^12.0, modeler_api ^1.1 e cron-expression ^3.1.",
+        "Motor opcional de automação; não substitui backend de concessões."
+      ]
+    },
+    {
+      "project": "drupal/rules",
+      "version": "4.0.1",
+      "project_url": "https://www.drupal.org/project/rules",
+      "source_archive": "https://ftp.drupal.org/files/projects/rules-4.0.1.tar.gz",
+      "bytes": 237409,
+      "sha256": "b8592f5b31a629d9dd5c2242440ea625172143f7995c3dc76864f1a3bdd16881",
+      "composer_license": "GPL-2.0-or-later",
+      "license_file": "rules/LICENSE.txt",
+      "inspected_paths": ["rules/composer.json", "rules/rules.info.yml"],
+      "findings": ["Exige Core ^10.3 || ^11 e typed_data ^2.1.", "Alternativa ao motor ECA, não adoção simultânea."]
+    },
+    {
+      "project": "drupal/gamification",
+      "version": "2.0.2",
+      "project_url": "https://www.drupal.org/project/gamification",
+      "source_archive": "https://ftp.drupal.org/files/projects/gamification-2.0.2.tar.gz",
+      "bytes": 19975,
+      "sha256": "ee2757033aa1c4701f5961b52f9087552b9ca31f9bfb10d29d144f44f138849f",
+      "composer_license": "GPL-2.0+",
+      "license_file": "gamification/LICENSE.txt",
+      "inspected_paths": [
+        "gamification/composer.json",
+        "gamification/gamification.info.yml",
+        "gamification/gamification.module",
+        "gamification/src/Plugin/GamificationWidgetUserpointsBase.php",
+        "gamification/src/Plugin/Gamification/Widget/DefaultWidget.php"
+      ],
+      "findings": [
+        "info.yml declara D11; composer.json limita drupal/core a ^8.0||^9.0||^10.0.",
+        "Depende de userpoints ^2.0; sem dry-run Composer nesta pesquisa.",
+        "Não selecionar para o escopo aprovado sem pontos."
+      ]
+    }
+  ]
+}

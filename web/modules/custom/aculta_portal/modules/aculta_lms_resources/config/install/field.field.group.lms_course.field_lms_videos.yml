@@ -1,0 +1,31 @@
+uuid: 9914fd19-d5c2-494e-ad83-0af88e3b19a4
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_lms_videos
+    - group.type.lms_course
+    - media.type.remote_video
+  module:
+    - aculta_lms_resources
+    - media
+id: group.lms_course.field_lms_videos
+field_name: field_lms_videos
+entity_type: group
+bundle: lms_course
+label: 'Vídeos do curso'
+description: 'Vincule vídeos remotos já publicados. O conteúdo e o acesso continuam sob responsabilidade do Portal/Media.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      remote_video: remote_video
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,0 +1,229 @@
+# Importação do Growroom: alterações, caminhos e estado
+
+Revisão: 2026-10-19. Escopo: o que já foi preparado no sistema, onde estão os dados recuperados, o estado verificado
+e o que falta. Nenhum conteúdo foi importado para o Drupal.
+
+Os números de download abaixo foram medidos em 2026-10-19, após a conclusão do reprocessamento. Para conferir de novo,
+usar somente leitura com `sudo`. A análise completa do acervo, com riscos para a importação, está em
+[AUDITORIA-GROWROOM-2026-10-19.md](AUDITORIA-GROWROOM-2026-10-19.md).
+
+## Pré-requisito atendido: `aculta_image` pronto
+
+- Ingestão obrigatória: `aculta_image.ingester->ingest($caminho, $urlOrigem, $capturadoEm)`. Resultado: `created`,
+  `reused` ou `rejected` (com motivo).
+- Destino das imagens aceitas: `public://importacao/<2 primeiros caracteres do SHA-256>/<SHA-256>.<ext>`. Nunca
+  sobrescreve; o mesmo conteúdo reaproveita o arquivo existente.
+- Origem: tabela `aculta_image_origin`, uma linha por arquivo e URL de origem. Repetir a importação não duplica.
+- Política única: png, gif, jpg, jpeg e webp, até 10 MB. Conteúdo que não é PNG, JPEG, GIF ou WebP é recusado.
+- Gate `scripts/validate-aculta-image.php` em PASS: nenhum código do site cria estilo ou upload de imagem fora do
+  sistema, então a importação não pode criar exceções.
+
+## Alterações feitas no sistema para a importação
+
+| Alteração | Onde | Commit |
+| --- | --- | --- |
+| Submódulo `aculta_image` (catálogo, política, renderização, inspeção, remoção, ingestão, auditoria, quarentena, comparação visual) | `web/modules/custom/aculta_portal/modules/aculta_image/` | 9ebd135d, cd3c053a, a5ce559f |
+| Tabelas `aculta_image_origin`, `aculta_image_quarantine`, `aculta_image_fingerprint` | atualizações 10001, 10002 e 10003 | 927b47c8, 9ebd135d |
+| Diretório de destino das importações `public://importacao` (criado sob demanda) | Runtime; sem arquivos de importação até agora | — |
+| Quarentena `private://aculta-image-quarentena` (área privada) | Runtime; vazia | — |
+| Módulos Composer `entity_usage` 5.0.1, `media_duplicates` 2.0.4, `imageapi_optimize` 4.2.0 e `imageapi_optimize_binaries` 1.2.0-beta1 | `composer.json`, `composer.lock` | 9ebd135d, cd3c053a |
+| Política de PDF e Ghostscript no ImageMagick | `/etc/ImageMagick-7/policy.xml` (backup em `policy.xml.aculta-bak`) | — (sistema) |
+| Limites de upload do PHP | `/etc/php/8.4/{cli,fpm}/conf.d/90-aculta.ini` | — (sistema) |
+
+## Scripts de download e mapeamento (versionados)
+
+Os scripts estão em `scripts/growroom/` e são a descrição de como os manifestos foram gerados:
+
+- `wayback_fetch.py {assets|html}`: baixa do Wayback a captura exata de cada URL do CDX. Nunca sobrescreve arquivo;
+  captura diferente da mesma URL ganha sufixo `__c<timestamp>`. Um registro é válido quando o arquivo existe e o
+  SHA-256 confere. Registros de falha são tentados de novo na rodada seguinte. Perfis entram na fila só se estiverem
+  em `perfis-permitidos.json`.
+- `build_mapping.py [--aplicar]`: mapeia tópico → fórum e autor → perfil. Sem `--aplicar`, só imprime os totais.
+  Com `--aplicar`, grava `perfis-permitidos.json` e `mapeamento/`.
+
+Uso (como root, pois o armazenamento é `root`): `sudo -n python3 -B scripts/growroom/wayback_fetch.py html`.
+Os caminhos de origem e de destino estão fixos no topo de cada script.
+
+## Caminhos dos dados recuperados (armazenamento privado do Homelab)
+
+Estes caminhos ficam fora do Git (`estados/` e armazenamento privado). Pasta de origem: `/home/aculta/private/aculta/forum/`
+(dono `root`, grupo `aculta`, modo `0750`).
+
+| Caminho | Conteúdo | Estado (2026-10-19) |
+| --- | --- | --- |
+| `cdx/board-prefix-cdx-to-20250719.json` | Inventário CDX do prefixo `growroom.net/board/`, corte em 2025-07-19 | completo; 44,5 MB |
+| `restauro/assets/` | Recursos não HTML baixados do Wayback, por host e caminho | concluído |
+| `restauro/html/` | Páginas HTML (tópicos, galerias e perfis permitidos) baixadas do Wayback | concluído |
+| `restauro/manifest-html.jsonl` | Registros por URL de página (acréscimo; o último registro de cada URL vale) | 58.411 registros; 57.954 URLs exatas |
+| `restauro/manifest-assets.jsonl` | Registros por URL de recurso (acréscimo) | 9.485 registros; 9.385 URLs exatas |
+| `restauro/perfis-permitidos.json` | URLs de perfil permitidas pela regra de usuários | 2.173 URLs |
+| `restauro/mapeamento/` | `topico-forum.json` e `autor-topicos.json`, gerados por `build_mapping.py --aplicar` | gerado |
+| `restauro/progress-*.log` | Progresso das rodadas | — |
+
+## Verificação do download (2026-10-19)
+
+- **Integridade:** em todos os arquivos referenciados pelo último registro de cada URL, o SHA-256 confere e o arquivo
+  existe. Não há arquivo em disco fora do manifesto.
+- **Divergências antigas:** 4 registros de HTML e 14 de assets apontavam para um arquivo que foi depois ocupado por outra
+  captura da mesma URL (variações com e sem `:80`). Esses registros foram superados por recapturas posteriores; não
+  são o estado atual. O manifesto não foi editado.
+- **Lacunas de HTML:** 8 URLs sem arquivo, de 57.954 (denominador: URLs exatas). 6 com falha de rede (`None`) e 2 com 404.
+- **Lacunas de assets:** 17 URLs, de 9.385 (denominador: URLs exatas). Todas respondem HTTP 200 sem corpo; o Wayback
+  não entregou o conteúdo. Ficam registradas como lacuna, sem arquivo.
+- **Perfis permitidos:** 2.171 de 2.173 URLs baixadas. 2 sem arquivo (ver lacunas de HTML).
+
+## Mapeamento tópico → fórum → autoria histórica (2026-10-19)
+
+- **Templates:** o acervo mistura o IPB (template antigo) e o IPS 4 (template atual). O mapeamento lê os dois.
+- **Fórum do tópico:** IPB: `<link rel='up' href='.../forum/<id>-...'>`. IPS 4: último `forum/<id>-` dentro das
+  `nav.ipsBreadcrumb`. Antes da correção, o IPS 4 ficava sem fórum (7.550 tópicos).
+- **Autores:** IPB: `<span class="author vcard">`, sem link de perfil (casamento pelo nome). IPS 4: bloco
+  `cAuthorPane_author`, com link de perfil que dá o ID exato.
+- **Totais:** 24.696 tópicos baixados; 24.675 com fórum; 21 sem fórum (páginas sem navegação, de índice). Em fóruns
+  importados: 18.377; excluídos: 6.298.
+- **Conferência:** para uma amostra de 3.000 tópicos, o nome do fórum no título da página é consistente com o ID
+  atribuído (ex.: 1 = Informações Básicas, 2 = Avisos, 24 = Notícias, 76 = Cannabis Medicinal).
+- **Autores:** 6.096 nos tópicos importados; 737 com ID exato (IPS 4); 1.850 casados com perfil; 6 ambíguos; 4.240 sem
+  perfil no índice CDX.
+
+## Regra histórica de usuários — substituída por F-D17/F-D44
+
+O texto de 2026-10-16 abaixo foi superado. Autores do acervo não são contas User nem Profile: cada autoria importada
+usa `aculta_legado_autor`, não ganha rota individual e aponta ao memorial coletivo `/u/lendashistoricas`. O nome
+individual é mantido como autoria do conteúdo; `-gr` aparece apenas nos cartões de autoria do Fórum. IDs IPS4/THW
+servem como origem estável; na ausência deles, aplica-se a chave determinística de nome aprovada em F-D45. Perfis
+capturados não são necessários para criar identidades ou rotas individuais de autor legado. Associações de URLs de
+perfil que continuam ambíguas não bloqueiam esse modelo e não devem unir IDs de origem distintos.
+
+## Fóruns fora da importação (decisão do responsável, 2026-10-16)
+
+| Fórum (nome no Growroom) | Identificador (`forum/<id>`) | Observação |
+| --- | --- | --- |
+| Avisos | 2 e 52 | dois fóruns com o mesmo nome |
+| Multimidia Cannabica | 48 | |
+| Cannabis Medicinal (interpretado como "Cultivo Medicinal") | 76 | o nome "Cultivo Medicinal" não existe no Growroom; confirmar com o responsável |
+| Notícias | 24 | incluído em 2026-10-16 (pedido do responsável) |
+
+Escopo: a decisão vale para a **importação**. O download não exclui esses fóruns; a exclusão é aplicada no mapeamento.
+
+## Plano de importação: regras decididas (2026-10-19)
+
+Estas regras valem quando a importação começar. Nenhuma está em execução.
+
+**Tópicos excluídos que ficam** (decisões do responsável, 2026-10-19):
+- Tema político e social (legalização, marcha, lei, decisões, notícias de política de drogas): mantidos (1.393 tópicos).
+- Casos de uma pessoa específica (preso, cerco, denúncia): mantidos (555 tópicos). Esses tópicos descrevem pessoas
+  identificáveis em processos criminais. Os autores não entram como perfis (ver regra de usuários).
+- Vida interna do fórum (usuário do mês, rifas, eventos): os 616 tópicos identificados ficam excluídos por padrão.
+  Inclusão exige seleção manual explícita (F-D46).
+- Outros termos (4.739 tópicos): seleção manual por caixa, em `scratchpad/selecao_outros.html` (sessão de trabalho, fora do
+  Git). Até a seleção, ficam excluídos.
+
+**Conteúdo comercial fora da restauração** (decisão do responsável, 2026-10-19; `scripts/growroom/marcar_comercial.py`):
+- Tópicos de anúncio de loja e vendedor são marcados pelo título: marca "[Growshop]" e verbos de anúncio ("vendo",
+  "vende-se"). Resultado: **641 tópicos** em `comercial-marcados.jsonl`, de 37 títulos distintos, quase todos anúncios de
+  lojas de sementes. Saem da importação.
+- Os 17 tópicos marcados `revisar` ficam excluídos por padrão. Inclusão exige seleção manual explícita (F-D46).
+- Limite: a regra só vê o título. Anúncio sem marca nem verbo de venda no título não é detectado. Tentativa pelo texto da
+  página foi descartada: menus e blocos do template aparecem em todas as páginas e marcaram notícias e debates.
+- Nada é apagado do acervo arquivado. A exclusão vale só para a importação.
+- Links e imagens de anúncio de terceiros continuam descartados pelo `mapear_links.py` (anúncios `openx`). Anúncios de
+  lojas dentro das fotos não foram identificados.
+
+**Links para growroom.net** (decisão do responsável, 2026-10-19: link quebrado vai para o modal de conteúdo legado).
+Script versionado: `scripts/growroom/mapear_links.py`. Resultado da última execução, sobre 8.801.010 ocorrências
+em 738.125 alvos distintos:
+
+| Destino | Alvos | Regra |
+| --- | --- | --- |
+| Link interno | 64.750 | página ou recurso com captura válida no acervo: vira link para o conteúdo importado |
+| Imagem do acervo | 7.805 | foto de conteúdo (`uploads/`, galeria) com arquivo válido: entra pelo `aculta_image` |
+| Imagem padrão | 73.717 | foto de conteúdo sem arquivo: usa a imagem padrão "Que pena não conseguimos restaurar essa imagem do antigo growroom" (`scripts/growroom/gerar_imagem_padrao.py`) |
+| Modal de conteúdo legado | 591.305 | link quebrado de página: `data-legado-growroom` abre o modal, em vez de navegar |
+| Descartado | 548 | anúncios de terceiros (`openx`) e recursos do tema antigo (CSS, JS, ícones), que não são conteúdo |
+
+Correção de 2026-10-19: a versão anterior classificava as fotos de `uploads/` e galeria como recursos do tema e as
+descartava (81.522 alvos). Agora são tratadas como conteúdo. Para as fotos sem arquivo, a imagem padrão é usada no lugar
+do modal. As 506.908 ocorrências de foto sem arquivo estão nas páginas de tópico e galeria.
+
+- Dos 591.305 alvos que vão para o modal, 305.967 são links de navegação com token de sessão (`s=`, `do=`, `act=`), que
+  não são conteúdo. Eles também vão para o modal, sem mapeamento individual.
+- Os 92 mil alvos de tópico com variação de página (`showtopic&st=`, `&pid=`) podem ser resolvidos para o tópico importado
+  pelo ID antes de cair no modal. Isso ainda precisa ser implementado no plano.
+- **Teste contra o site vivo: inconclusivo.** Deste servidor, `growroom.net` não resolve por DNS, e o teste retornou
+  erro de rede em todas as 80 amostras. Não é possível afirmar se o site está fora do ar. O teste precisa ser repetido
+  de outra rede.
+- O modal exige alteração no tema ACULTA420, que depende de autorização explícita (AGENTS.md). O texto da história do
+  Growroom também precisa de aprovação do responsável antes de ir ao ar.
+
+## Checklist de prontidão (verificado em 2026-10-19)
+
+Verificação somente leitura: `scripts/growroom/verificar_importacao.py` (resultado em `restauro/verificacao-importacao.json`).
+A verificação completa relê os 8 GB e confere o SHA-256 de cada arquivo.
+
+| Checagem | Resultado |
+| --- | --- |
+| C1 Manifestos: último registro válido aponta para arquivo com SHA-256 igual | OK: 67.315 registros, 0 ausentes, 0 divergentes |
+| C2 Duplicatas: caminhos existem e têm o mesmo conteúdo | OK: 2.151 grupos |
+| C3 Truncados: continuam com 1 MiB e sem marcador final | OK: 228 arquivos |
+| C4 Comerciais: marcados existem entre os tópicos | OK: 658 marcados (641 fora + 17 para revisar) |
+| C5 Links: destinos somam o total; fotos de conteúdo nunca descartadas | OK: 738.125 alvos |
+| C6 Perfis permitidos existem no CDX com captura 200 | OK: 2.173 URLs |
+| C7 Mapeamento salvo bate com o `build_mapping.py` atual | OK: 36.077 tópicos, mesmos fóruns |
+| C8 Nenhum e-mail nos arquivos de mapeamento | OK (após omitir 10 nomes com forma de e-mail do mapa) |
+
+**Estado das decisões e pré-requisitos operacionais** (histórico revisado em 2026-10-26):
+
+1. **Remodelagem do Fórum:** integrada na PR #297; não é mais bloqueio.
+2. **Seleção dos 4.739 tópicos de "outros termos": recebida** (2026-10-19). 133 tópicos marcados pelo responsável,
+   guardados em `restauro/selecao-manual.json`. 132 estão no acervo e entram no conjunto, mesmo quando o fórum é excluído.
+   O 133º (tópico 44876) foi removido pela regra comercial por causa da palavra "growshop" no título, mas é notícia sobre
+   uma ação policial. A escolha explícita prevalece, e a regra comercial tem esse falso positivo registrado.
+   Os demais tópicos de "outros termos" não marcados continuam excluídos.
+3. **Tópicos `revisar` (17 no levantamento atual) e vida interna (616):** exclusão padrão decidida; inclusão somente por seleção manual explícita (F-D46).
+4. **Autoria:** não são importados Users/Profiles. Autores dos itens aprovados viram entidades `aculta_legado_autor` com IDs estáveis (F-D17/F-D44/F-D45); nenhuma URL de perfil individual é criada.
+5. **Capturas de perfis:** não são necessárias para a autoria legada. Lacunas e ambiguidades são históricas e não impedem
+   a criação de `aculta_legado_autor`; não criam contas ou perfis públicos.
+6. **228 fotos truncadas:** entram com a imagem padrão, no lugar do
+   arquivo cortado. Também se aplica aos 298 links de download dessas fotos.
+7. **Modal de conteúdo legado**: depende de autorização para alterar o tema ACULTA420 e da aprovação do texto da história.
+8. **Teste dos links contra o site vivo: fechado.** `growroom.net` não existe mais (informado pelo responsável em
+    2026-10-19). Os links quebrados seguem para o modal, e a verificação ao vivo deixa de ser pendência.
+9. **Ingestão das fotos e imagem padrão** pelo `aculta_image`, com conversão para WebP: precisa ser coberta pelo exportador/importador e validada isoladamente.
+10. **Resolução dos links `showtopic&st=` / `&pid=`** para o tópico importado pelo ID: ainda precisa ser implementada no pipeline.
+
+## Histórico do bloqueio inicial
+
+**Registro histórico supersedido:** a importação foi adiada em 2026-10-19 até a remodelagem do Fórum na PR #297.
+Essa remodelagem foi integrada e a decisão de destino foi atualizada em F-D43. O texto histórico não é um bloqueio
+vigente; a preparação para o Runtime de testes continua sujeita aos pré-requisitos abaixo.
+
+A F3 (migração piloto) e a F6 (reconstrução em lotes) pertenciam ao ciclo anterior. Os estados e a sequência descritos
+naquela decisão foram substituídos por F-D43–F-D46 e pelo preparo atual abaixo. A importação deve criar autoria em
+`aculta_legado_autor`, nunca contas ou Profiles; o pipeline precisa ser idempotente e reversível em ambiente isolado.
+
+## Decisão atual e preparo de importação em testes — 2026-10-26
+
+Este adendo substitui os bloqueios históricos que apontavam a remodelagem da PR #297 como pré-requisito e a decisão de manter o Runtime de testes vazio como estado final. A remodelagem foi integrada. O destino desejado é o ambiente de testes ACULTA com o acervo curado importado; manter esse Runtime vazio não é o objetivo final. A tarefa atual é deixar o pipeline e a instalação de teste prontos para essa importação. Produção permanece excluída. Esta decisão não significa que o conteúdo já foi importado: esta execução não alterou entidade, arquivo, configuração ou dado persistente do Runtime.
+
+A política de seleção registrada acima continua sendo a fonte de escopo: fóruns excluídos, exceções temáticas, seleção manual, conteúdo comercial e lacunas devem continuar identificados. A decisão mais recente também resolve a identidade histórica: autores são entidades `aculta_legado_autor`, sem User/Profile ou rota individual. O memorial coletivo `/u/lendashistoricas` mantém os nomes sem sufixo; somente os cartões de autoria do conteúdo do Fórum exibem `-gr` (F-D44).
+
+### Estado técnico e próximo preparo
+
+- `build_mapping.py` foi executado em 2026-10-26: 36.751 tópicos baixados; 36.078 identificados; 31.599 selecionados; 634 marcados comerciais removidos. O mapa de conteúdo registra 7.943 rótulos de autoria e 3.941 URLs de perfil permitidas; dez rótulos em forma de e-mail são omitidos. Esses totais descrevem mapeamento, não importação.
+- `build_mapping.py --so-mapeamento` agora gera `mapeamento/autor-origem.json` com 9.608 identidades de origem: 741 IDs IPS4, 2.751 IDs THW e 6.116 chaves por nome normalizado. Quando há ID da plataforma, ele é preservado; sem ID, `origem_id` usa SHA-256 do nome normalizado, conforme F-D45. Variações de nome e tópicos associados ficam no arquivo privado para revisão. Nenhum nome ou corpus foi copiado para o Git. Ainda não existe importador Drupal final para posts, tópicos e assets.
+- Testes sintéticos da chave e do gate C10: 10/10 PASS. O manifesto no storage privado foi regenerado em 2026-10-26; `verificar_importacao.py --rapido` passou C1–C10: 68.666 registros de captura sem arquivo ausente no modo rápido; duplicatas, truncados e links sem problemas; mapeamento de 36.078 tópicos consistente; 31.599 selecionados sem tópicos fora do acervo, inclusão comercial ou exceções indevidas; C10 validou as 9.608 identidades, sem ID duplicado/inválido/pendente e sem tópicos ausentes/fora da seleção. C1/C3 rápidos conferem existência/tamanho, não recalculam hashes nem verificam marcador final JPEG. A checagem completa de integridade dos arquivos permanece necessária antes de importar.
+- Próxima etapa para preparar o Runtime de testes: exportar conteúdo de posts e assets com escopo/razão de seleção e hashes, sem copiar corpus ou PII ao Git. Depois construir o importador Drupal idempotente com dry-run, lotes retomáveis, reconciliação e rollback, validando primeiro em banco efêmero. O trabalho deve terminar com um plano executável para preencher o ambiente de testes, não com a decisão de deixá-lo vazio.
+- Antes de importar no Runtime de testes: gerar prévia quantitativa e de amostras sem dados pessoais nos logs; confirmar backup verificável e destino isolado; documentar rollback por restore point; validar a sequência completa em banco efêmero e comparar contagens/hash. A operação persistente fica bloqueada até essa revisão operacional específica. O Homelab documentado usa `/home/aculta/public_html -> web` no checkout compartilhado; o worktree `/tmp/aculta-m0-integridade` não é servido por esse symlink. Smoke/browser desta branch deve usar docroot e banco efêmeros, nunca presumir que `public_html` executa o código desta branch.
+- Decisão vigente: os 17 itens `revisar` e os 616 itens de vida interna ficam excluídos por padrão; só seleção manual explícita os inclui. A autoria não depende de perfis capturados. Não ampliar o conjunto aprovado ao criar o importador.
+
+F-D43–F-D46 constam em [DECISOES do Fórum](../../aculta_forum/docs/DECISOES.md). A preparação não autoriza importação em produção, escrita no Runtime compartilhado, nem alteração do conjunto aprovado.
+
+### Correção da seleção e verificação integral — 2026-10-26
+
+O registro numérico acima foi supersedido após a auditoria identificar que `build_mapping.py` excluía automaticamente apenas `comercial_forte`; os marcadores `revisar` não exigiam decisão manual, apesar de a triagem documentar revisão humana. O gerador agora exige seleção manual explícita para ambos os níveis. O gate C9 valida a mesma regra e possui testes para casos bloqueados e selecionados. A seleção aprovada não foi ampliada.
+
+- Regeneração privada de `mapeamento/` e `conjunto-importacao.json`: 36.751 tópicos capturados; 36.078 com fórum identificado; 31.585 no conjunto após o filtro corrigido; 651 marcados comerciais/revisão fora do conjunto. As 17 marcações `revisar` não estão selecionadas. O conjunto contém 28.134 tópicos de fóruns incluídos e 1.946 exceções temáticas.
+- `verificar_importacao.py --rapido` e verificação completa passaram C1–C10. Na completa: 68.666 registros de captura, zero arquivo ausente ou SHA divergente; 2.151 grupos duplicados sem problema; 228 capturas truncadas verificadas sem problema; C9 sem marcadores não aprovados, conteúdo fora do acervo ou exceções indevidas; C10 validou 9.607 autorias sem ID duplicado/inválido/pendente, tópico ausente/fora da seleção ou rótulo de e-mail.
+- Testes sintéticos: `python3 -m unittest tests.scripts.test_growroom_origin_ids` — 13 testes PASS; `py_compile` e `git diff --check` PASS. Os arquivos do acervo e mapas permanecem em storage privado, sem corpus ou nomes adicionados ao Git. Runtime consultado segue sem autores legados importados; esta execução não gravou Drupal.
+- Próxima etapa segura: produzir exportação versionada a partir do conjunto aprovado e validar serialização/importação idempotente em banco efêmero. A importação no Runtime de testes ainda depende de prévia, destino isolado, backup restaurável, rollback e validação completa em banco efêmero; produção continua fora do escopo.

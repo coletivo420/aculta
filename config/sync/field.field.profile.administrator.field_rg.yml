@@ -1,0 +1,20 @@
+uuid: 4061fdc5-3b85-4c88-a5d8-25cc42cc5ee1
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_rg
+    - profile.type.administrator
+id: profile.administrator.field_rg
+field_name: field_rg
+entity_type: profile
+bundle: administrator
+label: RG
+description: 'Dado de associado. Visível só no relatório administrativo.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

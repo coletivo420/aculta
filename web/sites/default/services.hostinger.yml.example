@@ -1,0 +1,17 @@
+# Production container parameters (Hostinger). Copy to services.hostinger.yml
+# on the server; keep the environment-specific copy outside version control.
+#
+# Shared session cookie for every purpose host of aculta.org. Login on one
+# purpose is valid on the others (ADMIN/CROSS-DOMAIN policy). The leading dot
+# makes the cookie valid for all subdomains. SameSite=Lax is the baseline.
+parameters:
+  session.storage.options:
+    gc_probability: 1
+    gc_divisor: 100
+    gc_maxlifetime: 200000
+    cookie_lifetime: 2000000
+    cookie_domain: '.aculta.org'
+    cookie_samesite: Lax
+    cookie_httponly: true
+    cookie_secure: true
+    name_suffix: ''

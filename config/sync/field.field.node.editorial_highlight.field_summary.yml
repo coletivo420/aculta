@@ -1,0 +1,19 @@
+uuid: d7c2623a-f61f-4189-86a4-0bd4e3b25555
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_summary
+    - node.type.editorial_highlight
+id: node.editorial_highlight.field_summary
+field_name: field_summary
+entity_type: node
+bundle: editorial_highlight
+label: Resumo
+description: 'Resumo curto e legível; não utilizar HTML ou cortar informação com reticências.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

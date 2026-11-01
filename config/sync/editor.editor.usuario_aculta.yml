@@ -1,0 +1,67 @@
+uuid: 6f1c2b7e-3a94-4d52-9b1e-8c0d7a4f5e21
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - filter.format.usuario_aculta
+  module:
+    - ckeditor5
+    - media
+format: usuario_aculta
+editor: ckeditor5
+settings:
+  toolbar:
+    items:
+      - bold
+      - italic
+      - code
+      - '|'
+      - link
+      - '|'
+      - bulletedList
+      - numberedList
+      - '|'
+      - blockQuote
+      - drupalInsertImage
+      - drupalMedia
+      - acultaImageModel
+      - acultaImageLegenda
+      - sourceEditing
+      - '-'
+  plugins:
+    aculta_image_model:
+      modelos:
+        - pequena
+        - padrao
+    ckeditor5_imageResize:
+      allow_resize: true
+    ckeditor5_list:
+      properties:
+        reversed: true
+        startIndex: true
+        styles: true
+      multiBlock: true
+    ckeditor5_sourceEditing:
+      allowed_tags:
+        - '<h2 id>'
+        - '<h3 id>'
+        - '<h4 id>'
+        - '<h5 id>'
+        - '<h6 id>'
+        - '<cite>'
+        - '<dl>'
+        - '<dt>'
+        - '<dd>'
+        - '<a hreflang>'
+        - '<blockquote cite>'
+        - '<img data-aculta-legenda data-aculta-alinhamento>'
+    media_media:
+      allow_view_mode_override: false
+image_upload:
+  status: true
+  scheme: public
+  directory: inline-images
+  max_size: '10485760'
+  max_dimensions:
+    width: null
+    height: null

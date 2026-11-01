@@ -1,0 +1,25 @@
+uuid: eae053a5-0e16-4456-9cec-cc85a4cf768e
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_whatsapp
+    - profile.type.gerente_loja
+  module:
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.gerente_loja.field_whatsapp
+field_name: field_whatsapp
+entity_type: profile
+bundle: gerente_loja
+label: WhatsApp
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

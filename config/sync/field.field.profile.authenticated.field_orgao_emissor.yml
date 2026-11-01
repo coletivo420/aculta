@@ -1,0 +1,20 @@
+uuid: 0123b5cc-e6f5-46f2-bb13-655d6fd8b046
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_orgao_emissor
+    - profile.type.authenticated
+id: profile.authenticated.field_orgao_emissor
+field_name: field_orgao_emissor
+entity_type: profile
+bundle: authenticated
+label: 'Órgão emissor do RG'
+description: 'Dado de associado. Visível só no relatório administrativo.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

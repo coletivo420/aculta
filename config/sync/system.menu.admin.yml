@@ -1,0 +1,10 @@
+uuid: d43ef356-f3d9-41de-b678-c782a92290f4
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: sapEi2YDGoI9yQIT_WgIV2vUdQ6DScH0V3fAyTadAL0
+id: admin
+label: Administração
+description: 'Navegação administrativa do Drupal: conteúdo, estrutura, configuração, usuários e relatórios.'
+locked: true

@@ -1,0 +1,363 @@
+# ACULTA Content Index
+
+Submódulo opcional do Kernel `aculta_portal`. O catálogo é derivado e poderá ser apagado e reconstruído; as entidades e permissões continuam pertencendo aos módulos de origem.
+
+**Versão:** `0.1.0-dev.180` — `ContentIndexRelationQuery` agora consulta relações recebidas por nome, com revalidação de Entity Access da origem e do alvo, purpose canônico, paginação e cursor opaco vinculado a conta, geração e fingerprint de providers. `EventContentIndexProviderKernelTest` cobre Eventos distintos relacionados ao Local apesar de múltiplas Datas, revogação imediata e isolamento de cursor. A API retorna entidades de origem; o Calendar continua responsável por ocorrências e recorrência. Unit 51/265, Kernel 127/2.171 PASS em `aculta_simpletest`; 274 depreciações Core/contrib. Runtime não alterado.
+**Status:** Dev. Schema, providers, manutenção incremental, reconstrução por geração, consultas paginadas com Entity Access, relações nomeadas, bloco de conteúdo relacionado e bridge opcional de Statistics estão implementados. Providers cobrem Revista, Wiki, Fórum, Activity, Gallery, Media e LMS, com adapters registrados nos módulos owner. Benchmarks sintéticos de rebuild/auditoria passaram em 10k, 100k e 1M; a repetição 1M mais recente levou 2.020,081 s no rebuild e 741,071 s na auditoria, sem divergências e sem SLO. Histórico: em 2026-10-23, uma ativação temporária no Runtime de teste `toca` foi revertida e deixou zero tabelas. Estado read-only verificado em 2026-10-26 no Runtime MAIN: `aculta_index` está habilitado e possui uma geração ativa válida, 145 entradas e 110 relações; fila sem itens pendentes e auditoria concluída sem achados. O módulo foi incluído em `config/sync/core.extension.yml` para reconciliar o estado ativo observado; nenhuma importação, rebuild ou alteração persistente foi executada. Essa evidência não equivale a homologação funcional com conteúdo representativo. O harness combinado é do `aculta_index` sob o Portal; não transfere ownership ao LMS. Instalação de configuração completa dos owners, grants operacionais, execução sobre catálogo com conteúdo e métricas representativas continuam pendentes.
+
+**Fechamento 2026-10-26 (dev.176):** o filtro limpa o cache interno de Entity Access dos tipos candidatos a cada página; despublicar ou revogar entre consultas no mesmo processo agora nega a entidade. Cursors incluem o fingerprint dos providers, além de conta, filtros e geração. A integridade ignora relações transitórias de gerações em descarte. `start` serializa rebuilds e recusa uma segunda geração `building`. Unit 51/265 e submódulo File 2/21, Kernel 119/2.019 PASS em MariaDB; no benchmark Fórum de 100 candidatos, duas amostras: membro 371–494 / 407–550 ms e visitante 178–243 / 220–290 ms p50/p95 (sintéticas, a variação não isola a mudança e não define SLO). A fixture representativa mista (28 entradas de conteúdo, 14 de alvo, 30 relações, dois idiomas e dois domínios) passou em duas execuções com rebuild 402–429 ms, auditoria ~46 ms, consulta aquecida p50/p95 4,7–5,0 / 5,8–6,2 ms e pico 82,5 MiB. Runtime local somente leitura: 145 entradas, 110 relações, uma geração ativa válida, fila vazia e auditoria sem achados. O submódulo opcional `aculta_index_file` cobre `file:file` sem projetar nome/URI/MIME/tamanho. O contrato de vídeo foi definido em [ACULTA-CONTENT-INDEX-VIDEO-RELATIONS](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-VIDEO-RELATIONS.md); LMS projeta `course_video` via `field_lms_videos`, e Revista projeta `embedded_video` para embeds rastreados na revisão corrente. Wiki e Fórum seguem pendentes de decisão editorial sobre permitir `remote_video` em seus formatos. Pendências: grants operacionais, carga real dos owners e execução sobre catálogo no Runtime. Detalhes no [worklog do Agente 3](../../../../../../docs/operations/ACULTA-AGENT3-INDEX-WORKLOG.md).
+
+**Revalidação 2026-10-29 (dev.178):** Unit Index 51/265, Kernel Index 120/2.020 e Unit File 2/21 passaram no MariaDB `aculta_simpletest`; o Kernel reportou 270 depreciações upstream, sem falhas. PHP lint passou nos 85 arquivos PHP do módulo e PHPCS Drupal/DrupalPractice passou após corrigir docblocks no controlador e teste de acesso do painel. A cobertura de acesso/Domain usa owners reais em Wiki, Fórum, Revista, Gallery e LMS no harness, mas não ativa as cadeias completas de todos os owners nem substitui homologação de grants operacionais com dados representativos. Nenhum rebuild ou escrita no Runtime foi executado.
+
+**Revalidação 2026-10-31:** suítes Unit e Kernel completas do `aculta_index` passaram com 178 testes / 2.436 assertions em `aculta_simpletest`; 274 depreciações Core/contrib, sem falhas. A bateria focal dos providers Activity, Magazine, Wiki, Fórum e LMS passou com 42 testes / 617 assertions; 261 depreciações Core/contrib, sem falhas. Os fixtures agora declaram referências de serviço e schema de nickname exigidos pelos owners reais. Nenhum rebuild ou escrita no Runtime foi executado.
+
+**Runtime read-only (2026-10-29):** o checkout de teste em `355e48a89` serve
+`aculta_index` dev.177; `aculta_index_file` está desabilitado. O gate da fila
+está pronto (0 queued/processing/retry/dead). Uma auditoria já existente está
+`running` (id 1), com 1 projeção stale e `valid=false`; não iniciei nem avancei
+auditoria e não executei rebuild. Essa auditoria precisa ser retomada ou
+resolvida por operador autorizado antes de nova homologação do catálogo.
+
+**Boot/DI combinado (dev.164):** `ContentIndexOwnerIntegrationKernelTest` carrega
+roots owners independentes para validar seus adapters no container do Index.
+Além do registry/tag real, agora persiste uma relação com o plugin Group real
+`aculta_document_viewer_group:course_document` (MariaDB: 1/33; 239 depreciações
+Core/contrib) e resolve o aggregator real do Statistics pela interface do
+Portal (1/36; 239 depreciações Core/contrib), e reconhece o provider
+`taxonomy_term:wiki_category` da Wiki. O boot de teste não é a arquitetura de
+produção: `aculta_index` é submódulo de `aculta_portal` e cada owner mantém seu
+adapter e sua policy.
+
+**Integração Wiki (dev.174):** `ContentIndexWikiAccessKernelTest` habilita Wiki e Image reais, com closure Portal + Index e sem ponte YAML/fixture. A suíte MariaDB passou em 7 testes / 238 assertions e 201 depreciações upstream, cobrindo descoberta, acesso, relações, backfill, fingerprint, ausência de `owner_uid`, troca de relação, update/delete, destino sem provider e bloqueio de relação quando a origem é rascunho.
+
+**Integração Wiki (dev.167):** o Kernel owner testa a projeção v3 e o
+`ContentIndexAccessFilter` com `aculta_wiki`, Portal e Index descobertos e
+inicializados de verdade, sem bridge de acesso. Fonte e destinos são entidades
+persistidas; conteúdo Wiki é negado no Domain `main`, autorizado em `wiki`,
+destinos não publicados são filtrados e o Domain inicial é restaurado. A mesma
+prova consulta `related_entry`, `wiki_category` e `wiki_image` pela
+`ContentIndexRelationQuery` real, com providers descobertos pelo container e
+uma geração de teste semeada para os registros necessários (owner: 2 testes /
+88 assertions, com a premissa de acesso à Media privada explicitamente verificada).
+A última suíte Wiki/Index completa registrada passou com 6 testes / 187
+assertions em MariaDB; ela é anterior ao dev.168 e não foi repetida neste
+incremento. Não é um rebuild integral nem validação do inventário completo.
+**Traduções:** no dev.85, `ContentIndexTranslationKernelTest` reconstrói um Node
+com duas línguas, consulta ambas pela API do Index, confirma que atualizar
+`pt-br` preserva `en` e apagar a tradução remove somente sua projeção e seu
+resultado; MariaDB: 1 teste / 20 assertions. A fixture concede `access content`
+à role anônima. Não é uma homologação multilíngue em Runtime.
+
+**Media:** no dev.84, `ContentIndexMediaProviderKernelTest` passou com 4 testes /
+76 assertions. Além dos providers image/document/course_document, carrega as
+declarações reais de `aculta_pdf_viewer_group` e `aculta_forum`; o teste
+`forum_attachment` verifica purpose `forum` e CRUD de Media unpublished com File
+privado. Os testes não ativam os owners completos nem validam seus grants.
+
+**Acesso de owners:** no dev.96, o Kernel Fórum passou em SQLite (4 testes /
+199 assertions), cobrindo hooks reais de grants, membership, revogação,
+`ContentIndexAccessFilter` e Domain canônico. O Kernel `course_document` passou
+em SQLite (1/28), usando a declaração de provider do YAML owner e uma relação
+Group fixture com Entity Access. O boot/DI integral do PDF Viewer Group continua
+pendente; nenhum destes testes ativou módulos no Runtime.
+
+No dev.97, a suíte Kernel completa passou em SQLite: 78 testes / 1.194
+assertions, com 39 depreciações Core/contrib e 42 depreciações PHPUnit. A
+rodada MariaDB aguarda a conclusão do benchmark de 1 milhão.
+
+No dev.98, a consulta Wiki `related_entry` passou no Kernel SQLite (2 testes /
+32 assertions): origem e alvos foram revalidados em `wiki`, o alvo unpublished
+foi omitido e o Domain `main` foi restaurado.
+
+No dev.99, o mesmo Kernel lê e registra a declaração real do provider em
+`aculta_wiki.services.yml`; somente a ponte de Entity Access continua sendo
+fixture. Boot/DI completo e Runtime seguem pendentes.
+
+No dev.100, o Kernel LMS existente passou também em SQLite (1/33; 47
+depreciações upstream), cobrindo estudante, educador, terceiro e Domain pelo
+filtro do Index. Consulta outgoing de recursos do curso continua sem teste
+end-to-end.
+
+No dev.101, a suíte Kernel completa passou em SQLite: 79 testes / 1.210
+assertions, com 39 depreciações Core/contrib e 42 PHPUnit. MariaDB aguarda o
+benchmark de 1 milhão.
+
+No dev.102, o Kernel Statistics registra as declarações de catálogo, storage e
+agregador lidas do YAML real do owner e resolve a ponte opcional do Index pelo
+DI: SQLite 1/22. Não ativa o módulo Statistics completo nem sua cadeia Commerce.
+
+No dev.103, a suíte Kernel completa passou em SQLite: 79 testes / 1.213
+assertions, com 39 depreciações Core/contrib e 42 PHPUnit.
+
+No dev.104, foi registrado que o benchmark MariaDB 1M em execução iniciou antes
+do isolamento dos jobs de fixture e das métricas por fase; seus dados parciais
+não serão tratados como resultado final nem comparados a 10k/100k.
+
+No dev.113, a classe Kernel de consulta MariaDB passou com 3 testes / 40
+assertions, incluindo projeção residual de provider desativado excluída dos
+candidatos. A classe Kernel LMS passou com 4 testes / 210 assertions e 53
+depreciações upstream; agora cobre a aresta `course_document` após rebuild,
+revalidando estudante, visitante e acesso ao documento não publicado. O boot/DI
+conjunto descobre o owner PDF e o Kernel transversal persiste a
+relação Group real; a instalação completa da configuração dos owners e os
+grants/Runtime continuam sem homologação integral.
+
+**Decisão de cobertura LMS:** manter esse harness isolado para provar a projeção,
+rebuild e consulta outgoing `course_document`. O boot integral do owner fica como
+dívida de homologação, pois depende de serviços ausentes de módulos não relacionados
+ao fluxo do Index (`aculta_user` e `commerce_cart`). Não se amplia a cadeia DI nesta
+microfase; a fixture não é evidência de boot completo do owner.
+
+**Arquitetura e roadmap:** [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
+**Plano de benchmark:** [matriz IDX 0.1-G/R](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-BENCHMARK.md).
+**Auditoria e matriz de reaproveitamento:** [IDX 0.1-A](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-AUDIT-0.1-A.md).
+
+**Validação mais recente (dev.158):** Unit completa passou (51/262; 14 depreciações PHPUnit), incluindo página mista Wiki/Fórum com ordem preservada e restauração do Domain. Kernel completa MariaDB (103/1.526; 39 depreciações Core/contrib e 54 PHPUnit), Fórum/Wiki acesso (4/199 e 2/32), consulta paginada (4/52) e cron/traduções (2/28) passaram. Em três execuções, o agrupamento por purpose reduziu a p50/p95 para 100 candidatos em 45%/44% no membro e 49%/42% no visitante, sem SLO e mantendo limite 100. PHPCS Drupal, lint e gate Drupal 11+ (1.159 checks) passaram. Benchmarks 10k/100k/1M concluídos; em 1M rebuild 2.137,817 s e auditoria 724,020 s, sem divergências. Evidências no [relatório Fórum](../../../../../../docs/portal/benchmarks/ACULTA-CONTENT-INDEX-FORUM-ACCESS-2026-10-23.md) e [relatório de escala](../../../../../../docs/portal/benchmarks/ACULTA-CONTENT-INDEX-MAINTENANCE-2026-10-23.md).
+
+No dev.141, o catálogo guarda `owner_uid` somente quando o provider identifica ownership por `EntityOwnerInterface`; filtros aceitam qualquer UID, mas cada entidade ainda passa por Entity Access, e o UID não é uma propriedade extra do DTO de consulta. A atualização `10018` adiciona a coluna nullable e os providers incrementam suas versões de projeção para forçar rebuild. Não há índice SQL específico antes de medição.
+
+No dev.142, o benchmark MariaDB com 100.000 fontes concluiu em 15m50s: rebuild 209,542 s, auditoria 724,666 s e zero divergências. A fase source→catalog consumiu 689,766 s (p95 do lote 28,31 s; máximo 72,71 s), com pico de auditoria de 558 MiB. É uma execução diagnóstica sem SLO; otimizar essa passagem antes de tentar 1M. Ver relatório de benchmark.
+
+No dev.143, cada lote de auditoria emite métricas `debug` por fase para distinguir enumeração/projeção, reconciliação, checkpoint e fila. O harness opt-in agrega esses valores no JSON. A amostra 10k teve scan fonte→catálogo de 6,75 s e comparação de 0,21 s; uma execução diagnóstica, sem SLO. Os campos são contagens e durações; IDs e conteúdo não são registrados.
+
+No dev.144, o enumerador também registra tempos de consulta, carga, projeção e limpeza de cache. A limpeza pode ser parametrizada apenas no benchmark. Três rodadas 10k por limite mostraram trade-off entre picos menores (500) e custo menor por lote normal (5.000); o padrão de produção continua 5.000 até decisão e medição em maior escala.
+
+No dev.145, as métricas detalhadas foram desligadas por padrão para evitar que cada lote gere uma linha `debug` no dblog/watchdog. Para habilitá-las temporariamente, configure `$settings['aculta_index_diagnostics'] = TRUE` no settings PHP do ambiente; desligue após coletar a amostra.
+
+No dev.146, a passagem catálogo→fonte acumula no máximo 5.000 identidades de fontes/alvos antes de limpar os caches de entidades e também os limpa ao terminar a fase. Isso limita memória em workers que processam várias chamadas no mesmo processo. Uma execução 100k anterior à mudança (cache de enumeração 500) levou 471,662 s na auditoria, teve pico de 492 MiB e zero divergências; serve apenas como baseline. Após a mudança, uma execução 10k terminou em 6,352 s, com pico 128,5 MiB e zero divergências. É uma amostra diagnóstica única; a validação 100k concluiu em dev.147, conforme os resultados registrados abaixo.
+
+No dev.147, a repetição 100k com a limpeza nova e o limite operacional 5.000 concluiu: rebuild 204,842 s; auditoria 92,913 s; pico 137,5 MiB; zero divergências. A fase source→catalog levou 63,178 s (p95 645 ms; máximo 885 ms). A rodada anterior em 100k com limite 500 levou 471,662 s de auditoria e 379,890 s em reset de cache do enumerador; por isso 5.000 permanece o padrão. As execuções são únicas e diferem em código, portanto não definem SLO nem isolam causalidade.
+
+No dev.149, o enumerador lê IDs pelo base table do storage quando o mapeamento confirma as colunas de ID e bundle; se não puder comprovar isso, usa EntityQuery. A carga e projeção continuam pela Entity API. Em 100k, as 201 páginas escolheram `base_table`, com p50/p95 de 1,103/1,557 ms para a consulta de IDs e zero divergências no rebuild/auditoria.
+
+No dev.150, o benchmark completo 1M concluiu em 49m55s de processo, dos quais 129,094 s foram setup sintético fora dos tempos do Index. Rebuild 2.137,817 s (468/s); auditoria 724,020 s; pico 214,5 MiB; todas as 4.002 verificações de integridade concluíram sem divergência. Uma amostra sintética local, sem SLO nem carga de relações.
+
+No dev.140, providers implementam opcionalmente `ContentIndexIndexabilityProviderInterface` para que a auditoria verifique elegibilidade sem recalcular projeções completas na passagem catálogo→fonte. A passagem fonte→catálogo ainda verifica hashes completos.
+
+No dev.139, `ContentIndexConcurrencyKernelTest` passou em MariaDB com 3 testes / 56 assertions, incluindo quatro processos produtores concorrentes, disputa de claim e proteção contra conclusão obsoleta. `ContentIndexSchemaKernelTest` passou em MariaDB com 51 testes / 544 assertions; 1 depreciação Core e 52 PHPUnit foram reportadas.
+
+No dev.114, `ContentIndexConcurrencyKernelTest` verifica duas sessões MariaDB
+distintas usando o prefixo isolado do Kernel (2 testes / 23 assertions). Durante
+a promoção, o leitor continua na geração anterior e um agendamento concorrente
+espera o commit; após retentar, seu trabalho bloqueia rollback até ser concluído.
+Na limpeza final, outro gerenciador espera o commit e depois encontra a geração
+já removida. O timeout de um segundo só afeta a sessão concorrente do teste.
+Não equivale a carga com vários workers PHP nem à homologação no Runtime.
+
+## Bloco de conteúdo relacionado (I-02, inspirado no OpenCulturas, 2026-10-28)
+
+O índice já guarda relações nomeadas. A melhoria é um bloco "Conteúdo relacionado" que consulta essas
+relações, respeita o acesso por entidade e por purpose, e não aparece quando não há relação suficiente.
+O bloco nunca consulta as entidades de origem diretamente: lê só o índice. O cache usa as tags das
+entidades relacionadas, sem contexto de usuário. Ordem: prioridade da relação, depois data de publicação.
+Referência visual: V-2 do comparativo.
+
+## Provider services
+
+Um módulo proprietário pode registrar um provider como serviço e marcá-lo com a tag `aculta_index.provider`. O provider implementa `ContentIndexProviderInterface`, declara ID estável e lista de tipos/bundles que conhece. Serviços de módulos desativados não são carregados pelo Drupal.
+
+```yaml
+services:
+  aculta_example.content_index_provider:
+    class: Drupal\aculta_example\Index\ExampleContentIndexProvider
+    tags:
+      - { name: aculta_index.provider }
+```
+
+O registry detecta IDs duplicados, IDs inválidos e declarações malformadas de entidade/bundle durante a construção do container. Cada provider declara `getProjectionVersion(): int`; essa versão integra o fingerprint da geração e deve ser incrementada quando a projeção mudar. Gerações parciais com outra versão não podem ser retomadas. Os DTOs neutros `ContentIndexProjection` e `ContentIndexRelation` e o contrato `ContentIndexProviderInterface` vivem no namespace base do Portal, portanto podem ser implementados sem dependência do submódulo. O registry não concede nem verifica acesso a conteúdo.
+
+Providers podem implementar `ContentIndexAccessContextProviderInterface` para indicar um purpose canônico, e `ContentIndexAccessPolicyProviderInterface` para acrescentar uma regra contextual à Entity Access. O filtro troca temporariamente o Domain, combina ambas as decisões para o mesmo usuário e restaura o contexto anterior. Sem provider ativo, Domain pedido ou policy determinável, a entrada não é exposta. O Index não infere purpose por hostname nem reduz grants/Group.
+
+Integrações atuais: Revista (`node:revista`); Wiki (`node:wiki_entry`) com relações outgoing `related_entry`, `wiki_category` (`taxonomy_term:wiki_category`) e `wiki_image` (`media:image`); Fórum (tópicos, ForumPosts e Comments legados); Gallery (`media_gallery` com relações explícitas para `media:image`); LMS (`group:lms_course` com relações `course_reading`, `course_gallery`, `course_document` e `course_video` via `field_lms_videos`; provider v4 com o plugin PDF Group e v3 sem ele, em `aculta_lms_resources` 0.1.0-dev.17); Media (`image`, `document`, `course_document`, `forum_attachment` e `remote_video`). Image, documentos de turma e anexos mantêm seus owners; o Portal fornece provider de `remote_video`, compartilhado por Revista, Wiki, Fórum e LMS. A categoria Wiki pertence à Wiki e usa `aculta_image` para Media; consultas revalidam Entity Access (Wiki MariaDB 3/84). Vídeo remoto não tem purpose fixo: Entity Access é revalidado no contexto da consulta. O provider Portal não projeta URL oEmbed, corpo, miniatura nem dados pessoais. O contrato das relações de vídeo foi definido em [ACULTA-CONTENT-INDEX-VIDEO-RELATIONS](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-VIDEO-RELATIONS.md); LMS projeta `course_video` via `field_lms_videos`, e a Revista v3 projeta `embedded_video` de embeds `media_embed` no `body`, rastreados na revisão corrente. Wiki e Fórum ainda não projetam essa relação e permanecem limitados pelas allowlists dos respectivos formatos. Nenhum módulo obtém acesso apenas por estar no catálogo.
+
+## Escrita e reconstrução
+
+`ContentIndexWriter::write()` continua sendo a API incremental por identidade.
+O rebuild chama `writeBatch()` com páginas de até 500 projeções: o lote inteiro
+é gravado numa transação, conflitos revertem o lote para repetição pelo
+checkpoint e a revisão do cache de candidatos avança uma vez após alterações.
+A invalidação de cache acontece depois do commit. O limite de lote acompanha o
+máximo do enumerador e do rebuilder; operações incrementais de worker continuam
+usando escrita unitária.
+
+Em fixture de 10.000 Nodes, o backfill de três rodadas passou de mediana
+65,97 s para 8,21 s após o batching. Isso mede o provider fixture e o banco
+local dedicado; não é SLO nem previsão de produção. Consulte a
+[comparação completa](../../../../../../docs/portal/benchmarks/ACULTA-CONTENT-INDEX-MAINTENANCE-2026-10-23.md).
+
+## Estatísticas opcionais
+
+`aculta_index.statistics_bridge` recebe uma página produzida por `ContentIndexQuery`, cujos itens já passaram pela revalidação de Entity Access, envia no máximo 100 identidades ao contrato `ContentEntityMetricAggregatorInterface` e retorna as mesmas entidades autorizadas com totais e cursor. O consumidor pode renderizar a página sem refazer a consulta. A integração não faz junção entre tabelas. Se Statistics não estiver habilitado, o resultado marca `available=false` e não inventa totais. Statistics valida permissão, catálogo, sensibilidade e semântica de dimensão; somente métricas com dimensão de ID simples explicitamente permitida são aceitas. Métricas e eventos continuam sob propriedade de Statistics.
+
+Os filtros da página precisam corresponder ao tipo e bundle aceitos pela métrica. No adapter atual, `wiki.entries.*` exige `node:wiki_entry` e `media.files.requests` exige `file:file` (além de permissão administrativa). Uma página incompatível é rejeitada pelo Statistics; o bridge não descarta conteúdo nem calcula totais parciais. O submódulo opcional `aculta_index_file` registra `file:file` (somente arquivos permanentes; sem nome, URI, MIME ou tamanho), tornando `media.files.requests` alcançável pelo bridge quando o submódulo está habilitado e a conta tem `administer aculta_statistics`. Sem o submódulo, a métrica continua sem provider.
+
+## Ativação
+
+O submódulo depende do módulo base `aculta_portal`, mas não é ativado por ele. Nenhum módulo de origem depende obrigatoriamente de `aculta_index`; integrações futuras devem usar dependência opcional e manter seu comportamento principal sem o índice.
+
+Na instalação, `hook_schema()` cria as tabelas derivadas e `hook_install()` cria o singleton com geração ativa vazia. Nenhum conteúdo é indexado ou exposto até uma futura reconstrução validada. Desativar/remover o submódulo não afeta as entidades de origem.
+
+`ContentIndexGenerationManager` cria gerações `building` (recusando uma segunda enquanto a anterior não for validada ou descartada, com bloqueio da linha de estado), permite ativar somente estados validados e mantém somente a geração anterior como `retained` para rollback; gerações retidas mais antigas passam a `discarding` na transação de ativação e cron/Drush as expurgam em lotes limitados. A troca ocorre em transação com bloqueio da linha de estado e comparação de revisão do ponteiro. O rebuild marca a conclusão do backfill por CAS; `ContentIndexRebuilder::validate()` exige essa marca, confere que o inventário de providers não mudou e executa a checagem estrutural na geração em construção antes de promovê-la. Projeções antigas na geração ativa não bloqueiam um rebuild novo já produzido pela versão corrente dos providers. O worker sincroniza as gerações `active`, `building`, `validated` e a única `retained`, usando sequência por identidade e invalidação de cache por geração. A ativação de geração `validated` ou `retained` exige inventário de providers compatível e que não haja trabalho queued, processing, retry ou dead. Enquanto há geração retida, schedule e retry usam o fence da mesma linha singleton da ativação, fechando a corrida entre drenagem da fila e troca do ponteiro.
+
+**Política decidida:** somente a geração imediatamente anterior permanece `retained` e recebe mudanças incrementais para permitir rollback. Na ativação, gerações retidas mais antigas passam atomicamente a `discarding`, deixam de receber eventos e são expurgadas em lotes limitados pelo cron/Drush. Rollback é recusado quando a fila não está drenada ou quando o fingerprint dos providers diverge.
+
+O Core Queue worker recupera estados `processing` sem progresso há cinco minutos como retry com backoff. Para inspeção operacional, `ContentIndexWorkManager::listDead()` retorna uma página de identidades com erro normalizado e `retryDead()` reenvia um item. A CLI Drush permite inspecionar e reparar dead-letters sem criar UI no Kernel. Retry manual exige que o provider proprietário esteja registrado no container ativo. Se o módulo owner estiver desabilitado/removido, o item permanece em dead-letter e não é reenfileirado sem autoridade de projeção.
+
+## Operação via Drush
+
+As operações são explícitas; completar o backfill não ativa a geração:
+
+```text
+drush aculta-index:rebuild start
+drush aculta-index:rebuild batch GENERATION_ID --limit=100
+drush aculta-index:rebuild validate GENERATION_ID
+drush aculta-index:rebuild activate GENERATION_ID
+drush aculta-index:rebuild discard GENERATION_ID
+drush aculta-index:rebuild discard-batch GENERATION_ID --limit=500
+drush aculta-index:rebuild cleanup --limit=500
+drush aculta-index:queue status
+drush aculta-index:queue dead --limit=50
+drush aculta-index:queue retry WORK_ID
+```
+
+Execute `batch` repetidamente até `complete=true`, depois valide e ative. O gate
+recusa ativação enquanto a fila dos providers ativos tiver trabalho pendente ou
+dead-letter. A saída de `queue dead` contém identidades de entidades e deve ficar
+restrita ao terminal de operadores autorizados. Os comandos foram implementados
+localmente. No smoke check temporário autorizado de 2026-10-23, a descoberta live dos três
+comandos foi confirmada com `drush list --raw` e `drush help`. Não se executaram
+auditoria, fila ou operações de rebuild contra dados no Runtime; o módulo foi
+desinstalado e suas tabelas removidas após a verificação.
+
+Uma geração parcial incompatível ou abandonada pode ser encerrada com `discard`
+somente enquanto estiver em `building`. Repita `discard-batch` até `complete=true`;
+cada chamada remove no máximo o limite solicitado de entradas e relações, apaga
+os cursors persistidos dessa geração e, por último, remove seu registro. A troca
+para `discarding` impede novas escritas e remove a geração dos destinos de eventos
+incrementais. Gerações ativas, validadas e a geração anterior retida para rollback não são aceitas. Gerações antigas supersedidas são expurgadas por `cleanup` ou cron.
+O procedimento afeta apenas dados derivados do índice, nunca entidades de origem.
+
+## Auditoria incremental
+
+O cron processa no máximo um lote (200 linhas) por execução. O checkpoint percorre
+primeiro entradas e depois relações usando as chaves primárias capturadas no início
+do ciclo. Um ciclo novo só começa após 24 horas do término anterior. O estado
+agrega contagens e não guarda títulos, corpos ou IDs das entidades com problemas.
+Quando uma entrada da geração ativa usa uma versão antiga de provider ainda
+registrado, o lote agenda novamente sua identidade no work manager após persistir
+o checkpoint. A fila deduplica o trabalho e o worker relê a entidade pelo provider
+atual. O mesmo lote carrega fontes em grupos limitados e compara o hash canônico da
+projeção. Fonte ausente, tradução removida ou bundle que saiu do ownership
+confirmado agenda exclusão; hash divergente agenda nova projeção. Provider,
+entity type ou bundle sem ownership verificável é contado e preservado. Todo job
+é agendado depois do checkpoint e somente se a geração auditada continuar ativa.
+Providers desativados ou sem ownership verificável permanecem preservados e não
+recebem jobs destrutivos. Após reativação, o provider owner precisa ser registrado
+e a auditoria deve confirmar que a fonte não existe antes de enfileirar a exclusão
+da projeção derivada; o worker apaga somente essa projeção.
+
+```text
+drush aculta-index:audit status
+drush aculta-index:audit start
+drush aculta-index:audit batch --limit=200
+```
+
+O comando manual pode continuar um ciclo existente; um novo `start` é recusado
+enquanto outro ciclo estiver em execução. A auditoria verifica estrutura e
+reconcilia a geração ativa em lotes limitados, nas duas direções. A fase de
+entradas carrega entidades por tipo, revalida o provider proprietário e compara o
+hash canônico; projeções divergentes são refileiradas e fontes confirmadamente
+ausentes são removidas via work manager. A fase `sources` percorre providers e
+tipos pelo enumerador keyset e encontra entidades elegíveis sem entrada no
+catálogo, também refileirando-as. Ownership/provider indisponível é contado e
+preservado; providers desabilitados e gerações retidas não são apagados. Quando
+o provider volta a ser habilitado, ele retoma ownership e a auditoria valida as
+fontes antes de reenfileirar projeções ou remoções. O Portal não mantém manifesto
+para excluir dados de um owner indisponível. O cursor persistido identifica
+provider, entity type e último ID, sem expor IDs no estado
+Drush. A validação do rebuild mantém suas verificações estruturais da geração em
+construção.
+
+## Cache interno de candidatos
+
+A consulta guarda somente a página limitada de identidades candidatas por até
+60 segundos. A chave inclui geração, revisão monotônica, filtros, posição
+keyset, limite e fingerprint dos providers. O writer incrementa a revisão na
+mesma transação em que grava ou remove projeções e invalida as páginas da
+geração. Uma consulta que concorre com escrita só armazena a página se a revisão
+não mudou durante a leitura. Entidades originais e Entity Access são resolvidos
+novamente em toda chamada; o DTO continua sem cacheabilidade compartilhável
+(max-age 0). Escritas diretas ao catálogo fora do writer podem permanecer
+visíveis até o TTL expirar e não fazem parte do contrato de invalidação.
+
+## Relações de saída
+
+`aculta_index.relation_query` consulta uma relação nomeada para uma identidade de
+origem e retorna somente alvos presentes na geração ativa. A consulta é de um
+salto e unidirecional; não percorre relações recebidas ou grafos recursivos.
+Entity Access é revalidado tanto na origem quanto em até 100 alvos candidatos.
+Relações com idioma `und` selecionam a tradução no idioma padrão do site. A
+resposta usa cursor opaco, não calcula totais/facetas e não é cacheada. Edges
+que resolvem ao mesmo alvo e idioma aparecem uma única vez; a paginação usa o
+`entry_id` imutável do alvo.
+
+No dev.115, `ContentIndexMagazineAccessKernelTest` consulta a relação
+`related_activity` depois do rebuild com os providers Magazine e Activity
+declarados nos YAMLs owner. Entity Access é revalidado sob `magazine` para a
+publicação e `main` para a atividade; o Domain de entrada é restaurado.
+MariaDB: 2 testes / 31 assertions PASS, 5 depreciações upstream. Grants
+específicos além do Entity Access e boot completo dos owners continuam
+pendentes.
+
+
+No dev.116, `ContentIndexGalleryProviderKernelTest` também consulta `gallery_image`
+pela API outgoing após reconstruir a geração. Os providers Gallery e `image`
+são carregados pelos YAMLs owner; a conta autenticada pode ver a Gallery no
+purpose `magazine` e a imagem pela Entity Access própria. MariaDB: 2 testes /
+48 assertions PASS, com 9 depreciações Core/contrib. O harness não ativa os
+owners completos nem verifica grants específicos de Gallery/Media.
+
+
+No dev.117, a Gallery de teste aponta para uma imagem publicada e uma não
+publicada. Ambas permanecem como relações derivadas; a consulta outgoing
+retorna somente a imagem permitida pela Entity Access da Media. MariaDB: 2
+testes / 51 assertions PASS, com 9 depreciações Core/contrib.
+
+
+No dev.118, o service-map Unit compila a referência do manager Group com um
+serviço sintético tipado e verifica que o provider LMS declara versão 1 quando
+o plugin PDF Group está ausente. Unit do Index: 39 testes / 204 assertions
+PASS, com 10 depreciações PHPUnit.
+
+
+Em 2026-10-23, regressões Unit focadas nos adapters passaram sem banco:
+Activity 4/13, Fórum 3/14, Gallery 2/13, LMS Resources 13/70, Magazine
+24/96, Wiki 57/258 e contratos compartilhados Portal 2/8; o Unit do Index
+passou com 39/204. O conjunto reportou 37 depreciações PHPUnit/upstream.
+Esses resultados não substituem as suítes Kernel nem o boot dos owners.
+
+
+**Correção do harness Kernel (2026-10-26):** os testes de providers usam agora o caminho do checkout do módulo em vez de `DRUPAL_ROOT` do checkout compartilhado. Os testes Group inicializam o owner `aculta_document_viewer_group`; fixtures Wiki instalam os schemas `flagging` e `history` ativados pelos hooks reais. Execuções focais após a correção: Media 5/101 PASS; Group/owner/Wiki 10/361 PASS (272 depreciações Core/contrib). Suíte Kernel completa após reparo: 111 testes / 1.852 assertions PASS; 280 depreciações e 54 PHPUnit depreciações reportadas separadamente, sem erro/falha.
+
+## Backlog OC315 - descoberta cultural (2026-10-29)
+
+O [OpenCulturas 3.1.5](../../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md) usa Search API + view mode de indexação + três facetas. O ACULTA **já possui** providers de Index, relações nomeadas, consulta paginada e ACL: **não reimplementar** esses mecanismos.
+
+- **OC-IDX1 / P0:** mapear integração de `aculta_event` e `aculta_event_location` com descoberta cultural, mantendo Search API como índice textual e `aculta_index` como catálogo transversal/relacional. Documentar possíveis sobreposições antes de criar nova projeção.
+- **OC-IDX2 / P0:** consulta/publicação restrita ao purpose, entidade e usuários habilitados; evitar renderização indiscriminada de dados privados e referências LMS em páginas globais.
+- **OC-IDX3 / P1:** facetas opcionais (tipo, categoria, período, localidade, acessibilidade) e componentes de listagem com paginação sem JS obrigatório. `drupal/facets` **não está aprovado como dependência** por esta auditoria.
+- **OC-IDX4 / P1:** testes de duas contas e propósito de domínio diferente, invalidação por atualização/remoção e benchmark de volume. Sem `accessCheck(FALSE)` propagado à vitrine pública.
+
+Estado: **planejado; nenhum provider, índice, schema ou configuração modificados**.
+
+## Events e Locais - contrato IDX-LOC planejado (2026-10-29)
+
+[Plano LOC](../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), seção 6, e
+[roadmap do Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
+Providers Event/Location já registrados não comprovam descoberta integrada.
+O incremento prevê canônicos, indexabilidade pública, relação event_location
+via Datas, busca paginada, fila/remoção e testes reais de acesso/Domain/cache.
+Sem novo índice, provider por ocorrência ou duplicação da fonte; adapters no
+Events. Nenhuma implementação, rebuild ou nova homologação neste registro.
+
+**Revalidação 2026-11-02:** suíte Unit completa em MariaDB `aculta_simpletest`: 51 testes / 265 assertions, PASS. Suíte Kernel completa: 127 testes / 2.171 assertions, PASS; 274 depreciações Core/contrib. PHPCS Drupal/DrupalPractice, PHP lint dos arquivos PHP, aliases temporários, rotas administrativas no domínio principal e índice de status passaram. Nenhum rebuild ou escrita no Runtime foi executado. O aviso inicial do runner sobre diretório HTML não gravável foi resolvido criando `$SUITE_OUT`; não afetou a execução PHPUnit.

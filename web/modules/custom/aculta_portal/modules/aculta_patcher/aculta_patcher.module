@@ -1,0 +1,51 @@
+<?php
+
+/**
+ * @file
+ * Trilha de auditoria das alterações de patch ACULTA.
+ */
+
+declare(strict_types=1);
+
+use Drupal\aculta_patcher\Entity\AcultaPatch;
+use Drupal\aculta_patcher\PatchAuditMessage;
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function aculta_patcher_aculta_patch_insert(EntityInterface $entity): void {
+  aculta_patcher_audit('criado', $entity);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function aculta_patcher_aculta_patch_update(EntityInterface $entity): void {
+  aculta_patcher_audit('alterado', $entity);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function aculta_patcher_aculta_patch_delete(EntityInterface $entity): void {
+  aculta_patcher_audit('excluído', $entity);
+}
+
+/**
+ * Registra a alteração no canal aculta_patcher.
+ */
+function aculta_patcher_audit(string $action, EntityInterface $entity): void {
+  if (!$entity instanceof AcultaPatch) {
+    return;
+  }
+  $message = PatchAuditMessage::format(
+    $action,
+    (string) $entity->id(),
+    $entity->getPackage(),
+    $entity->getVersion(),
+    (bool) $entity->status(),
+    (int) \Drupal::currentUser()->id(),
+  );
+  \Drupal::logger('aculta_patcher')->notice($message);
+}

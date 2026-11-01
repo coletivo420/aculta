@@ -1,0 +1,9 @@
+name: Identidade sem avatar no fixture defensivo
+description: 'O estado de teste sem o slot de avatar não inventa uma imagem ou inicial, nem cria link público que o owner não autorizou. Em produção, o AvatarResolver fornece o avatar do acervo.'
+component: aculta420:profile-identity
+props:
+  display_name: Perfil Exemplo
+  hint: Atualize sua apresentação pública.
+slots:
+  actions:
+    markup: '<a class="btn btn-outline-primary" href="#foto">Adicionar foto</a>'

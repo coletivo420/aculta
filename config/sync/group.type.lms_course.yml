@@ -1,0 +1,14 @@
+uuid: bcb6b6e9-0c40-4e54-b310-cbe522781fc9
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: syRuPwm6UVjSrMUz6u7iCKALR6GbubCP0m6D-WwFAt0
+id: lms_course
+label: Curso
+description: ''
+new_revision: true
+creator_membership: true
+creator_wizard: false
+creator_roles:
+  - lms_course-course_creator

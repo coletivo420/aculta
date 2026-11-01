@@ -1,0 +1,8 @@
+uuid: ec495835-784e-4ad8-a008-b08fed6e83a5
+langcode: pt-br
+status: true
+dependencies: {  }
+id: aculta-footer-content
+label: Conteúdo
+description: 'Navegação de notícias, atividades e comunicação no footer.'
+locked: false

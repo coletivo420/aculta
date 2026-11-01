@@ -1,0 +1,12 @@
+uuid: f36153fc-cf20-4c81-91c6-a069f8b87a34
+langcode: pt-br
+status: true
+dependencies: {  }
+id: conta_aculta_org
+domain_id: 792936
+hostname: conta.aculta.org
+name: 'ACULTA - Conta'
+scheme: https
+weight: 2
+is_default: false
+path_prefix: ''

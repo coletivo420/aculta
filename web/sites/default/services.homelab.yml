@@ -1,0 +1,18 @@
+parameters:
+  renderer.config:
+    required_cache_contexts: ['languages:language_interface', 'theme', 'user.permissions', 'domain']
+    auto_placeholder_conditions:
+      max-age: 0
+      contexts: ['session', 'user']
+      tags: []
+    debug: false
+  session.storage.options:
+    gc_probability: 1
+    gc_divisor: 100
+    gc_maxlifetime: 200000
+    cookie_lifetime: 2000000
+    cookie_domain: '.aculta.toca.net.br'
+    cookie_samesite: Lax
+    cookie_httponly: true
+    cookie_secure: true
+    name_suffix: ''

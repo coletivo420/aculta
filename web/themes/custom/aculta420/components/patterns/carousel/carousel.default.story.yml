@@ -1,0 +1,8 @@
+name: Padrão
+description: Carrossel com dois slides.
+component: aculta420:carousel
+props: {}
+slots:
+  slides:
+    markup: <div class="carousel-item active"><p>Primeiro slide</p></div><div class="carousel-item"><p>Segundo
+      slide</p></div>

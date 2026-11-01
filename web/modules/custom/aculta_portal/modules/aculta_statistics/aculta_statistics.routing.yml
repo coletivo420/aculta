@@ -1,0 +1,60 @@
+aculta_statistics.retention:
+  path: '/painel-administrativo/aculta/estatisticas/retencao'
+  defaults:
+    _form: '\Drupal\aculta_statistics\Form\RetentionSettingsForm'
+    _title: 'Retenção de estatísticas'
+  requirements:
+    _permission: 'administer aculta_statistics'
+
+aculta_statistics.wiki_read:
+  path: '/estatisticas/wiki/{node}/leitura'
+  defaults:
+    _controller: 'aculta_statistics.wiki_read_controller:record'
+  methods: [POST]
+  requirements:
+    _access: 'TRUE'
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+aculta_statistics.dashboard:
+  path: '/painel-administrativo/aculta/estatisticas'
+  defaults:
+    _controller: '\Drupal\aculta_statistics\Controller\StatisticsDashboardController::overview'
+    _title: 'Estatísticas'
+  requirements:
+    _permission: 'administer aculta_statistics'
+
+aculta_statistics.dashboard_export:
+  path: '/painel-administrativo/aculta/estatisticas/exportar'
+  defaults:
+    _controller: '\Drupal\aculta_statistics\Controller\StatisticsDashboardController::export'
+    _title: 'Exportar estatísticas'
+  requirements:
+    _permission: 'administer aculta_statistics'
+
+aculta_statistics.wiki_ranking_export:
+  path: '/painel-administrativo/aculta/estatisticas/area/wiki/ranking.csv'
+  defaults:
+    _controller: '\Drupal\aculta_statistics\Controller\StatisticsDashboardController::wikiRankingExport'
+    _title: 'Exportar ranking da Wiki'
+  requirements:
+    _permission: 'administer aculta_statistics'
+
+aculta_statistics.wiki_revision_export:
+  path: '/painel-administrativo/aculta/estatisticas/area/wiki/revisoes.csv'
+  defaults:
+    _controller: '\Drupal\aculta_statistics\Controller\StatisticsDashboardController::wikiRevisionExport'
+    _title: 'Exportar histórico de edição da Wiki'
+  requirements:
+    _permission: 'administer aculta_statistics'
+
+aculta_statistics.area:
+  path: '/painel-administrativo/aculta/estatisticas/area/{area}'
+  defaults:
+    _controller: '\Drupal\aculta_statistics\Controller\StatisticsDashboardController::overview'
+    _title: 'Estatísticas por área'
+  requirements:
+    _permission: 'administer aculta_statistics'
+    area: 'vendas|email|lms|links|forum|midia|wiki'

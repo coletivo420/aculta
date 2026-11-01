@@ -1,0 +1,6 @@
+name: Sem ações
+description: Cabeçalho sem a área de ações e sem texto de apoio.
+component: aculta420:hero
+props:
+  title: Associação Cultural Antiproibicionista
+  slogan: Lutando por um futuro livre da proibição.

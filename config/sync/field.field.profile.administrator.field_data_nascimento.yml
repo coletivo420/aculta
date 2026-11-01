@@ -1,0 +1,22 @@
+uuid: 7b5a168d-c5fe-4c7e-88b4-a45300ba83a3
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_data_nascimento
+    - profile.type.administrator
+  module:
+    - datetime
+id: profile.administrator.field_data_nascimento
+field_name: field_data_nascimento
+entity_type: profile
+bundle: administrator
+label: 'Data de nascimento'
+description: 'Dado de associado. Visível só no relatório administrativo.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime
+

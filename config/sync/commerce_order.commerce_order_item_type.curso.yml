@@ -1,0 +1,11 @@
+uuid: d0ee0302-7495-4519-8aba-a964700893fa
+langcode: pt-br
+status: true
+dependencies: {  }
+id: curso
+label: Curso
+traits: {  }
+locked: false
+purchasableEntityType: commerce_product_variation
+orderType: curso
+

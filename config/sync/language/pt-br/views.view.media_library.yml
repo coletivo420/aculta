@@ -1,0 +1,13 @@
+label: 'Biblioteca de mídia'
+description: 'Seleção e reutilização de mídia no editor. Mantém os displays e argumentos exigidos pelo Media Library.'
+display:
+  default:
+    display_title: Padrão
+    display_options:
+      title: 'Biblioteca de mídia'
+  page:
+    display_title: Página
+  widget:
+    display_title: 'Seletor de mídia'
+  widget_table:
+    display_title: 'Seletor de mídia em tabela'

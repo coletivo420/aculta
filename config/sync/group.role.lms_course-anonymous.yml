@@ -1,0 +1,16 @@
+uuid: 3ef054c7-6c7a-4cfd-9641-885824da5a15
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - group.type.lms_course
+    - user.role.anonymous
+id: lms_course-anonymous
+label: 'Visitante anônimo'
+weight: -20
+admin: false
+scope: outsider
+global_role: anonymous
+group_type: lms_course
+permissions:
+  - 'view group'

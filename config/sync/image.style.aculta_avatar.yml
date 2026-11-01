@@ -1,0 +1,27 @@
+uuid: 4172501b-0a67-4624-9ba0-f271b0290a97
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - crop.type.aculta_avatar_1x1
+  module:
+    - crop
+name: aculta_avatar
+label: 'Avatar institucional ACULTA'
+effects:
+  c8fc4c79-9703-45f4-a383-4091db2b120d:
+    uuid: c8fc4c79-9703-45f4-a383-4091db2b120d
+    id: crop_crop
+    weight: 0
+    data:
+      crop_type: aculta_avatar_1x1
+      automatic_crop_provider: null
+  5af4bcfe-381e-4f62-a25b-8846c669b89e:
+    uuid: 5af4bcfe-381e-4f62-a25b-8846c669b89e
+    id: image_scale
+    weight: 1
+    data:
+      width: 256
+      height: 256
+      upscale: false
+pipeline: aculta_derivados

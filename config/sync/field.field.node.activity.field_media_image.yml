@@ -1,0 +1,25 @@
+uuid: 0771ae21-f2db-46db-b9bd-6de1783cd42b
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_media_image
+    - media.type.image
+    - node.type.activity
+id: node.activity.field_media_image
+field_name: field_media_image
+entity_type: node
+bundle: activity
+label: 'Imagem editorial'
+description: 'Campo editorial administrável: Imagem editorial. Preencha somente com informações verificadas.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+    auto_create: false
+field_type: entity_reference

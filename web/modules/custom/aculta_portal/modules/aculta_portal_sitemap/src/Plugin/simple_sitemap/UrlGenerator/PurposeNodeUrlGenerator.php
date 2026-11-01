@@ -1,0 +1,301 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_portal_sitemap\Plugin\simple_sitemap\UrlGenerator;
+
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountSwitcherInterface;
+use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\node\NodeInterface;
+use Drupal\path_alias\AliasManagerInterface;
+use Drupal\simple_sitemap\Logger;
+use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginBase;
+use Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator\UrlGeneratorBase;
+use Drupal\domain_config\Config\DomainConfigCollectionUtils;
+use Drupal\simple_sitemap\Settings;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Gera URLs canônicas de nós cuja origem é o purpose da variante.
+ *
+ * Regras (ADR-009, política de indexação 0.1.0-D):
+ * - R1/R2: o nó entra somente no sitemap do purpose de seu field_domain_source;
+ * - R3: somente nós publicados;
+ * - R4: somente o que um usuário anônimo pode visualizar (verificado com a
+ *   conta anônima);
+ * - R5a: exclui nós com robots noindex no metatag;
+ * - R7: URLs usam o host do ambiente definido pelo ACULTA Deployer; teste
+ *   mantém noindex.
+ *
+ * @UrlGenerator(
+ *   id = "aculta_purpose_node",
+ *   label = @Translation("ACULTA: nós por purpose"),
+ *   description = @Translation("Nós públicos no host do ambiente definido pelo Deployer."),
+ * )
+ */
+final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
+
+  /**
+   * Chave de configuração de terceiros da variante que guarda o purpose.
+   */
+  public const PURPOSE_KEY = 'purpose';
+
+  /**
+   * Purposes com política de indexação ativa.
+   *
+   * SHOP fica fora até ter catálogo público; FORUM e ACCOUNT nunca entram.
+   */
+  public const INDEXABLE_PURPOSES = ['main', 'support', 'magazine', 'wiki', 'courses', 'links', 'eventos'];
+
+  /**
+   * Purposes cuja página inicial é uma rota, em vez de um nó.
+   *
+   * SUPPORT usa a raiz do subdomínio (DT-P23); MAGAZINE, WIKI e COURSES usam
+   * suas rotas de front.
+   */
+  public const ROOT_PURPOSES = ['main', 'support', 'magazine', 'wiki', 'courses', 'links', 'eventos'];
+
+  /**
+   * Páginas públicas que não são nós, como rotas e webforms.
+   *
+   * Mantém a paridade com o sitemap institucional anterior.
+   */
+  public const PUBLIC_PATHS = [
+    'main' => ['/contato'],
+    'wiki' => ['/wiki/verbetes'],
+    // Listagens de eventos; cada evento publicado é tratado à parte.
+    'eventos' => ['/eventos', '/calendario', '/locais', '/mapa'],
+  ];
+
+  /**
+   * Bundles elegíveis na política de indexação.
+   */
+  public const BUNDLES = ['page', 'activity', 'document', 'wiki_entry', 'revista'];
+
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    Logger $logger,
+    Settings $settings,
+    private readonly DomainPurposeManager $purposes,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly AccountSwitcherInterface $accountSwitcher,
+    private readonly StorageInterface $configStorage,
+    private readonly AliasManagerInterface $aliasManager,
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $logger, $settings);
+  }
+
+  /**
+   * Creates the plugin instance.
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): SimpleSitemapPluginBase {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('simple_sitemap.logger'),
+      $container->get('simple_sitemap.settings'),
+      $container->get('aculta_portal.domain_purpose'),
+      $container->get('entity_type.manager'),
+      $container->get('account_switcher'),
+      $container->get('config.storage'),
+      $container->get('path_alias.manager'),
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDataSets(): array {
+    $purpose = $this->sitemapPurpose();
+    if ($purpose === NULL || !in_array($purpose, self::INDEXABLE_PURPOSES, TRUE)) {
+      return [];
+    }
+    $domain = $this->purposes->getDomain($purpose);
+    if ($domain === NULL) {
+      return [];
+    }
+    $sets = [];
+    if (in_array($purpose, self::ROOT_PURPOSES, TRUE)) {
+      $sets[] = ['purpose' => $purpose, 'root' => TRUE];
+    }
+    foreach (self::PUBLIC_PATHS[$purpose] ?? [] as $path) {
+      $sets[] = ['purpose' => $purpose, 'path' => $path];
+    }
+    $ids = $this->entityTypeManager->getStorage('node')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('status', 1)
+      ->condition('type', self::BUNDLES, 'IN')
+      ->condition('field_domain_source', $domain->id())
+      ->sort('nid')
+      ->execute();
+    $size = (int) $this->settings->get('entities_per_queue_item', 50);
+    foreach (array_chunk(array_values($ids), max(1, $size)) as $chunk) {
+      $sets[] = ['purpose' => $purpose, 'ids' => $chunk];
+    }
+    // Eventos publicados (F7). Cancelado e rascunho não entram no sitemap.
+    if ($purpose === 'eventos' && $this->entityTypeManager->hasDefinition('aculta_event')) {
+      $eventos = $this->entityTypeManager->getStorage('aculta_event')->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('field_status', 'publicado')
+        ->sort('id')
+        ->execute();
+      foreach (array_chunk(array_values($eventos), max(1, $size)) as $chunk) {
+        $sets[] = ['purpose' => $purpose, 'event_ids' => $chunk];
+      }
+    }
+    return $sets;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function processDataSet($data_set): array {
+    return $this->collect($data_set);
+  }
+
+  /**
+   * Generates a flat list of path data, with one entry per URL.
+   *
+   * {@inheritdoc}
+   */
+  public function generate($data_set): array {
+    return $this->collect($data_set);
+  }
+
+  /**
+   * Collects generated URLs for one dataset.
+   *
+   * @return array<int, array<string, mixed>>
+   *   Generated path data.
+   */
+  private function collect(array $data_set): array {
+    $purpose = (string) ($data_set['purpose'] ?? '');
+    if (!empty($data_set['root'])) {
+      $root = $this->purposes->environmentPathUrl($purpose, '/');
+      return $root === NULL ? [] : [$this->constructPathData($root)];
+    }
+    if (isset($data_set['event_ids'])) {
+      $resultados = [];
+      foreach ($this->entityTypeManager->getStorage('aculta_event')->loadMultiple($data_set['event_ids']) as $evento) {
+        // Só publicado entra; o status é conferido de novo, não só na consulta.
+        if ((string) $evento->get('field_status')->value !== 'publicado'
+          || (string) $evento->get('field_slug')->value === '') {
+          continue;
+        }
+        $path = '/eventos/' . (string) $evento->get('field_slug')->value;
+        $url = $this->purposes->environmentPathUrl($purpose, $path);
+        if ($url !== NULL) {
+          // Eventos não têm campo de alteração; lastmod é opcional.
+          $resultados[] = $this->constructPathData($url);
+        }
+      }
+      return $resultados;
+    }
+    if (isset($data_set['path'])) {
+      $url = $this->purposes->environmentPathUrl($purpose, (string) $data_set['path']);
+      return $url === NULL ? [] : [$this->constructPathData($url)];
+    }
+    $results = [];
+    // R4: a elegibilidade de visualização é verificada como usuário anônimo.
+    $this->accountSwitcher->switchTo(new AnonymousUserSession());
+    try {
+      foreach ($this->entityTypeManager->getStorage('node')->loadMultiple($data_set['ids'] ?? []) as $node) {
+        if (!$node instanceof NodeInterface || !$this->isEligible($node, $purpose)) {
+          continue;
+        }
+        $url = $this->purposes->environmentRouteUrl(
+          $purpose,
+          'entity.node.canonical',
+          ['node' => $node->id()],
+        );
+        if ($url === NULL) {
+          continue;
+        }
+        $results[] = $this->constructPathData($url, [
+          'lastmod' => date('c', (int) $node->getChangedTime()),
+        ]);
+      }
+    }
+    finally {
+      $this->accountSwitcher->switchBack();
+    }
+    return $results;
+  }
+
+  /**
+   * Checks publication, access, purpose, front-page and noindex eligibility.
+   */
+  private function isEligible(NodeInterface $node, string $purpose): bool {
+    if (!$node->isPublished()) {
+      return FALSE;
+    }
+    // Avalia no purpose de origem: o Portal só libera verbetes da WIKI quando o
+    // domínio ativo também é o da WIKI.
+    $viewable = $this->purposes->runInPurpose($purpose, static fn(): bool => $node->access('view'));
+    if ($viewable !== TRUE) {
+      return FALSE;
+    }
+    $source = $node->hasField('field_domain_source') && !$node->get('field_domain_source')->isEmpty()
+      ? $this->purposes->getPurposeForDomainId((string) $node->get('field_domain_source')->target_id)
+      : NULL;
+    if ($source !== $purpose) {
+      return FALSE;
+    }
+    // A página inicial do purpose é representada pela raiz do host.
+    // O nó que ocupa essa posição redireciona para a raiz; listá-lo duplicaria
+    // a URL.
+    if ($this->isPurposeFrontNode($node, $purpose)) {
+      return FALSE;
+    }
+    // R5a: noindex declarado no metatag do nó.
+    if ($node->hasField('field_meta_tags') && !$node->get('field_meta_tags')->isEmpty()
+      && stripos((string) $node->get('field_meta_tags')->value, 'noindex') !== FALSE) {
+      return FALSE;
+    }
+    return TRUE;
+  }
+
+  /**
+   * Checks whether a node is the configured front page for its purpose.
+   */
+  private function isPurposeFrontNode(NodeInterface $node, string $purpose): bool {
+    $domain = $this->purposes->getDomain($purpose);
+    if ($domain === NULL) {
+      return FALSE;
+    }
+    // Sem sobrescrita do domínio, a página inicial é a global (system.site).
+    $front = $this->configStorage
+      ->createCollection(DomainConfigCollectionUtils::createDomainConfigCollectionName($domain->id()))
+      ->read('system.site')['page']['front']
+      ?? $this->configStorage->read('system.site')['page']['front']
+      ?? NULL;
+    if (!is_string($front) || $front === '') {
+      return FALSE;
+    }
+    // O alias pode depender do Domain ativo. O índice central pode iniciar a
+    // geração em outro host, então a busca precisa usar o purpose do sitemap.
+    $alias = $this->purposes->runInPurpose(
+      $purpose,
+      fn (): string => $this->aliasManager->getAliasByPath('/node/' . $node->id()),
+    );
+    if (!is_string($alias)) {
+      return FALSE;
+    }
+    return $front === $alias || $front === '/node/' . $node->id();
+  }
+
+  /**
+   * Gets the purpose configured for the active sitemap.
+   */
+  private function sitemapPurpose(): ?string {
+    $purpose = $this->sitemap?->getThirdPartySetting('aculta_portal_sitemap', self::PURPOSE_KEY);
+    return is_string($purpose) && $purpose !== '' ? $purpose : NULL;
+  }
+
+}

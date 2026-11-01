@@ -1,0 +1,16 @@
+uuid: 9870f9df-4449-4b0e-8c02-3d43501d6b6d
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - simple_sitemap.type.aculta_purpose
+  module:
+    - aculta_portal_sitemap
+third_party_settings:
+  aculta_portal_sitemap:
+    purpose: magazine
+id: magazine
+label: 'ACULTA magazine'
+description: null
+type: aculta_purpose
+weight: 0

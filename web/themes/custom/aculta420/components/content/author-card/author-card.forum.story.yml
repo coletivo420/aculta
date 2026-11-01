@@ -1,0 +1,12 @@
+name: Autoria em discussão
+description: Cartão público de autoria; base móvel compacta com avatar de 2.5rem e alinhamento inicial, que retoma avatar de 3rem e alinhamento central a partir de 36rem.
+component: aculta420:author-card
+props:
+  variant: author_forum
+  display_name: Maria Antônia
+  profile_url: /u/maria
+  member_since: '2021'
+  has_avatar: true
+slots:
+  avatar:
+    markup: <span aria-hidden="true">M</span>

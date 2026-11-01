@@ -1,0 +1,29 @@
+uuid: 8b866fde-f7b7-4cf9-b6fd-a9133478177c
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_aculta_categories
+    - node.type.aculta_forum_topic
+    - taxonomy.vocabulary.aculta_forum_categories
+id: node.aculta_forum_topic.field_aculta_categories
+field_name: field_aculta_categories
+entity_type: node
+bundle: aculta_forum_topic
+label: Categoria
+description: 'Categoria pública do tópico.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      aculta_forum_categories: aculta_forum_categories
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

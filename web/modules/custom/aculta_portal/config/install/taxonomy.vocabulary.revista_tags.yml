@@ -1,0 +1,10 @@
+uuid: a1fca0f4-8da7-4354-a865-5c58f1da6b50
+langcode: pt-br
+status: true
+dependencies: {  }
+name: 'Tags da Revista'
+vid: revista_tags
+description: 'Palavras-chave das publicações da Revista.'
+weight: 0
+new_revision: false
+

@@ -1,0 +1,30 @@
+uuid: 31ee4242-81e2-42f4-824c-fedfd2509bc0
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_messenger_attempts
+    - message.template.aculta_msg_forum_published
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: 4DXpSo9rU3UlxNdWnDzTQWo2HXZclalcf9ShLu_0iHI
+id: message.aculta_msg_forum_published.field_aculta_messenger_attempts
+field_name: field_aculta_messenger_attempts
+entity_type: message
+bundle: aculta_msg_forum_published
+label: 'Tentativas de processamento'
+description: 'Número de tentativas do evento de assinatura.'
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

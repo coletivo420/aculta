@@ -1,0 +1,6 @@
+aculta_faq.admin:
+  title: 'FAQ e blocos editoriais'
+  route_name: aculta_faq.admin
+  parent: system.admin_content
+  weight: 35
+

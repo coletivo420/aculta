@@ -1,0 +1,100 @@
+{
+  "organization": "Associação Cultural Antiproibicionista",
+  "email": "4e20coletivo@gmail.com",
+  "official": {
+    "cnpj": "68.238.467/0001-08",
+    "legal_nature": "Associação Privada",
+    "legal_code": "399-9",
+    "opening_date": "2025-10-22",
+    "registration_status": "Ativa",
+    "registered_trade_name": "Coletivo 420",
+    "main_activity": "94.30-8-00 - Atividades de associações de defesa de direitos sociais",
+    "secondary_activity": "94.99-5-00 - Atividades associativas não especificadas anteriormente",
+    "address": "Avenida Cristóvão Colombo, 736\nQuadra 205, Lote 27, Sala 3\nJardim Novo Mundo\nGoiânia - GO\nCEP 74705-130\nBrasil",
+    "street_address": "Avenida Cristóvão Colombo, 736, Quadra 205, Lote 27, Sala 3",
+    "locality": "Goiânia",
+    "region": "GO",
+    "postal_code": "74705-130",
+    "country": "BR",
+    "phone": "(62) 9282-0666",
+    "schema_phone": "+55 62 9282-0666"
+  },
+  "hero": {
+    "eyebrow": "CULTURA • CIDADANIA • PARTICIPAÇÃO",
+    "title": "Associação Cultural Antiproibicionista",
+    "text": "Uma associação cultural sem fins lucrativos que reúne arte, música, comunicação, formação e participação social para fortalecer a cultura, ampliar o acesso à informação e construir redes de cuidado, direitos e cidadania."
+  },
+  "who": {
+    "bar": "QUEM SOMOS",
+    "title": "Cultura como espaço de encontro, expressão e transformação",
+    "paragraphs": [
+      "A Associação Cultural Antiproibicionista é uma organização da sociedade civil, sem fins lucrativos, construída a partir de experiências culturais, comunitárias e de mobilização social em Goiânia.",
+      "Nossa trajetória nasce do encontro entre música, cultura de rua, comunicação e participação popular. Desenvolvemos e apoiamos iniciativas que aproximam pessoas, ocupam espaços culturais, estimulam a produção artística e ampliam o acesso à informação.",
+      "A Associação também atua na promoção da redução de danos, dos direitos humanos e do debate público responsável sobre políticas de drogas, buscando contribuir para uma sociedade mais informada, acolhedora e comprometida com a dignidade das pessoas.",
+      "Por meio de projetos próprios e de parcerias, reunimos artistas, percussionistas, comunicadores, produtores culturais, pesquisadores, profissionais, voluntários e integrantes da comunidade em ações que combinam cultura, conhecimento e participação social."
+    ]
+  },
+  "mission": "Promover cultura, informação, cuidado e participação social por meio de projetos e ações que valorizem a expressão artística, a educação, a redução de danos, os direitos humanos e a construção coletiva de conhecimento.",
+  "work": {
+    "title": "O QUE FAZEMOS",
+    "intro": "Nossa atuação conecta diferentes linguagens e áreas de trabalho. Cultura, comunicação, cuidado e participação comunitária fazem parte de uma mesma construção.",
+    "areas": [
+      {"title": "CULTURA E ARTE", "text": "Realizamos e apoiamos atividades culturais que valorizam a música, a percussão, o reggae, o dub, o carnaval de rua e outras expressões da cultura independente. A rua, as praças, os palcos e os espaços comunitários também são lugares de criação, convivência e formação cultural."},
+      {"title": "COMUNICAÇÃO E FORMAÇÃO", "text": "Produzimos conteúdos, entrevistas, debates e materiais informativos para aproximar conhecimento e sociedade. Buscamos transformar assuntos complexos em conversas acessíveis, estimular o pensamento crítico e abrir espaço para diferentes experiências e saberes."},
+      {"title": "REDUÇÃO DE DANOS E CUIDADO", "text": "Promovemos informação e práticas de redução de danos orientadas pelo cuidado, pela autonomia e pela saúde pública. Em eventos e atividades comunitárias, incentivamos ambientes mais seguros, acolhedores e responsáveis."},
+      {"title": "DIREITOS E PARTICIPAÇÃO SOCIAL", "text": "Acompanhamos debates públicos relacionados aos direitos humanos e às políticas sobre substâncias psicoativas, promovendo informação, participação social e diálogo com a sociedade civil."}
+    ]
+  },
+  "projects_intro": "Da percussão ao audiovisual, do carnaval de rua aos encontros culturais, nossos projetos utilizam diferentes linguagens para aproximar pessoas e fortalecer a participação cultural.",
+  "projects": [],
+  "city": {
+    "title": "CULTURA QUE OCUPA A CIDADE", "callout": "CULTURA SE FAZ JUNTO.",
+    "paragraphs": [
+      "Acreditamos na cultura como ferramenta de encontro e construção coletiva.",
+      "Por isso, parte importante de nossa atuação acontece fora das telas: em ensaios, apresentações, cortejos, encontros, rodas de conversa, eventos e atividades abertas à comunidade.",
+      "Do som dos tambores do Baque Sativa ao reggae e ao dub do Carnareggae, buscamos fortalecer a produção cultural independente e criar espaços onde diferentes pessoas possam participar, aprender, produzir e compartilhar experiências.",
+      "Nossa trajetória está profundamente ligada ao Centro de Goiânia e aos espaços públicos da cidade, entendidos não apenas como lugares de passagem, mas como territórios de cultura, memória, convivência e cidadania."
+    ]
+  },
+  "knowledge": {
+    "title": "INFORMAÇÃO TAMBÉM É CULTURA",
+    "paragraphs": [
+      "Produzir cultura também significa produzir conhecimento.",
+      "A Associação mantém iniciativas de comunicação e formação voltadas à circulação de informações, experiências e diferentes perspectivas sobre cultura, saúde, direitos e sociedade.",
+      "Por meio de entrevistas, publicações, conteúdos digitais, encontros e projetos como o PodPlant420, buscamos construir uma comunicação acessível, responsável e conectada às questões vividas pela comunidade.",
+      "Nosso objetivo não é apenas falar, mas criar espaços de escuta e diálogo entre artistas, pesquisadores, profissionais, movimentos sociais, organizações e pessoas interessadas em compreender melhor os temas que atravessam nossa atuação."
+    ]
+  },
+  "care": {
+    "title": "CUIDADO, INFORMAÇÃO E DIREITOS",
+    "paragraphs": [
+      "A redução de danos faz parte da atuação social da Associação como uma abordagem baseada em cuidado, informação, autonomia e saúde pública.",
+      "Em atividades culturais e comunitárias, buscamos compartilhar orientações que contribuam para escolhas mais conscientes, ambientes mais seguros e relações baseadas no respeito.",
+      "Também acompanhamos discussões sobre direitos humanos e políticas públicas relacionadas às substâncias psicoativas, contribuindo para um debate responsável, baseado em informação e no respeito à dignidade das pessoas."
+    ],
+    "note": "A Associação não tem como finalidade incentivar práticas ilícitas. Sua atuação busca informar, educar, promover cultura, redução de danos, participação social e debate público."
+  },
+  "research": {
+    "title": "CULTURA, CUIDADO E PRODUÇÃO DE CONHECIMENTO",
+    "paragraphs": [
+      "As experiências construídas em nossos projetos também dialogam com a pesquisa e a educação popular em saúde.",
+      "Em 2026, a experiência do Bloco Sativa no Carnaval de Goiânia foi objeto de trabalho desenvolvido na Escola de Governo da Fiocruz, abordando a percussão popular, a redução de danos, a promoção da saúde e o fortalecimento de redes de cuidado no território.",
+      "Esse diálogo reforça uma ideia que acompanha nossa atuação: práticas culturais comunitárias também podem produzir conhecimento, vínculos e cuidado."
+    ]
+  },
+  "transparency": {
+    "bar": "TRANSPARÊNCIA", "title": "Uma associação construída com participação e responsabilidade",
+    "paragraphs": [
+      "A transparência faz parte do compromisso institucional da Associação Cultural Antiproibicionista.",
+      "Mantemos este espaço para facilitar o acesso a informações sobre nossa organização, estrutura associativa, documentos institucionais e atividades desenvolvidas."
+    ],
+    "intro": "A Associação Cultural Antiproibicionista mantém este espaço para facilitar o acesso a informações sobre sua organização, documentos institucionais, estrutura associativa e atividades."
+  },
+  "participation": {
+    "title": "CULTURA SE CONSTRÓI COLETIVAMENTE",
+    "paragraphs": [
+      "A Associação é feita por pessoas que acreditam na cultura, na informação, no cuidado e na participação como instrumentos de transformação social.",
+      "Artistas, músicos, comunicadores, pesquisadores, produtores culturais, voluntários e pessoas interessadas em fortalecer nossas atividades podem acompanhar os projetos, participar dos encontros e contribuir com essa construção."
+    ]
+  }
+}

@@ -1,0 +1,73 @@
+# Subaba E-mail, dentro da aba ACULTA (decisão de 2026-10-20). O painel fica em /painel-administrativo/aculta/mail.
+aculta_mailer.dashboard:
+  title: E-mail
+  description: Envios, entrega, registro, falhas e modelos do e-mail do sistema.
+  route_name: aculta_mailer.dashboard
+  parent: aculta_portal.admin
+  weight: 11
+aculta_mailer.delivery_settings:
+  title: Entrega
+  description: Chave geral, alertas, resumo e rastreamento.
+  route_name: aculta_mailer.delivery_settings
+  parent: aculta_mailer.dashboard
+  weight: 0
+aculta_mailer.log_settings:
+  title: Registro
+  description: Ligar o registro e definir o prazo de retenção.
+  route_name: aculta_mailer.log_settings
+  parent: aculta_mailer.dashboard
+  weight: 1
+aculta_mailer.log_list:
+  title: Envios
+  description: Lista de envios com filtros.
+  route_name: aculta_mailer.log_list
+  parent: aculta_mailer.dashboard
+  weight: 2
+aculta_mailer.failures:
+  title: Falhas
+  description: Relatório de falhas, com reenvio quando há conteúdo guardado.
+  route_name: aculta_mailer.failures
+  parent: aculta_mailer.dashboard
+  weight: 3
+entity.aculta_mailer_template.collection:
+  title: Modelos
+  description: Textos dos e-mails do sistema.
+  route_name: entity.aculta_mailer_template.collection
+  parent: aculta_mailer.dashboard
+  weight: 4
+entity.aculta_mailer_layout.collection:
+  title: Layouts
+  description: Estrutura visual dos e-mails.
+  route_name: entity.aculta_mailer_layout.collection
+  parent: aculta_mailer.dashboard
+  weight: 5
+entity.aculta_mailer_brand.collection:
+  title: Marcas
+  description: Identidade de remetente dos e-mails.
+  route_name: entity.aculta_mailer_brand.collection
+  parent: aculta_mailer.dashboard
+  weight: 6
+aculta_mailer.policy_settings:
+  title: Políticas
+  description: Suspensão e transporte por tipo de e-mail.
+  route_name: aculta_mailer.policy_settings
+  parent: aculta_mailer.dashboard
+  weight: 7
+aculta_mailer.diagnostics:
+  title: Diagnóstico
+  description: SPF, DKIM e DMARC do domínio remetente.
+  route_name: aculta_mailer.diagnostics
+  parent: aculta_mailer.dashboard
+  weight: 8
+aculta_mailer.imap_settings:
+  title: Monitoramento
+  description: Caixa IMAP para devoluções e DMARC.
+  route_name: aculta_mailer.imap_settings
+  parent: aculta_mailer.dashboard
+  weight: 9
+aculta_mailer.settings:
+  title: Configurações
+  description: Configurações gerais do envio de e-mail.
+  route_name: aculta_mailer.settings
+  parent: aculta_mailer.dashboard
+  weight: 10

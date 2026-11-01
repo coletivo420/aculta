@@ -1,0 +1,48 @@
+/* Section title band (DT-T07): moved from content.css. Oswald on the dark green band,
+   with discreet rules in CSS and no images. */
+.aculta-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  padding: 0.625rem 1.25rem;
+  margin-block: var(--aculta-space-section) 1.125rem;
+  color: var(--aculta-text-inverse);
+  background-color: var(--aculta-green-dark);
+  font-family: var(--aculta-font-display);
+  font-size: clamp(1.5625rem, 2vw, 1.8125rem);
+  line-height: 1.1;
+  font-weight: 600;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.aculta-section-title::before,
+.aculta-section-title::after {
+  content: "";
+  flex: 0 0 clamp(0.75rem, 2vw, 1.75rem);
+  height: 1px;
+  background-color: currentColor;
+  opacity: 0.5;
+}
+.aculta-main .aculta-section-title { margin-block: var(--aculta-space-section) 1.125rem; }
+
+.aculta-section-title--red {
+  color: var(--aculta-section-red-text);
+  background-color: var(--aculta-section-red-bg);
+}
+
+.aculta-section-title--green {
+  color: var(--aculta-section-green-text);
+  background-color: var(--aculta-section-green-bg);
+}
+
+.aculta-section-title--yellow {
+  color: var(--aculta-section-yellow-text);
+  background-color: var(--aculta-section-yellow-bg);
+}
+
+.aculta-section-title--green-dark {
+  color: var(--aculta-section-green-dark-text);
+  background-color: var(--aculta-section-green-dark-bg);
+}
+

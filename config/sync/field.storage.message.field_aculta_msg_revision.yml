@@ -1,0 +1,25 @@
+uuid: 40399db9-003a-4586-94c5-2a2227ad51e4
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: m0KVe4UPZKBLtcwaTQ7yyW452g8fNmLD2_PlfIUfJCU
+id: message.field_aculta_msg_revision
+field_name: field_aculta_msg_revision
+entity_type: message
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

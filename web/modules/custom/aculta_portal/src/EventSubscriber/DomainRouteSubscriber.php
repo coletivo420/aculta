@@ -1,0 +1,329 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_portal\EventSubscriber;
+
+use Drupal\aculta_portal\Domain\DomainRoutePolicy;
+use Drupal\Core\Routing\RouteSubscriberBase;
+use Drupal\Core\Routing\RoutingEvents;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Symfony\Component\Routing\RouteCollection;
+
+/**
+ * Applies canonical paths and purpose metadata to known route families. */
+final class DomainRouteSubscriber extends RouteSubscriberBase {
+
+  public function __construct(private readonly ConfigFactoryInterface $configFactory) {}
+
+  /**
+   * {@inheritdoc} */
+  public static function getSubscribedEvents(): array {
+    // Rename Admin Paths runs at -2048; translate its resulting paths after it.
+    return [RoutingEvents::ALTER => [['onAlterRoutes', -2049]]];
+  }
+
+  /**
+   * {@inheritdoc} */
+  protected function alterRoutes(RouteCollection $collection): void {
+    // Doação rápida passa pelo resumo antes do pagamento
+    // (Portal\Donation\DonationSummaryController).
+    if ($quick = $collection->get('aculta_donation.donation.quick')) {
+      $quick->setDefault('_controller', '\\Drupal\\aculta_portal\\Donation\\DonationSummaryController::quick');
+    }
+    // Checkout aceita contas autenticadas sem e-mail confirmado, mantendo as
+    // verificações de propriedade/Commerce e o aceite dos termos.
+    $protected = [
+      'lms.course.start' => 'aculta_portal.access.protected_route:course',
+      'lms.group.answer_form' => 'aculta_portal.access.protected_route:course',
+      'commerce_checkout.form' => 'aculta_portal.access.protected_route:checkout',
+    ];
+    foreach ($protected as $name => $access) {
+      if ($route = $collection->get($name)) {
+        $route->setRequirement('_custom_access', $access);
+      }
+    }
+    if ($route = $collection->get('commerce_checkout.checkout')) {
+      $route->setRequirement('_custom_access', 'aculta_portal.access.protected_route:checkoutStart');
+    }
+    $pathChanges = [
+      'user.login' => '/entrar',
+      'user.register' => '/criar-conta',
+      'user.pass' => '/recuperar-senha',
+      'user.reset' => '/recuperar-acesso/{uid}/{timestamp}/{hash}',
+      'user.reset.form' => '/recuperar-acesso/{uid}',
+      'user.reset.login' => '/recuperar-acesso/{uid}/{timestamp}/{hash}/entrar',
+      'user.logout' => '/sair',
+      'user.logout.confirm' => '/sair/confirmar',
+      'user.logout.http' => '/sair',
+      'user.edit' => '/identidade/editar',
+      'entity.user.canonical' => '/identidade/{user}',
+      'entity.user.edit_form' => '/painel-administrativo/pessoas/{user}/editar',
+      'entity.aculta_mail_confirmer.response_form' => '/confirmar-email/{aculta_mail_confirmer}/{hash}',
+      'entity.aculta_mail_confirmer.resend' => '/confirmar-email/reenviar/{confirmation}',
+      'aculta_mail_confirmer_user.cancel_email_change' => '/seguranca/email/cancelar/{user}',
+      'social_auth.network.redirect' => '/oauth/{network}',
+      'social_auth.network.callback' => '/oauth/{network}/retorno',
+      'social_auth.user.profiles' => '/identidade/{user}/conexoes/oauth',
+      'entity.group.join' => '/grupo/{group}/entrar',
+      'entity.group.leave' => '/grupo/{group}/sair',
+      'lms.course.start' => '/curso/{group}/iniciar',
+      'lms.course.reset_test' => '/curso/{group}/reiniciar-avaliacao',
+      'lms.group.self_results' => '/grupo/{group}/resultados-curso',
+      'lms.answer.details' => '/resposta/{lms_answer}/{js}/detalhes',
+      'entity.lms_answer.edit_form' => '/resposta/{lms_answer}/avaliar',
+      'profile.user_page.single' => '/identidade/{user}/{profile_type}',
+      'profile.user_page.multiple' => '/identidade/{user}/{profile_type}/lista',
+      'profile.user_page.add_form' => '/identidade/{user}/{profile_type}/adicionar',
+      'entity.webform_submission.user' => '/meus-formularios/{user}/{submission_view}',
+      'commerce_payment.notify' => '/integracoes/pagamentos/{commerce_payment_gateway}/notificacao',
+    ];
+    $accountRoutes = array_fill_keys(array_keys($pathChanges), TRUE);
+    unset(
+      $accountRoutes['commerce_payment.notify'],
+      $accountRoutes['entity.user.edit_form'],
+      // Purpose is resolved from the Group for membership actions. LMS route
+      // families are explicitly assigned below instead of ACCOUNT.
+      $accountRoutes['entity.group.join'],
+      $accountRoutes['entity.group.leave'],
+      $accountRoutes['lms.course.start'],
+      $accountRoutes['lms.course.reset_test'],
+      $accountRoutes['lms.group.self_results'],
+      $accountRoutes['lms.answer.details'],
+      $accountRoutes['entity.lms_answer.edit_form'],
+    );
+    $courseRoutes = array_fill_keys([
+      'lms.course.start',
+      'lms.course.reset_test',
+      'lms.group.self_results',
+      'lms.answer.details',
+      'entity.lms_answer.edit_form',
+    ], TRUE);
+
+    // Browser Form API is the supported password-authentication surface.
+    // Core's JSON login/password endpoints bypass Form API and therefore the
+    // Turnstile policy, so this site does not publish them.
+    foreach (['user.login.http', 'user.pass.http'] as $httpRoute) {
+      $collection->remove($httpRoute);
+    }
+
+    // Keep user.page because Core Navigation and other upstream flows still
+    // generate it. It is compatibility-only and never renders Core's generic
+    // profile UI. Do not bind it to a purpose: admin Navigation may generate
+    // the route while the current host is MAIN.
+    if ($route = $collection->get('user.page')) {
+      $route->setDefault('_controller', '\\Drupal\\aculta_portal\\Controller\\PortalController::legacyUserPageRedirect');
+    }
+
+    foreach ($pathChanges as $name => $path) {
+      if ($route = $collection->get($name)) {
+        $route->setPath($path);
+        if (isset($accountRoutes[$name])) {
+          $route->setOption('_aculta_domain_purpose', 'account');
+        }
+        elseif (isset($courseRoutes[$name])) {
+          $route->setOption('_aculta_domain_purpose', 'courses');
+        }
+        elseif ($name === 'commerce_payment.notify') {
+          $route->setOption('_aculta_domain_purpose', 'main');
+          // Provider notifications are machine-to-machine POST requests.
+          // Do not expose a GET variant through Commerce's generic route.
+          $route->setMethods(['POST']);
+        }
+        elseif ($name === 'entity.user.edit_form') {
+          // Core's one-time password reset uses this same route. The request
+          // policy permits it on ACCOUNT only with Core's session token.
+          $route->setOption('_aculta_domain_purpose', 'main');
+        }
+      }
+    }
+
+    // Keep the canonical registration URL available while public sign-up is
+    // closed. When Core registration is enabled later, its normal entity form
+    // remains at the same route and path.
+    if ($route = $collection->get('user.register')) {
+      if ($this->configFactory->get('user.settings')->get('register') !== 'visitors') {
+        $route->setDefault('_title', 'Cadastro temporariamente indisponível');
+        $route->setDefault('_controller', '\\Drupal\\aculta_portal\\Controller\\RegistrationController::closed');
+        $defaults = $route->getDefaults();
+        unset($defaults['_entity_form']);
+        $route->setDefaults($defaults);
+        $requirements = $route->getRequirements();
+        unset($requirements['_access_user_register']);
+        $requirements['_access'] = 'TRUE';
+        $route->setRequirements($requirements);
+      }
+    }
+
+    // Endereços, pagamentos e pedidos não recebem UID na URL; o
+    // AccountRouteSubscriber usa o usuário da sessão para verificar acesso.
+    // Rotas antigas /user/{uid}/... deixam de existir.
+    $account_paths = [
+      'entity.commerce_order.user_view' => ['/pedidos/{commerce_order}', []],
+    ];
+    foreach ($account_paths as $name => [$path, $unused]) {
+      if ($route = $collection->get($name)) {
+        $route->setPath($path);
+        $route->setOption('parameters', array_diff_key((array) $route->getOption('parameters'), ['user' => TRUE]));
+        $route->setOption('_aculta_domain_purpose', 'account');
+      }
+    }
+    // Meios de pagamento não são guardados nem exibidos pelo Portal: o
+    // pagamento é do Mercado Pago. As rotas de cadastro, edição, exclusão,
+    // padrão e listagem são removidas (404).
+    foreach ([
+      'entity.commerce_payment_method.add_form',
+      'entity.commerce_payment_method.edit_form',
+      'entity.commerce_payment_method.delete_form',
+      'entity.commerce_payment_method.set_default',
+    ] as $name) {
+      $collection->remove($name);
+    }
+    // Verificações usam a sessão e a entidade (dono do pedido/perfil).
+    // Ver docs/portal/REDIRECTS.md, seção de caminhos de conta.
+    // Commerce address-book routes are obsolete: the canonical address
+    // editor is aculta_portal.my_data_address (/dados/endereco). Do not
+    // redirect old pages in a development-only route contract.
+    foreach ([
+      'commerce_order.address_book.overview',
+      'commerce_order.address_book.add_form',
+      'commerce_order.address_book.edit_form',
+      'commerce_order.address_book.delete_form',
+      'commerce_order.address_book.set_default',
+    ] as $name) {
+      $collection->remove($name);
+    }
+    // Pedidos e pagamentos são listas do Commerce no painel da conta, sem UID
+    // na URL. O controller do Portal exige login e usa a sessão atual.
+    $account_lists = [
+      'view.commerce_user_orders.order_page' => ['/pedidos', 'orders', 'Meus pedidos'],
+    ];
+    foreach ($account_lists as $name => [$path, $method, $title]) {
+      if ($route = $collection->get($name)) {
+        $route->setPath($path);
+        $route->setDefaults([
+          '_controller' => '\\Drupal\\aculta_portal\\Controller\\PortalController::' . $method,
+          '_title' => $title,
+        ]);
+        $route->setRequirements(['_user_is_logged_in' => 'TRUE']);
+        $route->setOption('parameters', []);
+        $route->setOption('_aculta_domain_purpose', 'account');
+      }
+    }
+    // There is no separate payment-methods screen: remove its old list
+    // route, instead of publishing a temporary /pagamentos alias.
+    $collection->remove('entity.commerce_payment_method.collection');
+    foreach ([
+      'aculta_portal.dashboard',
+      'aculta_portal.my_data',
+      'aculta_portal.my_data_address',
+      'aculta_portal.my_data_other',
+      'aculta_portal.connections',
+      'aculta_portal.security',
+      'aculta_portal.security_password',
+      'aculta_portal.support_my',
+      'aculta_portal.support_subscription_action',
+      'aculta_portal.account_courses',
+      'aculta_portal.account_settings',
+    ] as $name) {
+      if ($route = $collection->get($name)) {
+        $route->setOption('_aculta_domain_purpose', 'account');
+      }
+    }
+    if ($route = $collection->get('aculta_portal.search')) {
+      $route->setOption('_aculta_domain_purpose', 'main');
+    }
+    if ($route = $collection->get('aculta_portal.support_form')) {
+      $route->setOption('_aculta_domain_purpose', 'support');
+    }
+    foreach ([
+      'aculta_portal.wiki_home',
+      'aculta_portal.wiki_search',
+      'aculta_portal.wiki_search_preview',
+      'view.wiki_entries.page_1',
+    ] as $name) {
+      if ($route = $collection->get($name)) {
+        $route->setOption('_aculta_domain_purpose', 'wiki');
+      }
+    }
+    // Páginas de produto pertencem a SHOP (host conforme o ambiente).
+    // Carrinho e checkout continuam no MAIN (DomainRoutePolicy).
+    if ($route = $collection->get('entity.commerce_product.canonical')) {
+      $route->setOption('_aculta_domain_purpose', 'shop');
+    }
+    // O catálogo público também pertence ao purpose SHOP.
+    if ($route = $collection->get('view.aculta_shop_catalog.page_catalog')) {
+      $route->setOption('_aculta_domain_purpose', 'shop');
+    }
+
+    // Listagens por sessão da Revista pertencem ao purpose MAGAZINE.
+    foreach ($collection as $name => $route) {
+      if (str_starts_with((string) $name, 'view.revista_sessoes.')) {
+        $route->setOption('_aculta_domain_purpose', 'magazine');
+      }
+    }
+
+    // Fórum, tópicos e containers pertencem ao purpose FORUM. Admin continua
+    // em MAIN (abaixo).
+    foreach ($collection as $name => $route) {
+      if (str_starts_with((string) $name, 'forum.')
+        || str_starts_with((string) $name, 'aculta_forum.')
+        || str_starts_with((string) $name, 'entity.taxonomy_term.forum_')
+        || str_starts_with((string) $name, 'view.aculta_forum_public_topics.')
+        || str_starts_with((string) $name, 'view.aculta_forum_search.')) {
+        $route->setOption('_aculta_domain_purpose', 'forum');
+      }
+    }
+
+    foreach ($collection as $name => $route) {
+      // Toda rota administrativa pertence a MAIN.
+      if ($route->getOption('_admin_route')) {
+        $route->setOption('_aculta_domain_purpose', 'main');
+      }
+      if (DomainRoutePolicy::isDonationFlowRouteName((string) $name)) {
+        // Escolha do valor fica em SUPPORT; o checkout Commerce fica em MAIN.
+        $purpose = DomainRoutePolicy::purposeForDonationRoute((string) $name);
+        $route->setOption('_aculta_domain_purpose', $purpose);
+        $route->setOption('_aculta_cross_domain_canonical_purpose', $purpose);
+      }
+      if (DomainRoutePolicy::isCentralTransactionRouteName((string) $name)) {
+        $route->setOption('_aculta_domain_purpose', 'main');
+        if ($name !== 'commerce_payment.notify') {
+          // Browser navigation may canonicalize to MAIN. Machine-to-machine
+          // notification POSTs must never be redirected between hosts.
+          $route->setOption('_aculta_cross_domain_canonical_purpose', 'main');
+        }
+      }
+    }
+
+    // Rename Admin Paths runs at -2048. Translate only first-level groups after
+    // its prefix rewrite, leaving stable internal route suffixes untouched.
+    $adminSegments = [
+      'config' => 'configuracoes',
+      'people' => 'pessoas',
+      'content' => 'conteudo',
+      'structure' => 'estrutura',
+      'commerce' => 'comercio',
+      'reports' => 'relatorios',
+      'appearance' => 'aparencia',
+      'modules' => 'modulos',
+    ];
+    foreach ($collection as $route) {
+      $path = $route->getPath();
+      if ($path === '/painel-administrativo' || str_starts_with($path, '/painel-administrativo/')) {
+        $route->setOption('_aculta_domain_purpose', 'main');
+      }
+      // Integrações externas existem somente no MAIN.
+      if ($path === '/integracoes' || str_starts_with($path, '/integracoes/')) {
+        $route->setOption('_aculta_domain_purpose', 'main');
+      }
+      foreach ($adminSegments as $source => $target) {
+        if (preg_match('~^/painel-administrativo/' . preg_quote($source, '~') . '(?:/|$)~', $path)) {
+          $route->setPath(preg_replace('~^/painel-administrativo/' . preg_quote($source, '~') . '(?=/|$)~', '/painel-administrativo/' . $target, $path, 1));
+          break;
+        }
+      }
+    }
+  }
+
+}

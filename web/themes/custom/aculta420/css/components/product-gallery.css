@@ -1,0 +1,26 @@
+/* VVJS product-media sequence, styled with the same contained image frame. */
+.aculta-galeria-produto .vvjs {
+  width: 100%;
+  color: var(--aculta-text-primary);
+  background: var(--aculta-surface-muted);
+}
+
+.aculta-galeria-produto .vvjs-item-inner {
+  display: grid;
+  min-height: 20rem;
+  place-items: center;
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
+.aculta-galeria-produto .vvjs-item-inner img {
+  display: block;
+  width: 100%;
+  max-height: min(70vh, 42rem);
+  object-fit: contain;
+}
+
+.aculta-galeria-produto .vvjs-button {
+  color: var(--aculta-text-primary);
+  background: var(--aculta-surface-page);
+  border: 1px solid var(--aculta-border-strong);
+}

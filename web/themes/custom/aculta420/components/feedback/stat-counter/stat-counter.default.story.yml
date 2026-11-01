@@ -1,0 +1,6 @@
+name: Estatística de exemplo
+description: Valor de demonstração acompanhado do rótulo que explica sua medida.
+component: aculta420:stat-counter
+props:
+  value: 128
+  label: Atividades culturais realizadas

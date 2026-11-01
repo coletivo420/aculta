@@ -1,0 +1,25 @@
+aculta_patcher.patch.*:
+  type: config_entity
+  label: 'Patch ACULTA'
+  mapping:
+    id:
+      type: string
+      label: 'Identificador'
+    label:
+      type: label
+      label: 'Nome'
+    status:
+      type: boolean
+      label: 'Ativo para o próximo build Composer'
+    package:
+      type: string
+      label: 'Pacote Composer'
+    version:
+      type: string
+      label: 'Versão exata validada'
+    issue_url:
+      type: string
+      label: 'Issue ou referência upstream'
+    patch:
+      type: text
+      label: 'Conteúdo unified diff'

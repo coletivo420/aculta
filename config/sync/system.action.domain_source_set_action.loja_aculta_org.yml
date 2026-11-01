@@ -1,0 +1,14 @@
+uuid: b144d8bc-9681-4898-97ba-86c63e136396
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - domain.record.loja_aculta_org
+  module:
+    - domain_source
+id: domain_source_set_action.loja_aculta_org
+label: 'Set content domain source value to the ACULTA - Loja domain'
+type: node
+plugin: domain_source_set_action
+configuration:
+  domain_id: loja_aculta_org

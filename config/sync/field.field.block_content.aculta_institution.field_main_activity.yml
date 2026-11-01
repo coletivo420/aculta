@@ -1,0 +1,19 @@
+uuid: 0f55df77-41c4-4ba1-a5c0-dbc252d551ac
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_institution
+    - field.storage.block_content.field_main_activity
+id: block_content.aculta_institution.field_main_activity
+field_name: field_main_activity
+entity_type: block_content
+bundle: aculta_institution
+label: 'Atividade econômica principal'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

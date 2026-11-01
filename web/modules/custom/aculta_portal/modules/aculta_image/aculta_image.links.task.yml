@@ -1,0 +1,23 @@
+aculta_image.admin.overview:
+  route_name: aculta_image.audit
+  title: 'Visão geral'
+  base_route: aculta_image.audit
+  weight: 0
+
+aculta_image.admin.report:
+  route_name: aculta_image.audit_report
+  title: 'Relatório'
+  base_route: aculta_image.audit
+  weight: 1
+
+aculta_image.admin.cleanup:
+  route_name: aculta_image.cleanup
+  title: 'Limpeza'
+  base_route: aculta_image.audit
+  weight: 2
+
+aculta_image.admin.quarantine:
+  route_name: aculta_image.quarantine
+  title: 'Quarentena'
+  base_route: aculta_image.audit
+  weight: 3

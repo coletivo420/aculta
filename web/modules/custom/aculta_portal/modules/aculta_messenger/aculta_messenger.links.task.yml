@@ -1,0 +1,25 @@
+aculta_messenger.admin_notices.overview:
+  route_name: aculta_messenger.admin_notices
+  title: 'Visão geral'
+  base_route: aculta_messenger.admin_notices
+  weight: 0
+
+aculta_messenger.admin_notices.temporary:
+  route_name: aculta_messenger.admin_temporary_notices
+  title: 'Avisos temporários'
+  base_route: aculta_messenger.admin_notices
+  weight: 1
+
+aculta_messenger.admin_notices.persistent:
+  route_name: aculta_messenger.admin_persistent_notices
+  title: 'Avisos persistentes'
+  base_route: aculta_messenger.admin_notices
+  weight: 2
+
+# Subaba Mensagens dentro da aba Participação do painel ACULTA.
+aculta_messenger.admin_subtab_mensagens:
+  title: 'Mensagens'
+  route_name: aculta_messenger.settings_form
+  base_route: aculta_portal.admin
+  parent_id: aculta_user.admin_tab_pessoas
+  weight: 1

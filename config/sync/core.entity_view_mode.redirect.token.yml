@@ -1,0 +1,11 @@
+uuid: 58f0365f-51c0-43fc-84e4-9a3b17175709
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - redirect
+id: redirect.token
+label: Token
+description: null
+targetEntityType: redirect
+cache: true

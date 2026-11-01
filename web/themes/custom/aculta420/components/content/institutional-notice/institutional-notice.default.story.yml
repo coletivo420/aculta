@@ -1,0 +1,8 @@
+name: Aviso institucional
+description: Alertas Site Alert exibem a severidade nativa em tokens semânticos.
+component: aculta420:institutional-notice
+props:
+  severity: medium
+slots:
+  message:
+    markup: <p>Comunicado temporário da associação.</p>

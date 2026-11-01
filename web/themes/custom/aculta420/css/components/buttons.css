@@ -1,0 +1,82 @@
+/* 10. Public interface buttons use the institutional yellow/red palette. */
+.btn, .button, button.link {
+  --bs-btn-font-family: var(--aculta-font-display);
+  --bs-btn-font-size: 1rem;
+  --bs-btn-font-weight: 600;
+  --bs-btn-focus-shadow-rgb: 104, 148, 39;
+  --aculta-button-bg: var(--aculta-interactive-bg);
+  --aculta-button-color: var(--aculta-interactive-text);
+  --bs-btn-padding-x: 1.25rem;
+  --bs-btn-padding-y: 0.625rem;
+  --bs-btn-line-height: 1.4;
+  text-decoration: none;
+}
+.btn-secondary, .btn-dark,
+.btn-warning, .btn-danger, .btn-light { --aculta-button-bg: var(--aculta-interactive-bg); --aculta-button-color: var(--aculta-interactive-text); }
+
+.btn-primary, .btn-secondary, .btn-success, .btn-info,
+.btn-warning, .btn-danger, .btn-light, .btn-dark, .button {
+  --bs-btn-color: var(--aculta-button-color);
+  --bs-btn-bg: var(--aculta-button-bg);
+  --bs-btn-border-color: var(--aculta-button-bg);
+  --bs-btn-hover-color: var(--aculta-interactive-hover-text);
+  --bs-btn-hover-bg: var(--aculta-interactive-hover-bg);
+  --bs-btn-hover-border-color: var(--aculta-interactive-hover-bg);
+  --bs-btn-active-color: var(--aculta-interactive-hover-text);
+  --bs-btn-active-bg: var(--aculta-interactive-hover-bg);
+  --bs-btn-active-border-color: var(--aculta-interactive-hover-bg);
+  --bs-btn-disabled-color: var(--aculta-button-color);
+  --bs-btn-disabled-bg: var(--aculta-button-bg);
+  --bs-btn-disabled-border-color: var(--aculta-button-bg);
+}
+.btn-warning { --bs-btn-border-color: var(--aculta-control-border); border-inline-start: 3px solid var(--aculta-interactive-active-bg); }
+.btn-danger { --bs-btn-border-color: var(--aculta-control-border); border-inline-start: 3px solid var(--aculta-text-accent); }
+.btn-light { --bs-btn-border-color: var(--aculta-control-border); }
+
+.btn-outline-primary, .btn-outline-success, .btn-outline-info,
+.btn-outline-secondary, .btn-outline-dark, .btn-outline-light,
+.btn-outline-warning, .btn-outline-danger {
+  --bs-btn-color: var(--aculta-interactive-text);
+  --bs-btn-bg: var(--aculta-interactive-bg);
+  --bs-btn-border-color: var(--aculta-interactive-border);
+  --bs-btn-hover-color: var(--aculta-interactive-hover-text);
+  --bs-btn-hover-bg: var(--aculta-interactive-hover-bg);
+  --bs-btn-hover-border-color: var(--aculta-interactive-hover-bg);
+  --bs-btn-active-color: var(--aculta-interactive-active-text);
+  --bs-btn-active-bg: var(--aculta-interactive-active-bg);
+  --bs-btn-active-border-color: var(--aculta-interactive-active-bg);
+  --bs-btn-disabled-color: var(--aculta-interactive-text);
+  --bs-btn-disabled-bg: var(--aculta-interactive-bg);
+  --bs-btn-disabled-border-color: var(--aculta-interactive-border);
+}
+.btn-outline-warning, .btn-outline-danger { --bs-btn-border-color: var(--aculta-interactive-active-bg); }
+.btn-outline-primary, .btn-outline-success, .btn-outline-info,
+.btn-outline-secondary, .btn-outline-dark, .btn-outline-light,
+.btn-outline-warning, .btn-outline-danger {
+  color: var(--aculta-interactive-text);
+  background-color: var(--aculta-interactive-bg);
+  border-color: var(--aculta-interactive-border);
+}
+.btn-link, button.link {
+  --bs-btn-color: var(--aculta-text-primary);
+  --bs-btn-hover-color: var(--aculta-text-primary);
+  --bs-btn-active-color: var(--aculta-text-primary);
+  --bs-btn-disabled-color: var(--aculta-text-primary);
+}
+button.link { color: var(--aculta-text-primary); }
+button.link:hover, button.link:focus { color: var(--aculta-text-accent); }
+
+:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .btn, .button):not(:where(.navbar-toggler, .btn-close, .accordion-button, .vvjb-button, .vvjb-play-pause-button, .btn-link, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .btn, .button))) {
+  color: var(--aculta-interactive-text);
+  background-color: var(--aculta-interactive-bg);
+  border-color: var(--aculta-interactive-border);
+}
+:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .btn, .button):not(:where(.navbar-toggler, .btn-close, .accordion-button, .vvjb-button, .vvjb-play-pause-button, .btn-link, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .btn, .button))):is(:hover, :active) {
+  color: var(--aculta-interactive-hover-text);
+  background-color: var(--aculta-interactive-hover-bg);
+  border-color: var(--aculta-interactive-hover-bg);
+}
+:where(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .btn, .button):not(:where(.navbar-toggler, .btn-close, .accordion-button, .vvjb-button, .vvjb-play-pause-button, .btn-link, .link, .auth-link, .aculta-auth-provider :is(button, input[type="submit"], input[type="button"], input[type="reset"], .form-submit, .btn, .button))):focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 3px;
+}

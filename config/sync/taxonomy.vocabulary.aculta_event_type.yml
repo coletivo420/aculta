@@ -1,0 +1,10 @@
+uuid: 0734a138-4f45-4363-82ec-60d63c28884b
+langcode: pt-br
+status: true
+dependencies: {  }
+name: 'Tipo de evento'
+vid: aculta_event_type
+description: 'Formato de cada evento do ACULTA.'
+weight: 0
+new_revision: false
+

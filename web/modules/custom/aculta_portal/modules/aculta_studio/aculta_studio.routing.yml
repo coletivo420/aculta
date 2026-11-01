@@ -1,0 +1,305 @@
+# Conta and Perfil stay separate; the legacy Portal dashboard remains at
+# /conta-legada and the account purpose root serves the Conta entry page.
+aculta_studio.account:
+  path: /conta
+  defaults:
+    _controller: 'aculta_studio.account_controller:page'
+    _title: 'Minha Conta'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+
+# S-R3-B2: Portal Profile Form API narrowed by route to private account fields.
+aculta_studio.account_data:
+  path: /conta/dados
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:data'
+    _title: 'Dados cadastrais'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+# Only the community profile is edited here; private account data is separate.
+# S-R3-A: Portal-owned private sections inside the Studio shell.
+# Legacy /dados keeps its form. Studio account form excludes public nickname.
+aculta_studio.account_address:
+  path: /conta/endereco
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:address'
+    _title: 'Endereço'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+# S-R3-B1: CPF/CNPJ remains owned by Portal + optional aculta_id_cpf.
+# No second storage or profile-public exposure.
+aculta_studio.account_documents:
+  path: /conta/documentos
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:documents'
+    _title: 'Documentos'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+aculta_studio.account_security:
+  path: /conta/seguranca
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:security'
+    _title: 'E-mail e segurança'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+aculta_studio.account_password:
+  path: /conta/seguranca/senha
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:password'
+    _title: 'Senha'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+aculta_studio.account_connections:
+  path: /conta/conexoes
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:connections'
+    _title: 'Contas conectadas'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+# S-R3-B3: keep Commerce orders, support history and appearance Form API
+# with their Portal owners, composed under Studio without a second shell.
+aculta_studio.account_orders:
+  path: /conta/pedidos
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:orders'
+    _title: 'Meus pedidos'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+aculta_studio.account_support:
+  path: /conta/apoio
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:support'
+    _title: 'Meu apoio'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+aculta_studio.account_preferences:
+  path: /conta/preferencias
+  defaults:
+    _controller: 'aculta_studio.account_section_controller:preferences'
+    _title: 'Preferências da conta'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+aculta_studio.profile:
+  path: /perfil
+  defaults:
+    _controller: 'aculta_studio.profile_controller:page'
+    _title: 'Meu Perfil'
+  requirements:
+    _custom_access: 'aculta_studio.profile_access:access'
+  options:
+    _aculta_domain_purpose: account
+
+# ACULTA User owns the standalone public-nickname Form API.
+aculta_studio.profile_nickname:
+  path: /perfil/apelido
+  defaults:
+    _form: '\Drupal\aculta_user\Form\NicknameForm'
+    _title: 'Editar apelido público'
+  requirements:
+    _custom_access: 'aculta_studio.profile_access:access'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
+
+aculta_studio.profile_privacy:
+  path: /perfil/privacidade
+  defaults:
+    _form: '\Drupal\aculta_user\Form\ProfileVisibilityForm'
+    _title: 'Privacidade do perfil'
+  requirements:
+    _custom_access: 'aculta_studio.profile_access:access'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_studio.profile_bio:
+  path: /perfil/bio
+  defaults:
+    _form: '\Drupal\aculta_user\Form\AccountBioForm'
+    _title: 'Editar biografia'
+  requirements:
+    _custom_access: 'aculta_studio.profile_access:access'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_studio.profile_social:
+  path: /perfil/redes/{rede}
+  defaults:
+    _form: '\Drupal\aculta_user\Form\SocialLinkForm'
+    _title: 'Editar rede social'
+  requirements:
+    _custom_access: 'aculta_studio.profile_access:access'
+    rede: 'instagram|facebook|reddit'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_studio.we_sativa:
+  path: /wesativa
+  defaults:
+    _controller: 'aculta_studio.we_sativa_controller:page'
+    _title: 'ACULTA STUDIO WE SATIVA'
+  requirements:
+    _permission: access aculta portal
+  options:
+    _aculta_domain_purpose: wiki
+
+aculta_studio.we_sativa_start:
+  path: /wesativa/inicio
+  defaults:
+    _controller: 'aculta_studio.we_sativa_controller:start'
+    _title: 'ACULTA STUDIO WE SATIVA'
+  requirements:
+    _permission: access aculta portal
+  options:
+    _aculta_domain_purpose: wiki
+
+aculta_studio.home:
+  path: /marley
+  defaults:
+    _controller: 'aculta_studio.marley_controller:page'
+    _title: 'ACULTA Studio Marley'
+    aba: ''
+    secao: ''
+    sub: ''
+  requirements:
+    _permission: access aculta portal
+  options:
+    _aculta_domain_purpose: account
+
+aculta_studio.area:
+  path: /marley/{aba}
+  defaults:
+    _controller: 'aculta_studio.marley_controller:page'
+    _title: 'ACULTA Studio Marley'
+    secao: ''
+    sub: ''
+  requirements:
+    _permission: access aculta portal
+    aba: '[a-z0-9-]+'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_studio.section:
+  path: /marley/{aba}/{secao}
+  defaults:
+    _controller: 'aculta_studio.marley_controller:page'
+    _title: 'ACULTA Studio Marley'
+    sub: ''
+  requirements:
+    _permission: access aculta portal
+    aba: '[a-z0-9-]+'
+    secao: '[a-z0-9-]+'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_studio.tab:
+  path: /marley/{aba}/{secao}/{sub}
+  defaults:
+    _controller: 'aculta_studio.marley_controller:page'
+    _title: 'ACULTA Studio Marley'
+  requirements:
+    _permission: access aculta portal
+    aba: '[a-z0-9-]+'
+    secao: '[a-z0-9-]+'
+    sub: '[a-z0-9-]+'
+  options:
+    _aculta_domain_purpose: account
+
+aculta_studio.salvos:
+  path: /salvos
+  defaults:
+    _controller: 'aculta_studio.saved_controller:page'
+    _title: 'Meus Salvos'
+  requirements:
+    _permission: access aculta portal
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: account
+
+# Ganjalab learner and educator experiences are owned by Studio. Route IDs remain stable during migration.
+aculta_lms.student_dashboard:
+  path: '/ganjalab'
+  defaults:
+    _controller: 'aculta_studio.ganjalab_controller:student'
+    _title: 'ACULTA Studio Ganjalab Estudante'
+  requirements:
+    _permission: access aculta portal
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+
+# Keep the Group owner's add Form API inside the educator workspace, purpose
+# and theme. The generated entity.group.add_form is an admin route on purpose
+# main, so it would return 404 on courses and drop the ACULTA Studio shell.
+aculta_lms.course_create:
+  path: '/ganjalab/educador/cursos/novo'
+  defaults:
+    _controller: 'aculta_studio.course_authoring_controller:create'
+    _title: 'Novo curso - Ganjalab Educador'
+  requirements:
+    _permission: 'create lms_course group'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+
+aculta_lms.educator_dashboard:
+  path: '/ganjalab/educador'
+  defaults:
+    _controller: 'aculta_studio.course_authoring_controller:dashboard'
+    _title: 'ACULTA Studio Ganjalab Educador'
+  requirements:
+    _permission: 'create lms_course group'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+

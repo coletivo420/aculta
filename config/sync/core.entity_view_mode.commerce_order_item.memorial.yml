@@ -1,0 +1,13 @@
+uuid: c28aedcd-29cd-4c2f-be77-79f619eb70bb
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - commerce_order
+_core:
+  default_config_hash: Mxg6vFccPSksY96SqGK5IBbRh-qwljkiBg9TPIG0Rnw
+id: commerce_order_item.memorial
+label: Memorial
+description: null
+targetEntityType: commerce_order_item
+cache: true

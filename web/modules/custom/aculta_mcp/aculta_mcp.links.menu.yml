@@ -1,0 +1,6 @@
+aculta_mcp.access_settings:
+  title: 'Usuários autorizados'
+  description: 'Gerencie as contas Drupal que podem acessar o ACULTA MCP externamente.'
+  route_name: aculta_mcp.access_settings
+  parent: mcp_server.admin
+  weight: 10

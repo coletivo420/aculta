@@ -1,0 +1,12 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Messenger composition
+status: experimental
+group: Content
+description: 'Visual frame around the native Private Message Form API form; does not replace submission or validation.'
+props:
+  type: object
+  properties: {}
+slots:
+  form:
+    title: Native message form
+    description: 'The original Form API form render array, including CSRF, validation, AJAX and no-JavaScript fallback.'

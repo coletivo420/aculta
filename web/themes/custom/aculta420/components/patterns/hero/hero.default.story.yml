@@ -1,0 +1,12 @@
+name: Padrão
+description: 'Cabeçalho completo: etiqueta, título, slogan, texto e ações.'
+component: aculta420:hero
+props:
+  eyebrow: Associação Cultural
+  title: Associação Cultural Antiproibicionista
+  slogan: Lutando por um futuro livre da proibição.
+  lead: Cultura, informação e cuidado coletivo.
+slots:
+  actions:
+    markup: <a class="btn btn-primary" href="#">Conheça a associação</a> <a class="btn
+      btn-outline-primary" href="#">Nossos projetos</a>

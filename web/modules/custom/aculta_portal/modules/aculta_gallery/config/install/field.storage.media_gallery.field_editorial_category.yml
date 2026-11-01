@@ -1,0 +1,19 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - media_gallery
+    - taxonomy
+id: media_gallery.field_editorial_category
+field_name: field_editorial_category
+entity_type: media_gallery
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {}
+persist_with_no_fields: false
+custom_storage: false

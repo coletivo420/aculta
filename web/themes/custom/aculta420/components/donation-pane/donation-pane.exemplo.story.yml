@@ -1,0 +1,5 @@
+name: Painel de contribuição
+description: Placeholder visual para a composição de campos fornecida pelo Form API.
+component: aculta420:donation-pane
+props:
+  elements: Campos do formulário de contribuição são renderizados pelo Drupal.

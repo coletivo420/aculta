@@ -1,0 +1,20 @@
+uuid: 83934b6c-176f-4940-90a4-8997f355e82b
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_orgao_emissor
+    - profile.type.lms_teacher
+id: profile.lms_teacher.field_orgao_emissor
+field_name: field_orgao_emissor
+entity_type: profile
+bundle: lms_teacher
+label: 'Órgão emissor do RG'
+description: 'Dado de associado. Visível só no relatório administrativo.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

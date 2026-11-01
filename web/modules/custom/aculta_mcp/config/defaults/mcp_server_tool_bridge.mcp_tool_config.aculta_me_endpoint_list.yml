@@ -1,0 +1,4 @@
+id: aculta_me_endpoint_list
+tool_id: aculta_mcp:melhorenvio_endpoint_list
+description: Lista caminhos da documentação pública do Melhor Envio.
+status: true

@@ -1,0 +1,22 @@
+uuid: 7480c270-96a8-4f5d-8da4-c1c3f86dba66
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - aculta420
+_core:
+  default_config_hash: erQSEZF2XUjNmgTl0uNRBzmg18ZGXwUcw2FhApoeuHk
+id: aculta_content
+theme: aculta420
+region: content
+weight: 0
+provider: null
+plugin: system_main_block
+settings:
+  id: system_main_block
+  label: 'Main page content'
+  label_display: '0'
+  provider: system
+visibility: {  }

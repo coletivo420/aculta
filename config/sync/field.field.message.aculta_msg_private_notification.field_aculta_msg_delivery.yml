@@ -1,0 +1,28 @@
+uuid: d579a3dd-71fe-4b1e-9f6b-a19de4cb162c
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_msg_delivery
+    - message.template.aculta_msg_private_notification
+  module:
+    - options
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: j-xA4jbXGe3HUohxfrGM4zZZiPGmsDCeGAy0euvROt0
+id: message.aculta_msg_private_notification.field_aculta_msg_delivery
+field_name: field_aculta_msg_delivery
+entity_type: message
+bundle: aculta_msg_private_notification
+label: 'Situação do envio'
+description: 'Estado técnico da entrega do aviso.'
+required: true
+translatable: false
+default_value:
+  -
+    value: pending
+default_value_callback: ''
+settings: {  }
+field_type: list_string

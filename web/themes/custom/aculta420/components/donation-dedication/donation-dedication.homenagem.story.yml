@@ -1,0 +1,8 @@
+name: Homenagem
+description: Valores ilustrativos de campos do formulário de dedicatória.
+component: aculta420:donation-dedication
+props:
+  legend: Faça uma homenagem
+  dedication_type: Em memória
+  honoree_first: Nome
+  honoree_last: Sobrenome

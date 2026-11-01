@@ -1,0 +1,24 @@
+uuid: f0dacd8f-2466-4ba6-90bb-0915b616d1cd
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - node.type.revista
+  module:
+    - node
+id: aculta_article
+label: 'URLs — Revista'
+type: 'canonical_entities:node'
+pattern: '/[node:session]/[node:title]'
+selection_criteria:
+  44a5e92b-d518-4812-874d-a8308a8097a9:
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: node
+    bundles:
+      revista: revista
+selection_logic: and
+weight: 0
+relationships: {  }
+

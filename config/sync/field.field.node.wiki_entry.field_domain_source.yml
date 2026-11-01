@@ -1,0 +1,25 @@
+uuid: 5c497c64-ccc4-450a-85b8-fa5c13096813
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_domain_source
+    - node.type.wiki_entry
+id: node.wiki_entry.field_domain_source
+field_name: field_domain_source
+entity_type: node
+bundle: wiki_entry
+label: 'Domain Source'
+description: 'Select the canonical domain for this content.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:domain'
+  handler_settings:
+    target_bundles: null
+    sort:
+      field: weight
+      direction: ASC
+field_type: entity_reference

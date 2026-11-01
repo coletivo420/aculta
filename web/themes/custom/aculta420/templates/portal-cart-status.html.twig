@@ -1,0 +1,13 @@
+{#
+  Caixa de status do "Adicionar ao carrinho" (módulo aculta_portal). Marcação mínima com classes BEM do módulo:
+  a aparência é do tema. O botão de fechar é tratado por js/cart-status.js.
+#}
+<div class="portal-cart-status portal-cart-status--{{ status_type }}" role="{{ status_role }}" data-portal-cart-status>
+  <p class="portal-cart-status__message">
+    <span>{{ message }}</span>
+    {% if url %}
+      <a class="portal-cart-status__link" href="{{ url }}">{{ link_label }}</a>
+    {% endif %}
+  </p>
+  <button type="button" class="portal-cart-status__close" data-portal-cart-status-close aria-label="{{ close_label }}">&times;</button>
+</div>

@@ -1,0 +1,16 @@
+uuid: a1cf3d0f-5547-44a3-8db7-3f2998abec58
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: QgF3JDg2h0tf2gaqzc4mNvlHttNkUpmxk1LZefP82hE
+id: document
+label: Documento
+description: 'Arquivos institucionais reutilizáveis na biblioteca de mídia. Os documentos de Transparência também possuem tipo de conteúdo próprio para contexto em HTML.'
+source: file
+queue_thumbnail_downloads: false
+new_revision: true
+source_configuration:
+  source_field: field_media_document
+field_map:
+  name: name

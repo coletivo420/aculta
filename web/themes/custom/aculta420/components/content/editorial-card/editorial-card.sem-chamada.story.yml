@@ -1,0 +1,11 @@
+name: Sem chamada
+description: Cartão editorial sem chamada para ação.
+component: aculta420:editorial-card
+props: {}
+slots:
+  category:
+    markup: Transparência
+  title:
+    markup: Documentos institucionais
+  summary:
+    markup: Estatuto, atas e relatórios.

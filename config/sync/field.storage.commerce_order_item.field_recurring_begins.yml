@@ -1,0 +1,22 @@
+uuid: 65642c74-872d-4841-94ab-f8e544b52b75
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - commerce_order
+    - datetime
+_core:
+  default_config_hash: 2CkgNFJIMvw1hg95gMApVKYjGccM7-P7pI9FUcu7qT0
+id: commerce_order_item.field_recurring_begins
+field_name: field_recurring_begins
+entity_type: commerce_order_item
+type: datetime
+settings:
+  datetime_type: date
+module: datetime
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

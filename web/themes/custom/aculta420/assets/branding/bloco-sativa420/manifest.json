@@ -1,0 +1,125 @@
+{
+  "project": "Bloco Sativa 420",
+  "date": "2026-10-09",
+  "source": "Artes fornecidas pelo responsável nesta conversa; conferir licença antes de publicação",
+  "processing": "Fontes preservadas byte a byte; redução LANCZOS, WebP qualidade 88, método 6; sem corte, filtros, vetorização ou recoloração",
+  "files": [
+    {
+      "path": "web/themes/custom/aculta420/assets/branding/bloco-sativa420/source/bloco-sativa420-horizontal-original.png",
+      "type": "original",
+      "format": "PNG",
+      "width": 2048,
+      "height": 682,
+      "bytes": 2758283,
+      "sha256": "5c3b371edcf518c20099bdc9f73d9e60f8bc0eb2bed4d336d4ea18d62fc7a6b7",
+      "alpha_extrema": [
+        255,
+        255
+      ]
+    },
+    {
+      "path": "web/themes/custom/aculta420/assets/branding/bloco-sativa420/web/horizontal/bloco-sativa420-horizontal-640w.webp",
+      "type": "web",
+      "format": "WebP",
+      "width": 640,
+      "height": 213,
+      "bytes": 62460,
+      "sha256": "c23e7a00c51a76151ace01011a704f943ce22645c0902ce083061348e8f84d24",
+      "alpha_extrema": [
+        255,
+        255
+      ]
+    },
+    {
+      "path": "web/themes/custom/aculta420/assets/branding/bloco-sativa420/web/horizontal/bloco-sativa420-horizontal-960w.webp",
+      "type": "web",
+      "format": "WebP",
+      "width": 960,
+      "height": 320,
+      "bytes": 116128,
+      "sha256": "4f16744b946c331eb2e0c5e21ddf354179ef1bd23cc6904c85420916f69fccc9",
+      "alpha_extrema": [
+        255,
+        255
+      ]
+    },
+    {
+      "path": "web/themes/custom/aculta420/assets/branding/bloco-sativa420/web/horizontal/bloco-sativa420-horizontal-1280w.webp",
+      "type": "web",
+      "format": "WebP",
+      "width": 1280,
+      "height": 426,
+      "bytes": 178348,
+      "sha256": "0b2fef243850dd3876af2ede560df668fa8ac751bddc8a00f3c2c1843bde5c3f",
+      "alpha_extrema": [
+        255,
+        255
+      ]
+    },
+    {
+      "path": "web/themes/custom/aculta420/assets/branding/bloco-sativa420/web/horizontal/bloco-sativa420-horizontal-2048w.webp",
+      "type": "web",
+      "format": "WebP",
+      "width": 2048,
+      "height": 682,
+      "bytes": 322212,
+      "sha256": "a0da432bda59696211e233e07bd1d3ab325e56d2e74e1dda1a211f547fd6c7d3",
+      "alpha_extrema": [
+        255,
+        255
+      ]
+    },
+    {
+      "path": "web/themes/custom/aculta420/assets/branding/bloco-sativa420/source/bloco-sativa420-square-original.png",
+      "type": "original",
+      "format": "PNG",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 2038761,
+      "sha256": "bf3b5d871ba85e138bd17efa96a682b1b0457fcfc844cf691ad0dee4ee5c17e5",
+      "alpha_extrema": [
+        255,
+        255
+      ]
+    },
+    {
+      "path": "web/themes/custom/aculta420/assets/branding/bloco-sativa420/web/square/bloco-sativa420-square-256w.webp",
+      "type": "web",
+      "format": "WebP",
+      "width": 256,
+      "height": 256,
+      "bytes": 25648,
+      "sha256": "fde5db9ec5833f047f31e4d2e96976c9f0010d04aa4eba99bb92cc45a54ae60c",
+      "alpha_extrema": [
+        255,
+        255
+      ]
+    },
+    {
+      "path": "web/themes/custom/aculta420/assets/branding/bloco-sativa420/web/square/bloco-sativa420-square-512w.webp",
+      "type": "web",
+      "format": "WebP",
+      "width": 512,
+      "height": 512,
+      "bytes": 62654,
+      "sha256": "334954fda72b91d2dfe1c1a91f3ce062eeb598dd0835f2b8728953b0c3bb2553",
+      "alpha_extrema": [
+        255,
+        255
+      ]
+    },
+    {
+      "path": "web/themes/custom/aculta420/assets/branding/bloco-sativa420/web/square/bloco-sativa420-square-1024w.webp",
+      "type": "web",
+      "format": "WebP",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 142474,
+      "sha256": "198fa9daecea03e36c51dcb60ebfb00b35eac3f816ae322e13ceacb07a252c5b",
+      "alpha_extrema": [
+        255,
+        255
+      ]
+    }
+  ]
+}

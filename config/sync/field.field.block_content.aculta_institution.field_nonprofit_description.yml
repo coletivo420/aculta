@@ -1,0 +1,19 @@
+uuid: 72831e19-160e-4f98-9b8e-40069d969b79
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_institution
+    - field.storage.block_content.field_nonprofit_description
+id: block_content.aculta_institution.field_nonprofit_description
+field_name: field_nonprofit_description
+entity_type: block_content
+bundle: aculta_institution
+label: 'Natureza institucional'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

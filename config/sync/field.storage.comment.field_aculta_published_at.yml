@@ -1,0 +1,21 @@
+uuid: 9e38edeb-1c09-495f-a509-9a0bc4ed6993
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - comment
+    - field
+id: comment.field_aculta_published_at
+field_name: field_aculta_published_at
+entity_type: comment
+type: integer
+settings:
+  unsigned: true
+  size: big
+module: core
+locked: true
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

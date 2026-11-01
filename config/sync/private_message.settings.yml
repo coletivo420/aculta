@@ -1,0 +1,8 @@
+langcode: pt-br
+create_message_label: 'Criar Mensagem Privada'
+ban_mode: passive
+ban_message: 'Esta pessoa não pode receber sua mensagem.'
+ban_label: Bloco
+unban_label: Desbloquear
+enable_email_notifications: true
+send_by_default: true

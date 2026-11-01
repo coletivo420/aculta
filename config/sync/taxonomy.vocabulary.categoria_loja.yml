@@ -1,0 +1,9 @@
+uuid: 1a015392-7876-40b3-8abf-a6a3017ec481
+langcode: pt-br
+status: true
+dependencies: {  }
+name: 'Categorias da loja'
+vid: categoria_loja
+description: null
+weight: 0
+new_revision: false

@@ -1,0 +1,58 @@
+uuid: 85017dca-c735-4f42-a82c-8da5ab21d5af
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.field.node.editorial_highlight.field_category
+    - field.field.node.editorial_highlight.field_complement
+    - field.field.node.editorial_highlight.field_domain_source
+    - field.field.node.editorial_highlight.field_link
+    - field.field.node.editorial_highlight.field_summary
+    - field.field.node.editorial_highlight.field_weight
+    - node.type.editorial_highlight
+  module:
+    - link
+    - user
+id: node.editorial_highlight.default
+targetEntityType: node
+bundle: editorial_highlight
+mode: default
+content:
+  field_category:
+    type: string
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_complement:
+    type: basic_string
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_link:
+    type: link
+    label: hidden
+    settings:
+      trim_length: 0
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_summary:
+    type: basic_string
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden:
+  field_domain_source: true
+  field_weight: true
+  langcode: true
+  links: true

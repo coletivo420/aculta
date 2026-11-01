@@ -1,0 +1,23 @@
+uuid: e834f27f-8ba8-4d32-bad0-fa978f9d2846
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - node.type.document
+  module:
+    - node
+id: aculta_document
+label: 'URLs — document'
+type: 'canonical_entities:node'
+pattern: '/transparencia/documentos/[node:title]'
+selection_criteria:
+  d1bebd0a-55d5-4b99-9725-810a5369cf63:
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: node
+    bundles:
+      document: document
+selection_logic: and
+weight: 0
+relationships: {  }

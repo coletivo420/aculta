@@ -1,0 +1,13 @@
+name: Padrão
+description: Cartão editorial com categoria, título, resumo e chamada.
+component: aculta420:editorial-card
+props: {}
+slots:
+  category:
+    markup: Institucional
+  title:
+    markup: Quem somos
+  summary:
+    markup: Conheça a história e a missão da associação.
+  cta:
+    markup: <a href="#">Conheça nossa história</a>

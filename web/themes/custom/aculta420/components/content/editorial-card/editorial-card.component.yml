@@ -1,0 +1,19 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Editorial card
+status: stable
+group: Cards
+description: 'Reusable editorial card presentation with renderable slots and component-scoped CSS.'
+props:
+  type: object
+  properties: {}
+slots:
+  category:
+    title: Category
+  title:
+    title: Title
+  summary:
+    title: Summary
+  complement:
+    title: Complement
+  cta:
+    title: Call to action

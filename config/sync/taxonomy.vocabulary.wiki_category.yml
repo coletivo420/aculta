@@ -1,0 +1,9 @@
+uuid: 46dbaef8-23f5-4295-940e-a8e02398a8ce
+langcode: pt-br
+status: true
+dependencies: {  }
+name: 'Categorias da Wiki420'
+vid: wiki_category
+description: 'Categorias hierárquicas para organizar os verbetes da Wiki420.'
+weight: 5
+new_revision: false

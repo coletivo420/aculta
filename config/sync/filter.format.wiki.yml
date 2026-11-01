@@ -1,0 +1,72 @@
+uuid: 1fb8aad8-035e-4a97-9dc4-c4ed711aa9a5
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - freelinking
+    - media
+name: 'Aculta Wiki (somente Wiki)'
+format: wiki
+weight: 5
+filters:
+  filter_align:
+    id: filter_align
+    provider: filter
+    status: true
+    weight: 7
+    settings: {  }
+  filter_autop:
+    id: filter_autop
+    provider: filter
+    status: true
+    weight: 10
+    settings: {  }
+  filter_caption:
+    id: filter_caption
+    provider: filter
+    status: true
+    weight: 8
+    settings: {  }
+  filter_html:
+    id: filter_html
+    provider: filter
+    status: true
+    weight: -10
+    settings:
+      allowed_html: '<drupal-media data-entity-type data-entity-uuid alt data-caption data-align> <p> <br> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <a href hreflang title> <blockquote cite> <ul type> <ol start type reversed> <li> <strong> <em> <code class="language-*"> <pre> <dl> <dt> <dd> <cite> <* dir="ltr rtl" lang>'
+      filter_html_help: false
+      filter_html_nofollow: false
+  filter_htmlcorrector:
+    id: filter_htmlcorrector
+    provider: filter
+    status: true
+    weight: 20
+    settings: {  }
+  freelinking:
+    id: freelinking
+    provider: freelinking
+    status: true
+    weight: 30
+    settings:
+      plugins:
+        nodetitle:
+          plugin: nodetitle
+          enabled: true
+          settings:
+            nodetypes:
+              - wiki_entry
+            failover: showtext
+      default: nodetitle
+      global_options:
+        ignore_upi: false
+  media_embed:
+    id: media_embed
+    provider: media
+    status: true
+    weight: 40
+    settings:
+      default_view_mode: default
+      allowed_view_modes: {  }
+      allowed_media_types:
+        document: document
+

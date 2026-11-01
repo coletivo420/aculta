@@ -1,0 +1,124 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_id_cpf\Unit;
+
+use Drupal\aculta_id_cpf\Enum\DocumentType;
+use Drupal\aculta_id_cpf\Service\CnpjValidator;
+use Drupal\aculta_id_cpf\Service\CpfValidator;
+use Drupal\aculta_id_cpf\Service\DocumentFormatter;
+use Drupal\aculta_id_cpf\Service\DocumentFingerprint;
+use Drupal\aculta_id_cpf\Service\DocumentNormalizer;
+use Drupal\aculta_id_cpf\Service\DocumentValidator;
+use Drupal\key\KeyInterface;
+use Drupal\key\KeyRepositoryInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
+
+/**
+ * Independent public vectors and malformed input cases.
+ */
+#[Group('aculta_id_cpf')]
+final class DocumentValidationTest extends TestCase {
+
+  /**
+   * Creates the validator with its pure validation dependencies.
+   */
+  private function validator(): DocumentValidator {
+    return new DocumentValidator(new DocumentNormalizer(), new CpfValidator(), new CnpjValidator());
+  }
+
+  /**
+   * Provides valid CPF and CNPJ examples.
+   *
+   * @return array<string, array{string, string, string, string}>
+   *   Valid document cases from the shared fixture.
+   */
+  public static function validDocuments(): array {
+    return (require dirname(__DIR__, 2) . '/fixtures/documents.php')['valid'];
+  }
+
+  /**
+   * Provides invalid CPF and CNPJ examples.
+   *
+   * @return array<string, array{string, string}>
+   *   Invalid document cases from the shared fixture.
+   */
+  public static function invalidDocuments(): array {
+    return (require dirname(__DIR__, 2) . '/fixtures/documents.php')['invalid'];
+  }
+
+  /**
+   * Normalizes and formats valid document examples.
+   */
+  #[DataProvider('validDocuments')]
+  public function testCanonicalizationAndFormatting(string $type, string $input, string $expected, string $formatted): void {
+    $documentType = DocumentType::from($type);
+    $validator = $this->validator();
+    $this->assertSame($expected, $validator->canonicalize($input, $documentType));
+    $formatter = new DocumentFormatter($validator);
+    $this->assertSame($formatted, $formatter->format($input, $documentType));
+    $this->assertSame(substr($expected, -2), preg_replace('/[^0-9]/', '', $formatter->redact($input, $documentType)));
+  }
+
+  /**
+   * Rejects malformed documents and invalid check digits.
+   */
+  #[DataProvider('invalidDocuments')]
+  public function testMalformedOrInvalidDocuments(string $type, string $input): void {
+    $this->assertFalse($this->validator()->isValid($input, DocumentType::from($type)));
+  }
+
+  /**
+   * Rejects CPF values made from a repeated digit.
+   */
+  public function testRepeatedCpfDigitsAreRejected(): void {
+    foreach (range(0, 9) as $digit) {
+      $this->assertFalse($this->validator()->isValid(str_repeat((string) $digit, 11), DocumentType::CPF));
+    }
+  }
+
+  /**
+   * Keeps fingerprints stable and separates document types.
+   */
+  public function testFingerprintIsDeterministicAndNamespaced(): void {
+    $key = $this->createMock(KeyInterface::class);
+    $key->expects($this->exactly(3))
+      ->method('getKeyValue')
+      ->with(TRUE)
+      ->willReturn(str_repeat('k', 32));
+    $repository = $this->createMock(KeyRepositoryInterface::class);
+    $repository->expects($this->exactly(3))
+      ->method('getKey')
+      ->with(DocumentFingerprint::KEY_ID)
+      ->willReturn($key);
+
+    $fingerprint = new DocumentFingerprint($this->validator(), $repository);
+    $cpf = $fingerprint->fingerprint('529.982.247-25', DocumentType::CPF);
+    $this->assertSame($cpf, $fingerprint->fingerprint('52998224725', DocumentType::CPF));
+    $this->assertSame(
+      hash_hmac('sha256', "aculta_id_cpf:v1\0cpf\0" . '52998224725', str_repeat('k', 32)),
+      $cpf,
+    );
+    $cnpj = $fingerprint->fingerprint('11.222.333/0001-81', DocumentType::CNPJ);
+    $this->assertNotSame($cpf, $cnpj);
+    $this->assertMatchesRegularExpression('/^[a-f0-9]{64}$/', $cpf);
+  }
+
+  /**
+   * Fails closed when the fingerprint key is too weak.
+   */
+  public function testFingerprintFailsClosedWithoutStrongKey(): void {
+    $key = $this->createMock(KeyInterface::class);
+    $key->method('getKeyValue')->with(TRUE)->willReturn(str_repeat('k', 31));
+    $repository = $this->createMock(KeyRepositoryInterface::class);
+    $repository->method('getKey')->with(DocumentFingerprint::KEY_ID)->willReturn($key);
+
+    $this->expectException(\RuntimeException::class);
+    (new DocumentFingerprint($this->validator(), $repository))
+      ->fingerprint('52998224725', DocumentType::CPF);
+  }
+
+}

@@ -1,0 +1,16 @@
+uuid: b7f0dce6-11a5-4d41-9ed5-d6a98d2a5a49
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - simple_sitemap.type.aculta_purpose
+  module:
+    - aculta_portal_sitemap
+third_party_settings:
+  aculta_portal_sitemap:
+    purpose: main
+id: main
+label: 'ACULTA main'
+description: null
+type: aculta_purpose
+weight: 0

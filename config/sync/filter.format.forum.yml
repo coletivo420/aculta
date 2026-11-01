@@ -1,0 +1,62 @@
+uuid: ecfacfce-98a8-45b3-b669-997c298faafa
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - aculta_forum
+    - editor
+    - entity_embed
+    - media
+name: 'Fórum (HTML restrito)'
+format: forum
+weight: 10
+filters:
+  editor_file_reference:
+    id: editor_file_reference
+    provider: editor
+    status: true
+    weight: 10
+    settings: {  }
+  entity_embed:
+    id: entity_embed
+    provider: entity_embed
+    status: true
+    weight: 30
+    settings: {  }
+  filter_align:
+    id: filter_align
+    provider: filter
+    status: true
+    weight: 5
+    settings: {  }
+  filter_caption:
+    id: filter_caption
+    provider: filter
+    status: true
+    weight: 6
+    settings: {  }
+  filter_html:
+    id: filter_html
+    provider: filter
+    status: true
+    weight: -10
+    settings:
+      allowed_html: '<drupal-media data-entity-type data-entity-uuid alt data-caption data-align> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-view-mode data-embed-button alt title data-caption data-align> <br> <p> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <a hreflang href title> <blockquote cite> <ul type> <ol type reversed start> <strong> <em> <code> <li> <* dir="ltr rtl" lang>'
+      filter_html_help: false
+      filter_html_nofollow: false
+  filter_image_lazy_load:
+    id: filter_image_lazy_load
+    provider: filter
+    status: true
+    weight: 15
+    settings: {  }
+  media_embed:
+    id: media_embed
+    provider: media
+    status: true
+    weight: 20
+    settings:
+      default_view_mode: default
+      allowed_view_modes: {  }
+      allowed_media_types:
+        forum_attachment: forum_attachment

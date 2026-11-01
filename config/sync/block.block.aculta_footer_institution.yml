@@ -1,0 +1,25 @@
+uuid: de500d43-d937-4445-9a89-bd9a8ff1c4b7
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - system.menu.aculta-footer-institution
+  module:
+    - system
+  theme:
+    - aculta420
+id: aculta_footer_institution
+theme: aculta420
+region: footer
+weight: 10
+provider: null
+plugin: 'system_menu_block:aculta-footer-institution'
+settings:
+  id: 'system_menu_block:aculta-footer-institution'
+  label: INSTITUCIONAL
+  label_display: visible
+  provider: system
+  level: 1
+  depth: 1
+  expand_all_items: false
+visibility: {  }

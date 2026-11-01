@@ -1,0 +1,18 @@
+uuid: 0c870e1f-726a-42f4-8c2b-4bfa65ca11dc
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - profile
+id: profile.field_profissao
+field_name: field_profissao
+entity_type: profile
+type: string
+settings: {  max_length: 120, is_ascii: false, case_sensitive: false }
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

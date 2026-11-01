@@ -1,0 +1,524 @@
+<?php
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\profile\Entity\ProfileType;
+
+/**
+ * Implements hook_install().
+ *
+ * Creates a private participant profile type. No profile data is fabricated.
+ */
+function aculta_portal_install(): void {
+  $types = \Drupal::entityTypeManager()->getStorage('profile_type');
+  if (!$types->load('participante')) {
+    ProfileType::create([
+      'id' => 'participante',
+      'label' => 'Participante',
+      'display_label' => 'Perfil de participante',
+      'multiple' => FALSE,
+      'registration' => FALSE,
+      'roles' => ['authenticated'],
+      'allow_revisions' => FALSE,
+      'new_revision' => FALSE,
+    ])->save();
+  }
+
+  $definitions = [
+    'field_first_name' => ['string', 'Nome', 80],
+    'field_last_name' => ['string', 'Sobrenome', 80],
+    'field_whatsapp' => ['string', 'WhatsApp', 32],
+  ];
+  foreach ($definitions as $name => [$type, $label, $length]) {
+    if (!FieldStorageConfig::loadByName('profile', $name)) {
+      $storage = FieldStorageConfig::create([
+        'field_name' => $name,
+        'entity_type' => 'profile',
+        'type' => $type,
+        'cardinality' => 1,
+        'settings' => $type === 'string' ? ['max_length' => $length, 'is_ascii' => FALSE, 'case_sensitive' => FALSE] : ['allowed_values' => array_combine(['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'], ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'])],
+      ]);
+      $storage->save();
+    }
+    if (!FieldConfig::loadByName('profile', 'participante', $name)) {
+      FieldConfig::create([
+        'field_name' => $name,
+        'entity_type' => 'profile',
+        'bundle' => 'participante',
+        'label' => $label,
+        'required' => FALSE,
+        'translatable' => FALSE,
+        'third_party_settings' => ['profile' => ['profile_private' => TRUE]],
+      ])->save();
+    }
+  }
+
+  $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load('profile.participante.default');
+  if (!$form_display) {
+    $form_display = \Drupal\Core\Entity\Entity\EntityFormDisplay::create([
+      'targetEntityType' => 'profile',
+      'bundle' => 'participante',
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
+  }
+  foreach (array_keys($definitions) as $weight => $name) {
+    $form_display->setComponent($name, ['type' => $name === 'field_state' ? 'options_select' : 'string_textfield', 'weight' => $weight]);
+  }
+  $form_display->save();
+
+  $view_display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load('profile.participante.default');
+  if (!$view_display) {
+    $view_display = \Drupal\Core\Entity\Entity\EntityViewDisplay::create([
+      'targetEntityType' => 'profile',
+      'bundle' => 'participante',
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
+  }
+  foreach (array_keys($definitions) as $weight => $name) {
+    $view_display->setComponent($name, ['label' => 'hidden', 'type' => $name === 'field_state' ? 'list_default' : 'string', 'weight' => $weight]);
+  }
+  $view_display->save();
+
+  $role = \Drupal\user\Entity\Role::load('authenticated');
+  if ($role) {
+    foreach (['access aculta portal', 'create participante profile', 'update own participante profile', 'view own participante profile'] as $permission) {
+      $role->grantPermission($permission);
+    }
+    $role->save();
+  }
+}
+
+/**
+ * Give authenticated users access only to their own private portal pages.
+ */
+function aculta_portal_update_11001(): string {
+  $role = \Drupal\user\Entity\Role::load('authenticated');
+  if ($role) {
+    foreach (['access aculta portal', 'create participante profile', 'update own participante profile', 'view own participante profile'] as $permission) {
+      $role->grantPermission($permission);
+    }
+    $role->save();
+  }
+  return 'Enabled authenticated users to access their own portal and participant profile.';
+}
+
+/**
+ * Adds nickname/address fields and configures a private cropped account photo.
+ */
+function aculta_portal_update_11003(): string {
+  $field_definitions = [
+    'field_nickname' => [
+      'type' => 'string',
+      'label' => 'Apelido',
+      'storage' => ['max_length' => 80, 'is_ascii' => FALSE, 'case_sensitive' => FALSE],
+    ],
+    'field_address' => [
+      'type' => 'address',
+      'label' => 'Endereço',
+      'storage' => ['available_countries' => ['BR'], 'langcode_override' => '', 'field_overrides' => []],
+    ],
+  ];
+  foreach ($field_definitions as $name => $definition) {
+    if (!FieldStorageConfig::loadByName('profile', $name)) {
+      FieldStorageConfig::create([
+        'field_name' => $name,
+        'entity_type' => 'profile',
+        'type' => $definition['type'],
+        'cardinality' => 1,
+        'settings' => $definition['storage'],
+      ])->save();
+    }
+    if (!FieldConfig::loadByName('profile', 'participante', $name)) {
+      FieldConfig::create([
+        'field_name' => $name,
+        'entity_type' => 'profile',
+        'bundle' => 'participante',
+        'label' => $definition['label'],
+        'required' => FALSE,
+        'translatable' => FALSE,
+        'third_party_settings' => ['profile' => ['profile_private' => TRUE]],
+      ])->save();
+    }
+  }
+
+  $form_displays = \Drupal::entityTypeManager()->getStorage('entity_form_display');
+  $profile_display = $form_displays->load('profile.participante.default');
+  if ($profile_display) {
+    $profile_display->setComponent('field_nickname', ['type' => 'string_textfield', 'weight' => -1]);
+    $profile_display->setComponent('field_address', ['type' => 'address_default', 'weight' => 20, 'settings' => ['wrapper_type' => 'details']]);
+    $profile_display->save();
+  }
+  $profile_view = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load('profile.participante.default');
+  if ($profile_view) {
+    $profile_view->setComponent('field_nickname', ['label' => 'hidden', 'type' => 'string', 'weight' => -1]);
+    $profile_view->setComponent('field_address', ['label' => 'hidden', 'type' => 'address_default', 'weight' => 20]);
+    $profile_view->save();
+  }
+
+  // No User picture field values existed when this update was prepared; moving
+  // its storage to private therefore cannot strand existing public uploads.
+  $picture_storage = FieldStorageConfig::loadByName('user', 'user_picture');
+  if ($picture_storage) {
+    $picture_storage->setSetting('uri_scheme', 'private');
+    $picture_storage->save();
+  }
+
+  $crop_types = \Drupal::entityTypeManager()->getStorage('crop_type');
+  if (!$crop_types->load('aculta_avatar_1x1')) {
+    \Drupal\crop\Entity\CropType::create([
+      'id' => 'aculta_avatar_1x1',
+      'label' => 'Foto de perfil quadrada',
+      'description' => 'Enquadramento quadrado da foto de perfil da conta.',
+      'aspect_ratio' => '1:1',
+      'soft_limit_width' => 256,
+      'soft_limit_height' => 256,
+      'hard_limit_width' => 2048,
+      'hard_limit_height' => 2048,
+    ])->save();
+  }
+  $render = \Drupal::service('aculta_image.render');
+  $avatarStyle = $render->styleId('avatar');
+  if ($render->styleEntity('avatar') === NULL) {
+    $style = \Drupal\image\Entity\ImageStyle::create(['name' => $avatarStyle, 'label' => 'Avatar institucional ACULTA']);
+    $style->addImageEffect(['id' => 'crop_crop', 'weight' => 0, 'data' => ['crop_type' => 'aculta_avatar_1x1', 'automatic_crop_provider' => NULL]]);
+    $style->addImageEffect(['id' => 'image_scale', 'weight' => 1, 'data' => ['width' => 256, 'height' => 256, 'upscale' => FALSE]]);
+    $style->save();
+  }
+
+  $user_form_display = $form_displays->load('user.user.default');
+  if ($user_form_display) {
+    $user_form_display->setComponent('user_picture', [
+      'type' => 'image_widget_crop',
+      'weight' => -1,
+      'settings' => [
+        'progress_indicator' => 'throbber',
+        'preview_image_style' => $render->styleId('avatar'),
+        'crop_preview_image_style' => $render->styleId('miniatura'),
+        'crop_list' => ['aculta_avatar_1x1'],
+        'crop_types_required' => ['aculta_avatar_1x1'],
+        'show_crop_area' => TRUE,
+        'show_default_crop' => FALSE,
+        'warn_multiple_usages' => TRUE,
+      ],
+    ]);
+    $user_form_display->save();
+  }
+  $user_view_display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load('user.user.default');
+  if ($user_view_display) {
+    $user_view_display->setComponent('user_picture', ['type' => 'image', 'label' => 'hidden', 'settings' => $render->displaySettings('avatar') + ['image_link' => '', 'image_loading' => ['attribute' => 'lazy']], 'weight' => 0]);
+    $user_view_display->save();
+  }
+
+  return 'Added private nickname/address fields and configured the existing User picture field for mandatory 1:1 crop.';
+}
+
+/**
+ * Prepares environment-backed integration credentials and explicit CAPTCHA points.
+ */
+function aculta_portal_update_11004(): string {
+  $key_storage = \Drupal::entityTypeManager()->getStorage('key');
+  $key_definitions = [
+    'turnstile' => ['Cloudflare Turnstile', 'TURNSTILE_KEYS_JSON', 'authentication_multivalue'],
+    'google_oauth_client_id' => ['Google OAuth client ID', 'GOOGLE_OAUTH_CLIENT_ID', 'authentication'],
+    'google_oauth_client_secret' => ['Google OAuth client secret', 'GOOGLE_OAUTH_CLIENT_SECRET', 'authentication'],
+  ];
+  foreach ($key_definitions as $id => [$label, $environment_variable, $type]) {
+    if (!$key_storage->load($id)) {
+      \Drupal\key\Entity\Key::create([
+        'id' => $id,
+        'label' => $label,
+        'description' => 'Environment-backed value; no credential is stored in exported configuration.',
+        'key_type' => $type,
+        'key_provider' => 'env',
+        'key_provider_settings' => ['env_variable' => $environment_variable, 'strip_line_breaks' => TRUE, 'base64_encoded' => FALSE],
+        'key_input' => 'none',
+      ])->save();
+    }
+  }
+
+  $override_storage = \Drupal::entityTypeManager()->getStorage('key_config_override');
+  $overrides = [
+    'google_client_id' => ['Google OAuth client ID', 'social_auth_google.settings', 'client_id', 'google_oauth_client_id'],
+    'google_client_secret' => ['Google OAuth client secret', 'social_auth_google.settings', 'client_secret', 'google_oauth_client_secret'],
+  ];
+  foreach ($overrides as $id => [$label, $config_name, $config_item, $key_id]) {
+    if (!$override_storage->load($id)) {
+      \Drupal\key\Entity\KeyConfigOverride::create([
+        'id' => $id,
+        'label' => $label,
+        'config_type' => 'system.simple',
+        'config_name' => $config_name,
+        'config_item' => $config_item,
+        'key_id' => $key_id,
+      ])->save();
+    }
+  }
+
+  $turnstile = \Drupal::configFactory()->getEditable('turnstile.settings');
+  $turnstile->set('keys', 'turnstile')
+    ->set('testing_site_key', '')
+    ->set('testing_secret_key', '')
+    ->set('widget.size', 'flexible')
+    ->set('widget.appearance', 'interaction-only')
+    ->save();
+
+  $captcha_settings = \Drupal::configFactory()->getEditable('captcha.settings');
+  $captcha_settings->set('enable_globally', 0)
+    ->set('enable_globally_on_admin_routes', FALSE)
+    ->set('default_challenge', 'turnstile/Turnstile')
+    ->save();
+
+  $form_ids = [
+    'user_login_form',
+    'user_register_form',
+    'user_pass',
+    'webform_submission_aculta_contact_add_form',
+  ];
+  $captcha_points = \Drupal::entityTypeManager()->getStorage('captcha_point');
+  foreach ($form_ids as $form_id) {
+    $point = $captcha_points->load($form_id) ?: \Drupal\captcha\Entity\CaptchaPoint::create([
+      'formId' => $form_id,
+      'label' => $form_id,
+    ]);
+    $point->setCaptchaType('turnstile/Turnstile');
+    $point->setStatus(TRUE);
+    $point->save();
+  }
+
+  // Keep registration closed until the transactional mail provider passes a
+  // real delivery test; preserve the desired password + email-verification
+  // flow for the later controlled opening of public registration.
+  \Drupal::configFactory()->getEditable('user.settings')
+    ->set('register', 'admin_only')
+    ->set('verify_mail', TRUE)
+    ->set('notify.register_pending_approval', TRUE)
+    ->save();
+  \Drupal::configFactory()->getEditable('user_registrationpassword.settings')
+    ->set('registration', 'with-pass')
+    ->set('registration_ftll_expire', TRUE)
+    ->set('registration_ftll_timeout', 86400)
+    ->set('registration_redirect', '/')
+    ->save();
+
+  return 'Created environment-backed Key references, disabled global CAPTCHA, protected only the five confirmed public form IDs, and prepared SMTP2GO without enabling outbound mail.';
+}
+
+/**
+ * Allows a signed-in user to remove only their own Social Auth connection.
+ */
+function aculta_portal_update_11006(): string {
+  $role = \Drupal\user\Entity\Role::load('authenticated');
+  if ($role && \Drupal::moduleHandler()->moduleExists('social_auth')) {
+    $role->grantPermission('delete own social auth profile');
+    $role->save();
+  }
+  return 'Granted authenticated users the restricted Social Auth permission to delete only their own linked profile.';
+}
+
+/**
+ * Keeps Agreement bypass restricted to the administrator role.
+ */
+function aculta_portal_update_11007(): string {
+  $role = \Drupal\user\Entity\Role::load('administrator');
+  if ($role) {
+    $role->grantPermission('bypass agreement');
+    $role->save();
+  }
+  return 'Granted Agreement bypass only to the administrator role.';
+}
+
+/**
+ * Unifies participant address data in the Commerce customer Address profile.
+ *
+ * The update copies any existing portal address and legacy city/state values
+ * before removing their duplicate fields. It is safe to resume: populated
+ * Commerce Address properties are never overwritten, and completed profiles
+ * no longer contain the source fields on a subsequent run.
+ */
+function aculta_portal_update_11008(&$sandbox): string {
+  $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
+  if (!isset($sandbox['profile_ids'])) {
+    $sandbox['profile_ids'] = array_values($profile_storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('type', 'participante')
+      ->execute());
+    $sandbox['profile_index'] = 0;
+  }
+
+  $limit = 50;
+  $end = min($sandbox['profile_index'] + $limit, count($sandbox['profile_ids']));
+  for (; $sandbox['profile_index'] < $end; $sandbox['profile_index']++) {
+    $participant = $profile_storage->load($sandbox['profile_ids'][$sandbox['profile_index']]);
+    if (!$participant) {
+      continue;
+    }
+
+    $address_values = [];
+    if ($participant->hasField('field_address') && !$participant->get('field_address')->isEmpty()) {
+      $address_values = array_filter(
+        $participant->get('field_address')->first()->toArray(),
+        static fn($value) => $value !== NULL && $value !== '',
+      );
+    }
+    if (empty($address_values['locality']) && $participant->hasField('field_city')) {
+      $address_values['locality'] = (string) ($participant->get('field_city')->value ?? '');
+    }
+    if (empty($address_values['administrative_area']) && $participant->hasField('field_state')) {
+      $address_values['administrative_area'] = (string) ($participant->get('field_state')->value ?? '');
+    }
+    $address_values = array_filter($address_values, static fn($value) => $value !== NULL && $value !== '');
+    if (!$address_values) {
+      continue;
+    }
+
+    $user = $participant->getOwner();
+    if (!$user) {
+      continue;
+    }
+    $customer_profiles = $profile_storage->loadByProperties(['uid' => $user->id(), 'type' => 'customer']);
+    $customer = $customer_profiles ? reset($customer_profiles) : NULL;
+    if (!$customer) {
+      $customer = $profile_storage->create([
+        'type' => 'customer',
+        'uid' => $user->id(),
+        'status' => TRUE,
+        'is_default' => TRUE,
+      ]);
+    }
+
+    $current_address = $customer->hasField('address') && !$customer->get('address')->isEmpty()
+      ? $customer->get('address')->first()->toArray()
+      : [];
+    $changed = FALSE;
+    foreach ($address_values as $key => $value) {
+      if (($current_address[$key] ?? '') === '' && $value !== '') {
+        $current_address[$key] = $value;
+        $changed = TRUE;
+      }
+    }
+    if (empty($current_address['country_code'])) {
+      $current_address['country_code'] = 'BR';
+      $changed = TRUE;
+    }
+    if (!empty($current_address['country_code'])) {
+      foreach (['given_name' => 'field_first_name', 'family_name' => 'field_last_name'] as $address_name => $profile_field) {
+        $name_value = (string) ($participant->get($profile_field)->value ?? '');
+        if (empty($current_address[$address_name]) && $name_value !== '') {
+          $current_address[$address_name] = $name_value;
+          $changed = TRUE;
+        }
+      }
+    }
+    if ($changed) {
+      $customer->set('address', $current_address);
+      $customer->save();
+    }
+  }
+
+  if ($sandbox['profile_index'] < count($sandbox['profile_ids'])) {
+    $sandbox['#finished'] = $sandbox['profile_index'] / max(1, count($sandbox['profile_ids']));
+    return 'Migrating participant addresses to Commerce customer Profiles.';
+  }
+
+  foreach (['field_address', 'field_city', 'field_state'] as $field_name) {
+    $field = FieldConfig::loadByName('profile', 'participante', $field_name);
+    if ($field) {
+      $field->delete();
+    }
+    $storage = FieldStorageConfig::loadByName('profile', $field_name);
+    if ($storage && !$storage->getBundles()) {
+      $storage->delete();
+    }
+  }
+  foreach (['entity_form_display' => ['profile.participante.default'], 'entity_view_display' => ['profile.participante.default']] as $entity_type => $ids) {
+    foreach ($ids as $id) {
+      $display = \Drupal::entityTypeManager()->getStorage($entity_type)->load($id);
+      if (!$display) {
+        continue;
+      }
+      foreach (['field_address', 'field_city', 'field_state'] as $field_name) {
+        $display->removeComponent($field_name);
+      }
+      if ($entity_type === 'entity_view_display') {
+        $hidden = $display->get('hidden') ?? [];
+        unset($hidden['field_address'], $hidden['field_city'], $hidden['field_state']);
+        $display->set('hidden', $hidden);
+      }
+      $display->save();
+    }
+  }
+
+  return 'Moved participant address data into the Drupal Commerce customer Address profile and removed the duplicate participant address fields.';
+}
+
+/**
+ * Reassigns stored text from core formats to the ACULTA formats.
+ *
+ * All current and revision field tables are updated without rewriting text,
+ * revision IDs, authors, or timestamps. The config import must first provide
+ * both target formats; remove the old format configs only after this update.
+ */
+function aculta_portal_update_11009(): string {
+  $targets = [
+    'basic_html' => 'usuario_aculta',
+    'full_html' => 'revista_editorial',
+  ];
+  foreach (array_unique(array_values($targets)) as $target) {
+    if (!\Drupal\filter\Entity\FilterFormat::load($target)) {
+      throw new \Drupal\Core\Utility\UpdateException(sprintf(
+        'The target text format "%s" must be imported before running this update.',
+        $target,
+      ));
+    }
+  }
+
+  $database = \Drupal::database();
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $field_manager = \Drupal::service('entity_field.manager');
+  $transaction = $database->startTransaction();
+  $updated = [];
+
+  try {
+    foreach ($entity_type_manager->getDefinitions() as $entity_type_id => $entity_type) {
+      $storage = $entity_type_manager->getStorage($entity_type_id);
+      if (!$storage instanceof \Drupal\Core\Entity\Sql\SqlEntityStorageInterface) {
+        continue;
+      }
+      $table_mapping = $storage->getTableMapping();
+      foreach ($field_manager->getFieldStorageDefinitions($entity_type_id) as $field_name => $field_definition) {
+        if (!isset($field_definition->getPropertyDefinitions()['format'])) {
+          continue;
+        }
+        $columns = $table_mapping->getColumnNames($field_name);
+        if (!isset($columns['format'])) {
+          continue;
+        }
+        $column = $columns['format'];
+        foreach ($table_mapping->getAllFieldTableNames($field_name) as $table) {
+          foreach ($targets as $source => $target) {
+            $count = $database->update($table)
+              ->fields([$column => $target])
+              ->condition($column, $source)
+              ->execute();
+            if ($count) {
+              $updated[$source] = ($updated[$source] ?? 0) + $count;
+            }
+          }
+        }
+      }
+    }
+    unset($transaction);
+  }
+  catch (\Throwable $exception) {
+    $transaction->rollBack();
+    throw $exception;
+  }
+
+  return sprintf(
+    'Reassigned stored text formats: basic_html=%d to usuario_aculta; full_html=%d to revista_editorial, including revision tables.',
+    $updated['basic_html'] ?? 0,
+    $updated['full_html'] ?? 0,
+  );
+}

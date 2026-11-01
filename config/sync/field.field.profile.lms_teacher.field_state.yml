@@ -1,0 +1,26 @@
+uuid: d6a94f00-53dd-4edb-8d3a-94ee4ca77c2b
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_state
+    - profile.type.lms_teacher
+  module:
+    - options
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.lms_teacher.field_state
+field_name: field_state
+entity_type: profile
+bundle: lms_teacher
+label: UF
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string
+

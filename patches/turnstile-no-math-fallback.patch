@@ -1,0 +1,38 @@
+--- a/turnstile.module
++++ b/turnstile.module
+@@ -23,7 +23,7 @@
+       if ($captcha_type == 'Turnstile') {
+         $config = \Drupal::config('turnstile.settings');
+         $renderer = \Drupal::service('renderer');
+-        $turnstile_keys = turnstile_keys();
++        $turnstile_keys = turnstile_keys() ?: ['site_key' => '', 'secret_key' => ''];
+         $turnstile_site_key = $turnstile_keys['site_key'];
+         $turnstile_secret_key = $turnstile_keys['secret_key'];
+ 
+@@ -53,10 +53,22 @@
+           $captcha = $turnstile->getWidget('turnstile_captcha_validation');
+         }
+         else {
+-          // Fallback to Math captcha as Turnstile is not configured. Invoke
+-          // the hook through the module handler so this keeps working if the
+-          // CAPTCHA module converts its procedural hooks to hook classes.
+-          $captcha = \Drupal::moduleHandler()->invoke('captcha', 'captcha', ['generate', 'Math']);
++          // Fail closed without silently substituting a different challenge.
++          $captcha = [
++            'form' => [
++              'turnstile_unavailable' => [
++                '#type' => 'item',
++                '#markup' => t('A verificação de segurança está temporariamente indisponível. Tente novamente mais tarde.'),
++              ],
++              'captcha_response' => [
++                '#type' => 'hidden',
++                '#value' => '',
++              ],
++            ],
++            'solution' => TRUE,
++            'captcha_validate' => 'turnstile_captcha_validation',
++            'cacheable' => TRUE,
++          ];
+         }
+ 
+         // If module configuration changes the form cache need to be refreshed.

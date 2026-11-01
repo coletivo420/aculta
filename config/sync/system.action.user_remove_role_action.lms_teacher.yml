@@ -1,0 +1,14 @@
+uuid: 6fb22f06-92d3-436b-8afa-84288edfa705
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - user.role.lms_teacher
+  module:
+    - user
+id: user_remove_role_action.lms_teacher
+label: 'Remove the Educador role from the selected user(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: lms_teacher

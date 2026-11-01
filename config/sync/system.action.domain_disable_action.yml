@@ -1,0 +1,13 @@
+uuid: fa100fb8-3d89-4096-bdaa-18df4977ace4
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - domain
+_core:
+  default_config_hash: DlfMeJotYBEDBKUfJoO_srd8rHic6XNYvF4esU-kJPw
+id: domain_disable_action
+label: 'Disable domain record'
+type: domain
+plugin: domain_disable_action
+configuration: {  }

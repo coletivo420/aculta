@@ -1,0 +1,25 @@
+uuid: 188d0178-444c-4d2d-81e5-dfd5888c3f77
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_first_name
+    - profile.type.gerente_loja
+  module:
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.gerente_loja.field_first_name
+field_name: field_first_name
+entity_type: profile
+bundle: gerente_loja
+label: Nome
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

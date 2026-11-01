@@ -1,0 +1,8 @@
+name: Gatilho com avisos
+description: Estado com dois avisos ilustrativos; o painel consulta seu conteúdo ao ser aberto.
+component: aculta420:alerts-trigger
+props:
+  href: '#avisos-exemplo'
+  count: 2
+  count_kind: active
+  all_href: ''

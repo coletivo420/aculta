@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ * Instalação e atualizações do submódulo aculta_magazine.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Aposenta a criação do campo de categoria em fóruns contribuídos.
+ */
+function aculta_magazine_update_10001(): string {
+  return 'Update legado aposentado: nenhum campo de categoria do Forum contrib foi criado.';
+}
+
+/**
+ * Aposenta a criação de pastas da Revista no vocabulário Forum contrib.
+ */
+function aculta_magazine_update_10002(): string {
+  return 'Update legado aposentado: nenhuma pasta editorial do Forum contrib foi criada.';
+}
+
+/**
+ * Padrão de URL do tópico do Fórum: /topico/<título>, em português e sem ID (docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md).
+ */
+function aculta_magazine_update_10003(): string {
+  $storage = new FileStorage(__DIR__ . '/config/install');
+  $data = $storage->read('pathauto.pattern.aculta_forum_topic');
+  unset($data['uuid'], $data['_core']);
+  if (\Drupal::entityTypeManager()->getStorage('pathauto_pattern')->load('aculta_forum_topic') === NULL) {
+    \Drupal::entityTypeManager()->getStorage('pathauto_pattern')->create($data)->save();
+  }
+
+  $generator = \Drupal::service('pathauto.generator');
+  $topics = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties(['type' => 'forum']);
+  foreach ($topics as $topic) {
+    $generator->updateEntityAlias($topic, 'bulkupdate');
+  }
+  return count($topics) . ' tópico(s) do Fórum com URL de /topico/.';
+}

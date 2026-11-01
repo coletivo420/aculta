@@ -1,0 +1,211 @@
+uuid: 0c82f7a0-3e34-4158-ae61-bc744bb19814
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_institution
+    - field.field.block_content.aculta_institution.field_address
+    - field.field.block_content.aculta_institution.field_address_region
+    - field.field.block_content.aculta_institution.field_cnpj
+    - field.field.block_content.aculta_institution.field_country
+    - field.field.block_content.aculta_institution.field_email
+    - field.field.block_content.aculta_institution.field_governance
+    - field.field.block_content.aculta_institution.field_headquarters
+    - field.field.block_content.aculta_institution.field_legal_code
+    - field.field.block_content.aculta_institution.field_legal_nature
+    - field.field.block_content.aculta_institution.field_locality
+    - field.field.block_content.aculta_institution.field_main_activity
+    - field.field.block_content.aculta_institution.field_nonprofit_description
+    - field.field.block_content.aculta_institution.field_opening_date
+    - field.field.block_content.aculta_institution.field_org_description
+    - field.field.block_content.aculta_institution.field_org_name
+    - field.field.block_content.aculta_institution.field_phone
+    - field.field.block_content.aculta_institution.field_postal_code
+    - field.field.block_content.aculta_institution.field_registration_status
+    - field.field.block_content.aculta_institution.field_schema_phone
+    - field.field.block_content.aculta_institution.field_secondary_activity
+    - field.field.block_content.aculta_institution.field_site
+    - field.field.block_content.aculta_institution.field_street_address
+    - field.field.block_content.aculta_institution.field_trade_name
+  module:
+    - link
+    - text
+id: block_content.aculta_institution.default
+targetEntityType: block_content
+bundle: aculta_institution
+mode: default
+content:
+  field_address:
+    type: string_textarea
+    weight: 46
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_address_region:
+    type: string_textfield
+    weight: 43
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_cnpj:
+    type: string_textfield
+    weight: 3
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_country:
+    type: string_textfield
+    weight: 45
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_email:
+    type: email_default
+    weight: 6
+    region: content
+    settings:
+      placeholder: ''
+      size: 60
+    third_party_settings: {  }
+  field_governance:
+    type: text_textarea
+    weight: 9
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_headquarters:
+    type: string_textfield
+    weight: 4
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_legal_code:
+    type: string_textfield
+    weight: 35
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_legal_nature:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_locality:
+    type: string_textfield
+    weight: 42
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_main_activity:
+    type: string_textarea
+    weight: 38
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_nonprofit_description:
+    type: string_textfield
+    weight: 33
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_opening_date:
+    type: string_textfield
+    weight: 36
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_org_description:
+    type: string_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_org_name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_phone:
+    type: string_textfield
+    weight: 7
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_postal_code:
+    type: string_textfield
+    weight: 40
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_registration_status:
+    type: string_textfield
+    weight: 37
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_schema_phone:
+    type: string_textfield
+    weight: 40
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_secondary_activity:
+    type: string_textarea
+    weight: 39
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_site:
+    type: link_default
+    weight: 8
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  field_street_address:
+    type: string_textfield
+    weight: 41
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_trade_name:
+    type: string_textfield
+    weight: 34
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  info:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+hidden: {  }

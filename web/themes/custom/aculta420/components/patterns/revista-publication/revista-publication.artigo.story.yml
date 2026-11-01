@@ -1,0 +1,25 @@
+name: Artigo editorial
+description: Exemplo de publicação da Revista com espaços visuais neutros e texto demonstrativo.
+component: aculta420:revista-publication
+props:
+  has_subtitle: true
+  has_summary: true
+  has_cover: true
+  has_footer: true
+slots:
+  meta:
+    markup: Autoria e data (exemplo)
+  cover:
+    markup: '<div class="ratio ratio-16x9 bg-body-secondary" role="img" aria-label="Área reservada para capa editorial"></div>'
+  subtitle:
+    markup: Chamada editorial demonstrativa
+  summary:
+    markup: <p>Resumo de exemplo da publicação.</p>
+  body:
+    markup: <p>Corpo de exemplo apresentado no leiaute da Revista.</p>
+  footer:
+    markup: Categorias e referências (exemplo)
+  authors:
+    markup: Caixa de autoria (exemplo)
+  discussion:
+    markup: <a href="#discussao-exemplo">Acessar discussão de exemplo</a>

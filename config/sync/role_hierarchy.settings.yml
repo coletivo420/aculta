@@ -1,0 +1,9 @@
+strict: 0
+non_hierarchical_roles:
+  anonymous: anonymous
+  authenticated: 0
+  email_confirmed: 0
+  content_editor: 0
+  administrator: 0
+  lms_teacher: 0
+  gerente_loja: 0

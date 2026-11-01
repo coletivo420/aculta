@@ -1,0 +1,8 @@
+name: Três colunas
+description: Uma coluna no mobile, duas em telas médias e três a partir de 992 CSS px.
+component: aculta420:content-grid
+props:
+  columns: 3
+slots:
+  items:
+    markup: <div class="card"><div class="card-body">Item um</div></div><div class="card"><div class="card-body">Item dois</div></div><div class="card"><div class="card-body">Item três</div></div>

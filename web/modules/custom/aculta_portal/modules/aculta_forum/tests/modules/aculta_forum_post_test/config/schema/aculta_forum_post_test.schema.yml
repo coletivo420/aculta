@@ -1,0 +1,12 @@
+aculta_user.settings:
+  type: config_object
+  label: 'Shared discussion moderation test settings'
+  mapping:
+    primeiro_comentario_discussao_moderado:
+      type: boolean
+      label: 'Moderate the first discussion post'
+    papeis_isentos:
+      type: sequence
+      label: 'Exempt roles'
+      sequence:
+        type: string

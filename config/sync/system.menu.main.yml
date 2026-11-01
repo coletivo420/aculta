@@ -1,0 +1,10 @@
+uuid: 8c795eb3-f5ca-4af4-8151-d2d1a95e4fd8
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: Q2Ra3jfoIVk0f3SjxJX61byRQFVBAbpzYDQOiY-kno8
+id: main
+label: 'Navegação principal'
+description: 'Sete destinos institucionais do header. Preserve rótulos completos e links para páginas existentes.'
+locked: true

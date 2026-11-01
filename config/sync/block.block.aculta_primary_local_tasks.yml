@@ -1,0 +1,22 @@
+uuid: 078a3afc-ca10-4310-88ed-c966a4f5e781
+langcode: en
+status: true
+dependencies:
+  theme:
+    - aculta420
+_core:
+  default_config_hash: nGE3EoPQQaQCuqTUtZgw0-KIzmrqdKDzdNQf2JyPUt4
+id: aculta_primary_local_tasks
+theme: aculta420
+region: highlighted
+weight: -4
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: 'Primary tabs'
+  label_display: '0'
+  provider: core
+  primary: true
+  secondary: false
+visibility: {  }

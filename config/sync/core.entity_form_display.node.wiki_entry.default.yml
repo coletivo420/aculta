@@ -1,0 +1,159 @@
+uuid: 520a6a8d-2714-4867-95da-b8c16fcfa7d8
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.field.node.wiki_entry.body
+    - field.field.node.wiki_entry.field_aculta_discussion
+    - field.field.node.wiki_entry.field_domain_source
+    - field.field.node.wiki_entry.field_wiki_categories
+    - field.field.node.wiki_entry.field_wiki_image
+    - field.field.node.wiki_entry.field_wiki_references
+    - field.field.node.wiki_entry.field_wiki_related
+    - field.field.node.wiki_entry.field_wiki_summary
+    - node.type.wiki_entry
+  module:
+    - link
+    - path
+    - text
+id: node.wiki_entry.default
+targetEntityType: node
+bundle: wiki_entry
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 2
+    region: content
+    settings:
+      rows: 12
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+  co_authors:
+    type: entity_reference_autocomplete_tags
+    weight: 17
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  created:
+    type: datetime_timestamp
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_domain_source:
+    type: entity_reference_autocomplete
+    weight: 122
+    region: hidden
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_wiki_categories:
+    type: options_select
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_wiki_image:
+    type: entity_reference_autocomplete
+    weight: 4
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_wiki_references:
+    type: link_default
+    weight: 5
+    region: content
+    settings:
+      placeholder_url: 'https://'
+      placeholder_title: 'Título da fonte'
+    third_party_settings: {  }
+  field_wiki_related:
+    type: entity_reference_autocomplete
+    weight: 6
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_wiki_summary:
+    type: string_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  simple_sitemap:
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 120
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 5
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  url_redirects:
+    weight: 50
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_aculta_discussion: true
+  promote: true
+  sticky: true

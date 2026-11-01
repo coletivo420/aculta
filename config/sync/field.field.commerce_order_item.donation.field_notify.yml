@@ -1,0 +1,23 @@
+uuid: e28d0aed-f3df-4dd5-8ecd-4a61496ba866
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - commerce_order.commerce_order_item_type.donation
+    - field.storage.commerce_order_item.field_notify
+_core:
+  default_config_hash: hPESaSCy1uoFm_TNdWP3qaolpNAHUYHnEtJOl0RubQI
+id: commerce_order_item.donation.field_notify
+field_name: field_notify
+entity_type: commerce_order_item
+bundle: donation
+label: 'Tell someone about this donation'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean

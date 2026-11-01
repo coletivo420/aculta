@@ -1,0 +1,12 @@
+name: Perfil institucional
+description: Prévia da página social sem arquivo de logo, com conteúdo e links demonstrativos.
+component: aculta420:social-links-page
+props:
+  title: ACULTA
+  has_links: true
+  theme_preset: classic
+slots:
+  description:
+    markup: '<p>Associação cultural antiproibicionista: cultura, direitos e participação.</p>'
+  links:
+    markup: '<a class="btn btn-primary" href="#site-exemplo">Conheça a associação</a><a class="btn btn-outline-primary" href="#canal-exemplo">Canal cultural (exemplo)</a>'

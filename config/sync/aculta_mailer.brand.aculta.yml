@@ -1,0 +1,9 @@
+uuid: 333c8148-c0df-4b03-8527-2e534e9f6db7
+langcode: pt-br
+status: true
+dependencies: {  }
+id: aculta
+label: ACULTA
+name: ACULTA
+footer: "Associação Cultural Antiproibicionista\nCNPJ 68.238.467/0001-08\nAvenida Cristóvão Colombo, 736, Quadra 205, Lote 27, Sala 3, Jardim Novo Mundo, Goiânia - GO, CEP 74705-130\nfaleconosco@aculta.org"
+

@@ -1,0 +1,12 @@
+uuid: 5aba7407-595e-4791-8bb4-b8d6f366e591
+langcode: pt-br
+status: true
+dependencies: {  }
+id: loja_aculta_org
+domain_id: 11753703
+hostname: loja.aculta.org
+name: 'ACULTA - Loja'
+scheme: https
+weight: 5
+is_default: false
+path_prefix: ''

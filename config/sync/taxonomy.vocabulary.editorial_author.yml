@@ -1,0 +1,9 @@
+uuid: 1ff2fdce-970c-4684-b9ee-81085f9a8e17
+langcode: pt-br
+status: true
+dependencies: {  }
+name: 'Autoria editorial'
+vid: editorial_author
+description: 'Autoria pública institucional ou pessoal; não confundir com a conta Drupal que cadastrou a publicação.'
+weight: 0
+new_revision: false

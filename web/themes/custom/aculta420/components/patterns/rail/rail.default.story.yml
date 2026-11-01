@@ -1,0 +1,11 @@
+name: Padrão
+description: >-
+  Trilho com snap por proximidade, rótulo acessível e rolagem por teclado,
+  inclusive em zoom ampliado.
+component: aculta420:rail
+props:
+  label: Cursos
+slots:
+  items:
+    markup: <div class="card"><div class="card-body">Curso um</div></div><div class="card"><div
+      class="card-body">Curso dois</div></div>

@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Install and update hooks for ACULTA Contributions.
+ */
+
+/**
+ * Adds revisionable source and decision context to existing proposals.
+ *
+ * The fields are private metadata, separate from payload values that domain
+ * adapters may apply to their target entities.
+ */
+function aculta_contributions_update_10001(): string {
+  $entity_type_id = 'aculta_contribution';
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $definitions = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions($entity_type_id);
+  $installed = [];
+  foreach (['source_data', 'decision_data'] as $field_name) {
+    if ($manager->getFieldStorageDefinition($field_name, $entity_type_id) !== NULL) {
+      continue;
+    }
+    $manager->installFieldStorageDefinition(
+      $field_name,
+      $entity_type_id,
+      'aculta_contributions',
+      $definitions[$field_name],
+    );
+    $installed[] = $field_name;
+  }
+
+  return $installed === []
+    ? 'Contribution context fields already exist.'
+    : 'Installed contribution context fields: ' . implode(', ', $installed) . '.';
+}

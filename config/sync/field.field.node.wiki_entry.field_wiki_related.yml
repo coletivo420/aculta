@@ -1,0 +1,24 @@
+uuid: 114beca9-88f7-448b-8006-1c6e44620e1c
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_wiki_related
+    - node.type.wiki_entry
+id: node.wiki_entry.field_wiki_related
+field_name: field_wiki_related
+entity_type: node
+bundle: wiki_entry
+label: 'Ver também'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      wiki_entry: wiki_entry
+    auto_create: false
+field_type: entity_reference

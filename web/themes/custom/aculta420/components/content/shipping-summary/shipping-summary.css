@@ -1,0 +1,8 @@
+/* Resumo do frete no carrinho lateral: tokens semânticos, mobile first. */
+.aculta-shipping-summary { display: grid; gap: 0.5rem; color: var(--aculta-text-primary); }
+.aculta-shipping-summary__titulo { margin: 0; font-weight: 600; }
+.aculta-shipping-summary__opcoes { display: grid; gap: 0.25rem; margin: 0; padding: 0; }
+.aculta-shipping-summary__opcao { display: grid; gap: 0.125rem; font-size: 0.875rem; }
+.aculta-shipping-summary__servico { font-weight: 600; }
+.aculta-shipping-summary__prazo { color: var(--aculta-text-secondary); }
+.aculta-shipping-summary__aviso { margin: 0; font-size: 0.875rem; color: var(--aculta-text-secondary); }

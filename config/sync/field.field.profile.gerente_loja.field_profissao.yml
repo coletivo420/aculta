@@ -1,0 +1,20 @@
+uuid: 9b57ce6a-f522-49a1-ac24-b113706afd59
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_profissao
+    - profile.type.gerente_loja
+id: profile.gerente_loja.field_profissao
+field_name: field_profissao
+entity_type: profile
+bundle: gerente_loja
+label: Profissão
+description: 'Dado de associado. Visível só no relatório administrativo.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

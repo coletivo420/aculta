@@ -1,0 +1,33 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_msg_delivery
+    - message.template.aculta_msg_forum_published
+  enforced:
+    module:
+      - aculta_messenger
+field_name: field_aculta_msg_delivery
+entity_type: message
+bundle: aculta_msg_forum_published
+label: 'Estado da entrega'
+description: 'Estado do processamento do evento de assinatura.'
+required: true
+translatable: false
+default_value:
+  -
+    value: pending
+default_value_callback: ''
+settings:
+  allowed_values:
+    -
+      value: pending
+      label: Pendente
+    -
+      value: sent
+      label: Processado
+    -
+      value: failed
+      label: Falhou
+  allowed_values_function: ''
+field_type: list_string

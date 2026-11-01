@@ -1,0 +1,9 @@
+uuid: 04fea54a-7f1c-4700-9906-bb52313bda71
+langcode: pt-br
+status: true
+dependencies: {  }
+currencyCode: BRL
+name: 'Real brasileiro'
+numericCode: '986'
+symbol: R$
+fractionDigits: 2

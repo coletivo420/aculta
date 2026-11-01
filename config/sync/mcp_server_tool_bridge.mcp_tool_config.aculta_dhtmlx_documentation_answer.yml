@@ -1,0 +1,8 @@
+uuid: 532b0212-5fb0-4c5f-a48b-4ee8797b1ad5
+langcode: pt-br
+status: true
+dependencies: {  }
+id: aculta_dhtmlx_documentation_answer
+tool_id: 'aculta_mcp:dhtmlx_documentation_answer'
+description: 'Responde perguntas factuais sobre a documentação pública DHTMLX; não envia credenciais ou dados da conta ACULTA.'
+

@@ -1,0 +1,10 @@
+uuid: 06128509-f0dc-402c-b126-596661c5b188
+langcode: pt-br
+status: true
+dependencies: {  }
+id: aculta_purpose
+label: 'ACULTA por purpose'
+description: 'Sitemaps por purpose de origem (ADR-009).'
+sitemap_generator: default
+url_generators:
+  - aculta_purpose_node

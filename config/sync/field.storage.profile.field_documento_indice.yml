@@ -1,0 +1,23 @@
+uuid: 9d311a7a-a665-4a5b-a4ea-e1275042da25
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - profile
+id: profile.field_documento_indice
+field_name: field_documento_indice
+entity_type: profile
+type: string
+settings:
+  max_length: 64
+  case_sensitive: false
+  is_ascii: true
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes:
+  documento_indice:
+    - value
+persist_with_no_fields: false
+custom_storage: false

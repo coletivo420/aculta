@@ -1,0 +1,12 @@
+uuid: 49479fbb-e70c-42be-b870-25fc2978b7f3
+langcode: pt-br
+status: true
+dependencies: {  }
+id: cursos_aculta_org
+domain_id: 3251697
+hostname: cursos.aculta.org
+name: 'ACULTA - Cursos'
+scheme: https
+weight: 6
+is_default: false
+path_prefix: ''

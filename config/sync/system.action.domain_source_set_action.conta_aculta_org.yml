@@ -1,0 +1,14 @@
+uuid: f4159404-412b-4a24-9847-c3ea76cd7123
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - domain.record.conta_aculta_org
+  module:
+    - domain_source
+id: domain_source_set_action.conta_aculta_org
+label: 'Set content domain source value to the ACULTA - Conta domain'
+type: node
+plugin: domain_source_set_action
+configuration:
+  domain_id: conta_aculta_org

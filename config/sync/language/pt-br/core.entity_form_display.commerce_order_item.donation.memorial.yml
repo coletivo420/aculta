@@ -1,0 +1,13 @@
+content:
+  field_honoree_first:
+    settings:
+      placeholder: Nome
+  field_honoree_last:
+    settings:
+      placeholder: Sobrenome
+  field_recipient_first_name:
+    settings:
+      placeholder: Nome
+  field_recipient_last_name:
+    settings:
+      placeholder: Sobrenome

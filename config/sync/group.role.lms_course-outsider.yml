@@ -1,0 +1,17 @@
+uuid: c052f5df-20fa-427f-8fe1-39baceac30c3
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - group.type.lms_course
+    - user.role.authenticated
+id: lms_course-outsider
+label: 'Visitante autenticado'
+weight: -15
+admin: false
+scope: outsider
+global_role: authenticated
+group_type: lms_course
+permissions:
+  - 'join group'
+  - 'view group'

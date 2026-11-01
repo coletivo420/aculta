@@ -1,0 +1,293 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for ACULTA Messenger.
+ */
+
+use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
+use Drupal\Core\Config\FileStorage;
+
+/**
+ * Implements hook_schema().
+ */
+function aculta_messenger_schema(): array {
+  return [
+    ForumNoticeEventSchema::TABLE => ForumNoticeEventSchema::definition(),
+  ];
+}
+
+/**
+ * Adds one delivery option while accepting both allowed_values shapes.
+ *
+ * Field storages installed from list_string config may store a sequence of
+ * value/label pairs, while older exports stored a value => label map. The
+ * update must preserve the existing shape instead of mixing the two.
+ */
+function aculta_messenger_add_delivery_option(array $allowed_values, string $value, string $label): array {
+  if (array_is_list($allowed_values)) {
+    foreach ($allowed_values as $option) {
+      if (($option['value'] ?? NULL) === $value) {
+        return $allowed_values;
+      }
+    }
+    $allowed_values[] = ['value' => $value, 'label' => $label];
+    return $allowed_values;
+  }
+  if (!array_key_exists($value, $allowed_values)) {
+    $allowed_values[$value] = $label;
+  }
+  return $allowed_values;
+}
+
+/**
+ * Adds a terminal cancelled state to the shared Message email delivery field.
+ */
+function aculta_messenger_update_10001(): void {
+  $field_storage = \Drupal::entityTypeManager()
+    ->getStorage('field_storage_config')
+    ->load('message.field_aculta_msg_delivery');
+  if (!$field_storage) {
+    return;
+  }
+  $current = $field_storage->getSetting('allowed_values') ?? [];
+  $allowed_values = aculta_messenger_add_delivery_option($current, 'cancelled', 'Cancelado');
+  if ($allowed_values !== $current) {
+    $field_storage->setSetting('allowed_values', $allowed_values)->save();
+  }
+}
+
+/**
+ * Adds the Forum direct-email outbox columns to the idempotency ledger.
+ */
+function aculta_messenger_update_10002(): void {
+  $table = ForumNoticeEventSchema::TABLE;
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists($table)) {
+    return;
+  }
+  $definition = ForumNoticeEventSchema::definition();
+  foreach (['email_status', 'email_attempts', 'email_updated'] as $field) {
+    if (!$schema->fieldExists($table, $field)) {
+      $schema->addField($table, $field, $definition['fields'][$field]);
+    }
+  }
+  if (!$schema->indexExists($table, 'email_status')) {
+    $schema->addIndex($table, 'email_status', ['email_status', 'email_updated'], $definition);
+  }
+}
+
+/**
+ * Installs defaults for the centralized LMS, Wiki, and Commerce adapters.
+ */
+function aculta_messenger_update_10003(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}
+
+/**
+ * Installs defaults for the centralized ACULTA Donation adapter.
+ */
+function aculta_messenger_update_10004(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}
+
+/**
+ * Adds stable Mailer correlation IDs to the existing Forum event ledger.
+ */
+function aculta_messenger_update_10005(): void {
+  $table = ForumNoticeEventSchema::TABLE;
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists($table) || $schema->fieldExists($table, 'email_correlation')) {
+    return;
+  }
+  $definition = ForumNoticeEventSchema::definition();
+  $schema->addField($table, 'email_correlation', $definition['fields']['email_correlation']);
+}
+
+/**
+ * Adds a terminal permanent-failure value to the shared Mailer status field.
+ */
+function aculta_messenger_update_10006(): void {
+  $field_storage = \Drupal::entityTypeManager()
+    ->getStorage('field_storage_config')
+    ->load('message.field_aculta_msg_delivery');
+  if (!$field_storage) {
+    return;
+  }
+  $current = $field_storage->getSetting('allowed_values') ?? [];
+  $allowed_values = aculta_messenger_add_delivery_option($current, 'failed_permanent', 'Falha permanente');
+  if ($allowed_values !== $current) {
+    $field_storage->setSetting('allowed_values', $allowed_values)->save();
+  }
+}
+
+/**
+ * Installs the complete friendship Message bundle and enqueue recovery field.
+ */
+function aculta_messenger_update_10007(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}
+
+/**
+ * Adds the delivery ownership marker for centrally mailed private notices.
+ */
+function aculta_messenger_update_10008(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}
+
+/**
+ * Adds the delivery ownership marker for centrally mailed friendship notices.
+ */
+function aculta_messenger_update_10009(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}
+
+/**
+ * Installs the weekly digest state field for private-message notices.
+ */
+function aculta_messenger_update_10010(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}
+
+/**
+ * Adds site-read state to persisted friendship notice Messages.
+ */
+function aculta_messenger_update_10011(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}
+
+/**
+ * Installs the shared Message-backed ACULTA Game achievement bundle.
+ */
+function aculta_messenger_update_10012(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}
+
+/**
+ * Installs only missing unread-count fields without replacing active config.
+ */
+function aculta_messenger_update_10013(): void {
+  $module_path = \Drupal::service('extension.list.module')->getPath('aculta_messenger');
+  $defaults = new FileStorage($module_path . '/config/install');
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $field_storage = $entity_type_manager->getStorage('field_storage_config');
+  $field_config = $entity_type_manager->getStorage('field_config');
+
+  // The existing friendship event field has a legacy string type on some
+  // sites. It is intentionally excluded: these read-state fields are the
+  // only missing dependencies used by the count queries.
+  $storage_names = [
+    'field.storage.message.field_aculta_friendship_read',
+    'field.storage.message.field_aculta_game_award_uuid',
+    'field.storage.message.field_aculta_game_read',
+  ];
+  foreach ($storage_names as $name) {
+    $config = $defaults->read($name);
+    if (!is_array($config) || empty($config['id'])) {
+      throw new \UnexpectedValueException(sprintf('Missing Messenger field default: %s.', $name));
+    }
+    if (!$field_storage->load($config['id'])) {
+      $field_storage->create($config)->save();
+    }
+  }
+
+  $instance_names = [
+    'field.field.message.aculta_msg_friendship.field_aculta_friendship_read',
+    'field.field.message.aculta_msg_game_award.field_aculta_game_award_uuid',
+    'field.field.message.aculta_msg_game_award.field_aculta_game_read',
+  ];
+  foreach ($instance_names as $name) {
+    $config = $defaults->read($name);
+    if (!is_array($config) || empty($config['id'])) {
+      throw new \UnexpectedValueException(sprintf('Missing Messenger field default: %s.', $name));
+    }
+    if ($field_config->load($config['id'])) {
+      continue;
+    }
+    $storage_id = $config['entity_type'] . '.' . $config['field_name'];
+    $storage = $field_storage->load($storage_id);
+    if (!$storage || $storage->getType() !== $config['field_type']) {
+      \Drupal::logger('aculta_messenger')->error('Skipped unread-count field @field because its field storage is missing or has a different type.', ['@field' => $config['field_name']]);
+      continue;
+    }
+    $field_config->create($config)->save();
+  }
+}
+
+/**
+ * Moves the Wiki editorial review settings to the central Messenger config.
+ *
+ * Only copies keys the destination does not already configure. A conflict is
+ * logged and left untouched, so an explicit Messenger choice is never
+ * overwritten by the legacy Wiki value.
+ */
+function aculta_messenger_update_10014(): void {
+  if (!\Drupal::moduleHandler()->moduleExists('aculta_wiki')) {
+    return;
+  }
+  $source = \Drupal::configFactory()->getEditable('aculta_wiki.settings');
+  $destination = \Drupal::configFactory()->getEditable('aculta_messenger.settings');
+  $map = [
+    'review_notifications' => 'wiki_review_notifications',
+    'review_recipients' => 'wiki_review_recipients',
+  ];
+  $conflicts = [];
+  $copied = FALSE;
+  foreach ($map as $legacy_key => $central_key) {
+    $legacy_value = $source->get($legacy_key);
+    if ($legacy_value === NULL) {
+      continue;
+    }
+    if ($destination->get($central_key) !== NULL) {
+      $conflicts[] = $central_key;
+      continue;
+    }
+    $destination->set($central_key, $legacy_value);
+    $copied = TRUE;
+  }
+  if ($copied) {
+    $destination->save();
+  }
+  if ($conflicts !== []) {
+    \Drupal::logger('aculta_messenger')->notice(
+      'Wiki review settings were already configured in Messenger and were not overwritten: @keys.',
+      ['@keys' => implode(', ', $conflicts)],
+    );
+    return;
+  }
+  // Every legacy key was migrated: remove the source so it is not exported
+  // without an owner schema.
+  if ($source->get('review_notifications') !== NULL || $source->get('review_recipients') !== NULL) {
+    $source->delete();
+  }
+}
+
+/**
+ * Installs the private Message bundle used for Events contribution outcomes.
+ */
+function aculta_messenger_update_10015(): void {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+}
+
+/**
+ * Allows the Events inbox bundle to store author submission notices.
+ */
+function aculta_messenger_update_10016(): void {
+  $storage = \Drupal::entityTypeManager()->getStorage('field_storage_config');
+  $field = $storage->load('message.field_aculta_events_notice_outcome');
+  if ($field === NULL) {
+    return;
+  }
+  $allowedValues = $field->getSetting('allowed_values') ?? [];
+  foreach ($allowedValues as $definition) {
+    if (($definition['value'] ?? NULL) === 'submitted') {
+      return;
+    }
+  }
+  $allowedValues[] = [
+    'value' => 'submitted',
+    'label' => 'Enviar para revisão',
+  ];
+  $field->setSetting('allowed_values', $allowedValues);
+  $field->save();
+}

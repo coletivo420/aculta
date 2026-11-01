@@ -1,0 +1,16 @@
+uuid: 6b82e74a-2a3e-4ceb-9054-4da5fbf4376c
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - commerce_store
+  enforced:
+    module:
+      - commerce_store
+_core:
+  default_config_hash: jF3zps2fK-ebAbUv5-Sz1yk2oy_VEsEGCSsOWviHEjY
+id: commerce_store_delete_action
+label: 'Excluir loja'
+type: commerce_store
+plugin: 'entity:delete_action:commerce_store'
+configuration: {  }

@@ -1,0 +1,35 @@
+uuid: 56832285-d3ef-4cc8-976b-924463c9fbb7
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - filter.format.plain_text
+    - filter.format.revista_editorial
+    - filter.format.usuario_aculta
+    - filter.format.webform_default
+    - filter.format.wiki
+    - node.type.page
+  module:
+    - text
+id: node.page.body
+field_name: body
+entity_type: node
+bundle: page
+label: Conteúdo
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: false
+  required_summary: false
+  allowed_formats:
+    revista_editorial: revista_editorial
+    usuario_aculta: usuario_aculta
+    webform_default: webform_default
+    wiki: wiki
+    plain_text: plain_text
+field_type: text_with_summary
+

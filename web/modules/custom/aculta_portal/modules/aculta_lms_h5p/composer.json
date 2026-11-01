@@ -1,0 +1,6 @@
+{
+  "name": "aculta/aculta-lms-h5p",
+  "type": "drupal-custom-module",
+  "description": "ACULTA LMS H5P integration derived from Drupal H5P",
+  "license": "GPL-2.0-or-later"
+}

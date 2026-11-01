@@ -1,0 +1,12 @@
+aculta_lms_h5p.admin_dashboard:
+  title: 'Conteúdo interativo do LMS'
+  description: 'Administre bibliotecas e configurações H5P.'
+  parent: system.admin_content
+  route_name: aculta_lms_h5p.admin_dashboard
+  weight: 35
+
+aculta_lms_h5p.admin_config:
+  title: 'Configurações H5P'
+  description: 'Configure a integração de conteúdo interativo do LMS.'
+  parent: system.admin_config_system
+  route_name: aculta_lms_h5p.admin.config.system.h5p

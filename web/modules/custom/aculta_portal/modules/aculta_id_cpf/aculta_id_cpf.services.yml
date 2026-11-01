@@ -1,0 +1,29 @@
+services:
+  aculta_id_cpf.normalizer:
+    class: Drupal\aculta_id_cpf\Service\DocumentNormalizer
+  aculta_id_cpf.cpf_validator:
+    class: Drupal\aculta_id_cpf\Service\CpfValidator
+  aculta_id_cpf.cnpj_validator:
+    class: Drupal\aculta_id_cpf\Service\CnpjValidator
+  aculta_id_cpf.validator:
+    class: Drupal\aculta_id_cpf\Service\DocumentValidator
+    arguments: ['@aculta_id_cpf.normalizer', '@aculta_id_cpf.cpf_validator', '@aculta_id_cpf.cnpj_validator']
+  aculta_id_cpf.formatter:
+    class: Drupal\aculta_id_cpf\Service\DocumentFormatter
+    arguments: ['@aculta_id_cpf.validator']
+  aculta_id_cpf.cipher:
+    class: Drupal\aculta_id_cpf\Service\DocumentCipher
+    arguments: ['@key.repository']
+  aculta_id_cpf.account_document:
+    class: Drupal\aculta_id_cpf\Service\AccountDocumentStore
+    arguments: ['@entity_type.manager', '@entity_field.manager', '@aculta_id_cpf.validator', '@aculta_id_cpf.formatter', '@aculta_id_cpf.cipher', '@aculta_id_cpf.fingerprint']
+  aculta_id_cpf.fingerprint:
+    class: Drupal\aculta_id_cpf\Service\DocumentFingerprint
+    arguments: ['@aculta_id_cpf.validator', '@key.repository']
+  aculta_id_cpf.login_identifier_resolver:
+    class: Drupal\aculta_id_cpf\Service\CpfLoginIdentifierResolver
+    arguments: ['@entity_type.manager', '@entity_field.manager', '@aculta_id_cpf.validator', '@aculta_id_cpf.fingerprint']
+  aculta_id_cpf.login_form_callbacks:
+    class: Drupal\aculta_id_cpf\Service\CpfLoginFormCallbacks
+    arguments: ['@aculta_id_cpf.login_identifier_resolver']
+

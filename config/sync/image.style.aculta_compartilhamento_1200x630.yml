@@ -1,0 +1,17 @@
+uuid: 739bde14-038e-4713-89af-43b50a777aab
+langcode: pt-br
+status: true
+dependencies: {  }
+name: aculta_compartilhamento_1200x630
+label: 'ACULTA compartilhamento 1200×630'
+effects:
+  8bb83c74-b0c4-497b-8d26-1f34d9fca361:
+    uuid: 8bb83c74-b0c4-497b-8d26-1f34d9fca361
+    id: image_scale_and_crop
+    weight: 0
+    data:
+      width: 1200
+      height: 630
+      anchor: center-center
+pipeline: aculta_derivados
+

@@ -1,0 +1,4 @@
+administer aculta qr codes:
+  title: 'Administrar códigos QR dinâmicos'
+  description: 'Criar, alterar destino, ativar, desativar e excluir códigos QR dinâmicos.'
+  restrict access: true

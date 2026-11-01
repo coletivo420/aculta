@@ -1,0 +1,148 @@
+{
+  "course": {
+    "label": "Introdução ao Antiproibicionismo",
+    "description": "<p>Curso introdutório sobre a política de drogas, o modelo proibicionista e as alternativas discutidas no Brasil e no mundo. É voltado a quem chega ao tema pela primeira vez e a quem quer revisar os conceitos com fontes verificáveis.</p><h3>Objetivos</h3><ul><li>distinguir proibicionismo, antiproibicionismo, descriminalização, regulação e redução de danos;</li><li>conhecer os marcos internacionais e nacionais da política de drogas;</li><li>avaliar argumentos de diferentes posições a partir de fontes primárias;</li><li>reconhecer o papel da participação social no debate.</li></ul><h3>Como fazer o curso</h3><p>São sete lições, cada uma com leitura, questões de verdadeiro ou falso e uma reflexão. As reflexões não têm resposta correta: servem para organizar o seu raciocínio.</p><h3>Sobre o conteúdo</h3><p>Este curso apresenta posições e dados de fontes públicas. Ele não substitui orientação jurídica nem de saúde. Quando uma informação for disputada, a lição diz isso e indica onde verificar.</p><h3>Glossário rápido</h3><ul><li><strong>Proibicionismo:</strong> modelo que trata a produção, o comércio e, em muitos países, o uso de certas substâncias como crime.</li><li><strong>Antiproibicionismo:</strong> crítica ao modelo proibicionista e defesa de alternativas, como regulação e redução de danos. Os antiproibicionistas não concordam em tudo entre si.</li><li><strong>Descriminalização:</strong> retirar a consequência penal de uma conduta, mantendo-a como ilícito de outra natureza (por exemplo, administrativo).</li><li><strong>Regulação:</strong> autorizar e controlar a produção, a distribuição e o consumo por regras do Estado.</li><li><strong>Redução de danos:</strong> conjunto de políticas e práticas que diminuem os danos do uso de substâncias, sem exigir abstinência como condição.</li></ul><h3>Fontes principais</h3><ul><li><a href=\"https://unaids.org.br/wp-content/uploads/2017/10/WEB_2017_07_12_GuiaTerminologia_UNAIDS.pdf\">UNAIDS, Guia de Terminologia (2017)</a></li><li><a href=\"https://www.hri.global/files/2021/05/05/What_is_Harm_Reduction_Portuguese_HRI.pdf\">Harm Reduction International, “O que é redução de danos?”</a></li><li><a href=\"https://site.mppr.mp.br/sites/hotsites/arquivos_restritos/files/migrados/File/Projeto_Semear/Temas_Revelantes/Reducao_de_Danos_uma_visao_Internacional.pdf\">MPPR, “Redução de danos: uma visão internacional”</a></li><li><a href=\"https://repositorio.ipea.gov.br/bitstream/11058/8846/14/bapi_18_panorama_internacional.pdf\">IPEA, “Panorama Internacional das Políticas sobre Drogas”</a></li><li><a href=\"https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2006/lei/l11343.htm\">Lei nº 11.343, de 23 de agosto de 2006 (Planalto)</a></li><li><a href=\"https://site.mppr.mp.br/sites/hotsites/arquivos_restritos/files/documento/2024-07/nota_tecnica_re_635.659_-_maconha_e_art._28_da_lei_n._11.343-06.pdf\">MPPR, nota técnica sobre o RE 635.659</a></li></ul>"
+  },
+  "lessons": [
+    {
+      "name": "Proibicionismo e antiproibicionismo",
+      "description": "<p>Este curso começa pelos termos, porque o debate sobre drogas costuma ser confuso quando as palavras não são definidas. Esta lição explica o que cada termo significa, por que a diferença importa e como o curso trata o assunto.</p><h3>O que é proibicionismo</h3><p>Proibicionismo é o modelo que responde ao uso, à produção e ao comércio de certas substâncias com a proibição penal. Nesse modelo, a resposta principal do Estado é a repressão, e o foco de atenção costuma ser a substância, e não a pessoa que a usa. Segundo o IPEA, o controle internacional de drogas migrou de uma lógica de regulação para uma lógica de proibição ao longo do século XX.</p><h3>O que é antiproibicionismo</h3><p>Antiproibicionismo é a crítica a esse modelo e a defesa de alternativas. As propostas variam bastante: algumas defendem a descriminalização do uso, outras a regulação do comércio, e outras colocam a redução de danos no centro da política. Antiproibicionismo não significa ausência de regras. Em geral, significa trocar a resposta penal por respostas de saúde, de regulação ou de assistência, com regras próprias para cada caso.</p><h3>Proibir não é o mesmo que controlar</h3><p>Um país pode proibir o comércio e, ao mesmo tempo, tratar o uso como questão de saúde. Outro pode regular o comércio por meio de licenças e aplicar sanções a quem vende sem licença. Cada combinação produz efeitos diferentes sobre saúde, segurança e direitos. Por isso, o debate sobre política de drogas precisa separar as perguntas: o que é proibido, quem é punido, quem é atendido e quem controla o mercado.</p><h3>Como este curso trata o tema</h3><p>O curso apresenta argumentos de diferentes posições e indica as fontes de cada informação. Quando um dado é disputado, a lição diz isso. A pergunta central não é se alguém concorda com a política atual, mas se as decisões públicas são avaliadas com evidências.</p><h3>Posição desta associação</h3><p>A ACULTA é uma associação cultural antiproibicionista, sem fins lucrativos. Este curso expõe essa perspectiva junto com os argumentos contrários, para que você avalie por conta própria.</p><h3>Fontes</h3><ul><li><a href=\"https://repositorio.ipea.gov.br/bitstream/11058/8846/14/bapi_18_panorama_internacional.pdf\">IPEA, “Panorama Internacional das Políticas sobre Drogas”</a></li><li><a href=\"https://www.hri.global/files/2021/05/05/What_is_Harm_Reduction_Portuguese_HRI.pdf\">Harm Reduction International, “O que é redução de danos?”</a></li></ul>",
+      "activities": [
+        {
+          "type": "true_false",
+          "name": "Questão de revisão",
+          "question": "Antiproibicionismo é uma posição única, com as mesmas propostas para todos os que a defendem.",
+          "bool_expected": false,
+          "description": "Falso. O antiproibicionismo reúne propostas diferentes, como descriminalização, regulação e redução de danos, e nem todos os antiproibicionistas concordam entre si.",
+          "max_score": 1
+        },
+        {
+          "type": "no_answer",
+          "name": "Conceitos iniciais",
+          "content": "Com suas palavras, explique a diferença entre proibir o comércio de uma substância e tratar o uso como questão de saúde. Dê um exemplo de cada um. Não há resposta correta.",
+          "max_score": 0
+        }
+      ]
+    },
+    {
+      "name": "Origens do controle internacional",
+      "description": "<p>O controle internacional de drogas começou no início do século XX, com as primeiras iniciativas diplomáticas para restringir o comércio do ópio. Segundo o IPEA, a transição foi da regulação para a proibição: as convenções do período passaram a tratar o consumo e a produção de certas substâncias como objeto de controle penal.</p><h3>Os três tratados</h3><ul><li><strong>Convenção Única sobre Entorpecentes (1961):</strong> consolidou tratados anteriores e estabeleceu o controle de substâncias como o ópio, a morfina, a cocaína e a cannabis.</li><li><strong>Convenção sobre Substâncias Psicotrópicas (1971):</strong> respondeu ao crescimento de drogas sintéticas e alucinógenas.</li><li><strong>Convenção contra o Tráfico Ilícito (1988):</strong> tratou da repressão ao tráfico e da cooperação entre países.</li></ul><h3>O que as convenções não dizem</h3><p>Os textos internacionais não mencionam a redução de danos, porque o termo ainda não era usado quando a Convenção de 1961 foi escrita. Segundo o MPPR, o órgão internacional de controle (JIFE) entende que as convenções não tratam dessa prática, e por isso ela não pode ser classificada como contrária a elas.</p><p>Fontes: <a href=\"https://repositorio.ipea.gov.br/bitstream/11058/8846/14/bapi_18_panorama_internacional.pdf\">IPEA, “Panorama Internacional das Políticas sobre Drogas”</a>; <a href=\"https://site.mppr.mp.br/sites/hotsites/arquivos_restritos/files/migrados/File/Projeto_Semear/Temas_Revelantes/Reducao_de_Danos_uma_visao_Internacional.pdf\">MPPR, “Redução de danos: uma visão internacional”</a>.</p><p><em>Ponto de debate:</em> críticos afirmam que esses tratados consolidaram a chamada “guerra às drogas”. Essa é uma leitura crítica, não a posição oficial da ONU. Vale comparar os textos oficiais antes de adotar qualquer uma delas.</p>",
+      "activities": [
+        {
+          "type": "true_false",
+          "name": "Tratados internacionais",
+          "question": "As convenções de 1961, 1971 e 1988 formam a base do controle internacional de drogas.",
+          "bool_expected": true,
+          "description": "Verdadeiro. Esses três tratados são a base do regime internacional, cada um com um foco.",
+          "max_score": 1
+        },
+        {
+          "type": "no_answer",
+          "name": "Reflexão sobre os tratados",
+          "content": "Qual dos três tratados você considera mais importante para entender a política atual? Justifique em poucas linhas.",
+          "max_score": 0
+        }
+      ]
+    },
+    {
+      "name": "Redução de danos",
+      "description": "<p>A redução de danos é um conjunto de políticas, programas e práticas que buscam diminuir as consequências negativas do uso de substâncias para a saúde, para a vida social e para a economia. Ela não exige a abstinência como condição para o atendimento. A UNAIDS define a redução de danos como um pacote abrangente de intervenções baseadas em evidências, sustentado por saúde pública e direitos humanos.</p><h3>Exemplos práticos</h3><ul><li><strong>Troca de seringas</strong>, que previne a transmissão de HIV e hepatites virais;</li><li><strong>Terapia de manutenção com agonistas opioides</strong>, para pessoas com dependência de opioides;</li><li><strong>Naloxona</strong>, medicamento usado para reverter overdoses de opioides.</li></ul><h3>Distinção importante</h3><p>Redução de danos não é incentivo ao uso. O objetivo é preservar a saúde e a vida de quem usa, com ou sem a intenção de parar.</p><p>Fontes: <a href=\"https://unaids.org.br/wp-content/uploads/2017/10/WEB_2017_07_12_GuiaTerminologia_UNAIDS.pdf\">UNAIDS, Guia de Terminologia (2017)</a>; <a href=\"https://www.hri.global/files/2021/05/05/What_is_Harm_Reduction_Portuguese_HRI.pdf\">Harm Reduction International, “O que é redução de danos?”</a>.</p>",
+      "activities": [
+        {
+          "type": "true_false",
+          "name": "Abstinência como condição",
+          "question": "Programas de redução de danos exigem que a pessoa pare de usar drogas para ser atendida.",
+          "bool_expected": false,
+          "description": "Falso. A redução de danos não exige abstinência como condição de atendimento.",
+          "max_score": 1
+        },
+        {
+          "type": "no_answer",
+          "name": "Redução de danos e HIV",
+          "content": "Como a troca de seringas pode ser explicada como política de saúde pública e não como estímulo ao uso?",
+          "max_score": 0
+        }
+      ]
+    },
+    {
+      "name": "Direitos humanos e políticas de drogas",
+      "description": "<p>Uma política de drogas afeta direitos: a saúde, a integridade física, a privacidade e o acesso à justiça. Quando o uso é tratado como crime, pessoas que usam drogas podem evitar serviços de saúde por medo de punição, o que aumenta riscos. Por isso, a UNAIDS associa a redução de danos a uma abordagem de direitos humanos.</p><h3>Dois efeitos a observar</h3><ul><li><strong>Acesso a serviços:</strong> o medo da repressão afasta pessoas de atendimento e de informação.</li><li><strong>Desigualdade:</strong> a aplicação da lei costuma atingir de forma desigual pessoas em territórios e grupos mais vulneráveis.</li></ul><p>A discussão sobre direitos não é consenso. Há quem argumente que a proibição protege a sociedade e a juventude. Esse argumento também precisa ser avaliado com dados.</p><p>Fontes: <a href=\"https://unaids.org.br/wp-content/uploads/2017/10/WEB_2017_07_12_GuiaTerminologia_UNAIDS.pdf\">UNAIDS, Guia de Terminologia (2017)</a>; <a href=\"https://www.hri.global/files/2021/05/05/What_is_Harm_Reduction_Portuguese_HRI.pdf\">Harm Reduction International, “O que é redução de danos?”</a>.</p>",
+      "activities": [
+        {
+          "type": "true_false",
+          "name": "Saúde e acesso",
+          "question": "Programas de redução de danos são apresentados pela UNAIDS como baseados em saúde pública e direitos humanos.",
+          "bool_expected": true,
+          "description": "Verdadeiro. Essa é a formulação da UNAIDS citada nesta lição.",
+          "max_score": 1
+        },
+        {
+          "type": "no_answer",
+          "name": "Quem é mais afetado",
+          "content": "Na sua avaliação, quais grupos sentem mais os efeitos da criminalização do uso? Explique o raciocínio.",
+          "max_score": 0
+        }
+      ]
+    },
+    {
+      "name": "Modelos de política: Portugal, Uruguai e Canadá",
+      "description": "<p>Há três modelos principais, além da proibição total: <strong>descriminalização</strong> (o uso deixa de ser crime, mas continua ilícito de outra natureza), <strong>regulação</strong> (o Estado autoriza e controla a cadeia) e <strong>legalização</strong> (o produto deixa de ser proibido, com regras de comércio e consumo).</p><h3>Portugal (2001)</h3><p>Desde 2001, a posse de drogas para uso pessoal deixou de ser crime e passou a ser tratada como contraordenação administrativa. Essas situações são encaminhadas a comissões de dissuasão, ligadas ao sistema de saúde. O uso continua proibido.</p><p><em>Ponto de debate:</em> a avaliação do modelo português é disputada. Estudos e artigos divergem sobre tendências de consumo e de mortes entre 2001 e os anos seguintes. Por isso, esta lição não apresenta números como conclusão. Os dados oficiais estão nos relatórios do SICAD e do Observatório Europeu da Droga e da Toxicodependência (OEDT).</p><h3>Uruguai (2013)</h3><p>A Lei nº 19.172/2013 regulou a produção, a distribuição e o consumo de cannabis. O acesso se dá por cadastro, em uma de três vias: farmácias, cultivo doméstico ou clube de cultivo. A lei criou o Instituto de Regulação e Controle da Cannabis (IRCCA), que supervisiona o mercado.</p><h3>Canadá (2018)</h3><p>A Cannabis Act entrou em vigor em outubro de 2018. Ela permite o uso por maiores de idade e a posse de até 30 gramas em nível federal, e as províncias podem impor restrições adicionais. As vendas ocorrem em lojas licenciadas.</p><p>Fontes: <a href=\"https://www.opensocietyfoundations.org/uploads/04a1698a-6d38-4147-b9fd-d07a5235b276/drug-policy-in-portugal-portuguese-20111206_0.pdf\">Open Society Foundations, “Política da Droga em Portugal”</a>; <a href=\"https://repositorio.ipea.gov.br/bitstreams/15f43436-b3e6-4f84-a76a-967b948e39b3/download\">IPEA, estudo sobre a regulação uruguaia da cannabis</a>; <a href=\"https://en.wikipedia.org/wiki/Cannabis_Act_(Canada)\">Wikipedia, “Cannabis Act (Canada)” (verificar a fonte oficial)</a>.</p>",
+      "activities": [
+        {
+          "type": "true_false",
+          "name": "Modelo português",
+          "question": "Em Portugal, a posse de drogas para uso pessoal deixou de ser crime em 2001 e passou a ser tratada como contraordenação administrativa.",
+          "bool_expected": true,
+          "description": "Verdadeiro. Esse é o marco legal descrito nesta lição, mas a avaliação de seus resultados é disputada.",
+          "max_score": 1
+        },
+        {
+          "type": "no_answer",
+          "name": "Indicadores de uma política",
+          "content": "Quais indicadores você usaria para avaliar se um modelo de política de drogas está funcionando? Liste pelo menos três.",
+          "max_score": 0
+        }
+      ]
+    },
+    {
+      "name": "O Brasil: Lei 11.343/2006 e o STF",
+      "description": "<p>No Brasil, a <strong>Lei nº 11.343/2006</strong> instituiu o Sistema Nacional de Políticas Públicas sobre Drogas e definiu as condutas ilícitas. O <strong>artigo 28</strong> trata de quem adquire, guarda ou porta droga para consumo pessoal. Pelo texto original, as sanções para esse caso são advertência, medida educativa e prestação de serviços, e não pena de prisão.</p><h3>A decisão do STF (2024)</h3><p>Em 26 de junho de 2024, o Supremo Tribunal Federal julgou o RE 635.659 (Tema 506). Segundo a nota técnica do MPPR e a análise publicada pela ConJur:</p><ul><li>o artigo 28 foi declarado inconstitucional, sem redução de texto, para afastar efeito penal do porte de <em>cannabis sativa</em> para uso pessoal;</li><li>o porte continua sendo ilícito de natureza administrativa, com advertência e medida educativa;</li><li>a decisão tomou como parâmetro cerca de 40 gramas ou seis plantas fêmeas, como presunção de uso pessoal, e não como limite absoluto;</li><li>a decisão vale apenas para a maconha.</li></ul><p><em>Atenção:</em> os efeitos sobre processos já julgados são controversos. Confira o acórdão oficial antes de citar qualquer número.</p><p>Fontes: <a href=\"https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2006/lei/l11343.htm\">Lei nº 11.343, de 23 de agosto de 2006 (Planalto)</a>; <a href=\"https://site.mppr.mp.br/sites/hotsites/arquivos_restritos/files/documento/2024-07/nota_tecnica_re_635.659_-_maconha_e_art._28_da_lei_n._11.343-06.pdf\">MPPR, nota técnica sobre o RE 635.659</a>; <a href=\"https://www.conjur.com.br/2024-ago-16/quais-os-efeitos-da-decisao-do-stf-sobre-a-maconha-tema-506-nos-casos-em-andamento-e-julgados/\">ConJur, “Efeitos da decisão do STF sobre a maconha (Tema 506)”</a>.</p>",
+      "activities": [
+        {
+          "type": "true_false",
+          "name": "Efeito penal",
+          "question": "Após a decisão do STF no RE 635.659, o porte de cannabis para uso pessoal deixou de ter efeito penal, mas continua sendo ilícito de natureza administrativa.",
+          "bool_expected": true,
+          "description": "Verdadeiro, segundo a nota técnica do MPPR citada nesta lição.",
+          "max_score": 1
+        },
+        {
+          "type": "no_answer",
+          "name": "Limite da decisão",
+          "content": "Por que a decisão do STF se limita à cannabis? Em sua opinião, isso faz sentido? Explique.",
+          "max_score": 0
+        }
+      ]
+    },
+    {
+      "name": "Debate crítico e participação",
+      "description": "<p>Esta última lição não encerra o debate. Ela organiza os principais argumentos de cada lado, para que você possa avaliá-los.</p><h3>Argumentos frequentemente apresentados</h3><ul><li><strong>Em favor da mudança:</strong> a proibição criminaliza pessoas sem reduzir o acesso às drogas; a redução de danos salva vidas; a regulação permite controle de qualidade e de idade.</li><li><strong>Em favor da manutenção de restrições:</strong> o acesso ampliado pode aumentar o consumo entre jovens; a regulação exige capacidade de fiscalização; alternativas precisam de avaliação cuidadosa.</li></ul><h3>Como participar</h3><p>Conselhos de saúde, conselhos de direitos, audiências públicas e consultas de projetos de lei são espaços em que cidadãos podem levar dados e experiências. Acompanhar relatórios oficiais e cobrar transparência também faz parte do debate.</p><h3>Como verificar uma informação</h3><ol><li>Procure a fonte primária (lei, acórdão, relatório oficial).</li><li>Confira a data e o contexto do dado.</li><li>Compare com outras fontes, inclusive as que discordam.</li></ol>",
+      "activities": [
+        {
+          "type": "true_false",
+          "name": "Fontes primárias",
+          "question": "O debate sobre política de drogas pode ser conduzido a partir de fontes primárias e dados verificáveis.",
+          "bool_expected": true,
+          "description": "Verdadeiro. Por isso o curso indica as fontes em cada lição.",
+          "max_score": 1
+        },
+        {
+          "type": "no_answer",
+          "name": "Síntese final",
+          "content": "Escreva, em um parágrafo, a posição que você passou a considerar mais bem fundamentada e o que ainda gostaria de verificar.",
+          "max_score": 0
+        }
+      ]
+    }
+  ]
+}

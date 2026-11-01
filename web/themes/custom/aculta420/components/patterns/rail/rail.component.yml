@@ -1,0 +1,23 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Rail
+status: experimental
+group: Patterns
+description: >-
+  Horizontal rail with native scrolling and proximity snap points. Keyboard
+  scrolling remains incremental at high zoom without JavaScript; focus comes
+  from the browser.
+props:
+  type: object
+  properties:
+    label:
+      type: string
+      description: 'Accessible name of the scrollable region.'
+      default: ''
+slots:
+  items:
+    title: Items
+    description: 'Rendered items, each one wrapped by the caller.'
+assets:
+  css:
+    component:
+      rail.css: {}

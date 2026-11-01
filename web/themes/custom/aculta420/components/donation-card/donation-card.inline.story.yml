@@ -1,0 +1,7 @@
+name: Ação compacta
+description: Exemplo de cartão de ação que ocupa somente a largura do texto.
+component: aculta420:donation-card
+props:
+  label: Doar
+  href: '#contribuicao-exemplo'
+  inline: true

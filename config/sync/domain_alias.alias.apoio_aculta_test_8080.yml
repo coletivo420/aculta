@@ -1,0 +1,10 @@
+uuid: 4f4188e3-59ce-4f19-a6dc-d5b9004b5626
+langcode: pt-br
+status: true
+dependencies: {  }
+id: apoio_aculta_test_8080
+domain_id: apoio_aculta_org
+pattern: 'apoio.aculta.test:8080'
+redirect: 0
+environment: local
+weight: 3

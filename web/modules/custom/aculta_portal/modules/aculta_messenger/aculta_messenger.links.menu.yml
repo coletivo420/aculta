@@ -1,0 +1,12 @@
+aculta_messenger.admin_notices:
+  title: 'Avisos'
+  description: 'Gerencie avisos temporários e comunicados persistentes da ACULTA.'
+  route_name: aculta_messenger.admin_notices
+  parent: system.admin
+  weight: 8
+aculta_messenger.settings_form:
+  title: 'Mensagens'
+  description: 'Políticas de conversas e modos de e-mail dos avisos.'
+  route_name: aculta_messenger.settings_form
+  parent: aculta_portal.admin
+  weight: 5

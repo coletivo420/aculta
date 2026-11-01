@@ -1,0 +1,25 @@
+uuid: 71d84cce-8942-4362-b5c1-496a5b2a3591
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_weight
+    - node.type.editorial_highlight
+id: node.editorial_highlight.field_weight
+field_name: field_weight
+entity_type: node
+bundle: editorial_highlight
+label: Ordem
+description: 'Número inteiro para ordenar os destaques: os menores números aparecem primeiro.'
+required: true
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

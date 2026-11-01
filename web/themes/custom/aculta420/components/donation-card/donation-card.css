@@ -1,0 +1,64 @@
+/* Cartão de doação: quebra de linha automática, tamanho compacto. Cores e tipografia vêm dos tokens semânticos. */
+.aculta-donation-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--aculta-border-default);
+  border-radius: 0.5rem;
+  background-color: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+  font-family: var(--aculta-font-display);
+  text-align: center;
+  text-decoration: none;
+  transition:
+    background-color var(--aculta-motion-fast) var(--aculta-ease-standard),
+    border-color var(--aculta-motion-fast) var(--aculta-ease-standard),
+    transform var(--aculta-motion-fast) var(--aculta-ease-standard);
+}
+
+.aculta-donation-card__value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  /* Quebra automática: o texto longo passa para a linha seguinte dentro do cartão. */
+  overflow-wrap: anywhere;
+}
+
+.aculta-donation-card:hover {
+  background-color: var(--aculta-interactive-hover-bg);
+  border-color: var(--aculta-border-accent);
+  color: var(--aculta-interactive-hover-text);
+  transform: translateY(-1px);
+}
+
+.aculta-donation-card:active {
+  background-color: var(--aculta-interactive-active-bg);
+  color: var(--aculta-interactive-active-text);
+  transform: translateY(0);
+}
+
+.aculta-donation-card:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Botão avulso (Doar): só a largura do texto, sem esticar na coluna. */
+.aculta-donation-card--inline {
+  width: max-content;
+  max-width: 100%;
+}
+
+/* "Outro": borda tracejada, por ser um campo digitável. */
+.aculta-donation-card--other {
+  border-style: dashed;
+  border-color: var(--aculta-border-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aculta-donation-card {
+    transition: none;
+  }
+}

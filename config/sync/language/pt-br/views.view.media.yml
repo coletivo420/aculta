@@ -1,0 +1,9 @@
+label: Mídia
+description: 'Administração de imagens, documentos, áudio e vídeo gerenciados pela biblioteca de mídia.'
+display:
+  default:
+    display_title: Padrão
+    display_options:
+      title: Mídia
+  media_page_list:
+    display_title: Página

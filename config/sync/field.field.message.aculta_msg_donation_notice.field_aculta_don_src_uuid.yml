@@ -1,0 +1,24 @@
+uuid: 4907c117-39a9-44c6-a05b-d5f295f133c2
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_don_src_uuid
+    - message.template.aculta_msg_donation_notice
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: ETxZ3-GyCLfR53wmbu0GWGUXPfcHHN6uq8yjcPGHjiM
+id: message.aculta_msg_donation_notice.field_aculta_don_src_uuid
+field_name: field_aculta_don_src_uuid
+entity_type: message
+bundle: aculta_msg_donation_notice
+label: 'UUID do evento de origem'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

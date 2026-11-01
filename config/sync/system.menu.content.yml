@@ -1,0 +1,13 @@
+uuid: b9ffdfda-1ae0-4059-b397-2fc29f20281f
+langcode: pt-br
+status: true
+dependencies:
+  enforced:
+    module:
+      - navigation
+_core:
+  default_config_hash: nqVwm91Uyib_rvFaNPF1MdYqHlmZ38w5rsOVVy4uWDw
+id: content
+label: Conteúdo
+description: 'Menu utilizado pelo módulo Navigation para acessar conteúdo, mídia, blocos e arquivos. É necessário mesmo sem links criados manualmente.'
+locked: true

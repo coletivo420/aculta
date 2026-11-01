@@ -1,0 +1,19 @@
+uuid: a1dadb24-30b0-4e91-8a71-a5c4ebabd113
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - block_content
+id: block_content.field_org_description
+field_name: field_org_description
+entity_type: block_content
+type: string_long
+settings:
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

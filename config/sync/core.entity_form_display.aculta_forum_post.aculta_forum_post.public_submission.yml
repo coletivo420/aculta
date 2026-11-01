@@ -1,0 +1,44 @@
+uuid: 1745e948-e712-4519-b5b0-abc1eefb5482
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.aculta_forum_post.public_submission
+  module:
+    - aculta_forum
+    - text
+id: aculta_forum_post.aculta_forum_post.public_submission
+targetEntityType: aculta_forum_post
+bundle: aculta_forum_post
+mode: public_submission
+content:
+  body:
+    type: text_textarea
+    weight: 0
+    region: content
+    settings:
+      rows: 8
+      placeholder: ''
+    third_party_settings: {  }
+  subject:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  changed: true
+  created: true
+  first_published: true
+  langcode: true
+  legacy_author: true
+  moderation_state: true
+  parent: true
+  revision_timestamp: true
+  revision_uid: true
+  status: true
+  thread_position: true
+  topic: true
+  uid: true

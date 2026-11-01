@@ -1,0 +1,15 @@
+uuid: 8d8916df-05a9-497f-ac39-19c5235aedbb
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - domain.record.forum_aculta_org
+  module:
+    - domain_source
+id: domain_source_set_action.forum_aculta_org
+label: 'Set content domain source value to the ACULTA - Fórum domain'
+type: node
+plugin: domain_source_set_action
+configuration:
+  domain_id: forum_aculta_org
+

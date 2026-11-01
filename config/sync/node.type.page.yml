@@ -1,0 +1,11 @@
+uuid: addea480-6415-426f-b4e7-424ac8202ed8
+langcode: pt-br
+status: true
+dependencies: {  }
+name: 'Página institucional'
+type: page
+description: 'Páginas permanentes da associação, como Institucional, Transparência e Política de Privacidade. A Home utiliza composição de conteúdo e blocos.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: false

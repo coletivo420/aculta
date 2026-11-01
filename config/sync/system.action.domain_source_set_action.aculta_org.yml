@@ -1,0 +1,14 @@
+uuid: aafa2119-fece-43c9-99cf-27dd2d71069f
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - domain.record.aculta_org
+  module:
+    - domain_source
+id: domain_source_set_action.aculta_org
+label: 'Set content domain source value to the ACULTA - Principal domain'
+type: node
+plugin: domain_source_set_action
+configuration:
+  domain_id: aculta_org

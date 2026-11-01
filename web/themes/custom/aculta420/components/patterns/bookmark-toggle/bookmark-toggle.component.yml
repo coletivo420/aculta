@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Ação de salvar
+status: experimental
+group: Patterns
+description: 'Apresentação para um controle de salvar fornecido pelo Drupal; o módulo proprietário entrega ação, acesso e estado.'
+props:
+  type: object
+  properties: {}
+slots:
+  action:
+    title: Ação de salvar
+    description: Controle renderizado pelo Drupal com link funcional e rótulo textual para salvar ou indicar que já está salvo.
+assets:
+  css:
+    component:
+      bookmark-toggle.css: {}

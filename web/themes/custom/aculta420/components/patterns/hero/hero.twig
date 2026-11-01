@@ -1,0 +1,7 @@
+<section class="aculta-hero">
+  {% if eyebrow %}<p class="aculta-eyebrow">{{ eyebrow }}</p>{% endif %}
+  <h1>{% for line in title|split("\n") %}{{ line }}{% if not loop.last %}<br>{% endif %}{% endfor %}</h1>
+  {% if slogan %}<p class="aculta-hero-slogan">{{ slogan }}</p>{% endif %}
+  {% if lead %}<p class="aculta-hero-lead">{{ lead }}</p>{% endif %}
+  {% if actions %}<div class="aculta-actions">{{ actions }}</div>{% endif %}
+</section>

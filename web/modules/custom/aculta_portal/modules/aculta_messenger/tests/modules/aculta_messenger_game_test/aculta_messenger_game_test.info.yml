@@ -1,0 +1,6 @@
+name: ACULTA Messenger Game Kernel Test Fixture
+type: module
+package: Testing
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:user

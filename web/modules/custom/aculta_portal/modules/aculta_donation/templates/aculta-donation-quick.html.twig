@@ -1,0 +1,8 @@
+{#
+  Fallback neutro do bloco de valores rápidos (aculta_donation). Sem aparência: o tema ACULTA420 sobrescreve este template.
+#}
+<ul class="aculta-donation-quick">
+  {% for link in links %}
+    <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+  {% endfor %}
+</ul>

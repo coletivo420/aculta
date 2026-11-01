@@ -1,0 +1,19 @@
+uuid: e10efa53-efc8-43c5-87e7-1e306ba063b9
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_institution
+    - field.storage.block_content.field_legal_nature
+id: block_content.aculta_institution.field_legal_nature
+field_name: field_legal_nature
+entity_type: block_content
+bundle: aculta_institution
+label: 'Natureza jurídica'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

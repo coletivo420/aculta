@@ -1,0 +1,4 @@
+services:
+  aculta_lms_resources_gallery_access_test.gallery_access:
+    class: Drupal\aculta_lms_resources\Hook\GalleryCourseAccessHooks
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']

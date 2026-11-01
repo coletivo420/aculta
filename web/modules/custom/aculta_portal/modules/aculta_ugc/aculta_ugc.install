@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Funções de instalação e atualização do ACULTA UGC (ARQ-06).
+ */
+
+/**
+ * Cria tabelas e definições de entidade para aculta_ugc (ARQ-06).
+ */
+function aculta_ugc_update_10001(): string {
+  $updateManager = \Drupal::entityDefinitionUpdateManager();
+  $entityTypeManager = \Drupal::entityTypeManager();
+
+  if (!$updateManager->getEntityType('aculta_ugc_report')) {
+    $entityType = $entityTypeManager->getDefinition('aculta_ugc_report');
+    $updateManager->installEntityType($entityType);
+  }
+
+  return (string) t('Installed ACULTA UGC report entity type (ARQ-06).');
+}

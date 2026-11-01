@@ -1,0 +1,609 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_events\Form;
+
+use Drupal\aculta_events\Access\EventPermissionPolicy;
+use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\aculta_events\Adapter\LocationContributionAdapter;
+use Drupal\aculta_contributions\Service\ContributionLifecycle;
+use Drupal\aculta_events\Plugin\Field\FieldWidget\EventLocationModalWidget;
+use Drupal\aculta_portal\Account\AccountAddressForm;
+use Drupal\aculta_portal\Account\StreetNumberField;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\CloseModalDialogCommand;
+use Drupal\Core\Ajax\InvokeCommand;
+use Drupal\Core\Ajax\ReplaceCommand;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Modal AJAX com duas etapas para buscar ou cadastrar locais reutilizáveis.
+ */
+final class EventLocationModalForm extends FormBase {
+
+  public function __construct(
+    #[Autowire(service: 'entity_type.manager')]
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    #[Autowire(service: 'aculta_events.permission_policy')]
+    private readonly EventPermissionPolicy $permissionPolicy,
+    #[Autowire(service: 'aculta_contributions.lifecycle')]
+    private readonly ?ContributionLifecycle $contributions = NULL,
+    #[Autowire(service: 'aculta_events.location_contribution_adapter')]
+    private readonly ?LocationContributionAdapter $locationAdapter = NULL,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('entity_type.manager'),
+      $container->get('aculta_events.permission_policy'),
+      $container->has('aculta_contributions.lifecycle') ? $container->get('aculta_contributions.lifecycle') : NULL,
+      $container->has('aculta_events.location_contribution_adapter') ? $container->get('aculta_events.location_contribution_adapter') : NULL,
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId(): string {
+    return 'aculta_events_location_modal_form';
+  }
+
+  /**
+   * Controle de acesso à rota do modal.
+   */
+  public function access(AccountInterface $account): AccessResult {
+    $canManage = $account->hasPermission('administer aculta events')
+      || $this->permissionPolicy->canCreateLocation($account)
+      || $this->permissionPolicy->canCreateEvent($account);
+
+    return AccessResult::allowedIf($canManage)
+      ->cachePerPermissions()
+      ->addCacheContexts(['user.roles'])
+      ->addCacheTags(['config:aculta_events.settings']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state): array {
+    $request = $this->getRequest();
+    $fieldName = (string) ($form_state->get('field_name') ?? $request->query->get('field_name') ?? 'field_event_location');
+    $defaultWrapper = $fieldName === 'field_event_location'
+      ? 'field-event-location-wrapper'
+      : 'field-' . str_replace('_', '-', $fieldName) . '-wrapper';
+    $wrapperId = (string) ($form_state->get('wrapper_id') ?? $request->query->get('wrapper_id') ?? $defaultWrapper);
+
+    $form_state->set('field_name', $fieldName);
+    $form_state->set('wrapper_id', $wrapperId);
+
+    $targetId = $form_state->get('target_id') ?? $request->query->get('target_id');
+    if ($targetId !== NULL) {
+      $form_state->set('target_id', (int) $targetId);
+    }
+
+    $mode = (string) ($form_state->get('mode') ?? 'search');
+
+    $form['#prefix'] = '<div id="aculta-location-modal-form-wrapper" class="aculta-location-modal">';
+    $form['#suffix'] = '</div>';
+
+    // Área para mensagens de status e validação dentro do modal.
+    $form['status_messages'] = [
+      '#type' => 'status_messages',
+      '#weight' => -100,
+    ];
+
+    if ($mode === 'create') {
+      $this->buildCreateStep($form, $form_state);
+    }
+    else {
+      $this->buildSearchStep($form, $form_state);
+    }
+
+    return $form;
+  }
+
+  /**
+   * Constrói o passo de busca e seleção de locais existentes.
+   */
+  private function buildSearchStep(array &$form, FormStateInterface $form_state): void {
+    $form['intro'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#value' => (string) $this->t('Pesquise e selecione um local existente ou inicie um novo cadastro sem fechar a página.'),
+    ];
+
+    $form['search_bar'] = [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'event-location-search-bar'],
+    ];
+
+    $searchTerm = trim((string) ($form_state->get('search_term') ?? ''));
+
+    $form['search_bar']['search_term'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Nome do local ou município'),
+      '#title_display' => 'invisible',
+      '#placeholder' => $this->t('Filtrar por nome do local ou município...'),
+      '#size' => 40,
+      '#default_value' => $form_state->get('search_term') ?? '',
+    ];
+
+    $form['search_bar']['search_submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Buscar'),
+      '#name' => 'op_search',
+      '#submit' => ['::submitSearch'],
+      '#ajax' => [
+        'callback' => '::ajaxRebuildModal',
+        'wrapper' => 'aculta-location-modal-form-wrapper',
+      ],
+    ];
+
+    if ($searchTerm !== '') {
+      $form['search_bar']['search_clear'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Limpar'),
+        '#name' => 'op_search_clear',
+        '#submit' => ['::submitClearSearch'],
+        '#ajax' => [
+          'callback' => '::ajaxRebuildModal',
+          'wrapper' => 'aculta-location-modal-form-wrapper',
+        ],
+        '#limit_validation_errors' => [],
+      ];
+    }
+
+    $query = $this->entityTypeManager->getStorage('aculta_event_location')
+      ->getQuery()
+      ->accessCheck(TRUE)
+      ->sort('id', 'DESC')
+      ->range(0, 15);
+
+    if ($searchTerm !== '') {
+      $or = $query->orConditionGroup()
+        ->condition('title', '%' . $searchTerm . '%', 'LIKE')
+        ->condition('field_endereco.locality', '%' . $searchTerm . '%', 'LIKE')
+        ->condition('field_endereco.administrative_area', '%' . $searchTerm . '%', 'LIKE');
+      $query->condition($or);
+    }
+
+    $ids = $query->execute();
+    $locations = $ids !== [] ? $this->entityTypeManager->getStorage('aculta_event_location')->loadMultiple($ids) : [];
+
+    $rows = [];
+    $currentUser = $this->currentUser();
+    foreach ($locations as $loc) {
+      if (!$loc instanceof EventLocation || !$loc->access('view', $currentUser)) {
+        continue;
+      }
+
+      $addressText = '';
+      if ($loc->hasField('field_endereco') && !$loc->get('field_endereco')->isEmpty()) {
+        $addr = $loc->get('field_endereco')->first();
+        if ($addr) {
+          $parts = array_filter([$addr->locality, $addr->administrative_area]);
+          $addressText = implode(' - ', $parts);
+        }
+      }
+
+      $locId = (int) $loc->id();
+      $isPublic = ($loc->get('field_status')->value ?? '') === 'publicado';
+
+      $rows[$locId] = [
+        'title' => $loc->label(),
+        'city' => $addressText !== '' ? $addressText : $this->t('Brasil'),
+        'status' => $isPublic ? $this->t('Publicado') : $this->t('Rascunho'),
+        'actions' => [
+          'data' => [
+            '#type' => 'submit',
+            '#value' => $this->t('Selecionar'),
+            '#name' => 'select_location_' . $locId,
+            '#location_id' => $locId,
+            '#submit' => ['::submitSelectLocation'],
+            '#ajax' => [
+              'callback' => '::ajaxSelectLocation',
+            ],
+            '#attributes' => ['data-portal-ui' => 'event-location-button-primary-small'],
+          ],
+        ],
+      ];
+    }
+
+    $form['locations_table'] = [
+      '#type' => 'table',
+      '#header' => [
+        $this->t('Local'),
+        $this->t('Município / UF'),
+        $this->t('Status'),
+        $this->t('Ação'),
+      ],
+      '#rows' => $rows,
+      '#empty' => $this->t('Nenhum local acessível encontrado com este termo.'),
+    ];
+
+    $form['actions'] = [
+      '#type' => 'actions',
+    ];
+
+    if ($this->permissionPolicy->canCreateLocation($this->currentUser())) {
+      $form['actions']['switch_create'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Cadastrar novo local'),
+        '#name' => 'op_switch_create',
+        '#submit' => ['::switchToCreate'],
+        '#ajax' => [
+          'callback' => '::ajaxRebuildModal',
+          'wrapper' => 'aculta-location-modal-form-wrapper',
+        ],
+        '#limit_validation_errors' => [],
+        '#attributes' => ['data-portal-ui' => 'event-location-button-action'],
+      ];
+    }
+
+    $form['actions']['cancel'] = [
+      '#type' => 'button',
+      '#value' => $this->t('Cancelar'),
+      '#ajax' => [
+        'callback' => '::ajaxCloseModal',
+      ],
+    ];
+  }
+
+  /**
+   * Constrói o passo de cadastro do endereço brasileiro.
+   */
+  private function buildCreateStep(array &$form, FormStateInterface $form_state): void {
+    $form['intro'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#value' => (string) $this->t('Preencha os dados do novo local. O país é fixado em Brasil e a busca é iniciada pelo CEP.'),
+    ];
+
+    $form['novo_nome'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Nome do local'),
+      '#required' => TRUE,
+      '#maxlength' => 255,
+      '#default_value' => $form_state->getValue('novo_nome') ?? '',
+    ];
+
+    // Fieldset de endereço brasileiro reutilizando o adaptador central.
+    $form['field_endereco'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Endereço do local (Brasil)'),
+      '#tree' => TRUE,
+    ];
+
+    $form['field_endereco'][0] = [
+      '#type' => 'address',
+      '#default_value' => [
+        'country_code' => 'BR',
+      ],
+    ];
+
+    AccountAddressForm::apply($form['field_endereco'][0]);
+
+    if (!$this->currentUser()->hasPermission('administer aculta events')) {
+      $form['proposal_notice'] = [
+        '#type' => 'item',
+        '#markup' => '<p>' . $this->t('O Local só será criado como rascunho após aprovação. A proposta não será vinculada ao Evento até que o Local esteja disponível.') . '</p>',
+      ];
+      $form['contribution_rationale'] = [
+        '#type' => 'textarea',
+        '#title' => $this->t('Por que este Local deve ser cadastrado?'),
+        '#description' => $this->t('Endereço e justificativa ficam privados para a equipe revisora.'),
+        '#required' => TRUE,
+        '#maxlength' => 5000,
+        '#default_value' => $form_state->getValue('contribution_rationale') ?? '',
+      ];
+      if (!$form_state->has('location_contribution_token')) {
+        $form_state->set('location_contribution_token', bin2hex(random_bytes(32)));
+      }
+      $form['contribution_submission_token'] = [
+        '#type' => 'value',
+        '#value' => $form_state->get('location_contribution_token'),
+      ];
+    }
+
+    $form['field_precisao'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Precisão pública do endereço'),
+      '#options' => [
+        'exato' => $this->t('Exato (número e rua visíveis)'),
+        'aproximado' => $this->t('Aproximado (apenas bairro e município públicos)'),
+      ],
+      '#default_value' => 'exato',
+    ];
+
+    $form['actions'] = [
+      '#type' => 'actions',
+      'save_and_select' => [
+        '#type' => 'submit',
+        '#value' => $this->t('Salvar e selecionar este local'),
+        '#name' => 'op_create_save',
+        '#submit' => ['::submitCreateLocation'],
+        '#ajax' => [
+          'callback' => '::ajaxCreateLocation',
+        ],
+        '#attributes' => ['data-portal-ui' => 'event-location-button-primary'],
+      ],
+      'back_to_search' => [
+        '#type' => 'submit',
+        '#value' => $this->t('Voltar para busca'),
+        '#name' => 'op_back_search',
+        '#submit' => ['::switchToSearch'],
+        '#ajax' => [
+          'callback' => '::ajaxRebuildModal',
+          'wrapper' => 'aculta-location-modal-form-wrapper',
+        ],
+        '#limit_validation_errors' => [],
+        '#attributes' => ['data-portal-ui' => 'event-location-button-secondary'],
+      ],
+      'cancel' => [
+        '#type' => 'button',
+        '#value' => $this->t('Cancelar'),
+        '#ajax' => [
+          'callback' => '::ajaxCloseModal',
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * Submissão de busca por termo.
+   */
+  public function submitSearch(array &$form, FormStateInterface $form_state): void {
+    $term = trim((string) $form_state->getValue('search_term'));
+    $form_state->set('search_term', $term);
+    $form_state->setRebuild(TRUE);
+  }
+
+  /**
+   * Limpa o termo de busca no modal.
+   */
+  public function submitClearSearch(array &$form, FormStateInterface $form_state): void {
+    $form_state->set('search_term', '');
+    $form_state->setValue('search_term', '');
+    $form_state->setRebuild(TRUE);
+  }
+
+  /**
+   * Transiciona para a etapa de criação.
+   */
+  public function switchToCreate(array &$form, FormStateInterface $form_state): void {
+    if (!$this->permissionPolicy->canCreateLocation($this->currentUser())) {
+      $form_state->setErrorByName('', (string) $this->t('Você não tem permissão para cadastrar novos locais.'));
+      return;
+    }
+    $form_state->set('mode', 'create');
+    $form_state->setRebuild(TRUE);
+  }
+
+  /**
+   * Transiciona de volta para a busca.
+   */
+  public function switchToSearch(array &$form, FormStateInterface $form_state): void {
+    $form_state->set('mode', 'search');
+    $form_state->setRebuild(TRUE);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
+    $triggering = (string) ($form_state->getTriggeringElement()['#name'] ?? '');
+    if ($triggering === 'op_create_save') {
+      if (!$this->permissionPolicy->canCreateLocation($this->currentUser())) {
+        $form_state->setErrorByName('', (string) $this->t('Você não tem permissão para cadastrar novos locais.'));
+        return;
+      }
+
+      $nome = trim((string) $form_state->getValue('novo_nome'));
+      if ($nome === '') {
+        $form_state->setErrorByName('novo_nome', (string) $this->t('Informe o nome do local.'));
+      }
+
+      $addressValue = $form_state->getValue(['field_endereco', 0]);
+      if (is_array($addressValue)) {
+        if (($addressValue['country_code'] ?? '') !== 'BR') {
+          $form_state->setErrorByName('field_endereco][0][country_code', (string) $this->t('Apenas endereços no Brasil (BR) são suportados.'));
+        }
+      }
+      if (!$this->currentUser()->hasPermission('administer aculta events')
+        && trim((string) $form_state->getValue('contribution_rationale')) === '') {
+        $form_state->setErrorByName('contribution_rationale', (string) $this->t('Informe por que este Local deve ser cadastrado.'));
+      }
+    }
+  }
+
+  /**
+   * Submissão de seleção de um local existente.
+   */
+  public function submitSelectLocation(array &$form, FormStateInterface $form_state): void {
+    $triggering = $form_state->getTriggeringElement();
+    $locationId = (int) ($triggering['#location_id'] ?? 0);
+    if ($locationId > 0) {
+      $loc = $this->entityTypeManager->getStorage('aculta_event_location')->load($locationId);
+      if ($loc instanceof EventLocation && $loc->access('view', $this->currentUser())) {
+        $form_state->set('selected_location_id', $locationId);
+      }
+      else {
+        $form_state->setErrorByName('', (string) $this->t('Você não tem permissão para selecionar este local.'));
+      }
+    }
+  }
+
+  /**
+   * Submissão de criação de um novo local.
+   */
+  public function submitCreateLocation(array &$form, FormStateInterface $form_state): void {
+    if (!$this->permissionPolicy->canCreateLocation($this->currentUser())) {
+      $form_state->setErrorByName('', (string) $this->t('Você não tem permissão para cadastrar novos locais.'));
+      return;
+    }
+
+    $nome = trim((string) $form_state->getValue('novo_nome'));
+    $addressValue = $form_state->getValue(['field_endereco', 0]) ?? [];
+
+    $countryCode = 'BR';
+    $logradouro = (string) ($addressValue['address_line1'] ?? '');
+    $complemento = (string) ($addressValue['address_line2'] ?? '');
+    $bairro = (string) ($addressValue['dependent_locality'] ?? '');
+    $cidade = (string) ($addressValue['locality'] ?? '');
+    $uf = strtoupper((string) ($addressValue['administrative_area'] ?? ''));
+    $cep = (string) ($addressValue['postal_code'] ?? '');
+    $precisao = (string) ($form_state->getValue('field_precisao') ?? 'exato');
+
+    [$number, $sn] = StreetNumberField::values($form['field_endereco'], $form_state);
+    $fullStreet = StreetNumberField::join($logradouro, $number, $sn);
+
+    if (!$this->currentUser()->hasPermission('administer aculta events')) {
+      if ($this->contributions === NULL || $this->locationAdapter === NULL) {
+        throw new \LogicException('O serviço de propostas de Locais não está disponível.');
+      }
+      $payload = $this->locationAdapter->validatePayload('location_create', [
+        'title' => $nome,
+        'field_endereco' => [[
+          'country_code' => 'BR',
+          'address_line1' => $fullStreet,
+          'address_line2' => $complemento,
+          'dependent_locality' => $bairro,
+          'locality' => $cidade,
+          'administrative_area' => $uf,
+          'postal_code' => $cep,
+        ],
+        ],
+        'field_precisao' => $precisao,
+      ]);
+      $this->contributions->submit(
+        'events_location',
+        'location_create',
+        NULL,
+        (string) $this->t('Criação do Local: @name', ['@name' => $nome]),
+        (string) $form_state->getValue('contribution_rationale'),
+        $payload,
+        (string) $form_state->getValue('contribution_submission_token'),
+      );
+      $this->messenger()->addStatus($this->t('Sua proposta foi enviada para revisão. Nenhum Local foi criado ou vinculado ao Evento.'));
+      $form_state->set('proposal_submitted', TRUE);
+      $form_state->set('mode', 'search');
+      $form_state->setRebuild(TRUE);
+      return;
+    }
+
+    $status = $this->permissionPolicy->canPublishLocation($this->currentUser()) ? 'publicado' : 'rascunho';
+
+    $location = EventLocation::create([
+      'title' => $nome,
+      'field_status' => $status,
+      'field_precisao' => $precisao,
+      'field_organizador' => $this->currentUser()->id(),
+      'field_endereco' => [
+        'country_code' => $countryCode,
+        'address_line1' => $fullStreet,
+        'address_line2' => $complemento,
+        'dependent_locality' => $bairro,
+        'locality' => $cidade,
+        'administrative_area' => $uf,
+        'postal_code' => $cep,
+      ],
+    ]);
+    $location->save();
+
+    $form_state->set('selected_location_id', (int) $location->id());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
+    // Processado pelos handlers específicos.
+  }
+
+  /**
+   * AJAX callback para reconstruir o modal após troca de tela ou busca.
+   */
+  public function ajaxRebuildModal(array &$form, FormStateInterface $form_state): array {
+    return $form;
+  }
+
+  /**
+   * AJAX callback para fechar o modal.
+   */
+  public function ajaxCloseModal(array &$form, FormStateInterface $form_state): AjaxResponse {
+    $response = new AjaxResponse();
+    $response->addCommand(new CloseModalDialogCommand());
+    return $response;
+  }
+
+  /**
+   * AJAX callback para selecionar local e atualizar o formulário pai.
+   */
+  public function ajaxSelectLocation(array &$form, FormStateInterface $form_state): AjaxResponse|array {
+    if ($form_state->hasAnyErrors()) {
+      return $form;
+    }
+    $locationId = (int) $form_state->get('selected_location_id');
+    return $this->buildUpdateParentResponse(
+      $locationId,
+      (string) $form_state->get('field_name'),
+      (string) $form_state->get('wrapper_id')
+    );
+  }
+
+  /**
+   * AJAX callback para salvar novo local e atualizar o pai.
+   */
+  public function ajaxCreateLocation(array &$form, FormStateInterface $form_state): AjaxResponse|array {
+    if ($form_state->hasAnyErrors()) {
+      return $form;
+    }
+    if ($form_state->get('proposal_submitted')) {
+      return $form;
+    }
+    $locationId = (int) $form_state->get('selected_location_id');
+    return $this->buildUpdateParentResponse(
+      $locationId,
+      (string) $form_state->get('field_name'),
+      (string) $form_state->get('wrapper_id')
+    );
+  }
+
+  /**
+   * Constrói resposta AJAX que fecha o modal e atualiza o formulário pai.
+   */
+  private function buildUpdateParentResponse(int $locationId, string $fieldName, string $wrapperId): AjaxResponse {
+    $response = new AjaxResponse();
+    $response->addCommand(new CloseModalDialogCommand());
+
+    $cardArray = EventLocationModalWidget::buildCardOrEmpty($locationId, $fieldName, $wrapperId);
+    $cardArray['#prefix'] = '<div id="' . $wrapperId . '" class="aculta-event-location-widget">';
+    $cardArray['#suffix'] = '</div>';
+
+    $targetInputId = $wrapperId === 'field-event-location-wrapper'
+      ? '#field-event-location-target-id'
+      : '#' . $wrapperId . '-target-id';
+
+    $response->addCommand(new ReplaceCommand('#' . $wrapperId, $cardArray));
+    $response->addCommand(new InvokeCommand($targetInputId, 'val', [(string) $locationId]));
+    $response->addCommand(new InvokeCommand($targetInputId, 'trigger', ['change']));
+
+    if ($targetInputId !== '#field-event-location-target-id') {
+      $response->addCommand(new InvokeCommand('#field-event-location-target-id', 'val', [(string) $locationId]));
+      $response->addCommand(new InvokeCommand('#field-event-location-target-id', 'trigger', ['change']));
+    }
+
+    return $response;
+  }
+
+}

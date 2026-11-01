@@ -1,0 +1,12 @@
+name: Uma coluna
+description: Uma região principal; em telas pequenas a ordem de leitura é a mesma.
+component: aculta420:page-columns
+props:
+  columns: 1
+slots:
+  primary:
+    markup: |
+      <article class="card"><div class="card-body">
+        <h2>Conteúdo principal</h2>
+        <p>Uma região ampla para texto, mídia e ações.</p>
+      </div></article>

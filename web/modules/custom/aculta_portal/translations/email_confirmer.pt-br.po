@@ -1,0 +1,40 @@
+# Tradução dos textos fixos da troca de e-mail (módulos email_confirmer_user e change_mail_page).
+# Importar com: drush locale:import pt-br translations/email_confirmer.pt-br.po
+msgid ""
+msgstr ""
+"Project-Id-Version: ACULTA Portal — confirmação de e-mail\n"
+"Language: pt-br\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "A message has been sent to the new email address %email to confirm the change. Until confirmed, your current address will be used."
+msgstr "Uma mensagem foi enviada para o novo endereço de e-mail %email para confirmar a alteração. Até a confirmação, o seu endereço atual continuará sendo usado."
+
+msgid "Your email address has been updated to %mail"
+msgstr "Seu endereço de e-mail foi atualizado para %mail"
+
+msgid "%user's email address has been updated to %mail"
+msgstr "O endereço de e-mail de %user foi atualizado para %mail"
+
+msgid "Email change request for your user account at [site:name]"
+msgstr "Solicitação de alteração de e-mail da sua conta em [site:name]"
+
+msgid "A request to change your email address has been made at [site:name]. In order to confirm the update of your email address you will need to follow the instructions sent to your new email address."
+msgstr "Foi feita uma solicitação para alterar o seu endereço de e-mail em [site:name]. Para confirmar a alteração, siga as instruções enviadas para o seu novo endereço de e-mail."
+
+msgid "Email address"
+msgstr "Endereço de e-mail"
+
+msgid "A valid email address. All emails from the system will be sent to this address. The email address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by email."
+msgstr "Um endereço de e-mail válido. Todos os e-mails do sistema serão enviados para este endereço. O endereço não é divulgado e só será usado se você quiser receber uma nova senha ou certas notícias e notificações por e-mail."
+
+msgid "Current password"
+msgstr "Senha atual"
+
+msgid "Required if you want to change the %mail."
+msgstr "Obrigatória para alterar o %mail."
+
+msgid "Your email has been changed."
+msgstr "Seu e-mail foi alterado."

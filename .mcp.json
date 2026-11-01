@@ -1,0 +1,44 @@
+{
+  "mcpServers": {
+    "melhorenvio": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://docs.melhorenvio.com.br/mcp",
+        "--header",
+        "Authorization: Bearer ${MELHORENVIO_MCP_TOKEN}"
+      ]
+    },
+    "mercadopago": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.mercadopago.com/mcp",
+        "--header",
+        "Authorization: Bearer ${MERCADOPAGO_MCP_TOKEN}"
+      ]
+    },
+    "dhtmlx-mcp": {
+      "type": "http",
+      "url": "https://docs.dhtmlx.com/mcp"
+    },
+    "osm-mcp": {
+      "type": "stdio",
+      "command": "/home/piradopirata/.local/share/codex-mcp/osm-mcp-server-0.1.1/bin/osm-mcp-server",
+      "args": [],
+      "env": {}
+    },
+    "aculta-drupal": {
+      "command": "/usr/bin/python3",
+      "args": [
+        "${CLAUDE_PROJECT_DIR}/scripts/mcp/aculta-drupal/server.py"
+      ]
+    },
+    "aculta": {
+      "type": "http",
+      "url": "https://aculta.toca.net.br/mcp"
+    }
+  }
+}

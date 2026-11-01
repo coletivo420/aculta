@@ -1,0 +1,28 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Composição de página em colunas
+status: experimental
+group: Layouts
+description: 'Layout de uma, duas ou três regiões em grade; a ordem do DOM é preservada e todas as regiões empilham no mobile.'
+props:
+  type: object
+  properties:
+    columns:
+      type: integer
+      title: Número de colunas
+      description: Quantidade de colunas no desktop; até três regiões nomeadas.
+      enum: [1, 2, 3]
+      default: 1
+slots:
+  primary:
+    title: Região principal
+    description: Conteúdo principal, sempre primeiro na ordem de leitura.
+  secondary:
+    title: Região secundária
+    description: Conteúdo secundário, lido após a região principal.
+  tertiary:
+    title: Terceira região
+    description: Conteúdo complementar, lido após as duas primeiras regiões.
+assets:
+  css:
+    component:
+      page-columns.css: {}

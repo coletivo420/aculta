@@ -1,0 +1,12 @@
+name: Autoria compacta
+description: Cartão de autor no tamanho sm, para listas densas.
+component: aculta420:author-card
+props:
+  variant: author_forum
+  display_name: Maria Antônia
+  profile_url: /u/maria
+  size: sm
+  has_avatar: true
+slots:
+  avatar:
+    markup: <span aria-hidden="true">M</span>

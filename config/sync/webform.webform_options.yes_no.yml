@@ -1,0 +1,16 @@
+uuid: ecfd02c1-f5f5-4b18-8ce3-5332fa4a9a61
+langcode: pt-br
+status: true
+dependencies:
+  enforced:
+    module:
+      - webform
+_core:
+  default_config_hash: W88NYg31DbaVNQx1Uir_dwwXHVtF09QOq4VBGsH1Snk
+id: yes_no
+label: Yes/No
+category: Geral
+likert: false
+options: |
+  Yes: Yes
+  No: No

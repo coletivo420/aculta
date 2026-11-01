@@ -1,0 +1,25 @@
+uuid: 00baf94f-a09f-46b7-80f7-d1b5b1982fa0
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_wiki_categories
+    - node.type.wiki_entry
+    - taxonomy.vocabulary.wiki_category
+id: node.wiki_entry.field_wiki_categories
+field_name: field_wiki_categories
+entity_type: node
+bundle: wiki_entry
+label: Categorias
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      wiki_category: wiki_category
+    auto_create: false
+field_type: entity_reference

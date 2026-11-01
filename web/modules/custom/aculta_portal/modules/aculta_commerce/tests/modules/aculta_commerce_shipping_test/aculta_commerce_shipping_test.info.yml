@@ -1,0 +1,7 @@
+name: 'ACULTA Commerce Shipping Test'
+type: module
+description: 'Test-only shipping provider used by the ACULTA Commerce kernel suite.'
+package: Testing
+core_version_requirement: ^11.3
+dependencies:
+  - aculta_commerce:aculta_commerce

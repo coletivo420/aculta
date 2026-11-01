@@ -1,0 +1,25 @@
+uuid: d9e9e758-73bd-439c-859e-31f9cee8e771
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_city
+    - profile.type.authenticated
+  module:
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.authenticated.field_city
+field_name: field_city
+entity_type: profile
+bundle: authenticated
+label: Cidade
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

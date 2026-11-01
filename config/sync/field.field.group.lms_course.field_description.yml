@@ -1,0 +1,22 @@
+uuid: d8e9b12b-f11f-45b4-8d3a-b3bfedc75c79
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_description
+    - group.type.lms_course
+  module:
+    - text
+id: group.lms_course.field_description
+field_name: field_description
+entity_type: group
+bundle: lms_course
+label: Descrição
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

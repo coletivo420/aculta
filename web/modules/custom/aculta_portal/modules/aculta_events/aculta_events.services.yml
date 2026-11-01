@@ -1,0 +1,111 @@
+services:
+  aculta_events.rsvp_policy_resolver:
+    class: Drupal\aculta_events\Rsvp\RsvpPolicyResolver
+    arguments: ['@entity_type.manager']
+  aculta_events.occurrences:
+    class: Drupal\aculta_events\Occurrence\EventDateOccurrences
+    arguments: ['@entity_type.manager']
+  aculta_events.permission_policy:
+    class: Drupal\aculta_events\Access\EventPermissionPolicy
+    arguments: ['@config.factory', '@entity_type.manager']
+  aculta_events.organization_suggestion:
+    class: Drupal\aculta_events\Organization\OrganizationSuggestionService
+    arguments: ['@entity_type.manager', '@aculta_events.permission_policy', '@lock', '@datetime.time', '@database']
+  aculta_events.organization_contribution_adapter:
+    class: Drupal\aculta_events\Adapter\OrganizationContributionAdapter
+    arguments: ['@entity_type.manager', '@?aculta_portal.domain_purpose', '@aculta_events.permission_policy', '@lock', '@database', '@aculta_events.organization_contribution_event_queue']
+    tags:
+      - { name: aculta_contributions.adapter }
+  aculta_events.location_contribution_adapter:
+    class: Drupal\aculta_events\Adapter\LocationContributionAdapter
+    arguments: ['@entity_type.manager', '@?aculta_portal.domain_purpose', '@aculta_events.permission_policy', '@lock', '@database', '@aculta_events.organization_contribution_event_queue']
+    tags:
+      - { name: aculta_contributions.adapter }
+  aculta_events.event_contribution_adapter:
+    class: Drupal\aculta_events\Adapter\EventContributionAdapter
+    arguments: ['@entity_type.manager', '@?aculta_portal.domain_purpose', '@aculta_events.permission_policy', '@?aculta_user.organization_access_service', '@lock', '@database', '@aculta_events.organization_contribution_event_queue']
+    tags:
+      - { name: aculta_contributions.adapter }
+  aculta_events.organization_contribution_event_queue:
+    class: Drupal\aculta_events\Service\OrganizationContributionEventQueue
+    arguments: ['@queue', '@keyvalue']
+  aculta_events.organization_contribution_notice_publisher:
+    class: Drupal\aculta_events\EventSubscriber\OrganizationContributionNoticePublisher
+    arguments: ['@entity_type.manager', '@?aculta_portal.domain_purpose', '@?aculta_messenger.notice_event_publisher', '@datetime.time', '@logger.channel.aculta_events']
+    tags:
+      - { name: event_subscriber }
+  aculta_events.slug:
+    class: Drupal\aculta_events\Slug\EventSlugGenerator
+    arguments: ['@entity_type.manager']
+  aculta_events.catalogue:
+    class: Drupal\aculta_events\Catalogue\EventCatalogue
+    arguments: ['@entity_type.manager', '@aculta_events.occurrences']
+  aculta_events.locations:
+    class: Drupal\aculta_events\Catalogue\LocationCatalogue
+    arguments: ['@entity_type.manager', '@current_user']
+  aculta_events.date_list_builder:
+    class: Drupal\aculta_events\Event\EventDateListBuilder
+    arguments: ['@entity_type.manager', '@string_translation']
+  aculta_events.upcoming:
+    class: Drupal\aculta_events\Occurrence\UpcomingDates
+    arguments: ['@entity_type.manager', '@aculta_events.occurrences']
+  Drupal\aculta_events\Hook\EventDateHooks:
+    class: Drupal\aculta_events\Hook\EventDateHooks
+    arguments:
+      - '@datetime.time'
+      - '@aculta_events.upcoming'
+      - '@router.admin_context'
+      - '@entity_type.manager'
+      - '@?aculta_index.work_manager'
+      - '@?aculta_index.provider_registry'
+  Drupal\aculta_events\Hook\ActivityRetirementHooks:
+    class: Drupal\aculta_events\Hook\ActivityRetirementHooks
+    autowire: true
+  aculta_events.activity_retired_route_subscriber:
+    class: Drupal\aculta_events\EventSubscriber\ActivityRetiredRouteSubscriber
+    tags:
+      - { name: event_subscriber }
+  aculta_events.event_filter:
+    class: Drupal\aculta_events\Agenda\EventFilter
+  aculta_events.item_provider:
+    class: Drupal\aculta_events\Calendar\EventCalendarItemProvider
+    arguments: ['@entity_type.manager', '@aculta_events.event_filter', '@current_user']
+    tags:
+      - { name: aculta_calendar.item_provider }
+  aculta_events.embed_frame_subscriber:
+    class: Drupal\aculta_events\EventSubscriber\EmbedFrameSubscriber
+    arguments: ['@aculta_calendar.embed_hosts']
+    tags:
+      - { name: event_subscriber }
+  aculta_events.admin_export_route_subscriber:
+    class: Drupal\aculta_events\EventSubscriber\AdministrativeExportRouteSubscriber
+    tags:
+      - { name: event_subscriber }
+  aculta_events.index_provider.event:
+    class: Drupal\aculta_events\ContentIndex\EventContentIndexProvider
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: aculta_index.provider }
+  aculta_events.index_provider.location:
+    class: Drupal\aculta_events\ContentIndex\LocationContentIndexProvider
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: aculta_index.provider }
+  aculta_events.index_provider.organization:
+    class: Drupal\aculta_events\ContentIndex\OrganizationContentIndexProvider
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: aculta_index.provider }
+  aculta_events.editorial_presenter:
+    class: Drupal\aculta_events\Editorial\EventEditorialPresenter
+    arguments: ['@string_translation']
+  logger.channel.aculta_events:
+    parent: logger.channel_base
+    arguments: ['aculta_events']
+  aculta_events.activity_location_migrator:
+    class: Drupal\aculta_events\Migration\ActivityLocationMigrator
+    arguments:
+      - '@entity_type.manager'
+      - '@database'
+      - '@state'
+      - '@logger.channel.aculta_events'

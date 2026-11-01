@@ -1,0 +1,13 @@
+aculta_image.admin:
+  title: 'Imagens'
+  description: 'Inventário, limpeza segura e quarentena de imagens.'
+  route_name: aculta_image.audit
+  parent: aculta_portal.admin
+  weight: 30
+
+aculta_image.settings:
+  title: 'Processamento e formatos'
+  description: 'Bibliotecas, compressão e formatos de imagem.'
+  route_name: aculta_image.settings
+  parent: aculta_image.admin
+  weight: 5

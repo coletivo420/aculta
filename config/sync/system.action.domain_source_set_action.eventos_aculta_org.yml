@@ -1,0 +1,14 @@
+uuid: 27fe59e4-efe0-4187-bdfe-6f5632093773
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - domain.record.eventos_aculta_org
+  module:
+    - domain_source
+id: domain_source_set_action.eventos_aculta_org
+label: 'Set content domain source value to the ACULTA - Eventos domain'
+type: node
+plugin: domain_source_set_action
+configuration:
+  domain_id: eventos_aculta_org

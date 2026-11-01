@@ -1,0 +1,22 @@
+uuid: 1eb0567b-0ad2-4d6d-8287-72ba70c4d51d
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_institution
+    - field.storage.block_content.field_governance
+  module:
+    - text
+id: block_content.aculta_institution.field_governance
+field_name: field_governance
+entity_type: block_content
+bundle: aculta_institution
+label: Governança
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

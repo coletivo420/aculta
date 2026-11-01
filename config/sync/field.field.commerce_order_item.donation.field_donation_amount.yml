@@ -1,0 +1,25 @@
+uuid: 6ac0fb86-8755-4d40-b83d-f9e5b395d170
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - commerce_order.commerce_order_item_type.donation
+    - field.storage.commerce_order_item.field_donation_amount
+  module:
+    - commerce_price
+_core:
+  default_config_hash: m-fo71eMHarf45g_6QmCmCs15hOoPEURSPej5jDP-zY
+id: commerce_order_item.donation.field_donation_amount
+field_name: field_donation_amount
+entity_type: commerce_order_item
+bundle: donation
+label: 'Valor do apoio'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  available_currencies: {  }
+  allow_negative: false
+field_type: commerce_price

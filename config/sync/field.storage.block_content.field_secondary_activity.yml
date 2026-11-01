@@ -1,0 +1,19 @@
+uuid: 989ca1fc-2696-4b7c-9f53-7f48997ed382
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - block_content
+id: block_content.field_secondary_activity
+field_name: field_secondary_activity
+entity_type: block_content
+type: string_long
+settings:
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

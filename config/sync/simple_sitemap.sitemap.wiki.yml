@@ -1,0 +1,16 @@
+uuid: 0048b9ac-47c9-4203-82bc-4c8024cfb8dd
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - simple_sitemap.type.aculta_purpose
+  module:
+    - aculta_portal_sitemap
+third_party_settings:
+  aculta_portal_sitemap:
+    purpose: wiki
+id: wiki
+label: 'ACULTA wiki'
+description: null
+type: aculta_purpose
+weight: 0

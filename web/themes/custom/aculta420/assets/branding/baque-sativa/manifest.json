@@ -1,0 +1,383 @@
+{
+  "project": "Baque Sativa",
+  "variants": [
+    {
+      "path": "source/baque-sativa-red-source.png",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 517656,
+      "sha256": "8c3fe36bf08244a237d756f4fbc369b05e688b5460c42dc54a057c368a1cd468"
+    },
+    {
+      "path": "source/baque-sativa-yellow-source.png",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 473708,
+      "sha256": "ec1b8c6b6aba1a9e2cf789615a4ddc41ca4877c57e590a56a752e867a29350cc"
+    },
+    {
+      "path": "web/baque-sativa-red-h128.png",
+      "width": 74,
+      "height": 128,
+      "bytes": 20554,
+      "sha256": "f29cea322a0f8d5c1883aa325c43f6179de10ed238dce677b2d7839a4e173b5f"
+    },
+    {
+      "path": "web/baque-sativa-red-h128.webp",
+      "width": 74,
+      "height": 128,
+      "bytes": 17176,
+      "sha256": "8dc9ca2d54c429b83f708329f61bd7547ea1f98577a59f04fbfbb294b217adf0"
+    },
+    {
+      "path": "web/baque-sativa-red-h192.png",
+      "width": 112,
+      "height": 192,
+      "bytes": 40483,
+      "sha256": "da69dd29e9b5c43ccb973de287dcaff477491199cd8a5a79c2cf3de2ece87776"
+    },
+    {
+      "path": "web/baque-sativa-red-h192.webp",
+      "width": 112,
+      "height": 192,
+      "bytes": 32502,
+      "sha256": "9010ffb1c168024585b14ad873d1db1d2059988bab295ed3366e051387a52bae"
+    },
+    {
+      "path": "web/baque-sativa-red-h256.png",
+      "width": 149,
+      "height": 256,
+      "bytes": 64416,
+      "sha256": "8611b957ecfa1c91e1ff06ce66f0ee63c127037d7a0470c8ff97fada8fbecfe9"
+    },
+    {
+      "path": "web/baque-sativa-red-h256.webp",
+      "width": 149,
+      "height": 256,
+      "bytes": 50472,
+      "sha256": "6f0b02a6fe1344208206cf4252cd45e6c9cdaac98f71abab5f4886bb73cc7940"
+    },
+    {
+      "path": "web/baque-sativa-red-h384.png",
+      "width": 223,
+      "height": 384,
+      "bytes": 122694,
+      "sha256": "c990580f713cf86acaa64d777627b18ccae21b5dc746cc05724b774602cc1ff1"
+    },
+    {
+      "path": "web/baque-sativa-red-h384.webp",
+      "width": 223,
+      "height": 384,
+      "bytes": 90834,
+      "sha256": "53805c7cbadc6e2a696fdd31d6bed5e2801ed83bb347d495ff4dcadbf63385fe"
+    },
+    {
+      "path": "web/baque-sativa-red-h512.png",
+      "width": 298,
+      "height": 512,
+      "bytes": 192864,
+      "sha256": "30aadd00576d25935551d461a0f8e3d4319b18390fd41e0a7996e7017349255e"
+    },
+    {
+      "path": "web/baque-sativa-red-h512.webp",
+      "width": 298,
+      "height": 512,
+      "bytes": 139570,
+      "sha256": "1bd94eac7f08a51ffc26c34ed2a6793f7deaf929bf3f10e8cbe0a0b4327beea1"
+    },
+    {
+      "path": "web/baque-sativa-red-h64.png",
+      "width": 37,
+      "height": 64,
+      "bytes": 6394,
+      "sha256": "4711effb52992f608b8fd2b9351b49580f77eca9db78f3bfc18c21457833a590"
+    },
+    {
+      "path": "web/baque-sativa-red-h64.webp",
+      "width": 37,
+      "height": 64,
+      "bytes": 5600,
+      "sha256": "3522f71ebe37705f942713d0c81d4d95b6121af44d57bce44d23ee1656348ba6"
+    },
+    {
+      "path": "web/baque-sativa-red-h768.png",
+      "width": 447,
+      "height": 768,
+      "bytes": 362840,
+      "sha256": "f3cfdb59b915c98783ee8e0e29d07e247067bf07ba15dca0d9784e031f0d86ff"
+    },
+    {
+      "path": "web/baque-sativa-red-h768.webp",
+      "width": 447,
+      "height": 768,
+      "bytes": 261594,
+      "sha256": "bbdf7f00e63a75a39e73e06322011633c50bcc51a4a226e864852ed02b9b30ea"
+    },
+    {
+      "path": "web/baque-sativa-red-h96.png",
+      "width": 56,
+      "height": 96,
+      "bytes": 12755,
+      "sha256": "482daa977e2c5ad38e57c52ae3516aa59ccb8f2efd44a1baf192f9e99dea11cf"
+    },
+    {
+      "path": "web/baque-sativa-red-h96.webp",
+      "width": 56,
+      "height": 96,
+      "bytes": 10816,
+      "sha256": "553638a9d2d7dd90221f3db09979018d193fea75952950af8a7caaf6820f2351"
+    },
+    {
+      "path": "web/baque-sativa-red-master.png",
+      "width": 557,
+      "height": 957,
+      "bytes": 490899,
+      "sha256": "c33acdc02c9baf9e422505fbbe34c3cda3250579ebabaa15d97067020cd31a72"
+    },
+    {
+      "path": "web/baque-sativa-red-master.webp",
+      "width": 557,
+      "height": 957,
+      "bytes": 343004,
+      "sha256": "8af8b6a201dd418d922bcb4abaee4fa62621fa5d3c22adf700f5e82556e137fe"
+    },
+    {
+      "path": "web/baque-sativa-red-square-128.png",
+      "width": 128,
+      "height": 128,
+      "bytes": 17750,
+      "sha256": "ecbc9c85ca58b0acc10ffdad9e5fc7fac045098bda8c0fdfe6f1a2f8f52a0cfe"
+    },
+    {
+      "path": "web/baque-sativa-red-square-128.webp",
+      "width": 128,
+      "height": 128,
+      "bytes": 15228,
+      "sha256": "1d81528b49c0b18ba129fea951e57cf78130aa924043b56426fb2f1a4c556a25"
+    },
+    {
+      "path": "web/baque-sativa-red-square-192.png",
+      "width": 192,
+      "height": 192,
+      "bytes": 34837,
+      "sha256": "8f70c7a7a806f7913ce106e51af19b6ece008973c7765734f924fab660b70953"
+    },
+    {
+      "path": "web/baque-sativa-red-square-192.webp",
+      "width": 192,
+      "height": 192,
+      "bytes": 28190,
+      "sha256": "5f5505288558ff17e90c186c232ed4ac55f53e77c90051c6d93f3d91a54df4ce"
+    },
+    {
+      "path": "web/baque-sativa-red-square-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 56055,
+      "sha256": "44b1469c3e21c3565216651db715b14fd7b9e75f77edf7e48ea480e65c3103c0"
+    },
+    {
+      "path": "web/baque-sativa-red-square-256.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 43632,
+      "sha256": "0f6f6e87751f99a837f58245b5ed8d8d55732b71ac1a9bb287a8abe748f11289"
+    },
+    {
+      "path": "web/baque-sativa-red-square-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 169474,
+      "sha256": "8c4530d6ed0d274a83ea21cf0574b4b6a19ab4fd4fb22e0a4ecf8b46f979410b"
+    },
+    {
+      "path": "web/baque-sativa-red-square-512.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 122728,
+      "sha256": "84f776ae96c9ebf9868636cd499eb561149f32291ae1b1cd5ef843a0a9fa87cd"
+    },
+    {
+      "path": "web/baque-sativa-yellow-h128.png",
+      "width": 74,
+      "height": 128,
+      "bytes": 20744,
+      "sha256": "bb09c0606324032d7d9b3be819fac35259ef5bba9841e6b48dae61e38ea419e7"
+    },
+    {
+      "path": "web/baque-sativa-yellow-h128.webp",
+      "width": 74,
+      "height": 128,
+      "bytes": 18404,
+      "sha256": "e0917552bc6158228c27ad8250f97c47b2b28ffe7e391776be5cd86013a4b8a7"
+    },
+    {
+      "path": "web/baque-sativa-yellow-h192.png",
+      "width": 111,
+      "height": 192,
+      "bytes": 40719,
+      "sha256": "0bdd2ace90ea1a775dd570c91186b35b72daa392a0c4bf9f49aef31b378c0d2a"
+    },
+    {
+      "path": "web/baque-sativa-yellow-h192.webp",
+      "width": 111,
+      "height": 192,
+      "bytes": 32336,
+      "sha256": "e1ab4ea088a1edf0bf655d3b6f80fe32f347640ee0e71f4a82c9f8057a05292a"
+    },
+    {
+      "path": "web/baque-sativa-yellow-h256.png",
+      "width": 148,
+      "height": 256,
+      "bytes": 64612,
+      "sha256": "2d22941f75ffe5a5e3aa99b9023f1f5859a9306f2b2db067d3d8e2225fa3bad6"
+    },
+    {
+      "path": "web/baque-sativa-yellow-h256.webp",
+      "width": 148,
+      "height": 256,
+      "bytes": 49660,
+      "sha256": "28c5f836dfb8d4e53b337e8f25b2ff77da24354d0abbb115eed0721248d73bb0"
+    },
+    {
+      "path": "web/baque-sativa-yellow-h384.png",
+      "width": 223,
+      "height": 384,
+      "bytes": 123644,
+      "sha256": "0e4682847aeca492ed3bc1c3199a53c20a1ce4728efc0d09f5f52413a3b59fe0"
+    },
+    {
+      "path": "web/baque-sativa-yellow-h384.webp",
+      "width": 223,
+      "height": 384,
+      "bytes": 91868,
+      "sha256": "6b631821bd8a39a41bf3f482ac2e2a59dff7802da1e73dfcd37a51e7ccf36dc3"
+    },
+    {
+      "path": "web/baque-sativa-yellow-h512.png",
+      "width": 297,
+      "height": 512,
+      "bytes": 194236,
+      "sha256": "9d616e515cab808b60a508c56a12d66e8a351649f35f37be50a0a0d511968a4e"
+    },
+    {
+      "path": "web/baque-sativa-yellow-h512.webp",
+      "width": 297,
+      "height": 512,
+      "bytes": 141046,
+      "sha256": "bfb7b7f7a5a37cb08864a96a2d26f613d4616d7916446902bec28d3d9e430348"
+    },
+    {
+      "path": "web/baque-sativa-yellow-h64.png",
+      "width": 37,
+      "height": 64,
+      "bytes": 6469,
+      "sha256": "da16b8e133c086fd4037d6e218e7d0aa29d642de0de0825c27ac7cda2d897037"
+    },
+    {
+      "path": "web/baque-sativa-yellow-h64.webp",
+      "width": 37,
+      "height": 64,
+      "bytes": 5646,
+      "sha256": "09e9b8168e22700cdd740a5de8f35915dd2808489e48c2ec5579025208c4a48d"
+    },
+    {
+      "path": "web/baque-sativa-yellow-h768.png",
+      "width": 445,
+      "height": 768,
+      "bytes": 366499,
+      "sha256": "859eaba49829a23856fa827a23a2f7977a456d0a8bccb4cfba4595d9770e3747"
+    },
+    {
+      "path": "web/baque-sativa-yellow-h768.webp",
+      "width": 445,
+      "height": 768,
+      "bytes": 270800,
+      "sha256": "9d087cefc9cd8ee4f8cee1aedd3e0cb0bb844e28d58498ec77c921c65138cf45"
+    },
+    {
+      "path": "web/baque-sativa-yellow-h96.png",
+      "width": 56,
+      "height": 96,
+      "bytes": 12930,
+      "sha256": "e292bcfc88cfb4198f5411233ecb468eb1a10a009e132bfdd7ccedfc507ab16d"
+    },
+    {
+      "path": "web/baque-sativa-yellow-h96.webp",
+      "width": 56,
+      "height": 96,
+      "bytes": 11320,
+      "sha256": "b5838bbc62a22edcc976ad6b0e28cb279da7f2b27dcd621b45fa1324c70b39cd"
+    },
+    {
+      "path": "web/baque-sativa-yellow-master.png",
+      "width": 521,
+      "height": 899,
+      "bytes": 448232,
+      "sha256": "b284879fe193c4b5faa8bcf3093cdd1c703cb882462edc2a33d7e2745ec8ab1e"
+    },
+    {
+      "path": "web/baque-sativa-yellow-master.webp",
+      "width": 521,
+      "height": 899,
+      "bytes": 322182,
+      "sha256": "0b680d044c4f055524d0cd316674df62185e3ac1ae37b4d6a23650c61e614058"
+    },
+    {
+      "path": "web/baque-sativa-yellow-square-128.png",
+      "width": 128,
+      "height": 128,
+      "bytes": 17872,
+      "sha256": "daafd0d82371587ae51a699255b83bc5889b4267484eaa187f954379d84c0573"
+    },
+    {
+      "path": "web/baque-sativa-yellow-square-128.webp",
+      "width": 128,
+      "height": 128,
+      "bytes": 15874,
+      "sha256": "d4444fcc262a814c71131784b09bab019664ad79b6aee8d5d53b566116518492"
+    },
+    {
+      "path": "web/baque-sativa-yellow-square-192.png",
+      "width": 192,
+      "height": 192,
+      "bytes": 34864,
+      "sha256": "e40bce3c6bb93a25d3366b437848f332a425303ed4285bed19b65c4c28a0db65"
+    },
+    {
+      "path": "web/baque-sativa-yellow-square-192.webp",
+      "width": 192,
+      "height": 192,
+      "bytes": 28030,
+      "sha256": "772cb9eab23096ed78de3dfd5a39fe39b3c2061fc21e78f3d5c0c14b40109936"
+    },
+    {
+      "path": "web/baque-sativa-yellow-square-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 56161,
+      "sha256": "8d5fc767c0a6def1914d5ead0560c1bb4c4ff6a7091a6c84babc380407d428f9"
+    },
+    {
+      "path": "web/baque-sativa-yellow-square-256.webp",
+      "width": 256,
+      "height": 256,
+      "bytes": 43546,
+      "sha256": "5037be5e174de2a0d1e4e2afc1f0ba2048d986a01d6b116fbb00c0181cc9d610"
+    },
+    {
+      "path": "web/baque-sativa-yellow-square-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 170650,
+      "sha256": "f025154f9225cb147d42891464e76972ac560012a709e2f56b2665d65595c332"
+    },
+    {
+      "path": "web/baque-sativa-yellow-square-512.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 124394,
+      "sha256": "6a21b0d224b92150fb2a1a962a8077ad883bf62689dc6acadbfd986a8b67485e"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+uuid: 104aff39-a094-4221-a1fd-4dfa33af2f4e
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_institution
+    - field.storage.block_content.field_headquarters
+id: block_content.aculta_institution.field_headquarters
+field_name: field_headquarters
+entity_type: block_content
+bundle: aculta_institution
+label: Sede
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,60 @@
+## 0.1.0-rc.1 — candidato a RC: revisão visual autenticada e conformidade PHPCS — 2026-10-29
+
+- Versão promovida a `0.1.0-rc.1` em `aculta_editor.info.yml`, `README.md` e status.
+- PHPCS: removidos os dois avisos de comprimento de linha em docblock de `TextFormatPolicyTest.php` (0 erros e 0 avisos em Drupal e DrupalPractice).
+- Suíte automatizada: Unit 16/61 e Kernel 8/127 PASS no MariaDB `aculta_simpletest` (188 assertions no total).
+- Revisão no Firefox ESR visível (`DISPLAY=:0`), sem escrita no Runtime (`tests/browser/aculta-editor/access.py`):
+  - Anônimo: rotas administrativas negadas e sanitização da renderização de nó editorial sem tags/atributos executáveis e sem overflow horizontal (1280/390/320 px).
+  - Editor (`content_editor`, uid 15 via login de uso único): acesso negado a `full_html` e `aculta_adm`; CKEditor 5 ativo em `node/add/revista` sem expor `full_html` e sem overflow em 1280, 390 e 320 px.
+  - Administrador (uid 1 via login de uso único): formulário `node/add/aculta_adm` e `node/add/page` com CKEditor 5 e toolbar ativos sem overflow em 1280, 390 e 320 px.
+- Critérios de RC atendidos; candidato pronto para deploy Alpha.
+
+## 0.1.0-dev.6 — smoke de acesso editorial — 2026-10-29
+
+- Adicionado smoke Firefox ESR, sem sessão ou escrita, para confirmar que visitante não recebe os formulários de edição de `full_html` nem de criação de `aculta_adm`.
+- Revalidação no banco `aculta_simpletest`: Unit 16/61 e Kernel 8/127 PASS; três depreciações upstream. O Kernel cobre a instalação dos formatos/templates e sanitização.
+- Firefox ESR no servidor de desenvolvimento: 2/2 rotas administrativas negadas para anônimo. Revisão autenticada como editor/admin ainda pendente; o Runtime não tem `qa_editor` e a criação de conta depende da tabela `user_nickname`, ausente no schema atual.
+- PHPCS Drupal do submódulo continua apontando dois avisos preexistentes em `TextFormatPolicyTest.php`; o smoke visual não altera PHP de produção.
+
+## 0.1.0-dev.5 — Editorial com filtro e tipo de HTML completo — 2026-10-22
+
+- `revista_editorial` (Aculta Editorial) recebe o filtro de HTML de edição (filter_html, align, caption, htmlcorrector), no lugar do HTML sem filtro.
+- Novo formato `full_html` (HTML completo do Core) e novo tipo de conteúdo `aculta_adm`, sem restrição de tags, com corpo nesse formato.
+
+## 0.1.0-dev.4 — formatos unificados — 2026-10-22
+
+- Formatos do site reduzidos a cinco com funções definidas: Aculta Básico (texto puro, `plain_text`), Usuário ACULTA (HTML restrito, `usuario_aculta`), Aculta Editorial (HTML completo, `revista_editorial`), Aculta Email (`email_html`) e Aculta Wiki (`wiki`).
+- Removidos da instalação do módulo: `aculta_basico`, `aculta_editorial`, `aculta_institucional`, `aculta_email`, e o hook que concedia o formato básico. Removido do Runtime: `restricted_html`, após migrar o nó 372 (página, sem perda) para `usuario_aculta`.
+- Templates apontam para `revista_editorial`.
+- Kernel 7/7 testes, 87 asserções.
+
+# Changelog — ACULTA Editor
+
+## 0.1.0-dev.3 — 2026-10-22
+
+- Colagem Markdown ativada no formato `aculta_editorial` (`ckeditor5_plugin_pack_paste_markdown__paste_markdown`, enabled). O plugin vem desligado por padrão e remove o `PasteFromMarkdownExperimental` sem essa opção.
+- Verificado no navegador: negrito, link e lista convertidos. Título de nível 1 vira parágrafo, pela política de títulos (2 a 4) do perfil.
+
+## 0.1.0-dev.2 — 2026-10-22
+
+- Auto Image habilitado por exceção formal do responsável. Inerte sem `ckeditor5_image` nos formatos; a regra do `aculta_image` impede adicionar o upload do Core.
+- Formatos novos liberados nos campos `body` de Página básica e Documento (`field.field.node.page.body` e `document.body`), com a mesma ordem nos arquivos e no Runtime.
+- Validação no navegador do ciclo editar, inserir, salvar, reabrir e renderizar (nó de teste, removido ao final).
+
+## 0.1.0-dev.1 — 2026-10-21
+
+- Validação no navegador (servidor de testes, Chromium headless): editar, inserir modelo e tabela, salvar, reabrir e renderizar com `aculta_editorial`, no nó de teste 500 (removido ao final).
+- `media_embed` ativado nos quatro formatos (renderização de `<drupal-media>`), com a mesma configuração do `usuario_aculta`.
+- Kernel test do ciclo de conteúdo: salvar, recarregar e renderizar um nó com `aculta_editorial`, com sanitização. 8 testes, 140 asserções, OK.
+- Contrato com o `aculta_mailer` documentado: o editor de modelos usa `aculta_email`.
+- CSS do conteúdo do editor no tema `aculta420` (0.6.0-dev.139).
+
+- Submódulo novo, com formatos `aculta_basico`, `aculta_editorial`, `aculta_institucional` e `aculta_email`, cada um
+  com editor CKEditor 5 e `filter_html` explícito.
+- Oito templates editoriais em configuração de instalação.
+- Permissão `use text format aculta_basico` concedida a `content_editor` no `hook_install`. Os demais formatos não
+  são concedidos automaticamente.
+- Dependência Composer `drupal/ckeditor5_plugin_pack` 1.5.6 (com `drupal/ckeditor5_premium_features` 1.8.6 instalado e
+  desabilitado). Ver `docs/portal/EDITOR-CKEDITOR5-AUDITORIA.md`.
+- Kernel test de formatos, permissões, sanitização e templates (6 testes, OK).
+- Não alterado: formatos existentes, tema, Runtime fora do submódulo.

@@ -1,0 +1,54 @@
+uuid: 8c04af28-12a2-47fa-aaf8-b3c27ee88851
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.field.media.document.field_media_document
+    - media.type.document
+  module:
+    - aculta_document_viewer
+_core:
+  default_config_hash: XxUyhaTuM0OUUZpr8G6jdrFBEh5eag7auWxBKhm6cvY
+id: media.document.default
+targetEntityType: media
+bundle: document
+mode: default
+content:
+  field_media_document:
+    type: aculta_document_viewer_media
+    label: visually_hidden
+    settings:
+      show_download: true
+      show_print: true
+      show_zoom: true
+      show_rotation: true
+      show_outline: true
+      show_page_thumbnails: true
+      show_fullscreen: true
+      show_search: true
+      show_page_navigation: true
+      show_full_viewer: true
+      use_site_settings: true
+      default_zoom: fit-width
+      default_scroll: vertical
+      double_page: false
+      double_page_mobile: false
+      language: pt-BR
+      embed_title: ''
+      link_text: ''
+      link_target: _blank
+      css_class: ''
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden:
+  created: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  langcode: true
+  name: true
+  search_api_excerpt: true
+  thumbnail: true
+  uid: true
+

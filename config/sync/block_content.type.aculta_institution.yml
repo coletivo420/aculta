@@ -1,0 +1,8 @@
+uuid: 3b1dc8a4-3f03-42b6-af97-47beda0e7ac0
+langcode: pt-br
+status: true
+dependencies: {  }
+id: aculta_institution
+label: 'Dados institucionais'
+revision: true
+description: 'Fonte estruturada dos dados oficiais da associação, compartilhada entre páginas, footer e JSON-LD. Alterar somente com confirmação documental.'

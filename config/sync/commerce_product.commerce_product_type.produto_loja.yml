@@ -1,0 +1,12 @@
+uuid: 7840667a-1f0d-4b2e-b4d3-abf5e144be39
+langcode: pt-br
+status: true
+dependencies: {  }
+id: produto_loja
+label: 'Produto da loja'
+traits: {  }
+locked: false
+description: ''
+variationTypes: {  }
+multipleVariations: true
+injectVariationFields: true

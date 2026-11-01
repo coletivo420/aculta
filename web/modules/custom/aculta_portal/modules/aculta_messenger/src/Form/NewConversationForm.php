@@ -1,0 +1,426 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_messenger\Form;
+
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\user\UserInterface;
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\aculta_portal\Render\PortalLinkElement;
+use Drupal\Core\Url;
+use Drupal\aculta_messenger\Controller\NewConversationController;
+use Drupal\aculta_messenger\Service\ConversationPolicy;
+use Drupal\aculta_user\Identity\PublicMemberIdentityInterface;
+use Drupal\private_message\Entity\PrivateMessage;
+use Drupal\private_message\Entity\PrivateMessageThread;
+use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\private_message\Mapper\PrivateMessageMapperInterface;
+use Drupal\private_message\Service\PrivateMessageServiceInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * First message in a conversation inside the multidomain bar drawer.
+ *
+ * Reuses Messenger send rules and the Private Message thread API. An existing
+ * conversation between the selected members is reused.
+ */
+final class NewConversationForm extends FormBase {
+
+  public function __construct(
+    private readonly AccountProxyInterface $currentUser,
+    private readonly PrivateMessageServiceInterface $privateMessageService,
+    private readonly PrivateMessageMapperInterface $privateMessageMapper,
+    private readonly PrivateMessageFormValidator $validator,
+    private readonly EntityTypeManagerInterface $entityTypes,
+    private readonly PublicMemberIdentityInterface $memberIdentity,
+    private readonly ConversationPolicy $policy,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('current_user'),
+      $container->get('private_message.service'),
+      $container->get('private_message.mapper'),
+      $container->get('aculta_messenger.private_message_form_validator'),
+      $container->get('entity_type.manager'),
+      $container->get(PublicMemberIdentityInterface::class),
+      $container->get('aculta_messenger.conversation_policy'),
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId(): string {
+    return 'aculta_messenger_new_conversation';
+  }
+
+  /**
+   * Builds the search, recipient chips, first message, and actions.
+   *
+   * A profile's "Iniciar conversa" action fixes the recipient, so that form
+   * contains only the message. The group flow uses the recipients in the chips.
+   */
+  public function buildForm(array $form, FormStateInterface $formState): array {
+    $fixed = $formState->get('recipient') !== NULL;
+    $limit = $this->policy->maxRecipients(ConversationPolicy::KIND_GROUP, $this->currentUser);
+    $form['#attributes'] = ['data-aculta-new-conversation-form' => ''];
+    if (!$fixed) {
+      // The drawer reads search/chips and posts to the group route.
+      $form['#action'] = Url::fromRoute('aculta_messenger.new_conversation_group')->toString();
+      $form['#attributes'] += [
+        'data-aculta-new-conversation' => '',
+        'data-aculta-group-max' => (string) $limit,
+        'aria-label' => (string) $this->t('Nova conversa'),
+      ];
+      $form['chips'] = [
+        '#type' => 'container',
+        '#attributes' => [
+          'data-aculta-chips' => '',
+          'data-portal-ui' => 'new-conversation-chips',
+          'aria-live' => 'polite',
+        ],
+      ];
+      $selectedIds = $this->recipientIds($formState);
+      foreach ($this->recipients($formState, FALSE) as $index => $user) {
+        $form['chips']['chip_' . $index] = $this->chip($user, $selectedIds);
+      }
+      $form['q'] = [
+        '#type' => 'search',
+        '#name' => 'q',
+        '#title' => (string) $this->t('Buscar membro'),
+        '#title_display' => 'invisible',
+        '#placeholder' => (string) $this->t('Buscar membro pelo nome'),
+        '#maxlength' => 100,
+        '#weight' => -10,
+        '#wrapper_attributes' => ['hidden' => TRUE, 'data-aculta-js-only' => ''],
+        '#attributes' => [
+          'autocomplete' => 'off',
+          'data-portal-ui' => 'search-preview-input',
+          'data-preview-url' => Url::fromRoute('aculta_messenger.new_conversation_search')->toString(),
+          'data-preview-target' => 'aculta-new-conversation-preview',
+          'data-min-chars' => (string) NewConversationController::MIN_CHARS,
+        ],
+      ];
+      $form['preview'] = [
+        '#type' => 'container',
+        '#weight' => -9,
+        '#attributes' => [
+          'id' => 'aculta-new-conversation-preview',
+          'data-portal-ui' => 'search-preview',
+          'role' => 'region',
+          'aria-label' => $this->t('Resultados de membros'),
+          'aria-live' => 'polite',
+          'hidden' => TRUE,
+          'data-aculta-js-only' => '',
+        ],
+        'hint' => ['#plain_text' => $this->t('Digite pelo menos @n caracteres para ver resultados.', ['@n' => NewConversationController::MIN_CHARS])],
+      ];
+    }
+    else {
+      foreach ($this->recipientIds($formState) as $index => $uid) {
+        $form['members_' . $index] = ['#type' => 'hidden', '#name' => 'members[]', '#value' => (string) $uid];
+      }
+    }
+    $form['message'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Mensagem'),
+      '#rows' => 4,
+      '#maxlength' => 5000,
+      '#weight' => 10,
+      '#attributes' => ['data-portal-ui' => 'new-conversation-message'],
+    ];
+    // Cancel returns to member search; home returns to the conversation list.
+    // PortalLinkElement preserves button styling and data attributes used by
+    // the drawer, unlike a generic link element.
+    $cancelUrl = Url::fromRoute('aculta_messenger.new_conversation')->toString();
+    $form['links'] = [
+      '#type' => 'container',
+      '#weight' => 20,
+      '#attributes' => ['data-portal-ui' => 'new-conversation-links'],
+      'cancel' => PortalLinkElement::build(
+        $this->t('Cancelar'),
+        Url::fromRoute('aculta_messenger.new_conversation'),
+        [
+          'data-aculta-conversation-url' => $cancelUrl,
+          'data-portal-ui' => 'new-conversation-cancel',
+        ],
+      ),
+      'home' => PortalLinkElement::build(
+        $this->t('Voltar para o início'),
+        Url::fromRoute('aculta_messenger.preview'),
+        [
+          'data-aculta-drawer-back' => '',
+          'data-portal-ui' => 'new-conversation-back',
+        ],
+      ),
+    ];
+    $form['actions'] = ['#type' => 'actions', '#weight' => 30];
+    $form['actions']['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Enviar'),
+      '#attributes' => ['data-portal-ui' => 'new-conversation-submit'],
+    ];
+    $form['#cache'] = ['max-age' => 0];
+    return $form;
+  }
+
+  /**
+   * Builds a recipient chip and its hidden member ID field.
+   *
+   * The drawer removes the chip in place; the link also works without
+   * JavaScript.
+   */
+  private function chip(UserInterface $user, array $selectedIds): array {
+    $name = $this->memberIdentity->publicDisplayName($user) ?? (string) $this->t('Membro');
+    $remaining = array_values(array_diff($selectedIds, [(int) $user->id()]));
+    return [
+      '#type' => 'container',
+      '#attributes' => ['data-aculta-chip' => '', 'data-portal-ui' => 'new-conversation-chip'],
+      'name' => [
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#value' => $name,
+        '#attributes' => ['data-aculta-chip-name' => '', 'data-portal-ui' => 'new-conversation-chip-name'],
+      ],
+      'remove' => PortalLinkElement::build(
+        '×',
+        Url::fromRoute('aculta_messenger.new_conversation_group', [], ['query' => ['members' => $remaining]]),
+        [
+          'data-aculta-chip-remove' => '',
+          'data-portal-ui' => 'new-conversation-chip-remove',
+          'aria-label' => (string) $this->t('Remover @name', ['@name' => $name]),
+        ],
+      ),
+      'member' => ['#type' => 'hidden', '#name' => 'members[]', '#value' => (string) $user->id()],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $formState): void {
+    $message = $formState->getValue('message');
+    if (!is_string($message) || trim($message) === '') {
+      $formState->setErrorByName('message', $this->t('Escreva a mensagem antes de enviar.'));
+      return;
+    }
+    $recipients = $this->recipients($formState);
+    $limit = $this->policy->maxRecipients(ConversationPolicy::KIND_GROUP, $this->currentUser);
+    if ($recipients === [] || count($recipients) > $limit) {
+      $formState->setErrorByName('members', $this->t('Escolha de 1 a @n pessoas.', ['@n' => $limit]));
+      return;
+    }
+    foreach ($recipients as $recipient) {
+      if ((int) $recipient->id() === (int) $this->currentUser->id()) {
+        $formState->setErrorByName('members', $this->t('Não foi possível iniciar uma conversa com este destinatário.'));
+        return;
+      }
+    }
+    // Apply native composer rules to this unsaved thread and every member.
+    $members = [(int) $this->currentUser->id()];
+    foreach ($recipients as $recipient) {
+      $members[] = (int) $recipient->id();
+    }
+    $thread = PrivateMessageThread::create(['members' => $members]);
+    $formState->set('pmt_entity', $thread);
+    $sender = $this->entityTypes->getStorage('user')->load($this->currentUser->id());
+    if ($sender instanceof UserInterface
+      && $this->privateMessageMapper->getThreadIdForMembers(
+        array_merge([$sender], $recipients),
+      )) {
+      // Existing threads remain replyable after preference changes.
+      $formState->set('existing_conversation', TRUE);
+    }
+    $this->validator->validateBlockedRecipients($form, $formState);
+    $this->validator->validateNewConversationPrivacy($form, $formState);
+    $this->validator->validateRateLimit($form, $formState);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $formState): void {
+    if ($formState->hasAnyErrors()) {
+      $this->validator->releaseSubmissionLocks();
+      return;
+    }
+    $recipients = $this->recipients($formState, TRUE, TRUE);
+    if ($recipients === []) {
+      $formState->setErrorByName(
+        'members',
+        $this->t('Não foi possível iniciar uma conversa com este destinatário.'),
+      );
+      $this->validator->releaseSubmissionLocks();
+      return;
+    }
+    // Reload all participants at the persistence boundary; entity manager
+    // cache from initial validation must not preserve stale permissions.
+    $sender = $this->entityTypes->getStorage('user')->loadUnchanged((int) $this->currentUser->id());
+    if (!$sender instanceof UserInterface || !$this->policy->canReceiveMessages($sender)) {
+      $formState->setErrorByName('message', $this->t('Não foi possível enviar uma mensagem para essa conversa.'));
+      $this->validator->releaseSubmissionLocks();
+      return;
+    }
+    // Recheck blocks before the contrib service can persist a new thread.
+    // The later check against the locked resolved thread still protects the
+    // actual message write if the relationship changes during resolution.
+    $this->validator->validateBlockedRecipients($form, $formState);
+    if ($formState->hasAnyErrors()) {
+      $this->validator->releaseSubmissionLocks();
+      return;
+    }
+    $thread = $this->resolveThreadForSubmission(array_merge([$sender], $recipients), $formState);
+    if (!$thread instanceof PrivateMessageThreadInterface) {
+      $this->validator->releaseSubmissionLocks();
+      return;
+    }
+    $thread = $this->validator->acquireThreadWriteLock($thread, $formState);
+    if (!$thread instanceof PrivateMessageThreadInterface) {
+      return;
+    }
+    $allowNewEmptyThread = $formState->get('existing_conversation') !== TRUE;
+    if (!$this->validator->hasFreshThreadAccess($thread, $sender, $allowNewEmptyThread)) {
+      $this->validator->releaseSubmissionLocks();
+      throw new NotFoundHttpException();
+    }
+    // Recheck after resolving and locking a concurrently created thread.
+    $this->validator->validateBlockedRecipients($form, $formState);
+    if ($formState->hasAnyErrors()) {
+      $this->validator->releaseSubmissionLocks();
+      return;
+    }
+    try {
+      $message = PrivateMessage::create([
+        'owner' => (int) $this->currentUser->id(),
+        'message' => ['value' => (string) $formState->getValue('message'), 'format' => 'plain_text'],
+      ]);
+      $message->save();
+      $thread->addMessage($message);
+      $thread->save();
+      $this->validator->registerRateLimit($form, $formState);
+      $formState->set('thread', $thread);
+    }
+    catch (\Throwable $exception) {
+      $this->validator->releaseSubmissionLocks();
+      throw $exception;
+    }
+    // NewConversationController::compose handles the drawer POST response.
+    // A Form API redirect would send it back to the compose step with a 303.
+    $formState->disableRedirect();
+  }
+
+  /**
+   * Rechecks privacy before the service creates a new thread.
+   *
+   * The service's getThreadForMembers() method creates and saves a thread when
+   * none exists. Resolve existing threads first so that their replies continue
+   * to follow the established-thread policy, then revalidate preferences and
+   * friendship immediately before creating a new thread.
+   *
+   * @param \Drupal\user\UserInterface[] $members
+   *   Sender and recipients in the exact order used by Private Message.
+   * @param \Drupal\Core\Form\FormStateInterface $formState
+   *   Current form input and validation state.
+   *
+   * @return \Drupal\private_message\Entity\PrivateMessageThreadInterface|null
+   *   An existing or newly created thread, or NULL when creation is refused.
+   */
+  private function resolveThreadForSubmission(array $members, FormStateInterface $formState): ?PrivateMessageThreadInterface {
+    $threadId = $this->privateMessageMapper->getThreadIdForMembers($members);
+    if ($threadId) {
+      $thread = $this->entityTypes->getStorage('private_message_thread')->load((int) $threadId);
+      return $thread instanceof PrivateMessageThreadInterface ? $thread : NULL;
+    }
+
+    // Validation ran before submit. Repeat it at the persistence boundary so
+    // a newly friend-only target or ended friendship cannot slip through.
+    $pendingThread = $formState->get('pmt_entity');
+    if (!$pendingThread instanceof PrivateMessageThreadInterface
+      || !$this->validator->canStartNewConversation($pendingThread)) {
+      $formState->set('aculta_messenger_new_conversation_privacy_rejected', TRUE);
+      return NULL;
+    }
+    $thread = $this->privateMessageService->getThreadForMembers($members);
+    return $thread instanceof PrivateMessageThreadInterface ? $thread : NULL;
+  }
+
+  /**
+   * Returns target IDs from the profile route or submitted recipient chips.
+   */
+  private function recipientIds(FormStateInterface $formState): array {
+    $single = $formState->get('recipient');
+    if ($single !== NULL) {
+      return self::normalizeRecipientIds([$single]);
+    }
+    $posted = $formState->getUserInput()['members'] ?? [];
+    return self::normalizeRecipientIds($posted);
+  }
+
+  /**
+   * Normalizes untrusted recipient input to unique positive account IDs.
+   *
+   * @param mixed $posted
+   *   Candidate IDs submitted by the browser.
+   *
+   * @return int[]
+   *   Canonical, unique positive account IDs, in their original order.
+   */
+  public static function normalizeRecipientIds(mixed $posted): array {
+    if (!is_array($posted)) {
+      return [];
+    }
+    $ids = [];
+    foreach ($posted as $value) {
+      if (!is_int($value) && !is_string($value)) {
+        continue;
+      }
+      $uid = filter_var($value, FILTER_VALIDATE_INT);
+      if ($uid !== FALSE && $uid > 0) {
+        $ids[$uid] = $uid;
+      }
+    }
+    return array_values($ids);
+  }
+
+  /**
+   * Returns conversation members other than the author.
+   *
+   * On submission, missing or inactive members make the list invalid. In chip
+   * rendering mode, unavailable members are omitted.
+   *
+   * @return \Drupal\user\UserInterface[]
+   *   Eligible recipients, or an empty list when strict loading fails.
+   */
+  private function recipients(
+    FormStateInterface $formState,
+    bool $strict = TRUE,
+    bool $reload = FALSE,
+  ): array {
+    $recipients = [];
+    foreach ($this->recipientIds($formState) as $uid) {
+      $storage = $this->entityTypes->getStorage('user');
+      $user = $uid > 0
+        ? ($reload ? $storage->loadUnchanged($uid) : $storage->load($uid))
+        : NULL;
+      if (!$user instanceof UserInterface
+        || !$this->policy->canReceiveMessages($user)
+        || $this->memberIdentity->publicDisplayName($user) === NULL) {
+        if ($strict) {
+          return [];
+        }
+        continue;
+      }
+      $recipients[] = $user;
+    }
+    return $recipients;
+  }
+
+}

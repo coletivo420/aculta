@@ -1,0 +1,14 @@
+uuid: efbfdeae-ec36-4099-b203-28d68bf0fd15
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: OeKGIkmZA_c-t6QLH81WNQx8gDCc1MRmxaTuQgxBByU
+id: administrator
+label: Administrador
+weight: 3
+is_admin: true
+permissions:
+  - 'create administrator profile'
+  - 'update own administrator profile'
+  - 'view own administrator profile'

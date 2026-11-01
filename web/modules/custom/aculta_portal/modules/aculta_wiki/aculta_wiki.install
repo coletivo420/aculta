@@ -1,0 +1,99 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for ACULTA Wiki.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Implements hook_install().
+ *
+ * Provision Core's queue table before a Wiki entity save can trigger
+ * DatabaseQueue's lazy table-creation DDL inside an editorial transaction.
+ */
+function aculta_wiki_install(): void {
+  \Drupal::service('aculta_wiki.editorial_event_queue')->prepareStorage();
+}
+
+/**
+ * Installs structured field values on existing Wiki proposal entities.
+ */
+function aculta_wiki_update_10001(): void {
+  $entity_type_id = 'aculta_wiki_proposal';
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $definition_manager = \Drupal::entityDefinitionUpdateManager();
+
+  // The entity type may have been added after aculta_wiki was already enabled.
+  // Install its complete SQL schema before installing the field added later.
+  if ($definition_manager->getEntityType($entity_type_id) === NULL) {
+    $definition_manager->installEntityType($entity_type_manager->getDefinition($entity_type_id));
+  }
+
+  // Fresh installs already include this base field in the installed definition.
+  if ($definition_manager->getFieldStorageDefinition('proposed_fields', $entity_type_id) !== NULL) {
+    return;
+  }
+
+  $definitions = \Drupal::service('entity_field.manager')
+    ->getBaseFieldDefinitions($entity_type_id);
+  $definition_manager->installFieldStorageDefinition(
+    'proposed_fields',
+    $entity_type_id,
+    'aculta_wiki',
+    $definitions['proposed_fields'],
+  );
+}
+
+/**
+ * Provisions Queue API storage before Wiki editorial transactions use it.
+ */
+function aculta_wiki_update_10002(): string {
+  \Drupal::service('aculta_wiki.editorial_event_queue')->prepareStorage();
+  return 'Initialized reliable Queue API storage for ACULTA Wiki editorial events.';
+}
+
+/**
+ * Defines durable checkpoints for the Wiki proposal migration.
+ */
+function aculta_wiki_schema(): array {
+  $schema['aculta_wiki_contribution_migration'] = [
+    'description' => 'Reconciliation record for migrating legacy Wiki proposals.',
+    'fields' => [
+      'legacy_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'legacy_uuid' => ['type' => 'varchar', 'length' => 128, 'not null' => TRUE],
+      'contribution_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'revision_count' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'migrated' => ['type' => 'int', 'size' => 'tiny', 'unsigned' => TRUE, 'not null' => TRUE],
+    ],
+    'primary key' => ['legacy_id'],
+    'unique keys' => ['legacy_uuid' => ['legacy_uuid']],
+  ];
+  $schema['aculta_wiki_contribution_revision_map'] = [
+    'description' => 'Reconciliation of old and migrated Wiki proposal revisions.',
+    'fields' => [
+      'legacy_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'legacy_revision_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'contribution_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'contribution_revision_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+    ],
+    'primary key' => ['legacy_id', 'legacy_revision_id'],
+    'unique keys' => ['contribution_revision' => ['contribution_revision_id']],
+    'indexes' => ['contribution' => ['contribution_id']],
+  ];
+  return $schema;
+}
+
+/**
+ * Migrates Wiki proposals in bounded, restartable batches.
+ */
+function aculta_wiki_update_10003(array &$sandbox): string {
+  $schema = \Drupal::database()->schema();
+  foreach (aculta_wiki_schema() as $table => $definition) {
+    if (!$schema->tableExists($table)) {
+      $schema->createTable($table, $definition);
+    }
+  }
+  return \Drupal::service('aculta_wiki.contribution_migration')->migrateBatch($sandbox);
+}

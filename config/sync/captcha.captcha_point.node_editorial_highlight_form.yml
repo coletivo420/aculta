@@ -1,0 +1,7 @@
+uuid: 8befa18b-cf8a-4fdb-a3c3-3dd6b1097e0c
+langcode: pt-br
+status: false
+dependencies: {  }
+formId: node_editorial_highlight_form
+captchaType: default
+label: node_editorial_highlight_form

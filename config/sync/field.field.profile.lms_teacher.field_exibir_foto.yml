@@ -1,0 +1,24 @@
+uuid: 7155b6f3-6991-400d-883b-cc26384a7d3b
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_exibir_foto
+    - profile.type.lms_teacher
+id: profile.lms_teacher.field_exibir_foto
+field_name: field_exibir_foto
+entity_type: profile
+bundle: lms_teacher
+label: 'Exibir foto no perfil público'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean
+

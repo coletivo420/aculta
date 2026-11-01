@@ -1,0 +1,103 @@
+aculta_portal.dashboard:
+  title: Minha conta
+  description: Acesso privado ao perfil e às interações pessoais com a Associação.
+  route_name: aculta_portal.dashboard
+  menu_name: account
+  weight: 5
+aculta_portal.support_settings:
+  title: Configurações do Apoio
+  description: Editar o texto introdutório da página pública Apoie.
+  route_name: aculta_portal.support_settings
+  parent: aculta_portal.admin
+  weight: 1
+# Aba ACULTA no painel: todas as configurações do ACULTA ficam aqui (decisão de 2026-10-20). Cada módulo declara os
+# próprios itens com parent: aculta_portal.admin (ou, para o e-mail, parent: aculta_mailer.dashboard).
+aculta_portal.admin:
+  title: ACULTA
+  description: Configurações e relatórios do ACULTA Portal, do e-mail e dos módulos integrados.
+  route_name: aculta_portal.admin
+  parent: system.admin
+  weight: 45
+aculta_portal.user_upload_settings:
+  title: 'Envio de arquivos por usuários'
+  description: 'Extensões e tamanho máximo usados pelos formulários de upload do Portal.'
+  route_name: aculta_portal.user_upload_settings
+  parent: aculta_portal.admin
+  weight: 8
+aculta_portal.appearance_settings:
+  title: Aparência do site
+  description: Cores, logo e opções visuais do site público.
+  route_name: aculta_portal.appearance_settings
+  parent: aculta_portal.admin
+  weight: 0
+aculta_portal.requirements:
+  title: Status
+  description: Status, versão mínima e versão instalada das integrações do Portal.
+  route_name: aculta_portal.requirements
+  parent: aculta_portal.admin
+  weight: 2
+aculta_portal.turnstile_settings:
+  title: Turnstile
+  description: Chaves e pontos de proteção anti-bot dos formulários.
+  route_name: aculta_portal.turnstile_settings
+  parent: aculta_portal.admin
+  weight: 3
+aculta_portal.deployer_status:
+  title: Implantação
+  description: Estado da implantação e do ambiente de deploy.
+  route_name: aculta_portal.deployer_status
+  parent: aculta_portal.admin
+  weight: 7
+aculta_portal.footer_support:
+  title: Apoie
+  description: Conheça as formas de apoio institucional disponíveis.
+  route_name: aculta_portal.support_form
+  menu_name: aculta-footer-institution
+  weight: -10
+# Administração de contas em Configurações > Pessoas (migradas das abas de Pessoas).
+aculta_portal.config_papeis_e_perfis:
+  title: 'Papéis e perfis'
+  description: 'Cadeia de papéis, operações de cada papel e criação de papel.'
+  route_name: entity.user_role.collection
+  parent: user.admin_index
+  weight: 10
+
+aculta_portal.config_permissoes_por_papel:
+  title: 'Permissões por papel'
+  description: 'Permissões concedidas a cada papel.'
+  route_name: user.admin_permissions
+  parent: user.admin_index
+  weight: 11
+
+aculta_portal.config_configuracoes_de_papel:
+  title: 'Configurações de papel'
+  description: 'Papel padrão e opções de criação de papéis.'
+  route_name: user.role.settings
+  parent: user.admin_index
+  weight: 12
+
+aculta_portal.config_campos_de_perfil:
+  title: 'Campos de Perfil'
+  description: 'Tipos de perfil (um por papel) e seus campos.'
+  route_name: entity.profile_type.collection
+  parent: user.admin_index
+  weight: 13
+
+aculta_portal.config_flood_unblock:
+  title: 'Flood Unblock'
+  description: 'Libera endereços bloqueados pelo controle de sobrecarga.'
+  route_name: flood_control.unblock_form
+  parent: user.admin_index
+  weight: 14
+aculta_portal.simplified_account:
+  title: Cadastro simplificado
+  description: 'Confirmação de e-mail e criação de senha ao concluir uma compra como convidado.'
+  route_name: aculta_portal.simplified_account
+  parent: aculta_portal.admin
+  weight: 9
+aculta_portal.checkout_common:
+  title: Carrinhos e checkouts
+  description: 'Checkout comum, Loja, LMS e Doações: modalidades, tipos de pedido e diagnóstico.'
+  route_name: aculta_portal.checkout_common
+  parent: aculta_portal.admin
+  weight: 8

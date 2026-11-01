@@ -1,0 +1,23 @@
+uuid: 526651e9-24df-449d-a7c1-d2b406d7eea2
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: HO1wr9zwq6QMumlTW6uOd66rRCZ6lxYOv1gwHqo4Fjs
+id: message.field_aculta_game_read
+field_name: field_aculta_game_read
+entity_type: message
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

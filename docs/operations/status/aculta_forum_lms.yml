@@ -1,0 +1,5 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.30
+state: Dev
+progress_note: "F15 dev.30: Unit 33/320 e Kernel 27/1355 PASS; 53 depreciações Core/contrib. O teste usa os helpers de dependência reais do LMS/Portal; o smoke Runtime para porque private://h5p não é gravável pelo Drush. Sem mudança de permissão/configuração; fixture parcial removida."
+next_phase: 'Retomar smoke autenticado e revisão visual Firefox depois de obter método autorizado para escrita temporária em private://h5p. Depois concluir as integrações Gallery/Magazine/Wiki e revisar F15 para RC ([CHANGELOG](web/modules/custom/aculta_portal/modules/aculta_forum_lms/CHANGELOG.md))'

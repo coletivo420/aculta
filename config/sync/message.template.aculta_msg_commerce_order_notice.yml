@@ -1,0 +1,27 @@
+uuid: a4a9637c-2d08-43e7-a18b-b7f29cb29899
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - filter.format.plain_text
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: lToJQk7zVA2z4gllmcr15U9m_FMgcbO2lqsVoZpBNxc
+template: aculta_msg_commerce_order_notice
+label: 'Aviso da Loja ACULTA'
+description: 'Aviso de pedido sem dados comerciais sensíveis.'
+text:
+  -
+    value: 'Pedido recebido na Loja ACULTA'
+    format: plain_text
+  -
+    value: '@summary Acesse: @url'
+    format: plain_text
+settings:
+  'token options':
+    clear: true
+    'token replace': false
+  purge_override: false
+  purge_methods: {  }

@@ -1,0 +1,117 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_user\Identity;
+
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\aculta_user\Entity\LegacyAuthor;
+use Drupal\user\UserInterface;
+
+/**
+ * Builds a cacheable, theme-neutral author card from the shared identity API.
+ */
+final class AuthorCardBuilder {
+
+  public function __construct(
+    private readonly AuthorIdentityResolver $identityResolver,
+  ) {}
+
+  /**
+   * Builds a historical card without creating or exposing a User account.
+   */
+  public function buildLegacy(LegacyAuthor $author): array {
+    return $this->buildLegacyWithDisplayName($author, (string) $author->label());
+  }
+
+  /**
+   * Builds a historical author card for Forum content.
+   */
+  public function buildLegacyForum(LegacyAuthor $author): array {
+    return $this->buildLegacyWithDisplayName(
+      $author,
+      LegacyAuthorDisplayName::forForum((string) $author->label()),
+    );
+  }
+
+  /**
+   * Builds the shared historical card with an explicitly selected display name.
+   */
+  private function buildLegacyWithDisplayName(LegacyAuthor $author, string $displayName): array {
+    $build = [
+      '#theme' => 'aculta_user_author_card',
+      '#variant' => 'author_growroom_historico',
+      '#display_name' => $displayName,
+      '#profile_url' => NULL,
+      '#avatar' => NULL,
+      '#has_avatar' => FALSE,
+      '#member_since' => NULL,
+      '#bio' => NULL,
+      '#social_links' => [],
+      '#designation' => NULL,
+      '#actions' => [],
+      '#source_label' => 'Acervo histórico Growroom',
+    ];
+    CacheableMetadata::createFromObject($author)->applyTo($build);
+    return $build;
+  }
+
+  /**
+   * Builds an author card render array for a supported user variant.
+   *
+   * Actions remain caller-provided render arrays, so this service never grants
+   * access or invents social actions. Only identity and the avatar permitted
+   * by PublicProfilePolicy enter the card.
+   *
+   * @return array|null
+   *   Cacheable theme-hook array, or NULL if no public identity is available.
+   */
+  public function build(
+    UserInterface $account,
+    string $variant = 'author_minimal',
+    array $actions = [],
+    ?string $designation = NULL,
+    string $size = 'md',
+  ): ?array {
+    $identity = $this->identityResolver->resolve($account, $variant);
+    if ($identity === NULL) {
+      return NULL;
+    }
+
+    return $this->card($identity, $actions, $designation, $size);
+  }
+
+  /**
+   * Builds the agreed fallback for an account without a public profile.
+   *
+   * The host must already have decided to show the account's display name,
+   * such as the LMS class roster. The avatar is always the acervo one.
+   */
+  public function buildFallback(UserInterface $account, string $size = 'sm', ?string $designation = NULL): array {
+    return $this->card($this->identityResolver->resolveFallback($account), [], $designation, $size);
+  }
+
+  /**
+   * Renders a resolved identity into the theme-neutral card contract.
+   */
+  private function card(AuthorIdentity $identity, array $actions, ?string $designation, string $size): array {
+    $data = $identity->toArray();
+    $build = [
+      '#theme' => 'aculta_user_author_card',
+      '#variant' => $data['variant'],
+      '#display_name' => $data['display_name'],
+      '#profile_url' => $data['profile_url'],
+      '#avatar' => $data['avatar'],
+      '#has_avatar' => $data['avatar'] !== NULL,
+      '#member_since' => $data['member_since'],
+      '#bio' => $data['bio'],
+      '#social_links' => $data['social_links'],
+      '#designation' => $designation,
+      '#actions' => $actions,
+      '#size' => in_array($size, ['sm', 'md', 'lg'], TRUE) ? $size : 'md',
+    ];
+    CacheableMetadata::createFromObject($identity)->applyTo($build);
+    return $build;
+  }
+
+}

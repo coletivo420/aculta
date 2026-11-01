@@ -1,0 +1,20 @@
+{# Comentário compartilhado do Portal; identidade e acesso preparados pelo aculta_user. #}
+<article{{ attributes.addClass('aculta-discussion-comment') }}>
+  {{ title_prefix }}
+  <header class="aculta-discussion-comment__header">
+    {% if content.author_card %}
+      {{ content.author_card }}
+    {% endif %}
+    {% if created %}
+      <time class="aculta-discussion-comment__submitted">{{ created }}</time>
+    {% endif %}
+  </header>
+  <div{{ content_attributes.addClass('aculta-discussion-comment__body') }}>
+    {{ content|without('author_card', 'links') }}
+  </div>
+  <footer class="aculta-discussion-comment__footer">
+    {{ permalink }}
+    {{ content.links }}
+  </footer>
+  {{ title_suffix }}
+</article>

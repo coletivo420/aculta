@@ -1,0 +1,26 @@
+uuid: 560e7af7-3b6c-4a6b-9034-c12a914763c5
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - file
+    - media
+  enforced:
+    module:
+      - aculta_forum
+id: media.field_media_forum_attachment
+field_name: field_media_forum_attachment
+entity_type: media
+type: file
+settings:
+  target_type: file
+  display_field: false
+  display_default: false
+  uri_scheme: private
+module: file
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

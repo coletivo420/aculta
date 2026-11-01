@@ -1,0 +1,20 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_aculta_notice_roles
+    - node.type.aculta_notice
+  module:
+    - options
+id: node.aculta_notice.field_aculta_notice_roles
+field_name: field_aculta_notice_roles
+entity_type: node
+bundle: aculta_notice
+label: 'Público por papel'
+description: 'Um ou mais papéis autorizados; a seleção é combinada por OU.'
+required: true
+translatable: false
+default_value: { }
+default_value_callback: ''
+settings: { }
+field_type: string

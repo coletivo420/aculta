@@ -1,0 +1,26 @@
+uuid: d8c5157b-9be7-4d48-a939-a87c067da18f
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - aculta_events
+    - aculta_portal
+  theme:
+    - aculta420
+id: aculta420_aculta_events_upcoming
+theme: aculta420
+region: sidebar
+weight: 1
+provider: null
+plugin: aculta_events_upcoming
+settings:
+  id: aculta_events_upcoming
+  label: 'Próximos eventos'
+  label_display: visible
+  provider: aculta_events
+visibility:
+  aculta_domain_purpose:
+    id: aculta_domain_purpose
+    purpose: main
+    negate: false
+    context_mapping: {  }

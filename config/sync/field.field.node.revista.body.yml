@@ -1,0 +1,24 @@
+uuid: 178d5812-887e-426f-bd88-eaa501d2da2b
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.revista
+  module:
+    - text
+id: node.revista.body
+field_name: body
+entity_type: node
+bundle: revista
+label: Conteúdo
+description: 'Texto completo. A Home e as listagens utilizam o resumo editorial.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: false
+  required_summary: false
+  allowed_formats: {  }
+field_type: text_with_summary

@@ -1,0 +1,23 @@
+uuid: 2c03d494-0c84-4cc7-bd43-622895b85ded
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_event_status
+    - node.type.activity
+  module:
+    - options
+id: node.activity.field_event_status
+field_name: field_event_status
+entity_type: node
+bundle: activity
+label: 'Situação da atividade'
+description: 'Campo editorial administrável: Situação da atividade. Preencha somente com informações verificadas.'
+required: true
+translatable: true
+default_value:
+  -
+    value: agendado
+default_value_callback: ''
+settings: {  }
+field_type: list_string

@@ -1,0 +1,10 @@
+uuid: e6edbf7d-a6ea-4962-9818-c3153d3fcf8b
+langcode: pt-br
+status: true
+dependencies: {  }
+id: aculta_test_8080
+domain_id: aculta_org
+pattern: 'aculta.test:8080'
+redirect: 0
+environment: local
+weight: 1

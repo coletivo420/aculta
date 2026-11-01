@@ -1,0 +1,52 @@
+commerce_payment.commerce_payment_gateway.plugin.aculta_mercadopago_checkout_pro:
+  type: commerce_payment_gateway_configuration
+  mapping:
+    public_key_test:
+      type: string
+      label: 'Public key Test'
+    access_token_test:
+      type: string
+      label: 'Access token Test'
+    public_key_stage:
+      type: string
+      label: 'Public key Stage'
+    access_token_stage:
+      type: string
+      label: 'Access token Stage'
+    public_key_prod:
+      type: string
+      label: 'Public key Prod'
+    access_token_prod:
+      type: string
+      label: 'Access token Prod'
+    client_id:
+      type: string
+      label: 'Client id'
+    client_secret:
+      type: string
+      label: 'Client Secret'
+    redirect_mode:
+      type: string
+      label: 'Checkout redirect mode'
+    country:
+      type: string
+      label: 'Store country'
+    payment_types:
+      type: sequence
+      label: 'Accepted payment types'
+      sequence:
+        type: boolean
+    payment_method:
+      type: sequence
+      label: 'Accepted payment methods (per payment type)'
+      sequence:
+        type: boolean
+    max_installments:
+      type: integer
+      label: 'Maximum installments'
+    autofee:
+      type: boolean
+      label: 'Autofee'
+    debug_logging:
+      type: boolean
+      label: 'Enable extra debug logging'

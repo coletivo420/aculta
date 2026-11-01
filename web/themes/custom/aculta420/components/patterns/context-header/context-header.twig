@@ -1,0 +1,13 @@
+{# Only a contextual page heading, never the global multidomain shell. #}
+<header class="aculta-context-header">
+  {% if breadcrumbs %}<div class="aculta-context-header__breadcrumbs">{{ breadcrumbs }}</div>{% endif %}
+  {% if back_link %}<div class="aculta-context-header__back">{{ back_link }}</div>{% endif %}
+  <div class="aculta-context-header__layout">
+    <div class="aculta-context-header__heading">
+      {% if eyebrow %}<p class="aculta-context-header__eyebrow">{{ eyebrow }}</p>{% endif %}
+      <h1 class="aculta-context-header__title">{{ title }}</h1>
+      {% if subtitle %}<p class="aculta-context-header__subtitle">{{ subtitle }}</p>{% endif %}
+    </div>
+    {% if actions %}<div class="aculta-context-header__actions">{{ actions }}</div>{% endif %}
+  </div>
+</header>

@@ -1,0 +1,567 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Atualizações do módulo ACULTA Eventos.
+ *
+ * Adaptado de OpenCulturas 3.1.4 (GPL-2.0-or-later),
+ * `profile/config/install/field.storage.node.field_pricing.yml`,
+ * `profile/config/install/field.storage.node.field_pricing_info.yml` e
+ * `profile/config/install/field.storage.node.field_ticketing.yml`.
+ * A migração instala campos informativos; nenhuma lógica de pagamento foi adaptada.
+ */
+
+
+use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Vocabulary;
+
+/**
+ * Tipos de evento do ACULTA (vocabulário aculta_event_type, MODELO-DE-DADOS.md).
+ *
+ * Os mesmos nomes que estavam no vocabulário antigo "event_type" (Tipo de atividade).
+ */
+const ACULTA_EVENTS_TIPOS = [
+  'Assembleia',
+  'Cortejo',
+  'Encontro',
+  'Feira',
+  'Festival',
+  'Formação',
+  'Oficina',
+  'Outro',
+  'Roda de conversa',
+  'Seminário',
+];
+
+/**
+ * Migra o vocabulário "event_type" (Tipo de atividade) para "aculta_event_type".
+ *
+ * Idempotente: pode rodar mais de uma vez. Antes de apagar, confere que nenhum nó
+ * usa os termos antigos; se usar, a função falha em vez de perder a referência.
+ */
+function aculta_events_update_10001(): string {
+  // 1. Vocabulário novo, com os termos de tipo de evento.
+  if (!Vocabulary::load('aculta_event_type')) {
+    Vocabulary::create([
+      'vid' => 'aculta_event_type',
+      'name' => 'Tipo de evento',
+      'description' => 'Formato de cada evento do ACULTA.',
+    ])->save();
+  }
+  $existentes = \Drupal::entityTypeManager()->getStorage('taxonomy_term')
+    ->loadByProperties(['vid' => 'aculta_event_type']);
+  $nomes = array_map(static fn ($termo) => $termo->label(), $existentes);
+  foreach (ACULTA_EVENTS_TIPOS as $peso => $nome) {
+    if (!in_array($nome, $nomes, TRUE)) {
+      Term::create([
+        'vid' => 'aculta_event_type',
+        'name' => $nome,
+        'weight' => $peso,
+      ])->save();
+    }
+  }
+
+  // 2. Antes de apagar o antigo, confere que nenhum nó o usa.
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  $antigos = array_keys($storage->loadByProperties(['vid' => 'event_type']));
+  if ($antigos !== [] && \Drupal::entityTypeManager()->hasDefinition('node')) {
+    $usados = \Drupal::entityTypeManager()->getStorage('node')->getQuery()
+      ->condition('field_event_type.target_id', $antigos, 'IN')
+      ->accessCheck(FALSE)
+      ->count()
+      ->execute();
+    if ($usados > 0) {
+      throw new \RuntimeException("event_type ainda é usado por $usados nó(s); migração interrompida.");
+    }
+    $storage->delete($storage->loadMultiple($antigos));
+  }
+
+  // 3. Campos do tipo activity que apontavam para o vocabulário antigo.
+  foreach (['node.activity.field_event_type' => 'field_config', 'node.field_event_type' => 'field_storage_config'] as $id => $tipo) {
+    $entidade = \Drupal::entityTypeManager()->getStorage($tipo)->load($id);
+    $entidade?->delete();
+  }
+
+  // 4. Vocabulário antigo.
+  Vocabulary::load('event_type')?->delete();
+
+  return 'Vocabulário event_type migrado para aculta_event_type.';
+}
+
+/**
+ * Instala as colunas de slug e de tipo em aculta_event, se ainda não existirem.
+ *
+ * Idempotente. Campo base de coluna única usa o nome do próprio campo como coluna.
+ */
+function _aculta_events_instala_campos_f3(): array {
+  $banco = \Drupal::database();
+  $gerenciador = \Drupal::entityDefinitionUpdateManager();
+  $definicoes = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_event');
+  $instalados = [];
+  foreach (['field_slug' => 'string', 'field_tipo' => 'entity_reference'] as $campo => $tipo) {
+    if ($banco->schema()->fieldExists('aculta_event', $campo)) {
+      continue;
+    }
+    $definicao = $definicoes[$campo] ?? NULL;
+    if ($definicao === NULL) {
+      throw new \RuntimeException("$campo não está declarado em aculta_event.");
+    }
+    $registrado = $gerenciador->getFieldStorageDefinition($campo, 'aculta_event');
+    if ($registrado !== NULL) {
+      $gerenciador->uninstallFieldStorageDefinition($registrado);
+    }
+    $gerenciador->installFieldStorageDefinition($campo, 'aculta_event', 'aculta_events', $definicao);
+    $instalados[] = $campo;
+  }
+  return $instalados;
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Campos da F3: slug público e tipo de evento.
+ */
+function aculta_events_update_10002(): string {
+  $instalados = _aculta_events_instala_campos_f3();
+  return $instalados === []
+    ? 'Campos field_slug e field_tipo já existiam em aculta_event.'
+    : 'Campos instalados em aculta_event: ' . implode(', ', $instalados) . '.';
+}
+
+/**
+ * Tipos de local portados do OpenCulturas (location_type), em português.
+ *
+ * Correção: o OpenCulturas tem "Gastronmy" (erro de digitação); aqui sai "Gastronomia".
+ */
+const ACULTA_EVENTS_TIPOS_LOCAL = [
+  'Atração turística',
+  'Clube',
+  'Centro de convenções',
+  'Espaço multifuncional',
+  'Espaço público',
+  'Gastronomia',
+  'Hotel',
+  'Instituição de ensino',
+  'Local de festival',
+  'Mercado',
+  'Monumento',
+  'Museu',
+  'Palco ao ar livre',
+  'Parque de exposições',
+  'Prédio de escritórios',
+  'Sala de concertos',
+  'Teatro',
+];
+
+/**
+ * Cria o vocabulário de tipos de local e instala os campos da entidade de local.
+ *
+ * Idempotente. Coluna de campo base de coluna única leva o nome do campo; o geofield tem
+ * várias colunas, então a verificação usa uma delas.
+ */
+function _aculta_events_instala_local(): array {
+  $instalados = [];
+  if (!Vocabulary::load('aculta_location_type')) {
+    Vocabulary::create([
+      'vid' => 'aculta_location_type',
+      'name' => 'Tipo de local',
+      'description' => 'Categoria de cada local de evento (portado do OpenCulturas).',
+    ])->save();
+    $instalados[] = 'vocabulário aculta_location_type';
+  }
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  $nomes = array_map(static fn ($t) => $t->label(), $storage->loadByProperties(['vid' => 'aculta_location_type']));
+  foreach (ACULTA_EVENTS_TIPOS_LOCAL as $peso => $nome) {
+    if (!in_array($nome, $nomes, TRUE)) {
+      Term::create(['vid' => 'aculta_location_type', 'name' => $nome, 'weight' => $peso])->save();
+    }
+  }
+
+  $gerenciador = \Drupal::entityDefinitionUpdateManager();
+  $definicoes = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_event_location');
+  foreach (['field_tipo', 'field_endereco', 'field_coordenadas'] as $campo) {
+    if ($gerenciador->getFieldStorageDefinition($campo, 'aculta_event_location') !== NULL) {
+      continue;
+    }
+    $definicao = $definicoes[$campo] ?? NULL;
+    if ($definicao === NULL) {
+      throw new \RuntimeException("$campo não está declarado em aculta_event_location.");
+    }
+    $gerenciador->installFieldStorageDefinition($campo, 'aculta_event_location', 'aculta_events', $definicao);
+    $instalados[] = $campo;
+  }
+  return $instalados;
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * F4: tipos de local (portados do OpenCulturas) e campos de endereço e coordenadas do local.
+ */
+function aculta_events_update_10003(): string {
+  $feito = _aculta_events_instala_local();
+  return $feito === [] ? 'Tipos de local e campos já existiam.' : 'Instalado: ' . implode(', ', $feito) . '.';
+}
+
+/**
+ * Instala campos informativos de preço e compra externa em aculta_event_date.
+ */
+function aculta_events_update_10004(): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $definitions = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_event_date');
+  $installed = [];
+  foreach (['field_gratuito', 'field_pricing', 'field_pricing_info', 'field_ticketing'] as $field_name) {
+    if ($manager->getFieldStorageDefinition($field_name, 'aculta_event_date') !== NULL) {
+      continue;
+    }
+    $definition = $definitions[$field_name] ?? NULL;
+    if ($definition === NULL) {
+      throw new \RuntimeException("$field_name não está declarado em aculta_event_date.");
+    }
+    $manager->installFieldStorageDefinition($field_name, 'aculta_event_date', 'aculta_events', $definition);
+    $installed[] = $field_name;
+  }
+
+  return $installed === []
+    ? 'Campos informativos de preço e compra externa já existiam.'
+    : 'Instalados em aculta_event_date: ' . implode(', ', $installed) . '.';
+}
+
+/**
+ * Instala campos estruturados de acessibilidade, modo e segurança (ARQ-04).
+ */
+function aculta_events_update_10005(): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $fieldManager = \Drupal::service('entity_field.manager');
+  $installed = [];
+
+  // 1. Campos em aculta_event.
+  $eventDefs = $fieldManager->getBaseFieldDefinitions('aculta_event');
+  foreach (['field_classificacao_etaria', 'field_acessibilidade', 'field_seguranca'] as $fieldName) {
+    if ($manager->getFieldStorageDefinition($fieldName, 'aculta_event') !== NULL) {
+      continue;
+    }
+    $definition = $eventDefs[$fieldName] ?? NULL;
+    if ($definition === NULL) {
+      throw new \RuntimeException("$fieldName não está declarado em aculta_event.");
+    }
+    $manager->installFieldStorageDefinition($fieldName, 'aculta_event', 'aculta_events', $definition);
+    $installed[] = "aculta_event.$fieldName";
+  }
+
+  // 2. Campos em aculta_event_date.
+  $dateDefs = $fieldManager->getBaseFieldDefinitions('aculta_event_date');
+  foreach (['field_modo', 'field_link_virtual', 'field_abertura_portas'] as $fieldName) {
+    if ($manager->getFieldStorageDefinition($fieldName, 'aculta_event_date') !== NULL) {
+      continue;
+    }
+    $definition = $dateDefs[$fieldName] ?? NULL;
+    if ($definition === NULL) {
+      throw new \RuntimeException("$fieldName não está declarado em aculta_event_date.");
+    }
+    $manager->installFieldStorageDefinition($fieldName, 'aculta_event_date', 'aculta_events', $definition);
+    $installed[] = "aculta_event_date.$fieldName";
+  }
+
+  return $installed === []
+    ? 'Campos estruturados de ARQ-04 já existiam.'
+    : 'Campos instalados: ' . implode(', ', $installed) . '.';
+}
+
+/**
+ * Instala campos de reivindicação de posse e organizador de locais (ARQ-05).
+ */
+function aculta_events_update_10006(): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $fieldManager = \Drupal::service('entity_field.manager');
+  $installed = [];
+
+  $eventDefs = $fieldManager->getBaseFieldDefinitions('aculta_event');
+  if ($manager->getFieldStorageDefinition('field_allow_claiming', 'aculta_event') === NULL) {
+    $manager->installFieldStorageDefinition('field_allow_claiming', 'aculta_event', 'aculta_events', $eventDefs['field_allow_claiming']);
+    $installed[] = 'aculta_event.field_allow_claiming';
+  }
+
+  $locDefs = $fieldManager->getBaseFieldDefinitions('aculta_event_location');
+  foreach (['field_allow_claiming', 'field_organizador'] as $fieldName) {
+    if ($manager->getFieldStorageDefinition($fieldName, 'aculta_event_location') === NULL) {
+      $manager->installFieldStorageDefinition($fieldName, 'aculta_event_location', 'aculta_events', $locDefs[$fieldName]);
+      $installed[] = "aculta_event_location.$fieldName";
+    }
+  }
+
+  return $installed === []
+    ? 'Campos de ARQ-05 já existiam em aculta_event e aculta_event_location.'
+    : 'Campos instalados: ' . implode(', ', $installed) . '.';
+}
+
+/**
+ * Instala campos de status, descrição, telefone e site em aculta_event_location (LOC-01/02).
+ */
+function aculta_events_update_10007(): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $fieldManager = \Drupal::service('entity_field.manager');
+  $installed = [];
+
+  $locDefs = $fieldManager->getBaseFieldDefinitions('aculta_event_location');
+  foreach (['field_status', 'field_descricao', 'field_telefone', 'field_site'] as $fieldName) {
+    if ($manager->getFieldStorageDefinition($fieldName, 'aculta_event_location') === NULL) {
+      $definition = $locDefs[$fieldName] ?? NULL;
+      if ($definition !== NULL) {
+        $manager->installFieldStorageDefinition($fieldName, 'aculta_event_location', 'aculta_events', $definition);
+        $installed[] = "aculta_event_location.$fieldName";
+      }
+    }
+  }
+
+  // Preenche field_status = 'publicado' para locais pré-existentes.
+  \Drupal::database()->update('aculta_event_location')
+    ->fields(['field_status' => 'publicado'])
+    ->isNull('field_status')
+    ->execute();
+
+  return $installed === []
+    ? 'Campos de LOC-01/02 já existiam em aculta_event_location.'
+    : 'Campos instalados: ' . implode(', ', $installed) . '.';
+}
+
+/**
+ * Instala o campo field_event_location no nó activity (LOC-05).
+ */
+function aculta_events_update_10008(): string {
+  if (!\Drupal::entityTypeManager()->hasDefinition('node')) {
+    return 'Entidade node não disponível.';
+  }
+
+  $fieldStorageConfigClass = '\Drupal\field\Entity\FieldStorageConfig';
+  $fieldConfigClass = '\Drupal\field\Entity\FieldConfig';
+
+  if (!class_exists($fieldStorageConfigClass) || !class_exists($fieldConfigClass)) {
+    return 'Módulo field não carregado.';
+  }
+
+  $storage = $fieldStorageConfigClass::loadByName('node', 'field_event_location');
+  if (!$storage) {
+    $fieldStorageConfigClass::create([
+      'field_name' => 'field_event_location',
+      'entity_type' => 'node',
+      'type' => 'entity_reference',
+      'settings' => [
+        'target_type' => 'aculta_event_location',
+      ],
+      'cardinality' => 1,
+      'translatable' => FALSE,
+    ])->save();
+  }
+
+  $field = $fieldConfigClass::loadByName('node', 'activity', 'field_event_location');
+  if (!$field) {
+    $fieldConfigClass::create([
+      'field_name' => 'field_event_location',
+      'entity_type' => 'node',
+      'bundle' => 'activity',
+      'label' => 'Local do evento',
+      'description' => 'Selecione ou cadastre o local do evento reutilizável.',
+      'required' => FALSE,
+      'settings' => [
+        'handler' => 'default:aculta_event_location',
+        'handler_settings' => [
+          'target_bundles' => NULL,
+          'auto_create' => FALSE,
+        ],
+      ],
+    ])->save();
+  }
+
+  return 'Campo field_event_location instalado com sucesso em node:activity.';
+}
+
+/**
+ * Atualiza os displays de formulário e exibição de node:activity para field_event_location (LOC-05).
+ */
+function aculta_events_update_10009(): string {
+  $entityTypeManager = \Drupal::entityTypeManager();
+  if (!$entityTypeManager->hasDefinition('entity_form_display') || !$entityTypeManager->hasDefinition('node')) {
+    return 'Entity display ou node não disponíveis.';
+  }
+
+  /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface|null $formDisplay */
+  $formDisplay = $entityTypeManager->getStorage('entity_form_display')->load('node.activity.default');
+  if ($formDisplay !== NULL) {
+    $formDisplay->setComponent('field_event_location', [
+      'type' => 'aculta_event_location_modal',
+      'weight' => 15,
+      'region' => 'content',
+      'settings' => [],
+      'third_party_settings' => [],
+    ]);
+    foreach ([
+      'field_place_name',
+      'field_event_street',
+      'field_event_postal',
+      'field_event_region',
+      'field_event_city',
+      'field_event_country',
+    ] as $fieldName) {
+      $formDisplay->removeComponent($fieldName);
+    }
+    $formDisplay->save();
+  }
+
+  /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface|null $viewDisplay */
+  $viewDisplay = $entityTypeManager->getStorage('entity_view_display')->load('node.activity.default');
+  if ($viewDisplay !== NULL) {
+    $viewDisplay->setComponent('field_event_location', [
+      'type' => 'entity_reference_label',
+      'label' => 'above',
+      'weight' => 15,
+      'region' => 'content',
+      'settings' => [
+        'link' => TRUE,
+      ],
+      'third_party_settings' => [],
+    ]);
+    $viewDisplay->save();
+  }
+
+  return 'Displays de formulário e exibição de node:activity atualizados com field_event_location.';
+}
+
+/**
+ * Instala o campo de ordem editorial das Datas de evento.
+ */
+function aculta_events_update_10011(): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  if ($manager->getFieldStorageDefinition('field_peso', 'aculta_event_date') !== NULL) {
+    return 'Campo field_peso de aculta_event_date já existia.';
+  }
+
+  $definitions = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_event_date');
+  $definition = $definitions['field_peso'] ?? NULL;
+  if ($definition === NULL) {
+    throw new \RuntimeException('field_peso não está declarado em aculta_event_date.');
+  }
+
+  $manager->installFieldStorageDefinition('field_peso', 'aculta_event_date', 'aculta_events', $definition);
+  return 'Campo field_peso instalado em aculta_event_date.';
+}
+
+/**
+ * Executa a migração idempotente de endereços legados de Activity para Locais (Fase 2).
+ */
+function aculta_events_update_10012(): string {
+  if (!\Drupal::hasService('aculta_events.activity_location_migrator')) {
+    return 'Serviço de migração de locais de atividade não encontrado.';
+  }
+
+  /** @var \Drupal\aculta_events\Migration\ActivityLocationMigrator $migrator */
+  $migrator = \Drupal::service('aculta_events.activity_location_migrator');
+  $result = $migrator->migrate(FALSE);
+
+  return sprintf(
+    'Migração de locais de Activity: %d candidatos processados, %d locais criados, %d reaproveitados, %d nós atualizados.',
+    $result['candidates_total'],
+    $result['locations_created'],
+    $result['locations_reused'],
+    $result['nodes_updated'],
+  );
+}
+
+/**
+ * Instala a entidade aculta_event_organization e os campos de organização em eventos (ARQ-05).
+ */
+function aculta_events_update_10013(): string {
+  $updateManager = \Drupal::entityDefinitionUpdateManager();
+  $entityTypeManager = \Drupal::entityTypeManager();
+
+  if (!$updateManager->getEntityType('aculta_event_organization')) {
+    $entityType = $entityTypeManager->getDefinition('aculta_event_organization');
+    $updateManager->installEntityType($entityType);
+  }
+
+  $eventFields = \Drupal\aculta_events\Entity\Event::baseFieldDefinitions(
+    $entityTypeManager->getDefinition('aculta_event')
+  );
+
+  foreach (['field_organizacao', 'field_coorganizadores'] as $fieldName) {
+    if ($updateManager->getFieldStorageDefinition($fieldName, 'aculta_event') === NULL && isset($eventFields[$fieldName])) {
+      $updateManager->installFieldStorageDefinition($fieldName, 'aculta_event', 'aculta_events', $eventFields[$fieldName]);
+    }
+  }
+
+  return 'Entidade aculta_event_organization e campos field_organizacao/field_coorganizadores instalados.';
+}
+
+/**
+ * Instala a entidade de oferta/lote de ingresso (D-61), inicialmente fechada.
+ */
+function aculta_events_update_10014(): string {
+  $updateManager = \Drupal::entityDefinitionUpdateManager();
+  $installed = FALSE;
+  if (!$updateManager->getEntityType('aculta_event_offer')) {
+    $definition = \Drupal::entityTypeManager()->getDefinition('aculta_event_offer');
+    $updateManager->installEntityType($definition);
+    $installed = TRUE;
+  }
+
+  return $installed
+    ? 'Entidade aculta_event_offer instalada; ofertas permanecem inativas por padrão.'
+    : 'Entidade aculta_event_offer já estava instalada; nenhuma alteração foi necessária.';
+}
+
+/**
+ * Instala a configuração estrutural de RSVP definida em D-60, sem ativá-la.
+ */
+function aculta_events_update_10015(): string {
+  $updateManager = \Drupal::entityDefinitionUpdateManager();
+  $fieldManager = \Drupal::service('entity_field.manager');
+  $instalados = [];
+  $campos = [
+    'aculta_event' => [
+      'field_rsvp_ativo',
+      'field_rsvp_escopo_capacidade',
+      'field_rsvp_capacidade',
+      'field_rsvp_limite_pessoa',
+      'field_rsvp_duplicidade',
+      'field_rsvp_reserva_minutos',
+      'field_rsvp_lista_espera',
+      'field_rsvp_cancelamento',
+      'field_rsvp_serie',
+    ],
+    'aculta_event_date' => ['field_rsvp_capacidade'],
+  ];
+
+  foreach ($campos as $entityTypeId => $fieldNames) {
+    $definitions = $fieldManager->getBaseFieldDefinitions($entityTypeId);
+    foreach ($fieldNames as $fieldName) {
+      if ($updateManager->getFieldStorageDefinition($fieldName, $entityTypeId) !== NULL) {
+        continue;
+      }
+      if (!isset($definitions[$fieldName])) {
+        throw new \RuntimeException(sprintf('Campo D-60 %s não está declarado em %s.', $fieldName, $entityTypeId));
+      }
+      $updateManager->installFieldStorageDefinition($fieldName, $entityTypeId, 'aculta_events', $definitions[$fieldName]);
+      $instalados[] = $entityTypeId . '.' . $fieldName;
+    }
+  }
+
+  return $instalados === []
+    ? 'Campos estruturais de RSVP D-60 já estavam instalados.'
+    : 'Campos estruturais de RSVP D-60 instalados: ' . implode(', ', $instalados) . '. RSVP permanece desativado.';
+}
+
+/**
+ * Installs the moderated organization suggestion entity.
+ */
+function aculta_events_update_10016(): string {
+  $updateManager = \Drupal::entityDefinitionUpdateManager();
+  if ($updateManager->getEntityType('aculta_event_org_suggestion')) {
+    return 'Entidade de sugestões de organizações já estava instalada.';
+  }
+
+  $definition = \Drupal::entityTypeManager()->getDefinition('aculta_event_org_suggestion');
+  $updateManager->installEntityType($definition);
+  return 'Entidade de sugestões de organizações instalada; alterações públicas aguardam aprovação administrativa.';
+}

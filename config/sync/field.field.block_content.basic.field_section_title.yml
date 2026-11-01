@@ -1,0 +1,19 @@
+uuid: 4308aa19-325e-4247-8556-a06429991de7
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.basic
+    - field.storage.block_content.field_section_title
+id: block_content.basic.field_section_title
+field_name: field_section_title
+entity_type: block_content
+bundle: basic
+label: 'Título da seção'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

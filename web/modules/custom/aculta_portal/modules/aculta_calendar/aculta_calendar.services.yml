@@ -1,0 +1,24 @@
+services:
+  aculta_calendar.embed_hosts:
+    class: Drupal\aculta_calendar\Embed\DeployerHostDirectory
+    arguments: ['@extension.list.module']
+  aculta_calendar.recurrence_expander:
+    class: Drupal\aculta_calendar\Recurrence\RecurrenceExpander
+  aculta_calendar.item_source:
+    class: Drupal\aculta_calendar\Item\CalendarItemSource
+    arguments: [!tagged_iterator aculta_calendar.item_provider, '@logger.factory']
+  aculta_calendar.occurrences:
+    class: Drupal\aculta_calendar\Agenda\CalendarOccurrences
+    arguments: ['@aculta_calendar.recurrence_expander']
+  aculta_calendar.agenda:
+    class: Drupal\aculta_calendar\Agenda\CalendarAgenda
+    arguments: ['@aculta_calendar.item_source', '@aculta_calendar.occurrences', '@logger.factory']
+  aculta_calendar.month_grid:
+    class: Drupal\aculta_calendar\Agenda\MonthGrid
+  aculta_calendar.ics_exporter:
+    class: Drupal\aculta_calendar\Ics\CalendarIcsExporter
+    arguments: ['@aculta_calendar.item_source', '@aculta_calendar.occurrences']
+  aculta_calendar.shared_purpose_route_subscriber:
+    class: Drupal\aculta_calendar\EventSubscriber\SharedPurposeRouteSubscriber
+    tags:
+      - { name: event_subscriber }

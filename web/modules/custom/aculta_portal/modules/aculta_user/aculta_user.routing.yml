@@ -1,0 +1,215 @@
+aculta_user.perfil_publico:
+  path: '/u/{apelido}'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\PublicProfileController::view'
+    _title: 'Perfil'
+  requirements:
+    _access: 'TRUE'
+    apelido: '[a-z0-9][a-z0-9-]{2,39}'
+  options:
+    # Perfil público existe só no purpose MAIN; em outro host responde 404 (DomainPurposeRequestSubscriber).
+    _aculta_domain_purpose: 'main'
+
+aculta_user.configuracoes_privacidade:
+  path: '/configuracoes/privacidade'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\ProfileVisibilityForm'
+    _title: 'Privacidade'
+  requirements:
+    _permission: 'access aculta portal'
+
+aculta_user.aculta_user_agreement_audit:
+  path: '/painel-administrativo/aculta/termos/aceites'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\AcultaUserAgreementAuditController::listing'
+    _title: 'Evidências de aceite e consentimento'
+  requirements:
+    _permission: 'administer aculta user agreements'
+  options:
+    _admin_route: true
+
+aculta_user.people:
+  path: '/painel-administrativo/pessoas'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\PeopleListController::listing'
+    _title: 'Pessoas'
+  requirements:
+    _permission: 'administer users'
+  options:
+    _admin_route: true
+
+aculta_user.ownership_claims:
+  path: '/painel-administrativo/pessoas/reivindicacoes'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\OwnershipClaimAdminController::overview'
+    _title: 'Reivindicações de posse'
+  requirements:
+    _permission: 'administer aculta claims'
+  options:
+    _admin_route: true
+
+aculta_user.ownership_claim_decide:
+  path: '/painel-administrativo/pessoas/reivindicacoes/{aculta_ownership_claim}/decidir'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\OwnershipClaimDecisionForm'
+    _title: 'Decidir reivindicação de posse'
+  requirements:
+    _permission: 'administer aculta claims'
+  options:
+    _admin_route: true
+
+aculta_user.participacao_settings:
+  path: '/painel-administrativo/aculta/participacao'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\ParticipationSettingsForm'
+    _title: 'Regras de participação'
+  requirements:
+    _permission: 'administer aculta participacao'
+  options:
+    _admin_route: true
+
+aculta_user.atividade:
+  path: '/atividade/{aba}'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\ActivityController::view'
+    _title: 'Atividade'
+    aba: 'wiki'
+  requirements:
+    _permission: 'access aculta portal'
+    aba: 'wiki|forum|revista|comentarios|conquistas'
+
+aculta_user.associados:
+  path: '/painel-administrativo/associados/relatorio'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\AssociadosController::report'
+    _title: 'Associados'
+  requirements:
+    _permission: 'administer aculta associados'
+  options:
+    _admin_route: true
+
+aculta_user.associados_csv:
+  path: '/painel-administrativo/associados/exportar'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\AssociadosController::export'
+    _title: 'Exportar associados'
+  requirements:
+    _permission: 'export aculta associados'
+  options:
+    _admin_route: true
+
+aculta_user.avatar_reroll:
+  path: '/avatar/sortear'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\AvatarRerollController::reroll'
+  requirements:
+    _permission: 'access aculta portal'
+    _csrf_token: 'TRUE'
+
+aculta_user.avatar_crop:
+  path: '/avatar/recortar'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\AvatarCropForm'
+    _title: 'Recortar foto'
+  requirements:
+    _permission: 'access aculta portal'
+
+aculta_user.foto:
+  path: '/avatar/foto'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\UserPictureForm'
+    _title: 'Foto do perfil'
+  requirements:
+    _permission: 'access aculta portal'
+
+aculta_user.bio_form:
+  path: '/bio/editar'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\AccountBioForm'
+    _title: 'Editar bio'
+  requirements:
+    _custom_access: 'aculta_user.account_modal_access:access'
+  options:
+    _aculta_domain_purpose: 'account'
+
+aculta_user.bio_save:
+  path: '/bio/salvar'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\AccountBioSaveController::save'
+  methods: [POST]
+  requirements:
+    _permission: 'access aculta portal'
+    _csrf_token: 'TRUE'
+  options:
+    _aculta_domain_purpose: 'account'
+
+aculta_user.redes_form:
+  path: '/redes/editar/{rede}'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\SocialLinkForm'
+    _title: 'Editar rede social'
+  requirements:
+    _custom_access: 'aculta_user.account_modal_access:access'
+    rede: 'instagram|facebook|reddit'
+  options:
+    _aculta_domain_purpose: 'account'
+
+aculta_user.redes_save:
+  path: '/redes/salvar'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\SocialLinkSaveController::save'
+  methods: [POST]
+  requirements:
+    _permission: 'access aculta portal'
+    _csrf_token: 'TRUE'
+  options:
+    _aculta_domain_purpose: 'account'
+
+# Memorial coletivo do Fórum (ACULTA Fórum, F2). Apelido reservado em AccountNames::RESERVED.
+# Conteúdo pendente: lista de autores e texto aprovado; ver CHANGELOG do aculta_forum.
+aculta_user.memorial_legados:
+  path: '/u/lendashistoricas'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\LegacyMemorialController::view'
+    _title: 'Perfil'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: 'main'
+
+aculta_user.denuncias_forum:
+  path: '/painel-administrativo/forum/denuncias'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\ReportQueueController::view'
+    _title: 'Denúncias do Fórum'
+  requirements:
+    _permission: 'moderar denuncias do forum'
+  methods: [GET, HEAD, POST]
+  options:
+    _admin_route: true
+
+aculta_user.associado_situacao:
+  path: '/painel-administrativo/associados/{user}/situacao'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\AssociadoSituacaoForm'
+    _title: 'Situação de associado'
+  requirements:
+    _permission: 'administer aculta associados'
+    user: '\d+'
+  options:
+    _admin_route: true
+    parameters:
+      user:
+        type: entity:user
+
+aculta_user.associado_pedido:
+  path: '/associado'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\AssociadoRequestForm'
+    _title: 'Associado'
+  requirements:
+    _permission: 'access aculta portal'
+  options:
+    _aculta_domain_purpose: 'account'
+
+# Caminhos legados da troca de e-mail (antes do contrib change_mail_page): levam à aba E-mail da Segurança.

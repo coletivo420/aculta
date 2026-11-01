@@ -1,0 +1,9 @@
+uuid: f4d71b33-8faa-46bd-a8a0-560c61fbd3ac
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: qZeHI5fZ9WQRKsfl8FMBwzk3puSsWCRtWKEZh04JJUo
+formId: user_pass
+captchaType: turnstile/Turnstile
+label: 'Recuperação de senha'

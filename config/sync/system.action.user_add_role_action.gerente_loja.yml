@@ -1,0 +1,14 @@
+uuid: b233ec08-09a5-4438-9a78-955cee77cf2b
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - user.role.gerente_loja
+  module:
+    - user
+id: user_add_role_action.gerente_loja
+label: 'Adiciona o papel Gerente de Loja para o(s) usuário(s) selecionado(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: gerente_loja

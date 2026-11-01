@@ -1,0 +1,12 @@
+aculta_gallery.ckeditor_dialog:
+  path: '/aculta-gallery/editor/{filter_format}'
+  defaults:
+    _form: '\Drupal\aculta_gallery\Form\GalleryEmbedDialogForm'
+    _title: 'Criar galeria'
+  requirements:
+    _permission: 'add media gallery entities'
+    _entity_access: 'filter_format.use'
+  options:
+    parameters:
+      filter_format:
+        type: entity:filter_format

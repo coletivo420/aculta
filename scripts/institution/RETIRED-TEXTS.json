@@ -1,0 +1,6 @@
+{
+  "note": "Textos e rótulos aposentados. Até a versão 1.0 não podem existir no código, nos testes nem na documentação atual (histórico só no CHANGELOG). Ver docs/operations/RELEASES.md, seção 'Caminhos e textos únicos até a 1.0'.",
+  "texts": [
+    {"text": "Status dos módulos e temas", "replaced_by": "Status", "since": "0.3.0-dev.1"}
+  ]
+}

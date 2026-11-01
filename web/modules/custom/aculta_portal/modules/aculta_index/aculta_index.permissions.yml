@@ -1,0 +1,4 @@
+administer aculta index:
+  title: 'Consultar o estado do índice de busca'
+  description: 'Ver geração ativa e trabalho pendente, sem executar operações.'
+  restrict access: true

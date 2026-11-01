@@ -1,0 +1,20 @@
+{#
+  Página pública de evento. Datas em dd/mm/aaaa HH:mm (horário de Brasília), montadas pelo controller.
+#}
+<article class="aculta-event">
+  <h1>{{ titulo }}</h1>
+  {% if subtitulo %}<p class="aculta-event__subtitulo">{{ subtitulo }}</p>{% endif %}
+  {% if cancelado %}
+    <p class="aculta-event__aviso" role="status"><strong>Este evento foi cancelado.</strong></p>
+  {% endif %}
+  {% if tipo %}<p><strong>Tipo:</strong> {{ tipo }}</p>{% endif %}
+  {% if organizador %}<p><strong>Organizador:</strong> {{ organizador }}</p>{% endif %}
+  {% if datas %}
+    <h2>Datas</h2>
+    <ul>
+      {% for linha in datas %}<li>{{ linha }}</li>{% endfor %}
+    </ul>
+  {% endif %}
+  {% if descricao %}<div class="aculta-event__descricao">{{ descricao|nl2br }}</div>{% endif %}
+  {% if url %}<p><a href="{{ url }}">Site do evento</a></p>{% endif %}
+</article>

@@ -1,0 +1,9 @@
+uuid: e91cd9f0-a45c-4e14-9599-5a8feb86139c
+langcode: pt-br
+status: true
+dependencies: {  }
+name: 'Área de atuação'
+vid: work_area
+description: 'Frentes comprovadas de atuação dos projetos.'
+weight: 0
+new_revision: false

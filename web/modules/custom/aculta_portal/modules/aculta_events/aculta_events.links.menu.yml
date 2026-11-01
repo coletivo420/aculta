@@ -1,0 +1,69 @@
+aculta_events.admin:
+  title: 'Eventos'
+  description: 'Gestão de eventos culturais, datas e locais.'
+  route_name: aculta_events.admin_overview
+  parent: system.admin
+  weight: 25
+
+aculta_events.admin_overview:
+  title: 'Visão geral'
+  description: 'Painel geral de eventos, datas e locais.'
+  route_name: aculta_events.admin_overview
+  parent: aculta_events.admin
+  weight: 0
+
+aculta_events.admin_events_list:
+  title: 'Eventos'
+  description: 'Catálogo de eventos culturais cadastrados.'
+  route_name: aculta_events.catalogue
+  parent: aculta_events.admin
+  weight: 1
+
+aculta_events.admin_event_add:
+  title: 'Cadastrar evento'
+  description: 'Criar um novo evento cultural com data e local.'
+  route_name: aculta_events.event_add
+  parent: aculta_events.admin
+  weight: 2
+
+aculta_events.admin_locations:
+  title: 'Locais de eventos'
+  description: 'Gerenciamento de locais e espaços culturais para eventos.'
+  route_name: aculta_events.locations
+  parent: aculta_events.admin
+  weight: 4
+
+aculta_events.admin_location_add:
+  title: 'Adicionar local'
+  description: 'Cadastrar um novo local de evento.'
+  route_name: aculta_events.location_add
+  parent: aculta_events.admin
+  weight: 5
+
+aculta_events.admin_organizations:
+  title: 'Organizações'
+  description: 'Gestão de organizações e produtoras culturais.'
+  route_name: aculta_events.admin_organizations
+  parent: aculta_events.admin
+  weight: 6
+
+aculta_events.admin_organization_suggestions:
+  title: 'Sugestões de organizações'
+  description: 'Revisar alterações propostas para organizações sem titular.'
+  route_name: aculta_events.admin_organization_suggestions
+  parent: aculta_events.admin
+  weight: 7
+
+aculta_events.admin_organization_add:
+  title: 'Cadastrar organização'
+  description: 'Cadastrar uma nova organização cultural.'
+  route_name: aculta_events.admin_organization_add
+  parent: aculta_events.admin
+  weight: 8
+
+aculta_events.admin_export:
+  title: 'Exportar eventos (CSV)'
+  description: 'Baixa datas de eventos publicados por período, com campos administrativos mínimos.'
+  route_name: aculta_events.admin_export
+  parent: aculta_events.admin
+  weight: 9

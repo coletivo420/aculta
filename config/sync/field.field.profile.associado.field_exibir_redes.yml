@@ -1,0 +1,24 @@
+uuid: 3eac0675-003a-4649-9c8b-cc036b2f2477
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_exibir_redes
+    - profile.type.associado
+id: profile.associado.field_exibir_redes
+field_name: field_exibir_redes
+entity_type: profile
+bundle: associado
+label: 'Exibir redes sociais no perfil público'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean
+

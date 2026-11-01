@@ -1,0 +1,14 @@
+uuid: 505e0ef5-8e50-42bd-adb2-26fc6ef4c761
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - domain.record.cursos_aculta_org
+  module:
+    - domain_source
+id: domain_source_set_action.cursos_aculta_org
+label: 'Set content domain source value to the ACULTA - Cursos domain'
+type: node
+plugin: domain_source_set_action
+configuration:
+  domain_id: cursos_aculta_org

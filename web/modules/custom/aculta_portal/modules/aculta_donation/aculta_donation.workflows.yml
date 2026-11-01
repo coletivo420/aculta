@@ -1,0 +1,37 @@
+# Workflow do pedido de assinatura de doação.
+#
+# Origem: commerce_recurring 8.x-1.0-rc3, workflow order_recurring (GPL-2.0-or-later; autores do commerce_recurring).
+# Adaptação ACULTA (2026-10-17): a transição cancel também parte de completed, porque a assinatura continua
+# ativa depois da primeira cobrança aprovada. Os demais estados e transições são os do original.
+order_recurring:
+  id: order_recurring
+  group: commerce_order
+  label: 'Recorrente'
+  states:
+    draft:
+      label: 'Rascunho'
+    needs_payment:
+      label: 'Aguardando autorização'
+    failed:
+      label: 'Falhou'
+    completed:
+      label: 'Ativa'
+    canceled:
+      label: 'Cancelada'
+  transitions:
+    place:
+      label: 'Enviar pedido'
+      from: [draft]
+      to: needs_payment
+    mark_paid:
+      label: 'Marcar como pago'
+      from: [needs_payment, failed]
+      to: completed
+    mark_failed:
+      label: 'Marcar como falho'
+      from: [needs_payment]
+      to: failed
+    cancel:
+      label: 'Cancelar pedido'
+      from: [draft, needs_payment, failed, completed]
+      to: canceled

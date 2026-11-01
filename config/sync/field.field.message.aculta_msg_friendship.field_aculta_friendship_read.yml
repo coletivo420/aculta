@@ -1,0 +1,28 @@
+uuid: bf4ef07c-d439-4e5f-8abd-887ac20c1bc3
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_friendship_read
+    - message.template.aculta_msg_friendship
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: O3y0bM-ErkaP6LyIdKI89M3i4FTFogafuZNs05nqbIw
+id: message.aculta_msg_friendship.field_aculta_friendship_read
+field_name: field_aculta_friendship_read
+entity_type: message
+bundle: aculta_msg_friendship
+label: 'Aviso lido'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean

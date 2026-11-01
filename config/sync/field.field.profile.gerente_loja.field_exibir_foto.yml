@@ -1,0 +1,24 @@
+uuid: 40ccae74-1e05-4d5b-8227-f2842c3e5fd4
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_exibir_foto
+    - profile.type.gerente_loja
+id: profile.gerente_loja.field_exibir_foto
+field_name: field_exibir_foto
+entity_type: profile
+bundle: gerente_loja
+label: 'Exibir foto no perfil público'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean
+

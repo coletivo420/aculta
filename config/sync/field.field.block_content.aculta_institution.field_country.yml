@@ -1,0 +1,19 @@
+uuid: 1c789341-7035-4acd-8931-5cebd3d7cc35
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_institution
+    - field.storage.block_content.field_country
+id: block_content.aculta_institution.field_country
+field_name: field_country
+entity_type: block_content
+bundle: aculta_institution
+label: 'País ISO (JSON-LD)'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

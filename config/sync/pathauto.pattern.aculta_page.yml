@@ -1,0 +1,23 @@
+uuid: d841f699-4744-4b13-aa49-96d27bbe5ac1
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - node.type.page
+  module:
+    - node
+id: aculta_page
+label: 'URLs — page'
+type: 'canonical_entities:node'
+pattern: '/[node:title]'
+selection_criteria:
+  f56521b2-7217-462c-9535-b6a38f566983:
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: node
+    bundles:
+      page: page
+selection_logic: and
+weight: 0
+relationships: {  }

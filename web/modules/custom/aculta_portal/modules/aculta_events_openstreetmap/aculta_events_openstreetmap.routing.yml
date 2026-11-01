@@ -1,0 +1,49 @@
+aculta_events_openstreetmap.status:
+  path: '/integracoes/openstreetmap/configuracao'
+  defaults:
+    _controller: 'aculta_events_openstreetmap.status_controller:page'
+    _title: 'OpenStreetMap para Eventos'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+  methods: [GET]
+
+aculta_events_openstreetmap.oauth_authorize:
+  path: '/integracoes/openstreetmap/autorizar'
+  defaults:
+    _controller: 'aculta_events_openstreetmap.oauth_controller:authorize'
+    _title: 'Autorizar OpenStreetMap'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: main
+  methods: [GET]
+
+aculta_events_openstreetmap.oauth_callback:
+  path: '/integracoes/openstreetmap/retorno'
+  defaults:
+    _controller: 'aculta_events_openstreetmap.oauth_controller:callback'
+    _title: 'Retorno do OpenStreetMap'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: main
+  methods: [GET]
+
+aculta_events_openstreetmap.import:
+  path: '/integracoes/openstreetmap/importar'
+  defaults:
+    _form: 'Drupal\aculta_events_openstreetmap\Form\OpenStreetMapImportWizard'
+    _title: 'Importar local do OpenStreetMap'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+  methods: [GET, POST]

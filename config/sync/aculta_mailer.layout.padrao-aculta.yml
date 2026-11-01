@@ -1,0 +1,10 @@
+uuid: 1a7d7b00-8bdc-4a9f-a1d5-2243661c81b9
+langcode: pt-br
+status: true
+dependencies: {  }
+id: padrao-aculta
+label: 'Padrão ACULTA'
+brand: aculta
+header: '{{ brand_name }}'
+footer: '{{ brand_footer }}'
+

@@ -1,0 +1,25 @@
+uuid: a617d019-92c9-4c68-84fb-e9df8f4a58f2
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_city
+    - profile.type.administrator
+  module:
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.administrator.field_city
+field_name: field_city
+entity_type: profile
+bundle: administrator
+label: Cidade
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

@@ -1,0 +1,539 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_messenger\Unit;
+
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\aculta_messenger\Friendship\FriendshipNoticeSubscriber;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
+use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
+use Drupal\aculta_messenger\Plugin\QueueWorker\FriendshipNoticeEmailWorker;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Routing\UrlGeneratorInterface;
+use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\domain\DomainInterface;
+use Drupal\message\MessageInterface;
+use Drupal\message_notify\MessageNotifyInterface;
+use Drupal\aculta_mailer\Api\AcultaMailerInterface;
+use Drupal\aculta_mailer\Delivery\DeliveryError;
+use Drupal\aculta_mailer\Delivery\SendResult;
+use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\Tests\UnitTestCase;
+use Drupal\user\UserInterface;
+use Drupal\user\UserDataInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpFoundation\RequestStack;
+use PHPUnit\Framework\Attributes\Group;
+
+/**
+ * Verifies safe failure paths for friendship notice e-mail delivery.
+ */
+#[Group('aculta_messenger')]
+final class FriendshipNoticeEmailWorkerTest extends UnitTestCase {
+
+  /**
+   * Malformed queue data never loads entities or invokes the transport.
+   */
+  public function testMalformedQueueItemIsIgnored(): void {
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->expects(self::never())->method('getStorage');
+    $notifier = $this->createMock(MessageNotifyInterface::class);
+    $notifier->expects(self::never())->method('send');
+    $worker = $this->worker($entityTypeManager, $notifier);
+
+    $worker->processItem(['message_id' => 'not-an-integer']);
+  }
+
+  /**
+   * A concurrent duplicate retries later without loading stale state.
+   */
+  public function testConcurrentDuplicateDoesNotLoadOrSend(): void {
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->expects(self::never())->method('getStorage');
+    $notifier = $this->createMock(MessageNotifyInterface::class);
+    $notifier->expects(self::never())->method('send');
+    $lock = $this->createMock(LockBackendInterface::class);
+    $lock->expects(self::once())
+      ->method('acquire')
+      ->with('aculta_messenger:friendship_notice_email:8', 180.0)
+      ->willReturn(FALSE);
+    $lock->expects(self::never())->method('release');
+    $worker = $this->worker($entityTypeManager, $notifier, $lock);
+
+    $this->expectException(\RuntimeException::class);
+    $this->expectExceptionMessage('Friendship notice email is already being processed.');
+    $worker->processItem(['message_id' => 8]);
+  }
+
+  /**
+   * Missing recipient or account purpose fails without sending e-mail.
+   */
+  public function testUnavailableRecipientFailsThePersistedMessage(): void {
+    $status = $this->createMock(FieldItemListInterface::class);
+    $status->method('__get')->with('value')->willReturn('pending');
+    $message = $this->createMock(MessageInterface::class);
+    $message->method('bundle')->willReturn(FriendshipNoticeSubscriber::TEMPLATE);
+    $message->method('getOwnerId')->willReturn(52);
+    $message->method('get')->willReturnCallback(fn(string $field): FieldItemListInterface => match ($field) {
+      'field_aculta_msg_delivery' => $status,
+      'field_aculta_mailer_managed' => $this->fieldValue(FALSE),
+      default => throw new \InvalidArgumentException('Unexpected field ' . $field),
+    });
+    $message->expects(self::once())
+      ->method('set')
+      ->with('field_aculta_msg_delivery', 'cancelled')
+      ->willReturnSelf();
+    $message->expects(self::once())->method('save');
+
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage->method('loadUnchanged')->with(8)->willReturn($message);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('loadUnchanged')->with(52)->willReturn(NULL);
+    $domainStorage = $this->createMock(EntityStorageInterface::class);
+    $domainStorage->method('load')->with('conta_aculta_org')->willReturn(NULL);
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->method('getStorage')->willReturnMap([
+      ['message', $messageStorage],
+      ['user', $userStorage],
+      ['domain', $domainStorage],
+    ]);
+    $notifier = $this->createMock(MessageNotifyInterface::class);
+    $notifier->expects(self::never())->method('send');
+    $worker = $this->worker($entityTypeManager, $notifier);
+
+    $worker->processItem(['message_id' => 8]);
+  }
+
+  /**
+   * Successful delivery is recorded and a duplicate queue item is ignored.
+   */
+  public function testSuccessfulDeliveryIsRecordedAndNotSentTwice(): void {
+    $state = ['status' => 'pending', 'attempts' => 0];
+    $previous_container = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
+    $notifier = $this->createMock(MessageNotifyInterface::class);
+    $notifier->expects(self::once())
+      ->method('send')
+      ->with(self::isInstanceOf(MessageInterface::class), ['save on success' => FALSE, 'save on fail' => FALSE])
+      ->willReturn(TRUE);
+    [$worker, $message] = $this->deliveryWorker($state, $notifier);
+    $message->expects(self::once())
+      ->method('setArguments')
+      ->with(['@account_url' => 'https://account.example.invalid/minha-conta'])
+      ->willReturnSelf();
+
+    try {
+      $worker->processItem(['message_id' => 8]);
+      $worker->processItem(['message_id' => 8]);
+    }
+    finally {
+      $this->restoreContainer($previous_container);
+    }
+
+    self::assertSame('sent', $state['status']);
+    self::assertSame(1, $state['attempts']);
+  }
+
+  /**
+   * New, explicitly marked notices use the centralized Mailer.
+   */
+  public function testMailerManagedNoticeUsesCentralMailer(): void {
+    $state = ['status' => 'pending', 'attempts' => 0, 'mailer_managed' => TRUE];
+    $previous_container = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
+    $notifier = $this->createMock(MessageNotifyInterface::class);
+    $notifier->expects(self::never())->method('send');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())->method('deliver')
+      ->with(self::callback(static function (MailMessage $mail): bool {
+        self::assertSame('friendship_notice', $mail->type);
+        self::assertSame('recipient@example.invalid', $mail->to);
+        self::assertSame('pt-br', $mail->langcode);
+        self::assertSame([
+          'summary' => 'Você recebeu um pedido de amizade.',
+          'url' => 'https://account.example.invalid/minha-conta',
+        ], $mail->context);
+        return !str_contains(serialize($mail->context), '52');
+      }))
+      ->willReturn(SendResult::sent());
+    [$worker] = $this->deliveryWorker($state, $notifier, $mailer);
+
+    try {
+      $worker->processItem(['message_id' => 8, 'mailer_managed' => TRUE]);
+    }
+    finally {
+      $this->restoreContainer($previous_container);
+    }
+
+    self::assertSame('sent', $state['status']);
+    self::assertSame(1, $state['attempts']);
+  }
+
+  /**
+   * Acceptance email states the transition without exposing account identity.
+   */
+  public function testAcceptanceEmailUsesOnlyGenericTransitionAndAccountLink(): void {
+    $state = ['status' => 'pending', 'attempts' => 0, 'mailer_managed' => TRUE];
+    $previous_container = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
+    $notifier = $this->createMock(MessageNotifyInterface::class);
+    $notifier->expects(self::never())->method('send');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())->method('deliver')
+      ->with(self::callback(static function (MailMessage $mail): bool {
+        self::assertSame([
+          'summary' => 'Seu pedido de amizade foi aceito.',
+          'url' => 'https://account.example.invalid/minha-conta',
+        ], $mail->context);
+        self::assertSame(['summary', 'url'], array_keys($mail->context));
+        return TRUE;
+      }))
+      ->willReturn(SendResult::sent());
+    [$worker] = $this->deliveryWorker($state, $notifier, $mailer, friendshipEvent: 'accepted');
+
+    try {
+      $worker->processItem(['message_id' => 8, 'mailer_managed' => TRUE]);
+    }
+    finally {
+      $this->restoreContainer($previous_container);
+    }
+
+    self::assertSame('sent', $state['status']);
+  }
+
+  /**
+   * Opt-out keeps the site notice and cancels email before counting a try.
+   */
+  public function testSiteOnlyPreferenceSuppressesEmailWithoutAttempt(): void {
+    $state = ['status' => 'pending', 'attempts' => 0, 'mailer_managed' => TRUE];
+    $previous_container = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
+    $notifier = $this->createMock(MessageNotifyInterface::class);
+    $notifier->expects(self::never())->method('send');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+    [$worker] = $this->deliveryWorker($state, $notifier, $mailer, AvisoPreferencias::EMAIL_OFF);
+
+    try {
+      $worker->processItem(['message_id' => 8, 'mailer_managed' => TRUE]);
+    }
+    finally {
+      $this->restoreContainer($previous_container);
+    }
+
+    self::assertSame('cancelled', $state['status']);
+    self::assertSame(0, $state['attempts']);
+  }
+
+  /**
+   * An opt-out between transient failure and retry cancels that retry.
+   */
+  public function testPreferenceChangedToSiteOnlyCancelsPendingRetry(): void {
+    $state = ['status' => 'pending', 'attempts' => 0, 'mailer_managed' => TRUE];
+    $previous_container = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
+    $notifier = $this->createMock(MessageNotifyInterface::class);
+    $notifier->expects(self::never())->method('send');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::once())->method('deliver')
+      ->willReturn(SendResult::failed(DeliveryError::Temporary, 421));
+    [$worker] = $this->deliveryWorker(
+      $state,
+      $notifier,
+      $mailer,
+      [AvisoPreferencias::EMAIL_IMMEDIATE, AvisoPreferencias::EMAIL_OFF],
+    );
+
+    try {
+      try {
+        $worker->processItem(['message_id' => 8, 'mailer_managed' => TRUE]);
+        self::fail('A transient delivery failure must remain retryable.');
+      }
+      catch (\RuntimeException $exception) {
+        self::assertSame('Friendship notice email delivery failed.', $exception->getMessage());
+      }
+      $worker->processItem(['message_id' => 8, 'mailer_managed' => TRUE]);
+      $worker->processItem(['message_id' => 8, 'mailer_managed' => TRUE]);
+    }
+    finally {
+      $this->restoreContainer($previous_container);
+    }
+
+    self::assertSame('cancelled', $state['status']);
+    self::assertSame(1, $state['attempts']);
+  }
+
+  /**
+   * Cancelled and permanent failures cannot be revived by a stale queue item.
+   */
+  public function testTerminalNoticeStatesAreNotSentAgain(): void {
+    $previous_container = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
+    try {
+      foreach (['cancelled', 'failed_permanent', 'sent'] as $terminalStatus) {
+        $state = ['status' => $terminalStatus, 'attempts' => 1, 'mailer_managed' => TRUE];
+        $notifier = $this->createMock(MessageNotifyInterface::class);
+        $notifier->expects(self::never())->method('send');
+        $mailer = $this->createMock(AcultaMailerInterface::class);
+        $mailer->expects(self::never())->method('deliver');
+        [$worker] = $this->deliveryWorker($state, $notifier, $mailer);
+
+        $worker->processItem(['message_id' => 8, 'mailer_managed' => TRUE]);
+
+        self::assertSame($terminalStatus, $state['status']);
+        self::assertSame(1, $state['attempts']);
+      }
+    }
+    finally {
+      $this->restoreContainer($previous_container);
+    }
+  }
+
+  /**
+   * An unconfirmed email cancels friendship delivery without an attempt.
+   */
+  public function testUnconfirmedEmailSuppressesDeliveryWithoutAttempt(): void {
+    $state = ['status' => 'pending', 'attempts' => 0, 'mailer_managed' => TRUE];
+    $previous_container = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
+    $notifier = $this->createMock(MessageNotifyInterface::class);
+    $notifier->expects(self::never())->method('send');
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::never())->method('deliver');
+    [$worker] = $this->deliveryWorker($state, $notifier, $mailer, AvisoPreferencias::EMAIL_IMMEDIATE, FALSE);
+
+    try {
+      $worker->processItem(['message_id' => 8, 'mailer_managed' => TRUE]);
+    }
+    finally {
+      $this->restoreContainer($previous_container);
+    }
+
+    self::assertSame('cancelled', $state['status']);
+    self::assertSame(0, $state['attempts']);
+  }
+
+  /**
+   * A transient retry reuses the same deterministic Mailer correlation.
+   */
+  public function testMailerManagedRetryKeepsTheSameCorrelation(): void {
+    $state = ['status' => 'pending', 'attempts' => 0, 'mailer_managed' => TRUE];
+    $previous_container = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
+    $notifier = $this->createMock(MessageNotifyInterface::class);
+    $notifier->expects(self::never())->method('send');
+    $correlations = [];
+    $mailer = $this->createMock(AcultaMailerInterface::class);
+    $mailer->expects(self::exactly(2))
+      ->method('deliver')
+      ->willReturnCallback(static function (MailMessage $mail) use (&$correlations): SendResult {
+        $correlations[] = $mail->correlationId;
+        return count($correlations) === 1
+          ? SendResult::failed(DeliveryError::Temporary, 421)
+          : SendResult::sent();
+      });
+    [$worker] = $this->deliveryWorker($state, $notifier, $mailer);
+
+    try {
+      try {
+        $worker->processItem(['message_id' => 8, 'mailer_managed' => TRUE]);
+        self::fail('A transient Mailer error must be retried by the queue.');
+      }
+      catch (\RuntimeException $exception) {
+        self::assertSame('Friendship notice email delivery failed.', $exception->getMessage());
+      }
+      $worker->processItem(['message_id' => 8, 'mailer_managed' => TRUE]);
+    }
+    finally {
+      $this->restoreContainer($previous_container);
+    }
+
+    self::assertCount(2, $correlations);
+    self::assertSame($correlations[0], $correlations[1]);
+    self::assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $correlations[0]);
+    self::assertSame('sent', $state['status']);
+    self::assertSame(2, $state['attempts']);
+  }
+
+  /**
+   * Transport failures are retried at most three times.
+   */
+  public function testTransportFailureRetriesThreeTimesAndThenStops(): void {
+    $state = ['status' => 'pending', 'attempts' => 0];
+    $previous_container = \Drupal::hasContainer() ? \Drupal::getContainer() : NULL;
+    $notifier = $this->createMock(MessageNotifyInterface::class);
+    $notifier->expects(self::exactly(3))->method('send')->willReturn(FALSE);
+    [$worker] = $this->deliveryWorker($state, $notifier);
+
+    try {
+      try {
+        $worker->processItem(['message_id' => 8]);
+        self::fail('The first failed delivery must be retried by the queue.');
+      }
+      catch (\RuntimeException $exception) {
+        self::assertSame('Friendship notice email delivery failed.', $exception->getMessage());
+      }
+      try {
+        $worker->processItem(['message_id' => 8]);
+        self::fail('The second failed delivery must be retried by the queue.');
+      }
+      catch (\RuntimeException $exception) {
+        self::assertSame('Friendship notice email delivery failed.', $exception->getMessage());
+      }
+      $worker->processItem(['message_id' => 8]);
+      $worker->processItem(['message_id' => 8]);
+    }
+    finally {
+      $this->restoreContainer($previous_container);
+    }
+
+    self::assertSame('failed_permanent', $state['status']);
+    self::assertSame(3, $state['attempts']);
+  }
+
+  /**
+   * Builds the queue worker with the configured domain resolver. */
+  private function worker(EntityTypeManagerInterface $entityTypeManager, MessageNotifyInterface $notifier, ?LockBackendInterface $lock = NULL, ?AcultaMailerInterface $mailer = NULL, ?AvisoPreferenciasInterface $preferences = NULL, ?EmailConfirmationPolicy $emailPolicy = NULL): FriendshipNoticeEmailWorker {
+    $domainPurpose = new DomainPurposeManager(
+      $entityTypeManager,
+      $this->createMock(DomainNegotiatorInterface::class),
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
+    );
+    return new FriendshipNoticeEmailWorker(
+      [],
+      FriendshipNoticeSubscriber::EMAIL_QUEUE,
+      [],
+      $entityTypeManager,
+      $notifier,
+      $mailer ?? $this->createMock(AcultaMailerInterface::class),
+      $domainPurpose,
+      $lock ?? $this->createConfiguredMock(LockBackendInterface::class, ['acquire' => TRUE]),
+      $preferences ?? $this->createConfiguredMock(AvisoPreferenciasInterface::class, ['emailMode' => AvisoPreferencias::EMAIL_IMMEDIATE]),
+      $emailPolicy ?? new EmailConfirmationPolicy(
+        $this->createConfiguredMock(UserDataInterface::class, ['get' => TRUE]),
+        $entityTypeManager,
+        $this->createMock(ModuleHandlerInterface::class),
+      ),
+    );
+  }
+
+  /**
+   * Creates a worker fixture with a current account, Domain, and Message.
+   *
+   * @param array{status: string, attempts: int} $state
+   *   Mutable persisted field values used to simulate repeated queue loads.
+   * @param \Drupal\message_notify\MessageNotifyInterface|null $notifier
+   *   Optional mocked delivery service.
+   * @param \Drupal\aculta_mailer\Api\AcultaMailerInterface|null $mailer
+   *   Optional mocked ACULTA Mailer.
+   * @param string $emailMode
+   *   Current friendship email mode.
+   * @param bool $emailConfirmed
+   *   Whether the recipient email is confirmed.
+   * @param string $friendshipEvent
+   *   Persisted transition used by the Mailer message.
+   *
+   * @return array{0: FriendshipNoticeEmailWorker, 1: MessageInterface}
+   *   The worker and persisted message mock.
+   */
+  private function deliveryWorker(array &$state, ?MessageNotifyInterface $notifier = NULL, ?AcultaMailerInterface $mailer = NULL, string|array $emailMode = AvisoPreferencias::EMAIL_IMMEDIATE, bool $emailConfirmed = TRUE, string $friendshipEvent = 'requested'): array {
+    $message = $this->createMock(MessageInterface::class);
+    $message->method('bundle')->willReturn(FriendshipNoticeSubscriber::TEMPLATE);
+    $message->method('id')->willReturn('8');
+    $message->method('getOwnerId')->willReturn(52);
+    $status_items = $this->createMock(FieldItemListInterface::class);
+    $status_items->method('__get')->with('value')->willReturnCallback(static function () use (&$state): string {
+      return $state['status'];
+    });
+    $attempt_items = $this->createMock(FieldItemListInterface::class);
+    $attempt_items->method('__get')->with('value')->willReturnCallback(static function () use (&$state): int {
+      return $state['attempts'];
+    });
+    $message->method('get')->willReturnCallback(function (string $field) use (&$state, $status_items, $attempt_items, $friendshipEvent): FieldItemListInterface {
+      return match ($field) {
+        'field_aculta_msg_delivery' => $status_items,
+        'field_aculta_messenger_attempts' => $attempt_items,
+        'field_aculta_mailer_managed' => $this->fieldValue($state['mailer_managed'] ?? FALSE),
+        FriendshipNoticeSubscriber::EVENT_FIELD => $this->fieldValue($friendshipEvent),
+        default => throw new \InvalidArgumentException('Unexpected field ' . $field),
+      };
+    });
+    $message->method('set')->willReturnCallback(static function (string $field, mixed $value) use (&$state, $message): MessageInterface {
+      if ($field === 'field_aculta_msg_delivery') {
+        $state['status'] = $value;
+      }
+      elseif ($field === 'field_aculta_messenger_attempts') {
+        $state['attempts'] = $value;
+      }
+      return $message;
+    });
+    $message->method('setArguments')->willReturnSelf();
+    $message->method('save')->willReturn(1);
+
+    $recipient = $this->createMock(UserInterface::class);
+    $recipient->method('id')->willReturn('52');
+    $recipient->method('isActive')->willReturn(TRUE);
+    $recipient->method('getEmail')->willReturn('recipient@example.invalid');
+    $domain = $this->createMock(DomainInterface::class);
+    $domain->method('isHttps')->willReturn(TRUE);
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage->method('loadUnchanged')->with(8)->willReturn($message);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->method('loadUnchanged')->with(52)->willReturn($recipient);
+    $domainStorage = $this->createMock(EntityStorageInterface::class);
+    $domainStorage->method('load')->with('conta_aculta_org')->willReturn($domain);
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->method('getStorage')->willReturnMap([
+      ['message', $messageStorage],
+      ['user', $userStorage],
+      ['domain', $domainStorage],
+    ]);
+
+    $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+    $urlGenerator->method('generateFromRoute')->willReturnCallback(static function (string $route): string {
+      self::assertSame('aculta_portal.dashboard', $route);
+      return 'https://account.example.invalid/minha-conta';
+    });
+    $container = new ContainerBuilder();
+    $container->set('url_generator', $urlGenerator);
+    \Drupal::setContainer($container);
+
+    $preference = $this->createMock(AvisoPreferenciasInterface::class);
+    $emailModeStub = $preference->method('emailMode')->with(52, AvisoPreferencias::EMAIL_FRIENDSHIP);
+    if (is_array($emailMode)) {
+      $emailModeStub->willReturn(...$emailMode);
+    }
+    else {
+      $emailModeStub->willReturn($emailMode);
+    }
+    $emailUserData = $this->createMock(UserDataInterface::class);
+    $emailUserData->method('get')->with('aculta_portal', 52, 'email_confirmed')->willReturn($emailConfirmed);
+    $emailPolicy = new EmailConfirmationPolicy($emailUserData, $entityTypeManager, $this->createMock(ModuleHandlerInterface::class));
+    return [
+      $this->worker($entityTypeManager, $notifier ?? $this->createMock(MessageNotifyInterface::class), mailer: $mailer, preferences: $preference, emailPolicy: $emailPolicy),
+      $message,
+    ];
+  }
+
+  /**
+   * Creates a scalar field item fixture.
+   */
+  private function fieldValue(mixed $value): FieldItemListInterface {
+    $field = $this->createMock(FieldItemListInterface::class);
+    $field->method('__get')->with('value')->willReturn($value);
+    return $field;
+  }
+
+  /**
+   * Restores the Unit test's global Drupal container after URL generation.
+   */
+  private function restoreContainer(?ContainerInterface $container): void {
+    if ($container === NULL) {
+      \Drupal::unsetContainer();
+      return;
+    }
+    \Drupal::setContainer($container);
+  }
+
+}

@@ -1,0 +1,185 @@
+/* Carrinho: contador da barra (zero itens esconde o badge) e caixa de status do "Adicionar ao carrinho".
+   A marcação é do módulo aculta_portal (classes portal-cart-status*) e do componente cart-offcanvas. */
+/* Geometria comum aos quatro controles da barra institucional. */
+.aculta-utility-trigger {
+  display: inline-flex;
+  flex: 0 0 2.75rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.aculta-utility-trigger:is(:hover, :focus) {
+  color: inherit;
+}
+
+.aculta-utility-trigger:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+
+.aculta-utility-trigger__icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.aculta-utility-trigger .aculta-utility-trigger__count {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  transform: translate(45%, -45%);
+  background: var(--aculta-status-error-text);
+  color: var(--aculta-status-error-surface);
+}
+
+.aculta-utility-offcanvas {
+  background: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+}
+
+.aculta-utility-offcanvas__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.aculta-utility-offcanvas__body > :first-child { margin-block-start: 0; }
+.aculta-utility-offcanvas__body > :last-child { margin-block-end: 0; }
+.aculta-utility-offcanvas__body[aria-busy="true"] { opacity: 0.7; }
+
+
+[data-aculta-alert-dismiss] {
+  float: inline-end;
+  display: inline-grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  margin-inline-start: 0.5rem;
+  border: 1px solid var(--aculta-status-error-border);
+  border-radius: 50%;
+  color: var(--aculta-status-error-text);
+  font-size: 1.25rem;
+  line-height: 1;
+  text-decoration: none;
+}
+
+[data-aculta-alert-dismiss]:focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+
+.aculta-messenger-offcanvas .item-list,
+.aculta-alerts-offcanvas .item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.aculta-messenger-offcanvas .item-list > li,
+.aculta-alerts-offcanvas .item-list > li {
+  padding-block: 0.75rem;
+  border-bottom: 1px solid var(--aculta-border-subtle);
+}
+
+.aculta-messenger-offcanvas .item-list > li:last-child,
+.aculta-alerts-offcanvas .item-list > li:last-child { border-bottom: 0; }
+
+.aculta-messenger-offcanvas [data-aculta-drawer-content] > .contextual,
+.aculta-alerts-offcanvas [data-aculta-drawer-content] > .contextual { display: none; }
+
+.portal-cart-status {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-block: 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--bs-border-color, currentColor);
+}
+
+.portal-cart-status--success {
+  border-color: var(--bs-success, currentColor);
+}
+
+.portal-cart-status--error {
+  border-color: var(--bs-danger, currentColor);
+  color: var(--bs-danger, inherit);
+}
+
+.portal-cart-status__message {
+  flex: 1 1 auto;
+  margin: 0;
+}
+
+.portal-cart-status__link {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.portal-cart-status__close {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: 0 0.25rem;
+  cursor: pointer;
+}
+
+/* Espaço reservado para a caixa de status: sem ele, o botão sobe quando a caixa some (troca de tamanho). */
+[id^="portal-cart-status-"]:empty {
+  min-height: 3.5rem;
+}
+
+/* Shared utility drawers: fluid width and scrollable bodies on narrow/mobile screens. */
+.aculta-utility-offcanvas {
+  /* Mobile base is edge-to-edge; the wide screen cap is applied below. */
+  --bs-offcanvas-width: 100vw;
+  max-height: 100dvh;
+  min-height: 0;
+}
+.aculta-utility-offcanvas .offcanvas-header,
+.aculta-utility-offcanvas .offcanvas-body { min-width: 0; }
+.aculta-utility-offcanvas .offcanvas-body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.aculta-utility-offcanvas :is(a, button):focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+.aculta-utility-offcanvas :is(.offcanvas-footer, [class$="__footer"]) {
+  flex: 0 0 auto;
+  padding: .75rem 1rem;
+  border-block-start: 1px solid var(--aculta-border-subtle);
+  background: var(--aculta-surface-raised);
+}
+.aculta-cart-offcanvas__caixa {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  align-items: baseline;
+  padding: .75rem;
+  margin-block: .5rem;
+  border: 1px solid var(--aculta-border-default);
+  border-radius: var(--bs-border-radius);
+  background: var(--aculta-surface-muted);
+}
+@media (min-width: 35.0625rem) {
+  .aculta-utility-offcanvas { --bs-offcanvas-width: min(26.25rem, 100vw); }
+}

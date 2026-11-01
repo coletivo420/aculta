@@ -1,0 +1,12 @@
+uuid: 2997c6b1-b257-4e21-9d73-0d09e05288e5
+langcode: pt-br
+status: true
+dependencies: {  }
+id: eventos_aculta_org
+domain_id: 21637402
+hostname: eventos.aculta.org
+name: 'ACULTA - Eventos'
+scheme: https
+weight: 10
+is_default: false
+path_prefix: ''

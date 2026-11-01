@@ -1,0 +1,7 @@
+name: Um slide
+description: Carrossel com um único slide.
+component: aculta420:carousel
+props: {}
+slots:
+  slides:
+    markup: <div class="carousel-item active"><p>Slide único</p></div>

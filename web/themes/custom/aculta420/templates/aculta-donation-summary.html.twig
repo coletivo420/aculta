@@ -1,0 +1,22 @@
+{#
+/**
+ * @file
+ * Default template for DonationItem pane summaries.
+ *
+ * Available variables:
+ *   - content: All fields defined in the 'donation' view mode.
+ *   - order_item: The Donation order item for easy display logic.
+ *   - attributes: Attributes for the wrapper.
+ *
+ * @ingroup themeable
+ */
+#}
+
+{%
+  set classes = [
+  'donation-summary--items',
+]
+%}
+<div{{ attributes.addClass(classes) }}>
+  {{ content }}
+</div>

@@ -1,0 +1,24 @@
+uuid: dfa8b18c-e0f8-4f75-b34a-f4307e99b329
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_exibir_bio
+    - profile.type.authenticated
+id: profile.authenticated.field_exibir_bio
+field_name: field_exibir_bio
+entity_type: profile
+bundle: authenticated
+label: 'Exibir bio no perfil público'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean
+

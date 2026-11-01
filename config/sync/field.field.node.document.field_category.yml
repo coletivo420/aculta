@@ -1,0 +1,19 @@
+uuid: 034cacde-621f-4d94-a7bb-d0ecd007f2ee
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_category
+    - node.type.document
+id: node.document.field_category
+field_name: field_category
+entity_type: node
+bundle: document
+label: Categoria
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,78 @@
+aculta_faq.public:
+  path: /perguntas-frequentes
+  defaults:
+    _controller: '\Drupal\aculta_faq\Controller\FaqController::publicList'
+    _title: 'Perguntas frequentes'
+  requirements:
+    _permission: 'access content'
+
+aculta_faq.admin:
+  path: /painel-administrativo/faq
+  defaults:
+    _controller: '\Drupal\aculta_faq\Controller\FaqController::admin'
+    _title: 'Perguntas frequentes e blocos editoriais'
+  requirements:
+    _permission: 'administer aculta faq'
+  options:
+    _admin_route: true
+
+aculta_faq.question_add:
+  path: /painel-administrativo/faq/perguntas/adicionar
+  defaults:
+    _entity_form: 'node.default'
+    _title: 'Criar pergunta frequente'
+    entity_type_id: node
+    node_type: aculta_faq
+    bundle_parameter: node_type
+  requirements:
+    _permission: 'administer aculta faq'
+  options:
+    _admin_route: true
+    parameters:
+      node_type:
+        type: entity:node_type
+        with_config_overrides: true
+
+aculta_faq.question_edit:
+  path: /painel-administrativo/faq/perguntas/{node}/editar
+  defaults:
+    _entity_form: 'node.default'
+    _title: 'Editar pergunta frequente'
+  requirements:
+    _custom_access: '\Drupal\aculta_faq\Access\FaqQuestionAccessCheck::access'
+  options:
+    _admin_route: true
+    parameters:
+      node:
+        type: entity:node
+
+aculta_faq.block_add:
+  path: /painel-administrativo/faq/blocos/adicionar
+  defaults:
+    _entity_form: 'block_content.default'
+    _title: 'Criar bloco editorial'
+    entity_type_id: block_content
+    block_content_type: aculta_editorial
+    bundle_parameter: block_content_type
+  requirements:
+    _permission: 'administer aculta faq'
+  options:
+    _admin_route: true
+    parameters:
+      block_content_type:
+        type: entity:block_content_type
+        with_config_overrides: true
+
+aculta_faq.block_edit:
+  path: /painel-administrativo/faq/blocos/{block_content}/editar
+  defaults:
+    _entity_form: 'block_content.default'
+    _title: 'Editar bloco editorial'
+  requirements:
+    _custom_access: '\Drupal\aculta_faq\Access\EditorialBlockAccessCheck::access'
+  options:
+    _admin_route: true
+    parameters:
+      block_content:
+        type: entity:block_content
+

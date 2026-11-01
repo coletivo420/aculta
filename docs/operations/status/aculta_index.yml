@@ -1,0 +1,19 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.180
+state: Dev
+next_phase: >-
+  Concluir grants/Domain dos providers owners, avaliar catálogo representativo e homologação operacional; manter Dev e não fazer rebuild no Runtime nesta integração.
+  Incluir o incremento LOC/IDX-LOC conforme [plano](docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md), sem substituir os gates anteriores.
+progress_note: >-
+  Dev.180: `ContentIndexRelationQuery::queryIncoming()` descobre origens por
+  relação nomeada e revalida Entity Access do alvo/origens, provider vigente,
+  purpose e cursor por conta. Eventos/Local: 3 Datas em 2 Eventos resultam em
+  2 entidades; perda de acesso e transferência de cursor testadas. Unit 51/265,
+  Kernel 127/2.171 PASS; 274 depreciações Core/contrib. PHPCS/PHP lint focais
+  PASS; Runtime sem alteração.
+  IDX-BLK integrado: plugin de bloco RelatedContentBlock (aculta_index_related_content) consumindo ContentIndexRelationQuery com resolução por contexto/rota, falha fechada para array vazio e biblioteca mobile-first aculta_index/related_content; RelatedContentBlockKernelTest PASS (7 testes / 146 asserções no banco aculta_simpletest).
+  IDX-LOC integrado: providers Events/Local (v2), URLs canônicas via purpose 'eventos', allowlist mínima, relação event_location derivada das datas com revalidação de acesso, e junção de ContentIndexRelationQuery ajustada para alvos de relação sem idioma específico (und). Suíte EventContentIndexProviderKernelTest PASS (6 testes / 141 asserções). Sem rebuild ou alteração de estado no Runtime.
+  Revalidação em 2026-10-29 no MariaDB aculta_simpletest: Unit 51/265, Kernel 120/2.020 (270 depreciações upstream) e Unit aculta_index_file 2/21 passaram. PHP lint dos 85 arquivos PHP e PHPCS Drupal/DrupalPractice passaram após corrigir docblocks do painel. O Kernel cobre Entity Access/Domain via harnesses owners de Wiki, Fórum, Revista, Gallery e LMS; ainda faltam grants operacionais e carga real representativa. Provider file:file permanece opt-in, fora do Config Sync; nenhum rebuild ou escrita no Runtime. A homologação funcional/visual e a revisão global ainda não permitem RC.
+  Runtime somente leitura em 2026-10-29, código ativo dev.177: fila pronta, sem jobs; auditoria id 1 continua running, com 1 projeção stale e valid=false. Não avancei o lote nem iniciei rebuild; grants e catálogo representativo continuam pendentes.
+  Revalidação 2026-10-31: Unit e Kernel completos do aculta_index passaram com 178 testes e 2.436 assertions no MariaDB aculta_simpletest; 274 depreciações Core/contrib. Bateria focal dos owners Activity, Magazine, Wiki, Forum e LMS: 42 testes e 617 assertions PASS; 261 depreciações Core/contrib. Corrigidos fixtures de referências Symfony e schema de nickname, sem mudança funcional em produção. Runtime sem escrita.
+  Revalidação 2026-11-02 no checkout dev: Unit 51/265 e Kernel 127/2.171 PASS em aculta_simpletest; 274 depreciações Core/contrib. PHPCS, PHP lint, aliases temporários, rotas administrativas MAIN e índice de status passaram. Nenhum rebuild ou escrita no Runtime.

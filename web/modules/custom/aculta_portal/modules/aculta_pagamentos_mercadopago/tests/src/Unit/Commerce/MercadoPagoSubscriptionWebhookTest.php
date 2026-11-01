@@ -1,0 +1,145 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_pagamentos_mercadopago\Unit\Commerce;
+
+use Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago\WebhookGuard;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionNotificationService;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoChargebackNotificationInterface;
+use Drupal\Core\Logger\LoggerChannelInterface;
+use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\HttpFoundation\Request;
+
+/**
+ * Webhook HMAC de assinatura válida encaminha o tópico; inválida é recusada.
+ */
+#[Group('aculta_pagamentos_mercadopago')]
+final class MercadoPagoSubscriptionWebhookTest extends UnitTestCase {
+
+  private const SEGREDO = 'segredo-de-teste-nao-real';
+
+  /**
+   * Requisição assinada pelo algoritmo do SDK.
+   *
+   * O manifesto usa id, request-id e ts com HMAC-SHA256.
+   */
+  private function requisicao(string $tipo, string $id, ?string $assinaturaErrada = NULL): Request {
+    $ts = (string) time();
+    $manifesto = "id:$id;request-id:req-1;ts:$ts;";
+    $hash = $assinaturaErrada ?? hash_hmac('sha256', $manifesto, self::SEGREDO);
+    $corpo = json_encode(['type' => $tipo, 'data' => ['id' => $id]], JSON_THROW_ON_ERROR);
+    return Request::create('/notificacoes', 'POST', [], [], [], [
+      'CONTENT_TYPE' => 'application/json',
+      'HTTP_X_SIGNATURE' => "ts=$ts,v1=$hash",
+      'HTTP_X_REQUEST_ID' => 'req-1',
+    ], $corpo);
+  }
+
+  /**
+   * Tests expected behavior.
+   */
+  private function logger(): LoggerChannelInterface {
+    return $this->createMock(LoggerChannelInterface::class);
+  }
+
+  /**
+   * Tests expected behavior.
+   */
+  public function testValidSubscriptionWebhookDispatchesTopicAndReturns200(): void {
+    $servico = $this->createMock(MercadoPagoSubscriptionNotificationService::class);
+    $servico->expects($this->once())->method('processar')->with('subscription_preapproval', 'abc123');
+    $resposta = (new WebhookGuard($servico, $this->logger()))->validateAndNormalize($this->requisicao('subscription_preapproval', 'abc123'), TRUE, self::SEGREDO);
+    $this->assertSame(200, $resposta->getStatusCode());
+  }
+
+  /**
+   * Tests expected behavior.
+   */
+  public function testAssinaturaInvalidaEhRecusadaSemProcessar(): void {
+    $servico = $this->createMock(MercadoPagoSubscriptionNotificationService::class);
+    $servico->expects($this->never())->method('processar');
+    $resposta = (new WebhookGuard($servico, $this->logger()))->validateAndNormalize($this->requisicao('subscription_preapproval', 'abc123', str_repeat('0', 64)), TRUE, self::SEGREDO);
+    $this->assertSame(401, $resposta->getStatusCode());
+  }
+
+  /**
+   * Tests expected behavior.
+   */
+  public function testServiceFailureReturns500ForRetry(): void {
+    $servico = $this->createMock(MercadoPagoSubscriptionNotificationService::class);
+    $servico->method('processar')->willThrowException(new \RuntimeException('provider body contains PRIVATE_TOKEN_SENTINEL'));
+    $logger = $this->createMock(LoggerChannelInterface::class);
+    $logger->expects($this->once())
+      ->method('error')
+      ->with('Falha ao processar notificação @tipo @id.', [
+        '@tipo' => 'subscription_authorized_payment',
+        '@id' => '3950169598',
+      ]);
+    $resposta = (new WebhookGuard($servico, $logger))->validateAndNormalize($this->requisicao('subscription_authorized_payment', '3950169598'), TRUE, self::SEGREDO);
+    $this->assertSame(500, $resposta->getStatusCode());
+  }
+
+  /**
+   * Authorized-payment invoice IDs must match the provider's numeric contract.
+   */
+  public function testAuthorizedPaymentRejectsNonNumericIdBeforeDispatch(): void {
+    $servico = $this->createMock(MercadoPagoSubscriptionNotificationService::class);
+    $servico->expects($this->never())->method('processar');
+    $resposta = (new WebhookGuard($servico, $this->logger()))
+      ->validateAndNormalize($this->requisicao('subscription_authorized_payment', 'cob-9'), TRUE, self::SEGREDO);
+
+    $this->assertSame(400, $resposta->getStatusCode());
+  }
+
+  /**
+   * Tests expected behavior.
+   */
+  public function testSemServicoWebhookDeAssinaturaSolicitaRetry(): void {
+    $resposta = (new WebhookGuard())->validateAndNormalize($this->requisicao('subscription_preapproval_plan', 'plan-1'), TRUE, self::SEGREDO);
+    $this->assertSame(503, $resposta->getStatusCode());
+  }
+
+  /**
+   * A signed chargeback delegates only its signature-covered case ID.
+   */
+  public function testValidChargebackWebhookDispatchesSignedCaseId(): void {
+    $chargebacks = $this->createMock(MercadoPagoChargebackNotificationInterface::class);
+    $chargebacks->expects($this->once())->method('processar')->with('98765');
+    $response = (new WebhookGuard(NULL, $this->logger(), $chargebacks))
+      ->validateAndNormalize($this->requisicao('topic_chargebacks_wh', '98765'), TRUE, self::SEGREDO);
+
+    $this->assertSame(200, $response->getStatusCode());
+  }
+
+  /**
+   * A reconciliation failure requests safe provider retry.
+   */
+  public function testChargebackServiceFailureReturnsRetryableError(): void {
+    $chargebacks = $this->createMock(MercadoPagoChargebackNotificationInterface::class);
+    $chargebacks->method('processar')->willThrowException(new \RuntimeException('private provider response'));
+    $logger = $this->createMock(LoggerChannelInterface::class);
+    $logger->expects($this->once())->method('error')->with(
+      'Falha ao processar notificação de contestação @id.',
+      ['@id' => '98765'],
+    );
+    $response = (new WebhookGuard(NULL, $logger, $chargebacks))
+      ->validateAndNormalize($this->requisicao('topic_chargebacks_wh', '98765'), TRUE, self::SEGREDO);
+
+    $this->assertSame(500, $response->getStatusCode());
+  }
+
+  /**
+   * An unsigned or forged chargeback cannot reach the provider API service.
+   */
+  public function testInvalidChargebackSignatureIsRejectedWithoutDispatch(): void {
+    $chargebacks = $this->createMock(MercadoPagoChargebackNotificationInterface::class);
+    $chargebacks->expects($this->never())->method('processar');
+    $response = (new WebhookGuard(NULL, $this->logger(), $chargebacks))
+      ->validateAndNormalize($this->requisicao('topic_chargebacks_wh', '98765', str_repeat('0', 64)), TRUE, self::SEGREDO);
+
+    $this->assertSame(401, $response->getStatusCode());
+  }
+
+}

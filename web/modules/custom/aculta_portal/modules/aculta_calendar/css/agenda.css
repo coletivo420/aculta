@@ -1,0 +1,110 @@
+/*
+ * Agenda e grade do mês (F5).
+ *
+ * Cores derivadas de currentColor para funcionar no claro e no escuro, com o
+ * ACULTA420 e com o Olivero.
+ */
+
+.aculta-agenda__filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 0.75rem;
+  align-items: end;
+  margin: 1rem 0;
+  max-width: 100%;
+}
+
+.aculta-agenda__filtros label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.aculta-agenda__filtros input,
+.aculta-agenda__filtros select {
+  font: inherit;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.aculta-agenda__filtros button {
+  font: inherit;
+  justify-self: start;
+}
+
+.aculta-agenda__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.aculta-mes {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.aculta-mes caption {
+  text-align: left;
+  font-weight: 700;
+  padding: 0.5rem 0;
+}
+
+.aculta-mes th,
+.aculta-mes td {
+  border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  padding: 0.35rem;
+  vertical-align: top;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.aculta-mes thead th {
+  text-align: center;
+  font-weight: 600;
+}
+
+.aculta-mes__fora {
+  background: color-mix(in srgb, currentColor 4%, transparent);
+}
+
+.aculta-mes__hoje {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  outline: 2px solid color-mix(in srgb, currentColor 45%, transparent);
+  outline-offset: -2px;
+}
+
+.aculta-mes__numero {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.aculta-mes__link {
+  display: block;
+  color: inherit;
+  text-decoration: underline;
+}
+
+.aculta-mes__contagem {
+  display: block;
+}
+
+.aculta-mes__eventos {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .aculta-mes__contagem {
+    display: none;
+  }
+
+  .aculta-mes__eventos {
+    display: block;
+  }
+}

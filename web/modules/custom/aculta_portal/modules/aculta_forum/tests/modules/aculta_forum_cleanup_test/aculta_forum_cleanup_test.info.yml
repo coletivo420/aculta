@@ -1,0 +1,7 @@
+name: 'ACULTA Forum cleanup test fixture'
+type: module
+description: 'Simulates a Media deletion failure for isolated cleanup Kernel tests.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+dependencies:
+  - drupal:media

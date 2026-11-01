@@ -1,0 +1,25 @@
+uuid: 55e28afe-8681-408b-87fe-9f1387e853b2
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_documento_indice
+    - profile.type.administrator
+  module:
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.administrator.field_documento_indice
+field_name: field_documento_indice
+entity_type: profile
+bundle: administrator
+label: 'Índice de unicidade (fingerprint HMAC)'
+description: 'Não é o documento. Índice pseudonimizado, privado do perfil.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

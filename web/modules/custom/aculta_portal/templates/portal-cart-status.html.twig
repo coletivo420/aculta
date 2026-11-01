@@ -1,0 +1,12 @@
+{#
+  Fallback neutro da caixa de status do carrinho (aculta_portal). Sem apresentação: o tema ativo (ACULTA420) sobrescreve este template.
+#}
+<div role="{{ status_role }}" data-portal-cart-status>
+  <p>
+    <span>{{ message }}</span>
+    {% if url %}
+      <a href="{{ url }}">{{ link_label }}</a>
+    {% endif %}
+  </p>
+  <button type="button" data-portal-cart-status-close aria-label="{{ close_label }}">&times;</button>
+</div>

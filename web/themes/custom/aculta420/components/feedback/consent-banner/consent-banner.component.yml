@@ -1,0 +1,8 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Consent banner
+status: experimental
+group: Feedback
+description: 'Banner de consentimento para visitante anônimo. Oculto até o JavaScript do módulo aculta_statistics decidir exibi-lo; os dados de privacidade vêm do Portal.'
+props:
+  type: object
+  properties: {}

@@ -1,0 +1,28 @@
+_core:
+  default_config_hash: UZ0787JbkK9d2JQTGavLSpNOQoU723GYLXnP8cwG11o
+langcode: pt-br
+hash_expiration: 86400
+restrict_same_ip: false
+resendrequest_delay: 900
+confirmation_lifetime: 604800
+confirmation_request:
+  subject: 'Confirme seu novo endereço de e-mail na Associação Cultural Antiproibicionista'
+  body: |-
+    Recebemos um pedido para usar [aculta-mail-confirmer:confirmation-mail] como e-mail da sua conta na Associação Cultural Antiproibicionista.
+
+    Se foi você, confirme clicando no link abaixo ou copiando e colando no navegador. O link pode ser usado uma vez e vale por 24 horas.
+
+    [aculta-mail-confirmer:confirmation-url]
+
+    Se não foi você, ignore esta mensagem: nada será alterado.
+confirmation_response:
+  skip_confirmation_form: false
+  questions:
+    pending: 'Prossiga para confirmar o seu endereço de e-mail.'
+    expired: 'Este processo de confirmação de e-mail expirou.'
+    cancelled: 'Este processo de confirmação de e-mail foi cancelado.'
+    confirmed: 'Seu endereço de e-mail foi confirmado.'
+  url:
+    confirm: '<front>'
+    cancel: '<front>'
+    error: '<front>'

@@ -1,0 +1,12 @@
+{#
+/**
+ * Popup de aceite dos termos (AccountTermsHooks), como diálogo modal do Drupal.
+ *
+ * O JavaScript abre o conteúdo com Drupal.dialog (modal, sem botão de fechar e sem Esc): só o aceite sai da tela.
+ * O título vem em data-dialog-title e aparece na barra do diálogo. O formulário é a mesma tela de aceite usada em
+ * /termos/aceitar (retorno sem JavaScript).
+ */
+#}
+<div id="aculta-account-terms" data-portal-ui="account-terms" data-dialog-title="{{ title }}" hidden>
+  {{ form }}
+</div>

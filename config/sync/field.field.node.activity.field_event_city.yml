@@ -1,0 +1,19 @@
+uuid: 136c7421-f440-4444-b974-964663e8fae6
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_event_city
+    - node.type.activity
+id: node.activity.field_event_city
+field_name: field_event_city
+entity_type: node
+bundle: activity
+label: 'Cidade da atividade'
+description: 'Campo editorial administrável: Cidade da atividade. Preencha somente com informações verificadas.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

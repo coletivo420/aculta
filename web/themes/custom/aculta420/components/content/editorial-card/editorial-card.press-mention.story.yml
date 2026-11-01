@@ -1,0 +1,14 @@
+name: Menção na imprensa
+description: 'Demonstra o uso do cartão editorial existente para fonte, chamada, trecho e link de uma menção pública.'
+component: aculta420:editorial-card
+slots:
+  category:
+    markup: Na imprensa
+  title:
+    markup: '<a href="#">Cultura comunitária em destaque</a>'
+  summary:
+    markup: '<p>Trecho demonstrativo da publicação, sem reproduzir conteúdo de uma fonte real.</p>'
+  complement:
+    markup: '<p>Veículo demonstrativo · 28 out. 2026</p>'
+  cta:
+    markup: '<a href="#">Ler a publicação</a>'

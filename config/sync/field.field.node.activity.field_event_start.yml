@@ -1,0 +1,21 @@
+uuid: b7b0c9ce-8cbb-45c5-844f-422ba727151f
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_event_start
+    - node.type.activity
+  module:
+    - datetime
+id: node.activity.field_event_start
+field_name: field_event_start
+entity_type: node
+bundle: activity
+label: Início
+description: 'Campo editorial administrável: Início. Preencha somente com informações verificadas.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

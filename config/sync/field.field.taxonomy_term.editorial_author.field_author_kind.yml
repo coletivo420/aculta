@@ -1,0 +1,23 @@
+uuid: 0fdc3662-0aad-456f-a914-adda7baf5f54
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_author_kind
+    - taxonomy.vocabulary.editorial_author
+  module:
+    - options
+id: taxonomy_term.editorial_author.field_author_kind
+field_name: field_author_kind
+entity_type: taxonomy_term
+bundle: editorial_author
+label: 'Tipo de autoria'
+description: 'Campo editorial administrável: Tipo de autoria. Preencha somente com informações verificadas.'
+required: true
+translatable: true
+default_value:
+  -
+    value: organization
+default_value_callback: ''
+settings: {  }
+field_type: list_string

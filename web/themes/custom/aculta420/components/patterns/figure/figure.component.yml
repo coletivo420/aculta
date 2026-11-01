@@ -1,0 +1,20 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Figura editorial
+status: stable
+group: Editorial
+description: 'Mídia renderizada pelo Drupal, com legenda e crédito opcionais.'
+props:
+  type: object
+  properties: {}
+slots:
+  image:
+    title: Mídia
+    description: 'Mídia já renderizada por Drupal/aculta_image; o componente não processa arquivos.'
+  caption:
+    title: Legenda
+  credit:
+    title: Crédito
+assets:
+  css:
+    component:
+      figure.css: {}

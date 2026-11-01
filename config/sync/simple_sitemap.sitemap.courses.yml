@@ -1,0 +1,16 @@
+uuid: 1471c854-a79b-4a08-82d5-c4c66dc5aba0
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - simple_sitemap.type.aculta_purpose
+  module:
+    - aculta_portal_sitemap
+third_party_settings:
+  aculta_portal_sitemap:
+    purpose: courses
+id: courses
+label: 'ACULTA courses'
+description: null
+type: aculta_purpose
+weight: 0

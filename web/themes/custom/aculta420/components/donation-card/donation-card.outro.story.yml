@@ -1,0 +1,7 @@
+name: Outro valor
+description: Estado visual da opção de valor definido pela pessoa.
+component: aculta420:donation-card
+props:
+  label: Outro valor
+  href: '#contribuicao-exemplo'
+  other: true

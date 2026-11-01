@@ -1,0 +1,35 @@
+uuid: a50a61a0-771b-4ba0-9a8c-6845aa4854f8
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.field.media.forum_attachment.field_media_forum_attachment
+    - media.type.forum_attachment
+  module:
+    - file
+  enforced:
+    module:
+      - aculta_forum
+id: media.forum_attachment.default
+targetEntityType: media
+bundle: forum_attachment
+mode: default
+content:
+  field_media_forum_attachment:
+    type: aculta_forum_attachment
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  created: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_media_forum_image: true
+  langcode: true
+  name: true
+  search_api_excerpt: true
+  thumbnail: true
+  uid: true

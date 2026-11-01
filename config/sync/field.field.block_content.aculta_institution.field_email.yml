@@ -1,0 +1,19 @@
+uuid: 43f10e9f-21bf-4069-a2f0-2e1114a8dc96
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_institution
+    - field.storage.block_content.field_email
+id: block_content.aculta_institution.field_email
+field_name: field_email
+entity_type: block_content
+bundle: aculta_institution
+label: E-mail
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: email

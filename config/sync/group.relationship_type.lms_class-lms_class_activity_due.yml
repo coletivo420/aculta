@@ -1,0 +1,17 @@
+uuid: bbd60f31-b99c-49cb-835b-b0b45f989cae
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - group.type.lms_class
+  module:
+    - aculta_lms
+    - group
+    - lms
+id: lms_class-lms_class_activity_due
+group_type: lms_class
+content_plugin: lms_class_activity_due
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

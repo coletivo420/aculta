@@ -1,0 +1,81 @@
+aculta_commerce_melhorenvio.settings:
+  type: config_object
+  label: 'ACULTA Commerce Melhor Envio'
+  mapping:
+    origin:
+      type: mapping
+      label: 'Endereço de origem (expedição)'
+      mapping:
+        country_code:
+          type: string
+          label: 'País'
+        postal_code:
+          type: string
+          label: 'CEP'
+        address_line1:
+          type: string
+          label: 'Logradouro, número ou S/N'
+        address_line2:
+          type: string
+          label: 'Complemento'
+        dependent_locality:
+          type: string
+          label: 'Bairro'
+        locality:
+          type: string
+          label: 'Cidade'
+        administrative_area:
+          type: string
+          label: 'UF'
+    package:
+      type: mapping
+      label: 'Pacote padrão da cotação'
+      mapping:
+        width:
+          type: integer
+          label: 'Largura (cm)'
+        height:
+          type: integer
+          label: 'Altura (cm)'
+        length:
+          type: integer
+          label: 'Comprimento (cm)'
+        weight:
+          type: float
+          label: 'Peso (kg)'
+    environment:
+      type: string
+      label: 'Ambiente do Melhor Envio (sandbox ou production)'
+    redirect_uri:
+      type: string
+      label: 'URL de retorno OAuth2'
+    scopes:
+      type: string
+      label: 'Escopos OAuth2'
+    contact_email:
+      type: string
+      label: 'E-mail de contato no User-Agent'
+    keys:
+      type: mapping
+      label: 'Nomes das chaves do Drupal Key por ambiente'
+      mapping:
+        sandbox:
+          type: mapping
+          label: 'Sandbox'
+          mapping:
+            client_id:
+              type: string
+              label: 'Chave do client_id'
+            client_secret:
+              type: string
+              label: 'Chave do client_secret'
+        production:
+          type: mapping
+          label: 'Produção'
+          mapping:
+            client_id:
+              type: string
+              label: 'Chave do client_id'
+            client_secret:
+              type: string
+              label: 'Chave do client_secret'

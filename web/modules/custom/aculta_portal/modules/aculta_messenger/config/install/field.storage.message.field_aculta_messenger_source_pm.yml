@@ -1,0 +1,22 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+    - private_message
+  enforced:
+    module:
+      - aculta_messenger
+id: message.field_aculta_messenger_source_pm
+field_name: field_aculta_messenger_source_pm
+entity_type: message
+type: entity_reference
+settings:
+  target_type: private_message
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {}
+persist_with_no_fields: false
+custom_storage: false

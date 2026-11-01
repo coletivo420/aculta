@@ -1,0 +1,17 @@
+uuid: b4620034-e618-46de-ba43-52f2eda0cbe5
+langcode: pt-br
+status: true
+dependencies: {  }
+name: aculta_card_16x9
+label: 'ACULTA card 16:9'
+effects:
+  656c3d3b-3719-4781-b45a-900d0843e02c:
+    uuid: 656c3d3b-3719-4781-b45a-900d0843e02c
+    id: image_scale_and_crop
+    weight: 0
+    data:
+      width: 640
+      height: 360
+      anchor: center-center
+pipeline: aculta_derivados
+

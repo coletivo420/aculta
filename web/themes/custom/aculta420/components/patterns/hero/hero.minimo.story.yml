@@ -1,0 +1,5 @@
+name: Mínimo
+description: Cabeçalho somente com título, sem texto de apoio e sem ações.
+component: aculta420:hero
+props:
+  title: Associação Cultural Antiproibicionista

@@ -1,0 +1,14 @@
+name: Frete calculado
+description: 'Opções de frete do último cálculo do visitante, com serviço, preço e prazo. Os valores vêm do Commerce; o componente apenas apresenta.'
+component: aculta420:shipping-summary
+props:
+  state: available
+  message: ''
+  postal_code: '01310100'
+  options:
+    - name: PAC
+      price: 'R$ 18,90'
+      days: 7
+    - name: SEDEX
+      price: 'R$ 32,40'
+      days: 2

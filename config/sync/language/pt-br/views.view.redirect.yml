@@ -1,0 +1,9 @@
+label: Redirecionamentos
+description: 'Administração dos redirecionamentos de URLs, incluindo mudanças de aliases. Evita destinos antigos sem continuidade.'
+display:
+  default:
+    display_title: Padrão
+    display_options:
+      title: Redirecionamentos
+  page_1:
+    display_title: Página

@@ -1,0 +1,10 @@
+uuid: 50208e4f-161c-4b26-bb13-ee172b47b4de
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: q7pDV2d9qFh1IVqvymOxUUYGSziZDeg961wURC0cSLs
+id: medium
+label: 'Data média padrão'
+locked: false
+pattern: 'D, j M Y - H:i'

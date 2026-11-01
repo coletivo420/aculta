@@ -1,0 +1,11 @@
+administer aculta contributions:
+  title: 'Administer ACULTA contributions'
+  restrict access: true
+view any aculta contributions:
+  title: 'View any ACULTA contributions'
+review aculta contributions:
+  title: 'Review ACULTA contributions'
+submit aculta contributions:
+  title: 'Submit ACULTA contributions'
+view own aculta contributions:
+  title: 'View own ACULTA contributions'

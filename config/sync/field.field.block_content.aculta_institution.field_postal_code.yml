@@ -1,0 +1,19 @@
+uuid: 48e72dbe-c007-4d25-8ffc-f2c5d58d7a32
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_institution
+    - field.storage.block_content.field_postal_code
+id: block_content.aculta_institution.field_postal_code
+field_name: field_postal_code
+entity_type: block_content
+bundle: aculta_institution
+label: 'CEP (JSON-LD)'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

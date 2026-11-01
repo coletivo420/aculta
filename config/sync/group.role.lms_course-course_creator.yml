@@ -1,0 +1,28 @@
+uuid: 54f251a4-c7a9-433b-923e-c0bd801caac6
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - group.type.lms_course
+    - group.relationship_type.lms_course-3abb8caf7f7d526ecedee
+  module:
+    - aculta_forum_lms
+id: lms_course-course_creator
+label: 'Criador do curso'
+weight: 22
+admin: false
+scope: individual
+global_role: null
+group_type: lms_course
+permissions:
+  - 'administer members'
+  - 'edit group'
+  - 'grade students'
+  - 'revert group revisions'
+  - 'view all group revisions'
+  - 'view any unpublished group'
+  - 'view group_node:aculta_lms_topic entity'
+  - 'view group'
+  - 'view group revisions'
+  - 'view latest group version'
+  - 'view own unpublished group'

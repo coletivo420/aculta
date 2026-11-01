@@ -1,0 +1,19 @@
+uuid: 9fabadbb-7224-4eb2-baf1-dff6a9e1d3eb
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_institution
+    - field.storage.block_content.field_opening_date
+id: block_content.aculta_institution.field_opening_date
+field_name: field_opening_date
+entity_type: block_content
+bundle: aculta_institution
+label: 'Data de abertura'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

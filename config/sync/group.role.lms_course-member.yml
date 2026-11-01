@@ -1,0 +1,28 @@
+uuid: 7574d725-31a1-445b-94fd-9c37faa91f73
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - group.type.lms_course
+    - group.relationship_type.lms_course-3abb8caf7f7d526ecedee
+    - user.role.authenticated
+  module:
+    - aculta_document_viewer
+    - aculta_forum_lms
+id: lms_course-member
+label: Estudante
+weight: 0
+admin: false
+scope: insider
+global_role: authenticated
+group_type: lms_course
+permissions:
+  - 'leave group'
+  - 'take course'
+  - 'update own group_membership relationship'
+  - 'view aculta_document_viewer:course_document entity'
+  - 'view any unpublished aculta_document_viewer:course_document entity'
+  - 'view aculta_document_viewer:course_document relationship'
+  - 'view group_node:aculta_lms_topic entity'
+  - 'view group'
+  - 'view group_membership relationship'

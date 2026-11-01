@@ -1,0 +1,50 @@
+id: aculta_planejar_integracao_publica
+label: Orientar sobre integrações ACULTA
+title: Orientar sobre integrações ACULTA
+description: Orienta sobre Mercado Pago, Melhor Envio, mapas e ferramentas públicas de documentação, usando o catálogo de integrações.
+status: true
+dependencies:
+  enforced:
+    module:
+    - aculta_mcp_client
+arguments:
+- label: Objetivo
+  machine_name: objetivo
+  description: Objetivo técnico não sensível relacionado às integrações do ACULTA
+  required: true
+messages:
+- role: user
+  content:
+  - type: resource
+    resource:
+      uri: aculta://public/aculta/integrations
+      mimeType: text/markdown
+      text: '# ACULTA integration catalogue
+
+
+        ## Mercado Pago
+
+
+        ACULTA uses Mercado Pago in website payment workflows. The public MCP tool searches developer documentation for Brazil and uses a server-held test credential only to reach that documentation service. It cannot read a merchant account, inspect payment state, create a payment, issue a refund, or change credentials.
+
+
+        ## Melhor Envio
+
+
+        ACULTA uses Melhor Envio in the shop''s shipping workflow. Public MCP tools search and read provider API documentation only. They do not receive customer addresses, calculate a live quote, book a shipment, create a label, or retrieve tracking data.
+
+
+        ## Maps and OpenStreetMap
+
+
+        ACULTA Maps provides map rendering, geocoding, and route links to website modules. Event location editing and any OpenStreetMap writes follow the separate Events-domain workflow and authorization rules. The OSM MCP server remains a local AI-client connection; the public ACULTA MCP endpoint does not forward geocoding, address, routing, or location searches.
+
+
+        ## DHTMLX documentation
+
+
+        The ACULTA MCP endpoint can search and answer questions about DHTMLX public documentation. This is a documentation connection, not a claim that ACULTA uses DHTMLX as a runtime service. Queries go to the hosted DHTMLX MCP service and may be logged according to its [published policy](https://docs.dhtmlx.com/suite/guides/mcp-server/).
+
+        '
+  - type: text
+    text: 'Ajude com este objetivo técnico: {{objetivo}}. Distinga documentação pública de operações reais da conta. Recomende ferramentas MCP de documentação apropriadas quando útil. Não peça nem processe dados pessoais, endereços, credenciais, pedidos, pagamentos, fretes ou rastreamento.'

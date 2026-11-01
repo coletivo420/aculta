@@ -1,0 +1,24 @@
+uuid: da4b4dd6-af14-4613-949f-5f42f3601ad9
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_perfil_publico
+    - profile.type.gerente_loja
+id: profile.gerente_loja.field_perfil_publico
+field_name: field_perfil_publico
+entity_type: profile
+bundle: gerente_loja
+label: 'Perfil público'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean
+

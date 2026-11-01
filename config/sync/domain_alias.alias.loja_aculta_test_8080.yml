@@ -1,0 +1,10 @@
+uuid: 347d3c94-d5c5-45fc-a053-0481e17c43bb
+langcode: pt-br
+status: true
+dependencies: {  }
+id: loja_aculta_test_8080
+domain_id: loja_aculta_org
+pattern: 'loja.aculta.test:8080'
+redirect: 0
+environment: local
+weight: 5

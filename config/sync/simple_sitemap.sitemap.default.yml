@@ -1,0 +1,13 @@
+uuid: 4d12a885-37d1-427a-be7c-385f2ac6d9f9
+langcode: pt-br
+status: false
+dependencies:
+  config:
+    - simple_sitemap.type.default_hreflang
+_core:
+  default_config_hash: rzLPapRSW-bgTs4MObzlqsqwj5IxPGO9EQZolw2ZzFc
+id: default
+label: Padrão
+description: 'The default hreflang sitemap - lists URLs to be indexed by modern search engines.'
+type: default_hreflang
+weight: 0

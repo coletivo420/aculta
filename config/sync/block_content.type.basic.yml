@@ -1,0 +1,10 @@
+uuid: 7ebea8b4-78f8-433d-a59f-13dddc0c28f0
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: pQP5iQy4SdhAMVcjDUncCfkJmTofnHVtXrsMzx4k6Yk
+id: basic
+label: 'Bloco editorial'
+revision: false
+description: 'Textos reutilizáveis das seções institucionais. Edite o conteúdo aqui; configure posição e visibilidade em Layout de blocos.'

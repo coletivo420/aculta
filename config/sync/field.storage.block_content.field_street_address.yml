@@ -1,0 +1,21 @@
+uuid: 5837b3b5-9632-4552-aa59-1419cffe9997
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - block_content
+id: block_content.field_street_address
+field_name: field_street_address
+entity_type: block_content
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,14 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - media_gallery
+    - pathauto
+id: aculta_gallery_album
+label: 'URLs — álbum'
+type: 'media_gallery'
+pattern: '/albuns/[media_gallery:title]'
+selection_criteria: {}
+selection_logic: and
+weight: 0
+relationships: {}

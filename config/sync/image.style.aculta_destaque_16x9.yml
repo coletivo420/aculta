@@ -1,0 +1,17 @@
+uuid: e9b34c44-b564-4be0-8154-61b3b671c92c
+langcode: pt-br
+status: true
+dependencies: {  }
+name: aculta_destaque_16x9
+label: 'ACULTA destaque 16:9'
+effects:
+  37545bb6-53ae-43c4-9b3f-0b27ae75ead9:
+    uuid: 37545bb6-53ae-43c4-9b3f-0b27ae75ead9
+    id: image_scale_and_crop
+    weight: 0
+    data:
+      width: 1280
+      height: 720
+      anchor: center-center
+pipeline: aculta_derivados
+

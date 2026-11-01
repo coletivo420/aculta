@@ -1,0 +1,19 @@
+uuid: 336adda5-e9b9-4a8b-8048-76b4e726234b
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_institution
+    - field.storage.block_content.field_phone
+id: block_content.aculta_institution.field_phone
+field_name: field_phone
+entity_type: block_content
+bundle: aculta_institution
+label: Telefone/WhatsApp
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

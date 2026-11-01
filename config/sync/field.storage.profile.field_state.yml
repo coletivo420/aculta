@@ -1,0 +1,102 @@
+uuid: f81a4d8e-1abc-4fbb-a85d-bfe2e46d2d4b
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - options
+    - profile
+id: profile.field_state
+field_name: field_state
+entity_type: profile
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: AC
+      label: AC
+    -
+      value: AL
+      label: AL
+    -
+      value: AP
+      label: AP
+    -
+      value: AM
+      label: AM
+    -
+      value: BA
+      label: BA
+    -
+      value: CE
+      label: CE
+    -
+      value: DF
+      label: DF
+    -
+      value: ES
+      label: ES
+    -
+      value: GO
+      label: GO
+    -
+      value: MA
+      label: MA
+    -
+      value: MT
+      label: MT
+    -
+      value: MS
+      label: MS
+    -
+      value: MG
+      label: MG
+    -
+      value: PA
+      label: PA
+    -
+      value: PB
+      label: PB
+    -
+      value: PR
+      label: PR
+    -
+      value: PE
+      label: PE
+    -
+      value: PI
+      label: PI
+    -
+      value: RJ
+      label: RJ
+    -
+      value: RN
+      label: RN
+    -
+      value: RS
+      label: RS
+    -
+      value: RO
+      label: RO
+    -
+      value: RR
+      label: RR
+    -
+      value: SC
+      label: SC
+    -
+      value: SP
+      label: SP
+    -
+      value: SE
+      label: SE
+    -
+      value: TO
+      label: TO
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

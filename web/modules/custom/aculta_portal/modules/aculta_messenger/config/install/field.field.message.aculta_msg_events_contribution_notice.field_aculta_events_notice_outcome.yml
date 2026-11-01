@@ -1,0 +1,21 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_events_notice_outcome
+    - message.template.aculta_msg_events_contribution_notice
+  enforced:
+    module:
+      - aculta_messenger
+id: message.aculta_msg_events_contribution_notice.field_aculta_events_notice_outcome
+field_name: field_aculta_events_notice_outcome
+entity_type: message
+bundle: aculta_msg_events_contribution_notice
+label: 'Resultado da proposta'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

@@ -1,0 +1,11 @@
+uuid: 643d2280-f865-452f-9934-b499cd5edc3f
+langcode: pt-br
+status: true
+dependencies: {  }
+name: 'Destaque editorial'
+type: editorial_highlight
+description: 'Itens do carrossel Cultura, informação e cuidado da Home. Edite categoria, título, resumo, complemento, CTA e ordem. Somente itens publicados aparecem; menor ordem vem primeiro.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: false

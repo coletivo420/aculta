@@ -1,0 +1,25 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Contador de estatística
+status: experimental
+group: Feedback
+description: 'Apresenta um valor numérico com seu rótulo; a política de supressão pertence ao provider.'
+props:
+  type: object
+  required:
+    - value
+    - label
+  properties:
+    value:
+      type: integer
+      minimum: 0
+      title: Valor
+      description: Valor já autorizado e preparado pelo provider.
+    label:
+      type: string
+      minLength: 1
+      title: Rótulo
+      description: Texto que identifica o significado do número.
+assets:
+  css:
+    component:
+      stat-counter.css: {}

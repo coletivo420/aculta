@@ -1,0 +1,12 @@
+uuid: 00a183f2-128a-40b1-be50-d990b333d8cf
+langcode: pt-br
+status: true
+dependencies: {  }
+id: apoio_aculta_org
+domain_id: 12827086
+hostname: apoio.aculta.org
+name: 'ACULTA - Apoio'
+scheme: https
+weight: 3
+is_default: false
+path_prefix: ''

@@ -1,0 +1,10 @@
+<?php
+
+/**
+ * @file
+ * Hooks for the ACULTA Forum module.
+ *
+ * Os hooks estão em `Drupal\aculta_forum\Hook`. Este arquivo não declara funções.
+ */
+
+declare(strict_types=1);

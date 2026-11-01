@@ -1,0 +1,26 @@
+uuid: d66a90ef-571a-4178-b455-e5995dbb2b45
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_msg_node
+    - message.template.aculta_msg_forum_published
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: kQ8vNS4jUxkuZ56rpe2veyzR2CSZtfDnV5vmqGf5wbk
+id: message.aculta_msg_forum_published.field_aculta_msg_node
+field_name: field_aculta_msg_node
+entity_type: message
+bundle: aculta_msg_forum_published
+label: 'Tópico de origem'
+description: 'Nó que originou o aviso da assinatura.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings: {  }
+field_type: entity_reference

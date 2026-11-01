@@ -1,0 +1,28 @@
+uuid: 3ee84a93-917b-4d4c-9192-b54e06694f86
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_wiki_read
+    - message.template.aculta_msg_wiki_notice
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: uAhyimRF-mX5cWRHdvSn-_Xa25249q-j0mvmg9bzq1Y
+id: message.aculta_msg_wiki_notice.field_aculta_wiki_read
+field_name: field_aculta_wiki_read
+entity_type: message
+bundle: aculta_msg_wiki_notice
+label: 'Aviso lido'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean

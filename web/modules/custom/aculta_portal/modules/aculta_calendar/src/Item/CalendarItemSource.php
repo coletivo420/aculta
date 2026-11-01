@@ -1,0 +1,149 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_calendar\Item;
+
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+
+/**
+ * Agrega os provedores de itens registrados pela tag do calendário.
+ *
+ * Um provedor com defeito não derruba a agenda: a falha é registrada no log e
+ * os demais provedores continuam.
+ */
+final class CalendarItemSource {
+
+  /**
+   * Construtor.
+   *
+   * @param iterable<CalendarItemProviderInterface> $provedores
+   *   Provedores coletados pela tag.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface|null $logger
+   *   Fábrica de log; opcional para uso isolado em testes.
+   */
+  public function __construct(
+    private readonly iterable $provedores,
+    private readonly ?LoggerChannelFactoryInterface $logger = NULL,
+  ) {}
+
+  /**
+   * Retorna os itens dos provedores para a consulta.
+   *
+   * @return array<int, \Drupal\aculta_calendar\Item\CalendarItem>
+   *   Itens encontrados, sem normalizar a recorrência.
+   */
+  public function items(CalendarQuery $query): array {
+    $itens = [];
+    foreach ($this->provedores as $provedor) {
+      if ($query->provedores !== [] && !in_array($provedor->id(), $query->provedores, TRUE)) {
+        continue;
+      }
+      try {
+        foreach ($provedor->items($query) as $item) {
+          $itens[] = $item;
+        }
+      }
+      catch (\Throwable $e) {
+        $this->registrarFalha($provedor, $e);
+      }
+    }
+    return $itens;
+  }
+
+  /**
+   * Definições de filtro agregadas.
+   *
+   * Chaves iguais entre provedores são mescladas, com as opções de todos.
+   *
+   * @return array<string, array{label: string, opcoes: array<int, string>}>
+   *   Definições agregadas por chave de filtro.
+   */
+  public function filtros(): array {
+    $filtros = [];
+    foreach ($this->provedores as $provedor) {
+      try {
+        foreach ($provedor->filtros() as $chave => $definicao) {
+          if (!isset($filtros[$chave])) {
+            $filtros[$chave] = $definicao;
+            continue;
+          }
+          $filtros[$chave]['opcoes'] = array_replace($filtros[$chave]['opcoes'], $definicao['opcoes'] ?? []);
+        }
+      }
+      catch (\Throwable $e) {
+        $this->registrarFalha($provedor, $e);
+      }
+    }
+    return $filtros;
+  }
+
+  /**
+   * Tags de cache agregadas dos provedores.
+   *
+   * @return string[]
+   *   Tags únicas.
+   */
+  public function cacheTags(): array {
+    $tags = [];
+    foreach ($this->provedores as $provedor) {
+      try {
+        $tags = array_merge($tags, $provedor->cacheTags());
+      }
+      catch (\Throwable $e) {
+        $this->registrarFalha($provedor, $e);
+      }
+    }
+    return array_values(array_unique($tags));
+  }
+
+  /**
+   * Cache contexts aggregated from providers.
+   *
+   * @return string[]
+   *   Unique contexts required to isolate provider results.
+   */
+  public function cacheContexts(): array {
+    $contexts = [];
+    foreach ($this->provedores as $provedor) {
+      try {
+        $contexts = array_merge($contexts, $provedor->cacheContexts());
+      }
+      catch (\Throwable $e) {
+        $this->registrarFalha($provedor, $e);
+      }
+    }
+    return array_values(array_unique($contexts));
+  }
+
+  /**
+   * Maximum cache age allowed by all providers.
+   *
+   * @return int
+   *   Cache max-age combined across providers.
+   */
+  public function cacheMaxAge(): int {
+    $maxAge = Cache::PERMANENT;
+    foreach ($this->provedores as $provedor) {
+      try {
+        $maxAge = Cache::mergeMaxAges($maxAge, $provedor->cacheMaxAge());
+      }
+      catch (\Throwable $e) {
+        $this->registrarFalha($provedor, $e);
+      }
+    }
+    return $maxAge;
+  }
+
+  /**
+   * Registra a falha de um provedor sem interromper os demais.
+   */
+  private function registrarFalha(CalendarItemProviderInterface $provedor, \Throwable $e): void {
+    $this->logger?->get('aculta_calendar')->warning('Provedor de itens @id falhou: @mensagem', [
+      '@id' => $provedor->id(),
+      '@mensagem' => $e->getMessage(),
+    ]);
+  }
+
+}

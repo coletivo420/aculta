@@ -1,0 +1,24 @@
+uuid: f9a83ced-4329-4d7e-896c-41528383fa7e
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.editorial_author.field_author_kind
+    - taxonomy.vocabulary.editorial_author
+  module:
+    - text
+id: taxonomy_term.editorial_author.default
+targetEntityType: taxonomy_term
+bundle: editorial_author
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_author_kind: true
+  langcode: true

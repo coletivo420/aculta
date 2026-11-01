@@ -1,0 +1,29 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.message.mail_body
+    - message.template.aculta_msg_commerce_order_notice
+  enforced:
+    module:
+      - aculta_messenger
+id: message.aculta_msg_commerce_order_notice.mail_body
+targetEntityType: message
+bundle: aculta_msg_commerce_order_notice
+mode: mail_body
+content:
+  partial_1:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_aculta_commerce_digest: true
+  field_aculta_commerce_version: true
+  field_aculta_commerce_event_type: true
+  field_aculta_commerce_uuid: true
+  field_aculta_commerce_read: true
+  field_aculta_msg_delivery: true
+  field_aculta_messenger_attempts: true
+  partial_0: true
+  search_api_excerpt: true

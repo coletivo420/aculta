@@ -1,0 +1,19 @@
+uuid: b4a74011-3c62-4903-8dcc-45714f434f59
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_institution
+    - field.storage.block_content.field_secondary_activity
+id: block_content.aculta_institution.field_secondary_activity
+field_name: field_secondary_activity
+entity_type: block_content
+bundle: aculta_institution
+label: 'Atividade econômica secundária'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

@@ -1,0 +1,14 @@
+uuid: 400599b0-3c3d-43ac-b832-58236d223d38
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - domain.record.wiki420_aculta_org
+  module:
+    - domain_source
+id: domain_source_set_action.wiki420_aculta_org
+label: 'Set content domain source value to the Wiki420 domain'
+type: node
+plugin: domain_source_set_action
+configuration:
+  domain_id: wiki420_aculta_org

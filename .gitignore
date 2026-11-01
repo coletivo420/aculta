@@ -1,0 +1,89 @@
+# ============================================================
+# ACULTA - Drupal
+# Arquivos que não devem ser versionados
+# ============================================================
+
+# Composer dependencies
+/vendor/
+
+# Drupal Core and contributed dependencies managed by Composer
+# web/libraries/ é versionado: bibliotecas front-end publicadas no GitHub (decisão do responsável).
+/web/core/
+/web/modules/contrib/
+/web/themes/contrib/
+/web/profiles/contrib/
+
+# Local Drupal settings - contains database credentials
+/web/sites/*/settings.php
+/web/sites/*/settings.local.php
+/web/sites/*/settings.homelab.php
+/web/sites/*/services.yml
+
+# User uploaded/generated files
+/web/sites/*/files/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+secrets.env
+*.secrets.env
+/secrets/
+/web/sites/*/settings.hostinger.php
+/web/sites/*/settings.secrets.php
+
+# Database dumps
+*.sql
+*.sql.gz
+*.dump
+
+# Logs
+*.log
+/logs/
+
+# Temporary/cache files
+/tmp/
+temp/
+.cache/
+
+# IDEs/editors
+.idea/
+.vscode/
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# PHPUnit
+.phpunit.result.cache
+
+# Drush
+/drush-backups/
+/web/sites/*/drush-backups/
+
+# Local development
+php.ini
+
+# Production/runtime files
+*.backup
+error_log
+**/error_log
+__pycache__/
+*.py[cod]
+
+# A pasta estados/ é local: armazena o backup do banco de dados e nunca vai para o Git (ver estados/README.md).
+/estados/
+
+# Saídas dos testes de Kernel e de navegador do Drupal (fixtures e capturas): geradas, nunca versionadas.
+/web/sites/simpletest/
+
+# Relatório neutro do ACULTA Deployer para o painel (sem valores; gerado localmente)
+/var/deployer/
+# Permissões locais do Claude Code: pessoais, não versionadas
+.claude/settings.local.json
+
+# Saída da suíte de navegador do Messenger (capturas e relatório locais).
+/.suite-out/

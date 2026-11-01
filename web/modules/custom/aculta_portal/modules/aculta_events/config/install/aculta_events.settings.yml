@@ -1,0 +1,4 @@
+create_event_roles:
+  - content_editor
+create_location_roles:
+  - content_editor

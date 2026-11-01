@@ -1,0 +1,11 @@
+uuid: ac8ebf67-b99b-441b-b177-01b7f86514c0
+langcode: pt-br
+status: true
+dependencies: {  }
+name: 'Documento institucional'
+type: document
+description: 'Documentos oficiais com contexto em HTML e arquivo PDF quando disponível. Publicar somente documentos reais e autorizados.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: false

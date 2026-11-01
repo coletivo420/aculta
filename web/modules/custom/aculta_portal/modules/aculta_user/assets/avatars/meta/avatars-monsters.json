@@ -1,0 +1,50 @@
+[
+  {
+    "id": "monster-001-one-eye",
+    "file": "monsters/monster-001-one-eye.png",
+    "family": "monsters",
+    "label": "Monstro de um olho",
+    "alt": "Monstro verde de um olho, sorridente e em estilo cartoon.",
+    "active": true
+  },
+  {
+    "id": "monster-002-three-eyes",
+    "file": "monsters/monster-002-three-eyes.png",
+    "family": "monsters",
+    "label": "Monstro de três olhos",
+    "alt": "Monstro azul de três olhos, em estilo cartoon.",
+    "active": true
+  },
+  {
+    "id": "monster-006-toothy",
+    "file": "monsters/monster-006-toothy.png",
+    "family": "monsters",
+    "label": "Monstro dentuço simpático",
+    "alt": "Monstro laranja sorridente com dentes grandes, em estilo cartoon.",
+    "active": true
+  },
+  {
+    "id": "monster-007-antenna",
+    "file": "monsters/monster-007-antenna.png",
+    "family": "monsters",
+    "label": "Criatura com antenas",
+    "alt": "Criatura azul com antenas e expressão relaxada, em estilo cartoon.",
+    "active": true
+  },
+  {
+    "id": "monster-008-big-tongue",
+    "file": "monsters/monster-008-big-tongue.png",
+    "family": "monsters",
+    "label": "Monstrinho com língua grande",
+    "alt": "Monstrinho rosa com língua grande, em estilo cartoon.",
+    "active": true
+  },
+  {
+    "id": "monster-009-round-chill",
+    "file": "monsters/monster-009-round-chill.png",
+    "family": "monsters",
+    "label": "Monstro redondo chapado",
+    "alt": "Monstro amarelo redondo com expressão relaxada, em estilo cartoon.",
+    "active": true
+  }
+]

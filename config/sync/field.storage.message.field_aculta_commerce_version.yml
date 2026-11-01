@@ -1,0 +1,26 @@
+uuid: 572e7526-e74b-4d07-bb7e-fcfdf0857dd5
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: cwraa7zWt6gdh8gRl06dhfvaGqbA-1a0cAUQftHgOI0
+id: message.field_aculta_commerce_version
+field_name: field_aculta_commerce_version
+entity_type: message
+type: string
+settings:
+  max_length: 64
+  case_sensitive: true
+  is_ascii: true
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

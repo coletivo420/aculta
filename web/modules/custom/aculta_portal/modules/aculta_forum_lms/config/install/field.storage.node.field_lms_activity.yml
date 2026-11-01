@@ -1,0 +1,23 @@
+uuid: 10cf685d-8601-4f01-a07b-7c60d501673a
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - lms
+    - node
+  enforced:
+    module:
+      - aculta_forum_lms
+id: node.field_lms_activity
+field_name: field_lms_activity
+entity_type: node
+type: entity_reference
+settings:
+  target_type: lms_activity
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

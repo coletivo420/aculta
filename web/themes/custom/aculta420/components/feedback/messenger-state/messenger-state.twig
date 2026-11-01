@@ -1,0 +1,8 @@
+{% set state_class = {
+  empty: 'aculta-messenger-state--empty',
+  error: 'aculta-messenger-state--error',
+  loading: 'aculta-messenger-state--loading',
+}[state] %}
+<div class="aculta-messenger-state {{ state_class }}"{% if state == 'error' %} role="alert"{% else %} role="status"{% endif %}{% if state == 'loading' %} aria-busy="true"{% endif %}>
+  {{ content }}
+</div>

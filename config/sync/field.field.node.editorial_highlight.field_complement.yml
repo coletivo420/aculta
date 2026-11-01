@@ -1,0 +1,19 @@
+uuid: dd502dbf-1e1a-4b49-bc2d-21e2072be5cd
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_complement
+    - node.type.editorial_highlight
+id: node.editorial_highlight.field_complement
+field_name: field_complement
+entity_type: node
+bundle: editorial_highlight
+label: Complemento
+description: 'Parágrafo complementar opcional que aprofunda o resumo.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

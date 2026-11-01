@@ -1,0 +1,294 @@
+## 0.1.0-dev.34 — toda limpeza delega ao coordenador global (2026-10-26)
+
+- `ImageCleanup` não chama mais `FileRemover` diretamente quando o coordenador
+  do Portal está ausente. O resultado fica `Unverifiable`, a exclusão física é
+  bloqueada e a fila preserva o item para nova tentativa após expirar o lease.
+- A dependência direta de `FileRemover` foi removida do construtor/serviço; o
+  Portal continua dono da avaliação global de referências e Image da remoção
+  física quando autorizada.
+- `ImageCleanupCoordinatorTest` garante que sem o coordenador nenhum arquivo é
+  removido e o item permanece na fila. Suíte Unit total: 28 testes / 118
+  assertions PASS (9 depreciações PHPUnit); PHPCS, lint e gate próprio PASS.
+
+# Changelog — aculta_image
+
+## 0.1.0-dev.46 — seção administrativa integrada ao ACULTA (2026-10-29)
+
+- O item Imagens e suas configurações de processamento ficam na raiz do painel
+  ACULTA; rota `/painel-administrativo/imagens/configuracoes` preservada.
+- Suíte Image 33/169 PASS (4 depreciações), PHPCS Drupal/DrupalPractice limpo e
+  gate específico do módulo PASS.
+
+## 0.1.0-dev.45 — opções administrativas de processamento (2026-10-29)
+
+- `/painel-administrativo/imagens/configuracoes` detecta Imagick/GD, formatos PHP
+  e otimizadores opcionais; só permite selecionar um backend disponível.
+- Compressão/redimensionamento, largura, tipos MIME processados, saída original,
+  JPEG/PNG, conversão WebP e qualidades JPEG/PNG/WebP ficam configuráveis.
+- O upload inline usa o backend selecionado. WebP fica ativo por padrão e gera qualidade 82,
+  atualiza URI, nome e MIME do File após gravação temporária; GIF animado é
+  preservado e GD não processa GIF. A migração do acervo existente ainda não foi
+  executada nem implementada.
+- Acesso da rota protegido por `administer aculta images`; teste Kernel nega
+  acesso a usuário comum. Suíte Image: 33 testes / 169 assertions PASS (4
+  depreciações upstream).
+
+## 0.1.0-dev.43 — revalidar binários Hostinger (2026-10-29)
+
+- Reconsultada a documentação oficial de Hostinger: Web e Cloud documentam `optipng`, `jpegoptim`, `jpegtran`, `gifsicle` e `libwebp-tools`, mas não documentam ImageMagick nem Ghostscript.
+- Isso não comprova indisponibilidade; miniaturas de PDF seguem condicionadas à confirmação no plano específico antes do RC.
+
+## 0.1.0-dev.42 — retenção quando coordenador indisponível (2026-10-29)
+
+- Kernel confirma que uma imagem permanente enfileirada permanece no banco e no storage quando o serviço coordenador do Portal não está disponível; o item fica elegível a nova tentativa após o lease.
+- Suíte do módulo: 32 testes / 150 assertions PASS; quatro depreciações upstream de `media_duplicates`/Drupal.
+
+## 0.1.0-dev.41 — referências em revisões históricas (2026-10-29)
+
+- Kernel cria uma revisão antiga de página com UUID de File embutido, salva uma revisão nova sem essa referência e confirma que o coordenador preserva o arquivo ainda usado pelo histórico.
+- Suíte do módulo: 31 testes / 146 assertions PASS; quatro depreciações upstream de `media_duplicates`/Drupal.
+
+## 0.1.0-dev.40 — referência embutida em texto (2026-10-29)
+
+- Kernel salva uma página com referência UUID a um File em texto formatado e confirma que o coordenador Portal mantém o arquivo.
+- Suíte do módulo: 31 testes / 144 assertions PASS; quatro depreciações upstream de `media_duplicates`/Drupal. PHPCS e gate próprio PASS.
+
+## 0.1.0-dev.39 — retenção por referência estruturada (2026-10-29)
+
+- Kernel cria uma mídia com campo de imagem real apontando para um File e confirma que o coordenador Portal mantém o arquivo; o caso de File Usage também continua coberto.
+- Suíte do módulo: 31 testes / 138 assertions PASS; quatro depreciações upstream de `media_duplicates`/Drupal. PHPCS e gate próprio PASS.
+
+## 0.1.0-dev.38 — integração Kernel com o coordenador Portal (2026-10-29)
+
+- Kernel registra as classes reais `FileReferenceInspector` e `UnusedFileCleaner` do Portal na fixture isolada, sem habilitar a cadeia inteira de Portal.
+- Um File de teste não referenciado é removido pelo serviço real de limpeza do Image; outro com uso registrado é preservado pelo coordenador.
+- Suíte do módulo: 31 testes / 129 assertions PASS; uma deprecação upstream de `media_duplicates_requirements`. PHPCS Drupal/DrupalPractice: 0 erros/avisos; PHP lint: 40/40.
+- A instalação completa do Portal, validação dos binários Hostinger e integração Growroom continuam pendentes.
+
+## 0.1.0-dev.37 — PHPCS sem erros ou avisos (2026-10-29)
+
+- Corrigida a formatação Drupal em 33 arquivos PHP, sem alteração de comportamento.
+- PHPCS Drupal/DrupalPractice: 0 erros e 0 avisos; PHP lint 33/33; Unit 28 testes/118 assertions; Kernel 2 testes/5 assertions com 1 deprecação upstream de `media_duplicates_requirements`.
+- A validação Runtime, a integração com o coordenador Portal, a confirmação dos binários Hostinger e a dependência do Growroom continuam pendentes.
+
+## 0.1.0-dev.36 — Kernel da instalação sem Portal (2026-10-29)
+
+- Kernel confirma que os serviços reais de limpeza e quarentena iniciam sem Portal e que a quarentena recusa a operação sem o coordenador compartilhado.
+- A limpeza e a remoção continuam sem apagar arquivos quando o coordenador não está disponível.
+- Auditoria PHPCS Drupal de todo o módulo encontrou 223 erros e 57 avisos em 32 arquivos existentes; a limpeza de estilo fica pendente e não foi misturada à mudança do Kernel.
+
+## 0.1.0-dev.35 — consulta de uso de arquivo (2026-10-28)
+
+- Adicionada consulta somente de leitura em `/painel-administrativo/imagens/{file}/usos`, protegida por `administer aculta images`. Lista apenas entidades acessíveis e não altera a política de upload.
+- O relatório ganhou uma lista limitada de imagens com link para a consulta de uso. Baseada no conceito da view do OpenCulturas; implementação própria com File Usage API. Kernel access: 1 teste / 1 assertion PASS (1 depreciação).
+
+## 0.1.0-dev.33 — coordenar também a quarentena pelo Portal
+
+- ImageQuarantine agora usa aculta_portal.unused_file_cleaner para conferir referências antes de mover e para repetir a verificação antes de excluir entradas vencidas. Sem o coordenador, a quarentena falha fechada.
+- Testes Unit cobrem retenção quando Core File Usage encontra referência e quando o coordenador não está disponível; nenhum arquivo é movido ou excluído.
+
+## 0.1.0-dev.32 — cobrir exclusão fail-closed por referências
+
+- `FileRemoverFailClosedTest` prova que uso reportado pelo File API ou por Entity Usage impede a exclusão; erro ao consultar Entity Usage propaga antes de qualquer acesso à storage de arquivos. Nenhum arquivo real é apagado.
+- Teste focal: 3 testes / 23 assertions PASS; suíte Unit do módulo: 25 / 103 PASS (9 depreciações PHPUnit). PHPCS Drupal/DrupalPractice e PHP lint do teste PASS.
+- README reconciliado à versão `0.1.0-dev.32`; status Dev mantido. Sem alteração no Runtime.
+
+## 0.1.0-dev.31 — limpeza delegada ao coordenador Portal
+
+- `ImageCleanup` usa `aculta_portal.unused_file_cleaner` quando disponível, mantendo fallback para instalação sem o Kernel Portal; não há dependência de módulo circular.
+- `FileRemoverInterface` formaliza o limite de propriedade: a remoção física de imagem e a invalidação de derivados continuam aqui.
+
+## 0.1.0-dev.30 — provider de mídia do Content Index
+
+- Registra o provider mínimo de `media:image` no módulo dono; arquivos, URLs e metadados de imagem não são copiados.
+
+
+## 0.1.0-dev.29 — permite perfil contextual de upload de imagem
+
+- `UploadPolicy::validators()` recebe limite e extensões opcionais para fluxos
+  contextuais; qualquer extensão deve continuar no catálogo central ACULTA.
+  Sem argumentos, o comportamento segue png/gif/jpg/jpeg/webp e 10 MB.
+- `ImageUploadIngestor` aplica o mesmo perfil ao validar e entregar o arquivo ao
+  Managed File API. Cobertura Unit de padrão, ampliação de tamanho e recusa de
+  extensão fora do catálogo.
+
+## 0.1.0-dev.28 — campo histórico de produto alinhado à política de imagem — 2026-10-20
+
+- O campo legado `commerce_product.produto_loja.field_imagens` declara `aculta_image:policy: default`, mantendo a configuração histórica dentro da política única de imagens.
+- Evidência: `php scripts/validate-aculta-image.php` PASS; no Runtime de teste, `aculta_image` estava habilitado e o campo não tinha `third_party_settings`. A política `default` foi aplicada apenas ao campo `commerce_product.produto_loja.field_imagens` com Drush; `config:status` deixou de listar esse campo como divergente. Nenhuma importação global foi executada. RUNTIME STATUS: APLICADO no Homelab; produção DEFERRED.
+
+## 0.1.0-dev.27 — imagem do texto marcada por atributos de dados — 2026-10-19
+
+- Filtro `ImagemModelo` emite `data-aculta-imagem`, `data-aculta-imagem-modelo`, `data-aculta-imagem-alinhamento` e `data-aculta-imagem-legenda` no lugar das classes `aculta-imagem*`. O tema (`revista-post.css`) seleciona por esses atributos.
+- Versão `0.1.0-dev.26` estava em `info.yml` sem seção neste CHANGELOG; esta entrega avança para `dev.27`.
+- RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.25 — gate de estilos em Views e modos de exibição — 2026-10-18
+
+- R9 lê os formatadores exportados de Views e dos modos de exibição e verifica que cada `image_style` e estilo PhotoSwipe
+  pertence a `ImageCatalog::STYLES`.
+- A verificação permanece estática e somente leitura; IDs são aceitos nas APIs Core/contrib porque são o formato exigido
+  por esses formatadores. A configuração passa a ficar coberta pelo gate, em vez de ser ignorada.
+- `php scripts/validate-aculta-image.php`: PASS (25 estilos). Runtime não foi alterado por este gate.
+
+## 0.1.0-dev.24 — derivados temporários: vida útil preservada e tamanho atualizado — 2026-10-16
+
+Classificação: PATCH.
+
+- `GeneratedImageFileManager::registerTemporaryDerivative()` não renova mais `created` a cada renderização. O `ImageCleanup` seleciona temporários por `created`; renovar a cada render impedia a limpeza do derivado.
+- Derivado já registrado e substituído no disco tem `filesize` atualizado e volta a temporário; a gravação só ocorre quando algo muda.
+- Evidência: PHPUnit Unit `aculta_image` 14/14 OK (47 asserções). Kernel: DEFERRED (sem banco MariaDB de teste nesta sessão). Serviço instanciado no Runtime de teste após cache rebuild.
+- RUNTIME STATUS: DEFERRED para Kernel; a limpeza de temporários por idade ainda não foi observada no Runtime.
+
+## 0.1.0-dev.23 — derivados temporários gerados por processadores
+
+- Novo serviço `aculta_image.generated_file` valida e registra derivados públicos gerados como File temporário; o ciclo existente os remove após `system.file:temporary_maximum_age` quando não há referências.
+- `ImageRenderer::buildManagedImage()` centraliza a marcação da imagem e associa cache tags do File.
+- O PDF Viewer usa esse fluxo para a miniatura pública do PDFPreview.
+
+## 0.1.0-dev.22 — reconciliação da documentação M10 — 2026-10-16
+
+- `MODELOS-DE-IMAGEM.md` agora reflete as verificações existentes no Runtime: persistência da legenda, viewport de 390 px, página pública e revisão Firefox/Orca/AT-SPI.
+- As fases P3 a P6 foram marcadas como concluídas; as pendências operacionais permanecem no handoff.
+
+## 0.1.0-dev.21 — auditoria R8 de consumidores e estilos — 2026-10-16
+
+- Auditoria do código e do Config Sync não encontrou consumidor `legado_*`; todas as referências de estilo nas configurações nativas correspondem a `ImageCatalog::STYLES`.
+- O gate `validate-aculta-image.php` passou sem usos de imagem fora do submódulo. O plano, handoff e registro de dívida anotam a conclusão de R8.
+- Atualizado comentário de `ImageCatalog` para refletir o critério atual de manutenção de estilos antigos.
+
+## 0.1.0-dev.20 — seletor de imagem e herança de papéis — 2026-10-16
+
+- Documentação alinhada à hierarquia da PR #286: `email_confirmed` mantém a permissão direta de `usuario_aculta`; `estudante`, `associado`, `lms_teacher` e `content_editor` a herdam pela configuração atual.
+- `gerente_loja` não herda `email_confirmed` na configuração verificada. Nenhum papel, conta ou permissão foi alterado nesta atualização.
+
+## 0.1.0-dev.19 — limpeza do ciclo de vida e painel administrativo — 2026-10-16
+
+- Substituições e remoções em campos de imagem/arquivo e textos ricos entram em fila; o cron revalida referências de `file_usage` e `entity_usage` antes de excluir.
+- Temporários de imagem sem uso são limpos após `system.file:temporary_maximum_age` (seis horas no padrão), em lotes de até 100 por cron ou execução administrativa.
+- A exclusão controlada invalida derivados do Image Style e remove metadados internos órfãos.
+- Painel em `/painel-administrativo/imagens` com visão geral, relatório, limpeza e quarentena. Documentação, registro de helpers e regra para agentes atualizados.
+- Runtime de testes confirmado por `--uri=https://aculta.toca.net.br` (`aculta_runtime`); cache reconstruído e quatro rotas verificadas com Drush.
+
+## 0.1.0-dev.18 — limite de upload da capa do curso — 2026-10-16
+
+- O widget de imagem de `capa_curso` agora aplica o limite de 10 MB de `UploadPolicy`; dimensões seguem sem limite máximo.
+- Campo atualizado no Runtime via Field API e exportado; `config:status` não mostra diferenças nos seis arquivos do R7.
+- Firefox, na sessão X11, confirmou o cartão usando uma imagem atribuída temporariamente ao curso 1; o estilo retornou JPEG 1280×720 (HTTP 200). O campo foi limpo e o cache reconstruído após o teste.
+- Gate `validate-aculta-image.php` passou.
+
+## 0.1.0-dev.17 — capa de curso no LMS (R7) — 2026-10-16
+
+- Criado o campo nativo `group.lms_course.capa_curso`, com upload pela política `aculta_image` desde a configuração inicial.
+- Os cartões das Views `courses` e `courses_catalog` usam `capa_curso` com a finalidade visual `destaque` (`aculta_destaque_16x9`).
+- Formulário de edição e exibição padrão do curso incluem a capa.
+- Configuração aplicada no Runtime via Entity API após bloqueio da importação parcial por dependência inválida alheia (`field.field.lms_activity.no_answer.field_content` → `filter.format.0`); cache reconstruído. `/courses` e `/cursos/catalogo` respondem 200. O curso atual está sem capa, então a imagem ainda aguarda conteúdo para conferência visual. Esta etapa não altera contas nem papéis.
+
+## 0.1.0-dev.16 — mesclagem de mídias repetidas e quarentena — 2026-10-16
+
+- Mesclados os grupos de arquivos idênticos da galeria 11, mantendo uma ocorrência por arquivo e o `alt` do menor ID de mídia em cada grupo (`126` e `128`). Mídias duplicadas `127`, `159` e `129` foram removidas; seus arquivos `223`, `255` e `225` foram enviados à quarentena `aculta_image` para retenção até 2026-11-15.
+- O relatório de duplicatas exatas não aponta mais esses grupos. O inventário de candidatas agora exclui arquivos que já estão na quarentena, evitando reenvio duplicado.
+
+
+## 0.1.0-dev.15 — barra do CKEditor multilinha — 2026-10-16
+
+- `full_html` e `usuario_aculta` usam a opção multilinha nativa do CKEditor; `revista_editorial` já tinha essa opção.
+- No Drupal core, o marcador `-` remove o agrupamento automático e permite que a barra passe para novas linhas.
+- Firefox no Runtime confirmou três linhas de botões a 500 px, sem botão de overflow. Nó temporário removido.
+
+## 0.1.0-dev.14 — dropdown de modelos e revisão do texto alternativo — 2026-10-16
+
+- Os quatro botões foram substituídos pelo dropdown `Modelo da imagem`, que indica o modelo da imagem selecionada e lista apenas as opções permitidas no formato.
+- Configuração dos três editores importada parcialmente no Runtime; cache reconstruído. Firefox confirmou as quatro opções no `full_html`, seleção de Larga e gravação de `data-aculta-modelo="larga"`.
+- O Drupal core avisa quando falta `alt`, permite abrir a edição por teclado e remove o aviso após salvar texto alternativo. Fluxo confirmado no Firefox; conteúdo temporário removido.
+
+## 0.1.0-dev.13 — Escape no formulário de legenda — 2026-10-16
+
+- O formulário contextual da legenda agora trata Escape como Cancelar e libera o handler ao destruir a view.
+- Firefox no Runtime confirmou upcast da legenda salva, abertura pelo teclado (Enter), foco no campo e fechamento por Escape sem alterar os dados. Nó temporário não publicado removido após o teste.
+- Leitor de tela, fluxo de `alt` e confirmação de `figcaption` numa página pública continuam pendentes.
+
+## 0.1.0-dev.12 — estilos responsivos para os modelos de texto — 2026-10-16
+
+- `revista-post.css` define largura de Pequena (50%), Padrão (580 px), Larga (900 px) e Destaque (960 px), com quebra para largura do corpo em telas até 575 px.
+- A legenda usa tokens semânticos e mantém contraste nos modos claro e escuro.
+- Firefox mediu os quatro modelos com o CSS e tokens reais do ACULTA420: 1366 px (larguras 320/580/900/960) e 500 px (484 px para todos, sem transformação lateral). Fundo/legenda mudaram corretamente entre claro e escuro.
+- Aferição foi feita numa fixture local com o HTML emitido pelo filtro; uma página pública do Runtime ainda precisa ser revisada em navegador com sessão válida.
+
+## 0.1.0-dev.11 — edição da legenda no CKEditor — 2026-10-16
+
+- Botão “Editar legenda” abre um formulário contextual com campo rotulado e ações Salvar/Cancelar.
+- A legenda é gravada em `data-aculta-legenda`, preservada no upcast/downcast e removida quando salva vazia. O filtro do servidor transforma o atributo em `figcaption`.
+- A ação foi adicionada a `full_html`, `revista_editorial` e `usuario_aculta`; configurações importadas e cache reconstruído no Runtime.
+- Firefox confirmou o formulário e a serialização do atributo; chamada direta ao filtro gerou `<figure>` e `<figcaption>` com legenda escapada. Reabertura em conteúdo salvo e página pública ainda precisam de validação integrada.
+
+## 0.1.0-dev.10 — botões de modelo funcionam no overflow do CKEditor — 2026-10-16
+
+- Corrigido o seletor do CKEditor: cada modelo agora é um botão próprio na toolbar, em vez de um dropdown aninhado que não abria no menu de overflow.
+- O Runtime de testes recebeu os novos itens de toolbar em `full_html`, `revista_editorial` e `usuario_aculta`; cache reconstruído.
+- Firefox confirmou a serialização de `data-aculta-modelo="padrao"` em `full_html` e de `pequena` em `usuario_aculta` e `revista_editorial`, inclusive no overflow com viewport útil de 488 px.
+- Persistência confirmada: um artigo temporário não publicado preservou `data-aculta-modelo="larga"` ao reabrir o formulário; o nó foi removido depois da verificação.
+- Upload real no Runtime: PNG de teste 1600×800 convertido para 1200×600; arquivo gerenciado removido e limpeza confirmada.
+- Gate `validate-aculta-image.php`, `php -l` do plugin PHP e `node --check` passaram. Temas claro/escuro e viewport útil de 390 px ainda pendentes (o Firefox headless limitou a janela a 488 px).
+
+## 0.1.0-dev.9 — modelo no CKEditor, formato Usuário ACULTA e conversão para 1200 px — 2026-10-17
+
+- Plugin `acultaImage.ImageModel` no CKEditor 5, em JavaScript simples (sem build), com a biblioteca `ckeditor5.image_model`. Seletor de modelo na barra de ferramentas; a lista de modelos vem da configuração do editor (`acultaImageModel.models`).
+- Botão de modelo ligado ao HTML completo e ao Revista — editorial. O HTML básico fica sem o botão até o formato próprio para usuários comuns e alunos.
+- Crédito removido de todos os modelos (filtro e marcação). Fica somente a legenda.
+- Formato `usuario_aculta` (Usuário ACULTA): HTML básico restrito, com o botão de imagem nos modelos Pequena e Padrão. Permissão concedida ao papel autenticado. O campo de resposta do fórum (`comment_forum`) passa a aceitar só esse formato.
+- Limite de 1200 px: o core deixou de recusar imagens maiores (`max_dimensions` nulo nos editores com upload). O `aculta_image` reduz para 1200 px de largura as imagens enviadas aos editores, antes da compressão (`ImageCompressor::redimensionar`, `mogrify`). Imagens menores não mudam. Aceita e converte.
+- Testes: 14 testes unitários, incluindo `ImageCompressorTest::testRedimensionamentoParaLargura`.
+- Runtime: pendente. Importação de configuração, cache rebuild e teste no navegador ainda não executados.
+- Documentação revisada para passagem: `docs/HANDOFF.md` (novo), `README.md`, `docs/PLANO.md` (roadmap atual), `docs/MODELOS-DE-IMAGEM.md` (estado e decisões), `docs/ESTILOS.md` e `docs/IMPORTACAO-GROWROOM.md` (correções e atualização de passagem).
+
+## 0.1.0-dev.8 — og:image de compartilhamento, dimensão máxima e compressão própria no texto — 2026-10-17
+
+- Estilo `aculta_compartilhamento_1200x630` (purpose `compartilhamento`) e hook `metatags_alter` que aponta `og_image` ao derivado da imagem da publicação (campos `field_media_image` e `field_image`). Verificado: publicação da Revista responde com `og:image` 1200×630, HTTP 200.
+- Upload de imagem nos editores: dimensão máxima de 1200 px de largura (campo do core, que redimensiona no servidor) e 10 MB, nos três editores. Referência: coluna de leitura de cerca de 580 px (retina 1160 px) e variantes de jornais de 1024 px no corpo.
+- Compressão sem perda do upload de texto (`ImageCompressor`, código próprio): optipng, jpegoptim e gifsicle, via hook `file_insert` em `public://inline-images/`. Testado sobre cópias de arquivos reais; o hook em si ainda não foi exercitado por upload real (o diretório `inline-images` pertence ao usuário `aculta` e não é gravável pelo terminal).
+- Avatar das respostas do Fórum: estilo `aculta_avatar_pequeno` no modo `compact` do usuário.
+- Testes unitários: 13 no total com `ImageCompressorTest`.
+
+## 0.1.0-dev.7 — estilos revisados, criados e documentados; importação documentada — 2026-10-17
+
+- Pesquisa de estilos (`docs/ESTILOS.md`): responsividade, 2× para alta densidade, recorte por proporção e a issue
+  #3523451 (ordenação de `srcset` no Drupal 11), que obriga a manter o 1x/2x explícito.
+- Criados: `aculta_destaque_16x9` (1280×720, recorte 16:9), `aculta_card_16x9` (640×360) e `aculta_avatar_pequeno` (96×96). Todos com o pipeline `aculta_derivados`.
+- Removidos do Runtime: `max_325x325`, `max_650x650`, `max_1300x1300`, `max_2600x2600` (sem consumidor; só existiam no Runtime).
+- Aplicação: abertura de tópico do Fórum usa `destaque`; página completa do projeto usa `aculta_destaque_16x9`.
+- Upload de imagem nos editores de texto (`basic_html`, `full_html`, `revista_editorial`): limite de 10 MB, igual à política.
+- Documentação: `README.md`, `docs/ESTILOS.md` e `docs/IMPORTACAO-GROWROOM.md` (alterações, caminhos, estado e bloqueio pela F3); `docs/PLANO.md` revisado.
+
+## 0.1.0-dev.6 — PDF liberado no ImageMagick; compressão com pipeline (M4 e M8) — 2026-10-17
+
+- Política do ImageMagick (`/etc/ImageMagick-7/policy.xml`, backup `.aculta-bak`): leitura de PDF, Ghostscript como delegate de execução e JPG nos formatos. Ver `docs/PLANO.md`.
+- Miniatura de PDF testada com o PV4: JPEG 480×621, gerado pelo `pdfpreview` (configuração do repositório aplicada no Runtime, que tinha valores padrão).
+- Compressão: dependências `drupal/imageapi_optimize` 4.2 e `drupal/imageapi_optimize_binaries` 1.2.0-beta1 (beta, fora da política de segurança do Drupal; escolha do responsável). Pipeline `aculta_derivados` com optipng e jpegoptim; 14 estilos exportados com `pipeline: aculta_derivados`; os 4 estilos `max_*` estão só no Runtime.
+- Módulos habilitados e registrados em `core.extension`: `aculta_image`, `entity_usage`, `file_mdm`, `imageapi_optimize`, `imageapi_optimize_binaries`, `media_duplicates`, `sophron`.
+- Homelab: optipng, jpegoptim, gifsicle, cwebp, ImageMagick 7 e SOAP instalados; `90-aculta.ini` com limites de upload de 128M.
+
+## 0.1.0-dev.5 — recálculo de referências corrigido; paridade de binários e PHP com a Hostinger — 2026-10-17
+
+- Recálculo de referências (`entity-usage:recreate`): causa — no nó 92 (blog "Bloco Sativa é objeto de Pesquisa na FIOCRUZ") a citação bibliográfica foi digitada no campo de URL de `field_references`. O link ficou inválido e o `entity_usage` lançava `InvalidArgumentException`.
+- Correção no banco (`node__field_references` e `node_revision__field_references`, delta 0): a citação foi movida para o título do link e a URL ficou vazia. Nenhum conteúdo foi apagado. O recálculo passa a rodar sem exceção (538 entidades).
+- Homelab: ImageMagick 7.1.1, Ghostscript, optipng, jpegoptim, gifsicle, cwebp e SOAP instalados. Limites de upload 128M via `90-aculta.ini`. PHP-FPM reiniciado.
+- Hostinger: ver `docs/PLANO.md`, seção "Hostinger: o que está confirmado".
+- Pendentes: política de PDF do ImageMagick (segurança) e processador da compressão (arquitetura). Ver o plano.
+
+## 0.1.0-dev.4 — auditoria, duplicatas, quarentena e comparação visual (M4 a M7 e M9) — 2026-10-17
+
+- Relatório `/painel-administrativo/imagens` (somente leitura): resumo do acervo, grupos de duplicatas exatas, pares visualmente parecidos e candidatas à revisão com motivos.
+- Duplicatas exatas com `media_duplicates` 2.0.4 (checksum). No Runtime: 2 grupos, com 3 e 2 mídias.
+- Candidatas com `entity_usage` 5.0.1: as sem referência em `file_usage` e sem entidade registrada. No Runtime: 13 candidatas, quase todas cópias de galerias.
+- Quarentena (`ImageQuarantine`): envio move para `private://aculta-image-quarentena`; restauração; exclusão só após 30 dias e nova verificação de uso. Atualização `aculta_image_update_10002`. Testada no Runtime com arquivo de teste.
+- Comparação visual (`DHash`): dHash de 64 bits com GD, sem dependência nova. Impressões calculadas no cron, 200 por execução (`aculta_image_update_10003`). Imagens que o GD não lê e imagens lisas são excluídas dos pares. Pares de cópias reais têm distância 0; fotos sequenciais muito parecidas ficam entre 4 e 6 bits. Sugestão para revisão, nada é alterado.
+- Pendente (M8): compressão com `imageapi_optimize` depende de binários (`optipng`, `jpegoptim` etc.), que não estão no sistema, ou de serviço externo com chave. Decisão do responsável.
+- Testes unitários: `DHashTest`, `QuarantineRulesTest` e `ImageIngesterTest` (11 no total).
+
+## 0.1.0-dev.44 — miniatura PDF com PHP Imagick (2026-10-29)
+
+- `aculta_image.pdf_thumbnail` gera a primeira página de PDFs elegíveis usando a extensão PHP Imagick, sem depender do CLI `magick`/`convert`; valida assinatura/tamanho, restringe recursos, preserva proporção e grava JPEG temporário atomicamente.
+- Hostinger verificado via SSH somente leitura: Imagick 3.8.1 com coders PDF/WebP e Ghostscript 9.54.0; PDF sintético processado em memória. A validação via FPM ainda não foi feita.
+- Suítes: Image 33/164 PASS (4 depreciações); PDF Viewer 36/367 PASS (137); Document Viewer 52/570 PASS (147 Core/contrib e 1 PHPUnit).
+

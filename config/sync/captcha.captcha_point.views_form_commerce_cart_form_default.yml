@@ -1,0 +1,7 @@
+uuid: a936045d-b5d5-4aff-88df-c38e1ed774f5
+langcode: pt-br
+status: false
+dependencies: {  }
+formId: views_form_commerce_cart_form_default
+captchaType: default
+label: 'Carrinho Commerce: sem CAPTCHA para todos os canais de compra'

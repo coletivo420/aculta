@@ -1,0 +1,10 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - block_content
+id: aculta_editorial
+label: 'Bloco editorial ACULTA'
+revision: true
+description: 'Texto reutilizável, limitado ao formato seguro Texto editorial ACULTA.'
+

@@ -1,0 +1,43 @@
+uuid: eee18e86-ec6e-4eb6-8819-53929ed945ec
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.message.mail_subject
+    - field.field.message.aculta_msg_wiki_notice.field_aculta_messenger_attempts
+    - field.field.message.aculta_msg_wiki_notice.field_aculta_msg_delivery
+    - field.field.message.aculta_msg_wiki_notice.field_aculta_wiki_digest_sent
+    - field.field.message.aculta_msg_wiki_notice.field_aculta_wiki_event_type
+    - field.field.message.aculta_msg_wiki_notice.field_aculta_wiki_event_version
+    - field.field.message.aculta_msg_wiki_notice.field_aculta_wiki_read
+    - field.field.message.aculta_msg_wiki_notice.field_aculta_wiki_source_uuid
+    - message.template.aculta_msg_wiki_notice
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: ihoYJ3Db4nytiIVSBzO-sgTxCUzgwf10xpVes_slhXQ
+id: message.aculta_msg_wiki_notice.mail_subject
+targetEntityType: message
+bundle: aculta_msg_wiki_notice
+mode: mail_subject
+content:
+  partial_0:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_aculta_messenger_attempts: true
+  field_aculta_msg_delivery: true
+  field_aculta_wiki_digest_sent: true
+  field_aculta_wiki_event_type: true
+  field_aculta_wiki_event_version: true
+  field_aculta_wiki_msg_delivery: true
+  field_aculta_wiki_read: true
+  field_aculta_wiki_source_uuid: true
+  partial_1: true
+  search_api_excerpt: true

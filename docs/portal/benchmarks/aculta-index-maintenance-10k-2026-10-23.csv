@@ -1,0 +1,4 @@
+run,source_count,rebuild_batch_count,rebuild_elapsed_ms,rebuild_rows_per_second,rebuild_batch_p50_ms,rebuild_batch_p95_ms,audit_batch_count,audit_elapsed_ms,audit_batches_per_second,audit_batch_p50_ms,audit_batch_p95_ms,missing_source_count,missing_catalog_entry_count,stale_projection_count,peak_memory_bytes
+1,10000,21,62554.699,160,3195.845,4548.410,102,4357.660,23,38.064,79.938,0,0,0,155713536
+2,10000,21,68404.638,146,3564.147,4847.477,102,4649.783,22,38.017,85.958,0,0,0,155713536
+3,10000,21,65968.250,152,3370.800,4697.937,102,4573.084,22,37.588,83.551,0,0,0,155713536

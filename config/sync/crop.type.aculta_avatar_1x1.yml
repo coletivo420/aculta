@@ -1,0 +1,12 @@
+uuid: 800bb52d-8c48-47d1-8cb4-3f3ff389efbf
+langcode: pt-br
+status: true
+dependencies: {  }
+label: 'Foto de perfil quadrada'
+id: aculta_avatar_1x1
+description: 'Enquadramento quadrado da foto de perfil da conta.'
+aspect_ratio: '1:1'
+soft_limit_width: 256
+soft_limit_height: 256
+hard_limit_width: 256
+hard_limit_height: 256

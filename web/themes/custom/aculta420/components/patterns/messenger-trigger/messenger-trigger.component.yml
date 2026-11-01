@@ -1,0 +1,22 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Mensagens na barra multidomínio
+status: experimental
+group: Patterns
+description: 'Gatilho e gaveta Bootstrap de conversas, com conteúdo atualizado por AJAX ao abrir.'
+props:
+  type: object
+  required: [href]
+  properties:
+    href:
+      type: string
+      title: URL same-origin do resumo de conversas
+    all_href:
+      type: string
+      title: URL de "Ver todas as mensagens" (rodapé da gaveta; vazio sem login)
+      default: ''
+    count:
+      type: integer
+      minimum: 0
+      default: 0
+      title: Conversas não lidas
+slots: {}

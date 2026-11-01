@@ -1,0 +1,92 @@
+[
+  {
+    "id": "undead-001-caveira-rastafari",
+    "file": "undead/undead-001-caveira-rastafari.png",
+    "family": "undead",
+    "label": "Caveira rastafari",
+    "alt": "Caveira rastafari de óculos com folhas de cannabis, boina rasta e baseado.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-002-catrina-canabica",
+    "file": "undead/undead-002-catrina-canabica.png",
+    "family": "undead",
+    "label": "Catrina canábica",
+    "alt": "Catrina esquelética com coroa floral e folhas de cannabis, fumando em pose elegante.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-003-ceifador-verde",
+    "file": "undead/undead-003-ceifador-verde.png",
+    "family": "undead",
+    "label": "Ceifador verde",
+    "alt": "Ceifador esquelético com capuz, foice e medalhão de folha de cannabis.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-004-zumbi-punk",
+    "file": "undead/undead-004-zumbi-punk.png",
+    "family": "undead",
+    "label": "Zumbi punk",
+    "alt": "Zumbi punk de moicano verde e vermelho, jaqueta com spikes e baseado.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-005-jardineiro-esqueleto",
+    "file": "undead/undead-005-jardineiro-esqueleto.png",
+    "family": "undead",
+    "label": "Jardineiro esqueleto",
+    "alt": "Esqueleto jardineiro com chapéu, pazinha e vaso de cannabis.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-006-dj-esqueleto",
+    "file": "undead/undead-006-dj-esqueleto.png",
+    "family": "undead",
+    "label": "DJ esqueleto",
+    "alt": "Esqueleto DJ com fones, boné e toca-discos em ambiente verde esfumaçado.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-007-cientista-zumbi",
+    "file": "undead/undead-007-cientista-zumbi.png",
+    "family": "undead",
+    "label": "Cientista zumbi",
+    "alt": "Zumbi cientista segurando frasco químico com símbolo de cannabis.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-008-pirata-esqueleto",
+    "file": "undead/undead-008-pirata-esqueleto.png",
+    "family": "undead",
+    "label": "Pirata esqueleto",
+    "alt": "Pirata esquelético com chapéu tricórnio, tapa-olho e baseado ao pôr do sol.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-009-zumbi-skatista",
+    "file": "undead/undead-009-zumbi-skatista.png",
+    "family": "undead",
+    "label": "Zumbi skatista",
+    "alt": "Zumbi skatista com boné e shape com folha de cannabis.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  },
+  {
+    "id": "undead-010-rei-esqueleto",
+    "file": "undead/undead-010-rei-esqueleto.png",
+    "family": "undead",
+    "label": "Rei esqueleto",
+    "alt": "Rei esqueleto com coroa dourada, manto real e medalhão de cannabis.",
+    "active": true,
+    "source": "generated-from-user-collage"
+  }
+]

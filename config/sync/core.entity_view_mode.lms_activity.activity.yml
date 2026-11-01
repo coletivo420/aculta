@@ -1,0 +1,11 @@
+uuid: fdb314b6-532a-4d1a-8116-add6d9fb6c26
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - lms
+id: lms_activity.activity
+label: Activity
+description: null
+targetEntityType: lms_activity
+cache: true

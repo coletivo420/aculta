@@ -1,0 +1,23 @@
+uuid: 6e9ca109-e782-4e67-af1a-85a7eef5e9d7
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_hero_primary
+    - node.type.page
+  module:
+    - link
+id: node.page.field_hero_primary
+field_name: field_hero_primary
+entity_type: node
+bundle: page
+label: 'Hero: ação principal'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 1
+  link_type: 17
+field_type: link

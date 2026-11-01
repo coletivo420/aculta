@@ -1,0 +1,21 @@
+uuid: 30dccf2a-14cf-48ba-8c8a-3f90555f0e3b
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_event_end
+    - node.type.activity
+  module:
+    - datetime
+id: node.activity.field_event_end
+field_name: field_event_end
+entity_type: node
+bundle: activity
+label: Término
+description: 'Campo editorial administrável: Término. Preencha somente com informações verificadas.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

@@ -1,0 +1,29 @@
+uuid: 3a9e5aac-8a20-4220-bb3e-f5125a15483e
+langcode: pt-br
+status: true
+dependencies: {  }
+id: node__activity
+label: 'Conteúdo: activity'
+tags:
+  title: '[node:title] | Associação Cultural Antiproibicionista'
+  description: '[node:editorial-summary]'
+  og_title: '[node:title]'
+  og_description: '[node:editorial-summary]'
+  og_url: '[node:canonical]'
+  og_image: '[node:image]'
+  canonical_url: '[node:canonical]'
+  schema_web_page_type: WebPage
+  schema_web_page_name: '[node:title]'
+  schema_web_page_description: '[node:editorial-summary]'
+  schema_web_page_url: '[node:canonical]'
+  schema_event_type: Event
+  schema_event_name: '[node:title]'
+  schema_event_description: '[node:editorial-summary]'
+  schema_event_image: 'a:2:{s:5:"@type";s:11:"ImageObject";s:3:"url";s:12:"[node:image]";}'
+  schema_event_start_date: '[node:start]'
+  schema_event_end_date: '[node:end]'
+  schema_event_event_status: '[node:event-status]'
+  schema_event_event_attendance_mode: '[node:attendance]'
+  schema_event_is_accessible_for_free: '[node:free]'
+  schema_event_url: '[node:canonical]'
+  schema_event_organizer: 'a:2:{s:5:"@type";s:12:"Organization";s:4:"name";s:16:"[node:organizer]";}'

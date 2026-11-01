@@ -1,0 +1,187 @@
+<?php
+
+/**
+ * @file
+ * Validates the bootstrapped Portal-to-theme presentation contract.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Read-only Runtime gate for ACULTA420 0.2-B Domain Presentation Contract.
+ */
+
+use Drupal\aculta_portal\Presentation\DomainPresentationBuilder;
+
+$checks = [];
+$assert = static function (bool $condition, string $message) use (&$checks): void {
+  if (!$condition) {
+    throw new RuntimeException($message);
+  }
+  $checks[] = $message;
+};
+
+$container = \Drupal::getContainer();
+$assert($container->has('aculta_portal.presentation.domain'), 'Domain presentation service is registered.');
+
+$builder = $container->get('aculta_portal.presentation.domain');
+$assert($builder instanceof DomainPresentationBuilder, 'Domain presentation service uses the canonical builder.');
+$domainPurpose = $container->get('aculta_portal.domain_purpose');
+$isMainFrontPage = $container->get('path.matcher')->isFrontPage();
+$assert(
+  $domainPurpose->getCurrentPurpose() === 'main',
+  'Run this gate with a MAIN purpose URI.',
+);
+
+$expected = [
+  'main' => ['ACULTA', 'ACULTA'],
+  'account' => ['Minha conta', 'Conta'],
+  'support' => ['Apoio', 'Apoio'],
+  'magazine' => ['Revista 420', 'Coletivo 420'],
+  'wiki' => ['Wiki420', 'Wiki420'],
+  'shop' => ['Loja', 'Loja'],
+  'courses' => ['Cursos', 'Cursos'],
+  'forum' => ['Fórum', 'Fórum'],
+  'links' => ['Redes sociais da ACULTA', 'Redes sociais'],
+  'eventos' => ['Eventos da ACULTA', 'Eventos'],
+];
+
+$containsObject = static function (mixed $value) use (&$containsObject): bool {
+  if (is_object($value)) {
+    return TRUE;
+  }
+  if (is_array($value)) {
+    foreach ($value as $item) {
+      if ($containsObject($item)) {
+        return TRUE;
+      }
+    }
+  }
+  return FALSE;
+};
+
+foreach ($expected as $purpose => [$title, $shortTitle]) {
+  $presentation = $builder->build($purpose);
+  $assert($presentation !== NULL, 'Presentation builds for purpose: ' . $purpose);
+
+  $theme = $presentation->toThemeArray();
+  $assert(array_keys($theme) === ['identity', 'regions', 'layout'], 'Theme contract has only identity, regions and layout: ' . $purpose);
+  $layout = $theme['layout'];
+  $assert(
+    array_keys($layout) === ['institution_bar_account', 'show_utility_bar', 'links_page', 'show_site_header'],
+    'Layout flags are the reviewed visibility set: ' . $purpose,
+  );
+  $assert($layout['institution_bar_account'] === ($purpose === 'account'), 'Account bar variant only for account: ' . $purpose);
+  $assert($layout['show_utility_bar'] === ($purpose !== 'links'), 'Utility bar is hidden only for links: ' . $purpose);
+  $assert($layout['links_page'] === ($purpose === 'links'), 'Links page layout only for links: ' . $purpose);
+  $assert(
+    $layout['show_site_header'] === TRUE,
+    'Institution Bar and Domain Header are available in every purpose: ' . $purpose,
+  );
+  $assert(
+    array_keys($theme['identity']) === ['purpose', 'title', 'short_title', 'home_url', 'logo_alt'],
+    'Identity contract has the stable key set: ' . $purpose,
+  );
+  $assert(
+    array_keys($theme['regions']) === ['brand_media', 'navigation', 'actions', 'wiki_search', 'showcase'],
+    'Region contract has the stable key set: ' . $purpose,
+  );
+  $assert($theme['identity']['purpose'] === $purpose, 'Purpose remains stable in presentation: ' . $purpose);
+  $assert($theme['identity']['title'] === $title, 'Title matches presentation contract: ' . $purpose);
+  $assert($theme['identity']['short_title'] === $shortTitle, 'Short title matches presentation contract: ' . $purpose);
+  $assert($theme['identity']['logo_alt'] === $title, 'Brand fallback alt follows the presentation title: ' . $purpose);
+  $assert(
+    preg_match('#^https?://[^/]+/#', $theme['identity']['home_url']) === 1,
+    'Purpose home URL is absolute and prepared by the Portal: ' . $purpose,
+  );
+  $assert(!$containsObject($theme), 'No object crosses the Portal -> theme boundary: ' . $purpose);
+  // Wiki brand/search have consumers; navigation/actions stay deferred.
+  $brand = $theme['regions']['brand_media'];
+  $brandIsWiki = $purpose === 'wiki' ? is_array($brand) : $brand === NULL;
+  $search = $theme['regions']['wiki_search'];
+  $searchIsWiki = $purpose === 'wiki'
+    ? is_array($search)
+      && ($search['#type'] ?? NULL) === 'form'
+      && ($search['#method'] ?? NULL) === 'get'
+      && ($search['#attributes']['role'] ?? NULL) === 'search'
+      && ($search['q']['#title_display'] ?? NULL) === 'invisible'
+      && array_key_exists('#value', $search['q'])
+      && in_array('url.query_args:q', $search['#cache']['contexts'] ?? [], TRUE)
+    : $search === NULL;
+  $assert(
+    $brandIsWiki
+      && $searchIsWiki
+      && $theme['regions']['navigation'] === NULL
+      && $theme['regions']['actions'] === NULL,
+    'Wiki receives branded media and the shared GET search form; navigation/actions stay deferred: ' . $purpose,
+  );
+  // MAIN showcase only on its front page; roots and cache tags follow Domains.
+  $showcase = $theme['regions']['showcase'];
+  $expectedShowcasePurposes = array_values(array_diff(array_keys($expected), ['main']));
+  $showcaseIsValid = $purpose === 'main' && $isMainFrontPage
+    ? is_array($showcase)
+      && array_reduce($showcase, static fn(bool $ok, $item): bool => $ok
+        && is_array($item)
+        && array_keys($item) === ['purpose', 'title', 'url'], TRUE)
+      && array_column($showcase, 'purpose') === $expectedShowcasePurposes
+    : $showcase === NULL;
+  $assert(
+    $showcaseIsValid,
+    'Showcase is only offered on the MAIN front and lists purpose roots: ' . $purpose,
+  );
+  if ($purpose === 'main' && $isMainFrontPage && is_array($showcase)) {
+    foreach ($showcase as $item) {
+      $rootUrl = $domainPurpose->pathUrl($item['purpose'], '/');
+      $assert(
+        $rootUrl !== NULL && $rootUrl->toString() === $item['url'],
+        'Showcase URL is resolved for the configured environment: ' . $item['purpose'],
+      );
+      $targetDomain = $domainPurpose->getDomain($item['purpose']);
+      $assert(
+        $targetDomain !== NULL
+          && array_diff($targetDomain->getCacheTags(), $presentation->getCacheTags()) === [],
+        'MAIN showcase varies with the target Domain configuration: ' . $item['purpose'],
+      );
+    }
+    $magazine = array_values(array_filter($showcase, static fn(array $item): bool => $item['purpose'] === 'magazine'));
+    $assert(count($magazine) === 1 && $magazine[0]['title'] === 'Revista 420', 'MAIN showcase includes Magazine.');
+  }
+
+  $contexts = $presentation->getCacheContexts();
+  foreach (['domain', 'languages:language_interface', 'url.site', 'url.path.is_front'] as $context) {
+    $assert(in_array($context, $contexts, TRUE), 'Presentation carries cache context ' . $context . ': ' . $purpose);
+  }
+  $domain = $domainPurpose->getDomain($purpose);
+  $assert($domain !== NULL, 'Configured Domain entity exists for purpose: ' . $purpose);
+  $domainTags = $domain->getCacheTags();
+  $assert($domainTags !== [], 'Domain entity exposes cache tags: ' . $purpose);
+  $assert(
+    array_diff($domainTags, $presentation->getCacheTags()) === [],
+    'Presentation includes the actual Domain entity cache tags: ' . $purpose,
+  );
+}
+
+if (!$isMainFrontPage) {
+  echo "SHOWCASE: DEFERRED (Drush has no routed MAIN front-page request; Kernel test covers it).\n";
+}
+
+$assert($builder->build('unknown-purpose') === NULL, 'Unknown purpose fails closed without presentation fallback.');
+
+$portalRoot = DRUPAL_ROOT . '/modules/custom/aculta_portal';
+$themeRoot = DRUPAL_ROOT . '/themes/custom/aculta420';
+$builderSource = file_get_contents($portalRoot . '/src/Presentation/DomainPresentationBuilder.php');
+$valueSource = file_get_contents($portalRoot . '/src/Presentation/DomainPresentation.php');
+$hooksSource = file_get_contents($portalRoot . '/src/Hook/PortalHooks.php');
+$themeHooksSource = file_get_contents($themeRoot . '/src/Hook/ThemeHooks.php');
+
+$assert(!str_contains($builderSource, 'aculta420:'), 'Portal builder does not instantiate ACULTA420 SDCs.');
+$assert(!str_contains($builderSource, 'DomainInterface'), 'Presentation builder does not expose DomainInterface.');
+$assert(!str_contains($valueSource, "'cacheability'"), 'Theme array has no ad-hoc cacheability field.');
+$assert(
+  str_contains($hooksSource, "\$variables['domain_presentation']")
+    && str_contains($hooksSource, 'addCacheableDependency'),
+  'Portal preprocess exports the neutral contract and merges cacheability through Renderer API.',
+);
+$assert(!str_contains($themeHooksSource, 'aculta_portal'), 'Theme hook class has no direct Portal dependency.');
+
+echo 'DOMAIN PRESENTATION CONTRACT: PASS (' . count($checks) . " checks)\n";

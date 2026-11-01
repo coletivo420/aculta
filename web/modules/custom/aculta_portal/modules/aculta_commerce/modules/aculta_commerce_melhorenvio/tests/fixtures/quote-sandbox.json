@@ -1,0 +1,108 @@
+[
+    {
+        "id": 1,
+        "name": "PAC",
+        "price": "28.33",
+        "custom_price": "28.33",
+        "discount": "0.00",
+        "currency": "R$",
+        "delivery_time": 7,
+        "delivery_range": {
+            "min": 6,
+            "max": 7
+        },
+        "custom_delivery_time": 7,
+        "custom_delivery_range": {
+            "min": 6,
+            "max": 7
+        },
+        "packages": [
+            {
+                "price": "28.33",
+                "discount": "0.00",
+                "format": "box",
+                "dimensions": {
+                    "height": 12,
+                    "width": 16,
+                    "length": 24
+                },
+                "weight": "0.80",
+                "insurance_value": "120.00",
+                "products": [
+                    {
+                        "id": "pacote-1",
+                        "quantity": 1
+                    }
+                ]
+            }
+        ],
+        "additional_services": {
+            "receipt": false,
+            "own_hand": false,
+            "collect": false
+        },
+        "company": {
+            "id": 1,
+            "name": "Correios",
+            "picture": "https://sandbox.melhorenvio.com.br/images/shipping-companies/correios.png"
+        }
+    },
+    {
+        "id": 2,
+        "name": "SEDEX",
+        "price": "57.23",
+        "custom_price": "57.23",
+        "discount": "0.00",
+        "currency": "R$",
+        "delivery_time": 3,
+        "delivery_range": {
+            "min": 2,
+            "max": 3
+        },
+        "custom_delivery_time": 3,
+        "custom_delivery_range": {
+            "min": 2,
+            "max": 3
+        },
+        "packages": [
+            {
+                "price": "57.23",
+                "discount": "0.00",
+                "format": "box",
+                "dimensions": {
+                    "height": 12,
+                    "width": 16,
+                    "length": 24
+                },
+                "weight": "0.80",
+                "insurance_value": "120.00",
+                "products": [
+                    {
+                        "id": "pacote-1",
+                        "quantity": 1
+                    }
+                ]
+            }
+        ],
+        "additional_services": {
+            "receipt": false,
+            "own_hand": false,
+            "collect": false
+        },
+        "company": {
+            "id": 1,
+            "name": "Correios",
+            "picture": "https://sandbox.melhorenvio.com.br/images/shipping-companies/correios.png"
+        }
+    },
+    {
+        "id": 17,
+        "name": "Mini Envios",
+        "error": "Valor segurado ultrapassa o limite máximo de R$ 104,62.",
+        "company": {
+            "id": 1,
+            "name": "Correios",
+            "picture": "https://sandbox.melhorenvio.com.br/images/shipping-companies/correios.png"
+        }
+    }
+]

@@ -1,0 +1,119 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Campos que o submódulo acrescenta às entidades de eventos.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
+
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+
+/**
+ * Implements hook_entity_base_field_info().
+ *
+ * O vínculo com a turma fica aqui, e não em aculta_events, para o módulo de eventos
+ * continuar independente do LMS. Sem este submódulo, evento não tem turma.
+ */
+function aculta_lms_agenda_entity_base_field_info(EntityTypeInterface $entity_type): array {
+  if ($entity_type->id() !== 'aculta_event') {
+    return [];
+  }
+  $fields['field_turma'] = BaseFieldDefinition::create('entity_reference')
+    ->setLabel(new TranslatableMarkup('Turma'))
+    ->setDescription(new TranslatableMarkup('Turma do LMS a que o evento pertence. Vazio = evento público do purpose eventos; preenchido = visível só aos matriculados.'))
+    ->setSetting('target_type', 'group')
+    ->setSetting('handler', 'default:group')
+    ->setSetting('handler_settings', ['target_bundles' => ['lms_class' => 'lms_class']]);
+  return $fields;
+}
+
+/**
+ * Implements hook_entity_access().
+ *
+ * Eventos vinculados a uma turma só podem ser vistos por seus matriculados.
+ * O acesso à entidade protege páginas diretas e qualquer consumidor que respeite
+ * o access handler; o provedor também aplica a regra ao catálogo público.
+ */
+function aculta_lms_agenda_entity_access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResult {
+  if ($entity->getEntityTypeId() !== 'aculta_event' || $operation !== 'view'
+    || !$entity->hasField('field_turma') || $entity->get('field_turma')->isEmpty()) {
+    return AccessResult::neutral();
+  }
+
+  return \Drupal::service('aculta_lms_agenda.event_access')->access($entity, $account);
+}
+
+/**
+ * Implements hook_simple_sitemap_links_alter().
+ *
+ * The public sitemap must not advertise events that the public cannot view.
+ */
+function aculta_lms_agenda_simple_sitemap_links_alter(array &$links, SimpleSitemapInterface $sitemap): void {
+  $slugsByKey = [];
+  foreach ($links as $key => $link) {
+    $path = $link['meta']['path'] ?? NULL;
+    if (!is_string($path)) {
+      continue;
+    }
+    $path = trim($path, '/');
+    if (preg_match('/^eventos\/([a-z0-9]+(?:-[a-z0-9]+)*)$/', $path, $matches) === 1) {
+      $slugsByKey[$key] = $matches[1];
+    }
+  }
+  if ($slugsByKey === []) {
+    return;
+  }
+
+  $ids = \Drupal::entityTypeManager()->getStorage('aculta_event')->getQuery()
+    ->condition('field_slug', array_values(array_unique($slugsByKey)), 'IN')
+    ->accessCheck(FALSE)
+    ->execute();
+  $restrictedSlugs = [];
+  foreach (\Drupal::entityTypeManager()->getStorage('aculta_event')->loadMultiple($ids) as $event) {
+    if ($event->hasField('field_turma') && !$event->get('field_turma')->isEmpty()) {
+      $restrictedSlugs[(string) $event->get('field_slug')->value] = TRUE;
+    }
+  }
+
+  foreach ($slugsByKey as $key => $slug) {
+    if (isset($restrictedSlugs[$slug])) {
+      unset($links[$key]);
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for aculta_event.
+ */
+function aculta_lms_agenda_aculta_event_insert(EntityInterface $evento): void {
+  _aculta_lms_agenda_avisa_turma($evento, NULL);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update() for aculta_event.
+ */
+function aculta_lms_agenda_aculta_event_update(EntityInterface $evento): void {
+  _aculta_lms_agenda_avisa_turma($evento, $evento->original ?? NULL);
+}
+
+/**
+ * Enfileira o aviso quando o evento de turma passa a publicado (não em cada edição).
+ */
+function _aculta_lms_agenda_avisa_turma(EntityInterface $evento, ?EntityInterface $anterior): void {
+  if ($evento->get('field_turma')->isEmpty() || (string) $evento->get('field_status')->value !== 'publicado') {
+    return;
+  }
+  $jaPublicado = $anterior !== NULL && (string) $anterior->get('field_status')->value === 'publicado';
+  if ($jaPublicado) {
+    return;
+  }
+  \Drupal::queue('aculta_lms_agenda_evento_turma')->createItem(['event_id' => (int) $evento->id()]);
+}

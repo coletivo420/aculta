@@ -1,0 +1,33 @@
+uuid: c7508dca-96f3-4bb1-bf03-c2d8d09cd0a3
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_wiki_summary
+    - filter.format.plain_text
+    - filter.format.revista_editorial
+    - filter.format.usuario_aculta
+    - filter.format.webform_default
+    - filter.format.wiki
+    - node.type.wiki_entry
+  module:
+    - text
+id: node.wiki_entry.field_wiki_summary
+field_name: field_wiki_summary
+entity_type: node
+bundle: wiki_entry
+label: Resumo
+description: 'Síntese breve do verbete.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats:
+    revista_editorial: revista_editorial
+    usuario_aculta: usuario_aculta
+    webform_default: webform_default
+    wiki: wiki
+    plain_text: plain_text
+field_type: text_long
+

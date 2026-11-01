@@ -1,0 +1,13 @@
+uuid: 3def9ceb-684c-404b-af23-d03368893211
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+_core:
+  default_config_hash: oEpQRdvbNOf_zOLFMVB72xOu09bAn8SQqlc7H2vI_-Q
+id: message.mail_subject
+label: 'Notificar - Assunto do e-mail'
+description: null
+targetEntityType: message
+cache: true

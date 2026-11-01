@@ -1,0 +1,60 @@
+{
+  "consumers": [
+    "web/themes/custom/aculta420",
+    "web/core",
+    "web/modules/contrib",
+    "web/themes/contrib",
+    "web/modules/custom/aculta_portal"
+  ],
+  "tool_terms": [
+    "aculta-deployer",
+    "aculta_deployer",
+    "o submódulo aculta_deployer",
+    "deploy-registry"
+  ],
+  "tool_dirs": [
+    "src",
+    "bin",
+    "config",
+    "registry",
+    "tests"
+  ],
+  "forbidden_dependencies": [
+    "web/themes",
+    "web/core",
+    "aculta420",
+    "\\Drupal\\",
+    "drush",
+    "vendor/",
+    "Drupal::",
+    "DRUPAL_ROOT",
+    "web/modules/contrib"
+  ],
+  "consumer_exclude": [
+    "web/modules/custom/aculta_portal/modules/aculta_deployer"
+  ],
+  "tool_root": "web/modules/custom/aculta_portal/modules/aculta_deployer",
+  "consumer_tool_reference_allowed": [
+    "web/modules/custom/aculta_portal/src/Deployer"
+  ],
+  "consumer_tool_reference_allowed_files": [
+    "web/modules/custom/aculta_portal/src/Environment/DeployerEnvironment.php",
+    "web/modules/custom/aculta_portal/tests/src/Unit/DeployerEnvironmentTest.php",
+    "web/modules/custom/aculta_portal/modules/aculta_calendar/src/Embed/DeployerHostDirectory.php",
+    "web/modules/custom/aculta_portal/modules/aculta_calendar/tests/src/Unit/DeployerHostDirectoryTest.php",
+    "web/modules/custom/aculta_portal/modules/aculta_events/src/EventSubscriber/EmbedFrameSubscriber.php",
+    "web/modules/custom/aculta_portal/modules/aculta_portal_sitemap/tests/src/Kernel/SitemapWiringKernelTest.php"
+  ],
+  "consumer_allowed_forbidden": [
+    "exec(",
+    "shell_exec(",
+    "proc_open(",
+    "passthru(",
+    "system(",
+    "popen(",
+    "bin/aculta-deployer",
+    "tool_root",
+    "src/Cli.php",
+    "Cli("
+  ]
+}

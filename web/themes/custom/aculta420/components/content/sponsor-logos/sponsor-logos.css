@@ -1,0 +1,26 @@
+.aculta-sponsor-logos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+  gap: 0.75rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.aculta-sponsor-logos > li {
+  display: grid;
+  min-height: 6rem;
+  place-items: center;
+  padding: 1rem;
+  color: var(--aculta-text-primary);
+  background-color: var(--aculta-surface-raised);
+  border: 1px solid var(--aculta-border-default);
+  text-align: center;
+}
+
+.aculta-sponsor-logos img {
+  display: block;
+  max-width: 100%;
+  max-height: 4rem;
+  object-fit: contain;
+}

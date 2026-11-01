@@ -1,0 +1,27 @@
+uuid: 97a769da-dc78-4f26-8227-e1b93d409a22
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_editorial_author
+    - node.type.revista
+    - taxonomy.vocabulary.editorial_author
+id: node.revista.field_editorial_author
+field_name: field_editorial_author
+entity_type: node
+bundle: revista
+label: 'Autoria editorial'
+description: 'Campo editorial administrável: Autoria editorial. Preencha somente com informações verificadas.'
+required: true
+translatable: true
+default_value:
+  -
+    target_id: '22'
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      editorial_author: editorial_author
+    auto_create: false
+field_type: entity_reference

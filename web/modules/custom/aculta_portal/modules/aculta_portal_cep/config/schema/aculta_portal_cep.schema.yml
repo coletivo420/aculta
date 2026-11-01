@@ -1,0 +1,20 @@
+aculta_portal_cep.settings:
+  type: config_object
+  label: 'Consulta de CEP'
+  mapping:
+    default_source:
+      type: string
+      label: 'Banco de dados padrão (primeira fonte consultada)'
+    sources:
+      type: sequence
+      label: 'Fontes de consulta'
+      sequence:
+        type: mapping
+        label: 'Fonte'
+        mapping:
+          enabled:
+            type: boolean
+            label: 'Ativa'
+          weight:
+            type: integer
+            label: 'Ordem'

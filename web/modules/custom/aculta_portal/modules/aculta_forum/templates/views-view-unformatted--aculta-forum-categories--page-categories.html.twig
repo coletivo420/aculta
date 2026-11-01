@@ -1,0 +1,20 @@
+{#
+/**
+ * @file
+ * Renders each Forum category group with an h2 heading.
+ *
+ * Core's unformatted template hardcodes h3 for the group title, which jumps
+ * from the page h1 to h3 in themes without an override (Olivero). The module
+ * keeps the hierarchy page title h1 → group h2 → category h3 regardless of
+ * the active theme. ACULTA420 overrides this template with its own grid.
+ */
+#}
+{% if title %}
+  <h2>{{ title }}</h2>
+{% endif %}
+{% for row in rows %}
+  {% set row_classes = [default_row_class ? 'views-row'] %}
+  <div{{ row.attributes.addClass(row_classes) }}>
+    {{- row.content -}}
+  </div>
+{% endfor %}

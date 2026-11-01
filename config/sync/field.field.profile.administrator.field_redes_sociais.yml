@@ -1,0 +1,24 @@
+uuid: bcd7b316-dbc9-4bf9-9527-5f6bf82645f5
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_redes_sociais
+    - profile.type.administrator
+  module:
+    - link
+id: profile.administrator.field_redes_sociais
+field_name: field_redes_sociais
+entity_type: profile
+bundle: administrator
+label: 'Redes sociais'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 1
+  link_type: 17
+field_type: link
+

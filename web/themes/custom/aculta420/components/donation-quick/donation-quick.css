@@ -1,0 +1,7 @@
+/* Grade dos cartões de valor de doação rápida (aculta_donation). Cada cartão é o componente donation-card. */
+.aculta-donation-quick {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+}

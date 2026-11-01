@@ -1,0 +1,10 @@
+uuid: d77e4c1e-4e1b-45a5-971f-3cda82e9a3ae
+langcode: pt-br
+status: true
+dependencies: {  }
+id: cursos_aculta_toca_net_br
+domain_id: cursos_aculta_org
+pattern: cursos.aculta.toca.net.br
+redirect: 0
+environment: homelab
+weight: 7

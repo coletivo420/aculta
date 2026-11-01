@@ -1,0 +1,10 @@
+uuid: ab53294b-3c4a-4ea5-8a49-fdca71bb6a4b
+langcode: pt-br
+status: true
+dependencies: {  }
+id: conta_aculta_toca_net_br
+domain_id: conta_aculta_org
+pattern: conta.aculta.toca.net.br
+redirect: 0
+environment: homelab
+weight: 2

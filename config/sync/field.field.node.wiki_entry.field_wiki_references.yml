@@ -1,0 +1,23 @@
+uuid: 2dd2c909-8474-42b3-92b0-f84f0fd2e82e
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_wiki_references
+    - node.type.wiki_entry
+  module:
+    - link
+id: node.wiki_entry.field_wiki_references
+field_name: field_wiki_references
+entity_type: node
+bundle: wiki_entry
+label: Referências
+description: 'Fontes consultáveis utilizadas na elaboração do verbete.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 1
+  link_type: 16
+field_type: link

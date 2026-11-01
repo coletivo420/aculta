@@ -1,0 +1,23 @@
+uuid: ebbd1643-2c40-41c3-9af0-d3767fdb14a4
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_aculta_notice_end
+    - node.type.aculta_notice
+  module:
+    - datetime
+_core:
+  default_config_hash: CZ4HbS2pqpDGDuLrw4xsdf1Dz-eClv-ZDXUV6AUAO1E
+id: node.aculta_notice.field_aculta_notice_end
+field_name: field_aculta_notice_end
+entity_type: node
+bundle: aculta_notice
+label: 'Término da exibição'
+description: 'Opcional. O aviso deixa de ser visível neste instante.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

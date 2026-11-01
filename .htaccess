@@ -1,0 +1,14 @@
+# ACULTA - Drupal 11.4 relocated web root workaround
+
+Options -Indexes
+
+SetEnv DRUPAL_WEBROOT /web
+
+RewriteEngine On
+
+# Bloquear diretórios e arquivos sensíveis na raiz
+RewriteRule ^(?:composer\.(?:json|lock)|AGENTS\.md|LICENSE(?:\.txt)?|\.git|recipes|vendor|config)(?:/|$) - [F,L,NC]
+
+# Encaminhar para o document root real do Drupal
+RewriteCond %{REQUEST_URI} !^/web/
+RewriteRule ^(.*)$ /web/$1 [L,QSA]

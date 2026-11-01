@@ -1,0 +1,28 @@
+uuid: 62c5c285-5971-4f83-8199-1dec7a0dfca8
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - file
+    - media
+  enforced:
+    module:
+      - aculta_document_viewer
+_core:
+  default_config_hash: YN6sbSX8Htott6if-5n2RecUYhXpkA8lwyWDg4BHnpY
+id: media.field_media_course_document
+field_name: field_media_course_document
+entity_type: media
+type: file
+settings:
+  target_type: file
+  display_field: false
+  display_default: false
+  uri_scheme: private
+module: file
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

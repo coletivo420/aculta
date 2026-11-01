@@ -1,0 +1,163 @@
+# Configuração e operação
+
+Documento de referência. Dono: `aculta_messenger` no ACULTA Portal. Revisão:
+2026-10-25.
+
+## Princípios
+
+- Não ativar automaticamente contrib, Views, blocos, campos ou configuração de
+  terceiros por instalação do Messenger.
+- Não criar config própria até identificar opções de integração que não sejam
+  configuração já fornecida por Core/contrib.
+- Config exportável pode conter nomes, tipos e políticas, nunca tokens, senha,
+  credencial SMTP ou segredo. Segredos, se uma integração futura realmente
+  exigir, seguem Drupal Key provider `env` e o contrato de secrets do ACULTA.
+- A entrega nova usa `aculta_mailer.mailer`, que mantém o transporte e os
+  templates de e-mail ACULTA. Não configurar SMTP ou outro transporte novo nem
+  adicionar dependência para isso. A fila antiga de amizade permanece
+  temporariamente em Message Notify até ser drenada; o caminho não deve ser
+  removido nem os itens reenfileirados pelo Mailer antes dessa confirmação.
+- Administração de Site Alert e comunicados permanece em `main`.
+- A central pessoal e suas configurações ficam em `account`.
+
+## Fase atual
+
+`aculta_messenger.info.yml` declara dependências no ACULTA Portal, nos cinco
+módulos integrados e nos módulos Core necessários ao bundle de aviso. A
+integração privada usa callback Form API, Flood e Queue API do Core,
+configuração Message exportável e o serviço `aculta_mailer.mailer` para novas
+entregas. `message_notify.sender` só permanece para itens legados de amizade
+ainda na fila. As rotas são da central; o módulo acrescenta o tipo
+de Node, uma decisão de node access e as permissões de Flag limitadas a
+`aculta_notice_read`. `composer.json` e `composer.lock` adicionam somente os
+cinco pacotes; versões em
+[INTEGRATIONS.md](INTEGRATIONS.md).
+
+O código de Private Message confirma que inbox, threads, criação, contagem de
+não lidas e bloqueio já existem. A instalação não concede as permissões de uso
+às roles: a revisão da política de papéis deve preceder a disponibilização do
+envio de membros. O rate limit usa dez envios válidos por UID/hora através do
+Flood do Core, sem nova tabela ou opção configurável. A configuração instalável
+do Messenger adiciona um tipo Message, campos de referência/estado e modos de
+visualização para deduplicação e email sem corpo privado. Enquanto houver
+eventos persistidos ou itens na fila, o lifecycle guard impede a desinstalação.
+
+A fase dev.5 adiciona o tipo Message e fields de rastreamento para eventos de
+publicação. A assinatura usa a flag já existente `seguir_topico`; nenhuma
+configuração global do Message Subscribe ou do transporte de e-mail é alterada.
+Notifiers ativos continuam sob a configuração existente. Administração fica no
+purpose `main`.
+
+A fase dev.6 habilita Site Alert e `datetime_range` no Config Sync e instala a
+configuração do bloco nativo Site Alert na região `highlighted` de ACULTA420,
+com polling em 300 segundos. Formulários,
+programação, severidade e permissões continuam em Site Alert; nenhuma role é
+autorizada automaticamente. O bloco é sitewide nos purposes com esse tema.
+O tipo persistente `aculta_notice` usa o workflow editorial, validade opcional e
+segmentação por papéis existentes. O acesso ao Node valida público e período.
+O estado individual usa o Flag não global `aculta_notice_read`; não há tabela
+customizada nem duplicação do Site Alert. O sino soma avisos persistentes não
+lidos e Site Alerts ativos para membros.
+
+Na configuração exportada examinada, nenhuma role recebe as permissões nativas
+`administer site alert`, `add site alerts`, `update site alerts` ou
+`delete site alerts`. O Messenger não amplia esse acesso; o responsável deve
+designar administradores em `main` antes de delegar a criação.
+
+A área de Mensagens oferece rotas de conta e entradas condicionais no shell.
+Não concede permissões nativas do Private Message. Conversas preserva a inbox
+contrib; Notificações exibe eventos privados entregues; Avisos lista Nodes
+publicados e visíveis com links nativos lido/não lido do Flag.
+
+## Defaults versionados e overrides por ambiente
+
+`config/sync/aculta_messenger.settings.yml` versiona as políticas estruturais
+de `email_modes` e `magazine_events` com os mesmos defaults de
+`config/install`. Instalações que precisem de política diferente devem defini-la
+como override de configuração no `settings.php` ou `settings.local.php` do
+ambiente, por exemplo em `$config['aculta_messenger.settings']['email_modes']`
+e `$config['aculta_messenger.settings']['magazine_events']`; não exportar
+preferências operacionais para o repositório. O override é específico do
+ambiente e não deve conter segredos neste caso.
+
+`private_message_digest_anchor` permanece fora do Config Sync por ser uma data
+operacional. Antes de qualquer `drush cim`, comparar o estado ativo e confirmar
+que políticas administrativas diferentes dos defaults estão representadas em
+overrides locais. Esta documentação e os defaults versionados não autorizam
+importar configuração em Runtime existente.
+
+## Checklist para implantação futura
+
+Todas as preferências de e-mail ficam na página de conta `/configuracoes/email`,
+propriedade do Messenger e armazenada em `user.data` sob `aculta_messenger`.
+Isso inclui Fórum, Aprendizagem, Wiki, Loja, Doações, Mensagens Privadas e
+Amizades; o formulário permanece disponível a membros sem permissão para
+iniciar conversas. As categorias de conteúdo oferecem sem e-mail, entrega
+direta ou resumo diário; a administração pode desabilitar cada modalidade em
+`aculta_messenger.settings:email_modes` e definir o padrão de entrega para
+contas que ainda não salvaram uma preferência. Escolhas individuais explícitas
+continuam prevalecendo. Um padrão administrativo inválido ou incompatível com
+as modalidades habilitadas é tratado como `off` (somente no site). Mensagens
+Privadas oferecem sem
+e-mail, aviso direto ou resumo semanal, sem incluir o corpo da conversa;
+Amizades oferecem somente no site ou e-mail direto. Os avisos no site e a
+inbox permanecem disponíveis independentemente dessas escolhas. O formulário
+de Privacidade continua responsável pela visibilidade do perfil e por deixar
+de seguir tópicos. O post-update
+`aculta_messenger_post_update_shared_email_preferences` migra o opt-in global
+legado e as exceções antigas do Fórum para modos individuais, preserva escolhas
+Messenger existentes e remove as chaves antigas após a cópia. Depois da
+migração, contas sem preferência seguem o padrão administrativo de cada
+categoria; a configuração inicial mantém avisos de conteúdo somente no site.
+Em Mensagens Privadas, a pessoa escolhe envio direto a cada mensagem, resumo
+semanal ou sem e-mail; a administração pode habilitar os modos, definir o
+padrão para contas sem preferência e definir a data inicial global do digest
+semanal. Amizade permite somente entrega no
+site ou e-mail direto. Os avisos de Mensagens Privadas contêm somente o nome do
+remetente e link para a inbox; nunca incluem o corpo da mensagem. Cada conta
+recebe os resumos seguintes após sete dias. A data inicial é considerada à
+meia-noite no fuso horário configurado em `system.date:timezone.default`; uma
+data administrativa inválida não habilita a entrega. O update
+`aculta_messenger_post_update_private_message_email_preferences` copia as
+preferências administrativas e individuais do Private Message para
+`aculta_messenger`; preserva uma escolha Messenger já existente e remove a chave
+individual antiga somente depois da cópia. O update é incremental e não foi
+executado no Runtime. Após sua execução, o Messenger é a fonte única dessas
+preferências. Avisos no site e conversas na inbox permanecem disponíveis
+independentemente do opt-out.
+O ACULTA Mailer é o transporte comum; produtores e adapters do Messenger não
+configuram SMTP.
+
+1. Comparar configuração exportada dos cinco módulos e aprovar os componentes
+   necessários; não fazer import/export automático.
+2. Confirmar os purposes e hosts do ambiente pelos arquivos de arquitetura e
+   gerar URLs com `DomainPurposeManager`.
+3. Instalar primeiro em ambiente de teste com transporte de e-mail controlado.
+4. Conferir configuração pendente (`config:status`) sem resolver drift alheio.
+5. Verificar `updatedb:status`; não executar `updb`, `cim` ou `cex` sem análise
+   do estado, efeitos e autorização operacional.
+6. Confirmar cache rebuild, acesso como duas contas, rotas de MAIN/ACCOUNT e
+   ausência de saída privada em outros purposes.
+7. Registrar comandos e evidências no changelog da fase/PR, sem criar relatório
+   normativo permanente de execução.
+# Configuração de comunicados
+
+O módulo instala o tipo editorial `aculta_notice` com texto, público por papel,
+início e término opcionais. A segmentação é inclusiva (OU): o membro que possui
+qualquer papel selecionado pode visualizar o aviso durante sua validade.
+`authenticated` significa todos os membros autenticados. Os papéis disponíveis
+são definidos a partir dos papéis existentes na configuração do Portal; Group
+não é presumido como ativo.
+
+O workflow editorial controla revisão e publicação. `content_editor` cria e
+edita avisos em rascunho; publicação segue as transições editoriais atribuídas
+à administração. A administração continua no purpose MAIN.
+
+`aculta_notice_read` é um Flag não global que fornece ações de marcar como lido
+e não lido. O badge para membros conta avisos visíveis ainda não marcados como
+lidos; visitantes veem a quantidade de Site Alerts temporários ativos.
+
+
+## Privacidade de novas conversas (0.1.1)
+
+Em Minha Conta > Configurações > Mensagens, cada usuário escolhe Todos os membros ou Somente amizades confirmadas. O estado usa User Data (`aculta_messenger`, chave `message_privacy`) e não requer configuração global ou import de configuração. O padrão efetivo é Todos os membros. Administradores e editores de conteúdo ignoram essa escolha; bloqueios individuais nativos do Private Message permanecem efetivos. A escolha não bloqueia respostas em conversas existentes.

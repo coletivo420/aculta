@@ -1,0 +1,19 @@
+uuid: 5693c143-e9f2-45ed-9ae0-6ad8387f756a
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_event_region
+    - node.type.activity
+id: node.activity.field_event_region
+field_name: field_event_region
+entity_type: node
+bundle: activity
+label: 'Estado da atividade'
+description: 'Campo editorial administrável: Estado da atividade. Preencha somente com informações verificadas.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

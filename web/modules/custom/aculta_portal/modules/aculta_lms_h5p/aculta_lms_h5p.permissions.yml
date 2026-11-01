@@ -1,0 +1,55 @@
+update h5p libraries:
+  title: 'Atualizar bibliotecas H5P'
+  description: 'A pessoa pode atualizar bibliotecas H5P. Conceda esta permissão somente a pessoas de confiança.'
+  restrict access: TRUE
+
+administer h5p libraries:
+  title: 'Administrar bibliotecas H5P'
+  description: 'A pessoa pode enviar, atualizar, excluir e restringir bibliotecas na página de conteúdo H5P.'
+  restrict access: TRUE
+
+access all h5p results:
+  title: 'Acessar todos os resultados H5P'
+  description: 'Acessar todos os resultados H5P stored in the system'
+  restrict access: TRUE
+
+access own h5p results:
+  title: 'Acessar os próprios resultados H5P'
+  description: 'Acessar os próprios resultados H5P from user profile.'
+  restrict access: TRUE
+
+create restricted h5p content types:
+  title: 'Criar tipos de conteúdo H5P restritos'
+  description: 'A pessoa pode criar tipos de conteúdo H5P restritos na administração de bibliotecas.'
+  restrict access: TRUE
+
+copy all h5ps:
+  title: 'Permitir cópia de qualquer atividade H5P'
+  description: "A cópia estará disponível em todas as atividades H5P."
+  restrict access: TRUE
+
+copy own h5ps:
+  title: 'Permitir cópia das próprias atividades H5P'
+  description: "A cópia estará disponível nas atividades H5P que a pessoa pode editar."
+  restrict access: TRUE
+
+download all h5ps:
+  title: 'Permitir download de qualquer atividade H5P'
+  description: "O download estará disponível em todas as atividades H5P, mesmo quando oculto nas configurações. Não terá efeito se o download estiver desativado globalmente."
+  restrict access: TRUE
+
+download own h5ps:
+  title: 'Permitir download das próprias atividades H5P'
+  description: "O download estará disponível nas atividades H5P que a pessoa pode editar, mesmo quando oculto nas configurações. Não terá efeito se o download estiver desativado globalmente."
+  restrict access: TRUE
+
+embed all h5ps:
+  title: 'Permitir incorporação de qualquer atividade H5P'
+  description: "The embed button will be available for all H5Ps even if embed button is hidden by configuration settings. This won't have any effect if embed button is globally disabled"
+  restrict access: TRUE
+
+embed own h5ps:
+  title: 'Permitir incorporação das próprias atividades H5P'
+  description: "The embed button will be available for H5Ps the user has access to edit even even if embed button is hidden by configuration settings. This won't have any effect if embed button is globally disabled"
+  restrict access: TRUE
+

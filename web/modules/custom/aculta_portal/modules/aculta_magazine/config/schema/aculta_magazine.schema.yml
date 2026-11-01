@@ -1,0 +1,19 @@
+aculta_magazine.settings:
+  type: config_object
+  label: 'Magazine editorial capabilities'
+  mapping:
+    authoring_roles:
+      type: sequence
+      label: 'Roles with authoring capability'
+      sequence:
+        type: string
+    review_roles:
+      type: sequence
+      label: 'Roles with review and publication capability'
+      sequence:
+        type: string
+    comments_roles:
+      type: sequence
+      label: 'Roles with comment moderation capability'
+      sequence:
+        type: string

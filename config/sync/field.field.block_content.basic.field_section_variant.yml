@@ -1,0 +1,21 @@
+uuid: 3b548005-f3ed-4c38-9038-9f379cd1ec13
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.basic
+    - field.storage.block_content.field_section_variant
+  module:
+    - options
+id: block_content.basic.field_section_variant
+field_name: field_section_variant
+entity_type: block_content
+bundle: basic
+label: 'Variante visual'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

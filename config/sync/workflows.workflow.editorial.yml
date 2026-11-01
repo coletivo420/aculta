@@ -1,0 +1,90 @@
+uuid: be6a8549-8fbe-4c67-911f-069521491578
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - node.type.aculta_notice
+  module:
+    - content_moderation
+_core:
+  default_config_hash: T7gMMyFbTYLalxpIOnzJebvek2OW0b1RgLVE9I2y228
+id: editorial
+label: Editorial
+type: content_moderation
+type_settings:
+  states:
+    archived:
+      label: Archived
+      weight: 5
+      published: false
+      default_revision: true
+    draft:
+      label: Draft
+      weight: -5
+      published: false
+      default_revision: false
+    published:
+      label: Published
+      weight: 0
+      published: true
+      default_revision: true
+    review:
+      label: 'Em revisão'
+      weight: 1
+      published: false
+      default_revision: false
+  transitions:
+    archive:
+      label: Archive
+      from:
+        - published
+      to: archived
+      weight: 2
+    archived_draft:
+      label: 'Restore to Draft'
+      from:
+        - archived
+      to: draft
+      weight: 3
+    archived_published:
+      label: Restore
+      from:
+        - archived
+      to: published
+      weight: 4
+    create_new_draft:
+      label: 'Create New Draft'
+      from:
+        - draft
+        - published
+      to: draft
+      weight: 0
+    draft_to_review:
+      label: 'Enviar para revisão'
+      from:
+        - draft
+      to: review
+      weight: 2
+    publish:
+      label: Publish
+      from:
+        - published
+        - draft
+      to: published
+      weight: 1
+    review_to_draft:
+      label: 'Devolver para rascunho'
+      from:
+        - review
+      to: draft
+      weight: 3
+    review_to_published:
+      label: Publicar
+      from:
+        - review
+      to: published
+      weight: 4
+  entity_types:
+    node:
+      - aculta_notice
+  default_moderation_state: draft

@@ -1,0 +1,12 @@
+# Padrão das consultas de CEP. Editado em Configurações > ACULTA Portal > Consulta de CEP.
+default_source: local
+sources:
+  local:
+    enabled: true
+    weight: 0
+  viacep:
+    enabled: true
+    weight: 1
+  brasilapi:
+    enabled: true
+    weight: 2

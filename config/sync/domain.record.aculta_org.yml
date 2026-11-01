@@ -1,0 +1,12 @@
+uuid: 5a3e2196-43c1-4a47-b5f7-32035b73c493
+langcode: pt-br
+status: true
+dependencies: {  }
+id: aculta_org
+domain_id: 13868239
+hostname: aculta.org
+name: 'ACULTA - Principal'
+scheme: https
+weight: 1
+is_default: true
+path_prefix: ''

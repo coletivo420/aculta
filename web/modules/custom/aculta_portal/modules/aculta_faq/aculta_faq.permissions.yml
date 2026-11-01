@@ -1,0 +1,10 @@
+administer aculta faq:
+  title: 'Administrar FAQ e blocos editoriais'
+  restrict access: true
+create aculta_faq content:
+  title: 'Criar perguntas frequentes'
+edit any aculta_faq content:
+  title: 'Editar qualquer pergunta frequente'
+delete any aculta_faq content:
+  title: 'Excluir qualquer pergunta frequente'
+

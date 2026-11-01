@@ -1,0 +1,7 @@
+allowed_extensions: 'png jpg jpeg gif webp pdf docx xls xlsx'
+max_size_mb: 10
+consumers:
+  forum:
+    inherit_global: true
+    allowed_extensions: 'png jpg jpeg gif webp pdf docx xls xlsx'
+    max_size_mb: 10

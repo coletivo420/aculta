@@ -1,0 +1,8 @@
+{% set severity_class = {
+  low: 'aculta-messenger-notice--low',
+  medium: 'aculta-messenger-notice--medium',
+  high: 'aculta-messenger-notice--high',
+}[severity] %}
+<div class="aculta-messenger-notice {{ severity_class }}" data-severity="{{ severity }}">
+  {{ message }}
+</div>

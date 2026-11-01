@@ -1,0 +1,27 @@
+id: aculta_forum_comment_parents
+label: 'Test parent links for ACULTA Forum Comment posts'
+source:
+  plugin: embedded_data
+  data_rows: []
+  ids:
+    cid:
+      type: integer
+process:
+  id:
+    plugin: migration_lookup
+    migration: aculta_forum_comment_posts
+    source: cid
+    no_stub: true
+  parent/target_id:
+    plugin: migration_lookup
+    migration: aculta_forum_comment_posts
+    source: parent_cid
+    no_stub: true
+destination:
+  plugin: 'entity:aculta_forum_post'
+  default_bundle: aculta_forum_post
+  overwrite_properties:
+    - parent
+migration_dependencies:
+  required:
+    - aculta_forum_comment_posts

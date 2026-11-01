@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+// Ponto de entrada da ferramenta. Standalone: não carrega Drupal, Drush nem vendor.
+$toolRoot = dirname(__DIR__);
+foreach (['Registry', 'Transform', 'Boundary', 'Verify', 'Indexing', 'HostingerLayout', 'Provision', 'Cli'] as $class) {
+  require_once $toolRoot . '/src/' . $class . '.php';
+}
+try {
+  exit((new AcultaDeployer\Cli($toolRoot))->run($argv));
+} catch (\Throwable $e) {
+  // Sem stack trace na saída: a mensagem basta para o operador.
+  fwrite(STDERR, 'aculta-deployer: ' . get_class($e) . ': ' . $e->getMessage() . "\n");
+  exit(1);
+}

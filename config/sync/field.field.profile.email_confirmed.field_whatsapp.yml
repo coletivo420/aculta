@@ -1,0 +1,25 @@
+uuid: afd24218-fa71-49e0-b680-5720a810a2b7
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_whatsapp
+    - profile.type.email_confirmed
+  module:
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.email_confirmed.field_whatsapp
+field_name: field_whatsapp
+entity_type: profile
+bundle: email_confirmed
+label: WhatsApp
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

@@ -1,0 +1,7 @@
+text:
+  -
+    value: 'Aviso sobre sua doação à ACULTA'
+    format: plain_text
+  -
+    value: '@summary Acesse: @url'
+    format: plain_text

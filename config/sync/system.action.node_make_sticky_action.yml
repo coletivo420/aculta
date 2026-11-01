@@ -1,0 +1,13 @@
+uuid: 8cb6769a-be2d-444a-86c0-224e786cad61
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: sOb26JSy3fGpWkvR0WYN6_hMqj_6d1rvbvrkzp1yya0
+id: node_make_sticky_action
+label: 'Destacar conteúdo'
+type: node
+plugin: node_make_sticky_action
+configuration: {  }

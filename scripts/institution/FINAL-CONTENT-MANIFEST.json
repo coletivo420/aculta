@@ -1,0 +1,610 @@
+{
+    "note": "Content is NOT included in config export. Preserve IDs/UUIDs during the separately planned secure migration; this is an inventory, not a database dump.",
+    "entities": {
+        "node": [
+            {
+                "id": "1",
+                "uuid": "dc47dc15-c623-47fc-9466-8a7043557221",
+                "bundle": "page",
+                "label": "Associação Cultural Antiproibicionista",
+                "published": true
+            },
+            {
+                "id": "2",
+                "uuid": "dc796008-38c0-4deb-864c-0e3d12c09f4a",
+                "bundle": "project",
+                "label": "Carnareggae Bloco Sativa",
+                "published": true
+            },
+            {
+                "id": "3",
+                "uuid": "267321dc-f286-472f-887b-dec6aa3ee0b8",
+                "bundle": "project",
+                "label": "Grupo de Percussão Baque Sativa",
+                "published": true
+            },
+            {
+                "id": "4",
+                "uuid": "9a52f9b6-40ca-4a90-b1e6-6caecc6447fe",
+                "bundle": "project",
+                "label": "PodPlant420",
+                "published": true
+            },
+            {
+                "id": "5",
+                "uuid": "cd3b0bcc-cbe2-4500-aeb0-5a6d1fe3b854",
+                "bundle": "project",
+                "label": "Batalha do Riddim",
+                "published": true
+            },
+            {
+                "id": "6",
+                "uuid": "9d0ee4a4-e1b9-4045-b714-5fd2dc8548ff",
+                "bundle": "page",
+                "label": "Institucional",
+                "published": true
+            },
+            {
+                "id": "7",
+                "uuid": "1f1ca541-3fa1-4a45-af9d-f39f94dc3192",
+                "bundle": "page",
+                "label": "Projetos",
+                "published": true
+            },
+            {
+                "id": "8",
+                "uuid": "94fb6c4f-755a-4f87-89ad-180343cfca82",
+                "bundle": "page",
+                "label": "Atividades",
+                "published": true
+            },
+            {
+                "id": "9",
+                "uuid": "35fe7bdf-f1a7-431a-9656-06ec2ac93b6f",
+                "bundle": "page",
+                "label": "Notícias",
+                "published": true
+            },
+            {
+                "id": "10",
+                "uuid": "0e78ba69-c4a0-41be-870e-b80943f5d674",
+                "bundle": "page",
+                "label": "Transparência",
+                "published": true
+            },
+            {
+                "id": "11",
+                "uuid": "4e3b630c-6d03-4134-8a64-d0e995a4f690",
+                "bundle": "page",
+                "label": "Política de Privacidade",
+                "published": true
+            },
+            {
+                "id": "12",
+                "uuid": "1c8b4f81-8e14-4794-aa0e-026204918fa3",
+                "bundle": "page",
+                "label": "Contato",
+                "published": false
+            },
+            {
+                "id": "13",
+                "uuid": "6af4bd3f-a46a-481a-bad3-c48cd87c0e8f",
+                "bundle": "document",
+                "label": "COMPROVANTE DE INSCRIÇÃO E SITUAÇÃO CADASTRAL - CNPJ",
+                "published": false
+            },
+            {
+                "id": "14",
+                "uuid": "5b1201da-795a-436d-bddc-b3f198aa38a7",
+                "bundle": "editorial_highlight",
+                "label": "INFORMAÇÃO TAMBÉM É CULTURA",
+                "published": true
+            },
+            {
+                "id": "15",
+                "uuid": "20e4646b-3cda-4b57-a7de-d1c7964568c0",
+                "bundle": "editorial_highlight",
+                "label": "CUIDADO, INFORMAÇÃO E DIREITOS",
+                "published": true
+            },
+            {
+                "id": "16",
+                "uuid": "8bdc590a-f3ca-41bc-b256-0e451f7f6dd2",
+                "bundle": "editorial_highlight",
+                "label": "CULTURA, CUIDADO E PRODUÇÃO DE CONHECIMENTO",
+                "published": true
+            },
+            {
+                "id": "41",
+                "uuid": "3db54eb5-2470-46f9-aab4-3a068e6f338c",
+                "bundle": "page",
+                "label": "Termos de Uso",
+                "published": true
+            },
+            {
+                "id": "42",
+                "uuid": "4ce3e773-c2d1-46c7-a41a-7d755837fa66",
+                "bundle": "wiki_entry",
+                "label": "Proibicionismo",
+                "published": true
+            },
+            {
+                "id": "43",
+                "uuid": "9603a4bd-b0a0-44cf-8b59-590ce53c8204",
+                "bundle": "wiki_entry",
+                "label": "Marcha da Maconha",
+                "published": true
+            },
+            {
+                "id": "44",
+                "uuid": "e1e16046-af64-494a-b781-b717233847a7",
+                "bundle": "wiki_entry",
+                "label": "Redução de Danos",
+                "published": true
+            },
+            {
+                "id": "45",
+                "uuid": "a4ec0e28-07bc-44a3-8c3a-9c5ff3ca42f5",
+                "bundle": "wiki_entry",
+                "label": "Associação Cultural Antiproibicionista",
+                "published": true
+            }
+        ],
+        "block_content": [
+            {
+                "id": "1",
+                "uuid": "9e930892-7963-49b3-af43-9ba601512cdd",
+                "bundle": "basic",
+                "label": "Home — Quem somos e missão",
+                "published": true
+            },
+            {
+                "id": "2",
+                "uuid": "bfc5d412-27f8-47b5-94ec-34114bffdfc7",
+                "bundle": "basic",
+                "label": "Home — O que fazemos",
+                "published": true
+            },
+            {
+                "id": "3",
+                "uuid": "a7dc6752-a06d-46ef-a4e7-39b7931df7f9",
+                "bundle": "basic",
+                "label": "Home — Cultura que ocupa a cidade",
+                "published": true
+            },
+            {
+                "id": "4",
+                "uuid": "222ed8b1-5847-4274-a611-87dac3293be7",
+                "bundle": "basic",
+                "label": "Home — Comunicação e conhecimento",
+                "published": true
+            },
+            {
+                "id": "5",
+                "uuid": "8fd34760-58bc-433c-8f96-449ded4ace9d",
+                "bundle": "basic",
+                "label": "Home — Cuidado, informação e direitos",
+                "published": true
+            },
+            {
+                "id": "6",
+                "uuid": "45934cbe-7d04-444c-bdb4-aada64bc80dd",
+                "bundle": "basic",
+                "label": "Home — Cultura, cuidado e conhecimento",
+                "published": true
+            },
+            {
+                "id": "7",
+                "uuid": "70773914-c529-4bf7-869b-8fc198b780ad",
+                "bundle": "basic",
+                "label": "Home — Transparência",
+                "published": true
+            },
+            {
+                "id": "8",
+                "uuid": "2a3a1cc7-802b-45ce-a137-7775527b15c6",
+                "bundle": "basic",
+                "label": "Home — Participação",
+                "published": true
+            },
+            {
+                "id": "9",
+                "uuid": "123eb3c7-726e-4fb9-9909-9c92c61f67ed",
+                "bundle": "aculta_institution",
+                "label": "Dados institucionais anteriores — preservados, sem uso público",
+                "published": true
+            },
+            {
+                "id": "10",
+                "uuid": "80f3fc02-39b5-4386-8a32-78301b635007",
+                "bundle": "aculta_institution",
+                "label": "Dados oficiais da Associação",
+                "published": true
+            },
+            {
+                "id": "11",
+                "uuid": "990079a5-c586-474b-89a4-38529c15fb14",
+                "bundle": "basic",
+                "label": "Organização e documentos da Transparência",
+                "published": true
+            },
+            {
+                "id": "12",
+                "uuid": "8bb4b286-4fc3-49c8-b35a-bcae14ae1984",
+                "bundle": "basic",
+                "label": "Construir em parceria — Home",
+                "published": true
+            },
+            {
+                "id": "13",
+                "uuid": "1a8bd16f-d4ea-4770-91a6-726332a65247",
+                "bundle": "basic",
+                "label": "Fortaleça nossos projetos — Home",
+                "published": true
+            }
+        ],
+        "menu_link_content": [
+            {
+                "id": "1",
+                "uuid": "d9a789e2-e650-4aae-a7f8-d80d8c1022bd",
+                "bundle": "menu_link_content",
+                "label": "Início",
+                "published": false
+            },
+            {
+                "id": "3",
+                "uuid": "50aca651-90e0-49b2-a660-9bca57a03d09",
+                "bundle": "menu_link_content",
+                "label": "Institucional",
+                "published": true
+            },
+            {
+                "id": "4",
+                "uuid": "853bd992-4f41-4e42-a066-18a5bba6118d",
+                "bundle": "menu_link_content",
+                "label": "Projetos",
+                "published": true
+            },
+            {
+                "id": "5",
+                "uuid": "d6b397db-eb8e-4da4-b34a-99ba4c258b85",
+                "bundle": "menu_link_content",
+                "label": "Atividades",
+                "published": true
+            },
+            {
+                "id": "6",
+                "uuid": "94f9e857-8db6-4d5b-9d47-42171b9700b2",
+                "bundle": "menu_link_content",
+                "label": "Notícias",
+                "published": true
+            },
+            {
+                "id": "7",
+                "uuid": "85834c54-c619-4fad-a843-d4b9142348b0",
+                "bundle": "menu_link_content",
+                "label": "Transparência",
+                "published": true
+            },
+            {
+                "id": "8",
+                "uuid": "7538bbf7-a086-4920-aabc-d7a447102468",
+                "bundle": "menu_link_content",
+                "label": "Contato",
+                "published": true
+            },
+            {
+                "id": "9",
+                "uuid": "2c90a8ec-119d-457d-a930-45d0e1a9d011",
+                "bundle": "menu_link_content",
+                "label": "Quem somos",
+                "published": true
+            },
+            {
+                "id": "10",
+                "uuid": "ae8eb275-e569-4a0a-abc2-4d864a7aafd4",
+                "bundle": "menu_link_content",
+                "label": "Projetos",
+                "published": true
+            },
+            {
+                "id": "11",
+                "uuid": "f2cdc2e5-8018-4fba-9828-86940b72ea22",
+                "bundle": "menu_link_content",
+                "label": "Transparência",
+                "published": true
+            },
+            {
+                "id": "12",
+                "uuid": "81cc61ac-4d97-4319-bf1e-4343aa2fcd99",
+                "bundle": "menu_link_content",
+                "label": "Notícias",
+                "published": true
+            },
+            {
+                "id": "13",
+                "uuid": "0b2c690b-7486-4c61-861f-dd473fba66c3",
+                "bundle": "menu_link_content",
+                "label": "Atividades",
+                "published": true
+            },
+            {
+                "id": "14",
+                "uuid": "ae127c2e-aa03-4a8e-b89c-69f864b7e2eb",
+                "bundle": "menu_link_content",
+                "label": "PodPlant420",
+                "published": true
+            },
+            {
+                "id": "15",
+                "uuid": "a2079029-53bf-4c12-96c2-79881a43a656",
+                "bundle": "menu_link_content",
+                "label": "Contato",
+                "published": true
+            },
+            {
+                "id": "16",
+                "uuid": "d9f4dac8-647f-4cdc-aa5d-841d5cb91178",
+                "bundle": "menu_link_content",
+                "label": "Acompanhe nossas atividades",
+                "published": false
+            },
+            {
+                "id": "17",
+                "uuid": "18825a7c-e0f4-4277-9f70-56ec5842fe98",
+                "bundle": "menu_link_content",
+                "label": "Política de Privacidade",
+                "published": true
+            },
+            {
+                "id": "18",
+                "uuid": "e00a77f5-e31a-4849-be8c-4e3384dbb0b3",
+                "bundle": "menu_link_content",
+                "label": "Apoie",
+                "published": true
+            }
+        ],
+        "path_alias": [
+            {
+                "id": "1",
+                "uuid": "a84a87ce-19f5-4372-98d1-bf5f52b91ad7",
+                "bundle": "path_alias",
+                "label": "/inicio",
+                "published": true
+            },
+            {
+                "id": "2",
+                "uuid": "0e93c66b-e21e-45e0-90d4-2f5b2b5ca288",
+                "bundle": "path_alias",
+                "label": "/projetos/carnareggae-bloco-sativa",
+                "published": true
+            },
+            {
+                "id": "3",
+                "uuid": "bf4122da-c32b-4eb3-9f5e-1d98a24d8a50",
+                "bundle": "path_alias",
+                "label": "/projetos/baque-sativa",
+                "published": true
+            },
+            {
+                "id": "4",
+                "uuid": "79c6abbf-1d0c-4f7f-8024-62e66f564afa",
+                "bundle": "path_alias",
+                "label": "/projetos/podplant420",
+                "published": true
+            },
+            {
+                "id": "5",
+                "uuid": "36ad2a32-b1bd-49aa-afeb-6bc7d59dfeae",
+                "bundle": "path_alias",
+                "label": "/projetos/batalha-do-riddim",
+                "published": true
+            },
+            {
+                "id": "6",
+                "uuid": "9530d233-3ecf-487c-9841-f76b6f702929",
+                "bundle": "path_alias",
+                "label": "/institucional",
+                "published": true
+            },
+            {
+                "id": "7",
+                "uuid": "171a0fd7-dd22-49c6-8d07-8e673550675f",
+                "bundle": "path_alias",
+                "label": "/projetos",
+                "published": true
+            },
+            {
+                "id": "8",
+                "uuid": "9447ac72-f0cb-4263-be2a-90b25f8f3fdc",
+                "bundle": "path_alias",
+                "label": "/atividades",
+                "published": true
+            },
+            {
+                "id": "9",
+                "uuid": "01dd7f29-44c2-43a7-a208-09a5d2637b24",
+                "bundle": "path_alias",
+                "label": "/noticias",
+                "published": true
+            },
+            {
+                "id": "10",
+                "uuid": "a6368774-e681-4b62-87af-58da34faf8e1",
+                "bundle": "path_alias",
+                "label": "/transparencia",
+                "published": true
+            },
+            {
+                "id": "11",
+                "uuid": "81c53401-0334-4208-bd0c-e0cd3cccb2de",
+                "bundle": "path_alias",
+                "label": "/politica-de-privacidade",
+                "published": true
+            },
+            {
+                "id": "12",
+                "uuid": "686cfe58-a261-43d6-b035-5b60e67bd272",
+                "bundle": "path_alias",
+                "label": "/contato",
+                "published": true
+            },
+            {
+                "id": "21",
+                "uuid": "ef69e065-9e50-4a90-a0e0-dfaa43fa3686",
+                "bundle": "path_alias",
+                "label": "/contato",
+                "published": true
+            },
+            {
+                "id": "22",
+                "uuid": "c108824c-db14-4e1b-ad77-205adba95579",
+                "bundle": "path_alias",
+                "label": "/contato",
+                "published": true
+            },
+            {
+                "id": "23",
+                "uuid": "bc030e08-b666-4f82-a941-7e7579a3d13a",
+                "bundle": "path_alias",
+                "label": "/contato/confirmation",
+                "published": true
+            },
+            {
+                "id": "24",
+                "uuid": "2b64de31-6dde-47d7-8eea-07f9bdca6e3a",
+                "bundle": "path_alias",
+                "label": "/contato/confirmation",
+                "published": true
+            },
+            {
+                "id": "25",
+                "uuid": "b2d88972-fb61-4df8-9604-653177b34777",
+                "bundle": "path_alias",
+                "label": "/contato/submissions",
+                "published": true
+            },
+            {
+                "id": "26",
+                "uuid": "99b40dae-a7be-4aa7-883f-85e0024f0fe8",
+                "bundle": "path_alias",
+                "label": "/contato/submissions",
+                "published": true
+            },
+            {
+                "id": "27",
+                "uuid": "679d6e02-ee6e-4c48-8782-2b915abc43c7",
+                "bundle": "path_alias",
+                "label": "/contato/drafts",
+                "published": true
+            },
+            {
+                "id": "28",
+                "uuid": "1d47c9a2-6fa4-4fe1-900f-210ccf5c5f86",
+                "bundle": "path_alias",
+                "label": "/contato/drafts",
+                "published": true
+            },
+            {
+                "id": "58",
+                "uuid": "695ce24d-d4f1-4a35-ab89-2dcce4c437f4",
+                "bundle": "path_alias",
+                "label": "/termos-de-uso",
+                "published": true
+            },
+            {
+                "id": "59",
+                "uuid": "d81b2b65-6cf8-425e-a910-cc5ef353483b",
+                "bundle": "path_alias",
+                "label": "/termos-de-uso",
+                "published": true
+            },
+            {
+                "id": "60",
+                "uuid": "72e3170f-6ea4-4307-9ec0-1d4d5b1ad86c",
+                "bundle": "path_alias",
+                "label": "/verbete/proibicionismo",
+                "published": true
+            },
+            {
+                "id": "61",
+                "uuid": "0653ba3f-aaf7-4b46-a3ae-c83a4593ee52",
+                "bundle": "path_alias",
+                "label": "/verbete/marcha-da-maconha",
+                "published": true
+            },
+            {
+                "id": "62",
+                "uuid": "d0690c8f-958d-4a12-b516-7d48e1a2c3a8",
+                "bundle": "path_alias",
+                "label": "/verbete/reducao-de-danos",
+                "published": true
+            },
+            {
+                "id": "63",
+                "uuid": "0509c07e-03ca-4546-bcd4-ae76ec8147b9",
+                "bundle": "path_alias",
+                "label": "/verbete/associacao-cultural-antiproibicionista",
+                "published": true
+            },
+            {
+                "id": "79",
+                "uuid": "dc9b8710-0562-4253-b944-142d4446b695",
+                "bundle": "path_alias",
+                "label": "/group/1/member/1",
+                "published": true
+            }
+        ],
+        "redirect": [
+            {
+                "id": "1",
+                "uuid": "7e6f3f67-77d6-4861-9c5d-a0e455cc965a",
+                "bundle": "redirect",
+                "label": "form/aculta-contact",
+                "published": true
+            },
+            {
+                "id": "2",
+                "uuid": "57c94095-d3e8-4006-94b7-6935fbd630aa",
+                "bundle": "redirect",
+                "label": "form/aculta-contact/confirmation",
+                "published": true
+            },
+            {
+                "id": "3",
+                "uuid": "a3d66c5d-13e0-4dd4-b3fe-a8bd929a0a6f",
+                "bundle": "redirect",
+                "label": "form/aculta-contact/confirmation",
+                "published": true
+            },
+            {
+                "id": "4",
+                "uuid": "3c8f83ea-a725-4c46-86a9-726722ef3211",
+                "bundle": "redirect",
+                "label": "form/aculta-contact/submissions",
+                "published": true
+            },
+            {
+                "id": "5",
+                "uuid": "81850b81-e7bc-4463-9813-3221dc6bcdda",
+                "bundle": "redirect",
+                "label": "form/aculta-contact/submissions",
+                "published": true
+            },
+            {
+                "id": "6",
+                "uuid": "bc826c44-9aef-46e0-a9fd-2f67e97912fd",
+                "bundle": "redirect",
+                "label": "form/aculta-contact/drafts",
+                "published": true
+            },
+            {
+                "id": "7",
+                "uuid": "33d5a740-4460-434e-8f75-72bb815b6fed",
+                "bundle": "redirect",
+                "label": "form/aculta-contact/drafts",
+                "published": true
+            }
+        ]
+    }
+}

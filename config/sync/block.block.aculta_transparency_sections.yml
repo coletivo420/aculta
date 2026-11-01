@@ -1,0 +1,33 @@
+uuid: 8e0243a5-f45c-46be-9819-32a9c73c4678
+langcode: pt-br
+status: true
+dependencies:
+  content:
+    - 'block_content:basic:990079a5-c586-474b-89a4-38529c15fb14'
+  module:
+    - aculta_portal
+    - block_content
+    - system
+  theme:
+    - aculta420
+id: aculta_transparency_sections
+theme: aculta420
+region: content
+weight: 20
+provider: null
+plugin: 'block_content:990079a5-c586-474b-89a4-38529c15fb14'
+settings:
+  id: 'block_content:990079a5-c586-474b-89a4-38529c15fb14'
+  label: 'Organização e documentos da Transparência'
+  label_display: ''
+  provider: block_content
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: /transparencia
+  aculta_domain_purpose:
+    id: aculta_domain_purpose
+    purpose: main
+    negate: false

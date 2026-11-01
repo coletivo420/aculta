@@ -1,0 +1,29 @@
+uuid: 4dfadd87-bbdd-4f8e-89c9-9ac48e658c4a
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+    - options
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: BHS_vgTxRtfe6MsTGletrIUHk4iJm08eG5fHo_0FxFU
+id: message.field_aculta_commerce_event_type
+field_name: field_aculta_commerce_event_type
+entity_type: message
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: order_placed
+      label: 'Pedido recebido'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

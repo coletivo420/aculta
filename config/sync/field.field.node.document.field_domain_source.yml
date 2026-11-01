@@ -1,0 +1,27 @@
+uuid: 48f6754a-8cd9-4aef-921a-ab4ef4466f9d
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_domain_source
+    - node.type.document
+id: node.document.field_domain_source
+field_name: field_domain_source
+entity_type: node
+bundle: document
+label: 'Domain Source'
+description: 'Select the canonical domain for this content.'
+required: false
+translatable: true
+default_value:
+  -
+    target_id: aculta_org
+default_value_callback: ''
+settings:
+  handler: 'default:domain'
+  handler_settings:
+    target_bundles: null
+    sort:
+      field: weight
+      direction: ASC
+field_type: entity_reference

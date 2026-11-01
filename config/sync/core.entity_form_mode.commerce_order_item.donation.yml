@@ -1,0 +1,13 @@
+uuid: 60fe78a8-9729-48c1-9db4-2a8151af96fb
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - commerce_order
+_core:
+  default_config_hash: '-xUPjGiR5B1s_QXi72Ww3CoM50XAmDBYmqhML6Ua8rc'
+id: commerce_order_item.donation
+label: Doação
+description: null
+targetEntityType: commerce_order_item
+cache: true

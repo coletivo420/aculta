@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * Homelab development database example.
+ * Copy this to an ignored local settings file and set ACULTA_ENV=homelab.
+ * The canonical Homelab web server is Apache + PHP-FPM. This file configures
+ * Drupal runtime settings only; VirtualHost configuration remains external.
+ * Production remains MariaDB and must use its own external settings/credentials.
+ */
+$aculta_environment = getenv('ACULTA_ENV') ?: 'homelab';
+if ($aculta_environment !== 'homelab') {
+  return;
+}
+
+// Runtime MariaDB do Homelab (banco aculta_runtime). O arquivo de credenciais fica em secrets/,
+// fora do Git, e deve retornar o array de conexão. Sem ele, o Drupal não conecta.
+$aculta_runtime_db = dirname(DRUPAL_ROOT) . '/secrets/aculta-runtime-db.php';
+if (is_file($aculta_runtime_db) && is_readable($aculta_runtime_db)) {
+  $databases['default']['default'] = include $aculta_runtime_db;
+}
+unset($aculta_runtime_db);
+
+// The seven homelab hostnames are handled by the project's normal local
+// settings and Domain aliases. No production hostname is redirected here.
+// Secrets use the shared ACULTA contract. The preferred native adapter passes
+// TURNSTILE_KEYS_JSON to PHP-FPM and CLI. If the host cannot provide native
+// environment variables, configure a restricted file outside the document
+// root and load the portable bootstrap adapter below. The loader gives an
+// existing native variable precedence over the file. Do not place credentials
+// in the database or substitute public test keys in a real environment.
+//
+// Optional secure bootstrap adapter (uncomment only when needed):
+// $settings['aculta_secrets_file'] = '/etc/aculta/secrets.env';
+// require __DIR__ . '/aculta.secrets.php';
+
+
+/**
+ * Keep Drupal-generated runtime files private to the application users.
+ *
+ * The setgid bit preserves the shared group on new directories. Default ACLs
+ * on the Homelab runtime paths still grant the CLI user the access it needs.
+ * These values prevent cache rebuilds from recreating writable directories as
+ * 0777. Apache/PHP-FPM ownership and ACLs must be reviewed independently in
+ * Homelab and production.
+ */
+$settings['file_chmod_directory'] = 02770;
+$settings['file_chmod_file'] = 0660;
+
+// Core's default PHP storage explicitly chmods compiled Twig directories to
+// 0777, ignoring these file-system settings. Override only the Twig bin in
+// Homelab so cache creation and cleanup keep directories at 02770.
+$settings['php_storage']['twig']['class'] = \Drupal\aculta_portal\PhpStorage\RestrictedTwigStorage::class;

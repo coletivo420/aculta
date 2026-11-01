@@ -1,0 +1,27 @@
+uuid: a682e487-7da3-4730-a315-162773c55aeb
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_document
+    - node.type.document
+  module:
+    - file
+id: node.document.field_document
+field_name: field_document
+entity_type: node
+bundle: document
+label: 'Documento PDF'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: institutional-documents
+  file_extensions: pdf
+  max_filesize: ''
+  description_field: true
+field_type: file

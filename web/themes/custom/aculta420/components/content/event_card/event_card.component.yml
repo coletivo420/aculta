@@ -1,0 +1,36 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de evento
+status: experimental
+group: Cards
+description: 'Cartão de evento do catálogo (/eventos). Dados vêm do módulo ACULTA Eventos: título, tipo, próxima data em dd/mm/aaaa e local.'
+props:
+  type: object
+  properties:
+    title:
+      type: string
+      description: 'Nome do evento.'
+      default: 'Evento'
+    url:
+      type: string
+      description: 'Endereço da página do evento.'
+      default: '#'
+    subtitle:
+      type: [string, 'null']
+      description: 'Subtítulo opcional.'
+      default: null
+    tipo:
+      type: [string, 'null']
+      description: 'Tipo do evento (vocabulário aculta_event_type).'
+      default: null
+    proxima:
+      type: [string, 'null']
+      description: 'Próxima data em dd/mm/aaaa HH:mm, horário de Brasília.'
+      default: null
+    local:
+      type: [string, 'null']
+      description: 'Nome do local, quando houver.'
+      default: null
+    cancelado:
+      type: boolean
+      description: 'Mostra o aviso de cancelamento.'
+      default: false

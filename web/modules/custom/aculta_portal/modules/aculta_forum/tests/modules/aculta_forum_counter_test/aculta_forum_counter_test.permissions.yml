@@ -1,0 +1,4 @@
+view restricted forum counter topics:
+  title: 'View restricted forum counter topics'
+  description: 'Grants the restricted Forum realm used by counter Kernel tests.'
+  restrict access: true

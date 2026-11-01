@@ -1,0 +1,19 @@
+uuid: c3b0e165-d00f-48c7-9e16-df443bbb0136
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - link
+    - node
+id: node.field_hero_secondary
+field_name: field_hero_secondary
+entity_type: node
+type: link
+settings: {  }
+module: link
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

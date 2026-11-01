@@ -1,0 +1,8 @@
+name: Autorização pendente
+description: Fixture textual sem marca nem imagem real; logotipos só entram após autorização registrada e ingestão por aculta_image.
+component: aculta420:sponsor-logos
+props:
+  label: Apoiadores com autorização registrada
+slots:
+  sponsors:
+    markup: '<li>Marca demonstrativa (sem logotipo)</li><li>Parceiro demonstrativo (sem logotipo)</li>'

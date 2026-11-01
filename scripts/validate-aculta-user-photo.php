@@ -1,0 +1,183 @@
+<?php
+
+/**
+ * @file
+ * Gate: regras de estado da foto de perfil (aculta_user). Ver web/modules/custom/aculta_portal/modules/aculta_user/docs/FOTO-PERFIL.md.
+ *
+ * Regras (invariantes INV-FOTO-*):
+ * - INV-FOTO-1: avatar do sistema (acervo) não tem botão "Remover" (o campo de envio não recebe remove_button).
+ * - INV-FOTO-2: "Sortear outro avatar" só existe quando a foto atual é do acervo (if ($isAcervo)).
+ * - INV-FOTO-3: não existe link "Recortar foto" no popup; o recorte só abre logo após o envio (photo-flow.js).
+ * - INV-FOTO-4: o recorte só aceita o arquivo recém-enviado: nada de fallback para a foto atual nem para o recorte pendente.
+ * - INV-FOTO-5: o campo de recorte aparece uma única vez no modal.
+ * - INV-FOTO-6: aplicar o recorte troca a foto da conta e recarrega o painel, sem reabrir o popup.
+ * - INV-FOTO-8: sortear só troca a prévia do modal; a foto muda ao salvar; fechar sem salvar descarta a escolha.
+ * - INV-FOTO-7: o popup não mostra nome nem link da foto atual; "Remover foto" (só personalizada) volta a um avatar sorteado do acervo.
+ * - INV-FOTO-10: o acervo é componente obrigatório e o último fallback: catálogo válido e ao menos uma entrada ativa com arquivo.
+ * - INV-FOTO-11: `user_picture` é a fonte única; perfil, autoria e memorial usam o resolver central, com cache da conta e sem fallback visual por inicial.
+ *
+ * Verificação estática do código-fonte (não depende de servidor). A verificação de navegador está no roteiro do docs.
+ */
+
+declare(strict_types=1);
+
+$root = dirname(__DIR__);
+$module = $root . '/web/modules/custom/aculta_portal/modules/aculta_user';
+$errors = [];
+
+$read = static function (string $relative) use ($module): string {
+  $file = $module . '/' . $relative;
+  if (!is_file($file)) {
+    return '';
+  }
+  return (string) file_get_contents($file);
+};
+
+$picture = $read('src/Form/UserPictureForm.php');
+$crop = $read('src/Form/AvatarCropForm.php');
+$hooks = $read('src/Hook/PhotoEditorHooks.php');
+$flow = $read('js/photo-flow.js');
+$avatarResolver = $read('src/Avatar/AvatarResolver.php');
+$authorResolver = $read('src/Identity/AuthorIdentityResolver.php');
+$publicProfile = $read('src/Controller/PublicProfileController.php');
+$legacyMemorial = $read('src/Controller/LegacyMemorialController.php');
+$identityTemplate = (string) @file_get_contents($root . '/web/themes/custom/aculta420/components/content/profile-identity/profile-identity.twig');
+$portalUi = (string) file_get_contents($root . '/web/themes/custom/aculta420/src/Hook/PortalUiHooks.php');
+$accountCss = (string) file_get_contents($root . '/web/themes/custom/aculta420/css/components/portal-account.css');
+$profileCss = (string) file_get_contents($root . '/web/themes/custom/aculta420/css/components/public-profile.css');
+
+if ($picture === '' || $crop === '') {
+  fwrite(STDERR, "ACULTA USER PHOTO FAIL:\n- arquivos do formulário de foto ausentes\n");
+  exit(1);
+}
+
+// INV-FOTO-1: remover só sai do campo quando a foto não é do acervo.
+if (!str_contains($picture, "'#aculta_acervo' => \$isAcervo")) {
+  $errors[] = 'INV-FOTO-1: o campo de envio não recebe #aculta_acervo = $isAcervo';
+}
+if (!preg_match('/function withoutRemoveForAcervo\(.*?unset\(\$element\[\'remove_button\'\]\)/s', $picture)) {
+  $errors[] = "INV-FOTO-1: withoutRemoveForAcervo não remove 'remove_button'";
+}
+if (!str_contains($picture, "'#after_build' => [[self::class, 'withoutRemoveForAcervo']]")) {
+  $errors[] = 'INV-FOTO-1: withoutRemoveForAcervo não está ligado como #after_build do campo';
+}
+
+// INV-FOTO-2: sortear só para acervo.
+$sortearPos = strpos($picture, "\$form['actions']['sortear']");
+$acervoPos = strpos($picture, 'if ($isAcervo) {');
+if ($sortearPos === FALSE) {
+  $errors[] = "INV-FOTO-2: \$form['actions']['sortear'] ausente";
+}
+elseif ($acervoPos === FALSE || $acervoPos > $sortearPos || str_contains(substr($picture, $acervoPos, $sortearPos - $acervoPos), '}')) {
+  $errors[] = "INV-FOTO-2: \$form['actions']['sortear'] não está dentro de 'if (\$isAcervo)'";
+}
+
+// INV-FOTO-3: sem link de recorte no popup nem no painel.
+if (preg_match('/aculta_user\.avatar_crop/', $picture) || preg_match('/aculta_user\.avatar_crop/', $hooks)) {
+  $errors[] = "INV-FOTO-3: link de recorte ('aculta_user.avatar_crop') presente no formulário do popup";
+}
+if (str_contains($picture, 'Recortar foto') || str_contains($hooks, 'Recortar foto')) {
+  $errors[] = "INV-FOTO-3: texto 'Recortar foto' presente no popup";
+}
+if (!str_contains($flow, 'openCrop(fid)')) {
+  $errors[] = 'INV-FOTO-3: photo-flow.js não abre o recorte ao receber o envio (openCrop)';
+}
+
+// INV-FOTO-5: o recorte aparece uma única vez (o achatamento limpa o pre_render que reagrupa os filhos).
+if (!str_contains($crop, "\$element[\$key]['#pre_render'] = [];") || !str_contains($crop, "\$element['#pre_render'] = [];")) {
+  $errors[] = 'INV-FOTO-5: flattenElement não limpa #pre_render; o campo de recorte sai duplicado';
+}
+
+// INV-FOTO-7: o campo de envio não mostra a foto atual (nome e link); "Remover foto" é botão próprio, só para foto personalizada, e sorteia do acervo.
+if (!str_contains($picture, "'#default_value' => NULL")) {
+  $errors[] = 'INV-FOTO-7: o campo de envio tem valor padrão (mostra nome/link da foto atual)';
+}
+if (!preg_match("/if \\(!\\\$isAcervo && \\\$current > 0\\) \\{.*?'remover'.*?'::removePersonal'/s", $picture)) {
+  $errors[] = "INV-FOTO-7: botão 'remover' com '::removePersonal' ausente ou fora do estado de foto personalizada";
+}
+if (!preg_match('/function removePersonal\(.*?avatarPool->reroll\(\$account\)/s', $picture)) {
+  $errors[] = 'INV-FOTO-7: removePersonal não sorteia do acervo (AvatarPool::reroll)';
+}
+
+// INV-FOTO-8: sortear só troca a prévia do modal (escolha pendente); a foto só muda ao salvar. Fechar sem salvar não grava.
+$reroll = $read('src/Controller/AvatarRerollController.php');
+if (!str_contains($picture, "'.ui-dialog [data-aculta-user-avatar]'") || !str_contains($picture, 'avatarPool->preview(')) {
+  $errors[] = 'INV-FOTO-8: o sorteio não se limita à prévia do modal (ReplaceCommand em .ui-dialog) ou não guarda escolha pendente';
+}
+if (str_contains($reroll, 'data-aculta-avatar-changed') || str_contains($flow, 'reloadAfterAvatarChange')) {
+  $errors[] = 'INV-FOTO-8: o sorteio ainda grava ou recarrega a página ao fechar o modal';
+}
+if (!str_contains($picture, 'applyPending(')) {
+  $errors[] = 'INV-FOTO-8: Salvar não aplica a escolha pendente do sorteio';
+}
+
+// INV-FOTO-9: foto importada por OAuth é personalizada: o presave de conta nova a torna permanente e fora do acervo.
+$accountHooks = $read('src/Hook/AccountCreationHooks.php');
+if (!str_contains($accountHooks, 'setPermanent()') || !str_contains($accountHooks, 'AvatarPool::DIRECTORY')) {
+  $errors[] = 'INV-FOTO-9: foto importada por OAuth não é tornada permanente/personalizada no presave da conta';
+}
+
+// INV-FOTO-6: aplicar o recorte troca a foto da conta e recarrega o painel; não há etapa de "Salvar" nem reabertura do popup.
+if (str_contains($crop, 'PENDING_KEY') || str_contains($crop, 'aculta_recorte') || !str_contains($crop, "set('user_picture'")) {
+  $errors[] = 'INV-FOTO-6: o recorte não troca a foto da conta, ou volta ao recorte pendente / reabertura do popup';
+}
+if (str_contains($flow, 'aculta_recorte') || str_contains($flow, 'reopen')) {
+  $errors[] = 'INV-FOTO-6: photo-flow.js reabre o popup ao voltar (loop de reabertura)';
+}
+
+// INV-FOTO-4: recorte só do arquivo recém-enviado.
+if (!preg_match('/function targetFile\(\).*?\$file->isPermanent\(\)/s', $crop)) {
+  $errors[] = 'INV-FOTO-4: targetFile não recusa arquivo permanente (foto já salva)';
+}
+$targetStart = strpos($crop, 'function targetFile(');
+$targetEnd = $targetStart === FALSE ? FALSE : strpos($crop, '/** Imagem que não é do acervo', $targetStart);
+if ($targetStart === FALSE || $targetEnd === FALSE) {
+  $errors[] = 'INV-FOTO-4: targetFile não encontrado';
+}
+else {
+  $target = substr($crop, $targetStart, $targetEnd - $targetStart);
+  if (str_contains($target, 'PENDING_KEY') || str_contains($target, "'user_picture'")) {
+    $errors[] = 'INV-FOTO-4: targetFile voltou a usar o recorte pendente ou a foto atual';
+  }
+}
+
+// INV-FOTO-11: fonte única e resolução compartilhada, sem fallback concorrente do tema.
+if (!str_contains($avatarResolver, "get('user_picture')") || !str_contains($avatarResolver, 'addCacheableDependency($account)')) {
+  $errors[] = 'INV-FOTO-11: AvatarResolver não usa user_picture como fonte canônica com cache da conta';
+}
+if (!str_contains($authorResolver, '$this->avatars->build(') || !str_contains($publicProfile, '$this->avatars->build(')) {
+  $errors[] = 'INV-FOTO-11: autoria e perfil público não usam AvatarResolver';
+}
+if (!str_contains($legacyMemorial, '$this->avatars->build(') || str_contains($legacyMemorial, "'initial'")) {
+  $errors[] = 'INV-FOTO-11: memorial coletivo não usa AvatarResolver ou cria inicial local';
+}
+if (preg_match('/slice\s*\(\s*0\s*,\s*1\s*\)|profile-identity__avatar--initial/', $identityTemplate)
+  || str_contains($portalUi, 'account-avatar-empty') || str_contains($portalUi, 'public-profile-initial')
+  || str_contains($accountCss, 'portal-account__avatar--empty') || str_contains($profileCss, 'portal-profile__initial')) {
+  $errors[] = 'INV-FOTO-11: tema mantém fallback visual por inicial ou token de avatar vazio';
+}
+
+// INV-FOTO-10: o acervo é componente obrigatório e o último fallback. Exige catálogo válido e ao menos uma entrada ativa com arquivo.
+$catalogPath = $module . '/assets/avatars/meta/avatars.json';
+$catalog = is_file($catalogPath) ? json_decode((string) file_get_contents($catalogPath), TRUE) : NULL;
+if (!is_array($catalog)) {
+  $errors[] = 'INV-FOTO-10: catálogo do acervo ausente ou inválido (assets/avatars/meta/avatars.json)';
+}
+else {
+  $active = 0;
+  foreach ($catalog as $item) {
+    if (is_array($item) && !empty($item['active']) && is_file($module . '/assets/avatars/' . ($item['file'] ?? ''))) {
+      $active++;
+    }
+  }
+  if ($active === 0) {
+    $errors[] = 'INV-FOTO-10: acervo sem entrada ativa com arquivo; o acervo é o último fallback';
+  }
+}
+
+if ($errors !== []) {
+  fwrite(STDERR, "ACULTA USER PHOTO FAIL:\n- " . implode("\n- ", $errors) . "\n");
+  exit(1);
+}
+
+echo 'ACULTA USER PHOTO: PASS (INV-FOTO-1 a INV-FOTO-11)' . PHP_EOL;

@@ -1,0 +1,17 @@
+uuid: 7278fc57-0275-4b8a-ac16-a1bb64e7733f
+langcode: pt-br
+status: true
+dependencies: {  }
+name: aculta_corpo_1200
+label: 'ACULTA corpo 1200px'
+effects:
+  89631276-7fee-43d4-88cb-5047d5cec240:
+    uuid: 89631276-7fee-43d4-88cb-5047d5cec240
+    id: image_scale
+    weight: 0
+    data:
+      width: 1200
+      height: null
+      upscale: false
+pipeline: aculta_derivados
+

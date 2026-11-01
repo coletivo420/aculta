@@ -1,0 +1,11 @@
+uuid: 209a1436-6774-4e6a-82e5-ce64bd57d6fc
+langcode: pt-br
+status: true
+dependencies: {  }
+name: Verbete
+type: wiki_entry
+description: 'Verbete editorial da Wiki420 da ACULTA.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: true

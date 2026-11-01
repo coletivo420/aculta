@@ -1,0 +1,33 @@
+services:
+  logger.channel.aculta_forum_restricted_test:
+    parent: logger.channel_base
+    arguments: ['aculta_forum_restricted_test']
+
+  aculta_forum_restricted_test.active_associate:
+    class: Drupal\aculta_user\Associado\AssociadoMarker
+    arguments: ['@entity_type.manager', '@datetime.time']
+    public: true
+
+  aculta_forum_restricted_test.group_resolver:
+    class: Drupal\aculta_forum\RestrictedForum\RestrictedForumGroupResolver
+    arguments: ['@config.factory', '@entity_type.manager', '@logger.channel.aculta_forum_restricted_test']
+    public: true
+
+  aculta_forum_restricted_test.access_policy:
+    class: Drupal\aculta_forum\RestrictedForum\RestrictedForumAccessPolicy
+    arguments: ['@aculta_forum_restricted_test.group_resolver', '@aculta_forum_restricted_test.active_associate', '@logger.channel.aculta_forum_restricted_test']
+    public: true
+
+  aculta_forum_restricted_test.grant_rebuilder:
+    class: Drupal\aculta_forum\RestrictedForum\RestrictedForumGrantRebuilder
+    arguments: ['@entity_type.manager', '@node.grant_storage', '@cache_tags.invalidator', '@logger.channel.aculta_forum_restricted_test']
+    public: true
+
+  aculta_forum_restricted_test.access_hooks:
+    class: Drupal\aculta_forum\Hook\RestrictedForumAccessHooks
+    arguments: ['@aculta_forum_restricted_test.group_resolver', '@aculta_forum_restricted_test.access_policy', '@aculta_forum_restricted_test.active_associate', '@logger.channel.aculta_forum_restricted_test']
+    public: true
+
+  Drupal\aculta_forum_restricted_test\Hook\RestrictedForumAccessTestHooks:
+    class: Drupal\aculta_forum_restricted_test\Hook\RestrictedForumAccessTestHooks
+    arguments: ['@aculta_forum_restricted_test.access_hooks']

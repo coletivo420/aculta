@@ -1,0 +1,11 @@
+uuid: 0823c320-e8a8-4de2-b0e6-e9d28cefcd11
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - block_content
+id: block_content.contact
+label: Contact
+description: null
+targetEntityType: block_content
+cache: true

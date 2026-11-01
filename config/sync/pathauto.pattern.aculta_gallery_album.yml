@@ -1,0 +1,17 @@
+uuid: 697d4f61-0feb-42bf-a3ae-5527fefb73dc
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - media_gallery
+_core:
+  default_config_hash: Y3FXziIELZTRboTm5qhTtIKNCvk0EIW42EtoWxoIcm4
+id: aculta_gallery_album
+label: 'URLs — álbum'
+type: media_gallery
+pattern: '/albuns/[media_gallery:title]'
+selection_criteria: {  }
+selection_logic: and
+weight: 0
+relationships: {  }
+

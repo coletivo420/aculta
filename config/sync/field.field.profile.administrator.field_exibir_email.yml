@@ -1,0 +1,24 @@
+uuid: 705a6787-2b4c-4251-971d-0e336c835254
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_exibir_email
+    - profile.type.administrator
+id: profile.administrator.field_exibir_email
+field_name: field_exibir_email
+entity_type: profile
+bundle: administrator
+label: 'Exibir e-mail no perfil público'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean
+

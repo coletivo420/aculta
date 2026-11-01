@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * Hooks for the ACULTA Calendar module.
+ */
+
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_metatags_alter().
+ */
+function aculta_calendar_metatags_alter(array &$tags, array $context): void {
+  $routeName = \Drupal::routeMatch()->getRouteName();
+  if (!in_array($routeName, [
+    'aculta_events.agenda',
+    'aculta_events.month',
+    'aculta_events.day',
+    'aculta_events.interactive',
+  ], TRUE)) {
+    return;
+  }
+
+  $request = \Drupal::requestStack()->getCurrentRequest();
+  $container = \Drupal::getContainer();
+  if ($request === NULL || !$container->has('aculta_portal.domain_purpose')) {
+    return;
+  }
+  $canonical = $container->get('aculta_portal.domain_purpose')
+    ->environmentPathUrl('eventos', $request->getPathInfo());
+  if (!$canonical instanceof Url) {
+    return;
+  }
+
+  $canonicalUrl = $canonical->toString();
+  $tags['canonical_url'] = $canonicalUrl;
+  $tags['og_url'] = $canonicalUrl;
+}

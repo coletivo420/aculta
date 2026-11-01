@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_lms_h5p\aculta_H5PEditor;
+
+use Drupal\file\Validation\FileValidatorSettingsTrait;
+
+/**
+ * Legacy H5P class identifier retained for Drupal discovery.
+ *
+ * Builds Drupal Core upload validators for non-image H5P media. */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.StartWithCapital, Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the H5P discovery identifier.
+final class aculta_H5PFileUploadValidators {
+
+  use FileValidatorSettingsTrait;
+
+  /**
+   * Returns Core validators bounded by PHP upload limits and extensions. */
+  public function forExtensions(string $extensions): array {
+    return $this->getFileUploadValidators(['file_extensions' => $extensions]);
+  }
+
+}

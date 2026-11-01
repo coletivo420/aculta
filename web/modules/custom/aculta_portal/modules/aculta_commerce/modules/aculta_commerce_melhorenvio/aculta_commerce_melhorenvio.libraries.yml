@@ -1,0 +1,12 @@
+# Calculadora de frete do módulo: funciona em qualquer tema (ACULTA420 e Olivero). Estilo com tokens do ACULTA420 e
+# fallback para o Bootstrap; comportamento em assets/shipping-calculator.js.
+shipping-calculator:
+  version: 1.x
+  css:
+    component:
+      assets/shipping-calculator.css: {}
+  js:
+    assets/shipping-calculator.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

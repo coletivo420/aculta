@@ -1,0 +1,6 @@
+name: Selos textuais
+description: Rótulos explícitos que não dependem apenas de cor ou ícone para comunicar recursos.
+component: aculta420:accessibility-badges
+slots:
+  badges:
+    markup: '<li>Legendas disponíveis</li><li>Descrição em texto</li><li>Navegação por teclado</li>'

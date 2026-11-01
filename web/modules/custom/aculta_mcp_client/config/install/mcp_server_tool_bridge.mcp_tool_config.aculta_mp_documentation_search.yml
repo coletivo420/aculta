@@ -1,0 +1,4 @@
+id: aculta_mp_documentation_search
+tool_id: 'aculta_mcp_client:mercadopago_documentation_search'
+description: 'Pesquisa somente a documentação pública do Mercado Pago para o Brasil; não consulta pagamentos, contas ou credenciais.'
+status: true

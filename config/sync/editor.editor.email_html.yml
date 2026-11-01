@@ -1,0 +1,29 @@
+uuid: 699e69f1-1ba9-4a63-85f5-6ec5be65ed72
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - filter.format.email_html
+  module:
+    - ckeditor5
+format: email_html
+editor: ckeditor5
+settings:
+  toolbar:
+    items:
+      - bold
+      - italic
+      - underline
+      - '|'
+      - link
+      - bulletedList
+      - numberedList
+      - '|'
+      - insertTable
+      - drupalMedia
+      - '|'
+      - undo
+      - redo
+  plugins: {  }
+image_upload: {  }
+

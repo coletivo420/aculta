@@ -1,0 +1,23 @@
+uuid: a6304704-32a7-443e-8611-c5ee3fa2e503
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - commerce_order
+_core:
+  default_config_hash: r6hRrwIc6LdAniTKcxADDxTCWCKrK5mNd2DdGuIL2Sw
+id: commerce_order_item.field_honoree_last
+field_name: field_honoree_last
+entity_type: commerce_order_item
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

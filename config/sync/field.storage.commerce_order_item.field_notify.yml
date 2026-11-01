@@ -1,0 +1,20 @@
+uuid: e0237eb6-215b-4569-bfba-4ee63baa83a3
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - commerce_order
+_core:
+  default_config_hash: Yh4Eo6wDov7Bvfk8uBNZnqIjhy5OxDuplj703LQvZGA
+id: commerce_order_item.field_notify
+field_name: field_notify
+entity_type: commerce_order_item
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

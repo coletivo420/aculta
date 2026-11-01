@@ -1,0 +1,123 @@
+services:
+  Drupal\aculta_user\Hook\ParticipationEditWindowHooks:
+    class: Drupal\aculta_user\Hook\ParticipationEditWindowHooks
+    arguments: ['@aculta_user.participation_edit_window']
+
+  aculta_user.aculta_user_agreement_hooks:
+    class: Drupal\aculta_user\Hook\AcultaUserAgreementHooks
+    arguments: ['@database']
+  aculta_user.aculta_user_agreement_ledger:
+    class: Drupal\aculta_user\Consent\AcultaUserAgreementLedger
+    arguments: ['@database', '@request_stack', '@datetime.time', '@private_key', '@entity_type.manager', '@path_alias.manager', '@event_dispatcher']
+  aculta_user.achievement_definitions:
+    class: Drupal\aculta_user\Badge\AchievementDefinitions
+    arguments: ['@config.factory', '@lock.persistent', '@entity_type.manager', '@file.usage']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_user.friendship_manager:
+    class: Drupal\aculta_user\Social\FriendshipManager
+    arguments: ['@entity_type.manager', '@current_user', '@lock.persistent', '@flood', '@event_dispatcher']
+  aculta_user.nickname_policy:
+    class: Drupal\aculta_user\Account\NicknamePolicy
+    arguments: ['@entity_type.manager', '@aculta_user.nickname_registry']
+  aculta_user.nickname_registry:
+    class: Drupal\aculta_user\Account\NicknameRegistry
+    arguments: ['@database', '@entity_type.manager']
+  aculta_user.public_profile_policy:
+    class: Drupal\aculta_user\PublicProfilePolicy
+  aculta_user.public_profile_link:
+    class: Drupal\aculta_user\PublicProfileLink
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+  aculta_user.author_identity_resolver:
+    class: Drupal\aculta_user\Identity\AuthorIdentityResolver
+    arguments: ['@entity_type.manager', '@aculta_user.public_profile_link', '@aculta_image.render', '@aculta_user.public_profile_policy', '@aculta_user.social_networks', '@date.formatter', '@aculta_user.avatar_resolver']
+    tags:
+      - { name: aculta_portal.helper }
+  Drupal\aculta_user\Identity\PublicMemberIdentityInterface: '@aculta_user.author_identity_resolver'
+  aculta_user.author_card_builder:
+    class: Drupal\aculta_user\Identity\AuthorCardBuilder
+    arguments: ['@aculta_user.author_identity_resolver']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_user.author_card_variant_resolver:
+    class: Drupal\aculta_user\Identity\AuthorCardVariantResolver
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_user.participation_rules:
+    class: Drupal\aculta_user\ParticipationRules
+    arguments: ['@config.factory', '@entity_type.manager']
+  aculta_user.published_participation_lookup:
+    class: Drupal\aculta_user\Participation\PublishedParticipationLookup
+    arguments: [!tagged_iterator aculta_user.published_participation_lookup]
+  aculta_user.participation_edit_window:
+    class: Drupal\aculta_user\ParticipationEditWindow
+    arguments: ['@config.factory', '@datetime.time', !tagged_iterator aculta_user.edit_window_exemption, '@logger.channel.default']
+  aculta_user.avatar_pool:
+    class: Drupal\aculta_user\Avatar\AvatarPool
+    arguments: ['@extension.list.module', '@file_system', '@entity_type.manager', '@user.data', '%app.root%']
+  aculta_user.avatar_resolver:
+    class: Drupal\aculta_user\Avatar\AvatarResolver
+    arguments: ['@aculta_image.render', '@aculta_user.avatar_pool']
+  aculta_user.social_auth_fields_subscriber:
+    class: Drupal\aculta_user\EventSubscriber\SocialAuthFieldsSubscriber
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: event_subscriber }
+  aculta_user.photo_editor_guard:
+    class: Drupal\aculta_user\Form\PhotoEditorGuard
+  aculta_user.avatar_asset_cleanup:
+    class: Drupal\aculta_user\Avatar\AvatarAssetCleanup
+    arguments: ['@entity_type.manager', '@datetime.time', '@aculta_portal.unused_file_cleaner']
+  aculta_user.badge_service:
+    class: Drupal\aculta_user\Badge\BadgeService
+    arguments: ['@entity_type.manager', '@lock.persistent', '@database', '@datetime.time', '@aculta_user.achievement_definitions']
+  aculta_user.account_bio_card:
+    class: Drupal\aculta_user\Bio\AccountBioCard
+    arguments: ['@entity_type.manager']
+  aculta_user.account_modal_access:
+    class: Drupal\aculta_user\Access\AccountModalAccess
+    arguments: ['@current_user', '@request_stack']
+  aculta_user.social_networks:
+    class: Drupal\aculta_user\Social\SocialNetworks
+  aculta_user.social_links_card:
+    class: Drupal\aculta_user\Social\SocialLinksCard
+    arguments: ['@entity_type.manager', '@aculta_user.social_networks']
+  aculta_user.legacy_authors:
+    class: Drupal\aculta_user\Legacy\LegacyAuthorManager
+    arguments: ['@entity_type.manager']
+  aculta_user.report_queue:
+    class: Drupal\aculta_user\Moderation\ReportQueue
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+  aculta_user.associado_marker:
+    class: Drupal\aculta_user\Associado\AssociadoMarker
+    arguments: ['@entity_type.manager', '@datetime.time']
+  aculta_user.public_profile_not_canonical:
+    class: Drupal\aculta_user\EventSubscriber\PublicProfileNotCanonicalSubscriber
+    arguments: ['@router.route_provider']
+    tags:
+      - { name: event_subscriber }
+  aculta_user.heranca_papeis:
+    class: Drupal\aculta_user\Role\HerancaDePapeis
+    arguments: ['@config.factory', '@entity_type.manager', '@database']
+  aculta_user.role_inheritance_current_user:
+    class: Drupal\aculta_user\EventSubscriber\RoleInheritanceCurrentUserSubscriber
+    arguments: ['@aculta_user.heranca_papeis', '@current_user', '@aculta_portal.email_confirmation_policy']
+    tags:
+      - { name: event_subscriber }
+
+  # Contrato público para consumidores que precisam revalidar a situação ativa
+  # sem ler a entidade aculta_associado.
+  aculta_user.active_associate:
+    alias: aculta_user.associado_marker
+
+  aculta_user.organization_membership_manager:
+    class: Drupal\aculta_user\Organization\OrganizationMembershipManager
+    arguments: ['@entity_type.manager', '@datetime.time']
+
+  aculta_user.ownership_claim_service:
+    class: Drupal\aculta_user\Organization\OwnershipClaimService
+    arguments: ['@entity_type.manager', '@datetime.time', '@aculta_user.organization_membership_manager']
+
+  aculta_user.organization_access_service:
+    class: Drupal\aculta_user\Organization\OrganizationAccessService
+    arguments: ['@aculta_user.organization_membership_manager']

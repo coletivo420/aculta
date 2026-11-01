@@ -1,0 +1,28 @@
+uuid: a6a38543-7515-4147-a516-45e1409eb643
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_msg_delivery
+    - message.template.aculta_msg_commerce_order_notice
+  module:
+    - options
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: EDrI1pzuk5thgRe6-hjIhQpo6Z-p1Lao4PA5RRtBv0I
+id: message.aculta_msg_commerce_order_notice.field_aculta_msg_delivery
+field_name: field_aculta_msg_delivery
+entity_type: message
+bundle: aculta_msg_commerce_order_notice
+label: 'Situação do envio'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: pending
+default_value_callback: ''
+settings: {  }
+field_type: list_string

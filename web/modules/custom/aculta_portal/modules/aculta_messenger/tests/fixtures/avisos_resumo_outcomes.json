@@ -1,0 +1,149 @@
+{
+    "provider_sent": {
+        "result": 1,
+        "events": [
+            {
+                "event": "lock.acquire",
+                "name": "aculta_messenger.avisos_resumo.27"
+            },
+            {
+                "event": "userData.set",
+                "key": "avisos_resumo_em_andamento"
+            },
+            {
+                "event": "deliver",
+                "type": "avisos_resumo",
+                "to": "member@example.test",
+                "langcode": "pt-br",
+                "context": {
+                    "resumo": "loja em \"Duas mensagens agrupadas\": 2"
+                },
+                "correlation": "4e559624-6e17-5194-b172-4dba1592fbcd"
+            },
+            {
+                "event": "lock.acquire",
+                "name": "aculta_messenger.avisos_resumo.27"
+            },
+            {
+                "event": "userData.set",
+                "key": "avisos_resumo_em_andamento"
+            },
+            {
+                "event": "provider.mark",
+                "provider": "loja",
+                "ids": [
+                    501,
+                    502
+                ]
+            },
+            {
+                "event": "userData.set",
+                "key": "avisos_resumo_ultimo"
+            },
+            {
+                "event": "userData.delete",
+                "key": "avisos_resumo_em_andamento"
+            },
+            {
+                "event": "lock.release",
+                "name": "aculta_messenger.avisos_resumo.27"
+            }
+        ]
+    },
+    "provider_cooldown": {
+        "result": 0,
+        "events": [
+            {
+                "event": "lock.acquire",
+                "name": "aculta_messenger.avisos_resumo.27"
+            },
+            {
+                "event": "lock.release",
+                "name": "aculta_messenger.avisos_resumo.27"
+            }
+        ]
+    },
+    "provider_temporary_failure": {
+        "result": 0,
+        "events": [
+            {
+                "event": "lock.acquire",
+                "name": "aculta_messenger.avisos_resumo.27"
+            },
+            {
+                "event": "userData.set",
+                "key": "avisos_resumo_em_andamento"
+            },
+            {
+                "event": "deliver",
+                "type": "avisos_resumo",
+                "to": "member@example.test",
+                "langcode": "pt-br",
+                "context": {
+                    "resumo": "loja em \"Duas mensagens agrupadas\": 2"
+                },
+                "correlation": "4e559624-6e17-5194-b172-4dba1592fbcd"
+            },
+            {
+                "event": "lock.acquire",
+                "name": "aculta_messenger.avisos_resumo.27"
+            },
+            {
+                "event": "lock.release",
+                "name": "aculta_messenger.avisos_resumo.27"
+            }
+        ]
+    },
+    "provider_cancelled": {
+        "result": 0,
+        "events": [
+            {
+                "event": "lock.acquire",
+                "name": "aculta_messenger.avisos_resumo.27"
+            },
+            {
+                "event": "userData.set",
+                "key": "avisos_resumo_em_andamento"
+            },
+            {
+                "event": "deliver",
+                "type": "avisos_resumo",
+                "to": "member@example.test",
+                "langcode": "pt-br",
+                "context": {
+                    "resumo": "loja em \"Duas mensagens agrupadas\": 2"
+                },
+                "correlation": "4e559624-6e17-5194-b172-4dba1592fbcd"
+            },
+            {
+                "event": "lock.acquire",
+                "name": "aculta_messenger.avisos_resumo.27"
+            },
+            {
+                "event": "provider.discard",
+                "provider": "loja"
+            },
+            {
+                "event": "userData.delete",
+                "key": "avisos_resumo_em_andamento"
+            },
+            {
+                "event": "lock.release",
+                "name": "aculta_messenger.avisos_resumo.27"
+            }
+        ]
+    },
+    "no_pending": {
+        "result": 0,
+        "events": []
+    },
+    "lock_not_acquired": {
+        "result": 0,
+        "events": [
+            {
+                "event": "lock.acquire",
+                "name": "aculta_messenger.avisos_resumo.27"
+            }
+        ]
+    }
+}

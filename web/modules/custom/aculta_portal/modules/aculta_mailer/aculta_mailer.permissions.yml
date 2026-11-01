@@ -1,0 +1,4 @@
+administer aculta_mailer:
+  title: 'Administrar o ACULTA Mailer'
+  description: 'Ver registros e estado dos envios de e-mail transacional.'
+  restrict access: true

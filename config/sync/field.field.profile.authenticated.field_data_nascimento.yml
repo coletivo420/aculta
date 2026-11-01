@@ -1,0 +1,22 @@
+uuid: 94e3eaaf-c8fc-490e-9f14-6cbe6447c09b
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_data_nascimento
+    - profile.type.authenticated
+  module:
+    - datetime
+id: profile.authenticated.field_data_nascimento
+field_name: field_data_nascimento
+entity_type: profile
+bundle: authenticated
+label: 'Data de nascimento'
+description: 'Dado de associado. Visível só no relatório administrativo.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime
+

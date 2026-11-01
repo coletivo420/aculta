@@ -1,0 +1,21 @@
+uuid: 98f2e536-1e74-4995-8807-f30846983198
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - block_content
+id: block_content.field_org_name
+field_name: field_org_name
+entity_type: block_content
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

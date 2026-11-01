@@ -1,0 +1,19 @@
+uuid: 545fe95b-c1cb-495e-9ccc-f36c7d3492e6
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_summary
+    - node.type.activity
+id: node.activity.field_summary
+field_name: field_summary
+entity_type: node
+bundle: activity
+label: Resumo
+description: 'Campo editorial administrável: Resumo. Preencha somente com informações verificadas.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

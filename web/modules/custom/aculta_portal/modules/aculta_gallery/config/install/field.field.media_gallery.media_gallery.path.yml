@@ -1,0 +1,19 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.media_gallery.path
+  module:
+    - path
+id: media_gallery.media_gallery.path
+field_name: path
+entity_type: media_gallery
+bundle: media_gallery
+label: 'URL'
+description: 'Alias público gerado pelo padrão de URL dos álbuns (/albuns/...).'
+required: false
+translatable: false
+default_value: {}
+default_value_callback: ''
+settings: {}
+field_type: path

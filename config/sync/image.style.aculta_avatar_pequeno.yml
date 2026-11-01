@@ -1,0 +1,17 @@
+uuid: cf73bed8-003f-469d-9a94-2a968c9c3ae8
+langcode: pt-br
+status: true
+dependencies: {  }
+name: aculta_avatar_pequeno
+label: 'ACULTA avatar pequeno'
+effects:
+  a4777b4f-4bc7-400c-8bec-285b23adf3cb:
+    uuid: a4777b4f-4bc7-400c-8bec-285b23adf3cb
+    id: image_scale_and_crop
+    weight: 0
+    data:
+      width: 96
+      height: 96
+      anchor: center-center
+pipeline: aculta_derivados
+

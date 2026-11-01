@@ -1,0 +1,16 @@
+uuid: 04f3cc91-a425-4426-941f-93925e1bf19f
+langcode: pt-br
+status: true
+dependencies: {  }
+name: aculta_card_1x
+label: 'Cartão de projeto 1x (256)'
+effects:
+  70146bb5-e001-4287-90de-4ecffd567677:
+    uuid: 70146bb5-e001-4287-90de-4ecffd567677
+    id: image_scale
+    weight: 0
+    data:
+      width: 256
+      height: 256
+      upscale: false
+pipeline: aculta_derivados

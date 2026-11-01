@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * @file
+ * Schema for the isolated ACULTA Messenger aviso Kernel fixture.
+ */
+
+use Drupal\aculta_messenger\Database\ForumCommentNoticeSchema;
+use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
+
+/**
+ * Implements hook_schema().
+ */
+function aculta_messenger_aviso_test_schema(): array {
+  return [
+    ForumCommentNoticeSchema::TABLE => ForumCommentNoticeSchema::definition(),
+    ForumNoticeEventSchema::TABLE => ForumNoticeEventSchema::definition(),
+  ];
+}

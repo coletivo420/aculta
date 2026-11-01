@@ -1,0 +1,222 @@
+[
+  {
+    "file": "handoff/podplant420/source/masters/podplant420-horizontal-on-dark-960w.png",
+    "format": "PNG",
+    "width": 960,
+    "height": 396,
+    "mode": "P",
+    "alpha": true,
+    "bytes": 30821,
+    "sha256": "7a6db45da9ea94151b50a7c527e1211cf12487c10490619a5cb57e4679c804b9"
+  },
+  {
+    "file": "handoff/podplant420/source/masters/podplant420-horizontal-on-light-960w.png",
+    "format": "PNG",
+    "width": 960,
+    "height": 397,
+    "mode": "P",
+    "alpha": true,
+    "bytes": 15750,
+    "sha256": "34867b4b0096784574c05c5b14ac86246b0f31379b00ab77f66afc5405d2424a"
+  },
+  {
+    "file": "handoff/podplant420/source/masters/podplant420-stacked-on-dark-512w.png",
+    "format": "PNG",
+    "width": 512,
+    "height": 512,
+    "mode": "P",
+    "alpha": true,
+    "bytes": 12417,
+    "sha256": "311f02ef5315cfd0a752f3270ce3016edce00158daa1c641ec157f7c5f1f7db4"
+  },
+  {
+    "file": "handoff/podplant420/source/masters/podplant420-stacked-on-light-512w.png",
+    "format": "PNG",
+    "width": 512,
+    "height": 512,
+    "mode": "P",
+    "alpha": true,
+    "bytes": 10689,
+    "sha256": "2ca446eb5792f0149470943e402a1c7f1586d034f85f8953ef1fea14c7853805"
+  },
+  {
+    "file": "handoff/podplant420/source/originais/podplant420-horizontal-on-dark-original.png",
+    "format": "PNG",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 165231,
+    "sha256": "c6ca50cf71754a7f611b63dde6ab469bde66aaeaca920e4ef75bc828c09c01a8"
+  },
+  {
+    "file": "handoff/podplant420/source/originais/podplant420-horizontal-on-light-original.png",
+    "format": "PNG",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 97421,
+    "sha256": "c5338bb64b7c08520ba8deeeddf81f00477816b4824a4c9d09e7c0e553f2aa34"
+  },
+  {
+    "file": "handoff/podplant420/source/originais/podplant420-stacked-on-dark-original.png",
+    "format": "PNG",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 153249,
+    "sha256": "7dde64fdfecb261730d4c982837383fad391e03f5850b98d9813f67291a56efb"
+  },
+  {
+    "file": "handoff/podplant420/source/originais/podplant420-stacked-on-light-original.png",
+    "format": "PNG",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 176670,
+    "sha256": "dccb6e43a0a0f06cb5ab6b69719596379ae2a4ad3335d7530b3b34fbd7cd4048"
+  },
+  {
+    "file": "web/themes/custom/aculta420/assets/branding/podplant420/web/horizontal/podplant420-horizontal-on-dark-240w.webp",
+    "format": "WEBP",
+    "width": 240,
+    "height": 99,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 3898,
+    "sha256": "fcebe16e7cd238c1d6086dd48cdcb3fba4d61a03b7cabb89b3eaf097eaf76482"
+  },
+  {
+    "file": "web/themes/custom/aculta420/assets/branding/podplant420/web/horizontal/podplant420-horizontal-on-dark-480w.webp",
+    "format": "WEBP",
+    "width": 480,
+    "height": 198,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 8522,
+    "sha256": "d97dbc884313441d01fbfbc9a4ab78094de66a6b8fbeef15d6b85dc34ae2dc95"
+  },
+  {
+    "file": "handoff/podplant420/web/horizontal/podplant420-horizontal-on-dark-720w.webp",
+    "format": "WEBP",
+    "width": 720,
+    "height": 297,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 14002,
+    "sha256": "7c03b95c3df6954d47281d5c1da6f918cbefae6208ee1da07d9ad6d98f80e809"
+  },
+  {
+    "file": "handoff/podplant420/web/horizontal/podplant420-horizontal-on-dark-960w.webp",
+    "format": "WEBP",
+    "width": 960,
+    "height": 396,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 20906,
+    "sha256": "ff8f5d969d81a56df7dae9bcd28b44908c1aaebad94932ed0ded1861b774a89a"
+  },
+  {
+    "file": "web/themes/custom/aculta420/assets/branding/podplant420/web/horizontal/podplant420-horizontal-on-light-240w.webp",
+    "format": "WEBP",
+    "width": 240,
+    "height": 99,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 3512,
+    "sha256": "71d514aee54c9cc50577e51073c0425b23548a2206a015d49b9dc362db49588e"
+  },
+  {
+    "file": "web/themes/custom/aculta420/assets/branding/podplant420/web/horizontal/podplant420-horizontal-on-light-480w.webp",
+    "format": "WEBP",
+    "width": 480,
+    "height": 199,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 8396,
+    "sha256": "dfe5f805757d13b6e602853caa426fa151d894e535fe4754b2148e2a0d5e5f7c"
+  },
+  {
+    "file": "handoff/podplant420/web/horizontal/podplant420-horizontal-on-light-720w.webp",
+    "format": "WEBP",
+    "width": 720,
+    "height": 298,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 13286,
+    "sha256": "603cadb134a5d3baa6ec5f6df5f0030f564a87bae258fb80b7d03b0dc1c76942"
+  },
+  {
+    "file": "handoff/podplant420/web/horizontal/podplant420-horizontal-on-light-960w.webp",
+    "format": "WEBP",
+    "width": 960,
+    "height": 397,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 19004,
+    "sha256": "af169c56f9e698a5607f5c4d7381e49efc4b362c903f0f145623f9b2ae3fb9ab"
+  },
+  {
+    "file": "web/themes/custom/aculta420/assets/branding/podplant420/web/stacked/podplant420-stacked-on-dark-128w.webp",
+    "format": "WEBP",
+    "width": 128,
+    "height": 128,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 1870,
+    "sha256": "1b15a44ffccd4d46c05d2701bdb6364c0fbcbaa0c64f9c5e955b67176f5e9f1b"
+  },
+  {
+    "file": "web/themes/custom/aculta420/assets/branding/podplant420/web/stacked/podplant420-stacked-on-dark-256w.webp",
+    "format": "WEBP",
+    "width": 256,
+    "height": 256,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 4636,
+    "sha256": "fac25867a0e40dee752df63f7ffebe1a7953959456d91d1b03fad8ae87ada006"
+  },
+  {
+    "file": "web/themes/custom/aculta420/assets/branding/podplant420/web/stacked/podplant420-stacked-on-dark-512w.webp",
+    "format": "WEBP",
+    "width": 512,
+    "height": 512,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 12396,
+    "sha256": "c5987fc70c9f06afe5627e63d64f4ea06afc745e3f6e6308df50e6da934077bd"
+  },
+  {
+    "file": "web/themes/custom/aculta420/assets/branding/podplant420/web/stacked/podplant420-stacked-on-light-128w.webp",
+    "format": "WEBP",
+    "width": 128,
+    "height": 128,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 2156,
+    "sha256": "44666bece0ed8fcc2e12c0d1ff496ae7c1ec69d62d9e5fd64dbcb2dd79d3a63d"
+  },
+  {
+    "file": "web/themes/custom/aculta420/assets/branding/podplant420/web/stacked/podplant420-stacked-on-light-256w.webp",
+    "format": "WEBP",
+    "width": 256,
+    "height": 256,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 5034,
+    "sha256": "b2e1cdff820b83f79706bc1b90ddfafa3a05cad9e20f5902b3ad4e0ef886dd82"
+  },
+  {
+    "file": "web/themes/custom/aculta420/assets/branding/podplant420/web/stacked/podplant420-stacked-on-light-512w.webp",
+    "format": "WEBP",
+    "width": 512,
+    "height": 512,
+    "mode": "RGBA",
+    "alpha": true,
+    "bytes": 11928,
+    "sha256": "7334294db3d1ff4cd8444bfc8e2c94334d896b60b7b6d27d7e1868bf8a3fe930"
+  }
+]

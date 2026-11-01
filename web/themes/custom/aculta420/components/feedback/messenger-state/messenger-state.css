@@ -1,0 +1,4 @@
+.aculta-messenger-state { padding: 1rem; border: 1px solid var(--aculta-border-default); border-radius: var(--bs-border-radius); background: var(--aculta-surface-muted); color: var(--aculta-text-primary); }
+.aculta-messenger-state--error { border-color: var(--aculta-status-error-border); color: var(--aculta-status-error-text); }
+.aculta-messenger-state--loading { color: var(--aculta-text-secondary); }
+.aculta-messenger-state > :last-child { margin-bottom: 0; }

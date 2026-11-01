@@ -1,0 +1,6 @@
+aculta_calendar.embed_hosts:
+  title: 'Incorporação do calendário'
+  description: 'Consulta dos hosts autorizados para incorporar o calendário.'
+  route_name: aculta_calendar.embed_hosts
+  parent: system.admin_content
+  weight: 55

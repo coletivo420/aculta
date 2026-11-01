@@ -1,0 +1,25 @@
+uuid: 9f4eb3a3-cca9-4e9c-b892-92e88471574c
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_last_name
+    - profile.type.administrator
+  module:
+    - profile
+third_party_settings:
+  profile:
+    profile_private: true
+id: profile.administrator.field_last_name
+field_name: field_last_name
+entity_type: profile
+bundle: administrator
+label: Sobrenome
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

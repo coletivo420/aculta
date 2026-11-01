@@ -1,0 +1,24 @@
+uuid: 6dcd9229-b321-4480-b2d5-08395563ba8e
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+id: message.field_aculta_friendship_event
+field_name: field_aculta_friendship_event
+entity_type: message
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {}
+persist_with_no_fields: false
+custom_storage: false

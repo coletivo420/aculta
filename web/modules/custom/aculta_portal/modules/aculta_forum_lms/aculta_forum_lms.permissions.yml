@@ -1,0 +1,4 @@
+administer aculta forum lms settings:
+  title: 'Administrar configurações das discussões do LMS'
+  description: 'Configura opções exclusivas dos fóruns de curso e turma.'
+  restrict access: true

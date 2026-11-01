@@ -1,0 +1,13 @@
+name: Abas de produto
+description: Exemplo visual das três regiões de uma página de produto.
+component: aculta420:product-tabs
+props:
+  id: catalogo-abas-produto
+  review_count: 2
+slots:
+  description:
+    markup: <p>Descrição demonstrativa do produto cultural.</p>
+  details:
+    markup: <p>Informações adicionais demonstrativas.</p>
+  reviews:
+    markup: <p>Avaliações demonstrativas, sem dados de clientes.</p>

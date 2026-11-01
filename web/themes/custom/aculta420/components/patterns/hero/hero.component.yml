@@ -1,0 +1,25 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+name: Hero
+status: experimental
+group: Patterns
+description: 'Front-page hero: eyebrow, multi-line title, slogan, lead and actions. Data is prepared by the presenter from the page fields.'
+props:
+  type: object
+  properties:
+    eyebrow:
+      type: ["string", "null"]
+      default: null
+    title:
+      type: string
+      description: 'Title. Line breaks are separated by newline characters.'
+      default: ''
+    slogan:
+      type: ["string", "null"]
+      default: null
+    lead:
+      type: ["string", "null"]
+      default: null
+slots:
+  actions:
+    title: Actions
+    description: 'Rendered action links, wrapped by the component.'

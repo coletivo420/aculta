@@ -1,0 +1,10 @@
+uuid: 00dadb7b-0837-4751-afe3-aba1dbe6823b
+langcode: pt-br
+status: true
+dependencies: {  }
+id: default
+label: 'Padrão'
+profileType: customer
+traits: {  }
+sendConfirmation: false
+confirmationBcc: ''

@@ -1,0 +1,29 @@
+uuid: 847879ed-03a5-4553-9ebd-e5fc007da54a
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_lms_activity
+    - node.type.aculta_lms_topic
+  module:
+    - lms
+    - node
+id: node.aculta_lms_topic.field_lms_activity
+field_name: field_lms_activity
+entity_type: node
+bundle: aculta_lms_topic
+label: Atividade do curso
+description: 'Associe esta discussão a uma atividade publicada do mesmo curso ou turma.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:lms_activity'
+  handler_settings:
+    target_bundles: null
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,0 +1,60 @@
+uuid: dd5f5644-bf03-45ab-8aa8-b5416a8a3993
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - node.type.wiki_entry
+  module:
+    - content_moderation
+id: wiki_editorial
+label: 'Wiki420 editorial'
+type: content_moderation
+type_settings:
+  states:
+    draft:
+      label: Rascunho
+      weight: 0
+      published: false
+      default_revision: false
+    published:
+      label: Publicado
+      weight: 2
+      published: true
+      default_revision: true
+    review:
+      label: 'Em revisão'
+      weight: 1
+      published: false
+      default_revision: false
+  transitions:
+    # Include the initial draft state so contributors can save before they
+    # explicitly choose draft_to_review in the native Node form.
+    create_new_draft:
+      label: 'Criar rascunho de nova revisão'
+      from:
+        - draft
+        - published
+      to: draft
+      weight: 3
+    draft_to_review:
+      label: 'Enviar para revisão'
+      from:
+        - draft
+      to: review
+      weight: 0
+    review_to_draft:
+      label: 'Devolver para rascunho'
+      from:
+        - review
+      to: draft
+      weight: 1
+    review_to_published:
+      label: Publicar
+      from:
+        - review
+      to: published
+      weight: 2
+  entity_types:
+    node:
+      - wiki_entry
+  default_moderation_state: draft

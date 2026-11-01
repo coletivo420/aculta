@@ -1,0 +1,23 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_messenger_attempts
+    - message.template.aculta_msg_donation_notice
+  enforced:
+    module:
+      - aculta_messenger
+id: message.aculta_msg_donation_notice.field_aculta_messenger_attempts
+field_name: field_aculta_messenger_attempts
+entity_type: message
+bundle: aculta_msg_donation_notice
+label: 'Tentativas de entrega'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings: { }
+field_type: integer

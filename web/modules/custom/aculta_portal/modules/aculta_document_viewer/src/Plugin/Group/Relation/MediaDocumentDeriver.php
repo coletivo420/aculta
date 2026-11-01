@@ -1,0 +1,41 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_document_viewer\Plugin\Group\Relation;
+
+use Drupal\Component\Plugin\Derivative\DeriverBase;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeInterface;
+use Drupal\media\Entity\MediaType;
+
+/**
+ * Derives the Group relation for the document Media bundle.
+ */
+final class MediaDocumentDeriver extends DeriverBase {
+
+  use StringTranslationTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDerivativeDefinitions($base_plugin_definition): array {
+    assert($base_plugin_definition instanceof GroupRelationTypeInterface);
+    $this->derivatives = [];
+
+    foreach (MediaType::loadMultiple() as $id => $_media_type) {
+      if ($id !== 'course_document') {
+        continue;
+      }
+
+      $derivative = clone $base_plugin_definition;
+      $derivative->set('entity_bundle', $id);
+      $derivative->set('label', $this->t('Group Media document'));
+      $derivative->set('description', $this->t('Adds document Media to a group and applies group access to the Media entity.'));
+      $this->derivatives[$id] = $derivative;
+    }
+
+    return $this->derivatives;
+  }
+
+}

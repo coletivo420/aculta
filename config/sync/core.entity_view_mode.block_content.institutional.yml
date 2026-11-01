@@ -1,0 +1,11 @@
+uuid: 54fa998f-cfe5-4dc6-bd22-10ceace921d4
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - block_content
+id: block_content.institutional
+label: 'Dados institucionais'
+description: null
+targetEntityType: block_content
+cache: true

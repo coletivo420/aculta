@@ -1,0 +1,19 @@
+uuid: 1666fb3b-df09-4391-a87a-1b244ca4dbdd
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_event_country
+    - node.type.activity
+id: node.activity.field_event_country
+field_name: field_event_country
+entity_type: node
+bundle: activity
+label: 'País da atividade'
+description: 'Campo editorial administrável: País da atividade. Preencha somente com informações verificadas.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

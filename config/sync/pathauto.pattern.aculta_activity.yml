@@ -1,0 +1,23 @@
+uuid: f22eee28-e8e2-433c-9efc-bb79252becc6
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - node.type.activity
+  module:
+    - node
+id: aculta_activity
+label: 'URLs — activity'
+type: 'canonical_entities:node'
+pattern: '/atividades/[node:title]'
+selection_criteria:
+  7f6de3c7-2e6f-41e6-ad80-c6259e294939:
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: node
+    bundles:
+      activity: activity
+selection_logic: and
+weight: 0
+relationships: {  }

@@ -1,0 +1,23 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.field.node.aculta_faq.body
+    - node.type.aculta_faq
+  module:
+    - text
+id: node.aculta_faq.default
+targetEntityType: node
+bundle: aculta_faq
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: { }
+    third_party_settings: { }
+    weight: 0
+    region: content
+hidden:
+  links: true
+

@@ -1,0 +1,11 @@
+name: Valores rápidos
+description: Valores demonstrativos; os links não iniciam uma doação.
+component: aculta420:donation-quick
+props:
+  links:
+    - title: R$ 10,00
+      url: '#contribuicao-10'
+    - title: R$ 25,00
+      url: '#contribuicao-25'
+    - title: Outro valor
+      url: '#contribuicao-outro'

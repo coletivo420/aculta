@@ -1,0 +1,28 @@
+uuid: 4eab9f15-28c1-4e05-b4ad-42d48a345bb7
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - filter.format.aculta_editorial
+    - node.type.aculta_faq
+  module:
+    - text
+_core:
+  default_config_hash: 0kr1Jn74epfE-Bt5JvDUlYMMj99zN3jWEhlsMDSfxuI
+id: node.aculta_faq.body
+field_name: body
+entity_type: node
+bundle: aculta_faq
+label: Resposta
+description: 'Aceita negrito, itálico, listas e links seguros.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: false
+  required_summary: false
+  allowed_formats:
+    - aculta_editorial
+field_type: text_with_summary

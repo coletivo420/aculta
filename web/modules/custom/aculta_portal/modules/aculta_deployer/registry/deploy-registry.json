@@ -1,0 +1,45 @@
+{
+    "schema": 1,
+    "entries": [
+        {
+            "id": "DEP-0001",
+            "kind": "canonical",
+            "status": "resolved",
+            "blocking": false,
+            "page": "Página de apoio, raiz do host SUPPORT (https://apoio.aculta.toca.net.br/)",
+            "current": "servidor de testes (2026-10-10): canonical da página de apoio = https://apoio.aculta.toca.net.br/, gerado a partir do registro de domínio por ambiente (hostname de teste importado no Runtime de teste).",
+            "expected_production": "https://apoio.aculta.org/",
+            "reason": "O canonical é gerado a partir do hostname do registro de domínio, que é dependente de ambiente (environment_bound, perfis production e test do aculta_deployer). Não havia correção de código: era o valor do registro no Runtime de teste.",
+            "owner": "responsável do projeto",
+            "decision": "resolvida pelo responsável em 2026-10-10 com verificação no servidor de testes. A sonda de produção (https://apoio.aculta.org/) segue registrada para a verificação pós-deploy.",
+            "probe": "https://apoio.aculta.org/",
+            "expect": "<link rel=\"canonical\" href=\"https://apoio.aculta.org/\">"
+        },
+        {
+            "id": "DEP-0002",
+            "kind": "sitemap",
+            "status": "resolved",
+            "blocking": false,
+            "page": "sitemap.xml: página raiz do host SUPPORT (https://apoio.aculta.org/)",
+            "current": "servidor de testes (2026-10-10): sitemap --env=test PASS. O filho de SUPPORT lista https://apoio.aculta.toca.net.br/ e o host responde 200. Registros de domínio por ambiente importados no Runtime de teste.",
+            "expected_production": "https://apoio.aculta.org/ listado no sitemap do host de apoio",
+            "reason": "O hostname do registro de domínio é dependente de ambiente (environment_bound, perfis production e test do aculta_deployer). Não havia correção de código: era o valor do registro no Runtime de teste.",
+            "owner": "responsável do projeto",
+            "decision": "resolvida pelo responsável em 2026-10-10 com verificação no servidor de testes. A sonda de produção (aculta.org/support/sitemap.xml) segue registrada para a verificação pós-deploy.",
+            "probe": "https://aculta.org/support/sitemap.xml",
+            "expect": "<loc>https://apoio.aculta.org/</loc>"
+        },
+        {
+            "id": "DEP-0003",
+            "kind": "other",
+            "page": "Todas as páginas públicas do servidor de testes (VirtualHosts aculta.toca.net.br e toca.net.br)",
+            "current": "Homelab (Apache): X-Robots-Tag \"noindex, nofollow, noarchive\" em todas as respostas. Produção Hostinger Cloud Startup: LiteSpeed, confirmado por x-turbo-charged-by em resposta HTTPS pública (2026-10-15).",
+            "expected_production": "Nenhuma resposta pública de produção contém X-Robots-Tag noindex; noindex permanece somente no Homelab",
+            "reason": "Regra de noindex pertence somente ao Homelab (environments.md). Se for copiada para produção, o site inteiro deixa de ser indexado. A configuração do servidor gerenciado Hostinger não está no repositório; o deployer verifica a ausência de X-Robots-Tag noindex nas respostas públicas, sem presumir Apache ou uma diretiva de configuração específica.",
+            "owner": "responsável do projeto",
+            "blocking": true,
+            "status": "open",
+            "decision": "política de indexação, comando robots e trava de build concluídos em RC; o servidor de desenvolvimento mantém X-Robots-Tag noindex (inclusive durante o Alpha) e a verificação da ausência de noindex nas respostas públicas da Hostinger (LiteSpeed) ocorre na etapa Beta pós-deploy (RELEASE-LIFECYCLE.md e MIGRACAO-DOMINIOS.md). A entrada permanece aberta e bloqueante até a validação Beta."
+        }
+    ]
+}

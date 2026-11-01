@@ -1,0 +1,13 @@
+uuid: a08030f8-b49e-49b1-b303-a12d59e36054
+langcode: pt-br
+status: true
+dependencies: {  }
+plugin: brevo
+host: ''
+port: 0
+user: ''
+password_secret: ''
+verify_peer: true
+id: brevo
+label: 'Brevo (API)'
+

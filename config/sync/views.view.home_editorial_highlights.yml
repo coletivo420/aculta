@@ -1,0 +1,134 @@
+uuid: 410ea148-388d-4fb6-98e5-dde0751f7901
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - node.type.editorial_highlight
+  module:
+    - node
+    - user
+    - vvjb
+id: home_editorial_highlights
+label: 'Destaques editoriais da Home'
+module: views
+description: 'Carrossel VVJB de destaques publicados. Ordenação crescente por Ordem e, em caso de empate, identificador do conteúdo. Não depende de três IDs fixos.'
+tag: ''
+base_table: node_field_data
+base_field: nid
+display:
+  default:
+    id: default
+    display_title: Padrão
+    display_plugin: default
+    position: 0
+    display_options:
+      title: 'Cultura, informação e cuidado'
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 3
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: tag
+        options: {  }
+      sorts:
+        field_weight_value:
+          id: field_weight_value
+          table: node__field_weight
+          field: field_weight_value
+          plugin_id: standard
+          order: ASC
+        nid:
+          id: nid
+          table: node_field_data
+          field: nid
+          entity_type: node
+          entity_field: nid
+          plugin_id: standard
+          order: ASC
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            editorial_highlight: editorial_highlight
+      style:
+        type: views_vvjb
+        options:
+          orientation: horizontal
+          items_small: 1
+          items_big: 2
+          gap: 24
+          item_width: 0
+          looping: true
+          slide_time: 3000
+          navigation: both
+          dot_style: circle
+          breakpoints: '768'
+          show_play_pause: true
+          show_progress_bar: false
+          show_page_counter: false
+          enable_keyboard_nav: true
+          enable_touch_swipe: true
+          enable_pause_on_hover: true
+          pause_on_reduced_motion: true
+          enable_deeplink: false
+      row:
+        type: 'entity:node'
+        options:
+          view_mode: default
+      query:
+        type: views_query
+        options: {  }
+      css_class: view-home-editorial-highlights
+      header:
+        area:
+          id: area
+          table: views
+          field: area
+          plugin_id: text
+          empty: false
+          content:
+            value: '<h2>CULTURA, INFORMAÇÃO E CUIDADO</h2><p class="aculta-page-intro">Diferentes frentes de uma atuação que conecta produção cultural, conhecimento, direitos e cuidado coletivo.</p>'
+            format: revista_editorial
+          tokenize: false
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  block_1:
+    id: block_1
+    display_title: Bloco
+    display_plugin: block
+    position: 1
+    display_options:
+      display_extenders: {  }
+      block_description: 'Destaques editoriais da Home'
+      block_hide_empty: true
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }

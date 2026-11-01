@@ -1,0 +1,23 @@
+{#
+/**
+ * @file
+ * ACULTA420 override of the Bootstrap5 page wrapper.
+ *
+ * Same markup as the base theme, with two changes: min-vh-100 instead of h-100,
+ * and flex-shrink-0. A fixed height equal to the viewport clips the sticky
+ * Domain Header to the first screen, because a sticky element cannot leave its
+ * containing block. A minimum height keeps the sticky-footer layout, and
+ * flex-shrink-0 stops the flex body from shrinking the wrapper back to 100vh.
+ *
+ * The "data-off-canvas-main-canvas" attribute is required by the off-canvas
+ * dialog (core/drupal.dialog.off_canvas) and must stay.
+ *
+ * Available variables:
+ * - children: Contains the child elements of the page.
+ */
+#}
+{% if children %}
+  <div class="dialog-off-canvas-main-canvas d-flex flex-column min-vh-100 flex-shrink-0" data-off-canvas-main-canvas>
+    {{ children }}
+  </div>
+{% endif %}

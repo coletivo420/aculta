@@ -1,0 +1,19 @@
+agenda:
+  css:
+    theme:
+      css/agenda.css: {}
+  dependencies:
+    - core/drupal
+
+dhtmlx:
+  js:
+    js/dhtmlx/dhtmlxscheduler.js: { preprocess: false }
+    js/aculta-calendar-interactive.js: {}
+  css:
+    theme:
+      css/dhtmlx/dhtmlxscheduler.css: { preprocess: false }
+      css/dhtmlx/contrast_white.css: { preprocess: false }
+      css/dhtmlx/contrast_black.css: { preprocess: false }
+  dependencies:
+    - core/drupal
+    - core/drupalSettings

@@ -1,0 +1,14 @@
+uuid: 437eff21-448a-4f74-abe4-2d6d0223f333
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - domain.record.apoio_aculta_org
+  module:
+    - domain_source
+id: domain_source_set_action.apoio_aculta_org
+label: 'Set content domain source value to the ACULTA - Apoio domain'
+type: node
+plugin: domain_source_set_action
+configuration:
+  domain_id: apoio_aculta_org

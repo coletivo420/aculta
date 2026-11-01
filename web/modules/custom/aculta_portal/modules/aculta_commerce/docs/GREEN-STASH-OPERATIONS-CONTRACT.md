@@ -1,0 +1,60 @@
+# ACULTA STUDIO GREEN STASH — Contrato de operações sem painel administrativo
+
+**Decisão vigente, retificada em 2026-10-30.** ACULTA STUDIO GREEN STASH é a área operacional/comercial integrada ao ACULTA Studio. Sua entrada oficial é `/studio/green-stash`; não é plataforma separada. A edição administrativa padrão de Commerce não é a interface de uso de operadores de loja.
+
+## Proibições e fronteiras
+
+- **Não** expor aos operadores botões `commerce_product->toUrl('edit-form')`, links diretos para `/painel-administrativo`, `/admin/commerce` ou edição administrativa de entidades. No início do trabalho remover links existentes e auditar novos componentes.
+- **Não** duplicar produtos, variações, pedidos, payments, shipments ou saldos em entidades paralelas. Manter ownership e validação nativa Commerce, Commerce Stock e Commerce Shipping.
+- Formulários **próprios de apresentação no Studio**, com Form API/Entity APIs/serviços Commerce, submissão autorizada e ações por operação. Reutilizar widgets e validações relevantes do Commerce via adaptação, **sem renderizar telas administrativas nativas indiscriminadamente**.
+- Somente UI Suite/SDC do tema ACULTA420 para apresentação, tokens e mobile-first; nenhum shell ou cabeçalho novo. Preservar checkout e carrinho multidomínio.
+- IDs internos de serviços podem continuar inglês. **Todas as rotas públicas e slugs em PT-BR.**
+
+## Rotas propostas (não implementadas até existir form/controller e gates)
+
+| Operação | Rota PT-BR | Autorizações |
+|---|---|---|
+| Catalogar | `/studio/green-stash/produtos` | Entrada Studio + acesso à(s) loja(s) |
+| Novo produto | `/studio/green-stash/produtos/novo` | create commerce_product + store |
+| Produto | `/studio/green-stash/produtos/{produto}` | view entity + store |
+| Editar | `/studio/green-stash/produtos/{produto}/editar` | update entity + store, CSRF em POST |
+| Variações | `/studio/green-stash/produtos/{produto}/variacoes` | update/product variation |
+| Estoque | `/studio/green-stash/estoque` e `.../movimentacoes` | Commerce Stock, grants e auditoria |
+| Pedido | `/studio/green-stash/pedidos/{pedido}` | view order + store |
+| Preparar | `/studio/green-stash/pedidos/{pedido}/preparar` | transição do workflow + store |
+| Envios | `/studio/green-stash/envios` | Commerce Shipping |
+| Etiqueta | `/studio/green-stash/envios/{remessa}/etiqueta` | remessa + operação financeira confirmada + Melhor Envio |
+| Configurações | `/studio/green-stash/configuracoes` | grants específicos por opção |
+
+Não adicionar rotas com placeholders perigosos antes de implementar controladores, verificação de proprietário da entidade/store, parâmetros convertidos e formulários de destino válidos. `/painel-administrativo` permanece para manutenção Drupal por administradores técnicos, fora do fluxo cotidiano.
+
+## Estado apresentado pela navegação (2026-10-31)
+
+A navegação contextual do ACULTA STUDIO GREEN STASH expõe somente **Visão geral**,
+**Produtos** e **Envios**, que possuem consumidores reais no controller e nos
+serviços Commerce. Pedidos, Estoque, Promoções, Clientes, Relatórios e
+Configurações não aparecem como links e seus slugs retornam 404 até que a
+respectiva operação, acesso por loja, fluxo sem painel Drupal e gates sejam
+implementados. Ter slug ou permissão de entrada não habilita uma operação.
+
+
+## Organização interna proposta
+
+- **Produtos:** Todos / Rascunhos / Novo / Variações / Imagens / Preços. Assistente de cadastro com passos básicos > variações > imagens > disponibilidade > revisão/publicação, rascunhos persistidos pelo modelo Commerce.
+- **Pedidos:** Novos / Pagos / Preparação / Concluídos / Cancelados. Detalhe com itens, pagamento somente leitura inicial, expedição e histórico. Não misturar alteração de pagamentos com fulfillment.
+- **Estoque:** Disponibilidade, locais, movimentações, reposição; controles são do Commerce Stock; edição sem alterações diretas de quantidade bruta fora da API de estoque.
+- **Envios:** Cotação, volumes, compra autorizada de frete, etiquetas PDF/ZPL, reimpressão, rastreamento; usa o endereço unificado ACULTA e o Melhor Envio.
+- **Demais áreas:** promoções, clientes autorizados, métricas Statistics e configurações; sem fallback para formulários admin.
+
+## Implementar em fases
+
+1. **GS-EDITOR-0.1 — bloqueio de saída:** auditar e remover links nativos das interfaces Green Stash; não oferecer `Editar` inútil. Documentação e teste estático de inexistência de redirecionamentos administrativos.
+2. **GS-EDITOR-0.2 — leitura contextual:** detalhe interno do produto (somente leitura) por route parameter e accessCheck da entidade **e** store, integração com listagem e ações apenas quando tiverem destino funcional.
+3. **GS-EDITOR-0.3 — formulário de criação:** usar Form API e APIs Commerce, com validações existentes e testes Kernel/Functional; composição Studio responsiva.
+4. **GS-EDITOR-0.4 — formulário de edição e variações:** edição segura com concorrência, validações e testes; conservar revisões/workflow se suportados.
+5. **GS-EDITOR-0.5 — estoque e logística:** implementar fluxos internos após serviços Commerce Stock/Melhor Envio serem homologados.
+6. **GS-EDITOR-T:** validar operadores sem acesso admin Drupal com rotas Studio funcionais, autorização por store, CSRF, IDOR, regressão do checkout, UI sem JS, 320px/light/dark e volume.
+
+## Gate de aceitação
+
+Um operador com permissão de loja mas sem permissão de administração técnica deve concluir **criar, editar, publicar, gerenciar estoque, preparar envio e gerar etiqueta** (esta última com autorização financeira) inteiramente no Green Stash, sem abrir URL administrativa do Drupal. Cada operação usa entidades e serviços proprietários, sem duplicação de armazenamento. Não declarar gate aprovado enquanto todos os fluxos não estiverem implementados/homologados.

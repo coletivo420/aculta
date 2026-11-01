@@ -1,0 +1,14 @@
+uuid: 33aee8db-4f85-4c15-935a-3167bd5afd67
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - user.role.lms_teacher
+  module:
+    - user
+id: user_add_role_action.lms_teacher
+label: 'Add the Educador role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: lms_teacher

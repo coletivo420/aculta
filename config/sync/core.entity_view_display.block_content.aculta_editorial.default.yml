@@ -1,0 +1,29 @@
+uuid: 68ccdf1a-2f29-46e3-bfd2-6c4e1e386c63
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - block_content.type.aculta_editorial
+    - field.field.block_content.aculta_editorial.body
+  module:
+    - text
+_core:
+  default_config_hash: Mr81pzN6ieECKZgSuBHrGH4XEr5VddBT00642IqjeNI
+id: block_content.aculta_editorial.default
+targetEntityType: block_content
+bundle: aculta_editorial
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  langcode: true
+  search_api_excerpt: true

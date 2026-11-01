@@ -1,0 +1,16 @@
+uuid: bf8efade-1531-46c7-9089-ad88b2e031fd
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: 1noCXlegCr5HFehQRF1ViXy1jhU1jZ_sNN99a8Sj5jo
+id: front
+label: 'Página inicial'
+tags:
+  canonical_url: '[site:url]'
+  shortlink: '[site:url]'
+  title: 'Associação Cultural Antiproibicionista | Goiânia - GO'
+  description: 'Associação sem fins lucrativos de Goiânia que desenvolve projetos de cultura, comunicação, cuidado, direitos e participação social.'
+  og_title: 'Associação Cultural Antiproibicionista'
+  og_description: 'Associação sem fins lucrativos de Goiânia que desenvolve projetos de cultura, comunicação, cuidado, direitos e participação social.'
+  og_url: '[site:url]'

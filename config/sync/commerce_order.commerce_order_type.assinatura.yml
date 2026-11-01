@@ -1,0 +1,22 @@
+uuid: b173a386-9a87-4d7b-8a3e-a81f40f3dd47
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - commerce_checkout
+third_party_settings:
+  commerce_checkout:
+    checkout_flow: assinatura_flow
+id: assinatura
+label: 'Assinatura de doação'
+traits: {  }
+locked: false
+workflow: order_recurring
+showOrderEditLinks: false
+numberPattern: order_default
+refresh_mode: customer
+refresh_frequency: 300
+sendReceipt: true
+receiptBcc: ''
+receiptSubject: ''
+

@@ -1,0 +1,108 @@
+aculta_portal.wiki_home:
+  path: /wiki
+  defaults:
+    _controller: \Drupal\aculta_wiki\Controller\WikiController::home
+    _title: Wiki420
+  requirements:
+    _permission: access content
+  options:
+    _aculta_domain_purpose: wiki
+    _aculta_show_page_title_on_front: true
+
+aculta_portal.wiki_search:
+  path: /wiki/busca
+  defaults:
+    _controller: \Drupal\aculta_wiki\Controller\WikiController::search
+    _title: Buscar na Wiki420
+  requirements:
+    _permission: access content
+  options:
+    _aculta_domain_purpose: wiki
+
+aculta_portal.wiki_search_preview:
+  path: /wiki/busca/previa
+  defaults:
+    _controller: '\Drupal\aculta_wiki\Controller\WikiController::preview'
+  requirements:
+    _permission: access content
+  options:
+    _aculta_domain_purpose: wiki
+
+aculta_wiki.contribution_intent:
+  path: '/wiki/verbetes/{node}/contribuir/como'
+  defaults:
+    _controller: '\Drupal\aculta_wiki\Controller\WikiContributionIntentController::page'
+    _title: 'Como você quer contribuir?'
+  requirements:
+    _permission: access content
+    _entity_access: 'node.view'
+  options:
+    _aculta_domain_purpose: wiki
+    parameters:
+      node:
+        type: entity:node
+
+aculta_wiki.proposal_submit:
+  path: '/wiki/verbetes/{node}/contribuir'
+  defaults:
+    _form: '\Drupal\aculta_wiki\Form\WikiProposalSubmissionForm'
+    _title: 'Contribuir com este verbete'
+  requirements:
+    _permission: 'submit wiki proposals'
+    _entity_access: 'node.view'
+  options:
+    _aculta_domain_purpose: wiki
+    parameters:
+      node:
+        type: entity:node
+
+aculta_wiki.proposal_status:
+  path: '/wiki/propostas/{proposal}'
+  defaults:
+    _controller: '\Drupal\aculta_wiki\Controller\WikiProposalStatusController::view'
+    _title: 'Minha proposta para a Wiki420'
+  requirements:
+    _entity_access: 'proposal.view'
+  options:
+    _aculta_domain_purpose: wiki
+    parameters:
+      proposal:
+        type: wiki_proposal
+
+aculta_wiki.studio_entry_create:
+  path: '/wesativa/verbetes/novo'
+  defaults:
+    _controller: '\Drupal\aculta_wiki\Controller\WikiEntryCreateController::createEntry'
+    _title: 'Criar verbete'
+  requirements:
+    _entity_create_access: 'node:wiki_entry'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: wiki
+
+aculta_wiki.proposal_withdraw:
+  path: '/wiki/propostas/{proposal}/retirar'
+  defaults:
+    _form: '\Drupal\aculta_wiki\Form\WikiProposalWithdrawalForm'
+    _title: 'Retirar proposta da Wiki420'
+  requirements:
+    _entity_access: 'proposal.view'
+  options:
+    _aculta_domain_purpose: wiki
+    parameters:
+      proposal:
+        type: wiki_proposal
+
+aculta_wiki.proposal_decide:
+  path: '/wesativa/propostas/{proposal}/decidir'
+  defaults:
+    _form: '\Drupal\aculta_wiki\Form\WikiProposalDecisionForm'
+    _title: 'Avaliar proposta da Wiki'
+  requirements:
+    _permission: 'moderate wiki proposals'
+    _entity_access: 'proposal.update'
+  options:
+    _aculta_domain_purpose: wiki
+    parameters:
+      proposal:
+        type: wiki_proposal

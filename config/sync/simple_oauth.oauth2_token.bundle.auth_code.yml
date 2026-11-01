@@ -1,0 +1,11 @@
+uuid: 6b786323-44b6-4c8c-b286-b7b6eeb2007b
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: zlxpI1nUDS46lrOkyHiD-72D5OFvlADLiyXT5B1iErk
+id: auth_code
+label: 'Auth code'
+description: 'The auth code type.'
+locked: true
+

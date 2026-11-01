@@ -1,0 +1,10 @@
+{#
+  Valores de doação rápida (aculta_donation). Cada valor é um cartão (componente donation-card); o último é "Outro".
+#}
+<div class="aculta-donation-quick" role="list">
+  {% for link in links %}
+    <div role="listitem">
+      {{ include('aculta420:donation-card', { label: link.title, href: link.url, other: loop.last }) }}
+    </div>
+  {% endfor %}
+</div>

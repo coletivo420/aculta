@@ -1,0 +1,25 @@
+# Catálogo do fórum (aculta_portal). Importar com:
+#   drush locale:import --type=customized --override=none pt-br <este arquivo>
+msgid ""
+msgstr ""
+"Language: pt-br\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Forums"
+msgstr "Fórum"
+
+msgid "Log in to post new content in the forum."
+msgstr "Entre para publicar conteúdo no fórum."
+
+msgid "Topics"
+msgstr "Tópicos"
+
+msgid "Last post"
+msgstr "Última postagem"
+
+msgid "No new posts"
+msgstr "Sem novas postagens"
+
+msgid "General discussion"
+msgstr "Discussão geral"

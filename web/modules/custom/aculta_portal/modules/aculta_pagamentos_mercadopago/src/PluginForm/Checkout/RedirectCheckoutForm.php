@@ -1,0 +1,670 @@
+<?php
+
+namespace Drupal\aculta_pagamentos_mercadopago\PluginForm\Checkout;
+
+use Drupal\aculta_pagamentos_mercadopago\Plugin\Commerce\PaymentGateway\CheckoutPro;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory;
+use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRedirectUrl;
+use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
+use Drupal\commerce_payment\PluginForm\PaymentOffsiteForm as BasePaymentOffsiteForm;
+use Drupal\commerce_price\Price;
+use Drupal\address\Plugin\Field\FieldType\AddressItem;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Url;
+use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
+use Drupal\file\FileInterface;
+use MercadoPago\Client\Common\RequestOptions;
+use MercadoPago\Exceptions\MPApiException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Provides the Off-site form for Mercado Pago Checkout.
+ *
+ * This is provided as a fallback when no "review" step is present in Checkout.
+ */
+class RedirectCheckoutForm extends BasePaymentOffsiteForm implements ContainerInjectionInterface {
+  use StringTranslationTrait;
+
+  /**
+   * Allow pending and in-process payments to reach their final provider state.
+   */
+  private const BINARY_MODE = FALSE;
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * The messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
+   * The file URL generator.
+   *
+   * @var \Drupal\Core\File\FileUrlGeneratorInterface
+   */
+  protected $fileUrlGenerator;
+
+  /**
+   * The logger channel factory.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected $loggerFactory;
+
+  /**
+   * Factory configured with the active gateway's environment credentials.
+   */
+  protected ?MercadoPagoClientFactory $clientFactory = NULL;
+
+  /**
+   * Constructs the offsite payment form.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory (available for future use, e.g. module config).
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger service.
+   * @param \Drupal\Core\File\FileUrlGeneratorInterface $file_url_generator
+   *   The file URL generator.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+   *   The logger channel factory.
+   * @param \Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoClientFactory|null $client_factory
+   *   The Mercado Pago client factory.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, MessengerInterface $messenger, FileUrlGeneratorInterface $file_url_generator, LoggerChannelFactoryInterface $logger_factory, ?MercadoPagoClientFactory $client_factory = NULL) {
+    $this->configFactory = $config_factory;
+    $this->messenger = $messenger;
+    $this->fileUrlGenerator = $file_url_generator;
+    $this->loggerFactory = $logger_factory;
+    $this->clientFactory = $client_factory;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): static {
+    // Parent requires return type static; this form is not extended.
+    // @phpstan-ignore-next-line new.static
+    return new static(
+      $container->get('config.factory'),
+      $container->get('messenger'),
+      $container->get('file_url_generator'),
+      $container->get('logger.factory'),
+      $container->get('aculta_pagamentos_mercadopago.client_factory'),
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   *
+   * @return array<string, mixed>
+   *   The modified form.
+   */
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
+    $form = parent::buildConfigurationForm($form, $form_state);
+
+    /** @var \Drupal\commerce_payment\Entity\PaymentInterface $payment */
+    $payment = $this->entity;
+
+    $payment_gateway = $payment->getPaymentGateway();
+    if ($payment_gateway === NULL) {
+      $this->messenger->addError($this->t('Payment gateway is missing.'));
+      return $form;
+    }
+    /** @var \Drupal\commerce_payment\Plugin\Commerce\PaymentGateway\OffsitePaymentGatewayInterface $payment_gateway_plugin */
+    $payment_gateway_plugin = $payment_gateway->getPlugin();
+    $configuration = $payment_gateway_plugin->getConfiguration();
+
+    if (!$payment_gateway_plugin instanceof CheckoutPro) {
+      $this->messenger->addError($this->t('Mercado Pago is not configured. Please contact the administrator.'));
+      return $form;
+    }
+
+    // Initialize the SDK with the configured access token before any API call.
+    $access_token = $payment_gateway_plugin->getAccessToken();
+    if ($access_token === '') {
+      $this->messenger->addError($this->t('Mercado Pago is not configured. Please contact the administrator.'));
+      return $form;
+    }
+    $order_id = $payment->getOrderId();
+    $order = $payment->getOrder();
+    if ($order === NULL) {
+      $this->messenger->addError($this->t('Order is missing.'));
+      return $form;
+    }
+
+    // Doação não tem endereço de cobrança (só pede e-mail e nome). O pagador
+    // usa o nome do painel e o e-mail.
+    $billing_profile = $order->getBillingProfile();
+    $address = NULL;
+    if ($billing_profile && !$billing_profile->get('address')->isEmpty()) {
+      $address = $billing_profile->get('address')->first();
+      if (!$address instanceof AddressItem) {
+        $this->messenger->addError($this->t('Billing address is missing.'));
+        return $form;
+      }
+    }
+    elseif ($order->bundle() !== 'doacao') {
+      $this->messenger->addError($this->t('Billing information is required to proceed.'));
+      return $form;
+    }
+
+    $nome = (array) $order->getData('aculta_personal_name', []);
+    $payer = [
+      'name' => $address ? $address->getGivenName() : (string) ($nome['first'] ?? ''),
+      'surname' => $address ? $address->getFamilyName() : (string) ($nome['last'] ?? ''),
+      'email' => $order->getEmail() ?: '',
+    ];
+    if ($address) {
+      $payer['address'] = [
+        'zip_code' => $address->getPostalCode() ?: '',
+        'street_name' => $address->getAddressLine1() . ' / ' . $address->getLocality() . ' ' . $address->getAdministrativeArea() . ' ' . $address->getCountryCode() . ' / ',
+      ];
+    }
+
+    $preference_lines = [];
+    foreach ($order->getItems() as $order_item) {
+      $unit_price = $order_item->getUnitPrice();
+      if ($unit_price === NULL) {
+        $this->messenger->addError($this->t('An order item is missing its price. Please contact the administrator.'));
+        return $form;
+      }
+      $item = [
+        'title' => $order_item->getTitle(),
+        'quantity' => (int) $order_item->getQuantity(),
+        'currency_id' => $unit_price->getCurrencyCode(),
+      ];
+      $adjusted_total = $order_item->getAdjustedTotalPrice();
+      if ($adjusted_total === NULL) {
+        $this->messenger->addError($this->t('An order item total could not be calculated. Please contact the administrator.'));
+        return $form;
+      }
+      $purchased = $order_item->getPurchasedEntity();
+      if ($purchased !== NULL) {
+        if (method_exists($purchased, 'getSku')) {
+          $sku = $purchased->getSku();
+          if ($sku !== NULL && $sku !== '') {
+            $item['id'] = mb_substr((string) $sku, 0, 256);
+          }
+        }
+        $description = $this->getProductDescription($purchased);
+        if ($description !== '') {
+          $item['description'] = mb_substr($description, 0, 256);
+        }
+        // Common image field names in Drupal Commerce.
+        $image_fields = ['field_images', 'images', 'field_image'];
+        $file_entity = NULL;
+
+        foreach ($image_fields as $field_name) {
+          if ($purchased->hasField($field_name) && !$purchased->get($field_name)->isEmpty()) {
+            $file_entity = $purchased->get($field_name)->entity;
+            break;
+          }
+        }
+
+        // If not found in Variation, try the parent Product.
+        if (!$file_entity && method_exists($purchased, 'getProduct')) {
+          $product = $purchased->getProduct();
+          if ($product !== NULL) {
+            foreach ($image_fields as $field_name) {
+              if ($product->hasField($field_name) && !$product->get($field_name)->isEmpty()) {
+                $file_entity = $product->get($field_name)->entity;
+                break;
+              }
+            }
+          }
+        }
+
+        if ($file_entity instanceof FileInterface) {
+          $file_uri = $file_entity->getFileUri();
+          if ($file_uri !== NULL && $file_uri !== '') {
+            $picture_url = $this->fileUrlGenerator->generateAbsoluteString($file_uri);
+            if ($picture_url !== '') {
+              // Mercado Pago limit is usually 256/600 characters depending on
+              // version.
+              $item['picture_url'] = mb_substr($picture_url, 0, 600);
+            }
+          }
+        }
+      }
+      $preference_lines[] = ['item' => $item, 'amount' => $adjusted_total];
+    }
+
+    $notification_url = Url::fromRoute('commerce_payment.notify', [
+      'commerce_payment_gateway' => $payment_gateway->id(),
+    ], ['absolute' => TRUE]);
+
+    $is_external_redirect = ($configuration['redirect_mode'] ?? 'redirect') === 'external_redirect';
+
+    // For popup/modal flow, Mercado Pago redirects to our intermediate page so
+    // we
+    // can close the popup and redirect the opener (avoids leaving two tabs
+    // open).
+    if ($is_external_redirect) {
+      $popup_return = Url::fromRoute('aculta_pagamentos_mercadopago.checkout_popup_return', [], [
+        'absolute' => TRUE,
+        'query' => ['redirect' => $form['#return_url']],
+      ])->toString();
+      $popup_cancel = Url::fromRoute('aculta_pagamentos_mercadopago.checkout_popup_return', [], [
+        'absolute' => TRUE,
+        'query' => ['redirect' => $form['#cancel_url']],
+      ])->toString();
+      $url_success = $popup_return;
+      $url_pending = $popup_return;
+      $url_failure = $popup_cancel;
+    }
+    else {
+      $url_success = $form['#return_url'];
+      $url_pending = $form['#return_url'];
+      $url_failure = $form['#cancel_url'];
+    }
+
+    $request = [
+      'items' => [],
+      'payer' => $payer,
+      'notification_url' => $notification_url->toString(),
+      'external_reference' => (string) $order_id,
+      'back_urls' => [
+        'success' => $url_success,
+        'pending' => $url_pending,
+        'failure' => $url_failure,
+      ],
+      'payment_methods' => [
+        'excluded_payment_methods' => CheckoutPro::getExcludedPaymentMethodsForPreference($configuration),
+        'excluded_payment_types' => CheckoutPro::getExcludedPaymentTypesForPreference($configuration),
+        'installments' => max(1, min(12, (int) ($configuration['max_installments'] ?? 12))),
+        'default_installments' => 1,
+      ],
+    ];
+    $request = self::applyPreferenceDefaults($request);
+
+    $order_total = $order->getTotalPrice();
+    if ($order_total === NULL) {
+      $this->messenger->addError($this->t('Order total is missing.'));
+      return $form;
+    }
+    $payment_amount = $payment->getAmount();
+    if ($payment_amount === NULL || !$payment_amount->equals($order_total)) {
+      $this->messenger->addError($this->t('Payment amount does not match the order total. Please contact the administrator.'));
+      return $form;
+    }
+    $currency_code = $order_total->getCurrencyCode();
+    $shipping_amount = new Price('0', $currency_code);
+
+    foreach ($order->collectAdjustments() as $adjustment) {
+      if ($adjustment->isIncluded()) {
+        continue;
+      }
+      if ($adjustment->getType() == 'shipping') {
+        $shipping_amount = $shipping_amount->add($adjustment->getAmount());
+      }
+    }
+
+    $request['shipments'] = [
+      'mode' => 'not_specified',
+      'cost' => (float) $shipping_amount->getNumber(),
+    ];
+
+    try {
+      $request['items'] = MercadoPagoPreferenceItems::build(
+        $preference_lines,
+        $order_total->subtract($shipping_amount),
+      );
+    }
+    catch (\InvalidArgumentException) {
+      $this->messenger->addError($this->t('The order total could not be represented safely for payment. Please contact the administrator.'));
+      return $form;
+    }
+
+    if (!empty($configuration['debug_logging'])) {
+      $debug_request = self::sanitizePreferenceDebugRequest($request);
+      $this->loggerFactory->get('Mercado Pago debug')->debug('Request sent: <pre>' . print_r($debug_request, TRUE) . '</pre>');
+    }
+
+    try {
+      $preference = $this->createPreference($payment_gateway, $request, (string) $order_id);
+    }
+    catch (MPApiException $e) {
+      $this->logPreferenceFailure($e->getStatusCode());
+      $this->messenger->addError($this->t('Communication with Mercado Pago API failed. Please contact the administrator.'));
+      return $form;
+    }
+    catch (\Throwable) {
+      $this->logPreferenceFailure();
+      $this->messenger->addError($this->t('Communication with Mercado Pago failed. Please contact the administrator.'));
+      return $form;
+    }
+
+    $redirect = self::preferenceRedirect($preference);
+    if ($redirect === NULL) {
+      $this->logPreferenceFailure();
+      $this->messenger->addError($this->t('Mercado Pago did not return a valid checkout link. Please contact the administrator.'));
+      return $form;
+    }
+    $preference_id = $redirect['id'];
+    $redirect_url = $redirect['url'];
+
+    // Use init_point for redirect; sandbox_init_point may be unreliable in test
+    // mode. Validate the provider origin before exposing it to the form or
+    // popup.
+    $form['#action'] = $redirect_url;
+
+    $order->setData('commerce_mercado_pago_checkout', [
+      'preference_id' => $preference_id,
+    ]);
+
+    $order->save();
+
+    $public_key = $payment_gateway_plugin->getPublicKey();
+
+    $data = [
+      'return' => $form['#return_url'],
+      'cancel' => $form['#cancel_url'],
+      'preference_id' => $preference_id,
+      'public_key' => $public_key,
+      'redirect_url' => $redirect_url,
+      'total' => $payment_amount->getNumber(),
+    ];
+
+    if ($is_external_redirect) {
+      // Open checkout in a popup window (modal-like). User clicks the button;
+      // we open window.open() so the popup can be closed on return and only one
+      // tab remains. Uses official init_point; return goes via our intermediate
+      // route that closes the popup and redirects the opener.
+      $form['#process'][] = [static::class, 'processExternalRedirectForm'];
+      $form['#attached']['library'][] = 'aculta_pagamentos_mercadopago/checkout_popup';
+      $form['#attached']['drupalSettings']['commerceMercadoPago']['checkoutPopup'] = [
+        'initPoint' => $redirect_url,
+      ];
+      $form['commerce_message'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => ['data-portal-ui' => 'checkout-help'],
+        '#value' => $this->t('Click the button below to proceed to Mercado Pago (opens in a popup window). After payment, the window will close automatically.'),
+        '#weight' => -10,
+      ];
+
+      return $form;
+    }
+
+    return $this->buildRedirectForm(
+      $form,
+      $form_state,
+      $redirect_url,
+      $data,
+      'post'
+    );
+  }
+
+  /**
+   * Creates a preference with an order-and-payload idempotency key.
+   *
+   * Re-rendering or retrying the same checkout request uses the same provider
+   * key. A materially changed order payload receives a different key.
+   *
+   * @param \Drupal\commerce_payment\Entity\PaymentGatewayInterface $gateway
+   *   The Commerce gateway providing the active environment credentials.
+   * @param array<string, mixed> $request
+   *   The validated preference payload.
+   * @param string $order_id
+   *   The Commerce order ID.
+   *
+   * @return object
+   *   Mercado Pago preference resource.
+   */
+  protected function createPreference(PaymentGatewayInterface $gateway, array $request, string $order_id): object {
+    if ($this->clientFactory === NULL) {
+      throw new \RuntimeException('Mercado Pago client factory is unavailable.');
+    }
+    $payload = json_encode($request, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    $idempotency_key = 'aculta-checkout-' . hash('sha256', $order_id . '|' . $payload);
+    $options = new RequestOptions(NULL, NULL, ['x-idempotency-key' => $idempotency_key]);
+    $client = $this->clientFactory->criar('preferencias', $gateway);
+    return $client->create($request, $options);
+  }
+
+  /**
+   * Returns safe preference data for an external redirect, or NULL.
+   *
+   * @return array{id: string, url: string}|null
+   *   Scalar provider ID and validated official checkout URL.
+   */
+  private static function preferenceRedirect(mixed $preference): ?array {
+    if (!is_object($preference)) {
+      return NULL;
+    }
+    $id = $preference->id ?? NULL;
+    $url = $preference->init_point ?? NULL;
+    if ((!is_string($id) && !is_int($id)) || !is_string($url)) {
+      return NULL;
+    }
+    $id = trim((string) $id);
+    $url = trim($url);
+    if ($id === '' || !MercadoPagoRedirectUrl::isValid($url)) {
+      return NULL;
+    }
+    return ['id' => $id, 'url' => $url];
+  }
+
+  /**
+   * Removes payer data before writing preference diagnostics to logs.
+   *
+   * @param array<string, mixed> $request
+   *   The preference request sent to the provider.
+   *
+   * @return array<string, mixed>
+   *   A diagnostic copy without personal payer details.
+   */
+  private static function sanitizePreferenceDebugRequest(array $request): array {
+    unset($request['payer']);
+    return $request;
+  }
+
+  /**
+   * Applies the integration's required preference behavior.
+   *
+   * A later request-array edit cannot accidentally enable binary mode and
+   * suppress pending or in-process payment states.
+   *
+   * @param array<string, mixed> $request
+   *   The preference request.
+   *
+   * @return array<string, mixed>
+   *   The request with ACULTA's fixed checkout behavior.
+   */
+  private static function applyPreferenceDefaults(array $request): array {
+    $request['binary_mode'] = self::BINARY_MODE;
+    $request['auto_return'] = 'approved';
+    return $request;
+  }
+
+  /**
+   * Logs a provider failure without forwarding its exception message or body.
+   */
+  private function logPreferenceFailure(?int $status = NULL): void {
+    $this->loggerFactory->get('aculta_pagamentos_mercadopago')->error('Mercado Pago preference creation failed (HTTP @status).', [
+      '@status' => $status ?: 'indisponível',
+    ]);
+  }
+
+  /**
+   * Process callback: prepares the form for external redirect (popup).
+   *
+   * Sets form action to # so the form does not submit; JS opens init_point in a
+   * popup instead. Makes the submit button visible so the user triggers the
+   * popup by click (avoids browser blocking). Does not add
+   * payment-redirect-form
+   * so Commerce's offsite_redirect.js does not run.
+   *
+   * @param array<string, mixed> $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   * @param array<string, mixed> $complete_form
+   *   The complete form array.
+   *
+   * @return array<string, mixed>
+   *   The modified form array.
+   */
+  public static function processExternalRedirectForm(array $form, FormStateInterface $form_state, array &$complete_form): array {
+    $complete_form['#action'] = '#';
+    $complete_form['#attributes']['class'][] = 'mercado-pago-checkout-popup';
+    $complete_form['actions']['#access'] = TRUE;
+    foreach (Element::children($complete_form['actions']) as $element_name) {
+      $complete_form['actions'][$element_name]['#access'] = TRUE;
+    }
+    return $form;
+  }
+
+  /**
+   * Gets a plain-text description of a purchasable entity.
+   *
+   * Tries 'body' and 'description' on the entity and, if present, on its parent
+   * product. Mercado Pago accepts item description up to 256 characters.
+   *
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
+   *   The purchased entity (e.g. product variation).
+   *
+   * @return string
+   *   Plain text description, or empty string if none found.
+   */
+  protected function getProductDescription($entity): string {
+    $candidates = ['body', 'description'];
+    foreach ($candidates as $field_name) {
+      if ($entity->hasField($field_name) && !$entity->get($field_name)->isEmpty()) {
+        $value = $entity->get($field_name)->first();
+        if ($value !== NULL) {
+          $raw = $value->getValue();
+          $text_value = isset($raw['value']) ? trim((string) $raw['value']) : '';
+          if ($text_value !== '') {
+            $text = trim(strip_tags($text_value));
+            if ($text !== '') {
+              return $text;
+            }
+          }
+        }
+      }
+    }
+    if (method_exists($entity, 'getProduct')) {
+      $product = $entity->getProduct();
+      if ($product !== NULL && $product->hasField('body') && !$product->get('body')->isEmpty()) {
+        $value = $product->get('body')->first();
+        if ($value !== NULL) {
+          $raw = $value->getValue();
+          $text_value = isset($raw['value']) ? trim((string) $raw['value']) : '';
+          if ($text_value !== '') {
+            $text = trim(strip_tags($text_value));
+            if ($text !== '') {
+              return $text;
+            }
+          }
+        }
+      }
+      if ($product !== NULL && $product->hasField('description') && !$product->get('description')->isEmpty()) {
+        $value = $product->get('description')->first();
+        if ($value !== NULL) {
+          $raw = $value->getValue();
+          $text_value = isset($raw['value']) ? trim((string) $raw['value']) : '';
+          if ($text_value !== '') {
+            $text = trim(strip_tags($text_value));
+            if ($text !== '') {
+              return $text;
+            }
+          }
+        }
+      }
+    }
+    return '';
+  }
+
+  /**
+   * Gets the absolute URL of the first product image from a purchasable entity.
+   *
+   * Tries common image field names on the entity (e.g. variation) and on its
+   * parent product. Mercado Pago accepts picture_url up to 600 characters.
+   *
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
+   *   The purchased entity (e.g. product variation).
+   *
+   * @return string
+   *   Absolute URL of the image, or empty string if none found.
+   */
+  protected function getProductImageUrl($entity): string {
+    $image_field_names = ['field_image', 'image', 'field_product_image', 'field_images'];
+    foreach ($image_field_names as $field_name) {
+      $url = $this->getImageUrlFromField($entity, $field_name);
+      if ($url !== '') {
+        return $url;
+      }
+    }
+    if (method_exists($entity, 'getProduct')) {
+      $product = $entity->getProduct();
+      if ($product !== NULL) {
+        foreach ($image_field_names as $field_name) {
+          $url = $this->getImageUrlFromField($product, $field_name);
+          if ($url !== '') {
+            return $url;
+          }
+        }
+      }
+    }
+    return '';
+  }
+
+  /**
+   * Gets the absolute URL of the first image from an entity's image field.
+   *
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
+   *   The entity that may have the field.
+   * @param string $field_name
+   *   The field name (e.g. field_image).
+   *
+   * @return string
+   *   Absolute URL, or empty string if the field is empty or not an image ref.
+   */
+  protected function getImageUrlFromField($entity, string $field_name): string {
+    if (!$entity->hasField($field_name) || $entity->get($field_name)->isEmpty()) {
+      return '';
+    }
+    $item = $entity->get($field_name)->first();
+    if ($item === NULL || !$item instanceof EntityReferenceItem) {
+      return '';
+    }
+    $file = $item->entity;
+    if ($file === NULL || !$file instanceof FileInterface) {
+      return '';
+    }
+    $uri = $file->getFileUri();
+    if ($uri === NULL || $uri === '') {
+      return '';
+    }
+    try {
+      return $this->fileUrlGenerator->generateAbsoluteString($uri);
+    }
+    catch (\Exception $exception) {
+      $this->loggerFactory->get('Mercado Pago')->warning('Could not generate the product image URL: @exception.', [
+        '@exception' => get_class($exception),
+      ]);
+      return '';
+    }
+  }
+
+}

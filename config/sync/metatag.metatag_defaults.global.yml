@@ -1,0 +1,35 @@
+uuid: 54a5fdd1-0221-400b-9ddd-2e44fb4d22bf
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: sL588ui1E_8-2c_UupwyYxcqX2OVyMFp3HTLbbFqvPc
+id: global
+label: Global
+tags:
+  canonical_url: '[current-page:url]'
+  title: '[current-page:title] | [site:name]'
+  og_site_name: 'Associação Cultural Antiproibicionista'
+  og_type: website
+  og_title: '[current-page:title]'
+  og_url: '[current-page:url]'
+  description: 'Site oficial da Associação Cultural Antiproibicionista em Goiânia: cultura, informação, cuidado e participação social.'
+  schema_organization_type: Organization
+  schema_organization_id: 'https://aculta.org/#organization'
+  schema_organization_name: '[institution:name]'
+  schema_organization_legal_name: '[institution:name]'
+  schema_organization_alternate_name: '[institution:alternate]'
+  schema_organization_tax_id: '[institution:tax-id]'
+  schema_organization_email: '[institution:email]'
+  schema_organization_telephone: '[institution:phone]'
+  schema_organization_url: '[institution:url]'
+  schema_organization_description: 'Associação sem fins lucrativos de Goiânia que desenvolve projetos de cultura, comunicação, cuidado, direitos e participação social.'
+  schema_organization_address: 'a:6:{s:5:"@type";s:13:"PostalAddress";s:13:"streetAddress";s:20:"[institution:street]";s:15:"addressLocality";s:18:"[institution:city]";s:13:"addressRegion";s:20:"[institution:region]";s:10:"postalCode";s:20:"[institution:postal]";s:14:"addressCountry";s:21:"[institution:country]";}'
+  schema_web_site_type: WebSite
+  schema_web_site_id: 'https://aculta.org/#website'
+  schema_web_site_name: '[institution:name]'
+  schema_web_site_url: '[institution:url]'
+  schema_web_site_publisher: 'a:4:{s:5:"@type";s:12:"Organization";s:3:"@id";s:32:"https://aculta.org/#organization";s:4:"name";s:18:"[institution:name]";s:3:"url";s:17:"[institution:url]";}'
+  schema_web_page_type: WebPage
+  schema_web_page_name: '[current-page:title]'
+  schema_web_page_url: '[current-page:url]'

@@ -1,0 +1,92 @@
+# ACULTA LMS Resources
+
+Módulo opcional que permite ao educador vincular ao curso publicações existentes
+da Revista, verbetes Wiki e galerias Media Gallery. O conteúdo e suas permissões
+continuam sob responsabilidade do módulo de origem; o curso apenas guarda
+referências e mostra links canônicos no purpose correspondente.
+
+Os links são exibidos a membros autorizados e educadores com permissão contextual.
+O builder revalida publicação e Entity Access sob o purpose da origem e agrega
+cacheability das entidades, domínios e resultados de acesso. Não duplica imagens,
+arquivos, conteúdo editorial ou storage.
+
+No caso de galerias, o campo do curso usa uma seleção dedicada: o educador com
+permissão contextual escolhe galerias publicadas no purpose Revista. A galeria
+concede visualização aos membros ativos e educadores do curso somente enquanto
+estiver vinculada a ele; a política geral de acesso da Gallery não é ampliada.
+
+O provider do Content Index projeta somente `Group:lms_course` e relações
+explícitas `course_reading` (`revista`/`wiki_entry`), `course_gallery`,
+`course_document` (quando o plugin
+`aculta_document_viewer_group:course_document` está registrado) e `course_video`
+(`media:remote_video`). Consultas revalidam Entity Access sob o purpose
+`courses` e exigem também `takeAccess()` ou a permissão contextual de educador
+(`administer members` ou `grade students`). Aulas, progresso, matrículas,
+respostas, notas e certificados continuam exclusivamente no LMS.
+
+O Media oEmbed compartilhado `remote_video` pertence ao `aculta_portal` e pode
+ser consultado pelo Index como entidade autorizada. O curso referencia vídeos
+pelo campo explícito `field_lms_videos`, limitado ao bundle `remote_video`;
+novas instalações recebem a configuração de `config/install` e sites existentes
+recebem o campo pelo update `8001`. O provider LMS emite `course_video` e a
+versão de projeção sobe para 4 com o plugin PDF Group ou 3 sem ele. O Media e
+sua Entity Access continuam no Portal; não copiar URL oEmbed, corpo, miniatura,
+progresso ou dados de estudante para o catálogo. O contrato completo das
+relações editoriais de vídeo está em
+[ACULTA-CONTENT-INDEX-VIDEO-RELATIONS](../../../../../../docs/portal/ACULTA-CONTENT-INDEX-VIDEO-RELATIONS.md).
+
+## Estado
+
+### Content Index: boot/DI do owner — validação dev.161
+
+`ContentIndexOwnerIntegrationKernelTest`, no módulo `aculta_index`, carregou a
+closure declarada de 103 módulos Portal/LMS e descobriu `lms_course` e
+`course_document` pelos services.yml dos owners reais. O gate passou em
+1 teste / 8 assertions (83 depreciações Core/contrib). Isso confirma o boot do
+container e as tags; não instala configuração/schema dos módulos nem substitui
+os testes focados de acesso com Group e Domain. Runtime continua pendente.
+
+No dev.162, o mesmo harness criou GroupType, Group e Media reais, resolveu a
+definição `aculta_document_viewer_group:course_document` registrada pelo owner e
+persistiu a relação curso→documento (1 teste / 33 assertions; 239 depreciações
+Core/contrib). O harness pertence ao `aculta_index` no Portal; o LMS não
+hospeda nem possui o Index. A policy LMS segue coberta nos testes focais; o
+Runtime permanece pendente.
+
+### Limpeza coordenada de recursos — dívida de integração em 2026-10-22
+
+O Portal já oferece parcialmente `aculta_portal.unused_file_cleaner` para
+verificação/remoção de File. Quando curso, turma ou referência for removida, o
+módulo deve fornecer suas relações e submeter candidatos ao Portal antes da
+limpeza. O Portal revalida referências e remove Media/File órfãos. A verificação
+deve preservar documentos ligados a outras turmas ou conteúdos e respeitar a
+relação Group atual. Não excluir arquivos diretamente; ver
+[política compartilhada](../../../../../../docs/portal/CONTENT-CLEANUP-POLICY.md).
+
+Dev 0.1.0-dev.10. O provider tem cobertura Unit e Kernel com Group real:
+estudante por `takeAccess()`, educador por `grade students`, terceiro negado.
+O Kernel passa pelo `ContentIndexAccessFilter`, combina Group Entity Access com
+policy LMS e verifica troca/restauração do purpose `courses` com Domains
+persistidos e negotiator real: 1 teste / 33 assertions PASS em MariaDB e em
+SQLite, com 47 depreciações de Core/contrib por execução. Unit lê e compila o YAML/tag owner (1/4); o módulo
+e sua cadeia completa ainda não foram inicializados no Kernel. A descoberta
+do provider pela tag/DI do módulo, instalação e smoke autenticado no Runtime e
+revisão visual continuam pendentes. PHP CLI 8.4.26; PHP 8.5 não validado.
+Consulte o
+[roadmap LMS](../../../../../../docs/modules/ACULTA-LMS-ROADMAP.md).
+
+Dev 0.1.0-dev.14. A relação outgoing `course_document` passou a ter cobertura
+Kernel completa no harness LMS: rebuild, consulta pelo estudante membro,
+negação do visitante externo e uso da declaração/tag YAML do provider Media
+owner (4 testes / 210 assertions em MariaDB; 53 depreciações Core/contrib).
+O plugin Group é fixture de teste; a ativação dos módulos owner completos,
+instalação no Runtime e smoke autenticado continuam pendentes.
+
+Dev 0.1.0-dev.15 corrige somente o pacote da fixture Kernel para `ACULTA Portal`,
+em conformidade com o gate de componentes próprios.
+
+Dev 0.1.0-dev.16 repete o Kernel LMS/Index em MariaDB: 4 testes / 208
+assertions, incluindo acesso de estudante e educador, terceiro negado e relações
+de leitura, galeria e documento. O teste usa Group real e plugin fixture para a
+relação PDF; as 53 depreciações são de Core/contrib. Boot owner e Runtime seguem
+pendentes.

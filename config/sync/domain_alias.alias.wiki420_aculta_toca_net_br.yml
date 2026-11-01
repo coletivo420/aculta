@@ -1,0 +1,10 @@
+uuid: b0edf827-7b5f-4d71-b649-079a0628847f
+langcode: pt-br
+status: true
+dependencies: {  }
+id: wiki420_aculta_toca_net_br
+domain_id: wiki420_aculta_org
+pattern: wiki420.aculta.toca.net.br
+redirect: 0
+environment: homelab
+weight: 5

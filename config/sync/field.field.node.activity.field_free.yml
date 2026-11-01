@@ -1,0 +1,23 @@
+uuid: 3bc5e896-2166-4954-9bb0-ea0905d05f22
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_free
+    - node.type.activity
+id: node.activity.field_free
+field_name: field_free
+entity_type: node
+bundle: activity
+label: 'Atividade gratuita'
+description: 'Campo editorial administrável: Atividade gratuita. Preencha somente com informações verificadas.'
+required: true
+translatable: true
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: Sim
+  off_label: Não
+field_type: boolean

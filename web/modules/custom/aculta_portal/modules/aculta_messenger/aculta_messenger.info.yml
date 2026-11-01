@@ -1,0 +1,23 @@
+name: ACULTA Messenger
+type: module
+description: 'Integra mensagens, notificações e avisos no ACULTA Portal.'
+package: 'ACULTA Portal'
+core_version_requirement: ^11.3
+version: '0.1.1-dev.405'
+dependencies:
+  - aculta_portal:aculta_portal
+  - aculta_portal:aculta_user
+  - aculta_portal:aculta_mailer
+  - aculta_portal:aculta_forum
+  - private_message:private_message
+  - message:message
+  - message_notify:message_notify
+  - message_subscribe:message_subscribe
+  - site_alert:site_alert
+  - drupal:node
+  - drupal:datetime
+  - drupal:menu_ui
+  - drupal:options
+  - flag:flag
+  - drupal:content_moderation
+  - pathauto:pathauto

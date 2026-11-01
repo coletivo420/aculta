@@ -1,0 +1,33 @@
+uuid: aa990ecf-bff4-4163-9bce-c8e99d2ae648
+langcode: pt-br
+status: true
+dependencies:
+  content:
+    - 'block_content:basic:c86786af-163d-4a72-b7d6-a0ae2344548b'
+  module:
+    - aculta_portal
+    - block_content
+    - system
+  theme:
+    - aculta420
+id: aculta_home_mission
+theme: aculta420
+region: content
+weight: 11
+provider: null
+plugin: 'block_content:c86786af-163d-4a72-b7d6-a0ae2344548b'
+settings:
+  id: 'block_content:c86786af-163d-4a72-b7d6-a0ae2344548b'
+  label: 'Home — Nossa missão'
+  label_display: '0'
+  provider: block_content
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: '<front>'
+  aculta_domain_purpose:
+    id: aculta_domain_purpose
+    purpose: main
+    negate: false

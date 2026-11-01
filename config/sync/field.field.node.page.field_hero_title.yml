@@ -1,0 +1,19 @@
+uuid: 9e213db8-22e3-45c2-a508-251d6d96f988
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_hero_title
+    - node.type.page
+id: node.page.field_hero_title
+field_name: field_hero_title
+entity_type: node
+bundle: page
+label: 'Hero: título (uma linha por quebra)'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

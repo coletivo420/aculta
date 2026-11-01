@@ -1,0 +1,18 @@
+uuid: fd1111b4-8cf0-422e-a900-8e189d297d6e
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - profile
+id: profile.field_exibir_foto
+field_name: field_exibir_foto
+entity_type: profile
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

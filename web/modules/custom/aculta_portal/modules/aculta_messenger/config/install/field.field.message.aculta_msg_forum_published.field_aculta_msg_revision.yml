@@ -1,0 +1,20 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_msg_revision
+    - message.template.aculta_msg_forum_published
+  enforced:
+    module:
+      - aculta_messenger
+field_name: field_aculta_msg_revision
+entity_type: message
+bundle: aculta_msg_forum_published
+label: 'Revisão de origem'
+description: 'Revisão que originou o aviso, usada para deduplicação.'
+required: true
+translatable: false
+default_value: []
+default_value_callback: ''
+settings: {}
+field_type: integer

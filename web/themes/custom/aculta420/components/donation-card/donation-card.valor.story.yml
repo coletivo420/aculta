@@ -1,0 +1,6 @@
+name: Valor sugerido
+description: Exemplo de opção de contribuição; não realiza transação.
+component: aculta420:donation-card
+props:
+  label: R$ 25,00
+  href: '#contribuicao-exemplo'

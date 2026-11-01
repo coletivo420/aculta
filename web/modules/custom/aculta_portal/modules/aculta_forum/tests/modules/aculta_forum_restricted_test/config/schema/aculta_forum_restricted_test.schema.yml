@@ -1,0 +1,10 @@
+aculta_forum.settings:
+  type: config_object
+  label: 'Restricted forum settings used by the Kernel fixture'
+  mapping:
+    restricted_group_type:
+      type: string
+      label: 'Group type used for restricted forums'
+      # The production schema documents the setting; the fixture repeats only
+      # the key exercised by the Kernel test because aculta_forum is not
+      # enabled there.

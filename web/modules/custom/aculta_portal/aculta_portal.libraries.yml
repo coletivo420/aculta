@@ -1,0 +1,45 @@
+account-navigation:
+  js:
+    js/account-navigation.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
+
+search-preview:
+  js:
+    js/search-preview.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
+account-password-modal:
+  js:
+    js/account-password-modal.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+    - core/drupal.dialog
+
+account-terms-modal:
+  js:
+    js/account-terms-modal.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+    - core/drupal.dialog
+
+cart-status:
+  js:
+    js/cart-status.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
+# Padrão de integrações externas: abre a autorização ou o pagamento num popup; o retorno é PopupReturnPage.
+integration-popup:
+  js:
+    js/integration-popup.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

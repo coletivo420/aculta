@@ -1,0 +1,10 @@
+uuid: 5d5c4b6c-ab73-4a41-9b43-c9f92c5fefcd
+langcode: pt-br
+status: true
+dependencies: {  }
+id: loja_aculta_toca_net_br
+domain_id: loja_aculta_org
+pattern: loja.aculta.toca.net.br
+redirect: 0
+environment: homelab
+weight: 6

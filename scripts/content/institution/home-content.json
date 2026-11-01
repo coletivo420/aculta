@@ -1,0 +1,231 @@
+{
+  "schema": 1,
+  "block_content": [
+    {
+      "uuid": "1a8bd16f-d4ea-4770-91a6-726332a65247",
+      "info": "Fortaleça nossos projetos — Home",
+      "body": {
+        "value": "<div class=\"aculta-prose\"><p>Sua contribuição ajuda a manter iniciativas culturais, comunicação, formação e ações de interesse coletivo.</p></div>",
+        "format": "full_html"
+      },
+      "fields": {
+        "field_section_title": "FORTALEÇA NOSSOS PROJETOS",
+        "field_section_heading": null,
+        "field_section_variant": "default"
+      }
+    },
+    {
+      "uuid": "222ed8b1-5847-4274-a611-87dac3293be7",
+      "info": "Home — Comunicação e conhecimento",
+      "body": {
+        "value": "<div class=\"aculta-prose\"><p>Produzir cultura também significa produzir conhecimento. Entrevistas, publicações e projetos como o PodPlant420 aproximam diferentes experiências e saberes.</p><p>Nossa comunicação busca criar espaços de escuta e diálogo sobre cultura, saúde, direitos e sociedade.</p><p><a href=\"/noticias\" class=\"aculta-editorial-link\">ACOMPANHE AS PUBLICAÇÕES</a></p></div>",
+        "format": "full_html"
+      },
+      "fields": {
+        "field_section_title": "INFORMAÇÃO TAMBÉM É CULTURA",
+        "field_section_heading": null,
+        "field_section_variant": "default"
+      }
+    },
+    {
+      "uuid": "45934cbe-7d04-444c-bdb4-aada64bc80dd",
+      "info": "Home — Cultura, cuidado e conhecimento",
+      "body": {
+        "value": "<div class=\"aculta-prose\"><p>Em 2026, a experiência do Bloco Sativa no Carnaval de Goiânia foi objeto de trabalho na Escola de Governo da Fiocruz, abordando percussão popular, redução de danos e redes de cuidado.</p><p>Práticas culturais comunitárias também podem produzir conhecimento, vínculos e cuidado.</p><p><a href=\"/institucional\" class=\"aculta-editorial-link\">CONHEÇA NOSSA HISTÓRIA</a></p></div>",
+        "format": "full_html"
+      },
+      "fields": {
+        "field_section_title": "CULTURA, CUIDADO E PRODUÇÃO DE CONHECIMENTO",
+        "field_section_heading": null,
+        "field_section_variant": "default"
+      }
+    },
+    {
+      "uuid": "47db0497-eb2e-4c2f-acf1-c8683c352cf7",
+      "info": "Cabeçalho — Nossos projetos",
+      "body": {
+        "value": "<p class=\"aculta-prose\">Da percussão ao audiovisual, nossos projetos aproximam pessoas e fortalecem a participação cultural.</p>",
+        "format": "full_html"
+      },
+      "fields": {
+        "field_section_title": "NOSSOS PROJETOS",
+        "field_section_heading": null,
+        "field_section_variant": "default"
+      }
+    },
+    {
+      "uuid": "70773914-c529-4bf7-869b-8fc198b780ad",
+      "info": "Home — Transparência",
+      "body": {
+        "value": "<div class=\"aculta-prose\"><p>Facilitamos o acesso a informações sobre a organização, os dados cadastrais e os documentos institucionais da Associação.</p><p><a href=\"/transparencia\" class=\"aculta-editorial-link\">CONHEÇA NOSSA TRANSPARÊNCIA</a></p></div>",
+        "format": "full_html"
+      },
+      "fields": {
+        "field_section_title": "TRANSPARÊNCIA",
+        "field_section_heading": "Uma associação construída com participação e responsabilidade",
+        "field_section_variant": "default"
+      }
+    },
+    {
+      "uuid": "8bb4b286-4fc3-49c8-b35a-bcae14ae1984",
+      "info": "Construir em parceria — Home",
+      "body": {
+        "value": "<div class=\"aculta-prose\"><p>Acreditamos na colaboração entre sociedade civil, instituições, empresas, universidades, poder público e iniciativas culturais para ampliar o alcance de projetos e fortalecer ações de interesse coletivo.</p><p><a class=\"aculta-editorial-link\" href=\"/contato\">FALE COM A ASSOCIAÇÃO</a></p></div>",
+        "format": "full_html"
+      },
+      "fields": {
+        "field_section_title": "CONSTRUIR EM PARCERIA",
+        "field_section_heading": null,
+        "field_section_variant": "default"
+      }
+    },
+    {
+      "uuid": "8fd34760-58bc-433c-8f96-449ded4ace9d",
+      "info": "Home — Cuidado, informação e direitos",
+      "body": {
+        "value": "<div class=\"aculta-prose\"><p>A redução de danos faz parte da atuação social da Associação, com informação, autonomia e cuidado em atividades culturais e comunitárias.</p><p>Também acompanhamos debates sobre direitos humanos e políticas públicas, com respeito à dignidade das pessoas.</p><p><a href=\"/institucional\" class=\"aculta-editorial-link\">CONHEÇA NOSSA ATUAÇÃO</a></p></div>",
+        "format": "full_html"
+      },
+      "fields": {
+        "field_section_title": "CUIDADO, INFORMAÇÃO E DIREITOS",
+        "field_section_heading": null,
+        "field_section_variant": "default"
+      }
+    },
+    {
+      "uuid": "990079a5-c586-474b-89a4-38529c15fb14",
+      "info": "Organização e documentos da Transparência",
+      "body": {
+        "value": "<h2>Estatuto Social</h2><p>O Estatuto Social estabelece os objetivos, os princípios e as regras de organização da Associação.</p><h2>Atas e Assembleias</h2><p>As atas registram as deliberações dos órgãos associativos. A Assembleia Geral de Fundação ocorreu em 22 de agosto de 2025.</p><h2>Governança</h2><p>A Assembleia Geral é o órgão deliberativo da Associação. O Conselho Associativo é seu órgão executivo, composto pela Coordenação Geral, Secretaria e Coordenação Financeira.</p><h2>Relatórios de atividades</h2><p>Os relatórios de atividades reúnem registros dos projetos e das ações desenvolvidas pela Associação.</p><h2>Prestação de contas</h2><p>Esta área reúne informações de prestação de contas relacionadas às atividades e aos projetos, quando aplicáveis.</p><h2>Parcerias e convênios</h2><p>Os instrumentos institucionais de parceria e convênio podem ser consultados nesta área quando disponibilizados para acesso público.</p><h2>Documentos institucionais</h2><p>Os documentos disponibilizados para consulta e download são apresentados a seguir, com identificação e contexto em HTML.</p>",
+        "format": "full_html"
+      },
+      "fields": {
+        "field_section_title": null,
+        "field_section_heading": null,
+        "field_section_variant": "transparency"
+      }
+    },
+    {
+      "uuid": "9e930892-7963-49b3-af43-9ba601512cdd",
+      "info": "Home — Quem somos e missão",
+      "body": {
+        "value": "<div class=\"aculta-prose\"><p>A Associação Cultural Antiproibicionista é uma organização da sociedade civil sem fins lucrativos, com sede em Goiânia, que reúne cultura, comunicação, formação e participação social.</p><p>Nossa trajetória nasce do encontro entre música, cultura de rua e mobilização comunitária. Desenvolvemos projetos que fortalecem a produção cultural, ampliam o acesso à informação e promovem cuidado, direitos e cidadania.</p><p><a href=\"/institucional\" class=\"aculta-editorial-link\">CONHEÇA NOSSA HISTÓRIA</a></p></div>",
+        "format": "full_html"
+      },
+      "fields": {
+        "field_section_title": "QUEM SOMOS",
+        "field_section_heading": "Cultura como espaço de encontro, expressão e transformação",
+        "field_section_variant": "default"
+      }
+    },
+    {
+      "uuid": "a7dc6752-a06d-46ef-a4e7-39b7931df7f9",
+      "info": "Home — Cultura que ocupa a cidade",
+      "body": {
+        "value": "<div class=\"aculta-prose\"><p>Ensaios, apresentações, cortejos e encontros abertos à comunidade fazem da cidade um espaço de cultura e convivência.</p><p>Do Baque Sativa ao Carnareggae, fortalecemos a produção independente e a ocupação coletiva dos espaços públicos de Goiânia.</p><p class=\"aculta-callout\">CULTURA SE FAZ JUNTO.</p><p><a href=\"/atividades\" class=\"btn btn-primary\">VEJA NOSSAS ATIVIDADES</a></p></div>",
+        "format": "full_html"
+      },
+      "fields": {
+        "field_section_title": "CULTURA QUE OCUPA A CIDADE",
+        "field_section_heading": null,
+        "field_section_variant": "city"
+      }
+    },
+    {
+      "uuid": "bfc5d412-27f8-47b5-94ec-34114bffdfc7",
+      "info": "Home — O que fazemos",
+      "body": {
+        "value": "<p class=\"aculta-prose\">Nossa atuação conecta diferentes linguagens e áreas de trabalho. Cultura, comunicação, cuidado e participação comunitária fazem parte de uma mesma construção.</p><div class=\"aculta-areas\"><section><h3>CULTURA E ARTE</h3><p>Realizamos e apoiamos iniciativas de música, percussão, cultura de rua, carnaval, reggae e outras expressões da cultura independente e popular.</p></section><section><h3>COMUNICAÇÃO E FORMAÇÃO</h3><p>Produzimos conteúdos, entrevistas, encontros e materiais que aproximam conhecimento, experiências e participação social.</p></section><section><h3>CUIDADO E REDUÇÃO DE DANOS</h3><p>Desenvolvemos ações orientadas pelo cuidado, pela autonomia, pela informação e pela promoção da saúde em atividades culturais e comunitárias.</p></section><section><h3>DIREITOS E PARTICIPAÇÃO SOCIAL</h3><p>Participamos de espaços de diálogo e construção coletiva relacionados a direitos humanos, cidadania e políticas públicas.</p></section></div><p><a href=\"/institucional\" class=\"aculta-editorial-link\">CONHEÇA NOSSA ATUAÇÃO</a></p>",
+        "format": "full_html"
+      },
+      "fields": {
+        "field_section_title": "O QUE FAZEMOS",
+        "field_section_heading": null,
+        "field_section_variant": "default"
+      }
+    },
+    {
+      "uuid": "c86786af-163d-4a72-b7d6-a0ae2344548b",
+      "info": "Home — Nossa missão (SDC)",
+      "body": {
+        "value": "<p>Promover cultura, informação, cuidado e participação social por meio de projetos e ações que valorizem a expressão artística, a educação, a redução de danos, os direitos humanos e a construção coletiva de conhecimento.</p>",
+        "format": "full_html"
+      },
+      "fields": {
+        "field_section_title": "NOSSA MISSÃO",
+        "field_section_heading": null,
+        "field_section_variant": "default"
+      }
+    }
+  ],
+  "node": [
+    {
+      "nid": 1,
+      "uuid": "dc47dc15-c623-47fc-9466-8a7043557221",
+      "bundle": "page",
+      "title": "Associação Cultural Antiproibicionista",
+      "fields": {
+        "field_hero_eyebrow": "CULTURA • CIDADANIA • PARTICIPAÇÃO",
+        "field_hero_title": "ASSOCIAÇÃO CULTURAL\nANTIPROIBICIONISTA",
+        "field_hero_slogan": "Lutando por um futuro livre da proibição.",
+        "field_hero_lead": "Cultura, informação, cuidado e participação social.",
+        "field_hero_primary": {
+          "uri": "internal:/institucional",
+          "title": "CONHEÇA A ASSOCIAÇÃO"
+        },
+        "field_hero_secondary": {
+          "uri": "internal:/projetos",
+          "title": "NOSSOS PROJETOS"
+        }
+      }
+    },
+    {
+      "uuid": "5b1201da-795a-436d-bddc-b3f198aa38a7",
+      "bundle": "editorial_highlight",
+      "title": "INFORMAÇÃO TAMBÉM É CULTURA",
+      "fields": {
+        "field_category": "COMUNICAÇÃO • CULTURA",
+        "field_complement": "Nossa comunicação cria espaços de escuta e diálogo sobre cultura, saúde, direitos e sociedade.",
+        "field_summary": "Produzir cultura também significa produzir conhecimento. Entrevistas, publicações e projetos audiovisuais aproximam diferentes experiências e saberes.",
+        "field_weight": "0",
+        "field_link": {
+          "uri": "internal:/noticias",
+          "title": "ACOMPANHE AS PUBLICAÇÕES",
+          "options": []
+        }
+      }
+    },
+    {
+      "uuid": "20e4646b-3cda-4b57-a7de-d1c7964568c0",
+      "bundle": "editorial_highlight",
+      "title": "CUIDADO, INFORMAÇÃO E DIREITOS",
+      "fields": {
+        "field_category": "CUIDADO • DIREITOS",
+        "field_complement": "Também participamos de debates sobre direitos humanos e políticas públicas, sempre com respeito à dignidade das pessoas.",
+        "field_summary": "A redução de danos integra nossa atuação social por meio de informação, autonomia e cuidado em atividades culturais e comunitárias.",
+        "field_weight": "1",
+        "field_link": {
+          "uri": "internal:/institucional",
+          "title": "CONHEÇA NOSSA ATUAÇÃO",
+          "options": []
+        }
+      }
+    },
+    {
+      "uuid": "8bdc590a-f3ca-41bc-b256-0e451f7f6dd2",
+      "bundle": "editorial_highlight",
+      "title": "CULTURA, CUIDADO E PRODUÇÃO DE CONHECIMENTO",
+      "fields": {
+        "field_category": "CULTURA • CONHECIMENTO",
+        "field_complement": "Práticas culturais comunitárias podem fortalecer vínculos, redes de cuidado e participação social.",
+        "field_summary": "Experiências construídas em nossos projetos também dialogam com pesquisa, educação popular e produção de conhecimento.",
+        "field_weight": "2",
+        "field_link": {
+          "uri": "internal:/institucional",
+          "title": "CONHEÇA NOSSA HISTÓRIA",
+          "options": []
+        }
+      }
+    }
+  ]
+}
