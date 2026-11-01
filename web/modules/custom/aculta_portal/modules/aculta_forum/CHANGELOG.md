@@ -1,3 +1,10 @@
+## 0.1.0-dev.337 — galeria do Fórum aceita imagens recentes do Studio
+
+- `ForumGalleryUploadDialogForm` lista imagens recentes do Studio (integração `forum`) e as soma aos envios novos, sem repetir arquivo.
+- Cada escolha é checada pelo dono; administrador vê todos. Descrições continuam na mesma ordem: novos envios primeiro, depois os escolhidos.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.336 — anexo do Fórum aceita envio recente do Studio
 
 - `ForumAttachmentUploadDialogForm` lista os envios recentes do Studio da integração `forum` (imagens e documentos).
