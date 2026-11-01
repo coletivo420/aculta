@@ -490,3 +490,11 @@
 - Exportado para `config/sync` o vocabulário `aculta_location_type`, já criado pelo update hook 10003, e coberta a negação de `/locais` fora do purpose `eventos` com teste Kernel.
 - O update hook já contém os 17 tipos de local traduzidos; este registro fecha a configuração e a evidência de acesso da microfase E1.
 
+## Fronteira de Contributions e reivindicação de Organização (2026-11-01)
+
+- O adapter comunitário permanece restrito a perfis públicos de organizações
+  não reivindicadas. Titularidade, membros e claims continuam sob `aculta_user`;
+  o allowlist de Contributions não os altera e a aplicação revalida o estado.
+- Kernel `testContributionCannotSubmitOrApplyToClaimedOrganization`: 1 teste /
+  27 assertions PASS em `aculta_simpletest`, 24 depreciações Core/contrib.
+

@@ -238,8 +238,8 @@ Publicar eventos mínimos no bus central. O Messenger envia avisos conforme pref
 - [x] Criar proposta privada para Organização por não administradores, pelo formulário próprio e pelo modal do Evento; nenhuma entidade é criada nem vinculada antes da revisão.
 - [x] Decisão administrativa de criação exige seleção explícita dos campos e título; lifecycle e modal/admin Kernel completos passaram (13/437 e 8/266 assertions).
 - [x] Editar proposta de perfil de Organização existente com campos allowlisted.
-- Integrar titulares, membros, reivindicação e revisão administrativa.
-- Definir tratamento de organização não reivindicada e de proposta conflitante.
+- [x] Preservar ownership em `aculta_user`: Contributions só editam perfil público de organização não reivindicada, excluem titularidade/membros/reivindicação do allowlist e falham fechado para organização reivindicada. Criação aprovada permanece não reivindicada, com proponente como organizador.
+- [x] Definir conflito para organização: mudanças no perfil ou estado de reivindicação invalidam a versão-base; a aplicação também revalida `isUnclaimed()`, e nome duplicado conflita sem mescla. Kernel novo `testContributionCannotSubmitOrApplyToClaimedOrganization`: 1/27 PASS em `aculta_simpletest`.
 **Saída:** criação e atualização sem alteração pública pré-aprovação.
 
 ### F5 - Locais

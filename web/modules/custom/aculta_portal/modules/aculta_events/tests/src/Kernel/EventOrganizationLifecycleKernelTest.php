@@ -451,6 +451,32 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
+   * Claimed organizations stay outside the community contribution adapter.
+   */
+  public function testContributionCannotSubmitOrApplyToClaimedOrganization(): void {
+    $organization = EventOrganization::create([
+      'title' => 'Organização reivindicada',
+      'field_slug' => 'organizacao-reivindicada',
+      'body' => 'Perfil sob titularidade.',
+      'reivindicada' => TRUE,
+      'reivindicacao_status' => 'confirmada',
+      'titular' => $this->anotherEditorUser->id(),
+      'field_status' => 'publicado',
+      'status' => 1,
+    ]);
+    $organization->save();
+
+    $this->usePurposeByCurrentAccount();
+    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_organization');
+    $this->container->get('current_user')->setAccount($this->editorUser);
+    self::assertFalse($adapter->submitAccess($this->editorUser, 'organization_update', $organization));
+
+    $this->container->get('current_user')->setAccount($this->adminUser);
+    self::assertFalse($adapter->applyAccess($this->adminUser, 'organization_update', $organization));
+    self::assertSame((int) $this->anotherEditorUser->id(), (int) $organization->get('titular')->target_id);
+  }
+
+  /**
    * A new organization is absent until its proposal is accepted.
    */
   public function testOrganizationCreateContributionWaitsForApproval(): void {
