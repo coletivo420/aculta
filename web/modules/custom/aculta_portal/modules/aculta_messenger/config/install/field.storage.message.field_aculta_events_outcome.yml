@@ -7,8 +7,8 @@ dependencies:
   enforced:
     module:
       - aculta_messenger
-id: message.field_aculta_events_notice_outcome
-field_name: field_aculta_events_notice_outcome
+id: message.field_aculta_events_outcome
+field_name: field_aculta_events_outcome
 entity_type: message
 type: list_string
 settings:

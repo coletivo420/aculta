@@ -274,7 +274,7 @@ function aculta_messenger_update_10015(): void {
  */
 function aculta_messenger_update_10016(): void {
   $storage = \Drupal::entityTypeManager()->getStorage('field_storage_config');
-  $field = $storage->load('message.field_aculta_events_notice_outcome');
+  $field = $storage->load('message.field_aculta_events_outcome');
   if ($field === NULL) {
     return;
   }

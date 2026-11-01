@@ -6,8 +6,8 @@ dependencies:
   enforced:
     module:
       - aculta_messenger
-id: message.field_aculta_events_proposal_uuid
-field_name: field_aculta_events_proposal_uuid
+id: message.field_aculta_events_prop_uuid
+field_name: field_aculta_events_prop_uuid
 entity_type: message
 type: string
 settings:

@@ -27,11 +27,11 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
 
   public const TEMPLATE = 'aculta_msg_events_contribution_notice';
 
-  private const EVENT_FIELD = 'field_aculta_events_notice_outcome';
+  private const EVENT_FIELD = 'field_aculta_events_outcome';
 
-  private const SOURCE_FIELD = 'field_aculta_events_proposal_uuid';
+  private const SOURCE_FIELD = 'field_aculta_events_prop_uuid';
 
-  private const VERSION_FIELD = 'field_aculta_events_proposal_revision';
+  private const VERSION_FIELD = 'field_aculta_events_prop_rev';
 
   private const READ_FIELD = 'field_aculta_events_notice_read';
 

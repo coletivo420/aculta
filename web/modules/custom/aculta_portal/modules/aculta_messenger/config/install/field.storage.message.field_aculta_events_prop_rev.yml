@@ -6,8 +6,8 @@ dependencies:
   enforced:
     module:
       - aculta_messenger
-id: message.field_aculta_events_proposal_revision
-field_name: field_aculta_events_proposal_revision
+id: message.field_aculta_events_prop_rev
+field_name: field_aculta_events_prop_rev
 entity_type: message
 type: string
 settings:

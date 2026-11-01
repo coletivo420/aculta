@@ -168,7 +168,7 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
     $field->expects(self::once())->method('save')->willReturn($field);
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->expects(self::exactly(2))->method('load')
-      ->with('message.field_aculta_events_notice_outcome')->willReturn($field);
+      ->with('message.field_aculta_events_outcome')->willReturn($field);
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_type_manager->expects(self::exactly(2))->method('getStorage')
       ->with('field_storage_config')->willReturn($storage);

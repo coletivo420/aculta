@@ -48,3 +48,4 @@ magazine_events:
   review_submitted: true
   review_returned: true
 private_message_digest_anchor: '2026-10-26'
+events_contribution_notices: true

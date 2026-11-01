@@ -2,16 +2,16 @@ langcode: pt-br
 status: true
 dependencies:
   config:
-    - field.storage.message.field_aculta_events_proposal_uuid
+    - field.storage.message.field_aculta_events_prop_rev
     - message.template.aculta_msg_events_contribution_notice
   enforced:
     module:
       - aculta_messenger
-id: message.aculta_msg_events_contribution_notice.field_aculta_events_proposal_uuid
-field_name: field_aculta_events_proposal_uuid
+id: message.aculta_msg_events_contribution_notice.field_aculta_events_prop_rev
+field_name: field_aculta_events_prop_rev
 entity_type: message
 bundle: aculta_msg_events_contribution_notice
-label: 'UUID da proposta'
+label: 'Revisão da proposta'
 description: ''
 required: true
 translatable: false
