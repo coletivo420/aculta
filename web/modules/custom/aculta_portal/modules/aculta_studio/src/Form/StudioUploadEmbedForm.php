@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_studio\Form;
 
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\Cleanup\FileCleanupStatus;
+use Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner;
 use Drupal\aculta_file_uploader\RecentUploads;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -51,6 +53,7 @@ final class StudioUploadEmbedForm extends FormBase {
     private readonly FileUsageInterface $fileUsage,
     private readonly AccountProxyInterface $currentUser,
     private readonly DateFormatterInterface $dateFormatter,
+    private readonly UnusedFileCleaner $unusedFileCleaner,
   ) {}
 
   /**
@@ -65,6 +68,7 @@ final class StudioUploadEmbedForm extends FormBase {
       $container->get('file.usage'),
       $container->get('current_user'),
       $container->get('date.formatter'),
+      $container->get('aculta_file_uploader.unused_file_cleaner'),
     );
   }
 
@@ -115,10 +119,11 @@ final class StudioUploadEmbedForm extends FormBase {
         continue;
       }
       $inUse = $this->fileUsage->listUsage($file) !== [];
-      $rows[] = [
-        $file->getFilename(),
-        $this->dateFormatter->format((int) $file->getCreatedTime(), 'short'),
-        $inUse ? $this->t('Em uso') : $this->t('Sem uso ainda'),
+      $rows[$fid] = [
+        'name' => $file->getFilename(),
+        'date' => $this->dateFormatter->format((int) $file->getCreatedTime(), 'short'),
+        'status' => $inUse ? $this->t('Em uso') : $this->t('Sem uso ainda'),
+        'disabled' => $inUse,
       ];
     }
     return [
@@ -131,10 +136,23 @@ final class StudioUploadEmbedForm extends FormBase {
         '#value' => $this->t('Envios sem uso são apagados após 6 horas, para imagens e documentos.'),
       ],
       'table' => [
-        '#type' => 'table',
-        '#header' => [$this->t('Arquivo'), $this->t('Enviado em'), $this->t('Situação')],
-        '#rows' => $rows,
+        '#type' => 'tableselect',
+        '#header' => [
+          'name' => $this->t('Arquivo'),
+          'date' => $this->t('Enviado em'),
+          'status' => $this->t('Situação'),
+        ],
+        '#options' => array_map(static fn (array $row): array => array_diff_key($row, ['disabled' => TRUE]), $rows),
+        '#disabled' => FALSE,
         '#empty' => $this->t('Nenhum envio recente nesta integração.'),
+        '#js_select' => FALSE,
+      ],
+      'remove' => [
+        '#type' => 'submit',
+        '#value' => $this->t('Remover selecionados sem uso'),
+        '#name' => 'remove_recent',
+        '#limit_validation_errors' => [['recentes', 'table']],
+        '#submit' => ['::removeUnused'],
       ],
     ];
   }
@@ -162,6 +180,33 @@ final class StudioUploadEmbedForm extends FormBase {
         }
       }
     }
+  }
+
+  /**
+   * Remove os envios escolhidos que continuam sem uso e são do próprio usuário (ou de todos, se administrador).
+   */
+  public function removeUnused(array &$form, FormStateInterface $form_state): void {
+    $integracao = (string) $form_state->getValue('integracao');
+    $isAdmin = $this->currentUser->hasPermission('administer site configuration');
+    $picked = array_keys(array_filter((array) $form_state->getValue(['recentes', 'table'])));
+    $removed = 0;
+    $kept = 0;
+    foreach ($picked as $fid) {
+      $file = $this->entityTypeManager->getStorage('file')->load((int) $fid);
+      if (!$file instanceof FileInterface
+        || !$this->recentUploads->isOwnedBy($file, (int) $this->currentUser->id(), $integracao, $isAdmin)) {
+        $kept++;
+        continue;
+      }
+      // A limpeza só apaga se nada usa o arquivo; em uso retorna InUse.
+      $status = $this->unusedFileCleaner->removeIfUnused($file, TRUE);
+      $status === FileCleanupStatus::Deleted ? $removed++ : $kept++;
+    }
+    $this->messenger()->addStatus($this->formatPlural($removed, 'Um envio removido.', '@count envios removidos.'));
+    if ($kept > 0) {
+      $this->messenger()->addWarning($this->formatPlural($kept, 'Um envio não foi removido: está em uso ou não é seu.', '@count envios não foram removidos: estão em uso ou não são seus.'));
+    }
+    $form_state->setRebuild();
   }
 
   /**

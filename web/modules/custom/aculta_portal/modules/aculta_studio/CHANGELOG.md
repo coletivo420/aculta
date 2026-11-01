@@ -1,3 +1,10 @@
+## 0.1.0-dev.33 — remover envio sem uso pelo Studio
+
+- A lista de envios recentes ganha seleção e o botão "Remover selecionados sem uso".
+- Remoção passa pela limpeza do aculta_file_uploader (`UnusedFileCleaner`): envio em uso não é apagado. Só o dono remove o seu; administrador remove qualquer um sem uso.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.32 — lista de envios recentes na página de envio
 
 - A página de envio do Studio lista os envios recentes da integração: os do usuário, ou todos se administrador.
