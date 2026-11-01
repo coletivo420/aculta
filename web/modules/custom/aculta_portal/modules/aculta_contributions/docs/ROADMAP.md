@@ -52,9 +52,12 @@
   source fingerprint. A newly proposed Date is optional and append-only.
 - [x] Event submission notices use a minimal private Messenger envelope and
   recoverable outbox. Updates 10015–10016 are applied in Runtime and config sync is clean.
-- [ ] `event_update` conflict/access scenarios passed locally (6/171 focused).
-  Event create duplicate-title/date conflict passed 1/26; the full Events class
-  passed 29/941 with this regression. Broader duplicate matrix and authenticated
+- [x] `event_update` conflict/access scenarios passed locally (6/171 focused).
+  Case-insensitive duplicate title with same Event date passed 1/26; Events
+  address proposal now fingerprints linked Dates/Event status. A concurrent Date
+  change conflicts without applying the new address (focal 1/26). Full Events
+  class on HEAD `559fc5c5e`: 30/973 (24 upstream deprecations). Event Index
+  exclusion/publication scheduling focal: 1/52. Broader duplicate matrix and authenticated
   Runtime verification remain pending.
 - [x] `aculta_content_admin` discovers the Events organization proposal queue
   through its native route access; no copied records or new decision grant.

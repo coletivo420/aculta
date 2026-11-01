@@ -1,5 +1,17 @@
 # Changelog
 
+## Complemento local — revisão F5 e validação do head (2026-11-01)
+
+- O adapter de Local inclui Datas e estado dos Eventos ligados na impressão
+  digital para mudança de endereço/precisão; recarrega as entidades e falha com
+  conflito se a Data/Evento mudou ou não está disponível para o revisor. Kernel
+  focal 1/26; classe Events completa 30/973 (24 depreciações upstream).
+- A suíte completa de `aculta_contributions` foi executada em `559fc5c5e`:
+  18 testes / 188 assertions PASS usando o banco dedicado `aculta_simpletest`.
+- Checkout servido alinhado no mesmo HEAD; `drush cr`, `updatedb:status` e
+  `config:status` passaram sem update/diff. Hosts canônicos Ganjalab/WE SATIVA
+  responderam 403 anônimo, sem 500; acesso autenticado permanece sem validação.
+
 ## Complemento local — concorrência interprocesso (2026-11-01)
 
 - Um worker PHP separado abre conexão DB independente e segura o lock de

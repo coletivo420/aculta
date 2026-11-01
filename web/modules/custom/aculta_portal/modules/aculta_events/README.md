@@ -2,11 +2,13 @@
 
 ## Propostas de Evento — F6 parcial
 
-Revalidação local em 2026-11-01: `EventOrganizationLifecycleKernelTest` passou
-29 testes / 941 assertions; os seis cenários `testEventUpdateContribution*`
+Revalidação local no HEAD `559fc5c5e`: `EventOrganizationLifecycleKernelTest`
+passou 30 testes / 973 assertions; os seis cenários `testEventUpdateContribution*`
 passaram 6/171, cobrindo submissão privada, aplicação seletiva, autorização
 atual, membership, acesso ao Local, fingerprint e rejeição de criação
-duplicada por título/Data (24 depreciações Core/contrib). Runtime não alterado.
+duplicada case-insensitive por título/Data, mudança concorrente em Data de Local
+e exclusão de Contributions/drafts do Index (24 depreciações Core/contrib).
+O teste de Index focal passou 1/52; não houve escrita de conteúdo/configuração no Runtime nesta validação.
 
 A aplicação de `event_update` recarrega Locais de Datas existentes e propostos,
 limpa o access handler e verifica o acesso `view` atual do autor. A revogação de
@@ -45,7 +47,8 @@ Kernel comprova persistência privada, acesso negado sem capability e ausência
 de entidade Event oficial (1/31). A suíte combinada atual de lifecycle e
 fronteira passou com 37 testes / 1.275 assertions (24 depreciações upstream);
 o teste focal de submissão `event_update` passou com 1/35.
-A inspeção visual autenticada não foi repetida nesta rodada.
+A inspeção visual autenticada e as jornadas Events autenticadas no Runtime não
+foram repetidas nesta rodada.
 
 O adapter `events_event` aceita `event_create` e `event_update` com allowlist
 editorial, valida intervalos de Datas e referências a Organizações/Locais, usa
@@ -97,9 +100,9 @@ workspace do autor ainda são pendentes.
 Alterações propostas de endereço ou precisão incluem na revisão-base as Datas e
 os Eventos ligados ao Local. Na aplicação, Datas/Eventos são recarregados do
 storage e o acesso `view` do revisor é revalidado; uma mudança concorrente gera
-conflito sem aplicar o endereço. `testLocationAddressContributionDetectsChangedLinkedEvent`
-comprovou o cenário de Data alterada (1/26). A classe Kernel completa passou em
-2026-11-01 com 30 testes / 967 assertions (24 depreciações upstream).
+conflito sem aplicar o endereço. `testLocationAddressContributionDetectsChangedLinkedEvent` comprovou o cenário
+de Data alterada (1/26). A classe Kernel completa passou no HEAD
+`559fc5c5e` em 2026-11-01 com 30 testes / 973 assertions (24 depreciações upstream).
 
 ## Propostas de perfil de Organização — dev.9
 

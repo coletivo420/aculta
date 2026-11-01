@@ -678,6 +678,10 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       $payload,
       str_repeat('a', 64),
     );
+    $eventProvider = $this->container->get('aculta_events.index_provider.event');
+    $indexProviders = $this->container->get('aculta_index.provider_registry');
+    self::assertNull($indexProviders->findProviderIdForBundle('aculta_contribution', 'aculta_contribution'));
+    self::assertNull($eventProvider->project($proposal), 'Private proposals must never produce an Index projection.');
     self::assertSame([], $this->container->get('entity_type.manager')->getStorage('aculta_event')
       ->loadByProperties(['title' => 'Mostra Comunitária Proposta']));
     self::assertFalse($proposal->access('view', $this->commonUser));
@@ -729,6 +733,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $event = reset($events);
     self::assertSame('rascunho', $event->get('field_status')->value);
     self::assertSame((int) $this->editorUser->id(), (int) $event->getOwnerId());
+    self::assertNull($eventProvider->project($event), 'An approved draft remains outside the public Index.');
     $dates = $this->container->get('entity_type.manager')->getStorage('aculta_event_date')
       ->loadByProperties(['field_evento' => $event->id()]);
     self::assertCount(1, $dates);
@@ -736,6 +741,17 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       (new \DateTimeImmutable('2027-01-10T21:00:00Z'))->getTimestamp(),
       $dates[array_key_first($dates)]->get('field_quando')->start_date->getTimestamp(),
     );
+
+    $event->set('field_status', 'publicado')->save();
+    self::assertNotNull($eventProvider->project($event), 'Only the official published Event is indexable.');
+    $scheduled = $this->container->get('database')->select('aculta_index_work', 'work')
+      ->fields('work', ['provider_id', 'entity_type', 'entity_id', 'operation'])
+      ->condition('entity_type', 'aculta_event')
+      ->condition('entity_id', (string) $event->id())
+      ->execute()
+      ->fetchAssoc();
+    self::assertIsArray($scheduled, 'Official Event changes schedule projection work.');
+    self::assertSame('project', $scheduled['operation']);
   }
 
   /**
