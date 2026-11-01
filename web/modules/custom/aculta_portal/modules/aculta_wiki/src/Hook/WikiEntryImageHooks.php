@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\Hook;
 
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
-use Drupal\aculta_portal\Upload\UserUploadPolicy;
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_wiki\Service\WikiContributorWorkspace;
 use Drupal\aculta_wiki\Form\WikiEntryFormActions;
@@ -37,7 +37,7 @@ final class WikiEntryImageHooks {
 
   public function __construct(
     TranslationInterface $stringTranslation,
-    private readonly UserUploadPolicy $uploadPolicy,
+    private readonly ConsumerUploadPolicy $uploadPolicy,
     private readonly UserUploadDialogBuilder $dialogBuilder,
     private readonly WikiLeadImageUploader $uploader,
     private readonly WikiContributorWorkspace $workspace,
@@ -94,7 +94,7 @@ final class WikiEntryImageHooks {
 
     // Without an enabled image extension the policy has nothing to offer; the
     // core autocomplete stays visible instead of locking the field.
-    if ($this->uploadPolicy->imageExtensions(WikiLeadImageUploader::CONSUMER) === '') {
+    if ($this->uploadPolicy->imageExtensions(WikiLeadImageUploader::CONSUMER) === []) {
       $this->addReviewAction($form, $node);
       return;
     }

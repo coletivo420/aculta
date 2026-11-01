@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Upload;
 
-use Drupal\aculta_portal\Upload\UserUploadPolicy;
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Transaction;
 use Drupal\Core\Entity\EntityFormInterface;
@@ -90,7 +90,7 @@ final class WikiLeadImageUploader {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly Connection $database,
     private readonly FileSystemInterface $fileSystem,
-    private readonly UserUploadPolicy $uploadPolicy,
+    private readonly ConsumerUploadPolicy $uploadPolicy,
     private readonly AccountProxyInterface $currentUser,
     TranslationInterface $stringTranslation,
   ) {

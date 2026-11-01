@@ -1,3 +1,11 @@
+## 0.1.0-dev.127 — imagem de destaque validada pela política do aculta_file_uploader
+
+- `WikiLeadImageUploader` e `WikiEntryImageHooks` usam `aculta_file_uploader.consumer_policy` (integração `wiki`) em vez de `UserUploadPolicy`.
+- A validação agora confere o MIME pelo conteúdo do arquivo, além de extensão, tamanho e dimensões. Testes Unit usam um PNG real em disco.
+- Serviços `aculta_wiki.wiki_lead_image_uploader` e `Drupal\aculta_wiki\Hook\WikiEntryImageHooks` religados.
+
+RUNTIME STATUS: DEFERRED. Testes Unit e Kernel não executados (sem vendor/ nem Runtime).
+
 ## 0.1.0-dev.126 — testes do diálogo com a política do uploader
 
 - Imagem de destaque usa `aculta_upload_dropzone` (teste Unit e Kernel). Validação ainda pela `UserUploadPolicy`.
