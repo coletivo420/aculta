@@ -21,7 +21,7 @@ final class DestinationResolverTest extends UnitTestCase {
   private function resolver(): DestinationResolver {
     $token = $this->createMock(Token::class);
     $token->method('replace')->willReturnCallback(
-      static fn(string $text): string => str_replace('[date:custom:Y]', '2026', $text),
+      static fn(string $text, array $data, array $options): string => str_replace('[date:custom:Y]', '2026', $text),
     );
     return new DestinationResolver($token);
   }
@@ -34,7 +34,7 @@ final class DestinationResolverTest extends UnitTestCase {
   }
 
   /**
-   * private:// também é aceito.
+   * Private scheme is also accepted.
    */
   public function testPrivateSchemeIsAccepted(): void {
     $this->assertSame('private://lms/2026', $this->resolver()->resolve('private://lms/[date:custom:Y]'));

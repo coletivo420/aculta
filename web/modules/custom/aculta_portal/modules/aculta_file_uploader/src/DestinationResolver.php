@@ -22,14 +22,12 @@ final class DestinationResolver {
   public function __construct(private readonly Token $token) {}
 
   /**
-   * Resolve um padrão de destino, por exemplo "public://aculta/[date:custom:Y]".
+   * Resolve um padrão de destino.
    *
    * @param string $pattern
    *   Destino com tokens opcionais.
    * @param array<string, mixed> $data
    *   Dados de contexto para os tokens.
-   * @param string|null $type
-   *   Tipo de token do Core, por exemplo "node" ou "user".
    *
    * @return string
    *   Destino final, sem tokens não resolvidos e com segmentos sanitizados.
@@ -37,7 +35,7 @@ final class DestinationResolver {
    * @throws \InvalidArgumentException
    *   Quando o esquema não é permitido ou o caminho tenta sair do destino.
    */
-  public function resolve(string $pattern, array $data = [], ?string $type = NULL): string {
+  public function resolve(string $pattern, array $data = []): string {
     $scheme = NULL;
     foreach (self::SCHEMES as $candidate) {
       if (str_starts_with($pattern, $candidate)) {
@@ -49,7 +47,7 @@ final class DestinationResolver {
       throw new \InvalidArgumentException('O destino de upload precisa usar public:// ou private://.');
     }
 
-    $replaced = $this->token->replace(substr($pattern, strlen($scheme)), $type, $data, ['clear' => TRUE]);
+    $replaced = $this->token->replace(substr($pattern, strlen($scheme)), $data, ['clear' => TRUE]);
 
     $segments = [];
     foreach (explode('/', $replaced) as $segment) {
@@ -59,7 +57,7 @@ final class DestinationResolver {
       if ($segment === '..') {
         throw new \InvalidArgumentException('O destino de upload não pode sair da pasta configurada.');
       }
-      // Sanitiza o segmento: somente letras, números, ponto, hífen e sublinhado.
+      // Sanitiza cada segmento para os caracteres seguros.
       $clean = preg_replace('/[^A-Za-z0-9._-]+/', '-', $segment) ?? '';
       $clean = trim($clean, '.-');
       if ($clean !== '') {

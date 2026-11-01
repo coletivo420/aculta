@@ -9,6 +9,12 @@
  * Implements hook_schema().
  */
 function aculta_file_uploader_schema(): array {
+  $database = \Drupal::database();
+  if ($database->schema()->tableExists('aculta_image_quarantine')) {
+    // The table was created by aculta_image before ownership moved here.
+    // Preserve it when enabling this module on an existing installation.
+    return [];
+  }
   $schema['aculta_image_quarantine'] = [
     'description' => 'Imagens candidatas enviadas para a quarentena (fase M7). Excluídas só após o prazo e nova verificação de uso. Tabela criada pelo aculta_image e mantida com o nome original.',
     'fields' => [

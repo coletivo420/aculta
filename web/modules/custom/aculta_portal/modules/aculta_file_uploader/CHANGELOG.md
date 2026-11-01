@@ -1,5 +1,15 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.10 — corrigir instalação e resolução de tokens
+
+- A instalação detecta a tabela de quarentena já criada por `aculta_image` e
+  não tenta recriá-la. Instalações novas ainda criam a tabela pela definição
+  de schema.
+- `DestinationResolver` passa dados e opções na assinatura Drupal 11 de
+  `Token::replace()`, evitando `TypeError` antes da sanitização.
+- Uploader Unit: 26 testes / 41 assertions PASS; Runtime de desenvolvimento
+  ainda aguarda enable e rebuild.
+
 ## 0.1.0-dev.9 — motor da fila de limpeza movido para o aculta_file_uploader
 
 - `Cleanup\ImageCleanup` (fila `aculta_image_replaced_files`, `run()` e a limpeza de temporários) sai do aculta_image. Serviço: `aculta_file_uploader.cleanup`.
