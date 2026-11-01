@@ -12,6 +12,17 @@
 - Nenhuma operação foi executada no Runtime. O próximo item Maps ainda pendente
   é a revisão de acesso/cache do catálogo conforme LOC-01/OC-M1.
 
+## Desenvolvimento na branch dev — cache de acesso a Locais (2026-11-01)
+
+- A partir de `3bae36db9`, `LocationCatalogue` passou a agregar cache tags e
+  contexts de decisões de view permitidas e negadas. As render arrays da lista
+  e do mapa propagam essa cacheability para evitar reutilização entre contas.
+- Testes de catálogo/mapa: **9 testes / 179 assertions, PASS**, com 14
+  depreciações upstream; PHP lint, PHPCS e `git diff --check` PASS.
+- Commit funcional: `1120a4d4a` (`fix(events): bubble location access cache metadata`).
+- O item LOC-01 continua parcial: revisão dos demais consumidores e paginação
+  escalável seguem pendentes. Nenhuma operação no Runtime.
+
 ### Gate de slugs — exceção OAuth técnica (2026-10-31)
 
 `validate-public-slugs.php` encontrou `simple_oauth.userinfo` (`/oauth/userinfo`), endpoint protocolar OAuth 2.0 de módulo contrib. A rota foi adicionada às exceções técnicas nomeadas do gate, sem mudança de URL ou reativação de aliases humanos. Resultado: **PASS**, 425 rotas e zero violações contrib fora da baseline DT-P20.
