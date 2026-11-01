@@ -1,9 +1,9 @@
 # Inventário dos consumidores de Contributions
 
-**Base de código:** branch `dev`, commit `d298f727d` (2026-11-01)
+**Base de código:** branch `dev`, commit `7006c26ea` (2026-11-01)
 **Revalidado em:** 2026-11-01
 
-Este inventário foi revalidado em `d298f727d` após a integração parcial de
+Este inventário foi revalidado em `7006c26ea` após a integração parcial de
 Organization/Location/Event, filas e revisão Content Admin, inbox de resultados
 Messenger, workspace privado, formulários de envio, atualização e ressubmissão
 estruturada para Eventos, revalidação de capability no apply e aviso privado de
@@ -13,6 +13,8 @@ Messenger 10015 e o update 10016 têm cobertura em
 `updatedb:status` mostra 10015/10016 pendentes e
 `config:status` não mostra diferenças. WE SATIVA usa `wiki:/wesativa`; IDs e filas
 são contratos existentes e não devem ser renomeados sem migração compatível.
+Os commits LMS/Game integrados entre `d298f727d` e este HEAD não alteraram os
+módulos owners listados neste inventário.
 
 | Owner | Dados e campos relevantes | Rotas/acesso e configuração | Filas, updates e testes |
 | --- | --- | --- | --- |
