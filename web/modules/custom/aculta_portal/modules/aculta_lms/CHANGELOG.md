@@ -1,3 +1,13 @@
+## 0.1.0-dev.99 — resiliencia do dashboard Ganjalab (2026-11-01)
+
+- `AccountCoursesReader` agora trata também o retorno booleano de handlers Group
+  mesmo com `return_as_object` solicitado: só `true` autoriza, `false` e valores
+  inesperados falham fechado. Resultados `AccessResultInterface` preservam a
+  validação e os cache tags normais.
+- Adicionados testes para concessão e negação booleanas. A auditoria local
+  encontrou um 500 em `/ganjalab` (erro `isAllowed()` sobre `true`); o provider
+  do dashboard executado como uid 1 concluiu sem erro após o guard.
+
 ## 0.1.0-dev.98 — contratos neutros e painel B2 (2026-11-01)
 
 - `aculta_lms` passa a depender de `aculta_learning_contracts`, módulo sem

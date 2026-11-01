@@ -7,6 +7,7 @@ namespace Drupal\aculta_lms\Account;
 use Drupal\aculta_learning_contracts\Learning\AccountCourseSummary;
 use Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\GroupMembershipLoaderInterface;
 use Drupal\lms\Entity\Bundle\Course;
@@ -38,7 +39,19 @@ final class AccountCoursesReader implements AccountCoursesReaderInterface {
 
       // Do not expose metadata or progress through a stale membership.
       $access = $course->access('view', $account, TRUE);
-      if (!$access->isAllowed()) {
+      if ($access instanceof AccessResultInterface) {
+        if (!$access->isAllowed()) {
+          continue;
+        }
+        $accessCacheTags = $access->getCacheTags();
+      }
+      elseif ($access === TRUE) {
+        // Group access hooks can return a boolean despite the object flag.
+        // Treat an explicit grant as allowed; the learner dashboard is already
+        // varied by user and must not cache this result across requests.
+        $accessCacheTags = [];
+      }
+      else {
         continue;
       }
 
@@ -70,7 +83,7 @@ final class AccountCoursesReader implements AccountCoursesReaderInterface {
         url: $url,
         cacheTags: array_values(array_unique(array_merge(
           $course->getCacheTags(),
-          $access->getCacheTags(),
+          $accessCacheTags,
           $status?->getCacheTags() ?? [],
         ))),
       );
