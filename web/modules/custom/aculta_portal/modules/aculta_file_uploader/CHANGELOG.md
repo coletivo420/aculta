@@ -1,5 +1,13 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.14 — catálogo de documentos (pdf, docx, xls, xlsx)
+
+- `UploadPolicy::DOCUMENT_EXTENSIONS` define os anexos. O catálogo de imagens (`EXTENSIONS`) e o limite de 10 MB não mudam; o aculta_image continua só com imagens.
+- `MimeTypeVerifier` aceita pdf (application/pdf), docx e xlsx (OOXML ou zip) e xls (OLE). Zip é aceito para docx/xlsx: validação estrutural do pacote fica como pendência.
+- Teste Unit: PDF com conteúdo compatível.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.13 — painel de uploads por integração
 
 - Nova rota `aculta_file_uploader.settings` em `/painel-administrativo/aculta-portal/uploads`, só no domínio principal (`_admin_route`), com permissão `administer site configuration`.

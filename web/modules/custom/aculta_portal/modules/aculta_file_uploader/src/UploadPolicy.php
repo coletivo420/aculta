@@ -24,6 +24,11 @@ final class UploadPolicy {
   public const MAX_BYTES = 10485760;
 
   /**
+   * Documentos aceitos pelo catálogo de anexos (pdf, Word e planilhas).
+   */
+  public const DOCUMENT_EXTENSIONS = 'pdf docx xls xlsx';
+
+  /**
    * Monta validadores do Managed File API para a política central ou escopada.
    *
    * @param int|null $maxBytes

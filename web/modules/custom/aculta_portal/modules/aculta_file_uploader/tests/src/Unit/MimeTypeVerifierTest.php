@@ -53,6 +53,13 @@ final class MimeTypeVerifierTest extends UnitTestCase {
   /**
    * Extensão fora do catálogo central é sempre recusada.
    */
+  public function testPdfContentMatchesPdfExtension(): void {
+    $verifier = new MimeTypeVerifier();
+    $pdf = "%PDF-1.4\n1 0 obj\n<< >>\nendobj\n%%EOF\n";
+    $this->assertTrue($verifier->matches($pdf, 'pdf'));
+    $this->assertFalse($verifier->matches($pdf, 'png'));
+  }
+
   public function testExtensionOutsideCatalogIsRejected(): void {
     $verifier = new MimeTypeVerifier();
     $this->assertFalse($verifier->matches((string) base64_decode(self::PNG_1X1), 'svg'));

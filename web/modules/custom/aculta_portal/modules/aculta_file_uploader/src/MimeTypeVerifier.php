@@ -22,6 +22,10 @@ final class MimeTypeVerifier {
     'jpg' => ['image/jpeg'],
     'jpeg' => ['image/jpeg'],
     'webp' => ['image/webp'],
+    'pdf' => ['application/pdf'],
+    'docx' => ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/zip'],
+    'xlsx' => ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/zip'],
+    'xls' => ['application/vnd.ms-excel', 'application/x-ole-storage', 'application/CDFV2'],
   ];
 
   /**
