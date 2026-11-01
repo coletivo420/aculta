@@ -1,3 +1,12 @@
+## 0.1.0-dev.335 — anexos e galeria validados pela política do aculta_file_uploader
+
+- `ForumAttachmentUploadDialogForm` e `ForumGalleryUploadDialogForm` usam `aculta_file_uploader.consumer_policy` (integração `forum`) em vez de `UserUploadPolicy`.
+- Validação confere MIME pelo conteúdo, além de extensão, tamanho e dimensões.
+- `aculta_forum.info.yml` declara a dependência `aculta_portal:aculta_file_uploader`.
+- Teste Kernel do diálogo monta a política do uploader. Imports sem uso removidos.
+
+RUNTIME STATUS: DEFERRED. Testes Kernel não executados (sem vendor/ nem Runtime).
+
 ## 0.1.0-dev.334 — testes do diálogo com a política do uploader
 
 - Teste Kernel do diálogo monta o builder com `ConsumerUploadPolicy`. Validação ainda pela `UserUploadPolicy`.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Form;
 
-use Drupal\aculta_portal\Upload\UserUploadPolicy;
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
 use Drupal\aculta_forum\Attachment\ForumAttachmentPublication;
 use Drupal\Core\Ajax\AjaxResponse;
@@ -30,7 +30,7 @@ final class ForumGalleryUploadDialogForm extends FormBase {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $currentUser,
-    private readonly UserUploadPolicy $uploadPolicy,
+    private readonly ConsumerUploadPolicy $uploadPolicy,
     private readonly UserUploadDialogBuilder $dialogBuilder,
   ) {}
 
@@ -40,7 +40,7 @@ final class ForumGalleryUploadDialogForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('current_user'),
-      $container->get('aculta_portal.user_upload_policy'),
+      $container->get('aculta_file_uploader.consumer_policy'),
       $container->get('aculta_portal.user_upload_dialog_builder'),
     );
   }

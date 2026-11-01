@@ -9,9 +9,6 @@ use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\aculta_file_uploader\MimeTypeVerifier;
 use Drupal\aculta_file_uploader\UploadPolicy as FileUploadPolicy;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
-use Drupal\aculta_portal\Upload\UserUploadPolicy;
-use Drupal\aculta_image\ImageInspector;
-use Drupal\aculta_image\UploadPolicy as ImageUploadPolicy;
 use Drupal\Core\Form\FormState;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -55,7 +52,7 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
   /**
    * Policy shared by the form and the dialog builder.
    */
-  private UserUploadPolicy $policy;
+  private ConsumerUploadPolicy $policy;
 
   /**
    * Form under test.
@@ -153,10 +150,12 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
     $this->member->save();
     $this->container->get('current_user')->setAccount($this->member);
 
-    $this->policy = new UserUploadPolicy(
+    $this->policy = new ConsumerUploadPolicy(
       $this->container->get('config.factory'),
-      new ImageUploadPolicy(),
-      new ImageInspector($this->container->get('image.factory')),
+      new FileUploadPolicy(),
+      new MimeTypeVerifier(),
+      $this->container->get('file_system'),
+      $this->container->get('image.factory'),
     );
     $this->form = new ForumAttachmentUploadDialogForm(
       $this->container->get('entity_type.manager'),
