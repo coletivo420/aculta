@@ -12,7 +12,6 @@ use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\node\NodeInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\EntityOwnerInterface;
@@ -119,22 +118,6 @@ final class BadgeEvaluationHooks {
         break;
       }
     }
-  }
-
-  /**
-   * Curso concluído com status "passed" no LMS.
-   */
-  #[Hook('lms_course_status_update')]
-  #[Hook('lms_course_status_insert')]
-  public function courseStatusUpdate(CourseStatusInterface $status): void {
-    if (!$this->isLive($status) || $status->getStatus() !== CourseStatusInterface::STATUS_PASSED) {
-      return;
-    }
-    $original = $status->getOriginal();
-    if ($original !== NULL && $original->getStatus() === CourseStatusInterface::STATUS_PASSED) {
-      return;
-    }
-    $this->badges->awardForTrigger((int) $status->getUserId(), 'course_passed');
   }
 
   /**
