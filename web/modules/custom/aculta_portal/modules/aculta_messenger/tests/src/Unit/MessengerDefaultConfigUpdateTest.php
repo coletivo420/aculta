@@ -233,6 +233,40 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
   }
 
   /**
+   * The Events outcome update preserves map-shaped allowed values.
+   */
+  public function testUpdatePreservesMapShapedSubmittedOutcome(): void {
+    $allowedValues = [
+      'submitted' => 'Enviar para revisão',
+      'needs_changes' => 'Pedir ajustes',
+    ];
+    $field = $this->createMock(FieldStorageConfigInterface::class);
+    $field->expects(self::exactly(2))->method('getSetting')->with('allowed_values')
+      ->willReturnCallback(static fn(): array => $allowedValues);
+    $field->expects(self::never())->method('setSetting');
+    $field->expects(self::never())->method('save');
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::exactly(2))->method('load')
+      ->with('message.field_aculta_events_outcome')->willReturn($field);
+    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_type_manager->expects(self::exactly(2))->method('getStorage')
+      ->with('field_storage_config')->willReturn($storage);
+    $container = new ContainerBuilder();
+    $container->set('entity_type.manager', $entity_type_manager);
+    require_once dirname(__DIR__, 3) . '/aculta_messenger.install';
+    \Drupal::setContainer($container);
+    try {
+      aculta_messenger_update_10016();
+      aculta_messenger_update_10016();
+      self::assertSame('Enviar para revisão', $allowedValues['submitted']);
+      self::assertCount(2, $allowedValues);
+    }
+    finally {
+      \Drupal::unsetContainer();
+    }
+  }
+
+  /**
    * The friendship and game unread-count fields install additively.
    */
   public function testUpdateInstallsUnreadCountFieldConfiguration(): void {

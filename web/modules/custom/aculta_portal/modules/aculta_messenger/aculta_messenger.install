@@ -311,15 +311,24 @@ function aculta_messenger_update_10016(): void {
     return;
   }
   $allowedValues = $field->getSetting('allowed_values') ?? [];
+  $isList = array_is_list($allowedValues);
   foreach ($allowedValues as $definition) {
-    if (($definition['value'] ?? NULL) === 'submitted') {
+    if ($isList && ($definition['value'] ?? NULL) === 'submitted') {
       return;
     }
   }
-  $allowedValues[] = [
-    'value' => 'submitted',
-    'label' => 'Enviar para revisão',
-  ];
+  if (!$isList && array_key_exists('submitted', $allowedValues)) {
+    return;
+  }
+  if ($isList) {
+    $allowedValues[] = [
+      'value' => 'submitted',
+      'label' => 'Enviar para revisão',
+    ];
+  }
+  else {
+    $allowedValues['submitted'] = 'Enviar para revisão';
+  }
   $field->setSetting('allowed_values', $allowedValues);
   $field->save();
 }
