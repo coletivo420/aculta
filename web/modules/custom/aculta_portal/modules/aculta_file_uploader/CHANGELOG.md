@@ -1,5 +1,14 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.13 — painel de uploads por integração
+
+- Nova rota `aculta_file_uploader.settings` em `/painel-administrativo/aculta-portal/uploads`, só no domínio principal (`_admin_route`), com permissão `administer site configuration`.
+- `UploadSettingsForm`: política global e uma aba por integração (wiki, fórum, revista, LMS). Herança ou restrição, nunca ampliação do catálogo nem do limite de 10 MB. Lista vazia é recusada.
+- Link no menu administrativo do aculta_portal.
+- O painel antigo (`/admin/config/aculta/uploads-usuarios`, `aculta_portal.user_upload`) permanece até fórum e LMS migrarem.
+
+RUNTIME STATUS: DEFERRED. Validar no Runtime: rota, permissão, gate de rotas administrativas e salvamento.
+
 ## 0.1.0-dev.12 — política de imagem por integração (configuração do uploader)
 
 - Nova configuração `aculta_file_uploader.settings` (padrão em `config/install`, schema próprio) com política global e `consumers.<integração>` (herança ou restrição).
