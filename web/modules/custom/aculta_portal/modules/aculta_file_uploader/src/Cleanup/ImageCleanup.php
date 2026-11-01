@@ -202,13 +202,25 @@ final class ImageCleanup {
   }
 
   /**
-   * Removes expired temporary images in a bounded batch.
+   * MIME types of the document catalog: same rule as images (temporário sem uso).
+   */
+  private const DOCUMENT_MIMES = [
+    'application/pdf',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-excel',
+  ];
+
+  /**
+   * Removes expired temporary images and documents in a bounded batch.
    */
   private function deleteExpiredTemporaryImages(int $limit): int {
     $cutoff = (int) $this->time->getRequestTime() - $this->temporaryAge();
     $query = $this->database->select('file_managed', 'f')
       ->fields('f', ['fid'])
-      ->condition('f.filemime', 'image/%', 'LIKE')
+      ->condition($this->database->condition('OR')
+        ->condition('f.filemime', 'image/%', 'LIKE')
+        ->condition('f.filemime', self::DOCUMENT_MIMES, 'IN'))
       ->condition('f.status', 0)
       ->condition('f.created', $cutoff, '<=')
       ->condition('f.fid', $this->database->select('file_usage', 'fu')->fields('fu', ['fid']), 'NOT IN')
@@ -219,7 +231,7 @@ final class ImageCleanup {
       ->range(0, $limit);
     $deleted = 0;
     foreach ($query->execute()->fetchCol() as $fid) {
-      $file = $this->loadImage((int) $fid);
+      $file = $this->loadUploadable((int) $fid);
       if ($file !== NULL && $file->isTemporary() && $this->removeFile($file, TRUE)) {
         $deleted++;
       }
@@ -233,6 +245,18 @@ final class ImageCleanup {
   private function loadImage(int $fid): ?FileInterface {
     $file = $fid > 0 ? $this->entityTypeManager->getStorage('file')->load($fid) : NULL;
     return $file instanceof FileInterface && str_starts_with((string) $file->getMimeType(), 'image/') ? $file : NULL;
+  }
+
+  /**
+   * Loads a File only when it is an image or a catalog document.
+   */
+  private function loadUploadable(int $fid): ?FileInterface {
+    $file = $fid > 0 ? $this->entityTypeManager->getStorage('file')->load($fid) : NULL;
+    if (!$file instanceof FileInterface) {
+      return NULL;
+    }
+    $mime = (string) $file->getMimeType();
+    return str_starts_with($mime, 'image/') || in_array($mime, self::DOCUMENT_MIMES, TRUE) ? $file : NULL;
   }
 
   /**

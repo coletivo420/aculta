@@ -1,5 +1,12 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.21 — limpeza de temporários vale para imagem e documento
+
+- `ImageCleanup` apaga temporários sem uso (após o prazo do File API) também para documentos do catálogo (PDF, DOCX, XLS, XLSX), com a mesma regra das imagens.
+- Envios do Studio sem uso seguem a mesma regra.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.20 — administradores veem os envios do Studio
 
 - `RecentUploads::forUser()` e `isOwnedBy()` aceitam `$all` para administradores: veem e usam envios de todos os usuários, dentro da pasta da integração. Usuário comum continua só com os próprios.
