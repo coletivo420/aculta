@@ -7,7 +7,7 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
-| Migração Wiki → Contributions | Kernel MariaDB | Update 10003 em lote preserva ID, UUID, revision IDs, contexto, estado, parecer, autoria/timestamps e idempotência; retry não duplica revisões; rota de status resolve ambos stores pelo ID estável | aprovado focal dev.123; 1 teste / 55 assertions; Runtime não atualizado |
+| Migração Wiki → Contributions | Kernel MariaDB | Update 10003 em lote preserva ID, UUID, revision IDs, contexto, estado, parecer, autoria/timestamps e idempotência; retry não duplica revisões; colisão aborta sem sobrescrita/checkpoint; revisão traduzida aborta sem cópia parcial; rota resolve ambos stores pelo ID | preservação/corte aprovados dev.123, 1/55; dev.125, retry/histórico/colisão/tradução 3/133; Runtime pendente |
 | Contrato Wiki→Messenger v1 | Revisão de contrato | Dois fatos editoriais, payload privado mínimo, destinatários revalidados, deduplicação por revisão e fila persistente; e-mails mantidos | escopo decidido; value objects v1 aprovados 4/5; API Messenger e producers pendentes |
 | Value objects de evento Wiki | Unit | UUID, revisão, UID/estado allowlisted e payload Queue v1 mínimos | aprovado dev.112; 4 testes / 5 asserções |
 | Producers Wiki→Messenger | Unit | Transição default para `review`, insert direto, deduplicação por estado, revisão não-default ignorada e canal de e-mail independente | aprovado dev.113; Unit eventos/hooks/worker 18 testes / 73 asserções |

@@ -21,6 +21,7 @@ use Drupal\Core\Session\UserSession;
 use Drupal\Core\StreamWrapper\PrivateStream;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
+use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\editor\Entity\Editor;
 use Drupal\aculta_portal\Cleanup\FileReferenceStatus;
 use Drupal\aculta_portal\Domain\FrontPathPolicy;
@@ -106,6 +107,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'ckeditor5',
       'freelinking',
       'history',
+      'language',
     ]);
     parent::bootKernel();
   }
@@ -2612,6 +2614,101 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       ->fetchField();
     self::assertSame($revisionMapCount, $revisionMapCountAfterRetry);
     self::assertSame($latestRevisionId, (int) $storage->load($legacyId)->getRevisionId());
+  }
+
+  /**
+   * Wiki migration fails closed when a shared contribution already uses its ID.
+   */
+  public function testWikiContributionMigrationPreservesIdCollision(): void {
+    $legacy = WikiProposal::create([
+      'uid' => 0,
+      'subject' => 'Proposta com colisão',
+      'target' => ['target_id' => 987654],
+      'target_revision_id' => 77,
+      'intent' => 'correction',
+      'proposed_text' => 'Texto legado.',
+      'rationale' => 'Motivo legado.',
+      'state' => 'submitted',
+    ]);
+    $legacy->setRevisionUserId(0);
+    $legacy->save();
+    $legacyId = (int) $legacy->id();
+
+    $existing = Contribution::create([
+      'id' => $legacyId,
+      'uid' => 0,
+      'subject' => 'Contribuição preexistente',
+      'source' => 'events_event',
+      'source_module' => 'aculta_events',
+      'purpose' => 'eventos',
+      'intent' => 'update',
+      'base_revision' => 'existing-revision',
+      'rationale' => 'Não substituir.',
+      'state' => 'submitted',
+    ]);
+    $existing->save();
+
+    $sandbox = [];
+    try {
+      aculta_wiki_update_10003($sandbox);
+      self::fail('The migration should reject a preexisting Contribution ID.');
+    }
+    catch (\RuntimeException $exception) {
+      self::assertStringContainsString('collides with an existing ACULTA Contribution', $exception->getMessage());
+    }
+
+    self::assertSame('Contribuição preexistente', $this->container
+      ->get('entity_type.manager')->getStorage('aculta_contribution')->load($legacyId)->label());
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_wiki_contribution_migration', 'migration')
+      ->condition('legacy_id', $legacyId)->countQuery()->execute()->fetchField());
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_wiki_contribution_revision_map', 'revision_map')
+      ->condition('legacy_id', $legacyId)->countQuery()->execute()->fetchField());
+    self::assertInstanceOf(WikiProposal::class, $this->container
+      ->get('entity_type.manager')->getStorage('aculta_wiki_proposal')->load($legacyId));
+  }
+
+  /**
+   * Wiki migration rejects translated history instead of losing translations.
+   */
+  public function testWikiContributionMigrationRejectsTranslatedRevision(): void {
+    $this->installConfig(['language']);
+    ConfigurableLanguage::create(['id' => 'fr', 'label' => 'French'])->save();
+    $legacy = WikiProposal::create([
+      'uid' => 0,
+      'subject' => 'English proposal',
+      'target' => ['target_id' => 987654],
+      'target_revision_id' => 77,
+      'intent' => 'correction',
+      'proposed_text' => 'Legacy text.',
+      'rationale' => 'Legacy rationale.',
+      'state' => 'submitted',
+      'langcode' => 'en',
+    ]);
+    $legacy->addTranslation('fr', [
+      'subject' => 'Proposition française',
+      'rationale' => 'Motif français.',
+    ]);
+    $legacy->setRevisionUserId(0);
+    $legacy->save();
+    $legacyId = (int) $legacy->id();
+
+    $sandbox = [];
+    try {
+      aculta_wiki_update_10003($sandbox);
+      self::fail('The migration should reject a translated Wiki revision.');
+    }
+    catch (\RuntimeException $exception) {
+      self::assertStringContainsString('translations that are not supported', $exception->getMessage());
+    }
+
+    self::assertNull($this->container
+      ->get('entity_type.manager')->getStorage('aculta_contribution')->load($legacyId));
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_wiki_contribution_migration', 'migration')
+      ->condition('legacy_id', $legacyId)->countQuery()->execute()->fetchField());
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_wiki_contribution_revision_map', 'revision_map')
+      ->condition('legacy_id', $legacyId)->countQuery()->execute()->fetchField());
+    self::assertCount(2, $this->container
+      ->get('entity_type.manager')->getStorage('aculta_wiki_proposal')->load($legacyId)->getTranslationLanguages());
   }
 
   /**

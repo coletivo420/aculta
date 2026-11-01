@@ -1,7 +1,7 @@
 # Plano de arquitetura e implementação - ACULTA Contributions
 
 **Estado:** F0 revalidado; F1/F2 parciais; Wiki dual-store; F4/F5 parciais; fila descoberta pelo Content Admin; avisos de submissão e decisão de Organização/Local/Evento no inbox via envelope mínimo e outbox; fila/revisão administrativa de Evento, `event_create` e `event_update` com interfaces de autor implementados; workspace e ressubmissão estruturada implementados; homologação Runtime pendente
-**Base de código auditada:** branch `dev`, `bc362a1be` (2026-11-01); auditoria F0 referenciada em [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md). Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
+**Base de código auditada:** branch `dev`, `d298f727d` (2026-11-01); auditoria F0 referenciada em [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md). Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
 **Escopo:** motor de propostas comunitárias reutilizável por domínios ACULTA, sem depender de Workflow Participants ou de Content Moderation para o ciclo de contribuições.
 
 ## 1. Decisão de arquitetura
@@ -47,7 +47,8 @@ O motor não deve ser um sistema universal de moderação. Denúncias, comentár
 - O update Wiki 10003 está preparado em lotes e preserva ID, UUID e revision ID,
   com reconciliação de cada proposta/revisão. Testes focais do corte/status
   passaram 2/264; lifecycle genérico 10/109; consumer Messenger 5/55; adapter
-  Wiki 3/5. O update ainda não foi executado no Runtime. O modelo Wiki antigo não persistia campos ou
+  Wiki 3/5; histórico/retry, colisão de ID e revisão traduzida passaram 3/133.
+  Runtime continua pendente. O modelo Wiki antigo não persistia campos ou
   modos de lista selecionados ao aceitar, portanto essa decisão histórica não
   pode ser reconstruída. O update aborta uma proposta se encontrar colisão de
   ID ou traduções históricas; essas situações exigem migração explicitamente

@@ -51,6 +51,9 @@ homologação dos grants ativos no Runtime.
 
 ## Estado atual
 
+- 0.1.0-dev.125 cobre retry/histórico, colisão e revisão traduzida no update
+  10003 (3/133 em `aculta_simpletest`); a colisão preserva a entidade existente
+  e a tradução não cria estado parcial. Runtime segue sem update.
 - 0.1.0-dev.124 mantém conversão/status por ID compatível com os dois stores.
   Novos envios usam `aculta_contribution` somente após todos os checkpoints de
   migração estarem presentes. Workspace, fila, decisão, retirada e publisher

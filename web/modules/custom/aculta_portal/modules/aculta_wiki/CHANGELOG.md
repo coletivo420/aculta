@@ -1,3 +1,11 @@
+## 0.1.0-dev.125 — reconciliação segura de Contributions
+
+- Kernels cobrem retry/histórico, colisão entre ID legacy Wiki e
+  `aculta_contribution`, e revisão traduzida. Update 10003 preserva a entidade
+  preexistente, aborta sem checkpoints/maps parciais e não descarta tradução:
+  3 testes / 133 assertions PASS em `aculta_simpletest`.
+- Homologação com dados Runtime permanece pendente.
+
 ## 0.1.0-dev.124 — corte dos consumidores para Contributions
 
 - Novos envios passam pelo lifecycle compartilhado somente após o gate
