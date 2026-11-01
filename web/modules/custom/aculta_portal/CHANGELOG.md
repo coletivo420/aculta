@@ -1,3 +1,12 @@
+## 0.4.1-dev.57 — painel antigo de uploads removido
+
+- Removidos: `UserUploadSettingsForm`, a rota `aculta_portal.user_upload_settings` (`/admin/config/aculta/uploads-usuarios`, sem redirect), o link de menu e a classe `UserUploadPolicy` com o serviço `aculta_portal.user_upload_policy`.
+- Todos os consumidores (wiki, fórum, LMS) usam `aculta_file_uploader.consumer_policy`. O painel de uploads por integração fica em `/painel-administrativo/aculta-portal/uploads`.
+- Mantidos: o dado `aculta_portal.user_upload` em config/sync e o schema. Remover o dado depende de ordem explícita e de confirmar que o `aculta_file_uploader_update_10001` já rodou no Runtime.
+- Testes que cobriam o painel antigo removidos. A cobertura do diálogo continua nos testes Kernel de wiki e fórum.
+
+RUNTIME STATUS: DEFERRED. Sem PHPUnit executado (sem vendor/ nem Runtime).
+
 ## 0.4.1-dev.56 — diálogo de upload usa a política do aculta_file_uploader
 
 - `UserUploadDialogBuilder` recebe `aculta_file_uploader.consumer_policy` e monta imagem e documento com o elemento `aculta_upload_dropzone`. Serviço `aculta_portal.user_upload_dialog_builder` religado.

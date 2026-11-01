@@ -143,9 +143,9 @@ criada, então o download real de resposta continua sem smoke positivo.
 - Imagens de capa de curso usam `aculta_image` e sua `UploadPolicy`; imagens
   enviadas ao editor H5P usam `aculta_image.upload_ingester` e o ciclo de vida
   de File/uso compartilhado. Arquivos anexados a respostas do LMS passam pela
-  política central `aculta_portal.user_upload_policy`, no consumidor `lms`
-  (aba LMS do painel de uploads), e as imagens rasters também por
-  `AcultaLmsSubmissionImage`/`ImageInspector`. Continuam em storage privado e
+  política `aculta_file_uploader.consumer_policy`, na integração `lms` (painel
+  `/painel-administrativo/aculta-portal/uploads`), e as imagens rasters também
+  pelo validador `AcultaLmsSubmissionImage`, que usa a mesma política. Continuam em storage privado e
   são entregues pela rota de download protegida pela resposta e pela matrícula
   vigente.
 - PDFs de material de turma usam Media `course_document`, relação de acesso

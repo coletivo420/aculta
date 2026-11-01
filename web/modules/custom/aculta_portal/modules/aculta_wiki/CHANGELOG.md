@@ -1,3 +1,9 @@
+## 0.1.0-dev.128 — teste do painel aponta para o uploader
+
+- `WikiLeadImagePolicyTest` lê a lista de integrações de `aculta_file_uploader` (`UploadSettingsForm::CONSUMERS`), porque o painel antigo saiu.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.127 — imagem de destaque validada pela política do aculta_file_uploader
 
 - `WikiLeadImageUploader` e `WikiEntryImageHooks` usam `aculta_file_uploader.consumer_policy` (integração `wiki`) em vez de `UserUploadPolicy`.

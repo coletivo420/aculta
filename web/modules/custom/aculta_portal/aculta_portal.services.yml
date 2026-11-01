@@ -18,9 +18,6 @@ services:
     class: Drupal\Core\Logger\LoggerChannelInterface
     factory: ['@logger.factory', 'get']
     arguments: ['aculta_portal_cleanup']
-  aculta_portal.user_upload_policy:
-    class: Drupal\aculta_portal\Upload\UserUploadPolicy
-    arguments: ['@config.factory', '@aculta_image.upload_policy', '@aculta_image.inspector']
   aculta_portal.user_upload_dialog_builder:
     class: Drupal\aculta_portal\Upload\UserUploadDialogBuilder
     arguments: ['@aculta_file_uploader.consumer_policy', '@string_translation']

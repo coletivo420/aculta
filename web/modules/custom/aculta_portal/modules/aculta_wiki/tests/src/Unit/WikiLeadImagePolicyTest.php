@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_wiki\Unit;
 
-use Drupal\aculta_portal\Form\UserUploadSettingsForm;
+use Drupal\aculta_file_uploader\Form\UploadSettingsForm;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Yaml\Yaml;
@@ -40,10 +40,10 @@ final class WikiLeadImagePolicyTest extends UnitTestCase {
   }
 
   /**
-   * O formulário administrativo edita a aba do consumidor "wiki".
+   * O painel de upload por integração oferece a aba do consumidor "wiki".
    */
   public function testSettingsFormOffersTheWikiTab(): void {
-    $constant = (new \ReflectionClass(UserUploadSettingsForm::class))->getReflectionConstant('CONSUMERS');
+    $constant = (new \ReflectionClass(UploadSettingsForm::class))->getReflectionConstant('CONSUMERS');
 
     self::assertIsArray($constant->getValue());
     self::assertContains('wiki', $constant->getValue());
