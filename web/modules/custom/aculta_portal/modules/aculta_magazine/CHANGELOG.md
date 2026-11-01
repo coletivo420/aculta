@@ -1,3 +1,11 @@
+## 0.5.0-dev.17 — imagem editorial da Revista aceita envio recente do Studio
+
+- Novo `RevistaCoverStudioHooks`: o formulário da Revista lista imagens recentes do Studio (integração `revista`). Usada só quando a imagem editorial está vazia.
+- Escolha validada (dono, imagem) e convertida em mídia de imagem antes da entidade ser montada. Envio fica no Studio.
+- `aculta_file_uploader` declarado como dependência.
+
+RUNTIME STATUS: DEFERRED.
+
 ## Revalidação 2026-11-02 — contexto de comentários editoriais
 
 - Unit Magazine: 41 testes / 168 assertions PASS. `RevistaEditorialAccessKernelTest`: 13/544 PASS. Forum Unit completa: 189/1.348 PASS.
