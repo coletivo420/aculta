@@ -1,3 +1,10 @@
+## 0.1.0-dev.133 — prévia da imagem no editor de ponto focal
+
+- O editor de ponto focal mostra a imagem atual, com permissão de quem edita o verbete.
+- Pendente: efeito nos estilos de imagem (Runtime).
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.132 — ponto focal da imagem de destaque
 
 - Editor de ponto focal na aba da imagem de destaque, para a imagem atual (não para um envio novo).

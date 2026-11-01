@@ -147,6 +147,10 @@ final class WikiEntryImageHooks {
           '#type' => 'container',
           '#attributes' => ['data-aculta-focal' => '', 'class' => ['aculta-focal']],
           '#attached' => ['library' => ['aculta_file_uploader/focal-point']],
+          // Prévia da imagem atual, com a permissão de quem edita o verbete.
+          'preview' => $current['media'] instanceof MediaInterface && $current['media']->hasField('field_media_image')
+            ? $current['media']->get('field_media_image')->view(['label' => 'hidden', 'type' => 'image', 'settings' => ['image_style' => '', 'image_link' => '']])
+            : ['#markup' => ''],
           'marker' => [
             '#type' => 'html_tag',
             '#tag' => 'span',
@@ -327,7 +331,7 @@ final class WikiEntryImageHooks {
       $alt = (string) ($media->get('field_media_image')->first()?->get('alt')->getValue() ?? '');
     }
     $fid = $media->hasField('field_media_image') ? (int) ($media->get('field_media_image')->target_id ?? 0) : 0;
-    return ['name' => (string) $media->label(), 'alt' => $alt, 'fid' => $fid];
+    return ['name' => (string) $media->label(), 'alt' => $alt, 'fid' => $fid, 'media' => $media];
   }
 
   /**

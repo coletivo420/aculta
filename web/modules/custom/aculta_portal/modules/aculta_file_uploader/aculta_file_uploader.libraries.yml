@@ -6,6 +6,9 @@ upload-dropzone:
     - core/once
 
 focal-point:
+  css:
+    component:
+      css/focal-point.css: {}
   js:
     js/focal-point.js: {}
   dependencies:

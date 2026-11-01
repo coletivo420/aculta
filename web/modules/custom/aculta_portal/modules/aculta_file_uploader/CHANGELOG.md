@@ -1,3 +1,9 @@
+## 0.1.0-dev.23 — estilo do editor de ponto focal
+
+- Biblioteca focal-point ganha CSS: a caixa segue a imagem e o marcador fica sobre ela. Usa a variável `--aculta-focal-marker`, com fallback.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.22 — ponto focal gravado na Crop API (16:9 e 1:1)
 
 - `FocalPointRecorder` grava o ponto focal como recortes 16:9 e 1:1 pelo image_widget_crop, com a mesma matemática de `FocalPoint`.
