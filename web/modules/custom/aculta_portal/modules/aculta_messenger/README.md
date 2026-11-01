@@ -30,8 +30,9 @@ atual; o digest faz a mesma validação ao montar cada linha.
 Os updates `10015` e `10016` instalaram o bundle e habilitaram o tipo de
 submissão em instalações existentes e foram aplicados no Runtime de
 desenvolvimento em 2026-11-01. O update aditivo `10017` instala os campos de
-entrega e digest e ainda precisa de homologação/aplicação no Runtime. `config/sync`
-contém as preferências da categoria.
+entrega e digest e foi aplicado no Runtime de desenvolvimento em 2026-11-02.
+`config/sync` contém as preferências da categoria; o import alterou somente
+`email_modes.eventos_contribuicoes`.
 
 Na dev.262, a busca de destinatários usa o apelido público resolvido pelo
 ACULTA User; não revela o nome interno da conta e omite usuários sem identidade

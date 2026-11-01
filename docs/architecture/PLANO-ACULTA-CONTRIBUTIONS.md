@@ -1,7 +1,7 @@
 # Plano de arquitetura e implementação - ACULTA Contributions
 
-**Estado:** F0 revalidado; F1/F2 concluídas e revalidadas localmente; F3 concluída quanto à migração/cutover dual-store, sem conteúdo Runtime a copiar; F4 concluída com escopo restrito a perfis públicos não reivindicados; F5 implementada localmente, incluindo escolha por site, e-mail imediato ou digest diário (padrão somente no site); F6/F7 implementadas localmente com homologação autenticada pendente; F8 concluída sem integração adicional (Calendar/Forum/UGC preservam owners); F9 permanece fase separada, sem remoção de Content Moderation. Updates Wiki/Messenger 10015/10016 foram aplicados no Runtime; update 10017 e configuração da categoria de e-mail aguardam homologação/aplicação. Pendentes: jornadas autenticadas de domínio no Runtime e aplicação verificada do update 10017/configuração.
-**Base de código auditada:** branch `dev`, HEAD `559fc5c5e` (2026-11-01); auditoria F0 revalidada após conflito case-insensitive de Evento duplicado e revalidação de Eventos ligados a alterações sensíveis de Local, conforme [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md). Suíte completa do núcleo no head atual: 18 testes / 188 assertions PASS. Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
+**Estado:** F0 revalidado; F1/F2 concluídas e revalidadas localmente; F3 concluída quanto à migração/cutover dual-store, sem conteúdo Runtime a copiar; F4 concluída com escopo restrito a perfis públicos não reivindicados; F5 implementada localmente, incluindo escolha por site, e-mail imediato ou digest diário (padrão somente no site); F6/F7 implementadas localmente com homologação autenticada pendente; F8 concluída sem integração adicional (Calendar/Forum/UGC preservam owners); F9 permanece fase separada, sem remoção de Content Moderation. Updates Wiki/Messenger 10015–10017 foram aplicados no Runtime; o diff de import de `aculta_messenger.settings` continha somente a categoria `eventos_contribuicoes` com inbox obrigatório e opções de e-mail autorizadas. Pendentes: jornadas autenticadas de domínio, entrega real de e-mail e upload H5P no Runtime.
+**Base de código auditada:** branch `dev`, HEAD `790a93fb2` (2026-11-02). Inventário de domínios e regras permanece no [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md); esta revalidação registrou Unit Messenger 402/4.374, Unit Contributions 3/19 e Kernel Contributions 15/169, todos PASS no head atual. Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
 **Escopo:** motor de propostas comunitárias reutilizável por domínios ACULTA, sem depender de Workflow Participants ou de Content Moderation para o ciclo de contribuições.
 
 ## 1. Decisão de arquitetura
@@ -117,6 +117,36 @@ O Content Moderation do Core mantém revisão publicada enquanto outra revisão 
   o diff removeu somente traduções órfãs. A conferência posterior ficou limpa.
 - Nenhuma mensagem de aviso foi criada na homologação. Testes autenticados de
   acesso a filas e jornadas Events continuam um gate separado.
+
+### Homologação local adicional — 2026-11-02
+
+- Checkout de desenvolvimento confirmado em `toca`, branch destacada no head
+  `790a93fb2`, URI Drush `http://default`, banco `aculta_runtime`, Drupal
+  11.4.10. Antes do update 10017 havia 631 tabelas; snapshot integral validado
+  com SHA-256
+  `7d26b545e43a94345e7b02c20b3af8e97eff77ff130d84bf4ecde2200476aa69`.
+- Update 10017 concluiu; criou a tabela/colunas esperadas (632 tabelas totais).
+  Os seis objetos de schema/display gerados pelo update foram adicionados ao
+  Config Sync antes do import, preservando os campos novos. `config:import
+  --diff` exibiu somente a inclusão de `email_modes.eventos_contribuicoes`
+  (`digest: true`, `immediate: true`, `default_mode: off`). Depois do import,
+  `config:status` e `updatedb:status` ficaram limpos e `drush cr` passou.
+- O módulo `aculta_file_uploader` está habilitado; os serviços
+  `aculta_file_uploader.ingestor` e `aculta_lms_h5p.editor_upload_manager`
+  resolvem. Foundation gate: 354 checks PASS. Smoke dos hosts de desenvolvimento:
+  raízes courses/wiki 200; Ganjalab e WE SATIVA nos respectivos paths 403; paths
+  cruzados 404. Não houve 500 nos paths testados. Shell-contract gate não passou:
+  o validator chama `ThemeHooks` com cinco argumentos, mas o construtor atual
+  requer seis. Páginas autenticadas, upload H5P e SMTP continuam sem validação.
+- Testes no checkout `790a93fb2`: Messenger Unit 402/4.374 PASS; Contributions
+  Unit 3/19 e Kernel 15/169 PASS via `aculta_simpletest`; integração Wiki/Events
+  Unit 11/32 e Events `EventOrganizationLifecycleKernelTest` 30/973 PASS via
+  `aculta_simpletest` (24 depreciações Drupal upstream). PHPCS Drupal +
+  DrupalPractice nos PHP alterados, PHP lint, YAML parse de 13 arquivos e
+  `git diff --check` passaram. `validate-project-status-index.php` continua
+  vermelho por problemas globais preexistentes: status ausente do File Uploader,
+  versões divergentes em oito módulos e README raiz gerado desatualizado. O
+  README não foi regenerado para evitar incluir alterações de outras frentes.
 
 ## 3. Conceitos e modelo proposto
 
@@ -267,7 +297,7 @@ Publicar eventos mínimos no bus central. O Messenger envia avisos conforme pref
 - [x] Oferecer formulário inicial `event_create` em `/culturas/propostas/evento/nova`; salva apenas Contribution privada, revalida capability e normaliza Datas. A suíte combinada registrada no incremento foi 37/1.275; não repetida neste HEAD.
 - [x] Oferecer formulário de proposta `event_update` para usuários com Entity Access `update`; captura revisão-base persistida e não altera o Evento até aprovação. Kernel focal 1/35.
 - [x] Avisar o autor no envio de propostas de Evento com envelope mínimo, revisão imutável, outbox e revalidação no Messenger. Updates 10015–10016 foram executados no Runtime após reparo dos IDs e instalação seletiva; config sync importado e limpo.
-- [x] Implementar a categoria Messenger `eventos_contribuicoes`, com inbox obrigatório, escolha por site/e-mail imediato/digest diário e padrão somente no site. Conteúdo do e-mail é genérico e a entrega revalida e-mail confirmado, preferência e acesso à proposta. Update 10017 ainda pendente de Runtime.
+- [x] Implementar a categoria Messenger `eventos_contribuicoes`, com inbox obrigatório, escolha por site/e-mail imediato/digest diário e padrão somente no site. Conteúdo do e-mail é genérico e a entrega revalida e-mail confirmado, preferência e acesso à proposta. Update 10017 e configuração foram aplicados no Runtime em 2026-11-02 após snapshot e import restrito à categoria.
 - Notificações não revelam campos privados nem fornecem links que bypassam Entity Access.
 **Saída:** revisor autorizado consegue encontrar e decidir; usuário só vê suas propostas.
 
