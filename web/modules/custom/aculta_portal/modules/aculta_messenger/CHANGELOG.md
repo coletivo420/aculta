@@ -401,6 +401,6 @@ O update aditivo `10017` instala os campos de entrega/digest em instalações
 existentes. A aplicação no Runtime permanece pendente.
 
 Validação: Unit Messenger **402 testes / 4.374 assertions PASS**, incluindo o
-worker de e-mail **1/15**. Runtime e
-envio SMTP não foram usados.
+worker de e-mail **1/15**. A aplicação do update 10017/configuração da categoria
+no Runtime de Contributions está pendente; SMTP não foi executado.
 
