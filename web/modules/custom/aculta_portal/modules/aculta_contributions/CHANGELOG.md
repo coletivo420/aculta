@@ -102,3 +102,11 @@
 - `ContributionModuleInstallKernelTest` instala o módulo por `module_installer`
   e valida entidade revisionável, tabelas de base/revisão, registry e defaults
   Flood: 1 teste / 8 assertions PASS em `aculta_simpletest`.
+
+## Avaliação F8 de Calendar, Fórum e UGC (2026-11-01)
+
+- O importador ICS mantém identidade `(source, external_uid)`, reconciliação
+  recorrente e revisão de itens importados sob `aculta_calendar`; não há motivo
+  para convertê-lo em lote de Contributions de Events. Fórum/UGC preservam
+  denúncias, escopo e privacidade nos owners atuais. Sem adapters ou escrita
+  adicionados nesta avaliação.

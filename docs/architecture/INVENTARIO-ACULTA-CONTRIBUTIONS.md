@@ -1,9 +1,9 @@
 # Inventário dos consumidores de Contributions
 
-**Base de código:** branch `dev`, commit `5a5973573` (2026-11-01)
+**Base de código:** branch `dev`, commit `23e568ece` (2026-11-01)
 **Revalidado em:** 2026-11-01
 
-Este inventário foi revalidado em `5a5973573` após a integração parcial de
+Este inventário foi revalidado em `23e568ece` após a integração parcial de
 Organization/Location/Event, filas e revisão Content Admin, inbox de resultados
 Messenger, workspace privado, formulários de envio, atualização e ressubmissão
 estruturada para Eventos, revalidação de capability no apply e aviso privado de
@@ -18,7 +18,7 @@ ser renomeados sem migração compatível.
 Os commits LMS/Game integrados entre `d298f727d` e este HEAD não alteraram os
 módulos owners listados neste inventário. Kernel completo de Organizations/Events
 em `34e79950e`: 27 testes / 888 assertions; os seis casos `event_update` são
-6/171. A classe completa reexecutada no checkout baseado em `5a5973573` passou 29/941.
+6/171. A classe completa reexecutada no checkout baseado em `23e568ece` passou 29/941.
 Auditoria Runtime autorizada em `toca` (`aculta_runtime`, Drupal 11.4.10,
 URI `http://default`, checkout servido `46ec52a96`, 631 tabelas): schema Wiki
 10003, Contributions 10001 e Messenger 10016. Updates sem pendências e config
@@ -68,7 +68,7 @@ de dados compatível.
 
 ## Matriz domínio × operação × policy × applier (F0)
 
-| Domínio/operação | Policy que decide | Applier/owner dos dados | Situação revalidada no checkout baseado em `5a5973573` |
+| Domínio/operação | Policy que decide | Applier/owner dos dados | Situação revalidada no checkout baseado em `23e568ece` |
 | --- | --- | --- | --- |
 | Wiki update | `WikiContributionAdapter`: purpose Wiki, e-mail confirmado, permissão de submissão, alvo publicado/visível, revisão padrão, Entity Access; reviewer `moderate wiki proposals`; apply requer `edit any wiki_entry` e Node update access. | `WikiProposalDecision::applyToWikiEntry()` mantém allowlist e lógica de listas/imagem; `aculta_contributions` mantém ciclo e revisão de proposta. | Novo submit e consumidores migrados com leitura dual-store; update 10003 aplicado em Runtime, sem entidades legacy ou compartilhadas para copiar; migration gate completo. Workflow oficial de Node continua em Content Moderation. |
 | Organização update não reivindicada | `OrganizationContributionAdapter` exige purpose `eventos`, conta autenticada com role/config `create_event_roles` e alvo não reivindicado; revisão/aplicação exigem purpose MAIN e `administer aculta events`. | Adapter Events aplica somente `title`, `body`, `imagem`, `links`, `localidade`, `uf`, `ocultar_localidade`, sob lock compartilhado e fingerprint integral do `EventOrganization`. | Novos envios usam `aculta_contributions`; fila e revisão dual-read mantêm sugestões legadas. Kernel 2/80 PASS. A revisão do autor para `needs_changes` é compartilhada; claims e titularidade permanecem fora do adapter. Não houve migração/drop de registros antigos nem homologação Runtime. |
@@ -79,6 +79,27 @@ de dados compatível.
 | Messenger / aviso | Owner escolhe destinatário; consumer, listagem e abertura revalidam conta ativa, autor, revisão, estado e Entity Access. | Events enfileira envelope mínimo de resultado para Organização/Local/Evento, sem payload/endereço/parecer; Messenger persiste Message e adiciona adapter à lista/estado lido. | Código e testes locais cobrem enqueue/consumo; updates 10015–10016 e config sync estão aplicados no Runtime. Acesso autenticado de ponta a ponta permanece pendente; e-mail/digest fora desta entrega. |
 | Index | Provider exige conteúdo oficial público e respeita access da origem. | `aculta_index` consome projections versionadas de Wiki/Events/Organization/Location. | Sem provider para Contributions, corretamente. Falta validar invalidation/reindex após apply de Events. |
 | UGC / Fórum / claims | `aculta_ugc` `ModerationScope`, política própria de comentário; claim pela policy `aculta_user`. | Denúncias, moderação de comentários e reivindicações permanecem nos owners. | Excluídos do ciclo Contribution; somente links/eventos de encaminhamento em caso justificado. |
+
+### Avaliação F8 — Calendar, Fórum e UGC
+
+- `aculta_calendar` mantém `aculta_calendar_import_source` e a entidade
+  revisionável `aculta_calendar_imported_item`, com source e `external_uid`.
+  `CalendarImportProcessor` reconcilia UIDs por fonte, cria drafts, mantém a
+  revisão publicada enquanto uma nova revisão externa aguarda revisão, e marca
+  UIDs ausentes sem exclusão/despublicação. A fila em
+  `/painel-administrativo/calendario/importacao` exige a permissão restrita
+  `administer aculta calendar imports`; o provider só expõe itens publicados.
+  Não há integração com `aculta_contributions`. Essa identidade externa e a
+  reconciliação recorrente são ownership próprio do Calendar, sem caso claro
+  para substituir por propostas comunitárias de Events.
+- `aculta_ugc_report` e as pontes de denúncias do Fórum mantêm alvo, motivo,
+  escopo de moderação, privacidade do denunciante e decisão em `aculta_ugc`/
+  `aculta_forum`. A busca de código não encontrou uso de `aculta_contribution`
+  nesses owners. Não converter denúncias ou decisões de moderação em propostas.
+- Index mantém a regra de só projetar conteúdo oficial público. O importer de
+  Calendar tem provider próprio para itens publicados; Contributions continua
+  sem provider. Maps permanece consumidor de Events/Locais, sem ownership de
+  propostas ou endereço.
 
 ### Decisões técnicas fechadas por este inventário
 

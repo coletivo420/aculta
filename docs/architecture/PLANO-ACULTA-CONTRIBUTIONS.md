@@ -1,7 +1,7 @@
 # Plano de arquitetura e implementação - ACULTA Contributions
 
-**Estado:** F0 revalidado; F1/F2 parciais; Wiki dual-store; F4 concluída com escopo restrito a perfis públicos não reivindicados; F5 parcial; fila descoberta pelo Content Admin; avisos de submissão e decisão de Organização/Local/Evento no inbox via envelope mínimo e outbox; fila/revisão administrativa de Evento, `event_create` e `event_update` com interfaces de autor implementados; workspace e ressubmissão estruturada implementados; updates Messenger e Wiki homologados parcialmente no Runtime; autorização autenticada de domínio pendente
-**Base de código auditada:** branch `dev`, checkout baseado em `5a5973573` (2026-11-01); auditoria F0 revalidada após o teste de instalação limpa e o conflito de Evento duplicado e referenciada em [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md). Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
+**Estado:** F0 revalidado; F1/F2 parciais; Wiki dual-store; F4 concluída com escopo restrito a perfis públicos não reivindicados; F5 parcial; F8 concluída sem integração adicional (Calendar/Forum/UGC preservam owners); fila descoberta pelo Content Admin; avisos de submissão e decisão de Organização/Local/Evento no inbox via envelope mínimo e outbox; fila/revisão administrativa de Evento, `event_create` e `event_update` com interfaces de autor implementados; workspace e ressubmissão estruturada implementados; updates Messenger e Wiki homologados parcialmente no Runtime; autorização autenticada de domínio pendente
+**Base de código auditada:** branch `dev`, checkout baseado em `23e568ece` (2026-11-01); auditoria F0 revalidada após o teste de instalação limpa e o conflito de Evento duplicado e referenciada em [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md). Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
 **Escopo:** motor de propostas comunitárias reutilizável por domínios ACULTA, sem depender de Workflow Participants ou de Content Moderation para o ciclo de contribuições.
 
 ## 1. Decisão de arquitetura
@@ -81,7 +81,7 @@ A auditoria do HEAD confirmou:
 - `aculta_messenger` é a central de mensagens e notificações.
 
 O inventário F0, incluindo a matriz domínio × operação × policy × applier, foi
-revalidado no checkout baseado em `5a5973573` em 2026-11-01 após a cobertura de falha fechada
+revalidado no checkout baseado em `23e568ece` em 2026-11-01 após a cobertura de falha fechada
 para organizações reivindicadas, conforme
 [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md).
 Claims continuam exclusivamente em `aculta_user`; endereço completo de Local
@@ -272,10 +272,10 @@ Publicar eventos mínimos no bus central. O Messenger envia avisos conforme pref
 **Saída:** revisor autorizado consegue encontrar e decidir; usuário só vê suas propostas.
 
 ### F8 - Importação e integrações ampliadas
-- Avaliar ICS/imports como geradores de propostas em lote.
-- Avaliar atalhos do Fórum e fluxo UGC como origem/encaminhamento, mantendo os domínios separados.
-- Index, Calendar e Maps recebem apenas mudanças aprovadas e visíveis.
-**Saída:** integração opt-in, idempotente, auditável e sem publicação silenciosa.
+- [x] Avaliar ICS como gerador de Contributions em lote. O importer de `aculta_calendar` já tem fontes autorizadas, identidade estável por `(source, external_uid)`, reconciliação `created/updated/unchanged/absent`, revisões para alterações e revisão administrativa antes de publicar `aculta_calendar_imported_item`. Converter sua revisão para Events Contributions perderia o owner do item externo e misturaria identidade/reconciliação de fonte com autoria comunitária; manter separado.
+- [x] Avaliar Fórum e UGC. `aculta_ugc_report`, seu `ModerationScope` e as pontes de denúncia do Fórum têm alvo, privacidade e decisão próprios. Não há fluxo claro que justifique criar uma Contribution paralela ou converter denúncias; manter nos owners existentes.
+- [x] Index, Calendar e Maps recebem mudanças somente através das entidades oficiais aprovadas/publicadas. `aculta_contribution` não tem provider de Index; itens ICS importados têm provider próprio e só são projetados depois de publicação editorial.
+**Saída:** a avaliação não encontrou integração necessária nesta fase; os três fluxos preservam seus owners e controles atuais.
 
 ### F9 - Independência do workflow Core na Wiki (decisão/gate separado)
 - Inventariar todo uso de Content Moderation/Workflows em Wiki, configuração, permissões, revisões e ambiente.

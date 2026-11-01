@@ -7,6 +7,8 @@ version checks, and selective application. Unknown adapter IDs fail closed.
 
 This module does not make proposals public or indexable. It does not own domain
 entities, editorial workflow, reports, ownership claims, or forum moderation.
+Calendar source imports also remain in `aculta_calendar`: they reconcile external
+UIDs into revisionable imported items and expose only approved published items.
 Wiki, unclaimed Organization profiles, Locations, and Events register domain
 adapters for private, allowlisted proposals.
 
