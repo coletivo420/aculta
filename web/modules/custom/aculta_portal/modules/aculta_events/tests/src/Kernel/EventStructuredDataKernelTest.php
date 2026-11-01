@@ -12,6 +12,7 @@ use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -79,6 +80,70 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
     $this->assertSame('hibrido', $data->get('field_modo')->value);
     $this->assertSame('https://transmissao.example.invalid/debate', $data->get('field_link_virtual')->uri);
     $this->assertSame('18:30 (30 minutos antes)', $data->get('field_abertura_portas')->value);
+  }
+
+  /**
+   * Public event pages hide private local data and vary cache by account.
+   */
+  public function testPrivateLocationIsHiddenFromPublicEventPresentation(): void {
+    User::create(['name' => 'root-fixture', 'status' => 1])->save();
+    $owner = User::create(['name' => 'local-owner', 'status' => 1]);
+    $owner->save();
+    $event = Event::create([
+      'title' => 'Evento híbrido público',
+      'field_slug' => 'evento-hibrido-publico',
+      'field_status' => 'publicado',
+    ]);
+    $event->save();
+    $location = EventLocation::create([
+      'title' => 'Local de endereço reservado',
+      'field_status' => 'privado',
+      'field_precisao' => 'exato',
+      'field_organizador' => $owner->id(),
+      'field_endereco' => [
+        'country_code' => 'BR',
+        'address_line1' => 'Rua Reservada, 987',
+        'locality' => 'Cidade Segura',
+        'administrative_area' => 'PR',
+        'postal_code' => '80000-987',
+      ],
+    ]);
+    $location->save();
+    $now = $this->container->get('datetime.time')->getCurrentTime();
+    EventDate::create([
+      'title' => 'Sessão híbrida',
+      'field_evento' => $event->id(),
+      'field_local' => $location->id(),
+      'field_quando' => [
+        'value' => gmdate('Y-m-d\\TH:i:s', $now + 86400),
+        'end_value' => gmdate('Y-m-d\\TH:i:s', $now + 90000),
+      ],
+      'field_modo' => 'hibrido',
+      'field_link_virtual' => 'https://stream.example.test/evento',
+    ])->save();
+
+    $controller = EventPageController::create($this->container);
+    $publicPage = $controller->page('evento-hibrido-publico');
+    $publicMarkup = (string) $publicPage['#datas'][0]['#markup'];
+    $publicJson = $this->extractJsonLd($publicPage['#attached']['html_head'], 'aculta_events_event_jsonld');
+    $publicLocation = $publicJson['@graph'][0]['location'] ?? NULL;
+
+    $this->assertStringNotContainsString('Local de endereço reservado', $publicMarkup);
+    $this->assertStringNotContainsString('Rua Reservada', json_encode($publicJson));
+    $this->assertStringNotContainsString('80000-987', json_encode($publicJson));
+    $this->assertSame('VirtualLocation', $publicLocation['@type'] ?? NULL);
+    $this->assertContains('user', $publicPage['#cache']['contexts']);
+
+    $this->container->get('current_user')->setAccount($owner);
+    $ownerPage = $controller->page('evento-hibrido-publico');
+    $ownerJson = $this->extractJsonLd($ownerPage['#attached']['html_head'], 'aculta_events_event_jsonld');
+    $ownerLocations = $ownerJson['@graph'][0]['location'] ?? [];
+
+    $this->assertStringContainsString('Local de endereço reservado', (string) $ownerPage['#datas'][0]['#markup']);
+    $this->assertCount(2, $ownerLocations);
+    $this->assertSame('Rua Reservada, 987', $ownerLocations[1]['address']['streetAddress'] ?? NULL);
+    $this->assertSame('80000-987', $ownerLocations[1]['address']['postalCode'] ?? NULL);
+    $this->assertContains('user', $ownerPage['#cache']['contexts']);
   }
 
   /**

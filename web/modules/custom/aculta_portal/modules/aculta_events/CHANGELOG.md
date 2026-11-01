@@ -1,5 +1,48 @@
 # Changelog — aculta_events
 
+## 2026-11-01 — Privacidade de Locais em Eventos, agenda e ICS
+
+- Página pública do Evento só apresenta nome, endereço, link e Schema.org do
+  Local quando a decisão de view permite. Os metadados de cache dos resultados
+  permitidos e negados são propagados; o organizador autorizado mantém acesso.
+- Agenda e itens usados pelo ICS deixam o Local privado em branco e invalidam
+  cache quando um Local muda.
+- Corrigidos dois erros 500 da página do Evento: chamada ao método inexistente
+  `getCoOrganizers()` e geração de URL canônica de Organização por uma rota que
+  não existe. Consumidores usam referências e rota pública reais.
+- Kernel de Evento estruturado, CalendarItemProvider e hooks de Data: **15
+  testes / 321 assertions, PASS**, com 15 depreciações Core/contrib. PHPCS e
+  PHP lint focal também passaram.
+
+## 2026-11-01 — Paginação do catálogo de Locais em lotes
+
+- `LocationCatalogue` carrega no máximo 100 entidades por lote e conserva apenas
+  os resultados da página solicitada, sem `loadMultiple()` global seguido de
+  `array_slice()`. A contagem continua considerando somente Locais autorizados.
+- A ordenação usa título e ID para estabilizar páginas com títulos repetidos;
+  índices negativos são normalizados para a primeira página.
+- Suítes Kernel de catálogo, mapa e gestão mais Unit do MapRenderer: **20 testes
+  / 369 assertions, PASS**; 22 depreciações upstream. PHP lint e PHPCS PASS.
+
+## 2026-11-01 — Propagar cacheabilidade do acesso a Locais
+
+- `LocationCatalogue` agrega os metadados de cache das decisões de view
+  permitidas e negadas, incluindo conteúdo privado acessível ao organizador.
+- A lista de Locais e o mapa agora incorporam esses contextos e tags; Kernel
+  confirma que conteúdo restrito não aparece para anônimos e que a resposta
+  varia por usuário.
+- Suítes focais de catálogo/mapa: 9 testes / 179 assertions PASS; PHP lint e
+  PHPCS Drupal/DrupalPractice PASS. Permanecem 14 depreciações de Core/contrib.
+
+## 2026-11-01 — Preservar coordenadas numéricas zero no mapa
+
+- O mapa agora inclui locais com latitude ou longitude `0` (Equador e meridiano
+  de Greenwich); `empty()` tratava esses valores válidos como ausentes.
+- A validação numérica e de faixa do `MapRenderer` permanece responsável por
+  rejeitar coordenadas inválidas antes de expô-las no navegador.
+- Kernel cobre o marcador `0/0`; junto com o Unit do renderer, são 5 testes e
+  57 asserções PASS. PHP lint e PHPCS focal também passaram.
+
 ## 2026-10-31 — Hierarquia de títulos no catálogo
 
 - Os títulos dos cartões em `/eventos` usam H2 imediatamente abaixo do H1 da

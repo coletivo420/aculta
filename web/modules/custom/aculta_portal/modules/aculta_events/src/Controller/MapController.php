@@ -6,6 +6,7 @@ namespace Drupal\aculta_events\Controller;
 
 use Drupal\aculta_events\Catalogue\LocationCatalogue;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
 use Drupal\aculta_maps\MapRenderer;
@@ -50,7 +51,8 @@ final class MapController extends ControllerBase {
   public function page(): array {
     $marcadores = [];
     $itens = [];
-    foreach ($this->locais->busca(NULL) as $item) {
+    $resultado = $this->locais->buscaPaginada(NULL, NULL, 0, 0);
+    foreach ($resultado['items'] as $item) {
       $local = $item['local'];
       $linha = '<strong>' . Html::escape((string) $local->label()) . '</strong>';
       if ($item['endereco'] !== '') {
@@ -71,7 +73,10 @@ final class MapController extends ControllerBase {
       $itens[] = $itemRender;
 
       $coords = $local->get('field_coordenadas')->first()?->getValue();
-      if (!empty($coords['lat']) && !empty($coords['lon'])) {
+      // Zero is a valid coordinate (Equator / Greenwich); empty() would drop
+      // valid locations at either axis. MapRenderer applies numeric range
+      // validation before exposing marker data to the browser.
+      if (is_numeric($coords['lat'] ?? NULL) && is_numeric($coords['lon'] ?? NULL)) {
         $casas = (string) $local->get('field_precisao')->value === 'aproximado' ? self::CASAS_APROXIMADO : 6;
         $marcadores[] = [
           'label' => (string) $local->label(),
@@ -105,6 +110,10 @@ final class MapController extends ControllerBase {
     ];
 
     $render['mapa'] = $mapa;
+
+    CacheableMetadata::createFromRenderArray($render)
+      ->addCacheableDependency($resultado['cache_metadata'])
+      ->applyTo($render);
 
     return $render;
   }

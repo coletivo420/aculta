@@ -14,6 +14,21 @@
 | LOC-07 | Migrador e testes de migração existem; execução Runtime não faz parte desta revisão | `ActivityLocationMigrator`, update/CLI e `ActivityLocationMigrationKernelTest` | Ensaio autorizado, snapshot/hash, contagem, rollback e decisão de corte dos legados |
 | LOC-08 | Não concluída | Testes focalizados existem; a análise comparativa não executou testes | Executar gates integrados e homologação visual/runtime no HEAD consolidado |
 
+### Revalidação funcional de privacidade — 2026-11-01
+
+- Página pública do Evento omite Local privado para quem não tem view access,
+  inclusive endereço no JSON-LD; o owner autorizado vê o Local com cache
+  variando por usuário.
+- Agenda e itens ICS públicos omitem nomes de Locais privados; alterações de
+  Local invalidam a cache do calendário. A agenda filtrada por Local (LOC-05)
+  continua pendente.
+- O teste revelou e corrigiu dois erros 500 na página de Evento:
+  `getCoOrganizers()` não existe no contrato de Event, e a organização não tem
+  route ID `canonical`. A composição usa as referências reais e
+  `aculta_events.organization_page`.
+- Kernel focal em `aculta_simpletest`: 15 testes / 321 assertions PASS; 15
+  depreciações upstream. Runtime não foi alterado.
+
 Versões e status de release permanecem Dev até fechar os gates exigidos. A presença de rota, classe ou teste no repositório não prova execução bem-sucedida, ativação no Runtime ou homologação visual.
 
 ## Integração arquitetural OpenCulturas - ARQ-01 a ARQ-04 (2026-10-29)

@@ -78,4 +78,60 @@ final class MapControllerKernelTest extends KernelTestBase {
     $this->assertStringNotContainsString('OpenStreetMap', $aviso);
   }
 
+  /**
+   * Valid zero latitude and longitude are retained as a map marker.
+   */
+  public function testMapKeepsZeroCoordinates(): void {
+    EventLocation::create([
+      'title' => 'Local no Equador e Greenwich',
+      'field_precisao' => 'exato',
+      'field_coordenadas' => [
+        'lat' => 0.0,
+        'lon' => 0.0,
+        'value' => 'POINT (0 0)',
+        'geo_type' => 'Point',
+      ],
+      'field_endereco' => [
+        'country_code' => 'BR',
+        'locality' => 'Localidade de teste',
+      ],
+    ])->save();
+
+    $page = MapController::create($this->container)->page();
+    $markers = $page['mapa']['#attached']['drupalSettings']['acultaMaps']['aculta-map']['markers'];
+
+    $this->assertCount(1, $markers);
+    $this->assertSame(0.0, $markers[0]['lat']);
+    $this->assertSame(0.0, $markers[0]['lng']);
+  }
+
+  /**
+   * Map output bubbles cache contexts from hidden owner-only locations.
+   */
+  public function testMapBubblesOwnerAccessCacheContext(): void {
+    $userStorage = $this->container->get('entity_type.manager')->getStorage('user');
+    $owner = $userStorage->create([
+      'name' => 'map-owner',
+      'mail' => 'map-owner@example.test',
+      'status' => 1,
+    ]);
+    $owner->save();
+    EventLocation::create([
+      'title' => 'Local restrito do mapa',
+      'field_status' => 'privado',
+      'field_organizador' => $owner->id(),
+      'field_endereco' => [
+        'country_code' => 'BR',
+        'address_line1' => 'Rua privada, 123',
+      ],
+    ])->save();
+
+    $page = MapController::create($this->container)->page();
+    $list = (string) \Drupal::service('renderer')->renderInIsolation($page['lista']);
+
+    $this->assertContains('user', $page['#cache']['contexts']);
+    $this->assertStringNotContainsString('Local restrito do mapa', $list);
+    $this->assertStringNotContainsString('Rua privada, 123', $list);
+  }
+
 }

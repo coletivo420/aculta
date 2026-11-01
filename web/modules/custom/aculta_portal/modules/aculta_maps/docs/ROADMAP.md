@@ -3,7 +3,7 @@
 [Plano LOC-00 a LOC-08](../../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md). MP0-MP7 permanecem evidências históricas; a experiência nova de Locais não está concluída.
 
 - [x] **LOC-00 / Fase 1 (2026-10-30):** inventário e fronteira Maps ↔ Events confirmados. Maps consome a entidade Local de Events via contratos neutros (`MapRenderer`, `RouteLinkBuilder`, `GeocodingService`); não duplica cadastro, catálogo ou armazenamento.
-- [ ] LOC-01: somente dados autorizados/minimizados chegam a renderer, popups e links de rota; precisão não substitui visibilidade.
+- [ ] LOC-01: somente dados autorizados/minimizados chegam a renderer, popups e links de rota; precisão não substitui visibilidade. Parcial em 2026-11-01: o catálogo agrega metadados de cache de decisões de view (inclusive negações), e mapa/lista os propagam; páginas carregam entidades em lotes de 100. Testes Kernel verificam isolamento de Locais privados por usuário. Revisão dos demais consumidores ainda pendente.
 - [ ] LOC-05: reutilizar MapRenderer/RouteLinkBuilder no detalhe e diretório; marcador aponta ao mesmo canônico usado pelo Index.
 - [ ] LOC-02/03: geocodificar endereço salvo pelo serviço existente; não criar autocomplete Nominatim por tecla nem cliente CEP próprio. O formulário de Local de Events usa o CEP como primeiro campo.
 - [ ] LOC-08: testar 0/0.0/ranges, aproximado/exato, cache entre contas, sem-JS e falha externa.
@@ -108,7 +108,7 @@ pendentes.
 Fonte: [auditoria 3.1.5](../../../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md). **Nenhuma mudança no provedor OSM/Leaflet padrão** (D-17 a D-20).
 
 - **OC-M1/P0:** testar proteção de locais no catálogo/mapa; revisar `accessCheck(FALSE)` de `LocationCatalogue`; garantir que precise de política explícita para expor dados pessoais/privados.
-- **OC-M2/P0:** aceitar coordenadas 0 e 0.0 sem eliminá-las por `!empty()`; testar range lat/lon e precisão aproximada.
+- [x] **OC-M2/P0:** aceitar coordenadas 0 e 0.0 sem eliminá-las por `!empty()`; testar range lat/lon e precisão aproximada. `MapController` usa validação numérica, com Kernel `0/0`; `MapRendererTest` cobre faixa inválida e arredondamento aproximado. Evidência no HEAD `dev`: 5 testes/57 assertions PASS (2026-11-01).
 - **OC-M3/P1:** integrar dados estruturados de acessibilidade/horários a filtros e popups, quando schema de Eventos existir.
 - **OC-M4/P2:** revisar `OfficeHoursToOsmFormatter.php` da origem após adoção de dados estruturados; não importar edição OSM sem revisão humana.
 - **Exploratório fora da paridade 3.1.5:** geometrias Polygon/MultiPolygon para circuitos e trajetos de eventos; **não** tratar como característica confirmada da origem nem implementar sem ADR de privacidade/custo.

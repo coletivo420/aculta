@@ -7,9 +7,11 @@ namespace Drupal\aculta_events\Controller;
 use Drupal\aculta_events\Cache\EventCacheTags;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Occurrence\UpcomingDates;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -73,30 +75,33 @@ final class EventPageController extends ControllerBase {
     $linhas = [];
     $podeEditarRecorrencia = $this->currentUser()->hasPermission('administer aculta events')
       && ($this->purposes === NULL || $this->purposes->getCurrentPurpose() === 'main');
-    // A tag de lista cobre data criada, editada ou excluída.
-    // Evita cache longo com um conjunto de datas desatualizado.
-    $tags = array_merge($evento->getCacheTags(), [EventCacheTags::LISTA]);
+    // A tag de lista cobre data criada, editada ou excluída. Access results
+    // below also contribute their contexts, including owner-only locations.
+    $cacheability = (new CacheableMetadata())
+      ->addCacheableDependency($evento)
+      ->addCacheTags([EventCacheTags::LISTA])
+      ->addCacheContexts(['user.permissions']);
+    $localViewAccess = [];
     foreach ($ocorrencias as $ocorrencia) {
       $local = $ocorrencia['data']->get('field_local')->entity;
       $texto = Html::escape($ocorrencia['inicio']->format('d/m/Y H:i') . ' às ' . $ocorrencia['fim']->format('H:i'));
       if ($local instanceof EventLocation) {
-        if ($local->access('view', $this->currentUser())) {
+        $access = $local->access('view', $this->currentUser(), TRUE);
+        $cacheability->addCacheableDependency($local)->addCacheableDependency($access);
+        $localViewAccess[(string) $local->id()] = $access;
+        if ($access->isAllowed()) {
           $localUrl = Url::fromRoute('aculta_events.location_canonical', [
             'aculta_event_location' => $local->id(),
           ])->toString();
           $texto .= ' — <a href="' . Html::escape($localUrl) . '">' . Html::escape((string) $local->label()) . '</a>';
+          if (!$local->get('field_osm_id')->isEmpty()) {
+            $texto .= ' — <a href="https://www.openstreetmap.org/copyright" rel="noopener">'
+              . Html::escape((string) $this->t('© OpenStreetMap contributors')) . '</a>';
+          }
         }
-        else {
-          $texto .= ' — ' . Html::escape((string) $local->label());
-        }
-        $tags = array_merge($tags, $local->getCacheTags());
       }
       if ($ocorrencia['cancelada'] || $evento->get('field_status')->value === 'cancelado') {
         $texto .= ' <strong>(cancelado)</strong>';
-      }
-      if ($local instanceof EventLocation && !$local->get('field_osm_id')->isEmpty()) {
-        $texto .= ' — <a href="https://www.openstreetmap.org/copyright" rel="noopener">'
-          . Html::escape((string) $this->t('© OpenStreetMap contributors')) . '</a>';
       }
       $data = $ocorrencia['data'];
       if ($podeEditarRecorrencia && !$data->get('field_regra')->isEmpty()) {
@@ -124,6 +129,10 @@ final class EventPageController extends ControllerBase {
     $descricao = mb_substr(trim(strip_tags((string) $evento->get('body')->value)), 0, 500);
     $organizador = $evento->get('field_organizador')->entity;
     $org = $evento->getOrganization();
+    $orgAccess = $org?->access('view', $this->currentUser(), TRUE);
+    if ($org !== NULL && $orgAccess !== NULL) {
+      $cacheability->addCacheableDependency($org)->addCacheableDependency($orgAccess);
+    }
 
     foreach (array_slice($ocorrencias, 0, 20) as $ocorrencia) {
       $local = $ocorrencia['data']->get('field_local')->entity;
@@ -165,56 +174,59 @@ final class EventPageController extends ControllerBase {
 
       // Local físico.
       if ($local instanceof EventLocation) {
-        $placeData = [
-          '@type' => 'Place',
-          'name' => (string) $local->label(),
-        ];
-        if ($local->access('view', $this->currentUser())) {
+        $localAccess = $localViewAccess[(string) $local->id()]
+          ?? $local->access('view', $this->currentUser(), TRUE);
+        $cacheability->addCacheableDependency($local)->addCacheableDependency($localAccess);
+        if ($localAccess->isAllowed()) {
+          $placeData = [
+            '@type' => 'Place',
+            'name' => (string) $local->label(),
+          ];
           $placeData['url'] = Url::fromRoute('aculta_events.location_canonical', [
             'aculta_event_location' => $local->id(),
           ], ['absolute' => TRUE])->toString();
-        }
 
-        $addressItem = $local->get('field_endereco')->first();
-        if ($addressItem !== NULL) {
-          $locality = (string) $addressItem->locality;
-          $adminArea = (string) $addressItem->administrative_area;
-          if ($locality !== '' || $adminArea !== '') {
-            $postalAddress = [
-              '@type' => 'PostalAddress',
-              'addressCountry' => 'BR',
-            ];
-            if ($locality !== '') {
-              $postalAddress['addressLocality'] = $locality;
-            }
-            if ($adminArea !== '') {
-              $postalAddress['addressRegion'] = $adminArea;
-            }
-            $precisao = (string) ($local->get('field_precisao')->value ?? 'exato');
-            if ($precisao !== 'aproximado') {
-              $street = (string) $addressItem->address_line1;
-              $postalCode = (string) $addressItem->postal_code;
-              if ($street !== '') {
-                $postalAddress['streetAddress'] = $street;
+          $addressItem = $local->get('field_endereco')->first();
+          if ($addressItem !== NULL) {
+            $locality = (string) $addressItem->locality;
+            $adminArea = (string) $addressItem->administrative_area;
+            if ($locality !== '' || $adminArea !== '') {
+              $postalAddress = [
+                '@type' => 'PostalAddress',
+                'addressCountry' => 'BR',
+              ];
+              if ($locality !== '') {
+                $postalAddress['addressLocality'] = $locality;
               }
-              if ($postalCode !== '') {
-                $postalAddress['postalCode'] = $postalCode;
+              if ($adminArea !== '') {
+                $postalAddress['addressRegion'] = $adminArea;
               }
+              $precisao = (string) ($local->get('field_precisao')->value ?? 'exato');
+              if ($precisao !== 'aproximado') {
+                $street = (string) $addressItem->address_line1;
+                $postalCode = (string) $addressItem->postal_code;
+                if ($street !== '') {
+                  $postalAddress['streetAddress'] = $street;
+                }
+                if ($postalCode !== '') {
+                  $postalAddress['postalCode'] = $postalCode;
+                }
+              }
+              $placeData['address'] = $postalAddress;
             }
-            $placeData['address'] = $postalAddress;
           }
-        }
 
-        if (isset($entrada['location']) && is_array($entrada['location']) && ($entrada['location']['@type'] ?? '') === 'VirtualLocation') {
-          $entrada['location'] = [$entrada['location'], $placeData];
-        }
-        else {
-          $entrada['location'] = $placeData;
+          if (isset($entrada['location']) && is_array($entrada['location']) && ($entrada['location']['@type'] ?? '') === 'VirtualLocation') {
+            $entrada['location'] = [$entrada['location'], $placeData];
+          }
+          else {
+            $entrada['location'] = $placeData;
+          }
         }
       }
 
       // Organizador: prioriza Organização pública; fallback para usuário.
-      if ($org !== NULL && $org->access('view')) {
+      if ($org !== NULL && $orgAccess?->isAllowed()) {
         $orgSlug = (string) $org->get('field_slug')->value;
         $orgLd = [
           '@type' => 'Organization',
@@ -287,15 +299,11 @@ final class EventPageController extends ControllerBase {
 
     // Organização verificada e coorganizadores (ARQ-05 / OC-C).
     $orgData = NULL;
-    if ($org !== NULL && $org->access('view', $this->currentUser())) {
-      $tags = array_merge($tags, $org->getCacheTags());
-      $orgUrl = NULL;
-      try {
-        $orgUrl = $org->toUrl('canonical');
-      }
-      catch (\Throwable) {
-        $orgUrl = NULL;
-      }
+    if ($org !== NULL && $orgAccess?->isAllowed()) {
+      $orgSlug = (string) $org->get('field_slug')->value;
+      $orgUrl = $orgSlug !== ''
+        ? Url::fromRoute('aculta_events.organization_page', ['slug' => $orgSlug])
+        : NULL;
       $orgData = [
         'label' => (string) $org->label(),
         'url' => $orgUrl?->toString(),
@@ -303,16 +311,17 @@ final class EventPageController extends ControllerBase {
     }
 
     $coOrgs = [];
-    foreach ($evento->getCoOrganizers() as $coOrg) {
-      if ($coOrg->access('view', $this->currentUser())) {
-        $tags = array_merge($tags, $coOrg->getCacheTags());
-        $coUrl = NULL;
-        try {
-          $coUrl = $coOrg->toUrl('canonical');
-        }
-        catch (\Throwable) {
-          $coUrl = NULL;
-        }
+    foreach ($evento->get('field_coorganizadores')->referencedEntities() as $coOrg) {
+      if (!$coOrg instanceof EventOrganization) {
+        continue;
+      }
+      $coOrgAccess = $coOrg->access('view', $this->currentUser(), TRUE);
+      $cacheability->addCacheableDependency($coOrg)->addCacheableDependency($coOrgAccess);
+      if ($coOrgAccess->isAllowed()) {
+        $coOrgSlug = (string) $coOrg->get('field_slug')->value;
+        $coUrl = $coOrgSlug !== ''
+          ? Url::fromRoute('aculta_events.organization_page', ['slug' => $coOrgSlug])
+          : NULL;
         $coOrgs[] = [
           'label' => (string) $coOrg->label(),
           'url' => $coUrl?->toString(),
@@ -338,6 +347,7 @@ final class EventPageController extends ControllerBase {
 
     $classificacao = (string) $evento->get('field_classificacao_etaria')->value;
     $seguranca = (string) $evento->get('field_seguranca')->value;
+    $cacheability->setCacheMaxAge($validade);
 
     return [
       '#theme' => 'aculta_event_page',
@@ -356,9 +366,9 @@ final class EventPageController extends ControllerBase {
       '#datas' => $linhas,
       '#cancelado' => $evento->get('field_status')->value === 'cancelado',
       '#cache' => [
-        'contexts' => ['user.permissions'],
-        'tags' => array_values(array_unique($tags)),
-        'max-age' => $validade,
+        'contexts' => $cacheability->getCacheContexts(),
+        'tags' => $cacheability->getCacheTags(),
+        'max-age' => $cacheability->getCacheMaxAge(),
       ],
       '#attached' => $anexos,
     ];

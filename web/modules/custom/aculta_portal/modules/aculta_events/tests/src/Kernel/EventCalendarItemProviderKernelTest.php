@@ -26,7 +26,11 @@ final class EventCalendarItemProviderKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'key', 'address', 'geofield', 'options', 'link', 'text', 'filter', 'taxonomy', 'datetime', 'datetime_range', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = [
+    'system', 'user', 'key', 'address', 'geofield', 'options', 'link', 'text',
+    'filter', 'taxonomy', 'datetime', 'datetime_range', 'aculta_calendar',
+    'aculta_events',
+  ];
 
   /**
    * {@inheritdoc}
@@ -65,7 +69,7 @@ final class EventCalendarItemProviderKernelTest extends KernelTestBase {
   /**
    * Item com local, regra, cancelamento e reagendamento.
    */
-  public function testItemComRegraExcecoesELocal(): void {
+  public function testItemComRegraExcecoesLocal(): void {
     $tipo = $this->termo('aculta_event_type', 'Oficina');
     $tipoLocal = $this->termo('aculta_location_type', 'Teatro');
 
@@ -109,6 +113,42 @@ final class EventCalendarItemProviderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Public calendar items and ICS omit private local names.
+   */
+  public function testPrivateLocationIsOmittedFromCalendarAndIcsItems(): void {
+    $evento = Event::create([
+      'title' => 'Evento em local restrito',
+      'field_status' => 'publicado',
+    ]);
+    $evento->save();
+    $local = EventLocation::create([
+      'title' => 'Endereço reservado',
+      'field_status' => 'privado',
+    ]);
+    $local->save();
+    $data = EventDate::create([
+      'title' => 'Data reservada',
+      'field_evento' => $evento->id(),
+      'field_local' => $local->id(),
+      'field_quando' => [
+        'value' => $this->utc('2030-06-10 19:00:00'),
+        'end_value' => $this->utc('2030-06-10 21:00:00'),
+      ],
+    ]);
+    $data->save();
+
+    $provider = $this->container->get('aculta_events.item_provider');
+    $items = iterator_to_array($provider->items($this->query()));
+    $icsItem = $provider->itemDaData($data, $evento, $local);
+
+    $this->assertCount(1, $items);
+    $this->assertSame('', $items[0]->local);
+    $this->assertNotNull($icsItem);
+    $this->assertSame('', $icsItem->local);
+    $this->assertContains('aculta_event_location_list', $provider->cacheTags());
+  }
+
+  /**
    * Filtros por tipo de evento e de local, como na agenda.
    */
   public function testFiltrosDoProvedor(): void {
@@ -126,7 +166,10 @@ final class EventCalendarItemProviderKernelTest extends KernelTestBase {
         'title' => $titulo,
         'field_evento' => $evento->id(),
         'field_local' => $local->id(),
-        'field_quando' => ['value' => $this->utc('2030-06-10 19:00:00'), 'end_value' => $this->utc('2030-06-10 20:00:00')],
+        'field_quando' => [
+          'value' => $this->utc('2030-06-10 19:00:00'),
+          'end_value' => $this->utc('2030-06-10 20:00:00'),
+        ],
       ])->save();
     }
 
@@ -144,7 +187,10 @@ final class EventCalendarItemProviderKernelTest extends KernelTestBase {
     $this->assertArrayHasKey('tipo_local', $filtros);
     $this->assertContains('Oficina', $filtros['tipo']['opcoes']);
     $this->assertContains('Teatro', $filtros['tipo_local']['opcoes']);
-    $this->assertSame(['aculta_event_date_list', 'aculta_event_list'], $provedor->cacheTags());
+    $this->assertSame(
+      ['aculta_event_date_list', 'aculta_event_list', 'aculta_event_location_list'],
+      $provedor->cacheTags(),
+    );
   }
 
   /**
