@@ -11,7 +11,7 @@ use InvalidArgumentException;
  * A confirmed course completion published by an education provider.
  *
  * This event is a notification contract, not a progress record. The source UUID
- * is opaque to consumers and exists for traceability and idempotent delivery.
+ * is opaque to consumers and exists for traceability and consumer-side deduplication.
  */
 final readonly class CourseCompletedEvent {
 
