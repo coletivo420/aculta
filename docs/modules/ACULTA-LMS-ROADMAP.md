@@ -6,7 +6,7 @@ Revisado em 2026-10-19. A implementação segue fases independentes, com autoriz
 
 > **Atualização 2026-11-01:** a extensão `aculta_lms_messenger` foi removida. A elegibilidade educacional vive em `aculta_lms\\Notice\\LearningEligibility`; os produtores publicam `MessengerNoticeEvent` pelo contrato público e o Messenger mantém persistência, leitura, contadores, preferências e digest. Registro em `docs/architecture/MESSENGER-CONSOLIDATION-2026-11.md`.
 
-> **Independência do Drupal LMS contrib — fatia B1 (2026-11-01):** o inventário de código e configuração está em [LMS-CONTRIB-DEPENDENCY-INVENTORY.md](LMS-CONTRIB-DEPENDENCY-INVENTORY.md). A dependência é estrutural: `aculta_portal` declara `lms:lms` e injeta `lms.training_manager` de forma obrigatória. A primeira fatia coloca a **jornada do curso e a sala** sob o contrato neutro `Drupal\aculta_learning_contracts\Learning\CourseJourneyReaderInterface`, implementado por `LearningDashboardManager`; o `CourseJourneyComposer` do Studio deixou de importar `Drupal\lms` e `aculta_lms`. Os contratos vivem no módulo `aculta_learning_contracts`, sem dependência de `lms:lms` nem de `aculta_portal`, para continuarem disponíveis quando o Portal deixar de exigir o contrib (B3). A fonte de verdade continua no LMS e nenhum dado foi migrado. Fases seguintes: resumo do estudante (B2), Portal sem LMS obrigatório (B3), autoria própria (C), piloto de migração (D), avaliações (E) e retirada do contrib (F).
+> **Independência do Drupal LMS contrib — B1/B2/B3-A (2026-11-01):** os contratos de jornada, resumo do estudante, cursos da Conta e conclusão educacional vivem em `aculta_learning_contracts`; `aculta_portal` não declara `lms:lms` nem injeta `lms.training_manager`; e o Studio compõe as experiências do estudante e do Educador. O provider `aculta_lms` continua lendo/escrevendo dados do Drupal LMS, que permanece a fonte de verdade. O Runtime foi validado no commit [`e60abcb62`](https://github.com/coletivo420/aculta/commit/e60abcb624a1bf3e73a46631915663cca39fddcb): smoke responsivo 74/74 em 320–1440 px, smoke final a 390 px, rotas do estudante/Educador respondendo e testes Unit/Kernels focais aprovados. Não houve migração de dados. Restam a instalação limpa sem contrib e a migração gradual de ownership, conteúdo, tentativas e progresso.
 
 ## Princípios e estado inicial
 
@@ -76,10 +76,7 @@ conta e não modifica o conteúdo LMS compartilhado entre turmas. O educador reg
 Esses Kernels registraram depreciações upstream (3 em instalação/certificado e 42 nos Kernels recentes de Group/Message).
 No Runtime de teste o adapter está habilitado, as cinco configurações Group de prazo foram importadas isoladamente e manager/worker instanciam. Smoke temporário com turma, membership e prazo confirmou aviso em Message, integração do aviso pessoal, enqueue pelo hook de Cron e persistência do lembrete pelo worker; limpeza removeu os dados e filas temporários. Não foi enviado e-mail. Cron roda a cada 3h, mas o hook e o worker foram invocados diretamente, sem aguardar execução agendada. A tentativa de Firefox headless em 2026-10-21 chegou ao antigo acordo geral `/agreement`; Agreement contrib foi posteriormente desinstalado e o fluxo foi substituído por `aculta_user_agreement`. Nenhum aceite foi submetido nessa tentativa. A gaveta autenticada ainda não foi revisada. Próximo: executar revisão visual/acessível em sessão de teste autenticada após concluir o aceite no fluxo atual; depois gates e revisão pré-RC.
 
-**F1 — Fundação `aculta_lms`: entregue na PR #286, versão `0.1.0-dev.1`.** O submódulo opcional e o contrato
-DI de conclusão aprovada estão implementados. Testes Unit (2/2) e Kernel isolado (1/1) passam; `aculta_lms`
-continua desativado no Runtime e ainda não tem produtor ou consumidor educacional ativo (**RUNTIME STATUS:
-DEFERRED**).
+**F1 — Fundação `aculta_lms`: implementada e integrada no Runtime de desenvolvimento.** Os contratos neutros estão habilitados; o provider LMS publica a conclusão aprovada e os consumidores Game/Messenger usam o evento compartilhado. Em 2026-11-01, `config:status` ficou limpo após habilitar `aculta_learning_contracts`; container, rotas de estudante e Educador e smoke final foram validados no commit `e60abcb62`. A independência do provider e instalação sem o contrib continuam fora deste gate.
 
 O viewer compartilhado e a relação Media↔Group para documentos privados de turma foram desenvolvidos nos
 submódulos `aculta_pdf_viewer` e `aculta_pdf_viewer_group`. O Kernel cobre membro, não membro, remoção da
@@ -728,7 +725,7 @@ Compatibilidade integral de cursos legados não é obrigatória. Cursos obsoleto
 
 A apresentação da jornada e da sala foi colocada em aculta_studio por meio de CourseJourneyComposer e CourseJourneyPresentationHooks. aculta_lms não declara mais dependência de aculta_studio; CourseRoomBuilder conserva apenas a composição de elementos de matrícula e roster. Os contratos e DTOs seguem em aculta_learning_contracts.
 
-O dashboard foi separado em duas camadas: `aculta_lms` fornece `StudentLearningSummaryReaderInterface` e DTOs tipados (`StudentLearningSummary`, `StudentLearningCourse`, `StudentLearningCertificate`); `aculta_studio` possui `LearnerDashboardComposer` e monta a interface. As rotas Ganjalab de estudante e educador também estão declaradas no Studio, mantendo IDs `aculta_lms.*` por compatibilidade. **Validação Runtime (2026-11-01):** jornada/sala 74/74 em 320–1440 px; `/ganjalab/educador` e o formulário de novo curso em 200; Unit Studio 62/597 e LMS 91/475; Kernel `ContractsInstallTest` 1/8. A integração com a rota nativa de atividade do Drupal LMS continua temporária. Esta entrega não remove dependências contrib nem equivale a homologação Runtime.
+O dashboard foi separado em duas camadas: `aculta_lms` fornece `StudentLearningSummaryReaderInterface` e DTOs tipados (`StudentLearningSummary`, `StudentLearningCourse`, `StudentLearningCertificate`); `aculta_studio` possui `LearnerDashboardComposer` e monta a interface. As rotas Ganjalab de estudante e educador também estão declaradas no Studio, mantendo IDs `aculta_lms.*` por compatibilidade. **Validação Runtime (2026-11-01, commit `e60abcb62`):** smoke Firefox ESR/X11 74/74 em 320, 390, 768, 1024, 1280 e 1440 px; smoke final do commit publicado a 390 px passou. `/ganjalab` e `/ganjalab/educador/cursos/novo` responderam HTTP 200; serviços e aliases foram resolvidos no container. PHPUnit Unit: Studio 62/597 e LMS 99/472; Kernel `ContractsInstallTest` 1/8; lint e PHPCS sem erros nos arquivos alterados. `config:status` ficou limpo. A integração com a rota nativa de atividade continua temporária; o provider permanece dependente do Drupal LMS.
 
 
 ## Estado da independência arquitetural
@@ -748,8 +745,8 @@ ainda dependem do Drupal LMS.
 
 ### Próximos gates
 
-1. Homologar no checkout local os contratos, serviços, hooks e dependências
-   adicionados nesta fatia; reconstruir container e executar testes focais.
+1. Validar a closure de instalação sem Drupal LMS contrib em ambiente isolado;
+   o Runtime atual foi homologado com o provider LMS ativo.
 2. Mover os leitores restantes de curso e agenda para contratos neutros onde
    isso reduza dependências de consumidores sem criar armazenamento paralelo.
 3. Desenhar a autoria ACULTA para curso e currículo, mantendo o LMS como provider
@@ -762,6 +759,6 @@ ainda dependem do Drupal LMS.
    contrib.
 
 Não alterar configuração ativa, migrar nem excluir dados como parte das etapas
-de desacoplamento por contratos. Consulte o
+de desacoplamento por contratos. `updatedb:status` ainda aponta `aculta_messenger_update_10015` e `10016`, pertencentes à frente Events/Messenger; não foram executadas nesta validação. Consulte o
 [Inventário de dependência do Drupal LMS contrib](LMS-CONTRIB-DEPENDENCY-INVENTORY.md)
 para a matriz de consumidores e critérios de remoção.
