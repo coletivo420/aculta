@@ -739,7 +739,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
-   * Event creation proposals conflict with an existing title and start time.
+   * Event creation conflicts with an existing title/date case-insensitively.
    */
   public function testEventCreateContributionRejectsDuplicateTitleAndDate(): void {
     $event = Event::create([
@@ -761,7 +761,7 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $this->container->get('current_user')->setAccount($this->editorUser);
     $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_event');
     $payload = $adapter->validatePayload('event_create', [
-      'title' => 'Mostra Cultural Existente',
+      'title' => 'mostra cultural existente',
       'dates' => [
         [
           'title' => 'Abertura proposta',
@@ -1432,6 +1432,92 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
     $unchanged = $this->container->get('entity_type.manager')->getStorage('aculta_event_location')->loadUnchanged($location->id());
     self::assertSame('Rua A, 10', $unchanged->get('field_endereco')->address_line1);
     self::assertSame('Alteração administrativa concorrente.', $unchanged->get('field_descricao')->value);
+  }
+
+  /**
+   * A linked Event change invalidates a sensitive Location address proposal.
+   */
+  public function testLocationAddressContributionDetectsChangedLinkedEvent(): void {
+    $location = EventLocation::create([
+      'title' => 'Local com Evento vinculado',
+      'field_organizador' => (int) $this->editorUser->id(),
+      'field_status' => 'publicado',
+      'field_endereco' => [[
+        'country_code' => 'BR',
+        'address_line1' => 'Rua A, 10',
+        'locality' => 'Natal',
+        'administrative_area' => 'RN',
+        'postal_code' => '59000-000',
+      ],
+      ],
+    ]);
+    $location->save();
+    $event = Event::create([
+      'title' => 'Evento no Local',
+      'field_organizador' => (int) $this->adminUser->id(),
+      'field_status' => 'publicado',
+    ]);
+    $event->save();
+    $date = EventDate::create([
+      'title' => 'Data no Local',
+      'field_evento' => (int) $event->id(),
+      'field_local' => (int) $location->id(),
+      'field_quando' => [
+        'value' => '2027-05-10T18:00:00',
+        'end_value' => '2027-05-10T20:00:00',
+      ],
+    ]);
+    $date->save();
+
+    $this->usePurposeByCurrentAccount();
+    $this->container->get('current_user')->setAccount($this->editorUser);
+    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_location');
+    $freshLocation = $this->container->get('entity_type.manager')->getStorage('aculta_event_location')
+      ->loadUnchanged($location->id());
+    $proposal = $this->container->get('aculta_contributions.lifecycle')->submit(
+      'events_location',
+      'location_update',
+      (string) $location->uuid(),
+      'Ajuste de endereço: Local com Evento vinculado',
+      'O endereço precisa de revisão.',
+      [
+        'field_endereco' => [[
+          'country_code' => 'BR',
+          'address_line1' => 'Rua A, 12',
+          'locality' => 'Natal',
+          'administrative_area' => 'RN',
+          'postal_code' => '59000-000',
+        ],
+        ],
+      ],
+      str_repeat('9', 64),
+      [],
+      $adapter->currentVersion('location_update', $freshLocation),
+    );
+
+    $date->set('field_quando', [
+      'value' => '2027-05-11T18:00:00',
+      'end_value' => '2027-05-11T20:00:00',
+    ])->save();
+    $this->container->get('current_user')->setAccount($this->adminUser);
+    try {
+      $this->container->get('aculta_contributions.lifecycle')->decide(
+        $proposal,
+        'accepted',
+        'Endereço revisado.',
+        ['field_endereco'],
+        (int) $proposal->getRevisionId(),
+      );
+      self::fail('A mudança na Data do Evento vinculado deve produzir conflito.');
+    }
+    catch (ConflictHttpException) {
+      $freshProposal = $this->container->get('entity_type.manager')->getStorage('aculta_contribution')
+        ->load($proposal->id());
+      self::assertSame('conflict', $freshProposal->get('state')->value);
+    }
+    $unchanged = $this->container->get('entity_type.manager')->getStorage('aculta_event_location')
+      ->loadUnchanged($location->id());
+    self::assertSame('Rua A, 10', $unchanged->get('field_endereco')->address_line1);
   }
 
   /**

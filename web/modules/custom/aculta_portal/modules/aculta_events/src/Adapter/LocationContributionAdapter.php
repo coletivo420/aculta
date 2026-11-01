@@ -7,6 +7,8 @@ namespace Drupal\aculta_events\Adapter;
 use Drupal\aculta_contributions\Contract\ContributionAdapterInterface;
 use Drupal\aculta_contributions\Entity\Contribution;
 use Drupal\aculta_events\Access\EventPermissionPolicy;
+use Drupal\aculta_events\Entity\Event;
+use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Event\OrganizationContributionOutcomeRecordedEvent;
 use Drupal\aculta_events\Service\OrganizationContributionEventQueue;
@@ -210,7 +212,10 @@ final class LocationContributionAdapter implements ContributionAdapterInterface 
     if ($intent !== 'location_update' || !$target instanceof EventLocation) {
       return '';
     }
-    return hash('sha256', json_encode($target->toArray(), JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE));
+    return hash('sha256', json_encode([
+      'location' => $target->toArray(),
+      'linked_events' => $this->linkedEventContext($target),
+    ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE));
   }
 
   /**
@@ -269,6 +274,9 @@ final class LocationContributionAdapter implements ContributionAdapterInterface 
         'field_endereco' => $fresh->get('field_endereco')->getValue(),
       ];
       $this->assertNoDuplicate($candidate, $locationId);
+      if (isset($normalized['field_endereco']) || isset($normalized['field_precisao'])) {
+        $this->assertLinkedEventsAvailable($fresh, $reviewer);
+      }
       $this->applyFields($fresh, $normalized);
       $fresh->save();
       unset($transaction);
@@ -445,6 +453,66 @@ final class LocationContributionAdapter implements ContributionAdapterInterface 
       }
       if ($this->sameLocation($duplicate, $proposed)) {
         throw new ConflictHttpException('Já existe um Local com nome e endereço semelhantes. Revise o cadastro existente antes de criar ou alterar.');
+      }
+    }
+  }
+
+  /**
+   * Captures related dates and Event status in the Location base version.
+   *
+   * Changing a Location address can change information shown by every Event
+   * using it. Those dependencies therefore participate in stale-source
+   * detection when a reviewer applies an address or precision change.
+   *
+   * @return array<int, array<string, bool|int|string|null>>
+   *   Stable, entity-ID-sorted context for Events that reference this Location.
+   */
+  private function linkedEventContext(EventLocation $location): array {
+    $dateStorage = $this->entityTypeManager->getStorage('aculta_event_date');
+    $dateIds = $dateStorage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('field_local', (int) $location->id())
+      ->sort('id')
+      ->execute();
+    $context = [];
+    foreach ($dateIds as $dateId) {
+      $date = $dateStorage->loadUnchanged($dateId);
+      if (!$date instanceof EventDate) {
+        continue;
+      }
+      $eventId = $date->get('field_evento')->isEmpty()
+        ? NULL
+        : (int) $date->get('field_evento')->target_id;
+      $event = $eventId === NULL
+        ? NULL
+        : $this->entityTypeManager->getStorage('aculta_event')->loadUnchanged($eventId);
+      $range = $date->get('field_quando')->first()?->getValue() ?? [];
+      $context[] = [
+        'date_id' => (int) $date->id(),
+        'event_id' => $eventId,
+        'event_exists' => $event instanceof Event,
+        'event_status' => $event instanceof Event ? (string) $event->get('field_status')->value : NULL,
+        'event_published' => $event instanceof Event && $event->get('field_status')->value === 'publicado',
+        'starts_at' => isset($range['value']) ? (string) $range['value'] : NULL,
+        'ends_at' => isset($range['end_value']) ? (string) $range['end_value'] : NULL,
+      ];
+    }
+    usort($context, static fn (array $left, array $right): int => $left['date_id'] <=> $right['date_id']);
+    return $context;
+  }
+
+  /**
+   * Fails closed if a sensitive Location update affects an unavailable Event.
+   */
+  private function assertLinkedEventsAvailable(EventLocation $location, AccountInterface $reviewer): void {
+    foreach ($this->linkedEventContext($location) as $context) {
+      if (!$context['event_exists'] || $context['event_id'] === NULL) {
+        throw new ConflictHttpException('Um Evento vinculado ao Local não está mais disponível.');
+      }
+      $event = $this->entityTypeManager->getStorage('aculta_event')->loadUnchanged($context['event_id']);
+      $this->entityTypeManager->getAccessControlHandler('aculta_event')->resetCache();
+      if (!$event instanceof Event || !$event->access('view', $reviewer, TRUE)->isAllowed()) {
+        throw new ConflictHttpException('Um Evento vinculado ao Local não está acessível para revisão.');
       }
     }
   }

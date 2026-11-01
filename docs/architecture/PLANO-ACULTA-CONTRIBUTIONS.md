@@ -1,7 +1,7 @@
 # Plano de arquitetura e implementação - ACULTA Contributions
 
 **Estado:** F0 revalidado; F1/F2 parciais; Wiki dual-store; F4 concluída com escopo restrito a perfis públicos não reivindicados; F5 parcial; F8 concluída sem integração adicional (Calendar/Forum/UGC preservam owners); fila descoberta pelo Content Admin; avisos de submissão e decisão de Organização/Local/Evento no inbox via envelope mínimo e outbox; fila/revisão administrativa de Evento, `event_create` e `event_update` com interfaces de autor implementados; workspace e ressubmissão estruturada implementados; updates Messenger e Wiki homologados parcialmente no Runtime; autorização autenticada de domínio pendente
-**Base de código auditada:** branch `dev`, checkout baseado em `23e568ece` (2026-11-01); auditoria F0 revalidada após o teste de instalação limpa e o conflito de Evento duplicado e referenciada em [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md). Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
+**Base de código auditada:** branch `dev`, HEAD `1057ce432` (2026-11-01); auditoria F0 revalidada após o teste de instalação limpa e o conflito de Evento duplicado e referenciada em [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md). Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
 **Escopo:** motor de propostas comunitárias reutilizável por domínios ACULTA, sem depender de Workflow Participants ou de Content Moderation para o ciclo de contribuições.
 
 ## 1. Decisão de arquitetura
@@ -250,7 +250,7 @@ Publicar eventos mínimos no bus central. O Messenger envia avisos conforme pref
 - [x] Enfileirar resultados de Organização e Local por evento mínimo, sem payload, endereço ou parecer; Messenger persiste avisos privados no inbox e revalida revisão, autor e acesso ao listar/abrir.
 - [ ] Definir política/categoria de e-mail para esses avisos; o incremento atual não envia e-mail nem digest.
 - [x] Workspace privado de leitura para Organização, Local e Evento em `/culturas/propostas`; ressubmissão em `/culturas/propostas/{uuid}/revisar` cria nova revisão após `needs_changes`, com payload tipado, endereço BR central e acesso restrito ao owner. A execução focal registrada foi 2/64, incluindo endereço BR; não repetida neste HEAD. Formulários de Evento para `event_create` e `event_update` estão implementados; o envio gera aviso privado por envelope mínimo. Homologação Runtime segue pendente.
-- [ ] Revalidar Eventos ligados ao Local antes de qualquer fusão/alteração sensível; propostas atuais não fazem fusão.
+- [x] Antes de aplicar alteração de endereço/precisão do Local, incluir Datas relacionadas e estado dos Eventos na revisão-base; recarregar entidades do storage, revalidar disponibilidade e acesso `view` atual, e conflitar sem aplicar se a origem mudou. `testLocationAddressContributionDetectsChangedLinkedEvent` cobre mudança concorrente de Data e endereço preservado (1/26); a proposta não faz fusão de Eventos.
 **Saída:** catálogo, seletor de local, página pública e Index mantêm consistência.
 
 ### F6 - Eventos

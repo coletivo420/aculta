@@ -94,6 +94,13 @@ Decisões de Organização e Local são enviadas ao inbox do site pelo Messenger
 com envelope mínimo, sem endereço, payload ou parecer; Runtime, email/digest e
 workspace do autor ainda são pendentes.
 
+Alterações propostas de endereço ou precisão incluem na revisão-base as Datas e
+os Eventos ligados ao Local. Na aplicação, Datas/Eventos são recarregados do
+storage e o acesso `view` do revisor é revalidado; uma mudança concorrente gera
+conflito sem aplicar o endereço. `testLocationAddressContributionDetectsChangedLinkedEvent`
+comprovou o cenário de Data alterada (1/26). A classe Kernel completa passou em
+2026-11-01 com 30 testes / 967 assertions (24 depreciações upstream).
+
 ## Propostas de perfil de Organização — dev.9
 
 Novas alterações de perfil em Organizações não reivindicadas são gravadas como
