@@ -98,3 +98,6 @@ services:
   aculta_studio.saved_controller:
     class: Drupal\aculta_studio\Controller\SavedContentController
     arguments: ['@aculta_studio.saved_content', '@aculta_studio.recommendations', '@current_user', '@request_stack', '@date.formatter', '@string_translation', '@aculta_portal.saved_content_query']
+  aculta_studio.upload_embed_controller:
+    class: Drupal\aculta_studio\Controller\StudioUploadEmbedController
+    arguments: ['@form_builder']

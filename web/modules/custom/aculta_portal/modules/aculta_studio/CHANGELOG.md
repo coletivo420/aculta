@@ -1,3 +1,13 @@
+## 0.1.0-dev.31 — drop zone embutida no Studio
+
+- Nova página `/estudio/envio/{integracao}` (wiki, fórum, galeria, revista, LMS), na casca do Studio. Só usuário logado; a regra de cada integração vale no salvar.
+- `StudioUploadEmbedForm` monta a drop zone pela política `aculta_file_uploader.consumer_policy` (imagem e documento) e revalida o arquivo no envio. Não cria conteúdo.
+- Arquivo recebido fica temporário até a integração referenciá-lo. Essa ligação ainda não existe: a página só recebe e confirma o envio.
+- Usuário (foto) fica fora desta página.
+- Teste Unit do controller: integração da lista e 404 fora dela.
+
+RUNTIME STATUS: DEFERRED. Testes não executados (sem vendor/ nem Runtime).
+
 ## 0.1.0-dev.30 — correção de runtime no Ganjalab Educador (2026-11-01)
 
 - `CourseAuthoringController::dashboard()` chamava `PortalLinkElement::build()`

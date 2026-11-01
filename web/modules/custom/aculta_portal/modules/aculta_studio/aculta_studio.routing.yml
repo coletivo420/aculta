@@ -303,3 +303,18 @@ aculta_lms.educator_dashboard:
     no_cache: true
     _aculta_domain_purpose: courses
 
+
+# Drop zone embutida: uma página por integração, na casca do Studio. A regra de
+# cada integração vale no salvar; esta rota só exige usuário logado.
+aculta_studio.upload_embed:
+  path: /estudio/envio/{integracao}
+  defaults:
+    _controller: 'aculta_studio.upload_embed_controller:page'
+    _title: 'Envio de arquivos'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+    integracao: 'wiki|forum|galeria|revista|lms'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true
