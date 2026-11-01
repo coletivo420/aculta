@@ -4,6 +4,12 @@ PROJECT-STATUS-INDEX-GUARD: 2026-10-21
 
 Este arquivo define as regras gerais do repositório. Siga também o `AGENTS.md` mais próximo dos arquivos alterados. Em caso de conflito, prevalecem a instrução explícita mais recente do responsável e as regras de segurança abaixo. Consulte a documentação referenciada para detalhes; não replique aqui históricos ou planos.
 
+## ESTADO DA SESSÃO
+
+- Antes de trocar de sessão, encerrar uma fase ou transferir o trabalho para outro agente/ferramenta, registre um handoff atualizado em [`docs/operations/ESTADO-DA-SESSAO.md`](docs/operations/ESTADO-DA-SESSAO.md). O registro deve resumir objetivo e contexto, o que foi feito, arquivos alterados, verificações executadas e seus resultados, pendências/bloqueios e próximos passos.
+- Inclua no handoff referências concretas para leitura (caminhos de arquivos e, quando útil, seções/linhas) que permitam à próxima sessão retomar do ponto correto. Não registre segredos ou dados sensíveis.
+- Ao concluir ou transferir a tarefa, informe ao responsável o caminho desse handoff para que sirva de referência às próximas sessões. Atualize o registro existente em vez de criar históricos paralelos; preserve o contexto anterior quando ainda for necessário para retomar o trabalho.
+
 ## Git: trabalhar e publicar em `dev`
 
 - Todas as alterações autorizadas devem ser feitas, commitadas e enviadas diretamente para `origin/dev`. Não crie branches, worktrees ou PRs, nem publique em outra branch, salvo instrução explícita posterior do responsável.
