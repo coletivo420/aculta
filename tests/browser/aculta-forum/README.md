@@ -304,3 +304,28 @@ DISPLAY=:0 SUITE_OUT='/home/<usuario>/private/aculta/visual-tests/forum-a11y' \
   mobília do tema; as paradas são contadas dentro de `<main>`.
 - Não cria conteúdo, não envia formulário e não dispara e-mail.
 - Rodada do candidato RC: 49/49 em ACULTA420 e 49/49 em Olivero.
+
+## Tópico público responsivo
+
+`tests/browser/aculta-theme-mobile-first/forum-topic-layout.py` segue GET-only
+um link público da home até um tópico que tenha pelo menos uma resposta. No
+Firefox ESR visível, verifica corpo, autoria, tópico/resposta, shell único,
+erros visíveis e overflow em 320/360/390/599/600/768/1024/1280/1440px. Capturas
+320/768/1440 ficam fora do repositório com permissões privadas. Não autentica,
+não submete comentários e não altera conteúdo.
+
+```sh
+cd /home/piradopirata/worktrees/opencultures-f0-adm8-e8
+DISPLAY=:0 FORUM_TOPIC_CSS_CANDIDATE=1 \
+FORUM_TOPIC_CSS_ROOT=/home/piradopirata/worktrees/opencultures-f0-adm8-e8 \
+SUITE_OUT=/home/piradopirata/aculta-suite-out/forum-topic-layout \
+ACULTA_FF_PROFILE_ROOT=/home/piradopirata/aculta-suite-out/forum-topic-layout/profiles \
+python3 -I tests/browser/aculta-theme-mobile-first/forum-topic-layout.py
+```
+
+`FORUM_TOPIC_BASE_URL` seleciona a raiz HTTPS de teste e
+`FORUM_TOPIC_WIDTHS` permite escolher larguras. A injeção local de
+`forum-index.css`, `discussion.css` e `author-card.css` ocorre somente na sessão
+Firefox; ela não prova que o Runtime serve a revisão do worktree. O teste é um
+smoke de apresentação de um tópico público e não substitui filas/ACL de
+comentários, teclado, zoom, claro/escuro ou WCAG 2.2 AA.

@@ -1,0 +1,23 @@
+uuid: 5f4e86e6-cb84-46f0-a169-09b2745ee254
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: UwewQKqbJgFwudhb9_x95lYM9gcgBCR_F1Vv58B05qI
+id: message.field_aculta_mailer_managed
+field_name: field_aculta_mailer_managed
+entity_type: message
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -44,6 +44,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       '/wesativa' => 'aculta_studio.we_sativa',
       '/wesativa/inicio' => 'aculta_studio.we_sativa_start',
       '/ganjalab' => 'aculta_lms.student_dashboard',
+      '/ganjalab/cursos/novo' => 'aculta_lms.course_create',
       '/salvos' => 'aculta_studio.salvos',
       '/greenstash' => 'aculta_commerce.green_stash',
       '/greenstash/{secao}' => 'aculta_commerce.green_stash_area',
@@ -62,7 +63,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
   }
 
   /**
-   * Conta and profile are restricted to account; suites use their owner domains.
+   * Conta and profile are restricted to account; suites use owner domains.
    */
   public function testAccountProfileAndSuiteAccess(): void {
     $routes = $this->routes();
@@ -101,6 +102,10 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     self::assertSame('wiki', $routes['aculta_studio.we_sativa']['options']['_aculta_domain_purpose']);
     self::assertSame('wiki', $routes['aculta_studio.we_sativa_start']['options']['_aculta_domain_purpose']);
     self::assertSame('courses', $routes['aculta_lms.student_dashboard']['options']['_aculta_domain_purpose']);
+    self::assertSame('courses', $routes['aculta_lms.course_create']['options']['_aculta_domain_purpose']);
+    self::assertSame('create lms_course group', $routes['aculta_lms.course_create']['requirements']['_permission']);
+    self::assertTrue($routes['aculta_lms.course_create']['options']['no_cache']);
+    self::assertSame('aculta_studio.course_authoring_controller:create', $routes['aculta_lms.course_create']['defaults']['_controller']);
     self::assertSame('wiki', $routes['aculta_wiki.proposal_decide']['options']['_aculta_domain_purpose']);
     foreach ([
       'aculta_commerce.green_stash',
@@ -135,9 +140,6 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       '/studio',
       '/studio/marley',
       '/studio/ganjalab',
-      '/studio/we-sativa',
-      '/studio/we-sativa/inicio',
-      '/studio/green-stash',
       '/studio/salvos',
       '/studio/conta',
       '/studio/perfil',
@@ -146,6 +148,11 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       '/studio/inicio',
       '/ganjalab420',
       '/minha-aprendizagem',
+      '/studio/we-sativa',
+      '/studio/we-sativa/inicio',
+      '/studio/we-sativa/propostas/{proposal}/decidir',
+      '/studio/green-stash',
+      '/studio/green-stash/{secao}',
       '/studio/ganjalab420',
       '/studio/ganjalab/{aba}/{secao}/{sub}',
     ];
@@ -156,7 +163,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
   }
 
   /**
-   * The original Minha Conta stays available at /conta-legada; the ACCOUNT root resolves to the account entry.
+   * Minha Conta stays at /conta-legada; the ACCOUNT root resolves to Conta.
    */
   public function testLegacyAccountRouteStillExistsButIsNotExposedAsAlias(): void {
     $root = dirname(__DIR__, 3);

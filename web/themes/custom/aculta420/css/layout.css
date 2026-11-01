@@ -12,6 +12,7 @@
   max-width: var(--aculta-page-content-max);
   padding-inline: var(--aculta-page-gutter);
 }
+
 .aculta-main { padding-block: var(--aculta-main-space-block); }
 .aculta-main--compact-top { padding-block-start: var(--aculta-main-space-block-compact); }
 .aculta-content, .aculta-sidebar { min-width: 0; }

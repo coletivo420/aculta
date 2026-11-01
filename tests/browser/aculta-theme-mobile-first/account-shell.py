@@ -90,6 +90,9 @@ def apply_candidate_css():
           style.textContent = arguments[0];
           document.head.append(style);
           return true;""", [CSS_CANDIDATE])
+    color_mode = os.environ.get("ACCOUNT_COLOR_MODE")
+    if color_mode in ("light", "dark"):
+        driver.js("document.documentElement.setAttribute('data-bs-theme', arguments[0]); return true", [color_mode])
 
 
 try:
@@ -124,6 +127,12 @@ try:
           const nav = document.querySelector('.portal-account__nav');
           const desktop = document.querySelector('.portal-account__menu-desktop');
           const accordion = document.querySelector('.portal-account__accordion');
+          const items = [...accordion.querySelectorAll('.portal-account__item')];
+          const summaries = items.map(item => item.querySelector('.portal-account__summary'));
+          const logout = accordion.querySelector('.portal-account__logout-row');
+          const open = accordion.querySelector('.portal-account__item[open]');
+          const tops = new Set(items.map(item => Math.round(item.getBoundingClientRect().top)));
+          const label = element => element.querySelector('.portal-account__label')?.textContent.trim();
           return {
             width: window.innerWidth,
             document: document.documentElement.scrollWidth,
@@ -131,7 +140,16 @@ try:
             navPosition: getComputedStyle(nav).position,
             desktopMenu: getComputedStyle(desktop).display,
             accordion: getComputedStyle(accordion).display,
-            sections: document.querySelectorAll('.portal-account__menu-desktop a').length
+            sections: document.querySelectorAll('.portal-account__menu-desktop a').length,
+            mobileItemCount: items.length,
+            mobileRows: tops.size,
+            mobileColumns: getComputedStyle(accordion).gridTemplateColumns.trim().split(/\\s+/).length,
+            desktopLabels: [...desktop.querySelectorAll('a')].map(label),
+            mobileLabels: [...accordion.querySelectorAll('.portal-account__item, .portal-account__logout-row')].map(label),
+            minSummaryHeight: Math.min(...summaries.map(item => item.getBoundingClientRect().height)),
+            logoutHeight: logout.getBoundingClientRect().height,
+            logoutGridColumn: getComputedStyle(logout).gridColumn,
+            openItemGridColumn: open ? getComputedStyle(open).gridColumn : null
           };
         })();""")
         mobile = width < 768
@@ -141,10 +159,22 @@ try:
         check(f"{width}px: menu contextual correto",
               metrics["sections"] > 0
               and metrics["desktopMenu"] == ("none" if mobile else "block")
-              and metrics["accordion"] == ("block" if mobile else "none")
+              and metrics["accordion"] == ("grid" if mobile else "none")
               and metrics["columns"] == (1 if mobile else 2)
-              and metrics["navPosition"] == ("static" if mobile else "sticky"),
+              and metrics["navPosition"] == ("static" if mobile else "sticky")
+              and metrics["desktopLabels"] == metrics["mobileLabels"],
               json.dumps(metrics, ensure_ascii=False))
+        if mobile:
+            check(f"{width}px: sanfona ocupa duas colunas sem mudar a ordem ou os alvos",
+                  metrics["mobileColumns"] == 2
+                  and metrics["mobileRows"] < metrics["mobileItemCount"]
+                  and metrics["minSummaryHeight"] >= 44
+                  and metrics["logoutHeight"] >= 44
+                  and "-1" in metrics["logoutGridColumn"]
+                  and (metrics["openItemGridColumn"] is None or "-1" in metrics["openItemGridColumn"]),
+                  json.dumps({key: metrics[key] for key in ("mobileColumns", "mobileRows", "mobileItemCount",
+                                                            "minSummaryHeight", "logoutHeight", "logoutGridColumn",
+                                                            "openItemGridColumn")}, ensure_ascii=False))
         image = driver.req("GET", f"/session/{driver.session}/screenshot")
         (OUT / f"account-shell-{width}.png").write_bytes(base64.b64decode(image))
 

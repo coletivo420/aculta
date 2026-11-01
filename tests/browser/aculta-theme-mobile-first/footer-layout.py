@@ -22,6 +22,8 @@ WIDTHS = [int(width) for width in os.environ.get(
 ).split(",")]
 DOMAIN_ENV = os.environ.get("FOOTER_DOMAIN_ENV", "test")
 CSS_OVERRIDE = os.environ.get("FOOTER_CSS_OVERRIDE") == "1"
+BASE_CSS_OVERRIDE = os.environ.get("FOOTER_BASE_CSS_OVERRIDE") == "1"
+AUTH_CSS_OVERRIDE = os.environ.get("FOOTER_AUTH_CSS_OVERRIDE") == "1"
 if DOMAIN_ENV not in ("test", "production"):
     raise SystemExit("FOOTER_DOMAIN_ENV deve ser test ou production.")
 
@@ -46,6 +48,10 @@ if missing:
 PURPOSES = [(purpose, f"https://{hosts[domain_id]}/") for purpose, domain_id in DOMAIN_IDS.items()]
 if CSS_OVERRIDE:
     candidate_css = (ROOT / "web/themes/custom/aculta420/components/patterns/social-links-page/social-links-page.css").read_text()
+if BASE_CSS_OVERRIDE:
+    candidate_base_css = (ROOT / "web/themes/custom/aculta420/css/base.css").read_text()
+if AUTH_CSS_OVERRIDE:
+    candidate_auth_css = (ROOT / "web/themes/custom/aculta420/css/components/auth.css").read_text()
 checks = []
 
 
@@ -122,6 +128,10 @@ try:
         except Exception as error:  # Continue other purposes, but never count a failed navigation as a pass.
             check(f"{purpose}: navegação da home pública", False, {"url": url, "error": str(error)[:240]})
             continue
+        if BASE_CSS_OVERRIDE:
+            driver.js("const style=document.createElement('style');style.textContent=arguments[0];document.head.append(style);return true;", [candidate_base_css])
+        if AUTH_CSS_OVERRIDE:
+            driver.js("const style=document.createElement('style');style.textContent=arguments[0];document.head.append(style);return true;", [candidate_auth_css])
         if CSS_OVERRIDE:
             driver.js("const style=document.createElement('style');style.textContent=arguments[0];document.head.append(style);return true;", [candidate_css])
         time.sleep(0.25)
@@ -171,6 +181,8 @@ finally:
 (OUT / "results.json").write_text(json.dumps({
     "domainEnvironment": DOMAIN_ENV,
     "cssOverride": CSS_OVERRIDE,
+    "baseCssOverride": BASE_CSS_OVERRIDE,
+    "authCssOverride": AUTH_CSS_OVERRIDE,
     "purposes": [purpose for purpose, _ in PURPOSES],
     "widths": WIDTHS,
     "checks": checks,

@@ -107,7 +107,7 @@ final class EventOrganizationForm extends ContentEntityForm {
       if ($entity->isUnclaimed()) {
         $form['unclaimed_notice'] = [
           '#type' => 'container',
-          '#attributes' => ['class' => ['messages', 'messages--warning']],
+          '#attributes' => ['data-portal-ui' => 'notice-warning'],
           '#markup' => $this->t('<strong>Atenção:</strong> Esta organização é pública e <em>não reivindicada</em>. Qualquer usuário autorizado a criar eventos pode editar suas informações até que um titular seja aprovado pela administração.'),
           '#weight' => -15,
         ];

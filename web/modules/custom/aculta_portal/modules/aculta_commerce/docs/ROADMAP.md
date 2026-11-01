@@ -5,9 +5,10 @@ Escopo iniciado em 2026-10-22; estado revisado em 2026-10-26. Este roadmap é ve
 ## Retificação vigente — ACULTA STUDIO GREEN STASH (2026-10-30)
 
 Green Stash é área comercial integrada ao ACULTA Studio, não produto, shell ou
-experiência independente. Nome oficial: **ACULTA STUDIO GREEN STASH**. Pelo
-ADR-038, a entrada atual é `/greenstash` no purpose `shop`; `/studio/green-stash`
-e o antigo `/estudio/loja` foram retirados sem alias ou redirect. Propostas não
+experiência independente. Nome oficial: **ACULTA STUDIO GREEN STASH**. Por
+retificação explícita do responsável, a entrada canônica é `/studio/green-stash`
+no purpose `shop`, com os fluxos comerciais sob o mesmo prefixo. `/greenstash`
+e `/estudio/loja` ficam retirados sem alias ou redirect. Propostas não
 implementadas não podem ser apresentadas como operações disponíveis. As fases
 abaixo preservam seus paths originais como histórico.
 
@@ -35,7 +36,7 @@ pendentes; nenhum e-mail real foi enviado.
 1. Loja, LMS e doações preservam regras e checkouts próprios; **aculta_portal coordena a configuração administrativa (Comum/Loja/LMS/Doações) e preserva o checkout e a consolidação atual do carrinho público**. Ver [ADR-032](../../../../../../../docs/decisions/ADR-032-portal-multi-cart-checkout.md).
 2. Mercado Pago é um gateway compartilhado centralizado em `aculta_pagamentos_mercadopago` para loja, LMS e doações. Reutilizar a integração e os contratos atuais; alteração de webhook exige regressão nas três áreas.
 3. `aculta_commerce` concentra capacidades próprias da loja e fornece provider de contexto para o orquestrador **no aculta_portal**; Drupal Commerce permanece fonte de verdade. Nenhum armazenamento paralelo de pedidos, carrinhos, pagamentos ou estoque. **Já existe `CartConsolidator` no Portal que consolida pedidos não-recorrentes; preservar essa regra, não projetar outra.**
-4. **ACULTA STUDIO GREEN STASH** é área comercial integrada ao ACULTA Studio, distinta funcionalmente de GanjaLab, GanjaLab420 e ACULTA STUDIO WE SATIVA, mas sem plataforma, shell, login ou identidade independentes. Usar `StudioExperienceProviderInterface` como contrato técnico, com acesso real a serviços e entidades proprietárias. Não pressupor que `account` permita administrar a loja: resolver purpose e grants explicitamente. Entrada oficial `/greenstash` no purpose `shop` (ADR-038).
+4. **ACULTA STUDIO GREEN STASH** é área comercial integrada ao ACULTA Studio, distinta funcionalmente de GanjaLab, GanjaLab420 e ACULTA STUDIO WE SATIVA, mas sem plataforma, shell, login ou identidade independentes. Usar `StudioExperienceProviderInterface` como contrato técnico, com acesso real a serviços e entidades proprietárias. Não pressupor que `account` permita administrar a loja: resolver purpose e grants explicitamente. Entrada oficial `/studio/green-stash` no purpose `shop` (retificação do ADR-038).
 5. ACULTA420 detém o visual, baseado exclusivamente em SDC/UI Suite; mobile-first, sem substituir o cabeçalho multidomínio.
 6. Estatísticas comerciais via `aculta_statistics`. Ler agregados para indicadores; consultas operacionais de pedidos através de Commerce.
 7. Índice transversal apenas para descoberta de produtos e relações públicas autorizadas, jamais para estoque, dados de clientes, carrinhos, transações, segredos ou controle de acesso.
@@ -140,11 +141,11 @@ Foi implementada a fundação de entrada administrativa `GreenStashAccessPolicy`
 
 ## GS-0.2-A/B — navegação inicial implementada (2026-10-23; rotas retificadas em 2026-10-30)
 
-Registro histórico: `GreenStashNavigation` começou com destinos preparatórios; não representa nove operações disponíveis. Naquela fase, a entrada era `/studio/green-stash`; atualmente use `/greenstash`. Somente seções com consumidores Commerce presentes podem aparecer como navegáveis.
+Registro histórico: `GreenStashNavigation` começou com destinos preparatórios; não representa nove operações disponíveis. Naquela fase, a entrada era `/studio/green-stash`; o destino atual foi retificado para `/studio/green-stash` no purpose `shop`. Somente seções com consumidores Commerce presentes podem aparecer como navegáveis.
 
 ## GS-0.2-B.1 — Correção de rotas PT-BR e descoberta Studio (2026-10-23)
 
-- As rotas então registradas em `/estudio/loja` foram aposentadas em 2026-10-30 sem redirect. A entrada oficial atual é `/greenstash` (ADR-038); `/studio/green-stash` também foi removida sem alias.
+- As rotas então registradas em `/estudio/loja` foram aposentadas em 2026-10-30 sem redirect. A decisão vigente confirma `/studio/green-stash` em `shop`; `/greenstash` não é alias nem destino canônico.
 - IDs internos de rota `aculta_commerce.green_stash[_area]`, entidades, namespaces e API PHP preservados. O parâmetro de URL é `secao`; mapeamento explícito de slug público PT-BR para identificadores internos.
 - Registro do provider Green Stash migrado do hook `aculta_commerce_container_alter` para `AcultaCommerceServiceProvider::alter()`, mecanismo Drupal próprio de alteração de definições de serviço. Continuidade condicionada a compilação do container e teste no homelab.
 - Não adicionar redirecionamento público legado de `/green-stash` até revisar links de terceiros e rotas históricas. As rotas anteriores não foram homologadas para produção, mas validar a necessidade de redirecionamento HTTP 301/308 no ambiente.
@@ -162,14 +163,14 @@ Registro histórico: `GreenStashNavigation` começou com destinos preparatórios
 ## Histórico — GS-0.2-C.2 — Catálogo com busca e paginação por cursor (2026-10-23)
 
 - `GreenStashProductReader::page()` oferece busca `busca` em título e cursor `antes`, mantendo `accessCheck(TRUE)`, `view/update` da entidade e `update` em ao menos uma loja associada. Não há query de contagem nem exposição de produtos LMS.
-- Rota daquela fase: `/studio/green-stash/produtos`; no ADR-038, a rota correspondente é `/greenstash/produtos`. Render API exibe formulário GET acessível, resultado em lista simples e link Próxima página; acesso/consulta não são cacheados publicamente.
+- Rota daquela fase: `/studio/green-stash/produtos`; após retificação do ADR-038, a rota correspondente é `/studio/green-stash/produtos`. Render API exibe formulário GET acessível, resultado em lista simples e link Próxima página; acesso/consulta não são cacheados publicamente.
 - Segurança: limite de 20 produtos por página, leitura de até cinco lotes de 100 IDs por solicitação. **Limitação:** se muitas entidades forem filtradas por grants, uma página pode ser parcial e não oferecer Próxima página embora existam produtos mais antigos. Não chamar isso de paginação exaustiva até integrar store filtering à consulta.
 - Sem funcionalidades de pedidos ou pagamento; SDC mobile-first ainda pendente, conforme GS-NAV-02.
 - Gates pendentes: Kernel/Functional para grants em produto e store, segurança de cursor e entrada de busca; desempenho em alto volume e regressão após `drush cr` no homelab.
 
 ## Decisão obrigatória — Green Stash substitui operação administrativa Commerce (2026-10-23)
 
-[Contrato operacional Green Stash](GREEN-STASH-OPERATIONS-CONTRACT.md): operações cotidianas da loja devem ocorrer em rotas próprias dentro de `/greenstash`, purpose `shop`. Usar Commerce/Shipping como backend; não apontar operadores para `edit-form` ou `/painel-administrativo`. O histórico de fases abaixo não significa que editar produtos, variações, estoque ou etiquetas esteja disponível.
+[Contrato operacional Green Stash](GREEN-STASH-OPERATIONS-CONTRACT.md): operações cotidianas da loja devem ocorrer em rotas próprias dentro de `/studio/green-stash`, purpose `shop`. Usar Commerce/Shipping como backend; não apontar operadores para `edit-form` ou `/painel-administrativo`. O histórico de fases abaixo não significa que editar produtos, variações, estoque ou etiquetas esteja disponível.
 
 ## GS-EDITOR-0.2 — Detalhe próprio de produto (2026-10-23)
 
@@ -177,9 +178,11 @@ Implementado endpoint de leitura `/studio/green-stash/produtos/{produto}` (entã
 
 Próxima fase GS-EDITOR-0.3: criação própria de produtos via Form API com API/validações Commerce, destino atual `/studio/green-stash/produtos/novo`; antes de liberar, auditar store access no create, regras de SKU/variações, CSRF, validação de formulário e edição concorrente. SDC/UI Suite mobile-first continua dependência do tema.
 
-## GS-EDITOR-0.3-A — Cadastro próprio de rascunho (2026-10-23)
+## GS-EDITOR-0.3-A — Cadastro próprio de rascunho (2026-10-23; gate de validação atualizado em 2026-10-31)
 
 Criada rota PT-BR `/studio/green-stash/produtos/novo` (inicialmente `/estudio/loja/produtos/novo`), usando Form API próprio `GreenStashProductCreateForm`. O cadastro inicial solicita título e loja, exige autorização de experiência Studio, `createAccess('produto_loja')` do Commerce e `update` na loja selecionada. A seleção é revalidada no submit. Produto salvo como **não publicado**, sem acesso aos formulários admin, checkout, preço ou estoque. Formulário aplica validação da entidade e recusa gravação se houver violations. A listagem fornece link `Novo produto`.
+
+**Gate homelab 2026-10-31 — BLOQUEADO:** a submissão real com `teste.comum` alcança a rota canônica `/greenstash/produtos/novo`, mas não persiste o rascunho porque a configuração sincronizada de `produto_loja` declara `multipleVariations: true` sem `variationTypes`. A validação Commerce retorna `variations: Este valor não pode ser nulo` (e a associação de loja precisa ser revalidada no ambiente após o grant do gerente). Nenhum valor de preço, SKU ou variação foi inventado para contornar o contrato. A ação `Novo produto` não deve ser considerada operacional até definir o tipo de variação e seus campos obrigatórios, implementar a criação transacional correspondente e repetir Functional/Kernel + rollback. A fixture visual NID 14 permanece somente para inspeção e não representa publicação ou venda.
 
 **Limites obrigatórios:** não são cadastradas variações, SKU, preço, imagens, mídia, pesos nem disponibilidade. Não afirmar que o produto está pronto para comercialização; as fases GS-EDITOR-0.3-B/0.4 deverão usar API Commerce/Stock e UI SDC/UI Suite, verificar diferenças entre validação Form API e constraints reais e impedir publicação incompleta. Priorizar testes Kernel/Functional para createAccess por store e aplicação de `stores` na entidade, permissões e CSRF. Nenhum teste homelab executado nesta entrega.
 
@@ -228,11 +231,10 @@ Commerce será owner de pedidos e itens transacionais pagos do tipo `ingresso`; 
 
 ## Migrar Green Stash ao purpose Shop - ADR-038
 
-Rotas `/greenstash...` em `shop` foram declaradas para operações de produto e remessa, preservando Commerce como owner e sem alterar checkout. `/studio/*` foi removido sem aliases; seguem pendentes os gates de POST/AJAX por purpose e a homologação da UI autenticada no Domain configurado para Loja.
+Rotas `/studio/green-stash...` em `shop` atendem operações de produto e remessa, preservando Commerce como owner e sem alterar checkout. Outros caminhos `/studio/*` permanecem removidos sem aliases; seguem pendentes os gates de POST/AJAX por purpose e a homologação da UI autenticada no Domain configurado para Loja.
 # ADR-038 — Green Stash no purpose Shop (2026-10-30)
 
-As rotas da suíte agora usam `/greenstash` e filhas no purpose `shop`; as
-referências `/studio/green-stash` nos registros anteriores são históricas.
+Estado desta nota histórica retificado: as rotas oficiais usam `/studio/green-stash` e filhas no purpose `shop`; `/greenstash` é o caminho anterior aposentado sem alias.
 `aculta_commerce` continua dono de produtos, pedidos e remessas. Acesso e
 escrita continuam condicionados a permissões Commerce e ao Domain correto.
 `DomainPurposeManager` gera links absolutos entre purposes. Gate de paths

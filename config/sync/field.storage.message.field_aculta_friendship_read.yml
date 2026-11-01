@@ -1,0 +1,23 @@
+uuid: 655391d8-51ef-4849-9397-fb6082b53b5a
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: a1re5xjU47lDBnNFZhha9lnAppOBoWW9ODUNYTZ0xck
+id: message.field_aculta_friendship_read
+field_name: field_aculta_friendship_read
+entity_type: message
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

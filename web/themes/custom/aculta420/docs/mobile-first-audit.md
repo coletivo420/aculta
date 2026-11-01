@@ -1,6 +1,185 @@
 # Auditoria mobile-first ACULTA420 — THEME-MF0
 
-**Estado em HEAD `1a4de33b6` (2026-10-30): inventário lexical regenerado; THEME-MF0 continua parcial, MF2 tem migrações incrementais e THEME-MF3 não está aprovado.**
+### THEME-MF2 — top-bar administrativa integrada no Runtime (2026-10-31)
+
+Após publicar `f378d2540`, o checkout de desenvolvimento em `toca` foi
+atualizado e teve o cache reconstruído. Drush confirmou Drupal 11.4.10,
+`aculta_runtime`, URI `http://default`, **611 tabelas**, nenhuma atualização de
+banco e zero diferenças Config Sync. Main e Loja retornaram HTTP 200.
+
+Firefox ESR visível, conta administrativa sintética UID 257, sem CSS/JS
+injetados: **47/47 checks** em 320/390/1023/1024/1280px. A top-bar real está
+`display:none` até 1023px e volta no desktop; Institution Bar fixa em `y=0` no
+primeiro scroll, sem overflow. Captura 320px revisada. Evidência em
+`/home/piradopirata/aculta-suite-out/admin-topbar-mobile-integrated-f378d2540-20261031/`.
+Snapshot modo 0600 anterior à sessão ULI, 611 tabelas, SHA-256
+`ac7be6520a84dc49aaac6afa14d6198010ff899b5440f5876f494860d66b9906`, em
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-admin-topbar-integrated-f378d2540-20261031.sql`.
+Isto aprova somente esta correção focal; THEME-MF3/OCS-F11 e a validação global
+continuam pendentes.
+
+### THEME-MF2 — Institution Bar e ações administrativas móveis (2026-10-31)
+
+Retificação da decisão anterior: a pedido do responsável, a Institution Bar
+fica fixa em `top: 0` no primeiro scroll não nulo e a Navigation top-bar de
+ações administrativas fica desativada em todos os viewports até 1023px; no
+desktop (a partir de 1024px) continua disponível. O CSS esconde o elemento
+`[data-drupal-admin-styles].top-bar`; o JavaScript mantém somente a fixação
+imediata e o displacement desktop. O fallback sem JavaScript preserva sticky
+natural. As decisões históricas abaixo sobre reaparecer no topo ou preservar
+foco nesta top-bar estão substituídas.
+
+Firefox ESR visível, com CSS/JS candidatos injetados somente na sessão, passou
+**47/47 checks administrativos** em 320/390/1023/1024/1280px: barra de ações
+ausente em 320/390/1023, mantida em 1024/1280, Institution Bar fixa no primeiro
+scroll e sem overflow; displacement e retorno mobile/desktop permaneceram
+estáveis. Sem JavaScript, passou mais **43/43 checks**; o fallback usa sticky
+natural e mantém a top-bar desativada em mobile. Captura 320px revisada. A
+primeira tentativa falhou 7/47 porque o
+seletor supunha um ancestral `#toolbar-administration` inexistente; uma segunda
+falhou pelas regras mais específicas da top-bar Drupal. A regra final usa o
+atributo real e `!important`, e passou a matriz completa.
+
+As sessões ULI autenticadas foram temporárias e não alteraram conteúdo,
+configuração ou permissões. Antes de cada sessão foi confirmado o Runtime
+`aculta_runtime`, URI `http://default`, host `toca` e 611 tabelas, e salvo um
+snapshot modo 0600 antes de cada sessão. O último SHA-256 é
+`16bd7d715694713cc77f1e6735d0a3873a08e437003a173e092181921c091e35`, em
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-admin-topbar-mobile-assertion-20261031.sql`.
+Capturas e relatório:
+`/home/piradopirata/aculta-suite-out/admin-topbar-mobile-final-8e0091a4a-20261031/`.
+Relatório da última rodada com a asserção de retorno mobile:
+`/home/piradopirata/aculta-suite-out/admin-topbar-mobile-final-assertion-8e0091a4a-20261031/`.
+Como os estilos foram injetados, a integração servida ainda precisa ser
+repetida após publicar este código; THEME-MF3 permanece pendente.
+
+### THEME-MF2 — Conta autenticada visualmente integrada (2026-10-31)
+
+No Runtime de desenvolvimento, HEAD `8e0091a4a`, Firefox ESR visível e sessão
+anônima, a raiz canônica de Conta (`/`, `body.path-entrar`) passou **10/10
+checks** em 320/360/390/599/600/768/1024/1280/1440px. A execução não injetou CSS
+nem marcador: o navegador recebeu a biblioteca do tema e o hook Portal reais.
+O marcador `challenge-frame` estava presente; em 320px o documento mediu
+320px, o challenge 300px coube no slot e o formulário começou exatamente após
+o H1, sem sobreposição. Com JavaScript da página desativado, a mesma rota passou
+outros 10/10 checks nos mesmos viewports; o marcador veio do servidor e o
+documento continuou com 320px. Não houve envio de formulário ou escrita no
+Runtime. Capturas e `summary.json`:
+`/home/piradopirata/aculta-suite-out/auth-served-runtime-8e0091a4a-20261031/`.
+Evidência sem JavaScript:
+`/home/piradopirata/aculta-suite-out/auth-served-nojs-runtime-8e0091a4a-20261031/`.
+Isto supera os registros históricos de overflow/validação candidata para esta
+rota. Não cobre as demais rotas de autenticação, zoom, teclado ou WCAG e não
+aprova THEME-MF3.
+
+### THEME-MF2 — revalidação estática após a decisão da Institution Bar (2026-10-31)
+
+No HEAD `056d49dc9`, Stylelint e ESLint do tema passaram. O schema SDC passou
+com 55 componentes, 27 chamadas include e 759 verificações; a fronteira
+tema/módulo passou 3.491 verificações; Design Foundations passou 2.429 checks;
+e o mapa de UI passou (520 tokens catalogados, 421 usados e 149 atributos).
+O teste Unit existente `CaptchaPresentationHooksTest` passou com 3 testes e 8
+assertions. O aviso PHPUnit sobre `sites/simpletest/browser_output` não gravável
+não impediu a execução nem alterou o resultado.
+
+Este checkpoint revalida somente lint, contratos estáticos e o teste Unit focal
+na árvore da branch. Não executou discovery/UI Patterns no Runtime, nem cobre
+homologação visual servida, zoom, WCAG integral ou toda a matriz de propósitos.
+O Runtime continua num checkout destacado anterior, com alterações paralelas
+preservadas; por isso a Institution Bar e a correção CAPTCHA ainda precisam de
+verificação integrada após o checkout de teste receber este HEAD. THEME-MF3 e
+OCS-F11 seguem pendentes.
+
+### THEME-MF2 — recuperação dos 500 e Institution Bar integrada (2026-10-31)
+
+Ao atualizar o checkout servido para `b13776abd`, o Firefox revelou HTTP 500
+nas raízes de Apoio, Conta, Wiki e Growroom. O log Drupal identificou
+`LogicException: Theme aculta420 should not implement preprocess_input more
+than once`: `InputHooks` era o provider documentado, mas `PortalUiHooks` também
+havia recebido o atributo do mesmo hook. Removi a inscrição duplicada e
+acrescentei um teste Unit que exige `InputHooks::preprocess()` como provider
+único. A correção foi publicada em `f382ee6f9`.
+
+No Runtime em `toca`, após checkout destacado em `f382ee6f9`, `drush
+updatedb:status` informou `No database updates required`; `config:status`
+continua com 227 itens (116 diferentes, 69 apenas no banco, 42 apenas no Sync).
+Após rebuild de cache, Main, Loja, Revista, Apoio, Conta, Wiki e Growroom
+responderam HTTP 200. Firefox ESR visível sem overrides passou **214/214
+checks**: 166 anônimos nas dez raízes (320/390px) e 48 autenticados em Main
+(320/390/1023/1024/1280px), incluindo fixação no primeiro scroll, foco da ação
+administrativa, breakpoint desktop e rolagem contínua. Dois SKIPs de scroll em
+Links são esperados porque a raiz não tem rolagem vertical. Evidência em
+`/home/piradopirata/aculta-suite-out/institution-bar-runtime-f382ee6f9-20261031/`.
+
+Snapshot anterior à sessão ULI autenticada:
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-institution-bar-browser-f382ee6f9-20261031.sql`,
+57.971.044 bytes, modo 0600, SHA-256
+`c4035ebe2777d8acc9917bc61ab9889dc918c6b7fbdca68c93cad9e93a7f29f1`.
+Runtime permaneceu em 624 tabelas. Nenhuma configuração foi importada nesta
+validação visual. THEME-MF3 e OCS-F11 continuam pendentes: esta matriz não
+substitui zoom global, WCAG integral, páginas internas ou comparação pareada
+OpenCulturas.
+
+### THEME-MF0/MF2 — agenda e calendário de Eventos (2026-10-31)
+
+Firefox ESR visível percorreu `/calendario`, a grade do mês atual e
+`/calendario/interativo` no host de teste de Eventos, em 320/360/390/599/600/
+768/1024/1280/1440px, claro/escuro e sessões separadas com JavaScript ativo e
+inativo: **108/108 checks**. Foram medidos overflow, Institution Bar, Domain
+Header, `main`, grade de sete colunas, fallback HTML e alternância entre agenda
+e scheduler interativo. Em viewport móvel a agenda HTML fica disponível; a
+partir de 768px o scheduler inicializado é exibido quando há JavaScript; sem
+JavaScript permanece o fallback e o contêiner interativo vazio não ocupa espaço.
+O botão de contraste existente também foi acionado no navegador; o scheduler
+reportou `contrast-black`, `aria-pressed=true` e o token `#141414` em desktop.
+
+O harness é `tests/browser/aculta-theme-mobile-first/calendar-agenda.py` e os
+comandos reutilizáveis estão no README da suíte. Capturas e `summary.json`:
+`/home/piradopirata/aculta-suite-out/calendar-agenda-homologation/`. A execução
+foi somente GET, no Runtime servido em HEAD `2493d7535`; não houve CSS candidata,
+envio de formulário ou gravação persistente. Portanto esta evidência caracteriza
+o baseline servido e os comportamentos existentes, não valida a integração da
+branch nem conclui THEME-MF0, THEME-MF3 ou OCS-F11. Zoom, teclado, acessibilidade,
+formulários de Eventos e os demais fluxos do purpose continuam por validar.
+
+### THEME-MF3 — reteste do calendário interno no HEAD publicado (2026-10-31)
+
+No Runtime destacado em `f2c3b37db`, Firefox ESR visível repetiu as três rotas em
+320/360/390/599/600/768/1024/1280/1440px, claro/escuro e JavaScript ligado e
+desligado: **108/108 checks**, sem FAIL, sem overflow e com shell único. A agenda
+HTML serviu sem JavaScript; o scheduler só inicializou com JavaScript e a partir
+de 768px. O controle de contraste existente também foi exercitado. O teste fez
+somente GET e alterações de estado locais no documento; não enviou filtros nem
+alterou conteúdo. Evidência:
+`/home/piradopirata/aculta-suite-out/calendar-agenda-integrated-f2c3b37db-20261031/`.
+Isto não cobre criação/edição de eventos, teclado completo ou WCAG 2.2 AA.
+
+### THEME-MF2 — cartões do catálogo público de Eventos (2026-10-31)
+
+O teste reutilizável `events-catalogue.py` aplicou a folha local do SDC
+`event_card` somente na sessão Firefox e percorreu o catálogo real `/eventos`
+em dez larguras (320/360/390/575/576/600/768/1024/1280/1440px). Resultado:
+**30/30 checks**. Os três cartões de teste permaneceram sem overflow; os títulos
+tinham alvos de 44px; a borda ficou no SDC enquanto o wrapper estrutural Drupal
+permaneceu sem borda/padding. Capturas em
+`/home/piradopirata/aculta-suite-out/events-catalogue-followup-20261101/`.
+Esta é validação da CSS candidata contra markup servido, somente GET. Não prova
+que o CSS esteja integrado/servido no Runtime, não cobre filtros ou detalhe do
+evento e não fecha THEME-MF3.
+
+Na mesma sessão, o link de detalhe existente `/eventos/feira-do-livro-teste`
+respondeu HTTP 500, confirmado por `curl` e pelo log Drupal no Runtime
+`2493d7535`. O erro registrado é `Call to undefined method
+Drupal\aculta_events\Entity\Event::getCoOrganizers()` em
+`EventPageController::page()` (linha 306 do arquivo servido). A chamada está em
+uma alteração não commitada no checkout servido; esse mesmo controller e outros
+arquivos de `aculta_events` já estavam modificados antes desta inspeção. Para
+preservar esse trabalho concorrente, não alterei o módulo. O detalhe de Eventos
+fica bloqueado até o owner reconciliar o controller com a entidade e repetir
+o teste HTTP/visual. O catálogo `/` permaneceu HTTP 200 e passou sua matriz
+candidata; isso não torna o purpose Eventos saudável por inteiro.
+
+**Estado em 2026-11-01, na árvore atual de `refactor/opencultures-codigo-visual`: inventário lexical regenerado; THEME-MF0 continua parcial, MF2 tem migrações incrementais e THEME-MF3 não está aprovado.**
 A auditoria inicial foi registrada no checkout servidor `ded8a6181`. Esta
 recontagem foi executada na branch `refactor/opencultures-codigo-visual` em
 `/home/piradopirata/worktrees/opencultures-f0-adm8-e8`; ela cobre fontes do
@@ -9,18 +188,222 @@ escrita no Runtime. O incidente posterior, incluindo o snapshot e a correção
 direcionada de `message.settings`, está registrado em
 `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
 
-### THEME-MF0 — recontagem lexical em HEAD `1a4de33b6` (2026-10-30)
+### THEME-MF2 — raiz Conta: correção candidata do formulário de login (2026-10-31)
+
+A raiz `https://conta.aculta.toca.net.br/` serve o formulário de Entrar
+(`body.path-entrar`). A matriz servida anterior mediu 328px para viewport de
+320px. A inspeção da captura candidata revelou também sobreposição vertical do
+formulário sobre o H1: o `.row.g-4` e `.row.g-xl-5` aplicam margem superior
+negativa, enquanto o heading da autenticação zerava a margem inferior.
+
+`auth.css` agora compensa o gutter do Bootstrap com 24px até 1199px e 48px a
+partir de 1200px, preservando os painéis unidos. Firefox ESR anônimo no Runtime
+via GET, com CSS candidata e marcador de challenge injetados somente na sessão,
+passou 10/10 checks em nove larguras (320/360/390/599/600/768/1024/1280/1440px),
+tanto com JavaScript como sem JavaScript. Em 320px, documento e viewport ficaram
+em 320px, o challenge coube em 300px e o topo do formulário coincidiu com o fim
+do H1 sem sobreposição. As rotas `/entrar`, `/criar-conta` e `/recuperar-senha`
+também passaram 10/10 cada com a nova asserção geométrica. A captura 320px da
+raiz foi revista. Evidências em
+`/home/piradopirata/aculta-suite-out/account-root-overflow-candidate-20261031/`
+e `/home/piradopirata/aculta-suite-out/account-root-overflow-nojs-candidate-20261031/`,
+além dos três diretórios de rota indicados no README da suíte.
+
+O hook PHP do Portal não foi aplicado ao Runtime e o CSS candidato foi
+injetado; ainda falta validar a versão integrada servida. Portanto a falha da
+matriz atual não está homologada como resolvida e THEME-MF3 continua pendente.
+
+### Reteste transversal e fluxos de autenticação — 2026-10-31
+
+Com o Runtime confirmado em `toca`, checkout servido `/home/aculta`, HEAD
+`2493d7535`, URI `http://default` e banco `aculta_runtime`, Firefox ESR visível
+repetiu `purpose-headings.py` nas dez raízes e seis larguras
+(320/390/600/768/1024/1440px). Resultado: **119/120**. Os 60 H1 estavam
+visíveis em `main#main-content`; Institution Bar e Domain Header apareceram uma
+vez nas 60 combinações. A única falha foi Conta/320px, com `documentWidth=328`.
+Apoio e Cursos têm H1 no Runtime; os registros anteriores de ausência foram
+superados. Relatório e capturas em
+`/home/piradopirata/aculta-suite-out/purpose-headings-recheck-20261031/`.
+
+As rotas `/entrar`, `/criar-conta` e `/recuperar-senha` passaram **10/10 cada**
+nas nove larguras 320/360/390/599/600/768/1024/1280/1440px, com o iframe
+Turnstile real carregado. `base.css`/`auth.css` e o marcador Portal foram
+injetados apenas na sessão Firefox: o documento não teve overflow e o slot do
+widget coube no viewport. Nenhum formulário foi enviado e não houve escrita no
+Runtime. Isso valida a CSS candidata sobre o markup servido; não valida o hook
+Portal integrado nem corrige a CSS atualmente servida. Evidências em
+`/home/piradopirata/aculta-suite-out/auth-turnstile-final-20261031/`.
+
+A capa pública da Revista também passou novo reteste candidato **28/28** em
+320–1440px, com quatro publicações/capas, links nativos sem JavaScript, teclado,
+claro/escuro, zoom real 200/400%, contraste de 12,40:1/14,50:1 e shell único.
+Somente a folha candidata foi injetada; nenhuma escrita foi feita no Runtime.
+Capturas e log em
+`/home/piradopirata/aculta-suite-out/revista-cover-recheck-20261031/`.
+Esses resultados focais não aprovam THEME-MF3.
+
+### THEME-MF2 — shell sem JavaScript e navegação por teclado (2026-11-01)
+
+No Runtime de desenvolvimento em HEAD `2493d7535`, Firefox ESR visível, sessão
+anônima e JavaScript desativado, a matriz reutilizável passou **210/210 checks**
+nas dez raízes/purposes (`main`, `account`, `support`, `magazine`, `wiki`,
+`shop`, `courses`, `forum`, `links`, `eventos`) e sete larguras (320/390/599/
+600/768/1024/1440px). Cada caso verificou headers globais únicos, ausência de
+overflow horizontal e visibilidade da navegação ou busca da Wiki. Evidência em
+`/home/piradopirata/aculta-suite-out/purpose-shell-nojs-resume-20261101/`.
+
+A matriz inicial de teclado cobriu os mesmos dez purposes em
+320/390/768/1280px. **663 verificações passaram, 10 foram SKIP** por o foco ser
+delegado ao Turnstile externo e uma falhou: Conta `/entrar` mediu 328px de
+documento em viewport de 320px. Relatório e capturas em
+`/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-resume-20261101/`.
+
+O reteste ampliado cobriu os dez purposes em 320/360/390/599/600/768/1024/
+1280/1440px, também com oito passos em cada sentido. **1.492 passaram; 23
+foram SKIP** (nove transferências ao Turnstile e 14 limites da sequência de
+foco); a única falha permaneceu Conta/320px, `documentWidth=328` contra
+`viewportWidth=320`. Relatório e capturas em
+`/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-9widths-20261101/`.
+
+Na repetição candidata de Conta, com CSS `auth.css` e marcador neutro de desafio
+injetados somente na sessão Firefox, as mesmas nove larguras tiveram **162
+checks aprovados e nove SKIP** pelo foco externo; o documento acompanhou a
+viewport, incluindo 320px. Evidência em
+`/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-account-candidate-9widths-20261101/`.
+As capturas de 320px baseline/candidata foram inspecionadas lado a lado; na
+candidata o slot de 300px do desafio cabe na viewport de 320px. A injeção
+demonstra o efeito do candidato, mas não valida o hook Portal servido nem o
+CAPTCHA externo por dentro. O overflow no Runtime continua aberto e THEME-MF3
+permanece pendente.
+
+No worktree, o reteste focal do candidato também passou PHP lint, PHPCS e a
+suíte Unit do hook (3 testes/8 assertions), além de Stylelint em `auth.css`.
+`validate-aculta420-sdc-schemas.php` passou (55 componentes, 27 includes,
+759 verificações), `validate-module-theme-boundary.php` passou (3489) e
+`validate-portal-ui-docs.php` passou (518 tokens mapeados, 421 usados, 149
+atributos). Esses checks verificam a árvore local; não substituem discovery nem
+integração no Runtime.
+
+O `validate-aculta420-foundation.php` antigo do checkout servido `/home/aculta`
+em HEAD `2493d7535` falhou na comparação da allowlist Twig porque ainda não
+inclui `views/views-view--revista-sessoes--page-revista.html.twig`, consumer da
+home da Revista. Reexecutei o script atualizado da branch via Drush do checkout
+servido, com host `toca`, URI `http://default` e banco `aculta_runtime`; passaram
+**352 checks**. O comando foi somente leitura e não alterou banco, cache ou
+checkout servido. Este resultado valida a árvore candidata contra a
+configuração ativa, mas não afirma que suas folhas CSS ou hook já estejam
+servidos; a confirmação pós-publicação/rebuild permanece pendente.
+
+O lint completo do tema também passou em `npm run lint:css` e
+`npm run lint:js`. A auditoria lexical foi regenerada e o TSV agora corresponde
+byte a byte à árvore: são 208 fontes (94 CSS/Sass, 12 JS e 102 Twig/HTML), 99
+blocos `@media` em 47 folhas, um `@container`, 774 correspondências de
+dimensão em 76 folhas e 57 declarações de overflow em 31 folhas. O total de
+dimensões é lexical e inclui também valores das media queries; não descreve a
+cascata renderizada. Comparação reproduzível em
+`/home/piradopirata/aculta-suite-out/mobile-inventory-resume-20261101/`.
+
+### THEME-MF0 — recontagem do inventário no HEAD `00b938203` (2026-10-31)
+
+Reexecutei `scripts/audit-aculta420-responsive-inventory.py --write` e comparei
+o TSV produzido byte a byte com uma segunda saída do gerador. A árvore mantém
+208 fontes (94 estilos, 12 JS e 102 Twig/HTML). O total atual é 100 ocorrências
+`@media` em 47 folhas, um `@container`, 798 matches dimensionais e 59
+declarações de `overflow`. As duas alterações desde a contagem anterior estão
+em `auth.css` e `studio.css`; o índice é lexical, não análise de cascade ou
+comportamento. A auditoria semântica por consumer, purpose e breakpoint continua
+parcial e THEME-MF0/MF3 não ficam aprovados por esta recontagem.
+
+### THEME-MF2 — botão de autenticação Google em modo escuro (2026-11-01)
+
+A captura de Conta/320px revelou texto claro sobre o fundo branco fixo do botão
+Google em modo escuro. O CSS usava `--aculta-text-primary`, que vira claro no
+modo escuro, enquanto o botão permanece branco; o hover usava a superfície
+muted escura. No baseline Runtime direcionado (Conta, 320/1440px, claro/escuro,
+normal/hover), **16/20 checks passaram**. As quatro falhas foram overflow de
+Conta/320px em ambos os modos e contraste normal do botão em escuro: 1,14:1 em
+320/1440px. O hover antigo tinha 12,95:1 por inverter a combinação.
+
+Em `auth.css`, o botão e o estado conectado agora mantêm texto verde escuro
+sobre a superfície branca em ambos os modos; hover/foco usam o creme fixo. A
+rodada candidata focal passou **90/90 checks** em nove larguras, claro/escuro e
+reduced motion. No modo escuro, contraste foi 12,40:1 no estado normal e 11,34:1
+em hover. A matriz global candidata passou **576/576 checks** nas dez raízes e
+nove larguras, incluindo shell, reduced motion, overflow, contraste do shell e
+do botão. Capturas 320px foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/auth-google-contrast-candidate-9widths-20261101/`
+e `/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-auth-global-candidate-20261101/`.
+O teste injeta CSS candidata e simula o marcador do Portal apenas na sessão;
+nada foi submetido ou autenticado. O Runtime continua servindo o baseline e
+precisa ser revalidado após integração/rebuild; isto não aprova THEME-MF3 nem a
+auditoria WCAG completa.
+
+### THEME-MF2 — barra multidomínio e scroll móvel (2026-10-31)
+
+Firefox ESR visível no Runtime `2493d7535` passou 42/42 checks anônimos em
+MAIN, Conta e Revista, a 320/390 px. Em Conta, `/` redirecionou para `/entrar`
+e o navegador focou o campo `edit-name`, levando a página a `scrollY=585`; a
+Institution Bar permaneceu no topo (`barTop=0`) e acompanhou o scroll sem salto.
+No cenário autenticado MAIN, a autenticação foi confirmada e passaram 40/40
+checks em 320/390/1023/1024/1280 px, incluindo estado inicial, scroll, faixa de
+transição contínua nos dois sentidos e troca de breakpoint. Em desktop, a barra
+permaneceu abaixo do Navigation top-bar fixo (64 px); em móvel, a barra de
+administração permaneceu em fluxo normal e a Institution Bar colou no topo ao
+alcançá-lo. Evidências em
+`/home/piradopirata/aculta-suite-out/institution-scroll-runtime-20261031/` e
+`/home/piradopirata/aculta-suite-out/institution-scroll-admin-20261031/`.
+
+O salto relatado não foi reproduzido nesta captura. A rolagem inicial de Conta
+é causada pelo foco automático no formulário de entrada, enquanto a barra
+continua fixa na borda superior. Esta evidência é focal do Runtime e não aprova
+THEME-MF3; outros purposes, páginas e estados seguem no gate global.
+
+Reteste anônimo nas dez raízes em 2026-10-31: as verificações de scroll
+passaram 130/130 em 320/390 px; não houve deslocamento da Institution Bar nos
+outros nove purposes. O relatório também mediu a largura do documento: Conta a
+320 px ficou em 328 px nos cinco pontos medidos. O elemento é o desafio
+Turnstile real do formulário `/entrar`, cujo slot tem 300 px; a correção
+candidata existente usa o marcador neutro do Portal e container query, e passou
+retestes focais com o iframe real, mas o hook ainda não está servido no Runtime
+`2493d7535`. Portanto, os 130 checks confirmam o comportamento sticky, não a
+ausência global de overflow. Evidência:
+`/home/piradopirata/aculta-suite-out/institution-scroll-all-purposes-20261031/`.
+
+### THEME-MF0 — recontagem lexical da árvore atual (2026-10-30)
 
 O gerador oficial foi executado com `--write` e repetido sem escrita; a segunda
-saída corresponde byte a byte a `theme-mobile-file-inventory.tsv`. São 206
-fontes rastreadas: 93 CSS/Sass, 12 JavaScript e 101 Twig/HTML. O índice aponta
-84 blocos `@media` em 46 folhas, zero `@container`, 636 correspondências
-lexicais de dimensões em 75 folhas e 53 declarações de overflow em 28 folhas.
-As três novas media queries em `css/tokens.css` usam `min-width` e limitam os
-tokens de fidelidade a `.studio` e `.aculta-profile-editor`; não alteram a
+saída corresponde byte a byte a `theme-mobile-file-inventory.tsv`. São 208
+fontes rastreadas: 94 CSS/Sass, 12 JavaScript e 102 Twig/HTML. O índice aponta
+99 blocos `@media` em 47 folhas, um `@container`, 753 correspondências lexicais
+de dimensões em 76 folhas e 57 declarações de overflow em 31 folhas. Os tokens
+de fidelidade permanecem escopados a consumidores Studio; não alteram a
 composição global. Esses números são lexicais, incluem possíveis comentários e
 não medem cascata, uso efetivo ou falhas de layout. A enumeração completa de
 consumidores por rota/purpose e o gate THEME-MF3 continuam pendentes.
+
+### THEME-MF2 / OCS-F10 — dashboard real de ACULTA Studio Culturas (2026-10-30)
+
+O wrapper `.aculta-events-organizer-dashboard` é renderizado pelo owner
+`aculta_events` na rota autenticada `/culturas`. `studio.css` agora compõe a
+introdução, guia, ações, filtros e tabela em base móvel, limitado a
+`body.path-culturas`; não foi criado SDC e controller/render arrays não foram
+alterados. Os links de ação chegam sem classes no DOM real, então o tema lhes
+aplica o mesmo acabamento secundário por posição estrutural, sem inferir papel
+ou disponibilidade. A tabela mantém scroll interno com `.table-responsive`.
+
+Firefox ESR visível com a folha candidata injetada somente na sessão passou
+20/20 verificações: nove viewports (320/360/390/599/600/768/1024/1280/1440)
+em claro/escuro, um dashboard, Institution Bar e Domain Header únicos, sem
+overflow no documento, campos busca/situação refluídos, alvos de 44px e foco de
+teclado visível em ambos os modos. Capturas 320/1440 foram revisadas. A fixture
+correspondente passou 110/110 checks. Evidências em
+`/home/piradopirata/aculta-suite-out/culturas-runtime-dashboard-20261030/` e
+`/home/piradopirata/aculta-suite-out/culturas-dashboard-20261030/`.
+
+É validação focal da rota/consumer, não publicação da folha. ACL A/B e entre
+lojas, cache, AJAX/no-JS, zoom 200/400%, reduced motion, WCAG 2.2 AA, demais
+telas de Culturas e comparação pareada com OpenCulturas permanecem DEFERRED;
+isto não aprova THEME-MF3, OCS-F10 ou OCS-F11.
 
 ### Atualização THEME-MF0/OCS-F0 — shell multidomínio em todas as raízes (2026-10-30)
 
@@ -88,6 +471,7 @@ ajustado para contar o hook legítimo de endereço do Portal e continuar
 reprovando hook de gateway Mercado Pago no Portal. Esta evidência não substitui
 Firefox visível, a matriz global, zoom, WCAG ou a validação de páginas servidas;
 THEME-MF3 permanece pendente.
+
 
 ### THEME-MF2 — marca da Institution Bar na base móvel (2026-10-30)
 
@@ -164,6 +548,79 @@ em 320/390/767/768/1024/1440px. Stylelint e sintaxe JS PASS; execução
 Firefox/Runtime DEFERRED por sessões concorrentes. Não homologa OCS-F11 nem
 THEME-MF3.
 
+### THEME-MF3 — validação candidata de autenticação e fronteira visual (2026-10-31)
+
+O Firefox ESR visível abriu `/entrar` anônimo no Runtime de desenvolvimento
+(HEAD servido `2493d7535`, `aculta_runtime`) e recebeu `base.css`/`auth.css` e o
+token `data-portal-ui="challenge-frame"` somente no browser. A rota e as onze
+larguras 320/360/390/575/576/599/600/768/1024/1280/1440px passaram **12/12**
+checks: viewport sem overflow, formulário e widget contidos, H1 sem sobrepor o
+formulário. A captura 320px foi inspecionada. Evidência em
+`/home/piradopirata/aculta-suite-out/auth-runtime-candidate-followup-20261031/`.
+O token foi simulado; o Runtime servido continua com `documentWidth=328px` em
+320px até que hook e CSS sejam integrados e testados nele. Isto não aprova
+THEME-MF3.
+
+No mesmo checkout, `validate-aculta420-foundation.php` executado por Drush no
+Runtime leu a árvore candidata e passou **352 checks**; `npm run lint:css`,
+`npm run lint:js`, `validate-aculta420-sdc-schemas.php` (55 componentes, 27
+includes, 759 checks), `validate-portal-ui-docs.php` (518 tokens, 421 usados,
+149 atributos) e `CaptchaPresentationHooksTest` (3 testes/8 assertions) também
+passaram. `validate-module-theme-boundary.php` falhou em uma de 3491
+verificações porque `CourseAuthoringController.php` emite classes de
+apresentação `studio`, `studio-course-authoring` e `studio__main`.
+
+**Pede-A — módulo `aculta_studio`:** substituir classes visuais no render array
+do `CourseAuthoringController` por tokens `data-portal-ui` consumidos pelo
+`PortalUiHooks` do tema, preservando os marcadores `data-aculta-studio`, a rota,
+o Form API owner, ACL e cacheability. Atualizar a caracterização do render array
+em `CourseAuthoringControllerTest`; provar com o teste Unit e
+`validate-module-theme-boundary.php` sem exceções/allowlist. O arquivo pertence
+ao módulo e foi introduzido por commit desta branch; não foi editado nesta
+frente visual.
+
+### THEME-MF2 — artigo editorial da Revista, reteste da fixture (2026-10-31)
+
+O harness `revista-article-layout.py` passou **20/20 checks** em Firefox ESR
+visível nas larguras 320/360/390/575/576/600/768/1024/1280/1440px. A comparação
+da CSS atual com a revisão anterior confirmou alinhamento de leitura mobile,
+resumo e metadados responsivos, ordem DOM estável e ausência de overflow. A
+captura de 320px foi inspecionada. É fixture `data:`; não comprova markup/campos
+de publicação real, CSS integrada ou paridade integral com OpenCulturas, e não
+fecha THEME-MF2/MF3 ou OCS-F11. Relatório/capturas em
+`/home/piradopirata/aculta-suite-out/revista-article-visual-followup-20261031/`.
+
+### THEME-MF2 — artigo real da Revista com CSS candidata (2026-10-31)
+
+No Firefox ESR visível, `revista-browser-zoom.py` passou **15/15 checks** no
+Runtime de desenvolvimento: home e publicação sintética já existente, dez
+larguras de 320–1440px e zoom real de 200%/400%. A CSS de publicação da branch
+foi injetada somente na sessão. A capa carregou, houve um H1 e shell único, sem
+overflow. Capturas de 320px e zoom foram inspecionadas; nada foi submetido ou
+alterado no Runtime. Isso valida uma publicação sintética e a apresentação
+candidata no browser, não CSS servida, todas as publicações, comentários, ACL,
+WCAG completa, OCS-F11 ou THEME-MF3. Relatório/capturas em
+`/home/piradopirata/aculta-suite-out/revista-article-runtime-branch-followup-20261031/`.
+
+### THEME-MF3 — foco de teclado nas raízes públicas (2026-10-30)
+
+`purpose-shell-keyboard.py` percorreu as dez raízes de purpose no Firefox ESR
+visível, anônimo, em 320/390/768/1280 px. O relatório contém 663 checks PASS,
+uma falha e dez SKIP: 624 paradas de foco do tema exibiram indicador visível
+(incluindo o outline do container `:focus-within` nos títulos dos cards LMS), e
+39/40 telas não tiveram overflow horizontal. A única falha foi Conta/320 px,
+`documentWidth=328`. Quatro SKIPs são foco delegado ao Turnstile externo e seis
+são fins de sequências de foco curtas; não foram contados como PASS.
+
+Capturas de primeiro foco em Conta e Cursos a 320 px foram inspecionadas;
+relatório e capturas estão em
+`/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-accepted-20261030/`.
+Nenhum link foi ativado nem formulário submetido. O teste cobre apenas raízes e
+até oito paradas em cada direção; não testa menus expandidos, páginas internas,
+contraste de foco ou leitor de tela. A validação interna do widget de terceiro
+permanece externa ao documento ACULTA. O overflow da Conta, o CAPTCHA, WCAG 2.2
+AA e os demais gates transversais mantêm THEME-MF3 pendente.
+
 ### THEME-MF2 — busca e linhas de tópicos do Fórum (2026-10-29)
 
 `forum-index.css` usa uma coluna como base na linha de tópico e no formulário
@@ -181,7 +638,8 @@ contraste do botão acima de 12:1 e CSS candidata sem overflow. A suíte detecto
 que o media query de 576px sobrescrevia a grade de 3 colunas de 992px por ordem
 na cascata; os blocos foram reordenados e o reteste passou. Capturas e
 `results.json`: `/home/piradopirata/aculta-suite-out/theme-mf2-forum-search-final-20261030/`.
-A linha sintética do índice ainda não substitui a inspeção de tópico real; Wiki,
+A inspeção focal de um tópico real com uma resposta está registrada abaixo; ela
+não substitui cobertura de outras discussões, páginas internas e estados. Wiki,
 Fórum e demais purposes não estão homologados globalmente e MF3 permanece
 pendente.
 
@@ -192,8 +650,8 @@ escuro. A linha de tópico e a ação da listagem foram fixtures somente no DOM;
 não se enviou conteúdo. Capturas e `results.json`:
 `/home/piradopirata/aculta-suite-out/theme-mf2-forum-index-20261030/`. O tema
 servido no Runtime não foi reconstruído; a barra multidomínio nessa captura
-reflete os assets servidos e não integra a CSS candidata do índice. A validação
-completa de tópico real e shell permanece pendente.
+reflete os assets servidos e não integra a CSS candidata do índice. A validação completa do tópico e do shell permanece pendente; a suíte focal de
+2026-10-31 cobre um tópico publicado com uma resposta, sem autenticação.
 
 As ações do cabeçalho da View de tópicos também foram migradas da media query
 com limite superior para aprimoramento progressivo: dimensões compactas a
@@ -360,18 +818,54 @@ pendentes. MF2 segue parcial e MF3 não foi aprovado.
 
 ## Escopo quantificado
 
-O inventário foi regenerado em 2026-10-30 por
-`scripts/audit-aculta420-responsive-inventory.py`. O TSV contém 206 arquivos-
-fonte: 93 folhas CSS/Sass, 12 scripts JavaScript (11 de produção e um de teste)
-e 101 templates Twig/HTML; não inclui documentação ou demais ativos. A busca
-lexical atual encontra `@media` em 46 folhas (81 blocos), zero `@container`,
-expressões de dimensão em 74 folhas (633 matches) e declarações `overflow`,
-`overflow-x` ou `overflow-y` em 28 folhas (53 declarações). A expressão de
-dimensão inclui width/height/inline-size/block-size e variantes min/max; os
-valores em media queries também aparecem porque o gerador percorre o texto CSS
-sem construir uma árvore sintática. As contagens não analisam cascata nem efeito
-calculado. O inventário é estrutural; não mede overflow renderizado ou prova
-comportamento por tela.
+O inventário foi regenerado em 2026-10-31 por
+`scripts/audit-aculta420-responsive-inventory.py`. O TSV contém 264 registros
+(mais o cabeçalho): 208 arquivos-fonte (94 folhas CSS/Sass, 12 scripts JS e
+102 templates Twig/HTML), o manifesto `aculta420.libraries.yml` e 55 manifests SDC
+`.component.yml`. A análise lexical registra 101 blocos `@media` em 47 folhas,
+dois `matchMedia()` em dois scripts JS, um `@container`, 799 correspondências
+dimensionais e 59 declarações de overflow em 31 folhas. O inventário também
+enumera 83 referências CSS/JS das libraries e SDCs; 82 arquivos locais foram
+verificados como existentes e a referência restante é a folha externa de
+fontes Google.
+
+As expressões de dimensão incluem width/height/inline-size/block-size e
+variantes min/max; valores nas próprias media queries também aparecem porque o
+gerador percorre o texto CSS sem construir uma árvore sintática. Os sinais JS
+registram `matchMedia`, APIs de viewport e rolagem. As contagens não analisam
+cascata nem efeito calculado. O inventário é estrutural; não mede overflow
+renderizado ou prova comportamento por tela.
+
+Na árvore `8039c4d7b`, o gerador validou as 83 referências CSS/JS locais ou
+externas das libraries e manifests SDC; nenhum asset local estava ausente. A
+saída padrão repetida foi byte a byte igual ao TSV gravado (SHA-256
+`2226395b53e026ffc759aef144615b0a568d8093cbcf996d9f18d84baa7d39fa`). Foram
+encontrados dois `matchMedia()` e dois sinais de rolagem em JavaScript; isso
+amplia o inventário lexical, mas não substitui a revisão do comportamento dos
+consumidores.
+
+Gates da árvore nessa revisão: SDC schema PASS (55 componentes, 27 includes,
+759 checks), Design Foundations PASS (2.429 checks), Foundation PASS (352) e
+Shell Contract PASS (13) executados com Drush e bootstrap do Runtime. A
+invocação direta por `php` dos dois últimos é inválida porque depende do
+container Drupal. `validate-module-theme-boundary.php` permanece FAIL (1/3.491):
+o controller
+`web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/CourseAuthoringController.php`
+emite `studio`, `studio-course-authoring` e `studio__main`; essa mudança já
+pertence ao commit `1fb521c57`. Nenhum arquivo funcional do módulo foi alterado
+nesta etapa; o gate continua impedindo publicação.
+
+#### Retificação — contrato de tokens de autoria de curso (2026-10-31)
+
+A dívida acima foi corrigida no trabalho visual subsequente. `CourseAuthoringController`
+agora emite tokens semânticos para shell, raiz específica, conteúdo e ação de
+retorno; deixou de escrever classes de design. `PortalUiHooks` mapeia esses
+tokens para as classes Fidelity existentes. O teste Unit do controller
+verifica tokens sem classes, e `PortalUiHooksTest` verifica o mapeamento. O
+resultado do gate global após esta correção será registrado com as evidências
+da execução. O gate focal passou em 3.491 verificações, sem tokens de
+apresentação ou classes de design no módulo. Isto resolve a dívida de fronteira,
+mas não aprova THEME-MF3.
 
 | Camada | Arquivos identificados | Observação da auditoria |
 |---|---|---|
@@ -412,11 +906,11 @@ terceiros, estilos inline ou comportamento de conteúdo real.
 | Perfil público e editor privado | `public-profile.css`, `profile-*` SDCs | Separação de dados privados/públicos e formulário/upload | Componentes identificados; captura e acesso pendentes |
 | Studio/Marley | `studio.css`, `context-*`, `content-*`, formulários/editorial | Dashboard, navegação interna, listagens e editor | Parcial; matriz OCS separada |
 | GanjaLab/LMS | `course_card`, `content-grid`, `context-header`, `empty-state` | Cursos, progresso, certificados, sala/turma e tabela | SDCs candidatos identificados; runtime não homologado |
-| WE Sativa/Wiki | `wiki.css`, `wiki-entry`, autoria/revisão | Longas tabelas, propostas, estados de revisão e moderação | CSS e SDC identificados; captura autorizada pendente |
-| Fórum | `discussion.css`, `forum-index.css`, `forum-category`, `messenger-*`, `bookmark-toggle` | Tópicos, respostas, paginação e navegação sem overflow horizontal | CSS/SDCs mapeados; teste em purpose pendente |
-| Revista/editorial | `revista-post.css`, `editorial-content.css`, carousel, editorial-card | Texto, imagens, metadados, carrossel e controles sem JS | CSS/JS/SDCs mapeados; render e estados pendentes |
+| WE Sativa/Wiki | `wiki.css`, `wiki-entry`, autoria/revisão | Longas tabelas, propostas, estados de revisão e moderação | Home/listagem/busca/verbete públicos testados com CSS candidata; Workspace WE Sativa e estados autenticados pendentes |
+| Fórum | `discussion.css`, `forum-index.css`, `forum-category`, `messenger-*`, `bookmark-toggle` | Tópicos, respostas, paginação e navegação sem overflow horizontal | Categorias, busca e tópico público com resposta testados; discussão autenticada, estados e homologação do CSS servido pendentes |
+| Revista/editorial | `revista-post.css`, `editorial-content.css`, carousel, editorial-card | Texto, imagens, metadados, carrossel e controles sem JS | Home/capa e artigo sintético conferidos em viewports e zoom focais; estados/editorial completos e CSS servido pendentes |
 | Loja/Commerce | `product.css`, gallery, tabs, cart, shipping, sales panel, product SDCs | Variações, tabelas, checkout, estoque/envios e ACL por loja | Camada de tema mapeada; operação/loja reais pendentes |
-| Green Stash (integrado ao Studio) | UI provider/controladores do módulo Commerce e `studio.css` | Produtos, pedidos, estoque, envios, promoções, clientes, relatórios e configurações | Rotas encontradas; capacidades disponíveis precisam ser distinguidas das planejadas |
+| Green Stash (integrado ao Studio) | UI provider/controladores do módulo Commerce e `studio.css` | Visão geral, produtos e envios existentes; demais áreas planejadas | Navegação só expõe Visão geral/Produtos/Envios; demais slugs agora retornam 404 até implementação e gate |
 | Eventos | `event_card`, `event-page-five-regions`, `statistics.css` | Agenda, datas, participantes e layout com cinco regiões | Catálogo e página de detalhe agora consomem os SDCs; captura real, estados e acessibilidade pendentes |
 | Messenger/alertas | drawers, compose/item/state, `alerts-dismiss.js` | Drawer acessível, lista, teclado, mensagens e fallback sem JS | Componentes/JS mapeados; acesso e cache pendentes |
 | GanjaLab editorial, Galerias e demais abas Marley | Plugins de aba e seus consumers reais | Variação de conteúdo, paginação e formulários owner | Providers/plugins listados; matriz de consumers incompleta |
@@ -425,13 +919,13 @@ Esta tabela não é evidência de cobertura homologada. Cada purpose ainda exige
 inventário de biblioteca anexada por controller/View/form, estados vazio/erro/
 sucesso/carregando e capturas em navegador visível.
 
-### THEME-MF0 — anexação literal de bibliotecas e consumers (2026-10-30)
+### THEME-MF0 — anexação literal de bibliotecas e consumers (retificação 2026-10-31)
 
 O scanner `scripts/audit-aculta420-library-consumers.php` correlaciona as
 definições das bibliotecas customizadas com referências literais em arquivos de
 código, templates e SDCs fora de diretórios de teste/documentação. A saída
 versionada [`theme-library-consumer-inventory.tsv`](theme-library-consumer-inventory.tsv)
-registra 42 libraries customizadas, 54 referências literais em 2.474 arquivos
+registra 42 libraries customizadas, 54 referências literais em 2.501 arquivos
 de fonte e seus CSS/JS declarados, dependências, arquivo e linha do consumer.
 É possível regenerá-la com `php scripts/audit-aculta420-library-consumers.php
 --write`; a execução padrão escreve TSV em stdout para comparação reproduzível.
@@ -448,6 +942,28 @@ construídas dinamicamente, dependências transitivas Core/contrib e anexações
 resolvidas apenas em Runtime exigem inspeção Drupal/HTTP. A matriz por purpose,
 View/Form API, estados e validação visual continuam parciais; MF0/MF3 não são
 aprovados por este scanner.
+
+#### Sinais responsivos dos assets de libraries (2026-10-31)
+
+`scripts/audit-aculta420-library-responsive.php` lê os próprios arquivos
+`*.libraries.yml` de `web/modules/custom` e do tema, analisa os CSS/JS locais
+declarados e correlaciona consumers literais e dependências entre libraries.
+`custom-library-responsive-inventory.tsv` contém 103 referências: 65 CSS e 38
+JS; 100 assets locais foram analisados, 3 são externos/gerenciados e nenhuma
+referência local está ausente. Os sinais lexicais incluem `@media`,
+`@container`, declarações dimensionais, overflow, APIs de viewport e scroll.
+Execução determinística: `php scripts/audit-aculta420-library-responsive.php`
+produz TSV em stdout; `--write` regenera o artefato versionado.
+
+O relatório inclui bibliotecas administrativas e assets de terceiros
+declarados por módulos, permitindo priorizar as telas de todos os purposes sem
+misturar apresentação ao tema. Não interpreta cascata, seletor, estado, tamanho
+efetivo do viewport ou execução condicional; um sinal lexical não é defeito nem
+prova de responsividade. As referências remotas de Google Fonts e SDK Mercado
+Pago e o CSS gerenciado do Tabulator requerem verificação própria de integração
+e licença. A correlação de rotas/purposes e a inspeção visual por consumidor
+seguem pendentes; este inventário amplia THEME-MF0, mas não o conclui nem aprova
+THEME-MF3.
 
 ### THEME-MF2 — rótulos longos da navegação global
 
@@ -655,6 +1171,21 @@ a Frente B não adicionará um header visual paralelo.
 | LINKS | landing social renderiza. | Apenas homepage, sem explorar links externos/QR. |
 | EVENTOS | listagem pública de evento/data renderiza. | Não cobre mapa, filtros, calendário, RSVP ou editor. |
 
+### Ajuste focal do workspace ACULTA STUDIO WE SATIVA — 2026-10-31
+
+O wrapper Wiki usa `d-grid gap-4`, cuja declaração Bootstrap `gap` é
+`!important`. As seções também recebiam margens verticais de 3–5rem, somando
+espaço duplicado ao gap do grid. O tema agora zera as margens individuais e
+define no wrapper um único `row-gap` pelos tokens responsivos Fidelity; a
+precedência é limitada ao wrapper Wiki para superar `gap-4`. No Firefox ESR
+visível, CSS candidata injetada na sessão, o intervalo efetivo foi 48px em 320px
+e 64px em 1440px, com claro e escuro, quatro capturas sem overflow. Esta é uma
+correção focal de tela, não altera o status THEME-MF3 nem OCS-F11: o path
+canônico `/studio/we-sativa`, estados Wiki preenchidos e acessibilidade ampla
+continuam pendentes. Evidências privadas fora do Git em
+`/home/piradopirata/aculta-suite-out/ocs-wesativa-spacing-candidate-final-20261031/`
+e `ocs-wesativa-spacing-candidate-dark-20261031/`.
+
 As capturas, no Firefox ESR visível, estão fora do Git em
 `$SUITE_OUT/aculta-theme-mf0-purposes-20261029/`. O checkout servidor era
 `75f049fd1`; os arquivos de tema/Studio/Commerce versionados eram iguais aos
@@ -699,10 +1230,22 @@ editorial legível, mas não substitui um consumer de entidade `revista`. As
 capturas 320/1440 foram inspecionadas em
 `/home/piradopirata/aculta-suite-out/aculta-revista-noticias-20261030/`.
 
-Para a Revista, permanece a pendência de confirmar se a View vazia em `/` é
-intencional e fornecer uma entidade `revista` publicada como fixture caso
-publicações devam aparecer. A página estática `/noticias` já é um estado
-distinto e visível; não criar conteúdo no tema.
+Reteste visual real da capa no Runtime, Firefox ESR visível em HEAD `2493d7535`
+(2026-10-30): `magazine-cover-runtime.py` passou 10/10 verificações na raiz
+canônica em modo anônimo. A View `revista_sessoes` renderizou hero “Revista
+420”, quatro teasers e as quatro imagens de capa; Institution Bar e Domain
+Header apareceram uma vez cada em todos os viewports. 320/360/390/599px
+renderizaram uma coluna; 600/768px, duas; 1024/1280/1440px, três. A primeira
+publicação assumiu a composição de destaque em grid a partir de 992px. Não houve
+overflow horizontal. Capturas 320px e 1440px foram inspecionadas visualmente.
+Firefox 153.5.1esr / geckodriver 0.37.1. Evidências em
+`/home/piradopirata/aculta-suite-out/magazine-cover-runtime-20261030/`.
+
+Esse reteste substitui o baseline antigo sem conteúdo em
+`aculta-purposes-mobile-baseline-20261030-3c1691fc5`; ele cobria outro HEAD e
+não representa a capa atual. A página estática `/noticias` permanece um estado
+distinto. O reteste não cobre zoom, teclado, claro/escuro, reduced motion,
+comparação pareada com dashboard OpenCulturas nem WCAG; não aprova THEME-MF3.
 
 ### Composição do Domain Header por purpose — Pede-A resolvido
 
@@ -733,11 +1276,15 @@ teclado, WCAG 2.2 AA nem THEME-MF3. As diferenças visuais registradas em
 snapshots anteriores são evidência de heads antigos, não estado vigente nem
 Pede-A aberto.
 
-### Pede-A — conteúdo editorial da Revista
+### Revista — dados da capa verificados; captura visual pendente
 
-| Owner/caminho | Contrato e evidência | Aceite esperado |
-|---|---|---|
-| Owner `aculta_magazine`: View `revista_sessoes`/homepage editorial e seus dados publicados | Em 2026-10-30, `/` respondeu sem H1 ou corpo além do rodapé em nove larguras. O sitemap inclui `/noticias`, página pública comum com H1/texto, mas sem rows da View `aculta-news`; não foi comprovado consumer de entidade `revista`. | Pede-A: confirmar se a raiz/listagem vazia é intencional e fornecer uma entidade `revista` publicada como fixture se a listagem deve mostrar publicações. Testar estado preenchido e vazio em 320/390/768/1440px, preservando ACL, cache e markup do owner. A página `/noticias` existente deve permanecer distinta; a Frente B não inventa conteúdo nem altera Views no tema. |
+A auditoria read-only confirmou View ativa, quatro publicações com imagens e
+template descoberto; o teste Firefox acima verificou o consumer visual real em
+nove viewports. O antigo Pede-A sobre ausência de publicação/consumer está
+resolvido e nenhuma alteração é solicitada ao owner do Magazine. Preservar a
+página estática `/noticias` como estado distinto. Não criar conteúdo de teste
+adicional; os limites de zoom, acessibilidade e comparação upstream continuam
+registrados como pendentes.
 
 O registro anterior do `ReportQueueController` foi um handoff já resolvido: o
 controller emite `forum-report-queue` e `forum-report-pager`, e o tema mapeia
@@ -958,6 +1505,28 @@ Evidência: 15 PNGs anônimos e `results.json` em
 Esta rodada confirma o comportamento focal servido, mas não exercita outras
 rotas internas autenticadas, teclado completo, zoom real, contraste, dark mode,
 reduced motion ou WCAG 2.2 AA; portanto THEME-MF3 continua pendente.
+
+### THEME-MF2 — repetição no Runtime atual (2026-10-31)
+
+Repeti o harness no Firefox ESR visível, sem injetar CSS/JS. O Runtime estava
+em `toca`, checkout servido `/home/piradopirata/projetos/aculta`, HEAD
+`2493d7535`, Drupal 11.4.10, URI `http://default`, banco `aculta_runtime` com
+624 tabelas. As dez homes anônimas passaram 130/130 checks em 320/390px. A
+conta `aculta_visual_admin` (UID 257) passou 40/40 checks na MAIN em
+320/390/1023/1024/1280px, incluindo rolagem contínua nos dois sentidos e
+resize 320↔1024 sem recarga. As capturas 320px inicial e após scroll foram
+inspecionadas; não houve salto nem posição intermediária da Institution Bar.
+Relatórios e PNGs em
+`/home/piradopirata/aculta-suite-out/institution-bar-followup-20261031/` e
+`/home/piradopirata/aculta-suite-out/institution-bar-admin-followup-20261031/`.
+
+Separadamente, a raiz do purpose Conta ainda mediu `documentWidth=328` para
+viewport de 320px, embora a barra tenha permanecido estável. Esse overflow é
+uma pendência visual independente e não foi contado como falha no harness
+focal da Institution Bar. A sessão administrativa foi aberta por ULI; não
+houve alteração de conteúdo, configuração, permissões ou preferências. Esta
+captura focal não cobre rotas internas, todos os estados da toolbar, temas,
+zoom, WCAG integral ou THEME-MF3.
 
 ### THEME-MF2 — repetição da Institution Bar em todas as homes (2026-10-30)
 
@@ -1203,9 +1772,24 @@ alinhamento central, preservando o breakpoint de composição horizontal em
 `profile-identity-layout.py` compara baseline/candidato em 14 larguras, mede o
 avatar, alinhamento, overflow, ordem DOM e mantém captura de cada estado. Lint
 CSS, sintaxe Python, Design Foundations e índice de status PASS; Firefox visível
-DEFERRED porque `DISPLAY` não está disponível e sessões geckodriver concorrentes
-estão ativas. A fixture não valida conteúdo ou ACL de perfil real. THEME-MF3
-continua pendente.
+passou agora 56/56 checks nas 14 larguras, com baseline e candidato lado a lado;
+captura de 320px inspecionada. `public-profile-layout.py` também passou 22/22
+checks em 11 larguras, comparando geometria e screenshot do consumer com o
+baseline. As duas são fixtures locais: não validam conteúdo ou ACL de perfil
+real. Evidências em `/home/piradopirata/aculta-suite-out/profile-identity-f9-20261030/`
+e `/home/piradopirata/aculta-suite-out/public-profile-f9-20261030/`.
+THEME-MF3 continua pendente.
+
+### THEME-MF3 — shell dos dez purposes sem JavaScript (2026-10-31)
+
+Firefox ESR visível, com JavaScript desativado, passou **270/270 checks** nas
+dez raízes Main, Conta, Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e
+Eventos, em 320/360/390/599/600/768/1024/1280/1440 px. Institution Bar e Domain
+Header foram únicos, sem overflow; navegação primária permaneceu disponível e
+a Wiki manteve sua busca contextual visível. A execução mediu o Runtime servido,
+sem CSS candidata e sem escrita. Não cobre páginas internas, estado autenticado,
+teclado, zoom ou WCAG integral, portanto não aprova THEME-MF3. Evidência em
+`/home/piradopirata/aculta-suite-out/purpose-shell-nojs-followup-20261031/`.
 
 ### THEME-MF2 — menu de opções do Messenger mobile-first (2026-10-29)
 
@@ -1493,6 +2077,23 @@ cache real, dark mode, zoom ou todos os estados; render do Runtime é
 `DEFERRED` enquanto a configuração do Runtime divergir e não houver rebuild.
 OCS-F3/F8 e THEME-MF2 permanecem parciais; isto não aprova THEME-MF3 ou OCS-F11.
 
+#### Retificação do consumer e novo alvo dos links (2026-10-31)
+
+A fixture descrita acima usava markup sintético de duas cartas e não espelhava o
+consumer `account-experiences`; o resultado antigo 45/45 não é evidência do Hub.
+`studio-card-fidelity.py` agora reflete a raiz `.studio.aculta-account-entry`,
+a lista renderizada e os cinco cartões dos destinos que
+`AccountExperienceProvider` fornece. Sem descrições ou operações inventadas.
+O CSS da Conta aumenta cada link a 44×44px, preservando o SDC e os render arrays.
+Firefox ESR passou 248/248 checks em 27 larguras entre 320–1920px; Montserrat,
+container, grade, cinco destinos, geometria e ausência de overflow foram
+verificados. A 320px, Tab percorreu todos os destinos em ordem e cada link
+exibiu `:focus-visible` com outline de 3px. Capturas 320/1440 foram revisadas em
+`/home/piradopirata/aculta-suite-out/studio-card-fidelity-account-entry-20261031/`.
+Stylelint passou. A fixture continua sem HTML Drupal, ACL, cache, modo escuro,
+zoom ou WCAG integral; Runtime permanece em HEAD `2493d7535` e a integração
+servida do adaptador continua pendente.
+
 ### THEME-MF2 — sticky com Navigation top-bar após migration de Events (2026-10-30)
 
 No Firefox ESR visível, `institution-bar-scroll.py` passou 142/142 checks no
@@ -1555,9 +2156,31 @@ Firefox ESR visível, Runtime no HEAD `f22c8f08d`, passou 11/11 checks a
 320/390/768/1440px: página sem overflow, região rotulada/focável, trilha
 rolável e navegação por teclado. Capturas e resultados estão em
 `/home/piradopirata/suite-out/course-rail-validation-f22-20261030/`. O teste é
-anônimo e somente leitura; não cobre leitores de tela, zoom, autenticação,
-contraste WCAG 2.2 AA ou outros consumers do rail. Esta evidência focal não
-fecha THEME-MF3.
+anônimo e somente leitura; leitores de tela, autenticação, contraste WCAG 2.2 AA
+ou outros consumers do rail permanecem fora desta evidência focal.
+
+Revalidação Firefox ESR em `2493d7535` adicionou zoom real de 400% e revelou
+regressão no baseline: 13/14 checks passaram, mas ArrowRight deixou
+`scrollLeft=12` a 400%, impedindo progressão por teclado. O SDC alterou
+`scroll-snap-type` de `mandatory` para `proximity`, preservando o scroll nativo
+sem JS e os pontos de encaixe sem bloquear setas incrementais. Com CSS candidata
+injetada apenas na sessão, foram **15/15 checks** com JavaScript e **15/15** com
+JavaScript da página desativado, em 320/390/768/1440px e zoom real 400%. A seta
+moveu o rail de 12 para 62,5px; uma sequência de 12 setas revelou o último cartão
+em `scrollLeft=439,25px`, sem overflow documental. Capturas de referência,
+candidata, fim do rail e relatórios em
+`/home/piradopirata/aculta-suite-out/courses-rail-400-recheck-20261031/`,
+`/home/piradopirata/aculta-suite-out/courses-rail-proximity-sequence-20261031/`
+e `/home/piradopirata/aculta-suite-out/courses-rail-proximity-nojs-20261031/`.
+As capturas candidatas foram inspecionadas. Este ajuste do consumer real não
+prova CSS servida, outros consumers ou WCAG completa; THEME-MF3 continua pendente.
+
+A suíte reutilizável passou a exigir também `:focus-visible`, outline sólido de
+3px e foco ativo após as setas. As rodadas candidatas ampliadas passaram **17/17
+checks** com JavaScript e **17/17** com JavaScript da página desativado; a 320px
+e a 400% o outline mediu 3px/3px de offset. Evidências e capturas em
+`/home/piradopirata/aculta-suite-out/courses-rail-focus-candidate-20261031/` e
+`/home/piradopirata/aculta-suite-out/courses-rail-focus-nojs-20261031/`.
 
 ### THEME-MF2 — shell sem JavaScript nas dez raízes públicas (2026-10-30)
 
@@ -1735,6 +2358,27 @@ cada interação/página interna, zoom, teclado completo, leitores de tela,
 contraste WCAG 2.2 AA nem a distribuição dos estilos ainda locais da branch.
 THEME-MF3 segue pendente.
 
+#### Reteste posterior — raiz Conta a 400% (2026-10-30)
+
+Reexecutei a matriz inteira depois da captura histórica: Firefox ESR visível,
+Runtime em HEAD `2493d7535`, dez raízes públicas, zoom real a partir de 1280px.
+O resultado atualizado é **29/30**, não 30/30: baseline 100% e zoom 200%/400%
+passaram nas dez raízes, exceto Conta a 400%, quando a viewport equivale a 320
+CSS px e `documentScrollWidth/bodyScrollWidth=328`; o shell e o H1 continuam
+presentes. As outras nove raízes passaram os dois níveis de zoom sem overflow.
+Capturas e relatório: `/home/piradopirata/aculta-suite-out/purpose-browser-zoom-full-20261030/`;
+a captura de Conta/400% foi inspecionada.
+
+Na comparação focal seguinte, `purpose-browser-zoom.py` injetou no DOM da sessão
+Firefox `base.css` e `components/auth.css` da branch, além de simular no wrapper
+CAPTCHA o contrato `data-portal-ui="challenge-frame"`. Conta passou 3/3
+checks, inclusive 400%/320 CSS px sem overflow; evidência em
+`/home/piradopirata/aculta-suite-out/account-zoom-candidate-20261030/` e captura
+400% inspecionada. Isso confirma a candidata de apresentação, mas a falha no
+Runtime permanece até o hook e a folha servidos serem integrados e revalidados;
+no-JS, páginas internas e acessibilidade seguem pendentes. O harness agora
+aceita `PURPOSE_ZOOM_PURPOSES` e registra candidatos a overflow para diagnóstico.
+
 ### Zoom real de 200%/400% nas dez raízes públicas (2026-10-30)
 
 O novo harness reutilizável `purpose-browser-zoom.py` usou Firefox ESR visível e
@@ -1751,3 +2395,2636 @@ seu teste Unit já existe, mas a correção ainda não está no Runtime, então 
 zoom não prova o reflow do conteúdo com título corrigido. O gate de headings
 pós-candidato segue DEFERRED. Esta matriz não valida páginas internas, teclado,
 leitores de tela ou WCAG 2.2 AA e não aprova THEME-MF3.
+
+### Retificação de contrato visual do formulário SUPPORT (2026-10-30)
+
+O teste anterior presumia que a rota pública renderizava `<fieldset>` e ações de
+pagamento; a primeira execução confirmou que esses elementos não existem no
+formulário atual, portanto suas 11 falhas de padding eram um falso negativo do
+harness. `SupportForm::buildForm()` atualmente entrega introdução, estado de
+serviço e bloco de outras formas de apoio, sem campos de cobrança, controles visíveis ou submit. O
+harness agora mede esses consumers reais, a grade `donation-quick` e confirma que
+nenhum controle de pagamento planejado aparece como funcional. Firefox ESR
+visível passou 37/37 checks em 320/360/390/480/481/599/600/768/1024/1280/1440px,
+sem overflow; `formWidth` ficou contido no viewport. Institution Bar e Domain
+Header apareceram uma vez no SUPPORT do Runtime HEAD `30c6770f3`. Evidências em
+`/home/piradopirata/aculta-suite-out/support-form-final-20261030/`.
+Não houve submissão; não cobre checkout, pagamento, ACL, teclado, zoom ou WCAG.
+
+### Reteste de autenticação e `page-columns` (2026-10-30)
+
+`auth-layout.py` passou 28/28 com baseline resolvido pelo commit anterior à
+correção dos seletores reais, em 11 larguras: paddings candidatos, ausência de
+overflow e classes `path-entrar`, `path-criar-conta` e
+`path-recuperar-senha`. `auth-route-runtime.py` também passou 12/12 na rota
+anônima real `/entrar` (CSS candidata injetada, nenhum envio de form). O SDC
+`page-columns` passou 70/70 na fixture em dez larguras para variantes de uma,
+duas e três colunas, ordem DOM e overflow; não possui consumer de produto
+homologado. Evidências em `/home/piradopirata/aculta-suite-out/`:
+`auth-layout-default-baseline-20261030`, `auth-route-runtime-resume-20261030` e
+`page-columns-resume-20261030`. Esses resultados não validam formulários reais de
+cadastro/recuperação, autorização, consumo Drupal do SDC ou THEME-MF3.
+
+### Conta autenticada e endereço unificado — reteste 2026-10-30
+
+Com a conta sintética UID 5 e Firefox ESR visível, `account-shell.py` passou
+33/33 checks em 320/360/390/599/600/767/768/1024/1280/1440px, com CSS candidato
+injetado apenas na sessão: as 13 seções aparecem iguais no menu desktop e no
+acordeão mobile, a coluna/layout mudam no breakpoint esperado e não há overflow.
+A Institution Bar permaneceu única. A sessão GET-only não salvou preferências.
+Evidência: `/home/piradopirata/aculta-suite-out/account-shell-runtime-retest-20261030/`.
+
+`account-address.py` foi executado contra o Runtime confirmado no HEAD
+`4307e6fe9`, com UID sintético 5: 29/29 checks em JavaScript e sem JavaScript.
+`/dados/endereco` apresentou uma instância do formulário canônico, todos os
+campos esperados, país oculto e behavior de `aculta_portal_cep`; `/dados` e a
+aba Endereço estavam ativos no shell legado. A geometria do agrupamento existente
+coube no conteúdo e não houve overflow em 320/360/390/599/600/768/1024/1280/1440px;
+o fallback sem JS passou em 320/390/768/1440px. Nada foi submetido/salvo; as
+capturas mascaram valores e ficam fora do Git em
+`/home/piradopirata/aculta-suite-out/account-address-head-4307-20261030/`.
+Isto não cobre lookup CEP ao vivo, ACL entre contas, teclado completo, zoom ou
+WCAG 2.2 AA.
+
+### THEME-MF3 — captura dos campos do endereço em JS/no-JS (2026-10-31)
+
+O harness foi ajustado após inspeção das capturas anteriores, que mostravam o
+topo do shell em vez do formulário. Agora o WebDriver enquadra o campo CEP com
+scroll não dependente do JavaScript do site; os valores de input permanecem
+mascarados. Firefox ESR visível repetiu `/dados/endereco` no Runtime `2493d7535`
+com UID sintético 5 e passou **42/42 verificações**: nove viewports (320/360/
+390/599/600/768/1024/1280/1440px) com JS, mais quatro (320/390/768/1440px) sem
+JS, campo CEP visível nas capturas, formulário único, oito campos, país oculto,
+behavior CEP carregado na sessão JS, navegação Meus Dados/Endereço, agrupamento
+Número/S/N/Complemento dentro do conteúdo e zero overflow. Capturas 320/1440px
+foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/account-address-field-capture-20261031/`.
+Nenhum campo foi digitado ou submetido. Isso valida a apresentação servida do
+formulário unificado nesse HEAD, não o lookup CEP ao vivo, ACL entre contas,
+zoom, teclado completo ou WCAG 2.2 AA.
+
+Autenticação por ULI criou somente metadados transitórios de sessão. Antes das
+duas rodadas, os snapshots íntegros de `aculta_runtime` (624 tabelas) foram
+guardados fora do Git, modo 0600: `aculta_runtime-before-account-address-visual-20261031.sql`,
+65.355.195 bytes, SHA-256
+`c82bb54739111d42513d1a65a951f93604fe4442e56a9004538164deb627fdab`; e
+`aculta_runtime-before-account-address-visual-field-capture-20261031.sql`,
+65.407.231 bytes, SHA-256
+`2e2cf0be97789aac044c226bc6e312cf13d474f5f39616f8e9a6dee2a0f2ac1a`.
+
+Reteste independente da Conta em 2026-10-30, com Runtime no HEAD `2493d7535`:
+`account-shell.py` passou 33/33 checks em 320/360/390/599/600/767/768/1024/
+1280/1440px com a folha candidata injetada no Firefox, sem submit ou gravação
+de preferências. As 13 seções dos menus desktop e mobile coincidiram, não houve
+overflow e a Institution Bar apareceu uma vez. A captura de 320px foi inspecionada.
+Snapshot pré-sessão: 624 tabelas, 58,555,853 bytes, SHA-256
+`ba691089b5237404f4e47b62f746c0d79f0413fe1a67c743aa32f47ff8a6c647`, em
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/runtime-before-account-visual-20261030.sql`.
+Capturas e resumo: `/home/piradopirata/aculta-suite-out/account-shell-f9-candidate-20261030/`.
+Isto valida somente a navegação responsiva autenticada, não os formulários de
+Conta nem S-R4/S-R5, ACL entre titulares, zoom ou WCAG completa.
+
+### THEME-MF2 — contrato visual neutro para widgets de verificação (2026-10-30)
+
+Firefox ESR visível reproduziu o overflow real em `/entrar` a 320 px: o conteúdo
+disponível era 268 px, o widget flexível mede 300 px e a página chegava a 328 px;
+a 360 px, o espaço disponível era 308 px. A folha não tenta redimensionar,
+cortar nem identificar o provedor.
+
+Implementação local: `CaptchaPresentationHooks` no Portal, executado depois do
+hook contrib `captcha`, acrescenta o token neutro
+`data-portal-ui="challenge-frame"` ao elemento de apresentação, inclusive em
+formulários aninhados e sem duplicar tokens existentes. O tema usa esse contrato
+para tornar `.aculta-content` um query container apenas quando existe o elemento
+e amplia o formulário em 2rem somente quando a largura disponível é menor que
+300 px. A ordem DOM, o widget `flexible`, seu token, sua validação e a política
+de exceções não mudam. Não há referência a CAPTCHA/Turnstile em CSS.
+
+PHP lint passou; Unit do hook passou 2 testes/4 assertions. Em Firefox ESR
+visível, o CSS local foi injetado e o marcador foi simulado apenas no DOM, sem
+submeter formulário: `/entrar` passou 12/12, `/criar-conta` 10/10 e
+`/recuperar-senha` 10/10 verificações nas larguras 320/360/390/599/600/768/1024/
+1280/1440px, sem overflow e mantendo o widget completo. As capturas em 320px
+foram inspecionadas. Evidências em
+`/home/piradopirata/aculta-suite-out/auth-captcha-frame-candidate-20261030/`,
+`auth-register-captcha-candidate-20261030/` e
+`auth-reset-captcha-candidate-20261030/`.
+
+O Runtime servido em `2493d7535` ainda não tem o novo hook do Portal: a suíte
+validou a CSS candidata com marcador simulado, não sua instalação real. Após
+servir o código e reconstruir cache, repetir as três rotas com o marcador do
+Portal efetivo, conferir estados com JavaScript/no-JS e formularios/`captcha_point`
+ativos. Não homologa THEME-MF3. A investigação inicial do rodapé em dez purposes
+(19/20) permanece evidência do mesmo overflow no CSS antigo; reteste após servir
+o contrato novo ainda pendente.
+
+Reteste posterior no checkout servido `2493d7535`, confirmado por Drush em
+`aculta_runtime` e correspondente ao HEAD da PR antes e depois da rodada:
+`purpose-headings.py` cobriu os dez purposes nos nove viewports exigidos
+(320/360/390/599/600/768/1024/1280/1440). Todos os 90 H1 estavam visíveis em
+`main#main-content`; os 90 pares Institution Bar/Domain Header estavam
+presentes uma vez. O total foi 179/180 checks: a única falha de shell/overflow
+segue Conta a 320 px (`documentWidth=328`), na rota de entrada com desafio de
+300 px. Evidência:
+`/home/piradopirata/aculta-suite-out/purpose-headings-pr-2493-full-20261030/results.json`.
+O achado antigo de H1 ausente em Apoio/Cursos foi resolvido no código servido;
+este teste valida headings e shell, não estados internos nem aprova THEME-MF3.
+
+Nova matriz anônima em 2026-10-30, ainda no HEAD servido `2493d7535`, repetiu
+90/90 raízes × nove larguras; os dois headers apareceram uma vez em todos os
+casos. Ela reproduziu o mesmo overflow isolado de Conta/320px (`328px`), sem
+outros registros com largura excedente. Em seguida, a CSS candidata e o
+marcador simulado foram reaplicados à rota real: `auth-route-runtime.py` passou
+3/3 em `/entrar`/320/360px. Artefatos em
+`/home/piradopirata/aculta-suite-out/purpose-matrix-continued-20261030/` e
+`/home/piradopirata/aculta-suite-out/auth-captcha-fix-recheck-20261030/`.
+O Runtime ainda não tem o hook PHP que fornece o marcador, logo o overflow
+servido permanece aberto até integração e reteste sem override/no-JS.
+
+### THEME-MF2 — rechecagem do formulário de entrada estreito (2026-10-30)
+
+Reexecutei `auth-route-runtime.py` em Firefox ESR visível contra o Apache local
+do Runtime, em 320/360 px, com folhas candidatas injetadas apenas na sessão. O
+markup anônimo real de `/entrar` foi confirmado; depois de acrescentar ao DOM o
+marcador `data-portal-ui="challenge-frame"` (simulação explícita do hook PHP),
+as duas larguras passaram junto com a checagem de rota: **3/3**. A 320 px, o
+widget mede 300 px, o documento fica em 320 px e `scrollX=0`; a 360 px o widget
+se ajusta a 308 px e o documento fica em 360 px. Capturas foram gravadas em
+`/home/piradopirata/aculta-suite-out/auth-overflow-recheck-20261030/`; a captura
+de 320 px foi inspecionada.
+
+O resultado confirma a CSS candidata com o contrato simulado; não valida o hook
+do Portal no Runtime nem a CSS servida sem override. Portanto a falha anterior
+de 320 px continua aberta na instalação corrente até que a branch seja servida,
+o cache reconstruído e a mesma rota seja retestada com o marcador produzido
+server-side, inclusive sem JavaScript. Na repetição atual, o hook passou no
+PHPUnit (**2 testes/4 assertions**) e a comparação Firefox candidatada repetiu
+**3/3** em 320/360 px. Evidência mais recente:
+`/home/piradopirata/aculta-suite-out/auth-overflow-repeat-20261030/`. Como o CSS
+e o marcador foram injetados no DOM, esse resultado confirma a candidata, não a
+instalação servida. Não aprova THEME-MF3.
+
+### Registro histórico — gates de fronteira e catálogo em Eventos/Índice
+
+A auditoria anterior encontrou classes de design diretamente nos formulários de
+organização de Eventos e tokens de apresentação ausentes do mapa/documentação.
+Esse bloqueio foi corrigido nesta branch no commit `9ea2e45f1`: os módulos usam
+`data-portal-ui`, `PortalUiHooks` traduz os tokens (inclusive em inputs), e a
+apresentação de `RelatedContentBlock` pertence ao tema. O Pede-A histórico para
+essa família está resolvido; evidência atual abaixo. A resolução não aprova o
+gate global THEME-MF3.
+
+### THEME-MF2 — regressão do carrossel editorial no HEAD local `3a245f1ff` (2026-10-30)
+
+Reexecutei `editorial-carousel-layout.py` em Firefox ESR visível depois dos commits
+locais desta rodada. Baseline (`HEAD^`) e candidata renderizaram capturas idênticas
+em 320/360/390/575/576/599/600/768/769/1024/1280/1440 px; 24/24 verificações
+passaram, sem overflow. Evidência em
+`/home/piradopirata/aculta-suite-out/editorial-carousel-retest-20261030/`.
+Como este HEAD não alterou a CSS do carrossel, a repetição é regressão do estado
+atual, não nova prova de paridade editorial nem aprovação THEME-MF3.
+
+### THEME-MF2 — organização de Eventos e bloco de conteúdo relacionado (2026-10-30)
+
+Os consumidores reais de organizações de Eventos e `RelatedContentBlock` foram
+migrados para contratos visuais `data-portal-ui` renderizados pelo tema. Removi
+a biblioteca CSS inativa de `aculta_index` e centralizei a apresentação no tema;
+a tabela do modal agora rola em seu contêiner, e os botões da busca têm alvo
+mínimo de 44 px. Em `EventOrganizationPageController`, os links passaram a ser
+render arrays tipados em vez de HTML de lista montado manualmente. Não foram
+alterados permissões, serviços, rotas ou operações funcionais.
+
+Gates locais executados: fronteira módulo/tema PASS (3.488 checks); catálogo de
+tokens PASS (515 mapeados, 420 usados, 149 atributos); fundamentos PASS (2.429
+checks); schemas SDC PASS (55 componentes, 759 checks); Stylelint PASS; PHP
+lint e PHPCS PASS; Unit PASS (83 testes/420 assertions); Kernel PASS (15
+testes/399 assertions, 34 depreciações de Core/contrib) no banco dedicado
+`aculta_simpletest`. Runtime não foi alterado.
+
+Firefox ESR visível, com o Bootstrap local efetivamente usado pelo tema, passou
+74/74 verificações da fixture em 320/360/390/599/600/768/1024/1280/1440 px,
+claro/escuro: zero overflow horizontal, grids progressivos, rolagem isolada da
+tabela, botão de 44 px, superfície em ambos os modos e foco de teclado visível.
+Capturas de 320 e 1440 px foram inspecionadas. Evidência:
+`/home/piradopirata/aculta-suite-out/aculta-events-organization-layout-r6/`.
+A fixture cobre CSS e markup representativo, não markup renderizado/ACL/AJAX de
+Drupal. THEME-MF3 permanece pendente até os gates globais e de integração real.
+
+### Revista — capa editorial servida e referência OpenCulturas verificada (2026-10-30)
+
+A raiz pública `https://revista.aculta.toca.net.br/` foi aberta no Firefox ESR
+visível, anônima e somente GET, contra o docroot de desenvolvimento em
+`2493d7535`. O Runtime já contém quatro publicações sintéticas autorizadas para
+inspeção humana (NIDs 599–602); esta rodada não criou nem alterou conteúdo. A
+View e sua chamada hero, os quatro teasers, as imagens carregadas, Institution
+Bar e Domain Header passaram **10/10 verificações** em 320/360/390/599/600/768/
+1024/1280/1440px, sem overflow. Capturas de 320 e 1440px foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/magazine-cover-runtime-current-20261030/`.
+O shell e o estado servido foram lidos; as alterações locais de Eventos no
+docroot permaneceram intactas.
+
+O tarball oficial OpenCulturas 3.1.5 foi conferido novamente: SHA-256
+`2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`. Para os
+teasers, `openculturas/profile/themes/opcult/sass/abstracts/_teasers.scss`
+documenta uma família configurável de superfície, raio, padding e sombra; o
+Twig `templates/node/node--teaser-unified.html.twig` delega ao teaser unificado.
+Isso é referência de composição, não autorização para copiar folhas, imagens,
+SVGs ou template. A capa ACULTA atual reutiliza os SDCs `patterns/hero` e
+`patterns/card`, apresenta publicação destaque e lista editorial real, empilha
+imagem/conteúdo no móvel e amplia para grade progressiva em telas maiores. A
+captura valida o consumer servido; sem uma homepage equivalente autenticada do
+OpenCulturas e sem baseline pareado de conteúdo, não se declara paridade visual.
+
+No mesmo Runtime `2493d7535`, a listagem pública de Eventos recebeu o CSS
+candidato local do SDC `event_card` no Firefox, sem alterar o servidor. Passou
+20/20 checks em 320/360/390/575/576/600/768/1024/1280/1440px: três cartões
+reais, grade responsiva, moldura aplicada uma vez no SDC e zero overflow.
+Captura 320px revisada; evidências em
+`/home/piradopirata/aculta-suite-out/events-catalogue-continuation-20261030/`.
+É uma verificação focal do catálogo; detalhe do evento, teclado, zoom e WCAG
+completa continuam pendentes.
+
+Antes da inspeção foi produzido snapshot íntegro do `aculta_runtime`
+(624 tabelas), armazenado fora do Git com modo restrito; SHA-256:
+`665c41fcdce303d6bc4d1171ea3421c8e42de53d5261c80e5c23d5a955c1fdae`.
+Não houve escrita de conteúdo ou configuração no Runtime durante a inspeção da
+capa. A autenticação administrativa descrita abaixo criou metadados transitórios
+de sessão/login no Runtime.
+
+### THEME-MF2 — barra multidomínio com sessão administrativa (2026-10-30)
+
+O Firefox ESR visível autenticou a conta administrativa sintética pelo host de
+Conta e verificou a home MAIN servida no Runtime, sem CSS/JS de override. O
+harness confirmou uma única Institution Bar, o offset da barra superior, a
+estabilização no carregamento e a posição após scroll de 80/240/480 px. Foram
+aprovadas 38/38 verificações em 320/390/1023/1024/1280 px, incluindo mudança de
+viewport 320→1024→320. Em 320/390 px a barra acompanha a barra administrativa
+enquanto ela está visível e ocupa o topo depois que ela sai da viewport; em
+1024/1280 px mantém offset fixo de 64 px. Não houve overflow horizontal nem
+mudança tardia de posição. Capturas móveis inicial e após scroll foram
+inspecionadas em
+`/home/piradopirata/aculta-suite-out/institution-bar-admin-default-login-20261030/`.
+
+O ULI foi iniciado no host de Conta configurado em `deploy.json`; o primeiro
+UID administrativo disponível nesse ambiente redireciona para recuperação, por
+isso o teste permite credencial sintética fornecida pelo ambiente como fallback.
+Credenciais não foram gravadas em artefatos nem impressas. A autenticação criou
+metadados transitórios de sessão/login no Runtime; não houve alteração de
+conteúdo ou configuração. Este teste fecha o cenário de scroll administrativo,
+mas não cobre as demais rotas, zoom, teclado completo ou WCAG 2.2 AA e não aprova
+THEME-MF3.
+
+Repeti o caso anônimo nos dez domínios em 320/390px com amostragem sticky a
+cada 12px, nos dois sentidos: **130/130 checks passaram**, `barTop=0` após
+ocultar a barra superior e desvio máximo de 0px. Repeti o caso administrativo
+autenticado em 320/390/1023/1024/1280px com `institution-bar.css` e
+`navigation-top-bar-displace.js` da branch injetados somente no Firefox:
+**40/40 passaram**, incluindo resize mobile↔desktop, estabilidade, posição
+durante scroll e amostragem de transição a cada 12px (desvio máximo <0,001px).
+O estado autenticado foi confirmado; no mobile `.top-bar` ficou em fluxo normal,
+e no desktop fixo com offset de 64px. Capturas inspecionadas e relatórios em
+`/home/piradopirata/aculta-suite-out/institution-bar-anonymous-recheck-20261031/`
+e `/home/piradopirata/aculta-suite-out/institution-bar-admin-candidate-recheck-20261031/`.
+O teste administrativo criou apenas metadados transitórios de sessão/login; não
+alterou conteúdo nem configuração. A repetição não reproduziu o salto/delay
+relatado; a integração visual candidata ainda precisa ser servida para fechar
+MF3 e cobrir outros estados e rotas internas.
+
+### OCS-F8 / THEME-MF2 — navegação e listagens do Green Stash (2026-10-30)
+
+`studio.css` apresenta a navegação contextual de áreas implementadas (Visão
+geral, Produtos e Envios), busca GET, cartões de produto e remessa sob
+`.studio.aculta-green-stash`. A base
+mobile usa colunas fluidas, links de 48px, foco de 3px e controles de formulário
+de 44px; modo escuro usa tokens Fidelity existentes. Não foram alterados render
+arrays, dados, Form API, ACL, Commerce ou shell. `npm run lint:css` passou.
+Firefox ESR visível passou 74/74 verificações na fixture que replica a
+estrutura renderizada do controller, em 320/360/390/599/600/768/1024/1280/1440px
+e claro/escuro; sem overflow, com links/estados, cartões, formulário e foco
+observados. Capturas revisadas em
+`$SUITE_OUT/green-stash-layout-20261030/`. Evidência da CSS candidata, não de
+rota real, operador ou grants por loja. OCS-F8, OCS-F11 e THEME-MF3 continuam
+pendentes.
+
+### OCS-F2 / THEME-MF2 — reteste real de navegação e alvos (2026-10-30)
+
+`studio.css` aplica alvos de 44×44 CSS px também aos links contextuais de Conta
+sob `.studio__subtabs`, mesmo quando o render não fornece a classe interna
+`.studio__link`. A ordem DOM, destinos, estado `aria-current`, wrap e shell
+permanecem. No Runtime identificado em `toca`, Firefox ESR visível com a folha
+candidata injetada sobre o markup servido passou 79/79 verificações na conta
+editorial comum (um `SKIP` por não haver publicação própria para testar edição)
+e 80/80 com a conta sintética `aculta_visual_admin`, proprietária dos quatro
+artigos fictícios autorizados. A lista real mostrou quatro linhas com links
+canônicos `/marley/revista/{id}/editar`. Foram medidos `/marley`, as cinco abas
+editoriais da seção Publicações, criação da Revista, Fórum, Galerias e navegação
+contextual de Conta; todos os alvos examinados tiveram ao menos 44px. Não houve
+overflow em 320/360/390/599/600/767/768/1024/1280/1440px no Marley, nem em
+Conta a 320/390/768/1280px. Contraste textual medido: 6,59:1 claro e 11,51:1
+escuro; geometria igual nos dois modos. Capturas estão em
+`/home/piradopirata/aculta-suite-out/studio-visual-candidate-20261030e/`,
+`/home/piradopirata/aculta-suite-out/studio-editorial-rows-retest-20261030/` e
+`/home/piradopirata/aculta-suite-out/studio-editorial-mobile-20261030/`;
+desktop e mobile foram revistos.
+
+O teste injeta a CSS do worktree no Firefox e não demonstra que ela já esteja
+implantada no Runtime. Também não cobre ausência de JS, zoom 200/400%, todos os
+consumidores, navegação completa por teclado, reduced motion ou auditoria WCAG
+2.2 AA. A captura da tabela a 390px mantém `table-responsive` e scroll dentro
+do componente, sem overflow do documento. OCS-F2/F5 seguem parciais; THEME-MF3
+e OCS-F11 continuam pendentes. A fixture sintética anterior (243/243 em 27
+larguras) continua como evidência complementar.
+
+### Studio — alvos mínimos nos formulários Fidelity (2026-10-30)
+
+Firefox ESR visível executou `studio-form-fidelity.py` com a CSS candidata local
+em claro e escuro, nos viewports 320/390/768/1440px. Foram 50/50 verificações:
+campos de texto e ações têm ao menos 44px de altura, foco de teclado está
+visível, não houve overflow e um formulário externo não recebeu os estilos do
+Studio. Stylelint também passou. Evidências em
+`/home/piradopirata/aculta-suite-out/studio-form-touch-target-20261030/`.
+É uma fixture de CSS/markup, não uma homologação de Form API real, AJAX/no-JS,
+ACL, contraste WCAG completo ou de todos os consumers Studio.
+
+### THEME-MF2 — alvo móvel dos links no cartão de Eventos (2026-10-30)
+
+O link de título do SDC `event_card` agora mantém altura mínima de 44px, com
+largura fluida e texto capaz de quebrar. Firefox ESR visível injetou a folha
+candidata sobre `/eventos`, que renderizou três cards reais, em
+320/360/390/575/576/600/768/1024/1280/1440px. Foram 30/30 verificações, sem
+overflow e com os três alvos medindo 44px em cada largura. Capturas 320/768/1440
+estão em `/home/piradopirata/aculta-suite-out/events-title-touch-targets-20261030/`.
+Isso valida CSS candidata no consumer servido, não a implantação após rebuild,
+o detalhe do evento ou WCAG completa; THEME-MF3 continua pendente.
+
+Reexecução em 2026-10-31 com o harness da branch atual repetiu **30/30 checks**
+nas mesmas dez larguras. As capturas móveis (320px) e desktop (1440px) foram
+inspecionadas: cards empilhados no celular, três colunas no desktop, sem moldura
+no wrapper e com a moldura única do SDC. A CSS foi injetada somente no Firefox;
+a versão reconstruída/servida continua pendente. Evidência em
+`/home/piradopirata/aculta-suite-out/events-catalogue-resume-20261031/`.
+
+### THEME-MF2 — alvos de links sociais do SDC author-card (2026-10-30)
+
+Os links sociais do SDC `author-card` agora têm área interativa de 44×44 CSS px,
+mantendo a lista flexível e sem reordenar o DOM. A suíte Firefox ESR visível
+passou 43/43 verificações em 320/360/390/575/576/600/768/1024/1280/1440px. Ela
+injetou a folha candidata e dois links sintéticos no consumer público de tópicos
+do Fórum; a página real manteve seus cinco cartões e zero overflow, enquanto os
+links sintéticos mediram 44×44px em todas as larguras. Isto não comprova que a
+rota real tenha links sociais publicados, nem valida WCAG completo, teclado ou
+perfil/ACL. Capturas e resumo em
+`/home/piradopirata/aculta-suite-out/author-card-social-targets-20261030/`.
+
+### THEME-MF2 — alvos do carrossel editorial MAIN (2026-10-30)
+
+Ajustei os botões de anterior/próximo e pausa e os botões dos pontos do VVJB
+para alvos de 44×44 CSS px. Os pontos preservam marcador visual de 10 px via
+pseudo-elemento; foco visível usa contorno de 3 px e a transição do marcador é
+removida em `prefers-reduced-motion`. A folha continua escopada à View editorial
+da home MAIN.
+
+A fixture reutilizável passou 36/36 checks em Firefox ESR visível, nas larguras
+320, 360, 390, 575, 576, 599, 600, 768, 769, 1024, 1280 e 1440 px: cinco
+controles medidos em 44×44, marcador de 10 px, geometria externa preservada e
+sem overflow. Capturas baseline/candidata e `summary.json` estão em
+`/home/piradopirata/worktrees/opencultures-f0-adm8-e8/.suite-out/editorial-carousel/`.
+Stylelint, design foundations, fronteira tema/módulo e schema/discovery SDC
+passaram. A fixture não testa teclado real, contraste em ambos os temas, a folha
+instalada no Runtime nem o comportamento do VVJB sem JavaScript; esses gates
+permanecem pendentes e THEME-MF3 não está aprovado.
+
+
+### THEME-MF2 — alvos de toque dos teasers da Revista (2026-10-31)
+
+A medição no consumer público real encontrou os links “Leia a publicação” com
+19px de altura em todos os nove viewports; os links de título também ficavam
+abaixo de 44px em alguns pontos de quebra. `revista-listing.css` agora dá
+`min-block-size: 2.75rem` aos links de título e de ação. A ação usa alinhamento
+flexível para manter o texto centralizado verticalmente; o markup, ordem DOM,
+SDCs, conteúdo e rotas não mudam.
+
+O Firefox ESR visível reproduziu a falha baseline (9/9 larguras) e, com a CSS
+candidata injetada apenas na sessão, passou 10/10 checks: quatro títulos e
+quatro ações com pelo menos 44px, imagens carregadas, grade responsiva, shell
+único e sem overflow em 320/360/390/599/600/768/1024/1280/1440px. Capturas de
+320 e 1440px foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/magazine-link-targets-candidate-20261031/`.
+O Runtime continua servindo a baseline; revalidação após publicação/rebuild,
+teclado completo, leitores de tela e WCAG 2.2 AA permanecem pendentes. Isto não
+aprova THEME-MF3.
+
+### THEME-MF2 — fallback decorativo de capa sem mídia na Revista (2026-10-30)
+
+O tema upstream 3.1.5 contém `%teaser-image-fallback` em
+`openculturas/profile/themes/opcult/templates/node/teasers.scss` e produz
+`teaser--top.no-image`; os arquivos concretos e a versão estão registrados em
+`studio-visual/upstream-inventory.md` (tarball oficial SHA-256
+`2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`). A Revista
+agora envia um container decorativo no slot `image` de `patterns/card` quando
+`field_media_image` está vazio. A região mantém proporção 16:9 como base e ocupa
+a coluna inteira da capa no desktop, usando gradientes e tokens do ACULTA; não
+foi copiado SVG, imagem, ícone, CSS nem Twig upstream.
+
+Firefox ESR visível verificou o consumer real anônimo em 320/360/390/599/600/768/
+1024/1280/1440px, com CSS candidata injetada e o primeiro media wrapper
+substituído por markup sintético equivalente ao container esperado. Passaram
+19/19 checks: capa existente, variante sem imagem, coluna responsiva, fundo
+calculado em claro/escuro, shell único e ausência de overflow. Capturas de 320 e
+1440px estão em
+`/home/piradopirata/aculta-suite-out/revista-cover-fallback-retest-20261030/`.
+O harness não executa o Twig candidato; a folha e o template também não estão
+implantados no Runtime observado. A integração do markup pelo Drupal, leitores
+de tela, zoom, teclado completo, WCAG 2.2 AA e regressões globais permanecem
+pendentes; THEME-MF3 não está aprovado.
+
+Reteste complementar no Firefox ESR visível confirmou a página real anônima da
+Revista com quatro publicações sintéticas de inspeção: **19/19 checks** nas
+mesmas nove larguras. O CSS desta branch foi injetado na sessão; para o cenário
+sem imagem, a primeira mídia foi substituída no DOM por um container sintético
+com a classe prevista pelo Twig. A captura de 320px confirmou a capa no fluxo
+mobile; a de 1440px confirmou a composição editorial em duas colunas. As duas
+capturas, inclusive o fallback, estão em
+`/home/piradopirata/aculta-suite-out/revista-cover-visual-followup-20261031/`.
+Isto repete o contrato CSS sobre o consumer real, mas ainda não executa o Twig
+candidato nem valida sua integração no Runtime.
+
+Revalidação em 2026-10-31 no Firefox ESR visível: a rota pública anônima serviu
+as quatro publicações sintéticas já existentes, com a Institution Bar e o Domain
+Header únicos. Passaram 19/19 verificações em 320/360/390/599/600/768/1024/1280/
+1440px, incluindo imagens carregadas, grades de uma/duas/três colunas, títulos e
+CTAs com alvo mínimo de 44px e zero overflow. Com a folha candidata injetada,
+o fallback foi novamente simulado apenas no DOM e conferido em claro/escuro.
+As capturas de 320 e 1440px foram revisadas em
+`/home/piradopirata/aculta-suite-out/revista-cover-revalidation-20261031/`.
+Nenhum conteúdo ou configuração foi gravado no Runtime nesta revalidação.
+A folha e o Twig da branch continuam sem integração servida; isto não aprova
+paridade pareada com OpenCulturas, teclado completo, zoom, WCAG 2.2 AA ou THEME-MF3.
+
+### THEME-MF3 — reteste global de shell, temas e fallback sem JavaScript (2026-10-31)
+
+Firefox ESR visível repetiu o shell público nas dez raízes definidas em
+`deploy.json`. Em claro/escuro, com `prefers-reduced-motion`, foram **358/360**
+checks nas larguras 320/360/390/599/600/768/1024/1280/1440px. As únicas falhas
+foram `/conta` a 320px nos dois modos: o runtime atual mede `documentWidth=328`
+para viewport de 320px, com Institution Bar e Domain Header únicos. Nas outras
+358 combinações, tokens, shell e largura passaram.
+
+A execução sem JavaScript passou **210/210** checks nas dez raízes e larguras
+320/390/599/600/768/1024/1440px, incluindo navegação visível e busca contextual
+da Wiki. Evidências: `/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-continuation-20261031/`
+e `/home/piradopirata/aculta-suite-out/purpose-shell-nojs-continuation-20261031b/`.
+A unidade de `CaptchaPresentationHooks` passou 3 testes/8 assertions com o
+bootstrap Drupal (reteteste local em 2026-10-31). A correção usa o marcador neutro `challenge-frame` e CSS por
+container query no código da branch, mas o Runtime `2493d7535` ainda serve a
+versão anterior. Validação do contrato no Runtime após servir/rebuild permanece
+pendente; THEME-MF3 não está aprovado.
+
+Revalidação focal da correção candidata em `/entrar`: Firefox ESR visível abriu
+o Runtime local, simulou o token neutro no DOM e injetou `base.css` + `auth.css`
+somente na sessão. Passou **3/3** (rota anônima e 320/360px): o widget completo
+mede 300px e cabe no contêiner de 300px a 320px de viewport; a 360px acompanha
+308px. `documentWidth` ficou igual ao viewport e `scrollX=0`. Evidência em
+`/home/piradopirata/aculta-suite-out/auth-overflow-followup-20261031/`. Este teste
+prova o comportamento da candidata sobre markup Runtime, não o hook real ou a
+CSS publicada; o Runtime servido continua com a falha identificada.
+
+Reteste adicional com o widget externo efetivamente carregado: o proxy
+temporário do harness roteou somente `conta.aculta.toca.net.br` para o Apache
+local e autorizou somente `challenges.cloudflare.com:443`. Com a CSS candidata
+e o marcador ainda simulado no Firefox, `/entrar` passou 3/3 em 320/360px; o
+iframe real mediu 300px dentro de seu slot de 300px a 320px e 308px a 360px,
+sem overflow do documento. A captura 320px foi inspecionada. Evidência em
+`/home/piradopirata/aculta-suite-out/auth-captcha-live-widget-candidate-20261030/`.
+Isto confirma o comportamento com o provedor externo ativo, não a instalação
+de `CaptchaPresentationHooks`: o Runtime ainda não fornece o token por código.
+THEME-MF3 segue pendente.
+
+Revalidação focal em 2026-10-31 ampliou `/entrar` para as nove larguras
+320/360/390/599/600/768/1024/1280/1440px. Firefox ESR passou **10/10 checks**
+contra o Runtime anônimo. O iframe Turnstile real carregou; a 320px ele mediu
+300px dentro do slot de 300px, e o documento permaneceu em 320px. O marcador
+`data-portal-ui="challenge-frame"` e `base.css`/`auth.css` do worktree foram
+injetados somente na sessão porque o Runtime ainda não contém o hook Portal
+candidato. Assim, o caso candidato está coberto na matriz, mas servir/rebuildar
+o hook e validar a CSS instalada continua pendente. Evidência em
+`/home/piradopirata/aculta-suite-out/auth-route-runtime-resume-20261031/`;
+THEME-MF3 permanece aberto.
+
+Após a repetição da matriz global, executei novamente esse cenário candidato no
+Firefox ESR local com o mesmo iframe externo real: **10/10 checks** nas nove
+larguras, incluindo slot de 300px dentro de viewport de 320px; a captura móvel
+foi inspecionada. Evidência mais recente em
+`/home/piradopirata/aculta-suite-out/auth-challenge-candidate-resume-20261031/`.
+
+Repetição em 2026-11-01, Firefox ESR visível e iframe Turnstile real, focada em
+320/360px: 3/3 verificações passaram. Com `base.css`/`auth.css` da branch e o
+marcador Portal simulado somente na sessão, o iframe coube em slots de 300/308px;
+`documentWidth` e `bodyWidth` coincidiram com o viewport e `scrollX=0`. Evidência
+em `/home/piradopirata/aculta-suite-out/auth-turnstile-resume-20261101/`. Sem a
+injeção, o Runtime ainda mede 328px em viewport 320px; esta repetição não
+substitui servir o hook, limpar cache e testar a implementação integrada.
+O resultado continua condicionado à CSS e ao marcador candidatos injetados; a
+matriz anônima acima segue registrando o overflow real de 328px no Runtime.
+
+### THEME-MF3 — reteste da candidata de autenticação em toda a matriz de shell (2026-10-30)
+
+O baseline anônimo confirmou o único overflow restante no shell a 320px: a home
+do purpose Conta serve `/entrar`, onde o formulário tinha 268px e o desafio
+Turnstile de 300px elevava `documentWidth` a 328px nos modos claro e escuro.
+Firefox ESR repetiu os dez purposes e nove larguras no Runtime. Somente em
+`path-entrar`, a suíte injetou `auth.css` do worktree e simulou no DOM o marcador
+neutro que `CaptchaPresentationHooks` deve emitir. As outras rotas mantiveram
+CSS e markup servidos sem override.
+
+O reteste passou **540/540** verificações em 320/360/390/599/600/768/1024/1280/
+1440px, nos modos claro/escuro e com reduced motion. Todos os shells mantiveram
+Institution Bar e Domain Header únicos, os links textuais do shell passaram a
+medição AA sobre suas superfícies e o documento ficou dentro do viewport.
+Em `/entrar` a 320px, ambos os modos mediram 320px. A captura clara foi
+inspecionada em
+`/home/piradopirata/aculta-suite-out/account-overflow-candidate-320-20261030/`;
+resumo global em
+`/home/piradopirata/aculta-suite-out/purpose-shell-auth-candidate-full-20261030/`.
+
+O teste injeta CSS e marcador no Firefox e não valida a emissão real do hook
+Portal nem o agregado CSS reconstruído no Runtime. O smoke sem JavaScript do
+shell permanece evidência separada e não incluiu esse marcador candidato.
+Zoom, WCAG 2.2 AA, teclado integral e todos os componentes/páginas internas não
+estão cobertos; THEME-MF3 e OCS-F11 continuam pendentes.
+
+### OCS-F3 — reteste atual da composição Fidelity do Hub Studio (2026-10-31)
+
+A fixture reutilizável `studio-card-fidelity.py` passou 243/243 verificações em
+27 larguras (320–1920px), incluindo limites 480/768/992/1100/1120/1360/1920px,
+Montserrat regular/negrito, container, escala tipográfica, dois cards, abas,
+alvos mínimos de 44px e ausência de overflow. As capturas 320 e 1440px foram
+inspecionadas: rótulos longos quebram sem alargar a tela, e o desktop mantém as
+abas em linha e cards em duas colunas. Evidência em
+`/home/piradopirata/aculta-suite-out/ocs-studio-card-current-20261031/`.
+A fixture não contém render Drupal, ACL, cache, estados opcionais nem dashboard
+autenticado OpenCulturas pareado; OCS-F3/F4 continuam parciais e OCS-F11 não
+está aprovado.
+
+### OCS-F4 — Hub real da Conta e conversão dos destinos em SDC (2026-10-31)
+
+Firefox ESR autenticado no Runtime `2493d7535` percorreu a raiz Account em
+320/360/390/599/600/768/1024/1280/1440px com a CSS Fidelity da branch injetada
+somente na sessão. O root `.studio.aculta-account-entry` esteve visível nas
+nove larguras; os headers institucionais foram únicos e não houve overflow.
+A conta possuía cinco links de experiências em todos os tamanhos. Porém a
+captura marcou **FAIL 9/9** nos invariantes do Hub: nenhum link estava dentro do
+SDC `aculta420:card` com variante `studio_fidelity`, e todos mediram somente
+19px de altura. A captura não observou conteúdo de formulários nem enviou dados.
+
+No source branch, `PortalUiHooks::preprocessStudioHub()` envolve os links reais
+no SDC existente preservando `#access`, cache, attachments e render array; os
+testes `PortalUiHooksTest` passaram **26 testes/148 assertions**. A injeção de
+CSS no Firefox não executa esse hook PHP. Portanto o resultado é uma falha do
+consumer servido, não evidência contra a implementação candidata. Runtime:
+host `toca`, checkout `/home/piradopirata/projetos/aculta` em `2493d7535`, URI
+`http://default`, banco `aculta_runtime`, 624 tabelas. Snapshot anterior ao ULI:
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-studio-hub-card-check-20261031.sql`
+(66.006.214 bytes; SHA-256
+`2597ebac5be92f8a6c591d2999de1f03b7727083f76aa2ca925850c63dd95083`).
+Relatório e capturas em
+`/home/piradopirata/aculta-suite-out/studio-hub-cards-20261031/`.
+
+O harness `ocs-baseline.py` agora pode receber `OCS_EXPECT_STUDIO_ROOT`; para o
+Hub, além de exigir root visível dentro de `main`, verifica lista não vazia,
+correspondência de links e cards compartilhados e alvos de 44×44px. Esta matriz
+falhou de forma explícita (`studio_capture_status=FAIL`); o Studio Hub continua
+pendente de render do source branch no Runtime. OCS-F4/F11 e THEME-MF3 não estão
+aprovados.
+
+### OCS-F7 — WE SATIVA no path legado e contraste do shell (2026-10-31)
+
+Firefox ESR visível repetiu `/wesativa` autenticado com a CSS Fidelity candidata
+nas larguras 320/360/390/599/600/768/1024/1280/1440px, em claro e escuro.
+Passaram **279/279 invariantes**: wrapper e seções Wiki, dois estados vazios,
+quatro filtros com estado atual e links de 46px, shell único, isolamento dos
+tokens Fidelity e zero overflow. A suíte também calcula contraste dos links
+textuais da Institution Bar sobre o fundo composto: **11,34:1** no claro e
+**12,95:1** no escuro.
+
+As capturas 320/1440px dos dois modos foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/ocs-f7-wesativa-full-contrast-final-light-20261031/`
+e
+`/home/piradopirata/aculta-suite-out/ocs-f7-wesativa-full-contrast-final-dark-20261031/`.
+Uma leitura intermediária de 3,75:1 ocorreu antes do fim da transição de cor;
+com a espera de 350 ms, Runtime sem override da Institution Bar e token estável,
+a amostra repetida foi 12,95:1 em todos os viewports escuros. Nenhuma correção
+CSS do shell foi necessária. O formulário da Wiki não foi enviado; o conteúdo
+estava vazio e a mensagem de login único é temporária. A rota oficial
+`/studio/we-sativa`, autoria/revisão/moderação preenchidas, grants A/B, AJAX,
+no-JS, zoom, WCAG completa e OCS-F11 seguem pendentes.
+
+### THEME-MF3 — zoom real das raízes públicas (2026-10-31)
+
+`purpose-browser-zoom.py` passou **30/30 checks** no Firefox ESR visível: as dez
+raízes de purpose mantiveram Institution Bar e Domain Header únicos, um `main`,
+H1 visível e sem overflow do documento a 100%, 200% e 400%. A 400%, o viewport
+CSS efetivo foi 320px. Em Conta, `base.css`/`auth.css` candidata e o marcador
+`challenge-frame` foram injetados na sessão; os outros nove purposes usaram o
+Runtime servido. Capturas de 400% em Conta, Cursos, Wiki, Fórum, Revista e
+Eventos foram inspecionadas. A medição de shell não atesta reflow de todos os
+formulários/listas internos; rails horizontais encontrados em Cursos são áreas
+roláveis e precisam de validação de controles/teclado. O hook Portal candidato
+segue não instalado no Runtime. Evidência em
+`/home/piradopirata/aculta-suite-out/purpose-browser-zoom-resume-20261031/`;
+THEME-MF3 continua pendente.
+
+### THEME-MF3 — trilha acessível de Cursos a 400% (2026-10-31)
+
+O consumer real público do SDC `rail` foi revalidado com Firefox ESR: `rail`
+permanece uma região rotulada, focável e internamente rolável a 400% de zoom
+(viewport CSS de 320px), enquanto o documento permanece contido em 320px.
+`ArrowRight` moveu a trilha depois do foco, com três cursos publicados. A rodada
+completa passou **14/14 checks** nos viewports 320/390/768/1440px mais o cenário
+de zoom. Isso confirma esse rail e seu teclado, não os carrosséis/listas de
+outros purposes. Evidência em
+`/home/piradopirata/aculta-suite-out/courses-rail-zoom-resume-20261031/`.
+
+### THEME-MF3 — Revista: capa e publicação a 200%/400% (2026-10-31)
+
+`revista-browser-zoom.py` foi ampliado para seguir o primeiro link público da
+home e medir também o corpo da publicação, além da capa. Firefox ESR visível
+passou **6/6 checks** entre home/publicação a 100%, 200% e 400%; a publicação
+teve H1 único, capa carregada, shell único e nenhum overflow do documento ou
+corpo. A 400%, viewport e documento permaneceram em 320px. As capturas de 400%
+foram inspecionadas. O artigo era conteúdo sintético autorizado no Runtime; o
+teste só fez GET e não submeteu comentários ou formulários. Evidência em
+`/home/piradopirata/aculta-suite-out/revista-article-zoom-resume-20261031/`.
+Isso verifica o reflow desta publicação, sem cobrir outras páginas editoriais,
+interação com comentários, comparação pareada de fidelidade ou WCAG 2.2 AA;
+THEME-MF3 e OCS-F11 continuam pendentes.
+
+Ao fortalecer o teste para exigir corpo visível, a primeira execução falhou em
+3/6: o nó sintético tinha 234 caracteres no banco, mas seu campo usava o formato
+`basic_html`, inexistente no Runtime e no Sync, então o formatter entregava um
+campo vazio. O tema e o Twig não foram alterados por essa descoberta. Após
+snapshot íntegro, atualizei somente o formato dos quatro nós sintéticos
+publicados 599–602 para o formato editorial existente e ativo `revista_editorial`;
+título, texto, mídia, publicação e permissões permaneceram iguais. O Firefox ESR
+repetiu 6/6 em 100/200/400%, agora exigindo texto e altura não nulos para o corpo,
+e gravou capturas focadas no H1 e no corpo a 200/400%. Capturas revisadas e JSON:
+`/home/piradopirata/aculta-suite-out/revista-article-zoom-followup-20261031d/`.
+O snapshot, a mudança restrita a dados de teste e as revisões geradas estão no
+registro de execução. Nenhuma configuração foi importada ou alterada.
+
+### THEME-MF3 — repetição da matriz pública no Runtime (2026-10-31)
+
+No Firefox ESR visível, a matriz anônima cobriu as dez raízes nos nove viewports
+320/360/390/599/600/768/1024/1280/1440px: **90/90 capturas**, sem rotas
+DEFERRED e com Institution Bar e Domain Header únicos em todas. O único overflow
+foi `/conta` a 320px: documento e corpo chegaram a 328px; a captura mostra o
+iframe Turnstile excedendo a coluna. As outras 89 combinações ficaram dentro da
+largura. Evidência e PNGs em
+`/home/piradopirata/aculta-suite-out/purpose-matrix-resume-20261031/`.
+
+A candidata de mitigação já está no código desta branch: o Portal marca o
+desafio com `data-portal-ui="challenge-frame"` e `auth.css` ajusta o formulário
+em container estreito. O Unit do hook passou 2 testes/4 assertions e o lint CSS
+passou. Esses testes não instalam a candidata: no Runtime ainda falta o hook e
+o CSS reconstruído; a falha 328px continua real até validar a integração
+servida. Esta matriz cobre apenas raízes públicas, portanto não aprova
+THEME-MF3 nem OCS-F11.
+
+### Institution Bar mobile durante scroll — reteste anônimo (2026-10-31)
+
+No Runtime servido em `2493d7535`, Firefox ESR visível repetiu o harness
+`institution-bar-scroll.py` nas homes anônimas MAIN (`aculta_org`) e Conta
+(`conta_aculta_org`), em 320 e 390px. **24/24 checks passaram**: posição
+`sticky`, topo estabilizado sem salto entre 50/200/500/1000ms, e barra presa ao
+topo após scroll de 80/240/480px. O teste também preservou uma posição de scroll
+restaurada ao navegar para Conta; ainda assim a barra ficou em `top=0`. Evidência
+em `/home/piradopirata/aculta-suite-out/institution-bar-scroll-followup-20261031/`.
+
+Em Conta/320px, o harness confirmou separadamente o overflow conhecido do
+documento (`328px` para viewport de `320px`, causado pelo Turnstile); isso não
+alterou a geometria sticky. Este reteste anônimo não cobre a toolbar do
+administrador. O cenário autenticado permanece DEFERRED até autenticação
+confirmada; portanto não prova nem exclui a falha móvel relatada quando a barra
+administrativa está presente, e THEME-MF3 segue pendente.
+
+**Complemento autenticado e cross-purpose (2026-10-31):** a conta sintética
+administrativa `aculta_visual_admin` (UID 257) autenticou no Firefox ESR. A
+barra administrativa responsiva estava no fluxo normal em 320/390/1023px e
+fixa em 1024/1280px. No mobile, com scroll de 80px a Institution Bar ainda
+subia junto com o conteúdo; após ultrapassar a barra administrativa, ficou em
+`top=0` nos scrolls de 240/480px. A transição estabilizou sem salto (mudança
+máxima observada de 0px). Em desktop, a barra administrativa ficou fixa em
+64px e a Institution Bar respeitou `top=64px`. **38/38 checks passaram**; as
+capturas mobile antes/depois foram revisadas. Evidência em
+`/home/piradopirata/aculta-suite-out/institution-bar-scroll-admin-followup-20261031/`.
+
+Sem CSS/JS candidato injetado, a matriz anônima foi ampliada aos dez
+purposes configurados no manifesto de deploy, 320/390px: **112/112 checks
+passaram** quanto à estabilização, scroll e topo sticky. Capturas em
+`/home/piradopirata/aculta-suite-out/institution-bar-scroll-all-anonymous-20261031/`.
+O relato intermitente de a barra ficar no meio da tela não foi reproduzido
+nessas amostras; scroll contínuo em dispositivo móvel físico e versões de
+navegador distintas ainda não foram testados. Isto valida o Runtime servido
+`2493d7535`, não a folha candidata atual da branch nem THEME-MF3.
+
+O harness foi fortalecido com 55 leituras por viewport móvel, percorrendo em
+passos de 12px os sentidos de descida e subida em torno do limiar sticky. A
+repetição anônima nos dez purposes passou **130/130 checks**; nove homes tinham
+altura suficiente para executar a sequência contínua, todas com desvio máximo
+de 0px. A repetição administrativa em MAIN passou **40/40 checks**; 55 amostras
+por largura móvel mediram desvio máximo de 0,000007px a 320px e 0px a 390px.
+Resultados em
+`/home/piradopirata/aculta-suite-out/institution-bar-scroll-transition-anonymous-20261031/`
+e
+`/home/piradopirata/aculta-suite-out/institution-bar-scroll-admin-transition-20261031/`.
+Isso reduz a lacuna do teste automatizado para transições rápidas; não reproduz
+gestos físicos do navegador móvel.
+
+### THEME-MF2 — offset sticky mobile independente do Drupal (2026-10-31)
+
+`institution-bar.css` agora fixa `top: 0` abaixo de 64rem. Nesse breakpoint a
+Navigation top-bar administrativa está no fluxo normal; no desktop continua
+valendo `--drupal-displace-offset-top`, inclusive os 64px da barra fixa. Isso
+evita que uma medição Drupal atrasada/stale desloque a Institution Bar depois
+de iniciado o scroll.
+
+Firefox ESR visível nas páginas do Runtime `2493d7535`, com CSS candidata
+injetada somente na sessão, passou 170/170 checks nos dez purposes anônimos a
+320/390px e na conta administrativa MAIN a 320/390/1023/1024/1280px. O reteste
+com a nova asserção de atraso passou
+180/180; em nove homes anônimas e na conta admin, uma variável de deslocamento
+forçada a 64px deixou a barra em `top=0` durante scroll a 320px. A home Links
+não tem rolagem suficiente para alcançar o limiar e aparece explicitamente em
+`staleDisplacementSkips`. Sem JavaScript, os propósitos anônimos passaram
+146/146 checks, incluindo a mesma simulação onde havia altura de rolagem.
+Como controle, sem CSS candidata o cenário no MAIN anônimo passou 14/15:
+somente a nova
+asserção falhou, medindo `top=64px`. O estado normal servido não reproduziu o
+offset stale; a falha de controle demonstra que a regra candidata neutraliza
+esse estado. Capturas foram revisadas, inclusive admin antes e depois do
+scroll. Evidências em
+`/home/piradopirata/aculta-suite-out/institution-bar-top-mobile-candidate-20261031/`,
+`/home/piradopirata/aculta-suite-out/institution-bar-stale-displacement-candidate-20261031/`
+e `/home/piradopirata/aculta-suite-out/institution-bar-stale-displacement-baseline-control-20261031/`.
+Depois da instrumentação explícita dos skips, a home MAIN repetiu a simulação
+focal 15/15 e produziu `staleDisplacementSkips=[]` em
+`/home/piradopirata/aculta-suite-out/institution-bar-stale-displacement-main-retest-20261031/`.
+
+Antes dos dois testes autenticados no Runtime foram salvos snapshots íntegros
+de `aculta_runtime`: `runtime-before-institution-bar-top-mobile-candidate-20261031.sql`
+(SHA-256 `c9b72e9ef41300fcc134c73d27cbeabf2f62803d8f2bf6743b1810c1c9907c11`)
+e `runtime-before-institution-bar-stale-displacement-test-20261031.sql`
+(SHA-256 `18e7d25bfe0fd84dc3c66e6409311faf6d025e36831963a51887ae1ffc8ded68`).
+O stylesheet candidato não está servido no Runtime. O ensaio não reproduz
+gestos físicos nem valida integração/cache após publicação; THEME-MF3 continua
+pendente. A suíte de 146 checks sem JavaScript está em
+`/home/piradopirata/aculta-suite-out/institution-bar-stale-displacement-nojs-20261031/`;
+a verificação focal de página curta, em
+`/home/piradopirata/aculta-suite-out/institution-bar-stale-displacement-short-page-20261031/`.
+
+### THEME-MF3 — formulários anônimos com Turnstile (2026-10-31)
+
+Firefox ESR visível abriu `/entrar`, `/criar-conta` e `/recuperar-senha` no
+Runtime local com o Turnstile real carregado. Para cada GET, injetei na sessão
+as folhas candidatas `base.css`/`auth.css` e simulei no wrapper o marcador
+`data-portal-ui="challenge-frame"`, pois o HEAD servido `2493d7535` ainda não
+contém o hook de apresentação do Portal desta branch. Cada rota passou **10/10
+checks** em 320/360/390/599/600/768/1024/1280/1440px: largura de documento
+igual ao viewport, sem scroll horizontal e slot do desafio com largura máxima
+de 300px em viewport 320px. Capturas/relatórios estão em
+`/home/piradopirata/aculta-suite-out/auth-login-candidate-current-20261031/`,
+`/home/piradopirata/aculta-suite-out/auth-register-candidate-current-20261031/`
+e `/home/piradopirata/aculta-suite-out/auth-reset-candidate-current-20261031/`.
+Não houve submit ou escrita no Runtime. O teste não confirma o hook PHP real ou
+o stylesheet reconstruído/servido; o baseline continua com overflow de 328px
+em `/entrar` a 320px, até a integração da branch ser instalada e retestada.
+
+Reteste isolado em 2026-10-31: `auth-route-runtime.py` abriu `/entrar` anônimo
+por Firefox ESR visível, com GET via proxy local restrito ao host Conta. Usando
+`auth.css`/`base.css` da branch e token de apresentação simulado no DOM, passou
+**10/10 checks** em 320/360/390/599/600/768/1024/1280/1440px; a 320px o
+documento mede 320px e o slot do desafio 300px. Evidência em
+`/home/piradopirata/aculta-suite-out/auth-route-candidate-resume-20261031/`.
+Nenhum formulário foi submetido. Este reteste continua sendo candidato: não
+valida o hook no formulário servido, nem cadastro/recuperação, JavaScript/no-JS,
+teclado, zoom, leitores de tela, WCAG 2.2 AA ou THEME-MF3.
+
+### OCS-F5 — isolar Fidelity do editor de Revista ao path Marley (2026-10-31)
+
+A auditoria de cascata encontrou seletores globais em `tokens.css` e
+`studio.css` que aplicavam Montserrat, tokens e acabamento Next a todo
+`form.node-revista-form`, e ao `.aculta-main` que o contivesse. A classe do
+Form API é compartilhada e não identifica o purpose. A evidência do GET real
+anterior mostra `body.path-marley` no editor de Publicações; todos esses
+seletores agora também exigem esse contexto. O formulário no purpose Magazine
+mantém o visual global e o editor de Publicações no Marley conserva Fidelity.
+
+Firefox ESR visível executou `tests/browser/aculta-studio/studio-form-fidelity.py`
+com as folhas do worktree injetadas em fixture, claro/escuro, 320/390/768/1440px:
+**54/54 checks**. A verificação confirmou ausência do token e do acabamento no
+formulário sob `body.path-magazine`, presença de Montserrat/tokens sob
+`body.path-marley`, alvos de 44px, foco visível e nenhum overflow na fixture.
+Stylelint, ESLint e `git diff --check` passaram. Artefatos:
+`/home/piradopirata/aculta-suite-out/studio-form-fidelity-scope-20261031/`.
+
+Esta é uma correção de isolamento de CSS e uma fixture, não homologação do CSS
+servido no Runtime, do submit Form API, de AJAX/no-JS, ACL, zoom ou WCAG integral;
+OCS-F5, OCS-F11 e THEME-MF3 permanecem parciais/pendentes.
+
+### OCS-F9 — Form API privado do Perfil (2026-10-31)
+
+`AccountBioForm` e `SocialLinkForm` já emitem `studio-bio-form` e
+`studio-social-form` exclusivamente na composição do Perfil Studio. O tema não
+traduzia esses tokens e os formulários full-page ficavam sem tokens/estilos
+Fidelity. `PortalUiHooks` agora traduz ambos para `studio-profile-form`; os
+roots tipográficos e de Form API reutilizam o acabamento existente, sem mudar
+contratos, storage, Form API, rotas ou SDCs. O modal legado de bio na Conta não
+emite esses tokens e permanece no estilo próprio.
+
+Os formulários existentes de apelido e privacidade não emitem token semântico.
+Como as rotas canônicas são `/perfil/apelido` e `/perfil/privacidade`, o tema
+usa `body.path-perfil` e os IDs dos formulários observados no código, mantendo
+o tratamento restrito ao Perfil. A rota geral `/configuracoes/privacidade` fica
+fora deste seletor.
+
+Firefox ESR visível passou **60/60 checks** na fixture com CSS local: bio/redes,
+apelido e privacidade com Montserrat, tokens claro/escuro, campos de texto e
+ações e rótulos de checkbox com 44px, checkbox de 20px, sem overflow em
+320/390/768/1440px; Magazine e modal Conta ficam sem tokens Fidelity, foco
+visível. Capturas da fixture em
+`/home/piradopirata/aculta-suite-out/studio-profile-forms-fidelity-20261031/`.
+Stylelint/ESLint, SDC schema, Design Foundations, fronteira módulo/tema,
+PHPUnit do hook (24/138), PHP lint, PHPCS e `git diff --check` passaram.
+Isto não homologa CSS servida no Runtime nem submissão Form API, privacy A/B,
+AJAX/no-JS, cache, zoom ou WCAG integral; OCS-F9/F11 e THEME-MF3 continuam
+parciais/pendentes.
+
+
+### OCS-F8 — remover destinos comerciais sem operação implementada (2026-10-31)
+
+A revisão do contrato e do consumer confirmou que Pedidos, Estoque, Promoções,
+Clientes, Relatórios e Configurações eram exibidos como links, apesar de suas
+telas conterem apenas aviso genérico. A navegação agora oferece somente Visão
+geral, Produtos e Envios, que têm consumers/controller reais. O requisito
+dinâmico de `secao` e `GreenStashNavigation::SLUGS` foram limitados a esses
+três caminhos; os outros slugs retornam 404 até implementação, controle de
+acesso por loja e gates. A área permanece integrada no Studio; não foi criado
+menu ou shell separado. Firefox ESR visível passou 74/74 checks em nove larguras e claro/escuro,
+confirmando exatamente três links, estado atual, controles 44px/48px e zero
+overflow. Evidências em
+`/home/piradopirata/aculta-suite-out/green-stash-nav-implemented-only-20261031/`.
+A fixture valida CSS e marcação sintética; o Runtime autenticado continua sem
+homologação.
+
+### THEME-MF0 — reconciliação do inventário lexical (2026-10-31)
+
+Ao retomar a auditoria, a execução de
+`scripts/audit-aculta420-responsive-inventory.py` encontrou 208 fontes no tema
+(94 CSS/SCSS/Sass, 12 JavaScript e 102 Twig/HTML), mas o TSV versionado ainda
+listava 206. O arquivo `theme-mobile-file-inventory.tsv` foi regenerado. A
+contagem estrutural atual é 99 blocos `@media`, 1 `@container`, 761 declarações
+dimensionais e 57 declarações de overflow. `git diff --check` passou e a saída
+gerada agora coincide com o artefato versionado.
+
+Esta reconciliação atualiza o índice lexical; não analisa cascata, bibliotecas,
+consumidores por purpose ou geometria renderizada, portanto THEME-MF0 continua
+parcial e THEME-MF3 não está aprovado. Firefox ESR visível passou 10/10 checks
+em `/entrar` com CSS da branch e token de apresentação simulado; o checkout
+servido continua em HEAD `2493d7535`, anterior ao hook CAPTCHA da branch.
+Nenhuma alteração foi feita no Runtime.
+
+### THEME-MF3 — reteste sem JavaScript das dez raízes públicas (2026-10-31)
+
+`purpose-shell-nojs.py` foi executado em Firefox ESR visível com JavaScript
+desativado no navegador, usando os dez domínios de teste configurados. Passou
+**210/210 checks** em 320/390/599/600/768/1024/1440px: Institution Bar e Domain
+Header únicos, documento sem overflow e navegação renderizada (ou busca própria
+da Wiki) disponível. As rotas são as raízes públicas; isto não cobre páginas
+internas, modos com JavaScript, formulários, zoom, teclado ou WCAG 2.2 AA e não
+aprova THEME-MF3. Relatório em
+`/home/piradopirata/aculta-suite-out/purpose-nojs-retest-20261031/results.json`.
+
+### THEME-MF3 — reteste de modo claro/escuro e movimento reduzido (2026-10-31)
+
+`purpose-shell-color-modes.py` percorreu as mesmas dez raízes de teste em
+320/360/390/599/600/768/1024/1280/1440px, com Firefox ESR visível e
+`prefers-reduced-motion` ativo. Passou **540/540 checks** para tokens de modo,
+shell único, ausência de overflow e contraste AA dos links textuais do shell.
+A alternância claro/escuro ocorreu no DOM da sessão. Na rota Conta, `auth.css` e
+`challenge-frame` candidatos foram injetados no navegador; não correspondem ao
+hook instalado no Runtime. O teste não valida preferência persistida, páginas
+internas, teclado completo, zoom, tecnologias assistivas ou WCAG 2.2 AA integral,
+portanto THEME-MF3 permanece pendente. Relatório em
+`/home/piradopirata/aculta-suite-out/purpose-modes-retest-20261031/results.json`.
+
+### THEME-MF3 — teclado Conta: baseline servido e CSS candidata (2026-10-31)
+
+O reteste de teclado no Firefox ESR visível, nas dez raízes públicas em 320 e
+1280px, registrou 333 checks aprovados, um reprovado e quatro SKIP (dois limites
+de sequência em Links e dois focos delegados ao CAPTCHA externo na Conta). A
+única reprovação foi a Conta anônima em 320px: o documento servido no Runtime
+mede 328px. Não houve ativação de links nem submissão. Relatório em
+`/home/piradopirata/aculta-suite-out/purpose-keyboard-retest-20261031/results.json`.
+
+Em execução separada, a Conta foi repetida em 320/1280px com `auth.css` da
+branch e o marcador `challenge-frame` injetados somente na sessão Firefox. Os
+36 checks de foco/overflow passaram; dois focos delegados ao CAPTCHA externo
+foram SKIP. Em 320px, o documento ficou com 320px e o slot do desafio com 300px.
+O harness `purpose-shell-keyboard.py` oferece
+`PURPOSE_KEYBOARD_AUTH_CANDIDATE=1` para reproduzir essa comparação; o README
+registra o escopo da injeção. Evidência em
+`/home/piradopirata/aculta-suite-out/account-keyboard-candidate-20261031/results.json`.
+
+A comparação confirma o reflow da folha candidata, mas não demonstra que o hook
+está instalado no Runtime: ele continua no HEAD `2493d7535`, anterior a esta
+correção da branch. O teste também não valida o interior do widget de terceiro,
+zoom, leitor de tela ou WCAG 2.2 AA integral. THEME-MF3 permanece pendente.
+
+### OCS-F10 / THEME-MF2 — apresentação de Meus Salvos (2026-10-31)
+
+`/salvos` no purpose Conta já emite tokens `studio-saved-*` para abas, lista,
+metadados, badges, paginação e estado vazio. O tema passou a aplicar a esses
+consumers a tipografia, superfícies e foco Fidelity existentes, com base em
+320px e wrapping progressivo. Nenhum SDC foi criado e nenhum controller,
+render array, consulta, permissão, cache ou ação foi alterado.
+
+Firefox ESR visível passou **131/131 checks** na fixture local em 320/360/390/
+599/600/768/1024/1280/1440px, claro/escuro. Foram verificados reflow sem
+overflow, uma aba atual, alvos de pelo menos 44px, cartões, superfícies por modo,
+contraste 16,48:1/15,48:1 para metadados, estado vazio e quatro destinos de
+foco por Tab com outline de 3px. Capturas
+320/1440px de ambos os modos foram inspecionadas; evidências em
+`/home/piradopirata/aculta-suite-out/studio-saved-content-fidelity-20261031/`.
+
+A fixture usa conteúdo demonstrativo e estrutura equivalente ao `item_list`; não
+abre `/salvos` no Runtime, não prova HTML final, privacidade/cache A/B, ACL por
+entidade, disponibilidade de módulos opcionais, zoom nem WCAG integral. Não se
+afirma paridade direta de uma biblioteca pessoal com uma página upstream
+autenticada. THEME-MF3 e OCS-F11 permanecem pendentes.
+
+### THEME-MF3 / OCS-F11 — reconciliação dos gates no HEAD atual (2026-10-31)
+
+No worktree da branch, os gates estáticos executados passaram: fronteira
+módulo/tema (3489 verificações), mapa módulo/tema (213), documentação Portal UI
+(518 tokens no mapa, 421 usados, 149 atributos), Design Foundations (2429) e
+schemas SDC (55 componentes, 27 includes, 759 verificações). Stylelint também
+passou depois da tela Salvos.
+
+O validador de fundação integrado não pôde ser executado nesse worktree, pois
+ele não tem bootstrap/DB; a execução direta terminou sem container Drupal.
+Read-only no checkout servido, Drush confirmou Runtime `aculta_runtime`, URI
+`http://default` e HEAD `2493d7535`. O validador desse HEAD falhou ao comparar
+templates: a versão servida ainda não inclui em sua allowlist
+`views/views-view--revista-sessoes--page-revista.html.twig`, que está presente
+no checkout; a versão fonte da branch já lista os 47 templates e sua comparação
+estática não encontrou extras ou ausências. Não houve troca de HEAD nem escrita
+no Runtime. O checkout servido também tem quatro arquivos de Eventos com
+alterações locais paralelas, preservadas intactas.
+
+O estado de validação integrada é **DEFERRED/BLOCKED pela revisão servida**, e
+esta amostra não aprova THEME-MF3 nem OCS-F11. A validação visual recente de
+Meus Salvos continua sendo fixture local, não consumer integrado.
+
+### OCS-F9 — modal privado de bio da Conta (2026-10-31)
+
+O token existente `account-bio-dialog` mantém a classe de tema
+`aculta-account-bio-dialog`, usada para dimensionar o diálogo, e agora também
+recebe a classe de apresentação reutilizada `studio-profile-form`. Assim o
+campo e as ações Limpar/Salvar do modal compartilham tipografia, superfícies e geometria dos
+formulários privados de bio do Perfil. A mudança ficou no mapa visual do tema;
+Form API, rota JSON/AJAX, estado, dados e comportamento de Conta não mudaram.
+Magazine e formulários sem esse token seguem sem Fidelity.
+
+`studio-form-fidelity.py` passou **66/66 checks** no Firefox ESR em 320/390/
+768/1440px, claro/escuro. Em todas as combinações o campo e as ações Limpar/Salvar do modal
+mediram 44px, Montserrat e tokens de texto esperados; não houve overflow. O
+formulário não foi enviado. A fixture simula o resultado de `PortalUiHooks`, não
+prova CSS servida ou diálogo AJAX real; não cobre ACL, cache, no-JS, zoom nem
+WCAG integral. OCS-F9, S-R5 e OCS-F11 continuam pendentes.
+
+### THEME-MF3 / OCS-F9 — artigo da Revista, viewports e zoom (2026-10-31)
+
+`revista-browser-zoom.py` executou no Firefox ESR visível contra o Runtime, com
+o conteúdo sintético autorizado no formato editorial ativo. Passou **15/15
+checks**: raiz pública e artigo com corpo realmente renderizado, capa carregada,
+Institution Bar e Domain Header únicos, sem overflow em 320/360/390/599/600/768/
+1024/1280/1440px, e artigo legível sem overflow horizontal a zoom 200% e 400%.
+Capturas do título e do corpo em 320/1440px e nos dois níveis de zoom ficam em
+`/home/piradopirata/aculta-suite-out/revista-article-matrix-20261031/`.
+
+Uma rodada adicional passou os mesmos 15 checks com folhas da branch injetadas
+somente na sessão do browser. A geometria medida em 1440px permaneceu igual à
+folha servida pelo Runtime; portanto essa rodada não evidencia diferença de
+CSS, nem que o Runtime esteja no HEAD da branch. Os dois testes são focais: não
+validam ACL/privacidade entre contas, envio de comentários, teclado completo,
+leitor de tela ou WCAG 2.2 AA integral. Não aprovam THEME-MF3 nem OCS-F11.
+Relatório da sessão candidata em
+`/home/piradopirata/aculta-suite-out/revista-article-candidate-20261031/`.
+
+### THEME-MF2 — ordem visual do artigo público da Wiki (2026-10-31)
+
+A auditoria no Firefox ESR visível encontrou que `.aculta-wiki-article__aside`
+era forçado à primeira linha da grade também no mobile, embora o template
+coloque o conteúdo principal antes do aside no DOM. A folha servida falhou a
+ordem visual em 320/360/390/599/600px; os nove viewports mantiveram shell e
+documento sem overflow. A CSS do tema define agora `grid-row: auto` na base,
+preservando a ordem de leitura no mobile e a coluna lateral a partir de 768px.
+
+Depois, a verificação foi consolidada no harness Wiki existente. Com as folhas
+locais injetadas somente na sessão Firefox, home, listagem, busca e verbete
+passaram **302/302 verificações** em doze larguras (320/360/390/575/576/600/640/
+767/768/1024/1280/1440px), incluindo a ordem visual do main/aside e o 404 do
+caminho interno `/wiki`. Capturas foram revisadas em
+`/home/piradopirata/aculta-suite-out/aculta-wiki-full-candidate-20261031/`.
+O baseline servido reprovou a ordem visual em cinco larguras abaixo de 768px;
+isto confirma que o Runtime ainda não recebeu a correção. A rodada não cobre
+revisão autenticada, ACL, discussão, teclado, zoom real, modos de cor ou WCAG
+2.2 AA integral, e não aprova THEME-MF3.
+Stylelint passou; Design Foundations passou 2429 checks; schemas SDC passaram
+55 componentes/27 includes/759 verificações; fronteira módulo/tema passou 3489
+verificações; mapa módulo/tema passou 213 checks.
+
+
+### THEME-MF2 — tópico e resposta real do Fórum (2026-10-31)
+
+`forum-topic-layout.py` descobriu na home pública um tópico publicado com uma
+resposta e passou **10/10 verificações** em Firefox ESR visível, com as folhas
+`forum-index.css`, `discussion.css` e `author-card.css` injetadas somente na
+sessão. Em 320/360/390/599/600/768/1024/1280/1440px, o artigo manteve corpo e
+autoria visíveis, resposta presente, Institution Bar e Domain Header únicos,
+sem erro visível ou overflow horizontal. Capturas 320/768/1440px em
+`/home/piradopirata/aculta-suite-out/forum-topic-layout-candidate-final2-20261031/`
+foram inspecionadas. O script só faz GETs e não envia comentários.
+
+A prova cobre um tópico público pequeno e não valida tópicos longos, paginação,
+formulário de resposta, usuários autenticados, privacidade, teclado, zoom, claro/
+escuro ou WCAG 2.2 AA; o Runtime continua servindo o CSS anterior à branch.
+THEME-MF3 permanece pendente.
+
+### THEME-MF2 — contrato de apresentação do CAPTCHA no Portal (2026-10-31)
+
+O hook neutro `CaptchaPresentationHooks` já marca o elemento `#type=captcha`
+com `data-portal-ui="challenge-frame"` após o alter do módulo `captcha`, sem
+alterar Form API ou comportamento do desafio. A cobertura Unit foi ampliada para
+proteger também essa ordem de execução; PHPUnit passou **3 testes/8 assertions**,
+PHP lint e PHPCS passaram. A folha candidata mantém o reflow em formulários
+estreitos, mas o Runtime em `2493d7535` ainda não serve o hook nem o CSS atual.
+Essa regressão de metadados não substitui a validação do formulário renderizado,
+JavaScript/no-JS ou o gate THEME-MF3.
+
+### THEME-MF3 — reteste pareado Conta/320px (2026-10-31)
+
+Firefox ESR visível repetiu o caso anônimo `/entrar` no mesmo Runtime/HEAD
+`2493d7535`: o baseline mediu `documentWidth=328` para viewport de 320px. Na
+sessão candidata, `auth.css` do worktree e o token neutro
+`data-portal-ui="challenge-frame"` foram aplicados somente no browser; a medida
+foi `320px`, sem overflow. Foco no formulário e navegação reversa permaneceram
+visíveis; baseline 2/3 checks (a única falha foi o overflow), candidato 5/5.
+Captura candidata inspecionada. Relatórios e PNGs fora do Git:
+`/home/piradopirata/aculta-suite-out/account-overflow-320-baseline-f6805cf4b/`
+e `/home/piradopirata/aculta-suite-out/account-overflow-320-rerun-f6805cf4b/`.
+
+O pareamento confirma a correção visual quando contrato Portal e CSS estão
+integrados, mas a sessão simulou o token e não prova código servido: o Runtime
+continua sem `CaptchaPresentationHooks` e sem a folha atual. A falha integrada
+permanece aberta, não se considera o baseline substituído e THEME-MF3 continua
+pendente até validar o hook, CSS compilada e formulário servido em toda a matriz.
+
+### Revalidação candidata no Runtime local — Conta/320px e matriz (2026-10-31)
+
+O overflow também apareceu na captura anônima da raiz Conta como
+`documentWidth=328` em viewport 320px. Reabri `/entrar` em Firefox ESR visível
+contra o mesmo Runtime, agora comparando a CSS atual do worktree em
+320/360/390/575/576/599/600/768/1024/1280/1440px. O candidato passou 12/12
+checks: documento e corpo ficaram na largura da viewport; o desafio carregado
+mediu 300px no slot de 300px a 320px e 308px a 360px; o formulário não teve
+scroll horizontal. A captura de 320px foi inspecionada.
+
+Esta rodada injetou `base.css`/`auth.css` e simulou no DOM o token
+`data-portal-ui="challenge-frame"`; ela não comprova a execução do hook PHP no
+Runtime. O `CaptchaPresentationHooksTest` passou 3 testes/8 assertions; PHP
+lint, PHPCS e Stylelint passaram. PHPUnit emitiu o aviso de que
+`sites/simpletest/browser_output` não é gravável, mas terminou com exit 0. O
+Runtime ainda serve a baseline que mede 328px; validação server-side integrada,
+sem JavaScript e após rebuild continuam pendentes, portanto THEME-MF3 não passa.
+Evidência em
+`/home/piradopirata/aculta-suite-out/account-overflow-followup-20261031/`.
+
+O mesmo candidato passou mais **12/12 checks** com JavaScript da página
+desativado, nas mesmas onze larguras. A CSS e o token foram injetados por
+WebDriver depois da renderização server-side; a medição confirma o reflow sem
+scripts da página (`window.Drupal` estava ausente), mas não a descoberta do hook
+PHP no Runtime. A captura de 320px está em
+`/home/piradopirata/aculta-suite-out/account-overflow-nojs-verified-followup-20261031/`.
+
+### THEME-MF2 — proporção do fallback de capa da Revista (2026-10-31)
+
+O arquivo concreto do OpenCulturas 3.1.5,
+`profile/themes/opcult/templates/node/teasers.scss`, define a capa sem imagem com
+`inline-size: 100%` e `aspect-ratio` paisagem; o placeholder de fundo não impõe
+altura mínima. O CSS compilado define `--oc-aspect-ratio-landscape: 16/9`. A
+comparação usou o tarball oficial SHA-256
+`2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`.
+
+A capa decorativa ACULTA também declarava 16:9, mas `min-height: 11rem` elevava
+286×176px a 320px, enquanto a imagem real media 286×161px. Removi essa altura
+mínima conflitante. O fallback continua preenchendo a coluna principal na
+composição desktop a partir de 992px. O harness agora mede erro de proporção
+máximo de 1 CSS px abaixo de 992px, além de claro/escuro, grade e overflow.
+Firefox ESR visível com CSS candidata injetada e markup fallback sintético
+passou **19/19 verificações** nos nove viewports: em 320px o fallback mede
+286×160,88px (erro de 0,01px); as imagens editoriais reais continuam carregadas,
+as colunas seguem 1/2/3 conforme os breakpoints, o shell permanece único e não
+há overflow. Capturas 320/1440px foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/revista-cover-ratio-20261031-f6805cf4b/`.
+Modo claro/escuro foi medido no fallback. A sessão candidata não executa o Twig
+nem atualiza o CSS servido; integração final e THEME-MF3 continuam pendentes.
+
+### THEME-MF2 / OCS-F9 — endereço canônico com zoom real (2026-10-31)
+
+O harness reutilizável `tests/browser/aculta-theme-mobile-first/account-address.py`
+agora mede zoom real de 200% e 400% no Firefox ESR, com JavaScript e no-JS. No
+Runtime do servidor de desenvolvimento, `/dados/endereco` passou **50/50
+checks**: contrato único de campos e behavior CEP (JS), rotas/menu, ausência de
+overflow em nove larguras JS e quatro no-JS, além de viewport efetivo de 640px
+e 320px em 200%/400%, sem overflow horizontal e com o campo CEP visível. As
+capturas ampliadas foram inspecionadas. Não foram preenchidos nem enviados
+campos; o navegador usou somente ULI da conta sintética UID 5.
+
+Antes da sessão, host `toca`, checkout servido `2493d7535`, URI
+`http://default`, banco `aculta_runtime` e 624 tabelas foram confirmados. O
+snapshot está em
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-account-address-zoom-20261031-full.sql`
+(65.429.156 bytes, modo 0600, SHA-256
+`172736668b42d79534a6d781dda004723374090cdb75c0a1f20914ab5b3c0b3a`). Os
+artefatos da sessão estão em
+`/home/piradopirata/aculta-suite-out/account-address-zoom/`.
+
+É evidência focal do formulário canônico: não verifica lookup ao vivo do CEP,
+submissão, ACL entre contas, teclado completo, leitor de tela ou WCAG 2.2 AA
+integral. Não homologa as demais telas/purposes, THEME-MF3, OCS-F9 ou OCS-F11.
+
+### OCS-F8 / THEME-MF2 — estado visual da Visão geral Green Stash (2026-10-31)
+
+A revisão do fixture existente encontrou que ele exercitava Produtos e Envios,
+mas não verificava o aviso real da Visão geral. O `opcult` 3.1.5 apresenta
+mensagens informativas persistentes como caixas em `_messages.scss`; sua
+hierarquia serviu de referência, sem copiar CSS. `.aculta-green-stash > p` agora
+usa tokens Fidelity, barra de início lógica, padding e wrapping, mantendo a
+mensagem de preparação explícita e sem sugerir ações comerciais ausentes.
+
+Firefox ESR visível passou **114/114 verificações** em nove larguras, claro/
+escuro e zoom real 200%/400%. Visão geral e Produtos preservaram seus avisos
+exatos; contraste medido foi 15,25:1/11,17:1, sem overflow, com todos os seis
+links, dois cartões, busca e avisos dentro de viewport CSS 640px/320px. Capturas
+de Produtos e Visão geral em 320/390/1440px e zoom 200/400% foram revisadas em
+`/home/piradopirata/aculta-suite-out/green-stash-zoom-rerun-20261031/`.
+
+É fixture local da folha candidata. Runtime com operador autorizado, isolamento
+entre lojas, dados Commerce, fluxos de escrita e WCAG integral continuam
+pendentes; OCS-F8/F11 e THEME-MF3 não estão aprovados.
+
+### THEME-MF2 — capa pública da Revista, teclado e zoom (2026-10-31)
+
+Firefox ESR visível abriu a raiz `magazine:/` no Runtime anônimo, confirmou a
+View real com hero, quatro publicações com capas carregadas e os dois headers
+globais únicos. No CSS servido pelo Runtime em HEAD `2493d7535`, o teste ampliado
+passou 5/28 checks e falhou 23/28: presença estrutural, foco por teclado e
+contraste passaram, mas os alvos falharam nos nove viewports, no zoom e com
+JavaScript desativado; os CTAs mediram 19px.
+
+Com `revista-listing.css` do worktree injetada somente na sessão Firefox, os nove
+viewports passaram: grade 1/2/3 colunas, zero overflow, imagens carregadas, shell
+único e títulos/CTAs com pelo menos 44px. Tab real via WebDriver alcançou título
+e CTA em 320px, ambos com `:focus-visible`, outline sólido de 3px e totalmente
+dentro do viewport. Os tokens servidos passaram contraste de 12,40:1 em claro e
+14,50:1 em escuro. A 200% e 400%, os links mantiveram 44px ou mais, sem overflow;
+scroll instantâneo trouxe títulos e CTAs para a área visível. Com JavaScript do
+site desativado, links nativos, shell, conteúdo, colunas e alvos também passaram
+nas nove larguras. Total candidato: 28/28. Capturas revisadas em
+`/home/piradopirata/aculta-suite-out/revista-cover-zoom-final-20261031/`;
+baseline sem injeção em
+`/home/piradopirata/aculta-suite-out/revista-cover-zoom-reachability-baseline-final-20261031/`.
+Capturas e relatórios da execução expandida sem JavaScript em
+`/home/piradopirata/aculta-suite-out/revista-cover-nojs-candidate-20261031/` e
+`/home/piradopirata/aculta-suite-out/revista-cover-nojs-baseline-20261031/`.
+
+O harness `revista-browser-zoom.py` também foi repetido no Runtime em
+2026-10-31: home e publicação existente passaram 15/15, incluindo zoom real
+200/400%, larguras 320–1440px no artigo, corpo/capa reais e zero overflow.
+Capturas e resumo em `/home/piradopirata/aculta-suite-out/revista-cover-zoom-20261031/`.
+Este teste não prova os alvos de link, cobertos separadamente acima.
+
+Estados de erro/vazio, reduced motion quando aplicável, leitor de tela e
+WCAG 2.2 AA integral continuam sem validação. A folha candidata não foi servida
+pelo Runtime; o resultado não aprova THEME-MF3 nem OCS-F11.
+
+Reexecução em 2026-10-31 com a mesma folha candidata passou novamente **28/28**.
+As capturas de 320 e 1440 px foram revisadas; os quatro cartões mantêm a grade,
+as imagens carregadas, alvos mínimos e shell global. Relatório e imagens desta
+rodada em `/home/piradopirata/aculta-suite-out/revista-cover-resume-20261031/`.
+Na árvore local, CSS lint, JS lint, schemas SDC (55 componentes/759 checks),
+Design Foundations (2429 checks) e fronteira módulo/tema (3491 verificações)
+também passaram; esses gates estáticos não substituem a integração servida.
+
+### OCS-F8 / THEME-MF2 — formulários Green Stash em zoom (2026-10-31)
+
+Firefox ESR visível, fixture local do tema: **186/186 checks** no Green Stash
+integrado, com listagem, detalhe de produto e formulário de rascunho, em
+320/360/390/599/600/768/1024/1280/1440px, claro/escuro, foco e zoom real
+200/400%. A execução identificou `min-width:auto` no formulário de criação,
+causando overflow a 320px e 400%; o tema agora limita o formulário ao container
+com `min-width:0`. Evidência e capturas em
+`/home/piradopirata/aculta-suite-out/green-stash-detail-create-homologation-20261031/`.
+É CSS candidata em fixture, sem submissão, acesso a Runtime, teste de grants por
+loja ou validação de conteúdo real; não aprova THEME-MF3 nem OCS-F11.
+
+### OCS-F6 / THEME-MF2 — Ganjalab LMS no Runtime (2026-10-31)
+
+A rota de propósito resolvida pelo `DomainPurposeManager` é
+`https://cursos.aculta.toca.net.br/ganjalab`. Com CSS Fidelity da branch injetada
+somente no Firefox, a conta sintética `teste.comum` passou 11/11 invariantes em
+cada uma das larguras 320/390/768/1024/1440px: Montserrat e headings aplicados,
+duas mensagens vazias de curso/certificados, shell multidomínio único,
+contraste AA nos links utilitários e nenhum overflow. As cinco capturas foram
+inspecionadas; em 1440px a composição LMS completa está visível. Evidência em
+`/home/piradopirata/aculta-suite-out/ganjalab-card-candidate-correct-domain-20261031/`.
+A CSS foi injetada em uma página Runtime apenas para avaliação: não prova entrega
+servida, cursos matriculados, ACL de turma, zoom, teclado, no-JS ou WCAG integral.
+OCS-F6/F11 e THEME-MF3 permanecem pendentes.
+
+### THEME-MF2 — navegação do shell de Conta em duas colunas (2026-10-31)
+
+Uma captura mobile do shell autenticado mostrou 12 entradas contextuais em uma
+coluna antes do conteúdo da experiência. A sanfona nativa existente agora usa
+uma grade de duas colunas abaixo de 768px; a seção aberta e Sair ocupam toda a
+linha, a ordem DOM permanece igual ao menu desktop e os alvos medem 56px. A
+composição observada reduziu 12 itens para 7 linhas sem overflow. `account-shell.py`
+passou 39/39 checks com CSS candidata em modo claro e 39/39 em escuro, nos dez
+viewports 320/360/390/599/600/767/768/1024/1280/1440px. Capturas em
+`/home/piradopirata/aculta-suite-out/account-shell-two-column-final2-20261031/`
+e `/home/piradopirata/aculta-suite-out/account-shell-two-column-dark-20261031/`.
+É validação de folha injetada; CSS servida, teclado completo, zoom, ACL entre
+contas e WCAG integral seguem pendentes. Não aprova THEME-MF3.
+
+### OCS-F10 / THEME-MF2 — título único em Meus Salvos (2026-10-31)
+
+A captura autenticada de `/salvos` revelou o título genérico da rota junto do
+H1 descritivo da biblioteca na mesma tela. A folha do tema agora oculta o
+heading genérico somente quando o consumer `.studio-saved-page` está presente;
+o H1 do conteúdo e o breadcrumb continuam visíveis. `ocs-baseline.py`, com CSS
+candidata injetada no Firefox ESR, passou os três checks de heading em cada
+largura 320/390/768/1024/1440px: um H1 visível, contexto de rota preservado e
+zero duplicação de título; shell único e sem overflow. Capturas/relatório em
+`/home/piradopirata/aculta-suite-out/saved-content-heading-candidate-20261031/`.
+Nenhum conteúdo foi alterado e a folha ainda não está servida. Cache privado
+A/B, ACL por entidade, zoom, teclado, no-JS e WCAG integral permanecem pendentes.
+
+### OCS-F9 / THEME-MF2 — alvos de ação do Perfil (2026-10-31)
+
+O baseline autenticado do Runtime encontrou sete links nos SDCs `profile-identity`,
+`profile-bio` e `profile-social` com somente 19px de altura. O CSS dos três
+componentes agora define altura mínima de 44px para links e botões dentro das
+ações. CSS candidato injetado na sessão Firefox ESR passou 7/7 alvos em cada
+largura 320/390/768/1024/1440px (44px; 48px nos três links de identidade em
+768/1024px), sem overflow. Em modo escuro, 320/390 também passaram 7/7. Capturas
+foram revistas em 320/1440px; a de 320px inclui o aviso transitório de login.
+Relatórios em
+`/home/piradopirata/aculta-suite-out/profile-action-target-baseline-20261031/`,
+`/home/piradopirata/aculta-suite-out/profile-action-target-candidate-20261031/`
+e `/home/piradopirata/aculta-suite-out/profile-action-target-dark-20261031/`.
+O CSS ainda não está servido no Runtime. Teclado completo, zoom, no-JS, contraste
+WCAG e regressão entre contas seguem pendentes; não aprova MF3 ou F11.
+
+### OCS-F9 / THEME-MF2 — Perfil em zoom real (2026-10-31)
+
+O harness `ocs-baseline.py` agora tem modo focal `OCS_PROFILE_ACTION_ZOOM=1`.
+No Firefox ESR visível, com a folha candidata injetada apenas na sessão, o
+Runtime autenticado passou **2/2 níveis de zoom**: 200% (viewport CSS de 640px)
+e 400% (320px). Nos dois níveis, os sete links de identidade, bio e redes
+mediram 44px de altura, ficaram dentro da largura visível e o documento/corpo
+não teve overflow horizontal. Capturas e `baseline.json` em
+`/home/piradopirata/aculta-suite-out/profile-action-zoom-gate-20261031/`.
+A execução focal separada percorreu por Tab os sete links a 320px; **7/7**
+foram alcançados com `:focus-visible`, contorno sólido de 3px, alvos de pelo
+menos 44×44px e limites horizontais dentro da viewport. Relatório em
+`/home/piradopirata/aculta-suite-out/profile-action-keyboard-20261031/`.
+A execução não envia formulários e não altera dados; o zoom do Firefox foi
+restaurado pelo script. É CSS candidata, não CSS servida. Percurso completo de
+teclado, leitor de tela, contraste completo, A/B de privacidade e
+OCS-F11/THEME-MF3 continuam pendentes.
+
+### OCS-F5 / THEME-MF2 — título duplicado do Marley (2026-10-31)
+
+A captura autenticada detectou dois H1 no painel Marley: o título genérico da
+rota `ACULTA Studio Marley` e o H1 próprio do workspace `O que vamos criar hoje?`.
+O tema agora oculta somente `.aculta-page-heading` quando `body.path-marley`
+contém o marcador real `[data-aculta-studio="root"]` e o título de contexto do
+workspace. `ocs-baseline.py`, com CSS candidata injetada apenas no Firefox ESR,
+passou 5/5 verificações por largura em 320/390/1440px: um H1 do workspace,
+título genérico oculto, marcador e heading presentes, breadcrumb preservado e
+zero overflow. Capturas revisadas em
+`/home/piradopirata/aculta-suite-out/marley-single-heading-final-20261031/`.
+O Runtime ainda não serve essa CSS; outros paths Marley, teclado/no-JS e a
+comparação autenticada com OpenCulturas permanecem pendentes. Não aprova F5,
+THEME-MF3 ou F11.
+
+### OCS-F5 / THEME-MF2 — navegação móvel das áreas Marley (2026-10-31)
+
+A captura candidata da rota Marley mediu os cinco links de área (`Revista`,
+`Fórum`, `Wiki`, `Cursos`, `Galerias`) no Runtime autenticado. A 320/390px, a
+lista quebra em duas linhas, os alvos medem 44px de altura ou mais, cabem na
+viewport e não criam overflow interno; em 1440px permanecem na mesma linha. O
+harness acrescentou esses invariantes e passou 5/5 por largura em
+320/390/1440px, sem falhas. Evidência em
+`/home/piradopirata/aculta-suite-out/marley-navigation-targets-20261031/`.
+Nenhum código CSS foi alterado nesta verificação; a validação do Studio completo,
+contraste, teclado/no-JS, zoom e comparação pareada com OpenCulturas permanecem
+pendentes.
+
+### THEME-MF2 / OCS-F9 — Perfil público anônimo e isolamento de Fidelity (2026-10-31)
+
+A conta sintética de teste já tinha link público; ele foi lido no `/perfil` sem
+submeter formulário, e a URL canônica `/u/pessoa-5` abriu em Firefox ESR numa
+sessão sem login no domínio MAIN. Com a folha Fidelity candidata carregada apenas
+na sessão, o perfil continuou fora do Studio: SDC `.portal-profile` presente,
+zero marcadores `data-aculta-studio`, tokens Fidelity ausentes, fonte Inter
+preservada (sem Montserrat), um H1, Institution Bar/Domain Header únicos e sem
+overflow. **11/11 invariantes passaram** em 320/390/768/1024/1440px; os quatro links
+sociais mediram 44,4px e permaneceram no viewport. Capturas revisadas em 320 e
+1440px; relatório em
+`/home/piradopirata/aculta-suite-out/profile-public-accessibility-redacted-20261031/`.
+O teste focal adicional passou por Tab nos quatro links: todos receberam
+`:focus-visible`/contorno sólido de 3px a 320px. Zoom real Firefox 200/400%
+também passou para os quatro links, sem overflow, com viewport CSS de 640/320px;
+evidência em
+`/home/piradopirata/aculta-suite-out/profile-public-accessibility-redacted-20261031/`.
+O modo anônimo reutilizável `OCS_STUDIO_ANONYMOUS=1` não cria ULI nem registra
+o texto do perfil no JSON. Isto valida uma conta pública sintética, não A/B de
+privacidade/campos, leitor de tela, zoom de toda a página ou WCAG integral;
+S-R4/S-R5, THEME-MF3 e OCS-F11 seguem pendentes.
+
+### THEME-MF3 — revalidação completa de modos e reduced motion (2026-10-31)
+
+Nova execução Firefox ESR visível do shell global nos dez purposes, nove larguras
+(320/360/390/599/600/768/1024/1280/1440px), claro/escuro e
+`prefers-reduced-motion`: o Runtime baseline passou **565/576** checks. As 11
+falhas foram o overflow de `/entrar` a 320px em claro e escuro (`documentWidth`
+328px), mais contraste de 1,14:1 no botão Google em tema escuro, nas nove
+larguras. Relatório: `/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-baseline-followup-20261031/`.
+
+Repetindo a matriz com `PURPOSE_MODE_AUTH_CANDIDATE=1`, a combinação candidata
+passou **576/576**. No botão Google, os estados normal e hover ficaram entre
+11,34:1 e 12,4:1. O candidato injeta CSS e marcador neutro somente na rota
+`/entrar`; o restante da matriz usa CSS/markup do Runtime. Relatório:
+`/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-candidate-followup-20261031/`.
+As capturas de Conta em 320px foram inspecionadas. Esses resultados isolam a
+causa e verificam a candidata sobre o Runtime, mas não confirmam hook/CSS
+instalados nem resolvem as demais coberturas de MF3. O Runtime segue no baseline;
+THEME-MF3 permanece pendente.
+### THEME-MF3 — revalidação de foco global e overflow de Conta (2026-10-31)
+
+Firefox ESR visível percorreu Tab/Shift+Tab nas dez raízes anônimas, em
+320/390/768/1280px. O JSON registrou 674 resultados: **663 PASS, 10 SKIP e um
+FAIL**. O único FAIL é o overflow documentado de `/entrar` a 320px
+(`documentWidth=328px`). Os SKIPs cobrem sequência curta ou foco delegado ao
+CAPTCHA de terceiro; não foram contados como aprovação. Evidência:
+`/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-followup-20261031/`.
+
+Em A/B focal de Conta, a suíte injetou `auth.css` e o marcador neutro candidato
+somente na sessão Firefox. Passou **72/72**, com quatro SKIPs de limite de
+sequência, em 320/390/768/1280px; a largura do documento coincidiu com o
+viewport também a 320px. Evidência:
+`/home/piradopirata/aculta-suite-out/account-keyboard-candidate-followup-20261031/`.
+O resultado exercita CSS/markup candidato, não o hook instalado. O Runtime segue
+com o overflow e THEME-MF3 permanece pendente.
+
+Reprodução diagnóstica focal em 2026-10-31: o iframe Turnstile requer 300px na
+coluna de 268px, elevando `body.scrollWidth` a 328px. Com `challenge-frame` e
+`auth.css` candidatos, o formulário mede 300px e o documento permanece em 320px;
+Firefox passou 5/5 checks focais. O hook de apresentação já está na branch, mas
+não no Runtime `2493d7535`; nenhum fallback de CSS ou mudança funcional foi
+adicionado. O modo diagnóstico reutilizável está documentado no README do
+harness. Relatórios em
+`/home/piradopirata/aculta-suite-out/account-overflow-baseline-diagnostic-320-20261031/`
+e `/home/piradopirata/aculta-suite-out/account-overflow-candidate-diagnostic-320-final-20261031/`.
+### THEME-MF3 — H1 e shell nas dez raízes públicas (2026-10-31)
+
+`purpose-headings.py` passou **119/120** verificações em Firefox ESR visível,
+nas dez raízes e larguras 320/390/600/768/1024/1440px. H1 visível dentro de
+`main#main-content` e Institution Bar/Domain Header únicos passaram em todas as
+combinações. A falha única foi o overflow já conhecido de `/entrar` a 320px
+(`documentWidth=328px`). Evidência:
+`/home/piradopirata/aculta-suite-out/purpose-headings-followup-20261031/`.
+Isso reforça a pendência de validação servida do candidato; não abre outro defeito
+de heading e não aprova THEME-MF3.
+### THEME-MF0 — inventário responsivo regenerado (2026-10-31)
+
+`audit-aculta420-responsive-inventory.py --write` conferiu e atualizou o TSV
+canônico depois de mudanças CSS recentes. O inventário cobre **208 fontes**: 94
+estilos, 12 arquivos JS e 102 Twig/HTML. Cinco registros CSS foram atualizados:
+`profile-bio`, `profile-identity`, `profile-social`, `portal-account` e `studio`.
+A inspeção lexical organiza a auditoria, mas não substitui a revisão de cascata
+nem os testes visuais por componente/rota.
+### THEME-MF0/MF2 — perfil das media queries (fotografia anterior)
+
+A leitura anterior encontrou 99 media queries em 47 arquivos e precede a
+supressão da Navigation top-bar mobile. A regra mobile focal adicionou a única
+consulta `max-width` atual; consultar a auditoria regenerada abaixo para o
+inventário vigente. A classificação lexical não comprova comportamento de
+componente, formulário ou estado; MF2/MF3 dependem de cobertura visual real.
+### OCS-F5 / THEME-MF2 — Marley canônico autenticado, nove viewports (2026-10-31)
+
+Firefox ESR visível capturou `account:/marley` em 320/360/390/599/600/768/1024/
+1280/1440px, com CSS Fidelity do worktree injetada somente na sessão. **9/9**
+telas mantiveram Institution Bar e Domain Header únicos, `documentWidth` igual
+ao viewport, cinco abas com exatamente uma ativa e links de aba com altura mínima
+de 44px. Evidência e capturas em
+`/home/piradopirata/aculta-suite-out/studio-marley-canonical-followup-20261031/`.
+A conta de teste não submeteu formulários. O screenshot de 320px inclui a mensagem
+transitória do login ULI; o registro da captura não é uma inspeção limpa de estados
+de mensagem. A referência OpenCulturas foi sua homepage pública, não um dashboard
+autenticado; isto não prova paridade visual completa, AJAX/no-JS, ACL, WCAG nem
+homologa F5/F11/MF3. `/studio` é 404 intencional segundo ADR-038; a área Marley
+canônica é `account:/marley`.
+### OCS-F8 / THEME-MF2 — navegação Green Stash: baseline e candidata (2026-10-31)
+
+No Runtime `2493d7535`, a rota antiga `shop:/greenstash` foi capturada a
+320/390/1440px: shell único, `documentScrollWidth=330` em 320px e largura correta
+nas outras duas. O DOM legado exibe nove links de área; essa captura não é a rota
+ou o menu da implementação local. No código da branch, a rota canônica
+`shop:/studio/green-stash` é verificada por `StudioIdentityRoutingTest`, `GreenStashNavigationTest` e
+`GreenStashExperienceProviderTest` (10 testes, 252 assertions); o Runtime ainda retorna 404 porque não serve esse contrato.
+
+A fixture visual da implementação candidata manteve somente Visão geral, Produtos
+e Envios e passou **186/186** checks em claro/escuro, viewports 320–1440px e zoom
+200/400%, sem overflow; contém overview explicitamente marcado “em preparação”
+e cenários visuais de produto sem salvar dados. Evidência em
+`/home/piradopirata/aculta-suite-out/green-stash-layout-followup-20261031/`.
+A integração de rota e UI no Runtime e as permissões operacionais por loja ficam
+DEFERRED; isso não aprova OCS-F8, OCS-F11 ou THEME-MF3.
+### OCS-F6 / THEME-MF2 — Ganjalab, claro/escuro e divergência do Runtime (2026-10-31)
+
+Em `courses:/ganjalab`, `ocs-baseline.py` com CSS Fidelity injetada passou
+`ganjalabFidelityStatus` em 320/390/1440px, nos modos claro e escuro (**6/6**
+combinações): Montserrat, contexto, dois estados vazios, shell único, sem overflow,
+contraste AA do shell e tokens Fidelity fora do shell. Capturas/JSON em
+`/home/piradopirata/aculta-suite-out/studio-ganjalab-canonical-followup-20261031/`
+e `/home/piradopirata/aculta-suite-out/studio-ganjalab-dark-canonical-followup-20261031/`.
+
+`LearnerDashboardComposerTest` + `GanjalabControllerTest`: 2 testes/4 assertions.
+O Runtime ainda serve markup “Minha conta / Área pessoal”, enquanto a implementação
+da branch compõe “ACULTA Studio Ganjalab”, “Meus cursos” e seu resumo de
+aprendizagem. As capturas exercitam CSS candidata sobre esse markup antigo; não
+validam o conteúdo/estados do compositor novo, matrícula/ACL LMS, AJAX/no-JS, zoom,
+WCAG integral ou paridade pareada com dashboard OpenCulturas. OCS-F6/F11 e MF3
+permanecem pendentes.
+
+#### OCS-F6 — extensão à grade completa de viewport (2026-10-31)
+
+A repetição de Ganjalab cobriu 320/360/390/599/600/768/1024/1280/1440px em claro
+e escuro: **18/18 combinações** com `ganjalabFidelityStatus=PASS`, todas as
+verificações internas verdadeiras e `fidelity_failures=[]`. Relatórios em
+`/home/piradopirata/aculta-suite-out/studio-ganjalab-full-light-followup-20261031/`
+e `/home/piradopirata/aculta-suite-out/studio-ganjalab-full-dark-followup-20261031/`.
+A limitação de markup Runtime anterior permanece; o novo consumer da branch ainda
+não foi servido, portanto não homologa F6/F11/MF3.
+
+### THEME-MF2 — mensagens de status no fluxo do conteúdo (2026-10-31)
+
+Uma captura autenticada de `/marley` a 320px mostrou o aviso ULI cobrindo o
+conteúdo inferior. Antes da sessão sintética foram conferidos `toca`, o docroot
+servido `/home/piradopirata/projetos/aculta`, HEAD `2493d7535`, URI `http://default`
+e banco `aculta_runtime`; snapshot íntegro:
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/runtime-before-uli-toast-diagnostic-20261031.sql`,
+65.070.871 bytes, modo `600`, SHA-256
+`0962c30f2d1076a3c6943e12a4cf031c1e029cda30ad41df298cb29e36fcc2ae`.
+O Firefox ESR visível mediu `.alert-wrapper` como `position: fixed`, `bottom: 0`,
+`z-index: 9999`, largura 320px e altura 245,6px em viewport 320×844. A folha
+agregada servida continha `.alert-wrapper{position:fixed;bottom:0;left:0;width:100%;max-height:75vh;z-index:9999}`;
+por ser agregada, a captura não atribuiu essa declaração a um arquivo-fonte
+individual.
+
+`css/components/content.css` agora restaura o fluxo normal somente para
+`.aculta-highlighted > .alert-wrapper`, região global acima do conteúdo em todos
+os purposes. O aviso continua no documento, preserva sua classe/role/markup e
+não recebe comportamento de descarte novo. O teste reutilizável
+`ocs-baseline.py` registra apenas classe, geometria e estilos, nunca o texto do
+aviso. Firefox ESR visível, purpose Revista público, fixture anônima sem dados
+pessoais e CSS candidata injetada: **4/4 PASS** em 320/390/768/1280px; wrapper
+estático, mensagem antes do heading seguinte e sem overflow. Screenshot de 320px
+e JSON: `/home/piradopirata/aculta-suite-out/status-message-flow-candidate-verified-20261031/`.
+
+Stylelint do tema e `git diff --check` passaram. O CSS ainda não foi reconstruído
+nem servido pelo Runtime; teclado/foco no botão fechar, temas escuro/claro,
+reduced motion, leitor de tela e regressão completa dos purposes seguem
+pendentes. Esse ajuste não aprova THEME-MF3 nem OCS-F11.
+
+#### Cobertura das raízes por purpose
+
+O mesmo fixture foi exercitado em 320/390px nas homes de Main, Conta (`/entrar`),
+Apoio, Revista, Wiki, Loja, Cursos, Growroom e Eventos: **18/18** verificações
+de posição passaram. O purpose Links também foi capturado nas duas larguras;
+sua composição usa `.aculta-social-links-shell` e não contém `.aculta-highlighted`,
+portanto a inserção do fixture foi corretamente marcada como `SKIP` (não há
+slot de mensagem nessa página). Relatório consolidado:
+`/home/piradopirata/aculta-suite-out/status-message-flow-all-purposes-verified-20261031/`.
+Essa execução não reprova por overflow geral: `/entrar` ainda mede 328px de
+largura documental em viewport 320px, pendência independente da mensagem já
+registrada nos gates MF3. O baseline candidato não foi instalado no Runtime.
+
+### THEME-MF2 — rodapé global e carrossel editorial (2026-10-31)
+
+Firefox ESR visível revalidou o rodapé nas dez raízes dos purposes Main, Conta,
+Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e Eventos em
+320/360/390/575/576/599/600/768/991/992/1024/1280/1440px. Foram **259/260
+checks**: estrutura responsiva, colunas progressivas, links de pelo menos 44px,
+Institution Bar e Domain Header únicos, e sem overflow do rodapé passaram em
+todas as áreas. A única falha foi o overflow conhecido de `/entrar` a 320px
+(`documentWidth=328px`); o contêiner do rodapé mediu 320px e não apresentou
+overflow próprio. Para Links, o SDC `social-links-page` manteve o seu consumer
+próprio. O teste injetou `base.css`, `auth.css` e o CSS candidato do SDC Links
+na sessão do navegador; a folha do rodapé e a página servida não foram
+reconstruídas nem instaladas. Capturas e resultado em
+`/home/piradopirata/aculta-suite-out/footer-cross-purpose-visual-followup-20261031/`.
+
+No mesmo ciclo, a home MAIN e o carrossel editorial real foram revalidados com
+`editorial-carousel-runtime.py`: consumer e inicialização VVJB reais presentes,
+slides com conteúdo visível e **15/15 checks** em 320/360/390/575/576/599/600/
+768/769/1024/1280/1440px. O carrossel não excedeu o viewport, preservou
+controles e usou cartão único no mobile e cartões de até 370px a partir de
+769px. O stylesheet candidato foi injetado na sessão; não houve alteração de
+preferências nem conteúdo. Capturas/JSON em
+`/home/piradopirata/aculta-suite-out/editorial-carousel-visual-followup-20261031/`.
+
+Essas rodadas não resolvem o overflow de Conta, não validam a integração do
+stylesheet servido nem equivalem a zoom, teclado completo, leitor de tela,
+contraste ou aceite WCAG 2.2 AA. THEME-MF3 e OCS-F11 continuam pendentes.
+
+### THEME-MF2 — superfície do destaque editorial da Revista (2026-10-31)
+
+A leitura do OpenCulturas 3.1.5 verificou em
+`profile/themes/opcult/sass/abstracts/_teasers.scss` o raio de 1,5 rem e a
+superfície elevada configurável para a família de cartões editoriais. Os quatro
+cartões da listagem pública da Revista usavam acabamento distinto.
+`revista-listing.css` agora aplica raio de 1,5 rem e o token local
+`--aculta-shadow-raised` a todos os cartões; o destaque preserva seu layout
+próprio. O SDC `patterns/card`, o markup, os campos e os dados editoriais
+permanecem os existentes; nenhum CSS, imagem, SVG ou ícone upstream foi
+copiado.
+
+Stylelint passou. `magazine-cover-runtime.py`, Firefox ESR visível e CSS
+candidata injetada na sessão passaram **28/28 checks** em 320–1440px; o harness
+verifica raio e sombra em todos os cartões. Também cobre claro/escuro, teclado,
+sem JavaScript, zoom real de 200%/400%, foco visível, alvos mínimos de 44 px e
+zero overflow. As capturas de 320/1440px foram inspecionadas em
+`/home/piradopirata/aculta-suite-out/magazine-cards-family-final-20261031/`.
+No bootstrap read-only do Runtime (`toca`, HEAD `2493d7535`, URI
+`http://default`, banco `aculta_runtime`), a Foundation validou os arquivos
+candidatos da worktree com 352 checks e o contrato de shell passou 13 checks.
+O Runtime ainda serve a CSS anterior à branch; este ajuste candidato não está
+instalado e não aprova THEME-MF3.
+
+### OCS-F10 / THEME-MF2 — bordas dos campos no dashboard Culturas (2026-10-31)
+
+A comparação do Sass OpenCulturas 3.1.5 (`opcult/sass/abstracts/_forms.scss`)
+com a implementação Studio confirmou que o pacote usa bordas claras nas laterais
+e uma borda inferior mais escura, invertidas semanticamente no tema escuro. Os
+tokens Fidelity já representam os dois estados; o formulário de filtros do
+organizador de Eventos ainda aplicava a cor inferior nos quatro lados. O seletor
+escopado de `/culturas` agora usa os tokens superior, lateral e inferior. O
+fixture `culturas-dashboard.py` verifica as quatro bordas em claro/escuro e nove
+larguras; Firefox ESR visível passou **128/128 checks**, incluindo zero overflow
+do documento, reflow dos filtros, rolagem local da tabela, alvos 44px, foco e
+shell externo. Evidências em
+`/home/piradopirata/aculta-suite-out/culturas-dashboard-form-border-20261031/`.
+Como fixture estrutural com CSS candidata, não prova render Drupal, Form API,
+permissões, AJAX/no-JS ou cache; THEME-MF3 e OCS-F11 seguem pendentes.
+
+### THEME-MF3 — reteste global do shell em cor e reduced motion (2026-10-31)
+
+No Runtime de desenvolvimento, o Firefox ESR visível percorreu as dez raízes dos
+purposes Main, Conta, Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e Eventos,
+nove larguras (320–1440px), claro/escuro e `prefers-reduced-motion`: **576/576
+checks passaram**. A medição verificou tokens de cor, shell único, overflow e
+contraste AA dos links do shell; as capturas e o relatório estão em
+`/home/piradopirata/aculta-suite-out/purpose-shell-colormodes-followup-20261031/`.
+Na rota `/entrar`, o harness injetou `auth.css` da worktree e simulou o marcador
+`challenge-frame` somente na sessão Firefox. Portanto esta rodada confirma o
+Runtime baseline e o comportamento visual candidato focal de Conta, mas não
+confirma que o hook do Portal ou CSS da branch estejam instalados/servidos. Não
+cobre páginas internas, teclado integral, zoom ou WCAG global; THEME-MF3 segue
+pendente.
+
+Repeti a matriz em Firefox ESR visível no checkout de trabalho: **576/576
+checks passaram** nas dez raízes/purposes, nove larguras, claro/escuro e
+`prefers-reduced-motion`. O reteste da candidata confirmou zero overflow e
+shell único em cada captura, contraste AA nos links medidos; em `/entrar`, CSS
+e marcador de desafio foram injetados somente na sessão do navegador. Revisei
+uma folha de contato com as 20 capturas móveis dos dez purposes nos dois modos.
+Relatório, imagens e capturas completos em
+`/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-branch-20261031/`.
+O Runtime continua no HEAD `2493d7535`; isto confirma a árvore candidata no
+Firefox, não que CSS/hook estejam servidos. A amostra segue focal e não aprova
+THEME-MF3: telas internas, zoom, teclado integral e WCAG global continuam
+pendentes.
+
+### OCS-F5/F7 — ritmo das tabelas de listagem Marley/Wiki (2026-10-31)
+
+A leitura de `opcult/sass/base/_tables.scss` identificou ritmo de células,
+primeira/última coluna sem padding inline e cabeçalho com peso e divisor próprios.
+Os render arrays atuais de `MarleyListingBuilder` já usam tabela Drupal dentro
+de `studio-listing-wrap`; o hook de apresentação do tema fornece as classes sem
+alterar os arrays. `studio.css` agora aplica esse tratamento somente a
+`.studio__listing` e mantém overflow horizontal no wrapper em telas estreitas.
+Firefox ESR visível passou **74/74 checks** na fixture correspondente, em nove
+larguras, claro/escuro, sem overflow documental, com foco por teclado e sem
+alterar DOM/ordem de dados. A fixture inclui agora o estado vazio produzido pelo
+Twig de tabela do Drupal (`<td colspan="6">`), com capturas próprias 320/1440px
+em ambos os temas, e exige que sua mensagem fique contida e visível. A consulta
+fixture reproduz o wrapper Studio e o `.table-responsive` interno, verificando a
+rolagem no pai direto da tabela como no HTML real. A consulta GET das abas
+Marley no Runtime encontrou 1 linha em Rascunhos, 1 em Revisão, 4
+Publicados e 1 Arquivado; nenhum estava vazio. Evidência da fixture em
+`/home/piradopirata/aculta-suite-out/studio-listing-dom-parity-20261031/`
+e captura real em
+`/home/piradopirata/aculta-suite-out/marley-editor-state-tabs-20261031/`.
+Não valida listagem Drupal renderizada, grants, estados com conteúdo real, cache,
+AJAX/no-JS ou zoom; OCS-F5/F7/F11 e THEME-MF3 permanecem parciais/pendentes.
+
+### OCS-F5 / THEME-MF2 — toolbar do editor de Revista (2026-10-31)
+
+A captura candidata do GET `/marley/revista/nova` mostrou que o seletor de ação
+do Form API também estiliza os 23 botões do CKEditor. A regra foi estreitada
+para `.form-actions`, preservando a toolbar e widgets em seus estilos próprios.
+Firefox ESR com a folha candidata passou os checks de alvos das duas ações,
+toolbar e overflow em 320/390/768/1440px, em claro e escuro; as capturas 320/1440
+foram inspecionadas. Nenhum formulário foi submetido. O runtime serve uma folha
+anterior, portanto essa evidência não homologa a CSS integrada nem OCS-F5/F11 ou
+THEME-MF3. Relatórios em
+`/home/piradopirata/aculta-suite-out/marley-editor-form-final-20261031/` e
+`/home/piradopirata/aculta-suite-out/marley-editor-form-dark-20261031/`.
+
+### OCS-F5 — escopo do check de heading nas rotas Marley (2026-10-31)
+
+A inspeção do controller mostrou que o H1 “O que vamos criar hoje?” pertence
+somente à landing `/marley` (`data-aculta-studio="welcome"`). O harness agora
+exige os marcadores `root`, `welcome` e o título contextual para aplicar os
+checks de heading; subrotas com `root` sem `welcome` registram
+`SKIP_NOT_WORKSPACE_LANDING`, em vez de falharem por não renderizar o H1 da
+landing. No Firefox ESR com CSS candidata, `/marley` passou heading e navegação
+em 320/390px; a subrota `/marley/revista/publicacoes/arquivados` foi capturada
+sem falhas em 320/390/768/1440px, com navegação 4/4 e rolagem local aprovada em
+320/390px. Isso corrige a classificação do baseline anterior; não reduz os
+checks de heading na landing nem aprova OCS-F11/THEME-MF3. Evidências em
+`/home/piradopirata/aculta-suite-out/marley-root-heading-final-20261031/` e
+`/home/piradopirata/aculta-suite-out/marley-archived-heading-scope-20261031/`.
+
+### OCS-F10 — formulário proprietário de criação de galeria (2026-10-31)
+
+Leitura Drush no Runtime confirmou `entity.media_gallery.add_form`, com
+`_entity_create_access: media_gallery`, `_admin_route: true` e purpose `main`.
+A conta sintética `aculta_visual_admin` (UID 257) tem acesso. Firefox ESR abriu
+por GET `https://aculta.toca.net.br/painel-administrativo/conteudo/media-gallery/add`
+em 320/390/768/1440px; document/body permaneceram sem overflow. As capturas
+320/1440 foram inspecionadas: a página usa o tema administrativo, não emite
+marcadores Studio nem Institution Bar/Domain Header. Nenhum campo foi enviado,
+nenhuma galeria criada e nenhum arquivo alterado. Isso inventaria a tela real do
+owner; não é consumer de ACULTA420/Studio nem evidência de paridade visual.
+Qualquer apresentação dessa Form API dentro do shell Studio exigiria rota/decisão
+explícita do módulo owner; esta fase não alterou a rota nem adicionou interface
+paralela. Relatório e capturas em
+`/home/piradopirata/aculta-suite-out/gallery-create-runtime-visual-20261031/`.
+### OCS-F6 / THEME-MF2 — formulário de criação de curso no Studio (2026-10-31)
+
+A ação da aba Cursos apontava para a rota administrativa Group em `main`, apesar
+de produzir URL no host `courses`. Firefox ESR autenticado encontrou 404 no
+host Cursos; no host principal o Form API abriu em Claro sem o shell e com
+`documentScrollWidth=403` em viewport 320 px. Nenhum formulário foi enviado.
+
+O código da PR agora declara `/ganjalab/cursos/novo` em `courses`, envolve o
+Group `lms_course` add form original dentro do contexto visual Studio e revalida
+Entity Access antes de construir o formulário. Isso reutiliza os estilos de
+formulário já presentes no tema; não cria campos ou fluxo de persistência.
+Firefox autenticado integrado, submit, AJAX/no-JS e acesso real permanecem
+`DEFERRED` até o Runtime executar o HEAD da PR. O teste de captura do formulário
+administrativo identifica uma falha visual real na rota antiga, mas não é
+evidência de aprovação OCS-F6, OCS-F11 nem THEME-MF3.
+
+### OCS-F6 — dashboard Ganjalab, CSS candidata em claro/escuro (2026-10-31)
+
+Firefox ESR visível capturou o GET autenticado real `/ganjalab` em
+320/390/768/1440px. Com a folha Fidelity da branch injetada apenas na sessão, o
+dashboard passou 92/92 checks focais combinados em claro e escuro: Montserrat
+no conteúdo/heading/estados, dois estados vazios, sem overflow documental,
+Institution Bar e Domain Header presentes, contraste AA nos links utilitários e
+tokens Fidelity ausentes dos headers. As capturas 320/1440 em claro e 320 em
+escuro foram inspecionadas. O markup e os estados vieram do Runtime; somente a
+CSS era candidata. O HEAD Runtime `2493d7535` ainda não serve a folha da branch.
+Não cobre grants/matrículas entre contas, teclado completo, zoom, no-JS nem
+WCAG 2.2 AA integral; OCS-F6/F11 e THEME-MF3 seguem parciais/pendentes.
+Evidências em
+`/home/piradopirata/aculta-suite-out/ganjalab-dashboard-fidelity-candidate-20261031/`
+e `/home/piradopirata/aculta-suite-out/ganjalab-dashboard-fidelity-dark-20261031/`.
+
+### THEME-MF2 / OCS-F10 — aviso ULI no dashboard Culturas (2026-10-31)
+
+Nova captura Firefox ESR autenticada em `/culturas` usou `content.css` e
+`studio.css` candidatas injetadas somente no navegador. Em 320px, o aviso ULI
+real teve `position: static`, permaneceu no fluxo antes do H1 e deixou de cobrir
+o painel; sem overflow documental. A matriz de aviso retornou 1/1 PASS em 320px
+e `SKIP_NO_STATUS_NOTICE` nas capturas 390/768/1440px, quando o aviso já havia
+se autocerrado. A revisão visual confirmou a captura 320px. Esta verificação
+não prova CSS integrada no Runtime, reduced motion, foco do botão fechar ou
+WCAG completa. Evidência em
+`/home/piradopirata/aculta-suite-out/culturas-runtime-status-flow-retest-20261031/`.
+
+### OCS-F10 / THEME-MF2 — formulários reais de Eventos Culturas (2026-10-31)
+
+Firefox ESR autenticado abriu por GET `/culturas/eventos/novo` e
+`/culturas/locais/novo` no purpose Eventos. Com `studio.css`, tokens Fidelity e
+`content.css` candidatos injetados somente no navegador, os dois formulários
+passaram 108/108 checks em 320/360/390/599/600/768/1024/1280/1440px: formulário
+presente e contido na viewport, Montserrat, campos e ações com pelo menos 44px,
+botão primário usando o token Fidelity e sem overflow documental. Institution
+Bar e Domain Header permaneceram visíveis. O aviso ULI real apareceu em uma
+captura a 320px; `content.css` o manteve estático antes do H1 e sem cobrir o
+formulário (1/1 PASS). Nas outras 17 capturas, a mensagem se autocerrou e os
+checks de fluxo foram `SKIP_NO_STATUS_NOTICE`. Capturas 320/1440 revistas; nenhum
+formulário enviado ou conteúdo alterado. Evidências em
+`/home/piradopirata/aculta-suite-out/culturas-organizer-forms-fidelity-9widths-with-status-20261031/`.
+
+Um fixture anônimo posterior incluiu H2 de status e mensagem a 320px. A folha
+`content.css` candidata resultou em título de 18px/22,5px, uma linha; aviso em
+fluxo passou e o screenshot foi inspecionado. Isso valida a regra de título
+compacto no fixture, não reexecuta nem substitui a medição ULI real.
+
+O primeiro ensaio de botão apontou falso negativo porque a variável CSS foi
+lida fora do escopo `.aculta-main`; o harness foi corrigido para resolver o
+token dentro do formulário e comparar um clone de medição sem hover/transição.
+O JSON final registrou 18 capturas, `CAPTURED` e zero falhas. As folhas continuam
+candidatas injetadas: integração no Runtime, modo escuro, no-JS/AJAX, CEP,
+teclado/zoom, ACL entre contas e WCAG completa não foram homologados. OCS-F10,
+OCS-F11 e THEME-MF3 seguem parciais/pendentes.
+
+### THEME-MF3 — diagnóstico do foco transferido ao Turnstile (2026-10-31)
+
+Reteste Firefox ESR candidato da Conta em 320/390/768/1440px percorreu Tab e
+Shift+Tab. Houve 72 checks PASS e quatro `SKIP` no foco delegado ao widget; sem
+falhas. O alvo reportado é um `DIV` de `tabIndex=-1` dentro do wrapper, mas no
+documento ACULTA ele não corresponde a `:focus`/`:focus-visible` e o wrapper
+não corresponde a `:focus-within`. CSS do tema não consegue alcançar o estado
+transferido pelo CAPTCHA externo. O script agora registra essas propriedades
+para distinguir essa limitação de foco normal do shell. O conteúdo interno do
+iframe continua fora da inspeção. Evidência em
+`/home/piradopirata/aculta-suite-out/account-captcha-focus-diagnostic-20261031/`.
+Os quatro casos permanecem `SKIP`; isto não aprova o gate de teclado/WCAG do
+THEME-MF3.
+
+### OCS-F9 — reteste focal de Meu Perfil no Runtime (2026-10-31)
+
+Firefox ESR visível abriu `/perfil` com duas contas sintéticas existentes. O
+baseline servido passou 28 verificações, teve 0 falhas e 4 skips. Com a
+`content.css` do checkout injetada somente no navegador, o reteste passou
+32 verificações, teve 0 falhas e 4 skips. Os skips são os checks de perfil
+público e isolamento entre sessões: as contas disponíveis não formam um par
+público/privado e não têm sentinelas privadas distintas. A CSS candidata
+posicionou o aviso ULI em fluxo, antes do H1, sem encobrir o cartão a 320px;
+na captura da rota real o título do aviso permanece em uma linha. A CSS
+continua não instalada no Runtime, então o resultado demonstra o efeito do
+candidato sobre o HTML real, não a correção servida nem aprovação S-R4.
+
+Runtime: checkout servido `2493d7535`, `aculta_runtime`, 624 tabelas. Antes
+de cada ULI foi feito snapshot íntegro: `runtime-before-sr4-profile-browser-20261031.sql`
+(107,760,702 bytes; SHA-256
+`cb7f4ceb2459f70e8c65b54837b57fce9bfda776c0145084a762f48bf95ecb86`) e
+`runtime-before-sr4-profile-candidate-browser-20261031.sql` (107,858,706 bytes;
+SHA-256 `0be6aa8f305718e015a193f88eb4292b54e28351b87aad49c575ffe200a63ec4`).
+Resultados e capturas estão fora do repositório, em
+`/home/piradopirata/aculta-suite-out/aculta-studio-profile-s-r4-layout-20261031/`
+e `/home/piradopirata/aculta-suite-out/aculta-studio-profile-s-r4-content-candidate-20261031/`.
+Sem envio de formulário ou gravação de perfil. Permanecem necessários os
+fixtures A/B público/privado, sentinelas únicas, os gates funcionais e de
+acessibilidade da matriz S-R4 e depois a comparação S-R5; OCS-F11/THEME-MF3
+continuam pendentes.
+
+### THEME-MF2 — tópico público do Fórum, reteste visual (2026-10-31)
+
+Firefox ESR visível abriu um tópico publicado com resposta no purpose Growroom.
+Com `forum-index.css`, `discussion.css` e o SDC `author-card` da branch
+injetados somente na sessão do navegador, a página passou 10/10 verificações
+em 320/360/390/599/600/768/1024/1280/1440 px: título único, corpo, autoria,
+resposta, discussão contextual, ausência de erros visíveis e de overflow, além
+de Institution Bar e Domain Header únicos. A captura de 320 px foi inspecionada.
+O tópico continha zero comentários Drupal, portanto esta rodada é apenas visual
+do tópico e da estrutura de discussão; não testa criação, moderação nem ACL de
+comentários. A folha não foi instalada no Runtime. Evidências em
+`/home/piradopirata/aculta-suite-out/forum-visual-followup-20261031/`.
+Não aprova THEME-MF3 ou OCS-F11; integração servida, acessibilidade completa,
+teclado, zoom, dark mode e validação funcional seguem pendentes.
+
+O SDC `author-card` foi medido separadamente na listagem real `/discussoes/novas`:
+43/43 verificações passaram em 320/360/390/575/576/600/768/1024/1280/1440 px,
+incluindo troca de alinhamento em 576 px, avatar de 32/48 px, ausência de
+overflow e alvos sociais de 44×44 px. A CSS candidata foi injetada no Firefox;
+os links sociais foram uma fixture invisível e não representam links reais do
+perfil. Evidência em
+`/home/piradopirata/aculta-suite-out/forum-author-followup-20261031/`.
+
+### OCS-F5 — landing Marley com aviso ULI e tabela (2026-10-31)
+
+Firefox ESR autenticado capturou `/marley` no Runtime em nove larguras. O
+primeiro ensaio marcou falso FAIL a 320 px porque a checagem encontrou um H1
+oculto antes do aviso ULI no DOM, embora a captura mostre o aviso antes do título
+visível. `ocs-baseline.py` agora exige que o heading de referência tenha uma
+caixa visível. O reteste passou com `CAPTURED`, zero falhas: em 320 px o aviso
+permaneceu estático no fluxo antes do heading visível e a tabela rolou dentro do
+wrapper; nas outras larguras o aviso já havia se autocerrado. A árvore não teve
+overflow. CSS Fidelity e `content.css` foram injetados somente no navegador;
+isto não valida integração servida, submissão editorial, ACL, estados AJAX/no-JS
+ou WCAG integral. Evidência em
+`/home/piradopirata/aculta-suite-out/marley-landing-followup-20261031/`.
+
+### THEME-MF2/MF3 — Conta `/entrar`, overflow e teclado em 320px (2026-10-31)
+
+O Firefox ESR visível repetiu o gate focado no Runtime: sem CSS candidata,
+`/entrar` mediu 328px de largura documental em viewport de 320px (15/16 checks;
+falha reproduzida). Com `auth.css` candidata e marcador visual neutro do
+challenge injetados apenas no browser, a largura caiu para 320px, sem elementos
+fora da viewport; foram 36 verificações aprovadas em 320/390px e dois skips no
+foco interno delegado ao Turnstile. O screenshot candidato de 320px foi
+inspecionado. Isto comprova a correção geométrica candidata, não a instalação no
+Runtime, nem a operação interna do CAPTCHA. Evidências em
+`/home/piradopirata/aculta-suite-out/account-keyboard-baseline-followup-20261031/`
+e `/home/piradopirata/aculta-suite-out/account-keyboard-candidate-followup-20261031/`.
+THEME-MF3 continua pendente até validar a folha integrada e os demais gates.
+
+### THEME-MF3 — reteste global do shell, cor e reduced motion (2026-10-31)
+
+Firefox ESR visível repetiu a matriz nas dez raízes dos purposes Main, Conta,
+Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e Eventos, em nove larguras e
+claro/escuro: **576/576 checks passaram**. A CSS e o marcador de autenticação
+foram injetados apenas em `/entrar`; as demais páginas refletem o shell servido
+no Runtime. A captura focal de Conta/320px foi revisada separadamente. O teste
+cobre shell único, overflow e contraste institucional, reduced motion e botão
+Google, mas não telas internas, teclado completo, zoom, WCAG integral nem CSS
+instalada. Portanto é reteste focal/misto, não aprovação THEME-MF3. Evidência em
+`/home/piradopirata/aculta-suite-out/purpose-shell-global-followup-20261031/`.
+
+Reteste de cores em 2026-10-31 confirmou o botão real de login Google com
+`auth.css` candidata nas nove larguras, em claro/escuro e reduced motion:
+90/90 checks. Em escuro, o contraste calculado foi 12,40:1 no estado normal e
+11,34:1 em hover; a captura 320px foi inspecionada. Evidência em
+`/home/piradopirata/aculta-suite-out/auth-google-contrast-followup-20261031/`.
+O CSS segue sem integração no Runtime; este resultado não fecha THEME-MF3.
+
+### THEME-MF3 — zoom real nas dez raízes públicas (2026-10-31)
+
+Firefox ESR visível passou **30/30 checks** a 100%, 200% e 400% nas dez raízes
+dos purposes Main, Conta, Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e
+Eventos. Não houve overflow documental; Institution Bar, Domain Header e
+`main#main-content` permaneceram únicos. A 400%, a viewport CSS efetiva foi
+320px. `auth.css` e o marcador neutro do challenge foram injetados apenas na
+Conta; os demais purposes usaram CSS servida. As capturas de Conta e Revista a
+400% foram inspecionadas. Esse gate cobre somente páginas raiz e não substitui
+zoom de páginas internas, WCAG integral nem validação da folha integrada.
+Evidência em
+`/home/piradopirata/aculta-suite-out/purpose-zoom-global-followup-20261031/`.
+
+### THEME-MF2 — formulário unificado de endereço da Conta (2026-10-31)
+
+Firefox ESR autenticado abriu `/dados/endereco` no Runtime servido. O smoke GET
+passou **50/50 verificações**: único formulário canônico, contrato de campos,
+país BR oculto e behavior CEP; nove larguras com JavaScript, quatro sem
+JavaScript e zoom real de 200/400% nos dois modos, sem overflow e com CEP
+visível. A captura JS de 320px e a captura de zoom 400% foram inspecionadas; os
+inputs permaneceram mascarados. Não houve submit, gravação de endereço ou
+consulta CEP. Runtime `2493d7535`, 624 tabelas antes/depois; apenas as sessões
+ULI temporárias foram criadas. Snapshot anterior: 66.848.723 bytes, modo 0600,
+SHA-256 `764fac824376c8f3dfab49b0f5378093c10fa20b21910180ab397ef7400c21fa`.
+Resultados em
+`/home/piradopirata/aculta-suite-out/account-address-visual-followup-20261031/`.
+Não substitui teste de preenchimento CEP, submissão, privacidade A/B ou WCAG
+integral; THEME-MF3 segue pendente.
+
+### THEME-MF2 — página pública de Apoio e `donation-quick` (2026-10-31)
+
+Firefox ESR visível, somente GET, passou **37/37 verificações** em
+320/360/390/480/481/599/600/768/1024/1280/1440 px. O formulário público e o
+SDC existente mantiveram a grade dentro do viewport, sem overflow e sem expor
+fieldsets, controles de cobrança ou submit inexistentes. Institution Bar e
+Domain Header permaneceram presentes; as capturas de 320 e 1440 px foram
+inspecionadas. Isto é smoke visual da página pública, sem teclado, zoom, tema
+escuro, reduced motion ou WCAG integral; THEME-MF3 continua pendente. Evidência
+em `/home/piradopirata/aculta-suite-out/support-form-followup-20261031/`.
+
+### OCS-F6 / THEME-MF2 — dashboard Ganjalab e aviso ULI (2026-10-31)
+
+Firefox ESR autenticado capturou o dashboard real `/ganjalab` em nove larguras.
+Com Fidelity e `content.css` candidatas injetadas apenas no navegador, a captura
+passou `CAPTURED`, zero falhas, root `.aculta-context-header` visível e sem
+overflow. O LMS real mostrou estados vazios de cursos e certificados. No
+baseline, porém, o aviso ULI estava `position: fixed` a 320px e cobria a
+navegação; com `content.css` candidata, ficou no fluxo antes do heading visível
+(1/1 PASS). Nas oito larguras seguintes já havia se autocerrado (SKIP). Capturas
+de 320/1440px foram inspecionadas. Runtime `2493d7535` ainda não emite os
+marcadores novos `data-aculta-studio`; o resultado mede a tela servida anterior,
+não o compositor novo nem sua paridade pareada com o OpenCulturas. Nenhum curso
+ou matrícula foi criado. Evidência em
+`/home/piradopirata/aculta-suite-out/ganjalab-status-flow-candidate-20261031/`.
+OCS-F6, OCS-F11 e THEME-MF3 seguem pendentes.
+
+### THEME-MF2 / OCS-F3 — lint e integridade estática do tema (2026-10-31)
+
+No HEAD `95f7bdffc`, Stylelint (`npm run lint:css`) e ESLint
+(`npm run lint:js`) passaram. `validate-aculta420-sdc-schemas.php` passou com
+55 componentes, 27 includes e 759 verificações; Design Foundations passou
+2.429 checks, com contrastes e foco escuros acima dos limites auditados; a
+auditoria estática de assets encontrou 55 SDCs, 45 folhas CSS, 100 stories e
+nenhum finding. O inventário responsivo leu 264 fontes (94 estilos, 12 JS,
+102 Twig/HTML, 1 arquivo de libraries, 55 manifests e 83 referências a assets)
+sem gravar a saída versionada.
+
+Esta rodada não executou discovery Drupal/UI Patterns contra o Runtime, nem
+Firefox, testes funcionais, WCAG integral ou comparação pareada com o upstream.
+Portanto, é validação estática do HEAD, não integração servida nem aprovação de
+THEME-MF3/OCS-F11. O Runtime tem checkout separado e alterações não commitadas
+de outra frente; não foi trocado.
+
+### THEME-MF2 / OCS-F3 — Foundation candidato contra o Runtime (2026-10-31)
+
+No Runtime do servidor `toca` (`http://default`, banco `aculta_runtime`, checkout
+`00e6149b0`), a execução do script antigo do checkout servido falhou apenas no
+allowlist de templates: ele não conhece
+`views/views-view--revista-sessoes--page-revista.html.twig`. Em seguida, o
+script de Foundation do HEAD publicado `aa6479f6b` foi executado via Drush do
+Runtime e passou **352 checks** contra a configuração ativa. A diferença é de
+versão do script/template e não foi corrigida editando o Runtime. Ambas as
+leituras foram sem escrita; alterações locais paralelas de Events foram
+preservadas.
+
+O resultado confirma a fundação candidata e descoberta SDC no contexto Drupal
+ativo, mas não substitui Firefox com o HEAD servido, os testes dos consumers,
+WCAG integral, comparação pareada nem homologação. THEME-MF3 e OCS-F11 seguem
+pendentes.
+
+### THEME-MF2 — Institution Bar móvel: scroll anônimo e administrativo (2026-10-31)
+
+O Firefox ESR visível abriu as dez raízes de domínio do Runtime. Em sessão
+anônima, **130/130 checks** passaram em 320/390 px: a Institution Bar começou
+em `top: 0`, estabilizou sem salto e permaneceu contínua ao longo de 55 amostras
+de scroll para baixo e para cima. Na conta administrativa sintética (UID 257),
+**40/40 checks** passaram em 320/390/1023/1024/1280 px, inclusive a troca do
+breakpoint e o alinhamento com Navigation top-bar em desktop.
+
+A captura administrativa em 320 px também confirma a lacuna de comportamento
+relatada: a Navigation top-bar é relativa e ocupa 136 px; com a barra global
+iniciando a 185 px, ela segue o fluxo quando começa a rolagem (top 115 px a
+scroll 80) e só fica em `top: 0` após a toolbar sair da viewport (scroll 240).
+Não ocorreu salto intermediário nesta sessão. Os checks atuais validam a
+transição sticky natural, não o requisito de fixação imediata depois do primeiro
+scroll. Não alterei a hierarquia nem escondi ações administrativas; a decisão
+sobre manter esses controles acessíveis enquanto a Institution Bar fixa está
+pendente.
+
+Snapshot antes do ULI sintético: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-institution-admin-scroll-20261031.sql`, 67.182.031 bytes, modo 0600, SHA-256 `104c6dc36046099a6258edc9574218582f79a152cb03e9885cbcc787d378f991`. O teste não submeteu conteúdo nem alterou configuração; a contagem foi 624 tabelas antes/depois. Resultados/capturas estão em
+`/home/piradopirata/aculta-suite-out/institution-bar-anonymous-baseline-20261031/`
+e `/home/piradopirata/aculta-suite-out/institution-bar-admin-baseline-20261031/`.
+A folha/JS candidata não foi injetada; este resultado não aprova THEME-MF3.
+
+### Decisão e implementação candidata — Institution Bar e ações administrativas (2026-10-31)
+
+Decisão posterior do responsável, que substitui a pendência registrada acima:
+em viewports móveis, a Institution Bar assume `top: 0` no primeiro scroll não
+nulo. A Navigation top-bar administrativa fica visualmente oculta durante a
+rolagem e reaparece ao voltar ao topo. Ações com foco de teclado permanecem
+visíveis e recebem camada acima do shell até o foco sair. Sem JavaScript, a
+Institution Bar mantém o sticky natural como melhoria progressiva. O espaço da
+Navigation top-bar é preservado enquanto oculta para estabilizar a altura
+rolável; placeholder só é criado se a Institution Bar já ocupar o topo natural.
+
+Firefox ESR visível, com CSS/JS candidatos injetados somente no navegador,
+passou **49/49 checks autenticados** (320/390/1023/1024/1280 px), **175/175
+checks anônimos** nas dez raízes (320/390 px; dois SKIPs no domínio Links porque
+a raiz não tem rolagem vertical) e **136/136 checks sem JavaScript**. As
+capturas administrativas 320 px foram inspecionadas. Relatórios em
+`/home/piradopirata/aculta-suite-out/institution-bar-focus-layer-validation-20261031/`,
+`/home/piradopirata/aculta-suite-out/institution-bar-anonymous-domains-final-20261031/`
+e `/home/piradopirata/aculta-suite-out/institution-bar-no-js-final-20261031/`.
+
+O Runtime permaneceu no checkout servido destacado `00e6149b0`, host `toca`,
+URI `http://default`, `aculta_runtime`, 624 tabelas. Nenhum arquivo do checkout
+servido foi alterado e nenhum conteúdo/configuração foi submetido; apenas
+sessões ULI temporárias foram criadas. Snapshots modo 0600 anteriores a cada
+sessão autenticada, todos em
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/`:
+
+- `aculta_runtime-before-institution-bar-first-scroll-rerun-20261031.sql` — 67.567.928 bytes; SHA-256 `169868fe8db836282e20d3d83ad2b7fdca3ec67ac2aec793c3c6ec89f08b8e03`.
+- `aculta_runtime-before-institution-bar-keyboard-candidate-20261031.sql` — 67.768.711 bytes; SHA-256 `e99d68282dacf2ee863b36ea2571e2f455a8a4e01a0a66c8fbc844ebc8b49d37`.
+- `aculta_runtime-before-institution-bar-focus-preservation-20261031.sql` — 67.828.514 bytes; SHA-256 `15838dd3d30ccac35efea398b7bfd5fa3821702b70b66344c17ad8da33c2c185`.
+- `aculta_runtime-before-institution-bar-no-gap-20261031.sql` — 67.888.313 bytes; SHA-256 `368894f0a0185ef5bf483c57c12b24078e9a49dd54f119a38319934634e240df`.
+- `aculta_runtime-before-institution-bar-display-suppression-20261031.sql` — 68.007.923 bytes; SHA-256 `6871ebbeb1e1a4468dde0d010f8fd1ae3d60860f9799bca726c0f02ef81edf03`.
+- `aculta_runtime-before-institution-bar-placeholder-validation-20261031.sql` — 68.067.730 bytes; SHA-256 `bc99a05352cd21be4f6dc0cc9fb68d1503bc4d3fc5ab9e3397d01335bd7bd89f`.
+- `aculta_runtime-before-institution-bar-final-scroll-validation-20261031.sql` — 67.948.115 bytes; SHA-256 `bfcb44e6dbeffec995e354a3044c9b57c3aaf6a00ca80d853b1e9fbca94be95d`.
+- `aculta_runtime-before-institution-bar-final-fallback-20261031.sql` — 68.127.532 bytes; SHA-256 `237617489cfe0a0416229a9b461d0c318099af2ef010f8dcdcf0c46bc55780`.
+- `aculta_runtime-before-institution-bar-focus-layer-validation-20261031.sql` — 68.186.787 bytes; SHA-256 `262ad2d2165b016e95f9311e4daebb5213ee164f6b704b27b2a77906d697fa2b`.
+
+Os resultados medem somente a candidata no browser, não uma integração servida.
+THEME-MF3 e OCS-F11 permanecem pendentes; a validação global e a homologação
+visual ainda não foram concluídas.
+
+### THEME-MF3 — teclado global e zoom nativo (2026-10-31)
+
+No Runtime destacado em `9af71edb1`, Firefox ESR visível e sem CSS/JS candidatos,
+a navegação por teclado percorreu as dez raízes públicas (MAIN, Conta, Apoio,
+Revista, Wiki, Loja, Cursos, Fórum, Links e Eventos) em
+320/360/390/599/600/768/1024/1280/1440 px. Passaram **1.493 verificações**:
+90 verificações de overflow horizontal e 1.403 verificações de foco visível e
+no viewport. Não houve FAIL. Foram registrados **23 SKIPs** de limites de
+sequência de foco (Conta: 9; Links: 14), porque a sequência terminou antes dos
+oito passos solicitados; esses passos não contam como PASS. Relatório e capturas
+em `/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-f378d2540-20261031/`.
+
+O mesmo Firefox aplicou zoom nativo de 200% e 400% à raiz dos dez purposes,
+com viewport de dispositivo 1280 px. Os **30/30 checks** passaram: baseline,
+zoom atingido, shell único e sem overflow do documento. Capturas e JSON em
+`/home/piradopirata/aculta-suite-out/purpose-browser-zoom-9af71edb1-20261031/`.
+O harness também lista conteúdo interno rolável/visualmente oculto como
+candidato; o critério de PASS considera overflow de documento/body, que ficou
+ausente em todos os casos.
+
+Esta rodada verifica as raízes públicas e não cobre formulários internos,
+zoom em cada template, estados autenticados de cada purpose, leitores de tela,
+WCAG 2.2 AA, tema escuro ou reduced motion. Os 23 SKIPs permanecem lacunas de
+evidência, e THEME-MF3/OCS-F11 não estão aprovados.
+
+### THEME-MF3 — temas claro/escuro e movimento reduzido no shell (2026-10-31)
+
+Firefox ESR visível, Runtime no HEAD `762c56eb3`, sem folhas candidatas, testou
+MAIN, Conta, Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e Eventos nas
+larguras 320/360/390/599/600/768/1024/1280/1440 px. **576/576 checks passaram**
+em claro e escuro. O teste confirmou os tokens de superfície/texto, shell único,
+ausência de overflow do documento, `prefers-reduced-motion: reduce` e contraste
+de pelo menos 4,5:1 nos links textuais da Institution Bar e Domain Header. Na
+rota de entrada de Conta, também passou o contraste do botão Google normal e
+em hover. Evidência e capturas: `/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-762c56eb3-20261031/`.
+
+O tema escuro foi exercitado pelo estado `data-bs-theme="dark"` e o movimento
+reduzido pela preferência real do Firefox. Este teste cobre tokens e links do
+shell, não contraste/conteúdo de todos os componentes, estados de foco completos,
+leitor de tela ou a avaliação integral WCAG 2.2 AA. Logo, não substitui o gate
+de acessibilidade e não aprova THEME-MF3/OCS-F11.
+
+### THEME-MF3 — fallback global sem JavaScript (2026-10-31)
+
+No Runtime destacado em `1151b3352`, Firefox ESR visível com JavaScript
+desativado percorreu as dez raízes públicas em 320/360/390/599/600/768/1024/
+1280/1440 px. Passaram **270/270 checks**, verificando Institution Bar e
+Domain Header únicos, ausência de overflow e navegação ou busca da Wiki visível
+sem JavaScript. O resultado cobre somente as raízes públicas e o shell; não
+avalia todos os componentes interativos, formulários submetidos, leitores de
+tela ou WCAG 2.2 AA completa. Relatório:
+`/home/piradopirata/aculta-suite-out/purpose-shell-nojs-1151b3352-20261031/`.
+THEME-MF3/OCS-F11 continuam pendentes.
+
+### THEME-MF2 — capa integrada da Revista e fonte OpenCulturas verificada (2026-10-31)
+
+O tarball da versão exata foi recuperado da distribuição oficial em
+`https://ftp.drupal.org/files/projects/openculturas-3.1.5.tar.gz`; SHA-256
+`2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`, igual ao
+registrado na auditoria. `openculturas/composer.json` declara GPL-2.0-or-later.
+Na fonte `profile/themes/opcult/`, foram inspecionados os teasers em
+`templates/node/node--teaser-big.html.twig`, `templates/views/views.scss`, a
+composição de hero em `templates/layout/hero-layouts.scss` e os tokens/fallbacks
+de `sass/abstracts/_teasers.scss`. Evidência upstream: teaser editorial com mídia
+dominante e fallback, cartão arredondado com sombra e composição que muda quando
+há espaço horizontal suficiente.
+
+A Revista aplica esses conceitos sem copiar código ou ativos: o Twig usa os
+SDCs locais `aculta420:hero` e `aculta420:card`; `revista-listing.css` usa tokens
+ACULTA e gradientes CSS para uma capa decorativa sem imagem. Na listagem atual,
+há uma coluna abaixo de 600px, duas de 600–991px e três a partir de 992px; o
+destaque muda para composição editorial horizontal em desktop. Nenhuma imagem,
+fonte, ícone, SVG, CSS ou UUID de configuração OpenCulturas foi transplantado
+para esta adaptação.
+
+Firefox ESR visível, anônimo, no Runtime destacado em `8d7f1d576`, sem folhas
+injetadas, passou **28/28 checks**: View e chamada hero, quatro cartões já
+publicados para inspeção, imagem carregada, nove larguras, foco do título/CTA,
+claro/escuro, zoom 200/400%, renderização sem JavaScript, alvos de 44px e overflow.
+Contraste dos links foi 12,40:1 em claro e 14,50:1 em escuro; CSS local e servida
+têm SHA-256 idêntico. Capturas 320/1440px revisadas. Relatório:
+`/home/piradopirata/aculta-suite-out/magazine-cover-served-8d7f1d576-20261031/`.
+Essa é validação da capa Aculta, não comparação pareada de pixel com uma instância
+OpenCulturas. THEME-MF3 e OCS-F11 continuam sem homologação global.
+
+Uma segunda rodada passou **37/37 checks** com a CSS candidata injetada e um
+wrapper de imagem sintético substituído localmente por gradientes. Nas nove
+larguras, a área sem imagem manteve a proporção e o fundo adaptativo claro/escuro,
+sem overflow. É somente uma simulação CSS no navegador; `field_media_image` é
+obrigatório no bundle e não se criou conteúdo que contornasse essa validação.
+Evidência: `/home/piradopirata/aculta-suite-out/magazine-cover-fallback-candidate-8d7f1d576-20261031/`.
+
+### THEME-MF0 — inventário responsivo regenerado após o shell mobile (2026-10-31)
+
+`python3 scripts/audit-aculta420-responsive-inventory.py --write` atualizou
+duas linhas do TSV canônico (CSS `institution-bar.css` e JS
+`navigation-top-bar-displace.js`). A execução sem `--write` foi comparada byte a
+byte e coincidiu. O inventário contém 264 registros: 94 estilos, 12 arquivos
+JavaScript, 102 Twig/HTML, uma library e 55 manifestos SDC; 83 referências locais
+de assets foram verificadas. SHA-256 do TSV:
+`834d194020000f3c949d3bbae8d71c6d8d80b04fe0923d1b4b52856d6c185c04`.
+
+A varredura encontrou 101 regras `@media` em 47 estilos: 83 consultas com
+`min-width`, uma com `max-width` e as demais para preferências/recursos de
+entrada. A única exceção de largura máxima é a decisão focal que oculta as ações
+administrativas em até 1023px. Há uma `@container` em `css/components/auth.css`.
+Isto atualiza a fotografia histórica de 99 consultas somente `min-width` e não
+substitui o inventário visual por componentes e purposes.
+
+### THEME-MF3 — heading principal nas dez raízes públicas (2026-10-31)
+
+Firefox ESR visível, em GET anônimo e sem injeções, passou **180/180 checks**
+nas raízes MAIN, Conta, Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e
+Eventos em 320/360/390/599/600/768/1024/1280/1440 px. Cada rota teve `<main
+id="main-content">`, exatamente um H1 visível e nenhum overflow do documento.
+Evidência: `/home/piradopirata/aculta-suite-out/purpose-headings-f57c6c93d-20261031/`.
+É validação de hierarquia da raiz; não avalia páginas internas, semântica de
+todos os títulos, leitor de tela ou WCAG completa, portanto não aprova MF3/F11.
+
+### THEME-MF2/MF3 — artigo real da Revista servido no Runtime (2026-10-31)
+
+No Runtime destacado em `03a9cd172`, Firefox ESR visível e sem injeção de CSS
+passou **15/15 checks** na home e no artigo editorial ligado a partir dela:
+larguras 320/360/390/599/600/768/1024/1280/1440px, zoom real de 200%/400%,
+corpo editorial, capa, discussão contextual, shell único e zero overflow. As
+capturas de 320px da publicação e do zoom foram revisadas. Nenhum comentário
+foi enviado e nenhum conteúdo foi alterado. Evidência:
+`/home/piradopirata/aculta-suite-out/revista-browser-zoom-served-03a9cd172-20261031/`.
+Este smoke não testa autorização de comentários, ACL entre contas, moderadores,
+teclado completo ou WCAG 2.2 AA; não aprova OCS-F11/THEME-MF3.
+
+
+### THEME-MF2 — reteste da apresentação de organizações de Eventos (2026-10-31)
+
+Firefox ESR visível executou novamente `organization-forms.py` usando o
+Bootstrap local do projeto e os CSS atuais do tema: **74/74 checks** em
+320/360/390/599/600/768/1024/1280/1440 px, claro/escuro. Passaram reflow dos
+formulários e listas, rolagem confinada da tabela, superfície, foco visível e
+alvo de 44 px; sem overflow. Evidência:
+`/home/piradopirata/aculta-suite-out/aculta-events-organization-layout-f2c3b37db-20261031/`.
+Este harness é uma fixture local, não a tela Drupal servida; ACL, AJAX, conteúdo
+e integração no Runtime continuam por validar.
+
+### THEME-MF2 — catálogo público real de Eventos (2026-10-31)
+
+O Firefox ESR visível abriu `/eventos` no host de teste e mediu três publicações
+existentes em 320/360/390/575/576/600/768/1024/1280/1440 px. **30/30 checks**
+passaram: zero overflow, moldura visual aplicada somente ao SDC e links de
+pelo menos 44 px. Evidência:
+`/home/piradopirata/aculta-suite-out/events-catalogue-candidate-81b6ed4ad-20261031/`.
+O harness injeta o CSS local do SDC sobre a página real; portanto é validação da
+folha candidata e do markup/conteúdo servido, não prova isolada da CSS integrada.
+Não houve escrita de conteúdo ou submissão de filtros.
+
+### THEME-MF2 — catálogo de Eventos com conteúdo real servido (2026-10-31)
+
+Firefox ESR visível mediu `/eventos` no host de teste, com três cartões já
+publicados, em 320/360/390/575/576/600/768/1024/1280/1440px: **30/30 checks**
+para ausência de overflow, borda pertencente ao SDC e alvos de link de título
+com 44px. Nenhum filtro foi enviado ou conteúdo modificado. O script injeta a
+folha local do SDC sobre o markup real para tornar a comparação repetível; não
+é prova isolada do CSS já servido. Evidência:
+`/home/piradopirata/aculta-suite-out/events-catalogue-candidate-81b6ed4ad-20261031/`.
+
+### OCS-F10 / THEME-MF2 — formulários de organização de Eventos servidos no Runtime (2026-10-31)
+
+Firefox ESR visível autenticado como conta sintética `aculta_visual_admin` abriu
+por GET `/culturas/eventos/novo` e `/culturas/locais/novo`, sem CSS ou JavaScript
+injetados, em 320/360/390/599/600/768/1024/1280/1440px. Foram gravadas 18
+capturas, com `CAPTURED`, zero falhas e largura documental igual à viewport nas
+18. Institution Bar e Domain Header estavam presentes; o Form API proprietário
+de cada rota estava renderizado. Capturas mobile foram revisadas. Nenhum
+formulário foi submetido, endereço consultado ou conteúdo alterado. Snapshot
+pré-ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-integrated-nooverride-20261031.sql`,
+54.390.833 bytes, modo 0600, SHA-256
+`f9dc3f87efc85947b8d8f72ccc6f277857e3467a504be3e853eaea21a5dca062`; Runtime
+com 611 tabelas antes/depois. Evidência visual:
+`/home/piradopirata/aculta-suite-out/culturas-organizer-integrated-nooverride-e38c1f1f0-20261031/`.
+A rodada valida renderização integrada e overflow, não dark mode, no-JS/AJAX,
+teclado/zoom, grants entre contas, CEP ou WCAG completa; não aprova OCS-F11 nem
+THEME-MF3.
+
+### OCS-F10 — ACULTA Studio Culturas servido no Runtime (2026-10-31)
+
+A rota autenticada `/culturas` foi aberta por GET em Firefox ESR visível, sem
+CSS/JS candidatos, em 320/360/390/599/600/768/1024/1280/1440px. As nove
+capturas ficaram `CAPTURED`, zero falhas; Institution Bar e Domain Header
+estavam presentes e a largura documental igualou a viewport. A captura mobile
+foi revista: o aviso ULI permaneceu em fluxo e a descrição do estado do
+organizador continuou legível. Nenhuma ação de evento/local foi acionada.
+Evidência: `/home/piradopirata/aculta-suite-out/culturas-hub-integrated-bdc8fb4d9-20261031/`.
+Snapshot anterior à ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-hub-integrated-20261031.sql`,
+54.288.530 bytes, modo 0600, SHA-256
+`af918261e2200f41fddf8a9bd249fda7839de055913dfb6408c94b6f3e978d5d`; `aculta_runtime`
+permaneceu em 611 tabelas. Esta captura verifica reflow e shell do hub, não
+CRUD, grants entre contas, teclado/zoom, dark mode ou WCAG completa; não aprova
+OCS-F11/THEME-MF3.
+
+### OCS-F10 / THEME-MF2 — ACULTA Studio Culturas sem JavaScript (2026-10-31)
+
+Com JavaScript do site desativado no Firefox ESR visível, `/culturas`,
+`/culturas/eventos/novo` e `/culturas/locais/novo` renderizaram por GET em nove
+larguras (27 capturas, `CAPTURED`, zero falhas), sem overflow documental.
+Institution Bar e Domain Header permaneceram presentes. Os dois Form API forms
+continuaram visíveis; seus 16 campos observáveis e ações mediram pelo menos
+44px nas larguras testadas. A navegação sem JavaScript expande no fluxo; a
+captura de 320px foi revisada. Nenhuma operação foi enviada. Evidência:
+`/home/piradopirata/aculta-suite-out/culturas-nojs-integrated-5702e4ffc-20261031/`.
+Snapshot pré-ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-nojs-integrated-20261031.sql`,
+54.545.379 bytes, modo 0600, SHA-256
+`c89e7f93401d06b2ae95ccbc242f02a0691ae75703dd1d67d8c3c7d9ae0e20db`; Runtime
+com 611 tabelas. Este é um reteste de renderização/reflow sem script, não cobre
+AJAX, dark mode, teclado/zoom ou WCAG completa; não aprova OCS-F11/THEME-MF3.
+
+### OCS-F10 / THEME-MF2 — Culturas escuro e sem JavaScript (2026-10-31)
+
+Reteste Firefox ESR visível com `data-bs-theme=dark` aplicado apenas ao documento
+via WebDriver e scripts do site desativados: `/culturas` e os dois formulários,
+nove larguras, **27 capturas**, `CAPTURED`, zero falhas, sem overflow. Os
+formulários mantiveram 16 campos observáveis e ações com altura mínima de 44px;
+a captura escura de `/culturas/eventos/novo` a 320px foi revisada. A alteração
+de tema foi local à sessão e nenhuma preferência persistiu. Evidência:
+`/home/piradopirata/aculta-suite-out/culturas-nojs-dark-integrated-ac328d00e-20261031/`.
+Snapshot pré-ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-nojs-dark-20261031.sql`,
+54.387.794 bytes, modo 0600, SHA-256
+`cae1dcf5a9f446cd3f1b08131c997bcd7ca061cc3cc07e4bb46b19b4996abe7e`.
+Isto verifica reflow e superfícies do tema escuro neste fluxo, não contraste
+WCAG integral, interações AJAX, ACL ou teclado; os gates globais seguem abertos.
+
+### OCS-F10 / THEME-MF2 — Culturas escuro com JavaScript habilitado (2026-10-31)
+
+Firefox ESR visível capturou `/culturas` e os dois formulários reais de Eventos
+em nove larguras, com JavaScript ativo e modo escuro selecionado somente no
+documento da sessão: 27 capturas, `CAPTURED`, zero falhas e nenhum overflow.
+Institution Bar e Domain Header permaneceram presentes; os formulários
+mantiveram 16 campos observáveis e ações com altura mínima de 44px. Captura
+escura de 320px revisada. Nenhum formulário foi submetido e nenhuma preferência
+foi salva. Evidência:
+`/home/piradopirata/aculta-suite-out/culturas-js-dark-integrated-f1f50a7ea-20261031/`.
+Snapshot pré-ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-js-dark-20261031.sql`,
+54.642.017 bytes, modo 0600, SHA-256
+`da201177dda07fd685594a9cd35c0d3afc1f8ca3cecbdc796c61e1f9ac8b9217`.
+A amostra valida modo escuro e reflow, não contraste WCAG integral, teclado,
+zoom, ACL nem OCS-F11/THEME-MF3.
+
+### THEME-MF2 / OCS-F10 — teclado e alvos dos formulários Culturas (2026-10-31)
+
+No Firefox ESR visível, a candidata de layout foi aplicada localmente aos
+formulários reais `/culturas/eventos/novo` e `/culturas/locais/novo`, a 320px.
+Os **35/35 controles** foram alcançados por Tab, mostraram foco visível e
+atenderam às dimensões mínimas do controle/alvo (17 controles no evento, 18 no
+local); não houve overflow. O complemento do endereço no formulário de local
+passou de 35,6px para 204px ao reflowar para uma linha própria, e o alvo S/N
+mediu 66×44px. A candidata injeta somente o CSS/estrutura do worktree; isto é
+pré-validação e não o gate integrado. Capturas e JSON:
+`/home/piradopirata/aculta-suite-out/culturas-keyboard-candidate5-320-b2479397f-20261031/`.
+Snapshot pré-ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-keyboard-candidate5-20261031.sql`,
+56.515.783 bytes, modo 0600, SHA-256
+`33a030371e032425ba45499d04eded50d729e17cfd5804929abcde7c0538fcf0`;
+Runtime `aculta_runtime`, 611 tabelas. Esta pré-validação não aprovou os gates
+globais; o reteste integrado sem injeção está registrado abaixo.
+
+Reteste integrado após o commit `ca70dfaf6`, sem CSS/JS candidatos: Firefox ESR
+visível capturou os dois formulários em 320/360/390/599/600/768/1024/1280/1440px,
+**18/18 páginas**, shell presente, zero overflow e zero falhas. Tab alcançou
+17/17 controles do evento e 18/18 do local, todos com foco visível; alvos nativos
+e labels associados cumpriram 44px, complemento 204×44px e alvo S/N 66×44px.
+Evidência: `/home/piradopirata/aculta-suite-out/culturas-keyboard-integrated-ca70dfaf6-20261031/`.
+Snapshot pré-ULI: `aculta_runtime-before-culturas-keyboard-integrated-20261031.sql`,
+50.991.672 bytes, modo 0600, SHA-256
+`9619d330e27a706380506e38d1207c229ac2b309abf524399ca1128db42214cc`.
+
+O mesmo conjunto de páginas passou **18/18** em modo escuro com JavaScript e
+**18/18** sem JavaScript, sem falhas ou overflow; no-JS os campos e ações
+observados mantiveram ao menos 44px de altura. Evidências em
+`/home/piradopirata/aculta-suite-out/culturas-dark-integrated-ca70dfaf6-20261031/`
+e `/home/piradopirata/aculta-suite-out/culturas-nojs-keyboard-integrated-ca70dfaf6-20261031/`.
+Snapshots pré-ULI, ambos com 611 tabelas e modo 0600:
+`aculta_runtime-before-culturas-keyboard-dark-integrated-20261031.sql`,
+56.576.153 bytes, SHA-256
+`56ecb16d9fbdf4cc083838a547a6897ca804b9407a093a7f2d13cd6bb12b7906`; e
+`aculta_runtime-before-culturas-keyboard-nojs-integrated-20261031.sql`,
+56.682.982 bytes, SHA-256
+`51ff77e9818cf2e79a52069d86fb8399971a2b0844b10feb1a8b85555bae31c5`.
+Esses resultados fecham a regressão visual responsiva/teclado deste ajuste;
+contraste WCAG integral, zoom, ACL, AJAX e os gates globais THEME-MF3/OCS-F11
+continuam separados e pendentes.
+
+### OCS-F10 / THEME-MF2 — zoom real dos formulários Culturas (2026-10-31)
+
+Depois do commit `9eae5caf4`, Firefox ESR visível no docroot sincronizado abriu
+por GET `/culturas/eventos/novo` e `/culturas/locais/novo`, sem CSS/JS injetados
+e sem submeter formulários. As duas rotas passaram viewport base de 1280px e
+zoom real a 100%, 200% e 400%: **12/12 checks** de shell, presença dos forms,
+razão de zoom e ausência de overflow horizontal. A Institution Bar e o Domain
+Header apareceram uma vez em cada estado; o Local manteve Complemento ≥44px e
+alvo S/N ≥44×44px. Em 200%/400%, Tab alcançou o campo principal do Evento e,
+no Local, S/N e Complemento; todos mostraram `:focus-visible` com contorno ou
+anel de foco. A métrica exige que ao menos 85% do controle permaneça no
+viewport; Complemento mediu 88,1% a 200% e 96,6% a 400%, com pequeno recorte
+junto à borda inferior, sem ocultar o foco. Evidência:
+`/home/piradopirata/aculta-suite-out/culturas-forms-zoom-postpush-20261031/`
+(10 capturas e `report.json`). Snapshot pré-ULI:
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-forms-zoom-postpush-20261031.sql`,
+51.377.027 bytes, modo 0600, SHA-256
+`663569d5f39646443b19bf1c159ee29fec754293fb8631de133d6b1725bf1407`.
+Este resultado fecha zoom/teclado somente para esses dois formulários; não
+cobre CEP, envio/Form API, grants A/B, AJAX, contraste WCAG integral ou
+THEME-MF3/OCS-F11.
+
+### Ferramentas rápidas e diagnóstico axe de Culturas (2026-10-31)
+
+> **Retificação de status em 2026-10-31:** os achados de código abaixo foram
+> corrigidos em `b24d3f67e` e `f68dde925`; a auditoria inicial é preservada como
+> histórico. A seção “Reteste axe após correções” registra os resultados atuais
+> e as limitações restantes.
+
+O runner WebDriver foi ampliado com Firefox ESR, Chrome e Chromium headless
+opt-in e screenshots de borda (320/1440px), preservando o Firefox ESR/X11 para
+inspeção visual e zoom real. A matriz responsiva do dashboard `/culturas`
+passou 20/20 verificações em Firefox ESR headless (13,5s), Chrome headless
+(9,7s) e Chromium headless (11,3s), cobrindo nove larguras, claro/escuro,
+overflow, estrutura e foco. Candidata de CSS foi injetada localmente; a medição
+não equivale a validação do CSS servido nem fecha THEME-MF3/OCS-F11. A receita
+reutilizável está em `tests/browser/aculta-theme-mobile-first/README.md`.
+
+O diagnóstico axe-core 4.14.0 em 320px identificou nos dois modos de cor:
+contraste 3,58:1 em `.aculta-footer-cnpj`, `.field--name-field-cnpj` e
+`.field--name-field-headquarters`; conteúdo sem landmark em
+`.aculta-institution-bar__brand` e `.use-ajax > .visually-hidden`; e um select
+do filtro de situação sem nome acessível. Um contraste adicional ficou como
+`incomplete` para revisão humana. Isso é uma **pendência real**, não aprovação
+WCAG 2.2 AA. O select é montado em
+`web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`:
+pendente de correção: emitir nome programático associado ao select (label visível quando
+compatível com a composição, ou `aria-label` traduzível); manter os mesmos
+valores e GET `status`; teste de acessibilidade/functional deve confirmar o
+nome no DOM e a filtragem existente. Contraste e landmarks pertencem à revisão
+do shell/institucional do tema, sem mudanças funcionais nesta microfase.
+Resultados JSON e capturas estão em
+`/home/piradopirata/aculta-suite-out/culturas-runtime-axe-firefox-20261031/`.
+
+O runner genérico validou também `https://aculta.toca.net.br/` em
+320/390/1280px, claro/escuro e Firefox/Chrome headless: 6/6 viewports por
+motor, sem overflow. axe reportou três regras por modo na página inicial:
+`aria-prohibited-attr` em `.vvjb-carousel-dots`, contraste no bloco institucional
+do footer (3,58:1) e conteúdo sem landmark no shell (`.aculta-institution-bar__brand`
+e `.aculta-search-utility > .visually-hidden`). O primeiro nó é emitido pelo
+carrossel de destaques; identificar seu owner e corrigir a semântica preservando
+controles reais do carrossel. Contraste e landmark precisam de correção na
+revisão global do tema. Evidência: `/home/piradopirata/aculta-suite-out/generic-page-matrix-firefox-20261031/`
+e `.../generic-page-matrix-chrome-20261031/`. Estes resultados são o baseline
+histórico anterior às correções abaixo; não descrevem o estado atual do código.
+
+### Reteste axe após correções — home pública e Culturas (2026-10-31)
+
+As correções focais foram publicadas em `b24d3f67e` e `f68dde925`: texto
+institucional/CNPJ usa token de contraste adequado no rodapé; Institution Bar
+é uma região nomeada; o filtro de situação de Culturas tem nome acessível
+traduzível sem alterar opções ou semântica GET; os contêineres de pontos e
+controles de seta do carrossel VVJB têm `role="group"`. O teste Kernel de
+Eventos também exige o rótulo e preserva as chaves das opções.
+
+Após essas correções, a página inicial pública passou Firefox ESR headless em
+320/360/390/599/600/768/1024/1280/1440px, claro/escuro: 18/18 viewports, zero
+overflow, zero violações e zero itens `incomplete` do axe nos pontos auditados.
+Chrome headless passou 10/10 nas larguras 320/390/768/1280/1440px nos dois
+modos, também sem violações ou itens incompletos. Em Firefox ESR visível/X11,
+a home passou 4/4 capturas em 390/1280px nos dois modos.
+
+Culturas autenticado passou Firefox ESR headless em 18/18 viewports e Chrome
+headless em 10/10, sem overflow nem violações axe. O axe ainda retorna um item
+`incomplete` por modo para `h1.title`: não conseguiu determinar o fundo por
+alegada sobreposição parcial. A captura de 320px foi revisada e não mostra
+sobreposição; as cores do CSS são `#1f1f1f` sobre `#f2f7f0` no claro (15,18:1)
+e `#efefef` sobre `#171513` no escuro (15,84:1). Esse item foi verificado
+manualmente, mas continua registrado como `incomplete` automatizado, não como
+resultado de axe aprovado. JSON/capturas em
+`/home/piradopirata/aculta-suite-out/axe-a11y-responsive-{home,culturas}-{firefox,chrome}-20261031/`;
+capturas X11 da home em
+`/home/piradopirata/aculta-suite-out/axe-a11y-x11-home-20261031/`.
+
+O reteste comprova somente essas rotas, modos, larguras e regras axe observadas.
+Não é auditoria completa WCAG 2.2 AA, não cobre todos os propósitos, fluxos,
+estados, leitores de tela ou interação, e não aprova THEME-MF3 nem OCS-F11.
+
+### THEME-MF0 — baseline anônimo de todas as raízes de purpose (2026-10-31)
+
+Com o checkout de desenvolvimento confirmado em `toca`, HEAD `18f0eabf0`, URI
+`http://default`, banco `aculta_runtime` (611 tabelas), o harness genérico
+`tests/browser/aculta-smoke/page-matrix.py` percorreu as dez raízes atuais
+descritas em `aculta_deployer/config/deploy.json`: Main, Conta, Apoio, Revista,
+Wiki, Loja, Cursos, Growroom/Fórum, Links e Eventos. Firefox ESR headless,
+320/360/390/599/600/768/1024/1280/1440px e claro/escuro: **180/180** páginas
+retornaram HTTP 200 e não apresentaram overflow horizontal. Foi uma leitura
+anônima, somente GET; não valida páginas internas, formulários, ACL, contas A/B,
+teclado, zoom, no-JS, reduced motion nem cache privado.
+
+O axe-core 4.14.0, executado a 320px em cada raiz e modo, registrou quatro
+violações no total: `label-content-name-mismatch` nos dois links de matrícula
+de Cursos, porque o `aria-label` traduzido omitia o texto visível “Login /
+Registro”; e `heading-order` em Eventos, cuja página passa de H1 diretamente
+para H3 nos títulos dos cartões. A tradução do tema agora inclui o rótulo
+visível; o controller de Eventos e seu SDC usam H2, protegido por teste Kernel.
+Essas correções estão no candidato desta branch; precisam de integração e
+reteste servido antes de fechar os achados.
+
+Também houve quatro resultados `incomplete` (Conta/H1 e Growroom/select
+`#edit-categoria`, em claro/escuro), sem violações adicionais. Axe não consegue
+determinar o fundo do H1 por alegada sobreposição, nem do select por gradiente/
+imagem de fundo. Estes dois alvos exigem revisão manual; não são classificados
+como aprovação de contraste. Evidência baseline:
+`/home/piradopirata/aculta-suite-out/project-roots-firefox-matrix-20261031/`.
+O gate é evidência inicial transversal de THEME-MF0, não conclusão do inventário
+ou aprovação THEME-MF3/OCS-F11.
+
+### Reteste transversal após correções — 2026-10-31
+
+No commit servido `3648c50db`, o harness genérico de navegador foi repetido nas
+dez raízes públicas do projeto (Main, Conta, Apoio, Revista, Wiki, Loja, Cursos,
+Growroom/Fórum, Links e Eventos), demonstrando que os runners são
+infraestrutura compartilhada entre todos os módulos/purposes, não somente do
+tema ou Studio. Firefox ESR headless passou **180/180** combinações (10 rotas ×
+9 larguras × claro/escuro), com HTTP 200, sem overflow horizontal e zero
+violações axe. Permanecem quatro resultados axe `incomplete`: H1 da Conta e
+select de categoria do Growroom em claro/escuro; esses itens requerem revisão
+manual e não contam como aprovação automatizada de contraste.
+
+Como validação complementar de engines e inspeção visível, Chrome headless passou
+36/36 checks de Cursos/Eventos (duas rotas × nove larguras × dois modos), e
+Firefox ESR/X11 passou 16/16 (duas rotas × quatro larguras × dois modos). A
+faixa horizontal de Cursos passou 17/17 checks tanto com JavaScript quanto sem
+ele, incluindo zoom real de 400%, foco visível e navegação até todos os cards.
+A captura que mostra parte do próximo card é o convite visual da faixa; não
+significa que os demais cards estejam inacessíveis.
+
+Evidências privadas: `/home/piradopirata/aculta-suite-out/project-roots-firefox-matrix-3648c50db/`,
+`course-event-chrome-matrix-3648c50db/`, `course-event-x11-3648c50db/`,
+`courses-rail-served-3648c50db/` e `courses-rail-nojs-served-3648c50db/`.
+Limite: a matriz das dez raízes é anônima; validações de engine/X11 e faixa são
+focais. Não cobrem todas as telas internas, ACLs, submissões, leitor de tela ou
+todos os critérios WCAG 2.2 AA. THEME-MF3 e OCS-F11 permanecem pendentes.
+
+### OCS-F3/F4 — Hub da Conta: reteste do SDC no Runtime e correção candidata (2026-10-31)
+
+No Runtime `toca`, checkout servido e destacado em `6c71c5a13`, Firefox ESR/X11
+autenticado pela conta de teste `aculta_visual_admin` percorreu a entrada da
+Conta em 320/360/390/599/600/768/1024/1280/1440px, sem CSS candidata. A rota
+canônica `/conta` normalizou para `/`, a entrada da Conta. O root e os cinco
+links autorizados apareceram em todas as larguras; Institution Bar e Domain
+Header eram únicos e não houve overflow. Contudo, **9/9 checks falharam**: os
+links não estavam dentro do SDC `patterns/card` e mediam apenas 19px de altura.
+Capturas e relatório: `/home/piradopirata/aculta-suite-out/studio-account-hub-card-retest-6c71c5a13-20261031/`.
+
+A causa foi confirmada nos contratos dos arrays de render: `AccountExperienceProvider`
+define `#attributes` no `item_list`; o preprocess do Core apresenta esse token
+em `attributes`, mas o adapter do tema só consultava `element` e
+`wrapper_attributes`. O adapter agora reconhece ambos os campos de attributes e
+wrapper sem alterar destinos ou links. `PortalUiHooksTest` passou 27 testes/149
+assertions; PHP lint, PHPCS Drupal/DrupalPractice, schema/discovery SDC (55
+componentes, 27 includes, 759 checks) e `git diff --check` passaram. A integração
+Firefox sem override após publicação/cache ainda é necessária antes de marcar o
+consumer como corrigido. Snapshot anterior às sessões ULI: arquivo
+`aculta_runtime-before-studio-hub-card-retest-20261031.sql` (55.599.739 bytes,
+SHA-256 `2a5283018b21e24cc545b1becbb09951a52c4eae6dc60cbb55705f6a522e7b4f`, modo
+0600) e `aculta_runtime-before-studio-account-hub-card-retest-20261031.sql`
+(57.157.968 bytes, SHA-256
+`82b13a97f786dc5882b55f269323a53761c8bdc09fc8f8190ff4f4c66f581e4d`, modo
+0600), ambos em `runtime-snapshots/`. Nenhum formulário foi enviado nem conteúdo
+foi alterado.
+
+### OCS-F3/F4 — wrapper dos cards de entrada da Conta (2026-10-31)
+
+A saída real do preprocess Drupal usa cinco `li.list-group-item` ao redor dos
+SDCs `patterns/card`. A primeira captura autenticada integrada mostrou uma
+superfície Bootstrap quadrada em volta de cada card Fidelity arredondado. O CSS
+escopa a neutralização de padding, fundo e borda desses wrappers somente em
+`.aculta-account-entry`; o SDC mantém sua única superfície visual. A fixture
+Firefox ESR/X11 foi atualizada para reproduzir a classe Core. Resultado local:
+277/277 checks em 27 larguras (320–1920px), cinco alvos de 44px, teclado,
+Montserrat e zoom real de 200%/400%; zero falhas e sem overflow. Capturas:
+`/home/piradopirata/aculta-suite-out/studio-card-fidelity-list-wrapper-20261031/`.
+A captura de 1440px foi revisada. Lint CSS e `git diff --check` passaram. A
+correção candidata ainda precisa ser servida pelo Runtime e retestada; isso não
+aprova THEME-MF3 nem OCS-F11.
+
+### OCS-F3/F4 — confirmação da correção no Runtime (2026-10-31)
+
+A observação anterior foi concluída após publicar `5a9c03b4b`: docroot alinhado,
+cache reconstruído, `updatedb:status` sem updates e `config:status` sem diferenças.
+Firefox ESR/X11 autenticado abriu a entrada da Conta sem CSS override em
+320/360/390/599/600/768/1024/1280/1440px. Os nove viewports exibiram cinco SDCs,
+raio de 24px, largura documental igual à viewport e Institution Bar/Domain
+Header únicos; `CAPTURED`, zero falhas. Captura 1440px revisada; não há segunda
+superfície Bootstrap. Evidência: `/home/piradopirata/aculta-suite-out/studio-account-hub-card-integrated-5a9c03b4b-20261031/`.
+Snapshot prévio modo 0600: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-account-wrapper-5a9c03b4b-20261031.sql`,
+57.414.352 bytes, SHA-256 `1c679a99cbddbad7b3690c0fac5c5a8043165083063efe32bb71df4ee346f16a`.
+Essa confirmação cobre a entrada da Conta; não fecha THEME-MF3 nem OCS-F11.
+
+### OCS-F6 — Ganjalab integrado no HEAD atual (2026-10-31)
+
+Firefox ESR/X11 autenticado capturou `courses:/ganjalab` no Runtime destacado
+`959bc283c`, sem CSS injetada, em 320/360/390/599/600/768/1024/1280/1440px.
+`CAPTURED`, zero falhas, documento sem overflow; `.studio`, o SDC
+`context-header` e os dois estados vazios do compositor foram encontrados em
+todos os viewports. Institution Bar e Domain Header únicos. Capturas 320 e 1440
+px revisadas. Relatório: `/home/piradopirata/aculta-suite-out/ganjalab-dashboard-integrated-959bc283c-20261031/`.
+Snapshot pré-ULI modo 0600: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-ganjalab-current-959bc283c-20261031.sql`,
+51.990.962 bytes, SHA-256 `325ec6eae0efde2e9ad5ff76ca86ab0258fd64692235940c58cf9b4e3d1acac4`.
+A conta não possui matrículas nem certificados: cards de conteúdo preenchidos,
+ACL entre usuários, no-JS/AJAX, teclado/zoom, dark mode e WCAG não foram
+validados. O reteste confirma o compositor e os estados vazios, não fecha F6,
+THEME-MF3 ou OCS-F11.
+
+### OCS-F8 / THEME-MF2 — Green Stash integrado no Runtime (2026-10-31)
+
+Green Stash permanece a área comercial integrada do ACULTA Studio, sob
+`shop:/studio/green-stash`, com o Institution Bar e Domain Header compartilhados.
+O GET autenticado de criação de produto passou após corrigir o tratamento do
+`createAccess()` que causava HTTP 500. O harness genérico do projeto verificou
+visão geral, produtos, envios, novo produto e detalhe em 320/360/390/599/600/
+768/1024/1280/1440px, claro/escuro: **90/90**, HTTP 200, sem overflow, axe sem
+violações nem `incomplete`. Capturas 320px e 1440px revisadas; nenhum formulário
+foi enviado. Evidência: `/home/piradopirata/aculta-suite-out/green-stash-full-fixed-55665601d-20261031/`.
+O snapshot pré-ULI e limites estão em `docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
+
+Isso valida apresentação/reflow e o GET do formulário, não submissão Commerce,
+grants A/B entre lojas, operações fora das telas disponíveis, no-JS/AJAX,
+teclado/zoom ou WCAG 2.2 AA. OCS-F8 permanece parcial; THEME-MF3 e OCS-F11
+continuam pendentes.
+
+### THEME-MF3 — reteste transversal dos shells públicos (2026-10-31)
+
+Firefox ESR visível em `DISPLAY=:0` percorreu as raízes de main, account,
+support, magazine, wiki, shop, courses, forum, links e eventos, nos domínios
+de teste configurados em `aculta_deployer/config/deploy.json`. Em
+320/360/390/599/600/768/1024/1280/1440px, claro/escuro e reduced motion,
+passaram **576/576 checks**: documento sem overflow, Institution Bar e Domain
+Header únicos, tokens de superfície/texto presentes e contraste AA dos links
+textuais do shell medidos. O harness não injetou CSS nem JavaScript candidato;
+40 capturas e `results.json` estão em
+`/home/piradopirata/aculta-suite-out/purpose-shell-recheck-dbb226ef3-20261031/`.
+
+A sessão foi anônima e somente GET. O checkout de desenvolvimento permaneceu
+no HEAD destacado `ae3227866`; nenhuma escrita persistente foi feita no
+Runtime, que estava identificado como `aculta_runtime`, URI `http://default`,
+619 tabelas. A matriz cobre apenas as páginas-raiz públicas e o shell; não
+valida páginas internas, zoom, teclado, foco, leitor de tela, ACL entre contas,
+formulários, no-JS, axe completo ou a fidelidade pareada `opcult`. Portanto
+THEME-MF3 e OCS-F11 continuam sem aprovação.
+
+### THEME-MF3 — no-JS, teclado, zoom e axe nas raízes públicas (2026-10-31)
+
+No mesmo Runtime e docroot destacado `ae3227866`, Firefox ESR/X11 percorreu as
+dez raízes anônimas dos purposes:
+
+- Com JavaScript do perfil desativado, **270/270 checks** passaram em nove
+  larguras; headers únicos, navegação (ou busca contextual da Wiki) disponível
+  e sem overflow. Evidência:
+  `/home/piradopirata/aculta-suite-out/purpose-shell-nojs-recheck-dbb226ef3-20261031/`.
+- Tab e Shift+Tab passaram **609/609 checks** em 320/390/768/1280px, sem
+  falhas; 47 limites de sequência foram registrados como `SKIP`. Shift+Tab
+  percorreu a sequência reversa a partir do último foco real alcançado por Tab.
+  O teste focal do Fórum passou 32/32 checks em 320/768px. Evidência:
+  `/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-recheck-corrected-dbb226ef3-20261031/`.
+- Zoom real do Firefox passou **30/30 checks** em 100%, 200% e 400%, sem
+  overflow horizontal e com Institution Bar, Domain Header e `main` únicos.
+  Evidência:
+  `/home/piradopirata/aculta-suite-out/purpose-browser-zoom-recheck-dbb226ef3-20261031/`.
+- A matriz genérica passou **40/40 checks** de status HTTP, viewport e overflow
+  em 320/1440px e claro/escuro. Os 20 scans axe reportaram zero violações, mas
+  quatro análises `color-contrast` ficaram `incomplete`: H1 de Conta por
+  elemento sobreposto e seletor de categoria do Fórum por gradiente/imagem,
+  cada um em claro/escuro. Capturas e relatório:
+  `/home/piradopirata/aculta-suite-out/purpose-shell-axe-recheck-dbb226ef3-20261031/`.
+  Esses casos requerem revisão manual; não são contados como conformidade WCAG.
+
+As sessões foram anônimas e somente GET. Claro/escuro, axe e tamanho de viewport
+foram aplicados somente à sessão local do Firefox. As capturas 320/1440 da
+Revista no reteste de shell foram revisadas; as demais capturas geradas ainda
+não foram todas inspecionadas visualmente. Esta evidência amplia o gate, mas não
+cobre rotas internas de cada purpose, ACL A/B, todos os formulários, fluxos AJAX,
+leitores de tela ou comparação pareada integral com `opcult`; portanto THEME-MF3
+e OCS-F11 permanecem pendentes.
+
+### THEME-MF3 — hierarquia de H1 nas dez raízes públicas (2026-10-31)
+
+Firefox ESR/X11 abriu as dez raízes anônimas em 320/390/600/768/1024/1440px:
+**120/120 checks** passaram. Cada página tinha um H1 visível dentro de
+`main#main-content`, Institution Bar e Domain Header únicos, e largura
+documental igual à viewport. A Conta passou a 320px, superando a falha
+histórica daquele viewport. Evidência em
+`/home/piradopirata/aculta-suite-out/purpose-headings-recheck-768d514ef-20261031/`.
+O teste foi somente GET e não injeta CSS; cobre apenas raízes públicas, não a
+hierarquia das páginas internas ou leitor de tela. Não aprova THEME-MF3.

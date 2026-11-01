@@ -168,7 +168,7 @@
 
 .aculta-wiki-article__aside {
   align-self: start;
-  grid-row: 1;
+  grid-row: auto;
   padding: 0.9rem;
   border: 1px solid var(--aculta-border-default);
   background: var(--aculta-surface-raised);

@@ -1,3 +1,8 @@
+## Retificação de caminho ACULTA STUDIO WE SATIVA — 2026-10-30
+
+- O caminho canônico confirmado pelo responsável é `/studio/we-sativa` no purpose `wiki`, incluindo a entrada de contribuição.
+- Os links Wiki passam a gerar a rota dentro do purpose `wiki`; homologação Kernel/Runtime após a retificação continua pendente.
+
 ## 0.1.0-dev.23 — qualidade S-R4/S-R5: PHPCS, testes de Conta e rotas verificadas (2026-10-25)
 
 - PHPCS Drupal e DrupalPractice limpo em `aculta_studio` (src e tests). Documentação ausente foi escrita com descrições reais, não com blocos vazios; arrays longos foram divididos e nomes totalmente qualificados trocados por `use`.

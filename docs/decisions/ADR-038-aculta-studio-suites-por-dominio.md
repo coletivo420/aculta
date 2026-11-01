@@ -1,18 +1,18 @@
 # ADR-038 - Suites do ACULTA Studio distribuídas por domínio
 
-- **Status:** Aceita; paths e bloqueio das rotas antigas implementados. O Domain Wiki canônico permanece `wiki420`, conforme correção do responsável em 2026-10-30; não há migração de host Wiki neste escopo. Grants e fluxos completos ainda requerem homologação.
+- **Status:** Aceita com retificação vinculante de paths em 2026-10-30. O Domain Wiki canônico permanece `wiki420`; grants e fluxos completos ainda requerem homologação.
 - **Data:** 2026-10-30.
 - **Decisor:** responsável pelo produto.
 - **Contexto:** As experiências do Studio estão concentradas no host `conta` sob `/studio/*`, apesar de pertencerem a domínios funcionais distintos.
-- **Decisão:** Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. Hosts seguem o Domain ativo por ambiente.
-- **Retirada do prefixo:** `/studio` e todas as rotas públicas `/studio/*` deixam de existir após a migração e respondem 404, sem aliases/redirects. A marca ACULTA Studio e o módulo `aculta_studio` permanecem como plataforma/registry, sem hub URL sob `/studio`.
+- **Decisão original:** Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. Hosts seguem o Domain ativo por ambiente.
+- **Retificação vinculante do responsável (2026-10-30):** os nomes e caminhos oficiais são **ACULTA STUDIO WE SATIVA** em `wiki:/studio/we-sativa` e **ACULTA STUDIO GREEN STASH** em `shop:/studio/green-stash`. Seus fluxos filhos usam os mesmos prefixos. Não são hubs independentes: providers continuam integrados ao registry Studio, com dados e ACL nos owners Wiki/Commerce. Todos os demais caminhos `/studio/*`, inclusive `/studio` e caminhos antigos das outras Suites, seguem 404 sem aliases/redirects.
 - **Conta e Perfil:** seguem independentes das Suites. A raiz `account` será uma página de entrada da Conta e não reescreve para `/studio`; `/conta-legada` continua. Rotas atuais `/studio/conta/*`, `/studio/perfil/*`, `/studio/salvos` e `/studio/conta/mercado-pago/planos` migram para caminhos próprios sem `/studio`, preservando owners e separação Conta/Perfil.
 - **Ownership:** `aculta_lms`, `aculta_wiki`, `aculta_commerce` e `aculta_events` mantêm dados, formulários, ACL e workflows. `aculta_studio` compõe interfaces; não duplica seus dados ou operações.
 - **Revista no Marley:** o trabalho editorial de não administradores autorizados ocorre em `/marley/revista/*`, purpose `account`, no domínio de Marley. `/painel-administrativo/revista` permanece no purpose `main`, exclusivo para configuração e supervisão administrativa. O owner `aculta_magazine` mantém o bundle `revista`, formulários, workflow e comentários; o Studio compõe as jornadas e delega operações às APIs do owner, sem escrita cross-domain.
 - **Discussão contextual da Revista:** `field_aculta_discussion` e o tipo Comment `aculta_discussion_post` permanecem associados diretamente ao Node `revista`. `aculta_forum` fornece contexto, apresentação, access checks e políticas compartilhadas; isso não converte a discussão em `ForumPost`, não cria tópico público automático e não inclui a Revista na fila Growroom.
 - **Host Wiki:** o host canônico é o Domain configurado `wiki420` (`wiki420.aculta.*`). A referência a `wiki.aculta.*` no pedido inicial foi corrigida pelo responsável; preservar a configuração atual, sem novo Domain, DNS, TLS ou corte de host.
 - **Fronteira:** escrita ocorre somente no purpose da Suite; host errado responde 404, inclusive POST. Navegação usa URL absoluta via `DomainPurposeManager`, sem POST cross-domain.
-- **Novas Suites:** toda implementação futura escolhe domínio/purpose e caminho próprios; não criar novo `/studio/{suite}`.
+- **Novas Suites:** toda implementação futura escolhe domínio/purpose e caminho próprios; esta retificação aprova prefixos `/studio/` somente para as duas áreas nomeadas acima.
 - **Plano:** [contrato da plataforma](../architecture/ACULTA-STUDIO-EXPERIENCE-PLATFORM.md), [sitemap](../architecture/ROUTES-SITEMAP.md), [front paths](../portal/DOMAIN-FRONT-PATHS.md) e roadmap `aculta_studio`.
 
 ## Fases
@@ -29,21 +29,21 @@ Não fazer corte parcial que deixe links ou rotas graváveis em `/studio`; não 
 
 ## Correspondência de caminhos aprovada
 
-Os destinos abaixo preservam os IDs de rota quando possível e movem a URL para o purpose dono. As rotas antigas `/studio*` serão removidas sem alias ou redirect.
+Os destinos abaixo preservam os IDs de rota quando possível e movem as URLs para os purposes donos. A retificação mantém os caminhos oficiais de WE SATIVA e Green Stash sob `/studio/` nos respectivos domains; os demais `/studio*` continuam removidos sem alias ou redirect.
 
 | Caminho antigo | Caminho/purpose novo | Owner e decisão |
 | --- | --- | --- |
 | `/studio/marley` | `/marley` · `account` | `aculta_studio`; entrada Marley |
 | `/studio/marley/{aba}[/{secao}[/{sub}]]` | `/marley/{aba}[/{secao}[/{sub}]]` · `account` | `aculta_studio`; composição Marley e ações dos owners |
 | `/studio/ganjalab` | `/ganjalab` · `courses` | rota `aculta_lms.student_dashboard`; LMS |
-| `/studio/we-sativa` | `/wesativa` · `wiki` | `aculta_studio`; workspace WE SATIVA |
-| `/studio/we-sativa/inicio` | `/wesativa/inicio` · `wiki` | `aculta_studio`; entrada delegada ao workspace Wiki |
-| `/studio/marley/wiki/propostas/{proposal}/decidir` | `/wesativa/propostas/{proposal}/decidir` · `wiki` | `aculta_wiki.proposal_decide`; operação editorial Wiki |
-| `/studio/green-stash` | `/greenstash` · `shop` | `aculta_commerce.green_stash`; Commerce |
-| `/studio/green-stash/{secao}` | `/greenstash/{secao}` · `shop` | `aculta_commerce.green_stash_area`; Commerce |
-| `/studio/green-stash/produtos/novo` | `/greenstash/produtos/novo` · `shop` | `aculta_commerce.green_stash_product_create`; Commerce |
-| `/studio/green-stash/produtos/{produto}` | `/greenstash/produtos/{produto}` · `shop` | `aculta_commerce.green_stash_product_detail`; Commerce |
-| `/studio/green-stash/envios/{aculta_shipment}/transicao/{transition}` | `/greenstash/envios/{aculta_shipment}/transicao/{transition}` · `shop` | `aculta_commerce.green_stash_shipment_transition`; Commerce |
+| `/studio/we-sativa` em `account` | `/studio/we-sativa` · `wiki` | `aculta_studio`; workspace WE SATIVA, path oficial confirmado pelo responsável |
+| `/studio/we-sativa/inicio` em `account` | `/studio/we-sativa/inicio` · `wiki` | `aculta_studio`; entrada delegada ao workspace Wiki |
+| `/studio/marley/wiki/propostas/{proposal}/decidir` | `/studio/we-sativa/propostas/{proposal}/decidir` · `wiki` | `aculta_wiki.proposal_decide`; operação editorial Wiki |
+| `/studio/green-stash` em `account` | `/studio/green-stash` · `shop` | `aculta_commerce.green_stash`; área integrada, path oficial confirmado pelo responsável |
+| `/studio/green-stash/{secao}` em `account` | `/studio/green-stash/{secao}` · `shop` | `aculta_commerce.green_stash_area`; Commerce |
+| `/studio/green-stash/produtos/novo` em `account` | `/studio/green-stash/produtos/novo` · `shop` | `aculta_commerce.green_stash_product_create`; Commerce |
+| `/studio/green-stash/produtos/{produto}` em `account` | `/studio/green-stash/produtos/{produto}` · `shop` | `aculta_commerce.green_stash_product_detail`; Commerce |
+| `/studio/green-stash/envios/{aculta_shipment}/transicao/{transition}` | `/studio/green-stash/envios/{aculta_shipment}/transicao/{transition}` · `shop` | `aculta_commerce.green_stash_shipment_transition`; Commerce |
 | `/studio/culturas` | `/culturas` · `eventos` | destino aprovado; `aculta_events`; não havia rota de Suite implementada no HEAD inicial |
 | `/studio/conta` | `/conta` · `account` | `aculta_studio`; composição da Conta, sem dados de Perfil |
 | `/studio/conta/dados` | `/conta/dados` · `account` | Portal; dados privados |
@@ -72,6 +72,6 @@ Os nomes de host não são parte das rotas: links absolutos entre purposes devem
 - **Implementado no código:** caminhos das cinco Suites; rotas separadas de Conta, Perfil, salvos e Mercado Pago; raiz do purpose `account` como entrada da Conta; bloqueio global de `/studio` e `/studio/*` sem alias/redirect. A configuração exportada de front path da Conta aponta para `/conta`.
 - **Verificado no servidor de desenvolvimento:** após rebuild de cache, `/studio` e amostras de `/studio/*` responderam 404; a matriz de GET/POST retornou 404 nos purposes errados; os caminhos canônicos resolveram no purpose correto. A rota Culturas autenticada foi validada em Firefox depois da correção publicada em `95314a5a7`.
 - **Não concluído:** auditoria integral dos consumidores residuais, testes Kernel POST/AJAX em `aculta_simpletest`, grants/fluxos completos das Suites, validação de escrita para loja/eventos e homologação dos cinco Domains.
-- **Validação do host Wiki:** `wiki420.aculta.toca.net.br/wesativa` foi acessado por HTTPS em 2026-10-30 e retornou 403 anônimo (rota protegida; TLS e host alcançados). Firefox autenticado capturou WE SATIVA em `/wesativa`. `wiki420.aculta.org` não resolveu por DNS a partir deste ambiente de desenvolvimento; disponibilidade de produção não foi verificada. Nenhuma troca de host está planejada.
+- **Validação histórica do host Wiki (antes da retificação):** `wiki420.aculta.toca.net.br/wesativa` retornou 403 anônimo e Firefox autenticado capturou `/wesativa` em 2026-10-30. Isso antecede a retificação vinculante dos caminhos. Os paths `/studio/we-sativa` e `/studio/we-sativa/inicio` ainda precisam de homologação no Runtime; `wiki420.aculta.org` não resolveu por DNS a partir deste ambiente de desenvolvimento e disponibilidade de produção não foi verificada.
 
 Os commits de implementação e correção de Culturas estão publicados na branch da PR #299. Os detalhes e saídas dos comandos da sessão devem ficar no registro operacional, distinguindo validação local de homologação externa.

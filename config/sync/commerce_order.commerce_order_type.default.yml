@@ -4,14 +4,14 @@ status: true
 dependencies:
   module:
     - aculta_commerce
+third_party_settings:
+  aculta_commerce:
+    shipment_type: default
 _core:
   default_config_hash: jn2Hj-04qG6O3dTtK8EaBB13jVPplONDb9L0Fat-0pI
 id: default
 label: Padrão
 traits: {  }
-third_party_settings:
-  aculta_commerce:
-    shipment_type: default
 locked: false
 workflow: order_default
 showOrderEditLinks: false

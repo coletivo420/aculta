@@ -235,15 +235,20 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
     $this->assertSame('item_list', $build['#theme']);
     $this->assertSame('Locais do Festival', (string) $build['#title']);
     $this->assertCount(2, $build['#items']);
-    $this->assertContains('aculta_index/related_content', $build['#attached']['library']);
+    $this->assertSame('related-content-block', $build['#attributes']['data-portal-ui']);
+    $this->assertArrayNotHasKey('#attached', $build);
 
     // Check rendered item attributes and sub-elements.
     $firstItem = $build['#items'][0];
     $this->assertSame('container', $firstItem['#type']);
+    $this->assertSame('related-content-item', $firstItem['#attributes']['data-portal-ui']);
     $this->assertSame('aculta_event_location', $firstItem['#attributes']['data-entity-type']);
     $this->assertArrayHasKey('title', $firstItem);
     $this->assertArrayHasKey('badge', $firstItem);
     $this->assertArrayHasKey('summary', $firstItem);
+    $this->assertSame('related-content-link', $firstItem['title']['#attributes']['data-portal-ui']);
+    $this->assertSame('related-content-badge', $firstItem['badge']['#attributes']['data-portal-ui']);
+    $this->assertSame('related-content-summary', $firstItem['summary']['#attributes']['data-portal-ui']);
 
     // Verify cache tags include source event and both location entities.
     $cacheTags = $build['#cache']['tags'];

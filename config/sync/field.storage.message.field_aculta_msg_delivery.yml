@@ -9,7 +9,7 @@ dependencies:
     module:
       - aculta_messenger
 _core:
-  default_config_hash: IYTlgvl7IoWM_42TbuQC2NuPFuzi9Hd3vQ-Xf2F50Gs
+  default_config_hash: x3tKvSMmv5Pc0PpYS_6rSEA3qkq8q-cxMG-Y5rhBHh4
 id: message.field_aculta_msg_delivery
 field_name: field_aculta_msg_delivery
 entity_type: message
@@ -27,7 +27,7 @@ settings:
       label: Falhou
     -
       value: failed_permanent
-      label: Falha permanente
+      label: 'Falha permanente'
     -
       value: cancelled
       label: Cancelado

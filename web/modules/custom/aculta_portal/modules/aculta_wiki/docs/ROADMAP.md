@@ -1,10 +1,36 @@
 # Roadmap — ACULTA Wiki
 
+### Incremento dev.119 — criação WE SATIVA no purpose Wiki
+
+O CTA de autoria passa a `/studio/we-sativa/verbetes/novo`, rota própria no
+purpose Wiki, protegida por `createAccess('wiki_entry')`. Seu controller monta
+o formulário Core existente via Entity Form API; não há um formulário paralelo
+nem gravação ao abrir a página. A rota Core `/node/add/wiki_entry` pertence ao
+purpose principal e não é mais usada pelo workspace. Kernel focal confirmou
+autorização, render do formulário e ausência de persistência (2 testes/200
+asserções). No Runtime em `c7fc57dba`, `drush cr` e discovery da rota passaram;
+Firefox ESR/X11 com UID 5 ativo, autorizado e confirmado passou 61/61
+verificações em 1440/1280/1024/768/640/390/360/320 px; workspace e formulário
+foram verificados em todas as larguras, incluindo título/corpo, retorno e
+ausência de overflow. `create-form.png` (320 px) e `create-form-wide.png`
+(1440 px) revisadas; formulário não submetido. A
+tentativa inicial com UID 257 confirmou o estado bloqueado esperado para conta
+sem e-mail confirmado.
+
+## Retificação vigente de caminhos (2026-10-30)
+
+Por decisão vinculante do responsável, **ACULTA STUDIO WE SATIVA** usa
+`/studio/we-sativa` e descendentes no purpose `wiki`, no Domain `wiki420`.
+Entradas históricas abaixo que descrevem `/wesativa` ou purpose `account`
+registram estado anterior e não são o contrato vigente. A rota e os links
+foram atualizados; Kernel e Runtime após a retificação ainda precisam ser
+homologados.
+
 **Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md).
 Fechar escopo, testes, gates e revisão visual aplicável antes de RC. Deploy em
 produção só quando todos os módulos, temas e subtemas estiverem em RC.
 
-Linha do projeto `aculta_wiki`: **0.1.0-dev.118**. No Runtime de teste,
+Linha do projeto `aculta_wiki`: **0.1.0-dev.119**. No Runtime de teste,
 `aculta_wiki`, `aculta_studio` e `aculta_index` estão ativos. `drush cr` e o
 update autorizado 10001 foram aplicados; as rotas WE SATIVA existem e as quatro
 tabelas da entidade de proposta foram instaladas. Em dev.117 o Index foi

@@ -2,14 +2,14 @@ uuid: 8a5ee552-99fa-4115-b00d-5c123bfa29be
 langcode: pt-br
 status: true
 dependencies:
-  enforced:
-    module:
-      - aculta_portal
   config:
     - field.field.media.remote_video.field_media_oembed_video
     - media.type.remote_video
   module:
     - media
+  enforced:
+    module:
+      - aculta_portal
 id: media.remote_video.default
 targetEntityType: media
 bundle: remote_video
@@ -28,7 +28,11 @@ content:
     region: content
 hidden:
   created: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   langcode: true
   name: true
+  search_api_excerpt: true
   thumbnail: true
   uid: true

@@ -245,7 +245,7 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     UgcRecipientConfig::create([
       'id' => 'forum',
       'label' => 'Equipe de Moderação do Fórum',
-      'emails' => ['mod-forum@aculta.org'],
+      'emails' => ['mod-forum@example.invalid'],
     ])->save();
 
     $this->queue = $this->container->get('aculta_ugc.report_queue');
@@ -253,7 +253,7 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
   }
 
   /**
-   * Valida que novas sinalizações do Fórum sincronizam em UGC com notificação e sem duplicidade.
+   * Verifies Forum flags sync to UGC with notification and no duplicates.
    */
   public function testForumFlaggingBridgeAndNotification(): void {
     $topic = Node::create([
@@ -288,15 +288,15 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     $this->assertSame((int) $topic->id(), (int) $report->get('target_id')->value);
     $this->assertSame('pendente', $report->get('status')->value);
 
-    // Valida que o aviso de moderação foi disparado com proteção de privacidade.
+    // Verifies the moderation notice preserves reporter privacy.
     $notices = $this->notifier->getDispatchedNotifications();
     $this->assertNotEmpty($notices);
     $lastNotice = end($notices);
     $this->assertSame('forum', $lastNotice['purpose']);
-    $this->assertSame(['mod-forum@aculta.org'], $lastNotice['recipients']);
+    $this->assertSame(['mod-forum@example.invalid'], $lastNotice['recipients']);
     $this->assertArrayNotHasKey('uid', $lastNotice);
 
-    // Valida que se a flag for desfeita (excluída), a denúncia pendente é removida.
+    // Deleting the flag removes its pending report.
     $flagging->delete();
     $reloadedReports = $reportStorage->loadByProperties([
       'legacy_flag_id' => (int) $flagging->id(),
@@ -326,7 +326,7 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     ]);
     $ugcReport->save();
 
-    // Tópico 2 possui sinalização legada pura na tabela flagging (simulando registro histórico).
+    // Topic 2 has a legacy-only flagging row, simulating historical data.
     $this->container->get('database')->insert('flagging')
       ->fields([
         'flag_id' => 'sinalizar_topico',
@@ -371,7 +371,7 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
   }
 
   /**
-   * Valida que o ReportQueueController renderiza o painel unificado com a tabela.
+   * Verifies the ReportQueueController renders the unified table.
    */
   public function testReportQueueControllerRendersUnifiedPanel(): void {
     $topic = Node::create(['type' => 'aculta_forum_topic', 'title' => 'Tópico em Moderação', 'status' => 1]);
@@ -666,7 +666,7 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     ]);
     $topic->save();
 
-    // Cria flag no banco ignorando o hook para simular registro legado pré-existente.
+    // Insert directly to simulate a legacy flagging row before the hook.
     \Drupal::database()->insert('flagging')->fields([
       'flag_id' => 'sinalizar_topico',
       'uuid' => \Drupal::service('uuid')->generate(),
@@ -794,7 +794,7 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
 }
 
 /**
- * Dublê de ActiveAssociateInterface para testes sem carregar aculta_user completo.
+ * Test double for ActiveAssociateInterface without loading aculta_user.
  */
 class ForumUgcTestActiveAssociate implements ActiveAssociateInterface {
 

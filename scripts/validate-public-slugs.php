@@ -163,6 +163,7 @@ $portalOverrides = [
 // retained for moderation/revision workflows; these are not human URLs.
 $technicalRouteExemptions = [
   'entity.group.revision_delete_form' => 'Group revision deletion operation; entity revision access controls it.',
+  'simple_oauth.userinfo' => 'OAuth 2.0 UserInfo endpoint; protocol route, not a human-facing ACULTA URL.',
 ];
 
 foreach ($contribRouting as $file) {

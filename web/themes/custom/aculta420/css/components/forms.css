@@ -5,6 +5,65 @@
   font-family: var(--aculta-font-display);
   font-weight: 600;
 }
+
+form.node-form .vertical-tabs__panes :is(.description, .details-description, .fieldset-legend) {
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+
+form.node-form :is(.vertical-tabs__menu-item > a, details > summary, .token-dialog) {
+  min-block-size: 2.75rem;
+}
+
+form.node-form details > summary {
+  display: flex;
+  align-items: center;
+}
+
+form.node-form .token-dialog {
+  display: inline-flex;
+  align-items: center;
+}
+
+form.node-form .vertical-tabs__menu-item,
+form.node-form .vertical-tabs__menu-item.is-selected {
+  color: var(--aculta-text-primary);
+  background-color: var(--aculta-surface-raised);
+  border-color: var(--aculta-border-default);
+}
+
+form.node-form .vertical-tabs__menu-item a,
+form.node-form .vertical-tabs__menu-item-title,
+form.node-form .vertical-tabs__menu-item-summary {
+  color: var(--aculta-text-primary);
+}
+
+/* Core vertical-tabs metadata must remain inside narrow editorial forms. */
+@media (max-width: 35.999rem) {
+  form.node-form .vertical-tabs,
+  form.node-form .vertical-tabs__panes,
+  form.node-form .entity-meta {
+    inline-size: 100% !important;
+    max-inline-size: 100% !important;
+  }
+  form.node-form .vertical-tabs {
+    flex-direction: column;
+  }
+  form.node-form .vertical-tabs__menu {
+    inline-size: 100%;
+    flex: 0 0 auto;
+  }
+  form.node-form .entity-meta {
+    flex: 0 0 100% !important;
+    min-inline-size: 0 !important;
+  }
+  form.node-form .vertical-tabs__panes :is(.description, .details-description, .fieldset-legend) {
+    display: block;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+  }
+}
+
 .webform-submission-form .form-submit {
   min-height: 2.75rem;
   padding: 0.625rem 1.25rem;

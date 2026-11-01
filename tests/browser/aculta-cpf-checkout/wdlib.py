@@ -1,7 +1,11 @@
-import json, os, socket, subprocess, tempfile, time, urllib.error, urllib.request
+import json, os, shutil, socket, subprocess, tempfile, time, urllib.error, urllib.request
+from pathlib import Path
 
 FIREFOX = os.environ.get("FIREFOX", "/usr/bin/firefox-esr")
 GECKODRIVER = os.environ.get("GECKODRIVER", "geckodriver")
+CHROME = os.environ.get("CHROME", "/usr/bin/google-chrome")
+CHROMIUM = os.environ.get("CHROMIUM", "/usr/bin/chromium")
+CHROMEDRIVER = os.environ.get("CHROMEDRIVER", "chromedriver")
 TIMEOUT = int(os.environ.get("TIMEOUT", "30"))
 
 
@@ -12,27 +16,72 @@ class WDError(Exception):
 
 
 class Driver:
-    def __init__(self, prefs=None, bidi=False):
+    def __init__(self, prefs=None, bidi=False, headless=False, browser="firefox"):
+        browser = browser.lower()
+        if browser not in ("firefox", "chrome", "chromium"):
+            raise ValueError("browser deve ser firefox, chrome ou chromium")
         s = socket.socket(); s.bind(("127.0.0.1", 0)); self.port = s.getsockname()[1]; s.close()
         self.base = f"http://127.0.0.1:{self.port}"
-        profile_root = os.environ.get("ACULTA_FF_PROFILE_ROOT", "/tmp")
+        profile_root = os.environ.get("ACULTA_FF_PROFILE_ROOT")
+        if not profile_root:
+            suite_out = os.environ.get("SUITE_OUT")
+            if not suite_out:
+                raise RuntimeError("Defina ACULTA_FF_PROFILE_ROOT ou SUITE_OUT para o perfil temporário.")
+            profile_root = os.path.join(suite_out, "profiles")
+        profile_root = os.path.realpath(profile_root)
+        if os.path.commonpath((profile_root, "/tmp")) == "/tmp":
+            raise RuntimeError("Perfis WebDriver não podem ficar em /tmp; use armazenamento persistente em $SUITE_OUT/profiles.")
+        repository_root = Path(__file__).resolve().parents[3]
+        if Path(profile_root).is_relative_to(repository_root):
+            raise RuntimeError("Perfis WebDriver devem ficar fora do repositório.")
         os.makedirs(profile_root, mode=0o700, exist_ok=True)
+        os.chmod(profile_root, 0o700)
         self.profile = tempfile.mkdtemp(prefix="aculta-ff-", dir=profile_root)
-        self.proc = subprocess.Popen([GECKODRIVER, "--port", str(self.port)],
+        self.browser = browser
+        driver_binary = GECKODRIVER if browser == "firefox" else CHROMEDRIVER
+        driver_args = [driver_binary, "--port", str(self.port)]
+        if browser != "firefox":
+            driver_args = [driver_binary, f"--port={self.port}"]
+        self.proc = subprocess.Popen(driver_args,
                                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         self.session = None
+        server_ready = False
         for _ in range(75):
             try:
-                self.req("GET", "/status", timeout=2); break
+                self.req("GET", "/status", timeout=2)
+                server_ready = True
+                break
             except Exception:
+                if self.proc.poll() is not None:
+                    break
                 time.sleep(0.2)
-        opts = {"binary": FIREFOX, "args": ["-profile", self.profile, "-no-remote"]}
-        if prefs:
-            opts["prefs"] = prefs
+        if not server_ready:
+            exit_code = self.proc.poll()
+            self.proc.terminate()
+            self.proc.wait(timeout=5)
+            shutil.rmtree(self.profile, ignore_errors=True)
+            raise RuntimeError(f"WebDriver {browser} não iniciou em {self.base}/status (exit={exit_code}).")
+        if browser == "firefox":
+            args = ["-profile", self.profile, "-no-remote"]
+            if headless:
+                args.append("-headless")
+            opts = {"binary": FIREFOX, "args": args}
+            if prefs:
+                opts["prefs"] = prefs
+            browser_options = {"moz:firefoxOptions": opts}
+            browser_name = "firefox"
+        else:
+            binary = CHROME if browser == "chrome" else CHROMIUM
+            args = [f"--user-data-dir={self.profile}", "--no-first-run", "--no-default-browser-check"]
+            if headless:
+                args.extend(("--headless=new", "--disable-dev-shm-usage"))
+            opts = {"binary": binary, "args": args}
+            browser_options = {"goog:chromeOptions": opts}
+            browser_name = "chrome"
         always_match = {
-            "browserName": "firefox",
+            "browserName": browser_name,
             "acceptInsecureCerts": True,
-            "moz:firefoxOptions": opts,
+            **browser_options,
         }
         if bidi:
             always_match["webSocketUrl"] = True
@@ -116,4 +165,4 @@ class Driver:
             self.proc.wait(timeout=10)
         except Exception:
             self.proc.kill()
-        import shutil; shutil.rmtree(self.profile, ignore_errors=True)
+        shutil.rmtree(self.profile, ignore_errors=True)

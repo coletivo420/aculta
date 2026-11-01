@@ -46,4 +46,6 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_aculta_published_at: true
+  field_autor_legado: true

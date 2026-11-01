@@ -346,8 +346,8 @@ try {
   }
   file_put_contents($tokens_path, $original_tokens);
 
-  $studio_light_selector = ".studio,\n.aculta-profile-editor {\n";
-  $studio_scoped_tokens = str_replace($studio_light_selector, $studio_light_selector . "  --aculta-studio-fidelity-fixture: 1;\n", $original_tokens, $replacements);
+  $studio_light_token = "--aculta-studio-fidelity-primary: #9d1980;\n  --aculta-studio-fidelity-link: #a1167f;";
+  $studio_scoped_tokens = str_replace($studio_light_token, "--aculta-studio-fidelity-fixture: 1;\n  " . $studio_light_token, $original_tokens, $replacements);
   if ($studio_scoped_tokens === $original_tokens || $replacements !== 1) {
     throw new RuntimeException('Could not create Studio scoped-token fixture.');
   }
@@ -356,6 +356,13 @@ try {
   $fixtures++;
   if ($status !== 0) {
     $failures[] = 'an explicitly scoped Studio fidelity token was rejected';
+  }
+  $unscoped_editor_tokens = str_replace('body.path-marley ', '', $original_tokens);
+  file_put_contents($tokens_path, $unscoped_editor_tokens);
+  [$status, $output] = $run_validator();
+  $fixtures++;
+  if ($status === 0 || !str_contains($output, 'Studio fidelity tokens have one light and one explicit dark scoped block')) {
+    $failures[] = 'an editorial-form fidelity selector without the Marley path scope was accepted';
   }
   $unscoped_theme_token = str_replace(
     '--aculta-studio-fidelity-primary: #9d1980;',

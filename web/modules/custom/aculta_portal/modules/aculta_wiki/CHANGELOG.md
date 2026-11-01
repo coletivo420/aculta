@@ -1,3 +1,22 @@
+## Retificação de caminho ACULTA STUDIO WE SATIVA — 2026-10-30
+
+- Rotas e links canônicos usam `/studio/we-sativa` no purpose `wiki`, conforme ADR-038 retificado pelo responsável.
+- `/wesativa` não fica como alias ou redirect. Testes de rota após a retificação e homologação Runtime continuam pendentes.
+
+## 0.1.0-dev.119 — criação WE SATIVA no purpose Wiki
+
+- O CTA usa `/studio/we-sativa/verbetes/novo`, protegido por
+  `createAccess('wiki_entry')` no purpose Wiki. O controller renderiza o
+  formulário nativo de Node Form API e não persiste conteúdo ao abrir.
+- Kernel focal confirmou rota permitida para autoria autorizada, render do
+  formulário e ausência de Node salvo (2 testes/200 asserções). Runtime em
+  `c7fc57dba`: discovery e `drush cr` passaram; Firefox ESR/X11 com UID 5
+  ativo/autorizado/confirmado passou 61/61 verificações em oito larguras
+  (1440/1280/1024/768/640/390/360/320 px), incluindo título/corpo, retorno e
+  ausência de overflow no workspace e formulário. Capturas `create-form.png`
+  (320 px) e `create-form-wide.png` (1440 px) revisadas; formulário não submetido. O reteste
+  inicial UID 257 confirmou corretamente o bloqueio por e-mail não confirmado.
+
 ## 0.1.0-dev.118 — proteger grants versionados das propostas (2026-10-26)
 
 - Teste Unit `WikiProposalRolePermissionsConfigTest` verifica que submissão e

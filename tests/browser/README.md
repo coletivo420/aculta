@@ -1,4 +1,14 @@
-# Testes visuais de navegador
+# Testes visuais de navegador — projeto ACULTA
+
+Esta é a infraestrutura compartilhada de navegador para **todo o projeto
+ACULTA**: todos os módulos, produtos, domínios/purposes e consumidores, incluindo
+interfaces Drupal e integrações frontend. O harness genérico não pertence ao
+tema nem ao Studio. Informe as URLs da área sob teste; escolha a suíte específica
+somente quando precisar validar contratos que uma medição genérica não alcança.
+Essa regra vale para as instruções, scripts, evidências e manutenção deste
+catálogo: qualquer frente deve primeiro adaptar a execução genérica passando suas
+URLs e só adicionar código específico quando houver uma necessidade técnica que
+o harness comum não cubra.
 
 Esta pasta guarda os scripts de teste visual do projeto — navegador, captura de
 tela e medição de renderização — para que outras sessões reaproveitem o que já
@@ -24,7 +34,8 @@ sessão termina e o trabalho se perde.
   (servidor de desenvolvimento ou local), as variáveis de ambiente, como executar e
   quais são as limitações conhecidas.
 - **Artefatos ficam fora do repositório**: PNG, HTML e logs vão para
-  `$SUITE_OUT` (padrão em `/tmp/...`). O repositório guarda o script, não a
+  `$SUITE_OUT`, que deve ser informado e ficar em armazenamento persistente.
+  Não use `/tmp` nem o próprio checkout. O repositório guarda o script, não a
   evidência — evidência com dado de conta não deve ser versionada.
 - **Sem segredos no script**: credenciais vêm do ambiente (`secrets/*.env`);
   nada de senha, token ou link de uso único hardcoded ou impresso.
@@ -38,11 +49,35 @@ sessão termina e o trabalho se perde.
   qualquer estado compartilhado, o comando de execução deve restaurar o estado
   com `trap`, no mesmo comando, e o README deve mostrar como.
 
-Regra vigente de navegador: Firefox ESR visível em `DISPLAY=:0`, via
-geckodriver; nunca Chromium nem headless (`docs/operations/NAVEGADOR-TESTES.md`
-e `AGENTS.md`).
+Algumas instruções históricas de suítes ainda mostram `/tmp` como saída. Use o
+armazenamento persistente `/home/piradopirata/aculta-suite-out/<nome-da-suite>`
+no servidor, e configure
+`ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"`. O `wdlib` atual rejeita perfis
+sob `/tmp`.
+
+Firefox ESR visível em `DISPLAY=:0` é usado para revisão humana, capturas de
+aceite e zoom real. Por autorização do responsável em 2026-10-31, o Firefox ESR
+headless executa matrizes automatizadas repetitivas quando reduz setup/tempo;
+Chrome/Chromium headless são motores complementares, com driver compatível e
+resultado registrado. Declare browser/headless explicitamente e mantenha a
+revisão X11. Consulte `docs/operations/NAVEGADOR-TESTES.md` e `AGENTS.md`.
 
 ## Scripts salvos hoje
+
+### Harness genérico para qualquer módulo/produto/purpose: `aculta-smoke/`
+
+`smoke-page.py` executa smoke GET reutilizável de uma ou mais URLs de qualquer
+área do projeto; `page-matrix.py` faz matriz de larguras, modos de cor e axe
+opcional em qualquer módulo, produto, domínio/purpose ou consumer que possa ser
+aberto no navegador.
+Executam Firefox visível/X11 ou Firefox/Chrome/Chromium headless, com perfil
+temporário e artefatos privados em `$SUITE_OUT`. A sessão prévia opcional aceita
+uma URL de início sem escrevê-la aos logs. Não provam ACL nem submissão de
+formulário, persistência, processamento de dados no servidor, cache Drupal ou
+autorização entre contas/lojas. Instruções completas e comandos genéricos:
+[README local](aculta-smoke/README.md). Para contratos específicos, escolha a
+suíte dona listada abaixo e complemente o harness genérico em vez de tratá-lo
+como substituto.
 
 ### `aculta-cpf-checkout/`
 
@@ -126,6 +161,39 @@ deixou. Servem de referência de fluxo; ao evoluí-los, considere movê-los para
 - CPF/checkout, servidor de desenvolvimento: `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`, seção 9.6.
 - Olivero, ambiente local: mesma seção, subseção "Tema Olivero no ambiente local".
 
+## Registro transversal do projeto — 2026-10-31
+
+O runner genérico foi usado em todas as dez raízes públicas atuais listadas no
+manifesto de deploy, não apenas em páginas do tema ou Studio. Após as correções
+de hierarquia de títulos em Eventos e do nome acessível em Cursos, Firefox ESR
+headless passou 180/180 combinações (10 raízes × 9 larguras × claro/escuro),
+com HTTP 200 e sem overflow. Axe não encontrou violações; quatro resultados
+`incomplete` (H1 da Conta e select de categoria do Growroom, nos dois modos)
+continuam para revisão manual e não são reportados como aprovação de contraste.
+Chrome headless passou 36/36 combinações focais de Eventos e Cursos; Firefox
+ESR/X11 passou 16/16 nas mesmas rotas, em quatro larguras e dois modos. No
+consumer Cursos, Firefox/X11 também passou 17/17 checks com JavaScript e 17/17
+sem JavaScript, incluindo zoom nativo de 400%, foco e alcance de todos os cards
+da faixa horizontal. A captura com parte do próximo card visível é o desenho
+intencional da faixa; os cards continuam alcançáveis por teclado e rolagem.
+
+Evidências privadas não versionadas em `$SUITE_OUT`:
+
+- `project-roots-firefox-matrix-3648c50db/`
+- `course-event-chrome-matrix-3648c50db/`
+- `course-event-x11-3648c50db/`
+- `courses-rail-served-3648c50db/` e `courses-rail-nojs-served-3648c50db/`
+
+Este registro demonstra reutilização do harness em múltiplos componentes e
+purposes. As rotas de Eventos/Cursos e a faixa de Cursos são validações focais;
+essa rodada não cobre todos os fluxos autenticados, componentes, ACLs, leitor de
+tela ou critérios WCAG 2.2 AA e não fecha THEME-MF3/OCS-F11.
+
+O parâmetro `AXE_SCRIPT` desacopla a matriz da instalação npm do tema. Validado
+em 2026-10-31 na capa da Revista com Firefox ESR headless, dois viewports e dois
+modos: 4/4 checks, zero overflow, zero violações e zero `incomplete`; artefatos
+em `/home/piradopirata/aculta-suite-out/project-generic-runner-revista-20261031/`.
+
 ### `aculta-mercadopago/`
 
 `buyer-login.py` abre Mercado Pago em Firefox ESR visível e tenta autenticar
@@ -143,8 +211,11 @@ pagamento. Ver `aculta-mercadopago/README.md`.
 ### `aculta-theme-mobile-first/`
 
 `author-card.py` valida o breakpoint do cartão de autoria no consumer público do
-Fórum (`/discussoes/novas`), além de overflow horizontal em 320–1440 px. Roda no
-servidor de desenvolvimento, Firefox ESR visível, sem escrita. `account-shell.py`
+Fórum (`/discussoes/novas`), alvos sociais candidatos e overflow horizontal em
+320–1440 px. `events-catalogue.py` verifica os cartões reais de `/eventos`, seus
+links de título com alvos mínimos de 44px e overflow na mesma grade. Ambos rodam
+no servidor de desenvolvimento, Firefox ESR visível, por GET e sem escrita.
+`account-shell.py`
 confere a navegação autenticada da Conta por GET com link Drush efêmero e compara
 o CSS servido com a folha candidata opcional. Consulte o README local para
 variáveis e limitações. `support-form.py` registra o baseline do formulário de
@@ -158,5 +229,9 @@ README local para execução e limites.
 `account-address.py` verifica por GET o formulário unificado da Conta, sua
 navegação legada, a biblioteca CEP executada, os campos e o reflow com e sem
 JavaScript; não submete dados. Veja o README local para variáveis e limites.
+`purpose-shell-keyboard.py` percorre o shell público dos dez purposes com
+Firefox ESR, Tab/Shift+Tab em 320/390/768/1280px, foco visível e overflow. É
+anônimo, somente leitura e registra separadamente o fim da sequência e o foco
+delegado ao CAPTCHA externo; veja o README local para status e limitações.
 `maps-events-address.py` valida o widget de endereço na revisão do importador OSM, Brasil fixo, CEP e reflow; para antes de salvar/enviar. Execução dependente de Firefox ESR visível e permissão de integração; ver README local e estado DEFERRED quando DISPLAY/runtime não estiver disponível. `account-orders.py` verifica a tabela de pedidos em Conta no estado real disponível e uma linha sintética sem dados pessoais, comparando o CSS local candidato e restaurando as métricas desktop. A execução atual não teve pedido não-rascunho na conta autorizada; a validação de linha real está documentada como DEFERRED.
 `institutional-layout.py` compara regras mobile-first de CTA/grade/detalhes com o CSS anterior em fixture no Firefox visível; não acessa Runtime nem substitui a inspeção de páginas reais.

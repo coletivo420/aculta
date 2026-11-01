@@ -4,6 +4,17 @@ Tema público e sistema de componentes da plataforma Drupal da ACULTA. Implement
 a apresentação; não é fonte de verdade de identidade, autenticação, Commerce,
 LMS, Domains, conteúdo ou persistência.
 
+## Ferramentas de validação
+
+`axe-core` 4.14.0 é uma dependência de desenvolvimento (MPL-2.0), usada pelos
+runners de navegador para identificar violações automatizáveis em páginas de
+qualquer purpose. Execute `npm ci` nesta pasta e use `ACCESSIBILITY_SCAN=1` no
+runner genérico ou `CULTURAS_AXE=1` no gate específico; consulte
+`tests/browser/aculta-smoke/README.md` e
+`tests/browser/aculta-theme-mobile-first/README.md`. Resultados
+`incomplete` exigem revisão; axe-core não comprova conformidade WCAG 2.2 AA nem
+substitui teclado, zoom, inspeção visual, leitor de tela ou avaliação contextual.
+
 ## Meu Perfil — SDCs experimentais 0.7.0-dev.2
 
 Quatro SDCs experimentais para o editor privado (`profile-editor`,

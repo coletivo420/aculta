@@ -1,0 +1,28 @@
+uuid: aed02a45-4286-471d-bb32-1564c034e823
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_game_read
+    - message.template.aculta_msg_game_award
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: 6M_RVlTe2dbJ9x1nX2YWBulbgPP1s5_RzQac-LsNGhI
+id: message.aculta_msg_game_award.field_aculta_game_read
+field_name: field_aculta_game_read
+entity_type: message
+bundle: aculta_msg_game_award
+label: 'Aviso lido'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean

@@ -8,13 +8,11 @@ id: group.field_roster_visible
 field_name: field_roster_visible
 entity_type: group
 type: boolean
-settings:
-  on_label: 'Sim'
-  off_label: 'Não'
+settings: {  }
 module: core
 locked: false
 cardinality: 1
 translatable: false
-indexes: { }
+indexes: {  }
 persist_with_no_fields: false
 custom_storage: false

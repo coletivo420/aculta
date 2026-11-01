@@ -1,4 +1,13 @@
-## Status visual consolidado — sequência OCS-F0–F11 e THEME-MF0–MF3 (2026-10-30)
+## Status visual consolidado — sequência OCS-F0–F11 e THEME-MF0–MF3 (2026-10-31)
+
+### Fronteira visual do formulário de criação Ganjalab
+
+`CourseAuthoringController` entrega `studio-shell studio-course-authoring`,
+`studio-main` e `studio-action studio-course-authoring-back` como tokens
+semânticos. O ACULTA420 mapeia os tokens às classes Fidelity existentes; o
+controller mantém o Form API e o ACL do Group `lms_course`. Testes Unit
+cobrem a emissão e o mapeamento. A homologação visual integrada continua
+dependente do gate de Runtime e não altera o status geral THEME-MF3/OCS-F11.
 
 Esta é a sequência aprovada mais recente e substitui numerações incompatíveis
 em registros históricos abaixo: F0 inventário; F1 tokens; F2 navegação;
@@ -10,20 +19,88 @@ depende de THEME-MF3. OCS-A1–A4 só começam depois dos dois gates aprovados.
 |---|---|
 | THEME-MF0 | Parcial: inventários lexicais/libraries recenseados; reteste no HEAD `4eb116482` verificou shell em 10 raízes anônimas × 9 larguras (90/90; ambos os headers uma vez, sem overflow); consumers por tela/purpose e cascata continuam incompletos. |
 | THEME-MF1–MF2 | Implementação incremental; cobertura visual global incompleta. |
-| THEME-MF3 | Pendente; não homologar todo ACULTA420 como mobile-first. |
+| THEME-MF3 | Pendente. Roots públicas passaram no HEAD servido: no-JS 270/270, teclado 609/609, zoom real 30/30, H1 120/120 e axe/viewport 40/40 sem violações; quatro resultados axe ficaram `incomplete` para revisão manual. Studio autenticado Marley/Conta/Perfil passou foco 648 observações (621 focos visíveis), e dark/reduced motion passou 6/6 em cada modo. Páginas internas adicionais, ACL, formulários, leitores de tela, revisão manual dos `incomplete` e acessibilidade global completa seguem pendentes; não homologar todo ACULTA420 como mobile-first. |
 | OCS-F0 | Parcial: providers/rotas mapeados; contrato de shell no Portal e captura pós-migration das raízes em 10 purposes verificados em `4eb116482`; baseline Studio ainda não inclui tela autenticada equivalente do upstream nem todas as áreas/estados. |
-| OCS-F1–F2 | Implementados parcialmente; fidelidade de todos os consumers e Runtime pendente. |
-| OCS-F3 | Variante `studio_fidelity` adicionada ao SDC `patterns/card` com story e consumidor real na entrada da Conta; schema 55/756, Unit 20/121 e CSS fixture Firefox 45/45 passaram; render Drupal/Runtime pendente. |
-| OCS-F4 | Composição adapta links autorizados do registry e da entrada da Conta ao SDC existente; estado funcional vem dos providers. Captura Runtime com o novo adaptador pendente. |
-| OCS-F5–F7 | Parcial/incompleto; exige validação visual/funcional por Marley, LMS e Wiki, sem alterar seus owners. |
-| OCS-F8 | Fundação de tokens/container e raiz visual do Studio entregue também ao Green Stash; telas operacionais por loja e grants não homologados. |
-| OCS-F9–F10 | Pendente de validação abrangente, preservando Conta, Perfil, `/conta-legada` e demais áreas reais. |
-| OCS-F11 | Não aprovado: depende de THEME-MF3 e das evidências de todas as áreas/estados. |
+| OCS-F1–F2 | Implementados parcialmente; CSS candidata verificada em rotas reais, implantação e cobertura total pendentes. |
+| OCS-F3 | Variante `studio_fidelity` reutilizada pelo SDC `patterns/card`, com story e consumers reais na Conta e Ganjalab. CSS escopada trata os wrappers do Core e mantém alvos 44×44px. Fixture Firefox ESR fiel ao render array passou 250/250 em 27 larguras (320–1920px), incluindo container, tipografia, foco e zoom 200/400%. Runtime `5a9c03b4b`: Conta autenticada passou 9 larguras, cinco cards por largura, shell único, sem overflow e links/alvos ≥44px. Ganjalab agora seleciona a mesma variante; cartões com cursos preenchidos ainda sem fixture autenticada. F3 segue parcial para demais consumers/áreas. |
+| OCS-F4 | Hub da Conta em `/` no purpose Account usa providers reais. Runtime `5a9c03b4b`, sem CSS injetada, confirmou cinco links disponíveis, cards do SDC, shell único, 44px+ e sem overflow em nove larguras; captura comparativa inspecionada. `/conta` normaliza para `/`. F4 parcial: conteúdo equivalente da home autenticada OpenCulturas e estados de Conta ainda não foram comparados integralmente. |
+| OCS-F5–F6 | Parcial: Marley foi validado com publicações sintéticas, tabela responsiva e GET dos Form APIs sem submit. Ganjalab serve o dashboard LMS real; SDC de curso/certificado usa variante `studio_fidelity`, mas a conta testada não tinha matrícula/certificado. ACL A/B, dados preenchidos, formulários, no-JS/AJAX e estados editoriais/LMS completos pendentes. |
+| OCS-F7 | Rota canônica `/wesativa` no purpose Wiki, com autoria em `/wesativa/verbetes/novo` e decisão de propostas em `/wesativa/propostas/{proposal}/decidir`; protegida por `createAccess('wiki_entry')` e Node Form API. Unit `WeSativaControllerTest` + `StudioIdentityRoutingTest`: 8 testes/206 assertions PASS; `WikiControllerTest`: 13 testes/74 assertions PASS. Conta editorial `studio_editor_test` (UID 258) confirmou `createAccess=1` e workspace access. Baseline Firefox/X11 autenticado em `wiki420:/wesativa`, via ULI do domínio Conta, passou 8/8 larguras com conteúdo real, context header/tabs, shell e 0 falhas de fidelidade. ACL/grants de moderação, persistência editorial, AJAX/no-JS, zoom e WCAG 2.2 AA completa ainda pendentes. |
+| OCS-F8 | Green Stash é área integrada em `shop:/greenstash`; rotas migradas e Unit `GreenStashNavigationTest` passou junto ao contrato de identidade (7 testes/246 assertions). O host configurado `https://loja.aculta.org/greenstash` não resolve neste ambiente (curl HTTP 000), portanto o baseline visual canônico está DEFERRED. Fluxos Commerce com duas lojas, operações, no-JS/AJAX, teclado/zoom e ACL A/B permanecem pendentes. |
+| OCS-F9 | Conta privada e Perfil público seguem separados e `/conta-legada` preservada. Shell da Conta passou Firefox 33/33 em dez larguras; fixtures de identidade e perfil público passaram 56/56 e 22/22; formulário privado/modal de bio passaram 66/66. Baselines autenticados adicionais com `teste.comum` capturaram Conta e Perfil em oito larguras sem falhas. S-R4 no Runtime: baseline 28 PASS/0 FAIL/4 SKIP; CSS candidata `content.css` injetada somente no Firefox: 32 PASS/0 FAIL/4 SKIP. Privacidade A/B, avatar/foto, crop, cache, S-R4/S-R5 e acessibilidade completa continuam pendentes. |
+| OCS-F10 | Culturas passou fixture 110/110 e rota com CSS candidata 20/20 em nove larguras e claro/escuro, shell único e zero overflow. Os formulários owner de Eventos/Locais passaram 108/108 checks em nove larguras; fluxo ULI real 1 PASS/17 SKIP e título compacto em fixture 320px. CSS candidata não está servida no Runtime; grants A/B, estados completos, demais providers/opcionais e paridade pareada seguem pendentes. |
+| OCS-F11 | Não aprovado: depende de THEME-MF3 e das evidências de todas as áreas/estados. O probe autenticado de teclado em Marley, Conta e Perfil registrou 648 observações, 621 focos visíveis e 27 retornos ao body em nove larguras; modos dark/light passaram 6/6 cada. Baseline Marley corrigido para aceitar tabela responsiva contida em 599/600px; isso é evidência parcial, não o gate final. |
 | OCS-A1–A4 | Não iniciadas; gate anterior permanece fechado. |
 
-## ADR-038 - caminho aprovado para as Suites (execução parcial, 2026-10-30)
+### Reteste histórico de rotas F6/F7/F8 no Runtime — 2026-10-31
 
-Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. Paths/purposes e rejeição global de `/studio*` foram implementados no código; `aculta_studio` permanece framework compartilhado. A raiz de `account` é entrada da Conta; Conta e Perfil permanecem separados. O Domain Wiki canônico é `wiki420`; o pedido para renomeá-lo a `wiki.aculta.*` foi corrigido pelo responsável e não faz parte do escopo. As seções abaixo são histórico quando descrevem os paths antigos.
+Este bloco registra o estado do HEAD `2493d7535` antes da publicação das rotas
+canônicas. A tabela de status acima e o registro atualizado de WE SATIVA abaixo
+substituem as conclusões históricas para F7; F6 e F8 seguem com os limites
+descritos na tabela.
+
+No HEAD servido `2493d7535`, a conta sintética abriu `/ganjalab` nas nove
+larguras. Correção após inspeção dos artefatos: o shell compartilhado mostra os
+links de Minha Conta, mas o conteúdo principal é o dashboard LMS real:
+`Aprendizagem`, `ACULTA Studio Ganjalab`, `Meus cursos` e estados vazios de
+cursos/certificados. A conta não tinha matrícula nem certificado; a captura não
+é conteúdo de Conta substituindo o LMS. O Runtime ainda não continha o token
+raiz `studio-fidelity-scope` da source branch; a CSS candidata injetada não
+homologa a integração nova. Os paths oficiais `/studio/we-sativa` e
+`/studio/green-stash` retornaram 404 anônimo; em
+27 capturas autenticadas os documentos ficaram vazios. Drush confirma Wiki sem
+rota oficial e Green Stash ainda em `/greenstash`. A source branch local contém
+as rotas canônicas, e a suíte Unit Commerce passou 11 testes/145 assertions;
+isso prova o código do checkout, não a instalação no Runtime. A saída agregada
+`studio_capture_status=CAPTURED` do harness não detectou os documentos vazios e
+não deve ser usada como aceite. Evidência em
+`/home/piradopirata/aculta-suite-out/ocs-studio-routes-resume-20261031/` e
+detalhes na [matriz de paridade visual](../../../../../../themes/custom/aculta420/docs/studio-visual/visual-parity-matrix.md).
+F6/F7/F8 seguem sem homologação Runtime; F11/MF3 não aprovados.
+
+### Escopo Fidelity do painel LMS — implementação candidata
+
+`LearnerDashboardComposer` marca agora o contêiner de conteúdo com o token
+neutro `studio-fidelity-scope`; `PortalUiHooks` o traduz somente para a classe
+`.studio`, necessária aos tokens e estilos OpenCulturas escopados. O shell
+multidomínio não recebe essa classe, e não há novo shell nem alteração dos dados
+ou contratos LMS. Testes Unit cobrem a emissão do token e sua tradução no tema.
+Isto corrige a integração visual no código candidato, mas a rota/runtime estava
+desalinhada no reteste acima; portanto não aprova OCS-F6 nem gates globais.
+
+### OCS-F10 — ACULTA Studio Culturas: composição mobile-first candidata
+
+O tema agora aplica a composição visual ao wrapper real do dashboard
+`aculta_events`: intro, guia, ações autorizadas, filtros, tabela e paginação.
+O controller, suas render arrays, links, filtros GET, permissões e cache não
+foram alterados. CSS mantém escopo em `body.path-culturas`; como os links reais
+de ação chegam sem classes, a composição dá o mesmo acabamento secundário a
+todos eles sem inferir permissões pelo índice. Fixture estrutural passou
+110/110 checks em nove viewports e claro/escuro. Na rota autenticada real,
+Firefox ESR passou 20/20 verificações: 18 combinações de nove viewports e
+claro/escuro mais foco por teclado em ambos os modos. CSS candidata injetada,
+shell único e sem overflow no documento; capturas
+320/1440px foram inspecionadas. Reuso de SDCs: nenhum novo SDC; a composição usa
+o dashboard/render arrays atuais e tokens já existentes. ACL A/B, grants
+distintos, cache, AJAX/no-JS, zoom, WCAG e paridade pareada OpenCulturas não
+foram validados; não aprova F10/F11/MF3. Ver evidências e execução em
+[`tests/browser/aculta-studio/README.md`](../../../../../../../tests/browser/aculta-studio/README.md)
+e [matriz de paridade](../../../../../../themes/custom/aculta420/docs/studio-visual/visual-parity-matrix.md).
+
+### THEME-MF2 — desafio de verificação responsivo (2026-10-30)
+
+No commit local `7dbca2b8a`, o Portal fornece o token de apresentação neutro
+`challenge-frame` e o tema adapta o formulário estreito com container query.
+Unit (2/2), PHP lint/PHPCS, Stylelint, Design Foundations e SDC schemas passaram.
+Firefox validou CSS candidata e marcador simulado nas três rotas de autenticação,
+320–1440 px; a integração ainda não foi servida no Runtime. A publicação está
+pendente porque a referência de branch no GitHub não foi encontrada pelo fetch,
+e o PR #299 permanece em `2493d7535`. O gate global permanece vermelho por
+classes/tokens visuais de Eventos e Índice; não aprova THEME-MF3 nem OCS-F11.
+
+## ADR-038 retificado - caminhos oficiais das áreas Studio (execução parcial, 2026-10-30)
+
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; **ACULTA STUDIO WE SATIVA** `wiki:/studio/we-sativa`; **ACULTA STUDIO GREEN STASH** `shop:/studio/green-stash`; Culturas `eventos:/culturas`. O responsável retificou ADR-038 para aprovar esses dois paths sob seus purposes próprios; `/studio` e os demais prefixos antigos continuam 404. `aculta_studio` permanece framework compartilhado. A raiz de `account` é entrada da Conta; Conta e Perfil permanecem separados. O Domain Wiki canônico é `wiki420`. As seções abaixo são histórico quando descrevem paths substituídos.
 
 ## Inventário histórico pré-ADR-038
 
@@ -86,16 +163,19 @@ A API e ACL comerciais permanecem no `aculta_commerce`; alterações de services
 
 **Substitui o bloco inicial "Frente visual aprovada" onde limita F5 ao Marley e encerra fidelidade em F7.** A fonte normativa agora é [plano visual atualizado](../../../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md), seção "Retificação vinculante de escopo transversal".
 
-- [ ] **OCS-F0:** auditar todo `StudioTab`, providers, rotas e consumidores. Cobertura inicial: hub, Marley, GanjaLab, WE Sativa, Conta, Perfil e **demais experiências efetivamente registradas**; distinguir existentes, opcionais e planejadas.
-- [ ] **OCS-F1-F3:** tokens Next escopados, navegação interna **derivada do registry/ACL**, SDCs e histórias reutilizáveis, sem shell institucional paralelo.
-- [ ] **OCS-F4:** hub e grade dinâmica de experiências autorizadas, links reais e estados de ausência.
-- [ ] **OCS-F5:** Marley e experiências editoriais proprietárias.
-- [ ] **OCS-F6:** GanjaLab, cursos, turmas, biblioteca e jornada educacional nos limites do LMS existente.
-- [ ] **OCS-F7:** WE Sativa, autoria Wiki e fluxos realmente presentes; autoria não é moderação.
-- [ ] **OCS-F8:** Conta privada e Perfil público em separados; S-R4/S-R5 e `/conta-legada` preservados.
-- [ ] **OCS-F9:** experiências adicionais inventariadas em F0, incluindo módulos opcionais e estados desligados.
-- [ ] **OCS-F10:** **gate final da fidelidade**, com matriz interexperiências, screenshots e testes; **somente então** iniciar OCS-A1-A4.
-- [ ] **OCS-A1-A4:** tokens e identidade Aculta, componentes, aplicação **a todas as experiências** e consolidação sem alterar contratos funcionais.
+A sequência abaixo retifica a numeração desta lista histórica e alinha o roadmap ao plano vigente:
+
+- [ ] **OCS-F0:** auditar todos os providers, rotas e consumers reais, opcionais e planejados; revisar `opcult`, licenças, matriz de paridade e baselines.
+- [ ] **OCS-F1-F3:** tokens Next escopados, navegação contextual e SDCs/stories com consumers reais.
+- [ ] **OCS-F4:** hub dinâmico com experiências autorizadas e estados reais.
+- [ ] **OCS-F5:** Marley e fluxos editoriais.
+- [ ] **OCS-F6:** GanjaLab e jornada LMS.
+- [ ] **OCS-F7:** ACULTA STUDIO WE SATIVA e autoria Wiki, respeitando ACL de revisão/moderação.
+- [ ] **OCS-F8:** ACULTA STUDIO GREEN STASH integrado, com operações realmente existentes e grants Commerce.
+- [ ] **OCS-F9:** Conta privada e Perfil público distintos; S-R4/S-R5 e `/conta-legada` preservados.
+- [ ] **OCS-F10:** ACULTA Studio Culturas e demais providers encontrados no inventário.
+- [ ] **OCS-F11:** gate de fidelidade de todo Studio, obrigatório depois de THEME-MF3 e antes de OCS-A1.
+- [ ] **OCS-A1-A4:** identidade Aculta aplicada sobre os mesmos SDCs e contratos, somente após OCS-F11/THEME-MF3 aprovados.
 
 ### Registro de implementação visual F4 — 2026-10-30
 
@@ -114,15 +194,13 @@ Não substituir o conteúdo de uma experiência pelo de outra. O Studio compõe 
 
 **Ordem obrigatória:** primeiro reproduzir fielmente a aparência OpenCulturas **Next** (`opcult`, não `openculturas_base`); só depois do gate de fidelidade passar para identidade própria Aculta Studio. Plano técnico: [PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md](../../../../../../../docs/architecture/PLANO-VISUAL-OPENCULTURAS-NEXT-ACULTA-STUDIO.md).
 
-- [ ] **OCS-F0:** inventário, baseline e matriz visual por tela/estado, auditoria de licenças e consumers SDC.
-- [ ] **OCS-F1-F3:** tokens de fidelidade escopados, shell/navegação internos e variantes de SDCs existentes; não mudar Institution Bar/Domain Header nem CSS global.
-- [ ] **OCS-F4:** dashboard fiel, dados e ações reais; sem salvos/recomendações/organização simulados.
-- [ ] **OCS-F5:** Marley e ferramentas editoriais com a mesma aparência; módulos mantêm dados e operações.
-- [ ] **OCS-F6:** Conta privada e Perfil público com apresentação consistente, mas contratos distintos, sem retirar `/conta-legada`; respeitar gates S-R4/S-R5.
-- [ ] **OCS-F7 (gate):** screenshots de paridade e aceite de acessibilidade, cache, acesso A/B, no-JS, mobile e SDC Runtime.
-- [ ] **OCS-A1-A4:** aplicar identidade institucional Aculta, refinar componentes, revisar as telas e remover estilos provisórios sem trocar props/slots/rotas.
-
-F0-F3 podem ser implementadas sem desbloquear a homologação de S-R4/S-R5; F4-F6 seguem restrições funcionais existentes. Cada fase: commit independente na PR #299; **documentação não significa implementação**.
+**Registro histórico:** a numeração e a divisão F0-F7 deste plano inicial foram
+substituídas pela sequência OCS-F0–F11 e THEME-MF0–MF3 descrita no status
+consolidado no início deste documento e no plano visual vigente. Para execução e
+status, usar somente a sequência atual: Green Stash em F8, Conta/Perfil em F9,
+demais áreas em F10 e gate Fidelity em F11, condicionado a THEME-MF3. O princípio
+aprovado em duas etapas continua válido: primeiro OpenCulturas Next, depois a
+identidade própria Aculta; documentação não significa implementação.
 
 ### Registro OCS-F1 — tipografia e tokens escopados (2026-10-30)
 
@@ -630,9 +708,10 @@ somente porque há documentação.
 técnico `GreenStashExperienceProvider` não cria experiência de produto
 independente. Operações de Commerce, ACL, formulários, dados e transições
 permanecem com seus owners; a apresentação só pode promover capacidades
-confirmadas no código. O inventário identificou Produtos e Envios no código;
-Pedidos/Estoque/Promoções/Clientes/Relatórios/Configurações ainda exigem
-verificação individual e não devem ser anunciados como ativos.
+confirmadas no código. O inventário identificou Produtos e Envios no código; a navegação contextual
+expõe Visão geral, Produtos e Envios. Pedidos/Estoque/Promoções/Clientes/
+Relatórios/Configurações foram retirados dos links e seus slugs retornam 404
+enquanto não houver operação, autorização por loja e gates correspondentes.
 
 
 ## OCS-F0 / THEME-MF0 — evidência de execução (2026-10-29)
@@ -752,3 +831,313 @@ permanecem parciais.
 - [ ] F12-H2 homologar grants e formulários de escrita das Suites, especialmente Green Stash, e ampliar acessibilidade/zoom/teclado/mobile além do baseline 1440/390.
 
 Pendências residuais: F12-H2 e testes Kernel de integração para métodos/AJAX permanecem sem execução porque `SIMPLETEST_DB` não está configurado. O usuário de teste não tem grants de Green Stash, portanto a captura visual não homologa escrita na Loja. Não declarar homologação funcional integral antes de validar essas permissões e fluxos.
+
+### OCS-F10 — apresentação da biblioteca Meus Salvos (2026-10-31)
+
+O tema agora aplica a fundação Fidelity à rota canônica privada `account:/salvos`
+por meio dos tokens `studio-saved-*` já emitidos por este módulo. A fixture
+Firefox ESR passou 131/131 checks em nove larguras (320–1440px), claro/escuro,
+lista preenchida e estado vazio, incluindo contraste AA dos metadados; quatro
+paradas de Tab exibiram foco visível.
+Nenhum SDC, render array, serviço, rota, permissão ou cache foi alterado. Esta
+é evidência local da folha candidata, não homologação do consumer servido, do
+isolamento entre contas nem de OCS-F10/F11/THEME-MF3.
+
+
+### OCS-F1/F5–F7/F9 — campos e botões Fidelity (2026-10-30)
+
+O tema agora traduz o tratamento de Form API do OpenCulturas 3.1.5 em tokens e
+seletores restritos a `.studio__main form` e `.aculta-profile-editor form`.
+Firefox ESR visível passou 42/42 checks em 320/390/768/1440px, claro/escuro,
+com botão padrão, primário, reset e destrutivo, foco visível e isolamento do
+formulário fora do Studio. Stylelint e Design Foundations passaram. Capturas
+320px foram inspecionadas; artefatos estão em
+`/home/piradopirata/aculta-suite-out/studio-form-fidelity-final2-20261030/`.
+Não valida Drupal/Form API real, AJAX/no-JS, ACL nem fluxos dos owners; F5–F7/F9
+continuam parciais e não há gate F11.
+
+### Reteste OCS-F1/F5–F7/F9 — alvos de formulário (2026-10-30)
+
+Campos e botões dentro de `.studio__main form` e `.aculta-profile-editor form`
+agora têm altura mínima de 44px. A mesma fixture Firefox ESR passou 50/50 em
+claro/escuro e 320/390/768/1440px; o estilo continua isolado de formulários
+externos ao Studio. Stylelint passou. Evidências em
+`/home/piradopirata/aculta-suite-out/studio-form-touch-target-20261030/`.
+Permanece validação de fixture CSS/markup, sem homologar Drupal/Form API, owners,
+AJAX/no-JS, ACL ou gates OCS-F11/THEME-MF3.
+
+### OCS-F6 — apresentação candidata do dashboard GanjaLab (2026-10-30)
+
+A área de aprendizagem real em `/ganjalab` usa o dashboard do estudante e os
+SDCs existentes (`context-header`, `card`, `content-grid`, `empty-state`). A
+camada do tema agora estende tokens, geometria do container, headings, cards e
+estado vazio somente a `body.path-ganjalab .aculta-main`; a navegação da Conta,
+Institution Bar e Domain Header ficam fora do escopo Fidelity. Nenhum controller,
+serviço LMS, matrícula, dado ou regra de acesso foi alterado.
+
+Firefox ESR visível capturou a conta sintética autorizada em nove viewports
+(320, 360, 390, 599, 600, 768, 1024, 1280 e 1440 px), com CSS candidata injetada
+no navegador e sem overflow horizontal. As imagens foram revisadas. A amostra
+não cobre zoom, WCAG, ACL entre estudantes, aulas/turmas com dados,
+no-JS/AJAX ou regressão dos outros purposes; F6 permanece parcial. O coletor
+agora aguarda Montserrat e registra os estados de cada `FontFace`; Firefox
+confirmou a fonte carregada em 320/390/768/1440 px. A medição encontrou Inter
+no estado vazio nas larguras 768/1440 px, e a regra Fidelity foi corrigida. Um
+segundo reteste confirmou Montserrat no estado vazio em 320/390/768/1440 px,
+sem overflow. Reteste escuro forçado no documento confirmou tokens de texto e
+superfície em 320/1440 px. Dez invariantes (fonte, headings, dois estados
+vazios, componentes, overflow e isolamento do shell) passaram em 320/390/768/
+1440 px no modo claro. Onze checks passaram em 320/1440 px no modo escuro,
+incluindo o token de texto escuro. Isso não é auditoria de contraste WCAG.
+
+O Runtime observado no HEAD `2493d7535` serve `/ganjalab`, mas a rota oficial
+WE SATIVA `/studio/we-sativa` retorna documento vazio: esse Runtime ainda
+registra `/wesativa`. É divergência de versão/roteamento fora do escopo CSS;
+não se altera roteamento nem se declara F7/OCS-F11 homologado com essa
+superfície incompleta. Evidências e procedimento reproduzível estão em
+[`tests/browser/aculta-studio/README.md`](../../../../../../../tests/browser/aculta-studio/README.md)
+e em `$SUITE_OUT/ganjalab-fidelity-candidate-20261030`.
+
+### OCS-F7 — consumer Wiki WE SATIVA, estilo Fidelity candidato (2026-10-30)
+
+Reutilizado o wrapper real `.we-sativa__workspace` e os SDCs atuais
+`context-header`, `content-section`, `context-tabs`, `content-grid`, `card` e
+`empty-state`; sem alteração dos serviços Wiki nem criação de outro contrato.
+A folha escopada traz heading e seções tipográficas, superfícies/cartões e
+estados vazios Fidelity inspirados nos tokens já auditados do OpenCulturas Next
+3.1.5. O tarball de referência foi novamente baixado de Drupal.org e validado
+pelo SHA-256 `2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`;
+nenhum CSS, Twig, ícone, imagem ou fonte upstream foi copiado.
+
+Firefox ESR visível, CSS candidata e conta sintética autorizada: path legado
+`/wesativa`, 320/1440px, 14/14 invariantes em cada largura; Montserrat carregada,
+duas seções e estados vazios, filtros com `aria-current` único, wrapping, links
+46px, zero overflow e shell preservado. Capturas em
+`/home/piradopirata/aculta-suite-out/wesativa-legacy-route-final-20261030/`.
+O Runtime `2493d7535` ainda registra `/wesativa`; `/studio/we-sativa` segue
+sem página. Não homologar o path oficial, autoria com verbetes, estados de
+revisão/moderação, grants A/B, no-JS/AJAX, zoom ou WCAG. F7 parcial;
+THEME-MF3 e OCS-F11 continuam sem aprovação.
+
+#### OCS-F7 — modo escuro no consumer servido (2026-10-30)
+
+O reteste escuro de `/wesativa` passou 15/15 invariantes em 320/1440px: texto
+`rgb(239, 239, 239)`, Montserrat, superfícies, quatro filtros, shell isolado e
+zero overflow. Evidência visual e JSON em
+`/home/piradopirata/aculta-suite-out/wesativa-dark-legacy-20261030/`. Snapshot
+pré-ULI `/home/piradopirata/aculta-suite-out/runtime-before-wesativa-dark-20261030.sql`,
+SHA-256 `635b80adb3aaff58be98a539c52aeddaf9f133a14bf3336f4a7bd6e5b707ca33`.
+Essa amostra do path legado não fecha F7, ACL editorial, dados reais, WCAG ou
+validação do path canônico.
+
+### OCS-F9 — formulários privados de bio e redes (2026-10-31)
+
+Os Form API existentes `AccountBioForm` e `SocialLinkForm` já emitem tokens
+`studio-bio-form`/`studio-social-form` somente nos caminhos privados do Perfil
+Studio. Apelido e privacidade usam os IDs de formulário reais sob
+`body.path-perfil`. O tema traduz os tokens bio/social para
+`studio-profile-form` e aplica a mesma fundação Fidelity dos formulários
+Marley/Perfil. O token do modal de bio da Conta agora também mapeia essa classe
+existente, preservando a classe de dimensionamento do diálogo. Nenhum controller,
+Form API, rota, ACL, dado, SDC ou fluxo AJAX foi alterado. A fixture Firefox ESR
+com CSS candidata passou 66/66 checks em claro/escuro, 320/390/768/1440px,
+incluindo campo e ações Limpar/Salvar de 44px no modal, foco visível e rótulos
+checkbox de 44px. Runtime servido,
+submit real, privacy A/B, cache, AJAX/no-JS, zoom, WCAG, S-R4/S-R5 e OCS-F11
+permanecem pendentes.
+### OCS-F5 — isolamento do formulário editorial Marley (2026-10-31)
+
+A classe compartilhada `form.node-revista-form` não é suficiente para identificar
+uma tela Studio. Os tokens Fidelity e estilos do formulário em `studio.css` e
+`tokens.css` agora exigem `body.path-marley`, que foi observado no GET real do
+editor `/marley/revista/{id}/editar`. A fixture Firefox ESR passou 54/54 em
+claro/escuro e 320/390/768/1440px: o formulário Marley recebe Fidelity e um
+consumer Magazine com a mesma classe não recebe tokens/estilos. Não altera
+Form API, SDC, serviço, permissão ou operação editorial. O teste é fixture de
+CSS; Runtime alinhado, submit, AJAX/no-JS, ACL e gate geral OCS-F5 seguem
+pendentes.
+
+### OCS-F8 / F12-H2 — Green Stash visual e caminho canônico (2026-10-31)
+
+O contrato local mantém Green Stash como área comercial integrada em `shop`, no
+caminho `/studio/green-stash`; os testes Unit de rota, navegação e provider passaram 10/252. A fixture visual
+candidata passou 186/186 sem overflow e sem salvar dados, cobrindo somente os
+estados declarados e três áreas. O Runtime no HEAD `2493d7535` ainda serve
+`/greenstash` e retorna 404 para a rota nova; homologação real permanece DEFERRED.
+Grants por loja, formulários e fluxos Commerce reais continuam pendentes.
+
+### OCS-F6 — Ganjalab — revisão candidata em claro/escuro (2026-10-31)
+
+Firefox ESR candidate CSS checks passed at 320/390/1440px in both modes.
+`LearnerDashboardComposerTest` and `GanjalabControllerTest` passed 2 tests/4
+assertions. Runtime markup still displays “Minha conta / Área pessoal”; branch
+composer outputs “Meus cursos”. The captures therefore do not homologate the new
+consumer or LMS grants/enrollments. OCS-F6/F11 remain partial.
+
+Reteste de 2026-10-31 usou o GET autenticado real `/ganjalab` no Runtime e a
+folha candidata da branch injetada apenas no Firefox: 320/390/768/1440px em
+claro e escuro passaram 92/92 checks focais de tipografia Fidelity, dois estados
+vazios, ausência de overflow, headers do shell, contraste utilitário e tokens
+Fidelity ausentes do shell. As capturas 320/1440 foram inspecionadas. Isto
+confirma o encaixe visual da composição servida; a folha ainda não está
+integrada no HEAD Runtime `2493d7535`, nem foram cobertos ACL/grants,
+matrículas, teclado completo, no-JS ou zoom. OCS-F6 permanece parcial.
+
+Reteste posterior ampliou a cobertura candidata de Ganjalab para 320–1440px, nove
+larguras, em claro/escuro: 18/18 combinações passaram. O Runtime ainda apresenta
+markup anterior ao compositor local; registrar F6 como parcial até validar tela
+servida, contratos LMS e ACL.
+
+### OCS-F10 — formulários owner de Eventos Culturas (2026-10-31)
+
+Os GETs reais `/culturas/eventos/novo` e `/culturas/locais/novo` foram capturados
+no Firefox ESR autenticado, sem envio dos formulários. As folhas Fidelity e
+`content.css` candidatas passaram 108/108 checks dos forms em nove larguras
+(320/360/390/599/600/768/1024/1280/1440px), cobrindo forms proprietários,
+encaixe, Montserrat, alvos de 44px e token da ação primária; Institution Bar e
+Domain Header permaneceram presentes. Um aviso ULI real passou a medição de
+fluxo em 320px; nas outras 17 capturas ele já tinha se autocerrado e ficou SKIP.
+O harness mede geometria/estilos sem ler valores de campo e está documentado em
+`tests/browser/aculta-studio/README.md`. Folhas injetadas no navegador: modo
+escuro, CEP, no-JS/AJAX, submit, ACL, zoom, WCAG e integração no Runtime seguem
+pendentes. Não se criou SDC ou formulário paralelo; F10, F11 e THEME-MF3 seguem
+parciais/pendentes.
+
+Após essa captura, o aviso sintético anônimo foi ampliado para incluir H2 e
+mensagem e testado em 320px com `content.css` candidata: fluxo PASS; título em
+18px/22,5px, uma linha, também inspecionado visualmente. Esse ensaio geométrico
+da tipografia não substitui o único aviso ULI real observado e não altera o
+status dos gates.
+# 2026-10-31 — apresentação Studio para criação de cursos
+
+A ação “Novo curso” da aba Cursos Marley apontava para `entity.group.add_form`
+com o purpose `courses`, embora a rota gerada do Group seja administrativa e
+pertença ao purpose `main`. A captura autenticada confirmou 404 no host Cursos;
+no host principal, a mesma rota abriu Claro fora do shell e causou 403 px de
+largura documental em viewport 320 px.
+
+Foi adicionada a rota proprietária `/ganjalab/cursos/novo` no purpose `courses`.
+Ela reusa `EntityFormBuilder` para obter a operação `add` do Group `lms_course`,
+confere `Entity::access('create')` antes de construir o formulário e o envolve
+no marcador visual Studio. A navegação Marley agora usa essa rota pelo
+`DomainPurposeManager`. O tema reutiliza o tratamento de formulário e o layout
+responsivo já existentes; o link de retorno usa o render helper do Portal.
+Nenhum campo, storage, validação, persistência ou submit foi copiado.
+
+O HTTP do Runtime segue em `DEFERRED`: o checkout Runtime está no HEAD anterior
+da PR e, portanto, ainda não contém a rota nova. A validação autenticada final,
+submit com curso sintético e regressão no Firefox devem ser executados após a
+rota chegar ao Runtime; nenhum curso foi criado neste trabalho.
+
+### OCS-F5 — landing Marley e ordem do aviso ULI (2026-10-31)
+
+O reteste autenticado no Runtime capturou `/marley` em nove larguras com
+`CAPTURED` e zero falhas; a folha Fidelity continuou candidata, injetada apenas
+no Firefox. Corrigimos o harness para selecionar headings visíveis ao conferir
+que o aviso ULI precede o conteúdo: antes, ele selecionava um heading oculto no
+DOM e gerava falso FAIL em 320 px. A medição atual confirmou o aviso em fluxo e
+a rolagem confinada da tabela. Não homologa a CSS integrada, OCS-F11 nem
+THEME-MF3. Evidência e limitações em
+`web/themes/custom/aculta420/docs/mobile-first-audit.md`.
+
+### OCS-F6 — dashboard Ganjalab servido e aviso móvel (2026-10-31)
+
+Captura autenticada de `/ganjalab` no Runtime `2493d7535`, nove larguras,
+Fidelity candidata, sem overflow e dois estados vazios LMS. O Runtime não emite
+os marcadores `data-aculta-studio` da implementação atual, então não valida o
+novo compositor. O aviso ULI cobriu a navegação a 320px no baseline; `content.css`
+candidata o moveu para o fluxo antes do heading seguinte (1 PASS; 8 SKIP porque
+o aviso já havia se fechado). CSS não integrada, sem matrícula/curso criado;
+OCS-F6/F11 e THEME-MF3 permanecem parciais. Evidência e snapshots no log de
+`docs/operations/ACULTA-CONTINUOUS-EXECUTION.md`.
+
+### OCS-F10 — captura autenticada de Culturas (2026-10-31)
+
+O host de teste de Eventos respondeu à captura autenticada da rota canônica
+`/culturas`. O probe `culturas-runtime.py` cobriu claro/escuro em
+320/390/768/1440px, confirmou Institution Bar e Domain Header únicos, dashboard
+e três ações reais, alvos de 44px, filtros de uma coluna e tabela com rolagem
+confinada sem overflow documental. Evidência em
+`/home/piradopirata/aculta-suite-out/culturas-runtime-followup-98f69/`.
+Esta captura não submete eventos nem Locais, não valida ACL por operação ou o
+popup AJAX de Local; F10 permanece parcial e não altera a aprovação de MF3/F11.
+
+O mesmo cenário passou axe-core em claro/escuro a 320px: duas auditorias, zero
+violações e um resultado `incomplete` por modo. Evidência em
+`/home/piradopirata/aculta-suite-out/culturas-axe-followup-d207/`.
+
+A matriz de zoom real do Firefox ESR validou o purpose `eventos` em 100%, 200%
+e 400%: 3/3 checks passaram, sem overflow documental e com Institution Bar,
+Domain Header e H1 únicos. Evidência em
+`/home/piradopirata/aculta-suite-out/eventos-public-zoom-423/`.
+
+### OCS-F8 — Green Stash alcançável no host de teste (2026-10-31)
+
+Com ULI de inspeção no domínio Conta, a rota canônica `/greenstash` respondeu
+HTTP 200 em claro/escuro e 320/390/768/1440px, sem overflow. O mesmo cenário
+passou axe-core autenticado nos dois modos, sem violações nem incompletos.
+Evidências em `/home/piradopirata/aculta-suite-out/greenstash-page-matrix-auth-879/`
+e `/home/piradopirata/aculta-suite-out/greenstash-axe-auth-879/`.
+Operações Commerce, grants por loja e formulários não foram submetidos; F8
+continua parcial e F11 não é aprovado por esta captura.
+
+O reteste Firefox ESR da mesma Suite passou zoom real em 100/200/400% (3/3) e
+teclado em 64/64 checks, com quatro limites esperados, nas larguras
+320/390/768/1280px. Evidências em
+`/home/piradopirata/aculta-suite-out/greenstash-zoom-84e/` e
+`/home/piradopirata/aculta-suite-out/greenstash-keyboard-84e/`.
+
+A tentativa autenticada das superfícies operacionais de produtos e envios
+retornou 403 em todos os viewports, sem overflow; axe-core passou nos seis
+estados. Isso confirma a negação para o usuário de inspeção, mas ainda requer
+uma conta com grant Commerce para homologar operações e formulários.
+
+Após o grant explícito de `administer commerce_store` ao `gerente_loja`, a
+matriz autenticada passou HTTP 200 em `/greenstash`, `/greenstash/produtos/novo`
+e `/greenstash/envios`, nos modos claro/escuro e 320/768/1440px: 18/18 estados,
+sem overflow. Axe-core passou nos seis estados operacionais, sem violações ou
+incompletos. Não houve submit nem criação de produto; a validação funcional de
+persistência permanece pendente.
+
+Os contratos Unit e Kernel do módulo Commerce também passaram após o grant:
+13 testes/100 asserções Unit e 15 testes/260 asserções Kernel, com 7 skips
+esperados. A evidência visual/axe das rotas operacionais está verde; falta
+somente submeter um rascunho autorizado e validar persistência/rollback antes
+de considerar F8 e F11 homologados.
+
+Reteste Firefox ESR visível (`DISPLAY=:0`) cobriu claro/escuro em
+320/390/768/1440px, com largura documental igual à viewport e sem overflow em
+todos os oito estados. Evidência em
+`/home/piradopirata/aculta-suite-out/culturas-x11-followup-43ec/`.
+
+### OCS-F3/F4 — acabamento dos cards do Hub de Conta (2026-10-31)
+
+Corrigida a moldura duplicada dos cinco cards de experiências: os wrappers
+`list-group-item` do Drupal são neutralizados somente dentro de
+`.aculta-account-entry`, preservando o SDC reutilizado, os links e o shell. A
+fixture local Firefox/X11 passou 277/277 checks em 27 larguras, incluindo
+teclado e zoom de 200%/400%. A correção permanece candidata até validação da
+folha servida pelo Runtime; não fecha OCS-F11 nem THEME-MF3.
+
+Follow-up integrado: CSS publicada confirmada no Runtime, sem override, em nove
+larguras. Cinco cards foram renderizados e a largura documental não excedeu a
+viewport. Evidência em `web/themes/custom/aculta420/docs/mobile-first-audit.md`
+e relatório privado em `$SUITE_OUT`; OCS-F11 e THEME-MF3 continuam pendentes.
+
+Reteste de F6 no HEAD Runtime `959bc283c` confirmou o compositor atual, os dois
+estados vazios reais e o escopo `.studio` em nove larguras, sem overflow e sem
+CSS override. O usuário de inspeção não possui matrículas nem certificados, por
+isso a captura não contém cards preenchidos. Para esses consumidores, o
+compositor agora escolhe a variante SDC `studio_fidelity` compartilhada com o
+Hub de Conta; conteúdo LMS, certificados, links, ACL e cache permanecem no LMS.
+Renderização de cards preenchidos ainda precisa de fixture/dados autorizados.
+
+O resultado integrado, os nove viewports, as duas capturas revisadas, o snapshot
+e os limites da cobertura de Ganjalab estão em
+`web/themes/custom/aculta420/docs/mobile-first-audit.md`, sob “OCS-F6 — Ganjalab
+integrado no HEAD atual”.
+
+Fixture Runtime autorizada do Green Stash: produto rascunho NID 14, não
+publicado, renderizado na listagem e no detalhe em 16 estados responsivos, sem
+overflow e com axe sem violações. O conteúdo é exclusivamente de teste e foi
+preservado para inspeção humana; submit e rollback permanecem pendentes.

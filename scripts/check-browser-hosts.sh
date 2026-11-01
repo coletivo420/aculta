@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Verifica, no Firefox ESR visível na sessão X11 local, se as páginas de teste carregam.
-# Controlado pelo geckodriver (WebDriver W3C). Não usa Chromium headless.
+# Para o uso genérico/headless e matriz responsiva, veja tests/browser/aculta-smoke/.
 # Uso: scripts/check-browser-hosts.sh [URL ...]
 # Sem argumentos, usa os hosts de teste (*.aculta.toca.net.br) e example.com como controle.
 # Saída: tabela no terminal e, por URL, o HTML em OUT_DIR. Código 124 = tempo esgotado.
@@ -11,7 +11,15 @@ export DISPLAY="${DISPLAY:-:0}"
 export TIMEOUT="${TIMEOUT:-15}"
 export FIREFOX="${FIREFOX:-/usr/bin/firefox-esr}"
 export GECKODRIVER="${GECKODRIVER:-geckodriver}"
-export OUT_DIR="${OUT_DIR:-/tmp/aculta-browser-check-$(date +%Y%m%d-%H%M%S)}"
+export OUT_DIR="${OUT_DIR:-${SUITE_OUT:-/home/piradopirata/aculta-suite-out/browser-check-$(date +%Y%m%d-%H%M%S)}}"
+umask 077
+case "$(realpath -m "$OUT_DIR")" in
+  /tmp|/tmp/*) echo "OUT_DIR deve ficar fora de /tmp; use armazenamento persistente." >&2; exit 2 ;;
+esac
+repo_root="$(git -C "$(dirname -- "${BASH_SOURCE[0]}")/.." rev-parse --show-toplevel)"
+case "$(realpath -m "$OUT_DIR")" in
+  "$repo_root"|"$repo_root"/*) echo "OUT_DIR deve ficar fora do repositório." >&2; exit 2 ;;
+esac
 
 if ! command -v "$GECKODRIVER" >/dev/null 2>&1; then
   echo "geckodriver não encontrado: defina GECKODRIVER=/caminho/do/geckodriver" >&2
@@ -67,7 +75,12 @@ def porta_livre():
 
 porta = porta_livre()
 base = f"http://127.0.0.1:{porta}"
-perfil = tempfile.mkdtemp(prefix="aculta-ff-", dir="/tmp")
+os.makedirs(OUT_DIR, mode=0o700, exist_ok=True)
+os.chmod(OUT_DIR, 0o700)
+profile_root = os.path.join(OUT_DIR, "profiles")
+os.makedirs(profile_root, mode=0o700, exist_ok=True)
+os.chmod(profile_root, 0o700)
+perfil = tempfile.mkdtemp(prefix="aculta-ff-", dir=profile_root)
 driver = subprocess.Popen([GECKODRIVER, "--port", str(porta)],
                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 

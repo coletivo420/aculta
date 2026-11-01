@@ -41,6 +41,9 @@ content:
     region: content
 hidden:
   attribute_tamanho: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   langcode: true
   price: true
   search_api_excerpt: true

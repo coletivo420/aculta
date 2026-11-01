@@ -1,3 +1,4 @@
+uuid: 1ce166ac-b734-4dcc-9ec5-548b6208e07c
 langcode: pt-br
 status: true
 dependencies:
@@ -14,11 +15,6 @@ type_settings:
       weight: 0
       published: false
       default_revision: false
-    review:
-      label: 'Aguardando moderação'
-      weight: 1
-      published: false
-      default_revision: false
     published:
       label: Publicado
       weight: 2
@@ -29,7 +25,18 @@ type_settings:
       weight: 3
       published: false
       default_revision: true
+    review:
+      label: 'Aguardando moderação'
+      weight: 1
+      published: false
+      default_revision: false
   transitions:
+    approve:
+      label: Aprovar
+      from:
+        - review
+      to: published
+      weight: 2
     create_draft:
       label: 'Salvar rascunho'
       from:
@@ -38,6 +45,18 @@ type_settings:
         - rejected
       to: draft
       weight: 0
+    edit_published:
+      label: 'Salvar edição publicada'
+      from:
+        - published
+      to: published
+      weight: 4
+    reject:
+      label: Rejeitar
+      from:
+        - review
+      to: rejected
+      weight: 3
     submit_for_review:
       label: 'Enviar para moderação'
       from:
@@ -45,24 +64,6 @@ type_settings:
         - rejected
       to: review
       weight: 1
-    approve:
-      label: Aprovar
-      from:
-        - review
-      to: published
-      weight: 2
-    reject:
-      label: Rejeitar
-      from:
-        - review
-      to: rejected
-      weight: 3
-    edit_published:
-      label: 'Salvar edição publicada'
-      from:
-        - published
-      to: published
-      weight: 4
     withdraw:
       label: 'Retirar da publicação'
       from:

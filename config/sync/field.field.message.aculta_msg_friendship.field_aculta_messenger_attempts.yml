@@ -8,6 +8,8 @@ dependencies:
   enforced:
     module:
       - aculta_messenger
+_core:
+  default_config_hash: CS9UdToQItOFgf3u3sBWaXYuWSI1kyBw9J8gVfmdmQY
 id: message.aculta_msg_friendship.field_aculta_messenger_attempts
 field_name: field_aculta_messenger_attempts
 entity_type: message

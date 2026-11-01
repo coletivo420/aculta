@@ -68,11 +68,26 @@ Quando uma rota é a página inicial de um Domain e o tema normalmente omite o b
 
 ## Mecanismo (como o módulo entrega design sem classes)
 
+### Retificação Studio Ganjalab (2026-10-31)
+
+O `CourseAuthoringController` marca a composição com `studio-shell`,
+`studio-course-authoring`, `studio-main` e `studio-action` mais
+`studio-course-authoring-back`. `PortalUiHooks` mapeia esses tokens para as
+classes de apresentação do ACULTA420. O controller conserva apenas o
+marcador funcional `data-aculta-studio`, o Form API do Group `lms_course`, o
+controle de acesso e a cacheabilidade. O teste Unit do controller e o teste
+Unit do mapa visual cobrem essa fronteira. Após a retificação, o gate global
+passou em 3.491 verificações, sem tokens de apresentação ou classes de design
+no módulo.
+
 - O módulo marca o elemento com `data-portal-ui="token [token2]"`. O token é um nome semântico (ex.: `account-avatar`,
   `button-primary`, `requirements-status status-ok`), nunca uma classe de design.
 - O tema traduz os tokens em classes em `web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` (`TOKENS`). Os hooks
   de pré-processamento (`container`, `html_tag`, `item_list`, `input`, `form_element`, `image` e os templates
   `aculta_portal_*`) leem os atributos do elemento (inclusive os que o núcleo ainda não mesclou) e trocam os tokens.
+- Exceção sem classe: elementos de terceiro podem receber um token semântico pelo Portal para ancorar layout responsivo.
+  `CaptchaPresentationHooks` acrescenta `challenge-frame` após a inserção do elemento contrib; o ACULTA420 usa o token
+  diretamente em uma container query, sem identificar o provedor nem alterar seu markup/validação.
 - Elementos de texto ou link do módulo usam o template neutro `aculta_portal_element` (`#tag`, `#value`,
   `#element_attributes`). Links com token passam por `Drupal\aculta_portal\Render\PortalLinkElement::build()`, que
   preserva o `href` e a cacheabilidade de `Url::toString(TRUE)`. O gerador de links do núcleo não tem template de tema,

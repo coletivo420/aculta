@@ -1,5 +1,12 @@
 # Changelog — aculta_events
 
+## 2026-10-31 — Hierarquia de títulos no catálogo
+
+- Os títulos dos cartões em `/eventos` usam H2 imediatamente abaixo do H1 da
+  página; o SDC `content/event_card` mantém a mesma semântica.
+- Kernel cobre o contrato da tag de título. Não altera dados, filtro, acesso,
+  rotas ou cache.
+
 ## 2026-10-30 — Fase 2: Migração e Rollback de Endereços Legados de Activity para Locais
 
 - Implementado o serviço central de migração `ActivityLocationMigrator` (`aculta_events.activity_location_migrator`):

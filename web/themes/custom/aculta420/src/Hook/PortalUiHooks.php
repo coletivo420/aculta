@@ -30,9 +30,60 @@ final class PortalUiHooks {
   public const TOKENS = [
     // Avisos e mensagens (classes de mensagens do Drupal, estilizadas aqui).
     'notice-warning' => ['messages', 'messages--warning'],
+    'notice-status' => ['messages', 'messages--status'],
     'notice-error' => ['messages', 'messages--error'],
     // Eventos: estrutura neutra do catálogo e leitores de calendário.
     'event-card' => ['event-card'],
+    'event-organization-widget' => ['aculta-event-org-widget'],
+    'event-organization-target-id' => ['aculta-event-organization-target-id'],
+    'event-organization-intro' => ['lead'],
+    'event-organization-search' => ['search-box'],
+    'event-organization-location-fields' => ['aculta-event-organization-location-fields'],
+    'event-organization-results-table' => ['org-modal-results-table'],
+    'event-organization-small-button' => ['button', 'button--small'],
+    'event-organization-search-action' => ['button', 'button--secondary'],
+    'event-organization-add-action' => ['button', 'button--primary'],
+    'event-organization-back-action' => ['button'],
+    'event-organization-status-success' => ['badge', 'badge--success'],
+    'event-organization-status-warning' => ['badge', 'badge--warning'],
+    'event-organization-status-info' => ['badge', 'badge--info'],
+    'event-organization-status-danger' => ['badge', 'badge--danger'],
+    'event-organization-profile' => ['aculta-organization-profile'],
+    'event-organization-unclaimed' => ['organization-badge', 'organization-badge--unclaimed'],
+    'event-organization-header' => ['organization-header'],
+    'event-organization-body' => ['organization-body'],
+    'event-organization-links' => ['organization-links'],
+    'event-organization-events' => ['organization-events'],
+    'event-organization-actions' => ['organization-footer-actions'],
+    'event-organization-title' => ['organization-title'],
+    'event-organization-location' => ['organization-location'],
+    'event-organization-description' => ['organization-description'],
+    'event-organization-event-link' => ['organization-event-item'],
+    'event-organization-admin-link' => ['organization-admin-link', 'text-muted', 'small'],
+    'event-organization-admin-action' => ['button', 'button--secondary', 'button--small'],
+    'event-org-summary-card' => ['event-org-card'],
+    'event-org-title' => ['event-org-card__title'],
+    'event-org-badge' => ['badge', 'event-org-card__badge'],
+    'event-org-locality' => ['event-org-card__locality'],
+    'event-org-button-secondary' => ['button', 'button--secondary'],
+    'event-org-button-danger' => ['button', 'button--danger'],
+    'event-org-empty' => ['event-org-empty'],
+    'event-org-button-primary' => ['button', 'button--primary'],
+    'coorganizer-card' => ['coorganizer-item', 'clearfix'],
+    'coorganizer-title' => ['coorganizer-item__title'],
+    'coorganizers-list' => ['coorganizers-list'],
+    'coorganizer-badge' => ['badge', 'coorganizer-item__badge'],
+    'event-organization-fallback' => ['text-muted', 'small'],
+    'event-coorg-button-add' => ['button', 'button--primary'],
+    'events-organization-admin-overview' => ['aculta-events-organization-admin-overview'],
+    'admin-org-filters' => ['form--inline', 'clearfix'],
+    'event-organization-admin-filter-fields' => ['aculta-event-organization-admin-filter-fields'],
+    'related-content-block' => ['aculta-related-content'],
+    'related-content-item' => ['aculta-related-content__item'],
+    'related-content-link' => ['aculta-related-content__link'],
+    'related-content-title' => ['aculta-related-content__title'],
+    'related-content-badge' => ['aculta-related-content__badge'],
+    'related-content-summary' => ['aculta-related-content__summary'],
     'event-date-row' => ['aculta-event-date-row'],
     'event-date-actions' => ['aculta-event-date-actions'],
     'event-location-widget' => ['aculta-event-location-widget'],
@@ -257,6 +308,9 @@ final class PortalUiHooks {
     // Green Stash is a Studio area; keep its product styles while inheriting
     // the Studio-scoped OpenCulturas fidelity foundation.
     'green-stash-entry' => ['studio', 'aculta-green-stash'],
+    // LMS dashboard is composed in the main region without the Studio shell.
+    // Keep Studio tokens inside its content root, away from the global shell.
+    'studio-fidelity-scope' => ['studio'],
     'green-stash-product-create' => ['aculta-green-stash__product-create'],
     'green-stash-navigation-link' => ['nav-link', 'aculta-green-stash__navigation-link'],
     'green-stash-navigation' => ['nav', 'aculta-green-stash__navigation'],
@@ -392,7 +446,7 @@ final class PortalUiHooks {
     // (dialog.css).
     'photo-dialog' => ['aculta-photo-dialog'],
     'avatar-crop-dialog' => ['aculta-avatar-crop-dialog'],
-    'account-bio-dialog' => ['aculta-account-bio-dialog'],
+    'account-bio-dialog' => ['aculta-account-bio-dialog', 'studio-profile-form'],
     'social-link-dialog' => ['aculta-social-link-dialog'],
     'secret-dialog' => ['aculta-secret-dialog'],
     'messenger-preview' => ['aculta-messenger-preview'],
@@ -506,6 +560,8 @@ final class PortalUiHooks {
     'account-entry' => ['studio', 'aculta-account-entry'],
     'account-experiences' => ['studio__actions', 'list-unstyled', 'd-grid', 'gap-2'],
     'studio-shell' => ['studio'],
+    'studio-course-authoring' => ['studio-course-authoring'],
+    'studio-course-authoring-back' => ['studio-course-authoring__back'],
     'studio-marley-entry' => ['btn', 'btn-outline-primary', 'studio__action'],
     'studio-account-home' => ['studio__panel', 'card', 'card-body'],
     'studio-profile-entry' => ['btn', 'btn-outline-primary', 'studio__action'],
@@ -514,6 +570,8 @@ final class PortalUiHooks {
     'studio-profile-actions' => ['studio__actions', 'list-unstyled', 'd-flex', 'flex-wrap', 'gap-2'],
     'studio-profile-public-link' => ['btn', 'btn-outline-primary', 'studio__action'],
     'studio-profile-editor' => ['aculta-profile-editor'],
+    'studio-bio-form' => ['studio-profile-form'],
+    'studio-social-form' => ['studio-profile-form'],
     'studio-saved-content' => ['studio', 'studio-saved-page'],
     'studio-saved-summary' => ['studio-saved-summary'],
     'studio-page-title' => ['page-title'],
@@ -726,6 +784,18 @@ final class PortalUiHooks {
     elseif ($tokens === '' && is_array($wrapperAttributes)) {
       $tokens = (string) ($wrapperAttributes['data-portal-ui'] ?? '');
     }
+    // AccountExperienceProvider sets #attributes on its item_list render
+    // array. Core exposes those as the list's `attributes` variable, while
+    // `wrapper_attributes` represents the outer container. Handle both real
+    // item-list contracts so this adapter sees the provider's token before
+    // the generic token mapper removes it.
+    $attributes = $variables['attributes'] ?? NULL;
+    if ($tokens === '' && $attributes instanceof Attribute) {
+      $tokens = (string) ($attributes['data-portal-ui'] ?? '');
+    }
+    elseif ($tokens === '' && is_array($attributes)) {
+      $tokens = (string) ($attributes['data-portal-ui'] ?? '');
+    }
     if (!preg_match('/(?:^|\\s)(?:studio-experiences|account-experiences)(?:\\s|$)/', $tokens) || !is_array($variables['items'] ?? NULL)) {
       return;
     }
@@ -929,6 +999,9 @@ final class PortalUiHooks {
     }
     $existing = $attributes['class'] ?? [];
     $attributes['class'] = array_values(array_unique(array_merge(is_array($existing) ? $existing : [$existing], $classes)));
+    if (in_array('studio-listing-wrap', $tokens, TRUE)) {
+      $attributes['tabindex'] = '0';
+    }
     // Variáveis de template (attributes, title_attributes, content_attributes)
     // são Attribute; elementos guardam array.
     $container[$key] = in_array($key, ['attributes', 'title_attributes', 'content_attributes'], TRUE) ? new Attribute($attributes) : $attributes;
@@ -946,6 +1019,9 @@ final class PortalUiHooks {
     }
     $tokens = preg_split('/\s+/', trim((string) $attributes[self::ATTRIBUTE]->value())) ?: [];
     $attributes->removeAttribute(self::ATTRIBUTE);
+    if (in_array('studio-listing-wrap', $tokens, TRUE)) {
+      $attributes->setAttribute('tabindex', '0');
+    }
     foreach ($tokens as $token) {
       foreach (self::TOKENS[$token] ?? [] as $class) {
         $attributes->addClass($class);

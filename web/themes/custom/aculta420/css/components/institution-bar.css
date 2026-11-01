@@ -8,6 +8,35 @@
   border-bottom: 1px solid var(--aculta-shell-border);
   font: 500 0.8125rem/1.4 var(--aculta-font-body);
 }
+
+/* The admin Navigation top-bar is in normal flow below its desktop breakpoint.
+   Keep the Institution Bar at viewport top without a displacement measurement. */
+@media (max-width: 63.999rem) {
+  .aculta-institution-bar {
+    top: 0;
+  }
+
+  .aculta-institution-bar--scroll-fixed {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    width: 100%;
+    z-index: 1030;
+  }
+
+  .aculta-institution-bar-placeholder {
+    display: block;
+    flex: 0 0 auto;
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  /* Keep the mobile viewport reserved for the multidomain shell. */
+  .top-bar[data-drupal-admin-styles] {
+    display: none !important;
+  }
+}
+
 .aculta-institution-bar__inner {
   display: flex;
   flex-wrap: wrap;
@@ -42,7 +71,10 @@
 }
 
 .aculta-institution-bar__home { display: inline-flex; line-height: 0; }
-.aculta-institution-bar__home:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
+.aculta-institution-bar__home:is(:focus, :focus-visible) {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
 
 /* Preserve separation from the fixed Drupal Navigation top-bar without JS. */
 @media (min-width: 64rem) {

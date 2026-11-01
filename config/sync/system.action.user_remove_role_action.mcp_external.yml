@@ -1,0 +1,15 @@
+uuid: 42a829c1-1de9-49b8-b8fd-6bedfe3335b7
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - user.role.mcp_external
+  module:
+    - user
+id: user_remove_role_action.mcp_external
+label: 'Remover o papel ACULTA MCP externo dos usuários selecionados'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: mcp_external
+

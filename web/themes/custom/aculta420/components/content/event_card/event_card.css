@@ -45,6 +45,13 @@
   margin: 0 0 0.25rem;
 }
 
+.event-card__titulo a {
+  display: inline-flex;
+  max-inline-size: 100%;
+  min-block-size: 2.75rem;
+  align-items: center;
+}
+
 .event-card__subtitulo {
   margin: 0 0 0.5rem;
 }

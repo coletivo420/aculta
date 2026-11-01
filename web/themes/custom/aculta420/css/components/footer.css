@@ -26,6 +26,7 @@
 .aculta-footer .aculta-footer-description { max-width: 36ch; font-family: var(--aculta-font-body); }
 .aculta-footer :is(.aculta-footer-description, .aculta-footer-cnpj, .aculta-institution-details) { color: var(--aculta-text-inverse); font: 700 1.1667rem/1.5 var(--aculta-font-body); }
 .aculta-footer .aculta-footer-cnpj { font-size: 0.875rem; font-weight: 400; }
+.aculta-footer :is(.aculta-footer-cnpj, .aculta-institution-details, .field--name-field-headquarters) { color: var(--aculta-section-green-text); }
 .aculta-footer .region-footer .nav-link { display: inline-block; width: fit-content; min-height: 2.75rem; font-size: 0.95rem; }
 .aculta-footer .region-footer .menu { padding-inline-start: 0; list-style: none; }
 

@@ -2,11 +2,11 @@ uuid: 6dd99471-44cd-4322-961d-10a123d335ed
 langcode: pt-br
 status: true
 dependencies:
+  module:
+    - media
   enforced:
     module:
       - aculta_portal
-  module:
-    - media
 id: media.field_media_oembed_video
 field_name: field_media_oembed_video
 entity_type: media

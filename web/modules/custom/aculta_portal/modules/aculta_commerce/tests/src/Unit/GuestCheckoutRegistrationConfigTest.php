@@ -48,7 +48,7 @@ final class GuestCheckoutRegistrationConfigTest extends UnitTestCase {
       $this->assertFalse($configuration['panes']['login']['allow_registration'], $id);
     }
     $course = $this->config('commerce_order.commerce_order_type.curso');
-    $this->assertSame('default', $course['third_party_settings']['commerce_checkout']['checkout_flow']);
+    $this->assertSame('curso', $course['third_party_settings']['commerce_checkout']['checkout_flow']);
   }
 
   /**

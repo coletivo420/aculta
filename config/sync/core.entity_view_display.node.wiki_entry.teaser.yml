@@ -20,6 +20,11 @@ targetEntityType: node
 bundle: wiki_entry
 mode: teaser
 content:
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
   field_wiki_categories:
     type: entity_reference_label
     label: hidden
@@ -51,7 +56,14 @@ content:
     region: content
 hidden:
   body: true
+  co_authors: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_aculta_discussion: true
   field_domain_source: true
   field_wiki_references: true
   field_wiki_related: true
   langcode: true
+  private_message_link: true
+  search_api_excerpt: true

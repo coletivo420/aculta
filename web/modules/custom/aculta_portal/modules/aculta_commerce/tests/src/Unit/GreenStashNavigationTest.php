@@ -20,12 +20,13 @@ final class GreenStashNavigationTest extends UnitTestCase {
   /**
    * Tests canonical paths and the absence of the retired route family.
    */
-  public function testCanonicalRoutesUseShopPurposePathAndNoStudioAliases(): void {
+  public function testCanonicalRoutesUseStudioPathAndShopPurpose(): void {
     $moduleRoot = dirname(__DIR__, 3);
     $routes = Yaml::decode((string) file_get_contents($moduleRoot . '/aculta_commerce.routing.yml'));
 
     self::assertSame('/greenstash', $routes['aculta_commerce.green_stash']['path']);
     self::assertSame('/greenstash/{secao}', $routes['aculta_commerce.green_stash_area']['path']);
+    self::assertSame('visao-geral|produtos|envios', $routes['aculta_commerce.green_stash_area']['requirements']['secao']);
     self::assertSame('shop', $routes['aculta_commerce.green_stash']['options']['_aculta_domain_purpose']);
     self::assertSame('ACULTA STUDIO GREEN STASH', $routes['aculta_commerce.green_stash']['defaults']['_title']);
     self::assertSame('/greenstash/produtos/novo', $routes['aculta_commerce.green_stash_product_create']['path']);
@@ -35,24 +36,34 @@ final class GreenStashNavigationTest extends UnitTestCase {
     foreach ($routes as $route) {
       self::assertFalse(str_starts_with($route['path'], '/estudio/loja'));
     }
+    self::assertNotContains('/studio/green-stash', array_column($routes, 'path'));
   }
 
   /**
    * Tests that every area has read-only contextual navigation.
    */
-  public function testEachAreaIsReadOnlyAndHasItsOwnRoute(): void {
+  public function testOnlyImplementedAreasAreDiscoverable(): void {
     $navigation = new GreenStashNavigation();
     foreach (GreenStashNavigation::SLUGS as $slug => $key) {
       $label = GreenStashNavigation::AREAS[$key];
       $render = $navigation->build($slug);
       self::assertSame('green-stash-entry', $render['#attributes']['data-portal-ui']);
       self::assertSame($label, $render['heading']['#value']);
-      self::assertCount(count(GreenStashNavigation::AREAS), $render['navigation']['items']);
+      self::assertCount(3, $render['navigation']['items']);
       self::assertSame('page', $render['navigation']['items'][$slug]['#attributes']['aria-current']);
       self::assertSame('aculta_commerce.green_stash_area', $render['navigation']['items'][$slug]['#url']->getRouteName());
       self::assertArrayNotHasKey('orders', $render);
       self::assertArrayNotHasKey('products', $render);
     }
+
+    self::assertSame(['overview', 'products', 'shipping'], GreenStashNavigation::AVAILABLE);
+    self::assertSame(['visao-geral', 'produtos', 'envios'], array_keys(GreenStashNavigation::SLUGS));
+    self::assertArrayNotHasKey('pedidos', GreenStashNavigation::SLUGS);
+    self::assertArrayNotHasKey('estoque', GreenStashNavigation::SLUGS);
+    self::assertArrayNotHasKey('promocoes', GreenStashNavigation::SLUGS);
+    self::assertArrayNotHasKey('clientes', GreenStashNavigation::SLUGS);
+    self::assertArrayNotHasKey('relatorios', GreenStashNavigation::SLUGS);
+    self::assertArrayNotHasKey('configuracoes', GreenStashNavigation::SLUGS);
   }
 
   /**

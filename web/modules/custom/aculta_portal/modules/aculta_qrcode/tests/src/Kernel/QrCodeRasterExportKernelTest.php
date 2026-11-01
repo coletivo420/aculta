@@ -62,7 +62,7 @@ final class QrCodeRasterExportKernelTest extends KernelTestBase {
        * {@inheritdoc}
        */
       public function publicUrl(QrCode $entity): ?Url {
-        return Url::fromUri('https://links.aculta.toca.net.br/qr/' . $entity->getCode());
+        return Url::fromUri('https://links.example.invalid/qr/' . $entity->getCode());
       }
 
     };

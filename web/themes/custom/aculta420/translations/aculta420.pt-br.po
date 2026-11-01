@@ -35,7 +35,7 @@ msgstr "Leia mais"
 
 #: lms (rótulo de acesso ao curso)
 msgid "Login or register to access @title"
-msgstr "Entre ou cadastre-se para acessar @title"
+msgstr "Login / Registro: entre ou cadastre-se para acessar @title"
 
 #: componente VVJB (controles e índice do carrossel)
 msgid "Carousel Controls"

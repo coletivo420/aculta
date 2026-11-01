@@ -11,6 +11,16 @@
 | Plugin ID do Group (`aculta_pdf_viewer_group:course_document`) | Migra junto na fase `0.1.0-dev.3`, somente após a estratégia de `0.1.0-dev.2` ser comprovada. |
 | Tema ACULTA420 | Alterações autorizadas desde o início da frente (ver `docs/portal/MAPA-MODULO-TEMA.md`). |
 
+### Regra de sincronização da relação de documentos do Group (2026-10-31)
+
+O ID de configuração `group.relationship_type.lms_course-af8ec2205541224f9d8c4`
+é estável. O Drupal Group não permite renomear o machine name dessa entidade por
+importação de configuração. Ao internalizar o plugin de
+`aculta_document_viewer_group` em `aculta_document_viewer`, preserve o ID e o UUID
+da relação e atualize somente a dependência de módulo e `content_plugin`. Uma
+tentativa de importar o ID novo `lms_course-664b23d4931526bbffbc9` falha no
+Runtime e interrompe a sincronização.
+
 ## Estado inicial do repositório
 
 - Host: `toca` (Homelab). Runtime confirmado: `aculta_runtime` (Drush `status`), URI `http://default`, esperado neste ambiente.

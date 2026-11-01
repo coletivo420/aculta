@@ -1,0 +1,10 @@
+uuid: 2595c328-1a8a-43ed-aa4b-e0270e8e8b30
+langcode: pt-br
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: y1FyTtKOCWLjTjmj9_hUjhdxRccIwiXC26xxQCKYpt4
+id: aculta_me_endpoint_details
+tool_id: 'aculta_mcp:melhorenvio_endpoint_details'
+description: 'Lê documentação de um endpoint do Melhor Envio. O método e caminho selecionam documentação e não executam chamadas à API.'
+

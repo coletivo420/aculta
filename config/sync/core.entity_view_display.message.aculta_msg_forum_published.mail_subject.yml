@@ -13,7 +13,7 @@ dependencies:
     module:
       - aculta_messenger
 _core:
-  default_config_hash: oq4sxiLpEAF7MF4ufkm-rRnZiQiyH70YGTCnHXumR9I
+  default_config_hash: AGs9_s9-Ab_j9JTVzfZvHCaDULZYWDwBrVUCXGngg7Q
 id: message.aculta_msg_forum_published.mail_subject
 targetEntityType: message
 bundle: aculta_msg_forum_published
@@ -25,9 +25,9 @@ content:
     weight: 0
     region: content
 hidden:
-  entity_print_view_word_docx: true
-  entity_print_view_pdf: true
   entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   field_aculta_messenger_attempts: true
   field_aculta_msg_delivery: true
   field_aculta_msg_node: true

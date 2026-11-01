@@ -8,7 +8,7 @@ dependencies:
     module:
       - aculta_messenger
 _core:
-  default_config_hash: kow5M21nzF_BWDS6Qh-ThxX1dLaEL-9ihjtf_llqsZM
+  default_config_hash: RVtvw7wtHv7j3Pf3EArcsVA5omqBAN97Zwck-my7SQQ
 id: message.field_aculta_enqueue_attempts
 field_name: field_aculta_enqueue_attempts
 entity_type: message

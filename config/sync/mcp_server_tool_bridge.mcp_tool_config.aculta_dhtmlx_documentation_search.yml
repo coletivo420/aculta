@@ -1,0 +1,8 @@
+uuid: c72832c9-04fb-4f5b-89f8-b392b391369c
+langcode: pt-br
+status: true
+dependencies: {  }
+id: aculta_dhtmlx_documentation_search
+tool_id: 'aculta_mcp:dhtmlx_documentation_search'
+description: 'Pesquisa documentação pública DHTMLX. Não envie dados pessoais ou confidenciais; o servidor hospedado pode registrar consultas.'
+

@@ -27,22 +27,25 @@ tema.
 
 `WIKI_CSS_OVERRIDE=1` injeta no browser as folhas `wiki.css` e
 `patterns/wiki-entry/wiki-entry.css` candidatas do checkout/worktree e valida
-o layout sobre as páginas servidas. No verbete público, o teste mede a grade
-de uma coluna com aside primeiro e margem compacta das abas abaixo de 768px;
-em 768px restaura a grade de duas colunas e a margem anterior. Defina
+o layout sobre as páginas servidas. No verbete público, o teste mede uma
+coluna abaixo de 768px preservando o conteúdo principal antes do aside na ordem
+visual e no DOM, além da margem compacta das abas. Em 768px restaura a grade de
+duas colunas e a margem anterior, com o aside à direita do conteúdo. Defina
 `WIKI_CSS_ROOT` se o script estiver sendo executado de outro checkout. As
 larguras incluem as fronteiras 575/576 e 767/768 CSS px. Isso valida a folha
-candidata nos três caminhos públicos; não prova que o agregado ou a configuração
+candidata nos três caminhos principais e no verbete; não prova que o agregado ou a configuração
 do Runtime foi atualizado, nem cobre o workspace autenticado do Studio.
 
 ## WE SATIVA autenticado
 
 `we-sativa.py` autentica no Runtime de teste com uma URL de login único gerada
 por Drush para a conta autorizada UID 5 (ajustável por variável), abre a home
-Wiki, segue o CTA para `/wesativa/inicio`, testa o reflow nas oito
-larguras (320/360/390/640/768/1024/1280/1440 px) e percorre “Meu
-Trabalho” até o formulário Node nativo e seu retorno. Não envia formulários nem
-altera preferências ou conteúdo; grava capturas e resumo fora do repositório.
+Wiki, segue o CTA para a rota oficial `/studio/we-sativa/inicio`, testa o
+reflow nas oito larguras (320/360/390/640/768/1024/1280/1440 px) e percorre
+“Meu Trabalho” em `/studio/we-sativa` até o formulário Node nativo e seu
+retorno. Confere que CTA, workspace e criação permanecem no host Wiki. Não envia
+formulários nem altera preferências ou conteúdo; gera uma sessão autenticada
+temporária e grava capturas e resumo fora do repositório.
 
 ```sh
 cd /home/piradopirata/projetos/aculta
@@ -53,17 +56,30 @@ DISPLAY=:0 ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles" SUITE_OUT="$SUITE_OUT" \
 
 Variáveis: `WIKI_HOME_URL` (padrão `https://wiki420.aculta.toca.net.br/`),
 `WIKI_STUDIO_PAGE` (padrão
-`https://conta.aculta.toca.net.br/wesativa/inicio`),
-`WIKI_STUDIO_LOGIN_URI` (padrão `https://conta.aculta.toca.net.br`),
-`WIKI_STUDIO_UID` (padrão `5`; passe vazio para usar `WIKI_STUDIO_USER`) e
-`WIKI_STUDIO_USER` (padrão vazio; usado quando `WIKI_STUDIO_UID` é vazio) e
-`SUITE_OUT` (padrão `/home/piradopirata/aculta-suite-out/aculta-wiki-we-sativa`). Requer
-Drush funcional e Firefox ESR visível. A conta precisa ter confirmação de e-mail,
+`https://wiki420.aculta.toca.net.br/studio/we-sativa/inicio`),
+`WIKI_STUDIO_LOGIN_URI` (padrão `https://conta.aculta.toca.net.br`, para emitir
+uma sessão compartilhada entre os hosts Account e Wiki),
+`WIKI_STUDIO_UID` (padrão `5`; passe vazio para usar `WIKI_STUDIO_USER`),
+`WIKI_STUDIO_USER` (padrão vazio; usado quando `WIKI_STUDIO_UID` é vazio),
+`WIKI_STUDIO_DRUSH_ROOT` (opcional; raiz do checkout com `web/` e `vendor/`
+quando o script roda de um worktree, mas o ULI deve ser emitido pelo docroot
+Runtime), e
+`SUITE_OUT` (padrão `/home/piradopirata/aculta-suite-out/aculta-wiki-we-sativa`).
+Requer Drush funcional e Firefox ESR visível. A conta precisa ter confirmação de e-mail,
 acesso ao Studio e criação Wiki. A rodada autentica e cria uma sessão de navegador;
 não reconstrói caches/configuração, não publica nem grava conteúdo. O resultado
 avalia somente o tema ativo no Runtime de teste; a rodada dev.117 também cobriu
 Olivero e modo escuro. Leitor de tela e WCAG 2.2 AA completa permanecem fora
 do escopo do script.
+
+O fluxo `we-sativa.py` abre a ação de criação em
+`/studio/we-sativa/verbetes/novo`, dentro do purpose Wiki, e confirma o
+formulário nativo e o link de retorno. Não usa `/node/add/wiki_entry` em outro
+purpose e não submete nem salva o formulário. O runner exige que título e corpo
+estejam renderizados; aviso de confirmação sem os campos não passa. Quando o
+formulário abre, salva `create-form.png` (320px) e `create-form-wide.png`
+(1440px) em `$SUITE_OUT`. Workspace e formulário são medidos em cada uma das
+oito larguras da lista; o runner volta ao início WE SATIVA entre as medições.
 
 O script valida raiz, listagem e busca em desktop e larguras móveis, verifica
 presença de `main`/`h1`, erros visíveis e rolagem horizontal, e confirma que o

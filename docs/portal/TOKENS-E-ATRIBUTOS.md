@@ -176,6 +176,7 @@ Atributos: não há wildcard. Todo nome usado no código aparece na tabela acima
 | `data-portal-chrome` | exato | sim | 2 |
 | `data-portal-page-title` | exato | sim | 2 |
 | `data-portal-payment-notice` | exato | não | 2 |
+| `data-portal-trigger` | exato | sim | 7 |
 | `data-portal-ui` | exato | sim | 50 |
 ## Famílias dinâmicas de tokens
 
@@ -216,6 +217,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `new-conversation-message` | `form-control` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Form/NewConversationForm.php` |
 | `new-conversation-results` | `list-group` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php` |
 | `new-conversation-result` | `list-group-item`, `list-group-item-action` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/NewConversationController.php` |
+| `challenge-frame` | sem classe; âncora de container query para reflow de formulários estreitos | `web/modules/custom/aculta_portal/src/Hook/CaptchaPresentationHooks.php` |
 | `account-home` | `aculta-account-home` | `web/modules/custom/aculta_portal/src/Hook/PortalHooks.php` (link Minha conta do menu da conta; o tema aplica a classe ao link) |
 | `messenger-read-status` | `aculta-messenger-read-status` | `web/themes/custom/aculta420/src/Hook/ThemeHooks.php` |
 | `notice-read-status` | `aculta-messenger-read-status` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
@@ -347,7 +349,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `account-terms` | `aculta-account-terms` | `web/modules/custom/aculta_portal/js/account-terms-modal.js`<br>`web/modules/custom/aculta_portal/templates/aculta-portal-account-terms-modal.html.twig` |
 | `photo-dialog` | `aculta-photo-dialog` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/UserPictureForm.php` |
 | `avatar-crop-dialog` | `aculta-avatar-crop-dialog` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AvatarCropForm.php` |
-| `account-bio-dialog` | `aculta-account-bio-dialog` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AccountBioForm.php` |
+| `account-bio-dialog` | `aculta-account-bio-dialog studio-profile-form` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AccountBioForm.php` |
 | `social-link-dialog` | `aculta-social-link-dialog` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/SocialLinkForm.php` |
 | `secret-dialog` | `aculta-secret-dialog` | `web/modules/custom/aculta_portal/src/Secrets/Form/SecretClearForm.php`<br>`web/modules/custom/aculta_portal/src/Secrets/Form/SecretEditForm.php` |
 | `messenger-preview` | `aculta-messenger-preview` | `web/modules/custom/aculta_portal/modules/aculta_messenger/src/Controller/MessagesController.php` |
@@ -574,6 +576,8 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `document-download-item` | `aculta-download-meta-item` | `web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Plugin/Field/FieldFormatter/DownloadWithMetaFormatter.php` |
 | `document-download-link` | `download-link` | `web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Plugin/Field/FieldFormatter/DownloadWithMetaFormatter.php` |
 | `studio-shell` | `studio` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-course-authoring` | `studio-course-authoring` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/CourseAuthoringController.php` |
+| `studio-course-authoring-back` | `studio-course-authoring__back` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/CourseAuthoringController.php` |
 | `studio-marley-entry` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/MarleyExperienceProvider.php` |
 | `studio-account-home` | `studio__panel card card-body` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php` |
 | `studio-profile-entry` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/ProfileExperienceProvider.php` |
@@ -582,6 +586,8 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `studio-profile-actions` | `studio__actions list-unstyled d-flex flex-wrap gap-2` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
 | `studio-profile-public-link` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
 | `studio-profile-editor` | `aculta-profile-editor` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
+| `studio-fidelity-scope` | `studio` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Learning/LearnerDashboardComposer.php` |
+| `studio-bio-form`, `studio-social-form` | `studio-profile-form` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AccountBioForm.php`; `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/SocialLinkForm.php` |
 | `studio-saved-content` | `studio studio-saved-page` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-saved-summary` | `studio-saved-summary` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/SavedExperienceProvider.php` |
 | `studio-page-title` | `page-title` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
@@ -669,6 +675,57 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `event-organizer-filter-form` | `form--inline clearfix` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organizer-filters` | `organizer-dashboard-filters` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-organizer-guide` | `culturas-guide` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `notice-status` | `messages messages--status` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-widget` | `aculta-event-org-widget` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-target-id` | `aculta-event-organization-target-id` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-intro` | `lead` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-search` | `search-box` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-location-fields` | `aculta-event-organization-location-fields` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-results-table` | `org-modal-results-table` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-small-button` | `button button--small` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-search-action` | `button button--secondary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-add-action` | `button button--primary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-back-action` | `button` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Form/EventOrganizationModalForm.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-org-summary-card` | `event-org-card` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-org-title` | `event-org-card__title` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-org-badge` | `event-org-card__badge` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-org-locality` | `event-org-card__locality` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-org-button-secondary` | `button button--secondary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-org-button-danger` | `button button--danger` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-org-empty` | `event-org-empty` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-org-button-primary` | `button button--primary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `coorganizer-card` | `coorganizer-item clearfix` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `coorganizer-title` | `coorganizer-item__title` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-coorg-button-add` | `button button--primary` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `events-organization-admin-overview` | `aculta-events-organization-admin-overview` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `admin-org-filters` | `form--inline clearfix` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `related-content-block` | `aculta-related-content` | `web/modules/custom/aculta_portal/modules/aculta_index/src/Plugin/Block/RelatedContentBlock.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `coorganizers-list` | `coorganizers-list` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `coorganizer-badge` | `badge coorganizer-item__badge` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-fallback` | `text-muted small` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Field/FieldWidget/EventOrganizationModalWidget.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-status-success` | `badge badge--success` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-status-warning` | `badge badge--warning` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-status-info` | `badge badge--info` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-status-danger` | `badge badge--danger` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-admin-filter-fields` | `aculta-event-organization-admin-filter-fields` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationAdminController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-profile` | `aculta-organization-profile` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-unclaimed` | `organization-badge organization-badge--unclaimed` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-header` | `organization-header` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-body` | `organization-body` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-links` | `organization-links` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-events` | `organization-events` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-actions` | `organization-footer-actions` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-title` | `organization-title` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-location` | `organization-location` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-description` | `organization-description` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-event-link` | `organization-event-item` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-admin-link` | `organization-admin-link text-muted small` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `event-organization-admin-action` | `button button--secondary button--small` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizationPageController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `related-content-item` | `aculta-related-content__item` | `web/modules/custom/aculta_portal/modules/aculta_index/src/Plugin/Block/RelatedContentBlock.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `related-content-link` | `aculta-related-content__link` | `web/modules/custom/aculta_portal/modules/aculta_index/src/Plugin/Block/RelatedContentBlock.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `related-content-title` | `aculta-related-content__title` | `web/modules/custom/aculta_portal/modules/aculta_index/src/Plugin/Block/RelatedContentBlock.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `related-content-badge` | `aculta-related-content__badge` | `web/modules/custom/aculta_portal/modules/aculta_index/src/Plugin/Block/RelatedContentBlock.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `related-content-summary` | `aculta-related-content__summary` | `web/modules/custom/aculta_portal/modules/aculta_index/src/Plugin/Block/RelatedContentBlock.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `events-admin-overview` | `aculta-events-admin-overview` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventAdminOverviewController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `events-upcoming-block` | `aculta-events-upcoming` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Block/UpcomingEventsBlock.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `events-upcoming-link` | `aculta-events-upcoming__link` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Plugin/Block/UpcomingEventsBlock.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |

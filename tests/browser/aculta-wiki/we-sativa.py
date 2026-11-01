@@ -17,13 +17,16 @@ sys.path.insert(0, str(PROJECT / "tests/browser/aculta-cpf-checkout"))
 from wdlib import Driver, WDError  # noqa: E402
 
 PAGE = os.environ.get(
-    "WIKI_STUDIO_PAGE", "https://conta.aculta.toca.net.br/wesativa/inicio"
+    "WIKI_STUDIO_PAGE", "https://wiki420.aculta.toca.net.br/studio/we-sativa/inicio"
 )
 HOME = os.environ.get("WIKI_HOME_URL", "https://wiki420.aculta.toca.net.br/")
 LOGIN_URI = os.environ.get("WIKI_STUDIO_LOGIN_URI", "https://conta.aculta.toca.net.br")
 USER_UID = os.environ.get("WIKI_STUDIO_UID", "5")
 USER = os.environ.get("WIKI_STUDIO_USER", "")
-OUT = Path(os.environ.get("SUITE_OUT", "/tmp/aculta-wiki-we-sativa"))
+DRUSH_ROOT = Path(os.environ.get("WIKI_STUDIO_DRUSH_ROOT", str(PROJECT))).resolve()
+OUT = Path(os.environ.get(
+    "SUITE_OUT", "/home/piradopirata/aculta-suite-out/aculta-wiki-we-sativa"
+))
 OUT.mkdir(parents=True, exist_ok=True)
 WIDTHS = [(1440, "wide-1440"), (1280, "desktop"), (1024, "tablet-1024"),
           (768, "tablet-768"), (640, "zoom-200-equiv"), (390, "mobile-390"), (360, "mobile-360"),
@@ -49,7 +52,7 @@ def one_time_login():
     login_args.append(f"--uri={LOGIN_URI}")
     result = subprocess.run(
         login_args,
-        cwd=PROJECT,
+        cwd=DRUSH_ROOT,
         check=True,
         capture_output=True,
         text=True,
@@ -118,9 +121,10 @@ try:
             el.innerText.includes('Comece pela WE SATIVA'));
           return {href: a.href, path: new URL(a.href).pathname, host: new URL(a.href).host};
         })();""")
-        check("CTA da Wiki resolve para o início no host de conta",
-              cta["path"].endswith("/wesativa/inicio")
-              and cta["host"] == urlparse(PAGE).netloc, cta["path"])
+        check("CTA da Wiki resolve para a rota oficial no host Wiki",
+              cta["path"] == "/studio/we-sativa/inicio"
+              and cta["host"] == urlparse(PAGE).netloc,
+              f"{cta['host']}{cta['path']}")
         driver.get(cta["href"])
     else:
         home_diagnostic = driver.js("""return {
@@ -138,7 +142,8 @@ try:
         driver.get(PAGE)
     page_loaded = wait_for(
         "!!(document.querySelector('main') || document.querySelector('#main-content')) && "
-        "(document.querySelector('main') || document.querySelector('#main-content')).innerText.includes('Seu espaço de contribuição')"
+        "(document.querySelector('main') || document.querySelector('#main-content')).innerText.includes('Seu espaço de contribuição') && "
+        "location.pathname === '/studio/we-sativa/inicio'"
     )
     check("início WE SATIVA abre autenticado", page_loaded)
     if not page_loaded:
@@ -175,9 +180,17 @@ try:
         check("início contextual tem main e h1", metrics["hasMain"] and metrics["heading"])
         check("guia editorial e link Meu Trabalho presentes",
               metrics["hasGuide"] and bool(metrics["workHref"]))
+        work_url = urlparse(metrics["workHref"])
+        check("Meu Trabalho usa a rota oficial do Studio Wiki",
+              work_url.path == "/studio/we-sativa"
+              and work_url.netloc == urlparse(PAGE).netloc,
+              f"{work_url.netloc}{work_url.path}")
         create_href = metrics["createHref"]
-        check("ação Criar verbete aponta para a rota nativa", "/node/add/wiki_entry" in create_href,
-              urlparse(create_href).path if create_href else "ausente")
+        create_url = urlparse(create_href)
+        check("ação Criar verbete mantém a criação dentro de WE SATIVA",
+              create_url.path == "/studio/we-sativa/verbetes/novo"
+              and create_url.netloc == urlparse(PAGE).netloc,
+              f"{create_url.netloc}{create_url.path}" if create_href else "ausente")
         check("links de conteúdo têm nome acessível", metrics["unnamedLinks"] == 0,
               f"sem nome={metrics['unnamedLinks']}")
 
@@ -200,6 +213,44 @@ try:
             screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
             (OUT / f"{name}.png").write_bytes(base64.b64decode(screenshot))
 
+            if create_href:
+                driver.get(create_href)
+                form_loaded = wait_for(
+                    "document.querySelector('form.node-wiki-entry-form "
+                    "input[name=\\\"title[0][value]\\\"]') && "
+                    "document.querySelector('form.node-wiki-entry-form "
+                    "[name=\\\"body[0][value]\\\"]')"
+                )
+                form_metrics = driver.js("""return {
+                  viewport: window.innerWidth,
+                  path: location.pathname,
+                  titleFields: document.querySelectorAll(
+                    'form.node-wiki-entry-form input[name="title[0][value]"]'
+                  ).length,
+                  bodyFields: document.querySelectorAll(
+                    'form.node-wiki-entry-form [name="body[0][value]"]'
+                  ).length,
+                  document: document.documentElement.scrollWidth,
+                  body: document.body.scrollWidth,
+                };""")
+                check(f"{name}: formulário mostra título e corpo",
+                      form_loaded and form_metrics["titleFields"] == 1
+                      and form_metrics["bodyFields"] == 1,
+                      json.dumps(form_metrics, ensure_ascii=False))
+                check(f"{name}: formulário sem overflow horizontal",
+                      form_metrics["document"] <= width and form_metrics["body"] <= width,
+                      f"viewport={width}, document={form_metrics['document']}, body={form_metrics['body']}")
+                if width in (320, 1440) and form_loaded:
+                    screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                    filename = "create-form.png" if width == 320 else "create-form-wide.png"
+                    (OUT / filename).write_bytes(base64.b64decode(screenshot))
+                driver.get(PAGE)
+                workspace_restored = wait_for(
+                    "location.pathname === '/studio/we-sativa/inicio' && "
+                    "document.querySelector('main, #main-content')"
+                )
+                check(f"{name}: volta à página inicial WE SATIVA", workspace_restored)
+
         if metrics["workHref"]:
             driver.get(metrics["workHref"])
             workspace_loaded = wait_for(
@@ -214,16 +265,50 @@ try:
                 "[...document.querySelectorAll('a')].some((a) => "
                 "a.innerText.includes('Voltar para Meu Trabalho WE SATIVA'))"
             )
-            check("formulário nativo oferece retorno autorizado ao workspace", returned)
+            return_diagnostic = driver.js("""return {
+              path: location.pathname,
+              title: document.title,
+              form: document.querySelector('form.node-wiki-entry-form')?.id || null,
+              titleFields: document.querySelectorAll(
+                'form.node-wiki-entry-form input[name="title[0][value]"]'
+              ).length,
+              bodyFields: document.querySelectorAll(
+                'form.node-wiki-entry-form [name="body[0][value]"]'
+              ).length,
+              confirmationNotice: [...document.querySelectorAll('main, #main-content')]
+                .some((el) => el.innerText.includes('precisa confirmar seu e-mail')),
+              returnLinkCount: [...document.querySelectorAll('a')]
+                .filter((a) => a.textContent.includes('Voltar para Meu Trabalho WE SATIVA')).length,
+              formActionCount: document.querySelectorAll('form').length,
+            };""")
+            check("formulário nativo oferece retorno autorizado ao workspace", returned,
+                  json.dumps(return_diagnostic, ensure_ascii=False))
+            fields_ready = return_diagnostic["titleFields"] == 1 and return_diagnostic["bodyFields"] == 1
+            check("autoria confirmada recebe os campos de título e corpo", fields_ready,
+                  json.dumps({"title": return_diagnostic["titleFields"],
+                              "body": return_diagnostic["bodyFields"],
+                              "confirmationNotice": return_diagnostic["confirmationNotice"]},
+                            ensure_ascii=False))
+            if returned:
+                screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                (OUT / "create-form.png").write_bytes(base64.b64decode(screenshot))
+            if not returned:
+                screenshot = driver.req("GET", f"/session/{driver.session}/screenshot")
+                (OUT / "workspace-return-link-missing.png").write_bytes(base64.b64decode(screenshot))
             if returned:
                 return_link = driver.js("""return (() => {
                   const a = [...document.querySelectorAll('a')].find((el) =>
                     el.innerText.includes('Voltar para Meu Trabalho WE SATIVA'));
-                  return {path: new URL(a.href).pathname, outlined: a.classList.contains('btn-outline-primary')};
+                  const url = new URL(a.href);
+                  return {path: url.pathname, host: url.host,
+                    outlined: a.classList.contains('btn-outline-primary')};
                 })();""")
                 check("retorno leva ao workspace autorizado",
-                      return_link["path"].endswith("/wesativa"),
-                      return_link["path"])
+                      return_link["path"] == "/studio/we-sativa",
+                      f"{return_link['host']}{return_link['path']}")
+                check("retorno permanece no host Wiki",
+                      return_link["host"] == urlparse(PAGE).netloc,
+                      return_link["host"])
         (OUT / "summary.json").write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n")
 finally:
     bidi.close()

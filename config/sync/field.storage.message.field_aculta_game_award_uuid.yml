@@ -1,0 +1,26 @@
+uuid: d3f7d455-88de-4421-a123-13d02393a428
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: 6ArJLSACOGaIGT9Av98gZtJP-P5uIIcXALLWU5-zsiw
+id: message.field_aculta_game_award_uuid
+field_name: field_aculta_game_award_uuid
+entity_type: message
+type: string
+settings:
+  max_length: 128
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

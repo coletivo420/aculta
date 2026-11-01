@@ -22,11 +22,11 @@ targetEntityType: group
 bundle: lms_course
 mode: default
 content:
-  aculta_lms_course_room:
-    weight: 20
-    region: content
   aculta_lms_course_resources:
     weight: 21
+    region: content
+  aculta_lms_course_room:
+    weight: 20
     region: content
   capa_curso:
     type: image
@@ -65,8 +65,11 @@ content:
 hidden:
   changed: true
   created: true
-  field_course_product: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   field_course_hours: true
+  field_course_product: true
   field_h5p_activities: true
   field_lms_galleries: true
   field_lms_readings: true

@@ -21,7 +21,16 @@ OUT = Path(os.environ["SUITE_OUT"])
 OUT.mkdir(parents=True, exist_ok=True)
 os.environ.setdefault("ACULTA_FF_PROFILE_ROOT", str(OUT / "profiles"))
 CSS_PATH = "web/themes/custom/aculta420/css/components/auth.css"
-BASELINE_REF = os.environ.get("AUTH_BASELINE_REF", "HEAD^")
+BASELINE_REF = os.environ.get("AUTH_BASELINE_REF")
+if not BASELINE_REF:
+    selector_fix = subprocess.check_output(
+        ["git", "log", "-1", "--format=%H", "--grep=fix(theme): aplica estilos nas rotas reais de autenticação",
+         "--", CSS_PATH],
+        cwd=ROOT, text=True,
+    ).strip()
+    if not selector_fix:
+        raise SystemExit("Não foi possível identificar o baseline anterior à correção de auth.css.")
+    BASELINE_REF = f"{selector_fix}^"
 WIDTHS = [int(width) for width in os.environ.get(
     "AUTH_WIDTHS", "320,360,390,575,576,599,600,768,1024,1280,1440",
 ).split(",")]

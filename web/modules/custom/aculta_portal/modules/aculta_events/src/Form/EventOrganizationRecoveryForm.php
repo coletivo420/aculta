@@ -68,7 +68,7 @@ final class EventOrganizationRecoveryForm extends FormBase {
 
     $form['intro'] = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['messages', 'messages--warning']],
+      '#attributes' => ['data-portal-ui' => 'notice-warning'],
       'info' => [
         '#markup' => '<p>' . $this->t('A <strong>recuperação administrativa de titularidade</strong> é uma operação excepcional que transfere a titularidade direta da organização <em>%label</em> para um novo titular selecionado, atribuindo os poderes de administração e revogando a gestão anterior.', [
           '%label' => $aculta_event_organization->label(),
@@ -123,7 +123,7 @@ final class EventOrganizationRecoveryForm extends FormBase {
         '#type' => 'link',
         '#title' => $this->t('Cancelar'),
         '#url' => Url::fromRoute('aculta_events.admin_organizations'),
-        '#attributes' => ['class' => ['button']],
+        '#attributes' => ['data-portal-ui' => 'button'],
       ],
     ];
 

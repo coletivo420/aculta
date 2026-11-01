@@ -1,5 +1,123 @@
 # Execução contínua ACULTA — PR #298
 
+### Gate de slugs — exceção OAuth técnica (2026-10-31)
+
+`validate-public-slugs.php` encontrou `simple_oauth.userinfo` (`/oauth/userinfo`), endpoint protocolar OAuth 2.0 de módulo contrib. A rota foi adicionada às exceções técnicas nomeadas do gate, sem mudança de URL ou reativação de aliases humanos. Resultado: **PASS**, 425 rotas e zero violações contrib fora da baseline DT-P20.
+
+### Unit Wiki/WE SATIVA — evidência adicional (2026-10-31)
+
+A suíte Unit completa de `aculta_wiki` foi executada no checkout visual: **85 testes e 461 assertions, PASS**. Isso cobre contratos do Wiki e não substitui a homologação visual autenticada da rota canônica, que permanece dependente de fixture editorial autorizada.
+
+### Fixture editorial WE SATIVA — Runtime (2026-10-31)
+
+Com autorização explícita, foi criada no `aculta_runtime` a conta `studio_editor_test` (UID 258), com os papéis `content_editor` e `email_confirmed`. A política `EmailConfirmationPolicy::markConfirmed()` foi aplicada; Drush confirmou `createAccess('wiki_entry')=1` e `WikiContributorWorkspace::access()=1`. A credencial não é versionada: fica no arquivo protegido `/home/piradopirata/aculta-runtime-snapshots/20261031-editorial/credentials.txt` (modo 600). Snapshot pré-escrita: `/home/piradopirata/aculta-runtime-snapshots/20261031-editorial/runtime.sql.gz`, SHA-256 `7ef607f54e1ad56801a8c53414310eefb396c107bce4e0ce9ff0a5ce48f23c43`.
+
+O baseline Firefox/X11 ainda recebe `Acesso negado` porque o docroot Runtime está no HEAD antigo `ae3227866`: a ULI emitida para a conta usa `/recuperar-acesso/.../entrar`, que retorna HTTP 404 nesse checkout. A fixture e os grants estão prontos; repetir o baseline após o docroot acompanhar o HEAD da branch, sem alterar ACL ou criar alias temporário.
+
+### Alinhamento do docroot para reteste (2026-10-31)
+
+O docroot foi alinhado por checkout destacado ao `origin/refactor/openculturas-codigo-visual` em `7c81acfd5`, após criar branch de backup do HEAD `ae3227866` e stash incluindo os arquivos não rastreados. O cache foi reconstruído. O primeiro ULI direto no host Wiki retornou 404 por política de domínio; esse diagnóstico histórico foi superado usando ULI no domínio Conta e navegação para o host Wiki, conforme o registro abaixo.
+
+### Rotas canônicas e homologação editorial — 2026-10-31
+
+Após decisão do responsável, as rotas das Suites foram alinhadas para `wiki:/wesativa` e `shop:/greenstash`; `/studio/*` deixou de ser usado para essas experiências. Os testes focais de identidade/navegação passaram (7 testes/246 assertions) e aliases temporários passaram. O Runtime foi atualizado para o `config/sync` após snapshot `c03ffc6ae08fa62aafa3daffe50ec297486040f3b2778c2efc9bda8cca1631a8`; o único diff era `private_message_digest_anchor` em `aculta_messenger.settings`, removido pelo import. `config:status` e `updatedb:status` ficaram limpos.
+
+Com ULI emitida no domínio Conta (`conta.aculta.toca.net.br`) e navegação para `https://wiki420.aculta.toca.net.br/wesativa`, `studio_editor_test` carregou o consumer real WE SATIVA em 320/390/599/600/768/1024/1280/1440px: **8/8 capturas, 0 falhas de fidelidade**, conteúdo/context-header/context-tabs presentes, shell único e sem overflow. Evidência: `/home/piradopirata/aculta-suite-out/studio-wesativa-editorial-accountuli-20261031/`.
+
+Matriz HTTP de migração: `wiki420:/wesativa` respondeu 403 anônimo (rota existente e protegida), `wiki420:/studio/we-sativa` respondeu 404; `loja.aculta.org:/greenstash` e o path antigo não puderam ser alcançados neste ambiente (HTTP 000 por resolução/conectividade do host), portanto Green Stash continua DEFERRED para teste de reachability externo.
+
+Reteste pós-migração de Conta e Perfil com `teste.comum`: Firefox ESR/X11 em 320/390/768/1440px carregou as duas superfícies privadas separadamente, com shell, Institution Bar e Domain Header presentes, conteúdo real e zero falhas de fidelidade. Nenhuma rota de Suite foi reutilizada para Conta ou Perfil; o resultado não cobre privacidade A/B nem upload/crop.
+
+Matriz genérica autenticada de WE SATIVA com `studio_editor_test` passou **18/18 checks** (320–1440px, claro/escuro), HTTP 200, largura do documento igual ao viewport e sem overflow. Evidência: `/home/piradopirata/aculta-suite-out/wesativa-page-matrix-20261101/`. O runner genérico não habilitou axe nesta execução; WCAG completa permanece pendente.
+
+O axe autenticado encontrou e corrigiu contraste insuficiente no modal de aceite em dark mode (texto claro sobre fundo claro, 1,06–1,14:1). `portal-account-terms-modal.css` agora aplica superfície/texto semântico ao diálogo, título e labels. Reteste: **18/18 viewport checks, 0 violações axe**, com 1 resultado `incomplete` não classificável como violação. Evidência: `/home/piradopirata/aculta-suite-out/wesativa-axe-fixed-20261101/`. Commit da correção: `84ca752ba`.
+
+O axe de Conta/Perfil encontrou ausência de H1 e ordem inválida de headings na entrada de Conta. `AccountExperienceProvider` agora renderiza H1 `Minha Conta` e H2 `Experiências` antes das listas. Reteste autenticado: **36/36 viewport checks, 0 violações axe** em Conta e Perfil, claro/escuro. Evidência: `/home/piradopirata/aculta-suite-out/account-profile-axe-fixed2-20261101/`. Commits: `ea2b3df55` e `4baf12561`.
+
+O axe de Marley encontrou `scrollable-region-focusable` na tabela responsiva. O comportamento global `studio-table-a11y.js` agora torna `.studio__listing-wrap > .table-responsive` focável e fornece rótulo acessível. Reteste autenticado: **18/18 viewport checks, 0 violações axe**, claro/escuro. Evidência: `/home/piradopirata/aculta-suite-out/marley-axe-fixed2-20261101/`. Commit: `6685ebc3b`.
+
+Reteste conjunto pós-correção de Marley e Ganjalab: **36/36 viewport checks, 0 violações axe**, claro/escuro, HTTP 200 e sem overflow. Evidência: `/home/piradopirata/aculta-suite-out/marley-ganjalab-axe-fixed2-20261101/`.
+
+Revista pública no host correto `revista.aculta.toca.net.br` passou **18/18 viewport checks e 0 violações axe**, claro/escuro, HTTP 200 e sem overflow. Evidência: `/home/piradopirata/aculta-suite-out/revista-axe-live-20261101/`. O host alternativo `revista420.aculta.toca.net.br` continua indisponível e não é usado como canonical.
+
+### WE SATIVA canônico — evidência adicional (2026-10-31)
+
+O baseline Firefox ESR/X11 autenticado de `https://wiki420.aculta.toca.net.br/studio/we-sativa` foi executado em 320/390/599/600/768/1024/1280/1440px. As 8 capturas retornaram `Acesso negado`; Institution Bar, Domain Header e ausência de overflow foram observados, mas nenhum consumer Wiki foi servido. Evidência: `/home/piradopirata/aculta-suite-out/studio-we-sativa-baseline-recheck-8d4dcc07d-20261031/`. O resultado é DEFERRED por autorização/instalação do Runtime e mantém OCS-F7/OCS-F11 pendentes; não usar `/wesativa` como substituto da rota canônica.
+
+## PR #299 — WE SATIVA: formulário de criação no purpose Wiki (2026-10-31)
+
+- O CTA de autoria apontava para `node.add` (`/node/add/wiki_entry`), uma rota
+  do purpose principal que respondia em branco no host Wiki. A mudança
+  `c7fc57dba` adiciona `/studio/we-sativa/verbetes/novo`, protegida por
+  `createAccess('wiki_entry')`; o controller renderiza o formulário Node Form
+  API existente, sem salvar conteúdo. O workspace não envia mais para outra
+  finalidade.
+- Focais MariaDB `aculta_simpletest`: 2 testes/200 asserções PASS (rota Wiki,
+  autoria permitida/leitor negado, formulário nativo e contagem de Nodes
+  inalterada); PHP lint, PHPCS Drupal, YAML/discovery estática e
+  `validate-no-temporary-route-aliases.php` PASS. Kernel em PHP 8.4.27 emitiu
+  365 deprecações Core/contrib/PHPUnit.
+- Checkout de desenvolvimento em `toca`, `/home/piradopirata/projetos/aculta`,
+  destacado em `c7fc57dba`, Drupal 11.4.10, URI `http://default`, DB
+  `aculta_runtime`, 611 tabelas. `updatedb:status` sem pendências;
+  `config:status` sem diferenças; `drush cr` PASS; discovery confirma rota e
+  `_aculta_domain_purpose: wiki`.
+- Antes de cada uma das duas tentativas ULI foram feitos snapshots integrais,
+  modo 0600: `runtime-snapshots/aculta_runtime-before-we-sativa-create-form-c7fc57dba-20261031.sql`
+  (51.604.818 bytes; SHA-256
+  `d626a71f5943c6556c0db22ee9e83747a8d19421354b4d77e87fef50f45ced74`) e
+  `runtime-snapshots/aculta_runtime-before-we-sativa-create-form-account-uli-c7fc57dba-20261031.sql`
+  (53.693.907 bytes; SHA-256
+  `ab749edaca6009afa9426f061210869a9d04a2fa97059d1b7edebeb065a88e87`). A
+  primeira tentativa emitiu ULI pelo host Wiki e ficou anônima; a segunda,
+  emitida pelo host Conta, autenticou corretamente. Ambas foram GET-only e não
+  submeteram nem salvaram conteúdo.
+- Firefox ESR visível/X11 validou o fluxo no host Wiki em 1440, 1280, 1024,
+  768, 640, 390, 360 e 320 px: 36/36 verificações PASS, sem overflow; botão de
+  criação permaneceu visível, formulário `node-wiki-entry-form` e retorno para
+  o workspace foram confirmados. Capturas/resumo privados em
+  `/home/piradopirata/aculta-suite-out/we-sativa-create-form-account-uli-c7fc57dba-20261031/`.
+- O script WE SATIVA agora usa o host Conta para emitir a ULI por padrão e
+  salva `create-form.png` em `$SUITE_OUT`, permitindo inspecionar o formulário.
+  A captura da sessão UID 257 mostrou que essa conta estava sem confirmação de
+  e-mail; por isso os campos editoriais estavam corretamente bloqueados apesar
+  do shell/form retornar. O runner passou a exigir título/corpo. UID 5 foi
+  verificado ativo, autorizado e com e-mail confirmado; Firefox ESR/X11 passou
+  61/61 em oito larguras (1440/1280/1024/768/640/390/360/320 px), abrindo
+  também o formulário em cada largura e confirmando campos editoriais, retorno
+  ao início e ausência de overflow. Capturas `create-form.png` (320px) e
+  `create-form-wide.png` (1440px) inspecionadas; nada foi submetido. Snapshot
+  pré-ULI modo 0600:
+  `runtime-snapshots/aculta_runtime-before-we-sativa-form-matrix-b2d79189a-20261031.sql`
+  (47.614.244 bytes; SHA-256
+  `26958edd662bb6d071edf6f072f948ce0b342903d4936c695849f0d7ad556a4a`). Evidência
+  em `/home/piradopirata/aculta-suite-out/we-sativa-form-matrix-b2d79189a-20261031/`.
+  WCAG 2.2 AA completa, leitor de tela e submissão/ACL em matriz de contas
+  continuam pendentes.
+
+## PR #299 — OCS-F3/F4: adapter SDC da entrada da Conta (2026-10-31)
+
+- Preflight no servidor `toca`: `/home/piradopirata/projetos/aculta`, HEAD destacado `6c71c5a13`, Drupal 11.4.10, URI `http://default`, banco `aculta_runtime`, 611 tabelas; `updatedb:status` sem updates e `config:status` sem diferenças. A conta sintética `aculta_visual_admin` (UID 257) estava ativa e tinha `access aculta portal`.
+- Antes de cada sessão ULI foram salvos snapshots integrais modo 0600: `runtime-snapshots/aculta_runtime-before-studio-hub-card-retest-20261031.sql` (55.599.739 bytes; SHA-256 `2a5283018b21e24cc545b1becbb09951a52c4eae6dc60cbb55705f6a522e7b4f`) e `runtime-snapshots/aculta_runtime-before-studio-account-hub-card-retest-20261031.sql` (57.157.968 bytes; SHA-256 `82b13a97f786dc5882b55f269323a53761c8bdc09fc8f8190ff4f4c66f581e4d`). As duas sessões fizeram GET apenas; nenhum formulário ou conteúdo foi alterado.
+- Firefox ESR/X11 percorreu a raiz Account em 320/360/390/599/600/768/1024/1280/1440px. Tanto `/` quanto o caminho de rota `/conta` normalizado para `/` exibiram cinco links de experiência, Institution Bar e Domain Header únicos e zero overflow. O teste `OCS_EXPECT_STUDIO_ROOT` encontrou zero SDCs `studio_fidelity`; os cinco links mediram 19px e o gate do Hub falhou 9/9.
+- Causa no source: `AccountExperienceProvider` coloca `data-portal-ui=account-experiences` em `#attributes`; o preprocess de `item_list` do Core entrega isso em `attributes`, enquanto o adapter só lia `element`/`wrapper_attributes`. `PortalUiHooks::preprocessStudioHub()` agora lê também `attributes`; o Unit foi alinhado ao contrato real. PHP lint e PHPCS Drupal/DrupalPractice passaram; `PortalUiHooksTest`: 27 testes/149 assertions; SDC: 55 componentes/27 includes/759 checks; `git diff --check` PASS.
+- A correção ainda precisa ser publicada no HEAD do Runtime, reconstruir cache e passar a mesma captura sem override. Até essa evidência, OCS-F3/F4 seguem parciais; não há homologação global THEME-MF3/OCS-F11.
+
+## PR #299 — harness de navegador compartilhado e reteste transversal (2026-10-31)
+
+- Documentação e comandos de `tests/browser/` foram explicitamente definidos como infraestrutura para todo o ACULTA: todos os módulos, produtos, domínios/purposes e consumers. As instruções agora exigem reutilizar smoke/matriz genéricos com URLs da área e só criar runner específico para uma lacuna funcional, ACL ou fixture; runners especializados não substituem a camada comum.
+- No HEAD publicado `3648c50db`, Firefox ESR headless passou 180/180 combinações anônimas nas dez raízes públicas atuais × nove larguras × claro/escuro. Todas responderam HTTP 200, não houve overflow nem violações axe; quatro resultados `incomplete` (H1 Conta e select Growroom em ambos os modos) seguem para revisão manual. Chrome headless passou 36/36 checks focais de Cursos/Eventos; Firefox ESR/X11 passou 16/16. A faixa de Cursos passou 17/17 com JavaScript e 17/17 sem JavaScript, inclusive zoom real de 400%, foco e alcance de todos os cards.
+- Para remover dependência do `node_modules` do tema, `page-matrix.py` agora aceita `AXE_SCRIPT` para qualquer instalação local compatível de axe-core. Compilação Python passou; validação real na capa da Revista com Firefox ESR headless, axe, 320/1280px e claro/escuro: 4/4, HTTP 200, sem overflow, zero violações e zero `incomplete`. Evidência: `/home/piradopirata/aculta-suite-out/project-generic-runner-revista-20261031/`.
+- Evidências em `/home/piradopirata/aculta-suite-out/project-roots-firefox-matrix-3648c50db/`, `course-event-chrome-matrix-3648c50db/`, `course-event-x11-3648c50db/`, `courses-rail-served-3648c50db/` e `courses-rail-nojs-served-3648c50db/`. Detalhes e limitações em `tests/browser/README.md`, `docs/operations/NAVEGADOR-TESTES.md` e `web/themes/custom/aculta420/docs/mobile-first-audit.md`.
+- Verificação atual do servidor `toca`: checkout `/home/piradopirata/projetos/aculta`, HEAD destacado `3648c50db`, Drupal 11.4.10, URI `http://default`, DB `aculta_runtime`; `updatedb:status` sem atualizações e `config:status` sem diferenças. Nenhuma escrita no Runtime nesta microfase documental.
+- Limite: a matriz é anônima e cobre as raízes, não todas as telas internas nem ACL, leitores de tela ou WCAG 2.2 AA completa. Não aprova THEME-MF3/OCS-F11.
+
+### Histórico de alinhamento Runtime no HEAD 3648c50db
+
+- O Runtime `aculta_runtime` (611 tabelas) foi validado no servidor `toca` após as mudanças funcionais publicadas. Antes da escrita de tradução houve snapshot íntegro em `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-course-label-axe-fix-20261031.sql`, SHA-256 `0c74994afe87a19f93e08eea58f002ccfc360ae120f4121c97ba90948d2fdc6e`, modo 0600. Foi importada uma tradução customizada de um rótulo de Cursos; Drush informou 0 adicionadas, 1 atualizada e 0 removidas.
+- A importação de tradução também atualizou cinco configurações View ativas. Antes da reconciliação houve segundo snapshot: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-course-label-view-sync-reconcile-20261031.sql`, SHA-256 `08d7dc95f59c5627cff12565c7c7f98dadb239bb150a2adb4f3b2c31881f3c9e`, modo 0600. A fonte de import foi isolada aos cinco YAML de `config/sync` (`commerce_order_item_table`, `commerce_order_item_table_admin`, `courses_admin`, `locked_content`, `moderated_content`); após import parcial e rebuild, `config:status` ficou sem diferenças. Nenhum conteúdo foi alterado.
+- Incidente operacional: `drush config:export --diff` nesta versão do Drush escreveu 352 arquivos sob `config/sync` em vez de apenas exibir um diff. O estado do Git estava limpo antes da execução; verificou-se que os 352 caminhos afetados eram exclusivamente `config/sync`, e somente esses arquivos gerados foram restaurados para o HEAD publicado. O export não foi usado como fonte para a reconciliação. O estado final do checkout permaneceu limpo e o Runtime está novamente alinhado ao Sync. Evitar esse comando como operação somente leitura nesta instalação.
+
 ## PR #299 — recuperação de rota 500 durante migração de Suites — 2026-10-30
 
 - Servidor `toca`; checkout servido `/home/piradopirata/projetos/aculta`, branch `refactor/opencultures-codigo-visual`, HEAD `8ec034700`; Drush confirmou Drupal 11.4.10, URI `http://default`, root `web` e Runtime `aculta_runtime`.
@@ -1968,3 +2086,745 @@ Critério: ancestral do head, ou arquivos alterados pela branch idênticos no he
   fora do Git. Esses testes são apenas da home da Revista: no-JS, leitor de tela,
   WCAG 2.2 AA, outros estados e outros purposes continuam pendentes; THEME-MF3
   não está aprovado.
+
+## OCS-F2 — alvos de navegação e validação real no Studio — 2026-10-30
+
+- **Checkout/Runtime verificados:** worktree `/home/piradopirata/worktrees/opencultures-f0-adm8-e8`, branch `refactor/opencultures-codigo-visual`; servidor `toca`, docroot `/home/piradopirata/projetos/aculta/web`, Drupal 11.4.10, URI `https://conta.aculta.toca.net.br`, banco `aculta_runtime`, 624 tabelas. HEAD servido `2493d7535`; HEAD do worktree `5dcdb7b5c`, sem commits remotos novos no fetch (32 commits locais à frente). Alterações locais de Events no docroot servido foram preservadas e não tocadas.
+- **Configuração pontual autorizada:** `aculta_magazine.settings` estava ausente no Runtime, embora o módulo estivesse ativo e o arquivo `config/sync/aculta_magazine.settings.yml` definisse papéis de autoria/revisão `content_editor` e comentários `administrator`. A importação parcial com apenas esse YAML foi abortada pela validação de dependências globais ausentes (`aculta_pdf_viewer` e `aculta_document_viewer_group`); a importação não gravou configuração. Seguindo a autorização de alinhar essa configuração focal, o mesmo YAML foi aplicado por `drush config:set --input-format=yaml`; `config:get` confirmou os valores do Sync. Nenhum módulo foi desinstalado e nenhum conteúdo foi alterado. O diff global de configuração continua inesperado; nenhuma importação global foi iniciada.
+- **Snapshots:** antes da configuração focal, `/home/piradopirata/aculta-suite-out/runtime-snapshot-magazine-settings-20261030.sql`, SHA-256 `ee0489daa5da15ea4b3d49f9414409a38adb23ee4ceb9120962edafa8f1b167c`, 59.421.951 bytes. Antes do reteste visual, com as 624 tabelas e a configuração focal já conferidas, `/home/piradopirata/aculta-suite-out/runtime-before-studio-visual-20261030.sql`, SHA-256 `d64b25647626bcb2663372c35b3391e3ccb207ebac3c95349decb8ee687575f0`, 59.485.387 bytes.
+- **Reteste Firefox ESR visível:** a suíte `tests/browser/aculta-studio/run-visual.sh` injetou somente a CSS candidata do worktree sobre rotas/markup servidos. Resultado final: 79 checks PASS, zero FAIL, um SKIP justificado porque a conta de teste não tem publicação própria publicada para exercitar edição. Foram exercitados `/marley`, os cinco estados de Publicações, Nova publicação/Enter, Galerias, fila do Fórum e `/conta/endereco`. Alvos contextuais da Conta mediram pelo menos 44×44px em 320/390/768/1280px; Marley não teve overflow em 320/360/390/599/600/767/768/1024/1280/1440px. Contraste textual mínimo medido de 6,59:1 no claro e 11,51:1 no escuro; geometria igual. A preferência de cor foi restaurada pelo `trap` do wrapper. Artefatos revisados em `/home/piradopirata/aculta-suite-out/studio-visual-candidate-20261030e/`.
+- **Gates estáticos:** Stylelint CSS, ESLint JS, `node --check`, SDC schemas (55 componentes/759 checks), Design Foundations (2.429 checks), module-theme boundary (3.488 checks) e `git diff --check` PASS. `npm run lint:css` foi tentado na raiz e não se aplica porque o `package.json` fica em `web/themes/custom/aculta420`; o comando correto com `--prefix` passou. Kernel/Functional, zoom 200/400, no-JS, usuários anônimos, grants de publicação, outros purposes e auditoria WCAG completa não foram executados nesta microfase.
+- **Estado:** CSS de Conta candidata passou em markup real, mas o override não comprova implantação física no Runtime. Não é aprovação de paridade completa ou dos gates THEME-MF3/OCS-F11; A1–A4 continuam bloqueadas. O commit local desta microfase não será publicado enquanto os gates globais exigidos pelo procedimento continuarem vermelhos.
+
+## OCS-F5 — listagem editorial real, conta proprietária e mobile — 2026-10-30
+
+- **Preflight:** Runtime em `toca`, checkout servido `/home/piradopirata/projetos/aculta`, HEAD `2493d7535`, Drupal 11.4.10, URI Conta HTTPS, banco `aculta_runtime`, 624 tabelas. A conta sintética `aculta_visual_admin` (UID 257), já autorizada e documentada, tem papel `content_editor` e é proprietária das quatro publicações de teste NIDs 599–602. A sessão usou ULI; não foi consultado nem exposto segredo.
+- **Snapshots antes das sessões:** `/home/piradopirata/aculta-suite-out/runtime-before-editorial-visual-20261030.sql`, SHA-256 `5dc5f832af4da7c486af5bab8a7584928c294f18974ce69330dd5e5e3b3fe30a`, 60.327.008 bytes; reteste após corrigir o seletor de rota: `/home/piradopirata/aculta-suite-out/runtime-before-editorial-visual-retest-20261030.sql`, SHA-256 `957a517a39f83b048c86b8723a81e1fd9e30e70f46d913282bc7beb5be2b283a`, 60.409.049 bytes; viewport mobile com rota inicial na lista publicada: `/home/piradopirata/aculta-suite-out/runtime-before-editorial-mobile-visual-20261030.sql`, SHA-256 `8019b06f56362f87e19eaf784524ae12abf277c7acb60306a600030309aff85d`, 60.481.790 bytes.
+- **Evidência Firefox ESR visível:** com CSS candidata injetada somente no navegador, a conta proprietária passou 80/80 checks, sem FAIL/SKIP. `/marley/revista/publicacoes/publicados` exibiu quatro linhas e quatro links com o caminho canônico `/marley/revista/{id}/editar` no purpose Conta; `/marley/revista/criar/nova-publicacao` abriu via Enter sem enviar conteúdo. A repetição com a listagem como rota inicial passou também 80/80; screenshot móvel 390px revisada e a tabela reteve o scroll no container sem overflow horizontal do documento. Evidências em `/home/piradopirata/aculta-suite-out/studio-editorial-rows-retest-20261030/` e `/home/piradopirata/aculta-suite-out/studio-editorial-mobile-20261030/`.
+- **Limites e estado:** só estados Publicados continham itens; os demais estados editoriais são exercitados apenas pela navegação, não por fixtures de conteúdo para cada workflow. Nenhum formulário foi aberto/enviado, nenhum conteúdo/configuração/permissão foi modificado; a preferência de cor da conta foi restaurada. CSS candidata não comprova implantação no Runtime. F5 permanece parcial até cobrir todos os estados/fluxos; THEME-MF3 e OCS-F11 continuam pendentes.
+
+### OCS-F5 — apresentação Fidelity no GET do Form API editorial — 2026-10-30
+
+- **Leitura do markup:** a rota canônica `/marley/revista/{id}/editar` entrega o formulário Drupal com as classes reais `node-revista-form node-form`; o `body` tem apenas `path-marley node--type-revista`, sem classe de rota mais granular. O primeiro teste do seletor hipotético `path-marley-revista-*` foi corretamente refutado pelo navegador (75/76); a regra foi estreitada para `form.node-revista-form`, sem atingir as demais páginas do purpose Marley.
+- **Implementação visual candidata:** tokens OpenCulturas de fidelidade aplicados somente ao SDC/wrapper `.studio`, ao editor de perfil existente e ao Form API editorial identificado. `studio.css` estende tipografia, superfície, fieldsets, controles e botões no formulário nativo; nenhum controller, render array, operação, dado, permissão ou shell foi alterado. O contrato de escopo do analyzer de Design Foundations e sua fixture de regressão foram ampliados para aceitar esse consumidor visual específico.
+- **Runtime e snapshot:** host `toca`; checkout servido `/home/piradopirata/projetos/aculta`; Drupal 11.4.10; URI `https://conta.aculta.toca.net.br`; banco `aculta_runtime`, 624 tabelas; HEAD servido `2493d7535`. Antes da sessão read-only/ULI, snapshot `/home/piradopirata/aculta-suite-out/runtime-before-editorial-form-browser-20261030.sql`, SHA-256 `862b5952a3097d4814e759945b7ff5165ca6919afbe8d6902e13c100c204e7b7`, 59 MiB. A wrapper salvou e restaurou a preferência de cor; não houve submit ou alteração de conteúdo/configuração.
+- **Firefox ESR visível:** a suíte candidata passou 76/76 verificações, sem SKIP/FAIL. A rota real mostrou título, conteúdo, formato de texto e campos secundários; CSS candidata serviu Montserrat, foreground Fidelity e o formulário não excedeu o viewport em 320/390/768/1280px. Foram também cobertos navegação, lista real de quatro itens, alvo de 44px, teclado Enter/foco, modo claro/escuro e contraste textual 6,59:1/11,51:1 nos elementos Studio avaliados. Capturas desktop/móvel inspecionadas e JSON em `/home/piradopirata/aculta-suite-out/studio-editorial-form-fidelity-retest-20261030/`.
+- **Gates estáticos:** Stylelint e ESLint do tema, PHP lint do analyzer/fixture, `validate-aculta420-design-foundations.php` (2.429 checks), fixtures (159 outcomes) e `git diff --check` passaram. A primeira execução do browser não passou por falha de seletor e foi repetida após limitar o escopo; não foi enviada qualquer alteração ao Runtime.
+- **Limites:** CSS injetada no Firefox, não implantada no Runtime; GET de edição não comprova save, preview, AJAX/no-JS, ACL completa, usuário anônimo, zoom 200/400%, WCAG 2.2 AA ou comparação pareada com formulário upstream. OCS-F5 permanece parcial; THEME-MF3/OCS-F11 não foram homologados e A1–A4 continuam bloqueadas.
+
+### OCS-F5 — título editorial com tokens Fidelity, sem tocar o shell — 2026-10-30
+
+- **Ajuste:** a primeira captura comprovou que a tipografia Fidelity alcançava o formulário, mas o heading “Editar publicação” ainda herdava o Oswald global. Os tokens passaram a ser providos ao `.aculta-main` somente via `:has(form.node-revista-form)`; um fallback direto no form mantém os campos legíveis se o navegador não aplicar `:has`. O CSS tipográfico acompanha o mesmo `main` condicional. Institution Bar e Domain Header são irmãos desse main e não recebem os tokens.
+- **Firefox ESR visível:** a suíte em markup/runtime real e CSS candidata passou 78/78 checks, sem SKIP/FAIL. `main`, H1 e formulário computaram Montserrat; H1 ficou em 48px no desktop e refluiu em duas linhas no viewport 320px. Institution Bar e Domain Header apareceram uma vez cada e ambos computaram a propriedade fidelity vazia. Zero overflow em 320/390/768/1280px; capturas revisadas em `/home/piradopirata/aculta-suite-out/studio-editorial-heading-fidelity-20261030/`.
+- **Runtime:** snapshot anterior à sessão `/home/piradopirata/aculta-suite-out/runtime-before-editorial-heading-browser-20261030.sql`, SHA-256 `ad3e0784c013fd39c826d140012e2b24216facdb97392e6ab765f7f386ddece3`. A preferência foi restaurada pelo wrapper; GET somente leitura, sem submissão.
+- **Estado:** é CSS candidata, não implantada no Runtime; não valida save, preview, fluxo no-JS/AJAX, ACL completa, zoom, WCAG integral nem paridade comparativa com página upstream equivalente. F5 continua parcial e os gates THEME-MF3/OCS-F11 seguem abertos.
+
+### OCS-F5 — GET do formulário proprietário de criação — 2026-10-30
+
+- `/marley/revista/criar/nova-publicacao` é a entrada contextual da seção; o link real de ação leva a `/marley/revista/nova`. A suíte seguiu o `href` renderizado em vez de assumir que a rota da aba é o formulário.
+- Firefox ESR visível, usuário proprietário sintético, CSS candidata e GET sem submit: 87/87 checks. O Form API de criação renderizou `node-revista-form`, title input e heading, todos com Montserrat; zero overflow em 320/390/768/1280px. A criação e a edição passaram pelo mesmo tratamento visual de tokens/componente.
+- Capturas desktop/mobile e `results.json`: `/home/piradopirata/aculta-suite-out/studio-editorial-create-form-fidelity-retest-20261030/`. Snapshot anterior à sessão ULI: `/home/piradopirata/aculta-suite-out/runtime-before-editorial-create-route-browser-20261030.sql`, SHA-256 `5076f6fb97ea608a0d4707bc0bf1339d7881516eb1f011b83da7d1ccdaa57b9f`. Não houve alteração de publicação, configuração ou preferência permanente.
+- Limites mantidos: stylesheet injetada apenas no navegador; nenhum POST/save/preview; gates de no-JS, ACL integral, zoom, WCAG e paridade upstream não foram executados. OCS-F5 permanece parcial e THEME-MF3/OCS-F11 não foram aprovados.
+
+### OCS-F6 — GanjaLab, camada Fidelity candidata — 2026-10-30
+
+- **Implementação visual:** `tokens.css`, `studio.css` e o analyzer de Design Foundations estendem os tokens e acabamento ao dashboard estudantil em `body.path-ganjalab .aculta-main`. Reutiliza o markup/SDCs já fornecidos pelo composer LMS; shell, navegação da Conta, Institution Bar e Domain Header não recebem os tokens. Nenhum código funcional LMS foi alterado.
+- **Runtime/evidência:** servidor `toca`, Drupal 11.4.10, `aculta_runtime` com 624 tabelas e HEAD servido `2493d7535`; o snapshot imediatamente anterior ao candidato está em `/home/piradopirata/aculta-suite-out/runtime-before-ganjalab-fidelity-candidate-20261030.sql`, SHA-256 `40be54d793ff9a0a7edb6e6a8cdd86d5c405b0e0feffe5e15912be4bc889aef2`. Firefox ESR visível, conta sintética `aculta_visual_admin` já autorizada, nove larguras (320/360/390/599/600/768/1024/1280/1440), zero overflow; imagens em `/home/piradopirata/aculta-suite-out/ganjalab-fidelity-candidate-20261030/`. Foram inspecionadas capturas 320 e 1440 px. A confirmação antiga de Montserrat retornou `false` porque o coletor consultou antes de aguardar a fonte; o script agora solicita a fonte antes da coleta e inclui os estados `FontFace`, ainda sem nova execução.
+- **Bloqueio de cobertura:** o caminho oficial do propósito courses `/ganjalab` renderiza o painel estudantil, mas Wiki `/studio/we-sativa` retorna documento vazio no Runtime `2493d7535`, que ainda registra `/wesativa`. Sem alteração de roteamento nesta frente. F6 parcial; OCS-F11 e THEME-MF3 permanecem não homologados. A1–A4 seguem bloqueadas.
+
+### OCS-F6 — tipografia do estado vazio e carga de Montserrat confirmadas — 2026-10-30
+
+- O Firefox ESR visível mostrou Montserrat carregada em quatro larguras e descobriu que o empty state herdava Inter a partir de 768px. `studio.css` passou a definir a família e line-height Fidelity no `.aculta-empty-state` dentro da rota GanjaLab, preservando o isolamento. O segundo reteste confirmou Montserrat em main, heading e ambos os estados vazios a 320/390/768/1440px, com scroll width igual ao viewport e Institution Bar/Domain Header presentes uma vez; os tokens Fidelity nos dois headers continuam vazios.
+- Capturas e JSON: `/home/piradopirata/aculta-suite-out/ganjalab-font-retest2-20261030/`. Snapshot antes da sessão ULI: `/home/piradopirata/aculta-suite-out/runtime-before-ganjalab-font-retest2-20261030.sql`, SHA-256 `4afdf35a7735bd0916ce8091d73113a7f17e891245d7e64b7ebe37b1b35d15c1`, 62.379.368 bytes. Sessão somente GET; nenhum conteúdo, preferência persistente, configuração ou permissão foi alterado.
+- O coletor ganhou `OCS_STUDIO_COLOR_MODE=light|dark` para alternar `data-bs-theme` só no documento de teste. Modo claro: dez invariantes passaram em 320/390/768/1440px, com zero falhas; modo escuro: onze invariantes passaram em 320/1440px, incluindo texto `rgb(239, 239, 239)`, superfície escura e zero overflow. JSONs sem falhas em `/home/piradopirata/aculta-suite-out/ganjalab-light-assertion-20261030/` e `/home/piradopirata/aculta-suite-out/ganjalab-dark-assertion-20261030/`. Snapshot antes do reteste claro: `/home/piradopirata/aculta-suite-out/runtime-before-ganjalab-light-assertion-20261030.sql`, SHA-256 `42a86ecff8672f29774ff571e85bcecce3d34e32c6c81483f0dac61eb44423bc`, 58.191.931 bytes; snapshot antes do dark: `/home/piradopirata/aculta-suite-out/runtime-before-ganjalab-assertion-retest-20261030.sql`, SHA-256 `1ed49c24aa0484e36db7ad1e53c163ba3d3a404247f1e9d6fca56dcd424a1157`, 62.427.227 bytes. Não é medição completa de contraste WCAG nem altera o tema persistido da conta. F6 continua parcial, sem homologação de zoom, WCAG, ACL intercontas, dados LMS preenchidos ou regressão global.
+
+### OCS-F7 — consumer Wiki em WE SATIVA, composição candidate — 2026-10-30
+
+- **Base verificada:** o tarball oficial `openculturas-3.1.5.tar.gz` foi baixado novamente para `/home/piradopirata/aculta-suite-out/` e seu SHA-256 conferido como `2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`. Foram conferidos `_teasers.scss`, `templates/node/teasers.scss`, `user-dashboard-views.scss` e `navigation/tabs.scss`; nenhuma folha/markup/asset upstream foi copiado.
+- **Implementação:** estilos Fidelity e tokens escopados ao wrapper existente `we-sativa__workspace`, emitido por `PortalUiHooks`; ajustes em headings, content sections, cartões e estados vazios reutilizam os SDCs já consumidos por `WikiContributorWorkspace`. O path oficial da branch é `/studio/we-sativa`, mas o Runtime no HEAD `2493d7535` registra `/wesativa`; o reteste foi feito no caminho legado apenas para validar o consumer servido, sem declarar o path oficial homologado.
+- **Firefox ESR visível:** conta sintética autorizada, GET no host Wiki e CSS candidata injetada no browser; 14 checks passaram em 320 e 1440px. Verificou Montserrat e todos os estados/seções, os quatro filtros com um `aria-current`, links de 46px, wrapping, zero overflow, Institution Bar e Domain Header presentes e sem tokens Fidelity. Capturas revisadas em `/home/piradopirata/aculta-suite-out/wesativa-legacy-route-final-20261030/`; JSON sem falhas.
+- **Runtime/snapshot:** `toca`, `/home/piradopirata/projetos/aculta`, HEAD servido `2493d7535`, `aculta_runtime`, 624 tabelas. Snapshot antes da ULI: `/home/piradopirata/aculta-suite-out/runtime-before-wesativa-visual-final-20261030.sql`, SHA-256 `324300f03de2e56e4d606990ded74212208bcc0175705ea8450e4b9b9d85a524`, 58.450.930 bytes. Nenhum formulário foi submetido ou conteúdo/configuração foi alterado.
+- **Limites:** captura não usa o path canônico, não contém conteúdo Wiki autorizado para demonstrar cartões com dados, nem cobre autoria/revisão/moderação, ACL A/B, no-JS/AJAX, dark, zoom ou WCAG. F7 parcial; F11/MF3 não aprovados e OCS-A1–A4 bloqueadas.
+
+### OCS-F7 — reteste escuro de WE SATIVA no Runtime legado — 2026-10-30
+
+- Firefox ESR visível, stylesheet candidata injetada, `data-bs-theme=dark` apenas no documento; `/wesativa`, 320/1440px. Passaram 15/15 invariantes em ambas as larguras; texto `rgb(239, 239, 239)`, Montserrat, estados vazios e superfícies escuros, shell sem tokens Fidelity, quatro filtros acessíveis e zero overflow. Capturas revisadas em `/home/piradopirata/aculta-suite-out/wesativa-dark-legacy-20261030/`.
+- Snapshot pré-ULI `/home/piradopirata/aculta-suite-out/runtime-before-wesativa-dark-20261030.sql`, SHA-256 `635b80adb3aaff58be98a539c52aeddaf9f133a14bf3336f4a7bd6e5b707ca33`, 58.502.572 bytes; Runtime `aculta_runtime`, 624 tabelas, HEAD servido `2493d7535`. Nenhuma preferência persistente ou dado foi alterado.
+- F7 permanece parcial: somente o path legado foi servido; `/studio/we-sativa`, autoria/revisão/moderação, fixtures Wiki, grants A/B, zoom, contraste WCAG, no-JS/AJAX e MF3 ainda não homologados.
+
+### THEME-MF2/MF3 — Institution Bar e admin toolbar mobile — 2026-10-31
+
+- **Runtime conferido antes da sessão:** host `toca`; checkout servido `/home/piradopirata/projetos/aculta`; HEAD destacado `2493d7535`; URI `http://default`; banco `aculta_runtime`, conectado, 624 tabelas. O checkout servido contém alterações não commitadas de Eventos; não foram tocadas.
+- **Snapshot pré-ULI:** `/home/piradopirata/aculta-suite-out/runtime-snapshots/runtime-before-institution-bar-authenticated-20261031.sql`, SHA-256 `cf23aa72d519615af97eeb001d32879811be9dcaf7d823d3416b9c0addf650c2`, 67.077.419 bytes, modo 0600.
+- **Sessão sintética autorizada:** o teste visual usou `aculta_visual_admin` UID 257 via ULI; nenhuma senha foi lida ou exibida. Nenhum conteúdo, configuração, permissão ou preferência persistente foi alterado; ULI criou a sessão Drupal de teste.
+- **Firefox ESR visível:** o harness reutilizável foi ampliado para percorrer o sticky em passos de 12px nos sentidos de descida e subida. A versão ampliada passou 40/40 checks administrativos em MAIN (incluindo 55 leituras em cada largura 320/390px) e 130/130 checks anônimos nos dez purposes configurados, 320/390px. A versão anterior passou 38/38 e 112/112, respectivamente. Não se reproduziu salto/posição intermediária. Evidências detalhadas em `web/themes/custom/aculta420/docs/mobile-first-audit.md` e nas pastas externas listadas ali.
+- **Snapshot antes da segunda autenticação ULI:** `/home/piradopirata/aculta-suite-out/runtime-snapshots/runtime-before-institution-bar-transition-admin-20261031.sql`, SHA-256 `3747d45e71003b862c5c56da6ac9fc59b7572e2eafe9eaebdfef205a1a70b554`, 67.203.080 bytes, modo 0600. Snapshot realizado após reconfirmar `toca`, HEAD `2493d7535`, URI `http://default`, `aculta_runtime` e 624 tabelas.
+- **Limites:** não houve teste em dispositivo móvel físico nem captura da folha candidata local; mantém-se pendente a validação do CSS/JS da branch no Runtime e o gate THEME-MF3. O checkout servido permanece no HEAD `2493d7535`.
+
+### THEME-MF2 — repetição da Institution Bar — 2026-10-31
+
+- **Preflight:** host `toca`; checkout/docroot `/home/piradopirata/projetos/aculta`; HEAD destacado `2493d7535`; Drupal 11.4.10; URI `http://default`; banco `aculta_runtime`, 624 tabelas. O checkout servido já tinha alterações não commitadas de Eventos, que não foram tocadas.
+- **Firefox ESR visível, CSS/JS servidos sem override:** nas dez homes anônimas, 130/130 checks em 320/390px; na MAIN autenticada como `aculta_visual_admin` UID 257, 40/40 checks em 320/390/1023/1024/1280px, incluindo scroll contínuo e mudança de largura 320↔1024. Capturas revisadas. Resultados em `/home/piradopirata/aculta-suite-out/institution-bar-followup-20261031/` e `/home/piradopirata/aculta-suite-out/institution-bar-admin-followup-20261031/`.
+- **Estado alterado:** a autenticação usou ULI, que criou uma sessão Drupal temporária. Nenhum conteúdo, configuração, permissão ou preferência foi alterado. Nesta repetição não foi feito snapshot imediatamente antes da sessão ULI; por isso, esta execução registra apenas o estado validado e a sessão temporária, sem alegação de snapshot prévio. O preflight consultou o banco e confirmou 624 tabelas.
+- **Achado separado:** a raiz anônima de Conta exibiu `documentWidth=328` em viewport 320px; o harness de sticky não considera overflow documental como critério e passou os checks posicionais. A correção desse overflow continua pendente.
+- **Limites:** esta repetição focal não aprova THEME-MF3, nem cobre rotas internas, zoom, teclado completo, cores, reduced motion ou WCAG integral.
+
+### THEME-MF3 — corrigir formato dos artigos sintéticos da Revista — 2026-10-31
+
+- **Preflight:** servidor `toca`; checkout servido `/home/piradopirata/projetos/aculta`, HEAD `2493d7535`; URI `https://revista.aculta.toca.net.br`; banco `aculta_runtime`; 624 tabelas. Drush somente leitura confirmou que o formato `revista_editorial` está ativo e que os nós 599–602 são publicações sintéticas da Revista publicadas, com formato `basic_html`. O formato `basic_html` não existe na configuração Runtime/Sync; a renderização pública resultava em `<div class="field--name-body"></div>` apesar do texto armazenado.
+- **Snapshot antes da escrita:** `/home/piradopirata/aculta-backups/revista-body-format-20261031/aculta_runtime-before-format-fix.sql`, 106.454.164 bytes, modo 0600, SHA-256 `ceee9081250ce2b7bd28018ec2e7bad19c0322b835c725ea4de0fdcf99ec101e`.
+- **Escrita de conteúdo de teste autorizada:** por API de entidade Drupal, somente os nós sintéticos 599–602 tiveram `body.format` alterado de `basic_html` ausente para `revista_editorial` ativo. Título, valores de texto, resumo, mídia, status publicado, ACL e configuração não foram alterados; Drupal gerou revisões correntes 778–781 e timestamps `changed` para essas quatro entidades. Nenhum módulo, grant ou configuração foi alterado; não houve `config:import` nem `updatedb`.
+- **Validação posterior:** Firefox ESR visível no Runtime, 100/200/400% reais, homepage e artigo 602: **6/6 checks**, agora incluindo `bodyTextLength > 0`, altura renderizada do corpo, capa carregada, H1 e shell únicos e zero overflow. As capturas foram ajustadas para mostrar H1 e corpo em cada zoom e revisadas em `/home/piradopirata/aculta-suite-out/revista-article-zoom-followup-20261031d/`. Nenhum formulário ou comentário foi enviado.
+- **Limite:** esse reparo padroniza apenas conteúdo sintético de homologação para usar um formato editorial válido. Não corrige um problema no Twig/CSS, não altera conteúdo editorial real e não aprova o gate THEME-MF3, a comparação pareada OpenCulturas ou WCAG 2.2 AA.
+
+## 2026-10-31 — captura read-only da área Marley no Runtime
+
+- Ambiente confirmado: `toca`; checkout servido `/home/piradopirata/projetos/aculta`, HEAD destacado `2493d7535`, URI Drush `http://default`, banco `aculta_runtime`, 624 tabelas.
+- Antes de abrir sessão autenticada por ULI, `drush sql:dump` gerou snapshot do banco com 624/624 tabelas em `/home/piradopirata/aculta-suite-out/runtime-studiosnapshot-20261031/aculta_runtime.sql`, modo `600`, 64.774.437 bytes. SHA-256: `537a0b95c5023ce8bbdf6ce94bb76209cedff59ba2719b406e40a3e462d0b261`.
+- Firefox ESR visível capturou `account:/marley` em 320/360/390/599/600/768/1024/1280/1440px com CSS Fidelity candidata injetada somente na sessão. Capturas e JSON: `/home/piradopirata/aculta-suite-out/studio-marley-canonical-followup-20261031/`.
+- Resultado: 9/9 telas capturadas; Institution Bar e Domain Header únicos, sem overflow horizontal, cinco abas com uma ativa e alvos de pelo menos 44px. Nenhum formulário foi enviado nem conteúdo/configuração/permissão alterado. A sessão temporária de ULI foi criada para o teste; credenciais não foram registradas.
+- O GET de `/studio` no purpose Conta retornou 404 vazio, como determina ADR-038; não é defeito. A captura comparativa do upstream foi apenas a homepage pública, não um dashboard autenticado. O resultado é candidato e não homologa OCS-F5/F11 ou THEME-MF3.
+
+## 2026-10-31 — Green Stash, baseline legado e rota canônica candidata
+
+- Sessões ULI da conta sintética `aculta_visual_admin` foram abertas após o snapshot integral descrito acima; não houve envio de formulários nem alteração de conteúdo/configuração/permissões.
+- No Runtime `2493d7535`, `shop:/greenstash` ainda é a rota servida. Firefox ESR capturou 320/390/1440px: shell único; `documentScrollWidth=330` em viewport 320px (overflow de 10px); 390/1440px sem overflow. Essa página e seus nove links pertencem ao baseline antigo, não ao contrato visual novo. Evidência: `/home/piradopirata/aculta-suite-out/green-stash-runtime-legacy-baseline-20261031/`.
+- A rota local canônica `/studio/green-stash` retorna 404 no Runtime porque HEAD remoto mantém `/greenstash`; ela não está servida. Não contar como falha visual da implementação local. A página oficial permanece DEFERRED para homologação de Runtime.
+- Na branch, `StudioIdentityRoutingTest`, `GreenStashNavigationTest` e `GreenStashExperienceProviderTest`: **10 testes/252 assertions**. A fixture candidata `green-stash-layout.py` passou 186/186 (320–1440px, claro/escuro, telas de visão geral/produto/detalhe/criação e zoom real); valida somente apresentação, não operação Commerce nem grants por loja. Relatório: `/home/piradopirata/aculta-suite-out/green-stash-layout-followup-20261031/`.
+
+## 2026-10-31 — Ganjalab em claro/escuro, CSS candidata
+
+- Firefox ESR visível abriu a rota oficial `courses:/ganjalab` no Runtime com CSS candidata injetada apenas na sessão, em claro e escuro, 320/390/1440px. Relatórios: `/home/piradopirata/aculta-suite-out/studio-ganjalab-canonical-followup-20261031/` e `/home/piradopirata/aculta-suite-out/studio-ganjalab-dark-canonical-followup-20261031/`.
+- Em todas as seis combinações, `ganjalabFidelityStatus=PASS`: Montserrat em main/heading/estados vazios, contexto presente, dois estados vazios, sem overflow, shell único, contraste AA dos links textuais da Institution Bar e tokens Fidelity ausentes do shell; modo escuro também verificou o token de texto.
+- `LearnerDashboardComposerTest` e `GanjalabControllerTest`: 2 testes/4 assertions. Nenhum formulário, curso ou matrícula foi alterado. As sessões ULI usaram a conta sintética; o snapshot anterior à sessão permanece registrado na entrada acima.
+- **Limite que impede F6:** o markup servido ainda mostra “Minha conta / Área pessoal”; o compositor da branch define “ACULTA Studio Ganjalab / Meus cursos / Acompanhe suas aulas e certificados”. Logo, os checks medem CSS candidata sobre markup antigo, não a tela final da branch. Não homologar OCS-F6/F11/MF3.
+
+### Reteste ampliado Ganjalab — matriz Fidelity (2026-10-31)
+
+Firefox ESR executou novamente `courses:/ganjalab` na grade completa de nove
+larguras (320/360/390/599/600/768/1024/1280/1440px) em claro e escuro: **18/18
+combinações capturadas**, todas com `ganjalabFidelityStatus=PASS` e sem falhas de
+Fidelity. Evidência em `/home/piradopirata/aculta-suite-out/studio-ganjalab-full-light-followup-20261031/`
+e `/home/piradopirata/aculta-suite-out/studio-ganjalab-full-dark-followup-20261031/`.
+Continua CSS candidata sobre o markup Runtime “Minha conta / Área pessoal”; não
+homologa o compositor “Meus cursos” ainda não servido. Sem formulário, matrícula
+ou preferência persistente alterados.
+
+## 2026-10-31 — OCS-F4: captura autenticada do Hub e auditoria do SDC
+
+- **Ambiente confirmado antes das sessões:** host `toca`; checkout servido `/home/piradopirata/projetos/aculta`, HEAD destacado `2493d7535`; Drush root `/home/piradopirata/projetos/aculta/web`, URI `http://default`, banco `aculta_runtime`, 624 tabelas.
+- **Snapshots integrais anteriores a cada ULI:**
+  1. `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-studio-hub-visual-gate-20261031.sql` — 65.897.048 bytes, SHA-256 `21378d202df8c38edd8d55c8620a47238469bda412ec89d8ffdeecefa1d0a684`.
+  2. `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-studio-hub-root-visible-20261031.sql` — 65.950.830 bytes, SHA-256 `faeb7e158103c0c8fb32c27ea1a827d3f295647514cc7523e19df9a1e488c4b7`.
+  3. `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-studio-hub-card-check-20261031.sql` — 66.006.214 bytes, SHA-256 `2597ebac5be92f8a6c591d2999de1f03b7727083f76aa2ca925850c63dd95083`.
+  Todos foram criados por `mysqldump --single-transaction --quick --skip-lock-tables`, modo `0600`. O teste fez GET/ULI em Firefox ESR visível; não enviou formulários nem alterou conteúdo, configurações, permissões ou preferências. A única escrita esperada no Runtime foi a criação das sessões temporárias de autenticação.
+- **Resultado visual:** a raiz Account respondeu com o root `.studio.aculta-account-entry` visível em 320/360/390/599/600/768/1024/1280/1440px; cinco experiências disponíveis apareceram, mas nenhum link foi renderizado no SDC `card` e todos mediram 19px. O novo gate registrou `studio_capture_status=FAIL` em nove capturas. CSS Fidelity foi injetada só no Firefox e não executa o hook PHP.
+- **Resultado no source branch:** `PortalUiHooksTest` passou 26 testes/148 assertions, incluindo o adaptador Studio Hub para o SDC compartilhado. O Runtime segue no HEAD remoto anterior e não contém esse hook; os arquivos não commitados de `aculta_events` permaneceram intactos. Evidências: `/home/piradopirata/aculta-suite-out/studio-hub-cards-20261031/`. Não houve troca de HEAD, `updatedb`, `config:import` ou escrita editorial.
+- **Status:** OCS-F4 parcial; o gate do Hub servido permanece vermelho até o source branch com o preprocess visual ser integrado e validado. THEME-MF3 e OCS-F11 continuam pendentes; OCS-A1–A4 não iniciadas.
+
+## THEME-MF2 — endereço de Conta, reteste responsivo (2026-10-31)
+
+- Runtime confirmado no host `toca`, checkout servido `/home/piradopirata/projetos/aculta`, HEAD destacado `2493d7535`, URI `http://default`/`https://conta.aculta.toca.net.br`, banco `aculta_runtime`, 624 tabelas antes e depois.
+- Antes dos ULI usados pelo smoke, snapshot íntegro via `drush sql:dump`: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-account-address-visual-followup-20261031.sql`, 66.848.723 bytes, modo 0600, SHA-256 `764fac824376c8f3dfab49b0f5378093c10fa20b21910180ab397ef7400c21fa`.
+- Firefox ESR visível abriu `/dados/endereco` por GET com JavaScript e sem JavaScript; passou 50/50 checks, incluindo nove larguras, quatro larguras no fallback, zoom 200/400%, um único formulário, campos contratuais, CEP, país BR oculto e ausência de overflow. Capturas mascaram inputs; nenhuma consulta CEP, submissão ou alteração de endereço foi feita. Apenas sessões ULI foram criadas.
+- Evidência: `/home/piradopirata/aculta-suite-out/account-address-visual-followup-20261031/`. Não houve `updatedb`, `config:import`, `pm:uninstall`, `drush cr` nem alteração de configuração/conteúdo.
+
+## OCS-F6 — dashboard Ganjalab e fluxo do aviso ULI (2026-10-31)
+
+- Runtime confirmado: host `toca`, checkout servido `/home/piradopirata/projetos/aculta`, HEAD destacado `2493d7535`, URI `http://default`/`https://cursos.aculta.toca.net.br`, `aculta_runtime`, 624 tabelas antes e depois.
+- Três sessões ULI foram usadas para rever o root visual e testar a correção candidata. Antes de cada sessão houve snapshot íntegro via `drush sql:dump`, modo `0600`:
+  1. `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-ganjalab-visual-followup-20261031.sql` — 66.917.705 bytes; SHA-256 `babbffdbb536913277ecd251f0bb21dac4ef909af63a9658cad8d71fbde40f4a`.
+  2. `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-ganjalab-visual-rerun-20261031.sql` — 66.980.746 bytes; SHA-256 `e022c857d3c1e725b2e52a26c3d32d45d5c91abb50e7e85ed7a9edfea9abb3d2`.
+  3. `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-ganjalab-status-flow-candidate-20261031.sql` — 67.035.266 bytes; SHA-256 `5ad61519aa510b2f19252289b0e3ce3ede189198bb7693d3c008162c89bed85d`.
+- Firefox ESR capturou `/ganjalab` autenticado em nove larguras. O primeiro comando de teste usou `.studio`, ausente no Runtime antigo; reexecutado com `.aculta-context-header`, resultou `CAPTURED`, zero falhas e zero overflow. A página mostrou LMS, cursos/certificados vazios. O Runtime ainda não tem os marcadores da implementação candidata.
+- No baseline o aviso ULI ficou `position: fixed` e cobriu navegação a 320px. Com `content.css` candidata injetada só na sessão, ficou estático no fluxo antes do heading visível (1 PASS); oito larguras posteriores ficaram `SKIP_NO_STATUS_NOTICE` por autoclosure. Não houve criação de curso/matrícula nem alteração de conteúdo/configuração. Apenas sessões ULI foram criadas; sem `updatedb`, `config:import`, `pm:uninstall` ou `drush cr`.
+- Evidência: `/home/piradopirata/aculta-suite-out/ganjalab-status-flow-candidate-20261031/`. Candidato não está servido; OCS-F6/F11 e THEME-MF3 continuam pendentes.
+
+## 2026-10-31 — Institution Bar: decisão de primeiro scroll móvel
+
+- **Decisão do responsável:** em mobile, fixar Institution Bar em `top: 0` no primeiro scroll não nulo; ocultar visualmente a Navigation top-bar administrativa até voltar ao topo; preservar ações focadas por teclado acima do shell; manter sticky natural quando JavaScript estiver indisponível.
+- **Runtime antes da sessão autenticada:** servidor `toca`; checkout servido `/home/piradopirata/projetos/aculta`, HEAD destacado `00e6149b0`; Drupal 11.4.10; URI `http://default`; `aculta_runtime`, 624 tabelas. Arquivos paralelos de Events no checkout servido foram preservados e não alterados.
+- **Snapshot pré-ULI da validação autenticada final:** `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-institution-bar-focus-layer-validation-20261031.sql`, 68.186.787 bytes, modo 0600, SHA-256 `262ad2d2165b016e95f9311e4daebb5213ee164f6b704b27b2a77906d697fa2b`. Snapshots anteriores das repetições de ULI estão listados em `web/themes/custom/aculta420/docs/mobile-first-audit.md`.
+- **Validação:** Firefox ESR visível passou 49/49 checks autenticados nas larguras 320/390/1023/1024/1280, 175/175 anônimos nas dez raízes a 320/390 (dois SKIPs de primeiro scroll porque Links não tem rolagem vertical) e 136/136 sem JavaScript. Capturas foram revisadas. CSS e JS candidatos foram injetados apenas no navegador; o Runtime não recebeu esses arquivos.
+- **Efeito no Runtime:** ULI criou uma sessão Drupal temporária. Não houve alteração de conteúdo, configuração, permissões ou preferências; nenhuma troca de HEAD, `updatedb`, `config:import` ou `drush cr` ocorreu. A contagem permaneceu 624 tabelas.
+- **Resultado e limite:** os testes verificam a candidata e não a integração servida. THEME-MF3 e OCS-F11 permanecem pendentes. Relatórios/capturas e inventário integral de snapshots: `web/themes/custom/aculta420/docs/mobile-first-audit.md`.
+
+## 2026-10-31 — revalidação estática THEME-MF2
+
+- Branch `refactor/opencultures-codigo-visual`: antes da atualização documental, HEAD local e remoto coincidiam em `056d49dc9`; worktree limpa e sem alterações prévias nos arquivos da fase.
+- Passaram lint CSS/JS, schema SDC (55 componentes, 27 includes, 759 checks), fronteira tema/módulo (3.491), Design Foundations (2.429), documentação UI (520 tokens, 421 usados, 149 atributos) e `CaptchaPresentationHooksTest` (3 testes/8 assertions). PHPUnit emitiu aviso de diretório de browser output não gravável, mas a suíte focal concluiu com status zero.
+- Nenhum teste browser integrado foi repetido nesta microfase. O Runtime/checkout servido permanece separado, destacado em HEAD anterior e com alterações de outra frente; não foi alterado. A decisão de ocultar a barra administrativa no scroll permanece validada apenas com CSS/JS candidatos injetados no Firefox.
+- Limite: gates estáticos da branch aprovados; THEME-MF0 parcial, THEME-MF3 e OCS-F11 pendentes.
+
+## 2026-10-31 — corrigir 500 por hook visual duplicado e validar shell servido
+
+- Checkout de desenvolvimento `toca` atualizado de `00e6149b0` para `b13776abd`, preservando sete alterações paralelas em `/home/piradopirata/aculta-suite-out/runtime-head-switch-b13776abd/parallel-work.patch` (SHA-256 `73bc004e04230aa53056f7b225bedae91e497b096987458b8175fb7ad60ce398`), stash `8595e92bb798bccf4665097d17c2af12b394dffc` e ref local `refs/archive/dev-before-b13776abd`. Após publicação de `f382ee6f9`, o checkout foi destacado nesse HEAD; `refs/archive/dev-before-f382ee6f9` preserva o HEAD `b13776abd`.
+- Drush confirmou Drupal 11.4.10, root `/home/piradopirata/projetos/aculta/web`, URI `http://default`, banco `aculta_runtime`, 624 tabelas. `updatedb:status`: `[success] No database updates required.` `config:status`: 227 itens (116 Different, 69 Only in DB, 42 Only in sync dir). Nenhum `updatedb` ou `config:import` ocorreu. O responsável decidiu manter os 14 módulos MCP ativos e adicioná-los ao Sync; a reconciliação de configuração ficou para microfase própria.
+- Causa confirmada dos 500 em Apoio, Conta, Wiki e Growroom: `LogicException` do Core porque `InputHooks` e `PortalUiHooks` registravam `preprocess_input`. Commit publicado `f382ee6f9` removeu o atributo duplicado e adicionou teste de unicidade. Gates: Unit 27/149 PASS; Kernel 7/19 PASS em `aculta_simpletest`; PHPCS, PHP lint, lint CSS/JS, SDC 759, Design Foundations 2.429, boundary 3.490, UI docs 520/421/149 e diff-check PASS.
+- Antes dos rebuilds de cache foram salvos snapshots modo 0600: `aculta_runtime-before-pr-head-b13776abd-20261031.sql` (69.137.932 bytes, SHA-256 `275dfa6157c1b829a3d621c0875678146ac9bb8d76364201d75f160f018d0af6`) e `aculta_runtime-before-pr-head-f382ee6f9-20261031.sql` (61.251.555 bytes, SHA-256 `b3dd72ed5ac29fbf8c0083c7b18a988647f8a8345789cb1cb325a71c0326b475`). Ambos precederam `drush cr`; contagem ficou em 624.
+- Depois da correção, Main, Loja, Revista, Apoio, Conta, Wiki e Growroom retornaram HTTP 200. Firefox ESR visível sem injeções passou 214/214: dez raízes anônimas em 320/390px e Main autenticado em 320/390/1023/1024/1280px; dois SKIPs são Links sem scroll vertical. Snapshot anterior à sessão ULI: `aculta_runtime-before-institution-bar-browser-f382ee6f9-20261031.sql`, 57.971.044 bytes, SHA-256 `c4035ebe2777d8acc9917bc61ab9889dc918c6b7fbdca68c93cad9e93a7f29f1`. Evidência em `/home/piradopirata/aculta-suite-out/institution-bar-runtime-f382ee6f9-20261031/`.
+- Limite: resolve a causa específica dos 500 e comprova o shell servido nessa matriz. THEME-MF3/OCS-F11, WCAG global, zoom em páginas internas e comparação pareada permanecem pendentes.
+
+## 2026-10-31 — autenticação responsiva e top-bar administrativa mobile
+
+- **Runtime:** host `toca`, checkout servido `/home/piradopirata/projetos/aculta`, HEAD destacado `8e0091a4a`, Drupal 11.4.10, URI `http://default`, banco `aculta_runtime`. `updatedb:status`: sem atualizações; `config:status`: sem diferenças. Conta `/` respondeu 302 anonimamente conforme esperado. Não houve import de configuração, updatedb, conteúdo ou alteração de permissões.
+- **Conta:** Firefox ESR visível, sem injeção de CSS ou marcador, passou 10/10 checks nas larguras 320/360/390/599/600/768/1024/1280/1440px; sessão sem JavaScript também 10/10. A página serviu o marcador Portal `challenge-frame`, o widget coube em 300px e o documento ficou em 320px a 320px, sem sobreposição do H1. Evidências em `auth-served-runtime-8e0091a4a-20261031/` e `auth-served-nojs-runtime-8e0091a4a-20261031/`.
+- **Top-bar administrativa mobile:** decisão do responsável desativa a Navigation top-bar em até 1023px, mantendo-a desde 1024px; Institution Bar fixa em `top:0` no primeiro scroll. Firefox autenticado com CSS/JS candidatos injetados passou 47/47 checks nas larguras 320/390/1023/1024/1280px; sem JavaScript e com CSS candidata, 43/43. Capturas revisadas em `admin-topbar-mobile-final-assertion-8e0091a4a-20261031/` e `admin-topbar-mobile-nojs-retest-8e0091a4a-20261031/`. As primeiras tentativas tiveram 7 falhas por especificidade/seletor e foram corrigidas antes do resultado final. Isto não valida integração servida.
+- **Snapshots pré-ULI:** cada teste autenticado foi precedido por snapshot integral modo 0600. Arquivos e hashes: `runtime-snapshots/aculta_runtime-before-admin-topbar-mobile-20261031.sql` (`312b81d626ef3f777524164fd10e16e2499b93c6fbf8ab5d0f01b2fb89e24dde`), `...-rerun-20261031.sql` (`92d32264d91f08f52166f64174aee412cb9b1e1a4cb18d05dd016937b5cb6ee9`), `...-final-20261031.sql` (`37f513ffdc1585edf734a478fce80347cd8272f77cf99d794f23ab26ad2e4a7f`), `...-nojs-20261031.sql` (`6e0b243c95d4a8b03f0953282f43af51c3ab0588509d5f2625bb8db6b4c8c7a7`), `...-nojs-debug-20261031.sql` (`9bd899137be1412c3b1ad1dfa124331f0f6202fc73e8b8d9c5aec36bf2c762ec`), `...-nojs-retest-20261031.sql` (`1d6c53fbe7b3433a222b22ec92cab61f110885cea49e596cfe16801877e8171a`), `...-js-retest-20261031.sql` (`41483bc200acc0772f42027abeaa588a364f1fb4d56b6de551d4000f4d39a577`) e `...-assertion-20261031.sql` (`16bd7d715694713cc77f1e6735d0a3873a08e437003a173e092181921c091e35`). Antes dos seis primeiros, o banco tinha 614 tabelas; nas duas últimas sessões, 611.
+- **Purga normal Field API observada:** comparado ao snapshot pós-reconciliação `0f382ba9...` (614 tabelas), o schema passou a 611. A diferença é apenas as três tabelas `field_deleted_data_*` que guardavam cópias antigas após a recuperação Messenger; desapareceram pela purga normal, não por `DROP` manual. O documento de reconciliação Sync registra o delta.
+- **Limite:** o CSS/JS da top-bar foi candidato injetado no Firefox e ainda precisa ser validado sem overrides no HEAD publicado. Lint CSS/JS, Python compile e `git diff --check` passaram. THEME-MF3 e OCS-F11 continuam pendentes.
+
+## 2026-10-31 — top-bar administrativa integrada e validada
+
+- Commit `f378d2540` foi publicado em fast-forward na branch existente `refactor/opencultures-codigo-visual`; não foi criada branch/PR nem feito merge. O checkout do servidor foi movido de `8e0091a4a` para `f378d2540` e destacado; o HEAD anterior ficou preservado em `refs/archive/dev-before-f378d2540`.
+- Preflight: host `toca`, `/home/piradopirata/projetos/aculta`, Drupal 11.4.10, `aculta_runtime`, URI `http://default`, 611 tabelas. `updatedb:status`: sem updates; `config:status`: sem diferenças. `drush cr` completou; Main e Loja retornaram HTTP 200.
+- Firefox ESR visível, conta administrativa sintética UID 257, sem CSS/JS candidatos: **47/47 checks** em 320/390/1023/1024/1280px. A top-bar servida ficou `display:none` até 1023px e disponível em 1024/1280px; Institution Bar fixou em `y=0` no primeiro scroll; sem overflow. Captura revisada em `admin-topbar-mobile-integrated-f378d2540-20261031/`.
+- Snapshot modo 0600 anterior à sessão ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-admin-topbar-integrated-f378d2540-20261031.sql`, 52.538.843 bytes, SHA-256 `ac7be6520a84dc49aaac6afa14d6198010ff899b5440f5876f494860d66b9906`, 611 tabelas. A sessão ULI não alterou conteúdo, configuração ou permissões.
+- Resultado: a correção focal deixou de ser candidata e está integrada no Runtime. THEME-MF3 e OCS-F11 continuam pendentes por cobertura responsiva global, telas internas, zoom, WCAG e comparação de fidelidade ainda incompletos.
+
+## 2026-10-31 — teclado e zoom nas raízes dos dez purposes
+
+- Runtime em `toca`, checkout servido destacado no HEAD `9af71edb1`, URI `http://default`, banco `aculta_runtime`; `updatedb:status` sem atualizações e `config:status` sem diferenças. O teste foi somente leitura.
+- Firefox ESR visível, sem injeções, percorreu MAIN, Conta, Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e Eventos em 320/360/390/599/600/768/1024/1280/1440 px. Passaram 1.493 verificações: 90 de overflow horizontal e 1.403 de indicador de foco visível dentro do viewport. Zero FAIL; 23 SKIPs porque a sequência terminou antes dos oito passos pedidos (Conta: 9; Links: 14). Evidência: `/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-f378d2540-20261031/`.
+- O zoom nativo do Firefox a 200% e 400%, com viewport de dispositivo 1280 px, passou 30/30 verificações nas dez raízes: atingiu o nível de zoom, manteve a Institution Bar, Domain Header e `<main>` únicos e não alargou o documento. Evidência: `/home/piradopirata/aculta-suite-out/purpose-browser-zoom-9af71edb1-20261031/`.
+- Limite: a matriz verifica raízes públicas, não todos os templates internos nem estados autenticados de cada purpose. Os SKIPs de foco continuam sem evidência; leitor de tela, tema escuro, reduced motion e WCAG 2.2 AA global permanecem pendentes. THEME-MF3 e OCS-F11 seguem não aprovados.
+
+## 2026-10-31 — tema claro/escuro e reduced motion nos dez purposes
+
+- Depois do commit documental `762c56eb3`, o checkout servido foi destacado nesse HEAD. Preflight em `toca`: Drupal 11.4.10, `aculta_runtime`, URI `http://default`; `updatedb:status` sem updates, `config:status` sem diferenças; `drush cr` passou. `aculta.toca.net.br` e `loja.aculta.toca.net.br` responderam HTTP 200; os hosts de produção não resolveram DNS nesse ambiente.
+- Firefox ESR visível, sem CSS candidata, passou **576/576 checks** em MAIN, Conta, Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links e Eventos, nas larguras 320/360/390/599/600/768/1024/1280/1440 px. Cobriu os modos claro e escuro, tokens do shell, movimento reduzido, overflow do documento, Institution Bar/Domain Header únicos e contraste AA de links; o botão Google em Conta passou em estado normal e hover.
+- Evidência: `/home/piradopirata/aculta-suite-out/purpose-shell-color-modes-762c56eb3-20261031/`. O teste escuro usa `data-bs-theme="dark"`; movimento reduzido usa preferência Firefox. Não equivale a WCAG 2.2 AA completa e não testa cada componente ou conteúdo dos dez domínios. THEME-MF3/OCS-F11 permanecem pendentes.
+
+## 2026-10-31 — fallback do shell sem JavaScript em nove larguras
+
+- Após publicar o checkpoint documental `1151b3352`, o checkout servido ficou destacado nesse HEAD. Em `toca`/`aculta_runtime`, `updatedb:status` não encontrou updates, `config:status` não mostrou diferenças, `drush cr` passou e Main/Loja nos hosts de teste responderam HTTP 200.
+- Firefox ESR visível com JavaScript desativado passou **270/270 checks** nas dez raízes públicas e em 320/360/390/599/600/768/1024/1280/1440 px. Foram verificados os headers únicos, overflow do documento e fallback visível da navegação ou busca Wiki.
+- Relatório e log: `/home/piradopirata/aculta-suite-out/purpose-shell-nojs-1151b3352-20261031/`. É cobertura do shell público; não valida submissão dos formulários, cada widget interativo ou acessibilidade integral. THEME-MF3/OCS-F11 continuam pendentes.
+
+## 2026-10-31 — H1 principal e `<main>` nos dez purposes
+
+- No Runtime `f57c6c93d`, Firefox ESR visível e anônimo passou **180/180 checks** nas dez raízes (MAIN, Conta, Apoio, Revista, Wiki, Loja, Cursos, Fórum, Links, Eventos) em 320/360/390/599/600/768/1024/1280/1440 px.
+- Cada rota tinha um `<main id="main-content">`, exatamente um H1 visível dentro do conteúdo principal e nenhum overflow horizontal do documento. Nenhum link foi ativado e nenhum formulário foi enviado.
+- Evidência: `/home/piradopirata/aculta-suite-out/purpose-headings-f57c6c93d-20261031/`. A verificação cobre as raízes públicas, não todas as páginas internas nem WCAG/leitor de tela; não aprova THEME-MF3/OCS-F11.
+
+## 2026-10-31 — agenda interna de Eventos e validadores de apresentação
+
+- Runtime `toca`, checkout servido `/home/piradopirata/projetos/aculta`, HEAD destacado `f2c3b37db`, Drupal 11.4.10, URI `http://default`, `aculta_runtime`. `updatedb:status` não encontrou atualizações, `config:status` não encontrou diferenças; `drush cr` passou. Os hosts de teste Main e Loja responderam HTTP 200.
+- Firefox ESR visível, anônimo e sem injeções, percorreu `/calendario`, a grade mensal e `/calendario/interativo` em 320/360/390/599/600/768/1024/1280/1440 px, claro/escuro, JavaScript ligado/desligado: **108/108 checks**, sem overflow, sem duplicação do shell. A agenda HTML permaneceu utilizável sem JavaScript; o scheduler iniciou com JavaScript a partir de 768 px. Nenhum filtro foi submetido e nenhum conteúdo foi alterado. Evidência: `/home/piradopirata/aculta-suite-out/calendar-agenda-integrated-f2c3b37db-20261031/`.
+- Lint CSS e JS passaram; SDC schemas/discovery: 55 componentes, 27 includes, 759 checks; Design Foundations: 2.429; fronteira tema/módulo: 3.490; mapa tema/módulo: 213; documentação UI: 520 tokens, 421 usados, 149 atributos. Inventário responsivo regenerado e comparado byte a byte.
+- Limite: esta rodada cobre a agenda, não criação/edição de eventos, ACL entre contas, Form API, teclado integral, leitor de tela ou WCAG 2.2 AA completa. THEME-MF3 e OCS-F11 seguem pendentes.
+
+## 2026-10-31 — fixture responsiva do seletor de organizações de Eventos
+
+- Firefox ESR visível executou `tests/browser/aculta-events/organization-forms.py` contra a fixture local, com o Bootstrap do projeto e CSS atual do tema, em nove larguras e modos claro/escuro: **74/74 checks**. Reflow dos formulários/listas, rolagem interna da tabela, superfície, foco de teclado, alvo de 44 px e ausência de overflow passaram.
+- Evidência: `/home/piradopirata/aculta-suite-out/aculta-events-organization-layout-f2c3b37db-20261031/`. Não acessa o Runtime nem valida markup Drupal, ACL ou AJAX; não aprova THEME-MF3/OCS-F11.
+
+## 2026-10-31 — catálogo público de Eventos e limpeza de referências locais publicadas
+
+- No Runtime destacado em `81b6ed4ad`, Firefox ESR visível percorreu a raiz `/eventos` no host de teste em 320/360/390/575/576/600/768/1024/1280/1440 px. **30/30 checks** passaram com três publicações existentes, sem overflow, SDC como único wrapper visual e links com 44 px. O harness injeta o CSS local do SDC na página real; não enviou filtros nem alterou conteúdo. Evidência: `/home/piradopirata/aculta-suite-out/events-catalogue-candidate-81b6ed4ad-20261031/`.
+- A pedido do responsável, foram removidas 72 branches locais cujos commits eram alcançáveis em referências `origin` após `git fetch`; ficaram preservados `main`, a branch ativa, branches não publicadas e qualquer branch atualmente em worktree. Foi removido o worktree MCP limpo cujo commit estava em `origin/main`; `git worktree prune` retirou seu registro obsoleto. Worktrees de outras frentes com arquivos modificados e diretórios de snapshots/evidência foram preservados.
+- Limite do teste: a folha foi injetada; esta medição não substitui validação isolada do CSS servido nem fecha THEME-MF3/OCS-F11.
+
+## 2026-10-31 — catálogo público de Eventos no Runtime
+
+- No Runtime `81b6ed4ad`, Firefox ESR visível abriu `/eventos` e avaliou três publicações já existentes em 320/360/390/575/576/600/768/1024/1280/1440px: **30/30 checks** para overflow, moldura somente no SDC e alvos de título de 44px.
+- Foi somente GET; o harness injetou a folha local do SDC sobre o markup real. Nenhum filtro foi enviado nem conteúdo foi alterado. Evidência: `/home/piradopirata/aculta-suite-out/events-catalogue-candidate-81b6ed4ad-20261031/`. Não prova isoladamente o CSS integrado e não aprova THEME-MF3/OCS-F11.
+
+## 2026-10-31 — formulários ACULTA Studio Culturas no CSS integrado
+
+- Preflight em `toca`: checkout servido `/home/piradopirata/projetos/aculta`, HEAD destacado `e38c1f1f0`, Drupal 11.4.10, URI `https://conta.aculta.toca.net.br`, banco `aculta_runtime`, 611 tabelas. Antes da ULI, snapshot integral modo 0600: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-integrated-nooverride-20261031.sql`, 54.390.833 bytes, SHA-256 `f9dc3f87efc85947b8d8f72ccc6f277857e3467a504be3e853eaea21a5dca062`.
+- Firefox ESR visível autenticado na conta sintética de inspeção abriu por GET `/culturas/eventos/novo` e `/culturas/locais/novo` em 320/360/390/599/600/768/1024/1280/1440px, sem CSS/JS candidato: **18 capturas**, zero falhas, sem overflow documental; Institution Bar, Domain Header e um formulário proprietário foram encontrados em cada rota. Capturas mobile revisadas. Nenhum formulário/endereço foi enviado e nenhum conteúdo/configuração foi alterado. Evidência: `/home/piradopirata/aculta-suite-out/culturas-organizer-integrated-nooverride-e38c1f1f0-20261031/`. A ULI criou sessão temporária; schema manteve 611 tabelas.
+- Limite: não cobre dark mode, no-JS/AJAX, teclado/zoom, ACL entre contas, CEP ou WCAG completa; não aprova OCS-F11/THEME-MF3.
+
+## 2026-10-31 — hub ACULTA Studio Culturas integrado
+
+- Runtime em `toca`, checkout `/home/piradopirata/projetos/aculta`, HEAD destacado `bdc8fb4d9`, URI `https://conta.aculta.toca.net.br`, banco `aculta_runtime`, 611 tabelas. Snapshot antes da sessão ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-hub-integrated-20261031.sql`, 54.288.530 bytes, modo 0600, SHA-256 `af918261e2200f41fddf8a9bd249fda7839de055913dfb6408c94b6f3e978d5d`.
+- Firefox ESR visível abriu `/culturas` no purpose Eventos, autenticado e sem injeção, em 320/360/390/599/600/768/1024/1280/1440px: nove capturas, zero falhas, Institution Bar e Domain Header presentes e largura documental igual à viewport. Captura de 320px revisada; o aviso ULI ficou em fluxo. Nenhuma operação de evento/local foi acionada. Relatório: `/home/piradopirata/aculta-suite-out/culturas-hub-integrated-bdc8fb4d9-20261031/`.
+- A sessão ULI é temporária; não houve alteração de conteúdo/configuração. `updatedb:status` e `config:status` continuaram sem diferenças; schema permaneceu em 611 tabelas. Limite: este harness de captura não comprova ACL por operação, dark mode, no-JS/AJAX, teclado/zoom ou WCAG.
+
+## 2026-10-31 — Culturas integrado sem JavaScript
+
+- No Runtime `toca`, checkout `/home/piradopirata/projetos/aculta`, HEAD destacado `5702e4ffc`, Drupal 11.4.10, `aculta_runtime`, 611 tabelas. Snapshot pré-ULI modo 0600: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-nojs-integrated-20261031.sql`, 54.545.379 bytes, SHA-256 `c89e7f93401d06b2ae95ccbc242f02a0691ae75703dd1d67d8c3c7d9ae0e20db`.
+- Firefox ESR visível com scripts do site desativados abriu `/culturas`, `/culturas/eventos/novo` e `/culturas/locais/novo` por GET em nove larguras: 27 capturas, zero falhas, sem overflow documental; shell único. Os formulários renderizaram com 16 campos observáveis e ações de pelo menos 44px. A navegação se expandiu no fluxo; captura de 320px revisada. Nenhum formulário foi enviado nem conteúdo alterado. Evidência: `/home/piradopirata/aculta-suite-out/culturas-nojs-integrated-5702e4ffc-20261031/`.
+- Estendido `ocs-baseline.py` com `OCS_JAVASCRIPT_ENABLED=0`; valor padrão mantém scripts habilitados. Limite: não valida AJAX nem WCAG/teclado/zoom.
+
+## 2026-10-31 — Culturas escuro sem JavaScript
+
+- Runtime em `toca`, checkout `/home/piradopirata/projetos/aculta`, HEAD destacado `ac328d00e`, Drupal 11.4.10, `aculta_runtime`, 611 tabelas. Snapshot pré-ULI modo 0600: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-nojs-dark-20261031.sql`, 54.387.794 bytes, SHA-256 `cae1dcf5a9f446cd3f1b08131c997bcd7ca061cc3cc07e4bb46b19b4996abe7e`.
+- Firefox ESR visível capturou `/culturas` e os formulários de Evento e Local em nove larguras, com JavaScript do site desativado e `data-bs-theme=dark` local: 27 capturas, zero falhas e sem overflow; cada formulário manteve campos/ações com altura mínima de 44px. Captura de 320px revisada. Não houve POST nem escrita de preferência/conteúdo. Evidência: `/home/piradopirata/aculta-suite-out/culturas-nojs-dark-integrated-ac328d00e-20261031/`.
+- `ocs-baseline.py` e README agora permitem escolher modo claro/escuro no documento de teste, sem persistir configuração. Limite: não testa contraste WCAG integral, AJAX, teclado ou ACL.
+
+## 2026-10-31 — Culturas escuro com scripts ativos
+
+- Runtime em `toca`, checkout `/home/piradopirata/projetos/aculta`, HEAD destacado `f1f50a7ea`, Drupal 11.4.10, `aculta_runtime`, 611 tabelas. Snapshot pré-ULI modo 0600: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-culturas-js-dark-20261031.sql`, 54.642.017 bytes, SHA-256 `da201177dda07fd685594a9cd35c0d3afc1f8ca3cecbdc796c61e1f9ac8b9217`.
+- Firefox ESR visível capturou o hub `/culturas` e os formulários de Evento e Local em nove larguras, com scripts ativos e modo escuro no documento WebDriver: 27 capturas, zero falhas, sem overflow; institution bar e domain header presentes; todos os campos/ações observáveis dos formulários mediram pelo menos 44px. Captura a 320px revisada. Nenhum POST nem preferência persistida. Evidência: `/home/piradopirata/aculta-suite-out/culturas-js-dark-integrated-f1f50a7ea-20261031/`.
+- Limite: não valida contraste WCAG integral, ACL, teclado/zoom ou OCS-F11/THEME-MF3.
+
+## 2026-10-31 — OCS-F3/F4: wrappers duplicados no Hub da Conta
+
+- A inspeção da captura integrada do Hub identificou o SDC Fidelity dentro de
+  `li.list-group-item`, com uma segunda borda/padding Bootstrap. `studio.css`
+  agora neutraliza fundo, borda e padding apenas no wrapper da lista da Conta;
+  o SDC `patterns/card` permanece como superfície e nenhum contrato de link foi
+  alterado. A fixture foi ajustada para reproduzir esse markup do Core.
+- `npm run lint:css`, Python compile check e `git diff --check` passaram. Firefox
+  ESR/X11 local passou 277/277 checks em 27 larguras de 320 a 1920px, cinco
+  wrappers, destinos e alvos 44px, teclado/foco, tipografia Montserrat e zoom
+  real de 200%/400%, sem overflow. Captura de 1440px revisada. Evidência:
+  `/home/piradopirata/aculta-suite-out/studio-card-fidelity-list-wrapper-20261031/`.
+- Limite: CSS candidata testada em fixture local; falta confirmar a folha servida
+  pelo Runtime. Não aprova THEME-MF3 ou OCS-F11.
+
+### Follow-up integrado — confirmação após publicação
+
+- Docroot `/home/piradopirata/projetos/aculta` destacado em `5a9c03b4b`; cache
+  reconstruído, sem updates Drupal e sem diferenças config/sync. Snapshot antes
+  da sessão ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-account-wrapper-5a9c03b4b-20261031.sql`,
+  57.414.352 bytes, modo 0600, SHA-256
+  `1c679a99cbddbad7b3690c0fac5c5a8043165083063efe32bb71df4ee346f16a`.
+- Firefox ESR/X11 autenticado, sem CSS override, capturou a entrada da Conta em
+  320/360/390/599/600/768/1024/1280/1440px: `CAPTURED`, zero falhas, cinco SDCs,
+  Institution Bar e Domain Header únicos, largura documental igual à viewport.
+  A captura 1440px foi revisada e mostra somente a superfície arredondada de cada
+  card. Evidências: `/home/piradopirata/aculta-suite-out/studio-account-hub-card-integrated-5a9c03b4b-20261031/`.
+  A sessão não enviou formulários nem alterou conteúdo/configuração. O gate
+  THEME-MF3/OCS-F11 permanece aberto.
+
+## 2026-10-31 — OCS-F6: Ganjalab no Runtime atual
+
+- Preflight `toca`: checkout `/home/piradopirata/projetos/aculta`, HEAD
+  destacado `959bc283c`, Drupal 11.4.10, `aculta_runtime`, 611 tabelas, URI
+  `http://default`; sem updates ou diferenças config/sync. Snapshot antes da
+  sessão ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-ganjalab-current-959bc283c-20261031.sql`,
+  51.990.962 bytes, modo 0600, SHA-256
+  `325ec6eae0efde2e9ad5ff76ca86ab0258fd64692235940c58cf9b4e3d1acac4`.
+- Firefox ESR/X11 autenticado abriu `https://cursos.aculta.toca.net.br/ganjalab`
+  sem CSS override nos nove viewports de 320 a 1440px: `CAPTURED`, zero falhas,
+  contexto `.studio`, três SDCs do compositor (cabeçalho e dois estados vazios),
+  Institution Bar/Domain Header únicos e
+  sem overflow. Capturas 320/1440 revisadas. Nenhum curso foi criado e nenhum
+  formulário enviado. Evidência: `/home/piradopirata/aculta-suite-out/ganjalab-dashboard-integrated-959bc283c-20261031/`.
+- A conta não possui matrículas nem certificados; cartões preenchidos, ACL A/B,
+  no-JS/AJAX, teclado/zoom, modo escuro e WCAG permanecem pendentes. OCS-F6,
+  THEME-MF3 e OCS-F11 continuam abertos.
+
+## 2026-10-31 — correção do formulário Green Stash e defaults Messenger
+
+- A matriz Firefox ESR/X11 genérica do projeto encontrou HTTP 500 em
+  `/studio/green-stash/produtos/novo`. A causa foi `createAccess()` chamado sem
+  `return_as_object=TRUE` e tratado como `AccessResult`. O fix publicado em
+  `1161fd046` corrige a chamada e seu teste Unit; 2 testes/11 assertions passaram.
+- A mesma rodada apontou exceções `QueryException` nos contadores de avisos
+  opcionais de amizade e conquistas. O Runtime tinha os storages de leitura
+  ausentes. Uma primeira tentativa de update 10013 via
+  `installDefaultConfig()` foi abortada pelo campo legado
+  `message.field_aculta_friendship_event` (`string` ativo, `list_string` no
+  default). O Drupal já havia criado parte dos defaults antes de abortar: o
+  Runtime agora reporta 619 tabelas e diferenças de configuração. Não houve
+  importação de `config/sync` nem remoção de conteúdo/configuração.
+- A revisão do update 10013 substitui a importação ampla por criação seletiva e
+  idempotente apenas dos três storages e três instâncias necessários aos
+  contadores; configs existentes são preservadas e tipos incompatíveis geram
+  log sem substituição. A correção foi publicada em `fb7bd2859`. Snapshot
+  anterior à primeira tentativa:
+  `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-update-10013-1161fd046-20261031.sql`,
+  48.087.711 bytes, modo 0600, SHA-256
+  `161a5c41575fae939a94d7330e80f94cd519fae58e09a9411afdd7714fe9c497`.
+- Antes da execução seletiva, novo snapshot íntegro:
+  `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-selective-update-10013-55665601d-20261031.sql`,
+  48.283.737 bytes, modo 0600, SHA-256
+  `cb1c9a0cfc19d006589cbdaa496bc8ee4b1c8829c1d91a59bf42680f95d48c86`.
+- O update 10013 seletivo foi aplicado no docroot `55665601d`; não restam
+  updates pendentes. Os storages boolean/string esperados e as três instâncias
+  foram confirmados, e `unreadCount(257)` respondeu sem exceção nos adapters
+  friendship e game.
+- Para reconciliar a tentativa abortada com o Sync sem remover defaults
+  necessários, foram exportados exatamente os 43 itens Messenger em diferença
+  da coleção principal (31 ausentes no Sync e 12 diferentes); 37 arquivos
+  mudaram, seis já eram idênticos. O comparador também identificou nove
+  traduções `pt-br` dos templates na coleção `language`, agora sincronizadas.
+  Nenhum outro módulo entrou no conjunto. A importação completa não foi
+  executada. Após publicar `473060304` e `ad2a5c59e`, trocar o docroot e
+  reconstruir cache, `config:status` confirmou zero diferenças e
+  `updatedb:status` zero pendências, com 619 tabelas preservadas.
+- Firefox ESR/X11 autenticado, pelo harness genérico de todo o ACULTA, verificou
+  as cinco rotas disponíveis do Green Stash em nove larguras e claro/escuro:
+  **90/90**, HTTP 200, sem overflow, axe sem violações nem `incomplete`. Não
+  houve envio de formulário. Capturas e `results.json`:
+  `/home/piradopirata/aculta-suite-out/green-stash-full-fixed-55665601d-20261031/`.
+  Snapshot pré-ULI modo 0600, 54.404.995 bytes, SHA-256
+  `0f5bff8425f0ddca419f2adf4948b6c008ab9625f447740cb1e7eaf2a2d2c180`.
+- PHPUnit Unit dos dois módulos: 10 testes/46 assertions passaram; PHP lint,
+  PHPCS Drupal, YAML parse e validador de dependências de config (1.702 checks)
+  passaram. Kernel `FriendshipNoticePipelineKernelTest` +
+  `GameAchievementNoticePersistenceKernelTest`: 5 testes/69 assertions OK no
+  `aculta_simpletest`; houve duas depreciações upstream de discovery `@EntityType`
+  do Core, sem falhas. A homologação A/B, ACL e demais gates globais continuam
+  pendentes.
+- A tentativa de delegação read-only ao Qwen3-Coder 30B foi iniciada pelo CLI
+  configurado, mas o gateway remoto retornou HTTP 502; a análise delegada ficou
+  indisponível nesta rodada. O servidor e processo remoto existentes foram
+  preservados.
+
+## Reteste transversal visual e correção do Config Sync (2026-10-31)
+
+- Firefox ESR/X11 percorreu as dez raízes públicas de propósito, em nove
+  larguras, dois modos de cor e reduced motion: **576/576 checks**, zero
+  falhas. Foram verificadas shell única, ausência de overflow e contraste dos
+  links textuais; os limites da cobertura estão em
+  `web/themes/custom/aculta420/docs/mobile-first-audit.md`. A execução foi
+  anônima, somente GET, no docroot destacado `ae3227866`, sem alterar Runtime.
+- A suíte Unit completa do Messenger revelou que o Sync incluía
+  `private_message_digest_anchor`, embora `MessengerModuleInstallConfigTest`
+  exija que esse estado operacional não seja versionado. A chave foi removida
+  exclusivamente de `config/sync/aculta_messenger.settings.yml`; defaults e
+  configuração ativa não foram alterados. O teste focal passou (2/8) e a suíte
+  Messenger completa passou (389/4.295). Atualizar o Sync no docroot exigirá
+  revisão do diff: a âncora ativa permanecerá intencionalmente fora do Sync.
+- A PR #299 foi encontrada como merged em `2493d7535`. A branch remota
+  não existia no primeiro `ls-remote`; um push fast-forward recriou a referência
+  `refactor/openculturas-codigo-visual` em `dbb226ef3`. Isso não abriu PR nem
+  fez merge, mas a referência não está vinculada a uma PR aberta. A delegação
+  Qwen/Ollama foi descartada, conforme orientação do responsável.
+- Continuação da evidência global nas dez raízes públicas: no-JS passou 270/270;
+  teclado passou 609/609 (47 `SKIP` de sequência limitada); zoom real 100/200/
+  400% passou 30/30; axe/page-matrix passou 40/40 checks de viewport, com zero
+  violações e quatro resultados de contraste `incomplete` em Conta/Fórum para
+  revisão manual. Capturas e limites estão em
+  `web/themes/custom/aculta420/docs/mobile-first-audit.md`. A matriz teclado
+  anterior teve dois FAIL porque iniciava Shift+Tab do `body`; a reprodução
+  focalizou o rodapé fora da viewport a 768px. O harness agora parte do último
+  foco real da sequência Tab, e o teste focal do Fórum passou 32/32. Nenhuma
+  regra visual do tema foi alterada por esse diagnóstico.
+- `purpose-headings.py` também passou **120/120 checks** nas dez roots em seis
+  larguras, inclusive Conta 320px; mediu um H1 visível no `main`, shell único e
+  sem overflow. Evidência em
+  `/home/piradopirata/aculta-suite-out/purpose-headings-recheck-768d514ef-20261031/`.
+- O gate estático do shell tinha uma asserção excessivamente literal e rejeitava
+  a variante legítima `aculta-institution-bar--account` por não usar a classe
+  base como primeiro token. O analisador foi ajustado para exigir a classe base
+  em qualquer ordem, preservando a proibição de wrapper paralelo. No Runtime,
+  SDC schema passou (55 componentes/759 checks), shell contract passou (13),
+  Design Foundations passou (2.429) e Revista/parity passou. Correção publicada
+  em `65a064603`.
+- O probe autenticado de modos do Studio, com `teste.comum`, capturou Marley,
+  Conta e Perfil em 320/1440px: dark + reduced motion confirmou 6/6, e light
+  confirmou 6/6. Nenhuma preferência foi salva. Evidências em
+  `/home/piradopirata/aculta-suite-out/studio-theme-dark-recheck-70ba54aba-20261031/`
+  e `/home/piradopirata/aculta-suite-out/studio-theme-light-recheck-70ba54aba-20261031/`.
+- O probe autenticado `tests/browser/aculta-studio/keyboard-focus.py`, com a
+  conta existente `teste.comum`, percorreu Marley, Conta e Perfil nas nove
+  larguras: 648 observações, 621 focos reais com `:focus-visible` e outline,
+  27 retornos esperados ao body. Evidência em
+  `/home/piradopirata/aculta-suite-out/studio-keyboard-focus-recheck-8603e2d5b-20261031/`.
+  Nenhum formulário foi enviado; ACL A/B, modais e leitores de tela continuam
+  fora desta prova.
+- O baseline autenticado de Marley encontrou um falso vermelho na regra de
+  tabela responsiva: a listagem real tinha seis colunas, mas cabia integralmente
+  em 599/600px. `ocs-baseline.py` agora aceita scroll local quando necessário ou
+  tabela contida quando não há excedente; os dois viewports passaram no reteste
+  sem overflow. Evidência em
+  `/home/piradopirata/aculta-suite-out/studio-marley-baseline-retest-599-600-20261031/`.
+- Baselines autenticados adicionais com `teste.comum` capturaram a entrada de
+  Conta (normalizada para a raiz canônica) e Perfil em oito larguras, ambos
+  `CAPTURED` e sem falhas de invariantes. Evidências em
+  `/home/piradopirata/aculta-suite-out/studio-conta-baseline-recheck-e538f5f3d-20261031/`
+  e `/home/piradopirata/aculta-suite-out/studio-profile-baseline-recheck-e538f5f3d-20261031/`.
+  A/B de privacidade, upload/crop e cache entre contas continuam pendentes.
+- O Kernel `WikiLeadImageLifecycleKernelTest` foi atualizado para os caminhos
+  canônicos da Suite WE SATIVA (`/wesativa`, domínio `wiki420`) após a migração
+  ADR-038. A execução completa passou: 29 testes, 1.767 asserções; houve 369
+  depreciações já existentes do Drupal/contrib, sem falhas. A execução focal
+  anterior também passou (1 teste, 76 asserções). Evidência local em
+  `/tmp/wiki-kernel-route4.out` e `/tmp/wiki-kernel-filter.out`.
+- Reteste estático após o alinhamento canônico: `validate-aculta420-foundation`
+  passou com 353 checks via Drush no Runtime; SDC schema passou (55
+  componentes, 759 checks); shell contract passou (13); design foundations
+  passou (2.432); module/theme boundary passou (3.492); Revista parity passou;
+  aliases temporários passaram (38 arquivos) e a política de rotas
+  administrativas MAIN passou (154 rotas). Esses gates fortalecem MF1/MF2 e a
+  higiene de rotas, mas não substituem MF3/F11, que ainda exigem cobertura
+  visual global e os hosts Green Stash/Eventos.
+- A matriz genérica `tests/browser/aculta-smoke/page-matrix.py` foi executada
+  em Firefox ESR headless contra cinco superfícies acessíveis do Runtime
+  (`aculta`, Conta, Ganjalab, Revista e WE SATIVA), em claro/escuro e 320/390/
+  768/1440px: 40/40 observações, zero overflow horizontal e nenhum status
+  inesperado. Evidência fora do Git em
+  `/home/piradopirata/aculta-suite-out/global-page-matrix-02f5-run2/`.
+  Esta matriz confirma reflow/reachability, mas não substitui ACL, submit,
+  zoom real ou a homologação dos hosts ainda indisponíveis.
+- A mesma matriz executou axe-core em Firefox ESR headless nos cinco URLs,
+  claro/escuro e viewport mínimo de cada modo: 10 auditorias, zero violações
+  WCAG reportadas e dois resultados `incomplete` sem impacto/violação. O
+  relatório está em
+  `/home/piradopirata/aculta-suite-out/global-axe-986c92f97/results.json`.
+  A execução é automatizada e não substitui inspeção X11, teclado, zoom real,
+  ACL ou testes de submissão.
+- O host de teste de Eventos tornou-se alcançável para o probe autenticado:
+  `culturas-runtime.py` executou a rota canônica `/culturas` com o usuário de
+  inspeção, em claro/escuro e 320/390/768/1440px. Foram capturados 10 estados
+  (incluindo os estados finais de cada modo), com Institution Bar e Domain
+  Header únicos, dashboard presente, ações de 44px, filtros responsivos e
+  tabela com rolagem confinada, sem largura documental excedente. Evidência em
+  `/home/piradopirata/aculta-suite-out/culturas-runtime-followup-98f69/`.
+  Isso melhora a evidência OCS-F10, mas ainda não homologa escrita, ACL por
+  operação, popup AJAX de Local ou THEME-MF3/OCS-F11.
+- A mesma captura autenticada de Culturas recebeu axe-core em Firefox ESR
+  headless nos modos claro/escuro a 320px: duas auditorias, zero violações e
+  um resultado `incomplete` por modo. O relatório está em
+  `/home/piradopirata/aculta-suite-out/culturas-axe-followup-d207/results.json`.
+  O resultado não substitui a validação de teclado, zoom X11, submissão e ACL
+  por operação.
+- O probe autenticado de Culturas foi repetido em Firefox ESR visível (`DISPLAY=:0`)
+  nos modos claro/escuro e 320/390/768/1440px: 8 estados, shell e dashboard
+  presentes, largura documental igual à viewport em todos os estados e sem
+  overflow. Capturas e relatório em
+  `/home/piradopirata/aculta-suite-out/culturas-x11-followup-43ec/`. Esta é
+  evidência X11 de geometria, não ainda um teste de zoom real, escrita ou ACL
+  operacional.
+- A matriz de zoom real do Firefox ESR validou o purpose `eventos` em 100%,
+  200% e 400%: 3/3 checks passaram, sem overflow documental e com Institution
+  Bar, Domain Header e H1 únicos. Evidência em
+  `/home/piradopirata/aculta-suite-out/eventos-public-zoom-423/`.
+- O harness de teclado foi endurecido para não tratar o link de skip 1x1 como
+  âncora de foco reverso e registrar o retorno a esse limite como `skip`, não
+  como falha de foco de conteúdo. O reteste público de `eventos` passou 64
+  checks e registrou 4 limites esperados, sem falhas. Evidência em
+  `/home/piradopirata/aculta-suite-out/eventos-keyboard-fixed2/results.json`.
+- A matriz global foi repetida com o harness corrigido nos dez purposes, quatro
+  larguras e oito passos por direção: 609 checks PASS, 45 limites esperados e
+  4 FAIL concentrados em `links` a 320/390px (passos 7/8), já isolados como
+  problema específico da superfície Links, não do tratamento de `Shift+Tab`.
+  Evidência completa em
+  `/home/piradopirata/aculta-suite-out/global-keyboard-fixed-8a26/results.json`;
+  THEME-MF3 continua sem aprovação enquanto esses quatro casos não forem
+  corrigidos ou formalmente revisados.
+- O fallback visual `:focus` para `.aculta-institution-bar__home` foi publicado
+  em `4f1af872d`, mas o reteste servido do purpose Links ainda reporta foco
+  inativo nos passos 7/8 de 320/390/768px. A regra está presente no agregado
+  CSS; o próximo diagnóstico precisa explicar por que o WebDriver não mantém
+  `document.activeElement` nessa sequência antes de qualquer nova alteração.
+- Reteste final de `links` após rebuild de cache passou sem falhas: 37 checks
+  de foco/overflow e 7 limites de sequência esperados, em 320/390/768/1280px.
+  A captura diagnóstica também confirmou foco visível real no link de skip, na
+  marca da Institution Bar, no logo, no menu e nos links de conteúdo. Evidência
+  em `/home/piradopirata/aculta-suite-out/links-keyboard-final/results.json`.
+- A matriz global final, após a correção da Institution Bar e rebuild, passou
+  **609/609 checks de foco** nos dez purposes, quatro larguras e oito passos
+  por direção, com 47 limites de sequência explicitamente registrados como
+  `skip`. Evidência em
+  `/home/piradopirata/aculta-suite-out/global-keyboard-final-fc2/results.json`.
+  Isso remove o bloqueio de teclado do THEME-MF3; permanecem os demais gates
+  transversais e a homologação funcional de F11.
+- O host autenticado de Green Stash respondeu ao ULI de inspeção e a matriz
+  genérica cobriu `/greenstash` em claro/escuro e 320/390/768/1440px: 8/8
+  estados HTTP 200, título canônico do Studio e zero overflow. A camada axe
+  autenticada passou nos dois modos, sem violações nem incompletos. Evidências:
+  `/home/piradopirata/aculta-suite-out/greenstash-page-matrix-auth-879/` e
+  `/home/piradopirata/aculta-suite-out/greenstash-axe-auth-879/`. Isso remove o
+  bloqueio de reachability de F8, mas não homologa operações Commerce, grants
+  por loja, formulários, ACL de operador ou OCS-F11.
+- Green Stash também passou zoom e teclado no Firefox ESR visível: zoom real
+  100/200/400% em 3/3 checks, e teclado em 64/64 checks com 4 limites de
+  sequência esperados, nas larguras 320/390/768/1280px. Evidências em
+  `/home/piradopirata/aculta-suite-out/greenstash-zoom-84e/` e
+  `/home/piradopirata/aculta-suite-out/greenstash-keyboard-84e/`.
+- A matriz autenticada tentou as superfícies operacionais `/greenstash/produtos/novo`,
+  `/greenstash/produtos/1` e `/greenstash/envios` em 320/768/1440px, claro/escuro.
+  Todas responderam 403 sem overflow; axe-core registrou zero violações e
+  zero incompletos nos seis estados de rota. Isso confirma que o operador de
+  inspeção não recebe grants Commerce indevidos, mas não substitui testes com
+  uma conta autorizada de loja nem submissão de formulário. Evidência em
+  `/home/piradopirata/aculta-suite-out/greenstash-routes-auth-424/`.
+- A repetição com o usuário existente `teste.comum` (papel `gerente_loja`) teve
+  o mesmo resultado 403 nas três superfícies operacionais, sem overflow e sem
+  violações axe. Isso evidencia que o bloqueio é de autorização de rota/purpose
+  ou grant de loja, não de CSS; não foi criado conteúdo nem alterada ACL.
+  Evidência em `/home/piradopirata/aculta-suite-out/greenstash-operations-manager-424/`.
+- Reteste final dos gates estáticos após F8: foundation 353, SDC schema 759,
+  shell contract 13, design foundations 2.432, aliases 38 arquivos e política
+  de rotas administrativas 154 rotas — todos PASS. Esses resultados confirmam
+  a integridade estrutural do tema, mas não convertem F8/F11 em PASS enquanto
+  as operações protegidas não tiverem uma conta/grant funcional homologável.
+- Por decisão explícita do responsável, o papel `gerente_loja` agora inclui
+  `access aculta green stash`. A alteração foi publicada em `ce5a8fcaa`, com
+  snapshot Runtime SHA-256
+  `21d76a769a59213af20ca941320244a354e64033bb98e51b382acc0d40f708e6` em
+  `/home/piradopirata/aculta-runtime-snapshots/20261031-greenstash-grant/`,
+  importada no Runtime e normalizada em `827ecd736`; `config:status` ficou
+  limpo. A checagem Drush confirmou permissão e acesso do UID 5. O probe
+  browser cross-domain ainda retorna 403 para o usuário, indicando uma camada
+  adicional de sessão/purpose ou grant de loja a investigar antes de declarar
+  operações homologadas.
+- A investigação do segundo 403 confirmou no Runtime que o UID 5 tem a
+  permissão da Suite, mas `GreenStashStoreResolver` exige `commerce_store`
+  `update` e o handler nativo retorna `false` para view/update da única loja.
+  Não foi concedido `administer commerce_store` automaticamente, pois isso
+  ampliaria o contrato funcional além da ordem recebida; é necessário definir
+  o grant de loja proprietário antes da homologação de criar produto/envios.
+- Após a autorização explícita e a inclusão de `administer commerce_store`, a
+  matriz autenticada do gerente passou a responder HTTP 200 em `/greenstash`,
+  `/greenstash/produtos/novo` e `/greenstash/envios`, nos modos claro/escuro e
+  320/768/1440px: 18/18 estados sem overflow. Axe-core passou as seis
+  combinações de rota e modo, sem violações nem incompletos. Não houve submit
+  nem criação de produto. Evidência em
+  `/home/piradopirata/aculta-suite-out/greenstash-manager-final-528/`.
+- Os contratos Unit de Green Stash passaram após o grant: `GreenStashAccessPolicy`,
+  leitor/ACL de produtos, criação de produto e navegação — 13 testes e 100
+  asserções, sem falhas. A execução não persiste dados Runtime.
+- Os Kernel tests Commerce executados no banco dedicado `aculta_simpletest`
+  passaram: 15 testes, 260 asserções, 7 skips esperados e zero falhas,
+  cobrindo instalação limpa, shipping engine/cutover e permissões do leitor de
+  remessas Green Stash. Foram reportadas 222 depreciações de Drupal/contrib,
+  sem impacto no resultado.
+- Foi criado no Runtime o produto rascunho de inspeção NID 14, título
+  `TESTE VISUAL Green Stash — rascunho`, vinculado à loja 1, não publicado e
+  sem venda. Snapshot pré-escrita em
+  `/home/piradopirata/aculta-runtime-snapshots/20261031-greenstash-fixture/`,
+  SHA-256 `64d08f228cb869840b2c7ac07b19decd71e89cf3e80b016b201a8fea6ec474d5`.
+  A captura autenticada do gerente cobriu listagem e detalhe em claro/escuro e
+  320/390/768/1440px: 16 estados HTTP 200, zero overflow; axe passou em quatro
+  auditorias, zero violações e um `incomplete` por modo apenas na listagem.
+  Evidência em `/home/piradopirata/aculta-suite-out/greenstash-fixture-14/`.
+- O submit real do formulário `/greenstash/produtos/novo` foi exercitado com
+  WebDriver usando a conta `gerente_loja`, sem persistir um novo produto. O
+  formulário retornou a mensagem de erro esperada pelo handler de validação;
+  a inspeção direta das violações mostrou `stores.0.target_id` não referenciável
+  e `variations` nulo. Isso revela uma pendência funcional do catálogo (a forma
+  inicial promete rascunho sem variação, mas o tipo Commerce exige ambas), que
+  impede declarar persistência/rollback ou F8/F11 concluídos. Nenhum workaround
+  visual foi criado.
+- Após o registro do bloqueio, a microfase documental foi publicada em
+  `99d426eb6`. No checkout do docroot alinhado a esse HEAD, os gates estáticos
+  foram repetidos: foundation 353, shell contract 13, SDC schemas 55
+  componentes/759 checks, route aliases 38 arquivos, design foundations 2.432
+  checks e admin routes MAIN 154 rotas — todos PASS. Esses gates não substituem
+  a correção do contrato de variações nem autorizam marcar Green Stash/F8 como
+  homologado.
+- A tentativa de expandir a matriz para `/marley/revista/publicacoes` não
+  criou sessão nem alterou o Runtime: o UID editorial histórico `255` não
+  existe mais no banco atual, e o Drush recusou gerar ULI para conta nula.
+  A capa pública continua validada em headless; a matriz editorial autenticada
+  fica DEFERRED até usar uma conta de homologação existente, sem criar usuário
+  ou conteúdo nesta rodada.
+- A mesma rota revelou e corrigiu um erro 500 real: `EditorialWorkspaceController`
+  chamava `t()` sem serviço de tradução e sua definição de serviço não o
+  injetava. O controller agora usa `StringTranslationTrait` com
+  `@string_translation`; após rebuild explícito do container, a matriz
+  autenticada com a conta existente UID 5 passou 18/18 viewports, em claro e
+  escuro, sem overflow. Evidência em
+  `/home/piradopirata/aculta-suite-out/revista-marley-reader-fixed3-20261031194409/`.
+- A suíte Unit da Revista foi repetida após a correção: 40 testes e 162
+  asserções passaram. O parâmetro de tradução permanece opcional para manter
+  os construtores de teste existentes, enquanto o container injeta o serviço
+  real em produção.
+- A suíte Kernel `RevistaEditorialAccessKernelTest` passou no banco dedicado
+  `aculta_simpletest`: 12 testes e 500 asserções, sem falhas. O gate cobre
+  acesso editorial e discussão contextual e não altera o Runtime.
+- A matriz do formulário `/marley/revista/nova` com UID 5 encontrou overflow
+  real em 320/360/390px e 1280px (10/18 estados). Duas tentativas de contenção
+  apenas no CSS do tema não alteraram a folha efetivamente servida e foram
+  revertidas; não foi mantido workaround sem evidência. O formulário editorial
+  permanece DEFERRED para inspeção do layout Bootstrap/vertical-tabs no consumer
+  correto, sem declarar THEME-MF3 aprovado.
+- A inspeção de geometria confirmou que o overflow não é apenas o offcanvas
+  oculto: em 320px o painel `.entity-meta.vertical-tabs__panes` excede o
+  formulário (direita em 422px para um formulário que termina em 292px), e em
+  1280px o consumer chega a 1332px. O stylesheet agregado servido ao navegador
+  não refletiu as tentativas locais após rebuild, portanto a correção correta
+  precisa ser aplicada no consumer/asset realmente anexado ao formulário e
+  repetida no Runtime; nenhuma regra especulativa foi mantida.
+- Correção efetiva publicada em `afe947a73`: o asset global de formulários
+  agora empilha os vertical-tabs no mobile e permite quebra de descrições e
+  legendas longas do painel de metadados. Após limpeza dos agregados CSS,
+  rebuild do cache e nova sessão autenticada, `/marley/revista/nova` passou
+  18/18 viewports em claro/escuro, 320–1440px, sem overflow. Evidência em
+  `/home/piradopirata/aculta-suite-out/revista-marley-create-final-20261031200025/`.
+- O refinamento `5a1ce9091` elevou alvos de toque de summaries/token dialog e
+  corrigiu o contraste do menu vertical no modo escuro. A matriz autenticada
+  com axe passou 8/8 viewports (320/390/768/1280px, claro/escuro), zero
+  violações; três resultados `incomplete` por modo permanecem para revisão
+  manual. Evidência em
+  `/home/piradopirata/aculta-suite-out/revista-marley-create-axe-fixed-20261031200255/`.
+- O lint Stylelint do tema foi repetido após os ajustes do formulário:
+  `web/themes/custom/aculta420/node_modules/.bin/stylelint` sobre todos os CSS
+  do tema passou sem erros.
+- A suíte Unit completa de `aculta_magazine` foi repetida no checkout atual:
+  40 testes e 162 asserções, sem falhas.
+- Reteste final do formulário `/marley/revista/nova` após a correção de
+  contraste/alvos: 18/18 estados responsivos passaram em claro/escuro,
+  320–1440px, sem overflow e HTTP 200. Evidência em
+  `/home/piradopirata/aculta-suite-out/revista-marley-create-final-matrix-20261031200443/`.
+- Após a publicação final, os validadores estáticos no docroot passaram:
+  Foundation 353, SDC schemas 55 componentes/759 checks e route aliases 38
+  arquivos.
+- A revisão dos três resultados `incomplete` restantes do axe no formulário
+  identifica `aria-valid-attr-value`, `color-contrast` e `target-size` em
+  elementos Core/Metatag/CKEditor. Eles não são violações confirmadas pelo
+  axe, mas exigem revisão manual/atribuição ao owner do widget antes de
+  declarar WCAG completo; não foram mascarados no relatório.
+- O gate vermelho de design foundations detectou que os estilos de contraste
+  adicionados ao menu vertical usavam seletor explícito de modo escuro. O
+  commit `4433d853a` substituiu isso por tokens semânticos compartilhados;
+  depois, Design Foundations passou 2.432 checks e COLOR MODE TOKEN-ONLY
+  passou. Stylelint também permaneceu PASS.
+- A matriz autenticada do hub Marley revelou overflow real da tabela
+  `.studio__listing` em 320/390px. O commit `b3eb00d51` passou a usar layout
+  fixo e quebra de conteúdo somente no mobile; após limpar agregados CSS,
+  `/marley` passou 8/8 estados em 320/390/768/1280px, claro/escuro, HTTP 200 e
+  sem overflow. Evidência em
+  `/home/piradopirata/aculta-suite-out/marley-auth-listing-fixed-20261031200744/`.
+- A listagem editorial `/marley/revista/publicacoes` tinha tabela responsiva
+  fora da classe `studio__listing`; os commits `82fad15d5`/`cccf7d1db` aplicam
+  o mesmo contrato mobile a tabelas Marley/Wiki. Reteste autenticado passou
+  8/8 estados em 320/390/768/1280px, claro/escuro, sem overflow. Evidência em
+  `/home/piradopirata/aculta-suite-out/marley-revista-listing-fixed2-20261031200910/`.
+- A matriz autenticada da entrada WE SATIVA em `wiki420` passou 8/8 estados em
+  320/390/768/1280px, claro/escuro, HTTP 200 e sem overflow. Evidência em
+  `/home/piradopirata/aculta-suite-out/wesativa-auth-final-20261031200935/`.
+- A raiz autenticada de Conta passou 8/8 estados em 320/390/768/1280px,
+  claro/escuro, HTTP 200 e sem overflow. Evidência em
+  `/home/piradopirata/aculta-suite-out/conta-auth-final-20261031201137/`.
+- A auditoria axe da entrada WE SATIVA repetiu 8/8 viewports responsivos, com
+  zero violações e um resultado `incomplete` por modo para revisão manual.
+  Evidência em `/home/piradopirata/aculta-suite-out/wesativa-axe-final-20261031200958/`.
+- A matriz autenticada do GanjaLab em `/ganjalab` passou 8/8 estados em
+  320/390/768/1280px, claro/escuro, sem overflow e com zero violações axe;
+  permanece um `incomplete` por modo. Evidência em
+  `/home/piradopirata/aculta-suite-out/ganjalab-auth-axe-final-20261031201023/`.
+- A Conta Perfil privada em `/perfil` passou 8/8 estados autenticados em
+  320/390/768/1280px, claro/escuro, HTTP 200 e sem overflow. Evidência em
+  `/home/piradopirata/aculta-suite-out/profile-private-final-20261031201100/`.
+- Culturas público: a matriz genérica Firefox headless em `eventos.aculta.toca.net.br/culturas` retornou HTTP 403 em 8/8 estados (320/390/768/1280px, claro/escuro), sem overflow. Isso confirma a fronteira de autorização anônima, mas não substitui a matriz autenticada da experiência; gate visual autenticado permanece pendente até disponibilizar snapshot/sessão homologável.
+- Gato estático repetido após a microfase de Culturas: Foundation 353, SDC schema 55 componentes/759 checks, aliases temporários 38 arquivos, rotas administrativas MAIN 154 rotas e Design Foundations 2432 checks; todos PASS, incluindo COLOR MODE TOKEN-ONLY e contrastes escuros. Isso mantém a base publicável, sem converter os gates globais MF3/F11 em PASS.
+- Eventos público: matriz Firefox headless em `eventos.aculta.toca.net.br/`, `/eventos` e `/calendario` (320/390/768/1280px, claro/escuro) obteve 16/24 checks sem overflow. A raiz e o calendário retornaram 200; `/eventos` retornou 404 de forma consistente, preservando a política de rotas canônicas. Evidência: `/home/piradopirata/aculta-suite-out/eventos-root-matrix-20261031/`.
+- Matriz consolidada pública das Suites (Firefox headless, 320/390/768/1280px, claro/escuro) executada em 48 combinações. Conta raiz respondeu 200 em 8/8 sem overflow; Marley foi deliberadamente chamado no host incorreto e respondeu 404; Ganjalab, WE SATIVA, Green Stash e Culturas responderam 403 anônimo sem overflow em 32/32. A evidência confirma as fronteiras de purpose, mas exige repetir Marley no host de Conta para validar a URL canônica. Artefatos: `/home/piradopirata/aculta-suite-out/canonical-suites-public-20261031/`.
+- Reteste canônico de Marley em `conta.aculta.toca.net.br/marley`: 8/8 estados anônimos retornaram 403 sem overflow (320/390/768/1280px, claro/escuro), conforme proteção da Suite. Evidência: `/home/piradopirata/aculta-suite-out/marley-public-canonical-20261031/`.
+- Gate no-JS global repetido em Firefox ESR/X11: **210/210 checks PASS**, cobrindo dez purposes, 320/390/599/600/768/1024/1440px, Institution Bar e Domain Header únicos, sem overflow e navegação/ busca disponível sem JavaScript. Evidência: `/home/piradopirata/aculta-suite-out/purpose-shell-nojs-final/`; log completo em `purpose-shell-nojs-final.log`. Isso fecha somente o gate no-JS do shell, não a homologação global de formulários/AJAX.
+- Gate de teclado/foco do shell global executado no checkout servido `toca/aculta_runtime`: **609/609 checks PASS**, 47 limites de sequência explicitamente classificados pelo runner, cobrindo dez purposes e as larguras configuradas. Sem overflow e foco visível verificado em tab/shift-tab. Evidência: `/home/piradopirata/aculta-suite-out/purpose-shell-keyboard-runtime-final/`; log completo em `purpose-shell-keyboard-runtime-final.log`.
+- Gate de zoom real executado em Firefox ESR/X11 no runtime: **30/30 checks PASS**, cobrindo dez purposes em baseline 100%, zoom 200% e 400%, com document/body scroll width contidos e shell único. Evidência: `/home/piradopirata/aculta-suite-out/purpose-browser-zoom-final/`; log `purpose-browser-zoom-final.log`.
+- Axe consolidado nas cinco raízes canônicas públicas (Firefox headless, claro/escuro, 320/390/768/1280px): **0 violações** em 10 análises, com 2 resultados `incomplete` somente na Conta raiz (dependências/terceiros). O runner retornou exit 1 por `incomplete` sob `ACCESSIBILITY_STRICT=1`; não há base para declarar WCAG completa. Evidência: `/home/piradopirata/aculta-suite-out/canonical-axe-public-20261031/`.
+- Suíte Unit de fronteiras de propósito/rotas executada no runtime: `DomainRoutePolicyTest`, `DomainRouteSubscriberIntegrationPurposeTest` e `PurposeFrontPathProcessorTest` — **24 testes, 57 assertions, PASS**. O PHPUnit avisou que `sites/simpletest/browser_output` não é gravável, mas isso não afetou a suíte Unit. 
+- Gate HTTP vivo de fronteiras de domínio: `validate-domain-front-paths.php --live` — **26/26 checks PASS**, incluindo 404 para purposes incorretos, caminhos canônicos documentados e ausência de front paths internos expostos.
+- Lint oficial do tema executado com os scripts declarados em `web/themes/custom/aculta420/package.json`: `npm run lint:css` e `npm run lint:js` — ambos **PASS**. O comando inexistente `npm run lint` não foi considerado gate.
+- Lint PHP dos hooks/testes do tema: sem erros de sintaxe. Suíte Unit visual `web/themes/custom/aculta420/tests/src/Unit`: **47 testes, 346 assertions, PASS**. PHPUnit repetiu apenas o aviso não bloqueante sobre `sites/simpletest/browser_output` não gravável.
+- Integridade documental verificada com `php scripts/validate-project-status-index.php`: **PASS** (48 componentes; índice derivado de `docs/operations/status`).
+- Runtime verificado antes da próxima rodada: `drush status` confirmou `aculta_runtime` no docroot servido; `updatedb:status` retornou “No database updates required” e `config:status` retornou “No differences between DB and sync directory”. Nenhuma escrita foi executada.
+- Reteste agregado dos gates estáticos: Foundation 353; SDC schema 55 componentes/759 checks; aliases 38 arquivos; rotas administrativas MAIN 154; Design Foundations 2432; color mode token-only e contrastes escuros; status index 48 componentes. Todos **PASS** no mesmo checkout.
+- Baseline comparativo OpenCulturas Next atualizado em Firefox X11 (`ocs-baseline.py`, 1440/390px): capturas públicas da fonte foram geradas, mas o modo anônimo não captura o Studio autenticado e o runner encerrou como `DEFERRED`. Evidência: `/home/piradopirata/aculta-suite-out/ocs-baseline-public-final/`; não usar como aprovação OCS-F11.
+- Baseline autenticado do Studio obtido via ULI do `aculta_runtime` com Firefox X11 (`ocs-baseline.py`, 1440/390px): Conta, Culturas e Planos foram capturados com Institution Bar/Domain Header e marcadores de composição; a fonte OpenCulturas pública também foi capturada. Evidência: `/home/piradopirata/aculta-suite-out/ocs-baseline-auth-final/`; nenhuma credencial/ULI foi versionada.
+- Auditoria do `baseline.json` autenticado: 20 capturas (fonte OpenCulturas + 9 páginas Studio) em 1440/390px, `fidelity_failures=0`; duas limitações registradas pelo runner, sem credenciais versionadas. Isso fornece comparação visual reproduzível, mas não substitui a aprovação formal de F11.
+- Baseline autenticado ampliado para todas as larguras do plano (320/360/390/599/600/768/1024/1280/1440px): **90 capturas, 90 registros, `fidelity_failures=0`**. Limitações explícitas: fonte pública não é dashboard autenticado e a conta sintética não submete formulários. Evidência: `/home/piradopirata/aculta-suite-out/ocs-baseline-auth-full-final/`.
+- Runner do endereço ajustado para aceitar wrapping mobile legítimo do Complemento, mantendo ordem e ausência de sobreposição. Reteste no Runtime: **50/50 verificações PASS**, incluindo CEP, Conta legada, no-JS, 320–1440px e zoom 200/400%. Evidência: `/home/piradopirata/aculta-suite-out/account-address-final-fixed/`.
+- Integração CEP em Maps/Eventos validada no assistente OSM: **13/13 verificações PASS**, incluindo widget central, país BR oculto, preenchimento de município/UF, ausência de salvamento e reflow sem overflow em 320/390/768/1440px. Evidência: `/home/piradopirata/aculta-suite-out/maps-events-address-final/`.
+- Formulários autenticados de Culturas validados em Firefox X11: **12/12 checks PASS** para Evento e Local, zoom 100/200/400%, foco de teclado, Institution Bar/Domain Header e sem overflow. Nenhum dado foi submetido. Evidência: `/home/piradopirata/aculta-suite-out/culturas-forms-zoom-final/`.
+- Gate autenticado específico de Culturas (`culturas-runtime.py`, Firefox headless): **20/20 route checks PASS**, claro/escuro em 320–1440px, foco de teclado PASS e axe com 0 violações (1 `incomplete` por modo). Evidência: `/home/piradopirata/aculta-suite-out/culturas-runtime-final/`.
+- Matriz pública dedicada do Studio executada em Firefox ESR visível para os dez purposes: **90 capturas, 0 deferred, 0 overflow_records e shell_violations vazio**, cobrindo 320/360/390/599/600/768/1024/1280/1440px. Evidência: `/home/piradopirata/aculta-suite-out/purpose-matrix-final/purpose-matrix.json`.
+- Guard de consentimento executado: `validate-single-acceptance.php` — **PASS**, um único formulário de aceite e ledger limitado a `aculta_user_agreement_terms`.
+- Probe autenticado de foco do Studio em Marley, Conta e Perfil: **648 observações, 621 alvos focáveis, 621 com foco visível e outline**, 27 retornos ao corpo, 27 screenshots; exit 0. Evidência: `/home/piradopirata/aculta-suite-out/studio-keyboard-focus-final/keyboard-focus.json`.
+- Fidelidade de formulários Studio validada em Firefox X11: **66/66 verificações PASS**, claro/escuro, 320/390/768/1440px, alvos mínimos de 44px, modal de bio, Marley, Perfil e isolamento da Revista; foco preservado. Evidência: `/home/piradopirata/aculta-suite-out/studio-form-fidelity-final/`.
+- Fidelidade dos cards/hub Studio validada em Firefox X11: **277/277 verificações PASS**, incluindo rótulos oficiais Marley, Ganjalab, WE SATIVA, Green Stash e Culturas, Montserrat, alvos 44px e zoom 200/400% sem overflow. Evidência: `/home/piradopirata/aculta-suite-out/studio-card-fidelity-final/`.
+- Fidelidade das listagens Studio validada em Firefox X11: **74/74 checks PASS**, claro/escuro, tabelas com rolagem interna, estados vazios contidos, sem overflow documental e foco de teclado visível. Evidência: `/home/piradopirata/aculta-suite-out/studio-listing-fidelity-final/`.
+- Probe de tema autenticado Studio em modo escuro e reduced motion: **12 capturas, 12 correspondências de tema escuro e 12 de reduced motion**, Marley/Conta/Perfil em 320/390/768/1440px. Evidência: `/home/piradopirata/aculta-suite-out/studio-theme-modes-final/theme-modes.json`.
+- Fixtures A/B sintéticas criadas no Runtime após snapshot SHA-256 externo: `sr4_fixture_a` (UID 259, perfil público, marcador `Marcador SR4 A`) e `sr4_fixture_b` (UID 260, perfil privado, marcador `Marcador SR4 B`). S‑R4 executado em Firefox ESR/X11 com exit 0; isolamento, rota, SDCs, light/dark, reflow 320–1440px e no-JS passaram. Evidência: `/home/piradopirata/aculta-suite-out/profile-s-r4-final/`. Credenciais não foram versionadas.
+- Auditoria de branches remotas: a duplicata com erro de grafia `refactor/opencultures-codigo-visual` não possuía commits exclusivos e era ancestral da branch oficial `refactor/openculturas-codigo-visual`; foi removida local/remotamente. Após `fetch --prune`, restam `origin/main` e a branch oficial; `HEAD...origin/refactor/openculturas-codigo-visual` = `0/0` (nenhum commit faltante ou não publicado).

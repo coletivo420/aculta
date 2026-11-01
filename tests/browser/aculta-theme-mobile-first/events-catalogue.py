@@ -95,11 +95,18 @@ try:
             wrapperBackground:style(wrapper,'background-color'),
             cardBorder:style(card,'border-width'),
             cardWidth:card?.getBoundingClientRect().width ?? 0,
+            titleTargets:[...document.querySelectorAll('.event-catalogue__list .event-card__titulo a')]
+              .map(link=>{const rect=link.getBoundingClientRect();return {
+                width:Math.round(rect.width),height:Math.round(rect.height),
+                text:link.textContent.trim()};}),
             documentWidth:document.documentElement.scrollWidth
           };
         })();""")
         check(f"{width}px: cards reais e página sem overflow", metrics["cards"] > 0 and metrics["documentWidth"] <= width, json.dumps(metrics, ensure_ascii=False))
         check(f"{width}px: moldura somente no SDC", metrics["wrapperBorder"] == "0px" and metrics["wrapperPadding"] == "0px" and metrics["cardBorder"] == "1px", json.dumps(metrics, ensure_ascii=False))
+        check(f"{width}px: títulos-link têm alvo mínimo de 44px",
+              bool(metrics["titleTargets"]) and all(target["height"] >= 44 for target in metrics["titleTargets"]),
+              json.dumps(metrics["titleTargets"], ensure_ascii=False))
         if width in (320, 768, 1440):
             image = driver.req("GET", f"/session/{driver.session}/screenshot")
             (OUT / f"events-catalogue-{width}.png").write_bytes(base64.b64decode(image))

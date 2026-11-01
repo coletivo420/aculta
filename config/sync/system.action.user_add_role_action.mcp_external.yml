@@ -1,0 +1,15 @@
+uuid: a9b9d1b5-1737-4142-809b-f58f5a8e1e9d
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - user.role.mcp_external
+  module:
+    - user
+id: user_add_role_action.mcp_external
+label: 'Adiciona o papel ACULTA MCP externo para o(s) usuário(s) selecionado(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: mcp_external
+

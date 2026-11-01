@@ -17,12 +17,14 @@ label: 'Gerente de Loja'
 weight: 9
 is_admin: false
 permissions:
+  - 'access aculta green stash'
   - 'access administration pages'
   - 'access commerce_product overview'
   - 'access commerce_product_attribute overview'
   - 'access site reports'
   - 'administer aculta donation campaigns'
   - 'administer aculta support settings'
+  - 'administer commerce_store'
   - 'administrar doacoes'
   - 'create commerce_product_attribute'
   - 'create gerente_loja profile'

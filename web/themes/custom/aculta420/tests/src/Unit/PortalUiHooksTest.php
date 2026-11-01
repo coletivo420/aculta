@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta420\Unit;
 
+use Drupal\aculta420\Hook\InputHooks;
 use Drupal\aculta420\Hook\PortalUiHooks;
 use Drupal\aculta420\Hook\ThemeHooks;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -38,6 +39,25 @@ final class PortalUiHooksTest extends UnitTestCase {
     }
 
     self::assertSame([PortalUiHooks::class . '::preprocess'], $implementations);
+  }
+
+  /**
+   * Input presentation stays centralized in InputHooks for Core compatibility.
+   */
+  public function testInputPreprocessHasOneThemeHookProvider(): void {
+    $implementations = [];
+    foreach ([InputHooks::class, PortalUiHooks::class, ThemeHooks::class] as $provider) {
+      $reflection = new \ReflectionClass($provider);
+      foreach ($reflection->getMethods() as $method) {
+        foreach ($method->getAttributes(Hook::class) as $attribute) {
+          if ($attribute->newInstance()->hook === 'preprocess_input') {
+            $implementations[] = $provider . '::' . $method->getName();
+          }
+        }
+      }
+    }
+
+    self::assertSame([InputHooks::class . '::preprocess'], $implementations);
   }
 
   /**
@@ -121,9 +141,11 @@ final class PortalUiHooksTest extends UnitTestCase {
       '#cache' => ['contexts' => ['user.permissions'], 'tags' => ['commerce_store_list']],
     ];
     $variables = [
-      'wrapper_attributes' => new Attribute(['data-portal-ui' => 'account-experiences']),
+      // The real AccountExperienceProvider sets #attributes on item_list;
+      // Core exposes that token through the `attributes` preprocess variable.
+      'attributes' => new Attribute(['data-portal-ui' => 'account-experiences']),
       'items' => [['value' => $link, 'attributes' => new Attribute()]],
-      'attributes' => new Attribute(),
+      'wrapper_attributes' => new Attribute(),
     ];
 
     (new PortalUiHooks())->preprocess($variables);
@@ -208,6 +230,83 @@ final class PortalUiHooksTest extends UnitTestCase {
 
     self::assertTrue($variables['attributes']->hasClass('studio'));
     self::assertTrue($variables['attributes']->hasClass('aculta-green-stash'));
+    self::assertFalse($variables['attributes']->offsetExists('data-portal-ui'));
+  }
+
+  /**
+   * A standalone Studio content consumer gets only the scoped fidelity class.
+   */
+  public function testMapsStudioFidelityScopeWithoutAddingShellClass(): void {
+    $variables = [
+      'element' => [
+        '#attributes' => ['data-portal-ui' => 'studio-fidelity-scope'],
+      ],
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    $classes = $variables['element']['#attributes']['class'];
+    self::assertSame(['studio'], $classes);
+    self::assertArrayNotHasKey('data-portal-ui', $variables['element']['#attributes']);
+  }
+
+  /**
+   * Course authoring tokens map to the established Studio presentation.
+   */
+  public function testMapsStudioCourseAuthoringTokens(): void {
+    $variables = [
+      'attributes' => new Attribute([
+        'data-portal-ui' => 'studio-shell studio-course-authoring',
+      ]),
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    self::assertTrue($variables['attributes']->hasClass('studio'));
+    self::assertTrue($variables['attributes']->hasClass('studio-course-authoring'));
+    self::assertFalse($variables['attributes']->offsetExists('data-portal-ui'));
+
+    $back = [
+      'element_attributes' => new Attribute([
+        'data-portal-ui' => 'studio-action studio-course-authoring-back',
+      ]),
+    ];
+    (new PortalUiHooks())->preprocess($back);
+
+    self::assertTrue($back['element_attributes']->hasClass('btn'));
+    self::assertTrue($back['element_attributes']->hasClass('studio__action'));
+    self::assertTrue($back['element_attributes']->hasClass('studio-course-authoring__back'));
+    self::assertFalse($back['element_attributes']->offsetExists('data-portal-ui'));
+  }
+
+  /**
+   * Studio-only profile Form API tokens share one visual root class.
+   */
+  public function testMapsStudioProfileFormsToFidelityRoot(): void {
+    foreach (['studio-bio-form', 'studio-social-form'] as $token) {
+      $variables = [
+        'attributes' => new Attribute(['data-portal-ui' => $token]),
+      ];
+
+      (new PortalUiHooks())->preprocess($variables);
+
+      self::assertTrue($variables['attributes']->hasClass('studio-profile-form'), $token);
+      self::assertFalse($variables['attributes']->offsetExists('data-portal-ui'), $token);
+    }
+  }
+
+  /**
+   * Account bio dialog reuses the Studio profile form presentation contract.
+   */
+  public function testMapsAccountBioDialogToFidelityRoot(): void {
+    $variables = [
+      'attributes' => new Attribute(['data-portal-ui' => 'account-bio-dialog']),
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    self::assertTrue($variables['attributes']->hasClass('aculta-account-bio-dialog'));
+    self::assertTrue($variables['attributes']->hasClass('studio-profile-form'));
     self::assertFalse($variables['attributes']->offsetExists('data-portal-ui'));
   }
 
@@ -336,6 +435,28 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
+   * Input/button preprocess maps presentational tokens without removing AJAX.
+   */
+  public function testInputTokensMapToButtonClassesAndPreserveAjax(): void {
+    $variables = [
+      'element' => [
+        '#attributes' => [
+          'data-portal-ui' => 'event-organization-add-action',
+          'class' => ['use-ajax'],
+        ],
+      ],
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    $attributes = $variables['element']['#attributes'];
+    self::assertArrayNotHasKey('data-portal-ui', $attributes);
+    self::assertContains('button', $attributes['class']);
+    self::assertContains('button--primary', $attributes['class']);
+    self::assertContains('use-ajax', $attributes['class']);
+  }
+
+  /**
    * Event location tokens map to the original theme classes and preserve AJAX.
    */
   public function testEventLocationTokensMapClassesAndKeepAjaxBehavior(): void {
@@ -360,6 +481,30 @@ final class PortalUiHooksTest extends UnitTestCase {
     self::assertContains('aculta-event-location-widget', $attributes['class']);
     self::assertContains('aculta-location-target-id', $attributes['class']);
     self::assertContains('use-ajax', $attributes['class']);
+  }
+
+  /**
+   * Organization Studio/public profile and related-content tokens map in theme.
+   */
+  public function testEventOrganizationAndRelatedContentTokensMapToThemeClasses(): void {
+    $variables = [
+      'element' => [
+        '#attributes' => [
+          'data-portal-ui' => 'event-organization-profile event-organization-header event-org-summary-card event-org-button-danger related-content-item related-content-link',
+        ],
+      ],
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    $attributes = $variables['element']['#attributes'];
+    self::assertArrayNotHasKey('data-portal-ui', $attributes);
+    self::assertContains('aculta-organization-profile', $attributes['class']);
+    self::assertContains('organization-header', $attributes['class']);
+    self::assertContains('event-org-card', $attributes['class']);
+    self::assertContains('button--danger', $attributes['class']);
+    self::assertContains('aculta-related-content__item', $attributes['class']);
+    self::assertContains('aculta-related-content__link', $attributes['class']);
   }
 
   /**

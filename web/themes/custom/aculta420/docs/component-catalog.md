@@ -48,9 +48,11 @@ schema, story, consumer real e status no catálogo.
 
 Os SDCs do Studio herdam tipografia Montserrat e tokens de cor, contraste,
 espaçamento, largura e superfície por meio dos wrappers `.studio` e
-`.aculta-profile-editor`. Props, slots, render arrays e schemas de componentes
-não mudaram; tokens não são definidos no `:root`, evitando efeito nos demais
-purposes. A licença da fonte está junto dos WOFF2 em
+`.aculta-profile-editor`; os Form API de bio e redes do Perfil usam o root
+`form.studio-profile-form` traduzido dos tokens semânticos já emitidos por
+`aculta_user`. Props, slots, render arrays e schemas de componentes não mudaram;
+tokens não são definidos no `:root`, evitando efeito nos demais purposes. A
+licença da fonte está junto dos WOFF2 em
 `assets/fonts/montserrat/OFL.txt`. Em Firefox ESR visível, o consumer Marley
 recebeu a folha candidata injetada: 63/63 checks executáveis passaram, a fonte
 carregou, o gutter global ficou idêntico antes/depois e a tipografia computada do
@@ -72,16 +74,34 @@ renderização autenticada:
 | `wiki-entry` | `patterns/wiki-entry/wiki-entry.component.yml` | Lista/entrada Wiki; consumer e estado de revisão/moderação pendentes de homologação. |
 | `profile-editor`, `profile-identity`, `profile-bio`, `profile-social` | `patterns/profile-editor/profile-editor.component.yml`, `content/profile-identity/profile-identity.component.yml`, `content/profile-bio/profile-bio.component.yml`, `content/profile-social/profile-social.component.yml` | Reuso separado para edição privada e perfil público; grants, campos opt-in e cache precisam passar S-R4/S-R5. |
 
+A capa da Revista reutiliza `patterns/card` pelo template `node--revista--teaser`;
+não há SDC paralelo. A primeira publicação ocupa a composição de capa. Mídia e
+fallback decorativo mantêm proporção 16:9 abaixo de 992px; no desktop a imagem
+preenche a coluna principal. O fallback não copia SVG/imagem/CSS do upstream.
+`magazine-cover-runtime.py` mede esse contrato sobre a página real, simulando
+somente o markup de ausência de mídia no DOM.
+
 Institution Bar e Domain Header são elementos do shell ACULTA, não substitutos
 para SDC de conteúdo Studio. Seus contratos e consumers continuam independentes
 desta lista.
 
-Meus Salvos (`/studio/salvos`) já emite tokens neutros `studio-saved-*` e usa
-a listagem/paginação do controller proprietário. Antes de criar ou declarar um
-SDC consumidor nessa tela, confirmar a composição renderizada e testar cache
-privado A/B; `card`, `context-tabs` e `empty-state` são apenas candidatos de
-reuso até essa verificação. Não apresentar módulos opcionais ou ações sem
-consumer autorizado como funcionais.
+Meus Salvos (`account:/salvos`) já emite tokens neutros `studio-saved-*` e usa
+a listagem/paginação do controller proprietário. A folha do tema agora
+apresenta suas abas, cartões compactos, metadados, paginação e estado vazio com
+os tokens Fidelity existentes. O trabalho não criou SDC novo nem alterou
+render arrays, consulta, ACL ou cache; a fixture local de 131 checks valida
+somente CSS e markup equivalente. Em 2026-10-31, a CSS candidata também foi
+capturada na rota Runtime autenticada em cinco larguras; os checks confirmaram
+um H1 de conteúdo visível, breadcrumb preservado, shell único e zero overflow.
+Esse teste não valida a folha servida nem o cache privado A/B.
+`card`, `context-tabs` e `empty-state` continuam candidatos de reuso, sem
+consumer SDC comprovado nessa tela. Não apresentar módulos opcionais ou ações
+sem consumer autorizado como funcionais.
+
+Na captura, o H1 da rota repetia o título do H1 dentro da lista. A folha agora
+oculta somente o heading genérico da rota quando o consumer `.studio-saved-page`
+está presente, mantendo o H1 do conteúdo visível e o contexto na trilha de
+navegação. Nenhum render array ou contrato do controller foi alterado.
 
 O rodapé global também é composição do tema, não SDC; sua grade móvel começa em
 uma coluna e amplia progressivamente sem alterar blocos ou ordem DOM. A auditoria
@@ -142,20 +162,50 @@ não uma home autenticada; a paridade do conteúdo do Hub não é mensurável.
 O cartão do ponto de entrada usa agora a variante `studio_fidelity`. Ela mantém
 o contrato de slots/render array e aproxima margem, padding, raio e sombra dos
 teasers OpenCulturas 3.1.5, escopada à raiz `.studio`. A story é declarativa;
-não cria links funcionais. Firefox visível passou 45/45 medições na fixture
-local em nove larguras; não é captura do Runtime.
+não cria links funcionais. A fixture anterior passou 45/45 em nove larguras,
+mas seu markup não espelhava o consumer e continha duas instâncias sintéticas;
+seus resultados não são evidência do Hub.
+
+O adapter `PortalUiHooks::preprocessStudioHub()` reconhece o token tanto em
+`wrapper_attributes` quanto em `attributes`: o `AccountExperienceProvider`
+define `#attributes` no `item_list`, que o preprocess do Core expõe como
+`attributes`. O teste do consumer real usa agora esse contrato de Core; os links
+permanecem como render arrays no slot e mantêm `#access`, cache e attachments.
+
+`studio-card-fidelity.py` foi alinhado ao render array real do
+`AccountExperienceProvider` e ao adaptador `PortalUiHooks`: root
+`.studio.aculta-account-entry`, lista `.studio__actions` e cinco cartões com
+somente os links de Marley, Ganjalab, ACULTA STUDIO WE SATIVA, ACULTA STUDIO
+GREEN STASH e Culturas. Os rótulos da Conta privada coincidem agora com os
+providers das duas Suites. O CSS dá a cada link um alvo de 44×44px, sem alterar
+o SDC ou seus slots. Firefox ESR passou 250/250 medições em 27 larguras
+(320–1920px), incluindo container, grade, Montserrat, escala tipográfica, os
+cinco destinos, foco visível e ausência de overflow; zoom real a 200%/400%
+também passou, com viewports CSS de 640px/320px.
+Capturas em
+`/home/piradopirata/aculta-suite-out/studio-card-zoom-official-names-20261031/`.
+O reteste SDC passou 55 componentes/759 checks e `PortalUiHooksTest` passou 24
+testes/138 assertions. A fixture não representa o HTML servido; o Runtime
+continua no HEAD `2493d7535`.
 
 Na navegação interna, `.studio__tabs` e `.studio__subtabs` preservam os links e
 estados autorizados existentes. A apresentação distingue áreas primárias de
 abas secundárias no padrão OpenCulturas Next; ambas quebram linha na base
 mobile e neutralizam as molduras Bootstrap dos links e itens de lista, sem criar
-navegação ou destinos adicionais. Marley e a navegação contextual de Conta
-passaram os checks executáveis em Firefox com CSS candidato; comparação pareada
-e demais consumers permanecem pendentes (OCS-F2 parcial).
+navegação ou destinos adicionais. Cada link tem alvo mínimo de 44×44 CSS px.
+Firefox ESR visível verificou alvos e reflow numa fixture em 27 larguras, sem
+overflow; depois, a CSS candidata também foi verificada no Firefox ESR visível
+sobre as rotas reais servidas de Marley e Conta. A regra inclui âncoras dentro de
+`.studio__subtabs`, mesmo se o markup contextual não tiver `.studio__link`.
+Alvos foram medidos em 44px; a validação não prova implantação do CSS nem cobre
+todos os consumers. Comparação pareada e demais rotas permanecem pendentes
+(OCS-F2 parcial).
 
 `content/editorial-card` mantém os slots e o consumer atuais; altura mínima e
 padding compactos são a base, com composição ampla em `48.0625rem`. A validação
 visual do consumer real `node--editorial-highlight` segue pendente.
+
+O carrossel editorial da home MAIN reutiliza os controles do VVJB; anterior/próximo, pausa e pontos têm alvo de 44×44 CSS px, mantendo o ponto visual em 10 px. CSS escopada à View e sem novo SDC. Fixture Firefox passou 36/36 medições em 12 larguras; consulte `mobile-first-audit.md` para evidência e limites. A captura no Runtime com esta folha instalada permanece pendente.
 
 A galeria de álbuns usa markup e estado do módulo `aculta_gallery`; o tema faz
 o palco de uma coluna e miniaturas recolhidas desde a base, restaurando a grade
@@ -210,7 +260,7 @@ contratos e consumidores reais autorizem sua implementação; não são componen
 | Menção na imprensa | Story de uso de `content/editorial-card`; nenhum SDC novo | A View/consumer de menção real ainda não existe. |
 | `content/sponsor-logos` | Candidato experimental, sem marcas reais | Nenhum consumidor; marca só entra após autorização registrada e mídia pelo pipeline `aculta_image`. |
 | `patterns/bookmark-toggle` | Candidato experimental, com estados em stories | Consumido pelo tópico completo do Fórum através da ação nativa `flag_salvar_topico`; validação visual no Runtime pendente. A Flag mantém comportamento e acesso. |
-| `content/event_card` | Experimental com consumidor real | `PortalUiHooks::preprocessEventCatalogue()` adapta os render arrays neutros de `/eventos`; dados, filtros, acesso e cache continuam no `aculta_events`. A prop `proxima` recebe apenas a data; o SDC fornece o rótulo visual. CSS candidata validada com moldura única em dez viewports; runtime após rebuild pendente. |
+| `content/event_card` | Experimental com consumidor real | `PortalUiHooks::preprocessEventCatalogue()` adapta os render arrays neutros de `/eventos`; dados, filtros, acesso e cache continuam no `aculta_events`. A prop `proxima` recebe apenas a data; o SDC fornece o rótulo visual e usa H2 abaixo do H1 do catálogo. CSS candidata validada com moldura única e alvos de título de 44px em dez viewports; runtime após rebuild pendente. |
 | `layouts/event-page-five-regions` | Experimental com consumidor real | O override de tema `aculta-event-page.html.twig` compõe `/eventos/{slug}` em cinco regiões; o título de página é suprimido apenas nessa rota para manter um H1. |
 | `layouts/page-columns` (I-22) | Layout UI Patterns experimental com variações 1, 2 e 3 colunas e ordem DOM preservada no mobile | Sem consumidor real; permanece candidato. `rail` é horizontal e `content-section` não compõe regiões em colunas. |
 
@@ -218,10 +268,32 @@ contratos e consumidores reais autorizem sua implementação; não são componen
 colunas só entram em `48rem`. `tests/browser/aculta-theme-mobile-first/page-columns.py`
 compara a fixture do SDC em 320–1440px; continua sem consumer de produto.
 
+### ACULTA Studio Culturas — dashboard do owner Eventos
+
+`[data-portal-ui="event-organizer-dashboard"]` é o consumer atual de
+`EventOrganizerDashboardController`, traduzido para a classe
+`.aculta-events-organizer-dashboard` pelo `PortalUiHooks` existente. O CSS em
+`studio.css` compõe intro, guia, ações, filtros e tabela em mobile-first sob
+`body.path-culturas`. Não foi criado SDC porque o controller já fornece a
+estrutura e os render arrays proprietários; não se duplica contrato visual ou
+funcional em um componente paralelo. O fixture e suas limitações estão em
+[`tests/browser/aculta-studio/README.md`](../../../../../tests/browser/aculta-studio/README.md).
+
 As quatro cores fechadas de seção têm tokens, pares de contraste e stories no
 `content-section`. O bloco básico expõe `field_section_color` e preserva
 `field_section_variant` como dimensão visual separada; a hook `aculta_section`
 passa a cor escolhida ao SDC com fallback `default`.
+
+Os formulários owner existentes `aculta-event-add-form` e
+`aculta-event-location-add-form` reutilizam os tokens e estilos de formulário
+do tema, sob `body.path-culturas`; não há SDC ou Form API paralelo. Em Firefox
+ESR, as folhas candidatas foram medidas nas rotas reais em 320/360/390/599/600/
+768/1024/1280/1440px: 108/108 checks, sem overflow e com alvos de campo/ação de
+44px ou maiores. Um aviso ULI em 320px também permaneceu em fluxo (1/1 check).
+O título do aviso foi medido separadamente num fixture anônimo: 18px/22,5px em
+uma linha a 320px; o screenshot foi revisado.
+Isso não prova integração no Runtime nem cobre submit, ACL, CEP, modo escuro ou
+OCS-F11; veja os limites e o comando reproduzível no README da suíte.
 
 ## Gates do tema — 2026-10-28
 
@@ -257,9 +329,10 @@ consumidores, modos claro/escuro e renderização no Firefox ESR.
 
 ## B8 — composições de página em colunas
 
-`patterns/rail` oferece rolagem horizontal, `content-section` é um frame de
-conteúdo único e `ui_patterns_layouts` adapta SDCs para Layout Builder sem
-fornecer por si só um arranjo 1/2/3 colunas. O candidato
+`patterns/rail` oferece rolagem horizontal nativa com snap por proximidade para
+preservar navegação incremental por teclado em zoom alto; `content-section` é
+um frame de conteúdo único e `ui_patterns_layouts` adapta SDCs para Layout
+Builder sem fornecer por si só um arranjo 1/2/3 colunas. O candidato
 `layouts/page-columns` fornece regiões principal, secundária e complementar;
 tem stories de 1, 2 e 3 colunas e empilha as regiões pela ordem do DOM abaixo de
 768 px. As três variações foram capturadas no Runtime em 320 px e dark. Drawers
@@ -358,14 +431,94 @@ fornecidos pelo consumidor. Nenhum SDC, prop, slot ou story novo foi necessário
 nesta camada; a matriz de paridade e o inventário upstream registram os estados
 pendentes de captura.
 
+### OCS-F1/F5–F7/F9 — estilos de Form API no tema
+
+Os formulários existentes continuam sendo renderizados pelos módulos e pelo
+Form API; o tema não cria um SDC de formulário paralelo. O editor de Publicações
+é limitado a `body.path-marley`; os Form API de bio e redes do Perfil reutilizam
+os tokens existentes `studio-bio-form`/`studio-social-form`, traduzidos pelo
+tema em `studio-profile-form`. Apelido e privacidade, sem token semântico próprio,
+usam seus IDs reais somente sob `body.path-perfil`. O token `account-bio-dialog`
+mantém a classe de tamanho do diálogo e reutiliza `studio-profile-form` para o
+campo privado de bio da Conta. A fixture Firefox ESR mais recente passou 66/66
+verificações em claro/escuro e 320/390/768/1440px: Fidelity nos formulários
+Marley/Perfil e no modal privado de bio, ausência de Fidelity no Magazine,
+campos/ações com pelo menos 44px, checkboxes de 20px com rótulos de 44px e foco
+visível. Não houve novo SDC, slot ou prop.
+A fixture não substitui a homologação dos consumers reais, submissão Form API,
+AJAX/no-JS, grants, cache ou privacidade A/B. Evidência em
+`/home/piradopirata/aculta-suite-out/studio-form-fidelity-account-modal-20261031/`.
+
+No formulário nativo de criação de publicação, a aparência Fidelity do botão
+fica restrita aos controles em `.form-actions`. Os botões do CKEditor e de
+widgets mantêm sua própria apresentação; não se cria SDC nem toolbar paralela.
+A captura candidata Firefox do GET `/marley/revista/nova` mediu 23 controles de
+toolbar, duas ações Form API com alvos ≥44px e ausência de overflow em
+320/390/768/1440px, em claro e escuro. A CSS é injetada apenas no navegador de
+teste; a folha integrada no Runtime ainda precisa ser homologada. Evidências em
+`/home/piradopirata/aculta-suite-out/marley-editor-form-final-20261031/` e
+`/home/piradopirata/aculta-suite-out/marley-editor-form-dark-20261031/`.
+
+O Form API de criação de curso também reutiliza o tratamento `.studio__main form`
+existente; a classe vem do token `studio-main`, mapeado pelo tema. A raiz e o
+link de retorno usam tokens de apresentação (`studio-course-authoring` e
+`studio-course-authoring-back`) mapeados para classes já existentes. O
+controlador do ACULTA Studio apenas compõe a operação
+`add` do Group `lms_course` e mantém seu formulário/ACL originais. Não foi
+criado SDC de formulário paralelo; a rota canônica é
+`/ganjalab/cursos/novo` em `courses`, com retorno à experiência ACULTA Studio
+Ganjalab. Homologação Firefox integrada está `DEFERRED` até o Runtime carregar
+o HEAD da PR; o GET antigo em `/group/add/lms_course` foi confirmado fora do
+tema como admin Claro e com overflow a 320px.
+
 ### OCS-F8 — área comercial integrada
 
 Green Stash usa o token neutro `green-stash-entry`; o tema o mapeia para a raiz
 visual `.studio.aculta-green-stash`. Assim a área comercial integrada reutiliza
 a fundação de tipografia, superfície e layout do Studio, preservando os
 componentes específicos de Green Stash. Não foi criado SDC, shell, menu global
-ou fluxo de Commerce paralelo. A renderização candidata ainda requer Firefox
-visível no Runtime para validação.
+ou fluxo de Commerce paralelo. Navegação contextual mostra apenas Visão geral,
+Produtos e Envios; áreas sem operação implementada não são links e respondem
+404. Fixture local valida a folha candidata; renderização integrada requer
+Firefox visível no Runtime.
+
+`studio.css` compõe a navegação autorizada emitida pelo
+`GreenStashNavigation`, o formulário GET de busca e as listagens de
+produto/remessa emitidas pelo controller. O CSS é escopado pela raiz
+`.studio.aculta-green-stash`, mantém apenas Visão geral, Produtos e Envios,
+permite quebra sem rolagem horizontal e dá acabamento de cartão às linhas com H3. Nenhum SDC novo
+foi necessário: os dados operacionais atuais são wrappers simples de render
+arrays e continuam pertencendo ao módulo Commerce. A fixture
+`green-stash-layout.py` passou 74/74 checks no Firefox ESR visível em nove
+larguras e claro/escuro; capturas da fixture estão em
+`$SUITE_OUT/green-stash-layout-continuation-20261030/`. Reteste de 2026-10-31
+passou 74/74 com a navegação limitada às três áreas operacionais, em evidência
+`$SUITE_OUT/green-stash-nav-implemented-only-20261031/`. Ambas são fixtures, não
+homologação do Runtime. Esta evidência valida somente a folha e a marcação simulada. Operador autorizado, grants por loja,
+rotas reais e fluxos de escrita seguem pendentes.
+
+Reteste focal de 2026-10-31 acrescentou a Visão geral e os avisos informativos
+reais de estado e escopo da raiz ao fixture. O aviso recebeu surface Fidelity,
+barra lógica de 4px e wrapping móvel, sem nova classe de markup ou SDC; o padrão
+de caixa informativa do `opcult` 3.1.5 (`sass/base/_messages.scss`, tarball SHA-256
+`2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`) serviu
+somente de referência hierárquica. Firefox ESR passou **114/114 checks** em
+nove larguras, claro/escuro e zoom real 200%/400%, incluindo contraste
+15,25:1/11,17:1, aviso exato da Visão geral e encaixe dos elementos a 320px
+CSS. Capturas de estado em 320/390/1440px e zoom ficam em
+`/home/piradopirata/aculta-suite-out/green-stash-zoom-rerun-20261031/`.
+Continua fixture da folha candidata; não valida Runtime, operador autorizado,
+grants por loja, dados Commerce ou fluxos de escrita.
+
+Em 2026-10-31, a fixture foi expandida aos consumers representativos de detalhe
+de produto e criação de rascunho. O cartão usa os tokens Fidelity; o formulário
+reaproveita os estilos `.studio__main form` existentes. Firefox ESR passou
+186/186 verificações em nove larguras, claro/escuro, foco e zoom real 200/400%.
+A execução local também encontrou e corrigiu `min-width:auto` no formulário de
+criação, que causava overflow a 320px/400%. Capturas e `report.json`:
+`/home/piradopirata/aculta-suite-out/green-stash-detail-create-homologation-20261031/`.
+É evidência de CSS candidata em fixture; grants por loja, renderização Runtime,
+dados reais e submissão do formulário continuam pendentes.
 
 ## THEME-MF2 — `patterns/content-grid`
 
@@ -405,6 +558,15 @@ pode quebrar em colunas estreitas. Firefox ESR passou 32/32 checks, incluindo
 575/576px foi confirmada. Capturas em
 `/home/piradopirata/suite-out/aculta-theme-author-card-892f803d5/`.
 
+Links sociais do cartão agora usam alvos de 44×44px em todos os tamanhos. A
+story Editorial cobre essa variação com dados públicos autorizados. Firefox ESR
+passou 43/43 checks em 320/360/390/575/576/600/768/1024/1280/1440px: a folha
+candidata e dois links sintéticos do SDC mediram 44×44px; o consumer real do
+Fórum manteve cinco cartões e não apresentou overflow. Os links sociais da
+listagem real não foram tratados como disponíveis nem usados para alegar teste
+de dados de perfil. Evidência em
+`$SUITE_OUT/author-card-social-targets-20261030/`.
+
 ## THEME-MF2 — navegação do shell `portal-account`
 
 A sanfona já usada em mobile virou base; o breakpoint de 48rem restaura o menu
@@ -413,6 +575,16 @@ DOM ou atributos AJAX. A folha candidata passou 33/33 checks Firefox autenticado
 em dez larguras e sem overflow. A repetição integrada sem CSS override passou
 33/33 após commit e `drush cr`; a agregação ativa foi verificada. Evidência em
 `/home/piradopirata/suite-out/aculta-account-shell-8768825cf/`.
+
+Em 2026-10-31, a sanfona mobile foi organizada em duas colunas sem duplicar
+markup ou mudar a ordem das 13 seções. A seção aberta e o logout ocupam a linha
+completa; em 320–767px os alvos continuam com 56px e a navegação cai de 12 para
+7 linhas no caso capturado. Firefox ESR passou 39/39 verificações na folha
+candidata em modo claro e 39/39 em escuro; capturas 320px revisadas em
+`/home/piradopirata/aculta-suite-out/account-shell-two-column-final2-20261031/`
+e `/home/piradopirata/aculta-suite-out/account-shell-two-column-dark-20261031/`.
+Não houve submissão nem gravação de preferências; gates de teclado, zoom,
+privacidade A/B e WCAG integral continuam pendentes.
 
 ## THEME-MF0 — `donation-quick` no purpose SUPPORT
 
@@ -506,13 +678,95 @@ três regiões em 768px. Comportamento, testes e limites estão em
 [`mobile-first-audit.md`](mobile-first-audit.md).
 
 
-### Consumer real — capa da Revista (2026-10-30)
+### THEME-MF2 — alvos dos teasers da Revista
+
+Links de título e ação no consumer `revista_sessoes` têm altura mínima de 44px,
+com a mesma composição do SDC `card`. O primeiro resultado usou CSS candidata
+injetada na sessão; o reteste integrado do consumer está registrado logo abaixo.
+Não foi criado componente nem alterado contrato. Evidências e limites em
+`mobile-first-audit.md`.
+
+### Consumer real — capa da Revista (2026-10-31)
 
 A página da View `revista_sessoes` reutiliza `patterns/hero` para o título
 contextual e o `patterns/card` existente para os teasers editoriais, sem novo
 SDC nem alteração dos contratos de conteúdo. A capa principal muda para
 composição horizontal em desktop por CSS da View; em telas menores empilha
-imagem e conteúdo. Stories e schema dos SDCs permanecem inalterados porque
-não houve mudança de contrato. O consumer foi capturado no Firefox ESR visível
-no Runtime em 320–1440px; a evidência e os limites estão em
+imagem e conteúdo. Stories e schema permanecem inalterados: o consumer continua
+usando os slots existentes e não adiciona props/variantes. A página foi validada
+no Firefox ESR visível no Runtime, sem injeções, em 320–1440px, claro/escuro,
+teclado, JavaScript ligado/desligado e zoom 200/400%; passou 28/28 checks. CSS
+servida e do checkout têm SHA-256 igual. Capturas e limites em
 `mobile-first-audit.md`.
+
+Se `field_media_image` estiver vazio, o template envia um container decorativo
+no slot `image` do mesmo `patterns/card`; a CSS cria uma região 16:9 com tokens
+semânticos e gradientes, sem copiar o SVG ou os estilos upstream. O markup
+continua sem texto, ação, novo SDC ou ativo externo. O template e a CSS agora
+estão servidos no Runtime; `magazine-cover-runtime.py` passou 28/28 verificações
+na capa real. A simulação complementar do slot sem mídia passou 37/37 checks de
+geometria em nove larguras, mas substitui o wrapper no DOM e injeta a CSS; não
+executa o Twig vazio. Como `field_media_image` é obrigatório e os quatro artigos
+de inspeção têm mídia, não se criou conteúdo que contornasse a validação. Não
+há caso real sem imagem homologado; ver `mobile-first-audit.md`.
+
+### THEME-MF2 — organizações de Eventos e conteúdo relacionado
+
+A apresentação dos formulários de organização, cartões de organização e bloco
+de conteúdo relacionado usa os contratos `data-portal-ui` existentes. O tema
+centraliza CSS responsivo em `css/components/event-organization.css` e
+`content.css`; a biblioteca CSS desativada do módulo Índice foi removida. Não
+houve SDC novo nem mudança de props/slots: formulários e bloco preservam seus
+consumidores e contratos Drupal. A fixture Firefox reutiliza Bootstrap local e
+passa 74/74 checks; Kernel dos módulos está DEFERRED sem `SIMPLETEST_DB`. Veja
+`mobile-first-audit.md` para detalhes e limites.
+
+### OCS-F7 — consumer ACULTA STUDIO WE SATIVA (2026-10-30)
+
+A composição visual do consumer Wiki reutiliza os SDCs existentes
+`context-header`, `content-section`, `context-tabs`, `content-grid`, `card` e
+`empty-state`; não foi criado SDC paralelo nem story fictícia. O wrapper real
+`we-sativa__workspace`, mapeado pelo `PortalUiHooks`, é a raiz de escopo dos
+tokens e estilos Fidelity. O catálogo não declara schema novo nem consumidor
+extra: os render arrays são construídos por `WikiContributorWorkspace`.
+Firefox ESR visível confirmou no consumer real servido (path legado `/wesativa`)
+14 invariantes por viewport em 320/1440px: fonte, wrapper, headings, seções,
+estados, quatro filtros, filtro atual único, wrapping, links de pelo menos 44px,
+overflow e isolamento do shell. No modo escuro, 15/15 invariantes passaram nos
+mesmos dois viewports. O path canônico `/studio/we-sativa` ainda não é servido
+pelo Runtime HEAD `2493d7535`; F7 permanece parcial, sem aprovação.
+
+### OCS-F3 — reexecução da fixture do Hub Fidelity
+
+A combinação existente de `studio__tabs`, `studio__subtabs` e SDC `card` foi
+revalidada em 27 larguras (243 checks Firefox ESR), com rótulos longos quebrando
+sem overflow e cards em duas colunas a partir de 768px. Não cria SDC nem altera
+contrato. Capturas e limitações em `studio-visual/visual-parity-matrix.md` e
+`mobile-first-audit.md`.
+
+Atualização visual de 2026-10-31: links e botões dentro de
+`profile-identity__actions`, `profile-bio__actions` e `profile-social__actions`
+recebem altura mínima de 44px. A captura autenticada mediu o baseline servido em
+19px e a folha candidata em 44px ou mais nos sete links reais, a
+320/390/768/1024/1440px; modo escuro passou a 320/390px. Nenhum contrato SDC
+mudou. Ver limites e evidências no [roadmap visual](visual-cross-product-roadmap.md)
+e na [auditoria mobile-first](mobile-first-audit.md); validação candidata não
+equivale a homologação Runtime, F11 ou MF3.
+
+### Conta — cards das experiências no Hub
+
+O Hub da Conta reutiliza o SDC `patterns/card` para as experiências disponíveis.
+O adaptador mantém a lista Drupal e seus destinos; `studio.css` neutraliza apenas
+a pele `list-group-item` dos `<li>` que envolvem o SDC, evitando uma segunda
+superfície ao redor do card. A fixture `tests/browser/aculta-studio/studio-card-fidelity.py`
+reproduz o markup Core, verifica 27 viewports, teclado e zoom de 200%/400%;
+a evidência atual é local candidata e está registrada na auditoria mobile-first.
+
+A folha publicada também foi confirmada sem override no Runtime em nove larguras;
+cinco cards foram renderizados sem overflow, com Institution Bar e Domain Header
+únicos. Evidências e limites estão na auditoria mobile-first.
+
+O SDC `patterns/card`, variante `studio_fidelity`, é também o padrão visual para
+cards de cursos e certificados emitidos pelo compositor Ganjalab. O compositor
+mantém dados, links e acesso sob os contratos LMS; a variante altera somente a
+apresentação.

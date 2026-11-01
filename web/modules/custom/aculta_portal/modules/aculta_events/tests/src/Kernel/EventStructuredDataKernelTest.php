@@ -71,13 +71,13 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
         'end_value' => '2026-11-10T21:00:00',
       ],
       'field_modo' => 'hibrido',
-      'field_link_virtual' => 'https://transmissao.aculta.org/debate',
+      'field_link_virtual' => 'https://transmissao.example.invalid/debate',
       'field_abertura_portas' => '18:30 (30 minutos antes)',
     ]);
     $data->save();
 
     $this->assertSame('hibrido', $data->get('field_modo')->value);
-    $this->assertSame('https://transmissao.aculta.org/debate', $data->get('field_link_virtual')->uri);
+    $this->assertSame('https://transmissao.example.invalid/debate', $data->get('field_link_virtual')->uri);
     $this->assertSame('18:30 (30 minutos antes)', $data->get('field_abertura_portas')->value);
   }
 
@@ -104,7 +104,7 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
       'body' => 'Entidade dedicada ao desenvolvimento e promoção da cultura.',
       'localidade' => 'Curitiba',
       'uf' => 'PR',
-      'links' => "https://aculta.org\nhttps://instagram.com/aculta",
+      'links' => "https://aculta.example.invalid\nhttps://instagram.com/aculta",
       'reivindicada' => TRUE,
       'reivindicacao_status' => 'confirmada',
     ]);
@@ -147,7 +147,7 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
         'end_value' => '2026-11-15T21:30:00',
       ],
       'field_modo' => 'hibrido',
-      'field_link_virtual' => 'https://aovivo.aculta.org/cinema',
+      'field_link_virtual' => 'https://aovivo.example.invalid/cinema',
       'field_gratuito' => TRUE,
     ]);
     $data->save();
@@ -172,7 +172,7 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
     $this->assertIsArray($eventGraphItem['location']);
     $this->assertCount(2, $eventGraphItem['location']);
     $this->assertSame('VirtualLocation', $eventGraphItem['location'][0]['@type']);
-    $this->assertSame('https://aovivo.aculta.org/cinema', $eventGraphItem['location'][0]['url']);
+    $this->assertSame('https://aovivo.example.invalid/cinema', $eventGraphItem['location'][0]['url']);
     $this->assertSame('Place', $eventGraphItem['location'][1]['@type']);
     $this->assertSame('Espaço Cultural das Flores', $eventGraphItem['location'][1]['name']);
     $this->assertSame('Curitiba', $eventGraphItem['location'][1]['address']['addressLocality']);
@@ -212,7 +212,7 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
     $this->assertSame('BR', $orgJson['address']['addressCountry']);
     $this->assertSame('Curitiba', $orgJson['address']['addressLocality']);
     $this->assertSame('PR', $orgJson['address']['addressRegion']);
-    $this->assertContains('https://aculta.org', $orgJson['sameAs']);
+    $this->assertContains('https://aculta.example.invalid', $orgJson['sameAs']);
     $this->assertContains('https://instagram.com/aculta', $orgJson['sameAs']);
   }
 

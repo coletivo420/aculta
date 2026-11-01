@@ -293,10 +293,6 @@ display:
     position: 1
     display_options:
       title: 'Categorias do Growroom420'
-      defaults:
-        fields: false
-        header: false
-        style: false
       fields:
         tid:
           id: tid
@@ -425,10 +421,15 @@ display:
         type: default
         options:
           grouping:
-            - field: parent_name
+            -
+              field: parent_name
               rendered: false
               rendered_strip: false
           default_row_class: true
+      defaults:
+        style: false
+        fields: false
+        header: false
       header:
         area_text_custom:
           id: area_text_custom

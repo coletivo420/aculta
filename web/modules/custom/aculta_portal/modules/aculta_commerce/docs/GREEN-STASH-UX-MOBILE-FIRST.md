@@ -43,7 +43,7 @@ Acesso a **checkout Comum/Loja/LMS/Doações** é no painel transversal do **Por
 
 ## Layout responsivo
 
-**320–599px:** barra multidomínio global preservada; cabeçalho da experiência com título, descrição curta, busca e ação contextual; bottom navigation **dentro do Green Stash** com até quatro destinos prioritários (Início, Produtos, Pedidos, Envios) e item Mais para Estoque, Promoções, Clientes, Relatórios, Configurações, quando autorizados. A bottom navigation não substitui o cabeçalho global nem o carrinho. Áreas não autorizadas omitidas, não placeholders habilitados. Listas são cartões compactos, filtros em drawer/bottom-sheet acessível ou formulário na página, ações secundárias em menu por item.
+**320–599px:** barra multidomínio global preservada; cabeçalho da experiência com título, descrição curta, busca e ação contextual; bottom navigation **dentro do Green Stash** com até quatro destinos prioritários (Início, Produtos, Pedidos, Envios) e item Mais para Estoque, Promoções, Clientes, Relatórios, Configurações, quando autorizados. A navegação mostra somente destinos com operação implementada e acesso autorizado; hoje: Visão geral, Produtos e Envios. Pedidos, Estoque, Promoções, Clientes, Relatórios e Configurações ficam omitidos até seus fluxos serem implementados e homologados. A navegação não transforma autorização de entrada em autorização operacional. A bottom navigation não substitui o cabeçalho global nem o carrinho. Áreas indisponíveis são omitidas, não placeholders habilitados. Listas são cartões compactos, filtros em drawer/bottom-sheet acessível ou formulário na página, ações secundárias em menu por item.
 **600–1023px:** navegação da experiência como abas/rail compacto, listas adaptativas e painel de detalhe.
 **1024px+:** navegação lateral persistente, cabeçalho contextual, listagens tabeladas com paginação e painel de detalhe separado; mesmos endpoints/autorização que no telefone.
 Não inventar altura fixa ou barras que cubram o conteúdo/teclado. Respeitar safe-area e reduzir movimento.
@@ -124,3 +124,19 @@ Todos com `.component.yml`, Twig, CSS com tokens, stories e gates; sem acesso a 
 ## Dívidas
 
 GS-UX-01: validar provider/rota/container no homelab. GS-UX-02: testar matrizes de roles/store. GS-UX-03: conferir componentes exatos de navegação Studio/tema e histórias disponíveis antes de criar novos. GS-UX-04: KPIs dependem do contrato real Statistics. GS-UX-05: envios e estoque dependem das integrações REST/Stock e testes reais. Não declarar concluído o que está apenas projetado.
+
+## Revalidação da apresentação integrada — 2026-10-31
+
+A rota canônica da implementação local é `shop:/studio/green-stash`. A suíte Unit
+`StudioIdentityRoutingTest`, `GreenStashNavigationTest` e
+`GreenStashExperienceProviderTest` passaram 10 testes/252 assertions. A fixture de browser
+passou 186/186 checks em claro/escuro, larguras 320–1440px e zoom 200/400%,
+exibindo as três áreas candidatas existentes e mantendo zero overflow. A visão
+geral declara que nenhuma operação comercial está disponível nessa tela; os
+estados de produto usados pela fixture não salvam dados.
+
+No Runtime `2493d7535`, a rota nova ainda responde 404 e o caminho legado
+`/greenstash` permanece servido; a captura legacy a 320px mede `documentScrollWidth=330`
+com viewport de 320px. A verificação da rota/UI oficial, controle de acesso por
+loja e operações reais permanece DEFERRED até o Runtime servir o commit da branch.
+A fixture não substitui as dívidas GS-UX-01/02/05 nem homologa OCS-F8/F11.

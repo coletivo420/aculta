@@ -38,6 +38,7 @@ final class LearnerDashboardComposer {
     $data = $this->dashboards->studentDashboard($this->currentUser);
     $build = [
       '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'studio-fidelity-scope'],
       'context_header' => [
         '#theme' => 'aculta_portal_component',
         '#name' => 'context-header',
@@ -88,6 +89,7 @@ final class LearnerDashboardComposer {
       $course_items[] = [
         '#theme' => 'aculta_portal_component',
         '#name' => 'card',
+        '#props' => ['variant' => 'studio_fidelity'],
         '#slots' => [
           'header' => $item['title'],
           'content' => [
@@ -134,6 +136,7 @@ final class LearnerDashboardComposer {
       $certificate_items[] = [
         '#theme' => 'aculta_portal_component',
         '#name' => 'card',
+        '#props' => ['variant' => 'studio_fidelity'],
         '#slots' => [
           'header' => $certificate_data['course'],
           'content' => [

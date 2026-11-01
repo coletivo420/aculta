@@ -1,3 +1,4 @@
+uuid: 7eb12273-0415-40e0-9e09-3da9402059e7
 langcode: pt-br
 status: true
 dependencies:
@@ -22,6 +23,7 @@ content:
     third_party_settings: {  }
 hidden:
   created: true
+  field_media_forum_image: true
   langcode: true
   name: true
   path: true

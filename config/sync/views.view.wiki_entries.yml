@@ -144,9 +144,6 @@ display:
     display_plugin: page
     position: 1
     display_options:
-      defaults:
-        pager: false
-        header: false
       pager:
         type: full
         options:
@@ -168,6 +165,9 @@ display:
             offset: false
             offset_label: Offset
           quantity: 9
+      defaults:
+        pager: false
+        header: false
       header:
         result:
           id: result

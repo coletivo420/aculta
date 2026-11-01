@@ -2,7 +2,7 @@
 .aculta-rail {
   overflow-x: auto;
   overscroll-behavior-inline: contain;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: x proximity;
   padding-block-end: 0.5rem;
 }
 .aculta-rail:focus-visible {

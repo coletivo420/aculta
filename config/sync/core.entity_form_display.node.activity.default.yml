@@ -71,14 +71,14 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_event_location:
-    type: aculta_event_location_modal
+  field_event_end:
+    type: datetime_default
     weight: 15
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_event_end:
-    type: datetime_default
+  field_event_location:
+    type: aculta_event_location_modal
     weight: 15
     region: content
     settings: {  }
@@ -219,4 +219,3 @@ hidden:
   field_place_name: true
   promote: true
   sticky: true
-

@@ -24,6 +24,7 @@ UID = os.environ.get("ACCOUNT_ADDRESS_UID", "5")
 PATH = "/dados/endereco"
 WIDTHS = [320, 360, 390, 599, 600, 768, 1024, 1280, 1440]
 NO_JS_WIDTHS = [320, 390, 768, 1440]
+ZOOM_TARGETS = (2.0, 4.0)
 results = []
 
 
@@ -70,6 +71,16 @@ def viewport(driver, socket, context, width):
     return int(driver.js("return innerWidth"))
 
 
+def press_browser_key(key):
+    windows = subprocess.check_output(
+        ["xdotool", "search", "--onlyvisible", "--class", "firefox"], text=True,
+    ).splitlines()
+    if not windows:
+        raise RuntimeError("Janela visível do Firefox ESR não encontrada.")
+    subprocess.run(["xdotool", "windowactivate", "--sync", windows[-1]], check=True)
+    subprocess.run(["xdotool", "key", "--clearmodifiers", key], check=True)
+
+
 viewport.command_id = 1
 
 
@@ -105,11 +116,13 @@ def form_metrics(driver):
         hiddenCountry: countryHidden,
         cepLibrary: lib.includes('aculta_portal_cep/cep-address')
           || scripts.some((src) => src.includes('cep-address')) || cepBehavior,
-        addressLayoutRow: !!row, content: rect(content), row: rect(row),
+        addressLayoutRow: !!row, content: rect(content), row: rect(row), postal: rect(postal),
         number: rect(number?.closest('.form-item, .js-form-item') || number),
         sn: rect(sn?.closest('.form-check, .form-item, .js-form-item') || sn),
         complement: rect(complement?.closest('.form-item, .js-form-item') || complement),
         scrollWidth: document.documentElement.scrollWidth,
+        bodyScrollWidth: document.body.scrollWidth,
+        devicePixelRatio,
         viewportWidth: innerWidth,
         accountMenuHasMyData: [...document.querySelectorAll('.portal-account__menu a, .portal-account__accordion a')]
           .some((link) => new URL(link.href, location.href).pathname.replace(/\\/$/, '') === '/dados'),
@@ -145,18 +158,39 @@ def run(no_js=False):
         for width in widths:
             actual = viewport(driver, socket, context, width)
             metrics = form_metrics(driver)
-            check(f"{label} {width}px: viewport sem overflow", actual == width and metrics["scrollWidth"] <= width,
-                  {"viewport": actual, "document": metrics["scrollWidth"]})
+            check(f"{label} {width}px: viewport sem overflow", actual == width
+                  and metrics["scrollWidth"] <= width and metrics["bodyScrollWidth"] <= width,
+                  {"viewport": actual, "document": metrics["scrollWidth"],
+                   "body": metrics["bodyScrollWidth"]})
             if not no_js:
                 row, content = metrics["row"], metrics["content"]
                 contained = bool(row and content and row["left"] >= content["left"] - 2
                                  and row["right"] <= content["right"] + 2)
                 pieces = [metrics["number"], metrics["sn"], metrics["complement"]]
-                ordered = all(pieces) and pieces[0]["right"] <= pieces[1]["left"] + 4 \
-                    and pieces[1]["right"] <= pieces[2]["left"] + 4
+                # Mobile wrapping is expected when the Complemento control cannot
+                # fit beside Número/S-N. Preserve DOM/visual order across rows,
+                # while still rejecting overlap when controls share a row.
+                def follows(previous, current):
+                    if current["top"] > previous["top"] + 4:
+                        return True
+                    return current["left"] >= previous["right"] - 4
+
+                ordered = all(pieces) and follows(pieces[0], pieces[1]) \
+                    and follows(pieces[1], pieces[2])
                 check(f"JS {width}px: agrupamento existente cabe no conteúdo", metrics["addressLayoutRow"]
                       and contained and ordered,
                       {"row": row, "content": content, "number": pieces[0], "sn": pieces[1], "complement": pieces[2]})
+            # Scroll only through WebDriver-injected test code so captures show
+            # the actual address fields, including in the site's no-JS run.
+            postal_view = driver.js("""const field=document.querySelector('input[name$="[postal_code]"]');
+              field?.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
+              if (!field) return null;
+              const box=field.getBoundingClientRect();
+              return {top:Math.round(box.top*100)/100,bottom:Math.round(box.bottom*100)/100,
+                viewport:innerHeight};""")
+            postal_visible = bool(postal_view and postal_view["top"] >= 0
+                                  and postal_view["bottom"] <= postal_view["viewport"])
+            check(f"{label} {width}px: campo CEP visível na captura", postal_visible, postal_view)
             # Mask typed values in screenshots; captures stay outside the repository.
             driver.js("""if (!document.querySelector('[data-address-visual-mask]')) {
               const style=document.createElement('style'); style.dataset.addressVisualMask='true';
@@ -166,6 +200,42 @@ def run(no_js=False):
             image = driver.req("GET", f"/session/{driver.session}/screenshot")
             suffix = "nojs" if no_js else "js"
             (OUT / f"account-address-{suffix}-{width}.png").write_bytes(base64.b64decode(image))
+
+        # Real Firefox page zoom (Ctrl+Plus), while retaining the same form
+        # consumer and never entering or submitting address data.
+        for target in ZOOM_TARGETS:
+            press_browser_key("ctrl+0")
+            time.sleep(0.15)
+            viewport(driver, socket, context, 1280)
+            zoom = form_metrics(driver)
+            for _ in range(24):
+                if 1280 / max(1, zoom["viewportWidth"]) >= target - 0.08:
+                    break
+                press_browser_key("ctrl+plus")
+                time.sleep(0.12)
+                zoom = form_metrics(driver)
+            ratio = 1280 / max(1, zoom["viewportWidth"])
+            reached = ratio >= target - 0.08
+            no_overflow = (zoom["scrollWidth"] <= zoom["viewportWidth"]
+                           and zoom["bodyScrollWidth"] <= zoom["viewportWidth"])
+            check(f"{label}: Firefox zoom {round(target * 100)}% atingido sem overflow",
+                  reached and no_overflow,
+                  {"target": target, "ratio": ratio, "viewport": zoom["viewportWidth"],
+                   "document": zoom["scrollWidth"], "body": zoom["bodyScrollWidth"],
+                   "devicePixelRatio": zoom["devicePixelRatio"]})
+            postal_view = driver.js("""const field=document.querySelector('input[name$="[postal_code]"]');
+              field?.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
+              if (!field) return null;
+              const box=field.getBoundingClientRect();
+              return {top:Math.round(box.top*100)/100,bottom:Math.round(box.bottom*100)/100,
+                viewport:innerHeight};""")
+            postal_visible = bool(postal_view and postal_view["top"] >= 0
+                                  and postal_view["bottom"] <= postal_view["viewport"])
+            check(f"{label}: campo CEP visível a zoom {round(target * 100)}%", postal_visible, postal_view)
+            image = driver.req("GET", f"/session/{driver.session}/screenshot")
+            (OUT / f"account-address-{label}-zoom-{round(target * 100)}.png").write_bytes(
+                base64.b64decode(image)
+            )
         return True
     finally:
         socket.close()

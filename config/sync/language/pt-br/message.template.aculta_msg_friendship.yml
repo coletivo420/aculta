@@ -1,0 +1,7 @@
+text:
+  -
+    value: 'Atualização de amizade na ACULTA'
+    format: plain_text
+  -
+    value: 'Você recebeu uma atualização de amizade. Acesse sua conta para conferir: @account_url'
+    format: plain_text

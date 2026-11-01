@@ -1,12 +1,13 @@
+uuid: 560e7af7-3b6c-4a6b-9034-c12a914763c5
 langcode: pt-br
 status: true
 dependencies:
-  enforced:
-    module:
-      - aculta_forum
   module:
     - file
     - media
+  enforced:
+    module:
+      - aculta_forum
 id: media.field_media_forum_attachment
 field_name: field_media_forum_attachment
 entity_type: media

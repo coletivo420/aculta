@@ -5,9 +5,9 @@ module:
   aculta_commerce: 0
   aculta_commerce_melhorenvio: 0
   aculta_content_admin: 0
-  aculta_editor: 0
-  aculta_donation: 0
   aculta_document_viewer: 0
+  aculta_donation: 0
+  aculta_editor: 0
   aculta_events: 0
   aculta_events_openstreetmap: 0
   aculta_faq: 0
@@ -17,17 +17,21 @@ module:
   aculta_gallery: 0
   aculta_game: 0
   aculta_id_cpf: 0
-  aculta_index: 0
   aculta_image: 0
+  aculta_index: 0
+  aculta_links: 0
   aculta_lms: 0
   aculta_lms_agenda: 0
   aculta_lms_h5p: 0
   aculta_lms_messenger: 0
-  aculta_links: 0
   aculta_lms_resources: 0
   aculta_magazine: 0
+  aculta_mail_confirmer: 0
+  aculta_mail_confirmer_user: 0
   aculta_mailer: 0
   aculta_maps: 0
+  aculta_mcp: 0
+  aculta_mcp_client: 0
   aculta_messenger: 0
   aculta_pagamentos_mercadopago: 0
   aculta_patcher: 0
@@ -78,11 +82,12 @@ module:
   commerce_store: 0
   config: 0
   config_translation: 0
+  consumers: 0
   content_lock: 0
   content_moderation: 0
   contextual: 0
-  csp: 0
   crop: 0
+  csp: 0
   ctools: 0
   ctools_entity_mask: 0
   ctools_views: 0
@@ -95,13 +100,11 @@ module:
   domain_config: 0
   dynamic_page_cache: 0
   editor: 0
-  aculta_mail_confirmer: 0
-  aculta_mail_confirmer_user: 0
   embed: 0
   entity: 0
   entity_embed: 0
-  entity_reference_revisions: 0
   entity_print: 0
+  entity_reference_revisions: 0
   entity_usage: 0
   field: 0
   field_ui: 0
@@ -113,10 +116,10 @@ module:
   flood_control: 0
   fraction: 0
   freelinking: 0
-  gnode: 0
   geofield: 0
-  group: 0
+  gnode: 0
   google_tag: 0
+  group: 0
   help: 0
   history: 0
   image: 0
@@ -137,11 +140,14 @@ module:
   lms_file_upload: 0
   locale: 0
   login_emailusername: 0
+  mcp_server: 0
+  mcp_server_oauth: 0
+  mcp_server_tool_bridge: 0
+  mcp_server_ui: 0
   media: 0
   media_duplicates: 0
   media_gallery: 0
   media_library: 0
-  migrate: 0
   menu_link_content: 0
   menu_ui: 0
   message: 0
@@ -149,6 +155,7 @@ module:
   message_subscribe: 0
   metatag: 0
   metatag_open_graph: 0
+  migrate: 0
   mysql: 0
   navigation: 0
   node: 0
@@ -164,8 +171,8 @@ module:
   private_message: 0
   profile: 0
   redirect: 0
-  reporting: 0
   rename_admin_paths: 0
+  reporting: 0
   role_hierarchy: 0
   schema_article: 0
   schema_event: 0
@@ -180,6 +187,12 @@ module:
   search_api: 0
   search_api_db: 0
   security_review: 0
+  serialization: 0
+  simple_oauth: 0
+  simple_oauth_21: 0
+  simple_oauth_client_registration: 0
+  simple_oauth_pkce: 0
+  simple_oauth_server_metadata: 0
   simple_sitemap: 0
   site_alert: 0
   social_api: 0
@@ -191,6 +204,7 @@ module:
   taxonomy: 0
   text: 0
   token: 0
+  tool: 0
   turnstile: 0
   ui_patterns: 0
   ui_patterns_blocks: 0
