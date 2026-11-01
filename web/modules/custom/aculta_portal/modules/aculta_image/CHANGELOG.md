@@ -1,3 +1,11 @@
+## 0.1.0-dev.50 — tabela da quarentena pertence ao aculta_file_uploader
+
+- `aculta_image_schema()` deixa de declarar `aculta_image_quarantine`. A definição vem de `aculta_file_uploader_schema()`.
+- `hook_update_10002()` continua disponível e lê a definição do aculta_file_uploader, sem recriar tabela existente.
+- Teste Kernel de limpeza: a tabela é instalada por `aculta_file_uploader`; o módulo entra na lista de módulos do teste.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.49 — motor da auditoria no aculta_file_uploader
 
 - `aculta_image.audit` sai do aculta_image; o serviço passa a ser `aculta_file_uploader.audit`. Controller, rotas e abas permanecem aqui.

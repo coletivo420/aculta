@@ -34,7 +34,7 @@ final class ImageCleanupPortalCoordinatorKernelTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system', 'user', 'field', 'file', 'image', 'media', 'node', 'text', 'entity_usage', 'media_duplicates', 'aculta_image',
+    'system', 'user', 'field', 'file', 'image', 'media', 'node', 'text', 'entity_usage', 'media_duplicates', 'token', 'aculta_file_uploader', 'aculta_image',
   ];
 
   /**
@@ -74,7 +74,8 @@ final class ImageCleanupPortalCoordinatorKernelTest extends KernelTestBase {
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('node', ['node_access']);
     $this->installSchema('entity_usage', ['entity_usage']);
-    $this->installSchema('aculta_image', ['aculta_image_fingerprint', 'aculta_image_origin', 'aculta_image_quarantine']);
+    $this->installSchema('aculta_image', ['aculta_image_fingerprint', 'aculta_image_origin']);
+    $this->installSchema('aculta_file_uploader', ['aculta_image_quarantine']);
     $this->installConfig(['media']);
     $this->installConfig(['node']);
 

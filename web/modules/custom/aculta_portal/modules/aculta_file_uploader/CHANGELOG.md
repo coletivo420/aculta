@@ -1,5 +1,13 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.7 — schema da quarentena passa ao aculta_file_uploader
+
+- `aculta_file_uploader.install` declara `hook_schema()` para `aculta_image_quarantine`. O nome da tabela não muda.
+- Em instalações existentes a tabela já existe e não é recriada. Em instalações novas, ela é criada por este módulo.
+- Ao desinstalar o aculta_file_uploader, a tabela será removida. Ao desinstalar o aculta_image, ela não é mais tocada.
+
+RUNTIME STATUS: DEFERRED. Validar no Runtime antes do RC (update do aculta_image e instalação limpa).
+
 ## 0.1.0-dev.6 — motor da auditoria movido do aculta_image
 
 - `Audit\ImageAudit` e `Visual\DHash` (com teste Unit) saem do aculta_image e passam para este módulo. Serviço: `aculta_file_uploader.audit`.

@@ -17,19 +17,6 @@ function aculta_image_schema(): array {
     ],
     'primary key' => ['fid'],
   ];
-  $schema['aculta_image_quarantine'] = [
-    'description' => 'Imagens candidatas enviadas para a quarentena (fase M7). Excluídas só após o prazo e nova verificação de uso.',
-    'fields' => [
-      'fid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
-      'uri_original' => ['type' => 'varchar', 'length' => 2048, 'not null' => TRUE],
-      'uri_quarentena' => ['type' => 'varchar', 'length' => 2048, 'not null' => TRUE],
-      'motivo' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
-      'enviado_em' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
-      'vence_em' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
-    ],
-    'primary key' => ['fid'],
-    'indexes' => ['vence_em' => ['vence_em']],
-  ];
   $schema['aculta_image_origin'] = [
     'description' => 'Origem de cada imagem ingerida de fora do site (URL e captura), por SHA-256 do conteúdo.',
     'fields' => [
@@ -61,7 +48,9 @@ function aculta_image_update_10001(): void {
  * Cria a tabela da quarentena de imagens (fase M7).
  */
 function aculta_image_update_10002(): void {
-  $schema = aculta_image_schema();
+  // A definição da tabela passou ao aculta_file_uploader (0.1.0-dev.7).
+  module_load_include('install', 'aculta_file_uploader');
+  $schema = aculta_file_uploader_schema();
   $database = \Drupal::database();
   if (!$database->schema()->tableExists('aculta_image_quarantine')) {
     $database->schema()->createTable('aculta_image_quarantine', $schema['aculta_image_quarantine']);
