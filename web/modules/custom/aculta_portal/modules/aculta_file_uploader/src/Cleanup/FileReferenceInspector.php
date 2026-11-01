@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Cleanup;
+namespace Drupal\aculta_file_uploader\Cleanup;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\ContentEntityNullStorage;

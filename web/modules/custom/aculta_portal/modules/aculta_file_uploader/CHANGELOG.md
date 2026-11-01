@@ -1,5 +1,13 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.8 — limpeza de File movida do aculta_portal, com contratos
+
+- Movidos do aculta_portal: `Cleanup\UnusedFileCleaner`, `FileReferenceInspector` (e interface), `FileCleanupStatus`, `FileReferenceStatus` e `FileCleanupAssessorInterface`. Serviços: `aculta_file_uploader.unused_file_cleaner`, `aculta_file_uploader.file_reference_inspector`, `aculta_file_uploader.cleanup.logger` (mesmo canal `aculta_portal_cleanup`).
+- Contrato `Cleanup\FileDeletionOwnerInterface`: quem apaga o arquivo. O aculta_image implementa por `FileRemoverInterface` e publica o alias `aculta_file_uploader.deletion_owner`.
+- Dimensões de imagem lidas pelo `ImageFactory` do Core, sem `ImageInspector`. Sem dependência de aculta_image ou aculta_portal.
+
+RUNTIME STATUS: DEFERRED. Validar no Runtime: limpeza de File e exclusão via alias.
+
 ## 0.1.0-dev.7 — schema da quarentena passa ao aculta_file_uploader
 
 - `aculta_file_uploader.install` declara `hook_schema()` para `aculta_image_quarantine`. O nome da tabela não muda.

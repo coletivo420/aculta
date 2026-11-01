@@ -15,9 +15,9 @@ use Drupal\Core\Image\ImageFactory;
 use Drupal\file\FileRepositoryInterface;
 use Drupal\file\FileInterface;
 use Drupal\aculta_image\FileRemoverInterface;
-use Drupal\aculta_portal\Cleanup\FileReferenceInspectorInterface;
-use Drupal\aculta_portal\Cleanup\FileReferenceStatus;
-use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceInspectorInterface;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceStatus;
+use Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Schema;
 use Drupal\Core\Logger\LoggerChannelInterface;
@@ -51,7 +51,7 @@ final class aculta_H5PManagedFileStorageTest extends UnitTestCase {
       $fileSystem,
       $repository,
       $fileUsage,
-      new ImageFileUsageManager(new ImageInspector($this->createMock(ImageFactory::class)), $fileUsage),
+      new ImageFileUsageManager($this->createMock(ImageFactory::class), $fileUsage),
       $this->unusedCleaner(),
       (new \ReflectionClass(PackagedAssetPublisher::class))->newInstanceWithoutConstructor(),
       $this->usageManager($fileSystem, $repository, $fileUsage),
@@ -253,7 +253,7 @@ final class aculta_H5PManagedFileStorageTest extends UnitTestCase {
       $database,
       $references,
       $remover,
-      new ImageInspector($this->createMock(ImageFactory::class)),
+      $this->createMock(ImageFactory::class),
       $this->createMock(LoggerChannelInterface::class),
     );
   }

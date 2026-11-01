@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_portal\Unit\Cleanup;
 
 use Drupal\aculta_image\FileRemoverInterface;
-use Drupal\aculta_image\ImageInspector;
-use Drupal\aculta_portal\Cleanup\FileCleanupStatus;
-use Drupal\aculta_portal\Cleanup\FileReferenceInspectorInterface;
-use Drupal\aculta_portal\Cleanup\FileReferenceStatus;
-use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
+use Drupal\aculta_file_uploader\Cleanup\FileCleanupStatus;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceInspectorInterface;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceStatus;
+use Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Schema;
 use Drupal\Core\Image\ImageFactory;
@@ -106,7 +105,7 @@ final class UnusedFileCleanerTest extends UnitTestCase {
    *   Core File Usage rows to return.
    * @param \Drupal\aculta_image\FileRemoverInterface $remover
    *   Image owner implementation.
-   * @param \Drupal\aculta_portal\Cleanup\FileReferenceInspectorInterface $inspector
+   * @param \Drupal\aculta_file_uploader\Cleanup\FileReferenceInspectorInterface $inspector
    *   Reference inspector.
    */
   private function cleaner(array $usage, FileRemoverInterface $remover, FileReferenceInspectorInterface $inspector): UnusedFileCleaner {
@@ -128,8 +127,7 @@ final class UnusedFileCleanerTest extends UnitTestCase {
     $image->method('isValid')->willReturn(FALSE);
     $factory = $this->createMock(ImageFactory::class);
     $factory->method('get')->willReturn($image);
-    $imageInspector = new ImageInspector($factory);
-    return new UnusedFileCleaner($fileUsage, $database, $inspector, $remover, $imageInspector, $logger);
+    return new UnusedFileCleaner($fileUsage, $database, $inspector, $remover, $factory, $logger);
   }
 
   /**

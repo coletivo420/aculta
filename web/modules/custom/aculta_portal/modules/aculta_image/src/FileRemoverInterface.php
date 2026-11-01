@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_image;
 
+use Drupal\aculta_file_uploader\Cleanup\FileDeletionOwnerInterface;
+
 use Drupal\file\FileInterface;
 
 /**
@@ -12,7 +14,7 @@ use Drupal\file\FileInterface;
  * This is the only path for deleting files in ACULTA. It covers images and
  * other file types.
  */
-interface FileRemoverInterface {
+interface FileRemoverInterface extends FileDeletionOwnerInterface {
 
   /**
    * Deletes a file only when Core and Entity Usage report no use.

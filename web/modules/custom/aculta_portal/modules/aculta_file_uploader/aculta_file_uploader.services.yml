@@ -26,3 +26,16 @@ services:
     arguments: ['@database', '@?media_duplicates.checksum_statistics', '@file_system']
     tags:
       - { name: aculta_portal.helper }
+
+  aculta_file_uploader.cleanup.logger:
+    class: Drupal\Core\Logger\LoggerChannelInterface
+    factory: ['@logger.factory', 'get']
+    arguments: ['aculta_portal_cleanup']
+  aculta_file_uploader.file_reference_inspector:
+    class: Drupal\aculta_file_uploader\Cleanup\FileReferenceInspector
+    arguments: ['@entity_type.manager', '@entity_field.manager', '@database', '@aculta_file_uploader.cleanup.logger']
+  aculta_file_uploader.unused_file_cleaner:
+    class: Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner
+    arguments: ['@file.usage', '@database', '@aculta_file_uploader.file_reference_inspector', '@aculta_file_uploader.deletion_owner', '@image.factory', '@aculta_file_uploader.cleanup.logger']
+    tags:
+      - { name: aculta_portal.helper }

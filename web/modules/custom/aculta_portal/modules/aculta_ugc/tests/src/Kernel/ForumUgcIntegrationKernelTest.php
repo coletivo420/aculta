@@ -131,7 +131,7 @@ final class ForumUgcIntegrationKernelTest extends KernelTestBase {
     $container->register('aculta_user.active_associate', ForumUgcTestActiveAssociate::class);
 
     foreach ([
-      'aculta_portal.unused_file_cleaner',
+      'aculta_file_uploader.unused_file_cleaner',
       'aculta_portal.unused_media_cleaner',
       'aculta_image.render',
       'aculta_statistics.storage',

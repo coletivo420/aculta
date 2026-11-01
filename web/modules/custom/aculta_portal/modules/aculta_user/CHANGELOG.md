@@ -1,3 +1,9 @@
+## 0.4.0-dev.92 — consumo do motor de limpeza movido para o aculta_file_uploader
+
+- Imports dos tipos de limpeza e serviço `aculta_portal.unused_file_cleaner` passam a `aculta_file_uploader`. Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.93 — memorial coletivo usa avatar central do Portal (2026-10-29)
 
 - `LegacyMemorialController` passa a renderizar o fallback institucional por

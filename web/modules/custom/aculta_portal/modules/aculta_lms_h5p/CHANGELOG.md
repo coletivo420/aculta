@@ -1,3 +1,9 @@
+## 0.4.0-dev.162 — consumo do motor de limpeza movido para o aculta_file_uploader
+
+- Imports dos tipos de limpeza e serviço `aculta_portal.unused_file_cleaner` passam a `aculta_file_uploader`. Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.161 — upload de imagem pelo aculta_file_uploader (fase 4)
 
 - O upload de imagem do editor H5P usa o `FileUploadIngestor` do

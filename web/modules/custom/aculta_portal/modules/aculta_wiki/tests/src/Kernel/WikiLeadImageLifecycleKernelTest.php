@@ -23,7 +23,7 @@ use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\editor\Entity\Editor;
-use Drupal\aculta_portal\Cleanup\FileReferenceStatus;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceStatus;
 use Drupal\aculta_portal\Domain\FrontPathPolicy;
 use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
 use Drupal\field\Entity\FieldConfig;
@@ -521,7 +521,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $node->delete();
     self::assertSame(
       FileReferenceStatus::Referenced,
-      $this->container->get('aculta_portal.file_reference_inspector')->inspect($media),
+      $this->container->get('aculta_file_uploader.file_reference_inspector')->inspect($media),
     );
     self::assertSame(['processed' => 1, 'media_deleted' => 0, 'files_deleted' => 0], $cleanup->cleanup());
     self::assertInstanceOf(Media::class, Media::load($media->id()));
@@ -530,7 +530,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $article->delete();
     self::assertSame(
       FileReferenceStatus::Clear,
-      $this->container->get('aculta_portal.file_reference_inspector')->inspect($media),
+      $this->container->get('aculta_file_uploader.file_reference_inspector')->inspect($media),
     );
     self::assertSame(['processed' => 1, 'media_deleted' => 1, 'files_deleted' => 1], $cleanup->cleanup());
     self::assertNull(Media::load($media->id()));

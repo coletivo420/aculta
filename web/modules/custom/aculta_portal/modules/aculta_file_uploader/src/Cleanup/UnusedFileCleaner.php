@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Cleanup;
+namespace Drupal\aculta_file_uploader\Cleanup;
 
-use Drupal\aculta_image\FileRemoverInterface;
-use Drupal\aculta_image\ImageInspector;
+use Drupal\Core\Image\ImageFactory;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\file\FileInterface;
@@ -19,8 +18,8 @@ final class UnusedFileCleaner implements FileCleanupAssessorInterface {
     private readonly FileUsageInterface $fileUsage,
     private readonly Connection $database,
     private readonly FileReferenceInspectorInterface $referenceInspector,
-    private readonly FileRemoverInterface $imageRemover,
-    private readonly ImageInspector $imageInspector,
+    private readonly FileDeletionOwnerInterface $deletionOwner,
+    private readonly ImageFactory $imageFactory,
     private readonly LoggerChannelInterface $logger,
   ) {}
 
@@ -58,7 +57,7 @@ final class UnusedFileCleaner implements FileCleanupAssessorInterface {
    * @param bool $allowTemporary
    *   Whether the caller already applied the configured retention period.
    *
-   * @return \Drupal\aculta_portal\Cleanup\FileCleanupStatus
+   * @return \Drupal\aculta_file_uploader\Cleanup\FileCleanupStatus
    *   Deleted or a fail-closed reason why it was retained.
    */
   public function removeIfUnused(FileInterface $file, bool $allowTemporary = FALSE): FileCleanupStatus {
@@ -69,13 +68,13 @@ final class UnusedFileCleaner implements FileCleanupAssessorInterface {
 
     try {
       $mime = (string) $file->getMimeType();
-      $isRaster = str_starts_with($mime, 'image/') || $this->imageInspector->dimensions($file->getFileUri()) !== NULL;
+      $isRaster = str_starts_with($mime, 'image/') || $this->hasDimensions($file->getFileUri());
       // A raster file with a non-image MIME type is ambiguous: keep it.
       if ($isRaster && !str_starts_with($mime, 'image/')) {
         return FileCleanupStatus::OwnerRejected;
       }
       // Every deletion goes through the aculta_image owner, images or not.
-      if (!$this->imageRemover->delete($file, 'portal_unused_file_cleanup')) {
+      if (!$this->deletionOwner->delete($file, 'portal_unused_file_cleanup')) {
         return FileCleanupStatus::OwnerRejected;
       }
     }
@@ -89,6 +88,14 @@ final class UnusedFileCleaner implements FileCleanupAssessorInterface {
 
     $this->logger->info('Unused File {fid} removed through Portal cleanup.', ['fid' => $file->id()]);
     return FileCleanupStatus::Deleted;
+  }
+
+  /**
+   * Confirms that a URI is a valid image with positive dimensions.
+   */
+  private function hasDimensions(string $uri): bool {
+    $image = $this->imageFactory->get($uri);
+    return $image->isValid() && $image->getWidth() > 0 && $image->getHeight() > 0;
   }
 
   /**

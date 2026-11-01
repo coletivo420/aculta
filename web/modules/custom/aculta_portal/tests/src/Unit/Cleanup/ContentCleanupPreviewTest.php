@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_portal\Unit\Cleanup;
 
 use Drupal\aculta_portal\Cleanup\ContentCleanupPreview;
-use Drupal\aculta_portal\Cleanup\FileCleanupAssessorInterface;
-use Drupal\aculta_portal\Cleanup\FileCleanupStatus;
+use Drupal\aculta_file_uploader\Cleanup\FileCleanupAssessorInterface;
+use Drupal\aculta_file_uploader\Cleanup\FileCleanupStatus;
 use Drupal\aculta_portal\Cleanup\MediaCleanupAssessorInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_portal\Cleanup;
+namespace Drupal\aculta_file_uploader\Cleanup;
 
 /**
  * Result of an unused-file cleanup request. */

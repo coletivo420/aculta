@@ -89,7 +89,7 @@ final class PortalHelperRegistry {
       'summary' => 'Gera JPEG da primeira página de PDFs públicos com PHP Imagick, sem depender do binário de linha de comando.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
     ],
-    'aculta_portal.unused_file_cleaner' => [
+    'aculta_file_uploader.unused_file_cleaner' => [
       'label' => 'Coordenação de limpeza de arquivos sem uso',
       'summary' => 'Revalida File Usage, Entity Usage, referências estruturadas e embeds versionados; delega imagens ao aculta_image.',
       'docs' => 'docs/portal/CONTENT-CLEANUP-POLICY.md',

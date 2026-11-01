@@ -11,11 +11,10 @@ use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Hook\ForumAttachmentAccessHooks;
 use Drupal\aculta_forum\Hook\ForumAttachmentPublicationHooks;
 use Drupal\aculta_forum_cleanup_test\Hook\CleanupFailureTestHooks;
-use Drupal\aculta_image\ImageInspector;
 use Drupal\aculta_image\FileRemover;
-use Drupal\aculta_portal\Cleanup\FileReferenceInspector;
-use Drupal\aculta_portal\Cleanup\FileReferenceStatus;
-use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceInspector;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceStatus;
+use Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner;
 use Drupal\aculta_portal\Cleanup\UnusedMediaCleaner;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\comment\CommentInterface;
@@ -852,7 +851,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
           $this->container->get('file_system'),
           $this->container->get('logger.factory'),
         ),
-        new ImageInspector($this->container->get('image.factory')),
+        $this->container->get('image.factory'),
         $this->container->get('logger.factory')->get('test'),
       ),
       $this->container->get('config.factory'),

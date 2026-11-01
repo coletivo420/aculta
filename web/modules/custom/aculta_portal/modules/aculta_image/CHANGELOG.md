@@ -1,3 +1,10 @@
+## 0.1.0-dev.51 — limpeza de File do aculta_portal passa pelos contratos do uploader
+
+- `FileRemoverInterface` passa a estender `aculta_file_uploader` `FileDeletionOwnerInterface`. Serviço `aculta_file_uploader.deletion_owner` (alias de `aculta_image.file_remover`) é o dono da exclusão.
+- Testes e serviços de quarentena usam o serviço e as classes novos. Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.50 — tabela da quarentena pertence ao aculta_file_uploader
 
 - `aculta_image_schema()` deixa de declarar `aculta_image_quarantine`. A definição vem de `aculta_file_uploader_schema()`.

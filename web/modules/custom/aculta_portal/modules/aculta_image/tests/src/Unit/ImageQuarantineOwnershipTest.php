@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_image\Unit;
 
 use Drupal\aculta_image\FileRemoverInterface;
-use Drupal\aculta_image\ImageInspector;
 use Drupal\aculta_image\Quarantine\ImageQuarantine;
-use Drupal\aculta_portal\Cleanup\FileReferenceInspectorInterface;
-use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceInspectorInterface;
+use Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Schema;
@@ -57,7 +56,7 @@ final class ImageQuarantineOwnershipTest extends UnitTestCase {
       $database,
       $inspector,
       $remover,
-      new ImageInspector($factory),
+      $factory,
       $logger,
     );
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Cleanup;
 
+use Drupal\aculta_file_uploader\Cleanup\FileCleanupAssessorInterface;
+use Drupal\aculta_file_uploader\Cleanup\FileCleanupStatus;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\file\FileInterface;
 use Drupal\media\MediaInterface;

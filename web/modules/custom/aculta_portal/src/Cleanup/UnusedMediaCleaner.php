@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Cleanup;
 
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceInspectorInterface;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceStatus;
+use Drupal\aculta_file_uploader\Cleanup\FileCleanupStatus;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\media\MediaInterface;
 

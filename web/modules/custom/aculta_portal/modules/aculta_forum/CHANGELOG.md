@@ -1,3 +1,9 @@
+## 0.1.0-dev.333 — consumo do motor de limpeza movido para o aculta_file_uploader
+
+- Imports dos tipos de limpeza e serviço `aculta_portal.unused_file_cleaner` passam a `aculta_file_uploader`. Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
 ## Revalidação 2026-11-02 — comentários e D-65
 
 - Suíte Unit completa: 189 testes / 1.348 assertions PASS. D-65 access check: 1/1; subscriber canônico: 2/4 PASS.

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_image\Kernel;
 
-use Drupal\aculta_portal\Cleanup\FileReferenceInspector;
-use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceInspector;
+use Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
@@ -42,7 +42,7 @@ final class ImageCleanupPortalCoordinatorKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->setDefinition('aculta_portal.file_reference_inspector', new Definition(
+    $container->setDefinition('aculta_file_uploader.file_reference_inspector', new Definition(
       FileReferenceInspector::class,
       [new Reference('entity_type.manager'), new Reference('entity_field.manager'), new Reference('database')],
     ));
@@ -50,14 +50,14 @@ final class ImageCleanupPortalCoordinatorKernelTest extends KernelTestBase {
       LoggerChannelInterface::class,
       ['aculta_portal_cleanup'],
     ))->setFactory([new Reference('logger.factory'), 'get']));
-    $container->setDefinition('aculta_portal.unused_file_cleaner', new Definition(
+    $container->setDefinition('aculta_file_uploader.unused_file_cleaner', new Definition(
       UnusedFileCleaner::class,
       [
         new Reference('file.usage'),
         new Reference('database'),
-        new Reference('aculta_portal.file_reference_inspector'),
+        new Reference('aculta_file_uploader.file_reference_inspector'),
         new Reference('aculta_image.file_remover'),
-        new Reference('aculta_image.inspector'),
+        new Reference('image.factory'),
         new Reference('aculta_portal.cleanup.logger'),
       ],
     ));

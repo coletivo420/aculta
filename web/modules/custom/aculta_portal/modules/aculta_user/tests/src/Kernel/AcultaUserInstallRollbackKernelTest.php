@@ -99,7 +99,7 @@ final class AcultaUserInstallRollbackKernelTest extends KernelTestBase {
     // and are never instantiated by this test; they only need to exist so the
     // container compiles while aculta_user is being installed.
     $container->register('aculta_portal.domain_purpose', \stdClass::class);
-    $container->register('aculta_portal.unused_file_cleaner', \stdClass::class);
+    $container->register('aculta_file_uploader.unused_file_cleaner', \stdClass::class);
   }
 
   /**
