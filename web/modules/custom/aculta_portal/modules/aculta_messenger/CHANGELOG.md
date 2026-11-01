@@ -1,22 +1,31 @@
-## Aviso de submissão de Evento no inbox (2026-11-02)
+## Homologação de avisos Events no Runtime (2026-11-01)
+
+- Updates 10015 e 10016 concluíram em `aculta_runtime`; não há updates pendentes
+  nem diferenças de configuração. Nenhuma mensagem de aviso foi criada.
+- Bundle e fields foram encurtados para respeitar o limite Drupal de 32
+  caracteres. O update 10015 instala apenas os nove objetos deste aviso; 10016
+  preserva valores em lista e em mapa.
+- O config sync recebeu os 11 objetos ativos do bundle e o valor existente de
+  `private_message_digest_anchor`.
+
+## Aviso de submissão de Evento no inbox (2026-11-01)
 
 - O consumer aceita `submitted` no contrato privado de avisos de Events;
   título e resumo são genéricos e a abertura revalida a revisão exata, autor e
   acesso. Não inclui payload, não envia e-mail e não entra no digest.
 - Configuração inclui o valor novo e update idempotente 10016 o adiciona em
-  instalações existentes sem sobrescrever outros valores. Não executado no
-  Runtime.
+  instalações existentes sem sobrescrever outros valores. Aplicado no Runtime.
 - Validação local combinada: Event lifecycle + Unit de Events/Messenger,
   34 testes / 875 assertions; Unit update/consumer 5/20; PHP lint, PHPCS,
   YAML e diff check passaram. Sem escrita Runtime.
 
-## Complemento local — inbox de decisões de Events Contributions (2026-11-02)
+## Complemento local — inbox de decisões de Events Contributions (2026-11-01)
 
 - Messenger persiste resultados mínimos de Organização/Local no inbox do site,
   com autor, revisão, outcome, estado de leitura e chave idempotente; não guarda
   payload, endereço ou parecer. A lista e a abertura revalidam source e acesso.
-- Sem envio por email/digest. Update 10015 está preparado para instalações
-  existentes, mas não foi executado no Runtime.
+- Sem envio por email/digest. Update 10015 foi executado no Runtime após ser
+  limitado aos defaults deste bundle; 10016 também concluiu.
 - Unit consumer/queue **9 testes / 27 assertions PASS**. Renderização e Kernel
   próprio de persistência do novo bundle aguardam validação integrada.
 

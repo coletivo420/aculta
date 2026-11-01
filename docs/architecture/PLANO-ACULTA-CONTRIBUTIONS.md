@@ -1,7 +1,7 @@
 # Plano de arquitetura e implementação - ACULTA Contributions
 
-**Estado:** F0 revalidado; F1/F2 parciais; Wiki dual-store; F4/F5 parciais; fila descoberta pelo Content Admin; avisos de submissão e decisão de Organização/Local/Evento no inbox via envelope mínimo e outbox; fila/revisão administrativa de Evento, `event_create` e `event_update` com interfaces de autor implementados; workspace e ressubmissão estruturada implementados; homologação Runtime pendente
-**Base de código auditada:** branch `dev`, `b41156a3d` (2026-11-01); auditoria F0 referenciada em [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md). Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
+**Estado:** F0 revalidado; F1/F2 parciais; Wiki dual-store; F4/F5 parciais; fila descoberta pelo Content Admin; avisos de submissão e decisão de Organização/Local/Evento no inbox via envelope mínimo e outbox; fila/revisão administrativa de Evento, `event_create` e `event_update` com interfaces de autor implementados; workspace e ressubmissão estruturada implementados; updates Messenger e Wiki homologados parcialmente no Runtime; autorização autenticada de domínio pendente
+**Base de código auditada:** branch `dev`, `46ec52a96` (2026-11-01); auditoria F0 referenciada em [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md). Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
 **Escopo:** motor de propostas comunitárias reutilizável por domínios ACULTA, sem depender de Workflow Participants ou de Content Moderation para o ciclo de contribuições.
 
 ## 1. Decisão de arquitetura
@@ -21,7 +21,7 @@ O motor não deve ser um sistema universal de moderação. Denúncias, comentár
 
 ## 2. Evidências e estado atual
 
-### Estado verificado em `a7f5261d9` (2026-11-01)
+### Estado de implementação revalidado em `46ec52a96` (2026-11-01)
 
 - `aculta_contributions` agora define `aculta_contribution`, entidade privada
   revisionável, registro de adaptadores confiáveis e serviços de submissão,
@@ -37,18 +37,21 @@ O motor não deve ser um sistema universal de moderação. Denúncias, comentár
   retirada, decisão, workspace, fila editorial e publisher usam leitura
   dual-store; novos envios ficam fechados até existir checkpoint para toda
   proposta legada. O workflow oficial da Wiki continua em Content Moderation.
-  Nenhuma cópia 10003 foi executada no Runtime.
+  No Runtime, schema Wiki 10003 já estava registrado; a auditoria encontrou zero
+  propostas/revisões legacy, Contributions, checkpoints e revision maps; o gate
+  de migração retornou completo. Não havia conteúdo a copiar.
 - Unit: registry/state machine 3 testes / 19 assertions; Kernel 12 testes / 138
   assertions (passaram em `aculta_simpletest`; combinado 15/157). O Kernel revelou e corrigiu a
   dependência `options` e um fixture que usava incorretamente UID 1. PHPCS
   Drupal, lint PHP e `git diff --check` passaram após as alterações recentes.
-  Nenhuma escrita Runtime.
+  Updates Messenger 10015/10016 foram executados no Runtime após os reparos
+  descritos na homologação abaixo.
 
 - O update Wiki 10003 está preparado em lotes e preserva ID, UUID e revision ID,
   com reconciliação de cada proposta/revisão. Testes focais do corte/status
   passaram 2/264; lifecycle genérico 10/109; consumer Messenger 5/55; adapter
   Wiki 3/5; histórico/retry, colisão de ID e revisão traduzida passaram 3/133.
-  Runtime continua pendente. O modelo Wiki antigo não persistia campos ou
+  Acesso autenticado de ponta a ponta no Runtime continua pendente. O modelo Wiki antigo não persistia campos ou
   modos de lista selecionados ao aceitar, portanto essa decisão histórica não
   pode ser reconstruída. O update aborta uma proposta se encontrar colisão de
   ID ou traduções históricas; essas situações exigem migração explicitamente
@@ -58,10 +61,10 @@ A implementação do núcleo é progresso parcial, não conclusão das fases F1/
 persistência, submissão, aplicação seletiva, conflito, Flood configurável,
 rollback provocado pelo adapter e acesso delegado ao owner de domínio têm Kernel
 MariaDB. O ciclo de retorno para ajustes, nova revisão do autor e retirada final
-também tem cobertura Kernel. Concorrência multiprocesso e instalação/update
-Runtime ainda precisam de validação. O Kernel verifica contenção de submissão
-entre backends independentes/conexões MariaDB; ainda não há runner de processos
-SO concorrentes.
+também tem cobertura Kernel. Updates/configuração Runtime foram homologados;
+autorização autenticada e jornadas de domínio ainda precisam de validação. O
+Kernel verifica contenção de submissão entre backends independentes/conexões
+MariaDB; ainda não há runner de processos SO concorrentes.
 
 A auditoria do HEAD confirmou:
 
@@ -88,6 +91,31 @@ adapter até fechar política e experiência do autor.
 O Drupal `Workflow Participants` exige `content_moderation`, associa participantes a entidades moderadas e descreve cobertura limitada para entidades que não sejam Nodes. Ele gerencia designação de editores/revisores dentro do workflow do Core, não propostas comunitárias independentes. Não usá-lo como dependência nem adaptar seu código como base.
 
 O Content Moderation do Core mantém revisão publicada enquanto outra revisão passa por estados de workflow. Esse padrão informa os requisitos de segurança e publicação, mas o motor comunitário será baseado em propostas separadas e contratos dos domínios. Não afirmar que a Wiki já é independente do Core: essa migração é uma frente distinta, com risco e escopo próprios.
+
+### Homologação de banco do Runtime — 2026-11-01
+
+- Ambiente confirmado: `toca`, checkout servido `/home/piradopirata/projetos/aculta`
+  no commit `46ec52a96`, URI `http://default`, banco `aculta_runtime`, Drupal
+  11.4.10, 631 tabelas. Schema final: Wiki 10003, Contributions 10001 e
+  Messenger 10016. `updatedb:status` não lista pendências e
+  `config:status` não mostra diferenças.
+- A leitura Wiki encontrou zero propostas/revisões legacy, zero Contributions,
+  zero checkpoints e zero revision maps; o gate de migração retornou completo.
+- Messenger 10015/10016 concluíram. O aviso usa bundle e fields dentro do limite
+  Drupal de 32 caracteres; 10015 instala apenas os nove objetos do aviso e
+  ignora entidades já presentes. 10016 preserva formatos de lista e mapa. Os
+  11 objetos ativos foram exportados seletivamente para `config/sync`; o
+  settings sincroniza também `private_message_digest_anchor`.
+- Snapshots integrais fora do repositório foram validados com `gzip -t` e
+  SHA-256. O último, posterior à sincronização, está em
+  `/home/piradopirata/worktrees/backup-runtime-messenger-20261101-post-import/`
+  com hash `daf48e769b5d02a343a800d8dc3a1db5f6f4645607904fe9c3eef291c6ba2e46`.
+  Houve tentativas abortadas por IDs acima de 32 caracteres e por instalação
+  global de default de amizade divergente; os updates foram então corrigidos e
+  concluídos seletivamente. `config:import --diff` também aplica a importação:
+  o diff removeu somente traduções órfãs. A conferência posterior ficou limpa.
+- Nenhuma mensagem de aviso foi criada na homologação. Testes autenticados de
+  acesso a filas e jornadas Events continuam um gate separado.
 
 ## 3. Conceitos e modelo proposto
 
@@ -226,7 +254,7 @@ Publicar eventos mínimos no bus central. O Messenger envia avisos conforme pref
 
 ### F6 - Eventos
 - Adapter `events_event` implementa `event_create` e `event_update`, valida allowlist e intervalos, revalida organizador/Organização/Local, usa fingerprint com Datas e aplica sob lock/transação. A aplicação recarrega o autor e revalida capability e Entity Access atuais, limpando o cache do Evento e recarregando Locais das Datas antes de verificar acesso; a validação registrada no HEAD `dd6ba130c` da suíte de lifecycle e fronteira cobre revogação de membership, Local tornado privado, criação privada em rascunho e atualização seletiva com Datas aditivas (37 testes / 1.275 assertions; 24 depreciações upstream). Os commits posteriores de LMS não alteram esses módulos.
-- Decisões de propostas de Evento enfileiram envelope mínimo e são consumidas pelo mesmo inbox Messenger de Organização/Local; não incluem payload nem parecer. A revisão administrativa usa `administer aculta events` no MAIN e a fila aparece no Content Admin via autorização nativa. Na aplicação, Kernel comprova revalidação quando membership da Organização é revogado e quando o Local proposto passa a privado. O workspace abre propostas de Organização, Local e Evento. A ressubmissão após `needs_changes` usa formulário estruturado; `ContributionLifecycle::revise()` revalida owner, estado, capacidade e revisão-base. Autores propõem `event_create` em `/culturas/propostas/evento/nova` e `event_update` em `/culturas/eventos/{aculta_event}/propor-alteracao`; ambos salvam Contributions privadas e emitem aviso mínimo. Atualizações exigem Entity Access e capturam fingerprint da versão persistida; Datas novas são opcionais e append-only. No HEAD `34e79950e`, a classe Kernel completa passou 27/888 e seis cenários `event_update` passaram 6/171, cobrindo submissão, aplicação, perda de acesso, membership, Local e origem alterada. Homologação Runtime e updates Messenger 10015–10016 seguem pendentes.
+- Decisões de propostas de Evento enfileiram envelope mínimo e são consumidas pelo mesmo inbox Messenger de Organização/Local; não incluem payload nem parecer. A revisão administrativa usa `administer aculta events` no MAIN e a fila aparece no Content Admin via autorização nativa. Na aplicação, Kernel comprova revalidação quando membership da Organização é revogado e quando o Local proposto passa a privado. O workspace abre propostas de Organização, Local e Evento. A ressubmissão após `needs_changes` usa formulário estruturado; `ContributionLifecycle::revise()` revalida owner, estado, capacidade e revisão-base. Autores propõem `event_create` em `/culturas/propostas/evento/nova` e `event_update` em `/culturas/eventos/{aculta_event}/propor-alteracao`; ambos salvam Contributions privadas e emitem aviso mínimo. Atualizações exigem Entity Access e capturam fingerprint da versão persistida; Datas novas são opcionais e append-only. No HEAD `34e79950e`, a classe Kernel completa passou 27/888 e seis cenários `event_update` passaram 6/171, cobrindo submissão, aplicação, perda de acesso, membership, Local e origem alterada. Updates Messenger 10015–10016 foram executados; testes autenticados e jornadas Events no Runtime continuam pendentes.
 - Manter ICS/feeds existentes sem importação automática no escopo inicial.
 **Saída:** evento só entra no catálogo público após aprovação/aplicação.
 
@@ -237,7 +265,7 @@ Publicar eventos mínimos no bus central. O Messenger envia avisos conforme pref
 - [x] Permitir ressubmissão estruturada pelo autor somente em `needs_changes`, usando o ciclo genérico e nova revisão imutável. Kernel focal 2/64, incluindo endereço BR fixo.
 - [x] Oferecer formulário inicial `event_create` em `/culturas/propostas/evento/nova`; salva apenas Contribution privada, revalida capability e normaliza Datas. A suíte combinada registrada no incremento foi 37/1.275; não repetida neste HEAD.
 - [x] Oferecer formulário de proposta `event_update` para usuários com Entity Access `update`; captura revisão-base persistida e não altera o Evento até aprovação. Kernel focal 1/35.
-- [x] Avisar o autor no envio de propostas de Evento com envelope mínimo, revisão imutável, outbox e revalidação no Messenger. Updates idempotentes 10015–10016 ampliam o valor do aviso; execução Runtime pendente.
+- [x] Avisar o autor no envio de propostas de Evento com envelope mínimo, revisão imutável, outbox e revalidação no Messenger. Updates 10015–10016 foram executados no Runtime após reparo dos IDs e instalação seletiva; config sync importado e limpo.
 - [ ] Definir política/categoria de e-mail; avisos de Contributions permanecem somente no site e fora do digest.
 - Notificações não revelam campos privados nem fornecem links que bypassam Entity Access.
 **Saída:** revisor autorizado consegue encontrar e decidir; usuário só vê suas propostas.

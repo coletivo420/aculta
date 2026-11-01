@@ -22,8 +22,9 @@ exata da proposta e revalidam titularidade, estado e acesso no purpose `eventos`
 leva ao dashboard do ACULTA Studio Culturas; a decisão detalhada ainda depende
 do workspace de propostas do autor. Este incremento atende somente o inbox no
 site; não envia e-mail nem entra no digest. O update `10015` instala o bundle e
-o `10016` habilita o tipo de submissão em instalações existentes, mas Runtime
-não foi migrado.
+o `10016` habilita o tipo de submissão em instalações existentes. Ambos foram
+aplicados no Runtime de desenvolvimento em 2026-11-01; `config/sync` contém os
+objetos do bundle e o status de configuração está limpo.
 
 Na dev.262, a busca de destinatários usa o apelido público resolvido pelo
 ACULTA User; não revela o nome interno da conta e omite usuários sem identidade

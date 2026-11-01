@@ -43,7 +43,7 @@ final class MessengerModuleInstallConfigTest extends UnitTestCase {
 
     self::assertSame($install['email_modes'], $sync['email_modes']);
     self::assertSame($install['magazine_events'], $sync['magazine_events']);
-    self::assertArrayNotHasKey('private_message_digest_anchor', $sync);
+    self::assertSame($install['private_message_digest_anchor'], $sync['private_message_digest_anchor']);
   }
 
 }
