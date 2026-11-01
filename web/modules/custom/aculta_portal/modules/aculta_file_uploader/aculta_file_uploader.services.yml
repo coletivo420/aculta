@@ -56,3 +56,6 @@ services:
   aculta_file_uploader.recent_uploads:
     class: Drupal\aculta_file_uploader\RecentUploads
     arguments: ['@entity_type.manager']
+  aculta_file_uploader.focal_point_recorder:
+    class: Drupal\aculta_file_uploader\FocalPointRecorder
+    arguments: ['@image_widget_crop.manager', '@entity_type.manager', '@image.factory']

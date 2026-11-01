@@ -1,0 +1,75 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_file_uploader;
+
+use Drupal\crop\Entity\Crop;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Image\ImageFactory;
+use Drupal\file\FileInterface;
+use Drupal\image_widget_crop\ImageWidgetCropInterface;
+
+/**
+ * Grava o ponto focal de uma imagem como recortes na Crop API (16:9 e 1:1).
+ *
+ * Usa o mesmo caminho do recorte de avatar: applyCrop ou updateCrop do
+ * image_widget_crop. A matemática do recorte fica em FocalPoint. O efeito nos
+ * estilos de imagem é uma etapa separada.
+ */
+final class FocalPointRecorder {
+
+  /**
+   * Tipos de recorte do ponto focal e a proporção de cada um (largura / altura).
+   */
+  public const CROP_RATIOS = [
+    'aculta_ponto_focal_16x9' => 16 / 9,
+    'aculta_ponto_focal_1x1' => 1.0,
+  ];
+
+  public function __construct(
+    private readonly ImageWidgetCropInterface $cropManager,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly ImageFactory $imageFactory,
+  ) {}
+
+  /**
+   * Grava os recortes do ponto focal. Retorna, por tipo, se foi gravado.
+   *
+   * @return array<string, bool>
+   */
+  public function record(FileInterface $file, float $focalX, float $focalY): array {
+    $result = [];
+    $image = $this->imageFactory->get($file->getFileUri());
+    $cropTypes = $this->entityTypeManager->getStorage('crop_type');
+
+    foreach (self::CROP_RATIOS as $typeId => $ratio) {
+      $result[$typeId] = FALSE;
+      $cropType = $cropTypes->load($typeId);
+      if ($cropType === NULL || !$image->isValid() || $image->getWidth() < 1 || $image->getHeight() < 1) {
+        continue;
+      }
+
+      $rect = FocalPoint::cropRectangle(
+        $image->getWidth(),
+        $image->getHeight(),
+        FocalPoint::clampPercent($focalX),
+        FocalPoint::clampPercent($focalY),
+        $ratio,
+      );
+      $props = $rect + ['crop_applied' => '1'];
+      $ref = ['file-id' => $file->id(), 'file-uri' => $file->getFileUri()];
+
+      if (Crop::cropExists($file->getFileUri(), $typeId)) {
+        $this->cropManager->updateCrop($props, $ref, $cropType);
+      }
+      else {
+        $this->cropManager->applyCrop($props, $ref, $cropType);
+      }
+      $result[$typeId] = TRUE;
+    }
+
+    return $result;
+  }
+
+}

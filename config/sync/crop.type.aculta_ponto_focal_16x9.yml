@@ -1,0 +1,12 @@
+uuid: 365901e4-32f9-4587-a0b7-4607e0b66049
+langcode: pt-br
+status: true
+dependencies: {  }
+label: 'Ponto focal 16:9'
+id: aculta_ponto_focal_16x9
+description: 'Recorte 16:9 gravado a partir do ponto focal da imagem.'
+aspect_ratio: '16:9'
+soft_limit_width: 0
+soft_limit_height: 0
+hard_limit_width: 0
+hard_limit_height: 0

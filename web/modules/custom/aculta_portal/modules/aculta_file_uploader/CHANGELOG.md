@@ -1,3 +1,12 @@
+## 0.1.0-dev.22 — ponto focal gravado na Crop API (16:9 e 1:1)
+
+- `FocalPointRecorder` grava o ponto focal como recortes 16:9 e 1:1 pelo image_widget_crop, com a mesma matemática de `FocalPoint`.
+- Tipos de recorte `aculta_ponto_focal_16x9` e `aculta_ponto_focal_1x1` em config/sync (limites 0, sem recorte fixo).
+- Dependências `crop` e `image_widget_crop` declaradas.
+- Pendente: efeito nos estilos de imagem (todos os estilos) e validação no Runtime.
+
+RUNTIME STATUS: DEFERRED.
+
 # Changelog — aculta_file_uploader
 
 ## 0.1.0-dev.21 — limpeza de temporários vale para imagem e documento
