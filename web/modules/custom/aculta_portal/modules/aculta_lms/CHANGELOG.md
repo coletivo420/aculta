@@ -1,3 +1,13 @@
+## 0.1.0-dev.100 — envio de respostas validado pela política do aculta_file_uploader
+
+- `SubmissionImageHooks` usa `aculta_file_uploader.consumer_policy` (integração `lms`) em vez de `UserUploadPolicy`.
+- `LmsSubmissionImageValidator` delega a `isValidImage(file, 'lms')`: uma regra de conteúdo para todos os consumidores. O aculta_image sai do caminho de upload do LMS.
+- Dependência `aculta_portal:aculta_file_uploader` declarada.
+- Testes Unit e Kernel acompanham a política nova. O Kernel grava `aculta_file_uploader.settings` no setUp.
+- Observação: o info.yml estava em 0.1.0-dev.98 e este changelog já tinha a entrada 0.1.0-dev.99, de outra sessão. A versão foi para 0.1.0-dev.100.
+
+RUNTIME STATUS: DEFERRED. Testes não executados (sem vendor/ nem Runtime).
+
 ## 0.1.0-dev.99 — resiliencia do dashboard Ganjalab (2026-11-01)
 
 - `AccountCoursesReader` agora trata também o retorno booleano de handlers Group

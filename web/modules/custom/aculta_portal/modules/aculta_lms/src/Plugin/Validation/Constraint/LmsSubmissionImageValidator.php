@@ -4,23 +4,26 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Plugin\Validation\Constraint;
 
-use Drupal\aculta_image\ImageInspector;
-use Drupal\aculta_image\UploadPolicy;
-use Drupal\Core\File\FileSystemInterface;
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\UploadPolicy;
 use Drupal\file\FileInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-/** Applies the central ACULTA image policy to image attachments. */
+/**
+ * Aplica a política de imagem do LMS a anexos de resposta.
+ *
+ * Usa a mesma regra de conteúdo do aculta_file_uploader para a integração
+ * `lms`: extensão, tamanho, MIME pelo conteúdo e dimensões decodificáveis.
+ * Arquivos fora do catálogo de imagens seguem a validação nativa do Core.
+ */
 final class LmsSubmissionImageValidator extends ConstraintValidator {
 
   public function __construct(
-    #[Autowire(service: 'aculta_image.inspector')]
-    private readonly ImageInspector $imageInspector,
-    #[Autowire(service: 'file_system')]
-    private readonly FileSystemInterface $fileSystem,
+    #[Autowire(service: 'aculta_file_uploader.consumer_policy')]
+    private readonly ConsumerUploadPolicy $uploadPolicy,
   ) {}
 
   /** {@inheritdoc} */
@@ -33,25 +36,11 @@ final class LmsSubmissionImageValidator extends ConstraintValidator {
     }
 
     $extension = strtolower(pathinfo($value->getFilename(), PATHINFO_EXTENSION));
-    $extensions = [
-      'gif' => 'image/gif',
-      'jpeg' => 'image/jpeg',
-      'jpg' => 'image/jpeg',
-      'png' => 'image/png',
-      'webp' => 'image/webp',
-    ];
-    if (!isset($extensions[$extension])) {
+    if (!in_array($extension, explode(' ', UploadPolicy::EXTENSIONS), TRUE)) {
       return;
     }
 
-    $path = $this->fileSystem->realpath($value->getFileUri());
-    $bytes = $path !== FALSE && is_readable($path) ? @file_get_contents($path) : FALSE;
-    $image = is_string($bytes) ? $this->imageInspector->fromBytes($bytes) : NULL;
-    if ($value->getSize() > UploadPolicy::MAX_BYTES
-      || !is_string($bytes)
-      || strlen($bytes) > UploadPolicy::MAX_BYTES
-      || $image === NULL
-      || ($image['mime'] ?? NULL) !== $extensions[$extension]) {
+    if (!$this->uploadPolicy->isValidImage($value, 'lms')) {
       $this->context->addViolation($constraint->message);
     }
   }

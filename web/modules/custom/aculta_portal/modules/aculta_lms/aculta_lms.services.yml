@@ -72,7 +72,7 @@ services:
     arguments: ['@?aculta_qrcode.generator', '@?aculta_qrcode.payload_validator', '@?aculta_qrcode.preset_registry', '@?aculta_portal.domain_purpose']
   aculta_lms.submission_image_validator:
     class: Drupal\aculta_lms\Plugin\Validation\Constraint\LmsSubmissionImageValidator
-    arguments: ['@aculta_image.inspector', '@file_system']
+    arguments: ['@aculta_file_uploader.consumer_policy']
   aculta_lms.uploaded_answer_access:
     class: Drupal\aculta_lms\Access\UploadedAnswerAccessCheck
     arguments: ['@aculta_lms.account_user_loader']
@@ -110,7 +110,7 @@ services:
       - { name: aculta_portal.implementation }
   Drupal\aculta_lms\Hook\SubmissionImageHooks:
     class: Drupal\aculta_lms\Hook\SubmissionImageHooks
-    arguments: ['@string_translation', '@?aculta_portal.user_upload_policy']
+    arguments: ['@string_translation', '@?aculta_file_uploader.consumer_policy']
   aculta_lms.checkout_provider:
     class: Drupal\aculta_lms\Checkout\LmsCheckoutProvider
     arguments: ['@aculta_portal.order_type_checkout_flows', '@aculta_portal.checkout_settings']

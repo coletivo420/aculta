@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Hook;
 
-use Drupal\aculta_portal\Upload\UserUploadPolicy;
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -25,7 +25,7 @@ final class SubmissionImageHooks {
    */
   public function __construct(
     TranslationInterface $stringTranslation,
-    private readonly ?UserUploadPolicy $uploadPolicy = NULL,
+    private readonly ?ConsumerUploadPolicy $uploadPolicy = NULL,
   ) {
     $this->stringTranslation = $stringTranslation;
   }

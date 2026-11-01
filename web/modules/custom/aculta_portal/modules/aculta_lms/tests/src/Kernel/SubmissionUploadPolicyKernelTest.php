@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\aculta_lms\Hook\SubmissionImageHooks;
-use Drupal\aculta_portal\Upload\UserUploadPolicy;
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\MimeTypeVerifier;
+use Drupal\aculta_file_uploader\UploadPolicy as FileUploadPolicy;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
@@ -37,9 +39,9 @@ final class SubmissionUploadPolicyKernelTest extends KernelTestBase {
   /**
    * Shared upload policy under test.
    *
-   * @var \Drupal\aculta_portal\Upload\UserUploadPolicy
+   * @var \Drupal\aculta_file_uploader\ConsumerUploadPolicy
    */
-  private UserUploadPolicy $policy;
+  private ConsumerUploadPolicy $policy;
 
   /**
    * {@inheritdoc}
@@ -51,17 +53,23 @@ final class SubmissionUploadPolicyKernelTest extends KernelTestBase {
     ]);
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
-    $this->policy = new UserUploadPolicy(
+    $this->config('aculta_file_uploader.settings')
+      ->set('allowed_extensions', 'png gif jpg jpeg webp pdf docx xls xlsx')
+      ->set('max_size_mb', 10)
+      ->save();
+    $this->policy = new ConsumerUploadPolicy(
       $this->container->get('config.factory'),
-      $this->container->get('aculta_image.upload_policy'),
-      $this->container->get('aculta_image.inspector'),
+      new FileUploadPolicy(),
+      new MimeTypeVerifier(),
+      $this->container->get('file_system'),
+      $this->container->get('image.factory'),
     );
   }
 
   /**
    * The effective LMS policy stays identical while the tab inherits global. */
   public function testInheritedPolicyKeepsTheEffectivePolicyUnchanged(): void {
-    self::assertSame(['png', 'jpg', 'jpeg', 'gif', 'webp', 'pdf', 'docx', 'xls', 'xlsx'], $this->policy->allowedExtensions('lms'));
+    self::assertSame(['png', 'gif', 'jpg', 'jpeg', 'webp', 'pdf', 'docx', 'xls', 'xlsx'], $this->allowed('lms'));
     self::assertSame(10 * 1024 * 1024, $this->policy->maxBytes('lms'));
 
     $element = $this->alterForm([
@@ -91,7 +99,7 @@ final class SubmissionUploadPolicyKernelTest extends KernelTestBase {
   /**
    * A saved LMS tab caps the response without touching the global policy. */
   public function testSavedLmsOverrideCapsTheResponse(): void {
-    $this->config('aculta_portal.user_upload')
+    $this->config('aculta_file_uploader.settings')
       ->set('allowed_extensions', 'png jpg pdf docx')
       ->set('max_size_mb', 20)
       ->set('consumers.lms', [
@@ -101,7 +109,7 @@ final class SubmissionUploadPolicyKernelTest extends KernelTestBase {
       ])
       ->save();
 
-    self::assertSame(['pdf', 'docx'], $this->policy->allowedExtensions('lms'));
+    self::assertSame(['pdf', 'docx'], $this->allowed('lms'));
     self::assertSame(5 * 1024 * 1024, $this->policy->maxBytes('lms'));
 
     $element = $this->alterForm([
@@ -112,7 +120,7 @@ final class SubmissionUploadPolicyKernelTest extends KernelTestBase {
     self::assertSame(5 * 1024 * 1024, $element['#upload_validators']['FileSizeLimit']['fileLimit']);
     self::assertSame('Envie um arquivo. Extensões permitidas: pdf docx.', (string) $element['#description']);
 
-    self::assertSame(['png', 'jpg', 'pdf', 'docx'], $this->policy->allowedExtensions());
+    self::assertSame(['png', 'jpg', 'pdf', 'docx'], $this->allowed());
     self::assertSame(20 * 1024 * 1024, $this->policy->maxBytes());
   }
 
@@ -147,8 +155,17 @@ final class SubmissionUploadPolicyKernelTest extends KernelTestBase {
   }
 
   /**
+   * Extensões aceitas por imagens e documentos, na ordem do catálogo.
+   *
+   * @return string[]
+   */
+  private function allowed(?string $consumer = NULL): array {
+    return array_merge($this->policy->imageExtensions($consumer), $this->policy->documentExtensions($consumer));
+  }
+
+  /**
    * Builds the production hook with the given policy. */
-  private function hooks(?UserUploadPolicy $policy): SubmissionImageHooks {
+  private function hooks(?ConsumerUploadPolicy $policy): SubmissionImageHooks {
     return new SubmissionImageHooks($this->container->get('string_translation'), $policy);
   }
 
