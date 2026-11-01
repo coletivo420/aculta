@@ -1,31 +1,38 @@
 # Contrato de eventos educacionais
 
-## Conclusão aprovada
+## Conclusão de curso
 
-`CourseCompletedEvent` representa uma entidade `lms_course_status` já salva,
-finalizada e com estado `passed`. O produtor chama
-`aculta_lms.course_completion_publisher` somente após confirmar a transição
-para esse estado. A classe contém UUID do status de origem, ID do Group curso,
-ID numérico da conta Drupal e instante UTC `completedAt`.
+`CourseCompletedEvent` é um contrato neutro de
+`aculta_learning_contracts\Event`. O provider atual é o adaptador
+`aculta_lms.course_completion_publisher`, que publica o evento depois de
+confirmar um status LMS salvo, finalizado e com estado `passed`. Importações
+marcadas como sincronização são ignoradas.
 
-O evento significa conclusão aprovada conforme a avaliação nativa do Drupal
-LMS. O payload não contém score, respostas, arquivos ou dados de apresentação.
-Não é uma fonte de verdade nova e não autoriza qualquer consumidor a conceder
-nota, certificado, amizade ou mensagem sem consultar novamente a entidade LMS.
+O payload contém UUID opaco da origem, ID do curso Group, ID numérico da conta
+como string e instante UTC `completedAt`. O evento significa conclusão
+aprovada conforme a avaliação nativa do provider Drupal LMS. Não contém score,
+respostas, arquivos ou dados de apresentação e não é um registro de progresso
+paralelo.
 
-O publisher despacha uma vez por chamada e não é idempotente. O produtor é
-responsável por chamar apenas na transição; consumidores futuros devem usar
-UUID de origem + destinatário para deduplicação, reabrir o estado atual e
-revalidar access/membership antes de qualquer ação. Nenhum produtor/listener de
-produção está registrado em F1.
+Os consumidores atuais são:
+
+- `aculta_game`: concede o gatilho `course_passed` por meio da API existente
+  de conquistas.
+- `aculta_messenger`: recebe o aviso encaminhado pelo fluxo LMS e mantém
+  `lms_course_status` como tipo de entidade de origem para compatibilidade com
+  a deduplicação e o armazenamento atuais.
+
+O publisher despacha por chamada e não mantém registro de entrega nem garante
+idempotência. O hook produtor deve chamar somente na transição para conclusão.
+Consumidores não devem tratar o UUID como classe de entidade, nem criar
+armazenamento paralelo de conclusão.
 
 ## Limites e compatibilidade
 
-- LMS mantém status, tentativas, score e conclusão; Group mantém curso e
-  membership; User mantém concessões; Messenger mantém mensagens/avisos.
-- Não há storage de eventos, fila custom, rota, configuração ou envio nesta
-  fase.
-- A API é um contrato inicial interno do submódulo. Mudança incompatível
-  requer revisão do ADR-005, consumidores e política de versionamento.
-- Próximo consumidor educacional previsto: contrato LMS → Messenger F13, após
-  produtor confiável, preferência, dedupe e revalidação de acesso.
+- O LMS mantém status, tentativas, score e conclusão; Group mantém curso e
+  membership; User mantém concessões; Messenger mantém mensagens e avisos.
+- O evento neutro reduz dependências de código dos consumidores, mas não remove
+  a dependência do provider de `aculta_lms` em Drupal LMS contrib.
+- Não há storage de eventos nem fila custom nesta integração.
+- Mudanças incompatíveis no payload exigem revisão dos consumidores e da
+  política de versionamento do contrato.
