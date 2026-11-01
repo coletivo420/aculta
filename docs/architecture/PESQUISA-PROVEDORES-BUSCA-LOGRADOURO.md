@@ -1,8 +1,12 @@
 # Pesquisa e Análise Comparativa de Provedores de Busca por Logradouro para ACULTA Events e Maps
 
-> **Status:** Pesquisa técnica e recomendação arquitetural. **Nenhuma busca por endereço foi implementada nesta fase.** Conta, checkout e cadastro de locais mantêm o comportamento estrito de CEP central (`aculta_portal_cep`) com país exclusivamente Brasil (`BR`).
+> **ARQUIVADO em 2026-10-31 por D-57.** Esta pesquisa é mantida somente como histórico; não há busca por logradouro, provedor a escolher ou implementação futura aprovada. O contrato vigente mantém exclusivamente a consulta por CEP existente em `aculta_portal_cep`, inclusive em Events e Maps. Não use as recomendações abaixo como backlog executável.
 
 ---
+
+## 1. Contexto histórico (não normativo)
+
+O conteúdo abaixo registra a comparação realizada antes da decisão D-57. As alternativas de provedores foram descartadas para o produto atual.
 
 ## 1. Contexto e Guardrails do Projeto
 

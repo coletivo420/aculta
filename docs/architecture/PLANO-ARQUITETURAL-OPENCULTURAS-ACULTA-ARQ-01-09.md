@@ -14,7 +14,7 @@ A ordem de dependências é: fechar as regras de ACL e cache de Locais (ARQ-01/L
 
 ## Diretriz aprovada para ARQ-08 - concluir Revista existente, sem novos conteúdos (2026-10-29)
 
-**Esta seção substitui ARQ-08/P2 onde sugeria novos modelos de imprensa, apoiadores, teasers ou metadados como entregas obrigatórias.** A Revista existente (`aculta_magazine`, **único bundle `revista`**) é a infraestrutura editorial. Já contém `field_subtitle` (chamada), `field_summary` (resumo), metatags, coautoria, discussões, Views e SDCs: **não duplicar entidades, bundles, campos, workflows ou módulos**. Os recursos OpenCulturas são apenas referências para fechar lacunas reais da Revista e de seus consumidores.
+**Esta seção atualiza ARQ-08/P2.** **Atualização do responsável — 2026-10-31 (D-64):** planejar o pacote completo de referências de imprensa, apoiadores e teasers editoriais. Este adendo autoriza planejamento de contratos e consumidores, mas não implementação imediata, novo bundle, entidade ou campo. Antes de codificar, definir consumidor real, autorização de marcas, acessibilidade, grants, cache e migração não destrutiva. A Revista existente (`aculta_magazine`, **único bundle `revista`**) é a infraestrutura editorial. Já contém `field_subtitle` (chamada), `field_summary` (resumo), metatags, coautoria, discussões, Views e SDCs: **não duplicar entidades, bundles, campos, workflows ou módulos**. Os recursos OpenCulturas são apenas referências para fechar lacunas reais da Revista e de seus consumidores.
 
 | Microfase | Conclusão pendente | Gate |
 | --- | --- | --- |

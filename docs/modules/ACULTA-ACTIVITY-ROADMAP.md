@@ -166,7 +166,7 @@ adapter mínimo.
   - Disponibilizado o script CLI `scripts/migrate-activity-locations.php` com suporte a `--inspect`, `--dry-run`, `--execute` e `--rollback`.
   - Implementado o hook `aculta_events_update_10012()` em `aculta_events.install` para execução controlada em deploy.
   - Cobertura completa com o teste de Kernel `ActivityLocationMigrationKernelTest` (3 testes e 79 asserções cobrindo auditoria, integridade de dry-run, criação idempotente, deduplicação de múltiplos nós para o mesmo local e rollback completo).
-- [ ] Busca por logradouro permanece restrita a Events/Maps e aguarda aprovação de provedor/termos/privacidade/limites.
+- [x] Busca por logradouro descartada por D-57; formulários mantêm somente CEP. Busca de Locais existentes por nome continua permitida.
 - [ ] Validar projeções de `aculta_index`, assegurando que endereço físico e dados privados não sejam indexados.
 
 Ver [ADR-033](../decisions/ADR-033-endereco-busca-e-locais.md), [plano LOC](../architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md) e [contrato de endereço](../portal/ACCOUNT-ADDRESS.md). Activity permanece Dev até integração completa e evidências próprias.
