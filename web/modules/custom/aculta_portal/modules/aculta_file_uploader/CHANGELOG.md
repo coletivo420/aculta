@@ -14,8 +14,11 @@ RUNTIME STATUS: DEFERRED.
   de schema.
 - `DestinationResolver` passa dados e opções na assinatura Drupal 11 de
   `Token::replace()`, evitando `TypeError` antes da sanitização.
-- Uploader Unit: 26 testes / 41 assertions PASS; Runtime de desenvolvimento
-  ainda aguarda enable e rebuild.
+- Uploader Unit: 27 testes / 48 assertions PASS. No Runtime `toca`, o módulo
+  foi habilitado sem recriar a tabela existente e `drush cr` passou; os serviços
+  `aculta_file_uploader.ingestor` e `aculta_lms_h5p.editor_upload_manager`
+  foram resolvidos pelo container. O envio real de arquivo H5P ainda não foi
+  exercitado.
 
 ## 0.1.0-dev.9 — motor da fila de limpeza movido para o aculta_file_uploader
 
