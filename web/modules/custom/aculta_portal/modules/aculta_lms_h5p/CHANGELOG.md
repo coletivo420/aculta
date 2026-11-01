@@ -1,3 +1,13 @@
+## 0.4.0-dev.161 — upload de imagem pelo aculta_file_uploader (fase 4)
+
+- O upload de imagem do editor H5P usa o `FileUploadIngestor` do
+  aculta_file_uploader, no lugar do `ImageUploadIngestor` do aculta_image.
+- Restrição de MIME do campo da atividade mantida (`allowedMimes`).
+- Volta para dev porque o código mudou após o RC e o RC não foi revalidado.
+- Não validado no Runtime: PHPUnit, Kernel e upload real de imagem H5P
+  pendentes.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-rc.1 — candidato de release (2026-10-29)
 
 - F10 e F15 completas; revisão visual autenticada documentada no Runtime de teste.
