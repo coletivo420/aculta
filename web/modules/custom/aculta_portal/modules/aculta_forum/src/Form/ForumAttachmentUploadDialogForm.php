@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Form;
 use Drupal\aculta_forum\Attachment\ForumAttachmentPublication;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\RecentUploads;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\Core\Ajax\HtmlCommand;
@@ -34,6 +35,7 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
     private readonly AccountProxyInterface $currentUser,
     private readonly ConsumerUploadPolicy $uploadPolicy,
     private readonly UserUploadDialogBuilder $dialogBuilder,
+    private readonly RecentUploads $recentUploads,
   ) {}
 
   /**
@@ -45,6 +47,7 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
       $container->get('current_user'),
       $container->get('aculta_file_uploader.consumer_policy'),
       $container->get('aculta_portal.user_upload_dialog_builder'),
+      $container->get('aculta_file_uploader.recent_uploads'),
     );
   }
 
@@ -66,6 +69,17 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
     ];
 
     $this->dialogBuilder->addFileControls($form, 'forum', self::UPLOAD_DIRECTORY, 'image_file', 'document_file');
+    // Envios recentes do Studio: o próprio usuário vê os seus; administrador vê todos.
+    $studio_options = $this->recentUploads->forUser((int) $this->currentUser->id(), 'forum', 10, $this->currentUser->hasPermission('administer site configuration'));
+    if ($studio_options !== []) {
+      $form['studio_file'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Ou escolha um envio recente do Studio'),
+        '#options' => ['' => $this->t('- Nenhum -')] + $studio_options,
+        '#default_value' => '',
+        '#description' => $this->t('Só vale se nenhum arquivo novo for enviado acima.'),
+      ];
+    }
     if (isset($form['image_file'])) {
       $form['image_alt'] = [
         '#type' => 'textfield',
@@ -89,34 +103,65 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
-    $image_fids = array_values(array_filter(array_map('intval', (array) $form_state->getValue('image_file'))));
-    $document_fids = array_values(array_filter(array_map('intval', (array) $form_state->getValue('document_file'))));
-    if (count($image_fids) + count($document_fids) !== 1) {
-      $form_state->setErrorByName('image_file', $this->t('Envie um arquivo por vez.'));
+    $selection = $this->resolveSelection($form_state);
+    if ($selection['error'] !== NULL) {
+      $form_state->setErrorByName($selection['field'], $selection['error']);
       return;
     }
-
-    $is_image_upload = $image_fids !== [];
-    if ($is_image_upload) {
+    if ($selection['file'] === NULL) {
+      return;
+    }
+    if ($selection['is_image']) {
       $image_alt = trim((string) $form_state->getValue('image_alt'));
       if ($image_alt === '' || mb_strlen($image_alt) > 512) {
         $form_state->setErrorByName('image_alt', $this->t('Informe uma descrição não vazia de até 512 caracteres para a imagem.'));
         return;
       }
     }
-    $fid = $is_image_upload ? reset($image_fids) : reset($document_fids);
-    $file = $this->entityTypeManager->getStorage('file')->load($fid);
-    if (!$file instanceof FileInterface) {
-      $form_state->setErrorByName($is_image_upload ? 'image_file' : 'document_file', $this->t('O arquivo enviado não está disponível. Envie-o novamente.'));
-      return;
+    $is_valid = $selection['is_image']
+      ? $this->uploadPolicy->isValidImage($selection['file'], 'forum')
+      : $this->uploadPolicy->isValidDocument($selection['file'], 'forum');
+    if (!$is_valid) {
+      $form_state->setErrorByName($selection['field'], $this->t('O arquivo não atende às extensões ou ao tamanho permitidos.'));
+    }
+  }
+
+  /**
+   * Resolve o arquivo escolhido: upload novo, ou envio recente do Studio do dono.
+   *
+   * @return array{file: ?FileInterface, is_image: bool, field: string, error: ?\Drupal\Core\StringTranslation\TranslatableMarkup}
+   */
+  private function resolveSelection(FormStateInterface $form_state): array {
+    $image_fids = array_values(array_filter(array_map('intval', (array) $form_state->getValue('image_file'))));
+    $document_fids = array_values(array_filter(array_map('intval', (array) $form_state->getValue('document_file'))));
+    $studio_fid = (int) $form_state->getValue('studio_file');
+    $uploaded = count($image_fids) + count($document_fids);
+
+    if ($uploaded > 1 || ($uploaded === 1 && $studio_fid > 0)) {
+      return ['file' => NULL, 'is_image' => FALSE, 'field' => 'image_file', 'error' => $this->t('Envie um arquivo por vez.')];
+    }
+    if ($uploaded === 0 && $studio_fid === 0) {
+      return ['file' => NULL, 'is_image' => FALSE, 'field' => 'image_file', 'error' => $this->t('Envie um arquivo ou escolha um envio recente.')];
     }
 
-    $is_valid = $is_image_upload
-      ? $this->uploadPolicy->isValidImage($file, 'forum')
-      : $this->uploadPolicy->isValidDocument($file, 'forum');
-    if (!$is_valid) {
-      $form_state->setErrorByName($is_image_upload ? 'image_file' : 'document_file', $this->t('O arquivo não atende às extensões ou ao tamanho permitidos.'));
+    if ($uploaded === 1) {
+      $is_image = $image_fids !== [];
+      $fid = $is_image ? reset($image_fids) : reset($document_fids);
+      $field = $is_image ? 'image_file' : 'document_file';
+      $file = $this->entityTypeManager->getStorage('file')->load($fid);
+      if (!$file instanceof FileInterface) {
+        return ['file' => NULL, 'is_image' => $is_image, 'field' => $field, 'error' => $this->t('O arquivo enviado não está disponível. Envie-o novamente.')];
+      }
+      return ['file' => $file, 'is_image' => $is_image, 'field' => $field, 'error' => NULL];
     }
+
+    // Envio recente do Studio: só do próprio usuário, ou de todos se administrador.
+    $file = $this->entityTypeManager->getStorage('file')->load($studio_fid);
+    $is_image = $file instanceof FileInterface && in_array(strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION)), $this->uploadPolicy->imageExtensions('forum'), TRUE);
+    if (!$file instanceof FileInterface || !$this->recentUploads->isOwnedBy($file, (int) $this->currentUser->id(), 'forum', $this->currentUser->hasPermission('administer site configuration'))) {
+      return ['file' => NULL, 'is_image' => FALSE, 'field' => 'studio_file', 'error' => $this->t('O arquivo escolhido não está disponível. Envie-o novamente.')];
+    }
+    return ['file' => $file, 'is_image' => $is_image, 'field' => 'studio_file', 'error' => NULL];
   }
 
   /**
@@ -134,23 +179,15 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
       return $response;
     }
 
-    $image_fids = array_values(array_filter(array_map('intval', (array) $form_state->getValue('image_file'))));
-    $document_fids = array_values(array_filter(array_map('intval', (array) $form_state->getValue('document_file'))));
-    $is_image_upload = $image_fids !== [];
-    $field_name = $is_image_upload ? 'image_file' : 'document_file';
-    $fids = array_merge($image_fids, $document_fids);
-    if (count($fids) !== 1) {
-      $form_state->setErrorByName($field_name, $this->t('Envie um arquivo por vez.'));
+    $selection = $this->resolveSelection($form_state);
+    if ($selection['error'] !== NULL || $selection['file'] === NULL) {
+      $form_state->setErrorByName($selection['field'], $selection['error'] ?? $this->t('O arquivo enviado não está disponível. Envie-o novamente.'));
       $response->addCommand(new HtmlCommand('#aculta-forum-attachment-dialog', $form));
       return $response;
     }
-
-    $file = $this->entityTypeManager->getStorage('file')->load((int) reset($fids));
-    if (!$file instanceof FileInterface) {
-      $form_state->setErrorByName($field_name, $this->t('O arquivo enviado não está disponível. Envie-o novamente.'));
-      $response->addCommand(new HtmlCommand('#aculta-forum-attachment-dialog', $form));
-      return $response;
-    }
+    $file = $selection['file'];
+    $is_image_upload = $selection['is_image'];
+    $field_name = $selection['field'];
 
     $is_valid = $is_image_upload
       ? $this->uploadPolicy->isValidImage($file, 'forum')

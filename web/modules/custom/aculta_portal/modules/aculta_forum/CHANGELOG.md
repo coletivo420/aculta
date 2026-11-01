@@ -1,3 +1,10 @@
+## 0.1.0-dev.336 — anexo do Fórum aceita envio recente do Studio
+
+- `ForumAttachmentUploadDialogForm` lista os envios recentes do Studio da integração `forum` (imagens e documentos).
+- Envio escolhido vale só se for do próprio usuário; administrador vê todos. A galeria de imagens fica para uma etapa seguinte.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.335 — anexos e galeria validados pela política do aculta_file_uploader
 
 - `ForumAttachmentUploadDialogForm` e `ForumGalleryUploadDialogForm` usam `aculta_file_uploader.consumer_policy` (integração `forum`) em vez de `UserUploadPolicy`.
