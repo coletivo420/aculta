@@ -2,10 +2,11 @@
 
 ## Propostas de Evento — F6 parcial
 
-Revalidação no HEAD `7a26aea78`: os seis Kernels `testEventUpdateContribution*`
-passaram (6 testes / 171 assertions; 24 depreciações Core/contrib), cobrindo
-submissão privada, aplicação seletiva, autorização atual, membership, acesso ao
-Local e fingerprint da origem.
+Revalidação no HEAD `34e79950e`: `EventOrganizationLifecycleKernelTest` passou
+27 testes / 888 assertions; os seis cenários `testEventUpdateContribution*`
+passaram 6/171, cobrindo submissão privada, aplicação seletiva, autorização
+atual, membership, acesso ao Local e fingerprint da origem (24 depreciações
+Core/contrib). Runtime não alterado.
 
 A aplicação de `event_update` recarrega Locais de Datas existentes e propostos,
 limpa o access handler e verifica o acesso `view` atual do autor. A revogação de

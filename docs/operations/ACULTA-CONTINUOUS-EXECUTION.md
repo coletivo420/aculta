@@ -3189,3 +3189,8 @@ ou preferência persistente alterados.
 - Revalidado `dev` após fast-forward até `d298f727d`; oito commits LMS/Game concorrentes foram preservados. O inventário F0 não encontrou mudança no owner/contratos de Contributions decorrente dessa integração.
 - Kernel `WikiLeadImageLifecycleKernelTest`, filtro `testWikiContributionMigration(PreservesRevisionHistory|PreservesIdCollision|RejectsTranslatedRevision)`, com `SIMPLETEST_DB` apontando a `aculta_simpletest`: **3 testes / 133 assertions PASS**. Os casos verificam retry sem revisões duplicadas, não sobrescrita de ID existente, ausência de checkpoint/revision map após colisão e rejeição de histórico traduzido sem cópia parcial. Foram reportadas 245 depreciações Core/contrib.
 - PHP lint, PHPCS Drupal e `git diff --check` PASS. Nenhum update foi executado no `aculta_runtime`; dados reais, contagem de colisões/traduções e homologação do update 10003 seguem pendentes.
+
+### Revalidação do ciclo Events Contributions (2026-11-01)
+
+- No HEAD `34e79950e`, `EventOrganizationLifecycleKernelTest` completa passou usando `aculta_simpletest`: 27 testes / 888 assertions, 24 depreciações Core/contrib. Filtro `testEventUpdateContribution*`: 6 testes / 171 assertions, incluindo submissão privada, aplicação seletiva, perda de Entity Access, membership revogado, Local privado e origem alterada.
+- Nenhuma escrita no `aculta_runtime`; os updates Messenger 10015–10016 e homologação permanecem pendentes.

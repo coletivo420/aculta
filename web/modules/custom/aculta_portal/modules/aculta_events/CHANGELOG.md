@@ -1,3 +1,9 @@
+## Revalidação 2026-11-01 — ciclo de vida e propostas
+
+- `EventOrganizationLifecycleKernelTest`: **27 testes / 888 assertions PASS**;
+  `testEventUpdateContribution*`: 6 / 171. Ambos usam `aculta_simpletest`;
+  24 depreciações Core/contrib. Runtime sem alterações.
+
 ## Revalidação 2026-11-01 — conflitos de `event_update`
 
 - Reexecutados os casos Kernel de submissão privada, aplicação seletiva, perda

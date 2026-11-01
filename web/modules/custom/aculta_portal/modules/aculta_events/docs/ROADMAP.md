@@ -1,7 +1,8 @@
 ## Contributions — estado local em 2026-11-02
 
-- Revalidação no HEAD `7a26aea78`: suíte focal `testEventUpdateContribution*`
-  passou 6/171 (24 depreciações Core/contrib); sem alteração Runtime.
+- Revalidação no HEAD `34e79950e`: `EventOrganizationLifecycleKernelTest` passou
+  27/888 e os casos `testEventUpdateContribution*`, 6/171 (24 depreciações
+  Core/contrib); sem alteração Runtime.
 
 - Organização sem titular: propostas de perfil e criação sob revisão; claims,
   titularidade, membros e edições de perfis reivindicados continuam nos owners
