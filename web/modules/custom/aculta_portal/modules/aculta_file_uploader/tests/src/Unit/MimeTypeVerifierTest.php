@@ -74,4 +74,24 @@ final class MimeTypeVerifierTest extends UnitTestCase {
     $this->assertFalse($verifier->matches('', 'png'));
   }
 
+  /**
+   * docx exige as entradas do pacote OOXML, não só o cabeçalho ZIP.
+   */
+  public function testDocxNeedsWordPackageEntries(): void {
+    $verifier = new MimeTypeVerifier();
+    $header = "PK\x03\x04" . str_repeat("\0", 26);
+    $this->assertTrue($verifier->matches($header . '[Content_Types].xml' . 'word/document.xml', 'docx'));
+    $this->assertFalse($verifier->matches($header . 'xl/workbook.xml', 'docx'));
+  }
+
+  /**
+   * xlsx exige a pasta de planilhas do pacote OOXML.
+   */
+  public function testXlsxNeedsWorkbookEntry(): void {
+    $verifier = new MimeTypeVerifier();
+    $header = "PK\x03\x04" . str_repeat("\0", 26);
+    $this->assertTrue($verifier->matches($header . '[Content_Types].xml' . 'xl/workbook.xml', 'xlsx'));
+    $this->assertFalse($verifier->matches($header . 'word/document.xml', 'xlsx'));
+  }
+
 }

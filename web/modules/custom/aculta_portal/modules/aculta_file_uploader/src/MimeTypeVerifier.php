@@ -14,6 +14,16 @@ namespace Drupal\aculta_file_uploader;
 final class MimeTypeVerifier {
 
   /**
+   * Entradas obrigatórias de cada pacote OOXML, procuradas nos bytes lidos.
+   *
+   * @var array<string, string[]>
+   */
+  private const PACKAGE_ENTRIES = [
+    'docx' => ['[Content_Types].xml', 'word/document.xml'],
+    'xlsx' => ['[Content_Types].xml', 'xl/workbook.xml'],
+  ];
+
+  /**
    * Tipos MIME aceitos para cada extensão do catálogo central.
    */
   private const MIME_BY_EXTENSION = [
@@ -55,7 +65,17 @@ final class MimeTypeVerifier {
       return FALSE;
     }
     $mime = $this->detect($bytes);
-    return $mime !== NULL && in_array($mime, $allowed, TRUE);
+    if ($mime === NULL || !in_array($mime, $allowed, TRUE)) {
+      return FALSE;
+    }
+    // Pacotes OOXML guardam os nomes das entradas em texto puro nos cabeçalhos
+    // locais do ZIP. Um ZIP comum com extensão docx ou xlsx não tem essas entradas.
+    foreach (self::PACKAGE_ENTRIES[$extension] ?? [] as $entry) {
+      if (!str_contains($bytes, $entry)) {
+        return FALSE;
+      }
+    }
+    return TRUE;
   }
 
 }

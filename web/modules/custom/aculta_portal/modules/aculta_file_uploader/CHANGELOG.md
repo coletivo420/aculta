@@ -1,5 +1,13 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.17 — validação estrutural de docx e xlsx
+
+- `MimeTypeVerifier::matches()` exige as entradas do pacote OOXML nos bytes lidos: docx precisa de `[Content_Types].xml` e `word/document.xml`; xlsx, de `[Content_Types].xml` e `xl/workbook.xml`. Um ZIP comum com extensão docx ou xlsx é recusado.
+- Limitação: a verificação procura os nomes nos cabeçalhos locais do ZIP. Não decodifica o XML.
+- Testes Unit: `testDocxNeedsWordPackageEntries` e `testXlsxNeedsWorkbookEntry`.
+
+RUNTIME STATUS: DEFERRED. Teste não executado (sem vendor/ nem Runtime). Confirmar com um .docx e um .xlsx reais no Runtime.
+
 ## 0.1.0-dev.16 — correção da política por integração
 
 - Testes: o teste de PDF agora remove o arquivo temporário (a alteração anterior tinha apagado a chamada) e o docblock de `testRejectsFileAboveLimit` voltou a ficar junto do método.
