@@ -1,3 +1,11 @@
+## 0.1.0-dev.101 — resposta do LMS aceita envio recente do Studio
+
+- `SubmissionImageHooks` lista envios recentes do aluno (integração `lms`, imagens e documentos), usados só com o envio vazio.
+- Escolha checada pelo dono (administrador vê todos) e validada pela política do `aculta_file_uploader`.
+- Assume o formato padrão `managed_file` do `file_upload`; o código do contrib `lms_file_upload` não está neste checkout e não foi verificado.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.100 — envio de respostas validado pela política do aculta_file_uploader
 
 - `SubmissionImageHooks` usa `aculta_file_uploader.consumer_policy` (integração `lms`) em vez de `UserUploadPolicy`.
