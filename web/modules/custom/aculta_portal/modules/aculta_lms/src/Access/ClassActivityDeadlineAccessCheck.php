@@ -7,6 +7,7 @@ namespace Drupal\aculta_lms\Access;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
@@ -60,6 +61,44 @@ final class ClassActivityDeadlineAccessCheck {
 
   /**
    * Finds the parent course relationship for a class. */
+  /**
+   * Checks access to the published course that owns a class.
+   *
+   * Keep Drupal LMS course semantics inside this adapter. Consumers receive
+   * only a cacheable access result and do not need CourseInterface.
+   */
+  public function courseAccessForClass(GroupInterface $class, AccountInterface $account): AccessResult {
+    $cacheTags = ['group_relationship_list:plugin:lms_classes:entity:' . $class->id()];
+    if ($class->bundle() !== 'lms_class') {
+      return AccessResult::forbidden()
+        ->cachePerUser()
+        ->addCacheContexts(['user.permissions', 'user.group_permissions'])
+        ->addCacheableDependency($class)
+        ->addCacheTags($cacheTags);
+    }
+
+    $course = $this->courseForClass($class);
+    if (!$course instanceof CourseInterface || !$course->isPublished()) {
+      return AccessResult::forbidden()
+        ->cachePerUser()
+        ->addCacheContexts(['user.permissions', 'user.group_permissions'])
+        ->addCacheableDependency($class)
+        ->addCacheTags($cacheTags);
+    }
+
+    $courseAccess = $course->takeAccess($account);
+    return AccessResult::allowedIf($courseAccess->isAllowed())
+      ->cachePerUser()
+      ->addCacheContexts(['user.permissions', 'user.group_permissions'])
+      ->addCacheTags([
+        ...$cacheTags,
+        'group_relationship_list:plugin:group_membership:group:' . $course->id(),
+      ])
+      ->addCacheableDependency($class)
+      ->addCacheableDependency($course)
+      ->addCacheableDependency($courseAccess);
+  }
+
   public function courseForClass(GroupInterface $class): ?CourseInterface {
     if ($class->bundle() !== 'lms_class') {
       return NULL;
