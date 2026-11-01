@@ -281,7 +281,7 @@ Não foram portados: distribuição Opigno, manager Angular legado, entidades pr
 | Fase | Objetivo | Dependências | Critério de aceite | Rollback |
 | --- | --- | --- | --- | --- |
 | B2 — Resumo do estudante | Contrato ACULTA para dashboard (cursos, progresso, pendências, certificados) | `StudentLearningSummaryReaderInterface` e DTOs publicados; composer no Studio | Código implementado em `dev`; confirmar lint, testes e integração local; Studio sem imports LMS | Reverter consumidores e manter manager atual |
-| B3-A — Portal sem LMS obrigatório | Contrato de cursos da Conta; provider e slugs no `aculta_lms`; remover `lms:lms` do Portal | Busca de imports/serviços/rotas no Portal; validação local da instalação sem LMS | Código em `dev`; confirmar containers, rotas e conta sem provider no checkout local | Reintroduzir dependência ou services; nenhum dado migrado |
+| B3-A — Portal sem LMS obrigatório | Contrato de cursos da Conta; provider e slugs no `aculta_lms`; remover `lms:lms` do Portal | Imports/serviços/rotas do Portal removidos; adaptação LMS opcional | Implementada no código `dev`; Runtime/instalação sem LMS ainda exigem validação local | Reintroduzir a dependência se o gate local falhar; nenhum dado migrado |
 | C — Autoria própria | Curso, currículo e versão publicada em entidades ACULTA; editor mobile-first | Contratos B1/B2; decisão sobre Group | Rascunho, prévia e publicação sem duplicar atividade consumida | Desligar editor; fonte legada continua |
 | D — Piloto de migração | Curso piloto migrado com mapa de IDs e reconciliação | C; backup e export imutável | Contagem, ordem, acesso e progresso equivalentes; sem exposição de arquivo privado | Ownership volta ao legado antes de novas tentativas |
 | E — Avaliações | Migrar tentativas, respostas, notas e comentários | D; política de retenção | Testes de isolamento A/B, histórico preservado | Manter curso no novo backend; export/replay auditável |
@@ -486,6 +486,6 @@ web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/Le
 
 Observações:
 
-- A extração dos contratos não adicionou nem removeu imports de `Drupal\lms` no código de produção. A separação de apresentação removeu `aculta_lms/src/Hook/LearningRoomHooks.php`; a extração de conta/rotas moveu `AccountCoursesReader` e os três `Routing/LmsFriendly*` para o LMS. Com a B3-A, **`aculta_portal` deixou de importar `Drupal\lms`** e os dois processadores residuais saíram da lista. A migração do gatilho de conclusão para o evento neutro também removeu o import de `Drupal\\lms` do Game. O total atualizado é **59 arquivos / 114 linhas**.
+- A extração dos contratos não adicionou imports de `Drupal\lms` nos consumidores. A separação de apresentação removeu `aculta_lms/src/Hook/LearningRoomHooks.php`; a extração de conta/rotas moveu `AccountCoursesReader` e os três `Routing/LmsFriendly*` para o LMS. Com a B3-A, **`aculta_portal` deixou de importar `Drupal\lms`** e os dois processadores residuais saíram da lista. A migração do gatilho de conclusão para o evento neutro também removeu o import de `Drupal\\lms` do Game. O total atualizado é **59 arquivos / 114 linhas**.
 - `aculta_studio/src` não aparece na lista: não importa `Drupal\lms`.
 - Nenhum arquivo do `aculta_portal` base aparece na lista atual.
