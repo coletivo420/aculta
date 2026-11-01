@@ -1,5 +1,12 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.6 — motor da auditoria movido do aculta_image
+
+- `Audit\ImageAudit` e `Visual\DHash` (com teste Unit) saem do aculta_image e passam para este módulo. Serviço: `aculta_file_uploader.audit`.
+- A auditoria continua somente leitura. Rotas, abas, controller e painel `/painel-administrativo/imagens` seguem no aculta_image (decisão do responsável: só o motor migra).
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.5 — GeneratedImageFileManager movido do aculta_image (migração dos derivados)
 
 - `GeneratedImageFileManager` e o serviço `aculta_file_uploader.generated_file` passam a viver aqui; `aculta_image.generated_file` sai do `aculta_image`.

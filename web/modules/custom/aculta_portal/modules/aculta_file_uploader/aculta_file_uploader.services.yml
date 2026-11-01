@@ -21,3 +21,8 @@ services:
     arguments: ['@entity_type.manager', '@file_system', '@file.mime_type.guesser', '@image.factory', '@datetime.time']
     tags:
       - { name: aculta_portal.helper }
+  aculta_file_uploader.audit:
+    class: Drupal\aculta_file_uploader\Audit\ImageAudit
+    arguments: ['@database', '@?media_duplicates.checksum_statistics', '@file_system']
+    tags:
+      - { name: aculta_portal.helper }

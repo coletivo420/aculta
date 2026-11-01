@@ -53,11 +53,6 @@ services:
     arguments: ['@aculta_image.inspector', '@file.usage']
     tags:
       - { name: aculta_portal.helper }
-  aculta_image.audit:
-    class: Drupal\aculta_image\Audit\ImageAudit
-    arguments: ['@database', '@?media_duplicates.checksum_statistics', '@file_system']
-    tags:
-      - { name: aculta_portal.helper }
   aculta_image.quarantine:
     class: Drupal\aculta_image\Quarantine\ImageQuarantine
     arguments: ['@database', '@file.repository', '@file_system', '@?aculta_portal.unused_file_cleaner', '@datetime.time', '@entity_type.manager']

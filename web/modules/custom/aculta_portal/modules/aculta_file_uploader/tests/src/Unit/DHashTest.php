@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_image\Unit;
+namespace Drupal\Tests\aculta_file_uploader\Unit;
 
-use Drupal\aculta_image\Visual\DHash;
+use Drupal\aculta_file_uploader\Visual\DHash;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 

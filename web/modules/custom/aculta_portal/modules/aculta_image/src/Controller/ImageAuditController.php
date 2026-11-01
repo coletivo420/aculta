@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_image\Controller;
 
-use Drupal\aculta_image\Audit\ImageAudit;
+use Drupal\aculta_file_uploader\Audit\ImageAudit;
 use Drupal\aculta_image\ImageCapabilities;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
@@ -29,7 +29,7 @@ final class ImageAuditController extends ControllerBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('aculta_image.audit'),
+      $container->get('aculta_file_uploader.audit'),
       $container->get('aculta_image.capabilities'),
       $container->get('config.factory'),
     );

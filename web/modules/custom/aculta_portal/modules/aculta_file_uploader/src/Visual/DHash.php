@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_image\Visual;
+namespace Drupal\aculta_file_uploader\Visual;
 
 /**
  * Calculates 64-bit difference hashes for visual image comparisons.

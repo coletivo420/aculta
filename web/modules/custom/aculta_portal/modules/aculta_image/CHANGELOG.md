@@ -1,3 +1,10 @@
+## 0.1.0-dev.49 — motor da auditoria no aculta_file_uploader
+
+- `aculta_image.audit` sai do aculta_image; o serviço passa a ser `aculta_file_uploader.audit`. Controller, rotas e abas permanecem aqui.
+- `ImageAuditController`, `ImageQuarantineForm` e `CronHooks` usam o serviço e a classe do aculta_file_uploader. Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.48 — derivados movidos para o aculta_file_uploader
 
 - `GeneratedImageFileManager` e `aculta_image.generated_file` saem do `aculta_image`. O registro de derivados passa a ser `aculta_file_uploader.generated_file`.

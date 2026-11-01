@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_image\Form;
 
-use Drupal\aculta_image\Audit\ImageAudit;
+use Drupal\aculta_file_uploader\Audit\ImageAudit;
 use Drupal\aculta_image\Quarantine\ImageQuarantine;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
@@ -29,7 +29,7 @@ final class ImageQuarantineForm extends FormBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('aculta_image.audit'),
+      $container->get('aculta_file_uploader.audit'),
       $container->get('aculta_image.quarantine'),
       $container->get('entity_type.manager'),
     );

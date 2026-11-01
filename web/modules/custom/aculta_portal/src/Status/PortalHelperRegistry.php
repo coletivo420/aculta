@@ -130,7 +130,7 @@ final class PortalHelperRegistry {
       'summary' => 'Registra e remove referências das imagens H5P no File API para a limpeza segura do acervo.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
     ],
-    'aculta_image.audit' => [
+    'aculta_file_uploader.audit' => [
       'label' => 'Inventário e auditoria de imagens',
       'summary' => 'Resumo do acervo, grupos de duplicatas exatas e candidatas à revisão com motivos. Somente leitura.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',

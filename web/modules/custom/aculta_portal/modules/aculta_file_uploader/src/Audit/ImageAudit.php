@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_image\Audit;
+namespace Drupal\aculta_file_uploader\Audit;
 
-use Drupal\aculta_image\Visual\DHash;
+use Drupal\aculta_file_uploader\Visual\DHash;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\File\FileSystemInterface;
 

@@ -3,7 +3,7 @@ type: module
 description: 'Pipeline único de upload do Portal: política, verificação de MIME por conteúdo, destinos com tokens e ingestão via File API do Core. Fase 1: núcleo sem consumidores migrados. Submódulo do aculta_portal.'
 package: 'ACULTA Portal'
 core_version_requirement: ^11.3
-version: '0.1.0-dev.5'
+version: '0.1.0-dev.6'
 dependencies:
   - drupal:file
   - drupal:token

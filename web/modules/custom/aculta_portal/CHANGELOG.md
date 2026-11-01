@@ -1,3 +1,10 @@
+## 0.4.1-dev.52 — registro do helper de auditoria migrado
+
+- `PortalHelperRegistry`: a entrada `aculta_image.audit` passa a `aculta_file_uploader.audit`.
+- Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.4.1-dev.51 — registro de helper do derivado migrado
 
 - `PortalHelperRegistry`: a entrada `aculta_image.generated_file` passa a `aculta_file_uploader.generated_file`.
