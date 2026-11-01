@@ -126,7 +126,7 @@ final class MessengerSettingsFormTest extends UnitTestCase {
   public function testSubmitPersistsEmailModesAndWeeklyDigestAnchor(): void {
     $config = $this->createMock(Config::class);
     $saved = [];
-    $config->expects(self::exactly(8))
+    $config->expects(self::exactly(10))
       ->method('set')
       ->willReturnCallback(static function (string $key, mixed $value) use (&$saved, $config): Config {
         $saved[$key] = $value;

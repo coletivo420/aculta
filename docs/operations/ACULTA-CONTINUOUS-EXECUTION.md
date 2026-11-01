@@ -3182,6 +3182,7 @@ ou preferência persistente alterados.
 - Drush confirmou Drupal 11.4.10, `aculta_runtime` conectado, host `toca`, URI `http://default`. `updatedb:status` lista Messenger 10015 e 10016 pendentes; `config:status` informa nenhuma diferença entre banco e `config/sync`. Nenhum update/importação/cache rebuild foi executado nesta rechecagem.
 - Atualização de evidência do plano: `aculta_messenger_update_10015()` agora tem cobertura Unit junto dos demais updates aditivos; `10016` continua com teste de idempotência. Os updates seguem sem homologação Runtime.
 - Validação no worktree `dev` em `bc362a1be`: `MessengerDefaultConfigUpdateTest` PASS (10 testes/50 assertions), PHP lint, PHPCS Drupal e `git diff --check` PASS. A suíte Unit completa de Messenger executou 394 testes e teve 2 falhas em `MessengerSettingsFormTest::testSubmitPersistsEmailModesAndWeeklyDigestAnchor` e `PersonalNoticeAdapterHooksTest::testDisabledOptionalAdaptersDoNotBreakListOrCount`; a suíte completa requer triagem separada e não é declarada verde.
+- Revalidação posterior no HEAD `6659b15bf`: corrigidas apenas expectativas antigas de testes Unit Messenger (10 gravações da configuração; locator opcional consultado por adapter/operação). Casos focais passaram 2/12 e a suíte Unit completa passou **395 testes / 4.317 assertions**; PHP lint, PHPCS Drupal e `git diff --check` PASS. Sem alteração de comportamento de produção.
 
 ### Reconciliação fail-closed da migração Wiki 10003 (2026-11-01)
 
