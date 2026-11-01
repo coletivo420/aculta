@@ -21,7 +21,20 @@
   depreciações upstream; PHP lint, PHPCS e `git diff --check` PASS.
 - Commit funcional: `1120a4d4a` (`fix(events): bubble location access cache metadata`).
 - O item LOC-01 continua parcial: revisão dos demais consumidores e paginação
-  escalável seguem pendentes. Nenhuma operação no Runtime.
+  completa de consumidores segue pendente; a listagem passou a carregar em
+  lotes na execução seguinte. Nenhuma operação no Runtime.
+
+## Desenvolvimento na branch dev — paginação de Locais em lotes (2026-11-01)
+
+- `LocationCatalogue` agora carrega até 100 entidades por consulta e mantém em
+  memória somente a página acessível solicitada, preservando a contagem exata
+  pós-ACL. Título e ID formam a ordenação estável; página negativa volta a 0.
+- Testes de catálogo, mapa, gestão de Locais e MapRenderer: **20 testes / 369
+  assertions, PASS**, com 22 depreciações upstream. PHP lint, PHPCS e
+  `git diff --check` PASS.
+- Commit funcional: `f0d77b0de` (`perf(events): batch location catalogue results`).
+- LOC-01 segue parcial até a auditoria dos demais consumidores. Runtime não foi
+  alterado.
 
 ### Gate de slugs — exceção OAuth técnica (2026-10-31)
 
