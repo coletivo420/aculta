@@ -6,6 +6,7 @@ namespace Drupal\aculta_file_uploader;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Image\ImageFactory;
 use Drupal\file\FileInterface;
 
 /**
@@ -14,7 +15,8 @@ use Drupal\file\FileInterface;
  * Uma integração só restringe os catálogos centrais (imagens e documentos) e o
  * limite de tamanho, nunca os amplia. Um arquivo é aceito somente com extensão
  * permitida, tamanho dentro do limite e bytes compatíveis com a extensão (MIME
- * pelo conteúdo). Lista vazia fecha a política.
+ * pelo conteúdo). Imagens também precisam ter dimensões decodificáveis. Lista
+ * vazia fecha a política.
  */
 final class ConsumerUploadPolicy {
 
@@ -28,6 +30,7 @@ final class ConsumerUploadPolicy {
     private readonly UploadPolicy $policy,
     private readonly MimeTypeVerifier $mimeVerifier,
     private readonly FileSystemInterface $fileSystem,
+    private readonly ImageFactory $imageFactory,
   ) {}
 
   /**
@@ -58,17 +61,17 @@ final class ConsumerUploadPolicy {
   }
 
   /**
-   * Confirma extensão, tamanho e MIME pelo conteúdo de uma imagem.
+   * Confirma extensão, tamanho, MIME pelo conteúdo e dimensões de uma imagem.
    */
   public function isValidImage(FileInterface $file, ?string $consumer = NULL): bool {
-    return $this->isValidFile($file, $this->imageExtensions($consumer), $consumer);
+    return $this->isValidFile($file, $this->imageExtensions($consumer), $consumer, TRUE);
   }
 
   /**
    * Confirma extensão, tamanho e MIME pelo conteúdo de um documento.
    */
   public function isValidDocument(FileInterface $file, ?string $consumer = NULL): bool {
-    return $this->isValidFile($file, $this->documentExtensions($consumer), $consumer);
+    return $this->isValidFile($file, $this->documentExtensions($consumer), $consumer, FALSE);
   }
 
   /**
@@ -98,6 +101,37 @@ final class ConsumerUploadPolicy {
   }
 
   /**
+   * Restringe validadores de uma atividade à política da integração.
+   *
+   * A integração pode só estreitar: extensões fora da lista dela são removidas
+   * e o limite nunca sobe. Validadores extras da atividade são preservados.
+   *
+   * @param array<string, mixed> $validators
+   *   Validadores do Managed File API pedidos pela atividade.
+   *
+   * @return array<string, mixed>
+   */
+  public function restrictValidators(array $validators, ?string $consumer = NULL): array {
+    $allowed = array_merge($this->imageExtensions($consumer), $this->documentExtensions($consumer));
+    $requested = preg_split('/[\s,]+/', strtolower(trim((string) ($validators['FileExtension']['extensions'] ?? implode(' ', $allowed))))) ?: [];
+    $validators['FileExtension'] = ['extensions' => implode(' ', array_values(array_intersect($requested, $allowed)))];
+
+    $limit = $this->maxBytes($consumer);
+    $validators['FileSizeLimit'] = ['fileLimit' => min((int) ($validators['FileSizeLimit']['fileLimit'] ?? $limit), $limit)];
+    return $validators;
+  }
+
+  /**
+   * Extensões que um conjunto de validadores aceita, para texto de ajuda.
+   *
+   * @param array<string, mixed> $validators
+   */
+  public function acceptedExtensions(array $validators): string {
+    $extensions = (string) ($validators['FileExtension']['extensions'] ?? '');
+    return implode(' ', preg_split('/[\s,]+/', strtolower(trim($extensions)), -1, PREG_SPLIT_NO_EMPTY) ?: []);
+  }
+
+  /**
    * Interseção entre a configuração da integração e um catálogo central.
    *
    * @return string[]
@@ -113,7 +147,7 @@ final class ConsumerUploadPolicy {
    *
    * @param string[] $extensions
    */
-  private function isValidFile(FileInterface $file, array $extensions, ?string $consumer): bool {
+  private function isValidFile(FileInterface $file, array $extensions, ?string $consumer, bool $raster): bool {
     $extension = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
     if (!in_array($extension, $extensions, TRUE)) {
       return FALSE;
@@ -128,7 +162,14 @@ final class ConsumerUploadPolicy {
       return FALSE;
     }
     $bytes = @file_get_contents($path, FALSE, NULL, 0, $limit);
-    return is_string($bytes) && $this->mimeVerifier->matches($bytes, $extension);
+    if (!is_string($bytes) || !$this->mimeVerifier->matches($bytes, $extension)) {
+      return FALSE;
+    }
+    if (!$raster) {
+      return TRUE;
+    }
+    $image = $this->imageFactory->get($file->getFileUri());
+    return $image->isValid() && $image->getWidth() > 0 && $image->getHeight() > 0;
   }
 
   /**

@@ -1,5 +1,12 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.16 — correção da política por integração
+
+- Testes: o teste de PDF agora remove o arquivo temporário (a alteração anterior tinha apagado a chamada) e o docblock de `testRejectsFileAboveLimit` voltou a ficar junto do método.
+- `ConsumerUploadPolicy` valida dimensões de imagem pelo `ImageFactory` do Core, como a política antiga fazia. Novos: `restrictValidators()` e `acceptedExtensions()`, usados pelo LMS.
+
+RUNTIME STATUS: DEFERRED. Sem PHPUnit executado (sem vendor/ nem Runtime); apenas `php -l`.
+
 ## 0.1.0-dev.15 — política por integração com documentos
 
 - `ConsumerUploadPolicy` separa imagens (`imageExtensions`, `isValidImage`, `imageValidators`) e documentos (`documentExtensions`, `isValidDocument`, `documentValidators`). Ambas herdam ou restringem a política global e nunca ampliam o catálogo central.

@@ -10,12 +10,14 @@ use Drupal\aculta_file_uploader\UploadPolicy;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Image\Image;
+use Drupal\Core\Image\ImageFactory;
 use Drupal\file\FileInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Cobre a política de imagem por integração (herança, limites e conteúdo).
+ * Cobre a política por integração: herança, limites, documentos e conteúdo.
  */
 #[Group('aculta_file_uploader')]
 final class ConsumerUploadPolicyTest extends UnitTestCase {
@@ -38,7 +40,13 @@ final class ConsumerUploadPolicyTest extends UnitTestCase {
     $factory->method('get')->with('aculta_file_uploader.settings')->willReturn($config);
     $fileSystem = $this->createMock(FileSystemInterface::class);
     $fileSystem->method('realpath')->willReturn($realpath);
-    return new ConsumerUploadPolicy($factory, new UploadPolicy(), new MimeTypeVerifier(), $fileSystem);
+    $image = $this->createMock(Image::class);
+    $image->method('isValid')->willReturn(TRUE);
+    $image->method('getWidth')->willReturn(1);
+    $image->method('getHeight')->willReturn(1);
+    $imageFactory = $this->createMock(ImageFactory::class);
+    $imageFactory->method('get')->willReturn($image);
+    return new ConsumerUploadPolicy($factory, new UploadPolicy(), new MimeTypeVerifier(), $fileSystem, $imageFactory);
   }
 
   /**
@@ -50,6 +58,16 @@ final class ConsumerUploadPolicyTest extends UnitTestCase {
     $file->method('getSize')->willReturn($size);
     $file->method('getFileUri')->willReturn('public://' . $name);
     return $file;
+  }
+
+  /**
+   * Escreve bytes em um arquivo temporário e devolve o caminho.
+   */
+  private function tempFile(string $bytes): string {
+    $path = tempnam(sys_get_temp_dir(), 'aculta_upload_');
+    self::assertIsString($path);
+    file_put_contents($path, $bytes);
+    return $path;
   }
 
   /**
@@ -87,20 +105,19 @@ final class ConsumerUploadPolicyTest extends UnitTestCase {
   }
 
   /**
-   * Lista sem nenhuma extensão de imagem fecha a política.
+   * Lista sem nenhuma extensão de imagem fecha a política de imagens.
    */
   public function testEmptyImageCatalogFailsClosed(): void {
     $policy = $this->policy(['allowed_extensions' => 'pdf docx']);
     self::assertSame([], $policy->imageExtensions());
+    self::assertSame([], $policy->imageValidators());
   }
 
   /**
    * Arquivo com extensão de PNG mas conteúdo de texto é recusado.
    */
   public function testRejectsContentThatDoesNotMatchExtension(): void {
-    $path = tempnam(sys_get_temp_dir(), 'aculta_upload_');
-    self::assertIsString($path);
-    file_put_contents($path, 'isto não é uma imagem');
+    $path = $this->tempFile('isto não é uma imagem');
     try {
       $policy = $this->policy(['allowed_extensions' => 'png'], $path);
       self::assertFalse($policy->isValidImage($this->file('foto.png', (int) filesize($path))));
@@ -114,9 +131,7 @@ final class ConsumerUploadPolicyTest extends UnitTestCase {
    * PNG com conteúdo compatível, dentro do limite, é aceito.
    */
   public function testAcceptsMatchingImageWithinLimit(): void {
-    $path = tempnam(sys_get_temp_dir(), 'aculta_upload_');
-    self::assertIsString($path);
-    file_put_contents($path, base64_decode(self::PNG_1X1));
+    $path = $this->tempFile(base64_decode(self::PNG_1X1));
     try {
       $policy = $this->policy(['allowed_extensions' => 'png', 'max_size_mb' => 10], $path);
       self::assertTrue($policy->isValidImage($this->file('foto.png', (int) filesize($path))));
@@ -129,8 +144,13 @@ final class ConsumerUploadPolicyTest extends UnitTestCase {
   /**
    * Arquivo acima do limite é recusado antes de ler o conteúdo.
    */
+  public function testRejectsFileAboveLimit(): void {
+    $policy = $this->policy(['allowed_extensions' => 'png', 'max_size_mb' => 1], '/nao/usado');
+    self::assertFalse($policy->isValidImage($this->file('grande.png', 1024 * 1024 + 1)));
+  }
+
   /**
-   * Documentos têm política própria, separada das imagens.
+   * Imagens e documentos têm catálogos separados.
    */
   public function testDocumentsAreSeparateFromImages(): void {
     $policy = $this->policy(['allowed_extensions' => 'png pdf docx']);
@@ -142,21 +162,29 @@ final class ConsumerUploadPolicyTest extends UnitTestCase {
    * PDF com conteúdo compatível é aceito como documento.
    */
   public function testAcceptsPdfContentAsDocument(): void {
-    $path = tempnam(sys_get_temp_dir(), 'aculta_upload_');
-    self::assertIsString($path);
-    file_put_contents($path, "%PDF-1.4\n1 0 obj\n<< >>\nendobj\n%%EOF\n");
+    $path = $this->tempFile("%PDF-1.4\n1 0 obj\n<< >>\nendobj\n%%EOF\n");
     try {
       $policy = $this->policy(['allowed_extensions' => 'pdf'], $path);
       self::assertTrue($policy->isValidDocument($this->file('contrato.pdf', (int) filesize($path))));
     }
     finally {
-      ($path);
+      @unlink($path);
     }
   }
 
-  public function testRejectsFileAboveLimit(): void {
-    $policy = $this->policy(['allowed_extensions' => 'png', 'max_size_mb' => 1], '/nao/usado');
-    self::assertFalse($policy->isValidImage($this->file('grande.png', 1024 * 1024 + 1)));
+  /**
+   * Validadores da atividade são estreitados e o limite nunca sobe.
+   */
+  public function testRestrictValidatorsNarrowsExtensionsAndCapsSize(): void {
+    $policy = $this->policy(['allowed_extensions' => 'png pdf', 'max_size_mb' => 2]);
+    $validators = $policy->restrictValidators([
+      'FileExtension' => ['extensions' => 'png gif pdf docx'],
+      'FileSizeLimit' => ['fileLimit' => 50 * 1024 * 1024],
+      'Extra' => [],
+    ], 'lms');
+    self::assertSame('png pdf', $policy->acceptedExtensions($validators));
+    self::assertSame(2 * 1024 * 1024, $validators['FileSizeLimit']['fileLimit']);
+    self::assertArrayHasKey('Extra', $validators);
   }
 
 }
