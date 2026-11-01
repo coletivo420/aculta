@@ -1,5 +1,13 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.19 — envios recentes do Studio por integração e dono
+
+- `RecentUploads` (`aculta_file_uploader.recent_uploads`): lista os envios do próprio usuário numa integração (`private://studio/envio/<integração>`) e confere se um arquivo é do dono e da pasta certa. Recusa caminho com `..` e nome de integração fora de letras minúsculas.
+- Consulta com `accessCheck(FALSE)` declarado: o filtro por dono é explícito pela condição de uid.
+- Teste Unit: `RecentUploadsTest`. A consulta ao banco não tem teste nesta entrega.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.18 — integrações galeria e usuário no painel
 
 - `UploadSettingsForm::CONSUMERS` inclui `galeria` e `usuario`, para configurar cada uma no painel de uploads.
