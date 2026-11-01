@@ -1,3 +1,9 @@
+## 0.4.1-dev.55 — registro do helper de quarentena migrado
+
+- `PortalHelperRegistry`: `aculta_image.quarantine` (serviço) vira `aculta_file_uploader.quarantine`. Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.4.1-dev.54 — registro do helper de limpeza migrado
 
 - `PortalHelperRegistry`: `aculta_image.cleanup` vira `aculta_file_uploader.cleanup`. Sem mudança de comportamento.

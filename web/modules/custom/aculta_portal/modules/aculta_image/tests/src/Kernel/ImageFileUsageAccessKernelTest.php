@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_image\Kernel;
 
 use Drupal\aculta_file_uploader\Cleanup\ImageCleanup;
-use Drupal\aculta_image\Quarantine\ImageQuarantine;
+use Drupal\aculta_file_uploader\Quarantine\ImageQuarantine;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\UserSession;
 use Drupal\Core\File\FileExists;
@@ -74,7 +74,7 @@ final class ImageFileUsageAccessKernelTest extends KernelTestBase {
     self::assertFalse($this->container->get('module_handler')->moduleExists('aculta_portal'));
     self::assertInstanceOf(ImageCleanup::class, $this->container->get('aculta_file_uploader.cleanup'));
 
-    $quarantine = $this->container->get('aculta_image.quarantine');
+    $quarantine = $this->container->get('aculta_file_uploader.quarantine');
     self::assertInstanceOf(ImageQuarantine::class, $quarantine);
     self::assertFalse(
       $quarantine->enviar($this->createMock(FileInterface::class), 'coordinator unavailable'),

@@ -1,3 +1,9 @@
+## 0.1.0-dev.53 — motor da quarentena no aculta_file_uploader
+
+- `aculta_image.quarantine` (serviço) sai do aculta_image. O formulário `ImageQuarantineForm` e os testes obtêm `aculta_file_uploader.quarantine`. Rotas e abas inalteradas.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.52 — motor da fila de limpeza no aculta_file_uploader
 
 - `aculta_image.cleanup` sai do aculta_image. Hooks de entidade, cron e formulário de limpeza passam a usar `aculta_file_uploader.cleanup`. Rotas e abas inalteradas.

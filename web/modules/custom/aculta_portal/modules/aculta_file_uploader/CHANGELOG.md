@@ -1,5 +1,12 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.11 — motor da quarentena movido para o aculta_file_uploader
+
+- `Quarantine\ImageQuarantine` sai do aculta_image. Serviço: `aculta_file_uploader.quarantine`. Tabela `aculta_image_quarantine` e regras de prazo inalteradas.
+- Formulário e rotas da quarentena permanecem no aculta_image.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.10 — corrigir instalação e resolução de tokens
 
 - A instalação detecta a tabela de quarentena já criada por `aculta_image` e

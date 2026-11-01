@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_image\Unit;
 
 use Drupal\aculta_image\FileRemoverInterface;
-use Drupal\aculta_image\Quarantine\ImageQuarantine;
+use Drupal\aculta_file_uploader\Quarantine\ImageQuarantine;
 use Drupal\aculta_file_uploader\Cleanup\FileReferenceInspectorInterface;
 use Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner;
 use Drupal\Component\Datetime\TimeInterface;
