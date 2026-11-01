@@ -1,8 +1,9 @@
-## Contributions — estado local em 2026-11-02
+## Contributions — estado local em 2026-11-01
 
-- Revalidação no HEAD `34e79950e`: `EventOrganizationLifecycleKernelTest` passou
-  27/888 e os casos `testEventUpdateContribution*`, 6/171 (24 depreciações
-  Core/contrib); sem alteração Runtime.
+- Revalidação do checkout de desenvolvimento: `EventOrganizationLifecycleKernelTest`
+  passou 29/941, incluindo rejeição de título e Data duplicados; os cenários
+  `testEventUpdateContribution*` passaram 6/171 (24 depreciações Core/contrib).
+  Sem alteração Runtime.
 
 - Organização sem titular: propostas de perfil e criação sob revisão; claims,
   titularidade, membros e edições de perfis reivindicados continuam nos owners
@@ -14,7 +15,9 @@
   outbox KeyValue recuperável pelo cron. Sem payload privado e sem email/digest.
 - Kernel Contributions/Events + fronteira **37 testes / 1.275 assertions PASS** (24
   depreciações Core/contrib); fila/outbox e consumer Messenger **9 testes / 27
-  assertions PASS**; update idempotente do campo de aviso **1 teste / 13 assertions PASS**. Updates Messenger 10015–10016 e homologação Runtime pendentes.
+  assertions PASS**; update idempotente do campo de aviso **1 teste / 13 assertions PASS**.
+  Updates Messenger 10015–10016 estão aplicados; jornada autenticada Events
+  continua pendente.
 - Eventos têm adapter `events_event` parcial: formulário em
   `/culturas/propostas/evento/nova` submete `event_create` como Contribution
   privada com Datas e referências allowlisted; a aprovação gera rascunho
@@ -25,8 +28,9 @@
   compartilhado; não carregam payload ou parecer. A interface de autor para
   proposta `event_update` está em `/culturas/eventos/{aculta_event}/propor-alteracao`;
   conserva o CRUD oficial e grava só Contribution privada. Permanecem pendentes
-  revisão detalhada de duplicidade, cobertura adicional de conflitos e
-  homologação Runtime (updates 10015–10016). O workspace privado e o aviso para
+  revisão ampla da matriz de duplicidade, cobertura adicional de conflitos e
+  homologação autenticada no Runtime; updates 10015–10016 estão aplicados.
+  O workspace privado e o aviso para
   Organização, Local e Evento agora usam a mesma rota privada do workspace.
   Regressões focais de workspace passaram em `EventOrganizationLifecycleKernelTest`
   (3/111), e purpose da rota em `EventDomainBoundaryKernelTest` (1/100).

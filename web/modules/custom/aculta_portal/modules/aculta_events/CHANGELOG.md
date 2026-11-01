@@ -498,3 +498,9 @@
 - Kernel `testContributionCannotSubmitOrApplyToClaimedOrganization`: 1 teste /
   27 assertions PASS em `aculta_simpletest`, 24 depreciações Core/contrib.
 
+## Conflito de criação de Evento duplicado (2026-11-01)
+
+- Kernel verifica que uma proposta com título e início de Data já existentes
+  conflita na aprovação, mantém a Contribution em `submitted` e não cria outro
+  Evento. Caso focal: 1 teste / 26 assertions; classe completa: 29/941, com 24
+  depreciações upstream. `aculta_simpletest`, sem escrita no Runtime.

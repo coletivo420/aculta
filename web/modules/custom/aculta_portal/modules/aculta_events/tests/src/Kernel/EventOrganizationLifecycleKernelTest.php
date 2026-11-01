@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\aculta_events\Entity\Event;
+use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Controller\EventOrganizationSuggestionAdminController;
@@ -735,6 +736,70 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
       (new \DateTimeImmutable('2027-01-10T21:00:00Z'))->getTimestamp(),
       $dates[array_key_first($dates)]->get('field_quando')->start_date->getTimestamp(),
     );
+  }
+
+  /**
+   * Event creation proposals conflict with an existing title and start time.
+   */
+  public function testEventCreateContributionRejectsDuplicateTitleAndDate(): void {
+    $event = Event::create([
+      'title' => 'Mostra Cultural Existente',
+      'field_status' => 'publicado',
+      'field_organizador' => (int) $this->adminUser->id(),
+    ]);
+    $event->save();
+    EventDate::create([
+      'title' => 'Abertura',
+      'field_evento' => (int) $event->id(),
+      'field_quando' => [
+        'value' => '2027-05-10T18:00:00',
+        'end_value' => '2027-05-10T20:00:00',
+      ],
+    ])->save();
+
+    $this->usePurposeByCurrentAccount();
+    $this->container->get('current_user')->setAccount($this->editorUser);
+    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('events_event');
+    $payload = $adapter->validatePayload('event_create', [
+      'title' => 'Mostra Cultural Existente',
+      'dates' => [
+        [
+          'title' => 'Abertura proposta',
+          'starts_at' => '2027-05-10T18:00:00Z',
+          'ends_at' => '2027-05-10T20:00:00Z',
+        ],
+      ],
+    ]);
+    $lifecycle = $this->container->get('aculta_contributions.lifecycle');
+    $proposal = $lifecycle->submit(
+      'events_event',
+      'event_create',
+      NULL,
+      'Proposta duplicada de Evento',
+      'Este Evento já existe.',
+      $payload,
+      str_repeat('d', 64),
+    );
+
+    $this->container->get('current_user')->setAccount($this->adminUser);
+    try {
+      $lifecycle->decide(
+        $proposal,
+        'accepted',
+        'Conflita com um Evento existente.',
+        ['title', 'dates'],
+        (int) $proposal->getRevisionId(),
+      );
+      self::fail('An existing Event with the same title and date must conflict.');
+    }
+    catch (ConflictHttpException) {
+      $reloaded = $this->container->get('entity_type.manager')->getStorage('aculta_contribution')
+        ->loadUnchanged($proposal->id());
+      self::assertSame('submitted', $reloaded->get('state')->value);
+    }
+
+    self::assertCount(1, $this->container->get('entity_type.manager')->getStorage('aculta_event')
+      ->loadByProperties(['title' => 'Mostra Cultural Existente']));
   }
 
   /**

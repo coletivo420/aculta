@@ -21,8 +21,9 @@ application choices; that data is not inferred from a revision log.
 
 The generic lifecycle Kernel suite also exercises lock contention across a
 separate PHP process and independent DB connection. The competing submission is
-denied with no persisted proposal; the combined Entity + Lifecycle suite passed
-14 tests / 161 assertions on the existing `aculta_simpletest` database.
+denied with no persisted proposal. The clean install Kernel verifies entity
+storage, settings and service registration (1/8). The full module suite passed
+18 tests / 188 assertions on the existing `aculta_simpletest` database.
 
 The Wiki adapter delegates approved-field application to the
 existing Wiki editorial workflow. New submissions use this shared lifecycle
@@ -36,26 +37,20 @@ revision reconciliation, preserving numeric IDs, UUIDs, revision IDs, authors,
 timestamps, states, notes, and active idempotency hashes. Its local Kernel
 fixture and dual-store status route pass 1 test / 55 assertions, including
 retry without duplicate revisions and lookup on both sides of migration. The
-coordinated cutover passes 2 Wiki tests / 264 assertions; lifecycle Kernel
-passes 10 / 109. The update has not run in Runtime. It stops on ID collisions or
-translated legacy revisions; the old entity tables remain intact. The legacy
-model did not store selected approval fields or list modes, so those historical
+coordinated cutover passed 2 Wiki tests / 264 assertions; lifecycle Kernel
+passed 10 / 109. Update 10003 ran in Runtime and found no rows to copy. It stops
+on ID collisions or translated legacy revisions; the old entity tables remain
+intact. The legacy model did not store selected approval fields or list modes, so those historical
 decisions cannot be reconstructed.
 
 Events supports private `event_create` and `event_update` proposals. Update
 submission requires the Event's current Entity Access `update` result and
 captures a fingerprint from the persisted source. A newly proposed Date is
 optional and append-only. Submission notices use a minimal Messenger envelope;
-updates 10015–10016 still require Runtime installation and verification. The
-Events lifecycle and domain-boundary Kernel suites pass together with 37 tests,
+updates 10015–10016 ran on the development Runtime, and their configuration
+is synchronized. Authenticated end-to-end access remains pending. The Events
+lifecycle and domain-boundary Kernel suites pass together with 37 tests,
 1,275 assertions, and 24 upstream deprecations on `aculta_simpletest`.
-
-The development Runtime's WE SATIVA HTTP 500 was traced to its compiled
-container still referencing the removed LMS `LearningRoomHooks` class after
-the presentation hook moved to Studio. A full snapshot was taken before
-`drush cr`; afterward anonymous Wiki routes returned their expected 403 and
-retired proposal routes returned 404. Authenticated HTTP verification remains
-pending; Bootstrap theme `#form_id` warnings remain non-fatal.
 
 ## Library use
 

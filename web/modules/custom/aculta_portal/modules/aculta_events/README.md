@@ -2,17 +2,17 @@
 
 ## Propostas de Evento — F6 parcial
 
-Revalidação no HEAD `34e79950e`: `EventOrganizationLifecycleKernelTest` passou
-27 testes / 888 assertions; os seis cenários `testEventUpdateContribution*`
+Revalidação local em 2026-11-01: `EventOrganizationLifecycleKernelTest` passou
+29 testes / 941 assertions; os seis cenários `testEventUpdateContribution*`
 passaram 6/171, cobrindo submissão privada, aplicação seletiva, autorização
-atual, membership, acesso ao Local e fingerprint da origem (24 depreciações
-Core/contrib). Runtime não alterado.
+atual, membership, acesso ao Local, fingerprint e rejeição de criação
+duplicada por título/Data (24 depreciações Core/contrib). Runtime não alterado.
 
 A aplicação de `event_update` recarrega Locais de Datas existentes e propostos,
 limpa o access handler e verifica o acesso `view` atual do autor. A revogação de
 membership em Organização reivindicada ou a mudança do Local para privado gera
-conflito sem mutar o Evento. `EventOrganizationLifecycleKernelTest` passou com
-23 testes / 744 assertions (24 depreciações Core/contrib).
+conflito sem mutar o Evento. Uma execução anterior da classe passou com 23
+testes / 744 assertions (24 depreciações Core/contrib).
 
 A revisão administrativa de propostas `event_create` e `event_update` fica em
 `/painel-administrativo/eventos/propostas`, protegida pela permissão nativa
@@ -59,7 +59,8 @@ Entity Access atualizado do autor são revalidados; o cache do handler do Evento
 é limpo antes da checagem. Regressões Kernel cobrem a revogação de acesso entre
 submissão e decisão. Envios e decisões publicam evento mínimo ao Messenger
 (source, UUID/revisão, destinatário e tipo), sem payload ou parecer. O update
-Messenger 10016 amplia o tipo allowlisted; Runtime ainda não foi atualizado.
+Messenger 10015–10016 ampliam o tipo allowlisted e foram aplicados no Runtime;
+a configuração sincronizada está limpa.
 As interfaces de proposta inicial e de atualização estão implementadas. A
 fingerprint usa entidade recarregada para ser estável entre
 valores escalares em memória e a representação persistida. Não declarar a fase

@@ -7,18 +7,17 @@
   é negada sem persistência. Suíte Entity + Lifecycle: 14/161; worker e teste
   passam lint e PHPCS Drupal. Executado em `aculta_simpletest`, sem Runtime.
 
-## Complemento local — autor Events e recuperação do 500 da WE SATIVA (2026-11-01)
+## Complemento local — autor Events e status do HTTP 500 local (2026-11-01)
 
 - `event_create` e `event_update` agora têm formulários de autor; `event_update`
   exige Entity Access atual e armazena fingerprint da origem persistida. Avisos
   de submissão são privados e usam envelope mínimo Messenger.
 - Suítes Kernel de lifecycle Events e fronteira de domínio passaram juntas:
   37 testes / 1.275 assertions, 24 depreciações upstream.
-- O HTTP 500 local de `/wesativa` era causado pelo container compilado ainda
-  referenciar `LearningRoomHooks`, removido na mudança de apresentação LMS para
-  Studio. Após snapshot integral e `drush cr`, smoke anônimo retorna 403 esperado
-  nas rotas protegidas e 404 nos caminhos legados. A validação autenticada
-  permanece pendente.
+- O HTTP 500 local identificado ocorreu em `/ganjalab`: `AccountCoursesReader`
+  chamava `isAllowed()` sobre booleano `true`. A correção aceita `true`, falha
+  fechado para os demais resultados e passou 2 testes / 19 assertions. WE SATIVA
+  não reproduziu 500; a rota anônima protegida retornou 403.
 
 ## Complemento local — adapter inicial de Evento (2026-11-01)
 
@@ -47,7 +46,7 @@
 - Wiki editorial consumers support both migrated Contributions and legacy
   proposals during the transition; the original Wiki entity tables remain.
 - Kernel cutover/status 2 tests / 264 assertions and lifecycle Kernel 10 / 109
-  assertions PASS. Runtime migration has not run.
+  assertions PASS at that version; the update was later applied in Runtime with zero rows to copy.
 
 ## 0.1.0-dev.2
 
@@ -86,9 +85,20 @@
 - No domain adapter, public route, Wiki data migration, Events integration,
   administrative queue, or Messenger event is included in this version.
 
-## Wiki integration in progress
+## Revalidação local de Contributions (2026-11-01)
 
-- Registered the Wiki adapter and added update 10003 for batch reconciliation
-  of legacy proposal/revision identity and content. Kernel migration fixture:
-  1 test / 53 assertions. Runtime update and all consumer cutover remain
-  pending; see the module README and roadmap.
+- A suíte completa de `aculta_contributions` passou 18 testes / 188 assertions
+  em `aculta_simpletest`. Inclui entidade privada revisionável, acesso deny-by-
+  default, adaptador desconhecido, lifecycle, rollback e concorrência em processo
+  PHP independente.
+- Wiki update 10003 foi aplicado no Runtime; leitura encontrou zero propostas
+  legacy, zero Contributions e zero checkpoints/maps. O gate de migração terminou
+  completo, sem conteúdo a copiar. Updates Messenger 10015/10016 também foram
+  aplicados e a configuração está sincronizada. Jornadas autenticadas permanecem
+  pendentes.
+
+## Instalação limpa e matriz atualizada (2026-11-01)
+
+- `ContributionModuleInstallKernelTest` instala o módulo por `module_installer`
+  e valida entidade revisionável, tabelas de base/revisão, registry e defaults
+  Flood: 1 teste / 8 assertions PASS em `aculta_simpletest`.
