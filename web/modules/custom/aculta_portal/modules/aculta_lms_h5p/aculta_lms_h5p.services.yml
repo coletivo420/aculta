@@ -53,7 +53,7 @@ services:
     arguments: ['@file_url_generator', '@file_system', '@language_manager', '@asset.query_string', '@database', '@aculta_lms_h5p.editor_storage', '@aculta_lms_h5p.editor_ajax', '@aculta_lms_h5p.framework']
   aculta_lms_h5p.editor_upload_manager:
     class: Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorUploadManager
-    arguments: ['@file.upload_handler', '@aculta_image.upload_ingester', '@aculta_image.inspector', '@file_system', '@config.factory', '@aculta_lms_h5p.framework']
+    arguments: ['@file.upload_handler', '@aculta_file_uploader.ingestor', '@aculta_image.inspector', '@file_system', '@config.factory', '@aculta_lms_h5p.framework']
   aculta_lms_h5p.course_access:
     class: Drupal\aculta_lms_h5p\Access\aculta_H5PCourseAccessManager
     arguments: ['@entity_type.manager']

@@ -48,6 +48,7 @@ final class FileUploadIngestor {
     ?string $tokenType = NULL,
     ?int $maxBytes = NULL,
     ?string $extensions = NULL,
+    array $allowedMimes = [],
   ): FileUploadResult {
     $extension = strtolower(pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_EXTENSION));
     $validators = $this->policy->validators($maxBytes, $extensions);
@@ -58,8 +59,12 @@ final class FileUploadIngestor {
     }
 
     $bytes = @file_get_contents((string) $uploadedFile->getRealPath());
-    if (!is_string($bytes) || !$this->isRaster($bytes) || !$this->mimeVerifier->matches($bytes, $extension)) {
+    $rasterMime = is_string($bytes) ? $this->rasterMime($bytes) : NULL;
+    if ($rasterMime === NULL || !$this->mimeVerifier->matches($bytes, $extension)) {
       throw new \InvalidArgumentException('O conteúdo do arquivo não corresponde à extensão enviada.');
+    }
+    if ($allowedMimes !== [] && !in_array($rasterMime, $allowedMimes, TRUE)) {
+      throw new \InvalidArgumentException('O tipo de imagem não corresponde ao campo.');
     }
 
     $destination = $this->destinations->resolve($destinationPattern, $tokenData, $tokenType);
@@ -73,11 +78,15 @@ final class FileUploadIngestor {
   }
 
   /**
-   * Indica se os bytes são um raster aceito pela política.
+   * Retorna o MIME do raster aceito pela política, ou NULL se não for raster.
    */
-  private function isRaster(string $bytes): bool {
+  private function rasterMime(string $bytes): ?string {
     $info = @getimagesizefromstring($bytes);
-    return $info !== FALSE && in_array($info[2] ?? 0, self::RASTER_TYPES, TRUE);
+    if ($info === FALSE || !in_array($info[2] ?? 0, self::RASTER_TYPES, TRUE)) {
+      return NULL;
+    }
+    $mime = (string) ($info['mime'] ?? '');
+    return $mime !== '' ? $mime : NULL;
   }
 
 }
