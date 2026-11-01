@@ -743,6 +743,10 @@ entre consumidores e o contrib, mas não torna o provider independente: o
 publisher e as funções de curso, atividade, tentativas, notas e certificados
 ainda dependem do Drupal LMS.
 
+### Microfase — acesso da agenda de turma pelo adapter LMS
+
+`aculta_lms_agenda` não importa mais `Drupal\\lms\\Entity\\Bundle\\CourseInterface` para autorizar eventos de turma. A verificação de curso publicado e `take course` foi centralizada em `ClassActivityDeadlineAccessCheck::courseAccessForClass()`, que retorna `AccessResult` com dependências e tags de cache; a agenda mantém a validação de membership ativa da turma. A mudança remove um import contrib fora do provider. **Estado:** implementada em `dev`; testes automatizados e Runtime desta microfase pendentes. Não altera conteúdo, memberships nem configuração.
+
 ### Próximos gates
 
 1. Validar a closure de instalação sem Drupal LMS contrib em ambiente isolado;
