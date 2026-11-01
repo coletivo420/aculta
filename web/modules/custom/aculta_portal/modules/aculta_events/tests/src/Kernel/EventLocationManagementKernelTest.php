@@ -354,6 +354,27 @@ final class EventLocationManagementKernelTest extends KernelTestBase {
   }
 
   /**
+   * Catalog pages process multiple entity batches without changing totals.
+   */
+  public function testCatalogueLoadsLocationsInBoundedBatches(): void {
+    for ($index = 0; $index < 205; $index++) {
+      EventLocation::create([
+        'title' => sprintf('Local %03d', $index),
+        'field_status' => 'publicado',
+      ])->save();
+    }
+
+    $catalogue = $this->container->get('aculta_events.locations');
+    $page = $catalogue->buscaPaginada(NULL, NULL, 10, 10, $this->adminUser);
+    $negativePage = $catalogue->buscaPaginada(NULL, NULL, -1, 10, $this->adminUser);
+
+    $this->assertSame(205, $page['total']);
+    $this->assertCount(10, $page['items']);
+    $this->assertSame('Local 100', (string) $page['items'][0]['local']->label());
+    $this->assertSame('Local 000', (string) $negativePage['items'][0]['local']->label());
+  }
+
+  /**
    * Valida formulário próprio de cadastro de local com campos (LOC-02).
    */
   public function testEventLocationStandaloneForm(): void {
@@ -379,7 +400,7 @@ final class EventLocationManagementKernelTest extends KernelTestBase {
   }
 
   /**
-   * Valida formulário de evento com seleção de local (campos avulsos removidos).
+   * Valida formulário de evento com seleção inline de local.
    */
   public function testEventFormWithInlineLocationCreation(): void {
     $this->container->get('current_user')->setAccount($this->adminUser);

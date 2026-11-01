@@ -1,5 +1,15 @@
 # Changelog — aculta_events
 
+## 2026-11-01 — Paginação do catálogo de Locais em lotes
+
+- `LocationCatalogue` carrega no máximo 100 entidades por lote e conserva apenas
+  os resultados da página solicitada, sem `loadMultiple()` global seguido de
+  `array_slice()`. A contagem continua considerando somente Locais autorizados.
+- A ordenação usa título e ID para estabilizar páginas com títulos repetidos;
+  índices negativos são normalizados para a primeira página.
+- Suítes Kernel de catálogo, mapa e gestão mais Unit do MapRenderer: **20 testes
+  / 369 assertions, PASS**; 22 depreciações upstream. PHP lint e PHPCS PASS.
+
 ## 2026-11-01 — Propagar cacheabilidade do acesso a Locais
 
 - `LocationCatalogue` agrega os metadados de cache das decisões de view
