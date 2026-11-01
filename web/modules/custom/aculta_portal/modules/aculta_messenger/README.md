@@ -12,7 +12,7 @@ por conteúdo nunca criam conversas nem alteram participantes. O núcleo
 para LMS, Wiki, Fórum, Loja, Revista, Doações, Game e Eventos; módulos de domínio publicam eventos e selecionam
 destinatários conforme suas regras.
 
-## Resultado de propostas de Eventos — inbox no site
+## Resultado de propostas de Eventos — inbox e preferências de e-mail
 
 O Messenger consome envelopes mínimos enviados por `aculta_events` para
 submissões e decisões de propostas de Organização, Local e Evento. Persiste
@@ -20,11 +20,18 @@ uma Message privada por autor, tipo e revisão, com chave idempotente; não grav
 payload, endereço nem parecer. A listagem e a abertura recarregam a revisão
 exata da proposta e revalidam titularidade, estado e acesso no purpose `eventos`. O link
 leva ao dashboard do ACULTA Studio Culturas; a decisão detalhada ainda depende
-do workspace de propostas do autor. Este incremento atende somente o inbox no
-site; não envia e-mail nem entra no digest. O update `10015` instala o bundle e
-o `10016` habilita o tipo de submissão em instalações existentes. Ambos foram
-aplicados no Runtime de desenvolvimento em 2026-11-01; `config/sync` contém os
-objetos do bundle e o status de configuração está limpo.
+do workspace de propostas do autor. O inbox no site é sempre mantido. Em
+Configurações de e-mail, a pessoa pode escolher somente no site, e-mail
+imediato, ou resumo diário; o padrão é somente no site. Mensagens de e-mail
+contêm apenas um resumo genérico e o link, nunca payload, endereço ou parecer.
+O envio imediato revalida conta ativa, e-mail confirmado, preferência e acesso
+atual; o digest faz a mesma validação ao montar cada linha.
+
+Os updates `10015` e `10016` instalaram o bundle e habilitaram o tipo de
+submissão em instalações existentes e foram aplicados no Runtime de
+desenvolvimento em 2026-11-01. O update aditivo `10017` instala os campos de
+entrega e digest e ainda precisa de homologação/aplicação no Runtime. `config/sync`
+contém as preferências da categoria.
 
 Na dev.262, a busca de destinatários usa o apelido público resolvido pelo
 ACULTA User; não revela o nome interno da conta e omite usuários sem identidade

@@ -48,6 +48,9 @@ aculta_messenger.settings:
         amizade:
           type: aculta_messenger.email_modes
           label: 'Amizades'
+        eventos_contribuicoes:
+          type: aculta_messenger.email_modes
+          label: 'Propostas de Eventos'
     wiki_review_notifications:
       type: boolean
       label: 'Avisar as caixas editoriais da Wiki quando um verbete entrar em revisão'

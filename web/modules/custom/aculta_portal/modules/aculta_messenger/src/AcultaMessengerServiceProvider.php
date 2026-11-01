@@ -21,6 +21,7 @@ use Drupal\aculta_messenger\Integration\Events\Controller\EventsContributionNoti
 use Drupal\aculta_messenger\Integration\Events\EventSubscriber\EventsContributionNoticeConsumer;
 use Drupal\aculta_messenger\Integration\Events\EventsContributionNoticeManager;
 use Drupal\aculta_messenger\Integration\Events\EventsContributionNoticeManagerInterface;
+use Drupal\aculta_messenger\Integration\Events\Mail\EventsContributionNoticeMailType;
 use Drupal\aculta_messenger\Integration\Game\EventSubscriber\GameAchievementNoticeEventConsumer;
 use Drupal\aculta_messenger\Integration\Game\GameAchievementNoticeManager;
 use Drupal\aculta_messenger\Integration\Game\GameAchievementNoticeManagerInterface;
@@ -166,8 +167,11 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
         new Reference('entity_type.manager'),
         new Reference('aculta_portal.domain_purpose'),
         new Reference('lock'),
+        new Reference('aculta_messenger.aviso_preferencias'),
+        new Reference('queue'),
+        new Reference('logger.channel.aculta_messenger'),
       ],
-    ));
+    ))->addTag('aculta_messenger.aviso_digest_provider');
     $container->setAlias(EventsContributionNoticeManagerInterface::class, 'aculta_messenger.events_contribution_notice_manager');
     $container->setDefinition('aculta_messenger.events_contribution_notice_consumer', new Definition(
       EventsContributionNoticeConsumer::class,
@@ -185,6 +189,10 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
         new Reference('request_stack'),
       ],
     ))->setPublic(TRUE);
+    $container->setDefinition(EventsContributionNoticeMailType::class, new Definition(
+      EventsContributionNoticeMailType::class,
+      [new Reference('string_translation')],
+    ))->addTag('aculta_mailer.type');
   }
 
   /**

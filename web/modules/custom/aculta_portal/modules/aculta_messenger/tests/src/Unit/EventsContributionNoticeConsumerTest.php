@@ -27,7 +27,7 @@ final class EventsContributionNoticeConsumerTest extends UnitTestCase {
     ));
     $consumer = new EventsContributionNoticeConsumer($manager);
     $consumer->consume($this->event([
-      'mail_policy' => 'none',
+      'mail_policy' => 'user_preference',
       'notice_type' => 'accepted',
       'proposal_source' => 'events_location',
     ]));
@@ -45,7 +45,7 @@ final class EventsContributionNoticeConsumerTest extends UnitTestCase {
     ));
     $consumer = new EventsContributionNoticeConsumer($manager);
     $consumer->consume($this->event([
-      'mail_policy' => 'none',
+      'mail_policy' => 'user_preference',
       'notice_type' => 'needs_changes',
       'proposal_source' => 'events_event',
     ]));
@@ -63,7 +63,7 @@ final class EventsContributionNoticeConsumerTest extends UnitTestCase {
     ));
     $consumer = new EventsContributionNoticeConsumer($manager);
     $consumer->consume($this->event([
-      'mail_policy' => 'none',
+      'mail_policy' => 'user_preference',
       'notice_type' => 'submitted',
       'proposal_source' => 'events_event',
     ]));
@@ -78,7 +78,7 @@ final class EventsContributionNoticeConsumerTest extends UnitTestCase {
     $consumer->consume($this->event([
       'notice_type' => 'accepted',
       'proposal_source' => 'events_location',
-      'mail_policy' => 'user_preference',
+      'mail_policy' => 'none',
     ]));
   }
 

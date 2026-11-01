@@ -2,11 +2,15 @@
 
 ## Evolução recente
 
-- **Integração de Events Contributions (2026-11-01):** Messenger persiste
+- **Integração de Events Contributions (2026-11-01, preferências atualizadas):** Messenger persiste
   avisos privados de resultado de Organização/Local por autor, revisão e outcome;
   valida revisão, owner, estado e acesso no purpose `eventos` ao listar/abrir.
-  Inbox apenas no site, fora de e-mail/digest; updates 10015–10016 aplicados no
-  Runtime e bundle sincronizado em `config/sync`. Consumer/queue Units relacionados passaram 9 testes / 27 assertions;
+  O inbox permanece obrigatório; o membro escolhe somente no site, e-mail
+  imediato ou digest diário (padrão somente no site). E-mail genérico revalida
+  conta, confirmação, preferência e acesso. Update 10017 adiciona campos de
+  entrega/digest e aguarda aplicação no Runtime; 10015–10016 já foram aplicados.
+  Unit Messenger completo passou 402 testes / 4.373 assertions, incluindo as
+  preferências e o cancelamento por opt-out do worker;
   Kernel Events/Contributions 27 testes / 658 assertions, com 24 depreciações
   upstream. Smoke autenticado e teste específico de renderização do inbox
   permanecem pendentes.

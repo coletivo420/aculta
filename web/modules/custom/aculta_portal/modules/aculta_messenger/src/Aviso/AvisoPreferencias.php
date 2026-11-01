@@ -28,6 +28,8 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
 
   public const EMAIL_FRIENDSHIP = 'amizade';
 
+  public const EMAIL_EVENTS_CONTRIBUTIONS = 'eventos_contribuicoes';
+
   /**
    * Categories whose existing email behavior is immediate-only. */
   public const EMAIL_IMMEDIATE_ONLY_CATEGORIES = [
@@ -46,6 +48,7 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
     'doacao',
     self::EMAIL_PRIVATE_MESSAGES,
     self::EMAIL_FRIENDSHIP,
+    self::EMAIL_EVENTS_CONTRIBUTIONS,
   ];
 
   public function __construct(
@@ -61,6 +64,11 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
     }
     $configured = $this->configuredEmailModes($category);
     $allowed = [self::EMAIL_OFF];
+    if ($category === self::EMAIL_EVENTS_CONTRIBUTIONS && $configured === NULL) {
+      // Keep this opt-in hidden until the additive delivery fields are
+      // installed and the site policy is imported.
+      return $allowed;
+    }
     if (in_array($category, self::EMAIL_IMMEDIATE_ONLY_CATEGORIES, TRUE)) {
       if ($configured === NULL) {
         return [...$allowed, self::EMAIL_IMMEDIATE];

@@ -6,18 +6,22 @@ namespace Drupal\aculta_messenger\Integration\Events;
 
 use Drupal\aculta_contributions\Entity\Contribution;
 use Drupal\aculta_messenger\Aviso\EligibleNoticePage;
+use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\message\MessageInterface;
 use Drupal\user\UserInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Stores and resolves private Events contribution outcome notices. */
@@ -35,15 +39,36 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
 
   private const READ_FIELD = 'field_aculta_events_notice_read';
 
+  private const DIGEST_FIELD = 'field_aculta_events_digest_sent';
+
+  private const DELIVERY_FIELD = 'field_aculta_msg_delivery';
+
+  private const ATTEMPTS_FIELD = 'field_aculta_messenger_attempts';
+
   /**
    * Whether the optional notice bundle and fields are installed. */
   private ?bool $ready = NULL;
+
+  /**
+   * Whether the additive delivery fields are installed.
+   */
+  private ?bool $deliveryReady = NULL;
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DomainPurposeManager $domainPurposes,
     private readonly LockBackendInterface $lock,
+    private readonly AvisoPreferenciasInterface $preferences,
+    private readonly QueueFactory $queueFactory,
+    private readonly LoggerInterface $logger,
   ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestProviderId(): string {
+    return 'events_contributions';
+  }
 
   /**
    * {@inheritdoc} */
@@ -75,17 +100,46 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
         ->range(0, 1)->execute();
       if ($ids !== []) {
         $existing = $storage->load(reset($ids));
+        if ($existing instanceof MessageInterface && $this->deliveryStorageReady()
+          && $existing->get(self::DELIVERY_FIELD)->value === 'failed'
+          && (int) $existing->get(self::ATTEMPTS_FIELD)->value === 0) {
+          $existing->set(self::DELIVERY_FIELD, 'pending')->save();
+          try {
+            $this->queueDirectDelivery($existing);
+          }
+          catch (\RuntimeException $exception) {
+            $existing->set(self::DELIVERY_FIELD, 'failed')->save();
+            throw $exception;
+          }
+        }
         return $existing instanceof MessageInterface ? $existing : NULL;
       }
-      $message = $storage->create([
+      $values = [
         'template' => self::TEMPLATE,
         'uid' => $event->recipientUid(),
         self::EVENT_FIELD => $event->metadata()['notice_type'],
         self::SOURCE_FIELD => $proposal->uuid(),
         self::VERSION_FIELD => (string) $proposal->getRevisionId(),
         self::READ_FIELD => 0,
-      ]);
+      ];
+      $mode = AvisoPreferencias::EMAIL_OFF;
+      if ($this->deliveryStorageReady()) {
+        $mode = $this->preferences->emailMode($event->recipientUid(), AvisoPreferencias::EMAIL_EVENTS_CONTRIBUTIONS);
+        $values[self::DIGEST_FIELD] = $mode === AvisoPreferencias::EMAIL_DIGEST ? 0 : 1;
+        $values[self::DELIVERY_FIELD] = $mode === AvisoPreferencias::EMAIL_IMMEDIATE ? 'pending' : 'sent';
+        $values[self::ATTEMPTS_FIELD] = 0;
+      }
+      $message = $storage->create($values);
       $message->save();
+      if ($mode === AvisoPreferencias::EMAIL_IMMEDIATE) {
+        try {
+          $this->queueDirectDelivery($message);
+        }
+        catch (\RuntimeException $exception) {
+          $message->set(self::DELIVERY_FIELD, 'failed')->save();
+          throw $exception;
+        }
+      }
       return $message instanceof MessageInterface ? $message : NULL;
     }
     finally {
@@ -116,6 +170,9 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
     return [
       'title' => $this->outcomeTitle($noticeType),
       'summary' => $this->outcomeSummary($noticeType),
+      'email_summary' => $noticeType === 'submitted'
+        ? (string) $this->t('Sua proposta de Eventos foi registrada no ACULTA.')
+        : (string) $this->t('Há uma atualização sobre uma proposta sua de Eventos no ACULTA.'),
       'url' => $url,
     ];
   }
@@ -210,6 +267,79 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function pendingRecipientIds(): array {
+    if (!$this->deliveryStorageReady()) {
+      return [];
+    }
+    $ids = $this->entityTypeManager->getStorage('message')->getQuery()->accessCheck(FALSE)
+      ->condition('template', self::TEMPLATE)->condition(self::DIGEST_FIELD, 0)->execute();
+    $recipients = [];
+    foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
+      if ($message instanceof MessageInterface) {
+        $recipients[(int) $message->getOwnerId()] = TRUE;
+      }
+    }
+    return array_keys($recipients);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function digestRowsFor(int $uid): array {
+    if (!$this->deliveryStorageReady()) {
+      return [];
+    }
+    $account = $this->entityTypeManager->getStorage('user')->loadUnchanged($uid);
+    if (!$account instanceof UserInterface || !$account->isActive()
+      || $this->preferences->emailMode($uid, AvisoPreferencias::EMAIL_EVENTS_CONTRIBUTIONS) !== AvisoPreferencias::EMAIL_DIGEST) {
+      $this->discardDigest($uid);
+      return [];
+    }
+    $ids = $this->pendingDigestIds($uid);
+    $rows = [];
+    foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($ids) as $message) {
+      if (!$message instanceof MessageInterface) {
+        continue;
+      }
+      $notice = $this->resolve($message, $account);
+      if ($notice === NULL) {
+        $message->set(self::DIGEST_FIELD, 1)->save();
+        continue;
+      }
+      $rows[] = [
+        'tipo' => 'eventos_contribuicoes',
+        'titulo' => $notice['email_summary'],
+        'quantidade' => 1,
+        'delivery_id' => (int) $message->id(),
+      ];
+    }
+    return $rows;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function markDigestSent(int $uid, array $deliveryIds): void {
+    $this->setDigestSent($uid, $deliveryIds);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function discardDigest(int $uid): void {
+    $this->setDigestSent($uid);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function discardDigestItems(int $uid, array $deliveryIds): void {
+    $this->setDigestSent($uid, $deliveryIds);
+  }
+
+  /**
    * Reloads the exact immutable contribution revision and rechecks access. */
   private function loadAuthorizedProposal(string $uuid, int $revisionId, AccountInterface $recipient, mixed $outcome): ?Contribution {
     if ($uuid === '' || $revisionId < 1 || !in_array($outcome, ['submitted', 'needs_changes', 'declined', 'accepted'], TRUE)) {
@@ -241,7 +371,7 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
       && $event->purpose() === 'eventos'
       && $event->eventType() === 'events.organization_proposal_outcome'
       && $metadataKeys === ['mail_policy', 'notice_type', 'proposal_source']
-      && ($event->metadata()['mail_policy'] ?? NULL) === 'none'
+      && ($event->metadata()['mail_policy'] ?? NULL) === 'user_preference'
       && in_array(
         $event->metadata()['proposal_source'] ?? NULL,
         ['events_organization', 'events_location', 'events_event'],
@@ -259,10 +389,68 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
     if ($this->entityTypeManager->getStorage('message_template')->load(self::TEMPLATE) === NULL) {
       return $this->ready = FALSE;
     }
-    $fields = [self::EVENT_FIELD, self::SOURCE_FIELD, self::VERSION_FIELD, self::READ_FIELD];
+    $fields = [
+      self::EVENT_FIELD,
+      self::SOURCE_FIELD,
+      self::VERSION_FIELD,
+      self::READ_FIELD,
+    ];
     $storageIds = array_map(static fn(string $field): string => 'message.' . $field, $fields);
     $configIds = array_map(static fn(string $field): string => 'message.' . self::TEMPLATE . '.' . $field, $fields);
     return $this->ready = count($this->entityTypeManager->getStorage('field_storage_config')->loadMultiple($storageIds)) === count($fields)
+      && count($this->entityTypeManager->getStorage('field_config')->loadMultiple($configIds)) === count($fields);
+  }
+
+  /**
+   * Returns pending digest message IDs for one recipient.
+   */
+  private function pendingDigestIds(int $uid): array {
+    return $this->entityTypeManager->getStorage('message')->getQuery()->accessCheck(FALSE)
+      ->condition('template', self::TEMPLATE)->condition('uid', $uid)->condition(self::DIGEST_FIELD, 0)->execute();
+  }
+
+  /**
+   * Marks pending digest messages sent, optionally limited to exact IDs.
+   */
+  private function setDigestSent(int $uid, ?array $deliveryIds = NULL): void {
+    if (!$this->deliveryStorageReady()) {
+      return;
+    }
+    foreach ($this->entityTypeManager->getStorage('message')->loadMultiple($deliveryIds ?? $this->pendingDigestIds($uid)) as $message) {
+      if ($message instanceof MessageInterface && (int) $message->getOwnerId() === $uid && $message->bundle() === self::TEMPLATE) {
+        $message->set(self::DIGEST_FIELD, 1)->save();
+      }
+    }
+  }
+
+  /**
+   * Queues direct e-mail through the shared Messenger delivery worker.
+   */
+  private function queueDirectDelivery(MessageInterface $message): void {
+    if ($this->queueFactory->get('aculta_events_contribution_messenger_email')->createItem(['message_id' => (int) $message->id()]) === FALSE) {
+      $this->logger->error('Could not queue Events contribution notice email for Message @id.', ['@id' => $message->id()]);
+      throw new \RuntimeException('Events contribution notice email could not be queued.');
+    }
+  }
+
+  /**
+   * Checks whether additive digest and e-mail fields are installed.
+   */
+  private function deliveryStorageReady(): bool {
+    if ($this->deliveryReady !== NULL) {
+      return $this->deliveryReady;
+    }
+    if (!$this->storageReady()) {
+      return $this->deliveryReady = FALSE;
+    }
+    $fields = [
+      self::DIGEST_FIELD,
+      self::DELIVERY_FIELD,
+      self::ATTEMPTS_FIELD,
+    ];
+    $storageIds = array_map(static fn(string $field): string => 'message.' . $field, $fields);
+    $configIds = array_map(static fn(string $field): string => 'message.' . self::TEMPLATE . '.' . $field, $fields);
+    return $this->deliveryReady = count($this->entityTypeManager->getStorage('field_storage_config')->loadMultiple($storageIds)) === count($fields)
       && count($this->entityTypeManager->getStorage('field_config')->loadMultiple($configIds)) === count($fields);
   }
 

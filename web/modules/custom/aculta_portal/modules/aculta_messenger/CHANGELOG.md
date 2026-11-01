@@ -391,3 +391,16 @@ entre 98% e 100% de uso. Não houve interação com avisos.
   oferecidos. Nenhuma atualização Runtime executada nesta implementação.
 - Compatibilidade do ID da fila mantida: worker lê envelopes antigos de
   Organização e os novos envelopes versionados de Organização/Local.
+# 0.1.1-dev.406 — entrega opcional dos avisos de Contributions Events
+
+O aviso de proposta de Eventos continua obrigatório no inbox. A categoria
+`eventos_contribuicoes` permite ao membro escolher somente no site, e-mail
+imediato ou resumo diário; o modo padrão é somente no site. Entregas usam texto
+genérico, confirmação de e-mail, preferência atual e revalidação de acesso.
+O update aditivo `10017` instala os campos de entrega/digest em instalações
+existentes. A aplicação no Runtime permanece pendente.
+
+Validação: Unit Messenger **402 testes / 4.374 assertions PASS**, incluindo o
+worker de e-mail **1/15**. Runtime e
+envio SMTP não foram usados.
+

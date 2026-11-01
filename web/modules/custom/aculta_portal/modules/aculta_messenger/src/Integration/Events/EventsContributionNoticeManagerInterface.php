@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Integration\Events;
 
 use Drupal\aculta_messenger\Aviso\PaginatedPersonalNoticeAdapterInterface;
+use Drupal\aculta_messenger\Aviso\AvisoDigestProviderIdentityInterface;
+use Drupal\aculta_messenger\Aviso\AvisoDigestSelectiveDiscardInterface;
+use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\message\MessageInterface;
 
 /**
  * Owner contract for private Events contribution outcome notices. */
-interface EventsContributionNoticeManagerInterface extends PaginatedPersonalNoticeAdapterInterface {
+interface EventsContributionNoticeManagerInterface extends PaginatedPersonalNoticeAdapterInterface, AvisoDigestProviderIdentityInterface, AvisoDigestSelectiveDiscardInterface, AvisoDigestProviderInterface {
 
   /**
    * Stores an allowlisted proposal outcome after source access validation. */

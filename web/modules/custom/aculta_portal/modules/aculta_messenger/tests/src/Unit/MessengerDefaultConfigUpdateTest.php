@@ -233,6 +233,56 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
   }
 
   /**
+   * The direct and digest delivery update installs only missing config. */
+  public function testUpdateInstallsEventsContributionDeliveryFields(): void {
+    $names = [
+      'field.storage.message.field_aculta_msg_delivery',
+      'field.storage.message.field_aculta_messenger_attempts',
+      'field.storage.message.field_aculta_events_digest_sent',
+      'field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_digest_sent',
+      'field.field.message.aculta_msg_events_contrib_notice.field_aculta_msg_delivery',
+      'field.field.message.aculta_msg_events_contrib_notice.field_aculta_messenger_attempts',
+    ];
+    $config_manager = $this->createMock(ConfigManagerInterface::class);
+    $config_manager->expects(self::exactly(count($names)))->method('loadConfigEntityByName')->willReturn(NULL);
+    $config_manager->expects(self::exactly(count($names)))->method('getEntityTypeIdByName')
+      ->willReturnCallback(static fn(string $name): string => str_starts_with($name, 'field.storage.') ? 'field_storage_config' : 'field_config');
+    $entity = $this->createMock(ConfigEntityInterface::class);
+    $entity->expects(self::exactly(count($names)))->method('isInstallable')->willReturn(TRUE);
+    $entity->expects(self::exactly(count($names)))->method('save');
+    $storages = [];
+    foreach (['field_storage_config' => 3, 'field_config' => 3] as $type => $count) {
+      $storage = $this->createMock(ConfigEntityStorageInterface::class);
+      $storage->expects(self::exactly($count))->method('createFromStorageRecord')->willReturn($entity);
+      $storages[$type] = $storage;
+    }
+    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_type_manager->expects(self::exactly(count($names)))->method('getStorage')
+      ->willReturnCallback(static fn(string $type): ConfigEntityStorageInterface => $storages[$type]);
+    $container = new ContainerBuilder();
+    $container->set('extension.list.module', new class {
+
+      /**
+       * Returns the Messenger module path for the update fixture.
+       */
+      public function getPath(string $module): string {
+        return dirname(__DIR__, 3);
+      }
+
+    });
+    $container->set('config.manager', $config_manager);
+    $container->set('entity_type.manager', $entity_type_manager);
+    require_once dirname(__DIR__, 3) . '/aculta_messenger.install';
+    \Drupal::setContainer($container);
+    try {
+      aculta_messenger_update_10017();
+    }
+    finally {
+      \Drupal::unsetContainer();
+    }
+  }
+
+  /**
    * The Events outcome update preserves map-shaped allowed values.
    */
   public function testUpdatePreservesMapShapedSubmittedOutcome(): void {

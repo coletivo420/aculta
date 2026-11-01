@@ -121,7 +121,9 @@ do autor para acompanhar/revisar propostas devolvidas. A fila do Content Admin
 aponta para a rota nativa Events e preserva seu acesso. Decisões persistidas
 geram eventos mínimos em fila própria; o owner revalida revisão, autor e acesso
 antes de emitir envelope ao Messenger. O inbox consome o tipo
-`events.organization_proposal_outcome`; digest e email não estão ligados a ele.
+`events.organization_proposal_outcome`; o Messenger mantém o aviso no site e
+oferece e-mail imediato ou resumo diário conforme preferência da pessoa. O
+padrão é somente no site; o conteúdo e os pareceres da proposta não vão ao e-mail.
 O enqueue ocorre após a decisão editorial: se a Queue API falhar, o evento mínimo
 fica no outbox KeyValue e `hook_cron()` tenta recuperá-lo em lotes de até 25.
 O consumer do Messenger é idempotente por proposta, revisão, destinatário e

@@ -332,3 +332,37 @@ function aculta_messenger_update_10016(): void {
   $field->setSetting('allowed_values', $allowedValues);
   $field->save();
 }
+
+/**
+ * Adds digest and direct-email delivery fields to Events proposal notices.
+ */
+function aculta_messenger_update_10017(): void {
+  $module_path = \Drupal::service('extension.list.module')->getPath('aculta_messenger');
+  $source = new FileStorage($module_path . '/config/install');
+  $names = [
+    'field.storage.message.field_aculta_msg_delivery',
+    'field.storage.message.field_aculta_messenger_attempts',
+    'field.storage.message.field_aculta_events_digest_sent',
+    'field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_digest_sent',
+    'field.field.message.aculta_msg_events_contrib_notice.field_aculta_msg_delivery',
+    'field.field.message.aculta_msg_events_contrib_notice.field_aculta_messenger_attempts',
+  ];
+  $config = $source->readMultiple($names);
+  $config_manager = \Drupal::service('config.manager');
+  $ordered_names = (new \Drupal\Core\Config\Entity\ConfigDependencyManager())->setData($config)->sortAll();
+  foreach ($ordered_names as $name) {
+    if ($config_manager->loadConfigEntityByName($name) !== NULL) {
+      continue;
+    }
+    $entity_type = $config_manager->getEntityTypeIdByName($name);
+    if ($entity_type === NULL || !isset($config[$name])) {
+      throw new \LogicException(sprintf('Events notice delivery configuration %s is missing or is not an entity.', $name));
+    }
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+    $entity = $storage->createFromStorageRecord($config[$name]);
+    if (!$entity->isInstallable()) {
+      throw new \LogicException(sprintf('Events notice delivery configuration %s has unmet dependencies.', $name));
+    }
+    $entity->save();
+  }
+}

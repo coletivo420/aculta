@@ -310,6 +310,7 @@ final class MessengerSettingsForm extends ConfigFormBase {
       'doacao' => (string) $this->t('Doações'),
       AvisoPreferencias::EMAIL_PRIVATE_MESSAGES => (string) $this->t('Mensagens privadas'),
       AvisoPreferencias::EMAIL_FRIENDSHIP => (string) $this->t('Amizades'),
+      AvisoPreferencias::EMAIL_EVENTS_CONTRIBUTIONS => (string) $this->t('Propostas de Eventos'),
       default => throw new \InvalidArgumentException('Categoria de aviso inválida.'),
     };
   }

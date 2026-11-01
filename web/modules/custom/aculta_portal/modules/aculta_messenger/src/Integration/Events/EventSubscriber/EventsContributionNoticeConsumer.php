@@ -32,7 +32,7 @@ final class EventsContributionNoticeConsumer implements EventSubscriberInterface
       || $event->purpose() !== 'eventos'
       || $event->eventType() !== 'events.organization_proposal_outcome'
       || $metadataKeys !== ['mail_policy', 'notice_type', 'proposal_source']
-      || ($metadata['mail_policy'] ?? NULL) !== 'none'
+      || ($metadata['mail_policy'] ?? NULL) !== 'user_preference'
       || !in_array($metadata['proposal_source'] ?? NULL, ['events_organization', 'events_location', 'events_event'], TRUE)
       || !in_array($outcome, ['submitted', 'needs_changes', 'declined', 'accepted'], TRUE)) {
       return;

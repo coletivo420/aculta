@@ -84,7 +84,7 @@ final class OrganizationContributionNoticePublisher implements EventSubscriberIn
         [
           'notice_type' => $event->outcome,
           'proposal_source' => $event->source,
-          'mail_policy' => 'none',
+          'mail_policy' => 'user_preference',
         ],
       ));
     }
