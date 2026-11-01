@@ -1,5 +1,14 @@
 # Changelog — aculta_events
 
+## 2026-11-01 — Preservar coordenadas numéricas zero no mapa
+
+- O mapa agora inclui locais com latitude ou longitude `0` (Equador e meridiano
+  de Greenwich); `empty()` tratava esses valores válidos como ausentes.
+- A validação numérica e de faixa do `MapRenderer` permanece responsável por
+  rejeitar coordenadas inválidas antes de expô-las no navegador.
+- Kernel cobre o marcador `0/0`; junto com o Unit do renderer, são 5 testes e
+  57 asserções PASS. PHP lint e PHPCS focal também passaram.
+
 ## 2026-10-31 — Hierarquia de títulos no catálogo
 
 - Os títulos dos cartões em `/eventos` usam H2 imediatamente abaixo do H1 da

@@ -78,4 +78,31 @@ final class MapControllerKernelTest extends KernelTestBase {
     $this->assertStringNotContainsString('OpenStreetMap', $aviso);
   }
 
+  /**
+   * Valid zero latitude and longitude are retained as a map marker.
+   */
+  public function testMapKeepsZeroCoordinates(): void {
+    EventLocation::create([
+      'title' => 'Local no Equador e Greenwich',
+      'field_precisao' => 'exato',
+      'field_coordenadas' => [
+        'lat' => 0.0,
+        'lon' => 0.0,
+        'value' => 'POINT (0 0)',
+        'geo_type' => 'Point',
+      ],
+      'field_endereco' => [
+        'country_code' => 'BR',
+        'locality' => 'Localidade de teste',
+      ],
+    ])->save();
+
+    $page = MapController::create($this->container)->page();
+    $markers = $page['mapa']['#attached']['drupalSettings']['acultaMaps']['aculta-map']['markers'];
+
+    $this->assertCount(1, $markers);
+    $this->assertSame(0.0, $markers[0]['lat']);
+    $this->assertSame(0.0, $markers[0]['lng']);
+  }
+
 }

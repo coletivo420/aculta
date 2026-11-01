@@ -71,7 +71,10 @@ final class MapController extends ControllerBase {
       $itens[] = $itemRender;
 
       $coords = $local->get('field_coordenadas')->first()?->getValue();
-      if (!empty($coords['lat']) && !empty($coords['lon'])) {
+      // Zero is a valid coordinate (Equator / Greenwich); empty() would drop
+      // valid locations at either axis. MapRenderer applies numeric range
+      // validation before exposing marker data to the browser.
+      if (is_numeric($coords['lat'] ?? NULL) && is_numeric($coords['lon'] ?? NULL)) {
         $casas = (string) $local->get('field_precisao')->value === 'aproximado' ? self::CASAS_APROXIMADO : 6;
         $marcadores[] = [
           'label' => (string) $local->label(),
