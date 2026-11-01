@@ -105,7 +105,7 @@ Dependências declaradas em `info.yml`:
 | H5P | `aculta_lms_h5p` importa `ActivityInterface`, `CourseInterface` e usa Group | Fork ACULTA, mas vínculo por atividade LMS | Adapter H5P ACULTA com contrato de atividade e tentativa | Alto: bibliotecas e segurança | Pendente |
 | Fórum pedagógico | `aculta_forum_lms` importa entidades LMS e relação Group | Node/Comment são owners ACULTA; o vínculo é LMS | Substituir o vínculo `lms_activity` por referência de atividade ACULTA | Médio: isolamento entre turmas | Pendente |
 | Recursos do curso | `aculta_lms_resources` importa `CourseInterface` e lê Group | Content Index ACULTA + Group | Trocar o tipo por contrato de curso ACULTA | Baixo/médio | Pendente |
-| Agenda do curso | `aculta_lms_agenda` importa entidades LMS | Nenhum | Ler por contrato de curso/atividade | Baixo | Pendente |
+| Agenda do curso | `aculta_lms_agenda` delega a validação de acesso ao curso ao serviço adapter `aculta_lms`; agenda mantém membership da turma | `ClassActivityDeadlineAccessCheck::courseAccessForClass()` retorna `AccessResult` cacheável sem expor `CourseInterface` | Manter regras de domínio LMS dentro do adapter e preservar cache/access | Baixo | Adapter implementado; validação automatizada/Runtime desta microfase pendente |
 | Conquistas | `aculta_game` consome `CourseCompletedEvent`; provider `aculta_lms` ainda lê `CourseStatusInterface` | `aculta_learning_contracts\\Event\\CourseCompletedEvent` | Validar integração em Runtime; manter o LMS isolado no provider | Baixo/médio | Evento neutro implementado; validação pendente |
 | Avisos educacionais | `aculta_messenger` consome `LearningEligibility` do `aculta_lms` | Contrato público `MessengerNoticeEvent`; elegibilidade em `aculta_lms` | Manter elegibilidade no adaptador até o domínio próprio existir | Baixo | Pendente |
 | Certificados | Entidade própria lê status final LMS | `CourseCertificateManagerInterface` | Trocar a fonte de conclusão pelo contrato de progresso ACULTA | Médio: snapshot e verificação pública | Pendente |
@@ -408,10 +408,10 @@ Resultado atualizado em 2026-11-01, após a migração da conquista de conclusã
 
 | Escopo | Arquivos únicos | Ocorrências (`use`) |
 | --- | ---: | ---: |
-| Código ACULTA sem `tests/` | **59** | **114** |
-| Incluindo `tests/` | **95** | **208** |
+| Código ACULTA sem `tests/` | **58** | **113** |
+| Incluindo `tests/` | **94** | **207** |
 
-Distribuição dos 59 arquivos não-teste:
+Distribuição dos 58 arquivos não-teste:
 
 | Módulo/área | Arquivos únicos |
 | --- | ---: |
@@ -420,10 +420,9 @@ Distribuição dos 59 arquivos não-teste:
 | `aculta_forum_lms` | 6 |
 | `aculta_lms_resources` | 5 |
 | `aculta_messenger` | 1 |
-| `aculta_lms_agenda` | 1 |
 | `scripts` | 1 |
 
-Caminhos dos 59 arquivos não-teste:
+Caminhos dos 58 arquivos não-teste:
 
 ```text
 scripts/content/load-course-introducao-antiproibicionismo.php
@@ -433,7 +432,6 @@ web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Context/LmsDiscuss
 web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Hook/LmsActivityDiscussionHooks.php
 web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Hook/Lmsaculta_H5PDiscussionHooks.php
 web/modules/custom/aculta_portal/modules/aculta_forum_lms/src/Plugin/EntityReferenceSelection/Courseaculta_H5PContentSelection.php
-web/modules/custom/aculta_portal/modules/aculta_lms_agenda/src/EventClassAccess.php
 web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/Access/aculta_H5PCourseAccessManager.php
 web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/aculta_H5PDrupal/aculta_H5PDrupal.php
 web/modules/custom/aculta_portal/modules/aculta_lms_h5p/src/aculta_H5PEditor/aculta_H5PEditorUtilities.php
@@ -489,6 +487,6 @@ web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Lms/Le
 
 Observações:
 
-- A extração dos contratos não adicionou imports de `Drupal\lms` nos consumidores. A separação de apresentação removeu `aculta_lms/src/Hook/LearningRoomHooks.php`; a extração de conta/rotas moveu `AccountCoursesReader` e os três `Routing/LmsFriendly*` para o LMS. Com a B3-A, **`aculta_portal` deixou de importar `Drupal\lms`** e os dois processadores residuais saíram da lista. A migração do gatilho de conclusão para o evento neutro também removeu o import de `Drupal\\lms` do Game. O total atualizado é **59 arquivos / 114 linhas**.
+- A extração dos contratos não adicionou imports de `Drupal\lms` nos consumidores. A separação de apresentação removeu `aculta_lms/src/Hook/LearningRoomHooks.php`; a extração de conta/rotas moveu `AccountCoursesReader` e os três `Routing/LmsFriendly*` para o LMS. Com a B3-A, **`aculta_portal` deixou de importar `Drupal\lms`** e os dois processadores residuais saíram da lista. A migração do gatilho de conclusão para o evento neutro também removeu o import de `Drupal\\lms` do Game. O adapter de acesso da agenda agora encapsula o tipo LMS, reduzindo mais um import fora do provider. O total atualizado é **58 arquivos / 113 linhas**.
 - `aculta_studio/src` não aparece na lista: não importa `Drupal\lms`.
 - Nenhum arquivo do `aculta_portal` base aparece na lista atual.
