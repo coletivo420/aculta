@@ -1,5 +1,12 @@
 # Changelog — ACULTA Gallery
 
+## 0.1.0-dev.22 — embed de galeria aceita imagens recentes do Studio
+
+- `GalleryEmbedDialogForm` lista imagens recentes do Studio (integração `galeria`) e as soma às fotos novas.
+- Escolha checada pelo dono (administrador vê todos), com validação de imagem.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.21 — upload de fotos novas pela política do aculta_file_uploader
 
 - `GalleryEmbedDialogForm` usa `aculta_file_uploader.consumer_policy` (integração `galeria`) em vez de `aculta_image.upload_policy`.
