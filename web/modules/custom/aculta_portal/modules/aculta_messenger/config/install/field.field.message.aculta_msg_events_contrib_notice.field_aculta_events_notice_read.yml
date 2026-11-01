@@ -3,14 +3,14 @@ status: true
 dependencies:
   config:
     - field.storage.message.field_aculta_events_notice_read
-    - message.template.aculta_msg_events_contribution_notice
+    - message.template.aculta_msg_events_contrib_notice
   enforced:
     module:
       - aculta_messenger
-id: message.aculta_msg_events_contribution_notice.field_aculta_events_notice_read
+id: message.aculta_msg_events_contrib_notice.field_aculta_events_notice_read
 field_name: field_aculta_events_notice_read
 entity_type: message
-bundle: aculta_msg_events_contribution_notice
+bundle: aculta_msg_events_contrib_notice
 label: 'Aviso lido'
 description: ''
 required: true

@@ -6,7 +6,7 @@ dependencies:
   enforced:
     module:
       - aculta_messenger
-template: aculta_msg_events_contribution_notice
+template: aculta_msg_events_contrib_notice
 label: 'Aviso de proposta de Eventos ACULTA'
 description: 'Aviso mínimo de decisão sobre proposta comunitária, sem conteúdo privado.'
 text:

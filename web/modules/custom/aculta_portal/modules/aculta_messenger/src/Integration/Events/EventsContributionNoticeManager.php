@@ -25,7 +25,7 @@ final class EventsContributionNoticeManager implements EventsContributionNoticeM
 
   use StringTranslationTrait;
 
-  public const TEMPLATE = 'aculta_msg_events_contribution_notice';
+  public const TEMPLATE = 'aculta_msg_events_contrib_notice';
 
   private const EVENT_FIELD = 'field_aculta_events_outcome';
 

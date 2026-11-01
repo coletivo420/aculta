@@ -53,7 +53,7 @@ final class NoticeReadStateManager implements NoticeReadStateManagerInterface {
       'aculta_msg_donation_notice' => $this->setDonationRead($message, $account, $read),
       'aculta_msg_friendship' => $this->setFriendshipRead($message, $account, $read),
       'aculta_msg_game_award' => $this->setGameRead($message, $account, $read),
-      'aculta_msg_events_contribution_notice' => $this->setEventsRead($message, $account, $read),
+      'aculta_msg_events_contrib_notice' => $this->setEventsRead($message, $account, $read),
       default => FALSE,
     };
   }
