@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Unit;
 
 use DateTimeImmutable;
-use Drupal\aculta_lms\Event\CourseCompletedEvent;
+use Drupal\aculta_learning_contracts\Event\CourseCompletedEvent;
 use Drupal\aculta_lms\Event\CourseCompletionPublisher;
 use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\Tests\UnitTestCase;
@@ -23,7 +23,7 @@ final class CourseCompletionPublisherTest extends UnitTestCase {
       ->method('dispatch')
       ->with($this->callback(static fn(object $event): bool =>
         $event instanceof CourseCompletedEvent
-        && $event->sourceStatusUuid === 'status-uuid'
+        && $event->sourceUuid === 'status-uuid'
         && $event->courseId === '42'
         && $event->accountId === '7'
         && $event->completedAt == new DateTimeImmutable('@1760000000')
