@@ -1,3 +1,10 @@
+## Revalidação 2026-11-01 — conflitos de `event_update`
+
+- Reexecutados os casos Kernel de submissão privada, aplicação seletiva, perda
+  de Entity Access, membership revogado, Local tornado privado e origem alterada:
+  **6 testes / 171 assertions PASS**, 24 depreciações Core/contrib. Runtime não
+  alterado.
+
 ## Revalidação 2026-11-02 — ACL da agenda contextual
 
 - Novo cenário Kernel com dois owners de Local e anônimo confirma que a agenda contextual não divulga títulos/eventos de Locais privados alheios. UIDs de fixture são 101/102 para evitar o bypass administrativo reservado ao UID 1.
