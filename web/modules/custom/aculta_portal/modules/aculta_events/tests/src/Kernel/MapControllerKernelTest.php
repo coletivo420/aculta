@@ -105,4 +105,33 @@ final class MapControllerKernelTest extends KernelTestBase {
     $this->assertSame(0.0, $markers[0]['lng']);
   }
 
+  /**
+   * Map output bubbles cache contexts from hidden owner-only locations.
+   */
+  public function testMapBubblesOwnerAccessCacheContext(): void {
+    $userStorage = $this->container->get('entity_type.manager')->getStorage('user');
+    $owner = $userStorage->create([
+      'name' => 'map-owner',
+      'mail' => 'map-owner@example.test',
+      'status' => 1,
+    ]);
+    $owner->save();
+    EventLocation::create([
+      'title' => 'Local restrito do mapa',
+      'field_status' => 'privado',
+      'field_organizador' => $owner->id(),
+      'field_endereco' => [
+        'country_code' => 'BR',
+        'address_line1' => 'Rua privada, 123',
+      ],
+    ])->save();
+
+    $page = MapController::create($this->container)->page();
+    $list = (string) \Drupal::service('renderer')->renderInIsolation($page['lista']);
+
+    $this->assertContains('user', $page['#cache']['contexts']);
+    $this->assertStringNotContainsString('Local restrito do mapa', $list);
+    $this->assertStringNotContainsString('Rua privada, 123', $list);
+  }
+
 }

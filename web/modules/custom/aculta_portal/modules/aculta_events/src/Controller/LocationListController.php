@@ -6,6 +6,7 @@ namespace Drupal\aculta_events\Controller;
 
 use Drupal\aculta_events\Catalogue\LocationCatalogue;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Link;
 use Drupal\Core\Pager\PagerManagerInterface;
@@ -110,6 +111,10 @@ final class LocationListController extends ControllerBase {
     $build['pager'] = [
       '#type' => 'pager',
     ];
+
+    CacheableMetadata::createFromRenderArray($build)
+      ->addCacheableDependency($resultado['cache_metadata'])
+      ->applyTo($build);
 
     return $build;
   }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_events\Kernel;
 
 use Drupal\aculta_events\Catalogue\LocationCatalogue;
+use Drupal\aculta_events\Controller\LocationListController;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\KernelTests\KernelTestBase;
@@ -110,8 +111,7 @@ final class LocationCatalogueKernelTest extends KernelTestBase {
   }
 
   /**
-   * Catálogo aplica view access antes de calcular total e paginação, inclusive
-   * quando não há conta de requisição disponível.
+   * Catálogo filtra acesso antes de calcular total e paginação.
    */
   public function testBuscaPaginadaFiltraAcessoAntesDaPaginacao(): void {
     $publico = $this->local('Local público', 'exato');
@@ -127,11 +127,54 @@ final class LocationCatalogueKernelTest extends KernelTestBase {
     $this->assertCount(1, $resultado['items']);
     $this->assertSame((string) $publico->id(), (string) $resultado['items'][0]['local']->id());
 
-    // Sem conta explícita, a ausência de contexto não pode abrir locais privados.
+    // Sem conta, o catálogo não pode abrir locais privados.
     $semConta = new LocationCatalogue($this->container->get('entity_type.manager'));
     $resultadoSemConta = $semConta->buscaPaginada(NULL, NULL, 0, 10);
     $this->assertSame(1, $resultadoSemConta['total']);
     $this->assertSame((string) $publico->id(), (string) $resultadoSemConta['items'][0]['local']->id());
+  }
+
+  /**
+   * Owner-only locations vary cache by account and are absent for others.
+   */
+  public function testOwnerOnlyLocationAccessBubblesUserCacheContext(): void {
+    // Keep the first account from receiving Drupal's implicit UID 1 access.
+    $this->createUser();
+    $owner = $this->createUser();
+    $public = $this->local('Local público', 'exato');
+    $private = $this->local('Local privado do organizador', 'exato');
+    $private->set('field_status', 'privado');
+    $private->set('field_organizador', $owner->id());
+    $private->save();
+
+    $catalogue = new LocationCatalogue($this->container->get('entity_type.manager'));
+    $ownerResult = $catalogue->buscaPaginada(NULL, NULL, 0, 10, $owner);
+    $anonymous = new AnonymousUserSession();
+    $anonymousResult = $catalogue->buscaPaginada(NULL, NULL, 0, 10, $anonymous);
+
+    $this->assertSame(2, $ownerResult['total']);
+    $this->assertSame(1, $anonymousResult['total']);
+    $this->assertSame((string) $public->id(), (string) $anonymousResult['items'][0]['local']->id());
+    $this->assertContains('user', $ownerResult['cache_metadata']->getCacheContexts());
+    $this->assertContains('user', $anonymousResult['cache_metadata']->getCacheContexts());
+  }
+
+  /**
+   * The public location list bubbles cache contexts for hidden draft locations.
+   */
+  public function testLocationListBubblesOwnerAccessCacheContext(): void {
+    $this->createUser();
+    $owner = $this->createUser();
+    $private = $this->local('Local privado da lista', 'exato');
+    $private->set('field_status', 'privado');
+    $private->set('field_organizador', $owner->id());
+    $private->save();
+
+    $page = LocationListController::create($this->container)->page();
+    $list = (string) \Drupal::service('renderer')->renderInIsolation($page['list']);
+
+    $this->assertContains('user', $page['#cache']['contexts']);
+    $this->assertStringNotContainsString('Local privado da lista', $list);
   }
 
   /**

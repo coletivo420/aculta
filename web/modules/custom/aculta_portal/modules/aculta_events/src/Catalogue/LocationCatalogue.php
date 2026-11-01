@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_events\Catalogue;
 
 use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AnonymousUserSession;
@@ -51,8 +52,9 @@ final class LocationCatalogue {
    * @param \Drupal\Core\Session\AccountInterface|null $account
    *   Conta para verificação de acesso.
    *
-   * @return array{items: array<int, array{local: \Drupal\aculta_events\Entity\EventLocation, endereco: string}>, total: int}
-   *   Itens paginados e total de registros válidos.
+   * @return array
+   *   Itens paginados, total de registros válidos e `cache_metadata`
+   *   (\Drupal\Core\Cache\CacheableMetadata) agregado das decisões de acesso.
    */
   public function buscaPaginada(
     ?int $tipo = NULL,
@@ -62,10 +64,12 @@ final class LocationCatalogue {
     ?AccountInterface $account = NULL,
   ): array {
     // Falha fechado quando o serviço for usado sem conta explícita nem contexto
-    // de requisição: locais privados/rascunhos nunca entram por ausência de ACL.
+    // de requisição: locais privados/rascunhos não entram por falta de ACL.
     $conta = $account ?? $this->currentUser ?? new AnonymousUserSession();
     $storage = $this->entityTypeManager->getStorage('aculta_event_location');
     $consulta = $storage->getQuery()->sort('title', 'ASC')->accessCheck(FALSE);
+    $cacheability = (new CacheableMetadata())
+      ->addCacheTags(['aculta_event_location_list']);
 
     if ($tipo !== NULL && $tipo > 0) {
       $consulta->condition('field_tipo.target_id', $tipo);
@@ -76,7 +80,7 @@ final class LocationCatalogue {
 
     $allIds = $consulta->execute();
     if (empty($allIds)) {
-      return ['items' => [], 'total' => 0];
+      return ['items' => [], 'total' => 0, 'cache_metadata' => $cacheability];
     }
 
     /** @var \Drupal\aculta_events\Entity\EventLocation[] $locais */
@@ -84,12 +88,21 @@ final class LocationCatalogue {
     $validos = [];
 
     foreach ($locais as $local) {
-      if ($local instanceof EventLocation && $local->access('view', $conta)) {
-        $validos[] = [
-          'local' => $local,
-          'endereco' => $this->enderecoPublico($local),
-        ];
+      if (!$local instanceof EventLocation) {
+        continue;
       }
+      $viewAccess = $local->access('view', $conta, TRUE);
+      // Both allowed and denied results affect this list. Bubble their cache
+      // contexts so owner-only drafts cannot leak through a shared page cache.
+      $cacheability->addCacheableDependency($viewAccess);
+      if (!$viewAccess->isAllowed()) {
+        continue;
+      }
+      $cacheability->addCacheableDependency($local);
+      $validos[] = [
+        'local' => $local,
+        'endereco' => $this->enderecoPublico($local),
+      ];
     }
 
     $total = count($validos);
@@ -98,6 +111,7 @@ final class LocationCatalogue {
     return [
       'items' => $items,
       'total' => $total,
+      'cache_metadata' => $cacheability,
     ];
   }
 

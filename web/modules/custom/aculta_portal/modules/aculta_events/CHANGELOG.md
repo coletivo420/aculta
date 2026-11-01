@@ -1,5 +1,15 @@
 # Changelog — aculta_events
 
+## 2026-11-01 — Propagar cacheabilidade do acesso a Locais
+
+- `LocationCatalogue` agrega os metadados de cache das decisões de view
+  permitidas e negadas, incluindo conteúdo privado acessível ao organizador.
+- A lista de Locais e o mapa agora incorporam esses contextos e tags; Kernel
+  confirma que conteúdo restrito não aparece para anônimos e que a resposta
+  varia por usuário.
+- Suítes focais de catálogo/mapa: 9 testes / 179 assertions PASS; PHP lint e
+  PHPCS Drupal/DrupalPractice PASS. Permanecem 14 depreciações de Core/contrib.
+
 ## 2026-11-01 — Preservar coordenadas numéricas zero no mapa
 
 - O mapa agora inclui locais com latitude ou longitude `0` (Equador e meridiano

@@ -6,6 +6,7 @@ namespace Drupal\aculta_events\Controller;
 
 use Drupal\aculta_events\Catalogue\LocationCatalogue;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
 use Drupal\aculta_maps\MapRenderer;
@@ -50,7 +51,8 @@ final class MapController extends ControllerBase {
   public function page(): array {
     $marcadores = [];
     $itens = [];
-    foreach ($this->locais->busca(NULL) as $item) {
+    $resultado = $this->locais->buscaPaginada(NULL, NULL, 0, 0);
+    foreach ($resultado['items'] as $item) {
       $local = $item['local'];
       $linha = '<strong>' . Html::escape((string) $local->label()) . '</strong>';
       if ($item['endereco'] !== '') {
@@ -108,6 +110,10 @@ final class MapController extends ControllerBase {
     ];
 
     $render['mapa'] = $mapa;
+
+    CacheableMetadata::createFromRenderArray($render)
+      ->addCacheableDependency($resultado['cache_metadata'])
+      ->applyTo($render);
 
     return $render;
   }

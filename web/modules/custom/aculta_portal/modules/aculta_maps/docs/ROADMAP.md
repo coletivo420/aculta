@@ -3,7 +3,7 @@
 [Plano LOC-00 a LOC-08](../../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md). MP0-MP7 permanecem evidências históricas; a experiência nova de Locais não está concluída.
 
 - [x] **LOC-00 / Fase 1 (2026-10-30):** inventário e fronteira Maps ↔ Events confirmados. Maps consome a entidade Local de Events via contratos neutros (`MapRenderer`, `RouteLinkBuilder`, `GeocodingService`); não duplica cadastro, catálogo ou armazenamento.
-- [ ] LOC-01: somente dados autorizados/minimizados chegam a renderer, popups e links de rota; precisão não substitui visibilidade.
+- [ ] LOC-01: somente dados autorizados/minimizados chegam a renderer, popups e links de rota; precisão não substitui visibilidade. Parcial em 2026-11-01: o catálogo agrega metadados de cache de decisões de view (inclusive negações), e mapa/lista os propagam; testes Kernel verificam isolamento de Locais privados por usuário. Revisão dos demais consumidores ainda pendente.
 - [ ] LOC-05: reutilizar MapRenderer/RouteLinkBuilder no detalhe e diretório; marcador aponta ao mesmo canônico usado pelo Index.
 - [ ] LOC-02/03: geocodificar endereço salvo pelo serviço existente; não criar autocomplete Nominatim por tecla nem cliente CEP próprio. O formulário de Local de Events usa o CEP como primeiro campo.
 - [ ] LOC-08: testar 0/0.0/ranges, aproximado/exato, cache entre contas, sem-JS e falha externa.
