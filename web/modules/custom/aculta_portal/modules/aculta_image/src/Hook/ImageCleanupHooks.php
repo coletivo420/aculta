@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_image\Hook;
 
-use Drupal\aculta_image\ImageCleanup;
+use Drupal\aculta_file_uploader\Cleanup\ImageCleanup;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class ImageCleanupHooks {
 
   public function __construct(
-    #[Autowire(service: 'aculta_image.cleanup')]
+    #[Autowire(service: 'aculta_file_uploader.cleanup')]
     private readonly ImageCleanup $cleanup,
   ) {}
 

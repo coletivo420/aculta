@@ -1,5 +1,12 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.9 — motor da fila de limpeza movido para o aculta_file_uploader
+
+- `Cleanup\ImageCleanup` (fila `aculta_image_replaced_files`, `run()` e a limpeza de temporários) sai do aculta_image. Serviço: `aculta_file_uploader.cleanup`.
+- Os hooks de entidade e o cron continuam no aculta_image, para não enfileirar sem o módulo de imagem. Teste Unit movido com o motor.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.8 — limpeza de File movida do aculta_portal, com contratos
 
 - Movidos do aculta_portal: `Cleanup\UnusedFileCleaner`, `FileReferenceInspector` (e interface), `FileCleanupStatus`, `FileReferenceStatus` e `FileCleanupAssessorInterface`. Serviços: `aculta_file_uploader.unused_file_cleaner`, `aculta_file_uploader.file_reference_inspector`, `aculta_file_uploader.cleanup.logger` (mesmo canal `aculta_portal_cleanup`).

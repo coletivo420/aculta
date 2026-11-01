@@ -39,3 +39,8 @@ services:
     arguments: ['@file.usage', '@database', '@aculta_file_uploader.file_reference_inspector', '@aculta_file_uploader.deletion_owner', '@image.factory', '@aculta_file_uploader.cleanup.logger']
     tags:
       - { name: aculta_portal.helper }
+  aculta_file_uploader.cleanup:
+    class: Drupal\aculta_file_uploader\Cleanup\ImageCleanup
+    arguments: ['@database', '@entity_type.manager', '@queue', '@config.factory', '@datetime.time', '@?aculta_file_uploader.unused_file_cleaner']
+    tags:
+      - { name: aculta_portal.helper }

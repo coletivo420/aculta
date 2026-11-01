@@ -146,7 +146,7 @@ final class ImageCleanupPortalCoordinatorKernelTest extends KernelTestBase {
     $queue->createItem(['fid' => (int) $embeddedFile->id()]);
     $queue->createItem(['fid' => (int) $revisionFile->id()]);
 
-    $result = $this->container->get('aculta_image.cleanup')->run(5);
+    $result = $this->container->get('aculta_file_uploader.cleanup')->run(5);
 
     self::assertSame(['processed' => 5, 'deleted' => 1], $result);
     self::assertNull($this->container->get('entity_type.manager')->getStorage('file')->load($file->id()));

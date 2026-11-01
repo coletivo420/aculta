@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_image\Unit;
+namespace Drupal\Tests\aculta_file_uploader\Unit;
 
-use Drupal\aculta_image\ImageCleanup;
+use Drupal\aculta_file_uploader\Cleanup\ImageCleanup;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;

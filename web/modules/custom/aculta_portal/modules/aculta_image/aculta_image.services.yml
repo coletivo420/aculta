@@ -28,11 +28,6 @@ services:
     arguments: ['@file.usage', '@entity_type.manager', '@database', '@file_system', '@logger.factory']
     tags:
       - { name: aculta_portal.helper }
-  aculta_image.cleanup:
-    class: Drupal\aculta_image\ImageCleanup
-    arguments: ['@database', '@entity_type.manager', '@queue', '@config.factory', '@datetime.time', '@?aculta_file_uploader.unused_file_cleaner']
-    tags:
-      - { name: aculta_portal.helper }
   aculta_image.ingester:
     class: Drupal\aculta_image\ImageIngester
     arguments: ['@file.repository', '@file_system', '@database', '@aculta_image.inspector', '@datetime.time', '@logger.factory']

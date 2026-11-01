@@ -1,3 +1,9 @@
+## 0.4.1-dev.54 — registro do helper de limpeza migrado
+
+- `PortalHelperRegistry`: `aculta_image.cleanup` vira `aculta_file_uploader.cleanup`. Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.4.1-dev.53 — limpeza de File consome o aculta_file_uploader
 
 - Dependência nova: `aculta_portal:aculta_file_uploader`. `UnusedMediaCleaner`, `ContentCleanupPreview` e a interface de mídia usam os tipos do uploader.

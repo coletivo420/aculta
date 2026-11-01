@@ -105,7 +105,7 @@ final class PortalHelperRegistry {
       . 'não inclui nomes, URIs ou conteúdo no relatório.',
       'docs' => 'docs/portal/CONTENT-CLEANUP-POLICY.md',
     ],
-    'aculta_image.cleanup' => [
+    'aculta_file_uploader.cleanup' => [
       'label' => 'Limpeza do ciclo de vida de imagens',
       'summary' => 'Revalida imagens substituídas e remove uploads temporários vencidos em lotes pelo cron ou painel.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/README.md',
