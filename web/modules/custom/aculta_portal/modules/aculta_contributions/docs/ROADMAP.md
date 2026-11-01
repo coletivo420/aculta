@@ -22,8 +22,9 @@
   choices.
 - [x] Prepare update 10003 with per-proposal transaction, bounded batches,
   idempotent checkpoints, and exact numeric ID/UUID/revision ID preservation.
-  Kernel migration/status fixture: 1 test / 55 assertions, including retry and
-  status-route resolution before and after the copy.
+  Kernel migration/status and fail-closed fixtures cover history/retry,
+  dual-store status, ID collision and translated revision: 3 tests / 133
+  assertions on `aculta_simpletest`. Runtime data reconciliation remains pending.
 - [x] Switch Wiki submission to the shared lifecycle and status/withdraw/
   decision, workspace, editorial queue, and notice consumers to dual-store
   resolution. New submissions are gated until every legacy proposal has a
@@ -48,8 +49,9 @@
 - [x] Event submission notices use a minimal private Messenger envelope and
   recoverable outbox. Updates 10015–10016 are implemented but not installed in
   Runtime.
-- [ ] Full duplicate and related-access revocation matrix, and Runtime
-  verification remain pending.
+- [ ] `event_update` conflict/access scenarios passed `aculta_simpletest`
+  (6/171 focused; full Events lifecycle 27/888). Broader duplicate matrix and
+  Runtime verification remain pending.
 - [x] `aculta_content_admin` discovers the Events organization proposal queue
   through its native route access; no copied records or new decision grant.
 - [x] Messenger stores minimal Organization/Location decision outcomes in the
@@ -73,3 +75,9 @@ the coordinated service cutover is implemented, but the Runtime update and
 real-data reconciliation have not run. The update does not remove legacy tables.
 No Events, UGC, Forum, ownership-claim, or internal editorial workflow is
 converted into a contribution by this initial module.
+
+Legacy entity references are classified in
+`docs/architecture/INVENTARIO-ACULTA-CONTRIBUTIONS.md`: Wiki and Organization
+suggestions remain owner-local for dual-read/checkpoint migration, Messenger
+resolves both queued Wiki entity types, and Content Moderation remains only for
+the official Wiki Node workflow. No `Workflow Participants` dependency was found.

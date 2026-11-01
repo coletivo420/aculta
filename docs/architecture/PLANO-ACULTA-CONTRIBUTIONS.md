@@ -1,7 +1,7 @@
 # Plano de arquitetura e implementação - ACULTA Contributions
 
 **Estado:** F0 revalidado; F1/F2 parciais; Wiki dual-store; F4/F5 parciais; fila descoberta pelo Content Admin; avisos de submissão e decisão de Organização/Local/Evento no inbox via envelope mínimo e outbox; fila/revisão administrativa de Evento, `event_create` e `event_update` com interfaces de autor implementados; workspace e ressubmissão estruturada implementados; homologação Runtime pendente
-**Base de código auditada:** branch `dev`, `34e79950e` (2026-11-01); auditoria F0 referenciada em [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md). Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
+**Base de código auditada:** branch `dev`, `b41156a3d` (2026-11-01); auditoria F0 referenciada em [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md). Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
 **Escopo:** motor de propostas comunitárias reutilizável por domínios ACULTA, sem depender de Workflow Participants ou de Content Moderation para o ciclo de contribuições.
 
 ## 1. Decisão de arquitetura
@@ -311,3 +311,6 @@ Aceite final: nenhum conteúdo oficial é alterado na submissão; só adaptadore
 - Workflows overview: https://www.drupal.org/docs/8/core/modules/workflows/overview
 
 As páginas de módulos contrib são referências de escopo e trade-offs, não requisitos de dependência. Nenhum módulo contrib listado deve ser adicionado ao composer como parte deste plano.
+
+Busca final de referências ao modelo anterior e motivos transitórios está
+registrada em [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md).

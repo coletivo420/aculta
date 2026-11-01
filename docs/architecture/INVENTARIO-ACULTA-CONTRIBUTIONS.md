@@ -1,9 +1,9 @@
 # Inventário dos consumidores de Contributions
 
-**Base de código:** branch `dev`, commit `34e79950e` (2026-11-01)
+**Base de código:** branch `dev`, commit `b41156a3d` (2026-11-01)
 **Revalidado em:** 2026-11-01
 
-Este inventário foi revalidado em `34e79950e` após a integração parcial de
+Este inventário foi revalidado em `b41156a3d` após a integração parcial de
 Organization/Location/Event, filas e revisão Content Admin, inbox de resultados
 Messenger, workspace privado, formulários de envio, atualização e ressubmissão
 estruturada para Eventos, revalidação de capability no apply e aviso privado de
@@ -15,7 +15,7 @@ Messenger 10015 e o update 10016 têm cobertura em
 são contratos existentes e não devem ser renomeados sem migração compatível.
 Os commits LMS/Game integrados entre `d298f727d` e este HEAD não alteraram os
 módulos owners listados neste inventário. Kernel completo de Organizations/Events
-no HEAD: 27 testes / 888 assertions; os seis casos `event_update` são 6/171.
+em `34e79950e`: 27 testes / 888 assertions; os seis casos `event_update` são 6/171.
 
 | Owner | Dados e campos relevantes | Rotas/acesso e configuração | Filas, updates e testes |
 | --- | --- | --- | --- |
@@ -81,6 +81,20 @@ de dados compatível.
 - Requisições para endereço completo em Local usam CEP central e BR. Antes da
   fase Local, confirmar auditoria do formulário completo e de validação server-
   side, sem tocar no Runtime nem promover componente por mera documentação.
+
+## Busca final do modelo anterior
+
+- `aculta_wiki_proposal` permanece no owner `aculta_wiki` para resolver rotas e
+  histórico durante a leitura dual-store e para o update 10003. O Messenger
+  aceita ambos os entity types para que envelopes enfileirados antes do corte
+  continuem resolvíveis. O lifecycle de `aculta_contributions` não usa o tipo
+  legacy como storage.
+- `aculta_event_org_suggestion` permanece no owner `aculta_events` em entidade,
+  serviço e fila administrativa, com leitura compatível enquanto propostas
+  novas usam Contributions. Remoção depende de reconciliação Runtime.
+- Não foi encontrada dependência de `Workflow Participants` no código custom.
+  `content_moderation` aparece na Wiki para workflow e publicação de Nodes
+  oficiais, separado do ciclo de propostas comunitárias.
 
 ## Lacunas de execução
 
