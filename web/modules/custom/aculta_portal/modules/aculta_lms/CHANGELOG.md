@@ -1,3 +1,14 @@
+## 0.1.0-dev.102 — lms_file_upload portado para o aculta_lms
+
+- Plugin de resposta `file_upload` portado para `aculta_lms` (mesmo id, diretório `private://lms_file_upload` e file usage, para manter respostas antigas).
+- Download com `lms_answer.see_details` e checagem de matrícula atual, rota `aculta_lms.answer_file_download` em `/resposta/{lms_answer}/baixar-arquivo`.
+- Política do `aculta_file_uploader` (integração `lms`) aplicada aos validadores.
+- Requisito de sistema de arquivos privado portado.
+- Dependência `lms_file_upload` removida do info.yml.
+- Pendente: composer.json/composer.lock, core.extension (uninstall com ordem explícita e snapshot) e validação no Runtime.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.101 — resposta do LMS aceita envio recente do Studio
 
 - `SubmissionImageHooks` lista envios recentes do aluno (integração `lms`, imagens e documentos), usados só com o envio vazio.

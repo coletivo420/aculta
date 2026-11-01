@@ -27,7 +27,7 @@ use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\lms\Entity\Lesson;
 use Drupal\lms\Entity\LessonStatus;
 use Drupal\lms\Entity\LessonStatusInterface;
-use Drupal\lms_file_upload\Controller\FileUploadAnswerController;
+use Drupal\aculta_lms\Controller\AnswerFileDownloadController;
 use Drupal\user\RoleInterface;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -69,7 +69,6 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     'lms',
     'lms_answer_comments',
     'lms_answer_plugins',
-    'lms_file_upload',
   ];
 
   /**
@@ -445,13 +444,13 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     $answer->setData(['file_upload' => [$file->id()]])->save();
     $this->container->get('file.usage')->add($file, 'lms_file_upload', 'lms_answer', $answer->id());
 
-    $route_name = 'lms_file_upload.answer_file_download';
+    $route_name = 'aculta_lms.answer_file_download';
     $route = $this->container->get('router.route_provider')->getRouteByName($route_name);
     self::assertSame('/resposta/{lms_answer}/baixar-arquivo', $route->getPath());
     $access_manager = $this->container->get('access_manager');
     self::assertTrue($access_manager->checkNamedRoute($route_name, ['lms_answer' => $answer->id()], $student, TRUE)->isAllowed());
 
-    $response = (new FileUploadAnswerController($this->container->get('lms.training_manager')))->download($answer);
+    $response = (new AnswerFileDownloadController($this->container->get('lms.training_manager')))->download($answer);
     ob_start();
     $response->sendContent();
     $body = ob_get_clean();

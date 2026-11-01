@@ -76,10 +76,12 @@ services:
   aculta_lms.uploaded_answer_access:
     class: Drupal\aculta_lms\Access\UploadedAnswerAccessCheck
     arguments: ['@aculta_lms.account_user_loader']
-  aculta_lms.uploaded_answer_route_subscriber:
-    class: Drupal\aculta_lms\EventSubscriber\UploadedAnswerRouteSubscriber
-    tags:
-      - { name: event_subscriber }
+  Drupal\aculta_lms\Controller\AnswerFileDownloadController:
+    class: Drupal\aculta_lms\Controller\AnswerFileDownloadController
+    autowire: true
+  Drupal\aculta_lms\Hook\FileUploadActivityFormHooks:
+    class: Drupal\aculta_lms\Hook\FileUploadActivityFormHooks
+    autowire: true
   aculta_lms.course_completion_publisher:
     class: Drupal\aculta_lms\Event\CourseCompletionPublisher
     arguments: ['@event_dispatcher']

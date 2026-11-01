@@ -101,3 +101,15 @@ aculta_lms.certificate_qr:
     codigo: '[A-Za-z0-9_-]{40,64}'
 
 
+
+aculta_lms.answer_file_download:
+  path: '/resposta/{lms_answer}/baixar-arquivo'
+  defaults:
+    _controller: '\Drupal\aculta_lms\Controller\AnswerFileDownloadController::download'
+  requirements:
+    _entity_access: 'lms_answer.see_details'
+    _custom_access: 'aculta_lms.uploaded_answer_access::access'
+  options:
+    parameters:
+      lms_answer:
+        type: entity:lms_answer

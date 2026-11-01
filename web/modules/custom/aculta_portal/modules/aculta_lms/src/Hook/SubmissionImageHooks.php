@@ -127,7 +127,8 @@ final class SubmissionImageHooks {
       $form_state->setErrorByName('studio_file', $this->t('O arquivo escolhido não está disponível. Escolha novamente.'));
       return;
     }
-    $form_state->setValue('file_upload', (int) $file->id());
+    // O contrib lê o arquivo como data['file_upload'][0].
+    $form_state->setValue('file_upload', [(int) $file->id()]);
   }
 
   /**
