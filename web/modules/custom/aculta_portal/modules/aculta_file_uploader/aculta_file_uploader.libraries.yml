@@ -1,0 +1,13 @@
+upload-dropzone:
+  js:
+    js/upload-dropzone.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
+focal-point:
+  js:
+    js/focal-point.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
