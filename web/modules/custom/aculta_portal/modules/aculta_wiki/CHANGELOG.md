@@ -1,3 +1,10 @@
+## 0.1.0-dev.131 — imagem de destaque aceita envio recente do Studio
+
+- A imagem de destaque da wiki ganha uma lista de envios recentes do Studio (`RecentUploads`). Sem upload novo, vale o envio escolhido, verificado por dono (administrador vê todos).
+- `WikiLeadImageUploader` e `WikiEntryImageHooks` recebem `aculta_file_uploader.recent_uploads` como argumento opcional.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.130 — dependência explícita do aculta_file_uploader
 
 - `aculta_wiki.info.yml` declara `aculta_portal:aculta_file_uploader`, porque a imagem de destaque usa `aculta_file_uploader.consumer_policy`.

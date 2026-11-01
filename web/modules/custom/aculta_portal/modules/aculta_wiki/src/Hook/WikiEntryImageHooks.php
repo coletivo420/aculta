@@ -6,6 +6,7 @@ namespace Drupal\aculta_wiki\Hook;
 
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\RecentUploads;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_wiki\Service\WikiContributorWorkspace;
 use Drupal\aculta_wiki\Form\WikiEntryFormActions;
@@ -44,6 +45,7 @@ final class WikiEntryImageHooks {
     private readonly DomainPurposeManager $domainPurposes,
     private readonly AccountProxyInterface $currentUser,
     private readonly RouteProviderInterface $routeProvider,
+    private readonly ?RecentUploads $recentUploads = NULL,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -142,6 +144,17 @@ final class WikiEntryImageHooks {
     }
 
     $this->dialogBuilder->addFileControls($form[$tab], WikiLeadImageUploader::CONSUMER, WikiLeadImageUploader::DIRECTORY, WikiLeadImageUploader::FILE);
+    // Envios recentes do Studio: o próprio usuário vê os seus; administrador vê todos.
+    $studioOptions = $this->recentUploads?->forUser((int) $this->currentUser->id(), WikiLeadImageUploader::CONSUMER, 10, $this->currentUser->hasPermission('administer site configuration')) ?? [];
+    if ($studioOptions !== []) {
+      $form[$tab][WikiLeadImageUploader::STUDIO_FILE] = [
+        '#type' => 'select',
+        '#title' => $this->t('Ou escolha um envio recente do Studio'),
+        '#options' => ['' => $this->t('- Nenhum -')] + $studioOptions,
+        '#default_value' => '',
+        '#description' => $this->t('Só vale se nenhum arquivo novo for enviado acima.'),
+      ];
+    }
     $form[$tab][WikiLeadImageUploader::FILE]['#title'] = $this->t('Nova imagem de destaque');
     $form[$tab][WikiLeadImageUploader::ALT] = [
       '#type' => 'textfield',

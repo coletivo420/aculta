@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\Upload;
 
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\RecentUploads;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Transaction;
 use Drupal\Core\Entity\EntityFormInterface;
@@ -52,6 +53,11 @@ final class WikiLeadImageUploader {
   public const FILE = 'file';
 
   /**
+   * Envio escolhido da lista do Studio, usado quando não há upload novo.
+   */
+  public const STUDIO_FILE = 'studio_file';
+
+  /**
    * Alt text element inside the tab.
    */
   public const ALT = 'alt';
@@ -93,6 +99,7 @@ final class WikiLeadImageUploader {
     private readonly ConsumerUploadPolicy $uploadPolicy,
     private readonly AccountProxyInterface $currentUser,
     TranslationInterface $stringTranslation,
+    private readonly ?RecentUploads $recentUploads = NULL,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -123,6 +130,10 @@ final class WikiLeadImageUploader {
     $file = $this->entityTypeManager->getStorage('file')->load((int) reset($fids));
     if (!$file instanceof FileInterface) {
       $form_state->setErrorByName($this->errorName(self::FILE), $this->t('A imagem enviada não está disponível. Envie-a novamente.'));
+      return;
+    }
+    if (!$this->studioPickAllowed($form_state, $file)) {
+      $form_state->setErrorByName($this->errorName(self::FILE), $this->t('A imagem escolhida não está disponível. Envie-a novamente.'));
       return;
     }
     if (!$this->uploadPolicy->isValidImage($file, self::CONSUMER)) {
@@ -166,7 +177,7 @@ final class WikiLeadImageUploader {
 
     $fid = (int) reset($fids);
     $file = $this->entityTypeManager->getStorage('file')->load($fid);
-    if (!$file instanceof FileInterface || !$this->uploadPolicy->isValidImage($file, self::CONSUMER)) {
+    if (!$file instanceof FileInterface || !$this->studioPickAllowed($form_state, $file) || !$this->uploadPolicy->isValidImage($file, self::CONSUMER)) {
       $form_state->setErrorByName($this->errorName(self::FILE), $this->t('A imagem não atende às extensões ou ao tamanho permitidos.'));
       return;
     }
@@ -351,6 +362,31 @@ final class WikiLeadImageUploader {
    * Returns the submitted file IDs of the managed file element.
    */
   private function uploadedFids(FormStateInterface $form_state): array {
+    $managed = $this->managedFids($form_state);
+    if ($managed !== []) {
+      return $managed;
+    }
+    // Sem upload novo, vale o envio escolhido da lista do Studio (checado por dono).
+    $studio = (int) $form_state->getValue([self::TAB, self::STUDIO_FILE], 0);
+    return $studio > 0 ? [$studio] : [];
+  }
+
+  /**
+   * Um envio escolhido da lista do Studio só vale para o próprio usuário, ou para administrador.
+   */
+  private function studioPickAllowed(FormStateInterface $form_state, FileInterface $file): bool {
+    if ($this->managedFids($form_state) !== []) {
+      return TRUE;
+    }
+    return $this->recentUploads?->isOwnedBy($file, (int) $this->currentUser->id(), self::CONSUMER, $this->currentUser->hasPermission('administer site configuration')) ?? FALSE;
+  }
+
+  /**
+   * IDs do upload novo, feito pelo próprio campo de arquivo.
+   *
+   * @return int[]
+   */
+  private function managedFids(FormStateInterface $form_state): array {
     $value = $form_state->getValue([self::TAB, self::FILE], []);
     if (!is_array($value)) {
       return [];
