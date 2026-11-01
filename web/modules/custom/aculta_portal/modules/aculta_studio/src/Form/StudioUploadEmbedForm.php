@@ -123,7 +123,7 @@ final class StudioUploadEmbedForm extends FormBase {
         'name' => $file->getFilename(),
         'date' => $this->dateFormatter->format((int) $file->getCreatedTime(), 'short'),
         'status' => $inUse ? $this->t('Em uso') : $this->t('Sem uso ainda'),
-        'disabled' => $inUse,
+        '#disabled' => $inUse,
       ];
     }
     return [
@@ -142,8 +142,7 @@ final class StudioUploadEmbedForm extends FormBase {
           'date' => $this->t('Enviado em'),
           'status' => $this->t('Situação'),
         ],
-        '#options' => array_map(static fn (array $row): array => array_diff_key($row, ['disabled' => TRUE]), $rows),
-        '#disabled' => FALSE,
+        '#options' => $rows,
         '#empty' => $this->t('Nenhum envio recente nesta integração.'),
         '#js_select' => FALSE,
       ],
