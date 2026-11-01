@@ -1,5 +1,5 @@
 _core:
-  default_config_hash: 9vFxEUZlWFbkbz7DKzJQU0fzmq9NEsAKo9dwNEktyvs
+  default_config_hash: mSR6rbBmM_UajMKPr6N3S1Z-O8aupakoYBpANX2_eV8
 group_creation_enabled: true
 group_max_members: 10
 retention_months: 6
@@ -49,3 +49,4 @@ magazine_events:
   updated: true
   review_submitted: true
   review_returned: true
+private_message_digest_anchor: '2026-10-26'

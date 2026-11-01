@@ -1,0 +1,35 @@
+uuid: c8fc5623-fce9-46f9-9a2d-61f569703195
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.message.mail_subject
+    - field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_notice_read
+    - field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_outcome
+    - field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_prop_rev
+    - field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_prop_uuid
+    - message.template.aculta_msg_events_contrib_notice
+  module:
+    - layout_builder
+third_party_settings:
+  layout_builder:
+    enabled: false
+    allow_custom: false
+id: message.aculta_msg_events_contrib_notice.mail_subject
+targetEntityType: message
+bundle: aculta_msg_events_contrib_notice
+mode: mail_subject
+content:
+  partial_0:
+    weight: 0
+    region: content
+hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_aculta_events_notice_read: true
+  field_aculta_events_outcome: true
+  field_aculta_events_prop_rev: true
+  field_aculta_events_prop_uuid: true
+  partial_1: true
+  search_api_excerpt: true

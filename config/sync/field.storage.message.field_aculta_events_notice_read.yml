@@ -1,0 +1,23 @@
+uuid: 5a55adb9-65d8-420f-9b41-94d83b99d2c7
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: dUR5ZJgZfSGSlkm__oT-69ATdwFfPhP62VXZZu4EglQ
+id: message.field_aculta_events_notice_read
+field_name: field_aculta_events_notice_read
+entity_type: message
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
