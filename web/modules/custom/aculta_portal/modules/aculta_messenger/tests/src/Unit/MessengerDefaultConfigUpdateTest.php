@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\Core\Config\ConfigInstaller;
+use Drupal\Core\Config\ConfigManagerInterface;
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
 use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -132,10 +135,53 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
    * The Events contribution notice update installs its private bundle defaults.
    */
   public function testUpdateInstallsEventsContributionNoticeConfiguration(): void {
-    $installer = $this->createMock(ConfigInstaller::class);
-    $installer->expects(self::once())->method('installDefaultConfig')->with('module', 'aculta_messenger');
+    $names = [
+      'message.template.aculta_msg_events_contrib_notice',
+      'field.storage.message.field_aculta_events_outcome',
+      'field.storage.message.field_aculta_events_notice_read',
+      'field.storage.message.field_aculta_events_prop_rev',
+      'field.storage.message.field_aculta_events_prop_uuid',
+      'field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_outcome',
+      'field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_notice_read',
+      'field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_prop_rev',
+      'field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_prop_uuid',
+    ];
+    $config_manager = $this->createMock(ConfigManagerInterface::class);
+    $config_manager->expects(self::exactly(count($names)))->method('loadConfigEntityByName')
+      ->willReturn(NULL);
+    $config_manager->expects(self::exactly(count($names)))->method('getEntityTypeIdByName')
+      ->willReturnCallback(static function (string $name): string {
+        return match (TRUE) {
+          str_starts_with($name, 'message.template.') => 'message_template',
+          str_starts_with($name, 'field.storage.') => 'field_storage_config',
+          default => 'field_config',
+        };
+      });
+    $entity = $this->createMock(ConfigEntityInterface::class);
+    $entity->expects(self::exactly(count($names)))->method('isInstallable')->willReturn(TRUE);
+    $entity->expects(self::exactly(count($names)))->method('save');
+    $storages = [];
+    foreach (['message_template' => 1, 'field_storage_config' => 4, 'field_config' => 4] as $type => $count) {
+      $storage = $this->createMock(ConfigEntityStorageInterface::class);
+      $storage->expects(self::exactly($count))->method('createFromStorageRecord')->willReturn($entity);
+      $storages[$type] = $storage;
+    }
+    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_type_manager->expects(self::exactly(count($names)))->method('getStorage')
+      ->willReturnCallback(static fn(string $type): ConfigEntityStorageInterface => $storages[$type]);
     $container = new ContainerBuilder();
-    $container->set('config.installer', $installer);
+    $container->set('extension.list.module', new class {
+
+      /**
+       * Returns the Messenger module path for the update fixture.
+       */
+      public function getPath(string $module): string {
+        return dirname(__DIR__, 3);
+      }
+
+    });
+    $container->set('config.manager', $config_manager);
+    $container->set('entity_type.manager', $entity_type_manager);
     require_once dirname(__DIR__, 3) . '/aculta_messenger.install';
     \Drupal::setContainer($container);
     try {

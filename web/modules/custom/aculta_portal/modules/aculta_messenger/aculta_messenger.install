@@ -266,7 +266,39 @@ function aculta_messenger_update_10014(): void {
  * Installs the private Message bundle used for Events contribution outcomes.
  */
 function aculta_messenger_update_10015(): void {
-  \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
+  $module_path = \Drupal::service('extension.list.module')->getPath('aculta_messenger');
+  $source = new FileStorage($module_path . '/config/install');
+  $names = [
+    'message.template.aculta_msg_events_contrib_notice',
+    'field.storage.message.field_aculta_events_outcome',
+    'field.storage.message.field_aculta_events_notice_read',
+    'field.storage.message.field_aculta_events_prop_rev',
+    'field.storage.message.field_aculta_events_prop_uuid',
+    'field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_outcome',
+    'field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_notice_read',
+    'field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_prop_rev',
+    'field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_prop_uuid',
+  ];
+  $config = $source->readMultiple($names);
+  $ordered_names = (new \Drupal\Core\Config\Entity\ConfigDependencyManager())
+    ->setData($config)
+    ->sortAll();
+  $config_manager = \Drupal::service('config.manager');
+  foreach ($ordered_names as $name) {
+    if ($config_manager->loadConfigEntityByName($name) !== NULL) {
+      continue;
+    }
+    $entity_type = $config_manager->getEntityTypeIdByName($name);
+    if ($entity_type === NULL || !isset($config[$name])) {
+      throw new \LogicException(sprintf('Events notice configuration %s is missing or is not an entity.', $name));
+    }
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+    $entity = $storage->createFromStorageRecord($config[$name]);
+    if (!$entity->isInstallable()) {
+      throw new \LogicException(sprintf('Events notice configuration %s has unmet dependencies.', $name));
+    }
+    $entity->save();
+  }
 }
 
 /**
