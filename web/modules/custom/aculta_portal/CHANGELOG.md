@@ -1,3 +1,11 @@
+## 0.4.1-dev.58 — dado antigo de uploads removido de config/sync
+
+- Removidos `config/sync/aculta_portal.user_upload.yml` e o bloco `aculta_portal.user_upload` do schema. Nenhum código lê mais esse dado.
+- O histórico do git mantém o arquivo removido: a configuração antiga (consumidores wiki e fórum) pode ser recuperada de commits anteriores.
+- Decisão do responsável: remover sem confirmar antes que `aculta_file_uploader_update_10001` rodou no Runtime. Se o update não rodou, as sobreposições de wiki e fórum precisam ser recriadas no painel novo.
+
+RUNTIME STATUS: DEFERRED. A linha `aculta_portal.user_upload` ainda existe no banco do Runtime até um config:import com remoção, por ordem explícita.
+
 ## 0.4.1-dev.57 — painel antigo de uploads removido
 
 - Removidos: `UserUploadSettingsForm`, a rota `aculta_portal.user_upload_settings` (`/admin/config/aculta/uploads-usuarios`, sem redirect), o link de menu e a classe `UserUploadPolicy` com o serviço `aculta_portal.user_upload_policy`.

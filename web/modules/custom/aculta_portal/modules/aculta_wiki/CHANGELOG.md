@@ -1,3 +1,9 @@
+## 0.1.0-dev.129 — testes que liam o dado antigo removidos
+
+- Removidos os testes de `WikiLeadImagePolicyTest` que liam `config/sync/aculta_portal.user_upload.yml` e o schema antigo.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.128 — teste do painel aponta para o uploader
 
 - `WikiLeadImagePolicyTest` lê a lista de integrações de `aculta_file_uploader` (`UploadSettingsForm::CONSUMERS`), porque o painel antigo saiu.
