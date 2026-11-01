@@ -1,4 +1,16 @@
-# Execução contínua ACULTA — PR #298
+# Execução contínua ACULTA — histórico das frentes
+
+## Desenvolvimento na branch dev — Maps/Events (2026-11-01)
+
+- Branch `dev` partiu do commit integrado `889c2bae8`; worktree de desenvolvimento
+  em `/home/piradopirata/worktrees/aculta-dev-development`.
+- `MapController` agora preserva latitude/longitude numéricas zero. Kernel de
+  Events e Unit do MapRenderer: **5 testes / 57 assertions, PASS**; PHP lint,
+  PHPCS e `git diff --check` passaram. O teste inclui o marcador `0/0`; o Unit
+  existente mantém cobertura de faixa inválida e precisão aproximada.
+- Commit funcional: `b64010de6` (`fix(events): preserve zero map coordinates`).
+- Nenhuma operação foi executada no Runtime. O próximo item Maps ainda pendente
+  é a revisão de acesso/cache do catálogo conforme LOC-01/OC-M1.
 
 ### Gate de slugs — exceção OAuth técnica (2026-10-31)
 
