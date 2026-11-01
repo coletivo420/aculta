@@ -12,6 +12,7 @@ module:
   aculta_events: 0
   aculta_events_openstreetmap: 0
   aculta_faq: 0
+  aculta_file_uploader: 0
   aculta_forum: 0
   aculta_forum_lms: 0
   aculta_forum_wiki: 0
