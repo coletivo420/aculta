@@ -246,7 +246,8 @@ Conclusões após a refatoração paralela de apresentação (2026-11-01):
 
 - `aculta_lms` declara as dependências contrib e depende de `aculta_portal` para
   serviços compartilhados. A dependência do Portal em LMS foi removida em código;
-  homologar instalação/rotas sem LMS no checkout local.
+  as rotas do Ganjalab foram homologadas no Runtime com LMS ativo. Instalação
+  limpa sem o contrib continua como gate arquitetural futuro.
 - `aculta_studio` depende de Group para turma/curso e autoria educadora.
 - O adaptador lê curso, lição, atividade, status, progresso e certificados;
   escrita de resposta/tentativa/nota continua no contrib.
@@ -254,8 +255,9 @@ Conclusões após a refatoração paralela de apresentação (2026-11-01):
   `lms_file_upload`, `webform_score` e `entity_print`.
 - B3-A está implementada no código: facade de cursos opcional, contrato/DTO,
   provider LMS, slugs e route subscriber movidos para `aculta_lms`, e remoção de
-  `lms:lms` do `aculta_portal.info.yml`. Lint, teste do conversor, rebuild de
-  container/rotas e homologação sem LMS continuam pendentes no checkout local.
+  `lms:lms` do `aculta_portal.info.yml`. Lint, testes focais, rebuild e smoke
+  do Ganjalab foram validados no Runtime/checkout; instalação limpa sem LMS
+  permanece como gate futuro da independência total.
 
 ### 7.6 O que a fatia não faz
 
@@ -281,7 +283,7 @@ Não foram portados: distribuição Opigno, manager Angular legado, entidades pr
 | Fase | Objetivo | Dependências | Critério de aceite | Rollback |
 | --- | --- | --- | --- | --- |
 | B2 — Resumo do estudante | Contrato ACULTA para dashboard (cursos, progresso, pendências, certificados) | `StudentLearningSummaryReaderInterface` e DTOs publicados; composer no Studio | Código implementado em `dev`; confirmar lint, testes e integração local; Studio sem imports LMS | Reverter consumidores e manter manager atual |
-| B3-A — Portal sem LMS obrigatório | Contrato de cursos da Conta; provider e slugs no `aculta_lms`; remover `lms:lms` do Portal | Imports/serviços/rotas do Portal removidos; adaptação LMS opcional | Implementada no código `dev`; Runtime/instalação sem LMS ainda exigem validação local | Reintroduzir a dependência se o gate local falhar; nenhum dado migrado |
+| B3-A — Portal sem LMS obrigatório | Contrato de cursos da Conta; provider e slugs no `aculta_lms`; remover `lms:lms` do Portal | Código validado no Runtime com contrib ativo; instalação limpa sem LMS permanece gate futuro | Implementada e homologada para Ganjalab no Runtime; instalação sem LMS não foi exercitada | Reintroduzir dependência se a validação de closure sem LMS falhar; nenhum dado migrado |
 | C — Autoria própria | Curso, currículo e versão publicada em entidades ACULTA; editor mobile-first | Contratos B1/B2; decisão sobre Group | Rascunho, prévia e publicação sem duplicar atividade consumida | Desligar editor; fonte legada continua |
 | D — Piloto de migração | Curso piloto migrado com mapa de IDs e reconciliação | C; backup e export imutável | Contagem, ordem, acesso e progresso equivalentes; sem exposição de arquivo privado | Ownership volta ao legado antes de novas tentativas |
 | E — Avaliações | Migrar tentativas, respostas, notas e comentários | D; política de retenção | Testes de isolamento A/B, histórico preservado | Manter curso no novo backend; export/replay auditável |
@@ -310,12 +312,13 @@ Executado nesta entrega:
 - `aculta_learning_contracts.info.yml` não declara dependências; o módulo contém apenas interfaces e value objects. Kernel `ContractsInstallTest` **1 teste / 8 asserções PASS**: instala o módulo em um site com apenas `system`, sem `aculta_portal` e sem `lms`, e confirma que as interfaces e as classes `CourseJourney` e `StudentLearningSummary` autoload.
 - Serviços: YAML analisado; `aculta_lms.course_journey_reader` e `aculta_studio.learner_dashboard_composer` existem; os aliases por interface apontam para eles; o controller e o provider do Studio recebem os serviços esperados.
 - Direção de imports: `aculta_studio/src` não importa `Drupal\lms` nem `Drupal\aculta_lms`; `aculta_lms/src` não importa `Drupal\aculta_studio`. A composição da jornada/sala vive em `aculta_studio\Hook\CourseJourneyPresentationHooks`.
-- **Runtime validado em 2026-11-01.** Snapshot prévio em
+- **Runtime validado no commit `e60abcb62` em 2026-11-01.** Snapshot prévio em
   `/home/aculta-system-data/backups/aculta_runtime-before-learning-contracts-20261101.sql.gz`
   (SHA-256 `48d99c192d0d83a4c11ba3922fb25034dfe552d1f6e5fce180d93a7f946b1358`).
   `aculta_learning_contracts` habilitado com `drush en` e cache reconstruído com
   `drush cr`; `config:status` passou a responder **No differences between DB and
   sync directory**. `class_exists()` e `moduleExists()` retornam `true`.
+- Smoke final do commit `e60abcb62`: Firefox ESR/X11 a 390 px aprovado; os 74/74 cenários mult largura foram aprovados após B3-A e correção do reader.
 - Serviços resolvidos no container real:
   `aculta_lms.course_journey_reader` → `LearningDashboardManager`;
   `aculta_studio.learner_dashboard_composer` → `LearnerDashboardComposer`; os
