@@ -1,3 +1,9 @@
+## 0.1.0-dev.37 — revisão do formulário de envio
+
+- Imports do `StudioUploadEmbedForm` em ordem alfabética (padrão Drupal). Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.36 — aviso de prazo logo após o envio
 
 - Depois de enviar, a própria tela do Studio mostra o prazo de limpeza de envios sem uso. Sem e-mail nem notificação externa.
