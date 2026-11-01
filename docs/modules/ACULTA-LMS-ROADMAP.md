@@ -731,66 +731,37 @@ A apresentação da jornada e da sala foi colocada em aculta_studio por meio de 
 O dashboard foi separado em duas camadas: `aculta_lms` fornece `StudentLearningSummaryReaderInterface` e DTOs tipados (`StudentLearningSummary`, `StudentLearningCourse`, `StudentLearningCertificate`); `aculta_studio` possui `LearnerDashboardComposer` e monta a interface. As rotas Ganjalab de estudante e educador também estão declaradas no Studio, mantendo IDs `aculta_lms.*` por compatibilidade. **Validação Runtime (2026-11-01):** jornada/sala 74/74 em 320–1440 px; `/ganjalab/educador` e o formulário de novo curso em 200; Unit Studio 62/597 e LMS 91/475; Kernel `ContractsInstallTest` 1/8. A integração com a rota nativa de atividade do Drupal LMS continua temporária. Esta entrega não remove dependências contrib nem equivale a homologação Runtime.
 
 
-## Próxima fatia de independência — B3-A: retirar o LMS do núcleo do Portal
+## Estado da independência arquitetural
 
-O próximo passo de código é remover do módulo base `aculta_portal` os imports diretos e o serviço obrigatório de Drupal LMS, sem desinstalar módulos nem remover dados.
+**B3-A está implementada no código de `dev`:** `aculta_portal` não declara
+`lms:lms`, não injeta `@lms.training_manager` e seu código-fonte não importa
+`Drupal\\lms`. Leitura de cursos e slugs educacionais ficam no adaptador
+`aculta_lms`; o Portal usa contratos neutros com provider opcional.
 
-**B3-A está implementada no código de `dev`:** foi criado
-`AccountCoursesReaderInterface` com `AccountCourseSummary`; `aculta_lms`
-registra o adaptador Group/LMS; `AccountCoursesManager` no Portal virou facade
-com provider opcional; e `AccountCoursePresenter` consome status ACULTA
-normalizado. Os quatro componentes de slug/rota amigável e o teste unitário
-foram movidos de `aculta_portal` para `aculta_lms`, mantendo IDs de serviço e
-parâmetros de rota compatíveis. O Portal não injeta mais
-`@lms.training_manager` e deixou de declarar `lms:lms`. Ficam pendentes lint,
-testes, rebuild do container/rotas e homologação de instalação sem LMS no
-checkout local.
+A conquista de primeira formação também passou a consumir
+`aculta_learning_contracts\\Event\\CourseCompletedEvent`. O provider LMS
+confirma o status concluído e emite o evento; Game e Messenger consomem o
+contrato sem depender diretamente da classe de status. Isso reduz o acoplamento
+entre consumidores e o contrib, mas não torna o provider independente: o
+publisher e as funções de curso, atividade, tentativas, notas e certificados
+ainda dependem do Drupal LMS.
 
-### Fronteira conhecida
+### Próximos gates
 
-- `aculta_portal.info.yml` ainda declara `lms:lms`.
-- `aculta_portal.services.yml` registra `aculta_portal.account_courses` com
-  `@lms.training_manager` obrigatório.
-- `src/AccountCoursesManager.php` importa
-  `Drupal\lms\TrainingManager`, `Course` e `CourseStatusInterface`.
-- `src/Presentation/AccountCoursePresenter.php` importa
-  `CourseStatusInterface`, então a camada de apresentação também conhece o
-  contrib.
-- `aculta_lms.learning_dashboard` já consome o serviço Portal como dependência
-  opcional. Essa direção deve ser revisada para evitar ciclo se o provider de
-  cursos da conta for movido ao LMS.
+1. Homologar no checkout local os contratos, serviços, hooks e dependências
+   adicionados nesta fatia; reconstruir container e executar testes focais.
+2. Mover os leitores restantes de curso e agenda para contratos neutros onde
+   isso reduza dependências de consumidores sem criar armazenamento paralelo.
+3. Desenhar a autoria ACULTA para curso e currículo, mantendo o LMS como provider
+   legado até existir paridade de acesso e progresso.
+4. Selecionar cursos legados elegíveis para futura migração. Cursos obsoletos
+   podem ficar fora do escopo; exclusão de dados requer inventário de vínculos,
+   backup e confirmação específica.
+5. Migrar conteúdo e, em fase separada, tentativas/progresso com ownership e
+   reconciliação explícitos. Só então planejar a remoção de pacote e módulos
+   contrib.
 
-### Implementação proposta
-
-1. Inventariar todos os `use Drupal\lms`, referências a serviços, rotas,
-   plugins e config sob `aculta_portal`; classificar cada ocorrência por
-   consumidor e dependência.
-2. Definir em `aculta_learning_contracts` um leitor de cursos da conta e DTOs
-   que carreguem somente os dados necessários à apresentação (identidade,
-   progresso, status, destino autorizado e cacheabilidade), sem entidades
-   contrib, render arrays ou classes LMS.
-3. Mover a leitura atual de Group/LMS para o adaptador educacional. Preservar
-   validação de acesso antes de expor título, descrição, progresso ou destino.
-4. Fazer o presenter do Portal consumir apenas o contrato e mapear estados para
-   rótulos/tons ACULTA, sem constantes de `CourseStatusInterface`.
-5. Tornar a integração ausente explicitamente suportada: Portal continua
-   funcional sem provider educacional, apresentando estado vazio e sem exigir
-   `lms.training_manager`.
-6. Só então remover `lms:lms` de `aculta_portal.info.yml`. Manter as
-   dependências contrib necessárias declaradas em `aculta_lms.info.yml`.
-7. Verificar instalação de suites não educacionais sem LMS, conta com e sem
-   provider, cache/access, rotas amigáveis, catálogo, checkout e regressão de
-   matrículas. Não alterar configuração ativa nem migrar/excluir dados nesta fase.
-
-### Gate de conclusão
-
-- `aculta_portal/src` não importa `Drupal\lms` nem injeta
-  `@lms.training_manager`.
-- Instalação e páginas não educacionais do Portal funcionam sem Drupal LMS.
-- Experiência educacional ativa segue com o provider LMS e conserva acesso,
-  URLs canônicas e cacheabilidade.
-- `aculta_lms` não passa a depender de `aculta_studio`; ambos comunicam dados
-  por contratos neutros.
-- Nenhuma remoção de cursos legados faz parte deste gate. Cursos obsoletos podem
-  ser excluídos do escopo de futura migração, mas qualquer exclusão real exige
-  inventário e confirmação específica.
+Não alterar configuração ativa, migrar nem excluir dados como parte das etapas
+de desacoplamento por contratos. Consulte o
+[Inventário de dependência do Drupal LMS contrib](LMS-CONTRIB-DEPENDENCY-INVENTORY.md)
+para a matriz de consumidores e critérios de remoção.
