@@ -139,7 +139,6 @@ module:
   lms_answer_comments: 0
   lms_answer_plugins: 0
   lms_classes: 0
-  lms_file_upload: 0
   locale: 0
   login_emailusername: 0
   mcp_server: 0
