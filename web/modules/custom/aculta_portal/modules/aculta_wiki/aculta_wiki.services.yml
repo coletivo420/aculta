@@ -78,7 +78,7 @@ services:
     arguments: ['@string_translation', '@request_stack']
   aculta_wiki.wiki_lead_image_uploader:
     class: Drupal\aculta_wiki\Upload\WikiLeadImageUploader
-    arguments: ['@entity_type.manager', '@database', '@file_system', '@aculta_file_uploader.consumer_policy', '@current_user', '@string_translation', '@?aculta_file_uploader.recent_uploads']
+    arguments: ['@entity_type.manager', '@database', '@file_system', '@aculta_file_uploader.consumer_policy', '@current_user', '@string_translation', '@?aculta_file_uploader.recent_uploads', '@?aculta_file_uploader.focal_point_recorder']
   Drupal\aculta_wiki\Hook\WikiEntryImageHooks:
     class: Drupal\aculta_wiki\Hook\WikiEntryImageHooks
     arguments:

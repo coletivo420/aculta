@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\Upload;
 
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\FocalPointRecorder;
 use Drupal\aculta_file_uploader\RecentUploads;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Transaction;
@@ -100,6 +101,7 @@ final class WikiLeadImageUploader {
     private readonly AccountProxyInterface $currentUser,
     TranslationInterface $stringTranslation,
     private readonly ?RecentUploads $recentUploads = NULL,
+    private readonly ?FocalPointRecorder $focalPointRecorder = NULL,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -171,6 +173,9 @@ final class WikiLeadImageUploader {
     if ($fids === []) {
       if ($form_state->getValue([self::TAB, self::REMOVE])) {
         $form_state->setValue([self::FIELD], []);
+      }
+      else {
+        $this->recordFocal($form_state);
       }
       return;
     }
@@ -356,6 +361,25 @@ final class WikiLeadImageUploader {
     }
     $media = $this->entityTypeManager->getStorage('media')->load((int) ($stored['media_id'] ?? 0));
     return $media instanceof MediaInterface ? $media : NULL;
+  }
+
+  /**
+   * Grava o ponto focal da imagem atual, quando o editor enviou valores válidos.
+   */
+  private function recordFocal(FormStateInterface $form_state): void {
+    if ($this->focalPointRecorder === NULL) {
+      return;
+    }
+    $fid = (int) $form_state->getValue([self::TAB, 'focal_fid']);
+    $x = $form_state->getValue([self::TAB, 'focal_x']);
+    $y = $form_state->getValue([self::TAB, 'focal_y']);
+    if ($fid < 1 || !is_numeric($x) || !is_numeric($y)) {
+      return;
+    }
+    $file = $this->entityTypeManager->getStorage('file')->load($fid);
+    if ($file instanceof FileInterface) {
+      $this->focalPointRecorder->record($file, (float) $x, (float) $y);
+    }
   }
 
   /**

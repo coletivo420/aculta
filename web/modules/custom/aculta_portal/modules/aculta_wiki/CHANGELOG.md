@@ -1,3 +1,11 @@
+## 0.1.0-dev.132 — ponto focal da imagem de destaque
+
+- Editor de ponto focal na aba da imagem de destaque, para a imagem atual (não para um envio novo).
+- Ao salvar sem trocar a imagem, o ponto focal grava os recortes 16:9 e 1:1 pelo `FocalPointRecorder`.
+- Pendente: prévia da imagem dentro do editor e efeito nos estilos de imagem (Runtime).
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.131 — imagem de destaque aceita envio recente do Studio
 
 - A imagem de destaque da wiki ganha uma lista de envios recentes do Studio (`RecentUploads`). Sem upload novo, vale o envio escolhido, verificado por dono (administrador vê todos).

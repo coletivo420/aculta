@@ -141,6 +141,23 @@ final class WikiEntryImageHooks {
           ? $this->t('@name (sem descrição)', ['@name' => $current['name']])
           : $this->t('@name — descrição: @alt', ['@name' => $current['name'], '@alt' => $current['alt']]),
       ];
+      // Ponto focal da imagem atual: vale para a imagem já salva, não para um envio novo.
+      if ($current['fid'] > 0) {
+        $form[$tab]['focal'] = [
+          '#type' => 'container',
+          '#attributes' => ['data-aculta-focal' => '', 'class' => ['aculta-focal']],
+          '#attached' => ['library' => ['aculta_file_uploader/focal-point']],
+          'marker' => [
+            '#type' => 'html_tag',
+            '#tag' => 'span',
+            '#attributes' => ['data-focal-marker' => '', 'class' => ['aculta-focal__marker'], 'aria-hidden' => 'true'],
+          ],
+          'focal_x' => ['#type' => 'hidden', '#default_value' => '50', '#attributes' => ['data-focal-x' => '']],
+          'focal_y' => ['#type' => 'hidden', '#default_value' => '50', '#attributes' => ['data-focal-y' => '']],
+          'focal_fid' => ['#type' => 'hidden', '#value' => (string) $current['fid']],
+        ];
+        $form[$tab]['focal']['#title'] = $this->t('Ponto focal da imagem atual');
+      }
     }
 
     $this->dialogBuilder->addFileControls($form[$tab], WikiLeadImageUploader::CONSUMER, WikiLeadImageUploader::DIRECTORY, WikiLeadImageUploader::FILE);
@@ -309,7 +326,8 @@ final class WikiEntryImageHooks {
     if ($media->hasField('field_media_image')) {
       $alt = (string) ($media->get('field_media_image')->first()?->get('alt')->getValue() ?? '');
     }
-    return ['name' => (string) $media->label(), 'alt' => $alt];
+    $fid = $media->hasField('field_media_image') ? (int) ($media->get('field_media_image')->target_id ?? 0) : 0;
+    return ['name' => (string) $media->label(), 'alt' => $alt, 'fid' => $fid];
   }
 
   /**
