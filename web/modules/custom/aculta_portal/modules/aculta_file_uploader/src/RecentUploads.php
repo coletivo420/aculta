@@ -10,8 +10,9 @@ use Drupal\file\FileInterface;
 /**
  * Envios recentes do Studio, por integração e por dono.
  *
- * Cada envio fica em uma subpasta da integração. Só o próprio usuário enxerga
- * e pode usar os seus envios: o dono é checado aqui, não na integração.
+ * Cada envio fica em uma subpasta da integração. O próprio usuário vê e usa os
+ * seus envios. Administradores veem todos, para revisão e limpeza. O dono é
+ * checado aqui, não na integração.
  */
 final class RecentUploads {
 
@@ -25,21 +26,26 @@ final class RecentUploads {
   ) {}
 
   /**
-   * Envios recentes do usuário numa integração, do mais novo para o mais antigo.
+   * Envios recentes numa integração, do mais novo para o mais antigo.
+   *
+   * Sem $all, só os envios do usuário $uid. Com $all (administrador), todos.
    *
    * @return array<int, string>
    *   Mapa fid => nome do arquivo.
    */
-  public function forUser(int $uid, string $integration, int $limit = 10): array {
-    if ($uid < 1 || !self::isIntegration($integration)) {
+  public function forUser(int $uid, string $integration, int $limit = 10, bool $all = FALSE): array {
+    if (($uid < 1 && !$all) || !self::isIntegration($integration)) {
       return [];
     }
     $storage = $this->entityTypeManager->getStorage('file');
-    // accessCheck(FALSE): o filtro por dono é explícito, pela condição de uid.
-    $ids = $storage->getQuery()
+    // accessCheck(FALSE): o filtro por dono é explícito (uid, ou $all do administrador).
+    $query = $storage->getQuery()
       ->accessCheck(FALSE)
-      ->condition('uri', self::directory($integration) . '/', 'STARTS_WITH')
-      ->condition('uid', $uid)
+      ->condition('uri', self::directory($integration) . '/', 'STARTS_WITH');
+    if (!$all) {
+      $query->condition('uid', $uid);
+    }
+    $ids = $query
       ->sort('created', 'DESC')
       ->range(0, max(1, $limit))
       ->execute();
@@ -54,16 +60,20 @@ final class RecentUploads {
   }
 
   /**
-   * Indica se o arquivo é um envio do próprio usuário para a integração.
+   * Indica se o arquivo é um envio do usuário para a integração, ou se $all.
+   *
+   * $all é para administradores. A pasta da integração e a ausência de ".."
+   * valem sempre.
    */
-  public function isOwnedBy(FileInterface $file, int $uid, string $integration): bool {
-    if ($uid < 1 || !self::isIntegration($integration)) {
+  public function isOwnedBy(FileInterface $file, int $uid, string $integration, bool $all = FALSE): bool {
+    if (($uid < 1 && !$all) || !self::isIntegration($integration)) {
       return FALSE;
     }
     $uri = $file->getFileUri();
-    return (int) $file->getOwnerId() === $uid
-      && str_starts_with($uri, self::directory($integration) . '/')
-      && !str_contains($uri, '..');
+    if (!str_starts_with($uri, self::directory($integration) . '/') || str_contains($uri, '..')) {
+      return FALSE;
+    }
+    return $all || (int) $file->getOwnerId() === $uid;
   }
 
   /**

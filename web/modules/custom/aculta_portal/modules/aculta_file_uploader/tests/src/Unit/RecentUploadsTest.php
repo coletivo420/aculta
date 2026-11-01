@@ -52,6 +52,15 @@ final class RecentUploadsTest extends UnitTestCase {
   }
 
   /**
+   * Administrador vê e usa envios de outro usuário, dentro da pasta da integração.
+   */
+  public function testAdministratorMayUseAnotherUsersUploadInsideTheFolder(): void {
+    $recent = new RecentUploads($this->createMock(\Drupal\Core\Entity\EntityTypeManagerInterface::class));
+    self::assertTrue($recent->isOwnedBy($this->file('private://studio/envio/wiki/a.png', 7), 0, 'wiki', TRUE));
+    self::assertFalse($recent->isOwnedBy($this->file('private://studio/envio/forum/a.png', 7), 0, 'wiki', TRUE));
+  }
+
+  /**
    * Caminho com ".." não escapa da pasta da integração.
    */
   public function testPathTraversalIsRefused(): void {

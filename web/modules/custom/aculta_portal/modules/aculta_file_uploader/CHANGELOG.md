@@ -1,5 +1,12 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.20 — administradores veem os envios do Studio
+
+- `RecentUploads::forUser()` e `isOwnedBy()` aceitam `$all` para administradores: veem e usam envios de todos os usuários, dentro da pasta da integração. Usuário comum continua só com os próprios.
+- Teste Unit do caso de administrador.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.19 — envios recentes do Studio por integração e dono
 
 - `RecentUploads` (`aculta_file_uploader.recent_uploads`): lista os envios do próprio usuário numa integração (`private://studio/envio/<integração>`) e confere se um arquivo é do dono e da pasta certa. Recusa caminho com `..` e nome de integração fora de letras minúsculas.
