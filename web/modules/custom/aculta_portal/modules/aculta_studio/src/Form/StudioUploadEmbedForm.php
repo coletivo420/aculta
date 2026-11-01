@@ -235,6 +235,9 @@ final class StudioUploadEmbedForm extends FormBase {
       $total += count(array_filter((array) $form_state->getValue($key)));
     }
     $this->messenger()->addStatus($this->formatPlural($total, 'Um arquivo recebido.', '@count arquivos recebidos.'));
+    // Aviso na própria tela: o envio fica temporário até a integração usá-lo.
+    $hours = max(1, (int) round($this->imageCleanup->temporaryAge() / 3600));
+    $this->messenger()->addWarning($this->t('Envios sem uso são apagados após @h horas. Use o arquivo na integração antes desse prazo.', ['@h' => $hours]));
   }
 
 }
