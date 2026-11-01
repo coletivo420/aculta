@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace Drupal\aculta_studio\Form;
 
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\RecentUploads;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\file\FileInterface;
+use Drupal\file\FileUsage\FileUsageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -42,6 +47,10 @@ final class StudioUploadEmbedForm extends FormBase {
     private readonly ConsumerUploadPolicy $policy,
     private readonly UserUploadDialogBuilder $dialogBuilder,
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly RecentUploads $recentUploads,
+    private readonly FileUsageInterface $fileUsage,
+    private readonly AccountProxyInterface $currentUser,
+    private readonly DateFormatterInterface $dateFormatter,
   ) {}
 
   /**
@@ -52,6 +61,10 @@ final class StudioUploadEmbedForm extends FormBase {
       $container->get('aculta_file_uploader.consumer_policy'),
       $container->get('aculta_portal.user_upload_dialog_builder'),
       $container->get('entity_type.manager'),
+      $container->get('aculta_file_uploader.recent_uploads'),
+      $container->get('file.usage'),
+      $container->get('current_user'),
+      $container->get('date.formatter'),
     );
   }
 
@@ -83,7 +96,47 @@ final class StudioUploadEmbedForm extends FormBase {
       '#value' => $this->t('Enviar'),
       '#button_type' => 'primary',
     ];
+    $form['recentes'] = $this->recentList($integracao);
     return $form;
+  }
+
+  /**
+   * Lista os envios recentes da integração: os do usuário, ou todos se administrador.
+   *
+   * @return array<string, mixed>
+   */
+  private function recentList(string $integracao): array {
+    $isAdmin = $this->currentUser->hasPermission('administer site configuration');
+    $files = $this->recentUploads->forUser((int) $this->currentUser->id(), $integracao, 10, $isAdmin);
+    $rows = [];
+    foreach (array_keys($files) as $fid) {
+      $file = $this->entityTypeManager->getStorage('file')->load($fid);
+      if (!$file instanceof FileInterface) {
+        continue;
+      }
+      $inUse = $this->fileUsage->listUsage($file) !== [];
+      $rows[] = [
+        $file->getFilename(),
+        $this->dateFormatter->format((int) $file->getCreatedTime(), 'short'),
+        $inUse ? $this->t('Em uso') : $this->t('Sem uso ainda'),
+      ];
+    }
+    return [
+      '#type' => 'details',
+      '#title' => $this->t('Envios recentes'),
+      '#open' => TRUE,
+      'description' => [
+        '#type' => 'html_tag',
+        '#tag' => 'p',
+        '#value' => $this->t('Envios sem uso são apagados após 6 horas, para imagens e documentos.'),
+      ],
+      'table' => [
+        '#type' => 'table',
+        '#header' => [$this->t('Arquivo'), $this->t('Enviado em'), $this->t('Situação')],
+        '#rows' => $rows,
+        '#empty' => $this->t('Nenhum envio recente nesta integração.'),
+      ],
+    ];
   }
 
   /**

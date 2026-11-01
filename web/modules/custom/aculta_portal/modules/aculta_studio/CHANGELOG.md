@@ -1,3 +1,11 @@
+## 0.1.0-dev.32 — lista de envios recentes na página de envio
+
+- A página de envio do Studio lista os envios recentes da integração: os do usuário, ou todos se administrador.
+- Cada envio mostra data e situação (em uso ou sem uso ainda). Aviso: envios sem uso são apagados após 6 horas.
+- Dependências novas: RecentUploads, file.usage, current_user e date.formatter.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.31 — drop zone embutida no Studio
 
 - Nova página `/estudio/envio/{integracao}` (wiki, fórum, galeria, revista, LMS), na casca do Studio. Só usuário logado; a regra de cada integração vale no salvar.
