@@ -1,7 +1,7 @@
 # Plano de arquitetura e implementação - ACULTA Contributions
 
 **Estado:** F0 revalidado; F1/F2 parciais; Wiki dual-store; F4 concluída com escopo restrito a perfis públicos não reivindicados; F5 parcial; fila descoberta pelo Content Admin; avisos de submissão e decisão de Organização/Local/Evento no inbox via envelope mínimo e outbox; fila/revisão administrativa de Evento, `event_create` e `event_update` com interfaces de autor implementados; workspace e ressubmissão estruturada implementados; updates Messenger e Wiki homologados parcialmente no Runtime; autorização autenticada de domínio pendente
-**Base de código auditada:** branch `dev`, checkout baseado em `821f99810` (2026-11-01); auditoria F0 revalidada após o teste de instalação limpa e o conflito de Evento duplicado e referenciada em [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md). Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
+**Base de código auditada:** branch `dev`, checkout baseado em `5a5973573` (2026-11-01); auditoria F0 revalidada após o teste de instalação limpa e o conflito de Evento duplicado e referenciada em [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md). Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
 **Escopo:** motor de propostas comunitárias reutilizável por domínios ACULTA, sem depender de Workflow Participants ou de Content Moderation para o ciclo de contribuições.
 
 ## 1. Decisão de arquitetura
@@ -81,7 +81,7 @@ A auditoria do HEAD confirmou:
 - `aculta_messenger` é a central de mensagens e notificações.
 
 O inventário F0, incluindo a matriz domínio × operação × policy × applier, foi
-revalidado no checkout baseado em `821f99810` em 2026-11-01 após a cobertura de falha fechada
+revalidado no checkout baseado em `5a5973573` em 2026-11-01 após a cobertura de falha fechada
 para organizações reivindicadas, conforme
 [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md).
 Claims continuam exclusivamente em `aculta_user`; endereço completo de Local

@@ -1,9 +1,9 @@
 # Inventário dos consumidores de Contributions
 
-**Base de código:** branch `dev`, commit `821f99810` (2026-11-01)
+**Base de código:** branch `dev`, commit `5a5973573` (2026-11-01)
 **Revalidado em:** 2026-11-01
 
-Este inventário foi revalidado em `821f99810` após a integração parcial de
+Este inventário foi revalidado em `5a5973573` após a integração parcial de
 Organization/Location/Event, filas e revisão Content Admin, inbox de resultados
 Messenger, workspace privado, formulários de envio, atualização e ressubmissão
 estruturada para Eventos, revalidação de capability no apply e aviso privado de
@@ -18,7 +18,7 @@ ser renomeados sem migração compatível.
 Os commits LMS/Game integrados entre `d298f727d` e este HEAD não alteraram os
 módulos owners listados neste inventário. Kernel completo de Organizations/Events
 em `34e79950e`: 27 testes / 888 assertions; os seis casos `event_update` são
-6/171. A classe completa reexecutada no checkout baseado em `821f99810` passou 29/941.
+6/171. A classe completa reexecutada no checkout baseado em `5a5973573` passou 29/941.
 Auditoria Runtime autorizada em `toca` (`aculta_runtime`, Drupal 11.4.10,
 URI `http://default`, checkout servido `46ec52a96`, 631 tabelas): schema Wiki
 10003, Contributions 10001 e Messenger 10016. Updates sem pendências e config
@@ -68,7 +68,7 @@ de dados compatível.
 
 ## Matriz domínio × operação × policy × applier (F0)
 
-| Domínio/operação | Policy que decide | Applier/owner dos dados | Situação revalidada no checkout baseado em `821f99810` |
+| Domínio/operação | Policy que decide | Applier/owner dos dados | Situação revalidada no checkout baseado em `5a5973573` |
 | --- | --- | --- | --- |
 | Wiki update | `WikiContributionAdapter`: purpose Wiki, e-mail confirmado, permissão de submissão, alvo publicado/visível, revisão padrão, Entity Access; reviewer `moderate wiki proposals`; apply requer `edit any wiki_entry` e Node update access. | `WikiProposalDecision::applyToWikiEntry()` mantém allowlist e lógica de listas/imagem; `aculta_contributions` mantém ciclo e revisão de proposta. | Novo submit e consumidores migrados com leitura dual-store; update 10003 aplicado em Runtime, sem entidades legacy ou compartilhadas para copiar; migration gate completo. Workflow oficial de Node continua em Content Moderation. |
 | Organização update não reivindicada | `OrganizationContributionAdapter` exige purpose `eventos`, conta autenticada com role/config `create_event_roles` e alvo não reivindicado; revisão/aplicação exigem purpose MAIN e `administer aculta events`. | Adapter Events aplica somente `title`, `body`, `imagem`, `links`, `localidade`, `uf`, `ocultar_localidade`, sob lock compartilhado e fingerprint integral do `EventOrganization`. | Novos envios usam `aculta_contributions`; fila e revisão dual-read mantêm sugestões legadas. Kernel 2/80 PASS. A revisão do autor para `needs_changes` é compartilhada; claims e titularidade permanecem fora do adapter. Não houve migração/drop de registros antigos nem homologação Runtime. |

@@ -32,7 +32,7 @@
 | Event contribution workspace routes remain only in Eventos purpose and uncached; dashboard links to the workspace | `EventDomainBoundaryKernelTest::testOrganizerRoutesBelongOnlyToEventsPurpose`, `::testOrganizerDashboardBuildsWithAccessResultObject` | PASS, recorded Events domain-boundary class 10 tests / 369 assertions; 18 Core/contrib deprecations |
 | Local development HTTP 500 and WE SATIVA check | Watchdog, focused Kernel and HTTP smoke | Current 500 was `/ganjalab`: `AccountCoursesReader` called `isAllowed()` on boolean `true`; correction passed 2 tests / 19 assertions and UID 1 provider path was exercised. `/wesativa` did not reproduce a 500; its anonymous protected route returned 403. Authenticated WE SATIVA access remains pending. |
 | Events Kernel lifecycle and domain-boundary suites on `dev` HEAD `dd6ba130c` | `EventOrganizationLifecycleKernelTest` + `EventDomainBoundaryKernelTest`, with `SIMPLETEST_DB` sourced from the protected local env file and checked to target `aculta_simpletest` | Passed: 37 tests / 1,275 assertions; 24 upstream deprecations. |
-| Contributions core full suite on the `dev` checkout based on `821f99810` | `php vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_contributions/tests/src` with existing `SIMPLETEST_DB` | Passed 18 tests / 188 assertions (2026-11-01). |
+| Contributions core full suite on the `dev` checkout based on `5a5973573` | `php vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_contributions/tests/src` with existing `SIMPLETEST_DB` | Passed 18 tests / 188 assertions (2026-11-01). |
 
 Unit command:
 
