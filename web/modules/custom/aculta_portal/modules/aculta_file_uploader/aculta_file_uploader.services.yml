@@ -1,0 +1,18 @@
+services:
+  aculta_file_uploader.upload_policy:
+    class: Drupal\aculta_file_uploader\UploadPolicy
+
+  aculta_file_uploader.mime_verifier:
+    class: Drupal\aculta_file_uploader\MimeTypeVerifier
+
+  aculta_file_uploader.destination_resolver:
+    class: Drupal\aculta_file_uploader\DestinationResolver
+    arguments: ['@token']
+
+  aculta_file_uploader.ingestor:
+    class: Drupal\aculta_file_uploader\FileUploadIngestor
+    arguments:
+      - '@aculta_file_uploader.upload_policy'
+      - '@aculta_file_uploader.mime_verifier'
+      - '@aculta_file_uploader.destination_resolver'
+      - '@file.upload_handler'
