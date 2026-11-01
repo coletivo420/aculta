@@ -5,6 +5,7 @@ package: 'ACULTA Portal'
 core_version_requirement: ^11.3
 version: '0.1.0-dev.46'
 dependencies:
+  - aculta_portal:aculta_file_uploader
   - drupal:file
   - drupal:image
   - drupal:media
