@@ -1,7 +1,7 @@
 # Plano de arquitetura e implementação - ACULTA Contributions
 
-**Estado:** F0 revalidado; F1/F2 parciais; Wiki dual-store; F4/F5 parciais; fila descoberta pelo Content Admin; avisos de submissão e decisão de Organização/Local/Evento no inbox via envelope mínimo e outbox; fila/revisão administrativa de Evento, `event_create` e `event_update` com interfaces de autor implementados; workspace e ressubmissão estruturada implementados; updates Messenger e Wiki homologados parcialmente no Runtime; autorização autenticada de domínio pendente
-**Base de código auditada:** branch `dev`, `46ec52a96` (2026-11-01); auditoria F0 referenciada em [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md). Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
+**Estado:** F0 revalidado; F1/F2 parciais; Wiki dual-store; F4 concluída com escopo restrito a perfis públicos não reivindicados; F5 parcial; fila descoberta pelo Content Admin; avisos de submissão e decisão de Organização/Local/Evento no inbox via envelope mínimo e outbox; fila/revisão administrativa de Evento, `event_create` e `event_update` com interfaces de autor implementados; workspace e ressubmissão estruturada implementados; updates Messenger e Wiki homologados parcialmente no Runtime; autorização autenticada de domínio pendente
+**Base de código auditada:** branch `dev`, `6ef16063f` (2026-11-01); auditoria F0 revalidada em `6ef16063f` e referenciada em [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md). Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
 **Escopo:** motor de propostas comunitárias reutilizável por domínios ACULTA, sem depender de Workflow Participants ou de Content Moderation para o ciclo de contribuições.
 
 ## 1. Decisão de arquitetura
@@ -21,7 +21,7 @@ O motor não deve ser um sistema universal de moderação. Denúncias, comentár
 
 ## 2. Evidências e estado atual
 
-### Estado de implementação revalidado em `46ec52a96` (2026-11-01)
+### Evidências de implementação registradas em `46ec52a96` (2026-11-01)
 
 - `aculta_contributions` agora define `aculta_contribution`, entidade privada
   revisionável, registro de adaptadores confiáveis e serviços de submissão,
@@ -39,7 +39,8 @@ O motor não deve ser um sistema universal de moderação. Denúncias, comentár
   proposta legada. O workflow oficial da Wiki continua em Content Moderation.
   No Runtime, schema Wiki 10003 já estava registrado; a auditoria encontrou zero
   propostas/revisões legacy, Contributions, checkpoints e revision maps; o gate
-  de migração retornou completo. Não havia conteúdo a copiar.
+  de migração retornou completo. O update 10003 já está aplicado no Runtime; não havia
+  conteúdo a copiar.
 - Unit: registry/state machine 3 testes / 19 assertions; Kernel 12 testes / 138
   assertions (passaram em `aculta_simpletest`; combinado 15/157). O Kernel revelou e corrigiu a
   dependência `options` e um fixture que usava incorretamente UID 1. PHPCS
@@ -80,8 +81,8 @@ A auditoria do HEAD confirmou:
 - `aculta_messenger` é a central de mensagens e notificações.
 
 O inventário F0, incluindo a matriz domínio × operação × policy × applier, foi
-revalidado no HEAD `bc362a1be` em 2026-11-01 após os adapters de Organização/Local,
-os avisos no Messenger e os formulários de Events, conforme
+revalidado no HEAD `6ef16063f` em 2026-11-01 após a cobertura de falha fechada
+para organizações reivindicadas, conforme
 [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md).
 Claims continuam exclusivamente em `aculta_user`; endereço completo de Local
 usa CEP central e apenas BR. Criação de Organização com claim pendente e
