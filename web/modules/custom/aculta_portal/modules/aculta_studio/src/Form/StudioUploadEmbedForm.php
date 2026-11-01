@@ -6,6 +6,8 @@ namespace Drupal\aculta_studio\Form;
 
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\aculta_file_uploader\Cleanup\FileCleanupStatus;
+use Drupal\aculta_file_uploader\Cleanup\ImageCleanup;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner;
 use Drupal\aculta_file_uploader\RecentUploads;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
@@ -54,6 +56,8 @@ final class StudioUploadEmbedForm extends FormBase {
     private readonly AccountProxyInterface $currentUser,
     private readonly DateFormatterInterface $dateFormatter,
     private readonly UnusedFileCleaner $unusedFileCleaner,
+    private readonly ImageCleanup $imageCleanup,
+    private readonly TimeInterface $time,
   ) {}
 
   /**
@@ -69,6 +73,8 @@ final class StudioUploadEmbedForm extends FormBase {
       $container->get('current_user'),
       $container->get('date.formatter'),
       $container->get('aculta_file_uploader.unused_file_cleaner'),
+      $container->get('aculta_file_uploader.cleanup'),
+      $container->get('datetime.time'),
     );
   }
 
@@ -122,7 +128,7 @@ final class StudioUploadEmbedForm extends FormBase {
       $rows[$fid] = [
         'name' => $file->getFilename(),
         'date' => $this->dateFormatter->format((int) $file->getCreatedTime(), 'short'),
-        'status' => $inUse ? $this->t('Em uso') : $this->t('Sem uso ainda'),
+        'status' => $inUse ? $this->t('Em uso') : $this->expiryStatus($file),
         '#disabled' => $inUse,
       ];
     }
@@ -179,6 +185,18 @@ final class StudioUploadEmbedForm extends FormBase {
         }
       }
     }
+  }
+
+  /**
+   * Situação de um envio sem uso: quanto falta para a limpeza automática.
+   */
+  private function expiryStatus(FileInterface $file): string {
+    $remaining = (int) $file->getCreatedTime() + $this->imageCleanup->temporaryAge() - (int) $this->time->getRequestTime();
+    if ($remaining <= 0) {
+      return (string) $this->t('Será apagado na próxima limpeza.');
+    }
+    $minutes = (int) ceil($remaining / 60);
+    return (string) $this->t('Sem uso: será apagado em cerca de @min min.', ['@min' => $minutes]);
   }
 
   /**

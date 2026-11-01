@@ -1,3 +1,10 @@
+## 0.1.0-dev.35 — aviso de prazo na lista de envios
+
+- Envio sem uso mostra quanto falta para a limpeza automática (prazo de temporário do File API, 6 horas por padrão).
+- Aviso fica na própria página do Studio. Não há e-mail nem notificação de saída nesta fase.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.34 — só arquivos sem uso podem ser selecionados
 
 - Linhas de envios em uso ou ligados a conteúdo ficam desabilitadas na lista. A checagem no servidor continua valendo.
