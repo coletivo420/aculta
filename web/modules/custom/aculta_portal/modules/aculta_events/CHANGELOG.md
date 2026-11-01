@@ -1,5 +1,19 @@
 # Changelog — aculta_events
 
+## 2026-11-01 — Privacidade de Locais em Eventos, agenda e ICS
+
+- Página pública do Evento só apresenta nome, endereço, link e Schema.org do
+  Local quando a decisão de view permite. Os metadados de cache dos resultados
+  permitidos e negados são propagados; o organizador autorizado mantém acesso.
+- Agenda e itens usados pelo ICS deixam o Local privado em branco e invalidam
+  cache quando um Local muda.
+- Corrigidos dois erros 500 da página do Evento: chamada ao método inexistente
+  `getCoOrganizers()` e geração de URL canônica de Organização por uma rota que
+  não existe. Consumidores usam referências e rota pública reais.
+- Kernel de Evento estruturado, CalendarItemProvider e hooks de Data: **15
+  testes / 321 assertions, PASS**, com 15 depreciações Core/contrib. PHPCS e
+  PHP lint focal também passaram.
+
 ## 2026-11-01 — Paginação do catálogo de Locais em lotes
 
 - `LocationCatalogue` carrega no máximo 100 entidades por lote e conserva apenas

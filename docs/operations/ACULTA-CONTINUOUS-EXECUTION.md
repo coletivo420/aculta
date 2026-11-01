@@ -2864,3 +2864,13 @@ ou preferência persistente alterados.
 - Probe de tema autenticado Studio em modo escuro e reduced motion: **12 capturas, 12 correspondências de tema escuro e 12 de reduced motion**, Marley/Conta/Perfil em 320/390/768/1440px. Evidência: `/home/piradopirata/aculta-suite-out/studio-theme-modes-final/theme-modes.json`.
 - Fixtures A/B sintéticas criadas no Runtime após snapshot SHA-256 externo: `sr4_fixture_a` (UID 259, perfil público, marcador `Marcador SR4 A`) e `sr4_fixture_b` (UID 260, perfil privado, marcador `Marcador SR4 B`). S‑R4 executado em Firefox ESR/X11 com exit 0; isolamento, rota, SDCs, light/dark, reflow 320–1440px e no-JS passaram. Evidência: `/home/piradopirata/aculta-suite-out/profile-s-r4-final/`. Credenciais não foram versionadas.
 - Auditoria de branches remotas: a duplicata com erro de grafia `refactor/opencultures-codigo-visual` não possuía commits exclusivos e era ancestral da branch oficial `refactor/openculturas-codigo-visual`; foi removida local/remotamente. Após `fetch --prune`, restam `origin/main` e a branch oficial; `HEAD...origin/refactor/openculturas-codigo-visual` = `0/0` (nenhum commit faltante ou não publicado).
+
+### Microfase Events — privacidade de Local e reparo da página pública (2026-11-01)
+
+- Base antes da alteração: branch `dev`, HEAD `83a8200b6fa10d9477bcdf8b041b1f663358b2b3`; `origin/dev` estava sincronizada. `origin/main` observado em `8e7882dbea16a5ba34e1bf905a918db1df6df09e`.
+- O `EventPageController` agora só apresenta nome, link e endereço estruturado de Local quando a conta corrente passa pelo entity access; access results, entidades, `user.permissions` e tags de lista são incorporados à cacheabilidade. Evento híbrido mantém o local virtual quando o Local físico é privado.
+- O calendário público e ICS omitem nome de Local privado usando acesso anônimo, e a lista de cache também é invalidada quando Locais mudam.
+- Ao exercitar a página, foram corrigidos dois erros 500 existentes: chamada a `getCoOrganizers()` inexistente substituída pela referência `field_coorganizadores`, e rota canônica inexistente da Organização substituída por `aculta_events.organization_page` usando slug.
+- PHPUnit Kernel focal: **22 testes, 442 assertions, exit 0** (`EventStructuredDataKernelTest`, `EventCalendarItemProviderKernelTest`, `EventDateHooksKernelTest`, `EventCatalogueKernelTest`). Foram emitidas 15 deprecações Drupal/Core/contrib e o aviso de diretório `sites/simpletest/browser_output` não gravável; sem falha de teste.
+- `php -l` nos quatro arquivos PHP alterados, PHPCS Drupal/DrupalPractice e `git diff --check`: **exit 0**.
+- Nenhuma escrita foi feita em `aculta_runtime`; nenhuma configuração global foi importada. A homologação no Runtime permanece pendente.

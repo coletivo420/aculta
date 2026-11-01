@@ -4,7 +4,7 @@
 
 - [ ] LOC-05: suportar agenda do Local pelo contrato de itens/provedor existente; Events filtra a associação Data > Local e autoriza registros.
 - [ ] LOC-04/05: Index descobre eventos relacionados, sem transformar arestas em ocorrências nem duplicar RRULE/overrides.
-- [ ] LOC-01/08: revisar nome/endereço do Local em agenda e ICS, registros negados, cache e purposes main/eventos.
+- [ ] LOC-01/08: revisar nome/endereço do Local em agenda e ICS, registros negados, cache e purposes main/eventos. Parcial em 2026-11-01: itens públicos/ICS omitem nome de Local sem view access; alteração de Local invalida a agenda. Validação A/B de purpose e revisão dos demais consumidores continuam pendentes.
 - [ ] Cobrir futuros/em andamento, recorrência/cancelamento/reagendamento, links canônicos e acesso A/B.
 
 Não importar classes Events no núcleo independente, criar segundo calendário, promover versão ou executar Runtime por efeito deste plano.

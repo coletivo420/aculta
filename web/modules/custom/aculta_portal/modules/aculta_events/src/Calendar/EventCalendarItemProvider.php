@@ -12,6 +12,7 @@ use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Url;
 
 /**
@@ -42,6 +43,7 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
    */
   public function items(CalendarQuery $query): iterable {
     $storage = $this->entityTypeManager->getStorage('aculta_event_date');
+    $anonymous = new AnonymousUserSession();
     foreach ($storage->loadMultiple($storage->getQuery()->accessCheck(FALSE)->execute()) as $data) {
       if (!$data instanceof EventDate) {
         continue;
@@ -56,6 +58,11 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
         continue;
       }
       $local = $data->get('field_local')->entity;
+      // The shared calendar is public and does not vary by signed-in user.
+      // Never expose a private local's name through agenda or ICS.
+      if ($local instanceof EventLocation && !$local->access('view', $anonymous)) {
+        $local = NULL;
+      }
       if (!$this->filtro->aceita($evento, $local instanceof EventLocation ? $local : NULL, $query->filtros['tipo'] ?? NULL, $query->filtros['tipo_local'] ?? NULL)) {
         continue;
       }
@@ -80,7 +87,7 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
    * {@inheritdoc}
    */
   public function cacheTags(): array {
-    return ['aculta_event_date_list', 'aculta_event_list'];
+    return ['aculta_event_date_list', 'aculta_event_list', 'aculta_event_location_list'];
   }
 
   /**
@@ -104,6 +111,9 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
       return NULL;
     }
     $local ??= $data->get('field_local')->entity;
+    if ($local instanceof EventLocation && !$local->access('view', new AnonymousUserSession())) {
+      $local = NULL;
+    }
     $valores = $data->get('field_quando')->first()?->getValue();
     if ($valores === NULL) {
       return NULL;
