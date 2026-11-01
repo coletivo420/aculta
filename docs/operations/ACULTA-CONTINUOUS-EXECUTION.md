@@ -2874,3 +2874,11 @@ ou preferência persistente alterados.
 - PHPUnit Kernel focal: **22 testes, 442 assertions, exit 0** (`EventStructuredDataKernelTest`, `EventCalendarItemProviderKernelTest`, `EventDateHooksKernelTest`, `EventCatalogueKernelTest`). Foram emitidas 15 deprecações Drupal/Core/contrib e o aviso de diretório `sites/simpletest/browser_output` não gravável; sem falha de teste.
 - `php -l` nos quatro arquivos PHP alterados, PHPCS Drupal/DrupalPractice e `git diff --check`: **exit 0**.
 - Nenhuma escrita foi feita em `aculta_runtime`; nenhuma configuração global foi importada. A homologação no Runtime permanece pendente.
+
+### Integração da branch `dev` em `main` (2026-11-01)
+
+- Antes da integração, `origin/main` estava em `8e7882dbea16a5ba34e1bf905a918db1df6df09e` e `origin/dev` em `d3dda7fb5f53a4355e5b363a5867f18bc20611d4`. `dev` continha seis commits funcionais/documentais de Eventos e Locais, todos preservados.
+- A integração foi feita sem conflitos em merge commit `6b455316c9848e8d667fb5567cd459735b11cbc1`, com `origin/main` e `origin/dev` como pais. `git diff --check` passou; o tree integrado é o mesmo tree testado em `dev` (`b4dfcc7f1a82e88e30d62c5dc2d82f9a3c59f874`).
+- PHPUnit Kernel Events executado sobre esse tree antes da integração: **22 testes, 442 assertions, exit 0**; 15 deprecações de Core/contrib e aviso não bloqueante de diretório de saída PHPUnit não gravável. PHP lint, PHPCS Drupal/DrupalPractice e `git diff --check`: **exit 0**.
+- O push fast-forward foi aceito pelo remoto: `origin/main` avançou de `8e7882dbe` para `6b455316c`. Nenhum force push, merge adicional de PR ou alteração em dados/configuração Runtime foi feito.
+- `dev` ainda será atualizado por fast-forward para acompanhar o head integrado de `main`; isso preserva os commits e elimina a divergência dos ponteiros.
