@@ -1,0 +1,28 @@
+uuid: 6adbe37f-df5f-4a2e-9701-9bd383fb5cdc
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_messenger_attempts
+    - message.template.aculta_msg_events_contrib_notice
+  enforced:
+    module:
+      - aculta_messenger
+id: message.aculta_msg_events_contrib_notice.field_aculta_messenger_attempts
+field_name: field_aculta_messenger_attempts
+entity_type: message
+bundle: aculta_msg_events_contrib_notice
+label: 'Tentativas de entrega'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

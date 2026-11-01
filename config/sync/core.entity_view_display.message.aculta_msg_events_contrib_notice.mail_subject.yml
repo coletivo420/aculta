@@ -4,10 +4,13 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.message.mail_subject
+    - field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_digest_sent
     - field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_notice_read
     - field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_outcome
     - field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_prop_rev
     - field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_prop_uuid
+    - field.field.message.aculta_msg_events_contrib_notice.field_aculta_messenger_attempts
+    - field.field.message.aculta_msg_events_contrib_notice.field_aculta_msg_delivery
     - message.template.aculta_msg_events_contrib_notice
   module:
     - layout_builder
@@ -27,9 +30,12 @@ hidden:
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
+  field_aculta_events_digest_sent: true
   field_aculta_events_notice_read: true
   field_aculta_events_outcome: true
   field_aculta_events_prop_rev: true
   field_aculta_events_prop_uuid: true
+  field_aculta_messenger_attempts: true
+  field_aculta_msg_delivery: true
   partial_1: true
   search_api_excerpt: true
