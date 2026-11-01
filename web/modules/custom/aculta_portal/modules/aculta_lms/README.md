@@ -22,9 +22,12 @@ progresso, certificado, mensagem ou amizade paralelos.
 
 ## Integração de avisos — contrato vigente
 
-O `aculta_lms` é dono dos eventos, cursos, matrículas e da elegibilidade dos
-destinatários. Consumidores, avisos no site, persistência, central, deduplicação,
-preferências e a orquestração de e-mail são centralizados no `aculta_messenger`.
+O `aculta_lms` é dono dos cursos, matrículas, status e da elegibilidade dos
+destinatários. A conclusão é publicada pelo provider atual como o evento neutro
+`aculta_learning_contracts\Event\CourseCompletedEvent`; Game concede a conquista
+por esse contrato e Messenger encaminha o aviso ao fluxo centralizado.
+Consumidores, avisos no site, persistência, central, deduplicação, preferências
+e a orquestração de e-mail são centralizados no `aculta_messenger`.
 O aviso no site é obrigatório; o membro pode escolher e-mail desligado, direto
 ou digest/resumo, sempre sujeito às políticas administrativas. Transporte,
 templates e logs de entrega permanecem no `aculta_mailer`. O adapter executável
@@ -515,3 +518,8 @@ Estado ADR-038: `/ganjalab` em purpose `courses` está implementada; a antiga `/
 O `LearningDashboardManager` continua lendo entidades Group/Drupal LMS e certificados, mas publica `StudentLearningSummaryReaderInterface` com DTOs neutros. O `AccountCoursesReader` implementa `AccountCoursesReaderInterface` e fornece cursos autorizados para a Conta; o Portal recebe esse provider como opcional. `LmsFriendlySlugs`, o conversor, o route processor e o subscriber da rota foram movidos para este módulo, preservando os IDs de serviço `aculta_portal.lms_friendly_*` e os tipos de parâmetro existentes. O `aculta_portal` não declara mais `lms:lms`.
 
 A composição de render arrays do estudante pertence a `aculta_studio\Learning\\LearnerDashboardComposer`; as rotas Ganjalab são declaradas no Studio e mantêm IDs históricos `aculta_lms.*`. A rota nativa de atividade ainda é uma integração temporária. A separação remove a dependência Portal → Drupal LMS no metadata; o próprio `aculta_lms` continua dependente do contrib. Lint, testes e rebuild de rotas/container ainda precisam ser confirmados no checkout local; Runtime permanece sob a validação já delegada.
+
+A conclusão neutra remove o import direto do evento LMS nos consumidores Game e
+Messenger. O provider ainda lê `CourseStatusInterface` e permanece dependente
+do Drupal LMS contrib; esta mudança não migra dados nem remove a dependência do
+módulo LMS.
