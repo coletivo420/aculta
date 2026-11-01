@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_image\Unit;
+namespace Drupal\Tests\aculta_file_uploader\Unit;
 
-use Drupal\aculta_image\Quarantine\QuarantineRules;
+use Drupal\aculta_file_uploader\Quarantine\QuarantineRules;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -13,7 +13,7 @@ use PHPUnit\Framework\Attributes\Group;
  *
  * O prazo é de 30 dias; a quarentena vence no instante definido ou depois.
  */
-#[Group('aculta_image')]
+#[Group('aculta_file_uploader')]
 class QuarantineRulesTest extends UnitTestCase {
 
   /**

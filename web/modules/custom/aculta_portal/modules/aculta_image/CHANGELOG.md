@@ -1,3 +1,8 @@
+## 0.1.0-dev.47 — QuarantineRules movida para o aculta_file_uploader
+
+- `Quarantine\QuarantineRules` e seu teste saem do aculta_image; `ImageQuarantine` passa a importar a regra do aculta_file_uploader. Sem mudança de comportamento.
+- Migração completa da limpeza em andamento (decisão: migrar tudo). RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.34 — toda limpeza delega ao coordenador global (2026-10-26)
 
 - `ImageCleanup` não chama mais `FileRemover` diretamente quando o coordenador

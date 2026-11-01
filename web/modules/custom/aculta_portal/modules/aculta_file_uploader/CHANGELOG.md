@@ -1,5 +1,11 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.4 — migração da limpeza do aculta_image (passo 1: regras de quarentena)
+
+- `Quarantine\QuarantineRules` movida do aculta_image (M7), com teste Unit.
+- Passos seguintes da migração da limpeza: quarentena com tabela, fila de
+  substituição, auditoria, derivados, hooks e cron.
+
 ## 0.1.0-dev.3 — Fases 1 (fechamento), 2 e 3 (parte pura e UI)
 
 - Fase 1: testes Unit do `DestinationResolver` com `Token` simulado.

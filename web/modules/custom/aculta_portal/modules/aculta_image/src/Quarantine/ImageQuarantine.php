@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_image\Quarantine;
 
+use Drupal\aculta_file_uploader\Quarantine\QuarantineRules;
 use Drupal\aculta_portal\Cleanup\FileCleanupStatus;
 use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
 use Drupal\Component\Datetime\TimeInterface;
