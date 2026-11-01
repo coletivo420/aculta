@@ -26,6 +26,8 @@ final class UploadSettingsForm extends ConfigFormBase {
     'forum' => 'Fórum',
     'revista' => 'Revista',
     'lms' => 'LMS',
+    'galeria' => 'Galeria',
+    'usuario' => 'Foto do usuário',
   ];
 
   /**

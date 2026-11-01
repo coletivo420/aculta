@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Form;
 
-use Drupal\aculta_image\UploadPolicy;
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Ajax\AjaxResponse;
@@ -43,7 +43,7 @@ final class UserPictureForm extends FormBase {
     private CsrfTokenGenerator $csrfToken,
     private AvatarPool $avatarPool,
     private readonly ImageRenderer $imageRenderer,
-    private readonly UploadPolicy $uploadPolicy,
+    private readonly ConsumerUploadPolicy $uploadPolicy,
     private readonly RendererInterface $renderer,
   ) {}
 
@@ -55,7 +55,7 @@ final class UserPictureForm extends FormBase {
       $container->get('csrf_token'),
       $container->get('aculta_user.avatar_pool'),
       $container->get('aculta_image.render'),
-      $container->get('aculta_image.upload_policy'),
+      $container->get('aculta_file_uploader.consumer_policy'),
       $container->get('renderer'),
     );
   }
@@ -112,7 +112,9 @@ final class UserPictureForm extends FormBase {
       '#title' => $this->t('Foto'),
       '#description' => $this->t('Envie uma imagem PNG, JPG, GIF ou WebP de até 10 MB.'),
       '#upload_location' => self::UPLOAD_LOCATION,
-      '#upload_validators' => $this->uploadPolicy->validators(),
+      '#upload_validators' => $this->uploadPolicy->imageValidators('usuario'),
+      // Lista vazia desabilita o envio: sem validadores, o Core aceitaria qualquer arquivo.
+      '#disabled' => $this->uploadPolicy->imageExtensions('usuario') === [],
       '#default_value' => NULL,
       '#required' => FALSE,
       // Regra de estado (docs/FOTO-PERFIL.md): avatar do sistema nunca tem botão "Remover".

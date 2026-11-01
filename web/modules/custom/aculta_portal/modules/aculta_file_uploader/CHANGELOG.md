@@ -1,5 +1,11 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.18 — integrações galeria e usuário no painel
+
+- `UploadSettingsForm::CONSUMERS` inclui `galeria` e `usuario`, para configurar cada uma no painel de uploads.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.17 — validação estrutural de docx e xlsx
 
 - `MimeTypeVerifier::matches()` exige as entradas do pacote OOXML nos bytes lidos: docx precisa de `[Content_Types].xml` e `word/document.xml`; xlsx, de `[Content_Types].xml` e `xl/workbook.xml`. Um ZIP comum com extensão docx ou xlsx é recusado.

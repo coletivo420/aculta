@@ -1,5 +1,13 @@
 # Changelog — ACULTA Gallery
 
+## 0.1.0-dev.21 — upload de fotos novas pela política do aculta_file_uploader
+
+- `GalleryEmbedDialogForm` usa `aculta_file_uploader.consumer_policy` (integração `galeria`) em vez de `aculta_image.upload_policy`.
+- Campo desabilitado se a integração não tiver extensão de imagem: sem validadores, o Core aceitaria qualquer arquivo.
+- Dependência `aculta_portal:aculta_file_uploader` declarada.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.21 — correção do contrato do Alias Manager
 
 - O list builder administrativo injeta `Drupal\path_alias\AliasManagerInterface`, que é o contrato implementado pelo serviço `path_alias.manager`; a interface anterior apontava para um namespace incompatível e causava HTTP 500 na coleção de galerias.
