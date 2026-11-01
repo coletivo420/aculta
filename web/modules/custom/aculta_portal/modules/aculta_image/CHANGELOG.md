@@ -1,3 +1,11 @@
+## 0.1.0-dev.48 — derivados movidos para o aculta_file_uploader
+
+- `GeneratedImageFileManager` e `aculta_image.generated_file` saem do `aculta_image`. O registro de derivados passa a ser `aculta_file_uploader.generated_file`.
+- Sem mudança de comportamento: derivado temporário, mesma limpeza por `system.file:temporary_maximum_age`.
+- Migração da limpeza em andamento (decisão: migrar tudo). Pendentes: auditoria, quarentena com tabela, fila de substituição, hooks e cron.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.47 — QuarantineRules movida para o aculta_file_uploader
 
 - `Quarantine\QuarantineRules` e seu teste saem do aculta_image; `ImageQuarantine` passa a importar a regra do aculta_file_uploader. Sem mudança de comportamento.

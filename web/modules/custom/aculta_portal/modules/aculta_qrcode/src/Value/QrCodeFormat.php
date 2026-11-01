@@ -7,7 +7,7 @@ namespace Drupal\aculta_qrcode\Value;
 /**
  * Formatos de imagem do gerador de QR Code.
  *
- * PNG e WebP são gravados como derivados temporários pelo `aculta_image`
+ * PNG e WebP são gravados como derivados temporários pelo `aculta_file_uploader`
  * quando exportados (ver `QrCodeExporter`). SVG nunca vira raster. PDF não é
  * formato de imagem: é gerado pelo Entity Print e entregue sem gravação.
  */

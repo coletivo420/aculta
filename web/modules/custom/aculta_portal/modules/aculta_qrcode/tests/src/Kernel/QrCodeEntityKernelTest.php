@@ -166,12 +166,12 @@ final class QrCodeEntityKernelTest extends KernelTestBase {
   }
 
   /**
-   * Recusa exportação de arquivo sem o aculta_image (falha fechada).
+   * Recusa exportação de arquivo sem o aculta_file_uploader (falha fechada).
    */
   public function testRasterExportRefusedWithoutAcultaImage(): void {
     $entity = $this->manager->create('Exporta', 'https://example.invalid/');
     $this->expectException(\RuntimeException::class);
-    $this->expectExceptionMessage('aculta_image indisponível');
+    $this->expectExceptionMessage('aculta_file_uploader indisponível');
     $this->container->get('aculta_qrcode.exporter')->raster($entity, QrCodeFormat::Png);
   }
 

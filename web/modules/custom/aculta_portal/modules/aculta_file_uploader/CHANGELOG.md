@@ -1,5 +1,14 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.5 — GeneratedImageFileManager movido do aculta_image (migração dos derivados)
+
+- `GeneratedImageFileManager` e o serviço `aculta_file_uploader.generated_file` passam a viver aqui; `aculta_image.generated_file` sai do `aculta_image`.
+- Dimensões são lidas pelo `ImageFactory` do Core, sem `ImageInspector`, para não criar dependência circular (o `aculta_image` já depende deste módulo).
+- Dependência nova: `drupal:image`.
+- Consumidores atualizados: `aculta_qrcode`, `aculta_document_viewer` e o teste Kernel do `aculta_index`.
+
+RUNTIME STATUS: DEFERRED. Testes ainda não executados no Runtime nem com o `vendor/` completo.
+
 ## 0.1.0-dev.4 — migração da limpeza do aculta_image (passo 1: regras de quarentena)
 
 - `Quarantine\QuarantineRules` movida do aculta_image (M7), com teste Unit.

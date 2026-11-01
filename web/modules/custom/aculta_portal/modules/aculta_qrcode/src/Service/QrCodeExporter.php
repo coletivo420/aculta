@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_qrcode\Service;
 
-use Drupal\aculta_image\GeneratedImageFileManager;
+use Drupal\aculta_file_uploader\GeneratedImageFileManager;
 use Drupal\aculta_qrcode\Entity\QrCode;
 use Drupal\aculta_qrcode\Exception\InvalidQrCodeException;
 use Drupal\aculta_qrcode\Value\QrCodeFormat;
@@ -20,12 +20,12 @@ use Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface;
  * não exige nova exportação. Regras de arquivo:
  * - SVG é gerado em memória e nunca vira raster.
  * - PNG e WebP são derivados públicos registrados como temporários pelo
- *   `aculta_image`, com nome derivado do conteúdo. A mesma exportação reutiliza
+ *   `aculta_file_uploader`, com nome derivado do conteúdo. A mesma exportação reutiliza
  *   o arquivo; o `aculta_image` remove o que vencer.
  * - PDF é gerado pelo Entity Print e entregue sem gravação. O `aculta_image`
  *   aceita apenas imagens, então o PDF não passa por ele.
  *
- * Sem o `aculta_image`, a exportação de arquivo é recusada (falha fechada).
+ * Sem o `aculta_file_uploader`, a exportação de arquivo é recusada (falha fechada).
  */
 final class QrCodeExporter {
 
@@ -67,7 +67,7 @@ final class QrCodeExporter {
       throw new InvalidQrCodeException('SVG não é exportado como arquivo raster.');
     }
     if ($this->generatedFiles === NULL) {
-      throw new \RuntimeException('aculta_image indisponível: exportação de arquivo recusada.');
+      throw new \RuntimeException('aculta_file_uploader indisponível: exportação de arquivo recusada.');
     }
     $payload = $this->payload($entity);
     $preset = $this->preset($entity);
@@ -94,7 +94,7 @@ final class QrCodeExporter {
       $realpath = $this->fileSystem->realpath($uri);
     }
     if ($this->generatedFiles->registerTemporaryDerivative($uri) === NULL) {
-      throw new \RuntimeException('O aculta_image recusou o derivado do QR Code.');
+      throw new \RuntimeException('O aculta_file_uploader recusou o derivado do QR Code.');
     }
     $content = $realpath === FALSE ? FALSE : file_get_contents($realpath);
     if ($content === FALSE) {

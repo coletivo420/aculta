@@ -1,3 +1,10 @@
+## 0.4.1-dev.51 — registro de helper do derivado migrado
+
+- `PortalHelperRegistry`: a entrada `aculta_image.generated_file` passa a `aculta_file_uploader.generated_file`.
+- Sem mudança de comportamento. O serviço agora é definido pelo `aculta_file_uploader`.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.4.1-dev.50 — contratos educacionais fora do Portal (2026-11-01)
 
 - Correção da dev.49: `CourseJourneyReaderInterface`, `CourseJourney`,

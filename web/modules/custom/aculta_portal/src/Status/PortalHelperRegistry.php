@@ -69,7 +69,7 @@ final class PortalHelperRegistry {
       'summary' => 'Único acesso à leitura de imagens do Drupal no site: dimensões de arquivo em disco ou em memória.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
     ],
-    'aculta_image.generated_file' => [
+    'aculta_file_uploader.generated_file' => [
       'label' => 'Registro de imagens derivadas',
       'summary' => 'Registra derivados públicos gerados como arquivos temporários para que o ciclo normal do aculta_image os valide e limpe.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',

@@ -1,5 +1,13 @@
 # Changelog — aculta_document_viewer
 
+## 0.1.1-dev.1 — miniatura de PDF usa o aculta_file_uploader
+
+- `PdfPreviewThumbnailBuilder` e seu teste usam `GeneratedImageFileManager` do `aculta_file_uploader`; o serviço opcional passa a ser `aculta_file_uploader.generated_file`.
+- Dependência nova: `aculta_portal:aculta_file_uploader`.
+- Versão RC (0.1.0-rc.1) suspensa, pois o código mudou sem revalidação no Runtime. Volta a RC após validação (decisão pendente do responsável).
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-rc.1 — padronização de sufixos por tipo, subabas administrativas e promoção a RC (2026-10-29)
 
 - Padroniza os sufixos por tipo de arquivo (`aculta_document_viewer_pdf`,

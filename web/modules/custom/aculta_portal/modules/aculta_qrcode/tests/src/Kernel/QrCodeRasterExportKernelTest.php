@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_qrcode\Kernel;
 
-use Drupal\aculta_image\GeneratedImageFileManager;
-use Drupal\aculta_image\ImageInspector;
+use Drupal\aculta_file_uploader\GeneratedImageFileManager;
 use Drupal\aculta_qrcode\Entity\QrCode;
 use Drupal\aculta_qrcode\Service\QrCodeExporter;
 use Drupal\aculta_qrcode\Service\QrCodePublicUrlInterface;
@@ -17,7 +16,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Verifica exportação raster com o registro temporário do aculta_image.
+ * Verifica exportação raster com o registro temporário do aculta_file_uploader.
  */
 #[Group('aculta_qrcode')]
 #[RunTestsInSeparateProcesses]
@@ -51,7 +50,7 @@ final class QrCodeRasterExportKernelTest extends KernelTestBase {
   }
 
   /**
-   * Confirma que PNG raster passa pelo diretório e registro do aculta_image.
+   * Confirma que PNG raster passa pelo diretório e registro do aculta_file_uploader.
    */
   public function testPngRasterIsStoredAsTemporaryDerivative(): void {
     $manager = $this->container->get('aculta_qrcode.manager');
@@ -70,7 +69,7 @@ final class QrCodeRasterExportKernelTest extends KernelTestBase {
       $this->container->get('entity_type.manager'),
       $this->container->get('file_system'),
       $this->container->get('file.mime_type.guesser'),
-      new ImageInspector($this->container->get('image.factory')),
+      $this->container->get('image.factory'),
       $this->container->get('datetime.time'),
     );
     $exporter = new QrCodeExporter(

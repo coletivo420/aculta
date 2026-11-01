@@ -28,7 +28,7 @@ services:
 
   aculta_document_viewer.pdf_thumbnail_builder:
     class: Drupal\aculta_document_viewer\Pdf\PdfPreviewThumbnailBuilder
-    arguments: ['@aculta_image.pdf_thumbnail', '@config.factory', '@aculta_image.generated_file', '@aculta_image.render', '@aculta_image.inspector', '@file_system', '@logger.channel.aculta_document_viewer']
+    arguments: ['@aculta_image.pdf_thumbnail', '@config.factory', '@aculta_file_uploader.generated_file', '@aculta_image.render', '@aculta_image.inspector', '@file_system', '@logger.channel.aculta_document_viewer']
 
   aculta_document_viewer.thumbnail_builder:
     alias: aculta_document_viewer.pdf_thumbnail_builder

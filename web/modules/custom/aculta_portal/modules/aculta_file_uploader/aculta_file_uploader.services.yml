@@ -16,3 +16,8 @@ services:
       - '@aculta_file_uploader.mime_verifier'
       - '@aculta_file_uploader.destination_resolver'
       - '@file.upload_handler'
+  aculta_file_uploader.generated_file:
+    class: Drupal\aculta_file_uploader\GeneratedImageFileManager
+    arguments: ['@entity_type.manager', '@file_system', '@file.mime_type.guesser', '@image.factory', '@datetime.time']
+    tags:
+      - { name: aculta_portal.helper }
