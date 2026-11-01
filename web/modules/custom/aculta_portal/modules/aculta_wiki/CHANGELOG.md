@@ -1,3 +1,9 @@
+## 0.1.0-dev.130 — dependência explícita do aculta_file_uploader
+
+- `aculta_wiki.info.yml` declara `aculta_portal:aculta_file_uploader`, porque a imagem de destaque usa `aculta_file_uploader.consumer_policy`.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.129 — testes que liam o dado antigo removidos
 
 - Removidos os testes de `WikiLeadImagePolicyTest` que liam `config/sync/aculta_portal.user_upload.yml` e o schema antigo.
