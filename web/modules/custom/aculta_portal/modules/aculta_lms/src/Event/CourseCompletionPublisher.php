@@ -33,7 +33,7 @@ final class CourseCompletionPublisher implements CourseCompletionPublisherInterf
     $event = new CourseCompletedEvent(
       (string) $status->uuid(),
       $status->getCourseId(),
-      $status->getUserId(),
+      (string) $status->getUserId(),
       new DateTimeImmutable('@' . $finishedAt),
     );
     $this->eventDispatcher->dispatch($event);
