@@ -1,5 +1,15 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.15 — política por integração com documentos
+
+- `ConsumerUploadPolicy` separa imagens (`imageExtensions`, `isValidImage`, `imageValidators`) e documentos (`documentExtensions`, `isValidDocument`, `documentValidators`). Ambas herdam ou restringem a política global e nunca ampliam o catálogo central.
+- `UploadPolicy::documentValidators()` monta validadores de documento dentro de `DOCUMENT_EXTENSIONS`.
+- Painel `/painel-administrativo/aculta-portal/uploads` oferece imagens e documentos por integração.
+- Configuração padrão `config/install` passa a incluir pdf, docx, xls e xlsx, com a mesma paridade do painel antigo. `update_10001` não foi alterado.
+- Testes Unit: `ConsumerUploadPolicyTest` cobre separação de catálogos e PDF com conteúdo compatível.
+
+RUNTIME STATUS: DEFERRED. Testes PHPUnit ainda não executados (sem `vendor/` e sem Runtime); apenas `php -l`.
+
 ## 0.1.0-dev.14 — catálogo de documentos (pdf, docx, xls, xlsx)
 
 - `UploadPolicy::DOCUMENT_EXTENSIONS` define os anexos. O catálogo de imagens (`EXTENSIONS`) e o limite de 10 MB não mudam; o aculta_image continua só com imagens.

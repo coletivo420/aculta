@@ -38,7 +38,7 @@ final class ConsumerUploadPolicyTest extends UnitTestCase {
     $factory->method('get')->with('aculta_file_uploader.settings')->willReturn($config);
     $fileSystem = $this->createMock(FileSystemInterface::class);
     $fileSystem->method('realpath')->willReturn($realpath);
-    return new ConsumerUploadPolicy($factory, new MimeTypeVerifier(), $fileSystem);
+    return new ConsumerUploadPolicy($factory, new UploadPolicy(), new MimeTypeVerifier(), $fileSystem);
   }
 
   /**
@@ -129,6 +129,31 @@ final class ConsumerUploadPolicyTest extends UnitTestCase {
   /**
    * Arquivo acima do limite é recusado antes de ler o conteúdo.
    */
+  /**
+   * Documentos têm política própria, separada das imagens.
+   */
+  public function testDocumentsAreSeparateFromImages(): void {
+    $policy = $this->policy(['allowed_extensions' => 'png pdf docx']);
+    self::assertSame(['png'], $policy->imageExtensions());
+    self::assertSame(['pdf', 'docx'], $policy->documentExtensions());
+  }
+
+  /**
+   * PDF com conteúdo compatível é aceito como documento.
+   */
+  public function testAcceptsPdfContentAsDocument(): void {
+    $path = tempnam(sys_get_temp_dir(), 'aculta_upload_');
+    self::assertIsString($path);
+    file_put_contents($path, "%PDF-1.4\n1 0 obj\n<< >>\nendobj\n%%EOF\n");
+    try {
+      $policy = $this->policy(['allowed_extensions' => 'pdf'], $path);
+      self::assertTrue($policy->isValidDocument($this->file('contrato.pdf', (int) filesize($path))));
+    }
+    finally {
+      ($path);
+    }
+  }
+
   public function testRejectsFileAboveLimit(): void {
     $policy = $this->policy(['allowed_extensions' => 'png', 'max_size_mb' => 1], '/nao/usado');
     self::assertFalse($policy->isValidImage($this->file('grande.png', 1024 * 1024 + 1)));

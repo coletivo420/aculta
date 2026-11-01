@@ -56,4 +56,22 @@ final class UploadPolicy {
     ];
   }
 
+  /**
+   * Monta validadores do Managed File API para documentos, dentro do catálogo.
+   *
+   * @throws \InvalidArgumentException
+   *   Quando o limite é inválido ou as extensões saem do catálogo de documentos.
+   */
+  public function documentValidators(?int $maxBytes = NULL, ?string $extensions = NULL): array {
+    $maxBytes ??= self::MAX_BYTES;
+    $allowed = array_values(array_unique(preg_split('/\s+/', trim((string) $extensions)) ?: []));
+    if ($maxBytes < 1 || $allowed === [] || array_diff($allowed, explode(' ', self::DOCUMENT_EXTENSIONS)) !== []) {
+      throw new \InvalidArgumentException('A política de documentos excede o catálogo ACULTA.');
+    }
+    return [
+      'FileExtension' => ['extensions' => implode(' ', $allowed)],
+      'FileSizeLimit' => ['fileLimit' => $maxBytes],
+    ];
+  }
+
 }

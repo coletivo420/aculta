@@ -49,13 +49,13 @@ final class UploadSettingsForm extends ConfigFormBase {
     $config = $this->config('aculta_file_uploader.settings');
     $form['#tree'] = TRUE;
     $form['intro'] = [
-      '#markup' => '<p>' . $this->t('Cada integração herda a política global ou a restringe. Nenhuma opção amplia o catálogo de imagens nem o limite de 10 MB.') . '</p>',
+      '#markup' => '<p>' . $this->t('Cada integração herda a política global ou a restringe. Nenhuma opção amplia o catálogo de imagens e documentos nem o limite de 10 MB.') . '</p>',
     ];
 
     $form['global'] = ['#type' => 'details', '#title' => $this->t('Política global'), '#open' => TRUE];
     $form['global']['allowed_extensions'] = [
       '#type' => 'checkboxes',
-      '#title' => $this->t('Extensões de imagem permitidas'),
+      '#title' => $this->t('Extensões permitidas (imagens e documentos)'),
       '#options' => $this->extensionOptions(),
       '#default_value' => $this->selectedExtensions((string) $config->get('allowed_extensions')),
       '#required' => TRUE,
@@ -108,7 +108,7 @@ final class UploadSettingsForm extends ConfigFormBase {
     parent::validateForm($form, $form_state);
     $global = $this->checkedExtensions($form_state->getValue(['global', 'allowed_extensions']));
     if ($global === []) {
-      $form_state->setErrorByName('global][allowed_extensions', $this->t('Escolha ao menos uma extensão de imagem.'));
+      $form_state->setErrorByName('global][allowed_extensions', $this->t('Escolha ao menos uma extensão.'));
     }
     foreach (array_keys(self::CONSUMERS) as $key) {
       $values = $form_state->getValue(['consumers', $key]);
@@ -146,7 +146,7 @@ final class UploadSettingsForm extends ConfigFormBase {
    */
   private function extensionOptions(): array {
     $options = [];
-    foreach (explode(' ', UploadPolicy::EXTENSIONS) as $extension) {
+    foreach (self::catalog() as $extension) {
       $options[$extension] = strtoupper($extension);
     }
     return $options;
@@ -159,7 +159,7 @@ final class UploadSettingsForm extends ConfigFormBase {
    */
   private function selectedExtensions(string $configured): array {
     $requested = preg_split('/\s+/', strtolower(trim($configured))) ?: [];
-    return array_intersect(explode(' ', UploadPolicy::EXTENSIONS), $requested);
+    return array_intersect(self::catalog(), $requested);
   }
 
   /**
@@ -172,7 +172,16 @@ final class UploadSettingsForm extends ConfigFormBase {
       return [];
     }
     $checked = array_keys(array_filter($values, static fn ($value) => $value !== 0 && $value !== '0' && $value !== NULL && $value !== ''));
-    return array_values(array_intersect(explode(' ', UploadPolicy::EXTENSIONS), $checked));
+    return array_values(array_intersect(self::catalog(), $checked));
+  }
+
+  /**
+   * Catálogo completo do painel: imagens e documentos, na ordem central.
+   *
+   * @return string[]
+   */
+  private static function catalog(): array {
+    return array_merge(explode(' ', UploadPolicy::EXTENSIONS), explode(' ', UploadPolicy::DOCUMENT_EXTENSIONS));
   }
 
   /**
