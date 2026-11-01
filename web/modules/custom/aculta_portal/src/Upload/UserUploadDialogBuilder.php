@@ -4,20 +4,26 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Upload;
 
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\Core\StringTranslation\ByteSizeMarkup;
 use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
- * Builds the shared upload dialog shell and Managed File controls. */
+ * Monta a casca do diálogo de upload e os controles de arquivo.
+ *
+ * Os controles usam o elemento aculta_upload_dropzone do aculta_file_uploader,
+ * com a política por integração do mesmo módulo.
+ */
 final class UserUploadDialogBuilder {
 
   public function __construct(
-    private readonly UserUploadPolicy $policy,
+    private readonly ConsumerUploadPolicy $policy,
     private readonly TranslationInterface $translation,
   ) {}
 
   /**
-   * Applies the common dialog wrapper and Drupal editor AJAX libraries. */
+   * Aplica o invólucro comum do diálogo e as bibliotecas AJAX do editor.
+   */
   public function wrap(array &$form, string $dialog_id, string $consumer, ?string $context_token = NULL): void {
     $ui_tokens = ['user-upload-dialog'];
     if ($context_token !== NULL && preg_match('/^[a-z][a-z0-9-]*$/', $context_token)) {
@@ -31,7 +37,8 @@ final class UserUploadDialogBuilder {
   }
 
   /**
-   * Adds the shared image/document controls using a consumer policy. */
+   * Adiciona os controles de imagem e, se pedido, de documento da integração.
+   */
   public function addFileControls(
     array &$form,
     string $consumer,
@@ -40,10 +47,10 @@ final class UserUploadDialogBuilder {
     ?string $document_key = NULL,
     bool $multiple_images = FALSE,
   ): void {
-    $image_extensions = $this->policy->imageExtensions($consumer);
+    $image_extensions = implode(' ', $this->policy->imageExtensions($consumer));
     if ($image_extensions !== '') {
       $form[$image_key] = [
-        '#type' => 'managed_file',
+        '#type' => 'aculta_upload_dropzone',
         '#title' => $this->translation->translate('Imagens'),
         '#description' => $this->translation->translate('Extensões: @extensions. Máximo por arquivo: @size.', [
           '@extensions' => $image_extensions,
@@ -55,10 +62,10 @@ final class UserUploadDialogBuilder {
       ];
     }
 
-    $document_extensions = $this->policy->documentExtensions($consumer);
+    $document_extensions = implode(' ', $this->policy->documentExtensions($consumer));
     if ($document_key !== NULL && $document_extensions !== '') {
       $form[$document_key] = [
-        '#type' => 'managed_file',
+        '#type' => 'aculta_upload_dropzone',
         '#title' => $this->translation->translate('PDF ou documento Office'),
         '#description' => $this->translation->translate('Extensões: @extensions. Máximo por arquivo: @size.', [
           '@extensions' => $document_extensions,

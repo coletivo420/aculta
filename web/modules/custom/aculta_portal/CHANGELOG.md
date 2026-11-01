@@ -1,3 +1,11 @@
+## 0.4.1-dev.56 — diálogo de upload usa a política do aculta_file_uploader
+
+- `UserUploadDialogBuilder` recebe `aculta_file_uploader.consumer_policy` e monta imagem e documento com o elemento `aculta_upload_dropzone`. Serviço `aculta_portal.user_upload_dialog_builder` religado.
+- Consumidores ainda usam `UserUploadPolicy` para validar; a migração deles segue em commits próprios.
+- Testes: wiki e fórum (Unit e Kernel) e Kernel de upload montam o builder com a política nova. Config `aculta_file_uploader.settings` gravada onde o módulo não está habilitado.
+
+RUNTIME STATUS: DEFERRED. Testes não executados (sem vendor/ nem Runtime).
+
 ## 0.4.1-dev.55 — registro do helper de quarentena migrado
 
 - `PortalHelperRegistry`: `aculta_image.quarantine` (serviço) vira `aculta_file_uploader.quarantine`. Sem mudança de comportamento.

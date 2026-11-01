@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Form\ForumAttachmentUploadDialogForm;
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\MimeTypeVerifier;
+use Drupal\aculta_file_uploader\UploadPolicy as FileUploadPolicy;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
 use Drupal\aculta_portal\Upload\UserUploadPolicy;
 use Drupal\aculta_image\ImageInspector;
@@ -66,6 +69,10 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
+    $this->config('aculta_file_uploader.settings')
+      ->set('allowed_extensions', 'png gif jpg jpeg webp pdf docx xls xlsx')
+      ->set('max_size_mb', 10)
+      ->save();
     $this->installEntitySchema('media');
     $this->installSchema('file', ['file_usage']);
     $this->installConfig([
@@ -155,7 +162,10 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
       $this->container->get('entity_type.manager'),
       $this->container->get('current_user'),
       $this->policy,
-      new UserUploadDialogBuilder($this->policy, $this->container->get('string_translation')),
+      new UserUploadDialogBuilder(
+        new ConsumerUploadPolicy($this->container->get('config.factory'), new FileUploadPolicy(), new MimeTypeVerifier(), $this->container->get('file_system'), $this->container->get('image.factory')),
+        $this->container->get('string_translation'),
+      ),
     );
   }
 

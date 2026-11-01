@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Kernel\Upload;
 
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\MimeTypeVerifier;
+use Drupal\aculta_file_uploader\UploadPolicy as FileUploadPolicy;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
 use Drupal\aculta_portal\Upload\UserUploadPolicy;
 use Drupal\aculta_portal\Form\UserUploadSettingsForm;
@@ -142,11 +145,14 @@ final class UserUploadPolicyKernelTest extends KernelTestBase {
   /**
    * Image and document controls use the configured Core validators. */
   public function testUploadDialogUsesPolicyAndDrupalManagedFileValidators(): void {
-    $this->config('aculta_portal.user_upload')
+    $this->config('aculta_file_uploader.settings')
       ->set('allowed_extensions', 'png pdf docx')
       ->set('max_size_mb', 35)
       ->save();
-    $builder = new UserUploadDialogBuilder($this->policy, $this->container->get('string_translation'));
+    $builder = new UserUploadDialogBuilder(
+      new ConsumerUploadPolicy($this->container->get('config.factory'), new FileUploadPolicy(), new MimeTypeVerifier(), $this->container->get('file_system'), $this->container->get('image.factory')),
+      $this->container->get('string_translation'),
+    );
     $form = [];
 
     $builder->wrap($form, 'forum-upload-dialog', 'forum', 'forum-attachment-dialog');

@@ -1,3 +1,9 @@
+## 0.1.0-dev.334 — testes do diálogo com a política do uploader
+
+- Teste Kernel do diálogo monta o builder com `ConsumerUploadPolicy`. Validação ainda pela `UserUploadPolicy`.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.333 — consumo do motor de limpeza movido para o aculta_file_uploader
 
 - Imports dos tipos de limpeza e serviço `aculta_portal.unused_file_cleaner` passam a `aculta_file_uploader`. Sem mudança de comportamento.

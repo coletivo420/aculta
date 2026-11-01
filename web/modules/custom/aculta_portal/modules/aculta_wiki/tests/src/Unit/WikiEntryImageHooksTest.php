@@ -7,6 +7,9 @@ namespace Drupal\Tests\aculta_wiki\Unit;
 use Drupal\aculta_image\ImageInspector;
 use Drupal\aculta_image\UploadPolicy as ImageUploadPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\MimeTypeVerifier;
+use Drupal\aculta_file_uploader\UploadPolicy as FileUploadPolicy;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
 use Drupal\aculta_portal\Upload\UserUploadPolicy;
 use Drupal\aculta_wiki\Hook\WikiEntryImageHooks;
@@ -42,6 +45,13 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 final class WikiEntryImageHooksTest extends UnitTestCase {
 
   /**
+   * Último par (extensões, MB) usado por policy(), para a política do uploader.
+   *
+   * @var array{0: string, 1: int}
+   */
+  private array $uploadValues = ['', 10];
+
+  /**
    * A aba substitui o autocomplete do Media e usa a política da Wiki.
    */
   public function testAddsTheUploadTabAndHidesTheCoreWidget(): void {
@@ -54,7 +64,7 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
     self::assertSame('details', $form['wiki_lead_image']['#type']);
     self::assertSame('advanced', $form['wiki_lead_image']['#group']);
     self::assertTrue($form['wiki_lead_image']['#tree']);
-    self::assertSame('managed_file', $form['wiki_lead_image']['file']['#type']);
+    self::assertSame('aculta_upload_dropzone', $form['wiki_lead_image']['file']['#type']);
     self::assertSame('private://wiki/imagens', $form['wiki_lead_image']['file']['#upload_location']);
     self::assertFalse($form['wiki_lead_image']['file']['#multiple']);
     self::assertSame([
@@ -169,7 +179,7 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
     return new WikiEntryImageHooks(
       $this->getStringTranslationStub(),
       $policy,
-      new UserUploadDialogBuilder($policy, $this->getStringTranslationStub()),
+      new UserUploadDialogBuilder($this->consumerPolicy(), $this->getStringTranslationStub()),
       $this->uploader($policy),
       new WikiContributorWorkspace(
         $entityTypeManager,
@@ -198,9 +208,26 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
   }
 
   /**
+   * Builds the file uploader policy over the values of the last policy().
+   */
+  private function consumerPolicy(): ConsumerUploadPolicy {
+    [$extensions, $megabytes] = $this->uploadValues;
+    $config = $this->createMock(Config::class);
+    $config->method('get')->willReturnCallback(static fn (string $key) => match ($key) {
+      'allowed_extensions' => $extensions,
+      'max_size_mb' => $megabytes,
+      default => NULL,
+    });
+    $config_factory = $this->createMock(ConfigFactoryInterface::class);
+    $config_factory->method('get')->with('aculta_file_uploader.settings')->willReturn($config);
+    return new ConsumerUploadPolicy($config_factory, new FileUploadPolicy(), new MimeTypeVerifier(), $this->createMock(FileSystemInterface::class), $this->createMock(ImageFactory::class));
+  }
+
+  /**
    * Builds the central upload policy over a fixed configuration.
    */
   private function policy(string $extensions, int $megabytes): UserUploadPolicy {
+    $this->uploadValues = [$extensions, $megabytes];
     $config = $this->createMock(Config::class);
     $config->method('get')->willReturnCallback(static fn (string $key) => match ($key) {
       'allowed_extensions' => $extensions,

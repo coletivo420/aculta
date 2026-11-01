@@ -2203,7 +2203,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $form = $formBuilder->buildForm($formObject, $formState);
 
     self::assertArrayHasKey(WikiLeadImageUploader::TAB, $form);
-    self::assertSame('managed_file', $form[WikiLeadImageUploader::TAB][WikiLeadImageUploader::FILE]['#type']);
+    self::assertSame('aculta_upload_dropzone', $form[WikiLeadImageUploader::TAB][WikiLeadImageUploader::FILE]['#type']);
     $formState->setValue($form['title']['widget'][0]['value']['#parents'], 'Rascunho com imagem real');
     $formState->setValue($form['body']['widget'][0]['value']['#parents'], 'Texto inicial com fonte.');
     $formState->setValue($form['body']['widget'][0]['format']['#parents'], 'plain_text');
