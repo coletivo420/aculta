@@ -179,9 +179,11 @@ final class ConsumerUploadPolicy {
    */
   private function settings(?string $consumer): array {
     $config = $this->configFactory->get('aculta_file_uploader.settings');
+    // Configuração ausente ou vazia cai nos padrões seguros do catálogo
+    // central: nenhuma integração fica sem extensão permitida.
     $global = [
-      'allowed_extensions' => $config->get('allowed_extensions'),
-      'max_size_mb' => $config->get('max_size_mb'),
+      'allowed_extensions' => $this->usable($config->get('allowed_extensions'), UploadPolicy::EXTENSIONS),
+      'max_size_mb' => $this->usable($config->get('max_size_mb'), self::DEFAULT_MAX_MB),
     ];
     if ($consumer === NULL) {
       return $global;
@@ -191,9 +193,25 @@ final class ConsumerUploadPolicy {
       return $global;
     }
     return [
-      'allowed_extensions' => $override['allowed_extensions'] ?? $global['allowed_extensions'],
-      'max_size_mb' => $override['max_size_mb'] ?? $global['max_size_mb'],
+      'allowed_extensions' => $this->usable($override['allowed_extensions'] ?? NULL, $global['allowed_extensions']),
+      'max_size_mb' => $this->usable($override['max_size_mb'] ?? NULL, $global['max_size_mb']),
     ];
+  }
+
+  /**
+   * Devolve o valor quando utilizável, ou o padrão seguro.
+   */
+  private function usable(mixed $value, mixed $default): mixed {
+    if ($value === NULL) {
+      return $default;
+    }
+    if (is_string($value)) {
+      return trim($value) === '' ? $default : $value;
+    }
+    if (is_int($value) || is_float($value)) {
+      return $value > 0 ? $value : $default;
+    }
+    return $value;
   }
 
 }

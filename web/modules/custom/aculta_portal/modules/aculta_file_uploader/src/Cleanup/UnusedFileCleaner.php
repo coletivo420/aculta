@@ -18,7 +18,7 @@ final class UnusedFileCleaner implements FileCleanupAssessorInterface {
     private readonly FileUsageInterface $fileUsage,
     private readonly Connection $database,
     private readonly FileReferenceInspectorInterface $referenceInspector,
-    private readonly FileDeletionOwnerInterface $deletionOwner,
+    private readonly ?FileDeletionOwnerInterface $deletionOwner,
     private readonly ImageFactory $imageFactory,
     private readonly LoggerChannelInterface $logger,
   ) {}
@@ -74,7 +74,7 @@ final class UnusedFileCleaner implements FileCleanupAssessorInterface {
         return FileCleanupStatus::OwnerRejected;
       }
       // Every deletion goes through the aculta_image owner, images or not.
-      if (!$this->deletionOwner->delete($file, 'portal_unused_file_cleanup')) {
+      if ($this->deletionOwner === NULL || !$this->deletionOwner->delete($file, 'portal_unused_file_cleanup')) {
         return FileCleanupStatus::OwnerRejected;
       }
     }

@@ -28,7 +28,7 @@ final class FocalPointRecorder {
   ];
 
   public function __construct(
-    private readonly ImageWidgetCropInterface $cropManager,
+    private readonly ?ImageWidgetCropInterface $cropManager,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ImageFactory $imageFactory,
   ) {}
@@ -40,6 +40,10 @@ final class FocalPointRecorder {
    */
   public function record(FileInterface $file, float $focalX, float $focalY): array {
     $result = [];
+    if ($this->cropManager === NULL) {
+      // Sem image_widget_crop o ponto focal não é gravado; falha fechada.
+      return array_fill_keys(array_keys(self::CROP_RATIOS), FALSE);
+    }
     $image = $this->imageFactory->get($file->getFileUri());
     $cropTypes = $this->entityTypeManager->getStorage('crop_type');
 

@@ -32,7 +32,7 @@ final class FocalPointRecorderTest extends UnitTestCase {
     $file = $this->createMock(FileInterface::class);
     $file->method('getFileUri')->willReturn('public://foto.jpg');
     $imageFactory = $this->createMock(ImageFactory::class);
-    $imageFactory->method('get')->willReturn(new Image('public://foto.jpg', NULL, NULL));
+    $imageFactory->method('get')->willReturn($this->createMock(Image::class));
 
     $recorder = new FocalPointRecorder($cropManager, $entityTypes, $imageFactory);
     $result = $recorder->record($file, 50.0, 50.0);

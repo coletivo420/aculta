@@ -1,3 +1,14 @@
+# Changelog — aculta_file_uploader
+
+## 0.1.0-dev.24 — wiring tolerante e fallback da política
+
+- `aculta_file_uploader.deletion_owner` e `image_widget_crop.manager` passam a referências opcionais (`@?`): o módulo compila e é testável sem `aculta_image` ou `image_widget_crop` no container. Sem owner ou sem crop, a remoção e o ponto focal falham fechados.
+- `ConsumerUploadPolicy::settings()` cai no catálogo central e no teto de 10 MiB quando a configuração está ausente ou vazia — inclusive depois de um `config:import` que apague `aculta_file_uploader.settings`.
+- `FocalPointRecorderTest` usa um mock de `Image`; antes passava `NULL` ao construtor.
+- Unit uploader 47/104 PASS.
+
+RUNTIME STATUS: DEFERRED. Só wiring e testes; nada aplicado no Runtime.
+
 ## 0.1.0-dev.23 — estilo do editor de ponto focal
 
 - Biblioteca focal-point ganha CSS: a caixa segue a imagem e o marcador fica sobre ela. Usa a variável `--aculta-focal-marker`, com fallback.

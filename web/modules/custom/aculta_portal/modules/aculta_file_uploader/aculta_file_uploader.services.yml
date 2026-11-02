@@ -40,7 +40,7 @@ services:
     arguments: ['@entity_type.manager', '@entity_field.manager', '@database', '@aculta_file_uploader.cleanup.logger']
   aculta_file_uploader.unused_file_cleaner:
     class: Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner
-    arguments: ['@file.usage', '@database', '@aculta_file_uploader.file_reference_inspector', '@aculta_file_uploader.deletion_owner', '@image.factory', '@aculta_file_uploader.cleanup.logger']
+    arguments: ['@file.usage', '@database', '@aculta_file_uploader.file_reference_inspector', '@?aculta_file_uploader.deletion_owner', '@image.factory', '@aculta_file_uploader.cleanup.logger']
     tags:
       - { name: aculta_portal.helper }
   aculta_file_uploader.cleanup:
@@ -58,4 +58,4 @@ services:
     arguments: ['@entity_type.manager']
   aculta_file_uploader.focal_point_recorder:
     class: Drupal\aculta_file_uploader\FocalPointRecorder
-    arguments: ['@image_widget_crop.manager', '@entity_type.manager', '@image.factory']
+    arguments: ['@?image_widget_crop.manager', '@entity_type.manager', '@image.factory']
