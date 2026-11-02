@@ -7,6 +7,7 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 ## ADRs
 
 - [ADR-041 — xAPI 2.0 com LRS próprio no Drupal, substituindo SCORM](ADR-041-xapi-2-lrs-proprio.md) — aceita nas decisões D-66 a D-69; implementação pendente das fases F1 a F4.
+- [ADR-042 — Remoção das dependências do Drupal LMS contrib no aculta_lms](ADR-042-remocao-dependencias-lms-contrib.md) — proposta; plano em fases P0 a P6, aguardando aprovação por fase.
 
 - [ADR-040 — Rolagem horizontal visível em tabelas](ADR-040-rolagem-horizontal-tabelas.md) — aceita; barra visível em todo wrapper de tabela, sem rolagem horizontal da página.
 
