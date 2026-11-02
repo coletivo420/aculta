@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_file_uploader\Unit;
 
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\ImageDimensionReader;
 use Drupal\aculta_file_uploader\MimeTypeVerifier;
 use Drupal\aculta_file_uploader\UploadPolicy;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\File\FileSystemInterface;
-use Drupal\Core\Image\Image;
-use Drupal\Core\Image\ImageFactory;
 use Drupal\file\FileInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -40,13 +39,9 @@ final class ConsumerUploadPolicyTest extends UnitTestCase {
     $factory->method('get')->with('aculta_file_uploader.settings')->willReturn($config);
     $fileSystem = $this->createMock(FileSystemInterface::class);
     $fileSystem->method('realpath')->willReturn($realpath);
-    $image = $this->createMock(Image::class);
-    $image->method('isValid')->willReturn(TRUE);
-    $image->method('getWidth')->willReturn(1);
-    $image->method('getHeight')->willReturn(1);
-    $imageFactory = $this->createMock(ImageFactory::class);
-    $imageFactory->method('get')->willReturn($image);
-    return new ConsumerUploadPolicy($factory, new UploadPolicy(), new MimeTypeVerifier(), $fileSystem, $imageFactory);
+    $dimensionReader = $this->createMock(ImageDimensionReader::class);
+    $dimensionReader->method('dimensions')->willReturn(['width' => 1, 'height' => 1]);
+    return new ConsumerUploadPolicy($factory, new UploadPolicy(), new MimeTypeVerifier(), $fileSystem, $dimensionReader);
   }
 
   /**

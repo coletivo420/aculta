@@ -1,5 +1,15 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.29 — leitura de dimensões sem ImageFactory
+
+- Novo `ImageDimensionReader` (`aculta_file_uploader.image_dimension_reader`), leitor nativo de dimensões com
+  `getimagesize()` sobre o caminho real. Substitui `ImageFactory` em `ConsumerUploadPolicy`, `FocalPointRecorder`,
+  `GeneratedImageFileManager` e `UnusedFileCleaner`. Motivo: `aculta_image` depende deste módulo; usar o
+  `aculta_image.inspector` criaria ciclo. Comportamento: uma imagem válida continua aceita; arquivo não-imagem ou
+  sem dimensões positivas continua recusado.
+- Testes unitários de `ConsumerUploadPolicyTest` e `FocalPointRecorderTest` passam a mockar o leitor.
+- RUNTIME STATUS: DEFERRED (testes unitários não executados neste ambiente; falta rodar no Runtime).
+
 ## 0.1.0-dev.28 — limites de ingestão configuráveis no painel de uploads
 
 - Nova subaba `/painel-administrativo/aculta/uploads/limites` (`aculta_file_uploader.ingestion_limits`), com as

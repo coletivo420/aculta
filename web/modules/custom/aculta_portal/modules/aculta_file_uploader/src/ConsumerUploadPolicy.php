@@ -6,7 +6,6 @@ namespace Drupal\aculta_file_uploader;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileSystemInterface;
-use Drupal\Core\Image\ImageFactory;
 use Drupal\file\FileInterface;
 
 /**
@@ -30,7 +29,7 @@ final class ConsumerUploadPolicy {
     private readonly UploadPolicy $policy,
     private readonly MimeTypeVerifier $mimeVerifier,
     private readonly FileSystemInterface $fileSystem,
-    private readonly ImageFactory $imageFactory,
+    private readonly ImageDimensionReader $dimensionReader,
   ) {}
 
   /**
@@ -168,8 +167,7 @@ final class ConsumerUploadPolicy {
     if (!$raster) {
       return TRUE;
     }
-    $image = $this->imageFactory->get($file->getFileUri());
-    return $image->isValid() && $image->getWidth() > 0 && $image->getHeight() > 0;
+    return $this->dimensionReader->dimensions($file->getFileUri()) !== NULL;
   }
 
   /**

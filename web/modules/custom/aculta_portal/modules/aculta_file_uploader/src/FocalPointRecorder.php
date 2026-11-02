@@ -6,7 +6,6 @@ namespace Drupal\aculta_file_uploader;
 
 use Drupal\crop\Entity\Crop;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Image\ImageFactory;
 use Drupal\file\FileInterface;
 use Drupal\image_widget_crop\ImageWidgetCropInterface;
 
@@ -30,7 +29,7 @@ final class FocalPointRecorder {
   public function __construct(
     private readonly ?ImageWidgetCropInterface $cropManager,
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly ImageFactory $imageFactory,
+    private readonly ImageDimensionReader $dimensionReader,
   ) {}
 
   /**
@@ -44,19 +43,19 @@ final class FocalPointRecorder {
       // Sem image_widget_crop o ponto focal não é gravado; falha fechada.
       return array_fill_keys(array_keys(self::CROP_RATIOS), FALSE);
     }
-    $image = $this->imageFactory->get($file->getFileUri());
+    $dimensions = $this->dimensionReader->dimensions($file->getFileUri());
     $cropTypes = $this->entityTypeManager->getStorage('crop_type');
 
     foreach (self::CROP_RATIOS as $typeId => $ratio) {
       $result[$typeId] = FALSE;
       $cropType = $cropTypes->load($typeId);
-      if ($cropType === NULL || !$image->isValid() || $image->getWidth() < 1 || $image->getHeight() < 1) {
+      if ($cropType === NULL || $dimensions === NULL) {
         continue;
       }
 
       $rect = FocalPoint::cropRectangle(
-        $image->getWidth(),
-        $image->getHeight(),
+        $dimensions['width'],
+        $dimensions['height'],
         FocalPoint::clampPercent($focalX),
         FocalPoint::clampPercent($focalY),
         $ratio,

@@ -8,7 +8,6 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\File\MimeType\MimeTypeGuesser;
-use Drupal\Core\Image\ImageFactory;
 use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
 
@@ -24,7 +23,7 @@ final class GeneratedImageFileManager {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly FileSystemInterface $fileSystem,
     private readonly MimeTypeGuesser $mimeTypeGuesser,
-    private readonly ImageFactory $imageFactory,
+    private readonly ImageDimensionReader $dimensionReader,
     private readonly TimeInterface $time,
   ) {}
 
@@ -93,8 +92,7 @@ final class GeneratedImageFileManager {
    * Confirma que o URI é uma imagem válida com dimensões positivas.
    */
   private function hasDimensions(string $uri): bool {
-    $image = $this->imageFactory->get($uri);
-    return $image->isValid() && $image->getWidth() > 0 && $image->getHeight() > 0;
+    return $this->dimensionReader->dimensions($uri) !== NULL;
   }
 
 }

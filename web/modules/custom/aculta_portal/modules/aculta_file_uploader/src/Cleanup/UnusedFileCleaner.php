@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_file_uploader\Cleanup;
 
-use Drupal\Core\Image\ImageFactory;
+use Drupal\aculta_file_uploader\ImageDimensionReader;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\file\FileInterface;
@@ -19,7 +19,7 @@ final class UnusedFileCleaner implements FileCleanupAssessorInterface {
     private readonly Connection $database,
     private readonly FileReferenceInspectorInterface $referenceInspector,
     private readonly ?FileDeletionOwnerInterface $deletionOwner,
-    private readonly ImageFactory $imageFactory,
+    private readonly ImageDimensionReader $dimensionReader,
     private readonly LoggerChannelInterface $logger,
   ) {}
 
@@ -94,8 +94,7 @@ final class UnusedFileCleaner implements FileCleanupAssessorInterface {
    * Confirms that a URI is a valid image with positive dimensions.
    */
   private function hasDimensions(string $uri): bool {
-    $image = $this->imageFactory->get($uri);
-    return $image->isValid() && $image->getWidth() > 0 && $image->getHeight() > 0;
+    return $this->dimensionReader->dimensions($uri) !== NULL;
   }
 
   /**
