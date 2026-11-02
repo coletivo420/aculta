@@ -40,6 +40,26 @@ Antes de implementar, valide todos os metadados e imports atuais. O alvo deve el
 | SCORM/xAPI | Capacidade possível apenas com demanda real | Registrar como não assumida | Player, LRS, importadores e extração de pacotes |
 | Catálogo, turmas, certificados, mensagens, calendário e comércio | Padrões de fluxo, se úteis | Reutilizar apenas requisitos que não conflitem com owners ACULTA | Entidades e serviços Opigno; duplicação de Group, Commerce, Messenger, Events ou certificados |
 
+## Aproveitamento confirmado na revisão de módulo e learning path (2026-11-02)
+
+Base: `opigno_module` 3.2.8 e `opigno_learning_path` 3.2.8, lidos de forma estática, sem execução. Só conceitos; nenhum trecho foi copiado. Qualquer trecho derivado exige registro em `ORIGEM` (D-25) e revisão da licença GPL-2.0+.
+
+| Item confirmado | Uso ACULTA | Fase | Condição |
+| --- | --- | --- | --- |
+| Aprovação por tentativa: todas as atividades avaliadas e nota igual ou acima do mínimo; política de manter a mais recente ou a melhor; sorteio de N entre M | Critério da avaliação objetiva | Posterior à fase 1 | Score mínimo está fora da fase 1; só entra com decisão de produto da avaliação |
+| Checklist de publicação: ao menos um item obrigatório; validar cada módulo e curso antes de publicar; mensagem por etapa | Validação da autoria própria | Fase C | Implementar como serviço. Não enviar resposta HTTP de dentro do validador (anti-padrão no Opigno) |
+| Retomada pela última atividade | Fecha a pendência do `LearningResumeProvider` | Fase 1 | Derivar dos timestamps de `LessonStatus` e `CourseStatus` do LMS. Não criar entidade `LatestActivity` |
+| Nota do curso como média das melhores notas por módulo | Só após decisão de produto | Pendente | A regra exata (`courseGetScore`) não foi revisada por completo |
+| Sete cenários de teste (acesso à edição, visibilidade, início, conclusão, condição de link entre passos, nota por módulo) | Roteiro de aceite de F6 e F8 | Fase 1 (F6) | Código de teste não reaproveitado |
+
+Não aproveitar: entidades paralelas de status e retomada (`UserModuleStatus`, `LPStatus`, `LatestActivity`); pipeline de PPT para imagem com `exec`; exportação em `sites/default/files/opigno-export`; importação de ZIP sem limites; `\Drupal::` e código estático; Angular e dependências de Group 1.x.
+
+Gaps da ACULTA confirmados pelo código do Opigno, já tratados ou registrados: instalador H5P sem limite de ZIP (`fac3d58`); parser DMARC sem teto (`bf6a089`); download IMAP sem teto (`0d9d754`). Ver `docs/operations/SECURITY-REVIEW-ZIP-INPUTS-2026-11-02.md`.
+
+Decisões já tomadas: o pacote H5P do Opigno é corpus de teste no Homelab (F10), não entra em produção.
+
+Abertos, dependem do responsável: tour de primeiro acesso (`opigno_tour`), que exige decisão antes de qualquer implementação; competências (`opigno_skills_system`), sem decisão.
+
 ## Escopo da primeira fase
 
 ### Incluído
