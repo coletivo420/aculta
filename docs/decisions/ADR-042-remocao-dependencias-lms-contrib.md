@@ -1,6 +1,6 @@
 # ADR-042 — Remoção das dependências do Drupal LMS contrib no aculta_lms
 
-- **Status:** Proposta, aguardando aprovação do plano por fase. Nenhuma remoção de código, de configuração ou de dado está autorizada por este ADR até a aprovação de cada fase.
+- **Status:** Aprovada em 2026-11-02 (plano P0–P6 e decisões 1–6). Cada fase exige gate próprio antes do corte. Nenhuma remoção de código, de configuração ou de dado está autorizada por este ADR até a aprovação de cada fase.
 - **Data:** 2026-11-02
 - **Relaciona-se com:** ADR-041 (xAPI 2.0, LRS próprio), `docs/modules/LMS-CONTRIB-DEPENDENCY-INVENTORY.md`, `docs/modules/ANALISE-LMS-CONTRIB-1-2-4.md`, `docs/modules/OPIGNO-ACULTA-INDEPENDENCE-PLAN.md`.
 
