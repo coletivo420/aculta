@@ -339,6 +339,6 @@ código do módulo.
 
 | ID | Dívida | Evidência | Sev. | Decisão | Estado |
 | --- | --- | --- | --- | --- | --- |
-| DT-U01 | Revista: o seletor de imagem recente do Studio aparece, mas salvar falha com "O campo Imagem editorial é obrigatório" | Firefox ESR em `/node/605/edit`: select `studio_cover` com o fid 786, erro de campo obrigatório na validação do widget de Media Library antes do `#validate` do hook; tentativa de conversão no `after_build` não resolveu e foi revertida | Média | Sim (dono do hook de capa) | Aberta |
+| DT-U01 | Revista: o seletor de imagem recente do Studio aparecia, mas salvar falhava com "O campo Imagem editorial é obrigatório" | Resolvida em 2026-11-02: `MediaLibraryWidget::validateRequired` lê o user input bruto; a conversão no `#after_build` agora grava a Media no form state e no user input. Runtime: Revista 605 salva com a media 284 | Média | Sim | Resolvida |
 | DT-U02 | `LmsH5PDiscussionResolverKernelTest` errava por `aculta_lms.xapi_attempt_token_controller` exigir `key.repository` | Reexecutado em 2026-11-02 após os commits de xAPI: 1 teste / 37 assertions PASS | Baixa | Não | Resolvida |
 | DT-U03 | `field_file_extensions` existe sem valores em nenhuma atividade; o tipo `file_upload` e a atividade 23 foram criados na homologação | Consulta `exists(field_file_extensions)` = 0 | Baixa | Não | Aberta |

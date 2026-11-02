@@ -1,3 +1,10 @@
+## 0.5.0-dev.18 — capa pela escolha de envio recente do Studio
+
+- `MediaLibraryWidget::validateRequired` lê a seleção do **user input** bruto, antes dos handlers de `#validate`. A escolha agora é convertida no `#after_build` do formulário da Revista, que grava a Media criada no form state **e** no user input, e relaxa `#required` de novo.
+- Versão 0.5.0-dev.18.
+
+RUNTIME STATUS: VALIDATED no Runtime (2026-11-02): Revista 605 salva com a escolha do Studio (fid 786) → media 284 (image, publicada, alt "Imagem editorial"), arquivo permanente. Unit Revista 43/179 PASS.
+
 ## 0.5.0-dev.17 — imagem editorial da Revista aceita envio recente do Studio
 
 - Novo `RevistaCoverStudioHooks`: o formulário da Revista lista imagens recentes do Studio (integração `revista`). Usada só quando a imagem editorial está vazia.

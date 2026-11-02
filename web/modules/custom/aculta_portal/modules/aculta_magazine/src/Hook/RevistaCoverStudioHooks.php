@@ -7,6 +7,7 @@ namespace Drupal\aculta_magazine\Hook;
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\aculta_file_uploader\RecentUploads;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Render\Element;
@@ -63,12 +64,69 @@ final class RevistaCoverStudioHooks {
       '#description' => t('Usada somente se a imagem editorial acima estiver vazia.'),
       '#weight' => (float) ($form[self::FIELD]['#weight'] ?? 0) + 0.01,
     ];
-    // The required check runs before form validators; validateCover enforces it.
+    // MediaLibraryWidget::validateRequired lê a seleção do user input bruto,
+    // antes dos handlers de #validate. A conversão precisa ocorrer no
+    // after_build e gravar também o user input.
     $this->relax($form[self::FIELD]);
+    $form['#after_build'][] = [self::class, 'afterBuild'];
     $form['#validate'] = array_merge(
       ['Drupal\aculta_magazine\Hook\RevistaCoverStudioHooks:validateCover'],
       $form['#validate'] ?? [],
     );
+  }
+
+  /**
+   * Converte a escolha do Studio antes da validação do widget.
+   */
+  public static function afterBuild(array $form, FormStateInterface $form_state): array {
+    if (!isset($form[self::FIELD])) {
+      return $form;
+    }
+    static::relax($form[self::FIELD]);
+    $pick = (int) $form_state->getValue(self::PICK);
+    if ($pick < 1 || (int) $form_state->getValue([self::FIELD, 0, 'target_id']) > 0) {
+      return $form;
+    }
+    $media_id = \Drupal::service(self::class)->createMediaFromPick($pick, $form_state);
+    if ($media_id === NULL) {
+      return $form;
+    }
+    $value = [['target_id' => $media_id]];
+    $form_state->setValue(self::FIELD, $value);
+    $form_state->setValue([self::FIELD, 'selection'], $value);
+    // validateRequired usa getUserInput(), não os valores do form state.
+    $input = $form_state->getUserInput();
+    NestedArray::setValue($input, [self::FIELD, 'selection'], $value);
+    $form_state->setUserInput($input);
+    $form_state->setValue(self::PICK, 0);
+    return $form;
+  }
+
+  /**
+   * Cria a Media da escolha do Studio, ou NULL quando ela não é válida.
+   */
+  public function createMediaFromPick(int $pick, FormStateInterface $form_state): ?int {
+    $file = $this->entityTypeManager->getStorage('file')->load($pick);
+    $isAdmin = $this->currentUser->hasPermission('administer site configuration');
+    if (!$file instanceof FileInterface
+      || !$this->recentUploads->isOwnedBy($file, (int) $this->currentUser->id(), self::CONSUMER, $isAdmin)
+      || !$this->uploadPolicy->isValidImage($file, self::CONSUMER)) {
+      $form_state->setErrorByName(self::PICK, t('A imagem escolhida não está disponível. Escolha novamente.'));
+      return NULL;
+    }
+    if (!$file->isPermanent()) {
+      $file->setPermanent();
+      $file->save();
+    }
+    $media = $this->entityTypeManager->getStorage('media')->create([
+      'bundle' => 'image',
+      'name' => $file->getFilename(),
+      'uid' => $this->currentUser->id(),
+      'status' => 1,
+      'field_media_image' => ['target_id' => $file->id(), 'alt' => (string) t('Imagem editorial')],
+    ]);
+    $media->save();
+    return (int) $media->id();
   }
 
   /**
@@ -119,12 +177,12 @@ final class RevistaCoverStudioHooks {
   /**
    * Removes the required flag from the widget tree. Our validator covers it.
    */
-  private function relax(array &$element): void {
+  private static function relax(array &$element): void {
     if (isset($element['#required'])) {
       $element['#required'] = FALSE;
     }
     foreach (Element::children($element) as $child) {
-      $this->relax($element[$child]);
+      static::relax($element[$child]);
     }
   }
 

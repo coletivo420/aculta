@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.5.0-dev.17
+version: 0.5.0-dev.18
 state: Dev
 progress_note: >-
-  2026-11-02 (Runtime): seletor "imagem recente do Studio" aparece no formulário da Revista com o fid enviado, mas salvar devolve "O campo Imagem editorial é obrigatório" — a validação do widget de Media Library dispara antes da conversão. DEFERRED até corrigir o hook.
+  Dev.18: capa pela escolha de envio recente do Studio validada no Runtime — Revista 605 salva com fid 786 e cria a media 284 (image, publicada); a conversão acontece no #after_build e grava também o user input, que o MediaLibraryWidget lê antes do #validate.
   Dev.17: a imagem editorial aceita envio recente do Studio (integração
   `revista`), somado aos envios novos. Unit Magazine 43/179 PASS; upload
   autenticado no Runtime e tema Olivero pendentes.
