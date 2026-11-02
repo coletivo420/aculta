@@ -1,3 +1,9 @@
+## 0.1.0-dev.54 — implementa a interface de dimensões do uploader
+
+- `ImageInspector` implementa `ImageDimensionReaderInterface` (`aculta_file_uploader`), que o uploader usa quando
+  este módulo está ativo. Sem mudança de comportamento para os demais chamadores.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.53 — motor da quarentena no aculta_file_uploader
 
 - `aculta_image.quarantine` (serviço) sai do aculta_image. O formulário `ImageQuarantineForm` e os testes obtêm `aculta_file_uploader.quarantine`. Rotas e abas inalteradas.

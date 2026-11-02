@@ -69,4 +69,4 @@ services:
     factory: ['@aculta_file_uploader.ingestion_limits_reader', 'get']
   aculta_file_uploader.image_dimension_reader:
     class: Drupal\aculta_file_uploader\ImageDimensionReader
-    arguments: ['@file_system']
+    arguments: ['@file_system', '@?aculta_image.inspector']

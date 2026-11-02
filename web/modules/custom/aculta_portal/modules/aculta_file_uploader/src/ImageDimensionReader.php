@@ -12,14 +12,23 @@ use Drupal\Core\File\FileSystemInterface;
  * Camada abaixo do aculta_image: não depende dele (aculta_image depende deste módulo). Usa getimagesize() nativo
  * sobre o caminho real do arquivo. Retorna NULL quando o arquivo não é uma imagem com dimensões positivas.
  */
-class ImageDimensionReader {
-
-  public function __construct(private readonly FileSystemInterface $fileSystem) {}
+class ImageDimensionReader implements ImageDimensionReaderInterface {
 
   /**
-   * @return array{width: int, height: int}|null
+   * Com aculta_image ativo, delega ao aculta_image.inspector (interface invertida); sem ele, usa getimagesize().
+   */
+  public function __construct(
+    private readonly FileSystemInterface $fileSystem,
+    private readonly ?ImageDimensionReaderInterface $inspector = NULL,
+  ) {}
+
+  /**
+   * {@inheritdoc}
    */
   public function dimensions(string $uri): ?array {
+    if ($this->inspector !== NULL) {
+      return $this->inspector->dimensions($uri);
+    }
     $path = $this->fileSystem->realpath($uri);
     if ($path === FALSE || $path === '' || !is_file($path)) {
       return NULL;

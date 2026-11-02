@@ -1,5 +1,11 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.30 — interface de dimensões com aculta_image
+
+- Nova `ImageDimensionReaderInterface`. `ImageDimensionReader` implementa a interface e delega ao
+  `aculta_image.inspector` quando ele está ativo (`@?aculta_image.inspector`); sem ele, usa `getimagesize()`.
+- RUNTIME STATUS: DEFERRED (testes não executados neste ambiente).
+
 ## 0.1.0-dev.29 — leitura de dimensões sem ImageFactory
 
 - Novo `ImageDimensionReader` (`aculta_file_uploader.image_dimension_reader`), leitor nativo de dimensões com
