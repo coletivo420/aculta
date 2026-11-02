@@ -1,3 +1,12 @@
+## 0.1.0-dev.108 — API SCORM 1.2 no navegador (sem endpoint de progresso)
+
+- `js/scorm/aculta-scorm-api-12.js`: API SCORM 1.2 derivada de conceitos do Opigno SCORM 3.2.7 (GPL-2.0-or-later), reescrita
+  sem `eval`, sem depuração e com retornos de erro conforme a especificação. Registro de origem em `docs/ORIGEM-OPIGNO.md`.
+- Biblioteca `aculta_lms/scorm.api12` (dependências `core/jquery` e `core/drupal`).
+- Não grava progresso: o commit dispara `commit12` para o player. O endpoint que grava na tentativa do LMS fica para a fase seguinte.
+
+Validação: 32/32 em Node com stubs de `window`, `jQuery` e `Drupal`. Não executado no navegador nem no Runtime: DEFERRED.
+
 ## 0.1.0-dev.107 — normalização de estado SCORM (sem armazenamento)
 
 - `ScormStatusMapper`: função pura que converte lesson_status (SCORM 1.2) e completion_status/success_status (SCORM 2004)

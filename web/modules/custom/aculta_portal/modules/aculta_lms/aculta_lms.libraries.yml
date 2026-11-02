@@ -2,3 +2,10 @@ admin_toolbar_icon:
   css:
     theme:
       css/admin-toolbar-icon.css: {}
+
+scorm.api12:
+  js:
+    js/scorm/aculta-scorm-api-12.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
