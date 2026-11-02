@@ -12,10 +12,11 @@ Este arquivo define as regras gerais do repositório. Siga também o `AGENTS.md`
 
 ## Git: trabalhar e publicar em `dev`
 
-- Cada entrega é commitada e enviada diretamente para `origin/dev` (push automático, decisão do responsável em 2026-11-02). Não crie branches, worktrees ou PRs, nem publique em outra branch, salvo instrução explícita posterior do responsável.
-- Antes de editar, confira `git status --short --branch` e preserve alterações de outras pessoas. Trabalhe sobre `dev`; se o checkout estiver em outra branch ou houver trabalho conflitante, não o sobrescreva: alinhe o checkout com segurança antes de prosseguir.
+- Cada entrega é commitada e enviada diretamente para `origin/dev` (push automático, D-71). Não crie branches nem PRs, nem publique em outra branch, salvo instrução explícita do responsável.
+- Antes de editar, confira `git status --short --branch` e preserve alterações de outras pessoas. Trabalhe sobre `dev` no checkout principal ou em um worktree local sem branch: `git worktree add --detach <caminho fora do repositório> origin/dev`. Ao integrar, use `git push origin HEAD:dev` e depois `git worktree remove <caminho>` (D-70). Se houver trabalho conflitante, não o sobrescreva.
 - Faça commits pequenos e claros, contendo somente arquivos da sua tarefa. Depois, envie-os para `origin/dev` por fast-forward. Nunca use force push, reset destrutivo ou descarte alterações alheias.
 - Se o remoto avançar ou o push for recusado, atualize e integre as mudanças sem sobrescrever trabalho; revise o resultado e tente novamente. Ao concluir, informe os commits enviados, validações executadas e qualquer bloqueio. Não diga que publicou se o push não foi confirmado.
+- Após cada push em `origin/dev`, sincronize o Runtime com o mesmo commit, conforme `docs/operations/AGENT-OPERATIONS.md` (D-70).
 
 ## Escopo e segurança
 

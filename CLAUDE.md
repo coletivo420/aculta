@@ -13,8 +13,8 @@ Plataforma Drupal 11 da ACULTA (PHP conforme `docs/architecture/environments.md`
 
 ## Regras que prevalecem (decisões do responsável)
 
-- **Branch:** `dev`, conforme AGENTS.md. Não crie branch, PR nem troque de branch sem ordem explícita.
-- **Commits:** um commit por entrega, só com os arquivos dela, com o trailer `Claude-Session`. Demais regras de Git: AGENTS.md.
+- **Branch:** `dev`, conforme AGENTS.md. Não crie branch nem PR, nem troque de branch sem ordem explícita. Worktree local sem branch é permitido (AGENTS.md, D-70).
+- **Commits:** um commit por entrega, só com os arquivos dela, com o trailer `Claude-Session`. Coautoria (`Co-Authored-By`) é proibida. Demais regras de Git: AGENTS.md.
 - **Push:** automático para `origin/dev` após cada entrega, por fast-forward, conforme AGENTS.md. Não é exigida autorização por hash.
 - **Estados de release:** Dev (desenvolvimento) → RC → Alpha → Beta. O Alpha começa depois do RC, na migração para `*.aculta.org`. O Beta é a produção no Hostinger, depois de Alpha validado. Só se avança para Alpha quando todos os módulos, temas e subtemas estiverem em RC. Merge em `main` não é deploy.
 - **Ambientes:** o servidor de desenvolvimento é `*.aculta.toca.net.br` (com `.br`). Ele não é o Alpha: o Alpha só existe depois do RC, em `*.aculta.org`. Produção é `*.aculta.org`. `127.0.0.1` simula o servidor de desenvolvimento, mas não é ele. Não invente hosts.

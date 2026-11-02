@@ -79,6 +79,8 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 | D-67 | Armazenamento do xAPI (LMS) | **LRS próprio no Drupal**, com as declarações guardadas no MariaDB do projeto. Não usar Ralph nem outro LRS separado. | `aculta_lms`; o ADR de xAPI deve tratar a duplicidade entre declarações brutas e estado derivado, pois a regra de não criar armazenamento paralelo ainda se aplica ao estado. Escolha diferente da recomendação (guardar só resultados). |
 | D-68 | Retenção do histórico de declarações xAPI (LMS) | **Opção administrativa no LMS para definir o prazo de retenção, com padrão de 6 meses.** | `aculta_lms`; a opção fica em rota administrativa do domínio principal (`/painel-administrativo/**`), com permissão de administração. Consulta ao histórico restrita à equipe administrativa, a definir no ADR. |
 | D-69 | Nota de atividade xAPI (LMS) | **Pela regra de tentativa:** cada declaração com resultado vira tentativa, e a regra existente (melhor ou última) define a nota. Reaproveita `AttemptRule`. | `aculta_lms`; substitui a regra de nota do SCORM registrada em 2026-11-02. |
+| D-70 | Worktrees locais e sincronização do Runtime (agentes) | **Worktrees locais sem branch são permitidos** (`git worktree add --detach <caminho> origin/dev`, integração com `git push origin HEAD:dev` e remoção ao final). **Após cada push em `origin/dev`, o Runtime é sincronizado com o mesmo commit**, sem tocar em `secrets/`, `settings.local.php`, `private/`, `var/` nem nos dados do site. Antes, `updatedb:status` e `config:status`; havendo pendência, snapshot com hash e só então `updatedb` e `config:import` do `config/sync`. Nunca `pm:uninstall`, `DROP` ou apagamento de conteúdo. Substitui a regra de diretório de trabalho obrigatório (`AGENT-GUARDRAILS-FULL.md`, seção homônima) e a proibição de worktree em `AGENTS.md` e `AGENT-OPERATIONS.md`. | `AGENTS.md`, `CLAUDE.md`, `AGENT-OPERATIONS.md`; ambientes em `environments.md` |
+| D-71 | Push automático em `origin/dev` | **Cada entrega é enviada a `origin/dev` por fast-forward logo após o commit, sem autorização por hash.** Não há force push, push para `main`, nem PR ou merge sem pedido explícito. Substitui a exigência de pedido explícito para push, a regra de PR da frente e a referência a `main` nas regras operacionais. | `AGENTS.md`, `CLAUDE.md`, `AGENT-OPERATIONS.md` |
 
 ## Pendente
 
@@ -95,6 +97,8 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 - **Presença (I-29 e Statistics)** tem superfície restrita: painel e rodapé do fórum, sem exposição pública geral.
 
 ## Histórico
+
+- 2026-11-02: D-70 e D-71 registradas. Substituem regras de worktree, de Runtime e de push de `AGENTS.md`, `AGENT-OPERATIONS.md` e `AGENT-GUARDRAILS-FULL.md`. Nenhuma decisão anterior foi reescrita.
 
 - 2026-10-28: decisões D-01 a D-12 registradas, a partir de perguntas interativas. P-01 aguardando dado do responsável.
 - 2026-10-28: P-02 resolvido com o ADR-014 (provedor de mapa).
