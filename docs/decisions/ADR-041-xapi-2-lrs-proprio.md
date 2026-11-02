@@ -44,6 +44,6 @@ O LRS guarda as declarações brutas, e a tentativa guarda o estado derivado. Is
 
 ## Pendências
 
-- Módulo `lms` contrib ausente no ambiente: a F3 precisa dele para vincular a tentativa à matrícula. Não verificado.
+- Vínculo com a tentativa: o `lms` contrib 1.2.4 não tem entidade de tentativa por lançamento; o mais próximo é `lms_lesson_status`. Análise em `docs/modules/ANALISE-LMS-CONTRIB-1-2-4.md`. Decidir se a declaração guarda só o ID do registro do contrib ou se o ACULTA cria entidade própria. O `lms` não vira requisito sem decisão própria.
 - Teste de remoção mensal e medição de carga de escrita no MariaDB do Runtime.
 - Conferência do texto IEEE 9274.1.1-2023 para autorização e JSON Schema antes da F1.
