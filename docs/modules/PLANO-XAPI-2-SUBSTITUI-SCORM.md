@@ -1,6 +1,6 @@
 # Plano de estudo: substituir SCORM por xAPI 2.0 e seguintes
 
-Status: **estudo**. Decisão D-66 (2026-11-02) registrada em `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`, com substituição completa da decisão anterior e escopo xAPI 2.0 puro. Nenhuma implementação começa antes do ADR e das decisões da seção 5.
+Status: **decisões fechadas, ADR pendente**. D-66 (substituição e escopo xAPI 2.0 puro), D-67 (LRS próprio no Drupal), D-68 (retenção configurável, padrão 6 meses) e D-69 (nota pela regra de tentativa), todas em `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`. Nenhuma implementação começa antes do ADR.
 
 Base: [ESTUDO-FERRAMENTAS-LMS-2026.md](ESTUDO-FERRAMENTAS-LMS-2026.md), com as fontes ali listadas.
 
@@ -29,7 +29,7 @@ Consequência direta: o código SCORM (manifesto, validador, extrator, APIs 1.2 
 3. **Armazenamento e leitura**: duas alternativas, abaixo.
 4. **Tradução para o LMS**: declarações viram estado e pontuação da tentativa (`result.score`, `result.completion`, `result.success`) pelo mesmo mapeamento que hoje existe em `ScormStatusMapper`, adaptado.
 
-### Onde guardar as declarações
+### Onde guardar as declarações (decidido: D-67, LRS próprio no Drupal)
 
 | Alternativa | Vantagem | Risco |
 | --- | --- | --- |
@@ -37,7 +37,7 @@ Consequência direta: o código SCORM (manifesto, validador, extrator, APIs 1.2 
 | **B. LRS próprio no Drupal (entidade)** | Sem serviço extra. Usa o padrão do projeto. | Carga de escrita e consulta em MariaDB. Implementar o LRS inteiro é trabalho grande e sem ganho frente ao Ralph. |
 | **C. Só os resultados no Drupal** | Mantém a regra de sem armazenamento paralelo. Guarda só o estado e a pontuação na tentativa. | Não guarda o histórico completo de declarações, que é o que o xAPI oferece. Perde a análise posterior. |
 
-Recomendação preliminar: **C para o progresso do aluno** (é o que o LMS usa para aprovação e certificado) e **A ou B para o histórico bruto**, se houver demanda de análise. Escolher entre A e B depende de quem vai consumir o histórico.
+Decisão tomada (D-67): **B, LRS próprio no Drupal**. Isso difere da recomendação deste estudo, que era C para o progresso. O ADR precisa tratar a duplicidade: as declarações são o registro bruto, e a tentativa guarda o estado derivado. A regra de não criar armazenamento paralelo se aplica ao estado, não às declarações, que são uma capacidade nova.
 
 ## 4. Fases propostas (sem implementar antes da decisão)
 
@@ -54,14 +54,14 @@ Cada fase vira um commit separado, como manda o processo do projeto.
 ## 5. Decisões
 
 Respondidas em 2026-11-02:
-- **Escopo**: xAPI 2.0 puro. cmi5 fica fora; o lançamento é próprio do ACULTA.
-- **Código SCORM**: removido já, em `aculta_lms` 0.1.0-dev.112.
-- **Substituição**: completa. A regra de demanda real não vale mais para xAPI.
+- **Escopo** (D-66): xAPI 2.0 puro. cmi5 fica fora; o lançamento é próprio do ACULTA.
+- **Código SCORM** (D-66): removido em `aculta_lms` 0.1.0-dev.112.
+- **Substituição** (D-66): completa. A regra de demanda real não vale mais para xAPI.
+- **Armazenamento** (D-67): LRS próprio no Drupal.
+- **Retenção** (D-68): opção administrativa no LMS, padrão de 6 meses. A opção fica no painel do domínio principal.
+- **Nota** (D-69): pela regra de tentativa, com `AttemptRule`.
 
-Ainda pendentes (para o ADR de xAPI):
-1. **LRS**: Ralph separado (A), LRS no Drupal (B) ou só resultados no Drupal (C)? Recomendo C para o progresso e A ou B para o histórico.
-2. **Histórico bruto**: quanto tempo guardar as declarações e quem pode consultá-las? Afeta a escolha de A ou B e a LGPD.
-3. **Nota**: a regra de nota (antes ligada ao quiz do SCORM) será decidida no ADR, com base nas declarações de resultado do xAPI.
+Pendente para o ADR: quem pode consultar o histórico (equipe administrativa, a definir), e a regra de remoção automática ao fim do prazo.
 
 ## 6. Riscos
 
