@@ -10,3 +10,10 @@ aculta_lms.xapi:
         Range:
           min: 60
           max: 7200
+    retention_months:
+      type: integer
+      label: 'Retenção das declarações (meses)'
+      constraints:
+        Range:
+          min: 1
+          max: 24

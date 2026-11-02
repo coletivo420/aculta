@@ -1,1 +1,2 @@
 attempt_token_ttl: 1800
+retention_months: 6

@@ -1,3 +1,11 @@
+## 0.1.0-dev.120 — retenção configurável das declarações xAPI (D-68, parcial)
+
+- `Xapi\XapiRetention`: prazo de retenção em meses (`retention_months` em `aculta_lms.xapi`), padrão 6, faixa 1–24.
+  `cutoff()` dá o instante UTC antes do qual as declarações estão vencidas. Função pura.
+- Mesma opção administrativa de validade do token, agora com os dois campos. Configuração padrão e schema atualizados.
+- Validação: `XapiRetentionTest` 3/3. Com as demais suítes xAPI, 62/62 no shim.
+- Remoção mensal das declarações vencidas (serviço com consulta de entidade): DEFERRED, Runtime.
+
 ## 0.1.0-dev.119 — validade do token de tentativa configurável (F3, parcial)
 
 - `Xapi\XapiTokenSettings`: lê a validade do token (`aculta_lms.xapi`, chave `attempt_token_ttl`, em segundos). Padrão

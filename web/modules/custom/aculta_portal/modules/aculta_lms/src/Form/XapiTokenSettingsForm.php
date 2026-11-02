@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Form;
 
+use Drupal\aculta_lms\Xapi\XapiRetention;
 use Drupal\aculta_lms\Xapi\XapiTokenSettings;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -49,6 +50,17 @@ final class XapiTokenSettingsForm extends ConfigFormBase {
         '@max' => XapiTokenSettings::MAX_TTL,
       ]),
     ];
+    $form[XapiRetention::KEY_MONTHS] = [
+      '#type' => 'number',
+      '#title' => $this->t('Retenção das declarações (meses)'),
+      '#default_value' => XapiRetention::monthsFrom($this->config(XapiTokenSettings::CONFIG_NAME)->get(XapiRetention::KEY_MONTHS)),
+      '#min' => XapiRetention::MIN_MONTHS,
+      '#max' => XapiRetention::MAX_MONTHS,
+      '#required' => TRUE,
+      '#description' => $this->t('Padrão: @default meses. Declarações mais antigas que o prazo entram na remoção mensal.', [
+        '@default' => XapiRetention::DEFAULT_MONTHS,
+      ]),
+    ];
     return $form;
   }
 
@@ -64,6 +76,13 @@ final class XapiTokenSettingsForm extends ConfigFormBase {
         '@max' => XapiTokenSettings::MAX_TTL,
       ]));
     }
+    $months = $form_state->getValue(XapiRetention::KEY_MONTHS);
+    if (!is_numeric($months) || (int) $months != $months || (int) $months < XapiRetention::MIN_MONTHS || (int) $months > XapiRetention::MAX_MONTHS) {
+      $form_state->setErrorByName(XapiRetention::KEY_MONTHS, $this->t('Informe um prazo de @min a @max meses.', [
+        '@min' => XapiRetention::MIN_MONTHS,
+        '@max' => XapiRetention::MAX_MONTHS,
+      ]));
+    }
   }
 
   /**
@@ -72,6 +91,7 @@ final class XapiTokenSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->configFactory()->getEditable(XapiTokenSettings::CONFIG_NAME)
       ->set(XapiTokenSettings::KEY_TTL, (int) $form_state->getValue(XapiTokenSettings::KEY_TTL))
+      ->set(XapiRetention::KEY_MONTHS, (int) $form_state->getValue(XapiRetention::KEY_MONTHS))
       ->save();
     parent::submitForm($form, $form_state);
     $this->messenger()->addStatus($this->t('Validade do token salva.'));
