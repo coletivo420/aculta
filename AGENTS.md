@@ -40,6 +40,7 @@ Regras gerais do repositório, válidas para todos os agentes. Em caso de confli
 - Drupal fica em `web/`; módulos customizados em `web/modules/custom/`; tema em `web/themes/custom/aculta420/`. Siga os padrões Drupal/PHP e os contratos dos módulos envolvidos.
 - Não invente contratos nem altere ownership de rotas, entidades, permissões, workflow ou integrações sem verificar a documentação e o código atuais.
 - Não invente hosts, nomes de servidor, CNPJ, endereço ou dados institucionais.
+- **Evite caminhos e rotas absolutas.** Em código, scripts, testes, documentação e comandos versionados, não grave caminhos absolutos de máquina (`/home/...`, `/mnt/...`, `/usr/...`, `/tmp/...`) nem URLs de ambiente fixas. Use caminhos relativos à raiz do repositório, `__DIR__`/`$root` nos scripts, variáveis de ambiente (`SUITE_OUT`, `FIREFOX_BIN`, `GECKODRIVER`, `LOGIN_URL`, `BASE`) e resolução pelo `PATH`. Hosts e URLs de teste vêm de configuração ou de variável, não de texto fixo. Exceção: caminhos de servidor documentados em `docs/architecture/environments.md`.
 
 ## Arquitetura e validação
 

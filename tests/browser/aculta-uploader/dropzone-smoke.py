@@ -4,7 +4,7 @@ Uso: SUITE_OUT=/fora/do/repo LOGIN_URL='<link único do drush user:login>' pytho
 Confere a zona de arrastar (borda tracejada, .is-dragover ao arrastar, área de status)
 e a rejeição de MIME incorreto. Não usa headless.
 """
-import json, os, pathlib, sys, time
+import json, os, pathlib, shutil, sys, time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
@@ -22,8 +22,14 @@ def check(name, ok, detail=""):
 opts = Options()
 opts.add_argument("--width=1280")
 opts.add_argument("--height=900")
-opts.binary_location = os.environ.get('FIREFOX_BIN', '/usr/bin/firefox-esr')
-driver = webdriver.Firefox(options=opts, service=Service(os.environ.get('GECKODRIVER', '/usr/local/bin/geckodriver'), port=int(os.environ.get('GECKO_PORT', '4445'))))
+firefox = os.environ.get('FIREFOX_BIN') or shutil.which('firefox-esr') or shutil.which('firefox')
+if not firefox:
+    sys.exit('Firefox não encontrado no PATH; defina FIREFOX_BIN')
+opts.binary_location = firefox
+gecko = os.environ.get('GECKODRIVER') or shutil.which('geckodriver')
+if not gecko:
+    sys.exit('geckodriver não encontrado no PATH; defina GECKODRIVER')
+driver = webdriver.Firefox(options=opts, service=Service(gecko, port=int(os.environ.get('GECKO_PORT', '4445'))))
 try:
     # Login de teste pelo host da conta; a sessão é copiada para o host principal.
     driver.get(os.environ["LOGIN_URL"])

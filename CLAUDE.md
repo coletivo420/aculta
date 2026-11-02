@@ -23,6 +23,8 @@ Regras gerais de Git, commits, push, worktree, Runtime e coautoria estão em `AG
 - **Testes de Portal, Revista e Fórum:** rode também com o tema Olivero, além do ACULTA420. O módulo deve funcionar sem o tema.
 - **Navegador de testes:** Firefox ESR visível em `DISPLAY=:0`, via geckodriver. Não use Chromium nem headless. Perfil temporário e artefatos vão para `$SUITE_OUT`, fora do repositório. Scripts de teste visual ficam em `tests/browser/<frente>/` com `README.md`.
 
+- **Caminhos e rotas:** não grave caminhos absolutos de máquina nem URLs de ambiente fixas em código, testes, scripts ou docs versionados (regra completa em `AGENTS.md`, seção Escopo e segurança).
+
 ## Dúvida ou ordem fora deste texto
 
 Pare e pergunte ao responsável. Faça antes o que for independente.
