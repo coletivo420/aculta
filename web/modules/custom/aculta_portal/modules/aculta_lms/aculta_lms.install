@@ -22,6 +22,14 @@ function aculta_lms_update_10002(): void {
   }
 }
 
+/** Installs the xAPI statement storage (ADR-041, D-67). */
+function aculta_lms_update_10003(): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  if (!$manager->getEntityType('aculta_lms_xapi_statement')) {
+    $manager->installEntityType(\Drupal::entityTypeManager()->getDefinition('aculta_lms_xapi_statement'));
+  }
+}
+
 /**
  * Implements hook_requirements().
  *
