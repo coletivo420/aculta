@@ -7,8 +7,8 @@ Escopo: pontos do código custom da ACULTA que descompactam ou leem ZIP/GZIP/XLS
 | Superfície | Origem | Situação | Commit |
 | --- | --- | --- | --- |
 | Instalador de pacote H5P (`aculta_lms_h5p`, `aculta_H5PLibraryPackageInstaller`) | Upload de administrador | Corrigido: teto de entradas, de bytes por arquivo, de bytes totais e de razão, medidos por streaming antes da extração | `fac3d58` (enviado) |
-| Parser DMARC (`aculta_mailer`, `DmarcReportParser`) | Anexo de remetente externo | Corrigido: `getFromIndex(0)` e `gzdecode` sem teto. Agora teto de 8 MiB de XML descompactado, medido ao ler | `bf6a089` (local) |
-| Download IMAP (`aculta_mailer`, `CurlImapClient`) | Caixa de e-mail (mensagem externa) | Corrigido: teto de 25 MiB por mensagem, medido durante o download. Mensagem acima do teto é descartada e o cursor avança | `0d9d754` (local) |
+| Parser DMARC (`aculta_mailer`, `DmarcReportParser`) | Anexo de remetente externo | Corrigido: `getFromIndex(0)` e `gzdecode` sem teto. Agora teto de 8 MiB de XML descompactado, medido ao ler | `6f978b5` (origin/dev) |
+| Download IMAP (`aculta_mailer`, `CurlImapClient`) | Caixa de e-mail (mensagem externa) | Corrigido: teto de 25 MiB por mensagem, medido durante o download. Mensagem acima do teto é descartada e o cursor avança | `42ed25f` (origin/dev) |
 | DOCX e XLSX (`DocxPackageValidator`) | Upload de usuário | Já media bytes reais por streaming (`measureEntry`, com orçamento), antes da correção | — |
 | ODS (`SpreadsheetFileValidator::validateOds`) | Upload de usuário | Já tinha orçamento de bytes, razão de compressão e limite de entradas | — |
 
@@ -22,22 +22,30 @@ Escopo: pontos do código custom da ACULTA que descompactam ou leem ZIP/GZIP/XLS
 
 ## Pendências e limites
 
-- `MailMonitorTest::testOversizedMessageIsSkippedAndQueueContinues` foi escrito e não rodou: o teste usa `createMock`, fora do shim local. Deve rodar no ambiente com PHPUnit oficial.
-- PHPUnit oficial, Kernel do Mailer e gate do Portal não rodaram nesta sessão (Packagist bloqueado; sem Runtime).
-- Kernel do instalador H5P (`aculta_simpletest`) e teste de bomba real: Homelab, com autorização.
-- `QrCodeBatchController` cria ZIP de saída (não lê entrada externa). Não foi revisado em profundidade.
-- Não portado do Opigno: fluxo de PPT com `exec` e nome de arquivo sem `escapeshellarg` (`ExternalPackageController`).
-- Limite compartilhado entre módulos: descartado por decisão do responsável. Cada módulo mantém sua própria implementação.
+### Resultado de execução no Homelab — 2026-11-02
+
+- **PASS:** PHPUnit oficial do Mailer Unit, incluindo `MailMonitorTest::testOversizedMessageIsSkippedAndQueueContinues`, os casos GZIP/ZIP e a configuração de limites: 15 testes, 40 assertions.
+- **PASS:** PHPUnit oficial de `aculta_lms`: `AttemptRuleTest`, 11 testes, 11 assertions.
+- **PASS:** PHPUnit oficial de `aculta_lms_h5p` Unit: 6 testes, 40 assertions.
+- **PASS:** Kernels do Mailer (`AcultaMailerKernelTest` e `MailSettingsKernelTest`): 7 testes, 33 assertions, no `aculta_simpletest`. Após os limites configuráveis em `dev.77`, a primeira execução faltou `file.upload_handler`; as fixtures agora habilitam `file` e `aculta_file_uploader`.
+- **PASS:** Kernel do instalador H5P: 11 testes, 232 assertions, no `aculta_simpletest`. A primeira execução encontrou ausência de `aculta_file_uploader` e schema instalado pelo módulo antigo; a fixture foi alinhada ao módulo dono do serviço/schema e passou na repetição.
+- **PASS:** gate `validate-aculta-portal-drupal11.php`: 1.159 checks; `validate-project-status-index.php`: 48 componentes.
+- **PASS:** Runtime confirmado em `toca`, banco `aculta_runtime`; `updatedb` sem updates. Snapshot integral pré-import: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-homelab-validation-20261102/runtime.sql`, SHA-256 `f49e3b6a72f9cbec3d34cec1edb51fcdf464d2c25bc8695a06f1f9f1c413f68`. `config:import` importou apenas `config/sync`, removendo `aculta_file_uploader.settings` que existia só no banco; os status finais de updates/configuração ficaram limpos.
+- **DEFERRED:** teste real de bomba ZIP/H5P não executado; requer autorização explícita do responsável. A autorização foi solicitada e ainda não recebida.
+- **REVISADO, sem mudança:** `QrCodeBatchController` cria arquivo ZIP de saída com `ZipArchive::addFromString`; não abre nem descompacta arquivo de entrada externa.
+- **DEFERRED por escopo:** o fluxo PPT do `ExternalPackageController` do Opigno não foi portado. O plano de independência registra explicitamente PPT/importação/exportação como não objetivos; nenhuma execução desse fluxo foi feita.
+- **MANTIDO:** não há validador compartilhado entre módulos; decisão registrada continua sendo implementação própria por superfície.
+- **PENDENTE:** rodada dos testes de Portal, Revista e Fórum com o tema Olivero além do ACULTA420; essas suítes não foram executadas nesta validação.
 
 ## Versões
 
-- `aculta_lms_h5p` 0.4.0-dev.166 (teto no código) e 0.4.0-dev.167 (teto vindo do painel).
-- `aculta_mailer` 0.1.0-dev.75 (DMARC), 0.1.0-dev.76 (IMAP) e 0.1.0-dev.77 (tetos vindos do painel e guarda de
-  relatório sem metadados). Ver CHANGELOG do módulo.
+- `aculta_lms_h5p` 0.4.0-dev.166 (teto no código), 0.4.0-dev.167 (teto vindo do painel) e 0.4.0-dev.168 (fixture Kernel).
+- `aculta_mailer` 0.1.0-dev.75 (DMARC), 0.1.0-dev.76 (IMAP), 0.1.0-dev.77 (tetos vindos do painel e guarda de
+  relatório sem metadados) e 0.1.0-dev.78 (fixtures Kernel). Ver CHANGELOG do módulo.
 - `aculta_file_uploader` 0.1.0-dev.28: o objeto `IngestionLimits` e a subaba `/painel-administrativo/aculta/uploads/limites`.
 
 Atualização de 2026-11-02 (mesma data, depois da revisão): os tetos de DMARC, IMAP e H5P deixaram de ser
 constantes fixas e passaram a vir do painel de uploads, com os mesmos padrões e tetos máximos fixos no código.
 As correções descritas acima continuam valendo; só a origem do valor mudou.
 
-Status geral: DEFERRED até a execução no ambiente de testes.
+Status geral: Unit, Kernel Mailer/H5P e gates concluídos no Homelab; testes temáticos Portal/Revista/Fórum com Olivero e teste real de bomba ZIP/H5P seguem pendentes.
