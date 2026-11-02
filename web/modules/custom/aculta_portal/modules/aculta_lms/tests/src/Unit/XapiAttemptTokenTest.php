@@ -22,11 +22,11 @@ final class XapiAttemptTokenTest extends UnitTestCase {
    * Token emitido verifica com as mesmas reivindicações.
    */
   public function testRoundTripKeepsClaims(): void {
-    $token = (new XapiAttemptToken(self::SECRET))->issue(42, 'https://aculta.org/atividade/1', self::REGISTRATION, self::NOW);
+    $token = (new XapiAttemptToken(self::SECRET))->issue(42, 'https://exemplo.invalid/atividade/1', self::REGISTRATION, self::NOW);
     $claims = (new XapiAttemptToken(self::SECRET))->verify($token, self::NOW + 60);
 
     $this->assertSame(42, $claims['uid']);
-    $this->assertSame('https://aculta.org/atividade/1', $claims['content']);
+    $this->assertSame('https://exemplo.invalid/atividade/1', $claims['content']);
     $this->assertSame(self::REGISTRATION, $claims['registration']);
     $this->assertSame(self::NOW + 1800, $claims['exp']);
   }
@@ -35,7 +35,7 @@ final class XapiAttemptTokenTest extends UnitTestCase {
    * Alterar as reivindicações invalida a assinatura.
    */
   public function testTamperedBodyIsRefused(): void {
-    $token = (new XapiAttemptToken(self::SECRET))->issue(42, 'https://aculta.org/atividade/1', self::REGISTRATION, self::NOW);
+    $token = (new XapiAttemptToken(self::SECRET))->issue(42, 'https://exemplo.invalid/atividade/1', self::REGISTRATION, self::NOW);
     [$body, $signature] = explode('.', $token);
     $forged = strtr(base64_encode((string) json_encode(['uid' => 43, 'content' => 'x', 'registration' => self::REGISTRATION, 'iat' => self::NOW, 'exp' => self::NOW + 1800])), '+/', '-_');
     $this->expectException(\UnexpectedValueException::class);
@@ -46,7 +46,7 @@ final class XapiAttemptTokenTest extends UnitTestCase {
    * Token assinado com outro segredo é recusado.
    */
   public function testWrongSecretIsRefused(): void {
-    $token = (new XapiAttemptToken(self::SECRET))->issue(42, 'https://aculta.org/atividade/1', self::REGISTRATION, self::NOW);
+    $token = (new XapiAttemptToken(self::SECRET))->issue(42, 'https://exemplo.invalid/atividade/1', self::REGISTRATION, self::NOW);
     $this->expectException(\UnexpectedValueException::class);
     (new XapiAttemptToken('fedcba9876543210fedcba9876543210'))->verify($token, self::NOW);
   }
@@ -55,7 +55,7 @@ final class XapiAttemptTokenTest extends UnitTestCase {
    * Token expirado é recusado no instante de expiração.
    */
   public function testExpiredTokenIsRefused(): void {
-    $token = (new XapiAttemptToken(self::SECRET))->issue(42, 'https://aculta.org/atividade/1', self::REGISTRATION, self::NOW, 60);
+    $token = (new XapiAttemptToken(self::SECRET))->issue(42, 'https://exemplo.invalid/atividade/1', self::REGISTRATION, self::NOW, 60);
     $this->expectException(\UnexpectedValueException::class);
     (new XapiAttemptToken(self::SECRET))->verify($token, self::NOW + 60);
   }
@@ -81,7 +81,7 @@ final class XapiAttemptTokenTest extends UnitTestCase {
    */
   public function testTtlAboveMaximumIsRefused(): void {
     $this->expectException(\InvalidArgumentException::class);
-    (new XapiAttemptToken(self::SECRET))->issue(42, 'https://aculta.org/atividade/1', self::REGISTRATION, self::NOW, XapiAttemptToken::MAX_TTL + 1);
+    (new XapiAttemptToken(self::SECRET))->issue(42, 'https://exemplo.invalid/atividade/1', self::REGISTRATION, self::NOW, XapiAttemptToken::MAX_TTL + 1);
   }
 
   /**
@@ -89,7 +89,7 @@ final class XapiAttemptTokenTest extends UnitTestCase {
    */
   public function testNonUuidRegistrationIsRefused(): void {
     $this->expectException(\InvalidArgumentException::class);
-    (new XapiAttemptToken(self::SECRET))->issue(42, 'https://aculta.org/atividade/1', 'reg-1', self::NOW);
+    (new XapiAttemptToken(self::SECRET))->issue(42, 'https://exemplo.invalid/atividade/1', 'reg-1', self::NOW);
   }
 
 }

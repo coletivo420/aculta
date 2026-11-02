@@ -67,21 +67,21 @@ final class XapiStatementValidatorTest extends UnitTestCase {
    * mbox precisa ser mailto IRI.
    */
   public function testRefusesMboxWithoutMailto(): void {
-    $this->refused($this->statement(['actor' => ['mbox' => 'ana@aculta.org']]));
+    $this->refused($this->statement(['actor' => ['mbox' => 'ana@exemplo.invalid']]));
   }
 
   /**
    * account exige homePage e name.
    */
   public function testRefusesAccountWithoutName(): void {
-    $this->refused($this->statement(['actor' => ['account' => ['homePage' => 'https://aculta.org']]]));
+    $this->refused($this->statement(['actor' => ['account' => ['homePage' => 'https://exemplo.invalid']]]));
   }
 
   /**
    * Grupos não são aceitos nesta fase.
    */
   public function testRefusesGroupActor(): void {
-    $this->refused($this->statement(['actor' => ['objectType' => 'Group', 'mbox' => 'mailto:g@aculta.org']]));
+    $this->refused($this->statement(['actor' => ['objectType' => 'Group', 'mbox' => 'mailto:g@exemplo.invalid']]));
   }
 
   /**
@@ -179,9 +179,9 @@ final class XapiStatementValidatorTest extends UnitTestCase {
   private function statement(array $overrides = []): array {
     $base = [
       'id' => self::UUID,
-      'actor' => ['mbox' => 'mailto:ana@aculta.org'],
+      'actor' => ['mbox' => 'mailto:ana@exemplo.invalid'],
       'verb' => ['id' => 'http://adlnet.gov/expapi/verbs/completed'],
-      'object' => ['objectType' => 'Activity', 'id' => 'https://aculta.org/lms/atividade/1'],
+      'object' => ['objectType' => 'Activity', 'id' => 'https://exemplo.invalid/lms/atividade/1'],
       'result' => ['success' => TRUE, 'score' => ['scaled' => 0.9]],
       'timestamp' => '2026-11-02T10:00:00Z',
     ];

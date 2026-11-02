@@ -136,7 +136,7 @@ final class XapiBatchIngestorTest extends UnitTestCase {
    * @return array{uid: int, content: string, registration: string}
    */
   private function claims(): array {
-    return ['uid' => 42, 'content' => 'https://aculta.org/atividade/1', 'registration' => self::REGISTRATION];
+    return ['uid' => 42, 'content' => 'https://exemplo.invalid/atividade/1', 'registration' => self::REGISTRATION];
   }
 
   /**
@@ -147,7 +147,7 @@ final class XapiBatchIngestorTest extends UnitTestCase {
       'id' => $id,
       'actor' => ['mbox' => 'mailto:aluno@example.org'],
       'verb' => ['id' => 'http://adlnet.gov/expapi/verbs/completed'],
-      'object' => ['id' => 'https://aculta.org/atividade/1'],
+      'object' => ['id' => 'https://exemplo.invalid/atividade/1'],
       'timestamp' => '2026-11-02T10:00:00Z',
     ];
     if ($registration !== NULL) {

@@ -46,6 +46,7 @@ Regras gerais do repositório, válidas para todos os agentes. Em caso de confli
 - Suítes atuais: Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. `aculta_studio` é infraestrutura compartilhada, não uma raiz pública. `/studio` e `/studio/*` respondem 404, sem alias nem redirect.
 - Rotas administrativas e de integração existem só no domínio principal e respondem 404 nos demais. A experiência de organizadores em `/culturas` permanece separada.
 - Preserve os módulos responsáveis e valide acesso no servidor, inclusive em escritas.
+- Endereço centralizado em `aculta_portal_cep` e país exclusivo Brasil (BR), conforme ADR-034 (`docs/decisions/ADR-034-pais-unico-brasil-endereco-central.md`).
 - Padrão Drupal 11+: `docs/portal/DRUPAL-11-STANDARDS.md`.
 - Antes de concluir, execute as verificações relevantes e registre os resultados. Não alegue testes que não executou.
 
@@ -55,3 +56,4 @@ Regras gerais do repositório, válidas para todos os agentes. Em caso de confli
 - Regras por escopo: `docs/operations/AGENT-POLICY-INDEX.md`.
 - Decisões do responsável: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md` (D-70 e D-71 vigentes).
 - Contratos de domínio e rotas: ADR-038, `docs/portal/ADMIN-DOMAIN-POLICY.md` e documentação de arquitetura pertinente.
+- Aceite único de Termos de Uso e Política de Privacidade: `docs/portal/ACEITE-UNICO.md`.
