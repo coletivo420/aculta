@@ -341,8 +341,8 @@ código do módulo.
 | --- | --- | --- | --- | --- | --- |
 | DT-U01 | Revista: o seletor de imagem recente do Studio aparecia, mas salvar falhava com "O campo Imagem editorial é obrigatório" | Resolvida em 2026-11-02: `MediaLibraryWidget::validateRequired` lê o user input bruto; a conversão no `#after_build` agora grava a Media no form state e no user input. Runtime: Revista 605 salva com a media 284 | Média | Sim | Resolvida |
 | DT-U02 | `LmsH5PDiscussionResolverKernelTest` errava por `aculta_lms.xapi_attempt_token_controller` exigir `key.repository` | Reexecutado em 2026-11-02 após os commits de xAPI: 1 teste / 37 assertions PASS | Baixa | Não | Resolvida |
-| DT-U03 | `field_file_extensions` existe sem valores em nenhuma atividade; o tipo `file_upload` e a atividade 23 foram criados na homologação | Consulta `exists(field_file_extensions)` = 0 | Baixa | Não | Aberta |
-- **Testes não executados.** Unitários e de kernel de `aculta_file_uploader`, `aculta_lms`, `aculta_wiki`, `aculta_forum`,
+| DT-U03 | `field_file_extensions` sem valores: a tabela `lms_activity__field_file_extensions` existe e tem 0 linhas; a atividade 23 (`file_upload`, "[HOMOLOG] Envio de arquivo") existe. `lms_file_upload` não está habilitado no Runtime e não aparece em `core.extension`, portanto sem uso | Consultas read-only em 2026-11-02 no Runtime (`aculta_runtime`) | Baixa | Não | Aberta (sem valores; decisão do responsável para preencher ou remover) |
+- **Testes (2026-11-02, worktree em `origin/dev`).** Unit: `aculta_user` 145/575 OK; `aculta_file_uploader` 56/123 OK (1 deprecação); `aculta_image` 21/120 OK; `aculta_document_viewer` 66/316 OK. Kernel `SubmissionUploadPolicyKernelTest` 5/39 OK. Kernel `aculta_lms` completa: 31 testes, 795 asserções, 6 erros (antes 23): 4 de `lms.training_manager` (contrib, P4), 1 `TypeError` em `AccountCoursesManager` com o `TrainingManager` do contrib, 1 `LearnerDashboardComposer` ausente. Commits de uploader com `RUNTIME STATUS: DEFERRED` até a validação de navegador.
   `aculta_image` e `aculta_document_viewer` ainda não rodaram. O ambiente de desenvolvimento local não tem `web/core`
   nem PHPUnit. Os commits `ac550d3e`, `e2b8b9bf`, `83d8bbda`, `7f8cd105` e `168ffe6e` ficam `RUNTIME STATUS: DEFERRED`.
 - **Gates do Portal e de slugs não rodados.** `validate-aculta-portal-drupal11.php`, `validate-project-status-index.php`
@@ -351,7 +351,7 @@ código do módulo.
 - **R2 do gate de imagem.** Exceção por arquivo para `UploadPolicy.php`, `ConsumerUploadPolicy.php` e
   `FileUploadIngestor.php` (`aculta_file_uploader`, dona da política central). A exceção também cobre o ramo de imagem
   desses arquivos. Revisar quando o catálogo de imagem for consolidado.
-- **Leitor de dimensões.** `ImageDimensionReaderInterface` no uploader; `aculta_image.inspector` implementa a interface e
+- **Leitor de dimensões.** Validado em Unit nos dois cenários (`ImageDimensionReaderTest` 4/7 OK): com inspetor (delegação, mock do `ImageDimensionReaderInterface`) e sem `aculta_image` (`getimagesize()`, PNG válido e texto renomeado). Não validado com o `aculta_image.inspector` real no Runtime.
   é usado quando o módulo está ativo. Sem ele, `getimagesize()`. Validar nos dois cenários (com e sem `aculta_image`).
 - **Ponto focal.** Recorte 16:9 e 1:1 gravado pela Crop API e prévia no editor da wiki. Falta validar no navegador e
   confirmar o efeito nos estilos de imagem depois de conhecer o schema do `image_widget_crop` no Runtime.
