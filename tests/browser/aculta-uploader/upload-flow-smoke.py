@@ -43,9 +43,13 @@ try:
     inputs = driver.find_elements(By.CSS_SELECTOR, "input[type=file]")
     check("campo de arquivo presente", len(inputs) > 0, str(len(inputs)))
     if inputs:
-        bad = OUT / "teste-invalido.exe"
-        bad.write_bytes(b"MZ" + b"\0" * 64)
-        inputs[0].send_keys(str(bad))
+        send = os.environ.get("SEND_FILE")
+        if send:
+            inputs[0].send_keys(send)
+        else:
+            bad = OUT / "teste-invalido.exe"
+            bad.write_bytes(b"MZ" + b"\0" * 64)
+            inputs[0].send_keys(str(bad))
         time.sleep(4)
         driver.save_screenshot(str(OUT / "02-mime-incorreto.png"))
         errors = driver.find_elements(By.CSS_SELECTOR, ".messages--error, .form-item--error-message, .file-upload-error")
