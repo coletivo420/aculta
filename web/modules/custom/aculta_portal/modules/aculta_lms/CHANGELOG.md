@@ -1,3 +1,18 @@
+## 0.1.0-dev.115 — derivação de progresso a partir de declarações xAPI (F2, função pura)
+
+- `Xapi\XapiProgressDeriver`: agrupa declarações validadas por `context.registration` (uma tentativa por lançamento) e
+  deriva conclusão, sucesso e nota de cada tentativa. Conclusão vem de `result.completion` ou dos verbos `completed`,
+  `passed` e `failed`; sucesso vem do `result.success` ou dos verbos `passed` e `failed`; a última declaração com nota
+  decide dentro da tentativa, por timestamp.
+- Nota na escala de 0 a 100: `scaled` vale `max(0, scaled) × 100`; sem `scaled`, `raw` com `min` e `max` vira percentual
+  limitado a 0–100; sem intervalo válido, não há nota.
+- Status e escolha da nota vêm de `AttemptRule` (`KEEP_LATEST` ou `KEEP_BEST`), sem reimplementar a regra. Atividade sem
+  tentativa concluída com nota fica pendente.
+
+Validação: `XapiProgressDeriverTest` 16/16 no shim unitário local, e `XapiStatementValidatorTest` 20/20 (regressão F1).
+Controle de mutação: com conversão de nota errada (×10), 7 testes falham; sem ordenação por timestamp, o teste de
+ordenação falha. Sem endpoint, sem lançamento e sem Runtime: DEFERRED.
+
 ## 0.1.0-dev.114 — validador de declarações xAPI 2.0 (F1, sem endpoint)
 
 - `Xapi\XapiStatementValidator`: valida uma declaração xAPI 2.0 antes do LRS aceitá-la. Segue o texto da especificação
