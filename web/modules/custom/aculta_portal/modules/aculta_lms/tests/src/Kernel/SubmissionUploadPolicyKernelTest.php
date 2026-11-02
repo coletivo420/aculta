@@ -28,6 +28,7 @@ final class SubmissionUploadPolicyKernelTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
+    'key',
     'system',
     'user',
     'file',

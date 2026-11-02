@@ -29,6 +29,7 @@ final class ClassRosterVisibilityTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
+    'key',
     'system', 'domain', 'user', 'file', 'image', 'media', 'entity_usage', 'aculta_image', 'aculta_file_uploader',
     'field', 'filter', 'flexible_permissions', 'group', 'views', 'options',
     'text', 'lms', 'lms_classes', 'aculta_lms',

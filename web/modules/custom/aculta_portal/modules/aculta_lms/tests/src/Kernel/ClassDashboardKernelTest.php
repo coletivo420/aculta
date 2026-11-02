@@ -37,6 +37,7 @@ final class ClassDashboardKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc} */
   protected static $modules = [
+    'key',
     'system', 'domain',
     'user',
     'file',

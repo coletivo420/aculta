@@ -21,6 +21,7 @@ final class WebformScoreOwnershipTest extends KernelTestBase {
   use UserCreationTrait;
 
   protected static $modules = [
+    'key',
     'system',
     'user',
     'field',

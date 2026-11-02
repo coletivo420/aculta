@@ -40,6 +40,7 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
+    'key',
     'system', 'domain',
     'datetime',
     'user',

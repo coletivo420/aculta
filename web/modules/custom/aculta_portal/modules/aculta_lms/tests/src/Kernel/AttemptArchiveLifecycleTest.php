@@ -50,6 +50,7 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
    * @var string[]
    */
   protected static $modules = [
+    'key',
     'system', 'domain',
     'user',
     'file',

@@ -52,6 +52,7 @@ final class CertificateLifecycleTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
+    'key',
     'system', 'domain', 'user', 'file', 'field', 'filter', 'image', 'media', 'options', 'text', 'entity_print',
     'entity_usage', 'aculta_image', 'aculta_file_uploader', 'flexible_permissions', 'group', 'views', 'lms',
   ];
