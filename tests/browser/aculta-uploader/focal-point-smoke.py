@@ -68,6 +68,25 @@ try:
         x2 = fx()
         check("seta direita move focal_x (1%)", x2 != x1, f"{x1} -> {x2}")
         driver.save_screenshot(str(OUT / "02-seta.png"))
+        if os.environ.get("SAVE") == "1":
+            fx2, fy2 = fx(), fy()
+            from selenium.webdriver.support.ui import Select
+            fmt = driver.find_elements(By.CSS_SELECTOR, "select[name='body[0][format]']")
+            if fmt:
+                sel_opt = Select(fmt[0])
+                vals = [o.get_attribute('value') for o in sel_opt.options]
+                pick = 'wiki' if 'wiki' in vals else next((v for v in vals if v), None)
+                if pick:
+                    sel_opt.select_by_value(pick)
+                check("formato de texto selecionado", pick is not None, pick)
+            save = [b for b in driver.find_elements(By.CSS_SELECTOR, "input[type=submit], button[type=submit]") if (b.get_attribute('value') or b.text or '').strip() in ('Salvar', 'Save')]
+            check("botão Salvar do formulário presente", len(save) > 0, len(save))
+            if save:
+                driver.execute_script("arguments[0].click();", save[0])
+                time.sleep(6)
+            driver.save_screenshot(str(OUT / "03-salvo.png"))
+            check("formulário salvo sem erro", not driver.find_elements(By.CSS_SELECTOR, ".messages--error"), "")
+            print("SAVED_FOCAL", fx2, fy2)
 finally:
     (OUT / "resultado.json").write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
     driver.quit()
