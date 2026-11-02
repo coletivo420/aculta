@@ -2,6 +2,16 @@
 
 Este é o ponto único de handoff para as próximas sessões e agentes. Atualize este documento antes de trocar de sessão, encerrar uma fase ou transferir o trabalho para outro agente/ferramenta, conforme `AGENTS.md`.
 
+## Handoff mais recente — validação Homelab concluída parcialmente, 2026-11-02
+
+- **Tarefa e contexto:** validar no Homelab as entregas `6f978b5`, `42ed25f`, `7fe8bae`, `7adb5fc`, `313c227` e `fac3d58`; usuário autorizou depois a bomba ZIP real e pediu o relatório completo.
+- **Checkout/publicação:** `dev`, limpo e sincronizado com `origin/dev` no momento do handoff. Commits desta validação enviados: `3a1a8569e` (fixture H5P), `9dddc1fff` (fixtures Mailer) e `5e73f2279` (bombas ZIP reais). Commit documental da consolidação final ainda precisa ser criado/enviado.
+- **Runtime:** `toca`, Drupal 11.4.10, PHP 8.4.27, Drush 13.8.0, banco `aculta_runtime`. Snapshot pré-import: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-homelab-validation-20261102/runtime.sql`, SHA-256 `f49e3b6a72f9cbec3d34cec1edb51fcdf464d2c25bc8695a06f1f9f1c413f68`. Atualização sem pending updates; import somente de `config/sync`, que removeu a configuração DB-only `aculta_file_uploader.settings`; verificações finais de status limpas.
+- **Resultados executados:** Mailer Unit 15/40 PASS; LMS `AttemptRuleTest` 11/11 PASS; H5P Unit 6/40 PASS; Mailer Kernel 7/33 PASS; H5P instalador Kernel 13/310 PASS; casos reais de bomba ZIP 2/78 PASS, rejeitando entrada de 33 MiB e entrada de 2 MiB com razão >100:1 antes da extração. Gates Portal Drupal 11+ 1.159 checks PASS; índice de status 48 componentes PASS. Fórum funcional: ACULTA420 6/33 PASS e Olivero 6/33 PASS.
+- **Limite:** não há testes `BrowserTestBase`/`FunctionalJavascriptTestBase` para Portal e Revista. Smoke temporária da Revista falhou antes da execução por dependências de Views (`node.type.revista`, `field.field.node.revista.field_aculta_discussion`) ausentes em instalação limpa sem `config/sync`; logo Portal/Revista não foram validados em nenhum dos dois temas. O achado e motivo estão no relatório abaixo.
+- **Documentação a finalizar:** atualizar e publicar `docs/operations/SECURITY-REVIEW-ZIP-INPUTS-2026-11-02.md` com os resultados e este handoff. Não alterar o texto dos achados da revisão.
+- **Referências:** `docs/operations/SECURITY-REVIEW-ZIP-INPUTS-2026-11-02.md`; `docs/operations/BANCO-DE-TESTE.md`; `docs/architecture/environments.md`; `docs/operations/AGENT-OPERATIONS.md`; `git status --short --branch`.
+
 ## Handoff mais recente
 
 - **Data/hora:** 2026-11-02, America/Sao_Paulo.
