@@ -89,6 +89,7 @@ $hooks = new ThemeHooks(
   \Drupal::service('entity_type.manager'),
   \Drupal::routeMatch(),
   \Drupal::service('extension.list.theme'),
+  \Drupal::service('state'),
 );
 
 $complete = [
