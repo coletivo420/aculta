@@ -1,7 +1,10 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.135
+version: 0.1.0-dev.136
 state: Dev
 progress_note: >-
+  Dev.136: Kernel instala schema de crop, remove escrita de nickname_required e
+  asserções da aba Wiki apagada em da7c0a348. Kernel WikiLeadImageLifecycle 33
+  testes / 2.186 assertions PASS (381 depreciações Core/contrib).
   Dev.135: editor de ponto focal usa só data-aculta-focal/data-focal-marker;
   Unit Wiki 78/402 PASS; revisão visual pendente.
   Dev.134: testes alinhados ao catálogo central de upload; Unit Wiki 78/402 PASS.

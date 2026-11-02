@@ -128,6 +128,9 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
     $this->installEntitySchema('node');
+    // O crop está habilitado pela cadeia do aculta_file_uploader; sem o schema
+    // o hook de exclusão do arquivo quebra e a limpeza falha fechada.
+    $this->installEntitySchema('crop');
     // Core's menu_ui submit hooks inspect and may create menu links when a
     // native node form is submitted, so keep the entity schema available to
     // the isolated Kernel fixture even when the test does not exercise menus.
@@ -1248,9 +1251,6 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'roles' => ['wiki_workspace_creator_test'],
     ]);
     $author->save();
-    $this->container->get('config.factory')->getEditable('aculta_user.settings')
-      ->set('nickname_required', FALSE)
-      ->save();
     $reader = User::create([
       'uid' => 18,
       'name' => 'wiki-workspace-reader',
@@ -3275,13 +3275,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertCount(26, array_unique(array_merge($firstPageIds, $secondPageIds)));
     self::assertSame($firstPageIds, array_map(static fn (WikiProposal $item): int => (int) $item->id(), $queue->proposals('invalid-cursor')->getItems()));
 
-    $wikiTab = $this->container->get('aculta_studio.marley_tab_manager')->createInstance('wiki');
-    self::assertTrue($wikiTab->access($reviewer)->isAllowed());
-    self::assertArrayHasKey('moderacao', $wikiTab->sections($reviewer));
-    self::assertArrayHasKey('propostas', $wikiTab->sections($reviewer)['moderacao']['tabs']);
-    self::assertArrayNotHasKey('verbetes', $wikiTab->sections($reviewer));
-    self::assertArrayNotHasKey('revisoes', $wikiTab->sections($reviewer));
-    self::assertArrayNotHasKey('moderacao', $wikiTab->sections($submitter));
+    // A aba Wiki do Marley foi removida (da7c0a348); a fila editorial da Wiki
+    // vive nas rotas do purpose wiki420 e no listing compartilhado do Studio.
     $studioProposalListing = $this->container->get('aculta_studio.marley_listing')
       ->build(['entity' => 'wiki_proposal_queue'], $reviewer);
     self::assertCount(25, $studioProposalListing['table']['#rows']);
@@ -4090,8 +4085,7 @@ PHP;
     self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
     self::assertNull($page->getNextCursor());
 
-    $wikiTab = $this->container->get('aculta_studio.marley_tab_manager')->createInstance('wiki');
-    self::assertArrayHasKey('revisoes', $wikiTab->sections($reviewer)['moderacao']['tabs']);
+    // Sem a aba Wiki do Marley (da7c0a348), a revisão usa o listing do Studio.
     $studioReviewListing = $this->container->get('aculta_studio.marley_listing')
       ->build(['entity' => 'wiki_entry_review_queue'], $reviewer);
     self::assertCount(1, $studioReviewListing['table']['#rows']);

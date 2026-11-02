@@ -1,3 +1,12 @@
+## 0.1.0-dev.136 — Kernel de ciclo de vida volta a rodar inteiro
+
+- O Kernel instala o schema de `crop`: a cadeia do uploader habilita o crop, e o hook de exclusão do arquivo consulta a tabela; sem ela a limpeza falhava fechada.
+- Removida a escrita de `aculta_user.settings:nickname_required`, que não existe na configuração nem no schema.
+- Removidas as asserções da aba Wiki do Marley, apagada em da7c0a348; a fila editorial continua coberta pelo listing do Studio.
+- Versão 0.1.0-dev.136.
+
+RUNTIME STATUS: DEFERRED. Só testes.
+
 ## 0.1.0-dev.135 — editor de ponto focal sem classes de design
 
 - `WikiEntryImageHooks` usa só `data-aculta-focal` e `data-focal-marker`; as classes saíram do módulo e o CSS do uploader/tema seleciona pelos atributos.
