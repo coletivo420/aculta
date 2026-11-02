@@ -55,7 +55,7 @@ final class WikiLeadImageDownloadAccess {
         ->execute();
       if ($mediaIds === []) {
         // Mídia não publicada (verbete em rascunho): só quem pode editar o verbete vê a prévia.
-        return $this->editableDraftAccess($file->id());
+        return $this->editableDraftAccess((int) $file->id());
       }
 
       $publishedReferences = $this->entityTypeManager->getStorage('node')->getQuery()
@@ -69,7 +69,7 @@ final class WikiLeadImageDownloadAccess {
       if ($publishedReferences !== []) {
         return NULL;
       }
-      return $this->editableDraftAccess($file->id());
+      return $this->editableDraftAccess((int) $file->id());
     }
     catch (\Throwable) {
       // Incomplete entity configuration or a lookup failure must not expose a
