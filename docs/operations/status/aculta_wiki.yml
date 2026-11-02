@@ -13,7 +13,11 @@ progress_note: >-
   MarleyTabManager do Studio e dois `files_deleted` que falham também com o
   UnusedFileCleaner de b3f05ccbd).
   A imagem de destaque usa `aculta_file_uploader.consumer_policy` e aceita envios
-  recentes do Studio; upload autenticado no Runtime pendente.
+  recentes do Studio. Runtime 2026-11-02: verbete 604 criado como rascunho com
+  imagem de destaque → media 277 (image, não publicada) e arquivo permanente em
+  `private://wiki/imagens`. A aba só renderizava depois de confirmar o e-mail da
+  conta: o aculta_portal oculta campos de formulário da Wiki para e-mail não
+  confirmado (EmailConfirmationPolicy), o que parecia defeito do uploader.
   Dev.121: `WikiEditorialNoticePipelineTest` liga worker, publisher com
   revalidação de acesso e subscriber Messenger reais; 1/10 PASS. Unit Wiki
   completa 88/484 PASS. Combinado com Kernels separados de fila e persistência,
