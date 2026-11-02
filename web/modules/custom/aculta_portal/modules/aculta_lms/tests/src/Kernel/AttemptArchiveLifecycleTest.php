@@ -57,7 +57,7 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     'media',
     'entity_usage',
     'media_duplicates',
-    'aculta_image',
+    'aculta_image', 'aculta_file_uploader',
     'filter',
     'field',
     'flexible_permissions',
@@ -470,7 +470,9 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
   public function testSubmissionImageConstraintUsesCoreFileValidator(): void {
     $validPath = $this->siteDirectory . '/private/answer-valid.png';
     $invalidPath = $this->siteDirectory . '/private/answer-invalid.png';
-    file_put_contents($validPath, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l1sAAAAASUVORK5CYII=', TRUE));
+    // PNG 1x1 RGBA decodificável pela GD: a política central exige dimensões
+    // legíveis, não apenas um cabeçalho válido.
+    file_put_contents($validPath, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAADUlEQVQImWP4z8DwHwAFAAH/q842iQAAAABJRU5ErkJggg==', TRUE));
     file_put_contents($invalidPath, 'not an image');
     try {
       $validator = $this->container->get('file.validator');

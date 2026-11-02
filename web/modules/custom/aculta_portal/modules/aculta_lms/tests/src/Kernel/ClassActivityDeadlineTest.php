@@ -49,7 +49,7 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
     'options',
     'entity_print',
     'entity_usage',
-    'aculta_image',
+    'aculta_image', 'aculta_file_uploader',
     'field',
     'filter',
     'flexible_permissions',

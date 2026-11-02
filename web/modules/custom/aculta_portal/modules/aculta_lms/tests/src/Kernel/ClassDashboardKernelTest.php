@@ -43,7 +43,7 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     'image',
     'media',
     'entity_usage',
-    'aculta_image',
+    'aculta_image', 'aculta_file_uploader',
     'field',
     'filter',
     'flexible_permissions',

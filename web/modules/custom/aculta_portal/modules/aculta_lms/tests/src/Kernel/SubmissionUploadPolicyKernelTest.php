@@ -32,7 +32,7 @@ final class SubmissionUploadPolicyKernelTest extends KernelTestBase {
     'user',
     'file',
     'image',
-    'aculta_image',
+    'aculta_image', 'aculta_file_uploader',
     'aculta_portal_upload_test',
   ];
 
@@ -49,7 +49,7 @@ final class SubmissionUploadPolicyKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installConfig([
-      'system', 'user', 'file', 'image', 'aculta_image', 'aculta_portal_upload_test',
+      'system', 'user', 'file', 'image', 'aculta_image', 'aculta_file_uploader', 'aculta_portal_upload_test',
     ]);
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
@@ -121,7 +121,8 @@ final class SubmissionUploadPolicyKernelTest extends KernelTestBase {
     self::assertSame('Envie um arquivo. Extensões permitidas: pdf docx.', (string) $element['#description']);
 
     self::assertSame(['png', 'jpg', 'pdf', 'docx'], $this->allowed());
-    self::assertSame(20 * 1024 * 1024, $this->policy->maxBytes());
+    // A configuração global pode pedir mais, mas o teto central é 10 MB.
+    self::assertSame(10 * 1024 * 1024, $this->policy->maxBytes());
   }
 
   /**

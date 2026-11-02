@@ -101,7 +101,8 @@ final class FileUpload extends ActivityAnswerBase implements PluginFormInterface
     $activity = $answer->getActivity();
     $data = $answer->getData();
 
-    $default_value = $data['file_upload'][0] ?? NULL;
+    $default_value = $this->fidFromData($data);
+    $default_value = $default_value === NULL ? NULL : [$default_value];
     $default_file_extensions = $this->configuration['default_file_extensions'];
     $file_extensions = $activity->get('field_file_extensions')->first()?->getValue()['value'] ?? $default_file_extensions;
     $file_extensions = \str_replace(',', ' ', $file_extensions);
@@ -163,7 +164,7 @@ final class FileUpload extends ActivityAnswerBase implements PluginFormInterface
       '#type' => 'link',
       '#title' => $file->getFilename(),
       '#attributes' => [
-        'class' => ['lms-answer-file'],
+        'data-portal-ui' => 'lms-answer-file',
         'target' => '_blank',
       ],
       '#url' => $url,
@@ -181,17 +182,23 @@ final class FileUpload extends ActivityAnswerBase implements PluginFormInterface
    * Uploaded file of the answer, if any.
    */
   public function getFile(AnswerInterface $answer): ?FileInterface {
-    $data = $answer->getData();
+    $fid = $this->fidFromData($answer->getData());
+    return $fid === NULL ? NULL : $this->entityTypeManager->getStorage('file')->load($fid);
+  }
 
-    if (
-      !\array_key_exists('file_upload', $data) ||
-      !\is_array($data['file_upload']) ||
-      !\array_key_exists(0, $data['file_upload'])
-    ) {
+  /**
+   * Extrai o fid gravado pelo managed_file do Core.
+   *
+   * O Form API persiste `['file_upload' => ['fids' => [fid]]]`. O formato
+   * antigo `[fid]` também é aceito para respostas gravadas antes do port.
+   */
+  private function fidFromData(array $data): ?int {
+    $value = $data['file_upload'] ?? NULL;
+    if (!\is_array($value)) {
       return NULL;
     }
-
-    return $this->entityTypeManager->getStorage('file')->load($data['file_upload'][0]);
+    $fid = $value['fids'][0] ?? $value[0] ?? NULL;
+    return \is_numeric($fid) && (int) $fid > 0 ? (int) $fid : NULL;
   }
 
 }

@@ -1,3 +1,12 @@
+## 0.1.0-dev.103 — formato de data e acesso do arquivo de resposta
+
+- `FileUpload::getFile()` lê `data['file_upload']['fids'][0]`, que é o formato que o `managed_file` do Core grava, e mantém `[fid]` para respostas antigas. Antes lia `[0]`, que nunca existe: o download negava e o formulário não recarregava o arquivo.
+- O link do arquivo usa `data-portal-ui="lms-answer-file"` em vez da classe `lms-answer-file`, conforme a fronteira módulo–tema.
+- Novos Kernels habilitam `aculta_file_uploader` (o `KernelTestBase` não resolve dependências do `info.yml`).
+- Novo Unit `FileUploadAnswerDataTest` 7/9 PASS.
+
+RUNTIME STATUS: DEFERRED. O download real depende de resposta com arquivo no Runtime.
+
 ## 0.1.0-dev.102 — lms_file_upload portado para o aculta_lms
 
 - Plugin de resposta `file_upload` portado para `aculta_lms` (mesmo id, diretório `private://lms_file_upload` e file usage, para manter respostas antigas).

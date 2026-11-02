@@ -41,7 +41,7 @@ final class LearningDashboardKernelTest extends KernelTestBase {
    */
   protected static $modules = [
     'system', 'domain', 'user', 'file', 'field', 'filter', 'image', 'media', 'options', 'entity_print',
-    'entity_usage', 'aculta_image', 'flexible_permissions', 'group', 'views', 'text', 'lms', 'aculta_lms',
+    'entity_usage', 'aculta_image', 'aculta_file_uploader', 'flexible_permissions', 'group', 'views', 'text', 'lms', 'aculta_lms',
   ];
 
   /**
