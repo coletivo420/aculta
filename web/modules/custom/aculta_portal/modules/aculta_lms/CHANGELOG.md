@@ -1,3 +1,9 @@
+## 0.1.0-dev.116 — nome do método de extensões padrão
+
+- `FileUpload::getDefaultAllowedFileExtensions()` vira `defaultAllowedExtensions()`. Só renomeação: a validação
+  de extensões do LMS já passa por `aculta_file_uploader.consumer_policy` (`restrictValidators`, consumidor `lms`).
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.115 — derivação de progresso a partir de declarações xAPI (F2, função pura)
 
 - `Xapi\XapiProgressDeriver`: agrupa declarações validadas por `context.registration` (uma tentativa por lançamento) e

@@ -174,7 +174,7 @@ final class FileUpload extends ActivityAnswerBase implements PluginFormInterface
   /**
    * Default file extensions of the plugin.
    */
-  public function getDefaultAllowedFileExtensions(): string {
+  public function defaultAllowedExtensions(): string {
     return $this->configuration['default_file_extensions'];
   }
 

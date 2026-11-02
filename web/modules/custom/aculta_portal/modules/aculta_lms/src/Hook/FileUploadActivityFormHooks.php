@@ -36,7 +36,7 @@ final class FileUploadActivityFormHooks {
     if (!$plugin instanceof FileUpload) {
       return;
     }
-    $form['field_file_extensions']['widget'][0]['value']['#default_value'] = $plugin->getDefaultAllowedFileExtensions();
+    $form['field_file_extensions']['widget'][0]['value']['#default_value'] = $plugin->defaultAllowedExtensions();
   }
 
 }
