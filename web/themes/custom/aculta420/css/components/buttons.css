@@ -96,7 +96,7 @@ button.link:hover, button.link:focus { color: var(--aculta-text-accent); }
   text-decoration: none;
   background-color: var(--aculta-interactive-bg);
   color: var(--aculta-interactive-text);
-  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  transition: background-color var(--aculta-motion-quick) ease-in-out, color var(--aculta-motion-quick) ease-in-out, border-color var(--aculta-motion-quick) ease-in-out;
 }
 [data-portal-ui="aculta-btn-outline"] {
   background-color: transparent;
