@@ -1,3 +1,12 @@
+## 0.1.0-dev.107 — normalização de estado SCORM (sem armazenamento)
+
+- `ScormStatusMapper`: função pura que converte lesson_status (SCORM 1.2) e completion_status/success_status (SCORM 2004)
+  em conclusão, sucesso e estado normalizado (`not_started`, `in_progress`, `completed`, `passed`, `failed`). Recusa
+  valores fora da especificação e versão desconhecida, em vez de assumir padrão.
+- Não grava nada. Onde o estado será guardado (tentativa do LMS, decisão do responsável) fica para a fase seguinte.
+
+Validação: `ScormStatusMapperTest` 8/8 no shim unitário local. PHPUnit oficial e Kernel DEFERRED.
+
 ## 0.1.0-dev.106 — base segura de pacote SCORM (sem player)
 
 Acrescenta `Scorm\` dentro do aculta_lms, sem submódulo e sem dependência do Drupal:
