@@ -334,3 +334,11 @@ código do módulo.
 | DT-H5P02 | Assets agregados são normalizados para o player legado em vez de passarem pelo sistema de libraries do Drupal | `aculta_H5PDrupal::buildAggregatedAssets()`, chamado por `aggregatedAssets()` | Média | Não; depende da remoção do player legado | Pós-RC | Aberta |
 | DT-H5P03 | Busca em streaming salva via `aculta_H5PEditorDrupalStorage::saveFileTemporarily()` em vez da opção `sink` do Guzzle | `aculta_H5PDrupal::fetchExternalData()`, ramo `$stream` | Baixa | Não; avaliar junto com a atualização do cliente HTTP | Pós-RC | Aberta |
 | DT-H5P04 | O filtro `semantics IS NOT NULL` nas duas consultas de listagem de bibliotecas pode ser desnecessário | `aculta_H5PEditorDrupalStorage.php`, consultas de detalhes e de listagem | Baixa | Não; medir o custo antes de remover | Pós-RC | Aberta |
+
+## Uploader e Studio — pendências desta fase (2026-11-02)
+
+| ID | Dívida | Evidência | Sev. | Decisão | Estado |
+| --- | --- | --- | --- | --- | --- |
+| DT-U01 | Revista: o seletor de imagem recente do Studio aparece, mas salvar falha com "O campo Imagem editorial é obrigatório" | Firefox ESR em `/node/605/edit`: select `studio_cover` com o fid 786, erro de campo obrigatório na validação do widget de Media Library antes do `#validate` do hook; tentativa de conversão no `after_build` não resolveu e foi revertida | Média | Sim (dono do hook de capa) | Aberta |
+| DT-U02 | `LmsH5PDiscussionResolverKernelTest` erra por `aculta_lms.xapi_attempt_token_controller` exigir `key.repository` (módulo key não habilitado no teste) | `phpunit .../LmsH5PDiscussionResolverKernelTest.php` em 2026-11-02, após os commits de xAPI de outra sessão | Baixa | Não | Aberta |
+| DT-U03 | `field_file_extensions` existe sem valores em nenhuma atividade; o tipo `file_upload` e a atividade 23 foram criados na homologação | Consulta `exists(field_file_extensions)` = 0 | Baixa | Não | Aberta |
