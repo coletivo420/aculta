@@ -42,6 +42,16 @@ final class XapiProgressDeriverTest extends UnitTestCase {
   }
 
   /**
+   * min ausente vale 0: raw 15 de max 20 dá 75, como no Opigno.
+   */
+  public function testMissingMinDefaultsToZero(): void {
+    $statements = [$this->statement(self::VERB_COMPLETED, ['score' => ['raw' => 15, 'max' => 20]], 'reg-1', '2026-11-02T10:00:00Z')];
+    $result = (new XapiProgressDeriver())->result($statements, AttemptRule::KEEP_LATEST, 50.0);
+
+    $this->assertSame(75.0, $result['score']);
+  }
+
+  /**
    * Quando há scaled e raw, o scaled vale.
    */
   public function testScaledWinsOverRaw(): void {

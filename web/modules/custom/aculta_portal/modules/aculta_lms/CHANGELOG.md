@@ -1,3 +1,9 @@
+## 0.1.0-dev.121 — nota xAPI com min ausente (F2)
+
+- `XapiProgressDeriver`: `raw` com `max` e sem `min` agora vale com `min = 0`, como a xAPI permite. Sem `success` virando
+  nota máxima (diferença deliberada em relação ao Opigno). Teste `testMissingMinDefaultsToZero`.
+- Validação: 63/63 no shim (suítes xAPI). Sem Runtime: nenhuma alteração de banco ou configuração.
+
 ## 0.1.0-dev.120 — retenção configurável das declarações xAPI (D-68, parcial)
 
 - `Xapi\XapiRetention`: prazo de retenção em meses (`retention_months` em `aculta_lms.xapi`), padrão 6, faixa 1–24.

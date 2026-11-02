@@ -18,7 +18,7 @@ use Drupal\aculta_lms\Assessment\AttemptRule;
  *   (o sentido vem do IRI do verbo);
  * - sucesso: o último result.success ou verbo `passed` (verdadeiro) ou `failed`
  *   (falso) decide;
- * - nota: result.score.scaled vira max(0, scaled) × 100; sem scaled, raw com min e max
+ * - nota: result.score.scaled vira max(0, scaled) × 100; sem scaled, raw com max (min ausente vale 0)
  *   vira percentual de (raw − min) ÷ (max − min) × 100, limitado a 0–100; sem nenhum
  *   dos dois, não há nota. A última declaração com nota decide.
  *
@@ -150,12 +150,14 @@ final class XapiProgressDeriver {
     if (isset($score['scaled'])) {
       return max(0.0, (float) $score['scaled']) * 100.0;
     }
-    if (isset($score['raw'], $score['min'], $score['max'])) {
-      $range = (float) $score['max'] - (float) $score['min'];
+    if (isset($score['raw'], $score['max'])) {
+      // min é opcional na xAPI; ausente, vale 0 (mesmo padrão do Opigno, sem nota máxima por success).
+      $min = (float) ($score['min'] ?? 0);
+      $range = (float) $score['max'] - $min;
       if ($range <= 0) {
         return NULL;
       }
-      $percent = ((float) $score['raw'] - (float) $score['min']) / $range * 100.0;
+      $percent = ((float) $score['raw'] - $min) / $range * 100.0;
       return max(0.0, min(100.0, $percent));
     }
     return NULL;
