@@ -11,7 +11,7 @@ use Drupal\aculta_lms\Certificate\CourseCertificateManager;
 use Drupal\aculta_lms\Controller\LearningDashboardController;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\aculta_lms\LearningDashboardManager;
-use Drupal\aculta_lms\Learning\LearnerDashboardComposer;
+use Drupal\aculta_studio\Learning\LearnerDashboardComposer;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\KernelTests\KernelTestBase;
