@@ -1,3 +1,14 @@
+## 0.4.0-dev.167 — limites do pacote H5P vêm do painel de uploads
+
+- O instalador recebe `IngestionLimits` (`aculta_file_uploader`) e aplica o teto por entrada e o total configurados em
+  `/painel-administrativo/aculta/uploads/limites`. Padrões: 32 MB por entrada e 256 MB no total. Tetos fixos: 128 MB
+  e 512 MB. Entradas de contagem e razão de compressão continuam constantes.
+- Dependência já existente: `aculta_file_uploader`.
+
+Validação: os testes de unidade do instalador (`aculta_H5PLibraryPackageInstallerTest`) usam `createMock` e não
+rodaram no shim local. `aculta_H5PArchiveResourceLimitsTest` 6/6 no shim anterior, sem mudança de lógica. Kernel e
+gate não executados. Status: DEFERRED.
+
 ## 0.4.0-dev.166 — limites de recursos no instalador de bibliotecas H5P
 
 - Novo `aculta_H5PArchiveResourceLimits`, sem dependências Drupal: recusa pacotes
