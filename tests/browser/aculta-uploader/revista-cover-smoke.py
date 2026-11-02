@@ -37,10 +37,20 @@ try:
     btn = driver.find_elements(By.CSS_SELECTOR, "[data-drupal-selector='edit-field-media-image-open-button'], input[name='field_media_image-media-library-open-button']")
     check("botão de abrir biblioteca da capa presente", len(btn) > 0, str(len(btn)))
     if btn:
-        driver.execute_script("arguments[0].scrollIntoView({block:'center'}); arguments[0].click();", btn[0])
-        time.sleep(4)
+        # O botão da biblioteca de mídia abre por mousedown (comportamento do Drupal).
+        driver.execute_script("arguments[0].scrollIntoView({block:'center'}); arguments[0].dispatchEvent(new MouseEvent('mousedown',{bubbles:true,cancelable:true,view:window})); arguments[0].click();", btn[0])
+        from selenium.webdriver.support.ui import WebDriverWait
+        from selenium.webdriver.support import expected_conditions as EC
+        try:
+            WebDriverWait(driver, 15).until(lambda d: d.find_elements(By.CSS_SELECTOR, ".ui-dialog, .media-library-wrapper--dialog, [role=dialog]"))
+        except Exception:
+            pass
+        time.sleep(2)
+        check("diálogo da biblioteca abriu", len(driver.find_elements(By.CSS_SELECTOR, ".ui-dialog, [role=dialog]")) > 0, str(len(driver.find_elements(By.CSS_SELECTOR, ".ui-dialog, [role=dialog]"))))
         driver.save_screenshot(str(OUT / "01-biblioteca.png"))
-        inputs = driver.find_elements(By.CSS_SELECTOR, "input[type=file]")
+        dlg = driver.find_elements(By.CSS_SELECTOR, ".ui-dialog, [role=dialog]")
+        scope = dlg[-1] if dlg else driver
+        inputs = scope.find_elements(By.CSS_SELECTOR, "input[type=file]")
         check("campo de arquivo no diálogo da biblioteca", len(inputs) > 0, str(len(inputs)))
         if inputs:
             bad = OUT / "teste-invalido.exe"
