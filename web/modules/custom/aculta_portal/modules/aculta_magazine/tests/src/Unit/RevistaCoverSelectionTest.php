@@ -22,6 +22,8 @@ use PHPUnit\Framework\Attributes\Group as TestGroup;
 #[TestGroup('aculta_magazine')]
 final class RevistaCoverSelectionTest extends UnitTestCase {
 
+  private const FIELD_NAME = 'field_media_image';
+
   /**
    * Monta o hook com dependências simuladas.
    */
@@ -48,9 +50,11 @@ final class RevistaCoverSelectionTest extends UnitTestCase {
 
     self::assertFalse($form_state->hasAnyErrors(), 'A escolha em selection não deve gerar erro.');
     self::assertSame(
-      [['target_id' => 277]],
-      $form_state->getValue(['field_media_image']),
+      [['target_id' => 277, 'weight' => 0]],
+      $form_state->getValue([self::FIELD_NAME, 'selection']),
+      'massageFormValues lê selection; sem ela a mídia vira [] e o campo fica nulo.',
     );
+    self::assertSame(277, (int) $form_state->getValue([self::FIELD_NAME, 0, 'target_id']));
   }
 
   /**

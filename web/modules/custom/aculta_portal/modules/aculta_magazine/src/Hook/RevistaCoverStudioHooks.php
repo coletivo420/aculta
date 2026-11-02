@@ -141,8 +141,11 @@ final class RevistaCoverStudioHooks {
         $form_state->setErrorByName(self::FIELD, t('Escolha ou envie a imagem editorial.'));
       }
       elseif ($existing > 0) {
-        // A escolha do widget chega em selection até o massageFormValues.
-        $form_state->setValue(self::FIELD, [['target_id' => $existing]]);
+        // MediaLibraryWidget::massageFormValues só devolve selection; sem ela,
+        // a mídia vira [] e o campo obrigatório falha com "não pode ser nulo".
+        $value = [['target_id' => $existing, 'weight' => 0]];
+        $form_state->setValue(self::FIELD, $value);
+        $form_state->setValue([self::FIELD, 'selection'], $value);
       }
       return;
     }
