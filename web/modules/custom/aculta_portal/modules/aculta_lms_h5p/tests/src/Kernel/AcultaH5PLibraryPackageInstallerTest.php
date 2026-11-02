@@ -185,6 +185,74 @@ final class AcultaH5PLibraryPackageInstallerTest extends KernelTestBase {
   }
 
   /**
+   * Rejects a real ZIP entry above 32 MiB before creating an extraction dir.
+   */
+  public function testRejectsRealOversizedZipEntryBeforeExtraction(): void {
+    $payload = $this->siteDirectory . '/oversized-' . bin2hex(random_bytes(6)) . '.bin';
+    $package = $this->siteDirectory . '/oversized-' . bin2hex(random_bytes(6)) . '.h5p';
+    $handle = fopen($payload, 'wb');
+    self::assertIsResource($handle);
+    try {
+      $remaining = 33 * 1024 * 1024;
+      while ($remaining > 0) {
+        $chunkSize = min(1024 * 1024, $remaining);
+        self::assertSame($chunkSize, fwrite($handle, random_bytes($chunkSize)));
+        $remaining -= $chunkSize;
+      }
+    }
+    finally {
+      fclose($handle);
+    }
+
+    $zip = new \ZipArchive();
+    self::assertSame(TRUE, $zip->open($package, \ZipArchive::CREATE | \ZipArchive::EXCL));
+    self::assertTrue($zip->addFile($payload, 'large-random.bin'));
+    self::assertTrue($zip->close());
+    $zip = new \ZipArchive();
+    self::assertSame(TRUE, $zip->open($package, \ZipArchive::RDONLY));
+    $entry = $zip->statName('large-random.bin');
+    $zip->close();
+    self::assertGreaterThan(32 * 1024 * 1024, $entry['size']);
+    self::assertLessThan(100, $entry['size'] / max(1, $entry['comp_size']));
+
+    try {
+      $this->assertPackageIsRejectedBeforeExtraction(
+        $package,
+        'O pacote H5P contém um arquivo grande demais.',
+      );
+    }
+    finally {
+      unlink($payload);
+      unlink($package);
+    }
+  }
+
+  /**
+   * Rejects a real highly-compressible ZIP entry above 1 MiB and 100:1.
+   */
+  public function testRejectsRealHighRatioZipEntryBeforeExtraction(): void {
+    $package = $this->createPackage([
+      'high-ratio.txt' => str_repeat('A', 2 * 1024 * 1024),
+    ]);
+    $zip = new \ZipArchive();
+    self::assertSame(TRUE, $zip->open($package, \ZipArchive::RDONLY));
+    $entry = $zip->statName('high-ratio.txt');
+    $zip->close();
+    self::assertGreaterThan(1024 * 1024, $entry['size']);
+    self::assertGreaterThan(100, $entry['size'] / max(1, $entry['comp_size']));
+
+    try {
+      $this->assertPackageIsRejectedBeforeExtraction(
+        $package,
+        'O pacote H5P tem uma taxa de compressão suspeita.',
+      );
+    }
+    finally {
+      unlink($package);
+    }
+  }
+
+  /**
    * Confirms invalid late assets are rejected before any library is saved. */
   public function testPreflightsEveryAssetBeforePersistingPackageLibraries(): void {
     $package = $this->createPackage([
@@ -377,6 +445,22 @@ final class AcultaH5PLibraryPackageInstallerTest extends KernelTestBase {
     }
     self::assertTrue($zip->close());
     return $path;
+  }
+
+  /**
+   * Installs the archive through the real service and proves rejection precedes extraction.
+   */
+  private function assertPackageIsRejectedBeforeExtraction(string $package, string $expectedMessage): void {
+    try {
+      $this->container->get('aculta_lms_h5p.library_package_installer')->install($package);
+      self::fail('Expected the unsafe archive to be rejected.');
+    }
+    catch (\UnexpectedValueException $exception) {
+      self::assertSame($expectedMessage, $exception->getMessage());
+    }
+
+    $storagePath = $this->container->get('aculta_lms_h5p.storage_path')->getPath();
+    self::assertSame([], glob($storagePath . '/package-*') ?: []);
   }
 
 }

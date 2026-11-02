@@ -1,3 +1,12 @@
+## 0.4.0-dev.169 — valida bombas ZIP reais antes da extração
+
+- Kernels do instalador criam ZIPs reais com uma entrada aleatória de 33 MiB e
+  uma entrada compactada de 2 MiB acima de 100:1.
+- Os dois pacotes são enviados ao serviço real do instalador; ele recusa cada
+  um durante o preflight, sem criar diretório temporário de extração.
+- PHPUnit oficial no Homelab: Kernel do instalador 13/310 PASS, incluindo os
+  dois casos de bomba real.
+
 ## 0.4.0-dev.168 — fixture Kernel acompanha a integração de limites
 
 - O Kernel do instalador habilita `aculta_file_uploader`, dependência usada pelo
