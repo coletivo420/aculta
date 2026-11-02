@@ -370,9 +370,9 @@ final class WikiLeadImageUploader {
     if ($this->focalPointRecorder === NULL) {
       return;
     }
-    $fid = (int) $form_state->getValue([self::TAB, 'focal_fid']);
-    $x = $form_state->getValue([self::TAB, 'focal_x']);
-    $y = $form_state->getValue([self::TAB, 'focal_y']);
+    $fid = (int) $form_state->getValue([self::TAB, 'focal', 'focal_fid']);
+    $x = $form_state->getValue([self::TAB, 'focal', 'focal_x']);
+    $y = $form_state->getValue([self::TAB, 'focal', 'focal_y']);
     if ($fid < 1 || !is_numeric($x) || !is_numeric($y)) {
       return;
     }
