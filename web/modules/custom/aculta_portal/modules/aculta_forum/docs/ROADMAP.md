@@ -593,7 +593,7 @@ concorrência e falha parcial. Esta etapa não autoriza excluir conteúdo do
 Runtime.
 
 1. Upload contextual de imagens com `aculta_image` e galerias `media_gallery`
-   via `aculta_gallery`, consumindo a política central `aculta_portal.user_upload_policy`;
+   via `aculta_gallery`, consumindo a política central `aculta_file_uploader.consumer_policy`;
    a aba do Fórum herda a política global ou configura override, e a publicação
    dos Media permanece vinculada ao post ou comentário visível.
 2. Cartões/preview local de Office, priorizando DOCX e planilhas, apenas para
@@ -646,7 +646,7 @@ T20–T24:
 
 - Upload: `wiki_entry` não tem campo de envio do usuário. `field_wiki_image` é
   referência a Media editorial, não upload por pessoa, então não há superfície
-  para aplicar `aculta_portal.user_upload_policy` sem antes criar o campo (ou
+  para aplicar `aculta_file_uploader.consumer_policy` sem antes criar o campo (ou
   decidir que o Media editorial fica fora da política).
 - Comentários: `wiki_entry` não tem campo Comment nem `field_aculta_discussion`.
   A moderação de primeiro comentário do `aculta_user` é genérica ao campo, mas
