@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.lms_activity.file_upload.field_file_extensions
     - lms.lms_activity_type.file_upload
   module:
     - user
@@ -33,6 +32,5 @@ hidden:
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
-  field_file_extensions: true
   langcode: true
   search_api_excerpt: true

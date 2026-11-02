@@ -103,7 +103,8 @@ final class FileUpload extends ActivityAnswerBase implements PluginFormInterface
 
     $default_value = $this->fidFromData($data);
     $default_value = $default_value === NULL ? NULL : [$default_value];
-    $file_extensions = $activity->get('field_file_extensions')->first()?->getValue()['value'] ?? $this->defaultAllowedExtensions();
+    // DT-U03: o campo field_file_extensions foi removido; a lista vem da política do uploader.
+    $file_extensions = $this->defaultAllowedExtensions();
     $file_extensions = \str_replace(',', ' ', $file_extensions);
 
     $validators = $this->uploadPolicy->restrictValidators(

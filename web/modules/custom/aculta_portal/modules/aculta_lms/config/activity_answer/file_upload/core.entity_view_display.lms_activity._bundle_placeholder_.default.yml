@@ -2,7 +2,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.lms_activity._bundle_placeholder_.field_file_extensions
     - lms.lms_activity_type._bundle_placeholder_
   module:
     - user
@@ -27,4 +26,3 @@ content:
     weight: 1
     region: content
 hidden:
-  field_file_extensions: true
