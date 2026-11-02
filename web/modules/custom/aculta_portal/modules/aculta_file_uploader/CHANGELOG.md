@@ -1,5 +1,16 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.27 — rota do painel de uploads corrigida
+
+- A rota `aculta_file_uploader.settings` passa de `/painel-administrativo/aculta-portal/uploads` para
+  `/painel-administrativo/aculta/uploads`, o caminho canônico do painel ACULTA. Não há redirecionamento: a rota
+  anterior não era canônica e nenhum outro código a referenciava.
+- README e `docs/STUDIO-INTEGRATION.md` do submódulo, e o README do `aculta_lms`, passam a citar o caminho correto.
+  O histórico acima deste ponto é mantido como estava.
+- Gate `scripts/validate-admin-routes-main-domain.php`: PASS (39 arquivos de rota, 161 rotas administrativas).
+
+Status: DEFERRED. Verificação no navegador do painel corrigido depende do ambiente de testes.
+
 ## 0.1.0-dev.26 — CSS do ponto focal por atributo
 
 - `css/focal-point.css` seleciona `[data-aculta-focal]` e `[data-focal-marker]` em vez das classes.

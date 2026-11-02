@@ -7,7 +7,7 @@ ser aberta quando o responsável ordenar.
 
 - O uploader mantém a interface de envio (`aculta_upload_dropzone`). O Studio
   consome essa interface; não reimplementa upload.
-- O painel administrativo (`/painel-administrativo/aculta-portal/uploads`) fica
+- O painel administrativo (`/painel-administrativo/aculta/uploads`) fica
   no uploader. É experiência só para administradores.
 - A experiência de envio para o usuário final é a integração Aculta Studio.
 - Pelas regras do projeto, não há CORS para transportar estado entre

@@ -1,5 +1,5 @@
 aculta_file_uploader.settings:
-  path: '/painel-administrativo/aculta-portal/uploads'
+  path: '/painel-administrativo/aculta/uploads'
   defaults:
     _form: '\Drupal\aculta_file_uploader\Form\UploadSettingsForm'
     _title: 'Uploads por integração'

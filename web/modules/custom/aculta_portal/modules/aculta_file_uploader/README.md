@@ -27,7 +27,7 @@ configurado.
 
 ## Configuração administrativa
 
-`/painel-administrativo/aculta-portal/uploads` permite administrar a política
+`/painel-administrativo/aculta/uploads` permite administrar a política
 global e as exceções por consumidor. A rota exige `administer site
 configuration` e pertence ao domínio principal. `aculta_file_uploader.settings`
 é configuração operacional; não a adicione ao Config Sync sem revisar os

@@ -144,7 +144,7 @@ criada, então o download real de resposta continua sem smoke positivo.
   enviadas ao editor H5P usam `aculta_image.upload_ingester` e o ciclo de vida
   de File/uso compartilhado. Arquivos anexados a respostas do LMS passam pela
   política `aculta_file_uploader.consumer_policy`, na integração `lms` (painel
-  `/painel-administrativo/aculta-portal/uploads`), e as imagens rasters também
+  `/painel-administrativo/aculta/uploads`), e as imagens rasters também
   pelo validador `AcultaLmsSubmissionImage`, que usa a mesma política. Continuam em storage privado e
   são entregues pela rota de download protegida pela resposta e pela matrícula
   vigente.
