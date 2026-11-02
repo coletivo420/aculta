@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.332
+version: 0.1.0-dev.337
 state: Dev
 next_phase: >-
   Verificar a reconstrução de rotas e HTTP 404 de `/comment/{cid}` no próximo

@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.5.0-dev.16
+version: 0.5.0-dev.17
 state: Dev
 progress_note: >-
   Dev.16: `EditorialCapabilitiesForm` usa Entity Storage injetado; removida

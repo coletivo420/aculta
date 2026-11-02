@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.30
+version: 0.1.0-dev.37
 state: Dev
 progress_note: >-
   2026-11-01: Correções de runtime no Ganjalab: CourseAuthoringController passa os atributos exigidos por PortalLinkElement::build (ArgumentCountError, teste 3/36); CourseJourneyPresentationHooks recebeu o import de Learning\CourseJourneyComposer (TypeError no container). O Studio possui LearnerDashboardComposer, rotas Ganjalab e CourseJourneyPresentationHooks; o LMS não é dependência. Unit Studio 62/597 e LMS 99/472 PASS; Kernel ContractsInstallTest 1/8 PASS; jornada/sala 74/74 e Educador 200.

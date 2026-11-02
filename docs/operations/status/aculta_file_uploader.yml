@@ -1,0 +1,5 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.23
+state: Dev
+next_phase: 'Homologar uploads reais de Wiki, Fórum, LMS e Portal com arquivos válidos, MIME incorreto e acima do limite ([README](web/modules/custom/aculta_portal/modules/aculta_file_uploader/README.md)).'
+progress_note: "Dev.23: pipeline central cobre imagens e documentos, consumidores Wiki/Fórum/LMS/Portal/Galeria/Usuário, uploads recentes por dono e integração do ponto focal com Crop API. Runtime segue DEFERRED para upload autenticado real; ver CHANGELOG."
