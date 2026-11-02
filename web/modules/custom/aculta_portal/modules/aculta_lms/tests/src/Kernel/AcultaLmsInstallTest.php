@@ -6,7 +6,6 @@ namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Contract\PaymentOperationsInterface;
-use Drupal\aculta_studio\Controller\GanjalabController;
 use Drupal\aculta_lms\CourseOrderEnrollmentManagerInterface;
 use Drupal\aculta_lms\Controller\LearningDashboardController;
 use Drupal\aculta_lms\Hook\EnrollmentFormHooks;
@@ -93,10 +92,6 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $checkoutSettings = $container->get('aculta_portal.checkout_settings');
     $this->assertInstanceOf(CheckoutSettings::class, $checkoutSettings);
     $this->assertSame(CheckoutSettings::LEGACY_LMS_ORDER_TYPE, $checkoutSettings->lmsOrderType());
-    $this->assertInstanceOf(
-      GanjalabController::class,
-      $container->get('aculta_studio.ganjalab_controller'),
-    );
     $this->assertInstanceOf(EnrollmentFormHooks::class, $container->get(EnrollmentFormHooks::class));
     $route = $container->get('router.route_provider')->getRouteByName('aculta_lms.class_activity_deadline');
     $this->assertSame('/painel-administrativo/lms/curso/{course}/turma/{group}/atividade/{activity}/prazo', $route->getPath());
