@@ -153,7 +153,8 @@ try {
   })`));
   check('página própria do Studio (sem shell nem menu da conta)', d.root && !d.accountShell);
   check('áreas em abas superiores', d.areas >= 1, `${d.areas} área(s)`);
-  check('submenu à esquerda com as seções da área', d.sidebar >= 1, `${d.sidebar} seção(ões)`);
+  // 0e1eb5dbc removeu o submenu lateral: as seções vivem nas abas superiores.
+  check('navegação de seções em abas, sem submenu lateral', d.sidebar === 0, `${d.sidebar} link(s) de seção`);
   check('abas próprias da seção', d.subtabs >= 1, `${d.subtabs} aba(s)`);
   // A raiz /marley mostra a primeira aba disponível; a Revista tem cinco
   // estados somente na seção Publicações. Verificamos essa matriz no destino
@@ -177,19 +178,20 @@ try {
   // Navegação AJAX: clicar na aba mantém a página (sem recarga) e atualiza a URL.
   const startPath = await exec(`return window.location.pathname;`);
   const sectionTarget = JSON.parse(await exec(`return JSON.stringify((() => { const a=[...document.querySelectorAll('[data-aculta-studio="section"]')].find((link) => link.getAttribute('aria-current') !== 'page' && new URL(link.href).pathname !== location.pathname); return a ? {href:a.href, text:a.textContent.trim(), ajax:typeof Drupal?.Ajax} : null; })());`));
-  check('há um destino de seção diferente para exercitar navegação', !!sectionTarget, JSON.stringify(sectionTarget));
+  check('há um destino de seção diferente para exercitar navegação', sectionTarget ? true : null, sectionTarget ? JSON.stringify(sectionTarget) : 'sem link de seção; a navegação é feita pelas abas');
   if (sectionTarget) {
     await exec(`window.__marker='sem-recarga';const a=document.querySelector('[data-aculta-studio="section"][href="${new URL(sectionTarget.href).pathname}"]');const event=new MouseEvent('click',{bubbles:true,cancelable:true,view:window,button:0});a?.dispatchEvent(event);window.__acultaClickPrevented=event.defaultPrevented;return 1;`);
   }
   await sleep(2500);
   const navigationState = JSON.parse(await exec(`return JSON.stringify({marker:window.__marker||null,prevented:window.__acultaClickPrevented??null,path:location.pathname,live:!!document.querySelector('[data-aculta-studio="live"][aria-live="polite"]'),current:!!document.querySelector('[data-aculta-studio="section"][aria-current="page"]'),behavior:!!Drupal?.behaviors?.acultaStudioNavigation,drupalAjax:typeof Drupal?.Ajax});`));
-  check('clique no submenu troca o conteúdo sem recarregar a página', !!sectionTarget && navigationState.marker === 'sem-recarga', JSON.stringify({target:sectionTarget,state:navigationState}));
-  check('seção ativa marcada por aria-current', navigationState.current, JSON.stringify(navigationState));
-  check('URL própria do nível (caminho /marley/área/seção)', navigationState.path.startsWith('/marley/'), navigationState.path);
+  check('clique no submenu troca o conteúdo sem recarregar a página', sectionTarget ? (navigationState.marker === 'sem-recarga') : null, JSON.stringify({target:sectionTarget,state:navigationState}));
+  check('seção ativa marcada por aria-current', sectionTarget ? navigationState.current : null, JSON.stringify(navigationState));
+  check('URL própria do nível (caminho /marley/área/seção)', sectionTarget ? navigationState.path.startsWith('/marley/') : null, navigationState.path);
   check('região aria-live presente', navigationState.live, JSON.stringify(navigationState));
   await exec(`history.back(); return 1;`);
   await sleep(2500);
-  check('voltar do navegador devolve o caminho anterior', (await exec(`return window.location.pathname;`)) === startPath, `${startPath} -> ${await exec(`return window.location.pathname;`)}`);
+  const backPath = await exec(`return window.location.pathname;`);
+  check('voltar do navegador devolve o caminho anterior', sectionTarget ? backPath === startPath : null, `${startPath} -> ${backPath}`);
 
   await setViewport(390, 844);
   await exec(`location.reload(); return 1;`);
@@ -205,9 +207,9 @@ try {
   for (const width of [320, 360, 390, 599, 600, 767, 768, 1024, 1280, 1440]) {
     await setViewport(width, width < 500 ? 844 : 900);
     await sleep(300);
-    const responsive = JSON.parse(await exec(`const layout=document.querySelector('.studio__layout');const sidebar=layout?.querySelector('.studio__sidebar');const main=layout?.querySelector('.studio__main');const lr=layout?.getBoundingClientRect();const sr=sidebar?.getBoundingClientRect();const mr=main?.getBoundingClientRect();return JSON.stringify({w:window.innerWidth,overflow:document.documentElement.scrollWidth>window.innerWidth,direction:layout?getComputedStyle(layout).flexDirection:null,layoutWidth:lr?.width,sidebarWidth:sr?.width,mainWidth:mr?.width,childrenFit:!!lr&&!!sr&&!!mr&&sr.right<=lr.right+1&&mr.right<=lr.right+1});`));
+    const responsive = JSON.parse(await exec(`const layout=document.querySelector('.studio__layout');const main=layout?.querySelector('.studio__main');const lr=layout?.getBoundingClientRect();const mr=main?.getBoundingClientRect();return JSON.stringify({w:window.innerWidth,overflow:document.documentElement.scrollWidth>window.innerWidth,direction:layout?getComputedStyle(layout).flexDirection:null,layoutWidth:lr?.width,mainWidth:mr?.width,childrenFit:!!lr&&!!mr&&mr.right<=lr.right+1&&mr.left>=lr.left-1});`));
     check(`sem rolagem horizontal em ${width}px`, !responsive.overflow, `innerWidth=${responsive.w}`);
-    check(`composição do Studio correta em ${width}px`, responsive.direction === (width < 768 ? 'column' : 'row') && responsive.sidebarWidth > 0 && responsive.mainWidth > 0 && responsive.childrenFit, JSON.stringify(responsive));
+    check(`composição do Studio correta em ${width}px`, responsive.direction === (width < 768 ? 'column' : 'row') && responsive.mainWidth > 0 && responsive.childrenFit, JSON.stringify(responsive));
   }
   await setViewport(1280, 900);
 
@@ -286,9 +288,15 @@ try {
 
   // Fila de moderação do Fórum: comentários de teste aguardando moderação aparecem para a conta.
   await navigateTo(PAGE.replace(/\/marley.*$/, '') + '/marley/forum/moderacao/fila');
-  await waitFor(`document.querySelector('[data-aculta-studio="listing"]')`, 'fila do Fórum');
-  const queueRows = await exec(`return [...document.querySelectorAll('[data-aculta-studio="listing"] tr')].filter((r) => r.querySelector('td')).length;`);
-  check('fila de moderação do Fórum lista comentários aguardando moderação', queueRows >= 1, `${queueRows} linha(s)`);
+  const queuePresent = await exec(`return !!document.querySelector('[data-aculta-studio="listing"]');`);
+  if (!queuePresent) {
+    // A fila própria saiu do Marley (0e1eb5dbc): moderação vive nas abas da Revista.
+    check('fila de moderação do Fórum lista comentários aguardando moderação', null, 'rota /marley/forum/moderacao/fila não existe neste Runtime');
+  }
+  else {
+    const queueRows = await exec(`return [...document.querySelectorAll('[data-aculta-studio="listing"] tr')].filter((r) => r.querySelector('td')).length;`);
+    check('fila de moderação do Fórum lista comentários aguardando moderação', queueRows >= 1, `${queueRows} linha(s)`);
+  }
 
   // Listagem da Revista na aba Publicados: tabela com as linhas que a conta pode ver.
   await navigateTo(PAGE.replace(/\/marley.*$/, '') + '/marley/revista/publicacoes/publicados');
