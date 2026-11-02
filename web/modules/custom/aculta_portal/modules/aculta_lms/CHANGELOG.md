@@ -1,3 +1,10 @@
+## 0.1.0-dev.126 — Contrato de aula (ADR-042, P1)
+
+- `CourseLesson` (valor imutável) e `CourseLessonReaderInterface` definem a aula no vocabulário ACULTA, sem tipos do contrib.
+- Versão 0.1.0-dev.126 foi marcada por `afb7816d`; este bloco registra o conteúdo.
+- Adaptador do LMS contrib e testes no Runtime pendentes; nenhum consumidor mudou.
+- Smoke sem Drupal 3/3; `CourseLessonTest` escrito, não executado.
+
 ## 0.1.0-dev.125 — Desacoplamento do leitor de cursos (ADR-042, decisão 6a)
 
 ## 0.1.0-dev.126 — remoção de ligações ao upload de atividades e ao DT-U03
