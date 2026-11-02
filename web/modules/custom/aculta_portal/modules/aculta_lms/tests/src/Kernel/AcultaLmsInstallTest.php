@@ -59,6 +59,10 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_relationship');
+    $this->installEntitySchema('lms_course_status');
+    $this->installEntitySchema('lms_lesson_status');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
