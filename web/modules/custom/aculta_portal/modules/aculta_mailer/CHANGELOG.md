@@ -1,3 +1,10 @@
+## 0.1.0-dev.78 — fixtures Kernel registram dependências de ingestão
+
+- Os Kernels do Mailer habilitam `file` e `aculta_file_uploader`, necessários
+  para compilar o serviço de ingestão e fornecer `IngestionLimits`.
+- PHPUnit oficial no Homelab: Unit 15/40 e Kernels `AcultaMailerKernelTest` +
+  `MailSettingsKernelTest` 7/33 PASS no `aculta_simpletest`.
+
 ## 0.1.0-dev.77 — limites de ingestão configuráveis e guarda de relatório DMARC
 
 - Os tetos do parser DMARC (relatório descompactado) e do download IMAP (mensagem) saem do código e vêm de
