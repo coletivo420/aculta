@@ -1,5 +1,17 @@
 # Estado da sessão
 
+## Handoff mais recente — xAPI F3/Homelab e sincronização, 2026-11-02
+
+- **Tarefa:** concluir a implementação F3 do LRS xAPI, sincronizar com `origin/dev`, validar no checkout Homelab e publicar. O usuário autorizou push e o teste real ZIP/H5P na sessão anterior.
+- **Git:** `dev` foi conferida e sincronizada em `d4a465d45` (`origin/dev`); as mudanças F3 foram commitadas em `960c86bd3` (`feat(aculta_lms): conclui ingestão e retenção xAPI`). Push e atualização deste handoff ainda precisam ser feitos.
+- **Entrega:** `aculta_lms` 0.1.0-dev.124; endpoint para emissão de token da tentativa e `POST /xapi/statements`, validação/idempotência/limite Flood por token, retenção mensal em lotes e cobertura Unit/Kernel. ADR-041, plano xAPI, CHANGELOG, status e README foram atualizados.
+- **Runtime:** Drush confirmou `toca`, Drupal 11.4.10, PHP 8.4.27 e banco `aculta_runtime`. `updatedb:status`: sem updates pendentes; `config:status`: sem diferenças. Snapshot criado anteriormente para a validação de config/Olivero: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-xapi-olivero-20261102/runtime.sql`, SHA-256 `385f539d6a8f82e12dfe2c8e293bab691f3242e00b5545b33913453ff2868153`.
+- **Validações executadas nesta retomada:** PHPUnit oficial Unit de XAPI, AttemptRule, Mailer e H5P: 97 testes/190 asserções PASS; Kernel xAPI retention, Mailer e H5P installer no `aculta_simpletest`: 22 testes/365 asserções PASS, 27 depreciações de Core/contrib; gate Portal Drupal 11+: 1.159 checks PASS; gate MAIN: 39 arquivos/163 rotas PASS; status index: 48 componentes PASS; PHP lint e `git diff --check` PASS.
+- **Validações Homelab executadas anteriormente nesta tarefa:** Firefox ESR visível com ACULTA420 e Olivero aceitou e persistiu statement em ambos; formulário de configuração somente no MAIN e 404 em `cursos`; Flood aceitou as primeiras 60 submissões inválidas e respondeu 429 à 61ª. Artefatos fora do repositório: `/home/piradopirata/aculta-suite-out/xapi-browser-20261102/`.
+- **ZIP/GZIP da tarefa predecessora:** resultados reais e achados foram registrados sem reescrever os achados em `docs/operations/SECURITY-REVIEW-ZIP-INPUTS-2026-11-02.md`; inclui execução autorizada de ZIPs de bomba pelo instalador H5P. Portal/Revista funcional por tema ficaram DEFERRED pelas dependências de instalação/configuração descritas naquele documento; Fórum passou em ACULTA420 e Olivero.
+- **Próximos passos:** revisar status após commit documental, `git push origin dev` por fast-forward e confirmar `HEAD == origin/dev`; então relatar hashes, validações e pendências ao responsável.
+- **Leitura para retomar:** commit `960c86bd3`; `docs/modules/PLANO-XAPI-2-SUBSTITUI-SCORM.md`; `docs/decisions/ADR-041-xapi-2-lrs-proprio.md`; `docs/operations/SECURITY-REVIEW-ZIP-INPUTS-2026-11-02.md`.
+
 Este é o ponto único de handoff para as próximas sessões e agentes. Atualize este documento antes de trocar de sessão, encerrar uma fase ou transferir o trabalho para outro agente/ferramenta, conforme `AGENTS.md`.
 
 ## Handoff mais recente — validação Homelab concluída parcialmente, 2026-11-02
