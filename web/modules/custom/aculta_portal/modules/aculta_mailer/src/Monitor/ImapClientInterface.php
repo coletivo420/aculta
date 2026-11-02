@@ -19,6 +19,9 @@ interface ImapClientInterface {
 
   /**
    * Conteúdo bruto (RFC 5322) da mensagem, sem marcá-la como lida.
+   *
+   * @throws \Drupal\aculta_mailer\Monitor\ImapMessageTooLargeException
+   *   Quando a mensagem passa do teto de download.
    */
   public function fetch(int $uid): string;
 

@@ -1,3 +1,17 @@
+## 0.1.0-dev.76 — teto de download IMAP por mensagem — 2026-11-02
+
+O cliente IMAP corta a transferência de uma mensagem ao passar de 25 MiB (`CurlImapClient::MAX_MESSAGE_BYTES`),
+medido durante o download por callback de escrita do curl, sem acumular o restante em memória. A mensagem acima do
+teto gera `ImapMessageTooLargeException`. Antes, uma exceção de fetch abortava o poll inteiro sem avançar o cursor,
+então uma mensagem grande bloqueava a fila de bounces e de DMARC para sempre. Agora o monitor descarta essa mensagem,
+avança o cursor e segue com as próximas.
+
+Validação: o caminho do curl foi exercitado contra um servidor HTTP local (`php -S`) com arquivo de 30 MiB: estouro
+gera a exceção; corpo abaixo do teto volta idêntico, inclusive com teto igual ao tamanho; a leitura sem teto continua
+íntegra. Pico de memória no estouro: 48 MiB. `MonitorParsersTest` 6/6 no shim unitário local.
+Não executados nesta sessão: `MailMonitorTest` (usa `createMock`, fora do shim; o teste de descarte foi escrito, mas
+não rodou), PHPUnit oficial, Kernel Mailer e gate Drupal 11+. Status: DEFERRED.
+
 ## 0.1.0-dev.75 — limite de descompactação no parser DMARC — 2026-11-02
 
 Anexos DMARC de remetentes externos agora têm teto de 8 MiB de XML descompactado, medido ao ler. O parser
