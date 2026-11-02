@@ -36,9 +36,14 @@ O LRS guarda as declarações brutas, e a tentativa guarda o estado derivado. Is
 - Migração de SCORM, que não existe em produção.
 - Consulta pública ao histórico. A consulta é só administrativa, a definir em ADR próprio se houver demanda.
 
+## Decisões complementares (2026-11-02)
+
+- **Consulta do histórico:** só a equipe administrativa, no painel do domínio principal. Educadores não consultam declarações de alunos.
+- **Remoção ao fim do prazo:** apagamento em lote mensal das declarações vencidas, no padrão de retenção de 6 meses. A remoção é do registro bruto; o estado derivado da tentativa não é apagado por ela.
+- **Credencial:** aprovado o modelo de token curto por tentativa, vinculado à matrícula, ao conteúdo e à tentativa, emitido pelo Drupal e tratado como segredo.
+
 ## Pendências
 
-- Quem pode consultar o histórico, além da equipe administrativa.
-- Regra de remoção automática ao fim do prazo, com teste de Runtime.
-- Medição de carga de escrita no MariaDB do Runtime.
+- Módulo `lms` contrib ausente no ambiente: a F3 precisa dele para vincular a tentativa à matrícula. Não verificado.
+- Teste de remoção mensal e medição de carga de escrita no MariaDB do Runtime.
 - Conferência do texto IEEE 9274.1.1-2023 para autorização e JSON Schema antes da F1.
