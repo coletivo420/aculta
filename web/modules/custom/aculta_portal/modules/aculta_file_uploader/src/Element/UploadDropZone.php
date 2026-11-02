@@ -37,7 +37,7 @@ class UploadDropZone extends ManagedFile {
    */
   public static function attachDropZone(array $element): array {
     $element['#attributes']['class'][] = 'aculta-dropzone';
-    $element['#attributes']['data-aculta-dropzone'] = '';
+    $element['#attributes']['data-aculta-dropzone'] = TRUE;
     $element['#attached']['library'][] = 'aculta_file_uploader/upload-dropzone';
     return $element;
   }
