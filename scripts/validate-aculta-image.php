@@ -19,7 +19,8 @@
  * - R9: estilos configurados em Views e modos de exibição, validados contra o catálogo.
  * - R10: cópia direta de imagens em mirroring de assets fora do aculta_image.
  *
- * Exceções de R2: somente a conquista do aculta_game (política contextual aprovada).
+ * Exceções de R2: a conquista do aculta_game (política contextual aprovada) e a política central do
+ * aculta_file_uploader (dona dos validadores de upload).
  */
 
 declare(strict_types=1);
@@ -35,6 +36,18 @@ $EXCECOES = [
     'FileImageDimensions' => 'Exceção aprovada pelo responsável: a conquista mantém 4096 px próprios.',
     'FileExtension' => 'Exceção aprovada pelo responsável: a conquista usa png/jpg/jpeg/webp.',
     'public://conquistas' => 'Exceção aprovada: pasta própria das conquistas.',
+  ],
+  'web/modules/custom/aculta_portal/modules/aculta_file_uploader/src/UploadPolicy.php' => [
+    'FileExtension' => 'Política central do aculta_file_uploader (dona dos validadores de upload, Fase 4): listas e limites do catálogo.',
+    'FileSizeLimit' => 'Política central do aculta_file_uploader (dona dos validadores de upload, Fase 4): listas e limites do catálogo.',
+  ],
+  'web/modules/custom/aculta_portal/modules/aculta_file_uploader/src/ConsumerUploadPolicy.php' => [
+    'FileExtension' => 'Política central do aculta_file_uploader (dona dos validadores de upload, Fase 4): listas e limites do catálogo.',
+    'FileSizeLimit' => 'Política central do aculta_file_uploader (dona dos validadores de upload, Fase 4): listas e limites do catálogo.',
+  ],
+  'web/modules/custom/aculta_portal/modules/aculta_file_uploader/src/FileUploadIngestor.php' => [
+    'FileExtension' => 'Política central do aculta_file_uploader (dona dos validadores de upload, Fase 4): listas e limites do catálogo.',
+    'FileSizeLimit' => 'Política central do aculta_file_uploader (dona dos validadores de upload, Fase 4): listas e limites do catálogo.',
   ],
 ];
 
