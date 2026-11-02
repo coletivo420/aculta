@@ -1,16 +1,19 @@
 # Inventário dos consumidores de Contributions
 
-**Base de código:** branch `dev`, commit `790a93fb2` (2026-11-02)
+**Base de código:** branch `dev`, commit `9e6975fab` (2026-11-02)
 **Revalidado em:** 2026-11-02
 
-Este inventário foi revalidado em `790a93fb2` após a integração de
+Este inventário foi revalidado em `9e6975fab` após a integração de
 Organization/Location/Event, filas e revisão Content Admin, inbox de resultados
 Messenger, workspace privado, formulários de envio, atualização e ressubmissão
 estruturada para Eventos, revalidação de capability no apply e aviso privado de
 envio por envelope Messenger mínimo e escolha do canal de e-mail. A cobertura
 Unit dos updates Messenger 10015–10017 inclui
-`MessengerDefaultConfigUpdateTest` (11 testes / 64 assertions). No Runtime de
-desenvolvimento, todos foram executados e a configuração sincronizada;
+`MessengerDefaultConfigUpdateTest` (11 testes / 64 assertions). A revalidação
+local neste HEAD passou Messenger Unit 402/4.374; Contributions Unit+Kernel
+18/188; adapter Wiki Unit 3/5; migração Wiki Kernel 3/133; e Events
+`EventOrganizationLifecycleKernelTest` 30/973. No Runtime de desenvolvimento,
+10017 e a configuração foram aplicados no head `790a93fb2`;
 `updatedb:status` e `config:status` estão limpos. A matriz foi atualizada após
 o teste de fronteira para organizações reivindicadas (Kernel Events 30/973).
 WE SATIVA usa `wiki:/wesativa`; IDs e filas são contratos existentes e não devem
@@ -20,7 +23,7 @@ os módulos owners listados neste inventário. No head atual, a classe Kernel
 Events passou 30 testes / 973 assertions, incluindo conflito quando uma Data
 ligada muda enquanto proposta de endereço aguarda revisão (24 depreciações Drupal
 upstream).
-Auditoria Runtime autorizada em `toca` (`aculta_runtime`, Drupal 11.4.10,
+Auditoria Runtime autorizada em `toca` no head `790a93fb2` (`aculta_runtime`, Drupal 11.4.10,
 URI `http://default`, 632 tabelas): schema Wiki 10003, Contributions 10001 e
 Messenger 10017. Updates sem pendências e config sync limpa. O snapshot anterior
 ao update 10017 tem SHA-256
@@ -34,7 +37,9 @@ No HEAD `790a93fb2`, o checkout servido foi alinhado após backup; `drush cr`,
 `updatedb:status` e `config:status` confirmaram cache reconstruído, nenhum update
 pendente e sync limpo. Hosts canônicos `cursos.aculta.toca.net.br/ganjalab` e
 `wiki420.aculta.toca.net.br/wesativa` responderam 403 anônimo, sem 500; isso não
-valida jornadas autenticadas. As falhas intermediárias e a importação efetiva por `config:import --diff` estão
+valida jornadas autenticadas. A ponta atual `9e6975fab` não foi servida no
+Runtime: o checkout local posterior estava em `9bec71451` com alterações
+paralelas não commitadas e foi preservado. As falhas intermediárias e a importação efetiva por `config:import --diff` estão
 detalhadas no plano de arquitetura; nenhum dado de proposta foi copiado. Os stores legacy e
 compartilhado, revisões, checkpoints e revision maps estão todos com 0 linhas;
 o migration gate Wiki retorna completo.

@@ -1,7 +1,7 @@
 # Plano de arquitetura e implementação - ACULTA Contributions
 
 **Estado:** F0 revalidado; F1/F2 concluídas e revalidadas localmente; F3 concluída quanto à migração/cutover dual-store, sem conteúdo Runtime a copiar; F4 concluída com escopo restrito a perfis públicos não reivindicados; F5 implementada localmente, incluindo escolha por site, e-mail imediato ou digest diário (padrão somente no site); F6/F7 implementadas localmente com homologação autenticada pendente; F8 concluída sem integração adicional (Calendar/Forum/UGC preservam owners); F9 permanece fase separada, sem remoção de Content Moderation. Updates Wiki/Messenger 10015–10017 foram aplicados no Runtime; o diff de import de `aculta_messenger.settings` continha somente a categoria `eventos_contribuicoes` com inbox obrigatório e opções de e-mail autorizadas. Pendentes: jornadas autenticadas de domínio, entrega real de e-mail e upload H5P no Runtime.
-**Base de código auditada:** branch `dev`, HEAD `790a93fb2` (2026-11-02). Inventário de domínios e regras permanece no [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md); esta revalidação registrou Unit Messenger 402/4.374, Unit Contributions 3/19 e Kernel Contributions 15/169, todos PASS no head atual. Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
+**Base de código auditada:** branch `dev`, HEAD `9e6975fab` (2026-11-02). Inventário de domínios e regras permanece no [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md); nesta ponta, Messenger Unit 402/4.374, Contributions Unit+Kernel 18/188, adapter Wiki Unit 3/5, migração Wiki Kernel 3/133 e Events `EventOrganizationLifecycleKernelTest` 30/973 passaram. Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
 **Escopo:** motor de propostas comunitárias reutilizável por domínios ACULTA, sem depender de Workflow Participants ou de Content Moderation para o ciclo de contribuições.
 
 ## 1. Decisão de arquitetura
@@ -118,7 +118,7 @@ O Content Moderation do Core mantém revisão publicada enquanto outra revisão 
 - Nenhuma mensagem de aviso foi criada na homologação. Testes autenticados de
   acesso a filas e jornadas Events continuam um gate separado.
 
-### Homologação local adicional — 2026-11-02
+### Homologação no Runtime registrada em `790a93fb2` — 2026-11-02
 
 - Checkout de desenvolvimento confirmado em `toca`, branch destacada no head
   `790a93fb2`, URI Drush `http://default`, banco `aculta_runtime`, Drupal
@@ -143,10 +143,27 @@ O Content Moderation do Core mantém revisão publicada enquanto outra revisão 
   Unit 11/32 e Events `EventOrganizationLifecycleKernelTest` 30/973 PASS via
   `aculta_simpletest` (24 depreciações Drupal upstream). PHPCS Drupal +
   DrupalPractice nos PHP alterados, PHP lint, YAML parse de 13 arquivos e
-  `git diff --check` passaram. `validate-project-status-index.php` continua
-  vermelho por problemas globais preexistentes: status ausente do File Uploader,
-  versões divergentes em oito módulos e README raiz gerado desatualizado. O
-  README não foi regenerado para evitar incluir alterações de outras frentes.
+  `git diff --check` passaram. `validate-project-status-index.php --write` regenerou a tabela do README. A
+  validação continua vermelha por problemas globais fora do escopo: status ausente
+  do File Uploader e versões divergentes em outros componentes; seus manifestos e
+  status não foram alterados nesta tarefa.
+
+### Revalidação de testes em `9e6975fab` — 2026-11-02
+
+- Sem escrita no Runtime: Messenger Unit 402/4.374 PASS; Contributions Unit e
+  Kernel 18/188 PASS; `WikiContributionAdapterTest` 3/5 PASS; migração Wiki
+  (`testWikiContributionMigration*`) 3/133 PASS; Events
+  `EventOrganizationLifecycleKernelTest` 30/973 PASS. Os Kernels usaram
+  exclusivamente `aculta_simpletest`; houve 24 depreciações Drupal upstream
+  no Kernel Events e 255 depreciações Core/contrib no Kernel Wiki.
+- A ponta `dev` avançou após a homologação Runtime em `790a93fb2`. O checkout
+  servido estava em `9bec71451` com alterações não commitadas de outras frentes;
+  não foi trocado nem usado para alegar homologação no novo HEAD. A validação
+  Runtime acima permanece evidência daquele commit, não de `9e6975fab`.
+- `validate-project-status-index.php --write` regenerou o bloco do README raiz.
+  A validação continua falhando por status ausente de File Uploader e versões
+  divergentes em componentes de outras frentes; esses manifestos/status não
+  foram alterados nesta tarefa.
 
 ## 3. Conceitos e modelo proposto
 
@@ -285,7 +302,7 @@ Publicar eventos mínimos no bus central. O Messenger envia avisos conforme pref
 
 ### F6 - Eventos
 - Adapter `events_event` implementa `event_create` e `event_update`, valida allowlist e intervalos, revalida organizador/Organização/Local, usa fingerprint com Datas e aplica sob lock/transação. A aplicação recarrega o autor e revalida capability e Entity Access atuais, limpando o cache do Evento e recarregando Locais das Datas antes de verificar acesso; a validação registrada no HEAD `dd6ba130c` da suíte de lifecycle e fronteira cobre revogação de membership, Local tornado privado, criação privada em rascunho e atualização seletiva com Datas aditivas (37 testes / 1.275 assertions; 24 depreciações upstream). Os commits posteriores de LMS não alteram esses módulos.
-- Decisões de propostas de Evento enfileiram envelope mínimo e são consumidas pelo mesmo inbox Messenger de Organização/Local; não incluem payload nem parecer. A revisão administrativa usa `administer aculta events` no MAIN e a fila aparece no Content Admin via autorização nativa. Na aplicação, Kernel comprova revalidação quando membership da Organização é revogado e quando o Local proposto passa a privado. O workspace abre propostas de Organização, Local e Evento. A ressubmissão após `needs_changes` usa formulário estruturado; `ContributionLifecycle::revise()` revalida owner, estado, capacidade e revisão-base. Autores propõem `event_create` em `/culturas/propostas/evento/nova` e `event_update` em `/culturas/eventos/{aculta_event}/propor-alteracao`; ambos salvam Contributions privadas e emitem aviso mínimo. Atualizações exigem Entity Access e capturam fingerprint da versão persistida; Datas novas são opcionais e append-only. Os cenários `event_update` passaram 6/171, cobrindo submissão, aplicação, perda de acesso, membership, Local e origem alterada. Updates Messenger 10015–10016 foram executados. No HEAD `559fc5c5e`, a classe Events completa passou 30/973 (24 depreciações upstream), incluindo título duplicado case-insensitive e mudança de Data ligada ao Local. O teste de integração de Index passou 1/52 e confirma proposta/draft fora da projeção e publicação oficial agendando trabalho. Homologação autenticada permanece pendente.
+- Decisões de propostas de Evento enfileiram envelope mínimo e são consumidas pelo mesmo inbox Messenger de Organização/Local; não incluem payload nem parecer. A revisão administrativa usa `administer aculta events` no MAIN e a fila aparece no Content Admin via autorização nativa. Na aplicação, Kernel comprova revalidação quando membership da Organização é revogado e quando o Local proposto passa a privado. O workspace abre propostas de Organização, Local e Evento. A ressubmissão após `needs_changes` usa formulário estruturado; `ContributionLifecycle::revise()` revalida owner, estado, capacidade e revisão-base. Autores propõem `event_create` em `/culturas/propostas/evento/nova` e `event_update` em `/culturas/eventos/{aculta_event}/propor-alteracao`; ambos salvam Contributions privadas e emitem aviso mínimo. Atualizações exigem Entity Access e capturam fingerprint da versão persistida; Datas novas são opcionais e append-only. Os cenários `event_update` passaram 6/171, cobrindo submissão, aplicação, perda de acesso, membership, Local e origem alterada. Updates Messenger 10015–10017 foram executados. No HEAD `9e6975fab`, a classe Events completa passou 30/973 (24 depreciações upstream), incluindo título duplicado case-insensitive e mudança de Data ligada ao Local. O teste de integração de Index passou 1/52 e confirma proposta/draft fora da projeção e publicação oficial agendando trabalho. Homologação autenticada permanece pendente.
 - Manter ICS/feeds existentes sem importação automática no escopo inicial.
 **Saída:** evento só entra no catálogo público após aprovação/aplicação.
 
