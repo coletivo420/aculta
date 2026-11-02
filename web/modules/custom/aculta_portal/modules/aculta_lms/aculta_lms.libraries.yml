@@ -16,3 +16,9 @@ scorm.api2004:
   dependencies:
     - core/jquery
     - core/drupal
+
+scorm.player:
+  js:
+    js/scorm/aculta-scorm-player.js: {}
+  dependencies:
+    - core/drupal

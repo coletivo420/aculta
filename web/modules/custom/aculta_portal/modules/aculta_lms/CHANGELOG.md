@@ -1,3 +1,13 @@
+## 0.1.0-dev.111 — lógica do player SCORM (sem DOM e sem endpoint)
+
+- `js/scorm/aculta-scorm-player.js`: ordem dos SCOs, destino de navegação pedido pelo conteúdo (`continue`, `previous`,
+  `{target=ID}choice`) e envio do commit por POST same-origin. Liga-se às APIs 1.2 e 2004 pelo evento de cada versão.
+  Não grava nada no navegador nem no servidor por conta própria: quem recebe é o endpoint de progresso.
+- Biblioteca `aculta_lms/scorm.player`.
+- Registro de origem atualizado em `docs/ORIGEM-OPIGNO.md`.
+
+Validação: 21/21 em Node, com as APIs 1.2 e 2004 reais. Árvore, iframe, endpoint e Runtime DEFERRED.
+
 ## 0.1.0-dev.110 — sanitização do progresso SCORM (sem endpoint)
 
 - `ScormProgressSnapshot`: recebe o cmi do conteúdo e devolve só o que está no schema de SCORM 1.2 ou 2004, com tipo e limite

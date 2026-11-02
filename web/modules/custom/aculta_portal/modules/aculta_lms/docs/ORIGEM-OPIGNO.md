@@ -40,6 +40,15 @@ Registro exigido pela decisão D-25 e pelo plano de independência do Opigno. Ca
 - Dependência: jQuery e Drupal, somente para localizar o iframe do player. Declarada em `scorm.api2004`.
 - Testado: 34/34 em Node com stubs (script de teste fora do repositório).
 
+### js/scorm/aculta-scorm-player.js
+
+- Fonte de conceito: `js/lib/player.js` e `js/opigno_scorm.player.js` do opigno_scorm 3.2.7 (ordem dos SCOs, navegação pedida pelo conteúdo, envio do progresso).
+- Tipo: escrita própria. Nenhum bloco de código copiado.
+- Sem DOM, sem jQuery: só ordem, destino de navegação e envio do commit. A árvore e o iframe ficam para a camada de apresentação.
+- Navegação aceita apenas `continue`, `previous` e `{target=ID}choice` com alvo existente. Outros valores não navegam.
+- Envio do commit é POST same-origin com JSON; falha de rede não quebra o conteúdo.
+- Testado: 21/21 em Node, com as APIs 1.2 e 2004 reais carregadas em contextos separados.
+
 ## Não portado nesta entrada
 
 - `js/lib/player.js` e `js/opigno_scorm.player.js`: player ainda não portado.
