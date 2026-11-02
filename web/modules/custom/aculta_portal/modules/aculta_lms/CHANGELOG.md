@@ -1,3 +1,11 @@
+## 0.1.0-dev.122 — pontuação própria dos tipos objetivos (ADR-042, P3, parcial)
+
+- `Assessment\ObjectiveAnswerScorer`: verdadeiro/falso (100 ou 0), seleção só com o conjunto exato, sem crédito parcial,
+  e lacunas por percentual de respostas aceitas (sem diferença de caixa, espaços nas pontas e espaços internos colapsados).
+  Mesma escala da AttemptRule (0 a 100). Função pura, sem dependência do `lms_answer_plugins`.
+- Validação: `ObjectiveAnswerScorerTest` 5/5 no shim. Mutante com crédito parcial na seleção: 1 teste falha.
+- Plugins de resposta e entidades próprias: não ligados ainda (P2/P3, Runtime).
+
 ## 0.1.0-dev.121 — nota xAPI com min ausente (F2)
 
 - `XapiProgressDeriver`: `raw` com `max` e sem `min` agora vale com `min = 0`, como a xAPI permite. Sem `success` virando
