@@ -1,0 +1,71 @@
+# Plano de estudo: substituir SCORM por xAPI 2.0 e seguintes
+
+Status: **estudo**. Decisão D-66 (2026-11-02) registrada em `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`. Nenhuma implementação começa antes de ADR próprio e das decisões da seção 5.
+
+Base: [ESTUDO-FERRAMENTAS-LMS-2026.md](ESTUDO-FERRAMENTAS-LMS-2026.md), com as fontes ali listadas.
+
+## 1. O que muda
+
+| Hoje (SCORM, `aculta_lms` dev.106 a dev.111) | Com xAPI 2.0 |
+| --- | --- |
+| Conteúdo fala com uma API no navegador (`window.API`, `API_1484_11`). | Conteúdo envia declarações (statements) JSON a um endpoint de LRS. Não há API de navegador. |
+| Pacote ZIP com `imsmanifest.xml`, lido e validado. | Conteúdo pode ser qualquer página web. Não existe manifesto obrigatório. |
+| Progresso é o cmi, traduzido para estado normalizado. | Progresso é o conjunto de declarações; o estado é derivado delas. |
+| Player de navegação entre SCOs. | Não há navegação padrão. A ordem e o lançamento ficam com o LMS. |
+
+Consequência direta: o código já commitado de SCORM (manifesto, validador, extrator, APIs 1.2 e 2004, snapshot do cmi, player) deixa de ser usado. **Nenhum pacote SCORM foi publicado nem está em produção**, então não há migração de conteúdo. A remoção é decisão separada (seção 5).
+
+## 2. xAPI 2.0 em termos práticos
+
+- **Declaração**: `actor` (quem), `verb` (o que fez), `object` (sobre o quê), com `id` em UUID e `timestamp`. Campos opcionais: `result`, `context`, `attachments`.
+- **Padrão**: IEEE 9274.1.1-2023. Vendors devem suportar 1.0.x e 2.0 por um tempo ([xapi.com](https://xapi.com/blog/what-vendors-can-do-to-prepare-for-xapi-2-0)).
+- **Autorização**: a 2.0 retirou a autorização da especificação. Cada implementação define a sua. No ACULTA isso significa credencial própria, emitida pelo Drupal, e nada parecido com a chave do LRS no conteúdo.
+- **Lançamento**: xAPI não define como o conteúdo recebe o endpoint e o token. Isso fica para o LMS. O cmi5 define esse lançamento sobre xAPI 1.0.x.
+
+## 3. Arquitetura proposta (a validar)
+
+1. **Lançamento**: rota do LMS que gera, para cada tentativa, um token curto e vinculado à matrícula, ao conteúdo e ao actor. O conteúdo recebe endpoint e token pelo lançamento.
+2. **Ingestão**: endpoint `POST /statements` (ou equivalente) com as mesmas regras de sanitização já usadas no snapshot SCORM: tamanho máximo por declaração e por lote, tipos validados, idempotência pelo `id` da declaração.
+3. **Armazenamento e leitura**: duas alternativas, abaixo.
+4. **Tradução para o LMS**: declarações viram estado e pontuação da tentativa (`result.score`, `result.completion`, `result.success`) pelo mesmo mapeamento que hoje existe em `ScormStatusMapper`, adaptado.
+
+### Onde guardar as declarações
+
+| Alternativa | Vantagem | Risco |
+| --- | --- | --- |
+| **A. Ralph (LRS separado, MIT, Python)** | Serviço pronto e mantido por terceiros. Separa o registro do Drupal. | Mais um serviço para hospedar (Python, mais backend como Elasticsearch ou MongoDB). Confronta a regra de não criar armazenamento paralelo, porque as declarações vivem fora do Drupal. |
+| **B. LRS próprio no Drupal (entidade)** | Sem serviço extra. Usa o padrão do projeto. | Carga de escrita e consulta em MariaDB. Implementar o LRS inteiro é trabalho grande e sem ganho frente ao Ralph. |
+| **C. Só os resultados no Drupal** | Mantém a regra de sem armazenamento paralelo. Guarda só o estado e a pontuação na tentativa. | Não guarda o histórico completo de declarações, que é o que o xAPI oferece. Perde a análise posterior. |
+
+Recomendação preliminar: **C para o progresso do aluno** (é o que o LMS usa para aprovação e certificado) e **A ou B para o histórico bruto**, se houver demanda de análise. Escolher entre A e B depende de quem vai consumir o histórico.
+
+## 4. Fases propostas (sem implementar antes da decisão)
+
+| Fase | Entrega | Gate |
+| --- | --- | --- |
+| F0 | ADR com alternativas de LRS, modelo de credencial e destino do código SCORM. | Decisões da seção 5 respondidas. |
+| F1 | Validador puro de declaração xAPI 2.0 (campos obrigatórios, tipos, tamanho), com testes. | ADR aceito. |
+| F2 | Derivação de estado e pontuação a partir de declarações, pura, com testes. | F1. |
+| F3 | Lançamento com token por tentativa e endpoint de ingestão autenticado, com limite de taxa. | F1 e F2; credencial aprovada. |
+| F4 | Runtime: envio real de declarações de um conteúdo de teste, em Firefox ESR, e Olivero. | Ambiente de teste disponível para o agente. |
+
+Cada fase vira um commit separado, como manda o processo do projeto.
+
+## 5. Decisões que faltam (perguntar ao responsável)
+
+1. **LRS**: Ralph separado (A), LRS no Drupal (B) ou só resultados no Drupal (C)? Recomendo C para o progresso e A ou B para o histórico.
+2. **cmi5**: conteúdo de parceiros virá em cmi5 (que usa xAPI 1.0.x e um lançamento próprio) ou só em xAPI 2.0 puro? Isso muda o lançamento da F3.
+3. **Código SCORM já commitado**: remover (recomendo, para não manter código sem uso) ou manter como legado até o ADR de xAPI ser aceito?
+4. **Histórico bruto**: quanto tempo guardar as declarações e quem pode consultá-las? Afeta a escolha de A ou B e a LGPD.
+
+## 6. Riscos
+
+- **Padrão em transição**: a 2.0 é recente e vendors ainda suportam 1.0.x. Se o conteúdo de um parceiro vier em 1.0.x, o endpoint precisa aceitar as duas.
+- **Credencial**: sem autorização na especificação, o modelo de token é nossa responsabilidade. Precisa de revisão de segurança e de limite de taxa, como o resto do Portal.
+- **Dados pessoais**: declarações trazem identificação do aluno no `actor`. Precisa de mesma atenção que o snapshot SCORM tinha para não guardar campos fora de escopo.
+- **Escopo**: xAPI não traz player nem conteúdo. Se o ACULTA não tiver conteúdo xAPI, a funcionalidade fica sem uso. A demanda real continua sendo a condição.
+
+## 7. Limites deste estudo
+
+- Não verifiquei na fonte primária a seção de autorização e o JSON Schema oficial da xAPI 2.0. Os detalhes técnicos da seção 2 devem ser conferidos no texto do IEEE 9274.1.1 antes do ADR.
+- Não consultei o módulo lms contrib, então não sei como ele trataria declarações. Vale a mesma ressalva de sempre.

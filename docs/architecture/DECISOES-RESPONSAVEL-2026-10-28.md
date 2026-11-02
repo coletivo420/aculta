@@ -75,6 +75,7 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 | D-63 | Personalização de QR Code | Organizadores podem personalizar de forma limitada, dentro dos parâmetros e validações de contraste, legibilidade e segurança definidos pelo ACULTA. | `aculta_qrcode` e `aculta_image`; logos somente pelo pipeline central de imagem. |
 | D-64 | Planejamento ARQ-08 | Planejar o pacote de referências de imprensa, apoiadores e teasers editoriais. O planejamento não autoriza criar entidades/campos nem implementar sem consumidor editorial real, autorização de marcas e contratos aprovados. | Atualizar o plano ARQ-08; preservar Revista como único bundle editorial e os owners atuais. |
 | D-65 | URLs individuais antigas de comentários | A rota antiga `/comment/{cid}` deve terminar em 404. Comentários continuam acessíveis no contexto autorizado do conteúdo proprietário. | `aculta_forum`, Magazine, LMS e demais consumidores contextuais; não criar página individual pública de comentário. |
+| D-66 | Substituir SCORM por xAPI 2.0 e seguintes (LMS) | **Substituir o SCORM pelo xAPI 2.0 e padrões seguintes.** O plano será estudado antes de qualquer implementação. Conflita com a decisão de adiar SCORM/xAPI sem demanda real (`OPIGNO-CODE-AUDIT.md`, plano de independência) e com a ordem de implementar SCORM dentro do `aculta_lms` (dev.106 a dev.111). Estudo: `docs/modules/PLANO-XAPI-2-SUBSTITUI-SCORM.md`. | `aculta_lms`; o código SCORM já commitado fica sem uso até decisão de remoção; nenhum LRS nem endpoint é implementado por esta decisão. |
 
 ## Pendente
 
@@ -124,3 +125,4 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 - 2026-10-31: D-57 a D-65 registradas por decisão direta do responsável; D-57 encerra a busca postal por logradouro e mantém somente CEP.
 - 2026-10-31: D-35 permanece sem definição de documento fiscal; venda paga segue bloqueada até parecer fiscal/jurídico.
 - 2026-10-31: D-56 foi superada por D-57; não existe trabalho futuro de busca por rua em Events ou Maps.
+- 2026-11-02: D-66 registrada por decisão direta do responsável. Substitui SCORM por xAPI 2.0 e seguintes; plano em estudo, sem implementação.
