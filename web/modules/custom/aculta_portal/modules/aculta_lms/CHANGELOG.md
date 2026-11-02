@@ -1,3 +1,16 @@
+## 0.1.0-dev.117 — token de tentativa e entidade de declarações xAPI (F3, parcial)
+
+- `Xapi\XapiAttemptToken`: token curto por tentativa, HMAC-SHA256, com estudante (uid), conteúdo, lançamento
+  (registration) e validade (máximo de 7200 s). Função pura: o segredo é injetado, com mínimo de 32 bytes; a
+  verificação usa comparação em tempo constante e recusa token malformado, adulterado, de outro segredo ou expirado.
+- `aculta_lms_xapi_statement` (`XapiStatement`): registro bruto e somente de inserção das declarações validadas.
+  Tentativa referenciada de forma opaca por `lesson_status_id`, sem copiar estado. Instalada pelo
+  `aculta_lms_update_10003`. Sem handler de acesso e sem rota: entram com o endpoint.
+
+Validação: `XapiAttemptTokenTest` 8/8, `XapiProgressDeriverTest` 16/16 e `XapiStatementValidatorTest` 20/20 no shim
+(44/44). Controle de mutação: sem checagem de expiração, `testExpiredTokenIsRefused` falha. Instalação do update 10003
+e endpoint, Kernel e Runtime: DEFERRED.
+
 ## 0.1.0-dev.116 — nome do método de extensões padrão
 
 - `FileUpload::getDefaultAllowedFileExtensions()` vira `defaultAllowedExtensions()`. Só renomeação: a validação
