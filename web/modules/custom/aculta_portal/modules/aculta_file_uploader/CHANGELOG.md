@@ -1,5 +1,11 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.33 — zona de soltar ativa no diálogo do Fórum
+
+- `UploadDropZone` marca `data-aculta-dropzone` em `#attributes` (campo) e em `#wrapper_attributes` (contêiner do managed_file). Sem isso o JS da zona não era anexado: sem `.is-dragover` e sem área de status.
+- Validado no Firefox ESR (DISPLAY=:0) no diálogo de anexo do Fórum: 6/6 em `tests/browser/aculta-uploader/dropzone-smoke.py`.
+- Versão 0.1.0-dev.33.
+
 ## 0.1.0-dev.31 — editor de ponto focal acessível por teclado
 
 - O contêiner `[data-aculta-focal]` recebe `tabindex="0"`, `role="application"` e `aria-label` antes de ligar as setas; antes o `keydown` existia, mas o elemento não era focável.
