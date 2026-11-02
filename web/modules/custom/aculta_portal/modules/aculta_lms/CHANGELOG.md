@@ -1,3 +1,28 @@
+## 0.1.0-dev.106 — base segura de pacote SCORM (sem player)
+
+Acrescenta `Scorm\` dentro do aculta_lms, sem submódulo e sem dependência do Drupal:
+
+- `ScormManifestParser`: lê `imsmanifest.xml` de SCORM 1.2 e 2004 com DOMDocument e `LIBXML_NONET`. Recusa DOCTYPE,
+  versão desconhecida, item que aponta para recurso inexistente e manifesto sem item lançável.
+- `ScormPackageValidator`: valida o ZIP antes da extração. Mede os bytes realmente descompactados por streaming, com
+  teto por entrada (64 MiB), total (256 MiB), entradas (5000) e razão de compressão (100). Recusa nomes com `..`,
+  caminho absoluto, barra invertida e link simbólico, e exige `imsmanifest.xml` na raiz.
+- `ScormPackageExtractor`: extrai para um subdiretório próprio criado dentro de um diretório pai escolhido pelo chamador
+  (que deve ser privado, por exemplo sob `private://`). Grava com criação exclusiva, confere o caminho resolvido de cada
+  entrada e remove o subdiretório inteiro em qualquer erro.
+
+Origem: implementação própria a partir da especificação SCORM. O pacote `opigno_scorm` 3.2.7 foi lido como referência
+de conceito (modelo de itens, recursos e regras de lançamento); nenhum trecho foi copiado. O `XML2Array` do Opigno não
+foi portado porque o `DOMDocument` é a API oficial do PHP.
+
+Ainda não existe: player, endpoint de lançamento, integração com atividade do LMS e registro de progresso. Esses itens
+dependem de decisão de produto sobre onde guardar o progresso, para não criar armazenamento paralelo.
+
+Validação: `ScormManifestParserTest`, `ScormPackageValidatorTest` e `ScormPackageExtractorTest` somam 18/18 no shim
+unitário local. Controles de mutação: sem checagem de symlink, `testRejectsSymlink` falha; sem checagem de DOCTYPE,
+`testRejectsDoctype` falha pela mensagem genérica. Não executados: PHPUnit oficial, Kernel e gate Drupal 11+. Status:
+DEFERRED.
+
 ## 0.1.0-dev.105 — regra pura de tentativa de avaliação (sem ligação ainda)
 
 Acrescenta `Assessment\AttemptRule`, sem dependência do Drupal: status da tentativa (pendente, aprovada ou

@@ -190,6 +190,12 @@ Há também divergência no fluxo: scormExtract() chama unzipPackage($file) (pas
 
 Fontes: [OpignoScorm 3.2.7](https://git.drupalcode.org/project/opigno_scorm/-/blob/3.2.7/src/OpignoScorm.php), [módulo SCORM](https://git.drupalcode.org/project/opigno_scorm/-/tree/3.2.7).
 
+**Atualização (2026-11-02):** o responsável determinou implementar SCORM dentro do `aculta_lms`, sem submódulo, o que
+supera a decisão de adiar acima. Não foi copiado código do Opigno. A base foi entregue no `aculta_lms` 0.1.0-dev.106,
+com leitor de manifesto, validador de pacote e extrator em diretório privado, sem usar `public://`. Ficam pendentes
+o player e o lançamento, e a decisão de produto sobre onde registrar o progresso. Conflito registrado: a decisão
+original de adiar por falta de demanda real é anterior à ordem do responsável.
+
 ### OPA-09 — Migração: desserialização de dados legados
 
 opigno_migration/src/Plugin/migrate/source/User.php usa unserialize() sem allowed_classes => FALSE para o campo data de usuários e um valor de perfil (linhas 92 e 123). A superfície é o banco-fonte legado usado por operadores da migração, não uma rota web de uso comum; portanto o risco depende da confiança e integridade desse banco. Outra desserialização no subscriber de grupos passa allowed_classes => FALSE.
