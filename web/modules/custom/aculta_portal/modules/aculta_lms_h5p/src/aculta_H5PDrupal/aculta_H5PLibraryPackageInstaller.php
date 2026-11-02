@@ -18,6 +18,7 @@ final class aculta_H5PLibraryPackageInstaller {
     private readonly aculta_H5PStoragePathInterface $storagePath,
     private readonly aculta_H5PLibraryCacheInvalidator $cacheInvalidator,
     private readonly aculta_H5PDrupal $framework,
+    private readonly aculta_H5PArchiveResourceLimits $resourceLimits = new aculta_H5PArchiveResourceLimits(),
   ) {}
 
   /**
@@ -74,6 +75,8 @@ final class aculta_H5PLibraryPackageInstaller {
       throw new \UnexpectedValueException('O pacote H5P não é um arquivo ZIP válido.');
     }
     try {
+      // Bound entries, decompressed size and ratio before any extraction.
+      $this->resourceLimits->assertWithinLimits($zip);
       for ($index = 0; $index < $zip->numFiles; $index++) {
         $entry = $zip->statIndex($index);
         $name = $entry['name'] ?? NULL;

@@ -1,3 +1,25 @@
+## 0.4.0-dev.166 — limites de recursos no instalador de bibliotecas H5P
+
+- Novo `aculta_H5PArchiveResourceLimits`, sem dependências Drupal: recusa pacotes
+  com mais de 10.000 entradas, arquivo descompactado acima de 32 MiB, pacote
+  acima de 256 MiB descompactado e taxa de compressão acima de 100:1 (aplicada a
+  entradas com mais de 1 MiB).
+- Os bytes são medidos por streaming, não pelo tamanho declarado no cabeçalho do
+  ZIP, que pode ser falsificado.
+- `aculta_H5PLibraryPackageInstaller` aplica os limites antes de qualquer
+  extração, com o validador H5P oficial ainda como segunda barreira.
+- Referência de dimensionamento: o pacote de bibliotecas do Opigno 3.2.8 (2.683
+  entradas, 16,3 MB descompactados, taxa máxima 11,4) passa com folga.
+- Testes: Unit `aculta_H5PArchiveResourceLimitsTest` (6 casos) executado
+  localmente com executor mínimo compatível com as asserções usadas, sem PHPUnit
+  do projeto (o Packagist estava bloqueado no ambiente). Kernel do instalador e
+  PHPUnit oficial: NÃO executados.
+- Gate `validate-aculta-portal-drupal11.php`: FAIL, idêntico ao HEAD antes desta
+  mudança (dívida pré-existente, não tratada aqui).
+- Versão: `info.yml` estava em dev.164 enquanto o CHANGELOG já tinha dev.165;
+  esta entrega usa dev.166 para não colidir.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.162 — consumo do motor de limpeza movido para o aculta_file_uploader
 
 - Imports dos tipos de limpeza e serviço `aculta_portal.unused_file_cleaner` passam a `aculta_file_uploader`. Sem mudança de comportamento.
