@@ -1,3 +1,10 @@
+## 0.1.0-dev.128 — Adaptadores de leitura ACULTA para aula, atividade e resposta
+
+- Registrados `ContribCourseLessonAdapter`, `ContribCourseActivityAdapter` e `ContribCourseAnswerAdapter`, cada um isolando sua entidade do LMS contrib atrás do contrato correspondente. Os serviços usam injeção de dependência e aliases por interface.
+- Testes Unit dos adaptadores cobrem conversão, nota ausente, tipo de atividade ausente e recusa de estado de avaliação inválido. Unit do módulo: 204 testes/666 assertions PASS; `AcultaLmsInstallTest`: 4/95 PASS validando os aliases; gate Portal: 1.159 verificações PASS.
+- O estado do LMS contrib é booleano e vira submitted/graded. TrainingManager::getActivityMaxScore permite converter pontos por atividade para percentual 0–100; resposta avaliada sem nota ou atividade sem máximo é recusada.
+- A posição da aula vem do delta da referência no curso; a pontuação máxima da atividade vem da referência na aula.
+
 ## 0.1.0-dev.127 — Contratos de atividade e resposta (ADR-042, P1)
 
 - `CourseActivity` e `CourseAnswer` (valores imutáveis) com `CourseActivityReaderInterface` e `CourseAnswerReaderInterface`.

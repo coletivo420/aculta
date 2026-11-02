@@ -1,5 +1,17 @@
 # Estado da sessão
 
+## Handoff mais recente — adaptadores ACULTA do LMS contrib, 2026-11-02
+
+- **Tarefa:** concluir os adaptadores P1 de aula, atividade e resposta do `aculta_lms`, seguindo o ADR-042, sem commit/push e sem executar P5/P6.
+- **Referência:** branch `dev`, HEAD de início `ea7a74788d3442333ce448b90ffd16d5c9f599d0`, igual ao commit informado; `composer install` concluído.
+- **Implementação:** adicionados `ContribCourseLessonAdapter`, `ContribCourseActivityAdapter` e `ContribCourseAnswerAdapter`, seus aliases por interface e cobertura Unit. Atualizados manifest, CHANGELOG, status do componente e README gerado.
+- **API contrib verificada:** `LessonInterface.php` expõe apenas métodos adicionais de randomização/navegação/handler; ID, label e campos vêm das interfaces Drupal base. Aula/posição vêm de `CourseInterface::LESSONS`; publicação é o campo `status`. `ActivityInterface.php` não acrescenta métodos; tipo vem do bundle, aula e pontuação máxima vêm das referências em `LessonInterface::ACTIVITIES`. `AnswerInterface.php` oferece `getActivity`, `getLessonStatus`, `isEvaluated`, `getScore`, `getData` e `getUserId`; `TrainingManager.php` oferece `getActivityMaxScore` e operações de tentativa, sem um estado textual de resposta. O score contrib é inteiro/pontos; `TrainingManager::getActivityMaxScore()` retorna o máximo da referência e o adaptador converte para percentual 0–100. Respostas avaliadas sem nota ou máximo são recusadas. Estado textual desconhecido não é representável pela API atual, embora a fronteira recuse valores fora do booleano esperado.
+- **Arquivos alterados:** `README.md`; `docs/operations/status/aculta_lms.yml`; `web/modules/custom/aculta_portal/modules/aculta_lms/CHANGELOG.md`; `aculta_lms.info.yml`; `aculta_lms.services.yml`; três adaptadores em `src/Learning/`; `tests/src/Unit/ContribLearningAdaptersTest.php`.
+- **Verificações:** Unit completa do módulo PASS, 203 testes/661 assertions, 1 depreciação PHPUnit. Kernel `AcultaLmsInstallTest` PASS, 4 testes/95 assertions e 27 depreciações upstream; confirma resolução dos três aliases. `LearningDashboardKernelTest` PASS, 1/41, 43 depreciações upstream no banco `aculta_simpletest`. Gate Portal PASS (1.159 verificações), status index PASS (48 componentes), `git diff --check` PASS. `AccountCoursesReaderTest` continua UnitTestCase; não foi convertido para Kernel.
+- **Runtime:** Drush confirmou o ambiente local de desenvolvimento `toca`/`aculta_runtime`. `updatedb:status`: `No database updates required.` `config:status`: `No differences between DB and sync directory.` `aculta_lms_update_10004` não está pendente; nenhum update/import foi aplicado e, portanto, não foi necessário snapshot.
+- **Pendências:** verificar a escala de nota do LMS antes de ligar consumidores a `CourseAnswer`; estado desconhecido de avaliação não tem representação equivalente no contrib. Nenhuma alteração de P5/P6. Nenhum commit/push realizado por solicitação explícita.
+- **Leitura para retomar:** `docs/decisions/ADR-042-remocao-dependencias-lms-contrib.md`; `vendor/drupal/lms/src/Entity/{LessonInterface,ActivityInterface,AnswerInterface}.php`; `vendor/drupal/lms/src/TrainingManager.php`; `web/modules/custom/aculta_portal/modules/aculta_lms/src/Learning/ContribCourse*Adapter.php`.
+
 ## Handoff mais recente — xAPI F3/Homelab e sincronização, 2026-11-02
 
 - **Tarefa:** concluir a implementação F3 do LRS xAPI, sincronizar com `origin/dev`, validar no checkout Homelab e publicar. O usuário autorizou push e o teste real ZIP/H5P na sessão anterior.

@@ -14,6 +14,9 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\aculta_lms\Event\CourseCompletionPublisherInterface;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
+use Drupal\aculta_lms\Learning\CourseActivityReaderInterface;
+use Drupal\aculta_lms\Learning\CourseAnswerReaderInterface;
+use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Core\Session\UserSession;
 use Drupal\user\UserInterface;
@@ -85,6 +88,9 @@ final class AcultaLmsInstallTest extends KernelTestBase {
       CourseCompletionPublisherInterface::class,
       $container->get('aculta_lms.course_completion_publisher'),
     );
+    $this->assertInstanceOf(CourseLessonReaderInterface::class, $container->get(CourseLessonReaderInterface::class));
+    $this->assertInstanceOf(CourseActivityReaderInterface::class, $container->get(CourseActivityReaderInterface::class));
+    $this->assertInstanceOf(CourseAnswerReaderInterface::class, $container->get(CourseAnswerReaderInterface::class));
     $this->assertInstanceOf(
       CourseOrderEnrollmentManagerInterface::class,
       $container->get('aculta_lms.course_order_enrollment'),
