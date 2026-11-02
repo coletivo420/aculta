@@ -13,6 +13,8 @@ use Drupal\aculta_wiki\Form\WikiEntryFormActions;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\Cache;
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Url;
 use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -149,7 +151,7 @@ final class WikiEntryImageHooks {
           '#attached' => ['library' => ['aculta_file_uploader/focal-point']],
           // Prévia da imagem atual, com a permissão de quem edita o verbete.
           'preview' => $current['media'] instanceof MediaInterface && $current['media']->hasField('field_media_image')
-            ? $current['media']->get('field_media_image')->view(['label' => 'hidden', 'type' => 'image', 'settings' => ['image_style' => '', 'image_link' => '']])
+            ? $this->previewMarkup($current['media'], (string) $current['alt'])
             : ['#markup' => ''],
           'marker' => [
             '#type' => 'html_tag',
@@ -217,6 +219,39 @@ final class WikiEntryImageHooks {
   /**
    * Orders core fields and adds concise guidance for a new Wiki entry.
    */
+  /**
+   * Monta a prévia da imagem atual com a URL de query do core para arquivos privados.
+   *
+   * A forma de caminho /system/files/{arquivo} responde 404 neste core (o processador de
+   * caminho reescreve para /system/files sem rota exata). A forma ?file= é a usada pelo projeto.
+   */
+  private function previewMarkup(MediaInterface $media, string $alt): array {
+    $file = $media->get('field_media_image')->entity;
+    if ($file === NULL) {
+      return ['#markup' => ''];
+    }
+    $uri = $file->getFileUri();
+    $relative = self::privateFileQueryPath($uri);
+    if ($relative !== NULL) {
+      $src = Url::fromRoute('system.files', ['scheme' => 'private'], ['query' => ['file' => $relative]])->toString();
+    }
+    else {
+      $src = \Drupal::service('file_url_generator')->generateString($uri);
+    }
+    return ['#markup' => '<img src="' . Html::escape($src) . '" alt="' . Html::escape($alt) . '" class="img-fluid">'];
+  }
+
+  /**
+   * Caminho relativo de uma URI private:// para a forma de query ?file=; NULL para outros esquemas.
+   */
+  public static function privateFileQueryPath(string $uri): ?string {
+    if (!str_starts_with($uri, 'private://')) {
+      return NULL;
+    }
+    $relative = substr($uri, strlen('private://'));
+    return $relative === '' ? NULL : $relative;
+  }
+
   private function prepareAuthoringForm(array &$form, NodeInterface $node): void {
     $weights = [
       'title' => 0,
