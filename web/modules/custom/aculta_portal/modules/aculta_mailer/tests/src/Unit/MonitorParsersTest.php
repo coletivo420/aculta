@@ -123,4 +123,60 @@ final class MonitorParsersTest extends UnitTestCase {
     $this->assertSame('olá mundo', $leaves[0]['body']);
   }
 
+  /**
+   * Gzip que descompacta além do teto é recusado, mesmo com XML válido.
+   */
+  public function testRejectsGzipBombAboveReportLimit(): void {
+    $gz = base64_encode(gzencode($this->oversizedReport()));
+
+    $this->assertNull((new DmarcReportParser())->parse($this->attachment('application/gzip', 'bomba.xml.gz', $gz)));
+  }
+
+  /**
+   * Zip que descompacta além do teto é recusado, mesmo com XML válido.
+   */
+  public function testRejectsZipBombAboveReportLimit(): void {
+    $path = sys_get_temp_dir() . '/aculta-dmarc-' . bin2hex(random_bytes(6)) . '.zip';
+    $zip = new \ZipArchive();
+    self::assertTrue($zip->open($path, \ZipArchive::CREATE | \ZipArchive::OVERWRITE));
+    $zip->addFromString('relatorio.xml', $this->oversizedReport());
+    $zip->close();
+    try {
+      $zipBody = base64_encode((string) file_get_contents($path));
+      $this->assertNull((new DmarcReportParser())->parse($this->attachment('application/zip', 'bomba.zip', $zipBody)));
+    }
+    finally {
+      @unlink($path);
+    }
+  }
+
+  /**
+   * Relatório válido e maior que o teto de descompactação.
+   */
+  private function oversizedReport(): string {
+    return '<?xml version="1.0"?><feedback><!--' . str_repeat('x', 9 * 1024 * 1024) . '--></feedback>';
+  }
+
+  /**
+   * Mensagem com um único anexo em base64.
+   */
+  private function attachment(string $type, string $name, string $base64): string {
+    return implode("\r\n", [
+      'Content-Type: multipart/mixed; boundary="M1"',
+      '',
+      '--M1',
+      'Content-Type: text/plain',
+      '',
+      'Relatório DMARC anexo.',
+      '--M1',
+      "Content-Type: $type; name=\"$name\"",
+      'Content-Transfer-Encoding: base64',
+      "Content-Disposition: attachment; filename=\"$name\"",
+      '',
+      chunk_split($base64),
+      '--M1--',
+      '',
+    ]);
+  }
+
 }

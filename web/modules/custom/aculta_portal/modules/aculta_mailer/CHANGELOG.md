@@ -1,3 +1,18 @@
+## 0.1.0-dev.75 — limite de descompactação no parser DMARC — 2026-11-02
+
+Anexos DMARC de remetentes externos agora têm teto de 8 MiB de XML descompactado, medido ao ler. O parser
+lia a primeira entrada de ZIP inteira com `getFromIndex(0)` e descompactava GZIP com `gzdecode` sem limite, então
+um anexo pequeno com razão de compressão alta podia esgotar a memória do cron de monitoramento. O ZIP passa a ser
+lido em fluxo e o GZIP é alimentado em fatias, com corte ao passar do teto. Anexos acima do teto são ignorados como
+relatório, sem gerar resumo parcial.
+
+Limite conhecido e não tratado aqui: o IMAP ainda baixa a mensagem inteira em `CurlImapClient::fetch`, sem teto
+de tamanho. Limitar esse download é decisão separada (afeta o transporte e a leitura de bounces).
+
+Validação: `MonitorParsersTest` **6/6 PASS** no shim unitário local (dois testes novos de bomba GZIP e ZIP). Controle
+com o parser anterior: **4 PASS / 2 FAIL**, confirmando que os testes detectam a falha. Não executados: PHPUnit
+oficial, Kernel Mailer e gate Drupal 11+ (dependência Packagist/Runtime indisponível nesta sessão). Status: DEFERRED.
+
 ## 0.1.0-dev.74 — restringir detalhes pessoais nos logs operacionais — 2026-10-25
 
 Falhas IMAP agora guardam e registram somente a classe da exceção; o estado
