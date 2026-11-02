@@ -342,3 +342,22 @@ código do módulo.
 | DT-U01 | Revista: o seletor de imagem recente do Studio aparecia, mas salvar falhava com "O campo Imagem editorial é obrigatório" | Resolvida em 2026-11-02: `MediaLibraryWidget::validateRequired` lê o user input bruto; a conversão no `#after_build` agora grava a Media no form state e no user input. Runtime: Revista 605 salva com a media 284 | Média | Sim | Resolvida |
 | DT-U02 | `LmsH5PDiscussionResolverKernelTest` errava por `aculta_lms.xapi_attempt_token_controller` exigir `key.repository` | Reexecutado em 2026-11-02 após os commits de xAPI: 1 teste / 37 assertions PASS | Baixa | Não | Resolvida |
 | DT-U03 | `field_file_extensions` existe sem valores em nenhuma atividade; o tipo `file_upload` e a atividade 23 foram criados na homologação | Consulta `exists(field_file_extensions)` = 0 | Baixa | Não | Aberta |
+- **Testes não executados.** Unitários e de kernel de `aculta_file_uploader`, `aculta_lms`, `aculta_wiki`, `aculta_forum`,
+  `aculta_image` e `aculta_document_viewer` ainda não rodaram. O ambiente de desenvolvimento local não tem `web/core`
+  nem PHPUnit. Os commits `ac550d3e`, `e2b8b9bf`, `83d8bbda`, `7f8cd105` e `168ffe6e` ficam `RUNTIME STATUS: DEFERRED`.
+- **Gates do Portal e de slugs não rodados.** `validate-aculta-portal-drupal11.php`, `validate-project-status-index.php`
+  e `validate-public-slugs.php` falham por `vendor/` incompleto (falta `Symfony\Yaml`). Reinstalar dependências no
+  Runtime e rodar os três antes do RC.
+- **R2 do gate de imagem.** Exceção por arquivo para `UploadPolicy.php`, `ConsumerUploadPolicy.php` e
+  `FileUploadIngestor.php` (`aculta_file_uploader`, dona da política central). A exceção também cobre o ramo de imagem
+  desses arquivos. Revisar quando o catálogo de imagem for consolidado.
+- **Leitor de dimensões.** `ImageDimensionReaderInterface` no uploader; `aculta_image.inspector` implementa a interface e
+  é usado quando o módulo está ativo. Sem ele, `getimagesize()`. Validar nos dois cenários (com e sem `aculta_image`).
+- **Ponto focal.** Recorte 16:9 e 1:1 gravado pela Crop API e prévia no editor da wiki. Falta validar no navegador e
+  confirmar o efeito nos estilos de imagem depois de conhecer o schema do `image_widget_crop` no Runtime.
+- **Consumidores sem evidência.** Galeria (embed, `media_gallery 44`) e capa da Revista ainda não têm validação
+  registrada nos docs de Runtime.
+- **Fixture removido.** `aculta_portal_upload_test` (schema `aculta_portal.user_upload`) saiu do repositório; o teste do
+  LMS passa a usar `aculta_file_uploader.image_dimension_reader`.
+- **Histórico não alterado.** `docs/history/*` e `TEST-MATRIX.md` do fórum mantêm o nome antigo `user_upload_policy`
+  como registro do que foi feito.
