@@ -14,8 +14,9 @@ use Drupal\file\FileInterface;
 /**
  * Registra derivados de imagem gerados como arquivos temporários.
  *
- * Movido do aculta_image (0.1.0-dev.48). Lê dimensões pelo ImageFactory do Core
- * para não depender do aculta_image, que já depende deste módulo.
+ * Movido do aculta_image (0.1.0-dev.48). Lê dimensões pelo leitor do próprio
+ * uploader (ImageDimensionReader), sem depender do aculta_image, que já depende
+ * deste módulo.
  */
 final class GeneratedImageFileManager {
 
