@@ -64,8 +64,12 @@ final class FocalPointRecorder {
       $props = $rect + ['crop_applied' => '1'];
       $ref = ['file-id' => $file->id(), 'file-uri' => $file->getFileUri()];
 
-      if (Crop::cropExists($file->getFileUri(), $typeId)) {
-        $this->cropManager->updateCrop($props, $ref, $cropType);
+      // updateCrop só atualiza crops ligados a um image style que usa o tipo.
+      // Sem esse vínculo ele recria o crop, então a atualização vai direto na
+      // entidade existente.
+      $existing = Crop::findCrop($file->getFileUri(), $typeId);
+      if ($existing instanceof Crop) {
+        $this->cropManager->updateCropProperties($existing, $rect);
       }
       else {
         $this->cropManager->applyCrop($props, $ref, $cropType);

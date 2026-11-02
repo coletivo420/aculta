@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.4.0-dev.164
+version: 0.4.0-dev.166
 state: RC
-progress_note: "RC.1 (2026-10-29): F10/F15 completas. Unit 28/93 PASS; Kernel 15/388 PASS com 41 depreciações Core/contrib; PHPCS Drupal/DrupalPractice em PHP, lint 57/57 e node --check 3/3 PASS. Gates módulo–tema 3397, mapa 214, tokens 380 e índice 50 PASS. Revisão visual autenticada no Runtime de teste registrada para F10/F15; as alterações posteriores à versão servida dev.150 foram PHPDoc/estilo, sem mudança de rotas ou interface. Nenhuma operação Runtime nesta promoção."
+progress_note: "Dev.166: limites de recursos no instalador de bibliotecas H5P (entradas, bytes descompactados e taxa de compressão); testes do módulo não reexecutados nesta rodada. RC.1 (2026-10-29): F10/F15 completas. Unit 28/93 PASS; Kernel 15/388 PASS com 41 depreciações Core/contrib; PHPCS Drupal/DrupalPractice em PHP, lint 57/57 e node --check 3/3 PASS. Gates módulo–tema 3397, mapa 214, tokens 380 e índice 50 PASS. Revisão visual autenticada no Runtime de teste registrada para F10/F15; as alterações posteriores à versão servida dev.150 foram PHPDoc/estilo, sem mudança de rotas ou interface. Nenhuma operação Runtime nesta promoção."
 next_phase: 'Aguardar autorização explícita para deploy/validação Alpha; seguir docs/operations/RELEASE-LIFECYCLE.md e registrar evidência por purpose. Nenhum deploy ou atualização do Runtime foi executado nesta microfase.'

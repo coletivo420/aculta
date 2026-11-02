@@ -1,5 +1,15 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.25 — ponto focal atualiza o crop existente
+
+- `FocalPointRecorder` atualiza o crop existente com `updateCropProperties` em vez de `updateCrop`. O `updateCrop` do image_widget_crop só atualiza crops ligados a um image style que usa o tipo; sem esse vínculo ele recriava o crop, duplicando recortes a cada gravação.
+- Versão 0.1.0-dev.25.
+
+RUNTIME STATUS: VALIDATED no Runtime `aculta_runtime` (2026-11-02), com os crop types importados:
+`record(file, 25, 75)` criou `aculta_ponto_focal_16x9` (400x225) e `_1x1` (300x300);
+`record(file, 80, 20)` atualizou os dois crops em vez de duplicar (2 crops no total).
+Arquivo, crops e diretório de teste removidos depois.
+
 ## 0.1.0-dev.24 — wiring tolerante e fallback da política
 
 - `aculta_file_uploader.deletion_owner` e `image_widget_crop.manager` passam a referências opcionais (`@?`): o módulo compila e é testável sem `aculta_image` ou `image_widget_crop` no container. Sem owner ou sem crop, a remoção e o ponto focal falham fechados.
