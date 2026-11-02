@@ -1,3 +1,9 @@
+## 0.1.0-dev.127 — Contratos de atividade e resposta (ADR-042, P1)
+
+- `CourseActivity` e `CourseAnswer` (valores imutáveis) com `CourseActivityReaderInterface` e `CourseAnswerReaderInterface`.
+- `CourseAnswer` exige nota quando avaliada e recusa notas fora de 0–100.
+- Smoke sem Drupal 5/5; `CourseActivityAnswerTest` escrito, não executado. Adaptadores do contrib pendentes.
+
 ## 0.1.0-dev.126 — Contrato de aula (ADR-042, P1)
 
 - `CourseLesson` (valor imutável) e `CourseLessonReaderInterface` definem a aula no vocabulário ACULTA, sem tipos do contrib.
