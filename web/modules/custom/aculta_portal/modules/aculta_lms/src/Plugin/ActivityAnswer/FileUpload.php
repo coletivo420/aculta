@@ -103,8 +103,7 @@ final class FileUpload extends ActivityAnswerBase implements PluginFormInterface
 
     $default_value = $this->fidFromData($data);
     $default_value = $default_value === NULL ? NULL : [$default_value];
-    $default_file_extensions = $this->configuration['default_file_extensions'];
-    $file_extensions = $activity->get('field_file_extensions')->first()?->getValue()['value'] ?? $default_file_extensions;
+    $file_extensions = $activity->get('field_file_extensions')->first()?->getValue()['value'] ?? $this->defaultAllowedExtensions();
     $file_extensions = \str_replace(',', ' ', $file_extensions);
 
     $validators = $this->uploadPolicy->restrictValidators(
@@ -175,7 +174,10 @@ final class FileUpload extends ActivityAnswerBase implements PluginFormInterface
    * Default file extensions of the plugin.
    */
   public function defaultAllowedExtensions(): string {
-    return $this->configuration['default_file_extensions'];
+    // A lista padrão vem da política central do uploader para o consumidor
+    // LMS (ADR-042/uploader: a política é a fonte; o campo da atividade é
+    // override opcional e continua filtrado por ela).
+    return implode(' ', $this->uploadPolicy->documentExtensions('lms'));
   }
 
   /**
