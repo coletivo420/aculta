@@ -7,8 +7,11 @@ namespace Drupal\Tests\aculta_lms_h5p\Unit;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\file\Upload\FormUploadedFile;
 use Drupal\aculta_image\ImageInspector;
-use Drupal\aculta_image\ImageUploadIngestor;
-use Drupal\aculta_image\UploadPolicy;
+use Drupal\aculta_file_uploader\DestinationResolver;
+use Drupal\aculta_file_uploader\FileUploadIngestor;
+use Drupal\aculta_file_uploader\MimeTypeVerifier;
+use Drupal\aculta_file_uploader\UploadPolicy;
+use Drupal\token\Token;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorUploadManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -90,7 +93,7 @@ final class aculta_H5PEditorUploadManagerTest extends UnitTestCase {
     $imageFactory = $this->createMock(ImageFactory::class);
     $imageFactory->method('get')->with('private://h5p-custom/editor/images/capa.png')->willReturn($image);
     $inspector = new ImageInspector($imageFactory);
-    $imageIngestor = new ImageUploadIngestor(new UploadPolicy(), $inspector, $handler);
+    $imageIngestor = new FileUploadIngestor(new UploadPolicy(), new MimeTypeVerifier(), new DestinationResolver($this->token()), $handler);
     $fileSystem = $this->createMock(FileSystemInterface::class);
     $fileSystem->expects(self::once())->method('prepareDirectory')->willReturn(TRUE);
     $config = $this->createMock(ImmutableConfig::class);
@@ -118,12 +121,20 @@ final class aculta_H5PEditorUploadManagerTest extends UnitTestCase {
   }
 
   /**
+   * Token service double that keeps the pattern unchanged. */
+  private function token(): Token {
+    $token = $this->createMock(Token::class);
+    $token->method('replace')->willReturnArgument(0);
+    return $token;
+  }
+
+  /**
    * Creates the upload manager with minimal mocked dependencies. */
   private function manager(): aculta_H5PEditorUploadManager {
     $inspector = new ImageInspector($this->createMock(ImageFactory::class));
     return new aculta_H5PEditorUploadManager(
       $this->createMock(FileUploadHandlerInterface::class),
-      new ImageUploadIngestor(new UploadPolicy(), $inspector, $this->createMock(FileUploadHandlerInterface::class)),
+      new FileUploadIngestor(new UploadPolicy(), new MimeTypeVerifier(), new DestinationResolver($this->token()), $this->createMock(FileUploadHandlerInterface::class)),
       $inspector,
       $this->createMock(FileSystemInterface::class),
       $this->createMock(ConfigFactoryInterface::class),

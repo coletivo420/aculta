@@ -46,6 +46,17 @@
           render();
         };
 
+        // O contêiner precisa ser focável para o teclado chegar às setas.
+        if (!editor.hasAttribute('tabindex')) {
+          editor.setAttribute('tabindex', '0');
+        }
+        if (!editor.hasAttribute('role')) {
+          editor.setAttribute('role', 'application');
+        }
+        if (!editor.getAttribute('aria-label')) {
+          editor.setAttribute('aria-label', Drupal.t('Ponto focal da imagem'));
+        }
+
         editor.addEventListener('click', setFromPointer);
 
         // Teclado: setas movem em 1%; com Shift, em 10%.

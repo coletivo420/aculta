@@ -1,5 +1,13 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.31 — editor de ponto focal acessível por teclado
+
+- O contêiner `[data-aculta-focal]` recebe `tabindex="0"`, `role="application"` e `aria-label` antes de ligar as setas; antes o `keydown` existia, mas o elemento não era focável.
+- `focal-point.css` ganha foco visível com o token de foco.
+- Versão 0.1.0-dev.31.
+
+RUNTIME STATUS: VALIDATED no Runtime (2026-11-02): clique move o marcador (30%/60% → 29,69%/58,78%) e setas movem 1% (50→52 em x, 50→49 em y) com foco real no Firefox ESR.
+
 ## 0.1.0-dev.30 — interface de dimensões com aculta_image
 
 - Nova `ImageDimensionReaderInterface`. `ImageDimensionReader` implementa a interface e delega ao

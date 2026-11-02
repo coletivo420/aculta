@@ -61,7 +61,7 @@ final class LmsH5PDiscussionResolverKernelTest extends KernelTestBase {
     'lms_classes',
     'aculta_image',
     'aculta_lms',
-    'aculta_lms_h5p',
+    'aculta_lms_h5p', 'token', 'aculta_file_uploader'
   ];
 
   /**

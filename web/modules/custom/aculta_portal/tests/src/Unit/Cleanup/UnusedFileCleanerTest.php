@@ -125,8 +125,10 @@ final class UnusedFileCleanerTest extends UnitTestCase {
     $logger = $this->createMock(LoggerChannelInterface::class);
     $image = $this->createMock(ImageInterface::class);
     $image->method('isValid')->willReturn(FALSE);
+    // Um PDF não tem dimensões raster; devolver dimensões o tornaria ambíguo
+    // e a limpeza falharia fechada (OwnerRejected), como no código real.
     $factory = $this->createMock(ImageDimensionReader::class);
-    $factory->method('dimensions')->willReturn(['width' => 1, 'height' => 1]);
+    $factory->method('dimensions')->willReturn(NULL);
     return new UnusedFileCleaner($fileUsage, $database, $inspector, $remover, $factory, $logger);
   }
 

@@ -32,6 +32,8 @@ final class QrCodeRasterExportKernelTest extends KernelTestBase {
     'datetime',
     'file',
     'image',
+    'token',
+    'aculta_file_uploader',
     'aculta_qrcode',
   ];
 

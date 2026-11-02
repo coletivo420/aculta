@@ -52,7 +52,7 @@ final class aculta_H5PManagedFileStorageTest extends UnitTestCase {
       $fileSystem,
       $repository,
       $fileUsage,
-      new ImageFileUsageManager($this->createMock(ImageFactory::class), $fileUsage),
+      new ImageFileUsageManager(new ImageInspector($this->createMock(ImageFactory::class)), $fileUsage),
       $this->unusedCleaner(),
       (new \ReflectionClass(PackagedAssetPublisher::class))->newInstanceWithoutConstructor(),
       $this->usageManager($fileSystem, $repository, $fileUsage),

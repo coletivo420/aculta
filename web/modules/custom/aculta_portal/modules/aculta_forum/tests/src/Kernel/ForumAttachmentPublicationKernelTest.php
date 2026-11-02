@@ -87,6 +87,8 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
     'content_moderation',
     'aculta_forum_post_test',
     'aculta_forum_cleanup_test',
+    'token',
+    'aculta_file_uploader',
   ];
 
   /**
