@@ -1,0 +1,12 @@
+# Configuração administrativa das declarações xAPI (ADR-041).
+aculta_lms.xapi:
+  type: config_object
+  label: 'Declarações xAPI'
+  mapping:
+    attempt_token_ttl:
+      type: integer
+      label: 'Validade do token de tentativa (segundos)'
+      constraints:
+        Range:
+          min: 60
+          max: 7200

@@ -1,3 +1,23 @@
+## 0.1.0-dev.119 — validade do token de tentativa configurável (F3, parcial)
+
+- `Xapi\XapiTokenSettings`: lê a validade do token (`aculta_lms.xapi`, chave `attempt_token_ttl`, em segundos). Padrão
+  1800 s; valor ausente, não inteiro ou fora de 60–7200 s cai no padrão.
+- `Form\XapiTokenSettingsForm` em `/painel-administrativo/aculta/lms/xapi/validade-token`, permissão
+  `administer site configuration`, rota `_admin_route`. Só no domínio principal: gate
+  `validate-admin-routes-main-domain.php` PASS (39 arquivos, 163 rotas).
+- Configuração padrão em `config/install/aculta_lms.xapi.yml` e schema em `config/schema/aculta_lms.xapi.schema.yml`.
+- Validação: `XapiTokenSettingsTest` 5/5 no shim; com as suítes de token (8) e ingestão (10), 23/23 no total.
+  Formulário, rota e instalação da configuração no Runtime: DEFERRED. `config:export` para `config/sync` antes do RC.
+
+## 0.1.0-dev.118 — ingestão de lotes xAPI, função pura (F3, parcial)
+
+- `Xapi\XapiBatchIngestor`: decide, sem gravar, quais declarações de um lote são aceitas. Lote que não é lista JSON,
+  vazio, com mais de 50 declarações ou acima de 1 MiB é recusado por inteiro. Cada declaração passa pelo
+  `XapiStatementValidator`; registration diferente do token é recusado por declaração; ausente, recebe o do token.
+  Declaração sem id, repetida no lote ou já gravada é recusada como duplicata.
+- Validação: `XapiBatchIngestorTest` 10/10 no shim. Regressão (token, deriver e validador): 54/54 no total.
+  Controle de mutação: sem checagem de duplicata, dois testes falham. Gravação, endpoint e Runtime: DEFERRED.
+
 ## 0.1.0-dev.117 — token de tentativa e entidade de declarações xAPI (F3, parcial)
 
 - `Xapi\XapiAttemptToken`: token curto por tentativa, HMAC-SHA256, com estudante (uid), conteúdo, lançamento

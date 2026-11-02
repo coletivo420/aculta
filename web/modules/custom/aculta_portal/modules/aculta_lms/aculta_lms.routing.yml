@@ -113,3 +113,13 @@ aculta_lms.answer_file_download:
     parameters:
       lms_answer:
         type: entity:lms_answer
+
+aculta_lms.xapi_token_settings:
+  path: '/painel-administrativo/aculta/lms/xapi/validade-token'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\XapiTokenSettingsForm'
+    _title: 'Validade do token de tentativa'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: true

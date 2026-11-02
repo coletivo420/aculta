@@ -41,9 +41,13 @@ O LRS guarda as declarações brutas, e a tentativa guarda o estado derivado. Is
 - **Consulta do histórico:** só a equipe administrativa, no painel do domínio principal. Educadores não consultam declarações de alunos.
 - **Remoção ao fim do prazo:** apagamento em lote mensal das declarações vencidas, no padrão de retenção de 6 meses. A remoção é do registro bruto; o estado derivado da tentativa não é apagado por ela.
 - **Credencial:** aprovado o modelo de token curto por tentativa, vinculado à matrícula, ao conteúdo e à tentativa, emitido pelo Drupal e tratado como segredo.
+- **Vínculo com a tentativa:** a declaração guarda só a referência opaca ao `lms_lesson_status`. Nenhuma entidade de tentativa própria é criada, para não duplicar o progresso do LMS.
+- **Segredo do token:** Drupal Key com provider env, com um segredo por ambiente. Em produção, o `aculta_deployer` provisiona após o deploy. Exige atualizar o ACULTA Secrets Contract.
+- **Validade do token:** 30 minutos (padrão do código), com teto de 2 horas.
 
 ## Pendências
 
-- Vínculo com a tentativa: o `lms` contrib 1.2.4 não tem entidade de tentativa por lançamento; o mais próximo é `lms_lesson_status`. Análise em `docs/modules/ANALISE-LMS-CONTRIB-1-2-4.md`. Decidir se a declaração guarda só o ID do registro do contrib ou se o ACULTA cria entidade própria. O `lms` não vira requisito sem decisão própria.
+- Dependência do vínculo: a referência ao `lms_lesson_status` assume que o contrib mantém uma tentativa por aula. Não verificado no Runtime. Análise em `docs/modules/ANALISE-LMS-CONTRIB-1-2-4.md`. O `lms` não vira requisito do projeto.
+- Atualizar o ACULTA Secrets Contract com a nova chave, antes da F3.
 - Teste de remoção mensal e medição de carga de escrita no MariaDB do Runtime.
 - Conferência do texto IEEE 9274.1.1-2023 para autorização e JSON Schema antes da F1.
