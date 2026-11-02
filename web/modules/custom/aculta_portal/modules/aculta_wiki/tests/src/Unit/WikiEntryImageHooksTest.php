@@ -59,7 +59,7 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
     self::assertSame('private://wiki/imagens', $form['wiki_lead_image']['file']['#upload_location']);
     self::assertFalse($form['wiki_lead_image']['file']['#multiple']);
     self::assertSame([
-      'FileExtension' => ['extensions' => 'png jpg jpeg gif webp'],
+      'FileExtension' => ['extensions' => 'png gif jpg jpeg webp'],
       'FileSizeLimit' => ['fileLimit' => 10 * 1048576],
       'FileIsImage' => [],
     ], $form['wiki_lead_image']['file']['#upload_validators']);

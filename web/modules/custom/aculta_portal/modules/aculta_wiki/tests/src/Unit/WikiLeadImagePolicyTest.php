@@ -21,7 +21,7 @@ final class WikiLeadImagePolicyTest extends UnitTestCase {
     $constant = (new \ReflectionClass(UploadSettingsForm::class))->getReflectionConstant('CONSUMERS');
 
     self::assertIsArray($constant->getValue());
-    self::assertContains('wiki', $constant->getValue());
+    self::assertArrayHasKey('wiki', $constant->getValue());
   }
 
 

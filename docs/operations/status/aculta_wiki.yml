@@ -1,7 +1,14 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.133
+version: 0.1.0-dev.134
 state: Dev
 progress_note: >-
+  Dev.134: testes alinhados ao catálogo central de upload; Unit Wiki 78/402 PASS.
+  Kernel WikiLeadImageLifecycle 33 testes / 1.847 assertions: 3 erros e 2 falhas
+  preexistentes (schema aculta_user.settings, plugin `wiki` ausente no
+  MarleyTabManager do Studio e dois `files_deleted` que falham também com o
+  UnusedFileCleaner de b3f05ccbd).
+  A imagem de destaque usa `aculta_file_uploader.consumer_policy` e aceita envios
+  recentes do Studio; upload autenticado no Runtime pendente.
   Dev.121: `WikiEditorialNoticePipelineTest` liga worker, publisher com
   revalidação de acesso e subscriber Messenger reais; 1/10 PASS. Unit Wiki
   completa 88/484 PASS. Combinado com Kernels separados de fila e persistência,

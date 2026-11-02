@@ -1,3 +1,11 @@
+## 0.1.0-dev.134 — testes alinhados ao catálogo central
+
+- `WikiEntryImageHooksTest` espera a ordem do catálogo central (`png gif jpg jpeg webp`).
+- `WikiLeadImagePolicyTest` confere a chave `wiki` em `UploadSettingsForm::CONSUMERS` com `assertArrayHasKey`.
+- Unit Wiki 78/402 PASS.
+
+RUNTIME STATUS: DEFERRED. Só testes.
+
 ## 0.1.0-dev.133 — prévia da imagem no editor de ponto focal
 
 - O editor de ponto focal mostra a imagem atual, com permissão de quem edita o verbete.
