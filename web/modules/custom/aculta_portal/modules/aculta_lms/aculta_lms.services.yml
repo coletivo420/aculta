@@ -23,9 +23,13 @@ services:
   logger.channel.aculta_lms:
     parent: logger.channel_base
     arguments: ['aculta_lms']
+  aculta_lms.course_progress_adapter:
+    class: Drupal\aculta_lms\Learning\ContribCourseProgressAdapter
+    arguments: ['@lms.training_manager']
+  Drupal\aculta_lms\Learning\CourseProgressReaderInterface: '@aculta_lms.course_progress_adapter'
   aculta_lms.account_courses_reader:
     class: Drupal\aculta_lms\Account\AccountCoursesReader
-    arguments: ['@lms.training_manager', '@group.membership_loader', '@aculta_portal.domain_purpose']
+    arguments: ['@Drupal\aculta_lms\Learning\CourseProgressReaderInterface', '@group.membership_loader', '@aculta_portal.domain_purpose']
   Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface: '@aculta_lms.account_courses_reader'
   aculta_portal.lms_friendly_slugs:
     class: Drupal\aculta_lms\Routing\LmsFriendlySlugs

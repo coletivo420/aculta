@@ -10,17 +10,17 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\GroupMembershipLoaderInterface;
-use Drupal\lms\Entity\Bundle\Course;
-use Drupal\lms\Entity\CourseStatusInterface;
-use Drupal\lms\TrainingManager;
+use Drupal\aculta_lms\Learning\CourseProgress;
+use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
+use Drupal\group\Entity\GroupInterface;
 
 /**
- * Adapts authorized Group and Drupal LMS course data to ACULTA summaries.
+ * Adapts authorized Group course data and ACULTA progress to account summaries (ADR-042, decisão 6).
  */
 final class AccountCoursesReader implements AccountCoursesReaderInterface {
 
   public function __construct(
-    private readonly TrainingManager $trainingManager,
+    private readonly CourseProgressReaderInterface $progress,
     private readonly GroupMembershipLoaderInterface $membershipLoader,
     private readonly DomainPurposeManager $domainPurposeManager,
   ) {}
@@ -33,7 +33,7 @@ final class AccountCoursesReader implements AccountCoursesReaderInterface {
 
     foreach ($this->membershipLoader->loadByUser($account) as $membership) {
       $course = $membership->getGroup();
-      if (!$course instanceof Course || $course->bundle() !== 'lms_course') {
+      if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course') {
         continue;
       }
 
@@ -55,7 +55,7 @@ final class AccountCoursesReader implements AccountCoursesReaderInterface {
         continue;
       }
 
-      $status = $this->trainingManager->loadCourseStatus($course, $account, ['current' => TRUE]);
+      $progress = $this->progress->current($course, $account);
       $description = '';
       $descriptionFormat = '';
       if ($course->hasField('field_description') && !$course->get('field_description')->isEmpty()) {
@@ -63,28 +63,27 @@ final class AccountCoursesReader implements AccountCoursesReaderInterface {
         $descriptionFormat = (string) $course->get('field_description')->format;
       }
 
-      $statusCode = $status?->getStatus() ?? '';
-      $finished = $status?->isFinished() ?? FALSE;
+      $statusCode = $progress?->status ?? '';
+      $finished = $progress?->finished ?? FALSE;
       $url = NULL;
-      if ($statusCode !== CourseStatusInterface::STATUS_NEEDS_EVALUATION) {
+      if ($statusCode !== CourseProgress::STATUS_NEEDS_EVALUATION) {
         $route = $finished ? 'lms.group.self_results' : 'lms.course.start';
         $url = $this->domainPurposeManager->routeUrl('courses', $route, ['group' => $course->id()]);
       }
 
-      $score = $status?->getScore();
       $items[] = new AccountCourseSummary(
         id: (string) $course->id(),
         label: (string) $course->label(),
         description: $description,
         descriptionFormat: $descriptionFormat,
         status: $this->normalizeStatus($statusCode),
-        score: is_numeric($score) ? (float) $score : NULL,
+        score: $progress?->score,
         finished: $finished,
         url: $url,
         cacheTags: array_values(array_unique(array_merge(
           $course->getCacheTags(),
           $accessCacheTags,
-          $status?->getCacheTags() ?? [],
+          $progress?->cacheTags ?? [],
         ))),
       );
     }
@@ -98,10 +97,10 @@ final class AccountCoursesReader implements AccountCoursesReaderInterface {
    */
   private function normalizeStatus(string $status): string {
     return match ($status) {
-      CourseStatusInterface::STATUS_PROGRESS => AccountCourseSummary::STATUS_IN_PROGRESS,
-      CourseStatusInterface::STATUS_PASSED => AccountCourseSummary::STATUS_COMPLETED,
-      CourseStatusInterface::STATUS_FAILED => AccountCourseSummary::STATUS_FAILED,
-      CourseStatusInterface::STATUS_NEEDS_EVALUATION => AccountCourseSummary::STATUS_AWAITING_EVALUATION,
+      CourseProgress::STATUS_PROGRESS => AccountCourseSummary::STATUS_IN_PROGRESS,
+      CourseProgress::STATUS_PASSED => AccountCourseSummary::STATUS_COMPLETED,
+      CourseProgress::STATUS_FAILED => AccountCourseSummary::STATUS_FAILED,
+      CourseProgress::STATUS_NEEDS_EVALUATION => AccountCourseSummary::STATUS_AWAITING_EVALUATION,
       default => AccountCourseSummary::STATUS_NOT_STARTED,
     };
   }

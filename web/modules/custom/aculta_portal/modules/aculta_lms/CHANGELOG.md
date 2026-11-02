@@ -1,3 +1,13 @@
+## 0.1.0-dev.125 — Desacoplamento do leitor de cursos (ADR-042, decisão 6a)
+
+- `AccountCoursesReader` deixa de importar `Drupal\lms`. Depende de `CourseProgressReaderInterface` (contrato ACULTA) e
+  recebe um `CourseProgress` (status, conclusão, nota, cache tags).
+- `ContribCourseProgressAdapter` é a única classe do módulo que lê o `TrainingManager` do LMS contrib. Mapeia
+  `loadCourseStatus` para os status `in progress`, `passed`, `failed` e `evaluation`, e ignora o que não for `Course`.
+- `AccountCoursesReaderTest` reescrito para o contrato: concessão booleana mantém o curso; negação falha fechado sem
+  consultar o progresso.
+- Testes PHPUnit e Kernel não executados nesta sessão (sem `vendor/`); verificação no Runtime pendente.
+
 ## 0.1.0-dev.124 — LRS xAPI 2.0 ativo (ADR-041, F3)
 
 - `aculta_lms_update_10003` e a configuração `aculta_lms.xapi` instalados no Runtime de teste; `updatedb:status` e
