@@ -6,14 +6,6 @@
 - Validado no Firefox ESR (DISPLAY=:0) no diálogo de anexo do Fórum: 6/6 em `tests/browser/aculta-uploader/dropzone-smoke.py`.
 - Versão 0.1.0-dev.33.
 
-## 0.1.0-dev.31 — editor de ponto focal acessível por teclado
-
-- O contêiner `[data-aculta-focal]` recebe `tabindex="0"`, `role="application"` e `aria-label` antes de ligar as setas; antes o `keydown` existia, mas o elemento não era focável.
-- `focal-point.css` ganha foco visível com o token de foco.
-- Versão 0.1.0-dev.31.
-
-RUNTIME STATUS: VALIDATED no Runtime (2026-11-02): clique move o marcador (30%/60% → 29,69%/58,78%) e setas movem 1% (50→52 em x, 50→49 em y) com foco real no Firefox ESR.
-
 ## 0.1.0-dev.32 — estilo da zona de arrastar e soltar
 
 - Novo `css/upload-dropzone.css` na biblioteca `upload-dropzone`. Até aqui a zona não tinha estilo: o usuário não via
@@ -22,6 +14,14 @@ RUNTIME STATUS: VALIDATED no Runtime (2026-11-02): clique move o marcador (30%/6
   fallback; sem seletor de tema. `prefers-reduced-motion` remove a transição.
 - Usado pelo Studio (`UserUploadDialogBuilder`), wiki, fórum e demais consumidores do elemento `aculta_upload_dropzone`.
 - RUNTIME STATUS: DEFERRED (sem validação visual no navegador nesta sessão).
+
+## 0.1.0-dev.31 — editor de ponto focal acessível por teclado
+
+- O contêiner `[data-aculta-focal]` recebe `tabindex="0"`, `role="application"` e `aria-label` antes de ligar as setas; antes o `keydown` existia, mas o elemento não era focável.
+- `focal-point.css` ganha foco visível com o token de foco.
+- Versão 0.1.0-dev.31.
+
+RUNTIME STATUS: VALIDATED no Runtime (2026-11-02): clique move o marcador (30%/60% → 29,69%/58,78%) e setas movem 1% (50→52 em x, 50→49 em y) com foco real no Firefox ESR.
 
 ## 0.1.0-dev.30 — interface de dimensões com aculta_image
 
