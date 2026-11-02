@@ -1,3 +1,15 @@
+## 0.1.0-dev.110 — sanitização do progresso SCORM (sem endpoint)
+
+- `ScormProgressSnapshot`: recebe o cmi do conteúdo e devolve só o que está no schema de SCORM 1.2 ou 2004, com tipo e limite
+  de tamanho (suspend_data 4096 na 1.2 e 64000 na 2004; interações até 200). Elementos fora do schema, como identificação do
+  aluno, são descartados. Status são validados pelo `ScormStatusMapper`, que também deriva o estado normalizado.
+- Decisão de armazenamento: o resultado vai como dado da resposta do LMS (`getData()`), que já é o mecanismo do módulo, sem
+  tabela paralela. Essa ligação ainda não foi feita (ver abaixo).
+
+Validação: `ScormProgressSnapshotTest` 13/13 no shim unitário local. Pendente, DEFERRED: plugin `ActivityAnswer` do SCORM,
+endpoint de progresso, rota com autorização, player, e testes no Runtime e no PHPUnit oficial. A API de criação de resposta
+do módulo `lms` não pôde ser conferida aqui, porque o pacote contrib não está no ambiente.
+
 ## 0.1.0-dev.109 — API SCORM 2004 no navegador (sem endpoint de progresso)
 
 - `js/scorm/aculta-scorm-api-2004.js`: API SCORM 2004 derivada de conceitos do Opigno SCORM 3.2.7 (GPL-2.0-or-later), reescrita
