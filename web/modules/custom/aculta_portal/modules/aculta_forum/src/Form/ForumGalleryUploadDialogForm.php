@@ -29,11 +29,11 @@ final class ForumGalleryUploadDialogForm extends FormBase {
   private const UPLOAD_DIRECTORY = 'private://forum/anexos';
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly ConsumerUploadPolicy $uploadPolicy,
-    private readonly UserUploadDialogBuilder $dialogBuilder,
-    private readonly RecentUploads $recentUploads,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly ConsumerUploadPolicy $uploadPolicy,
+    protected readonly UserUploadDialogBuilder $dialogBuilder,
+    protected readonly RecentUploads $recentUploads,
   ) {}
 
   /**

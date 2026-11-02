@@ -31,11 +31,11 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
   private const EMBED_DISPLAY = 'entity_reference:entity_reference_entity_view';
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly ConsumerUploadPolicy $uploadPolicy,
-    private readonly UserUploadDialogBuilder $dialogBuilder,
-    private readonly RecentUploads $recentUploads,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly ConsumerUploadPolicy $uploadPolicy,
+    protected readonly UserUploadDialogBuilder $dialogBuilder,
+    protected readonly RecentUploads $recentUploads,
   ) {}
 
   /**

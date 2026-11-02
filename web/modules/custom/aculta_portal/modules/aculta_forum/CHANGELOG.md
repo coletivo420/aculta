@@ -1,3 +1,14 @@
+## 0.1.0-dev.339 — diálogos de anexo e galeria sobrevivem ao cache de formulário
+
+- As dependências de `ForumAttachmentUploadDialogForm` e `ForumGalleryUploadDialogForm` passam a `protected readonly`: o `DependencySerializationTrait` do FormBase não serializa propriedades privadas da subclasse, então o upload em dois passos devolvia 500 ("typed property must not be accessed before initialization").
+- Versão 0.1.0-dev.339.
+
+RUNTIME STATUS: VALIDATED parcialmente no Runtime `aculta_runtime` (2026-11-02):
+upload de imagem no diálogo de anexo aceito em `private://forum/anexos/` após corrigir a
+permissão de grupo do diretório; o envio AJAX não foi exercitado por HTTP (o caminho de
+creção de Media é coberto pelo Kernel `ForumAttachmentUploadDialogFormKernelTest` 2/34 PASS).
+Unit Fórum 189/1348 PASS.
+
 ## 0.1.0-dev.338 — Kernel do diálogo com a política central
 
 - `ForumAttachmentUploadDialogFormKernelTest` habilita `aculta_file_uploader`, injeta `RecentUploads` no formulário (5º argumento) e usa um PDF real de fixture, porque a política confere o MIME pelo conteúdo.
