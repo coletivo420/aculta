@@ -1,7 +1,10 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.38
+version: 0.1.0-dev.39
 state: Dev
 progress_note: >-
+  Dev.39: drop zone do Studio serializa dependências (protected readonly), envia
+  arquivos e remove envios sem uso; validado no Runtime com aceite, recusa de
+  MIME, recusa por tamanho e remoção. Unit 64/606 PASS.
   Dev.38: painéis de aprendizagem e jornada emitem data-portal-ui em vez de
   classes aculta-learning-*; Unit Studio 64/606 PASS; revisão visual pendente.
   Dev.37: drop zone embutida por integração em /estudio/envio/{integracao},

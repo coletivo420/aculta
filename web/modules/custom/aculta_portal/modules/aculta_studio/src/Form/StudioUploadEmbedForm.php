@@ -48,14 +48,14 @@ final class StudioUploadEmbedForm extends FormBase {
   public const DIRECTORY = 'private://studio/envio';
 
   public function __construct(
-    private readonly ConsumerUploadPolicy $policy,
-    private readonly UserUploadDialogBuilder $dialogBuilder,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly RecentUploads $recentUploads,
-    private readonly FileUsageInterface $fileUsage,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly DateFormatterInterface $dateFormatter,
-    private readonly UnusedFileCleaner $unusedFileCleaner,
+    protected readonly ConsumerUploadPolicy $policy,
+    protected readonly UserUploadDialogBuilder $dialogBuilder,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly RecentUploads $recentUploads,
+    protected readonly FileUsageInterface $fileUsage,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly DateFormatterInterface $dateFormatter,
+    protected readonly UnusedFileCleaner $unusedFileCleaner,
     private readonly ImageCleanup $imageCleanup,
     private readonly TimeInterface $time,
   ) {}
@@ -136,6 +136,8 @@ final class StudioUploadEmbedForm extends FormBase {
       '#type' => 'details',
       '#title' => $this->t('Envios recentes'),
       '#open' => TRUE,
+      // Mantém o tableselect em recentes[table][fid], como o handler espera.
+      '#tree' => TRUE,
       'description' => [
         '#type' => 'html_tag',
         '#tag' => 'p',
@@ -156,7 +158,7 @@ final class StudioUploadEmbedForm extends FormBase {
         '#type' => 'submit',
         '#value' => $this->t('Remover selecionados sem uso'),
         '#name' => 'remove_recent',
-        '#limit_validation_errors' => [['recentes', 'table']],
+        '#limit_validation_errors' => [['recentes', 'table'], ['integracao']],
         '#submit' => ['::removeUnused'],
       ],
     ];

@@ -1,3 +1,15 @@
+## 0.1.0-dev.39 — drop zone do Studio sobrevive ao cache de formulário e remove envios
+
+- As dependências do `StudioUploadEmbedForm` passam a `protected readonly`: o `DependencySerializationTrait` do FormBase só serializa propriedades visíveis no escopo dele, então `private` promovidas se perdiam e o envio em duas etapas dava 500 ("must not be accessed before initialization").
+- O `details` de envios recentes ganha `#tree`, para o tableselect chegar como `recentes[table][fid]`, e `#limit_validation_errors` inclui `integracao`; antes a ação de remover recebia seleção e integração vazias e não apagava nada.
+- Versão 0.1.0-dev.39.
+
+RUNTIME STATUS: VALIDATED no Runtime `aculta_runtime` (2026-11-02): PNG válido aceito
+(fid temporário em `private://studio/envio/wiki/`), texto renomeado para `.png` recusado,
+PNG de 11,47 MB recusado pelo teto de 10 MB, envio concluído com "Um arquivo recebido."
+e remoção de envio sem uso apagando o arquivo (status Deleted, linha e arquivo ausentes).
+Unit Studio 64/606 PASS.
+
 ## 0.1.0-dev.38 — apresentação sai das classes de design
 
 - `LearnerDashboardComposer` e `CourseJourneyComposer` emitem `data-portal-ui` (e `data-state`/`data-variant`/`data-route-current`) em vez de classes `aculta-learning-*`; o ACULTA420 passou a selecionar por esses atributos.
