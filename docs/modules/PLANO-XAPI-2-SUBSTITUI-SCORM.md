@@ -1,6 +1,6 @@
 # Plano de estudo: substituir SCORM por xAPI 2.0 e seguintes
 
-Status: **decisões fechadas, ADR pendente**. D-66 (substituição e escopo xAPI 2.0 puro), D-67 (LRS próprio no Drupal), D-68 (retenção configurável, padrão 6 meses) e D-69 (nota pela regra de tentativa), todas em `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`. Nenhuma implementação começa antes do ADR.
+Status: **ADR aceito; F1–F4 concluídas; F3/F4 homologadas no Homelab em 2026-11-02**. D-66 (substituição e escopo xAPI 2.0 puro), D-67 (LRS próprio no Drupal), D-68 (retenção configurável, padrão 6 meses) e D-69 (nota pela regra de tentativa) estão em `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`.
 
 Base: [ESTUDO-FERRAMENTAS-LMS-2026.md](ESTUDO-FERRAMENTAS-LMS-2026.md), com as fontes ali listadas.
 
@@ -46,8 +46,8 @@ Decisão tomada (D-67): **B, LRS próprio no Drupal**. Isso difere da recomenda�
 | F0 | ADR com alternativas de LRS, modelo de credencial e destino do código SCORM. | Decisões da seção 5 respondidas. |
 | F1 | Validador puro de declaração xAPI 2.0 (campos obrigatórios, tipos, tamanho), com testes. **Concluída em código (dev.114), 20/20 no shim.** | ADR aceito. |
 | F2 | Derivação de estado e pontuação a partir de declarações, pura, com testes. **Concluída em código (dev.115), 16/16 no shim, com controle de mutação. Status e nota pela `AttemptRule`.** | F1. |
-| F3 | Lançamento com token por tentativa e endpoint de ingestão autenticado, com limite de taxa. | F1 e F2; credencial aprovada. |
-| F4 | Runtime: envio real de declarações de um conteúdo de teste, em Firefox ESR, e Olivero. | Ambiente de teste disponível para o agente. |
+| F3 | **Concluída em `aculta_lms` 0.1.0-dev.124:** token vinculado à tentativa, endpoint POST autenticado, validação/idempotência e Flood por token; retenção mensal em lotes com log. PHPUnit Unit 65/99; Kernel 2/22; gate MAIN PASS. | F1 e F2; credencial aprovada. |
+| F4 | **Concluída no Homelab:** Firefox ESR com `DISPLAY=:0` enviou uma declaração de teste aceita e persistida em ACULTA420 e Olivero; formulário restrito ao MAIN (404 em `cursos`); Flood confirmou 60/minuto e 429 no 61º envio. | Ambiente de teste disponível para o agente. |
 
 Cada fase vira um commit separado, como manda o processo do projeto.
 
@@ -61,7 +61,7 @@ Respondidas em 2026-11-02:
 - **Retenção** (D-68): opção administrativa no LMS, padrão de 6 meses. A opção fica no painel do domínio principal.
 - **Nota** (D-69): pela regra de tentativa, com `AttemptRule`.
 
-Pendente para o ADR: quem pode consultar o histórico (equipe administrativa, a definir), e a regra de remoção automática ao fim do prazo.
+Pendências restantes: medir carga de escrita no MariaDB antes de uso de produção e provisionar o segredo HMAC por ambiente no deploy de produção. Consulta ao histórico permanece restrita à equipe administrativa, sem endpoint de leitura nesta fase.
 
 ## 6. Riscos
 

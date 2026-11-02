@@ -34,7 +34,7 @@ final class XapiBatchIngestor {
   /**
    * @param string $body
    *   Corpo JSON recebido.
-   * @param array{uid: int, content: string, registration: string} $claims
+   * @param array{uid: int, content: string, registration: string, lesson_status_id: int, actor_mbox_sha1sum: string} $claims
    *   Reivindicações do token já verificado.
    * @param string[] $knownStatementIds
    *   statement_id já gravados para a mesma tentativa ou estudante.
@@ -90,6 +90,14 @@ final class XapiBatchIngestor {
       }
       if (isset($seen[$id])) {
         $refused[] = ['index' => $index, 'reason' => 'Declaração duplicada.'];
+        continue;
+      }
+      if (($normalized['object']['id'] ?? NULL) !== $claims['content']) {
+        $refused[] = ['index' => $index, 'reason' => 'Conteúdo diferente do token.'];
+        continue;
+      }
+      if (($normalized['actor']['mbox_sha1sum'] ?? NULL) !== strtolower($claims['actor_mbox_sha1sum'])) {
+        $refused[] = ['index' => $index, 'reason' => 'Ator diferente do token.'];
         continue;
       }
       $seen[$id] = TRUE;

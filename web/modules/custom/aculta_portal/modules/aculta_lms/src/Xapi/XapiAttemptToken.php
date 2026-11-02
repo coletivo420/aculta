@@ -8,9 +8,9 @@ namespace Drupal\aculta_lms\Xapi;
  * Token curto de tentativa para o envio de declarações xAPI (ADR-041, F3).
  *
  * Função pura, sem Drupal e sem armazenamento. Assina com HMAC-SHA256 as
- * reivindicações da tentativa: estudante (uid), conteúdo, lançamento
- * (registration) e validade. O segredo é injetado por quem chama; na F3 virá
- * da Drupal Key, nunca de configuração exportável.
+ * reivindicações da tentativa: estudante (uid), progresso da aula, conteúdo,
+ * lançamento (registration), ator e validade. O segredo vem da Drupal Key/env,
+ * nunca de configuração exportável.
  *
  * Formato: base64url(JSON das reivindicações) . "." . base64url(HMAC).
  */
@@ -41,13 +41,17 @@ final class XapiAttemptToken {
    *   Identificador do conteúdo xAPI (IRI da atividade de lançamento).
    * @param string $registration
    *   UUID do lançamento (context.registration).
+   * @param int $lessonStatusId
+   *   ID opaco do lms_lesson_status associado à tentativa.
+   * @param string $actorMboxSha1sum
+   *   SHA-1 hexadecimal de `mailto:` seguido do e-mail normalizado do estudante.
    * @param int $now
    *   Instante de emissão, em Unix time.
    * @param int $ttl
    *   Validade, em segundos, de 1 até MAX_TTL.
    */
-  public function issue(int $uid, string $content, string $registration, int $now, int $ttl = 1800): string {
-    if ($uid <= 0 || $content === '' || !$this->isUuid($registration)) {
+  public function issue(int $uid, string $content, string $registration, int $lessonStatusId, string $actorMboxSha1sum, int $now, int $ttl = 1800): string {
+    if ($uid <= 0 || $content === '' || !$this->isUuid($registration) || $lessonStatusId <= 0 || preg_match('/^[0-9a-f]{40}$/i', $actorMboxSha1sum) !== 1) {
       throw new \InvalidArgumentException('Reivindicações inválidas para o token.');
     }
     if ($ttl < 1 || $ttl > self::MAX_TTL) {
@@ -57,6 +61,8 @@ final class XapiAttemptToken {
       'uid' => $uid,
       'content' => $content,
       'registration' => $registration,
+      'lesson_status_id' => $lessonStatusId,
+      'actor_mbox_sha1sum' => strtolower($actorMboxSha1sum),
       'iat' => $now,
       'exp' => $now + $ttl,
     ];
@@ -82,10 +88,12 @@ final class XapiAttemptToken {
     }
     $claims = json_decode((string) $this->decode($body), TRUE);
     if (!is_array($claims)
-      || !isset($claims['uid'], $claims['content'], $claims['registration'], $claims['iat'], $claims['exp'])
+      || !isset($claims['uid'], $claims['content'], $claims['registration'], $claims['lesson_status_id'], $claims['actor_mbox_sha1sum'], $claims['iat'], $claims['exp'])
       || !is_int($claims['uid']) || $claims['uid'] <= 0
       || !is_string($claims['content']) || $claims['content'] === ''
       || !is_string($claims['registration']) || !$this->isUuid($claims['registration'])
+      || !is_int($claims['lesson_status_id']) || $claims['lesson_status_id'] <= 0
+      || !is_string($claims['actor_mbox_sha1sum']) || preg_match('/^[0-9a-f]{40}$/i', $claims['actor_mbox_sha1sum']) !== 1
       || !is_int($claims['iat']) || !is_int($claims['exp'])) {
       throw new \UnexpectedValueException('Reivindicações inválidas.');
     }

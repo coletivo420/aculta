@@ -2,6 +2,24 @@ services:
   aculta_lms.account_user_loader:
     class: Drupal\aculta_lms\Account\AccountUserLoader
     arguments: ['@entity_type.manager']
+  aculta_lms.xapi_statement_validator:
+    class: Drupal\aculta_lms\Xapi\XapiStatementValidator
+  aculta_lms.xapi_batch_ingestor:
+    class: Drupal\aculta_lms\Xapi\XapiBatchIngestor
+    arguments: ['@aculta_lms.xapi_statement_validator']
+  aculta_lms.xapi_attempt_token_controller:
+    class: Drupal\aculta_lms\Controller\XapiAttemptTokenController
+    arguments: ['@key.repository', '@entity_type.manager', '@current_user', '@config.factory', '@datetime.time']
+  aculta_lms.xapi_statements_controller:
+    class: Drupal\aculta_lms\Controller\XapiStatementsController
+    arguments: ['@key.repository', '@entity_type.manager', '@flood', '@lock', '@database', '@datetime.time', '@aculta_lms.xapi_batch_ingestor', '@logger.channel.aculta_lms']
+  aculta_lms.xapi_statement_retention:
+    class: Drupal\aculta_lms\Xapi\XapiStatementRetentionPurger
+    arguments: ['@entity_type.manager', '@state', '@datetime.time', '@logger.channel.aculta_lms']
+  Drupal\aculta_lms\Xapi\XapiStatementRetentionPurger: '@aculta_lms.xapi_statement_retention'
+  Drupal\aculta_lms\Hook\XapiRetentionCronHooks:
+    class: Drupal\aculta_lms\Hook\XapiRetentionCronHooks
+    arguments: ['@aculta_lms.xapi_statement_retention', '@config.factory']
   logger.channel.aculta_lms:
     parent: logger.channel_base
     arguments: ['aculta_lms']

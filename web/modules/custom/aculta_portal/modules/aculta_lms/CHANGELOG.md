@@ -1,3 +1,20 @@
+## 0.1.0-dev.124 — LRS xAPI 2.0 ativo (ADR-041, F3)
+
+- `aculta_lms_update_10003` e a configuração `aculta_lms.xapi` instalados no Runtime de teste; `updatedb:status` e
+  `config:status` sem pendências após importação somente de `config/sync`.
+- Formulário de validade do token disponível no MAIN; gate de domínio administrativo PASS. Tokens HMAC-SHA256 usam Drupal
+  Key com provider env, padrão 1800 s e teto 7200 s, vinculados a usuário, conteúdo, registration, actor e
+  `lesson_status_id`.
+- `POST /xapi/statements` autentica pelo header `X-ACULTA-XAPI-Token` (Bearer conflita com Simple OAuth), valida lotes
+  com `XapiBatchIngestor`, impõe limites de corpo/declarações, idempotência e flood de 60/minuto por token, e persiste
+  somente declarações aceitas.
+- Hook de cron executa a retenção mensal em lotes de 500, com corte por `XapiRetention::cutoff()` e log da quantidade
+  removida. Um mês só é marcado concluído quando não há lote cheio restante.
+- Segredo `ACULTA_LMS_XAPI_TOKEN_SECRET` incluído no Secrets Contract e allowlist do loader; nenhum valor de segredo é
+  versionado. PHPUnit oficial xAPI Unit: 65 testes/99 assertions; Kernel MariaDB `aculta_simpletest`: 2/22, incluindo
+  o hook mensal. Firefox ESR com `DISPLAY=:0`: declaração aceita e persistida em ACULTA420 e Olivero; formulário
+  aparece no MAIN e responde 404 em `cursos`. Flood real: 60 lotes inválidos retornaram 400 e o 61º retornou 429.
+
 ## 0.1.0-dev.123 — modelo de certificado separado do registro emitido
 
 - `Entity\CertificateTemplate` (`aculta_lms_certificate_template`): nome, orientação do papel, modo de visualização e

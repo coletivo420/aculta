@@ -17,6 +17,7 @@ final class XapiBatchIngestorTest extends UnitTestCase {
 
   private const REGISTRATION = '9e13c2a4-5b1f-4c8e-9a7d-3f2b1e0d4c5a';
   private const OTHER_REGISTRATION = '1f2e3d4c-5b6a-4c7d-8e9f-0a1b2c3d4e5f';
+  private const ACTOR_SHA1 = '0123456789abcdef0123456789abcdef01234567';
 
   /**
    * Declarações válidas são aceitas e recebem o registration do token quando ausente.
@@ -128,15 +129,33 @@ final class XapiBatchIngestorTest extends UnitTestCase {
     $this->assertSame('A declaração exige verb.', $result['refused'][0]['reason']);
   }
 
+  public function testRefusesStatementForDifferentContent(): void {
+    $statement = $this->statement('a0000000-0000-4000-8000-000000000001');
+    $statement['object']['id'] = 'https://aculta.org/atividade/other';
+    $result = $this->ingestor()->ingest((string) json_encode([$statement]), $this->claims(), []);
+
+    $this->assertSame([], $result['accepted']);
+    $this->assertSame('Conteúdo diferente do token.', $result['refused'][0]['reason']);
+  }
+
+  public function testRefusesStatementForDifferentActor(): void {
+    $statement = $this->statement('a0000000-0000-4000-8000-000000000001');
+    $statement['actor']['mbox_sha1sum'] = str_repeat('f', 40);
+    $result = $this->ingestor()->ingest((string) json_encode([$statement]), $this->claims(), []);
+
+    $this->assertSame([], $result['accepted']);
+    $this->assertSame('Ator diferente do token.', $result['refused'][0]['reason']);
+  }
+
   private function ingestor(): XapiBatchIngestor {
     return new XapiBatchIngestor(new XapiStatementValidator());
   }
 
   /**
-   * @return array{uid: int, content: string, registration: string}
+   * @return array{uid: int, content: string, registration: string, lesson_status_id: int, actor_mbox_sha1sum: string}
    */
   private function claims(): array {
-    return ['uid' => 42, 'content' => 'https://exemplo.invalid/atividade/1', 'registration' => self::REGISTRATION];
+    return ['uid' => 42, 'content' => 'https://exemplo.invalid/atividade/1', 'registration' => self::REGISTRATION, 'lesson_status_id' => 2468, 'actor_mbox_sha1sum' => self::ACTOR_SHA1];
   }
 
   /**
@@ -145,7 +164,7 @@ final class XapiBatchIngestorTest extends UnitTestCase {
   private function statement(string $id, ?string $registration = NULL): array {
     $statement = [
       'id' => $id,
-      'actor' => ['mbox' => 'mailto:aluno@example.org'],
+      'actor' => ['mbox_sha1sum' => self::ACTOR_SHA1],
       'verb' => ['id' => 'http://adlnet.gov/expapi/verbs/completed'],
       'object' => ['id' => 'https://exemplo.invalid/atividade/1'],
       'timestamp' => '2026-11-02T10:00:00Z',
