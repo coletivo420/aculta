@@ -1,13 +1,19 @@
+## 0.4.0-dev.168 — fixture Kernel acompanha a integração de limites
+
+- O Kernel do instalador habilita `aculta_file_uploader`, dependência usada pelo
+  serviço de upload e pelo serviço configurável de limites.
+- A fixture instala `aculta_image_quarantine` pelo módulo dono atual
+  (`aculta_file_uploader`), mantendo as tabelas de origem/impressão digital em
+  `aculta_image`.
+- PHPUnit oficial no Homelab: Unit ZIP 6/40 e Kernel do instalador 11/232 PASS.
+
 ## 0.4.0-dev.167 — limites do pacote H5P vêm do painel de uploads
 
 - O instalador recebe `IngestionLimits` (`aculta_file_uploader`) e aplica o teto por entrada e o total configurados em
   `/painel-administrativo/aculta/uploads/limites`. Padrões: 32 MB por entrada e 256 MB no total. Tetos fixos: 128 MB
   e 512 MB. Entradas de contagem e razão de compressão continuam constantes.
 - Dependência já existente: `aculta_file_uploader`.
-
-Validação: os testes de unidade do instalador (`aculta_H5PLibraryPackageInstallerTest`) usam `createMock` e não
-rodaram no shim local. `aculta_H5PArchiveResourceLimitsTest` 6/6 no shim anterior, sem mudança de lógica. Kernel e
-gate não executados. Status: DEFERRED.
+- Validação original: Kernel pendente naquela fase; reexecutado na dev.168 após corrigir a fixture, 11/232 PASS.
 
 ## 0.4.0-dev.166 — limites de recursos no instalador de bibliotecas H5P
 

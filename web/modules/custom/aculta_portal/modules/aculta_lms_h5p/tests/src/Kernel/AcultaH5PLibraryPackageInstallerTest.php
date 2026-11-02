@@ -37,7 +37,7 @@ final class AcultaH5PLibraryPackageInstallerTest extends KernelTestBase {
    * {@inheritdoc} */
   protected static $modules = [
     'system', 'user', 'field', 'options', 'file', 'image', 'media', 'views',
-    'entity_usage', 'aculta_image', 'aculta_lms_h5p',
+    'entity_usage', 'aculta_image', 'aculta_file_uploader', 'aculta_lms_h5p',
   ];
 
   /**
@@ -69,7 +69,8 @@ final class AcultaH5PLibraryPackageInstallerTest extends KernelTestBase {
     $this->installEntitySchema('aculta_h5p_content');
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
-    $this->installSchema('aculta_image', ['aculta_image_fingerprint', 'aculta_image_quarantine', 'aculta_image_origin']);
+    $this->installSchema('aculta_image', ['aculta_image_fingerprint', 'aculta_image_origin']);
+    $this->installSchema('aculta_file_uploader', ['aculta_image_quarantine']);
     $this->installSchema('aculta_lms_h5p', [
       'h5p_content_libraries',
       'h5p_libraries',
