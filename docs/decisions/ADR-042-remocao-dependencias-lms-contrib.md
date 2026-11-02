@@ -22,6 +22,7 @@ Remover só o `composer.json` não torna o ACULTA independente. Ele também não
 3. **Vizinhos:** remover só o que é do `lms` (o módulo e os submódulos `lms_*`). `webform_score` e `entity_print` não entram nesta sequência; ficam para revisão própria.
 4. **Ordem (2026-11-02, 11:09):** a remoção do contrib (P5) acontece depois do P4.
 5. **Conteúdo legado (2026-11-02, 11:09):** não é necessário migrar conteúdo legado. Por isso, o P4 deixa de ser migração e passa a ser a verificação de instalação limpa das entidades próprias, sem o contrib.
+6. **Antecipação (2026-11-02, 11:45):** o `AccountCoursesReader` sai do contrib antes do P4, porque ele é a principal causa dos erros da suíte Kernel. A troca é feita em duas partes: (a) o leitor passa a depender de um contrato ACULTA de progresso, e o contrib fica isolado num único adaptador; (b) o adaptador é substituído pela fonte própria no P2. A parte (a) não muda comportamento; a parte (b) é P5 para esta classe.
 
 ## Decisão de arquitetura
 
