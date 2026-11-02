@@ -86,6 +86,7 @@ diferença permanece fora do escopo e não foi importada nem exportada.
 | `osm_production_client_id` | `OSM_PRODUCTION_CLIENT_ID` | Produção, testes e desenvolvimento (credencial única do OSM) | Não, ID da aplicação OAuth2 da API ativa; no teste só é resolvido com `aculta_openstreetmap_environment=production` (D-45) | plain |
 | `osm_production_client_secret` | `OSM_PRODUCTION_CLIENT_SECRET` | Produção, testes e desenvolvimento (credencial única do OSM) | Sim, segredo da aplicação OAuth2 da API ativa; em teste fica somente em `secrets/aculta.secrets.env` (D-45) | plain |
 | `aculta_osm_token_encryption` | `ACULTA_OSM_TOKEN_ENCRYPTION_KEY` | Produção e testes | Sim, chave hex de 64 caracteres para cifrar tokens OAuth2 no State | plain |
+| `aculta_lms_xapi_token` | `ACULTA_LMS_XAPI_TOKEN_SECRET` | Produção e testes (opcional até ativação do xAPI) | Sim, segredo HMAC de no mínimo 32 bytes por ambiente | plain |
 | `smtp_password` | `SMTP_PASSWORD` | Produção e testes | Sim, senha do envio SMTP do domínio | plain |
 
 Os ambientes vêm do contrato (`environments` em `config/secrets-contract.json`). Variáveis
