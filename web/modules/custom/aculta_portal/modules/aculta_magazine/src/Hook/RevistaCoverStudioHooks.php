@@ -133,12 +133,16 @@ final class RevistaCoverStudioHooks {
    * Turns the Studio choice into the editorial image Media, when it is used.
    */
   public function validateCover(array &$form, FormStateInterface $form_state): void {
-    $existing = (int) $form_state->getValue([self::FIELD, 0, 'target_id']);
+    $existing = $this->selectedMediaId($form_state);
     $pick = (int) $form_state->getValue(self::PICK);
 
     if ($existing > 0 || $pick === 0) {
       if ($existing === 0 && $pick === 0) {
         $form_state->setErrorByName(self::FIELD, t('Escolha ou envie a imagem editorial.'));
+      }
+      elseif ($existing > 0) {
+        // A escolha do widget chega em selection até o massageFormValues.
+        $form_state->setValue(self::FIELD, [['target_id' => $existing]]);
       }
       return;
     }
@@ -172,6 +176,26 @@ final class RevistaCoverStudioHooks {
     $value = [['target_id' => (int) $media->id()]];
     $form_state->setValue(self::FIELD, $value);
     $form_state->setValue(self::PICK, 0);
+  }
+
+  /**
+   * Returns the Media chosen in the widget, or 0 when there is none.
+   *
+   * The media library widget keeps the chosen item in `selection` until the
+   * form values are massaged, so validation must read both places.
+   */
+  private function selectedMediaId(FormStateInterface $form_state): int {
+    $direct = (int) $form_state->getValue([self::FIELD, 0, 'target_id']);
+    if ($direct > 0) {
+      return $direct;
+    }
+    foreach ((array) $form_state->getValue([self::FIELD, 'selection']) as $item) {
+      $id = is_array($item) ? (int) ($item['target_id'] ?? 0) : 0;
+      if ($id > 0) {
+        return $id;
+      }
+    }
+    return 0;
   }
 
   /**
