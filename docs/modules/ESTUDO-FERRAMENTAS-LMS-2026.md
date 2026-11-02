@@ -8,8 +8,8 @@ Método: pesquisa na web (dados de 2026-11-02). Itens marcados como **não verif
 
 | Padrão | Versão atual | Situação para o ACULTA |
 | --- | --- | --- |
-| SCORM 1.2 | 1.2 (2001) | Já implementado: API no navegador, manifesto e validação. Continua sendo o mais comum em conteúdo legado. |
-| SCORM 2004 | 4th Edition (2009) | Já implementado: API `API_1484_11`. É a última versão de SCORM. |
+| SCORM 1.2 | 1.2 (2001) | Removido em `aculta_lms` 0.1.0-dev.112 (D-66). Era o mais comum em conteúdo legado. |
+| SCORM 2004 | 4th Edition (2009) | Removido em `aculta_lms` 0.1.0-dev.112 (D-66). Era a última versão de SCORM. |
 | xAPI (Tin Can) | 1.0.3, e 2.0 publicado como IEEE 9274.1.1-2023 | Não implementado. Modelo de "declarações" enviadas a um LRS, em vez de API de navegador. Exige armazenamento de registros. |
 | cmi5 | Baseado em xAPI 1.0.x. Versão "Quartz" anunciada segundo a [LearningGuild](https://www.learningguild.com/articles/adl-cmi5-committee-announces-release-of-quartz-version-of-cmi5-specification); número atual **não verificado** na ADL | Não implementado. Mantém a estrutura de lançamento e conclusão do SCORM sobre xAPI. |
 
@@ -43,8 +43,8 @@ Regra do projeto: nenhum módulo contrib novo entra sem análise de dependência
 
 ## 4. Conclusão e próximos passos
 
-1. **SCORM 1.2 e 2004: manter.** Já está implementado no `aculta_lms`, pendente de Runtime.
-2. **xAPI/cmi5: estudo de viabilidade, não implementação.** Só faz sentido se houver parceiro ou conteúdo que exija. O plano de independência registra SCORM/xAPI como capacidade a assumir só com demanda real (`OPIGNO-ACULTA-INDEPENDENCE-PLAN.md`). Essa regra continua valendo para xAPI.
+1. **SCORM 1.2 e 2004: removidos** em dev.112, por decisão D-66. A troca por xAPI 2.0 está em `PLANO-XAPI-2-SUBSTITUI-SCORM.md`.
+2. **xAPI 2.0: adotado pela D-66**, com escopo puro (sem cmi5). A implementação espera o ADR previsto no plano. A regra de demanda real não vale mais para xAPI.
 3. **Se houver demanda:** comparar Ralph e Learning Locker com teste de instalação no servidor de desenvolvimento, medindo manutenção, requisitos e custo de hospedagem. Nenhum LRS entra em produção sem essa comparação.
 4. **Antes de qualquer escolha:** confirmar a versão atual do cmi5 na fonte da ADL, a situação do Learning Locker, e a compatibilidade dos módulos Drupal com Drupal 11. Esses três pontos não foram verificados nesta pesquisa.
 

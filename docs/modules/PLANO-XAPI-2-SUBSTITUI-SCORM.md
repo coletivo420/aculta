@@ -1,6 +1,6 @@
 # Plano de estudo: substituir SCORM por xAPI 2.0 e seguintes
 
-Status: **estudo**. Decisão D-66 (2026-11-02) registrada em `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`. Nenhuma implementação começa antes de ADR próprio e das decisões da seção 5.
+Status: **estudo**. Decisão D-66 (2026-11-02) registrada em `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md`, com substituição completa da decisão anterior e escopo xAPI 2.0 puro. Nenhuma implementação começa antes do ADR e das decisões da seção 5.
 
 Base: [ESTUDO-FERRAMENTAS-LMS-2026.md](ESTUDO-FERRAMENTAS-LMS-2026.md), com as fontes ali listadas.
 
@@ -13,7 +13,7 @@ Base: [ESTUDO-FERRAMENTAS-LMS-2026.md](ESTUDO-FERRAMENTAS-LMS-2026.md), com as f
 | Progresso é o cmi, traduzido para estado normalizado. | Progresso é o conjunto de declarações; o estado é derivado delas. |
 | Player de navegação entre SCOs. | Não há navegação padrão. A ordem e o lançamento ficam com o LMS. |
 
-Consequência direta: o código já commitado de SCORM (manifesto, validador, extrator, APIs 1.2 e 2004, snapshot do cmi, player) deixa de ser usado. **Nenhum pacote SCORM foi publicado nem está em produção**, então não há migração de conteúdo. A remoção é decisão separada (seção 5).
+Consequência direta: o código SCORM (manifesto, validador, extrator, APIs 1.2 e 2004, snapshot do cmi, player) **foi removido em `aculta_lms` 0.1.0-dev.112**, por decisão do responsável. Nenhum pacote SCORM foi publicado nem está em produção, então não há migração de conteúdo.
 
 ## 2. xAPI 2.0 em termos práticos
 
@@ -51,12 +51,17 @@ Recomendação preliminar: **C para o progresso do aluno** (é o que o LMS usa p
 
 Cada fase vira um commit separado, como manda o processo do projeto.
 
-## 5. Decisões que faltam (perguntar ao responsável)
+## 5. Decisões
 
+Respondidas em 2026-11-02:
+- **Escopo**: xAPI 2.0 puro. cmi5 fica fora; o lançamento é próprio do ACULTA.
+- **Código SCORM**: removido já, em `aculta_lms` 0.1.0-dev.112.
+- **Substituição**: completa. A regra de demanda real não vale mais para xAPI.
+
+Ainda pendentes (para o ADR de xAPI):
 1. **LRS**: Ralph separado (A), LRS no Drupal (B) ou só resultados no Drupal (C)? Recomendo C para o progresso e A ou B para o histórico.
-2. **cmi5**: conteúdo de parceiros virá em cmi5 (que usa xAPI 1.0.x e um lançamento próprio) ou só em xAPI 2.0 puro? Isso muda o lançamento da F3.
-3. **Código SCORM já commitado**: remover (recomendo, para não manter código sem uso) ou manter como legado até o ADR de xAPI ser aceito?
-4. **Histórico bruto**: quanto tempo guardar as declarações e quem pode consultá-las? Afeta a escolha de A ou B e a LGPD.
+2. **Histórico bruto**: quanto tempo guardar as declarações e quem pode consultá-las? Afeta a escolha de A ou B e a LGPD.
+3. **Nota**: a regra de nota (antes ligada ao quiz do SCORM) será decidida no ADR, com base nas declarações de resultado do xAPI.
 
 ## 6. Riscos
 

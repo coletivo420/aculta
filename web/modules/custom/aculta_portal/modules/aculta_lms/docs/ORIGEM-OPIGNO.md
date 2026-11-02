@@ -2,6 +2,8 @@
 
 Registro exigido pela decisão D-25 e pelo plano de independência do Opigno. Cada arquivo derivado tem uma entrada aqui.
 
+> **Atualização (aculta_lms 0.1.0-dev.112, D-66):** os trechos SCORM abaixo foram removidos do módulo por decisão do responsável (substituir SCORM por xAPI 2.0). Este registro fica como histórico de proveniência do que foi derivado e depois retirado.
+
 ## Fonte
 
 - Pacote: `opigno_scorm` 3.2.7, licença GPL-2.0-or-later (`LICENSE.txt` do pacote).

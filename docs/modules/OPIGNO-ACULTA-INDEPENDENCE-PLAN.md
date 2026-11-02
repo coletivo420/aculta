@@ -37,7 +37,7 @@ Antes de implementar, valide todos os metadados e imports atuais. O alvo deve el
 | Árvore visual e ordenação | Inspiração para futura autoria | Registrar como requisito futuro, condicionado a contrato independente de currículo/ordem | Angular, endpoints Opigno ou ordenação visual sem persistência |
 | Plugins e scoring | Comparar com Answer Plugins, Webform Score e H5P ACULTA | Inventariar gaps e fronteiras | Port em bloco de plugins, tentativas ou scores |
 | Importação/exportação | Referência de portabilidade | Nenhuma implementação | Formato .opi e fluxo export/import Opigno |
-| SCORM/xAPI | Capacidade possível apenas com demanda real | Registrar como não assumida | Player, LRS, importadores e extração de pacotes |
+| SCORM/xAPI | Superada pela D-66 (2026-11-02): padrão adotado é xAPI 2.0; SCORM removido em aculta_lms 0.1.0-dev.112 | Plano em `PLANO-XAPI-2-SUBSTITUI-SCORM.md` | LRS, lançamento, ingestão e tradução para o LMS |
 | Catálogo, turmas, certificados, mensagens, calendário e comércio | Padrões de fluxo, se úteis | Reutilizar apenas requisitos que não conflitem com owners ACULTA | Entidades e serviços Opigno; duplicação de Group, Commerce, Messenger, Events ou certificados |
 
 ## Aproveitamento confirmado na revisão de módulo e learning path (2026-11-02)
@@ -79,7 +79,7 @@ Abertos, dependem do responsável: tour de primeiro acesso (`opigno_tour`), que 
 - Reconstruir todas as rotas e formulários nativos nesta etapa.
 - Implementar o Course Builder visual completo.
 - Portar código Opigno ou adicionar dependências Composer Opigno.
-- Habilitar SCORM, xAPI, importação ou exportação.
+- Habilitar importação ou exportação. (SCORM e xAPI: ver D-66, que substitui a regra de demanda real.)
 - Remover drupal/lms do Composer antes de substituir Portal, módulos opcionais, configuração, Views, rotas, tema, scripts e dados que devam ser retidos.
 
 ## Cursos legados

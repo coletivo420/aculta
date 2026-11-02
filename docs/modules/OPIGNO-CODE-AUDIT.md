@@ -139,7 +139,7 @@ Fonte: [Composer issue #3574400](https://www.drupal.org/project/opigno_lms/issue
 | Activity plugins e scoring | **Não portar em bloco**; comparar com Answer Plugins, Webform Score e H5P ACULTA. |
 | Cursos, classes, memberships | **Não portar entidades**; manter Group 3 e Commerce ACULTA. |
 | Catálogo/retomada | **Reaproveitar padrões**, conectados às fontes canônicas ACULTA. |
-| SCORM/xAPI | **Adiar** até existir conteúdo/parceiro que exija; superfície de segurança e manutenção grande. |
+| SCORM/xAPI | ~~**Adiar** até existir conteúdo/parceiro que exija~~ **Superada pela D-66 (2026-11-02):** padrão adotado é xAPI 2.0; SCORM removido em aculta_lms 0.1.0-dev.112. |
 | Export/import .opi | **Não reutilizar**; formato ACULTA versionado e storage privado. |
 | Messaging/forum/profile/calendar | **Não portar serviços**; já há owners ACULTA. |
 | Certificados | **Comparar UX/templates**; preservar emissão/QR/verificação/PDF ACULTA. |
@@ -186,11 +186,11 @@ OpignoScorm::unzipPackage() extrai ZIP para public://external_package_extracted/
 
 Há também divergência no fluxo: scormExtract() chama unzipPackage($file) (pasta default external_package_extracted) e em seguida procura public://opigno_scorm_extracted/scorm_ID/imsmanifest.xml. Outro formulário/validador prepara a pasta opigno_scorm_extracted como efeito anterior. Isso parece acoplamento a uma etapa prévia; tratar como defeito latente de fluxo até teste dinâmico confirmar cenário de falha.
 
-**Decisão:** não habilitar SCORM por cópia direta. Se houver demanda real, usar extração temporária privada e isolada, limites explícitos, validação de caminhos/symlinks, cleanup em erro e checagem de autorização dos recursos de playback, com testes de integração e infraestrutura Apache/Nginx.
+**Decisão (superada pela D-66, 2026-11-02; os riscos de extração continuam válidos para qualquer pacote):** não habilitar SCORM por cópia direta. Se houver demanda real, usar extração temporária privada e isolada, limites explícitos, validação de caminhos/symlinks, cleanup em erro e checagem de autorização dos recursos de playback, com testes de integração e infraestrutura Apache/Nginx.
 
 Fontes: [OpignoScorm 3.2.7](https://git.drupalcode.org/project/opigno_scorm/-/blob/3.2.7/src/OpignoScorm.php), [módulo SCORM](https://git.drupalcode.org/project/opigno_scorm/-/tree/3.2.7).
 
-**Atualização (2026-11-02):** o responsável determinou implementar SCORM dentro do `aculta_lms`, sem submódulo, o que
+**Atualização (2026-11-02, superada pela D-66 no mesmo dia):** o responsável determinou implementar SCORM dentro do `aculta_lms`, sem submódulo, o que
 supera a decisão de adiar acima. Não foi copiado código do Opigno. A base foi entregue no `aculta_lms` 0.1.0-dev.106,
 com leitor de manifesto, validador de pacote e extrator em diretório privado, sem usar `public://`. Ficam pendentes
 o player e o lançamento, e a decisão de produto sobre onde registrar o progresso. Conflito registrado: a decisão
@@ -211,7 +211,7 @@ Fonte: [User migration source 3.2.7](https://git.drupalcode.org/project/opigno_m
 | opigno_certificate | Modelos e geração de certificado vinculados a percursos | Sobrepõe certificados ACULTA | Reutilizar requisitos de templates, não emissão/acesso sem revisão (OPA-07). |
 | opigno_class / opigno_catalog | Turmas/coortes e catálogo de treinamentos | Sobrepõe Group 3, matrícula e descoberta ACULTA | Usar padrões de UX; não portar entidades ou regras de matrícula. |
 | opigno_calendar | Eventos e calendário individual | Sobrepõe calendário/eventos ACULTA | Não integrar serviços; avaliar apenas conteúdo/UX. |
-| opigno_scorm | Player e importador SCORM | Capacidade ainda não assumida pelo ACULTA | Adiar até demanda de conteúdo concreta; OPA-08 e cobertura de testes nula no pacote inspecionado. |
+| opigno_scorm | Player e importador SCORM | Capacidade não assumida pelo ACULTA; SCORM removido em dev.112 (D-66) | Adiar até demanda de conteúdo concreta (superada pela D-66, que troca SCORM por xAPI 2.0); OPA-08 e cobertura de testes nula no pacote inspecionado. |
 | opigno_tincan_api | Emissão de eventos xAPI para atividades e integração LRS | Potencial analítica, mas exige perfil xAPI, privacidade e destino LRS | Não adotar sem arquitetura de eventos ACULTA, consentimento/retention e contrato de dados; sem testes no pacote inspecionado. |
 | opigno_migration | Importação de dados de versões/distribuições legadas | Útil apenas em migração pontual | Não é dependência de runtime; revisão e isolamento antes de qualquer execução (OPA-09). |
 | opigno_messaging / opigno_commerce | Mensagens e compras/entitlements | Sobreposição direta a Messenger/Commerce ACULTA | Não portar. |
@@ -268,4 +268,4 @@ Não usado: `XML2Array` (substituído por DOMDocument), formulários D7, `hook_m
 
 Conclusão: o 7.x confirma o que já foi portado (API, manifesto, validação, extração privada) e aponta duas capacidades para decisão futura: a integração SCORM com quiz e a árvore do player. Não há código de D7 aproveitável diretamente em D11.
 
-**Decisão do responsável (2026-11-02):** a nota do SCORM entra na avaliação do LMS, mapeando as interações do SCO como quiz, no modelo da integração do Opigno 7.x. Pendências dessa decisão: verificar no módulo `lms` contrib (não disponível no ambiente) o modelo de resposta de quiz antes de implementar; definir como a pontuação agregada se relaciona com a regra de tentativa (melhor ou última).
+**Decisão do responsável (2026-11-02, superada em parte pela D-66):** a nota do SCORM entrava na avaliação do LMS, mapeando as interações do SCO como quiz. Como o SCORM foi removido, a regra de nota volta a ser decidida no ADR de xAPI. Texto original: no modelo da integração do Opigno 7.x. Pendências dessa decisão: verificar no módulo `lms` contrib (não disponível no ambiente) o modelo de resposta de quiz antes de implementar; definir como a pontuação agregada se relaciona com a regra de tentativa (melhor ou última).

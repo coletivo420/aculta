@@ -1,3 +1,13 @@
+## 0.1.0-dev.112 — remoção do código SCORM (decisão D-66)
+
+Remove o código SCORM commitado em dev.106 a dev.111, por decisão do responsável (D-66: substituir SCORM por xAPI 2.0):
+
+- `src/Scorm/` (manifesto, validador, extrator, mapeador de estado e snapshot do cmi).
+- `js/scorm/` (APIs 1.2 e 2004 e a lógica do player).
+- Testes unitários SCORM e as bibliotecas `scorm.api12`, `scorm.api2004` e `scorm.player`.
+
+O histórico continua no Git. Nenhum pacote SCORM foi publicado, então não há migração. O registro de origem em `docs/ORIGEM-OPIGNO.md` fica como histórico. Nenhuma funcionalidade de produção muda.
+
 ## 0.1.0-dev.111 — lógica do player SCORM (sem DOM e sem endpoint)
 
 - `js/scorm/aculta-scorm-player.js`: ordem dos SCOs, destino de navegação pedido pelo conteúdo (`continue`, `previous`,
