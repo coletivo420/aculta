@@ -44,6 +44,9 @@ O LRS guarda as declarações brutas, e a tentativa guarda o estado derivado. Is
 - **Vínculo com a tentativa:** a declaração guarda só a referência opaca ao `lms_lesson_status`. Nenhuma entidade de tentativa própria é criada, para não duplicar o progresso do LMS.
 - **Segredo do token:** Drupal Key com provider env, com um segredo por ambiente. Em produção, o `aculta_deployer` provisiona após o deploy. Exige atualizar o ACULTA Secrets Contract.
 - **Validade do token:** 30 minutos (padrão do código), com teto de 2 horas.
+- **Limite de taxa:** serviço flood do Drupal Core, por token de tentativa, sem tabela nova. Não se aplica limite por IP nesta fase.
+- **Remoção mensal:** hook de cron do Drupal, uma vez por mês, em lotes, com registro de quantos registros foram removidos.
+- **Versão da xAPI:** só xAPI 2.0. Conteúdo em 1.0.x é recusado, conforme D-66; revisar só com demanda registrada.
 
 ## Pendências
 
