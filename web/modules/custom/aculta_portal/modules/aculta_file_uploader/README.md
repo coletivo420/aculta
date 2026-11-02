@@ -25,6 +25,15 @@ O painel de configuração mantém políticas para `wiki`, `forum`, `revista`,
 `consumer_policy`; a política não amplia o catálogo global nem o limite
 configurado.
 
+## Limites de ingestão
+
+`/painel-administrativo/aculta/uploads/limites` define os tetos de tamanho para
+arquivos recebidos de fora: relatório DMARC, mensagem IMAP e pacote H5P. Os valores
+ficam em `aculta_file_uploader.ingestion_limits`, com padrão em
+`config/install`. Os tetos máximos são fixos no código (`IngestionLimits::CEILINGS`);
+valor inválido ou acima do teto volta ao padrão. Não é o limite de upload por
+usuário, que continua em `UploadPolicy`.
+
 ## Configuração administrativa
 
 `/painel-administrativo/aculta/uploads` permite administrar a política

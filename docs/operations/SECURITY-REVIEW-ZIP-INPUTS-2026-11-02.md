@@ -31,7 +31,13 @@ Escopo: pontos do código custom da ACULTA que descompactam ou leem ZIP/GZIP/XLS
 
 ## Versões
 
-- `aculta_lms_h5p` 0.4.0-dev.166 (já registrado).
-- `aculta_mailer` 0.1.0-dev.75 (DMARC) e 0.1.0-dev.76 (IMAP). Ver CHANGELOG do módulo.
+- `aculta_lms_h5p` 0.4.0-dev.166 (teto no código) e 0.4.0-dev.167 (teto vindo do painel).
+- `aculta_mailer` 0.1.0-dev.75 (DMARC), 0.1.0-dev.76 (IMAP) e 0.1.0-dev.77 (tetos vindos do painel e guarda de
+  relatório sem metadados). Ver CHANGELOG do módulo.
+- `aculta_file_uploader` 0.1.0-dev.28: o objeto `IngestionLimits` e a subaba `/painel-administrativo/aculta/uploads/limites`.
+
+Atualização de 2026-11-02 (mesma data, depois da revisão): os tetos de DMARC, IMAP e H5P deixaram de ser
+constantes fixas e passaram a vir do painel de uploads, com os mesmos padrões e tetos máximos fixos no código.
+As correções descritas acima continuam valendo; só a origem do valor mudou.
 
 Status geral: DEFERRED até a execução no ambiente de testes.
