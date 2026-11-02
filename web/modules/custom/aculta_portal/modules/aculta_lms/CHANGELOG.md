@@ -1,3 +1,16 @@
+## 0.1.0-dev.105 — regra pura de tentativa de avaliação (sem ligação ainda)
+
+Acrescenta `Assessment\AttemptRule`, sem dependência do Drupal: status da tentativa (pendente, aprovada ou
+reprovada) e escolha do resultado mantido (mais recente ou melhor, com desempate pelo término). A regra reproduz o
+conceito de aprovação por tentativa observado no Opigno, sem copiar código.
+
+Esta versão não liga a regra a nenhuma avaliação, matrícula ou progresso do LMS: a aplicação depende de decisão de
+produto (fase posterior à fase 1 do plano de independência). Score mínimo fica fora da fase 1.
+
+Validação: `AttemptRuleTest` 11/11 PASS no shim unitário local, com controle de mutação (troca de `>=` por `>`
+faz 2 testes falharem). O teste pegou um bug de desempate na política "melhor", corrigido nesta versão. Não
+executados: PHPUnit oficial, Kernel e gate Drupal 11+. Status: DEFERRED.
+
 ## 0.1.0-dev.104 — link de início do curso sem classes de design
 
 - `CourseLinkHooks` passa `data-portal-ui="lms-start-link"`; o ACULTA420 estiliza o botão.
