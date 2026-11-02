@@ -1,3 +1,9 @@
+## 0.1.0-dev.113 — comentário do formato de resposta corrigido
+
+- Comentário em `SubmissionImageHooks` descreve a leitura atual (`fids` e `[fid]`), sem mudança de código.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.112 — remoção do código SCORM (decisão D-66)
 
 Remove o código SCORM commitado em dev.106 a dev.111, por decisão do responsável (D-66: substituir SCORM por xAPI 2.0):
