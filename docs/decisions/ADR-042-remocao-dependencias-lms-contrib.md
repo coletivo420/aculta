@@ -20,6 +20,8 @@ Remover só o `composer.json` não torna o ACULTA independente. Ele também não
 1. **Escopo:** plano em fases, com este ADR aprovado antes de qualquer código de remoção.
 2. **Dados do Runtime:** os dados de teste (cursos, respostas e notas) podem ser descartados. A exclusão só acontece na fase própria, com ordem explícita no momento da execução, conforme as regras do projeto para destruição de dados.
 3. **Vizinhos:** remover só o que é do `lms` (o módulo e os submódulos `lms_*`). `webform_score` e `entity_print` não entram nesta sequência; ficam para revisão própria.
+4. **Ordem (2026-11-02, 11:09):** a remoção do contrib (P5) acontece depois do P4.
+5. **Conteúdo legado (2026-11-02, 11:09):** não é necessário migrar conteúdo legado. Por isso, o P4 deixa de ser migração e passa a ser a verificação de instalação limpa das entidades próprias, sem o contrib.
 
 ## Decisão de arquitetura
 
@@ -41,7 +43,7 @@ Cada fase é um commit ou um conjunto de commits, com gate próprio e rollback e
 | P1 | Contratos ACULTA de aula, atividade, resposta e progresso, com adaptador para o contrib. Testes Unit. | Testes passam com o adaptador do contrib; nenhum comportamento muda. |
 | P2 | Entidades próprias instaladas em paralelo ao contrib, sem leitura de produção. | Kernel com `aculta_simpletest`; instalação no Runtime com snapshot por hash. |
 | P3 | Plugins de resposta no `aculta_lms`, substituindo `lms_answer_plugins`. | Testes de cada plugin; Olivero e ACULTA420 nos testes de Portal e Revista. |
-| P4 | Migração ensaiada dos dados de teste para as entidades próprias, com rollback. | Ensaio no Runtime com snapshot; restauração verificada. |
+| P4 | Verificação de instalação limpa das entidades próprias, sem o contrib. Sem migração de conteúdo legado (decisão 5). | Instalação em ambiente limpo no Runtime, com snapshot por hash e rollback verificado. |
 | P5 | Corte: remoção das importações de `Drupal\lms`, dos módulos `lms*` e do Composer. | Grep sem ocorrências em `web/modules/custom`; gates do Portal; migração já executada. |
 | P6 | Remoção dos dados de teste do contrib, com ordem explícita. | Ordem explícita do responsável no momento da execução. |
 
@@ -50,7 +52,7 @@ Cada fase é um commit ou um conjunto de commits, com gate próprio e rollback e
 - Views, rotas, permissões e o tema assumem IDs e formatos do contrib. O corte precisa de inventário de views e de rotas (P0).
 - Os 38 testes que importam `Drupal\lms` precisam ser reescritos junto com cada fase, não depois.
 - Sem o módulo `lms`, o `aculta_lms_h5p` também perde a dependência declarada. O submódulo precisa de avaliação própria em P0.
-- Migração de dados só depois de ensaio. Dados de teste descartados não voltam.
+- Sem migração de conteúdo legado (decisão 5). Dados de teste descartados não voltam (decisão 2).
 - Não há Runtime disponível nesta sessão para P2 em diante. Essas fases ficam DEFERRED até o ambiente.
 
 ## Pendências
