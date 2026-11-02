@@ -1,5 +1,23 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.28 — limites de ingestão configuráveis no painel de uploads
+
+- Nova subaba `/painel-administrativo/aculta/uploads/limites` (`aculta_file_uploader.ingestion_limits`), com as
+  abas "Uploads por integração" e "Limites de ingestão" no mesmo grupo de tarefas locais. Permissão:
+  `administer site configuration`, só no domínio principal.
+- Serviço `aculta_file_uploader.ingestion_limits` (value object `IngestionLimits`, lido de
+  `aculta_file_uploader.ingestion_limits` por `IngestionLimitsReader`). Padrões e tetos fixos no código: relatório
+  DMARC 8/32 MB, mensagem IMAP 25/50 MB, pacote H5P 32/128 MB por entrada e 256/512 MB no total. Valor inválido ou
+  acima do teto volta ao padrão. Entrada maior que o total do pacote faz valer os padrões H5P.
+- Os consumidores (`aculta_mailer` e `aculta_lms_h5p`) leem esses limites. Este limite não é o de upload por
+  usuário (`UploadPolicy`), que não muda.
+- Config: `config/install/aculta_file_uploader.ingestion_limits.yml` e schema. A exportação para `config/sync` é feita
+  no Runtime, antes do RC.
+
+Validação: `IngestionLimitsTest` 5/5 no shim unitário local. Não executados: formulário e rota no navegador,
+Kernel de instalação da config, PHPUnit oficial, gate de rotas (rodado antes desta versão) e gate Drupal 11+. Status:
+DEFERRED.
+
 ## 0.1.0-dev.27 — rota do painel de uploads corrigida
 
 - A rota `aculta_file_uploader.settings` passa de `/painel-administrativo/aculta-portal/uploads` para

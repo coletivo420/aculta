@@ -7,3 +7,13 @@ aculta_file_uploader.settings:
     _permission: 'administer site configuration'
   options:
     _admin_route: true
+
+aculta_file_uploader.ingestion_limits:
+  path: '/painel-administrativo/aculta/uploads/limites'
+  defaults:
+    _form: '\Drupal\aculta_file_uploader\Form\IngestionLimitsForm'
+    _title: 'Limites de ingestão'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: true

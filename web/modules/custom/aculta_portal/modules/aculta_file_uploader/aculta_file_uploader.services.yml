@@ -59,3 +59,11 @@ services:
   aculta_file_uploader.focal_point_recorder:
     class: Drupal\aculta_file_uploader\FocalPointRecorder
     arguments: ['@?image_widget_crop.manager', '@entity_type.manager', '@image.factory']
+
+  aculta_file_uploader.ingestion_limits_reader:
+    class: Drupal\aculta_file_uploader\IngestionLimitsReader
+    arguments: ['@config.factory']
+
+  aculta_file_uploader.ingestion_limits:
+    class: Drupal\aculta_file_uploader\IngestionLimits
+    factory: ['@aculta_file_uploader.ingestion_limits_reader', 'get']

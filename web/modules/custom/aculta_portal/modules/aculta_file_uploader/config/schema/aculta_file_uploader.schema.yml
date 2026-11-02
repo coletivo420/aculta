@@ -27,3 +27,20 @@ aculta_file_uploader.consumer:
     max_size_mb:
       type: integer
       label: 'Tamanho máximo por arquivo em megabytes'
+
+aculta_file_uploader.ingestion_limits:
+  type: config_object
+  label: 'Limites de ingestão de arquivos recebidos de fora (megabytes)'
+  mapping:
+    dmarc_max_report_mb:
+      type: integer
+      label: 'Relatório DMARC descompactado (MB, teto 32)'
+    imap_max_message_mb:
+      type: integer
+      label: 'Mensagem IMAP (MB, teto 50)'
+    h5p_max_entry_mb:
+      type: integer
+      label: 'Pacote H5P, uma entrada (MB, teto 128)'
+    h5p_max_total_mb:
+      type: integer
+      label: 'Pacote H5P, total descompactado (MB, teto 512)'
