@@ -2,6 +2,9 @@
 version: 0.5.0-dev.17
 state: Dev
 progress_note: >-
+  Dev.17: a imagem editorial aceita envio recente do Studio (integração
+  `revista`), somado aos envios novos. Unit Magazine 43/179 PASS; upload
+  autenticado no Runtime e tema Olivero pendentes.
   Dev.16: `EditorialCapabilitiesForm` usa Entity Storage injetado; removida
   dependência `entity_usage` duplicada. Unit/Kernel completos: 54 testes / 712
   assertions PASS; PHP lint 32/32 e PHPCS Drupal/DrupalPractice sem erros ou

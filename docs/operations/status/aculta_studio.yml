@@ -2,6 +2,9 @@
 version: 0.1.0-dev.37
 state: Dev
 progress_note: >-
+  Dev.37: drop zone embutida por integração em /estudio/envio/{integracao},
+  avisos de prazo e remoção de envio sem uso; StudioUploadEmbedControllerTest
+  2/7 PASS. Upload autenticado e smoke visual no Runtime pendentes.
   2026-11-01: Correções de runtime no Ganjalab: CourseAuthoringController passa os atributos exigidos por PortalLinkElement::build (ArgumentCountError, teste 3/36); CourseJourneyPresentationHooks recebeu o import de Learning\CourseJourneyComposer (TypeError no container). O Studio possui LearnerDashboardComposer, rotas Ganjalab e CourseJourneyPresentationHooks; o LMS não é dependência. Unit Studio 62/597 e LMS 99/472 PASS; Kernel ContractsInstallTest 1/8 PASS; jornada/sala 74/74 e Educador 200.
   2026-11-01: A jornada e a sala do Ganjalab consomem o contrato ACULTA CourseJourneyReaderInterface e os DTOs CourseJourney/CourseJourneyLesson; CourseJourneyComposer não importa mais Drupal\lms. O adaptador e a fonte de verdade continuam no aculta_lms/Group/LMS. Unit Studio 60/586 e LMS 92/482 PASS; smoke Firefox ESR/X11 do Ganjalab a 390 px 29/29 OK; inventário em docs/modules/LMS-CONTRIB-DEPENDENCY-INVENTORY.md.
   2026-11-01: Os dashboards de estudante e educador oferecem atalhos recíprocos somente quando a rota de destino autoriza a conta. Rótulos e rotas mantêm as experiências distintas; nenhum grant ou dado LMS foi alterado. A lista do Educador filtra cursos com acesso de atualização Group. Código commitado; testes automatizados, lint, browser e Runtime seguem pendentes.
