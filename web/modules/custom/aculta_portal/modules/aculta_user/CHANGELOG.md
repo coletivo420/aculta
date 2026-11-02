@@ -1,5 +1,10 @@
 ## 0.4.0-dev.93 — foto do perfil pela política do aculta_file_uploader
 
+## 0.4.0-dev.94 — publicRouteSlug normaliza com PublicRouteSlug
+
+- `AccountNames::publicRouteSlug()` normaliza com `PublicRouteSlug::normalize` e valida o slug canônico. `validate-profile-links` PASS. Unit 145/575 OK.
+- Versão 0.4.0-dev.94.
+
 - `UserPictureForm` usa `aculta_file_uploader.consumer_policy` (integração `usuario`) em vez de `aculta_image.upload_policy`.
 - Campo desabilitado se a integração não tiver extensão de imagem.
 - Dependência `aculta_portal:aculta_file_uploader` declarada.

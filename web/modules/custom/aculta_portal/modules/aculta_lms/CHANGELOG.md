@@ -1,5 +1,11 @@
 ## 0.1.0-dev.125 — Desacoplamento do leitor de cursos (ADR-042, decisão 6a)
 
+## 0.1.0-dev.126 — remoção de ligações ao upload de atividades e ao DT-U03
+
+- Campo `field_file_extensions` removido (DT-U03, decisão do responsável): a lista da atividade `file_upload` vem da política do `aculta_file_uploader`.
+- Teste de instalação habilita `lms` e dependências, como as demais Kernel do módulo. Kernel: 31 testes, 851 asserções, 2 erros de harness.
+- Versão 0.1.0-dev.126.
+
 - `AccountCoursesReader` deixa de importar `Drupal\lms`. Depende de `CourseProgressReaderInterface` (contrato ACULTA) e
   recebe um `CourseProgress` (status, conclusão, nota, cache tags).
 - `ContribCourseProgressAdapter` é a única classe do módulo que lê o `TrainingManager` do LMS contrib. Mapeia
