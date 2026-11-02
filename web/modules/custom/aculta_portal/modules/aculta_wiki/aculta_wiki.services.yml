@@ -93,7 +93,7 @@ services:
       - '@?aculta_file_uploader.recent_uploads'
   Drupal\aculta_wiki\Hook\WikiLeadImageDownloadAccess:
     class: Drupal\aculta_wiki\Hook\WikiLeadImageDownloadAccess
-    arguments: ['@file.repository', '@entity_type.manager']
+    arguments: ['@file.repository', '@entity_type.manager', '@current_user']
   Drupal\aculta_wiki\Hook\WikiReviewHooks:
     class: Drupal\aculta_wiki\Hook\WikiReviewHooks
     arguments:

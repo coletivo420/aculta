@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\Hook;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\file\FileRepositoryInterface;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
@@ -17,6 +18,7 @@ final class WikiLeadImageDownloadAccess {
   public function __construct(
     private readonly FileRepositoryInterface $fileRepository,
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly AccountInterface $currentUser,
   ) {}
 
   /**
@@ -63,7 +65,22 @@ final class WikiLeadImageDownloadAccess {
         ->range(0, 1)
         ->execute();
 
-      return $publishedReferences === [] ? -1 : NULL;
+      if ($publishedReferences !== []) {
+        return NULL;
+      }
+      // Quem pode editar um verbete que usa a imagem vê a prévia ao editar (rascunho).
+      $draftReferences = $this->entityTypeManager->getStorage('node')->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('type', 'wiki_entry')
+        ->condition(WikiLeadImageUploader::FIELD . '.target_id', array_values($mediaIds), 'IN')
+        ->range(0, 20)
+        ->execute();
+      foreach ($this->entityTypeManager->getStorage('node')->loadMultiple($draftReferences) as $node) {
+        if ($node->access('update', $this->currentUser)) {
+          return NULL;
+        }
+      }
+      return -1;
     }
     catch (\Throwable) {
       // Incomplete entity configuration or a lookup failure must not expose a
