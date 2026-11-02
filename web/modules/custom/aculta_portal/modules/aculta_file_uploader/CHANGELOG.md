@@ -8,6 +8,15 @@
 
 RUNTIME STATUS: VALIDATED no Runtime (2026-11-02): clique move o marcador (30%/60% → 29,69%/58,78%) e setas movem 1% (50→52 em x, 50→49 em y) com foco real no Firefox ESR.
 
+## 0.1.0-dev.31 — estilo da zona de arrastar e soltar
+
+- Novo `css/upload-dropzone.css` na biblioteca `upload-dropzone`. Até aqui a zona não tinha estilo: o usuário não via
+  onde soltar nem o estado de arrastar. Estado `.is-dragover` e área de status agora têm aparência.
+- Cores por tokens semânticos (`--aculta-dropzone-border`, `--aculta-dropzone-active`, `--aculta-dropzone-active-bg`) com
+  fallback; sem seletor de tema. `prefers-reduced-motion` remove a transição.
+- Usado pelo Studio (`UserUploadDialogBuilder`), wiki, fórum e demais consumidores do elemento `aculta_upload_dropzone`.
+- RUNTIME STATUS: DEFERRED (sem validação visual no navegador nesta sessão).
+
 ## 0.1.0-dev.30 — interface de dimensões com aculta_image
 
 - Nova `ImageDimensionReaderInterface`. `ImageDimensionReader` implementa a interface e delega ao

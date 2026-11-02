@@ -1,4 +1,7 @@
 upload-dropzone:
+  css:
+    component:
+      css/upload-dropzone.css: {}
   js:
     js/upload-dropzone.js: {}
   dependencies:
