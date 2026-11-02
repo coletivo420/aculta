@@ -17,7 +17,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
  * Regressão do teto central de upload nas respostas com arquivo do LMS.
  *
  * O aculta_portal e o aculta_lms não são habilitados no Kernel: a política é
- * montada com os mesmos serviços reais do aculta_image que o container do site
+ * montada com os mesmos serviços reais do aculta_file_uploader que o container do site
  * injeta, e o hook é o mesmo registrado em aculta_lms.services.yml.
  */
 #[Group('aculta_lms')]
@@ -33,7 +33,6 @@ final class SubmissionUploadPolicyKernelTest extends KernelTestBase {
     'file',
     'image',
     'aculta_image', 'aculta_file_uploader',
-    'aculta_portal_upload_test',
   ];
 
   /**
@@ -49,7 +48,7 @@ final class SubmissionUploadPolicyKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installConfig([
-      'system', 'user', 'file', 'image', 'aculta_image', 'aculta_file_uploader', 'aculta_portal_upload_test',
+      'system', 'user', 'file', 'image', 'aculta_image', 'aculta_file_uploader',
     ]);
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
@@ -62,7 +61,7 @@ final class SubmissionUploadPolicyKernelTest extends KernelTestBase {
       new FileUploadPolicy(),
       new MimeTypeVerifier(),
       $this->container->get('file_system'),
-      $this->container->get('image.factory'),
+      $this->container->get('aculta_file_uploader.image_dimension_reader'),
     );
   }
 
