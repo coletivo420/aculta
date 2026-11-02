@@ -251,3 +251,19 @@ Alinhamentos normativos: [Course Builder Ganjalab Educador](../portal/STUDIO-LMS
 ## 17. Status de implementação ACULTA — 2026-11-01
 
 O padrão 1 (etapas do percurso e próxima ação) foi aplicado sobre um contrato ACULTA próprio: `CourseJourneyReaderInterface` e o DTO `CourseJourney` fornecem à jornada do Ganjalab o percurso ordenado, a posição atual e os destinos autorizados sem expor entidades do LMS ao composer do Studio. As capacidades do Opigno continuam sendo referência de UX; nenhum código, template, CSS, Angular, entidade, armazenamento ou formato de export do Opigno foi portado. Inventário e plano de desacoplamento: [LMS-CONTRIB-DEPENDENCY-INVENTORY.md](LMS-CONTRIB-DEPENDENCY-INVENTORY.md).
+
+## Auditoria do Opigno 7.x-1.23 (capacidades SCORM) — 2026-11-02
+
+Pedido do responsável: auditar capacidades específicas do 7.x, sem usar o pacote como base. Decisão anterior (não incorporar o Opigno inteiro) permanece. Fonte lida de forma estática, em pasta própria fora do repositório. Nenhum código foi copiado.
+
+Achados:
+
+- **Extração sem limites (mesmo risco do OPA-08).** `opigno_scorm_extract()` chama `ZipArchive::extractTo()` direto em `OPIGNO_SCORM_DIRECTORY/scorm_<fid>`, sem limite de entradas, bytes, razão de compressão ou links simbólicos. Já coberto pelo `ScormPackageValidator` e pelo `ScormPackageExtractor` (aculta_lms 0.1.0-dev.106).
+- **Caminho de lançamento a partir do diretório extraído.** O player monta `{extracted_dir}/{launch}` (`opigno_scorm_ui.player.inc`, linha 121). Não há checagem de autorização nesse ponto da leitura estática. Vai para a rota autorizada, não para caminho público.
+- **Estado do aluno em tabela própria por SCO.** `opigno_scorm_ui_scorm_cmi_get()` lê cmi por usuário, pacote e chave. Em ACULTA o mesmo dado vai como dado da resposta do LMS (decisão tomada), sem tabela paralela.
+- **Integração SCORM com quiz (`opigno_scorm_quiz`).** Registra caminhos de interação e objetivos, e converte respostas SCORM em respostas de quiz (`response.inc`, `question.inc`). Capacidade real, ainda não portada. Exige decisão de produto: nota do SCORM entra na avaliação do LMS? Hoje não está definido.
+- **Árvore do player (`opigno_scorm_ui_player_scorm_tree`, `flatten_tree`, `start_sco`).** Organização dos SCOs e início automático do próximo. Entra junto com o player, ainda não feito.
+
+Não usado: `XML2Array` (substituído por DOMDocument), formulários D7, `hook_menu`, `hook_field_*` e Rules. Todos são de D7.
+
+Conclusão: o 7.x confirma o que já foi portado (API, manifesto, validação, extração privada) e aponta duas capacidades para decisão futura: a integração SCORM com quiz e a árvore do player. Não há código de D7 aproveitável diretamente em D11.
