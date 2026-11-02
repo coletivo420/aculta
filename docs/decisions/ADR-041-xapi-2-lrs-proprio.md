@@ -1,6 +1,6 @@
 # ADR-041 — xAPI 2.0 com LRS próprio no Drupal, substituindo SCORM
 
-- **Status:** Aceita nas decisões do responsável (D-66 a D-69, 2026-11-02); implementação pendente do ADR de fases F1 a F4 (ver `docs/modules/PLANO-XAPI-2-SUBSTITUI-SCORM.md`).
+- **Status:** Aceita nas decisões do responsável (D-66 a D-69, 2026-11-02). F1 concluída em código (validador puro, dev.114, 20/20 no shim); F2 a F4 pendentes (ver `docs/modules/PLANO-XAPI-2-SUBSTITUI-SCORM.md`).
 - **Data:** 2026-11-02.
 - **Decisores:** responsável pelo produto.
 - **Substitui:** a parte SCORM/xAPI da decisão de adiar conteúdo padronizado sem demanda real (`docs/modules/OPIGNO-CODE-AUDIT.md`, OPA-08 e tabela; `docs/modules/OPIGNO-ACULTA-INDEPENDENCE-PLAN.md`). A decisão de não incorporar o Opigno inteiro permanece.

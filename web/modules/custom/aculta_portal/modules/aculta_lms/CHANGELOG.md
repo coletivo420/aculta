@@ -1,3 +1,14 @@
+## 0.1.0-dev.114 — validador de declarações xAPI 2.0 (F1, sem endpoint)
+
+- `Xapi\XapiStatementValidator`: valida uma declaração xAPI 2.0 antes do LRS aceitá-la. Segue o texto da especificação
+  (Data) para actor (exatamente um identificador inverso funcional), verb (IRI), object (Activity e StatementRef), result
+  (score, success, completion, response, duration, extensions) e context. Id em UUID e timestamp em ISO 8601.
+- Escolhas de ingestão, que falham fechado: propriedades desconhecidas são recusadas; grupos, SubStatement e attachments
+  são recusados nesta fase; `stored` e `authority` não são aceitos do cliente, porque o LRS os define; tamanho máximo de
+  64 KiB por declaração.
+
+Validação: `XapiStatementValidatorTest` 20/20 no shim unitário local. Controle de mutação: sem a checagem de propriedades
+desconhecidas, `testRefusesUnknownTopLevelProperty` falha. Endpoint, LRS, lançamento e Runtime DEFERRED.
 ## 0.1.0-dev.113 — comentário do formato de resposta corrigido
 
 - Comentário em `SubmissionImageHooks` descreve a leitura atual (`fids` e `[fid]`), sem mudança de código.

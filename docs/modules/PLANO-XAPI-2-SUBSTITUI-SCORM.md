@@ -44,7 +44,7 @@ Decisão tomada (D-67): **B, LRS próprio no Drupal**. Isso difere da recomenda�
 | Fase | Entrega | Gate |
 | --- | --- | --- |
 | F0 | ADR com alternativas de LRS, modelo de credencial e destino do código SCORM. | Decisões da seção 5 respondidas. |
-| F1 | Validador puro de declaração xAPI 2.0 (campos obrigatórios, tipos, tamanho), com testes. | ADR aceito. |
+| F1 | Validador puro de declaração xAPI 2.0 (campos obrigatórios, tipos, tamanho), com testes. **Concluída em código (dev.114), 20/20 no shim.** | ADR aceito. |
 | F2 | Derivação de estado e pontuação a partir de declarações, pura, com testes. | F1. |
 | F3 | Lançamento com token por tentativa e endpoint de ingestão autenticado, com limite de taxa. | F1 e F2; credencial aprovada. |
 | F4 | Runtime: envio real de declarações de um conteúdo de teste, em Firefox ESR, e Olivero. | Ambiente de teste disponível para o agente. |
