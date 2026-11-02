@@ -8,6 +8,7 @@ use Drupal\aculta_forum\Form\ForumAttachmentUploadDialogForm;
 use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
 use Drupal\aculta_file_uploader\MimeTypeVerifier;
 use Drupal\aculta_file_uploader\UploadPolicy as FileUploadPolicy;
+use Drupal\aculta_file_uploader\RecentUploads;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
 use Drupal\Core\Form\FormState;
 use Drupal\field\Entity\FieldConfig;
@@ -32,6 +33,15 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
    *
    * @var string[]
    */
+
+  /**
+   * PDF mínimo real: a política central confere o MIME pelo conteúdo.
+   */
+  private const PDF_FIXTURE = "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n"
+    . "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n"
+    . "3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 200 200]>>endobj\n"
+    . "trailer<</Root 1 0 R>>\n%%EOF\n";
+
   protected static $modules = [
     'system',
     'user',
@@ -42,6 +52,7 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
     'image',
     'media',
     'editor',
+    'aculta_file_uploader',
   ];
 
   /**
@@ -165,6 +176,7 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
         new ConsumerUploadPolicy($this->container->get('config.factory'), new FileUploadPolicy(), new MimeTypeVerifier(), $this->container->get('file_system'), $this->container->get('image.factory')),
         $this->container->get('string_translation'),
       ),
+      new RecentUploads($this->container->get('entity_type.manager')),
     );
   }
 
@@ -172,7 +184,7 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
    * One valid document becomes an unpublished Media and a permanent file.
    */
   public function testDocumentCreatesUnpublishedMedia(): void {
-    $file = $this->file('anexo.pdf', 'documento de teste');
+    $file = $this->file('anexo.pdf', self::PDF_FIXTURE);
     $state = new FormState();
     $state->setValue('document_file', [$file->id()]);
 
@@ -208,7 +220,7 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
    * More than one file, missing file and incompatible types are refused.
    */
   public function testInvalidSubmissionsAreRefused(): void {
-    $document = $this->file('anexo.pdf', 'documento');
+    $document = $this->file('anexo.pdf', self::PDF_FIXTURE);
     $image = $this->file('foto.png', 'imagem falsa');
 
     $twoFiles = new FormState();

@@ -1,3 +1,10 @@
+## 0.1.0-dev.338 — Kernel do diálogo com a política central
+
+- `ForumAttachmentUploadDialogFormKernelTest` habilita `aculta_file_uploader`, injeta `RecentUploads` no formulário (5º argumento) e usa um PDF real de fixture, porque a política confere o MIME pelo conteúdo.
+- Kernel do diálogo 2/34 PASS.
+
+RUNTIME STATUS: DEFERRED. Só testes.
+
 ## 0.1.0-dev.337 — galeria do Fórum aceita imagens recentes do Studio
 
 - `ForumGalleryUploadDialogForm` lista imagens recentes do Studio (integração `forum`) e as soma aos envios novos, sem repetir arquivo.
