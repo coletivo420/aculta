@@ -267,3 +267,5 @@ Achados:
 Não usado: `XML2Array` (substituído por DOMDocument), formulários D7, `hook_menu`, `hook_field_*` e Rules. Todos são de D7.
 
 Conclusão: o 7.x confirma o que já foi portado (API, manifesto, validação, extração privada) e aponta duas capacidades para decisão futura: a integração SCORM com quiz e a árvore do player. Não há código de D7 aproveitável diretamente em D11.
+
+**Decisão do responsável (2026-11-02):** a nota do SCORM entra na avaliação do LMS, mapeando as interações do SCO como quiz, no modelo da integração do Opigno 7.x. Pendências dessa decisão: verificar no módulo `lms` contrib (não disponível no ambiente) o modelo de resposta de quiz antes de implementar; definir como a pontuação agregada se relaciona com a regra de tentativa (melhor ou última).
