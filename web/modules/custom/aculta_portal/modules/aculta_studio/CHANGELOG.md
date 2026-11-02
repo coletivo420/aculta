@@ -1,3 +1,10 @@
+## 0.1.0-dev.38 — apresentação sai das classes de design
+
+- `LearnerDashboardComposer` e `CourseJourneyComposer` emitem `data-portal-ui` (e `data-state`/`data-variant`/`data-route-current`) em vez de classes `aculta-learning-*`; o ACULTA420 passou a selecionar por esses atributos.
+- Unit Studio 64/606 PASS. Revisão visual no navegador pendente.
+
+RUNTIME STATUS: DEFERRED. Mudança de marcação; visual não validado.
+
 ## 0.1.0-dev.37 — revisão do formulário de envio
 
 - Imports do `StudioUploadEmbedForm` em ordem alfabética (padrão Drupal). Sem mudança de comportamento.

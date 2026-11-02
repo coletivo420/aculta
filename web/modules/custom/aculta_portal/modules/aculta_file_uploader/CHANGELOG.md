@@ -1,5 +1,12 @@
 # Changelog — aculta_file_uploader
 
+## 0.1.0-dev.26 — CSS do ponto focal por atributo
+
+- `css/focal-point.css` seleciona `[data-aculta-focal]` e `[data-focal-marker]` em vez das classes.
+- Unit uploader 47/104 PASS.
+
+RUNTIME STATUS: DEFERRED. Mudança de marcação; visual não validado.
+
 ## 0.1.0-dev.25 — ponto focal atualiza o crop existente
 
 - `FocalPointRecorder` atualiza o crop existente com `updateCropProperties` em vez de `updateCrop`. O `updateCrop` do image_widget_crop só atualiza crops ligados a um image style que usa o tipo; sem esse vínculo ele recriava o crop, duplicando recortes a cada gravação.

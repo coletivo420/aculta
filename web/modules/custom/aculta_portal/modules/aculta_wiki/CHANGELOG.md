@@ -1,3 +1,10 @@
+## 0.1.0-dev.135 — editor de ponto focal sem classes de design
+
+- `WikiEntryImageHooks` usa só `data-aculta-focal` e `data-focal-marker`; as classes saíram do módulo e o CSS do uploader/tema seleciona pelos atributos.
+- Unit Wiki 78/402 PASS. Revisão visual no navegador pendente.
+
+RUNTIME STATUS: DEFERRED. Mudança de marcação; visual não validado.
+
 ## 0.1.0-dev.134 — testes alinhados ao catálogo central
 
 - `WikiEntryImageHooksTest` espera a ordem do catálogo central (`png gif jpg jpeg webp`).

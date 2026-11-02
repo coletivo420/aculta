@@ -2,7 +2,7 @@
  * Editor de ponto focal: a imagem define a caixa; o marcador fica sobre ela.
  * Sem cores ou modos escuros aqui: o marcador usa o token de destaque do tema.
  */
-.aculta-focal {
+[data-aculta-focal] {
   position: relative;
   display: inline-block;
   max-width: 100%;
@@ -10,13 +10,13 @@
   cursor: crosshair;
 }
 
-.aculta-focal img {
+[data-aculta-focal] img {
   display: block;
   max-width: 100%;
   height: auto;
 }
 
-.aculta-focal__marker {
+[data-focal-marker] {
   position: absolute;
   width: 1.25rem;
   height: 1.25rem;
@@ -27,7 +27,7 @@
   pointer-events: none;
 }
 
-.aculta-focal:focus-visible {
+[data-aculta-focal]:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 3px;
 }

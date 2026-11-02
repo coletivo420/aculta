@@ -79,7 +79,7 @@ final class CourseLinkHooks {
     $link = NULL;
     if ($label !== NULL) {
       $url = Url::fromRoute('lms.course.start', ['group' => $course->id()], [
-        'attributes' => ['class' => ['btn', 'btn-primary', 'start-link']],
+        'attributes' => ['data-portal-ui' => 'lms-start-link'],
       ]);
       $link = Link::fromTextAndUrl($label, $url)->toRenderable();
     }

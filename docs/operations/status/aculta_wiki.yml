@@ -1,7 +1,9 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.134
+version: 0.1.0-dev.135
 state: Dev
 progress_note: >-
+  Dev.135: editor de ponto focal usa só data-aculta-focal/data-focal-marker;
+  Unit Wiki 78/402 PASS; revisão visual pendente.
   Dev.134: testes alinhados ao catálogo central de upload; Unit Wiki 78/402 PASS.
   Kernel WikiLeadImageLifecycle 33 testes / 1.847 assertions: 3 erros e 2 falhas
   preexistentes (schema aculta_user.settings, plugin `wiki` ausente no

@@ -88,12 +88,12 @@ final class CourseJourneyComposerTest extends UnitTestCase {
 
     $build = $composer->build($this->journey());
 
-    self::assertContains('aculta-learning-journey', $build['#attributes']['class']);
+    self::assertSame('aculta-learning-journey', $build['#attributes']['data-portal-ui']);
     $items = $build['outline']['list']['#items'];
     self::assertCount(3, $items);
-    self::assertContains('aculta-learning-journey__lesson--finished', $items[0]['#attributes']['class']);
-    self::assertContains('aculta-learning-journey__lesson--current', $items[1]['#attributes']['class']);
-    self::assertContains('aculta-learning-journey__lesson--locked', $items[2]['#attributes']['class']);
+    self::assertSame('finished', $items[0]['#attributes']['data-state']);
+    self::assertSame('current', $items[1]['#attributes']['data-state']);
+    self::assertSame('locked', $items[2]['#attributes']['data-state']);
     self::assertArrayNotHasKey('link', $items[2]);
     self::assertSame('Aula atual', (string) $items[1]['state']['#value']);
     self::assertSame('Ainda não liberada', (string) $items[2]['state']['#value']);
@@ -109,7 +109,7 @@ final class CourseJourneyComposerTest extends UnitTestCase {
       '#markup' => '<form id="lms-answer-form"></form>',
     ]);
 
-    self::assertContains('aculta-learning-room', $build['#attributes']['class']);
+    self::assertSame('aculta-learning-room', $build['#attributes']['data-portal-ui']);
     self::assertSame('Redução de danos', $build['header']['#props']['title']);
     self::assertSame('Curso de redução de danos · Aula 2 de 3', $build['header']['#props']['subtitle']);
     self::assertArrayHasKey('back_link', $build['header']['#slots']);

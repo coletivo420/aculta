@@ -1,3 +1,10 @@
+## 0.1.0-dev.104 — link de início do curso sem classes de design
+
+- `CourseLinkHooks` passa `data-portal-ui="lms-start-link"`; o ACULTA420 estiliza o botão.
+- Unit LMS 108/508 PASS. Revisão visual no navegador pendente.
+
+RUNTIME STATUS: DEFERRED. Mudança de marcação; visual não validado.
+
 ## 0.1.0-dev.103 — formato de data e acesso do arquivo de resposta
 
 - `FileUpload::getFile()` lê `data['file_upload']['fids'][0]`, que é o formato que o `managed_file` do Core grava, e mantém `[fid]` para respostas antigas. Antes lia `[0]`, que nunca existe: o download negava e o formulário não recarregava o arquivo.

@@ -145,7 +145,7 @@ final class WikiEntryImageHooks {
       if ($current['fid'] > 0) {
         $form[$tab]['focal'] = [
           '#type' => 'container',
-          '#attributes' => ['data-aculta-focal' => '', 'class' => ['aculta-focal']],
+          '#attributes' => ['data-aculta-focal' => ''],
           '#attached' => ['library' => ['aculta_file_uploader/focal-point']],
           // Prévia da imagem atual, com a permissão de quem edita o verbete.
           'preview' => $current['media'] instanceof MediaInterface && $current['media']->hasField('field_media_image')
@@ -154,7 +154,7 @@ final class WikiEntryImageHooks {
           'marker' => [
             '#type' => 'html_tag',
             '#tag' => 'span',
-            '#attributes' => ['data-focal-marker' => '', 'class' => ['aculta-focal__marker'], 'aria-hidden' => 'true'],
+            '#attributes' => ['data-focal-marker' => '', 'aria-hidden' => 'true'],
           ],
           'focal_x' => ['#type' => 'hidden', '#default_value' => '50', '#attributes' => ['data-focal-x' => '']],
           'focal_y' => ['#type' => 'hidden', '#default_value' => '50', '#attributes' => ['data-focal-y' => '']],

@@ -43,7 +43,7 @@ final class LearnerDashboardComposerTest extends UnitTestCase {
     $build = $composer->build();
 
     self::assertSame('studio-fidelity-scope', $build['#attributes']['data-portal-ui']);
-    self::assertContains('aculta-learning-home', $build['#attributes']['class']);
+    self::assertSame('true', $build['#attributes']['data-aculta-learning-home']);
     self::assertSame('Minha aprendizagem', $build['context_header']['#props']['title']);
     self::assertArrayHasKey('courses_section', $build);
     self::assertArrayNotHasKey('continue_section', $build);

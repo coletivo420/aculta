@@ -50,7 +50,7 @@ final class LearnerDashboardComposer {
       '#type' => 'container',
       '#attributes' => [
         'data-portal-ui' => 'studio-fidelity-scope',
-        'class' => ['aculta-learning-home'],
+        'data-aculta-learning-home' => 'true',
       ],
       'context_header' => [
         '#theme' => 'aculta_portal_component',
@@ -98,23 +98,23 @@ final class LearnerDashboardComposer {
         '#type' => 'html_tag',
         '#tag' => 'p',
         '#value' => $this->t('Aula: @lesson', ['@lesson' => $course->currentLessonLabel]),
-        '#attributes' => ['class' => ['aculta-learning-home__lesson']],
+        '#attributes' => ['data-portal-ui' => 'aculta-learning-home__lesson'],
       ];
     }
     $content['progress'] = $this->buildProgress($course);
 
     $url = $course->continueUrl;
     $label = $show_lesson ? $this->t('Continuar aula') : $this->t('Continuar curso');
-    $url->setOption('attributes', ['class' => ['btn', 'btn-primary']]);
+    $url->setOption('attributes', ['data-portal-ui' => 'aculta-btn-primary']);
 
     return [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-learning-home__section', 'aculta-learning-home__continue']],
+      '#attributes' => ['data-portal-ui' => 'aculta-learning-home__section'],
       'title' => [
         '#type' => 'html_tag',
         '#tag' => 'h2',
         '#value' => $this->t('Continuar aprendendo'),
-        '#attributes' => ['class' => ['aculta-learning-home__section-title']],
+        '#attributes' => ['data-portal-ui' => 'aculta-learning-home__section-title'],
       ],
       'card' => [
         '#theme' => 'aculta_portal_component',
@@ -125,7 +125,7 @@ final class LearnerDashboardComposer {
             '#type' => 'html_tag',
             '#tag' => 'h3',
             '#value' => $course->label,
-            '#attributes' => ['class' => ['aculta-learning-home__course-title']],
+            '#attributes' => ['data-portal-ui' => 'aculta-learning-home__course-title'],
           ],
           'content' => $content,
           'footer' => Link::fromTextAndUrl($label, $url)->toRenderable(),
@@ -146,18 +146,18 @@ final class LearnerDashboardComposer {
   private function buildCoursesSection(array $courses): array {
     $section = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-learning-home__section', 'aculta-learning-home__courses']],
+      '#attributes' => ['data-portal-ui' => 'aculta-learning-home__section'],
       'title' => [
         '#type' => 'html_tag',
         '#tag' => 'h2',
         '#value' => $this->t('Meus cursos'),
-        '#attributes' => ['class' => ['aculta-learning-home__section-title']],
+        '#attributes' => ['data-portal-ui' => 'aculta-learning-home__section-title'],
       ],
     ];
 
     if ($courses === []) {
       $catalog_url = Url::fromRoute('aculta_portal.courses_home');
-      $catalog_url->setOption('attributes', ['class' => ['btn', 'btn-primary']]);
+      $catalog_url->setOption('attributes', ['data-portal-ui' => 'aculta-btn-primary']);
       $section['empty'] = [
         '#theme' => 'aculta_portal_component',
         '#name' => 'empty-state',
@@ -203,17 +203,17 @@ final class LearnerDashboardComposer {
         '#type' => 'html_tag',
         '#tag' => 'p',
         '#value' => $this->t('Avaliação pendente'),
-        '#attributes' => ['class' => ['aculta-learning-home__pending']],
+        '#attributes' => ['data-portal-ui' => 'aculta-learning-home__pending'],
       ];
     }
 
     $actions = [];
     $journey_url = Url::fromRoute('entity.group.canonical', ['group' => $course->id]);
-    $journey_url->setOption('attributes', ['class' => ['btn', 'btn-outline-secondary']]);
+    $journey_url->setOption('attributes', ['data-portal-ui' => 'aculta-btn-outline']);
     $actions['journey'] = Link::fromTextAndUrl($this->t('Ver jornada'), $journey_url)->toRenderable();
     if ($course->continueUrl instanceof Url) {
       $course_url = $course->continueUrl;
-      $course_url->setOption('attributes', ['class' => ['btn', 'btn-primary']]);
+      $course_url->setOption('attributes', ['data-portal-ui' => 'aculta-btn-primary']);
       $actions['continue'] = Link::fromTextAndUrl($this->courseActionLabel($course), $course_url)->toRenderable();
     }
 
@@ -226,12 +226,12 @@ final class LearnerDashboardComposer {
           '#type' => 'html_tag',
           '#tag' => 'h3',
           '#value' => $course->label,
-          '#attributes' => ['class' => ['aculta-learning-home__course-title']],
+          '#attributes' => ['data-portal-ui' => 'aculta-learning-home__course-title'],
         ],
         'content' => $content,
         'footer' => [
           '#type' => 'container',
-          '#attributes' => ['class' => ['aculta-learning-home__actions']],
+          '#attributes' => ['data-portal-ui' => 'aculta-learning-home__actions'],
           'items' => $actions,
         ],
       ],
@@ -270,14 +270,14 @@ final class LearnerDashboardComposer {
         '#type' => 'html_tag',
         '#tag' => 'p',
         '#value' => $this->t('Este curso ainda não tem aulas publicadas.'),
-        '#attributes' => ['class' => ['aculta-learning-home__meta']],
+        '#attributes' => ['data-portal-ui' => 'aculta-learning-home__meta'],
       ];
     }
     $completed = $course->completedLessons;
     $percent = $course->progressPercent;
     return [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-learning-home__progress']],
+      '#attributes' => ['data-portal-ui' => 'aculta-learning-home__progress'],
       'label' => [
         '#type' => 'html_tag',
         '#tag' => 'p',
@@ -341,12 +341,12 @@ final class LearnerDashboardComposer {
 
     return [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-learning-home__section', 'aculta-learning-home__certificates']],
+      '#attributes' => ['data-portal-ui' => 'aculta-learning-home__section'],
       'title' => [
         '#type' => 'html_tag',
         '#tag' => 'h2',
         '#value' => $this->t('Meus certificados'),
-        '#attributes' => ['class' => ['aculta-learning-home__section-title']],
+        '#attributes' => ['data-portal-ui' => 'aculta-learning-home__section-title'],
       ],
       'grid' => [
         '#theme' => 'aculta_portal_component',

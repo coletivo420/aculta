@@ -40,10 +40,10 @@ final class CourseJourneyComposer {
   public function build(CourseJourney $journey): array {
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-learning-journey']],
+      '#attributes' => ['data-portal-ui' => 'aculta-learning-journey'],
       'back' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-learning-journey__back']],
+        '#attributes' => ['data-portal-ui' => 'aculta-learning-journey__back'],
         'link' => Link::fromTextAndUrl(
           $this->t('Minha aprendizagem'),
           Url::fromRoute('aculta_lms.student_dashboard'),
@@ -51,18 +51,18 @@ final class CourseJourneyComposer {
       ],
       'intro' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-learning-journey__intro']],
+        '#attributes' => ['data-portal-ui' => 'aculta-learning-journey__intro'],
         'eyebrow' => [
           '#type' => 'html_tag',
           '#tag' => 'p',
           '#value' => $this->t('ACULTA Studio Ganjalab'),
-          '#attributes' => ['class' => ['aculta-learning-journey__eyebrow']],
+          '#attributes' => ['data-portal-ui' => 'aculta-learning-journey__eyebrow'],
         ],
         'title' => [
           '#type' => 'html_tag',
           '#tag' => 'h2',
           '#value' => $this->t('Minha jornada'),
-          '#attributes' => ['class' => ['aculta-learning-journey__title']],
+          '#attributes' => ['data-portal-ui' => 'aculta-learning-journey__title'],
         ],
       ],
       'summary' => $this->buildSummary($journey),
@@ -102,11 +102,11 @@ final class CourseJourneyComposer {
       ]);
 
     $back_url = Url::fromRoute('entity.group.canonical', ['group' => $journey->courseId]);
-    $back_url->setOption('attributes', ['class' => ['aculta-learning-room__back-link']]);
+    $back_url->setOption('attributes', ['data-portal-ui' => 'aculta-learning-room__back-link']);
 
     $build = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-learning-room']],
+      '#attributes' => ['data-portal-ui' => 'aculta-learning-room'],
       'header' => [
         '#theme' => 'aculta_portal_component',
         '#name' => 'context-header',
@@ -121,18 +121,18 @@ final class CourseJourneyComposer {
       ],
       'layout' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-learning-room__layout']],
+        '#attributes' => ['data-portal-ui' => 'aculta-learning-room__layout'],
         'outline_mobile' => [
           '#type' => 'details',
           '#title' => $this->t('Conteúdo do curso'),
           '#open' => FALSE,
-          '#attributes' => ['class' => ['aculta-learning-room__outline', 'aculta-learning-room__outline--mobile']],
+          '#attributes' => ['data-portal-ui' => 'aculta-learning-room__outline', 'data-variant' => 'mobile'],
           'items' => $this->buildLessonList($journey, $lesson_delta),
         ],
         'outline_desktop' => [
           '#type' => 'container',
           '#attributes' => [
-            'class' => ['aculta-learning-room__outline', 'aculta-learning-room__outline--desktop'],
+            'data-portal-ui' => 'aculta-learning-room__outline', 'data-variant' => 'desktop',
             'role' => 'navigation',
             'aria-label' => $this->t('Conteúdo do curso'),
           ],
@@ -140,7 +140,7 @@ final class CourseJourneyComposer {
             '#type' => 'html_tag',
             '#tag' => 'h2',
             '#value' => $this->t('Conteúdo do curso'),
-            '#attributes' => ['class' => ['aculta-learning-room__outline-title']],
+            '#attributes' => ['data-portal-ui' => 'aculta-learning-room__outline-title'],
           ],
           'items' => $this->buildLessonList($journey, $lesson_delta),
         ],
@@ -165,7 +165,7 @@ final class CourseJourneyComposer {
   private function buildSummary(CourseJourney $journey): array {
     $summary = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-learning-journey__summary']],
+      '#attributes' => ['data-portal-ui' => 'aculta-learning-journey__summary'],
       'progress' => $this->buildProgress($journey),
     ];
     if ($journey->currentLessonLabel !== NULL && $journey->currentLessonIndex !== NULL) {
@@ -177,7 +177,7 @@ final class CourseJourneyComposer {
           '@position' => $journey->currentLessonIndex,
           '@total' => $journey->totalLessons,
         ]),
-        '#attributes' => ['class' => ['aculta-learning-journey__current']],
+        '#attributes' => ['data-portal-ui' => 'aculta-learning-journey__current'],
       ];
     }
     return $summary;
@@ -195,12 +195,12 @@ final class CourseJourneyComposer {
   private function buildJourneyOutline(CourseJourney $journey): array {
     $outline = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-learning-journey__outline']],
+      '#attributes' => ['data-portal-ui' => 'aculta-learning-journey__outline'],
       'title' => [
         '#type' => 'html_tag',
         '#tag' => 'h2',
         '#value' => $this->t('Aulas do curso'),
-        '#attributes' => ['class' => ['aculta-learning-journey__title']],
+        '#attributes' => ['data-portal-ui' => 'aculta-learning-journey__title'],
       ],
     ];
     if ($journey->lessons === []) {
@@ -238,7 +238,7 @@ final class CourseJourneyComposer {
       '#theme' => 'item_list',
       '#list_type' => 'ol',
       '#items' => $items,
-      '#attributes' => ['class' => ['aculta-learning-journey__lessons']],
+      '#attributes' => ['data-portal-ui' => 'aculta-learning-journey__lessons'],
     ];
   }
 
@@ -263,11 +263,9 @@ final class CourseJourneyComposer {
     $item = [
       '#type' => 'container',
       '#attributes' => [
-        'class' => array_values(array_filter([
-          'aculta-learning-journey__lesson',
-          'aculta-learning-journey__lesson--' . $state,
-          $is_route_current ? 'aculta-learning-journey__lesson--route-current' : NULL,
-        ])),
+        'data-portal-ui' => 'aculta-learning-journey__lesson',
+        'data-state' => $state,
+        'data-route-current' => $is_route_current ? 'true' : NULL,
       ],
     ];
     if ($lesson->url instanceof Url) {
@@ -282,7 +280,7 @@ final class CourseJourneyComposer {
         '#type' => 'html_tag',
         '#tag' => 'span',
         '#value' => Html::escape($lesson->label),
-        '#attributes' => ['class' => ['aculta-learning-journey__lesson-label']],
+        '#attributes' => ['data-portal-ui' => 'aculta-learning-journey__lesson-label'],
       ];
     }
     $item['state'] = [
@@ -290,10 +288,8 @@ final class CourseJourneyComposer {
       '#tag' => 'span',
       '#value' => $this->stateLabel($state),
       '#attributes' => [
-        'class' => [
-          'aculta-learning-journey__state',
-          'aculta-learning-journey__state--' . $state,
-        ],
+        'data-portal-ui' => 'aculta-learning-journey__state',
+        'data-state' => $state,
       ],
     ];
     return $item;
@@ -328,14 +324,14 @@ final class CourseJourneyComposer {
         '#type' => 'html_tag',
         '#tag' => 'p',
         '#value' => $this->t('Este curso ainda não tem aulas publicadas.'),
-        '#attributes' => ['class' => ['aculta-learning-journey__meta']],
+        '#attributes' => ['data-portal-ui' => 'aculta-learning-journey__meta'],
       ];
     }
     $completed = $journey->completedLessons;
     $percent = $journey->progressPercent;
     return [
       '#type' => 'container',
-      '#attributes' => ['class' => ['aculta-learning-journey__progress']],
+      '#attributes' => ['data-portal-ui' => 'aculta-learning-journey__progress'],
       'label' => [
         '#type' => 'html_tag',
         '#tag' => 'p',
