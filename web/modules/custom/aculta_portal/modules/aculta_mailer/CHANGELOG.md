@@ -1,3 +1,16 @@
+## 0.1.0-dev.77 — limites de ingestão configuráveis e guarda de relatório DMARC
+
+- Os tetos do parser DMARC (relatório descompactado) e do download IMAP (mensagem) saem do código e vêm de
+  `IngestionLimits`, do `aculta_file_uploader`, editável em `/painel-administrativo/aculta/uploads/limites`. Padrões
+  mantidos: 8 MB e 25 MB. Tetos fixos: 32 MB e 50 MB. Valor inválido ou acima do teto volta ao padrão.
+- `DmarcReportParser` recusa relatório sem `report_metadata` ou `policy_published`. Antes, esse XML gerava aviso de
+  propriedade nula e um resumo vazio gravado no estado.
+- Dependência nova: `aculta_file_uploader`.
+
+Validação: `MonitorParsersTest` 8/8 no shim unitário local (inclui o teto configurado e o relatório sem metadados).
+Não executados: `MailMonitorTest` e `AcultaMailerKernelTest` (usam `createMock` ou Runtime), PHPUnit oficial e gate
+Drupal 11+. Status: DEFERRED.
+
 ## 0.1.0-dev.76 — teto de download IMAP por mensagem — 2026-11-02
 
 O cliente IMAP corta a transferência de uma mensagem ao passar de 25 MiB (`CurlImapClient::MAX_MESSAGE_BYTES`),

@@ -22,6 +22,7 @@ final class CurlImapClient implements ImapClientInterface {
     private readonly string $user,
     private readonly string $password,
     private readonly string $mailbox,
+    private readonly int $maxMessageBytes = self::MAX_MESSAGE_BYTES,
   ) {}
 
   /**
@@ -58,7 +59,7 @@ final class CurlImapClient implements ImapClientInterface {
    * {@inheritdoc}
    */
   public function fetch(int $uid): string {
-    return $this->request($this->mailboxUrl() . ';UID=' . $uid, NULL, self::MAX_MESSAGE_BYTES);
+    return $this->request($this->mailboxUrl() . ';UID=' . $uid, NULL, $this->maxMessageBytes);
   }
 
   /**

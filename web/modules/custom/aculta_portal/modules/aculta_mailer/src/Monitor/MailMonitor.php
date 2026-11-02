@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Monitor;
 
+use Drupal\aculta_file_uploader\IngestionLimits;
 use Drupal\aculta_mailer\Alert\MailAlerts;
 use Drupal\aculta_mailer\Policy\QuotaSignal;
 use Drupal\aculta_mailer\Transport\SecretProviderInterface;
@@ -71,6 +72,7 @@ final class MailMonitor {
     private readonly ?SecretProviderInterface $secrets,
     private readonly MailAlerts $alerts,
     private readonly QuotaSignal $quotaSignal,
+    private readonly IngestionLimits $ingestionLimits,
   ) {}
 
   /**
@@ -108,7 +110,14 @@ final class MailMonitor {
     if ($host === '' || $user === '' || $password === NULL || $password === '') {
       return NULL;
     }
-    return new CurlImapClient($host, $port, $user, $password, $mailbox !== '' ? $mailbox : 'INBOX');
+    return new CurlImapClient(
+      $host,
+      $port,
+      $user,
+      $password,
+      $mailbox !== '' ? $mailbox : 'INBOX',
+      $this->ingestionLimits->bytes(IngestionLimits::IMAP_MAX_MESSAGE_MB),
+    );
   }
 
   /**

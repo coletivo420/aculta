@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Monitor;
 
+use Drupal\aculta_file_uploader\IngestionLimits;
+
 /**
  * Relatório agregado DMARC (RFC 7489, Apêndice C): anexo XML em texto, gzip ou zip, resumido em contagens.
  *
@@ -27,12 +29,12 @@ final class DmarcReportParser {
   ];
 
   /**
-   * Teto do XML descompactado de um relatório (8 MiB).
+   * Limites de ingestão em vigor (teto do XML descompactado, configurável no painel de uploads).
    *
    * Anexos vêm de remetentes externos. O tamanho declarado em ZIP ou GZIP pode
    * ser forjado, então o limite é medido ao ler, e não pelo cabeçalho.
    */
-  private const MAX_REPORT_BYTES = 8388608;
+  public function __construct(private readonly IngestionLimits $limits) {}
 
   /**
    * Tamanho de leitura ao descompactar um anexo.
@@ -89,7 +91,7 @@ final class DmarcReportParser {
         return NULL;
       }
       $xml .= $piece;
-      if (strlen($xml) > self::MAX_REPORT_BYTES) {
+      if (strlen($xml) > $this->limits->bytes(IngestionLimits::DMARC_MAX_REPORT_MB)) {
         return NULL;
       }
     }
@@ -124,7 +126,7 @@ final class DmarcReportParser {
             return NULL;
           }
           $xml .= $chunk;
-          if (strlen($xml) > self::MAX_REPORT_BYTES) {
+          if (strlen($xml) > $this->limits->bytes(IngestionLimits::DMARC_MAX_REPORT_MB)) {
             return NULL;
           }
         }
@@ -151,6 +153,10 @@ final class DmarcReportParser {
     $doc = simplexml_load_string($xml, \SimpleXMLElement::class, LIBXML_NONET);
     libxml_use_internal_errors($previous);
     if ($doc === FALSE || $doc->getName() !== 'feedback') {
+      return NULL;
+    }
+    // Sem metadados do relatório não há resumo útil; recusar evita aviso de propriedade nula e linha vazia.
+    if (!isset($doc->report_metadata->date_range, $doc->policy_published->domain)) {
       return NULL;
     }
     $total = 0;
