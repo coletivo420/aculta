@@ -42,7 +42,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    */
   protected static $modules = [
     'system', 'user', 'file', 'image', 'media', 'options', 'entity_print', 'domain',
-    'entity_usage', 'aculta_image', 'aculta_file_uploader',
+    'entity_usage', 'key', 'aculta_image', 'aculta_file_uploader',
   ];
 
   /**
