@@ -1,0 +1,27 @@
+allowed_extensions: 'png gif jpg jpeg webp pdf docx xls xlsx'
+max_size_mb: 10
+consumers:
+  wiki:
+    inherit_global: true
+    allowed_extensions: 'png gif jpg jpeg webp pdf docx xls xlsx'
+    max_size_mb: 10
+  forum:
+    inherit_global: true
+    allowed_extensions: 'png gif jpg jpeg webp pdf docx xls xlsx'
+    max_size_mb: 10
+  revista:
+    inherit_global: true
+    allowed_extensions: 'png gif jpg jpeg webp pdf docx xls xlsx'
+    max_size_mb: 10
+  lms:
+    inherit_global: true
+    allowed_extensions: 'png gif jpg jpeg webp pdf docx xls xlsx'
+    max_size_mb: 10
+  gallery:
+    inherit_global: true
+    allowed_extensions: 'png gif jpg jpeg webp pdf docx xls xlsx'
+    max_size_mb: 10
+  user_picture:
+    inherit_global: true
+    allowed_extensions: 'png gif jpg jpeg webp pdf docx xls xlsx'
+    max_size_mb: 10

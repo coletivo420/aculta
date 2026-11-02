@@ -1,0 +1,11 @@
+uuid: 3e272d53-add2-4cf1-b64e-ca4fc4f951b5
+langcode: pt-br
+status: true
+dependencies: {  }
+id: file_upload
+name: 'Envio de arquivo'
+description: 'Atividade com anexo de arquivo.'
+pluginId: file_upload
+pluginConfiguration:
+  default_file_extensions: 'pdf png jpg'
+defaultMaxScore: 10
