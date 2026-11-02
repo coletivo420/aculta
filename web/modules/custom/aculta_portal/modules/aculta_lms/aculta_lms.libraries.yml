@@ -9,3 +9,10 @@ scorm.api12:
   dependencies:
     - core/jquery
     - core/drupal
+
+scorm.api2004:
+  js:
+    js/scorm/aculta-scorm-api-2004.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal

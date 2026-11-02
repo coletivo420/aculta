@@ -25,9 +25,23 @@ Registro exigido pela decisão D-25 e pelo plano de independência do Opigno. Ca
 - Dependência: jQuery e Drupal, somente para localizar o iframe do player. Declarada em `scorm.api12`.
 - Testado: 32/32 em Node com stubs de `window`, `jQuery` e `Drupal` (script de teste fora do repositório).
 
+### js/scorm/aculta-scorm-api-2004.js
+
+- Fonte de conceito: `js/lib/api-2004.js` do opigno_scorm 3.2.7.
+- Tipo: reescrita. Nenhum bloco de código copiado. Códigos de erro e nomes de elementos CMI são os da especificação SCORM 2004 RTE.
+- Mantido do conceito: métodos Initialize, Terminate, GetValue, SetValue, Commit, GetLastError, GetErrorString; registro de caminhos com somente leitura e somente escrita; eventos; commit com o identificador do SCO.
+- Alterado de propósito:
+  - sem `eval`, sem `console.log`, sem testes internos do Opigno (`cmi.__value__`, `cmi.__unimplemented__` e similares);
+  - Terminate, SetValue e Commit devolvem `"false"` em erro, como a especificação manda;
+  - estado de término é checado antes do de inicialização (123, 133, 143, 113), como manda a especificação;
+  - suspend_data não é mais redirecionado por iframe; cada SCO tem sua própria instância da API;
+  - adl.nav.request é guardado e entregue ao player pelo evento `navigation` no Terminate. O Opigno trocava o iframe pelo DOM; essa troca agora é do player;
+  - objeto exportado como `window.API_1484_11`, nome exigido pelo conteúdo 2004.
+- Dependência: jQuery e Drupal, somente para localizar o iframe do player. Declarada em `scorm.api2004`.
+- Testado: 34/34 em Node com stubs (script de teste fora do repositório).
+
 ## Não portado nesta entrada
 
-- `js/lib/api-2004.js`: fase seguinte, com entrada própria aqui.
 - `js/lib/player.js` e `js/opigno_scorm.player.js`: player ainda não portado.
 - `src/XML2Array.php`: substituído por `DOMDocument` no `ScormManifestParser`.
 - `templates/*.twig`: não portados; o tema ACULTA420 define a apresentação.
@@ -35,4 +49,4 @@ Registro exigido pela decisão D-25 e pelo plano de independência do Opigno. Ca
 
 ## Pendente
 
-- Responsável: confirmar esta entrada antes do RC (D-25 exige revisão de licença e proveniência).
+- Responsável: confirmar estas entradas antes do RC (D-25 exige revisão de licença e proveniência).

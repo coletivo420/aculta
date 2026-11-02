@@ -1,3 +1,13 @@
+## 0.1.0-dev.109 — API SCORM 2004 no navegador (sem endpoint de progresso)
+
+- `js/scorm/aculta-scorm-api-2004.js`: API SCORM 2004 derivada de conceitos do Opigno SCORM 3.2.7 (GPL-2.0-or-later), reescrita
+  sem `eval`, sem depuração, sem testes internos e com retornos de erro da especificação. Exportada como `window.API_1484_11`.
+  Pedido de navegação (`adl.nav.request`) vai ao player pelo evento `navigation` no Terminate; a troca de SCO é do player.
+- Biblioteca `aculta_lms/scorm.api2004`.
+- Registro de origem atualizado em `docs/ORIGEM-OPIGNO.md`.
+
+Validação: 34/34 em Node com stubs de `window`, `jQuery` e `Drupal`. Navegador e Runtime DEFERRED.
+
 ## 0.1.0-dev.108 — API SCORM 1.2 no navegador (sem endpoint de progresso)
 
 - `js/scorm/aculta-scorm-api-12.js`: API SCORM 1.2 derivada de conceitos do Opigno SCORM 3.2.7 (GPL-2.0-or-later), reescrita
