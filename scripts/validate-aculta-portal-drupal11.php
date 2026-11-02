@@ -200,12 +200,13 @@ $check(
 // here. Social Auth callback handles /integracoes/{network}/retorno.
 // ADR-013 (P-CART D) adds CommerceCheckoutRouteSubscriber.
 // Mercado Pago owns its webhook subscriber.
+// 14 desde que LmsFriendlyRouteSubscriber passou ao aculta_lms (port do LMS).
 $check(
-  preg_match_all('/name:\s*event_subscriber\b/', $services) === 15
+  preg_match_all('/name:\s*event_subscriber\b/', $services) === 14
     && str_contains($services, 'aculta_portal.social_auth_callback_route_subscriber:')
     && str_contains($services, 'Drupal\\aculta_portal\\EventSubscriber\\SocialAuthCallbackRouteSubscriber')
     && str_contains($read($srcRoot . '/EventSubscriber/SocialAuthCallbackRouteSubscriber.php'), "'/integracoes/{network}/retorno'"),
-  'Portal must register exactly fifteen canonical subscribers, including the canonical Social Auth callback route; CEP rate limiting remains owned by aculta_portal_cep.',
+  'Portal must register exactly fourteen canonical subscribers, including the canonical Social Auth callback route; CEP rate limiting remains owned by aculta_portal_cep.',
 );
 
 $tokenHooks = $srcRoot . '/Hook/TokenHooks.php';
@@ -813,17 +814,16 @@ $check(
   'P5.4-D requirements controller must use injected theme handler, app root and services.',
 );
 
-// P5.5: storage comes from injected managers and public services only.
-// Static Group membership loads are replaced by the group.membership_loader
-// service; storage queries remain on injected entity storage.
+// P5.5: the Portal no longer reads Group memberships. The educational
+// provider (aculta_lms) owns Group/LMS access and exposes AccountCoursesReader;
+// the Portal only adapts that contract, and the dependency stays optional.
 $coursesManagerSource = $read($srcRoot . '/AccountCoursesManager.php');
 $servicesSource = $read(dirname($srcRoot) . '/aculta_portal.services.yml');
 $check(
-  !str_contains($coursesManagerSource, 'GroupMembership::loadByUser')
-    && str_contains($coursesManagerSource, 'GroupMembershipLoaderInterface $membershipLoader')
-    && str_contains($coursesManagerSource, '$this->membershipLoader->loadByUser($account)')
-    && str_contains($servicesSource, "'@group.membership_loader'"),
-  'P5.5 AccountCoursesManager must read Group memberships through the injected group.membership_loader service.',
+  !str_contains($coursesManagerSource, 'GroupMembership')
+    && str_contains($coursesManagerSource, 'AccountCoursesReaderInterface $reader')
+    && str_contains($servicesSource, "'@?Drupal\\aculta_learning_contracts\\Learning\\AccountCoursesReaderInterface'"),
+  'P5.5 AccountCoursesManager must consume the AccountCoursesReader contract instead of reading Group memberships.',
 );
 $storageStaticPattern = '/\\\\Drupal::(?:entityTypeManager|entityQuery)\(\)|\\\\Drupal::service\(\'entity_type\.manager\'\)/';
 $storageStaticHits = 0;

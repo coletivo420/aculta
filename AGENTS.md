@@ -30,6 +30,7 @@ Este arquivo define as regras gerais do repositório. Siga também o `AGENTS.md`
 - Suítes atuais: Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. `aculta_studio` é infraestrutura compartilhada, não uma raiz pública. `/studio` e `/studio/*` devem responder 404, sem alias ou redirect.
 - Rotas administrativas e de integração existem somente no domínio principal e devem responder 404 em outros domínios. A experiência de organizadores em `/culturas` permanece separada.
 - Preserve os módulos responsáveis e valide acesso no servidor, inclusive em escritas. Links entre domínios devem seguir os serviços e políticas de propósito já existentes.
+- Padrão normativo do Drupal 11+ (versões, depreciações e tags canônicas de serviço): `docs/portal/DRUPAL-11-STANDARDS.md`.
 - Antes de concluir, execute as verificações relevantes à mudança e registre os resultados. Não alegue testes ou validações que não executou.
 
 ## Referências
