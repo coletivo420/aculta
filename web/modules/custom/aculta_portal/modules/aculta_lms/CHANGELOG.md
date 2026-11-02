@@ -1,3 +1,12 @@
+## 0.1.0-dev.123 — modelo de certificado separado do registro emitido
+
+- `Entity\CertificateTemplate` (`aculta_lms_certificate_template`): nome, orientação do papel, modo de visualização e
+  referência opaca ao curso. Separado do `CourseCertificate`, que continua sendo o registro emitido. Ideia do Opigno
+  (`opigno_certificate`), implementação própria; `entity_print` segue para o PDF.
+- `aculta_lms_update_10004` instala a entidade, com a mesma guarda dos updates 10002 e 10003.
+- Sem handler de acesso, sem rota e sem ligação com a emissão (decisão pendente: se o certificado emitido guarda a referência ao modelo).
+- Instalação no Runtime e testes Kernel: DEFERRED.
+
 ## 0.1.0-dev.122 — pontuação própria dos tipos objetivos (ADR-042, P3, parcial)
 
 - `Assessment\ObjectiveAnswerScorer`: verdadeiro/falso (100 ou 0), seleção só com o conjunto exato, sem crédito parcial,

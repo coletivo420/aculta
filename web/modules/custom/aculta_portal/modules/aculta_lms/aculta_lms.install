@@ -49,3 +49,11 @@ function aculta_lms_requirements(string $phase): array {
   }
   return $requirements;
 }
+
+/** Installs the certificate template definition (modelo separado do registro emitido). */
+function aculta_lms_update_10004(): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  if (!$manager->getEntityType('aculta_lms_certificate_template')) {
+    $manager->installEntityType(\Drupal::entityTypeManager()->getDefinition('aculta_lms_certificate_template'));
+  }
+}
