@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\aculta_lms\LearningDashboardManager;
-use Drupal\aculta_portal\AccountCoursesManager;
+use Drupal\aculta_learning_contracts\Learning\AccountCourseSummary;
+use Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -172,13 +173,8 @@ final class LearningDashboardKernelTest extends KernelTestBase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     );
-    $account_courses = new AccountCoursesManager(
-      $this->container->get('lms.training_manager'),
-      $domain_purpose,
-      $this->container->get('group.membership_loader'),
-    );
     $manager = new LearningDashboardManager(
-      $account_courses,
+      $this->container->get(AccountCoursesReaderInterface::class),
       $this->container->get('aculta_lms.course_certificate_manager'),
       $this->container->get('entity_type.manager'),
       $this->container->get('lms.training_manager'),
@@ -187,7 +183,7 @@ final class LearningDashboardKernelTest extends KernelTestBase {
     $dashboard = $manager->studentDashboard($student);
 
     self::assertCount(1, $dashboard['courses']);
-    self::assertSame(CourseStatusInterface::STATUS_NEEDS_EVALUATION, $dashboard['courses'][0]['status']);
+    self::assertSame(AccountCourseSummary::STATUS_AWAITING_EVALUATION, $dashboard['courses'][0]['status']);
     self::assertTrue($dashboard['courses'][0]['pending_evaluation']);
     self::assertSame(1, $dashboard['courses'][0]['total_lessons']);
     self::assertSame(1, $dashboard['courses'][0]['completed_lessons']);
