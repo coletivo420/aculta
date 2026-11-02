@@ -9,7 +9,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Schema;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Image\ImageFactory;
+use Drupal\aculta_file_uploader\ImageDimensionReader;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\file\FileInterface;
@@ -69,7 +69,7 @@ final class AvatarAssetCleanupCoordinatorTest extends UnitTestCase {
       $database,
       $references,
       $remover,
-      $this->createMock(ImageFactory::class),
+      $this->createMock(ImageDimensionReader::class),
       $logger,
     );
 

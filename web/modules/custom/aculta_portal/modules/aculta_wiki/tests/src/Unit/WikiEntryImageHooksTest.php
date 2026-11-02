@@ -22,7 +22,7 @@ use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Image\Image;
-use Drupal\Core\Image\ImageFactory;
+use Drupal\aculta_file_uploader\ImageDimensionReader;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\TypedData\ComplexDataInterface;
@@ -219,8 +219,8 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
     $image->method('isValid')->willReturn(TRUE);
     $image->method('getWidth')->willReturn(1);
     $image->method('getHeight')->willReturn(1);
-    $image_factory = $this->createMock(ImageFactory::class);
-    $image_factory->method('get')->willReturn($image);
+    $image_factory = $this->createMock(ImageDimensionReader::class);
+    $image_factory->method('dimensions')->willReturn(['width' => 1, 'height' => 1]);
     return new ConsumerUploadPolicy($config_factory, new FileUploadPolicy(), new MimeTypeVerifier(), $files, $image_factory);
   }
 

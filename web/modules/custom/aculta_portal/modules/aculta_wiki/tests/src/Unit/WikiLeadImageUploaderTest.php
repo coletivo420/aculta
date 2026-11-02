@@ -19,7 +19,7 @@ use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Image\ImageFactory;
+use Drupal\aculta_file_uploader\ImageDimensionReader;
 use Drupal\Core\Image\ImageInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\file\FileInterface;
@@ -340,8 +340,8 @@ final class WikiLeadImageUploaderTest extends UnitTestCase {
     $image->method('isValid')->willReturn(TRUE);
     $image->method('getWidth')->willReturn(800);
     $image->method('getHeight')->willReturn(600);
-    $image_factory = $this->createMock(ImageFactory::class);
-    $image_factory->method('get')->willReturn($image);
+    $image_factory = $this->createMock(ImageDimensionReader::class);
+    $image_factory->method('dimensions')->willReturn(['width' => 1, 'height' => 1]);
 
     $config = $this->createMock(Config::class);
     $config->method('get')->willReturnCallback(static fn (string $key) => match ($key) {

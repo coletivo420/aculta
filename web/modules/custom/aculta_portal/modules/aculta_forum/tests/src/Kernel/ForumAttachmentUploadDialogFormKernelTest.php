@@ -166,14 +166,14 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
       new FileUploadPolicy(),
       new MimeTypeVerifier(),
       $this->container->get('file_system'),
-      $this->container->get('image.factory'),
+      $this->container->get('aculta_file_uploader.image_dimension_reader'),
     );
     $this->form = new ForumAttachmentUploadDialogForm(
       $this->container->get('entity_type.manager'),
       $this->container->get('current_user'),
       $this->policy,
       new UserUploadDialogBuilder(
-        new ConsumerUploadPolicy($this->container->get('config.factory'), new FileUploadPolicy(), new MimeTypeVerifier(), $this->container->get('file_system'), $this->container->get('image.factory')),
+        new ConsumerUploadPolicy($this->container->get('config.factory'), new FileUploadPolicy(), new MimeTypeVerifier(), $this->container->get('file_system'), $this->container->get('aculta_file_uploader.image_dimension_reader')),
         $this->container->get('string_translation'),
       ),
       new RecentUploads($this->container->get('entity_type.manager')),

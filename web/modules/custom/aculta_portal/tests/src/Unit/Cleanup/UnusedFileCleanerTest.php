@@ -11,7 +11,7 @@ use Drupal\aculta_file_uploader\Cleanup\FileReferenceStatus;
 use Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Schema;
-use Drupal\Core\Image\ImageFactory;
+use Drupal\aculta_file_uploader\ImageDimensionReader;
 use Drupal\Core\Image\ImageInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\file\FileInterface;
@@ -125,8 +125,8 @@ final class UnusedFileCleanerTest extends UnitTestCase {
     $logger = $this->createMock(LoggerChannelInterface::class);
     $image = $this->createMock(ImageInterface::class);
     $image->method('isValid')->willReturn(FALSE);
-    $factory = $this->createMock(ImageFactory::class);
-    $factory->method('get')->willReturn($image);
+    $factory = $this->createMock(ImageDimensionReader::class);
+    $factory->method('dimensions')->willReturn(['width' => 1, 'height' => 1]);
     return new UnusedFileCleaner($fileUsage, $database, $inspector, $remover, $factory, $logger);
   }
 

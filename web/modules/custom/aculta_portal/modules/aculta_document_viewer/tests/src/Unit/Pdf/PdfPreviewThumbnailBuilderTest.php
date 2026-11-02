@@ -13,6 +13,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Image\ImageFactory;
+use Drupal\aculta_file_uploader\ImageDimensionReader;
 use Drupal\Core\File\MimeType\MimeTypeGuesser;
 use Drupal\aculta_document_viewer\Pdf\PdfPreviewThumbnailBuilder;
 use Drupal\Component\Datetime\TimeInterface;
@@ -53,7 +54,7 @@ final class PdfPreviewThumbnailBuilderTest extends UnitTestCase {
         $this->createMock(EntityTypeManagerInterface::class),
         $file_system,
         $this->createMock(MimeTypeGuesser::class),
-        $this->createMock(ImageFactory::class),
+        $this->createMock(ImageDimensionReader::class),
         $this->getMockBuilder(TimeInterface::class)->getMock(),
       ),
       new ImageRenderer(new ImageCatalog(), $this->createMock(EntityTypeManagerInterface::class)),
@@ -100,7 +101,7 @@ final class PdfPreviewThumbnailBuilderTest extends UnitTestCase {
           $this->createMock(EntityTypeManagerInterface::class),
           $file_system,
           $this->createMock(MimeTypeGuesser::class),
-          $this->createMock(ImageFactory::class),
+          $this->createMock(ImageDimensionReader::class),
           $this->getMockBuilder(TimeInterface::class)->getMock(),
         ),
         new ImageRenderer(new ImageCatalog(), $this->createMock(EntityTypeManagerInterface::class)),

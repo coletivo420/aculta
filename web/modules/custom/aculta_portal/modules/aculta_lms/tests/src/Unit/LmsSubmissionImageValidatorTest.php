@@ -13,7 +13,7 @@ use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Image\Image;
-use Drupal\Core\Image\ImageFactory;
+use Drupal\aculta_file_uploader\ImageDimensionReader;
 use Drupal\file\FileInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -73,8 +73,8 @@ final class LmsSubmissionImageValidatorTest extends TestCase {
     $image->method('isValid')->willReturn(TRUE);
     $image->method('getWidth')->willReturn(1);
     $image->method('getHeight')->willReturn(1);
-    $image_factory = $this->createMock(ImageFactory::class);
-    $image_factory->method('get')->willReturn($image);
+    $image_factory = $this->createMock(ImageDimensionReader::class);
+    $image_factory->method('dimensions')->willReturn(['width' => 1, 'height' => 1]);
 
     $file_system = $this->createMock(FileSystemInterface::class);
     $file_system->method('realpath')->with('private://lms_file_upload/answer')->willReturn($this->path);

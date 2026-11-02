@@ -12,6 +12,7 @@ use Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PFileUsageManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Image\ImageFactory;
+use Drupal\aculta_file_uploader\ImageDimensionReader;
 use Drupal\file\FileRepositoryInterface;
 use Drupal\file\FileInterface;
 use Drupal\aculta_image\FileRemoverInterface;
@@ -253,7 +254,7 @@ final class aculta_H5PManagedFileStorageTest extends UnitTestCase {
       $database,
       $references,
       $remover,
-      $this->createMock(ImageFactory::class),
+      $this->createMock(ImageDimensionReader::class),
       $this->createMock(LoggerChannelInterface::class),
     );
   }

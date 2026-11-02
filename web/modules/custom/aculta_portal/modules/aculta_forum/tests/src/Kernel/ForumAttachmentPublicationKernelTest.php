@@ -851,7 +851,7 @@ final class ForumAttachmentPublicationKernelTest extends KernelTestBase {
           $this->container->get('file_system'),
           $this->container->get('logger.factory'),
         ),
-        $this->container->get('image.factory'),
+        $this->container->get('aculta_file_uploader.image_dimension_reader'),
         $this->container->get('logger.factory')->get('test'),
       ),
       $this->container->get('config.factory'),

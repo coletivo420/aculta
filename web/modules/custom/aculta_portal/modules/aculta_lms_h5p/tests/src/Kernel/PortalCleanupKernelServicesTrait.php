@@ -39,7 +39,7 @@ trait PortalCleanupKernelServicesTrait {
         new Reference('database'),
         new Reference('aculta_file_uploader.file_reference_inspector'),
         new Reference('aculta_image.file_remover'),
-        new Reference('image.factory'),
+        new Reference('aculta_file_uploader.image_dimension_reader'),
         new Reference('aculta_portal.cleanup.logger'),
       ],
     ));

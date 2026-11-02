@@ -69,7 +69,7 @@ final class QrCodeRasterExportKernelTest extends KernelTestBase {
       $this->container->get('entity_type.manager'),
       $this->container->get('file_system'),
       $this->container->get('file.mime_type.guesser'),
-      $this->container->get('image.factory'),
+      $this->container->get('aculta_file_uploader.image_dimension_reader'),
       $this->container->get('datetime.time'),
     );
     $exporter = new QrCodeExporter(
