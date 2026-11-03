@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.177
+version: 0.1.0-dev.176
 state: Dev
-progress_note: "Dev.177: corrigidos 500 por slug cru, matrícula curso→turma, dependências do formulário perdidas no cache e encadeamento setPermanent/save; fieldset de lacunas mantém answer[blank_N]. Snapshot SHA-256 ec8259784afe036efba985dcab557694530cb106dfa20fadbd31b7d9ff71bc88; sem updates ou diferenças de config antes/depois; drush cr passou. Anônimo 403 nas cinco rotas; estudante sintético abre e envia os cinco tipos, sem 500. Firefox ESR visível, ACULTA420: upload 10/10 em 1440/320. Unit 226/788, Kernel install 7/193, Portal 1202, slugs 410, admin routes 170 PASS. Dashboard docente HTTP 200; produto sem revisão/nota final de resposta. Isolamento entre estudantes e Olivero DEFERRED. Dados sintéticos permanecem, incluindo tentativa 0 e upload parcialmente salvo do erro anterior."
-next_phase: 'Definir fluxo de revisão/nota do educador; testar isolamento com segunda estudante sintética autorizada; validar Olivero visualmente. Não remover dados sintéticos sem ordem separada. Medição de carga xAPI e segredo de produção continuam pendentes.'
+progress_note: "Dev.176: isolamento autenticado do segundo aluno: formulário próprio HTTP 200, download da resposta de outro aluno HTTP 403 e rota de lista inexistente HTTP 404, sem vazamento. ClassActivityDeadlineTest sem lms/lms_classes falha na criação do Group porque o harness não registra o plugin entity:group_relationship:lms_course-group_membership. Revisão docente DEFERRED porque não há rota/formulário de avaliação ou feedback. Olivero: validação dispensada pelo responsável em 2026-11-03. Snapshot SHA-256 cd8ac930dcb95354074846929273253327045fd907f1cec0b1c53f04101c2616."
+next_phase: 'Corrigir a configuração própria de relacionamentos do harness e criar fluxo autorizado de revisão docente. Não remover dados sintéticos sem ordem separada. Olivero dispensado pelo responsável em 2026-11-03.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.
 # O Studio compõe cards SDC, mas a homologação depende de fixtures LMS

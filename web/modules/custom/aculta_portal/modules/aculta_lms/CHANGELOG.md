@@ -1154,3 +1154,19 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 - Verificação focal conjunta: `AcultaLmsInstallTest` + `AttemptArchiveLifecycleTest`, 16 testes/603 asserções PASS; 57 depreciações Core/contrib.
 - Unit completa: 236 testes/829 asserções PASS, 1 depreciação PHPUnit.
 
+## 0.1.0-dev.176 — validação de isolamento e limites do Runtime
+
+- O segundo aluno sintético autenticado recebeu HTTP 200 somente no próprio
+  formulário, HTTP 403 ao tentar baixar a resposta de outro aluno e não
+  encontrou uma rota de listagem de respostas (HTTP 404). Nenhum dado da
+  primeira resposta apareceu nas respostas.
+- A revisão docente permanece DEFERRED: o painel existente expõe métricas e
+  prazos, mas o módulo não possui rota ou formulário para revisar, avaliar e
+  publicar feedback de respostas.
+- `ClassActivityDeadlineTest` foi ajustado para não habilitar `lms` nem
+  `lms_classes` e instalar as entidades ACULTA. A execução ainda falha antes
+  dos asserts com `The "entity:group_relationship:lms_course-group_membership"
+  plugin does not exist`; o harness requer uma correção de configuração de
+  relacionamento própria, sem reintroduzir o contrib.
+- Olivero: validação dispensada pelo responsável em 2026-11-03.
+

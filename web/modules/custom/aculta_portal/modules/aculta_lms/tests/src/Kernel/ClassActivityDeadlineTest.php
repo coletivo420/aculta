@@ -45,8 +45,6 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
     'filter',
     'flexible_permissions',
     'group',
-    'lms',
-    'lms_classes',
     'views',
     'options',
     'text',
@@ -67,9 +65,20 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installConfig(['system', 'group', 'lms', 'lms_classes']);
+    $this->installConfig(['system', 'group']);
     foreach ([
+      'group.type.lms_course',
+      'group.type.lms_class',
+      'group.relationship_type.lms_course-group_membership',
+      'group.relationship_type.lms_class-group_membership',
+      'group.relationship_type.lms_course-lms_classes',
       'group.relationship_type.lms_class-lms_class_activity_due',
+      'group.role.lms_course-anonymous',
+      'group.role.lms_course-course_creator',
+      'group.role.lms_course-member',
+      'group.role.lms_course-outsider',
+      'group.role.lms_course-teacher',
+      'group.role.lms_class-member',
       'field.storage.group_relationship.field_activity_due_at',
       'field.field.group_relationship.lms_class-lms_class_activity_due.field_activity_due_at',
       'core.entity_form_display.group_relationship.lms_class-lms_class_activity_due.default',
