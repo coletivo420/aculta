@@ -1,4 +1,5 @@
 langcode: pt-br
+leitura_ativa: false
 superficies:
   main:
     modo: subdominio

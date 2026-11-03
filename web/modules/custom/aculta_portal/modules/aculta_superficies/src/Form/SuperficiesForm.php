@@ -49,6 +49,13 @@ final class SuperficiesForm extends ConfigFormBase {
     $form['aviso'] = [
       '#markup' => '<p>' . $this->t('Mudar o modo ou o slug não altera as rotas nesta versão. Antes de aplicar, confira o impacto na Conta e na sessão compartilhada.') . '</p>',
     ];
+    $form['leitura_ativa'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Aplicar a configuração às rotas'),
+      '#description' => $this->t('Desligado nesta versão. Ligar só depois do teste de rota no Runtime.'),
+      '#default_value' => $this->reader->leituraAtiva(),
+      '#disabled' => TRUE,
+    ];
     foreach ($this->reader->superficies() as $purpose => $linha) {
       $form[$purpose] = [
         '#type' => 'details',

@@ -46,6 +46,16 @@ final class SurfaceConfigReader {
   public function __construct(private readonly ConfigFactoryInterface $configFactory) {}
 
   /**
+   * Interruptor da leitura por configuração nas rotas (Fase 3.4).
+   *
+   * Desligado por padrão. Ligar exige o teste de rota da 3.0 no Runtime.
+   * Enquanto estiver desligado, nenhum comportamento muda.
+   */
+  public function leituraAtiva(): bool {
+    return (bool) ($this->configFactory->get(self::CONFIG_NAME)->get('leitura_ativa') ?? FALSE);
+  }
+
+  /**
    * Superfícies por purpose, com padrões onde a configuração não define.
    *
    * @return array<string, array{modo: string, ativa: bool, slug: string, titulo: string}>

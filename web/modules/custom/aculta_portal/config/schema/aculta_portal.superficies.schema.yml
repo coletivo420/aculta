@@ -2,6 +2,9 @@ aculta_portal.superficies:
   type: config_object
   label: 'Superfícies do Portal'
   mapping:
+    leitura_ativa:
+      type: boolean
+      label: 'Leitura de superfícies pelas rotas (desligado até o teste de rota)'
     superficies:
       type: sequence
       label: 'Superfícies por purpose'
