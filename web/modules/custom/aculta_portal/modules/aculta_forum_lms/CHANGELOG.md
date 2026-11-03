@@ -1,3 +1,11 @@
+## `0.1.0-dev.33` — checagem segura de referências em tabelas presentes
+
+- O update 10001 verifica separadamente as tabelas de valores atuais e de
+  revisões, ignorando a tabela de revisão quando ela não existe; qualquer valor
+  legado encontrado continua bloqueando a troca do campo.
+- Runtime: tentativa inicial não alterou o campo porque a tabela de revisão
+  está ausente; após a correção, o update será repetido com snapshot existente.
+
 ## `0.1.0-dev.32` — discussão referencia atividades ACULTA no corte P5
 
 - O campo `field_lms_activity` passa a apontar para `aculta_lms_activity` em

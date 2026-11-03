@@ -7,8 +7,16 @@ function aculta_forum_lms_update_10001(): string {
   $entity_type_manager = \Drupal::entityTypeManager();
   $field_storage = $entity_type_manager->getStorage('field_storage_config')->load('node.field_lms_activity');
   if ($field_storage && $field_storage->getSetting('target_type') !== 'aculta_lms_activity') {
-    $node_storage = $entity_type_manager->getStorage('node');
-    if ($node_storage->countFieldData($field_storage, TRUE) > 0) {
+    $database = \Drupal::database();
+    $has_references = FALSE;
+    foreach (['node__field_lms_activity', 'node_revision__field_lms_activity'] as $table) {
+      if ($database->schema()->tableExists($table)
+        && $database->select($table, 'field')->isNotNull('field_lms_activity_target_id')->range(0, 1)->countQuery()->execute()->fetchField()) {
+        $has_references = TRUE;
+        break;
+      }
+    }
+    if ($has_references) {
       throw new \RuntimeException('A referência legada field_lms_activity contém dados e não será descartada nem migrada automaticamente.');
     }
 
