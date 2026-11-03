@@ -57,6 +57,33 @@ final class AnswerPayload implements \JsonSerializable {
   }
 
   /**
+   * Returns the managed file referenced by a file-upload answer, when present.
+   *
+   * The payload stores references only. Download access is checked against the
+   * owning answer and its current course permissions at request time.
+   */
+  public function fileId(): ?int {
+    $value = $this->data['file_upload']['fids'][0] ?? $this->data['file_upload'][0] ?? NULL;
+    if ($value === NULL) {
+      return NULL;
+    }
+    if (!is_numeric($value) || (int) $value <= 0) {
+      throw new \UnexpectedValueException('Referência de arquivo da resposta inválida.');
+    }
+    return (int) $value;
+  }
+
+  /**
+   * Returns a payload that references one managed file.
+   */
+  public function withFileId(int $fileId): self {
+    if ($fileId <= 0) {
+      throw new \InvalidArgumentException('Identificador de arquivo deve ser positivo.');
+    }
+    return new self([...$this->data, 'file_upload' => ['fids' => [$fileId]]]);
+  }
+
+  /**
    * Serializes the payload as a JSON object.
    */
   public function jsonSerialize(): object {

@@ -47,7 +47,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system', 'user', 'file', 'image', 'media', 'options', 'entity_print', 'domain',
+    'system', 'user', 'file', 'image', 'media', 'field', 'comment', 'options', 'entity_print', 'domain',
     'entity_usage', 'key', 'aculta_image', 'aculta_file_uploader',
     'text', 'views', 'group', 'flexible_permissions', 'lms', 'lms_classes',
   ];
@@ -65,6 +65,10 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->installConfig(['field', 'comment']);
+    $this->installEntitySchema('user');
+    $this->installEntitySchema('comment');
+    $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('lms_course_status');
@@ -151,8 +155,15 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     aculta_lms_update_10008();
     aculta_lms_update_10008();
     self::assertTrue($schema->fieldExists('aculta_lms_answer', 'answer_data'));
-
     $entity_type_manager = $this->container->get('entity_type.manager');
+    $entity_type_manager->getStorage('field_config')->load('aculta_lms_answer.aculta_lms_answer.comments')->delete();
+    aculta_lms_update_10009();
+    aculta_lms_update_10009();
+    self::assertNotNull($entity_type_manager->getStorage('field_storage_config')->load('aculta_lms_answer.comments'));
+    self::assertNotNull($entity_type_manager->getStorage('field_config')->load('aculta_lms_answer.aculta_lms_answer.comments'));
+    self::assertNotNull($entity_type_manager->getStorage('comment_type')->load('aculta_lms_answer_comment'));
+    self::assertNotNull($entity_type_manager->getStorage('field_config')->load('comment.aculta_lms_answer_comment.comment_body'));
+
     foreach (['aculta_lms_lesson', 'aculta_lms_activity', 'aculta_lms_answer', 'aculta_lms_progress'] as $entity_type_id) {
       $this->assertTrue($entity_type_manager->hasDefinition($entity_type_id));
       $this->assertTrue($schema->tableExists($entity_type_id));
@@ -181,6 +192,17 @@ final class AcultaLmsInstallTest extends KernelTestBase {
       'answer_data' => (new AnswerPayload(['answer' => 'primeira tentativa']))->toJson(),
     ]);
     $attempt->save();
+
+    $comment = $this->container->get('entity_type.manager')->getStorage('comment')->create([
+      'entity_type' => 'aculta_lms_answer',
+      'entity_id' => $attempt->id(),
+      'field_name' => 'comments',
+      'comment_type' => 'aculta_lms_answer_comment',
+      'comment_body' => 'Feedback do educador',
+      'status' => 1,
+    ]);
+    $comment->save();
+    self::assertSame('aculta_lms_answer', $comment->getCommentedEntity()->getEntityTypeId());
 
     $graded = $answer_storage->load($attempt->id());
     $graded->set('state', 'graded');

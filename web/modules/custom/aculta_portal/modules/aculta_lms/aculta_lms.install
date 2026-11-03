@@ -136,3 +136,61 @@ function aculta_lms_update_10008(): void {
   $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_lms_answer');
   $manager->installFieldStorageDefinition('answer_data', 'aculta_lms_answer', 'aculta_lms', $fields['answer_data']);
 }
+
+/** Adds Core comments to ACULTA answer attempts. */
+function aculta_lms_update_10009(): void {
+  $comment_type_storage = \Drupal::entityTypeManager()->getStorage('comment_type');
+  if (!$comment_type_storage->load('aculta_lms_answer_comment')) {
+    $comment_type_storage->create([
+      'id' => 'aculta_lms_answer_comment',
+      'label' => 'Comentário da resposta ACULTA',
+      'target_entity_type_id' => 'aculta_lms_answer',
+      'description' => '',
+      'status' => TRUE,
+    ])->save();
+  }
+
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $field_storage_config_storage = $entity_type_manager->getStorage('field_storage_config');
+  if (!$field_storage_config_storage->load('aculta_lms_answer.comments')) {
+    $field_storage_config_storage->create([
+      'field_name' => 'comments',
+      'entity_type' => 'aculta_lms_answer',
+      'type' => 'comment',
+      'settings' => ['comment_type' => 'aculta_lms_answer_comment'],
+      'module' => 'comment',
+      'locked' => TRUE,
+      'cardinality' => 1,
+      'translatable' => TRUE,
+      'persist_with_no_fields' => FALSE,
+      'custom_storage' => FALSE,
+    ])->save();
+  }
+
+  $field_config_storage = \Drupal::entityTypeManager()->getStorage('field_config');
+  if (!$field_config_storage->load('aculta_lms_answer.aculta_lms_answer.comments')) {
+    $field_config_storage->create([
+      'field_name' => 'comments',
+      'entity_type' => 'aculta_lms_answer',
+      'bundle' => 'aculta_lms_answer',
+      'label' => 'Comentários da resposta',
+      'required' => TRUE,
+      'translatable' => TRUE,
+      'default_value' => [[
+        'status' => 2,
+        'cid' => 0,
+        'last_comment_timestamp' => 0,
+        'last_comment_name' => NULL,
+        'last_comment_uid' => 0,
+        'comment_count' => 0,
+      ]],
+      'settings' => [
+        'default_mode' => 1,
+        'per_page' => 50,
+        'anonymous' => 0,
+        'form_location' => TRUE,
+        'preview' => 1,
+      ],
+    ])->save();
+  }
+}

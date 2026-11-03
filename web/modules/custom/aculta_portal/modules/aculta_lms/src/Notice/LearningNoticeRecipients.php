@@ -6,6 +6,7 @@ namespace Drupal\aculta_lms\Notice;
 
 use Drupal\aculta_lms\Event\ActivityDeadlineAssignedEvent;
 use Drupal\aculta_lms\Event\CourseContentReleasedEvent;
+use Drupal\aculta_lms\EducatorFeedbackPolicy;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\comment\CommentInterface;
@@ -116,7 +117,7 @@ final class LearningNoticeRecipients implements LearningNoticeRecipientsInterfac
   public function publishEducatorFeedbackNoticeForLearner(string $commentUuid, string $eventVersion): void {
     $comments = $this->entityTypeManager->getStorage('comment')->loadByProperties([
       'uuid' => $commentUuid,
-      'comment_type' => 'lms_answer_comment',
+      'comment_type' => EducatorFeedbackPolicy::COMMENT_TYPE,
       'status' => CommentInterface::PUBLISHED,
     ]);
     $comment = reset($comments);

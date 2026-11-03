@@ -20,6 +20,10 @@ use Drupal\user\UserInterface;
  */
 final class EducatorFeedbackPolicy {
 
+  /**
+   * Comment type owned by ACULTA answer entities. */
+  public const COMMENT_TYPE = 'aculta_lms_answer_comment';
+
   public function __construct(
     private readonly LearningEligibilityInterface $eligibility,
   ) {}

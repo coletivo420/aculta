@@ -26,7 +26,7 @@ final class EducatorFeedbackEventHooks {
  * Publishes feedback created already visible to the student. */
   #[Hook('entity_insert')]
   public function entityInsert(EntityInterface $entity): void {
-    if ($entity instanceof CommentInterface && $entity->bundle() === 'lms_answer_comment' && $entity->isPublished()) {
+    if ($entity instanceof CommentInterface && $entity->bundle() === EducatorFeedbackPolicy::COMMENT_TYPE && $entity->isPublished()) {
       $this->publish($entity);
     }
   }
@@ -35,7 +35,7 @@ final class EducatorFeedbackEventHooks {
  * Publishes feedback when it becomes visible or its text changes. */
   #[Hook('entity_update')]
   public function entityUpdate(EntityInterface $entity): void {
-    if (!$entity instanceof CommentInterface || $entity->bundle() !== 'lms_answer_comment' || !$entity->isPublished()) {
+    if (!$entity instanceof CommentInterface || $entity->bundle() !== EducatorFeedbackPolicy::COMMENT_TYPE || !$entity->isPublished()) {
       return;
     }
     $original = $entity->getOriginal();

@@ -48,4 +48,33 @@ final class AnswerPayloadTest extends TestCase {
     new AnswerPayload(['resource' => fopen('php://memory', 'rb')]);
   }
 
+  /**
+   * Tests a file answer stores only a positive managed-file reference.
+   */
+  public function testFileReferenceRoundTripsAndRejectsInvalidIds(): void {
+    $payload = (new AnswerPayload(['caption' => 'prova']))->withFileId(42);
+    self::assertSame(42, $payload->fileId());
+    self::assertSame(42, AnswerPayload::fromJson($payload->toJson())->fileId());
+    self::assertNull((new AnswerPayload(['answer' => 'texto']))->fileId());
+
+    foreach ([0, -1] as $fileId) {
+      try {
+        $payload->withFileId($fileId);
+        self::fail('A referência de arquivo inválida foi aceita.');
+      }
+      catch (\InvalidArgumentException) {
+        self::assertTrue(TRUE);
+      }
+    }
+  }
+
+  /**
+   * Tests malformed references loaded from persisted JSON are rejected.
+   */
+  public function testMalformedFileReferenceIsRejected(): void {
+    $payload = new AnswerPayload(['file_upload' => ['fids' => ['abc']]]);
+    $this->expectException(\UnexpectedValueException::class);
+    $payload->fileId();
+  }
+
 }

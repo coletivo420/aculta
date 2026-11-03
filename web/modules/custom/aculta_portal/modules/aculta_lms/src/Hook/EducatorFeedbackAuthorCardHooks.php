@@ -37,7 +37,7 @@ final class EducatorFeedbackAuthorCardHooks {
    */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
-    if ($entity->getEntityTypeId() !== 'comment' || $entity->bundle() !== 'lms_answer_comment' || !$entity instanceof CommentInterface) {
+    if ($entity->getEntityTypeId() !== 'comment' || $entity->bundle() !== EducatorFeedbackPolicy::COMMENT_TYPE || !$entity instanceof CommentInterface) {
       return;
     }
     $author = $entity->getOwner();

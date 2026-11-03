@@ -1,3 +1,17 @@
+## 0.1.0-dev.160 — comentários Core em tentativas ACULTA
+
+- O tipo `aculta_lms_answer_comment` e o campo Core `comments` pertencem a
+  `aculta_lms_answer`; comentários começam fechados e o update `10009` cria as
+  configurações de modo idempotente. Notificações e cartão de autoria passam a
+  reconhecer esse tipo próprio.
+- CourseAnswer continua sendo a projeção de estado e nota. O schema de payload
+  imutável do update `10008` permanece; `AnswerPayload` passa a validar e
+  serializar referências positivas de managed file sem conceder acesso ao
+  arquivo. Kernel `AcultaLmsInstallTest` 6/190
+  PASS (44 depreciações Core/contrib); Unit completa 231/793 PASS (1
+  depreciação PHPUnit). O consumidor ainda depende do contrib até o restante do
+  corte P5.
+
 ## 0.1.0-dev.159 — payload ACULTA imutável por tentativa
 
 - `aculta_lms_answer` passa a guardar payload estruturado JSON; atividade, aluno,

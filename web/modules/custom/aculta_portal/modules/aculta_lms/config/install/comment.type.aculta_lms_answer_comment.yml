@@ -1,0 +1,10 @@
+uuid: 317a2b74-87ca-44bb-91d0-c747f2242166
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - comment
+id: aculta_lms_answer_comment
+label: 'Comentário da resposta ACULTA'
+target_entity_type_id: aculta_lms_answer
+description: ''
