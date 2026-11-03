@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Monitor;
 
+use Drupal\aculta_file_uploader\IngestionLimits;
 use Drupal\aculta_mailer\Alert\MailAlerts;
 use Drupal\aculta_mailer\Policy\QuotaSignal;
 use Drupal\aculta_mailer\Transport\SecretProviderInterface;
@@ -71,6 +72,7 @@ final class MailMonitor {
     private readonly ?SecretProviderInterface $secrets,
     private readonly MailAlerts $alerts,
     private readonly QuotaSignal $quotaSignal,
+    private readonly IngestionLimits $ingestionLimits,
   ) {}
 
   /**
@@ -108,7 +110,14 @@ final class MailMonitor {
     if ($host === '' || $user === '' || $password === NULL || $password === '') {
       return NULL;
     }
-    return new CurlImapClient($host, $port, $user, $password, $mailbox !== '' ? $mailbox : 'INBOX');
+    return new CurlImapClient(
+      $host,
+      $port,
+      $user,
+      $password,
+      $mailbox !== '' ? $mailbox : 'INBOX',
+      $this->ingestionLimits->bytes(IngestionLimits::IMAP_MAX_MESSAGE_MB),
+    );
   }
 
   /**
@@ -180,7 +189,14 @@ final class MailMonitor {
     $uids = array_slice($client->uidsAbove($this->cursor('bounce')), 0, self::BATCH);
     $applied = 0;
     foreach ($uids as $uid) {
-      $raw = $client->fetch($uid);
+      try {
+        $raw = $client->fetch($uid);
+      }
+      catch (ImapMessageTooLargeException) {
+        // Descartada e não reprocessada: o cursor avança para não travar a fila.
+        $this->saveCursor('bounce', $uid);
+        continue;
+      }
       $bounce = $this->bounces->parse($raw);
       if ($bounce !== NULL) {
         $this->quotaSignal->bounce((string) ($bounce['correlation'] ?? ''), $bounce['diagnostic']);
@@ -207,7 +223,15 @@ final class MailMonitor {
     $uids = array_slice($client->uidsAbove($this->cursor('dmarc')), 0, self::BATCH);
     $found = 0;
     foreach ($uids as $uid) {
-      $summary = $this->dmarc->parse($client->fetch($uid));
+      try {
+        $message = $client->fetch($uid);
+      }
+      catch (ImapMessageTooLargeException) {
+        // Descartada e não reprocessada: o cursor avança para não travar a fila.
+        $this->saveCursor('dmarc', $uid);
+        continue;
+      }
+      $summary = $this->dmarc->parse($message);
       if ($summary !== NULL) {
         // Os IPs de origem ficam fora do resumo guardado: só totais e a identificação do relatório.
         unset($summary['top_sources']);

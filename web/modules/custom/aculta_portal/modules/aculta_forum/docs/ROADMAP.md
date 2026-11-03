@@ -1,3 +1,5 @@
+> Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
+
 # Roadmap — ACULTA Forum
 
 **Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Fechar escopo, testes, gates e revisão visual aplicável antes de RC; Alpha valida o deploy no servidor de desenvolvimento; após aprovação, preparar produção. Seções `rc.*` abaixo são planejamento/histórico legado, não autorizam deixar critérios para depois do deploy.
@@ -6,6 +8,23 @@ Linha do projeto `aculta_forum`: começou em **0.1.0-dev.1**. Roadmap de escopo
 aprovado pelo responsável em 2026-10-19; o estado real de cada entrega fica no
 CHANGELOG e nos commits. Dev.1 e dev.2 são documentais/fundacionais; não alteram
 Runtime.
+
+## Estado atual — permalink standalone de Comment (D-65, revalidado 2026-11-01)
+
+A rota Core `entity.comment.canonical` mantém o nome e pode ser usada para
+gerar links legados, mas o subscriber substitui os requisitos de acesso por uma
+checagem que sempre retorna 404. A discussão segue acessível dentro da entidade
+hospedeira e sob a autorização contextual existente. A revalidação focal de
+D-65, `DiscussionContextResolver` e campo Comment compartilhado passou com 6
+testes / 29 assertions em `aculta_simpletest`. Isso cobre a rota canônica
+gerável, o guard que lança 404 e a preservação do contrato contextual; não é
+uma captura HTTP. Rebuild de rotas e HTTP 404 no Runtime continuam pendentes;
+nenhuma escrita Runtime foi realizada.
+
+Em 2026-11-01, `CommentCanonicalRouteSubscriberTest` passou 2 testes / 4
+assertions, incluindo a execução direta do access check e a confirmação da
+`NotFoundHttpException`. PHPCS e PHP lint focais passaram. O Runtime não foi
+consultado nesta microfase; a resposta HTTP após rebuild permanece pendente.
 
 ## Plano vigente de evolução — Fórum + Messenger (F-D41, 2026-10-24)
 
@@ -576,7 +595,7 @@ concorrência e falha parcial. Esta etapa não autoriza excluir conteúdo do
 Runtime.
 
 1. Upload contextual de imagens com `aculta_image` e galerias `media_gallery`
-   via `aculta_gallery`, consumindo a política central `aculta_portal.user_upload_policy`;
+   via `aculta_gallery`, consumindo a política central `aculta_file_uploader.consumer_policy`;
    a aba do Fórum herda a política global ou configura override, e a publicação
    dos Media permanece vinculada ao post ou comentário visível.
 2. Cartões/preview local de Office, priorizando DOCX e planilhas, apenas para
@@ -629,7 +648,7 @@ T20–T24:
 
 - Upload: `wiki_entry` não tem campo de envio do usuário. `field_wiki_image` é
   referência a Media editorial, não upload por pessoa, então não há superfície
-  para aplicar `aculta_portal.user_upload_policy` sem antes criar o campo (ou
+  para aplicar `aculta_file_uploader.consumer_policy` sem antes criar o campo (ou
   decidir que o Media editorial fica fora da política).
 - Comentários: `wiki_entry` não tem campo Comment nem `field_aculta_discussion`.
   A moderação de primeiro comentário do `aculta_user` é genérica ao campo, mas

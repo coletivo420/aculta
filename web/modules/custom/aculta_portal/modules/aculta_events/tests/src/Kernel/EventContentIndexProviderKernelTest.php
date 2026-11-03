@@ -4,19 +4,16 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_events\Kernel;
 
-use Drupal\aculta_events\Catalogue\LocationCatalogue;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Form\EventDateCreateForm;
 use Drupal\aculta_events\Hook\EventDateHooks;
-use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Session\AnonymousUserSession;
-use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\taxonomy\Entity\Term;
@@ -182,7 +179,7 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
     $this->assertNotNull($registry->findForBundle('aculta_event_organization', 'aculta_event_organization'));
     $this->assertSame(64, strlen($registry->fingerprint()));
 
-    // 3. Allowlist de projeção do Local: não inclui telefone, site, endereço exato.
+    // 3. Allowlist de projeção do Local: não inclui telefone, site ou endereço.
     $locAuthor = User::create(['name' => 'autor-local', 'status' => 1]);
     $locAuthor->save();
     $location->set('field_organizador', $locAuthor->id());
@@ -223,7 +220,7 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
   }
 
   /**
-   * Relações Evento > Local: deduplicação, múltiplos locais, filtros de status/modo e reparenting.
+   * Relações Evento > Local: deduplicação e filtros de status/modo.
    */
   public function testEventLocationRelationshipsDeduplicationAndFiltering(): void {
     $event = Event::create([
@@ -310,7 +307,7 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
     $this->assertNotNull($proj);
 
     $locRelations = array_values(array_filter($proj->relations, static fn ($r) => $r->type === 'event_location'));
-    // Deve conter exatamente 2 relações: local A e local B (sem duplicar local A, sem rascunho/privado/online).
+    // Deve conter A e B, sem duplicar A ou incluir rascunhos e locais privados.
     $this->assertCount(2, $locRelations);
     $targetIds = array_map(static fn ($r) => $r->targetEntityId, $locRelations);
     sort($targetIds);
@@ -323,14 +320,17 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
     $date3->save();
 
     $projReparented = $provider->project($event);
-    $locRelationsReparented = array_values(array_filter($projReparented->relations, static fn ($r) => $r->type === 'event_location'));
+    $locRelationsReparented = array_values(array_filter(
+      $projReparented->relations,
+      static fn ($r) => $r->type === 'event_location',
+    ));
     // Agora só resta local A, deduplicado.
     $this->assertCount(1, $locRelationsReparented);
     $this->assertSame((string) $locA->id(), $locRelationsReparented[0]->targetEntityId);
   }
 
   /**
-   * Consulta Index via API de relações: acesso de origem e alvo, negação imediata, cursores e restauração de Domain.
+   * Consulta relações Index: ACL, revogação, cursores e restauração de Domain.
    */
   public function testIndexRelationQueryAccessAndDomainRestoration(): void {
     // Reserve UID 1 para testes de acesso.
@@ -394,7 +394,7 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
     $this->assertContains((string) $loc1->id(), $resultIds);
     $this->assertContains((string) $loc2->id(), $resultIds);
 
-    // 2. Negação imediata de alvo: despublicar local 2 imediatamente exclui o local da consulta.
+    // 2. Despublicar Local 2 remove o alvo imediatamente da consulta.
     $loc2->set('field_status', 'privado');
     $loc2->save();
 
@@ -410,7 +410,7 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
     $this->assertCount(1, $resultImmediate->entities);
     $this->assertSame((string) $loc1->id(), (string) $resultImmediate->entities[0]->id());
 
-    // 3. Negação imediata de origem: despublicar o evento imediatamente retorna vazio.
+    // 3. Despublicar o Evento remove a origem imediatamente da consulta.
     $event->set('field_status', 'rascunho');
     $event->save();
 
@@ -463,7 +463,112 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
   }
 
   /**
-   * Idempotência de backfill/rebuild: dados derivados repetidos não duplicam nem apagam a fonte.
+   * Incoming Index relations return distinct, currently authorized sources.
+   */
+  public function testIncomingRelationQueryReturnsDistinctAuthorizedEvents(): void {
+    User::create(['name' => 'root-incoming-fixture', 'status' => 1])->save();
+    $reader = User::create(['name' => 'incoming-reader', 'status' => 1]);
+    $reader->save();
+    $other = User::create(['name' => 'incoming-other', 'status' => 1]);
+    $other->save();
+
+    $eventA = Event::create(['title' => 'Evento A', 'field_status' => 'publicado']);
+    $eventA->save();
+    $eventB = Event::create(['title' => 'Evento B', 'field_status' => 'publicado']);
+    $eventB->save();
+    $location = EventLocation::create(['title' => 'Local vinculado', 'field_status' => 'publicado']);
+    $location->save();
+
+    $dateStorage = $this->container->get('entity_type.manager')->getStorage('aculta_event_date');
+    foreach ([[$eventA, '10'], [$eventA, '11'], [$eventB, '12']] as [$event, $day]) {
+      $dateStorage->create([
+        'title' => 'Data ' . $day,
+        'field_evento' => $event->id(),
+        'field_local' => $location->id(),
+        'field_quando' => [
+          'value' => '2026-12-' . $day . 'T19:00:00',
+          'end_value' => '2026-12-' . $day . 'T21:00:00',
+        ],
+      ])->save();
+    }
+
+    $this->buildAndActivateGeneration();
+    $relationQuery = $this->container->get('aculta_index.relation_query');
+    $targetLangcode = $location->language()->getId();
+    $anonymous = new AnonymousUserSession();
+
+    $result = $relationQuery->queryIncoming(
+      'aculta_event_location',
+      (string) $location->id(),
+      $targetLangcode,
+      'event_location',
+      $anonymous,
+      NULL,
+      10,
+    );
+    self::assertCount(2, $result->entities, 'Three dates must resolve to two distinct Event entities.');
+    $eventIds = array_map(static fn (Event $event): string => (string) $event->id(), $result->entities);
+    sort($eventIds);
+    $expectedIds = [(string) $eventA->id(), (string) $eventB->id()];
+    sort($expectedIds);
+    self::assertSame($expectedIds, $eventIds);
+
+    $page = $relationQuery->queryIncoming(
+      'aculta_event_location',
+      (string) $location->id(),
+      $targetLangcode,
+      'event_location',
+      $reader,
+      NULL,
+      1,
+    );
+    self::assertCount(1, $page->entities);
+    self::assertNotNull($page->nextCursor);
+    try {
+      $relationQuery->queryIncoming(
+        'aculta_event_location',
+        (string) $location->id(),
+        $targetLangcode,
+        'event_location',
+        $other,
+        $page->nextCursor,
+        1,
+      );
+      self::fail('An incoming-relation cursor must not be transferable to another account.');
+    }
+    catch (\InvalidArgumentException) {
+      // The cursor is bound to the reader account.
+    }
+
+    // Source and target Entity Access are revalidated after indexing.
+    $eventB->set('field_status', 'rascunho')->save();
+    $afterUnpublish = $relationQuery->queryIncoming(
+      'aculta_event_location',
+      (string) $location->id(),
+      $targetLangcode,
+      'event_location',
+      $anonymous,
+      NULL,
+      10,
+    );
+    self::assertCount(1, $afterUnpublish->entities);
+    self::assertSame((string) $eventA->id(), (string) $afterUnpublish->entities[0]->id());
+
+    $location->set('field_status', 'privado')->save();
+    $afterTargetRevocation = $relationQuery->queryIncoming(
+      'aculta_event_location',
+      (string) $location->id(),
+      $targetLangcode,
+      'event_location',
+      $anonymous,
+      NULL,
+      10,
+    );
+    self::assertCount(0, $afterTargetRevocation->entities);
+  }
+
+  /**
+   * Backfill idempotente não duplica dados derivados nem apaga a fonte.
    */
   public function testBackfillIdempotencyAndUpdateDoesNotDeleteSource(): void {
     $event = Event::create(['title' => 'Encontro Idempotente', 'field_status' => 'publicado']);
@@ -518,7 +623,7 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
   }
 
   /**
-   * Resiliência: Index sem geração ativa mantém CRUD e busca do catálogo pelo Entity API.
+   * Sem geração ativa, CRUD e catálogo continuam operando pela Entity API.
    */
   public function testIndexDisabledOrNoActiveGenerationFallback(): void {
     // Sem chamar buildAndActivateGeneration(), não há geração ativa.
@@ -530,14 +635,20 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
     $event = Event::create(['title' => 'Concerto', 'field_status' => 'publicado']);
     $event->save();
 
-    // Query do índice responde vazio de forma segura e sem lançar exceções não tratadas.
+    // O Index responde vazio, sem exceções não tratadas.
     $indexQuery = $this->container->get('aculta_index.query');
     $result = $indexQuery->query(['entity_type' => 'aculta_event_location'], new AnonymousUserSession());
     $this->assertCount(0, $result->entities);
     $this->assertNull($result->nextCursor);
 
     $relationQuery = $this->container->get('aculta_index.relation_query');
-    $relResult = $relationQuery->queryOutgoing('aculta_event', (string) $event->id(), $event->language()->getId(), 'event_location', new AnonymousUserSession());
+    $relResult = $relationQuery->queryOutgoing(
+      'aculta_event',
+      (string) $event->id(),
+      $event->language()->getId(),
+      'event_location',
+      new AnonymousUserSession(),
+    );
     $this->assertCount(0, $relResult->entities);
 
     // Catálogo nativo do owner continua operando 100% pelo Entity API.
@@ -586,7 +697,7 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
     $newLoc = EventLocation::create(['title' => 'Auditório Novo', 'field_status' => 'publicado']);
     $newLoc->save();
 
-    // Testa validação no EventDateCreateForm antes de qualquer processamento de fila.
+    // Valida EventDateCreateForm antes de qualquer processamento de fila.
     $form = EventDateCreateForm::create($this->container);
     $formBuild = [];
 
@@ -619,7 +730,7 @@ final class EventContentIndexProviderKernelTest extends KernelTestBase {
   }
 
   /**
-   * Constrói e ativa uma geração completa do Content Index a partir dos providers do container.
+   * Constrói e ativa uma geração usando os providers do container.
    */
   private function buildAndActivateGeneration(): void {
     /** @var \Drupal\aculta_index\Maintenance\ContentIndexRebuilder $rebuilder */

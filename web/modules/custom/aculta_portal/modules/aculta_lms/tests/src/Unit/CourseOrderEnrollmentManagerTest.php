@@ -17,7 +17,6 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
@@ -79,7 +78,7 @@ final class CourseOrderEnrollmentManagerTest extends UnitTestCase {
     $class = $this->createMock(GroupInterface::class);
     $class->method('bundle')->willReturn('lms_class');
     $class->method('id')->willReturn('77');
-    $course = $this->createMock(CourseInterface::class);
+    $course = $this->createMock(GroupInterface::class);
     $course->method('bundle')->willReturn('lms_course');
     $course->method('id')->willReturn('44');
     $classRelationship = $this->createMock(GroupRelationshipInterface::class);
@@ -186,7 +185,7 @@ final class CourseOrderEnrollmentManagerTest extends UnitTestCase {
     $itemStorage->method('getQuery')->willReturn($itemQuery);
     $itemStorage->method('loadMultiple')->with([31])->willReturn([$item]);
 
-    $course = $this->createMock(CourseInterface::class);
+    $course = $this->createMock(GroupInterface::class);
     $course->method('bundle')->willReturn('lms_course');
     $course->method('id')->willReturn('55');
     $classRelationship = $this->createMock(GroupRelationshipInterface::class);
@@ -287,7 +286,7 @@ final class CourseOrderEnrollmentManagerTest extends UnitTestCase {
     $item->method('get')->with('field_course_class')->willReturn((object) ['entity' => $class]);
     $order->method('getItems')->willReturn([$item]);
 
-    $course = $this->createMock(CourseInterface::class);
+    $course = $this->createMock(GroupInterface::class);
     $course->method('bundle')->willReturn('lms_course');
     $course->method('id')->willReturn('55');
     $classRelationship = $this->createMock(GroupRelationshipInterface::class);

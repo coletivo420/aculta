@@ -206,6 +206,7 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
       'status' => TRUE,
       'created' => 100,
       'changed' => 200,
+      'field_media_image' => [['target_id' => '501']],
     ]);
     $node->save();
     $work = $this->container->get('aculta_index.work_manager')
@@ -219,7 +220,10 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     self::assertSame((string) $node->id(), $projection->entityId);
     self::assertSame('en', $projection->langcode);
     self::assertSame('Encontro de teste', $projection->label);
-    self::assertSame([], $projection->relations);
+    self::assertCount(1, $projection->relations);
+    self::assertSame('editorial_image', $projection->relations[0]->type);
+    self::assertSame('media', $projection->relations[0]->targetEntityTypeId);
+    self::assertSame('501', $projection->relations[0]->targetEntityId);
     self::assertSame('main', $provider->getAccessPurpose($node));
   }
 

@@ -6,14 +6,13 @@ namespace Drupal\Tests\aculta_lms_resources\Unit;
 
 use Drupal\aculta_lms_resources\CourseResourceBuilder;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\domain\DomainNegotiatorInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -29,14 +28,11 @@ final class CourseResourceBuilderTest extends UnitTestCase {
    */
   public function testOutsiderDoesNotReceiveCourseResources(): void {
     $account = $this->createMock(AccountProxyInterface::class);
-    $course = $this->createMock(CourseInterface::class);
-    $course->expects(self::once())
-      ->method('takeAccess')
-      ->with($account)
-      ->willReturn(AccessResult::forbidden()->addCacheContexts(['user.group_permissions']));
-    $course->expects(self::exactly(2))
+    $course = $this->createMock(GroupInterface::class);
+    $course->expects(self::exactly(3))
       ->method('hasPermission')
       ->willReturnMap([
+        ['take course', $account, FALSE],
         ['administer members', $account, FALSE],
         ['grade students', $account, FALSE],
       ]);

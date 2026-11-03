@@ -1,3 +1,14 @@
+## Revalidação 2026-11-02 — gateway e recorrência
+
+- Unit completa: 258 testes / 1.156 assertions PASS, incluindo chave idempotente estável, timeout ambíguo e reconciliação de assinatura.
+- Kernel `CheckoutProTest`: 3 testes / 135 assertions PASS em `aculta_simpletest`; 78 depreciações Core/contrib.
+- Nenhuma transação ou mensagem externa foi enviada; comprador sandbox e fluxo ponta a ponta seguem pendentes.
+
+## Verificação de regressão 2026-10-31
+
+- Suíte completa do gateway: **261 testes / 1.291 assertions PASS** em `aculta_simpletest`; 78 depreciações Core/contrib.
+- Recorder de recorrência: 30/194 PASS; webhook de assinatura: 8/22 PASS. Não houve chamada de cobrança nem mensagem externa. A homologação de pagamento com comprador sandbox permanece pendente.
+
 ## 0.1.0-dev.80 — sincronizar os tipos de pedido do gateway (2026-10-28)
 
 - `config/sync` agora declara os bundles `curso`, `default` e `doacao` aceitos pelo gateway ativo em modo `test`; comparação focal do Runtime não aponta diferença. Nenhuma importação ou escrita de banco foi feita.

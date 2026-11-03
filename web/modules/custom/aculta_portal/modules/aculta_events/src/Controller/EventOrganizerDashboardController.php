@@ -64,7 +64,19 @@ final class EventOrganizerDashboardController extends ControllerBase {
         '#url' => Url::fromRoute('aculta_events.organizer_event_add'),
         '#attributes' => ['data-portal-ui' => 'button-primary'],
       ];
+      $items[] = [
+        '#type' => 'link',
+        '#title' => $this->t('Propor novo Evento para revisão'),
+        '#url' => Url::fromRoute('aculta_events.organizer_event_contribution_add'),
+        '#attributes' => ['data-portal-ui' => 'button-secondary'],
+      ];
     }
+    $items[] = [
+      '#type' => 'link',
+      '#title' => $this->t('Minhas propostas'),
+      '#url' => Url::fromRoute('aculta_events.organizer_contributions'),
+      '#attributes' => ['data-portal-ui' => 'button-secondary'],
+    ];
     if ($canCreateLocation->isAllowed()) {
       $items[] = [
         '#type' => 'link',
@@ -195,7 +207,13 @@ final class EventOrganizerDashboardController extends ControllerBase {
 
     $locations = [];
     if ($locationIds !== []) {
-      $locations = $this->entities->getStorage('aculta_event_location')->loadMultiple($locationIds);
+      foreach ($this->entities->getStorage('aculta_event_location')->loadMultiple($locationIds) as $locationId => $location) {
+        $locationAccess = $location->access('view', $account, TRUE);
+        $cache->addCacheableDependency($location)->addCacheableDependency($locationAccess);
+        if ($locationAccess->isAllowed()) {
+          $locations[$locationId] = $location;
+        }
+      }
     }
 
     $rows = [];
@@ -253,9 +271,17 @@ final class EventOrganizerDashboardController extends ControllerBase {
         ['data' => $statusLabel],
         [
           'data' => [
-            '#type' => 'link',
-            '#title' => $this->t('Gerenciar'),
-            '#url' => Url::fromRoute('aculta_events.organizer_event_edit', ['aculta_event' => $event->id()]),
+            '#type' => 'container',
+            'edit' => [
+              '#type' => 'link',
+              '#title' => $this->t('Gerenciar'),
+              '#url' => Url::fromRoute('aculta_events.organizer_event_edit', ['aculta_event' => $event->id()]),
+            ],
+            'propose' => [
+              '#type' => 'link',
+              '#title' => $this->t('Propor alteração'),
+              '#url' => Url::fromRoute('aculta_events.organizer_event_contribution_update', ['aculta_event' => $event->id()]),
+            ],
           ],
         ],
       ];

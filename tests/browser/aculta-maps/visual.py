@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "tests/browser/aculta-cpf-checkout"))
 from wdlib import Driver  # noqa: E402
 
-OUT = Path(os.environ.get("SUITE_OUT", "/tmp/aculta-maps-mp7"))
+OUT = Path(os.environ.get("SUITE_OUT", "/home/piradopirata/aculta-suite-out/mp7-maps"))
 URL = os.environ.get("MAP_URL", "https://eventos.aculta.toca.net.br/mapa")
 
 
@@ -59,6 +59,7 @@ def metrics(driver):
         width: el.clientWidth, height: el.clientHeight,
         background: getComputedStyle(el).backgroundColor,
         leaflet: el.classList.contains('leaflet-container') || !!el.querySelector('.leaflet-container'),
+        tileHosts: [...new Set([...el.querySelectorAll('.leaflet-tile')].map(tile => new URL(tile.src).hostname))],
         markers: el.querySelectorAll('.leaflet-marker-icon').length,
         provider: Object.values(drupalSettings.acultaMaps || {})[0]?.provider || null,
         configuredMarkers: Object.values(drupalSettings.acultaMaps || {})[0]?.markers?.length || 0,
@@ -69,6 +70,18 @@ def metrics(driver):
       theme: document.documentElement.getAttribute('data-bs-theme'),
       bodyText: document.body.innerText.slice(0, 1200),
     };""")
+
+
+def validate_osm_tile_host(result, label):
+    map_result = result.get("map")
+    if not map_result or map_result.get("provider") != "openstreetmap":
+        return
+    tile_hosts = map_result.get("tileHosts", [])
+    if not tile_hosts:
+        raise RuntimeError(f"No OpenStreetMap tiles loaded at {label}.")
+    unexpected_hosts = [host for host in tile_hosts if host != "tile.openstreetmap.org"]
+    if unexpected_hosts:
+        raise RuntimeError(f"OpenStreetMap tiles use non-canonical hosts at {label}: {unexpected_hosts}")
 
 
 def main():
@@ -87,6 +100,7 @@ def main():
         for label, width, height in [("1280", 1280, 1000), ("320", 320, 900)]:
             viewport.set(width, height)
             results[label] = metrics(driver)
+            validate_osm_tile_host(results[label], label)
             filename = f"map-{label}.png"
             capture(driver, filename)
             results["screenshots"].append(filename)
@@ -94,6 +108,7 @@ def main():
         driver.js("document.documentElement.setAttribute('data-bs-theme', 'dark');")
         viewport.set(1280, 1000)
         results["dark"] = metrics(driver)
+        validate_osm_tile_host(results["dark"], "dark 1280")
         filename = "map-dark-1280.png"
         capture(driver, filename)
         results["screenshots"].append(filename)

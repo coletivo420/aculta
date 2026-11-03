@@ -1,7 +1,13 @@
 # ACULTA Doações (`aculta_donation`)
 
-Submódulo do `aculta_portal` (versão 0.1.0-dev.26). Reúne a doação do site: campanhas com prazo, fluxo de pedido e checkout
+Submódulo do `aculta_portal` (versão 0.1.0-dev.29). Reúne a doação do site: campanhas com prazo, fluxo de pedido e checkout
 (port próprio do `commerce_donation_flow`, que saiu do Composer), blocos, painéis e configuração.
+
+## Revalidação 2026-11-02
+
+- Unit completa: 26 testes / 90 assertions PASS.
+- `DonationPortKernelTest`: 5 testes / 196 assertions PASS em `aculta_simpletest`; 88 depreciações Core/contrib.
+- Nenhuma chamada financeira ou mensagem externa foi enviada. O comprador sandbox e a jornada end-to-end continuam pendentes.
 
 ## O que entrega
 
@@ -22,6 +28,11 @@ O nome da configuração segue o provider que atualmente fornece o comportamento
 plugins e campos continuam estáveis quando usados por configurações exportadas; o setting migra para o namespace próprio
 porque a dependência de configuração Drupal é validada pelo módulo provider durante importações.
 - **Abas** da seção Doações: Campanhas, Valores padrão (`aculta_portal.support_settings`) e Fluxo de doação.
+
+**Revalidação 2026-10-31:** Unit + Kernel de Doações passaram com 31 testes / 286
+assertions em `aculta_simpletest` (88 depreciações upstream). Nenhum fluxo
+financeiro foi enviado ao Mercado Pago; aprovação, pendência, rejeição,
+cancelamento e conciliação real seguem pendentes de comprador sandbox autorizado.
 
 ## Avisos de pedidos e pagamentos
 

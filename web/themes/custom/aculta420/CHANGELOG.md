@@ -1,3 +1,10 @@
+## 0.7.0-dev.27 — tokens de apresentação para marcação de módulo
+
+- `studio.css`, `tokens.css` e `buttons.css` passam a selecionar `data-portal-ui` (learning-home, learning-journey, learning-room, botões) e `data-aculta-focal`/`data-focal-marker`; os módulos deixaram de emitir classes de design.
+- Os blocos de tokens do Studio (claro, escuro e automático) e os breakpoints incluem os escopos `:has([data-portal-ui="aculta-learning-journey|room"])`, como o verificador já espera.
+- Gate `validate-aculta420-design-foundations.php`: PASS (2441 checks) e `COLOR MODE TOKEN-ONLY: PASS`. Unit tema 48/349 PASS.
+- Revisão visual no Firefox ESR **pendente**: a marcação mudou de classe para atributo.
+
 - Criados guardrails mobile-first globais para todos os agentes e purposes do ACULTA420; referências adicionadas a `AGENTS.md`, `CLAUDE.md` e ao índice de políticas. Não altera status de MF0–MF3.
 - `webform.css` agora limita a largura do modal por gutter na base, sem breakpoint `max-width`; Firefox ESR confirmou equivalência de pixels e métricas em 14 larguras (62/62 checks). O fluxo real e THEME-MF3 seguem pendentes.
 # Alterações pendentes de validação visual — ainda sem nova marcação de versão

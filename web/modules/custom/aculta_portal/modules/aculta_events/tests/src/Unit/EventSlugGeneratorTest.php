@@ -19,6 +19,7 @@ class EventSlugGeneratorTest extends UnitTestCase {
    * Títulos e slugs esperados.
    *
    * @return array<string, array{string, string}>
+   *   Cases of source titles and expected slugs.
    */
   public static function titulos(): array {
     return [

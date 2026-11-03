@@ -1,3 +1,22 @@
+## 0.4.0-dev.93 — foto do perfil pela política do aculta_file_uploader
+
+## 0.4.0-dev.94 — publicRouteSlug normaliza com PublicRouteSlug
+
+- `AccountNames::publicRouteSlug()` normaliza com `PublicRouteSlug::normalize` e valida o slug canônico. `validate-profile-links` PASS. Unit 145/575 OK.
+- Versão 0.4.0-dev.94.
+
+- `UserPictureForm` usa `aculta_file_uploader.consumer_policy` (integração `usuario`) em vez de `aculta_image.upload_policy`.
+- Campo desabilitado se a integração não tiver extensão de imagem.
+- Dependência `aculta_portal:aculta_file_uploader` declarada.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.92 — consumo do motor de limpeza movido para o aculta_file_uploader
+
+- Imports dos tipos de limpeza e serviço `aculta_portal.unused_file_cleaner` passam a `aculta_file_uploader`. Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.93 — memorial coletivo usa avatar central do Portal (2026-10-29)
 
 - `LegacyMemorialController` passa a renderizar o fallback institucional por

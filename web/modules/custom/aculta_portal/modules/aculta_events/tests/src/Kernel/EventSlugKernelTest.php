@@ -19,7 +19,10 @@ final class EventSlugKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'key', 'address', 'geofield', 'options', 'link', 'text', 'filter', 'taxonomy', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = [
+    'system', 'user', 'key', 'address', 'geofield', 'options', 'link', 'text',
+    'filter', 'taxonomy', 'aculta_calendar', 'aculta_events',
+  ];
 
   /**
    * {@inheritdoc}
@@ -34,7 +37,7 @@ final class EventSlugKernelTest extends KernelTestBase {
   /**
    * Títulos iguais ganham sufixo; editar o título não muda o slug já gravado.
    */
-  public function testSlugUnicoEEstavel(): void {
+  public function testSlugUnicoEstavel(): void {
     $a = Event::create(['title' => 'Oficina de Cerâmica']);
     $a->save();
     $b = Event::create(['title' => 'Oficina de Cerâmica']);

@@ -71,6 +71,23 @@ final class WikiNoticeManagerTest extends UnitTestCase {
   }
 
   /**
+   * Persists outcome notices whose source is a generic Wiki contribution.
+   */
+  public function testGenericContributionOutcomeIsPersisted(): void {
+    $message = $this->createMock(MessageInterface::class);
+    $message->method('id')->willReturn('43');
+    $message->expects(self::once())->method('save')->willReturn(1);
+    [$entities, $queueFactory] = $this->dependencies($message);
+    $preferences = $this->createMock(AvisoPreferenciasInterface::class);
+    $preferences->method('emailMode')->with(27, 'wiki')->willReturn(AvisoPreferencias::EMAIL_OFF);
+
+    self::assertSame(
+      $message,
+      $this->manager($entities, $preferences, $queueFactory)->record($this->event('aculta_contribution')),
+    );
+  }
+
+  /**
    * Unread count batch-loads Wiki revisions while revalidating each target.
    */
   public function testUnreadCountBatchLoadsReviewRevisions(): void {
@@ -211,11 +228,11 @@ final class WikiNoticeManagerTest extends UnitTestCase {
 
   /**
    * Builds a valid Wiki notice event. */
-  private function event(): MessengerNoticeEvent {
+  private function event(string $sourceType = 'aculta_wiki_proposal'): MessengerNoticeEvent {
     return new MessengerNoticeEvent(
       'wiki.proposal_outcome',
       'aculta_wiki',
-      'aculta_wiki_proposal',
+      $sourceType,
       'e56f3248-f7b3-4e55-9ea1-91b8e6a0df9f',
       '12',
       27,

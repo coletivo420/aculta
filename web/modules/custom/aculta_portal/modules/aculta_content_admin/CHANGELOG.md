@@ -1,5 +1,13 @@
 # Changelog — aculta_content_admin
 
+## Integração Contributions — fila de Organizações (2026-11-01)
+
+- Adicionada a fila nativa de propostas de Organizações à coleção moderável; o
+  painel continua verificando o acesso efetivo da rota Events, sem conceder
+  permissão nem replicar dados.
+- Kernel cobre ocultação para usuário comum e disponibilidade somente para
+  `administer aculta events`.
+
 ## 0.1.0-rc.1 — validar ADM5 no candidato servido (2026-10-29)
 
 - Firefox ESR autenticado no Runtime: rota canônica 200; somente as seis

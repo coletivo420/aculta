@@ -1,3 +1,15 @@
+> Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
+
+## 0.1.0-dev.16 — GREEN STASH em /green-stash
+
+- As rotas `/greenstash/*` passam a `/green-stash/*`, no purpose `shop`.
+- Testes: DEFERRED (sem `vendor/` nem Runtime nesta sessão).
+
+## Verificação de regressão 2026-10-31
+
+- Suíte completa Commerce: **80 testes / 591 assertions PASS**, 7 skipped e 222 depreciações Core/contrib. A execução usou `aculta_simpletest`.
+- Nenhum pedido, cotação ou pagamento real foi criado. A suíte não implementa nem homologa ingressos; modelo de item pago, integração de carrinho e bloqueios fiscal/LGPD continuam pendentes conforme ADR-036.
+
 ## Retificação de caminho ACULTA STUDIO GREEN STASH — 2026-10-30
 
 - O caminho canônico confirmado pelo responsável é `/studio/green-stash` no purpose `shop`; rotas de produto e remessa usam o mesmo prefixo.

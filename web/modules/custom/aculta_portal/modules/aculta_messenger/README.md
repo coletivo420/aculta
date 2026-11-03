@@ -1,6 +1,6 @@
 # ACULTA Messenger
 
-Versão de desenvolvimento atual: **0.1.1-dev.403**. O roadmap e o changelog
+Versão de desenvolvimento atual: **0.1.1-dev.406**. O roadmap e o changelog
 registram o estado de cada incremento e as verificações executadas.
 
 Infraestrutura unificada do ACULTA Portal para avisos do site, notificações, assinaturas, e-mail integrado e conversas privadas voluntárias entre membros. A fonte de verdade de cada
@@ -9,8 +9,30 @@ experiência e aplica os contratos de acesso e Domain do Portal. A decisão
 normativa está em [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md); notificações
 por conteúdo nunca criam conversas nem alteram participantes. O núcleo
 `aculta_messenger` também hospeda todos os consumidores e adapters de avisos
-para LMS, Wiki, Fórum e Loja; módulos de domínio publicam eventos e selecionam
+para LMS, Wiki, Fórum, Loja, Revista, Doações, Game e Eventos; módulos de domínio publicam eventos e selecionam
 destinatários conforme suas regras.
+
+## Resultado de propostas de Eventos — inbox e preferências de e-mail
+
+O Messenger consome envelopes mínimos enviados por `aculta_events` para
+submissões e decisões de propostas de Organização, Local e Evento. Persiste
+uma Message privada por autor, tipo e revisão, com chave idempotente; não grava
+payload, endereço nem parecer. A listagem e a abertura recarregam a revisão
+exata da proposta e revalidam titularidade, estado e acesso no purpose `eventos`. O link
+leva ao dashboard do ACULTA Studio Culturas; a decisão detalhada ainda depende
+do workspace de propostas do autor. O inbox no site é sempre mantido. Em
+Configurações de e-mail, a pessoa pode escolher somente no site, e-mail
+imediato, ou resumo diário; o padrão é somente no site. Mensagens de e-mail
+contêm apenas um resumo genérico e o link, nunca payload, endereço ou parecer.
+O envio imediato revalida conta ativa, e-mail confirmado, preferência e acesso
+atual; o digest faz a mesma validação ao montar cada linha.
+
+Os updates `10015` e `10016` instalaram o bundle e habilitaram o tipo de
+submissão em instalações existentes e foram aplicados no Runtime de
+desenvolvimento em 2026-11-01. O update aditivo `10017` instala os campos de
+entrega e digest e foi aplicado no Runtime de desenvolvimento em 2026-11-02.
+`config/sync` contém as preferências da categoria; o import alterou somente
+`email_modes.eventos_contribuicoes`.
 
 Na dev.262, a busca de destinatários usa o apelido público resolvido pelo
 ACULTA User; não revela o nome interno da conta e omite usuários sem identidade
@@ -18,25 +40,14 @@ pública. Na dev.66, a cobertura do e-mail mínimo de amizade inclui sucesso, UR
 deduplicação e três tentativas limitadas em falha. Os testes não usam SMTP real;
 smoke autenticado e revisão visual permanecem pendentes.
 
-## Integração planejada com Meu Espaço no Studio (STUDIO-P0)
+## Proposta antiga de integração pessoal com Studio
 
-Quando `/studio/pessoal` existir, Studio poderá apresentar **somente
-atalhos, resumos e contadores autorizados** da central de Avisos e
-Mensagens, e acesso às preferências de comunicação. As fontes de verdade
-permanecem no `aculta_messenger`: tipos Message, `aculta_aviso`,
-Private Message, conversas voluntárias, deduplicação, bloqueios, leitura,
-retenção e canais; e-mail é transportado por `aculta_mailer`.
-
-**Proibido:** criar inbox do Studio, copiar estado de leitura, fazer envio
-direto, mudar destinatários ou criar thread ao exibir participação pessoal.
-O Studio não deverá deduzir permissão para conversar a partir do acesso ao
-perfil público. Preferências de contato e visibilidade são revalidadas
-pelas políticas User/Messenger.
-
-**Estado:** integração futura, sem código alterado. Fonte:
-[Hub/Meu Espaço e marcos STUDIO-P0–P7](../../../../../../docs/architecture/ACULTA-STUDIO-PERSONAL-EXPERIENCE.md).
-O roadmap próprio Messenger M0–M7 mantém prioridade, versões e
-contratos independentes.
+A proposta STUDIO-P0 que mencionava `/studio/pessoal` está arquivada e não
+representa uma rota ou compromisso vigente. O hub `/studio` foi removido; Conta
+e Perfil permanecem experiências separadas, conforme
+[ADR-038](../../../../../../docs/decisions/ADR-038-aculta-studio-suites-por-dominio.md)
+e [contrato Conta/Perfil](../../../../../../docs/architecture/ACULTA-STUDIO-CONTA-PERFIL-SEPARADOS.md).
+Uma futura integração requer decisão e paths atualizados antes de implementação.
 
 ## Centralização de mensagens, avisos e e-mail
 

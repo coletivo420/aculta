@@ -141,4 +141,38 @@ final class CalendarItemSourceKernelTest extends KernelTestBase {
     $this->assertSame(0, $fonte->cacheMaxAge());
   }
 
+  /**
+   * Uma consulta contextual pode restringir os provedores sem mudar os demais.
+   */
+  public function testConsultaPodeSelecionarProvedores(): void {
+    $fuso = new \DateTimeZone('America/Sao_Paulo');
+    $itemA = new CalendarItem(
+      id: 'a:1',
+      titulo: 'A',
+      inicio: new \DateTimeImmutable('2030-05-10 10:00:00', $fuso),
+      fim: new \DateTimeImmutable('2030-05-10 11:00:00', $fuso),
+    );
+    $itemB = new CalendarItem(
+      id: 'b:1',
+      titulo: 'B',
+      inicio: new \DateTimeImmutable('2030-05-10 12:00:00', $fuso),
+      fim: new \DateTimeImmutable('2030-05-10 13:00:00', $fuso),
+    );
+    $providerA = $this->createStub(CalendarItemProviderInterface::class);
+    $providerA->method('id')->willReturn('a');
+    $providerA->method('items')->willReturn([$itemA]);
+    $providerB = $this->createStub(CalendarItemProviderInterface::class);
+    $providerB->method('id')->willReturn('b');
+    $providerB->method('items')->willReturn([$itemB]);
+    $source = new CalendarItemSource([$providerA, $providerB]);
+    $query = new CalendarQuery(
+      new \DateTimeImmutable('2030-05-01 00:00:00', $fuso),
+      new \DateTimeImmutable('2030-05-31 23:59:59', $fuso),
+      new \DateTimeImmutable('2030-05-01 00:00:00', $fuso),
+      provedores: ['b'],
+    );
+
+    $this->assertSame([$itemB], $source->items($query));
+  }
+
 }

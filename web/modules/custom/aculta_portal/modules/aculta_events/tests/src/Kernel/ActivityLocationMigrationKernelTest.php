@@ -16,7 +16,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Valida a migração em lote, diagnóstico, dry-run, deduplicação e rollback de locais de Activity.
+ * Valida migração, diagnóstico, dry-run e rollback de locais de Activity.
  */
 #[Group('aculta_events')]
 #[RunTestsInSeparateProcesses]
@@ -43,7 +43,14 @@ final class ActivityLocationMigrationKernelTest extends KernelTestBase {
     'aculta_events',
   ];
 
+  /**
+   * Migration service under test.
+   */
   private ActivityLocationMigrator $migrator;
+
+  /**
+   * Editor account used by migration scenarios.
+   */
   private User $editorUser;
 
   /**
@@ -85,6 +92,9 @@ final class ActivityLocationMigrationKernelTest extends KernelTestBase {
     $this->migrator = $this->container->get('aculta_events.activity_location_migrator');
   }
 
+  /**
+   * Creates a field when its storage or bundle instance is missing.
+   */
   private function createField(string $entityType, string $bundle, string $fieldName, string $type, array $settings = []): void {
     if (!FieldStorageConfig::loadByName($entityType, $fieldName)) {
       FieldStorageConfig::create([
@@ -169,7 +179,7 @@ final class ActivityLocationMigrationKernelTest extends KernelTestBase {
   }
 
   /**
-   * Valida migração efetiva com deduplicação de locais idênticos e posterior rollback completo.
+   * Migra locais duplicados e valida o rollback completo.
    */
   public function testMigrationExecutionAndRollback(): void {
     $node1 = Node::create([
@@ -248,7 +258,7 @@ final class ActivityLocationMigrationKernelTest extends KernelTestBase {
     self::assertSame('publicado', $loc1->get('field_status')->value);
     self::assertSame((int) $this->editorUser->id(), (int) $loc1->get('field_organizador')->target_id);
 
-    // Campos legados permanecem intactos nos nós
+    // Campos legados permanecem intactos nos nós.
     self::assertSame('Parque das Artes', $reloadedNode1->get('field_place_name')->value);
 
     // 2. Executa Rollback
@@ -256,7 +266,7 @@ final class ActivityLocationMigrationKernelTest extends KernelTestBase {
     self::assertSame(3, $rollback['nodes_unlinked']);
     self::assertSame(2, $rollback['locations_deleted']);
 
-    // Verifica que locais foram removidos e nós desvinculados
+    // Verifica que locais foram removidos e nós desvinculados.
     self::assertEmpty(EventLocation::loadMultiple());
 
     $cleanNode1 = Node::load($node1->id());

@@ -12,7 +12,7 @@ use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Cache\Cache;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -57,11 +57,11 @@ final class aculta_H5PCourseAccessManagerTest extends UnitTestCase {
    * @param bool $allowed
    *   Whether the Group permits the requested access operation.
    *
-   * @return array{0: \Drupal\aculta_lms_h5p\Access\aculta_H5PCourseAccessManager, 1: \Drupal\lms\Entity\Bundle\CourseInterface}
+   * @return array{0: \Drupal\aculta_lms_h5p\Access\aculta_H5PCourseAccessManager, 1: \Drupal\group\Entity\GroupInterface}
    *   The access manager and its mocked course.
    */
   private function managerForCourse(array $contentIds, bool $allowed = TRUE): array {
-    $course = $this->createMock(CourseInterface::class);
+    $course = $this->createMock(GroupInterface::class);
     $course->method('id')->willReturn(8);
     $course->method('getCacheTags')->willReturn(['group:8']);
     $course->method('getCacheContexts')->willReturn([]);
@@ -71,7 +71,7 @@ final class aculta_H5PCourseAccessManagerTest extends UnitTestCase {
     $field = $this->createMock(FieldItemList::class);
     $field->method('getIterator')->willReturn(new \ArrayIterator($items));
     $course->method('get')->with('field_h5p_activities')->willReturn($field);
-    $course->method('takeAccess')->willReturn(AccessResult::allowedIf($allowed));
+    $course->method('hasPermission')->with('take course', self::anything())->willReturn($allowed);
     $course->method('access')->with('update', self::anything(), TRUE)->willReturn(AccessResult::allowedIf($allowed));
 
     $groupStorage = $this->createMock(EntityStorageInterface::class);

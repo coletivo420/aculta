@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Unit;
 
-use Drupal\aculta_image\ImageInspector;
-use Drupal\aculta_image\UploadPolicy as ImageUploadPolicy;
 use Drupal\aculta_lms\Hook\SubmissionImageHooks;
-use Drupal\aculta_portal\Upload\UserUploadPolicy;
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\MimeTypeVerifier;
+use Drupal\aculta_file_uploader\UploadPolicy as FileUploadPolicy;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Image\ImageFactory;
+use Drupal\aculta_file_uploader\ImageDimensionReader;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -105,9 +106,9 @@ final class SubmissionImageHooksTest extends UnitTestCase {
       default => NULL,
     });
     $configFactory = $this->createMock(ConfigFactoryInterface::class);
-    $configFactory->method('get')->with('aculta_portal.user_upload')->willReturn($config);
+    $configFactory->method('get')->with('aculta_file_uploader.settings')->willReturn($config);
 
-    $policy = new UserUploadPolicy($configFactory, new ImageUploadPolicy(), new ImageInspector($this->createMock(ImageFactory::class)));
+    $policy = new ConsumerUploadPolicy($configFactory, new FileUploadPolicy(), new MimeTypeVerifier(), $this->createMock(FileSystemInterface::class), $this->createMock(ImageDimensionReader::class));
     return new SubmissionImageHooks($this->getStringTranslationStub(), $policy);
   }
 

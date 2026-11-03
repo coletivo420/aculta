@@ -1,4 +1,9 @@
 services:
+  aculta_game.course_completion_badge_subscriber:
+    class: Drupal\aculta_game\EventSubscriber\CourseCompletionBadgeSubscriber
+    arguments: ['@aculta_user.badge_service']
+    tags:
+      - { name: event_subscriber }
   aculta_game.forum_participation_policy:
     class: Drupal\aculta_game\ForumParticipationPolicy
     arguments: ['@aculta_portal.domain_purpose']

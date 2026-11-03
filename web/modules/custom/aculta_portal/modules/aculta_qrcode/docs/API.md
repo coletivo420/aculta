@@ -106,7 +106,7 @@ Toda gravação valida antes de salvar; violação vira `InvalidQrCodeException`
 | Método | Saída | Regra |
 | --- | --- | --- |
 | `svg(QrCode): string` | SVG em memória | Sem arquivo. |
-| `raster(QrCode, QrCodeFormat::Png|Webp): string` | Bytes do PNG ou WebP | Derivado em `public://aculta-qrcode/{hash}.{ext}`, registrado pelo `aculta_image.generated_file` como temporário. Sem `aculta_image`, recusa. |
+| `raster(QrCode, QrCodeFormat::Png|Webp): string` | Bytes do PNG ou WebP | Derivado em `public://aculta-qrcode/{hash}.{ext}`, registrado pelo `aculta_file_uploader.generated_file` como temporário. Sem `aculta_file_uploader`, recusa. |
 | `pdf(QrCode): string` | Bytes do PDF | Entity Print (`dompdf`), sem recursos remotos, sem PHP embutido, sem log. Sem gravação. |
 
 O QR codifica a URL pública `/qr/{codigo}`, não o destino. Sem URL pública (ambiente sem `aculta_portal`), a exportação falha.

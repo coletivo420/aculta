@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_image\Form;
 
-use Drupal\aculta_image\ImageCleanup;
+use Drupal\aculta_file_uploader\Cleanup\ImageCleanup;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -20,7 +20,7 @@ final class ImageCleanupForm extends ConfirmFormBase {
    * Creates the object with its injected services.
    */
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('aculta_image.cleanup'));
+    return new static($container->get('aculta_file_uploader.cleanup'));
   }
 
   /**

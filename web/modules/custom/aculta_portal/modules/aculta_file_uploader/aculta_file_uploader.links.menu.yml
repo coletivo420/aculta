@@ -1,0 +1,6 @@
+aculta_file_uploader.settings:
+  title: 'Uploads por integração'
+  description: 'Extensões e tamanho de imagem de cada integração (wiki, fórum, revista, LMS).'
+  route_name: aculta_file_uploader.settings
+  parent: aculta_portal.admin
+  weight: 9

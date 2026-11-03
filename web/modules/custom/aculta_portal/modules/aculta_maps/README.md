@@ -20,18 +20,20 @@ OpenStreetMap ou Nominatim diretamente.
   `lng`, `label`, `description`, `url`, `routeUrl` e `precision`. Coordenadas
   inválidas são descartadas; precisão `approximate` é arredondada a duas casas.
 - `aculta_maps.geocoding` (`GeocodingService::geocode()`): retorna `lat`/`lng`
-  ou `NULL`. Nominatim respeita limite global de uma chamada por segundo; a
-  opção Google usa uma chamada de servidor e cai para Nominatim em falha.
+  ou `NULL`. Nominatim é usado em todos os engines e respeita limite global de
+  uma chamada por segundo. Google Geocoding não é chamado pela aplicação.
 - `aculta_maps.route_link_builder` (`RouteLinkBuilder::build()`): gera URL de
   rota com destino codificado e hosts permitidos. Links abrem apenas por clique,
   em nova aba com `noopener noreferrer`.
 
 ## Provedores e credenciais
 
-OpenStreetMap com Leaflet é o padrão. A atribuição aparece no mapa e a página
-consumidora precisa manter uma lista textual de conteúdo equivalente para quem
-não usa JavaScript. O aviso de privacidade deve apontar para
-`/sobre/politica-de-privacidade`.
+OpenStreetMap com Leaflet é o padrão. O código usa o endpoint HTTPS canônico
+`https://tile.openstreetmap.org/{z}/{x}/{y}.png`, com atribuição visível. A
+página consumidora precisa manter uma lista textual de conteúdo equivalente
+para quem não usa JavaScript. O aviso de privacidade aponta para
+`/sobre/politica-de-privacidade`; detalhes de tráfego e provedores pertencem à
+política, conforme ADR-030 e D-52.
 
 Google é opcional e escolhido no painel ADM7. `GOOGLE_MAPS_API_KEY` é usada no
 navegador e deve ser restrita aos hosts por referenciador e à Maps JavaScript
@@ -60,7 +62,13 @@ adaptador de `EventLocation` e na revisão de endereço do importador OSM.
 A busca atual por CEP já preenche o endereço e continua compartilhada. Busca/autocomplete futura pelo nome da rua/logradouro ainda não está disponível e sua interface ficará restrita a Events e Maps. O serviço pode ser fornecido por `aculta_portal_cep`, mas não será ativado em Conta, checkout ou formulário global. Geocodificação de endereço salvo continua distinta da busca postal. Plano e critérios:
 [CEP-ADDRESS-SEARCH-PLAN](../../../../../../docs/portal/CEP-ADDRESS-SEARCH-PLAN.md).
 
-Leaflet 1.9.4 é distribuído em `assets/vendor/leaflet/` sob BSD-2-Clause. O
-mapa público não foi ativado no Runtime: o smoke visual aguarda a revisão de
-transparência da política do ambiente, conforme ADR-030. Plano e fases estão em
-`docs/`.
+Leaflet 1.9.4 é distribuído em `assets/vendor/leaflet/` sob BSD-2-Clause. A
+minuta 0.6 da Política de Privacidade descreve tiles OSM/Google e geocodificação
+Nominatim, mas ainda não foi publicada no Runtime. Confirme o provedor e os
+cabeçalhos HTTP ativos por ambiente antes da homologação. Plano e fases estão
+em `docs/`.
+
+
+## Revalidação técnica 2026-11-02
+
+Unit Maps: 7 testes / 33 assertions PASS. Kernel: 3 testes / 6 assertions PASS; duas depreciações Core. O catálogo ACL A/B é testado pelo owner `aculta_events` (`LocationCatalogueKernelTest`: 6/129, dois owners e anônimo). HTTP/purpose, consumers restantes, `Referrer-Policy` Runtime e revisão jurídica continuam pendentes; nenhuma escrita Runtime.

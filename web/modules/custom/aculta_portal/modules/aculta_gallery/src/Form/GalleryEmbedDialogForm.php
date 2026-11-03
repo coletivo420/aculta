@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_gallery\Form;
 
-use Drupal\aculta_image\UploadPolicy;
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\RecentUploads;
+use Drupal\file\FileInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\Core\Ajax\HtmlCommand;
@@ -56,7 +58,8 @@ final class GalleryEmbedDialogForm extends FormBase {
     EntityTypeManagerInterface $entity_type_manager,
     WidgetPluginManager $widget_manager,
     AccountProxyInterface $current_user,
-    private readonly UploadPolicy $uploadPolicy,
+    private readonly ConsumerUploadPolicy $uploadPolicy,
+    private readonly RecentUploads $recentUploads,
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->widgetManager = $widget_manager;
@@ -71,7 +74,8 @@ final class GalleryEmbedDialogForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('plugin.manager.field.widget'),
       $container->get('current_user'),
-      $container->get('aculta_image.upload_policy'),
+      $container->get('aculta_file_uploader.consumer_policy'),
+      $container->get('aculta_file_uploader.recent_uploads'),
     );
   }
 
@@ -111,11 +115,24 @@ final class GalleryEmbedDialogForm extends FormBase {
       '#description' => $this->t('Formatos: png, gif, jpg, jpeg ou webp. Cada arquivo com até 10 MB.'),
       '#multiple' => TRUE,
       '#upload_location' => self::UPLOAD_DIRECTORY,
-      '#upload_validators' => array_merge(
-        $this->uploadPolicy->validators(),
-        ['FileIsImage' => []],
-      ),
+      '#upload_validators' => $this->uploadPolicy->imageValidators('galeria'),
+      // Lista vazia desabilita o envio: sem validadores, o Core aceitaria qualquer arquivo.
+      '#disabled' => $this->uploadPolicy->imageExtensions('galeria') === [],
     ];
+
+    // Envios recentes de imagem do Studio: o próprio usuário vê os seus; administrador vê todos.
+    $studio_images = array_filter(
+      $this->recentUploads->forUser((int) $this->currentUser->id(), 'galeria', 20, $this->currentUser->hasPermission('administer site configuration')),
+      fn (string $name): bool => in_array(strtolower(pathinfo($name, PATHINFO_EXTENSION)), $this->uploadPolicy->imageExtensions('galeria'), TRUE),
+    );
+    if ($studio_images !== []) {
+      $form['studio_images'] = [
+        '#type' => 'checkboxes',
+        '#title' => $this->t('Ou escolha imagens recentes do Studio'),
+        '#options' => $studio_images,
+        '#description' => $this->t('Somam-se às fotos novas acima.'),
+      ];
+    }
 
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = [
@@ -131,6 +148,31 @@ final class GalleryEmbedDialogForm extends FormBase {
   /**
    * {@inheritdoc}
    */
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
+    foreach ($this->studioPicks($form_state) as $fid) {
+      $file = $this->entityTypeManager->getStorage('file')->load($fid);
+      $allowed = $file instanceof FileInterface
+        && $this->recentUploads->isOwnedBy($file, (int) $this->currentUser->id(), 'galeria', $this->currentUser->hasPermission('administer site configuration'))
+        && $this->uploadPolicy->isValidImage($file, 'galeria');
+      if (!$allowed) {
+        $form_state->setErrorByName('studio_images', $this->t('Uma das imagens escolhidas do Studio não está disponível. Escolha novamente.'));
+        return;
+      }
+    }
+  }
+
+  /**
+   * IDs de imagens escolhidas da lista do Studio.
+   *
+   * @return int[]
+   */
+  private function studioPicks(FormStateInterface $form_state): array {
+    return array_values(array_map('intval', array_keys(array_filter((array) $form_state->getValue('studio_images')))));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {}
 
   /**
@@ -140,7 +182,8 @@ final class GalleryEmbedDialogForm extends FormBase {
    *   IDs das mídias criadas, na ordem do envio.
    */
   private function createMediaFromUploads(FormStateInterface $form_state, string $title): array {
-    $fids = array_filter(array_map('intval', (array) $form_state->getValue('new_images')));
+    $uploaded = array_filter(array_map('intval', (array) $form_state->getValue('new_images')));
+    $fids = array_values(array_unique(array_merge($uploaded, $this->studioPicks($form_state))));
     $media_ids = [];
     $position = 0;
     foreach ($fids as $fid) {

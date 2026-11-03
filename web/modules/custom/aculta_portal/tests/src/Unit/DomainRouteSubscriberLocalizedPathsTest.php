@@ -31,6 +31,7 @@ final class DomainRouteSubscriberLocalizedPathsTest extends UnitTestCase {
       'lms.course.reset_test' => '/curso/{group}/reiniciar-avaliacao',
       'lms.group.self_results' => '/grupo/{group}/resultados-curso',
       'lms.answer.details' => '/resposta/{lms_answer}/{js}/detalhes',
+      'aculta_lms.answer_attachment_download' => '/resposta/{answer}/arquivo',
       'entity.lms_answer.edit_form' => '/resposta/{lms_answer}/avaliar',
       'profile.user_page.single' => '/identidade/{user}/{profile_type}',
       'profile.user_page.multiple' => '/identidade/{user}/{profile_type}/lista',
@@ -60,6 +61,7 @@ final class DomainRouteSubscriberLocalizedPathsTest extends UnitTestCase {
       'lms.course.reset_test',
       'lms.group.self_results',
       'lms.answer.details',
+      'aculta_lms.answer_attachment_download',
       'entity.lms_answer.edit_form',
     ] as $name) {
       self::assertSame('courses', $routes->get($name)?->getOption('_aculta_domain_purpose'), $name);

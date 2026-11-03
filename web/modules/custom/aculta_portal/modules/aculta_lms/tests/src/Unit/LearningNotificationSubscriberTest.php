@@ -9,19 +9,22 @@ use Drupal\aculta_lms\Event\AnswerSubmittedEvent;
 use Psr\Log\LoggerInterface;
 use Drupal\aculta_lms\Event\CertificateIssuedEvent;
 use Drupal\aculta_lms\Event\CourseEnrollmentEvent;
-use Drupal\aculta_lms\Event\CourseCompletedEvent;
+use Drupal\aculta_learning_contracts\Event\CourseCompletedEvent;
 use Drupal\aculta_lms\Event\CourseContentReleasedEvent;
 use Drupal\aculta_lms\Event\EducatorFeedbackPublishedEvent;
 use Drupal\aculta_lms\Event\ActivityDeadlineAssignedEvent;
 use Drupal\aculta_lms\EventSubscriber\LearningNotificationSubscriber;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
-use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManagerInterface;
+use Drupal\aculta_lms\Notice\LearningNoticeRecipientsInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Psr\Log\NullLogger;
 
+/**
+ * Converts durable LMS events into Messenger notice contracts.
+ */
 #[CoversClass(LearningNotificationSubscriber::class)]
 #[Group('aculta_lms')]
 final class LearningNotificationSubscriberTest extends UnitTestCase {
@@ -30,7 +33,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
    * Confirms that a persisted enrollment becomes a Messenger notice.
    */
   public function testEnrollmentCreatesRequiredSiteNoticeAndOptionalDigest(): void {
-    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager = $this->createMock(LearningNoticeRecipientsInterface::class);
     $publisher = $this->createMock(MessengerNoticePublisherInterface::class);
     $publisher->expects($this->once())
       ->method('publish')
@@ -49,7 +52,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
    * Confirms that a certificate issue becomes a Messenger notice.
    */
   public function testCertificateCreatesRequiredSiteNoticeAndOptionalDigest(): void {
-    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager = $this->createMock(LearningNoticeRecipientsInterface::class);
     $publisher = $this->createMock(MessengerNoticePublisherInterface::class);
     $publisher->expects($this->once())
       ->method('publish')
@@ -68,7 +71,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
    * Confirms course completion is site-only and enters the shared digest.
    */
   public function testCompletionCreatesSiteNoticeWithoutTransactionalEmail(): void {
-    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager = $this->createMock(LearningNoticeRecipientsInterface::class);
     $publisher = $this->createMock(MessengerNoticePublisherInterface::class);
     $publisher->expects($this->once())
       ->method('publish')
@@ -91,7 +94,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
   /**
    * An evaluated answer creates only the site and digest notices. */
   public function testEvaluationCreatesSiteNoticeWithoutTransactionalEmail(): void {
-    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager = $this->createMock(LearningNoticeRecipientsInterface::class);
     $publisher = $this->createMock(MessengerNoticePublisherInterface::class);
     $publisher->expects($this->once())
       ->method('publish')
@@ -110,7 +113,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
    * A submitted response is routed to the notice manager for current graders.
    */
   public function testSubmissionNotifiesCurrentCourseEducators(): void {
-    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager = $this->createMock(LearningNoticeRecipientsInterface::class);
     $manager->expects($this->once())
       ->method('publishSubmissionNoticesForEducators')
       ->with('answer-uuid', str_repeat('b', 32));
@@ -123,19 +126,19 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
    * Routes a persisted content release into the learner notice provider.
    */
   public function testContentReleaseNotifiesCurrentLearners(): void {
-    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager = $this->createMock(LearningNoticeRecipientsInterface::class);
     $manager->expects($this->once())
       ->method('publishContentReleaseNoticesForLearners')
-      ->with('lesson-uuid', 'lms_lesson', str_repeat('c', 32));
+      ->with('lesson-uuid', 'aculta_lms_lesson', str_repeat('c', 32));
 
     $subscriber = new LearningNotificationSubscriber($manager, $this->publisher(), new NullLogger());
-    $subscriber->contentReleased(new CourseContentReleasedEvent('lms_lesson', 'lesson-uuid', str_repeat('c', 32)));
+    $subscriber->contentReleased(new CourseContentReleasedEvent('aculta_lms_lesson', 'lesson-uuid', str_repeat('c', 32)));
   }
 
   /**
    * Published educator feedback is routed to the learner notice provider. */
   public function testEducatorFeedbackNotifiesAnswerOwner(): void {
-    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager = $this->createMock(LearningNoticeRecipientsInterface::class);
     $manager->expects($this->once())
       ->method('publishEducatorFeedbackNoticeForLearner')
       ->with('comment-uuid', str_repeat('d', 32));
@@ -147,7 +150,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
   /**
    * A saved deadline is routed to the current learners of its class. */
   public function testActivityDeadlineNotifiesCurrentClassLearners(): void {
-    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager = $this->createMock(LearningNoticeRecipientsInterface::class);
     $manager->expects($this->once())
       ->method('publishActivityDeadlineNoticesForLearners')
       ->with('deadline-uuid', str_repeat('e', 32));
@@ -160,7 +163,7 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
    * Confirms notification failure does not escape the source event.
    */
   public function testPersistFailureIsLoggedAndDoesNotBreakSourceTransaction(): void {
-    $manager = $this->createMock(LearningNoticeManagerInterface::class);
+    $manager = $this->createMock(LearningNoticeRecipientsInterface::class);
     $publisher = $this->createMock(MessengerNoticePublisherInterface::class);
     $publisher->method('publish')->willThrowException(new \RuntimeException('dispatch unavailable'));
     $logger = $this->createMock(LoggerInterface::class);

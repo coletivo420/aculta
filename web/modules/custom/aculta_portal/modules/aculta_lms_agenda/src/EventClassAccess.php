@@ -10,7 +10,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_lms\Access\ClassActivityDeadlineAccessCheck;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembership;
-use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -26,17 +25,17 @@ final class EventClassAccess {
   ) {}
 
   /**
-   * Checks membership, published class/course, and course access.
+   * Checks membership and delegates course access to the ACULTA checker.
    */
   public function access(EntityInterface $event, AccountInterface $account): AccessResult {
     $class = $event->get('field_turma')->entity;
     if (!$class instanceof GroupInterface || $class->bundle() !== 'lms_class' || !$class->isPublished()) {
-      return $this->result(FALSE, $event, $class instanceof GroupInterface ? $class : NULL, NULL);
+      return $this->result(FALSE, $event, $class instanceof GroupInterface ? $class : NULL);
     }
 
-    $course = $this->classAccess->courseForClass($class);
-    if (!$course instanceof CourseInterface || !$course->isPublished()) {
-      return $this->result(FALSE, $event, $class, $course instanceof CourseInterface ? $course : NULL);
+    $courseAccess = $this->classAccess->courseAccessForClass($class, $account);
+    if (!$courseAccess->isAllowed()) {
+      return $this->result(FALSE, $event, $class)->addCacheableDependency($courseAccess);
     }
 
     $membership = NULL;
@@ -51,18 +50,14 @@ final class EventClassAccess {
       }
     }
 
-    $courseAccess = $course->takeAccess($account);
-    $result = AccessResult::forbiddenIf($membership === NULL || !$courseAccess->isAllowed())
+    $result = ($membership === NULL ? AccessResult::forbidden() : AccessResult::allowed())
       ->cachePerUser()
       ->addCacheContexts(['user.permissions', 'user.group_permissions'])
       ->addCacheTags([
         'group_relationship_list:plugin:group_membership:group:' . $class->id(),
-        'group_relationship_list:plugin:group_membership:group:' . $course->id(),
-        'group_relationship_list:plugin:lms_classes:entity:' . $class->id(),
       ])
       ->addCacheableDependency($event)
       ->addCacheableDependency($class)
-      ->addCacheableDependency($course)
       ->addCacheableDependency($courseAccess);
 
     if ($membership !== NULL) {
@@ -73,9 +68,9 @@ final class EventClassAccess {
   }
 
   /**
-   * Creates a user-specific result for unusable class/course references.
+   * Creates a user-specific result for an unusable class reference.
    */
-  private function result(bool $allowed, EntityInterface $event, ?GroupInterface $class, ?CourseInterface $course): AccessResult {
+  private function result(bool $allowed, EntityInterface $event, ?GroupInterface $class): AccessResult {
     $result = AccessResult::forbiddenIf(!$allowed)
       ->cachePerUser()
       ->addCacheContexts(['user.permissions', 'user.group_permissions'])
@@ -84,11 +79,6 @@ final class EventClassAccess {
       $result
         ->addCacheableDependency($class)
         ->addCacheTags(['group_relationship_list:plugin:group_membership:group:' . $class->id()]);
-    }
-    if ($course !== NULL) {
-      $result
-        ->addCacheableDependency($course)
-        ->addCacheTags(['group_relationship_list:plugin:lms_classes:entity:' . ($class?->id() ?? '')]);
     }
     return $result;
   }

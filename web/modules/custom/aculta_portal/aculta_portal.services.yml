@@ -4,29 +4,23 @@ services:
     arguments: ['remote_video', 'remote_video']
     tags:
       - { name: aculta_index.provider }
-  aculta_portal.file_reference_inspector:
-    class: Drupal\aculta_portal\Cleanup\FileReferenceInspector
-    arguments: ['@entity_type.manager', '@entity_field.manager', '@database', '@aculta_portal.cleanup.logger']
-  aculta_portal.unused_file_cleaner:
-    class: Drupal\aculta_portal\Cleanup\UnusedFileCleaner
-    arguments: ['@file.usage', '@database', '@aculta_portal.file_reference_inspector', '@aculta_image.file_remover', '@aculta_image.inspector', '@aculta_portal.cleanup.logger']
-    tags:
-      - { name: aculta_portal.helper }
   aculta_portal.unused_media_cleaner:
     class: Drupal\aculta_portal\Cleanup\UnusedMediaCleaner
-    arguments: ['@aculta_portal.file_reference_inspector', '@aculta_portal.cleanup.logger']
+    arguments: ['@aculta_file_uploader.file_reference_inspector', '@aculta_portal.cleanup.logger']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_portal.content_cleanup_preview:
+    class: Drupal\aculta_portal\Cleanup\ContentCleanupPreview
+    arguments: ['@entity_type.manager', '@aculta_file_uploader.unused_file_cleaner', '@aculta_portal.unused_media_cleaner']
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.cleanup.logger:
     class: Drupal\Core\Logger\LoggerChannelInterface
     factory: ['@logger.factory', 'get']
     arguments: ['aculta_portal_cleanup']
-  aculta_portal.user_upload_policy:
-    class: Drupal\aculta_portal\Upload\UserUploadPolicy
-    arguments: ['@config.factory', '@aculta_image.upload_policy', '@aculta_image.inspector']
   aculta_portal.user_upload_dialog_builder:
     class: Drupal\aculta_portal\Upload\UserUploadDialogBuilder
-    arguments: ['@aculta_portal.user_upload_policy', '@string_translation']
+    arguments: ['@aculta_file_uploader.consumer_policy', '@string_translation']
   aculta_portal.helper_registry:
     class: Drupal\aculta_portal\Status\PortalHelperRegistry
     autowire: false
@@ -234,7 +228,9 @@ services:
 
   aculta_portal.account_courses:
     class: Drupal\aculta_portal\AccountCoursesManager
-    arguments: ['@lms.training_manager', '@aculta_portal.domain_purpose', '@group.membership_loader']
+    arguments:
+      - '@?Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface'
+      - '@aculta_portal.domain_purpose'
     tags:
       - { name: aculta_portal.helper }
   aculta_portal.presentation.account_course:
@@ -293,25 +289,6 @@ services:
       - { name: event_subscriber }
       - { name: aculta_portal.implementation }
 
-  aculta_portal.lms_friendly_slugs:
-    class: Drupal\aculta_portal\Lms\LmsFriendlySlugs
-    arguments: ['@entity_type.manager', '@transliteration']
-    tags:
-      - { name: aculta_portal.helper }
-  aculta_portal.lms_friendly_slug_converter:
-    class: Drupal\aculta_portal\Lms\LmsFriendlySlugConverter
-    arguments: ['@aculta_portal.lms_friendly_slugs']
-    tags:
-      - { name: paramconverter }
-      - { name: aculta_portal.implementation }
-
-  aculta_portal.lms_friendly_route_processor:
-    class: Drupal\aculta_portal\Lms\LmsFriendlyRouteProcessor
-    arguments: ['@entity_type.manager', '@aculta_portal.lms_friendly_slugs']
-    tags:
-      - { name: route_processor_outbound, priority: 100 }
-      - { name: aculta_portal.implementation }
-
   aculta_portal.donation_friendly_route_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\DonationFriendlyRouteSubscriber
     tags:
@@ -320,12 +297,6 @@ services:
 
   aculta_portal.cart_friendly_route_subscriber:
     class: Drupal\aculta_portal\EventSubscriber\CartFriendlyRouteSubscriber
-    tags:
-      - { name: event_subscriber }
-      - { name: aculta_portal.implementation }
-
-  aculta_portal.lms_friendly_route_subscriber:
-    class: Drupal\aculta_portal\EventSubscriber\LmsFriendlyRouteSubscriber
     tags:
       - { name: event_subscriber }
       - { name: aculta_portal.implementation }
@@ -429,3 +400,11 @@ services:
     arguments: ['@database', '@entity_type.manager', '@?aculta_portal.domain_purpose']
 
   Drupal\aculta_portal\Saved\SavedContentQueryInterface: '@aculta_portal.saved_content_query'
+  aculta_portal.surface_config_reader:
+    class: Drupal\aculta_portal\Domain\SurfaceConfigReader
+    arguments: ['@config.factory']
+  aculta_portal.surface_request_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\SurfaceRequestSubscriber
+    arguments: ['@aculta_portal.surface_config_reader', '@aculta_portal.domain_purpose']
+    tags:
+      - { name: event_subscriber }

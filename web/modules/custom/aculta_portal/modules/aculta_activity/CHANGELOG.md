@@ -1,4 +1,24 @@
+## Revalidação 2026-11-02 — provider Activity
+
+- Unit Activity: 6 testes / 20 assertions PASS. Kernel Activity: 6/123 PASS em `aculta_simpletest`; 121 depreciações Core/contrib.
+- A projeção `editorial_image` e o purpose `main` seguem cobertos; nenhum Runtime ou conteúdo foi alterado.
+
 # Changelog — ACULTA Activity
+
+## 0.1.0-dev.12 — relação editorial de imagem e validação do formulário (2026-11-01)
+
+- O provider do Index passa a emitir `editorial_image` somente para a referência
+  explícita `field_media_image`; não projeta corpo, arquivo, URL nem metadados
+  privados da Media. Versão de projeção incrementada para 3.
+- A validação do formulário agora lê os valores submetidos, inclusive campos
+  limpos durante edição, em vez de validar apenas o estado anterior da entidade.
+- Kernel focado: 6 testes / 123 assertions PASS no MariaDB `aculta_simpletest`;
+  121 depreciações Core/contrib. O teste `testActivityFormValidationUsesSubmittedValues`
+  também confirma erros de URL, Local e intervalo de datas.
+- Maps Unit + provider Index de Events: 13 testes / 186 assertions PASS; 19
+  depreciações. Nenhuma operação foi feita no Runtime.
+- PHPCS Drupal/DrupalPractice sem erros ou avisos e PHP lint nos arquivos
+  alterados: PASS. A validação usa EntityTypeManager e conta atual por DI.
 
 ## 0.1.0-dev.11 — hooks de formulário e Metatag integrados (2026-10-29)
 

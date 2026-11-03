@@ -13,7 +13,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 
 /**
- * Serviço de migração idempotente e reversível de endereços legados de Activity para Locais.
+ * Migra endereços legados de Activity para Locais de forma reversível.
  */
 final class ActivityLocationMigrator {
 
@@ -29,7 +29,7 @@ final class ActivityLocationMigrator {
   ) {}
 
   /**
-   * Identifica atividades legadas que possuem dados de endereço e ainda não referenciam um Local.
+   * Localiza atividades com endereço sem referência a Local.
    *
    * @return \Drupal\node\NodeInterface[]
    *   Lista de nós elegíveis para migração.
@@ -86,7 +86,7 @@ final class ActivityLocationMigrator {
   }
 
   /**
-   * Realiza auditoria e diagnóstico prévio das atividades candidatas à migração.
+   * Audita as atividades candidatas antes da migração.
    *
    * @return array<string, mixed>
    *   Métricas e resumo de integridade.
@@ -153,7 +153,7 @@ final class ActivityLocationMigrator {
    * Executa a migração em lote ou ensaio (dry-run).
    *
    * @param bool $dryRun
-   *   Se TRUE, apenas simula e retorna o plano de ação sem persistir alterações.
+   *   Se TRUE, simula o plano sem persistir alterações.
    *
    * @return array<string, mixed>
    *   Relatório detalhado do processo de migração.
@@ -168,7 +168,7 @@ final class ActivityLocationMigrator {
     $createdLocations = [];
     $locationMap = [];
 
-    // Carrega locais existentes para reaproveitamento por chave normalizada (nome + CEP).
+    // Reaproveita locais pela chave normalizada de nome e CEP.
     if (!$dryRun && $this->entityTypeManager->hasDefinition('aculta_event_location')) {
       $existingLocations = $this->entityTypeManager->getStorage('aculta_event_location')->loadMultiple();
       foreach ($existingLocations as $existing) {
@@ -259,7 +259,7 @@ final class ActivityLocationMigrator {
   }
 
   /**
-   * Executa o rollback idempotente das entidades de Local criadas pela migração.
+   * Reverte as entidades de Local criadas pela migração.
    *
    * @return array<string, int>
    *   Contagem de nós desvinculados e locais removidos.

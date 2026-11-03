@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\EventSubscriber;
 
 use Drupal\aculta_lms\Event\CertificateIssuedEvent;
-use Drupal\aculta_lms\Event\CourseCompletedEvent;
+use Drupal\aculta_learning_contracts\Event\CourseCompletedEvent;
 use Drupal\aculta_lms\Event\CourseEnrollmentEvent;
 use Drupal\aculta_lms\Event\AnswerEvaluatedEvent;
 use Drupal\aculta_lms\Event\AnswerSubmittedEvent;
 use Drupal\aculta_lms\Event\CourseContentReleasedEvent;
 use Drupal\aculta_lms\Event\EducatorFeedbackPublishedEvent;
 use Drupal\aculta_lms\Event\ActivityDeadlineAssignedEvent;
+use Drupal\aculta_lms\Notice\LearningNoticeRecipientsInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
-use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -24,7 +24,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 final class LearningNotificationSubscriber implements EventSubscriberInterface {
 
   public function __construct(
-    private readonly LearningNoticeManagerInterface $notices,
+    private readonly LearningNoticeRecipientsInterface $recipients,
     private readonly MessengerNoticePublisherInterface $publisher,
     private readonly LoggerInterface $logger,
   ) {}
@@ -65,8 +65,8 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
   public function courseCompleted(CourseCompletedEvent $event): void {
     $this->publish(
       'completion',
-      'lms_course_status',
-      $event->sourceStatusUuid,
+      'aculta_lms_progress',
+      $event->sourceUuid,
       (int) $event->accountId,
       '1',
       $event->completedAt,
@@ -79,7 +79,7 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
     try {
       $this->publish(
         'evaluation',
-        'lms_answer',
+        'aculta_lms_answer',
         $event->answerUuid,
         (int) $event->accountId,
         $event->publicationVersion,
@@ -95,10 +95,12 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
    */
   public function answerSubmitted(AnswerSubmittedEvent $event): void {
     try {
-      $this->notices->publishSubmissionNoticesForEducators($event->answerUuid, $event->publicationVersion);
+      $this->recipients->publishSubmissionNoticesForEducators($event->answerUuid, $event->publicationVersion);
     }
     catch (\Throwable $exception) {
-      $this->logger->error('Could not record LMS submission notice: @message', ['@message' => $exception->getMessage()]);
+      $this->logger->error('Could not publish LMS submission notice (@exception).', [
+        '@exception' => $exception::class,
+      ]);
     }
   }
 
@@ -107,14 +109,16 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
    */
   public function contentReleased(CourseContentReleasedEvent $event): void {
     try {
-      $this->notices->publishContentReleaseNoticesForLearners(
+      $this->recipients->publishContentReleaseNoticesForLearners(
         $event->contentUuid,
         $event->contentEntityType,
         $event->publicationVersion,
       );
     }
     catch (\Throwable $exception) {
-      $this->logger->error('Could not record LMS content release notice: @message', ['@message' => $exception->getMessage()]);
+      $this->logger->error('Could not publish LMS content release notice (@exception).', [
+        '@exception' => $exception::class,
+      ]);
     }
   }
 
@@ -122,10 +126,12 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
    * Records newly published educator feedback for the answer owner. */
   public function educatorFeedbackPublished(EducatorFeedbackPublishedEvent $event): void {
     try {
-      $this->notices->publishEducatorFeedbackNoticeForLearner($event->commentUuid, $event->publicationVersion);
+      $this->recipients->publishEducatorFeedbackNoticeForLearner($event->commentUuid, $event->publicationVersion);
     }
     catch (\Throwable $exception) {
-      $this->logger->error('Could not record LMS educator feedback notice: @message', ['@message' => $exception->getMessage()]);
+      $this->logger->error('Could not publish LMS educator feedback notice (@exception).', [
+        '@exception' => $exception::class,
+      ]);
     }
   }
 
@@ -133,10 +139,12 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
    * Records a class-specific activity deadline for its current learners. */
   public function activityDeadlineAssigned(ActivityDeadlineAssignedEvent $event): void {
     try {
-      $this->notices->publishActivityDeadlineNoticesForLearners($event->deadlineUuid, $event->publicationVersion);
+      $this->recipients->publishActivityDeadlineNoticesForLearners($event->deadlineUuid, $event->publicationVersion);
     }
     catch (\Throwable $exception) {
-      $this->logger->error('Could not record LMS activity deadline notice: @message', ['@message' => $exception->getMessage()]);
+      $this->logger->error('Could not publish LMS activity deadline notice (@exception).', [
+        '@exception' => $exception::class,
+      ]);
     }
   }
 

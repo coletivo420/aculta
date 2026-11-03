@@ -40,3 +40,28 @@ O mesmo layout pode aparecer no alias legado `/ganjalab` ao entrar sem área; is
 ## Dependências paralelas
 
 G420-C2-T (estudante) segue pendente de fixtures LMS/tema. Wiki moderação exige provider revision-safe; Fórum e LMS têm frentes próprias. O Studio deve orquestrar consumidores concretos e nunca bloquear a autoria Revista enquanto outras interfaces amadurecem.
+
+## Meu trabalho — reorganização da navegação editorial (2026-11-01)
+
+A seção "Meu trabalho" deixou de exibir o submenu lateral. A própria seção
+concentra a ação de criação e as abas de status:
+
+- `RevistaTab` marca `publicacoes` com `suppress_sidebar` e define "Criar" como
+  ação de seção, apontando para a rota existente `/marley/revista/criar`
+  (`aculta_studio.section`, seção `criar`).
+- "Comentários e moderação" passou a ser uma aba da linha de status, depois de
+  "Arquivados", com o mesmo listing de comentários e a mesma checagem de
+  `comments_roles` + `administer comments`. A seção antiga continua resolvendo a
+  rota, mas fora do menu lateral (`sidebar => FALSE`).
+- `MarleyPresenter` preserva `suppress_sidebar`, `sidebar` e ações de seção,
+  filtrando ações pela `access` do owner. `MarleyController` só monta o sidebar
+  quando há itens navegáveis e a seção não o suprime; ações de seção renderizam
+  abaixo do título. Outras áreas não foram alteradas.
+
+Verificação servida em `0e1eb5dbc`: admin 257 vê 0 sidebars, título "Meu
+trabalho", ação `Criar` (`/marley/revista/criar`) e 6 abas incluindo moderação;
+a aba de moderação abre o listing de comentários (200); editora 258 vê as 5
+abas de status sem moderação; conta sem papéis vê o estado vazio de áreas.
+Matriz 320/1440 e claro/escuro: 12/12 HTTP 200. Teclado em 320/768: `Criar` e
+as 6 abas alcançáveis com foco visível de 3px. Testes: Unit do Studio
+**58 testes/568 assertions**, PHPCS e `php -l` PASS.

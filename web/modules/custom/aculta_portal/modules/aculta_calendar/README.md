@@ -20,3 +20,10 @@ em 1270/500 px; visão interativa com DHTMLX 7.2.15, 7 dias, contraste e fallbac
 móvel; smoke de eventos 129/129. O candidato inclui as correções da revisão de
 código, a publicação explícita de cancelamentos importados e a exibição de
 eventos de vários dias em cada dia coberto.
+
+
+## Revalidação Events/Calendar 2026-11-02
+
+- Unit Calendar: 98 testes / 299 assertions PASS; Kernel: 30 testes / 134 assertions PASS, duas depreciações Core.
+- Testes de agenda contextual Events: `EventCalendarItemProviderKernelTest` 6/116 e `EventIcsControllerKernelTest` 3/54 PASS, em `aculta_simpletest`; cobrem owner A, owner B e anônimo para Locais privados.
+- Purpose/host HTTP e homologação Runtime continuam pendentes. Nenhuma escrita no Runtime.

@@ -20,6 +20,44 @@ aculta_events.organizer_dashboard:
     _aculta_domain_purpose: eventos
     no_cache: true
 
+aculta_events.organizer_contributions:
+  path: '/culturas/propostas'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventContributionWorkspaceController::overview'
+    _title: 'Minhas propostas em Culturas'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
+aculta_events.organizer_contribution_status:
+  path: '/culturas/propostas/{proposal_uuid}'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventContributionWorkspaceController::view'
+    _title: 'Acompanhar proposta em Culturas'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+    proposal_uuid: '[a-f0-9-]{36}'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
+aculta_events.organizer_contribution_revise:
+  path: '/culturas/propostas/{proposal_uuid}/revisar'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventContributionRevisionForm'
+    _title: 'Revisar minha proposta'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+    proposal_uuid: '[a-f0-9-]{36}'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
 aculta_events.organizer_event_add:
   path: '/culturas/eventos/novo'
   defaults:
@@ -30,6 +68,34 @@ aculta_events.organizer_event_add:
   options:
     _aculta_domain_purpose: eventos
     no_cache: true
+
+aculta_events.organizer_event_contribution_add:
+  path: '/culturas/propostas/evento/nova'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventContributionSubmissionForm'
+    _title: 'Propor novo Evento'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+
+aculta_events.organizer_event_contribution_update:
+  path: '/culturas/eventos/{aculta_event}/propor-alteracao'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventUpdateContributionSubmissionForm'
+    _title: 'Propor alteração de Evento'
+  requirements:
+    _entity_access: 'aculta_event.update'
+    _user_is_logged_in: 'TRUE'
+    aculta_event: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    no_cache: true
+    parameters:
+      aculta_event:
+        type: entity:aculta_event
 
 aculta_events.organizer_event_edit:
   path: '/culturas/eventos/{aculta_event}/editar'
@@ -404,6 +470,20 @@ aculta_events.date_ics:
   options:
     _aculta_domain_purpose: eventos
 
+aculta_events.location_ics:
+  path: '/locais/{aculta_event_location}/agenda.ics'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventIcsController::local'
+    _title: 'Exportar agenda do local'
+  requirements:
+    _access: 'TRUE'
+    aculta_event_location: '\d+'
+  options:
+    _aculta_domain_purpose: eventos
+    parameters:
+      aculta_event_location:
+        type: entity:aculta_event_location
+
 aculta_events.interactive:
   path: '/calendario/interativo'
   defaults:
@@ -496,7 +576,7 @@ aculta_events.organizer_organization_edit:
     _entity_form: 'aculta_event_organization.edit'
     _title: 'Editar organização'
   requirements:
-    _entity_access: 'aculta_event_organization.update'
+    _custom_access: '\Drupal\aculta_events\Access\EventOrganizationAccessControlHandler::editFormAccess'
     aculta_event_organization: '\d+'
   options:
     _aculta_domain_purpose: eventos
@@ -530,6 +610,103 @@ aculta_events.admin_organizations:
   options:
     _admin_route: true
     _aculta_domain_purpose: main
+
+aculta_events.admin_organization_suggestions:
+  path: '/painel-administrativo/eventos/organizacoes/sugestoes'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventOrganizationSuggestionAdminController::overview'
+    _title: 'Sugestões de alteração de organizações'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.admin_organization_suggestion_review:
+  path: '/painel-administrativo/eventos/organizacoes/sugestoes/{aculta_event_org_suggestion}'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationSuggestionReviewForm'
+    _title: 'Revisar sugestão de organização'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_event_org_suggestion: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+    parameters:
+      aculta_event_org_suggestion:
+        type: entity:aculta_event_org_suggestion
+
+aculta_events.admin_organization_contribution_review:
+  path: '/painel-administrativo/eventos/organizacoes/propostas/{aculta_contribution}'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationContributionReviewForm'
+    _title: 'Revisar proposta de organização'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_contribution: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+    parameters:
+      aculta_contribution:
+        type: entity:aculta_contribution
+
+aculta_events.admin_location_contributions:
+  path: '/painel-administrativo/eventos/locais/propostas'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventLocationContributionAdminController::overview'
+    _title: 'Propostas de Locais'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.admin_event_contributions:
+  path: '/painel-administrativo/eventos/propostas'
+  defaults:
+    _controller: '\Drupal\aculta_events\Controller\EventContributionAdminController::overview'
+    _title: 'Propostas de Eventos'
+  requirements:
+    _permission: 'administer aculta events'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+
+aculta_events.admin_event_contribution_review:
+  path: '/painel-administrativo/eventos/propostas/{aculta_contribution}'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationContributionReviewForm'
+    _title: 'Revisar proposta de Evento'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_contribution: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+    parameters:
+      aculta_contribution:
+        type: entity:aculta_contribution
+
+aculta_events.admin_location_contribution_review:
+  path: '/painel-administrativo/eventos/locais/propostas/{aculta_contribution}'
+  defaults:
+    _form: '\Drupal\aculta_events\Form\EventOrganizationContributionReviewForm'
+    _title: 'Revisar proposta de Local'
+  requirements:
+    _permission: 'administer aculta events'
+    aculta_contribution: '\d+'
+  options:
+    _admin_route: true
+    _aculta_domain_purpose: main
+    no_cache: true
+    parameters:
+      aculta_contribution:
+        type: entity:aculta_contribution
 
 aculta_events.admin_organization_add:
   path: '/painel-administrativo/eventos/organizacoes/cadastrar'

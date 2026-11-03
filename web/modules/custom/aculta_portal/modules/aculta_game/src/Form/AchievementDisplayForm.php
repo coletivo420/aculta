@@ -12,7 +12,9 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-/** Escolhas da própria pessoa dentro de Minha Conta > Atividade > Conquistas. */
+/**
+ * Escolhas da própria pessoa dentro de Minha Conta > Atividade > Conquistas.
+ */
 final class AchievementDisplayForm extends FormBase {
 
   public function __construct(
@@ -20,14 +22,23 @@ final class AchievementDisplayForm extends FormBase {
     private readonly AccountProxyInterface $account,
   ) {}
 
+  /**
+   * Create the display preferences form from Drupal services.
+   */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('aculta_game.achievement_presentation'), $container->get('current_user'));
   }
 
+  /**
+   * Return the stable form identifier.
+   */
   public function getFormId(): string {
     return 'aculta_game_achievement_display';
   }
 
+  /**
+   * Build the current account achievement display preferences.
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     if (!$this->account->isAuthenticated()) {
       throw new AccessDeniedHttpException();
@@ -49,20 +60,57 @@ final class AchievementDisplayForm extends FormBase {
     $form['items'] = ['#type' => 'container', '#tree' => TRUE];
     foreach ($this->presentation->definitions() as $id => $definition) {
       $choice = $preferences['items'][$id] ?? [];
-      $form['items'][$id] = ['#type' => 'details', '#title' => (string) $definition['label'], '#open' => TRUE];
+      $form['items'][$id] = [
+        '#type' => 'details',
+        '#title' => (string) $definition['label'],
+        '#open' => TRUE,
+      ];
       $form['items'][$id]['image'] = $this->presentation->imageForDefinition($definition, TRUE, (string) $id);
-      $form['items'][$id]['status'] = ['#type' => 'container', 'text' => ['#plain_text' => isset($earned[$id]) ? $this->t('Conquistada') : $this->t('Ainda não conquistada')]];
+      $form['items'][$id]['status'] = [
+        '#type' => 'container',
+        'text' => [
+          '#plain_text' => isset($earned[$id])
+            ? $this->t('Conquistada')
+            : $this->t('Ainda não conquistada'),
+        ],
+      ];
       if (!empty($definition['description'])) {
-        $form['items'][$id]['description'] = ['#type' => 'container', 'text' => ['#plain_text' => $definition['description']]];
+        $form['items'][$id]['description'] = [
+          '#type' => 'container',
+          'text' => ['#plain_text' => $definition['description']],
+        ];
       }
       $criteria = array_map(static fn (string $trigger): string => AchievementDefinitions::TRIGGERS[$trigger] ?? $trigger, $definition['triggers'] ?? []);
-      $form['items'][$id]['criteria'] = ['#type' => 'container', 'label' => ['#plain_text' => $this->t('Como conquistar')], 'text' => ['#plain_text' => implode(' · ', $criteria)]];
+      $form['items'][$id]['criteria'] = [
+        '#type' => 'container',
+        'label' => ['#plain_text' => $this->t('Como conquistar')],
+        'text' => ['#plain_text' => implode(' · ', $criteria)],
+      ];
       if (empty($definition['enabled'])) {
-        $form['items'][$id]['unavailable'] = ['#type' => 'container', 'text' => ['#plain_text' => $this->t('Indisponível para novas concessões')]];
+        $form['items'][$id]['unavailable'] = [
+          '#type' => 'container',
+          'text' => ['#plain_text' => $this->t('Indisponível para novas concessões')],
+        ];
       }
-      $form['items'][$id]['show'] = ['#type' => 'checkbox', '#title' => $this->t('Exibir quando conquistada'), '#default_value' => empty($choice['hidden'])];
-      $form['items'][$id]['highlight'] = ['#type' => 'checkbox', '#title' => $this->t('Exibir em destaque'), '#default_value' => !empty($choice['highlight'])];
-      $form['items'][$id]['weight'] = ['#type' => 'number', '#title' => $this->t('Ordem de exibição'), '#description' => $this->t('Números menores aparecem primeiro. Os destaques vêm antes dos demais.'), '#min' => -50, '#max' => 50, '#step' => 1, '#default_value' => (int) ($choice['weight'] ?? 0)];
+      $form['items'][$id]['show'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Exibir quando conquistada'),
+        '#default_value' => empty($choice['hidden']),
+      ];
+      $form['items'][$id]['highlight'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Exibir em destaque'),
+        '#default_value' => !empty($choice['highlight']),
+      ];
+      $form['items'][$id]['weight'] = [
+        '#type' => 'number',
+        '#title' => $this->t('Ordem de exibição'),
+        '#description' => $this->t('Números menores aparecem primeiro. Os destaques vêm antes dos demais.'),
+        '#min' => -50,
+        '#max' => 50,
+        '#step' => 1,
+        '#default_value' => (int) ($choice['weight'] ?? 0),
+      ];
     }
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Salvar exibição das conquistas')];
@@ -71,6 +119,9 @@ final class AchievementDisplayForm extends FormBase {
     return $form;
   }
 
+  /**
+   * Save the current account achievement display preferences.
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     if (!$this->account->isAuthenticated()) {
       throw new AccessDeniedHttpException();
@@ -78,9 +129,17 @@ final class AchievementDisplayForm extends FormBase {
     $items = [];
     foreach ($this->presentation->definitions() as $id => $definition) {
       $row = $form_state->getValue(['items', $id], []);
-      $items[$id] = ['hidden' => empty($row['show']), 'highlight' => !empty($row['highlight']), 'weight' => (int) ($row['weight'] ?? 0)];
+      $items[$id] = [
+        'hidden' => empty($row['show']),
+        'highlight' => !empty($row['highlight']),
+        'weight' => (int) ($row['weight'] ?? 0),
+      ];
     }
-    $this->presentation->savePreferences((int) $this->account->id(), ['hide_all' => (bool) $form_state->getValue('hide_all'), 'email_notifications' => (bool) $form_state->getValue('email_notifications'), 'items' => $items]);
+    $this->presentation->savePreferences((int) $this->account->id(), [
+      'hide_all' => (bool) $form_state->getValue('hide_all'),
+      'email_notifications' => (bool) $form_state->getValue('email_notifications'),
+      'items' => $items,
+    ]);
     $this->messenger()->addStatus($this->t('Exibição das conquistas salva.'));
     $form_state->setRedirect('aculta_user.atividade', ['aba' => 'conquistas']);
   }

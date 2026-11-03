@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms_h5p\aculta_H5PDrupal;
 
+use Drupal\aculta_file_uploader\IngestionLimits;
 use Drupal\Core\File\FileSystemInterface;
 
 /**
@@ -18,6 +19,7 @@ final class aculta_H5PLibraryPackageInstaller {
     private readonly aculta_H5PStoragePathInterface $storagePath,
     private readonly aculta_H5PLibraryCacheInvalidator $cacheInvalidator,
     private readonly aculta_H5PDrupal $framework,
+    private readonly ?IngestionLimits $ingestionLimits = NULL,
   ) {}
 
   /**
@@ -74,6 +76,12 @@ final class aculta_H5PLibraryPackageInstaller {
       throw new \UnexpectedValueException('O pacote H5P não é um arquivo ZIP válido.');
     }
     try {
+      // Bound entries, decompressed size and ratio before any extraction.
+      $limits = $this->ingestionLimits ?? IngestionLimits::defaults();
+      (new aculta_H5PArchiveResourceLimits(
+        maxEntryBytes: $limits->bytes(IngestionLimits::H5P_MAX_ENTRY_MB),
+        maxTotalBytes: $limits->bytes(IngestionLimits::H5P_MAX_TOTAL_MB),
+      ))->assertWithinLimits($zip);
       for ($index = 0; $index < $zip->numFiles; $index++) {
         $entry = $zip->statIndex($index);
         $name = $entry['name'] ?? NULL;

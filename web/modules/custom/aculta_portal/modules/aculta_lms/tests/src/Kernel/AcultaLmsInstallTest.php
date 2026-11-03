@@ -6,8 +6,8 @@ namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Contract\PaymentOperationsInterface;
-use Drupal\aculta_studio\Controller\GanjalabController;
 use Drupal\aculta_lms\CourseOrderEnrollmentManagerInterface;
+use Drupal\aculta_lms\Access\AnswerAttachmentAccessCheck;
 use Drupal\aculta_lms\Controller\LearningDashboardController;
 use Drupal\aculta_lms\Hook\EnrollmentFormHooks;
 use Drupal\aculta_lms\Hook\CourseFirstAdminMenuHooks;
@@ -15,6 +15,13 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\aculta_lms\Event\CourseCompletionPublisherInterface;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
+use Drupal\aculta_lms\Learning\CourseActivityReaderInterface;
+use Drupal\aculta_lms\Learning\CourseActivity;
+use Drupal\aculta_lms\Plugin\ActivityAnswer\ObjectiveAnswerPluginResolver;
+use Drupal\aculta_lms\Plugin\ActivityAnswer\SelectAnswerPlugin;
+use Drupal\aculta_lms\Learning\CourseAnswerReaderInterface;
+use Drupal\aculta_lms\Learning\AnswerPayload;
+use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Core\Session\UserSession;
 use Drupal\user\UserInterface;
@@ -41,8 +48,9 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system', 'user', 'file', 'image', 'media', 'options', 'entity_print', 'domain',
-    'entity_usage', 'aculta_image',
+    'system', 'user', 'file', 'image', 'media', 'field', 'comment', 'options', 'entity_print', 'domain',
+    'entity_usage', 'key', 'aculta_image', 'aculta_file_uploader',
+    'text', 'views', 'group', 'flexible_permissions',
   ];
 
   /**
@@ -58,6 +66,12 @@ final class AcultaLmsInstallTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->installConfig(['field', 'comment']);
+    $this->installEntitySchema('user');
+    $this->installEntitySchema('comment');
+    $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installEntitySchema('group');
+    $this->installEntitySchema('group_relationship');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
@@ -70,6 +84,9 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertTrue($this->container->get('module_installer')->install(['aculta_lms'], FALSE));
     $container = \Drupal::getContainer();
     $this->assertTrue($container->get('module_handler')->moduleExists('aculta_lms'));
+    foreach (['lms', 'lms_classes', 'lms_answer_plugins', 'lms_answer_comments'] as $contrib_module) {
+      $this->assertFalse($container->get('module_handler')->moduleExists($contrib_module));
+    }
     $this->assertInstanceOf(
       PaymentOperationsInterface::class,
       $container->get('aculta_portal.payment_provider.payment_operations'),
@@ -77,10 +94,23 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertTrue($container->get('module_handler')->hasImplementations('form_lms_answer_form_alter', ['aculta_lms']));
     $this->assertTrue($container->get('module_handler')->hasImplementations('commerce_order_insert', ['aculta_lms']));
     $this->assertTrue($container->get('module_handler')->hasImplementations('commerce_order_update', ['aculta_lms']));
+    $attachmentRoute = $container->get('router.route_provider')->getRouteByName('aculta_lms.answer_attachment_download');
+    $this->assertSame('/resposta/{answer}/arquivo', $attachmentRoute->getPath());
+    $this->assertSame('entity:aculta_lms_answer', $attachmentRoute->getOption('parameters')['answer']['type']);
+    $this->assertInstanceOf(
+      AnswerAttachmentAccessCheck::class,
+      $container->get('aculta_lms.answer_attachment_access'),
+    );
     $this->assertInstanceOf(
       CourseCompletionPublisherInterface::class,
       $container->get('aculta_lms.course_completion_publisher'),
     );
+    $this->assertInstanceOf(CourseLessonReaderInterface::class, $container->get(CourseLessonReaderInterface::class));
+    $this->assertInstanceOf(CourseActivityReaderInterface::class, $container->get(CourseActivityReaderInterface::class));
+    $objectiveAnswers = $container->get(ObjectiveAnswerPluginResolver::class);
+    $this->assertInstanceOf(ObjectiveAnswerPluginResolver::class, $objectiveAnswers);
+    $this->assertInstanceOf(SelectAnswerPlugin::class, $objectiveAnswers->forActivity(new CourseActivity(10, 20, 'select', TRUE)));
+    $this->assertInstanceOf(CourseAnswerReaderInterface::class, $container->get(CourseAnswerReaderInterface::class));
     $this->assertInstanceOf(
       CourseOrderEnrollmentManagerInterface::class,
       $container->get('aculta_lms.course_order_enrollment'),
@@ -88,10 +118,6 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $checkoutSettings = $container->get('aculta_portal.checkout_settings');
     $this->assertInstanceOf(CheckoutSettings::class, $checkoutSettings);
     $this->assertSame(CheckoutSettings::LEGACY_LMS_ORDER_TYPE, $checkoutSettings->lmsOrderType());
-    $this->assertInstanceOf(
-      GanjalabController::class,
-      $container->get('aculta_studio.ganjalab_controller'),
-    );
     $this->assertInstanceOf(EnrollmentFormHooks::class, $container->get(EnrollmentFormHooks::class));
     $route = $container->get('router.route_provider')->getRouteByName('aculta_lms.class_activity_deadline');
     $this->assertSame('/painel-administrativo/lms/curso/{course}/turma/{group}/atividade/{activity}/prazo', $route->getPath());
@@ -115,9 +141,142 @@ final class AcultaLmsInstallTest extends KernelTestBase {
       LearningDashboardController::class,
       $container->get('aculta_lms.learning_dashboard_controller'),
     );
-    $this->assertFalse($container->get('config.storage')->exists('aculta_lms.settings'));
+    $this->assertTrue($container->get('config.storage')->exists('aculta_lms.settings'));
     $this->assertFalse($container->get('module_handler')->hasImplementations('install', ['aculta_lms']));
     $this->assertFalse($container->get('module_handler')->hasImplementations('schema', ['aculta_lms']));
+  }
+
+  /**
+   * Tests the P2 entity update installs all schemas and is idempotent.
+   */
+  public function testP2LearningEntityUpdateIsIdempotent(): void {
+    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    aculta_lms_update_10005();
+    aculta_lms_update_10005();
+    aculta_lms_update_10006();
+    aculta_lms_update_10006();
+    require_once DRUPAL_ROOT . '/' . $this->container->get('extension.list.module')->getPath('aculta_lms') . '/aculta_lms.install';
+    $schema = $this->container->get('database')->schema();
+    $update_manager = $this->container->get('entity.definition_update_manager');
+    $answer_fields = $this->container->get('entity_field.manager')->getBaseFieldDefinitions('aculta_lms_answer');
+    $update_manager->uninstallFieldStorageDefinition($answer_fields['answer_data']);
+    self::assertFalse($schema->fieldExists('aculta_lms_answer', 'answer_data'));
+    aculta_lms_update_10008();
+    aculta_lms_update_10008();
+    self::assertTrue($schema->fieldExists('aculta_lms_answer', 'answer_data'));
+    $entity_type_manager = $this->container->get('entity_type.manager');
+    $entity_type_manager->getStorage('field_config')->load('aculta_lms_answer.aculta_lms_answer.comments')->delete();
+    aculta_lms_update_10009();
+    aculta_lms_update_10009();
+    self::assertNotNull($entity_type_manager->getStorage('field_storage_config')->load('aculta_lms_answer.comments'));
+    self::assertNotNull($entity_type_manager->getStorage('field_config')->load('aculta_lms_answer.aculta_lms_answer.comments'));
+    self::assertNotNull($entity_type_manager->getStorage('comment_type')->load('aculta_lms_answer_comment'));
+    self::assertNotNull($entity_type_manager->getStorage('field_config')->load('comment.aculta_lms_answer_comment.comment_body'));
+    $entity_type_manager->getStorage('field_config')->load('comment.aculta_lms_answer_comment.comment_body')->delete();
+    aculta_lms_update_10010();
+    aculta_lms_update_10010();
+    self::assertSame('2d34480d-1f59-4d31-86c2-829ef03786ac', $entity_type_manager->getStorage('field_config')->load('comment.aculta_lms_answer_comment.comment_body')->uuid());
+
+    $archive_fields = $this->container->get('entity_field.manager')->getBaseFieldDefinitions('aculta_lms_attempt_archive');
+    $update_manager->uninstallFieldStorageDefinition($archive_fields['score_precise']);
+    self::assertFalse($schema->fieldExists('aculta_lms_attempt_archive', 'score_precise'));
+    aculta_lms_update_10011();
+    aculta_lms_update_10011();
+    self::assertTrue($schema->fieldExists('aculta_lms_attempt_archive', 'score_precise'));
+
+    $relationship_config = $this->container->get('config.factory')
+      ->getEditable('group.relationship_type.lms_course-lms_classes');
+    $relationship_config->set('dependencies', [
+      'config' => ['group.type.lms_course'],
+      'module' => ['lms', 'lms_classes'],
+    ])->save(TRUE);
+    aculta_lms_update_10012();
+    aculta_lms_update_10012();
+    self::assertSame(['aculta_lms'], $this->container->get('config.factory')
+      ->get('group.relationship_type.lms_course-lms_classes')->get('dependencies.module'));
+    self::assertSame(['group.type.lms_course'], $this->container->get('config.factory')
+      ->get('group.relationship_type.lms_course-lms_classes')->get('dependencies.config'));
+
+    foreach (['aculta_lms_lesson', 'aculta_lms_activity', 'aculta_lms_answer', 'aculta_lms_progress'] as $entity_type_id) {
+      $this->assertTrue($entity_type_manager->hasDefinition($entity_type_id));
+      $this->assertTrue($schema->tableExists($entity_type_id));
+      $handler = $entity_type_manager->getAccessControlHandler($entity_type_id);
+      $entity = $entity_type_manager->getStorage($entity_type_id)->create();
+      $this->assertFalse($handler->access($entity, 'view', NULL));
+    }
+    $this->assertTrue($schema->indexExists('aculta_lms_lesson', 'course_weight'));
+    $this->assertTrue($schema->indexExists('aculta_lms_activity', 'lesson_weight'));
+    $this->assertTrue($schema->indexExists('aculta_lms_answer', 'activity_uid'));
+    $this->assertTrue($schema->indexExists('aculta_lms_progress', 'course_uid'));
+    $progress_indexes = $this->container->get('database')->query('SHOW INDEX FROM {aculta_lms_progress}')->fetchAllAssoc('Key_name');
+    $this->assertSame('0', (string) $progress_indexes['course_uid']->Non_unique);
+    $answer_create = $this->container->get('database')->query('SHOW CREATE TABLE {aculta_lms_answer}')->fetchField(1);
+    $progress_create = $this->container->get('database')->query('SHOW CREATE TABLE {aculta_lms_progress}')->fetchField(1);
+    $this->assertStringContainsString('varchar(16) NOT NULL', $answer_create);
+    $this->assertStringContainsString('varchar(32) NOT NULL', $progress_create);
+    $this->assertStringContainsString('activity_id" int(11) NOT NULL', $answer_create);
+    $this->assertStringContainsString('answer_data', $answer_create);
+
+    $answer_storage = $entity_type_manager->getStorage('aculta_lms_answer');
+    $attempt = $answer_storage->create([
+      'activity_id' => 17,
+      'uid' => 23,
+      'state' => 'submitted',
+      'answer_data' => (new AnswerPayload(['answer' => 'primeira tentativa']))->toJson(),
+    ]);
+    $attempt->save();
+
+    $comment = $this->container->get('entity_type.manager')->getStorage('comment')->create([
+      'entity_type' => 'aculta_lms_answer',
+      'entity_id' => $attempt->id(),
+      'field_name' => 'comments',
+      'comment_type' => 'aculta_lms_answer_comment',
+      'comment_body' => 'Feedback do educador',
+      'status' => 1,
+    ]);
+    $comment->save();
+    self::assertSame('aculta_lms_answer', $comment->getCommentedEntity()->getEntityTypeId());
+
+    $graded = $answer_storage->load($attempt->id());
+    $graded->set('state', 'graded');
+    $graded->set('score', 0);
+    $graded->save();
+    self::assertSame(['answer' => 'primeira tentativa'], $graded->getAnswerPayload()->toArray());
+
+    $graded->setAnswerPayload(new AnswerPayload(['answer' => 'alteração proibida']));
+    $this->expectException(EntityStorageException::class);
+    $this->expectExceptionMessage('Tentativa enviada é imutável; crie outra resposta para uma nova tentativa.');
+    $graded->save();
+  }
+
+  /**
+   * Tests class permission config migration is idempotent and preserves maps.
+   */
+  public function testClassPermissionConfigUpdateIsIdempotent(): void {
+    require_once DRUPAL_ROOT . '/' . $this->container->get('extension.list.module')->getPath('aculta_lms') . '/aculta_lms.install';
+    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $factory = $this->container->get('config.factory');
+    // Seed the former contrib config as raw storage: its schema is intentionally
+    // unavailable in this kernel because no contrib LMS module is enabled.
+    $this->container->get('config.storage')->write('lms_classes.settings', [
+      'class_permission_mappings' => ['view group_node:aculta_lms_topic entity' => 'grade students'],
+      'course_permission_mappings' => ['take course' => 'add students'],
+    ]);
+    $factory->getEditable('aculta_lms.settings')->delete();
+
+    aculta_lms_update_10007();
+    $expected = [
+      'class_permission_mappings' => ['view group_node:aculta_lms_topic entity' => 'grade students'],
+      'course_permission_mappings' => ['take course' => 'add students'],
+    ];
+    $settings = $factory->get('aculta_lms.settings');
+    $this->assertSame($expected['class_permission_mappings'], $settings->get('class_permission_mappings'));
+    $this->assertSame($expected['course_permission_mappings'], $settings->get('course_permission_mappings'));
+
+    aculta_lms_update_10007();
+    $settings = $factory->get('aculta_lms.settings');
+    $this->assertSame($expected['class_permission_mappings'], $settings->get('class_permission_mappings'));
+    $this->assertSame($expected['course_permission_mappings'], $settings->get('course_permission_mappings'));
   }
 
   /**
@@ -161,7 +320,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
       'uid' => (int) $administratorEntity->id(),
       'permissions' => ['administer lms'],
     ]);
-    $this->assertTrue($archive->access('view', $administrator));
+    $this->assertFalse($archive->access('view', $administrator), 'The former contrib administrator permission does not bypass course membership.');
     $this->assertFalse($archive->access('update', $administrator));
     $this->assertSame('{"answer":"texto anterior"}', $storage->load($archive->id())->get('answer_data')->value);
 

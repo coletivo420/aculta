@@ -1,0 +1,72 @@
+services:
+  aculta_file_uploader.consumer_policy:
+    class: Drupal\aculta_file_uploader\ConsumerUploadPolicy
+    arguments: ['@config.factory', '@aculta_file_uploader.upload_policy', '@aculta_file_uploader.mime_verifier', '@file_system', '@aculta_file_uploader.image_dimension_reader']
+
+  aculta_file_uploader.upload_policy:
+    class: Drupal\aculta_file_uploader\UploadPolicy
+
+  aculta_file_uploader.mime_verifier:
+    class: Drupal\aculta_file_uploader\MimeTypeVerifier
+
+  aculta_file_uploader.destination_resolver:
+    class: Drupal\aculta_file_uploader\DestinationResolver
+    arguments: ['@token']
+
+  aculta_file_uploader.ingestor:
+    class: Drupal\aculta_file_uploader\FileUploadIngestor
+    arguments:
+      - '@aculta_file_uploader.upload_policy'
+      - '@aculta_file_uploader.mime_verifier'
+      - '@aculta_file_uploader.destination_resolver'
+      - '@file.upload_handler'
+  aculta_file_uploader.generated_file:
+    class: Drupal\aculta_file_uploader\GeneratedImageFileManager
+    arguments: ['@entity_type.manager', '@file_system', '@file.mime_type.guesser', '@aculta_file_uploader.image_dimension_reader', '@datetime.time']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_file_uploader.audit:
+    class: Drupal\aculta_file_uploader\Audit\ImageAudit
+    arguments: ['@database', '@?media_duplicates.checksum_statistics', '@file_system']
+    tags:
+      - { name: aculta_portal.helper }
+
+  aculta_file_uploader.cleanup.logger:
+    class: Drupal\Core\Logger\LoggerChannelInterface
+    factory: ['@logger.factory', 'get']
+    arguments: ['aculta_portal_cleanup']
+  aculta_file_uploader.file_reference_inspector:
+    class: Drupal\aculta_file_uploader\Cleanup\FileReferenceInspector
+    arguments: ['@entity_type.manager', '@entity_field.manager', '@database', '@aculta_file_uploader.cleanup.logger']
+  aculta_file_uploader.unused_file_cleaner:
+    class: Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner
+    arguments: ['@file.usage', '@database', '@aculta_file_uploader.file_reference_inspector', '@?aculta_file_uploader.deletion_owner', '@aculta_file_uploader.image_dimension_reader', '@aculta_file_uploader.cleanup.logger']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_file_uploader.cleanup:
+    class: Drupal\aculta_file_uploader\Cleanup\ImageCleanup
+    arguments: ['@database', '@entity_type.manager', '@queue', '@config.factory', '@datetime.time', '@?aculta_file_uploader.unused_file_cleaner']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_file_uploader.quarantine:
+    class: Drupal\aculta_file_uploader\Quarantine\ImageQuarantine
+    arguments: ['@database', '@file.repository', '@file_system', '@?aculta_file_uploader.unused_file_cleaner', '@datetime.time', '@entity_type.manager']
+    tags:
+      - { name: aculta_portal.helper }
+  aculta_file_uploader.recent_uploads:
+    class: Drupal\aculta_file_uploader\RecentUploads
+    arguments: ['@entity_type.manager']
+  aculta_file_uploader.focal_point_recorder:
+    class: Drupal\aculta_file_uploader\FocalPointRecorder
+    arguments: ['@?image_widget_crop.manager', '@entity_type.manager', '@aculta_file_uploader.image_dimension_reader']
+
+  aculta_file_uploader.ingestion_limits_reader:
+    class: Drupal\aculta_file_uploader\IngestionLimitsReader
+    arguments: ['@config.factory']
+
+  aculta_file_uploader.ingestion_limits:
+    class: Drupal\aculta_file_uploader\IngestionLimits
+    factory: ['@aculta_file_uploader.ingestion_limits_reader', 'get']
+  aculta_file_uploader.image_dimension_reader:
+    class: Drupal\aculta_file_uploader\ImageDimensionReader
+    arguments: ['@file_system', '@?aculta_image.inspector']

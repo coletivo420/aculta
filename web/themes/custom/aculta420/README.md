@@ -15,14 +15,14 @@ runner genérico ou `CULTURAS_AXE=1` no gate específico; consulte
 `incomplete` exigem revisão; axe-core não comprova conformidade WCAG 2.2 AA nem
 substitui teclado, zoom, inspeção visual, leitor de tela ou avaliação contextual.
 
-## Meu Perfil — SDCs experimentais 0.7.0-dev.2
+## Registro histórico — SDCs de perfil (estado em dev.2)
 
 Quatro SDCs experimentais para o editor privado (`profile-editor`,
 `profile-identity`, `profile-bio`, `profile-social`) foram criados
-com schema, Twig, CSS e duas stories por componente. Esses componentes agora são consumidos pela tela `/studio/perfil`
-no Studio dev.21, por render arrays com slots do Core. A versão do
-tema permanece a mesma; gates de descoberta, cache, acesso e
-Firefox ESR/X11 seguem pendentes. O teste Kernel de descoberta,
+com schema, Twig, CSS e duas stories por componente. Naquele registro, os componentes eram consumidos pela tela `/studio/perfil`
+no Studio dev.21 por render arrays com slots do Core. O manifesto atual do
+ACULTA420 declara `0.7.0-dev.26`; esta seção não descreve a versão atual nem
+confirma que `/studio/perfil` permaneça uma rota vigente. O teste Kernel de descoberta,
 composição e escape dos quatro SDCs foi adicionado, mas ainda
 não foi executado. A versão 0.7.0-dev.2 não equivale à homologação.
 

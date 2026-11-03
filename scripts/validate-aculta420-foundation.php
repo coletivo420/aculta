@@ -17,10 +17,13 @@ use Symfony\Component\Yaml\Yaml;
 
 $root = dirname(__DIR__);
 
-// The gate reads Runtime through Drupal. When called directly, it delegates
-// to Drush and forwards its output and exit code.
-if (!class_exists(\Drupal::class)) {
-  $drush = $root . '/vendor/drush/drush/drush.php';
+// The gate reads Runtime through Drupal. Composer may autoload Drupal without
+// bootstrapping it, so direct CLI invocation must also check the container.
+// ACULTA_DRUSH_ROOT lets a worktree use the authorized Runtime checkout's Drush
+// while this script still inspects files in its own checkout.
+if (!class_exists(\Drupal::class) || !\Drupal::hasContainer()) {
+  $drushRoot = getenv('ACULTA_DRUSH_ROOT') ?: $root;
+  $drush = $drushRoot . '/vendor/drush/drush/drush.php';
   if (!is_file($drush)) {
     fwrite(STDERR, "ACULTA420 FOUNDATION FAIL: Drush não instalado (vendor/drush/drush/drush.php ausente).\n");
     exit(1);

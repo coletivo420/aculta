@@ -83,7 +83,7 @@ final class WikiController extends ControllerBase {
       'browse' => [
         '#type' => 'link',
         '#title' => $this->t('Ver todos os verbetes'),
-        '#url' => Url::fromUserInput('/wiki/verbetes'),
+        '#url' => Url::fromUserInput('/verbetes'),
       ],
       'collaboration' => [
         '#type' => 'link',

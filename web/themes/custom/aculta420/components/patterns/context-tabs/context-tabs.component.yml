@@ -1,6 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
 name: Context tabs
-status: experimental
+status: stable
 group: Patterns
 description: 'Progressively enhanced navigation between real routes under the multidomain shell. Links and access come from the provider.'
 props:

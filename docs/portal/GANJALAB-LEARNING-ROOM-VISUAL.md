@@ -12,7 +12,7 @@
 Criar um espaço mobile-first para estudar, ler, assistir, fazer atividades, consultar materiais e participar das discussões existentes nos Comments autorizados. Prioridade: **continuar de onde parou** e **completar a tarefa atual**, sem aparência de administração. O nome técnico **`aculta_lms` fica preservado**; Drupal LMS, Group e seus providers são fontes canônicas de matrículas, progresso, atividades, prazos, notas e autorizações. A experiência pública é ACULTA Studio Ganjalab; ACULTA420 detém o visual. Não implementar outro LMS, módulo, gradebook ou storage.
 
 ## Modelo de navegação
-Dashboard `/studio/ganjalab` → Meu curso autorizado → Sala (atividade/aula permitida) → anterior/próxima **permitida** → retorno ao curso. URLs reais e acessíveis sem JS vêm das rotas/providers nativos; não inventar neste planejamento novos paths para aula.
+Dashboard `/ganjalab` (propósito `courses`) → Meu curso autorizado → Sala (atividade/aula permitida) → anterior/próxima **permitida** → retorno ao curso. URLs reais e acessíveis sem JS vêm das rotas/providers nativos; não inventar neste planejamento novos paths para aula.
 
 - **Mobile 320–767px:** cabeçalho curto com voltar ao curso, título truncado de forma acessível; progresso real contextual; botão “Conteúdo do curso” revela índice (accordion/offcanvas acessível); aula em **uma coluna**; guias contextuais “Aula”, “Materiais” e “Discussão” quando há conteúdo; rodapé com anterior/próxima, sem botão falso de conclusão.
 - **Tablet 768–1023px:** índice recolhível, reader amplo, ações ao alcance.

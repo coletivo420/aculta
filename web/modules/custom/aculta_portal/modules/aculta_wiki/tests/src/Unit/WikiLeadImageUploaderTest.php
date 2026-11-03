@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_wiki\Unit;
 
-use Drupal\aculta_image\ImageInspector;
-use Drupal\aculta_image\UploadPolicy as ImageUploadPolicy;
-use Drupal\aculta_portal\Upload\UserUploadPolicy;
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\MimeTypeVerifier;
+use Drupal\aculta_file_uploader\UploadPolicy;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -19,7 +19,7 @@ use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Image\ImageFactory;
+use Drupal\aculta_file_uploader\ImageDimensionReader;
 use Drupal\Core\Image\ImageInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\file\FileInterface;
@@ -340,8 +340,8 @@ final class WikiLeadImageUploaderTest extends UnitTestCase {
     $image->method('isValid')->willReturn(TRUE);
     $image->method('getWidth')->willReturn(800);
     $image->method('getHeight')->willReturn(600);
-    $image_factory = $this->createMock(ImageFactory::class);
-    $image_factory->method('get')->willReturn($image);
+    $image_factory = $this->createMock(ImageDimensionReader::class);
+    $image_factory->method('dimensions')->willReturn(['width' => 1, 'height' => 1]);
 
     $config = $this->createMock(Config::class);
     $config->method('get')->willReturnCallback(static fn (string $key) => match ($key) {
@@ -350,8 +350,13 @@ final class WikiLeadImageUploaderTest extends UnitTestCase {
       default => NULL,
     });
     $config_factory = $this->createMock(ConfigFactoryInterface::class);
-    $config_factory->method('get')->with('aculta_portal.user_upload')->willReturn($config);
-    $policy = new UserUploadPolicy($config_factory, new ImageUploadPolicy(), new ImageInspector($image_factory));
+    $config_factory->method('get')->with('aculta_file_uploader.settings')->willReturn($config);
+    $png = tempnam(sys_get_temp_dir(), 'aculta_wiki_');
+    file_put_contents($png, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='));
+    register_shutdown_function(static fn () => @unlink($png));
+    $policy_files = $this->createMock(FileSystemInterface::class);
+    $policy_files->method('realpath')->willReturn($png);
+    $policy = new ConsumerUploadPolicy($config_factory, new UploadPolicy(), new MimeTypeVerifier(), $policy_files, $image_factory);
 
     $current_user = $this->createMock(AccountProxyInterface::class);
     $current_user->method('id')->willReturn(7);

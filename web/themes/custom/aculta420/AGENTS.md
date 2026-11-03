@@ -96,6 +96,21 @@ escopada ao Studio.
   navegações simultâneas quando aumentarem a produtividade. Não criar área,
   ação ou estado que o módulo proprietário ainda não oferece.
 
+Os gates `validate-aculta420-foundation.php` e
+`validate-aculta420-shell-contract.php` consultam serviços Drupal em modo
+somente leitura. Em uma worktree sem `settings.php`/segredos locais, informe o
+checkout autorizado que contém a conexão de Runtime; o script continua lendo
+os arquivos do checkout atual:
+
+```sh
+ACULTA_DRUSH_ROOT=/caminho/do/checkout-runtime php scripts/validate-aculta420-foundation.php
+ACULTA_DRUSH_ROOT=/caminho/do/checkout-runtime php scripts/validate-aculta420-shell-contract.php
+```
+
+No servidor de desenvolvimento, o caminho é
+`/home/piradopirata/projetos/aculta`. Não use estes gates para executar
+`updatedb`, importação de configuração ou qualquer escrita no Runtime.
+
 Referências normativas e de implementação: [Bootstrap 5.3 — breakpoints e
 abordagem mobile-first](https://getbootstrap.com/docs/5.3/layout/breakpoints/),
 [Bootstrap 5.3 — grid](https://getbootstrap.com/docs/5.3/layout/grid/) e [W3C —

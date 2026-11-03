@@ -1,0 +1,22 @@
+uuid: 2d34480d-1f59-4d31-86c2-829ef03786ac
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - comment.type.aculta_lms_answer_comment
+    - field.storage.comment.comment_body
+  module:
+    - text
+id: comment.aculta_lms_answer_comment.comment_body
+field_name: comment_body
+entity_type: comment
+bundle: aculta_lms_answer_comment
+label: Comentário
+description: ''
+required: false
+translatable: true
+default_value: { }
+default_value_callback: ''
+settings:
+  allowed_formats: { }
+field_type: text_long

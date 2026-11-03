@@ -8,6 +8,7 @@ use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Occurrence\EventDateOccurrences;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -61,7 +62,7 @@ final class AgendaEntriesProvider {
     $saida = [];
     foreach ($this->turmasDoUsuario($account) as $turma) {
       $curso = $this->prazos->courseForClass($turma);
-      if ($curso === NULL || !$curso->isPublished() || !$curso->takeAccess($account)->isAllowed()) {
+      if ($curso === NULL || !$curso->isPublished() || !$curso->hasPermission('take course', $account)) {
         continue;
       }
 
@@ -74,9 +75,17 @@ final class AgendaEntriesProvider {
         if ($inicio < $de || $inicio > $ate) {
           continue;
         }
+        $atividade = $prazo->getEntity();
+        $tipoAtividade = $atividade instanceof ContentEntityInterface && $atividade->hasField('type')
+          ? (string) $atividade->get('type')->value
+          : '';
+        $tituloAtividade = $atividade?->label();
+        if (!is_string($tituloAtividade) || $tituloAtividade === '') {
+          $tituloAtividade = $tipoAtividade === '' ? 'atividade' : ucfirst(str_replace('_', ' ', $tipoAtividade));
+        }
         $saida[] = [
           'tipo' => 'prazo',
-          'titulo' => 'Prazo: ' . (string) $prazo->getEntity()?->label(),
+          'titulo' => 'Prazo: ' . $tituloAtividade,
           'inicio' => $inicio,
           'fim' => $inicio,
           'cancelada' => FALSE,

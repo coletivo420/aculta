@@ -5,12 +5,14 @@ module:
   aculta_commerce: 0
   aculta_commerce_melhorenvio: 0
   aculta_content_admin: 0
+  aculta_contributions: 0
   aculta_document_viewer: 0
   aculta_donation: 0
   aculta_editor: 0
   aculta_events: 0
   aculta_events_openstreetmap: 0
   aculta_faq: 0
+  aculta_file_uploader: 0
   aculta_forum: 0
   aculta_forum_lms: 0
   aculta_forum_wiki: 0
@@ -19,11 +21,10 @@ module:
   aculta_id_cpf: 0
   aculta_image: 0
   aculta_index: 0
-  aculta_links: 0
+  aculta_learning_contracts: 0
   aculta_lms: 0
   aculta_lms_agenda: 0
   aculta_lms_h5p: 0
-  aculta_lms_messenger: 0
   aculta_lms_resources: 0
   aculta_magazine: 0
   aculta_mail_confirmer: 0
@@ -35,6 +36,7 @@ module:
   aculta_messenger: 0
   aculta_pagamentos_mercadopago: 0
   aculta_patcher: 0
+  aculta_paths: 0
   aculta_portal: 0
   aculta_portal_cep: 0
   aculta_portal_sitemap: 0
@@ -133,11 +135,6 @@ module:
   layout_builder: 0
   layout_discovery: 0
   link: 0
-  lms: 0
-  lms_answer_comments: 0
-  lms_answer_plugins: 0
-  lms_classes: 0
-  lms_file_upload: 0
   locale: 0
   login_emailusername: 0
   mcp_server: 0
@@ -240,6 +237,7 @@ module:
   views: 10
   domain_source: 30
   standard: 1000
+  aculta_linkweed: 0
 theme:
   claro: 0
   stable9: 0

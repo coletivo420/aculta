@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_forum\Functional;
 
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Drupal\taxonomy\Entity\Term;
 use Drupal\aculta_forum\Attachment\ForumAttachmentCleanup;
 use Drupal\Core\Url;
 use Drupal\domain\Entity\Domain;
@@ -65,7 +67,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
     $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')
       ->loadByProperties(['vid' => 'aculta_forum_categories']);
     if ($terms === []) {
-      \Drupal\taxonomy\Entity\Term::create([
+      Term::create([
         'vid' => 'aculta_forum_categories',
         'name' => 'Categoria funcional',
       ])->save();
@@ -188,7 +190,7 @@ final class ForumRoutesFunctionalTest extends BrowserTestBase {
     $this->container->get('module_installer')->uninstall(['aculta_forum']);
     $this->container->get('router.builder')->rebuild();
     self::assertFalse($this->container->get('config.storage')->exists('aculta_forum.settings'));
-    $this->expectException(\Symfony\Component\Routing\Exception\RouteNotFoundException::class);
+    $this->expectException(RouteNotFoundException::class);
     $this->container->get('router.route_provider')->getRouteByName('aculta_forum.admin');
   }
 

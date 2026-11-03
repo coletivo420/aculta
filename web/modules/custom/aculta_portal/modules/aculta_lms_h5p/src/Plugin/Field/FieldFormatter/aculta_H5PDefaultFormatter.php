@@ -15,7 +15,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PLibraryIdentifier;
 use Drupal\aculta_lms_h5p\Entity\aculta_H5PContent;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\aculta_document_viewer\Pdf\PdfViewerBuilderInterface;
 use Drupal\media\MediaInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -96,8 +96,10 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
     $element = [];
 
     $course = $items->getEntity();
-    if ($course instanceof CourseInterface) {
-      $takeAccess = $course->takeAccess($this->currentUser);
+    if ($course instanceof GroupInterface) {
+      $takeAccess = AccessResult::allowedIf($course->hasPermission('take course', $this->currentUser))
+        ->cachePerUser()
+        ->addCacheContexts(['user.permissions', 'user.group_permissions']);
       $updateAccess = $course->access('update', $this->currentUser, TRUE);
       $fieldAccess = AccessResult::allowedIf($takeAccess->isAllowed() || $updateAccess->isAllowed())
         ->addCacheableDependency($course)
@@ -122,7 +124,7 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
 
       // Grab generic integration settings.
       $course = $item->getEntity();
-      $h5p_integration = aculta_H5PDrupal::getGenericaculta_H5PIntegrationSettings($course instanceof CourseInterface ? $course : NULL);
+      $h5p_integration = aculta_H5PDrupal::getGenericaculta_H5PIntegrationSettings($course instanceof GroupInterface ? $course : NULL);
       $core = aculta_H5PDrupal::getInstance('core');
       $preloaded_dependencies = $core->loadContentDependencies($h5p_content->id(), 'preloaded');
 
@@ -133,7 +135,7 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
       $dependency_assets = $core->getDependenciesFiles($preloaded_dependencies, 'h5p-library-assets');
       $content_settings['scripts'] = $core->getAssetsUrls($dependency_assets['scripts']);
       $content_settings['styles'] = $core->getAssetsUrls($dependency_assets['styles']);
-      if ($course instanceof CourseInterface) {
+      if ($course instanceof GroupInterface) {
         $content_settings['contentUrl'] = base_path() . 'h5p-content/' . $course->id() . '/' . $h5p_content->id();
       }
       $content_settings['exportUrl'] = '';
@@ -223,7 +225,7 @@ class aculta_H5PDefaultFormatter extends FormatterBase {
       $cacheability->applyTo($element[$delta]);
 
       if (
-        $course instanceof CourseInterface
+        $course instanceof GroupInterface
         && $h5p_content->hasField('course_documents')
       ) {
         $documents = [];

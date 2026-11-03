@@ -20,12 +20,15 @@ final class CalendarQuery {
    *   Referência para o horizonte de série aberta.
    * @param array<string, int> $filtros
    *   Filtros do provedor, por exemplo tipo_local; suas chaves variam.
+   * @param string[] $provedores
+   *   IDs opcionais de provedores a consultar. Vazio mantém todos.
    */
   public function __construct(
     public readonly \DateTimeImmutable $de,
     public readonly \DateTimeImmutable $ate,
     public readonly \DateTimeImmutable $agora,
     public readonly array $filtros = [],
+    public readonly array $provedores = [],
   ) {}
 
 }

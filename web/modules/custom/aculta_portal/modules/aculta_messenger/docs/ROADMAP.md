@@ -2,6 +2,19 @@
 
 ## Evolução recente
 
+- **Integração de Events Contributions (2026-11-01, preferências atualizadas):** Messenger persiste
+  avisos privados de resultado de Organização/Local por autor, revisão e outcome;
+  valida revisão, owner, estado e acesso no purpose `eventos` ao listar/abrir.
+  O inbox permanece obrigatório; o membro escolhe somente no site, e-mail
+  imediato ou digest diário (padrão somente no site). E-mail genérico revalida
+  conta, confirmação, preferência e acesso. Update 10017 adiciona campos de
+  entrega/digest e aguarda aplicação no Runtime; 10015–10016 já foram aplicados.
+  Unit Messenger completo passou 402 testes / 4.373 assertions, incluindo as
+  preferências e o cancelamento por opt-out do worker;
+  Kernel Events/Contributions 27 testes / 658 assertions, com 24 depreciações
+  upstream. Smoke autenticado e teste específico de renderização do inbox
+  permanecem pendentes.
+
 - **Dev.396 — logs operacionais sem texto potencialmente pessoal:** o Mailer não copia mais mensagens de exceção SMTP arbitrárias para o logger, e o monitor IMAP guarda/exibe apenas a classe da exceção no estado operacional. Novas falhas persistem somente classe/código no Mail Log e em alertas; registros históricos anteriores não foram reescritos e podem reter texto bruto até sua retenção normal; a tela mascara estado IMAP legado, substituído pelo cron. `MailMonitorTest` **6/18**, `MailSettingsKernelTest` **2/5**, Unit Mailer **162/343** e Kernel Mailer **46/214 PASS**. PHPCS sem erros (avisos de linhas longas preexistentes), gate Drupal 11+ **1.155 checks** e índice PASS. SMTP/Runtime não executados.
 
 - **Dev.395 — propriedade segura das leases:** teste com SIGSTOP após o aceite do Mailer confirmou que `lock.persistent` compartilha um proprietário entre requisições e permitia renovação por um worker obsoleto. Os locks temporários do Messenger e Mailer agora usam `lock`, com proprietário por processo; `lock.persistent` fica reservado a estados que realmente atravessam requisições. O Kernel usa `DatabaseLockBackend` real nos dois boots. O teste expira/substitui a lease enquanto o worker está suspenso, prova que o worker antigo não confirma o manifesto e reconcilia depois sem segundo envio. Focal **6/133 PASS**; Kernels Messenger + Mailer **101/1.421 PASS** no banco dedicado, dez depreciações upstream e quatro notices PHPUnit. Runtime e SMTP externo não executados.

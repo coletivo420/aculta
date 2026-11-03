@@ -21,6 +21,7 @@ services:
 
   aculta_magazine.content_index_provider:
     class: Drupal\aculta_magazine\ContentIndex\MagazineContentIndexProvider
+    arguments: ['@entity_usage.usage', '@entity_type.manager']
     tags:
       - { name: aculta_index.provider }
 
@@ -31,3 +32,7 @@ services:
   aculta_magazine.post_presentation:
     class: Drupal\aculta_magazine\Presentation\PostPresentation
     arguments: ['@date.formatter', '@entity_type.manager', '@aculta_portal.domain_purpose']
+
+  Drupal\aculta_magazine\Hook\RevistaCoverStudioHooks:
+    class: Drupal\aculta_magazine\Hook\RevistaCoverStudioHooks
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_file_uploader.recent_uploads', '@aculta_file_uploader.consumer_policy']

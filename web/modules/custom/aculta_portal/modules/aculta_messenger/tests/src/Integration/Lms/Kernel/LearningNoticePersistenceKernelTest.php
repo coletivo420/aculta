@@ -6,13 +6,13 @@ namespace Drupal\Tests\aculta_messenger\Integration\Lms\Kernel;
 
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
+use Drupal\aculta_lms\Notice\LearningEligibilityInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Integration\Lms\EventSubscriber\LearningNoticeEventSubscriber;
 use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager;
 use Drupal\aculta_messenger\Integration\Lms\Plugin\QueueWorker\LmsNotificationEmailWorker;
-use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\aculta_messenger\Service\NoticeReadStateManager;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -31,7 +31,6 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\message\Entity\MessageTemplate;
 use Drupal\user\Entity\User;
@@ -104,8 +103,8 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
       $this->createMock(DateFormatterInterface::class),
       $this->createMock(QueueFactory::class),
       new NullLogger(),
-      $this->createMock(MessengerNoticePublisherInterface::class),
       $this->container->get('lock.persistent'),
+      $this->createMock(LearningEligibilityInterface::class),
     );
 
     $first = $manager->record('source-uuid', 'deadline', (int) $learner->id(), FALSE, 'version-one');
@@ -149,8 +148,8 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
       $this->createMock(DateFormatterInterface::class),
       $queueFactory,
       new NullLogger(),
-      $this->createMock(MessengerNoticePublisherInterface::class),
       $this->container->get('lock.persistent'),
+      $this->createMock(LearningEligibilityInterface::class),
     );
     $preferences = $this->createMock(AvisoPreferenciasInterface::class);
     $preferences->method('emailMode')->willReturn(AvisoPreferencias::EMAIL_IMMEDIATE);
@@ -193,8 +192,8 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
       $this->createMock(DateFormatterInterface::class),
       $this->createMock(QueueFactory::class),
       new NullLogger(),
-      $this->createMock(MessengerNoticePublisherInterface::class),
       $this->container->get('lock.persistent'),
+      $this->createMock(LearningEligibilityInterface::class),
     );
     $message = $manager->record('deadline-source', 'deadline', (int) $learner->id(), FALSE, 'version-one');
     self::assertNotNull($message);
@@ -219,7 +218,7 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
     $class->method('bundle')->willReturn('lms_class');
     $class->method('access')->willReturn(AccessResult::allowed());
     $class->method('label')->willReturn('Turma 24');
-    $course = $this->createMock(CourseInterface::class);
+    $course = $this->createMock(GroupInterface::class);
     $course->method('id')->willReturn('course-12');
     $course->method('bundle')->willReturn('lms_course');
     $course->method('label')->willReturn('Curso aberto');
@@ -286,8 +285,8 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
       $this->createMock(DateFormatterInterface::class),
       $queueFactory,
       new NullLogger(),
-      $this->createMock(MessengerNoticePublisherInterface::class),
       $lock,
+      $this->createMock(LearningEligibilityInterface::class),
     );
     $event = new MessengerNoticeEvent(
       'lms.enrollment',

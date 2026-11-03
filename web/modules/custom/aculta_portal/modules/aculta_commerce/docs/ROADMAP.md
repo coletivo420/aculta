@@ -1,3 +1,5 @@
+> Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
+
 # ACULTA Commerce — Roadmap e auditoria 0.1.0-A
 
 Escopo iniciado em 2026-10-22; estado revisado em 2026-10-26. Este roadmap é versionado no repositório e não acompanha o nome de uma branch de trabalho específica.
@@ -200,7 +202,8 @@ Gate módulo/tema após conciliação: removida a classe visual própria dos lin
 ## Registro histórico superado — integração Loja/Messenger (2026-10-24)
 
 Esta seção descreve a etapa anterior, quando o consumer vivia em
-`aculta_commerce_messenger`. Após migração, esse fluxo foi removido:
+`aculta_commerce_messenger`; a extensão foi removida do código em 2026-11-01.
+Após migração, esse fluxo foi removido:
 `aculta_commerce` publica `store.order_placed`; consumers, Message, central,
 contador, abertura segura e canais pertencem ao `aculta_messenger`. Avisos no
 site são obrigatórios e e-mail usa off/direto/digest pela preferência e política

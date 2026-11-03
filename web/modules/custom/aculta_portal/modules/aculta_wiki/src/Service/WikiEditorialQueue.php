@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\Service;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_contributions\Entity\Contribution;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -53,32 +54,56 @@ final class WikiEditorialQueue {
 
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['user', 'user.permissions', 'url.query_args:wiki_proposal_cursor'])
-      ->addCacheTags(['aculta_wiki_proposal_list']);
-    $storage = $this->entityTypeManager->getStorage('aculta_wiki_proposal');
-    $query = $storage->getQuery()
-      ->accessCheck(TRUE)
-      ->addMetaData('account', $this->currentUser)
-      ->condition('state', ['submitted', 'needs_changes'], 'IN')
-      ->sort('created', 'DESC')
-      ->sort('id', 'DESC')
-      ->range(0, self::PAGE_SIZE + 1);
+      ->addCacheTags(['aculta_wiki_proposal_list', 'aculta_contribution_list']);
 
     $position = $this->parseCursor($cursor);
-    if ($position !== NULL) {
-      $after = $query->orConditionGroup()
-        ->condition('created', $position[0], '<')
-        ->condition($query->andConditionGroup()
-          ->condition('created', $position[0])
-          ->condition('id', $position[1], '<'));
-      $query->condition($after);
+    $candidates = [];
+    foreach (['aculta_contribution', 'aculta_wiki_proposal'] as $entityTypeId) {
+      $storage = $this->entityTypeManager->getStorage($entityTypeId);
+      $query = $storage->getQuery()
+        ->accessCheck(TRUE)
+        ->addMetaData('account', $this->currentUser)
+        ->condition('state', ['submitted', 'needs_changes'], 'IN')
+        ->sort('created', 'DESC')
+        ->sort('id', 'DESC')
+        ->range(0, self::PAGE_SIZE + 1);
+      if ($entityTypeId === 'aculta_contribution') {
+        $query->condition('source', 'wiki')
+          ->condition('source_module', 'aculta_wiki')
+          ->condition('purpose', 'wiki');
+      }
+      if ($position !== NULL) {
+        $query->condition($query->orConditionGroup()
+          ->condition('created', $position[0], '<')
+          ->condition($query->andConditionGroup()
+            ->condition('created', $position[0])
+            ->condition('id', $position[1], '<')));
+      }
+      $ids = array_values($query->execute());
+      $candidates = [...$candidates, ...array_values($storage->loadMultiple($ids))];
     }
-
-    $ids = array_values($query->execute());
-    $loaded = $storage->loadMultiple($ids);
+    usort($candidates, static function (WikiProposal|Contribution $left, WikiProposal|Contribution $right): int {
+      $created = (int) $right->get('created')->value <=> (int) $left->get('created')->value;
+      if ($created !== 0) {
+        return $created;
+      }
+      $id = (int) $right->id() <=> (int) $left->id();
+      if ($id !== 0) {
+        return $id;
+      }
+      return ($left instanceof Contribution ? 0 : 1) <=> ($right instanceof Contribution ? 0 : 1);
+    });
+    $unique = [];
+    foreach ($candidates as $candidate) {
+      if ((!$candidate instanceof WikiProposal && !$candidate instanceof Contribution)
+        || ($candidate instanceof Contribution && $candidate->get('source')->value !== 'wiki')) {
+        continue;
+      }
+      $unique[$candidate->uuid()] ??= $candidate;
+    }
     $items = [];
-    foreach ($ids as $id) {
-      $proposal = $loaded[$id] ?? NULL;
-      if (!$proposal instanceof WikiProposal
+    foreach ($unique as $proposal) {
+      if ((!$proposal instanceof WikiProposal && !$proposal instanceof Contribution)
         || !$proposal->isDefaultRevision()
         || !in_array($proposal->get('state')->value, ['submitted', 'needs_changes'], TRUE)) {
         continue;

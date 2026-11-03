@@ -2,7 +2,7 @@
 
 > **Minuta, não publicada.** Cópia para leitura e revisão, gerada de `scripts/institution/politica-de-privacidade.html` (fonte única do texto publicado). Não edite este arquivo: altere o HTML e rode `python3 -I scripts/compliance/render-minutas.py`. Os trechos entre colchetes são pendências de decisão ou de revisão jurídica.
 
-**Atualizada em 27/10/2026 — versão 0.5 (minuta).** Esta política explica como o site institucional da Associação Cultural Antiproibicionista trata dados pessoais, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018).
+**Atualizada em 31/10/2026 — versão 0.6 (minuta).** Esta política explica como o site institucional da Associação Cultural Antiproibicionista trata dados pessoais, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018).
 
 ## Quem trata os dados
 
@@ -94,6 +94,14 @@ O site usa cookies estritamente necessários à sessão, à autenticação, à s
 
 Ao preencher um endereço, o site pode consultar o CEP informado no serviço público ViaCEP. Essa consulta envia somente o CEP. No simulador de frete, o último CEP válido informado fica salvo para preencher e recalcular o frete em uma próxima visita: para visitante sem conta, na sessão do navegador; para pessoa autenticada, como dado privado da conta até sua exclusão. Se houver endereço salvo na conta e ainda não houver CEP usado no simulador, o CEP do endereço preenche o campo e inicia a cotação. A pessoa pode substituir o CEP a qualquer momento. O resultado da cotação continua guardado na sessão por até 15 minutos; outros dados do endereço não são copiados para essa preferência.
 
+## Mapas e geocodificação de locais
+
+Quando uma página exibe um mapa interativo, o navegador solicita os mapas ao provedor configurado. No provedor padrão OpenStreetMap, o navegador se conecta diretamente aos servidores de mapas da OpenStreetMap Foundation (OSMF). Essas requisições técnicas incluem o endereço IP, informações do navegador e os blocos geográficos do mapa solicitados; podem incluir também o cabeçalho de origem permitido pelo navegador e pela política do serviço. A OSMF pode distribuir os blocos por servidores de cache em diferentes regiões. Consulte a [Política de Privacidade da OSMF](https://osmfoundation.org/wiki/Privacy_Policy) e a [Política de Uso dos Tiles](https://operations.osmfoundation.org/policies/tiles/). A atribuição visível “© OpenStreetMap contributors” informa a origem dos dados cartográficos.
+
+Se o provedor Google Maps for selecionado pela Associação, o navegador também se conecta aos serviços do Google Maps para carregar e apresentar o mapa. O Google recebe o endereço IP e dados técnicos necessários a essas requisições e trata os dados conforme os [termos da Maps JavaScript API](https://developers.google.com/maps/documentation/javascript/policies) e a [Política de Privacidade do Google](https://policies.google.com/privacy).
+
+Ao criar um Local ou alterar seu endereço, o servidor do ACULTA consulta o serviço público Nominatim, operado pela OSMF, para obter coordenadas. A consulta envia a rua e número, município, UF, CEP e país informados no cadastro; o pedido é feito pelo servidor, não pelo navegador da pessoa visitante. As coordenadas retornadas são armazenadas no registro do Local. Essa consulta ocorre quando o Local é criado ou quando seu endereço muda, não em cada visita à página, e não é usada como autocomplete. Consulte a [Política de Uso do Nominatim](https://operations.osmfoundation.org/policies/nominatim/) e a [Política de Privacidade da OSMF](https://osmfoundation.org/wiki/Privacy_Policy).
+
 ## Prazos de retenção
 
 - Registro de envios (tipo, estado, transporte, tentativas, código e identificador do destinatário): 90 dias, por padrão, configurável pela administração entre 30 dias e 1 ano.
@@ -104,9 +112,9 @@ Ao preencher um endereço, o site pode consultar o CEP informado no serviço pú
 
 ## Compartilhamento e transferência internacional
 
-Os dados são acessados por pessoas autorizadas e compartilhados apenas com os prestadores técnicos citados nesta política, na medida necessária às funcionalidades efetivamente ativadas: Mercado Pago (pagamentos), Brevo, Hostinger e SMTP2GO (envio de e-mails), Cloudflare (antirrobô, quando ativo), Google (fontes e, se optar, conexão de conta) e ViaCEP (consulta de CEP).
+Os dados são acessados por pessoas autorizadas e compartilhados apenas com os prestadores técnicos citados nesta política, na medida necessária às funcionalidades efetivamente ativadas: Mercado Pago (pagamentos), Brevo, Hostinger e SMTP2GO (envio de e-mails), Cloudflare (antirrobô, quando ativo), Google (fontes, mapas quando selecionados e, se optar, conexão de conta), OpenStreetMap Foundation (tiles e geocodificação de locais), e ViaCEP (consulta de CEP).
 
-Os servidores que hospedam o site e o banco de dados ficam no Brasil. Alguns prestadores podem tratar dados fora do Brasil, como o Brevo, o Cloudflare e o Google, com as garantias previstas na LGPD (art. 33) e as cláusulas contratuais de cada prestador. [Verificar, com cada prestador, o país de tratamento dos dados antes da publicação.]
+Os servidores que hospedam o site e o banco de dados ficam no Brasil. Alguns prestadores podem tratar dados fora do Brasil, como o Brevo, o Cloudflare, o Google e a OSMF, inclusive por redes de distribuição global. A localização e as garantias aplicáveis devem ser confirmadas para cada prestador antes da publicação, conforme a LGPD (art. 33). [Revisar países de tratamento, bases legais, contratos e salvaguardas com assessoria jurídica antes da publicação.]
 
 ## Segurança
 
@@ -126,4 +134,4 @@ Esta política pode ser atualizada. A data no topo indica a versão vigente. Alt
 
 ## Versão
 
-Versão 0.5 (minuta), 27/10/2026. Substitui a versão 0.4 de 22/10/2026. Explica o uso e a retenção do último CEP do simulador de frete para preenchimento automático. Recomenda-se revisão jurídica antes da publicação em produção.
+Versão 0.6 (minuta), 31/10/2026. Substitui a versão 0.5 de 27/10/2026. Inclui o tráfego técnico para mapas OpenStreetMap/Google e o envio, pelo servidor, do endereço de Locais ao Nominatim quando o Local é criado ou seu endereço muda. Esta minuta não foi publicada no Runtime e requer confirmação operacional dos provedores ativos, revisão jurídica das bases legais e transferência internacional, e aprovação da Associação antes de qualquer publicação.

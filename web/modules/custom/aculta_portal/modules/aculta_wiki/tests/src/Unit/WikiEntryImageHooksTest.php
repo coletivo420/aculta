@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_wiki\Unit;
 
-use Drupal\aculta_image\ImageInspector;
-use Drupal\aculta_image\UploadPolicy as ImageUploadPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\MimeTypeVerifier;
+use Drupal\aculta_file_uploader\UploadPolicy as FileUploadPolicy;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
-use Drupal\aculta_portal\Upload\UserUploadPolicy;
 use Drupal\aculta_wiki\Hook\WikiEntryImageHooks;
 use Drupal\aculta_wiki\Service\WikiContributorWorkspace;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
@@ -21,7 +21,8 @@ use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Image\ImageFactory;
+use Drupal\Core\Image\Image;
+use Drupal\aculta_file_uploader\ImageDimensionReader;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\TypedData\ComplexDataInterface;
@@ -54,11 +55,11 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
     self::assertSame('details', $form['wiki_lead_image']['#type']);
     self::assertSame('advanced', $form['wiki_lead_image']['#group']);
     self::assertTrue($form['wiki_lead_image']['#tree']);
-    self::assertSame('managed_file', $form['wiki_lead_image']['file']['#type']);
+    self::assertSame('aculta_upload_dropzone', $form['wiki_lead_image']['file']['#type']);
     self::assertSame('private://wiki/imagens', $form['wiki_lead_image']['file']['#upload_location']);
     self::assertFalse($form['wiki_lead_image']['file']['#multiple']);
     self::assertSame([
-      'FileExtension' => ['extensions' => 'png jpg jpeg gif webp'],
+      'FileExtension' => ['extensions' => 'png gif jpg jpeg webp'],
       'FileSizeLimit' => ['fileLimit' => 10 * 1048576],
       'FileIsImage' => [],
     ], $form['wiki_lead_image']['file']['#upload_validators']);
@@ -186,7 +187,7 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
   /**
    * Builds the uploader the hook hands the submit and validate callbacks.
    */
-  private function uploader(UserUploadPolicy $policy): WikiLeadImageUploader {
+  private function uploader(ConsumerUploadPolicy $policy): WikiLeadImageUploader {
     return new WikiLeadImageUploader(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(Connection::class),
@@ -200,7 +201,7 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
   /**
    * Builds the central upload policy over a fixed configuration.
    */
-  private function policy(string $extensions, int $megabytes): UserUploadPolicy {
+  private function policy(string $extensions, int $megabytes): ConsumerUploadPolicy {
     $config = $this->createMock(Config::class);
     $config->method('get')->willReturnCallback(static fn (string $key) => match ($key) {
       'allowed_extensions' => $extensions,
@@ -208,9 +209,19 @@ final class WikiEntryImageHooksTest extends UnitTestCase {
       default => NULL,
     });
     $config_factory = $this->createMock(ConfigFactoryInterface::class);
-    $config_factory->method('get')->with('aculta_portal.user_upload')->willReturn($config);
-
-    return new UserUploadPolicy($config_factory, new ImageUploadPolicy(), new ImageInspector($this->createMock(ImageFactory::class)));
+    $config_factory->method('get')->with('aculta_file_uploader.settings')->willReturn($config);
+    $png = tempnam(sys_get_temp_dir(), 'aculta_wiki_');
+    file_put_contents($png, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='));
+    register_shutdown_function(static fn () => @unlink($png));
+    $files = $this->createMock(FileSystemInterface::class);
+    $files->method('realpath')->willReturn($png);
+    $image = $this->createMock(Image::class);
+    $image->method('isValid')->willReturn(TRUE);
+    $image->method('getWidth')->willReturn(1);
+    $image->method('getHeight')->willReturn(1);
+    $image_factory = $this->createMock(ImageDimensionReader::class);
+    $image_factory->method('dimensions')->willReturn(['width' => 1, 'height' => 1]);
+    return new ConsumerUploadPolicy($config_factory, new FileUploadPolicy(), new MimeTypeVerifier(), $files, $image_factory);
   }
 
   /**

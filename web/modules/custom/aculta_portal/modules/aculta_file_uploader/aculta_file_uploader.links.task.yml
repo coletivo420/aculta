@@ -1,0 +1,11 @@
+aculta_file_uploader.settings_tab:
+  title: 'Uploads por integração'
+  route_name: aculta_file_uploader.settings
+  base_route: aculta_file_uploader.settings
+  weight: 0
+
+aculta_file_uploader.ingestion_limits_tab:
+  title: 'Limites de ingestão'
+  route_name: aculta_file_uploader.ingestion_limits
+  base_route: aculta_file_uploader.settings
+  weight: 1

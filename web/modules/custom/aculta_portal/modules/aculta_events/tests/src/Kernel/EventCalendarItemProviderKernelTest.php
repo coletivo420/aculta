@@ -11,6 +11,8 @@ use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventDateOverride;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\user\Entity\User;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
 use PHPUnit\Framework\Attributes\Group;
@@ -146,6 +148,104 @@ final class EventCalendarItemProviderKernelTest extends KernelTestBase {
     $this->assertNotNull($icsItem);
     $this->assertSame('', $icsItem->local);
     $this->assertContains('aculta_event_location_list', $provider->cacheTags());
+  }
+
+  /**
+   * Contextual calendar query returns only dates at a public Local.
+   */
+  public function testContextualQueryRequiresPublicLocation(): void {
+    $locations = [];
+    $definitions = [
+      ['Sede pública', 'publicado'],
+      ['Outra sede', 'publicado'],
+      ['Sede privada', 'privado'],
+    ];
+    foreach ($definitions as [$name, $status]) {
+      $location = EventLocation::create(['title' => $name, 'field_status' => $status]);
+      $location->save();
+      $locations[] = $location;
+    }
+    $eventLocations = [
+      ['Evento A', $locations[0]],
+      ['Evento B', $locations[1]],
+      ['Evento C', $locations[2]],
+    ];
+    foreach ($eventLocations as [$title, $location]) {
+      $event = Event::create([
+        'title' => $title,
+        'field_slug' => strtolower(str_replace(' ', '-', $title)),
+        'field_status' => 'publicado',
+      ]);
+      $event->save();
+      EventDate::create([
+        'title' => $title,
+        'field_evento' => $event->id(),
+        'field_local' => $location->id(),
+        'field_quando' => [
+          'value' => $this->utc('2030-06-10 19:00:00'),
+          'end_value' => $this->utc('2030-06-10 20:00:00'),
+        ],
+      ])->save();
+    }
+
+    $provider = $this->container->get('aculta_events.item_provider');
+    $publicItems = iterator_to_array($provider->items($this->query(['local' => (int) $locations[0]->id()])));
+    $privateItems = iterator_to_array($provider->items($this->query(['local' => (int) $locations[2]->id()])));
+
+    $this->assertSame(['Evento A'], array_map(static fn (CalendarItem $item): string => $item->titulo, $publicItems));
+    $this->assertSame([], $privateItems);
+  }
+
+  /**
+   * Contextual local agendas are isolated between owners and anonymous users.
+   */
+  public function testContextualAgendaIsolatedBetweenLocationOwners(): void {
+    // UID 1 bypasses access checks in Drupal and cannot be used as an owner
+    // fixture for private content.
+    $ownerA = User::create(['uid' => 101, 'name' => 'owner-a', 'status' => 1]);
+    $ownerA->save();
+    $ownerB = User::create(['uid' => 102, 'name' => 'owner-b', 'status' => 1]);
+    $ownerB->save();
+
+    $localA = EventLocation::create([
+      'title' => 'Local privado A',
+      'field_status' => 'privado',
+      'field_organizador' => $ownerA->id(),
+    ]);
+    $localA->save();
+    $localB = EventLocation::create([
+      'title' => 'Local privado B',
+      'field_status' => 'privado',
+      'field_organizador' => $ownerB->id(),
+    ]);
+    $localB->save();
+
+    foreach ([[$localA, 'Evento A'], [$localB, 'Evento B']] as [$local, $title]) {
+      $event = Event::create(['title' => $title, 'field_status' => 'publicado']);
+      $event->save();
+      EventDate::create([
+        'title' => $title,
+        'field_evento' => $event->id(),
+        'field_local' => $local->id(),
+        'field_quando' => [
+          'value' => $this->utc('2030-06-10 19:00:00'),
+          'end_value' => $this->utc('2030-06-10 20:00:00'),
+        ],
+      ])->save();
+    }
+
+    $provider = $this->container->get('aculta_events.item_provider');
+    $this->container->get('current_user')->setAccount($ownerA);
+    $ownerAItems = iterator_to_array($provider->items($this->query(['local' => (int) $localA->id()])));
+    self::assertFalse($localB->access('view', $ownerA));
+    $ownerBItems = iterator_to_array($provider->items($this->query(['local' => (int) $localB->id()])));
+
+    $this->container->get('current_user')->setAccount(new AnonymousUserSession());
+    $anonymousItems = iterator_to_array($provider->items($this->query(['local' => (int) $localA->id()])));
+
+    self::assertSame(['Evento A'], array_map(static fn (CalendarItem $item): string => $item->titulo, $ownerAItems));
+    self::assertSame([], $ownerBItems);
+    self::assertSame([], $anonymousItems);
   }
 
   /**

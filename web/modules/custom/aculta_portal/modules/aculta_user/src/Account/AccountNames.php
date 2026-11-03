@@ -83,7 +83,13 @@ final class AccountNames {
    * inválidos retornam NULL, sem causar erro durante o render.
    */
   public static function publicRouteSlug(string $apelido): ?string {
-    return self::isValid($apelido) ? self::routeSlugFromDisplay($apelido) : NULL;
+    if (!self::isValid($apelido)) {
+      return NULL;
+    }
+    $slug = preg_match('/^(.+)#([1-9][0-9]*)$/', $apelido, $matches) === 1
+      ? PublicRouteSlug::normalize($matches[1] . '-' . $matches[2])
+      : PublicRouteSlug::normalize($apelido);
+    return self::isValid($slug) ? $slug : NULL;
   }
 
   /**

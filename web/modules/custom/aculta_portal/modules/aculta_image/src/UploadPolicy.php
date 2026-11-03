@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_image;
 
+use Drupal\aculta_file_uploader\UploadPolicy as FileUploadPolicy;
+
 /**
  * Define a política única de upload de imagem do ACULTA.
  *
@@ -17,12 +19,15 @@ namespace Drupal\aculta_image;
 final class UploadPolicy {
 
   /**
-   * Extensões aceitas. */
-  public const EXTENSIONS = 'png gif jpg jpeg webp';
+   * Extensões aceitas. Fonte única: aculta_file_uploader.
+   */
+  public const EXTENSIONS = FileUploadPolicy::EXTENSIONS;
 
   /**
-   * Tamanho máximo do arquivo enviado, em bytes (10 MB). */
-  public const MAX_BYTES = 10485760;
+   * Tamanho máximo do arquivo enviado, em bytes (10 MB). Fonte única:
+   * aculta_file_uploader.
+   */
+  public const MAX_BYTES = FileUploadPolicy::MAX_BYTES;
 
   /**
    * Builds Form API validators for the central or a scoped image policy.
@@ -42,18 +47,8 @@ final class UploadPolicy {
    *   When the scoped limit or extensions are invalid.
    */
   public function validators(?int $maxBytes = NULL, ?string $extensions = NULL): array {
-    $maxBytes ??= self::MAX_BYTES;
-    $extensions ??= self::EXTENSIONS;
-    $allowedExtensions = array_values(array_unique(preg_split('/\s+/', trim($extensions)) ?: []));
-    $centralExtensions = explode(' ', self::EXTENSIONS);
-    if ($maxBytes < 1 || $allowedExtensions === []
-      || array_diff($allowedExtensions, $centralExtensions) !== []) {
-      throw new \InvalidArgumentException('A política contextual de imagem excede o catálogo ACULTA.');
-    }
-    return [
-      'FileExtension' => ['extensions' => implode(' ', $allowedExtensions)],
-      'FileSizeLimit' => ['fileLimit' => $maxBytes],
-    ];
+    // Delegação: a regra vive no aculta_file_uploader (Fase 4, passo 1).
+    return (new FileUploadPolicy())->validators($maxBytes, $extensions);
   }
 
 }

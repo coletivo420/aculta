@@ -1,3 +1,46 @@
+## Contributions — estado local em 2026-11-01
+
+- Revalidação do checkout de desenvolvimento: `EventOrganizationLifecycleKernelTest`
+  passou 29/941, incluindo rejeição de título e Data duplicados; os cenários
+  `testEventUpdateContribution*` passaram 6/171 (24 depreciações Core/contrib).
+  Sem alteração Runtime.
+
+- Organização sem titular: propostas de perfil e criação sob revisão; claims,
+  titularidade, membros e edições de perfis reivindicados continuam nos owners
+  existentes.
+- Local: proposta privada de criação/atualização, endereço central BR, allowlist,
+  conflito por versão e bloqueio de duplicidade provável. Criação aprovada é
+  draft e não associa Evento automaticamente.
+- Resultado: evento mínimo e inbox Messenger privado; enqueue após commit com
+  outbox KeyValue recuperável pelo cron. Sem payload privado e sem email/digest.
+- Kernel Contributions/Events + fronteira **37 testes / 1.275 assertions PASS** (24
+  depreciações Core/contrib); fila/outbox e consumer Messenger **9 testes / 27
+  assertions PASS**; update idempotente do campo de aviso **1 teste / 13 assertions PASS**.
+  Updates Messenger 10015–10016 estão aplicados; jornada autenticada Events
+  continua pendente.
+- Eventos têm adapter `events_event` parcial: formulário em
+  `/culturas/propostas/evento/nova` submete `event_create` como Contribution
+  privada com Datas e referências allowlisted; a aprovação gera rascunho
+  atribuído ao autor. `event_update` aplica seleção explícita e adiciona Datas
+  sem substituir as existentes. Revalidação de referências, datas e fingerprint
+  ocorre na aprovação.
+- Submissão e decisões agora usam o evento mínimo e o consumer Messenger
+  compartilhado; não carregam payload ou parecer. A interface de autor para
+  proposta `event_update` está em `/culturas/eventos/{aculta_event}/propor-alteracao`;
+  conserva o CRUD oficial e grava só Contribution privada. Permanecem pendentes
+  revisão ampla da matriz de duplicidade, cobertura adicional de conflitos e
+  homologação autenticada no Runtime; updates 10015–10016 estão aplicados.
+  O workspace privado e o aviso para
+  Organização, Local e Evento agora usam a mesma rota privada do workspace.
+  Regressões focais de workspace passaram em `EventOrganizationLifecycleKernelTest`
+  (3/111), e purpose da rota em `EventDomainBoundaryKernelTest` (1/100).
+- `EventOrganizationLifecycleKernelTest`: 23 testes / 747 assertions PASS,
+  24 depreciações Core/contrib após revalidação de capability e Entity Access
+  do autor no adapter de Evento. Após ampliar o workspace para Organização e
+  Local, a classe passou com 23 testes / 753 assertions; `EventDomainBoundaryKernelTest`
+  passou com 10/369. Após ressubmissão estruturada e proposta inicial, os Kernels
+  combinados das duas classes passaram com 36/1.229.
+
 ## LOC-00 a LOC-08 - status revalidado no HEAD da PR #299 (2026-10-30)
 
 [Plano LOC](../../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md) e [análise comparativa OpenCulturas](../../../../../../../docs/architecture/ANALISE-COMPARATIVA-OPENCULTURAS-ACULTA-STUDIO-CULTURAS.md). A documentação anterior descreve o baseline pré-implementação; o código da PR agora contém o fluxo integrado. Esta revisão não executou a suíte nem acessou o Runtime: classifica código presente separadamente de teste executado e homologação.
@@ -9,10 +52,23 @@
 | LOC-02 | CRUD e páginas/diretório de Local presentes | `EventLocationForm`, rotas `organizer_location_*`, `LocationPageController`, `LocationListController` | Homologar formulários, acessos e agenda pública integrada |
 | LOC-03 | Fluxo de seleção/cadastro em popup Drupal/AJAX presente; Data fica subordinada ao Evento | `EventLocationModalWidget`, `EventLocationModalForm`, `EventForm`, `EventDateCreateForm`, testes Kernel | Revalidar estado do formulário pai, teclado/foco e bloqueio por purpose no navegador |
 | LOC-04 / IDX-LOC | Providers, relações derivadas, manutenção incremental e URLs canônicas presentes | `EventContentIndexProvider`, `LocationContentIndexProvider`, hooks e testes Kernel | Validar geração/consulta no ambiente de teste sem escrita não autorizada no Runtime |
-| LOC-05 | Páginas e catálogo de Local, agenda e administração presentes no código | Controllers de Local, views e rotas administrativas | Homologar paginação, busca, precisão, mapas, links e navegação |
+| LOC-05 | Detalhe e catálogo de Local; agenda de 30 dias integrada ao `aculta_calendar`, filtrada por Data > Local | `LocationPageController`, `CalendarQuery`, provider Events, `CalendarAgenda`; Kernel cobre recorrência, cancelamento, reagendamento, Local privado e cache por usuário | Homologar A/B, propósito/host, histórico, links/ICS contextuais e navegação |
 | LOC-06 | Implementação parcial presente: dashboard `/culturas`, criação/edição de Eventos, Datas/Locais e papéis configuráveis | `EventOrganizerDashboardController`, rotas `organizer_*`, `EventForm`, `EventSettingsForm` | Melhorar dashboard, validar autorização/domínio, visual, mobile, acessibilidade e Runtime |
 | LOC-07 | Migrador e testes de migração existem; execução Runtime não faz parte desta revisão | `ActivityLocationMigrator`, update/CLI e `ActivityLocationMigrationKernelTest` | Ensaio autorizado, snapshot/hash, contagem, rollback e decisão de corte dos legados |
 | LOC-08 | Não concluída | Testes focalizados existem; a análise comparativa não executou testes | Executar gates integrados e homologação visual/runtime no HEAD consolidado |
+
+### Revalidação LOC-05 — 2026-10-31
+
+- `EventLocationManagementKernelTest` agora inspeciona as datas efetivamente
+  renderizadas na página do Local: recorrência, cancelamento, reagendamento e
+  exclusão de um Evento associado a outro Local. O novo caso passou com 22
+  assertions; PHPCS e PHP lint do fixture passaram.
+- Suíte completa Unit/Kernel de Events: **129 testes / 2.557 assertions PASS**
+  em `aculta_simpletest`, com 51 depreciações Core/contrib. A bateria focada de
+  Calendar/Events (agenda, ICS, provider e gestão de Local) passou com 22 testes
+  / 296 assertions; a execução isolada do novo caso também passou.
+- Sem escrita ou importação no Runtime. A/B, propósito/host, histórico,
+  navegação e eventual ICS contextual continuam pendentes em LOC-08.
 
 ### Revalidação funcional de privacidade — 2026-11-01
 
@@ -21,7 +77,11 @@
   variando por usuário.
 - Agenda e itens ICS públicos omitem nomes de Locais privados; alterações de
   Local invalidam a cache do calendário. A agenda filtrada por Local (LOC-05)
-  continua pendente.
+  agora usa `CalendarQuery`/`CalendarAgenda`, cobre até 30 dias e exige acesso ao
+  Local. Em Local privado, owner autorizado vê a agenda com cache por usuário;
+  outra conta recebe 404. O feed ICS contextual por Local foi implementado na
+  microfase seguinte; homologação de purpose/runtime e navegação integrada
+  continuam pendentes.
 - O teste revelou e corrigiu dois erros 500 na página de Evento:
   `getCoOrganizers()` não existe no contrato de Event, e a organização não tem
   route ID `canonical`. A composição usa as referências reais e
@@ -29,7 +89,30 @@
 - Kernel focal em `aculta_simpletest`: 15 testes / 321 assertions PASS; 15
   depreciações upstream. Runtime não foi alterado.
 
+### Exportação ICS contextual por Local — 2026-11-01
+
+- A rota canônica `/locais/{aculta_event_location}/agenda.ics` foi adicionada
+  no purpose `eventos`, com parâmetro de entidade owner e link na página do
+  Local. Consulta o `CalendarIcsExporter` compartilhado, restringe a janela aos
+  próximos 30 dias e seleciona apenas o provider `aculta_events` filtrado pelo
+  ID do Local; séries, cancelamentos e reagendamentos continuam no motor
+  `aculta_calendar`.
+- O controller repete o Entity Access de `view` antes de serializar. Owner pode
+  exportar Local privado; outra conta recebe 404. Resposta `private, no-store`
+  e `X-Robots-Tag`; não inclui eventos de outro Local nem itens LMS.
+- `EventIcsControllerKernelTest`: 3 testes / 54 assertions PASS. Suíte completa
+  Events: 132 testes / 2.599 assertions PASS em `aculta_simpletest`, com 51
+  depreciações Core/contrib. Matriz HTTP de purpose/host ainda pendente.
+
 Versões e status de release permanecem Dev até fechar os gates exigidos. A presença de rota, classe ou teste no repositório não prova execução bem-sucedida, ativação no Runtime ou homologação visual.
+
+### Agenda de Local pelo provider compartilhado — 2026-11-01
+
+- `LocationPageController` não consulta mais `EventDate` diretamente para montar sua lista: chama `CalendarAgenda` com uma consulta que seleciona somente `aculta_events` e filtra o ID de Local na relação da Data.
+- A janela padrão exibe hoje até 30 dias. O motor compartilhado expande séries e aplica cancelamentos/reagendamentos; itens preservam link para o Evento.
+- A consulta contextual usa Entity Access na conta corrente. Local privado aparece apenas ao owner/editor autorizado, com contexto de cache `user`; Local privado negado não retorna itens. Locais de outras páginas não entram na agenda.
+- Ajustado o fixture existente de `EventAdminOverviewController`: instala o schema de Organização e verifica as quatro métricas/nove ações que o controller já renderiza.
+- Suíte completa Events: **128 testes / 2.528 assertions PASS** após corrigir o fixture administrativo; suíte focal após revalidar o acesso: **19 testes / 380 assertions PASS**. PHPCS focal e `git diff --check` PASS; Runtime não foi alterado.
 
 ## Integração arquitetural OpenCulturas - ARQ-01 a ARQ-04 (2026-10-29)
 
@@ -57,7 +140,7 @@ Entrada: plano aprovado.
 - [x] D-13: campo de data com `daterange` do core, sem `smart_date` (incompatível com `doctrine/collections` 3.x via `simshaun/recurr`).
 - [x] Compatibilidade com Core ^11.4 de `geofield` (1.67.0) e `address`: verificada no Core 11.4.10 — `EventLocation` usa os dois tipos de campo e as suítes Kernel do módulo passam (36 testes).
 - [x] D-14: recorrência própria na v1, com `rlanvin/php-rrule` 3.0 (commit `dcea19c4a`, `7ae9e54e4`). **Autorizada pelo responsável em 2026-10-28** (D-16), junto com `drupal/geofield`; nenhuma das duas precisa ser revertida.
-- [x] Revisão técnica de termos/cobrança concluída em `aculta_maps/docs/REVISAO-TERMOS-MAPAS-2026-10-28.md`: D-46 resolve o geocodificador — Nominatim para qualquer mapa, sem persistir resultados Google, com atribuição OSM/ODbL sobre mapa Google. A chave Google Geocoding permanece sem uso pela aplicação. A página de privacidade não foi alterada conforme instrução do responsável.
+- [x] Revisão técnica de termos/cobrança concluída em `aculta_maps/docs/REVISAO-TERMOS-MAPAS-2026-10-28.md`: D-46 resolve o geocodificador — Nominatim para qualquer mapa, sem persistir resultados Google, com atribuição OSM/ODbL sobre mapa Google. A chave Google Geocoding permanece sem uso pela aplicação. D-52 veda aviso inline sobre IP; a minuta da política 0.6 descreve tiles e geocodificação, aguardando revisão e publicação autorizada no Runtime.
 - [x] Auditoria do OpenCulturas (`AUDITORIA-OPENCULTURAS.md`): nenhum arquivo copiado diretamente; achados S1 a S8 e T1 a T14 viram tarefas de F2–F6.
 - [x] Revisão de licenças: OpenCulturas GPL-2.0-or-later e trechos derivados registrados em `ORIGEM-OPENCULTURAS.md`; Phosphor não é usado; Bootstrap Icons tem licença MIT.
 
@@ -104,14 +187,14 @@ Saída: catálogo e página do evento navegáveis. Cartão em SDC e validação 
 
 ## Fase F4 — Locais com mapa
 
-> **D-19:** o mapa e a geocodificação pertencem ao submódulo `aculta_maps`. MP0–MP7 estão concluídas; `MapController` permanece em `aculta_events` por montar os dados do catálogo e a rota `/mapa`. O Runtime de teste está ativado com Leaflet/OpenStreetMap como padrão. A política não foi alterada conforme decisão do responsável de não informar IP; a revisão editorial da divulgação de tiles e do provedor segue pendente. Evidências detalhadas em `web/modules/custom/aculta_portal/modules/aculta_maps/docs/`.
+> **D-19:** o mapa e a geocodificação pertencem ao submódulo `aculta_maps`. MP0–MP7 estão concluídas; `MapController` permanece em `aculta_events` por montar os dados do catálogo e a rota `/mapa`. O Runtime de teste está ativado com Leaflet/OpenStreetMap como padrão. D-52 veda aviso inline de IP; a minuta da política 0.6 agora descreve tiles e geocodificação. Publicação no Runtime, revisão jurídica e aprovação institucional permanecem pendentes. Evidências detalhadas em `web/modules/custom/aculta_portal/modules/aculta_maps/docs/`.
 
 Entrada: F3 concluída. Configuração do mapa conforme D-18 e ADR-030: Leaflet com OpenStreetMap público como padrão e fallback; Google Maps API opcional, com a chave em `aculta_secrets`; link de rota do Google sem API; URL de rota configurável.
 
 - [x] Campo de coordenadas e endereço; regra de precisão do endereço (commit `fd70ddd8a`).
 - [x] Geocodificação no servidor (Geocoding API), uma vez por local, com a chave fora do repositório (commit `f761d8593`).
 - [x] Bloco de mapa Leaflet/OSM, agrupamento próprio de marcadores e lista sincronizada (`58359728f`, `fd5c96526`).
-- [x] Mapa na página, com aviso e link para `/sobre/politica-de-privacidade` (`58359728f`). A divulgação editorial sobre tiles/provedor continua pendente; a política não foi alterada.
+- [x] Mapa na página, com aviso e link para `/sobre/politica-de-privacidade` (`58359728f`). A minuta 0.6 cobre tiles/provedores; ainda não foi publicada no Runtime.
 - [x] **Painel administrativo de opções do mapa** (ADM7), em `/painel-administrativo/mapas` (`cac0efbba`):
   - engine: `openstreetmap` (padrão) ou `google`, com o fallback automático para o OpenStreetMap quando a chave faltar ou a API falhar;
   - estado da chave `GOOGLE_MAPS_API_KEY` no `aculta_secrets` (mostra "configurada" ou "ausente", nunca o valor);
@@ -262,6 +345,10 @@ Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`.
 - **I-28** selos de acessibilidade do local e do evento (`content/accessibility-badges`), na F4 e F6.
 - **I-30** "próximos eventos" na vitrine e na home de eventos, na F3.
 
+## Revalidação ACL da agenda contextual por Local (2026-11-02)
+
+`EventCalendarItemProvider` foi exercitado com duas contas comuns e uma conta anônima. A conta A consulta o próprio Local privado, não consulta o Local da conta B, e anônimo não recebe dados de nenhuma agenda privada. A fixture usa UIDs 101/102 porque UID 1 tem bypass de acesso no Drupal. `EventCalendarItemProviderKernelTest`: 6 testes / 116 assertions PASS; 13 depreciações Core/contrib. Não houve mudança funcional de produção nem escrita no Runtime.
+
 ## Pós-v1 (sem data)
 
 - Ingressos e inscrições: campos informativos atuais não são ticketing. RSVP gratuito e venda paga dentro do ACULTA são frentes futuras distintas; pedidos pagos usam Commerce/Mercado Pago e entram no carrinho integrado conforme D-39, enquanto RSVP não usa checkout na proposta ADR-036. Venda paga bloqueada por parecer fiscal/jurídico e LGPD. Plano atualizado em `docs/PLANO-INGRESSOS-PAGOS.md`.
@@ -284,13 +371,13 @@ Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`.
 
 | Ordem | Incremento | Evidência no código | Gate |
 | --- | --- | --- | --- |
-| OC-EV1 / P0 | ACL de locais | `LocationCatalogue::busca()` usa `accessCheck(FALSE)` sem `access('view')` por item; definir se locais são sempre públicos | Kernel anônimo, editor e dois purposes; dados negados ausentes de lista, mapa e cache |
+| OC-EV1 / P0 | ACL de locais | Implementado: a consulta seleciona candidatos e revalida cada entidade por `access('view', $account, TRUE)`; decisões permitidas e negadas integram a cacheabilidade antes de lista/mapa/paginação. | Kernel em 2026-10-31: 6 testes/129 assertions PASS, com owner A, owner B e anônimo. Purpose/Runtime e auditoria dos demais consumidores ainda pendentes. |
 | OC-EV2 / P0 | desempenho do catálogo | `EventCatalogue::busca()` carrega eventos + datas e expande em PHP | paginação efetiva, benchmark de recorrência extensa, limites e cache |
 | OC-EV3 / P1 | eventos híbridos e informação | OpenCulturas: `field_attendance_mode`, `field_location_virtual`, `field_min_age`, `field_safety_info`, `field_door_time_relative`, `field_event_status` | modelo/tipos acordados, update idempotente, Form API, ACL e tests |
 | OC-EV4 / P1 | horário estruturado e acessibilidade | hoje `field_horario` é texto; `accessibility-badges` não recebe dados reais | tipagem, exceções, safe markup, consumer evento/local e busca |
 | OC-EV5 / P1 | página real com layout SDC | `EventPageController` usa `#theme=aculta_event_page` e o Twig próprio contém H1; `event-page-five-regions` é candidato | consumidor real, eliminar H1 duplicado sem perder título acessível, desktop/320/zoom/teclado |
 | OC-EV6 / P2 | imprensa, apoiadores e pessoas | campos/consumidores ausentes ou parciais | vínculos verificados, autorização de marca e pipeline de imagem |
-| OC-EV7 / P2 | geodados | mapa atual é de pontos; `MapController` usa `!empty` para lat/lon | aceitar coordenada 0; estudar polígonos **como ideia, não paridade comprovada 3.1.5** |
+| OC-EV7 / P2 | geodados | mapa atual é de pontos; `MapController` valida coordenadas numericamente e aceita `0`/`0.0`. | Kernel `MapControllerKernelTest`: 3 testes/57 assertions PASS em 2026-11-01. Polígonos seguem ideia exploratória, não paridade comprovada 3.1.5. |
 
 **Dependências:** indexação cruzada via `aculta_index`/Search API; `aculta_maps` continua dono do renderer; não introduzir novo papel `organizador`, ECA ou `smart_date`. Revisar code owner e autorização antes de qualquer alteração de esquema ou Runtime.
 
@@ -298,7 +385,7 @@ Origem: `docs/architecture/OPENCULTURAS-COMPARATIVO.md`.
 
 Fonte: `docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md`. Preservar E0-E10 e fases F, sem reabrir entregas anteriores.
 
-- [ ] **OC-A/P0:** benchmark e limites/paginação reais de `EventCatalogue::busca()` (expansão em PHP); contrato explícito de publicidade/acesso de `EventLocation` e teste A/B/purpose, pois `LocationCatalogue::busca()` usa `accessCheck(FALSE)`. Validar latitude/longitude zero em `MapController` (não usar `!empty()` para validar coordenadas numéricas).
+- [ ] **OC-A/P0:** benchmark e limites/paginação reais de `EventCatalogue::busca()` (expansão em PHP). O contrato de ACL de `EventLocation`, isolamento A/B no `LocationCatalogue` e validação numérica de coordenadas (inclusive zero) estão implementados e cobertos pelos testes acima; homologar purpose/Runtime e auditar os demais consumidores.
 - [ ] **OC-A/P0:** tornar eventos/locais descobríveis na busca cultural apenas com grants e purpose corretos; jamais expor evento de turma LMS privada.
 - [ ] **OC-B/P1:** modalidade virtual/híbrida, referência online, idade mínima, segurança, horário de portas, status da data, horário estruturado e acessibilidade como dados; instalar novas dependências só após aprovação própria. Updates idempotentes e testes Kernel.
 - [ ] **OC-B/P1:** ligar SDCs existentes `accessibility-badges` e `event-page-five-regions` a consumidor real; apurar duplicidade de H1, teclado, zoom 200% e 320 px.
@@ -392,7 +479,7 @@ O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas
 
 ## Ingressos gratuitos e pagos - proposta de integração (ADR-036)
 
-O estado atual continua sem ticketing interno: `field_gratuito`, `field_pricing` e `field_pricing_info` são informativos; `field_ticketing` é link externo. Não há RSVP com emissão, venda Commerce, lote/estoque ligado a Data, emissão pós-pagamento ou check-in integrado.
+`field_gratuito`, `field_pricing` e `field_pricing_info` continuam informativos; `field_ticketing` é link externo. A entidade estrutural `aculta_event_offer` foi adicionada para ofertas/lotes de Evento, com Data opcional, sem rota pública e inativa por padrão. O update `10015` instala políticas RSVP em Evento/Data com RSVP desligado e capacidade apenas nominal. `RsvpPolicyResolver` valida a política gratuita e os contextos Evento/Data/Lote, falhando fechado para regras incompletas, vínculos divergentes e lotes inativos/pagos; não registra inscrição nem reserva capacidade. Ainda não há endpoint, emissão, venda Commerce, capacidade consumida, emissão pós-pagamento ou check-in.
 
 - **Ownership:** `aculta_events` é dono das ofertas/lotes, inscrições/participantes, emissão e check-in. `aculta_commerce` mantém pedidos e order items pagos; `aculta_pagamentos_mercadopago` mantém o gateway; `aculta_portal` coordena os tipos/contextos no carrinho já existente. Sem gateway, carrinho ou storage financeiro paralelo.
 - **Gratuito (proposta):** RSVP sem cobrança, nome e e-mail (D-33/D-40), sem CPF, pedido Commerce, carrinho ou Mercado Pago. Confirmar capacidade atomicamente e emitir credencial consumível uma vez no check-in. Não coletar dados reais em produção antes da revisão LGPD/base legal/aviso/retenção.
@@ -404,7 +491,9 @@ O estado atual continua sem ticketing interno: `field_gratuito`, `field_pricing`
 
 ### Decisões ainda abertas
 
-RSVP obrigatório ou opcional; limite por pessoa e prevenção de duplicidade; capacidade por lote versus Data; reserva temporária/expiração/fila; cancelamento e liberação de vaga; abrangência por série; transferência; entrega/acessibilidade do ingresso; retenção/base legal; critérios para migrar links externos.
+D-60/D-61 resolveram RSVP opcional, escopo configurável de capacidade (Evento/Data/Lote), regras configuráveis de limites, duplicidade, reserva/expiração, espera e cancelamento, inscrição por ocorrência ou série, transferência auditável com invalidação da credencial anterior e ownership das ofertas/lotes/RSVP em `aculta_events`. Não tratar esses itens como decisões pendentes.
+
+Permanecem pendentes o parecer fiscal/jurídico para venda paga, a revisão LGPD/base legal/aviso antes de coleta pública de dados, o contrato de item Commerce e os detalhes acessíveis de emissão/entrega da credencial e categorias de operador do check-in. A entidade de oferta existe, mas não expõe nem executa ticketing.
 
 ## Rota da Suite Culturas - ADR-038
 
@@ -416,6 +505,7 @@ LOC-06 passa a acompanhar código implementado e gates de integração pendentes
 - **Gestão administrativa:** Restrita ao MAIN em `/painel-administrativo/eventos/organizacoes`, com paginação `pager(20)` e filtros (nome, reivindicação inclusive pendente, revisão de acessos e denúncias UGC). Recuperação emergencial de posse em `/painel-administrativo/eventos/organizacoes/{id}/recuperar`.
 - **Modal de seleção e cadastro:** `EventOrganizationModalWidget` e `EventOrganizationModalForm` utilizam o sistema de diálogos nativo do Drupal com AJAX, busca com prevenção de duplicidades, devolução de foco ao gatilho (`data-portal-trigger`), cadastro sem CEP/rua e respeito a `ocultar_localidade`.
 - **Governança estrita de reivindicação:** Usuários não-administradores não podem assumir titularidade imediata no cadastro; podem criar organizações como não-reivindicadas ou submeter uma solicitação com justificativa obrigatória (`reivindicada = FALSE`, `reivindicacao_status = 'pendente'`, `titular = NULL`), registrando o pedido em `aculta_ownership_claim` para deliberação da moderação. Nenhum papel de proprietário (`owner`) é concedido antes do deferimento administrativo formal. No deferimento, solicitações concorrentes pendentes para a mesma entidade são automaticamente rejeitadas com nota de auditoria; em caso de indeferimento de pedido único, o status da organização é restaurado automaticamente para `nao_reivindicada`.
+- **Protótipo de sugestões de edição para organização sem titular:** código inicial permite a contas que criam Eventos propor campos de perfil, com fila administrativa e revalidação antes da aplicação. Em 2026-11-01, o responsável esclareceu que sugestões em Eventos terão outro caminho. Este fluxo é provisório, não homologado nem para ativar no Runtime; definir o caminho final e então substituir/revalidar o protótipo.
 - **Filtro contextual na moderação:** A listagem administrativa de reivindicações (`OwnershipClaimAdminController`) suporta filtros diretos por `target_type` e `target_id`, com contexts de cache em URL, viabilizando link direto da visão geral de organizações para suas reivindicações específicas.
 - **Injeção de dependência e desacoplamento:** `EventOrganizationMembersForm` utiliza injeção de dependência via `ContainerInjectionInterface` para gerenciamento de tipos de entidade, membros e reivindicações, eliminando chamadas estáticas `\Drupal::service`.
 - **Projeção segura no Content Index:** `OrganizationContentIndexProvider` projeta o perfil da organização preservando a privacidade: o criador técnico nunca é vinculado como titular/owner no índice de entidades não-reivindicadas ou pendentes; o `ownerUid` reflete estritamente o titular oficial deferido. Localidade (UF) é omitida caso `ocultar_localidade` esteja ativo. Endereço postal e CEP nunca são coletados ou projetados para organizações.

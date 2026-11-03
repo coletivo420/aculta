@@ -1,3 +1,72 @@
+## 0.4.0-dev.171 — remove dependência do Drupal LMS contrib
+
+- `aculta_lms_h5p` mantém os acessos por Group e não precisa habilitar o módulo `lms`; o Kernel focal remove essa dependência do harness.
+- Unit 34/139 PASS; Kernel de acesso 3/128 PASS, com 35 depreciações upstream.
+
+## 0.4.0-dev.169 — valida bombas ZIP reais antes da extração
+
+- Kernels do instalador criam ZIPs reais com uma entrada aleatória de 33 MiB e
+  uma entrada compactada de 2 MiB acima de 100:1.
+- Os dois pacotes são enviados ao serviço real do instalador; ele recusa cada
+  um durante o preflight, sem criar diretório temporário de extração.
+- PHPUnit oficial no Homelab: Kernel do instalador 13/310 PASS, incluindo os
+  dois casos de bomba real.
+
+## 0.4.0-dev.168 — fixture Kernel acompanha a integração de limites
+
+- O Kernel do instalador habilita `aculta_file_uploader`, dependência usada pelo
+  serviço de upload e pelo serviço configurável de limites.
+- A fixture instala `aculta_image_quarantine` pelo módulo dono atual
+  (`aculta_file_uploader`), mantendo as tabelas de origem/impressão digital em
+  `aculta_image`.
+- PHPUnit oficial no Homelab: Unit ZIP 6/40 e Kernel do instalador 11/232 PASS.
+
+## 0.4.0-dev.167 — limites do pacote H5P vêm do painel de uploads
+
+- O instalador recebe `IngestionLimits` (`aculta_file_uploader`) e aplica o teto por entrada e o total configurados em
+  `/painel-administrativo/aculta/uploads/limites`. Padrões: 32 MB por entrada e 256 MB no total. Tetos fixos: 128 MB
+  e 512 MB. Entradas de contagem e razão de compressão continuam constantes.
+- Dependência já existente: `aculta_file_uploader`.
+- Validação original: Kernel pendente naquela fase; reexecutado na dev.168 após corrigir a fixture, 11/232 PASS.
+
+## 0.4.0-dev.166 — limites de recursos no instalador de bibliotecas H5P
+
+- Novo `aculta_H5PArchiveResourceLimits`, sem dependências Drupal: recusa pacotes
+  com mais de 10.000 entradas, arquivo descompactado acima de 32 MiB, pacote
+  acima de 256 MiB descompactado e taxa de compressão acima de 100:1 (aplicada a
+  entradas com mais de 1 MiB).
+- Os bytes são medidos por streaming, não pelo tamanho declarado no cabeçalho do
+  ZIP, que pode ser falsificado.
+- `aculta_H5PLibraryPackageInstaller` aplica os limites antes de qualquer
+  extração, com o validador H5P oficial ainda como segunda barreira.
+- Referência de dimensionamento: o pacote de bibliotecas do Opigno 3.2.8 (2.683
+  entradas, 16,3 MB descompactados, taxa máxima 11,4) passa com folga.
+- Testes: Unit `aculta_H5PArchiveResourceLimitsTest` (6 casos) executado
+  localmente com executor mínimo compatível com as asserções usadas, sem PHPUnit
+  do projeto (o Packagist estava bloqueado no ambiente). Kernel do instalador e
+  PHPUnit oficial: NÃO executados.
+- Gate `validate-aculta-portal-drupal11.php`: FAIL, idêntico ao HEAD antes desta
+  mudança (dívida pré-existente, não tratada aqui).
+- Versão: `info.yml` estava em dev.164 enquanto o CHANGELOG já tinha dev.165;
+  esta entrega usa dev.166 para não colidir.
+- RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.162 — consumo do motor de limpeza movido para o aculta_file_uploader
+
+- Imports dos tipos de limpeza e serviço `aculta_portal.unused_file_cleaner` passam a `aculta_file_uploader`. Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.4.0-dev.161 — upload de imagem pelo aculta_file_uploader (fase 4)
+
+- O upload de imagem do editor H5P usa o `FileUploadIngestor` do
+  aculta_file_uploader, no lugar do `ImageUploadIngestor` do aculta_image.
+- Restrição de MIME do campo da atividade mantida (`allowedMimes`).
+- Volta para dev porque o código mudou após o RC e o RC não foi revalidado.
+- Não validado no Runtime: PHPUnit, Kernel e upload real de imagem H5P
+  pendentes.
+- RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-rc.1 — candidato de release (2026-10-29)
 
 - F10 e F15 completas; revisão visual autenticada documentada no Runtime de teste.
@@ -493,4 +562,19 @@
 - Unit + Kernel no `aculta_simpletest`: 43 testes/481 assertions PASS, 41
   depreciações Core/contrib no Kernel e 0 no Unit. F15 está tecnicamente
   completa; RC aguarda somente o gate global módulo–tema externo a H5P.
+
+## 0.4.0-dev.164 — container H5P recuperado no Runtime de desenvolvimento
+
+- Habilitado `aculta_file_uploader` no Runtime `toca`; a tabela de quarentena já
+  existente foi preservada. `drush cr` passou e o container resolve o
+  `FileUploadIngestor` e o gerenciador de upload H5P.
+- Smoke anônimo de Ganjalab e WE SATIVA respondeu 403 nos caminhos canônicos,
+  sem 500. Upload real H5P e rota autenticada ainda não foram exercitados.
+
+RUNTIME STATUS: PARTIAL.
+
+## 0.4.0-dev.170 — acesso H5P usa contratos Group
+
+- Acesso de estudante e educador, painel, formatter, editor e integrações agora tipam cursos por `GroupInterface`; permissão de estudante usa `take course` no Group.
+- Unit H5P 34/139 PASS; Kernel de acesso/integração 3/134 PASS, com 44 depreciações upstream.
 

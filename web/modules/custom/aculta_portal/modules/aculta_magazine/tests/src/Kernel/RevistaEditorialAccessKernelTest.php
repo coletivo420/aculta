@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_magazine\Kernel;
 
 use Drupal\aculta_magazine\Hook\RevistaFormHooks;
+use Drupal\aculta_magazine\Form\EditorialCapabilitiesForm;
 use Drupal\Component\Serialization\Yaml;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Routing\RouteMatch;
@@ -665,6 +666,20 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
     // The workflow widget is the owner's; it stays in the main flow.
     self::assertArrayNotHasKey('moderation_state', $form['revista_secondary']);
     self::assertContains('aculta_magazine/revista-form', $form['#attached']['library']);
+  }
+
+  /**
+   * The capability settings form builds its role options from injected storage.
+   */
+  public function testEditorialCapabilitiesFormLoadsAvailableRoles(): void {
+    $form = EditorialCapabilitiesForm::create($this->container);
+    $build = $form->buildForm([], new FormState());
+
+    foreach (['authoring_roles', 'review_roles', 'comments_roles'] as $key) {
+      self::assertArrayHasKey('content_editor', $build[$key]['#options']);
+      self::assertArrayHasKey('email_confirmed', $build[$key]['#options']);
+      self::assertArrayNotHasKey('anonymous', $build[$key]['#options']);
+    }
   }
 
   /**

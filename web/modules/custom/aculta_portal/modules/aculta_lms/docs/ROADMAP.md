@@ -75,6 +75,12 @@ O provider `Group:lms_course` vive em `aculta_lms_resources`, junto das referên
 - Flow de checkout próprio do LMS, sem cálculo de frete (D-43); tipo de pedido `curso` e matrícula inalterados. Não compartilha o flow `default` da Loja.
 - Matrícula continua dependendo do pagamento concluído. CPF/CNPJ cadastrado não libera matrícula.
 - Política central implementada em `aculta_portal`; Unit da política e Kernel do pane passaram. Regressão de UX do checkout gratuito em Functional/Browser isolado e homologação Runtime ainda pendentes. Ver `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`.
+# Ganjalab Educador — separação da experiência estudante (2026-11-01)
+
+O propósito `courses` mantém duas superfícies: estudante em `/ganjalab` e educador em `/ganjalab/educador`. A criação de curso fica em `/ganjalab/educador/cursos/novo`, dentro do workspace Educador. O formulário volta ao dashboard Educador. Os títulos e a identidade visual distinguem estudante e educador; o acesso continua exigindo os grants Group/LMS existentes, sem papel novo. O Course Builder permanece em planejamento e será implementado somente sobre entidades, Form API e relações já confirmadas.
+
+Consulte o [contrato de fronteiras Studio](../../../../../../docs/portal/ACULTA-STUDIO-EXPERIENCE-BOUNDARIES.md) e o [Course Builder](../../../../../../docs/portal/STUDIO-LMS-COURSE-BUILDER-VISUAL.md). A mudança de rota de criação não muda ownership, membership ou armazenamento. Validação automatizada/Runtime ainda não executada após este ajuste.
+
 # ADR-038 — Suite Ganjalab no purpose Courses (2026-10-30)
 
 O dashboard de estudante agora usa `/ganjalab` no purpose `courses`; a rota

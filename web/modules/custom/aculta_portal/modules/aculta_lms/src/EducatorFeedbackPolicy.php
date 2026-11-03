@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms;
 
 use Drupal\comment\CommentInterface;
-use Drupal\lms\Entity\AnswerInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
-use Drupal\lms\Entity\CourseStatusInterface;
-use Drupal\lms\Entity\LessonStatusInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\aculta_lms\Notice\LearningEligibilityInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -22,38 +21,35 @@ use Drupal\user\UserInterface;
 final class EducatorFeedbackPolicy {
 
   /**
+   * Comment type owned by ACULTA answer entities. */
+  public const COMMENT_TYPE = 'aculta_lms_answer_comment';
+
+  public function __construct(
+    private readonly LearningEligibilityInterface $eligibility,
+  ) {}
+
+  /**
    * Confirma que o autor do comentário é educador, não o dono da resposta.
    */
   public function isEducator(CommentInterface $comment): bool {
     $answer = $comment->getCommentedEntity();
     $author = $comment->getOwner();
-    if (!$answer instanceof AnswerInterface || !$author instanceof UserInterface) {
+    if (!$answer instanceof EntityInterface || $answer->getEntityTypeId() !== 'aculta_lms_answer' || !$author instanceof UserInterface) {
       return FALSE;
     }
-    if ((string) $answer->getUserId() === (string) $author->id()) {
+    if ((string) $answer->get('uid')->value === (string) $author->id()) {
       return FALSE;
     }
     $course = $this->courseForAnswer($answer);
-    return $course instanceof CourseInterface
+    return $course instanceof GroupInterface
       && $course->hasPermission('grade students', $author);
   }
 
   /**
    * Resolve o curso atual sem getters tipados em referências LMS antigas.
    */
-  public function courseForAnswer(AnswerInterface $answer): ?CourseInterface {
-    $lessonStatus = $answer->get('lesson_status')->entity;
-    if (!$lessonStatus instanceof LessonStatusInterface) {
-      return NULL;
-    }
-    $courseStatus = $lessonStatus->get('course_status')->entity;
-    if (!$courseStatus instanceof CourseStatusInterface) {
-      return NULL;
-    }
-    $course = $courseStatus->get(CourseStatusInterface::COURSE_FIELD)->entity;
-    return $course instanceof CourseInterface && $course->bundle() === 'lms_course'
-      ? $course
-      : NULL;
+  public function courseForAnswer(EntityInterface $answer): ?GroupInterface {
+    return $this->eligibility->courseForAnswer($answer);
   }
 
 }

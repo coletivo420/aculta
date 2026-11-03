@@ -211,6 +211,7 @@ php scripts/validate-browser-validators.php
 php scripts/validate-institution-content.php
 php scripts/validate-lms-skin.php
 php scripts/validate-aculta420-design-foundations.php
+php scripts/validate-aculta420-studio-identity.php
 php scripts/tests/validate-aculta420-design-foundations-test.php
 php scripts/tests/validate-aculta420-shell-contract-test.php
 vendor/bin/drush php:script validate-aculta420-shell-contract --script-path=../scripts

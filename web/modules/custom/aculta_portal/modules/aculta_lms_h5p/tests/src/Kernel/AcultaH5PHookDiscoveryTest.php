@@ -24,7 +24,7 @@ final class AcultaH5PHookDiscoveryTest extends KernelTestBase {
 
   /**
    * {@inheritdoc} */
-  protected static $modules = ['system', 'user', 'file', 'views', 'aculta_image', 'aculta_lms_h5p'];
+  protected static $modules = ['system', 'user', 'file', 'views', 'aculta_image', 'aculta_lms_h5p', 'token', 'aculta_file_uploader'];
 
   /**
    * {@inheritdoc}

@@ -65,6 +65,53 @@ final class MarleyPresenterTest extends UnitTestCase {
   }
 
   /**
+   * Keeps the sidebar controls and only allowed section actions.
+   */
+  public function testPreservesSidebarControlsAndAllowedSectionActions(): void {
+    $tab = $this->createMock(MarleyTabInterface::class);
+    $tab->method('isAvailable')->willReturn(TRUE);
+    $tab->method('access')->willReturn(AccessResult::allowed());
+    $tab->method('sections')->willReturn([
+      'publicacoes' => [
+        'label' => 'Meu trabalho',
+        'weight' => 0,
+        'suppress_sidebar' => TRUE,
+        'actions' => [
+          ['title' => 'Criar', 'url' => NULL, 'access' => TRUE],
+          ['title' => 'Negada', 'url' => NULL, 'access' => FALSE],
+        ],
+        'tabs' => [
+          'todos' => [
+            'label' => 'Todos',
+            'weight' => 0,
+            'actions' => [['title' => 'Ação', 'url' => NULL, 'access' => TRUE]],
+          ],
+        ],
+      ],
+      'criar' => [
+        'label' => 'Criar',
+        'weight' => 10,
+        'sidebar' => FALSE,
+        'tabs' => [
+          'nova' => [
+            'label' => 'Nova',
+            'weight' => 0,
+            'actions' => [['title' => 'Nova', 'url' => NULL, 'access' => TRUE]],
+          ],
+        ],
+      ],
+    ]);
+    $presenter = new MarleyPresenter($this->createMock(PluginManagerInterface::class));
+
+    $sections = $presenter->sectionsFor($tab, $this->createMock(AccountInterface::class));
+
+    self::assertTrue($sections['publicacoes']['suppress_sidebar']);
+    self::assertCount(1, $sections['publicacoes']['actions']);
+    self::assertSame('Criar', (string) $sections['publicacoes']['actions'][0]['title']);
+    self::assertFalse($sections['criar']['sidebar']);
+  }
+
+  /**
    * Builds a tab double with the given availability and access result.
    */
   private function tab(bool $available, AccessResult $access): MarleyTabInterface {

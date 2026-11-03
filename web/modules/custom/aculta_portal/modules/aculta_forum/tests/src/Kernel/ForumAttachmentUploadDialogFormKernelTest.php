@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Form\ForumAttachmentUploadDialogForm;
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\MimeTypeVerifier;
+use Drupal\aculta_file_uploader\UploadPolicy as FileUploadPolicy;
+use Drupal\aculta_file_uploader\RecentUploads;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
-use Drupal\aculta_portal\Upload\UserUploadPolicy;
-use Drupal\aculta_image\ImageInspector;
-use Drupal\aculta_image\UploadPolicy as ImageUploadPolicy;
 use Drupal\Core\Form\FormState;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -32,6 +33,15 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
    *
    * @var string[]
    */
+
+  /**
+   * PDF mínimo real: a política central confere o MIME pelo conteúdo.
+   */
+  private const PDF_FIXTURE = "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n"
+    . "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n"
+    . "3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 200 200]>>endobj\n"
+    . "trailer<</Root 1 0 R>>\n%%EOF\n";
+
   protected static $modules = [
     'system',
     'user',
@@ -42,6 +52,7 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
     'image',
     'media',
     'editor',
+    'aculta_file_uploader',
   ];
 
   /**
@@ -52,7 +63,7 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
   /**
    * Policy shared by the form and the dialog builder.
    */
-  private UserUploadPolicy $policy;
+  private ConsumerUploadPolicy $policy;
 
   /**
    * Form under test.
@@ -66,6 +77,10 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('file');
+    $this->config('aculta_file_uploader.settings')
+      ->set('allowed_extensions', 'png gif jpg jpeg webp pdf docx xls xlsx')
+      ->set('max_size_mb', 10)
+      ->save();
     $this->installEntitySchema('media');
     $this->installSchema('file', ['file_usage']);
     $this->installConfig([
@@ -146,16 +161,22 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
     $this->member->save();
     $this->container->get('current_user')->setAccount($this->member);
 
-    $this->policy = new UserUploadPolicy(
+    $this->policy = new ConsumerUploadPolicy(
       $this->container->get('config.factory'),
-      new ImageUploadPolicy(),
-      new ImageInspector($this->container->get('image.factory')),
+      new FileUploadPolicy(),
+      new MimeTypeVerifier(),
+      $this->container->get('file_system'),
+      $this->container->get('aculta_file_uploader.image_dimension_reader'),
     );
     $this->form = new ForumAttachmentUploadDialogForm(
       $this->container->get('entity_type.manager'),
       $this->container->get('current_user'),
       $this->policy,
-      new UserUploadDialogBuilder($this->policy, $this->container->get('string_translation')),
+      new UserUploadDialogBuilder(
+        new ConsumerUploadPolicy($this->container->get('config.factory'), new FileUploadPolicy(), new MimeTypeVerifier(), $this->container->get('file_system'), $this->container->get('aculta_file_uploader.image_dimension_reader')),
+        $this->container->get('string_translation'),
+      ),
+      new RecentUploads($this->container->get('entity_type.manager')),
     );
   }
 
@@ -163,7 +184,7 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
    * One valid document becomes an unpublished Media and a permanent file.
    */
   public function testDocumentCreatesUnpublishedMedia(): void {
-    $file = $this->file('anexo.pdf', 'documento de teste');
+    $file = $this->file('anexo.pdf', self::PDF_FIXTURE);
     $state = new FormState();
     $state->setValue('document_file', [$file->id()]);
 
@@ -199,7 +220,7 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
    * More than one file, missing file and incompatible types are refused.
    */
   public function testInvalidSubmissionsAreRefused(): void {
-    $document = $this->file('anexo.pdf', 'documento');
+    $document = $this->file('anexo.pdf', self::PDF_FIXTURE);
     $image = $this->file('foto.png', 'imagem falsa');
 
     $twoFiles = new FormState();

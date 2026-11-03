@@ -16,6 +16,12 @@ use Drupal\aculta_messenger\Integration\Donation\DonationNoticeManager;
 use Drupal\aculta_messenger\Integration\Donation\DonationNoticeManagerInterface;
 use Drupal\aculta_messenger\Integration\Donation\EventSubscriber\DonationNoticeEventConsumer;
 use Drupal\aculta_messenger\Integration\Donation\Mail\DonationNoticeMailType;
+use Drupal\aculta_messenger\Integration\Events\AccessEventsContributionNotice;
+use Drupal\aculta_messenger\Integration\Events\Controller\EventsContributionNoticeOpenController;
+use Drupal\aculta_messenger\Integration\Events\EventSubscriber\EventsContributionNoticeConsumer;
+use Drupal\aculta_messenger\Integration\Events\EventsContributionNoticeManager;
+use Drupal\aculta_messenger\Integration\Events\EventsContributionNoticeManagerInterface;
+use Drupal\aculta_messenger\Integration\Events\Mail\EventsContributionNoticeMailType;
 use Drupal\aculta_messenger\Integration\Game\EventSubscriber\GameAchievementNoticeEventConsumer;
 use Drupal\aculta_messenger\Integration\Game\GameAchievementNoticeManager;
 use Drupal\aculta_messenger\Integration\Game\GameAchievementNoticeManagerInterface;
@@ -33,7 +39,10 @@ use Drupal\aculta_messenger\Integration\Magazine\MagazineNoticeManagerInterface;
 use Drupal\aculta_messenger\Integration\Magazine\Mail\MagazineNoticeMailType;
 use Drupal\aculta_messenger\Integration\Wiki\AccessWikiNotice;
 use Drupal\aculta_messenger\Integration\Wiki\Controller\WikiNoticeOpenController;
+use Drupal\aculta_messenger\Integration\Wiki\EditorialReviewNotice;
+use Drupal\aculta_messenger\Integration\Wiki\EditorialReviewNoticeInterface;
 use Drupal\aculta_messenger\Integration\Wiki\EventSubscriber\WikiNoticeEventSubscriber;
+use Drupal\aculta_messenger\Integration\Wiki\Mail\WikiEditorialReviewMailType;
 use Drupal\aculta_messenger\Integration\Wiki\Mail\WikiNoticeMailType;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManager;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManagerInterface;
@@ -42,6 +51,7 @@ use Drupal\aculta_messenger\Hook\BadgeAwardNoticeEventProducer;
 use Drupal\aculta_messenger\Mapper\MessengerPrivateMessageMapper;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Argument\ServiceLocatorArgument;
@@ -86,6 +96,10 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
       $this->registerMagazineAdapter($container);
     }
 
+    if ($container->hasDefinition('aculta_events.location_contribution_adapter')) {
+      $this->registerEventsContributionAdapter($container);
+    }
+
     $optionalAdapters = [];
     if ($container->hasDefinition('aculta_game.forum_participation_policy')) {
       $container->setDefinition('aculta_messenger.game_achievement_notice_manager', new Definition(
@@ -118,6 +132,9 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
         $optionalAdapters[$adapter] = new Reference($service);
       }
     }
+    if ($container->hasDefinition('aculta_messenger.events_contribution_notice_manager')) {
+      $optionalAdapters['eventos'] = new Reference('aculta_messenger.events_contribution_notice_manager');
+    }
     if ($container->hasDefinition('aculta_messenger.notice_read_state')) {
       $container->getDefinition('aculta_messenger.notice_read_state')
         ->setArgument(1, new ServiceLocatorArgument($optionalAdapters));
@@ -142,6 +159,43 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
   }
 
   /**
+   * Registers the optional Events contributions inbox integration. */
+  private function registerEventsContributionAdapter(ContainerBuilder $container): void {
+    $container->setDefinition('aculta_messenger.events_contribution_notice_manager', new Definition(
+      EventsContributionNoticeManager::class,
+      [
+        new Reference('entity_type.manager'),
+        new Reference('aculta_portal.domain_purpose'),
+        new Reference('lock'),
+        new Reference('aculta_messenger.aviso_preferencias'),
+        new Reference('queue'),
+        new Reference('logger.channel.aculta_messenger'),
+      ],
+    ))->addTag('aculta_messenger.aviso_digest_provider');
+    $container->setAlias(EventsContributionNoticeManagerInterface::class, 'aculta_messenger.events_contribution_notice_manager');
+    $container->setDefinition('aculta_messenger.events_contribution_notice_consumer', new Definition(
+      EventsContributionNoticeConsumer::class,
+      [new Reference('aculta_messenger.events_contribution_notice_manager')],
+    ))->addTag('event_subscriber');
+    $container->setDefinition('aculta_messenger.events_contribution_notice_access', new Definition(
+      AccessEventsContributionNotice::class,
+      [new Reference('aculta_messenger.events_contribution_notice_manager'), new Reference('current_user')],
+    ))->setPublic(TRUE);
+    $container->setDefinition('aculta_messenger.events_contribution_notice_open_controller', new Definition(
+      EventsContributionNoticeOpenController::class,
+      [
+        new Reference('aculta_messenger.events_contribution_notice_manager'),
+        new Reference('current_user'),
+        new Reference('request_stack'),
+      ],
+    ))->setPublic(TRUE);
+    $container->setDefinition(EventsContributionNoticeMailType::class, new Definition(
+      EventsContributionNoticeMailType::class,
+      [new Reference('string_translation')],
+    ))->addTag('aculta_mailer.type');
+  }
+
+  /**
    * Registers services for the optional LMS adapter. */
   private function registerLmsAdapter(ContainerBuilder $container): void {
     $container->setDefinition('aculta_messenger.lms_notice_manager', new Definition(
@@ -153,8 +207,8 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
         new Reference('date.formatter'),
         new Reference('queue'),
         new Reference('logger.channel.aculta_messenger'),
-        new Reference('aculta_messenger.notice_event_publisher'),
         new Reference('lock'),
+        new Reference('aculta_lms.notice_eligibility'),
       ],
     ))->addTag('aculta_messenger.aviso_digest_provider');
     $container->setAlias(LearningNoticeManagerInterface::class, 'aculta_messenger.lms_notice_manager');
@@ -218,6 +272,26 @@ final class AcultaMessengerServiceProvider extends ServiceProviderBase {
     ))->setPublic(TRUE);
     $container->setDefinition(WikiNoticeMailType::class, new Definition(
       WikiNoticeMailType::class,
+      [new Reference('string_translation')],
+    ))->addTag('aculta_mailer.type');
+    $container->setDefinition('aculta_messenger.wiki_editorial_review_notice', new Definition(
+      EditorialReviewNotice::class,
+      [
+        new Reference('entity_type.manager'),
+        new Reference('config.factory'),
+        new Reference('keyvalue.expirable'),
+        new Reference('lock'),
+        new Reference('string_translation'),
+        new Reference('aculta_mailer.queue', ContainerInterface::NULL_ON_INVALID_REFERENCE),
+        new Reference('Drupal\aculta_mailer\Api\PublicUrlInterface', ContainerInterface::NULL_ON_INVALID_REFERENCE),
+      ],
+    ))->setPublic(TRUE);
+    $container->setAlias(
+      EditorialReviewNoticeInterface::class,
+      'aculta_messenger.wiki_editorial_review_notice',
+    );
+    $container->setDefinition(WikiEditorialReviewMailType::class, new Definition(
+      WikiEditorialReviewMailType::class,
       [new Reference('string_translation')],
     ))->addTag('aculta_mailer.type');
   }

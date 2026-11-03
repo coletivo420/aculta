@@ -4,6 +4,8 @@
 ## Objetivo
 Unificar visualmente as experiências de estudante do **ACULTA Studio Ganjalab** sob o Design System **ACULTA420**, sem tocar na identidade técnica `aculta_lms`, nem replicar dados de LMS, Group, PDFs, imagens, mensagens ou Fórum. Os contratos anteriores permanecem fontes de verdade por tela.
 
+Este documento cobre somente o **Ganjalab Estudante**. O **Ganjalab Educador** tem contrato e gates separados no [Course Builder](STUDIO-LMS-COURSE-BUILDER-VISUAL.md); o **Marley** limita-se a Revista, moderação do Fórum e Galerias. Não se deve reutilizar o shell de estudante como painel do educador nem misturar filas editoriais/moderação na jornada do aprendiz. Ver também [fronteiras das experiências Studio](ACULTA-STUDIO-EXPERIENCE-BOUNDARIES.md).
+
 ## Contratos de experiência
 | Experiência | Documento | Fonte e gate |
 | --- | --- | --- |

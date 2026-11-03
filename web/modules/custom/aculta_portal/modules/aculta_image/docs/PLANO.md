@@ -13,7 +13,7 @@ Todo o site usa o `aculta_image` para upload, derivados, entrega responsiva, aud
 arquivos de imagem. Nenhum módulo do Portal cria estilo de imagem, processa imagem ou apaga arquivo por conta própria.
 A regra está em `AGENTS.md` ("Imagens e arquivos de imagem") e é verificada pelo gate.
 
-Processadores opcionais que geram derivados fora da Image API devem registrar o resultado por `aculta_image.generated_file`
+Processadores opcionais que geram derivados fora da Image API devem registrar o resultado por `aculta_file_uploader.generated_file`
 e entregar a marcação por `aculta_image.render`. Derivados sem referência são temporários e entram na limpeza pela idade
 `system.file:temporary_maximum_age`.
 

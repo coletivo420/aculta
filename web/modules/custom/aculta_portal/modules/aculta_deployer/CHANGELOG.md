@@ -1,3 +1,9 @@
+## 0.1.29-dev.1 — volta a Dev; comando de sugestão de superfícies
+
+- Módulo volta a Dev após o candidato 0.1.28-rc.1, por decisão do responsável. Novo RC depende de revalidação (Alpha e Beta).
+- Comando `superficies-sugestao --from-json=<arquivo>`: lê `{purpose: {modo, slug}}` e imprime sugestões de entradas de correção de deploy para superfícies em diretório. Não grava no registro.
+- Versões sincronizadas em `aculta_deployer.info.yml`, `VERSION` e `Cli::VERSION`.
+
 ## 0.1.28-rc.1 — candidato a RC: fronteira de testes Sitemap, D-50, PHPCS e revisão de DEP-0003 — 2026-10-29
 
 - Versão sincronizada em `0.1.28-rc.1` em `aculta_deployer.info.yml`, `VERSION` e `Cli::VERSION`.

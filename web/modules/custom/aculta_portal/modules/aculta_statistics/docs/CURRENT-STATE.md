@@ -43,7 +43,7 @@ contagens, nunca a autoria privada.
 Regra do AGENTS: a Wiki não é módulo, é conteúdo. Não reimplementar a Wiki no
 Fórum. O Core não traz contador de leitura; o contador próprio foi decidido e entregue na 0.2.0-dev.3.
 
-## LMS (`aculta_lms`, `drupal/lms` 1.2.4, `group` 3.3.5)
+## LMS (`aculta_lms`, entidades ACULTA e Group 3.3.5)
 
 | Recurso | Onde está | Classificação |
 |---|---|---|
@@ -55,8 +55,9 @@ Fórum. O Core não traz contador de leitura; o contador próprio foi decidido e
 | Resposta enviada (avaliação) | `AnswerSubmittedEvent` e `AnswerLifecycleEventHooks`: arquivos **não commitados de outra frente** | INTEGRAÇÃO FUTURA. Não depender até o commit |
 | Descarte de tentativas | `AttemptArchiveManager` | Retenção de dados educacionais, não métrica |
 
-Regra: o LMS é a fonte de matrícula e progresso. O Statistics recebe contagens
-por turma e curso, nunca notas ou respostas individuais.
+Regra: `aculta_lms` e Group são a fonte de matrícula e progresso ACULTA. O
+Statistics recebe contagens por turma e curso, nunca notas ou respostas
+individuais. Conteúdo legado LMS contrib não é migrado.
 
 ## E-mail (`aculta_mailer`)
 
@@ -73,11 +74,11 @@ por turma e curso, nunca notas ou respostas individuais.
 Distinção que o Statistics deve manter: `sent` no log significa aceito pelo
 sistema de e-mail, não entregue.
 
-## Links (`aculta_links`)
+## Links (`aculta_linkweed`)
 
 | Recurso | Onde está | Classificação |
 |---|---|---|
-| Cliques por destino e dia | `LinkAnalytics::recordClick()` → fila → `aculta_links_stat_daily` | DEVE SER REUTILIZADO. Modelo de privacidade de referência |
+| Cliques por destino e dia | `LinkAnalytics::recordClick()` → fila → `aculta_linkweed_stat_daily` | DEVE SER REUTILIZADO. Modelo de privacidade de referência |
 | Retenção de 90 dias | `LinkAnalytics::purgeExpired()`, cron com `#[Hook]` | DEVE SER REUTILIZADO |
 | Cliques por destino para tela | `clickCounts()` | DEVE SER REUTILIZADO |
 
@@ -128,7 +129,7 @@ sistema de e-mail, não entregue.
 
 ## Duplicações a evitar
 
-- Contador de cliques: `aculta_links` já tem agregado. O Statistics deve convergir para ele, não criar um segundo.
+- Contador de cliques: `aculta_linkweed` já tem agregado. O Statistics deve convergir para ele, não criar um segundo.
 - Log de e-mail: `aculta_mail_log` é o registro. Não instalar Mailer Plus Log nem Trace Mail Log para isso.
 - Contagem de comentários: já existe no Core via `comment_count`.
 - Eventos de Commerce: não instalar ECA Commerce; a API nativa basta.

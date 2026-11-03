@@ -40,6 +40,7 @@ $expected = [
   'osm_production_client_id' => ['OSM_PRODUCTION_CLIENT_ID', FALSE],
   'osm_production_client_secret' => ['OSM_PRODUCTION_CLIENT_SECRET', FALSE],
   'aculta_osm_token_encryption' => ['ACULTA_OSM_TOKEN_ENCRYPTION_KEY', FALSE],
+  'aculta_lms_xapi_token' => ['ACULTA_LMS_XAPI_TOKEN_SECRET', FALSE],
   'melhorenvio_sandbox_client_id' => ['MELHORENVIO_SANDBOX_CLIENT_ID', FALSE],
   'melhorenvio_sandbox_client_secret' => ['MELHORENVIO_SANDBOX_CLIENT_SECRET', FALSE],
   'melhorenvio_production_client_id' => ['MELHORENVIO_PRODUCTION_CLIENT_ID', FALSE],

@@ -14,7 +14,6 @@ dependencies:
     - image.style.aculta_destaque_16x9
   module:
     - image
-    - lms
     - aculta_lms_resources
     - text
 id: group.lms_course.default
@@ -55,13 +54,6 @@ content:
     third_party_settings: {  }
     weight: -5
     region: content
-  start_link:
-    type: lms_component_formatter
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 10
-    region: content
 hidden:
   changed: true
   created: true
@@ -74,6 +66,5 @@ hidden:
   field_lms_galleries: true
   field_lms_readings: true
   langcode: true
-  lessons: true
   search_api_excerpt: true
   uid: true

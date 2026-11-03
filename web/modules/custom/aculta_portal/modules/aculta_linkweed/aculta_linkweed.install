@@ -1,0 +1,262 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Installs the revisionable visual preset field on existing micropages.
+ */
+function aculta_linkweed_update_10001(): string {
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  if ($update_manager->getFieldStorageDefinition('theme_preset', 'aculta_linkweed_page') === NULL) {
+    $definitions = \Drupal::service('entity_field.manager')
+      ->getBaseFieldDefinitions('aculta_linkweed_page');
+    $update_manager->installFieldStorageDefinition(
+      'theme_preset',
+      'aculta_linkweed_page',
+      'aculta_linkweed',
+      $definitions['theme_preset'],
+    );
+  }
+
+  return 'Adicionado o campo revisionável de preset visual às micropáginas existentes.';
+}
+
+/**
+ * Moves the public social-links configuration into ACULTA Links.
+ */
+function aculta_linkweed_update_10002(): string {
+  $config_storage = \Drupal::service('config.storage');
+  if ($config_storage->read('aculta_linkweed.social_links') !== FALSE) {
+    return 'The ACULTA Links social configuration already exists; no values were changed.';
+  }
+
+  $source = $config_storage->read('aculta_portal.social_links') ?: [];
+  $data = array_replace([
+    'instagram' => '',
+    'youtube' => '',
+    'facebook' => '',
+    'buttons' => [],
+  ], array_intersect_key($source, array_flip(['instagram', 'youtube', 'facebook', 'buttons'])));
+  \Drupal::configFactory()
+    ->getEditable('aculta_linkweed.social_links')
+    ->setData($data)
+    ->save();
+
+  return 'Copied the existing ACULTA social-links values; the legacy configuration was preserved for rollback.';
+}
+
+/**
+ * Installs revisionable availability-window fields on existing page items.
+ */
+function aculta_linkweed_update_10003(): string {
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  $definitions = \Drupal::service('entity_field.manager')
+    ->getBaseFieldDefinitions('aculta_linkweed_item');
+  foreach (['available_from', 'available_until'] as $field_name) {
+    if ($update_manager->getFieldStorageDefinition($field_name, 'aculta_linkweed_item') === NULL) {
+      $update_manager->installFieldStorageDefinition(
+        $field_name,
+        'aculta_linkweed_item',
+        'aculta_linkweed',
+        $definitions[$field_name],
+      );
+    }
+  }
+
+  return 'Added revisionable availability-window fields to existing ACULTA Links items; existing items remain immediately available with no end date.';
+}
+
+/**
+ * Installs the generated short-code field on existing reusable destinations.
+ */
+function aculta_linkweed_update_10004(): string {
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  if ($update_manager->getFieldStorageDefinition('short_code', 'aculta_linkweed') === NULL) {
+    $definitions = \Drupal::service('entity_field.manager')
+      ->getBaseFieldDefinitions('aculta_linkweed');
+    $update_manager->installFieldStorageDefinition(
+      'short_code',
+      'aculta_linkweed',
+      'aculta_linkweed',
+      $definitions['short_code'],
+    );
+  }
+
+  return 'Added the opaque short-code field; existing destinations receive a code when next saved.';
+}
+
+/**
+ * Installs the opt-in public owner identity field on existing microsites.
+ */
+function aculta_linkweed_update_10005(): string {
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  if ($update_manager->getFieldStorageDefinition('show_owner_identity', 'aculta_linkweed_page') === NULL) {
+    $definitions = \Drupal::service('entity_field.manager')
+      ->getBaseFieldDefinitions('aculta_linkweed_page');
+    $update_manager->installFieldStorageDefinition(
+      'show_owner_identity',
+      'aculta_linkweed_page',
+      'aculta_linkweed',
+      $definitions['show_owner_identity'],
+    );
+  }
+
+  return 'Added the opt-in public owner identity field to existing microsites; existing pages keep the default disabled.';
+}
+
+/**
+ * Cliques passaram a ser contados pelo aculta_statistics (ADR-0004).
+ *
+ * A tabela própria foi criada aqui antes da centralização e é removida em
+ * aculta_linkweed_update_10008(). Nenhum dado é migrado: o banco é de teste.
+ */
+function aculta_linkweed_update_10006(): string {
+  return 'Cliques de links passam ao aculta_statistics; a tabela própria é removida na atualização 10008.';
+}
+
+/**
+ * Installs the Drupal node-reference destination on existing reusable links.
+ */
+function aculta_linkweed_update_10007(): string {
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  if ($update_manager->getFieldStorageDefinition('target_node', 'aculta_linkweed') === NULL) {
+    $definitions = \Drupal::service('entity_field.manager')
+      ->getBaseFieldDefinitions('aculta_linkweed');
+    $update_manager->installFieldStorageDefinition(
+      'target_node',
+      'aculta_linkweed',
+      'aculta_linkweed',
+      $definitions['target_node'],
+    );
+  }
+
+  return 'Added the revisionable node-reference destination field; existing URI destinations remain unchanged.';
+}
+
+/**
+ * Remove a tabela própria de cliques: a contagem agora é do aculta_statistics (ADR-0004).
+ *
+ * Sem migração: o banco de teste não retém esses agregados.
+ */
+function aculta_linkweed_update_10008(): string {
+  $schema = \Drupal::database()->schema();
+  if ($schema->tableExists('aculta_linkweed_stat_daily')) {
+    $schema->dropTable('aculta_linkweed_stat_daily');
+  }
+
+  return 'Removed the link click table; clicks are counted by aculta_statistics.';
+}
+
+/**
+ * Renames the LinkWeed module, entity types, tables, and active configuration.
+ */
+function aculta_linkweed_update_10009(): string {
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $tables = [
+    'aculta_link' => 'aculta_linkweed',
+    'aculta_link_revision' => 'aculta_linkweed_revision',
+    'aculta_link_item' => 'aculta_linkweed_item',
+    'aculta_link_item_revision' => 'aculta_linkweed_item_revision',
+    'aculta_link_page' => 'aculta_linkweed_page',
+    'aculta_link_page_revision' => 'aculta_linkweed_page_revision',
+  ];
+  foreach ($tables as $old => $new) {
+    if ($schema->tableExists($old) && !$schema->tableExists($new)) {
+      $schema->renameTable($old, $new);
+    }
+  }
+
+  foreach (['entity.definitions.installed', 'entity.storage_schema.sql'] as $collection_name) {
+    $collection = \Drupal::keyValue($collection_name);
+    foreach ($collection->getAll() as $key => $value) {
+      if (strpos($key, 'aculta_link') !== 0) {
+        continue;
+      }
+      $new_key = aculta_linkweed_rename_value($key);
+      $collection->set($new_key, aculta_linkweed_rename_value($value));
+      if ($new_key !== $key) {
+        $collection->delete($key);
+      }
+    }
+  }
+
+  $config = \Drupal::configFactory()->getEditable('core.extension');
+  $modules = $config->get('module') ?: [];
+  if (isset($modules['aculta_links']) && !isset($modules['aculta_linkweed'])) {
+    $weight = $modules['aculta_links'];
+    unset($modules['aculta_links']);
+    $modules['aculta_linkweed'] = $weight;
+    $config->set('module', $modules)->save();
+  }
+
+  $storage = \Drupal::service('config.storage');
+  foreach ($storage->listAll('aculta_links.') as $name) {
+    $new_name = aculta_linkweed_rename_value($name);
+    $data = $storage->read($name);
+    $storage->write($new_name, aculta_linkweed_rename_value($data));
+    $storage->delete($name);
+  }
+  foreach ($storage->listAll() as $name) {
+    $data = $storage->read($name);
+    $renamed = aculta_linkweed_rename_value($data);
+    if ($renamed !== $data) {
+      $storage->write($name, $renamed);
+    }
+  }
+
+  return 'Renomeados o módulo LinkWeed, suas entidades, tabelas, schema e configurações ativas.';
+}
+
+/** Recursively renames LinkWeed identifiers without corrupting serialized values. */
+function aculta_linkweed_rename_value(mixed $value): mixed {
+  if (is_string($value)) {
+    return str_replace(
+      ['aculta_linkweedweed_page', 'aculta_linkweedweed_item', 'aculta_linkweedweed', 'aculta_links', 'aculta_link_page', 'aculta_link_item', 'aculta_link'],
+      ['aculta_linkweed_page', 'aculta_linkweed_item', 'aculta_linkweed', 'aculta_linkweed', 'aculta_linkweed_page', 'aculta_linkweed_item', 'aculta_linkweed'],
+      $value,
+    );
+  }
+  if (is_array($value)) {
+    $renamed = [];
+    foreach ($value as $key => $item) {
+      $renamed[aculta_linkweed_rename_value($key)] = aculta_linkweed_rename_value($item);
+    }
+    return $renamed;
+  }
+  return $value;
+}
+
+/** Repairs identifiers produced by the first idempotent migration pass. */
+function aculta_linkweed_update_10010(): string {
+  $repair = static function (mixed $value) use (&$repair): mixed {
+    if (is_string($value)) {
+      return str_replace('aculta_linkweedweed', 'aculta_linkweed', $value);
+    }
+    if (is_array($value)) {
+      $out = [];
+      foreach ($value as $key => $item) {
+        $out[$repair($key)] = $repair($item);
+      }
+      return $out;
+    }
+    return $value;
+  };
+  foreach (['entity.definitions.installed', 'entity.storage_schema.sql'] as $name) {
+    $store = \Drupal::keyValue($name);
+    foreach ($store->getAll() as $key => $value) {
+      $new_key = $repair($key);
+      $store->set($new_key, $repair($value));
+      if ($new_key !== $key) {
+        $store->delete($key);
+      }
+    }
+  }
+  $storage = \Drupal::service('config.storage');
+  foreach ($storage->listAll('aculta_linkweedweed.') as $name) {
+    $storage->write($repair($name), $repair($storage->read($name)));
+    $storage->delete($name);
+  }
+  return 'Corrigidos os identificadores duplicados da migração LinkWeed.';
+}
+

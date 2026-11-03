@@ -20,21 +20,18 @@ use Drupal\Core\Routing\AdminContext;
 use Drupal\views\ViewExecutable;
 
 /**
- * Datas passadas fora das listagens, sem cron invalidando cache (auditoria, T5).
+ * Oculta datas passadas sem cron de invalidação (auditoria, T5).
  *
- * Equivalente ao `viewsPostExecute` do OpenCulturas, escrito do zero: uma view cuja
- * tabela base é `aculta_event_date` perde as linhas cuja data já terminou, corrige
- * `total_rows` e declara max-age até o fim da próxima ocorrência. No instante em que
- * a data passa, o cache vence e a linha sai; nenhuma tarefa agendada é necessária.
+ * Reimplementa `viewsPostExecute`: Views com base `aculta_event_date` removem
+ * linhas vencidas, atualizam `total_rows` e expiram na próxima ocorrência.
+ * Nenhuma tarefa agendada é necessária.
  *
- * A tag de lista fecha o outro lado: criar, editar ou excluir evento, data ou exceção
- * de ocorrência invalida a listagem, para que o max-age até a próxima data não congele
- * conteúdo editado.
+ * A tag de lista invalida resultados ao criar, editar ou excluir evento, data
+ * ou exceção, sem congelar o max-age da próxima ocorrência.
  *
- * Limite conhecido: a remoção acontece depois da consulta. A página que contiver a
- * linha removida mostra um item a menos, mas a contagem e a paginação continuam
- * coerentes porque `total_rows` é ajustado. A view do M2 deve filtrar por período na
- * consulta quando o período for fixo; este hook cobre só o que muda com o relógio.
+ * Limite: a remoção ocorre após a consulta. Os rows e `total_rows` permanecem
+ * coerentes. Views com período fixo devem filtrar na consulta; este hook cobre
+ * somente mudanças dependentes do relógio.
  */
 final class EventDateHooks {
 
@@ -57,7 +54,7 @@ final class EventDateHooks {
    */
   #[Hook('views_post_execute')]
   public function viewsPostExecute(ViewExecutable $view): void {
-    // Listagem administrativa mostra o histórico inteiro: não filtra por relógio.
+    // A listagem administrativa mantém o histórico completo.
     if (!$this->listaDatas($view) || $this->adminContext->isAdminRoute()) {
       return;
     }
@@ -112,7 +109,7 @@ final class EventDateHooks {
     Cache::invalidateTags([EventCacheTags::LISTA, 'aculta_event_location_list']);
 
     // Quando datas são inseridas, atualizadas ou excluídas, agenda reprojeção
-    // do evento pai para atualizar as relações event_location no Content Index (LOC-04).
+    // do evento pai para atualizar relações event_location no Index (LOC-04).
     if ($entity instanceof EventDate && $this->workManager !== NULL) {
       $eventId = (int) ($entity->get('field_evento')->target_id ?? 0);
       if ($eventId > 0) {
@@ -135,7 +132,7 @@ final class EventDateHooks {
       }
     }
     elseif ($entity instanceof EventLocation && $this->workManager !== NULL) {
-      // Quando um local muda ou é excluído, reprojeta todos os eventos que possuem datas nesse local.
+      // Ao mudar ou excluir o Local, reprojeta os Eventos com datas nele.
       $dateIds = $this->entityTypeManager->getStorage('aculta_event_date')
         ->getQuery()
         ->accessCheck(FALSE)

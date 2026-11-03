@@ -55,3 +55,26 @@ sobre IP. A revisão editorial da informação sobre o provedor permanece penden
 Termos, cobrança, atribuição, cache e licenças foram revisados tecnicamente. D-46 remove o uso de resultados Google
 Geocoding; a atribuição OSM/ODbL é mostrada em mapas Google quando há coordenadas de Nominatim. A transparência
 editorial geral da política de privacidade continua separada e pendente.
+
+## Revalidação — 2026-10-31
+
+- A política atual de tiles OSM exige o endpoint HTTPS canônico
+  `https://tile.openstreetmap.org/{z}/{x}/{y}.png`, atribuição, respeito a cache
+  e `Referer` válido em páginas web. O `aculta-map.js` foi ajustado para usar o
+  host canônico, sem subdomínios de balanceamento.
+- O código inspecionado usa o `User-Agent` identificador `ACULTA Maps/1.0`, uma
+  trava/timestamp compartilhados para limitar chamadas Nominatim a uma por
+  segundo, consulta somente no salvamento e restringe a busca ao Brasil. A
+  política pública proíbe autocomplete e recomenda cache e possibilidade de
+  trocar o serviço.
+- D-52 remove apenas o texto inline no mapa. ADR-030 ainda exige que a política
+  descreva provedores e dados técnicos. A minuta 0.6 passou a incluir tiles,
+  provedor opcional Google e geocodificação server-side; continua minuta, não
+  publicada no Runtime, aguardando revisão jurídica e aprovação institucional.
+- A resposta HTTP da página de mapa para `Referrer-Policy` não foi revalidada
+  nesta revisão; antes de homologar uso do tile server, confirmar que o cabeçalho
+  permite `Referer` conforme a política OSM.
+
+Referência oficial consultada em 2026-10-31: [Tile Usage Policy](https://operations.osmfoundation.org/policies/tiles/),
+[Nominatim Usage Policy](https://operations.osmfoundation.org/policies/nominatim/) e
+[OSMF Privacy Policy](https://osmfoundation.org/wiki/Privacy_Policy).

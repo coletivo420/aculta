@@ -29,6 +29,7 @@ final class NoticeOriginGrouper {
     'doacao' => 'Doações',
     'conquistas' => 'Conquistas',
     'conta' => 'Conta',
+    'eventos' => 'Eventos',
     'outros' => 'Outros avisos',
   ];
 

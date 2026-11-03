@@ -1,6 +1,8 @@
 # Plano - ingressos gratuitos e pagos em Eventos
 
-Status: **plano revisado, sem código.** Decisões atualizadas em 2026-10-31 conforme D-60/D-61; venda paga continua bloqueada por D-35. A v1 contém somente campos informativos; RSVP gratuito com emissão e venda interna não estão implementados. D-29 a D-43 continuam sendo base para a trilha paga. Esta revisão propõe o fluxo gratuito derivado de D-33/D-36/D-37/D-40, sem autorizar coleta ou venda pública. Ver ADR-036.
+Status: **implementação estrutural parcial.** D-60/D-61 estão refletidas no código e neste plano. `aculta_event_offer` registra ofertas/lotes inativos, vinculados a Evento e opcionalmente a Data. `RsvpPolicyResolver` valida políticas completas para contextos de RSVP gratuito, mas não registra participantes nem reserva capacidade; emissão, checkout, pagamento e check-in continuam não implementados. Venda paga permanece bloqueada por D-35, e coleta pública depende da revisão LGPD. D-29 a D-43 continuam como base para a trilha paga. Ver ADR-036.
+
+O update `10015` instala campos estruturais de política RSVP em Evento/Data conforme D-60. RSVP fica desligado por padrão; os campos não são expostos no formulário do organizador e não reservam capacidade. `RsvpPolicyResolver` falha fechado se RSVP estiver desligado, as regras essenciais estiverem incompletas, o contexto Evento/Data/Lote não corresponder ou a oferta não for gratuita e ativa. A política retornada descreve limites nominais; não registra participantes, reserva capacidade ou habilita endpoint. O modelo não coleta participante nem disponibiliza inscrição pública.
 
 > **Atenção:** a emissão de documento fiscal (ponto A, D-35) está **sem decisão**. Nenhuma venda pode abrir antes do
 > parecer fiscal e jurídico. Este plano não substitui esse parecer.
@@ -90,8 +92,8 @@ Contratos que o `aculta_events` precisa, com a regra da ADR-032 de não classifi
 
 A lista a seguir permanece como escopo da venda paga, complementada e reordenada pelo aditivo normativo da seção 9. A trilha gratuita não cria pedido ou pagamento.
 
-1. **Tipo de pedido `ingresso` e tipo de item de lote** (I-1, I-2).
-2. **Lotes de ingresso** por data: nome, preço, quantidade e período de venda.
+1. **Tipo de pedido `ingresso` e contrato de order item** (I-1, I-2), ainda não implementados.
+2. **Ofertas/lotes por Evento/Data:** modelo estrutural `aculta_event_offer` implementado e inativo; faltam gestão autorizada, disponibilidade transacional e contrato com o item pago.
 3. **Taxa** com modalidade e mínimos (D-33).
 4. **Checkout próprio de Eventos** (D-38) e entrada no carrinho integrado (D-39).
 5. **Compra** pelo fluxo de pedido existente, com limite de quantidade por pedido.
@@ -109,7 +111,7 @@ A lista a seguir permanece como escopo da venda paga, complementada e reordenada
 | C | Valores dos mínimos de taxa e prazo de estorno, sem valor inicial | Configuração do administrador |
 | D | Detalhe técnico da categoria de operador (nome, tela de convite e revogação) | Implementação em `aculta_events` |
 | E | Incidência de taxa sobre o valor do ingresso e contabilidade do repasse | Parecer fiscal |
-| F | Forma do item de lote (I-2): variação de produto Commerce ou entidade própria | Decisão técnica na P2 |
+| F | Contrato do item pago no pedido Commerce (I-2) | Decisão técnica na P2; a entidade de oferta ACULTA não substitui order item |
 
 ## 7. Fases propostas - histórico,,As fases P0-P7 abaixo registram o plano original de venda paga. Para a sequência vigente, critérios de aceite e fluxo gratuito, prevalece a seção 9 (ADR-036), que amplia este escopo sem declarar implementação.,## 7. Fases propostas
 
@@ -117,7 +119,7 @@ A lista a seguir permanece como escopo da venda paga, complementada e reordenada
 | --- | --- | --- |
 | P0 | Parecer fiscal e de LGPD (pontos A, B e E) | Decisão do responsável |
 | P1 | Caracterização do carrinho integrado, dos três checkouts e das rotas globais (B-01), com testes | Aditivo à ADR-032 (feito) |
-| P2 | Tipo de pedido `ingresso`, tipo de item, `CheckoutSettings` e lotes, sem venda aberta (resolve F) | P1 |
+| P2 | Contrato de pedido/item `ingresso`, integração de ofertas e `CheckoutSettings`, sem venda aberta | P1; modelo estrutural da oferta já existe |
 | P3 | Checkout próprio de Eventos com gateway de teste (credenciais em `secrets/`) | P2 |
 | P4 | Inclusão de Eventos no carrinho integrado, com regressão da barra e dos checkouts existentes | P3 |
 | P5 | Ingresso com QR, check-in e bloqueio de reuso | P3 |
@@ -140,7 +142,7 @@ A lista a seguir permanece como escopo da venda paga, complementada e reordenada
 
 ## Ingressos gratuitos e pagos - proposta de integração (ADR-036)
 
-O estado atual continua sem ticketing interno: `field_gratuito`, `field_pricing` e `field_pricing_info` são informativos; `field_ticketing` é link externo. Não há RSVP com emissão, venda Commerce, lote/estoque ligado a Data, emissão pós-pagamento ou check-in integrado.
+`field_gratuito`, `field_pricing` e `field_pricing_info` continuam informativos; `field_ticketing` é link externo. A entidade estrutural `aculta_event_offer` registra ofertas/lotes por Evento e Data opcional, inativas por padrão e sem rota pública. RSVP com emissão, venda Commerce, capacidade consumida, emissão pós-pagamento e check-in continuam ausentes.
 
 - **Ownership:** `aculta_events` é dono das ofertas/lotes, inscrições/participantes, emissão e check-in. `aculta_commerce` mantém pedidos e order items pagos; `aculta_pagamentos_mercadopago` mantém o gateway; `aculta_portal` coordena os tipos/contextos no carrinho já existente. Sem gateway, carrinho ou storage financeiro paralelo.
 - **Gratuito (proposta):** RSVP sem cobrança, nome e e-mail (D-33/D-40), sem CPF, pedido Commerce, carrinho ou Mercado Pago. Confirmar capacidade atomicamente e emitir credencial consumível uma vez no check-in. Não coletar dados reais em produção antes da revisão LGPD/base legal/aviso/retenção.
@@ -167,11 +169,13 @@ Não replicar contratos internos do plugin, tabelas, código, gateways ou UI Wor
 
 ### Decisões ainda abertas
 
-RSVP obrigatório ou opcional; limite por pessoa e prevenção de duplicidade; capacidade por lote versus Data; reserva temporária/expiração/fila; cancelamento e liberação de vaga; abrangência por série; transferência; entrega/acessibilidade do ingresso; retenção/base legal; critérios para migrar links externos.
+D-60/D-61 resolveram a política de RSVP opcional, escopo configurável de capacidade (Evento/Data/Lote), regras configuráveis de limite, duplicidade, reserva/expiração, espera e cancelamento, inscrição por ocorrência ou série, transferência auditável com invalidação da credencial anterior e ownership das ofertas/lotes/RSVP em `aculta_events`. Não reapresentar esses itens como perguntas pendentes.
+
+Permanecem pendentes: parecer fiscal/jurídico para qualquer venda paga; revisão LGPD, base legal, aviso e retenção operacional antes de coleta pública de nome/e-mail; forma técnica do item Commerce (variação ou entidade própria); e detalhes de acessibilidade/entrega da credencial e categorias de operador de check-in. Nenhum desses bloqueios impede testes unitários/Kernel com dados fictícios, mas impede ativação pública correspondente.
 
 ### Escopo conjunto
 
-1. Modelo de oferta/lote contextual a Evento e Data, com período, preço transacional, capacidade, disponibilidade e limite de quantidade; escolha entre variação Commerce ou entidade de oferta permanece decisão técnica da P2.
+1. Modelo estrutural da oferta/lote contextual a Evento e Data (`aculta_event_offer`) criado. O contrato do order item Commerce continua decisão técnica da P2; preço da oferta não é pedido, pagamento nem registro financeiro.
 2. Registro/participante e credencial com estados explícitos e trilha auditável; QR opaco, assinado e sem PII; check-in móvel compartilhado.
 3. RSVP gratuito com nome/e-mail, confirmação de capacidade e emissão da credencial sem criar Commerce order, carrinho, CPF ou chamada de gateway.
 4. Ingresso pago como item Commerce em pedido do tipo `ingresso`; Mercado Pago confirma o pagamento antes da emissão. Aplicar idempotência no webhook, retorno, emissão e reentrega.
@@ -185,7 +189,7 @@ RSVP obrigatório ou opcional; limite por pessoa e prevenção de duplicidade; c
 | --- | --- | --- |
 | P0 | Implementar regras de RSVP, lotação, duplicidade, reserva, cancelamento, séries e transferência conforme D-60 | Configuração por Evento; capacidade atômica; LGPD antes de coleta pública. Parecer fiscal/jurídico continua obrigatório antes de venda paga. |
 | P1 | Caracterizar carrinho, checkout, gateway, tipos de pedido/itens, webhook, refund e frete | Baseline e rollback; sem alteração funcional. Regressões Loja/LMS/Doações. |
-| P2 | Fechar modelo de lotes, inscrição e credencial; implementar type/item `ingresso` e contrato com Portal | Capacidade transacional; não reclassificar tipos existentes; sem vendas. |
+| P2 | Fechar capacidade, inscrição e credencial; implementar type/item `ingresso` e contrato com Portal | Modelo estrutural da oferta criado; capacidade transacional pendente; sem vendas. |
 | P3 | RSVP/ingresso gratuito e emissão | Sem Commerce, CPF, carrinho ou gateway; nome/e-mail; idempotência, concorrência, cancelamento, privacidade e check-in. |
 | P4 | Checkout pago Events no sandbox | Emissão somente após pagamento confirmado; sem frete; gates fiscal/jurídico/LGPD cumpridos. |
 | P5 | Integração ao carrinho atual apenas para pedidos pagos | Precedência D-39; pedido misto sem frete para ingressos; regressão de todos checkouts existentes. |
@@ -195,13 +199,19 @@ RSVP obrigatório ou opcional; limite por pessoa e prevenção de duplicidade; c
 
 Não marcar fase como concluída sem evidência específica. Testes com credenciais somente sandbox; produção bloqueada até pareceres e release. A proposta não habilita transações reais.
 
-### Pontos que agentes não devem presumir
+### Decisões já fixadas e gates restantes
 
-- Se RSVP é obrigatório ou opcional, quantidade máxima por pessoa e deduplicação.
-- Se a capacidade limita lote, Data ou ambos; hold temporário, expiração e fila de espera.
-- Política para cancelamento gratuito, reabertura de vaga, transferência e ingresso de série.
-- Formato acessível da credencial e entrega, operador e dispositivo de check-in.
-- Base legal, retenção, aviso, dados mínimos, parecer fiscal e incidência de taxas.
-- Precedência entre campos informativos existentes e lotes internos; migração de links externos.
+As regras de RSVP opcional, escopo de capacidade (Evento/Data/Lote), limites, duplicidade, reserva/expiração, espera,
+cancelamento, abrangência por ocorrência/série e transferência auditável estão decididas em D-60. O ownership de ofertas,
+lotes e capacidade em `aculta_events`, e a separação entre RSVP gratuito e Commerce, estão decididos em D-61. Não reabrir
+essas escolhas como dúvidas de produto.
 
-Enquanto as questões estiverem abertas, implementar somente o que for reversível e não coletar/vender no ambiente público.
+Continuam como gates antes de qualquer coleta pública de dados pessoais: revisão LGPD de base legal, aviso, minimização e
+retenção; implementação e teste de controles de acesso e privacidade. A credencial deve ser acessível e usar token opaco
+sem PII, validado no servidor. A venda paga continua bloqueada por parecer fiscal/jurídico e pelos gates financeiros já
+registrados. A precedência entre campos informativos e ofertas internas, incluindo eventual migração de links externos,
+deve ser definida antes de ativar ofertas ao público.
+
+Enquanto esses gates não forem satisfeitos, não expor inscrição pública, coletar dados de participantes, vender, emitir
+credenciais utilizáveis ou fazer check-in em produção. Desenvolvimento isolado e testes com dados sintéticos podem
+prosseguir sem checkout/gateway e sem escrita no Runtime.

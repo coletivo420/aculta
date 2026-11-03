@@ -7,7 +7,8 @@ namespace Drupal\Tests\aculta_lms\Unit;
 use Drupal\aculta_lms\Event\AnswerEvaluatedEvent;
 use Drupal\aculta_lms\Event\AnswerSubmittedEvent;
 use Drupal\aculta_lms\Hook\AnswerLifecycleEventHooks;
-use Drupal\lms\Entity\AnswerInterface;
+use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\aculta_lms\Learning\CourseAnswer;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -33,13 +34,11 @@ final class AnswerLifecycleEventHooksTest extends UnitTestCase {
         return $event;
       });
     $hooks = new AnswerLifecycleEventHooks($dispatcher);
-    $original = $this->answer(FALSE);
-    $hooks->entityUpdate($this->answer(TRUE, 1, 100, $original));
+    $original = $this->answer(CourseAnswer::STATE_SUBMITTED);
+    $hooks->entityUpdate($this->answer(CourseAnswer::STATE_GRADED, original: $original));
 
-    $hooks->entityUpdate($this->answer(TRUE, 1, 200, $this->answer(TRUE, 1, 100)));
-    $hooks->entityUpdate($this->answer(TRUE, 2, 300, $this->answer(TRUE, 1, 200)));
-    $hooks->entityInsert($this->answer(FALSE));
-
+    $hooks->entityUpdate($this->answer(CourseAnswer::STATE_GRADED, original: $this->answer(CourseAnswer::STATE_GRADED)));
+    $hooks->entityUpdate($this->answer(CourseAnswer::STATE_GRADED, original: $this->answer(CourseAnswer::STATE_GRADED)));
     self::assertCount(3, $versions);
     self::assertNotSame($versions[0], $versions[1]);
     self::assertNotSame($versions[1], $versions[2]);
@@ -54,13 +53,13 @@ final class AnswerLifecycleEventHooksTest extends UnitTestCase {
       ->method('dispatch')
       ->with($this->isInstanceOf(AnswerEvaluatedEvent::class));
 
-    (new AnswerLifecycleEventHooks($dispatcher))->entityInsert($this->answer(TRUE));
+    (new AnswerLifecycleEventHooks($dispatcher))->entityInsert($this->answer(CourseAnswer::STATE_GRADED));
   }
 
   /**
    * Publishes a pending response without including its content.
    */
-  public function testPublishesPendingSubmissionWithoutResponseData(): void {
+  public function testPublishesSubmittedAnswerWithoutResponsePayload(): void {
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
     $dispatcher->expects($this->once())
       ->method('dispatch')
@@ -70,10 +69,7 @@ final class AnswerLifecycleEventHooksTest extends UnitTestCase {
         && preg_match('/^[a-f0-9]{32}$/', $event->publicationVersion) === 1
       ));
 
-    (new AnswerLifecycleEventHooks($dispatcher))->entityInsert($this->answer(
-      FALSE,
-      data: ['answer' => 'private response'],
-    ));
+    (new AnswerLifecycleEventHooks($dispatcher))->entityInsert($this->answer(CourseAnswer::STATE_SUBMITTED));
   }
 
   /**
@@ -84,8 +80,8 @@ final class AnswerLifecycleEventHooksTest extends UnitTestCase {
     $dispatcher->expects($this->once())
       ->method('dispatch')
       ->with($this->isInstanceOf(AnswerSubmittedEvent::class));
-    $original = $this->answer(TRUE, data: ['answer' => 'previously evaluated response']);
-    $updated = $this->answer(FALSE, changed: 200, original: $original, data: ['answer' => 'new response']);
+    $original = $this->answer(CourseAnswer::STATE_GRADED);
+    $updated = $this->answer(CourseAnswer::STATE_SUBMITTED, original: $original);
 
     (new AnswerLifecycleEventHooks($dispatcher))->entityUpdate($updated);
   }
@@ -93,14 +89,13 @@ final class AnswerLifecycleEventHooksTest extends UnitTestCase {
   /**
    * Creates an answer mock with minimal identity and state.
    */
-  private function answer(bool $evaluated, int $score = 0, int $changed = 100, ?AnswerInterface $original = NULL, array $data = []): AnswerInterface {
-    $answer = $this->createMock(AnswerInterface::class);
-    $answer->method('isEvaluated')->willReturn($evaluated);
+  private function answer(string $state, int $uid = 27, ?ContentEntityBase $original = NULL): ContentEntityBase {
+    $answer = $this->createMock(ContentEntityBase::class);
+    $answer->method('getEntityTypeId')->willReturn('aculta_lms_answer');
     $answer->method('uuid')->willReturn('answer-uuid');
-    $answer->method('getUserId')->willReturn('27');
-    $answer->method('getScore')->willReturn($score);
-    $answer->method('getChangedTime')->willReturn($changed);
-    $answer->method('getData')->willReturn($data);
+    $answer->method('get')->willReturnCallback(static function (string $name) use ($state, $uid): object {
+      return (object) ['value' => $name === 'state' ? $state : $uid];
+    });
     $answer->method('getOriginal')->willReturn($original);
     return $answer;
   }

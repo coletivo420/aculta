@@ -406,3 +406,234 @@ visível/alvos no Firefox ESR. Modo escuro com JS e modo sem JS passaram também
 18/18 cada, todos sem overflow. Isso valida somente a regressão responsiva desta
 mudança; veja hashes, evidências e limites em `../mobile-first-audit.md`. Não
 aprova por si só OCS-F11 ou THEME-MF3.
+
+### OCS-F3 — feedback de estado no Studio (2026-11-01)
+
+A família de feedback listada na matriz histórica (linha "Estados
+vazio/erro/sucesso", referência `templates/components/status-messages.html.twig`
+e `sass/base/_messages.scss`) foi implementada como apresentação, sem novo SDC.
+`studio.css` aplica a caixa de mensagem do Next ao alerta Bootstrap real das
+rotas Studio, mantendo papel ARIA, texto do owner, links e ação de fechar.
+
+Evidência: `tests/browser/aculta-theme-mobile-first/studio-status-messages.py`
+passou **112/112** no Firefox ESR visível — nove larguras, claro/escuro, zoom
+real 200%/400%, escopo sem vazamento para container de outro purpose, borda de
+2px na cor do estado, contraste 12,4:1 no claro e 14,5:1 no escuro e zero
+overflow. Artefatos em
+`/home/piradopirata/aculta-suite-out/studio-status-messages-20261101/`.
+
+Limites: a fixture reproduz o markup Bootstrap e as folhas do tema; não prova
+render Drupal, ACL, AJAX/no-JS, cache por usuário nem submissão de formulário.
+Decisão do responsável (2026-11-01): Montserrat está **excluída** da fidelidade
+desta família; a região `aculta-highlighted` herda a fonte do documento e usa o
+token semântico de sombra, e essa exclusão está aceita e encerrada. OCS-F3
+permanece parcial apenas pelos gates servidos; OCS-F11 e THEME-MF3 seguem
+pendentes.
+
+### Pede-A — divergência de caminho canônico de WE SATIVA e Green Stash (2026-11-01)
+
+O código em `dev` (commit `2013becb7`) define as rotas canônicas em
+`/wesativa` e `/greenstash` e o `StudioIdentityRoutingTest` declara
+`/studio/we-sativa` e `/studio/green-stash` obsoletos. Em sentido contrário,
+`docs/decisions/ADR-038-aculta-studio-suites-por-dominio.md` ainda registra
+`/studio/we-sativa` e `/studio/green-stash` como oficiais, e
+`aculta_portal/src/Domain/FrontPathPolicy.php` mantém
+`CANONICAL_STUDIO_PATHS` com esses mesmos prefixos. Os dois Unit tests do
+branch afirmam regras opostas.
+
+Esta matriz não altera rota, política nem ADR. Até o responsável decidir,
+registre qual mapa vale e atualize ADR-038, `FrontPathPolicy`, o teste de rotas
+e a documentação visual no mesmo commit. As capturas Studio devem citar o path
+efetivamente servido; `/studio/*` não deve ser reintroduzido sem essa decisão.
+
+#### OCS-F3 — verificação servida (2026-11-01)
+
+O checkout servido foi atualizado de `882ad66cd` para `6cbcbdf52`; `updatedb:status`
+e `config:status` não tinham pendências, `drush cr` passou e main/loja
+responderam 200. A folha servida contém o bloco OCS-F3 e a mensagem real de
+login único do ULI (UID 257) em `conta:/marley` mediu borda de 2px em
+`rgb(104, 148, 39)`, `flex-wrap: wrap`, respiro 16px/32px e sombra, sem overflow
+em 320/600/768px. Snapshot 0600 com SHA-256
+`38400a64e4e7c68e6571f785c0064c30a9bcc0b5c78a293c46d393f897bf4c9d`.
+O `page-matrix` passou 30/36; os seis avisos são a rolagem interna da tabela de
+Marley (599/600/768px), não o alerta. Evidência em
+`/home/piradopirata/aculta-suite-out/ocs-f3-served-capture-20261101/`.
+Permanecem pendentes outros estados/rotas, envio de formulário, AJAX/no-JS,
+cache por usuário e WCAG integral; OCS-F11/THEME-MF3 seguem pendentes.
+
+#### THEME-MF2 — ícone de status no Marley mobile (2026-11-01)
+
+O alerta Bootstrap emitia `<svg>` sem altura declarada; com apenas
+`max-width: 2rem`, o ícone mantinha 150px de altura intrínseca e abria um vazio
+alto antes do texto em 320px. `css/drupal-bootstrap.css` agora confina os dois
+eixos (`width/height: auto; max-width/max-height: 2rem`). Servido em `cc02e433a`
+com `drush cr`, a mensagem de ULI em `conta:/marley` mediu ícone 32×32 e alerta
+de 175px a 320px e 111px a 600/768px, sem overflow; captura 320px revisada.
+Fixture 130/130. Evidência em
+`/home/piradopirata/aculta-suite-out/ocs-f3-marley-iconfix-served-20261101/`.
+
+#### OCS-F5/F7/F8/F10 — subrotas servidas em mobile (2026-11-01)
+
+Captura servida com ULI UID 257 em 320/768px, modo claro, das subrotas
+`conta:/marley/revista/publicacoes`, `conta:/marley/revista/nova`,
+`loja:/greenstash/produtos`, `loja:/greenstash/produtos/novo`,
+`eventos:/culturas/eventos/novo`, `eventos:/culturas/locais/novo`,
+`wiki420:/wesativa/verbetes/novo` e `cursos:/ganjalab/cursos/novo`:
+**16/16 respostas HTTP 200**. Os dois avisos de overflow (publicações a 320px e
+formulário de curso a 320px) estão dentro de wrappers com rolagem horizontal
+(ADR-040), sem alargar o documento. Capturas revisadas de evento, local, produto
+e publicação; CEP aparece antes do logradouro no formulário de Local.
+
+**Pede-A — Green Stash:** a rota `aculta_commerce.green_stash_product_create`
+usa `_form` direto e não recebe o wrapper do controller, por isso a tela
+`/greenstash/produtos/novo` não exibe a navegação contextual Visão geral /
+Produtos / Envios que aparece nas listagens e no detalhe. O tema não pode criar
+navegação sem markup; o owner Commerce precisa compor o formulário dentro do
+wrapper padrão sem alterar ACL, Form API ou persistência. Evidência em
+`/home/piradopirata/aculta-suite-out/ocs-f3-subroutes-20261101/`.
+
+**Escopo de fidelidade:** `/wesativa/verbetes/novo` é um formulário de nó do
+owner Wiki fora do workspace; o aviso de e-mail usa o alerta global do tema, não
+a caixa Fidelity do Studio. Isso é esperado pelo escopo `.we-sativa__workspace`.
+
+## OCS-F11 — fechamento do gate de fidelidade do Studio (2026-11-01)
+
+Executado no Runtime servido `928acfa4f`, dependente de THEME-MF3 aprovado na
+mesma data.
+
+| Verificação | Resultado |
+|---|---|
+| Matriz das 8 áreas Studio × 9 larguras × claro/escuro | **144/144 HTTP 200**; documento igual à viewport |
+| Overflow | apenas wrappers de tabela com rolagem horizontal (ADR-040): Marley até 768px e Culturas até 600px |
+| ACL positiva (admin UID 257) | 200 em Marley, Conta, Perfil, Salvos, Ganjalab, WE Sativa, Green Stash e Culturas |
+| ACL negativa (conta `f11_sem_acesso`, UID 261, só `authenticated`) | **403 em 5/5** rotas operacionais (produtos Green Stash, publicações Marley, verbetes WE Sativa, eventos Culturas, curso Ganjalab) |
+| Isolamento de purpose | **7/7** rotas Studio em host errado ou `/studio/*` respondem 404; rotas válidas anônimas respondem 403 |
+| Cache por usuário | `/perfil` com `Cache-Control: must-revalidate, no-cache, private` e `X-Drupal-Cache: UNCACHEABLE (request policy)`; conteúdo específico da conta presente só na sessão correspondente |
+| Sem JavaScript | 8 áreas a 320px com documento igual à viewport; tabelas rolam por CSS |
+| Teclado | 648 observações em Marley/Conta/Perfil; 621/621 alvos com `:focus-visible` e contorno |
+| axe-core | 8 áreas a 320/1440px: **0 violações**; incompletos de `aria-label` resolvidos com `role="region"`; `color-contrast` residual do Ganjalab revisado por token (texto primário sobre superfície elevada) |
+| PHPUnit Unit do `aculta_studio` | **63 testes / 582 assertions, OK** |
+| PHPUnit Kernel do `aculta_studio` (`aculta_simpletest`) | **8 testes / 153 assertions, OK**, 13 depreciações Core/contrib |
+| Fixture da família de feedback | **130/130 PASS** |
+
+**Ressalvas (DEFERRED):** comparação pareada com um OpenCulturas autenticado não
+foi possível (só há instância pública); fluxos de escrita/persistência (envio de
+formulário, criação de produto/evento) não foram executados por exigirem
+alteração de conteúdo; operadores de duas lojas distintas não têm fixture;
+leitor de tela e WCAG integral manual seguem fora do ambiente. Nenhuma dessas
+ressalvas impede o aceite do responsável em 2026-11-01, mas devem ser fechadas
+antes de declarar paridade pixel-perfect ou homologar escrita.
+
+Com THEME-MF3 e OCS-F11 aprovados, a Etapa 2 (OCS-A1–A4) está desbloqueada; sua
+execução não foi iniciada.
+
+### OCS-A1 — retokenização institucional do Studio (2026-11-01)
+
+A camada Identity foi implementada sobre os mesmos contratos da Etapa Fidelity.
+`studio-identity.css` redefine os tokens do Studio com valores semânticos
+institucionais, sem SDC novo e sem seletor de modo fora de `tokens.css`. A
+ativação é controlada por `drush state:set aculta420.studio_identity 1` +
+`drush cr`; sem o estado, a Fidelity permanece. Fixture comparativa passou
+**108/108** em nove larguras e claro/escuro, com link 5,81:1 (claro) e 11,51:1
+(escuro) e CTA amarelo/verde-escuro 7,84:1. Evidência em
+`/home/piradopirata/aculta-suite-out/ocs-a1-identity-20261101/`.
+A2–A4 (acabamento, benchmark em todas as áreas e consolidação) ainda não foram
+executadas.
+
+#### OCS-A2 — acabamento da Identity (2026-11-01)
+
+Tipografia institucional (Inter no corpo, Oswald nos títulos), raio de 3px em
+cards/campos/botões e acento amarelo na aba ativa, sempre escopados por
+`html.studio-identity` e usando apenas tokens. Fixture comparativa passou
+**144/144** em nove larguras e claro/escuro. A3 (benchmark em todas as áreas) e
+A4 (consolidação) seguem pendentes.
+
+#### OCS-A2/A3 — status servido e bloqueio (2026-11-01)
+
+A2 (tipografia/acabamento) está implementada e validada em fixture
+(144/144), mas o Runtime permanece em `d345661b7`: a troca para o HEAD da A2
+foi abortada porque um arquivo de teste Wiki tem alteração local de outra
+sessão e também muda no novo HEAD. A alteração foi preservada e a Identity foi
+desligada (`aculta420.studio_identity=0`, `drush cr`, main 200). O benchmark
+servido de A3 fica DEFERRED até a conciliação. Capturas em fixture:
+`/home/piradopirata/aculta-suite-out/ocs-a2-identity-20261101/`.
+
+#### OCS-A3 — benchmark em fixture (2026-11-01)
+
+Benchmark Fidelity × Identity gerado no mesmo markup representativo do Studio em
+320/1440px, claro/escuro: **144/144** e oito capturas em
+`/home/piradopirata/aculta-suite-out/ocs-a3-benchmark-20261101/`. O benchmark
+servido de todas as áreas segue DEFERRED pelo bloqueio do checkout; A4 não foi
+iniciada.
+
+#### OCS-A3 — benchmark servido (2026-11-01)
+
+Com `aculta420.studio_identity=1`, Marley (320/1440) e Culturas (320) mostraram
+Oswald, raio de 3px, CTA amarelo e texto verde-escuro. Benchmark das 8 áreas em
+320/1440 e claro/escuro: **28/32 HTTP 200**; `wiki420:/wesativa` retornou **500**
+nas quatro combinações também com a Identity desligada, o que caracteriza
+regressão do HEAD servido da frente Wiki (Pede-A), não da camada visual. As
+demais áreas passaram sem overflow documental. Identity revertida para 0 e main
+200. Evidência em `/home/piradopirata/aculta-suite-out/ocs-a3-served-full-20261101/`.
+A3 concluída para 7/8 áreas; WE Sativa DEFERRED; A4 pendente.
+
+#### OCS-A4 — consolidação (2026-11-01)
+
+Gate `scripts/validate-aculta420-studio-identity.php` **PASS (34 checks, 29
+tokens)**; override morto removido. Design Foundations 2.441, SDC 759,
+fronteira 3.535, Browser Validators 21, Unit 48/349 e fixture 144/144 PASS.
+Identity sem ativos novos. A camada permanece desligada no Runtime até a
+correção do 500 de WE Sativa e a decisão de virada.
+
+#### OCS-A3 — benchmark servido completo (2026-11-01)
+
+O 500 de `wiki420:/wesativa` foi corrigido pela frente Wiki no HEAD servido
+`acffacc53`; recheck 320/1440 e claro/escuro retornou 200. Com a Identity
+ligada, o benchmark das 8 áreas em 320/1440 e claro/escuro passou **32/32 HTTP
+200**; os quatro avisos de overflow são as tabelas de Marley/Culturas a 320px
+(ADR-040). Identity revertida para Fidelity (state 0, main 200). Evidência em
+`/home/piradopirata/aculta-suite-out/ocs-a3-served-complete-20261101/`.
+A3 concluída em 8/8 áreas; A4 concluída; Pede-A do WE Sativa encerrado.
+
+### Identity ligada no Runtime (2026-11-01)
+
+A reconciliação de `core.extension`/`aculta_contributions.settings` foi publicada
+em `627e0754d` e o `config:status` ficou limpo no HEAD servido. Com
+`aculta420.studio_identity=1` e `drush cr`, a Identity está ativa: HTML servido
+com `studio-identity`, main/loja 200 e benchmark das 8 áreas em 320/1440 e
+claro/escuro **32/32 HTTP 200**. Evidência em
+`/home/piradopirata/aculta-suite-out/ocs-identity-live-20261101/`. A Fidelity
+permanece reversível desligando o estado.
+
+### Fechamento das lacunas servidas — 2026-11-01
+
+- **Culturas:** `studio.css` servida (20 seletores de
+  `.aculta-events-organizer-dashboard`); `/culturas`, `/culturas/eventos/novo` e
+  `/culturas/locais/novo` em 320/1440 e claro/escuro responderam **200**; axe
+  **0 violações**; sem JS, documento = 320 e tabela rola por CSS; zoom 200%
+  sem overflow (649/649) e wrapper 609/705; cache
+  `private, no-cache`/`UNCACHEABLE (request policy)`; ACL A/B já coberta.
+  O alvo de 400% do harness foi ultrapassado para ~500% (256px), abaixo do
+  reflow de 320px.
+- **Revista:** `revista-listing.css` está **servida** no agregado CSS
+  (`delta=4`) com `.aculta-revista-teaser`; raiz 320/1440 e claro/escuro **200**,
+  axe **0 violações**. O aviso de overflow é falso positivo do rótulo
+  `visually-hidden` com `nowrap`, sem deslocamento visual. Estados vazio/erro
+  da View seguem **DEFERRED** (exigem fixture/filtro sem conteúdo).
+- **WE Sativa, Conta e Perfil:** rotas canônicas confirmadas por
+  `StudioIdentityRoutingTest` (**4 testes/201 assertions**); páginas **200**,
+  axe **0 violações**, teclado 621/621 focos visíveis. O formulário de verbete
+  tem `aria-describedby="edit-simple-sitemap--description"` apontando para ID
+  inexistente (simple_sitemap) — **Pede-A** ao owner do formulário, não ao tema.
+- **SDCs:** cinco componentes transversais promovidos a `stable`; ver
+  `component-catalog.md`. `profile-*` e `course_card` seguem experimentais.
+- **Pareamento com OpenCulturas autenticado:** continua DEFERRED (só há
+  instância pública).
+
+#### Revista — estado de erro e checkout (2026-11-01)
+
+O 404 de Revista a 320px passou sem overflow e com **0 violações axe**. O estado
+vazio da View segue DEFERRED (sem filtro exposto e sem autorização para criar
+conteúdo de teste). O checkout servido `f57c1b275` tem `config:status` limpo e
+Identity ativa; carrega deleções não commitadas de outra sessão nos plugins
+`MarleyTab` (Cursos/Wiki) e no teste de disponibilidade, preservadas sem commit.

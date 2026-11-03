@@ -11,8 +11,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 /**
  * Ocorrências de uma data de evento numa janela (RECORRENCIA.md, seção 6).
  *
- * Liga o `EventDate` e suas `EventDateOverride` ao `RecurrenceExpander`. O campo guarda
- * UTC; a saída é em horário de Brasília, como o site exige.
+ * Liga `EventDate` e `EventDateOverride` ao `RecurrenceExpander`.
+ * O armazenamento é UTC e a saída usa o fuso de Brasília.
  */
 final class EventDateOccurrences {
 
@@ -25,14 +25,22 @@ final class EventDateOccurrences {
   ) {}
 
   /**
-   * Ocorrências de $data em [$de, $ate].
+   * Ocorrências de uma data dentro da janela informada.
    *
-   * Sem regra, a data é uma ocorrência só, se cair na janela. Com regra, usa o expansor.
+   * Sem regra, devolve uma ocorrência quando ela cai na janela.
+   * Com regra, usa o expansor.
    *
+   * @param \Drupal\aculta_events\Entity\EventDate $data
+   *   Data cujas ocorrências serão expandidas.
+   * @param \DateTimeImmutable $de
+   *   Início inclusivo da janela de consulta.
+   * @param \DateTimeImmutable $ate
+   *   Fim inclusivo da janela de consulta.
    * @param \DateTimeImmutable $agora
    *   Referência para o horizonte de série aberta (agora + field_limite_meses).
    *
    * @return array<int, array{inicio: \DateTimeImmutable, fim: \DateTimeImmutable, original: \DateTimeImmutable, cancelada: bool}>
+   *   Ocorrências expandidas no fuso local.
    *
    * @throws \Drupal\aculta_calendar\Recurrence\RecurrenceException
    */
@@ -54,12 +62,13 @@ final class EventDateOccurrences {
       if ($ini < $de || $ini > $ate) {
         return [];
       }
-      return [[
+      $ocorrencia = [
         'inicio' => $ini,
         'fim' => $fim->setTimezone($fuso),
         'original' => $ini,
         'cancelada' => FALSE,
-      ]];
+      ];
+      return [$ocorrencia];
     }
 
     $limite = $agora->modify('+' . (int) ($data->get('field_limite_meses')->value ?? 12) . ' months');
@@ -78,6 +87,7 @@ final class EventDateOccurrences {
    * Exceções da data, indexadas pelo timestamp do início original.
    *
    * @return array<int, array{inicio: ?\DateTimeImmutable, fim: ?\DateTimeImmutable}>
+   *   Exceções por início original.
    */
   private function excecoes(EventDate $data): array {
     $storage = $this->entityTypeManager->getStorage('aculta_event_override');

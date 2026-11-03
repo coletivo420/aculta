@@ -105,7 +105,7 @@ final class EventLocationDeleteForm extends ContentEntityConfirmFormBase {
       '%title' => $title,
     ]));
 
-      $form_state->setRedirect(EventRouteContext::route('aculta_events.locations', 'aculta_events.organizer_dashboard'));
+    $form_state->setRedirect(EventRouteContext::route('aculta_events.locations', 'aculta_events.organizer_dashboard'));
   }
 
 }

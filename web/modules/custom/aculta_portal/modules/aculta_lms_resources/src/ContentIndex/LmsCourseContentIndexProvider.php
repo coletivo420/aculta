@@ -17,7 +17,7 @@ use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\media\MediaInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\node\NodeInterface;
@@ -62,7 +62,7 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
    * {@inheritdoc}
    */
   public function getAccessPurpose(ContentEntityInterface $entity): ?string {
-    return $entity instanceof CourseInterface && $entity->bundle() === 'lms_course'
+    return $entity instanceof GroupInterface && $entity->bundle() === 'lms_course'
       ? 'courses'
       : NULL;
   }
@@ -71,7 +71,7 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
    * {@inheritdoc}
    */
   public function isIndexable(ContentEntityInterface $entity): bool {
-    return $entity instanceof CourseInterface
+    return $entity instanceof GroupInterface
       && $entity->getEntityTypeId() === 'group'
       && $entity->bundle() === 'lms_course'
       && $this->domainPurposeManager->getDomain('courses') !== NULL;
@@ -81,11 +81,13 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
    * {@inheritdoc}
    */
   public function checkAccess(ContentEntityInterface $entity, AccountInterface $account): AccessResultInterface {
-    if (!$entity instanceof CourseInterface || $entity->bundle() !== 'lms_course') {
+    if (!$entity instanceof GroupInterface || $entity->bundle() !== 'lms_course') {
       return AccessResult::forbidden();
     }
 
-    $takeAccess = $entity->takeAccess($account);
+    $takeAccess = AccessResult::allowedIf($entity->hasPermission('take course', $account))
+      ->cachePerUser()
+      ->addCacheContexts(['user.permissions', 'user.group_permissions']);
     $canManage = $entity->hasPermission('administer members', $account)
       || $entity->hasPermission('grade students', $account);
     return AccessResult::allowedIf($takeAccess->isAllowed() || $canManage)
@@ -98,7 +100,7 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
    * {@inheritdoc}
    */
   public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
-    if (!$entity instanceof CourseInterface
+    if (!$entity instanceof GroupInterface
       || $entity->getEntityTypeId() !== 'group'
       || $entity->bundle() !== 'lms_course') {
       return NULL;
@@ -134,14 +136,14 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
   /**
    * Adds only explicitly supported editorial node references.
    *
-   * @param \Drupal\lms\Entity\Bundle\CourseInterface $course
+   * @param \Drupal\group\Entity\GroupInterface $course
    *   Course containing the field.
    * @param string $fieldName
    *   Reference field that contains editorial nodes.
    * @param list<\Drupal\aculta_portal\ContentIndex\ContentIndexRelation> $relations
    *   Relations to append.
    */
-  private function appendNodeRelations(CourseInterface $course, string $fieldName, array &$relations): void {
+  private function appendNodeRelations(GroupInterface $course, string $fieldName, array &$relations): void {
     if (!$course->hasField($fieldName) || $course->get($fieldName)->isEmpty()) {
       return;
     }
@@ -156,12 +158,12 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
   /**
    * Adds references to galleries selected for course resources.
    *
-   * @param \Drupal\lms\Entity\Bundle\CourseInterface $course
+   * @param \Drupal\group\Entity\GroupInterface $course
    *   Course containing the gallery field.
    * @param list<\Drupal\aculta_portal\ContentIndex\ContentIndexRelation> $relations
    *   Relations to append.
    */
-  private function appendGalleryRelations(CourseInterface $course, array &$relations): void {
+  private function appendGalleryRelations(GroupInterface $course, array &$relations): void {
     $fieldName = 'field_lms_galleries';
     if (!$course->hasField($fieldName) || $course->get($fieldName)->isEmpty()) {
       return;
@@ -181,12 +183,12 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
    * and its Entity Access remain owned by the Portal; no URL, body or
    * thumbnail is copied.
    *
-   * @param \Drupal\lms\Entity\Bundle\CourseInterface $course
+   * @param \Drupal\group\Entity\GroupInterface $course
    *   Course containing the video reference field.
    * @param list<\Drupal\aculta_portal\ContentIndex\ContentIndexRelation> $relations
    *   Relations to append.
    */
-  private function appendVideoRelations(CourseInterface $course, array &$relations): void {
+  private function appendVideoRelations(GroupInterface $course, array &$relations): void {
     $fieldName = 'field_lms_videos';
     if (!$course->hasField($fieldName) || $course->get($fieldName)->isEmpty()) {
       return;
@@ -201,12 +203,12 @@ final class LmsCourseContentIndexProvider implements ContentIndexProviderInterfa
   /**
    * Adds access-controlled PDF documents attached through the Group plugin.
    *
-   * @param \Drupal\lms\Entity\Bundle\CourseInterface $course
+   * @param \Drupal\group\Entity\GroupInterface $course
    *   Course containing the Group relation.
    * @param list<\Drupal\aculta_portal\ContentIndex\ContentIndexRelation> $relations
    *   Relations to append.
    */
-  private function appendDocumentRelations(CourseInterface $course, array &$relations): void {
+  private function appendDocumentRelations(GroupInterface $course, array &$relations): void {
     $pluginId = $this->relationTypeManager->hasDefinition('aculta_document_viewer:course_document')
       ? 'aculta_document_viewer:course_document'
       : 'aculta_document_viewer_group:course_document';

@@ -1,6 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
 name: Content grid
-status: experimental
+status: stable
 group: Patterns
 description: 'Responsive grid for mixed rendered items such as content, taxonomy terms and external links. Each item keeps its own markup.'
 props:

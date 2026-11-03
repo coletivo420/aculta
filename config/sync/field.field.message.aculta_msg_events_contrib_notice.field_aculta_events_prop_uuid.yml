@@ -1,0 +1,24 @@
+uuid: 666c0103-38f8-4ac7-8c93-7c76bf68b20d
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_events_prop_uuid
+    - message.template.aculta_msg_events_contrib_notice
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: jYj90QOu1XnyCN3dNEi5hNPTTRO2fz_Bef2zAIxCwhI
+id: message.aculta_msg_events_contrib_notice.field_aculta_events_prop_uuid
+field_name: field_aculta_events_prop_uuid
+entity_type: message
+bundle: aculta_msg_events_contrib_notice
+label: 'UUID da proposta'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

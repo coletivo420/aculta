@@ -74,8 +74,8 @@ final class EventContentIndexProvider implements ContentIndexProviderInterface, 
 
     $relations = [];
     $this->addRelations($entity, 'field_tipo', 'event_type', 'taxonomy_term', $relations);
-    // Identidade canônica de organizador: relações públicas usam a entidade canônica
-    // de organização (aculta_event_organization), nunca contas de usuário (user:<uid>).
+    // Relações públicas usam a organização canônica, nunca contas de usuário.
+    // A identidade fica em aculta_event_organization, não em user:<uid>.
     $this->addRelations($entity, 'field_organizacao', 'organizer', 'aculta_event_organization', $relations);
     $this->addRelations($entity, 'field_coorganizadores', 'co_organizer', 'aculta_event_organization', $relations);
     $this->addLocationRelations($entity, $relations);
@@ -125,7 +125,7 @@ final class EventContentIndexProvider implements ContentIndexProviderInterface, 
       if (!$date instanceof ContentEntityInterface) {
         continue;
       }
-      // Datas com modalidade exclusivamente virtual/online não projetam local físico.
+      // Datas exclusivamente virtuais não projetam um Local físico.
       if ($date->hasField('field_modo') && (string) $date->get('field_modo')->value === 'online') {
         continue;
       }

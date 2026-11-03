@@ -35,6 +35,8 @@ final class ContentIndexMagazineAccessKernelTest extends KernelTestBase {
     'system',
     'user',
     'field',
+    'entity_usage',
+    'media',
     'node',
     'domain',
     'aculta_index',
@@ -64,7 +66,10 @@ final class ContentIndexMagazineAccessKernelTest extends KernelTestBase {
         Yaml::PARSE_CUSTOM_TAGS,
       )['services'];
       $service = $serviceMap[$serviceId];
-      $definition = (new Definition($service['class'], $service['arguments'] ?? []))->setPublic(TRUE);
+      $arguments = array_map(static function (string $argument): string|Reference {
+        return str_starts_with($argument, '@') ? new Reference(substr($argument, 1)) : $argument;
+      }, $service['arguments'] ?? []);
+      $definition = (new Definition($service['class'], $arguments))->setPublic(TRUE);
       foreach ($service['tags'] as $tag) {
         $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
       }
@@ -81,6 +86,7 @@ final class ContentIndexMagazineAccessKernelTest extends KernelTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('domain');
     $this->installSchema('node', ['node_access']);
+    $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
       'aculta_index_state',

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_events\Kernel;
 
+use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Formatter de datas futuras: formato brasileiro, datas passadas ocultas e cache até o fim da data (T5).
+ * Formatter de datas futuras, datas passadas ocultas e cache temporizado (T5).
  */
 #[Group('aculta_events')]
 #[RunTestsInSeparateProcesses]
@@ -19,7 +20,11 @@ final class DateRangeUpcomingFormatterKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'key', 'address', 'geofield', 'taxonomy', 'link', 'text', 'filter', 'datetime', 'datetime_range', 'options', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = [
+    'system', 'user', 'key', 'address', 'geofield', 'taxonomy', 'link', 'text',
+    'filter', 'datetime', 'datetime_range', 'options', 'aculta_calendar',
+    'aculta_events',
+  ];
 
   /**
    * {@inheritdoc}
@@ -35,8 +40,8 @@ final class DateRangeUpcomingFormatterKernelTest extends KernelTestBase {
   /**
    * Evento de apoio: a data precisa pertencer a um evento.
    */
-  private function evento(): \Drupal\aculta_events\Entity\Event {
-    $evento = \Drupal\aculta_events\Entity\Event::create(['title' => 'Evento de teste']);
+  private function evento(): Event {
+    $evento = Event::create(['title' => 'Evento de teste']);
     $evento->save();
     return $evento;
   }

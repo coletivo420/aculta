@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Deadline;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_lms\Access\ClassActivityDeadlineAccessCheck;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\lms\Entity\ActivityInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -29,7 +28,7 @@ final class ClassActivityDeadlineManager {
    * If a learner has more than one current class for the same course, the
    * earliest deadline is shown so an active enrollment is never understated.
    */
-  public function deadlineForLearner(CourseInterface $course, ActivityInterface $activity, AccountInterface $learner): ?GroupRelationshipInterface {
+  public function deadlineForLearner(GroupInterface $course, ContentEntityInterface $activity, AccountInterface $learner): ?GroupRelationshipInterface {
     if (!$this->accessCheck->activityBelongsToCourse($activity, $course)) {
       return NULL;
     }
@@ -70,22 +69,22 @@ final class ClassActivityDeadlineManager {
   /**
    * Returns the parent course for a class.
    */
-  public function courseForClass(GroupInterface $class): ?CourseInterface {
+  public function courseForClass(GroupInterface $class): ?GroupInterface {
     return $this->accessCheck->courseForClass($class);
   }
 
   /**
    * Checks whether an activity belongs to a course through a published lesson. */
-  public function activityBelongsToCourse(ActivityInterface $activity, CourseInterface $course): bool {
+  public function activityBelongsToCourse(ContentEntityInterface $activity, GroupInterface $course): bool {
     return $this->accessCheck->activityBelongsToCourse($activity, $course);
   }
 
   /**
    * Returns the matching current relation for a class and activity.
    */
-  public function deadlineForClass(GroupInterface $class, ActivityInterface $activity): ?GroupRelationshipInterface {
+  public function deadlineForClass(GroupInterface $class, ContentEntityInterface $activity): ?GroupRelationshipInterface {
     $course = $this->courseForClass($class);
-    if (!$course instanceof CourseInterface || !$this->accessCheck->activityBelongsToCourse($activity, $course)) {
+    if (!$course instanceof GroupInterface || !$this->accessCheck->activityBelongsToCourse($activity, $course)) {
       return NULL;
     }
     $relationships = $class->getRelationshipsByEntity($activity, 'lms_class_activity_due');

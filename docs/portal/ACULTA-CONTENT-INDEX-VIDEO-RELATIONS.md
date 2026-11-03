@@ -34,7 +34,7 @@ O `target_langcode` é `und`; a consulta resolve a tradução padrão do Media.
 
 | Origem | Estado atual verificado | Pré-requisito para implementar | Observação |
 | --- | --- | --- | --- |
-| Revista (`node:revista`) | `filter.format.revista_editorial` permite `remote_video`; provider já usa purpose `magazine` | Adicionar `embedded_video` ao provider do Magazine e incrementar a versão de projeção | Formato já permite; relação ainda pendente no provider |
+| Revista (`node:revista`) | `filter.format.revista_editorial` permite `remote_video`; provider usa purpose `magazine` | **Implementado:** provider v3 usa `entity_usage` na revisão corrente e allowlist `media_embed`/`body`/`remote_video` | Bateria focal de providers e Kernels dos owners passou em MariaDB; o consumidor revalida o alvo. Sem acesso Runtime |
 | Wiki (`node:wiki_entry`) | `filter.format.wiki` permite somente `document` | Decisão editorial para permitir `remote_video` no formato e definição de quais bundles podem embutir | Não alterar o formato sem decisão do owner |
 | Fórum (`node:aculta_forum_topic`, `aculta_forum_post`, `comment:aculta_discussion_post`) | `filter.format.forum` permite somente `forum_attachment` | Decidir se tópicos, posts e comentários podem embutir vídeo; atualizar o formato e o provider | Comentários legados e ForumPost coexistem |
 | LMS (`group:lms_course`) | Campo explícito `field_lms_videos` (Media `remote_video`) implementado em `aculta_lms_resources`; provider emite `course_video` | **Implementado**: `config/install`, update `8001`, provider v4/3 e Kernel `course_video` | `takeAccess()`/Group continua autoridade; URL/corpo/miniatura não copiados |
@@ -97,8 +97,12 @@ GanjaLab, GanjaLab420, WE Sativa, Revista, Wiki, Fórum, LMS e Portal devem:
 - LMS implementado no owner `aculta_lms_resources`: `field_lms_videos`,
   update `8001`, relação `course_video` e teste Kernel com membro/educador e
   terceiro negado. Config Sync e update no Runtime são do agente de integração.
-- Revista tem o formato editorial pronto, mas o provider ainda não emite a
-  relação; Wiki e Fórum precisam decidir se os formatos permitem
-  `remote_video`.
+- Revista emite `embedded_video` apenas para embeds controlados pelo formato e
+  rastreados na revisão corrente. Em 2026-10-31, a bateria conjunta de owners
+  passou com 42 testes e 617 assertions; o rebuild Wiki também passou após
+  instalar no fixture o schema de nickname exigido pelo hook de criação de
+  usuário. A execução reportou 261 depreciações Core/contrib, sem falhas.
+- Wiki e Fórum precisam de decisão editorial sobre permitir `remote_video` em
+  seus formatos; os providers não foram ampliados sem essa decisão.
 - O Index não antecipa adapters de embeds; só revalida o Media alvo.
 - Nenhuma operação de Runtime foi executada para esta definição.

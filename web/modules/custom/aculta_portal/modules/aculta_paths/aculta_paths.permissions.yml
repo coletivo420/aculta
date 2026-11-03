@@ -1,0 +1,4 @@
+administrar superficies:
+  title: 'Administrar superfícies do Portal'
+  description: 'Ativar, desativar, escolher modo e slug de cada superfície.'
+  restrict access: true

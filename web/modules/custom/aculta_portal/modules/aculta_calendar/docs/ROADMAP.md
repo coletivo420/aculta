@@ -2,10 +2,12 @@
 
 [Plano LOC-00 a LOC-08](../../../../../../../docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md). Calendar mantém o motor/RC anterior; nenhuma integração nova foi homologada aqui.
 
-- [ ] LOC-05: suportar agenda do Local pelo contrato de itens/provedor existente; Events filtra a associação Data > Local e autoriza registros.
-- [ ] LOC-04/05: Index descobre eventos relacionados, sem transformar arestas em ocorrências nem duplicar RRULE/overrides.
-- [ ] LOC-01/08: revisar nome/endereço do Local em agenda e ICS, registros negados, cache e purposes main/eventos. Parcial em 2026-11-01: itens públicos/ICS omitem nome de Local sem view access; alteração de Local invalida a agenda. Validação A/B de purpose e revisão dos demais consumidores continuam pendentes.
+- [x] LOC-05 (código): o detalhe do Local consulta o provider Events por meio do `CalendarQuery` contextual e expande ocorrências pelo `CalendarAgenda`; o gate de homologação continua em LOC-08.
+- [x] LOC-04/05 (API): Index descobre Eventos relacionados ao Local por relações recebidas nomeadas; `queryIncoming()` retorna entidades deduplicadas, sem transformar arestas em ocorrências nem duplicar RRULE/overrides. Kernel Events cobre três Datas em dois Eventos, ACL atual e paginação/cursor. A agenda temporal continua usando `CalendarQuery`/`CalendarAgenda` e o provider Events.
+- [ ] LOC-01/08: concluir matriz HTTP de purpose/host e Runtime para agenda/ICS. Kernel em 2026-11-02: isolamento A/B e conta anônima passaram para agenda contextual e ICS; itens públicos omitem Local sem acesso e alteração de Local invalida a agenda. Revisão dos demais consumidores continua pendente.
 - [ ] Cobrir futuros/em andamento, recorrência/cancelamento/reagendamento, links canônicos e acesso A/B.
+
+Implementação em 2026-11-01: `CalendarQuery` restringe fontes por IDs de provider e cada ocorrência preserva ID/link. O detalhe de Local usa o provider `aculta_events`, filtra a relação Data > Local e expande recorrência, cancelamento e reagendamento. Kernel Events verifica Local privado por owner, negação a outra conta e filtro entre Locais. A matriz HTTP de propósito/runtime continua fora da evidência desta microfase; o ICS contextual pertence ao Events e foi validado separadamente por `EventIcsControllerKernelTest` (3 testes / 54 assertions em 2026-11-02).
 
 Não importar classes Events no núcleo independente, criar segundo calendário, promover versão ou executar Runtime por efeito deste plano.
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\PathProcessor;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\Core\PathProcessor\InboundPathProcessorInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -34,16 +35,7 @@ final class PurposeFrontPathProcessor implements InboundPathProcessorInterface {
    *   fica em `/conta-legada`, sem ser a raiz.
    * - magazine e main: sem reescrita. A raiz é o `<front>` (página inicial do site, com a marca do host).
    */
-  public const FRONT_PATHS = [
-    'support' => '/apoio',
-    'wiki' => '/wiki',
-    'courses' => '/cursos',
-    'shop' => '/loja',
-    'forum' => '/discussoes',
-    'links' => '/redes-sociais',
-    'account' => '/conta',
-    'eventos' => '/eventos',
-  ];
+  public const FRONT_PATHS = DomainSurfaceMap::FRONT_PATHS;
 
   public function __construct(
     private readonly DomainPurposeManager $domainPurposeManager,

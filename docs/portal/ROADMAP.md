@@ -1,3 +1,5 @@
+> Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
+
 ## Nova frente arquitetural OpenCulturas - ARQ-01 a ARQ-09 (2026-10-29)
 
 [Plano arquitetural de incorporação seletiva](../architecture/PLANO-ARQUITETURAL-OPENCULTURAS-ACULTA-ARQ-01-09.md). P0: segurança/privacidade de locais, escala de ocorrências, descoberta via Index/Search API; P1: modelos de eventos, organizações, moderação UGC e salvos; P2: editorial e Media; ARQ-09 integra gates de segurança, cache e Runtime. **Sem substituir** `aculta_index`, owners funcionais, contratos por purpose, Studio, Green Stash integrado ou a frente global mobile-first ACULTA420. Estado: planejamento, sem testes nesta atualização.
@@ -27,9 +29,9 @@ metadados documentados; a diferença foi corrigida sem alteração de comportame
 ou escrita no Runtime. Portal segue Dev; as fases funcionais abaixo permanecem
 pendentes.
 
-## Revalidação documental — 2026-10-29
+## Fotografia histórica da revalidação documental — 2026-10-29
 
-O manifesto e o status usam `0.4.1-dev.44`. Os metadados do catálogo de helpers
+Naquela revalidação, o manifesto e o status consultados usavam `0.4.1-dev.44`. Os metadados do catálogo de helpers
 e implementações apontam para `ADR-032-portal-multi-cart-checkout.md`, que
 contém as decisões vigentes; `ADR-013` é o registro do Content Index, não do
 checkout. O gate Portal Drupal 11+ passou (1.162 verificações); Unit 323/974 e
@@ -52,9 +54,12 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
 
 - Apresentação Wiki420 e política de autoria pública: [WIKI.md](WIKI.md); Runtime DEFERRED até inspeção visual.
 
-## Estado atual — conferido em 2026-10-23
+## Fotografia histórica — estado conferido em 2026-10-23
 
-- Versão: **0.4.1-dev.21** (`aculta_portal.info.yml`; confira o changelog para o estado desta branch). Sem tag: tags só por pedido explícito do responsável. O texto de estado abaixo reflete auditorias anteriores e deve ser lido junto às atualizações datadas do roadmap.
+Este bloco é um registro daquela data, não o estado atual da branch. Consulte os
+manifests, roadmaps dos módulos e atualizações posteriores para o estado vigente.
+
+- Versão do Portal na fotografia: **0.4.1-dev.21**. Esse valor não descreve o manifesto atual. Sem tag: tags só por pedido explícito do responsável.
 - Submódulos conferidos nos manifests: `aculta_deployer` 0.1.25, `aculta_associado_id` 0.3.0-dev.1 (descontinuado em 2026-10-23), `aculta_portal_sitemap` 0.1.2, `aculta_messenger` 0.1.1-dev.76, `aculta_gallery` 0.1.0-dev.17, `aculta_magazine` 0.5.0-dev.8, `aculta_index` 0.1.0-dev.160 (manifest conferido em 2026-10-23) e `aculta_activity` 0.1.0-dev.7. Pendências específicas estão nos roadmaps dos componentes; a versão do manifesto não certifica homologação.
 - Tema: `aculta420` 0.6.1-dev.4 (manifest conferido). Gate Foundation segue obrigatório; modais do Fórum aguardam inspeção visual pré-RC.
 - Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md). O relatório [de 2026-10-12](historico/RELATORIO-ESTADO-2026-10-12.md) é um snapshot anterior às PRs #238 e #239.
@@ -98,10 +103,12 @@ Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
   `aculta_portal.unused_media_cleaner` foram implementadas parcialmente:
   verificam File Usage/Entity Usage, referências estruturadas e embeds textuais.
   A primeira delega imagens ao `aculta_image`; a segunda remove candidatos
-  Media não publicados após revalidar uso. O executor
-  com prévia, IDs explícitos,
-  verificação de todas as revisões, adapters por dono e backup homologado segue
-  pendente; não há exclusão de conteúdo pelo cron.
+  Media não publicados após revalidar uso novamente imediatamente antes da
+  exclusão. Dev.47 acrescenta `aculta_portal.content_cleanup_preview`, uma
+  prévia sem escrita de até 100 IDs File/Media explícitos. Ainda faltam
+  inventário e adapters de posts/revisões por dono, relatório agregado de
+  dependências e executor com confirmação explícita, backup homologado e trilha
+  auditável; não há exclusão de conteúdo pelo cron.
 - A limpeza pontual autorizada dos 12 Nodes `revista` no Runtime de teste foi
   executada em 2026-10-22; relatório em
   [MAGAZINE-TEST-CLEANUP-2026-10-22.md](MAGAZINE-TEST-CLEANUP-2026-10-22.md).

@@ -9,6 +9,8 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_contributions\Service\ContributionLifecycle;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\aculta_wiki\Service\WikiProposalWithdrawal;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -23,6 +25,7 @@ final class WikiProposalWithdrawalForm extends FormBase {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly WikiProposalWithdrawal $withdrawal,
+    private readonly ContributionLifecycle $contributions,
     MessengerInterface $messenger,
   ) {
     $this->messenger = $messenger;
@@ -35,6 +38,7 @@ final class WikiProposalWithdrawalForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('aculta_wiki.proposal_withdrawal'),
+      $container->get('aculta_contributions.lifecycle'),
       $container->get('messenger'),
     );
   }
@@ -49,14 +53,15 @@ final class WikiProposalWithdrawalForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, ?WikiProposal $proposal = NULL): array {
-    if (!$proposal instanceof WikiProposal
+  public function buildForm(array $form, FormStateInterface $form_state, WikiProposal|Contribution|null $proposal = NULL): array {
+    if ((!$proposal instanceof WikiProposal && !$proposal instanceof Contribution)
       || (int) $proposal->getOwnerId() !== (int) $this->currentUser()->id()
       || !$proposal->access('view', $this->currentUser())
       || !in_array($proposal->get('state')->value, ['submitted', 'needs_changes'], TRUE)) {
       throw new AccessDeniedHttpException();
     }
     $form_state->set('wiki_proposal_id', (int) $proposal->id());
+    $form_state->set('wiki_proposal_entity_type', $proposal->getEntityTypeId());
     $form['summary'] = [
       '#type' => 'item',
       '#title' => $this->t('Retirar proposta: @title', ['@title' => $proposal->label()]),
@@ -97,13 +102,22 @@ final class WikiProposalWithdrawalForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $proposal = $this->entityTypeManager->getStorage('aculta_wiki_proposal')
+    $proposal = $this->entityTypeManager->getStorage('aculta_contribution')
       ->load((int) $form_state->get('wiki_proposal_id'));
-    if (!$proposal instanceof WikiProposal) {
+    if (!$proposal instanceof Contribution || $proposal->get('source')->value !== 'wiki') {
+      $proposal = $this->entityTypeManager->getStorage('aculta_wiki_proposal')
+        ->load((int) $form_state->get('wiki_proposal_id'));
+    }
+    if (!$proposal instanceof WikiProposal && !$proposal instanceof Contribution) {
       throw new AccessDeniedHttpException();
     }
     try {
-      $proposal = $this->withdrawal->withdraw($proposal, (int) $form_state->getValue('expected_revision_id'));
+      if ($proposal instanceof Contribution) {
+        $proposal = $this->contributions->withdraw($proposal, (int) $form_state->getValue('expected_revision_id'));
+      }
+      else {
+        $proposal = $this->withdrawal->withdraw($proposal, (int) $form_state->getValue('expected_revision_id'));
+      }
     }
     catch (ConflictHttpException $exception) {
       $form_state->setErrorByName('confirm', $exception->getMessage());

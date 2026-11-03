@@ -37,6 +37,16 @@ na chamada do manager. Na dev.111, `ParamConverterManager` do Core converte os
 IDs Group/Comment pela definição `entity:group`/`entity:comment` antes do check;
 o teste nega aluno e Group diferente do proprietário do tópico.
 
+## Contrato de leitura da jornada (B1, 2026-11-01)
+
+`Drupal\aculta_learning_contracts\Learning\CourseJourneyReaderInterface` é o contrato neutro da jornada Ganjalab. Ele vive em `aculta_learning_contracts`, módulo sem dependência de `lms:lms`, `aculta_portal`, `aculta_studio` ou `aculta_lms`. `getCourseJourney(string $course_id, AccountInterface $account): ?CourseJourney` devolve o modelo de apresentação `CourseJourney` (com `CourseJourneyLesson`), já autorizado, com estrutura publicada, estados, progresso, aula atual e destinos permitidos. Retorna `NULL` quando o identificador não é um curso e um DTO com `access: FALSE` quando o curso existe mas a conta não pode cursá-lo.
+
+`Drupal\aculta_lms\LearningDashboardManager` implementa o contrato como adaptador Drupal LMS/Group; o alias `aculta_lms.course_journey_reader` é o único ponto de composição. O adaptador é o único que importa `CourseInterface`, `LessonInterface`, `LessonStatusInterface` e `TrainingManager` nesse caminho. `CourseRoomBuilder` (matrícula/roster no LMS) e `CourseJourneyPresentationHooks` (jornada/sala no Studio) consomem o contrato; `CourseJourneyComposer` consome apenas o DTO e não importa classes do contrib nem de `aculta_lms`. O `aculta_lms` não depende mais de `aculta_studio`.
+
+O contrato fica em `aculta_learning_contracts` porque precisava sobreviver à remoção de `lms:lms` do Portal (B3-A concluída em 2026-11-01) e não deve pertencer nem ao consumidor nem ao adaptador. Colocá-lo em `aculta_studio` fazia o adaptador do LMS depender do namespace do consumidor; colocá-lo em `aculta_lms` faria o Studio importar um módulo de integração que não precisa conhecer. O novo módulo não declara dependência de nenhum dos três e contém apenas interfaces e value objects. Na B2, o `LearnerDashboardComposer` vive no Studio e consome `StudentLearningSummaryReaderInterface`; o `aculta_lms` implementa o leitor de resumo e não depende de `aculta_studio`.
+
+A fonte de verdade permanece no LMS/Group durante a transição. Nenhum dado é duplicado, nenhuma escrita é redirecionada e a autorização continua decidida no servidor pelo adaptador. O inventário e a contagem reproduzível de imports estão em [LMS-CONTRIB-DEPENDENCY-INVENTORY.md](../modules/LMS-CONTRIB-DEPENDENCY-INVENTORY.md).
+
 ## Matriz de ownership e dependências
 
 | Necessidade | API/dono | Evento/dado que pode cruzar | Proibições |
@@ -45,7 +55,7 @@ o teste nega aluno e Group diferente do proprietário do tópico.
 | Arquivos e imagens de curso | Media/File + `aculta_image` + LMS | Capa de curso sob `UploadPolicy`; imagens H5P passam por `upload_ingester`; documento PDF de turma é Media `course_document` privado com relação Group e viewer `aculta_pdf_viewer` | URL pública para arquivo privado, caminho de imagem fora de `aculta_image`, upload de imagem paralelo no H5P |
 | PDF de curso | `aculta_pdf_viewer` + `aculta_pdf_viewer_group` + Group | Educador vincula Media `course_document` à turma; viewer usa Media/File e acesso Group atual, com bytes entregues pela rota privada do Core | Usar o bundle editorial `document` público para material de turma; duplicar viewer, storage de documento ou entrega privada |
 | Arquivos de trabalho | Media/File + File Access + LMS File Upload + `aculta_image` | Submissão via LMS; anexos raster passam pela `UploadPolicy` e `ImageInspector`, continuam privados e o download revalida matrícula. Validação Kernel e fluxo de upload/revogação ainda pendentes | URL pública de arquivo privado, armazenamento paralelo ou imagem fora da política compartilhada |
-| Avisos educacionais | `aculta_messenger` + Message/Message Notify, integrados pelo adapter `aculta_lms_messenger` | evento mínimo, UUID imutável da origem, destinatário e referência de rota revalidável | LMS Messages, fila/storage redundante, envio baseado só em membership antiga |
+| Avisos educacionais | `aculta_messenger` + contrato público `MessengerNoticeEvent`; elegibilidade em `aculta_lms` | evento mínimo, UUID imutável da origem, destinatário e referência de rota revalidável | LMS Messages, fila/storage redundante, envio baseado só em membership antiga |
 | Identidade, perfil e conexões | User/Profile + `aculta_user` | referência de User e API `FriendshipManagerInterface` quando aplicável | entidade de amizade ou perfil no LMS |
 | Conquistas | `aculta_user`/`aculta_game` | fato de conclusão/atributo LMS confirmado pela API autorizada | recalcular nota/progresso, nova entidade espelho de award |
 | Discussão de curso/turma/atividade | `aculta_forum` + `aculta_forum_lms` + Node/Comment + Group access | Adapter com tópico interno e provider contextual; acesso revalidado no Group e no host; curso herda permissão Group Node `grade students` para turma; habilitado somente no Runtime de teste | Entidade paralela; role global `estudante`/`lms_teacher` sem membership ou permissão contextual; expor listagem antes de aplicar filtros de Group/Entity Access |

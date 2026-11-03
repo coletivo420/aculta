@@ -1,6 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
 name: Context header
-status: experimental
+status: stable
 group: Patterns
 description: 'Contextual page heading under the permanent multidomain shell; the consuming presenter owns title, actions and cache.'
 props:

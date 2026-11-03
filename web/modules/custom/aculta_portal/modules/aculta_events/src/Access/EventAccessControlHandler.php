@@ -10,9 +10,9 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Acesso a evento: rascunho só para quem pode ver rascunhos (MODELO-DE-DADOS.md, sitemap).
+ * Controla acesso a Eventos publicados e rascunhos (modelo e sitemap).
  *
- * Publicado e cancelado são visíveis; cancelado aparece com aviso na página (regra do modelo).
+ * Publicados e cancelados são visíveis; cancelados mostram um aviso.
  */
 final class EventAccessControlHandler extends EntityAccessControlHandler {
 

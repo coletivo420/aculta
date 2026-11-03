@@ -1,4 +1,292 @@
+> Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
+
+## Revalidação 2026-11-01 — ciclo de vida e propostas
+
+- `EventOrganizationLifecycleKernelTest`: **27 testes / 888 assertions PASS**;
+  `testEventUpdateContribution*`: 6 / 171. Ambos usam `aculta_simpletest`;
+  24 depreciações Core/contrib. Runtime sem alterações.
+
+## Revalidação 2026-11-01 — conflitos de `event_update`
+
+- Reexecutados os casos Kernel de submissão privada, aplicação seletiva, perda
+  de Entity Access, membership revogado, Local tornado privado e origem alterada:
+  **6 testes / 171 assertions PASS**, 24 depreciações Core/contrib. Runtime não
+  alterado.
+
+## Revalidação 2026-11-02 — ACL da agenda contextual
+
+- Novo cenário Kernel com dois owners de Local e anônimo confirma que a agenda contextual não divulga títulos/eventos de Locais privados alheios. UIDs de fixture são 101/102 para evitar o bypass administrativo reservado ao UID 1.
+- `EventCalendarItemProviderKernelTest`: 6 testes / 116 assertions PASS; 13 depreciações Core/contrib. Sem mudança funcional de produção ou escrita no Runtime.
+
 # Changelog — aculta_events
+
+## Proposta de atualização de Evento (2026-11-02)
+
+- Dashboard oferece `/culturas/eventos/{aculta_event}/propor-alteracao` somente
+  para quem passa Entity Access `update`. O formulário envia `event_update` com
+  revisão-base, payload allowlisted e uma Data opcional append-only; a entidade
+  oficial permanece intacta na submissão.
+- A fingerprint agora é calculada a partir da versão persistida recarregada,
+  evitando falso conflito por bool/int versus string entre objeto em memória e
+  valor hidratado do banco.
+- `EventOrganizationLifecycleKernelTest` e `EventDomainBoundaryKernelTest`:
+  37 testes / 1.275 assertions PASS, 24 depreciações upstream. Runtime não
+  alterado.
+
+## Aviso de envio de proposta de Evento (2026-11-02)
+
+- `event_create` enfileira aviso privado mínimo após persistir a Contribution.
+  O evento inclui somente source, UUID/revisão, destinatário e `submitted`;
+  payload e justificativa permanecem fora do Messenger.
+- Teste Kernel verifica submissão privada e envelope sem dados do payload;
+  validação focal total: 34 testes / 875 assertions. Inbox Runtime depende do
+  update Messenger 10016 e não foi homologado.
+
+# Proposta inicial de Evento (2026-11-02)
+
+- Adicionada `/culturas/propostas/evento/nova` para enviar Evento e Datas como
+  Contribution privada. A rota exige login/purpose `eventos`; o formulário
+  exige a capability atual de criação, usa a allowlist `events_event`, UUIDs
+  das referências e normaliza horários para UTC. Nenhuma entidade Event ou
+  EventDate é salva antes da aprovação. O dashboard expõe a ação para quem pode
+  criar Eventos; o CRUD nativo existente permanece disponível.
+- Kernel confirma submissão privada, negação sem capability, horário UTC e
+  ausência de Event oficial: 1 teste / 32 assertions. Kernels combinados de
+  lifecycle Events e fronteira: 36 testes / 1.229 assertions PASS, com 24
+  depreciações upstream. PHPCS, PHP lint, YAML e diff check PASS. Runtime não
+  foi alterado.
+
+## Correção — links de avisos de Organização e Local (2026-11-02)
+
+- O manager Messenger já enviava decisões das fontes `events_organization`,
+  `events_location` e `events_event` para o detalhe do workspace. O controller
+  aceitava somente `events_event`, então notificações válidas de Organização e
+  Local terminavam em 404.
+- O workspace agora lista e abre as três fontes permitidas, mantendo filtro por
+  UID proprietário, Entity Access e rotas privadas de `eventos`. O quadro exibe
+  o tipo de contribuição correspondente.
+- Suítes completas: `EventOrganizationLifecycleKernelTest` 23/753 (24
+  depreciações upstream) e `EventDomainBoundaryKernelTest` 10/369 (18
+  depreciações upstream) PASS. PHPCS Drupal Core, lint PHP, YAML e diff check
+  PASS. Runtime não foi alterado.
+
+## Complemento local — workspace privado de propostas de Evento (2026-11-02)
+
+- Adicionadas as rotas `/culturas/propostas` e detalhe por UUID para a conta
+  autora consultar situação, conteúdo enviado e retorno editorial.
+- O controller filtra por proprietário, source Events e Entity Access; outra
+  conta recebe 404. O dashboard Culturas liga ao workspace e os avisos de
+  decisão Messenger apontam ao detalhe da proposta.
+- `EventOrganizationLifecycleKernelTest`: 23 testes / 747 assertions PASS;
+  `EventDomainBoundaryKernelTest`: 10 testes / 368 assertions PASS. Ambos com
+  depreciações upstream (24 e 18). Teste focado confirmou link do dashboard:
+  1 teste / 25 assertions PASS.
+- Ressubmissão estruturada após pedido de ajustes e notice no envio continuam
+  pendentes.
+
+## Complemento local — revalidação de relações de Evento (2026-11-02)
+
+- Ao aplicar `event_update`, Locais das Datas existentes/propostas são
+  recarregados e o access handler é limpo antes de revalidar `view` para o
+  autor. Membership revogado em Organização reivindicada também impede apply.
+- Kernel cobre ambos os conflitos e confirma que a proposta permanece pendente
+  e o Evento inalterado: 23 testes / 744 assertions; 24 depreciações.
+
+## Complemento local — fila e revisão de propostas de Evento (2026-11-02)
+
+- A fila administrativa lista propostas `event_create`/`event_update` e abre a
+  revisão seletiva pelo lifecycle de Contributions.
+- Rota permanece no MAIN com `administer aculta events`; Content Admin só a
+  descobre quando o acesso nativo autoriza. Sem payload privado na listagem.
+- `ModeratableCollectionRegistryTest`: 1 teste / 8 assertions; suíte
+  `EventOrganizationLifecycleKernelTest`: 21 testes / 691 assertions PASS,
+  com 24 depreciações Core/contrib. Validador MAIN-only e aliases, lint PHP,
+  YAML e PHPCS dos arquivos alterados passaram. Runtime não homologado.
+
+## Complemento local — aviso de decisão de proposta de Evento (2026-11-02)
+
+- `events_event` agora registra decisões no envelope mínimo já usado por
+  Organizações e Locais; o worker e o consumer aceitam o source de Evento.
+- Sem payload, endereço ou parecer no envelope. Unit: 11 testes / 32
+  assertions; `EventOrganizationLifecycleKernelTest`: 21 / 687, com 24
+  depreciações Core/contrib. Inbox Runtime depende do update Messenger 10015,
+  que não foi executado.
+
+## Complemento local — propostas de Evento (F6 parcial)
+
+- Registrado adapter `events_event` para criar e atualizar Eventos via ciclo
+  privado de Contributions. Campos internos e status de publicação não são
+  aceitos; criação aprovada fica em rascunho e atribuída ao proponente.
+- Datas propostas são adicionadas sem apagar/reescrever Datas existentes;
+  Organização, Local, autor, intervalos e fingerprint são revalidados na
+  aplicação. A interface de submissão/workspace do autor e avisos Messenger
+  específicos de Evento continuam pendentes.
+- Aplicação revalida capability configurável de criação e Entity Access atualizado do autor; o cache do handler é invalidado antes de checar atualização. Testes de regressão cobrem revogação entre envio e decisão.
+- `EventOrganizationLifecycleKernelTest`: 21 testes / 681 assertions PASS (24 depreciações Core/contrib); PHPCS e lint PHP PASS. Runtime não alterado/não homologado.
+
+## Complemento local — inbox e recuperação de resultados Contributions (2026-11-02)
+
+- Outcomes de Organizações e Locais levam o source estável no envelope. O
+  enfileiramento ocorre após commit da decisão; falhas de Queue API ficam no
+  outbox KeyValue para tentativa posterior por `hook_cron()` (até 25 por ciclo).
+- Messenger persiste aviso privado e idempotente no inbox, sem payload/endereço/
+  parecer; envio por e-mail/digest e workspace do autor seguem pendentes.
+- Unit Events/Messenger: 9 testes / 27 assertions PASS. Kernel focal de fila e
+  decisão: 1 teste / 46 assertions PASS; a suíte Kernel ampla teve uma
+  expectativa antiga de envelope, corrigida e revalidada no teste focal.
+- Runtime sem migrações/importação de configuração.
+
+## Complemento local — propostas de criação e atualização de Local (2026-11-02)
+
+- Não administradores podem propor criação/atualização de Local; alterações
+  permanecem privadas até decisão. Endereço usa o formulário central, país BR
+  obrigatório; coordenadas, OSM, status, titularidade e vínculo com Evento são
+  protegidos. Criação aprovada permanece draft e atribuída ao proponente.
+- Adicionada fila/revisão no MAIN, descoberta por `aculta_content_admin`, sem
+  substituir autorização do owner Events. Duplicidade provável bloqueia a
+  aplicação e não faz merge automático.
+- Os três testes Kernel focais passaram com 100 assertions. São pendências a
+  integração de avisos Messenger para Local, execução de suítes amplas e
+  homologação Runtime; o Runtime não foi alterado.
+
+## Complemento local — propostas de criação de Organização (2026-11-01)
+
+- Criação por não administrador, tanto no formulário próprio quanto no modal do
+  Evento, passa a gerar proposta privada `organization_create`; o perfil só é
+  criado após aprovação administrativa. A proposta não é vinculada ao Evento.
+- Após aprovação, a Organização é publicada sem titular e sem membership, com
+  autoria atribuída ao proponente. A reivindicação de titularidade continua no
+  fluxo próprio e só fica disponível depois da criação aprovada.
+- Suítes Kernel completas de lifecycle e modal/admin passaram (13 testes / 437
+  assertions e 8 / 266); PHPCS, validadores de rotas/aliases, YAML e índice de
+  status passaram.
+
+## 0.2.0-dev.9 — propostas de perfil via Contributions (2026-11-01)
+
+- Novas propostas para perfis de Organizações não reivindicadas usam o ciclo
+  compartilhado, com adapter Events, allowlist, versão-base completa e lock da
+  Organização. A aprovação aplica só os campos escolhidos; claims, membros,
+  publicação e edição direta de Organizações reivindicadas preservam seus owners.
+- A fila administrativa lista Contributions novas e sugestões legadas; os
+  registros e rotas antigos continuam revisáveis. O Runtime não migrou nem
+  removeu registros legados.
+- Kernel focal de submissão, privacidade, rejeição de campos de titularidade,
+  aplicação seletiva e conflito de versão-base: 2 testes / 75 assertions PASS.
+- Dependência ausente do Runtime causava 500 em `/wesativa` e
+  `/wesativa/verbetes/novo`; após snapshot, `aculta_contributions` foi habilitado
+  e os dois paths autenticados responderam HTTP 200.
+- Content Admin agora descobre a fila por sua rota nativa; Events persiste
+  resultados mínimos e os publica ao Messenger após revalidar autor/acesso.
+  Inbox/digest/email, workspace de ajustes do autor e demais adapters de Events
+  permanecem pendentes.
+
+## 0.2.0-dev.8 — propostas moderadas para organizações sem titular (2026-11-01)
+
+- Edição por contas autorizadas a criar Eventos agora gera proposta privada;
+  a entidade pública permanece inalterada até aprovação administrativa.
+- Adicionada a fila em `/painel-administrativo/eventos/organizacoes/sugestoes`
+  e revisão com comparação atual/proposto, aprovação ou rejeição e autoria da
+  decisão. Só campos de perfil público são permitidos.
+- Aprovação exige que a organização continue sem titular e que sua impressão
+  digital pública corresponda ao estado no envio. Locks por proposta e
+  organização, transação e revalidação impedem reaplicação e sobrescrita de
+  atualização posterior. Sugestões privadas a `administer aculta events`.
+- `EventOrganizationLifecycleKernelTest`: cobertura para envio sem mutação,
+  proteção dos campos de titularidade, aprovação, rejeição, proposta obsoleta e
+  acesso negado; resultado a registrar após o gate desta versão. Update hook
+  `10016` instala a entidade de sugestões. Runtime não foi alterado.
+
+## 0.2.0-dev.7 — lint completo do módulo e desacoplamento do formulário de Local (2026-11-01)
+
+- O formulário de Local recebe `EventPermissionPolicy` por injeção de
+  dependência, removendo chamadas globais ao container sem alterar as regras
+  de criação e publicação.
+- Corrigidos os apontamentos de estilo do módulo inteiro. PHPCS Drupal e
+  DrupalPractice passou sem erros ou avisos; `git diff --check` passou.
+- A suíte Kernel completa passou: 131 testes / 2.765 assertions; permanecem
+  51 depreciações Core/contrib preexistentes. Unit: 10 testes / 23 assertions
+  PASS. Runtime não foi alterado.
+
+## 0.2.0-dev.6 — resolução fail-closed da política RSVP (2026-11-02)
+
+- `RsvpPolicyResolver` produz uma política interna somente quando RSVP está
+  habilitado, os parâmetros obrigatórios estão completos e o contexto de
+  capacidade Evento/Data/Lote pertence ao Evento.
+- Contexto por Lote exige oferta gratuita ativa; ofertas pagas/inativas,
+  capacidades inválidas e datas/ofertas de outro Evento são recusadas.
+- O resolver não registra participantes, coleta dados, reserva capacidade nem
+  oferece rota pública. RSVP continua fechado por padrão; revisão LGPD segue
+  obrigatória antes de qualquer coleta pública.
+- `EventOfferKernelTest`: 4 testes / 91 assertions PASS; 12 depreciações
+  Core/contrib. A suíte Kernel Events (130 testes / 2.741 assertions) e Unit
+  (10 testes / 23 assertions) passaram antes da otimização final da consulta de
+  recorrência; após a otimização, o Kernel focal passou novamente. PHPCS,
+  validadores de rotas/status e `git diff --check` PASS. Runtime não foi alterado.
+
+## 0.2.0-dev.5 — campos estruturais de política RSVP (2026-11-02)
+
+- Update `10015` instala em Evento/Data a política estrutural D-60: RSVP
+  desligado por padrão, escopo Evento/Data/Lote, capacidades nominais,
+  limite por participante, duplicidade, duração de reserva, espera,
+  cancelamento e inscrição por ocorrência/série.
+- Campos permanecem ocultos no formulário do organizador até existir o fluxo
+  completo; capacidade não é consumida e nenhuma inscrição/dado de participante
+  é armazenado.
+- Kernel focal valida defaults, persistência por Data, constraints positivas e
+  idempotência do update: `EventRsvpSettingsKernelTest` passou com 2 testes / 37
+  assertions e 12 depreciações Core/contrib. Kernel completo Events passou com
+  129 testes / 2.709 assertions e 51 depreciações Core/contrib. Runtime não foi
+  alterado.
+
+## 0.2.0-dev.4 — modelo estrutural de ofertas/lotes (2026-11-02)
+
+- Adicionada a entidade `aculta_event_offer`, pertencente a Eventos, com Evento
+  obrigatório, Data opcional, modalidade gratuita/paga, preço descritivo,
+  capacidade nominal, limites e janela de disponibilidade.
+- Oferta começa inativa, exige `administer aculta events` e não declara rotas
+  públicas ou de edição organizadora. Não implementa RSVP, pedido, pagamento,
+  emissão ou check-in.
+- Update hook `10014` instala o tipo de entidade em instalações existentes.
+- Kernel focal cobre persistência, referências sem duplicar Evento/Data, estado
+  fechado por padrão, acesso exclusivo de administradores, constraints de faixa,
+  ausência de rotas públicas e idempotência do update hook. `EventOfferKernelTest`
+  passou: 3 testes / 57 assertions; 12 depreciações Core/contrib.
+- Revisão LGPD e parecer fiscal/jurídico continuam bloqueando coleta pública e
+  venda, respectivamente; Runtime não foi alterado.
+
+## 0.2.0-dev.3 — ocultar Local sem acesso no dashboard de organizadores (2026-11-01)
+
+- O dashboard valida `view` para cada Local associado antes de renderizar título
+  ou município/UF e agrega os metadados de cache das decisões permitidas e
+  negadas.
+- Kernel confirma que um organizador pode gerenciar seu Evento sem receber
+  dados de um Local privado de outra conta.
+- Suíte de Kernel: 123 testes / 2.597 assertions PASS; Unit: 10 testes / 23
+  assertions PASS. Foram registradas 51 depreciações de Core/contrib.
+- PHP lint, PHPCS Drupal/DrupalPractice focal, validadores de status/fronteira e
+  `git diff --check` PASS.
+- Runtime não foi alterado; homologação HTTP continua pendente.
+
+## 0.2.0-dev.2 — feed ICS contextual por Local (2026-11-01)
+
+- Adicionada a rota `/locais/{id}/agenda.ics` no purpose `eventos` e link contextual na página do Local.
+- O feed usa `CalendarQuery`/`CalendarIcsExporter`, filtra somente o provider `aculta_events`, restringe pelo ID do Local e usa a janela de 30 dias da agenda. Entity Access é revalidado; Local privado de outra conta retorna 404. Respostas `private, no-store` e `noindex`.
+- Kernel focal `EventIcsControllerKernelTest`: 3 testes / 54 assertions PASS, incluindo conteúdo de outro Local excluído e Local privado visível ao owner, negado a outra conta.
+- Suíte completa Events em `aculta_simpletest`: 132 testes / 2.599 assertions PASS; 51 depreciações Core/contrib. PHP lint, PHPCS focal, parse YAML e verificadores de aliases/purpose PASS.
+- Ainda pendem testes HTTP da matriz de purpose/host e homologação Runtime; nenhum Runtime foi alterado.
+
+## 2026-10-31 — reconciliar as decisões D-60/D-61 do ticketing
+
+- ADR-036, plano de ingressos, roadmap e README agora distinguem as regras aprovadas (RSVP opcional, capacidade configurável, inscrição por ocorrência/série, transferência auditável e ownership) das pendências legais e técnicas.
+- Ticketing continua sem implementação: a página mantém apenas preço/gratuidade informativos e link externo. Nenhum dado de participante foi coletado; venda continua bloqueada por parecer fiscal/jurídico e revisão LGPD.
+- Suíte Events previamente executada em `aculta_simpletest`: 129 testes / 2.557 assertions PASS; nenhum teste ou gate Runtime foi executado nesta atualização documental.
+
+## 2026-11-01 — agenda de Local pelo provider compartilhado
+
+- O detalhe do Local consulta a agenda pelo `CalendarQuery`/`CalendarAgenda` de `aculta_calendar`, limita a origem ao provider Events e filtra Data > Local.
+- O calendário expande recorrência e reaplica cancelamentos/reagendamentos; a página mostra os próximos 30 dias e liga cada item à página canônica do Evento.
+- Entity Access controla Locais privados por usuário, incluindo isolamento de cache. O gate completo em purpose/Runtime e um feed ICS contextual por Local não foram executados nesta microfase.
+- Suíte completa Events: **128 testes / 2.528 assertions PASS** após corrigir o fixture administrativo; suíte focal após revalidar o acesso do Evento: **19 testes / 380 assertions PASS**. PHP lint, PHPCS focal e `git diff --check` PASS; depreciações upstream registradas.
 
 ## 2026-11-01 — Privacidade de Locais em Eventos, agenda e ICS
 
@@ -203,3 +491,18 @@
 
 - Exportado para `config/sync` o vocabulário `aculta_location_type`, já criado pelo update hook 10003, e coberta a negação de `/locais` fora do purpose `eventos` com teste Kernel.
 - O update hook já contém os 17 tipos de local traduzidos; este registro fecha a configuração e a evidência de acesso da microfase E1.
+
+## Fronteira de Contributions e reivindicação de Organização (2026-11-01)
+
+- O adapter comunitário permanece restrito a perfis públicos de organizações
+  não reivindicadas. Titularidade, membros e claims continuam sob `aculta_user`;
+  o allowlist de Contributions não os altera e a aplicação revalida o estado.
+- Kernel `testContributionCannotSubmitOrApplyToClaimedOrganization`: 1 teste /
+  27 assertions PASS em `aculta_simpletest`, 24 depreciações Core/contrib.
+
+## Conflito de criação de Evento duplicado (2026-11-01)
+
+- Kernel verifica que uma proposta com título e início de Data já existentes
+  conflita na aprovação, mantém a Contribution em `submitted` e não cria outro
+  Evento. Caso focal: 1 teste / 26 assertions; classe completa: 29/941, com 24
+  depreciações upstream. `aculta_simpletest`, sem escrita no Runtime.

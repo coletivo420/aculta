@@ -120,7 +120,7 @@ padrão e respeita a opção explícita do painel/formatter.
    tags/contexts/max-age de Media, File e access, os controles acessíveis e a
    biblioteca `aculta_document_viewer/aculta_document_viewer_pdf`.
    A miniatura pública, quando habilitada, é validada e registrada como File
-   temporário pelo `aculta_image.generated_file`, renderizada por
+   temporário pelo `aculta_file_uploader.generated_file`, renderizada por
    `aculta_image.render` e removida pela limpeza normal após
    `system.file:temporary_maximum_age`.
 5. `aculta_document_viewer/js/pdf-viewer.mjs` importa `pdf.mjs` e aponta o worker para

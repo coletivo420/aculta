@@ -10,7 +10,6 @@ use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Url;
 use Drupal\aculta_lms\Access\ClassDashboardAccessCheck;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -102,13 +101,13 @@ final class ClassRosterVisibilityForm extends FormBase {
   /**
    * Gets and type-checks the route's course and class.
    *
-   * @return array{0: \Drupal\lms\Entity\Bundle\CourseInterface, 1: \Drupal\group\Entity\GroupInterface}
+   * @return array{0: \Drupal\group\Entity\GroupInterface, 1: \Drupal\group\Entity\GroupInterface}
    *   The current course and its class.
    */
   private function routeEntities(): array {
     $course = $this->currentRouteMatch->getParameter('course');
     $class = $this->currentRouteMatch->getParameter('group');
-    if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course'
+    if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course'
       || !$class instanceof GroupInterface || $class->bundle() !== 'lms_class') {
       throw new \LogicException('The class roster visibility route requires its course and class.');
     }
@@ -118,7 +117,7 @@ final class ClassRosterVisibilityForm extends FormBase {
   /**
    * Denies stale, mismatched, or no longer authorized form submissions.
    */
-  private function assertAccess(CourseInterface $course, GroupInterface $class): void {
+  private function assertAccess(GroupInterface $course, GroupInterface $class): void {
     if (!$this->classAccess->access($course, $class)->isAllowed()) {
       throw new AccessDeniedHttpException();
     }

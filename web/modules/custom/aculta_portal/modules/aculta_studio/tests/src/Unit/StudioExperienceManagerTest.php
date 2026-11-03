@@ -7,7 +7,10 @@ namespace Drupal\Tests\aculta_studio\Unit;
 use Drupal\aculta_studio\Experience\GanjalabExperienceProvider;
 use Drupal\aculta_studio\Experience\AccountExperienceProvider;
 use Drupal\aculta_studio\Experience\StudioExperienceManager;
+use Drupal\aculta_studio\Learning\LearnerDashboardComposer;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -23,7 +26,7 @@ final class StudioExperienceManagerTest extends UnitTestCase {
    * Checks provider metadata and that no LMS experience is registered.
    */
   public function testProviderMetadataAndAbsenceOfLms(): void {
-    $provider = new GanjalabExperienceProvider(NULL);
+    $provider = new GanjalabExperienceProvider($this->composer());
     self::assertSame('ganjalab', $provider->id());
     self::assertSame('courses', $provider->purpose());
     self::assertSame('aculta_lms.student_dashboard', $provider->routeName());
@@ -44,7 +47,7 @@ final class StudioExperienceManagerTest extends UnitTestCase {
   public function testProviderInventoryKeepsOrderAndDeniesOtherPurpose(): void {
     $manager = new StudioExperienceManager();
     $conta = new AccountExperienceProvider();
-    $ganjalab = new GanjalabExperienceProvider(NULL);
+    $ganjalab = new GanjalabExperienceProvider($this->composer());
     $manager->addProvider($conta);
     $manager->addProvider($ganjalab);
 
@@ -60,10 +63,22 @@ final class StudioExperienceManagerTest extends UnitTestCase {
    */
   public function testDuplicateProviderRejected(): void {
     $manager = new StudioExperienceManager();
-    $provider = new GanjalabExperienceProvider(NULL);
+    $provider = new GanjalabExperienceProvider($this->composer());
     $manager->addProvider($provider);
     $this->expectException(\InvalidArgumentException::class);
     $manager->addProvider($provider);
+  }
+
+  /**
+   * Builds a composer without a summary provider for metadata-only tests.
+   */
+  private function composer(): LearnerDashboardComposer {
+    return new LearnerDashboardComposer(
+      NULL,
+      $this->createMock(AccountProxyInterface::class),
+      $this->createMock(DateFormatterInterface::class),
+      $this->getStringTranslationStub(),
+    );
   }
 
 }

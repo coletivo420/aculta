@@ -1,0 +1,13 @@
+services:
+  aculta_contributions.adapter_registry:
+    class: Drupal\aculta_contributions\Adapter\ContributionAdapterRegistry
+    tags:
+      - { name: service_collector, tag: aculta_contributions.adapter, call: addAdapter }
+  aculta_contributions.lifecycle:
+    class: Drupal\aculta_contributions\Service\ContributionLifecycle
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_contributions.adapter_registry', '@aculta_contributions.state_machine', '@flood', '@lock', '@database', '@config.factory', '@logger.channel.aculta_contributions']
+  aculta_contributions.state_machine:
+    class: Drupal\aculta_contributions\Service\ContributionStateMachine
+  logger.channel.aculta_contributions:
+    parent: logger.channel_base
+    arguments: ['aculta_contributions']

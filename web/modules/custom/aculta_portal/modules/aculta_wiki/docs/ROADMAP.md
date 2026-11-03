@@ -1,4 +1,25 @@
+> Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
+
 # Roadmap — ACULTA Wiki
+
+## Pipeline de aviso editorial via Messenger
+
+`WikiEditorialNoticePipelineTest` liga o worker da fila, o publisher editorial
+com revalidação de acesso e o subscriber real do Messenger em um
+`EventDispatcher`. Um payload válido chega ao consumidor com envelope mínimo
+após a revisão e o editor serem autorizados. Kernels próprios cobrem fila e
+persistência de `Message`; nenhuma mensagem externa ou escrita Runtime foi
+executada. Homologação HTTP e operação Runtime seguem pendentes.
+
+## Revalidação 2026-11-02 — revalidação de destinatários Messenger
+
+`WikiEditorialNoticePublisherTest` cobre emissão para editor ativo com acesso
+à revisão e descarte quando o acesso é negado. O envelope validado contém só
+tipo de aviso, política de preferência, identidade opaca da fonte/revisão e
+destinatário; não inclui conteúdo editorial ou contato pessoal. Unit focal:
+3 testes / 19 assertions PASS. O teste pipeline dev.121 cobre worker → producer
+→ consumer em memória; fila e persistência continuam cobertas por Kernels
+separados, e a homologação real continua pendente.
 
 ### Incremento dev.119 — criação WE SATIVA no purpose Wiki
 
@@ -49,13 +70,23 @@ quando chamado diretamente.
 entram no índice. Sem JavaScript obrigatório: cada letra é um link. Não cria rota nova além da listagem;
 o caminho segue o padrão de slugs em português.
 
-## Auditoria M-0 — RBAC de propostas
+## Auditoria M-0 — RBAC de propostas (revalidada em 2026-11-01)
 
 Dev.118 adiciona teste focal de Config Sync (1 teste / 8 assertions) para os
-quatro grants distribuídos entre `email_confirmed` e `content_editor`. O Runtime
-Wiki consultado read-only continua sem esses grants; as propostas seguem
-indisponíveis e o acesso falha fechado. Importar/alterar roles ativos permanece
-pendente de autorização operacional e revisão do diff.
+quatro grants distribuídos entre `email_confirmed` e `content_editor`. Consulta
+read-only ao Runtime em 2026-11-01 confirmou os quatro grants ativos e
+`config:status` sem divergência. Não houve importação ou alteração de roles.
+O código continua fail-closed por permissão e acesso à entidade.
+
+Revalidação em 2026-10-31: suíte Unit/Kernel completa da Wiki passou em
+`aculta_simpletest` (**116 testes / 2.278 assertions**, 372 depreciações
+Core/contrib). A cobertura inclui a entidade privada revisionável, acesso
+separado por autor/revisor e preservação dos grants no Config Sync.
+
+Revalidação focal em 2026-11-01: teste de configuração 1/8 e Kernel de
+submissão privada 1/220 PASS, com 250 depreciações de Core/contrib/Webform.
+A/B e fluxo completo no Runtime permanecem pendentes de janela autorizada;
+não é necessária importação de grants com o estado ativo observado hoje.
 
 ## Integração vigente Wiki ↔ Messenger — avisos editoriais
 
@@ -141,9 +172,11 @@ seguido por `drush cr`. Nenhuma configuração ou conteúdo foi importado.
 O contrato define dois eventos: entrada de revisão `wiki_entry` na fila, para
 contas `content_editor` com acesso atual, e decisão da proposta para sua autoria.
 O payload carrega UUID/revisão e os dados mínimos de destinatário/estado; a
-identificação e o acesso são revalidados pelo consumer. `aculta_wiki_messenger`
+identificação e o acesso são revalidados pelo consumer. `aculta_messenger`
 consome o envelope compartilhado, persiste no Message e aplica email direto ou
-resumo conforme preferência/política Mailer. A especificação está em
+resumo conforme preferência/política Mailer. O canal administrativo das caixas
+editoriais também é do Messenger; a casca `aculta_wiki_messenger` foi removida
+em 2026-11-01. A especificação está em
 [`MESSENGER-EVENT-CONTRACT.md`](MESSENGER-EVENT-CONTRACT.md). O produtor e o
 QueueWorker Wiki foram implementados em dev.113; o consumer Wiki→Messenger foi
 adicionado em dev.114. Unit focais 3/20 e PHPCS passam. Kernel/Runtime e

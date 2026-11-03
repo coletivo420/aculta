@@ -1,6 +1,6 @@
 # ACULTA Game — conquistas e missões
 
-Versão atual: `0.1.0-dev.19` — primeira publicação de Comment ACULTA vigente ou
+Versão atual: `0.1.0-dev.20` — primeira publicação de Comment ACULTA vigente ou
 de `ForumPost` público pode conceder uma vez a conquista existente; migração,
 sincronização, autoria histórica e outros contextos permanecem inelegíveis.
 Os avisos de conquista usam o publisher/centro central do Messenger, sem storage
@@ -24,6 +24,8 @@ em [EXECUCAO.md](docs/EXECUCAO.md). G4 habilita três missões unitárias com pr
 Reconhecer contribuições culturais, comunitárias e de aprendizagem por conquistas
 e missões. Integrar as fontes reais do Portal e apresentar progresso compreensível,
 sem ranking, pontuação competitiva, XP/níveis ou benefícios financeiros.
+
+PHPCS Drupal/DrupalPractice no submódulo passou com zero erros e zero avisos; Unit Game passou 14/77 e o Kernel ForumPost real passou 1/25, com cinco depreciações de Domain. A correção de estilo não altera regras de concessão.
 
 O trigger existente de primeira resposta publicada agora aceita Comments
 ACULTA vigentes e posts revisionáveis do Growroom. O Game observa a publicação

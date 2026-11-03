@@ -11,7 +11,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -77,12 +77,14 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
     $items = [];
 
     foreach ($storage->loadMultiple($ids) as $entity) {
-      if (!$entity instanceof CourseInterface) {
+      if (!$entity instanceof GroupInterface) {
         continue;
       }
       $access = $educator
         ? $entity->access('update', $this->currentUser, TRUE)
-        : $entity->takeAccess($this->currentUser);
+        : \Drupal\Core\Access\AccessResult::allowedIf($entity->hasPermission('take course', $this->currentUser))
+          ->cachePerUser()
+          ->addCacheContexts(['user.permissions', 'user.group_permissions']);
       $cacheability->addCacheableDependency($entity)->addCacheableDependency($access);
       if (!$access->isAllowed()) {
         continue;

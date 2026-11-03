@@ -37,6 +37,9 @@ final class CalendarItemSource {
   public function items(CalendarQuery $query): array {
     $itens = [];
     foreach ($this->provedores as $provedor) {
+      if ($query->provedores !== [] && !in_array($provedor->id(), $query->provedores, TRUE)) {
+        continue;
+      }
       try {
         foreach ($provedor->items($query) as $item) {
           $itens[] = $item;

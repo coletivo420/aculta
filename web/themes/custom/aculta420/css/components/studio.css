@@ -211,8 +211,9 @@ body.path-perfil form#aculta-user-profile-visibility-form .form-type-checkbox la
   cursor: pointer;
 }
 
-/* Ganjalab's LMS owns the student content; only its Studio route adopts this
-   presentation layer, keeping the account navigation and global shell intact. */
+/* Ganjalab is a standalone learner surface on the courses purpose. These
+   styles affect its page content only; the institutional/domain shell stays
+   global, while the private account shell must not wrap this route. */
 body.path-ganjalab .aculta-main {
   color: var(--aculta-studio-fidelity-text);
   font-family: var(--aculta-studio-fidelity-font-family);
@@ -226,7 +227,7 @@ body.path-ganjalab .aculta-main :is(h1, h2, h3, h4, h5, h6) {
 }
 
 body.path-ganjalab .aculta-main .aculta-context-header__title {
-  font-size: clamp(2rem, 7vw, var(--aculta-studio-fidelity-font-size-xxl));
+  font-size: clamp(1.8rem, 3.8vw, 2.75rem);
   font-weight: var(--aculta-studio-fidelity-font-weight-bold);
 }
 
@@ -240,7 +241,7 @@ body.path-ganjalab .aculta-main .aculta-card {
 
 body.path-ganjalab .aculta-main .aculta-card .card-body {
   padding-block: 1rem;
-  padding-inline: 2rem;
+  padding-inline: clamp(1rem, 2.25vw, 1.5rem);
 }
 
 body.path-ganjalab .aculta-main .aculta-empty-state {
@@ -611,7 +612,7 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
 
 .studio__listing {
   inline-size: 100%;
-  max-inline-size: 100%;
+  max-inline-size: none;
   margin-block: var(--aculta-studio-fidelity-row-gap);
   border-collapse: collapse;
   color: var(--aculta-studio-fidelity-text);
@@ -646,28 +647,8 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
   margin: 0;
 }
 
-@media (max-width: 35.999rem) {
-  .studio__listing {
-    table-layout: fixed;
-    overflow-wrap: anywhere;
-  }
-
-  .studio__listing :is(td, th) {
-    min-inline-size: 0;
-    overflow-wrap: anywhere;
-  }
-
-  :is(body.path-marley, body.path-wesativa) table.responsive-enabled {
-    table-layout: fixed;
-    inline-size: 100%;
-    max-inline-size: 100%;
-  }
-
-  :is(body.path-marley, body.path-wesativa) table.responsive-enabled :is(td, th) {
-    min-inline-size: 0;
-    overflow-wrap: anywhere;
-  }
-}
+/* Tabelas que excedem o wrapper rolam na horizontal com barra visível
+   (ADR-040). Não comprimir células com table-layout fixo. */
 
 /* OpenCulturas Next 3.1.5 form treatment, limited to Studio form consumers. */
 .studio__main form,
@@ -1511,5 +1492,461 @@ body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"
 
   .aculta-green-stash__products form label {
     grid-column: 1 / -1;
+  }
+}
+
+/* OCS-F3 — feedback de estado no Studio.
+   Caixa de mensagem do OpenCulturas Next (opcult sass/base/_messages.scss,
+   tarball SHA-256 2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406)
+   aplicada ao alerta Bootstrap já entregue pelo padrão do tema. O template, o
+   papel ARIA, o texto do owner e a ação de fechar permanecem intactos: apenas a
+   apresentação muda. O escopo reutiliza as raízes de fidelidade do Studio e não
+   alcança outros purposes. */
+:is(
+  .aculta-main > .aculta-container:has(.studio),
+  .aculta-main > .aculta-container:has(.aculta-profile-editor),
+  .aculta-main > .aculta-container:has(.we-sativa__workspace),
+  body.path-ganjalab .aculta-main > .aculta-container,
+  body.path-culturas .aculta-main > .aculta-container
+) > .aculta-highlighted > .alert-wrapper > .alert {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding-block: 1rem;
+  padding-inline: 1rem 2rem;
+  border-width: 2px;
+  border-style: solid;
+  border-inline-start-width: 2px;
+  background-image: none;
+  box-shadow: var(--aculta-shadow-raised);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+:is(
+  .aculta-main > .aculta-container:has(.studio),
+  .aculta-main > .aculta-container:has(.aculta-profile-editor),
+  .aculta-main > .aculta-container:has(.we-sativa__workspace),
+  body.path-ganjalab .aculta-main > .aculta-container,
+  body.path-culturas .aculta-main > .aculta-container
+) > .aculta-highlighted > .alert-wrapper > .alert > div {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
+:is(
+  .aculta-main > .aculta-container:has(.studio),
+  .aculta-main > .aculta-container:has(.aculta-profile-editor),
+  .aculta-main > .aculta-container:has(.we-sativa__workspace),
+  body.path-ganjalab .aculta-main > .aculta-container,
+  body.path-culturas .aculta-main > .aculta-container
+) > .aculta-highlighted > .alert-wrapper > .alert .alert-heading {
+  margin-block: 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+:is(
+  .aculta-main > .aculta-container:has(.studio),
+  .aculta-main > .aculta-container:has(.aculta-profile-editor),
+  .aculta-main > .aculta-container:has(.we-sativa__workspace),
+  body.path-ganjalab .aculta-main > .aculta-container,
+  body.path-culturas .aculta-main > .aculta-container
+) > .aculta-highlighted > .alert-wrapper > .alert a:not(.btn):not(.button) {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+:is(
+  .aculta-main > .aculta-container:has(.studio),
+  .aculta-main > .aculta-container:has(.aculta-profile-editor),
+  .aculta-main > .aculta-container:has(.we-sativa__workspace),
+  body.path-ganjalab .aculta-main > .aculta-container,
+  body.path-culturas .aculta-main > .aculta-container
+) > .aculta-highlighted > .alert-wrapper > .alert .btn-close {
+  flex: none;
+}
+
+:is(
+  .aculta-main > .aculta-container:has(.studio),
+  .aculta-main > .aculta-container:has(.aculta-profile-editor),
+  .aculta-main > .aculta-container:has(.we-sativa__workspace),
+  body.path-ganjalab .aculta-main > .aculta-container,
+  body.path-culturas .aculta-main > .aculta-container
+) > .aculta-highlighted > .alert-wrapper > .alert-success {
+  border-color: var(--bs-success);
+}
+
+:is(
+  .aculta-main > .aculta-container:has(.studio),
+  .aculta-main > .aculta-container:has(.aculta-profile-editor),
+  .aculta-main > .aculta-container:has(.we-sativa__workspace),
+  body.path-ganjalab .aculta-main > .aculta-container,
+  body.path-culturas .aculta-main > .aculta-container
+) > .aculta-highlighted > .alert-wrapper > .alert-info {
+  border-color: var(--bs-info);
+}
+
+:is(
+  .aculta-main > .aculta-container:has(.studio),
+  .aculta-main > .aculta-container:has(.aculta-profile-editor),
+  .aculta-main > .aculta-container:has(.we-sativa__workspace),
+  body.path-ganjalab .aculta-main > .aculta-container,
+  body.path-culturas .aculta-main > .aculta-container
+) > .aculta-highlighted > .alert-wrapper > .alert-warning {
+  border-color: var(--bs-warning);
+}
+
+:is(
+  .aculta-main > .aculta-container:has(.studio),
+  .aculta-main > .aculta-container:has(.aculta-profile-editor),
+  .aculta-main > .aculta-container:has(.we-sativa__workspace),
+  body.path-ganjalab .aculta-main > .aculta-container,
+  body.path-culturas .aculta-main > .aculta-container
+) > .aculta-highlighted > .alert-wrapper > .alert-danger {
+  border-color: var(--bs-danger);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(
+    .aculta-main > .aculta-container:has(.studio),
+    .aculta-main > .aculta-container:has(.aculta-profile-editor),
+    .aculta-main > .aculta-container:has(.we-sativa__workspace),
+    body.path-ganjalab .aculta-main > .aculta-container,
+    body.path-culturas .aculta-main > .aculta-container
+  ) > .aculta-highlighted > .alert-wrapper > .alert,
+  :is(
+    .aculta-main > .aculta-container:has(.studio),
+    .aculta-main > .aculta-container:has(.aculta-profile-editor),
+    .aculta-main > .aculta-container:has(.we-sativa__workspace),
+    body.path-ganjalab .aculta-main > .aculta-container,
+    body.path-culturas .aculta-main > .aculta-container
+  ) > .aculta-highlighted > .alert-wrapper > .alert .btn-close {
+    transition: none;
+  }
+}
+
+/* Ganjalab learning experience: home, journey and room.
+   Data, access and states come from the LMS manager; these rules only own
+   presentation and never hide data that should remain visible. */
+[data-aculta-learning-home] {
+  color: var(--aculta-studio-fidelity-text);
+  font-family: var(--aculta-studio-fidelity-font-family);
+  line-height: var(--aculta-studio-fidelity-line-height-default);
+}
+
+[data-portal-ui="aculta-learning-home__section"] {
+  margin-block-start: clamp(1.5rem, 4vw, 2.5rem);
+  min-width: 0;
+}
+
+[data-portal-ui="aculta-learning-home__section-title"],
+[data-portal-ui="aculta-learning-journey__title"] {
+  font-size: var(--aculta-studio-fidelity-font-size-xl);
+  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
+  line-height: var(--aculta-studio-fidelity-line-height-headings);
+  margin-block: 0 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+[data-portal-ui="aculta-learning-home__continue"] .aculta-card {
+  border-color: var(--aculta-studio-fidelity-primary);
+}
+
+[data-portal-ui="aculta-learning-home__course-title"] {
+  margin: 0 0 0.35rem;
+  font-size: var(--aculta-studio-fidelity-font-size-ml);
+  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
+  overflow-wrap: anywhere;
+}
+
+[data-portal-ui="aculta-learning-home__lesson"] {
+  margin: 0 0 0.5rem;
+  font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
+  overflow-wrap: anywhere;
+}
+
+[data-portal-ui="aculta-learning-home__meta"],
+[data-portal-ui="aculta-learning-journey__meta"] {
+  margin: 0;
+  color: var(--aculta-studio-fidelity-muted);
+}
+
+[data-portal-ui="aculta-learning-home__pending"] {
+  margin: 0.5rem 0 0;
+  color: var(--aculta-studio-fidelity-text);
+  font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
+}
+
+[data-portal-ui="aculta-learning-home__progress"] p,
+[data-portal-ui="aculta-learning-journey__progress"] p {
+  margin: 0 0 0.5rem;
+}
+
+[data-portal-ui="aculta-learning-home__progress"] progress,
+[data-portal-ui="aculta-learning-journey__progress"] progress {
+  display: block;
+  inline-size: 100%;
+  block-size: 0.75rem;
+  accent-color: var(--aculta-studio-fidelity-primary);
+}
+
+[data-portal-ui="aculta-learning-home__actions"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+[data-portal-ui="aculta-learning-home__actions"] .btn,
+[data-portal-ui="aculta-learning-home__continue"] .card-footer .btn {
+  display: inline-flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+  justify-content: center;
+}
+
+[data-portal-ui="aculta-learning-journey"],
+[data-portal-ui="aculta-learning-room"] {
+  min-width: 0;
+  color: var(--aculta-studio-fidelity-text);
+  font-family: var(--aculta-studio-fidelity-font-family);
+  font-size: var(--aculta-studio-fidelity-font-size-default);
+  line-height: var(--aculta-studio-fidelity-line-height-default);
+  overflow-wrap: anywhere;
+}
+
+[data-portal-ui="aculta-learning-journey"] {
+  margin-block-start: clamp(1.25rem, 3vw, 2rem);
+}
+
+[data-portal-ui="aculta-learning-journey"] a:not(.btn),
+[data-portal-ui="aculta-learning-room"] a:not(.btn) {
+  color: var(--aculta-studio-fidelity-link);
+}
+
+[data-portal-ui="aculta-learning-journey"] a:not(.btn):is(:hover, :focus-visible),
+[data-portal-ui="aculta-learning-room"] a:not(.btn):is(:hover, :focus-visible) {
+  color: var(--aculta-studio-fidelity-primary);
+}
+
+[data-portal-ui="aculta-learning-journey"] :is(a, summary):focus-visible,
+[data-portal-ui="aculta-learning-room"] :is(a, summary):focus-visible {
+  outline: 3px solid var(--aculta-studio-fidelity-input-focus);
+  outline-offset: 2px;
+}
+
+[data-portal-ui="aculta-learning-journey__back"] {
+  margin-block-end: 0.75rem;
+}
+
+/* The LMS start-link component ships its own blue/teal defaults. Use the
+   institutional interactive tokens so the journey CTA matches the home. */
+.aculta-content .lms-start-link a {
+  color: var(--aculta-interactive-text);
+  border: 1px solid var(--aculta-interactive-border);
+  background-color: var(--aculta-interactive-bg);
+  font-size: var(--aculta-studio-fidelity-font-size-default);
+}
+
+.aculta-content .lms-start-link a:is(:hover, :focus) {
+  color: var(--aculta-interactive-hover-text);
+  border-color: var(--aculta-interactive-hover-bg);
+  background-color: var(--aculta-interactive-hover-bg);
+}
+
+[data-portal-ui="aculta-learning-journey__back"] a {
+  display: inline-flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+}
+
+[data-portal-ui="aculta-learning-journey__eyebrow"] {
+  margin: 0;
+  color: var(--aculta-studio-fidelity-muted);
+  font-size: 0.8rem;
+  font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+[data-portal-ui="aculta-learning-journey__summary"] {
+  padding: 1rem clamp(1rem, 2.5vw, 1.5rem);
+  border: 1px solid var(--aculta-studio-fidelity-divider);
+  border-radius: 1rem;
+  background-color: var(--aculta-studio-fidelity-surface);
+}
+
+[data-portal-ui="aculta-learning-journey__current"] {
+  margin: 0.5rem 0 0;
+  font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
+}
+
+[data-portal-ui="aculta-learning-journey__outline"] {
+  margin-block-start: clamp(1.5rem, 4vw, 2.25rem);
+}
+
+[data-portal-ui="aculta-learning-journey__lessons"] {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-portal-ui="aculta-learning-journey__lesson"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding: 0.75rem clamp(0.75rem, 2vw, 1rem);
+  border: 1px solid var(--aculta-studio-fidelity-divider);
+  border-inline-start: 0.3rem solid var(--aculta-studio-fidelity-divider);
+  border-radius: 0.75rem;
+  background-color: var(--aculta-studio-fidelity-surface);
+}
+
+[data-portal-ui="aculta-learning-journey__lesson"] a,
+[data-portal-ui="aculta-learning-journey__lesson-label"] {
+  min-block-size: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
+}
+
+[data-portal-ui="aculta-learning-journey__lesson"][data-state="finished"] {
+  border-inline-start-color: var(--bs-success);
+}
+
+[data-portal-ui="aculta-learning-journey__lesson"][data-state="current"],
+[data-portal-ui="aculta-learning-journey__lesson"][data-route-current] {
+  border-color: var(--aculta-studio-fidelity-primary);
+  border-inline-start-color: var(--aculta-studio-fidelity-primary);
+}
+
+[data-portal-ui="aculta-learning-journey__lesson"][data-state="locked"] {
+  border-inline-start-color: var(--aculta-studio-fidelity-muted);
+}
+
+[data-portal-ui="aculta-learning-journey__state"] {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--aculta-studio-fidelity-divider);
+  border-radius: 999px;
+  color: var(--aculta-studio-fidelity-text);
+  background-color: var(--aculta-studio-fidelity-surface-muted);
+  font-size: 0.85rem;
+  font-weight: var(--aculta-studio-fidelity-font-weight-medium);
+}
+
+[data-portal-ui="aculta-learning-journey__state"][data-state="finished"] {
+  border-color: var(--bs-success);
+}
+
+[data-portal-ui="aculta-learning-journey__state"][data-state="current"] {
+  border-color: var(--aculta-studio-fidelity-primary);
+}
+
+[data-portal-ui="aculta-learning-journey__state"][data-state="locked"] {
+  border-style: dashed;
+  color: var(--aculta-studio-fidelity-muted);
+}
+
+[data-portal-ui="aculta-learning-room"] {
+  margin-block-start: 1rem;
+}
+
+[data-portal-ui="aculta-learning-room__layout"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+  min-width: 0;
+}
+
+[data-portal-ui="aculta-learning-room__outline"] {
+  min-width: 0;
+}
+
+[data-portal-ui="aculta-learning-room__outline-title"] {
+  margin: 0 0 0.75rem;
+  font-size: var(--aculta-studio-fidelity-font-size-ml);
+  font-weight: var(--aculta-studio-fidelity-font-weight-bold);
+  line-height: var(--aculta-studio-fidelity-line-height-headings);
+  overflow-wrap: anywhere;
+}
+
+[data-portal-ui="aculta-learning-room__outline"][data-variant="desktop"] {
+  display: none;
+}
+
+[data-portal-ui="aculta-learning-room__outline"][data-variant="mobile"] {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--aculta-studio-fidelity-divider);
+  border-radius: 1rem;
+  background-color: var(--aculta-studio-fidelity-surface);
+}
+
+[data-portal-ui="aculta-learning-room__outline"][data-variant="mobile"] > summary {
+  display: flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+  cursor: pointer;
+  font-weight: var(--aculta-studio-fidelity-font-weight-semibold);
+}
+
+[data-portal-ui="aculta-learning-room__outline"][data-variant="mobile"][open] > summary {
+  margin-block-end: 0.75rem;
+}
+
+[data-portal-ui="aculta-learning-room__content"] {
+  min-width: 0;
+  max-width: 72ch;
+}
+
+[data-portal-ui="aculta-learning-room__content"] :is(img, video, iframe, svg) {
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+[data-portal-ui="aculta-learning-room__content"] :is(input, select, textarea) {
+  max-inline-size: 100%;
+}
+
+[data-portal-ui="aculta-learning-room__content"] .btn {
+  min-block-size: 2.75rem;
+}
+
+[data-portal-ui="aculta-learning-room__back-link"] {
+  display: inline-flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+}
+
+@media (min-width: 64rem) {
+  [data-portal-ui="aculta-learning-room__layout"] {
+    grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr);
+  }
+
+  [data-portal-ui="aculta-learning-room__outline"][data-variant="mobile"] {
+    display: none;
+  }
+
+  [data-portal-ui="aculta-learning-room__outline"][data-variant="desktop"] {
+    display: block;
+    position: sticky;
+    inset-block-start: 1rem;
+    max-block-size: calc(100vh - 2rem);
+    overflow-y: auto;
+  }
+
+  [data-portal-ui="aculta-learning-room__content"] {
+    justify-self: start;
+    inline-size: 100%;
   }
 }

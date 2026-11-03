@@ -50,6 +50,7 @@ final class CalendarAgendaKernelTest extends KernelTestBase {
     $this->assertSame(['2030-05-10', '2030-05-12'], array_keys($dias));
     $this->assertSame(['Roda', 'Oficina'], array_map(static fn (array $i): string => $i['titulo'], $dias['2030-05-10']));
     $this->assertTrue($dias['2030-05-12'][0]['cancelada']);
+    $this->assertSame('/eventos/roda', $dias['2030-05-10'][0]['link']);
   }
 
   /**
@@ -184,6 +185,7 @@ final class CalendarAgendaKernelTest extends KernelTestBase {
       inicio: new \DateTimeImmutable($inicio, $fuso),
       fim: new \DateTimeImmutable($fim, $fuso),
       local: 'Sede',
+      link: '/eventos/' . strtolower(str_replace(' ', '-', $titulo)),
       origem: 'teste',
       rrule: $rrule,
       excecoes: $excecoes,

@@ -15,7 +15,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Access\GroupAccessResult;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipStorageInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\node\NodeInterface;
 
 /**
@@ -98,7 +97,7 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
       $parents = $this->relationshipStorage()->loadByEntity($group, 'lms_classes');
       $parent = count($parents) === 1 ? reset($parents) : NULL;
       $course = $parent?->getGroup();
-      if (!$course instanceof CourseInterface) {
+      if (!$course instanceof GroupInterface) {
         return AccessResult::forbidden()
           ->addCacheableDependency($entity)
           ->addCacheableDependency($relationship)
@@ -180,9 +179,11 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
    * Evaluates membership in the exact course or class context.
    */
   private function contextMembershipAccess(GroupInterface $group, AccountInterface $account): AccessResultInterface {
-    if ($group instanceof CourseInterface) {
+    if ($group->bundle() === 'lms_course') {
       return $this->membershipOrEducatorAccess(
-        $group->takeAccess($account),
+        AccessResult::allowedIf($group->hasPermission('take course', $account))
+          ->cachePerUser()
+          ->addCacheContexts(['user.permissions', 'user.group_permissions']),
         $this->educatorPermissionAccess($group, $account),
       );
     }
@@ -196,7 +197,7 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
         ->addCacheTags(['group_relationship_list:plugin:lms_classes:entity:' . $group->id()]);
     }
     $course = reset($parents)->getGroup();
-    if (!$course instanceof CourseInterface) {
+    if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course') {
       return AccessResult::forbidden()->addCacheableDependency($group);
     }
 
@@ -271,7 +272,7 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
       $course = reset($parents)->getGroup();
     }
 
-    if (!$course instanceof CourseInterface) {
+    if (!$course instanceof GroupInterface) {
       return AccessResult::forbidden()->addCacheableDependency($group);
     }
 
@@ -286,7 +287,7 @@ final class LmsDiscussionContextProvider implements DiscussionContextProviderInt
   /**
    * Checks the contextual educator permission without deciding fallback access.
    */
-  private function educatorPermissionAccess(CourseInterface $course, AccountInterface $account): AccessResultInterface {
+  private function educatorPermissionAccess(GroupInterface $course, AccountInterface $account): AccessResultInterface {
     return GroupAccessResult::allowedIfHasGroupPermission($course, $account, 'grade students')
       ->addCacheableDependency($course);
   }

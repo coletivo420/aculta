@@ -1,6 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
 name: Content section
-status: experimental
+status: stable
 group: Patterns
 description: 'Editorial section frame: optional bar title, optional sub-heading and renderable body. The body keeps rich content as it was.'
 props:

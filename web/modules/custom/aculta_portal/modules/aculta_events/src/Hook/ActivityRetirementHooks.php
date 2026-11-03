@@ -31,7 +31,7 @@ final class ActivityRetirementHooks {
   }
 
   /**
-   * Remove o link legado de criação de Activity da barra administrativa e adiciona Eventos e Locais.
+   * Remove o link legado de Activity e adiciona Eventos e Locais.
    */
   #[Hook('menu_links_discovered_alter', order: Order::Last)]
   public function menuLinksDiscoveredAlter(array &$links): void {
@@ -62,4 +62,3 @@ final class ActivityRetirementHooks {
   }
 
 }
-

@@ -16,11 +16,13 @@ Regra de uso: nenhum módulo gera `.ics` ou embed próprios. Quem tem datas regi
 | --- | --- |
 | `Drupal\aculta_calendar\Item\CalendarItem` | Item imutável: `id`, `titulo`, `inicio`, `fim`, `diaInteiro`, `fuso`, `local`, `link`, `origem`, `rrule`, `excecoes`, `reagendadas`, `cancelado`, `limiteMeses`. Com `rrule`, é uma série. |
 | `Drupal\aculta_calendar\Item\CalendarItemProviderInterface` | `id()`, `items(CalendarQuery)`, `filtros()`, `cacheTags()`. |
-| `Drupal\aculta_calendar\Item\CalendarQuery` | Janela (`de`, `ate`), referência (`agora`) e filtros do provedor. |
+| `Drupal\aculta_calendar\Item\CalendarQuery` | Janela (`de`, `ate`), referência (`agora`), filtros e lista opcional de IDs de provedores. Sem lista, consulta todos; com lista, restringe itens à fonte selecionada. |
 | Tag `aculta_calendar.item_provider` | Registra o provedor. O `aculta_calendar.item_source` agrega todos. |
 
 O calendário expande a regra (`CalendarOccurrences`), monta a agenda (`CalendarAgenda`), a grade
-do mês (`MonthGrid`) e o `.ics` (`CalendarIcsExporter`). O provedor só traduz o dono do dado.
+do mês (`MonthGrid`) e o `.ics` (`CalendarIcsExporter`). Cada ocorrência mantém o ID e o link do item
+de origem. Uma consulta contextual pode limitar provedores sem fazer o calendário importar classes
+ou conhecer entidades dos módulos donos. O provedor só traduz o dono do dado.
 
 ## Importação revisável de iCalendar
 

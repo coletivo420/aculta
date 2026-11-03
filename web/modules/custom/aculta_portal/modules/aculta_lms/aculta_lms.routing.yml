@@ -1,30 +1,3 @@
-aculta_lms.student_dashboard:
-  path: '/ganjalab'
-  defaults:
-    _controller: 'aculta_studio.ganjalab_controller:student'
-    _title: 'ACULTA Studio Ganjalab'
-  requirements:
-    _permission: access aculta portal
-    _user_is_logged_in: 'TRUE'
-  options:
-    no_cache: true
-    _aculta_domain_purpose: courses
-
-# Keep the Group owner's add Form API inside the Ganjalab purpose and theme.
-# The generated entity.group.add_form is an admin route on purpose main, so a
-# cross-purpose link to it returns 404 on the courses host and drops the shell.
-aculta_lms.course_create:
-  path: '/ganjalab/cursos/novo'
-  defaults:
-    _controller: 'aculta_studio.course_authoring_controller:create'
-    _title: 'Criar curso'
-  requirements:
-    _permission: 'create lms_course group'
-    _user_is_logged_in: 'TRUE'
-  options:
-    no_cache: true
-    _aculta_domain_purpose: courses
-
 aculta_lms.class_dashboard:
   path: '/painel-administrativo/lms/curso/{course}/turma/{group}/painel'
   defaults:
@@ -40,6 +13,27 @@ aculta_lms.class_dashboard:
         type: entity:group
       group:
         type: entity:group
+
+aculta_lms.xapi_attempt_token:
+  path: '/xapi/token'
+  defaults:
+    _controller: 'aculta_lms.xapi_attempt_token_controller:issue'
+  methods: [POST]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _csrf_request_header_token: 'TRUE'
+  options:
+    _aculta_domain_purpose: courses
+
+aculta_lms.xapi_statements:
+  path: '/xapi/statements'
+  defaults:
+    _controller: 'aculta_lms.xapi_statements_controller:post'
+  methods: [POST]
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_domain_purpose: courses
 
 aculta_lms.class_activity_deadline:
   path: '/painel-administrativo/lms/curso/{course}/turma/{group}/atividade/{activity}/prazo'
@@ -57,7 +51,7 @@ aculta_lms.class_activity_deadline:
       group:
         type: entity:group
       activity:
-        type: entity:lms_activity
+        type: entity:aculta_lms_activity
 
 aculta_lms.class_roster_settings:
   path: '/painel-administrativo/lms/curso/{course}/turma/{group}/participantes'
@@ -128,3 +122,24 @@ aculta_lms.certificate_qr:
     codigo: '[A-Za-z0-9_-]{40,64}'
 
 
+
+aculta_lms.answer_attachment_download:
+  path: '/resposta/{answer}/arquivo'
+  defaults:
+    _controller: '\Drupal\aculta_lms\Controller\AcultaAnswerFileDownloadController::download'
+  requirements:
+    _custom_access: 'aculta_lms.answer_attachment_access::access'
+  options:
+    parameters:
+      answer:
+        type: entity:aculta_lms_answer
+
+aculta_lms.xapi_token_settings:
+  path: '/painel-administrativo/aculta/lms/xapi/validade-token'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\XapiTokenSettingsForm'
+    _title: 'Validade do token de tentativa'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: true

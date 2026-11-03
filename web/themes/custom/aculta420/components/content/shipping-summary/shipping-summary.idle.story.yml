@@ -1,0 +1,8 @@
+name: Frete ainda não calculado
+description: 'Estado inicial do carrinho lateral, sem cálculo feito. Orienta a calcular no produto ou no carrinho completo; não calcula nem inventa valores.'
+component: aculta420:shipping-summary
+props:
+  state: idle
+  message: ''
+  options: []
+  postal_code: ''

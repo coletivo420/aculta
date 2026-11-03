@@ -79,23 +79,11 @@ final class FrontPathPolicyTest extends UnitTestCase {
   }
 
   /**
-   * Canonical Studio areas are allowed only under their owning purpose.
+   * Os caminhos /studio saíram: a política não guarda exceção alguma.
    */
-  public function testCanonicalStudioPathsArePurposeScoped(): void {
-    $this->assertTrue(FrontPathPolicy::caminhoStudioCanonicoPermitido('shop', '/studio/green-stash'));
-    $this->assertTrue(FrontPathPolicy::caminhoStudioCanonicoPermitido(
-      'shop', '/studio/green-stash/produtos/novo',
-    ));
-    $this->assertTrue(FrontPathPolicy::caminhoStudioCanonicoPermitido('wiki', '/studio/we-sativa'));
-    $this->assertTrue(FrontPathPolicy::caminhoStudioCanonicoPermitido(
-      'wiki', '/studio/we-sativa/propostas/17/decidir',
-    ));
-
-    $this->assertFalse(FrontPathPolicy::caminhoStudioCanonicoPermitido('account', '/studio/green-stash'));
-    $this->assertFalse(FrontPathPolicy::caminhoStudioCanonicoPermitido('wiki', '/studio/green-stash'));
-    $this->assertFalse(FrontPathPolicy::caminhoStudioCanonicoPermitido('shop', '/studio/we-sativa'));
-    $this->assertFalse(FrontPathPolicy::caminhoStudioCanonicoPermitido('account', '/studio/marley'));
-    $this->assertFalse(FrontPathPolicy::caminhoStudioCanonicoPermitido('wiki', '/studio/we-sativa-legacy'));
+  public function testCaminhosInternosDoWikiELojaContinuamFechados(): void {
+    $this->assertTrue(FrontPathPolicy::bloqueiaCaminhoInterno('wiki', '/wiki', FALSE));
+    $this->assertTrue(FrontPathPolicy::bloqueiaCaminhoInterno('shop', '/loja', FALSE));
   }
 
 }

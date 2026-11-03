@@ -2,7 +2,7 @@
 version: 0.1.0-rc.1
 state: RC
 progress_note: >-
-  Incremento LOC-05/08 de agenda por Local planejado e ainda não homologado; a evidência RC a seguir se refere ao motor/candidato anterior.
+  Incremento LOC-05: agenda de Local agora usa CalendarQuery com seleção de provider e CalendarAgenda para recorrência/overrides, integrada pelo provider Events. Testes completos Calendar: 128/433 PASS; Events: 128/2528 PASS. O incremento não altera o candidato RC anterior. A/B de Kernel e ICS contextual foram verificados em 2026-11-02; a matriz HTTP de purpose/host, demais consumidores e Runtime permanecem pendentes.
   RC 0.1.0-rc.1 (2026-10-29): candidato e36140e63 servido no checkout de teste
   com drush cr. ADM8 autenticada (anônimo 403/autenticado 200, tabela somente
   leitura com 3 cabeçalhos e 10 linhas, sem controles de edição e sem overflow
@@ -14,4 +14,4 @@ progress_note: >-
   cancelamentos importados e a exibição de eventos de vários dias em cada dia
   coberto. Runtime sem config:import; apenas a conta descartável de revisão foi
   criada e removida.
-next_phase: "Preservar RC do motor existente; planejar e validar agenda/ICS por Local em LOC-05/08 pelo provider Events, sem dependência invertida. Alpha do candidato anterior continua sujeito à autorização de release. [Plano LOC](docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md)."
+next_phase: "Preservar RC do motor existente; concluir matriz HTTP de purpose/host, auditar consumidores restantes e homologar a agenda por Local em Runtime autorizado. ICS contextual implementado e coberto em Kernel; sem dependência invertida. [Plano LOC](docs/architecture/PLANO-LOCAIS-ACULTA-EVENTS-INDEX.md)."

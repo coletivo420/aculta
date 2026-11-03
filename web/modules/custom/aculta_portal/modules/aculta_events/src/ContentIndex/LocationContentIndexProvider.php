@@ -55,7 +55,7 @@ final class LocationContentIndexProvider implements ContentIndexProviderInterfac
    * {@inheritdoc}
    */
   public function isIndexable(ContentEntityInterface $entity): bool {
-    // Apenas locais explicitamente publicados são elegíveis à descoberta pública no índice.
+    // Só locais publicados são elegíveis à descoberta pública no índice.
     return $entity instanceof EventLocation
       && $entity->hasField('field_status')
       && !$entity->get('field_status')->isEmpty()

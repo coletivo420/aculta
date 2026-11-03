@@ -1117,7 +1117,7 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/purpose-headings.p
 Loja, Cursos, Fórum, Links e Eventos. Usa Firefox ESR visível e somente GET.
 Nos nove purposes com `.aculta-footer`, mede a grade em 1 coluna abaixo de
 576px, 2 colunas entre 576 e 991px e 4 colunas a partir de 992px. Links tem um
-footer próprio (`.aculta-social-links-footer`) fornecido por `aculta_links`;
+footer próprio (`.aculta-social-links-footer`) fornecido por `aculta_linkweed`;
 nesse purpose, mede os anchors reais do footer e sua área mínima de 44px. Para
 todos, confere o shell único e ausência de overflow. Captura a página rolada
 até o rodapé em 320 e 1440px. Larguras padrão: 320/360/390/575/576/599/600/
@@ -1297,3 +1297,49 @@ export CULTURAS_RUNTIME_SNAPSHOT=/home/piradopirata/aculta-suite-out/runtime-sna
 export SUITE_OUT=/home/piradopirata/aculta-suite-out/culturas-runtime-headless
 bash tests/browser/aculta-theme-mobile-first/culturas-fast-gate.sh
 ```
+
+## OCS-F3 — mensagens de status no Studio
+
+`studio-status-messages.py` mede a família de feedback do Studio no Firefox ESR
+visível. A fixture carrega Bootstrap, Bootstrap Icons, o `alerts.css` do tema
+base e as folhas do ACULTA420, reproduz quatro alertas reais (status, aviso,
+erro, informação) dentro de um container com `.studio` e um alerta de controle
+em container sem `.studio`. Verifica borda de 2px na cor do estado, sombra,
+respiro, `flex-wrap`, cores iguais aos tokens semânticos, contraste do link,
+altura do título e zero overflow em 320/360/390/599/600/768/1024/1280/1440px,
+claro/escuro e zoom real 200%/400%.
+
+```sh
+cd /home/piradopirata/worktrees/aculta-dev-development
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/studio-status-messages
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+python3 -I tests/browser/aculta-theme-mobile-first/studio-status-messages.py
+```
+
+É evidência de folha em fixture. Não abre Drupal, não autentica, não valida
+ACL, cache, AJAX/no-JS nem envio de formulário. PNG e `report.json` ficam
+somente em `$SUITE_OUT`.
+
+## OCS-A1 — camada Identity do Studio
+
+`studio-identity.py` compara a camada Fidelity com a camada Identity no mesmo
+markup de Studio (link, formulário, CTA e alerta) em nove larguras e
+claro/escuro. Verifica os tokens institucionais, o CTA amarelo com texto
+verde-escuro, contrastes AA e ausência de overflow. A Identity só é aplicada
+quando `<html>` recebe `studio-identity`, controlado pelo estado
+`aculta420.studio_identity` no tema; a fixture alterna a classe diretamente.
+
+```sh
+cd /home/piradopirata/worktrees/aculta-dev-development
+export DISPLAY=:0
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/studio-identity
+export ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles"
+python3 -I tests/browser/aculta-theme-mobile-first/studio-identity.py
+```
+
+É evidência de folha em fixture; não autentica nem altera o Runtime.
+
+O fixture cobre também o acabamento OCS-A2: Oswald nos títulos, raio
+institucional em campos/botões/cards e acento amarelo na aba ativa, sempre no
+escopo `html.studio-identity`.

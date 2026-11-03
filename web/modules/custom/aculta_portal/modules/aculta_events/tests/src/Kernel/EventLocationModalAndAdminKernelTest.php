@@ -76,6 +76,7 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_event');
     $this->installEntitySchema('aculta_event_date');
     $this->installEntitySchema('aculta_event_location');
+    $this->installEntitySchema('aculta_event_organization');
     $this->installSchema('system', ['sequences']);
     $this->installSchema('node', ['node_access']);
     $this->installConfig(['system']);
@@ -203,8 +204,8 @@ final class EventLocationModalAndAdminKernelTest extends KernelTestBase {
 
     self::assertArrayHasKey('metrics', $build);
     self::assertArrayHasKey('quick_actions', $build);
-    self::assertCount(3, $build['metrics']['#rows']);
-    self::assertCount(7, $build['quick_actions']['#items']);
+    self::assertCount(4, $build['metrics']['#rows']);
+    self::assertCount(9, $build['quick_actions']['#items']);
   }
 
   /**

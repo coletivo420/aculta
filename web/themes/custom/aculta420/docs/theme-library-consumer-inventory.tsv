@@ -22,7 +22,7 @@ aculta_forum/discussion-progress	0	1	core/drupal|core/once	2	render-array/librar
 aculta_forum/forum-post-history	0	1	core/jquery|core/once|core/drupal|history/api	1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_forum/src/Service/ForumPostThreadBuilder.php	76
 aculta_gallery/ckeditor5.create	0	1	core/ckeditor5|core/drupal.ajax|core/drupal.dialog.ajax|entity_embed/entity_embed	1	literal-reference	web/modules/custom/aculta_portal/modules/aculta_gallery/src/Plugin/CKEditor5Plugin/CreateGallery.php	28
 aculta_image/ckeditor5.image_model	0	1	core/ckeditor5|core/ckeditor5.image|ckeditor5/internal.drupal.ckeditor5.image	0	—	—	—
-aculta_links/micropagina	1	0		1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_links/src/Controller/LinkPagePublicController.php	265
+aculta_linkweed/micropagina	1	0		1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_linkweed/src/Controller/LinkPagePublicController.php	265
 aculta_lms/admin_toolbar_icon	1	0		1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/AdminToolbarIconHooks.php	26
 aculta_magazine/revista-form	0	1	core/drupal|core/once	1	render-array/library	web/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/RevistaFormHooks.php	49
 aculta_mailer/admin	1	0		2	render-array/library	web/modules/custom/aculta_portal/modules/aculta_mailer/src/Controller/MailLogListController.php	119

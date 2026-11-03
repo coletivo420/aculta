@@ -7,17 +7,19 @@ namespace Drupal\aculta_forum\Hook;
 use Drupal\Core\Hook\Attribute\Hook;
 
 /**
- * Registro do agrupamento de categorias do fórum como tema, de propriedade do módulo.
+ * Registro do agrupamento de categorias do fórum como tema.
  */
 class ForumThemeHooks {
 
   /**
    * Implements hook_theme().
    *
-   * Registra o agrupamento de página como tema próprio, para que temas sem override (por exemplo, Olivero) usem o
-   * template do módulo com h2 em vez do h3 do Core. O ACULTA420 sobrescreve o mesmo hook com seu template de grade.
+   * Registra o agrupamento da página como tema próprio para temas sem override
+   * (como Olivero), usando o template do módulo com H2 em vez do H3 do Core.
+   * O ACULTA420 sobrescreve o mesmo hook com seu template de grade.
    *
    * @return array<string, array<string, mixed>>
+   *   Definições de tema para o agrupamento de categorias.
    */
   #[Hook('theme')]
   public function theme(mixed $existing, string $type, string $theme, string $path): array {

@@ -8,7 +8,7 @@ use Drupal\aculta_lms\CourseRoomBuilder;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /** Adds the course overview to the existing Group canonical page. */
@@ -33,7 +33,7 @@ final class CourseRoomHooks {
           'display' => [
             'aculta_lms_course_room' => [
               'label' => 'Sala do curso',
-              'description' => 'Índice de lições e acesso à sala nativa do Drupal LMS.',
+              'description' => 'Sala de aprendizagem do curso.',
               'weight' => 20,
               'visible' => TRUE,
             ],
@@ -48,7 +48,7 @@ final class CourseRoomHooks {
    */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $viewMode): void {
-    if (!$entity instanceof CourseInterface || $viewMode !== 'full' || !$display->getComponent('aculta_lms_course_room')) {
+    if (!$entity instanceof GroupInterface || $entity->bundle() !== 'lms_course' || $viewMode !== 'full' || !$display->getComponent('aculta_lms_course_room')) {
       return;
     }
     $build['aculta_lms_course_room'] = $this->courseRoomBuilder->build($entity);

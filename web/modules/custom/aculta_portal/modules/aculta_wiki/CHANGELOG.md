@@ -1,3 +1,152 @@
+> Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
+
+## 0.1.0-dev.137 — Rotas da Wiki na raiz e WE SATIVA em /we-sativa
+
+- Subrotas da Wiki sobem para a raiz de wiki420: `/busca-wiki`, `/verbetes` e `/propostas`.
+- A ação WE SATIVA passa a `/we-sativa` (`/we-sativa/verbetes/novo` e `/we-sativa/propostas/{proposal}/decidir`).
+- O sitemap e o link "ver todos" usam `/verbetes`. A entrada `/wiki` segue interna: a raiz reescreve para ela.
+- Os caminhos `/wiki/busca`, `/wiki/verbetes`, `/wiki/propostas` e `/wesativa` respondem 404, sem redirect.
+- Testes Unit e Kernel: DEFERRED (sem `vendor/` nem Runtime nesta sessão).
+
+## 0.1.0-dev.136 — Kernel de ciclo de vida volta a rodar inteiro
+
+- O Kernel instala o schema de `crop`: a cadeia do uploader habilita o crop, e o hook de exclusão do arquivo consulta a tabela; sem ela a limpeza falhava fechada.
+- Removida a escrita de `aculta_user.settings:nickname_required`, que não existe na configuração nem no schema.
+- Removidas as asserções da aba Wiki do Marley, apagada em da7c0a348; a fila editorial continua coberta pelo listing do Studio.
+- Versão 0.1.0-dev.136.
+
+RUNTIME STATUS: DEFERRED. Só testes.
+
+## 0.1.0-dev.135 — editor de ponto focal sem classes de design
+
+- `WikiEntryImageHooks` usa só `data-aculta-focal` e `data-focal-marker`; as classes saíram do módulo e o CSS do uploader/tema seleciona pelos atributos.
+- Unit Wiki 78/402 PASS. Revisão visual no navegador pendente.
+
+RUNTIME STATUS: DEFERRED. Mudança de marcação; visual não validado.
+
+## 0.1.0-dev.134 — testes alinhados ao catálogo central
+
+- `WikiEntryImageHooksTest` espera a ordem do catálogo central (`png gif jpg jpeg webp`).
+- `WikiLeadImagePolicyTest` confere a chave `wiki` em `UploadSettingsForm::CONSUMERS` com `assertArrayHasKey`.
+- Unit Wiki 78/402 PASS.
+
+RUNTIME STATUS: DEFERRED. Só testes.
+
+## 0.1.0-dev.133 — prévia da imagem no editor de ponto focal
+
+- O editor de ponto focal mostra a imagem atual, com permissão de quem edita o verbete.
+- Pendente: efeito nos estilos de imagem (Runtime).
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.132 — ponto focal da imagem de destaque
+
+- Editor de ponto focal na aba da imagem de destaque, para a imagem atual (não para um envio novo).
+- Ao salvar sem trocar a imagem, o ponto focal grava os recortes 16:9 e 1:1 pelo `FocalPointRecorder`.
+- Pendente: prévia da imagem dentro do editor e efeito nos estilos de imagem (Runtime).
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.131 — imagem de destaque aceita envio recente do Studio
+
+- A imagem de destaque da wiki ganha uma lista de envios recentes do Studio (`RecentUploads`). Sem upload novo, vale o envio escolhido, verificado por dono (administrador vê todos).
+- `WikiLeadImageUploader` e `WikiEntryImageHooks` recebem `aculta_file_uploader.recent_uploads` como argumento opcional.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.130 — dependência explícita do aculta_file_uploader
+
+- `aculta_wiki.info.yml` declara `aculta_portal:aculta_file_uploader`, porque a imagem de destaque usa `aculta_file_uploader.consumer_policy`.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.129 — testes que liam o dado antigo removidos
+
+- Removidos os testes de `WikiLeadImagePolicyTest` que liam `config/sync/aculta_portal.user_upload.yml` e o schema antigo.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.128 — teste do painel aponta para o uploader
+
+- `WikiLeadImagePolicyTest` lê a lista de integrações de `aculta_file_uploader` (`UploadSettingsForm::CONSUMERS`), porque o painel antigo saiu.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.127 — imagem de destaque validada pela política do aculta_file_uploader
+
+- `WikiLeadImageUploader` e `WikiEntryImageHooks` usam `aculta_file_uploader.consumer_policy` (integração `wiki`) em vez de `UserUploadPolicy`.
+- A validação agora confere o MIME pelo conteúdo do arquivo, além de extensão, tamanho e dimensões. Testes Unit usam um PNG real em disco.
+- Serviços `aculta_wiki.wiki_lead_image_uploader` e `Drupal\aculta_wiki\Hook\WikiEntryImageHooks` religados.
+
+RUNTIME STATUS: DEFERRED. Testes Unit e Kernel não executados (sem vendor/ nem Runtime).
+
+## 0.1.0-dev.126 — testes do diálogo com a política do uploader
+
+- Imagem de destaque usa `aculta_upload_dropzone` (teste Unit e Kernel). Validação ainda pela `UserUploadPolicy`.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.125 — consumo do motor de limpeza movido para o aculta_file_uploader
+
+- Imports dos tipos de limpeza e serviço `aculta_portal.unused_file_cleaner` passam a `aculta_file_uploader`. Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.125 — reconciliação segura de Contributions
+
+- Kernels cobrem retry/histórico, colisão entre ID legacy Wiki e
+  `aculta_contribution`, e revisão traduzida. Update 10003 preserva a entidade
+  preexistente, aborta sem checkpoints/maps parciais e não descarta tradução:
+  3 testes / 133 assertions PASS em `aculta_simpletest`.
+- Homologação com dados Runtime permanece pendente.
+
+## 0.1.0-dev.124 — corte dos consumidores para Contributions
+
+- Novos envios passam pelo lifecycle compartilhado somente após o gate
+  confirmar checkpoints duráveis para todas as propostas Wiki legadas.
+- Status/param converter, retirada, decisão, workspace, fila editorial e
+  publisher resolvem tanto `aculta_contribution` quanto a entidade antiga,
+  mantendo as tabelas legadas durante a transição.
+- Kernel focal de corte/status: 2 testes / 264 assertions PASS; PHP lint,
+  PHPCS Drupal Core e validadores de rotas PASS. Runtime não atualizado.
+
+## 0.1.0-dev.121 — pipeline editorial Wiki → Messenger
+
+- Adicionado teste com `WikiEditorialEventWorker`, publisher editorial e
+  subscriber Messenger reais no mesmo `EventDispatcher`: payload de fila
+  válido chega ao consumidor somente após revalidar revisão, editor ativo,
+  permissões e acesso à revisão. O envelope é mínimo; o teste não persiste
+  dados nem envia e-mail.
+- `WikiEditorialNoticePipelineTest`: 1 teste / 10 assertions PASS; suíte Unit
+  Wiki: 88 testes / 484 assertions PASS. Os Kernels existentes cobrem fila e
+  persistência/consumer. Entrega HTTP e homologação Runtime não foram executadas.
+
+## Revalidação 2026-11-02 — destinatários do Messenger Wiki
+
+- Unit do publisher agora confirma que somente editor ativo com permissões e
+  acesso à revisão recebe envelope mínimo; acesso negado não publica aviso.
+- `WikiEditorialNoticePublisherTest`: 3 testes / 19 assertions PASS. A entrega
+  persistida no Messenger foi coberta por testes próprios do consumer; o fluxo
+  produtor → worker → consumer completo e a homologação Runtime seguem pendentes.
+
+## Revalidação 2026-11-02 — permissões de proposta e notificação
+
+- `WikiProposalRolePermissionsConfigTest`: 1/8 PASS; Kernel `testProposalSubmissionUsesPrivateRevisionedEntityAndAccess`: 1/220 PASS, 250 depreciações Core/contrib/Webform.
+- Config Sync contém os quatro grants nos papéis esperados; Runtime/config não foram alterados nesta rodada.
+- Publisher Messenger foi revisado estaticamente: revalida revisão, destinatário ativo, owner, resultado, Entity Access e purpose antes de publicar envelope mínimo. O teste Kernel de despacho/entrega por destinatário permanece pendente.
+
+## 0.1.0-dev.120 — confirmar RBAC de propostas em leitura (2026-11-01)
+
+- Consulta read-only ao Runtime de desenvolvimento confirmou os quatro grants
+  de propostas presentes nos papéis `email_confirmed` e `content_editor`;
+  `config:status` não apontou divergência. Nenhum grant foi importado ou
+  alterado nesta fase.
+- `WikiProposalRolePermissionsConfigTest`: 1 teste / 8 assertions PASS. Kernel
+  de submissão privada: 1 teste / 220 assertions PASS, com 250 depreciações de
+  Core/contrib/Webform registradas.
+- O código continua fail-closed por permissão e acesso à entidade. Validação
+  ponta a ponta/A-B no Runtime permanece pendente de janela autorizada.
+
 ## Retificação de caminho ACULTA STUDIO WE SATIVA — 2026-10-30
 
 - Rotas e links canônicos usam `/studio/we-sativa` no purpose `wiki`, conforme ADR-038 retificado pelo responsável.
@@ -219,6 +368,14 @@
 
 # Changelog — ACULTA Wiki
 
+## 0.1.0-dev.123 — leitura de status durante migração (2026-11-02)
+
+- A rota de status mantém route ID e path e resolve propostas nos dois entity
+  types pelo ID numérico estável. Retirada e decisão continuam ligadas à
+  entidade legada até seus formulários aceitarem o contrato genérico.
+- Kernel da migração e resolução dual-store: 1 teste / 55 assertions PASS.
+  Runtime não atualizado.
+
 ## 0.1.0-dev.106 — compor a home Wiki em Kernel
 
 - Kernel invoca `WikiController::home()` sob purpose Wiki e verifica seu render
@@ -332,4 +489,27 @@
   Core/contrib e 26 PHPUnit; não houve falha.
 - O aviso de saída BrowserTest não gravável apareceu no início das execuções;
   não impediu os testes Kernel.
+
+## Fundação do adapter ACULTA Contributions — 2026-11-01
+
+- Registra o adapter `wiki` para validar elegibilidade, purpose e campos
+  allowlisted e delegar a aplicação ao workflow editorial atual.
+- Unit focal: 3 testes / 5 assertions; Kernel focal: 1 teste / 223 assertions.
+- Rotas, formulários e consumidores continuam no armazenamento legado; não
+  houve migração nem escrita no Runtime.
+
+## 0.1.0-dev.122 — preparar migração para ACULTA Contributions
+
+- Adiciona update 10003 em lotes reiniciáveis, com checkpoints de proposta e
+  revisão. IDs, UUIDs, revision IDs, autoria, timestamps, contexto privado,
+  estado, parecer e hashes de idempotência ativos são reconciliados.
+- O Kernel de migração passou 1 teste / 53 assertions em aculta_simpletest;
+  PHPCS Drupal/DrupalPractice, lint PHP/YAML e git diff --check passaram.
+- Rotas e consumidores ainda usam aculta_wiki_proposal; o update não foi
+  executado no Runtime e a cópia não muda o fluxo ativo nesta fase.
+- A rotina aborta a proposta afetada se encontrar conflito de ID ou revisões
+  traduzidas, mantendo-a intacta para tratamento explícito.
+- A entidade legada e suas tabelas permanecem preservadas. O modelo legado não
+  registrava a seleção de campos/modos de lista aplicados em aceite; essa
+  informação histórica não existe para ser migrada.
 

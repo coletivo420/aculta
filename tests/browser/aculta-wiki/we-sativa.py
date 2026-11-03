@@ -17,7 +17,7 @@ sys.path.insert(0, str(PROJECT / "tests/browser/aculta-cpf-checkout"))
 from wdlib import Driver, WDError  # noqa: E402
 
 PAGE = os.environ.get(
-    "WIKI_STUDIO_PAGE", "https://wiki420.aculta.toca.net.br/studio/we-sativa/inicio"
+    "WIKI_STUDIO_PAGE", "https://wiki420.aculta.toca.net.br/wesativa/inicio"
 )
 HOME = os.environ.get("WIKI_HOME_URL", "https://wiki420.aculta.toca.net.br/")
 LOGIN_URI = os.environ.get("WIKI_STUDIO_LOGIN_URI", "https://conta.aculta.toca.net.br")
@@ -122,7 +122,7 @@ try:
           return {href: a.href, path: new URL(a.href).pathname, host: new URL(a.href).host};
         })();""")
         check("CTA da Wiki resolve para a rota oficial no host Wiki",
-              cta["path"] == "/studio/we-sativa/inicio"
+              cta["path"] == "/wesativa/inicio"
               and cta["host"] == urlparse(PAGE).netloc,
               f"{cta['host']}{cta['path']}")
         driver.get(cta["href"])
@@ -143,7 +143,7 @@ try:
     page_loaded = wait_for(
         "!!(document.querySelector('main') || document.querySelector('#main-content')) && "
         "(document.querySelector('main') || document.querySelector('#main-content')).innerText.includes('Seu espaço de contribuição') && "
-        "location.pathname === '/studio/we-sativa/inicio'"
+        "location.pathname === '/wesativa/inicio'"
     )
     check("início WE SATIVA abre autenticado", page_loaded)
     if not page_loaded:
@@ -182,13 +182,13 @@ try:
               metrics["hasGuide"] and bool(metrics["workHref"]))
         work_url = urlparse(metrics["workHref"])
         check("Meu Trabalho usa a rota oficial do Studio Wiki",
-              work_url.path == "/studio/we-sativa"
+              work_url.path == "/wesativa"
               and work_url.netloc == urlparse(PAGE).netloc,
               f"{work_url.netloc}{work_url.path}")
         create_href = metrics["createHref"]
         create_url = urlparse(create_href)
         check("ação Criar verbete mantém a criação dentro de WE SATIVA",
-              create_url.path == "/studio/we-sativa/verbetes/novo"
+              create_url.path == "/wesativa/verbetes/novo"
               and create_url.netloc == urlparse(PAGE).netloc,
               f"{create_url.netloc}{create_url.path}" if create_href else "ausente")
         check("links de conteúdo têm nome acessível", metrics["unnamedLinks"] == 0,
@@ -246,7 +246,7 @@ try:
                     (OUT / filename).write_bytes(base64.b64decode(screenshot))
                 driver.get(PAGE)
                 workspace_restored = wait_for(
-                    "location.pathname === '/studio/we-sativa/inicio' && "
+                    "location.pathname === '/wesativa/inicio' && "
                     "document.querySelector('main, #main-content')"
                 )
                 check(f"{name}: volta à página inicial WE SATIVA", workspace_restored)
@@ -304,7 +304,7 @@ try:
                     outlined: a.classList.contains('btn-outline-primary')};
                 })();""")
                 check("retorno leva ao workspace autorizado",
-                      return_link["path"] == "/studio/we-sativa",
+                      return_link["path"] == "/wesativa",
                       f"{return_link['host']}{return_link['path']}")
                 check("retorno permanece no host Wiki",
                       return_link["host"] == urlparse(PAGE).netloc,

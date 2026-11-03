@@ -21,14 +21,20 @@ final class WikiNoticeEventSubscriberTest extends UnitTestCase {
    * Accepts only declared Wiki event types and source entity mappings. */
   public function testConsumesSupportedWikiEventsOnly(): void {
     $manager = $this->createMock(WikiNoticeManagerInterface::class);
-    $manager->expects(self::once())->method('record')->with(self::callback(
-      static fn(MessengerNoticeEvent $event): bool => $event->eventType() === 'wiki.proposal_outcome',
+    $manager->expects(self::exactly(2))->method('record')->with(self::callback(
+      static fn(MessengerNoticeEvent $event): bool => $event->eventType() === 'wiki.proposal_outcome'
+        && in_array($event->sourceEntityType(), ['aculta_wiki_proposal', 'aculta_contribution'], TRUE),
     ));
     $subscriber = new WikiNoticeEventSubscriber($manager);
 
     $subscriber->consume($this->event(
       'wiki.proposal_outcome',
       'aculta_wiki_proposal',
+      ['notice_type' => 'proposal_outcome', 'mail_policy' => 'user_preference'],
+    ));
+    $subscriber->consume($this->event(
+      'wiki.proposal_outcome',
+      'aculta_contribution',
       ['notice_type' => 'proposal_outcome', 'mail_policy' => 'user_preference'],
     ));
     $subscriber->consume($this->event(

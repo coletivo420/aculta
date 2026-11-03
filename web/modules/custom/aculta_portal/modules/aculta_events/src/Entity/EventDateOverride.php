@@ -11,10 +11,10 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Exceção de uma ocorrência de série: cancelamento ou reagendamento (RECORRENCIA.md, M1).
+ * Exceção de uma ocorrência: cancelamento ou reagendamento (M1).
  *
- * A chave é `field_inicio_original`, o início gerado pela regra. Início e fim vazios
- * significam cancelada; preenchidos, a ocorrência passa para o novo horário.
+ * A chave é `field_inicio_original`, o início gerado pela regra. Início e fim
+ * vazios indicam cancelamento; preenchidos, indicam reagendamento.
  */
 #[ContentEntityType(
   id: 'aculta_event_override',

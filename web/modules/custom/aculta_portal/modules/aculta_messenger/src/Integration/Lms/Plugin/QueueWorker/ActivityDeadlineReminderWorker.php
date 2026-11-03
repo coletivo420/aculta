@@ -8,7 +8,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\Attribute\QueueWorker;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManagerInterface;
+use Drupal\aculta_lms\Notice\LearningNoticeRecipientsInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -27,7 +27,7 @@ final class ActivityDeadlineReminderWorker extends QueueWorkerBase implements Co
     array $configuration,
     string $plugin_id,
     mixed $plugin_definition,
-    private readonly LearningNoticeManagerInterface $notices,
+    private readonly LearningNoticeRecipientsInterface $recipients,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -40,7 +40,7 @@ final class ActivityDeadlineReminderWorker extends QueueWorkerBase implements Co
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('aculta_messenger.lms_notice_manager'),
+      $container->get('aculta_lms.notice_recipients'),
     );
   }
 
@@ -53,7 +53,7 @@ final class ActivityDeadlineReminderWorker extends QueueWorkerBase implements Co
       || !preg_match('/^[a-f0-9]{32}$/', $data['event_version'])) {
       return;
     }
-    $this->notices->publishActivityDeadlineReminderForLearners(
+    $this->recipients->publishActivityDeadlineReminderForLearners(
       $data['deadline_uuid'],
       $data['event_version'],
     );

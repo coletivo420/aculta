@@ -9,10 +9,11 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\aculta_lms\Entity\CourseCertificate;
 use Drupal\aculta_lms\Event\CertificateIssuedEvent;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\aculta_lms\Entity\ProgressEntity;
+use Drupal\aculta_lms\Learning\CourseProgress;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\user\UserInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
@@ -44,17 +45,14 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
   /**
    * {@inheritdoc}
    */
-  public function issue(CourseStatusInterface $status, AccountInterface $issuer): CourseCertificate {
-    if (!$status->isFinished() || $status->getStatus() !== CourseStatusInterface::STATUS_PASSED) {
-      throw new UnprocessableEntityHttpException('Only a finished, approved course status can receive a certificate.');
+  public function issue(ProgressEntity $progress, AccountInterface $issuer): CourseCertificate {
+    if (!(bool) $progress->get('finished')->value || (string) $progress->get('status')->value !== CourseProgress::STATUS_PASSED) {
+      throw new UnprocessableEntityHttpException('Only finished, approved course progress can receive a certificate.');
     }
 
-    // LMS entity getters are typed and can throw when asynchronous cleanup has
-    // already removed one of the referenced entities. Resolve the fields first
-    // so an incomplete status fails as a controlled validation response.
-    $course = $status->get(CourseStatusInterface::COURSE_FIELD)->entity;
-    $student = $status->get('uid')->entity;
-    if (!$course instanceof CourseInterface || !$student instanceof UserInterface) {
+    $course = $this->entityTypeManager->getStorage('group')->load($progress->get('course_id')->value);
+    $student = $this->entityTypeManager->getStorage('user')->load($progress->get('uid')->value);
+    if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course' || !$student instanceof UserInterface) {
       throw new UnprocessableEntityHttpException('The course or student is unavailable.');
     }
     if (!$issuer->hasPermission('administer lms') && !$course->hasPermission('grade students', $issuer)) {
@@ -68,7 +66,7 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
       throw new UnprocessableEntityHttpException('The course workload must be greater than zero.');
     }
 
-    $lockName = 'aculta_lms_certificate_issue:' . $status->uuid();
+    $lockName = 'aculta_lms_certificate_issue:' . $progress->uuid();
     if (!$this->lock->acquire($lockName, 60.0)) {
       throw new ConflictHttpException('Certificate issuance is already in progress.');
     }
@@ -78,7 +76,7 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
       $storage = $this->entityTypeManager->getStorage('aculta_lms_certificate');
       $transaction = $this->database->startTransaction();
       $previous = $storage->loadByProperties([
-        'course_status_uuid' => $status->uuid(),
+        'course_status_uuid' => $progress->uuid(),
         'state' => 'active',
       ]);
       $sequence = 1;
@@ -95,11 +93,11 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
       $certificate = $storage->create([
         'uid' => (int) $student->id(),
         'course_id' => (int) $course->id(),
-        'course_status_uuid' => $status->uuid(),
+        'course_status_uuid' => $progress->uuid(),
         'certificate_name' => $student->getDisplayName(),
         'course_title' => $course->label(),
         'course_hours' => $hours,
-        'completed' => $status->getFinished(),
+        'completed' => (int) $progress->get('changed')->value,
         'issued' => $this->time->getRequestTime(),
         'sequence' => $sequence,
         'supersedes_id' => $supersedesId,
@@ -126,7 +124,7 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
     catch (\Throwable $exception) {
       // A notification integration must never roll back an already issued
       // certificate or make the issuer believe it was not issued.
-      $this->logger->error('Could not publish the LMS certificate issued event: @message', ['@message' => $exception->getMessage()]);
+      $this->logger->error('Could not publish the ACULTA certificate issued event: @message', ['@message' => $exception->getMessage()]);
     }
     return $certificate;
   }
@@ -136,7 +134,7 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
    */
   public function revoke(CourseCertificate $certificate, AccountInterface $issuer, string $reason): void {
     $course = $this->entityTypeManager->getStorage('group')->load($certificate->get('course_id')->value);
-    if (!$issuer->hasPermission('administer lms') && (!$course instanceof GroupInterface || !$course->hasPermission('grade students', $issuer))) {
+    if (!$issuer->hasPermission('administer lms') && (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course' || !$course->hasPermission('grade students', $issuer))) {
       throw new AccessDeniedHttpException();
     }
     if ($certificate->get('state')->value === 'revoked') {

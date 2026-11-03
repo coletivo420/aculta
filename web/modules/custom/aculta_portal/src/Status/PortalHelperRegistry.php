@@ -69,7 +69,7 @@ final class PortalHelperRegistry {
       'summary' => 'Único acesso à leitura de imagens do Drupal no site: dimensões de arquivo em disco ou em memória.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
     ],
-    'aculta_image.generated_file' => [
+    'aculta_file_uploader.generated_file' => [
       'label' => 'Registro de imagens derivadas',
       'summary' => 'Registra derivados públicos gerados como arquivos temporários para que o ciclo normal do aculta_image os valide e limpe.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
@@ -89,7 +89,7 @@ final class PortalHelperRegistry {
       'summary' => 'Gera JPEG da primeira página de PDFs públicos com PHP Imagick, sem depender do binário de linha de comando.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
     ],
-    'aculta_portal.unused_file_cleaner' => [
+    'aculta_file_uploader.unused_file_cleaner' => [
       'label' => 'Coordenação de limpeza de arquivos sem uso',
       'summary' => 'Revalida File Usage, Entity Usage, referências estruturadas e embeds versionados; delega imagens ao aculta_image.',
       'docs' => 'docs/portal/CONTENT-CLEANUP-POLICY.md',
@@ -99,7 +99,13 @@ final class PortalHelperRegistry {
       'summary' => 'Revalida referências e remove Media não publicado submetido pelo módulo dono.',
       'docs' => 'docs/portal/CONTENT-CLEANUP-POLICY.md',
     ],
-    'aculta_image.cleanup' => [
+    'aculta_portal.content_cleanup_preview' => [
+      'label' => 'Prévia de limpeza de anexos',
+      'summary' => 'Avalia IDs explícitos de File e Media em modo somente leitura; '
+      . 'não inclui nomes, URIs ou conteúdo no relatório.',
+      'docs' => 'docs/portal/CONTENT-CLEANUP-POLICY.md',
+    ],
+    'aculta_file_uploader.cleanup' => [
       'label' => 'Limpeza do ciclo de vida de imagens',
       'summary' => 'Revalida imagens substituídas e remove uploads temporários vencidos em lotes pelo cron ou painel.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/README.md',
@@ -124,12 +130,12 @@ final class PortalHelperRegistry {
       'summary' => 'Registra e remove referências das imagens H5P no File API para a limpeza segura do acervo.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
     ],
-    'aculta_image.audit' => [
+    'aculta_file_uploader.audit' => [
       'label' => 'Inventário e auditoria de imagens',
       'summary' => 'Resumo do acervo, grupos de duplicatas exatas e candidatas à revisão com motivos. Somente leitura.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',
     ],
-    'aculta_image.quarantine' => [
+    'aculta_file_uploader.quarantine' => [
       'label' => 'Quarentena de imagens',
       'summary' => 'Envia candidatas sem referência para área privada, restaura, e exclui só após 30 dias e nova verificação de uso.',
       'docs' => 'web/modules/custom/aculta_portal/modules/aculta_image/docs/PLANO.md',

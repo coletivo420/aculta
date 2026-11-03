@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\SurfaceConfigReader;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\Core\Config\StorageInterface;
@@ -65,7 +66,7 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
    */
   public const PUBLIC_PATHS = [
     'main' => ['/contato'],
-    'wiki' => ['/wiki/verbetes'],
+    'wiki' => ['/verbetes'],
     // Listagens de eventos; cada evento publicado é tratado à parte.
     'eventos' => ['/eventos', '/calendario', '/locais', '/mapa'],
   ];
@@ -86,6 +87,7 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
     private readonly AccountSwitcherInterface $accountSwitcher,
     private readonly StorageInterface $configStorage,
     private readonly AliasManagerInterface $aliasManager,
+    private readonly SurfaceConfigReader $surfaces,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $logger, $settings);
   }
@@ -105,7 +107,22 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
       $container->get('account_switcher'),
       $container->get('config.storage'),
       $container->get('path_alias.manager'),
+      $container->get('aculta_portal.surface_config_reader'),
     );
+  }
+
+  /**
+   * A lista fixa é teto: a configuração de superfícies só pode remover.
+   *
+   * Com a configuração padrão (todas ativas, em subdomínio), o resultado é o
+   * mesmo de INDEXABLE_PURPOSES. Superfície desativada sai do sitemap.
+   */
+  private function superficiePublicavel(string $purpose): bool {
+    if (!in_array($purpose, self::INDEXABLE_PURPOSES, TRUE)) {
+      return FALSE;
+    }
+    $linha = $this->surfaces->superficies()[$purpose] ?? NULL;
+    return $linha === NULL || ($linha['ativa'] && $linha['modo'] !== 'desativado');
   }
 
   /**
@@ -113,7 +130,7 @@ final class PurposeNodeUrlGenerator extends UrlGeneratorBase {
    */
   public function getDataSets(): array {
     $purpose = $this->sitemapPurpose();
-    if ($purpose === NULL || !in_array($purpose, self::INDEXABLE_PURPOSES, TRUE)) {
+    if ($purpose === NULL || !$this->superficiePublicavel($purpose)) {
       return [];
     }
     $domain = $this->purposes->getDomain($purpose);

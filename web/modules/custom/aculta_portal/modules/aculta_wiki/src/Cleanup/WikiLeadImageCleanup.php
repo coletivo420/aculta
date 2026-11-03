@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Cleanup;
 
-use Drupal\aculta_portal\Cleanup\FileCleanupStatus;
-use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
+use Drupal\aculta_file_uploader\Cleanup\FileCleanupStatus;
+use Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner;
 use Drupal\aculta_portal\Cleanup\UnusedMediaCleaner;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;

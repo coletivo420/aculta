@@ -1,0 +1,35 @@
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - message
+    - options
+  enforced:
+    module:
+      - aculta_messenger
+id: message.field_aculta_events_outcome
+field_name: field_aculta_events_outcome
+entity_type: message
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: submitted
+      label: 'Enviar para revisão'
+    -
+      value: needs_changes
+      label: 'Pedir ajustes'
+    -
+      value: declined
+      label: 'Recusar'
+    -
+      value: accepted
+      label: 'Aceitar'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

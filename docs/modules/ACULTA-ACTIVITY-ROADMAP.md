@@ -12,6 +12,10 @@ release independente enquanto o módulo for apenas o adapter e sua fronteira.
 - Exclusão de corpo, URL de evento, dados de pessoas e relações sem contrato.
 - Hooks do formulário/Metatag e validação condicional agora pertencem a
   `aculta_activity`; Portal mantém canonicalização e metadados transversais.
+- Em `0.1.0-dev.12`, Activity projeta a relação `editorial_image` somente da
+  referência explícita `field_media_image`; Entity Access revalida o alvo no
+  consumo. A validação de formulário usa os valores submetidos, respeitando
+  campos limpos e alterações ainda não persistidas.
 
 ## Antes de concluir com aculta_portal
 

@@ -9,7 +9,6 @@ use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -18,8 +17,8 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\aculta_lms\Entity\CourseCertificate;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\aculta_lms\Entity\ActivityEntity;
+use Drupal\aculta_lms\Entity\LessonEntity;
 use Drupal\user\UserInterface;
 
 /**
@@ -35,36 +34,48 @@ final class LearningDashboardController {
     private readonly AccountProxyInterface $currentUser,
     private readonly DateFormatterInterface $dateFormatter,
     TranslationInterface $stringTranslation,
-    private readonly \Drupal\aculta_studio\Learning\LearnerDashboardComposer $learnerComposer,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
 
   /**
-   * Student view: own courses, progress, pending evaluations and certificates. */
-  public function student(): array {
-    return $this->learnerComposer->build();
-  }
-
-  /**
    * Educator view: status counts for one class, with no student answer data. */
-  public function class(GroupInterface $group, CourseInterface $course): array {
+  public function class(GroupInterface $group, GroupInterface $course): array {
     $data = $this->dashboards->classDashboard($group, $this->currentUser);
     if ($data === NULL || (string) $data['course']->id() !== (string) $course->id()) {
       return ['#plain_text' => $this->t('Turma indisponível.')];
     }
     $activityRows = [];
     $seenActivities = [];
-    foreach ($data['course']->get(CourseInterface::LESSONS)->referencedEntities() as $lesson) {
-      if (!$lesson instanceof EntityPublishedInterface || !$lesson->isPublished() || !$lesson->hasField('activities')) {
+    $cacheability = new CacheableMetadata();
+    $lessons = $this->entityTypeManager->getStorage('aculta_lms_lesson')->loadByProperties([
+      'course_id' => (int) $course->id(),
+      'published' => TRUE,
+    ]);
+    usort($lessons, static fn(LessonEntity $a, LessonEntity $b): int =>
+      [(int) $a->get('weight')->value, (int) $a->id()] <=> [(int) $b->get('weight')->value, (int) $b->id()]
+    );
+    foreach ($lessons as $lesson) {
+      if (!$lesson instanceof LessonEntity) {
         continue;
       }
-      foreach ($lesson->get('activities')->referencedEntities() as $activity) {
+      $cacheability->addCacheableDependency($lesson);
+      $activities = $this->entityTypeManager->getStorage('aculta_lms_activity')->loadByProperties([
+        'lesson_id' => (int) $lesson->id(),
+      ]);
+      usort($activities, static fn(ActivityEntity $a, ActivityEntity $b): int =>
+        [(int) $a->get('weight')->value, (int) $a->id()] <=> [(int) $b->get('weight')->value, (int) $b->id()]
+      );
+      foreach ($activities as $activity) {
+        if (!$activity instanceof ActivityEntity) {
+          continue;
+        }
         $activityId = (string) $activity->id();
-        if (isset($seenActivities[$activityId]) || !$activity instanceof EntityPublishedInterface || !$activity->isPublished()) {
+        if (isset($seenActivities[$activityId])) {
           continue;
         }
         $seenActivities[$activityId] = TRUE;
+        $cacheability->addCacheableDependency($activity);
         $deadline = $this->deadlines->deadlineForClass($group, $activity);
         $timestamp = NULL;
         if ($deadline instanceof GroupRelationshipInterface && !$deadline->get('field_activity_due_at')->isEmpty()) {
@@ -72,7 +83,7 @@ final class LearningDashboardController {
           $timestamp = $date->getTimestamp();
         }
         $activityRows[] = [
-          ['data' => ['#plain_text' => (string) $activity->label()]],
+          ['data' => ['#plain_text' => (string) $this->t('Atividade @type', ['@type' => str_replace('_', ' ', (string) $activity->get('type')->value)])]],
           [
             'data' => [
               '#plain_text' => $timestamp === NULL
@@ -138,6 +149,7 @@ final class LearningDashboardController {
     ];
     CacheableMetadata::createFromRenderArray($build)
       ->addCacheableDependency($data['cache'])
+      ->addCacheableDependency($cacheability)
       ->applyTo($build);
     return $build;
   }

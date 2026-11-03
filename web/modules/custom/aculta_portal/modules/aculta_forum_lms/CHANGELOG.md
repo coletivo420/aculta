@@ -1,3 +1,24 @@
+## `0.1.0-dev.33` — checagem segura de referências em tabelas presentes
+
+- O update 10001 verifica separadamente as tabelas de valores atuais e de
+  revisões, ignorando a tabela de revisão quando ela não existe; qualquer valor
+  legado encontrado continua bloqueando a troca do campo.
+- Runtime: tentativa inicial não alterou o campo porque a tabela de revisão
+  está ausente; após a correção, o retry concluiu e recriou o campo como
+  referência `aculta_lms_activity`. Não havia tabela nem valor de referência
+  legado; `updatedb:status` ficou limpo e `drush cr` passou.
+
+## `0.1.0-dev.32` — discussão referencia atividades ACULTA no corte P5
+
+- O campo `field_lms_activity` passa a apontar para `aculta_lms_activity` em
+  instalação nova; update 10001 recria o armazenamento em ambientes existentes
+  somente quando não há referências para preservar.
+- Kernel do resolvedor sem `lms`/`lms_classes`: 1 teste/25 assertions PASS;
+  Unit: 33 testes/329 assertions PASS. Depreciações Kernel: 38 de Core e
+  módulos não LMS.
+- Gate Portal: 1.172 checks PASS; public-slugs: 410 rotas, sem violações.
+- Update 10001 segue pendente no Runtime até a aplicação controlada após o push.
+
 ## `0.1.0-dev.30` — corrigir o harness Kernel da integração H5P–Fórum — 2026-10-29
 
 - O teste focal usa os helpers de dependências reais do LMS e de limpeza do
@@ -505,4 +526,17 @@
 - Smoke e revisão visual autenticados não foram executados; a suíte falhou e a
   regra de trabalho manda parar esta frente sem alterar a fixture para contornar
   o resultado. Nenhum Runtime ou conteúdo de teste foi alterado.
+
+## `0.1.0-dev.31` — discussões ligadas às entidades próprias LMS — 2026-11-02
+
+- Os resolvers de atividade, o contexto de discussões e a seleção de conteúdo
+  H5P passaram a usar `GroupInterface` e `aculta_lms_activity`; permissões de
+  estudante são verificadas com `GroupInterface::hasPermission()`.
+- O campo de referência do tópico nas definições de instalação agora aponta
+  para `aculta_lms_activity`. `config/sync` permanece sem alteração e conserva
+  a referência legada até a etapa de migração de configuração/dados.
+- A integração antiga no formulário contrib de resposta foi removida porque
+  não existe formulário ACULTA equivalente nesta fase.
+- Kernel do fórum: 27 testes / 1.348 asserções PASS; 58 depreciações
+  Core/contrib. Unit: 33 testes / 323 asserções PASS.
 

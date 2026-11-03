@@ -75,6 +75,12 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 | D-63 | Personalização de QR Code | Organizadores podem personalizar de forma limitada, dentro dos parâmetros e validações de contraste, legibilidade e segurança definidos pelo ACULTA. | `aculta_qrcode` e `aculta_image`; logos somente pelo pipeline central de imagem. |
 | D-64 | Planejamento ARQ-08 | Planejar o pacote de referências de imprensa, apoiadores e teasers editoriais. O planejamento não autoriza criar entidades/campos nem implementar sem consumidor editorial real, autorização de marcas e contratos aprovados. | Atualizar o plano ARQ-08; preservar Revista como único bundle editorial e os owners atuais. |
 | D-65 | URLs individuais antigas de comentários | A rota antiga `/comment/{cid}` deve terminar em 404. Comentários continuam acessíveis no contexto autorizado do conteúdo proprietário. | `aculta_forum`, Magazine, LMS e demais consumidores contextuais; não criar página individual pública de comentário. |
+| D-66 | Substituir SCORM por xAPI 2.0 e seguintes (LMS) | **Substituir o SCORM pelo xAPI 2.0 e padrões seguintes, por completo.** Substitui a parte SCORM/xAPI da decisão de adiar (`OPIGNO-CODE-AUDIT.md` OPA-08 e tabela; plano de independência): xAPI deixa de depender de demanda real. Escopo: xAPI 2.0 puro, sem cmi5. Código SCORM removido em `aculta_lms` 0.1.0-dev.112. A decisão de não incorporar o Opigno inteiro **permanece**. Estudo: `docs/modules/PLANO-XAPI-2-SUBSTITUI-SCORM.md`. | `aculta_lms`; nenhum LRS nem endpoint é implementado por esta decisão; LRS e retenção do histórico seguem pendentes para o ADR. |
+| D-67 | Armazenamento do xAPI (LMS) | **LRS próprio no Drupal**, com as declarações guardadas no MariaDB do projeto. Não usar Ralph nem outro LRS separado. | `aculta_lms`; o ADR de xAPI deve tratar a duplicidade entre declarações brutas e estado derivado, pois a regra de não criar armazenamento paralelo ainda se aplica ao estado. Escolha diferente da recomendação (guardar só resultados). |
+| D-68 | Retenção do histórico de declarações xAPI (LMS) | **Opção administrativa no LMS para definir o prazo de retenção, com padrão de 6 meses.** | `aculta_lms`; a opção fica em rota administrativa do domínio principal (`/painel-administrativo/**`), com permissão de administração. Consulta ao histórico restrita à equipe administrativa, a definir no ADR. |
+| D-69 | Nota de atividade xAPI (LMS) | **Pela regra de tentativa:** cada declaração com resultado vira tentativa, e a regra existente (melhor ou última) define a nota. Reaproveita `AttemptRule`. | `aculta_lms`; substitui a regra de nota do SCORM registrada em 2026-11-02. |
+| D-70 | Worktrees locais e sincronização do Runtime (agentes) | **Worktrees locais sem branch são permitidos** (`git worktree add --detach <caminho> origin/dev`, integração com `git push origin HEAD:dev` e remoção ao final). **Após cada push em `origin/dev`, o Runtime é sincronizado com o mesmo commit**, sem tocar em `secrets/`, `settings.local.php`, `private/`, `var/` nem nos dados do site. Antes, `updatedb:status` e `config:status`; havendo pendência, snapshot com hash e só então `updatedb` e `config:import` do `config/sync`. Nunca `pm:uninstall`, `DROP` ou apagamento de conteúdo. Substitui a regra de diretório de trabalho obrigatório (`AGENT-GUARDRAILS-FULL.md`, seção homônima) e a proibição de worktree em `AGENTS.md` e `AGENT-OPERATIONS.md`. | `AGENTS.md`, `CLAUDE.md`, `AGENT-OPERATIONS.md`; ambientes em `environments.md` |
+| D-71 | Push automático em `origin/dev` | **Cada entrega é enviada a `origin/dev` por fast-forward logo após o commit, sem autorização por hash.** Não há force push, push para `main`, nem PR ou merge sem pedido explícito. Substitui a exigência de pedido explícito para push, a regra de PR da frente e a referência a `main` nas regras operacionais. | `AGENTS.md`, `CLAUDE.md`, `AGENT-OPERATIONS.md` |
 
 ## Pendente
 
@@ -91,6 +97,8 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 - **Presença (I-29 e Statistics)** tem superfície restrita: painel e rodapé do fórum, sem exposição pública geral.
 
 ## Histórico
+
+- 2026-11-02: D-70 e D-71 registradas. Substituem regras de worktree, de Runtime e de push de `AGENTS.md`, `AGENT-OPERATIONS.md` e `AGENT-GUARDRAILS-FULL.md`. Nenhuma decisão anterior foi reescrita.
 
 - 2026-10-28: decisões D-01 a D-12 registradas, a partir de perguntas interativas. P-01 aguardando dado do responsável.
 - 2026-10-28: P-02 resolvido com o ADR-014 (provedor de mapa).
@@ -124,3 +132,5 @@ Status: **vigente**, salvo decisão posterior registrada aqui. Uma decisão só 
 - 2026-10-31: D-57 a D-65 registradas por decisão direta do responsável; D-57 encerra a busca postal por logradouro e mantém somente CEP.
 - 2026-10-31: D-35 permanece sem definição de documento fiscal; venda paga segue bloqueada até parecer fiscal/jurídico.
 - 2026-10-31: D-56 foi superada por D-57; não existe trabalho futuro de busca por rua em Events ou Maps.
+- 2026-11-02: D-66 registrada por decisão direta do responsável. Substitui SCORM por xAPI 2.0 e seguintes; plano em estudo, sem implementação. Resolve o conflito com o adiamento anterior (substituição completa, escopo xAPI 2.0 puro, código SCORM removido em dev.112).
+- 2026-11-02: D-67 a D-69 registradas por decisão direta do responsável: LRS próprio no Drupal; retenção configurável com padrão de 6 meses; nota pela regra de tentativa.

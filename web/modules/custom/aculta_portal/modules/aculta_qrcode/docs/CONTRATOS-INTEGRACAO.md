@@ -23,7 +23,7 @@ que o módulo espera de cada dependência. Nada aqui cria serviço duplicado.
 
 | Item da missão | Dono | Contrato esperado pelo aculta_qrcode |
 |---|---|---|
-| Logo por imagem local autorizada | `aculta_image` | Receber um arquivo já validado e redimensionado pelo `aculta_image`. O QR Code não processa imagem. Hoje `@?aculta_image.generated_file` só gerencia o derivado. Sem logo, nada muda. |
+| Logo por imagem local autorizada | `aculta_image` | Receber um arquivo já validado e redimensionado pelo `aculta_image`. O QR Code não processa imagem. Hoje `@?aculta_file_uploader.generated_file` só gerencia o derivado. Sem logo, nada muda. |
 | Métricas de leitura do redirecionamento | `aculta_statistics` | Chamar `aculta_statistics.recorder->record(metric, dimension, amount)` no redirecionamento. Métrica sugerida: `qrcode_redirect`, dimensão = id do QR Code. **Não criar contador próprio.** A métrica precisa entrar no catálogo do `aculta_statistics` (integração central). |
 | Prévia no formulário | `aculta_qrcode` | Pode ser feita neste módulo com rota dedicada e o gerador atual. Não implementada nesta execução. |
 | Geração em lote | `aculta_qrcode` | Pode ser feita com o `QrCodeExporter` atual. Não implementada nesta execução. |
@@ -33,4 +33,4 @@ que o módulo espera de cada dependência. Nada aqui cria serviço duplicado.
 ## Integração central (agente principal)
 
 1. Adicionar `qrcode_redirect` ao catálogo de métricas do `aculta_statistics`.
-2. Confirmar que a dependência `@?aculta_image.generated_file` continua opcional na instalação de produção.
+2. Confirmar que a dependência `@?aculta_file_uploader.generated_file` continua opcional na instalação de produção.

@@ -14,7 +14,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -37,7 +36,7 @@ final class Lmsaculta_H5PDiscussionHooks {
   #[Hook('h5p_formatter_alter')]
   public function formatterAlter(array &$elements, FieldItemListInterface $items): void {
     $course = $items->getEntity();
-    if (!$course instanceof CourseInterface) {
+    if (!$course instanceof GroupInterface) {
       return;
     }
     foreach ($items as $delta => $item) {

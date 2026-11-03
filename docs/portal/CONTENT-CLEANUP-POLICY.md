@@ -1,6 +1,6 @@
 # Política de limpeza de conteúdo e anexos
 
-**Dono da política:** `aculta_portal`. **Estado:** APIs compartilhadas de verificação/remoção de Media/File implementadas parcialmente em Portal 0.4.1-dev.34; fluxo coordenado de exclusão de conteúdo segue planejado. Nenhuma exclusão automática de posts foi habilitada.
+**Dono da política:** `aculta_portal`. **Estado:** APIs compartilhadas de verificação/remoção de Media/File e uma prévia somente leitura de IDs explícitos estão implementadas parcialmente em Portal 0.4.1-dev.47; inventário de posts, adapters de origem e fluxo de execução coordenado seguem pendentes. Nenhuma exclusão automática de posts foi habilitada.
 
 ## Objetivo e limites
 
@@ -31,10 +31,27 @@ Nenhum cron apagará posts. Uma operação de limpeza exige IDs explícitos, uma
 
 Primeiros consumidores: `aculta_image.cleanup` chama o serviço de File opcionalmente, mantendo fallback standalone e sem dependência `aculta_image` → Portal; `aculta_forum.attachment_cleanup` decide quais Media do Fórum são candidatos e usa os serviços compartilhados para revalidar/remover Media e File. Os demais projetos abaixo ainda estão em planejamento, exceto onde indicado.
 
+## Prévia de File/Media — 2026-11-01
+
+O serviço `aculta_portal.content_cleanup_preview` recebe listas explícitas de
+IDs File/Media, deduplica e ordena os IDs, limita cada relatório a 100 assets e
+revalida o estado por meio dos assessors compartilhados. O relatório contém
+somente tipo, ID, estado e indicação de candidato; não contém nomes, URIs,
+labels, corpo ou dados de pessoas. A chamada só usa `loadMultiple()` e métodos
+`assess()`; ela não chama `delete()`, não persiste plano/auditoria e não altera
+conteúdo ou índice.
+
+Um status `available` é apenas candidato de uma operação separada. Qualquer
+execução ainda deve exigir confirmação explícita, backup recuperável em Runtime,
+trilha auditável e revalidação imediata. A remoção compartilhada de Media agora
+reavalia publicação e referências antes de executar Entity API. A implementação
+atual não descobre Nodes, revisões ou adapters por módulo e não executa limpeza
+de posts; os owners ainda devem fornecer seus candidatos e relações.
+
 ## Entrega planejada no Portal
 
 1. Auditoria somente leitura e matriz de adapters de conteúdo/anexos por módulo proprietário.
-2. Serviço de planejamento que recebe IDs explícitos e emite relatório de dependências, candidatos a remoção e itens retidos; nenhum efeito colateral.
+2. **Parcial:** `aculta_portal.content_cleanup_preview` analisa IDs File/Media explícitos e não tem efeitos colaterais. Falta receber IDs de conteúdo e adapters dos módulos donos para produzir o inventário agregado de posts, revisões, dependências e anexos.
 3. Executor em lotes, iniciado por comando administrativo explícito, que revalida dependências e acessos antes de cada exclusão e delega remoção de imagens ao `aculta_image`.
 4. Testes de referências compartilhadas, revisões, traduções, embeds sem registro de uso, concorrência e falha parcial; logging sem conteúdo sensível.
 5. Homologação no banco dedicado e Runtime de testes com backup restaurável antes de qualquer limpeza real.

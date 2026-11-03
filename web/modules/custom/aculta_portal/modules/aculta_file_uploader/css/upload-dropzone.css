@@ -1,0 +1,32 @@
+/*
+ * Zona de arrastar e soltar do upload. Cores vêm de tokens semânticos com fallback;
+ * o componente não conhece light ou dark. Mobile first, sem overflow horizontal.
+ */
+.aculta-dropzone {
+  position: relative;
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: 1rem;
+  border: 2px dashed var(--aculta-dropzone-border, currentColor);
+  border-radius: 0.5rem;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.aculta-dropzone.is-dragover {
+  border-style: solid;
+  border-color: var(--aculta-dropzone-active, currentColor);
+  background-color: var(--aculta-dropzone-active-bg, transparent);
+}
+
+.aculta-dropzone__status {
+  min-height: 1.25rem;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aculta-dropzone {
+    transition: none;
+  }
+}

@@ -1,6 +1,6 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.11
+version: 0.1.0-dev.12
 state: Dev
 progress_note: >-
-  Dev.11: Kernel usa o dispatcher real para formulário e Metatag; valida URL online, local presencial, ordem das datas, VirtualLocation, remoção de imagem sem valor e preservação de override editorial. Unit + Kernel: 13 testes/143 assertions PASS no MariaDB aculta_simpletest, com 121 depreciações Core/contrib. PHPCS Drupal/DrupalPractice e PHP lint 8/8 PASS. O contrato do Index 0.1 não exige eventos extras de grants; Entity Access padrão no purpose main já tem cobertura. Revisão visual/Runtime depende do candidato servido; o ciclo do adapter fecha junto do Kernel aculta_portal.
+  Dev.12: provider projeta a relação allowlisted editorial_image apenas da referência explícita field_media_image (projeção v3), sem corpo, URL ou metadados privados; a validação de Activity lê valores submetidos. Kernel 6/123 e Unit 6/20 PASS em 2026-11-02; Maps Unit + provider Index de Events 13/186 PASS em aculta_simpletest. Depreciações Core/contrib: 121 no Kernel Activity e 19 no conjunto Maps/Events. A checagem Entity Access/purpose main permanece coberta. Homologação visual e Runtime pendentes; sem escrita Runtime.
 next_phase: 'Quando o candidato for servido, revisar formulário e renderização Schema.org no Firefox/Runtime; concluir o adapter junto do Kernel aculta_portal, sem RC independente ([roadmap](docs/modules/ACULTA-ACTIVITY-ROADMAP.md))'

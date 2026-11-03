@@ -6,6 +6,9 @@
 > migração. Referências `/studio/*` abaixo são históricas, não rotas válidas;
 > consulte o [mapa vigente](../decisions/ADR-038-aculta-studio-suites-por-dominio.md).
 
+
+> **Escopo atualizado (2026-11-01):** Marley atende Revista, moderação do Fórum e Galerias. Os fluxos LMS de autoria passam a pertencer ao workspace separado **Ganjalab Educador**; a experiência de aprendizagem do **Ganjalab Estudante** é outro produto/fluxo. As fases GANJALAB E-0.1 e E-A abaixo preservam histórico, mas sua priorização de Marley como área genérica de criação está superada. Aplicar o contrato vigente em [fronteiras das experiências Studio](ACULTA-STUDIO-EXPERIENCE-BOUNDARIES.md), [roadmap Marley](STUDIO-MAGAZINE-ROADMAP.md) e [Course Builder](STUDIO-LMS-COURSE-BUILDER-VISUAL.md).
+
 ## 1. Jornada centrada em conteúdo próprio
 **Entrada padrão:** Área → “Minhas publicações” (ou o equivalente conforme o provider) → Criar/Continuar/Editar. Mesmo roles com acesso amplo começam no seu espaço pessoal; “Equipe”, “Fila de revisão”, “Moderação” e “Todos autorizados” são contextos separados. Um editor que abre conteúdo de outra pessoa deve ver “Editando conteúdo de [autor]” e um link de volta para a fila/equipe; ações continuam condicionadas a Entity Access e workflow.
 
@@ -106,9 +109,9 @@ Este documento **não** altera banco, roles, fluxos existentes nem autoriza excl
 
 A proposta mobile-first detalhada para a experiência de post, criação e edição da Revista está em [STUDIO-REVISTA-EDITOR-VISUAL.md](STUDIO-REVISTA-EDITOR-VISUAL.md). O documento detalha o shell CKEditor 5, configurações progressivas, prévia, fluxos editoriais, a prioridade de “Minhas publicações”, separação de fila de equipe e os gates de acessibilidade. **É planejamento; nenhuma tela foi implementada nesta entrega.**
 
-## Sequenciamento aprovado — GANJALAB E-0.1 (2026-10-22)
+## Sequenciamento histórico — GANJALAB E-0.1 (2026-10-22; escopo substituído)
 
-Priorizar ACULTA Studio Marley em `/studio/marley` enquanto a homologação de consumidores LMS e ACULTA420 prossegue separadamente em ACULTA Studio Ganjalab (`/studio/ganjalab`). E-A inventaria rotas/forms e remove divergências documentais; E-B consolida “Meus conteúdos” com autorização/paginação/estado por revisão; E-C integra criação, rascunho, edição, prévia e submissão pelo workflow do módulo dono; E-D aplica somente SDC/UI Suite com fallback HTTP e edição no celular. A fila Wiki e experiências de outros donos só entram após providers especializados e testes de isolamento. Separar meus itens, equipe e moderação também nos modelos de autorização, nunca só em abas visuais. Ver roadmap do submódulo Studio.
+Este registro documenta a priorização anterior e não é o contrato atual. A execução editorial de Marley aplica-se somente a Revista, moderação do Fórum e Galerias, conforme [roadmap vigente](STUDIO-MAGAZINE-ROADMAP.md). Autoria educacional migrou para Ganjalab Educador; jornada e sala permanecem em Ganjalab Estudante. Não interpretar `/studio/*` como rota vigente. As fases de criação/editoração abaixo aplicam-se ao conteúdo dos owners correspondentes, não ao Course Builder LMS.
 
 ## E-A.1 — primeira entrega de simplicidade
 

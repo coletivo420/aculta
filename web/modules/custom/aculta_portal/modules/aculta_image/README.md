@@ -27,7 +27,6 @@ Todos com injeção de dependência e, quando couber, tag `aculta_portal.helper`
 | `aculta_image.upload_policy` | `UploadPolicy` | Política central para png, gif, jpg, jpeg e webp (10 MB padrão). Uploads contextuais podem selecionar subconjunto e ampliar tamanho explicitamente, sem liberar extensões fora do catálogo central. |
 | `aculta_image.render` | `ImageRenderer` | `build()`, `buildManagedImage()` para imagens gerenciadas pré-derivadas, `styleId()`, `styleEntity()`, `displaySettings()`. |
 | `aculta_image.inspector` | `ImageInspector` | Dimensões de arquivo ou de bytes. |
-| `aculta_image.generated_file` | `GeneratedImageFileManager` | Registra derivados de imagem públicos como arquivos temporários sujeitos à limpeza normal. |
 | `aculta_image.file_remover` | `FileRemover` | Exclusão de imagem após checagem de `file_usage` e `entity_usage`; invalida derivados e metadados internos. |
 | `aculta_image.cleanup` | `ImageCleanup` | Fila de imagens substituídas/removidas e limpeza de temporários vencidos, sempre coordenadas pelo Portal; sem coordenador a fila retém itens não verificáveis. |
 | `aculta_image.ingester` | `ImageIngester` | Ingestão de imagem externa (SHA-256, reaproveitamento, origem). |

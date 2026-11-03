@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Unit;
 
-use Drupal\aculta_image\ImageInspector;
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\MimeTypeVerifier;
+use Drupal\aculta_file_uploader\UploadPolicy;
 use Drupal\aculta_lms\Plugin\Validation\Constraint\LmsSubmissionImage;
 use Drupal\aculta_lms\Plugin\Validation\Constraint\LmsSubmissionImageValidator;
+use Drupal\Core\Config\Config;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Image\Image;
+use Drupal\aculta_file_uploader\ImageDimensionReader;
 use Drupal\file\FileInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -50,14 +56,30 @@ final class LmsSubmissionImageValidatorTest extends TestCase {
     $validator->initialize($context);
 
     $validator->validate($this->file('answer.png', filesize($this->path)), new LmsSubmissionImage());
-    $validator->validate($this->file('answer.png', 10485761), new LmsSubmissionImage());
+    $validator->validate($this->file('answer.png', UploadPolicy::MAX_BYTES + 1), new LmsSubmissionImage());
   }
 
   private function validator(): LmsSubmissionImageValidator {
-    $image_factory = $this->createMock(\Drupal\Core\Image\ImageFactory::class);
+    $config = $this->createMock(Config::class);
+    $config->method('get')->willReturnCallback(static fn (string $key) => match ($key) {
+      'allowed_extensions' => 'png gif jpg jpeg webp pdf docx xls xlsx',
+      'max_size_mb' => 10,
+      default => NULL,
+    });
+    $config_factory = $this->createMock(ConfigFactoryInterface::class);
+    $config_factory->method('get')->with('aculta_file_uploader.settings')->willReturn($config);
+
+    $image = $this->createMock(Image::class);
+    $image->method('isValid')->willReturn(TRUE);
+    $image->method('getWidth')->willReturn(1);
+    $image->method('getHeight')->willReturn(1);
+    $image_factory = $this->createMock(ImageDimensionReader::class);
+    $image_factory->method('dimensions')->willReturn(['width' => 1, 'height' => 1]);
+
     $file_system = $this->createMock(FileSystemInterface::class);
     $file_system->method('realpath')->with('private://lms_file_upload/answer')->willReturn($this->path);
-    return new LmsSubmissionImageValidator(new ImageInspector($image_factory), $file_system);
+
+    return new LmsSubmissionImageValidator(new ConsumerUploadPolicy($config_factory, new UploadPolicy(), new MimeTypeVerifier(), $file_system, $image_factory));
   }
 
   private function file(string $name, int|false $size): FileInterface {

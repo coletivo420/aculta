@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.15
+version: 0.1.0-dev.16
 state: Dev
 progress_note: >-
   Firefox ESR comprovou sem CAPTCHA o produto, carrinho, identificação por e-mail,
@@ -21,5 +21,8 @@ progress_note: >-
   commerce_shipment, 17 updates pendentes e divergências Config Sync globais.
   Testes visuais criaram carrinhos/pedidos anônimos não enviados, sem pagamento.
   Conta pós-compra, gateway, Functional no Runtime e cutover operacional
-  permanecem pendentes; manter Dev.
+  permanecem pendentes; manter Dev. Reexecução da suíte completa em
+  `aculta_simpletest` em 2026-10-31: 80 testes / 591 assertions PASS, 7 skipped,
+  222 depreciações upstream. Nenhum pedido, cotação ou pagamento real foi
+  criado. Ingressos não estão implementados; ver ADR-036 e decisão do item.
 next_phase: 'Homologar checkout e seleção de frete em Firefox ESR no servidor de testes, validar cotação sandbox sem contratar envio e planejar cutover autorizado preservando pedidos LMS/Doações ([roadmap](web/modules/custom/aculta_portal/modules/aculta_commerce/docs/ROADMAP.md))'

@@ -33,6 +33,8 @@ use Symfony\Component\Yaml\Yaml;
 #[RunTestsInSeparateProcesses]
 final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
 
+  use LmsForumDependencyHarnessTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -51,6 +53,11 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
     'gnode',
     'lms',
     'lms_classes',
+    'aculta_lms',
+    'key',
+    'file',
+    'domain',
+    'aculta_file_uploader',
     'aculta_forum_lms_test',
   ];
 

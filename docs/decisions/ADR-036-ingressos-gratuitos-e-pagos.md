@@ -1,6 +1,6 @@
 # ADR-036 - Ingressos gratuitos e pagos no ACULTA Events
 
-- **Status:** Proposta para revisão; não autoriza coleta ou venda.
+- **Status:** Proposta técnica em revisão. As regras de produto D-60/D-61 estão aprovadas; a ADR não autoriza coleta pública nem venda.
 - **Data:** 2026-10-30.
 - **Contexto:** Events armazena gratuidade/preço informativos e link externo, mas não implementa RSVP, emissão, venda, lotes ou check-in. O Portal possui Commerce e gateway Mercado Pago, porém os tipos atuais não ligam pedidos a ingressos de Eventos.
 - **Proposta:** `aculta_events` é dono de ofertas/lotes, participantes, inscrição, emissão e check-in; `aculta_commerce` mantém pedidos e itens pagos; `aculta_pagamentos_mercadopago` mantém o gateway; `aculta_portal` coordena o carrinho existente. Sem gateway, carrinho ou storage financeiro paralelo.
@@ -11,7 +11,8 @@
 - **Financeiro:** taxa, estorno e repasse seguem D-31 a D-34; repasse manual, sem split/marketplace inicialmente. Venda paga bloqueada por parecer fiscal/jurídico (D-35), LGPD e homologação sandbox.
 - **Compatibilidade:** preservar `field_gratuito`, `field_pricing`, `field_pricing_info` e `field_ticketing`; definir fonte/precedência e migração antes de ativar lotes internos.
 - **Interpretação proposta à ADR-032/D-39:** somente pedidos pagos integram o carrinho. RSVP gratuito não é pedido e fica fora do carrinho. Requer revisão antes de codificar.
-- **Pontos abertos:** RSVP obrigatório/opcional, limites/duplicidade, capacidade por lote/Data, hold/expiração/fila, cancelamento/liberação de vaga, séries, transferência, credencial acessível, retenção, parecer fiscal e base legal.
+- **Pontos resolvidos por D-60/D-61:** RSVP opcional por Evento; escopo da capacidade configurável entre Evento/Data/Lote; limites, duplicidade, reserva/expiração, espera e cancelamento configuráveis; inscrição por ocorrência ou série; transferência sempre permitida, auditável e com invalidação da credencial anterior; `aculta_events` é dono das ofertas/lotes e RSVP gratuito não usa Commerce.
+- **Pontos ainda abertos:** base legal, aviso e revisão LGPD antes de coletar dados publicamente; parecer fiscal/jurídico antes de venda paga; decisão técnica da forma do item Commerce (variação ou entidade própria); detalhes acessíveis de emissão/entrega da credencial e operação do check-in. Os demais parâmetros de taxa e estorno são configurações administrativas, não decisões de produto pendentes.
 - **Plano:** [integração de ingressos](../../web/modules/custom/aculta_portal/modules/aculta_events/docs/PLANO-INGRESSOS-PAGOS.md).
 
 ## Consequências

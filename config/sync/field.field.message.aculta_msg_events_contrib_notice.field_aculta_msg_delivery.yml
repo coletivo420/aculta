@@ -1,0 +1,26 @@
+uuid: 1fa77210-26dd-4eb3-8517-1a004f577fdd
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_msg_delivery
+    - message.template.aculta_msg_events_contrib_notice
+  module:
+    - options
+  enforced:
+    module:
+      - aculta_messenger
+id: message.aculta_msg_events_contrib_notice.field_aculta_msg_delivery
+field_name: field_aculta_msg_delivery
+entity_type: message
+bundle: aculta_msg_events_contrib_notice
+label: 'Situação do envio'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: pending
+default_value_callback: ''
+settings: {  }
+field_type: list_string

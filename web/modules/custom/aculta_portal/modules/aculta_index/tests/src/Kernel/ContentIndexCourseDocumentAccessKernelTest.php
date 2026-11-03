@@ -66,7 +66,7 @@ final class ContentIndexCourseDocumentAccessKernelTest extends KernelTestBase {
 
     foreach ([
       'aculta_image.pdf_thumbnail',
-      'aculta_image.generated_file',
+      'aculta_file_uploader.generated_file',
       'aculta_image.render',
       'aculta_image.inspector',
     ] as $serviceId) {

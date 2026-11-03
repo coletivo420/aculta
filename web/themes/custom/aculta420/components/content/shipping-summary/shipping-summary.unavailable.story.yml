@@ -1,0 +1,8 @@
+name: Frete indisponível
+description: 'Mensagem do Commerce após um cálculo sem opções para o CEP informado. O componente não decide disponibilidade.'
+component: aculta420:shipping-summary
+props:
+  state: unavailable
+  message: 'Não há frete disponível para o CEP informado.'
+  options: []
+  postal_code: '01310100'

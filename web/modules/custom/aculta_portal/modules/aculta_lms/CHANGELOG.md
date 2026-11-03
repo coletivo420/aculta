@@ -1,3 +1,699 @@
+## 0.1.0-dev.174 — remove declarações xAPI órfãs (ADR-041)
+
+- Após snapshot (SHA-256
+  `a867e0bccd0febe81a25d3c9a910043c1b605ea313782d72f032ccc1e5d1dd26`), foram
+  removidas as 3 declarações com `lesson_status_id=4`, sem progresso ACULTA
+  correspondente. A instrução SQL foi limitada à tabela xAPI e aos três
+  `statement_id` confirmados no inventário operacional.
+- Contagens antes/depois: `aculta_lms_xapi_statement` 3/0;
+  `aculta_lms_progress` 0/0; `aculta_lms_lesson` 0/0;
+  `aculta_lms_activity` 0/0; `aculta_lms_answer` 0/0. Nenhuma outra tabela
+  ou entidade foi modificada pela exclusão.
+- Cache rebuild passou; `updatedb:status` sem pendências; nenhuma importação de
+  configuração.
+
+## 0.1.0-dev.173 — registra evidências e pendências xAPI (ADR-041)
+
+- Documenta `lesson_status_id` como identificador opaco de
+  `aculta_lms_progress.id` e encerra a suposição de uma tentativa por aula no
+  LMS contrib, removido em P5.
+- Consulta somente leitura no Runtime encontrou 3 declarações com
+  `lesson_status_id=4`, sem progresso ACULTA correspondente. Nenhuma linha foi
+  alterada.
+- Confirmada a Key ativa `aculta_lms_xapi_token`, provider `env`, e a presença
+  da variável contratada com comprimento 64; o conteúdo não foi exibido nem
+  registrado. Provisionamento de produção continua pendente.
+- Medição de carga de escrita MariaDB: **DEFERRED** até haver ambiente
+  production-like representativo e teste sintético autorizado antes da
+  ativação xAPI em produção.
+
+## P6 — descarte autorizado de dados de teste no Runtime (ADR-042)
+
+- Snapshot anterior ao descarte: SHA-256
+  `038a4e61326c8940500729e7592595d4587a593cc8e12d8e34c0dc81c252c74a`.
+- Pela API Drupal foram removidos o único arquivo residual associado a uma
+  resposta LMS, seis vínculos `group_membership` e os cinco Groups de teste
+  conferidos com o inventário P5. Os dados contrib LMS listados na ordem já
+  estavam ausentes ou zerados. Não houve importação de config.
+- Verificação: Groups, vínculos e uso de arquivo `lms_file_upload` zerados;
+  usuários (23), pedidos Commerce (111), itens de pedido (106), comentário
+  ACULTA (1) e declarações xAPI (3) preservados. Cache rebuild passou,
+  `updatedb:status` sem pendências, Portal gate 1.172 checks PASS e grep de
+  `Drupal\\lms` em `web/modules/custom` com zero ocorrências. Diferenças de
+  `config:status` revisadas, sem importação.
+- Efeito inesperado da exclusão dos Groups: `aculta_lms_attempt_archive` caiu
+  de 1 para 0; também variaram `entity_usage` (351 para 343), `key_value`
+  (3764 para 3753), `path_alias` e `path_alias_revision` (52 para 46), e
+  `queue` (7 para 10). Nenhuma restauração ou outra exclusão foi feita.
+
+## 0.1.0-dev.172 — remove o LMS contrib no corte P5 (ADR-042)
+
+- Remove `drupal/lms` do `composer.json` e do lock; Composer confirmou somente
+  a remoção desse pacote. `lms_file_upload` não era pacote Composer. Cópias
+  manuais de `lms` e `lms_file_upload` foram retiradas dos caminhos de descoberta.
+- Desinstalação Runtime em ordem: `lms_answer_comments`, `lms_answer_plugins`,
+  `lms_classes`, `lms`. Por ordem explícita de descarte em P5, foram removidos
+  8 aulas, 17 atividades, 3 respostas, 3 status de aula e 2 status de curso.
+  Também foram removidos 2 vínculos Group de cursos/turmas marcados `[TESTE P1]`;
+  os cinco Groups permaneceram. Nenhum conteúdo foi migrado.
+- Update Fórum 10001 refez a referência para `aculta_lms_activity` sem valores
+  legados; LMS 10012 preservou a dependência ACULTA da relação curso–turma.
+- Cache rebuild passou e `updatedb:status` está limpo. `config:status` ainda
+  mostra diferenças de superfície, Groups, tópicos, papel e Views; a lista foi
+  revisada e não houve importação de config/sync.
+- Validação final: LMS Unit 218/758, Fórum Unit 33/329, Kernel
+  `AcultaLmsInstallTest` 6/172 e Fórum focal 1/25 passaram. Gates Portal
+  1.172 checks e public-slugs 410 rotas passaram; a busca final por imports
+  do namespace do LMS contrib em `web/modules/custom` retornou zero.
+- Snapshot pré-P5: SHA-256
+  `37947c05fe3d523fbce0ff42c78f61f5d90f56a2a566de7c06f1869774bcd595`.
+  P6 e reescrita de histórico não executados.
+
+## 0.1.0-dev.171 — prepara o corte de entidades e relações legadas
+
+- Config Sync remove configurações que pertencem às entidades LMS contrib,
+  mantém Groups, cursos, turmas e relações Group e aponta o vínculo de
+  discussões para `aculta_lms_activity`.
+- O Kernel focal do Fórum não habilita os módulos LMS. Um update recria o campo
+  de atividade ACULTA e recusa a execução se houver valores legados a migrar.
+- Update 10012 mantém a configuração da relação curso–turma sob dependência
+  de `aculta_lms`, preservando os vínculos Group no corte do contrib.
+- Unit: 218 testes/758 assertions PASS; `AcultaLmsInstallTest`: 6 testes/172
+  assertions PASS (35 depreciações upstream); gate Portal: 1.172 checks PASS.
+- `config:status` mostra as configurações contrib removidas/alteradas e
+  `aculta_portal.superficies`; a diferença foi revisada e não foi importada.
+- Snapshot pré-P5 do Runtime: SHA-256
+  `37947c05fe3d523fbce0ff42c78f61f5d90f56a2a566de7c06f1869774bcd595`.
+- Composer e módulos LMS continuam instalados no Runtime até a etapa final P5.
+
+## 0.1.0-dev.170 — valida instalação limpa sem dependências LMS
+
+- Remove do manifesto de `aculta_lms` as dependências `lms`, `lms_classes`,
+  `lms_answer_plugins` e `lms_answer_comments`; dependências Composer e módulos
+  ativos do Runtime permanecem para a fase P5.
+- `AcultaLmsInstallTest` instala as quatro entidades P2 sem habilitar módulos
+  LMS nem criar schemas contrib. A fixture de `lms_classes.settings` é semeada
+  diretamente no armazenamento, sem exigir schema do módulo removido.
+- Unit completa: 218 testes/758 assertions PASS; Kernel `AcultaLmsInstallTest`:
+  6 testes/170 assertions PASS, 35 depreciações upstream. Gate Portal PASS
+  (1.172 checks); public-slugs PASS (423 rotas, zero violações).
+- Runtime `aculta_runtime`: `updatedb:status` sem atualizações; `config:status`
+  mantém apenas as diferenças anteriores em `aculta_portal.superficies` e
+  `core.extension`; `drush cr` PASS e `aculta_lms`/rota de arquivo disponíveis.
+  Nenhuma configuração foi importada nem módulo LMS desinstalado.
+
+## 0.1.0-dev.169 — remove hooks presos a formulários e links LMS
+
+- Remove `ActivityDeadlineFormHooks` e `CourseLinkHooks`, que alteravam
+  formulário/componente e rota fornecidos pelo contrib. Prazos por turma seguem
+  no manager ACULTA; início do curso segue pela página canônica do Group.
+- A varredura de imports PHP do LMS contrib em módulos custom retorna zero.
+- Unit 218/758 PASS; `AcultaLmsInstallTest` 6/196 PASS (44 depreciações);
+  `AttemptArchiveLifecycleTest` 5/201 PASS (50 depreciações); gate Portal
+  1.172 checks PASS. P4 ainda requer harness limpo e remoção das dependências
+  do manifesto; Composer e Runtime aguardam P5.
+
+## 0.1.0-dev.168 — remove plugin e rota legados de arquivo
+
+- Remove `FileUpload`, `UploadedAnswerAccessCheck`, o controller e a rota antigos
+  baseados em `lms_answer`, além dos testes e configurações do plugin. A rota
+  ACULTA de referência privada continua registrada e protegida por `AnswerEntity`.
+- A interface de submissão ACULTA para criar referências de arquivo segue
+  pendente; essa mudança não migra conteúdo legado.
+- Unit completa 220/764 PASS; `AcultaLmsInstallTest` 6/196 PASS
+  (44 depreciações) e `AttemptArchiveLifecycleTest` 5/201 PASS (50
+  depreciações Core/contrib); gate Portal 1.172 checks PASS.
+
+## 0.1.0-dev.167 — remove plugin legado de revisão por frases
+
+- Remove `FreeTextReviewFeedback`, seu teste e configurações de `phrase_feedback`,
+  que dependiam do plugin manager e da entidade Activity do Drupal LMS. A revisão
+  manual segue disponível por estado/nota ACULTA e comentários Core.
+- Unit completa 231/810 PASS (1 depreciação PHPUnit); `AcultaLmsInstallTest`
+  6/196 PASS (44 depreciações Core/contrib); gate Portal 1.172 checks PASS.
+  P5 segue incompleto: imports e dependências LMS restantes não foram removidos.
+
+## 0.1.0-dev.166 — cobre idempotência do campo de nota precisa
+
+- Kernel de instalação remove a coluna de precisão no banco efêmero e executa
+  `aculta_lms_update_10011()` duas vezes, confirmando instalação idempotente
+  (1 teste/51 asserções PASS; 43 depreciações Core/contrib).
+- A mudança complementa o corte do histórico ACULTA; não altera conteúdo do
+  Runtime. O gate Portal continua em 1.172 checks PASS.
+
+## 0.1.0-dev.165 — arquiva tentativas ACULTA sem Drupal LMS
+
+- O histórico agora lê `AnswerEntity`, resolve atividade/aula/curso pelas
+  entidades ACULTA e preserva payload JSON, comentários publicados e a nota
+  exata em `score_precise`, mantendo o campo inteiro legado `score`.
+- O acesso ao histórico exige usuário ativo e associação/permissão atual do
+  grupo; a autorização antiga `administer lms` não libera mais os registros.
+- Unit completa 235/830 PASS (1 depreciação PHPUnit); Kernel
+  `AttemptArchiveLifecycleTest` 9/367 PASS (50 depreciações Core/contrib);
+  gate Portal 1.172 checks PASS.
+- Runtime: snapshot SHA-256
+  `a344c5509ee02a565b4bd72790da51dd541d86298f75ba42eb7ba5f91c1fa076`; update
+  10011 e `drush cr` PASS. `updatedb:status` limpo; `config:status` mantém
+  `aculta_portal.superficies` e `core.extension` diferentes. P5 continua; outros
+  imports e dependências LMS ainda precisam ser removidos.
+
+## 0.1.0-dev.163 — protege downloads de anexos ACULTA
+
+- Adiciona rota ACULTA para anexo da tentativa. O acesso exige resposta enviada
+  ou avaliada, atividade `file_upload`, arquivo permanente em `private://` e,
+  por requisição, matrícula atual do aluno dono ou permissão de correção no curso. A resposta é
+  `application/octet-stream`, `nosniff`, attachment e `private, no-store`.
+- Unit completa 236/829 PASS (1 depreciação); Kernel `AcultaLmsInstallTest`
+  6/194 PASS (44 depreciações); Unit de autorização 3/30 PASS; PHPCS e Portal
+  gate 1.172 PASS. Rota contrib permanece durante a transição. P5 segue
+  incompleto; não removeu dependências.
+
+## 0.1.0-dev.162 — alinha campo de comentário ao Runtime
+
+- A configuração do campo `comment_body` segue as dependências geradas pelo
+  Core, mantendo instalação e sync coerentes.
+- Runtime: snapshot antes de `10010`, 136.543.115 bytes, SHA-256
+  `a382cb025e0593ecaee741e1f285fb509995fb2b467990defa240fa68400b0bf`;
+  `10010` e `drush cr` PASS. `updatedb:status` sem pendências; `config:status`
+  mantém apenas duas diferenças externas ao LMS (`aculta_portal.superficies`
+  e `core.extension`), sem import global. Kernel `AcultaLmsInstallTest` 6/191
+  PASS (44 depreciações); Unit LMS 233/799 PASS (1 depreciação); Portal gate
+  1.172 checks PASS.
+
+## 0.1.0-dev.161 — sincroniza configuração do comentário ACULTA
+
+- Os quatro objetos de configuração do tipo e do campo de comentários ACULTA
+  também ficam no `config/sync`, para que uma sincronização posterior preserve
+  o update `10009`. O update `10010` cria o campo `comment_body` se ausente.
+  Os UUIDs de instalação e sincronização seguem os valores já persistidos no
+  Runtime para evitar substituição de entidades de configuração.
+- Runtime: snapshot anterior ao update `10009`, SHA-256
+  `d44704f1c612c95b2854bdfb5401196d9293a896dd1dfde33d49c5684bcfe9a4`;
+  update `10009` e `drush cr` PASS. Kernel completo 6/191 PASS (44
+  depreciações); Unit 233/799 PASS (1 depreciação). `10010` aguarda snapshot e
+  aplicação. `config:status` mostra somente diferenças externas LMS em
+  `aculta_portal.superficies` e `core.extension`, além do campo de comentário
+  que o update `10010` ainda criará; a importação global foi adiada para não
+  remover a ativação de superfícies fora do escopo.
+
+## 0.1.0-dev.160 — comentários Core em tentativas ACULTA
+
+- O tipo `aculta_lms_answer_comment` e o campo Core `comments` pertencem a
+  `aculta_lms_answer`; comentários começam fechados e o update `10009` cria as
+  configurações de modo idempotente. Notificações e cartão de autoria passam a
+  reconhecer esse tipo próprio.
+- CourseAnswer continua sendo a projeção de estado e nota. O schema de payload
+  imutável do update `10008` permanece; `AnswerPayload` passa a validar e
+  serializar referências positivas de managed file sem conceder acesso ao
+  arquivo. Kernel `AcultaLmsInstallTest` 6/190
+  PASS (44 depreciações Core/contrib); Unit completa 231/793 PASS (1
+  depreciação PHPUnit). O consumidor ainda depende do contrib até o restante do
+  corte P5.
+
+## 0.1.0-dev.159 — payload ACULTA imutável por tentativa
+
+- `aculta_lms_answer` passa a guardar payload estruturado JSON; atividade, aluno,
+  data de criação e payload não podem ser alterados depois do envio. Uma nova
+  tentativa cria outro registro; estado e nota continuam editáveis para a
+  avaliação. O contrato `CourseAnswer` permanece como projeção de estado/nota.
+- `aculta_lms_update_10008` instala o campo sem regravar respostas antigas;
+  repetição não altera o schema. Unit `AnswerPayloadTest` 3/7 PASS e Kernel
+  `AcultaLmsInstallTest` 6/147 PASS (28 depreciações upstream).
+
+## 0.1.0-dev.158 — agenda usa entidades de aprendizagem ACULTA
+
+- O provedor de agenda verifica `take course` pela permissão Group e o Kernel
+  monta os prazos com `LessonEntity`/`ActivityEntity`; schemas LMS contrib
+  deixaram de ser instalados pela suíte da agenda.
+- A relação `lms_class_activity_due` mantém o ID, mas sua config deixa de
+  depender do módulo `lms`. O título do prazo usa o título da entidade quando
+  existe e, para `ActivityEntity` que não tem campo de título, apresenta o tipo
+  estável da atividade humanizado.
+- A verificação revelou e corrigiu acesso neutro para evento de outra turma;
+  `EventAccessHooks` agora nega explicitamente e é descoberto como hook OOP.
+  Corrigida também a sintaxe inválida em `EventClassAccess.php` recebida do
+  upstream.
+- Agenda Kernel 4/168 PASS (94 depreciações upstream), Agenda Unit 8/18 PASS;
+  PHPCS e gate Portal 1.172 PASS após atualizar a linha de base para incluir o subscriber de superfícies (registrado, interruptor desligado). O harness Kernel ainda carrega LMS por causa
+  do manifesto de `aculta_lms`, não por imports da fixture da agenda.
+
+## 0.1.0-dev.157 — permissões herdadas de cursos e turmas em ACULTA
+
+- O cálculo de permissões Group entre cursos e turmas passa a ser implementado
+  por `ClassPermissionCalculator` em `aculta_lms`, preservando o ID da relação
+  `lms_classes` e os mapeamentos configurados.
+- `aculta_lms_update_10007` transfere os mapeamentos ativos para
+  `aculta_lms.settings`; nenhum conteúdo é migrado. O harness/kernel ainda usa
+  módulos contrib neste passo.
+- Unit completa 228/786 PASS; Kernels de roster 3/66 e instalação 6/143 PASS;
+  gate Portal 1.168 checks e PHPCS focal PASS. Runtime snapshotado antes do
+  update 10007 (SHA-256 `624bb557...c6e424`); update/cache rebuild PASS e
+  `updatedb:status`/`config:status` limpos. A sincronização criou as configs
+  `aculta_lms.settings` e `aculta_portal.superficies`.
+
+## 0.1.0-dev.156 — relação de turmas Group própria (ADR-042 P5)
+
+- `CourseClassRelation` no `aculta_lms` implementa o plugin Group `lms_classes` com as cardinalidades existentes; `CourseClassRelationHooks` seleciona a implementação ACULTA durante a convivência com o contrib, mantendo intactos os IDs e registros da relação.
+- `ClassRosterVisibilityTest` verifica plugin, cardinalidades e roster: Kernel focal 2 testes/50 assertions PASS (41 depreciações Core/contrib). Unit completa: 228 testes/786 assertions PASS (1 depreciação PHPUnit); PHPCS focal e gate Portal (1.160 checks) PASS. O harness sem contrib segue pendente para P4.
+
+## 0.1.0-dev.155 — Kernel de certificados usa progresso ACULTA (ADR-042 P5)
+
+- `CertificateLifecycleTest` cria e verifica `aculta_lms_progress`; deixa de importar tipos `CourseStatus` do LMS contrib, mantendo os testes do ciclo de certificados no modelo próprio já consumido pelo serviço.
+- Kernel focal: 5 testes/158 assertions PASS; suíte Unit completa: 228 testes/786 assertions PASS (1 depreciação PHPUnit).
+
+## 0.1.0-dev.154 — slugs consultam conteúdo ACULTA (ADR-042 P5)
+
+- O conversor e o route processor usam `GroupInterface`; slugs de aula consultam `aculta_lms_lesson` por `course_id` e os de atividade consultam `aculta_lms_activity` por `lesson_id`, ambos em ordem de peso/ID.
+- Tipos estáveis de atividade geram o slug enquanto `CourseActivity` ainda não define título. Rotas contrib continuam sendo detectadas pelo nome apenas, sem importação do namespace LMS.
+- Unit focal de slugs 10/31 PASS.
+
+## 0.1.0-dev.153 — xAPI usa progresso ACULTA (ADR-042 P5)
+
+- Emissão e validação de tokens resolvem `lesson_status_id` em `aculta_lms_progress` e conferem o `uid`; o campo persistido mantém o nome já usado e passa a apontar para progresso ACULTA, conforme P2.
+- A estrutura da tabela e os registros xAPI não são reescritos; IDs legados permanecem opacos e não são remapeados. A associação agora representa progresso por curso, pois progresso individual por aula não existe no modelo P2.
+
+## 0.1.0-dev.138 — certificados usam progresso ACULTA
+
+- Emissão, formulário de seleção e autorização consultam `aculta_lms_progress` e Groups; certificados continuam registrando o UUID de origem no campo existente `course_status_uuid`.
+- Unit completa 224/724 PASS (1 deprecation PHPUnit); teste de acesso de emissão ajustado para Group.
+
+## 0.1.0-dev.137 — sala de curso usa contratos Group e ACULTA
+
+- `CourseRoomBuilder`, `CourseRoomHooks` e `ClassRosterManager` deixam de exigir o tipo `CourseInterface` ou `ClassHelper`; aulas/turmas continuam sendo resolvidas por Group e relações registradas.
+- Unit focal do builder 2/12 PASS; Unit completa 224/724 PASS (1 deprecation PHPUnit).
+
+## 0.1.0-dev.136 — evento de conclusão usa progresso ACULTA
+
+- `CourseCompletionPublisher` e seus hooks publicam `CourseCompletedEvent` a partir de transições da entidade `aculta_lms_progress` para `passed` e `finished`.
+- Teste Unit cobre publicação de conclusão válida e recusa de estado não aprovado, incompleto ou recém criado.
+
+## 0.1.0-dev.135 — painel passa a ler progresso e aulas próprias (ADR-042)
+
+- `LearningDashboardManager` e a jornada usam os contratos ACULTA de progresso e aulas; métricas de turma consultam `aculta_lms_progress`.
+- O P2 mantém apenas progresso agregado por curso. O painel não inventa aula atual nem progresso individual por aula; o estado agregado acabado representa o curso inteiro.
+
+## 0.1.0-dev.134 — fonte própria de respostas (ADR-042)
+
+- `CourseAnswerReaderInterface` passa a consultar `aculta_lms_answer` por atividade e estudante; estado e nota são mapeados no vocabulário ACULTA e as respostas são ordenadas por ID.
+- Teste focal cobre estado submetido, nota nula, conversão para `float` e ordenação.
+
+## 0.1.0-dev.133 — fonte própria de atividades (ADR-042)
+
+- `CourseActivityReaderInterface` passa a consultar `aculta_lms_activity` por `lesson_id`, mapeando tipo, inclusão em nota e posição.
+- Teste focal cobre mapeamento e ordenação por `weight`/ID.
+
+## 0.1.0-dev.132 — fonte própria de aulas (ADR-042)
+
+- `CourseLessonReaderInterface` passa a ler `aculta_lms_lesson` por `course_id`, retornando todas as aulas em ordem de `weight` e ID.
+- Teste focal cobre mapeamento dos campos, aula não publicada e ordenação estável.
+
+## 0.1.0-dev.131 — fonte própria de progresso por curso (ADR-042)
+
+- `CourseProgressReaderInterface` passa a ler `aculta_lms_progress` por `course_id` e `uid`, via `entity_type.manager`; status inválido é recusado e nota numérica vira `float`.
+- A suíte focal do leitor cobre progresso encontrado, nota nula e ausência de registro. A fonte contrib segue registrada, sem alias ativo, até a remoção conjunta dos adaptadores no fim da Fase A.
+
+## 0.1.0-dev.130 — plugins objetivos ACULTA (ADR-042, P3)
+
+- Adicionados plugins ACULTA para `true_false`, `select` e `fill_blanks`, ligados a `CourseActivity` pelo tipo estável e resolvidos por serviço injetado.
+- Os plugins usam `ObjectiveAnswerScorer`; seleção exige conjunto exato e lacunas usam a normalização existente. Os plugins do LMS contrib continuam ativos; nenhuma dissertativa, resposta por arquivo, revisão ou troca de leitor foi incluída.
+- `ObjectiveAnswerPluginsTest` 5/13 PASS; suíte Unit completa 216/686 PASS (1 depreciação PHPUnit). Kernel `AcultaLmsInstallTest` 5/128 PASS (27 depreciações upstream), incluindo serviço injetado e resolução de `select` pelo tipo de `CourseActivity`. Nenhuma troca dos plugins contrib, integração de formulário, persistência ou leitor nesta fase.
+
+## 0.1.0-dev.129 — entidades próprias de aprendizagem (ADR-042, P2)
+
+- Criadas as entidades internas de aula, atividade, resposta e progresso, com acesso negado por padrão e sem rotas ou formulários.
+- `aculta_lms_update_10005` instala as quatro definições de modo idempotente; `10006` alinha colunas obrigatórias e tamanhos (`state` 16, `status` 32). Índices compostos definidos na schema própria, incluindo unicidade curso/aluno no progresso.
+- Unit completa 211/673 PASS (1 depreciação PHPUnit); `AcultaLmsInstallTest` 5/126 PASS (27 depreciações upstream), incluindo reexecução dos updates, acesso negado e índice único. Gate Portal PASS (1.159 checks). Runtime atualizado após snapshot SHA-256 `d8be1298ddbc961a1397ffc22db74a3aa044d74edc2d1caeaafffcef2de0526e`; `updatedb:status` e `config:status` limpos; sem import de Config Sync.
+
+## 0.1.0-dev.128 — Adaptadores de leitura ACULTA para aula, atividade e resposta
+
+- Registrados `ContribCourseLessonAdapter`, `ContribCourseActivityAdapter` e `ContribCourseAnswerAdapter`, cada um isolando sua entidade do LMS contrib atrás do contrato correspondente. Os serviços usam injeção de dependência e aliases por interface.
+- Testes Unit dos adaptadores cobrem conversão, nota ausente, tipo de atividade ausente e recusa de estado de avaliação inválido. Unit do módulo: 204 testes/666 assertions PASS; `AcultaLmsInstallTest`: 4/95 PASS validando os aliases; gate Portal: 1.159 verificações PASS.
+- O estado do LMS contrib é booleano e vira submitted/graded. TrainingManager::getActivityMaxScore permite converter pontos por atividade para percentual 0–100; resposta avaliada sem nota ou atividade sem máximo é recusada.
+- A posição da aula vem do delta da referência no curso; a pontuação máxima da atividade vem da referência na aula.
+
+## 0.1.0-dev.127 — Contratos de atividade e resposta (ADR-042, P1)
+
+- `CourseActivity` e `CourseAnswer` (valores imutáveis) com `CourseActivityReaderInterface` e `CourseAnswerReaderInterface`.
+- `CourseAnswer` exige nota quando avaliada e recusa notas fora de 0–100.
+- Smoke sem Drupal 5/5; `CourseActivityAnswerTest` escrito, não executado. Adaptadores do contrib pendentes.
+
+## 0.1.0-dev.126 — Contrato de aula (ADR-042, P1)
+
+- `CourseLesson` (valor imutável) e `CourseLessonReaderInterface` definem a aula no vocabulário ACULTA, sem tipos do contrib.
+- Versão 0.1.0-dev.126 foi marcada por `afb7816d`; este bloco registra o conteúdo.
+- Adaptador do LMS contrib e testes no Runtime pendentes; nenhum consumidor mudou.
+- Smoke sem Drupal 3/3; `CourseLessonTest` escrito, não executado.
+
+## 0.1.0-dev.125 — Desacoplamento do leitor de cursos (ADR-042, decisão 6a)
+
+## 0.1.0-dev.126 — remoção de ligações ao upload de atividades e ao DT-U03
+
+- Campo `field_file_extensions` removido (DT-U03, decisão do responsável): a lista da atividade `file_upload` vem da política do `aculta_file_uploader`.
+- Teste de instalação habilita `lms` e dependências, como as demais Kernel do módulo. Kernel: 31 testes, 851 asserções, 2 erros de harness.
+- Versão 0.1.0-dev.126.
+
+- `AccountCoursesReader` deixa de importar classes do LMS contrib. Depende de `CourseProgressReaderInterface` (contrato ACULTA) e
+  recebe um `CourseProgress` (status, conclusão, nota, cache tags).
+- `ContribCourseProgressAdapter` é a única classe do módulo que lê o `TrainingManager` do LMS contrib. Mapeia
+  `loadCourseStatus` para os status `in progress`, `passed`, `failed` e `evaluation`, e ignora o que não for `Course`.
+- `AccountCoursesReaderTest` reescrito para o contrato: concessão booleana mantém o curso; negação falha fechado sem
+  consultar o progresso.
+- Testes PHPUnit e Kernel não executados nesta sessão (sem `vendor/`); verificação no Runtime pendente.
+
+## 0.1.0-dev.124 — LRS xAPI 2.0 ativo (ADR-041, F3)
+
+- `aculta_lms_update_10003` e a configuração `aculta_lms.xapi` instalados no Runtime de teste; `updatedb:status` e
+  `config:status` sem pendências após importação somente de `config/sync`.
+- Formulário de validade do token disponível no MAIN; gate de domínio administrativo PASS. Tokens HMAC-SHA256 usam Drupal
+  Key com provider env, padrão 1800 s e teto 7200 s, vinculados a usuário, conteúdo, registration, actor e
+  `lesson_status_id`.
+- `POST /xapi/statements` autentica pelo header `X-ACULTA-XAPI-Token` (Bearer conflita com Simple OAuth), valida lotes
+  com `XapiBatchIngestor`, impõe limites de corpo/declarações, idempotência e flood de 60/minuto por token, e persiste
+  somente declarações aceitas.
+- Hook de cron executa a retenção mensal em lotes de 500, com corte por `XapiRetention::cutoff()` e log da quantidade
+  removida. Um mês só é marcado concluído quando não há lote cheio restante.
+- Segredo `ACULTA_LMS_XAPI_TOKEN_SECRET` incluído no Secrets Contract e allowlist do loader; nenhum valor de segredo é
+  versionado. PHPUnit oficial xAPI Unit: 65 testes/99 assertions; Kernel MariaDB `aculta_simpletest`: 2/22, incluindo
+  o hook mensal. Firefox ESR com `DISPLAY=:0`: declaração aceita e persistida em ACULTA420 e Olivero; formulário
+  aparece no MAIN e responde 404 em `cursos`. Flood real: 60 lotes inválidos retornaram 400 e o 61º retornou 429.
+
+## 0.1.0-dev.123 — modelo de certificado separado do registro emitido
+
+- `Entity\CertificateTemplate` (`aculta_lms_certificate_template`): nome, orientação do papel, modo de visualização e
+  referência opaca ao curso. Separado do `CourseCertificate`, que continua sendo o registro emitido. Ideia do Opigno
+  (`opigno_certificate`), implementação própria; `entity_print` segue para o PDF.
+- `aculta_lms_update_10004` instala a entidade, com a mesma guarda dos updates 10002 e 10003.
+- Sem handler de acesso, sem rota e sem ligação com a emissão (decisão pendente: se o certificado emitido guarda a referência ao modelo).
+- Instalação no Runtime e testes Kernel: DEFERRED.
+
+## 0.1.0-dev.122 — pontuação própria dos tipos objetivos (ADR-042, P3, parcial)
+
+- `Assessment\ObjectiveAnswerScorer`: verdadeiro/falso (100 ou 0), seleção só com o conjunto exato, sem crédito parcial,
+  e lacunas por percentual de respostas aceitas (sem diferença de caixa, espaços nas pontas e espaços internos colapsados).
+  Mesma escala da AttemptRule (0 a 100). Função pura, sem dependência do `lms_answer_plugins`.
+- Validação: `ObjectiveAnswerScorerTest` 5/5 no shim. Mutante com crédito parcial na seleção: 1 teste falha.
+- Plugins de resposta e entidades próprias: não ligados ainda (P2/P3, Runtime).
+
+## 0.1.0-dev.121 — nota xAPI com min ausente (F2)
+
+- `XapiProgressDeriver`: `raw` com `max` e sem `min` agora vale com `min = 0`, como a xAPI permite. Sem `success` virando
+  nota máxima (diferença deliberada em relação ao Opigno). Teste `testMissingMinDefaultsToZero`.
+- Validação: 63/63 no shim (suítes xAPI). Sem Runtime: nenhuma alteração de banco ou configuração.
+
+## 0.1.0-dev.120 — retenção configurável das declarações xAPI (D-68, parcial)
+
+- `Xapi\XapiRetention`: prazo de retenção em meses (`retention_months` em `aculta_lms.xapi`), padrão 6, faixa 1–24.
+  `cutoff()` dá o instante UTC antes do qual as declarações estão vencidas. Função pura.
+- Mesma opção administrativa de validade do token, agora com os dois campos. Configuração padrão e schema atualizados.
+- Validação: `XapiRetentionTest` 3/3. Com as demais suítes xAPI, 62/62 no shim.
+- Remoção mensal das declarações vencidas (serviço com consulta de entidade): DEFERRED, Runtime.
+
+## 0.1.0-dev.119 — validade do token de tentativa configurável (F3, parcial)
+
+- `Xapi\XapiTokenSettings`: lê a validade do token (`aculta_lms.xapi`, chave `attempt_token_ttl`, em segundos). Padrão
+  1800 s; valor ausente, não inteiro ou fora de 60–7200 s cai no padrão.
+- `Form\XapiTokenSettingsForm` em `/painel-administrativo/aculta/lms/xapi/validade-token`, permissão
+  `administer site configuration`, rota `_admin_route`. Só no domínio principal: gate
+  `validate-admin-routes-main-domain.php` PASS (39 arquivos, 163 rotas).
+- Configuração padrão em `config/install/aculta_lms.xapi.yml` e schema em `config/schema/aculta_lms.xapi.schema.yml`.
+- Validação: `XapiTokenSettingsTest` 5/5 no shim; com as suítes de token (8) e ingestão (10), 23/23 no total.
+  Formulário, rota e instalação da configuração no Runtime: DEFERRED. `config:export` para `config/sync` antes do RC.
+
+## 0.1.0-dev.118 — ingestão de lotes xAPI, função pura (F3, parcial)
+
+- `Xapi\XapiBatchIngestor`: decide, sem gravar, quais declarações de um lote são aceitas. Lote que não é lista JSON,
+  vazio, com mais de 50 declarações ou acima de 1 MiB é recusado por inteiro. Cada declaração passa pelo
+  `XapiStatementValidator`; registration diferente do token é recusado por declaração; ausente, recebe o do token.
+  Declaração sem id, repetida no lote ou já gravada é recusada como duplicata.
+- Validação: `XapiBatchIngestorTest` 10/10 no shim. Regressão (token, deriver e validador): 54/54 no total.
+  Controle de mutação: sem checagem de duplicata, dois testes falham. Gravação, endpoint e Runtime: DEFERRED.
+
+## 0.1.0-dev.117 — token de tentativa e entidade de declarações xAPI (F3, parcial)
+
+- `Xapi\XapiAttemptToken`: token curto por tentativa, HMAC-SHA256, com estudante (uid), conteúdo, lançamento
+  (registration) e validade (máximo de 7200 s). Função pura: o segredo é injetado, com mínimo de 32 bytes; a
+  verificação usa comparação em tempo constante e recusa token malformado, adulterado, de outro segredo ou expirado.
+- `aculta_lms_xapi_statement` (`XapiStatement`): registro bruto e somente de inserção das declarações validadas.
+  Tentativa referenciada de forma opaca por `lesson_status_id`, sem copiar estado. Instalada pelo
+  `aculta_lms_update_10003`. Sem handler de acesso e sem rota: entram com o endpoint.
+
+Validação: `XapiAttemptTokenTest` 8/8, `XapiProgressDeriverTest` 16/16 e `XapiStatementValidatorTest` 20/20 no shim
+(44/44). Controle de mutação: sem checagem de expiração, `testExpiredTokenIsRefused` falha. Instalação do update 10003
+e endpoint, Kernel e Runtime: DEFERRED.
+
+## 0.1.0-dev.116 — nome do método de extensões padrão
+
+- `FileUpload::getDefaultAllowedFileExtensions()` vira `defaultAllowedExtensions()`. Só renomeação: a validação
+  de extensões do LMS já passa por `aculta_file_uploader.consumer_policy` (`restrictValidators`, consumidor `lms`).
+- RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.115 — derivação de progresso a partir de declarações xAPI (F2, função pura)
+
+- `Xapi\XapiProgressDeriver`: agrupa declarações validadas por `context.registration` (uma tentativa por lançamento) e
+  deriva conclusão, sucesso e nota de cada tentativa. Conclusão vem de `result.completion` ou dos verbos `completed`,
+  `passed` e `failed`; sucesso vem do `result.success` ou dos verbos `passed` e `failed`; a última declaração com nota
+  decide dentro da tentativa, por timestamp.
+- Nota na escala de 0 a 100: `scaled` vale `max(0, scaled) × 100`; sem `scaled`, `raw` com `min` e `max` vira percentual
+  limitado a 0–100; sem intervalo válido, não há nota.
+- Status e escolha da nota vêm de `AttemptRule` (`KEEP_LATEST` ou `KEEP_BEST`), sem reimplementar a regra. Atividade sem
+  tentativa concluída com nota fica pendente.
+
+Validação: `XapiProgressDeriverTest` 16/16 no shim unitário local, e `XapiStatementValidatorTest` 20/20 (regressão F1).
+Controle de mutação: com conversão de nota errada (×10), 7 testes falham; sem ordenação por timestamp, o teste de
+ordenação falha. Sem endpoint, sem lançamento e sem Runtime: DEFERRED.
+
+## 0.1.0-dev.114 — validador de declarações xAPI 2.0 (F1, sem endpoint)
+
+- `Xapi\XapiStatementValidator`: valida uma declaração xAPI 2.0 antes do LRS aceitá-la. Segue o texto da especificação
+  (Data) para actor (exatamente um identificador inverso funcional), verb (IRI), object (Activity e StatementRef), result
+  (score, success, completion, response, duration, extensions) e context. Id em UUID e timestamp em ISO 8601.
+- Escolhas de ingestão, que falham fechado: propriedades desconhecidas são recusadas; grupos, SubStatement e attachments
+  são recusados nesta fase; `stored` e `authority` não são aceitos do cliente, porque o LRS os define; tamanho máximo de
+  64 KiB por declaração.
+
+Validação: `XapiStatementValidatorTest` 20/20 no shim unitário local. Controle de mutação: sem a checagem de propriedades
+desconhecidas, `testRefusesUnknownTopLevelProperty` falha. Endpoint, LRS, lançamento e Runtime DEFERRED.
+## 0.1.0-dev.113 — comentário do formato de resposta corrigido
+
+- Comentário em `SubmissionImageHooks` descreve a leitura atual (`fids` e `[fid]`), sem mudança de código.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.112 — remoção do código SCORM (decisão D-66)
+
+Remove o código SCORM commitado em dev.106 a dev.111, por decisão do responsável (D-66: substituir SCORM por xAPI 2.0):
+
+- `src/Scorm/` (manifesto, validador, extrator, mapeador de estado e snapshot do cmi).
+- `js/scorm/` (APIs 1.2 e 2004 e a lógica do player).
+- Testes unitários SCORM e as bibliotecas `scorm.api12`, `scorm.api2004` e `scorm.player`.
+
+O histórico continua no Git. Nenhum pacote SCORM foi publicado, então não há migração. O registro de origem em `docs/ORIGEM-OPIGNO.md` fica como histórico. Nenhuma funcionalidade de produção muda.
+
+## 0.1.0-dev.111 — lógica do player SCORM (sem DOM e sem endpoint)
+
+- `js/scorm/aculta-scorm-player.js`: ordem dos SCOs, destino de navegação pedido pelo conteúdo (`continue`, `previous`,
+  `{target=ID}choice`) e envio do commit por POST same-origin. Liga-se às APIs 1.2 e 2004 pelo evento de cada versão.
+  Não grava nada no navegador nem no servidor por conta própria: quem recebe é o endpoint de progresso.
+- Biblioteca `aculta_lms/scorm.player`.
+- Registro de origem atualizado em `docs/ORIGEM-OPIGNO.md`.
+
+Validação: 21/21 em Node, com as APIs 1.2 e 2004 reais. Árvore, iframe, endpoint e Runtime DEFERRED.
+
+## 0.1.0-dev.110 — sanitização do progresso SCORM (sem endpoint)
+
+- `ScormProgressSnapshot`: recebe o cmi do conteúdo e devolve só o que está no schema de SCORM 1.2 ou 2004, com tipo e limite
+  de tamanho (suspend_data 4096 na 1.2 e 64000 na 2004; interações até 200). Elementos fora do schema, como identificação do
+  aluno, são descartados. Status são validados pelo `ScormStatusMapper`, que também deriva o estado normalizado.
+- Decisão de armazenamento: o resultado vai como dado da resposta do LMS (`getData()`), que já é o mecanismo do módulo, sem
+  tabela paralela. Essa ligação ainda não foi feita (ver abaixo).
+
+Validação: `ScormProgressSnapshotTest` 13/13 no shim unitário local. Pendente, DEFERRED: plugin `ActivityAnswer` do SCORM,
+endpoint de progresso, rota com autorização, player, e testes no Runtime e no PHPUnit oficial. A API de criação de resposta
+do módulo `lms` não pôde ser conferida aqui, porque o pacote contrib não está no ambiente.
+
+## 0.1.0-dev.109 — API SCORM 2004 no navegador (sem endpoint de progresso)
+
+- `js/scorm/aculta-scorm-api-2004.js`: API SCORM 2004 derivada de conceitos do Opigno SCORM 3.2.7 (GPL-2.0-or-later), reescrita
+  sem `eval`, sem depuração, sem testes internos e com retornos de erro da especificação. Exportada como `window.API_1484_11`.
+  Pedido de navegação (`adl.nav.request`) vai ao player pelo evento `navigation` no Terminate; a troca de SCO é do player.
+- Biblioteca `aculta_lms/scorm.api2004`.
+- Registro de origem atualizado em `docs/ORIGEM-OPIGNO.md`.
+
+Validação: 34/34 em Node com stubs de `window`, `jQuery` e `Drupal`. Navegador e Runtime DEFERRED.
+
+## 0.1.0-dev.108 — API SCORM 1.2 no navegador (sem endpoint de progresso)
+
+- `js/scorm/aculta-scorm-api-12.js`: API SCORM 1.2 derivada de conceitos do Opigno SCORM 3.2.7 (GPL-2.0-or-later), reescrita
+  sem `eval`, sem depuração e com retornos de erro conforme a especificação. Registro de origem em `docs/ORIGEM-OPIGNO.md`.
+- Biblioteca `aculta_lms/scorm.api12` (dependências `core/jquery` e `core/drupal`).
+- Não grava progresso: o commit dispara `commit12` para o player. O endpoint que grava na tentativa do LMS fica para a fase seguinte.
+
+Validação: 32/32 em Node com stubs de `window`, `jQuery` e `Drupal`. Não executado no navegador nem no Runtime: DEFERRED.
+
+## 0.1.0-dev.107 — normalização de estado SCORM (sem armazenamento)
+
+- `ScormStatusMapper`: função pura que converte lesson_status (SCORM 1.2) e completion_status/success_status (SCORM 2004)
+  em conclusão, sucesso e estado normalizado (`not_started`, `in_progress`, `completed`, `passed`, `failed`). Recusa
+  valores fora da especificação e versão desconhecida, em vez de assumir padrão.
+- Não grava nada. Onde o estado será guardado (tentativa do LMS, decisão do responsável) fica para a fase seguinte.
+
+Validação: `ScormStatusMapperTest` 8/8 no shim unitário local. PHPUnit oficial e Kernel DEFERRED.
+
+## 0.1.0-dev.106 — base segura de pacote SCORM (sem player)
+
+Acrescenta `Scorm\` dentro do aculta_lms, sem submódulo e sem dependência do Drupal:
+
+- `ScormManifestParser`: lê `imsmanifest.xml` de SCORM 1.2 e 2004 com DOMDocument e `LIBXML_NONET`. Recusa DOCTYPE,
+  versão desconhecida, item que aponta para recurso inexistente e manifesto sem item lançável.
+- `ScormPackageValidator`: valida o ZIP antes da extração. Mede os bytes realmente descompactados por streaming, com
+  teto por entrada (64 MiB), total (256 MiB), entradas (5000) e razão de compressão (100). Recusa nomes com `..`,
+  caminho absoluto, barra invertida e link simbólico, e exige `imsmanifest.xml` na raiz.
+- `ScormPackageExtractor`: extrai para um subdiretório próprio criado dentro de um diretório pai escolhido pelo chamador
+  (que deve ser privado, por exemplo sob `private://`). Grava com criação exclusiva, confere o caminho resolvido de cada
+  entrada e remove o subdiretório inteiro em qualquer erro.
+
+Origem: implementação própria a partir da especificação SCORM. O pacote `opigno_scorm` 3.2.7 foi lido como referência
+de conceito (modelo de itens, recursos e regras de lançamento); nenhum trecho foi copiado. O `XML2Array` do Opigno não
+foi portado porque o `DOMDocument` é a API oficial do PHP.
+
+Ainda não existe: player, endpoint de lançamento, integração com atividade do LMS e registro de progresso. Esses itens
+dependem de decisão de produto sobre onde guardar o progresso, para não criar armazenamento paralelo.
+
+Validação: `ScormManifestParserTest`, `ScormPackageValidatorTest` e `ScormPackageExtractorTest` somam 18/18 no shim
+unitário local. Controles de mutação: sem checagem de symlink, `testRejectsSymlink` falha; sem checagem de DOCTYPE,
+`testRejectsDoctype` falha pela mensagem genérica. Não executados: PHPUnit oficial, Kernel e gate Drupal 11+. Status:
+DEFERRED.
+
+## 0.1.0-dev.105 — regra pura de tentativa de avaliação (sem ligação ainda)
+
+Acrescenta `Assessment\AttemptRule`, sem dependência do Drupal: status da tentativa (pendente, aprovada ou
+reprovada) e escolha do resultado mantido (mais recente ou melhor, com desempate pelo término). A regra reproduz o
+conceito de aprovação por tentativa observado no Opigno, sem copiar código.
+
+Esta versão não liga a regra a nenhuma avaliação, matrícula ou progresso do LMS: a aplicação depende de decisão de
+produto (fase posterior à fase 1 do plano de independência). Score mínimo fica fora da fase 1.
+
+Validação: `AttemptRuleTest` 11/11 PASS no shim unitário local, com controle de mutação (troca de `>=` por `>`
+faz 2 testes falharem). O teste pegou um bug de desempate na política "melhor", corrigido nesta versão. Não
+executados: PHPUnit oficial, Kernel e gate Drupal 11+. Status: DEFERRED.
+
+## 0.1.0-dev.104 — link de início do curso sem classes de design
+
+- `CourseLinkHooks` passa `data-portal-ui="lms-start-link"`; o ACULTA420 estiliza o botão.
+- Unit LMS 108/508 PASS. Revisão visual no navegador pendente.
+
+RUNTIME STATUS: DEFERRED. Mudança de marcação; visual não validado.
+
+## 0.1.0-dev.103 — formato de data e acesso do arquivo de resposta
+
+- `FileUpload::getFile()` lê `data['file_upload']['fids'][0]`, que é o formato que o `managed_file` do Core grava, e mantém `[fid]` para respostas antigas. Antes lia `[0]`, que nunca existe: o download negava e o formulário não recarregava o arquivo.
+- O link do arquivo usa `data-portal-ui="lms-answer-file"` em vez da classe `lms-answer-file`, conforme a fronteira módulo–tema.
+- Novos Kernels habilitam `aculta_file_uploader` (o `KernelTestBase` não resolve dependências do `info.yml`).
+- Novo Unit `FileUploadAnswerDataTest` 7/9 PASS.
+
+RUNTIME STATUS: DEFERRED. O download real depende de resposta com arquivo no Runtime.
+
+## 0.1.0-dev.102 — lms_file_upload portado para o aculta_lms
+
+- Plugin de resposta `file_upload` portado para `aculta_lms` (mesmo id, diretório `private://lms_file_upload` e file usage, para manter respostas antigas).
+- Download com `lms_answer.see_details` e checagem de matrícula atual, rota `aculta_lms.answer_file_download` em `/resposta/{lms_answer}/baixar-arquivo`.
+- Política do `aculta_file_uploader` (integração `lms`) aplicada aos validadores.
+- Requisito de sistema de arquivos privado portado.
+- Dependência `lms_file_upload` removida do info.yml.
+- Pendente: composer.json/composer.lock, core.extension (uninstall com ordem explícita e snapshot) e validação no Runtime.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.101 — resposta do LMS aceita envio recente do Studio
+
+- `SubmissionImageHooks` lista envios recentes do aluno (integração `lms`, imagens e documentos), usados só com o envio vazio.
+- Escolha checada pelo dono (administrador vê todos) e validada pela política do `aculta_file_uploader`.
+- Assume o formato padrão `managed_file` do `file_upload`; o código do contrib `lms_file_upload` não está neste checkout e não foi verificado.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.100 — envio de respostas validado pela política do aculta_file_uploader
+
+- `SubmissionImageHooks` usa `aculta_file_uploader.consumer_policy` (integração `lms`) em vez de `UserUploadPolicy`.
+- `LmsSubmissionImageValidator` delega a `isValidImage(file, 'lms')`: uma regra de conteúdo para todos os consumidores. O aculta_image sai do caminho de upload do LMS.
+- Dependência `aculta_portal:aculta_file_uploader` declarada.
+- Testes Unit e Kernel acompanham a política nova. O Kernel grava `aculta_file_uploader.settings` no setUp.
+- Observação: o info.yml estava em 0.1.0-dev.98 e este changelog já tinha a entrada 0.1.0-dev.99, de outra sessão. A versão foi para 0.1.0-dev.100.
+
+RUNTIME STATUS: DEFERRED. Testes não executados (sem vendor/ nem Runtime).
+
+## 0.1.0-dev.99 — resiliencia do dashboard Ganjalab (2026-11-01)
+
+- `AccountCoursesReader` agora trata também o retorno booleano de handlers Group
+  mesmo com `return_as_object` solicitado: só `true` autoriza, `false` e valores
+  inesperados falham fechado. Resultados `AccessResultInterface` preservam a
+  validação e os cache tags normais.
+- Adicionados testes para concessão e negação booleanas. A auditoria local
+  encontrou um 500 em `/ganjalab` (erro `isAllowed()` sobre `true`); o provider
+  do dashboard executado como uid 1 concluiu sem erro após o guard.
+
+## 0.1.0-dev.98 — contratos neutros e painel B2 (2026-11-01)
+
+- `aculta_lms` passa a depender de `aculta_learning_contracts`, módulo sem
+  dependência do contrib LMS. `CourseJourneyReaderInterface`, `CourseJourney`,
+  `CourseJourneyLesson` e o resumo B2
+  (`StudentLearningSummaryReaderInterface` e DTOs) vêm desse módulo.
+- O painel do estudante foi separado: o LMS implementa o leitor de resumo e
+  fornece dados tipados; a composição e as rotas Ganjalab ficam no Studio. O LMS
+  não depende de `aculta_studio`.
+- O antigo `LearnerDashboardComposerInterface` foi substituído na B2 pelo
+  contrato de resumo tipado; o composer vive no Studio.
+- `AccountCoursesReader::getAccountCourses()` passou a usar
+  `access('view', $account, TRUE)` antes de `isAllowed()`. Sem o terceiro
+  argumento, o método devolve bool e o catálogo/home do Ganjalab falhavam com
+  `Call to a member function isAllowed() on true`.
+- Sem alteração de entidade, configuração, dado ou escrita. A fonte de verdade
+  continua no Group/Drupal LMS.
+- **Runtime:** `aculta_learning_contracts` habilitado após snapshot com hash;
+  `config:status` sem diferenças; serviços e aliases resolvidos no container;
+  jornada e sala 74/74 em 320–1440 px. Nenhum dado de curso, matrícula,
+  resposta ou progresso foi alterado.
+
+## 0.1.0-dev.97 — contrato da jornada em camada neutra (2026-11-01)
+
+- Correção da fatia dev.96: `CourseJourneyReaderInterface`,
+  `CourseJourney` e `CourseJourneyLesson` foram movidos de
+  `Drupal\aculta_studio\Learning` para
+  `Drupal\aculta_portal\Contract\Learning`. `aculta_lms` depende de
+  `aculta_studio`; manter o contrato no consumidor fazia o adaptador importar o
+  namespace de quem já depende dele.
+- `LearningDashboardManager`, `CourseRoomBuilder` e `LearningRoomHooks` apontam
+  para o namespace neutro; o alias por interface em `aculta_lms.services.yml`
+  também. Nenhuma rota, entidade, configuração ou dado mudou.
+- Testes e documentação de dependências atualizados. A fonte de verdade continua
+  no Group/Drupal LMS.
+
+## 0.1.0-dev.96 — jornada do curso sob contrato ACULTA (2026-11-01)
+
+- `LearningDashboardManager` passa a implementar
+  `Drupal\aculta_portal\Contract\Learning\CourseJourneyReaderInterface`; `courseJourney()`
+  devolve `CourseJourney` com lições `CourseJourneyLesson`, e
+  `getCourseJourney(string $course_id, AccountInterface $account)` resolve o
+  Group internamente e devolve `NULL` quando o ID não é um curso.
+- `CourseRoomBuilder` e `LearningRoomHooks` consomem o contrato; a resolução de
+  acesso de entrada fica centralizada no adaptador. O formulário de compra
+  continua decidido por `administer members`.
+- Aliases `aculta_lms.course_journey_reader` e por interface no
+  `aculta_lms.services.yml`. A fonte de verdade continua no Group/Drupal LMS;
+  nenhum dado, rota, configuração ou escrita mudou.
+- Inventário completo e fases futuras em
+  `docs/modules/LMS-CONTRIB-DEPENDENCY-INVENTORY.md`.
+- Validação: PHPUnit Unit LMS 92/482 e Studio 60/586 PASS; PHP lint sem erros;
+  PHPCS sem erros nos arquivos alterados (4 avisos preexistentes de comprimento
+  de linha). `AcultaLmsInstallTest` mantém falha preexistente de autowiring de
+  `CourseLinkHooks`/`TrainingManager` no harness, confirmada na baseline.
+- Smoke de navegador Firefox ESR/X11 em
+  `tests/browser/aculta-ganjalab/learning-experience.mjs`, 390 px: 29/29
+  verificações OK, incluindo início, jornada com 7 aulas e estados, sala com
+  formulário nativo, modo escuro e foco. A matriz completa de larguras não foi
+  repetida nesta fatia. A suíte apenas autenticou e leu páginas; nenhum dado ou
+  configuração do Runtime foi alterado.
+
 ## 0.1.0-dev.94 — feedback de educador distingue aluno e educador
 
 - `EducatorFeedbackPolicy` (`aculta_lms.educator_feedback_policy`) define educador
@@ -285,4 +981,92 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
   o formulário mantém a resposta sem o widget de feedback e a avaliação mostra
   que a atividade não está disponível. Unit focal: 3/15; combinada LMS/
   Messenger: 83/440, com 8 depreciações PHPUnit.
+
+## 0.1.0-dev.139 — eventos usam respostas próprias do ACULTA
+
+- `AnswerLifecycleEventHooks` publica submissão e avaliação a partir de `aculta_lms_answer`; respostas P2 não armazenam o payload, portanto a publicação usa apenas identidade e estado persistido.
+- Sem leitura nem preservação adicional do payload de respostas legado.
+
+## 0.1.0-dev.140 — vínculo de curso usa Group
+
+- Publicação de matrícula de turma valida o grupo de curso pelo contrato `GroupInterface`, sem depender de `CourseInterface` do LMS contrib.
+- O relacionamento Group `lms_classes` continua sendo a associação existente entre turma e curso.
+
+## 0.1.0-dev.141 — notificações leem conteúdo próprio
+
+- Eventos de liberação e revalidação do Messenger usam `aculta_lms_lesson` e `aculta_lms_activity`; atividade fica disponível quando a aula ACULTA pai está publicada, pois o modelo P2 não define publicação independente.
+- O vínculo para curso e as matrículas continuam usando Group. Nenhum payload ou status legado foi migrado.
+
+## 0.1.0-dev.142 — acesso ao painel usa Group
+
+- `ClassDashboardAccessCheck` valida curso e turma por `GroupInterface`, alinhado ao retorno ACULTA do resolvedor de turma.
+
+## 0.1.0-dev.143 — matrícula comercial usa relações Group
+
+- O entitlement Commerce valida cursos com `GroupInterface` e resolve turmas pela relação `lms_classes`, sem `CourseInterface` ou `ClassHelper`.
+
+## 0.1.0-dev.144 — formulários de curso usam relações Group
+
+- Compra de curso e configuração de visibilidade do roster recebem curso como `GroupInterface`; turmas elegíveis vêm de `lms_classes` por Group API.
+
+## 0.1.0-dev.145 — avisos de avaliação usam resposta própria
+
+- Eligibility, feedback educador e destinatários de submissão/avaliação resolvem `aculta_lms_answer` → atividade → aula → Group.
+- O payload não existe na entidade P2; os avisos apontam aos painéis Ganjalab até existir uma tela própria de resposta.
+
+## 0.1.0-dev.146 — prazos e painel leem entidades próprias
+
+- Prazo por turma, acesso e formulário usam `aculta_lms_activity` e `aculta_lms_lesson`; painel docente enumera atividades e aulas próprias e agrega `aculta_lms_progress`.
+- Testes Kernel de prazo e painel agora exercitam atividade, aula e progresso ACULTA; as entidades LMS permanecem no harness apenas para os bundles e relacionamentos Group legados.
+
+## 0.1.0-dev.147 — Recursos usa acesso Group
+
+- O índice de conteúdo e os links de materiais verificam acesso estudantil por `take course` em Group, sem importar `CourseInterface` do LMS.
+- Unit de `aculta_lms_resources` 13/66 PASS; Kernel do índice de acesso 5/259 PASS (53 depreciações upstream).
+
+## 0.1.0-dev.148 — avisos resolvem entidades próprias
+
+- Elegibilidade, destinatários e links de avisos usam resposta, aula e atividade ACULTA e Group; URLs de curso usam a rota canônica de Group.
+- LMS Unit 227/747 PASS; Kernel de prazos/painel 2/87 PASS; Messenger LMS Unit 48/470 e Kernel 4/52 PASS.
+
+## 0.1.0-dev.149 — encerramento dos adaptadores temporários P1
+
+- Os contratos CourseProgress, CourseLesson, CourseActivity e CourseAnswer já
+  são servidos por leitores de entidades ACULTA; os quatro adaptadores do LMS
+  contrib e seus serviços/testes temporários foram removidos.
+- Dados legados não foram migrados. Respostas sem payload na entidade P2 e
+  outros consumidores contrib continuam pendentes de implementação antes do
+  corte P5.
+- O Kernel do painel usa agora aulas/progresso próprios; sem progresso
+  individual por aula, exibe zero aulas concluídas em vez de inferi-las do LMS.
+
+## 0.1.0-dev.150 — matrícula usa Group sem helper de LMS Classes
+
+- `EnrollmentFormHooks` valida cursos e turmas como `GroupInterface` e lê as
+  relações do curso diretamente, removendo `CourseInterface` e `ClassHelper`.
+- O ID de plugin de relação `lms_classes` permanece estável por ora para
+  preservar a configuração e os vínculos existentes; o provedor ACULTA ainda
+  precisa substituí-lo antes da remoção do submódulo.
+- `EnrollmentFormHooksTest`: 9 testes / 63 asserções PASS; Unit completa:
+  222 testes / 735 asserções PASS (1 depreciação PHPUnit).
+
+## 0.1.0-dev.151 — destino canônico Group na lista de cursos
+
+- `AccountCoursesReader` usa `entity.group.canonical` para cursos em andamento
+  e concluídos; cursos em avaliação continuam sem URL de retomada.
+- `AccountCoursesReaderTest`: 3 testes / 27 asserções PASS, cobrindo destino e
+  parâmetros do Group.
+
+## 0.1.0-dev.152 — jornada sem destinos de resposta contrib
+
+- `LearningDashboardManager` aponta cursos para `entity.group.canonical`.
+  Cada aula da jornada fica sem URL até existir uma rota ACULTA para conteúdo e
+  resposta; nenhum destino `lms.*` é inventado.
+- `CourseJourneyManagerTest` verifica rota/ID canônicos e URL de aula nula.
+
+## 0.1.0-dev.164 — instala Comment antes do módulo no Kernel de tentativas
+
+- Corrige a ordem do harness Kernel `AttemptArchiveLifecycleTest`: instala primeiro a configuração do Core Comment, incluindo o armazenamento `comment_body`, antes de instalar `aculta_lms`.
+- Verificação focal conjunta: `AcultaLmsInstallTest` + `AttemptArchiveLifecycleTest`, 16 testes/603 asserções PASS; 57 depreciações Core/contrib.
+- Unit completa: 236 testes/829 asserções PASS, 1 depreciação PHPUnit.
 

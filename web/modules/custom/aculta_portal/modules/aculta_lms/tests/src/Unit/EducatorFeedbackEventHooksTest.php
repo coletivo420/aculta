@@ -7,13 +7,10 @@ namespace Drupal\Tests\aculta_lms\Unit;
 use Drupal\aculta_lms\EducatorFeedbackPolicy;
 use Drupal\aculta_lms\Event\EducatorFeedbackPublishedEvent;
 use Drupal\aculta_lms\Hook\EducatorFeedbackEventHooks;
+use Drupal\aculta_lms\Notice\LearningEligibilityInterface;
 use Drupal\comment\CommentInterface;
-use Drupal\Core\Field\FieldItemList;
-use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\lms\Entity\AnswerInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
-use Drupal\lms\Entity\CourseStatusInterface;
-use Drupal\lms\Entity\LessonStatusInterface;
+use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -21,126 +18,111 @@ use PHPUnit\Framework\Attributes\Group as TestGroup;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Tests events for educator feedback published on LMS answers. */
+ * Tests events for educator feedback published on ACULTA answers.
+ */
 #[CoversClass(EducatorFeedbackEventHooks::class)]
 #[TestGroup('aculta_lms')]
 final class EducatorFeedbackEventHooksTest extends UnitTestCase {
 
   /**
-   * A published comment by a course grader produces a minimal event. */
+   * Tests that published educator feedback dispatches an event.
+   */
   public function testPublishedEducatorFeedbackPublishesEvent(): void {
     $educator = $this->createMock(UserInterface::class);
     $educator->method('id')->willReturn('22');
-    $course = $this->createMock(CourseInterface::class);
-    $course->method('bundle')->willReturn('lms_course');
-    $course->method('hasPermission')->with('grade students', $educator)->willReturn(TRUE);
-    $courseStatus = $this->createMock(CourseStatusInterface::class);
-    $courseStatus->method('get')->with(CourseStatusInterface::COURSE_FIELD)->willReturn($this->referenceField($course));
-    $lessonStatus = $this->createMock(LessonStatusInterface::class);
-    $lessonStatus->method('get')->with('course_status')->willReturn($this->referenceField($courseStatus));
-    $answer = $this->createMock(AnswerInterface::class);
-    $answer->method('getUserId')->willReturn('21');
-    $answer->method('get')->with('lesson_status')->willReturn($this->referenceField($lessonStatus));
-    $comment = $this->createMock(CommentInterface::class);
-    $comment->method('bundle')->willReturn('lms_answer_comment');
-    $comment->method('isPublished')->willReturn(TRUE);
-    $comment->method('getCommentedEntity')->willReturn($answer);
-    $comment->method('getOwner')->willReturn($educator);
-    $comment->method('uuid')->willReturn('feedback-comment-uuid');
-
+    $course = $this->course(TRUE, $educator);
+    $answer = $this->answer(21);
+    $eligibility = $this->createMock(LearningEligibilityInterface::class);
+    $eligibility->method('courseForAnswer')->with($answer)->willReturn($course);
+    $comment = $this->comment($answer, $educator);
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
-    $dispatcher->expects($this->once())
-      ->method('dispatch')
-      ->with($this->callback(static fn (object $event): bool =>
-        $event instanceof EducatorFeedbackPublishedEvent
-        && $event->commentUuid === 'feedback-comment-uuid'
-        && preg_match('/^[a-f0-9]{32}$/', $event->publicationVersion) === 1
-      ));
+    $dispatcher->expects(self::once())->method('dispatch')->with($this->callback(static fn(object $event): bool =>
+      $event instanceof EducatorFeedbackPublishedEvent
+      && $event->commentUuid === 'feedback-comment-uuid'
+      && preg_match('/^[a-f0-9]{32}$/', $event->publicationVersion) === 1
+    ));
 
-    (new EducatorFeedbackEventHooks($dispatcher, new EducatorFeedbackPolicy()))->entityInsert($comment);
+    (new EducatorFeedbackEventHooks($dispatcher, new EducatorFeedbackPolicy($eligibility)))->entityInsert($comment);
   }
 
   /**
-   * A stale answer reference suppresses feedback instead of throwing.
+   * Tests that a missing answer prevents event publication.
    */
-  public function testPublishedFeedbackWithMissingLessonStatusDoesNotDispatch(): void {
+  public function testPublishedFeedbackWithMissingAnswerDoesNotDispatch(): void {
     $educator = $this->createMock(UserInterface::class);
-    $educator->method('id')->willReturn('22');
-    $answer = $this->createMock(AnswerInterface::class);
-    $answer->method('getUserId')->willReturn('21');
-    $answer->method('get')->with('lesson_status')->willReturn($this->referenceField(NULL));
-    $comment = $this->createMock(CommentInterface::class);
-    $comment->method('bundle')->willReturn('lms_answer_comment');
-    $comment->method('isPublished')->willReturn(TRUE);
-    $comment->method('getCommentedEntity')->willReturn($answer);
-    $comment->method('getOwner')->willReturn($educator);
-
+    $eligibility = $this->createMock(LearningEligibilityInterface::class);
+    $eligibility->expects(self::never())->method('courseForAnswer');
+    $comment = $this->comment(NULL, $educator);
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
-    $dispatcher->expects($this->never())->method('dispatch');
+    $dispatcher->expects(self::never())->method('dispatch');
 
-    (new EducatorFeedbackEventHooks($dispatcher, new EducatorFeedbackPolicy()))->entityInsert($comment);
+    (new EducatorFeedbackEventHooks($dispatcher, new EducatorFeedbackPolicy($eligibility)))->entityInsert($comment);
   }
 
   /**
-   * Student comments never create educator feedback notifications. */
+   * Tests that learner comments do not dispatch educator feedback.
+   */
   public function testLearnerAuthoredCommentDoesNotPublishFeedbackEvent(): void {
     $learner = $this->createMock(UserInterface::class);
     $learner->method('id')->willReturn('21');
-    $answer = $this->createMock(AnswerInterface::class);
-    $answer->method('getUserId')->willReturn('21');
-    $comment = $this->createMock(CommentInterface::class);
-    $comment->method('bundle')->willReturn('lms_answer_comment');
-    $comment->method('isPublished')->willReturn(TRUE);
-    $comment->method('getCommentedEntity')->willReturn($answer);
-    $comment->method('getOwner')->willReturn($learner);
-
+    $answer = $this->answer(21);
+    $eligibility = $this->createMock(LearningEligibilityInterface::class);
+    $eligibility->expects(self::never())->method('courseForAnswer');
+    $comment = $this->comment($answer, $learner);
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
-    $dispatcher->expects($this->never())->method('dispatch');
-    (new EducatorFeedbackEventHooks($dispatcher, new EducatorFeedbackPolicy()))->entityInsert($comment);
+    $dispatcher->expects(self::never())->method('dispatch');
+
+    (new EducatorFeedbackEventHooks($dispatcher, new EducatorFeedbackPolicy($eligibility)))->entityInsert($comment);
   }
 
   /**
-   * A course member without grading permission is not an educator. */
+   * Tests that a member without grading permission cannot dispatch feedback.
+   */
   public function testCommentWithoutGradePermissionDoesNotPublishFeedbackEvent(): void {
     $member = $this->createMock(UserInterface::class);
     $member->method('id')->willReturn('22');
-    $course = $this->createMock(CourseInterface::class);
-    $course->method('bundle')->willReturn('lms_course');
-    $course->method('hasPermission')->with('grade students', $member)->willReturn(FALSE);
-    $courseStatus = $this->createMock(CourseStatusInterface::class);
-    $courseStatus->method('get')->with(CourseStatusInterface::COURSE_FIELD)->willReturn($this->referenceField($course));
-    $lessonStatus = $this->createMock(LessonStatusInterface::class);
-    $lessonStatus->method('get')->with('course_status')->willReturn($this->referenceField($courseStatus));
-    $answer = $this->createMock(AnswerInterface::class);
-    $answer->method('getUserId')->willReturn('21');
-    $answer->method('get')->with('lesson_status')->willReturn($this->referenceField($lessonStatus));
-    $comment = $this->createMock(CommentInterface::class);
-    $comment->method('bundle')->willReturn('lms_answer_comment');
-    $comment->method('isPublished')->willReturn(TRUE);
-    $comment->method('getCommentedEntity')->willReturn($answer);
-    $comment->method('getOwner')->willReturn($member);
-
+    $course = $this->course(FALSE, $member);
+    $answer = $this->answer(21);
+    $eligibility = $this->createMock(LearningEligibilityInterface::class);
+    $eligibility->method('courseForAnswer')->with($answer)->willReturn($course);
+    $comment = $this->comment($answer, $member);
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
-    $dispatcher->expects($this->never())->method('dispatch');
-    (new EducatorFeedbackEventHooks($dispatcher, new EducatorFeedbackPolicy()))->entityInsert($comment);
+    $dispatcher->expects(self::never())->method('dispatch');
+
+    (new EducatorFeedbackEventHooks($dispatcher, new EducatorFeedbackPolicy($eligibility)))->entityInsert($comment);
   }
 
   /**
-   * Creates a field item list whose reference can be absent or available.
+   * Creates a course mock with the requested grading permission.
    */
-  private function referenceField(?object $entity): FieldItemListInterface {
-    return new class($entity) extends FieldItemList {
+  private function course(bool $canGrade, UserInterface $user): GroupInterface {
+    $course = $this->createMock(GroupInterface::class);
+    $course->method('bundle')->willReturn('lms_course');
+    $course->method('hasPermission')->with('grade students', $user)->willReturn($canGrade);
+    return $course;
+  }
 
-      public function __construct(private readonly ?object $referencedEntity) {}
+  /**
+   * Creates an ACULTA answer entity mock.
+   */
+  private function answer(int $uid): ContentEntityBase {
+    $answer = $this->createMock(ContentEntityBase::class);
+    $answer->method('getEntityTypeId')->willReturn('aculta_lms_answer');
+    $answer->method('get')->with('uid')->willReturn((object) ['value' => $uid]);
+    return $answer;
+  }
 
-      public function __get($property_name) {
-        if ($property_name === 'entity') {
-          return $this->referencedEntity;
-        }
-        return parent::__get($property_name);
-      }
-
-    };
+  /**
+   * Creates a comment mock attached to an answer.
+   */
+  private function comment(?ContentEntityBase $answer, UserInterface $author): CommentInterface {
+    $comment = $this->createMock(CommentInterface::class);
+    $comment->method('bundle')->willReturn(EducatorFeedbackPolicy::COMMENT_TYPE);
+    $comment->method('isPublished')->willReturn(TRUE);
+    $comment->method('getCommentedEntity')->willReturn($answer);
+    $comment->method('getOwner')->willReturn($author);
+    $comment->method('uuid')->willReturn('feedback-comment-uuid');
+    return $comment;
   }
 
 }

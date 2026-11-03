@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Integration\Lms\Unit;
 
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
+use Drupal\aculta_lms\Notice\LearningEligibilityInterface;
 use Drupal\aculta_messenger\Integration\Lms\LearningNoticeManager;
-use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -58,8 +58,8 @@ final class LearningNoticeRecordLockTest extends UnitTestCase {
       $this->createMock(DateFormatterInterface::class),
       $this->createMock(QueueFactory::class),
       new NullLogger(),
-      $this->createMock(MessengerNoticePublisherInterface::class),
       $lock,
+      $this->createMock(LearningEligibilityInterface::class),
     );
 
     $this->expectException(\RuntimeException::class);

@@ -9,16 +9,15 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Schema;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Image\ImageFactory;
+use Drupal\aculta_file_uploader\ImageDimensionReader;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\file\FileInterface;
 use Drupal\file\FileUsage\FileUsageInterface;
 use Drupal\aculta_image\FileRemoverInterface;
-use Drupal\aculta_image\ImageInspector;
-use Drupal\aculta_portal\Cleanup\FileReferenceInspectorInterface;
-use Drupal\aculta_portal\Cleanup\FileReferenceStatus;
-use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceInspectorInterface;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceStatus;
+use Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner;
 use Drupal\aculta_user\Avatar\AvatarAssetCleanup;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -70,7 +69,7 @@ final class AvatarAssetCleanupCoordinatorTest extends UnitTestCase {
       $database,
       $references,
       $remover,
-      new ImageInspector($this->createMock(ImageFactory::class)),
+      $this->createMock(ImageDimensionReader::class),
       $logger,
     );
 

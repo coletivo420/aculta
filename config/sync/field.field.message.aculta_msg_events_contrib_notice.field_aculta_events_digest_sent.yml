@@ -1,0 +1,26 @@
+uuid: 3cbf817b-5063-4db6-81b6-92159a129581
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_events_digest_sent
+    - message.template.aculta_msg_events_contrib_notice
+  enforced:
+    module:
+      - aculta_messenger
+id: message.aculta_msg_events_contrib_notice.field_aculta_events_digest_sent
+field_name: field_aculta_events_digest_sent
+entity_type: message
+bundle: aculta_msg_events_contrib_notice
+label: 'Resumo diário enviado'
+description: 'Impede repetir a mesma atualização em resumos futuros.'
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean

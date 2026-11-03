@@ -2,7 +2,7 @@
 
 ## ADR-038 — caminhos vigentes das Suites (retificado pelo responsável em 2026-10-30)
 
-Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. O prefixo `/studio` e todos os caminhos `/studio/*` respondem 404 sem alias/redirect. O Domain Wiki canônico é `wiki420`. `aculta_studio` permanece framework compartilhado. A raiz de `account` apresenta a entrada da Conta; Conta e Perfil permanecem separados. Consulte a retificação vigente do ADR-038.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/we-sativa`; Green Stash `shop:/green-stash`; Culturas `eventos:/culturas`. O prefixo `/studio` e todos os caminhos `/studio/*` respondem 404 sem alias/redirect. O Domain Wiki canônico é `wiki420`. `aculta_studio` permanece framework compartilhado. A raiz de `account` apresenta a entrada da Conta; Conta e Perfil permanecem separados. Consulte a retificação vigente do ADR-038.
 
 
 ## Contrato histórico antes do ADR-038
@@ -48,7 +48,7 @@ the shared entry inventory requires `edit any`. The focal test passed 7/27.
 
 ## WE SATIVA — entrypoint e workspace existentes (Studio dev.3 / Wiki dev.76)
 
-A rota oficial é `/studio/we-sativa` no purpose `wiki`, conforme retificação
+A rota oficial é `/we-sativa` no purpose `wiki`, conforme retificação
 vigente do ADR-038, e usa o provider Studio;
 `aculta_wiki.contributor_workspace` é dono dos dados, grants, paginação e links
 Wiki. Meu Trabalho separa cursores para verbetes/propostas, usa SDCs e revalida
@@ -60,11 +60,20 @@ em Wiki dev.77 (23/1.039 para o ciclo Wiki, incluindo o workspace); Firefox/X11,
 
 Estas regras foram realocadas do arquivo histórico de instruções; aplique somente no escopo correspondente. O `AGENTS.md` raiz continua obrigatório.
 
+## Fronteiras atuais das experiências Studio (2026-11-01)
+
+- Marley `account:/marley`: Revista, moderação do Fórum e Galerias. Não expor criação de tópicos nem navegação geral de discussões no Marley. A aba de moderação exige `moderar denuncias do forum` e delega à rota owner.
+- Ganjalab Estudante `courses:/ganjalab`: dashboard, jornada e sala; dados/progresso vêm do LMS.
+- Ganjalab Educador `courses:/ganjalab/educador`: autoria/gestão. Novo curso em `/ganjalab/educador/cursos/novo`; retorno do formulário sempre ao dashboard do Educador.
+- O dashboard do estudante só oferece o atalho ao Educador se Url::access() autorizar; o dashboard Educador só exibe retorno ao estudante se a rota estudante autorizar. Não criar toggle fixo nem ocultar o curso atual ao alternar.
+- O Course Builder não pertence ao Marley. Não misturar professor/estudante na navegação ou conceder acesso educacional por causa de permissão editorial.
+- Ver contrato de produto [ACULTA-STUDIO-EXPERIENCE-BOUNDARIES.md](../../../../../../docs/portal/ACULTA-STUDIO-EXPERIENCE-BOUNDARIES.md).
+
 ## ACULTA Studio (regra permanente)
 
 ### WE SATIVA start page (dev.6)
 
-The `/studio/we-sativa/inicio` controller delegates to the Wiki owner. Unit
+The `/we-sativa/inicio` controller delegates to the Wiki owner. Unit
 coverage verifies a provider with the optional start-page contract, a provider
 without it, and owner-denied access (3/3 focal; Studio Unit suite 20/61). Kernel
 Wiki integration verifies the route, access-conditioned links and rendered
@@ -78,7 +87,7 @@ workspace service and WE SATIVA routes.
   permissão real do dono, nunca nome de papel) e `actions()` (ação com o acesso da rota do dono). Ação para outro
   domínio usa `DomainPurposeManager::routeUrl()` e avalia o acesso com `runInPurpose()`.
 - Nenhuma rota ou ação do Studio contorna Form API, Entity Access, Content Moderation nem as permissões do dono.
-- **Rotas canônicas, sem aliases:** somente `/studio/we-sativa/**` em `wiki` e `/studio/green-stash/**` em `shop` usam o prefixo `/studio/`; `/studio` e todos os outros caminhos `/studio/*` respondem 404. Marley usa `/marley/{aba}[/{secao}[/{sub}]]` em `account`; Ganjalab `/ganjalab` em `courses`; Culturas `/culturas` em `eventos`. Conta e Perfil ficam em `/conta` e `/perfil`, separados. Não criar redirects de compatibilidade; URLs aposentadas respondem 404.
+- **Rotas canônicas, sem aliases:** WE SATIVA (`/we-sativa/**`, `wiki`) e GREEN STASH (`/green-stash/**`, `shop`) têm caminhos próprios, sem prefixo `/studio`; `/studio` e todos os outros caminhos `/studio/*` respondem 404. Marley usa `/marley/{aba}[/{secao}[/{sub}]]` em `account`; Ganjalab `/ganjalab` em `courses`; Culturas `/culturas` em `eventos`. Conta e Perfil ficam em `/conta` e `/perfil`, separados. Não criar redirects de compatibilidade; URLs aposentadas respondem 404.
   Cada aba principal, opção de submenu e aba interna tem URL própria; o AJAX melhora a troca, mas não é a única forma de
   acesso. Segmento fora do alcance da conta responde 404. Os níveis são: áreas em abas superiores (uma por dono);
   submenu à esquerda com as seções da área; abas internas da seção, com as ações no painel. Cada área implementa `sections()` com esses níveis. Apresentação: tokens `data-portal-ui`
@@ -126,8 +135,8 @@ Cada Suite responde em seu próprio domínio/purpose e sob o caminho-base abaixo
 | --- | --- | --- | --- | --- |
 | Marley | `account` | configurado no Domain | configurado no Domain | `/marley` |
 | Ganjalab | `courses` | configurado no Domain | configurado no Domain | `/ganjalab` |
-| ACULTA STUDIO WE SATIVA | `wiki` | configurado no Domain (`wiki420`) | configurado no Domain (`wiki420`) | `/studio/we-sativa` |
-| ACULTA STUDIO GREEN STASH | `shop` | configurado no Domain | configurado no Domain | `/studio/green-stash` |
+| ACULTA STUDIO WE SATIVA | `wiki` | configurado no Domain (`wiki420`) | configurado no Domain (`wiki420`) | `/we-sativa` |
+| ACULTA STUDIO GREEN STASH | `shop` | configurado no Domain | configurado no Domain | `/green-stash` |
 | Culturas | `eventos` | configurado no Domain | configurado no Domain | `/culturas` |
 
 Manter Conta e Perfil como experiências diferentes, fora das Suites. A raiz de `conta` apresenta a entrada da Conta e não reescreve para `/studio`. `/conta/*`, `/perfil/*` e `/salvos` preservam owners e dados separados. A Conta legada continua em `/conta-legada`.

@@ -86,13 +86,4 @@ final class SocialLinksCard {
     ];
   }
 
-  /**
-   * Valor curto para exibir: o endereço do e-mail, ou o host e o caminho do link.
-   */
-  private function shortValue(string $key, string $uri): string {
-    $host = (string) parse_url($uri, PHP_URL_HOST);
-    $path = rtrim((string) parse_url($uri, PHP_URL_PATH), '/');
-    return $host . $path;
-  }
-
 }

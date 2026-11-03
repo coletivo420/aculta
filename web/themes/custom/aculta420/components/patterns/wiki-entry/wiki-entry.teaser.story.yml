@@ -3,13 +3,13 @@ description: Card da listagem com imagem de destaque, resumo e categorias.
 component: aculta420:wiki-entry
 props:
   variant: teaser
-  url: /wiki/verbetes/exemplo
+  url: /verbetes/exemplo
   has_image: true
   has_summary: true
   has_categories: true
 slots:
   title:
-    markup: '<a href="/wiki/verbetes/exemplo" rel="bookmark">Exemplo de verbete</a>'
+    markup: '<a href="/verbetes/exemplo" rel="bookmark">Exemplo de verbete</a>'
   image:
     markup: '<div class="ratio ratio-16x9 bg-body-secondary" role="img" aria-label="Área reservada para a imagem de destaque"></div>'
   summary:

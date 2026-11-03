@@ -1,0 +1,24 @@
+uuid: 21cf5a82-d18f-46e9-9854-844a1fc56a88
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_events_prop_rev
+    - message.template.aculta_msg_events_contrib_notice
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: aPZLnLtqIby_jTFyHv1CfSSeqsEwaDabfBNU7ExRC3Q
+id: message.aculta_msg_events_contrib_notice.field_aculta_events_prop_rev
+field_name: field_aculta_events_prop_rev
+entity_type: message
+bundle: aculta_msg_events_contrib_notice
+label: 'Revisão da proposta'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\EventSubscriber;
 
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
+use Drupal\aculta_messenger\Integration\Wiki\EditorialReviewNoticeInterface;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_wiki\Event\WikiEntryReviewRequestedEvent;
 use Drupal\aculta_wiki\Event\WikiProposalOutcomeRecordedEvent;
+use Drupal\aculta_contributions\Entity\Contribution;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\user\UserInterface;
@@ -23,6 +25,7 @@ final class WikiEditorialNoticePublisher implements EventSubscriberInterface {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DomainPurposeManager $domainPurposes,
     private readonly MessengerNoticePublisherInterface $publisher,
+    private readonly EditorialReviewNoticeInterface $editorialReviewNotices,
     private readonly TimeInterface $time,
     private readonly LoggerInterface $logger,
   ) {}
@@ -76,16 +79,42 @@ final class WikiEditorialNoticePublisher implements EventSubscriberInterface {
         'wiki.review_requested:' . $event->entryUuid . ':' . $event->entryRevisionId . ':' . $editor->id(),
       );
     }
+    // The administrative mailbox channel belongs to Messenger and is queued
+    // only after the same revision revalidation above.
+    $this->editorialReviewNotices->notifyReview($event->entryUuid, $event->entryRevisionId);
   }
 
   /**
    * Publishes a private outcome only to its active, authorized proposal author. */
   public function proposalOutcome(WikiProposalOutcomeRecordedEvent $event): void {
-    $proposalStorage = $this->entityTypeManager->getStorage('aculta_wiki_proposal');
-    $proposal = $proposalStorage->loadRevision($event->proposalRevisionId);
+    $contribution = $this->entityTypeManager->getStorage('aculta_contribution')
+      ->loadRevision($event->proposalRevisionId);
     $recipient = $this->entityTypeManager->getStorage('user')->load($event->recipientUid);
-    if (!$proposal || !$recipient instanceof UserInterface || !$recipient->isActive()
-      || $proposal->uuid() !== $event->proposalUuid
+    if (!$recipient instanceof UserInterface || !$recipient->isActive()) {
+      return;
+    }
+    if ($contribution instanceof Contribution
+      && $contribution->get('source')->value === 'wiki'
+      && $contribution->uuid() === $event->proposalUuid
+      && (int) $contribution->getRevisionId() === $event->proposalRevisionId
+      && (int) $contribution->getOwnerId() === $event->recipientUid
+      && $contribution->get('state')->value === $event->outcome
+      && $contribution->access('view', $recipient, TRUE)->isAllowed()) {
+      $this->publish(
+        'wiki.proposal_outcome',
+        'aculta_contribution',
+        $event->proposalUuid,
+        (string) $event->proposalRevisionId,
+        $event->recipientUid,
+        'proposal_outcome',
+        'wiki.proposal_outcome:' . $event->proposalUuid . ':' . $event->proposalRevisionId . ':' . $event->recipientUid,
+      );
+      return;
+    }
+
+    $proposal = $this->entityTypeManager->getStorage('aculta_wiki_proposal')
+      ->loadRevision($event->proposalRevisionId);
+    if (!$proposal || $proposal->uuid() !== $event->proposalUuid
       || (int) $proposal->getRevisionId() !== $event->proposalRevisionId
       || (int) $proposal->getOwnerId() !== $event->recipientUid
       || $proposal->get('state')->value !== $event->outcome

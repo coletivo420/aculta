@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\aculta_lms\LearningDashboardManager;
-use Drupal\aculta_portal\AccountCoursesManager;
+use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
+use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
+use Drupal\aculta_lms\Learning\CourseProgress;
+use Drupal\aculta_learning_contracts\Learning\AccountCourseSummary;
+use Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -15,12 +19,6 @@ use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\group\PermissionScopeInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
-use Drupal\lms\Entity\CourseStatus;
-use Drupal\lms\Entity\CourseStatusInterface;
-use Drupal\lms\Entity\Lesson;
-use Drupal\lms\Entity\LessonStatus;
-use Drupal\lms\Entity\LessonStatusInterface;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -28,7 +26,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Tests student progress against real Group and LMS entities.
+ * Tests student progress against Group and ACULTA-owned learning entities.
  */
 #[TestGroup('aculta_lms')]
 #[RunTestsInSeparateProcesses]
@@ -40,8 +38,9 @@ final class LearningDashboardKernelTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
+    'key',
     'system', 'domain', 'user', 'file', 'field', 'filter', 'image', 'media', 'options', 'entity_print',
-    'entity_usage', 'aculta_image', 'flexible_permissions', 'group', 'views', 'text', 'lms', 'aculta_lms',
+    'entity_usage', 'aculta_image', 'aculta_file_uploader', 'flexible_permissions', 'group', 'views', 'text', 'lms', 'aculta_lms',
   ];
 
   /**
@@ -66,34 +65,42 @@ final class LearningDashboardKernelTest extends KernelTestBase {
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
-    $this->installEntitySchema('lms_lesson');
-    $this->installEntitySchema('lms_course_status');
-    $this->installEntitySchema('lms_lesson_status');
+    $this->installEntitySchema('aculta_lms_lesson');
+    $this->installEntitySchema('aculta_lms_progress');
     $this->installEntitySchema('aculta_lms_certificate');
   }
 
   /**
    * Verifies progress follows course access and published lessons.
    */
-  public function testStudentDashboardCountsAccessibleLessonsOnly(): void {
+  public function testStudentDashboardUsesOwnedLessonAndProgressEntities(): void {
     $owner = User::create(['name' => 'dashboard-owner', 'status' => 1]);
     $owner->save();
     $student = User::create(['name' => 'dashboard-student', 'status' => 1]);
     $student->save();
 
-    $visible_lesson = Lesson::create(['name' => 'Aula visível', 'status' => 1, 'uid' => $owner->id()]);
-    $visible_lesson->save();
-    $restricted_lesson = Lesson::create(['name' => 'Aula restrita', 'status' => 1, 'uid' => $owner->id()]);
-    $restricted_lesson->save();
     $course = Group::create([
       'type' => 'lms_course',
       'label' => 'Curso do painel',
       'uid' => $owner->id(),
       'status' => 1,
     ]);
-    $course->get(CourseInterface::LESSONS)->appendItem(['target_id' => $visible_lesson->id()]);
-    $course->get(CourseInterface::LESSONS)->appendItem(['target_id' => $restricted_lesson->id()]);
     $course->save();
+    $lesson_storage = $this->container->get('entity_type.manager')->getStorage('aculta_lms_lesson');
+    $visible_lesson = $lesson_storage->create([
+      'course_id' => $course->id(),
+      'title' => 'Aula visível',
+      'published' => TRUE,
+      'weight' => 0,
+    ]);
+    $visible_lesson->save();
+    $restricted_lesson = $lesson_storage->create([
+      'course_id' => $course->id(),
+      'title' => 'Aula restrita',
+      'published' => FALSE,
+      'weight' => 1,
+    ]);
+    $restricted_lesson->save();
     GroupRole::create([
       'id' => 'lms_course-dashboard_student',
       'label' => 'Estudante de teste',
@@ -104,34 +111,23 @@ final class LearningDashboardKernelTest extends KernelTestBase {
     $course->addMember($student, ['group_roles' => ['lms_course-dashboard_student']]);
     self::assertCount(1, $this->container->get('group.membership_loader')->loadByUser($student));
     self::assertTrue($course->access('view', $student));
-    self::assertTrue($course->takeAccess($student)->isAllowed());
-    self::assertFalse($visible_lesson->access('view', $student), 'Generic lesson view access does not represent access through the enrolled course.');
+    self::assertTrue($course->hasPermission('take course', $student));
 
-    $restricted_lesson->setUnpublished();
-    $restricted_lesson->save();
-
-    $course_status = CourseStatus::create([
-      CourseStatusInterface::COURSE_FIELD => $course->id(),
+    $progress = $this->container->get('entity_type.manager')->getStorage('aculta_lms_progress')->create([
+      'course_id' => $course->id(),
       'uid' => $student->id(),
-      'status' => CourseStatusInterface::STATUS_NEEDS_EVALUATION,
-      'finished' => 0,
-      'current' => TRUE,
+      'status' => CourseProgress::STATUS_NEEDS_EVALUATION,
+      'finished' => FALSE,
+      'score' => NULL,
     ]);
-    $course_status->save();
-    foreach ([$visible_lesson, $restricted_lesson] as $lesson) {
-      LessonStatus::create([
-        'course_status' => $course_status->id(),
-        LessonStatusInterface::LESSON_FIELD => $lesson->id(),
-        'finished' => 1_760_000_000,
-      ])->save();
-    }
+    $progress->save();
     $other_student = User::create(['name' => 'dashboard-other-student', 'status' => 1]);
     $other_student->save();
     $certificate_storage = $this->container->get('entity_type.manager')->getStorage('aculta_lms_certificate');
     $own_certificate = $certificate_storage->create([
       'uid' => $student->id(),
       'course_id' => $course->id(),
-      'course_status_uuid' => $course_status->uuid(),
+      'course_status_uuid' => $progress->uuid(),
       'certificate_name' => 'dashboard-student',
       'course_title' => 'Curso do painel',
       'course_hours' => 3,
@@ -171,26 +167,22 @@ final class LearningDashboardKernelTest extends KernelTestBase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     );
-    $account_courses = new AccountCoursesManager(
-      $this->container->get('lms.training_manager'),
-      $domain_purpose,
-      $this->container->get('group.membership_loader'),
-    );
     $manager = new LearningDashboardManager(
-      $account_courses,
+      $this->container->get(AccountCoursesReaderInterface::class),
       $this->container->get('aculta_lms.course_certificate_manager'),
       $this->container->get('entity_type.manager'),
-      $this->container->get('lms.training_manager'),
+      $this->container->get(CourseProgressReaderInterface::class),
+      $this->container->get(CourseLessonReaderInterface::class),
     );
 
     $dashboard = $manager->studentDashboard($student);
 
     self::assertCount(1, $dashboard['courses']);
-    self::assertSame(CourseStatusInterface::STATUS_NEEDS_EVALUATION, $dashboard['courses'][0]['status']);
+    self::assertSame(AccountCourseSummary::STATUS_AWAITING_EVALUATION, $dashboard['courses'][0]['status']);
     self::assertTrue($dashboard['courses'][0]['pending_evaluation']);
     self::assertSame(1, $dashboard['courses'][0]['total_lessons']);
-    self::assertSame(1, $dashboard['courses'][0]['completed_lessons']);
-    self::assertSame(100, $dashboard['courses'][0]['progress_percent']);
+    self::assertSame(0, $dashboard['courses'][0]['completed_lessons']);
+    self::assertSame(0, $dashboard['courses'][0]['progress_percent']);
     self::assertCount(1, $dashboard['certificates']);
     $visible_certificates = array_values($dashboard['certificates']);
     self::assertSame((string) $student->id(), (string) $visible_certificates[0]->get('uid')->value);
@@ -198,7 +190,7 @@ final class LearningDashboardKernelTest extends KernelTestBase {
     self::assertContains('aculta_lms_certificate:' . $own_certificate->id(), $dashboard['cache']->getCacheTags());
     self::assertContains('user', $dashboard['cache']->getCacheContexts());
     self::assertContains('user.group_permissions', $dashboard['cache']->getCacheContexts());
-    self::assertContains('lms_lesson:' . $restricted_lesson->id(), $dashboard['cache']->getCacheTags());
+    self::assertContains('aculta_lms_lesson:' . $visible_lesson->id(), $dashboard['cache']->getCacheTags());
   }
 
 }

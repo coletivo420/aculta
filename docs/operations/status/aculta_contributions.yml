@@ -1,0 +1,17 @@
+# Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
+version: 0.1.0-dev.3
+state: Dev
+progress_note: >-
+  Núcleo inicial privado e revisionável implementado; registry/state machine
+  Unit 3/19 e Kernel 12/138 (15/157 combinados) PASS em `aculta_simpletest`;
+  PHP lint e PHPCS PASS. O núcleo cobre revisão do autor após pedido de ajuste,
+  retirada, contenção entre conexões MariaDB, contexto privado e auditoria de
+  campos aceitos.
+  Adapter Wiki registrado com validação de purpose/elegibilidade e aplicação
+  seletiva delegada ao workflow existente. Update Wiki 10003 em lote preserva
+  IDs/UUIDs/revision IDs e registra reconciliação. Submissão Wiki migrou para o
+  lifecycle compartilhado após gate de checkpoint completo; fila, workspace,
+  decisão, retirada, status e publisher leem os dois stores. Kernel focal de
+  corte/status 2/264 PASS; lifecycle 10/109 PASS; PHPCS Drupal Core PASS. Runtime
+  não atualizado; homologação e adapters Events pendentes.
+next_phase: 'Migrar os consumidores Wiki no mesmo corte lógico e então homologar update reconciliado; depois adapters Events ([roadmap](web/modules/custom/aculta_portal/modules/aculta_contributions/docs/ROADMAP.md))'

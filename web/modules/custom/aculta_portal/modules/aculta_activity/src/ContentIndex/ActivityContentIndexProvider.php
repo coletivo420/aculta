@@ -9,6 +9,7 @@ use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
 use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexOwnerResolver;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
+use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\node\NodeInterface;
 
@@ -28,7 +29,7 @@ final class ActivityContentIndexProvider implements ContentIndexProviderInterfac
    * {@inheritdoc}
    */
   public function getProjectionVersion(): int {
-    return 2;
+    return 3;
   }
 
   /**
@@ -65,6 +66,19 @@ final class ActivityContentIndexProvider implements ContentIndexProviderInterfac
       $domainId = (string) $entity->get('field_domain_source')->target_id;
     }
 
+    $relations = [];
+    // Activity's editorial image is an explicit Media reference. Keep only the
+    // typed identity edge; Media access is revalidated by Index consumers.
+    if ($entity->hasField('field_media_image') && !$entity->get('field_media_image')->isEmpty()) {
+      foreach ($entity->get('field_media_image')->getValue() as $item) {
+        $targetId = is_array($item) ? ($item['target_id'] ?? NULL) : NULL;
+        if ($targetId !== NULL && $targetId !== '') {
+          $key = 'editorial_image:media:' . (string) $targetId;
+          $relations[$key] = new ContentIndexRelation('editorial_image', 'media', (string) $targetId);
+        }
+      }
+    }
+
     return new ContentIndexProjection(
       'node',
       (string) $entity->id(),
@@ -76,6 +90,7 @@ final class ActivityContentIndexProvider implements ContentIndexProviderInterfac
       $entity->isPublished(),
       max(0, (int) $entity->getCreatedTime()),
       max(0, (int) $entity->getChangedTime()),
+      relations: array_values($relations),
       ownerUid: ContentIndexOwnerResolver::resolve($entity),
     );
   }

@@ -6,11 +6,36 @@ namespace Drupal\aculta_magazine\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\user\Entity\Role;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\TypedConfigManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configures the role groups that receive ACULTA Magazine capabilities. */
 final class EditorialCapabilitiesForm extends ConfigFormBase {
+
+  /**
+   * Constructs the editorial capabilities form.
+   */
+  public function __construct(
+    ConfigFactoryInterface $configFactory,
+    TypedConfigManagerInterface $typedConfigManager,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+  ) {
+    parent::__construct($configFactory, $typedConfigManager);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('config.typed'),
+      $container->get('entity_type.manager'),
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -32,7 +57,7 @@ final class EditorialCapabilitiesForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('aculta_magazine.settings');
     $options = [];
-    foreach (Role::loadMultiple() as $role) {
+    foreach ($this->entityTypeManager->getStorage('user_role')->loadMultiple() as $role) {
       if ($role->id() !== 'anonymous') {
         $options[$role->id()] = $role->label();
       }

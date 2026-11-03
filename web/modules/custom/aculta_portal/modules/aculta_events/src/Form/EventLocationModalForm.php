@@ -6,6 +6,8 @@ namespace Drupal\aculta_events\Form;
 
 use Drupal\aculta_events\Access\EventPermissionPolicy;
 use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\aculta_events\Adapter\LocationContributionAdapter;
+use Drupal\aculta_contributions\Service\ContributionLifecycle;
 use Drupal\aculta_events\Plugin\Field\FieldWidget\EventLocationModalWidget;
 use Drupal\aculta_portal\Account\AccountAddressForm;
 use Drupal\aculta_portal\Account\StreetNumberField;
@@ -19,6 +21,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Modal AJAX com duas etapas para buscar ou cadastrar locais reutilizáveis.
@@ -30,7 +33,23 @@ final class EventLocationModalForm extends FormBase {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'aculta_events.permission_policy')]
     private readonly EventPermissionPolicy $permissionPolicy,
+    #[Autowire(service: 'aculta_contributions.lifecycle')]
+    private readonly ?ContributionLifecycle $contributions = NULL,
+    #[Autowire(service: 'aculta_events.location_contribution_adapter')]
+    private readonly ?LocationContributionAdapter $locationAdapter = NULL,
   ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('entity_type.manager'),
+      $container->get('aculta_events.permission_policy'),
+      $container->has('aculta_contributions.lifecycle') ? $container->get('aculta_contributions.lifecycle') : NULL,
+      $container->has('aculta_events.location_contribution_adapter') ? $container->get('aculta_events.location_contribution_adapter') : NULL,
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -274,6 +293,28 @@ final class EventLocationModalForm extends FormBase {
 
     AccountAddressForm::apply($form['field_endereco'][0]);
 
+    if (!$this->currentUser()->hasPermission('administer aculta events')) {
+      $form['proposal_notice'] = [
+        '#type' => 'item',
+        '#markup' => '<p>' . $this->t('O Local só será criado como rascunho após aprovação. A proposta não será vinculada ao Evento até que o Local esteja disponível.') . '</p>',
+      ];
+      $form['contribution_rationale'] = [
+        '#type' => 'textarea',
+        '#title' => $this->t('Por que este Local deve ser cadastrado?'),
+        '#description' => $this->t('Endereço e justificativa ficam privados para a equipe revisora.'),
+        '#required' => TRUE,
+        '#maxlength' => 5000,
+        '#default_value' => $form_state->getValue('contribution_rationale') ?? '',
+      ];
+      if (!$form_state->has('location_contribution_token')) {
+        $form_state->set('location_contribution_token', bin2hex(random_bytes(32)));
+      }
+      $form['contribution_submission_token'] = [
+        '#type' => 'value',
+        '#value' => $form_state->get('location_contribution_token'),
+      ];
+    }
+
     $form['field_precisao'] = [
       '#type' => 'select',
       '#title' => $this->t('Precisão pública do endereço'),
@@ -374,9 +415,13 @@ final class EventLocationModalForm extends FormBase {
 
       $addressValue = $form_state->getValue(['field_endereco', 0]);
       if (is_array($addressValue)) {
-        if (isset($addressValue['country_code']) && $addressValue['country_code'] !== '' && $addressValue['country_code'] !== 'BR') {
+        if (($addressValue['country_code'] ?? '') !== 'BR') {
           $form_state->setErrorByName('field_endereco][0][country_code', (string) $this->t('Apenas endereços no Brasil (BR) são suportados.'));
         }
+      }
+      if (!$this->currentUser()->hasPermission('administer aculta events')
+        && trim((string) $form_state->getValue('contribution_rationale')) === '') {
+        $form_state->setErrorByName('contribution_rationale', (string) $this->t('Informe por que este Local deve ser cadastrado.'));
       }
     }
   }
@@ -421,6 +466,40 @@ final class EventLocationModalForm extends FormBase {
 
     [$number, $sn] = StreetNumberField::values($form['field_endereco'], $form_state);
     $fullStreet = StreetNumberField::join($logradouro, $number, $sn);
+
+    if (!$this->currentUser()->hasPermission('administer aculta events')) {
+      if ($this->contributions === NULL || $this->locationAdapter === NULL) {
+        throw new \LogicException('O serviço de propostas de Locais não está disponível.');
+      }
+      $payload = $this->locationAdapter->validatePayload('location_create', [
+        'title' => $nome,
+        'field_endereco' => [[
+          'country_code' => 'BR',
+          'address_line1' => $fullStreet,
+          'address_line2' => $complemento,
+          'dependent_locality' => $bairro,
+          'locality' => $cidade,
+          'administrative_area' => $uf,
+          'postal_code' => $cep,
+        ],
+        ],
+        'field_precisao' => $precisao,
+      ]);
+      $this->contributions->submit(
+        'events_location',
+        'location_create',
+        NULL,
+        (string) $this->t('Criação do Local: @name', ['@name' => $nome]),
+        (string) $form_state->getValue('contribution_rationale'),
+        $payload,
+        (string) $form_state->getValue('contribution_submission_token'),
+      );
+      $this->messenger()->addStatus($this->t('Sua proposta foi enviada para revisão. Nenhum Local foi criado ou vinculado ao Evento.'));
+      $form_state->set('proposal_submitted', TRUE);
+      $form_state->set('mode', 'search');
+      $form_state->setRebuild(TRUE);
+      return;
+    }
 
     $status = $this->permissionPolicy->canPublishLocation($this->currentUser()) ? 'publicado' : 'rascunho';
 
@@ -487,6 +566,9 @@ final class EventLocationModalForm extends FormBase {
    */
   public function ajaxCreateLocation(array &$form, FormStateInterface $form_state): AjaxResponse|array {
     if ($form_state->hasAnyErrors()) {
+      return $form;
+    }
+    if ($form_state->get('proposal_submitted')) {
       return $form;
     }
     $locationId = (int) $form_state->get('selected_location_id');

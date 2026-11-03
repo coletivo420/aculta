@@ -135,27 +135,41 @@ final class LocationCatalogueKernelTest extends KernelTestBase {
   }
 
   /**
-   * Owner-only locations vary cache by account and are absent for others.
+   * Private locations are isolated between owners and vary cache by account.
    */
   public function testOwnerOnlyLocationAccessBubblesUserCacheContext(): void {
     // Keep the first account from receiving Drupal's implicit UID 1 access.
     $this->createUser();
     $owner = $this->createUser();
+    $otherOwner = $this->createUser();
     $public = $this->local('Local público', 'exato');
-    $private = $this->local('Local privado do organizador', 'exato');
-    $private->set('field_status', 'privado');
-    $private->set('field_organizador', $owner->id());
-    $private->save();
+    $ownerPrivate = $this->local('Local privado do organizador A', 'exato');
+    $ownerPrivate->set('field_status', 'privado');
+    $ownerPrivate->set('field_organizador', $owner->id());
+    $ownerPrivate->save();
+    $otherOwnerPrivate = $this->local('Local privado do organizador B', 'exato');
+    $otherOwnerPrivate->set('field_status', 'privado');
+    $otherOwnerPrivate->set('field_organizador', $otherOwner->id());
+    $otherOwnerPrivate->save();
 
     $catalogue = new LocationCatalogue($this->container->get('entity_type.manager'));
     $ownerResult = $catalogue->buscaPaginada(NULL, NULL, 0, 10, $owner);
+    $otherOwnerResult = $catalogue->buscaPaginada(NULL, NULL, 0, 10, $otherOwner);
     $anonymous = new AnonymousUserSession();
     $anonymousResult = $catalogue->buscaPaginada(NULL, NULL, 0, 10, $anonymous);
 
     $this->assertSame(2, $ownerResult['total']);
+    $this->assertSame(2, $otherOwnerResult['total']);
     $this->assertSame(1, $anonymousResult['total']);
+    $ownerIds = array_map(static fn (array $item): string => (string) $item['local']->id(), $ownerResult['items']);
+    $otherOwnerIds = array_map(static fn (array $item): string => (string) $item['local']->id(), $otherOwnerResult['items']);
     $this->assertSame((string) $public->id(), (string) $anonymousResult['items'][0]['local']->id());
+    $this->assertContains((string) $ownerPrivate->id(), $ownerIds);
+    $this->assertNotContains((string) $otherOwnerPrivate->id(), $ownerIds);
+    $this->assertContains((string) $otherOwnerPrivate->id(), $otherOwnerIds);
+    $this->assertNotContains((string) $ownerPrivate->id(), $otherOwnerIds);
     $this->assertContains('user', $ownerResult['cache_metadata']->getCacheContexts());
+    $this->assertContains('user', $otherOwnerResult['cache_metadata']->getCacheContexts());
     $this->assertContains('user', $anonymousResult['cache_metadata']->getCacheContexts());
   }
 

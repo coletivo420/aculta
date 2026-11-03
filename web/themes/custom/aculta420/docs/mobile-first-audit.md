@@ -5028,3 +5028,186 @@ histórica daquele viewport. Evidência em
 `/home/piradopirata/aculta-suite-out/purpose-headings-recheck-768d514ef-20261031/`.
 O teste foi somente GET e não injeta CSS; cobre apenas raízes públicas, não a
 hierarquia das páginas internas ou leitor de tela. Não aprova THEME-MF3.
+
+### OCS-F3 — mensagens de status no Studio (2026-11-01)
+
+`studio.css` recebeu a família de feedback do OpenCulturas Next: borda de 2px
+na cor do estado, sombra elevada, respiro de 1rem/2rem e link sublinhado em
+negrito aplicados ao alerta Bootstrap já emitido pelo tema base. Nenhum
+template, SDC, JS, papel ARIA ou texto do owner foi alterado. O seletor
+reutiliza as raízes de fidelidade existentes e exige um ancestral
+`.aculta-container:has(.studio)`, `.aculta-profile-editor`,
+`.we-sativa__workspace` ou os purposes `ganjalab`/`culturas`.
+
+A fixture `tests/browser/aculta-theme-mobile-first/studio-status-messages.py`
+carrega Bootstrap, Bootstrap Icons, `alerts.css` do tema base e as folhas do
+ACULTA420, e reproduz quatro mensagens (status, aviso, erro, informação) mais um
+container de controle sem `.studio`. No Firefox ESR visível (`DISPLAY=:0`)
+passou **112/112 checks**: 320/360/390/599/600/768/1024/1280/1440px em
+claro/escuro, zoom real 200%/400% via `xdotool`, zero overflow documental,
+borda de 2px, conteúdo em `flex-wrap`, cores de estado idênticas aos tokens
+semânticos, contraste de link 12,4:1 (claro) e 14,5:1 (escuro), e o container
+de controle sem sombra nem borda de 2px — o escopo não vaza.
+
+Limites: é fixture de folha e markup; não abre Drupal, não valida ACL, cache
+por usuário, AJAX/no-JS, leitor de tela nem submissão de formulário. Decisão do
+responsável (2026-11-01): Montserrat está **excluída** desta família; a região
+`aculta-highlighted` não herda os tokens `--aculta-studio-fidelity-*`, a caixa
+usa `--aculta-shadow-raised` e a fonte do documento, e a exclusão está aceita.
+Evidência em
+`/home/piradopirata/aculta-suite-out/studio-status-messages-20261101/`.
+Stylelint e ESLint do tema passaram (exit 0). THEME-MF3 e OCS-F11 continuam
+pendentes.
+
+### OCS-F3 — validação servida no Runtime (2026-11-01)
+
+Com autorização operacional, o checkout servido `/home/piradopirata/projetos/aculta`
+foi movido de `882ad66cd` para `6cbcbdf52` (HEAD de `origin/dev` na janela). O
+caminho não rastreado `tests/src/Kernel/Routing/` foi preservado e não conflita
+com o novo head. Gatilho de banco: `updatedb:status` retornou "No database
+updates required." e `config:status` retornou "No differences between DB and
+sync directory."; portanto não houve snapshot obrigatório, `updatedb` nem
+`config:import`. `drush cr` retornou "Cache rebuild complete.". Smoke HTTP:
+main 200, loja 200 e conta 302 (redirecionamento de entrada esperado).
+
+Antes da sessão autenticada foi salvo snapshot `drush sql:dump`, modo 0600,
+SHA-256 `38400a64e4e7c68e6571f785c0064c30a9bcc0b5c78a293c46d393f897bf4c9d`, em
+`/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-ocs-f3-served-20261101.sql`.
+A sessão usou ULI da conta sintética `aculta_visual_admin` (UID 257), sem
+impressão do link.
+
+A folha servida em `https://aculta.toca.net.br/themes/custom/aculta420/css/components/studio.css`
+contém o bloco "OCS-F3 — feedback de estado no Studio". A captura autenticada de
+`/marley` (pós-login ULI) mostrou a mensagem real "Você usou um link de login
+único" com o estilo novo: borda de 2px na cor `rgb(104, 148, 39)`, `display:
+flex`, `flex-wrap: wrap`, `padding-top: 16px`, `padding-right: 32px`, sombra e
+um `.studio` no container; documento e mensagem mediram 320/600/768px sem
+overflow. Nenhum elemento dentro do alerta excedeu o viewport.
+
+`tests/browser/aculta-smoke/page-matrix.py` em `/marley` e `/conta` passou
+**30/36** combinações; os seis avisos são a rolagem interna já conhecida da
+tabela de publicações de Marley a 599/600/768px (THEAD/TBODY/TD/TR com
+`right=616` em viewport 600, sem alargar o documento), não o alerta. Artefatos
+em `/home/piradopirata/aculta-suite-out/ocs-f3-served-capture-20261101/`.
+Ainda pendentes: outros estados/rotas Studio, envio de formulário, AJAX/no-JS,
+cache por usuário, leitor de tela e WCAG integral. THEME-MF3/OCS-F11 não são
+aprovados por esta rodada.
+
+#### OCS-F3 — captura servida ampliada às áreas Studio (2026-11-01)
+
+Com a sessão ULI de `aculta_visual_admin` (UID 257) iniciada em `conta`, o
+`page-matrix.py` abriu as oito áreas em 320/390/768/1440px, modo claro:
+`conta:/marley`, `conta:/conta`, `conta:/perfil`, `conta:/salvos`,
+`cursos:/ganjalab`, `wiki420:/wesativa`, `loja:/greenstash` e
+`eventos:/culturas`. **Todas responderam HTTP 200**; a sessão cruzou os
+subdomínios sem novo login. O documento não excedeu a viewport em nenhuma
+captura.
+
+Avisos de `horizontalOverflow` restritos à rolagem interna de tabela:
+`conta:/marley` a 768px e `eventos:/culturas` a 320/390px (o documento mediu
+exatamente a viewport). Não houve overflow do alerta nem alargamento da página.
+Evidências em
+`/home/piradopirata/aculta-suite-out/ocs-f3-served-broad-20261101/` e
+`/home/piradopirata/aculta-suite-out/ocs-f3-served-broad-20261101b/`.
+Isso comprova disponibilidade e ausência de regressão responsiva básica com a
+folha servida; não substitui a auditoria visual pareada por experiência, ACL
+A/B, estados preenchidos, AJAX/no-JS e WCAG.
+
+Modo escuro (2026-11-01): as mesmas oito áreas em 320/390/768/1440px
+responderam **32/32 HTTP 200**; os três avisos de overflow são os mesmos da
+rolagem interna de tabela (Marley 768px, Culturas 320/390px). Evidência em
+`/home/piradopirata/aculta-suite-out/ocs-f3-served-broad-dark-20261101/`.
+
+#### THEME-MF2 — ícone do alerta abria vazio vertical no mobile (2026-11-01)
+
+Defeito reportado no ACULTA Studio Marley mobile. Causa: o template de alerta
+do tema base emite `<svg>` sem `width`/`height`; a regra contrib
+`.alert svg { max-width: 2rem; }` limita só a largura, e o ícone mantém 150px de
+altura intrínseca. Em 320px o alerta de status abria um bloco alto e vazio antes
+do texto, empurrando o conteúdo.
+
+Correção em `css/drupal-bootstrap.css`: `.alert svg { width: auto; height: auto;
+max-width: 2rem; max-height: 2rem; }`. O markup, o papel ARIA, o texto e a ação
+de fechar não mudam; a regra vale para todo alerta do tema, não só Studio.
+
+Verificação servida com ULI (UID 257) em `conta:/marley`, após publicar
+`cc02e433a`, atualizar o checkout servido e `drush cr`: ícone **32×32** (antes
+mantinha 150px), altura do alerta **175px a 320px** e **111px a 600/768px**,
+borda de 2px em `rgb(104, 148, 39)`, documento igual à viewport. Captura 320px
+revisada; o único aviso do `page-matrix` continua sendo a rolagem interna da
+tabela a 768px. Evidências em
+`/home/piradopirata/aculta-suite-out/ocs-f3-marley-iconfix-served-20261101/`.
+A fixture `studio-status-messages.py` ganhou o gate de regressão do ícone e
+passou **130/130**. Switch de head: `6cbcbdf52` → `cc02e433a`; `updatedb:status`
+e `config:status` sem pendências; `drush cr` PASS.
+
+Probe de teclado servido em `/marley`, `/conta` e `/perfil`
+(`tests/browser/aculta-studio/keyboard-focus.py`, conta `teste.comum`): **648
+observações, 621 alvos focáveis, 621 com `:focus-visible` e 621 com contorno**,
+27 retornos ao `body` e 27 capturas. Evidência em
+`/home/piradopirata/aculta-suite-out/ocs-f3-keyboard-served-20261101/`.
+
+#### ADR-040 — barra de rolagem horizontal em tabelas (2026-11-01)
+
+Decisão do responsável implementada em todo o tema: tabela que excede o
+contêiner rola na horizontal com barra visível, confinada ao wrapper; a página
+não rola. A regra global cobre `.table-responsive`,
+`.webform-multiple-table-responsive`, `.studio__listing-wrap`,
+`[data-aculta-studio="listing-wrap"]` e `[data-portal-ui="studio-listing-wrap"]`.
+A barra usa `scrollbar-width/color` no Firefox e `::-webkit-scrollbar` de
+`0.75rem` nos demais motores, com tokens semânticos e foco por teclado.
+`table-layout: fixed` foi removido das listagens do Studio para não esconder o
+overflow.
+
+Verificação servida em `bc1fac9b0`, após `drush cr`: Marley a 768px
+(`clientWidth=432`, `scrollWidth=597`) e Culturas a 320px
+(`clientWidth=280`, `scrollWidth=705`) expõem `overflow-x: auto`, cores de barra
+do tema, `tabindex=0` e `aria-label="Tabela rolável"`, com tabela em layout
+automático e documento igual à viewport. Evidências em
+`/home/piradopirata/aculta-suite-out/adr040-scroll-*`. Stylelint, ESLint e
+gates estáticos do tema passaram.
+
+A barra foi fotografada com a tabela centralizada: Marley a 320px
+(`clientWidth=288`, `scrollWidth=551`) e Culturas a 320px (`clientWidth=280`,
+`scrollWidth=705`), com a barra visível ao pé da tabela. Zoom real no Firefox:
+200% sem overflow; a sequência de `Ctrl+` chegou a ~500% (256px CSS), abaixo do
+alvo de reflow de 320px, onde o documento mediu 275px. Em 320px CSS o documento
+igualou a viewport e o overflow ficou confinado ao wrapper. Evidências em
+`/home/piradopirata/aculta-suite-out/adr040-table-shot-*` e
+`.../adr040-zoom-marley-20261101/`.
+
+Sem JavaScript (2026-11-01): com `javascript.enabled=false` e ULI UID 257, as
+oito áreas Studio carregaram a 320px com documento igual à viewport e um único
+`main`. As tabelas de Marley Publicações (288/551) e Culturas (280/705) mantêm
+`overflow-x: auto` e a barra horizontal só com CSS; o `tabindex` do wrapper só
+existe com JS (`studio-table-a11y.js`), então o foco de teclado no wrapper é uma
+limitação sem JavaScript.
+
+## THEME-MF3 — fechamento do gate (2026-11-01)
+
+Execução no Runtime servido `928acfa4f`, Firefox ESR visível, após `drush cr` e
+gatilho de banco sem pendências. Harnesses oficiais:
+
+| Gate | Resultado |
+|---|---|
+| `purpose-shell-color-modes.py` (10 purposes × 9 larguras × claro/escuro + reduced motion) | **576/576 PASS** |
+| `purpose-shell-nojs.py` (10 purposes × 7 larguras) | **210/210 PASS** |
+| `purpose-shell-keyboard.py` (10 purposes × 4 larguras, Tab/Shift+Tab) | **609/609 PASS**, 47 limites de sequência |
+| `purpose-browser-zoom.py` (10 purposes × 200%/400% reais) | **30/30 PASS** |
+| `purpose-headings.py` (10 purposes × 6 larguras) | **120/120 PASS** |
+| PHPUnit Unit do tema | **47 testes / 346 assertions, OK** |
+| PHPUnit Kernel do tema (`aculta_simpletest`) | **10 testes / 41 assertions, OK** |
+
+Total transversal: **1.545 checks de navegador PASS** + 57 testes PHPUnit do
+tema. Evidências em
+`/home/piradopirata/aculta-suite-out/mf3-{color-modes,nojs,keyboard,zoom,headings}-20261101/`.
+
+Correção encontrada pelo gate: o teste Kernel `ProfileSdcRenderKernelTest`
+esperava um nome diferente do `display_name` que ele mesmo passava; a asserção
+foi corrigida para o texto renderizado pelo template (`Apelido não informado`).
+
+**Ressalvas:** leitor de tela não está disponível neste ambiente (DEFERRED);
+RTL não é suportado pelo produto em pt-BR (não aplicável); a matriz cobre as dez
+raízes e as rotas internas do Studio, não todas as páginas internas de todos os
+purposes. Com essas ressalvas registradas, o responsável aprovou o gate em
+2026-11-01.

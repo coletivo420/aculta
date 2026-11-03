@@ -31,7 +31,7 @@ não requer uma aplicação Storybook separada.
 ## Inventário estático atual — 2026-10-30
 
 Na árvore atual há **55 arquivos `.component.yml`, 55 Twig, 45 CSS,
-3 JS e 100 stories** em `components/`. A contagem inclui componentes experimentais e
+3 JS e 103 stories** em `components/`. A contagem inclui componentes experimentais e
 candidatos abaixo; não demonstra validação do schema no Runtime, renderização na
 UI Patterns Library nem aprovação visual.
 
@@ -520,6 +520,12 @@ criação, que causava overflow a 320px/400%. Capturas e `report.json`:
 É evidência de CSS candidata em fixture; grants por loja, renderização Runtime,
 dados reais e submissão do formulário continuam pendentes.
 
+`content/shipping-summary`, consumido pela gaveta do carrinho e pelo painel do
+carrinho, recebeu três stories declarativas (frete ainda não calculado, frete
+calculado e frete indisponível) em 2026-11-01. Elas completam o contrato do
+catálogo, que exigia ao menos uma story por SDC, e permanecem estáticas: os
+valores e mensagens continuam vindo do Commerce; a story não calcula frete.
+
 ## THEME-MF2 — `patterns/content-grid`
 
 O SDC experimental tem consumidores de duas colunas em Marley, LMS e Wiki; os
@@ -770,3 +776,106 @@ O SDC `patterns/card`, variante `studio_fidelity`, é também o padrão visual p
 cards de cursos e certificados emitidos pelo compositor Ganjalab. O compositor
 mantém dados, links e acesso sob os contratos LMS; a variante altera somente a
 apresentação.
+
+### OCS-F3 — feedback de estado no Studio (2026-11-01)
+
+As mensagens de status do Drupal dentro do Studio passam a usar a caixa de
+mensagem do OpenCulturas Next (`opcult/sass/base/_messages.scss`, tarball
+SHA-256 `2cc0a34293e3cd7ccff633d07d61844afc1cec752d506a955c49a319fcbbb406`)
+sem criar SDC, template ou JS. O markup continua sendo o alerta Bootstrap do
+tema base (papel ARIA, texto do owner, links e botão de fechar preservados);
+`studio.css` aplica somente geometria — borda de 2px na cor do estado, sombra
+elevada, respiro de 1rem/2rem, conteúdo flexível e títulos de 1rem/600. O
+escopo reutiliza as raízes de fidelidade já existentes (`.studio`,
+`.aculta-profile-editor`, `.we-sativa__workspace`, `body.path-ganjalab` e
+`body.path-culturas`) e não alcança outros purposes.
+
+Decisão do responsável (2026-11-01): a fonte da mensagem **não** será Montserrat.
+A região `aculta-highlighted` fica fora da raiz que define os tokens
+`--aculta-studio-fidelity-*`; a caixa usa `--aculta-shadow-raised` e herda a
+fonte do documento, e essa exclusão da fidelidade tipográfica está aceita e
+encerrada. Moldura, ritmo e hierarquia seguem o Next.
+
+Fixture `tests/browser/aculta-theme-mobile-first/studio-status-messages.py`:
+**112/112 checks** no Firefox ESR visível (320/360/390/599/600/768/1024/1280/
+1440px, claro/escuro, zoom real 200%/400%), incluindo escopo sem vazamento para
+um container não-Studio, cores de estado iguais aos tokens semânticos,
+contraste de link 12,4:1 no claro e 14,5:1 no escuro, e zero overflow. Capturas
+e `report.json` em
+`/home/piradopirata/aculta-suite-out/studio-status-messages-20261101/`. É
+evidência de folha em fixture, não de renderização Drupal, ACL, AJAX ou
+submissão de formulário; não aprova OCS-F11 nem THEME-MF3.
+
+### OCS-A1 — camada de identidade ACULTA no Studio (2026-11-01)
+
+A Etapa 2 começou pela retokenização do Studio sem alterar SDCs, markup ou
+consumers. `css/components/studio-identity.css` reusa as mesmas raízes e
+variáveis da Fidelity, mas aponta os valores para os tokens semânticos
+institucionais: texto verde-escuro, link/CTA com contraste AA, superfícies
+creme/brancas no claro e charcoal no escuro, foco verde-escuro/amarelo e
+vermelho institucional para erro. Nenhum seletor de modo é declarado fora de
+`tokens.css`; a camada alterna automaticamente porque os tokens semânticos já
+mudam por modo.
+
+A alternância é **controlada e não é preferência de usuário**: o tema acrescenta
+`studio-identity` ao `<html>` somente quando o estado
+`aculta420.studio_identity` está ativo. Ligar/desligar:
+
+```sh
+drush state:set aculta420.studio_identity 1   # ou 0
+drush cr
+```
+
+Fixture `tests/browser/aculta-theme-mobile-first/studio-identity.py`: **108/108
+checks** no Firefox ESR visível, comparando Fidelity e Identity em nove
+larguras e claro/escuro. No claro, link mede 5,81:1 e CTA amarelo com texto
+verde-escuro 7,84:1; no escuro, link 11,51:1 e CTA 7,84:1. Capturas em
+`/home/piradopirata/aculta-suite-out/ocs-a1-identity-20261101/`.
+Gates: Design Foundations 2.441, Stylelint, PHPCS, Unit do tema 48/349 e
+fronteira tema/módulo 3.533 PASS. A camada está implementada, mas A2–A4
+(acabamento, benchmark em todo o Studio e consolidação) seguem pendentes.
+
+### OCS-A2 — acabamento institucional do Studio (2026-11-01)
+
+Sobre os mesmos seletores e consumers da Fidelity, a camada Identity agora usa
+Inter no corpo e **Oswald nos títulos**, cantos institucionais nos cards,
+campos e botões (`--bs-border-radius`), e acento amarelo na aba ativa. Nenhum
+componente, slot ou contrato novo: as regras vivem em `studio-identity.css` e
+só se aplicam quando `<html>` tem `studio-identity`. Alertas recebem o mesmo
+raio sem perder a borda de 2px por estado.
+
+A fixture comparativa `studio-identity.py` cobre agora tipografia, raio de
+campos/botões/cards e acento da aba: **144/144 checks** em nove larguras,
+claro/escuro. Evidência em
+`/home/piradopirata/aculta-suite-out/ocs-a2-identity-20261101/`. Gates:
+Design Foundations 2.441 PASS e Stylelint exit 0.
+
+### OCS-A4 — consolidação (2026-11-01)
+
+`scripts/validate-aculta420-studio-identity.php` consolida a camada Identity:
+verifica ausência de seletores de modo fora de `tokens.css`, todo token
+sobrescrito com consumer real, biblioteca carregada, ativação por estado e
+ausência de literais de cor. Encontrou e removeu um override morto
+(`--aculta-studio-fidelity-muted`). Resultado **PASS (34 checks, 29 tokens)**.
+A Identity não introduz fontes, imagens ou SVG novos; usa Inter/Oswald e a
+paleta já carregada. Fixture final 144/144.
+
+### Homologação de SDCs do Studio e fechamento de lacunas (2026-11-01)
+
+Com os gates THEME-MF3/OCS-F11 e a Etapa Identity concluídos, os SDCs
+transversais com múltiplos consumers reais foram promovidos a **stable**:
+
+| SDC | Consumers de código | Evidência servida |
+|---|---|---|
+| `patterns/context-header` | 7 (Marley, LMS, Wiki/propostas) | 200, axe 0 |
+| `patterns/context-tabs` | 3 (Marley, Wiki workspace/controller) | 200, axe 0 |
+| `patterns/content-grid` | 4 (Marley, LMS, Wiki) | 200, axe 0 |
+| `patterns/content-section` | 6 (Wiki/estados editoriais) | 200, axe 0 |
+| `feedback/empty-state` | 3 (LMS, Wiki) | 200, estados vazios reais |
+| `patterns/card` | Hub/Conta, LMS, listagens | já stable; variante `studio_fidelity` |
+
+Permanecem **experimentais**: `profile-identity`, `profile-bio`,
+`profile-social` (consumer único no `StudioProfileController`; S-R4/S-R5 ainda
+pendentes) e `course_card` (substituição do card LMS; sem novo consumer via
+render element). Gates após a promoção: SDC schema **764 checks**, Design
+Foundations 2.441, Browser Validators 21 e fronteira tema/módulo 3.542 PASS.

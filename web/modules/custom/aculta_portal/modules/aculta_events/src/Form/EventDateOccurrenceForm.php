@@ -17,11 +17,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Cancela, reagenda ou restaura uma ocorrência de série (D-14, RECORRENCIA.md, M1).
+ * Cancela, reagenda ou restaura uma ocorrência de série (D-14, M1).
  *
- * A chave da exceção é o início original da ocorrência, não o índice: mudar a regra
- * não muda a chave. Cancelar grava a exceção sem horário; reagendar grava o novo
- * início e fim; restaurar apaga a exceção e devolve o horário da regra.
+ * A chave da exceção é o início original, não o índice, então mudar a regra não
+ * a altera. Cancelar limpa o horário, reagendar grava o novo intervalo e
+ * restaurar apaga a exceção para devolver o horário da regra.
  */
 final class EventDateOccurrenceForm extends FormBase {
 
@@ -209,7 +209,7 @@ final class EventDateOccurrenceForm extends FormBase {
   }
 
   /**
-   * Ocorrência da data com este início original, ou NULL se não existir na série.
+   * Ocorrência da data pelo início original, ou NULL se não existir.
    *
    * @return array{inicio: \DateTimeImmutable, fim: \DateTimeImmutable, original: \DateTimeImmutable, cancelada: bool}|null
    *   Ocorrência expandida, ou NULL.

@@ -54,7 +54,7 @@ credenciais novas, e exigem `google/apiclient`, que não está no `composer.lock
 
 | Recurso | Módulo | Decisão |
 |---|---|---|
-| Agregado diário de cliques, retenção de 90 dias, cron com `#[Hook]` | `aculta_links` (`aculta_links_stat_daily`, `LinkAnalytics`) | REUTILIZAR o padrão. Convergência futura: o Statistics deve assumir o agregado de links. Não fazer agora: mudaria o módulo de Links, que tem alterações de outra frente. |
+| Agregado diário de cliques, retenção de 90 dias, cron com `#[Hook]` | `aculta_linkweed` (`aculta_linkweed_stat_daily`, `LinkAnalytics`) | REUTILIZAR o padrão. Convergência futura: o Statistics deve assumir o agregado de links. Não fazer agora: mudaria o módulo de Links, que tem alterações de outra frente. |
 | Log de envio e painel de contagens | `aculta_mailer` (`aculta_mail_log`, `MailDashboard`) | REUTILIZAR como fonte. |
 | Contagens de comentários | Core `comment` via `comment_count` nas Views de `aculta_forum` | REUTILIZAR como fonte. |
 | Painel de progresso e de turma | `aculta_lms` (`LearningDashboardManager`) | REUTILIZAR como fonte. |

@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * @file
+ * Instalação do aculta_file_uploader.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function aculta_file_uploader_schema(): array {
+  $database = \Drupal::database();
+  if ($database->schema()->tableExists('aculta_image_quarantine')) {
+    // The table was created by aculta_image before ownership moved here.
+    // Preserve it when enabling this module on an existing installation.
+    return [];
+  }
+  $schema['aculta_image_quarantine'] = [
+    'description' => 'Imagens candidatas enviadas para a quarentena (fase M7). Excluídas só após o prazo e nova verificação de uso. Tabela criada pelo aculta_image e mantida com o nome original.',
+    'fields' => [
+      'fid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      'uri_original' => ['type' => 'varchar', 'length' => 2048, 'not null' => TRUE],
+      'uri_quarentena' => ['type' => 'varchar', 'length' => 2048, 'not null' => TRUE],
+      'motivo' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''],
+      'enviado_em' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+      'vence_em' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['fid'],
+    'indexes' => ['vence_em' => ['vence_em']],
+  ];
+  return $schema;
+}
+
+/**
+ * Copia a política de upload do aculta_portal para a do aculta_file_uploader.
+ *
+ * Não apaga aculta_portal.user_upload: fórum e LMS continuam lendo a política
+ * antiga até migrarem, um consumidor por vez.
+ */
+function aculta_file_uploader_update_10001(): void {
+  $config = \Drupal::configFactory()->getEditable('aculta_file_uploader.settings');
+  if ($config->get('allowed_extensions') !== NULL) {
+    return;
+  }
+  $legacy = \Drupal::config('aculta_portal.user_upload')->get();
+  $config->setData($legacy + ['allowed_extensions' => 'png gif jpg jpeg webp', 'max_size_mb' => 10, 'consumers' => []]);
+  $config->save();
+}

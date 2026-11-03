@@ -1,3 +1,24 @@
+## 0.5.0-dev.18 — capa pela escolha de envio recente do Studio
+
+- `MediaLibraryWidget::validateRequired` lê a seleção do **user input** bruto, antes dos handlers de `#validate`. A escolha agora é convertida no `#after_build` do formulário da Revista, que grava a Media criada no form state **e** no user input, e relaxa `#required` de novo.
+- Versão 0.5.0-dev.18.
+
+RUNTIME STATUS: VALIDATED no Runtime (2026-11-02): Revista 605 salva com a escolha do Studio (fid 786) → media 284 (image, publicada, alt "Imagem editorial"), arquivo permanente. Unit Revista 43/179 PASS.
+
+## 0.5.0-dev.17 — imagem editorial da Revista aceita envio recente do Studio
+
+- Novo `RevistaCoverStudioHooks`: o formulário da Revista lista imagens recentes do Studio (integração `revista`). Usada só quando a imagem editorial está vazia.
+- Escolha validada (dono, imagem) e convertida em mídia de imagem antes da entidade ser montada. Envio fica no Studio.
+- `aculta_file_uploader` declarado como dependência.
+
+RUNTIME STATUS: DEFERRED.
+
+## Revalidação 2026-11-02 — contexto de comentários editoriais
+
+- Unit Magazine: 41 testes / 168 assertions PASS. `RevistaEditorialAccessKernelTest`: 13/544 PASS. Forum Unit completa: 189/1.348 PASS.
+- Comentários permanecem Comments `aculta_discussion_post` em `field_aculta_discussion` do Node `revista`; leitura/moderação no Marley delegam ao contexto `publication` do `aculta_forum`.
+- Fluxo HTTP de comentário pendente/aprovação e homologação Runtime não foram executados; nenhuma escrita Runtime.
+
 ## 0.5.0-dev.12 — remover classe de tema do teste do formatador (2026-10-29)
 
 - O teste usa `field-name`, classe de integração do Core, ao verificar a
@@ -374,6 +395,21 @@ Classificação: PATCH (correção de cache; sem mudança de contrato).
 - RUNTIME STATUS: verificado no Homelab por renderização a frio (em memória) das publicações. Inspeção visual humana pendente.
 
 # Changelog — aculta_magazine
+
+## 0.5.0-dev.16 — injeção de papéis e correção da descoberta do módulo (2026-10-31)
+
+- `EditorialCapabilitiesForm` usa `EntityTypeManagerInterface` injetado para
+  carregar papéis, removendo a chamada estática `Role::loadMultiple()` e
+  eliminando o aviso PHPCS.
+- Removida a dependência `entity_usage` duplicada no `.info.yml`.
+- Kernel verifica que `content_editor` e `email_confirmed` aparecem nas três
+  capacidades configuráveis e que o papel `anonymous` é omitido.
+- Unit/Kernel Magazine: 54 testes / 712 assertions PASS em `aculta_simpletest`.
+  PHP lint 32/32; PHPCS Drupal/DrupalPractice sem erros ou avisos.
+- MCP de Runtime reportou zero diferenças de Config Sync; o módulo ativo é
+  `.14`, e a branch contém `.16`. Nenhuma importação/escrita Runtime nem
+  homologação Firefox/X11 foi executada.
+
 ## 0.5.0-dev.13 — fechar estilo Drupal do Magazine (2026-10-29)
 
 - `PostPresentation` passa a usar `StringTranslationTrait`, organiza arrays e comentários conforme os padrões Drupal, sem alterar os tokens de tema nem os dados renderizados. `RevistaContentHooks` recebeu PHPDoc no formato Drupal.
@@ -403,3 +439,16 @@ Classificação: PATCH (correção de cache; sem mudança de contrato).
 - Read-only Runtime inspection found the previous View and block still active;
   the Config Sync diff has not been imported. Firefox/X11 role-based
   homologation remains pending, and no Runtime write was performed.
+## 0.5.0-dev.15 — relação de vídeo editorial no Content Index (2026-11-01)
+
+- Provider v3 consulta a API `entity_usage` para a revisão corrente e só emite
+  `embedded_video` para um uso `media_embed` no campo `body`, quando o alvo é
+  Media do bundle `remote_video`. Não interpreta HTML/corpo nem projeta URL,
+  thumbnail ou metadados do embed.
+- A dependência direta `entity_usage` foi declarada; o consumidor do Index segue
+  revalidando Entity Access do alvo no contexto canônico da publicação.
+- Unit Magazine: 7 testes / 43 assertions PASS; Kernel do Index Magazine: 1/18
+  PASS; Kernel de acesso Magazine: 2/31 PASS; integração real de providers: 2/89
+  PASS (266 depreciações Core/contrib). PHPCS e PHP lint sem achados. Nenhuma
+  operação no Runtime.
+

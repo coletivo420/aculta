@@ -9,15 +9,13 @@ use Drupal\aculta_events\Entity\EventDate;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
- * Ocorrências futuras de um evento e o instante em que a saída muda (auditoria, T5).
+ * Ocorrências futuras e instante em que a saída muda (auditoria, T5).
  *
- * A página e o catálogo mostram a partir de agora. Em vez de cron invalidando cache,
- * cada saída declara max-age até o fim da próxima ocorrência listada: no instante em
- * que a data passa, o cache vence sozinho e a ocorrência sai da lista.
+ * A página e o catálogo mostram a partir de agora. O cache expira no fim da
+ * próxima ocorrência; ela sai da lista sem precisar de cron.
  *
- * Uma ocorrência em andamento continua visível: o expansor só devolve ocorrências que
- * começam na janela (RECORRENCIA.md, seção 6), então a janela é alargada pela maior
- * duração das datas do evento antes de ser pedida.
+ * Ocorrências em andamento continuam visíveis. Como o expansor só devolve as
+ * que começam na janela, ela é alargada pela maior duração das datas.
  */
 final class UpcomingDates {
 
@@ -37,7 +35,7 @@ final class UpcomingDates {
   /**
    * Ocorrências do evento de agora até o horizonte, em ordem de início.
    *
-   * Cada item traz os horários da ocorrência e a data (`EventDate`) que a originou,
+   * Cada item traz os horários e a data (`EventDate`) de origem,
    * de onde saem local e demais campos.
    *
    * @param \Drupal\aculta_events\Entity\Event $evento
@@ -72,8 +70,8 @@ final class UpcomingDates {
   /**
    * Segundos até a saída mudar sozinha, ou NULL quando não há data futura.
    *
-   * A saída muda quando a próxima ocorrência termina: ela deixa de aparecer. Datas
-   * vencidas não contam; a menor validade manda.
+   * A saída muda quando termina a próxima ocorrência. Ignora datas vencidas e
+   * usa a menor validade.
    *
    * @param array<int, array{fim: \DateTimeImmutable}> $ocorrencias
    *   Ocorrências devolvidas por ::doEvento().
@@ -129,7 +127,7 @@ final class UpcomingDates {
   /**
    * Maior duração entre as datas do evento, em segundos.
    *
-   * Alarga o início da janela para que uma ocorrência em andamento não desapareça.
+   * Alarga a janela para manter ocorrências em andamento visíveis.
    *
    * @param \Drupal\aculta_events\Entity\EventDate[] $datas
    *   Datas do evento.

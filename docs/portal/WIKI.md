@@ -44,7 +44,7 @@ focar/clicar sem digitar não mostra a dica. Depois da primeira letra, informa o
 mínimo de três caracteres. Com termo suficiente, espera 300 ms após a última
 tecla, descarta respostas antigas, anuncia resultados numa região nomeada e
 mantém links normais percorridos por Tab. Setas permanecem disponíveis para
-editar o texto. A rota `/wiki/busca/previa` limita o resultado
+editar o texto. A rota `/busca-wiki/previa` limita o resultado
 a verbetes publicados, acessíveis e pertencentes ao Domain Wiki. A resposta é
 `no-store`; sem JavaScript, o formulário GET continua levando à busca completa.
 O Portal reutiliza `aculta_portal/search-preview` e seus marcadores neutros; o

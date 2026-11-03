@@ -12,6 +12,7 @@ use Drupal\content_moderation\ModerationInformationInterface;
 use Drupal\content_moderation\StateTransitionValidationInterface;
 use Drupal\domain\DomainInterface;
 use Drupal\aculta_wiki\Entity\WikiProposal;
+use Drupal\aculta_contributions\Entity\Contribution;
 use Drupal\aculta_wiki\Event\WikiProposalOutcomeRecordedEvent;
 use Drupal\node\NodeInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -157,13 +158,49 @@ final class WikiProposalDecision {
    */
   private function applyAcceptedFields(WikiProposal $proposal, array $approvedFields, array $listModes): void {
     $proposedFields = $proposal->getProposedFields();
+    $target = $proposal->get('target')->entity;
+    if (!$target instanceof NodeInterface) {
+      throw new ConflictHttpException('O verbete-base não está mais disponível.');
+    }
+    $this->applyToWikiEntry(
+      $target,
+      (string) $proposal->get('target_revision_id')->value,
+      $proposedFields,
+      $approvedFields,
+      ['list_modes' => $listModes],
+    );
+  }
+
+  /**
+   * Applies selected values to a published Wiki entry after policy checks.
+   *
+   * This is shared by the legacy proposal service and the Contributions
+   * adapter. The caller must hold a transaction; this method locks the target
+   * row and retains the official Core workflow checks.
+   *
+   * @param \Drupal\node\NodeInterface $target
+   *   Target Wiki entry.
+   * @param string $expectedVersion
+   *   Target revision ID captured when the proposal was submitted.
+   * @param array<string, mixed> $proposedFields
+   *   Adapter-validated Wiki field values.
+   * @param list<string> $approvedFields
+   *   Subset selected by the authorized reviewer.
+   * @param array<string, mixed> $decisionData
+   *   Adapter-validated application choices.
+   *
+   * @return \Drupal\node\NodeInterface
+   *   The newly published default revision.
+   */
+  public function applyToWikiEntry(NodeInterface $target, string $expectedVersion, array $proposedFields, array $approvedFields, array $decisionData = []): NodeInterface {
     $approvedFields = array_values(array_unique(array_filter($approvedFields, 'is_string')));
     if ($approvedFields === [] || array_diff($approvedFields, array_keys($proposedFields)) !== []) {
       throw new UnprocessableEntityHttpException('Selecione ao menos um campo proposto e disponível para aprovação.');
     }
+    $decisionData = $this->validateListModes($approvedFields, $decisionData);
 
-    $targetId = (int) $proposal->get('target')->target_id;
-    $this->domainPurposes->runInPurpose('wiki', function () use ($proposal, $targetId, $approvedFields, $listModes, $proposedFields): void {
+    $targetId = (int) $target->id();
+    $result = $this->domainPurposes->runInPurpose('wiki', function () use ($expectedVersion, $targetId, $approvedFields, $decisionData, $proposedFields): NodeInterface {
       $wikiDomain = $this->domainPurposes->getDomain('wiki');
       $storage = $this->entityTypeManager->getStorage('node');
       $lockedId = $this->database->select('node', 'node')
@@ -175,7 +212,7 @@ final class WikiProposalDecision {
       $target = $lockedId ? $storage->loadUnchanged($targetId) : NULL;
       if (!$wikiDomain || !$target instanceof NodeInterface || $target->bundle() !== 'wiki_entry'
         || !$target->isDefaultRevision() || !$target->isPublished()
-        || (int) $target->getRevisionId() !== (int) $proposal->get('target_revision_id')->value) {
+        || (string) $target->getRevisionId() !== $expectedVersion) {
         throw new ConflictHttpException('O verbete-base mudou ou não pode mais ser editado. Atualize a proposta antes de aceitar.');
       }
       if (!$target->hasField('field_domain_source')
@@ -198,7 +235,7 @@ final class WikiProposalDecision {
           $value = $value['value'];
         }
         elseif (in_array($fieldName, ['field_wiki_references', 'field_wiki_categories', 'field_wiki_related'], TRUE)) {
-          $value = $this->mergeListField($target, $fieldName, $value, $listModes[$fieldName] ?? NULL, $wikiDomain);
+          $value = $this->mergeListField($target, $fieldName, $value, $decisionData['list_modes'][$fieldName] ?? NULL, $wikiDomain);
         }
         elseif ($fieldName === 'field_wiki_image') {
           if ($value !== NULL) {
@@ -229,7 +266,47 @@ final class WikiProposalDecision {
       $target->setRevisionUserId((int) $this->currentUser->id());
       $target->setRevisionLogMessage('Proposta da Wiki aceita; campos aprovados aplicados e publicados.');
       $target->save();
+      return $target;
     });
+    if (!$result instanceof NodeInterface) {
+      throw new AccessDeniedHttpException();
+    }
+    return $result;
+  }
+
+  /**
+   * Persists the minimal Wiki outcome notice for a generic proposal revision.
+   */
+  public function recordContributionOutcome(Contribution $proposal, string $outcome): void {
+    $ownerId = (int) $proposal->getOwnerId();
+    if ($ownerId > 0 && $proposal->uuid() && $proposal->getRevisionId()) {
+      $this->editorialEvents->enqueue(new WikiProposalOutcomeRecordedEvent(
+        $proposal->uuid(),
+        (int) $proposal->getRevisionId(),
+        $ownerId,
+        $outcome,
+      ));
+    }
+  }
+
+  /**
+   * Validates list-field application modes from trusted decision context. */
+  private function validateListModes(array $approvedFields, array $decisionData): array {
+    if (array_diff(array_keys($decisionData), ['list_modes']) !== []) {
+      throw new UnprocessableEntityHttpException('Opções editoriais de aplicação inválidas.');
+    }
+    $modes = $decisionData['list_modes'] ?? [];
+    if (!is_array($modes)) {
+      throw new UnprocessableEntityHttpException('Opções de listas inválidas.');
+    }
+    $listFields = ['field_wiki_references', 'field_wiki_categories', 'field_wiki_related'];
+    foreach ($modes as $fieldName => $mode) {
+      if (!in_array($fieldName, $listFields, TRUE) || !in_array($fieldName, $approvedFields, TRUE)
+        || !in_array($mode, ['replace', 'append'], TRUE)) {
+        throw new UnprocessableEntityHttpException('Opções de listas inválidas.');
+      }
+    }
+    return ['list_modes' => $modes];
   }
 
   /**

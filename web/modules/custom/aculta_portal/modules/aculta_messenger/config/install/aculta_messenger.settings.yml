@@ -40,6 +40,12 @@ email_modes:
     digest: false
     immediate: true
     default_mode: immediate
+  eventos_contribuicoes:
+    digest: true
+    immediate: true
+    default_mode: off
+wiki_review_notifications: false
+wiki_review_recipients: ''
 magazine_events:
   published: true
   updated: true

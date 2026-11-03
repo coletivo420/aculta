@@ -114,25 +114,6 @@ field_settings:
     indexed_locked: true
     type_locked: true
     hidden: true
-  status:
-    label: Publicado
-    datasource_id: 'entity:node'
-    property_path: status
-    type: boolean
-    indexed_locked: true
-    type_locked: true
-    dependencies:
-      module:
-        - node
-  title:
-    label: Título
-    datasource_id: 'entity:node'
-    property_path: title
-    type: text
-    boost: 5.0
-    dependencies:
-      module:
-        - node
   post_body:
     label: 'Corpo do post'
     datasource_id: 'entity:aculta_forum_post'
@@ -161,6 +142,25 @@ field_settings:
       module:
         - aculta_forum
         - node
+  status:
+    label: Publicado
+    datasource_id: 'entity:node'
+    property_path: status
+    type: boolean
+    indexed_locked: true
+    type_locked: true
+    dependencies:
+      module:
+        - node
+  title:
+    label: Título
+    datasource_id: 'entity:node'
+    property_path: title
+    type: text
+    boost: 5.0
+    dependencies:
+      module:
+        - node
   type:
     label: 'Tipo de conteúdo'
     datasource_id: 'entity:node'
@@ -170,19 +170,19 @@ field_settings:
       module:
         - node
 datasource_settings:
-  'entity:node':
-    bundles:
-      default: false
-      selected:
-        - aculta_forum_topic
-    languages:
-      default: true
-      selected: {  }
   'entity:aculta_forum_post':
     bundles:
       default: false
       selected:
         - aculta_forum_post
+    languages:
+      default: true
+      selected: {  }
+  'entity:node':
+    bundles:
+      default: false
+      selected:
+        - aculta_forum_topic
     languages:
       default: true
       selected: {  }
@@ -223,8 +223,8 @@ processor_settings:
     fields:
       - body
       - post_body
-      - title
       - post_subject
+      - title
   language_with_fallback: {  }
   tokenizer:
     weights:
@@ -234,8 +234,8 @@ processor_settings:
     fields:
       - body
       - post_body
-      - title
       - post_subject
+      - title
     spaces: ''
     ignored: ._-
     overlap_cjk: 1
@@ -248,8 +248,8 @@ processor_settings:
     fields:
       - body
       - post_body
-      - title
       - post_subject
+      - title
 tracker_settings:
   default:
     indexing_order: fifo

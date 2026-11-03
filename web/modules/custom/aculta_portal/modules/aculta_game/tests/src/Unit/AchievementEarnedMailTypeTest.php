@@ -11,14 +11,18 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Texto padrão do aviso de conquista: placeholders declarados e renderização com o contexto.
+ * Texto padrão do aviso de conquista.
+ *
+ * Verifica os placeholders declarados e sua renderização com o contexto.
  */
 #[CoversClass(AchievementEarnedMailType::class)]
 #[Group('aculta_game')]
 final class AchievementEarnedMailTypeTest extends UnitTestCase {
 
   /**
-   * O texto padrão só usa variáveis declaradas e sai com o nome e o link no contexto.
+   * O texto padrão usa apenas as variáveis declaradas.
+   *
+   * Também confirma que o nome e o link aparecem após renderizar o contexto.
    */
   public function testDefaultTextUsesDeclaredVariables(): void {
     $type = new AchievementEarnedMailType($this->getStringTranslationStub());

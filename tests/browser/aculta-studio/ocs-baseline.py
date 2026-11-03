@@ -525,9 +525,11 @@ socket.onmessage = (event) => {
                 visibleH1,breadcrumb:document.querySelector('.aculta-breadcrumb')?.textContent.trim()||'',
                 workspaceRoot:!!document.querySelector('[data-aculta-studio="root"]'),
                 workspaceLanding:!!document.querySelector('[data-aculta-studio="welcome"]'),
-                workspaceTitle:!!document.querySelector('[data-aculta-studio="root"] .aculta-context-header__title')};
+                workspaceTitle:!!document.querySelector('[data-aculta-studio="root"] .aculta-context-header__title'),
+                path:location.pathname.endsWith('/')?location.pathname.slice(0,-1):location.pathname};
             })());"""))
-            if not headings["workspaceRoot"] or not headings["workspaceLanding"]:
+            if (not headings["workspaceRoot"] or not headings["workspaceLanding"]
+                    or headings["path"] != "/marley"):
                 record["marleyHeadingChecks"] = {}
                 record["marleyHeadingStatus"] = "SKIP_NOT_WORKSPACE_LANDING"
             else:

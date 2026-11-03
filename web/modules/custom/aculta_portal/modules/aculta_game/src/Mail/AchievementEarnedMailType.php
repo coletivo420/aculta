@@ -28,8 +28,14 @@ final class AchievementEarnedMailType implements MailTypeInterface {
    */
   public function variables(): array {
     return [
-      'label' => ['label' => (string) $this->translation->translate('Nome da conquista'), 'sample' => 'Primeira leitura'],
-      'url' => ['label' => (string) $this->translation->translate('Endereço das conquistas'), 'sample' => 'https://example.invalid/conta/atividade'],
+      'label' => [
+        'label' => (string) $this->translation->translate('Nome da conquista'),
+        'sample' => 'Primeira leitura',
+      ],
+      'url' => [
+        'label' => (string) $this->translation->translate('Endereço das conquistas'),
+        'sample' => 'https://example.invalid/conta/atividade',
+      ],
     ];
   }
 

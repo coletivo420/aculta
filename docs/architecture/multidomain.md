@@ -31,7 +31,7 @@ hostname e não recebe entidade `Domain` em Twig/SDC. Ver o contrato planejado e
 | shop | loja.aculta.org | loja.aculta.toca.net.br | Domain ativo; catálogo futuro |
 | courses | cursos.aculta.org | cursos.aculta.toca.net.br | ativo |
 | forum | growroom420.aculta.org | growroom420.aculta.toca.net.br | ativo (0.2.0-dev.57) |
-| links | links.aculta.org | links.aculta.toca.net.br | Domain/purpose ativo; landing preservadora em `aculta_links`; Runtime de teste HTTP 200/404 confirmado; DNS de produção não provisionado |
+| links | links.aculta.org | links.aculta.toca.net.br | Domain/purpose ativo; landing preservadora em `aculta_linkweed`; Runtime de teste HTTP 200/404 confirmado; DNS de produção não provisionado |
 | eventos | eventos.aculta.org | eventos.aculta.toca.net.br | ativo; ACULTA Studio Culturas e catálogo público |
 
 ## Vitrine do MAIN (2026-10-28)
@@ -100,7 +100,7 @@ assertions; Drupal/Core/dependências reportaram 92 depreciações, sem falhas.
 - Em 2026-10-20, o Runtime não tinha Node `page` com
   `field_domain_source = links_aculta_org` nem alias `/redes-sociais`; a raiz e o
   path direto retornavam 404 antes da restauração. A rota `/redes-sociais` agora
-  tem fallback no `aculta_links`; após rebuild, HTTP da raiz confirmou 200 e o
+  tem fallback no `aculta_linkweed`; após rebuild, HTTP da raiz confirmou 200 e o
   acesso direto 404. Produção não confirmada. Perfis são salvos em
   `aculta_portal.social_links` e editados em Administração > Configuração >
   ACULTA Portal > Redes sociais (`/painel-administrativo/aculta/redes-sociais`).
@@ -175,6 +175,6 @@ principal não serve apoio.
 
 ## ADR-038 - Suites Studio distribuídas por purpose (implementação em andamento)
 
-Marley em `account:/marley`, Ganjalab em `courses:/ganjalab`, WE SATIVA em `wiki:/wesativa`, Green Stash em `shop:/greenstash` e Culturas em `eventos:/culturas`. Os paths e boundaries estão declarados; o módulo `aculta_studio` continua compartilhado e não publica `/studio` ou `/studio/*`. A raiz de `account` apresenta a entrada da Conta sem rewrite para Studio. As rotas nomeadas usam `DomainPurposeManager` para endereços absolutos; hosts não são codificados nas definições de rota.
+Marley em `account:/marley`, Ganjalab em `courses:/ganjalab`, WE SATIVA em `wiki:/we-sativa`, Green Stash em `shop:/green-stash` e Culturas em `eventos:/culturas`. Os paths e boundaries estão declarados; o módulo `aculta_studio` continua compartilhado e não publica `/studio` ou `/studio/*`. A raiz de `account` apresenta a entrada da Conta sem rewrite para Studio. As rotas nomeadas usam `DomainPurposeManager` para endereços absolutos; hosts não são codificados nas definições de rota.
 
 A tabela acima descreve os hosts configurados por ambiente. O Domain canônico de Wiki permanece `wiki420`; não há troca para `wiki.aculta.*` no ADR-038. O endpoint de desenvolvimento `wiki420.aculta.toca.net.br` foi alcançado por HTTPS em 2026-10-30; o DNS de produção `wiki420.aculta.org` não foi resolvido neste ambiente e sua disponibilidade não está validada. Ver [ADR-038](../decisions/ADR-038-aculta-studio-suites-por-dominio.md).

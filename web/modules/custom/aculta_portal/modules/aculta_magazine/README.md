@@ -5,9 +5,19 @@ conteúdo, publicação e mídia.
 
 ## Estado
 
-**0.5.0-dev.14:** central administrativa e adaptadores editoriais no Marley
-implementados no código e Config Sync. Esta entrega não está homologada em
+**0.5.0-dev.16:** provider v3 registra `embedded_video` para Media `remote_video`
+explicitamente embutido na revisão atual da publicação. Acesso ao alvo é
+revalidado pelo Content Index. Esta entrega não está homologada em
 Runtime nem em Firefox/X11. Testes e pendências constam do CHANGELOG.
+
+Revalidação 2026-10-31: Unit/Kernel completos passaram com 54 testes / 712
+assertions; PHP lint 32/32 e PHPCS Drupal/DrupalPractice sem erros ou avisos.
+O formulário de capacidades agora carrega os papéis por Entity Storage
+injetado. Configuração Runtime lida via MCP: zero diferenças com o Sync do
+checkout servido; a árvore `config/sync` da branch coincide com a desse
+checkout. O módulo ativo no Runtime está em `0.5.0-dev.14`, enquanto a branch
+contém `.16`; não houve import nem escrita. Revisão Firefox/X11 e homologação
+funcional no código candidato continuam pendentes.
 
 **Base 0.5.0-dev.13:** PHPCS Drupal/DrupalPractice integral PASS; Unit + Kernel
 39/610 PASS sem depreciações; PHP lint 2/2 e `node --check` PASS. A revisão
@@ -26,7 +36,8 @@ arquivos de Calendar, Events e Maps, sem violações do Magazine.
 - [Matriz ator × estado × ação](docs/EDITORIAL-ACTOR-STATE-MATRIX.md)
 - [Contrato de rotas e domínios editoriais](docs/ROUTES-DOMAIN-CONTRACT.md)
 - [Registro histórico da migração `article`/`blog` → `revista`](docs/MIGRATION-ARTICLE-BLOG-TO-REVISTA.md)
-- [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md) — o provider declara o contexto canônico `magazine`; Entity Access e Revision Access continuam nos módulos de origem. `aculta_portal` é owner do Media compartilhado `remote_video`; `filter.format.revista_editorial` já o permite como embed e o provider do Index registra somente metadados mínimos, sem URL oEmbed. Por decisão do responsável, a relação entre embeds e publicações fica adiada até fechar formatos editoriais e contratos de acesso dos consumidores; preservar o corpo editorial.
+- [ACULTA Content Index](../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md) — o provider declara o contexto canônico `magazine`; Entity Access e Revision Access continuam nos módulos de origem. `aculta_portal` é owner do Media compartilhado `remote_video`; `filter.format.revista_editorial` permite o embed e o provider v3 registra a aresta `embedded_video` apenas quando `entity_usage` aponta ao corpo da revisão atual. Não lê nem projeta URL oEmbed ou corpo; o consumidor revalida o acesso ao Media.
+- `entity_usage` é dependência direta do adapter de Index do Magazine para resolver embeds explícitos de mídia por revisão.
 - [CHANGELOG](CHANGELOG.md)
 
 Para políticas editoriais transversais, consulte a

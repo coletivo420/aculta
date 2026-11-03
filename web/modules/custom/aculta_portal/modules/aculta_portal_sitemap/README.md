@@ -5,7 +5,7 @@ ADR-009 em `docs/decisions/`).
 
 ## Candidato RC 0.1.2-rc.1
 
-Versão do `info.yml` e do CHANGELOG: `0.1.2-rc.1`. Runner estático 13/13 PASS; suíte Unit/Kernel 9 testes/25 assertions PASS (72 depreciações); PHP lint e PHPCS Drupal/DrupalPractice PASS. Kernel comprova que o alias front-page é consultado no purpose certo e restaurado, e que `/wiki/verbetes` gera URL no host de teste do Deployer. A homologação HTTP foi feita por GET local no checkout servido `662c62d43`: índice e sete filhos HTTP 200/noindex, 29 URLs em hosts de teste. Nenhum host de produção ou Search Console foi consultado. Sitemap XML não tem interface visual; revisão visual não se aplica.
+Versão do `info.yml` e do CHANGELOG: `0.1.2-rc.1`. Runner estático 13/13 PASS; suíte Unit/Kernel 9 testes/25 assertions PASS (72 depreciações); PHP lint e PHPCS Drupal/DrupalPractice PASS. Kernel comprova que o alias front-page é consultado no purpose certo e restaurado, que `/verbetes` gera URL no host de teste do Deployer e não depende do módulo Commerce Shipping removido. A homologação HTTP foi feita por GET local no checkout servido `662c62d43`: índice e sete filhos HTTP 200/noindex, 29 URLs em hosts de teste. Nenhum host de produção ou Search Console foi consultado. Sitemap XML não tem interface visual; revisão visual não se aplica.
 
 - Endereço por ambiente: a `base_url` segue o site definido pelo ACULTA Deployer (`var/deployer/environment.json`).
 
@@ -58,4 +58,4 @@ Versão do `info.yml` e do CHANGELOG: `0.1.2-rc.1`. Runner estático 13/13 PASS;
 - `tests/homologacao-url-site.sh 5 127.0.0.1`: PASS, 5 ciclos, 6 hosts e 2 caminhos.
 - GET somente em `127.0.0.1`, com Host dos testes: `/sitemap.xml` e sete sitemaps filhos retornaram HTTP 200 e `X-Robots-Tag: noindex, nofollow, noarchive`; os filhos continham 29 URLs ao todo, todas em hosts de teste declarados pelo Deployer.
 - A checagem comparou os hosts com `domain_transition.entries` e `robots_policy.test.hosts`; o segundo inventário isolado não contém todos os purposes, como `cursos`.
-- D-49 (2026-10-29) incluiu `/wiki/verbetes` na variante `wiki`; testes Kernel cobrem sua URL de teste e a consulta do alias front-page no contexto de domínio correto. DEP-0002 está resolvida no servidor de testes; a sonda de produção e o Search Console ficam para Beta.
+- D-49 (2026-10-29) incluiu `/verbetes` na variante `wiki`; testes Kernel cobrem sua URL de teste e a consulta do alias front-page no contexto de domínio correto. DEP-0002 está resolvida no servidor de testes; a sonda de produção e o Search Console ficam para Beta.
