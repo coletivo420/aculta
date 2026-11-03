@@ -1,3 +1,8 @@
+## 0.1.0-dev.133 — fonte própria de atividades (ADR-042)
+
+- `CourseActivityReaderInterface` passa a consultar `aculta_lms_activity` por `lesson_id`, mapeando tipo, inclusão em nota e posição.
+- Teste focal cobre mapeamento e ordenação por `weight`/ID.
+
 ## 0.1.0-dev.132 — fonte própria de aulas (ADR-042)
 
 - `CourseLessonReaderInterface` passa a ler `aculta_lms_lesson` por `course_id`, retornando todas as aulas em ordem de `weight` e ID.
