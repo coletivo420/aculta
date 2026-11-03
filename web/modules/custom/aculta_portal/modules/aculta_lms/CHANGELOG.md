@@ -1,3 +1,18 @@
+## 0.1.0-dev.173 — registra evidências e pendências xAPI (ADR-041)
+
+- Documenta `lesson_status_id` como identificador opaco de
+  `aculta_lms_progress.id` e encerra a suposição de uma tentativa por aula no
+  LMS contrib, removido em P5.
+- Consulta somente leitura no Runtime encontrou 3 declarações com
+  `lesson_status_id=4`, sem progresso ACULTA correspondente. Nenhuma linha foi
+  alterada.
+- Confirmada a Key ativa `aculta_lms_xapi_token`, provider `env`, e a presença
+  da variável contratada com comprimento 64; o valor não foi lido nem
+  registrado. Provisionamento de produção continua pendente.
+- Medição de carga de escrita MariaDB: **DEFERRED** até haver ambiente
+  production-like representativo e teste sintético autorizado antes da
+  ativação xAPI em produção.
+
 ## P6 — descarte autorizado de dados de teste no Runtime (ADR-042)
 
 - Snapshot anterior ao descarte: SHA-256

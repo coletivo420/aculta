@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.172
+version: 0.1.0-dev.173
 state: Dev
-progress_note: "ADR-042 P6 concluído no Runtime de desenvolvimento, sobre P5 dev.172. Snapshot pré-P6 SHA-256 038a4e61326c8940500729e7592595d4587a593cc8e12d8e34c0dc81c252c74a. Pela API Drupal foram removidos o arquivo de resposta LMS residual, seis vínculos group_membership e os cinco Groups de teste registrados no inventário P5; dados contrib LMS e comentários já estavam ausentes/zerados. groups e group_relationship: 0; file_usage de lms_file_upload: 0. Usuários 23, pedidos Commerce 111, itens 106, comentário ACULTA 1 e declarações xAPI 3 preservados. A exclusão dos Groups também removeu inesperadamente a única linha de aculta_lms_attempt_archive (1 para 0); entity_usage 351 para 343, key_value 3764 para 3753, path_alias e path_alias_revision 52 para 46, queue 7 para 10. Não houve restauração nem exclusão adicional fora do escopo. Cache rebuild PASS; updatedb sem pendências; config:status revisado, sem importação. Portal gate 1.172 checks PASS e busca Drupal\\lms em web/modules/custom com zero ocorrências."
-next_phase: 'P6 registrado; reescrita de histórico não executada.'
+progress_note: "ADR-041 documentada em dev.173, sem mudança de código funcional. Consulta somente leitura no Runtime: 3 declarações xAPI com lesson_status_id=4; 0 têm entidade aculta_lms_progress correspondente. Key aculta_lms_xapi_token existe e está ativa com provider env; ACULTA_LMS_XAPI_TOKEN_SECRET presente (comprimento 64; valor não lido nem registrado). Medição de carga de escrita MariaDB marcada DEFERRED até existir ambiente production-like representativo e teste sintético autorizado antes da ativação xAPI em produção. Nenhuma linha do Runtime foi alterada."
+next_phase: 'Executar medição de carga quando houver ambiente production-like representativo; provisionar segredo em produção antes da ativação xAPI.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.
 # O Studio compõe cards SDC, mas a homologação depende de fixtures LMS

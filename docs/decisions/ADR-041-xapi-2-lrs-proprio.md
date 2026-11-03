@@ -41,8 +41,8 @@ O LRS guarda as declarações brutas, e a tentativa guarda o estado derivado. Is
 - **Consulta do histórico:** só a equipe administrativa, no painel do domínio principal. Educadores não consultam declarações de alunos.
 - **Remoção ao fim do prazo:** apagamento em lote mensal das declarações vencidas, no padrão de retenção de 6 meses. A remoção é do registro bruto; o estado derivado da tentativa não é apagado por ela.
 - **Credencial:** aprovado o modelo de token curto por tentativa, vinculado à matrícula, ao conteúdo e à tentativa, emitido pelo Drupal e tratado como segredo.
-- **Vínculo com a tentativa:** a declaração guarda só a referência opaca ao `lms_lesson_status`. Nenhuma entidade de tentativa própria é criada, para não duplicar o progresso do LMS.
-- **Segredo do token:** Drupal Key com provider env, com um segredo por ambiente. Em produção, o `aculta_deployer` provisiona após o deploy. Exige atualizar o ACULTA Secrets Contract.
+- **Vínculo com a tentativa:** `lesson_status_id` permanece com esse nome no protocolo e nos registros por compatibilidade, mas é um identificador opaco de `aculta_lms_progress.id`. A suposição de uma tentativa por aula no LMS contrib foi encerrada com a remoção do contrib em P5 (ADR-042); o código ACULTA não depende dela.
+- **Segredo do token:** Drupal Key `aculta_lms_xapi_token` com provider env e um segredo por ambiente. A entrada `ACULTA_LMS_XAPI_TOKEN_SECRET` já consta no ACULTA Secrets Contract. Evidência somente leitura no Runtime de desenvolvimento: Key existente e ativa, provider `env` apontando para a variável contratada; variável presente, comprimento 64. O valor não foi lido nem registrado. Em produção, o `aculta_deployer` ainda precisa provisionar a variável após o deploy.
 - **Validade do token:** 30 minutos (padrão do código), com teto de 2 horas.
 - **Limite de taxa:** serviço flood do Drupal Core, por token de tentativa, sem tabela nova. Não se aplica limite por IP nesta fase.
 - **Remoção mensal:** hook de cron do Drupal, uma vez por mês, em lotes, com registro de quantos registros foram removidos.
@@ -50,7 +50,7 @@ O LRS guarda as declarações brutas, e a tentativa guarda o estado derivado. Is
 
 ## Pendências
 
-- Dependência do vínculo: a referência ao `lms_lesson_status` assume que o contrib mantém uma tentativa por aula. Não verificado no Runtime. Análise em `docs/modules/ANALISE-LMS-CONTRIB-1-2-4.md`. O `lms` não vira requisito do projeto.
-- Medição de carga de escrita no MariaDB do Runtime antes de conteúdo xAPI de produção.
+- Referências históricas: consulta somente leitura no Runtime de desenvolvimento encontrou 3 declarações, todas com `lesson_status_id=4`, e nenhuma entidade `aculta_lms_progress` com esse ID. As linhas foram preservadas, sem reparo. A referência continua opaca e não restaura dependência do contrib.
+- Medição de carga de escrita no MariaDB: **DEFERRED**. Executar antes de ativar conteúdo xAPI de produção, quando houver ambiente production-like com topologia e configuração MariaDB representativas; usar carga sintética autorizada e registrar latência/erros sem dados reais de estudantes.
 - Provisionar `ACULTA_LMS_XAPI_TOKEN_SECRET` por ambiente no deploy de produção antes de ativar conteúdo xAPI lá.
 - Conferência do texto IEEE 9274.1.1-2023 para autorização e JSON Schema antes da F1.
