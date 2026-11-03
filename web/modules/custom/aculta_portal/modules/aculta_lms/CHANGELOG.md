@@ -1,3 +1,20 @@
+## 0.1.0-dev.158 — agenda usa entidades de aprendizagem ACULTA
+
+- O provedor de agenda verifica `take course` pela permissão Group e o Kernel
+  monta os prazos com `LessonEntity`/`ActivityEntity`; schemas LMS contrib
+  deixaram de ser instalados pela suíte da agenda.
+- A relação `lms_class_activity_due` mantém o ID, mas sua config deixa de
+  depender do módulo `lms`. O título do prazo usa o título da entidade quando
+  existe e, para `ActivityEntity` que não tem campo de título, apresenta o tipo
+  estável da atividade humanizado.
+- A verificação revelou e corrigiu acesso neutro para evento de outra turma;
+  `EventAccessHooks` agora nega explicitamente e é descoberto como hook OOP.
+  Corrigida também a sintaxe inválida em `EventClassAccess.php` recebida do
+  upstream.
+- Agenda Kernel 4/168 PASS (94 depreciações upstream), Agenda Unit 8/18 PASS;
+  PHPCS e gate Portal 1.168 PASS. O harness Kernel ainda carrega LMS por causa
+  do manifesto de `aculta_lms`, não por imports da fixture da agenda.
+
 ## 0.1.0-dev.157 — permissões herdadas de cursos e turmas em ACULTA
 
 - O cálculo de permissões Group entre cursos e turmas passa a ser implementado

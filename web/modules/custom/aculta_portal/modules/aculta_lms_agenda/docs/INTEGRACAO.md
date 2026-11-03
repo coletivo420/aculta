@@ -16,7 +16,7 @@ Um usuário vê uma entrada somente se:
 
 - é membro (`GroupMembership`) de uma turma `lms_class` publicada;
 - essa turma pertence a um curso publicado (`lms_classes`);
-- o usuário tem acesso ao curso (`takeAccess`), que é a mesma checagem de `ClassActivityDeadlineManager`.
+- o usuário tem permissão Group `take course`, que é a mesma checagem de `ClassActivityDeadlineManager`.
 
 Quem não está matriculado não recebe a entrada, nem por lista nem por consulta direta. O provedor
 da agenda não tem caminho público: toda consulta recebe o usuário e aplica essa regra.
@@ -56,5 +56,5 @@ na região do painel é configuração do site e depende de aprovação.
 `AgendaEntriesProviderKernelTest::testSoMatriculadosVeemAsEntradasDaTurma` cobre
 o aluno matriculado na turma correta, um aluno matriculado em outra turma e um
 usuário sem matrícula. Só o primeiro recebe as entradas. `forAccount()` ainda
-revalida que a turma e o curso estão publicados e que `takeAccess()` permite o
+revalida que a turma e o curso estão publicados e que `hasPermission('take course')` permite o
 acesso ao curso.

@@ -1,4 +1,7 @@
 services:
+  Drupal\aculta_lms_agenda\Hook\EventAccessHooks:
+    arguments: ['@aculta_lms_agenda.event_access']
+
   aculta_lms_agenda.event_access:
     class: Drupal\aculta_lms_agenda\EventClassAccess
     arguments: ['@aculta_lms.class_activity_deadline_access']

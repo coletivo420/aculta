@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Drupal\\aculta_lms_agenda;
+namespace Drupal\aculta_lms_agenda;
 
-use Drupal\\Core\\Access\\AccessResult;
-use Drupal\\Core\\Entity\\EntityInterface;
-use Drupal\\Core\\Session\\AccountInterface;
-use Drupal\\aculta_lms\\Access\\ClassActivityDeadlineAccessCheck;
-use Drupal\\group\\Entity\\GroupInterface;
-use Drupal\\group\\Entity\\GroupMembership;
-use Drupal\\user\\UserInterface;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\aculta_lms\Access\ClassActivityDeadlineAccessCheck;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupMembership;
+use Drupal\user\UserInterface;
 
 /**
  * Enforces D-15 access for events linked to LMS classes.
@@ -25,7 +25,7 @@ final class EventClassAccess {
   ) {}
 
   /**
-   * Checks class membership and delegates course-specific access to the LMS adapter.
+   * Checks membership and delegates course access to the ACULTA checker.
    */
   public function access(EntityInterface $event, AccountInterface $account): AccessResult {
     $class = $event->get('field_turma')->entity;
@@ -50,7 +50,7 @@ final class EventClassAccess {
       }
     }
 
-    $result = AccessResult::allowedIf($membership !== NULL)
+    $result = ($membership === NULL ? AccessResult::forbidden() : AccessResult::allowed())
       ->cachePerUser()
       ->addCacheContexts(['user.permissions', 'user.group_permissions'])
       ->addCacheTags([
