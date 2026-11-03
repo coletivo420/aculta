@@ -426,3 +426,17 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   e `config:status`; em seguida publicar commit isolado e validar o Runtime.
 - Próxima etapa do objetivo: concluir auditoria LMS, depois pagamentos e então
   resolver item a item os problemas reportados por `updatedb`.
+## Continuação — regressão Kernel de pagamentos — 2026-11-03
+
+- Atualizada a suíte `CheckoutProTest` para habilitar `text_with_summary`,
+  necessário ao schema de `commerce_product.default.body` no Drupal atual.
+  Antes, os três cenários falhavam durante a instalação do fixture, antes de
+  executar código do gateway.
+- Validação pós-correção: Unit do Mercado Pago 258/1.156 PASS; Kernels
+  `CheckoutProTest` + `PaymentCardFieldsUpdateKernelTest` 4/152 PASS, com 72
+  depreciações upstream. PHPCS e PHP lint PASS.
+- Runtime: campos de cartão instalados, `updatedb:status` sem pendências e
+  `config:status` sem diferenças; nenhuma chamada externa ou cobrança criada.
+- Entrega em preparação: `aculta_pagamentos_mercadopago` 0.1.0-dev.85, teste,
+  changelog, status e índice do README. Próxima etapa: inventariar os itens
+  reais do `updatedb:status`/requirements e corrigi-los um a um.

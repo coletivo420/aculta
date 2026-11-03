@@ -182,3 +182,13 @@
 - `refundPayment()` só atualiza o pagamento Commerce quando a API retorna um estorno aprovado com ID positivo e `payment_id` igual ao pagamento solicitado. Respostas incompletas ou vinculadas a outro pagamento falham fechadas.
 - Regressões cobrem ausência de ID de estorno ou `payment_id`, ID inválido e pagamento divergente. Unit MP: 211 testes / 944 assertions PASS; Kernel `CheckoutProTest`: 2 testes / 91 assertions PASS (77 depreciações upstream); PHPCS Drupal/DrupalPractice e PHP lint focais PASS. A homologação de estorno sandbox continua pendente.
 
+## 0.1.0-dev.85 — corrige o harness Kernel do Checkout Pro
+
+- O Kernel inclui `text_with_summary`, dependência de schema do campo `body`
+  instalado pelo Commerce Product, para que os testes alcancem os casos do
+  gateway em vez de falhar na instalação da configuração.
+- Unit MP: 258 testes / 1.156 assertions PASS. Kernels CheckoutPro e
+  PaymentCardFieldsUpdate: 4 testes / 152 assertions PASS, com 72 depreciações
+  Core/contrib.
+- Nenhuma cobrança, preferência ou mensagem externa foi criada nesta rodada.
+
