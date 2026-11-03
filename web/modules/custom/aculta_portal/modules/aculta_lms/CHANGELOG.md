@@ -783,3 +783,10 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 - `AccountCoursesReaderTest`: 3 testes / 27 asserções PASS, cobrindo destino e
   parâmetros do Group.
 
+## 0.1.0-dev.152 — jornada sem destinos de resposta contrib
+
+- `LearningDashboardManager` aponta cursos para `entity.group.canonical`.
+  Cada aula da jornada fica sem URL até existir uma rota ACULTA para conteúdo e
+  resposta; nenhum destino `lms.*` é inventado.
+- `CourseJourneyManagerTest` verifica rota/ID canônicos e URL de aula nula.
+

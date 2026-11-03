@@ -24,7 +24,7 @@ final readonly class CourseJourneyLesson {
    * @param string $label
    *   Human-readable lesson label.
    * @param int $delta
-   *   Curriculum position used by native learning routes.
+   *   Position within the provider's published curriculum.
    * @param string $state
    *   One of finished, current, in_progress or not_started.
    * @param bool $isCurrent

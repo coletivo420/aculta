@@ -272,20 +272,14 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
         state: $progress?->finished ? 'finished' : 'not_started',
         isCurrent: FALSE,
         allowed: TRUE,
-        url: Url::fromRoute('lms.group.answer_form', [
-          'group' => $course->id(),
-          'lesson_delta' => $delta,
-          'activity_delta' => 0,
-        ]),
+        url: NULL,
       );
     }
     $completed = $progress?->finished ? $total : 0;
     $pending_evaluation = $progress?->status === CourseProgress::STATUS_NEEDS_EVALUATION;
     $continue_url = NULL;
     if (!$pending_evaluation && $total > 0) {
-      $continue_url = $progress?->finished
-        ? Url::fromRoute('lms.group.self_results', ['group' => $course->id()])
-        : Url::fromRoute('lms.course.start', ['group' => $course->id()]);
+      $continue_url = Url::fromRoute('entity.group.canonical', ['group' => $course->id()]);
     }
 
     return new CourseJourney(
