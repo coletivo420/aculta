@@ -51,7 +51,7 @@ aculta_lms.class_activity_deadline:
       group:
         type: entity:group
       activity:
-        type: entity:lms_activity
+        type: entity:aculta_lms_activity
 
 aculta_lms.class_roster_settings:
   path: '/painel-administrativo/lms/curso/{course}/turma/{group}/participantes'

@@ -13,7 +13,7 @@ use Drupal\group\Plugin\Group\Relation\GroupRelationBase;
  * Relates one class to an activity for a class-specific deadline. */
 #[GroupRelationType(
   id: 'lms_class_activity_due',
-  entity_type_id: 'lms_activity',
+  entity_type_id: 'aculta_lms_activity',
   label: new TranslatableMarkup('Prazo de atividade da turma'),
   description: new TranslatableMarkup('Define o prazo de uma atividade em uma turma.'),
   reference_label: new TranslatableMarkup('Atividade'),

@@ -740,3 +740,8 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 - Eligibility, feedback educador e destinatários de submissão/avaliação resolvem `aculta_lms_answer` → atividade → aula → Group.
 - O payload não existe na entidade P2; os avisos apontam aos painéis Ganjalab até existir uma tela própria de resposta.
 
+## 0.1.0-dev.146 — prazos e painel leem entidades próprias
+
+- Prazo por turma, acesso e formulário usam `aculta_lms_activity` e `aculta_lms_lesson`; painel docente enumera atividades e aulas próprias e agrega `aculta_lms_progress`.
+- Testes Kernel de prazo e painel agora exercitam atividade, aula e progresso ACULTA; as entidades LMS permanecem no harness apenas para os bundles e relacionamentos Group legados.
+
