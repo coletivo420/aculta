@@ -1,3 +1,8 @@
+## 0.1.0-dev.134 — fonte própria de respostas (ADR-042)
+
+- `CourseAnswerReaderInterface` passa a consultar `aculta_lms_answer` por atividade e estudante; estado e nota são mapeados no vocabulário ACULTA e as respostas são ordenadas por ID.
+- Teste focal cobre estado submetido, nota nula, conversão para `float` e ordenação.
+
 ## 0.1.0-dev.133 — fonte própria de atividades (ADR-042)
 
 - `CourseActivityReaderInterface` passa a consultar `aculta_lms_activity` por `lesson_id`, mapeando tipo, inclusão em nota e posição.
