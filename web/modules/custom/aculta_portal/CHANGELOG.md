@@ -1,3 +1,9 @@
+## 0.4.1-dev.65 — subscriber de superfícies desligado (Fase 3.4)
+
+- `SurfaceRequestSubscriber`: responde 404 para superfície desativada, só com `leitura_ativa` ligado. Desligado por padrão; nenhum comportamento muda. Ativação depende do teste de rota da 3.0 no Runtime.
+- O MAIN nunca é afetado.
+- Testes: DEFERRED.
+
 ## 0.4.1-dev.64 — testes escritos para mapa, leitor e validação de superfícies
 
 - `DomainSurfaceMapTest`: paridade dos purposes, IDs de Domain, raízes, nó da loja e caminho legado.

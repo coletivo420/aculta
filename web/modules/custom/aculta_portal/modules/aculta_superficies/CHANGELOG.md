@@ -1,3 +1,9 @@
+## 0.1.0-dev.5 — teste estático das rotas (3.0) e comando de sugestão planejado
+
+- `SurfaceRoutesStaticTest`: lê os YAML de Wiki, Studio e Commerce e confere os caminhos novos e a ausência dos antigos. Roda sem subir o Drupal.
+- Comando de sugestão no deployer: não incluído, porque o módulo está em RC. Decisão pendente do responsável.
+- Testes: DEFERRED (sem vendor/ nem Runtime). O teste Kernel com HTTP real segue DEFERRED.
+
 ## 0.1.0-dev.4 — aviso de correção de deploy ao mudar modo ou slug
 
 - O formulário avisa quando uma superfície muda de modo ou slug e indica o registro de correção de deploy (canonical e sitemap) a criar com a CLI do aculta_deployer. O Portal não grava no registro.

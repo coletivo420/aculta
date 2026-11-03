@@ -403,3 +403,8 @@ services:
   aculta_portal.surface_config_reader:
     class: Drupal\aculta_portal\Domain\SurfaceConfigReader
     arguments: ['@config.factory']
+  aculta_portal.surface_request_subscriber:
+    class: Drupal\aculta_portal\EventSubscriber\SurfaceRequestSubscriber
+    arguments: ['@aculta_portal.surface_config_reader', '@aculta_portal.domain_purpose']
+    tags:
+      - { name: event_subscriber }
