@@ -1,3 +1,8 @@
+## 0.1.0-dev.136 — evento de conclusão usa progresso ACULTA
+
+- `CourseCompletionPublisher` e seus hooks publicam `CourseCompletedEvent` a partir de transições da entidade `aculta_lms_progress` para `passed` e `finished`.
+- Teste Unit cobre publicação de conclusão válida e recusa de estado não aprovado, incompleto ou recém criado.
+
 ## 0.1.0-dev.135 — painel passa a ler progresso e aulas próprias (ADR-042)
 
 - `LearningDashboardManager` e a jornada usam os contratos ACULTA de progresso e aulas; métricas de turma consultam `aculta_lms_progress`.
