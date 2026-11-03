@@ -7,14 +7,14 @@ namespace Drupal\aculta_lms\Routing;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\RouteProcessor\OutboundRouteProcessorInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\Routing\Route;
 
 /**
  * Replaces LMS positions with friendly slugs when a URL is generated.
  *
- * Runs before the default outbound processors so that the course entity is still
- * available. Values that are already slugs are left unchanged.
+ * Runs before the default outbound processors while the course is available.
+ * Values that are already slugs are left unchanged.
  */
 final class LmsFriendlyRouteProcessor implements OutboundRouteProcessorInterface {
 
@@ -57,17 +57,20 @@ final class LmsFriendlyRouteProcessor implements OutboundRouteProcessorInterface
   /**
    * Accepts a loaded course or a course ID; anything else is left to Core.
    */
-  private function course(mixed $value): ?CourseInterface {
-    if ($value instanceof CourseInterface) {
+  private function course(mixed $value): ?GroupInterface {
+    if ($value instanceof GroupInterface && $value->bundle() === LmsFriendlySlugs::COURSE_BUNDLE) {
       return $value;
     }
     if (!$this->isPosition($value)) {
       return NULL;
     }
     $course = $this->entityTypeManager->getStorage('group')->load($value);
-    return $course instanceof CourseInterface ? $course : NULL;
+    return $course instanceof GroupInterface && $course->bundle() === LmsFriendlySlugs::COURSE_BUNDLE ? $course : NULL;
   }
 
+  /**
+   * Determines whether a route value is a numeric position.
+   */
   private function isPosition(mixed $value): bool {
     return is_int($value) || (is_string($value) && ctype_digit($value));
   }

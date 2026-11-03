@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.153
+version: 0.1.0-dev.154
 state: Dev
-progress_note: "ADR-042 P5 dev.153: os quatro leitores usam entidades próprias; adapters P1 removidos. Matrícula usa Group e dashboards/lista de cursos apontam para entity.group.canonical; tokens e ingestão xAPI agora autorizam pelo progresso ACULTA, preservando a chave armazenada lesson_status_id; aulas da jornada sem URL até existir rota ACULTA. Unit 226/763 PASS (1 depreciação PHPUnit); Kernel xAPI 3/30 PASS (27 depreciações upstream). Sem migração de legado. Consumidores de payload/histórico, relação lms_classes e rotas de submissão seguem pendentes; P4/P5 incompletos."
+progress_note: "ADR-042 P5 dev.154: os quatro leitores usam entidades próprias; adapters P1 removidos. Matrícula usa Group e dashboards/lista de cursos apontam para entity.group.canonical; tokens e ingestão xAPI autorizam pelo progresso ACULTA; slugs consultam Group e entidades próprias; aulas da jornada sem URL até existir rota ACULTA. Unit 228/786 PASS (1 depreciação PHPUnit); Kernel xAPI 3/30 PASS (27 depreciações upstream); gate Portal 1160 PASS. Sem migração de legado. Histórico/payload de respostas, relação lms_classes e rotas de submissão seguem pendentes; P4/P5 incompletos."
 next_phase: 'Continuar consumidores LMS restantes. Antes de remover lms_classes, fornecer plugin Group compatível com as relações atuais; antes de remover rotas/formulários de resposta, definir substituição ACULTA sem inventar payload/status. Revisar config/sync e manter dados; P6 fora do escopo.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.

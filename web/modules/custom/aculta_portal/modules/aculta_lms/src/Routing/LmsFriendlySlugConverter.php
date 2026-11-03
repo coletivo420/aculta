@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Routing;
 
 use Drupal\Core\ParamConverter\ParamConverterInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -33,7 +33,7 @@ final class LmsFriendlySlugConverter implements ParamConverterInterface {
    * {@inheritdoc}
    */
   public function convert($value, $definition, $name, array $defaults): mixed {
-    // Route defaults (activity_delta: 0) reach here as integers; they are already positions.
+    // Integer route defaults are already positions.
     if (!is_string($value)) {
       return $value;
     }
@@ -48,12 +48,18 @@ final class LmsFriendlySlugConverter implements ParamConverterInterface {
     };
   }
 
+  /**
+   * Resolves a lesson slug to its numeric position.
+   */
   private function lessonDelta(mixed $course, string $slug): ?int {
-    return $course instanceof CourseInterface ? $this->slugs->lessonDeltaFromSlug($course, $slug) : NULL;
+    return $course instanceof GroupInterface ? $this->slugs->lessonDeltaFromSlug($course, $slug) : NULL;
   }
 
+  /**
+   * Resolves an activity slug to its numeric position.
+   */
   private function activityDelta(mixed $course, mixed $lessonDelta, string $slug): ?int {
-    if (!$course instanceof CourseInterface || !is_int($lessonDelta)) {
+    if (!$course instanceof GroupInterface || !is_int($lessonDelta)) {
       return NULL;
     }
     $lesson = $this->slugs->lessonAt($course, $lessonDelta);

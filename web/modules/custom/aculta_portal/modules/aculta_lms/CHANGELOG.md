@@ -1,3 +1,9 @@
+## 0.1.0-dev.154 — slugs consultam conteúdo ACULTA (ADR-042 P5)
+
+- O conversor e o route processor usam `GroupInterface`; slugs de aula consultam `aculta_lms_lesson` por `course_id` e os de atividade consultam `aculta_lms_activity` por `lesson_id`, ambos em ordem de peso/ID.
+- Tipos estáveis de atividade geram o slug enquanto `CourseActivity` ainda não define título. Rotas contrib continuam sendo detectadas pelo nome apenas, sem importação do namespace LMS.
+- Unit focal de slugs 10/31 PASS.
+
 ## 0.1.0-dev.153 — xAPI usa progresso ACULTA (ADR-042 P5)
 
 - Emissão e validação de tokens resolvem `lesson_status_id` em `aculta_lms_progress` e conferem o `uid`; o campo persistido mantém o nome já usado e passa a apontar para progresso ACULTA, conforme P2.

@@ -4,22 +4,16 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Routing;
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Transliteration\PhpTransliteration;
-use Drupal\lms\Entity\Bundle\CourseInterface;
-use Drupal\lms\Entity\LessonInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\group\Entity\GroupInterface;
 
 /**
- * Derives Portuguese public slugs for LMS courses, lessons and activities.
+ * Derives Portuguese slugs for Group courses and ACULTA lesson content.
  *
- * The slug comes from the title, so no field is needed. Lessons and activities
- * are addressed by their position in the parent's ordered field; repeated titles
- * in the same scope receive "-2", "-3", and so on, in stored order.
- *
- * Why: the LMS routes use numeric positions (DT-P21). Titles are stable enough
- * for public links, and deriving them keeps the content model unchanged.
+ * Lesson titles and stable activity types are ordered by weight and ID.
+ * Repeated values in the same scope receive numeric suffixes.
  */
 final class LmsFriendlySlugs {
 
@@ -45,8 +39,10 @@ final class LmsFriendlySlugs {
    * Returns one unique slug per label, keeping the input order and keys.
    *
    * @param array<array-key,string> $labels
+   *   Labels to convert into unique slugs.
    *
    * @return array<array-key,string>
+   *   Slugs with the same keys and order as the input.
    */
   public function uniqueSlugs(array $labels): array {
     $used = [];
@@ -67,58 +63,58 @@ final class LmsFriendlySlugs {
   /**
    * Returns the course slug for a course, unique across all courses.
    */
-  public function courseSlug(CourseInterface $course): ?string {
+  public function courseSlug(GroupInterface $course): ?string {
     return $this->courseSlugs()[$course->id()] ?? NULL;
   }
 
   /**
    * Resolves a course slug to its course entity, or NULL.
    */
-  public function courseFromSlug(string $slug): ?CourseInterface {
+  public function courseFromSlug(string $slug): ?GroupInterface {
     $id = array_search($slug, $this->courseSlugs(), TRUE);
     if ($id === FALSE) {
       return NULL;
     }
     $course = $this->entityTypeManager->getStorage('group')->load($id);
-    return $course instanceof CourseInterface ? $course : NULL;
+    return $course instanceof GroupInterface && $course->bundle() === self::COURSE_BUNDLE ? $course : NULL;
   }
 
   /**
    * Returns the lesson at a position, or NULL when the position is empty.
    *
-   * The LMS getLesson() fails on a missing position, so the check comes first.
+   * Returns NULL when the requested course position does not exist.
    */
-  public function lessonAt(CourseInterface $course, int $delta): ?LessonInterface {
-    return $course->getLessonItem($delta) === NULL ? NULL : $course->getLesson($delta);
+  public function lessonAt(GroupInterface $course, int $delta): ?ContentEntityInterface {
+    return $this->lessons($course)[$delta] ?? NULL;
   }
 
   /**
    * Returns the lesson slug for a position in the course, or NULL.
    */
-  public function lessonSlug(CourseInterface $course, int $delta): ?string {
-    return $this->uniqueSlugs($this->labels($course->get('lessons')))[$delta] ?? NULL;
+  public function lessonSlug(GroupInterface $course, int $delta): ?string {
+    return $this->uniqueSlugs($this->lessonTitles($course))[$delta] ?? NULL;
   }
 
   /**
    * Resolves a lesson slug to its position in the course, or NULL.
    */
-  public function lessonDeltaFromSlug(CourseInterface $course, string $slug): ?int {
-    $delta = array_search($slug, $this->uniqueSlugs($this->labels($course->get('lessons'))), TRUE);
+  public function lessonDeltaFromSlug(GroupInterface $course, string $slug): ?int {
+    $delta = array_search($slug, $this->uniqueSlugs($this->lessonTitles($course)), TRUE);
     return $delta === FALSE ? NULL : $delta;
   }
 
   /**
    * Returns the activity slug for a position in the lesson, or NULL.
    */
-  public function activitySlug(LessonInterface $lesson, int $delta): ?string {
-    return $this->uniqueSlugs($this->labels($lesson->get(LessonInterface::ACTIVITIES)))[$delta] ?? NULL;
+  public function activitySlug(ContentEntityInterface $lesson, int $delta): ?string {
+    return $this->uniqueSlugs($this->activityTypes($lesson))[$delta] ?? NULL;
   }
 
   /**
    * Resolves an activity slug to its position in the lesson, or NULL.
    */
-  public function activityDeltaFromSlug(LessonInterface $lesson, string $slug): ?int {
-    $delta = array_search($slug, $this->uniqueSlugs($this->labels($lesson->get(LessonInterface::ACTIVITIES))), TRUE);
+  public function activityDeltaFromSlug(ContentEntityInterface $lesson, string $slug): ?int {
+    $delta = array_search($slug, $this->uniqueSlugs($this->activityTypes($lesson)), TRUE);
     return $delta === FALSE ? NULL : $delta;
   }
 
@@ -126,6 +122,7 @@ final class LmsFriendlySlugs {
    * Returns the course slugs keyed by course ID, in ID order.
    *
    * @return array<int|string,string>
+   *   Slugs keyed by Group course ID.
    */
   private function courseSlugs(): array {
     $storage = $this->entityTypeManager->getStorage('group');
@@ -142,17 +139,69 @@ final class LmsFriendlySlugs {
   }
 
   /**
-   * Returns the labels of referenced entities, keeping their stored positions.
+   * Returns the titles of own lessons in stored course order.
    *
    * @return array<int,string>
+   *   Lesson titles in weight and ID order.
    */
-  private function labels(FieldItemListInterface $items): array {
-    $labels = [];
-    foreach ($items as $delta => $item) {
-      $entity = $item->get('entity')->getValue();
-      $labels[$delta] = $entity instanceof EntityInterface ? (string) $entity->label() : '';
+  private function lessonTitles(GroupInterface $course): array {
+    $titles = [];
+    foreach ($this->lessons($course) as $delta => $lesson) {
+      $titles[$delta] = (string) self::fieldValue($lesson, 'title');
     }
-    return $labels;
+    return $titles;
+  }
+
+  /**
+   * Returns the own lessons for a course, ordered by weight and ID.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface[]
+   *   ACULTA lesson entities.
+   */
+  private function lessons(GroupInterface $course): array {
+    $storage = $this->entityTypeManager->getStorage('aculta_lms_lesson');
+    $ids = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('course_id', (int) $course->id())
+      ->sort('weight')
+      ->sort('id')
+      ->execute();
+    return array_values(array_filter(
+      $storage->loadMultiple($ids),
+      static fn(mixed $lesson): bool => $lesson instanceof ContentEntityInterface
+        && $lesson->getEntityTypeId() === 'aculta_lms_lesson',
+    ));
+  }
+
+  /**
+   * Returns the stable activity types in stored lesson order.
+   *
+   * @return array<int,string>
+   *   Stable activity types in weight and ID order.
+   */
+  private function activityTypes(ContentEntityInterface $lesson): array {
+    $storage = $this->entityTypeManager->getStorage('aculta_lms_activity');
+    $ids = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('lesson_id', (int) $lesson->id())
+      ->sort('weight')
+      ->sort('id')
+      ->execute();
+    $types = [];
+    foreach ($storage->loadMultiple($ids) as $activity) {
+      if ($activity instanceof ContentEntityInterface && $activity->getEntityTypeId() === 'aculta_lms_activity') {
+        $types[] = (string) self::fieldValue($activity, 'type');
+      }
+    }
+    return $types;
+  }
+
+  /**
+   * Returns the scalar value of an entity field.
+   */
+  private static function fieldValue(ContentEntityInterface $entity, string $field): mixed {
+    $values = $entity->get($field)->getValue();
+    return $values[0]['value'] ?? NULL;
   }
 
 }
