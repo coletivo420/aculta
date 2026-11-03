@@ -7,7 +7,7 @@ namespace Drupal\Tests\aculta_lms\Unit;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_lms\Access\CertificateIssueAccessCheck;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -20,7 +20,8 @@ final class CertificateIssueAccessCheckTest extends UnitTestCase {
   public function testGroupPermissionAccessDeclaresGroupPermissionContext(): void {
     $account = $this->createMock(AccountProxyInterface::class);
     $account->method('hasPermission')->willReturn(FALSE);
-    $course = $this->createMock(CourseInterface::class);
+    $course = $this->createMock(GroupInterface::class);
+    $course->method('bundle')->willReturn('lms_course');
     $course->method('getCacheContexts')->willReturn([]);
     $course->method('getCacheTags')->willReturn([]);
     $course->method('getCacheMaxAge')->willReturn(Cache::PERMANENT);

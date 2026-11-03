@@ -12,12 +12,14 @@ use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Url;
-use Drupal\lms\Entity\CourseStatusInterface;
+use Drupal\aculta_lms\Entity\ProgressEntity;
+use Drupal\aculta_lms\Learning\CourseProgress;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Lets authorized course educators issue a certificate from approved status.
+ * Lets authorized course educators issue a certificate from approved progress.
  */
 final class CourseCertificateIssueForm extends FormBase {
 
@@ -58,32 +60,32 @@ final class CourseCertificateIssueForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $course = $this->certificateRouteMatch->getParameter('group');
     $options = [];
-    if ($course !== NULL && ($this->account->hasPermission('administer lms') || $course->hasPermission('grade students', $this->account))) {
-      $statusStorage = $this->entityTypeManager->getStorage('lms_course_status');
-      $statusIds = $statusStorage->getQuery()
+    $can_manage = $course instanceof GroupInterface && $course->bundle() === 'lms_course'
+      && ($this->account->hasPermission('administer lms') || $course->hasPermission('grade students', $this->account));
+    if ($can_manage) {
+      $progressStorage = $this->entityTypeManager->getStorage('aculta_lms_progress');
+      $progressIds = $progressStorage->getQuery()
         ->accessCheck(FALSE)
-        ->condition(CourseStatusInterface::COURSE_FIELD, $course->id())
-        ->condition('status', CourseStatusInterface::STATUS_PASSED)
-        ->condition('finished', 0, '>')
+        ->condition('course_id', $course->id())
+        ->condition('status', CourseProgress::STATUS_PASSED)
+        ->condition('finished', TRUE)
         ->execute();
-      $statuses = $statusStorage->loadMultiple($statusIds);
-      foreach ($statuses as $status) {
-        if (!$status instanceof CourseStatusInterface || !$status->isFinished()) {
+      $progressItems = $progressStorage->loadMultiple($progressIds);
+      foreach ($progressItems as $progress) {
+        if (!$progress instanceof ProgressEntity || !(bool) $progress->get('finished')->value) {
           continue;
         }
-        // The LMS's typed getter throws if asynchronous cleanup has already
-        // removed the referenced account. Skip stale statuses in the form.
-        $student = $status->get('uid')->entity;
+        $student = $this->entityTypeManager->getStorage('user')->load($progress->get('uid')->value);
         if (!$student instanceof UserInterface) {
           continue;
         }
-        $options[$status->id()] = $this->t('@student — conclusão em @date', [
+        $options[$progress->id()] = $this->t('@student — conclusão em @date', [
           '@student' => $student->getDisplayName(),
-          '@date' => $this->dateFormatter->format($status->getFinished(), 'long'),
+          '@date' => $this->dateFormatter->format((int) $progress->get('changed')->value, 'long'),
         ]);
       }
     }
-    if ($course !== NULL && ($this->account->hasPermission('administer lms') || $course->hasPermission('grade students', $this->account))) {
+    if ($can_manage) {
       $certificates = $this->entityTypeManager->getStorage('aculta_lms_certificate')
         ->loadByProperties(['course_id' => (int) $course->id()]);
     }
@@ -133,9 +135,9 @@ final class CourseCertificateIssueForm extends FormBase {
         '#cache' => ['max-age' => 0],
       ];
     }
-    $form['course_status'] = [
+    $form['course_progress'] = [
       '#type' => 'select',
-      '#title' => $this->t('Conclusão aprovada'),
+      '#title' => $this->t('Progresso aprovado'),
       '#options' => $options,
       '#empty_option' => $this->t('- Selecione uma pessoa -'),
       '#required' => TRUE,
@@ -152,13 +154,13 @@ final class CourseCertificateIssueForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $course = $this->certificateRouteMatch->getParameter('group');
-    $status = $this->entityTypeManager->getStorage('lms_course_status')->load($form_state->getValue('course_status'));
-    if (!$status instanceof CourseStatusInterface || $course === NULL || $status->getCourseId() !== (string) $course->id()) {
+    $progress = $this->entityTypeManager->getStorage('aculta_lms_progress')->load($form_state->getValue('course_progress'));
+    if (!$progress instanceof ProgressEntity || !$course instanceof GroupInterface || (int) $progress->get('course_id')->value !== (int) $course->id()) {
       $this->messenger()->addError($this->t('Não foi possível emitir este certificado. Recarregue a página e tente novamente.'));
       return;
     }
     try {
-      $certificate = $this->certificates->issue($status, $this->account);
+      $certificate = $this->certificates->issue($progress, $this->account);
       $url = Url::fromRoute('aculta_lms.certificate_verify', ['codigo' => $certificate->get('verification_code')->value]);
       $this->messenger()->addStatus($this->t('Certificado emitido. Código de verificação: @code', [
         '@code' => $certificate->get('verification_code')->value,

@@ -1,3 +1,8 @@
+## 0.1.0-dev.138 — certificados usam progresso ACULTA
+
+- Emissão, formulário de seleção e autorização consultam `aculta_lms_progress` e Groups; certificados continuam registrando o UUID de origem no campo existente `course_status_uuid`.
+- Unit completa 224/724 PASS (1 deprecation PHPUnit); teste de acesso de emissão ajustado para Group.
+
 ## 0.1.0-dev.137 — sala de curso usa contratos Group e ACULTA
 
 - `CourseRoomBuilder`, `CourseRoomHooks` e `ClassRosterManager` deixam de exigir o tipo `CourseInterface` ou `ClassHelper`; aulas/turmas continuam sendo resolvidas por Group e relações registradas.
