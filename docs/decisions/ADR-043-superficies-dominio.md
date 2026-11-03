@@ -1,13 +1,15 @@
 # ADR-043: superfícies de domínio no aculta_portal
 
-- **Status:** proposto. Aguarda aceite do responsável. Não altera comportamento.
+- **Status:** aceito pelo responsável em 2026-11-02, como direção de modelo. A implementação segue a Fase 3 e não foi iniciada. Não altera comportamento.
 - **Data:** 2026-11-02.
 - **Relaciona-se com:** ADR-038 (suítes do Studio por domínio), ADR-009 (ambientes), D-50 (cookie local host-only), D-70 (worktrees e sincronização do Runtime).
 - **Base do inventário:** `dev` @ 93b638a (a leitura inicial foi feita em 1034dbb; os números abaixo foram conferidos em 93b638a).
 
-## Conflito registrado com ADR-038
+## Caminhos do Studio: sem conflito de código
 
-O mapa `CANONICAL_STUDIO_PATHS` em `FrontPathPolicy` ainda aponta `shop` para `/studio/green-stash` e `wiki` para `/studio/we-sativa`. O ADR-038 declara que esses caminhos foram descartados, que `/studio` e `/studio/*` respondem 404, e que os caminhos oficiais são `wiki:/wesativa` e `shop:/greenstash`. Esta ADR não decide o conflito: ele precisa ser corrigido no código, em commit próprio, antes da Fase 3.1. Ver também `docs/architecture/TESTES-3.0-ROTAS-SUPERFICIES.md`.
+Uma primeira leitura apontou conflito entre `CANONICAL_STUDIO_PATHS` (`shop:/studio/green-stash`, `wiki:/studio/we-sativa`) e o corpo do ADR-038. A leitura estava errada. A retificação do responsável em 2026-10-30, registrada em `web/modules/custom/aculta_portal/AGENTS.md`, aprova exatamente esses dois caminhos `/studio/*`; os demais `/studio/*` respondem 404. O código está conforme a retificação.
+
+Pendência documental: o corpo do ADR-038 ainda cita `wiki:/wesativa` e `shop:/greenstash` e diz que `/studio/*` foi descartado. Isso contradiz a retificação. Corrigir o ADR-038 é decisão separada do responsável.
 
 ## Inventário medido (leitura inicial em 1034dbb)
 

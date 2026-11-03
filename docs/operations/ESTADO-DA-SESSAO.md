@@ -7,9 +7,9 @@
 - **Arquivos principais:** `web/modules/custom/aculta_portal/modules/aculta_superficies/` (info.yml, README, CHANGELOG, `docs/PLANO-FINAL.md`); `docs/decisions/ADR-043-superficies-dominio.md` e anexo; `docs/architecture/TESTES-3.0-ROTAS-SUPERFICIES.md`; `docs/architecture/rotas-por-purpose-dev-93b638a.csv`; `docs/operations/status/aculta_superficies.yml`.
 - **Verificações:** `validate-environment-addresses.php` FAIL preexistente em `aculta_lms/tests/src/Unit/XapiBatchIngestorTest.php:134` (fora desta entrega, não corrigido). `validate-public-slugs.php` e `validate-project-status-index.php` não executados: exigem `vendor/`, ausente nesta sessão.
 - **Pendências:**
-  1. Corrigir `CANONICAL_STUDIO_PATHS` em `FrontPathPolicy` (conflito com ADR-038) em commit próprio.
+  1. ~~Corrigir `CANONICAL_STUDIO_PATHS`~~: não é conflito. A retificação do responsável (2026-10-30, `web/modules/custom/aculta_portal/AGENTS.md`) aprova `/studio/we-sativa` e `/studio/green-stash`, e o código está conforme. Pendente: o corpo do ADR-038 ainda cita `/wesativa` e `/greenstash`; corrigir é decisão do responsável.
   2. Regenerar a linha do `aculta_superficies` na tabela de status do README raiz com `php scripts/validate-project-status-index.php --write`, em ambiente com `vendor/`.
-  3. Aceite do ADR-043 pelo responsável.
+  3. ADR-043 aceito pelo responsável em 2026-11-02 como direção de modelo; implementação na Fase 3.
   4. Fase 3.0: testes de rota no Runtime (DEFERRED).
 - **Limites e riscos registrados:**
   - O commit `c5333a1` tem trailer `Co-Authored-By`, proibido pelo `AGENTS.md`. Não foi reescrito por causa da regra de não reescrever histórico compartilhado. Decisão do responsável.
