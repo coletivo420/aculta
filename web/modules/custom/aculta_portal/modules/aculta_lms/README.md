@@ -122,10 +122,8 @@ atividade pelo campo e omite o prazo se a atividade foi removida, sem invocar
 `Answer::getActivity()`: `ActivityDeadlineFormHooksTest` 2/6. O Kernel também
 confirma que o hook autoinjetado mostra o prazo da turma no formulário de
 resposta e formata a data no fuso da estudante: `ClassActivityDeadlineTest`
-1/46. O plugin de resposta aberta também descarta referências removidas: score
-seguro, formulário sem feedback dependente da atividade e indicação na tela de
-avaliação; `FreeTextReviewFeedbackTest` 4/20. Kernel focal: 4 testes / 126
-assertions; regressão Kernel LMS/Messenger: 23 testes / 719 assertions PASS, com
+1/46. Kernel focal: 4 testes / 126 assertions; regressão Kernel LMS/Messenger:
+23 testes / 719 assertions PASS, com
 95 depreciações upstream. Runtime `cursos`: sem updates pendentes, rebuild do
 cache concluiu e o container resolveu o hook; houve warning preexistente de
 cópia dos assets H5P. Não foi importada configuração e ainda falta um smoke
@@ -274,33 +272,19 @@ reembolso e isolamento A/B continuam DEFERRED. Matrícula manual e remoção pel
 interface de educador também precisam de smoke HTTP.
 Detalhes, limites e caminho de recuperação estão no [changelog](CHANGELOG.md).
 
-## F8 — Avaliações e feedback (implementação inicial)
+## F8 — Avaliações e feedback (transição ADR-042)
 
-Os tipos objetivos usam os plugins do submódulo contrib `lms_answer_plugins`:
-`select` (resposta única ou seleção múltipla), `select_feedback`, `true_false`,
-`true_false_feedback`, `fill_in_the_blanks` e `fill_in_the_blanks_feedback`.
-O educador escolhe o plugin ao criar um tipo de atividade; uma mesma seleção
-pode ser configurada como resposta única ou múltipla.
-Para resposta discursiva, `free_text` mantém a correção manual. O plugin
-`free_text_review_feedback` acrescenta feedback formativo configurável por
-frases, mas deliberadamente deixa a nota pendente para avaliação do educador;
-correspondência de palavras nunca é tratada como correção final de texto livre.
-Esse adaptador deriva do plugin `FreeTextFeedback` do Drupal LMS 1.2.4, licença
-GPL-2.0-or-later, com origem registrada no código.
+Os três scorers objetivos ACULTA cobrem `true_false`, `select` e `fill_blanks`,
+compartilhando `ObjectiveAnswerScorer`. A configuração de enunciado e gabarito
+ainda precisa ser definida em `ActivityEntity` antes de conectá-los ao fluxo de
+submissão. Resposta discursiva permanece com correção manual por estado e nota
+ACULTA; o plugin legado de feedback por frase foi removido no corte P5.
 
-`lms_answer_comments` integra a avaliação manual à Comment API do Core e deixa
-aluno e educador manterem comentários ligados à resposta original. LMS continua
-fonte da tentativa corrente, da nota e da conclusão. Como LMS 1.2.4 apaga uma
-resposta ao substituí-la, reiniciar a aula ou reavaliá-la, `aculta_lms` grava
-somente o estado anterior numa entidade interna e protegida de auditoria. Isso
-preserva o texto respondido, pontuação, horário e a conversa da resposta sem
-criar outro gradebook. Nenhuma nota é importada de Webform, H5P ou outro sistema.
-
-O histórico só aparece no detalhe da resposta e revalida acesso no momento da
-leitura: estudantes precisam manter `take course`; educadores precisam de
-`grade students` na turma. Os registros são apagados ao excluir o progresso do
-curso, a conta ou o curso. Assim, matrícula revogada não dá acesso ao arquivo
-histórico, e exclusões previstas pelo ciclo de vida removem as cópias.
+Comentários usam Comment API do Core e são ligados à resposta ACULTA. O
+histórico arquiva payload JSON e nota anterior em entidade interna protegida;
+`score_precise` guarda notas decimais sem alterar o campo inteiro legado.
+Acesso é revalidado contra associação e permissão atual do curso. Nenhuma nota
+é importada de Webform, H5P ou outro sistema.
 
 A nota mínima continua configurável por aula no LMS. Pontos de atividade são
 inteiros nativos do LMS; a nota da aula é a soma ponderada dividida pelo máximo,
@@ -472,8 +456,6 @@ LMS/Messenger 79/407 PASS (8 depreciações PHPUnit).
 - `tests/src/Unit/AttemptArchiveManagerTest.php`: preserva dados e notas
   anteriores antes de edição/reavaliação/reinício e ignora salvamento sem
   alteração.
-- `tests/src/Unit/FreeTextReviewFeedbackTest.php`: frases orientam somente o
-  feedback formativo e nunca finalizam a nota sem avaliação do educador.
 - `tests/src/Kernel/AcultaLmsInstallTest.php`: instalação isolada, registro DI, persistência, bloqueio de edição e limpeza por conta.
 - `tests/src/Unit/LearningDashboardManagerTest.php`: painel pessoal isolado por usuário e negação segura para turma sem curso pai.
 - `tests/src/Unit/ClassActivityDeadlineFormTest.php`: formulário interpreta o prazo no fuso horário da conta do educador e usa UTC como fallback.

@@ -304,7 +304,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
       'uid' => (int) $administratorEntity->id(),
       'permissions' => ['administer lms'],
     ]);
-    $this->assertTrue($archive->access('view', $administrator));
+    $this->assertFalse($archive->access('view', $administrator), 'The former contrib administrator permission does not bypass course membership.');
     $this->assertFalse($archive->access('update', $administrator));
     $this->assertSame('{"answer":"texto anterior"}', $storage->load($archive->id())->get('answer_data')->value);
 

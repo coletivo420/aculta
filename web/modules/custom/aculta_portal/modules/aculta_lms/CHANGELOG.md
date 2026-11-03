@@ -1,3 +1,12 @@
+## 0.1.0-dev.167 — remove plugin legado de revisão por frases
+
+- Remove `FreeTextReviewFeedback`, seu teste e configurações de `phrase_feedback`,
+  que dependiam do plugin manager e da entidade Activity do Drupal LMS. A revisão
+  manual segue disponível por estado/nota ACULTA e comentários Core.
+- Unit completa 231/810 PASS (1 depreciação PHPUnit); `AcultaLmsInstallTest`
+  6/196 PASS (44 depreciações Core/contrib); gate Portal 1.172 checks PASS.
+  P5 segue incompleto: imports e dependências LMS restantes não foram removidos.
+
 ## 0.1.0-dev.166 — cobre idempotência do campo de nota precisa
 
 - Kernel de instalação remove a coluna de precisão no banco efêmero e executa
