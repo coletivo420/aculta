@@ -45,4 +45,9 @@
   .aculta-profile-editor__grid:has(.aculta-profile-editor__social) .aculta-profile-editor__identity { grid-row: 1 / span 2; }
   .aculta-profile-editor__biography,
   .aculta-profile-editor__social { grid-column: 2; }
+  .aculta-profile-editor__identity .aculta-profile-identity {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .aculta-profile-editor__identity .aculta-profile-identity__actions { align-items: flex-start; }
 }

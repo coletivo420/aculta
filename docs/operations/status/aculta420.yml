@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.7.0-dev.28
+version: 0.7.0-dev.29
 state: Dev
 progress_note: >-
-  Dev.28: cartão de entrada da Conta e grade do SDC profile-editor; Foundation / PHP lint PASS; Runtime pós-mudança pendente. Dev.27: seletores por data-portal-ui/data-aculta-focal para a marcação dos
+  Dev.29: ações do profile-identity empilham sob a identificação no consumer profile-editor do Studio; Unit 49/354 e Foundation 2441 PASS, Firefox pós-correção pendente. Dev.28: cartão de entrada da Conta e grade do SDC profile-editor; Unit 49/354 e Foundation / PHP lint PASS. Dev.27: seletores por data-portal-ui/data-aculta-focal para a marcação dos
   módulos; gates de fundações e modo de cor PASS; revisão visual pendente.
   0.7.0-dev.26 / THEME-MF2 e OCS-F3: fundação mobile-first global com schema SDC (759), Design Foundations (2432), fronteira tema/módulo (3526), Browser Validators (21), Stylelint e ESLint PASS. OCS-F3 aplica a caixa de mensagem do opcult ao alerta Bootstrap dentro das raízes Fidelity; fixture Firefox ESR 112/112 e verificação servida no HEAD `6cbcbdf52` confirmou a folha e a mensagem real sem overflow. Montserrat excluída por decisão do responsável. Catálogo de shipping-summary completo (103 stories). THEME-MF3 e OCS-F11 seguem pendentes por cobertura de estados/rotas e WCAG integral.
   THEME-MF3 aprovado em 2026-11-01 no Runtime `928acfa4f`: color modes/reduced motion 576/576, no-JS 210/210, teclado 609/609, zoom 200/400% 30/30, headings 120/120 e Unit/Kernel do tema 47/346 e 10/41; OCS-F11 aprovado na sequência; ADR-040 implementa barra de rolagem horizontal em tabelas. Ressalvas: leitor de tela DEFERRED e RTL não suportado.

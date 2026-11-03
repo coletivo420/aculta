@@ -1,3 +1,8 @@
+## 0.7.0-dev.29 — manter as ações do Perfil legíveis na coluna lateral (2026-11-03)
+
+- Dentro do SDC `profile-editor`, o SDC existente `profile-identity` empilha suas ações abaixo da identificação em viewports largos. Evita que os links sejam comprimidos em uma coluna estreita; o escopo é somente o consumer privado do Studio.
+- A suíte visual acrescenta uma verificação da largura das ações no desktop. PHPUnit/theme Foundation PASS; Firefox Runtime pós-correção e comparação visual final pendentes.
+
 ## 0.7.0-dev.28 — cartões do Dashboard e Perfil em duas áreas (2026-11-03)
 
 - Novo token `account-entry-links` apresenta a entrada privada do Dashboard pelo SDC estável `card`, variante `studio_fidelity`, preservando render arrays e cache.
