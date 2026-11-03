@@ -60,6 +60,17 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
   }
 
   /**
+   * Formulário de caminhos fica em /painel-administrativo/aculta/caminhos, só no MAIN.
+   */
+  public function testFormularioEhSoMain(): void {
+    $dados = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_superficies.routing.yml');
+    $rota = $dados['aculta_superficies.form'];
+    $this->assertSame('/painel-administrativo/aculta/caminhos', $rota['path']);
+    $this->assertSame('main', $rota['options']['_aculta_domain_purpose']);
+    $this->assertSame('administrar superficies', $rota['requirements']['_permission']);
+  }
+
+  /**
    * Nenhum caminho antigo ou /studio continua declarado.
    */
   public function testCaminhosAntigosNaoDeclarados(): void {

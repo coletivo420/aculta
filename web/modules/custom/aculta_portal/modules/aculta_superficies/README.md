@@ -6,11 +6,11 @@ Submódulo opt-in do `aculta_portal`, para controlar cada superfície pública d
 - escolher o modo: `subdominio`, `diretorio` ou `desativado`;
 - definir o slug em português, usado no modo `diretorio`.
 
-**Status:** planejamento. `0.1.0-dev.1` é apenas o esqueleto desta pasta. Nenhum código PHP foi escrito. Testes: **DEFERRED** (sem Runtime).
+**Status:** Dev `0.1.0-dev.7`. Formulário e tabela em código; resolução de rotas ainda atrás do interruptor `leitura_ativa` (desligado). Testes: **DEFERRED** (sem Runtime).
 
 ## O que este submódulo faz
 
-- Formulário administrativo em `/painel-administrativo`, exclusivo do purpose `main`.
+- Formulário administrativo em `/painel-administrativo/aculta/caminhos`, exclusivo do purpose `main`, com tabela somente leitura dos caminhos públicos.
 - Validações: slug segue `FRIENDLY-PORTUGUESE-SLUGS`; dois purposes não podem ocupar o mesmo par host + caminho; superfícies protegidas não podem ser desativadas.
 - Sincronização dos registros do módulo Domain a partir da configuração.
 - Aviso de impacto antes de salvar.
@@ -51,7 +51,7 @@ Sem o passo 1, este submódulo não tem o que controlar.
 - ADR de superfícies: `docs/decisions/ADR-043-superficies-dominio.md` e anexo `docs/decisions/ADR-043-anexo-decisoes-fixas.md`.
 - `CHANGELOG.md` deste submódulo.
 
-## Estado das fases (2026-11-02)
+## Estado das fases (2026-11-03)
 
 | Fase | Estado | Observação |
 | --- | --- | --- |
@@ -59,9 +59,9 @@ Sem o passo 1, este submódulo não tem o que controlar.
 | 3.1 Mapa único | Código | `DomainSurfaceMap`; teste de paridade escrito. |
 | 3.2 Flag autoritativa | Código | Subscriber do portal preserva o purpose; teste de rota DEFERRED. |
 | 3.3 Constantes de purpose | Código | `DomainSurfaceMap::MAIN` e `ACCOUNT` no subscriber. |
-| 3.4 Atribuição pela configuração | Parcial | Configuração, schema, leitor e interruptor `leitura_ativa` (desligado). Subscriber não implementado. |
-| 3.5 Modo diretório | Parcial | Regra de superfícies permitidas na validação. URLs não implementadas. |
-| 3.6 Formulário | Código | `/painel-administrativo/superficies`, só MAIN. |
+| 3.4 Atribuição pela configuração | Parcial | Configuração, schema, leitor e interruptor `leitura_ativa` (desligado). `SurfaceRequestSubscriber` (núcleo) já existe e só age com o interruptor ligado. Atribuição de purpose por configuração não implementada. |
+| 3.5 Modo diretório | Parcial | Regra de diretório na validação; caminho em vigor só com `leitura_ativa` ligado. Resolução de `/slug` no MAIN não implementada (DEFERRED). |
+| 3.6 Formulário | Código | `/painel-administrativo/aculta/caminhos`, só MAIN, com tabela de caminhos. |
 | 3.7 Exportação | Parcial | YAML em `config/sync`; conferência de importação DEFERRED. |
 
 Todos os testes escritos ainda não foram executados.

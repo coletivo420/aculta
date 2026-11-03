@@ -1,8 +1,8 @@
 aculta_superficies.form:
-  path: '/painel-administrativo/superficies'
+  path: '/painel-administrativo/aculta/caminhos'
   defaults:
     _form: '\Drupal\aculta_superficies\Form\SuperficiesForm'
-    _title: 'Superfícies do Portal'
+    _title: 'Caminhos das superfícies'
   requirements:
     _permission: 'administrar superficies'
   options:

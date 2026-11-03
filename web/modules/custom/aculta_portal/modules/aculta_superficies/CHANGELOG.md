@@ -1,3 +1,11 @@
+## 0.1.0-dev.7 — caminhos em /painel-administrativo/aculta/caminhos e tabela somente leitura
+
+- Formulário movido de `/painel-administrativo/superficies` para `/painel-administrativo/aculta/caminhos` (só MAIN, permissão `administrar superficies`). O caminho antigo deixa de existir, sem alias: o submódulo não está em produção.
+- Tabela somente leitura com superfície, modo, caminho público (host vindo do Domain), ativação e caminho em vigor. Caminho de diretório só aparece como em vigor com `leitura_ativa` ligado.
+- Link no menu ACULTA (`aculta_portal.admin`), sem alterar outros menus.
+- `SurfaceRoutesStaticTest::testFormularioEhSoMain` confere caminho, purpose e permissão.
+- Testes: DEFERRED (sem vendor/ nem Runtime). Gate `validate-admin-routes-main-domain.php` executado.
+
 ## 0.1.0-dev.6 — aviso de deploy sem citar a ferramenta
 
 - Mensagem do formulário ao mudar modo ou slug não cita o nome da ferramenta de deploy. A fronteira (`boundaries`) exige isso: consumidores não referenciam a ferramenta.

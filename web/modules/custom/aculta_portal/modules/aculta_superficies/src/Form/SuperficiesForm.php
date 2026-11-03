@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_superficies\Form;
 
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\aculta_portal\Domain\SurfaceConfigReader;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -15,8 +16,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Administra modo, slug, título e ativação de cada superfície (Fase 3.6).
  *
- * Só existe no MAIN (rota com _aculta_domain_purpose main). Não altera
- * roteamento: a aplicação da configuração às rotas é a Fase 3.4 completa.
+ * Rota em /painel-administrativo/aculta/caminhos, só no MAIN. Mostra, em
+ * tabela somente leitura, o caminho público de cada superfície e se o
+ * interruptor leitura_ativa aplica a configuração às rotas.
  */
 final class SuperficiesForm extends ConfigFormBase {
 
@@ -24,6 +26,7 @@ final class SuperficiesForm extends ConfigFormBase {
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typed_config_manager,
     private readonly SurfaceConfigReader $reader,
+    private readonly DomainPurposeManager $purposes,
   ) {
     parent::__construct($config_factory, $typed_config_manager);
   }
@@ -33,6 +36,7 @@ final class SuperficiesForm extends ConfigFormBase {
       $container->get('config.factory'),
       $container->get('config.typed'),
       $container->get('aculta_portal.surface_config_reader'),
+      $container->get('aculta_portal.domain_purpose'),
     );
   }
 
@@ -46,6 +50,19 @@ final class SuperficiesForm extends ConfigFormBase {
 
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildForm($form, $form_state);
+    $form['caminhos'] = [
+      '#type' => 'table',
+      '#caption' => $this->t('Caminhos públicos (somente leitura)'),
+      '#header' => [
+        $this->t('Superfície'),
+        $this->t('Modo'),
+        $this->t('Caminho público'),
+        $this->t('Ativa'),
+        $this->t('Caminho em vigor'),
+      ],
+      '#rows' => $this->linhasDeCaminhos(),
+      '#empty' => $this->t('Nenhuma superfície configurada.'),
+    ];
     $form['aviso'] = [
       '#markup' => '<p>' . $this->t('Mudar o modo ou o slug não altera as rotas nesta versão. Antes de aplicar, confira o impacto na Conta e na sessão compartilhada.') . '</p>',
     ];
@@ -122,6 +139,53 @@ final class SuperficiesForm extends ConfigFormBase {
         '@pagina' => $linha['modo'] === 'diretorio' ? '/' . $linha['slug'] : '(subdomínio)',
       ]));
     }
+  }
+
+  /**
+   * Linhas da tabela de caminhos. Hosts vêm do Domain, nunca de texto fixo.
+   *
+   * @return array<int, array<int, string>>
+   */
+  private function linhasDeCaminhos(): array {
+    $linhas = [];
+    foreach ($this->reader->superficies() as $purpose => $linha) {
+      $emVigor = $this->reader->caminhoDiretorioAtivo($purpose);
+      if ($emVigor === NULL) {
+        $emVigor = $this->reader->leituraAtiva()
+          ? (string) $this->t('Não aplicável')
+          : (string) $this->t('Não (leitura_ativa desligada)');
+      }
+      $linhas[] = [
+        (string) (SurfaceConfigReader::TITULOS[$purpose] ?? $purpose),
+        $this->rotuloModo($linha['modo']),
+        $this->caminhoPublico($purpose, $linha),
+        (string) ($linha['ativa'] ? $this->t('Sim') : $this->t('Não')),
+        $emVigor,
+      ];
+    }
+    return $linhas;
+  }
+
+  private function caminhoPublico(string $purpose, array $linha): string {
+    if ($linha['modo'] === 'desativado') {
+      return '—';
+    }
+    if ($linha['modo'] === 'diretorio') {
+      $principal = $this->purposes->getDomain(DomainSurfaceMap::MAIN);
+      $host = $principal !== NULL ? $principal->getHostname() : '(sem Domain principal)';
+      $caminho = $this->reader->caminhoDiretorioConfigurado($purpose);
+      return $caminho !== NULL ? $host . $caminho : $host . ' (revisar slug ou ativação)';
+    }
+    $dominio = $this->purposes->getDomain($purpose);
+    return $dominio !== NULL ? $dominio->getHostname() . '/' : '(sem Domain)';
+  }
+
+  private function rotuloModo(string $modo): string {
+    return match ($modo) {
+      'diretorio' => (string) $this->t('Diretório'),
+      'desativado' => (string) $this->t('Desativado'),
+      default => (string) $this->t('Subdomínio'),
+    };
   }
 
   /**
