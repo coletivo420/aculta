@@ -235,7 +235,7 @@
           }
         });
 
-        drawer.addEventListener('show.bs.offcanvas', () => {
+        jQuery(drawer).on('show.bs.modal', () => {
           const endpoint = drawer.dataset.acultaDrawerUrl;
           if (!content || !endpoint) {
             return;
@@ -290,7 +290,7 @@
             });
         });
 
-        drawer.addEventListener('hide.bs.offcanvas', () => request?.abort());
+        jQuery(drawer).on('hide.bs.modal', () => request?.abort());
       });
     },
   };

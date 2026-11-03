@@ -345,3 +345,12 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - Versão do tema marcada `0.7.0-dev.38`; CHANGELOG, roadmap, gate Foundation, `AGENTS.md` do tema e índice gerado atualizados.
 - Verificações estáticas: PHP lint, parsing de YAML, status index (53 componentes) e `git diff --check` PASS. Testes e revisão visual não executados.
 - Cache do Runtime não reconstruído. A sincronização permanece bloqueada pelo `system_update_11501` que procura `aculta_link`; registro do snapshot e hash no handoff Bootstrap acima.
+
+## Handoff — ACULTA420 com Bootstrap 8.x nativo — 2026-11-03
+
+- **Objetivo:** usar somente Bootstrap 3.4.10 entregue pelo Drupal Bootstrap 8.x-3.45, sem carregar camada Bootstrap 5 no ACULTA420.
+- **Implementação:** removida a biblioteca `bootstrap5-framework` do `aculta420/global`; gavetas de carrinho, avisos e mensagens usam o plugin modal Bootstrap 3 com apresentação lateral CSS própria. Dropdown, abas, menu colapsável, alertas e eventos AJAX usam atributos/classes/eventos nativos do Bootstrap 3/jQuery. Ajustada a grade do endereço, cartões de conteúdo e utilitários que `PortalUiHooks` entrega para layouts ACULTA com classes `aculta-u-*`.
+- **Versão:** tema `0.7.0-dev.39`; atualizado CHANGELOG, roadmap, gate Foundation, instruções locais, status do componente e linha gerada do README.
+- **Validações:** status index regenerado (53 componentes); `git diff --check`, PHP lint, `node --check` e parsing de 3 arquivos YAML PASS. Testes e inspeção visual não executados.
+- **Runtime:** sincronização DEFERRED. `updatedb` permanece bloqueado por `system_update_11501` que procura o tipo de entidade `aculta_link`, ausente no Runtime; snapshot/hash constam no handoff Bootstrap 8.x acima. Não houve operação de escrita.
+- **Retomar lendo:** `web/themes/custom/aculta420/aculta420.libraries.yml`, `components/patterns/{cart-offcanvas,alerts-trigger,messenger-trigger,product-tabs}`, `js/{navigation,messenger-drawers}.js`, `css/components/{portal-cart,utilities}.css`, `scripts/validate-aculta420-foundation.php` e esta seção. A validação visual e de comportamento no tema base ainda é necessária antes de declarar RC.

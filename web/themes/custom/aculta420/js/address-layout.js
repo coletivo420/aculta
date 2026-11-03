@@ -9,7 +9,7 @@
 (function (Drupal, once) {
   'use strict';
 
-  const rowOf = (el) => el?.closest('.form-item, .js-form-item, .form-check') || null;
+  const rowOf = (el) => el?.closest('.form-item, .js-form-item, .checkbox, .radio') || null;
 
   // Procura o campo pelo nome final (ex.: [address_line1]), dentro do mesmo formulário ou bloco de endereço.
   const fieldIn = (container, key) => container.querySelector(`input[name$="[${key}]"], select[name$="[${key}]"]`);
@@ -40,13 +40,13 @@
     }
     // Número e S/N encolhem para caber; em telas móveis o complemento passa para a linha seguinte.
     const row = document.createElement('div');
-    row.className = 'row g-2 align-items-end portal-address-number-row';
+    row.className = 'row portal-address-number-row';
     const numCol = document.createElement('div');
-    numCol.className = 'col-auto';
+    numCol.className = 'col-xs-3 col-sm-2';
     const snCol = document.createElement('div');
-    snCol.className = 'col-auto pb-2';
+    snCol.className = 'col-xs-2 col-sm-1';
     const compCol = document.createElement('div');
-    compCol.className = 'col-12 col-sm';
+    compCol.className = 'col-xs-7 col-sm-9';
     numberRow.parentElement.insertBefore(row, numberRow);
     numCol.append(numberRow);
     if (snRow) {

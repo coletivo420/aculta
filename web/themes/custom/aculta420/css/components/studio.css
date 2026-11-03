@@ -239,7 +239,7 @@ body.path-ganjalab .aculta-main .aculta-card {
   box-shadow: var(--aculta-studio-fidelity-box-shadow);
 }
 
-body.path-ganjalab .aculta-main .aculta-card .card-body {
+body.path-ganjalab .aculta-main .aculta-card .panel-body {
   padding-block: 1rem;
   padding-inline: clamp(1rem, 2.25vw, 1.5rem);
 }
@@ -556,7 +556,7 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
   box-shadow: var(--aculta-studio-fidelity-box-shadow);
 }
 
-.aculta-main .we-sativa__workspace .aculta-card .card-body {
+.aculta-main .we-sativa__workspace .aculta-card .panel-body {
   padding-block: 1rem;
   padding-inline: 2rem;
 }
@@ -729,10 +729,10 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
   display: inline-block;
 }
 
-.studio__main form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), .form-select),
-.aculta-profile-editor form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), .form-select),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), .form-select),
-:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), .form-select) {
+.studio__main form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select.form-control),
+.aculta-profile-editor form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select.form-control),
+body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select.form-control),
+:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select.form-control) {
   min-block-size: 2.75rem;
   padding: 0.5rem 1rem;
   color: var(--aculta-studio-fidelity-text);
@@ -743,18 +743,18 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
   font: inherit;
 }
 
-.studio__main form :is(input, select, textarea, .form-control, .form-select)::placeholder,
-.aculta-profile-editor form :is(input, select, textarea, .form-control, .form-select)::placeholder,
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(input, select, textarea, .form-control, .form-select)::placeholder,
-:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(input, select, textarea, .form-control, .form-select)::placeholder {
+.studio__main form :is(input, select, textarea, .form-control, select.form-control)::placeholder,
+.aculta-profile-editor form :is(input, select, textarea, .form-control, select.form-control)::placeholder,
+body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(input, select, textarea, .form-control, select.form-control)::placeholder,
+:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(input, select, textarea, .form-control, select.form-control)::placeholder {
   color: var(--aculta-studio-fidelity-input-placeholder);
   font-family: var(--aculta-studio-fidelity-font-family);
 }
 
-.studio__main form :is(input, select, textarea, .form-control, .form-select):is(:focus, :focus-visible),
-.aculta-profile-editor form :is(input, select, textarea, .form-control, .form-select):is(:focus, :focus-visible),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(input, select, textarea, .form-control, .form-select):is(:focus, :focus-visible),
-:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(input, select, textarea, .form-control, .form-select):is(:focus, :focus-visible) {
+.studio__main form :is(input, select, textarea, .form-control, select.form-control):is(:focus, :focus-visible),
+.aculta-profile-editor form :is(input, select, textarea, .form-control, select.form-control):is(:focus, :focus-visible),
+body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(input, select, textarea, .form-control, select.form-control):is(:focus, :focus-visible),
+:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(input, select, textarea, .form-control, select.form-control):is(:focus, :focus-visible) {
   border-color: var(--aculta-studio-fidelity-input-focus);
   background-color: var(--aculta-studio-fidelity-input-background);
 }
@@ -766,10 +766,10 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
   border-color: var(--aculta-studio-fidelity-input-error);
 }
 
-.studio__main form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button),
-.aculta-profile-editor form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button),
-:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button) {
+.studio__main form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close),
+.aculta-profile-editor form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close),
+body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close),
+:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close) {
   display: inline-block;
   min-block-size: 2.75rem;
   margin-block-end: 1em;
@@ -788,37 +788,37 @@ body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-eve
   cursor: pointer;
 }
 
-.studio__main form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button):not([disabled]):is(:hover, :focus-visible),
-.aculta-profile-editor form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button):not([disabled]):is(:hover, :focus-visible),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button):not([disabled]):is(:hover, :focus-visible),
-:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button):not([disabled]):is(:hover, :focus-visible) {
+.studio__main form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close):not([disabled]):is(:hover, :focus-visible),
+.aculta-profile-editor form :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close):not([disabled]):is(:hover, :focus-visible),
+body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close):not([disabled]):is(:hover, :focus-visible),
+:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close):not([disabled]):is(:hover, :focus-visible) {
   color: var(--aculta-studio-fidelity-button-hover-text);
   border-color: var(--aculta-studio-fidelity-button-hover-border);
   background: var(--aculta-studio-fidelity-button-hover-background);
 }
 
-.studio__main form :is(.form-submit, .button--cta, .button--primary, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.btn-close):not(.accordion-button),
-.aculta-profile-editor form :is(.form-submit, .button--cta, .button--primary, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.btn-close):not(.accordion-button),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(.form-submit, .button--cta, .button--primary, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.btn-close):not(.accordion-button),
-:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(.form-submit, .button--cta, .button--primary, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.btn-close):not(.accordion-button) {
+.studio__main form :is(.form-submit, .button--cta, .button--primary, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.close),
+.aculta-profile-editor form :is(.form-submit, .button--cta, .button--primary, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.close),
+body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(.form-submit, .button--cta, .button--primary, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.close),
+:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(.form-submit, .button--cta, .button--primary, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.close) {
   color: var(--aculta-studio-fidelity-button-primary-text);
   border-color: var(--aculta-studio-fidelity-button-primary-border);
   background: var(--aculta-studio-fidelity-button-primary-background);
 }
 
-.studio__main form :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button),
-.aculta-profile-editor form :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button),
-:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button) {
+.studio__main form :is(.button--danger, .danger):not([disabled]):not(.close),
+.aculta-profile-editor form :is(.button--danger, .danger):not([disabled]):not(.close),
+body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(.button--danger, .danger):not([disabled]):not(.close),
+:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(.button--danger, .danger):not([disabled]):not(.close) {
   color: var(--aculta-studio-fidelity-button-danger-text);
   border-color: var(--aculta-studio-fidelity-button-danger-border);
   background: var(--aculta-studio-fidelity-button-background);
 }
 
-.studio__main form :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button):is(:hover, :focus-visible),
-.aculta-profile-editor form :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button):is(:hover, :focus-visible),
-body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button):is(:hover, :focus-visible),
-:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(.button--danger, .danger):not([disabled]):not(.btn-close):not(.accordion-button):is(:hover, :focus-visible) {
+.studio__main form :is(.button--danger, .danger):not([disabled]):not(.close):is(:hover, :focus-visible),
+.aculta-profile-editor form :is(.button--danger, .danger):not([disabled]):not(.close):is(:hover, :focus-visible),
+body.path-culturas main#main-content :is(form.aculta-event-form, form.aculta-event-location-form) :is(.button--danger, .danger):not([disabled]):not(.close):is(:hover, :focus-visible),
+:is(form.studio-profile-form, body.path-perfil form#aculta-user-studio-nickname-form, body.path-perfil form#aculta-user-profile-visibility-form) :is(.button--danger, .danger):not([disabled]):not(.close):is(:hover, :focus-visible) {
   color: var(--aculta-studio-fidelity-button-hover-text);
   border-color: var(--aculta-studio-fidelity-button-danger-border);
   background: var(--aculta-studio-fidelity-button-danger-border);
@@ -862,7 +862,7 @@ body.path-marley form.node-revista-form label.option {
   display: inline-block;
 }
 
-body.path-marley form.node-revista-form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), .form-select) {
+body.path-marley form.node-revista-form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select, textarea, .form-control:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="image"]), select.form-control) {
   min-block-size: 2.75rem;
   padding: 0.5rem 1rem;
   color: var(--aculta-studio-fidelity-text);
@@ -873,12 +873,12 @@ body.path-marley form.node-revista-form :is(input:not([type="checkbox"]):not([ty
   font: inherit;
 }
 
-body.path-marley form.node-revista-form :is(input, select, textarea, .form-control, .form-select)::placeholder {
+body.path-marley form.node-revista-form :is(input, select, textarea, .form-control, select.form-control)::placeholder {
   color: var(--aculta-studio-fidelity-input-placeholder);
   font-family: var(--aculta-studio-fidelity-font-family);
 }
 
-body.path-marley form.node-revista-form :is(input, select, textarea, .form-control, .form-select):is(:focus, :focus-visible) {
+body.path-marley form.node-revista-form :is(input, select, textarea, .form-control, select.form-control):is(:focus, :focus-visible) {
   border-color: var(--aculta-studio-fidelity-input-focus);
   background-color: var(--aculta-studio-fidelity-input-background);
 }
@@ -888,7 +888,7 @@ body.path-marley form.node-revista-form .error {
 }
 
 /* Keep the editor toolbar and widget buttons on their own UI styles. */
-body.path-marley form.node-revista-form .form-actions :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button) {
+body.path-marley form.node-revista-form .form-actions :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close) {
   min-block-size: 2.75rem;
   margin-block-end: 1em;
   padding: 0.5em 2em;
@@ -906,13 +906,13 @@ body.path-marley form.node-revista-form .form-actions :is(button, input[type="su
   cursor: pointer;
 }
 
-body.path-marley form.node-revista-form .form-actions :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.btn-close):not(.accordion-button):not([disabled]):is(:hover, :focus-visible) {
+body.path-marley form.node-revista-form .form-actions :is(button, input[type="submit"], input[type="button"], .form-submit, .button):not(.close):not([disabled]):is(:hover, :focus-visible) {
   color: var(--aculta-studio-fidelity-button-hover-text);
   border-color: var(--aculta-studio-fidelity-button-hover-border);
   background: var(--aculta-studio-fidelity-button-hover-background);
 }
 
-body.path-marley form.node-revista-form .form-actions :is(.form-submit, .button--cta, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.btn-close):not(.accordion-button) {
+body.path-marley form.node-revista-form .form-actions :is(.form-submit, .button--cta, .oc-button--primary):not([data-drupal-selector="edit-reset"]):not(.close) {
   color: var(--aculta-studio-fidelity-button-primary-text);
   border-color: var(--aculta-studio-fidelity-button-primary-border);
   background: var(--aculta-studio-fidelity-button-primary-background);
@@ -1004,7 +1004,7 @@ body.path-marley form.node-revista-form .form-actions :is(.form-submit, .button-
   border: 0;
 }
 
-.aculta-account-entry .studio__actions .aculta-card--studio-fidelity .card-body > a {
+.aculta-account-entry .studio__actions .aculta-card--studio-fidelity .panel-body > a {
   display: flex;
   min-block-size: 2.75rem;
   align-items: center;
@@ -1021,7 +1021,7 @@ body.path-marley form.node-revista-form .form-actions :is(.form-submit, .button-
   height: 100%;
 }
 
-.studio-hub .studio__actions .card-body {
+.studio-hub .studio__actions .panel-body {
   overflow-wrap: anywhere;
 }
 
@@ -1663,7 +1663,7 @@ body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"
   .aculta-main > .aculta-container:has(.we-sativa__workspace),
   body.path-ganjalab .aculta-main > .aculta-container,
   body.path-culturas .aculta-main > .aculta-container
-) > .aculta-highlighted > .alert-wrapper > .alert .btn-close {
+) > .aculta-highlighted > .alert-wrapper > .alert .close {
   flex: none;
 }
 
@@ -1721,7 +1721,7 @@ body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"
     .aculta-main > .aculta-container:has(.we-sativa__workspace),
     body.path-ganjalab .aculta-main > .aculta-container,
     body.path-culturas .aculta-main > .aculta-container
-  ) > .aculta-highlighted > .alert-wrapper > .alert .btn-close {
+  ) > .aculta-highlighted > .alert-wrapper > .alert .close {
     transition: none;
   }
 }
@@ -1798,7 +1798,7 @@ body.path-marley .aculta-main > .aculta-container:has([data-aculta-studio="root"
 }
 
 [data-portal-ui="aculta-learning-home__actions"] .btn,
-[data-portal-ui="aculta-learning-home__continue"] .card-footer .btn {
+[data-portal-ui="aculta-learning-home__continue"] .panel-footer .btn {
   display: inline-flex;
   min-block-size: 2.75rem;
   align-items: center;

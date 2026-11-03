@@ -45,4 +45,4 @@
   position: relative;
   margin-bottom: 0;
 }
-.aculta-cart-offcanvas__caixa .btn-close { position: absolute; top: 0.5rem; right: 0.5rem; }
+.aculta-cart-offcanvas__caixa .close { position: absolute; top: 0.5rem; right: 0.5rem; }

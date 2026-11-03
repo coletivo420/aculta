@@ -169,7 +169,7 @@
 .action-links .button-action:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
 
 /* Busca de tópicos: mantém ajuda e ação dentro de suas colunas em telas largas. */
-#views-exposed-form-aculta-forum-search-page-search > .d-flex {
+#views-exposed-form-aculta-forum-search-page-search {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr);
   align-items: start;
@@ -196,7 +196,7 @@
   min-height: 2.75rem;
 }
 @media (min-width: 576px) {
-  #views-exposed-form-aculta-forum-search-page-search > .d-flex {
+  #views-exposed-form-aculta-forum-search-page-search {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 
@@ -213,7 +213,7 @@
   .aculta-forum-topic-list-row__last-author { grid-column: 2; justify-content: flex-end; }
 }
 @media (min-width: 992px) {
-  #views-exposed-form-aculta-forum-search-page-search > .d-flex {
+  #views-exposed-form-aculta-forum-search-page-search {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
   }
   #views-exposed-form-aculta-forum-search-page-search #edit-actions {

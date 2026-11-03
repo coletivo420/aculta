@@ -17,7 +17,7 @@
 /* Título inline de elementos e de composto (configuração "título ao lado"). */
 .webform-element--title-inline > div { display: inline; }
 .webform-element--title-inline .form-control,
-.webform-element--title-inline .form-select {
+.webform-element--title-inline select.form-control {
   display: inline;
   width: inherit;
 }

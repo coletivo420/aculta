@@ -18,8 +18,11 @@ async function checkCounter(type, kind, count, expected) {
   const drawer = {
     dataset: { acultaDrawerCount: type, acultaDrawerUrl: '/preview' },
     querySelector: () => content,
-    addEventListener: (name, callback) => { handlers[name] = callback; },
   };
+  const jQuery = (element) => ({
+    on(name, callback) { handlers[name] = callback; return this; },
+  });
+  jQuery.fn = { modal() {}, collapse() {} };
   const document = {
     addEventListener() {},
     querySelector: () => counter,
@@ -35,9 +38,9 @@ async function checkCounter(type, kind, count, expected) {
   };
   const once = (id) => id === 'aculta-messenger-drawer' ? [drawer] : [];
   const fetch = async () => ({ ok: true, headers: { get: () => String(count) }, text: async () => '' });
-  vm.runInNewContext(source, { Drupal, once, drupalSettings: {}, document, fetch, AbortController, window: {} });
+  vm.runInNewContext(source, { Drupal, once, drupalSettings: {}, document, fetch, AbortController, window: {}, jQuery });
   Drupal.behaviors.acultaMessengerDrawers.attach(document);
-  handlers['show.bs.offcanvas']();
+  handlers['show.bs.modal']();
   await new Promise((resolve) => setImmediate(resolve));
   assert.equal(counter.dataset.count, String(count));
   assert.equal(counter.textContent, count > 99 ? '99+' : String(count));

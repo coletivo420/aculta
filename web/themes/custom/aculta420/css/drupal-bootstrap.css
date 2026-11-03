@@ -1,23 +1,20 @@
 /* 12. Drupal and Bootstrap components: preserve behavior and remove default colors. */
-.card, .modal-content, .offcanvas, .dropdown-menu {
-  --bs-card-bg: var(--aculta-surface-raised);
-  --bs-card-cap-bg: var(--aculta-surface-muted);
-  --bs-card-color: var(--aculta-text-primary);
-  --bs-modal-bg: var(--aculta-surface-raised);
-  --bs-modal-color: var(--aculta-text-primary);
-  --bs-offcanvas-bg: var(--aculta-surface-raised);
-  --bs-offcanvas-color: var(--aculta-text-primary);
-  --bs-dropdown-bg: var(--aculta-surface-raised);
-  --bs-dropdown-color: var(--aculta-text-primary);
-  --bs-dropdown-link-color: var(--aculta-text-primary);
-  --bs-dropdown-link-hover-color: var(--aculta-text-primary);
-  --bs-dropdown-link-hover-bg: var(--bs-primary-bg-subtle);
-  --bs-dropdown-link-active-color: var(--aculta-interactive-active-text);
-  --bs-dropdown-link-active-bg: var(--bs-primary-bg-subtle);
-  --bs-dropdown-link-disabled-color: var(--aculta-text-muted);
-  --bs-dropdown-header-color: var(--aculta-text-secondary);
+.panel, .modal-content, .dropdown-menu {
+  background-color: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
 }
-.aculta-navbar .dropdown-menu { --bs-dropdown-font-size: 1.25rem; }
+.panel, .panel-default, .modal-content, .dropdown-menu { border-color: var(--aculta-border-default); }
+.panel-heading { background-color: var(--aculta-surface-muted); color: var(--aculta-text-primary); }
+.dropdown-menu > li > a { color: var(--aculta-text-primary); }
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+  background-color: var(--aculta-surface-muted);
+  color: var(--aculta-text-primary);
+}
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+  background-color: var(--aculta-interactive-active-bg);
+  color: var(--aculta-interactive-active-text);
+}
+.aculta-navbar .dropdown-menu { font-size: 1.25rem; }
 
 /* Drupal Navigation keeps its three regions stacked until a wide viewport can
    fit the administrative title, context, and actions without horizontal
@@ -68,126 +65,62 @@
   }
 }
 
-.form-control, .form-select, .form-check-input, .input-group-text {
+.form-control, select.form-control, .input-group-addon {
   color: var(--aculta-text-primary);
   background-color: var(--aculta-surface-interactive);
   border-color: var(--aculta-border-strong);
 }
 .form-label { font-weight: 600; margin-bottom: 0.5rem; }
-.form-control, .form-select { min-height: 2.75rem; }
+.form-control, select.form-control { min-height: 2.75rem; }
 .form-control[type="color"] { min-height: 0; }
 .form-control::placeholder { color: var(--aculta-text-muted); opacity: 0.85; }
-.form-control:disabled, .form-select:disabled, .input-group-text { background-color: var(--aculta-surface-muted); }
-.form-control:focus, .form-select:focus, .form-check-input:focus {
+.form-control:disabled, select.form-control:disabled, .input-group-addon { background-color: var(--aculta-surface-muted); }
+.form-control:focus, select.form-control:focus, :is(input[type="checkbox"], input[type="radio"]):focus {
   color: var(--aculta-text-primary);
   background-color: var(--aculta-surface-interactive);
   border-color: var(--aculta-border-accent);
   box-shadow: 0 0 0 0.25rem var(--aculta-focus-ring);
 }
-.form-check-input:checked, .form-check-input[type="checkbox"]:indeterminate {
-  background-color: var(--aculta-border-accent);
-  border-color: var(--aculta-border-accent);
-}
-/* Substituir cores fixas dos ícones de formulário herdados pelo tema. */
-.form-select {
-  --bs-form-select-bg-img: linear-gradient(45deg, transparent 50%, var(--aculta-text-primary) 50%),
-    linear-gradient(135deg, var(--aculta-text-primary) 50%, transparent 50%);
-  background-position: right 1rem center, right 0.6875rem center;
-  background-size: 0.3125rem 0.3125rem;
-}
-.form-switch .form-check-input,
-.form-switch .form-check-input:focus,
-.form-switch .form-check-input:checked {
-  --bs-form-switch-bg: radial-gradient(circle, var(--aculta-text-inverse) 60%, transparent 65%);
-  background-color: var(--aculta-interactive-hover-bg);
-  background-size: 1rem 100%;
-}
-.form-switch .form-check-input:checked { background-color: var(--aculta-border-accent); }
-.form-range::-webkit-slider-thumb { background-color: var(--aculta-border-accent); }
-.form-range::-moz-range-thumb { background-color: var(--aculta-border-accent); }
-.form-range::-webkit-slider-thumb:active { background-color: var(--aculta-interactive-hover-bg); }
-.form-range::-moz-range-thumb:active { background-color: var(--aculta-interactive-hover-bg); }
-.form-range:focus::-webkit-slider-thumb { box-shadow: 0 0 0 0.25rem var(--aculta-focus-ring); }
-.form-range:focus::-moz-range-thumb { box-shadow: 0 0 0 0.25rem var(--aculta-focus-ring); }
-.form-range::-webkit-slider-runnable-track { background-color: var(--aculta-border-default); }
-.form-range::-moz-range-track { background-color: var(--aculta-border-default); }
-.form-range:disabled::-webkit-slider-thumb { background-color: var(--aculta-border-default); }
-.form-range:disabled::-moz-range-thumb { background-color: var(--aculta-border-default); }
-.form-range:disabled { opacity: 0.6; }
+ :is(input[type="checkbox"], input[type="radio"]):checked { accent-color: var(--aculta-border-accent); }
 .form-control.is-valid, .form-control.is-invalid,
 .was-validated .form-control:valid, .was-validated .form-control:invalid { background-image: none; }
-:is(.form-select.is-valid, .form-select.is-invalid, .was-validated .form-select:valid, .was-validated .form-select:invalid):not([multiple]):is(:not([size]), [size="1"]) {
-  --bs-form-select-bg-icon: none;
-}
-:is(.form-control, .form-select):is(.is-valid, .is-invalid):focus,
-.was-validated :is(.form-control, .form-select):is(:valid, :invalid):focus {
+:is(.form-control, select.form-control):is(.is-valid, .is-invalid):focus,
+.was-validated :is(.form-control, select.form-control):is(:valid, :invalid):focus {
   box-shadow: 0 0 0 0.25rem var(--aculta-focus-ring);
 }
 .valid-tooltip, .invalid-tooltip { color: var(--aculta-text-primary); background-color: var(--aculta-surface-muted); }
 .valid-tooltip { border: 1px solid var(--aculta-border-accent); }
 .invalid-tooltip { border: 1px solid var(--aculta-text-accent); }
 
-.nav { --bs-nav-link-color: var(--aculta-text-primary); --bs-nav-link-hover-color: var(--aculta-text-accent); --bs-nav-link-disabled-color: var(--aculta-text-muted); }
-.nav-pills { --bs-nav-pills-link-active-bg: var(--aculta-interactive-active-bg); --bs-nav-pills-link-active-color: var(--aculta-interactive-active-text); }
-.nav-tabs { --bs-nav-tabs-link-active-color: var(--aculta-text-primary); --bs-nav-tabs-link-active-bg: var(--aculta-surface-raised); }
-.pagination {
-  --bs-pagination-color: var(--aculta-text-primary);
-  --bs-pagination-bg: var(--aculta-surface-raised);
-  --bs-pagination-hover-color: var(--aculta-text-primary);
-  --bs-pagination-hover-bg: var(--aculta-surface-muted);
-  --bs-pagination-focus-color: var(--aculta-text-primary);
-  --bs-pagination-focus-bg: var(--aculta-surface-muted);
-  --bs-pagination-focus-box-shadow: 0 0 0 0.25rem var(--aculta-focus-ring);
-  --bs-pagination-active-color: var(--aculta-interactive-active-text);
-  --bs-pagination-active-bg: var(--aculta-interactive-active-bg);
-  --bs-pagination-active-border-color: var(--aculta-interactive-active-bg);
-  --bs-pagination-disabled-color: var(--aculta-text-muted);
-  --bs-pagination-disabled-bg: var(--aculta-surface-muted);
+.nav > li > a { color: var(--aculta-text-primary); }
+.nav > li > a:hover, .nav > li > a:focus { color: var(--aculta-text-accent); }
+.nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+  background-color: var(--aculta-interactive-active-bg);
+  color: var(--aculta-interactive-active-text);
 }
-.list-group {
-  --bs-list-group-bg: var(--aculta-surface-raised);
-  --bs-list-group-color: var(--aculta-text-primary);
-  --bs-list-group-action-color: var(--aculta-text-primary);
-  --bs-list-group-action-hover-color: var(--aculta-text-primary);
-  --bs-list-group-action-hover-bg: var(--aculta-surface-muted);
-  --bs-list-group-action-active-color: var(--aculta-text-primary);
-  --bs-list-group-action-active-bg: var(--aculta-surface-muted);
-  --bs-list-group-active-color: var(--aculta-interactive-active-text);
-  --bs-list-group-active-bg: var(--aculta-interactive-active-bg);
-  --bs-list-group-active-border-color: var(--aculta-interactive-active-bg);
-  --bs-list-group-disabled-color: var(--aculta-text-muted);
-  --bs-list-group-disabled-bg: var(--aculta-surface-muted);
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+  background-color: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
 }
-.accordion {
-  --bs-accordion-bg: var(--aculta-surface-raised);
-  --bs-accordion-color: var(--aculta-text-primary);
-  --bs-accordion-btn-color: var(--aculta-text-primary);
-  --bs-accordion-active-color: var(--aculta-text-primary);
-  --bs-accordion-active-bg: var(--bs-primary-bg-subtle);
-  --bs-accordion-btn-focus-box-shadow: 0 0 0 0.25rem var(--aculta-focus-ring);
-}
-.accordion-button::after {
-  background-image: none;
-  width: 0.75rem;
-  height: 0.75rem;
-  border-right: 2px solid var(--aculta-border-accent);
-  border-bottom: 2px solid var(--aculta-border-accent);
-  transform: rotate(45deg);
-}
-.accordion-button:not(.collapsed)::after { background-image: none; transform: rotate(225deg); }
-.progress { --bs-progress-bg: var(--aculta-surface-muted); --bs-progress-bar-bg: var(--aculta-border-accent); --bs-progress-bar-color: var(--aculta-text-inverse); }
+.pagination > li > a, .pagination > li > span { background-color: var(--aculta-surface-raised); color: var(--aculta-text-primary); }
+.pagination > li > a:hover, .pagination > li > span:hover,
+.pagination > li > a:focus, .pagination > li > span:focus { background-color: var(--aculta-surface-muted); color: var(--aculta-text-primary); }
+.pagination > .active > a, .pagination > .active > span,
+.pagination > .active > a:hover, .pagination > .active > span:hover { background-color: var(--aculta-interactive-active-bg); border-color: var(--aculta-interactive-active-bg); color: var(--aculta-interactive-active-text); }
+.pagination > .disabled > span, .pagination > .disabled > a { background-color: var(--aculta-surface-muted); color: var(--aculta-text-muted); }
+.list-group-item { background-color: var(--aculta-surface-raised); color: var(--aculta-text-primary); }
+.list-group-item:hover, .list-group-item:focus { background-color: var(--aculta-surface-muted); color: var(--aculta-text-primary); }
+.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus { background-color: var(--aculta-interactive-active-bg); border-color: var(--aculta-interactive-active-bg); color: var(--aculta-interactive-active-text); }
+.list-group-item.disabled, .list-group-item[disabled] { background-color: var(--aculta-surface-muted); color: var(--aculta-text-muted); }
+
+.progress { background-color: var(--aculta-surface-muted); }
+.progress-bar { background-color: var(--aculta-border-accent); color: var(--aculta-text-inverse); }
 .progress-bar { font-family: var(--aculta-font-body); font-size: 0.75rem; font-weight: 600; }
 
-.alert {
-  --bs-alert-color: var(--aculta-text-primary);
-  --bs-alert-bg: var(--aculta-surface-raised);
-  --bs-alert-border-color: var(--aculta-border-default);
-  --bs-alert-link-color: var(--aculta-text-primary);
-}
-.alert-primary, .alert-success, .alert-info { --bs-alert-bg: var(--aculta-surface-raised); --bs-alert-border-color: var(--aculta-border-default); }
-.alert-secondary, .alert-light, .alert-dark { --bs-alert-bg: var(--aculta-surface-muted); --bs-alert-border-color: var(--aculta-border-default); }
-.alert-warning { --bs-alert-color: var(--aculta-status-error-text); --bs-alert-bg: var(--aculta-status-error-surface); --bs-alert-border-color: var(--aculta-status-error-border); border-inline-start: 3px solid var(--aculta-status-error-border); }
-.alert-danger { --bs-alert-bg: var(--bs-danger-bg-subtle); --bs-alert-border-color: var(--aculta-border-default); border-inline-start: 3px solid var(--aculta-text-accent); }
+.alert { background-color: var(--aculta-surface-raised); border-color: var(--aculta-border-default); color: var(--aculta-text-primary); }
+.alert-primary, .alert-success, .alert-info { background-color: var(--aculta-surface-raised); border-color: var(--aculta-border-default); }
+.alert-warning { background-color: var(--aculta-status-error-surface); border-color: var(--aculta-status-error-border); color: var(--aculta-status-error-text); border-inline-start: 3px solid var(--aculta-status-error-border); }
+.alert-danger { background-color: var(--aculta-surface-muted); border-color: var(--aculta-border-default); border-inline-start: 3px solid var(--aculta-text-accent); }
 /* O template de alerta do tema base não declara width/height no SVG; a regra
    contrib limita apenas a largura, e o ícone mantém 150px de altura intrínseca,
    abrindo um vazio alto no mobile. Confinar os dois eixos. */
@@ -233,21 +166,14 @@
   background: var(--aculta-text-secondary);
 }
 
-.table {
-  --bs-table-color: var(--aculta-text-primary);
-  --bs-table-bg: var(--aculta-surface-raised);
-  --bs-table-border-color: var(--aculta-border-default);
-  --bs-table-striped-color: var(--aculta-text-primary);
-  --bs-table-striped-bg: var(--aculta-surface-muted);
-  --bs-table-active-color: var(--aculta-text-primary);
-  --bs-table-active-bg: var(--bs-primary-bg-subtle);
-  --bs-table-hover-color: var(--aculta-text-primary);
-  --bs-table-hover-bg: var(--aculta-surface-muted);
-}
-.table-primary, .table-success, .table-info { --bs-table-bg: var(--bs-primary-bg-subtle); }
-.table-warning { --bs-table-bg: var(--bs-warning-bg-subtle); }
-.table-danger { --bs-table-bg: var(--bs-danger-bg-subtle); }
-.table-dark, .table-secondary, .table-light { --bs-table-bg: var(--aculta-surface-muted); }
+.table { color: var(--aculta-text-primary); background-color: var(--aculta-surface-raised); }
+.table > thead > tr > th, .table > tbody > tr > th,
+.table > tfoot > tr > th, .table > thead > tr > td,
+.table > tbody > tr > td, .table > tfoot > tr > td { border-color: var(--aculta-border-default); }
+.table-striped > tbody > tr:nth-of-type(odd) { background-color: var(--aculta-surface-muted); }
+.table-hover > tbody > tr:hover { background-color: var(--aculta-surface-muted); color: var(--aculta-text-primary); }
+.table-primary, .table-success, .table-info { background-color: var(--aculta-surface-muted); }
+.table-warning, .table-danger, .table-dark, .table-condensed { color: var(--aculta-text-primary); }
 
 /* Helpers com valores compilados que não seguem apenas --bs-primary. */
 .text-primary, .text-success, .text-info,
@@ -261,17 +187,12 @@
 .link-secondary:hover, .link-secondary:focus,
 .link-dark:hover, .link-dark:focus { color: var(--aculta-text-accent) !important; }
 .link-light:hover, .link-light:focus { color: var(--aculta-text-inverse) !important; }
-.text-bg-primary, .text-bg-success, .text-bg-info { color: var(--aculta-text-primary) !important; background-color: var(--bs-primary-bg-subtle) !important; }
-.text-bg-warning { color: var(--aculta-text-primary) !important; background-color: var(--aculta-surface-muted) !important; }
-.text-bg-danger { color: var(--aculta-text-primary) !important; background-color: var(--bs-danger-bg-subtle) !important; }
-.text-bg-light { color: var(--aculta-text-primary) !important; }
-.modal-backdrop, .offcanvas-backdrop { background-color: var(--aculta-green-dark); }
-.tooltip { --bs-tooltip-bg: var(--aculta-green-dark); --bs-tooltip-color: var(--aculta-text-inverse); }
-.popover { --bs-popover-bg: var(--aculta-surface-raised); --bs-popover-header-bg: var(--aculta-surface-muted); --bs-popover-header-color: var(--aculta-text-primary); --bs-popover-body-color: var(--aculta-text-primary); }
-.toast { --bs-toast-bg: var(--aculta-surface-raised); --bs-toast-color: var(--aculta-text-primary); --bs-toast-header-bg: var(--aculta-surface-muted); --bs-toast-header-color: var(--aculta-text-primary); }
-.btn-close { filter: none; opacity: 1; background: none; color: var(--aculta-text-primary); min-width: 1.5rem; min-height: 1.5rem; }
-.btn-close::before { content: "\00d7"; display: block; font-size: 1.5rem; line-height: 1; }
-.btn-close:focus { box-shadow: 0 0 0 0.25rem var(--aculta-focus-ring); }
+.modal-backdrop { background-color: var(--aculta-green-dark); }
+.tooltip-inner { background-color: var(--aculta-green-dark); color: var(--aculta-text-inverse); }
+.popover { background-color: var(--aculta-surface-raised); color: var(--aculta-text-primary); }
+.popover-title { background-color: var(--aculta-surface-muted); color: var(--aculta-text-primary); }
+.modal-header .close { color: var(--aculta-text-primary); opacity: 1; text-shadow: none; }
+.modal-header .close:focus-visible { outline: 3px solid var(--aculta-focus-ring); outline-offset: 2px; }
 
 :is(a, button, input, select, textarea, .btn, .button):focus-visible {
   outline: 3px solid var(--aculta-focus-ring);
@@ -282,14 +203,14 @@
 ::selection { color: var(--aculta-interactive-active-text); background-color: var(--aculta-interactive-active-bg); }
 
 @media (prefers-reduced-motion: reduce) {
-  .btn, .button, .nav-link, .form-control, .form-select, .form-check-input,
-  .accordion-button, .accordion-button::after, .collapsing {
+  .btn, .button, .nav-link, .form-control, select.form-control, input[type="checkbox"], input[type="radio"],
+  .collapsing {
     transition: none;
   }
   .aculta-navbar .nav-link,
-  .card,
+  .panel,
   .aculta-editorial-list .views-row,
   .webform-submission-form .form-submit { transition: none; }
-  .card:is(:hover, :focus-within),
+  .panel:is(:hover, :focus-within),
   .aculta-editorial-list .views-row:is(:hover, :focus-within) { transform: none; }
 }

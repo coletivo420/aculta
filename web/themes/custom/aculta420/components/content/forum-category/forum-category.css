@@ -1,7 +1,7 @@
 .aculta-forum-category-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-  gap: var(--bs-gutter-x, 1rem);
+  gap: var(--aculta-gutter-x, 1rem);
 }
 
 .aculta-forum-category-list .views-row { min-width: 0; }
@@ -11,7 +11,7 @@
   padding: 1rem;
   border: 1px solid var(--aculta-border-default);
   border-inline-start: 0.25rem solid var(--aculta-border-accent);
-  border-radius: var(--bs-border-radius-lg, 0.5rem);
+  border-radius: var(--aculta-border-radius-lg, 0.5rem);
   background: var(--aculta-surface-raised);
   color: var(--aculta-text-primary);
 }

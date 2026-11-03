@@ -2,7 +2,7 @@
   min-inline-size: 0;
   padding: clamp(1rem, 3vw, 1.5rem);
   border: 1px solid var(--aculta-border-default);
-  border-radius: var(--bs-border-radius);
+  border-radius: var(--aculta-border-radius);
   background: var(--aculta-surface-raised);
   color: var(--aculta-text-primary);
 }

@@ -154,8 +154,9 @@ tokens e não altera `page.html.twig` ou markup do shell.
 
 ## Color modes
 
-Bootstrap 5.3 usa `data-bs-theme` para color modes. ACULTA420 seguirá o mesmo
-contrato.
+O Portal resolve o modo de cor e ACULTA420 o publica em `data-bs-theme`,
+contrato preservado para os tokens claro/escuro. O tema usa Bootstrap 3.4.10
+da base Drupal Bootstrap 8.x; esse atributo não carrega outro framework.
 
 > Light e dark são o mesmo ACULTA420; muda a luz, não a arquitetura.
 

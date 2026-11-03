@@ -258,7 +258,7 @@ validado em 320 px, além das capturas desktop/dark.
 
 ## Decisão de implementação visual — ferramentas UI Suite (2026-10-22)
 
-**Core SDC + UI Patterns + UI Styles são os instrumentos preferenciais**, integrados ao Bootstrap 5 do ACULTA420. O uso de ferramentas já configuradas é obrigatório como **etapa de avaliação** antes de qualquer Twig customizado, nova dependência ou CSS isolado; não obriga a converter todos os displays. Ver [plano UI Suite existente](ui-suite-migration-plan.md) para o inventário real, versões e exceções.
+**Core SDC + UI Patterns + UI Styles são os instrumentos preferenciais**, integrados ao Bootstrap 3.4.10 fornecido pela base Drupal Bootstrap 8.x. O uso de ferramentas já configuradas é obrigatório como **etapa de avaliação** antes de qualquer Twig customizado, nova dependência ou CSS isolado; não obriga a converter todos os displays. Ver [plano UI Suite existente](ui-suite-migration-plan.md) para o inventário real, versões e exceções.
 
 | Ferramenta | Emprego na próxima fase | Limite |
 | --- | --- | --- |

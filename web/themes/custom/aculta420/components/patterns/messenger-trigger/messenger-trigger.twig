@@ -5,8 +5,8 @@
 {{ attach_library('aculta420/messenger-drawers') }}
 <button type="button"
         class="aculta-utility-trigger aculta-messenger-trigger"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#aculta-messenger-offcanvas"
+        data-toggle="modal"
+        data-target="#aculta-messenger-offcanvas"
         aria-controls="aculta-messenger-offcanvas"
         aria-expanded="false"
         aria-label="{{ label }}">
@@ -16,19 +16,21 @@
   </span>
 </button>
 
-<div class="offcanvas offcanvas-end aculta-utility-offcanvas aculta-messenger-offcanvas"
+<div class="modal fade aculta-utility-offcanvas aculta-messenger-offcanvas"
      tabindex="-1"
      id="aculta-messenger-offcanvas"
+     role="dialog"
      aria-labelledby="aculta-messenger-offcanvas-title"
      data-aculta-utility-drawer
      data-aculta-drawer-count="messages"
      data-aculta-drawer-url="{{ href }}"
      data-aculta-drawer-label="{{ 'Não foi possível carregar as mensagens. Tente novamente.'|t }}">
-  <div class="offcanvas-header">
-    <h2 class="offcanvas-title h5" id="aculta-messenger-offcanvas-title">{{ 'Mensagens'|t }}</h2>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{{ 'Fechar mensagens'|t }}"></button>
+  <div class="modal-dialog" role="document"><div class="modal-content">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="{{ 'Fechar mensagens'|t }}"><span aria-hidden="true">&times;</span></button>
+    <h2 class="modal-title h5" id="aculta-messenger-offcanvas-title">{{ 'Mensagens'|t }}</h2>
   </div>
-  <div class="offcanvas-body aculta-utility-offcanvas__body" data-aculta-drawer-content aria-live="polite" aria-busy="false">
+  <div class="modal-body aculta-utility-offcanvas__body" data-aculta-drawer-content aria-live="polite" aria-busy="false">
     <p>{{ 'Abra para atualizar suas conversas.'|t }}</p>
   </div>
   {# Rodapé fixo da gaveta, abaixo de todas as conversas. Mesmo botão e posição do rodapé de avisos. #}
@@ -37,4 +39,5 @@
       <a class="btn btn-primary aculta-messenger-offcanvas__action" href="{{ all_href }}">{{ 'Ver todas as mensagens'|t }}</a>
     </div>
   {% endif %}
+  </div></div>
 </div>

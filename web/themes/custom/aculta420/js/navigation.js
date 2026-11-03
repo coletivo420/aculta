@@ -7,7 +7,7 @@
 
   Drupal.behaviors.acultaNavigation = {
     attach(context) {
-      if (typeof bootstrap === 'undefined') {
+      if (typeof jQuery === 'undefined' || !jQuery.fn.modal || !jQuery.fn.collapse) {
         return;
       }
       // Bootstrap owns opening, focus trapping and Escape. Reflect that state
@@ -15,8 +15,8 @@
       once('aculta-utility-drawer-state', '[data-aculta-utility-drawer]', context).forEach((drawer) => {
         const trigger = document.querySelector('[aria-controls="' + drawer.id + '"]');
         if (!trigger) return;
-        drawer.addEventListener('show.bs.offcanvas', () => trigger.setAttribute('aria-expanded', 'true'));
-        drawer.addEventListener('hidden.bs.offcanvas', () => trigger.setAttribute('aria-expanded', 'false'));
+        jQuery(drawer).on('show.bs.modal', () => trigger.setAttribute('aria-expanded', 'true'));
+        jQuery(drawer).on('hidden.bs.modal', () => trigger.setAttribute('aria-expanded', 'false'));
       });
       once('aculta-navigation', '.aculta-navbar', context).forEach((navbar) => {
         const toggle = navbar.querySelector('.aculta-menu-toggle');
@@ -27,7 +27,7 @@
         navbar.classList.add('aculta-navigation-ready');
         menu.addEventListener('keydown', (event) => {
           if (event.key === 'Escape' && !window.matchMedia('(min-width: 1100px)').matches) {
-            bootstrap.Collapse.getOrCreateInstance(menu, { toggle: false }).hide();
+            jQuery(menu).collapse('hide');
             toggle.focus();
           }
         });

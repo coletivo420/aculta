@@ -1,7 +1,10 @@
-## 0.7.0-dev.38 — preservar o framework ACULTA420 sobre Bootstrap 8.x-3.45 (2026-11-03; não validado visualmente)
+## 0.7.0-dev.39 — usar diretamente Bootstrap 8.x (2026-11-03; não validado visualmente)
 
-- O tema Drupal 8.x-3.45 usa Bootstrap 3 para suas integrações. ACULTA420 agora carrega explicitamente Bootstrap 5.3.8 local depois da base e antes dos estilos/componentes próprios, preservando as classes, variáveis CSS e APIs `data-bs-*` do tema.
-- O gate Foundation verifica o carregamento e a presença dos assets locais. Revisão visual completa e validação após rebuild do cache continuam pendentes.
+- ACULTA420 deixa de carregar a cópia local do Bootstrap 5 e usa diretamente Bootstrap 3.4.10 entregue por Drupal Bootstrap 8.x-3.45. Gavetas usam o plugin modal do Bootstrap 3 com estilos próprios do tema; toggles e eventos usam as APIs jQuery nativas. Revisão visual completa e validação após rebuild do cache continuam pendentes.
+
+## 0.7.0-dev.38 — Bootstrap 5 local sobre Drupal Bootstrap 8.x (2026-11-03; substituída)
+
+- Tentativa intermediária de manter Bootstrap 5.3.8 sobre a base Drupal Bootstrap 8.x; substituída pela integração nativa em dev.39 a pedido do responsável.
 
 ## 0.7.0-dev.37 — declarar compatibilidade com Drupal 12 (2026-11-03; não validado)
 

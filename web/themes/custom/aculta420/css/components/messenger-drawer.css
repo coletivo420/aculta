@@ -26,7 +26,6 @@
 .aculta-messenger-conversation__actions .aculta-messenger-options { position: relative; }
 /* Lista de conversas: o menu é só o ícone de três traços. O painel abre sobre a linha, alinhado à direita da caixa. */
 .aculta-messenger-conversation__actions .aculta-messenger-options__label,
-.aculta-messenger-conversation__actions .accordion-button::after { display: none; }
 .aculta-messenger-conversation__actions .aculta-messenger-options__summary { min-width: 2.25rem; justify-content: center; padding-inline: 0.45rem; }
 .aculta-messenger-conversation__actions .accordion,
 .aculta-messenger-conversation__actions .accordion-item { border: 0; background: transparent; }

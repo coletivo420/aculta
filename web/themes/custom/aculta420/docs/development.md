@@ -57,7 +57,7 @@ criar uma unidade nomeada e documentada em vez de recriar um arquivo residual.
 A estratégia responsiva do tema é mobile-first: iniciar pela largura mínima,
 ampliar por necessidade do conteúdo e auditar a intenção das regras existentes.
 Não converter `max-width` para `min-width` mecanicamente. Usar os breakpoints do
-Bootstrap 5.3.8 como referência, manter reflow em 320 CSS px e limitar a rolagem
+Bootstrap 3.4.10 como referência, manter reflow em 320 CSS px e limitar a rolagem
 bidimensional ao componente que precisa dela. Evidências e prioridades estão em
 [`mobile-first-audit.md`](mobile-first-audit.md); contrato arquitetural em
 [`ADR-012`](../../../../../docs/decisions/ADR-012-aculta420-mobile-first.md).

@@ -177,7 +177,7 @@
 .portal-account__body h3 { color: var(--aculta-text-primary); font: 600 1.375rem/1.2 Oswald, sans-serif; }
 .portal-account__body .form-item { margin-block-end: 1rem; }
 .portal-account__body .form-control,
-.portal-account__body .form-select { width: 100%; }
+.portal-account__body select.form-control { width: 100%; }
 /* Campo de CPF/CNPJ: largura de documento, não da coluna (token account-document-input). */
 .portal-account__body .form-control.portal-account-document-input { width: auto; max-width: 14rem; }
 

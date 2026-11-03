@@ -1,4 +1,4 @@
-{# Semantic layout; ACULTA420 loads Bootstrap 5 after the Drupal Bootstrap 3 base assets. #}
+{# Semantic layout using the Bootstrap 3 assets supplied by Drupal Bootstrap 8.x. #}
 {% set aculta_wiki_search = domain_presentation.regions.wiki_search|default(null) %}
 {# Institution Bar: global, institutional, no Domain/purpose decisions here. #}
 {% if domain_presentation.layout.institution_bar_account|default(false) %}
@@ -64,11 +64,11 @@
         </div>
       {% endif %}
       {% if not aculta_wiki_search and page.primary_menu %}
-        <button class="navbar-toggler aculta-menu-toggle" type="button"
-                data-bs-toggle="collapse" data-bs-target="#aculta-primary-menu"
+        <button class="navbar-toggle aculta-menu-toggle" type="button"
+                data-toggle="collapse" data-target="#aculta-primary-menu"
                 aria-controls="aculta-primary-menu" aria-expanded="false"
                 aria-label="{{ 'Menu principal'|t }}">
-          <span class="navbar-toggler-icon" aria-hidden="true"></span>
+          <span class="aculta-navbar-toggle-icon" aria-hidden="true"></span>
           <span>{{ 'Menu'|t }}</span>
         </button>
         <div class="collapse navbar-collapse" id="aculta-primary-menu">
@@ -99,9 +99,9 @@
     {% endif %}
     {% set aculta_showcase = domain_presentation.regions.showcase|default([]) %}
     {% if aculta_showcase %}
-      <nav class="aculta-purpose-showcase mb-4" aria-labelledby="aculta-purpose-showcase-title">
+      <nav class="aculta-purpose-showcase aculta-u-mb-4" aria-labelledby="aculta-purpose-showcase-title">
         <h2 id="aculta-purpose-showcase-title" class="h5">{{ 'Ecossistema ACULTA'|t }}</h2>
-        <ul class="list-unstyled d-flex flex-wrap gap-2 mb-0">
+        <ul class="list-unstyled aculta-u-flex aculta-u-wrap aculta-u-gap-2 aculta-u-mb-0">
           {% for item in aculta_showcase %}
             <li><a class="btn btn-outline-secondary" href="{{ item.url }}">{{ item.title }}</a></li>
           {% endfor %}
@@ -122,8 +122,8 @@
     ) %}
       <div class="aculta-page-heading">{{ aculta_page_title }}</div>
     {% endif %}
-    <div class="row g-4 g-xl-5">
-      <div class="{{ page.sidebar ? 'col-12 col-lg-8' : 'col-12' }} aculta-content">
+    <div class="row">
+      <div class="{{ page.sidebar ? 'col-xs-12 col-lg-8' : 'col-xs-12' }} aculta-content">
         {% if aculta_account_edit_blocked %}
           <div class="aculta-account-edit-notice" role="status">
             <p>{{ 'O gerenciamento da sua conta é feito em Minha Conta.'|t }}</p>
@@ -133,7 +133,7 @@
         {{ page.content }}
       </div>
       {% if page.sidebar %}
-        <aside class="col-12 col-lg-4 aculta-sidebar" aria-label="{{ 'Informações complementares'|t }}">
+        <aside class="col-xs-12 col-lg-4 aculta-sidebar" aria-label="{{ 'Informações complementares'|t }}">
           {{ page.sidebar }}
         </aside>
       {% endif %}

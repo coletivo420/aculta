@@ -13,15 +13,15 @@
   box-shadow: var(--aculta-studio-fidelity-box-shadow);
 }
 
-.studio .aculta-card--studio-fidelity .card-body {
+.studio .aculta-card--studio-fidelity .panel-body {
   padding-block: 1rem;
   padding-inline: 2rem;
 }
 
-.aculta-card > .card-header,
-.aculta-card > .card-footer,
-.aculta-card .card-header,
-.aculta-card .card-footer {
+.aculta-card > .panel-heading,
+.aculta-card > .panel-footer,
+.aculta-card .panel-heading,
+.aculta-card .panel-footer {
   color: inherit;
   background-color: transparent;
   border-color: var(--aculta-border-default);
@@ -40,21 +40,21 @@
   width: 100%;
   aspect-ratio: 1;
   object-fit: cover;
-  border-radius: var(--bs-border-radius);
+  border-radius: var(--aculta-border-radius);
 }
 
 .aculta-card__compact-body {
   min-width: 0;
 }
 
-:is(.aculta-card--compact, .aculta-card[data-card-variation="compact"]) .card-header,
-:is(.aculta-card--compact, .aculta-card[data-card-variation="compact"]) .card-body,
-:is(.aculta-card--compact, .aculta-card[data-card-variation="compact"]) .card-footer {
+:is(.aculta-card--compact, .aculta-card[data-card-variation="compact"]) .panel-heading,
+:is(.aculta-card--compact, .aculta-card[data-card-variation="compact"]) .panel-body,
+:is(.aculta-card--compact, .aculta-card[data-card-variation="compact"]) .panel-footer {
   padding: 0;
   border: 0;
 }
 
-:is(.aculta-card--compact, .aculta-card[data-card-variation="compact"]) .card-body {
+:is(.aculta-card--compact, .aculta-card[data-card-variation="compact"]) .panel-body {
   padding-block: 0.25rem;
 }
 
@@ -63,7 +63,7 @@
   height: auto;
 }
 
-.aculta-card--horizontal .card-header {
+.aculta-card--horizontal .panel-heading {
   border-top: 0;
 }
 
@@ -109,7 +109,7 @@
   background: transparent;
 }
 
-.aculta-card--overlay .card-img-overlay {
+.aculta-card--overlay .aculta-card__overlay-body {
   position: relative;
   padding: 0;
 }
@@ -120,8 +120,8 @@
   background-color: var(--aculta-interactive-hover-bg);
 }
 
-.aculta-card--overlay .card-body,
-.aculta-card--overlay .card-footer {
+.aculta-card--overlay .panel-body,
+.aculta-card--overlay .panel-footer {
   color: inherit;
   border-color: var(--aculta-border-strong);
   background: transparent;

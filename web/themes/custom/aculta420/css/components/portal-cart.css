@@ -147,15 +147,37 @@
 
 /* Shared utility drawers: fluid width and scrollable bodies on narrow/mobile screens. */
 .aculta-utility-offcanvas {
-  /* Mobile base is edge-to-edge; the wide screen cap is applied below. */
-  --bs-offcanvas-width: 100vw;
-  max-height: 100dvh;
-  min-height: 0;
+  /* Bootstrap 3 modal behavior with project-owned edge drawer presentation. */
+  overflow: hidden;
+  padding: 0 !important;
 }
-.aculta-utility-offcanvas .offcanvas-header,
-.aculta-utility-offcanvas .offcanvas-body { min-width: 0; }
-.aculta-utility-offcanvas .offcanvas-body {
+.aculta-utility-offcanvas .modal-dialog {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+}
+.aculta-utility-offcanvas .modal-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: var(--aculta-surface-raised);
+  color: var(--aculta-text-primary);
+}
+.aculta-utility-offcanvas .modal-header,
+.aculta-utility-offcanvas .modal-body { min-width: 0; }
+.aculta-utility-offcanvas .modal-header { flex: 0 0 auto; }
+.aculta-utility-offcanvas .modal-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
   min-height: 0;
+  max-height: none;
+  padding: 1rem;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -163,7 +185,7 @@
   outline: 3px solid var(--aculta-focus-ring);
   outline-offset: 2px;
 }
-.aculta-utility-offcanvas :is(.offcanvas-footer, [class$="__footer"]) {
+.aculta-utility-offcanvas :is(.modal-footer, [class$="__footer"]) {
   flex: 0 0 auto;
   padding: .75rem 1rem;
   border-block-start: 1px solid var(--aculta-border-subtle);
@@ -181,5 +203,5 @@
   background: var(--aculta-surface-muted);
 }
 @media (min-width: 35.0625rem) {
-  .aculta-utility-offcanvas { --bs-offcanvas-width: min(26.25rem, 100vw); }
+  .aculta-utility-offcanvas .modal-dialog { width: min(26.25rem, 100vw); }
 }

@@ -1,7 +1,7 @@
 .aculta-empty-state {
   padding: clamp(1rem, 3vw, 1.75rem);
   border: 1px solid var(--aculta-border-default);
-  border-radius: var(--bs-border-radius);
+  border-radius: var(--aculta-border-radius);
   color: var(--aculta-text-secondary);
   background: var(--aculta-surface-secondary);
 }

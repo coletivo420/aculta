@@ -17,7 +17,7 @@ body {
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6,
 .aculta-navbar, .btn, .button, button.link, .badge, .aculta-callout, .aculta-category,
-.display-1, .display-2, .display-3, .display-4, .display-5, .display-6 {
+.display-1, .display-2, .display-3, .display-4, .display-5 {
   font-family: var(--aculta-font-display);
 }
 
@@ -58,7 +58,7 @@ figcaption, caption, .site-slogan, .aculta-metadata {
 }
 
 /* Avatares nunca são achatados, em nenhum lugar do site: proporção 1:1, sem encolher com o contêiner
-   e sem a largura máxima do img-fluid que comprime a altura. */
+   e sem a largura máxima do img-responsive que comprime a altura. */
 img.image-style-aculta-avatar,
 img[src*="/styles/aculta_avatar/"] {
   flex: 0 0 auto;

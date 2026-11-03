@@ -1,10 +1,11 @@
 # Roadmap — ACULTA420
 
-## 0.7.0-dev.38 — manter Bootstrap 5 do ACULTA420 com base Drupal Bootstrap 8.x (2026-11-03; visual DEFERRED)
+## 0.7.0-dev.39 — usar diretamente Drupal Bootstrap 8.x (2026-11-03; visual DEFERRED)
 
-A base Drupal Bootstrap 8.x-3.45 fornece Bootstrap 3. O ACULTA420 carrega
-Bootstrap 5.3.8 localmente para seus componentes existentes e mantém as APIs
-`data-bs-*`; revisão visual e rebuild do cache no Runtime ainda pendentes.
+ACULTA420 usa o Bootstrap 3.4.10 e os plugins jQuery fornecidos pela base
+Drupal Bootstrap 8.x-3.45, sem carregar outra cópia do framework. As gavetas
+usam o modal nativo com apresentação lateral própria. A revisão visual e o
+rebuild do cache no Runtime ainda estão pendentes.
 
 ## 0.7.0-dev.37 — metadata de compatibilidade Drupal 12 (2026-11-03; não validado)
 

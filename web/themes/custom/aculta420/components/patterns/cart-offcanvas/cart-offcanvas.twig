@@ -2,19 +2,20 @@
    (loja, cursos, apoio) e um botão de checkout em cada separador. Dados vêm do Portal. #}
 {% set count = count|default(0) %}
 {# O badge fica sempre no DOM; com zero itens o CSS o esconde. O módulo atualiza data-aculta-cart-count após "Adicionar ao carrinho". #}
-<button type="button" class="aculta-utility-trigger" data-bs-toggle="offcanvas" data-bs-target="#aculta-cart-offcanvas" aria-controls="aculta-cart-offcanvas" aria-expanded="false" aria-label="Abrir carrinho ({{ count }} itens)" data-aculta-cart-trigger>
+<button type="button" class="aculta-utility-trigger" data-toggle="modal" data-target="#aculta-cart-offcanvas" aria-controls="aculta-cart-offcanvas" aria-expanded="false" aria-label="Abrir carrinho ({{ count }} itens)" data-aculta-cart-trigger>
   <span class="aculta-utility-trigger__icon">
     <i class="bi bi-cart3" aria-hidden="true"></i>
     <span class="aculta-unread-count aculta-utility-trigger__count" data-aculta-cart-count data-count="{{ count }}" aria-hidden="true">{{ count > 99 ? '99+' : count }}</span>
   </span>
 </button>
 
-<div class="offcanvas offcanvas-end aculta-cart-offcanvas aculta-utility-offcanvas" tabindex="-1" id="aculta-cart-offcanvas" aria-labelledby="aculta-cart-offcanvas-label" data-aculta-utility-drawer>
-  <div class="offcanvas-header">
-    <h2 class="offcanvas-title h5" id="aculta-cart-offcanvas-label">Carrinho</h2>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar carrinho"></button>
+<div class="modal fade aculta-cart-offcanvas aculta-utility-offcanvas" tabindex="-1" id="aculta-cart-offcanvas" role="dialog" aria-labelledby="aculta-cart-offcanvas-label" data-aculta-utility-drawer>
+  <div class="modal-dialog" role="document"><div class="modal-content">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar carrinho"><span aria-hidden="true">&times;</span></button>
+    <h2 class="modal-title h5" id="aculta-cart-offcanvas-label">Carrinho</h2>
   </div>
-  <div class="offcanvas-body aculta-cart-offcanvas__body">
+  <div class="modal-body aculta-cart-offcanvas__body">
     {% if empty %}
       <p class="aculta-cart-offcanvas__empty">Sem produto(s) no carrinho.</p>
     {% else %}
@@ -58,9 +59,10 @@
         {{ include('aculta420:shipping-summary', shipping, with_context = false) }}
       {% endif %}
       {% if url %}
-        <a class="btn btn-link p-0 aculta-cart-offcanvas__cart-link" href="{{ url }}">Ver carrinho completo</a>
+        <a class="btn btn-link aculta-cart-offcanvas__cart-link" href="{{ url }}">Ver carrinho completo</a>
       {% endif %}
     {% endif %}
   </div>
   <div class="aculta-cart-offcanvas__banner">{{ banner }}</div>
+  </div></div>
 </div>
