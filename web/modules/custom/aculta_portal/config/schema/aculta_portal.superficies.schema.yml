@@ -1,0 +1,26 @@
+aculta_portal.superficies:
+  type: config_object
+  label: 'Superfícies do Portal'
+  mapping:
+    superficies:
+      type: sequence
+      label: 'Superfícies por purpose'
+      sequence:
+        type: aculta_portal.superficie
+
+aculta_portal.superficie:
+  type: mapping
+  label: 'Superfície'
+  mapping:
+    modo:
+      type: string
+      label: 'Modo (subdominio, diretorio ou desativado)'
+    ativa:
+      type: boolean
+      label: 'Ativa'
+    slug:
+      type: string
+      label: 'Slug (só para diretório)'
+    titulo:
+      type: label
+      label: 'Título'

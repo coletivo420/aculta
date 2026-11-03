@@ -400,3 +400,6 @@ services:
     arguments: ['@database', '@entity_type.manager', '@?aculta_portal.domain_purpose']
 
   Drupal\aculta_portal\Saved\SavedContentQueryInterface: '@aculta_portal.saved_content_query'
+  aculta_portal.surface_config_reader:
+    class: Drupal\aculta_portal\Domain\SurfaceConfigReader
+    arguments: ['@config.factory']

@@ -1,3 +1,10 @@
+## 0.4.1-dev.63 — leitor de configuração de superfícies (Fase 3.4, parcial)
+
+- Novo `Domain/SurfaceConfigReader` (serviço `aculta_portal.surface_config_reader`) lê `aculta_portal.superficies` com padrões e valida regras: MAIN ativo, slug de diretório válido, sem reservados e sem duplicidade.
+- Configuração exportada em `config/sync/aculta_portal.superficies.yml` (padrão: todas em subdomínio, ativas) e schema em `config/schema/aculta_portal.superficies.schema.yml`.
+- As rotas ainda declaram purpose em YAML: a atribuição pela configuração fica para a 3.4 completa.
+- Testes: DEFERRED (sem `vendor/` nem Runtime).
+
 ## 0.4.1-dev.62 — literais de purpose do subscriber viram constantes (Fase 3.3, sem mudança de valor)
 
 - `DomainSurfaceMap::MAIN` e `DomainSurfaceMap::ACCOUNT` substituem os literais `'main'` e `'account'` em `DomainPurposeRequestSubscriber` (14 ocorrências). Os valores são os mesmos.

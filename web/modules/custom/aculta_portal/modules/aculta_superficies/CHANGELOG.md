@@ -1,3 +1,9 @@
+## 0.1.0-dev.2 — formulário de superfícies no MAIN (Fase 3.6)
+
+- `SuperficiesForm` em `/painel-administrativo/superficies`, permissão `administrar superficies`, rota só no MAIN.
+- Salva `aculta_portal.superficies` com validação do `SurfaceConfigReader`. Não altera rotas nesta versão.
+- Testes e Runtime: DEFERRED.
+
 # Changelog: ACULTA Superfícies
 
 ## 0.1.0-dev.1 — esqueleto e planejamento

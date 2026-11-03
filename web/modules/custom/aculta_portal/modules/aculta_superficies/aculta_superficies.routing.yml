@@ -1,0 +1,10 @@
+aculta_superficies.form:
+  path: '/painel-administrativo/superficies'
+  defaults:
+    _form: '\Drupal\aculta_superficies\Form\SuperficiesForm'
+    _title: 'Superfícies do Portal'
+  requirements:
+    _permission: 'administrar superficies'
+  options:
+    _admin_route: TRUE
+    _aculta_domain_purpose: main

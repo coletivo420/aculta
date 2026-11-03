@@ -1,0 +1,52 @@
+langcode: pt-br
+superficies:
+  main:
+    modo: subdominio
+    ativa: true
+    slug: ''
+    titulo: Principal
+  account:
+    modo: subdominio
+    ativa: true
+    slug: ''
+    titulo: Conta
+  support:
+    modo: subdominio
+    ativa: true
+    slug: ''
+    titulo: Apoio
+  magazine:
+    modo: subdominio
+    ativa: true
+    slug: ''
+    titulo: Revista
+  wiki:
+    modo: subdominio
+    ativa: true
+    slug: ''
+    titulo: Wiki
+  shop:
+    modo: subdominio
+    ativa: true
+    slug: ''
+    titulo: Loja
+  courses:
+    modo: subdominio
+    ativa: true
+    slug: ''
+    titulo: Cursos
+  forum:
+    modo: subdominio
+    ativa: true
+    slug: ''
+    titulo: Fórum
+  links:
+    modo: subdominio
+    ativa: true
+    slug: ''
+    titulo: Redes sociais
+  eventos:
+    modo: subdominio
+    ativa: true
+    slug: ''
+    titulo: Eventos
