@@ -39,7 +39,7 @@ final class LmsCalendarItemProvider implements CalendarItemProviderInterface {
     }
     foreach ($this->entries->forAccount($this->currentUser, $query->de, $query->ate) as $entry) {
       yield new CalendarItem(
-        id: 'lms:' . $entry['tipo'] . ':' . $entry['turma'] . ':' . md5($entry['titulo']) . ':' . $entry['inicio']->getTimestamp(),
+        id: $entry['key'],
         titulo: $entry['titulo'],
         inicio: $entry['inicio'],
         fim: $entry['fim'],

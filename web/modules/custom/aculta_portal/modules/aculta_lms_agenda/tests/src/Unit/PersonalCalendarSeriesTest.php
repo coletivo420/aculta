@@ -22,6 +22,7 @@ class PersonalCalendarSeriesTest extends UnitTestCase {
     $agora = new \DateTimeImmutable('2026-10-28 10:00', $fuso);
     $entradas = [
       [
+        'key' => 'lms:prazo:11',
         'tipo' => 'prazo',
         'titulo' => 'Prazo: Leitura',
         'inicio' => new \DateTimeImmutable('2026-11-02 12:00', $fuso),
@@ -31,6 +32,7 @@ class PersonalCalendarSeriesTest extends UnitTestCase {
         'turma' => 5,
       ],
       [
+        'key' => 'lms:event-date:22',
         'tipo' => 'evento',
         'titulo' => 'Roda',
         'inicio' => new \DateTimeImmutable('2026-11-04 19:00', $fuso),

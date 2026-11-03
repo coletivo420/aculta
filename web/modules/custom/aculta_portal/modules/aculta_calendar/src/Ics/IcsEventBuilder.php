@@ -41,8 +41,8 @@ final class IcsEventBuilder {
    * Monta o calendário com um evento.
    *
    * @param string $key
-   *   Chave estável da entidade, por exemplo "node:123". Compõe o UID junto
-   *   com a data de início, então o mesmo evento na mesma data mantém o UID.
+   *   Chave estável da entidade, por exemplo "node:123". Compõe o UID;
+   *   atributos editáveis do evento não participam do identificador.
    * @param string $summary
    *   Título. CR e LF viram espaço; controles são removidos antes do escape.
    * @param string $location
@@ -113,7 +113,7 @@ final class IcsEventBuilder {
     array $excecoes = [],
     array $reagendadas = [],
   ): string {
-    $uid = $this->uid($key, $start, $allDay);
+    $uid = $this->uid($key);
     $lines = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
@@ -164,7 +164,7 @@ final class IcsEventBuilder {
       'END:VTIMEZONE',
     ];
     foreach ($series as $serie) {
-      $uid = $this->uid($serie['key'], $serie['start'], $serie['allDay']);
+      $uid = $this->uid($serie['key']);
       $lines = array_merge($lines, $this->vevent(
         $uid, $serie['summary'], $serie['location'], $serie['start'], $serie['end'], $serie['allDay'],
         $serie['stamp'], NULL, $serie['rrule'] ?? NULL, $serie['excecoes'] ?? [],
@@ -268,11 +268,10 @@ final class IcsEventBuilder {
   }
 
   /**
-   * UID estável: hash de chave e data de início, com o domínio.
+   * UID estável: somente a chave imutável da entidade e o domínio.
    */
-  private function uid(string $key, \DateTimeImmutable $start, bool $allDay): string {
-    $when = $allDay ? $start->format('Ymd') : $this->utc($start);
-    return substr(hash('sha256', $key . '|' . $when), 0, 32) . '@' . $this->uidDomain;
+  private function uid(string $key): string {
+    return substr(hash('sha256', $key), 0, 32) . '@' . $this->uidDomain;
   }
 
   /**

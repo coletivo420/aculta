@@ -47,7 +47,7 @@ final class AgendaEntriesProvider {
   /**
    * Entradas do usuário na janela [$de, $ate], em ordem de início.
    *
-   * @return array<int, array{tipo: string, titulo: string, inicio: \DateTimeImmutable, fim: \DateTimeImmutable, cancelada: bool, curso: int|string, turma: int|string}>
+   * @return array<int, array{key: string, tipo: string, titulo: string, inicio: \DateTimeImmutable, fim: \DateTimeImmutable, cancelada: bool, curso: int|string, turma: int|string}>
    *   `tipo` é `prazo` ou `evento`.
    */
   public function forAccount(AccountInterface $account, \DateTimeImmutable $de, \DateTimeImmutable $ate): array {
@@ -84,6 +84,7 @@ final class AgendaEntriesProvider {
           $tituloAtividade = $tipoAtividade === '' ? 'atividade' : ucfirst(str_replace('_', ' ', $tipoAtividade));
         }
         $saida[] = [
+          'key' => 'lms:prazo:' . $prazo->id(),
           'tipo' => 'prazo',
           'titulo' => 'Prazo: ' . $tituloAtividade,
           'inicio' => $inicio,
@@ -99,6 +100,7 @@ final class AgendaEntriesProvider {
         foreach ($this->datasDoEvento($evento) as $data) {
           foreach ($this->ocorrencias->expandir($data, $de, $ate, $agora) as $ocorrencia) {
             $saida[] = [
+              'key' => 'lms:event-date:' . $data->id(),
               'tipo' => 'evento',
               'titulo' => (string) $evento->label(),
               'inicio' => $ocorrencia['inicio'],

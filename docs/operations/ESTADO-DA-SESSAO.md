@@ -1,5 +1,14 @@
 # Estado da sessão
 
+## Handoff — estabilidade de UID na exportação ICS, 2026-11-03
+
+- **Objetivo:** manter o UID ICS estável quando atributos editáveis de uma entidade de calendário mudam, sem alterar o Runtime nem publicar.
+- **Implementação local:** `IcsEventBuilder` agora deriva o UID somente da chave estável e de `$uidDomain`; início, título, local, recorrência e reagendamento não participam do hash. O adaptador LMS deixou de usar título/início: prazos usam o ID da relação e eventos usam o ID de `aculta_event_date`, preservando o UID da série.
+- **Arquivos da entrega:** `web/modules/custom/aculta_portal/modules/aculta_calendar/src/Ics/IcsEventBuilder.php`; seu teste Unit; `web/modules/custom/aculta_portal/modules/aculta_lms_agenda/src/AgendaEntriesProvider.php`; `Calendar/LmsCalendarItemProvider.php`; `Calendar/PersonalCalendarSeries.php`; teste Unit de `PersonalCalendarSeries`; este handoff.
+- **Validações:** PHP lint dos cinco arquivos PASS; PHPCS focal PASS; `git diff --check` PASS; Calendar + LMS Agenda Unit: 106 testes/317 asserções PASS; foco ICS/LMS: 14 testes/41 asserções PASS. PHPUnit exibiu apenas o aviso preexistente de diretório de saída de browser não gravável.
+- **Git:** branch `dev`, HEAD inicial `cf286b7258ad2fa5c846eceb2631902004f812ab`; arquivo não relacionado `tests/browser/aculta-studio/avatar-write.mjs` permaneceu untracked e fora do staging. Commit desta entrega ainda pendente; não houve push, merge, PR ou alteração do Runtime.
+- **Retomar lendo:** `IcsEventBuilder.php`, `IcsEventBuilderTest.php`, `AgendaEntriesProvider.php`, `PersonalCalendarSeries.php`, `git status --short --branch`.
+
 ## Handoff — complementos de validação Studio, 2026-11-03
 
 - **Base:** `dev`, HEAD inicial `f5ae2bf16d7b1f6da7a7a656e2f4e2f929b2a602`, igual a `origin/dev`; trabalho LMS paralelo `ad4b42e01e` já estava publicado e foi preservado.
