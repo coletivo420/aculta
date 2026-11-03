@@ -9,9 +9,11 @@ namespace Drupal\aculta_lms\Xapi;
  *
  * Função pura. Recebe o corpo JSON do lote, as reivindicações do token já
  * verificadas e os statement_id já gravados. Falha fechado:
- * - lote que não é um array JSON de declarações, ou que passa dos limites, é recusado por inteiro;
+ * - Lote que não é um array JSON de declarações, ou que passa dos limites,
+ *   é recusado por inteiro;
  * - cada declaração passa pelo XapiStatementValidator;
- * - o registration de cada declaração deve ser o do token; ausente, recebe o do token;
+ * - O registration de cada declaração deve ser o do token; ausente, recebe
+ *   o do token;
  * - statement_id repetido no lote ou já gravado é recusado como duplicata.
  *
  * O resultado traz as declarações aceitas, já normalizadas, e as recusadas
@@ -37,9 +39,10 @@ final class XapiBatchIngestor {
    * @param array{uid: int, content: string, registration: string, lesson_status_id: int, actor_mbox_sha1sum: string} $claims
    *   Reivindicações do token já verificado.
    * @param string[] $knownStatementIds
-   *   statement_id já gravados para a mesma tentativa ou estudante.
+   *   Statement IDs já gravados para a mesma tentativa ou estudante.
    *
    * @return array{accepted: list<array<string, mixed>>, refused: list<array{index: int, reason: string}>}
+   *   Normalized accepted statements and per-statement refusals.
    *
    * @throws \UnexpectedValueException
    *   Quando o lote inteiro é recusado.
@@ -49,6 +52,23 @@ final class XapiBatchIngestor {
       throw new \UnexpectedValueException('Lote acima do tamanho máximo.');
     }
     $batch = json_decode($body, TRUE);
+    return $this->ingestDecoded($batch, $claims, $knownStatementIds);
+  }
+
+  /**
+   * Validates and ingests a batch that has already been decoded from JSON.
+   *
+   * @param mixed $batch
+   *   Decoded JSON payload.
+   * @param array $claims
+   *   Claims from the verified attempt token.
+   * @param string[] $knownStatementIds
+   *   Statement IDs already stored for the attempt or student.
+   *
+   * @return array{accepted: list<array<string, mixed>>, refused: list<array{index: int, reason: string}>}
+   *   Normalized accepted statements and per-statement refusals.
+   */
+  public function ingestDecoded(mixed $batch, array $claims, array $knownStatementIds): array {
     if (!is_array($batch) || !array_is_list($batch)) {
       throw new \UnexpectedValueException('O lote deve ser uma lista JSON de declarações.');
     }

@@ -75,7 +75,14 @@ final class XapiStatementsController {
     $this->flood->register(self::FLOOD_EVENT, self::FLOOD_WINDOW, $floodIdentifier);
 
     $body = $request->getContent();
+    if (strlen($body) > XapiBatchIngestor::MAX_BODY_BYTES) {
+      return $this->json(['error' => 'Lote acima do tamanho máximo.'], 400);
+    }
     $decoded = json_decode($body, TRUE);
+    if (is_array($decoded) && array_is_list($decoded)
+      && count($decoded) > XapiBatchIngestor::MAX_STATEMENTS) {
+      return $this->json(['error' => 'Lote com declarações demais.'], 400);
+    }
     $statementIds = [];
     if (is_array($decoded) && array_is_list($decoded)) {
       foreach ($decoded as $statement) {
@@ -103,7 +110,7 @@ final class XapiStatementsController {
       }
 
       $claims['actor_mbox_sha1sum'] = strtolower($claims['actor_mbox_sha1sum']);
-      $result = $this->ingestor->ingest($body, $claims, $knownIds);
+      $result = $this->ingestor->ingestDecoded($decoded, $claims, $knownIds);
       $transaction = $this->database->startTransaction();
       $acceptedIds = [];
       foreach ($result['accepted'] as $statement) {

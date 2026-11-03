@@ -82,7 +82,7 @@ final class XapiBatchIngestorTest extends UnitTestCase {
   }
 
   /**
-   * statement_id repetido no mesmo lote: a segunda ocorrência é recusada.
+   * Statement ID repetido no mesmo lote: a segunda ocorrência é recusada.
    */
   public function testRefusesDuplicateInsideBatch(): void {
     $id = 'a0000000-0000-4000-8000-000000000001';
@@ -94,7 +94,7 @@ final class XapiBatchIngestorTest extends UnitTestCase {
   }
 
   /**
-   * statement_id já gravado é recusado como duplicata.
+   * Statement ID já gravado é recusado como duplicata.
    */
   public function testRefusesAlreadyStoredStatement(): void {
     $id = 'a0000000-0000-4000-8000-000000000001';
@@ -129,6 +129,9 @@ final class XapiBatchIngestorTest extends UnitTestCase {
     $this->assertSame('A declaração exige verb.', $result['refused'][0]['reason']);
   }
 
+  /**
+   * Declaração de conteúdo diferente é recusada.
+   */
   public function testRefusesStatementForDifferentContent(): void {
     $statement = $this->statement('a0000000-0000-4000-8000-000000000001');
     $statement['object']['id'] = 'https://teste.invalid/atividade/other';
@@ -138,6 +141,9 @@ final class XapiBatchIngestorTest extends UnitTestCase {
     $this->assertSame('Conteúdo diferente do token.', $result['refused'][0]['reason']);
   }
 
+  /**
+   * Declaração de ator diferente é recusada.
+   */
   public function testRefusesStatementForDifferentActor(): void {
     $statement = $this->statement('a0000000-0000-4000-8000-000000000001');
     $statement['actor']['mbox_sha1sum'] = str_repeat('f', 40);
@@ -147,19 +153,30 @@ final class XapiBatchIngestorTest extends UnitTestCase {
     $this->assertSame('Ator diferente do token.', $result['refused'][0]['reason']);
   }
 
+  /**
+   * Creates the ingestor under test.
+   */
   private function ingestor(): XapiBatchIngestor {
     return new XapiBatchIngestor(new XapiStatementValidator());
   }
 
   /**
-   * @return array{uid: int, content: string, registration: string, lesson_status_id: int, actor_mbox_sha1sum: string}
+   * @return array{uid: int, content: string, registration: string,
+   *   lesson_status_id: int, actor_mbox_sha1sum: string}
    */
   private function claims(): array {
-    return ['uid' => 42, 'content' => 'https://exemplo.invalid/atividade/1', 'registration' => self::REGISTRATION, 'lesson_status_id' => 2468, 'actor_mbox_sha1sum' => self::ACTOR_SHA1];
+    return [
+      'uid' => 42,
+      'content' => 'https://exemplo.invalid/atividade/1',
+      'registration' => self::REGISTRATION,
+      'lesson_status_id' => 2468,
+      'actor_mbox_sha1sum' => self::ACTOR_SHA1,
+    ];
   }
 
   /**
    * @return array<string, mixed>
+   *   Statement payload.
    */
   private function statement(string $id, ?string $registration = NULL): array {
     $statement = [
