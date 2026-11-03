@@ -27,3 +27,69 @@ function aculta_pagamentos_mercadopago_update_10001(): string {
 
   return 'Verified Commerce credit_card bundle fields; no redundant base fields were installed.';
 }
+
+/**
+ * Installs Commerce credit-card bundle fields missing from the schema.
+ */
+function aculta_pagamentos_mercadopago_update_10002(): string {
+  $entity_type_id = 'commerce_payment_method';
+  $required_fields = ['card_type', 'card_number', 'card_exp_month', 'card_exp_year'];
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $entity_type = $entity_type_manager->getDefinition($entity_type_id);
+  $bundle_handler = $entity_type_manager->getHandler($entity_type_id, 'bundle_plugin');
+  $definitions_by_bundle = [];
+
+  foreach (array_keys($bundle_handler->getBundleInfo()) as $bundle) {
+    foreach ($bundle_handler->getFieldDefinitions($bundle) as $field_name => $definition) {
+      if (in_array($field_name, $required_fields, TRUE)) {
+        $definitions_by_bundle[$field_name][$bundle] = $definition;
+      }
+    }
+  }
+
+  foreach ($required_fields as $field_name) {
+    if (empty($definitions_by_bundle[$field_name])) {
+      throw new \Drupal\Core\Utility\UpdateException(sprintf(
+        'Commerce payment method bundle plugins do not define the expected field %s.',
+        $field_name,
+      ));
+    }
+  }
+
+  $repository = \Drupal::service('entity.last_installed_schema.repository');
+  $installed = $repository->getLastInstalledFieldStorageDefinitions($entity_type_id);
+  $schema = \Drupal::database()->schema();
+  $table = $entity_type->getBaseTable();
+  $storage_listener = \Drupal::service('field_storage_definition.listener');
+  $field_listener = \Drupal::service('field.definition.listener');
+  $installed_fields = [];
+
+  foreach ($required_fields as $field_name) {
+    $bundle_definitions = $definitions_by_bundle[$field_name];
+    $definition = reset($bundle_definitions);
+    if (!isset($installed[$field_name])) {
+      // These fields have one shared-table column each. Repair metadata after
+      // a partially completed update without attempting to add an existing
+      // SQL column a second time.
+      if ($schema->fieldExists($table, $field_name)) {
+        $repository->setLastInstalledFieldStorageDefinition($definition);
+      }
+      else {
+        $storage_listener->onFieldStorageDefinitionCreate($definition);
+      }
+      $installed_fields[] = $field_name;
+    }
+
+    // Bundle plugin definitions are tracked separately for each payment method
+    // type, even though the SQL storage is shared by field name.
+    foreach ($definitions_by_bundle[$field_name] as $bundle_definition) {
+      $field_listener->onFieldDefinitionCreate($bundle_definition);
+    }
+  }
+
+  \Drupal::entityFieldManager()->clearCachedFieldDefinitions();
+  sort($installed_fields);
+  return $installed_fields
+    ? sprintf('Installed missing Commerce payment method fields: %s.', implode(', ', $installed_fields))
+    : 'Commerce payment method card fields were already installed.';
+}

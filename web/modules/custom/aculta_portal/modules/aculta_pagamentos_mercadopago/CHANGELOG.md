@@ -1,10 +1,14 @@
+## 0.1.0-dev.83 — instala os campos de cartão do Commerce
+
+- O update `10002` instala os campos como campos de bundle, registra os bundles e tolera uma reexecução sem recriar colunas.
+- O relatório de requisitos detecta a pendência, embora `updatedb:status` não a liste como update convencional.
+
 ## 0.1.0-dev.82 — corrige update de metadados de cartão
 
 - O update `10001` agora valida os quatro campos de cartão como definições de
   bundle do tipo `credit_card` no Commerce. Remove a tentativa inválida de
   instalá-los como campos base, que recebia definição nula para `card_type`.
-- Runtime confirmou os quatro campos pelo Entity Field Manager e a execução
-  direta do update retornou sucesso. Suíte Unit e `updatedb` completos pendentes.
+- Runtime confirmou as definições pelo Entity Field Manager, mas o relatório de requisitos mostrou que o schema não havia sido instalado; o update `10002` corrige essa diferença.
 
 ## 0.1.0-dev.81 — instala metadados de cartão do Commerce
 
