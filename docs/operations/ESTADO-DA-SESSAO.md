@@ -392,3 +392,11 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Status read-only após as correções existentes:** restam apenas as mudanças de PaymentMethod (4 campos) e Group (`revision_user` a desinstalar). `updatedb:status` lista os dois novos updates e quatro post-updates upstream de Text/User/Views. `config:status` mostra 86 diferenças.
 - **Snapshot anterior às alterações de banco:** `$SUITE_OUT/runtime-snapshots/aculta_runtime-before-entity-status-fix-20261103.sql`, SHA-256 `5dfe8df21e1246166948636fd5a3d0a738641aad606203fe83e474252faa6074`.
 - **Bloqueio conhecido:** um post-update de Text falhou anteriormente por configuração de Views que referencia o plugin ausente `course_card_row`; por isso não executar import de configuração até resolver esse estado e confirmar os updates pendentes. Ainda não foi executado `updatedb` desta entrega.
+
+## Handoff — campos de cartão do Commerce no Runtime — 2026-11-03
+
+- Commit `879c544f27` e o update `aculta_pagamentos_mercadopago_update_10002` instalaram os campos `card_type`, `card_number`, `card_exp_month` e `card_exp_year` como campos do bundle de pagamento Mercado Pago.
+- `PaymentCardFieldsUpdateKernelTest`: 1 teste / 17 assertions PASS em `aculta_simpletest`, com 13 depreciações Core/contrib.
+- Verificação final no Runtime `toca`/`aculta_runtime`: resumo de mudanças de entidade/campo vazio, `updatedb:status` sem pendências e `config:status` sem diferenças. Nenhum `config:import` foi necessário.
+- O preflight do Drush ainda emite avisos upstream de versão do Simple OAuth e post-updates antigos do Group; eles não impediram este update. Não reexecutar updates relacionados sem revisar esses avisos.
+- Snapshot pré-update protegido: `$SUITE_OUT/runtime-snapshots/aculta_runtime-before-mp-card-fields-20261103.sql`, SHA-256 `81715e89580503147ba03ea4f5fdc9454518fd7d2a2efa243ea10e83da1271ce`.

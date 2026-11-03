@@ -1,7 +1,15 @@
+## 0.1.0-dev.84 — endurece o update dos campos de cartão
+
+- O update `10002` valida o bundle Mercado Pago e instala seus campos pelo serviço oficial de bundles do Commerce.
+- `PaymentCardFieldsUpdateKernelTest`: 1 teste / 17 assertions PASS em `aculta_simpletest`; 13 depreciações de Core/contrib.
+- O update já aplicado no Runtime continua sem mudanças de entidade/campo, updates pendentes ou divergências de Config Sync.
+
 ## 0.1.0-dev.83 — instala os campos de cartão do Commerce
 
 - O update `10002` instala os campos como campos de bundle, registra os bundles e tolera uma reexecução sem recriar colunas.
-- O relatório de requisitos detecta a pendência, embora `updatedb:status` não a liste como update convencional.
+- `PaymentCardFieldsUpdateKernelTest`: 1 teste / 17 assertions PASS em `aculta_simpletest`; 13 depreciações de Core/contrib.
+- O update foi aplicado no Runtime em 2026-11-03; a verificação final não encontrou mudanças de entidade/campo nem atualizações de banco pendentes. `config:status` sem diferenças.
+- O preflight ainda informa avisos preexistentes de versão do Simple OAuth e post-updates antigos de Group; não impediram este update.
 
 ## 0.1.0-dev.82 — corrige update de metadados de cartão
 

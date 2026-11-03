@@ -37,20 +37,12 @@ function aculta_pagamentos_mercadopago_update_10002(): string {
   $entity_type_manager = \Drupal::entityTypeManager();
   $entity_type = $entity_type_manager->getDefinition($entity_type_id);
   $bundle_handler = $entity_type_manager->getHandler($entity_type_id, 'bundle_plugin');
-  $definitions_by_bundle = [];
-
-  foreach (array_keys($bundle_handler->getBundleInfo()) as $bundle) {
-    foreach ($bundle_handler->getFieldDefinitions($bundle) as $field_name => $definition) {
-      if (in_array($field_name, $required_fields, TRUE)) {
-        $definitions_by_bundle[$field_name][$bundle] = $definition;
-      }
-    }
-  }
-
+  $bundle = 'aculta_mercadopago_checkout_pro';
+  $definitions = $bundle_handler->getFieldDefinitions($bundle);
   foreach ($required_fields as $field_name) {
-    if (empty($definitions_by_bundle[$field_name])) {
+    if (!isset($definitions[$field_name])) {
       throw new \Drupal\Core\Utility\UpdateException(sprintf(
-        'Commerce payment method bundle plugins do not define the expected field %s.',
+        'The Mercado Pago payment method bundle does not define the expected field %s.',
         $field_name,
       ));
     }
@@ -58,38 +50,28 @@ function aculta_pagamentos_mercadopago_update_10002(): string {
 
   $repository = \Drupal::service('entity.last_installed_schema.repository');
   $installed = $repository->getLastInstalledFieldStorageDefinitions($entity_type_id);
-  $schema = \Drupal::database()->schema();
-  $table = $entity_type->getBaseTable();
-  $storage_listener = \Drupal::service('field_storage_definition.listener');
-  $field_listener = \Drupal::service('field.definition.listener');
-  $installed_fields = [];
-
-  foreach ($required_fields as $field_name) {
-    $bundle_definitions = $definitions_by_bundle[$field_name];
-    $definition = reset($bundle_definitions);
-    if (!isset($installed[$field_name])) {
-      // These fields have one shared-table column each. Repair metadata after
-      // a partially completed update without attempting to add an existing
-      // SQL column a second time.
-      if ($schema->fieldExists($table, $field_name)) {
-        $repository->setLastInstalledFieldStorageDefinition($definition);
-      }
-      else {
-        $storage_listener->onFieldStorageDefinitionCreate($definition);
-      }
-      $installed_fields[] = $field_name;
-    }
-
-    // Bundle plugin definitions are tracked separately for each payment method
-    // type, even though the SQL storage is shared by field name.
-    foreach ($definitions_by_bundle[$field_name] as $bundle_definition) {
-      $field_listener->onFieldDefinitionCreate($bundle_definition);
-    }
+  $missing_fields = array_diff($required_fields, array_keys($installed));
+  if (!$missing_fields) {
+    return 'Mercado Pago payment method card fields were already installed.';
   }
 
-  \Drupal::entityFieldManager()->clearCachedFieldDefinitions();
-  sort($installed_fields);
-  return $installed_fields
-    ? sprintf('Installed missing Commerce payment method fields: %s.', implode(', ', $installed_fields))
-    : 'Commerce payment method card fields were already installed.';
+  // The Entity module installs bundle fields through this installer. Its
+  // schema operations skip SQL columns that already exist, so this also
+  // recovers safely if a prior attempt completed only part of the metadata.
+  \Drupal::service('entity.bundle_plugin_installer')->installBundles(
+    $entity_type,
+    ['aculta_pagamentos_mercadopago'],
+  );
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  $installed = $repository->getLastInstalledFieldStorageDefinitions($entity_type_id);
+  $still_missing = array_diff($required_fields, array_keys($installed));
+  if ($still_missing) {
+    throw new \Drupal\Core\Utility\UpdateException(sprintf(
+      'Failed to install Mercado Pago payment method fields: %s.',
+      implode(', ', $still_missing),
+    ));
+  }
+
+  sort($missing_fields);
+  return sprintf('Installed missing Mercado Pago payment method fields: %s.', implode(', ', $missing_fields));
 }
