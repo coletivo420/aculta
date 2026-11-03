@@ -1,3 +1,29 @@
+## 0.1.0-dev.176 — validação Runtime interrompida por erro HTTP
+
+- Runtime Homelab sincronizado a `775295ac3d1c8c21524a9b15696515b70182b1b2`.
+  Snapshot integral pré-alteração: SHA-256
+  `374e09c05e47de60cc42a01d14c0e0d4186c1fa222a1c787acce00f1e92dd5a9`,
+  `$SUITE_OUT/lms-runtime-validation-20261103/aculta_runtime-before-775295ac3.sql`.
+- `composer install` concluiu sem instalar/atualizar/remover pacotes; lockfile
+  contém zero pacotes `drupal/lms*`. `drush cr` passou. Antes do update havia
+  somente `aculta_lms_update_10013`; foi aplicado e, depois, `updatedb:status`
+  ficou sem pendências. `config:status` permaneceu sem diferenças antes/depois;
+  nenhum `config/sync` foi importado.
+- Criados dados sintéticos marcados para validação: curso e turma auxiliar,
+  duas aulas publicadas, cinco atividades dos tipos objetivos, resposta livre
+  e upload, um estudante e um educador. Nenhuma resposta ou arquivo foi
+  submetido antes da interrupção.
+- Smoke HTTP anônimo às rotas dos cinco tipos de resposta retornou HTTP 500;
+  corpo capturado: `O site encontrou um erro inesperado. Tente novamente mais
+  tarde.` O runner consultou `/user/login` no host de Conta e recebeu HTTP 404.
+  Não houve sessão autenticada, POST de respostas, upload ou alteração de tema.
+- Gates Portal 1202 checks, slugs públicos 410 rotas, rotas administrativas
+  MAIN 41 arquivos/170 rotas e índice 53 componentes: PASS. A validação visual
+  Firefox/ACULTA420/Olivero, a avaliação de resposta discursiva pelo educador
+  e o isolamento entre dois estudantes ficam DEFERRED até correção do 500 e
+  nova validação autorizada. Dados sintéticos permanecem no Runtime para
+  revisão; descarte requer ordem separada.
+
 ## 0.1.0-dev.175 — resposta ACULTA sem LMS contrib
 
 - Converte os últimos pontos de integração e testes para entidades e serviços

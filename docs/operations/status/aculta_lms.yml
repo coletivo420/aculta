@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.175
+version: 0.1.0-dev.176
 state: Dev
-progress_note: "Dev.175: formulário ACULTA de respostas discursivas, objetivas e upload; prazo e discussões integrados. Update 10013 adiciona answer_config. Unit e Kernels focais PASS; validação visual e sincronização Runtime DEFERRED."
-next_phase: 'Executar medição de carga quando houver ambiente production-like representativo; provisionar segredo em produção antes da ativação xAPI.'
+progress_note: "Dev.176: Runtime no commit 775295ac3; update 10013 aplicado após snapshot. Smoke HTTP interrompido por HTTP 500 anônimo nas rotas de resposta; nenhuma submissão/upload. ACULTA420/Olivero, avaliação docente e isolamento entre estudantes DEFERRED até correção e nova ordem."
+next_phase: 'Investigar e corrigir o HTTP 500 das rotas de resposta ACULTA; repetir smoke autenticado e visual após autorização. Não remover os dados sintéticos sem ordem separada. Medição de carga xAPI e segredo de produção continuam pendentes.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.
 # O Studio compõe cards SDC, mas a homologação depende de fixtures LMS
