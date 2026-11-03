@@ -1,3 +1,15 @@
+## 0.1.0-dev.178 — migra Views públicas de cursos para aculta_lms
+
+- As Views `courses` e `courses_catalog` agora são fornecidas em
+  `config/install` pelo módulo, com dependência explícita de Views e LMS.
+- O row plugin legado inexistente `course_card_row` foi substituído por
+  `entity:group` no modo `default`, usando a exibição oficial do curso para capa
+  e descrição.
+- As cópias do Sync foram alinhadas às configurações instaláveis.
+- `CourseViewsConfigTest`: 1 teste / 10 assertions PASS; YAMLs Sync e install
+  iguais e sintaxe PHP válida. A atualização da configuração no Runtime segue
+  pendente por falhas independentes nos hooks de pagamento e Group.
+
 ## 0.1.0-dev.177 — corrige autorização das respostas ACULTA
 
 - A rota de resposta recebia os slugs ainda não convertidos durante a checagem

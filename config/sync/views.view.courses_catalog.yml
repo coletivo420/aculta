@@ -5,6 +5,7 @@ dependencies:
   config:
     - group.type.lms_course
   module:
+    - views
     - group
     - user
 _core:
@@ -82,13 +83,10 @@ display:
           default_row_class: true
           uses_fields: false
       row:
-        type: course_card_row
+        type: entity:group
         options:
-          background_image_field: capa_curso
-          image_style: aculta_destaque_16x9
-          media_view_mode: ''
-          description_field: field_description
-          description_display_type: full
+          relationship: none
+          view_mode: default
       query:
         type: views_query
         options:
