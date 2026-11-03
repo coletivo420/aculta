@@ -132,3 +132,13 @@ Este é o ponto único de handoff para as próximas sessões e agentes. Atualize
 Commits publicados em `origin/dev`: `6a0f0d072`, `7495f7a3d` e `2445c89b2`. A tarefa do plano, testes e gates operacionais pendentes estão registrados nas seções acima e em `docs/architecture/PLANO-ACULTA-CONTRIBUTIONS.md`.
 
 Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handoff ao transferir para um novo ponto de retomada, mantendo referências anteriores apenas se ainda forem necessárias para entender o estado atual.
+
+## Handoff — superfícies e caminhos públicos, 2026-11-03
+
+- **Entrega:** validação do Runtime para as superfícies concluída no commit `8263f1776`, enviado a `origin/dev`; `git ls-remote origin dev` confirmou `8263f17767fbe3910ac335bbcc381b375771bcc4`.
+- **Arquivos:** teste Kernel de superfícies, changelog/README/manifesto/status do `aculta_superficies`, matriz HTTP, revisão de fases e registro de dívidas.
+- **Runtime:** hostname `toca`, PHP 8.4.27, Drupal 11.4.10, banco `aculta_runtime`; `composer install`, `updatedb:status`, `config:status`, `config:import --diff` e `cr` passaram. `leitura_ativa` está TRUE somente no banco do Runtime; `config/sync/aculta_portal.superficies.yml` continua FALSE.
+- **Testes:** Unit focal 38/38 e 311 asserções; Kernel `SurfaceRoutesKernelTest` 2/2 e 22 asserções, com depreciações de Core/contrib. Matriz HTTP antes/depois registrada em `docs/architecture/TESTES-3.0-ROTAS-SUPERFICIES.md`.
+- **Gates:** admin routes, environment addresses, browser validators, public slugs, tema ACULTA420, boundaries e suíte do deployer PASS. Índice/Portal Drupal 11 falham por alteração simultânea do LMS: manifest `.160`, status `.159` e README fora deste commit.
+- **DEFERRED:** revisão autenticada da interface `/painel-administrativo/aculta/caminhos` e das Suites; resolução inbound de `/slug` no MAIN (3.5); exportação de `leitura_ativa: true` para `config/sync` somente no RC.
+- **Estado do checkout:** alterações não staged do `aculta_lms` pertencem ao trabalho paralelo e foram preservadas; não incluir no próximo commit de superfícies.
