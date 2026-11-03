@@ -1,3 +1,8 @@
+## 0.4.1-dev.67 — propósito da rota de anexo ACULTA
+
+- A rota `aculta_lms.answer_attachment_download` em `/resposta/{answer}/arquivo` pertence ao purpose `courses`, com cobertura Unit e registro no mapa de rotas.
+- Validação focal: `DomainRouteSubscriberLocalizedPathsTest` 1/30 PASS; gate Drupal 11+ do Portal 1.172 checks PASS.
+
 ## 0.4.1-dev.66 — caminho de diretório atrás do interruptor (Fase 3.5)
 
 - `SurfaceConfigReader::caminhoDiretorioConfigurado()` e `caminhoDiretorioAtivo()`: o caminho `/slug` de superfície em modo diretório só entra em vigor com `leitura_ativa` ligado. Com o padrão (desligado), retorna NULL e nenhum comportamento muda.
@@ -409,3 +414,4 @@ RUNTIME STATUS: DEFERRED.
 ## 0.4.1-dev.14 — providers de checkout e leitura do flow nativo (P-CART C) — 2026-10-22
 
 - Novo `OrderTypeCheckoutFlows`: lê o checkout flow associado ao tipo de pedido no Commerce, sem alterá-lo. Serve aos providers de Loja, LMS e Doações. Sem efeito público. RUNTIME STATUS: DEFERRED.
+

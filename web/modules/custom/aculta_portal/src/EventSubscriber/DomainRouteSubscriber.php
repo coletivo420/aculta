@@ -92,6 +92,7 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       'lms.course.reset_test' => '/curso/{group}/reiniciar-avaliacao',
       'lms.group.self_results' => '/grupo/{group}/resultados-curso',
       'lms.answer.details' => '/resposta/{lms_answer}/{js}/detalhes',
+      'aculta_lms.answer_attachment_download' => '/resposta/{answer}/arquivo',
       'entity.lms_answer.edit_form' => '/resposta/{lms_answer}/avaliar',
       'profile.user_page.single' => '/identidade/{user}/{profile_type}',
       'profile.user_page.multiple' => '/identidade/{user}/{profile_type}/lista',
@@ -111,6 +112,7 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       $accountRoutes['lms.course.reset_test'],
       $accountRoutes['lms.group.self_results'],
       $accountRoutes['lms.answer.details'],
+      $accountRoutes['aculta_lms.answer_attachment_download'],
       $accountRoutes['entity.lms_answer.edit_form'],
     );
     $courseRoutes = array_fill_keys([
@@ -118,6 +120,7 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
       'lms.course.reset_test',
       'lms.group.self_results',
       'lms.answer.details',
+      'aculta_lms.answer_attachment_download',
       'entity.lms_answer.edit_form',
     ], TRUE);
 

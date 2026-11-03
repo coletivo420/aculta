@@ -426,6 +426,7 @@ correspondentes estão habilitados no ambiente.
 | `cursos.aculta` | `/grupo/{group}/resultados-curso` | Resultados próprios do curso | Rota `lms.group.self_results`; acesso Group revalidado. |
 | `cursos.aculta` | `/resposta/{lms_answer}/{js}/detalhes` | Detalhes de resposta LMS (no-JS/AJAX) | Rota `lms.answer.details`; acesso `lms_answer.see_details`. |
 | `cursos.aculta` | `/resposta/{lms_answer}/avaliar` | Avaliação de resposta LMS | Rota `entity.lms_answer.edit_form`; acesso do owner LMS. |
+| `cursos.aculta` | `/resposta/{answer}/arquivo` | Download de anexo privado de tentativa ACULTA | Condicional; rota `aculta_lms.answer_attachment_download`, valida arquivo privado e matrícula/permissionamento ACULTA. |
 | `cursos.aculta` | `/grupo/{group}/entrar` | Entrada em grupo/curso permitido | Rota `entity.group.join`; exige permissão de entrada e grupo ainda não associado. |
 | `cursos.aculta` | `/grupo/{group}/sair` | Saída de grupo/curso permitido | Rota `entity.group.leave`; exige permissão de saída e membership ativo. |
 | `cursos.aculta` | `/educador/atividades-interativas` | Cursos administrados pelo educador que têm atividades H5P | Rota `aculta_lms_h5p`, purpose `courses`, exige papel `lms_teacher`; lista vazia quando os cursos não têm atividades H5P. |
@@ -497,6 +498,7 @@ correspondente e sua proteção deve ser mantida no dono da feature.
 | `main.aculta` | `/integracoes/pagamentos/{commerce_payment_gateway}/notificacao` | Notificação enviada pelo gateway de pagamento | Callback técnico, sem navegação humana; endereço declarado por ambiente e validado pelo gateway. |
 | `conta.aculta` | `/integracoes/{provedor}/retorno` | Callback de autenticação OAuth | Endpoint técnico, restrito a provedores e URIs configurados. |
 | `cursos.aculta` | `/resposta/{lms_answer}/baixar-arquivo` | Download de anexo de resposta | Condicional; verifica access à resposta e matrícula. |
+| `cursos.aculta` | `/resposta/{answer}/arquivo` | Download de anexo privado de tentativa ACULTA | Condicional à entidade e arquivo; acesso revalidado na tentativa ACULTA e na matrícula. |
 | `conta.aculta` | `/avatar/foto` | Modal de foto de perfil (formulário de envio, prévia e remoção) | Exige `access aculta portal`; sem purpose fixo, aberto pelo painel da conta. |
 | `conta.aculta` | `/avatar/recortar` | Modal de recorte do arquivo recém-enviado | Exige `access aculta portal`; aceita só o arquivo temporário do próprio usuário. |
 | `conta.aculta` | `/avatar/sortear` | Prévia AJAX de avatar do acervo (não grava até salvar) | Exige `access aculta portal` e token CSRF (`_csrf_token`). |
