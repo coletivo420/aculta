@@ -83,6 +83,20 @@ class MelhorEnvioWebhookControllerTest extends UnitTestCase {
   }
 
   /**
+   * Requisição com comprimento declarado, inclusive para testar streaming.
+   */
+  private function requestWithLength(string $body, ?string $signature, ?string $length): Request {
+    $request = $this->request($body, $signature);
+    if ($length !== NULL) {
+      $request->headers->set('Content-Length', $length);
+    }
+    else {
+      $request->headers->remove('Content-Length');
+    }
+    return $request;
+  }
+
+  /**
    * Sem segredo configurado no ambiente, o webhook responde 503 e não lê o corpo.
    */
   public function testMissingSecretIsServiceUnavailable(): void {
@@ -97,6 +111,32 @@ class MelhorEnvioWebhookControllerTest extends UnitTestCase {
     $response = $this->controller(self::SECRET)->receive($this->request(self::BODY, self::signature(self::BODY, 'outro')));
     $this->assertSame(403, $response->getStatusCode());
     $this->assertStringNotContainsString(self::SECRET, (string) $response->getContent());
+  }
+
+  /**
+   * A body at the limit reaches signature validation, but an excess body does not.
+   */
+  public function testBodyAtLimitIsProcessedAndBodyAboveLimitReturns413(): void {
+    $atLimit = str_repeat('a', MelhorEnvioWebhookController::MAX_BODY_BYTES);
+    $response = $this->controller(self::SECRET)->receive($this->requestWithLength($atLimit, 'inválida', NULL));
+    $this->assertSame(403, $response->getStatusCode());
+
+    $tooLarge = str_repeat('a', MelhorEnvioWebhookController::MAX_BODY_BYTES + 1);
+    $response = $this->controller(self::SECRET)->receive($this->requestWithLength($tooLarge, 'inválida', NULL));
+    $this->assertSame(413, $response->getStatusCode());
+  }
+
+  /**
+   * Declared lengths that are absent, invalid or too large are handled safely.
+   */
+  public function testInvalidOrOversizedDeclaredLengthReturns413(): void {
+    $response = $this->controller(self::SECRET)->receive($this->requestWithLength('{}', NULL, NULL));
+    $this->assertSame(403, $response->getStatusCode());
+
+    foreach (['12abc', (string) (MelhorEnvioWebhookController::MAX_BODY_BYTES + 1)] as $length) {
+      $response = $this->controller(self::SECRET)->receive($this->requestWithLength('{}', NULL, $length));
+      $this->assertSame(413, $response->getStatusCode());
+    }
   }
 
   /**
