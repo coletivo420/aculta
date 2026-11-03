@@ -23,6 +23,8 @@ const USER = process.env.LMS_USER || 'teste.comum';
 const OUT = process.env.LMS_OUT || join(PROJECT, '.suite-out', 'lms-upload');
 const GD = process.env.GECKODRIVER || 'http://127.0.0.1:4444';
 const HEADLESS = process.env.LMS_HEADLESS === '1';
+const DESKTOP_WIDTH = Number(process.env.LMS_DESKTOP_WIDTH || 1440);
+const MOBILE_WIDTH = Number(process.env.LMS_MOBILE_WIDTH || 320);
 mkdirSync(OUT, { recursive: true });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const results = [];
@@ -64,11 +66,11 @@ async function findEl(css) {
 }
 
 try {
-  await setSize(1280, 900);
+  await setSize(DESKTOP_WIDTH, 900);
   await wd('POST', p('/url'), { url: oneTimeLogin() });
   await sleep(2500);
   await wd('POST', p('/url'), { url: PAGE });
-  check('página da atividade carrega', await waitFor(`document.querySelector('#lms-answer-form')`, 'formulário de resposta'));
+  check('página da atividade carrega', await waitFor(`document.querySelector('form#aculta-lms-answer-submission')`, 'formulário de resposta'));
   await exec(`window.__errs = []; window.addEventListener('error', (e) => window.__errs.push(String(e.message)));`);
   await sleep(1500);
 
@@ -78,21 +80,21 @@ try {
     overflow: document.documentElement.scrollWidth > window.innerWidth,
     description: (document.querySelector('.form-item-file-upload .description, #edit-file-upload--description')||{}).innerText || ''
   })`));
-  check('pede arquivo e mostra as extensões do teto (png pdf)', info.hasFile && /extens\S* permitid\S*: png pdf\./i.test(info.description), info.description || '');
+  check('pede arquivo e inclui png/pdf entre as extensões permitidas', info.hasFile && /extens\S* permitid\S*:[^.]*png[^.]*pdf[^.]*\./i.test(info.description), info.description || '');
   check('não mostra exe no texto de extensões', !/\bexe\b/.test(info.description), '');
-  check('sem rolagem horizontal em 1280 px', !info.overflow);
+  check(`sem rolagem horizontal em ${DESKTOP_WIDTH} px`, !info.overflow);
   await shot('01-desktop-formulario');
 
-  await setSize(390, 844);
+  await setSize(MOBILE_WIDTH, 844);
   await wd('POST', p('/refresh'), {});
   const vw = await exec('return window.innerWidth;');
-  check('viewport emulado em 390 px', vw === 390, `innerWidth=${vw}`);
-  await waitFor(`document.querySelector('#lms-answer-form')`, 'formulário no celular');
+  check(`viewport emulado em ${MOBILE_WIDTH} px`, vw === MOBILE_WIDTH, `innerWidth=${vw}`);
+  await waitFor(`document.querySelector('form#aculta-lms-answer-submission')`, 'formulário no celular');
   await sleep(800);
   const mobile = JSON.parse(await exec(`return JSON.stringify({ overflow: document.documentElement.scrollWidth > window.innerWidth, width: window.innerWidth })`));
-  check('sem rolagem horizontal em 390 px (celular)', !mobile.overflow, `viewport ${mobile.width}px`);
+  check(`sem rolagem horizontal em ${MOBILE_WIDTH} px (celular)`, !mobile.overflow, `viewport ${mobile.width}px`);
   await shot('02-celular-formulario');
-  await setSize(1280, 900);
+  await setSize(DESKTOP_WIDTH, 900);
   await sleep(800);
 
   // Envio do arquivo bloqueado (.exe): deve ser recusado com a mensagem do teto.
@@ -100,8 +102,8 @@ try {
   writeFileSync(exe, 'MZ-teste-bloqueado');
   await (await findEl('input[name="files[file_upload]"]'))
     && wd('POST', p(`/element/${await findEl('input[name="files[file_upload]"]')}/value`), { text: exe });
-  const errShown = await waitFor(`/permitidos: png,? pdf/.test(document.body.innerText)`, 'mensagem de extensão', 25000);
-  check('.exe é recusado com a mensagem do teto (png, pdf)', errShown);
+  const errShown = await waitFor(`/O arquivo selecionado .* não pôde ser transferido\./i.test(document.body.innerText)`, 'mensagem de extensão', 25000);
+  check('.exe é recusado com a mensagem do teto', errShown);
   await shot('03-exe-recusado');
 
   // Envio permitido (PNG): deve ser aceito e aparecer no formulário.
@@ -113,6 +115,12 @@ try {
   const pngShown = await waitFor(`document.body.innerText.includes('teste-imagem')`, 'arquivo aceito', 25000);
   check('PNG permitido é aceito e aparece no formulário', pngShown);
   await shot('04-png-aceito');
+
+  const submit = await findEl('input[name="op"], button[name="op"]');
+  if (submit) await wd('POST', p(`/element/${submit}/click`), {});
+  const submitted = await waitFor(`document.body.innerText.includes('Sua resposta foi enviada')`, 'confirmação de resposta enviada', 25000);
+  check('resposta com PNG é enviada e confirmada', submitted);
+  await shot('05-resposta-enviada');
 
   const errs = await exec(`return (window.__errs || []).slice(0, 10);`);
   check('sem erros de JavaScript na página', errs.length === 0, errs.join(' | '));

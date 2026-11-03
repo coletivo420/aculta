@@ -20,13 +20,32 @@ final class AnswerSubmissionAccessCheck {
     private readonly AccountProxyInterface $currentUser,
   ) {}
 
-  public function access(GroupInterface $group, int $lesson_delta, int $activity_delta): AccessResult {
+  public function access(GroupInterface $group, mixed $lesson_delta, mixed $activity_delta): AccessResult {
     $result = AccessResult::forbidden()
       ->cachePerUser()
       ->addCacheContexts(['user.permissions', 'user.group_permissions'])
       ->addCacheableDependency($group)
       ->addCacheTags(['group_relationship_list:plugin:lms_classes:group:' . $group->id()]);
     if (!$this->currentUser->isAuthenticated() || $group->bundle() !== LmsFriendlySlugs::COURSE_BUNDLE || !$group->isPublished()) {
+      return $result;
+    }
+
+    // Access checks run before route parameter conversion. The route therefore
+    // supplies the public slugs here, although the form receives integer
+    // deltas after the parameter converters have run.
+    if (is_string($lesson_delta)) {
+      $lesson_delta = $this->slugs->lessonDeltaFromSlug($group, $lesson_delta);
+    }
+    if (!is_int($lesson_delta) || $lesson_delta < 0) {
+      return $result;
+    }
+    if (is_string($activity_delta)) {
+      $lesson = $this->slugs->lessonAt($group, $lesson_delta);
+      $activity_delta = $lesson instanceof ContentEntityInterface
+        ? $this->slugs->activityDeltaFromSlug($lesson, $activity_delta)
+        : NULL;
+    }
+    if (!is_int($activity_delta) || $activity_delta < 0) {
       return $result;
     }
     $activity = $this->slugs->activityAt($group, $lesson_delta, $activity_delta);

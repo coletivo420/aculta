@@ -15,6 +15,7 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\aculta_lms\Event\CourseCompletionPublisherInterface;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
+use Drupal\aculta_lms\Form\AnswerSubmissionForm;
 use Drupal\aculta_lms\Learning\CourseActivityReaderInterface;
 use Drupal\aculta_lms\Learning\CourseActivity;
 use Drupal\aculta_lms\Plugin\ActivityAnswer\ObjectiveAnswerPluginResolver;
@@ -149,6 +150,19 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertTrue($container->get('config.storage')->exists('aculta_lms.settings'));
     $this->assertFalse($container->get('module_handler')->hasImplementations('install', ['aculta_lms']));
     $this->assertFalse($container->get('module_handler')->hasImplementations('schema', ['aculta_lms']));
+  }
+
+  /**
+   * Ensures injected form services survive Form API cache serialization.
+   */
+  public function testAnswerSubmissionFormRestoresInjectedServicesAfterSerialization(): void {
+    $this->assertTrue($this->container->get('module_installer')->install(['aculta_lms'], FALSE));
+    $form = AnswerSubmissionForm::create($this->container);
+    $restored = unserialize(serialize($form));
+
+    $currentRoute = new \ReflectionProperty(AnswerSubmissionForm::class, 'currentRoute');
+    $this->assertTrue($currentRoute->isInitialized($restored));
+    $this->assertInstanceOf(\Drupal\Core\Routing\CurrentRouteMatch::class, $currentRoute->getValue($restored));
   }
 
   /**

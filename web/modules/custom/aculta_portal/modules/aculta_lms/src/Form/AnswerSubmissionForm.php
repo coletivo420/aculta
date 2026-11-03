@@ -26,14 +26,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class AnswerSubmissionForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly CurrentRouteMatch $currentRoute,
-    private readonly LmsFriendlySlugs $slugs,
-    private readonly FreeTextReviewFeedback $freeText,
-    private readonly ObjectiveAnswerPluginResolver $objectivePlugins,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly ConsumerUploadPolicy $uploadPolicy,
-    private readonly FileUsageInterface $fileUsage,
+    protected EntityTypeManagerInterface $entityTypeManager,
+    protected CurrentRouteMatch $currentRoute,
+    protected LmsFriendlySlugs $slugs,
+    protected FreeTextReviewFeedback $freeText,
+    protected ObjectiveAnswerPluginResolver $objectivePlugins,
+    protected AccountProxyInterface $currentUser,
+    protected ConsumerUploadPolicy $uploadPolicy,
+    protected FileUsageInterface $fileUsage,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -167,7 +167,8 @@ final class AnswerSubmissionForm extends FormBase {
     $answer->setAnswerPayload($payload);
     $answer->save();
     if ($type === 'file_upload') {
-      $file->setPermanent()->save();
+      $file->setPermanent();
+      $file->save();
       $this->fileUsage->add($file, 'aculta_lms', 'aculta_lms_answer', (string) $answer->id());
     }
     if ($type === 'free_text') {
@@ -191,7 +192,7 @@ final class AnswerSubmissionForm extends FormBase {
     if (!is_array($blanks) || $blanks === []) {
       throw new \UnexpectedValueException('Atividade de lacunas sem gabarito configurado.');
     }
-    $element = ['#type' => 'fieldset', '#title' => $this->t('Sua resposta')];
+    $element = ['#type' => 'fieldset', '#title' => $this->t('Sua resposta'), '#tree' => TRUE];
     foreach ($blanks as $index => $_accepted) {
       $element['blank_' . $index] = ['#type' => 'textfield', '#title' => $this->t('Lacuna @number', ['@number' => (string) ((int) $index + 1)]), '#required' => FALSE];
     }

@@ -36,7 +36,8 @@ O script termina com código 1 se alguma verificação falhar.
 
 ## Limites conhecidos
 
-- A janela do Firefox não reduz abaixo de 500 px. Por isso o celular é emulado pelo comando BiDi `browsingContext.setViewport` (390 px), e o script confere `window.innerWidth` antes da captura.
+- A janela do Firefox não reduz abaixo de 500 px. Por isso o celular é emulado pelo comando BiDi `browsingContext.setViewport` (320 px por padrão), e o script confere `window.innerWidth` antes da captura.
+- O desktop usa 1440 px por padrão. `LMS_DESKTOP_WIDTH` e `LMS_MOBILE_WIDTH` podem ajustar as larguras em execuções específicas.
 - Ao mudar a largura, o menu administrativo pode abrir por cima do conteúdo. A verificação recarrega a página
   em largura reduzida para capturar o formulário com o menu fechado.
-- A revisão cobre o formulário e o envio do arquivo; não envia a resposta final.
+- A revisão envia uma resposta sintética com PNG para a atividade marcada; não remova a tentativa sem ordem separada.

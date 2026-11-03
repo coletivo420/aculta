@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.176
+version: 0.1.0-dev.177
 state: Dev
-progress_note: "Dev.176: Runtime no commit 775295ac3; update 10013 aplicado após snapshot. Smoke HTTP interrompido por HTTP 500 anônimo nas rotas de resposta; nenhuma submissão/upload. ACULTA420/Olivero, avaliação docente e isolamento entre estudantes DEFERRED até correção e nova ordem."
-next_phase: 'Investigar e corrigir o HTTP 500 das rotas de resposta ACULTA; repetir smoke autenticado e visual após autorização. Não remover os dados sintéticos sem ordem separada. Medição de carga xAPI e segredo de produção continuam pendentes.'
+progress_note: "Dev.177: corrigidos 500 por slug cru, matrícula curso→turma, dependências do formulário perdidas no cache e encadeamento setPermanent/save; fieldset de lacunas mantém answer[blank_N]. Snapshot SHA-256 ec8259784afe036efba985dcab557694530cb106dfa20fadbd31b7d9ff71bc88; sem updates ou diferenças de config antes/depois; drush cr passou. Anônimo 403 nas cinco rotas; estudante sintético abre e envia os cinco tipos, sem 500. Firefox ESR visível, ACULTA420: upload 10/10 em 1440/320. Unit 226/788, Kernel install 7/193, Portal 1202, slugs 410, admin routes 170 PASS. Dashboard docente HTTP 200; produto sem revisão/nota final de resposta. Isolamento entre estudantes e Olivero DEFERRED. Dados sintéticos permanecem, incluindo tentativa 0 e upload parcialmente salvo do erro anterior."
+next_phase: 'Definir fluxo de revisão/nota do educador; testar isolamento com segunda estudante sintética autorizada; validar Olivero visualmente. Não remover dados sintéticos sem ordem separada. Medição de carga xAPI e segredo de produção continuam pendentes.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.
 # O Studio compõe cards SDC, mas a homologação depende de fixtures LMS

@@ -1,3 +1,39 @@
+## 0.1.0-dev.177 — corrige autorização das respostas ACULTA
+
+- A rota de resposta recebia os slugs ainda não convertidos durante a checagem
+  de acesso. O callback agora aceita esses valores brutos, resolve as posições
+  com o serviço de slugs e nega parâmetros inválidos sem erro de tipo.
+- A verificação de matrícula agora percorre os relacionamentos
+  `lms_classes` do curso para localizar as turmas ativas. A consulta anterior
+  filtrava o campo `entity_id` pelo ID do curso, embora esse campo identifique
+  a turma relacionada.
+- Serviços injetados do formulário agora sobrevivem ao cache/serialização do
+  Form API. O upload separa `setPermanent()` de `save()`, e o fieldset de
+  lacunas preserva a estrutura `answer[blank_N]` para pontuação.
+- Unit do LMS: 226 testes / 788 assertions PASS (4 depreciações PHPUnit).
+  `AcultaLmsInstallTest`: 7 / 193 PASS (35 depreciações upstream). Portal
+  Drupal 11+: 1.202 checks PASS; slugs públicos: 410 rotas PASS; rotas
+  administrativas MAIN: 41 arquivos / 170 rotas PASS.
+- Runtime: HTTP anônimo retorna 403 nas cinco atividades. A estudante sintética
+  abre as cinco páginas e envia verdadeiro/falso, seleção, lacunas, resposta
+  livre e arquivo; não houve 500 após os reparos. As três objetivas corretas
+  pontuaram 100; resposta livre ficou `submitted` sem nota. Firefox ESR visível
+  passou 10/10 checagens do upload em 1440 px e 320 px, incluindo recusa `.exe`,
+  PNG permitido e envio final. Capturas estão sob
+  `$SUITE_OUT/lms-runtime-validation-20261103/firefox-upload/` e
+  `$SUITE_OUT/lms-runtime-validation-20261103/firefox-answer-types/`.
+- Dados sintéticos mantidos: uma tentativa de cada tipo, mais uma tentativa de
+  lacunas que pontuou 0 antes da correção e uma tentativa de upload parcialmente
+  salva durante o 500 anterior. Há dois uploads referenciados: um permanente
+  com uso registrado e um temporário. Nenhum dado foi removido.
+- O painel docente responde HTTP 200 no domínio MAIN e mostra a turma; não há
+  rota/tela de revisão ou avaliação das respostas. Isolamento entre dois
+  estudantes não foi testado porque o cenário contém uma só estudante. Olivero
+  não foi selecionado para a validação visual.
+- `ClassActivityDeadlineTest` continua sem executar porque o harness ainda
+  declara o módulo removido `lms`; a regressão da regra de matrícula foi
+  coberta por `LearningEligibilityTest` Unit.
+
 ## 0.1.0-dev.176 — validação Runtime interrompida por erro HTTP
 
 - Runtime Homelab sincronizado a `775295ac3d1c8c21524a9b15696515b70182b1b2`.

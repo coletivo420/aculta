@@ -86,11 +86,7 @@ final class LearningEligibility implements LearningEligibilityInterface {
     if (!$course->hasPermission('take course', $account)) {
       return FALSE;
     }
-    $classRelationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
-      'entity_id' => $course->id(),
-      'plugin_id' => 'lms_classes',
-    ]);
-    foreach ($classRelationships as $relationship) {
+    foreach ($course->getRelationships('lms_classes') as $relationship) {
       $class = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
       if ($class === NULL || $class->bundle() !== 'lms_class') {
         continue;
