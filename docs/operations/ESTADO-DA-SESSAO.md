@@ -248,3 +248,10 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Frente 3:** manifesto, status e changelog do Studio alinhados em `0.1.0-dev.41`, versão evidenciada pelo manifesto/status e pela entrada de changelog existente. Nenhum código Studio foi incluído.
 - **Runtime:** snapshot anterior ao update 10014 em `$SUITE_OUT/lms-runtime-validation-20261103/final/aculta_runtime-before-isolation-review.sql`, SHA-256 `cd8ac930dcb95354074846929273253327045fd907f1cec0b1c53f04101c2616`. Update `aculta_lms_update_10014` aplicado; depois não há updates nem diferenças de configuração; cache rebuild passou.
 - **Gates:** Portal 1202 checks PASS, slugs 410 PASS, rotas administrativas 172 PASS e grep `Drupal\\lms` zero. Studio Unit 72/661 PASS. Olivero dispensado pelo responsável.
+
+### Continuação — validação visual Olivero, 2026-11-03
+
+- **Snapshot:** `$SUITE_OUT/lms-runtime-validation-20261103/olivero/aculta_runtime-before-olivero.sql`, SHA-256 `a1ddcb237d01e62c2eebbd531844df75ac3e573d92510fc8018e8c04b411c7f4`.
+- **Firefox ESR visível:** Olivero passou 10/10 verificações do formulário de upload em 1440 px e 320 px, incluindo recusa `.exe`, aceite PNG, envio e ausência de erros JavaScript. Capturas e relatório em `$SUITE_OUT/lms-runtime-validation-20261103/olivero-final4/`.
+- **Correção:** o harness passou a desconsiderar o menu móvel oculto do Olivero no cálculo de overflow; o formulário recebeu proteção de viewport para a navegação colapsada. O tema foi restaurado para `aculta420` e Olivero desinstalado.
+- **Runtime final:** `drush cr` passou, sem updates pendentes e sem diferenças de configuração.

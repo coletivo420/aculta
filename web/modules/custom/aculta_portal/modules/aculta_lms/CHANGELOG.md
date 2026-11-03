@@ -1170,4 +1170,5 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
   relacionamento própria, sem reintroduzir o contrib.
 - Olivero: validação dispensada pelo responsável em 2026-11-03.
 - Adicionada revisão docente ACULTA em `/painel-administrativo/lms/curso/{course}/turma/{group}/respostas`: educadores listam tentativas, gravam nota de 0 a 100 e feedback, e a própria resposta do estudante exibe a avaliação. A permissão contextual `grade students` protege a lista e o detalhe.
+- Olivero validado no Firefox ESR visível em 1440 px e 320 px: 10/10 verificações PASS para formulário, upload, recusa de extensão, envio e JavaScript. O tema foi habilitado somente durante a validação e restaurado para `aculta420` ao final.
 

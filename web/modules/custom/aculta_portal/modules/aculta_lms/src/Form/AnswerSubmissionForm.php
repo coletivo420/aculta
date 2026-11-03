@@ -57,6 +57,7 @@ final class AnswerSubmissionForm extends FormBase {
   }
 
   public function buildForm(array $form, FormStateInterface $form_state): array {
+    $form['#attached']['library'][] = 'aculta_lms/answer_form';
     [$course, $activity] = $this->routeEntities();
     $form_state->set('aculta_lms_course', $course);
     $form_state->set('aculta_lms_activity', $activity);

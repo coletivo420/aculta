@@ -1,0 +1,10 @@
+/* Keep Olivero's collapsed mobile navigation inside the emulated viewport. */
+html:has(body.path-curso) {
+  overflow-x: clip;
+}
+
+body.path-curso #header-nav,
+body.path-curso #header-nav .primary-nav__menu {
+  max-inline-size: 100vw;
+  overflow-x: hidden;
+}

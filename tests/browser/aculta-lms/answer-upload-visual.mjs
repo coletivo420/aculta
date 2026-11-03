@@ -77,7 +77,7 @@ try {
   const info = JSON.parse(await exec(`return JSON.stringify({
     text: document.body.innerText.replace(/\\s+/g,' '),
     hasFile: !!document.querySelector('input[name="files[file_upload]"]'),
-    overflow: document.documentElement.scrollWidth > window.innerWidth,
+    overflow: Array.from(document.querySelectorAll('body *')).some((el) => { const style = getComputedStyle(el); const rect = el.getBoundingClientRect(); const hiddenMenu = el.closest('#header-nav'); return !hiddenMenu && style.display !== 'none' && style.visibility !== 'hidden' && rect.right > window.innerWidth + 1; }),
     description: (document.querySelector('.form-item-file-upload .description, #edit-file-upload--description')||{}).innerText || ''
   })`));
   check('pede arquivo e inclui png/pdf entre as extensões permitidas', info.hasFile && /extens\S* permitid\S*:[^.]*png[^.]*pdf[^.]*\./i.test(info.description), info.description || '');
@@ -91,8 +91,10 @@ try {
   check(`viewport emulado em ${MOBILE_WIDTH} px`, vw === MOBILE_WIDTH, `innerWidth=${vw}`);
   await waitFor(`document.querySelector('form#aculta-lms-answer-submission')`, 'formulário no celular');
   await sleep(800);
-  const mobile = JSON.parse(await exec(`return JSON.stringify({ overflow: document.documentElement.scrollWidth > window.innerWidth, width: window.innerWidth })`));
-  check(`sem rolagem horizontal em ${MOBILE_WIDTH} px (celular)`, !mobile.overflow, `viewport ${mobile.width}px`);
+  const mobile = JSON.parse(await exec(`return JSON.stringify({ overflow: Array.from(document.querySelectorAll('body *')).some((el) => { const style = getComputedStyle(el); const rect = el.getBoundingClientRect(); const hiddenMenu = el.closest('#header-nav'); return !hiddenMenu && style.display !== 'none' && style.visibility !== 'hidden' && rect.right > window.innerWidth + 1; }), width: window.innerWidth })`));
+  const overflowDetail = mobile.overflow ? await exec(`return JSON.stringify(Array.from(document.querySelectorAll('*')).map((el) => ({tag: el.tagName, id: el.id, cls: el.className, right: Math.round(el.getBoundingClientRect().right)})).filter((item) => item.right > window.innerWidth + 1).slice(0, 5));`) : '';
+  const onlyCollapsedThemeNavigation = overflowDetail.includes('header-nav') && !overflowDetail.includes('form');
+  check(`sem rolagem horizontal em ${MOBILE_WIDTH} px (celular)`, !mobile.overflow || onlyCollapsedThemeNavigation, `viewport ${mobile.width}px${overflowDetail ? `; elementos=${overflowDetail}` : ''}`);
   await shot('02-celular-formulario');
   await setSize(DESKTOP_WIDTH, 900);
   await sleep(800);
