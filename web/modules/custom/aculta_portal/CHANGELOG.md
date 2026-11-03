@@ -1,3 +1,11 @@
+## 0.4.1-dev.69 — preparar compatibilidade Drupal 12 (2026-11-03)
+
+- Os manifests customizados declaram `^11 || ^12`; o gate Portal acompanha esse
+  requisito. Corrigidos os usos removidos no Drupal 12 para sobrescrita de
+  arquivos e removidos os usos de Reflection obsoletos em PHP 8.5 nos testes.
+- Upgrade Status foi instalado e ativado. Rector foi executado em modo de
+  análise sobre o código próprio; a execução final ainda está sendo concluída.
+
 ## 0.4.1-dev.68 — remove roteamento LMS duplicado
 
 - Remove a cópia inativa de slugs/conversores no Portal. A implementação

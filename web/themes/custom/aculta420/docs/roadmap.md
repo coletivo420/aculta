@@ -1,5 +1,10 @@
 # Roadmap — ACULTA420
 
+## 0.7.0-dev.37 — metadata de compatibilidade Drupal 12 (2026-11-03; não validado)
+
+Manifest atualizado para `^11 || ^12`. A validação formal do tema continua
+dependente do Drupal Core e dos módulos contrib instalados na versão 12.
+
 ## 0.7.0-dev.36 — Dashboard compacto e escopo da caixa de eventos (2026-11-03; Runtime PASS)
 
 - Dashboard: intervalo de 12 px entre blocos e ações, títulos internos sem margens padrão. Firefox ESR com CSS candidato local passou as verificações específicas em 320/390/768/1280 px; sem overflow e grade 1/2 colunas.

@@ -1299,7 +1299,6 @@ final class Cli {
     }
     $raw = curl_exec($handle);
     $http = (int) curl_getinfo($handle, CURLINFO_RESPONSE_CODE);
-    curl_close($handle);
     $body = is_string($raw) ? json_decode($raw, TRUE) : NULL;
     return ['http' => $http, 'body' => is_array($body) ? $body : []];
   }

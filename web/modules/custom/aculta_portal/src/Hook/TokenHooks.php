@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class TokenHooks {
 
   public function __construct(
-    #[Autowire('%app.root%')]
+    #[Autowire(param: 'app.root')]
     private readonly string $appRoot,
     #[Autowire(service: 'config.factory')]
     private readonly ConfigFactoryInterface $configFactory,

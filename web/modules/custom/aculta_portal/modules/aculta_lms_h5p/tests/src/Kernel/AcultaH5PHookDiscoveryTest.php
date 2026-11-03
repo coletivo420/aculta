@@ -50,7 +50,6 @@ final class AcultaH5PHookDiscoveryTest extends KernelTestBase {
       (new aculta_H5PFinishedEvent(['score' => 1]))->getQuizFields(),
     );
     $framework = new \ReflectionMethod(aculta_H5PDrupal::class, 'framework');
-    $framework->setAccessible(TRUE);
     self::assertSame($this->container->get('aculta_lms_h5p.framework'), $framework->invoke(NULL));
     self::assertInstanceOf(aculta_H5PLifecycleHooks::class, $this->container->get(aculta_H5PLifecycleHooks::class));
     self::assertSame('h5p_editor', $this->container->get('plugin.manager.field.widget')->getDefinition('h5p_editor')['id']);

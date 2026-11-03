@@ -338,7 +338,6 @@ final class ForumCategoryCounterAccessKernelTest extends KernelTestBase {
       $this->container->get('database'),
     );
     $method = new \ReflectionMethod($field, 'countByTerm');
-    $method->setAccessible(TRUE);
     $raw = $method->invoke($field, [(int) $this->publicCategory->id(), (int) $this->restrictedCategory->id()]);
     $names = [
       (int) $this->publicCategory->id() => 'Pública',

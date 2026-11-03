@@ -63,7 +63,7 @@ class SalesReportQuery {
     $consulta->groupBy('variacao_id');
     $consulta->groupBy('moeda');
     $consulta->orderBy('quantidade', 'DESC');
-    $linhas = $consulta->execute()->fetchAll(\PDO::FETCH_ASSOC);
+    $linhas = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $consulta->execute()->fetchAll(\Drupal\Core\Database\Statement\FetchAs::Associative), fn() => $consulta->execute()->fetchAll(\PDO::FETCH_ASSOC));
 
     // Nome do produto e da variação vêm das entidades, para não depender de joins em tabelas de tradução.
     $variacoes = $this->entityTypeManager->getStorage('commerce_product_variation')
@@ -108,7 +108,7 @@ class SalesReportQuery {
       'pedidos' => (int) $l['pedidos'],
       'total' => (string) $l['total'],
       'moeda' => (string) $l['moeda'],
-    ], $consulta->execute()->fetchAll(\PDO::FETCH_ASSOC));
+    ], \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $consulta->execute()->fetchAll(\Drupal\Core\Database\Statement\FetchAs::Associative), fn() => $consulta->execute()->fetchAll(\PDO::FETCH_ASSOC)));
   }
 
   /**

@@ -86,7 +86,7 @@ class aculta_H5PItem extends FieldItemBase implements FieldItemInterface {
 
     // Determine if this is a new revision.
     $entity = $this->getEntity();
-    $is_new_revision = (!empty($entity->original) && $entity->getRevisionId() != $entity->original->getRevisionId());
+    $is_new_revision = (!empty(\Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $entity->getOriginal(), fn() => $entity->original)) && $entity->getRevisionId() != \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $entity->getOriginal(), fn() => $entity->original)->getRevisionId());
 
     // Determine if this is a new translation.
     $do_new_translation = $this->get('h5p_content_new_translation')->getValue();

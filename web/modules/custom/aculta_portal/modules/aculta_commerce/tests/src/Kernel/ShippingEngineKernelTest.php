@@ -445,14 +445,12 @@ final class ShippingEngineKernelTest extends KernelTestBase {
     $complete_form = [];
     $this->assertTrue($pane->isVisible());
     $profile_method = new \ReflectionMethod($pane, 'getShippingProfile');
-    $profile_method->setAccessible(TRUE);
     $pane_profile = $profile_method->invoke($pane);
     $this->assertInstanceOf(ProfileInterface::class, $pane_profile);
     $this->assertNotNull($this->order->getBillingProfile());
     $this->assertFalse($this->order->getBillingProfile()->get('address')->isEmpty());
     $this->assertSame($this->profile->id(), $pane_profile->id());
     $can_calculate = new \ReflectionMethod($pane, 'canCalculateRates');
-    $can_calculate->setAccessible(TRUE);
     $this->assertCount(0, $pane_profile->get('address')->validate());
     $this->assertTrue($can_calculate->invoke($pane, $pane_profile));
     [$packed] = $this->container->get('aculta_commerce.packer_manager')->packToShipments($this->order, $this->profile, []);

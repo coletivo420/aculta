@@ -124,7 +124,7 @@ function aculta_lms_update_10007(): void {
       (array) ($current->get($mapping) ?? []),
     ));
   }
-  $editable->save(TRUE);
+  $editable->save();
 }
 
 /** Adds the immutable JSON payload field to ACULTA answer attempts. */
@@ -235,7 +235,7 @@ function aculta_lms_update_10012(): void {
   $name = 'group.relationship_type.lms_course-lms_classes';
   $config = \Drupal::configFactory()->getEditable($name);
   if (!$config->isNew()) {
-    $config->set('dependencies.module', ['aculta_lms'])->save(TRUE);
+    $config->set('dependencies.module', ['aculta_lms'])->save();
   }
 }
 

@@ -86,11 +86,15 @@ final class ImageQuarantine {
    * Entradas da quarentena, com o indicador de vencimento. */
   public function listar(): array {
     $agora = (int) $this->time->getRequestTime();
-    $linhas = $this->database->select('aculta_image_quarantine', 'q')
+    $linhas = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $this->database->select('aculta_image_quarantine', 'q')
       ->fields('q')
       ->orderBy('q.enviado_em', 'ASC')
       ->execute()
-      ->fetchAll(\PDO::FETCH_ASSOC);
+      ->fetchAll(\Drupal\Core\Database\Statement\FetchAs::Associative), fn() => $this->database->select('aculta_image_quarantine', 'q')
+      ->fields('q')
+      ->orderBy('q.enviado_em', 'ASC')
+      ->execute()
+      ->fetchAll(\PDO::FETCH_ASSOC));
     foreach ($linhas as &$linha) {
       $linha['vencida'] = QuarantineRules::vencida((int) $linha['vence_em'], $agora);
     }

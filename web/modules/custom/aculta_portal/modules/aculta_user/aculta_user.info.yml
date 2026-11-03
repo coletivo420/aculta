@@ -3,7 +3,7 @@ type: module
 description: 'Perfil público por apelido (/u/<apelido>) e visibilidade por item. Submódulo do Portal ACULTA.'
 package: 'ACULTA Portal'
 version: '0.4.0-dev.94'
-core_version_requirement: ^11.3
+core_version_requirement: ^11 || ^12
 dependencies:
   - aculta_portal:aculta_file_uploader
   - aculta_portal:aculta_image

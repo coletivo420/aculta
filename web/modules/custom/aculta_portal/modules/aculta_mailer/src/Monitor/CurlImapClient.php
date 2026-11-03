@@ -100,7 +100,6 @@ final class CurlImapClient implements ImapClientInterface {
     }
     $body = curl_exec($handle);
     $error = curl_error($handle);
-    curl_close($handle);
     if ($overflow) {
       throw new ImapMessageTooLargeException('Mensagem IMAP acima do limite de download.');
     }

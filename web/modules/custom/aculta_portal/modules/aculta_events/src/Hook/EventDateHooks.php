@@ -120,7 +120,7 @@ final class EventDateHooks {
       }
 
       // Se a data mudou de evento, reprojeta também o evento anterior.
-      $original = method_exists($entity, 'getOriginal') ? $entity->getOriginal() : ($entity->original ?? NULL);
+      $original = method_exists($entity, 'getOriginal') ? $entity->getOriginal() : (\Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $entity->getOriginal(), fn() => $entity->original) ?? NULL);
       if ($original instanceof EventDate) {
         $oldEventId = (int) ($original->get('field_evento')->target_id ?? 0);
         if ($oldEventId > 0 && $oldEventId !== $eventId) {

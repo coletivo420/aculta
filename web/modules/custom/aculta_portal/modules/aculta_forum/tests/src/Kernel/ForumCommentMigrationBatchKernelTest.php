@@ -486,7 +486,6 @@ final class ForumCommentMigrationBatchKernelTest extends KernelTestBase {
     );
     foreach (['sourcePlugin' => $source, 'destinationPlugin' => $destination] as $property => $value) {
       $reflection = new \ReflectionProperty(Migration::class, $property);
-      $reflection->setAccessible(TRUE);
       $reflection->setValue($migration, $value);
     }
     return $migration;

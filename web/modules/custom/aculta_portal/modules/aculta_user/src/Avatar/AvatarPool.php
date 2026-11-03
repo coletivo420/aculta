@@ -31,7 +31,7 @@ final class AvatarPool {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'user.data')]
     private readonly UserDataInterface $userData,
-    #[Autowire('%app.root%')]
+    #[Autowire(param: 'app.root')]
     private readonly string $appRoot,
   ) {}
 

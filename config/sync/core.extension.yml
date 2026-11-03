@@ -216,6 +216,7 @@ module:
   ui_styles_ui_patterns: 0
   ui_styles_views: 0
   update: 0
+  upgrade_status: 0
   user: 0
   username_enumeration_prevention: 0
   views_bulk_operations: 0

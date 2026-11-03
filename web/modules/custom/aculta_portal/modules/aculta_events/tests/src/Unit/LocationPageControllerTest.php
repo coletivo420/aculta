@@ -21,8 +21,6 @@ final class LocationPageControllerTest extends UnitTestCase {
   #[DataProvider('siteUrlProvider')]
   public function testSafeSiteUrl(?string $expected, string $value): void {
     $method = new \ReflectionMethod(LocationPageController::class, 'safeSiteUrl');
-    $method->setAccessible(TRUE);
-
     $this->assertSame($expected, $method->invoke(NULL, $value));
   }
 

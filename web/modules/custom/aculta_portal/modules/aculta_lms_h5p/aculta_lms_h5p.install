@@ -46,21 +46,21 @@ function aculta_lms_h5p_requirements($phase) {
   $requirements['h5p_php_extension_ziparchive'] = [
     'title' => t('ZipArchive extension'),
     'description' => t('ZipArchive PHP extensions must be installed and enabled.'),
-    'severity' => class_exists('ZipArchive') ? REQUIREMENT_OK : REQUIREMENT_ERROR,
+    'severity' => class_exists('ZipArchive') ? \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::OK, fn() => REQUIREMENT_OK) : \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::Error, fn() => REQUIREMENT_ERROR),
   ];
 
   // mbstring requirement
   $requirements['h5p_php_extension_mbstring'] = [
     'title' => t('Mbstring extension'),
     'description' => t('Mbstring PHP extension must be installed and enabled.'),
-    'severity' => extension_loaded('mbstring') ? REQUIREMENT_OK : REQUIREMENT_ERROR,
+    'severity' => extension_loaded('mbstring') ? \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::OK, fn() => REQUIREMENT_OK) : \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::Error, fn() => REQUIREMENT_ERROR),
   ];
 
   $supported_php = version_compare(PHP_VERSION, '8.3.0', '>=');
   $requirements['h5p_php_version'] = [
     'title' => t('PHP version'),
     'description' => t('PHP 8.3 or later is required by the Drupal 11 integration.'),
-    'severity' => $supported_php ? REQUIREMENT_OK : REQUIREMENT_ERROR,
+    'severity' => $supported_php ? \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::OK, fn() => REQUIREMENT_OK) : \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::Error, fn() => REQUIREMENT_ERROR),
   ];
 
   return $requirements;

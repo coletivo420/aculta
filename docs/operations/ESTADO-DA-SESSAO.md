@@ -321,3 +321,20 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Firefox ESR visível:** Olivero passou 10/10 verificações do formulário de upload em 1440 px e 320 px, incluindo recusa `.exe`, aceite PNG, envio e ausência de erros JavaScript. Capturas e relatório em `$SUITE_OUT/lms-runtime-validation-20261103/olivero-final4/`.
 - **Correção:** o harness passou a desconsiderar o menu móvel oculto do Olivero no cálculo de overflow; o formulário recebeu proteção de viewport para a navegação colapsada. O tema foi restaurado para `aculta420` e Olivero desinstalado.
 - **Runtime final:** `drush cr` passou, sem updates pendentes e sem diferenças de configuração.
+
+## Handoff — Bootstrap 8.x-3.45 — 2026-11-03
+
+- Atualizado `drupal/bootstrap` para 8.x-3.45 (Composer 3.45.0); `ACULTA420` e Bootstrap confirmados ativos pelo Drush. O asset local `twbs/bootstrap` 5.3.8 foi mantido para as fixtures e verificações já existentes.
+- Ajustados README, sincronizador de assets do Composer e gate Foundation. `composer validate`, `php -l` nos scripts alterados, gate Foundation (355 checks) e `git diff --check` passaram.
+- Commit `fee0f65c11` enviado para `origin/dev`.
+- Snapshot pré-update do `aculta_runtime`: `$SUITE_OUT/runtime-snapshots/aculta_runtime-before-bootstrap-8x-20261103.sql.gz.gz`; SHA-256 `2468c0ac57ea21092a753cc6289b73df623ebe38e62d1467dce0ffa11b27a853`.
+- **Bloqueio Runtime:** `updatedb` falhou em `system_update_11501`, pois o update procura o tipo de entidade `aculta_link`, ausente no Runtime. Nenhum `config:import` foi executado. Diagnosticar/alinha o estado do entity type antes de retomar `updatedb`.
+
+## Handoff — preparação Drupal 12 e ImageMagick 5 — 2026-11-03
+
+- Upgrade Status 5.0.0-alpha3 instalado/ativado e Rector 1.1.3 configurado para os módulos Portal/MCP e tema ACULTA420. 83 manifests customizados agora declaram `core_version_requirement: ^11 || ^12`.
+- Rector aplicou os ajustes de APIs removidas/depreciadas no código customizado; a segunda execução em dry-run não encontrou transformações restantes. Depreciações PHP 8.5 de cURL, GD e Reflection foram tratadas; o shim público legado `UploadedAnswerAccessCheck` foi preservado por compatibilidade.
+- ImageMagick atualizado para 5.0.2; PDFPreview está no branch `1.x-dev` (`6bdd374e`) porque a release estável 1.2.0 não aceita ImageMagick 5. Composer também remove Storybook. Drupal Core continua 11.5.0-beta1; isso é preparação de compatibilidade, não upgrade do Core.
+- Verificações: Composer validate, gate Portal (1202 checks), gate ACULTA420 Foundation (355 checks), índice do README (53 componentes), PHP lint e Rector dry-run PASS. PHPUnit não executado.
+- Upgrade Status registrou avisos manuais não impeditivos, incluindo o shim legado de compatibilidade e depreciações removidas só no Drupal 13.
+- Snapshot pré-update do Runtime e bloqueio em `system_update_11501` estão descritos acima. `config:import` ficou pendente após a falha de `updatedb`.

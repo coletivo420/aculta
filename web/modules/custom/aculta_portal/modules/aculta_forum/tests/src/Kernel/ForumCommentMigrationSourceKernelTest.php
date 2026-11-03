@@ -316,7 +316,6 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
       ),
     );
     $method = new \ReflectionMethod($source, 'initializeIterator');
-    $method->setAccessible(TRUE);
     return iterator_to_array($method->invoke($source), FALSE);
   }
 
@@ -341,7 +340,6 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
       ),
     );
     $method = new \ReflectionMethod($source, 'initializeIterator');
-    $method->setAccessible(TRUE);
     return iterator_to_array($method->invoke($source), FALSE);
   }
 

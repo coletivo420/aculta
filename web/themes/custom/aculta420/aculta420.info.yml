@@ -2,8 +2,8 @@ name: ACULTA420
 type: theme
 description: 'Bootstrap Component Design System público da plataforma ACULTA420.'
 package: Custom
-version: '0.7.0-dev.36'
-core_version_requirement: ^11
+version: '0.7.0-dev.37'
+core_version_requirement: ^11 || ^12
 base theme: bootstrap
 enforce_prop_schemas: true
 libraries:

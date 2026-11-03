@@ -292,7 +292,7 @@
         "drupal/history": "^1.0",
         "drupal/image_widget_crop": "^3.0",
         "drupal/imageapi_optimize_binaries": "^1.2.0-beta1",
-        "drupal/imagemagick": "^4.0",
+        "drupal/imagemagick": "^5.0",
         "drupal/key": "^1.22",
         "drupal/login_emailusername": "^3.0",
         "drupal/mcp_server": "^2.0@beta",
@@ -307,7 +307,7 @@
         "drupal/metatag": "^2.2",
         "drupal/node_co_authors": "^1.2",
         "drupal/pathauto": "1.15",
-        "drupal/pdfpreview": "^1.2",
+        "drupal/pdfpreview": "^1.2@dev",
         "drupal/photoswipe": "^5.0",
         "drupal/physical": "^1.5",
         "drupal/private_message": "^3.0",
@@ -493,6 +493,7 @@
     "require-dev": {
         "drupal/core-dev": "11.5.0-beta1",
         "drupal/sdc_devel": "^1.0",
-        "drupal/storybook": "^1.0"
+        "drupal/upgrade_status": "^5.0@alpha",
+        "palantirnet/drupal-rector": "^1.1"
     }
 }

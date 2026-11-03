@@ -77,8 +77,8 @@ $check(
 );
 $info = $read($moduleRoot . '/aculta_portal.info.yml');
 $check(
-  preg_match('/^core_version_requirement:\s*\^11\.3\s*$/m', $info) === 1,
-  'aculta_portal.info.yml must declare core_version_requirement: ^11.3.',
+  preg_match('/^core_version_requirement:\s*\^11\s*\|\|\s*\^12\s*$/m', $info) === 1,
+  'aculta_portal.info.yml must declare core_version_requirement: ^11 || ^12.',
 );
 
 $requiredDocs = [

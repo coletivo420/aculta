@@ -34,13 +34,13 @@ final class SecretsRequirementsHook {
       return ['aculta_secrets' => [
         'title' => $title,
         'value' => $this->t('Todas as credenciais obrigatórias estão configuradas (@env).', ['@env' => $this->secrets->environment()]),
-        'severity' => REQUIREMENT_OK,
+        'severity' => \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::OK, fn() => REQUIREMENT_OK),
       ]];
     }
     return ['aculta_secrets' => [
       'title' => $title,
       'value' => $this->t('Faltam: @names. Preencha em /painel-administrativo/aculta/segredos.', ['@names' => implode(', ', $missing)]),
-      'severity' => REQUIREMENT_WARNING,
+      'severity' => \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal\Core\Extension\Requirement\RequirementSeverity::Warning, fn() => REQUIREMENT_WARNING),
     ]];
   }
 

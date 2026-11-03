@@ -129,7 +129,7 @@ final class ForumNoticeEmailWorkerTest extends UnitTestCase {
       ->with(12, 72, Aviso::TIPO_RESPOSTA, 1);
     $outbox->expects(self::once())
       ->method('completeDirectDelivery')
-      ->with(17, self::isType('callable'))
+      ->with(17, self::isCallable())
       ->willReturnCallback(static function (int $id, callable $acknowledge) use ($event): bool {
         $acknowledge($event);
         return TRUE;

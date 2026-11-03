@@ -359,7 +359,6 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
     );
     $formState = new FormState();
     $anyErrors = new \ReflectionProperty(FormState::class, 'anyErrors');
-    $anyErrors->setAccessible(TRUE);
     $anyErrors->setValue(NULL, FALSE);
     $formState->set('pmt_entity', $candidateThread);
     $initialForm = [];
@@ -508,7 +507,6 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
    */
   private function formStateWithoutErrors(): FormState {
     $anyErrors = new \ReflectionProperty(FormState::class, 'anyErrors');
-    $anyErrors->setAccessible(TRUE);
     $anyErrors->setValue(NULL, FALSE);
     return new FormState();
   }

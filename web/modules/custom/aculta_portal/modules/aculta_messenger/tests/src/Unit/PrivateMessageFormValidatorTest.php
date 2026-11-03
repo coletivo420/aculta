@@ -659,7 +659,6 @@ final class PrivateMessageFormValidatorTest extends UnitTestCase {
    */
   private function formState(bool $hasErrors): FormStateInterface {
     $property = new \ReflectionProperty(FormState::class, 'anyErrors');
-    $property->setAccessible(TRUE);
     $property->setValue(NULL, $hasErrors);
     return new FormState();
   }

@@ -1,3 +1,8 @@
+## 0.7.0-dev.37 — declarar compatibilidade com Drupal 12 (2026-11-03; não validado)
+
+- O manifest do tema passa a aceitar Drupal 11 e 12. Compatibilidade formal
+  depende da validação do Core e dos módulos contrib no Drupal 12.
+
 ## 0.7.0-dev.31 — apresentar Conta Studio em painéis próprios (2026-11-03)
 
 - `studio-account-contextual-nav` deixa de herdar as abas editoriais do Marley; o tema apresenta a navegação contextual como lista vertical independente. Menu e conteúdo da Conta recebem superfícies elevadas, bordas e raios pelos tokens semânticos, preservando `<details>`, Form API e os owners.

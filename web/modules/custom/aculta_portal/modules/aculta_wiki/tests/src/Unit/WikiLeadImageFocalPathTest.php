@@ -61,7 +61,6 @@ final class WikiLeadImageFocalPathTest extends UnitTestCase {
     $this->setProperty($uploader, 'focalPointRecorder', $recorder);
 
     $method = new \ReflectionMethod($uploader, 'recordFocal');
-    $method->setAccessible(TRUE);
     $method->invoke($uploader, $form_state);
   }
 
@@ -84,7 +83,6 @@ final class WikiLeadImageFocalPathTest extends UnitTestCase {
     $this->setProperty($uploader, 'focalPointRecorder', $recorder);
 
     $method = new \ReflectionMethod($uploader, 'recordFocal');
-    $method->setAccessible(TRUE);
     $method->invoke($uploader, $form_state);
   }
 
@@ -139,7 +137,6 @@ final class WikiLeadImageFocalPathTest extends UnitTestCase {
    */
   private function setProperty(object $object, string $name, mixed $value): void {
     $prop = new \ReflectionProperty($object, $name);
-    $prop->setAccessible(TRUE);
     $prop->setValue($object, $value);
   }
 

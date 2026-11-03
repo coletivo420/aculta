@@ -163,7 +163,7 @@ function aculta_forum_update_9003(): void {
     ],
   ];
   $view->set($page_path . '.style', $style);
-  $view->save(TRUE);
+  $view->save();
 }
 
 /**
@@ -185,7 +185,7 @@ function aculta_forum_update_9004(): void {
   }
 
   $view->set($field_path, 'h3');
-  $view->save(TRUE);
+  $view->save();
 }
 
 /**
@@ -199,5 +199,5 @@ function aculta_forum_update_9005(): void {
   }
 
   $view->set('display.default.display_options.cache.type', 'aculta_forum_post_tag');
-  $view->save(TRUE);
+  $view->save();
 }

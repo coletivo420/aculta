@@ -36,5 +36,5 @@ function aculta_game_update_10001(): void {
       'criterion_version' => 1,
       'badge' => 'primeiro_curso',
     ],
-  ]])->save(TRUE);
+  ]])->save();
 }

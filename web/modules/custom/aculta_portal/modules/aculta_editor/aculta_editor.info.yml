@@ -2,7 +2,7 @@ name: 'ACULTA Editor (Editor de conteúdo)'
 type: module
 description: 'Formatos e editor do CKEditor 5 para o Portal ACULTA, com o Plugin Pack. Submódulo opcional do aculta_portal: desabilitado, o Portal não depende dele.'
 package: 'ACULTA Portal'
-core_version_requirement: ^11.3
+core_version_requirement: ^11 || ^12
 version: '0.1.0-rc.1'
 dependencies:
   - ckeditor5:ckeditor5
