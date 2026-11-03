@@ -1,9 +1,7 @@
-uuid: 317a2b74-87ca-44bb-91d0-c747f2242166
+uuid: aaea8a07-ef16-4953-b1f6-359fb326b827
 langcode: pt-br
 status: true
-dependencies:
-  module:
-    - comment
+dependencies: {  }
 id: aculta_lms_answer_comment
 label: 'Comentário da resposta ACULTA'
 target_entity_type_id: aculta_lms_answer

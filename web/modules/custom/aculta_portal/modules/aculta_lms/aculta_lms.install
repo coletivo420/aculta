@@ -194,3 +194,26 @@ function aculta_lms_update_10009(): void {
     ])->save();
   }
 }
+
+/** Adds the missing Core comment body field for existing answer comments. */
+function aculta_lms_update_10010(): void {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $field_config_storage = $entity_type_manager->getStorage('field_config');
+  $comment_body = $field_config_storage->load('comment.aculta_lms_answer_comment.comment_body');
+  if (!$comment_body) {
+    $comment_body = $field_config_storage->create([
+      'uuid' => '2d34480d-1f59-4d31-86c2-829ef03786ac',
+      'field_name' => 'comment_body',
+      'entity_type' => 'comment',
+      'bundle' => 'aculta_lms_answer_comment',
+      'label' => 'Comentário',
+      'description' => '',
+      'required' => FALSE,
+      'translatable' => TRUE,
+      'default_value' => [],
+      'default_value_callback' => '',
+      'settings' => ['allowed_formats' => []],
+    ]);
+  }
+  $comment_body->save();
+}

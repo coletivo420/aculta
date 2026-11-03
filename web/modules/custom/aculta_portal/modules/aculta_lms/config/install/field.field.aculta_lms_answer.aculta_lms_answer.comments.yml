@@ -1,17 +1,17 @@
-uuid: 27868ca8-8f0d-465a-bd8e-7b9d359911e6
+uuid: caa67595-ac52-418e-8b51-d63d4ea0c089
 langcode: pt-br
 status: true
 dependencies:
   config:
-    - comment.type.aculta_lms_answer_comment
     - field.storage.aculta_lms_answer.comments
   module:
+    - aculta_lms
     - comment
 id: aculta_lms_answer.aculta_lms_answer.comments
 field_name: comments
 entity_type: aculta_lms_answer
 bundle: aculta_lms_answer
-label: Comentários da resposta
+label: 'Comentários da resposta'
 description: ''
 required: true
 translatable: true

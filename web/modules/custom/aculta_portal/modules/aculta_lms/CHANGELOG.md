@@ -1,3 +1,19 @@
+## 0.1.0-dev.161 — sincroniza configuração do comentário ACULTA
+
+- Os quatro objetos de configuração do tipo e do campo de comentários ACULTA
+  também ficam no `config/sync`, para que uma sincronização posterior preserve
+  o update `10009`. O update `10010` cria o campo `comment_body` se ausente.
+  Os UUIDs de instalação e sincronização seguem os valores já persistidos no
+  Runtime para evitar substituição de entidades de configuração.
+- Runtime: snapshot anterior ao update `10009`, SHA-256
+  `d44704f1c612c95b2854bdfb5401196d9293a896dd1dfde33d49c5684bcfe9a4`;
+  update `10009` e `drush cr` PASS. Kernel completo 6/191 PASS (44
+  depreciações); Unit 233/799 PASS (1 depreciação). `10010` aguarda snapshot e
+  aplicação. `config:status` mostra somente diferenças externas LMS em
+  `aculta_portal.superficies` e `core.extension`, além do campo de comentário
+  que o update `10010` ainda criará; a importação global foi adiada para não
+  remover a ativação de superfícies fora do escopo.
+
 ## 0.1.0-dev.160 — comentários Core em tentativas ACULTA
 
 - O tipo `aculta_lms_answer_comment` e o campo Core `comments` pertencem a

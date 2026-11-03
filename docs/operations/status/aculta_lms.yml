@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.160
+version: 0.1.0-dev.161
 state: Dev
-progress_note: "ADR-042 P5 dev.160: o update 10009 adiciona comentário Core ACULTA fechado por padrão às tentativas; eventos/notificações identificam o tipo próprio. `AnswerPayload` guarda referência positiva a managed file no JSON e revalida o ID ao ler. Unit 233/799 PASS; Kernel AcultaLmsInstallTest 6/190 PASS (44 depreciações Core/contrib). CourseAnswer permanece projeção de estado/nota. Ainda pendem rota segura do arquivo, revisão e remoção de imports e configurações LMS; P5 incompleto. Runtime ainda precisa receber update 10009 depois de snapshot."
+progress_note: "ADR-042 P5 dev.161: update 10009 instalado; update 10010 cria idempotentemente o campo comment_body ausente. Quatro configs de instalação/sync registrados. `AnswerPayload` valida referência positiva a managed file no JSON. Unit 233/799 PASS; Kernel AcultaLmsInstallTest 6/191 PASS (44 depreciações Core/contrib). Snapshot pré-10009 SHA-256 `d44704f1c612c95b2854bdfb5401196d9293a896dd1dfde33d49c5684bcfe9a4`; 10010 pendente de snapshot novo e execução. `config:status` também mostra duas divergências externas LMS em `aculta_portal.superficies` e `core.extension`; importação global não executada pois alteraria módulo/flag fora do escopo. CourseAnswer permanece projeção de estado/nota. Ainda pendem rota segura do arquivo, revisão e remoção de imports e configurações LMS; P5 incompleto."
 next_phase: 'Concluir integração ACULTA de payload, tentativas, comentários e arquivos; resolver atividade/autoria e rota de início; remover todos os imports e dependências LMS, revisar 71 YAML de config sync, validar P4 sem contrib e então P5. P6 somente com ordem explícita.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.

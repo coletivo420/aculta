@@ -163,6 +163,10 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     self::assertNotNull($entity_type_manager->getStorage('field_config')->load('aculta_lms_answer.aculta_lms_answer.comments'));
     self::assertNotNull($entity_type_manager->getStorage('comment_type')->load('aculta_lms_answer_comment'));
     self::assertNotNull($entity_type_manager->getStorage('field_config')->load('comment.aculta_lms_answer_comment.comment_body'));
+    $entity_type_manager->getStorage('field_config')->load('comment.aculta_lms_answer_comment.comment_body')->delete();
+    aculta_lms_update_10010();
+    aculta_lms_update_10010();
+    self::assertSame('2d34480d-1f59-4d31-86c2-829ef03786ac', $entity_type_manager->getStorage('field_config')->load('comment.aculta_lms_answer_comment.comment_body')->uuid());
 
     foreach (['aculta_lms_lesson', 'aculta_lms_activity', 'aculta_lms_answer', 'aculta_lms_progress'] as $entity_type_id) {
       $this->assertTrue($entity_type_manager->hasDefinition($entity_type_id));
