@@ -1,5 +1,9 @@
 # Conta Studio: auditoria AJAX e plano de recuperação
 
+## Espaçamento ACULTA420 dev.32 — validação visual parcial no Runtime (2026-11-03)
+
+Após a redução da escala global, Firefox ESR visível confirmou no Studio Dashboard, Perfil e Marley 62/62 checks aplicáveis, com 21 SKIP condicionais, sem overflow em 320–1440 px; Perfil também passou zoom real de 200/400%, e Marley passou claro/escuro. Capturas/JSON: `$SUITE_OUT/studio-spacing-marley-20261103/`. Conta foi inspecionada separadamente, sem escrita: em 1440 px o shell mediu duas colunas (272/944 px), navegação e formulário em caixas com padding de 16/24 px; em 320 px mediu uma coluna, padding 16 px, sem overflow. Os nove links têm 46 px e o gap do menu é 8 px. Capturas/medidas: `$SUITE_OUT/studio-spacing-account-20261103/`. Não repetimos a bateria AJAX/Form API nessa alteração CSS; a tentativa longa foi interrompida sem resultado final. Cabeçalho institucional/global manteve-se inalterado. A prancha não foi recapturada nesta rodada, então não alegamos paridade pixel a pixel.
+
 ## Referências do repositório — 2026-11-03
 
 As pranchas oficiais disponíveis no HEAD remoto estão em

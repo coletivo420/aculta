@@ -407,8 +407,12 @@ Classificação: PATCH (mapeia a apresentação dos blocos existentes, sem criar
 - O player com tópico real ainda não está disponível no Runtime de teste; a
   revisão visual permanece pendente.
 
-## 0.7.0-dev.32 — padronizar espaçamento compacto no tema (2026-11-03; validação Runtime pendente)
+## 0.7.0-dev.32 — padronizar espaçamento compacto no tema (2026-11-03; validação Runtime parcial)
 
 - Introduz escala semântica de espaçamento ACULTA420 e reduz espaços globais de conteúdo e seção; ajusta páginas Studio, Conta e Perfil para usar a mesma cadência em caixas e painéis. Mantém alvos da navegação da Conta em 44 px e não altera cores do cabeçalho.
-- Referências de projeto: [Carbon spacing](https://www.carbondesignsystem.com/building-blocks/foundations/spacing/overview), [GOV.UK spacing](https://design-system.service.gov.uk/styles/spacing/) e [USWDS spacing units](https://designsystem.digital.gov/design-tokens/spacing-units/). Lint e inspeção Firefox pós-alteração pendentes.
+- Referências: [Carbon spacing](https://www.carbondesignsystem.com/building-blocks/foundations/spacing/overview), [GOV.UK spacing](https://design-system.service.gov.uk/styles/spacing/) e [USWDS spacing units](https://designsystem.digital.gov/design-tokens/spacing-units/). Stylelint, Foundation 354, Design Foundations 2462 e SDC schema 764 PASS. Firefox ESR visível: Marley, Dashboard e Perfil 62/62 checks aplicáveis PASS, 21 SKIP; Conta em captura e métricas diretas PASS em 1440/320px (2/1 colunas, sem overflow e alvos 46px). Capturas em `$SUITE_OUT/studio-spacing-marley-20261103/` e `$SUITE_OUT/studio-spacing-account-20261103/`. Interação AJAX completa da Conta não foi repetida após este ajuste visual; a suite extensa foi interrompida e não gerou relatório final. Sem mudança de cores do cabeçalho.
+
+## 0.7.0-dev.33 — fortalecer a verificação responsiva da Conta Studio (2026-11-03; validação do harness pendente)
+
+- O check visual agora mede as colunas do shell externo da Conta em desktop/mobile e tolera a borda computada fracionária por zoom. O reteste visual pós dev.32 está registrado no dev.32 abaixo e na auditoria Studio; a execução integral deste harness corrigido segue pendente.
 

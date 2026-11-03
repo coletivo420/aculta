@@ -1,8 +1,12 @@
 # Roadmap — ACULTA420
 
-## Escala compacta de espaçamento — 0.7.0-dev.32 (2026-11-03; validação Runtime pendente)
+## Verificação responsiva da Conta Studio — 0.7.0-dev.33 (2026-11-03; harness pendente)
 
-Tokens semânticos compartilhados reduzem os intervalos de conteúdo geral e de seções, com adaptação progressiva por viewport. Studio, Conta, Perfil e componentes de Conta do Portal usam caixas mais próximas e uma cadência comum; links de navegação conservam 44 px de altura mínima. Cores do cabeçalho não mudaram. Fontes consultadas: Carbon, GOV.UK Design System e USWDS. Lint, gates e comparação visual Firefox pós-alteração pendentes.
+O teste visual agora verifica o grid externo (duas colunas a partir de 768 px; uma abaixo) e aceita largura fracionária de borda computada pelo Firefox sob escala/zoom. A suíte corrigida precisa rodar integralmente; capturas anteriores ao ajuste do harness continuam evidência de apresentação, não do novo assert.
+
+## Escala compacta de espaçamento — 0.7.0-dev.32 (2026-11-03; validação visual Runtime parcial)
+
+Tokens semânticos compartilhados reduzem os intervalos de conteúdo geral e de seções, com adaptação progressiva por viewport. Studio, Conta, Perfil e componentes de Conta do Portal usam caixas mais próximas e uma cadência comum; links de navegação conservam pelo menos 44 px. Cores do cabeçalho não mudaram. Firefox ESR confirmou Marley, Dashboard e Perfil em 320–1440px, zoom 200/400%, claro/escuro e geometria responsiva: 62/62 aplicáveis PASS, 21 SKIP. Conta foi capturada e medida em 1440/320px: painéis em duas/uma colunas, gap de menu 8px, links de 46px e sem overflow. Artefatos em `$SUITE_OUT/studio-spacing-marley-20261103/` e `$SUITE_OUT/studio-spacing-account-20261103/`. Stylelint e gates PASS. A repetição da matriz de navegação AJAX/formulários da Conta após a compactação permanece pendente; uma tentativa extensa foi interrompida e não produziu JSON final. Fontes consultadas: Carbon, GOV.UK Design System e USWDS.
 
 ## Conta Studio em painéis próprios — 0.7.0-dev.31 (2026-11-03; validação Runtime pendente)
 
