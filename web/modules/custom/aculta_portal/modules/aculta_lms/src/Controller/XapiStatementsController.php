@@ -6,6 +6,7 @@ namespace Drupal\aculta_lms\Controller;
 
 use Drupal\aculta_lms\Xapi\XapiAttemptToken;
 use Drupal\aculta_lms\Xapi\XapiBatchIngestor;
+use Drupal\aculta_lms\Xapi\XapiProgressAccess;
 use Drupal\Core\Database\Connection;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -13,11 +14,12 @@ use Drupal\Core\Flood\FloodInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\key\KeyRepositoryInterface;
-use Drupal\lms\Entity\LessonStatusInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-/** Authenticated POST surface for the ACULTA xAPI 2.0 LRS. */
+/**
+ * Authenticated POST surface for the ACULTA xAPI 2.0 LRS.
+ */
 final class XapiStatementsController {
 
   private const FLOOD_EVENT = 'aculta_lms.xapi.statements';
@@ -28,6 +30,7 @@ final class XapiStatementsController {
   public function __construct(
     private readonly KeyRepositoryInterface $keys,
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly XapiProgressAccess $progressAccess,
     private readonly FloodInterface $flood,
     private readonly LockBackendInterface $lock,
     private readonly Connection $database,
@@ -36,7 +39,9 @@ final class XapiStatementsController {
     private readonly LoggerChannelInterface $logger,
   ) {}
 
-  /** Receives, validates and persists a batch of statements. */
+  /**
+   * Receives, validates and persists a batch of statements.
+   */
   public function post(Request $request): JsonResponse {
     if ($request->headers->get('X-Experience-API-Version') !== '2.0') {
       return $this->json(['error' => 'Versão xAPI não suportada.'], 400);
@@ -59,16 +64,7 @@ final class XapiStatementsController {
       return $this->json(['error' => 'Credencial inválida.'], 401);
     }
 
-    $lessonStatus = $this->entityTypeManager->getStorage('lms_lesson_status')->load($claims['lesson_status_id']);
-    if (!$lessonStatus instanceof LessonStatusInterface) {
-      return $this->json(['error' => 'Tentativa não autorizada.'], 401);
-    }
-    try {
-      if ((string) $lessonStatus->getCourseStatus()->getUserId() !== (string) $claims['uid']) {
-        return $this->json(['error' => 'Tentativa não autorizada.'], 401);
-      }
-    }
-    catch (\Throwable) {
+    if (!$this->progressAccess->isOwnedBy((int) $claims['lesson_status_id'], (int) $claims['uid'])) {
       return $this->json(['error' => 'Tentativa não autorizada.'], 401);
     }
 
@@ -153,6 +149,8 @@ final class XapiStatementsController {
     }
   }
 
+  /**
+   * Creates a no-store xAPI JSON response. */
   private function json(array $data, int $status): JsonResponse {
     $response = new JsonResponse($data, $status, ['X-Experience-API-Version' => '2.0']);
     $response->headers->set('Cache-Control', 'private, no-store');

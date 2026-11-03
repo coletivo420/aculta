@@ -1,3 +1,8 @@
+## 0.1.0-dev.153 — xAPI usa progresso ACULTA (ADR-042 P5)
+
+- Emissão e validação de tokens resolvem `lesson_status_id` em `aculta_lms_progress` e conferem o `uid`; o campo persistido mantém o nome já usado e passa a apontar para progresso ACULTA, conforme P2.
+- A estrutura da tabela e os registros xAPI não são reescritos; IDs legados permanecem opacos e não são remapeados. A associação agora representa progresso por curso, pois progresso individual por aula não existe no modelo P2.
+
 ## 0.1.0-dev.138 — certificados usam progresso ACULTA
 
 - Emissão, formulário de seleção e autorização consultam `aculta_lms_progress` e Groups; certificados continuam registrando o UUID de origem no campo existente `course_status_uuid`.

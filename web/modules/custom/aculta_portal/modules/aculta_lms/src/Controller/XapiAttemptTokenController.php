@@ -5,18 +5,20 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Controller;
 
 use Drupal\aculta_lms\Xapi\XapiAttemptToken;
+use Drupal\aculta_lms\Xapi\XapiProgressAccess;
 use Drupal\aculta_lms\Xapi\XapiTokenSettings;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\key\KeyRepositoryInterface;
-use Drupal\lms\Entity\LessonStatusInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-/** Issues short-lived tokens bound to one learner lesson attempt. */
+/**
+ * Issues short-lived tokens bound to a learner and ACULTA course progress.
+ */
 final class XapiAttemptTokenController {
 
   public const KEY_ID = 'aculta_lms_xapi_token';
@@ -24,12 +26,15 @@ final class XapiAttemptTokenController {
   public function __construct(
     private readonly KeyRepositoryInterface $keys,
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly XapiProgressAccess $progressAccess,
     private readonly AccountProxyInterface $currentUser,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly TimeInterface $time,
   ) {}
 
-  /** Issues a bearer token for an owned LMS lesson status. */
+  /**
+   * Issues a token for ACULTA progress; protocol key remains lesson_status_id.
+   */
   public function issue(Request $request): JsonResponse {
     $input = json_decode($request->getContent(), TRUE);
     if (!is_array($input)
@@ -43,16 +48,8 @@ final class XapiAttemptTokenController {
     }
 
     $user = $this->entityTypeManager->getStorage('user')->load($this->currentUser->id());
-    $lessonStatus = $this->entityTypeManager->getStorage('lms_lesson_status')->load((int) $input['lesson_status_id']);
-    if (!$user instanceof UserInterface || !$user->isActive() || !$lessonStatus instanceof LessonStatusInterface) {
-      return $this->json(['error' => 'Tentativa não autorizada.'], 403);
-    }
-    try {
-      if ((string) $lessonStatus->getCourseStatus()->getUserId() !== (string) $user->id()) {
-        return $this->json(['error' => 'Tentativa não autorizada.'], 403);
-      }
-    }
-    catch (\Throwable) {
+    if (!$user instanceof UserInterface || !$user->isActive()
+      || !$this->progressAccess->isOwnedBy((int) $input['lesson_status_id'], (int) $user->id())) {
       return $this->json(['error' => 'Tentativa não autorizada.'], 403);
     }
 
@@ -73,7 +70,7 @@ final class XapiAttemptTokenController {
         (int) $user->id(),
         $input['content'],
         $input['registration'],
-        (int) $lessonStatus->id(),
+        (int) $input['lesson_status_id'],
         $actorHash,
         $this->time->getRequestTime(),
         $ttl,
@@ -94,6 +91,8 @@ final class XapiAttemptTokenController {
     return $response;
   }
 
+  /**
+   * Creates a no-store xAPI JSON response. */
   private function json(array $data, int $status): JsonResponse {
     return new JsonResponse($data, $status, ['X-Experience-API-Version' => '2.0']);
   }

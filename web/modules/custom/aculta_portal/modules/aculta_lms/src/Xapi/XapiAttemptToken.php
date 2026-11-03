@@ -41,17 +41,19 @@ final class XapiAttemptToken {
    *   Identificador do conteúdo xAPI (IRI da atividade de lançamento).
    * @param string $registration
    *   UUID do lançamento (context.registration).
-   * @param int $lessonStatusId
-   *   ID opaco do lms_lesson_status associado à tentativa.
+   * @param int $progressId
+   *   ID opaco de aculta_lms_progress associado ao token.
+   *   A reivindicação mantém o nome lesson_status_id por compatibilidade.
    * @param string $actorMboxSha1sum
-   *   SHA-1 hexadecimal de `mailto:` seguido do e-mail normalizado do estudante.
+   *   SHA-1 hexadecimal de `mailto:` seguido do e-mail normalizado
+   *   do estudante.
    * @param int $now
    *   Instante de emissão, em Unix time.
    * @param int $ttl
    *   Validade, em segundos, de 1 até MAX_TTL.
    */
-  public function issue(int $uid, string $content, string $registration, int $lessonStatusId, string $actorMboxSha1sum, int $now, int $ttl = 1800): string {
-    if ($uid <= 0 || $content === '' || !$this->isUuid($registration) || $lessonStatusId <= 0 || preg_match('/^[0-9a-f]{40}$/i', $actorMboxSha1sum) !== 1) {
+  public function issue(int $uid, string $content, string $registration, int $progressId, string $actorMboxSha1sum, int $now, int $ttl = 1800): string {
+    if ($uid <= 0 || $content === '' || !$this->isUuid($registration) || $progressId <= 0 || preg_match('/^[0-9a-f]{40}$/i', $actorMboxSha1sum) !== 1) {
       throw new \InvalidArgumentException('Reivindicações inválidas para o token.');
     }
     if ($ttl < 1 || $ttl > self::MAX_TTL) {
@@ -61,7 +63,7 @@ final class XapiAttemptToken {
       'uid' => $uid,
       'content' => $content,
       'registration' => $registration,
-      'lesson_status_id' => $lessonStatusId,
+      'lesson_status_id' => $progressId,
       'actor_mbox_sha1sum' => strtolower($actorMboxSha1sum),
       'iat' => $now,
       'exp' => $now + $ttl,
@@ -106,20 +108,28 @@ final class XapiAttemptToken {
     return $claims;
   }
 
+  /**
+   * Signs an encoded claims body. */
   private function sign(string $body): string {
     return hash_hmac('sha256', $body, $this->secret, TRUE);
   }
 
+  /**
+   * Encodes bytes as unpadded base64url. */
   private function encode(string $bytes): string {
     return rtrim(strtr(base64_encode($bytes), '+/', '-_'), '=');
   }
 
+  /**
+   * Decodes unpadded base64url. */
   private function decode(string $text): string|false {
     $padded = strtr($text, '-_', '+/');
     $padded .= str_repeat('=', (4 - strlen($padded) % 4) % 4);
     return base64_decode($padded, TRUE);
   }
 
+  /**
+   * Determines whether a value is an RFC 4122 UUID. */
   private function isUuid(string $value): bool {
     return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $value) === 1;
   }

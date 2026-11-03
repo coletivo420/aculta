@@ -16,9 +16,9 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  * Registro bruto e somente de inserção: a declaração validada é guardada como
  * recebida. O estado da tentativa é derivado destes registros, nunca copiado
  * para outra entidade. A tentativa é referenciada de forma opaca por
- * lesson_status_id, o identificador do progresso da aula no LMS, sem
- * duplicar o estado. O vínculo final ainda depende de decisão do responsável
- * (ver docs/modules/ANALISE-LMS-CONTRIB-1-2-4.md).
+ * lesson_status_id, o identificador opaco do progresso do curso em ACULTA, sem
+ * duplicar o estado. O nome do campo permanece por compatibilidade com os
+ * registros existentes; P2 define a fonte nova como aculta_lms_progress.id.
  *
  * Campos que identificam o aluno (uid) e a declaração original (payload) têm
  * retenção configurável; a remoção mensal fica em serviço próprio da F3.
@@ -35,6 +35,8 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 )]
 final class XapiStatement extends ContentEntityBase {
 
+  /**
+   * {@inheritdoc} */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 
@@ -53,7 +55,7 @@ final class XapiStatement extends ContentEntityBase {
       ->setDefaultValue('');
 
     $fields['lesson_status_id'] = BaseFieldDefinition::create('integer')
-      ->setLabel(new TranslatableMarkup('Progresso da aula no LMS (referência opaca)'));
+      ->setLabel(new TranslatableMarkup('Progresso do curso ACULTA (referência opaca)'));
 
     $fields['verb_id'] = BaseFieldDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Verbo (IRI)'))

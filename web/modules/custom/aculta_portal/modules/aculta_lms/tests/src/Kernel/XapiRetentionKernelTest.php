@@ -5,28 +5,41 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\aculta_lms\Controller\XapiAttemptTokenController;
+use Drupal\aculta_lms\Controller\XapiStatementsController;
 use Drupal\aculta_lms\Hook\XapiRetentionCronHooks;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-/** Exercises xAPI retention against real Drupal entity storage in MariaDB. */
+/**
+ * Exercises xAPI retention against real Drupal entity storage in MariaDB.
+ */
 #[Group('aculta_lms')]
 #[RunTestsInSeparateProcesses]
 final class XapiRetentionKernelTest extends KernelTestBase {
 
   use AcultaLmsDependencyHarnessTrait;
 
+  /**
+   * Modules enabled by the Kernel harness.
+   *
+   * @var string[]
+   */
   protected static $modules = [
     'system', 'user', 'file', 'image', 'media', 'options', 'text', 'entity_print', 'domain', 'views',
     'entity', 'flexible_permissions', 'group', 'lms', 'key', 'entity_usage', 'aculta_image', 'aculta_file_uploader',
   ];
 
+  /**
+   * {@inheritdoc} */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
     $this->registerLmsDependencyServices($container);
   }
 
+  /**
+   * {@inheritdoc} */
   protected function setUp(): void {
     parent::setUp();
     $this->installSchema('user', ['users_data']);
@@ -35,6 +48,24 @@ final class XapiRetentionKernelTest extends KernelTestBase {
     $this->installEntitySchema('group');
   }
 
+  /**
+   * Checks controller services include the ACULTA progress access checker.
+   */
+  public function testTokenControllerServiceResolvesWithAcultaProgressAccess(): void {
+    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+
+    self::assertInstanceOf(
+      XapiAttemptTokenController::class,
+      $this->container->get('aculta_lms.xapi_attempt_token_controller'),
+    );
+    self::assertInstanceOf(
+      XapiStatementsController::class,
+      $this->container->get('aculta_lms.xapi_statements_controller'),
+    );
+  }
+
+  /**
+   * Tests expiration and idempotency of statement cleanup. */
   public function testPurgesOnlyExpiredStatementsAndIsMonthlyIdempotent(): void {
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
     $this->installEntitySchema('aculta_lms_xapi_statement');
@@ -71,6 +102,8 @@ final class XapiRetentionKernelTest extends KernelTestBase {
     self::assertSame(0, $purger->purge(6));
   }
 
+  /**
+   * Tests that cron applies the configured monthly retention. */
   public function testCronHookUsesConfiguredRetentionAndCompletesTheMonth(): void {
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
     $this->installEntitySchema('aculta_lms_xapi_statement');
