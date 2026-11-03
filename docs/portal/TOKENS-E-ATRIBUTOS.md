@@ -328,7 +328,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `social-links-channel-facebook` | `aculta-social-links__channel--facebook` | (montado dinamicamente ou só no tema) |
 | `social-links-list` | `aculta-social-links__list`, `list-unstyled` | `web/modules/custom/aculta_portal/src/Presentation/SocialLinksPagePresenter.php` |
 | `social-links-footer-inner` | `aculta-social-links-footer__inner` | `web/modules/custom/aculta_portal/src/Presentation/SocialLinksPagePresenter.php` |
-| `social-links-settings-button` | `aculta-social-links-settings-button` | `web/modules/custom/aculta_portal/modules/aculta_links/src/Form/SocialLinksSettingsForm.php` |
+| `social-links-settings-button` | `aculta-social-links-settings-button` | `web/modules/custom/aculta_portal/modules/aculta_linkweed/src/Form/SocialLinksSettingsForm.php` |
 | `security-card` | `aculta-security-card` | (montado dinamicamente ou só no tema) |
 | `security-pending` | `aculta-security-pending` | `web/modules/custom/aculta_portal/src/Controller/PortalController.php` |
 | `auth-provider` | `aculta-auth-provider` | `web/modules/custom/aculta_portal/src/Form/LoginPopupForm.php`<br>`web/modules/custom/aculta_portal/src/Hook/PortalHooks.php` |
@@ -514,7 +514,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `lms-class-roster` | `aculta-lms-class-roster d-grid gap-3` | `web/modules/custom/aculta_portal/modules/aculta_lms/src/ClassRosterManager.php` |
 | `consent-banner` | `aculta-consent` | `web/modules/custom/aculta_portal/modules/aculta_statistics/js/consent.js` |
 | `secrets-environment` | `aculta-portal-secrets__environment` | `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/src/Controller/SecretsController.php` |
-| `links-page-link` | `aculta-links-page__link` | `web/modules/custom/aculta_portal/modules/aculta_links/src/Controller/LinkPagePublicController.php` |
+| `links-page-link` | `aculta-links-page__link` | `web/modules/custom/aculta_portal/modules/aculta_linkweed/src/Controller/LinkPagePublicController.php` |
 | `secrets-tabs` | `secrets-tabs` | `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/js/secrets-tabs.js` |
 | `secrets-tab` | `secrets-tabs__tab` | `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/js/secrets-tabs.js` |
 | `secrets-tabs-list` | `secrets-tabs__list` | `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/src/Controller/SecretsController.php` |

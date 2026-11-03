@@ -74,11 +74,11 @@ individuais. Conteúdo legado LMS contrib não é migrado.
 Distinção que o Statistics deve manter: `sent` no log significa aceito pelo
 sistema de e-mail, não entregue.
 
-## Links (`aculta_links`)
+## Links (`aculta_linkweed`)
 
 | Recurso | Onde está | Classificação |
 |---|---|---|
-| Cliques por destino e dia | `LinkAnalytics::recordClick()` → fila → `aculta_links_stat_daily` | DEVE SER REUTILIZADO. Modelo de privacidade de referência |
+| Cliques por destino e dia | `LinkAnalytics::recordClick()` → fila → `aculta_linkweed_stat_daily` | DEVE SER REUTILIZADO. Modelo de privacidade de referência |
 | Retenção de 90 dias | `LinkAnalytics::purgeExpired()`, cron com `#[Hook]` | DEVE SER REUTILIZADO |
 | Cliques por destino para tela | `clickCounts()` | DEVE SER REUTILIZADO |
 
@@ -129,7 +129,7 @@ sistema de e-mail, não entregue.
 
 ## Duplicações a evitar
 
-- Contador de cliques: `aculta_links` já tem agregado. O Statistics deve convergir para ele, não criar um segundo.
+- Contador de cliques: `aculta_linkweed` já tem agregado. O Statistics deve convergir para ele, não criar um segundo.
 - Log de e-mail: `aculta_mail_log` é o registro. Não instalar Mailer Plus Log nem Trace Mail Log para isso.
 - Contagem de comentários: já existe no Core via `comment_count`.
 - Eventos de Commerce: não instalar ECA Commerce; a API nativa basta.

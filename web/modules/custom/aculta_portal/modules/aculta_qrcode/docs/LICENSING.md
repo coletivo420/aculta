@@ -19,7 +19,7 @@ Os projetos Drupal.org são GPL-2.0-or-later. A raiz deste repositório traz `LI
 
 | Pacote | Versão | Licença (Packagist) | Uso proposto | Estado |
 | --- | --- | --- | --- | --- |
-| `endroid/qr-code` | 6.1.3 (já no `composer.lock`) | MIT | Motor de codificação e SVG/PNG/WebP. | Em uso no `aculta_links`. Reutilizar. |
+| `endroid/qr-code` | 6.1.3 (já no `composer.lock`) | MIT | Motor de codificação e SVG/PNG/WebP. | Em uso no `aculta_linkweed`. Reutilizar. |
 | `bacon/bacon-qr-code` | 3.1.1 (já no lock) | BSD-2-Clause | Dependência transitiva do Endroid. | Em uso. |
 | `dasprid/enum` | 1.0.7 (já no lock) | BSD-2-Clause | Dependência transitiva do Endroid. | Em uso. |
 | `setasign/fpdf` | 1.8.x / 1.9.0 | MIT (1.9.0) | Writer PDF do Endroid. | Não adotado: decisão 1 em [ARQUITETURA.md](ARQUITETURA.md) escolheu Entity Print/Dompdf. |

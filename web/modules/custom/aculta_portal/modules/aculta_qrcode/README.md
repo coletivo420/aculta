@@ -26,6 +26,6 @@ Serviço central de QR Codes do ACULTA Portal, planejado para uso por todos os m
 
 ## Limites
 
-- Os QR Codes já existentes (`aculta_links`) continuam com a implementação atual até a 0.7.0.
+- Os QR Codes já existentes (`aculta_linkweed`) continuam com a implementação atual até a 0.7.0.
 - Nenhum serviço externo recebe conteúdo de QR.
 - Estatísticas de QR estático não existem por design.

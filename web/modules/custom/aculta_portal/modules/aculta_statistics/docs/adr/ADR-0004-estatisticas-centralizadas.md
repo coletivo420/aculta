@@ -5,7 +5,7 @@ Status: aceita pelo responsável (2026-10-21).
 ## Contexto
 
 Contadores de uso já existem em módulos produtores: cliques de links
-(`aculta_links`, tabela `aculta_links_stat_daily`), contagens de fórum
+(`aculta_linkweed`, tabela `aculta_linkweed_stat_daily`), contagens de fórum
 (`ForumAdminOverviewController`), resumo de envios (`MailSummary`,
 `MailDashboard`) e contagens de turma do LMS. Cada um guarda o próprio agregado,
 com regra de retenção e painel próprios. Isso duplica fonte, divide a retenção
@@ -31,7 +31,7 @@ e impede uma visão única.
 
 | Origem atual | Destino | Situação |
 |---|---|---|
-| `aculta_links` (`aculta_links_stat_daily`, `LinkAnalytics`) | `links.link.clicks` no `aculta_statistics` | Migrar histórico, depois remover tabela e fila própria. Convergência já prevista para a 0.7.0; passa a ser pré-requisito. |
+| `aculta_linkweed` (`aculta_linkweed_stat_daily`, `LinkAnalytics`) | `links.link.clicks` no `aculta_statistics` | Migrar histórico, depois remover tabela e fila própria. Convergência já prevista para a 0.7.0; passa a ser pré-requisito. |
 | `aculta_forum` (`ForumAdminOverviewController`, contagens) | `forum.*` no `aculta_statistics` | Séries temporais viram métrica; contagem atual vira leitura da fonte. |
 | `aculta_mailer` (`MailSummary`, `MailDashboard`, linhas do resumo) | `email.*` (0.5.0) | Resumo semanal passa a ler o `aculta_statistics`; o log de envios continua como registro. |
 | `aculta_lms` (painel da turma) | `lms.*` (0.4.0) | Contagens agregadas vão ao `aculta_statistics`; painel individual e privado não entra. |
@@ -64,5 +64,5 @@ por dia). A central alimenta as séries e os gráficos. O dado de origem continu
 
 - Retenção, permissão e auditoria de estatísticas ficam em um lugar só (ADR-0003).
 - Gate a criar: nenhum módulo grava agregado estatístico fora do `aculta_statistics`.
-- O `aculta_links` deixa de ser dono do agregado de cliques; o registro de
+- O `aculta_linkweed` deixa de ser dono do agregado de cliques; o registro de
   origem e a fila continuam conforme a LGPD do módulo.

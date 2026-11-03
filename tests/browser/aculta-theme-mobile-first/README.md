@@ -1117,7 +1117,7 @@ DISPLAY=:0 python3 -I tests/browser/aculta-theme-mobile-first/purpose-headings.p
 Loja, Cursos, Fórum, Links e Eventos. Usa Firefox ESR visível e somente GET.
 Nos nove purposes com `.aculta-footer`, mede a grade em 1 coluna abaixo de
 576px, 2 colunas entre 576 e 991px e 4 colunas a partir de 992px. Links tem um
-footer próprio (`.aculta-social-links-footer`) fornecido por `aculta_links`;
+footer próprio (`.aculta-social-links-footer`) fornecido por `aculta_linkweed`;
 nesse purpose, mede os anchors reais do footer e sua área mínima de 44px. Para
 todos, confere o shell único e ausência de overflow. Captura a página rolada
 até o rodapé em 320 e 1440px. Larguras padrão: 320/360/390/575/576/599/600/

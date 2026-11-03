@@ -30,6 +30,6 @@ administrador reduzir o armazenamento nem ajustar o prazo à política de privac
 - O prazo de cada métrica vira configuração do Drupal (Configuration API), com
   schema, para ser exportável e auditável (fase 0.2.0).
 - A exclusão em lote precisa de índice `(metric, day)` (já previsto em `ARCHITECTURE.md`).
-- O `aculta_links` deve adotar o mesmo modelo ao convergir (fase 0.7.0).
+- O `aculta_linkweed` deve adotar o mesmo modelo ao convergir (fase 0.7.0).
 - A retenção aplica-se também a dado de operação: a tela deve deixar claro
   quando "indefinido" é usado.

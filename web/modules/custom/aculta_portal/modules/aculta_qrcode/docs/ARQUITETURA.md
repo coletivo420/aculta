@@ -32,7 +32,7 @@ Nomes em `aculta_qrcode.services.yml`, com injeção de dependência e sem `\Dru
 - Entidade `aculta_qr_code` (machine name com até 32 caracteres, conforme a regra do Portal). Campos: rótulo, modo (`dynamic`), destino (`link` ou URL interna), código opaco, preset, estado (publicado/desativado), validade (início e fim), proprietário, timestamps.
 - Código opaco: identificador aleatório não sequencial e único. Não é reutilizado. A aparência não entra no identificador.
 - Campos com dado pessoal: nenhum na fundação. O destino pode conter dado pessoal digitado por quem administra; a orientação ao editor precisa existir, e qualquer campo novo entra no `docs/compliance/LGPD-INVENTARIO.md` antes da criação.
-- Histórico administrativo: revisões da entidade (`revisionable`), com o mesmo padrão de `aculta_links`.
+- Histórico administrativo: revisões da entidade (`revisionable`), com o mesmo padrão de `aculta_linkweed`.
 - Estatísticas: tabela agregada por código e dia, sem IP, user agent completo ou identificador de pessoa. Só entra depois da decisão 4.
 
 ## Acesso
@@ -68,7 +68,7 @@ Nomes em `aculta_qrcode.services.yml`, com injeção de dependência e sem `\Dru
 
 ## Integração com os consumidores
 
-- `aculta_links`: mantém as rotas `/pagina/{slug}/codigo-qr.svg` e `/redirecionar/{codigo}/codigo-qr.svg` até a 0.7.0. A migração para o serviço central ocorre só com liberação do escopo, sem duplicar a geração.
+- `aculta_linkweed`: mantém as rotas `/pagina/{slug}/codigo-qr.svg` e `/redirecionar/{codigo}/codigo-qr.svg` até a 0.7.0. A migração para o serviço central ocorre só com liberação do escopo, sem duplicar a geração.
 - `aculta_lms` (F11): a verificação pública do certificado usa o QR do serviço central. Enquanto esse serviço não existir, a integração permanece pendente naquele módulo.
 - `aculta_image`: arquivos exportados e logos passam por ele.
 - Consumidores dependem da API pública do serviço, não de classes internas.
