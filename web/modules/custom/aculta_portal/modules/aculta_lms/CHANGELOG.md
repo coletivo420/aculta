@@ -1,3 +1,8 @@
+## 0.1.0-dev.131 — fonte própria de progresso por curso (ADR-042)
+
+- `CourseProgressReaderInterface` passa a ler `aculta_lms_progress` por `course_id` e `uid`, via `entity_type.manager`; status inválido é recusado e nota numérica vira `float`.
+- A suíte focal do leitor cobre progresso encontrado, nota nula e ausência de registro. A fonte contrib segue registrada, sem alias ativo, até a remoção conjunta dos adaptadores no fim da Fase A.
+
 ## 0.1.0-dev.130 — plugins objetivos ACULTA (ADR-042, P3)
 
 - Adicionados plugins ACULTA para `true_false`, `select` e `fill_blanks`, ligados a `CourseActivity` pelo tipo estável e resolvidos por serviço injetado.

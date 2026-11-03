@@ -44,7 +44,10 @@ services:
   aculta_lms.course_progress_adapter:
     class: Drupal\aculta_lms\Learning\ContribCourseProgressAdapter
     arguments: ['@lms.training_manager']
-  Drupal\aculta_lms\Learning\CourseProgressReaderInterface: '@aculta_lms.course_progress_adapter'
+  aculta_lms.course_progress_reader:
+    class: Drupal\aculta_lms\Learning\EntityCourseProgressReader
+    arguments: ['@entity_type.manager']
+  Drupal\aculta_lms\Learning\CourseProgressReaderInterface: '@aculta_lms.course_progress_reader'
   aculta_lms.course_lesson_adapter:
     class: Drupal\aculta_lms\Learning\ContribCourseLessonAdapter
     arguments: ['@entity_type.manager']
