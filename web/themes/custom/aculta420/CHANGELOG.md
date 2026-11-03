@@ -420,7 +420,7 @@ Classificação: PATCH (mapeia a apresentação dos blocos existentes, sem criar
 
 - O check visual agora mede as colunas do shell externo da Conta em desktop/mobile e tolera a borda computada fracionária por zoom. O reteste visual pós dev.32 está registrado no dev.32 abaixo e na auditoria Studio. O primeiro teste integral expôs e levou à correção da leitura do nó raiz em dev.34.
 
-## 0.7.0-dev.35 — aproximar o conteúdo do título global (2026-11-03; validação pendente)
+## 0.7.0-dev.35 — aproximar o conteúdo do título global (2026-11-03; validação visual Studio PASS, restante pendente)
 
-- Substitui a margem fluida de 24–40 px do cabeçalho da página por 20 px via token semântico. A inspeção da captura atual da Conta ainda mostrou espaço excedente entre o H1 e as caixas; o ajuste atende todas as rotas que usam `.aculta-page-heading`, preservando estrutura e cores. Lint, gates e Firefox Runtime pós-ajuste pendentes.
+- Substitui a margem fluida de 24–40 px do cabeçalho da página por 20 px via token semântico. Firefox ESR visível no Runtime repetiu 102/102 verificações aplicáveis da Conta, com 21 SKIP e zero falhas; Dashboard/Perfil/Marley mantiveram 62/62 aplicáveis PASS e 21 SKIP. Captura Conta em `$SUITE_OUT/studio-spacing-dev35-20261103/`; sem comparação pareada pixel a pixel nesta rodada. Stylelint, Foundation 354, Design Foundations 2462 e SDC schema 764 PASS. Outros propósitos que herdam o título global não foram todos inspecionados.
 

@@ -1,8 +1,8 @@
 # Roadmap — ACULTA420
 
-## Reduzir intervalo entre título global e conteúdo — 0.7.0-dev.35 (2026-11-03; validação pendente)
+## Reduzir intervalo entre título global e conteúdo — 0.7.0-dev.35 (2026-11-03; Studio validado no Runtime)
 
-`.aculta-page-heading` usa 20 px do token semântico `--aculta-space-5`, no lugar do clamp fluido 24–40 px. O objetivo é manter a escala global compacta também no espaço após o título; verificar telas e propósitos além do Studio após o Runtime.
+`.aculta-page-heading` usa 20 px do token semântico `--aculta-space-5`, no lugar do clamp fluido 24–40 px. Firefox ESR confirmou novamente Conta 102/102 aplicáveis (21 SKIP, zero falhas) e Dashboard/Perfil/Marley 62/62 (21 SKIP); a captura da Conta mostra os painéis mais próximos do H1. Gatilhos de rota, título, foco e Form API permaneceram funcionais. Outros propósitos fora do Studio que usam o cabeçalho global ainda precisam de inspeção visual.
 
 ## Composição responsiva da Conta Studio — 0.7.0-dev.34 (2026-11-03; Runtime PASS)
 
