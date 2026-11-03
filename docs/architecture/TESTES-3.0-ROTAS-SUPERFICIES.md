@@ -30,8 +30,15 @@ Os hosts são os de produção (host de produção) e os de teste (host de teste
 | Integrações | `GET /integracoes/mcp` fora de `main` | 404 |
 | Legado | `GET /forum` no purpose `forum` | 404 (`CAMINHOS_LEGADOS`) |
 | Loja | `GET /node/372` na raiz de `shop` | 404 (`NO_DA_RAIZ`) |
-| Studio | `GET /studio/green-stash` em `shop` | permitido (`CANONICAL_STUDIO_PATHS`) |
-| Studio | `GET /studio/we-sativa` em `wiki` | permitido (`CANONICAL_STUDIO_PATHS`) |
+| Raiz | `GET /` em `wiki` (wiki420) | serve a Wiki (raiz reescrita para `/wiki`) |
+| Raiz | `GET /` em `shop` (loja420) | serve a loja (raiz reescrita para `/loja`) |
+| Interno | `GET /wiki` e `GET /loja` diretos | 404 (`FRONT_PATHS`) |
+| WE SATIVA | `GET /we-sativa` em `wiki` | rota da Suite (purpose `wiki`) |
+| WE SATIVA | `GET /we-sativa/inicio` em `wiki` | rota da Suite |
+| GREEN STASH | `GET /green-stash` em `shop` | rota da Suite (purpose `shop`) |
+| Wiki | `GET /busca-wiki`, `/verbetes`, `/propostas/{id}` em `wiki` | rotas da Wiki na raiz |
+| Caminhos antigos | `GET /wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` | 404 sem redirect |
+| Studio | `GET /studio` e `GET /studio/*` em todos os purposes | 404 |
 | Eventos | rota compartilhada `['eventos','main']` | serve nos dois purposes |
 
 ### Casos de flag

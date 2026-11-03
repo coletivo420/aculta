@@ -327,6 +327,11 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/meus-formularios/{user}/{submission_view}` | Submissões Webform da conta | Rota `entity.webform_submission.user`; acesso conferido por `WebformAccountAccess`. |
 | `conta.aculta` | `/meus-cursos` | Lista de cursos da pessoa | Conta autenticada; depende de matrícula/conteúdo. |
 | todos os purposes | `/studio` e demais `/studio/*` | Prefixos retirados | 404 em todos os métodos; exceções canônicas abaixo são purpose-scoped e não aceitam paths desconhecidos. |
+| `wiki.aculta` | `/` | Início da Wiki420 (raiz) | Raiz reescrita para `/wiki` internamente; `/wiki` direto responde 404. |
+| `wiki.aculta` | `/we-sativa` | ACULTA STUDIO WE SATIVA | Suite no purpose `wiki`; substitui `/wesativa` e `/studio/we-sativa`. |
+| `wiki.aculta` | `/busca-wiki`, `/verbetes`, `/propostas/{proposal}` | Rotas da Wiki na raiz | Substituem `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas`, que respondem 404. |
+| `loja.aculta` | `/` | Vitrine da loja (raiz) | Raiz reescrita para `/loja` internamente; `/loja` direto responde 404. |
+| `loja.aculta` | `/green-stash` | ACULTA STUDIO GREEN STASH | Suite no purpose `shop`; substitui `/greenstash` e `/studio/green-stash`. |
 | `conta.aculta` | `/conta` | **Minha Conta Studio** | `aculta_studio.account`, autenticação + Portal; composição de serviços cadastrais privados. Não retira a Conta legada. |
 | `conta.aculta` | `/conta/dados` | Dados cadastrais privados | `aculta_studio.account_data`, Profile Form API do Portal para nome e WhatsApp, sem o campo público de apelido. Legado `/dados` preservado. |
 | `conta.aculta` | `/conta/endereco` | Endereço privado no Studio | `aculta_studio.account_address`; chama `PortalController::address()` e mantém o mesmo Profile Commerce, CEP, Número/S-N e retorno contextual; legado `/dados/endereco` preservado. |

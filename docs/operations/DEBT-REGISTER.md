@@ -361,3 +361,14 @@ código do módulo.
   LMS passa a usar `aculta_file_uploader.image_dimension_reader`.
 - **Histórico não alterado.** `docs/history/*` e `TEST-MATRIX.md` do fórum mantêm o nome antigo `user_upload_policy`
   como registro do que foi feito.
+
+## Superfícies e caminhos públicos (2026-11-03)
+
+- **Testes escritos, não executados:** `DomainSurfaceMapTest`, `SurfaceConfigReaderTest` e a atualização de `FrontPathPolicyTest`. Dependem de `vendor/` e do Runtime.
+- **Gates sem `vendor/`:** `validate-public-slugs`, `validate-project-status-index` e `validate-aculta-portal-drupal11` não rodam nesta sessão. O último falha só por falta de `vendor/`.
+- **Índice de status:** a tabela do README raiz foi atualizada à mão. A regeneração oficial (`--write`) precisa de `vendor/`.
+- **Fase 3.0:** roteiro atualizado com os caminhos novos. Execução no Runtime DEFERRED.
+- **Fase 3.4 (parcial):** configuração, schema, leitor e interruptor `leitura_ativa` (desligado). O subscriber que aplica a configuração às rotas não existe.
+- **Fase 3.5 (parcial):** regra de diretório só na validação. URLs de diretório não implementadas.
+- **Fase 3.7 (parcial):** YAML exportado em `config/sync`. Conferência de importação no Runtime DEFERRED.
+- **Caminhos antigos em CHANGELOG e ROADMAP:** mantidos como histórico, com nota de substituição no topo.
