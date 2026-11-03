@@ -4,7 +4,9 @@
   revisões, ignorando a tabela de revisão quando ela não existe; qualquer valor
   legado encontrado continua bloqueando a troca do campo.
 - Runtime: tentativa inicial não alterou o campo porque a tabela de revisão
-  está ausente; após a correção, o update será repetido com snapshot existente.
+  está ausente; após a correção, o retry concluiu e recriou o campo como
+  referência `aculta_lms_activity`. Não havia tabela nem valor de referência
+  legado; `updatedb:status` ficou limpo e `drush cr` passou.
 
 ## `0.1.0-dev.32` — discussão referencia atividades ACULTA no corte P5
 
