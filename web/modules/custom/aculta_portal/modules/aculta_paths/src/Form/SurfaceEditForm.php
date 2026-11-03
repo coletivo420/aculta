@@ -90,10 +90,6 @@ final class SurfaceEditForm extends FormBase {
         'wrapper' => 'superficie-caminho',
         'event' => 'change',
       ],
-      // A troca de modo só deve reconstruir o bloco de caminho. Os campos
-      // condicionais não podem impedir essa reconstrução por estarem vazios;
-      // a validação completa ocorre no botão Salvar.
-      '#limit_validation_errors' => [],
     ];
     $form['caminho'] = [
       '#type' => 'container',

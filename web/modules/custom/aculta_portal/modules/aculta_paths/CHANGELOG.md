@@ -129,3 +129,7 @@
 
 - O identificador do formulário foi atualizado para impedir que callbacks AJAX reutilizem instâncias serializadas antes da correção de injeção.
 
+## 0.1.0-dev.22 — corrige valor submetido no seletor AJAX
+
+- Removida a limitação de validação do seletor de modo, permitindo que o valor selecionado seja processado normalmente durante a reconstrução do fragmento.
+
