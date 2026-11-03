@@ -466,3 +466,10 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   Ambos foram publicados e sincronizados: LMS `808879f6e2`, pagamentos
   `a799f461c8`; `drush cr`, `updatedb:status` e `config:status` passaram após
   cada push.
+## Handoff — remoção autorizada do tema Stable 9 — 2026-11-03
+
+- Removido `stable9` de `config/sync/core.extension.yml`, commit `1f7ac3348c` (`config: remove Stable 9 do Config Sync`), enviado a `origin/dev`.
+- Runtime `aculta_runtime` (Drupal 11.5.0-beta1): snapshot antes da importação em `$SUITE_OUT/runtime-snapshots/aculta_runtime-before-stable9-uninstall-20261103.sql`, 64,433,105 bytes, modo 0600, SHA-256 `3dd1d7f02621e813011b578b4104de32ad1a44535bb5615ccce0e149036f24e2`.
+- Preview de `config:import --diff` continha somente a remoção de `stable9`; importação concluiu. `drush cr` PASS. `updatedb:status`: sem atualizações; `config:status`: sem diferenças; temas ativos restantes: Claro, Bootstrap 8.x-3.45 e ACULTA420.
+- `core:requirements` deixou de reportar Stable 9; permanece o aviso de Claro depreciado. Search e Text With Summary Field também seguem como módulos depreciados instalados; não foram desinstalados nesta entrega.
+- Próximo: prosseguir no trabalho aberto do ACULTA420 com arquivos locais já modificados, revisar diffs por escopo e validar antes de qualquer commit. Preservar as alterações alheias existentes.
