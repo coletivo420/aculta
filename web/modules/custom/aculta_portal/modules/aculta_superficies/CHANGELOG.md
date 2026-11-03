@@ -71,3 +71,8 @@
 - Substituída a referência de produção na descrição do campo de host por um exemplo neutro; o valor exibido continua vindo da entidade Domain.
 - Gate de endereços de ambiente passa sem ocorrências no submódulo.
 
+## 0.1.0-dev.12 — corrige formulário AJAX no PHP 8.4
+
+- Renomeada a propriedade de configuração injetada para não colidir com a propriedade herdada de `FormBase`, permitindo renderizar o modal de edição.
+- A troca AJAX de modo ignora a validação de persistência até o envio pelo botão Salvar, permitindo estados intermediários sem erro.
+

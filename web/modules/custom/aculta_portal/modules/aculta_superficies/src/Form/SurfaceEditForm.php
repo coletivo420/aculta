@@ -27,7 +27,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class SurfaceEditForm extends FormBase {
 
   public function __construct(
-    private readonly ConfigFactoryInterface $configFactory,
+    private readonly ConfigFactoryInterface $configFactoryService,
     private readonly SurfaceConfigReader $reader,
     private readonly DomainPurposeManager $purposes,
     private readonly EntityTypeManagerInterface $entityTypeManager,
@@ -88,6 +88,10 @@ final class SurfaceEditForm extends FormBase {
         'wrapper' => 'superficie-caminho',
         'event' => 'change',
       ],
+      // A troca de modo só deve reconstruir o bloco de caminho. Os campos
+      // condicionais não podem impedir essa reconstrução por estarem vazios;
+      // a validação completa ocorre no botão Salvar.
+      '#limit_validation_errors' => [],
     ];
     $form['caminho'] = [
       '#type' => 'container',
@@ -164,6 +168,13 @@ final class SurfaceEditForm extends FormBase {
   }
 
   public function validateForm(array &$form, FormStateInterface $form_state): void {
+    // O seletor AJAX produz estados intermediários (por exemplo, modo
+    // desativado ainda com ativa marcada). Valide a combinação completa só no
+    // envio do formulário, nunca durante a reconstrução do bloco de caminho.
+    $gatilho = $form_state->getTriggeringElement();
+    if (($gatilho['#type'] ?? '') !== 'submit') {
+      return;
+    }
     $purpose = (string) $form['#purpose'];
     $superficies = $this->reader->superficies();
     $superficies[$purpose] = $this->valoresDoFormulario($purpose, $form_state);
@@ -204,7 +215,7 @@ final class SurfaceEditForm extends FormBase {
 
     $superficies = $this->reader->superficies();
     $superficies[$purpose] = $depois;
-    $this->configFactory->getEditable(SurfaceConfigReader::CONFIG_NAME)
+    $this->configFactoryService->getEditable(SurfaceConfigReader::CONFIG_NAME)
       ->set('superficies', $superficies)
       ->save();
 
