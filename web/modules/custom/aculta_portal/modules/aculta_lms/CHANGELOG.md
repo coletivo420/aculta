@@ -1,3 +1,17 @@
+## 0.1.0-dev.174 — remove declarações xAPI órfãs (ADR-041)
+
+- Após snapshot (SHA-256
+  `a867e0bccd0febe81a25d3c9a910043c1b605ea313782d72f032ccc1e5d1dd26`), foram
+  removidas as 3 declarações com `lesson_status_id=4`, sem progresso ACULTA
+  correspondente. A instrução SQL foi limitada à tabela xAPI e aos três
+  `statement_id` confirmados no inventário operacional.
+- Contagens antes/depois: `aculta_lms_xapi_statement` 3/0;
+  `aculta_lms_progress` 0/0; `aculta_lms_lesson` 0/0;
+  `aculta_lms_activity` 0/0; `aculta_lms_answer` 0/0. Nenhuma outra tabela
+  ou entidade foi modificada pela exclusão.
+- Cache rebuild passou; `updatedb:status` sem pendências; nenhuma importação de
+  configuração.
+
 ## 0.1.0-dev.173 — registra evidências e pendências xAPI (ADR-041)
 
 - Documenta `lesson_status_id` como identificador opaco de
