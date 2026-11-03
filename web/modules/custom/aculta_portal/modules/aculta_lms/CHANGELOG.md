@@ -713,3 +713,8 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 - `AnswerLifecycleEventHooks` publica submissão e avaliação a partir de `aculta_lms_answer`; respostas P2 não armazenam o payload, portanto a publicação usa apenas identidade e estado persistido.
 - Sem leitura nem preservação adicional do payload de respostas legado.
 
+## 0.1.0-dev.140 — vínculo de curso usa Group
+
+- Publicação de matrícula de turma valida o grupo de curso pelo contrato `GroupInterface`, sem depender de `CourseInterface` do LMS contrib.
+- O relacionamento Group `lms_classes` continua sendo a associação existente entre turma e curso.
+

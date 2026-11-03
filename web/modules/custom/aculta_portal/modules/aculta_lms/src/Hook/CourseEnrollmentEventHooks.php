@@ -9,8 +9,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\group\Entity\GroupMembership;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -42,7 +42,7 @@ final class CourseEnrollmentEventHooks {
     ]);
     foreach ($parents as $parent) {
       $course = $parent instanceof GroupRelationshipInterface ? $parent->getGroup() : NULL;
-      if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course') {
+      if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course') {
         continue;
       }
       $this->eventDispatcher->dispatch(new CourseEnrollmentEvent(
