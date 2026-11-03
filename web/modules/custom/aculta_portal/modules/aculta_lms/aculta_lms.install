@@ -111,3 +111,18 @@ function aculta_lms_update_10006(): void {
     }
   }
 }
+
+/** Copies Group class permission mappings into ACULTA-owned configuration. */
+function aculta_lms_update_10007(): void {
+  $config_factory = \Drupal::configFactory();
+  $legacy = $config_factory->get('lms_classes.settings');
+  $current = $config_factory->get('aculta_lms.settings');
+  $editable = $config_factory->getEditable('aculta_lms.settings');
+  foreach (['class_permission_mappings', 'course_permission_mappings'] as $mapping) {
+    $editable->set($mapping, array_replace(
+      (array) ($legacy->get($mapping) ?? []),
+      (array) ($current->get($mapping) ?? []),
+    ));
+  }
+  $editable->save(TRUE);
+}

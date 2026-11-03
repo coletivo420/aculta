@@ -1,3 +1,15 @@
+## 0.1.0-dev.157 — permissões herdadas de cursos e turmas em ACULTA
+
+- O cálculo de permissões Group entre cursos e turmas passa a ser implementado
+  por `ClassPermissionCalculator` em `aculta_lms`, preservando o ID da relação
+  `lms_classes` e os mapeamentos configurados.
+- `aculta_lms_update_10007` transfere os mapeamentos ativos para
+  `aculta_lms.settings`; nenhum conteúdo é migrado. O harness/kernel ainda usa
+  módulos contrib neste passo.
+- Unit completa 228/786 PASS; Kernels de roster 3/66 e instalação 6/143 PASS;
+  gate Portal 1.160 checks e PHPCS focal PASS. Runtime tem update 10007 pendente
+  e diferença de configuração `aculta_lms.settings`, ainda sem update/import.
+
 ## 0.1.0-dev.156 — relação de turmas Group própria (ADR-042 P5)
 
 - `CourseClassRelation` no `aculta_lms` implementa o plugin Group `lms_classes` com as cardinalidades existentes; `CourseClassRelationHooks` seleciona a implementação ACULTA durante a convivência com o contrib, mantendo intactos os IDs e registros da relação.

@@ -127,12 +127,14 @@ final class AcultaLmsInstallTest extends KernelTestBase {
       LearningDashboardController::class,
       $container->get('aculta_lms.learning_dashboard_controller'),
     );
-    $this->assertFalse($container->get('config.storage')->exists('aculta_lms.settings'));
+    $this->assertTrue($container->get('config.storage')->exists('aculta_lms.settings'));
     $this->assertFalse($container->get('module_handler')->hasImplementations('install', ['aculta_lms']));
     $this->assertFalse($container->get('module_handler')->hasImplementations('schema', ['aculta_lms']));
   }
 
-  /** Tests the P2 entity update installs all schemas and is idempotent. */
+  /**
+   * Tests the P2 entity update installs all schemas and is idempotent.
+   */
   public function testP2LearningEntityUpdateIsIdempotent(): void {
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
     aculta_lms_update_10005();
@@ -160,6 +162,34 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertStringContainsString('varchar(16) NOT NULL', $answer_create);
     $this->assertStringContainsString('varchar(32) NOT NULL', $progress_create);
     $this->assertStringContainsString('activity_id" int(11) NOT NULL', $answer_create);
+  }
+
+  /**
+   * Tests class permission config migration is idempotent and preserves maps.
+   */
+  public function testClassPermissionConfigUpdateIsIdempotent(): void {
+    require_once DRUPAL_ROOT . '/' . $this->container->get('extension.list.module')->getPath('aculta_lms') . '/aculta_lms.install';
+    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $factory = $this->container->get('config.factory');
+    $factory->getEditable('lms_classes.settings')
+      ->set('class_permission_mappings', ['view group_node:aculta_lms_topic entity' => 'grade students'])
+      ->set('course_permission_mappings', ['take course' => 'add students'])
+      ->save(TRUE);
+    $factory->getEditable('aculta_lms.settings')->delete();
+
+    aculta_lms_update_10007();
+    $expected = [
+      'class_permission_mappings' => ['view group_node:aculta_lms_topic entity' => 'grade students'],
+      'course_permission_mappings' => ['take course' => 'add students'],
+    ];
+    $settings = $factory->get('aculta_lms.settings');
+    $this->assertSame($expected['class_permission_mappings'], $settings->get('class_permission_mappings'));
+    $this->assertSame($expected['course_permission_mappings'], $settings->get('course_permission_mappings'));
+
+    aculta_lms_update_10007();
+    $settings = $factory->get('aculta_lms.settings');
+    $this->assertSame($expected['class_permission_mappings'], $settings->get('class_permission_mappings'));
+    $this->assertSame($expected['course_permission_mappings'], $settings->get('course_permission_mappings'));
   }
 
   /**

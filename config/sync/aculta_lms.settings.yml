@@ -1,0 +1,3 @@
+class_permission_mappings:
+  'view group_node:aculta_lms_topic entity': 'grade students'
+course_permission_mappings: {  }

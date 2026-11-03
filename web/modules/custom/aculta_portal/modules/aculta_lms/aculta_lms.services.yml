@@ -1,4 +1,8 @@
 services:
+  Drupal\aculta_lms\Access\ClassPermissionCalculator:
+    arguments: ['@config.factory', '@entity_type.manager']
+    tags:
+      - { name: flexible_permission_calculator, priority: 0 }
   aculta_lms.objective_answer_scorer:
     class: Drupal\aculta_lms\Assessment\ObjectiveAnswerScorer
   aculta_lms.objective_answer.true_false:
