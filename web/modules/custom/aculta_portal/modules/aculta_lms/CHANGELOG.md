@@ -1,3 +1,8 @@
+## 0.1.0-dev.132 — fonte própria de aulas (ADR-042)
+
+- `CourseLessonReaderInterface` passa a ler `aculta_lms_lesson` por `course_id`, retornando todas as aulas em ordem de `weight` e ID.
+- Teste focal cobre mapeamento dos campos, aula não publicada e ordenação estável.
+
 ## 0.1.0-dev.131 — fonte própria de progresso por curso (ADR-042)
 
 - `CourseProgressReaderInterface` passa a ler `aculta_lms_progress` por `course_id` e `uid`, via `entity_type.manager`; status inválido é recusado e nota numérica vira `float`.

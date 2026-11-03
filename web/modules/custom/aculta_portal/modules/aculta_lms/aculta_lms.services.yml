@@ -51,7 +51,10 @@ services:
   aculta_lms.course_lesson_adapter:
     class: Drupal\aculta_lms\Learning\ContribCourseLessonAdapter
     arguments: ['@entity_type.manager']
-  Drupal\aculta_lms\Learning\CourseLessonReaderInterface: '@aculta_lms.course_lesson_adapter'
+  aculta_lms.course_lesson_reader:
+    class: Drupal\aculta_lms\Learning\EntityCourseLessonReader
+    arguments: ['@entity_type.manager']
+  Drupal\aculta_lms\Learning\CourseLessonReaderInterface: '@aculta_lms.course_lesson_reader'
   aculta_lms.course_activity_adapter:
     class: Drupal\aculta_lms\Learning\ContribCourseActivityAdapter
     arguments: ['@entity_type.manager']
