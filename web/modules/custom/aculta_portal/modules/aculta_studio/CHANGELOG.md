@@ -1,3 +1,8 @@
+## 0.1.0-dev.43 — corrigir a aplicação de cache do link de Perfil (2026-11-03)
+
+- `AccessResultAllowed` não possui `applyTo()`. O Dashboard agora transfere a cacheabilidade do acesso via `CacheableMetadata`, evitando HTTP 500 ao renderizar a entrada autenticada; o resultado negado também mantém os contextos de cache.
+- Firefox ESR detectou HTTP 500 em `/` após a publicação dev.42. Correção aplicada; Runtime e captura visual após a correção serão registrados abaixo.
+
 ## 0.1.0-dev.42 — Dashboard em caixas e acesso separado ao Perfil (2026-11-03)
 
 - A entrada raiz substitui os nove atalhos de Conta por um cartão para Dados cadastrais. O editor privado do Perfil usa sua rota no mesmo purpose `account` e `Url::access()`; o link ao perfil público só aparece quando `AuthorIdentityResolver` fornece URL pública resolvida pelo owner.

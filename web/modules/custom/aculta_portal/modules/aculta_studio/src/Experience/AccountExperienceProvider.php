@@ -136,8 +136,15 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
     catch (RouteNotFoundException) {
       return [];
     }
-    if (!$access instanceof AccessResultInterface || !$access->isAllowed()) {
+    if (!$access instanceof AccessResultInterface) {
       return [];
+    }
+    $cacheability = CacheableMetadata::createFromObject($access)
+      ->addCacheContexts(['user', 'user.permissions', 'url.site']);
+    if (!$access->isAllowed()) {
+      $build = [];
+      $cacheability->applyTo($build);
+      return $build;
     }
     $build = [
       '#type' => 'link',
@@ -145,7 +152,7 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
       '#url' => $url,
       '#attributes' => ['data-portal-ui' => 'studio-profile-entry'],
     ];
-    $access->addCacheContexts(['user', 'user.permissions', 'url.site'])->applyTo($build);
+    $cacheability->applyTo($build);
     return $build;
   }
 

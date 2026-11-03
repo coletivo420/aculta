@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.42
+version: 0.1.0-dev.43
 state: Dev
 progress_note: >-
-  Studio Unit anterior 72/659 PASS. Firefox ESR visível no Runtime anterior: Conta 92/92
+  Dev.43 corrige HTTP 500 no Dashboard: AccessResultAllowed não oferece applyTo(); a metadata do acesso agora é aplicada por CacheableMetadata. A primeira suíte Firefox pós-dev.42 confirmou o 500; reteste pós-correção e capturas finais pendentes. Studio Unit 65/634 e Theme Unit 49/354 PASS; Design Foundations 2441, SDC schema 764, SDC audit sem findings, Portal Drupal 11+ 1202, public-slugs 42 e admin routes 172 PASS. Firefox ESR visível no Runtime anterior: Conta 92/92
   verificações aplicáveis PASS, 22 SKIP; nove rotas diretas HTTP 200,
   navegação AJAX/histórico/mobile, falhas 403/404 com retry, timeout/resposta
   tardia, sessão expirada e Form API inválido/válido aprovados. Dashboard,
