@@ -20,7 +20,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Session\UserSession;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -111,9 +110,7 @@ final class LearningDashboardManagerTest extends UnitTestCase {
 
   public function testCertificatePdfRouteFailsClosedWhenPrintEngineIsMissing(): void {
     $translation = $this->createMock(TranslationInterface::class);
-    $translation->method('translate')->willReturnCallback(
-      static fn(): TranslatableMarkup => new TranslatableMarkup('PDF indisponível.'),
-    );
+    $translation->method('translateString')->willReturn('PDF indisponível.');
     $controller = new CertificateVerificationController(
       $this->createMock(CourseCertificateManagerInterface::class),
       NULL,
