@@ -9,10 +9,10 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_lms\Form\CourseEnrollmentPurchaseForm;
 use Drupal\aculta_learning_contracts\Learning\CourseJourneyReaderInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 
 /**
- * Builds LMS-owned enrollment and participant roster elements for a course.
+ * Builds course enrollment and participant roster elements for a Group course.
  *
  * Studio composes the learner-facing course journey from the neutral contract.
  */
@@ -26,12 +26,12 @@ final class CourseRoomBuilder {
   ) {}
 
   /**
-   * Creates authorized enrollment and roster elements using canonical LMS state.
+   * Creates authorized enrollment and roster elements from Group state.
    *
    * @return array<string,mixed>
    *   Render array containing enrollment or participant roster elements.
    */
-  public function build(CourseInterface $course): array {
+  public function build(GroupInterface $course): array {
     $journey = $this->journeys->getCourseJourney((string) $course->id(), $this->currentUser);
     $cacheability = (new CacheableMetadata())
       ->addCacheableDependency($course)

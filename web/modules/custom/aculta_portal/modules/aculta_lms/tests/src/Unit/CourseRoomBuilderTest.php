@@ -13,7 +13,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -28,7 +28,7 @@ final class CourseRoomBuilderTest extends UnitTestCase {
    */
   public function testUsesEnrollmentPurchaseForm(): void {
     $account = $this->createMock(AccountProxyInterface::class);
-    $course = $this->createMock(CourseInterface::class);
+    $course = $this->createMock(GroupInterface::class);
     $course->method('id')->willReturn('course-1');
     $course->method('hasPermission')->with('administer members', $account)->willReturn(FALSE);
     $course->method('getCacheTags')->willReturn([]);
@@ -57,7 +57,7 @@ final class CourseRoomBuilderTest extends UnitTestCase {
    */
   public function testAuthorizedCourseBuildsRosterWithoutComposingJourney(): void {
     $account = $this->createMock(AccountProxyInterface::class);
-    $course = $this->createMock(CourseInterface::class);
+    $course = $this->createMock(GroupInterface::class);
     $course->method('id')->willReturn('course-1');
     $course->method('getCacheTags')->willReturn(['group:course-1']);
     $course->method('getCacheContexts')->willReturn([]);

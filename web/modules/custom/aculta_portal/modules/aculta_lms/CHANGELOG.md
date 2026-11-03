@@ -1,3 +1,8 @@
+## 0.1.0-dev.137 — sala de curso usa contratos Group e ACULTA
+
+- `CourseRoomBuilder`, `CourseRoomHooks` e `ClassRosterManager` deixam de exigir o tipo `CourseInterface` ou `ClassHelper`; aulas/turmas continuam sendo resolvidas por Group e relações registradas.
+- Unit focal do builder 2/12 PASS; Unit completa 224/724 PASS (1 deprecation PHPUnit).
+
 ## 0.1.0-dev.136 — evento de conclusão usa progresso ACULTA
 
 - `CourseCompletionPublisher` e seus hooks publicam `CourseCompletedEvent` a partir de transições da entidade `aculta_lms_progress` para `passed` e `finished`.
