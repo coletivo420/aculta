@@ -50,7 +50,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
   protected static $modules = [
     'system', 'user', 'file', 'image', 'media', 'field', 'comment', 'options', 'entity_print', 'domain',
     'entity_usage', 'key', 'aculta_image', 'aculta_file_uploader',
-    'text', 'views', 'group', 'flexible_permissions', 'lms', 'lms_classes',
+    'text', 'views', 'group', 'flexible_permissions',
   ];
 
   /**
@@ -72,8 +72,6 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
-    $this->installEntitySchema('lms_course_status');
-    $this->installEntitySchema('lms_lesson_status');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
@@ -86,6 +84,9 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertTrue($this->container->get('module_installer')->install(['aculta_lms'], FALSE));
     $container = \Drupal::getContainer();
     $this->assertTrue($container->get('module_handler')->moduleExists('aculta_lms'));
+    foreach (['lms', 'lms_classes', 'lms_answer_plugins', 'lms_answer_comments'] as $contrib_module) {
+      $this->assertFalse($container->get('module_handler')->moduleExists($contrib_module));
+    }
     $this->assertInstanceOf(
       PaymentOperationsInterface::class,
       $container->get('aculta_portal.payment_provider.payment_operations'),
@@ -242,10 +243,12 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     require_once DRUPAL_ROOT . '/' . $this->container->get('extension.list.module')->getPath('aculta_lms') . '/aculta_lms.install';
     $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
     $factory = $this->container->get('config.factory');
-    $factory->getEditable('lms_classes.settings')
-      ->set('class_permission_mappings', ['view group_node:aculta_lms_topic entity' => 'grade students'])
-      ->set('course_permission_mappings', ['take course' => 'add students'])
-      ->save(TRUE);
+    // Seed the former contrib config as raw storage: its schema is intentionally
+    // unavailable in this kernel because no contrib LMS module is enabled.
+    $this->container->get('config.storage')->write('lms_classes.settings', [
+      'class_permission_mappings' => ['view group_node:aculta_lms_topic entity' => 'grade students'],
+      'course_permission_mappings' => ['take course' => 'add students'],
+    ]);
     $factory->getEditable('aculta_lms.settings')->delete();
 
     aculta_lms_update_10007();

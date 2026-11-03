@@ -1,3 +1,19 @@
+## 0.1.0-dev.170 — valida instalação limpa sem dependências LMS
+
+- Remove do manifesto de `aculta_lms` as dependências `lms`, `lms_classes`,
+  `lms_answer_plugins` e `lms_answer_comments`; dependências Composer e módulos
+  ativos do Runtime permanecem para a fase P5.
+- `AcultaLmsInstallTest` instala as quatro entidades P2 sem habilitar módulos
+  LMS nem criar schemas contrib. A fixture de `lms_classes.settings` é semeada
+  diretamente no armazenamento, sem exigir schema do módulo removido.
+- Unit completa: 218 testes/758 assertions PASS; Kernel `AcultaLmsInstallTest`:
+  6 testes/170 assertions PASS, 35 depreciações upstream. Gate Portal PASS
+  (1.172 checks); public-slugs PASS (423 rotas, zero violações).
+- Runtime `aculta_runtime`: `updatedb:status` sem atualizações; `config:status`
+  mantém apenas as diferenças anteriores em `aculta_portal.superficies` e
+  `core.extension`; `drush cr` PASS e `aculta_lms`/rota de arquivo disponíveis.
+  Nenhuma configuração foi importada nem módulo LMS desinstalado.
+
 ## 0.1.0-dev.169 — remove hooks presos a formulários e links LMS
 
 - Remove `ActivityDeadlineFormHooks` e `CourseLinkHooks`, que alteravam
