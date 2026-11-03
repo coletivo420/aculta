@@ -1,6 +1,16 @@
 # Estado da sessão
 
-## Handoff documental - Conta Studio AJAX, 2026-11-03
+## Handoff — medição de carga MariaDB para xAPI, 2026-11-03
+
+- **Objetivo:** medir carga sintética de escrita para `aculta_lms_xapi_statement` em banco separado no Homelab, sem escrita em `aculta_runtime`.
+- **Entrega:** `docs/operations/CARGA-MARIADB-XAPI.md`; commit `8efb3af9b600a25217c5cf5c3aa45a06eae8ce18` publicado em `origin/dev`.
+- **Medição:** 5.000 linhas em 50 lotes, 6.389 linhas/s, p95 SQL individual 0,118 ms, p95 transação de lote 14,843 ms; tablespace 81.920 → 22.024.192 bytes. Limites de 5.000 linhas, 64 MiB e 30 s; encerrou pelo limite de linhas após 0,783 s.
+- **Descarte e Runtime:** `aculta_carga` removido, verificação de zero schema/tabelas. Contagens xAPI, progresso, aula, atividade e resposta no `aculta_runtime` permaneceram em zero. A soma `information_schema` variou +16.384 bytes durante o intervalo; causa não atribuída. Nenhum comando de escrita foi direcionado ao Runtime.
+- **Verificação:** carga feita por conexão local socket Unix, só dados sintéticos; sem usuário de teste, senha ou segredo criado. Sem importação de configuração. `git diff --check` passou; nenhum teste de aplicação foi executado.
+- **Pendências:** medição de persistência, não de validação, HTTP ou capacidade production-like. Para fechar ADR-041, repetir em ambiente production-like representativo antes de ativar conteúdo xAPI em produção.
+- **Retomar lendo:** `docs/operations/CARGA-MARIADB-XAPI.md`; `docs/decisions/ADR-041-xapi-2-lrs-proprio.md`; este handoff.
+
+## Handoff anterior — Conta Studio AJAX, 2026-11-03
 
 - Objetivo: aprofundar comparação Conta/legado e preparar execução da correção.
 - Entrega: docs/portal/STUDIO-CONTA-AJAX-AUDITORIA.md, integração nos planos ACULTA-STUDIO-VISUAL-PLANNING.md e STUDIO-VISUAL-P1-PESSOAL-EDITORIAL.md, e no roadmap do aculta_studio.
