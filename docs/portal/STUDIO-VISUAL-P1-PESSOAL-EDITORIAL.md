@@ -1,10 +1,10 @@
 # Studio Visual P1 - estruturas pessoais e editoriais
 
-## Estado da entrega P1 — ACULTA420 dev.36 — 2026-11-03
+## Estado da entrega P1 — implementação dev.36; Runtime em atualização — 2026-11-03
 
 Dashboard, Minha Conta, Meu Perfil e Marley estão implementados e publicados em `dev`. O Firefox ESR no Runtime passou 106/106 verificações aplicáveis, 21 SKIP condicionais e zero falhas. A bateria cobriu rotas diretas da Conta, AJAX/histórico/retry/timeout, formulários Form API válidos/inválidos, responsividade, teclado/foco, modos claro/escuro, Perfil sem campos privados, zoom 200/400% e composição de Marley. Capturas e JSON: `$SUITE_OUT/studio-spacing-runtime-dev36-20261103/`.
 
-Este resultado descreve o Runtime no momento do teste. Uma alteração local posterior de Composer deixou `main`, Perfil e Conta em HTTP 500; Drush aponta `group.membership_loader` ausente. O Composer não foi alterado nesta tarefa e o estado atual está documentado na auditoria.
+Este resultado descreve o Runtime no momento do teste, antes da atualização atual. O commit `5f695df` atualizou o checkout para Drupal 11.5.0-beta1 e Group 4 alpha; `drush status` responde. Uma consulta de `updatedb:status` falhou transitoriamente ao analisar `modules/contrib/storybook/storybook.info.yml`, e a seguinte listou 18 updates; há diferenças de configuração pendentes. O responsável pediu para aguardar a atualização: esta tarefa não executou updates/import, e um processo paralelo foi observado invocando `drush cr` sem saída disponível. A revalidação autenticada das rotas e fluxos Studio está pendente; o estado e as respostas HTTP anônimas estão registrados na auditoria.
 
 A comparação de composição foi feita com `docs/portal/studio-visual/referencias/image(20261103-123227).png` e capturas reais das quatro telas; não se declara paridade pixel a pixel. Os cinco PNGs da pasta oficial foram reconhecidos por `file`, decodificados em 1536×1024 por `identify` e validados por chunks/CRC/IEND. O ZIP não estava disponível, então `unzip -t` não foi executado.
 
