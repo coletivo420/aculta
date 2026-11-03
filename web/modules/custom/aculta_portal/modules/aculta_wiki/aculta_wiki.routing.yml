@@ -10,7 +10,7 @@ aculta_portal.wiki_home:
     _aculta_show_page_title_on_front: true
 
 aculta_portal.wiki_search:
-  path: /wiki/busca
+  path: /busca-wiki
   defaults:
     _controller: \Drupal\aculta_wiki\Controller\WikiController::search
     _title: Buscar na Wiki420
@@ -20,7 +20,7 @@ aculta_portal.wiki_search:
     _aculta_domain_purpose: wiki
 
 aculta_portal.wiki_search_preview:
-  path: /wiki/busca/previa
+  path: /busca-wiki/previa
   defaults:
     _controller: '\Drupal\aculta_wiki\Controller\WikiController::preview'
   requirements:
@@ -29,7 +29,7 @@ aculta_portal.wiki_search_preview:
     _aculta_domain_purpose: wiki
 
 aculta_wiki.contribution_intent:
-  path: '/wiki/verbetes/{node}/contribuir/como'
+  path: '/verbetes/{node}/contribuir/como'
   defaults:
     _controller: '\Drupal\aculta_wiki\Controller\WikiContributionIntentController::page'
     _title: 'Como você quer contribuir?'
@@ -43,7 +43,7 @@ aculta_wiki.contribution_intent:
         type: entity:node
 
 aculta_wiki.proposal_submit:
-  path: '/wiki/verbetes/{node}/contribuir'
+  path: '/verbetes/{node}/contribuir'
   defaults:
     _form: '\Drupal\aculta_wiki\Form\WikiProposalSubmissionForm'
     _title: 'Contribuir com este verbete'
@@ -57,7 +57,7 @@ aculta_wiki.proposal_submit:
         type: entity:node
 
 aculta_wiki.proposal_status:
-  path: '/wiki/propostas/{proposal}'
+  path: '/propostas/{proposal}'
   defaults:
     _controller: '\Drupal\aculta_wiki\Controller\WikiProposalStatusController::view'
     _title: 'Minha proposta para a Wiki420'
@@ -70,7 +70,7 @@ aculta_wiki.proposal_status:
         type: wiki_proposal
 
 aculta_wiki.studio_entry_create:
-  path: '/wesativa/verbetes/novo'
+  path: '/we-sativa/verbetes/novo'
   defaults:
     _controller: '\Drupal\aculta_wiki\Controller\WikiEntryCreateController::createEntry'
     _title: 'Criar verbete'
@@ -81,7 +81,7 @@ aculta_wiki.studio_entry_create:
     _aculta_domain_purpose: wiki
 
 aculta_wiki.proposal_withdraw:
-  path: '/wiki/propostas/{proposal}/retirar'
+  path: '/propostas/{proposal}/retirar'
   defaults:
     _form: '\Drupal\aculta_wiki\Form\WikiProposalWithdrawalForm'
     _title: 'Retirar proposta da Wiki420'
@@ -94,7 +94,7 @@ aculta_wiki.proposal_withdraw:
         type: wiki_proposal
 
 aculta_wiki.proposal_decide:
-  path: '/wesativa/propostas/{proposal}/decidir'
+  path: '/we-sativa/propostas/{proposal}/decidir'
   defaults:
     _form: '\Drupal\aculta_wiki\Form\WikiProposalDecisionForm'
     _title: 'Avaliar proposta da Wiki'

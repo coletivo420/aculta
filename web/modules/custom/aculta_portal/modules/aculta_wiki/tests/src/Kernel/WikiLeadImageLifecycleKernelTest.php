@@ -1532,7 +1532,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame(21, (int) $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->condition('uid', 17)->count()->execute());
     self::assertTrue($workspace->access($author)->isAllowed(), 'Owner-scoped work or create access should expose the workspace.');
     $requestStack = $this->container->get('request_stack');
-    $requestStack->push(Request::create('/studio/we-sativa'));
+    $requestStack->push(Request::create('/we-sativa'));
     try {
       $firstPage = $workspace->build($author);
     }
@@ -1562,7 +1562,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertMatchesRegularExpression('/^[0-9]{1,12}-[1-9][0-9]{0,12}$/', $query['wiki_node_cursor']);
     self::assertMatchesRegularExpression('/^[0-9]{1,12}-[1-9][0-9]{0,12}$/', $query['wiki_proposal_cursor']);
 
-    $requestStack->push(Request::create('/studio/we-sativa', 'GET', $query));
+    $requestStack->push(Request::create('/we-sativa', 'GET', $query));
     try {
       $secondPage = $workspace->build($author);
     }
@@ -1608,7 +1608,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $restrictedProposal->save();
     self::assertFalse($restrictedAuthor->hasPermission('view own wiki proposals'));
     self::assertTrue($workspace->access($restrictedAuthor)->isAllowed());
-    $requestStack->push(Request::create('/studio/we-sativa'));
+    $requestStack->push(Request::create('/we-sativa'));
     try {
       $restrictedPage = $workspace->build($restrictedAuthor);
     }
@@ -1734,7 +1734,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       elseif ($filter !== 'all') {
         $query['wiki_node_state'] = $filter;
       }
-      $requestStack->push(Request::create('/studio/we-sativa', 'GET', $query));
+      $requestStack->push(Request::create('/we-sativa', 'GET', $query));
       try {
         $build = $workspace->build($author);
       }
@@ -1766,7 +1766,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       self::assertSame($filter === 'malformed' ? 'all' : $filter, $activeLink['#url']->getOption('query')['wiki_node_state'] ?? 'all');
     }
 
-    $requestStack->push(Request::create('/studio/we-sativa', 'GET', [
+    $requestStack->push(Request::create('/we-sativa', 'GET', [
       'wiki_node_state' => 'in_progress',
       'wiki_proposal_cursor' => '1720000000-9',
     ]));
@@ -1781,7 +1781,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $nextQuery = $firstDraftPage['entries']['#slots']['body']['next_page']['#url']->getOption('query');
     self::assertSame('in_progress', $nextQuery['wiki_node_state']);
     self::assertSame('1720000000-9', $nextQuery['wiki_proposal_cursor']);
-    $requestStack->push(Request::create('/studio/we-sativa', 'GET', $nextQuery));
+    $requestStack->push(Request::create('/we-sativa', 'GET', $nextQuery));
     try {
       $secondDraftPage = $workspace->build($author);
     }
