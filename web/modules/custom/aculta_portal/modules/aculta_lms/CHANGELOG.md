@@ -745,3 +745,8 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 - Prazo por turma, acesso e formulário usam `aculta_lms_activity` e `aculta_lms_lesson`; painel docente enumera atividades e aulas próprias e agrega `aculta_lms_progress`.
 - Testes Kernel de prazo e painel agora exercitam atividade, aula e progresso ACULTA; as entidades LMS permanecem no harness apenas para os bundles e relacionamentos Group legados.
 
+## 0.1.0-dev.147 — Recursos usa acesso Group
+
+- O índice de conteúdo e os links de materiais verificam acesso estudantil por `take course` em Group, sem importar `CourseInterface` do LMS.
+- Unit de `aculta_lms_resources` 13/66 PASS; Kernel do índice de acesso 5/259 PASS (53 depreciações upstream).
+

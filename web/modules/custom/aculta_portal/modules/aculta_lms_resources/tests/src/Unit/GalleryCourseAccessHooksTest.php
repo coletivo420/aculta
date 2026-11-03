@@ -16,7 +16,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\group\Entity\Storage\GroupStorage;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -84,7 +84,7 @@ final class GalleryCourseAccessHooksTest extends UnitTestCase {
   /**
    * Creates the access hook with course candidates returned from Group storage.
    *
-   * @param \Drupal\lms\Entity\Bundle\CourseInterface[] $courses
+   * @param \Drupal\group\Entity\GroupInterface[] $courses
    *   Matching course entities.
    */
   private function hook(array $courses): GalleryCourseAccessHooks {
@@ -126,10 +126,11 @@ final class GalleryCourseAccessHooksTest extends UnitTestCase {
   /**
    * Creates a course with the requested membership and educator grants.
    */
-  private function course(AccessResult $take_access, bool $can_grade = FALSE): CourseInterface {
-    $course = $this->createMock(CourseInterface::class);
-    $course->method('takeAccess')->with($this->account)->willReturn($take_access);
-    $course->method('hasPermission')->willReturn($can_grade);
+  private function course(AccessResult $take_access, bool $can_grade = FALSE): GroupInterface {
+    $course = $this->createMock(GroupInterface::class);
+    $course->method('hasPermission')->willReturnCallback(static fn (string $permission): bool => $permission === 'take course'
+      ? $take_access->isAllowed()
+      : $can_grade);
     $course->method('getCacheTags')->willReturn(['group:course-42']);
     $course->method('getCacheContexts')->willReturn([]);
     $course->method('getCacheMaxAge')->willReturn(-1);

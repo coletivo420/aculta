@@ -19,7 +19,7 @@ use Drupal\aculta_lms_resources\Plugin\EntityReferenceSelection\PublishedGallery
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -37,7 +37,7 @@ final class PublishedGallerySelectionTest extends UnitTestCase {
    */
   public function testSelectionRestrictsToPublishedGalleriesAndCourseEducators(): void {
     $account = $this->createMock(AccountInterface::class);
-    $course = $this->createMock(CourseInterface::class);
+    $course = $this->createMock(GroupInterface::class);
     $course->method('isNew')->willReturn(FALSE);
     $course->method('hasPermission')->willReturn(TRUE);
 
