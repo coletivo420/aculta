@@ -248,6 +248,54 @@ final class EventOrganizationLifecycleKernelTest extends KernelTestBase {
   }
 
   /**
+   * Respects the entity publication flag in addition to the editorial status.
+   */
+  public function testOrganizationViewRequiresPublicationOrDraftPermission(): void {
+    $publicada = EventOrganization::create([
+      'title' => 'Organização publicada',
+      'field_status' => 'publicado',
+      'status' => 1,
+    ]);
+    $publicada->save();
+
+    $despublicada = EventOrganization::create([
+      'title' => 'Organização despublicada',
+      'field_status' => 'publicado',
+      'status' => 0,
+    ]);
+    $despublicada->save();
+
+    $rascunho = EventOrganization::create([
+      'title' => 'Organização em rascunho',
+      'field_status' => 'rascunho',
+      'status' => 1,
+    ]);
+    $rascunho->save();
+
+    $draftRole = Role::create([
+      'id' => 'event_draft_viewer',
+      'label' => 'Leitor de rascunhos de eventos',
+    ]);
+    $draftRole->grantPermission('view aculta event drafts');
+    $draftRole->save();
+    $draftViewer = User::create([
+      'name' => 'event_draft_viewer',
+      'mail' => 'event-draft-viewer@example.com',
+      'status' => 1,
+    ]);
+    $draftViewer->addRole('event_draft_viewer');
+    $draftViewer->save();
+
+    $this->assertTrue($publicada->access('view', $this->commonUser));
+    $this->assertFalse($despublicada->access('view', $this->commonUser));
+    $this->assertFalse($rascunho->access('view', $this->commonUser));
+    $this->assertTrue($despublicada->access('view', $draftViewer));
+    $this->assertTrue($rascunho->access('view', $draftViewer));
+    $this->assertTrue($despublicada->access('view', $this->adminUser));
+    $this->assertTrue($rascunho->access('view', $this->adminUser));
+  }
+
+  /**
    * Verifies unclaimed organization edits remain pending until approved.
    */
   public function testUnclaimedOrganizationChangesRequireAdministrativeApproval(): void {

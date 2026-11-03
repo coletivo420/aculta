@@ -25,7 +25,7 @@ final class EventOrganizationAccessControlHandler extends EntityAccessControlHan
 
     if ($operation === 'view') {
       $status = (string) $entity->get('field_status')->value;
-      if ($status === 'rascunho') {
+      if (!$entity->isPublished() || $status === 'rascunho') {
         return AccessResult::allowedIfHasPermission($account, 'view aculta event drafts')
           ->orIf(AccessResult::allowedIfHasPermission($account, 'administer aculta events'))
           ->addCacheableDependency($entity);
