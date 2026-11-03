@@ -1,6 +1,6 @@
 # ACULTA Studio — plano documental visual e de navegação
 
-## Estado efetivo da entrega dev.36 — 2026-11-03
+## Estado do código e última validação integrada dev.36 — 2026-11-03
 
 Este status atual substitui as pendências antigas deste documento e dos roadmaps. O Dashboard, a Conta privada, o Perfil público e Marley estão implementados no HEAD `d30a9529f7`, com owners, rotas e permissões preservados. O tema está em ACULTA420 `0.7.0-dev.36`; o módulo Studio no Runtime está em `0.1.0-dev.44`.
 
@@ -9,7 +9,7 @@ Este status atual substitui as pendências antigas deste documento e dos roadmap
 - **Perfil:** edição privada separada do perfil público; sem endereço/documentos no editor; preview e formulários usam os owners atuais.
 - **Marley:** “Criar” junto ao título de “Meu trabalho”, listagem mantida e moderação somente para a permissão do owner. Sem publicação própria na fixture atual, os testes de GET de edição/criação ficam `SKIP`; a listagem vazia, responsividade e autorização A/B estão cobertas.
 - **Tema:** tokens compactos pesquisados em Carbon, GOV.UK e USWDS; dev.36 reduz Dashboard a intervalos de 12 px. Cores do cabeçalho multidomínio permanecem ACULTA420.
-- **Runtime:** snapshot pré-import de 270.104.476 bytes, SHA-256 `f1461615bbec2363ab70ee762cac15b5d50115c2c80537fef5272c6500261a0f`; importou-se somente a visibilidade do bloco Próximos eventos (`main` + `<front>`). Cache, updates e config status limpos. HTTP anônimo: landing principal 200 com `.aculta-events-upcoming`; Perfil `/u/pessoa-5` 200 sem o bloco.
+- **Runtime na validação dev.36:** snapshot pré-import de 270.104.476 bytes, SHA-256 `f1461615bbec2363ab70ee762cac15b5d50115c2c80537fef5272c6500261a0f`; importou-se somente a visibilidade do bloco Próximos eventos (`main` + `<front>`). Cache, updates e config status limpos. HTTP anônimo: landing principal 200 com `.aculta-events-upcoming`; Perfil `/u/pessoa-5` 200 sem o bloco. Após essa validação, alterações locais não commitadas de Composer causaram HTTP 500 e erro de container; ver a auditoria AJAX. Não considerar o Runtime atualmente saudável.
 - **Validação visual:** Firefox ESR integrado passou 106/106 checks, 21 SKIP condicionais, zero falhas; Dashboard 320/390/768/1280 px; Conta AJAX/Form API/mobile; Perfil zoom 200/400%; Marley. Capturas em `$SUITE_OUT/studio-spacing-runtime-dev36-20261103/`. A prancha principal válida (1536×1024) foi cotejada por composição; não há alegação de igualdade pixel a pixel.
 - **SDCs:** reuso de `aculta420:card` (`studio_fidelity`), `profile-editor` e `profile-identity`; Conta combina `<details>`, lista Drupal e wrappers de Form API. Nenhum SDC novo.
 - **DEFERRED:** gravação do avatar interrompida pelo desafio humano de verificação; senha não enviada porque o aceite legal obrigatório não foi registrado. Leitor de tela coberto em Marley, não nas outras telas. Fixtures sem publicação própria não exercitam editar/criar; Runtime não desinstalou módulos opcionais. Veja a auditoria para limites e evidências.

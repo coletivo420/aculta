@@ -4,6 +4,8 @@
 
 Dashboard, Minha Conta, Meu Perfil e Marley estão implementados e publicados em `dev`. O Firefox ESR no Runtime passou 106/106 verificações aplicáveis, 21 SKIP condicionais e zero falhas. A bateria cobriu rotas diretas da Conta, AJAX/histórico/retry/timeout, formulários Form API válidos/inválidos, responsividade, teclado/foco, modos claro/escuro, Perfil sem campos privados, zoom 200/400% e composição de Marley. Capturas e JSON: `$SUITE_OUT/studio-spacing-runtime-dev36-20261103/`.
 
+Este resultado descreve o Runtime no momento do teste. Uma alteração local posterior de Composer deixou `main`, Perfil e Conta em HTTP 500; Drush aponta `group.membership_loader` ausente. O Composer não foi alterado nesta tarefa e o estado atual está documentado na auditoria.
+
 A comparação de composição foi feita com `docs/portal/studio-visual/referencias/image(20261103-123227).png` e capturas reais das quatro telas; não se declara paridade pixel a pixel. Os cinco PNGs da pasta oficial foram reconhecidos por `file`, decodificados em 1536×1024 por `identify` e validados por chunks/CRC/IEND. O ZIP não estava disponível, então `unzip -t` não foi executado.
 
 Dados e Endereço foram enviados no formulário original com valores existentes e conferidos sem mudança persistida; preferência de cor salva pelo harness foi restaurada. **DEFERRED:** gravação final do avatar (desafio humano), alteração de senha (aceite legal não realizado), screen reader além de Marley, publicação própria para testar as ações de edição/criação e desinstalação Runtime de módulos opcionais. Esses limites não alteram o aceite do restante da matriz; detalhes na [auditoria](STUDIO-CONTA-AJAX-AUDITORIA.md).
