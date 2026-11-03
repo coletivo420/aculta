@@ -33,7 +33,7 @@ dependencies:
     - media_library
     - metatag
     - path
-    - text
+    - text_with_summary
 id: node.activity.default
 targetEntityType: node
 bundle: activity

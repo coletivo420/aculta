@@ -11,7 +11,7 @@ dependencies:
     - field.field.node.aculta_lms_topic.field_h5p_content
     - node.type.aculta_lms_topic
   module:
-    - text
+    - text_with_summary
     - user
 _core:
   default_config_hash: v4pBOBS7JKh3K_Uwr46J7dIQMsMpmPmwkr_iSAUvBwE

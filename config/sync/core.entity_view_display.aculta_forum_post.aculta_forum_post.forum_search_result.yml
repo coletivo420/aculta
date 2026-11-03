@@ -6,7 +6,7 @@ dependencies:
     - core.entity_view_mode.aculta_forum_post.forum_search_result
   module:
     - aculta_forum
-    - text
+    - text_with_summary
 id: aculta_forum_post.aculta_forum_post.forum_search_result
 targetEntityType: aculta_forum_post
 bundle: aculta_forum_post

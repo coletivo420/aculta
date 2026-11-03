@@ -83,7 +83,7 @@ display:
           cell_min_width: 250
           grid_gutter: 20
       row:
-        type: entity:group
+        type: 'entity:group'
         options:
           relationship: none
           view_mode: default

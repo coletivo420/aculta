@@ -6,7 +6,7 @@ dependencies:
     - site_alert
 id: aculta_site_alert_read
 label: 'Aviso temporário lido'
-bundles: {}
+bundles: {  }
 entity_type: site_alert
 global: false
 flag_short: 'Marcar como lido'
@@ -20,9 +20,9 @@ weight: 0
 flag_type: 'entity:site_alert'
 link_type: ajax_link
 flagTypeConfig:
-  show_in_links: {}
+  show_in_links: {  }
   show_as_field: true
   show_on_form: false
   show_contextual_link: false
-  extra_permissions: {}
-linkTypeConfig: {}
+  extra_permissions: {  }
+linkTypeConfig: {  }

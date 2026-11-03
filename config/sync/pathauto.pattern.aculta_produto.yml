@@ -20,4 +20,4 @@ selection_criteria:
       produto_loja: produto_loja
 selection_logic: and
 weight: 0
-relationships: {}
+relationships: {  }

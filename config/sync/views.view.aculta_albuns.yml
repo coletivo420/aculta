@@ -192,4 +192,3 @@ display:
         - 'config:field.storage.media_gallery.field_credits'
         - 'config:field.storage.media_gallery.field_gallery_cover'
         - 'config:field.storage.media_gallery.field_published_at'
-

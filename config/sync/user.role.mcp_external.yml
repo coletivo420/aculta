@@ -15,4 +15,3 @@ weight: 5
 is_admin: false
 permissions:
   - 'access mcp server'
-

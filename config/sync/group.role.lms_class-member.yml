@@ -18,4 +18,3 @@ group_type: lms_class
 permissions:
   - 'view group_node:aculta_lms_topic entity'
   - 'view group'
-

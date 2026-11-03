@@ -15,7 +15,7 @@ dependencies:
     - content_moderation
     - datetime
     - path
-    - text
+    - text_with_summary
 _core:
   default_config_hash: OjTjjygaWpj1las9vai3K-xxHe1WG7eqp-hKAXZNjlo
 id: node.aculta_notice.default
@@ -130,4 +130,3 @@ hidden:
   field_domain_source: true
   promote: true
   sticky: true
-

@@ -15,7 +15,7 @@ dependencies:
   module:
     - link
     - path
-    - text
+    - text_with_summary
 id: node.wiki_entry.default
 targetEntityType: node
 bundle: wiki_entry

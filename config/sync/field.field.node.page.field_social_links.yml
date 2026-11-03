@@ -15,7 +15,7 @@ label: 'Links oficiais das redes sociais'
 description: 'Adicione cada canal oficial com o nome que será exibido e sua URL completa. Não cadastre perfis sem confirmação institucional.'
 required: false
 translatable: true
-default_value: {}
+default_value: {  }
 default_value_callback: ''
 settings:
   title: 1

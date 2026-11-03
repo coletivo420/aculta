@@ -24,4 +24,3 @@ settings:
     auto_create: true
     auto_create_bundle: revista_tags
 field_type: entity_reference
-

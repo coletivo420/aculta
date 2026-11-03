@@ -27,6 +27,11 @@ content:
     third_party_settings: {  }
     weight: 1
     region: content
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
   field_wiki_categories:
     type: entity_reference_label
     label: above
@@ -77,5 +82,12 @@ content:
     weight: 100
     region: content
 hidden:
+  co_authors: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
+  field_aculta_discussion: true
   field_domain_source: true
   langcode: true
+  private_message_link: true
+  search_api_excerpt: true

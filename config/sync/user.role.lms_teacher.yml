@@ -22,4 +22,3 @@ permissions:
   - 'update own lms_teacher profile'
   - 'view own lms_teacher profile'
   - 'view the administration theme'
-

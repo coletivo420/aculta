@@ -17,5 +17,5 @@ default_value:
   -
     value: default
 default_value_callback: ''
-settings: {}
+settings: {  }
 field_type: list_string

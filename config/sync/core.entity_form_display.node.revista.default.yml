@@ -27,7 +27,7 @@ dependencies:
     - media_library
     - metatag
     - path
-    - text
+    - text_with_summary
 id: node.revista.default
 targetEntityType: node
 bundle: revista

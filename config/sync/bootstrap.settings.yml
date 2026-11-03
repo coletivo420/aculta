@@ -1,5 +1,19 @@
 _core:
   default_config_hash: SAxd5V3RFQL50x5che_Ul9muWKRuUX2RSpBtspM-TGI
+favicon:
+  mimetype: image/vnd.microsoft.icon
+  path: ''
+  url: ''
+  use_default: true
+features:
+  comment_user_picture: true
+  comment_user_verification: true
+  favicon: true
+  node_user_picture: true
+logo:
+  path: ''
+  url: null
+  use_default: true
 bootstrap_fluid_container: 0
 bootstrap_container: container
 bootstrap_sidebar_position: both
@@ -35,3 +49,5 @@ bootstrap_body_bg_color: white
 bootstrap_h1_color: base
 bootstrap_h2_color: base
 bootstrap_h3_color: base
+schemas:
+  bootstrap: 8000

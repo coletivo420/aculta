@@ -10,4 +10,3 @@ password_secret: SMTP_PASSWORD
 verify_peer: true
 id: smtp_hostinger
 label: 'Hostinger (SMTP)'
-

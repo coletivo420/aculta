@@ -69,4 +69,3 @@ filters:
       allowed_view_modes: {  }
       allowed_media_types:
         document: document
-

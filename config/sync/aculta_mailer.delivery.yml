@@ -6,4 +6,3 @@ summary_admins: true
 brevo_enabled: true
 sending_enabled: true
 tracking_enabled: true
-

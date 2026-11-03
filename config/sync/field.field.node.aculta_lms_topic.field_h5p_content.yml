@@ -13,11 +13,11 @@ id: node.aculta_lms_topic.field_h5p_content
 field_name: field_h5p_content
 entity_type: node
 bundle: aculta_lms_topic
-label: Conteúdo H5P
+label: 'Conteúdo H5P'
 description: 'Associe esta discussão a um conteúdo H5P do mesmo curso ou turma.'
 required: false
 translatable: false
-default_value: { }
+default_value: {  }
 default_value_callback: ''
 settings:
   handler: 'aculta_forum_lms:course_h5p_content'

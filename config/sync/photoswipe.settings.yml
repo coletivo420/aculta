@@ -41,4 +41,3 @@ options:
     - 2
   preloaderDelay: 2000
   mainClass: ''
-

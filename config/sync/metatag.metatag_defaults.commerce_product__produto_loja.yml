@@ -1,7 +1,7 @@
 uuid: aae15a1b-614d-4d04-aa45-b9df0ccf5970
 langcode: pt-br
 status: true
-dependencies: {}
+dependencies: {  }
 id: commerce_product__produto_loja
 label: 'Loja: produto'
 tags:

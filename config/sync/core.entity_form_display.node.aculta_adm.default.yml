@@ -9,7 +9,7 @@ dependencies:
   module:
     - content_moderation
     - path
-    - text
+    - text_with_summary
 id: node.aculta_adm.default
 targetEntityType: node
 bundle: aculta_adm
@@ -99,4 +99,3 @@ hidden:
   field_domain_source: true
   promote: true
   sticky: true
-

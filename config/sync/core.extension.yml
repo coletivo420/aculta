@@ -22,6 +22,7 @@ module:
   aculta_image: 0
   aculta_index: 0
   aculta_learning_contracts: 0
+  aculta_linkweed: 0
   aculta_lms: 0
   aculta_lms_agenda: 0
   aculta_lms_h5p: 0
@@ -130,6 +131,9 @@ module:
   imageapi_optimize_binaries: 0
   imagemagick: 0
   inline_entity_form: 0
+  jquery_ui: 0
+  jquery_ui_draggable: 0
+  jquery_ui_resizable: 0
   key: 0
   language: 0
   layout_builder: 0
@@ -200,6 +204,7 @@ module:
   system: 0
   taxonomy: 0
   text: 0
+  text_with_summary: 0
   token: 0
   tool: 0
   turnstile: 0
@@ -238,7 +243,6 @@ module:
   views: 10
   domain_source: 30
   standard: 1000
-  aculta_linkweed: 0
 theme:
   claro: 0
   stable9: 0

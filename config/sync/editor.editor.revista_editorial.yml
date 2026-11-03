@@ -30,7 +30,7 @@ settings:
       - heading
       - codeBlock
       - drupalMedia
-      - "-"
+      - '-'
       - galeria
       - acultaGalleryCreate
   plugins:
@@ -111,4 +111,3 @@ image_upload:
   max_dimensions:
     width: null
     height: null
-

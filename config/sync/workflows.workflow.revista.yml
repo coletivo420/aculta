@@ -39,13 +39,13 @@ type_settings:
       to: archived
       weight: 2
     archived_draft:
-      label: Restaurar rascunho
+      label: 'Restaurar rascunho'
       from:
         - archived
       to: draft
       weight: 3
     archived_published:
-      label: Restaurar publicação
+      label: 'Restaurar publicação'
       from:
         - archived
       to: published

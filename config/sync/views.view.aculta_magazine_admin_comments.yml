@@ -82,7 +82,7 @@ display:
           settings:
             link_to_entity: true
           group_column: value
-          group_columns: {}
+          group_columns: {  }
           group_rows: true
           delta_limit: 0
           delta_offset: 0
@@ -147,7 +147,7 @@ display:
           settings:
             link: true
           group_column: target_id
-          group_columns: {}
+          group_columns: {  }
           group_rows: true
           delta_limit: 0
           delta_offset: 0
@@ -212,7 +212,7 @@ display:
           settings:
             link: true
           group_column: target_id
-          group_columns: {}
+          group_columns: {  }
           group_rows: true
           delta_limit: 0
           delta_offset: 0
@@ -288,7 +288,7 @@ display:
               granularity: 2
               refresh: 60
           group_column: value
-          group_columns: {}
+          group_columns: {  }
           group_rows: true
           delta_limit: 0
           delta_offset: 0
@@ -386,7 +386,7 @@ display:
           perm: 'administer comments'
       cache:
         type: tag
-        options: {}
+        options: {  }
       empty:
         area_text_custom:
           id: area_text_custom
@@ -416,7 +416,7 @@ display:
             field_identifier: changed
           exposed: false
           granularity: second
-      arguments: {}
+      arguments: {  }
       filters:
         comment_type:
           id: comment_type
@@ -440,7 +440,7 @@ display:
             use_operator: false
             operator: ''
             operator_limit_selection: false
-            operator_list: {}
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
@@ -457,8 +457,8 @@ display:
             multiple: false
             remember: false
             default_group: All
-            default_group_multiple: {}
-            group_items: {}
+            default_group_multiple: {  }
+            group_items: {  }
         field_name:
           id: field_name
           table: comment_field_data
@@ -480,7 +480,7 @@ display:
             use_operator: false
             operator: ''
             operator_limit_selection: false
-            operator_list: {}
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
@@ -497,8 +497,8 @@ display:
             multiple: false
             remember: false
             default_group: All
-            default_group_multiple: {}
-            group_items: {}
+            default_group_multiple: {  }
+            group_items: {  }
         entity_type:
           id: entity_type
           table: comment_field_data
@@ -520,7 +520,7 @@ display:
             use_operator: false
             operator: ''
             operator_limit_selection: false
-            operator_list: {}
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
@@ -537,8 +537,8 @@ display:
             multiple: false
             remember: false
             default_group: All
-            default_group_multiple: {}
-            group_items: {}
+            default_group_multiple: {  }
+            group_items: {  }
         type:
           id: type
           table: node_field_data
@@ -561,7 +561,7 @@ display:
             use_operator: false
             operator: ''
             operator_limit_selection: false
-            operator_list: {}
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
@@ -578,8 +578,8 @@ display:
             multiple: false
             remember: false
             default_group: All
-            default_group_multiple: {}
-            group_items: {}
+            default_group_multiple: {  }
+            group_items: {  }
       filter_groups:
         operator: AND
         groups:
@@ -587,7 +587,7 @@ display:
       style:
         type: table
         options:
-          grouping: {}
+          grouping: {  }
           row_class: ''
           default_row_class: true
           columns:
@@ -655,7 +655,7 @@ display:
           disable_sql_rewrite: false
           distinct: false
           replica: false
-          query_tags: {}
+          query_tags: {  }
       relationships:
         uid:
           id: uid
@@ -685,10 +685,10 @@ display:
       use_more: false
       use_more_always: true
       use_more_text: more
-      header: {}
-      footer: {}
+      header: {  }
+      footer: {  }
       hide_attachment_summary: false
-      display_extenders: {}
+      display_extenders: {  }
     cache_metadata:
       max-age: 0
       contexts:
@@ -697,7 +697,7 @@ display:
         - url
         - url.query_args
         - user.permissions
-      tags: {}
+      tags: {  }
       cacheable: false
   block_comments:
     id: block_comments
@@ -705,7 +705,7 @@ display:
     display_plugin: block
     position: 1
     display_options:
-      display_extenders: {}
+      display_extenders: {  }
       block_description: 'Comentários da Revista'
     cache_metadata:
       max-age: 0
@@ -715,5 +715,5 @@ display:
         - url
         - url.query_args
         - user.permissions
-      tags: {}
+      tags: {  }
       cacheable: false

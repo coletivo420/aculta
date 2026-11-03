@@ -7,4 +7,3 @@ label: 'Padrão ACULTA'
 brand: aculta
 header: '{{ brand_name }}'
 footer: '{{ brand_footer }}'
-
