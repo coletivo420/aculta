@@ -126,6 +126,36 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertFalse($container->get('module_handler')->hasImplementations('schema', ['aculta_lms']));
   }
 
+  /** Tests the P2 entity update installs all schemas and is idempotent. */
+  public function testP2LearningEntityUpdateIsIdempotent(): void {
+    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    aculta_lms_update_10005();
+    aculta_lms_update_10005();
+    aculta_lms_update_10006();
+    aculta_lms_update_10006();
+
+    $entity_type_manager = $this->container->get('entity_type.manager');
+    $schema = $this->container->get('database')->schema();
+    foreach (['aculta_lms_lesson', 'aculta_lms_activity', 'aculta_lms_answer', 'aculta_lms_progress'] as $entity_type_id) {
+      $this->assertTrue($entity_type_manager->hasDefinition($entity_type_id));
+      $this->assertTrue($schema->tableExists($entity_type_id));
+      $handler = $entity_type_manager->getAccessControlHandler($entity_type_id);
+      $entity = $entity_type_manager->getStorage($entity_type_id)->create();
+      $this->assertFalse($handler->access($entity, 'view', NULL));
+    }
+    $this->assertTrue($schema->indexExists('aculta_lms_lesson', 'course_weight'));
+    $this->assertTrue($schema->indexExists('aculta_lms_activity', 'lesson_weight'));
+    $this->assertTrue($schema->indexExists('aculta_lms_answer', 'activity_uid'));
+    $this->assertTrue($schema->indexExists('aculta_lms_progress', 'course_uid'));
+    $progress_indexes = $this->container->get('database')->query('SHOW INDEX FROM {aculta_lms_progress}')->fetchAllAssoc('Key_name');
+    $this->assertSame('0', (string) $progress_indexes['course_uid']->Non_unique);
+    $answer_create = $this->container->get('database')->query('SHOW CREATE TABLE {aculta_lms_answer}')->fetchField(1);
+    $progress_create = $this->container->get('database')->query('SHOW CREATE TABLE {aculta_lms_progress}')->fetchField(1);
+    $this->assertStringContainsString('varchar(16) NOT NULL', $answer_create);
+    $this->assertStringContainsString('varchar(32) NOT NULL', $progress_create);
+    $this->assertStringContainsString('activity_id" int(11) NOT NULL', $answer_create);
+  }
+
   /**
    * Tests that archived attempts are private, immutable, and purged.
    */

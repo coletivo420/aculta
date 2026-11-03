@@ -1,3 +1,9 @@
+## 0.1.0-dev.129 — entidades próprias de aprendizagem (ADR-042, P2)
+
+- Criadas as entidades internas de aula, atividade, resposta e progresso, com acesso negado por padrão e sem rotas ou formulários.
+- `aculta_lms_update_10005` instala as quatro definições de modo idempotente; `10006` alinha colunas obrigatórias e tamanhos (`state` 16, `status` 32). Índices compostos definidos na schema própria, incluindo unicidade curso/aluno no progresso.
+- Unit completa 211/673 PASS (1 depreciação PHPUnit); `AcultaLmsInstallTest` 5/126 PASS (27 depreciações upstream), incluindo reexecução dos updates, acesso negado e índice único. Gate Portal PASS (1.159 checks). Runtime atualizado após snapshot SHA-256 `d8be1298ddbc961a1397ffc22db74a3aa044d74edc2d1caeaafffcef2de0526e`; `updatedb:status` e `config:status` limpos; sem import de Config Sync.
+
 ## 0.1.0-dev.128 — Adaptadores de leitura ACULTA para aula, atividade e resposta
 
 - Registrados `ContribCourseLessonAdapter`, `ContribCourseActivityAdapter` e `ContribCourseAnswerAdapter`, cada um isolando sua entidade do LMS contrib atrás do contrato correspondente. Os serviços usam injeção de dependência e aliases por interface.

@@ -57,3 +57,57 @@ function aculta_lms_update_10004(): void {
     $manager->installEntityType(\Drupal::entityTypeManager()->getDefinition('aculta_lms_certificate_template'));
   }
 }
+
+/** Installs the four ACULTA-owned learning entities (ADR-042, P2). */
+function aculta_lms_update_10005(): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $entity_type_manager = \Drupal::entityTypeManager();
+  foreach (['aculta_lms_lesson', 'aculta_lms_activity', 'aculta_lms_answer', 'aculta_lms_progress'] as $entity_type_id) {
+    if (!$manager->getEntityType($entity_type_id)) {
+      $manager->installEntityType($entity_type_manager->getDefinition($entity_type_id));
+    }
+  }
+}
+
+/** Aligns required columns and constrained list lengths for the P2 tables. */
+function aculta_lms_update_10006(): void {
+  $database_schema = \Drupal::database()->schema();
+  $required_columns = [
+    'aculta_lms_lesson' => [
+      'course_id' => ['type' => 'int', 'not null' => TRUE],
+      'title' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE],
+      'published' => ['type' => 'int', 'size' => 'tiny', 'not null' => TRUE],
+      'weight' => ['type' => 'int', 'not null' => TRUE],
+      'changed' => ['type' => 'int', 'not null' => TRUE],
+    ],
+    'aculta_lms_activity' => [
+      'lesson_id' => ['type' => 'int', 'not null' => TRUE],
+      'type' => ['type' => 'varchar', 'length' => 64, 'not null' => TRUE],
+      'graded' => ['type' => 'int', 'size' => 'tiny', 'not null' => TRUE],
+      'weight' => ['type' => 'int', 'not null' => TRUE],
+      'changed' => ['type' => 'int', 'not null' => TRUE],
+    ],
+    'aculta_lms_answer' => [
+      'activity_id' => ['type' => 'int', 'not null' => TRUE],
+      'uid' => ['type' => 'int', 'not null' => TRUE],
+      'state' => ['type' => 'varchar', 'length' => 16, 'not null' => TRUE],
+      'created' => ['type' => 'int', 'not null' => TRUE],
+      'changed' => ['type' => 'int', 'not null' => TRUE],
+    ],
+    'aculta_lms_progress' => [
+      'course_id' => ['type' => 'int', 'not null' => TRUE],
+      'uid' => ['type' => 'int', 'not null' => TRUE],
+      'status' => ['type' => 'varchar', 'length' => 32, 'not null' => TRUE],
+      'finished' => ['type' => 'int', 'size' => 'tiny', 'not null' => TRUE],
+      'changed' => ['type' => 'int', 'not null' => TRUE],
+    ],
+  ];
+  foreach ($required_columns as $table => $columns) {
+    foreach ($columns as $column => $specification) {
+      if (!$database_schema->tableExists($table) || !$database_schema->fieldExists($table, $column)) {
+        continue;
+      }
+      $database_schema->changeField($table, $column, $column, $specification);
+    }
+  }
+}

@@ -1,5 +1,17 @@
 # Estado da sessão
 
+## Handoff mais recente — entidades próprias LMS P2, 2026-11-02
+
+- **Tarefa:** implementar as quatro entidades próprias do `aculta_lms` segundo ADR-042 e `docs/modules/P2-ENTIDADES-PROPRIAS-LMS.md`; P5/P6 e remoção de dados não executados.
+- **Referência:** branch `dev`, HEAD de referência `cd5e4c818b9443bbc088c4fbf7e0669ffa4dadbe`; `composer install` concluído. Sem commit/push conforme instrução explícita.
+- **Implementação:** `LessonEntity`, `ActivityEntity`, `AnswerEntity`, `ProgressEntity`; handler único interno de acesso negado; `LearningEntityStorageSchema` define índices compostos, inclusive chave única `course_id + uid`; updates idempotentes `aculta_lms_update_10005` e `10006` (colunas requeridas e tamanhos exatos). Campos/validações seguem o desenho; nenhuma rota/formulário.
+- **Arquivos:** `web/modules/custom/aculta_portal/modules/aculta_lms/src/{Access,Entity}/`; `aculta_lms.install`; `tests/src/Unit/LearningEntitiesTest.php`; teste Kernel em `tests/src/Kernel/AcultaLmsInstallTest.php`; versão/CHANGELOG, `docs/operations/status/aculta_lms.yml` e README gerado.
+- **Verificações:** Unit completa PASS, 211 testes/673 assertions, 1 depreciação PHPUnit; Kernel focal `AcultaLmsInstallTest` PASS, 5 testes/126 assertions, 27 depreciações Core/contrib. O Kernel chama os dois updates duas vezes e verifica os comprimentos SQL e índice único. A primeira verificação do índice único falhou por consulta sem prefixo do banco de teste; corrigida para `SHOW INDEX FROM {table}` e suíte repetida PASS. Gate Portal Drupal 11+ PASS, 1.159 checks; status index PASS, 48 componentes; PHP lint dos novos arquivos/instalador e `git diff --check` PASS.
+- **Runtime:** hostname `toca`, Drush confirmou Drupal 11.4.10 e banco `aculta_runtime`. Antes: `aculta_lms_update_10005` pendente; após inclusão do alinhamento de schema, `10006` também ficou pendente. `config:status` sem diferenças. Snapshot comprimido criado fora do checkout, SHA-256 `d8be1298ddbc961a1397ffc22db74a3aa044d74edc2d1caeaafffcef2de0526e`. Aplicados somente os updates P2 `10005` e `10006`; depois `updatedb:status` sem pendências e `config:status` sem diferenças. `SHOW CREATE TABLE` confirmou quatro tabelas e os índices; progresso tem `UNIQUE KEY course_uid (course_id, uid)`. Sem import de configuração.
+- **Pendências:** instalação limpa total da closure Portal não exercitada; Kernel focal existente foi usado, conforme harness com `key` e `aculta_simpletest`. Sem validação PHP 8.5 (Runtime/CLI usam 8.4.27). Runtime permanece no mesmo checkout local sem commit/push, por ordem explícita; tabela vazia inicial, sem migração de legado.
+- **Retomar lendo:** `docs/modules/P2-ENTIDADES-PROPRIAS-LMS.md`; as novas entidades e `LearningEntityStorageSchema`; `aculta_lms_update_10005`/`10006`; teste `AcultaLmsInstallTest`; resultados em changelog e status.
+
+
 ## Handoff mais recente — adaptadores ACULTA do LMS contrib, 2026-11-02
 
 - **Tarefa:** concluir os adaptadores P1 de aula, atividade e resposta do `aculta_lms`, seguindo o ADR-042; P5/P6 não executados.
