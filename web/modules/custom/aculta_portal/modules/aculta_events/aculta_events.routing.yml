@@ -543,7 +543,7 @@ aculta_events.location_widget_clear:
   defaults:
     _controller: '\Drupal\aculta_events\Controller\EventLocationWidgetController::clear'
   requirements:
-    _permission: 'access content'
+    _custom_access: '\Drupal\aculta_events\Form\EventLocationModalForm::access'
   options:
     _admin_route: true
     _aculta_domain_purpose: main
