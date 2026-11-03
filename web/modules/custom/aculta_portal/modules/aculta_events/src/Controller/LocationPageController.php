@@ -152,8 +152,8 @@ final class LocationPageController extends ControllerBase {
       ];
     }
 
-    $site = (string) ($aculta_event_location->get('field_site')->value ?? '');
-    if ($site !== '') {
+    $site = self::safeSiteUrl((string) ($aculta_event_location->get('field_site')->value ?? ''));
+    if ($site !== NULL) {
       $details['site'] = [
         '#type' => 'item',
         '#title' => $this->t('Site oficial'),
@@ -265,6 +265,21 @@ final class LocationPageController extends ControllerBase {
     ];
 
     return $build;
+  }
+
+  /**
+   * Returns a site URL safe for public HTML and structured data.
+   */
+  private static function safeSiteUrl(string $value): ?string {
+    $value = trim($value);
+    $scheme = parse_url($value, PHP_URL_SCHEME);
+    if ($value === '' || !is_string($scheme)
+      || !in_array(strtolower($scheme), ['http', 'https'], TRUE)
+      || preg_match('/[\x00-\x20<\x22\x3e\x7f]/', $value) === 1
+      || filter_var($value, FILTER_VALIDATE_URL) === FALSE) {
+      return NULL;
+    }
+    return $value;
   }
 
   /**

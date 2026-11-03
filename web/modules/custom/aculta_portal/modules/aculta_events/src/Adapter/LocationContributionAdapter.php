@@ -171,8 +171,13 @@ final class LocationContributionAdapter implements ContributionAdapterInterface 
         throw new UnprocessableEntityHttpException('Um dos campos propostos para o Local é inválido.');
       }
       $value = trim($value);
-      if ($field === 'field_site' && $value !== '' && filter_var($value, FILTER_VALIDATE_URL) === FALSE) {
-        throw new UnprocessableEntityHttpException('O site do Local precisa ser uma URL válida.');
+      if ($field === 'field_site' && $value !== '') {
+        $scheme = parse_url($value, PHP_URL_SCHEME);
+        if (!is_string($scheme) || !in_array(strtolower($scheme), ['http', 'https'], TRUE)
+          || preg_match('/[\x00-\x20<\x22\x3e\x7f]/', $value) === 1
+          || filter_var($value, FILTER_VALIDATE_URL) === FALSE) {
+          throw new UnprocessableEntityHttpException('O site do Local precisa ser uma URL HTTP ou HTTPS válida.');
+        }
       }
       if ($field === 'title' && $value === '') {
         throw new UnprocessableEntityHttpException('O nome do Local não pode ficar vazio.');

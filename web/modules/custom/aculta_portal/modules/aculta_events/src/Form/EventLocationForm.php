@@ -122,6 +122,15 @@ final class EventLocationForm extends ContentEntityForm {
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
+    $site = trim((string) ($form_state->getValue(['field_site', 0, 'uri']) ?? ''));
+    if ($site !== '') {
+      $scheme = parse_url($site, PHP_URL_SCHEME);
+      if (!is_string($scheme) || !in_array(strtolower($scheme), ['http', 'https'], TRUE)
+        || preg_match('/[\x00-\x20<\x22\x3e\x7f]/', $site) === 1
+        || filter_var($site, FILTER_VALIDATE_URL) === FALSE) {
+        $form_state->setErrorByName('field_site', (string) $this->t('O site do Local precisa ser uma URL HTTP ou HTTPS válida.'));
+      }
+    }
     $values = $form_state->getValue('field_endereco');
     if (is_array($values)) {
       foreach ($values as $item) {
