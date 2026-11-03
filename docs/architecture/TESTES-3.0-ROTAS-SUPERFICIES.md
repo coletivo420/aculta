@@ -79,7 +79,7 @@ Runtime Homelab. A coluna `Location` ficou ausente em todos os casos.
 | `/we-sativa` no Wiki | 403 | 403 |
 | `/green-stash` na Loja | 403 | 403 |
 | `/wiki` e `/loja` internos | 404 | 404 |
-| Painel MAIN sem sessão | 404 | 404 |
+| Painel MAIN sem sessão | 404 (módulo desabilitado no primeiro levantamento) | 403 |
 | Painel em subdomínio | 404 | 404 |
 | `/studio` e `/studio/x` | 404 | 404 |
 | `/wesativa`, `/greenstash`, `/wiki/busca` | 404 | 404 |
@@ -90,4 +90,5 @@ As respostas Drupal comuns usaram `Cache-Control: must-revalidate, no-cache,
 private`; `/studio*` e `/integracoes/mcp` fora do MAIN usaram `no-store,
 private`. Os 403 das Suites são controle de acesso para anônimo, sem redirect.
 A validação autenticada da página administrativa e das Suites permanece
-DEFERRED nesta execução.
+DEFERRED; o painel MAIN foi confirmado como rota existente por 403 de
+permissão, e o mesmo caminho no Wiki permanece 404 sem redirect.

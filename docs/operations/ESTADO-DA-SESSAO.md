@@ -145,3 +145,4 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 
 - **Continuação:** expectativas antigas de `/wesativa` e `/greenstash` foram corrigidas para `/we-sativa` e `/green-stash` nos testes de Studio e Commerce. A suíte combinada passou 257 testes/1.642 asserções; commit `52c52301b` está publicado em `origin/dev`.
 - **Interface administrativa:** rota, permissão restrita, parent de menu ACULTA e purpose MAIN conferidos nos YAML e no teste estático. A requisição anônima retorna 404; validação autenticada segue DEFERRED por falta de sessão de teste.
+- **Interface administrativa no Runtime:** `aculta_superficies` foi habilitado para a validação. `/painel-administrativo/aculta/caminhos` retorna 403 no MAIN para anônimo e 404 em subdomínio; a rota expõe path, purpose `main`, permissão `administrar superficies` e `_admin_route: true`. `config:status` mostra `core.extension` e `aculta_portal.superficies` como diferenças esperadas.
