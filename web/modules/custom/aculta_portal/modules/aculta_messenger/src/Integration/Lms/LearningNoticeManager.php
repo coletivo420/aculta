@@ -233,9 +233,9 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       'completion' => $source instanceof CourseStatusInterface ? $this->resolveCompletion($sourceUuid, $account, $source) : NULL,
       'evaluation' => $source instanceof AnswerInterface ? $this->resolveEvaluation($sourceUuid, $account, $source) : NULL,
       'submission' => $source instanceof AnswerInterface ? $this->resolveSubmission($sourceUuid, $account, $source) : NULL,
-      'course_release' => $source instanceof EntityPublishedInterface ? $this->resolveContentRelease($sourceUuid, 'group', $account, $source) : NULL,
-      'lesson_release' => $source instanceof EntityPublishedInterface ? $this->resolveContentRelease($sourceUuid, 'lms_lesson', $account, $source) : NULL,
-      'activity_release' => $source instanceof EntityPublishedInterface ? $this->resolveContentRelease($sourceUuid, 'lms_activity', $account, $source) : NULL,
+      'course_release' => $this->resolveContentRelease($sourceUuid, $account, $source),
+      'lesson_release' => $this->resolveContentRelease($sourceUuid, $account, $source),
+      'activity_release' => $this->resolveContentRelease($sourceUuid, $account, $source),
       'feedback' => $source instanceof CommentInterface ? $this->resolveEducatorFeedback($sourceUuid, $account, $source) : NULL,
       'deadline' => $source instanceof GroupRelationshipInterface ? $this->resolveActivityDeadline($sourceUuid, $account, (string) $message->get(self::EVENT_VERSION_FIELD)->value, FALSE, $source) : NULL,
       'deadline_reminder' => $source instanceof GroupRelationshipInterface ? $this->resolveActivityDeadline($sourceUuid, $account, (string) $message->get(self::EVENT_VERSION_FIELD)->value, TRUE, $source) : NULL,
@@ -303,8 +303,8 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
       'completion' => 'lms_course_status',
       'evaluation', 'submission' => 'lms_answer',
       'course_release' => 'group',
-      'lesson_release' => 'lms_lesson',
-      'activity_release' => 'lms_activity',
+      'lesson_release' => 'aculta_lms_lesson',
+      'activity_release' => 'aculta_lms_activity',
       'feedback' => 'comment',
       default => NULL,
     };
@@ -707,12 +707,12 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
   /**
    * Resolves a published content release only while the learner stays enrolled.
    */
-  private function resolveContentRelease(string $sourceUuid, string $entityType, AccountInterface $account, EntityPublishedInterface $content): ?array {
-    if (!$content instanceof EntityPublishedInterface || !$content->isPublished()) {
+  private function resolveContentRelease(string $sourceUuid, AccountInterface $account, EntityInterface $content): ?array {
+    if (!$this->eligibility->isContentAvailable($content)) {
       return NULL;
     }
     foreach ($this->eligibility->coursesForContent($content) as $course) {
-      if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course' || !$course->isPublished()
+      if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course' || !$course->isPublished()
         || !$course->access('view', $account, TRUE)->isAllowed() || !$this->eligibility->hasCurrentEnrollment($course, $account)) {
         continue;
       }

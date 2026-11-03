@@ -87,8 +87,8 @@ final class LearningNoticeEventSubscriberTest extends UnitTestCase {
     $routes = [
       ['submission', 'lms_answer'],
       ['course_release', 'group'],
-      ['lesson_release', 'lms_lesson'],
-      ['activity_release', 'lms_activity'],
+      ['lesson_release', 'aculta_lms_lesson'],
+      ['activity_release', 'aculta_lms_activity'],
       ['feedback', 'comment'],
       ['deadline', 'group_relationship'],
       ['deadline_reminder', 'group_relationship'],
@@ -110,8 +110,8 @@ final class LearningNoticeEventSubscriberTest extends UnitTestCase {
     foreach ([
       ['submission', 'lms_answer'],
       ['course_release', 'group'],
-      ['lesson_release', 'lms_lesson'],
-      ['activity_release', 'lms_activity'],
+      ['lesson_release', 'aculta_lms_lesson'],
+      ['activity_release', 'aculta_lms_activity'],
       ['feedback', 'comment'],
       ['deadline', 'group_relationship'],
       ['deadline_reminder', 'group_relationship'],

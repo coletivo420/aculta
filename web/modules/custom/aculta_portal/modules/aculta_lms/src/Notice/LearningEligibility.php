@@ -5,17 +5,15 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Notice;
 
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
-use Drupal\Core\Entity\EntityPublishedInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\lms\Entity\ActivityInterface;
 use Drupal\lms\Entity\AnswerInterface;
 use Drupal\lms\Entity\CourseInterface;
 use Drupal\lms\Entity\CourseStatusInterface;
-use Drupal\lms\Entity\LessonInterface;
 use Drupal\lms\Entity\LessonStatusInterface;
 use Drupal\user\UserInterface;
 
@@ -50,38 +48,43 @@ final class LearningEligibility implements LearningEligibilityInterface {
   /**
    * {@inheritdoc}
    */
-  public function coursesForContent(EntityPublishedInterface $content): array {
+  public function coursesForContent(EntityInterface $content): array {
     if ($content instanceof GroupInterface && $content->bundle() === 'lms_course') {
       return [$content];
     }
-    $lessonIds = [];
-    if ($content instanceof LessonInterface) {
-      $lessonIds[] = (int) $content->id();
+    $lesson = NULL;
+    if ($content->getEntityTypeId() === 'aculta_lms_lesson') {
+      $lesson = $content;
     }
-    elseif ($content instanceof ActivityInterface) {
-      $lessonIds = array_map('intval', array_keys($this->entityTypeManager->getStorage('lms_lesson')->getQuery()
-        ->accessCheck(FALSE)
-        ->condition(LessonInterface::ACTIVITIES . '.target_id', (int) $content->id())
-        ->execute()));
+    elseif ($content->getEntityTypeId() === 'aculta_lms_activity') {
+      $lesson = $this->entityTypeManager->getStorage('aculta_lms_lesson')->load((int) $content->get('lesson_id')->value);
     }
-    if ($lessonIds === []) {
+    if (!$lesson instanceof EntityInterface) {
       return [];
     }
-    $courseIds = $this->entityTypeManager->getStorage('group')->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('type', 'lms_course')
-      ->condition('lessons.target_id', $lessonIds, 'IN')
-      ->execute();
-    return array_values(array_filter(
-      $this->entityTypeManager->getStorage('group')->loadMultiple($courseIds),
-      static fn ($course): bool => $course instanceof GroupInterface,
-    ));
+    $course = $this->entityTypeManager->getStorage('group')->load((int) $lesson->get('course_id')->value);
+    return $course instanceof GroupInterface && $course->bundle() === 'lms_course' ? [$course] : [];
+  }
+
+  /** {@inheritdoc} */
+  public function isContentAvailable(EntityInterface $content): bool {
+    if ($content instanceof GroupInterface && $content->bundle() === 'lms_course') {
+      return $content->isPublished();
+    }
+    if ($content->getEntityTypeId() === 'aculta_lms_lesson') {
+      return (bool) $content->get('published')->value;
+    }
+    if ($content->getEntityTypeId() === 'aculta_lms_activity') {
+      $lesson = $this->entityTypeManager->getStorage('aculta_lms_lesson')->load((int) $content->get('lesson_id')->value);
+      return $lesson instanceof EntityInterface && (bool) $lesson->get('published')->value;
+    }
+    return FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function hasCurrentEnrollment(CourseInterface $course, AccountInterface $account): bool {
+  public function hasCurrentEnrollment(GroupInterface $course, AccountInterface $account): bool {
     if (!$course->hasPermission('take course', $account)) {
       return FALSE;
     }

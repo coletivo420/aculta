@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Event;
 
 /**
- * A published course, lesson, or activity became available to learners.
+ * Published Group courses and available ACULTA lessons or activities.
  */
 final readonly class CourseContentReleasedEvent {
 
@@ -18,8 +18,8 @@ final readonly class CourseContentReleasedEvent {
    */
   public const NOTICE_TYPES = [
     'group' => 'course_release',
-    'lms_lesson' => 'lesson_release',
-    'lms_activity' => 'activity_release',
+    'aculta_lms_lesson' => 'lesson_release',
+    'aculta_lms_activity' => 'activity_release',
   ];
 
   public function __construct(

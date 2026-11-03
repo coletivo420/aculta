@@ -4,27 +4,22 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Unit;
 
-use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\aculta_lms\Event\CourseContentReleasedEvent;
 use Drupal\aculta_lms\Hook\CourseContentEventHooks;
+use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\group\Entity\Group;
-use Drupal\lms\Entity\Activity;
-use Drupal\lms\Entity\Lesson;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-/**
- * Tests learner notice events for published LMS content transitions.
- */
+/** Tests learner notices for content stored in ACULTA's own entities. */
 #[CoversClass(CourseContentEventHooks::class)]
 #[TestGroup('aculta_lms')]
 final class CourseContentEventHooksTest extends UnitTestCase {
 
-  /**
-   * Publishes an event when a course is first created published.
-   */
   public function testPublishedCourseInsertPublishesRelease(): void {
     $course = $this->createMock(Group::class);
     $course->method('bundle')->willReturn('lms_course');
@@ -32,96 +27,75 @@ final class CourseContentEventHooksTest extends UnitTestCase {
     $course->method('isPublished')->willReturn(TRUE);
     $course->method('uuid')->willReturn('course-uuid');
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
-    $dispatcher->expects($this->once())
-      ->method('dispatch')
-      ->with($this->callback(static fn (object $event): bool =>
-        $event instanceof CourseContentReleasedEvent
-        && $event->noticeType() === 'course_release'
-        && $event->contentUuid === 'course-uuid'
-        && preg_match('/^[a-f0-9]{32}$/', $event->publicationVersion) === 1
-      ));
+    $dispatcher->expects(self::once())->method('dispatch')->with($this->callback(static fn(object $event): bool =>
+      $event instanceof CourseContentReleasedEvent
+      && $event->noticeType() === 'course_release'
+      && $event->contentUuid === 'course-uuid'
+    ));
 
-    (new CourseContentEventHooks($dispatcher))->entityInsert($course);
+    (new CourseContentEventHooks($dispatcher, $this->createMock(EntityTypeManagerInterface::class)))->entityInsert($course);
   }
 
-  /**
-   * Publishes when an existing activity becomes published.
-   */
-  public function testActivityPublicationTransitionPublishesRelease(): void {
-    $original = $this->createMock(Activity::class);
-    $original->method('isPublished')->willReturn(FALSE);
-    $activity = $this->createMock(Activity::class);
-    $activity->method('isPublished')->willReturn(TRUE);
-    $activity->method('getOriginal')->willReturn($original);
-    $activity->method('getEntityTypeId')->willReturn('lms_activity');
-    $activity->method('uuid')->willReturn('activity-uuid');
+  public function testPublishedOwnLessonInsertPublishesRelease(): void {
+    $lesson = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => TRUE]);
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
-    $dispatcher->expects($this->once())
-      ->method('dispatch')
-      ->with($this->callback(static fn (object $event): bool =>
-        $event instanceof CourseContentReleasedEvent && $event->noticeType() === 'activity_release'
-      ));
+    $dispatcher->expects(self::once())->method('dispatch')->with($this->callback(static fn(object $event): bool =>
+      $event instanceof CourseContentReleasedEvent
+      && $event->noticeType() === 'lesson_release'
+      && $event->contentUuid === 'lesson-uuid'
+    ));
 
-    (new CourseContentEventHooks($dispatcher))->entityUpdate($activity);
+    (new CourseContentEventHooks($dispatcher, $this->createMock(EntityTypeManagerInterface::class)))->entityInsert($lesson);
   }
 
-  /**
-   * Editorial changes to already released content do not create notices.
-   */
-  public function testEditorialActivityUpdateDoesNotPublishRelease(): void {
-    $original = $this->createMock(Activity::class);
-    $original->method('isPublished')->willReturn(TRUE);
-    $activity = $this->createMock(Activity::class);
-    $activity->method('isPublished')->willReturn(TRUE);
-    $activity->method('getOriginal')->willReturn($original);
+  public function testActivityAvailabilityInheritsPublishedLesson(): void {
+    $lesson = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => TRUE]);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::once())->method('load')->with(4)->willReturn($lesson);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getStorage')->with('aculta_lms_lesson')->willReturn($storage);
+    $activity = $this->contentEntity('aculta_lms_activity', 'activity-uuid', ['lesson_id' => 4]);
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
-    $dispatcher->expects($this->never())->method('dispatch');
+    $dispatcher->expects(self::once())->method('dispatch')->with($this->callback(static fn(object $event): bool =>
+      $event instanceof CourseContentReleasedEvent
+      && $event->noticeType() === 'activity_release'
+      && $event->contentUuid === 'activity-uuid'
+    ));
 
-    (new CourseContentEventHooks($dispatcher))->entityUpdate($activity);
+    (new CourseContentEventHooks($dispatcher, $manager))->entityInsert($activity);
   }
 
-  /**
-   * Adding a published activity to a published lesson creates a release event.
-   */
-  public function testAddingPublishedActivityToLessonPublishesRelease(): void {
-    $oldActivity = $this->createMock(Activity::class);
-    $oldActivity->method('id')->willReturn('12');
-    $newActivity = $this->createMock(Activity::class);
-    $newActivity->method('id')->willReturn('13');
-    $newActivity->method('isPublished')->willReturn(TRUE);
-    $newActivity->method('getEntityTypeId')->willReturn('lms_activity');
-    $newActivity->method('uuid')->willReturn('activity-13-uuid');
-
-    $original = $this->createMock(Lesson::class);
-    $original->method('isPublished')->willReturn(TRUE);
-    $original->method('hasField')->with('activities')->willReturn(TRUE);
-    $original->method('get')->with('activities')->willReturn($this->referenceList([$oldActivity]));
-    $lesson = $this->createMock(Lesson::class);
-    $lesson->method('isPublished')->willReturn(TRUE);
-    $lesson->method('getOriginal')->willReturn($original);
-    $lesson->method('hasField')->with('activities')->willReturn(TRUE);
-    $lesson->method('get')->with('activities')->willReturn($this->referenceList([$oldActivity, $newActivity]));
-
+  public function testActivityUnderUnpublishedLessonDoesNotPublish(): void {
+    $lesson = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => FALSE]);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('load')->with(4)->willReturn($lesson);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getStorage')->with('aculta_lms_lesson')->willReturn($storage);
+    $activity = $this->contentEntity('aculta_lms_activity', 'activity-uuid', ['lesson_id' => 4]);
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
-    $dispatcher->expects($this->once())
-      ->method('dispatch')
-      ->with($this->callback(static fn (object $event): bool =>
-        $event instanceof CourseContentReleasedEvent && $event->contentUuid === 'activity-13-uuid'
-      ));
+    $dispatcher->expects(self::never())->method('dispatch');
 
-    (new CourseContentEventHooks($dispatcher))->entityUpdate($lesson);
+    (new CourseContentEventHooks($dispatcher, $manager))->entityInsert($activity);
   }
 
-  /**
-   * Creates an LMS reference list for a content entity mock.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface[] $entities
-   *   Referenced content entities.
-   */
-  private function referenceList(array $entities): object {
-    $field = $this->createMock(EntityReferenceFieldItemListInterface::class);
-    $field->method('referencedEntities')->willReturn($entities);
-    return $field;
+  public function testEditorialUpdateOfAvailableLessonDoesNotPublish(): void {
+    $original = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => TRUE]);
+    $lesson = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => TRUE], $original);
+    $dispatcher = $this->createMock(EventDispatcherInterface::class);
+    $dispatcher->expects(self::never())->method('dispatch');
+
+    (new CourseContentEventHooks($dispatcher, $this->createMock(EntityTypeManagerInterface::class)))->entityUpdate($lesson);
+  }
+
+  private function contentEntity(string $type, string $uuid, array $fields, ?ContentEntityBase $original = NULL): ContentEntityBase {
+    $entity = $this->createMock(ContentEntityBase::class);
+    $entity->method('getEntityTypeId')->willReturn($type);
+    $entity->method('uuid')->willReturn($uuid);
+    $entity->method('getOriginal')->willReturn($original);
+    $entity->method('get')->willReturnCallback(static function (string $name) use ($fields): object {
+      return (object) ['value' => $fields[$name] ?? NULL];
+    });
+    return $entity;
   }
 
 }

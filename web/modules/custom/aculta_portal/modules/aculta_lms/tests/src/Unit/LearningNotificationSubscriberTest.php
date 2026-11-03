@@ -129,10 +129,10 @@ final class LearningNotificationSubscriberTest extends UnitTestCase {
     $manager = $this->createMock(LearningNoticeRecipientsInterface::class);
     $manager->expects($this->once())
       ->method('publishContentReleaseNoticesForLearners')
-      ->with('lesson-uuid', 'lms_lesson', str_repeat('c', 32));
+      ->with('lesson-uuid', 'aculta_lms_lesson', str_repeat('c', 32));
 
     $subscriber = new LearningNotificationSubscriber($manager, $this->publisher(), new NullLogger());
-    $subscriber->contentReleased(new CourseContentReleasedEvent('lms_lesson', 'lesson-uuid', str_repeat('c', 32)));
+    $subscriber->contentReleased(new CourseContentReleasedEvent('aculta_lms_lesson', 'lesson-uuid', str_repeat('c', 32)));
   }
 
   /**

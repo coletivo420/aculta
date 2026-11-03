@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Notice;
 
-use Drupal\Core\Entity\EntityPublishedInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\lms\Entity\ActivityInterface;
 use Drupal\lms\Entity\AnswerInterface;
 use Drupal\lms\Entity\CourseInterface;
 
@@ -30,12 +29,17 @@ interface LearningEligibilityInterface {
    * @return \Drupal\group\Entity\GroupInterface[]
    *   Course groups that contain the lesson or activity.
    */
-  public function coursesForContent(EntityPublishedInterface $content): array;
+  public function coursesForContent(EntityInterface $content): array;
+
+  /**
+   * Whether ACULTA content is currently available to enrolled learners.
+   */
+  public function isContentAvailable(EntityInterface $content): bool;
 
   /**
    * Checks active take-course permission in any class linked to the course.
    */
-  public function hasCurrentEnrollment(CourseInterface $course, AccountInterface $account): bool;
+  public function hasCurrentEnrollment(GroupInterface $course, AccountInterface $account): bool;
 
   /**
    * Checks an active take-course membership in the specific class.

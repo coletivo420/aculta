@@ -6,10 +6,9 @@ namespace Drupal\aculta_lms\Hook;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\lms\Entity\ActivityInterface;
-use Drupal\lms\Entity\LessonInterface;
 use Drupal\aculta_lms\Event\CourseContentReleasedEvent;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -20,6 +19,7 @@ final class CourseContentEventHooks {
 
   public function __construct(
     private readonly EventDispatcherInterface $eventDispatcher,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**
@@ -27,7 +27,7 @@ final class CourseContentEventHooks {
    */
   #[Hook('entity_insert')]
   public function entityInsert(EntityInterface $entity): void {
-    if ($this->isSupportedContent($entity) && $entity instanceof EntityPublishedInterface && $entity->isPublished()) {
+    if ($this->isContentAvailable($entity)) {
       $this->publish($entity);
     }
   }
@@ -37,34 +37,12 @@ final class CourseContentEventHooks {
    */
   #[Hook('entity_update')]
   public function entityUpdate(EntityInterface $entity): void {
-    if (!$this->isSupportedContent($entity) || !$entity instanceof EntityPublishedInterface || !$entity->isPublished()) {
+    if (!$this->isSupportedContent($entity) || !$this->isContentAvailable($entity)) {
       return;
     }
     $original = $entity->getOriginal();
-    if (!$original instanceof EntityPublishedInterface || !$original->isPublished()) {
+    if ($original === NULL || !$this->isContentAvailable($original)) {
       $this->publish($entity);
-      return;
-    }
-
-    $field = match (TRUE) {
-      $entity instanceof GroupInterface && $entity->bundle() === 'lms_course' => 'lessons',
-      $entity instanceof LessonInterface => LessonInterface::ACTIVITIES,
-      default => NULL,
-    };
-    if ($field === NULL || !$entity->hasField($field) || !$original->hasField($field)) {
-      return;
-    }
-
-    $previousIds = [];
-    foreach ($original->get($field)->referencedEntities() as $previous) {
-      $previousIds[(string) $previous->id()] = TRUE;
-    }
-    foreach ($entity->get($field)->referencedEntities() as $referenced) {
-      if (isset($previousIds[(string) $referenced->id()]) || !$this->isSupportedChild($entity, $referenced)
-        || !$referenced instanceof EntityPublishedInterface || !$referenced->isPublished()) {
-        continue;
-      }
-      $this->publish($referenced);
     }
   }
 
@@ -73,16 +51,24 @@ final class CourseContentEventHooks {
    */
   private function isSupportedContent(EntityInterface $entity): bool {
     return ($entity instanceof GroupInterface && $entity->bundle() === 'lms_course')
-      || $entity instanceof LessonInterface
-      || $entity instanceof ActivityInterface;
+      || in_array($entity->getEntityTypeId(), ['aculta_lms_lesson', 'aculta_lms_activity'], TRUE);
   }
 
   /**
-   * Checks that a newly referenced lesson or activity belongs to its field.
+   * Checks availability through ACULTA's lesson publication state.
    */
-  private function isSupportedChild(EntityInterface $parent, EntityInterface $child): bool {
-    return ($parent instanceof GroupInterface && $child instanceof LessonInterface)
-      || ($parent instanceof LessonInterface && $child instanceof ActivityInterface);
+  private function isContentAvailable(EntityInterface $entity): bool {
+    if ($entity instanceof GroupInterface && $entity->bundle() === 'lms_course') {
+      return $entity instanceof EntityPublishedInterface && $entity->isPublished();
+    }
+    if ($entity->getEntityTypeId() === 'aculta_lms_lesson') {
+      return (bool) $entity->get('published')->value;
+    }
+    if ($entity->getEntityTypeId() === 'aculta_lms_activity') {
+      $lesson = $this->entityTypeManager->getStorage('aculta_lms_lesson')->load((int) $entity->get('lesson_id')->value);
+      return $lesson instanceof EntityInterface && (bool) $lesson->get('published')->value;
+    }
+    return FALSE;
   }
 
   /**

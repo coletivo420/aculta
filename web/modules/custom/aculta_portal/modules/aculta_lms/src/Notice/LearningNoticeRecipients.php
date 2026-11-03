@@ -9,6 +9,7 @@ use Drupal\aculta_lms\Event\CourseContentReleasedEvent;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\comment\CommentInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\group\Entity\GroupInterface;
@@ -74,12 +75,12 @@ final class LearningNoticeRecipients implements LearningNoticeRecipientsInterfac
     }
     $contentEntities = $this->entityTypeManager->getStorage($contentEntityType)->loadByProperties(['uuid' => $contentUuid]);
     $content = reset($contentEntities);
-    if (!$content instanceof EntityPublishedInterface || !$content->isPublished()) {
+    if (!$content instanceof EntityInterface || !$this->eligibility->isContentAvailable($content)) {
       return;
     }
     $courses = $this->eligibility->coursesForContent($content);
     foreach ($courses as $course) {
-      if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course' || !$course->isPublished()) {
+      if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course' || !$course->isPublished()) {
         continue;
       }
       foreach ($course->getRelationships('lms_classes') as $relationship) {

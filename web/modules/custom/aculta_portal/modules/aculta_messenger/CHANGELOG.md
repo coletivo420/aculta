@@ -408,3 +408,7 @@ Validação: Unit Messenger **402 testes / 4.374 assertions PASS**; update 10017
 aplicado e configuração sincronizada no Runtime. SMTP e jornada autenticada não
 foram executados.
 
+## 0.1.1-dev.407 — avisos validam conteúdo educacional ACULTA
+
+- Abertura de avisos de aula/atividade usa as entidades próprias do LMS e a elegibilidade atual da aula publicada e da matrícula Group.
+
