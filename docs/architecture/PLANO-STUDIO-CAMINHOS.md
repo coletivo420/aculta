@@ -9,6 +9,20 @@ Base: `dev` @ d6953c8 (histórico reescrito em 2026-11-02 para remover o trailer
 - GREEN STASH: entrada na **raiz do subdomínio loja420**, sem prefixo `/studio`. Carrinho, checkout e pagamento continuam no MAIN.
 - O novo módulo (`aculta_superficies`) controla superfície, modo e slug. A política de `/studio/*` deixa de ser a fonte.
 
+## Respostas do responsável (2026-11-02, perguntas interativas)
+
+- **Wiki (wiki420):** a raiz `/` é a Wiki. `/wiki` sai e responde 404.
+- **Loja (loja420):** a raiz `/` é a loja. `/loja` sai e responde 404.
+- **WE SATIVA:** `/we-sativa` no purpose `wiki`.
+- **GREEN STASH:** `/green-stash` no purpose `shop`.
+- **Caminhos antigos** (`/wesativa`, `/greenstash`): 404 sem redirect, antes da versão estável.
+- **Rotas de ação:** mudam junto com a entrada, para o novo prefixo.
+- **Subrotas:** as subrotas internas da Wiki (`/wiki/busca`, `/wiki/verbetes/...`, `/wiki/propostas/...`) e da loja (`/loja/...`) sobem para a raiz do subdomínio, sem prefixo. Ex.: `/wiki/busca` → `/busca`.
+
+Consequência: a entrada da Wiki e a da loja ocupam a raiz. Os caminhos de WE SATIVA e GREEN STASH ficam em `/we-sativa` e `/green-stash`.
+
+Pendente antes da Fase B: nenhuma pergunta aberta. A Fase B altera rotas e controllers conforme acima; falta confirmar a ordem entre rotas da raiz (`/` do purpose wiki e `/` do purpose shop) e a presença de `/busca` no purpose `wiki` com a busca do MAIN.
+
 ## Estado medido (código em d6953c8)
 
 | Ponto | Onde | O que diz |
