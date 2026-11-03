@@ -1,3 +1,8 @@
+## 0.4.0-dev.34 — repara definições instaladas após renomeação de entidades — 2026-11-03
+
+- A renomeação agora regrava os objetos de definição de entidade/campos pelos IDs ativos; as versões anteriores só atualizavam as chaves e os arrays do key-value, deixando IDs antigos dentro de objetos serializados.
+- O update `10011` repara instalações já afetadas antes de o Core calcular a lista de mudanças. Runtime `toca`: snapshot e aplicação do update ficam registrados no handoff operacional.
+
 ## 0.4.0-dev.33 — token de apresentação da micropágina — 2026-10-26
 
 - A classe visual do link público passa pelo token `links-page-link` do contrato Portal–tema, preservando a mesma classe no ACULTA420.

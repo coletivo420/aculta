@@ -205,6 +205,8 @@ function aculta_linkweed_update_10009(): string {
     }
   }
 
+  aculta_linkweed_repair_installed_entity_definitions();
+
   return 'Renomeados o módulo LinkWeed, suas entidades, tabelas, schema e configurações ativas.';
 }
 
@@ -258,5 +260,45 @@ function aculta_linkweed_update_10010(): string {
     $storage->delete($name);
   }
   return 'Corrigidos os identificadores duplicados da migração LinkWeed.';
+}
+
+/**
+ * Rewrites installed definition objects after entity type IDs have changed.
+ *
+ * The rename passes above can rename key-value keys and arrays, but entity
+ * type and field storage definitions are objects. Their embedded entity type
+ * IDs must come from the active definitions, or Core fails while calculating
+ * the change list (before update hooks can run).
+ */
+function aculta_linkweed_repair_installed_entity_definitions(): void {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $entity_field_manager = \Drupal::service('entity_field.manager');
+  $repository = \Drupal::service('entity.last_installed_schema.repository');
+
+  $entity_type_manager->useCaches(FALSE);
+  $entity_field_manager->useCaches(FALSE);
+  try {
+    foreach (['aculta_linkweed', 'aculta_linkweed_item', 'aculta_linkweed_page'] as $entity_type_id) {
+      if (!$entity_type_manager->hasDefinition($entity_type_id)) {
+        continue;
+      }
+      $repository->setLastInstalledDefinition($entity_type_manager->getDefinition($entity_type_id));
+      $repository->setLastInstalledFieldStorageDefinitions(
+        $entity_type_id,
+        $entity_field_manager->getFieldStorageDefinitions($entity_type_id),
+      );
+    }
+  }
+  finally {
+    $entity_type_manager->useCaches(TRUE);
+    $entity_field_manager->useCaches(TRUE);
+  }
+}
+
+/** Repairs stale serialized IDs before Core's pending entity updates run. */
+function aculta_linkweed_update_10011(): string {
+  aculta_linkweed_repair_installed_entity_definitions();
+
+  return 'Alinhadas as definições instaladas das entidades LinkWeed aos tipos e campos ativos.';
 }
 
