@@ -1,3 +1,15 @@
+## 0.1.0-dev.162 — alinha campo de comentário ao Runtime
+
+- A configuração do campo `comment_body` segue as dependências geradas pelo
+  Core, mantendo instalação e sync coerentes.
+- Runtime: snapshot antes de `10010`, 136.543.115 bytes, SHA-256
+  `a382cb025e0593ecaee741e1f285fb509995fb2b467990defa240fa68400b0bf`;
+  `10010` e `drush cr` PASS. `updatedb:status` sem pendências; `config:status`
+  mantém apenas duas diferenças externas ao LMS (`aculta_portal.superficies`
+  e `core.extension`), sem import global. Kernel `AcultaLmsInstallTest` 6/191
+  PASS (44 depreciações); Unit LMS 233/799 PASS (1 depreciação); Portal gate
+  1.172 checks PASS.
+
 ## 0.1.0-dev.161 — sincroniza configuração do comentário ACULTA
 
 - Os quatro objetos de configuração do tipo e do campo de comentários ACULTA

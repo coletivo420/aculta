@@ -6,7 +6,6 @@ dependencies:
     - comment.type.aculta_lms_answer_comment
     - field.storage.comment.comment_body
   module:
-    - field
     - text
 id: comment.aculta_lms_answer_comment.comment_body
 field_name: comment_body
