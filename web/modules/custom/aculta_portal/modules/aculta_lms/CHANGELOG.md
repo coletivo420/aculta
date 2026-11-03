@@ -727,3 +727,7 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 
 - `ClassDashboardAccessCheck` valida curso e turma por `GroupInterface`, alinhado ao retorno ACULTA do resolvedor de turma.
 
+## 0.1.0-dev.143 — matrícula comercial usa relações Group
+
+- O entitlement Commerce valida cursos com `GroupInterface` e resolve turmas pela relação `lms_classes`, sem `CourseInterface` ou `ClassHelper`.
+
