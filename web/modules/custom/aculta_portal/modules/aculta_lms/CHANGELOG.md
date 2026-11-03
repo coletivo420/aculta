@@ -1,3 +1,22 @@
+## P6 — descarte autorizado de dados de teste no Runtime (ADR-042)
+
+- Snapshot anterior ao descarte: SHA-256
+  `038a4e61326c8940500729e7592595d4587a593cc8e12d8e34c0dc81c252c74a`.
+- Pela API Drupal foram removidos o único arquivo residual associado a uma
+  resposta LMS, seis vínculos `group_membership` e os cinco Groups de teste
+  conferidos com o inventário P5. Os dados contrib LMS listados na ordem já
+  estavam ausentes ou zerados. Não houve importação de config.
+- Verificação: Groups, vínculos e uso de arquivo `lms_file_upload` zerados;
+  usuários (23), pedidos Commerce (111), itens de pedido (106), comentário
+  ACULTA (1) e declarações xAPI (3) preservados. Cache rebuild passou,
+  `updatedb:status` sem pendências, Portal gate 1.172 checks PASS e grep de
+  `Drupal\\lms` em `web/modules/custom` com zero ocorrências. Diferenças de
+  `config:status` revisadas, sem importação.
+- Efeito inesperado da exclusão dos Groups: `aculta_lms_attempt_archive` caiu
+  de 1 para 0; também variaram `entity_usage` (351 para 343), `key_value`
+  (3764 para 3753), `path_alias` e `path_alias_revision` (52 para 46), e
+  `queue` (7 para 10). Nenhuma restauração ou outra exclusão foi feita.
+
 ## 0.1.0-dev.172 — remove o LMS contrib no corte P5 (ADR-042)
 
 - Remove `drupal/lms` do `composer.json` e do lock; Composer confirmou somente
