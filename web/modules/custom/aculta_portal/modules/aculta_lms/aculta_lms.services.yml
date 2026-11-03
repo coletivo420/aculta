@@ -132,17 +132,11 @@ services:
   aculta_lms.submission_image_validator:
     class: Drupal\aculta_lms\Plugin\Validation\Constraint\LmsSubmissionImageValidator
     arguments: ['@aculta_file_uploader.consumer_policy']
-  aculta_lms.uploaded_answer_access:
-    class: Drupal\aculta_lms\Access\UploadedAnswerAccessCheck
-    arguments: ['@aculta_lms.account_user_loader']
   aculta_lms.answer_attachment_access:
     class: Drupal\aculta_lms\Access\AnswerAttachmentAccessCheck
     arguments: ['@entity_type.manager', '@aculta_lms.notice_eligibility']
   Drupal\aculta_lms\Controller\AcultaAnswerFileDownloadController:
     class: Drupal\aculta_lms\Controller\AcultaAnswerFileDownloadController
-    autowire: true
-  Drupal\aculta_lms\Controller\AnswerFileDownloadController:
-    class: Drupal\aculta_lms\Controller\AnswerFileDownloadController
     autowire: true
   aculta_lms.course_completion_publisher:
     class: Drupal\aculta_lms\Event\CourseCompletionPublisher

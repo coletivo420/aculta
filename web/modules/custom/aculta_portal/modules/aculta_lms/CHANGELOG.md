@@ -1,3 +1,14 @@
+## 0.1.0-dev.168 — remove plugin e rota legados de arquivo
+
+- Remove `FileUpload`, `UploadedAnswerAccessCheck`, o controller e a rota antigos
+  baseados em `lms_answer`, além dos testes e configurações do plugin. A rota
+  ACULTA de referência privada continua registrada e protegida por `AnswerEntity`.
+- A interface de submissão ACULTA para criar referências de arquivo segue
+  pendente; essa mudança não migra conteúdo legado.
+- Unit completa 220/764 PASS; `AcultaLmsInstallTest` 6/196 PASS
+  (44 depreciações) e `AttemptArchiveLifecycleTest` 5/201 PASS (50
+  depreciações Core/contrib); gate Portal 1.172 checks PASS.
+
 ## 0.1.0-dev.167 — remove plugin legado de revisão por frases
 
 - Remove `FreeTextReviewFeedback`, seu teste e configurações de `phrase_feedback`,

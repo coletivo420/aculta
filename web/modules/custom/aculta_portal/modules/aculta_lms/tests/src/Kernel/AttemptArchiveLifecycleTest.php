@@ -7,9 +7,6 @@ namespace Drupal\Tests\aculta_lms\Kernel;
 use Drupal\Component\Serialization\Json;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\Entity\Comment;
-use Drupal\Core\File\FileExists;
-use Drupal\Core\File\FileSystemInterface;
-use Drupal\Core\StreamWrapper\PrivateStream;
 use Drupal\file\Entity\File;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
@@ -17,16 +14,6 @@ use Drupal\group\PermissionScopeInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Tests\lms\LmsKernelTestTrait;
 use Drupal\Tests\user\Traits\UserCreationTrait;
-use Drupal\lms\Entity\Activity;
-use Drupal\lms\Entity\ActivityType;
-use Drupal\lms\Entity\Answer;
-use Drupal\lms\Entity\AnswerInterface;
-use Drupal\lms\Entity\CourseStatus;
-use Drupal\lms\Entity\CourseStatusInterface;
-use Drupal\lms\Entity\Lesson;
-use Drupal\lms\Entity\LessonStatus;
-use Drupal\lms\Entity\LessonStatusInterface;
-use Drupal\aculta_lms\Controller\AnswerFileDownloadController;
 use Drupal\aculta_lms\Entity\ActivityEntity;
 use Drupal\aculta_lms\Entity\AnswerEntity;
 use Drupal\aculta_lms\Entity\LessonEntity;
@@ -37,7 +24,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Exercises attempt capture against real LMS and Comment entities. */
+ * Exercises ACULTA attempt capture, access and Comment lifecycle. */
 #[TestGroup('aculta_lms')]
 #[RunTestsInSeparateProcesses]
 final class AttemptArchiveLifecycleTest extends KernelTestBase {
@@ -80,8 +67,6 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->register('stream_wrapper.private', PrivateStream::class)
-      ->addTag('stream_wrapper', ['scheme' => 'private']);
     $this->registerLmsDependencyServices($container);
   }
 
@@ -357,160 +342,6 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
   }
 
   /**
-   * Revalidates uploaded-answer access after membership and account changes.
-   */
-  public function testUploadedAnswerAccessTracksMembershipRevocationAndTeacherRole(): void {
-    [$student, , , , $answer] = $this->createAttempt();
-    $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
-    $member_role = GroupRole::create([
-      'id' => 'lms_course-upload_test_member',
-      'label' => 'Upload test student',
-      'group_type' => 'lms_course',
-      'scope' => PermissionScopeInterface::INSIDER_ID,
-      'global_role' => RoleInterface::AUTHENTICATED_ID,
-      'permissions' => ['take course'],
-    ]);
-    $member_role->save();
-    $teacher_role = GroupRole::create([
-      'id' => 'lms_course-upload_test_teacher',
-      'label' => 'Upload test teacher',
-      'group_type' => 'lms_course',
-      'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
-      'permissions' => ['grade students'],
-    ]);
-    $teacher_role->save();
-
-    $course->addMember($student);
-    $other_student = $this->createUser();
-    $course->addMember($other_student);
-    $this->setCurrentUser($student);
-    $access_check = $this->container->get('aculta_lms.uploaded_answer_access');
-    $session_account = $this->container->get('current_user');
-    self::assertTrue($access_check->access($answer, $session_account)->isAllowed(), 'An enrolled answer owner can download their file.');
-    self::assertFalse($access_check->access($answer, $other_student)->isAllowed(), 'Another enrolled student cannot download a peer submission.');
-
-    $student->block()->save();
-    self::assertFalse($access_check->access($answer, $session_account)->isAllowed(), 'A blocked student session cannot download an uploaded answer.');
-    $student->activate()->save();
-
-    $course->removeMember($student);
-    self::assertFalse($access_check->access($answer, $student)->isAllowed(), 'Revoking membership immediately blocks the answer owner.');
-
-    $teacher = $this->createUser();
-    $course->addMember($teacher, ['group_roles' => [$teacher_role->id()]]);
-    $session_account->setAccount($teacher);
-    self::assertTrue($access_check->access($answer, $session_account)->isAllowed(), 'An educator with grade permission retains access after student membership is revoked.');
-    $teacher->block()->save();
-    self::assertFalse($access_check->access($answer, $session_account)->isAllowed(), 'A blocked educator session cannot download an uploaded answer.');
-  }
-
-  /**
-   * Denies a pending answer after its lesson status is deleted.
-   */
-  public function testUploadedAnswerAccessFailsClosedDuringQueuedStatusDeletion(): void {
-    [$student, , $lesson_status, , $answer] = $this->createAttempt('Entrega pendente', 'file_upload');
-    $answer_id = (int) $answer->id();
-    $lesson_status->delete();
-
-    $answer_storage = $this->container->get('entity_type.manager')->getStorage('lms_answer');
-    $answer_storage->resetCache([$answer_id]);
-    $answer = $answer_storage->load($answer_id);
-    self::assertInstanceOf(AnswerInterface::class, $answer, 'LMS queues answer deletion after deleting its lesson status.');
-    self::assertNull($answer->get('lesson_status')->entity, 'The answer reference is temporarily unresolved before the queue runs.');
-
-    $this->setCurrentUser($student);
-    $access = $this->container->get('aculta_lms.uploaded_answer_access')->access($answer, $student);
-    self::assertFalse($access->isAllowed(), 'A missing course context never grants a private download.');
-    self::assertContains('user', $access->getCacheContexts());
-  }
-
-  /**
-   * Denies a pending answer while its course-status deletion is queued.
-   */
-  public function testUploadedAnswerAccessFailsClosedDuringQueuedCourseStatusDeletion(): void {
-    [$student, $course_status, $lesson_status, , $answer] = $this->createAttempt('Entrega pendente', 'file_upload');
-    $answer_id = (int) $answer->id();
-    $course_status->delete();
-
-    $answer_storage = $this->container->get('entity_type.manager')->getStorage('lms_answer');
-    $answer_storage->resetCache([$answer_id]);
-    $answer = $answer_storage->load($answer_id);
-    self::assertInstanceOf(AnswerInterface::class, $answer, 'LMS queues dependent statuses and answers after deleting a course status.');
-    self::assertNotNull($answer->get('lesson_status')->entity, 'The lesson status still exists until its queued deletion runs.');
-    self::assertNull($lesson_status->get('course_status')->entity, 'The lesson status temporarily has no course status reference.');
-
-    $this->setCurrentUser($student);
-    $access = $this->container->get('aculta_lms.uploaded_answer_access')->access($answer, $student);
-    self::assertFalse($access->isAllowed(), 'A removed course status never grants a private download during queue cleanup.');
-    self::assertContains('user', $access->getCacheContexts());
-  }
-
-  /**
-   * Streams an answer file only while course access remains current.
-   */
-  public function testPrivateUploadRouteStreamsOnlyWhileCourseAccessIsCurrent(): void {
-    [$student, , , , $answer] = $this->createAttempt('Entrega de teste', 'file_upload');
-    $course = $answer->getLessonStatus()->getCourseStatus()->getCourse();
-    $member_role = GroupRole::create([
-      'id' => 'lms_course-file_test_member',
-      'label' => 'File test student',
-      'group_type' => 'lms_course',
-      'scope' => PermissionScopeInterface::INSIDER_ID,
-      'global_role' => RoleInterface::AUTHENTICATED_ID,
-      'permissions' => ['take course'],
-    ]);
-    $member_role->save();
-    $teacher_role = GroupRole::create([
-      'id' => 'lms_course-file_test_teacher',
-      'label' => 'File test teacher',
-      'group_type' => 'lms_course',
-      'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
-      'permissions' => ['grade students'],
-    ]);
-    $teacher_role->save();
-    $course->addMember($student);
-    $this->setCurrentUser($student);
-
-    $upload_directory = 'private://lms_file_upload';
-    self::assertTrue(
-      $this->container->get('file_system')->prepareDirectory(
-        $upload_directory,
-        FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS,
-      ),
-    );
-    $file = $this->container->get('file.repository')->writeData(
-      'private LMS submission content',
-      'private://lms_file_upload/submission.txt',
-      FileExists::Rename,
-    );
-    self::assertNotFalse($file);
-    $file->setPermanent();
-    $file->save();
-    $answer->setData(['file_upload' => [$file->id()]])->save();
-    $this->container->get('file.usage')->add($file, 'lms_file_upload', 'lms_answer', $answer->id());
-
-    $route_name = 'aculta_lms.answer_file_download';
-    $route = $this->container->get('router.route_provider')->getRouteByName($route_name);
-    self::assertSame('/resposta/{lms_answer}/baixar-arquivo', $route->getPath());
-    $access_manager = $this->container->get('access_manager');
-    self::assertTrue($access_manager->checkNamedRoute($route_name, ['lms_answer' => $answer->id()], $student, TRUE)->isAllowed());
-
-    $response = (new AnswerFileDownloadController($this->container->get('lms.training_manager')))->download($answer);
-    ob_start();
-    $response->sendContent();
-    $body = ob_get_clean();
-    self::assertSame('private LMS submission content', $body);
-    self::assertStringContainsString('attachment; filename="submission.txt"', $response->headers->get('Content-Disposition'));
-
-    $course->removeMember($student);
-    self::assertFalse($access_manager->checkNamedRoute($route_name, ['lms_answer' => $answer->id()], $student, TRUE)->isAllowed());
-
-    $teacher = $this->createUser();
-    $course->addMember($teacher, ['group_roles' => [$teacher_role->id()]]);
-    self::assertTrue($access_manager->checkNamedRoute($route_name, ['lms_answer' => $answer->id()], $teacher, TRUE)->isAllowed());
-  }
-
-  /**
    * Tests ACULTA image constraints run through Drupal Core file validation. */
   public function testSubmissionImageConstraintUsesCoreFileValidator(): void {
     $validPath = $this->siteDirectory . '/private/answer-valid.png';
@@ -547,67 +378,6 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
         unlink($invalidPath);
       }
     }
-  }
-
-  /**
-   * Creates a real course, status, activity, lesson and answer fixture.
-   *
-   * @return array{0: \Drupal\user\UserInterface, 1: CourseStatus, 2: LessonStatus, 3: Activity, 4: Answer}
-   *   The student and created LMS entities.
-   */
-  private function createAttempt(string $answer_text = 'Resposta original', string $plugin_id = 'no_answer'): array {
-    $owner = $this->createUser(['administer lms']);
-    $student = $this->createUser();
-    $this->setCurrentUser($owner);
-    ActivityType::create([
-      'id' => 'archive_test',
-      'name' => 'Teste de arquivo',
-      'pluginId' => $plugin_id,
-      'pluginConfiguration' => $plugin_id === 'file_upload' ? ['default_file_extensions' => 'txt'] : [],
-    ])->save();
-    $activity = Activity::create([
-      'type' => 'archive_test',
-      'name' => 'Resposta aberta',
-      'status' => 1,
-      'uid' => $owner->id(),
-    ]);
-    $activity->save();
-    $lesson = Lesson::create(['name' => 'Aula de teste', 'status' => 1, 'uid' => $owner->id()]);
-    $lesson->get('activities')->appendItem([
-      'target_id' => $activity->id(),
-      'data' => ['max_score' => 4],
-    ]);
-    $lesson->save();
-    $course = Group::create([
-      'type' => 'lms_course',
-      'label' => 'Curso de teste',
-      'uid' => $owner->id(),
-      'lessons' => [['target_id' => $lesson->id()]],
-    ]);
-    $course->save();
-    $course_status = CourseStatus::create([
-      CourseStatusInterface::COURSE_FIELD => $course->id(),
-      'uid' => $student->id(),
-    ]);
-    $course_status->save();
-    $lesson_status = LessonStatus::create([
-      'course_status' => $course_status->id(),
-      LessonStatusInterface::LESSON_FIELD => $lesson->id(),
-      'started' => 100,
-    ]);
-    $lesson_status->setActivityIds([$activity->id()]);
-    $lesson_status->save();
-    $answer = Answer::create([
-      'user_id' => $student->id(),
-      'lesson_status' => $lesson_status->id(),
-      AnswerInterface::ACTIVITY_FIELD => ['target_id' => $activity->id()],
-      'score' => 0,
-      'evaluated' => FALSE,
-    ]);
-    $answer->setData(['answer' => $answer_text]);
-    $answer->save();
-
-    return [$student, $course_status, $lesson_status, $activity, $answer];
   }
 
   /** Creates a course, lesson, activity and immutable ACULTA attempt. */

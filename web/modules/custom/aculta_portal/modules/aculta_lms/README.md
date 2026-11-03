@@ -101,16 +101,11 @@ testes / 215 assertions (6 depreciações). `AttemptArchiveLifecycleTest` passou
 com 9 testes / 369 assertions no banco Kernel dedicado; 42 depreciações vieram
 do Core e contrib. O access do histórico também nega estudante ou educador
 bloqueado e revalida após bloqueio e revogação da membership.
-O download de arquivo privado de resposta também nega estudante ou educador
-bloqueado antes de consultar a autorização LMS. Kernel lifecycle: 9 testes /
-369 assertions PASS (42 depreciações); Unit completo: 46 testes / 215
-assertions PASS (6 depreciações). O status ativo é verificado pelo User
-carregado também quando a requisição entrega apenas AccountProxy/session.
-O Kernel também apaga o `CourseStatus` real e confirma a negação do download
-enquanto `LessonStatus` e resposta ainda aguardam a fila de limpeza; ver
-`AttemptArchiveLifecycleTest`: 10 testes / 409 assertions PASS; Kernel
-LMS/Messenger: 24/770 PASS (95 depreciações upstream). PHPCS Drupal/
-DrupalPractice PASS.
+A rota atual de anexos recebe apenas `AnswerEntity` ACULTA, valida arquivo
+permanente em `private://` e revalida matrícula/permissão a cada requisição.
+O plugin de upload e a rota de download vinculados a `lms_answer` foram
+removidos no P5. A interface de submissão para criar referências de arquivo
+ACULTA ainda precisa ser conectada ao payload.
 O resolvedor tipa entidades de referência com `FieldableEntityInterface`; o
 PHPCS Drupal/DrupalPractice passou nos arquivos novos de resolução e no
 `AttemptArchiveManager`.

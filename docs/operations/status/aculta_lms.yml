@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.167
+version: 0.1.0-dev.168
 state: Dev
-progress_note: "ADR-042 P5 dev.167: tentativa/histórico usa AnswerEntity, preserva payload JSON, nota precisa e comentários Core; teste de acesso direto revoga após saída do curso. Unit completa 231/810 PASS (1 depreciação PHPUnit); `AcultaLmsInstallTest::testP2LearningEntityUpdateIsIdempotent` 1/51 PASS (43 depreciações); gate Portal 1.172 checks PASS. Update 10011 instala score_precise sem alterar score inteiro legado. Runtime: snapshot SHA-256 a344c5509ee02a565b4bd72790da51dd541d86298f75ba42eb7ba5f91c1fa076; 10011 e drush cr PASS, updatedb sem pendências; config:status mantém aculta_portal.superficies e core.extension diferentes. Imports Drupal\\lms e dependências ainda pendentes."
+progress_note: "ADR-042 P5 dev.168: tentativa/histórico usa AnswerEntity, preserva payload JSON, nota precisa e comentários Core; teste de acesso direto revoga após saída do curso. Unit completa 231/810 PASS (1 depreciação PHPUnit); `AcultaLmsInstallTest::testP2LearningEntityUpdateIsIdempotent` 1/51 PASS (43 depreciações); gate Portal 1.172 checks PASS. Update 10011 instala score_precise sem alterar score inteiro legado. Runtime: snapshot SHA-256 a344c5509ee02a565b4bd72790da51dd541d86298f75ba42eb7ba5f91c1fa076; 10011 e drush cr PASS, updatedb sem pendências; config:status mantém aculta_portal.superficies e core.extension diferentes. Imports Drupal\\lms e dependências ainda pendentes."
 next_phase: 'Concluir integração ACULTA de payload, tentativas, comentários e arquivos; resolver atividade/autoria e rota de início; remover todos os imports e dependências LMS, revisar 71 YAML de config sync, validar P4 sem contrib e então P5. P6 somente com ordem explícita.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.

@@ -123,18 +123,6 @@ aculta_lms.certificate_qr:
 
 
 
-aculta_lms.answer_file_download:
-  path: '/resposta/{lms_answer}/baixar-arquivo'
-  defaults:
-    _controller: '\Drupal\aculta_lms\Controller\AnswerFileDownloadController::download'
-  requirements:
-    _entity_access: 'lms_answer.see_details'
-    _custom_access: 'aculta_lms.uploaded_answer_access::access'
-  options:
-    parameters:
-      lms_answer:
-        type: entity:lms_answer
-
 aculta_lms.answer_attachment_download:
   path: '/resposta/{answer}/arquivo'
   defaults:
