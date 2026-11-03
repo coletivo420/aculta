@@ -38,6 +38,7 @@ final class EntityCourseProgressReader implements CourseProgressReaderInterface 
       finished: (bool) self::fieldValue($progress, 'finished'),
       score: is_numeric($score) ? (float) $score : NULL,
       cacheTags: $progress->getCacheTags(),
+      changedTime: is_numeric(self::fieldValue($progress, 'changed')) ? (int) self::fieldValue($progress, 'changed') : NULL,
     );
   }
 

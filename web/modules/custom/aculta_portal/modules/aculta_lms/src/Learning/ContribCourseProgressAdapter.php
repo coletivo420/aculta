@@ -10,9 +10,7 @@ use Drupal\lms\Entity\Bundle\Course;
 use Drupal\lms\TrainingManager;
 
 /**
- * Único ponto do aculta_lms que lê progresso do LMS contrib (ADR-042, decisão 6, parte a).
- *
- * Substituível pela fonte própria no P2, sem mudar quem consome CourseProgressReaderInterface.
+ * Adaptador legado para progresso do LMS contrib, mantido até o fim da Fase A.
  */
 final class ContribCourseProgressAdapter implements CourseProgressReaderInterface {
 

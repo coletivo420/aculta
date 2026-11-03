@@ -8,7 +8,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\lms\Entity\ActivityInterface;
 use Drupal\lms\Entity\LessonInterface;
 
-/** Reads ACULTA activity contracts from LMS contrib lessons. */
+/** Legacy adapter retained until the end of ADR-042 Phase A. */
 final class ContribCourseActivityAdapter implements CourseActivityReaderInterface {
 
   public function __construct(

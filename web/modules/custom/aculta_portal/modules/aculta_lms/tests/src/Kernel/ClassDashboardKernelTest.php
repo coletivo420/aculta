@@ -11,6 +11,8 @@ use Drupal\aculta_lms\Certificate\CourseCertificateManager;
 use Drupal\aculta_lms\Controller\LearningDashboardController;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\aculta_lms\LearningDashboardManager;
+use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
+use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
 use Drupal\aculta_studio\Learning\LearnerDashboardComposer;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
@@ -143,7 +145,8 @@ final class ClassDashboardKernelTest extends KernelTestBase {
         $this->container->get('lock'),
       ),
       $entityTypeManager,
-      $this->container->get('lms.training_manager'),
+      $this->container->get(CourseProgressReaderInterface::class),
+      $this->container->get(CourseLessonReaderInterface::class),
     );
     $educatorAccess = $manager->classDashboardAccess($class, $educator);
     self::assertTrue($educatorAccess->isAllowed());

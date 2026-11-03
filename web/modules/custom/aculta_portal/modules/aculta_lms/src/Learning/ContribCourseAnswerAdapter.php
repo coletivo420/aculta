@@ -8,7 +8,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\lms\Entity\AnswerInterface;
 use Drupal\lms\TrainingManager;
 
-/** Reads ACULTA answer contracts from LMS contrib answer entities. */
+/** Legacy adapter retained until the end of ADR-042 Phase A. */
 final class ContribCourseAnswerAdapter implements CourseAnswerReaderInterface {
 
   public function __construct(

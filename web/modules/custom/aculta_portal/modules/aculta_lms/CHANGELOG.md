@@ -1,3 +1,8 @@
+## 0.1.0-dev.135 — painel passa a ler progresso e aulas próprias (ADR-042)
+
+- `LearningDashboardManager` e a jornada usam os contratos ACULTA de progresso e aulas; métricas de turma consultam `aculta_lms_progress`.
+- O P2 mantém apenas progresso agregado por curso. O painel não inventa aula atual nem progresso individual por aula; o estado agregado acabado representa o curso inteiro.
+
 ## 0.1.0-dev.134 — fonte própria de respostas (ADR-042)
 
 - `CourseAnswerReaderInterface` passa a consultar `aculta_lms_answer` por atividade e estudante; estado e nota são mapeados no vocabulário ACULTA e as respostas são ordenadas por ID.

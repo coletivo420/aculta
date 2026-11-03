@@ -7,8 +7,8 @@ namespace Drupal\aculta_lms\Learning;
 /**
  * Leitura das aulas de um curso pelo contrato ACULTA (ADR-042, P1).
  *
- * Implementações: o adaptador do LMS contrib, até o P2. Quem consome só
- * conhece este contrato.
+ * A implementação ativa lê a entidade própria `aculta_lms_lesson`. Quem
+ * consome só conhece este contrato.
  */
 interface CourseLessonReaderInterface {
 

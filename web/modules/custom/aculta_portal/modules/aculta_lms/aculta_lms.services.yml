@@ -97,7 +97,7 @@ services:
       - { name: aculta_portal.implementation }
   aculta_lms.learning_dashboard:
     class: Drupal\aculta_lms\LearningDashboardManager
-    arguments: ['@?Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface', '@aculta_lms.course_certificate_manager', '@entity_type.manager', '@?lms.training_manager']
+    arguments: ['@?Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface', '@aculta_lms.course_certificate_manager', '@entity_type.manager', '@Drupal\aculta_lms\Learning\CourseProgressReaderInterface', '@Drupal\aculta_lms\Learning\CourseLessonReaderInterface']
   aculta_lms.student_status_cron_hooks:
     class: Drupal\aculta_lms\Hook\StudentStatusSnapshotCronHooks
     arguments: ['@aculta_lms.learning_dashboard', '@entity_type.manager', '@event_dispatcher', '@?aculta_user.aculta_user_agreement_ledger']

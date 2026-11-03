@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\aculta_lms\LearningDashboardManager;
+use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
+use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
 use Drupal\aculta_learning_contracts\Learning\AccountCourseSummary;
 use Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -177,7 +179,8 @@ final class LearningDashboardKernelTest extends KernelTestBase {
       $this->container->get(AccountCoursesReaderInterface::class),
       $this->container->get('aculta_lms.course_certificate_manager'),
       $this->container->get('entity_type.manager'),
-      $this->container->get('lms.training_manager'),
+      $this->container->get(CourseProgressReaderInterface::class),
+      $this->container->get(CourseLessonReaderInterface::class),
     );
 
     $dashboard = $manager->studentDashboard($student);

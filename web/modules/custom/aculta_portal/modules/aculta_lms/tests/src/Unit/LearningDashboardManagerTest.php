@@ -6,48 +6,36 @@ namespace Drupal\Tests\aculta_lms\Unit;
 
 use Drupal\aculta_lms\Certificate\CourseCertificateManagerInterface;
 use Drupal\aculta_lms\Controller\CertificateVerificationController;
+use Drupal\aculta_lms\Learning\CourseLesson;
+use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
+use Drupal\aculta_lms\Learning\CourseProgress;
+use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
 use Drupal\aculta_lms\LearningDashboardManager;
+use Drupal\aculta_learning_contracts\Learning\AccountCourseSummary;
+use Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
-use Drupal\Core\Entity\Query\QueryAggregateInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Session\UserSession;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\aculta_learning_contracts\Learning\AccountCourseSummary;
-use Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\lms\Entity\Bundle\Course;
-use Drupal\lms\Entity\Bundle\CourseInterface;
-use Drupal\lms\Entity\Lesson;
-use Drupal\lms\Entity\CourseStatusInterface;
-use Drupal\lms\Entity\LessonStatusInterface;
-use Drupal\lms\TrainingManager;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-/**
- * Tests fail-closed access and isolated empty states for LMS dashboards. */
+/** Tests ACULTA-backed learning dashboard projections and access. */
 #[Group('aculta_lms')]
 final class LearningDashboardManagerTest extends UnitTestCase {
 
-  /**
-   * Verifies the student dashboard stays scoped to the supplied account.
-   */
-  public function testStudentDashboardContainsOnlyTheSuppliedAccountScope(): void {
+  public function testEmptyStudentDashboardStaysScopedToTheSuppliedAccount(): void {
     $certificates = $this->createMock(CourseCertificateManagerInterface::class);
     $certificates->expects(self::once())->method('loadForStudent')->with(42)->willReturn([]);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->expects(self::never())->method('getStorage');
-    $manager = new LearningDashboardManager(
-      NULL,
-      $certificates,
-      $entityTypeManager,
-      $this->createMock(TrainingManager::class),
-    );
+    $manager = $this->manager(NULL, $certificates, $entityTypeManager);
 
     $dashboard = $manager->studentDashboard(new UserSession(['uid' => 42]));
 
@@ -56,117 +44,59 @@ final class LearningDashboardManagerTest extends UnitTestCase {
     self::assertContains('user', $dashboard['cache']->getCacheContexts());
   }
 
-  /**
-   * Verifies student progress counts only lessons available to the account.
-   */
-  public function testStudentProgressUsesCourseAccessAndPublishedLessons(): void {
+  public function testStudentDashboardUsesOwnPublishedLessonsAndCourseLevelProgress(): void {
     $account = new UserSession(['uid' => 42]);
-    $visible_lesson = $this->createMock(Lesson::class);
-    $visible_lesson->method('id')->willReturn('lesson-visible');
-    $visible_lesson->method('getCacheContexts')->willReturn([]);
-    $visible_lesson->method('getCacheTags')->willReturn(['lms_lesson:visible']);
-    $visible_lesson->method('getCacheMaxAge')->willReturn(-1);
-    $visible_lesson->method('isPublished')->willReturn(TRUE);
-    $visible_lesson->expects(self::never())->method('access');
-
-    $restricted_lesson = $this->createMock(Lesson::class);
-    $restricted_lesson->method('id')->willReturn('lesson-restricted');
-    $restricted_lesson->method('getCacheContexts')->willReturn([]);
-    $restricted_lesson->method('getCacheTags')->willReturn(['lms_lesson:restricted']);
-    $restricted_lesson->method('getCacheMaxAge')->willReturn(-1);
-    $restricted_lesson->method('isPublished')->willReturn(FALSE);
-    $restricted_lesson->expects(self::never())->method('access');
-
-    $lesson_list = $this->createMock(EntityReferenceFieldItemListInterface::class);
-    $lesson_list->method('referencedEntities')->willReturn([$visible_lesson, $restricted_lesson]);
-    $course = $this->createMock(Course::class);
-    $course->method('takeAccess')->with($account)->willReturn(AccessResult::allowed()->addCacheContexts(['user.group_permissions']));
-    $course->method('get')->with(CourseInterface::LESSONS)->willReturn($lesson_list);
-    $course->method('id')->willReturn('course-1');
+    $course = $this->createMock(GroupInterface::class);
+    $course->method('bundle')->willReturn('lms_course');
+    $course->method('id')->willReturn('1');
+    $course->method('isPublished')->willReturn(TRUE);
+    $course->method('hasPermission')->with('take course', $account)->willReturn(TRUE);
     $course->method('getCacheContexts')->willReturn([]);
-    $course->method('getCacheTags')->willReturn(['group:course-1']);
+    $course->method('getCacheTags')->willReturn(['group:1']);
     $course->method('getCacheMaxAge')->willReturn(-1);
+    $groupStorage = $this->createMock(EntityStorageInterface::class);
+    $groupStorage->expects(self::once())->method('load')->with('1')->willReturn($course);
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->expects(self::once())->method('getStorage')->with('group')->willReturn($groupStorage);
 
     $summary = new AccountCourseSummary(
-      id: 'course-1',
-      label: 'Curso',
-      description: '',
-      descriptionFormat: '',
-      status: AccountCourseSummary::STATUS_IN_PROGRESS,
-      score: NULL,
-      finished: FALSE,
-      url: NULL,
-      cacheTags: ['group:course-1'],
+      id: '1', label: 'Curso', description: '', descriptionFormat: '',
+      status: AccountCourseSummary::STATUS_IN_PROGRESS, score: NULL,
+      finished: FALSE, url: NULL, cacheTags: ['group:1'],
     );
-    $reader = $this->createMock(AccountCoursesReaderInterface::class);
-    $reader->expects(self::once())
-      ->method('getAccountCourses')
-      ->with($account)
-      ->willReturn([$summary]);
-    $course_status = $this->createMock(CourseStatusInterface::class);
-    $course_status->method('id')->willReturn('status-1');
-    $course_status->method('getStatus')->willReturn(CourseStatusInterface::STATUS_PROGRESS);
-    $course_status->method('isFinished')->willReturn(FALSE);
-    $course_status->method('getScore')->willReturn(NULL);
-    $course_status->method('getCacheContexts')->willReturn([]);
-    $course_status->method('getCacheTags')->willReturn(['lms_course_status:status-1']);
-    $course_status->method('getCacheMaxAge')->willReturn(-1);
-    $training_manager = $this->createMock(TrainingManager::class);
-    $training_manager->expects(self::once())
-      ->method('loadCourseStatus')
-      ->with($course, $account, ['current' => TRUE])
-      ->willReturn($course_status);
-    $group_storage = $this->createMock(EntityStorageInterface::class);
-    $group_storage->expects(self::once())->method('load')->with('course-1')->willReturn($course);
-    $status_query = $this->createMock(QueryAggregateInterface::class);
-    $status_query->method('accessCheck')->with(FALSE)->willReturnSelf();
-    $status_query->method('condition')->willReturnCallback(function (string $field, mixed $value = NULL, ?string $operator = NULL) use ($status_query): QueryAggregateInterface {
-      if ($field === LessonStatusInterface::LESSON_FIELD) {
-        self::assertSame(['lesson-visible'], $value);
-        self::assertSame('IN', $operator);
-      }
-      return $status_query;
-    });
-    $status_query->method('groupBy')->with(LessonStatusInterface::LESSON_FIELD)->willReturnSelf();
-    $status_query->expects(self::once())->method('execute')->willReturn([['lesson_revision' => 'lesson-visible']]);
-    $status_storage = $this->createMock(EntityStorageInterface::class);
-    $status_storage->expects(self::once())->method('getAggregateQuery')->willReturn($status_query);
-    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
-    $entityTypeManager->expects(self::exactly(2))
-      ->method('getStorage')
-      ->willReturnMap([
-        ['group', $group_storage],
-        ['lms_lesson_status', $status_storage],
-      ]);
+    $coursesReader = $this->createMock(AccountCoursesReaderInterface::class);
+    $coursesReader->method('getAccountCourses')->with($account)->willReturn([$summary]);
+    $progressReader = $this->createMock(CourseProgressReaderInterface::class);
+    $progressReader->expects(self::once())->method('current')->with($course, $account)->willReturn(
+      new CourseProgress(CourseProgress::STATUS_PROGRESS, FALSE, NULL, ['aculta_lms_progress:1'], 123),
+    );
+    $lessonReader = $this->createMock(CourseLessonReaderInterface::class);
+    $lessonReader->expects(self::once())->method('forCourse')->with(1)->willReturn([
+      new CourseLesson(5, 1, 'Aula publicada', TRUE, 0),
+      new CourseLesson(6, 1, 'Aula ainda oculta', FALSE, 1),
+    ]);
     $certificates = $this->createMock(CourseCertificateManagerInterface::class);
-    $certificates->expects(self::once())->method('loadForStudent')->with(42)->willReturn([]);
-    $manager = new LearningDashboardManager($reader, $certificates, $entityTypeManager, $training_manager);
+    $certificates->method('loadForStudent')->with(42)->willReturn([]);
+    $manager = new LearningDashboardManager($coursesReader, $certificates, $entityTypeManager, $progressReader, $lessonReader);
 
     $dashboard = $manager->studentDashboard($account);
 
+    self::assertCount(1, $dashboard['courses']);
     self::assertSame(1, $dashboard['courses'][0]['total_lessons']);
-    self::assertSame(1, $dashboard['courses'][0]['completed_lessons']);
+    self::assertSame(0, $dashboard['courses'][0]['completed_lessons']);
+    self::assertSame(0, $dashboard['courses'][0]['progress_percent']);
+    self::assertTrue($dashboard['courses'][0]['started']);
     self::assertContains('user.group_permissions', $dashboard['cache']->getCacheContexts());
-    self::assertContains('lms_lesson:restricted', $dashboard['cache']->getCacheTags());
   }
 
-  /**
-   * Verifies an unrelated or orphan class has no educator dashboard.
-   */
-  public function testClassWithoutLmsCourseRelationshipIsDeniedAndHasNoMetrics(): void {
+  public function testClassWithoutLmsCourseRelationshipIsDenied(): void {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->expects(self::exactly(2))->method('loadByProperties')->with([
-      'entity_id' => 'class-1',
-      'plugin_id' => 'lms_classes',
+      'entity_id' => 'class-1', 'plugin_id' => 'lms_classes',
     ])->willReturn([]);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->expects(self::exactly(2))->method('getStorage')->with('group_relationship')->willReturn($storage);
-    $manager = new LearningDashboardManager(
-      NULL,
-      $this->createMock(CourseCertificateManagerInterface::class),
-      $entityTypeManager,
-      $this->createMock(TrainingManager::class),
-    );
+    $manager = $this->manager(NULL, $this->createMock(CourseCertificateManagerInterface::class), $entityTypeManager);
     $class = $this->createMock(GroupInterface::class);
     $class->method('bundle')->willReturn('lms_class');
     $class->method('id')->willReturn('class-1');
@@ -179,9 +109,6 @@ final class LearningDashboardManagerTest extends UnitTestCase {
     self::assertNull($manager->classDashboard($class, $account));
   }
 
-  /**
-   * Ensures missing PDF tooling produces a controlled response.
-   */
   public function testCertificatePdfRouteFailsClosedWhenPrintEngineIsMissing(): void {
     $translation = $this->createMock(TranslationInterface::class);
     $translation->method('translate')->willReturnCallback(
@@ -197,6 +124,16 @@ final class LearningDashboardManagerTest extends UnitTestCase {
 
     $this->expectException(ServiceUnavailableHttpException::class);
     $controller->pdf('opaque-verification-code');
+  }
+
+  private function manager(?AccountCoursesReaderInterface $coursesReader, CourseCertificateManagerInterface $certificates, EntityTypeManagerInterface $entityTypeManager): LearningDashboardManager {
+    return new LearningDashboardManager(
+      $coursesReader,
+      $certificates,
+      $entityTypeManager,
+      $this->createMock(CourseProgressReaderInterface::class),
+      $this->createMock(CourseLessonReaderInterface::class),
+    );
   }
 
 }

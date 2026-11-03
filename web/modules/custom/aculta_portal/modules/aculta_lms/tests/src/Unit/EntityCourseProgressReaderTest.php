@@ -39,6 +39,7 @@ final class EntityCourseProgressReaderTest extends UnitTestCase {
     self::assertTrue($progress->finished);
     self::assertSame(82.5, $progress->score);
     self::assertSame(['aculta_lms_progress:12'], $progress->cacheTags);
+    self::assertSame(123, $progress->changedTime);
   }
 
   public function testReturnsNullScoreAndMissingProgress(): void {
@@ -64,6 +65,7 @@ final class EntityCourseProgressReaderTest extends UnitTestCase {
         'status' => $status,
         'finished' => $finished,
         'score' => $score,
+        'changed' => 123,
       };
       $field_list = $this->createMock(FieldItemListInterface::class);
       $field_list->method('getValue')->willReturn($value === NULL ? [] : [['value' => $value]]);

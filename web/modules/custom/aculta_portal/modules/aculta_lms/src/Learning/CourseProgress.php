@@ -7,8 +7,8 @@ namespace Drupal\aculta_lms\Learning;
 /**
  * Progresso atual de um aluno em um curso, no vocabulário ACULTA (ADR-042, decisão 6).
  *
- * Os valores de status são os mesmos strings que o LMS contrib usa hoje, para que a troca de fonte
- * não mude comportamento. Quando a fonte própria do P2 entrar, só o adaptador muda.
+ * Os valores de status mantêm o contrato ACULTA durante a convivência com o
+ * contrib; a leitura ativa usa a entidade própria `aculta_lms_progress`.
  */
 final class CourseProgress {
 
@@ -19,12 +19,15 @@ final class CourseProgress {
 
   /**
    * @param string[] $cacheTags
+   * @param int|null $changedTime
+   *   Timestamp of the most recent progress update, when available.
    */
   public function __construct(
     public readonly string $status,
     public readonly bool $finished,
     public readonly ?float $score,
     public readonly array $cacheTags = [],
+    public readonly ?int $changedTime = NULL,
   ) {}
 
 }
