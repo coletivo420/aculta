@@ -2,7 +2,7 @@
 
 ## Studio Dashboard, Meu Perfil e cabeçalho de Marley — 0.7.0-dev.30 (2026-11-03; Runtime pendente)
 
-`account-entry-links` usa o SDC existente `aculta420:card`/`studio_fidelity`; `profile-editor` distribui identidade à esquerda e bio/redes à direita em desktop. Dentro da coluna lateral, `profile-identity` empilha as ações abaixo da identidade. A listagem editorial do Marley agrupa título e ação em cabeçalho semântico e mantém a tabela rolável em viewport estreito. Mobile continua em uma coluna. Tokens e cores ACULTA420 existentes; barra e cores do cabeçalho não alteradas. Theme Unit 49/354, Design Foundations 2441 checks, PHPCS e PHP lint PASS. Firefox confirmou 94/94 verificações aplicáveis na versão dev.29, incluindo as ações do Perfil; cabeçalho Marley da dev.30 aguarda validação pós-sync. Referência principal em `docs/portal/studio-visual/referencias/`.
+`account-entry-links` usa o SDC existente `aculta420:card`/`studio_fidelity`; `profile-editor` distribui identidade à esquerda e bio/redes à direita em desktop. Dentro da coluna lateral, `profile-identity` empilha as ações abaixo da identidade. A listagem editorial do Marley agrupa título e ação em cabeçalho semântico e mantém a tabela rolável em viewport estreito. Mobile continua em uma coluna. Tokens e cores ACULTA420 existentes; barra e cores do cabeçalho não alteradas. Theme Unit 49/355, Design Foundations 2441 checks, PHP lint e PHPCS PASS. Firefox confirmou 97/97 verificações aplicáveis (21 SKIP), incluindo Perfil legível e alinhamento/uso em 320/390px no Marley. Referência principal em `docs/portal/studio-visual/referencias/`.
 
 ## THEME-MF2 — painel de Estatísticas e publicação da Revista
 

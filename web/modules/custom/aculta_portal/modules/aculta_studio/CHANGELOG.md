@@ -1,7 +1,7 @@
 ## 0.1.0-dev.44 — alinhar a ação Criar ao título do trabalho (2026-11-03)
 
 - A apresentação da seção agora agrupa título e ações em um cabeçalho próprio. Owners continuam fornecendo as mesmas ações e rotas; o token semântico do tema monta o botão junto ao título “Meu trabalho”.
-- Reteste Firefox ESR posterior à correção: pendente.
+- Theme Unit 49/355, Studio Unit 65/634 e Firefox ESR visível no Runtime (97/97 verificações aplicáveis, 21 SKIP, 0 falhas) PASS; o cabeçalho e a listagem não têm overflow em 320/390px. Capturas em `$SUITE_OUT/studio-dashboard-final-20261103/marley-header-dev30-retest/`.
 
 ## 0.1.0-dev.43 — corrigir a aplicação de cache do link de Perfil (2026-11-03)
 

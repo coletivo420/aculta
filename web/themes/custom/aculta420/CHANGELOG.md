@@ -1,7 +1,7 @@
 ## 0.7.0-dev.30 — compor cabeçalho editorial com ações (2026-11-03)
 
 - A seção editorial do Marley reutiliza o token semântico `studio-section-header` para posicionar o título e a ação do owner em uma caixa alinhada; a lista Drupal mantém seu conteúdo acessível e o tema limpa apenas a moldura visual herdada nesse cabeçalho.
-- Mantida a correção do `profile-editor` da versão dev.29. Firefox ESR validou as ações do Perfil legíveis em 1280px; a validação de Marley com o novo cabeçalho está pendente.
+- Mantida a correção do `profile-editor` da versão dev.29. Firefox ESR visível no Runtime: 97/97 verificações aplicáveis PASS, 21 SKIP, zero falhas; título/Criar alinhados e tabela utilizável em 320/390px. Unit 49/355 e Foundation 2441 PASS. Capturas em `$SUITE_OUT/studio-dashboard-final-20261103/marley-header-dev30-retest/`.
 
 ## 0.7.0-dev.29 — manter as ações do Perfil legíveis na coluna lateral (2026-11-03)
 
