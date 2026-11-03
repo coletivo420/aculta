@@ -424,3 +424,9 @@ Classificação: PATCH (mapeia a apresentação dos blocos existentes, sem criar
 
 - Substitui a margem fluida de 24–40 px do cabeçalho da página por 20 px via token semântico. Firefox ESR visível no Runtime repetiu 102/102 verificações aplicáveis da Conta, com 21 SKIP e zero falhas; Dashboard/Perfil/Marley mantiveram 62/62 aplicáveis PASS e 21 SKIP. Captura Conta em `$SUITE_OUT/studio-spacing-dev35-20261103/`; sem comparação pareada pixel a pixel nesta rodada. Stylelint, Foundation 354, Design Foundations 2462 e SDC schema 764 PASS. Outros propósitos que herdam o título global não foram todos inspecionados.
 
+## 0.7.0-dev.36 — compactar o ritmo do Dashboard e restringir Próximos eventos à landing principal (2026-11-03)
+
+- Dashboard Studio usa intervalos de 12 px entre blocos/ações e remove margens padrão dos títulos internos, mantendo a grade e os alvos existentes.
+- Bloco `aculta_events_upcoming` permanece condicionado ao purpose `main` e agora também à rota `<front>`, evitando exibição no Perfil público quando servido no domínio principal. Configuração requer import no Runtime após snapshot; não há mudança de dados.
+- Firefox ESR visível com CSS candidato: as verificações específicas de Dashboard passaram em 320/390/768/1280 px. Suite ampla: 126 PASS, 2 FAIL (fonte Montserrat candidata não carregada; moldura de abas secundárias), 21 checks condicionais SKIP. Os FAILs não foram ocultados nem contados como PASS; inspeção visual integrada da folha publicada fica pendente.
+

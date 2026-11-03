@@ -925,8 +925,10 @@ body.path-marley form.node-revista-form .form-actions :is(.form-submit, .button-
 .aculta-account-entry {
   display: grid;
   min-width: 0;
-  gap: var(--aculta-studio-fidelity-row-gap);
+  gap: var(--aculta-space-3);
 }
+
+.aculta-account-entry > :is(h1, h2) { margin-block: 0; }
 
 .studio-account-section {
   display: grid;
@@ -990,7 +992,7 @@ body.path-marley form.node-revista-form .form-actions :is(.form-submit, .button-
 .aculta-account-entry .studio__actions {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--aculta-studio-fidelity-row-gap);
+  gap: var(--aculta-space-3);
   padding: 0;
 }
 

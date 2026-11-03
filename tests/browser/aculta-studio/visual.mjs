@@ -419,8 +419,9 @@ try {
     await shot('00-conta-dashboard');
     for (const width of [320, 390, 768, 1280]) {
       await setViewport(width, width < 500 ? 844 : 900);
-      const dashboardLayout = JSON.parse(await exec(`const actions=document.querySelector('.aculta-account-entry .studio__actions');const columns=actions?getComputedStyle(actions).gridTemplateColumns.split(' ').length:0;return JSON.stringify({width:innerWidth,page:document.documentElement.scrollWidth,columns});`));
+      const dashboardLayout = JSON.parse(await exec(`const entry=document.querySelector('.aculta-account-entry');const actions=entry?.querySelector('.studio__actions');const columns=actions?getComputedStyle(actions).gridTemplateColumns.split(' ').length:0;const gap=entry?getComputedStyle(entry).rowGap:null;const headingMargins=[...(entry?.querySelectorAll(':scope > h1,:scope > h2')||[])].map((h)=>getComputedStyle(h).marginBlockStart);return JSON.stringify({width:innerWidth,page:document.documentElement.scrollWidth,columns,gap,headingMargins});`));
       check(`Dashboard sem overflow e com grade responsiva em ${width}px`, dashboardLayout.page <= width && dashboardLayout.columns === (width < 768 ? 1 : 2), JSON.stringify(dashboardLayout));
+      check(`Dashboard mantém ritmo compacto em ${width}px`, dashboardLayout.gap === '12px' && dashboardLayout.headingMargins.every((margin)=>margin === '0px'), JSON.stringify(dashboardLayout));
     }
     await setViewport(1280, 900);
     if (dashboard.profile) {

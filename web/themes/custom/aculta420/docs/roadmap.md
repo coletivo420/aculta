@@ -1,5 +1,10 @@
 # Roadmap — ACULTA420
 
+## 0.7.0-dev.36 — Dashboard compacto e escopo da caixa de eventos (2026-11-03; navegador parcial)
+
+- Dashboard: intervalo de 12 px entre blocos e ações, títulos internos sem margens padrão. Firefox ESR com CSS candidato local passou as verificações específicas em 320/390/768/1280 px; sem overflow e grade 1/2 colunas.
+- A visibilidade de Próximos eventos combina o purpose `main` com `<front>`, para aparecer somente na landing principal. A configuração requer import no Runtime após snapshot. A verificação visual candidata geral teve 126 PASS, 2 FAIL (carregamento de Montserrat no harness e moldura de abas secundárias) e 21 checks condicionais SKIP; os dois FAIL não medem espaçamento do Dashboard e ficam registrados, sem aceite geral desta execução.
+
 ## Reduzir intervalo entre título global e conteúdo — 0.7.0-dev.35 (2026-11-03; Studio validado no Runtime)
 
 `.aculta-page-heading` usa 20 px do token semântico `--aculta-space-5`, no lugar do clamp fluido 24–40 px. Firefox ESR confirmou novamente Conta 102/102 aplicáveis (21 SKIP, zero falhas) e Dashboard/Perfil/Marley 62/62 (21 SKIP); a captura da Conta mostra os painéis mais próximos do H1. Gatilhos de rota, título, foco e Form API permaneceram funcionais. Outros propósitos fora do Studio que usam o cabeçalho global ainda precisam de inspeção visual.
@@ -491,3 +496,4 @@ O Studio passou a priorizar **GANJALAB E-0.1**, interface editorial sob `conta.a
 ## Barra multidomínio — correção visual pendente de validação
 
 - Gatilhos e contadores compartilham a mesma geometria e tokens; rótulos das gavetas acompanham a contagem. Versão PATCH prevista: `0.7.1-dev.1`, após validação visual em Firefox ESR no ambiente autorizado.
+

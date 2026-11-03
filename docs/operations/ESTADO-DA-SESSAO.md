@@ -1,5 +1,11 @@
 # Estado da sessão
 
+## Handoff — espaçamento Studio e escopo de Próximos eventos, 2026-11-03
+
+- Dashboard Studio recebeu intervalo de 12 px e reset de margens nos títulos internos (`studio.css`); com CSS candidato em Firefox ESR, todas as verificações específicas passaram em 320/390/768/1280 px, grade 1/2 colunas e sem overflow. A suíte ampla teve 126 PASS, 2 FAIL (Montserrat candidata não carregou; verificação de moldura das abas secundárias) e 21 SKIP condicionais; os FAILs foram preservados no relatório externo `$SUITE_OUT/studio-spacing-dev36-20261103/results.json`.
+- `block.block.aculta420_aculta_events_upcoming.yml` agora exige purpose `main` e rota `<front>`, mantendo a caixa somente na landing principal e removendo-a do Perfil público no mesmo domínio.
+- Versão do tema marcada `0.7.0-dev.36`. Runtime `toca` / Drupal 11.4.10 / `aculta_runtime`; preflight `updatedb:status` sem updates e `config:status` mostra somente essa configuração diferente. Ainda não houve snapshot, import, cache rebuild nem smoke final pós-publicação. Antes de importar, fazer snapshot protegido conforme `AGENTS.md` e conferir que a diferença continua limitada ao bloco.
+
 ## Handoff — compactação da escala de espaçamento ACULTA420, 2026-11-03
 
 - **Objetivo:** pesquisar padrões compactos e reduzir/padronizar espaçamentos globais e nas telas Studio sem alterar paleta/cabeçalho.

@@ -511,3 +511,7 @@
   conflita na aprovação, mantém a Contribution em `submitted` e não cria outro
   Evento. Caso focal: 1 teste / 26 assertions; classe completa: 29/941, com 24
   depreciações upstream. `aculta_simpletest`, sem escrita no Runtime.
+## Escopo do bloco Próximos eventos na landing principal (2026-11-03)
+
+- A configuração `block.block.aculta420_aculta_events_upcoming` combina a visibilidade do purpose `main` com o caminho `<front>`. O bloco não aparece mais em páginas internas do domínio principal, incluindo o Perfil público. Importar `config/sync`; sem mudança de conteúdo ou dados.
+
