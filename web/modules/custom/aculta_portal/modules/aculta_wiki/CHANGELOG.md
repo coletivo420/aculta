@@ -1,3 +1,13 @@
+> Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
+
+## 0.1.0-dev.137 — Rotas da Wiki na raiz e WE SATIVA em /we-sativa
+
+- Subrotas da Wiki sobem para a raiz de wiki420: `/busca-wiki`, `/verbetes` e `/propostas`.
+- A ação WE SATIVA passa a `/we-sativa` (`/we-sativa/verbetes/novo` e `/we-sativa/propostas/{proposal}/decidir`).
+- O sitemap e o link "ver todos" usam `/verbetes`. A entrada `/wiki` segue interna: a raiz reescreve para ela.
+- Os caminhos `/wiki/busca`, `/wiki/verbetes`, `/wiki/propostas` e `/wesativa` respondem 404, sem redirect.
+- Testes Unit e Kernel: DEFERRED (sem `vendor/` nem Runtime nesta sessão).
+
 ## 0.1.0-dev.136 — Kernel de ciclo de vida volta a rodar inteiro
 
 - O Kernel instala o schema de `crop`: a cadeia do uploader habilita o crop, e o hook de exclusão do arquivo consulta a tabela; sem ela a limpeza falhava fechada.

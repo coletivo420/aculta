@@ -1,3 +1,9 @@
+## 0.4.1-dev.59 — Prefixo /studio removido da guarda de caminhos
+
+- `CANONICAL_STUDIO_PATHS` e `caminhoStudioCanonicoPermitido` saem de `FrontPathPolicy`.
+- Qualquer `/studio` responde 404 no subscriber de propósito. O teste de exceção vira teste de caminhos internos fechados.
+- Testes: DEFERRED.
+
 ## 0.4.1-dev.58 — dado antigo de uploads removido de config/sync
 
 - Removidos `config/sync/aculta_portal.user_upload.yml` e o bloco `aculta_portal.user_upload` do schema. Nenhum código lê mais esse dado.

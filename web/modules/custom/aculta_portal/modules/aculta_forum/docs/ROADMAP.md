@@ -1,3 +1,5 @@
+> Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
+
 # Roadmap — ACULTA Forum
 
 **Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Fechar escopo, testes, gates e revisão visual aplicável antes de RC; Alpha valida o deploy no servidor de desenvolvimento; após aprovação, preparar produção. Seções `rc.*` abaixo são planejamento/histórico legado, não autorizam deixar critérios para depois do deploy.

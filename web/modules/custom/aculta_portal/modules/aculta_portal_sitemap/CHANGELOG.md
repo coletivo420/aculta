@@ -1,3 +1,5 @@
+> Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
+
 ## Não lançado — URLs de sitemap por ambiente via ACULTA Deployer (F7)
 
 - Raízes, caminhos públicos e eventos agora usam `DomainPurposeManager::environmentPathUrl()`; conteúdo usa `environmentRouteUrl()`. Os hosts vêm de `domain_transition.entries` em `aculta_deployer/config/deploy.json`.

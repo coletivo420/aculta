@@ -1,3 +1,10 @@
+> Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
+
+## 0.1.0-dev.40 — Página WE SATIVA em /we-sativa
+
+- As rotas `/wesativa` e `/wesativa/inicio` passam a `/we-sativa` e `/we-sativa/inicio`, no purpose `wiki`.
+- Qualquer `/studio/*` segue 404. Testes: DEFERRED.
+
 ## 0.1.0-dev.39 — drop zone do Studio sobrevive ao cache de formulário e remove envios
 
 - As dependências do `StudioUploadEmbedForm` passam a `protected readonly`: o `DependencySerializationTrait` do FormBase só serializa propriedades visíveis no escopo dele, então `private` promovidas se perdiam e o envio em duas etapas dava 500 ("must not be accessed before initialization").

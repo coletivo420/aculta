@@ -1,3 +1,5 @@
+> Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
+
 ## Revalidação 2026-11-01 — ciclo de vida e propostas
 
 - `EventOrganizationLifecycleKernelTest`: **27 testes / 888 assertions PASS**;

@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.39
+version: 0.1.0-dev.40
 state: Dev
 progress_note: >-
   Dev.39: drop zone do Studio serializa dependências (protected readonly), envia

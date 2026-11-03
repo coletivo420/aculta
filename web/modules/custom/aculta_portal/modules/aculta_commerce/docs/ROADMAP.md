@@ -1,3 +1,5 @@
+> Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
+
 # ACULTA Commerce — Roadmap e auditoria 0.1.0-A
 
 Escopo iniciado em 2026-10-22; estado revisado em 2026-10-26. Este roadmap é versionado no repositório e não acompanha o nome de uma branch de trabalho específica.

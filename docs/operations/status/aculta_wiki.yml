@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.136
+version: 0.1.0-dev.137
 state: Dev
 progress_note: >-
   Dev.136: Kernel instala schema de crop, remove escrita de nickname_required e
