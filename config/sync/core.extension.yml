@@ -245,7 +245,6 @@ module:
   standard: 1000
 theme:
   claro: 0
-  stable9: 0
   aculta420: 0
   bootstrap: 0
 profile: standard
