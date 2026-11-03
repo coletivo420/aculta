@@ -1,5 +1,14 @@
 # Estado da sessão
 
+## Handoff mais recente — troca dos consumidores LMS interrompida por gate, 2026-11-02
+
+- **Tarefa:** trocar leituras de contrib pelas entidades próprias do P2, em commits publicados por consumidor; depois P4 e P5. Referência de Runtime informada: SHA-256 `c4537a0cd14ee8ba04fc3da2e3c660a0d18f9fbbf185777c43fe7cfc468c2c70`.
+- **Checkout:** branch `dev`, HEAD e `origin/dev` em `2cd835e6025ef17ea2527b1f6cbe8e708b0b93ef` no início. Descartada a remoção local prévia das dependências do manifesto conforme ordem explícita. Nenhum commit, push ou operação Runtime nesta retomada.
+- **Trabalho local não publicado:** `AnswerLifecycleEventHooks` passou a usar `aculta_lms_answer` e os estados do contrato `CourseAnswer`; o teste Unit correspondente usa campos/estado da entidade própria. Versão local preparada como `0.1.0-dev.139` em manifest, CHANGELOG e status. O P2 não guarda payload de resposta: eventos usam identidade e estado persistido, sem preservar payload legado. Arquivos: `web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/AnswerLifecycleEventHooks.php`, `tests/src/Unit/AnswerLifecycleEventHooksTest.php`, `aculta_lms.info.yml`, `CHANGELOG.md`, `docs/operations/status/aculta_lms.yml`.
+- **Verificações:** teste focal `AnswerLifecycleEventHooksTest` PASS (4 testes/19 assertions); Unit completa PASS (224 testes/724 assertions, 1 depreciação PHPUnit). O gate Portal falhou e a missão determina parar: `- A tabela do README raiz está desatualizada. Rode: php scripts/validate-project-status-index.php --write`; `PROJECT STATUS INDEX: FAIL`; `ACULTA PORTAL DRUPAL 11+ GATE: FAIL`; `- The permanent project module/theme status-index gate failed.` Nenhuma correção do índice foi executada por estar fora da entrega atual.
+- **Estado da missão:** interrompida antes do commit deste consumidor, Runtime, P4 e P5 pela condição de parada do gate. Não executar P4/P5 até o gate passar e a revisão retomar a entrega. Nenhum dado foi apagado; P6 e reescrita de histórico não executados.
+- **Retomar lendo:** este handoff; `scripts/validate-project-status-index.php`; `web/modules/custom/aculta_portal/modules/aculta_lms/src/Hook/AnswerLifecycleEventHooks.php`; `tests/src/Unit/AnswerLifecycleEventHooksTest.php`; `docs/decisions/ADR-042-remocao-dependencias-lms-contrib.md`.
+
 ## Handoff mais recente — P2 e plugins objetivos P3 do LMS, 2026-11-02
 
 - **Tarefa:** implementar as quatro entidades próprias do `aculta_lms` segundo ADR-042 e `docs/modules/P2-ENTIDADES-PROPRIAS-LMS.md`; P5/P6 e remoção de dados não executados.

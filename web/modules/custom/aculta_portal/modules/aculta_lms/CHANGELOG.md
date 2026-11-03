@@ -708,3 +708,8 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
   que a atividade não está disponível. Unit focal: 3/15; combinada LMS/
   Messenger: 83/440, com 8 depreciações PHPUnit.
 
+## 0.1.0-dev.139 — eventos usam respostas próprias do ACULTA
+
+- `AnswerLifecycleEventHooks` publica submissão e avaliação a partir de `aculta_lms_answer`; respostas P2 não armazenam o payload, portanto a publicação usa apenas identidade e estado persistido.
+- Sem leitura nem preservação adicional do payload de respostas legado.
+

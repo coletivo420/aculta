@@ -6,10 +6,10 @@ namespace Drupal\aculta_lms\Hook;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\lms\Entity\AnswerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Drupal\aculta_lms\Event\AnswerEvaluatedEvent;
 use Drupal\aculta_lms\Event\AnswerSubmittedEvent;
+use Drupal\aculta_lms\Learning\CourseAnswer;
 
 /**
  * Publishes learner answer submissions and evaluation publications.
@@ -25,13 +25,13 @@ final class AnswerLifecycleEventHooks {
    */
   #[Hook('entity_insert')]
   public function entityInsert(EntityInterface $entity): void {
-    if (!$entity instanceof AnswerInterface) {
+    if ($entity->getEntityTypeId() !== 'aculta_lms_answer') {
       return;
     }
-    if ($entity->isEvaluated()) {
-      $this->publish($entity);
+    if ($this->state($entity) === CourseAnswer::STATE_GRADED) {
+      $this->publishEvaluation($entity);
     }
-    elseif ($entity->getData() !== []) {
+    elseif ($this->state($entity) === CourseAnswer::STATE_SUBMITTED) {
       $this->publishSubmission($entity);
     }
   }
@@ -41,29 +41,30 @@ final class AnswerLifecycleEventHooks {
    */
   #[Hook('entity_update')]
   public function entityUpdate(EntityInterface $entity): void {
-    if (!$entity instanceof AnswerInterface) {
+    if ($entity->getEntityTypeId() !== 'aculta_lms_answer') {
       return;
     }
     $original = $entity->getOriginal();
-    if (!$original instanceof AnswerInterface) {
+    if ($original === NULL || $original->getEntityTypeId() !== 'aculta_lms_answer') {
       return;
     }
-    if (!$entity->isEvaluated()) {
-      if ($entity->getData() !== [] && $original->getData() !== $entity->getData()) {
-        $this->publishSubmission($entity);
-      }
+    if ($this->state($entity) === CourseAnswer::STATE_SUBMITTED
+      && $this->state($original) !== CourseAnswer::STATE_SUBMITTED) {
+      $this->publishSubmission($entity);
       return;
     }
-    $this->publish($entity);
+    if ($this->state($entity) === CourseAnswer::STATE_GRADED) {
+      $this->publishEvaluation($entity);
+    }
   }
 
   /**
    * Dispatches the learner-only evaluation event.
    */
-  private function publish(AnswerInterface $answer): void {
+  private function publishEvaluation(EntityInterface $answer): void {
     $this->eventDispatcher->dispatch(new AnswerEvaluatedEvent(
       (string) $answer->uuid(),
-      $answer->getUserId(),
+      (string) $answer->get('uid')->value,
       $this->newPublicationVersion(),
     ));
   }
@@ -71,11 +72,15 @@ final class AnswerLifecycleEventHooks {
   /**
    * Dispatches a response without including its content.
    */
-  private function publishSubmission(AnswerInterface $answer): void {
+  private function publishSubmission(EntityInterface $answer): void {
     $this->eventDispatcher->dispatch(new AnswerSubmittedEvent(
       (string) $answer->uuid(),
       $this->newPublicationVersion(),
     ));
+  }
+
+  private function state(EntityInterface $answer): string {
+    return (string) $answer->get('state')->value;
   }
 
   /**
