@@ -50,3 +50,18 @@ Sem o passo 1, este submódulo não tem o que controlar.
 - `docs/PLANO-FINAL.md` (nesta pasta): plano consolidado, decisões e etapas.
 - ADR de superfícies: `docs/decisions/ADR-043-superficies-dominio.md` e anexo `docs/decisions/ADR-043-anexo-decisoes-fixas.md`.
 - `CHANGELOG.md` deste submódulo.
+
+## Estado das fases (2026-11-02)
+
+| Fase | Estado | Observação |
+| --- | --- | --- |
+| 3.0 Congelar comportamento | DEFERRED | Roteiro pronto; exige Runtime. |
+| 3.1 Mapa único | Código | `DomainSurfaceMap`; teste de paridade escrito. |
+| 3.2 Flag autoritativa | Código | Subscriber do portal preserva o purpose; teste de rota DEFERRED. |
+| 3.3 Constantes de purpose | Código | `DomainSurfaceMap::MAIN` e `ACCOUNT` no subscriber. |
+| 3.4 Atribuição pela configuração | Parcial | Configuração, schema, leitor e interruptor `leitura_ativa` (desligado). Subscriber não implementado. |
+| 3.5 Modo diretório | Parcial | Regra de superfícies permitidas na validação. URLs não implementadas. |
+| 3.6 Formulário | Código | `/painel-administrativo/superficies`, só MAIN. |
+| 3.7 Exportação | Parcial | YAML em `config/sync`; conferência de importação DEFERRED. |
+
+Todos os testes escritos ainda não foram executados.

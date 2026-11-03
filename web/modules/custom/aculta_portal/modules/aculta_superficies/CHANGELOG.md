@@ -1,3 +1,9 @@
+## 0.1.0-dev.3 — estado real das fases e documentação
+
+- Fase 3.1 (mapa único), 3.2 (flag autoritativa), 3.3 (constantes de purpose), 3.4 parcial (configuração, schema, leitor, interruptor desligado), 3.5 parcial (regra de diretório na validação), 3.6 (formulário no MAIN), 3.7 parcial (YAML exportado).
+- Não implementado: subscriber da 3.4, URLs de diretório da 3.5, conferência de importação da 3.7. Dependem de teste de rota no Runtime.
+- Testes: escritos, DEFERRED.
+
 ## 0.1.0-dev.2 — formulário de superfícies no MAIN (Fase 3.6)
 
 - `SuperficiesForm` em `/painel-administrativo/superficies`, permissão `administrar superficies`, rota só no MAIN.

@@ -1,3 +1,9 @@
+## 0.4.1-dev.64 — testes escritos para mapa, leitor e validação de superfícies
+
+- `DomainSurfaceMapTest`: paridade dos purposes, IDs de Domain, raízes, nó da loja e caminho legado.
+- `SurfaceConfigReaderTest`: regras de MAIN, slug, reservados, duplicidade e lista de diretório.
+- Testes: escritos, NÃO executados (sem `vendor/` nem Runtime). DEFERRED.
+
 ## 0.4.1-dev.63 — leitor de configuração de superfícies (Fase 3.4, parcial)
 
 - Novo `Domain/SurfaceConfigReader` (serviço `aculta_portal.surface_config_reader`) lê `aculta_portal.superficies` com padrões e valida regras: MAIN ativo, slug de diretório válido, sem reservados e sem duplicidade.
