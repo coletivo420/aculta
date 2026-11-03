@@ -73,7 +73,7 @@ final class AnswerEntity extends ContentEntityBase {
       $original = $storage->loadUnchanged($this->id());
       if ($original instanceof self) {
         foreach (['activity_id', 'uid', 'answer_data', 'created'] as $field_name) {
-          if ($original->get($field_name)->getValue() !== $this->get($field_name)->getValue()) {
+          if ((string) $original->get($field_name)->value !== (string) $this->get($field_name)->value) {
             throw new \LogicException('Tentativa enviada é imutável; crie outra resposta para uma nova tentativa.');
           }
         }

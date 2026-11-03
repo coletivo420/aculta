@@ -217,3 +217,15 @@ function aculta_lms_update_10010(): void {
   }
   $comment_body->save();
 }
+
+/** Adds a precision field without changing existing integer score storage. */
+function aculta_lms_update_10011(): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $installed = $manager->getFieldStorageDefinition('score_precise', 'aculta_lms_attempt_archive');
+  if ($installed) {
+    return;
+  }
+  $definitions = \Drupal::service('entity_field.manager')
+    ->getBaseFieldDefinitions('aculta_lms_attempt_archive');
+  $manager->installFieldStorageDefinition('score_precise', 'aculta_lms_attempt_archive', 'aculta_lms', $definitions['score_precise']);
+}

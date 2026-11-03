@@ -1,3 +1,19 @@
+## 0.1.0-dev.165 — arquiva tentativas ACULTA sem Drupal LMS
+
+- O histórico agora lê `AnswerEntity`, resolve atividade/aula/curso pelas
+  entidades ACULTA e preserva payload JSON, comentários publicados e a nota
+  exata em `score_precise`, mantendo o campo inteiro legado `score`.
+- O acesso ao histórico exige usuário ativo e associação/permissão atual do
+  grupo; a autorização antiga `administer lms` não libera mais os registros.
+- Unit completa 235/830 PASS (1 depreciação PHPUnit); Kernel
+  `AttemptArchiveLifecycleTest` 9/367 PASS (50 depreciações Core/contrib);
+  gate Portal 1.172 checks PASS.
+- Runtime: snapshot SHA-256
+  `a344c5509ee02a565b4bd72790da51dd541d86298f75ba42eb7ba5f91c1fa076`; update
+  10011 e `drush cr` PASS. `updatedb:status` limpo; `config:status` mantém
+  `aculta_portal.superficies` e `core.extension` diferentes. P5 continua; outros
+  imports e dependências LMS ainda precisam ser removidos.
+
 ## 0.1.0-dev.163 — protege downloads de anexos ACULTA
 
 - Adiciona rota ACULTA para anexo da tentativa. O acesso exige resposta enviada
