@@ -479,7 +479,14 @@ Levantados na varredura de 2026-10-14: declarados em `css/tokens.css` e sem entr
 | `--aculta-shell-domain-text` | `var(--aculta-text-primary)` | 3 | Cabeçalho e barra institucional: bordas, textos, filtro do logo, estado ativo. |
 | `--aculta-shell-institution-text` | `var(--aculta-text-primary)` | 1 | Cabeçalho e barra institucional: bordas, textos, filtro do logo, estado ativo. |
 | `--aculta-shell-logo-filter` | `brightness(0)` | 3 | Cabeçalho e barra institucional: bordas, textos, filtro do logo, estado ativo. |
-| `--aculta-space-section` | `clamp(2.25rem, 4.5vw, 4.25rem)` | 6 | Espaço vertical entre seções (fluido). |
+| `--aculta-space-1` | `0.25rem` | 0 | Passo compacto da escala compartilhada de espaçamento (4 px). |
+| `--aculta-space-2` | `0.5rem` | 0 | Passo compacto da escala compartilhada de espaçamento (8 px). |
+| `--aculta-space-3` | `0.75rem` | 0 | Passo compacto da escala compartilhada de espaçamento (12 px). |
+| `--aculta-space-4` | `1rem` | 0 | Espaçamento padrão entre controles e conteúdo (16 px). |
+| `--aculta-space-5` | `1.25rem` | 0 | Espaçamento intermediário da escala compartilhada (20 px). |
+| `--aculta-space-6` | `1.5rem` | 0 | Espaçamento amplo da escala compartilhada (24 px). |
+| `--aculta-space-8` | `2rem` | 0 | Espaçamento de separação ampla (32 px). |
+| `--aculta-space-section` | `clamp(1.5rem, 3vw, 2.5rem)` | 6 | Espaço entre seções, reduzido em relação à escala anterior; telas largas limitam em 40 px. |
 | `--aculta-status-error-border` | `#b3261e` | 1 | Estados (ok, erro, atenção): texto, superfície e borda. |
 | `--aculta-status-error-surface` | `#fde8e7` | 2 | Estados (ok, erro, atenção): texto, superfície e borda. |
 | `--aculta-status-error-text` | `#b3261e` | 2 | Estados (ok, erro, atenção): texto, superfície e borda. |

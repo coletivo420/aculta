@@ -407,3 +407,8 @@ Classificação: PATCH (mapeia a apresentação dos blocos existentes, sem criar
 - O player com tópico real ainda não está disponível no Runtime de teste; a
   revisão visual permanece pendente.
 
+## 0.7.0-dev.32 — padronizar espaçamento compacto no tema (2026-11-03; validação Runtime pendente)
+
+- Introduz escala semântica de espaçamento ACULTA420 e reduz espaços globais de conteúdo e seção; ajusta páginas Studio, Conta e Perfil para usar a mesma cadência em caixas e painéis. Mantém alvos da navegação da Conta em 44 px e não altera cores do cabeçalho.
+- Referências de projeto: [Carbon spacing](https://www.carbondesignsystem.com/building-blocks/foundations/spacing/overview), [GOV.UK spacing](https://design-system.service.gov.uk/styles/spacing/) e [USWDS spacing units](https://designsystem.digital.gov/design-tokens/spacing-units/). Lint e inspeção Firefox pós-alteração pendentes.
+

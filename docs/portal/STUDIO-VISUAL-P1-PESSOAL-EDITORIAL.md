@@ -14,7 +14,7 @@ P1.1 e a implementação de P1.2 estão no código: Dashboard com identidade e p
 
 ### Estado adicional dos testes — 2026-11-03
 
-Orca/Firefox ESR passou 5/5 em Marley, incluindo anúncios das abas permitidas, heading e saída de áudio; a conta teste.comum tem permissão de moderação vigente via `content_editor`. Upload sintético de avatar chegou ao formulário de corte sem salvar imagem; persistência continuou igual. Senha permanece sem submissão por causa do aceite obrigatório de Termos, que não foi feito em nome da conta. Comparação real das quatro telas com a prancha principal válida foi realizada; aceite pixel a pixel não foi declarado. Veja a auditoria AJAX para evidências e limites.
+Orca/Firefox ESR passou 5/5 em Marley, incluindo anúncios das abas permitidas, heading e saída de áudio; a conta teste.comum tem permissão de moderação vigente via `content_editor`. O harness `avatar-write.mjs` passou 11/11 verificações, com 1 `DEFERRED`: upload sintético chegou ao formulário de corte, mas o desafio humano impediu a etapa final; avatar persistido não mudou e os três arquivos de teste continuam temporários. Senha permanece sem submissão por causa do aceite obrigatório de Termos, que não foi feito em nome da conta. Comparação real das quatro telas com a prancha principal válida foi realizada; aceite pixel a pixel não foi declarado. Veja a auditoria AJAX para evidências e limites.
 
 
 **Tipo:** plano documental para execução incremental.  

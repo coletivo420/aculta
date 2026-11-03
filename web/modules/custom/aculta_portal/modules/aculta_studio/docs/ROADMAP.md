@@ -4,7 +4,7 @@ Comparação real mostrou que a lista da Conta ainda herdava `nav-tabs`/`studio_
 
 ### Complemento de testes — 2026-11-03
 
-Orca/Firefox ESR passou 5/5 na tela Marley, com nome acessível das três abas autorizadas e heading correto; a gravação de áudio teve sinal. Avatar sintético foi recebido pelo Form API e abriu o corte; não foi aplicado nem salvo, e o estado de avatar permaneceu igual. Senha continua pendente: a conta sintética exige o aceite individual dos Termos, não realizado; a fixture comum proíbe troca de senha sem decisão. A comparação visual real usa a prancha principal válida e capturas Runtime, sem declarar paridade pixel a pixel. ZIP não disponível; cinco PNGs rastreados validados por `file` e `identify`.
+Orca/Firefox ESR passou 5/5 na tela Marley, com nome acessível das três abas autorizadas e heading correto; a gravação de áudio teve sinal. O harness de avatar passou 11/11 checks e registrou 1 `DEFERRED`: upload sintético recebido e corte aberto; desafio de verificação humana impediu submissão, estado persistido permaneceu igual e arquivos seguem temporários para limpeza normal. Senha continua pendente: a conta sintética exige o aceite individual dos Termos, não realizado; a fixture comum proíbe troca de senha sem decisão. Testes Unit cobrem owner CPF/CNPJ opcional ausente e componentes opcionais do Perfil; CPF/CNPJ está ativo no Runtime. A comparação visual real usa a prancha principal válida e capturas Runtime, sem declarar paridade pixel a pixel. ZIP não disponível; cinco PNGs rastreados validados por `file` e `identify`.
 
 ## Conta Studio e composição editorial Marley — 2026-11-03
 

@@ -1,6 +1,6 @@
 .aculta-profile-editor {
   display: grid;
-  gap: clamp(1rem, 3vw, 1.5rem);
+  gap: var(--aculta-space-4);
   min-inline-size: 0;
   max-inline-size: 76rem;
   margin-inline: auto;
@@ -17,7 +17,7 @@
 .aculta-profile-editor__grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: clamp(1rem, 2.5vw, 1.5rem);
+  gap: var(--aculta-space-4);
   align-items: start;
   min-inline-size: 0;
 }

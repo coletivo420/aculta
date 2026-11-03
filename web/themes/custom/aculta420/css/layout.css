@@ -1,9 +1,15 @@
 /* 4. Layout: one horizontal reference for the entire page. */
 @media (min-width: 48rem) {
   :root {
-    --aculta-page-gutter: clamp(1.5rem, 3vw, 2rem);
-    --aculta-main-space-block: clamp(2rem, 4vw, 3rem);
-    --aculta-main-space-block-compact: clamp(0.75rem, 1.5vw, 1.25rem);
+    --aculta-page-gutter: clamp(1rem, 2vw, 1.5rem);
+    --aculta-main-space-block: clamp(1rem, 2vw, 1.5rem);
+    --aculta-main-space-block-compact: var(--aculta-space-2);
+  }
+}
+
+@media (min-width: 70rem) {
+  :root {
+    --aculta-space-section: clamp(2rem, 2.5vw, 2.5rem);
   }
 }
 

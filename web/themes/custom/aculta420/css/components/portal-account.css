@@ -1,6 +1,6 @@
 .portal-account {
   display: grid;
-  gap: clamp(1rem, 2.5vw, 1.5rem);
+  gap: var(--aculta-space-4);
   color: var(--aculta-text-primary);
 }
 
@@ -27,13 +27,13 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: start;
-  gap: clamp(1rem, 2.5vw, 1.5rem);
+  gap: var(--aculta-space-4);
 }
 
 .portal-account__nav,
 .portal-account__content {
   min-width: 0;
-  padding: clamp(1rem, 2.5vw, 1.5rem);
+  padding: var(--aculta-space-4);
   background: var(--aculta-surface-raised);
   border-radius: 0.25rem;
 }
@@ -239,7 +239,7 @@
   .portal-account__nav {
     position: sticky;
     top: 1rem;
-    padding: clamp(1rem, 2.5vw, 1.5rem);
+    padding: var(--aculta-space-4);
     border-inline-start: 3px solid var(--aculta-border-accent);
     background: var(--aculta-surface-raised);
   }

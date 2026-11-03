@@ -1,5 +1,16 @@
 # Estado da sessão
 
+## Handoff — compactação da escala de espaçamento ACULTA420, 2026-11-03
+
+- **Objetivo:** pesquisar padrões compactos e reduzir/padronizar espaçamentos globais e nas telas Studio sem alterar paleta/cabeçalho.
+- **Decisão:** escala semântica de 4/8 px em tokens; seções agora 24–40 px; conteúdo principal usa 16 px na base e 16–24 px em desktop. Studio usa gutters/row gaps menores em todos os propósitos que compartilham o token; Conta reduz os intervalos da navegação e mantém links com 44 px. Perfil e Conta Portal foram alinhados aos tokens. O conteúdo continua progressivo por viewport.
+- **Pesquisa:** Carbon, GOV.UK Design System e USWDS; links e resumo estão em `web/themes/custom/aculta420/CHANGELOG.md` e em [Spacing](https://www.carbondesignsystem.com/building-blocks/foundations/spacing/overview), [GOV.UK](https://design-system.service.gov.uk/styles/spacing/) e [USWDS](https://designsystem.digital.gov/design-tokens/spacing-units/).
+- **Arquivos do ajuste:** `tokens.css`, `layout.css`, `studio.css`, `portal-account.css`, `components/patterns/profile-editor/profile-editor.css`, `docs/design-system.md`, `CHANGELOG.md`, `docs/roadmap.md`, `aculta420.info.yml` (0.7.0-dev.32).
+- **Validações:** Stylelint PASS; Foundation 354 PASS; Design Foundations 2462 PASS; token-only claro/escuro PASS; SDC schema 764 PASS; `git diff --check` PASS. Capturas/baseline novas e inspeção Firefox pós-alteração ainda pendentes, portanto ajuste visual no Runtime não homologado.
+- **Pesquisa visual e limite:** referências do Studio válidas usadas anteriormente; esta alteração não tem captura pós-mudança. Os passos pendentes de senha e persistência do avatar permanecem conforme o handoff Studio logo abaixo.
+- **Git/Runtime:** nenhum commit ou push desta retomada ainda. Confirmar status e preservar somente os arquivos da entrega antes de publicar; atualizar Runtime após push conforme procedimento.
+- **Retomar lendo:** tokens/layout/componentes acima, `web/themes/custom/aculta420/docs/versioning.md`, e os handoffs Studio nesta página.
+
 ## Handoff — estabilidade de UID na exportação ICS, 2026-11-03
 
 - **Objetivo:** manter o UID ICS estável quando atributos editáveis de uma entidade de calendário mudam, sem alterar o Runtime nem publicar.

@@ -86,12 +86,20 @@
   --aculta-link: var(--aculta-text-primary);
   --aculta-border: var(--aculta-border-default);
   --aculta-control-border: var(--aculta-border-strong);
-  --aculta-space-section: clamp(2.25rem, 4.5vw, 4.25rem);
+  /* A compact, shared 4px/8px scale keeps layout rhythm without oversized gaps. */
+  --aculta-space-1: 0.25rem;
+  --aculta-space-2: 0.5rem;
+  --aculta-space-3: 0.75rem;
+  --aculta-space-4: 1rem;
+  --aculta-space-5: 1.25rem;
+  --aculta-space-6: 1.5rem;
+  --aculta-space-8: 2rem;
+  --aculta-space-section: clamp(1.5rem, 3vw, 2.5rem);
   /* Mobile is the baseline; wider layouts gain room through progressive enhancement. */
   --aculta-page-gutter: 1rem;
   --aculta-page-content-max: 80rem;
-  --aculta-main-space-block: 1.5rem;
-  --aculta-main-space-block-compact: 0.5rem;
+  --aculta-main-space-block: var(--aculta-space-4);
+  --aculta-main-space-block-compact: var(--aculta-space-2);
   --aculta-focus: var(--aculta-focus-ring);
   --aculta-motion-fast: 180ms;
   --aculta-motion-quick: 150ms;
@@ -287,12 +295,12 @@ body.path-culturas .aculta-main,
   --aculta-studio-fidelity-font-weight-extrabold: 820;
   --aculta-studio-fidelity-font-weight-black: 900;
 
-  --aculta-studio-fidelity-gutter: 1.25rem;
-  --aculta-studio-fidelity-row-gap: 1.25rem;
+  --aculta-studio-fidelity-gutter: var(--aculta-space-4);
+  --aculta-studio-fidelity-row-gap: var(--aculta-space-4);
   --aculta-studio-fidelity-page-margin-sides: 0.25rem;
   --aculta-studio-fidelity-page-padding-inline: 1rem;
   --aculta-studio-fidelity-layout-max-width: 100rem;
-  --aculta-studio-fidelity-section-spacing: 3rem;
+  --aculta-studio-fidelity-section-spacing: var(--aculta-space-section);
   --aculta-studio-fidelity-border-radius-tiny: 0.125rem;
   --aculta-studio-fidelity-divider-width: 0.0625rem;
   --aculta-studio-fidelity-focus-outline-width: 0.125rem;
@@ -318,7 +326,7 @@ body.path-culturas .aculta-main,
   .aculta-main:has([data-portal-ui="aculta-learning-room"]),
   .aculta-main .we-sativa__workspace {
     --aculta-studio-fidelity-page-margin-sides: 1.25rem;
-    --aculta-studio-fidelity-page-padding-inline: 1.5rem;
+    --aculta-studio-fidelity-page-padding-inline: 1.25rem;
   }
 }
 
@@ -338,9 +346,8 @@ body.path-culturas .aculta-main,
   .aculta-main:has([data-portal-ui="aculta-learning-journey"]),
   .aculta-main:has([data-portal-ui="aculta-learning-room"]),
   .aculta-main .we-sativa__workspace {
-    --aculta-studio-fidelity-page-padding-inline: 3.5rem;
-    --aculta-studio-fidelity-gutter: 2rem;
-    --aculta-studio-fidelity-section-spacing: 4rem;
+    --aculta-studio-fidelity-page-padding-inline: 1.5rem;
+    --aculta-studio-fidelity-gutter: var(--aculta-space-5);
   }
 }
 
@@ -360,7 +367,7 @@ body.path-culturas .aculta-main,
   .aculta-main:has([data-portal-ui="aculta-learning-journey"]),
   .aculta-main:has([data-portal-ui="aculta-learning-room"]),
   .aculta-main .we-sativa__workspace {
-    --aculta-studio-fidelity-page-margin-sides: 3rem;
+    --aculta-studio-fidelity-page-margin-sides: 1.5rem;
   }
 }
 
@@ -380,8 +387,7 @@ body.path-culturas .aculta-main,
   .aculta-main:has([data-portal-ui="aculta-learning-journey"]),
   .aculta-main:has([data-portal-ui="aculta-learning-room"]),
   .aculta-main .we-sativa__workspace {
-    --aculta-studio-fidelity-page-padding-inline: 5rem;
-    --aculta-studio-fidelity-section-spacing: 5rem;
+    --aculta-studio-fidelity-page-padding-inline: 2rem;
   }
 }
 

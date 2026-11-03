@@ -1,5 +1,9 @@
 # Roadmap — ACULTA420
 
+## Escala compacta de espaçamento — 0.7.0-dev.32 (2026-11-03; validação Runtime pendente)
+
+Tokens semânticos compartilhados reduzem os intervalos de conteúdo geral e de seções, com adaptação progressiva por viewport. Studio, Conta, Perfil e componentes de Conta do Portal usam caixas mais próximas e uma cadência comum; links de navegação conservam 44 px de altura mínima. Cores do cabeçalho não mudaram. Fontes consultadas: Carbon, GOV.UK Design System e USWDS. Lint, gates e comparação visual Firefox pós-alteração pendentes.
+
 ## Conta Studio em painéis próprios — 0.7.0-dev.31 (2026-11-03; validação Runtime pendente)
 
 `studio-account-contextual-nav` não reutiliza mais `nav-tabs`/`studio__subtabs` do Marley: o tema o apresenta como lista vertical, com indicador ativo, dentro de painel semântico; o painel do owner Form API também recebe superfície própria. Reutiliza a estrutura nativa `details`, lista Drupal e Form API, pois nenhum SDC existente é adequado para controlar menu contextual e agrupar formulários de proprietários distintos. Tokens de superfície, borda, raio e sombra ACULTA420 respeitam claro/escuro; sem mudança no cabeçalho. Firefox e regressão pós-sync pendentes.
