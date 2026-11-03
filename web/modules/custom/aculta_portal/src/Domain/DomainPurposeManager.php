@@ -65,14 +65,17 @@ final class DomainPurposeManager {
       return NULL;
     }
     $previous = $this->domainNegotiator->getActiveDomain();
-    $this->domainNegotiator->setActiveDomain($domain);
+    $context = $this->domainNegotiator->getContext();
+    $context->setDomain($domain);
+    $context->setNegotiated(TRUE);
     try {
       return $callback();
     }
     finally {
       // Without a previous domain, restore negotiation to its initial state.
       if ($previous instanceof DomainInterface) {
-        $this->domainNegotiator->setActiveDomain($previous);
+        $context->setDomain($previous);
+        $context->setNegotiated(TRUE);
       }
       else {
         $this->domainNegotiator->getActiveDomain(TRUE);

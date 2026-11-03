@@ -41,7 +41,7 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
   protected static $modules = [
     'system', 'key', 'address', 'geofield', 'domain', 'datetime', 'datetime_range', 'user', 'file', 'image', 'media', 'options', 'link',
     'entity_print', 'entity_usage', 'aculta_image', 'aculta_file_uploader', 'field', 'filter', 'flexible_permissions',
-    'group', 'lms', 'lms_classes', 'views', 'text', 'taxonomy', 'aculta_lms', 'aculta_calendar',
+    'comment', 'group', 'views', 'text', 'taxonomy', 'aculta_lms', 'aculta_calendar',
     'aculta_events', 'aculta_lms_agenda',
   ];
 
@@ -58,19 +58,47 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installConfig(['system', 'group', 'lms', 'lms_classes', 'aculta_lms']);
+    $this->installConfig(['system', 'comment', 'group']);
     foreach ([
+      'group.type.lms_class',
+      'group.type.lms_course',
+      'group.relationship_type.lms_class-group_membership',
       'group.relationship_type.lms_class-lms_class_activity_due',
+      'group.relationship_type.lms_course-group_membership',
+      'group.relationship_type.lms_course-lms_classes',
+      'group.role.lms_class-member',
+      'group.role.lms_course-anonymous',
+      'group.role.lms_course-course_creator',
+      'group.role.lms_course-member',
+      'group.role.lms_course-outsider',
+      'group.role.lms_course-teacher',
       'field.storage.group_relationship.field_activity_due_at',
       'field.field.group_relationship.lms_class-lms_class_activity_due.field_activity_due_at',
       'core.entity_form_display.group_relationship.lms_class-lms_class_activity_due.default',
       'core.entity_view_display.group_relationship.lms_class-lms_class_activity_due.default',
     ] as $config_id) {
       $path = DRUPAL_ROOT . '/../config/sync/' . $config_id . '.yml';
-      $this->container->get('config.storage')->write($config_id, Yaml::decode(file_get_contents($path)));
+      $data = Yaml::decode(file_get_contents($path));
+      if (str_starts_with($config_id, 'group.type.')) {
+        $storage = $this->container->get('entity_type.manager')->getStorage('group_type');
+        if (!$storage->load($data['id'])) {
+          $storage->create($data)->save();
+        }
+      }
+      elseif (str_starts_with($config_id, 'group.relationship_type.')) {
+        $storage = $this->container->get('entity_type.manager')->getStorage('group_relationship_type');
+        if (!$storage->load($data['id'])) {
+          $storage->create($data)->save();
+        }
+      }
+      else {
+        $this->container->get('config.storage')->write($config_id, $data);
+      }
     }
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
-    $this->container->get('group_relation_type.manager')->clearCachedPluginMaps();
+    $relationTypeManager = $this->container->get('group_relation_type.manager');
+    $relationTypeManager->clearCachedDefinitions();
+    $relationTypeManager->clearCachedPluginMaps();
     $this->installEntitySchema('action');
     $this->installEntitySchema('user');
     $this->installSchema('user', ['users_data']);
@@ -260,7 +288,7 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $this->setCurrentUser($aluno);
     $itensCalendario = iterator_to_array($provedorCalendario->items($consulta));
     $this->assertCount(2, $itensCalendario);
-    $this->assertSame(['prazo', 'evento'], array_map(static fn ($item): string => explode(':', $item->id)[1], $itensCalendario));
+    $this->assertSame(['prazo', 'event-date'], array_map(static fn ($item): string => explode(':', $item->id)[1], $itensCalendario));
     $this->assertSame(['user'], $provedorCalendario->cacheContexts());
     $this->assertSame(0, $provedorCalendario->cacheMaxAge());
 

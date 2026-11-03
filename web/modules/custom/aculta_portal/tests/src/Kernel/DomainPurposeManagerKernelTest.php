@@ -128,7 +128,9 @@ final class DomainPurposeManagerKernelTest extends KernelTestBase {
     $this->createDomains();
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain(Domain::load('aculta_org'));
+    $context = $negotiator->getContext();
+    $context->setDomain(Domain::load('aculta_org'));
+    $context->setNegotiated(TRUE);
 
     $inside = $this->manager->runInPurpose(
       'shop',
@@ -155,7 +157,9 @@ final class DomainPurposeManagerKernelTest extends KernelTestBase {
     // Negotiate before forcing; a real request does the same. Otherwise the
     // next getActiveDomain() call would replace the forced domain.
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain(Domain::load('conta_aculta_org'));
+    $context = $negotiator->getContext();
+    $context->setDomain(Domain::load('conta_aculta_org'));
+    $context->setNegotiated(TRUE);
 
     try {
       $this->manager->runInPurpose('main', static function (): void {

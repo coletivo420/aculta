@@ -38,6 +38,16 @@ Estas superfícies não podem ser desativadas nem ter o modo alterado para `desa
 - `aculta_portal` (núcleo: resolvedor, configuração padrão e mapas de purpose).
 - `domain` (hosts, aliases de ambiente e registros de domínio).
 
+### Compatibilidade com Domain 4
+
+Revisado com Domain 4.0.0-alpha2: `DomainInterface::getHostname()` e
+`setHostname()` e a API de entidades usadas pelo formulário continuam
+disponíveis. O Domain 4 também permite vários registros no mesmo host usando
+`path_prefix`; `aculta_paths` não usa essa resolução. O modo Diretório continua
+sendo responsabilidade da camada do `aculta_portal`, conforme D3. A verificação
+de host repetido no formulário é intencional para superfícies em modo
+Subdomínio, cujo endereço deve identificar um único Domain neste modelo.
+
 ## Ordem de instalação (quando houver implementação)
 
 1. Núcleo com o resolvedor lendo a configuração e os padrões atuais (Fase 3.1 do plano).

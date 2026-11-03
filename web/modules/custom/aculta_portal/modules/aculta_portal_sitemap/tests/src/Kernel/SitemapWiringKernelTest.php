@@ -34,6 +34,7 @@ final class SitemapWiringKernelTest extends KernelTestBase {
     'system',
     'aculta_commerce_melhorenvio',
     'aculta_image',
+    'aculta_file_uploader',
     'aculta_mail_confirmer',
     'aculta_mail_confirmer_user',
     'aculta_mailer',
@@ -55,6 +56,7 @@ final class SitemapWiringKernelTest extends KernelTestBase {
     'commerce_store',
     'ctools',
     'ctools_views',
+    'crop',
     'datetime',
     'domain',
     'domain_alias',
@@ -69,10 +71,10 @@ final class SitemapWiringKernelTest extends KernelTestBase {
     'flexible_permissions',
     'group',
     'image',
+    'image_widget_crop',
     'inline_entity_form',
     'key',
     'language',
-    'lms',
     'login_emailusername',
     'media',
     'media_duplicates',
@@ -154,7 +156,8 @@ final class SitemapWiringKernelTest extends KernelTestBase {
 
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain($main);
+    $negotiator->getContext()->setDomain($main);
+    $negotiator->getContext()->setNegotiated(TRUE);
     $aliasManager = $this->createMock(AliasManagerInterface::class);
     $aliasManager->expects(self::once())
       ->method('getAliasByPath')
@@ -175,6 +178,7 @@ final class SitemapWiringKernelTest extends KernelTestBase {
       $this->container->get('account_switcher'),
       $storage,
       $aliasManager,
+      $this->container->get('aculta_portal.surface_config_reader'),
     );
     $node = $this->createMock(NodeInterface::class);
     $node->method('id')->willReturn(7);
@@ -242,6 +246,7 @@ final class SitemapWiringKernelTest extends KernelTestBase {
       $this->container->get('account_switcher'),
       $this->container->get('config.storage'),
       $this->container->get('path_alias.manager'),
+      $this->container->get('aculta_portal.surface_config_reader'),
     );
     $generator->setSitemap($sitemap);
 

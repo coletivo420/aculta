@@ -1,3 +1,10 @@
+## 0.4.1-dev.70 — compatibilidade integrada com contrib atualizado (2026-11-03)
+
+- `DomainPurposeManager::runInPurpose()` agora negocia/restaura o Domain pelo contexto público (`getContext()`), compatível com a API Domain instalada. Antes, a chamada removida `setActiveDomain()` quebrava a compilação do serviço no Kernel.
+- Fixtures dos Kernels Sitemap e Agenda removem módulos LMS contrib obsoletos e declaram as dependências/configurações atuais; testes diretos do gerador de sitemap recebem `surface_config_reader`.
+- Compatibilidade ACULTA revisada para Simple Sitemap 5, Pathauto 8.x-1.x-dev, Simple OAuth 6.1.x-dev e Webform 6.x-dev. Webform ainda apresenta depreciações upstream para Drupal 12, registradas no changelog do Sitemap.
+- Validação em PHP 8.5.12: DomainPurposeManager Kernel 8/47, Sitemap 4/15, Agenda 4/160 e Webform score ownership 1/11 PASS. Depreciações são de Core/contrib; integração no Core 12 não foi executada.
+
 ## 0.4.1-dev.69 — preparar compatibilidade Drupal 12 (2026-11-03)
 
 - Os manifests customizados declaram `^11 || ^12`; o gate Portal acompanha esse
