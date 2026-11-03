@@ -1,3 +1,9 @@
+## 0.4.1-dev.62 — literais de purpose do subscriber viram constantes (Fase 3.3, sem mudança de valor)
+
+- `DomainSurfaceMap::MAIN` e `DomainSurfaceMap::ACCOUNT` substituem os literais `'main'` e `'account'` em `DomainPurposeRequestSubscriber` (14 ocorrências). Os valores são os mesmos.
+- A semântica das decisões não muda. A troca para "superfície protegida" e "superfície de Conta" fica para quando houver teste de rota.
+- Testes: DEFERRED (sem `vendor/` nem Runtime).
+
 ## 0.4.1-dev.61 — mapa único de superfícies (Fase 3.1, sem mudança de valor)
 
 - Novo `Domain/DomainSurfaceMap` reúne `DOMAIN_IDS`, `FRONT_PATHS`, `NO_DA_RAIZ` e `CAMINHOS_LEGADOS`. Os valores são os mesmos de antes.

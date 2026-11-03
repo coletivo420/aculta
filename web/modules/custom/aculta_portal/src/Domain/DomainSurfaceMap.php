@@ -14,6 +14,12 @@ namespace Drupal\aculta_portal\Domain;
  */
 final class DomainSurfaceMap {
 
+  /** Superfície protegida: domínio principal (painel, carrinho, pagamento). */
+  public const MAIN = 'main';
+
+  /** Superfície de Conta. */
+  public const ACCOUNT = 'account';
+
   /**
    * Purpose => ID do Domain que o representa.
    */
