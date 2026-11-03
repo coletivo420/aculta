@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_superficies\Form;
+namespace Drupal\aculta_paths\Form;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\aculta_portal\Domain\SurfaceConfigReader;
-use Drupal\aculta_superficies\Validation\EnderecoValidator;
+use Drupal\aculta_paths\Validation\EnderecoValidator;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\Core\Ajax\RedirectCommand;
@@ -44,7 +44,7 @@ final class SurfaceEditForm extends FormBase {
   }
 
   public function getFormId(): string {
-    return 'aculta_superficies_editar_form_v2';
+    return 'aculta_paths_editar_form_v2';
   }
 
   /**
@@ -170,7 +170,7 @@ final class SurfaceEditForm extends FormBase {
     }
     $resposta = new AjaxResponse();
     $resposta->addCommand(new CloseModalDialogCommand());
-    $resposta->addCommand(new RedirectCommand(Url::fromRoute('aculta_superficies.form')->toString()));
+    $resposta->addCommand(new RedirectCommand(Url::fromRoute('aculta_paths.form')->toString()));
     return $resposta;
   }
 

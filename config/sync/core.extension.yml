@@ -36,6 +36,7 @@ module:
   aculta_messenger: 0
   aculta_pagamentos_mercadopago: 0
   aculta_patcher: 0
+  aculta_paths: 0
   aculta_portal: 0
   aculta_portal_cep: 0
   aculta_portal_sitemap: 0
@@ -43,7 +44,6 @@ module:
   aculta_secrets_manager: 0
   aculta_statistics: 0
   aculta_studio: 0
-  aculta_superficies: 0
   aculta_ugc: 0
   aculta_user: 0
   aculta_wiki: 0

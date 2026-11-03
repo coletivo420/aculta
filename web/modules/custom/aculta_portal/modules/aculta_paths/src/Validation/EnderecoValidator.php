@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_superficies\Validation;
+namespace Drupal\aculta_paths\Validation;
 
 /**
  * Valida slug de diretório e endereço de subdomínio, sem depender de Drupal.

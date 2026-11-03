@@ -1,6 +1,6 @@
-aculta_superficies.caminhos:
+aculta_paths.caminhos:
   title: Caminhos das superfícies
   description: Modo, slug e caminho público de cada superfície do Portal.
-  route_name: aculta_superficies.form
+  route_name: aculta_paths.form
   parent: aculta_portal.admin
   weight: 9

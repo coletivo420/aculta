@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_superficies\Kernel;
+namespace Drupal\Tests\aculta_paths\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * Confere o roteiro em docs/architecture/TESTES-3.0-ROTAS-SUPERFICIES.md.
  */
-#[Group('aculta_superficies')]
+#[Group('aculta_paths')]
 #[RunTestsInSeparateProcesses]
 final class SurfaceRoutesKernelTest extends KernelTestBase {
 
@@ -59,7 +59,7 @@ final class SurfaceRoutesKernelTest extends KernelTestBase {
     'aculta_wiki',
     'aculta_studio',
     'aculta_commerce',
-    'aculta_superficies',
+    'aculta_paths',
   ];
 
   /**

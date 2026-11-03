@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_superficies\Service;
+namespace Drupal\aculta_paths\Service;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Domain\DomainSurfaceMap;
@@ -31,7 +31,7 @@ final class DnsStatusChecker {
    *   classe: ok, erro ou aviso.
    */
   public function status(string $host): array {
-    $cid = 'aculta_superficies:dns:' . $host;
+    $cid = 'aculta_paths:dns:' . $host;
     $cache = $this->cache->get($cid);
     if ($cache && is_array($cache->data)) {
       return $cache->data;

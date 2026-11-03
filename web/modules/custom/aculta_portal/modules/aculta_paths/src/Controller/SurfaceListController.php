@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_superficies\Controller;
+namespace Drupal\aculta_paths\Controller;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\aculta_portal\Domain\SurfaceConfigReader;
-use Drupal\aculta_superficies\Service\DnsStatusChecker;
+use Drupal\aculta_paths\Service\DnsStatusChecker;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Link;
@@ -46,7 +46,7 @@ final class SurfaceListController extends ControllerBase {
     return new static(
       $container->get('aculta_portal.surface_config_reader'),
       $container->get('aculta_portal.domain_purpose'),
-      $container->get('aculta_superficies.dns_status'),
+      $container->get('aculta_paths.dns_status'),
     );
   }
 
@@ -93,7 +93,7 @@ final class SurfaceListController extends ControllerBase {
       if ($purpose === DomainSurfaceMap::MAIN) {
         continue;
       }
-      $editar = Link::createFromRoute($this->t('Editar'), 'aculta_superficies.editar', ['purpose' => $purpose], [
+      $editar = Link::createFromRoute($this->t('Editar'), 'aculta_paths.editar', ['purpose' => $purpose], [
         'attributes' => [
           'class' => ['use-ajax', 'button', 'button--small'],
           'data-dialog-type' => 'modal',

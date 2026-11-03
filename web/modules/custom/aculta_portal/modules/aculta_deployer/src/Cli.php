@@ -602,7 +602,7 @@ final class Cli {
         'page' => '/' . (string) ($linha['slug'] ?? ''),
         'current' => 'verificar no servidor de desenvolvimento',
         'expected_production' => '<definido pelo Domain de produção do purpose ' . (string) $purpose . '>',
-        'reason' => 'Superfície ' . (string) $purpose . ' em modo diretório (aculta_superficies).',
+        'reason' => 'Superfície ' . (string) $purpose . ' em modo diretório (aculta_paths).',
         'owner' => 'responsável pelo produto',
         'decision' => 'pendente',
       ];

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_superficies\Unit\Validation;
+namespace Drupal\Tests\aculta_paths\Unit\Validation;
 
-use Drupal\aculta_superficies\Validation\EnderecoValidator;
+use Drupal\aculta_paths\Validation\EnderecoValidator;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Validação de slug e de endereço de subdomínio.
  */
-#[Group('aculta_superficies')]
+#[Group('aculta_paths')]
 final class EnderecoValidatorTest extends UnitTestCase {
 
   public static function validos(): array {

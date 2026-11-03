@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_superficies\Service;
+namespace Drupal\aculta_paths\Service;
 
 /**
  * Classifica o DNS de um subdomínio em relação ao principal, sem consultar a rede.

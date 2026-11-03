@@ -68,6 +68,6 @@ Sem o passo 1, este submódulo não tem o que controlar.
 
 - `Validation\EnderecoValidator`: recusa caracteres inválidos e diz quais são (ex.: «:», «/», «espaço»); recusa formato de host e de slug. Maiúsculas são convertidas para minúsculas antes da validação.
 - `Service\DnsClassificador`: classifica o DNS do subdomínio em relação ao principal (CNAME para o principal ou IP em comum = OK). Pura, sem rede.
-- `Service\DnsStatusChecker` (serviço `aculta_superficies.dns_status`): consulta o DNS e usa cache de 5 minutos. Diretório mostra "Modo Diretório, Não Aplicável".
+- `Service\DnsStatusChecker` (serviço `aculta_paths.dns_status`): consulta o DNS e usa cache de 5 minutos. Diretório mostra "Modo Diretório, Não Aplicável".
 
 Todos os testes escritos ainda não foram executados. Testes novos: `EnderecoValidatorTest` e `DnsClassificadorTest`, sem vendor/ nesta sessão.

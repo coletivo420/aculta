@@ -10,7 +10,7 @@ namespace Drupal\aculta_portal\Domain;
  * Antes desta classe, os mapas viviam em DomainPurposeManager, em
  * PurposeFrontPathProcessor e em FrontPathPolicy. Os valores são os mesmos.
  * Quem consome deve ler daqui. A configuração por ambiente virá nas fases
- * seguintes (docs do submódulo aculta_superficies).
+ * seguintes (docs do submódulo aculta_paths).
  */
 final class DomainSurfaceMap {
 

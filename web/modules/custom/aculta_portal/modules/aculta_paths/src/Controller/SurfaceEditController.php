@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_superficies\Controller;
+namespace Drupal\aculta_paths\Controller;
 
-use Drupal\aculta_superficies\Form\SurfaceEditForm;
+use Drupal\aculta_paths\Form\SurfaceEditForm;
 use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\aculta_portal\Domain\SurfaceConfigReader;
 use Drupal\Core\Ajax\AjaxResponse;
@@ -25,7 +25,7 @@ final class SurfaceEditController extends ControllerBase {
   }
 
   /**
-   * Rota aculta_superficies.editar.
+   * Rota aculta_paths.editar.
    */
   public function abrir(string $purpose, Request $request): Response|array {
     if (!array_key_exists($purpose, DomainSurfaceMap::DOMAIN_IDS)) {

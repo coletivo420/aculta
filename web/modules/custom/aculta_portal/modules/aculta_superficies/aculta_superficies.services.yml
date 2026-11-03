@@ -1,4 +1,0 @@
-services:
-  aculta_superficies.dns_status:
-    class: Drupal\aculta_superficies\Service\DnsStatusChecker
-    arguments: ['@aculta_portal.domain_purpose', '@cache.default']

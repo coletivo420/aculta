@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_superficies\Unit\Validation;
+namespace Drupal\Tests\aculta_paths\Unit\Validation;
 
-use Drupal\aculta_superficies\Service\DnsClassificador;
+use Drupal\aculta_paths\Service\DnsClassificador;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Classificação do DNS de subdomínio em relação ao principal.
  */
-#[Group('aculta_superficies')]
+#[Group('aculta_paths')]
 final class DnsClassificadorTest extends UnitTestCase {
 
   private const PRINCIPAL = 'exemplo.org';

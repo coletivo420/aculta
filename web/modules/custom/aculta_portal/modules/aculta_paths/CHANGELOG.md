@@ -1,3 +1,12 @@
+## 0.1.0-dev.21 — renomeado de aculta_superficies para aculta_paths
+
+- Módulo, namespace, serviços, rotas e IDs de formulário trocam o prefixo para `aculta_paths`. Nome exibido: ACULTA Caminhos.
+- Caminho da página não mudou: continua `/painel-administrativo/aculta/caminhos`.
+- Permissão `administrar superficies` mantida (é permissão, não nome de módulo).
+- `core.extension` (config/sync) e referências no aculta_portal e no aculta_deployer atualizados.
+- Histórico acima mantém o nome antigo, de propósito.
+- Testes: escritos, não executados (sem vendor/ nesta sessão). Lint dos PHP executado.
+
 ## 0.1.0-dev.20 — validação e DNS em classes puras, com testes
 
 - `EnderecoValidator` (puro): valida slug e host, devolve código e argumentos; a tela traduz. Testes em `EnderecoValidatorTest`.

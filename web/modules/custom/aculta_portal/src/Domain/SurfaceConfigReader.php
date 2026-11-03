@@ -81,7 +81,7 @@ final class SurfaceConfigReader {
    *
    * Só devolve o caminho com leitura_ativa ligada. Com o padrão (desligada),
    * retorna NULL e nenhum comportamento muda. Hoje a resolução de /slug no
-   * MAIN ainda não existe: ver docs do submódulo aculta_superficies (DEFERRED).
+   * MAIN ainda não existe: ver docs do submódulo aculta_paths (DEFERRED).
    */
   public function caminhoDiretorioAtivo(string $purpose): ?string {
     if (!$this->leituraAtiva()) {

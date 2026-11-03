@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_superficies\Unit;
+namespace Drupal\Tests\aculta_paths\Unit;
 
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -15,7 +15,7 @@ use Symfony\Component\Yaml\Yaml;
  * antigos não são mais declarados. O teste Kernel com HTTP real fica DEFERRED
  * para o Runtime.
  */
-#[Group('aculta_superficies')]
+#[Group('aculta_paths')]
 final class SurfaceRoutesStaticTest extends UnitTestCase {
 
   /**
@@ -63,8 +63,8 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
    * Formulário de caminhos fica em /painel-administrativo/aculta/caminhos, só no MAIN.
    */
   public function testFormularioEhSoMain(): void {
-    $dados = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_superficies.routing.yml');
-    $rota = $dados['aculta_superficies.form'];
+    $dados = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_paths.routing.yml');
+    $rota = $dados['aculta_paths.form'];
     $this->assertSame('/painel-administrativo/aculta/caminhos', $rota['path']);
     $this->assertSame('main', $rota['options']['_aculta_domain_purpose']);
     $this->assertSame('administrar superficies', $rota['requirements']['_permission']);
@@ -74,8 +74,8 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
    * A edição abre em modal dentro do MAIN, com o purpose na rota.
    */
   public function testEdicaoEhSoMainEModal(): void {
-    $dados = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_superficies.routing.yml');
-    $rota = $dados['aculta_superficies.editar'];
+    $dados = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_paths.routing.yml');
+    $rota = $dados['aculta_paths.editar'];
     $this->assertSame('/painel-administrativo/aculta/caminhos/{purpose}/editar', $rota['path']);
     $this->assertSame('main', $rota['options']['_aculta_domain_purpose']);
     $this->assertSame('administrar superficies', $rota['requirements']['_permission']);
