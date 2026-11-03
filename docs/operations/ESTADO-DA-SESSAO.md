@@ -1,6 +1,18 @@
 # Estado da sessão
 
-## Handoff mais recente — superfícies de domínio (planejamento), 2026-11-02
+## Handoff mais recente — continuação ADR-042 P5, 2026-11-02
+
+- **Tarefa:** continuar a troca de consumidores LMS para entidades próprias e concluir P4/P5 quando não houver perda funcional sem contrato aprovado. Usuário autorizou commit/push e intervenção em outros módulos/tema. P6 e reescrita de histórico continuam proibidos.
+- **Commit publicado:** `20d56c7f328d197eba071824becb064b84b88471` (`test(aculta_lms): usa progresso ACULTA no ciclo de certificados`), `origin/dev` confirmado. `aculta_lms` em `0.1.0-dev.155`.
+- **Arquivos da entrega:** `tests/src/Kernel/CertificateLifecycleTest.php` usa `ProgressEntity`/`CourseProgress` e instala schema `aculta_lms_progress`; CHANGELOG, manifesto, status e README atualizados.
+- **Verificações:** Unit LMS 228 testes/786 assertions PASS (1 depreciação PHPUnit; PHPUnit avisou que `sites/simpletest/browser_output` não é gravável). Kernel `CertificateLifecycleTest` 5/158 PASS (43 depreciações Drupal/Core/contrib). PHPCS focal e `git diff --check` PASS. Gate Portal 1.160 checks PASS; índice 49 componentes PASS.
+- **Runtime:** hostname `toca`, Drupal 11.4.10, DB `aculta_runtime`. Antes do cache rebuild: updatedb sem pendências e config sem diferenças. `drush cr` PASS; depois, os dois estados permaneceram limpos. HEAD local e remoto: `20d56c7f328d197eba071824becb064b84b88471`.
+- **Inventário que bloqueia P4/P5 sem mudança de contrato:** `AttemptArchiveManager` e hooks arquivam texto/comentários/anexos e encadeiam estados de tentativa ausentes em `CourseAnswer`; upload/download e autorização (`Plugin/ActivityAnswer/FileUpload.php`, `AnswerFileDownloadController`, `UploadedAnswerAccessCheck`) dependem do payload e uso de arquivo contrib; revisão dissertativa (`FreeTextReviewFeedback`) está fora do escopo de P3; `CourseLinkHooks` depende do hook, rota/componente de início e configurações de revisita/avaliação do LMS, sem rota ACULTA equivalente. `AgendaEntriesProviderKernelTest` ainda cria Lesson/Activity do contrib e relacionamentos de prazo ligados a esses tipos. Os arquivos e testes exatos constam no inventário `rg -l 'Drupal\\lms' web/modules/custom --glob '*.php'`.
+- **Limite:** P2 define `CourseAnswer` sem conteúdo submetido e P3 cobre somente três scorers objetivos; não acrescentar payload ou estado, desligar upload/revisão, eliminar histórico, nem remover dependências sem decisão explícita sobre a nova persistência e experiência do aluno. Relações `lms_classes`, configurações sincronizadas que referenciam entidades contrib e dependências de submódulos também requerem substitutos antes do P5. P4/P5 incompletos; P6 não executado.
+- **Próximos passos:** definir modelo ACULTA para payload de resposta objetiva, upload, revisão e histórico; definir destino ACULTA para fluxo de início do curso e prazo de atividade. Depois adaptar produtores/consumidores e testes dependentes, revisar `config/sync`, executar P4 e só então remover dependências P5.
+- **Retomar lendo:** ADR-042; `docs/modules/P2-ENTIDADES-PROPRIAS-LMS.md`; `src/Entity/AnswerEntity.php`; `src/Plugin/ActivityAnswer/`; `src/AttemptArchiveManager.php`; `src/Hook/CourseLinkHooks.php`; `aculta_lms_agenda/tests/src/Kernel/AgendaEntriesProviderKernelTest.php`; `rg -l 'Drupal\\lms' web/modules/custom --glob '*.php'`; `git status --short --branch`.
+
+## Handoff anterior — superfícies de domínio (planejamento), 2026-11-02
 
 - **Tarefa:** planejar o controle de superfícies do aculta_portal (modo subdomínio ou diretório, slug e ativar/desativar), mantendo o módulo Domain para hosts e ambientes. Autorizado commit e push em `dev`.
 - **Commits:** `c5333a1` (planejamento do submódulo e ADR, enviado a `origin/dev`, fast-forward a partir de `93b638a`); commit seguinte desta entrega (ADR-043 movido para `docs/decisions/`, roteiro 3.0, status do submódulo, handoff).
