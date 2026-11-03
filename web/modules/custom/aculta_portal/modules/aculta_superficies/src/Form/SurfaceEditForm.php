@@ -11,6 +11,7 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -29,6 +30,7 @@ final class SurfaceEditForm extends FormBase {
     private readonly ConfigFactoryInterface $configFactory,
     private readonly SurfaceConfigReader $reader,
     private readonly DomainPurposeManager $purposes,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -36,6 +38,7 @@ final class SurfaceEditForm extends FormBase {
       $container->get('config.factory'),
       $container->get('aculta_portal.surface_config_reader'),
       $container->get('aculta_portal.domain_purpose'),
+      $container->get('entity_type.manager'),
     );
   }
 
@@ -102,12 +105,32 @@ final class SurfaceEditForm extends FormBase {
     }
     elseif ($modo === 'subdominio') {
       $dominio = $this->purposes->getDomain($purpose);
-      $form['caminho']['subdominio'] = [
-        '#type' => 'item',
-        '#title' => $this->t('Subdomínio'),
-        '#markup' => $dominio !== NULL ? $dominio->getHostname() : $this->t('(sem Domain)'),
-        '#description' => $this->t('Vem do Domain configurado. Não é editado aqui.'),
-      ];
+      $hostAtual = $dominio !== NULL ? (string) $dominio->getHostname() : '';
+      if ($ehMain) {
+        // O principal define o host de administração e a origem de todos os
+        // links; trocá-lo aqui não é permitido.
+        $form['caminho']['subdominio'] = [
+          '#type' => 'item',
+          '#title' => $this->t('Subdomínio'),
+          '#markup' => $hostAtual !== '' ? $hostAtual : $this->t('(sem Domain)'),
+          '#description' => $this->t('O principal não tem endereço editável aqui.'),
+        ];
+      }
+      else {
+        $form['caminho']['hostname'] = [
+          '#type' => 'textfield',
+          '#title' => $this->t('Subdomínio (endereço completo)'),
+          '#description' => $this->t('Ex.: wiki420.aculta.org. Sem https://, sem barra final. O endereço é gravado no Domain desta superfície.'),
+          '#default_value' => $hostAtual,
+          '#maxlength' => 253,
+          '#required' => TRUE,
+        ];
+        $form['caminho']['confirmar_host'] = [
+          '#type' => 'checkbox',
+          '#title' => $this->t('Entendo que o endereço muda nas rotas desta superfície'),
+          '#description' => $this->t('Marque só ao trocar o endereço. Sem essa confirmação, a troca não é gravada.'),
+        ];
+      }
     }
 
     $form['actions'] = ['#type' => 'actions'];
@@ -149,6 +172,29 @@ final class SurfaceEditForm extends FormBase {
       $campo = $form_state->getValue('modo') === 'diretorio' ? 'caminho][slug' : 'modo';
       $form_state->setErrorByName($campo, $erros[$purpose]);
     }
+
+    if ($purpose === DomainSurfaceMap::MAIN || $form_state->getValue('modo') !== 'subdominio') {
+      return;
+    }
+    $host = $this->hostSubmetido($form_state);
+    $dominio = $this->purposes->getDomain($purpose);
+    if ($dominio === NULL || $host === $dominio->getHostname()) {
+      return;
+    }
+    if (!preg_match('/^(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/', $host)) {
+      $form_state->setErrorByName('caminho][hostname', $this->t('Endereço inválido. Use só o domínio, em minúsculas, sem https:// e sem barra.'));
+      return;
+    }
+    if (!$form_state->getValue(['caminho', 'confirmar_host'])) {
+      $form_state->setErrorByName('caminho][confirmar_host', $this->t('Confirme a troca de endereço para gravar.'));
+    }
+    $ocupados = $this->entityTypeManager->getStorage('domain')->loadByProperties(['hostname' => $host]);
+    foreach ($ocupados as $ocupado) {
+      if ($ocupado->id() !== $dominio->id()) {
+        $form_state->setErrorByName('caminho][hostname', $this->t('Este endereço já é usado por outra superfície.'));
+        return;
+      }
+    }
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
@@ -162,6 +208,18 @@ final class SurfaceEditForm extends FormBase {
       ->set('superficies', $superficies)
       ->save();
 
+    $dominio = $this->purposes->getDomain($purpose);
+    if ($purpose !== DomainSurfaceMap::MAIN && $depois['modo'] === 'subdominio' && $dominio !== NULL) {
+      $host = $this->hostSubmetido($form_state);
+      if ($host !== $dominio->getHostname()) {
+        $dominio->set('hostname', $host)->save();
+        $this->messenger()->addWarning($this->t('Endereço de @titulo alterado para @host. Revise canonical e sitemap.', [
+          '@titulo' => $depois['titulo'],
+          '@host' => $host,
+        ]));
+      }
+    }
+
     $this->messenger()->addStatus($this->t('@titulo salvo.', ['@titulo' => $depois['titulo']]));
     // O Portal não grava no registro de deploy; a correção é registrada pela CLI.
     if ($depois['modo'] !== $antes['modo'] || $depois['slug'] !== $antes['slug']) {
@@ -169,6 +227,13 @@ final class SurfaceEditForm extends FormBase {
         '@titulo' => $depois['titulo'],
       ]));
     }
+  }
+
+  /**
+   * Host digitado, normalizado (minúsculas, sem espaços).
+   */
+  private function hostSubmetido(FormStateInterface $form_state): string {
+    return strtolower(trim((string) $form_state->getValue(['caminho', 'hostname'])));
   }
 
   /**

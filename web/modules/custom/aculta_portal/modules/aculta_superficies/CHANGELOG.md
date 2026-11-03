@@ -1,3 +1,9 @@
+## 0.1.0-dev.10 — subdomínio editável no modal (grava no Domain)
+
+- Modo subdomínio: campo com o endereço completo da superfície, gravado na entidade Domain do purpose. O principal continua somente leitura.
+- Troca de endereço exige confirmação explícita, valida formato (sem https://, sem barra) e impede repetir um endereço de outro Domain.
+- Testes: DEFERRED (sem vendor/ nem Runtime). Lint dos PHP executado.
+
 ## 0.1.0-dev.9 — edição em modal e seletor de modo por AJAX
 
 - Coluna Ações com botão Editar em cada linha; a edição abre em modal do Drupal (`/painel-administrativo/aculta/caminhos/{purpose}/editar`, só MAIN).
