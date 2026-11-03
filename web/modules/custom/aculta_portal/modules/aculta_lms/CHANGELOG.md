@@ -7,8 +7,10 @@
   `aculta_lms.settings`; nenhum conteúdo é migrado. O harness/kernel ainda usa
   módulos contrib neste passo.
 - Unit completa 228/786 PASS; Kernels de roster 3/66 e instalação 6/143 PASS;
-  gate Portal 1.160 checks e PHPCS focal PASS. Runtime tem update 10007 pendente
-  e diferença de configuração `aculta_lms.settings`, ainda sem update/import.
+  gate Portal 1.168 checks e PHPCS focal PASS. Runtime snapshotado antes do
+  update 10007 (SHA-256 `624bb557...c6e424`); update/cache rebuild PASS e
+  `updatedb:status`/`config:status` limpos. A sincronização criou as configs
+  `aculta_lms.settings` e `aculta_portal.superficies`.
 
 ## 0.1.0-dev.156 — relação de turmas Group própria (ADR-042 P5)
 
