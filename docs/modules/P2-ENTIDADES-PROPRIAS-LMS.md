@@ -82,8 +82,8 @@
 
 ## Limites registrados para P5
 
-- `aculta_lms_answer` implementa o contrato `CourseAnswer`: atividade, estudante, estado, nota e datas. O desenho P2 não define persistência de payload de resposta, tentativas, comentários ou anexos. Esses dados não foram adicionados nem migrados.
-- A ADR-042 determina que comentários e envio de arquivo passem a ser responsabilidade ACULTA, mas o contrato e o esquema próprios desses recursos ainda precisam ser definidos antes de substituir seus fluxos contrib.
+- `aculta_lms_answer` implementa o contrato `CourseAnswer`: atividade, estudante, estado, nota e datas. O desenho P2 não definiu payload de resposta, tentativas, comentários ou anexos. Após aprovação do responsável em 2026-11-03, o P5 adiciona payload JSON imutável por registro de tentativa; o desenho original e a ausência de migração legada permanecem.
+- A ADR-042 determina que comentários e envio de arquivo passem a ser responsabilidade ACULTA. O contrato/esquema de comentários e a integração de upload ainda precisam ser implementados antes de remover os módulos contrib correspondentes.
 
 ## Riscos
 

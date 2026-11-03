@@ -126,3 +126,13 @@ function aculta_lms_update_10007(): void {
   }
   $editable->save(TRUE);
 }
+
+/** Adds the immutable JSON payload field to ACULTA answer attempts. */
+function aculta_lms_update_10008(): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  if ($manager->getFieldStorageDefinition('answer_data', 'aculta_lms_answer')) {
+    return;
+  }
+  $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_lms_answer');
+  $manager->installFieldStorageDefinition('answer_data', 'aculta_lms_answer', 'aculta_lms', $fields['answer_data']);
+}

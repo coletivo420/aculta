@@ -19,6 +19,7 @@ use Drupal\aculta_lms\Learning\CourseActivity;
 use Drupal\aculta_lms\Plugin\ActivityAnswer\ObjectiveAnswerPluginResolver;
 use Drupal\aculta_lms\Plugin\ActivityAnswer\SelectAnswerPlugin;
 use Drupal\aculta_lms\Learning\CourseAnswerReaderInterface;
+use Drupal\aculta_lms\Learning\AnswerPayload;
 use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Core\Session\UserSession;
@@ -141,9 +142,17 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     aculta_lms_update_10005();
     aculta_lms_update_10006();
     aculta_lms_update_10006();
+    require_once DRUPAL_ROOT . '/' . $this->container->get('extension.list.module')->getPath('aculta_lms') . '/aculta_lms.install';
+    $schema = $this->container->get('database')->schema();
+    $update_manager = $this->container->get('entity.definition_update_manager');
+    $answer_fields = $this->container->get('entity_field.manager')->getBaseFieldDefinitions('aculta_lms_answer');
+    $update_manager->uninstallFieldStorageDefinition($answer_fields['answer_data']);
+    self::assertFalse($schema->fieldExists('aculta_lms_answer', 'answer_data'));
+    aculta_lms_update_10008();
+    aculta_lms_update_10008();
+    self::assertTrue($schema->fieldExists('aculta_lms_answer', 'answer_data'));
 
     $entity_type_manager = $this->container->get('entity_type.manager');
-    $schema = $this->container->get('database')->schema();
     foreach (['aculta_lms_lesson', 'aculta_lms_activity', 'aculta_lms_answer', 'aculta_lms_progress'] as $entity_type_id) {
       $this->assertTrue($entity_type_manager->hasDefinition($entity_type_id));
       $this->assertTrue($schema->tableExists($entity_type_id));
@@ -162,6 +171,27 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertStringContainsString('varchar(16) NOT NULL', $answer_create);
     $this->assertStringContainsString('varchar(32) NOT NULL', $progress_create);
     $this->assertStringContainsString('activity_id" int(11) NOT NULL', $answer_create);
+    $this->assertStringContainsString('answer_data', $answer_create);
+
+    $answer_storage = $entity_type_manager->getStorage('aculta_lms_answer');
+    $attempt = $answer_storage->create([
+      'activity_id' => 17,
+      'uid' => 23,
+      'state' => 'submitted',
+      'answer_data' => (new AnswerPayload(['answer' => 'primeira tentativa']))->toJson(),
+    ]);
+    $attempt->save();
+
+    $graded = $answer_storage->load($attempt->id());
+    $graded->set('state', 'graded');
+    $graded->set('score', 0);
+    $graded->save();
+    self::assertSame(['answer' => 'primeira tentativa'], $graded->getAnswerPayload()->toArray());
+
+    $graded->setAnswerPayload(new AnswerPayload(['answer' => 'alteração proibida']));
+    $this->expectException(EntityStorageException::class);
+    $this->expectExceptionMessage('Tentativa enviada é imutável; crie outra resposta para uma nova tentativa.');
+    $graded->save();
   }
 
   /**

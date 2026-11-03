@@ -1,3 +1,13 @@
+## 0.1.0-dev.159 — payload ACULTA imutável por tentativa
+
+- `aculta_lms_answer` passa a guardar payload estruturado JSON; atividade, aluno,
+  data de criação e payload não podem ser alterados depois do envio. Uma nova
+  tentativa cria outro registro; estado e nota continuam editáveis para a
+  avaliação. O contrato `CourseAnswer` permanece como projeção de estado/nota.
+- `aculta_lms_update_10008` instala o campo sem regravar respostas antigas;
+  repetição não altera o schema. Unit `AnswerPayloadTest` 3/7 PASS e Kernel
+  `AcultaLmsInstallTest` 6/147 PASS (28 depreciações upstream).
+
 ## 0.1.0-dev.158 — agenda usa entidades de aprendizagem ACULTA
 
 - O provedor de agenda verifica `take course` pela permissão Group e o Kernel
