@@ -1,14 +1,14 @@
 # Estado da sessão
 
-## Handoff mais recente — superfícies, rodada 2 (sem Runtime), 2026-11-03
+## Handoff mais recente — ADR-042 P5 concluído, 2026-11-03
 
-- **Tarefa:** página administrativa de caminhos (3.6), interruptor de diretório (3.5), revisão de 3.4 e integração, conferência de importação (3.7) e documentação das fases.
-- **Commits em `origin/dev`:** `d05f626` (reader de diretório atrás de `leitura_ativa`, aculta_portal 0.4.1-dev.66); `89b6cdb` (formulário em `/painel-administrativo/aculta/caminhos`, menu ACULTA, aculta_superficies 0.1.0-dev.7); e o commit de documentação desta rodada.
-- **Arquivos principais:** `web/modules/custom/aculta_portal/src/Domain/SurfaceConfigReader.php`; `web/modules/custom/aculta_portal/modules/aculta_superficies/` (`SuperficiesForm.php`, `aculta_superficies.routing.yml`, `aculta_superficies.links.menu.yml`, testes); `docs/architecture/REVISAO-FASES-SUPERFICIES.md`; `docs/operations/DEBT-REGISTER.md`.
-- **Verificações:** lint PHP e YAML dos arquivos alterados PASS; `validate-admin-routes-main-domain` PASS; `validate-environment-addresses` PASS; `validate-browser-validators` PASS; suíte standalone do deployer e `boundaries` PASS; lógica do leitor 9/9 PASS com stub (fora do repositório). `validate-aculta-portal-drupal11` FAIL também em HEAD limpo (pré-existente: vendor ausente e contagem de subscribers). Testes Drupal (Unit/Kernel) NÃO executados: sem `vendor/` completo.
-- **Pendências:** Fase 3.0 no Runtime (DEFERRED); resolução de `/slug` no MAIN (3.5, DEFERRED); conferência de importação de `aculta_portal.superficies` (3.7, DEFERRED: precisa de vendor; usar `drush config:status` no Runtime); regeneração do índice de status com `--write` (precisa de vendor).
-- **Correção de documento:** o registro de dívidas dizia que o subscriber de 3.4 não existia. Ele existe e está atrás de `leitura_ativa`.
-- **Retomar lendo:** `docs/architecture/REVISAO-FASES-SUPERFICIES.md`; `web/modules/custom/aculta_portal/modules/aculta_superficies/docs/PLANO-FINAL.md`; `git log --oneline -3`.
+- **Objetivo:** corte P5 do LMS contrib concluído. P6 e reescrita de histórico não executados.
+- **Commits publicados em `origin/dev`:** `baeb4339a` prepara configuração e campo do Fórum; `28f8bf887` torna seguro o update quando falta tabela de revisões; `d328c658b` remove `drupal/lms` do Composer/lock e conclui P5. Versões: `aculta_lms` 0.1.0-dev.172; `aculta_forum_lms` 0.1.0-dev.33.
+- **Runtime:** checkout `dev` em `origin/dev`, Drupal 11.4.10, PHP 8.4.27, banco `aculta_runtime`. Snapshot anterior ao P5: SHA-256 `37947c05fe3d523fbce0ff42c78f61f5d90f56a2a566de7c06f1869774bcd595`. Updates 10012 (LMS) e 10001 (Fórum) aplicados; cache rebuild e Composer install passaram; `updatedb:status` sem pendências. Módulos contrib desinstalados na ordem `lms_answer_comments`, `lms_answer_plugins`, `lms_classes`, `lms`; `lms_file_upload` não era pacote Composer e suas cópias manuais saíram dos caminhos de descoberta.
+- **Descarte explicitamente autorizado em P5:** 8 aulas, 17 atividades, 3 respostas, 3 status de aula, 2 status de curso e 2 relacionamentos de turma `[TESTE P1]`; nenhum conteúdo migrado. Os cinco Groups permaneceram. A relação de turma ACULTA continua configurada.
+- **Verificações:** LMS Unit 218/758 PASS; Fórum Unit 33/329 PASS; `AcultaLmsInstallTest` 6/172 PASS (35 depreciações); Kernel focal Fórum 1/25 PASS (38 depreciações); Portal 1.172 checks PASS; public-slugs 410 rotas PASS; composer validate PASS com avisos preexistentes de constraints fixas; busca literal por imports `Drupal\\lms` em `web/modules/custom` retorna zero. `composer show drupal/lms` confirma pacote ausente.
+- **Configuração Runtime:** `config:status` foi lido antes/depois e não houve importação. Permanecem diferenças de `aculta_portal.superficies`, config de Groups e tópicos, `core.extension`, papel `lms_teacher` e Views de cursos. Detalhes e causa da tentativa inicial falha/retry do update 10001 estão no CHANGELOG do Fórum.
+- **Retomar lendo:** `docs/decisions/ADR-042-remocao-dependencias-lms-contrib.md`; `docs/modules/P2-ENTIDADES-PROPRIAS-LMS.md`; `web/modules/custom/aculta_portal/modules/aculta_lms/CHANGELOG.md`; `docs/operations/status/aculta_lms.yml`; `git status --short --branch`.
 
 ## Handoff anterior — continuação ADR-042 P5, 2026-11-03
 
