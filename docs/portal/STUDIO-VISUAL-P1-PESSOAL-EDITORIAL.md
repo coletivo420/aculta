@@ -2,7 +2,7 @@
 
 ## Implementação P1.1/P1.2 e estado P1.3 - 2026-11-03
 
-P1.1 e a implementação local de P1.2 estão em código: dashboard de Conta, identidade provider-backed, shell Grid dedicado e navegação AJAX própria. Preserva Form API e owners. Focais Studio Unit 65/631 PASS. P1.2 ainda não está homologada no browser/Runtime nem cobre a matriz de formulários após trocas, falha/sessão, modo escuro, zoom e resize. Marley mantém listagem, ação abaixo do título e moderação condicional owner-backed; confirmar visualmente no Runtime.
+P1.1 e a implementação local de P1.2 estão em código: dashboard de Conta, identidade provider-backed, shell Grid dedicado e navegação AJAX própria. Preserva Form API e owners. Focais Studio Unit 72/658 PASS. Runtime sincronizado em `b70e56dbec` com configuração limpa e cache reconstruído; P1.2 ainda não está homologada no browser e não cobre a matriz de formulários após trocas, falha/sessão, modo escuro, zoom e resize. Marley mantém listagem, ação abaixo do título e moderação condicional owner-backed; confirmar visualmente no Runtime.
 
 
 **Tipo:** plano documental para execução incremental.  

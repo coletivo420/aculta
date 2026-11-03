@@ -3,7 +3,7 @@
 ## Implementação pendente de validação — provider Culturas no Studio (2026-11-03)
 
 - Adicionado `CulturasExperienceProvider` no módulo owner Eventos para fornecer o destino existente ao dashboard apenas a usuários autorizados pela policy de criação.
-- A versão `0.2.0-dev.9` permanece sem avanço até validação de Runtime; não houve alteração de grants, dados ou workflow.
+- O provider foi descoberto na compilação do Runtime em `b70e56dbec`; rota/ACL por navegador ainda pendentes. A versão `0.2.0-dev.9` permanece sem avanço até validação visual; grants, dados e workflow não foram alterados.
 
 ## Revalidação 2026-11-01 — ciclo de vida e propostas
 

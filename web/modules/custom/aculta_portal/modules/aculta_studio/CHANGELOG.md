@@ -5,7 +5,7 @@
 - Shell privado com navegação AJAX própria, histórico, metadados do renderer Account, estados de espera/falha e preservação do menu aberto/fechado. Form API continua sob os owners atuais.
 - Dashboard monta experiências autorizadas por provider e `DomainPurposeManager`; identidade pública só aparece quando resolvida pelo owner. Perfil público segue em rota e controlador separados.
 - Marley remove destino de criação duplicado e liga “Criar” à rota de `aculta_magazine`; Culturas fornece seu provider no módulo owner de Eventos.
-- Studio Unit 65/631 PASS. Runtime/browser, responses Drupal AJAX, formulários após navegação e revisão visual permanecem pendentes. A versão `0.1.0-dev.40` não foi avançada antes dessa validação.
+- Studio Unit 72/658 PASS. Runtime sincronizado em `b70e56dbec`: `updatedb:status` sem pendências, `config:status` limpo, `drush cr` PASS e rotas Conta/Perfil/Marley resolvidas. Browser autenticado, responses Drupal AJAX, formulários após navegação e revisão visual permanecem pendentes; versão `0.1.0-dev.40` não avançada sem validação visual.
 
 ## 0.1.0-dev.40 — Página WE SATIVA em /we-sativa
 

@@ -2,6 +2,7 @@
 version: 0.1.0-dev.40
 state: Dev
 progress_note: >-
+  Studio Unit 72/658 PASS. Runtime sincronizado em `b70e56dbec`: `updatedb:status` sem updates, `config:status` limpo e `drush cr` PASS; `/conta`, `/conta/dados`, `/conta/endereco`, `/perfil` e `/marley` resolvem. `/entrar` HTTP 200. Snapshot pré-import `$SUITE_OUT/runtime-snapshots/aculta_runtime-before-studio-8ccbcb0618-20261103/runtime.sql`, 90.495.226 bytes, SHA-256 `46ec3f1732472701e37c1602623fd2295e3e9ab5931d100630587df3890a9b54`. Browser autenticado, matriz AJAX/Form API, teclado, responsividade, claro/escuro e revisão visual seguem pendentes (`DISPLAY` ausente); versão permanece 0.1.0-dev.40.
   Dev.39: drop zone do Studio serializa dependências (protected readonly), envia
   arquivos e remove envios sem uso; validado no Runtime com aceite, recusa de
   MIME, recusa por tamanho e remoção. Unit 64/606 PASS.

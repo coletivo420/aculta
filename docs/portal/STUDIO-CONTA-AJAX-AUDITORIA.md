@@ -1,7 +1,7 @@
 # Conta Studio: auditoria AJAX e plano de recuperação
 
 Data: 2026-11-03. Estado: implementação local em desenvolvimento; homologação integrada Runtime/browser pendente.
-Implementação enviada em `8ccbcb0618` (mais alias autowired de Runtime `bf731e8789`), baseada nos contratos vigentes; revisão visual integrada pendente. O Runtime responde em `/entrar`; Config Sync teve de ser reconciliado após o merge reintroduzir YAMLs para módulos desativados. Snapshot pré-import realizado; import e rebuild aguardam push da reconciliação.
+Implementação enviada em `8ccbcb0618` (mais alias autowired `bf731e8789` e reconciliação Sync `1e336fe73e`/`b70e56dbec`), baseada nos contratos vigentes. Runtime sincronizado no commit `b70e56dbec`; `updatedb:status` sem pendências, `config:status` limpo e `drush cr` PASS. `/entrar` responde 200; revisão visual integrada e testes autenticados no browser permanecem pendentes (`DISPLAY` indisponível).
 Escopo: entrada account, seções privadas /conta/* e comparação com /conta-legada e suas seções. Não altera grants, entidades ou rotas.
 
 ## Evidências e limites
@@ -30,7 +30,7 @@ Conclusão confirmada no código: as rotas Conta Studio não anexavam uma biblio
 - O layout tema usa navegação e conteúdo em Grid, coluna em viewport estreito e menu/conteúdo em colunas a partir de 768px; classes visuais vêm do ACULTA420.
 - Dashboard usa identidade `AuthorIdentityResolver`, link autorizado para Perfil e providers registrados; cada card exige disponibilidade e AccessResult permitido e resolve destino com `DomainPurposeManager`. Green Stash permanece provider integrado. Culturas usa `EventPermissionPolicy::createEventAccessResult` além do gate Portal.
 - Marley já exibia ação de seção abaixo do título; “Criar” foi removido como seção lateral duplicada. A aba de comentários segue condicionada ao gate proprietário. A captura funcional no Runtime continua pendente.
-- Focais locais: Studio Unit 65 testes / 631 assertions PASS; `validate-aculta-portal-drupal11.php` 1.172 checks PASS; Foundation 354 PASS; Shell 13 PASS; public slugs 410/0 PASS; status index 49 PASS; PHP lint, PHPCS focal sem erros e `node --check` PASS. O Firefox real não foi executado (`DISPLAY` indisponível); AJAX real, formulários após trocas, teclado, zoom, claro/escuro, rede/timeout e permissões seguem pendentes.
+- Focais locais: Studio Unit 72 testes / 658 assertions PASS; `validate-aculta-portal-drupal11.php` 1.172 checks PASS; Foundation 354 PASS; Shell 13 PASS; public slugs 410/0 PASS; status index 49 PASS; PHP lint, PHPCS focal sem erros e `node --check` PASS. O Firefox real não foi executado (`DISPLAY` indisponível); AJAX real, formulários após trocas, teclado, zoom, claro/escuro, rede/timeout e permissões seguem pendentes.
 - `validate-module-theme-boundary.php` falha por literais preexistentes em `aculta_paths`; `validate-module-theme-map.php` falha porque `aculta_paths` não consta no mapa; `validate-portal-ui-docs.php` também aponta tokens/atributos preexistentes e agora documenta os atributos desta implementação. Não declarar aceite visual integrado.
 
 ## Preservação do legado
