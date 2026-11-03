@@ -766,3 +766,13 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 - O Kernel do painel usa agora aulas/progresso próprios; sem progresso
   individual por aula, exibe zero aulas concluídas em vez de inferi-las do LMS.
 
+## 0.1.0-dev.150 — matrícula usa Group sem helper de LMS Classes
+
+- `EnrollmentFormHooks` valida cursos e turmas como `GroupInterface` e lê as
+  relações do curso diretamente, removendo `CourseInterface` e `ClassHelper`.
+- O ID de plugin de relação `lms_classes` permanece estável por ora para
+  preservar a configuração e os vínculos existentes; o provedor ACULTA ainda
+  precisa substituí-lo antes da remoção do submódulo.
+- `EnrollmentFormHooksTest`: 9 testes / 63 asserções PASS; Unit completa:
+  222 testes / 735 asserções PASS (1 depreciação PHPUnit).
+

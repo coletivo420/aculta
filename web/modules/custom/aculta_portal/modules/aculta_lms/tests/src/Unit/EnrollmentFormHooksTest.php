@@ -10,7 +10,10 @@ use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\commerce_payment\PaymentStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\ContentEntityFormInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Access\AccessResultInterface;
@@ -28,6 +31,28 @@ use PHPUnit\Framework\Attributes\Group;
 #[CoversClass(EnrollmentFormHooks::class)]
 #[Group('aculta_lms')]
 final class EnrollmentFormHooksTest extends UnitTestCase {
+
+  /**
+   * A related Group class is accepted as a membership target.
+   */
+  public function testCourseClassSelectionUsesGroupRelationships(): void {
+    [$hooks, $form_state] = $this->classSelectionContext('30');
+    $form_state->expects(self::never())->method('setErrorByName');
+
+    $form = [];
+    $hooks->validateCourseClassSelection($form, $form_state);
+  }
+
+  /**
+   * A Group that is not related to the course is rejected.
+   */
+  public function testCourseClassSelectionRejectsUnrelatedGroup(): void {
+    [$hooks, $form_state] = $this->classSelectionContext('99');
+    $form_state->expects(self::once())->method('setErrorByName')->with('class', self::anything());
+
+    $form = [];
+    $hooks->validateCourseClassSelection($form, $form_state);
+  }
 
   /**
    * Manual enrollments remain removable without Commerce provenance.
@@ -210,6 +235,49 @@ final class EnrollmentFormHooksTest extends UnitTestCase {
       $this->createMock(AccountProxyInterface::class),
       $enrollments ?? $this->createMock(CourseOrderEnrollmentManagerInterface::class),
     );
+  }
+
+  /**
+   * Creates a course selection form with one related class Group.
+   *
+   * @return array{\Drupal\aculta_lms\Hook\EnrollmentFormHooks,\Drupal\Core\Form\FormStateInterface}
+   */
+  private function classSelectionContext(string $selected_class): array {
+    $class = $this->createMock(GroupInterface::class);
+    $class->method('bundle')->willReturn('lms_class');
+    $relationship = $this->createMock(GroupRelationshipInterface::class);
+    $relationship->method('getEntityId')->willReturn('30');
+    $relationship->method('getEntity')->willReturn($class);
+    $course = $this->createMock(GroupInterface::class);
+    $course->method('bundle')->willReturn('lms_course');
+    $course->method('id')->willReturn('10');
+    $course->method('getRelationships')->with('lms_classes')->willReturn([$relationship]);
+
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::once())->method('load')->with('10')->willReturn($course);
+    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_type_manager->method('getStorage')->with('group')->willReturn($storage);
+    $member_relationship = $this->createMock(GroupRelationshipInterface::class);
+    $member_relationship->method('getOwnerId')->willReturn('2');
+    $member_relationship->method('getEntityId')->willReturn('3');
+    $form_object = $this->createMock(ContentEntityFormInterface::class);
+    $form_object->method('getEntity')->willReturn($member_relationship);
+    $form_state = $this->createMock(FormStateInterface::class);
+    $form_state->method('get')->with('aculta_lms_enrollment_course_id')->willReturn('10');
+    $form_state->method('getFormObject')->willReturn($form_object);
+    $form_state->method('getValue')->willReturnCallback(static fn(string $key): mixed => match ($key) {
+      'class' => $selected_class,
+      'group_roles' => [],
+      default => NULL,
+    });
+
+    $hooks = new EnrollmentFormHooks(
+      $entity_type_manager,
+      $this->getStringTranslationStub(),
+      $this->createMock(AccountProxyInterface::class),
+      $this->createMock(CourseOrderEnrollmentManagerInterface::class),
+    );
+    return [$hooks, $form_state];
   }
 
   /**

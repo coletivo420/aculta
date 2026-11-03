@@ -21,8 +21,6 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\Form\GroupRelationshipDeleteForm;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
-use Drupal\lms_classes\ClassHelper;
 use Drupal\user\UserInterface;
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -143,7 +141,7 @@ final class EnrollmentFormHooks {
     }
 
     $course = $relationship->getGroup();
-    if (!$course instanceof CourseInterface) {
+    if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course') {
       return;
     }
 
@@ -170,7 +168,7 @@ final class EnrollmentFormHooks {
     }
 
     $form['class']['#required'] = TRUE;
-    if (ClassHelper::getClasses($course) === [] && $relationship->getOwnerId() === $relationship->getEntityId()) {
+    if ($this->classRelationships($course) === [] && $relationship->getOwnerId() === $relationship->getEntityId()) {
       $form['class'] = [
         '#type' => 'item',
         '#title' => $this->translation->translate('Turma'),
@@ -192,7 +190,7 @@ final class EnrollmentFormHooks {
     }
 
     $course = $this->entityTypeManager->getStorage('group')->load($course_id);
-    if (!$course instanceof CourseInterface) {
+    if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course') {
       $form_state->setErrorByName('class', $this->translation->translate('Não foi possível validar a turma deste curso.'));
       return;
     }
@@ -222,7 +220,7 @@ final class EnrollmentFormHooks {
     $is_course_manager = array_intersect($course_manager_roles, $selected_roles) !== [];
     $available_class_ids = array_map(
       static fn (GroupRelationshipInterface $relationship): string => (string) $relationship->getEntityId(),
-      $course->getRelationships('lms_classes'),
+      $this->classRelationships($course),
     );
 
     if ($is_course_manager) {
@@ -240,6 +238,22 @@ final class EnrollmentFormHooks {
     if ($class_id === '' || $class_id === '0' || !in_array($class_id, $available_class_ids, TRUE)) {
       $form_state->setErrorByName('class', $this->translation->translate('Selecione uma turma disponível deste curso.'));
     }
+  }
+
+  /**
+   * Returns existing class relationships for the course Group.
+   *
+   * The relationship plugin ID remains stable during the staged contrib
+   * transition; replacing its provider is tracked in the P5 inventory.
+   *
+   * @return \Drupal\group\Entity\GroupRelationshipInterface[]
+   */
+  private function classRelationships(GroupInterface $course): array {
+    return array_values(array_filter(
+      $course->getRelationships('lms_classes'),
+      static fn (GroupRelationshipInterface $relationship): bool => $relationship->getEntity() instanceof GroupInterface
+        && $relationship->getEntity()->bundle() === 'lms_class',
+    ));
   }
 
 }
