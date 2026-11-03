@@ -12,7 +12,7 @@
   Corrigida também a sintaxe inválida em `EventClassAccess.php` recebida do
   upstream.
 - Agenda Kernel 4/168 PASS (94 depreciações upstream), Agenda Unit 8/18 PASS;
-  PHPCS e gate Portal 1.168 PASS. O harness Kernel ainda carrega LMS por causa
+  PHPCS e gate Portal 1.172 PASS após atualizar a linha de base para incluir o subscriber de superfícies (registrado, interruptor desligado). O harness Kernel ainda carrega LMS por causa
   do manifesto de `aculta_lms`, não por imports da fixture da agenda.
 
 ## 0.1.0-dev.157 — permissões herdadas de cursos e turmas em ACULTA

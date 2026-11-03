@@ -200,13 +200,14 @@ $check(
 // here. Social Auth callback handles /integracoes/{network}/retorno.
 // ADR-013 (P-CART D) adds CommerceCheckoutRouteSubscriber.
 // Mercado Pago owns its webhook subscriber.
-// 14 desde que LmsFriendlyRouteSubscriber passou ao aculta_lms (port do LMS).
+// 15 com SurfaceRequestSubscriber registrado; o subscriber só aplica o
+// interruptor quando leitura_ativa está habilitado.
 $check(
-  preg_match_all('/name:\s*event_subscriber\b/', $services) === 14
+  preg_match_all('/name:\s*event_subscriber\b/', $services) === 15
     && str_contains($services, 'aculta_portal.social_auth_callback_route_subscriber:')
     && str_contains($services, 'Drupal\\aculta_portal\\EventSubscriber\\SocialAuthCallbackRouteSubscriber')
     && str_contains($read($srcRoot . '/EventSubscriber/SocialAuthCallbackRouteSubscriber.php'), "'/integracoes/{network}/retorno'"),
-  'Portal must register exactly fourteen canonical subscribers, including the canonical Social Auth callback route; CEP rate limiting remains owned by aculta_portal_cep.',
+  'Portal must register exactly fifteen canonical subscribers, including the canonical Social Auth callback route; CEP rate limiting remains owned by aculta_portal_cep.',
 );
 
 $tokenHooks = $srcRoot . '/Hook/TokenHooks.php';
