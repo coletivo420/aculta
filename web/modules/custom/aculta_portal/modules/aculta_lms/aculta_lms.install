@@ -238,3 +238,13 @@ function aculta_lms_update_10012(): void {
     $config->set('dependencies.module', ['aculta_lms'])->save(TRUE);
   }
 }
+
+/** Adds activity answer configuration used by ACULTA answer plugins. */
+function aculta_lms_update_10013(): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  if ($manager->getFieldStorageDefinition('answer_config', 'aculta_lms_activity')) {
+    return;
+  }
+  $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_lms_activity');
+  $manager->installFieldStorageDefinition('answer_config', 'aculta_lms_activity', 'aculta_lms', $fields['answer_config']);
+}

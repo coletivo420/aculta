@@ -88,6 +88,27 @@ final class LmsFriendlySlugs {
     return $this->lessons($course)[$delta] ?? NULL;
   }
 
+  /** Returns an ACULTA activity at the requested lesson/activity positions. */
+  public function activityAt(GroupInterface $course, int $lessonDelta, int $activityDelta): ?ContentEntityInterface {
+    $lesson = $this->lessonAt($course, $lessonDelta);
+    if (!$lesson instanceof ContentEntityInterface) {
+      return NULL;
+    }
+    $storage = $this->entityTypeManager->getStorage('aculta_lms_activity');
+    $ids = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('lesson_id', (int) $lesson->id())
+      ->sort('weight')
+      ->sort('id')
+      ->execute();
+    $activities = array_values(array_filter(
+      $storage->loadMultiple($ids),
+      static fn(mixed $activity): bool => $activity instanceof ContentEntityInterface
+        && $activity->getEntityTypeId() === 'aculta_lms_activity',
+    ));
+    return $activities[$activityDelta] ?? NULL;
+  }
+
   /**
    * Returns the lesson slug for a position in the course, or NULL.
    */

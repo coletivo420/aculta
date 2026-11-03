@@ -19,7 +19,7 @@ final class LearningEntityStorageSchema extends SqlContentEntityStorageSchema {
 
     $required_columns = match ($entity_type->id()) {
       'aculta_lms_lesson' => ['course_id', 'title', 'published', 'weight', 'changed'],
-      'aculta_lms_activity' => ['lesson_id', 'type', 'graded', 'weight', 'changed'],
+      'aculta_lms_activity' => ['lesson_id', 'type', 'graded', 'weight', 'answer_config', 'changed'],
       'aculta_lms_answer' => ['activity_id', 'uid', 'state', 'created', 'changed'],
       'aculta_lms_progress' => ['course_id', 'uid', 'status', 'finished', 'changed'],
       default => [],

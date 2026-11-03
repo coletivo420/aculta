@@ -1,3 +1,11 @@
+## 0.4.1-dev.68 — remove roteamento LMS duplicado
+
+- Remove a cópia inativa de slugs/conversores no Portal. A implementação
+  canônica está em `aculta_lms`, sem dependência Portal → aculta_lms. Os testes
+  equivalentes são mantidos pelo módulo owner.
+- Gate Portal Drupal 11+ PASS (1202 checks); validador de slugs públicos PASS
+  (410 rotas). Não foi alterado nem sincronizado o Runtime.
+
 ## 0.4.1-dev.67 — propósito da rota de anexo ACULTA
 
 - A rota `aculta_lms.answer_attachment_download` em `/resposta/{answer}/arquivo` pertence ao purpose `courses`, com cobertura Unit e registro no mapa de rotas.

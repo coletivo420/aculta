@@ -28,6 +28,10 @@ final class ActivityEntity extends ContentEntityBase {
     $fields['type'] = BaseFieldDefinition::create('string')->setLabel(new TranslatableMarkup('Tipo'))->setSetting('max_length', 64)->addConstraint('Regex', ['pattern' => '/^[a-z_]+$/'])->setRequired(TRUE);
     $fields['graded'] = BaseFieldDefinition::create('boolean')->setLabel(new TranslatableMarkup('Incluída na nota'))->setDefaultValue(FALSE)->setRequired(TRUE);
     $fields['weight'] = BaseFieldDefinition::create('integer')->setLabel(new TranslatableMarkup('Ordem'))->addConstraint('Range', ['min' => 0])->setRequired(TRUE)->setDefaultValue(0);
+    $fields['answer_config'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(new TranslatableMarkup('Configuração da resposta'))
+      ->setRequired(TRUE)
+      ->setDefaultValue('{}');
     $fields['changed'] = BaseFieldDefinition::create('changed')->setLabel(new TranslatableMarkup('Alterada em'));
     return $fields;
   }

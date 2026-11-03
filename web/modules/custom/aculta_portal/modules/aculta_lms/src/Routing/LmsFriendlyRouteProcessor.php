@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Route;
  */
 final class LmsFriendlyRouteProcessor implements OutboundRouteProcessorInterface {
 
-  private const ROUTE = 'lms.group.answer_form';
+  private const ROUTE = 'aculta_lms.answer_submission';
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,

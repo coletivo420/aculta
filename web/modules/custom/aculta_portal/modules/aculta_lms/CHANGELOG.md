@@ -1,3 +1,25 @@
+## 0.1.0-dev.175 — resposta ACULTA sem LMS contrib
+
+- Converte os últimos pontos de integração e testes para entidades e serviços
+  ACULTA. `UploadedAnswerAccessCheck` delega à política de anexo de resposta
+  própria; prazo e discussão integram o formulário ACULTA.
+- `AnswerSubmissionForm` grava tentativas imutáveis para respostas discursivas,
+  objetivas e upload privado sob a política central de arquivos. O novo plugin
+  de texto livre mantém feedback por expressões como indicador formativo;
+  somente o educador atribui a nota final. A configuração JSON da atividade é
+  instalada pelo update 10013.
+- O roteamento por slugs passa a apontar para o formulário ACULTA. As cópias
+  inativas do roteamento no Portal foram removidas; os testes proprietários
+  permanecem em `aculta_lms`.
+- Versões: `aculta_lms` 0.1.0-dev.175, `aculta_forum_lms` 0.1.0-dev.35 e
+  Portal 0.4.1-dev.68.
+- Validações: LMS Unit 224 testes/773 asserções PASS; Kernel de instalação
+  6/178 PASS (35 depreciações upstream); Forum LMS Unit 33/331 e Kernel focal
+  1/25 PASS (38 depreciações upstream); teste stale answer do Messenger 1/8
+  PASS. Gate Portal 1.202 checks, slugs públicos 410 rotas e índice 53
+  componentes PASS. Runtime permanece sem alteração; validação visual e
+  sincronização DEFERRED.
+
 ## 0.1.0-dev.174 — remove declarações xAPI órfãs (ADR-041)
 
 - Após snapshot (SHA-256

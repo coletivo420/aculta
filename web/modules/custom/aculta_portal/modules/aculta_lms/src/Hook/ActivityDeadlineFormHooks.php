@@ -6,23 +6,19 @@ namespace Drupal\aculta_lms\Hook;
 
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
-use Drupal\Core\Entity\EntityFormInterface;
-use Drupal\Core\Entity\EntityPublishedInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
-use Drupal\lms\Entity\ActivityInterface;
-use Drupal\lms\Entity\AnswerInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
-use Drupal\lms\Entity\CourseStatusInterface;
-use Drupal\lms\Entity\LessonStatusInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\user\UserInterface;
 
-/**
- * Shows the class-specific deadline on the LMS activity answer form. */
+/** Adds the current learner's class deadline to the ACULTA answer form. */
 final class ActivityDeadlineFormHooks {
 
   use StringTranslationTrait;
@@ -30,27 +26,23 @@ final class ActivityDeadlineFormHooks {
   public function __construct(
     private readonly ClassActivityDeadlineManager $deadlines,
     private readonly DateFormatterInterface $dateFormatter,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly AccountProxyInterface $currentUser,
     TranslationInterface $stringTranslation,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
 
-  /**
- * Adds the deadline label without changing the answer or its validation. */
-  #[Hook('form_lms_answer_form_alter')]
+  #[Hook('form_aculta_lms_answer_submission_alter')]
   public function answerFormAlter(array &$form, FormStateInterface $form_state): void {
-    $formObject = $form_state->getFormObject();
-    if (!$formObject instanceof EntityFormInterface || !$formObject->getEntity() instanceof AnswerInterface) {
+    $course = $form_state->get('aculta_lms_course');
+    $activity = $form_state->get('aculta_lms_activity');
+    if (!$course instanceof GroupInterface || !$activity instanceof ContentEntityInterface
+      || $activity->getEntityTypeId() !== 'aculta_lms_activity') {
       return;
     }
-    $answer = $formObject->getEntity();
-    $course = $this->courseForAnswer($answer);
-    $learner = $answer->getOwner();
-    if (!$course instanceof CourseInterface || !$learner instanceof UserInterface) {
-      return;
-    }
-    $activity = $answer->get(AnswerInterface::ACTIVITY_FIELD)->entity;
-    if (!$activity instanceof ActivityInterface || !$activity instanceof EntityPublishedInterface || !$activity->isPublished()) {
+    $learner = $this->entityTypeManager->getStorage('user')->load($this->currentUser->id());
+    if (!$learner instanceof UserInterface || !$learner->isActive()) {
       return;
     }
     $deadline = $this->deadlines->deadlineForLearner($course, $activity, $learner);
@@ -73,24 +65,6 @@ final class ActivityDeadlineFormHooks {
       ]),
       '#weight' => -100,
     ];
-  }
-
-  /**
-   * Resolves the current course without typed getters on stale LMS references.
-   */
-  private function courseForAnswer(AnswerInterface $answer): ?CourseInterface {
-    $lessonStatus = $answer->get('lesson_status')->entity;
-    if (!$lessonStatus instanceof LessonStatusInterface) {
-      return NULL;
-    }
-    $courseStatus = $lessonStatus->get('course_status')->entity;
-    if (!$courseStatus instanceof CourseStatusInterface) {
-      return NULL;
-    }
-    $course = $courseStatus->get(CourseStatusInterface::COURSE_FIELD)->entity;
-    return $course instanceof CourseInterface && $course->bundle() === 'lms_course'
-      ? $course
-      : NULL;
   }
 
 }

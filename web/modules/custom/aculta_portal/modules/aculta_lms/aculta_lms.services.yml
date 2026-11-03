@@ -21,6 +21,9 @@ services:
       - '@aculta_lms.objective_answer.select'
       - '@aculta_lms.objective_answer.fill_blanks'
   Drupal\aculta_lms\Plugin\ActivityAnswer\ObjectiveAnswerPluginResolver: '@aculta_lms.objective_answer_plugins'
+  aculta_lms.free_text_answer:
+    class: Drupal\aculta_lms\Plugin\ActivityAnswer\FreeTextReviewFeedback
+  Drupal\aculta_lms\Plugin\ActivityAnswer\FreeTextReviewFeedback: '@aculta_lms.free_text_answer'
   aculta_lms.account_user_loader:
     class: Drupal\aculta_lms\Account\AccountUserLoader
     arguments: ['@entity_type.manager']
@@ -117,6 +120,12 @@ services:
     class: Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager
     arguments: ['@entity_type.manager', '@aculta_lms.class_activity_deadline_access']
   Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager: '@aculta_lms.class_activity_deadline_manager'
+  aculta_lms.answer_submission_access:
+    class: Drupal\aculta_lms\Access\AnswerSubmissionAccessCheck
+    arguments: ['@aculta_portal.lms_friendly_slugs', '@aculta_lms.notice_eligibility', '@current_user']
+  Drupal\aculta_lms\Hook\ActivityDeadlineFormHooks:
+    class: Drupal\aculta_lms\Hook\ActivityDeadlineFormHooks
+    arguments: ['@aculta_lms.class_activity_deadline_manager', '@date.formatter', '@entity_type.manager', '@current_user', '@string_translation']
   aculta_lms.course_certificate_manager:
     class: Drupal\aculta_lms\Certificate\CourseCertificateManager
     arguments: ['@entity_type.manager', '@datetime.time', '@database', '@event_dispatcher', '@logger.channel.aculta_lms', '@lock']

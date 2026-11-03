@@ -19,6 +19,7 @@ use Drupal\aculta_lms\Learning\CourseActivityReaderInterface;
 use Drupal\aculta_lms\Learning\CourseActivity;
 use Drupal\aculta_lms\Plugin\ActivityAnswer\ObjectiveAnswerPluginResolver;
 use Drupal\aculta_lms\Plugin\ActivityAnswer\SelectAnswerPlugin;
+use Drupal\aculta_lms\Plugin\ActivityAnswer\FreeTextReviewFeedback;
 use Drupal\aculta_lms\Learning\CourseAnswerReaderInterface;
 use Drupal\aculta_lms\Learning\AnswerPayload;
 use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
@@ -91,7 +92,7 @@ final class AcultaLmsInstallTest extends KernelTestBase {
       PaymentOperationsInterface::class,
       $container->get('aculta_portal.payment_provider.payment_operations'),
     );
-    $this->assertTrue($container->get('module_handler')->hasImplementations('form_lms_answer_form_alter', ['aculta_lms']));
+    $this->assertTrue($container->get('module_handler')->hasImplementations('form_aculta_lms_answer_submission_alter', ['aculta_lms']));
     $this->assertTrue($container->get('module_handler')->hasImplementations('commerce_order_insert', ['aculta_lms']));
     $this->assertTrue($container->get('module_handler')->hasImplementations('commerce_order_update', ['aculta_lms']));
     $attachmentRoute = $container->get('router.route_provider')->getRouteByName('aculta_lms.answer_attachment_download');
@@ -101,6 +102,10 @@ final class AcultaLmsInstallTest extends KernelTestBase {
       AnswerAttachmentAccessCheck::class,
       $container->get('aculta_lms.answer_attachment_access'),
     );
+    $submissionRoute = $container->get('router.route_provider')->getRouteByName('aculta_lms.answer_submission');
+    $this->assertSame('/curso/{group}/{lesson_delta}/{activity_delta}', $submissionRoute->getPath());
+    $this->assertSame('courses', $submissionRoute->getOption('_aculta_domain_purpose'));
+    $this->assertInstanceOf(FreeTextReviewFeedback::class, $container->get(FreeTextReviewFeedback::class));
     $this->assertInstanceOf(
       CourseCompletionPublisherInterface::class,
       $container->get('aculta_lms.course_completion_publisher'),
@@ -197,6 +202,13 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     self::assertSame(['group.type.lms_course'], $this->container->get('config.factory')
       ->get('group.relationship_type.lms_course-lms_classes')->get('dependencies.config'));
 
+    $activity_fields = $this->container->get('entity_field.manager')->getBaseFieldDefinitions('aculta_lms_activity');
+    $update_manager->uninstallFieldStorageDefinition($activity_fields['answer_config']);
+    self::assertFalse($schema->fieldExists('aculta_lms_activity', 'answer_config'));
+    aculta_lms_update_10013();
+    aculta_lms_update_10013();
+    self::assertTrue($schema->fieldExists('aculta_lms_activity', 'answer_config'));
+
     foreach (['aculta_lms_lesson', 'aculta_lms_activity', 'aculta_lms_answer', 'aculta_lms_progress'] as $entity_type_id) {
       $this->assertTrue($entity_type_manager->hasDefinition($entity_type_id));
       $this->assertTrue($schema->tableExists($entity_type_id));
@@ -216,6 +228,8 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertStringContainsString('varchar(32) NOT NULL', $progress_create);
     $this->assertStringContainsString('activity_id" int(11) NOT NULL', $answer_create);
     $this->assertStringContainsString('answer_data', $answer_create);
+    $activity_create = $this->container->get('database')->query('SHOW CREATE TABLE {aculta_lms_activity}')->fetchField(1);
+    $this->assertStringContainsString('answer_config', $activity_create);
 
     $answer_storage = $entity_type_manager->getStorage('aculta_lms_answer');
     $attempt = $answer_storage->create([

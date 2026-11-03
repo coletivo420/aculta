@@ -1,3 +1,12 @@
+## `0.1.0-dev.35` — discussões no formulário ACULTA
+
+- O hook de discussões usa o contexto de ActivityEntity, Group e User
+  disponibilizado pelo formulário ACULTA de resposta. Não consulta respostas
+  ou estados do LMS contrib.
+- Unit: 33 testes/331 asserções PASS. Kernel focal do resolver: 1 teste/25
+  asserções PASS, com 38 depreciações de Core/contrib. Runtime e validação
+  visual DEFERRED.
+
 ## `0.1.0-dev.33` — checagem segura de referências em tabelas presentes
 
 - O update 10001 verifica separadamente as tabelas de valores atuais e de

@@ -39,13 +39,13 @@ final class SubmissionImageHooks {
   }
 
   /**
-   * Caps the contrib managed upload element to the LMS upload policy.
+   * Caps the ACULTA managed upload element to the LMS upload policy.
    *
    * The activity still chooses its extensions, but only inside the consumer
    * policy from aculta_portal. The ACULTA image constraint then inspects raster
    * image bytes; other extensions keep their native validation.
    */
-  #[Hook('form_lms_answer_form_alter')]
+  #[Hook('form_aculta_lms_answer_submission_alter')]
   public function answerFormAlter(array &$form, FormStateInterface $form_state): void {
     if (!isset($form['file_upload']['#upload_validators']) || !is_array($form['file_upload']['#upload_validators'])) {
       return;

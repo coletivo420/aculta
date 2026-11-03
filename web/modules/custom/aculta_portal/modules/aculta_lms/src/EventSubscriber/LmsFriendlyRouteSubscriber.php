@@ -11,9 +11,8 @@ use Symfony\Component\Routing\RouteCollection;
 /**
  * Serves LMS lesson and activity pages under Portuguese course and lesson slugs.
  *
- * The LMS controller keeps its signature; the parameter converters turn the slugs
- * into the course entity and the lesson and activity positions it expects. The old
- * numeric path is not kept as an alias (see DT-P21).
+ * Parameter converters resolve the Group course and ACULTA lesson/activity
+ * positions consumed by the answer submission form.
  */
 final class LmsFriendlyRouteSubscriber extends RouteSubscriberBase {
 
@@ -21,7 +20,7 @@ final class LmsFriendlyRouteSubscriber extends RouteSubscriberBase {
    * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection): void {
-    $route = $collection->get('lms.group.answer_form');
+    $route = $collection->get('aculta_lms.answer_submission');
     if ($route === NULL) {
       return;
     }

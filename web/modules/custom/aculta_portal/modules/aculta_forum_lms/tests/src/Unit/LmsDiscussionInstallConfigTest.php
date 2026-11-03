@@ -88,7 +88,11 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
       '@aculta_forum_lms.activity_discussion_resolver',
       $services['Drupal\\aculta_forum_lms\\Context\\LmsActivityDiscussionResolver'],
     );
-    self::assertArrayNotHasKey('Drupal\\aculta_forum_lms\\Hook\\LmsActivityDiscussionHooks', $services);
+    self::assertSame('Drupal\\aculta_forum_lms\\Hook\\LmsActivityDiscussionHooks', $services['Drupal\\aculta_forum_lms\\Hook\\LmsActivityDiscussionHooks']['class']);
+    self::assertSame(
+      ['@aculta_forum_lms.activity_discussion_resolver', '@current_user', '@entity_type.manager'],
+      $services['Drupal\\aculta_forum_lms\\Hook\\LmsActivityDiscussionHooks']['arguments'],
+    );
     self::assertSame('Drupal\\aculta_forum_lms\\Context\\Lmsaculta_H5PDiscussionResolver', $services['aculta_forum_lms.h5p_discussion_resolver']['class']);
     self::assertSame(
       [

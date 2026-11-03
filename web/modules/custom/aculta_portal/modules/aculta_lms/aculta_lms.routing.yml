@@ -134,6 +134,23 @@ aculta_lms.answer_attachment_download:
       answer:
         type: entity:aculta_lms_answer
 
+aculta_lms.answer_submission:
+  path: '/curso/{group}/{lesson_delta}/{activity_delta}'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\AnswerSubmissionForm'
+    _title: 'Responder atividade'
+  requirements:
+    _custom_access: 'aculta_lms.answer_submission_access::access'
+  options:
+    parameters:
+      group:
+        type: entity:group
+      lesson_delta:
+        type: aculta_portal.lms_lesson_slug
+      activity_delta:
+        type: aculta_portal.lms_activity_slug
+    _aculta_domain_purpose: courses
+
 aculta_lms.xapi_token_settings:
   path: '/painel-administrativo/aculta/lms/xapi/validade-token'
   defaults:
