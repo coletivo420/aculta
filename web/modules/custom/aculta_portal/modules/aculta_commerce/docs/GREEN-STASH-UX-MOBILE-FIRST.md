@@ -10,7 +10,7 @@ Status: **projeto visual e funcional**, não interface operacional implementada.
 
 ## Contratos existentes examinados
 
-- `aculta_studio/src/Experience/StudioExperienceProviderInterface.php`: providers integram áreas autorizadas ao Studio; Green Stash usa o ID técnico `green_stash` e o caminho oficial `/studio/green-stash`, no purpose `account`.
+- `aculta_studio/src/Experience/StudioExperienceProviderInterface.php`: providers integram áreas autorizadas ao Studio; Green Stash usa o ID técnico `green_stash` e o caminho oficial `/green-stash`, no purpose `account`.
 - `aculta_studio/src/StudioPresenter.php`: **GanjaLab** usa área > seção > aba; Green Stash usa navegação comercial contextual dentro do mesmo ACULTA Studio, sem um shell ou menu global próprio.
 - `aculta420` fornece Bootstrap, tokens, SDC/UI Suite, light/dark, componentes existentes e **cabeçalho multidomínio imutável**; não criar shell nem tema novo.
 - `aculta_commerce` mantém propriedade da Loja; Portal administra checkout transversal. `aculta_commerce_melhorenvio` pertence à integração logística; `aculta_statistics` fornece métricas.
@@ -127,7 +127,7 @@ GS-UX-01: validar provider/rota/container no homelab. GS-UX-02: testar matrizes 
 
 ## Revalidação da apresentação integrada — 2026-10-31
 
-A rota canônica da implementação local é `shop:/studio/green-stash`. A suíte Unit
+A rota canônica da implementação local é `shop:/green-stash`. A suíte Unit
 `StudioIdentityRoutingTest`, `GreenStashNavigationTest` e
 `GreenStashExperienceProviderTest` passaram 10 testes/252 assertions. A fixture de browser
 passou 186/186 checks em claro/escuro, larguras 320–1440px e zoom 200/400%,
@@ -136,7 +136,7 @@ geral declara que nenhuma operação comercial está disponível nessa tela; os
 estados de produto usados pela fixture não salvam dados.
 
 No Runtime `2493d7535`, a rota nova ainda responde 404 e o caminho legado
-`/greenstash` permanece servido; a captura legacy a 320px mede `documentScrollWidth=330`
+`/green-stash` permanece servido; a captura legacy a 320px mede `documentScrollWidth=330`
 com viewport de 320px. A verificação da rota/UI oficial, controle de acesso por
 loja e operações reais permanece DEFERRED até o Runtime servir o commit da branch.
 A fixture não substitui as dívidas GS-UX-01/02/05 nem homologa OCS-F8/F11.

@@ -2,7 +2,7 @@
 
 ## ADR-038 - caminhos atuais das Suites (retificado pelo responsável em 2026-10-30)
 
-Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/studio/we-sativa`; Green Stash `shop:/studio/green-stash`; Culturas `eventos:/culturas`. Os paths oficiais aprovados são ACULTA STUDIO WE SATIVA e ACULTA STUDIO GREEN STASH, cada um no purpose proprietário. `/studio` e os demais prefixos `/studio/*` permanecem 404, sem aliases/redirects. O Domain Wiki canônico é `wiki420`; `aculta_studio` continua framework compartilhado. Conta e Perfil seguem separados. Consulte a retificação de ADR-038.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/we-sativa`; Green Stash `shop:/green-stash`; Culturas `eventos:/culturas`. Os paths oficiais aprovados são ACULTA STUDIO WE SATIVA e ACULTA STUDIO GREEN STASH, cada um no purpose proprietário. `/studio` e os demais prefixos `/studio/*` permanecem 404, sem aliases/redirects. O Domain Wiki canônico é `wiki420`; `aculta_studio` continua framework compartilhado. Conta e Perfil seguem separados. Consulte a retificação de ADR-038.
 
   base e `ContentEntityNullStorage` sem converter falha real em exclusão; a
   classe Kernel de imagem passou 29/1.642 e a suíte Kernel Wiki 31/1.692. O
@@ -77,7 +77,7 @@ Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/studio/
 # 1/30. Runtime de teste aplicou update 10001 e drush cr; Firefox ESR/X11 passou
 # smoke WE SATIVA 19/19 (home, início, workspace, formulário e reflow 320–1280).
 
-# Dev.110: home Wiki aponta para `/studio/we-sativa/inicio` somente com
+# Dev.110: home Wiki aponta para `/we-sativa/inicio` somente com
 # createAccess e acesso real no Domain account; fallback nativo permanece.
 # Classe Kernel MariaDB passou 27/1.504; CTA e rotas verificados no Runtime no
 # Firefox ESR/X11 após rebuild de cache.
@@ -89,7 +89,7 @@ Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/studio/
 # isolada), incluindo projeção v4, relações, acesso real e rebuild isolado.
 # Runtime/rebuild instalado não executados.
 
-# Dev.109: `/studio/we-sativa/inicio` é entrypoint `account` servido pelo Studio;
+# Dev.109: `/we-sativa/inicio` é entrypoint `account` servido pelo Studio;
 # `WikiContributorWorkspace` mantém dados, acesso, cache e links autorizados.
 # Dois Kernels integrados passaram (2/208), com render ACULTA420. Runtime e
 # visual pendentes.
@@ -400,7 +400,7 @@ Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/studio/
 
 - Dev.39 WE SATIVA inicial: `aculta_wiki.contributor_workspace` busca apenas
   candidatos com UID da própria conta e revalida `view` de cada Node/proposta
-  no purpose `wiki` antes de mostrar dados. A entrada `/studio/we-sativa` fica
+  no purpose `wiki` antes de mostrar dados. A entrada `/we-sativa` fica
   no purpose `account`; mantenha acesso e dados no serviço Wiki. Até 20 itens
   por tipo; cursor/paginação e formulários seguem pendentes. Kernel focal
   aprovado: 1 teste / 37 assertions; 200 depreciações Drupal/contrib e 2 do
@@ -446,8 +446,8 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
   `docs/aculta-forum-0.1.0-dev.1` confirmou `aculta_wiki` ativo e
   `aculta_index` desativado no Runtime de teste. `/` retornou 200; `/wiki`
   retornou 404 por ser o caminho interno da raiz Wiki, conforme
-  `FrontPathPolicy`/`PurposeFrontPathProcessor`; `/wiki/verbetes`, `/wiki/busca`
-  e `/wiki/busca/previa` retornaram 200. Drush confirmou bootstrap Drupal
+  `FrontPathPolicy`/`PurposeFrontPathProcessor`; `/verbetes`, `/busca-wiki`
+  e `/busca-wiki/previa` retornaram 200. Drush confirmou bootstrap Drupal
   11.4.10, URI e banco `aculta_runtime`. Nenhuma configuração, cache ou dado foi
   alterado. Runtime não está homologado integralmente. Não instalar
   configuração nem executar outras operações persistentes sem autorização
@@ -455,8 +455,8 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
 - Testes unitários: `vendor/bin/phpunit -c web/core/phpunit.xml.dist
   web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit`.
 - Nomes e caminhos de rota são contrato público: `aculta_portal.wiki_home`
-  em `/wiki`, `aculta_portal.wiki_search` em `/wiki/busca` e
-  `aculta_portal.wiki_search_preview` em `/wiki/busca/previa`. O prefixo
+  em `/wiki`, `aculta_portal.wiki_search` em `/busca-wiki` e
+  `aculta_portal.wiki_search_preview` em `/busca-wiki/previa`. O prefixo
   `aculta_portal.` permanece mesmo com as rotas definidas neste submódulo.
 - Domínio e purpose continuam no Portal (`DomainPurposeManager`,
   `ContentPurposeResolver`, `PurposeFrontPathProcessor`, `DomainRouteSubscriber`).
@@ -502,7 +502,7 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
   de entidade, além de transições válidas. Kernel carrega workflow real e usa
   `email_confirmation_policy`; não criar bypasses para contas não confirmadas.
   Fila e serviço ainda não têm rota ou integração de UI com Studio.
-- Envio de propostas (dev.16): `/wiki/verbetes/{node}/contribuir` usa Form API,
+- Envio de propostas (dev.16): `/verbetes/{node}/contribuir` usa Form API,
   permission `submit wiki proposals` e `_entity_access: node.view`. O serviço
   revalida a revisão-base durante o salvamento. Texto sugerido é texto simples;
   o formulário avisa que ele não altera o verbete automaticamente. Não marcar
@@ -551,4 +551,4 @@ Herde as regras da raiz e do Portal. Para trabalho na Wiki, consulte `README.md`
 
 ## ADR-038 - residência futura da Suite WE SATIVA
 
-WE SATIVA responde em `/studio/we-sativa`, purpose `wiki`, no Domain canônico `wiki420`, conforme retificação vinculante de ADR-038 em 2026-10-30. Wiki mantém ownership de verbetes, propostas e permissões. Rotas de moderação que pertencem à Suite Marley continuam em `account:/marley/...`; não mova toda rota Wiki automaticamente para WE SATIVA. Somente os prefixos oficiais WE SATIVA e Green Stash podem usar `/studio/*`; os demais continuam 404 sem alias.
+WE SATIVA responde em `/we-sativa`, purpose `wiki`, no Domain canônico `wiki420`, conforme retificação vinculante de ADR-038 em 2026-10-30. Wiki mantém ownership de verbetes, propostas e permissões. Rotas de moderação que pertencem à Suite Marley continuam em `account:/marley/...`; não mova toda rota Wiki automaticamente para WE SATIVA. WE SATIVA (`/we-sativa`) e Green Stash (`/green-stash`) têm caminhos próprios; `/studio` e `/studio/*` continuam 404 sem alias.

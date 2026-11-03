@@ -2,7 +2,7 @@
 
 ## ADR-038 — estado atual
 
-`aculta_studio` permanece como framework compartilhado, registry e camada de composição. Não existe hub público `/studio`. Por decisão explícita do responsável, as áreas integradas **ACULTA STUDIO WE SATIVA** (`wiki:/studio/we-sativa`) e **ACULTA STUDIO GREEN STASH** (`shop:/studio/green-stash`) usam esses paths canônicos; `/studio` e os demais paths `/studio/*` continuam 404, sem alias nem redirect.
+`aculta_studio` permanece como framework compartilhado, registry e camada de composição. Não existe hub público `/studio`. Por decisão explícita do responsável, as áreas integradas **ACULTA STUDIO WE SATIVA** (`wiki:/we-sativa`) e **ACULTA STUDIO GREEN STASH** (`shop:/green-stash`) usam esses paths canônicos; `/studio` e os demais paths `/studio/*` continuam 404, sem alias nem redirect.
 
 | Suite | Purpose | Caminho |
 | --- | --- | --- |
@@ -10,8 +10,8 @@
 | Ganjalab Estudante | `courses` | `/ganjalab` |
 | Ganjalab Educador | `courses` | `/ganjalab/educador` |
 | Criação de curso | `courses` | `/ganjalab/educador/cursos/novo` |
-| ACULTA STUDIO WE SATIVA | `wiki` | `/studio/we-sativa` |
-| ACULTA STUDIO GREEN STASH | `shop` | `/studio/green-stash` |
+| ACULTA STUDIO WE SATIVA | `wiki` | `/we-sativa` |
+| ACULTA STUDIO GREEN STASH | `shop` | `/green-stash` |
 | Culturas | `eventos` | `/culturas` |
 
 A raiz de `account` apresenta a entrada da Conta; Conta (`/conta/*`) e Perfil (`/perfil/*`) permanecem separados.
@@ -156,7 +156,7 @@ o fallback sem JavaScript dos modais bio/redes precisa evoluir na P2-B.
 A única entrada global é **`/studio`** (route ID `aculta_studio.hub`).
 A entrada editorial é **`/studio/marley`**, mais as subrotas canônicas.
 Meu Espaço: `/studio/pessoal`. Ganjalab: `/studio/ganjalab`;
-WE SATIVA: `/studio/we-sativa`.
+WE SATIVA: `/we-sativa`.
 
 Foram removidas as rotas transitórias `/studio/inicio`,
 `/studio/Marley`, `/ganjalab`, `/ganjalab420`,
@@ -229,7 +229,7 @@ Execução faseada: [ROADMAP.md](docs/ROADMAP.md), marcos STUDIO-P0–P7.
 - **Meu Espaço (`pessoal`)**: entrypoint inicial no purpose `account`, com
   links para a Conta existente e autorização no registry; sem novos formulários
   nem substituição do shell de Conta. A rota é `/studio/pessoal`.
-- **WE SATIVA**: experiência independente de contribuição Wiki, nas rotas `/studio/we-sativa` e `/studio/we-sativa/inicio`.
+- **WE SATIVA**: experiência independente de contribuição Wiki, nas rotas `/we-sativa` e `/we-sativa/inicio`.
 
 A infraestrutura apresenta e encaminha. Os módulos proprietários continuam donos de entidades, formulários, workflow, permissões, matrículas, avaliações, progresso e cache de negócio.
 
@@ -240,7 +240,7 @@ As experiências pessoais usam `_aculta_domain_purpose: account`; Ganjalab usa o
 - Meu Espaço: `/studio/pessoal` (P1-A; Runtime ainda não homologado).
 - Marley: `/studio/marley` (entrada canônica, minúscula), `/studio/marley/{aba}`, `/studio/marley/{aba}/{secao}`, `/studio/marley/{aba}/{secao}/{sub}`.
 - Ganjalab: `/studio/ganjalab` (estudante autenticado; declarada pelo LMS).
-- WE SATIVA: `/studio/we-sativa` e `/studio/we-sativa/inicio`.
+- WE SATIVA: `/we-sativa` e `/we-sativa/inicio`.
 - Planos Mercado Pago: apresentação administrativa no Studio em `/studio/conta/mercado-pago/planos`; o módulo de pagamentos é dono do formulário, do endpoint POST `/integracoes/mercadopago/planos` e das operações no provedor.
 
 A entrada antiga `/studio/ganjalab` não pode continuar editorial: agora pertence exclusivamente a Ganjalab. As entradas antigas não colidentes usam redirects temporários 302 apenas em GET/HEAD: `/ganjalab` e níveis profundos editoriais para Marley; `/ganjalab420`, `/minha-aprendizagem` e `/studio/ganjalab420` para Ganjalab. Métodos de escrita não são redirecionados. O registro completo está em [contrato de identidade](../../../../../../docs/portal/ACULTA-STUDIO-IDENTITY.md) e no [mapa de rotas](../../../../../../docs/architecture/ROUTES-SITEMAP.md).
@@ -288,8 +288,8 @@ sem alias ou redirect.
 | --- | --- | --- |
 | Marley | `account` | `/marley` |
 | Ganjalab | `courses` | `/ganjalab` |
-| ACULTA STUDIO WE SATIVA | `wiki` | `/studio/we-sativa` |
-| ACULTA STUDIO GREEN STASH | `shop` | `/studio/green-stash` |
+| ACULTA STUDIO WE SATIVA | `wiki` | `/we-sativa` |
+| ACULTA STUDIO GREEN STASH | `shop` | `/green-stash` |
 | Culturas | `eventos` | `/culturas` |
 
 Conta (`/conta/*`) e Perfil (`/perfil/*`) permanecem separados; salvos usam

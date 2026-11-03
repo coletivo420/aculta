@@ -30,8 +30,8 @@ final class WikiSearchFormBuilderTest extends UnitTestCase {
     $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
     $urlGenerator->method('generateFromRoute')
       ->willReturnCallback(static fn ($routeName) => match ($routeName) {
-        'aculta_portal.wiki_search' => '/wiki/busca',
-        'aculta_portal.wiki_search_preview' => '/wiki/busca/previa',
+        'aculta_portal.wiki_search' => '/busca-wiki',
+        'aculta_portal.wiki_search_preview' => '/busca-wiki/previa',
         default => '/' . $routeName,
       });
     $container = new ContainerBuilder();
@@ -57,7 +57,7 @@ final class WikiSearchFormBuilderTest extends UnitTestCase {
 
     $requestStack = new RequestStack();
     if ($query !== NULL) {
-      $requestStack->push(Request::create('/wiki/busca', 'GET', ['q' => $query]));
+      $requestStack->push(Request::create('/busca-wiki', 'GET', ['q' => $query]));
     }
 
     return new WikiSearchFormBuilder($translation, $requestStack);
@@ -70,7 +70,7 @@ final class WikiSearchFormBuilderTest extends UnitTestCase {
     $build = $this->builder(NULL)->build();
 
     $this->assertSame('get', $build['#method']);
-    $this->assertSame('/wiki/busca', $build['#action']);
+    $this->assertSame('/busca-wiki', $build['#action']);
     $this->assertSame(['role' => 'search'], $build['#attributes']);
     $this->assertSame(['url.query_args:q'], $build['#cache']['contexts']);
     $this->assertSame(['aculta_portal/search-preview'], $build['#attached']['library']);
@@ -79,7 +79,7 @@ final class WikiSearchFormBuilderTest extends UnitTestCase {
     $this->assertSame(SearchPageController::MAX_CHARS, $build['q']['#maxlength']);
     // O módulo expõe só o marcador neutro; a classe visual é do tema (PortalUiHooks).
     $this->assertSame('search-preview-input', $build['q']['#attributes']['data-portal-ui']);
-    $this->assertSame('/wiki/busca/previa', $build['q']['#attributes']['data-preview-url']);
+    $this->assertSame('/busca-wiki/previa', $build['q']['#attributes']['data-preview-url']);
     $this->assertSame((string) SearchPageController::MIN_CHARS, $build['q']['#attributes']['data-min-chars']);
     $this->assertSame('aculta-wiki-search-preview', $build['preview']['#attributes']['id']);
     $this->assertSame('region', $build['preview']['#attributes']['role']);
@@ -115,7 +115,7 @@ final class WikiSearchFormBuilderTest extends UnitTestCase {
       ->willReturnCallback(static fn ($string) => (string) $string);
 
     $requestStack = new RequestStack();
-    $requestStack->push(Request::create('/wiki/busca', 'GET', ['q' => ['x']]));
+    $requestStack->push(Request::create('/busca-wiki', 'GET', ['q' => ['x']]));
 
     $build = (new WikiSearchFormBuilder($translation, $requestStack))->build();
 

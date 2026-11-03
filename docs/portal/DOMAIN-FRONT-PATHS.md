@@ -42,10 +42,10 @@ As rotas abaixo estão declaradas no código e respondem somente no purpose corr
 | --- | --- | --- | --- |
 | `conta.aculta.toca.net.br` | `account` | Marley `/marley` e filhas | 404 |
 | `cursos.aculta.toca.net.br` | `courses` | Ganjalab `/ganjalab` e filhas | 404 |
-| `wiki420.aculta.toca.net.br` (Domain canônico ativo) | `wiki` | WE SATIVA `/wesativa` e filhas | 404 |
-| `loja.aculta.toca.net.br` | `shop` | Green Stash `/greenstash` e filhas | 404 |
+| `wiki420.aculta.toca.net.br` (Domain canônico ativo) | `wiki` | WE SATIVA `/we-sativa` e filhas | 404 |
+| `loja.aculta.toca.net.br` | `shop` | Green Stash `/green-stash` e filhas | 404 |
 | `eventos.aculta.toca.net.br` | `eventos` | Culturas `/culturas` e filhas | 404 |
 
 A raiz `conta` apresenta entrada da Conta, resolvida pela rota `/conta`; esse caminho também é público. Não há reescrita para `/studio`; `/studio` e `/studio/*` retornam 404, sem alias/redirect. Conta e Perfil usam `/conta/*` e `/perfil/*`; `/salvos`, planos de Mercado Pago e `/conta-legada` permanecem separados. O Domain `wiki` é `wiki420`, conforme configuração; a referência a `wiki.aculta.*` foi retirada por correção do responsável.
 
-O cache de rotas no Runtime foi reconstruído em 2026-10-30 e o site respondeu HTTP 200 na raiz MAIN e na entrada de Conta; `/studio` respondeu 404. A rota `/wesativa` foi capturada autenticada em Firefox ESR visível no host `wiki420.aculta.toca.net.br`; produção (`wiki420.aculta.org`) não foi validada.
+O cache de rotas no Runtime foi reconstruído em 2026-10-30 e o site respondeu HTTP 200 na raiz MAIN e na entrada de Conta; `/studio` respondeu 404. A rota `/we-sativa` foi capturada autenticada em Firefox ESR visível no host `wiki420.aculta.toca.net.br`; produção (`wiki420.aculta.org`) não foi validada.

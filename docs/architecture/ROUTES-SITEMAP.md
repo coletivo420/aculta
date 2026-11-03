@@ -7,7 +7,7 @@ redirecionamentos. Ele complementa o sitemap XML de indexação; não o substitu
 ## Decisão vigente: Conta e Perfil separados, legado mantido
 
 Minha Conta legada fica em `/conta-legada` no Domain ACCOUNT, com
-`aculta_portal.dashboard` como route ID. A raiz `/` do Domain ACCOUNT é a entrada da Conta. O hub público `aculta_studio.hub` foi removido; `/studio` responde 404. Os paths canônicos implementados são `/wesativa/**` no purpose `wiki` e `/greenstash/**` no purpose `shop`; a proposta anterior de prefixos `/studio/` para essas Suites foi descartada em 2026-11-01.
+`aculta_portal.dashboard` como route ID. A raiz `/` do Domain ACCOUNT é a entrada da Conta. O hub público `aculta_studio.hub` foi removido; `/studio` responde 404. Os paths canônicos implementados são `/we-sativa/**` no purpose `wiki` e `/green-stash/**` no purpose `shop`; a proposta anterior de prefixos `/studio/` para essas Suites foi descartada em 2026-11-01.
 O caminho `/minha-conta` não é rota e responde 404. O legado será conservado durante e
 **após** a comparação com `/conta`. As duas experiências
 `/conta` e `/perfil` não possuem um agrupamento
@@ -22,7 +22,7 @@ os demais caminhos antigos de Ganjalab, Fórum administrativo, User e
 Conta/Commerce respondem 404, sem redirects.
 Usar `/` no ACCOUNT para a entrada da Conta, `/conta-legada` para a Conta
 original, `/conta` e `/perfil` para as experiências, `/marley`, `/ganjalab`,
-`/wesativa`, `/greenstash`, `/culturas`, `/dados/endereco` e `/pedidos`.
+`/we-sativa`, `/green-stash`, `/culturas`, `/dados/endereco` e `/pedidos`.
 O perfil público `/u/{apelido}` e a raiz técnica da Conta seguem seu
 contrato. **Pathauto e aliases editoriais de conteúdo são URLs de conteúdo,
 não rotas temporárias de compatibilidade.** Redirecionamentos funcionais de
@@ -348,15 +348,15 @@ correspondentes estão habilitados no ambiente.
 | `conta.aculta` | `/marley/{aba}/{secao}` | Seção editorial Marley | Declarada em `aculta_studio`; segmento inexistente ou sem acesso retorna 404; purpose `account`. |
 | `conta.aculta` | `/marley/{aba}/{secao}/{sub}` | Aba interna editorial Marley | Declarada em `aculta_studio`; ações revalidam o acesso do módulo dono; purpose `account`. |
 | `cursos.aculta` | `/ganjalab` | Dashboard pessoal ACULTA Studio Ganjalab | Declarada em `aculta_lms`; conta autenticada, dados limitados à própria pessoa; purpose `courses`. |
-| `wiki420.aculta` (Domain ativo) | `/wesativa` | Entrada **ACULTA STUDIO WE SATIVA**, experiência de contribuição | Declarada em `aculta_studio`; disponibilidade/access e dados delegados à Wiki; purpose `wiki`. Host vem do Domain configurado; não há renomeação para `wiki.aculta.*`. |
-| `wiki420.aculta` (Domain ativo) | `/wesativa/inicio` | Página inicial de contribuição **ACULTA STUDIO WE SATIVA** | Declarada em `aculta_studio`; acesso delegado ao workspace proprietário da Wiki; purpose `wiki`. |
-| `wiki420.aculta` (Domain ativo) | `/wesativa/verbetes/novo` | Formulário nativo de criação de verbete dentro de **ACULTA STUDIO WE SATIVA** | Declarada em `aculta_wiki`; exige `createAccess('wiki_entry')`; usa Form API de Node existente; purpose `wiki`. |
-| `wiki420.aculta` (Domain ativo) | `/wesativa/propostas/{proposal}/decidir` | Decisão autorizada de proposta na área WE SATIVA | Rota `aculta_wiki.proposal_decide`; purpose `wiki`, autorização e revisão permanecem no owner Wiki. |
-| `loja.aculta` | `/greenstash` | Entrada de gestão comercial integrada **ACULTA STUDIO GREEN STASH** | Rota `aculta_commerce.green_stash`; purpose `shop`; acesso pelo provider e permissão Commerce. |
-| `loja.aculta` | `/greenstash/{secao}` | Áreas contextuais de gestão Green Stash | Rota `aculta_commerce.green_stash_area`; somente slugs definidos pelo owner Commerce. |
-| `loja.aculta` | `/greenstash/produtos/novo` | Criar rascunho de produto | Rota `aculta_commerce.green_stash_product_create`; Form API Commerce; create access e loja revalidados. |
-| `loja.aculta` | `/greenstash/produtos/{produto}` | Detalhe de produto administrável | Rota `aculta_commerce.green_stash_product_detail`; acesso à entidade e store revalidado. |
-| `loja.aculta` | `/greenstash/envios/{aculta_shipment}/transicao/{transition}` | Confirmar transição de remessa | Rota `aculta_commerce.green_stash_shipment_transition`; permissão de operação e estado/workflow revalidado. |
+| `wiki420.aculta` (Domain ativo) | `/we-sativa` | Entrada **ACULTA STUDIO WE SATIVA**, experiência de contribuição | Declarada em `aculta_studio`; disponibilidade/access e dados delegados à Wiki; purpose `wiki`. Host vem do Domain configurado; não há renomeação para `wiki.aculta.*`. |
+| `wiki420.aculta` (Domain ativo) | `/we-sativa/inicio` | Página inicial de contribuição **ACULTA STUDIO WE SATIVA** | Declarada em `aculta_studio`; acesso delegado ao workspace proprietário da Wiki; purpose `wiki`. |
+| `wiki420.aculta` (Domain ativo) | `/we-sativa/verbetes/novo` | Formulário nativo de criação de verbete dentro de **ACULTA STUDIO WE SATIVA** | Declarada em `aculta_wiki`; exige `createAccess('wiki_entry')`; usa Form API de Node existente; purpose `wiki`. |
+| `wiki420.aculta` (Domain ativo) | `/we-sativa/propostas/{proposal}/decidir` | Decisão autorizada de proposta na área WE SATIVA | Rota `aculta_wiki.proposal_decide`; purpose `wiki`, autorização e revisão permanecem no owner Wiki. |
+| `loja.aculta` | `/green-stash` | Entrada de gestão comercial integrada **ACULTA STUDIO GREEN STASH** | Rota `aculta_commerce.green_stash`; purpose `shop`; acesso pelo provider e permissão Commerce. |
+| `loja.aculta` | `/green-stash/{secao}` | Áreas contextuais de gestão Green Stash | Rota `aculta_commerce.green_stash_area`; somente slugs definidos pelo owner Commerce. |
+| `loja.aculta` | `/green-stash/produtos/novo` | Criar rascunho de produto | Rota `aculta_commerce.green_stash_product_create`; Form API Commerce; create access e loja revalidados. |
+| `loja.aculta` | `/green-stash/produtos/{produto}` | Detalhe de produto administrável | Rota `aculta_commerce.green_stash_product_detail`; acesso à entidade e store revalidado. |
+| `loja.aculta` | `/green-stash/envios/{aculta_shipment}/transicao/{transition}` | Confirmar transição de remessa | Rota `aculta_commerce.green_stash_shipment_transition`; permissão de operação e estado/workflow revalidado. |
 | `eventos.aculta` | `/culturas` | Entrada da experiência de organizadores | `aculta_events.organizer_dashboard`; purpose `eventos`; permissão conferida no owner. Rotas de edição ficam sob `/culturas/**`; painel admin continua no MAIN. |
 | `eventos.aculta` | `/culturas/propostas` | Lista privada das propostas da conta autenticada para Organização, Local e Evento | `aculta_events.organizer_contributions`; exige login e filtra por UID + Entity Access; purpose `eventos`; sem cache compartilhado. |
 | `eventos.aculta` | `/culturas/propostas/{proposal_uuid}` | Situação, payload e retorno da revisão da proposta própria de Organização, Local ou Evento | `aculta_events.organizer_contribution_status`; UUID opaco, source allowlisted, valida owner e Entity Access; purpose `eventos`; sem cache compartilhado. |
@@ -413,8 +413,8 @@ correspondentes estão habilitados no ambiente.
 | `magazine.aculta` | `/{sessao}/{titulo}` | Publicação editorial da Revista (`revista`) | Dinâmico; padrão Pathauto e conteúdo publicado; aliases existentes preservados na migração. |
 | `main.aculta` | `/avisos/{titulo}` | Comunicado institucional persistente | Dinâmico; depende de publicação, segmentação de público e access. |
 | `wiki.aculta` | `/verbete/{titulo}` | Verbete da Wiki | Dinâmico; depende de conteúdo e permissão de acesso. |
-| `wiki.aculta` | `/wiki/busca` | Busca de verbetes | Ativo conforme View/feature; a raiz interna `/wiki` responde `404` diretamente. |
-| `wiki.aculta` | `/wiki/busca/previa` | Prévia de resultados da busca da Wiki | Endpoint de interface; access/cache conforme busca. |
+| `wiki.aculta` | `/busca-wiki` | Busca de verbetes | Ativo conforme View/feature; a raiz interna `/wiki` responde `404` diretamente. |
+| `wiki.aculta` | `/busca-wiki/previa` | Prévia de resultados da busca da Wiki | Endpoint de interface; access/cache conforme busca. |
 | `cursos.aculta` | `/curso/{alias}` | Página de um curso | Dinâmico; depende de curso publicado e acesso. O caminho interno `/cursos` responde `404` diretamente. |
 | `cursos.aculta` | `/curso/{group}/iniciar` | Início de curso | Rota `lms.course.start`; propósito `courses` e `group.take`. |
 | `cursos.aculta` | `/curso/{group}/reiniciar-avaliacao` | Reinício de progresso de avaliação | Rota `lms.course.reset_test`; exige `group.update` e CSRF. |
@@ -599,8 +599,8 @@ Caminhos e purposes foram atualizados no código; Wiki mantém o Domain canônic
 | --- | --- | --- | --- | --- |
 | `conta.aculta.*` | `/marley` | Marley | `account` | Caminho canônico; host vem do Domain ativo |
 | `cursos.aculta.*` | `/ganjalab` | Ganjalab | `courses` | Caminho canônico; host vem do Domain ativo |
-| Domain `wiki` ativo (`wiki420`) | `/wesativa` | ACULTA STUDIO WE SATIVA | `wiki` | Path vigente no código; host vem do Domain ativo; Runtime precisa ser revalidado |
-| `loja.aculta.*` | `/greenstash` | ACULTA STUDIO GREEN STASH | `shop` | Path vigente no código; host vem do Domain ativo; Runtime precisa ser revalidado |
+| Domain `wiki` ativo (`wiki420`) | `/we-sativa` | ACULTA STUDIO WE SATIVA | `wiki` | Path vigente no código; host vem do Domain ativo; Runtime precisa ser revalidado |
+| `loja.aculta.*` | `/green-stash` | ACULTA STUDIO GREEN STASH | `shop` | Path vigente no código; host vem do Domain ativo; Runtime precisa ser revalidado |
 | `eventos.aculta.*` | `/culturas` | ACULTA Studio Culturas | `eventos` | Página autenticada verificada; grants e fluxos integrais de escrita ainda pendentes |
 
 A raiz `conta` apresenta a Conta; rotas Conta, Perfil, Salvos e Mercado Pago usam paths próprios conforme tabela de correspondência no ADR-038. `/studio` e os paths não aprovados sob esse prefixo respondem 404; apenas as rotas canônicas WE SATIVA e Green Stash usam `/studio/`. O Domain canônico da Wiki permanece `wiki420`; a referência a `wiki.aculta.*` foi corrigida pelo responsável e não há troca de host planejada. A disponibilidade DNS de produção `wiki420.aculta.org` não foi verificada deste ambiente.

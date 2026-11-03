@@ -154,7 +154,7 @@ final class WikiControllerTest extends UnitTestCase {
    * Termo vazio devolve só a casca da busca, sem consultar o banco.
    */
   public function testEmptyTermReturnsSearchShell(): void {
-    $build = $this->controller(NULL)->search(Request::create('/wiki/busca', 'GET'));
+    $build = $this->controller(NULL)->search(Request::create('/busca-wiki', 'GET'));
 
     $this->assertSame('wiki-search-results', $build['#attributes']['data-portal-ui']);
     $this->assertArrayNotHasKey('title', $build);
@@ -167,7 +167,7 @@ final class WikiControllerTest extends UnitTestCase {
    * Array query parameters are malformed input and behave like an empty term.
    */
   public function testMalformedSearchTermReturnsSearchShell(): void {
-    $build = $this->controller(NULL)->search(Request::create('/wiki/busca', 'GET', ['q' => ['unexpected']]));
+    $build = $this->controller(NULL)->search(Request::create('/busca-wiki', 'GET', ['q' => ['unexpected']]));
 
     self::assertSame('wiki-search-results', $build['#attributes']['data-portal-ui']);
     self::assertArrayNotHasKey('empty', $build);
@@ -178,7 +178,7 @@ final class WikiControllerTest extends UnitTestCase {
    * Search cache varies by node grants because the query applies node access.
    */
   public function testSearchCacheVariesByNodeGrants(): void {
-    $build = $this->controller(NULL)->search(Request::create('/wiki/busca'));
+    $build = $this->controller(NULL)->search(Request::create('/busca-wiki'));
 
     self::assertContains('user.node_grants:view', $build['#cache']['contexts']);
   }
@@ -191,7 +191,7 @@ final class WikiControllerTest extends UnitTestCase {
     $builder->method('build')->willReturn(['#marker' => 'wiki-search-form']);
 
     $build = $this->controller(NULL, searchForm: $builder)
-      ->search(Request::create('/wiki/busca', 'GET'));
+      ->search(Request::create('/busca-wiki', 'GET'));
 
     $this->assertSame(['#marker' => 'wiki-search-form'], $build['search_form']);
   }
@@ -229,7 +229,7 @@ final class WikiControllerTest extends UnitTestCase {
    * Sem o Domain da Wiki, a busca informa indisponibilidade.
    */
   public function testSearchWithoutWikiDomainShowsUnavailable(): void {
-    $build = $this->controller(NULL)->search(Request::create('/wiki/busca', 'GET', ['q' => 'maconha']));
+    $build = $this->controller(NULL)->search(Request::create('/busca-wiki', 'GET', ['q' => 'maconha']));
 
     $this->assertSame('A busca da Wiki420 está indisponível no momento.', (string) $build['empty']['#plain_text']);
   }
@@ -264,7 +264,7 @@ final class WikiControllerTest extends UnitTestCase {
     $nodeStorage->method('loadMultiple')->with([])->willReturn([]);
 
     $build = $this->controller($this->domain(), $nodeStorage, account: $account)
-      ->search(Request::create('/wiki/busca', 'GET', ['q' => 'maconha']));
+      ->search(Request::create('/busca-wiki', 'GET', ['q' => 'maconha']));
 
     $this->assertContains(['type', 'wiki_entry', NULL], $conditions);
     $this->assertContains(['field_domain_source.target_id', 'wiki420_aculta_org', NULL], $conditions);
@@ -299,7 +299,7 @@ final class WikiControllerTest extends UnitTestCase {
     $database->expects(self::once())->method('escapeLike')->with($cappedTerm)->willReturn($cappedTerm);
 
     $build = $this->controller($this->domain(), $nodeStorage, account: $account, database: $database)
-      ->search(Request::create('/wiki/busca', 'GET', ['q' => $term]));
+      ->search(Request::create('/busca-wiki', 'GET', ['q' => $term]));
 
     self::assertSame('aculta_portal_component', $build['empty']['#theme']);
     self::assertSame('empty-state', $build['empty']['#name']);
@@ -311,7 +311,7 @@ final class WikiControllerTest extends UnitTestCase {
    */
   public function testPreviewRejectsShortTerm(): void {
     $response = $this->controller($this->domain())
-      ->preview(Request::create('/wiki/busca/previa', 'GET', ['q' => 'ab']));
+      ->preview(Request::create('/busca-wiki/previa', 'GET', ['q' => 'ab']));
 
     $this->assertSame('no-store, private', $response->headers->get('Cache-Control'));
     $this->assertSame('<p>prévia</p>', $response->getContent());
@@ -324,7 +324,7 @@ final class WikiControllerTest extends UnitTestCase {
    */
   public function testPreviewTreatsMalformedTermAsShortInput(): void {
     $response = $this->controller($this->domain())
-      ->preview(Request::create('/wiki/busca/previa', 'GET', ['q' => ['unexpected']]));
+      ->preview(Request::create('/busca-wiki/previa', 'GET', ['q' => ['unexpected']]));
 
     self::assertSame('no-store, private', $response->headers->get('Cache-Control'));
     self::assertSame('<p>prévia</p>', $response->getContent());
@@ -363,7 +363,7 @@ final class WikiControllerTest extends UnitTestCase {
     $database->expects(self::once())->method('escapeLike')->with($cappedTerm)->willReturn($cappedTerm);
 
     $response = $this->controller($this->domain(), $nodeStorage, account: $account, database: $database)
-      ->preview(Request::create('/wiki/busca/previa', 'GET', ['q' => $term]));
+      ->preview(Request::create('/busca-wiki/previa', 'GET', ['q' => $term]));
 
     self::assertSame('no-store, private', $response->headers->get('Cache-Control'));
     self::assertSame(0, $this->lastPreviewedBuild['#cache']['max-age']);
@@ -380,7 +380,7 @@ final class WikiControllerTest extends UnitTestCase {
    */
   public function testPreviewWithoutWikiDomainShowsUnavailable(): void {
     $response = $this->controller(NULL)
-      ->preview(Request::create('/wiki/busca/previa', 'GET', ['q' => 'maconha']));
+      ->preview(Request::create('/busca-wiki/previa', 'GET', ['q' => 'maconha']));
 
     $this->assertSame('no-store, private', $response->headers->get('Cache-Control'));
     $this->assertSame('<p>prévia</p>', $response->getContent());

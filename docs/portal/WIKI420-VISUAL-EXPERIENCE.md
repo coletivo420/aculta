@@ -13,7 +13,7 @@ Uma enciclopédia colaborativa, legível e consultável, inspirada na densidade 
 - **Acesso/descoberta:** Página inicial → pesquisa e categorias → listagem/resultado → verbete.
 - **Leitura:** verbete → sumário de âncoras autorizadas → seções → referências → relacionados; histórico e discussão como destinos contextuais somente quando rotas/providers de fato existirem.
 - **Edição:** ação de editar, revisão ou propor contribuição somente após access do Drupal; edição avançada pertence ao ACULTA Studio/CKEditor, sem UI administrativa na experiência anônima.
-- **Busca:** preservar GET /wiki/busca, prévia AJAX /wiki/busca/previa com debounce e descarte de respostas antigas; sem JS o formulário continua funcional. Rotas confirmadas em `aculta_wiki.routing.yml`; não inventar paths de categorias/histórico.
+- **Busca:** preservar GET /busca-wiki, prévia AJAX /busca-wiki/previa com debounce e descarte de respostas antigas; sem JS o formulário continua funcional. Rotas confirmadas em `aculta_wiki.routing.yml`; não inventar paths de categorias/histórico.
 
 ## Telas de experiência — contrato UX
 
@@ -79,7 +79,7 @@ Wiki / Categoria / Verbete
 
 1. `wiki-entry.css` já estiliza largura, texto, referências, infobox lateral, responsividade e estados de foco; evitar CSS paralelo.
 2. `css/components/wiki.css` já modela busca no Domain Header, prévia, Views de categorias/resultado e tokens claro/escuro. Qualquer refinamento depende de revisão real de reflow e do shell.
-3. A Wiki tem rotas explícitas `/wiki`, `/wiki/busca`, `/wiki/busca/previa`; outras rotas são hipótese até auditoria.
+3. A Wiki tem rotas explícitas `/wiki`, `/busca-wiki`, `/busca-wiki/previa`; outras rotas são hipótese até auditoria.
 4. O preview AJAX tem contrato existente (mínimo de caracteres, debounce, fallback GET, ACL, cache privado). Não duplicar endpoints ou substituir por SDC: SDC compõe a aparência, AJAX mantém-se no provider.
 5. Discussão contextual é **planejada**, não comprovada como publicada; respeitar o plano do Fórum.
 

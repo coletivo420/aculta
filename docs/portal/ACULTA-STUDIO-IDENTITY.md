@@ -2,7 +2,7 @@
 
 ## ADR-038 - caminhos canônicos implementados; homologação funcional parcial
 
-Marley `account:/marley` é o workspace de Revista, moderação do Fórum e Galerias; Ganjalab Estudante `courses:/ganjalab` é a experiência de aprendizagem; Ganjalab Educador é o workspace separado de autoria/gestão educacional em `courses:/ganjalab/educador` (criação em `/ganjalab/educador/cursos/novo`), sem substituir a rota de estudante; WE SATIVA `wiki:/wesativa` no Domain canônico `wiki420`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. `/studio` e todo `/studio/*` foram removidos e respondem 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `account` apresenta a entrada de Conta; Conta e Perfil permanecem separados. A referência a `wiki.aculta.*` no pedido original foi corrigida pelo responsável; não há migração de host Wiki planejada.
+Marley `account:/marley` é o workspace de Revista, moderação do Fórum e Galerias; Ganjalab Estudante `courses:/ganjalab` é a experiência de aprendizagem; Ganjalab Educador é o workspace separado de autoria/gestão educacional em `courses:/ganjalab/educador` (criação em `/ganjalab/educador/cursos/novo`), sem substituir a rota de estudante; WE SATIVA `wiki:/we-sativa` no Domain canônico `wiki420`; Green Stash `shop:/green-stash`; Culturas `eventos:/culturas`. `/studio` e todo `/studio/*` foram removidos e respondem 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `account` apresenta a entrada de Conta; Conta e Perfil permanecem separados. A referência a `wiki.aculta.*` no pedido original foi corrigida pelo responsável; não há migração de host Wiki planejada.
 
 ## Histórico pré-ADR-038
 
@@ -36,15 +36,15 @@ aplicar sempre este contrato vigente.
 ## Identidades atuais — Conta/Perfil separados (dev.13)
 
 Nomes oficiais das áreas integradas: **ACULTA STUDIO WE SATIVA** em
-`/studio/we-sativa` (início em `/studio/we-sativa/inicio`) e **ACULTA STUDIO
-GREEN STASH** em `/studio/green-stash`. Os providers continuam adaptadores do
+`/we-sativa` (início em `/we-sativa/inicio`) e **ACULTA STUDIO
+GREEN STASH** em `/green-stash`. Os providers continuam adaptadores do
 Studio; Wiki e Commerce mantêm seus dados, permissões e operações. Paths
 anteriores aposentados respondem 404, sem alias temporário.
 
 - `/studio` — hub;
 - `/studio/conta` — **Minha Conta Studio**, dados privados;
 - `/studio/perfil` — **Meu Perfil Studio**, identidade pública editável;
-- `/studio/marley`, `/studio/ganjalab`, `/studio/we-sativa` —
+- `/studio/marley`, `/studio/ganjalab`, `/we-sativa` —
   experiências distintas;
 - `/` no Domain ACCOUNT — **hub do ACULTA Studio** (caminho interno `/studio`);
 - `/conta-legada` — **Minha Conta legada permanente**, com shell
@@ -73,7 +73,7 @@ Somente URLs canônicas: `/studio` (hub, route ID `aculta_studio.hub`),
 `/studio/marley` (entrada editorial),
 `/studio/pessoal` (Minha Conta inicial),
 `/studio/ganjalab` (aprendizagem) e
-`/studio/we-sativa` (Wiki). Não há redirect para
+`/we-sativa` (Wiki). Não há redirect para
 `/studio/inicio`, `/studio/Marley`, `/ganjalab` ou
 `/minha-aprendizagem`: os caminhos transitórios foram retirados em
 desenvolvimento. **O texto de dev.7–10 abaixo é histórico e foi superado
@@ -135,8 +135,8 @@ formulário, dado pessoal ou shell foi migrado.
 ## Identidades
 
 **Nomes e caminhos oficiais das áreas integradas ao Studio:** ACULTA STUDIO
-GREEN STASH (`/studio/green-stash`) e ACULTA STUDIO WE SATIVA
-(`/studio/we-sativa`). Green Stash é gestão comercial dentro do Studio;
+GREEN STASH (`/green-stash`) e ACULTA STUDIO WE SATIVA
+(`/we-sativa`). Green Stash é gestão comercial dentro do Studio;
 WE SATIVA é contribuição Wiki dentro do Studio. Os IDs técnicos e os owners
 Commerce/Wiki permanecem, sem shell ou armazenamento paralelos.
 
@@ -156,7 +156,7 @@ Todas as rotas de Studio usam o purpose `account`; o Portal resolve o domínio d
 
 - Marley: `/studio/marley`, `/studio/marley/{aba}`, `/studio/marley/{aba}/{secao}` e `/studio/marley/{aba}/{secao}/{sub}`.
 - Ganjalab: `/studio/ganjalab`.
-- WE SATIVA: `/studio/we-sativa` e `/studio/we-sativa/inicio`.
+- WE SATIVA: `/we-sativa` e `/we-sativa/inicio`.
 
 A rota `/studio/ganjalab` pertencia à antiga entrada editorial e agora pertence exclusivamente ao dashboard de aprendizagem. Essa colisão impede preservar o mesmo caminho como alias editorial. As rotas canônicas editoriais ficam em `/studio/marley`.
 
@@ -186,8 +186,8 @@ Cada Suite responde em seu próprio domínio/purpose e sob o caminho-base abaixo
 | --- | --- | --- | --- | --- |
 | Marley | `account` | `conta.aculta.org` | `conta.aculta.toca.net.br` | `/marley` |
 | Ganjalab | `courses` | `cursos.aculta.org` | `cursos.aculta.toca.net.br` | `/ganjalab` |
-| WE SATIVA | `wiki` | configurado no Domain (`wiki420`) | configurado no Domain (`wiki420`) | `/wesativa` |
-| Green Stash | `shop` | `loja.aculta.org` | `loja.aculta.toca.net.br` | `/greenstash` |
+| WE SATIVA | `wiki` | configurado no Domain (`wiki420`) | configurado no Domain (`wiki420`) | `/we-sativa` |
+| Green Stash | `shop` | `loja.aculta.org` | `loja.aculta.toca.net.br` | `/green-stash` |
 | Culturas | `eventos` | `eventos.aculta.org` | `eventos.aculta.toca.net.br` | `/culturas` |
 
 Manter Conta e Perfil como experiências diferentes, fora das Suites. A raiz de `conta` passa a uma página de entrada da Conta com navegação para Marley e links absolutos às outras Suites; não aponta internamente para `/studio`. A Conta legada continua em `/conta-legada`. Planejar caminhos `/conta/*`, `/perfil/*` e `/salvos` para absorver as rotas pessoais atuais, preservando owners e sem misturar dados.

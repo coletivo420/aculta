@@ -13,7 +13,7 @@ LMS/Ganjalab, Fórum administrativo e troca de e-mail do User;
 não são mais publicados. **Esse inventário de 2026-10-24 foi superado pela
 ADR-038 em 2026-10-30.** Os caminhos públicos `/studio` e `/studio/*`
 foram retirados e respondem 404. Os caminhos atuais das Suites são `/marley`
-(`account`), `/ganjalab` (`courses`), `/wesativa` (`wiki`), `/greenstash`
+(`account`), `/ganjalab` (`courses`), `/we-sativa` (`wiki`), `/green-stash`
 (`shop`) e `/culturas` (`eventos`). Conta e Perfil usam `/conta/*` e
 `/perfil/*`; salvos usam `/salvos`, planos Mercado Pago
 `/conta/mercado-pago/planos`, e `/conta-legada` permanece. A Wiki ainda usa o

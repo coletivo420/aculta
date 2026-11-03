@@ -72,7 +72,7 @@ class IndexingPolicyTest extends UnitTestCase {
    */
   public function testPublicPathsMatchTheirPurpose(): void {
     $this->assertSame(['/contato'], PurposeNodeUrlGenerator::PUBLIC_PATHS['main']);
-    $this->assertSame(['/wiki/verbetes'], PurposeNodeUrlGenerator::PUBLIC_PATHS['wiki']);
+    $this->assertSame(['/verbetes'], PurposeNodeUrlGenerator::PUBLIC_PATHS['wiki']);
     $this->assertSame(
       ['/eventos', '/calendario', '/locais', '/mapa'],
       PurposeNodeUrlGenerator::PUBLIC_PATHS['eventos'],

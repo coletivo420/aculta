@@ -447,7 +447,7 @@ DT-P20 ficou vazio; exceções antigas foram removidas após o próprio gate con
 resolvidas.
 
 - Exceção aprovada pelo responsável (2026-10-21): `/studio` no domínio de conta (`conta.aculta.*/studio`). O nome do Estúdio é o nome do produto e já aparece no roadmap e no módulo `aculta_studio`; o slug é estável, sem redirecionamento.
-- Exceção aprovada pelo responsável (2026-10-30): `/studio/green-stash`, rota oficial da área integrada **ACULTA STUDIO GREEN STASH**. O nome da marca determina o slug estável, sem alias ou redirect para `/estudio/loja`; o caminho anterior retorna 404. A mesma convenção Studio se aplica a ACULTA STUDIO WE SATIVA em `/studio/we-sativa`.
+- Exceção aprovada pelo responsável (2026-10-30): `/green-stash`, rota oficial da área integrada **ACULTA STUDIO GREEN STASH**. O nome da marca determina o slug estável, sem alias ou redirect para `/estudio/loja`; o caminho anterior retorna 404. A mesma convenção Studio se aplica a ACULTA STUDIO WE SATIVA em `/we-sativa`.
 
 ## Overrides de rotas contrib — paths canônicos (2026-10-30)
 

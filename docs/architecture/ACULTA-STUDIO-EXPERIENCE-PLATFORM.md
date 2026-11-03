@@ -2,7 +2,7 @@
 
 ## ADR-038 - caminhos atuais das Suites (2026-10-30)
 
-Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa` no Domain `wiki420`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. `/studio` e todo `/studio/*` foram removidos e respondem 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `account` apresenta a entrada de Conta; Conta e Perfil permanecem separados. A menção a `wiki.aculta.*` no pedido inicial foi corrigida pelo responsável; não há migração de host Wiki planejada.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/we-sativa` no Domain `wiki420`; Green Stash `shop:/green-stash`; Culturas `eventos:/culturas`. `/studio` e todo `/studio/*` foram removidos e respondem 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `account` apresenta a entrada de Conta; Conta e Perfil permanecem separados. A menção a `wiki.aculta.*` no pedido inicial foi corrigida pelo responsável; não há migração de host Wiki planejada.
 
 ## Contratos anteriores
 
@@ -37,7 +37,7 @@ Dev.13 implementada no código Git, ainda sem homologação Drupal/Runtime.
 | Gestão comercial | ACULTA STUDIO GREEN STASH | `green_stash` |
 | Contribuição Wiki | ACULTA STUDIO WE SATIVA | `we_sativa` |
 
-Rotas canônicas: Marley em `/studio/marley` e níveis aninhados; Ganjalab em `/studio/ganjalab`; ACULTA STUDIO WE SATIVA em `/studio/we-sativa` e `/studio/we-sativa/inicio`; ACULTA STUDIO GREEN STASH em `/studio/green-stash`. Todas ficam no purpose `account`, resolvido pelo Portal. `/studio/ganjalab` pertence exclusivamente ao dashboard estudantil, portanto a antiga entrada editorial não pode ser preservada nesse endereço. Aliases e histórico estão em [contrato de identidade](../portal/ACULTA-STUDIO-IDENTITY.md).
+Rotas canônicas: Marley em `/studio/marley` e níveis aninhados; Ganjalab em `/studio/ganjalab`; ACULTA STUDIO WE SATIVA em `/we-sativa` e `/we-sativa/inicio`; ACULTA STUDIO GREEN STASH em `/green-stash`. Todas ficam no purpose `account`, resolvido pelo Portal. `/studio/ganjalab` pertence exclusivamente ao dashboard estudantil, portanto a antiga entrada editorial não pode ser preservada nesse endereço. Aliases e histórico estão em [contrato de identidade](../portal/ACULTA-STUDIO-IDENTITY.md).
 
 **Registros abaixo de 2026-10-24 são históricos.** Menções a GanjaLab editorial e GanjaLab420 estudantil descrevem nomenclaturas anteriores; a plataforma, ownership de negócio, ACULTA STUDIO GREEN STASH e ACULTA STUDIO WE SATIVA permanecem conforme o contrato vigente.
 
@@ -176,11 +176,11 @@ A enumeração sem filtro de `content_moderation_state` no `StudioListingBuilder
 
 ## Regra de domínio e URL canônica do Studio — 2026-10-22
 
-Decisão normativa mais recente: **todas as experiências e componentes de interface próprios do ACULTA Studio pertencem ao propósito `account`, servido em `conta.aculta.*`, sob namespace `/studio`**. O domínio é escolhido pelo Portal/Domain para cada ambiente, sem host fixo. GanjaLab editorial tem entrada `/studio/ganjalab`; GanjaLab420 estudante tem entrada `/studio/ganjalab420`; WE SATIVA começou em `/studio/we-sativa`. Caminhos antigos continuam como aliases temporários para evitar quebra dos consumidores. Esta regra substitui o planejamento anterior de renderizar o *shell* WE SATIVA no purpose Wiki. A entrega inicial WE SATIVA contém provider, Meu trabalho e link de criação, consumindo o serviço proprietário da Wiki sem deslocar entidades ou regras de acesso; os formulários e restante da jornada seguem pendentes. O cabeçalho multidomínio global permanece obrigatório em todas as telas; Studio não cria um segundo.
+Decisão normativa mais recente: **todas as experiências e componentes de interface próprios do ACULTA Studio pertencem ao propósito `account`, servido em `conta.aculta.*`, sob namespace `/studio`**. O domínio é escolhido pelo Portal/Domain para cada ambiente, sem host fixo. GanjaLab editorial tem entrada `/studio/ganjalab`; GanjaLab420 estudante tem entrada `/studio/ganjalab420`; WE SATIVA começou em `/we-sativa`. Caminhos antigos continuam como aliases temporários para evitar quebra dos consumidores. Esta regra substitui o planejamento anterior de renderizar o *shell* WE SATIVA no purpose Wiki. A entrega inicial WE SATIVA contém provider, Meu trabalho e link de criação, consumindo o serviço proprietário da Wiki sem deslocar entidades ou regras de acesso; os formulários e restante da jornada seguem pendentes. O cabeçalho multidomínio global permanece obrigatório em todas as telas; Studio não cria um segundo.
 
 ### WE SATIVA — entrada inicial no Studio (2026-10-23)
 
-O Studio registra `WeSativaExperienceProvider` e a rota `/studio/we-sativa` no
+O Studio registra `WeSativaExperienceProvider` e a rota `/we-sativa` no
 purpose `account`; `aculta_wiki.contributor_workspace` decide acesso, lista
 verbetes/propostas próprios e gera links sob purpose `wiki`. A tela limita a 20
 itens de cada tipo e revalida Entity Access antes da renderização. Kernel focal

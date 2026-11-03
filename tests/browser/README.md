@@ -97,7 +97,7 @@ pasta.
 | Script | Cobre | Ambiente |
 |---|---|---|
 | `visual.py`, `keyboard.py` | páginas públicas, reflow e teclado da busca | servidor de desenvolvimento |
-| `we-sativa.py` | workspace autenticado em `/wesativa`, reflow, ação nativa e retorno | servidor de desenvolvimento; login Drush da conta de teste |
+| `we-sativa.py` | workspace autenticado em `/we-sativa`, reflow, ação nativa e retorno | servidor de desenvolvimento; login Drush da conta de teste |
 
 ### `aculta-conta-raiz/`
 

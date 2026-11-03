@@ -40,9 +40,9 @@ do Runtime foi atualizado, nem cobre o workspace autenticado do Studio.
 
 `we-sativa.py` autentica no Runtime de teste com uma URL de login único gerada
 por Drush para a conta autorizada UID 5 (ajustável por variável), abre a home
-Wiki, segue o CTA para a rota oficial `/wesativa/inicio`, testa o
+Wiki, segue o CTA para a rota oficial `/we-sativa/inicio`, testa o
 reflow nas oito larguras (320/360/390/640/768/1024/1280/1440 px) e percorre
-“Meu Trabalho” em `/wesativa` até o formulário Node nativo e seu
+“Meu Trabalho” em `/we-sativa` até o formulário Node nativo e seu
 retorno. Confere que CTA, workspace e criação permanecem no host Wiki. Não envia
 formulários nem altera preferências ou conteúdo; gera uma sessão autenticada
 temporária e grava capturas e resumo fora do repositório.
@@ -63,7 +63,7 @@ DISPLAY=:0 ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles" SUITE_OUT="$SUITE_OUT" \
 
 Variáveis: `WIKI_HOME_URL` (padrão `https://wiki420.aculta.toca.net.br/`),
 `WIKI_STUDIO_PAGE` (padrão
-`https://wiki420.aculta.toca.net.br/wesativa/inicio`),
+`https://wiki420.aculta.toca.net.br/we-sativa/inicio`),
 `WIKI_STUDIO_LOGIN_URI` (padrão `https://conta.aculta.toca.net.br`, para emitir
 uma sessão compartilhada entre os hosts Account e Wiki),
 `WIKI_STUDIO_UID` (padrão `5`; passe vazio para usar `WIKI_STUDIO_USER`),
@@ -80,7 +80,7 @@ Olivero e modo escuro. Leitor de tela e WCAG 2.2 AA completa permanecem fora
 do escopo do script.
 
 O fluxo `we-sativa.py` abre a ação de criação em
-`/wesativa/verbetes/novo`, dentro do purpose Wiki, e confirma o
+`/we-sativa/verbetes/novo`, dentro do purpose Wiki, e confirma o
 formulário nativo e o link de retorno. Não usa `/node/add/wiki_entry` em outro
 purpose e não submete nem salva o formulário. O runner exige que título e corpo
 estejam renderizados; aviso de confirmação sem os campos não passa. Quando o
