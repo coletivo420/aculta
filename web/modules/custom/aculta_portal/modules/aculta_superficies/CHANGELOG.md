@@ -1,3 +1,9 @@
+## 0.1.0-dev.18 — maiúsculas viram minúsculas no endereço e no slug
+
+- Slug e subdomínio convertidos para minúsculas antes da validação e do salvamento.
+- Textos de ajuda do modal atualizados.
+- Testes: DEFERRED (sem vendor/ nem Runtime). Lint dos PHP executado.
+
 ## 0.1.0-dev.17 — Nome do Site, status de DNS e validação de endereço
 
 - Lista: sai a coluna Caminho em vigor e a linha do Principal. Entram Módulo ACULTA (somente leitura) e Status do DNS. Superfície passa a ser Nome do Site.

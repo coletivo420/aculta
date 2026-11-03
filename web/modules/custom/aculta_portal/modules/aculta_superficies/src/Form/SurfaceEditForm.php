@@ -102,7 +102,7 @@ final class SurfaceEditForm extends FormBase {
       $form['caminho']['slug'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Diretório (slug)'),
-        '#description' => $this->t('Minúsculas, números e hífen. Ex.: loja-sativa.'),
+        '#description' => $this->t('Letras sem acento, números e hífen. Maiúsculas viram minúsculas. Ex.: loja-sativa.'),
         '#default_value' => $linha['slug'],
         '#maxlength' => 64,
         '#required' => TRUE,
@@ -125,7 +125,7 @@ final class SurfaceEditForm extends FormBase {
         $form['caminho']['hostname'] = [
           '#type' => 'textfield',
           '#title' => $this->t('Subdomínio (endereço completo)'),
-          '#description' => $this->t('Ex.: wiki.exemplo.org. Sem https://, sem barra final. O endereço é gravado no Domain desta superfície.'),
+          '#description' => $this->t('Ex.: wiki.exemplo.org. Sem https://, sem barra final. Maiúsculas viram minúsculas. O endereço é gravado no Domain desta superfície.'),
           '#default_value' => $hostAtual,
           '#maxlength' => 253,
           '#required' => TRUE,
@@ -186,7 +186,7 @@ final class SurfaceEditForm extends FormBase {
 
     // Caracteres e formato: a mensagem diz o que foi recusado e por quê.
     if ($purpose !== DomainSurfaceMap::MAIN && $modo === 'diretorio') {
-      $motivo = $this->motivoEndereco((string) $form_state->getValue(['caminho', 'slug']), FALSE);
+      $motivo = $this->motivoEndereco($this->slugSubmetido($form_state), FALSE);
       if ($motivo !== NULL) {
         $form_state->setErrorByName('caminho][slug', $motivo);
         return;
@@ -277,7 +277,7 @@ final class SurfaceEditForm extends FormBase {
       $lista = implode(', ', array_map(static fn (string $c): string => $c === ' ' ? '«espaço»' : '«' . $c . '»', $proibidos));
       $uso = $host
         ? (string) $this->t('letras sem acento, números, hífen e ponto')
-        : (string) $this->t('letras minúsculas sem acento, números e hífen');
+        : (string) $this->t('letras sem acento, números e hífen');
       return (string) $this->t('Caracteres não permitidos: @lista. Use só @uso.', ['@lista' => $lista, '@uso' => $uso]);
     }
     if (!$host) {
@@ -310,6 +310,13 @@ final class SurfaceEditForm extends FormBase {
   }
 
   /**
+   * Slug digitado, sempre em minúsculas e sem espaços nas bordas.
+   */
+  private function slugSubmetido(FormStateInterface $form_state): string {
+    return strtolower(trim((string) $form_state->getValue(['caminho', 'slug'])));
+  }
+
+  /**
    * Host digitado, normalizado (minúsculas, sem espaços).
    */
   private function hostSubmetido(FormStateInterface $form_state): string {
@@ -327,7 +334,7 @@ final class SurfaceEditForm extends FormBase {
     return [
       'modo' => $ehMain ? 'subdominio' : $modo,
       'ativa' => $ehMain ? TRUE : (bool) $form_state->getValue('ativa'),
-      'slug' => $modo === 'diretorio' ? trim((string) $form_state->getValue(['caminho', 'slug'])) : '',
+      'slug' => $modo === 'diretorio' ? $this->slugSubmetido($form_state) : '',
       'titulo' => trim((string) $form_state->getValue('titulo')),
     ];
   }
