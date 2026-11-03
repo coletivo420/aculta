@@ -27,10 +27,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class SurfaceEditForm extends FormBase {
 
   public function __construct(
-    private readonly ConfigFactoryInterface $configFactoryService,
-    private readonly SurfaceConfigReader $reader,
-    private readonly DomainPurposeManager $purposes,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected ConfigFactoryInterface $configFactoryService,
+    protected SurfaceConfigReader $reader,
+    protected DomainPurposeManager $purposes,
+    protected EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -43,7 +43,7 @@ final class SurfaceEditForm extends FormBase {
   }
 
   public function getFormId(): string {
-    return 'aculta_superficies_editar_form';
+    return 'aculta_superficies_editar_form_v2';
   }
 
   /**
@@ -135,6 +135,11 @@ final class SurfaceEditForm extends FormBase {
           '#description' => $this->t('Marque só ao trocar o endereço. Sem essa confirmação, a troca não é gravada.'),
         ];
       }
+    }
+    else {
+      // Mantém o wrapper renderizável no estado desativado; um container
+      // completamente vazio pode gerar resposta AJAX inválida no Drupal.
+      $form['caminho']['vazio'] = ['#markup' => ''];
     }
 
     $form['actions'] = ['#type' => 'actions'];

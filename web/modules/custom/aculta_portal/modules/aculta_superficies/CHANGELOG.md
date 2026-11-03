@@ -76,3 +76,19 @@
 - Renomeada a propriedade de configuração injetada para não colidir com a propriedade herdada de `FormBase`, permitindo renderizar o modal de edição.
 - A troca AJAX de modo ignora a validação de persistência até o envio pelo botão Salvar, permitindo estados intermediários sem erro.
 
+## 0.1.0-dev.13 — garante fragmento vazio válido no modo desativado
+
+- O wrapper do caminho mantém um elemento renderizável quando nenhum campo de caminho deve aparecer.
+
+## 0.1.0-dev.14 — preserva dependências entre callbacks AJAX
+
+- Removido `readonly` das dependências injetadas no formulário para que o objeto seja restaurado corretamente entre requisições AJAX do Form API.
+
+## 0.1.0-dev.15 — restaura dependências do formulário AJAX
+
+- As dependências do formulário passaram a `protected`, compatíveis com a desserialização de formulários do `FormBase` entre requisições AJAX.
+
+## 0.1.0-dev.16 — invalida cache antigo do formulário
+
+- O identificador do formulário foi atualizado para impedir que callbacks AJAX reutilizem instâncias serializadas antes da correção de injeção.
+
