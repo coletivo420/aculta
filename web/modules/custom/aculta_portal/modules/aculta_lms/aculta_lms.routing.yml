@@ -135,6 +135,17 @@ aculta_lms.answer_file_download:
       lms_answer:
         type: entity:lms_answer
 
+aculta_lms.answer_attachment_download:
+  path: '/resposta/{answer}/arquivo'
+  defaults:
+    _controller: '\Drupal\aculta_lms\Controller\AcultaAnswerFileDownloadController::download'
+  requirements:
+    _custom_access: 'aculta_lms.answer_attachment_access::access'
+  options:
+    parameters:
+      answer:
+        type: entity:aculta_lms_answer
+
 aculta_lms.xapi_token_settings:
   path: '/painel-administrativo/aculta/lms/xapi/validade-token'
   defaults:

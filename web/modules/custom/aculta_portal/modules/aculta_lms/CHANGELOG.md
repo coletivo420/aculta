@@ -1,3 +1,14 @@
+## 0.1.0-dev.163 — protege downloads de anexos ACULTA
+
+- Adiciona rota ACULTA para anexo da tentativa. O acesso exige resposta enviada
+  ou avaliada, atividade `file_upload`, arquivo permanente em `private://` e,
+  por requisição, matrícula atual do aluno dono ou permissão de correção no curso. A resposta é
+  `application/octet-stream`, `nosniff`, attachment e `private, no-store`.
+- Unit completa 236/829 PASS (1 depreciação); Kernel `AcultaLmsInstallTest`
+  6/194 PASS (44 depreciações); Unit de autorização 3/30 PASS; PHPCS e Portal
+  gate 1.172 PASS. Rota contrib permanece durante a transição. P5 segue
+  incompleto; não removeu dependências.
+
 ## 0.1.0-dev.162 — alinha campo de comentário ao Runtime
 
 - A configuração do campo `comment_body` segue as dependências geradas pelo

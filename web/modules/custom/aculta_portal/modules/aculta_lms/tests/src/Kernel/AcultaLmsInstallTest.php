@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_lms\Kernel;
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Contract\PaymentOperationsInterface;
 use Drupal\aculta_lms\CourseOrderEnrollmentManagerInterface;
+use Drupal\aculta_lms\Access\AnswerAttachmentAccessCheck;
 use Drupal\aculta_lms\Controller\LearningDashboardController;
 use Drupal\aculta_lms\Hook\EnrollmentFormHooks;
 use Drupal\aculta_lms\Hook\CourseFirstAdminMenuHooks;
@@ -92,6 +93,13 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     $this->assertTrue($container->get('module_handler')->hasImplementations('form_lms_answer_form_alter', ['aculta_lms']));
     $this->assertTrue($container->get('module_handler')->hasImplementations('commerce_order_insert', ['aculta_lms']));
     $this->assertTrue($container->get('module_handler')->hasImplementations('commerce_order_update', ['aculta_lms']));
+    $attachmentRoute = $container->get('router.route_provider')->getRouteByName('aculta_lms.answer_attachment_download');
+    $this->assertSame('/resposta/{answer}/arquivo', $attachmentRoute->getPath());
+    $this->assertSame('entity:aculta_lms_answer', $attachmentRoute->getOption('parameters')['answer']['type']);
+    $this->assertInstanceOf(
+      AnswerAttachmentAccessCheck::class,
+      $container->get('aculta_lms.answer_attachment_access'),
+    );
     $this->assertInstanceOf(
       CourseCompletionPublisherInterface::class,
       $container->get('aculta_lms.course_completion_publisher'),
