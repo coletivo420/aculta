@@ -391,11 +391,13 @@
     "scripts": {
         "post-install-cmd": [
             "@php scripts/sync-bootstrap-assets.php",
-            "@php scripts/restore-aculta-htaccess.php"
+            "@php scripts/restore-aculta-htaccess.php",
+            "@php scripts/remove-optional-ai-modules.php"
         ],
         "post-update-cmd": [
             "@php scripts/sync-bootstrap-assets.php",
-            "@php scripts/restore-aculta-htaccess.php"
+            "@php scripts/restore-aculta-htaccess.php",
+            "@php scripts/remove-optional-ai-modules.php"
         ]
     },
     "extra": {

@@ -55,3 +55,23 @@ function aculta_mailer_update_10006(): void {
     $manager->installFieldStorageDefinition($name, 'aculta_mail_log', 'aculta_mailer', $fields[$name]);
   }
 }
+
+/**
+ * Installs the Mailer transport, template, layout, and brand entity types.
+ */
+function aculta_mailer_update_10008(): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $entity_type_manager = \Drupal::entityTypeManager();
+  foreach ([
+    'aculta_mailer_transport',
+    'aculta_mailer_template',
+    'aculta_mailer_layout',
+    'aculta_mailer_brand',
+  ] as $entity_type_id) {
+    if ($manager->getEntityType($entity_type_id) === NULL) {
+      $manager->installEntityType($entity_type_manager->getDefinition($entity_type_id));
+    }
+  }
+
+  return 'Installed the ACULTA Mailer configuration entity types.';
+}

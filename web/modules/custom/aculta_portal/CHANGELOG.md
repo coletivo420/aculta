@@ -1,3 +1,9 @@
+## 0.4.1-dev.71 — entidades e campos sincronizados (2026-11-03)
+
+- Adicionados updates idempotentes nos módulos owners para instalar os tipos de entidade ausentes e reconciliar os schemas indicados pelo relatório Drupal.
+- A troca de `group.revision_user` para `revision_uid` copia os autores de revisão antes de remover a definição antiga; o update valida que todos os valores foram preservados.
+- Kernel/Runtime necessários após publicação. Não foi executado `updatedb` neste checkout: há post-updates pendentes e configurações divergentes; ver handoff.
+
 ## 0.4.1-dev.70 — compatibilidade integrada com contrib atualizado (2026-11-03)
 
 - `DomainPurposeManager::runInPurpose()` agora negocia/restaura o Domain pelo contexto público (`getContext()`), compatível com a API Domain instalada. Antes, a chamada removida `setActiveDomain()` quebrava a compilação do serviço no Kernel.

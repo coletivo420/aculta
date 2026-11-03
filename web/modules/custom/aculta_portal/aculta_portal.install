@@ -522,3 +522,44 @@ function aculta_portal_update_11009(): string {
     $updated['full_html'] ?? 0,
   );
 }
+
+/**
+ * Migrates Group revision authors from the legacy field to revision_uid.
+ *
+ * The value copy happens before the old field definition is uninstalled, so
+ * existing revision authors remain intact across the field-name change.
+ */
+function aculta_portal_update_11010(): string {
+  $entity_type_id = 'group';
+  $table = 'groups_revision';
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $field_manager = \Drupal::service('entity_field.manager');
+  $database = \Drupal::database();
+  $schema = $database->schema();
+
+  $new_definition = $field_manager->getBaseFieldDefinitions($entity_type_id)['revision_uid'] ?? NULL;
+  if ($new_definition === NULL) {
+    throw new \Drupal\Core\Utility\UpdateException('The current Group revision_uid field definition is unavailable.');
+  }
+
+  $old_definition = $manager->getFieldStorageDefinition('revision_user', $entity_type_id);
+  if ($manager->getFieldStorageDefinition('revision_uid', $entity_type_id) === NULL) {
+    $manager->installFieldStorageDefinition('revision_uid', $entity_type_id, 'group', $new_definition);
+  }
+
+  $migrated = 0;
+  if ($schema->tableExists($table) && $schema->fieldExists($table, 'revision_user') && $schema->fieldExists($table, 'revision_uid')) {
+    $migrated = $database->query('SELECT COUNT(*) FROM {groups_revision} WHERE revision_user IS NOT NULL')->fetchField();
+    $database->query('UPDATE {groups_revision} SET revision_uid = revision_user WHERE revision_user IS NOT NULL AND revision_uid IS NULL');
+    $unmatched = $database->query('SELECT COUNT(*) FROM {groups_revision} WHERE revision_user IS NOT NULL AND (revision_uid IS NULL OR revision_uid <> revision_user)')->fetchField();
+    if ((int) $unmatched !== 0) {
+      throw new \Drupal\Core\Utility\UpdateException('Group revision authors could not be copied without conflicts; the legacy field was retained.');
+    }
+  }
+
+  if ($old_definition !== NULL) {
+    $manager->uninstallFieldStorageDefinition($old_definition);
+  }
+
+  return sprintf('Installed Group revision_uid, migrated %d revision author value(s), and removed the obsolete revision_user definition.', (int) $migrated);
+}

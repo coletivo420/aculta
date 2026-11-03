@@ -302,3 +302,29 @@ function aculta_linkweed_update_10011(): string {
   return 'Alinhadas as definições instaladas das entidades LinkWeed aos tipos e campos ativos.';
 }
 
+/**
+ * Reconciles installed schema metadata for revision and availability fields.
+ */
+function aculta_linkweed_update_10013(): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $field_manager = \Drupal::service('entity_field.manager');
+  $updated = [];
+  foreach ([
+    'aculta_linkweed_item' => ['revision_uid', 'available_from', 'available_until'],
+    'aculta_linkweed_page' => ['revision_uid'],
+  ] as $entity_type_id => $field_names) {
+    $current = $field_manager->getFieldStorageDefinitions($entity_type_id);
+    foreach ($field_names as $field_name) {
+      $original = $manager->getFieldStorageDefinition($field_name, $entity_type_id);
+      if ($original !== NULL && isset($current[$field_name])) {
+        $manager->updateFieldStorageDefinition($current[$field_name]);
+        $updated[] = "$entity_type_id.$field_name";
+      }
+    }
+  }
+
+  return $updated
+    ? 'Reconciled installed schema metadata for: ' . implode(', ', $updated) . '.'
+    : 'LinkWeed field schema metadata was already current.';
+}
+

@@ -1,3 +1,7 @@
+## 0.1.1-dev.410 — reconcilia schema do evento de amizade
+
+- Update `10018` atualiza o registro do schema de `message.field_aculta_friendship_event` sem reescrever os valores existentes.
+
 ## Homologação de avisos Events no Runtime (2026-11-01)
 
 - Updates 10015 e 10016 concluíram em `aculta_runtime`; não há updates pendentes

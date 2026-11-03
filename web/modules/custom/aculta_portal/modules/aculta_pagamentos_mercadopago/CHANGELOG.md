@@ -1,3 +1,8 @@
+## 0.1.0-dev.81 — instala metadados de cartão do Commerce
+
+- Update `10001` instala nos meios de pagamento os campos base `card_type`, `card_number`, `card_exp_month` e `card_exp_year` definidos pelo Commerce 3.x.
+- A tabela do Runtime não tinha meios de pagamento; o update não migra nem inventa dados de cartão.
+
 ## Revalidação 2026-11-02 — gateway e recorrência
 
 - Unit completa: 258 testes / 1.156 assertions PASS, incluindo chave idempotente estável, timeout ambíguo e reconciliação de assinatura.

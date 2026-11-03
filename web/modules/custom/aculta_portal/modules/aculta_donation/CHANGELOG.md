@@ -1,3 +1,7 @@
+## 0.1.0-dev.30 — instala o tipo de entidade de campanha
+
+- Update `11003` registra `aculta_donation_campaign` em instalações existentes; não cria campanhas nem altera configurações.
+
 ## Revalidação 2026-11-02 — Doações e autorização recorrente
 
 - Unit completa: 26 testes / 90 assertions PASS. Donation Kernel: 5 testes / 196 assertions PASS em `aculta_simpletest`, 88 depreciações Core/contrib.

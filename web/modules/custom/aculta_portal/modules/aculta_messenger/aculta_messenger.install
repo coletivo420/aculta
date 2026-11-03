@@ -366,3 +366,22 @@ function aculta_messenger_update_10017(): void {
     $entity->save();
   }
 }
+
+/**
+ * Reconciles the installed schema metadata for the friendship event field.
+ */
+function aculta_messenger_update_10018(): string {
+  $entity_type_id = 'message';
+  $field_name = 'field_aculta_friendship_event';
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $installed = $manager->getFieldStorageDefinition($field_name, $entity_type_id);
+  $current = \Drupal::service('entity_field.manager')
+    ->getFieldStorageDefinitions($entity_type_id)[$field_name] ?? NULL;
+
+  if ($installed !== NULL && $current !== NULL) {
+    $manager->updateFieldStorageDefinition($current);
+    return 'Reconciled the installed friendship event field schema without rewriting its values.';
+  }
+
+  return 'The friendship event field is not installed; no schema or values were changed.';
+}

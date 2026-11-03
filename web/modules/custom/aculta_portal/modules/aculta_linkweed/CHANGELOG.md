@@ -1,3 +1,7 @@
+## 0.4.0-dev.35 — reconcilia schemas de campos de micropágina
+
+- Update `10013` alinha o schema instalado dos campos revisionáveis `revision_uid`, `available_from` e `available_until` aos campos ativos, preservando os valores.
+
 ## 0.4.0-dev.34 — repara definições instaladas após renomeação de entidades — 2026-11-03
 
 - A renomeação agora regrava os objetos de definição de entidade/campos pelos IDs ativos; as versões anteriores só atualizavam as chaves e os arrays do key-value, deixando IDs antigos dentro de objetos serializados.

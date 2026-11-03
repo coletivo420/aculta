@@ -1,0 +1,31 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Install and update hooks for the ACULTA Mercado Pago integration.
+ */
+
+/**
+ * Installs Commerce payment method card metadata fields from Commerce 3.x.
+ */
+function aculta_pagamentos_mercadopago_update_10001(): string {
+  $entity_type_id = 'commerce_payment_method';
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $definitions = \Drupal::service('entity_field.manager')
+    ->getBaseFieldDefinitions($entity_type_id);
+
+  foreach (['card_type', 'card_number', 'card_exp_month', 'card_exp_year'] as $field_name) {
+    if ($manager->getFieldStorageDefinition($field_name, $entity_type_id) === NULL) {
+      $manager->installFieldStorageDefinition(
+        $field_name,
+        $entity_type_id,
+        'commerce_payment',
+        $definitions[$field_name],
+      );
+    }
+  }
+
+  return 'Installed Commerce payment method card metadata fields.';
+}
