@@ -164,4 +164,24 @@ final class AuthorIdentityResolver implements PublicMemberIdentityInterface {
     return is_string($name) && trim($name) !== '' ? $name : NULL;
   }
 
+  /**
+   * Resolves the public identity while retaining cacheability for absence.
+   *
+   * Consumers that render optional public identity need the account and
+   * principal profile dependencies even when policy returns no display name.
+   */
+  public function resolvePublic(UserInterface $account): AuthorIdentity {
+    $identity = $this->resolve($account, 'author_minimal');
+    if ($identity !== NULL) {
+      return $identity;
+    }
+
+    $cacheability = (new CacheableMetadata())->addCacheableDependency($account);
+    $profile = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $account);
+    if ($profile !== NULL) {
+      $cacheability->addCacheableDependency($profile);
+    }
+    return new AuthorIdentity('author_minimal', NULL, NULL, NULL, NULL, $cacheability);
+  }
+
 }

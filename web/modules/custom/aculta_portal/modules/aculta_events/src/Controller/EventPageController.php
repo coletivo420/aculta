@@ -10,6 +10,7 @@ use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Occurrence\UpcomingDates;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
@@ -45,6 +46,7 @@ final class EventPageController extends ControllerBase {
     private readonly UpcomingDates $proximas,
     private readonly TimeInterface $tempo,
     private readonly ?DomainPurposeManager $purposes = NULL,
+    private readonly ?AuthorIdentityResolver $identities = NULL,
   ) {}
 
   /**
@@ -56,6 +58,7 @@ final class EventPageController extends ControllerBase {
       $container->get('aculta_events.upcoming'),
       $container->get('datetime.time'),
       $container->has('aculta_portal.domain_purpose') ? $container->get('aculta_portal.domain_purpose') : NULL,
+      $container->has('aculta_user.author_identity_resolver') ? $container->get('aculta_user.author_identity_resolver') : NULL,
     );
   }
 
@@ -128,6 +131,14 @@ final class EventPageController extends ControllerBase {
     $urlEvento = Url::fromRoute('aculta_events.page', ['slug' => (string) $evento->get('field_slug')->value], ['absolute' => TRUE])->toString();
     $descricao = mb_substr(trim(strip_tags((string) $evento->get('body')->value)), 0, 500);
     $organizador = $evento->get('field_organizador')->entity;
+    $organizadorIdentidade = NULL;
+    if ($organizador !== NULL) {
+      $cacheability->addCacheableDependency($organizador);
+      if ($this->identities !== NULL) {
+        $organizadorIdentidade = $this->identities->resolvePublic($organizador);
+        $cacheability->addCacheableDependency($organizadorIdentidade);
+      }
+    }
     $org = $evento->getOrganization();
     $orgAccess = $org?->access('view', $this->currentUser(), TRUE);
     if ($org !== NULL && $orgAccess !== NULL) {
@@ -237,10 +248,10 @@ final class EventPageController extends ControllerBase {
         }
         $entrada['organizer'] = $orgLd;
       }
-      elseif ($organizador !== NULL) {
+      elseif ($organizadorIdentidade !== NULL) {
         $entrada['organizer'] = [
           '@type' => 'Person',
-          'name' => $organizador->getDisplayName(),
+          'name' => $organizadorIdentidade->toArray()['display_name'],
         ];
       }
 
@@ -294,8 +305,6 @@ final class EventPageController extends ControllerBase {
         ?? Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $evento->id()])->toString();
       $prefix = '<div class="event-admin-actions mb-4"><a href="' . Html::escape($editUrl) . '" class="button button--primary">' . $this->t('Editar evento e datas') . '</a></div>';
     }
-
-    $organizador = $evento->get('field_organizador')->entity;
 
     // Organização verificada e coorganizadores (ARQ-05 / OC-C).
     $orgData = NULL;
@@ -356,7 +365,7 @@ final class EventPageController extends ControllerBase {
       '#subtitulo' => (string) $evento->get('field_subtitulo')->value,
       '#descricao' => (string) $evento->get('body')->value,
       '#tipo' => $evento->get('field_tipo')->entity?->label(),
-      '#organizador' => $organizador?->getDisplayName(),
+      '#organizador' => $organizadorIdentidade?->toArray()['display_name'] ?? NULL,
       '#organizacao' => $orgData,
       '#coorganizadores' => $coOrgs,
       '#classificacao_etaria' => $classificacao !== '' ? $classificacao : NULL,

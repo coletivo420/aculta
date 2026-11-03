@@ -388,6 +388,41 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
   }
 
   /**
+   * Does not expose an organizer account without a public identity.
+   */
+  public function testPrivateOrganizerIdentityIsOmittedFromEventPresentation(): void {
+    $owner = User::create([
+      'name' => 'nome-cadastral-privado',
+      'status' => 1,
+    ]);
+    $owner->save();
+    $event = Event::create([
+      'title' => 'Evento sem organização pública',
+      'field_slug' => 'evento-sem-organizacao-publica',
+      'field_status' => 'publicado',
+      'field_organizador' => $owner->id(),
+    ]);
+    $event->save();
+    EventDate::create([
+      'title' => 'Sessão pública',
+      'field_evento' => $event->id(),
+      'field_quando' => [
+        'value' => '2026-11-15T19:00:00',
+        'end_value' => '2026-11-15T21:00:00',
+      ],
+    ])->save();
+
+    $page = EventPageController::create($this->container)->page('evento-sem-organizacao-publica');
+    $json = $this->extractJsonLd($page['#attached']['html_head'], 'aculta_events_event_jsonld');
+    $encoded = json_encode($json, JSON_UNESCAPED_UNICODE);
+
+    $this->assertNull($page['#organizador']);
+    $this->assertStringNotContainsString('nome-cadastral-privado', (string) $encoded);
+    $this->assertArrayNotHasKey('organizer', $json['@graph'][0]);
+    $this->assertContains('user:1', $page['#cache']['tags']);
+  }
+
+  /**
    * Extrai e decodifica o JSON-LD dos anexos html_head.
    *
    * @param array<int, array<int, mixed>> $htmlHead

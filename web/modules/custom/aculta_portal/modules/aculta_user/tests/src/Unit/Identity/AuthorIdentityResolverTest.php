@@ -48,6 +48,19 @@ final class AuthorIdentityResolverTest extends UnitTestCase {
   }
 
   /**
+   * The cacheable public identity retains dependencies when no name is allowed.
+   */
+  public function testResolvePublicRetainsCacheabilityWhenIdentityIsAbsent(): void {
+    [$resolver, $account] = $this->resolver('', TRUE);
+    $account->expects(self::never())->method('getDisplayName');
+
+    $identity = $resolver->resolvePublic($account);
+
+    self::assertNull($identity->toArray()['display_name']);
+    self::assertSame(['user:42', 'profile:1'], $identity->getCacheTags());
+  }
+
+  /**
    * Creates a resolver with one principal profile and no public avatar fields.
    *
    * @return array{0: AuthorIdentityResolver, 1: UserInterface}
@@ -59,14 +72,14 @@ final class AuthorIdentityResolverTest extends UnitTestCase {
     $account->method('id')->willReturn('42');
     $account->method('hasField')->willReturn(FALSE);
     $account->method('getCacheContexts')->willReturn([]);
-    $account->method('getCacheTags')->willReturn([]);
+    $account->method('getCacheTags')->willReturn(['user:42']);
     $account->method('getCacheMaxAge')->willReturn(-1);
 
     $nickname = $this->field($nicknameValue);
     $public = $this->field($profilePublic);
     $profile = $this->createMock(ProfileInterface::class);
     $profile->method('getCacheContexts')->willReturn([]);
-    $profile->method('getCacheTags')->willReturn([]);
+    $profile->method('getCacheTags')->willReturn(['profile:1']);
     $profile->method('getCacheMaxAge')->willReturn(-1);
     $profile->method('hasField')->willReturnCallback(
       static fn(string $field): bool => in_array($field, ['field_nickname', 'field_perfil_publico'], TRUE),
