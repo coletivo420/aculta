@@ -1169,4 +1169,5 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
   plugin does not exist`; o harness requer uma correção de configuração de
   relacionamento própria, sem reintroduzir o contrib.
 - Olivero: validação dispensada pelo responsável em 2026-11-03.
+- Adicionada revisão docente ACULTA em `/painel-administrativo/lms/curso/{course}/turma/{group}/respostas`: educadores listam tentativas, gravam nota de 0 a 100 e feedback, e a própria resposta do estudante exibe a avaliação. A permissão contextual `grade students` protege a lista e o detalhe.
 

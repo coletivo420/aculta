@@ -61,6 +61,20 @@ final class AnswerSubmissionForm extends FormBase {
     $form_state->set('aculta_lms_course', $course);
     $form_state->set('aculta_lms_activity', $activity);
     $configuration = $this->configuration($activity);
+    $ownAnswers = $this->entityTypeManager->getStorage('aculta_lms_answer')->loadByProperties([
+      'activity_id' => (int) $activity->id(),
+      'uid' => (int) $this->currentUser->id(),
+    ]);
+    usort($ownAnswers, static fn(ContentEntityInterface $a, ContentEntityInterface $b): int => (int) $b->id() <=> (int) $a->id());
+    $latest = $ownAnswers[0] ?? NULL;
+    if ($latest instanceof ContentEntityInterface && (string) $latest->get('state')->value === CourseAnswer::STATE_GRADED) {
+      $form['evaluation'] = [
+        '#type' => 'fieldset',
+        '#title' => $this->t('Avaliação da sua resposta'),
+        'score' => ['#type' => 'item', '#title' => $this->t('Nota'), '#plain_text' => (string) $latest->get('score')->value],
+        'feedback' => ['#type' => 'item', '#title' => $this->t('Feedback'), '#plain_text' => (string) $latest->get('feedback')->value],
+      ];
+    }
     if ($form_state->has('aculta_lms_formative_feedback')) {
       $answer = (string) $form_state->get('aculta_lms_formative_answer');
       $form['formative_feedback'] = $this->freeText->formativeFeedback($answer, $configuration);

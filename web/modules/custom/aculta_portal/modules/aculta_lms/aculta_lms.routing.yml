@@ -134,6 +134,38 @@ aculta_lms.answer_attachment_download:
       answer:
         type: entity:aculta_lms_answer
 
+aculta_lms.answer_reviews:
+  path: '/painel-administrativo/lms/curso/{course}/turma/{group}/respostas'
+  defaults:
+    _controller: 'aculta_lms.answer_review_controller:list'
+    _title: 'Respostas da turma'
+  requirements:
+    _custom_access: 'aculta_lms.answer_review_access::access'
+  options:
+    _admin_route: true
+    parameters:
+      course:
+        type: entity:group
+      group:
+        type: entity:group
+
+aculta_lms.answer_review:
+  path: '/painel-administrativo/lms/curso/{course}/turma/{group}/respostas/{answer}'
+  defaults:
+    _form: '\Drupal\aculta_lms\Form\AnswerReviewForm'
+    _title: 'Avaliar resposta'
+  requirements:
+    _custom_access: 'aculta_lms.answer_review_access::access'
+  options:
+    _admin_route: true
+    parameters:
+      course:
+        type: entity:group
+      group:
+        type: entity:group
+      answer:
+        type: entity:aculta_lms_answer
+
 aculta_lms.answer_submission:
   path: '/curso/{group}/{lesson_delta}/{activity_delta}'
   defaults:

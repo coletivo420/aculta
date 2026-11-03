@@ -248,3 +248,14 @@ function aculta_lms_update_10013(): void {
   $fields = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('aculta_lms_activity');
   $manager->installFieldStorageDefinition('answer_config', 'aculta_lms_activity', 'aculta_lms', $fields['answer_config']);
 }
+
+/** Adds the educator feedback projection to ACULTA answer entities. */
+function aculta_lms_update_10014(): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  if ($manager->getFieldStorageDefinition('feedback', 'aculta_lms_answer')) {
+    return;
+  }
+  $fields = \Drupal::service('entity_field.manager')
+    ->getBaseFieldDefinitions('aculta_lms_answer');
+  $manager->installFieldStorageDefinition('feedback', 'aculta_lms_answer', 'aculta_lms', $fields['feedback']);
+}

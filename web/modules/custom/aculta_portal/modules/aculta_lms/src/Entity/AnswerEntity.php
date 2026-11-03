@@ -54,6 +54,9 @@ final class AnswerEntity extends ContentEntityBase {
     $fields['score'] = BaseFieldDefinition::create('float')
       ->setLabel(new TranslatableMarkup('Nota'))
       ->addConstraint('Range', ['min' => 0, 'max' => 100]);
+    $fields['feedback'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(new TranslatableMarkup('Feedback do educador'))
+      ->setDefaultValue('');
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(new TranslatableMarkup('Criada em'));
     $fields['changed'] = BaseFieldDefinition::create('changed')

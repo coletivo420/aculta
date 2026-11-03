@@ -144,6 +144,12 @@ services:
   aculta_lms.answer_attachment_access:
     class: Drupal\aculta_lms\Access\AnswerAttachmentAccessCheck
     arguments: ['@entity_type.manager', '@aculta_lms.notice_eligibility']
+  aculta_lms.answer_review_access:
+    class: Drupal\aculta_lms\Access\AnswerReviewAccessCheck
+    arguments: ['@aculta_lms.notice_eligibility', '@current_user']
+  aculta_lms.answer_review_controller:
+    class: Drupal\aculta_lms\Controller\AnswerReviewController
+    arguments: ['@entity_type.manager']
   Drupal\aculta_lms\Controller\AcultaAnswerFileDownloadController:
     class: Drupal\aculta_lms\Controller\AcultaAnswerFileDownloadController
     autowire: true
