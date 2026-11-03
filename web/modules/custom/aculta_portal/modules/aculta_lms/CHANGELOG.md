@@ -731,3 +731,7 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 
 - O entitlement Commerce valida cursos com `GroupInterface` e resolve turmas pela relação `lms_classes`, sem `CourseInterface` ou `ClassHelper`.
 
+## 0.1.0-dev.144 — formulários de curso usam relações Group
+
+- Compra de curso e configuração de visibilidade do roster recebem curso como `GroupInterface`; turmas elegíveis vêm de `lms_classes` por Group API.
+
