@@ -602,6 +602,20 @@ body.path-culturas .aculta-events-organizer-dashboard :is(a, button, summary, in
   margin-bottom: 1rem;
 }
 
+.studio__section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aculta-studio-fidelity-row-gap);
+  margin-block-end: 1rem;
+}
+
+.studio__section-header > .studio__heading { margin: 0; }
+.studio__section-header > .item-list { margin: 0; }
+.studio__section-header .studio__actions { margin: 0; padding: 0; border: 0; background: transparent; }
+.studio__section-header .studio__actions > li { margin: 0; padding: 0; border: 0; background: transparent; }
+
 /* OpenCulturas Next table rhythm for the existing Marley/Wiki listings.
    Keep narrow tables scrollable inside their Drupal wrapper on touch screens. */
 .studio__listing-wrap {

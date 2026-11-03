@@ -1,6 +1,8 @@
-## Conta Studio — implementação e validação focal no Runtime (2026-11-03)
+## Conta Studio e composição editorial Marley — 2026-11-03
 
-Correção dev.43 do Dashboard: `AccessResultAllowed::applyTo()` causava HTTP 500 ao construir o link de Meu Perfil. A cacheabilidade agora é aplicada por `CacheableMetadata`; a repetição no Firefox ESR e o cotejo visual pós-fix serão registrados após atualização do Runtime.
+Dev.43 corrigiu o HTTP 500 do Dashboard: `AccessResultAllowed::applyTo()` não existe; `CacheableMetadata` aplica a cacheabilidade do link. Pós-push, Firefox ESR visível validou 94/94 checks aplicáveis, 21 SKIP, 0 falhas; Conta direta 9/9 HTTP 200, no-JS 4/4, Dashboard e Perfil responsivos, e ações do Perfil legíveis em viewport desktop. Capturas externas: `$SUITE_OUT/studio-dashboard-final-20261103/post-push/`.
+
+Dev.44 agrupa o título da seção Marley e suas ações num cabeçalho, para “Criar” ficar junto de “Meu trabalho”. A rota e o acesso continuam vindo do owner. O teste Firefox verifica o alinhamento em desktop e o uso em 320/390px; execução pós-sync pendente. A listagem e o menu de abas existentes não são removidos.
 
 C1-C3 implementadas e verificadas no Runtime, com shell `account-navigation.js`, root estável, metadados, Grid, estados, histórico e menu mobile. O listener delegado único em `document` sobrevive ao `replaceWith`; `Drupal.Ajax` não registra um segundo listener Core. Owners Form API preservados. Dashboard usa providers/permissões/domain e Perfil público separado; Marley “Criar” usa rota owner e moderação aparece apenas à conta autorizada. Studio Unit 72/659 PASS. Runtime `aculta_runtime` em `d7879e0d2e`: sem updates/config drift e cache reconstruído. HTTP autenticado: nove rotas Conta 200; anônimo 403 nas rotas privadas e 302 na raiz; moderação 404 para comum e 200 para moderadora em rodada A/B.
 

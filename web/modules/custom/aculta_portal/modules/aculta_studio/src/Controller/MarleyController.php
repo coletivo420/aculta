@@ -139,9 +139,13 @@ final class MarleyController {
     $layout['main'] = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'studio-main', 'data-aculta-studio' => 'main'],
-      'heading' => $this->element('h2', $section['label'], 'studio-heading', 'heading'),
+      'section_header' => [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'studio-section-header', 'data-aculta-studio' => 'section-header'],
+        'heading' => $this->element('h2', $section['label'], 'studio-heading', 'heading'),
+      ],
     ];
-    // Ações da seção ficam abaixo do título, antes das abas de status.
+    // Ações da seção ficam junto ao título, antes das abas de status.
     $section_actions = [];
     foreach ($section['actions'] ?? [] as $action) {
       $section_actions[] = PortalLinkElement::build(
@@ -151,7 +155,7 @@ final class MarleyController {
       );
     }
     if ($section_actions !== []) {
-      $layout['main']['section_actions'] = [
+      $layout['main']['section_header']['actions'] = [
         '#theme' => 'item_list',
         '#items' => $section_actions,
         '#attributes' => ['data-portal-ui' => 'studio-actions', 'data-aculta-studio' => 'section-actions'],

@@ -445,7 +445,7 @@ final class PortalUiHooksTest extends UnitTestCase {
   public function testMapsTokensInRenderElementArrayAttributes(): void {
     $variables = [
       'element' => [
-        '#attributes' => ['data-portal-ui' => 'email-notice', 'class' => ['x']],
+        '#attributes' => ['data-portal-ui' => 'email-notice studio-section-header', 'class' => ['x']],
       ],
     ];
 
@@ -454,6 +454,7 @@ final class PortalUiHooksTest extends UnitTestCase {
     $attributes = $variables['element']['#attributes'];
     $this->assertArrayNotHasKey('data-portal-ui', $attributes);
     $this->assertContains('aculta-email-notice', $attributes['class']);
+    $this->assertContains('studio__section-header', $attributes['class']);
     $this->assertContains('x', $attributes['class']);
   }
 

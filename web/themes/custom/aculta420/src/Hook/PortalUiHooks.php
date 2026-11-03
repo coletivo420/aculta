@@ -610,6 +610,7 @@ final class PortalUiHooks {
     'studio-layout' => ['studio__layout'],
     'studio-sidebar' => ['studio__sidebar'],
     'studio-main' => ['studio__main'],
+    'studio-section-header' => ['studio__section-header'],
     'studio-sections' => ['studio__sections', 'list-unstyled'],
     'studio-subtabs' => ['nav', 'nav-tabs', 'studio__subtabs'],
     'studio-link' => ['nav-link', 'studio__link'],

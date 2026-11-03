@@ -323,6 +323,8 @@ try {
   await waitFor(`document.querySelector('[data-aculta-studio="listing"]')`, 'listagem');
   const listingState = JSON.parse(await exec(`return JSON.stringify({ rows: [...document.querySelectorAll('[data-aculta-studio="listing"] tbody tr')].filter((row) => row.querySelector('td') && !row.querySelector('td[colspan]')).length, empty: !!document.querySelector('[data-aculta-studio="listing"] td[colspan]') });`));
   check('listagem da Revista apresenta conteúdo ou estado vazio', listingState.rows > 0 || listingState.empty, `${listingState.rows} conteúdo(s); estado vazio=${listingState.empty}`);
+  const sectionHeader = JSON.parse(await exec(`const header=document.querySelector('[data-aculta-studio="section-header"]');const title=header?.querySelector('[data-aculta-studio="heading"]');const action=header?.querySelector('[data-aculta-studio="action"]');const h=title?.getBoundingClientRect();const a=action?.getBoundingClientRect();return JSON.stringify({title:title?.textContent.trim(),action:action?.textContent.trim(),titleRight:h?.right,actionLeft:a?.left,actionTop:a?.top,titleTop:h?.top});`));
+  check('Criar fica junto ao título Meu trabalho em um único cabeçalho', sectionHeader.title === 'Meu trabalho' && sectionHeader.action === 'Criar' && sectionHeader.actionLeft >= sectionHeader.titleRight - 1 && Math.abs(sectionHeader.actionTop - sectionHeader.titleTop) < 20, JSON.stringify(sectionHeader));
   let editorialEditHref = null;
   if (listingState.rows > 0) {
     const editLinks = await exec(`return [...document.querySelectorAll('[data-aculta-studio="listing"] a')].filter((a) => /^editar$/i.test(a.textContent.trim())).map((a) => ({href:a.href,path:new URL(a.href).pathname}));`);
@@ -338,6 +340,12 @@ try {
   const groupsOk = await exec(`return !!document.querySelector('[data-aculta-studio="tabs"][aria-label]') && !!document.querySelector('[data-aculta-studio="live"][role="status"]');`);
   check('áreas com nome (aria-label) e região de status (role=status, aria-live)', groupsOk);
   await shot('03-listagem-revista');
+  for (const width of [320, 390]) {
+    await setViewport(width, 844);
+    const mobileListing = JSON.parse(await exec(`const wrap=document.querySelector('[data-aculta-studio="listing-wrap"]');const table=document.querySelector('[data-aculta-studio="listing"]');const header=document.querySelector('[data-aculta-studio="section-header"]');return JSON.stringify({width:innerWidth,page:document.documentElement.scrollWidth,wrap:wrap?.clientWidth,table:table?.scrollWidth,action:header?.querySelector('[data-aculta-studio="action"]')?.getBoundingClientRect().width});`));
+    check(`Marley mantém listagem e ação utilizáveis em ${width}px`, mobileListing.page === width && mobileListing.wrap <= width && mobileListing.table >= mobileListing.wrap && mobileListing.action > 0, JSON.stringify(mobileListing));
+  }
+  await setViewport(1280, 900);
 
   if (editorialEditHref) {
     await navigateTo(editorialEditHref);

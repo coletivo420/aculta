@@ -1,3 +1,8 @@
+## 0.1.0-dev.44 — alinhar a ação Criar ao título do trabalho (2026-11-03)
+
+- A apresentação da seção agora agrupa título e ações em um cabeçalho próprio. Owners continuam fornecendo as mesmas ações e rotas; o token semântico do tema monta o botão junto ao título “Meu trabalho”.
+- Reteste Firefox ESR posterior à correção: pendente.
+
 ## 0.1.0-dev.43 — corrigir a aplicação de cache do link de Perfil (2026-11-03)
 
 - `AccessResultAllowed` não possui `applyTo()`. O Dashboard agora transfere a cacheabilidade do acesso via `CacheableMetadata`, evitando HTTP 500 ao renderizar a entrada autenticada; o resultado negado também mantém os contextos de cache.
