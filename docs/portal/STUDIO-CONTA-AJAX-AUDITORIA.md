@@ -18,6 +18,20 @@ O SDC reutilizado é `aculta420:card`, variante `studio_fidelity`, por
 `PortalUiHooks`; nenhum SDC novo foi criado. O token `account-entry-links`
 mantém estrutura neutra e é mapeado pelo tema ACULTA420.
 
+## Correção visual pós-cotejo — 2026-11-03, ACULTA420 dev.31
+
+O cotejo visual real da captura `05-conta-dados.png` mostrou uma falha que a auditoria anterior havia classificado incorretamente como resolvida: `studio-account-contextual-nav` ainda herdava `nav-tabs`/`studio__subtabs` do espaço editorial Marley. Por isso a Conta exibia itens em linha/colunas curtas e o menu/formulário não tinham as caixas separadas da prancha. A correção remove esse mapeamento compartilhado e dá à lista um estilo vertical próprio; `<details>` nativo permanece como controle móvel, e menu/conteúdo recebem superfície, borda, raio e sombra pelos tokens semânticos ACULTA420. O formulário/validação continuam nos owners Form API. Nenhuma cor do cabeçalho global foi alterada.
+
+Commit `963ab7c6b10a375819e9bb0651bbb1a8e43540da` foi publicado por fast-forward em `origin/dev` e sincronizado no Runtime. Após `drush cr`, o tema informa `0.7.0-dev.31`, `updatedb:status` não tem updates e `config:status` está limpo. Firefox ESR visível passou 97/97 verificações aplicáveis, 22 SKIP, 0 falhas, incluindo checks novos de caixa/lista vertical, nove rotas diretas HTTP 200, AJAX, histórico, formulários inválido/válido, teclado e larguras 320–1440px. Capturas atuais: `$SUITE_OUT/studio-dashboard-final-20261103/account-panels-dev31-final/`; no-JS 14/14 em `$SUITE_OUT/studio-dashboard-final-20261103/final-nojs-retry/`. A inspeção pareada confirma a hierarquia em caixas na Conta e nos demais blocos; barra institucional preservada, conforme orientação do responsável.
+
+Theme Unit 50/358, Design Foundations 2441, SDC schema 764, Portal Drupal 11+ 1202, status index 53 e Stylelint passaram. O mapa Portal UI continua com 14 falhas preexistentes de tokens/atributos em LMS/Eventos/uploader; nenhuma corresponde ao token da navegação da Conta. `validate-module-theme-boundary.php` continua reportando apenas `button`, `button--small` e `superficies-dns` em `aculta_paths`. Não foram submetidos dados pessoais/endereço, arquivo/avatar ou senha; ausência de módulos opcionais, conteúdo editorial próprio/moderação para esta conta e leitor de tela continuam DEFERRED. A conta de teste tem endereço existente; o reteste foi read-only nesse dado.
+
+### Comparação pareada e diferenças restantes
+
+As capturas atuais foram inspecionadas em 1280px para Dashboard, Conta, Perfil e Marley; houve também captura de Conta em 320px, Perfil em 320px e Marley em 390px. A hierarquia proposta foi reproduzida com identidade e cards reais no Dashboard; Conta tem caixas lado a lado em desktop e empilhadas no celular; Perfil usa identidade à esquerda e edição à direita, empilhadas no celular; Marley mantém suas abas owner, botão “Criar” junto ao título e lista do owner. O formulário real de Preferências foi submetido pela suíte e restaurado; os demais formulários foram apenas lidos/validados sem persistir. A lista editorial desta conta de teste estava vazia.
+
+Diferenças intencionais: o shell e a barra multidomínio reais permanecem os do ACULTA420, sem copiar as cores/nominação fictícias da prancha; “Seções da conta” é o rótulo acessível do `<details>`; campos, descrições, avatar e estados seguem os providers/Form API reais. A prancha não é aceita como paridade pixel a pixel. Leitor de tela, fluxo de escrita pessoal/endereço/upload/senha e conteúdo próprio de moderação ainda não foram homologados.
+
 ## Reteste ampliado — 2026-11-03
 
 No Firefox ESR visível do Runtime, as nove rotas diretas `/conta/*` responderam HTTP 200; navegação AJAX comum com `replaceWith`, título/breadcrumb/foco, behaviors, back/forward, alternância mobile e cliques concorrentes passaram. No-JS passou 4/4 (Dados, Endereço e voltar). O Dashboard e o Perfil passaram em 320–1280px; Conta/Marley passaram em 320–1440px e Perfil foi verificado com zoom real 200/400% sem overflow.

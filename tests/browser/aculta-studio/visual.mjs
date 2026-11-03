@@ -483,6 +483,7 @@ try {
         const dimensions = JSON.parse(await exec(`const nav=document.querySelector('.studio-account-nav-list');const targets=[...nav.querySelectorAll('a')].map((link)=>{const r=link.getBoundingClientRect();return {text:link.textContent.trim(),width:r.width,height:r.height}});return JSON.stringify({width:window.innerWidth,page:document.documentElement.scrollWidth,nav:nav?.scrollWidth,client:nav?.clientWidth,targets});`));
         check(`Conta sem overflow com menu em ${width}px`, dimensions.page <= width && dimensions.nav <= dimensions.client + 1, JSON.stringify(dimensions));
         check(`Conta com alvos de menu mínimos em ${width}px`, dimensions.targets.length > 0 && dimensions.targets.every((target) => target.width >= 44 && target.height >= 44), JSON.stringify(dimensions.targets));
+        if (width === 320) await shot('05-conta-mobile');
       }
 
       await setViewport(1280, 900);
