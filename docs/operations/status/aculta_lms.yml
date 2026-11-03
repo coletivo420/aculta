@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.171
+version: 0.1.0-dev.172
 state: Dev
-progress_note: "ADR-042 P5 dev.171: Config Sync remove configs de tipos/plugins LMS contrib, mantém Groups/cursos/turmas/relações e aponta discussões a aculta_lms_activity. Updates Forum 10001 e LMS 10012 estão pendentes e testados; o 10012 preserva dependência ACULTA da relação curso–turma. LMS Unit 218/758 PASS; AcultaLmsInstallTest 6/172 PASS (35 depreciações upstream); Portal 1.172 checks PASS; public-slugs 410 rotas PASS. Snapshot pré-P5: SHA-256 37947c05fe3d523fbce0ff42c78f61f5d90f56a2a566de7c06f1869774bcd595. Runtime: config:status revisado, sem import; Composer e módulos LMS ainda instalados. P4 dev.170 validou instalação sem dependências contrib. P6 e reescrita de histórico não executados."
-next_phase: 'Aplicar updates 10001/10012 com snapshot, completar remoção Composer/módulos LMS via P5 e validar gates finais; P6 continua fora.'
+progress_note: "ADR-042 P5 dev.172: drupal/lms removido do Composer/lock; lms_file_upload não era pacote e cópias manuais LMS foram retiradas dos caminhos de descoberta. Runtime desinstalou comments, answer_plugins, classes e core. Descarte P5 autorizado: 8 aulas, 17 atividades, 3 respostas, 3 status de aula, 2 status de curso e 2 vínculos Group [TESTE P1]; cinco Groups preservados, sem migração. Updates Forum 10001 e LMS 10012 concluídos; LMS 10012 mantém relação de turma sob ACULTA. Unit LMS 218/758 e Fórum 33/329 PASS; Kernels focais LMS 6/172 (35 depreciações) e Fórum 1/25 (38); Portal 1.172 checks e public-slugs 410 rotas PASS; busca por imports do namespace contrib em web/modules/custom retorna zero. Composer install e cache rebuild PASS; updatedb sem pendências. config:status revisado, sem import: diferenças em aculta_portal.superficies, config de Groups/tópicos, core.extension, papel lms_teacher e Views de cursos. Snapshot pré-P5 SHA-256 37947c05fe3d523fbce0ff42c78f61f5d90f56a2a566de7c06f1869774bcd595. P6 e reescrita de histórico não executados."
+next_phase: 'Fechar testes/gates de P5 e publicar corte final; P6 permanece fora.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.
 # O Studio compõe cards SDC, mas a homologação depende de fixtures LMS

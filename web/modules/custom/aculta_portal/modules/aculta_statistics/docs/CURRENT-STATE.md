@@ -43,7 +43,7 @@ contagens, nunca a autoria privada.
 Regra do AGENTS: a Wiki não é módulo, é conteúdo. Não reimplementar a Wiki no
 Fórum. O Core não traz contador de leitura; o contador próprio foi decidido e entregue na 0.2.0-dev.3.
 
-## LMS (`aculta_lms`, `drupal/lms` 1.2.4, `group` 3.3.5)
+## LMS (`aculta_lms`, entidades ACULTA e Group 3.3.5)
 
 | Recurso | Onde está | Classificação |
 |---|---|---|
@@ -55,8 +55,9 @@ Fórum. O Core não traz contador de leitura; o contador próprio foi decidido e
 | Resposta enviada (avaliação) | `AnswerSubmittedEvent` e `AnswerLifecycleEventHooks`: arquivos **não commitados de outra frente** | INTEGRAÇÃO FUTURA. Não depender até o commit |
 | Descarte de tentativas | `AttemptArchiveManager` | Retenção de dados educacionais, não métrica |
 
-Regra: o LMS é a fonte de matrícula e progresso. O Statistics recebe contagens
-por turma e curso, nunca notas ou respostas individuais.
+Regra: `aculta_lms` e Group são a fonte de matrícula e progresso ACULTA. O
+Statistics recebe contagens por turma e curso, nunca notas ou respostas
+individuais. Conteúdo legado LMS contrib não é migrado.
 
 ## E-mail (`aculta_mailer`)
 

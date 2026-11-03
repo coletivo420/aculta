@@ -1,3 +1,26 @@
+## 0.1.0-dev.172 — remove o LMS contrib no corte P5 (ADR-042)
+
+- Remove `drupal/lms` do `composer.json` e do lock; Composer confirmou somente
+  a remoção desse pacote. `lms_file_upload` não era pacote Composer. Cópias
+  manuais de `lms` e `lms_file_upload` foram retiradas dos caminhos de descoberta.
+- Desinstalação Runtime em ordem: `lms_answer_comments`, `lms_answer_plugins`,
+  `lms_classes`, `lms`. Por ordem explícita de descarte em P5, foram removidos
+  8 aulas, 17 atividades, 3 respostas, 3 status de aula e 2 status de curso.
+  Também foram removidos 2 vínculos Group de cursos/turmas marcados `[TESTE P1]`;
+  os cinco Groups permaneceram. Nenhum conteúdo foi migrado.
+- Update Fórum 10001 refez a referência para `aculta_lms_activity` sem valores
+  legados; LMS 10012 preservou a dependência ACULTA da relação curso–turma.
+- Cache rebuild passou e `updatedb:status` está limpo. `config:status` ainda
+  mostra diferenças de superfície, Groups, tópicos, papel e Views; a lista foi
+  revisada e não houve importação de config/sync.
+- Validação final: LMS Unit 218/758, Fórum Unit 33/329, Kernel
+  `AcultaLmsInstallTest` 6/172 e Fórum focal 1/25 passaram. Gates Portal
+  1.172 checks e public-slugs 410 rotas passaram; a busca final por imports
+  do namespace do LMS contrib em `web/modules/custom` retornou zero.
+- Snapshot pré-P5: SHA-256
+  `37947c05fe3d523fbce0ff42c78f61f5d90f56a2a566de7c06f1869774bcd595`.
+  P6 e reescrita de histórico não executados.
+
 ## 0.1.0-dev.171 — prepara o corte de entidades e relações legadas
 
 - Config Sync remove configurações que pertencem às entidades LMS contrib,
@@ -36,7 +59,7 @@
 - Remove `ActivityDeadlineFormHooks` e `CourseLinkHooks`, que alteravam
   formulário/componente e rota fornecidos pelo contrib. Prazos por turma seguem
   no manager ACULTA; início do curso segue pela página canônica do Group.
-- `rg -F "Drupal\lms" web/modules/custom -g "*.php"` retorna zero.
+- A varredura de imports PHP do LMS contrib em módulos custom retorna zero.
 - Unit 218/758 PASS; `AcultaLmsInstallTest` 6/196 PASS (44 depreciações);
   `AttemptArchiveLifecycleTest` 5/201 PASS (50 depreciações); gate Portal
   1.172 checks PASS. P4 ainda requer harness limpo e remoção das dependências
@@ -281,7 +304,7 @@
 - Teste de instalação habilita `lms` e dependências, como as demais Kernel do módulo. Kernel: 31 testes, 851 asserções, 2 erros de harness.
 - Versão 0.1.0-dev.126.
 
-- `AccountCoursesReader` deixa de importar `Drupal\lms`. Depende de `CourseProgressReaderInterface` (contrato ACULTA) e
+- `AccountCoursesReader` deixa de importar classes do LMS contrib. Depende de `CourseProgressReaderInterface` (contrato ACULTA) e
   recebe um `CourseProgress` (status, conclusão, nota, cache tags).
 - `ContribCourseProgressAdapter` é a única classe do módulo que lê o `TrainingManager` do LMS contrib. Mapeia
   `loadCourseStatus` para os status `in progress`, `passed`, `failed` e `evaluation`, e ignora o que não for `Course`.

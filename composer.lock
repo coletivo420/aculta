@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3e5ca290019babee2f89a0a14600edb8",
+    "content-hash": "30befbdc1cbf6fc97e2959da3e9032db",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -4965,63 +4965,6 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/key",
                 "issues": "http://drupal.org/project/key"
-            }
-        },
-        {
-            "name": "drupal/lms",
-            "version": "1.2.4",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/lms.git",
-                "reference": "1.2.4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/lms-1.2.4.zip",
-                "reference": "1.2.4",
-                "shasum": "44544ef49fde6aa1c26a63afbc677aaca1425e7d"
-            },
-            "require": {
-                "drupal/core": "^10.3 || ^11",
-                "drupal/group": "^3.2"
-            },
-            "require-dev": {
-                "drupal/views_bulk_operations": "*",
-                "drush/drush": "^12 || ^13",
-                "phpstan/phpstan-deprecation-rules": "^1 || ^2",
-                "phpstan/phpstan-strict-rules": "^1 || ^2"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.2.4",
-                    "datestamp": "1791379273",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Marcin Grabias",
-                    "homepage": "https://www.drupal.org/u/graber",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "graber",
-                    "homepage": "https://www.drupal.org/user/1599440"
-                }
-            ],
-            "description": "Learning Management System for Drupal.",
-            "homepage": "https://www.drupal.org/project/lms",
-            "support": {
-                "source": "https://git.drupalcode.org/project/lms",
-                "issues": "https://www.drupal.org/project/issues/lms"
             }
         },
         {

@@ -106,7 +106,7 @@ RUNTIME STATUS: DEFERRED. Testes não executados (sem vendor/ nem Runtime).
 - `LearnerDashboardComposer` deixou de pertencer ao Studio; a implementação
   vive no `aculta_lms`. `GanjalabExperienceProvider` consome a interface e a
   referência opcional `@?aculta_lms.learner_dashboard_composer`.
-- O Studio não importa mais nenhuma classe de `Drupal\lms` nem de
+- O Studio não importa mais nenhuma classe do namespace LMS contrib nem de
   `Drupal\aculta_lms`. Comportamento visual, rotas e destinos preservados.
 - Sem dados, storage, permissões ou configuração ativa alterados.
 - **Runtime:** `aculta_learning_contracts` foi habilitado após snapshot com hash;
@@ -119,14 +119,14 @@ RUNTIME STATUS: DEFERRED. Testes não executados (sem vendor/ nem Runtime).
   `CourseJourney` e `CourseJourneyLesson` foram movidos para
   `Drupal\aculta_portal\Contract\Learning`, do qual o Studio já depende.
 - `CourseJourneyComposer` passa a importar apenas o contrato neutro; não importa
-  `Drupal\lms` nem `aculta_lms`. Comportamento visual, destinos e cache não
+  classes do namespace LMS contrib nem `aculta_lms`. Comportamento visual, destinos e cache não
   mudaram.
 - Validação: PHPUnit Unit Studio 60/586 e LMS 92/482 PASS; smoke Firefox/X11 do
   Ganjalab a 390 px 29/29 OK. Nenhum dado ou configuração alterado.
 
 ## 0.1.0-dev.27 — jornada consumida por contrato ACULTA (2026-11-01)
 
-- `CourseJourneyComposer` deixa de importar `Drupal\lms\Entity\Bundle\CourseInterface`
+- `CourseJourneyComposer` deixa de importar a interface Course do LMS contrib
   e consome apenas `CourseJourney`/`CourseJourneyLesson`, o modelo de
   apresentação do contrato `CourseJourneyReaderInterface`.
 - `build()` e `buildRoom()` recebem o DTO; aula atual, posição, estados,
