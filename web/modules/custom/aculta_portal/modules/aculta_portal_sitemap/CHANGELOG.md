@@ -1,3 +1,9 @@
+## 0.1.3-dev.1 — sitemap exclui superfícies desativadas (volta a Dev)
+
+- `PurposeNodeUrlGenerator` consulta `aculta_portal.superficies`: superfície desativada sai do sitemap. A lista `INDEXABLE_PURPOSES` continua sendo o teto; a configuração só remove. Com a configuração padrão, o resultado é o mesmo.
+- Módulo volta a Dev após o RC 0.1.2-rc.1, por decisão do responsável; o novo ciclo precisa de validação antes de novo RC.
+- Testes: DEFERRED (sem vendor/ nem Runtime).
+
 > Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
 
 ## Não lançado — URLs de sitemap por ambiente via ACULTA Deployer (F7)

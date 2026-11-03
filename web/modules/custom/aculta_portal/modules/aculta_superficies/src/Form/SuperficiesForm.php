@@ -103,11 +103,25 @@ final class SuperficiesForm extends ConfigFormBase {
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
+    $antes = $this->reader->superficies();
+    $depois = $this->valoresSubmetidos($form_state);
     $this->config(SurfaceConfigReader::CONFIG_NAME)
-      ->set('superficies', $this->valoresSubmetidos($form_state))
+      ->set('superficies', $depois)
       ->save();
     parent::submitForm($form, $form_state);
     $this->messenger()->addStatus($this->t('Superfícies salvas.'));
+    // O Portal não grava no registro do aculta_deployer (o repositório pode não
+    // ser gravável em produção). Mostra a entrada que o operador registra com a CLI.
+    foreach ($depois as $purpose => $linha) {
+      $mudou = $linha['modo'] !== $antes[$purpose]['modo'] || $linha['slug'] !== $antes[$purpose]['slug'];
+      if (!$mudou) {
+        continue;
+      }
+      $this->messenger()->addWarning($this->t('@titulo mudou de modo ou slug. Registre a correção de deploy (canonical e sitemap) com a CLI do aculta_deployer: página @pagina, esperado em produção conforme o novo modo.', [
+        '@titulo' => SurfaceConfigReader::TITULOS[$purpose] ?? $purpose,
+        '@pagina' => $linha['modo'] === 'diretorio' ? '/' . $linha['slug'] : '(subdomínio)',
+      ]));
+    }
   }
 
   /**

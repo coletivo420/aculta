@@ -1,3 +1,8 @@
+## 0.1.0-dev.4 — aviso de correção de deploy ao mudar modo ou slug
+
+- O formulário avisa quando uma superfície muda de modo ou slug e indica o registro de correção de deploy (canonical e sitemap) a criar com a CLI do aculta_deployer. O Portal não grava no registro.
+- Testes: DEFERRED.
+
 ## 0.1.0-dev.3 — estado real das fases e documentação
 
 - Fase 3.1 (mapa único), 3.2 (flag autoritativa), 3.3 (constantes de purpose), 3.4 parcial (configuração, schema, leitor, interruptor desligado), 3.5 parcial (regra de diretório na validação), 3.6 (formulário no MAIN), 3.7 parcial (YAML exportado).
