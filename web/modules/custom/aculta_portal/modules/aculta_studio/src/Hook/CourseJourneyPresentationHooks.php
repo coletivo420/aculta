@@ -55,12 +55,12 @@ final class CourseJourneyPresentationHooks {
   }
 
   /**
-   * Wraps the native LMS activity form in the Studio learning-room shell.
+   * Wraps the ACULTA answer form in the Studio learning-room shell.
    */
   #[Hook('preprocess_page')]
   public function preprocessLearningRoom(array &$variables): void {
     if ($this->journeys === NULL
-      || $this->routeMatch->getRouteName() !== 'lms.group.answer_form'
+      || $this->routeMatch->getRouteName() !== 'aculta_lms.answer_submission'
       || !isset($variables['page']['content'])
       || !is_array($variables['page']['content'])) {
       return;

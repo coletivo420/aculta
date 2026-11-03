@@ -75,7 +75,7 @@ final class CourseJourneyComposer {
   }
 
   /**
-   * Wraps the native LMS activity form in the learning room shell.
+   * Wraps an ACULTA activity form in the learning room shell.
    *
    * @param \Drupal\aculta_studio\Learning\CourseJourney $journey
    *   Authorized journey data.

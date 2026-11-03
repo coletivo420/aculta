@@ -399,4 +399,11 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - `PaymentCardFieldsUpdateKernelTest`: 1 teste / 17 assertions PASS em `aculta_simpletest`, com 13 depreciações Core/contrib.
 - Verificação final no Runtime `toca`/`aculta_runtime`: resumo de mudanças de entidade/campo vazio, `updatedb:status` sem pendências e `config:status` sem diferenças. Nenhum `config:import` foi necessário.
 - O preflight do Drush ainda emite avisos upstream de versão do Simple OAuth e post-updates antigos do Group; eles não impediram este update. Não reexecutar updates relacionados sem revisar esses avisos.
+
+## Continuação — corrigir a sala de aprendizagem ACULTA — 2026-11-03
+
+- **Achado LMS:** `CourseJourneyPresentationHooks::preprocessLearningRoom()` ainda verificava a rota removida `lms.group.answer_form`; respostas agora passam por `aculta_lms.answer_submission`, então a sala Ganjalab não envolvia o formulário atual.
+- **Correção:** hook ajustado para a rota ACULTA; fixtures do composer agora usam os route IDs atuais. Novo `CourseJourneyPresentationHooksTest` prova que a rota ACULTA recebe o shell e preserva o formulário.
+- **Validações:** Studio Unit completo 66/639 PASS; PHPCS Drupal/DrupalPractice nos quatro arquivos alterados PASS; gate Portal Drupal 11+ 1202 checks PASS; índice 53 componentes PASS; `git diff --check` PASS. PHPUnit avisou que `sites/simpletest/browser_output` não é gravável.
+- **Runtime:** antes da publicação, `updatedb:status` sem atualizações e `config:status` sem diferenças; nenhuma escrita de banco/configuração necessária. Próximo passo após push: confirmar Runtime, então continuar a auditoria LMS; pagamentos e demais requisitos Drupal ficam para as etapas seguintes do objetivo.
 - Snapshot pré-update protegido: `$SUITE_OUT/runtime-snapshots/aculta_runtime-before-mp-card-fields-20261103.sql`, SHA-256 `81715e89580503147ba03ea4f5fdc9454518fd7d2a2efa243ea10e83da1271ce`.
