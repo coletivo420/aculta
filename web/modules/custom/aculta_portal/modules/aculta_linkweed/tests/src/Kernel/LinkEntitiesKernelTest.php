@@ -50,6 +50,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     'path_alias',
     'views',
     'aculta_qrcode',
+    'aculta_paths',
     'aculta_linkweed',
   ];
 
