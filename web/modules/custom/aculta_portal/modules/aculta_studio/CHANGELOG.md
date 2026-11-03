@@ -1,3 +1,10 @@
+## 0.1.0-dev.42 — Dashboard em caixas e acesso separado ao Perfil (2026-11-03)
+
+- A entrada raiz substitui os nove atalhos de Conta por um cartão para Dados cadastrais. O editor privado do Perfil usa sua rota no mesmo purpose `account` e `Url::access()`; o link ao perfil público só aparece quando `AuthorIdentityResolver` fornece URL pública resolvida pelo owner.
+- Identidade e avatar vêm do `AuthorIdentityResolver`, com cacheabilidade de User/AuthorIdentity; o link público só aparece quando resolvido. Cards de experiências seguem registry, acesso e `DomainPurposeManager`. Conta, Perfil e owners não mudam.
+- A lista de plugins Marley fica limitada a Revista, Fórum/moderação e Galerias. `WikiTab` e `CursosTab` saem do Marley; WE SATIVA e Ganjalab continuam com os owners e rotas próprios. Grants, workflows e dados não mudam. Teste focal de escopo protege a lista.
+- `account-entry-links` conecta a estrutura neutra ao SDC existente `aculta420:card`, variante `studio_fidelity`; cabeçalho global intacto. Runtime pós-alteração e captura comparativa final ainda pendentes.
+
 > Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
 
 ## 0.1.0-dev.41 — evitar listener duplicado na navegação AJAX da Conta

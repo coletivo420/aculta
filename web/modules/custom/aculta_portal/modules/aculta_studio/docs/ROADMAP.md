@@ -1163,3 +1163,10 @@ preservado para inspeção humana; submit e rollback permanecem pendentes.
 
 Firefox ESR visível: no-JS 14/14 PASS; rotas Conta diretas 9/9 HTTP 200; Dashboard/Perfil, navegação AJAX/back-forward/mobile, retries 403/404, timeout/resposta tardia, sessão expirada, Form API inválido/válido, Marley, responsividade 320–1440px e zoom real 200/400% passaram. Bateria Conta 92/92 aplicáveis PASS, 22 SKIP condicionais. Artefatos fora do repositório em `$SUITE_OUT/studio-audit-20261103/member-final10/` e `$SUITE_OUT/studio-audit-20261103/nojs-aculta-final2/`. Senha/upload/anexos e escrita pessoal não foram submetidos; leitor de tela e cotejo pareado seguem pendentes; seis PNGs de referência estão truncados/corrompidos.
 
+
+
+## Revisão visual do Dashboard — 2026-11-03 (Runtime pendente)
+
+A entrada Account usa uma ligação privada, mostra editor Perfil com `Url::access()` no purpose `account`, e só apresenta link público/avatar quando vêm do `AuthorIdentityResolver`. Cards seguem registry, acesso e `DomainPurposeManager`. Tema reutiliza `aculta420:card` variante `studio_fidelity`; nenhum SDC novo nem mudança no cabeçalho. A prancha principal em `docs/portal/studio-visual/referencias/image(20261103-123227).png` foi cotejada conceitualmente; capturas finais Runtime pendentes.
+
+Na mesma revisão, o escopo Marley foi alinhado ao contrato: `WikiTab` e `CursosTab` removidos; permanecem Revista, Fórum/moderação e Galerias. `MarleyTabScopeTest` verifica o inventário. Nenhum owner, grant, workflow ou dado foi alterado; Wiki fica em WE SATIVA e LMS em Ganjalab.

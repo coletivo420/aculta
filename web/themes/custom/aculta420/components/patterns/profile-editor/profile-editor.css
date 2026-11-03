@@ -38,8 +38,11 @@
 
 @media (min-width: 48rem) {
   .aculta-profile-editor__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(14rem, 0.8fr) minmax(0, 1.2fr);
   }
 
-  .aculta-profile-editor__identity { grid-column: 1 / -1; }
+  .aculta-profile-editor__identity { grid-column: 1; grid-row: 1; }
+  .aculta-profile-editor__grid:has(.aculta-profile-editor__social) .aculta-profile-editor__identity { grid-row: 1 / span 2; }
+  .aculta-profile-editor__biography,
+  .aculta-profile-editor__social { grid-column: 2; }
 }

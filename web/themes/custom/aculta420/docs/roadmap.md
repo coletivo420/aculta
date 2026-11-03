@@ -1,5 +1,9 @@
 # Roadmap — ACULTA420
 
+## Studio Dashboard e Meu Perfil — 0.7.0-dev.28 (2026-11-03; Runtime pendente)
+
+`account-entry-links` usa o SDC existente `aculta420:card`/`studio_fidelity`; `profile-editor` distribui identidade à esquerda e bio/redes à direita em desktop e empilha em mobile. Tokens e cores ACULTA420 existentes; barra e cores do cabeçalho não alteradas. Theme Unit 49/354, Design Foundations 2441 checks, PHPCS e PHP lint PASS. Runtime e capturas pós-mudança continuam pendentes. Referência principal em `docs/portal/studio-visual/referencias/`.
+
 ## THEME-MF2 — painel de Estatísticas e publicação da Revista
 
 O painel de Estatísticas começa com filtros empilhados e amplia em

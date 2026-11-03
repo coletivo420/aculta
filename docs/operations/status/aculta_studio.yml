@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.41
+version: 0.1.0-dev.42
 state: Dev
 progress_note: >-
-  Studio Unit 72/659 PASS. Firefox ESR visível no Runtime: Conta 92/92
+  Studio Unit anterior 72/659 PASS. Firefox ESR visível no Runtime anterior: Conta 92/92
   verificações aplicáveis PASS, 22 SKIP; nove rotas diretas HTTP 200,
   navegação AJAX/histórico/mobile, falhas 403/404 com retry, timeout/resposta
   tardia, sessão expirada e Form API inválido/válido aprovados. Dashboard,
@@ -10,7 +10,12 @@ progress_note: >-
   Runtime `aculta_runtime`: sem updates, config limpo; cache reconstruído após
   correção do listener delegado persistente. DEFERRED: escrita pessoal/endereço,
   senha/uploads/anexos, opcionais ausentes, conteúdo aguardando moderação,
-  leitor de tela e comparação pareada com a prancha. Versão 0.1.0-dev.41.
+  leitor de tela, formulários pessoais com escrita e screenshot pareado pós-mudança.
+  Dashboard usa entrada privada, editor Perfil com `Url::access()` no purpose account,
+  link público/avatar somente quando resolvidos pelo owner. Marley: Revista, Fórum e
+  Galerias apenas; Wiki/Cursos continuam em WE SATIVA/Ganjalab. SDC card/studio_fidelity
+  reutilizado. Cinco referências válidas em docs/portal/studio-visual/referencias;
+  prancha desktop/mobile removida do origin/dev em 4599e115ed. Versão 0.1.0-dev.42.
   Dev.39: drop zone do Studio serializa dependências (protected readonly), envia
   arquivos e remove envios sem uso; validado no Runtime com aceite, recusa de
   MIME, recusa por tamanho e remoção. Unit 64/606 PASS.

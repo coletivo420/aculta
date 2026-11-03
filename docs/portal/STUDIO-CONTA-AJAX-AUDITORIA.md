@@ -1,5 +1,23 @@
 # Conta Studio: auditoria AJAX e plano de recuperação
 
+## Referências do repositório — 2026-11-03
+
+As pranchas oficiais disponíveis no HEAD remoto estão em
+[`studio-visual/referencias/`](studio-visual/referencias/README.md), com cinco
+PNG válidos no momento desta revisão. A principal, `image(20261103-123227).png`,
+tem 1536×1024 e representa as quatro estruturas; o cotejo conceitual foi feito
+contra ela e as outras pranchas presentes. O arquivo desktop/mobile foi
+removido pelo commit remoto `4599e115ed`; não foi reintroduzido. Nenhuma prancha
+é fonte de dados ou conteúdo aprovado. O Dashboard foi atualizado para mostrar
+uma única entrada privada de Conta, o link de edição do Perfil condicionado a
+`Url::access()` na rota do mesmo purpose, o link público apenas quando o owner o
+resolve, o avatar autorizado e os cards de experiências já disponíveis. Cabeçalho
+global e suas cores permaneceram intactos.
+
+O SDC reutilizado é `aculta420:card`, variante `studio_fidelity`, por
+`PortalUiHooks`; nenhum SDC novo foi criado. O token `account-entry-links`
+mantém estrutura neutra e é mapeado pelo tema ACULTA420.
+
 ## Reteste ampliado — 2026-11-03
 
 No Firefox ESR visível do Runtime, as nove rotas diretas `/conta/*` responderam HTTP 200; navegação AJAX comum com `replaceWith`, título/breadcrumb/foco, behaviors, back/forward, alternância mobile e cliques concorrentes passaram. No-JS passou 4/4 (Dados, Endereço e voltar). O Dashboard e o Perfil passaram em 320–1280px; Conta/Marley passaram em 320–1440px e Perfil foi verificado com zoom real 200/400% sem overflow.

@@ -1,3 +1,9 @@
+## 0.7.0-dev.28 — cartões do Dashboard e Perfil em duas áreas (2026-11-03)
+
+- Novo token `account-entry-links` apresenta a entrada privada do Dashboard pelo SDC estável `card`, variante `studio_fidelity`, preservando render arrays e cache.
+- O SDC `profile-editor` existente posiciona identidade à esquerda e biografia/redes à direita a partir de 48rem; abaixo, mantém a ordem em coluna. O cartão de identidade do Dashboard reaproveita o avatar cacheável do owner. Nenhuma cor do cabeçalho ou paleta foi alterada.
+- PHPCS Drupal, PHP lint, Theme Unit 49/354 e Design Foundations 2441 checks PASS. Captura real pós-push ainda pendente; não declarar aprovação visual integrada.
+
 ## 0.7.0-dev.27 — tokens de apresentação para marcação de módulo
 
 - `studio.css`, `tokens.css` e `buttons.css` passam a selecionar `data-portal-ui` (learning-home, learning-journey, learning-room, botões) e `data-aculta-focal`/`data-focal-marker`; os módulos deixaram de emitir classes de design.

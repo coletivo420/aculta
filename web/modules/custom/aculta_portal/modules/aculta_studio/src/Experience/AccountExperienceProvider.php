@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_studio\Experience;
 
-use Drupal\aculta_portal\Account\AccountDocumentInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
  * Private account experience: never edit the public/community profile here.
@@ -22,8 +22,6 @@ use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 final class AccountExperienceProvider implements StudioExperienceProviderInterface {
 
   public function __construct(
-    private readonly ?AccountDocumentInterface $documents = NULL,
-    private readonly ?DomainPurposeManager $domainPurposes = NULL,
     private readonly ?EntityTypeManagerInterface $entities = NULL,
     private readonly ?AccountInterface $currentUser = NULL,
     private readonly ?AuthorIdentityResolver $identityResolver = NULL,
@@ -77,7 +75,6 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
    * {@inheritdoc}
    */
   public function build(): array {
-    $items = $this->links();
     return [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'account-entry'],
@@ -90,15 +87,20 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
         '#plain_text' => new TranslatableMarkup('Acesse seus dados, segurança e experiências ACULTA.'),
       ],
       'identity' => $this->identity(),
-      'profile_link' => [
-        '#type' => 'link',
-        '#title' => new TranslatableMarkup('Editar Meu Perfil'),
-        '#url' => Url::fromRoute('aculta_studio.profile'),
-        '#attributes' => ['data-portal-ui' => 'studio-profile-entry'],
-      ],
-      'sections' => [
+      'profile_link' => $this->profileLink(),
+      'account_link' => [
         '#theme' => 'item_list',
-        '#items' => $items,
+        '#items' => [
+          [
+            '#type' => 'link',
+            '#title' => new TranslatableMarkup('Acessar Minha Conta'),
+            '#url' => Url::fromRoute('aculta_studio.account_data'),
+          ],
+        ],
+        '#attributes' => [
+          'data-portal-ui' => 'account-entry-links',
+          'aria-label' => new TranslatableMarkup('Minha Conta'),
+        ],
       ],
       'suites_heading' => [
         '#type' => 'html_tag',
@@ -118,6 +120,36 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
   }
 
   /**
+   * Builds the private editor link only when the owner route is available.
+   *
+   * @return array<string, mixed>
+   *   A link render array, or an empty array when the optional owner is absent.
+   */
+  private function profileLink(): array {
+    if ($this->currentUser === NULL) {
+      return [];
+    }
+    try {
+      $url = Url::fromRoute('aculta_studio.profile');
+      $access = $url->access($this->currentUser, TRUE);
+    }
+    catch (RouteNotFoundException) {
+      return [];
+    }
+    if (!$access instanceof AccessResultInterface || !$access->isAllowed()) {
+      return [];
+    }
+    $build = [
+      '#type' => 'link',
+      '#title' => new TranslatableMarkup('Editar Meu Perfil'),
+      '#url' => $url,
+      '#attributes' => ['data-portal-ui' => 'studio-profile-entry'],
+    ];
+    $access->addCacheContexts(['user', 'user.permissions', 'url.site'])->applyTo($build);
+    return $build;
+  }
+
+  /**
    * Builds current-user identity from the ACULTA User identity resolver.
    */
   private function identity(): array {
@@ -130,89 +162,39 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
     }
     $identity = $this->identityResolver?->resolve($user, 'profile_full');
     if ($identity !== NULL) {
-      return [
+      $identityValues = $identity->toArray();
+      $identityCache = CacheableMetadata::createFromObject($user)
+        ->addCacheableDependency($identity)
+        ->addCacheContexts(['user', 'user.permissions']);
+      $build = [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'studio-account-identity'],
+        '#attributes' => ['data-portal-ui' => 'studio-account-home studio-account-identity'],
         'name' => [
-          '#plain_text' => $identity->toArray()['display_name'] ?? '',
-        ],
-        '#cache' => [
-          'contexts' => ['user', 'user.permissions'],
-          'tags' => array_merge($user->getCacheTags(), $identity->getCacheTags()),
-          'max-age' => 0,
+          '#plain_text' => $identityValues['display_name'] ?? '',
         ],
       ];
+      if (is_array($identityValues['avatar'] ?? NULL)) {
+        $build['avatar'] = [
+          '#type' => 'container',
+          '#attributes' => ['data-portal-ui' => 'studio-account-avatar'],
+          'image' => $identityValues['avatar'],
+        ];
+      }
+      $profileUrl = $identityValues['profile_url'] ?? NULL;
+      if (is_string($profileUrl) && $profileUrl !== '') {
+        $build['public_profile_link'] = [
+          '#type' => 'link',
+          '#title' => new TranslatableMarkup('Ver perfil público'),
+          '#url' => Url::fromUri($profileUrl),
+          '#attributes' => ['data-portal-ui' => 'studio-profile-public-link'],
+        ];
+      }
+      $identityCache->applyTo($build);
+      return $build;
     }
     // A Drupal display name may be a private/legal name. Hide identity until
     // the public identity owner is available instead of leaking that fallback.
     return [];
-  }
-
-  /**
-   * Builds only owner-backed account links; hide unavailable document editor.
-   *
-   * @return array<int, array<string, mixed>>
-   *   Link render arrays.
-   */
-  private function links(): array {
-    $items = [
-      [
-        '#type' => 'link',
-        '#title' => new TranslatableMarkup('Informações cadastrais'),
-        '#url' => Url::fromRoute('aculta_studio.account_data'),
-      ],
-      [
-        '#type' => 'link',
-        '#title' => new TranslatableMarkup('Endereço'),
-        '#url' => Url::fromRoute('aculta_studio.account_address'),
-      ],
-    ];
-
-    if ($this->documents?->isAvailable()) {
-      $items[] = [
-        '#type' => 'link',
-        '#title' => new TranslatableMarkup('Documentos'),
-        '#url' => Url::fromRoute('aculta_studio.account_documents'),
-      ];
-    }
-
-    return array_merge($items, [
-      [
-        '#type' => 'link',
-        '#title' => new TranslatableMarkup('E-mail e segurança'),
-        '#url' => Url::fromRoute('aculta_studio.account_security'),
-      ],
-      [
-        '#type' => 'link',
-        '#title' => new TranslatableMarkup('Senha'),
-        '#url' => Url::fromRoute('aculta_studio.account_password'),
-      ],
-      [
-        '#type' => 'link',
-        '#title' => new TranslatableMarkup('Contas conectadas'),
-        '#url' => Url::fromRoute('aculta_studio.account_connections'),
-      ],
-      [
-        '#type' => 'link',
-        '#title' => new TranslatableMarkup('Meus pedidos'),
-        '#url' => Url::fromRoute('aculta_studio.account_orders'),
-      ],
-      [
-        '#type' => 'link',
-        '#title' => new TranslatableMarkup('Meu apoio'),
-        '#url' => Url::fromRoute('aculta_studio.account_support'),
-      ],
-      [
-        '#type' => 'link',
-        '#title' => new TranslatableMarkup('Preferências da conta'),
-        '#url' => Url::fromRoute('aculta_studio.account_preferences'),
-      ],
-      [
-        '#type' => 'link',
-        '#title' => new TranslatableMarkup('Abrir Minha Conta original'),
-        '#url' => Url::fromRoute('aculta_portal.dashboard'),
-      ],
-    ]);
   }
 
 }

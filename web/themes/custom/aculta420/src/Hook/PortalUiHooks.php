@@ -559,11 +559,13 @@ final class PortalUiHooks {
     // ACULTA Studio (aculta_studio): abas, painel e ações da conta.
     'account-entry' => ['studio', 'aculta-account-entry'],
     'account-experiences' => ['studio__actions', 'list-unstyled', 'd-grid', 'gap-2'],
+    'account-entry-links' => ['studio__actions', 'list-unstyled', 'd-grid', 'gap-2'],
     'studio-shell' => ['studio'],
     'studio-course-authoring' => ['studio-course-authoring'],
     'studio-course-authoring-back' => ['studio-course-authoring__back'],
     'studio-marley-entry' => ['btn', 'btn-outline-primary', 'studio__action'],
     'studio-account-home' => ['studio__panel', 'card', 'card-body'],
+    'studio-account-avatar' => ['studio-account-identity__avatar'],
     'studio-profile-entry' => ['btn', 'btn-outline-primary', 'studio__action'],
     'studio-profile-nickname-edit' => ['btn', 'btn-outline-primary', 'studio__action'],
     'studio-profile-photo-edit' => ['btn', 'btn-outline-primary', 'studio__action'],
@@ -798,7 +800,7 @@ final class PortalUiHooks {
     elseif ($tokens === '' && is_array($attributes)) {
       $tokens = (string) ($attributes['data-portal-ui'] ?? '');
     }
-    if (!preg_match('/(?:^|\\s)(?:studio-experiences|account-experiences)(?:\\s|$)/', $tokens) || !is_array($variables['items'] ?? NULL)) {
+    if (!preg_match('/(?:^|\\s)(?:studio-experiences|account-experiences|account-entry-links)(?:\\s|$)/', $tokens) || !is_array($variables['items'] ?? NULL)) {
       return;
     }
 

@@ -43,6 +43,16 @@ G420-C2-T (estudante) segue pendente de fixtures LMS/tema. Wiki moderação exig
 
 ## Meu trabalho — reorganização da navegação editorial (2026-11-01)
 
+## Retificação de escopo — 2026-11-03
+
+O contrato atual de Marley é `/marley` com Revista, Fórum/moderação e Galerias.
+As linhas antigas de Wiki e Cursos acima registravam plugins experimentais que
+não pertencem a este workspace e foram removidos de `Plugin/MarleyTab`.
+Contribuições Wiki permanecem em WE SATIVA (`wiki:/we-sativa`) e autoria/turmas
+LMS permanecem em Ganjalab (`courses:/ganjalab` e `/ganjalab/educador`). Os
+owners continuam responsáveis por rotas, ACL, conteúdo, workflow e persistência.
+`MarleyTabScopeTest` protege essa lista.
+
 A seção "Meu trabalho" deixou de exibir o submenu lateral. A própria seção
 concentra a ação de criação e as abas de status:
 

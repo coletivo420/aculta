@@ -1,5 +1,14 @@
 # Estado da sessão
 
+## Handoff — revisão visual Studio a partir de origin/dev, 2026-11-03
+
+- O checkout compartilhado preserva o commit paralelo LMS `2234b8320b` (equivalente remoto `ad4b42e01e`) e a alteração de teste foi commitada/publicada em `2697825bdb`; `origin/dev` contém o harness atualizado. Nenhum reset foi usado.
+- Worktree Studio baseada em `origin/dev` `4599e115ed`. Cinco PNGs íntegros estão em `docs/portal/studio-visual/referencias/`; a prancha principal `image(20261103-123227).png` (1536×1024) foi inspecionada. A prancha desktop/mobile foi removida do remoto em `4599e115ed`, embora estivesse íntegra em commit anterior. ZIP não encontrado.
+- Dashboard em implementação: uma entrada para Minha Conta, editor Perfil condicionado a `Url::access()` no purpose `account`, link público/avatar apenas quando resolvidos pelo owner; experiências autorizadas. Reuso SDC `aculta420:card` variante `studio_fidelity`, sem alterar cores do cabeçalho.
+- PHPCS Drupal e PHP lint focais passaram. PHPUnit Studio 65/634 e Theme Unit 49/354 passaram com bootstrap do Core do checkout base e autoloader temporário fora do repo apontando às classes desta worktree. Design Foundations 2441, SDC schema 764, SDC asset audit 0 findings e status index 53 componentes passaram. `validate-module-theme-boundary.php` falha somente em três classes CSS preexistentes de `aculta_paths`; o README gerado foi atualizado apenas para as linhas Studio/tema e a linha LMS publicada.
+- Runtime preflight em `toca`: Drupal 11.4.10, banco `aculta_runtime`, tema ACULTA420; `updatedb:status` limpo e `config:status` limpo. Ainda sem sync do candidato desta worktree.
+- Próximos passos: completar validação segura e screenshots pós-mudança, revisar diff/status staged, commit português, push fast-forward em `origin/dev`, sync de código ao Runtime conforme D-70 e registrar pendências.
+
 ## Handoff — implementação Conta Studio e Dashboard, 2026-11-03
 
 ### Reteste adicional no-JS — 2026-11-03

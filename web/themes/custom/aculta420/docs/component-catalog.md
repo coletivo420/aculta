@@ -172,6 +172,12 @@ define `#attributes` no `item_list`, que o preprocess do Core expõe como
 `attributes`. O teste do consumer real usa agora esse contrato de Core; os links
 permanecem como render arrays no slot e mantêm `#access`, cache e attachments.
 
+Na revisão visual de 2026-11-03, o token `account-entry-links` usa o mesmo
+adapter para apresentar uma única entrada privada “Acessar Minha Conta” como
+cartão `studio_fidelity`. O SDC `profile-editor` existente usa duas áreas em
+viewport largo, identidade à esquerda e bio/redes à direita, e empilha os slots
+na ordem semântica em mobile. Nenhum SDC novo foi criado.
+
 `studio-card-fidelity.py` foi alinhado ao render array real do
 `AccountExperienceProvider` e ao adaptador `PortalUiHooks`: root
 `.studio.aculta-account-entry`, lista `.studio__actions` e cinco cartões com

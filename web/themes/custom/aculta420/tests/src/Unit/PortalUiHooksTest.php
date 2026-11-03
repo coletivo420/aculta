@@ -159,6 +159,29 @@ final class PortalUiHooksTest extends UnitTestCase {
   }
 
   /**
+   * The private account entry is also displayed as a Studio fidelity card.
+   */
+  public function testPrivateAccountEntryUsesStudioFidelityCard(): void {
+    $link = [
+      '#type' => 'link',
+      '#title' => 'Acessar Minha Conta',
+      '#url' => $this->createMock(Url::class),
+    ];
+    $variables = [
+      'attributes' => new Attribute(['data-portal-ui' => 'account-entry-links']),
+      'items' => [['value' => $link, 'attributes' => new Attribute()]],
+      'wrapper_attributes' => new Attribute(),
+    ];
+
+    (new PortalUiHooks())->preprocess($variables);
+
+    $component = $variables['items'][0]['value'];
+    self::assertSame('aculta420:card', $component['#component']);
+    self::assertSame('studio_fidelity', $component['#props']['variant']);
+    self::assertSame($link, $component['#slots']['content']);
+  }
+
+  /**
    * Account root token scopes the private suite entry to the Studio theme.
    */
   public function testMapsAccountEntryToStudioRoot(): void {

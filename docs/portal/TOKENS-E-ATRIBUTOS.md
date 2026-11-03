@@ -587,6 +587,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `studio-course-authoring-back` | `studio-course-authoring__back` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/CourseAuthoringController.php` |
 | `studio-marley-entry` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/MarleyExperienceProvider.php` |
 | `studio-account-home` | `studio__panel card card-body` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php` |
+| `studio-account-avatar` | `studio-account-identity__avatar` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `studio-profile-entry` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/ProfileExperienceProvider.php` |
 | `studio-profile-nickname-edit` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
 | `studio-profile-photo-edit` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
@@ -641,6 +642,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 
 | `account-entry` | `studio aculta-account-entry` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `account-experiences` | `studio__actions list-unstyled d-grid gap-2` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
+| `account-entry-links` | `studio__actions list-unstyled d-grid gap-2`; transforma a entrada privada em cartão SDC `aculta420:card` (`studio_fidelity`) | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `button-ghost` | `button button--ghost` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventOrganizerDashboardController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-catalogue-actions-bar` | `actions-bar my-3` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Controller/EventCatalogueController.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
 | `event-date-actions` | `aculta-event-date-actions` | `web/modules/custom/aculta_portal/modules/aculta_events/src/Event/EventDateListBuilder.php`<br>`web/themes/custom/aculta420/src/Hook/PortalUiHooks.php` |
