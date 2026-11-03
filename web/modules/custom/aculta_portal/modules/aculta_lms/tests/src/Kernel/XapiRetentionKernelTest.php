@@ -28,7 +28,7 @@ final class XapiRetentionKernelTest extends KernelTestBase {
    */
   protected static $modules = [
     'system', 'user', 'file', 'image', 'media', 'options', 'text', 'entity_print', 'domain', 'views',
-    'entity', 'flexible_permissions', 'group', 'lms', 'key', 'entity_usage', 'aculta_image', 'aculta_file_uploader',
+    'entity', 'flexible_permissions', 'group', 'key', 'entity_usage', 'aculta_image', 'aculta_file_uploader', 'aculta_lms',
   ];
 
   /**
