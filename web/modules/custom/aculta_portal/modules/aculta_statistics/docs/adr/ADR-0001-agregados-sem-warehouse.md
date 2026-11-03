@@ -11,7 +11,7 @@ dado pessoal sem necessidade e repete o que Commerce, LMS e e-mail já mantêm.
 ## Decisão
 
 Gravar **contadores diários agregados** por `(métrica, dimensão, dia UTC)`, sem
-IP, usuário, referrer ou user-agent. Retenção de 90 dias, como em `aculta_linkweed`.
+IP, usuário, referrer ou user-agent. Retenção de 90 dias, como em `aculta_links`.
 Dados de origem ficam nos módulos donos e são lidos por provedores.
 
 ## Consequências

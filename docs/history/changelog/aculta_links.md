@@ -1,4 +1,4 @@
-Histórico arquivado do CHANGELOG.md de aculta_links. Não é fonte de decisão vigente: ver docs/decisions/ e docs/architecture/aculta_linkweed.md.
+Histórico arquivado do CHANGELOG.md de aculta_links. Não é fonte de decisão vigente: ver docs/decisions/ e docs/architecture/aculta_links.md.
 
 ## 0.4.0-dev.4 — presets visuais governados — 2026-10-20
 

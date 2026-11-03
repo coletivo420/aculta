@@ -135,7 +135,7 @@ DEFERRED (2 erros/0 assertions); sem Runtime write.
   `administer aculta_statistics`; sem a permissão, o atalho não aparece.
 - `config/sync` passou a conter `aculta_statistics.settings.yml`, com o mesmo
   conteúdo da configuração instalada, e a linha `aculta_statistics` em
-  `core.extension.yml` (o `aculta_linkweed` já depende deste módulo). Sem isso, a
+  `core.extension.yml` (o `aculta_links` já depende deste módulo). Sem isso, a
   importação de configuração apagaria os prazos gravados.
 - Testes: `RetentionFormKernelTest` cobre o formulário (um campo por métrica do
   catálogo, opções 30/90/180/365/indefinido) e a gravação por métrica;
@@ -221,7 +221,7 @@ até o módulo ser ativado.
 
 ### Decisões (sem código)
 - Consentimento de conta passa pelo ledger `aculta_user_agreement` do `aculta_user`.
-- Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_linkweed` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
+- Contador de leitura da Wiki próprio; QR estático medido só nos novos; convergência com `aculta_links` na 0.7.0; GA4 com banner para anônimos mediante autorização de tema.
 - Retenção configurável por métrica no painel administrativo (30, 90, 180, 365 dias ou indefinido), com permissão própria e confirmação antes de reduzir prazo (ADR-0003).
 
 ## 0.9.0-dev.4 (cliente do Search Console e leitura de segredos opcional)
@@ -392,8 +392,8 @@ até o módulo ser ativado.
 - Testes: `ForumActivitySubscriberTest` (Unit). Unit do módulo: 72/72.
 
 ### Centralização (ADR-0004, aplicada junto)
-- `aculta_linkweed` (0.4.0-dev.31) grava cliques em `links.link.clicks` e lê os totais daqui; a tabela
-  `aculta_linkweed_stat_daily`, a fila e o cron próprios foram removidos. Sem migração (banco de teste).
+- `aculta_links` (0.4.0-dev.31) grava cliques em `links.link.clicks` e lê os totais daqui; a tabela
+  `aculta_links_stat_daily`, a fila e o cron próprios foram removidos. Sem migração (banco de teste).
 - Validação no Runtime de teste (2026-10-21): `EmailReconciler` na janela de 7 dias gravou 69 envios (igual ao total do `aculta_mail_log`), com aceitos 41, entregues 4, devolvidos 1 e falhos 26. Cron do hook de e-mail ainda não observado no Runtime.
 
 ### Não feito

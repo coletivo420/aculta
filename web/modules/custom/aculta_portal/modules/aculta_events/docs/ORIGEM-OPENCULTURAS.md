@@ -48,8 +48,8 @@ Referência local: `/home/piradopirata/projetos/aculta-openculturas/` (somente l
 
 ## Diferença de licença com o AGPL
 
-O `aculta_linkweed` decidiu não copiar código do LinkStack por ser AGPL-3.0. O OpenCulturas não é AGPL:
-o código dele é GPL-2.0-or-later, e a regra do `aculta_linkweed` não se aplica a ele. Ainda assim,
+O `aculta_links` decidiu não copiar código do LinkStack por ser AGPL-3.0. O OpenCulturas não é AGPL:
+o código dele é GPL-2.0-or-later, e a regra do `aculta_links` não se aplica a ele. Ainda assim,
 cada cópia precisa do registro acima.
 
 ## Documentação copiada
