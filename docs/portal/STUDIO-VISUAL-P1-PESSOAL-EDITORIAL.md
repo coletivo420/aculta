@@ -1,8 +1,16 @@
 # Studio Visual P1 - estruturas pessoais e editoriais
 
-## Implementação P1.1/P1.2 e estado P1.3 - 2026-11-03
+## Estado da entrega P1 — ACULTA420 dev.36 — 2026-11-03
 
-### Revisão visual pós-dev.31 — 2026-11-03
+Dashboard, Minha Conta, Meu Perfil e Marley estão implementados e publicados em `dev`. O Firefox ESR no Runtime passou 106/106 verificações aplicáveis, 21 SKIP condicionais e zero falhas. A bateria cobriu rotas diretas da Conta, AJAX/histórico/retry/timeout, formulários Form API válidos/inválidos, responsividade, teclado/foco, modos claro/escuro, Perfil sem campos privados, zoom 200/400% e composição de Marley. Capturas e JSON: `$SUITE_OUT/studio-spacing-runtime-dev36-20261103/`.
+
+A comparação de composição foi feita com `docs/portal/studio-visual/referencias/image(20261103-123227).png` e capturas reais das quatro telas; não se declara paridade pixel a pixel. Os cinco PNGs da pasta oficial foram reconhecidos por `file`, decodificados em 1536×1024 por `identify` e validados por chunks/CRC/IEND. O ZIP não estava disponível, então `unzip -t` não foi executado.
+
+Dados e Endereço foram enviados no formulário original com valores existentes e conferidos sem mudança persistida; preferência de cor salva pelo harness foi restaurada. **DEFERRED:** gravação final do avatar (desafio humano), alteração de senha (aceite legal não realizado), screen reader além de Marley, publicação própria para testar as ações de edição/criação e desinstalação Runtime de módulos opcionais. Esses limites não alteram o aceite do restante da matriz; detalhes na [auditoria](STUDIO-CONTA-AJAX-AUDITORIA.md).
+
+## Histórico da implementação P1.1/P1.2 pré-dev.36 — 2026-11-03
+
+### Histórico da revisão visual pós-dev.31 — 2026-11-03
 
 O Firefox real mostrou que a navegação da Conta ainda reutilizava abas de Marley e não formava as caixas da prancha. Corrigido no ACULTA420 dev.31: lista contextual vertical, ativa destacada, menu e conteúdo em superfícies separadas, mantendo o `<details>` no mobile, Form API dos owners e cabeçalho global intacto. Reteste Runtime 97/97 PASS aplicáveis, 22 SKIP; no-JS 14/14; capturas em `$SUITE_OUT/studio-dashboard-final-20261103/account-panels-dev31-final/`. Tema Unit 50/358, Foundation 2441 e SDC schemas 764 PASS. Dados e Endereço foram submetidos validamente com os valores existentes e comparação de igualdade passou; avatar/upload, senha e screen reader permanecem DEFERRED. Veja a auditoria para estados e diferenças de comparação.
 

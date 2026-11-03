@@ -1,4 +1,12 @@
-## Reteste visual da Conta Studio — 2026-11-03
+## Estado consolidado da entrega Studio — ACULTA420 dev.36 — 2026-11-03
+
+- **Implementado:** Dashboard e cards vindos dos providers/permissões; shell Conta dedicado com navegação AJAX, histórico, acessibilidade e fallback; Perfil público separado da Conta; Marley com ação Criar junto ao título e moderação condicionada ao owner. Nenhum owner, grant, workflow ou storage foi duplicado.
+- **Visual:** SDCs reutilizados `aculta420:card` (`studio_fidelity`), `profile-editor` e `profile-identity`; Conta usa estrutura Core `<details>`/lista e wrappers dos owners. Nenhum SDC novo. ACULTA420 dev.36 aplica escala global compacta e reduz o gap do Dashboard para 12 px, sem mudar as cores do cabeçalho.
+- **Runtime:** ACULTA420 `0.7.0-dev.36`, `aculta_studio` `0.1.0-dev.44`, Drupal 11.4.10. Firefox ESR passou 106/106 verificações, 21 SKIP condicionais, zero falhas; `updatedb:status` sem updates e `config:status` limpo após snapshot/import apenas do bloco de eventos. Capturas em `$SUITE_OUT/studio-spacing-runtime-dev36-20261103/`.
+- **Referência:** a prancha `image(20261103-123227).png` e as capturas Runtime foram comparadas por composição; sem alegação de paridade pixel a pixel. Cinco referências oficiais são PNGs válidos, 1536×1024; ZIP indisponível.
+- **DEFERRED:** upload de avatar interrompido pelo desafio humano; troca de senha não executada sem aceite legal; Orca somente em Marley; criar/editar conteúdo próprio sem fixture editorial; ausência de módulos opcionais não exercitada no Runtime. Escritas pessoais/endereço tiveram submissão e conferência sem alteração persistida.
+
+## Histórico da primeira validação visual da Conta — ACULTA420 dev.31
 
 Comparação real mostrou que a lista da Conta ainda herdava `nav-tabs`/`studio__subtabs`, e não formava caixas claras para menu e conteúdo. O ACULTA420 dev.31 agora apresenta navegação vertical e painéis com tokens semânticos; Core `details`, item list e Form API foram reutilizados por não haver SDC apropriado para substituir a estrutura de vários owners. Nenhum formulário, permissão ou owner mudou. Firefox Runtime passou 97/97 checks aplicáveis (22 SKIP), no-JS 14/14; nove rotas Conta diretas HTTP 200, foco/ativo, AJAX e formulários inválido/válido confirmados. Dados e Endereço tiveram submits válidos no Firefox usando os valores já existentes, com hashes iguais antes/depois. Artefatos em `$SUITE_OUT/studio-dashboard-final-20261103/account-panels-dev31-final/`. Pendentes: upload/avatar/senha, módulos opcionais, screen reader e conteúdo editorial próprio da conta de teste. Theme Unit 50/358 e gates estáticos constam no handoff.
 
@@ -6,7 +14,7 @@ Comparação real mostrou que a lista da Conta ainda herdava `nav-tabs`/`studio_
 
 Orca/Firefox ESR passou 5/5 na tela Marley, com nome acessível das três abas autorizadas e heading correto; a gravação de áudio teve sinal. O harness de avatar passou 11/11 checks e registrou 1 `DEFERRED`: upload sintético recebido e corte aberto; desafio de verificação humana impediu submissão, estado persistido permaneceu igual e arquivos seguem temporários para limpeza normal. Senha continua pendente: a conta sintética exige o aceite individual dos Termos, não realizado; a fixture comum proíbe troca de senha sem decisão. Testes Unit cobrem owner CPF/CNPJ opcional ausente e componentes opcionais do Perfil; CPF/CNPJ está ativo no Runtime. A comparação visual real usa a prancha principal válida e capturas Runtime, sem declarar paridade pixel a pixel. ZIP não disponível; cinco PNGs rastreados validados por `file` e `identify`.
 
-## Conta Studio e composição editorial Marley — 2026-11-03
+## Histórico das correções dev.43/dev.44 — antes da validação integrada dev.36
 
 Dev.43 corrigiu o HTTP 500 do Dashboard: `AccessResultAllowed::applyTo()` não existe; `CacheableMetadata` aplica a cacheabilidade do link. Pós-push, Firefox ESR visível validou 94/94 checks aplicáveis, 21 SKIP, 0 falhas; Conta direta 9/9 HTTP 200, no-JS 4/4, Dashboard e Perfil responsivos, e ações do Perfil legíveis em viewport desktop. Capturas externas: `$SUITE_OUT/studio-dashboard-final-20261103/post-push/`.
 
@@ -16,7 +24,7 @@ C1-C3 implementadas e verificadas no Runtime, com shell `account-navigation.js`,
 
 Firefox ESR visível no Runtime: Conta 92/92 verificações aplicáveis PASS, 22 SKIP. Validou AJAX Conta (troca, histórico, 403/404/retry, timeout/resposta tardia, cliques concorrentes, mobile), Form API inválido e preferência válida restaurada, Dashboard cinco cards autorizados, Perfil separado, responsividade 320–1440px, claro/escuro, teclado e Marley/moderação autorizada. Capturas e limites: [auditoria](../../../../../../../docs/portal/STUDIO-CONTA-AJAX-AUDITORIA.md), artefatos em `$SUITE_OUT/studio-audit-20261103/member-final10/` e `$SUITE_OUT/studio-account-moderator-final-4-20261103/`.
 
-DEFERRED: upload/avatar/senha/anexos, escrita pessoal/endereço, módulos opcionais ausentes no Runtime, conteúdo aguardando moderação, leitor de tela e comparação integral com a prancha (PNGs em `references/studio-visual/` truncados/corrompidos). A matriz P1.2 de navegação passou; a homologação visual integral permanece parcial. Boundary/map/UI docs mantêm falhas preexistentes em `aculta_paths`/LMS/Eventos/uploader.
+Estado DEFERRED naquele registro pré-dev.36: upload/avatar/senha/anexos, escrita pessoal/endereço, módulos opcionais ausentes no Runtime, conteúdo aguardando moderação, leitor de tela e comparação visual. O conjunto de seis PNGs do caminho antigo `references/studio-visual/` era inválido e não foi usado; as cinco referências oficiais atuais em `docs/portal/studio-visual/referencias/` são válidas e foram comparadas por composição com capturas Runtime dev.36. Veja o estado consolidado no início deste roadmap. Boundary/map/UI docs mantêm falhas preexistentes em `aculta_paths`/LMS/Eventos/uploader.
 
 > Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
 
@@ -1173,12 +1181,12 @@ preservado para inspeção humana; submit e rollback permanecem pendentes.
 
 `0.1.0-dev.41` corrige a construção de `Drupal.Ajax` da Conta para evitar que o Core associe outro listener de clique aos links administrados pelo handler delegado. No Runtime `aculta_runtime`, o preflight permaneceu sem updates de banco e `config:status` limpo; o cache foi reconstruído após o ajuste de JS.
 
-Firefox ESR visível: no-JS 14/14 PASS; rotas Conta diretas 9/9 HTTP 200; Dashboard/Perfil, navegação AJAX/back-forward/mobile, retries 403/404, timeout/resposta tardia, sessão expirada, Form API inválido/válido, Marley, responsividade 320–1440px e zoom real 200/400% passaram. Bateria Conta 92/92 aplicáveis PASS, 22 SKIP condicionais. Artefatos fora do repositório em `$SUITE_OUT/studio-audit-20261103/member-final10/` e `$SUITE_OUT/studio-audit-20261103/nojs-aculta-final2/`. Senha/upload/anexos e escrita pessoal não foram submetidos; leitor de tela e cotejo pareado seguem pendentes; seis PNGs de referência estão truncados/corrompidos.
+Registro pré-dev.36: Firefox ESR no-JS 14/14 PASS; Conta 92/92 aplicáveis PASS, 22 SKIP; flags de senha/upload/anexos, leitor de tela e cotejo estavam pendentes naquela rodada. As referências mencionadas naquele registro eram os seis arquivos truncados de `references/studio-visual/`; foram substituídas pelas cinco imagens válidas versionadas em `docs/portal/studio-visual/referencias/`. O cotejo e a validação integrada posteriores estão resumidos no início deste roadmap.
 
 
 
-## Revisão visual do Dashboard — 2026-11-03 (Runtime pendente)
+## Revisão visual do Dashboard — estado integrado dev.36 — 2026-11-03
 
-A entrada Account usa uma ligação privada, mostra editor Perfil com `Url::access()` no purpose `account`, e só apresenta link público/avatar quando vêm do `AuthorIdentityResolver`. Cards seguem registry, acesso e `DomainPurposeManager`. Tema reutiliza `aculta420:card` variante `studio_fidelity`; nenhum SDC novo nem mudança no cabeçalho. A prancha principal em `docs/portal/studio-visual/referencias/image(20261103-123227).png` foi cotejada conceitualmente; capturas finais Runtime pendentes.
+A entrada Account usa uma ligação privada, mostra editor Perfil com `Url::access()` no purpose `account`, e só apresenta link público/avatar quando vêm do `AuthorIdentityResolver`. Cards seguem registry, acesso e `DomainPurposeManager`. Tema reutiliza `aculta420:card` variante `studio_fidelity`; nenhum SDC novo nem mudança no cabeçalho. Capturas Runtime e cotejo por composição da prancha principal estão concluídos em dev.36; ver `$SUITE_OUT/studio-spacing-runtime-dev36-20261103/` e o estado consolidado no início deste roadmap.
 
 Na mesma revisão, o escopo Marley foi alinhado ao contrato: `WikiTab` e `CursosTab` removidos; permanecem Revista, Fórum/moderação e Galerias. `MarleyTabScopeTest` verifica o inventário. Nenhum owner, grant, workflow ou dado foi alterado; Wiki fica em WE SATIVA e LMS em Ganjalab.

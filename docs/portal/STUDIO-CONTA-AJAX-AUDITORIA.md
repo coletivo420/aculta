@@ -1,6 +1,12 @@
 # Conta Studio: auditoria AJAX e plano de recuperação
 
-## Espaçamento ACULTA420 dev.32 — validação visual parcial no Runtime (2026-11-03)
+## Estado atual da entrega — ACULTA420 dev.36 / aculta_studio dev.44
+
+Dashboard, Conta, Perfil e Marley estão implementados e publicados em `dev`; o Firefox ESR no Runtime passou 106/106 checks, 21 SKIP condicionais e zero falhas. As nove rotas Conta responderam diretamente; a suíte verificou AJAX, histórico, retry/403/404, timeout/resposta tardia, sessão expirada, Form API e behaviors. Também verificou Dashboard/Perfil em 320/390/768/1280 px, zoom real 200/400%, teclado/foco, claro/escuro e listagem Marley. Dados e Endereço foram submetidos com valores existentes e permaneceram iguais; preferência de cor foi restaurada. Veja o registro de referências, rotas e limites abaixo.
+
+**Limites atuais:** avatar não foi persistido porque o desafio de verificação humana apareceu; senha não foi submetida sem aceite legal. Orca cobriu Marley, não as demais telas. A conta de teste não tem publicação própria, então checks de edição/criação editorial são condicionais `SKIP`. Os testes Unit verificam owners opcionais ausentes, mas não houve desinstalação de módulo no Runtime. As cinco pranchas PNG oficiais foram validadas e comparadas por composição com capturas Runtime; não se declara paridade pixel a pixel. O ZIP não estava disponível.
+
+## Histórico do reteste de espaçamento dev.32–dev.35 (supersedido pelo dev.36)
 
 Após a redução da escala global, Firefox ESR visível confirmou no Studio Dashboard, Perfil e Marley 62/62 checks aplicáveis, com 21 SKIP condicionais, sem overflow em 320–1440 px; Perfil também passou zoom real de 200/400%, e Marley passou claro/escuro. Capturas/JSON: `$SUITE_OUT/studio-spacing-marley-20261103/`. A suite completa da Conta passou 102/102 verificações aplicáveis (21 SKIP, zero falhas): layout 320/390/768/1280 px, nove links com 46 px, navegação AJAX, histórico, foco/ativo, retry após 403/404, timeout/resposta tardia, Form API e sessão expirada. Medição focada: 1440 px em duas colunas (272/944 px), padding dos painéis 16/24 px; 320 px em uma coluna, padding 16 px e sem overflow. Capturas/JSON: `$SUITE_OUT/studio-spacing-account-dev34-20261103/`. O teste de preferência salvou por Form API e o runner restaurou a opção clara original. Cabeçalho institucional/global manteve-se inalterado. A prancha não foi recapturada nesta rodada, então não alegamos paridade pixel a pixel.
 
@@ -36,7 +42,7 @@ As capturas atuais foram inspecionadas em 1280px para Dashboard, Conta, Perfil e
 
 Diferenças intencionais: o shell e a barra multidomínio reais permanecem os do ACULTA420, sem copiar as cores/nominação fictícias da prancha; “Seções da conta” é o rótulo acessível do `<details>`; campos, descrições, avatar e estados seguem os providers/Form API reais. A prancha não é aceita como paridade pixel a pixel. Dados/Endereço foram enviados com os valores existentes e comparados sem mudança persistida. A persistência final de avatar está DEFERRED pelo desafio humano, e senha pelo aceite de Termos. Orca/Firefox ESR validou os anúncios de Marley (5/5); não cobre leitor de tela das quatro telas. A listagem disponível para moderação estava vazia, embora acesso positivo/negativo tenha sido testado por role.
 
-## Reteste ampliado — 2026-11-03
+## Histórico do reteste ampliado pré-dev.36 — 2026-11-03
 
 No Firefox ESR visível do Runtime, as nove rotas diretas `/conta/*` responderam HTTP 200; navegação AJAX comum com `replaceWith`, título/breadcrumb/foco, behaviors, back/forward, alternância mobile e cliques concorrentes passaram. No-JS passou 4/4 (Dados, Endereço e voltar). O Dashboard e o Perfil passaram em 320–1280px; Conta/Marley passaram em 320–1440px e Perfil foi verificado com zoom real 200/400% sem overflow.
 
@@ -150,13 +156,13 @@ Nessa primeira rodada ficaram DEFERRED 403/404 e zoom; ambos foram cobertos pela
 
 Com ACULTA420 ativo no Runtime, Firefox ESR visível e a conta sintética documentada, o smoke `tests/browser/aculta-studio/nojs.mjs` passou **14/14**: login temporário, shell e formulário de Dados, navegação HTML nativa para Endereço, voltar e abertura direta das nove rotas de Conta com conteúdo e seção ativa. Nenhum formulário foi enviado. Relatório externo em `$SUITE_OUT/studio-audit-20261103/nojs-aculta-final2/nojs-results.json`. O harness agora segue o redirect explícito do ULI para `/conta/dados`, confirma autenticação antes de testar rotas privadas e consulta a semântica do shell sem depender de classes do tema.
 
-As seis imagens adicionadas em `references/studio-visual/` no commit `d732e95c` foram inspecionadas: os PNGs estão truncados/corrompidos (chunk IDAT incompleto ou CRC inválido) e não permitem comparação visual integral confiável. As fatias parcialmente recuperáveis mostram conteúdo fictício, que não foi copiado. A comparação pareada permanece DEFERRED até que arquivos íntegros sejam enviados. O Runtime está em ACULTA420, `updatedb:status` sem pendências e `config:status` limpo; `drush status` confirmou `aculta_runtime`. Escritas pessoais/endereço, upload/avatar, senha/anexos, módulos opcionais ausentes, leitor de tela e revisão visual pareada seguem DEFERRED.
+Registro histórico: os seis arquivos de `references/studio-visual/` do commit `d732e95c` eram truncados e não foram usados. O conjunto oficial posterior está em `docs/portal/studio-visual/referencias/`: cinco PNGs íntegros, validados por `file`, `identify` e integridade de chunks/CRC/IEND; a prancha principal é `image(20261103-123227).png` (1536×1024). A comparação pareada por composição das quatro telas foi feita com capturas Firefox reais, sem alegação de igualdade pixel a pixel. O estado atual da validação e Runtime está na seção **Reteste integrado dev.36** abaixo.
 ## Espaçamento compacto e matriz pública por purpose — 2026-11-03
 
 - ACULTA420 passou a usar uma escala semântica compacta (4/8/12/16/20/24/32 px), com intervalos globais de seção de 24–40 px e painéis de Conta/Perfil ajustados aos tokens. O título global usa 20 px; no Dashboard os intervalos entre blocos e cartões usam 12 px e títulos internos não duplicam margens.
 - Firefox ESR visível validou a suíte Studio pós-dev.35: 102/102 verificações aplicáveis PASS, 21 SKIP condicionais e zero falhas; Dashboard, Perfil e Marley 62/62 aplicáveis PASS. A matriz read-only de propósitos em 320/1440 px capturou 16 páginas: main, support, magazine e os shells Wiki/Shop/Courses/Eventos sem overflow. Wiki/Shop/Courses/Eventos retornaram acesso negado para anônimo, portanto essa parte valida shell/reflow, não conteúdo autorizado.
 - Limite observado na matriz: Links retornou página de erro Drupal sem shell em 320 e 1440 px. Isso não foi atribuído ao espaçamento nem corrigido nesta tarefa. Resultado bruto externo em `$SUITE_OUT/spacing-purpose-matrix-20261103/purpose-matrix.json`.
-- Próximos eventos: a configuração no propósito `main` agora exige também `<front>`. A caixa fica restrita à landing principal e não é renderizada no Perfil público. A importação dessa alteração no Runtime é registrada separadamente após snapshot e verificação de configuração.
+- Próximos eventos: a configuração exige purpose `main` e rota `<front>`. Após snapshot e importação no Runtime, HTTP anônimo confirmou a caixa presente na landing principal (`200`) e ausente no Perfil público (`200`).
 
 ### Reteste integrado dev.36
 

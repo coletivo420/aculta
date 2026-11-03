@@ -1,8 +1,22 @@
 # ACULTA Studio — plano documental visual e de navegação
 
-## Retificação de 2026-11-03: AJAX da Conta — implementação local
+## Estado efetivo da entrega dev.36 — 2026-11-03
 
-### Estado revisado após comparação real — 2026-11-03
+Este status atual substitui as pendências antigas deste documento e dos roadmaps. O Dashboard, a Conta privada, o Perfil público e Marley estão implementados no HEAD `d30a9529f7`, com owners, rotas e permissões preservados. O tema está em ACULTA420 `0.7.0-dev.36`; o módulo Studio no Runtime está em `0.1.0-dev.44`.
+
+- **Dashboard:** título canônico, cartão de identidade cacheável, link público via owner, edição de Perfil condicionada à rota/acesso e cinco destinos reais autorizados. Não há métricas nem conteúdo inventado.
+- **Conta:** as nove rotas `/conta/*` respondem diretamente; shell próprio em caixas, formulário em painel amplo, no-JS e AJAX com URL/histórico/ativo/título/breadcrumb/foco/retry/timeout e Drupal behaviors. Form API continua nos owners existentes.
+- **Perfil:** edição privada separada do perfil público; sem endereço/documentos no editor; preview e formulários usam os owners atuais.
+- **Marley:** “Criar” junto ao título de “Meu trabalho”, listagem mantida e moderação somente para a permissão do owner. Sem publicação própria na fixture atual, os testes de GET de edição/criação ficam `SKIP`; a listagem vazia, responsividade e autorização A/B estão cobertas.
+- **Tema:** tokens compactos pesquisados em Carbon, GOV.UK e USWDS; dev.36 reduz Dashboard a intervalos de 12 px. Cores do cabeçalho multidomínio permanecem ACULTA420.
+- **Runtime:** snapshot pré-import de 270.104.476 bytes, SHA-256 `f1461615bbec2363ab70ee762cac15b5d50115c2c80537fef5272c6500261a0f`; importou-se somente a visibilidade do bloco Próximos eventos (`main` + `<front>`). Cache, updates e config status limpos. HTTP anônimo: landing principal 200 com `.aculta-events-upcoming`; Perfil `/u/pessoa-5` 200 sem o bloco.
+- **Validação visual:** Firefox ESR integrado passou 106/106 checks, 21 SKIP condicionais, zero falhas; Dashboard 320/390/768/1280 px; Conta AJAX/Form API/mobile; Perfil zoom 200/400%; Marley. Capturas em `$SUITE_OUT/studio-spacing-runtime-dev36-20261103/`. A prancha principal válida (1536×1024) foi cotejada por composição; não há alegação de igualdade pixel a pixel.
+- **SDCs:** reuso de `aculta420:card` (`studio_fidelity`), `profile-editor` e `profile-identity`; Conta combina `<details>`, lista Drupal e wrappers de Form API. Nenhum SDC novo.
+- **DEFERRED:** gravação do avatar interrompida pelo desafio humano de verificação; senha não enviada porque o aceite legal obrigatório não foi registrado. Leitor de tela coberto em Marley, não nas outras telas. Fixtures sem publicação própria não exercitam editar/criar; Runtime não desinstalou módulos opcionais. Veja a auditoria para limites e evidências.
+
+## Histórico da implementação inicial de AJAX da Conta — dev.31
+
+### Estado revisado naquele reteste — supersedido pelo estado dev.36 acima
 
 A inspeção das capturas Runtime revelou que a primeira correção ainda deixava a navegação Conta com classes de abas do Marley. ACULTA420 dev.31 removeu essa herança: menu vertical em painel próprio e formulário em superfície independente, com tokens semânticos e `<details>` acessível no mobile. Firefox Runtime passou 97/97 verificações aplicáveis (22 SKIP), incluindo 320–1440px, caixas computadas, acesso/ativo, Form API inválido/válido e histórico AJAX. Capturas reais em `$SUITE_OUT/studio-dashboard-final-20261103/account-panels-dev31-final/`; a captura principal da prancha, 1536×1024, foi inspecionada junto aos resultados. A barra multidomínio e cores do cabeçalho permaneceram sem alteração, como solicitado.
 
@@ -16,7 +30,7 @@ Orca no Firefox ESR passou 5/5 verificações em Marley, cobrindo as três abas 
 
 Firefox ESR no Runtime: pós-dev.29 94/94 e pós-dev.30 97/97 verificações aplicáveis PASS, 21 SKIP em ambas, sem falhas. As cinco PNGs válidas em [`studio-visual/referencias/`](studio-visual/referencias/README.md) foram conferidas e a prancha de quatro estruturas `image(20261103-123227).png` serviu para cotejo visual das caixas; capturas reais por tela estão em `$SUITE_OUT/studio-dashboard-final-20261103/post-push/` e `$SUITE_OUT/studio-dashboard-final-20261103/marley-header-dev30-retest/`. O cabeçalho global manteve sua apresentação e cores. Em Marley “Criar” está junto a “Meu trabalho”; a tabela continua contida em viewport mobile. O arquivo desktop/mobile está ausente no HEAD remoto (remoção `4599e115ed`), não foi restaurado. Naqueles retestes, escrita pessoal/endereço, senha/upload/anexo e módulos opcionais ausentes permaneciam DEFERRED. Ver a [auditoria](STUDIO-CONTA-AJAX-AUDITORIA.md) para limites e evidências.
 
-A presença de `studio-navigation.js` não cobria `/conta/*`. A biblioteca dedicada da Conta usa links elegíveis, histórico/foco/estado, recuperação e Grid próprio; o listener delegado único permanece ativo após `replaceWith`. O Dashboard passa a mostrar uma única entrada privada para `/conta/dados`, edição do Perfil condicionada a rota/acesso e perfil público somente quando resolvido pelo owner; providers autorizados continuam como cards. Reutiliza SDC `aculta420:card` na variante `studio_fidelity`, tokens ACULTA420, sem alterar o cabeçalho global. Marley apresenta criação junto ao título e moderação condicionada. A composição foi cotejada conceitualmente com a prancha principal válida; capturas Runtime após esta alteração ainda pendentes. Testes anteriores e limites permanecem na [auditoria](STUDIO-CONTA-AJAX-AUDITORIA.md).
+A presença de `studio-navigation.js` não cobria `/conta/*`. A biblioteca dedicada da Conta usa links elegíveis, histórico/foco/estado, recuperação e Grid próprio; o listener delegado único permanece ativo após `replaceWith`. O Dashboard mostra uma única entrada privada para `/conta/dados`, edição do Perfil condicionada a rota/acesso e perfil público somente quando resolvido pelo owner; providers autorizados continuam como cards. Reutiliza SDC `aculta420:card` na variante `studio_fidelity`, tokens ACULTA420, sem alterar o cabeçalho global. Marley apresenta criação junto ao título e moderação condicionada. Capturas Runtime integradas pós-dev.36 estão em `$SUITE_OUT/studio-spacing-runtime-dev36-20261103/`; evidência e limites estão na [auditoria](STUDIO-CONTA-AJAX-AUDITORIA.md).
 
 
 **Estado:** planejamento para agentes; não é especificação de implementação já aprovada nem registro de homologação.  
