@@ -79,7 +79,16 @@ final class AssociadosController extends ControllerBase {
     $handle = fopen('php://temp', 'r+');
     fputcsv($handle, ['apelido', 'email', 'situacao', 'data_adesao', 'rg', 'orgao_emissor', 'profissao', 'data_nascimento']);
     foreach ($this->rows() as $r) {
-      fputcsv($handle, [$r['apelido'], $r['email'], $r['situacao'], $r['adesao_iso'], $r['rg'], $r['orgao'], $r['profissao'], $r['nascimento']]);
+      fputcsv($handle, [
+        $this->safeSpreadsheetCell($r['apelido']),
+        $this->safeSpreadsheetCell($r['email']),
+        $this->safeSpreadsheetCell($r['situacao']),
+        $r['adesao_iso'],
+        $this->safeSpreadsheetCell($r['rg']),
+        $this->safeSpreadsheetCell($r['orgao']),
+        $this->safeSpreadsheetCell($r['profissao']),
+        $this->safeSpreadsheetCell($r['nascimento']),
+      ]);
     }
     rewind($handle);
     $csv = stream_get_contents($handle);
@@ -126,6 +135,16 @@ final class AssociadosController extends ControllerBase {
       AssociadoMarker::CONVIDADO => (string) $this->t('Convidado (aguardando aceite)'),
       default => $situacao,
     };
+  }
+
+  /**
+   * Neutraliza fórmulas quando um campo textual for aberto em uma planilha.
+   *
+   * Espaços e controles podem preceder o marcador e ainda permitir
+   * interpretação como fórmula por alguns aplicativos.
+   */
+  private function safeSpreadsheetCell(string $value): string {
+    return preg_match('/^[\s\x00-\x1F]*[=+@-]/u', $value) ? "'" . $value : $value;
   }
 
   private function mask(string $rg): string {
