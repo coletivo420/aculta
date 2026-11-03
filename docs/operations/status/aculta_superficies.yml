@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.1
 state: Dev
-next_phase: Fase 3.0 (roteiro em docs/architecture/TESTES-3.0-ROTAS-SUPERFICIES.md) quando houver Runtime; depois a Fase 3.1 do plano. Retificar o corpo do ADR-038 é decisão separada do responsável.
-progress_note: "0.1.0-dev.1: esqueleto (info.yml, README, CHANGELOG) e planejamento em docs/PLANO-FINAL.md; ADR-043 aceito como direção de modelo. Nenhum código PHP. Testes DEFERRED (sem Runtime nesta sessão)."
+next_phase: Fase 3.1 (unificar os cinco mapas) depois de validar a 3.0 no Runtime (docs/architecture/TESTES-3.0-ROTAS-SUPERFICIES.md). Retificar o corpo do ADR-038 é decisão separada do responsável.
+progress_note: "Fase 3.2 aplicada no código (flag de purpose autoritativo lida no DomainRouteSubscriber do portal; testes DEFERRED). 0.1.0-dev.1: esqueleto (info.yml, README, CHANGELOG) e planejamento em docs/PLANO-FINAL.md; ADR-043 aceito como direção de modelo. Nenhum código PHP. Testes DEFERRED (sem Runtime nesta sessão)."
