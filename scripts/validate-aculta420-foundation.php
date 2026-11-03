@@ -60,6 +60,7 @@ $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
 $assert(is_string($info['version'] ?? NULL) && trim($info['version']) !== '', 'Theme metadata declares a non-empty version.');
+$assert(($info['version'] ?? NULL) === '0.7.0-dev.37', 'Theme Foundation gate tracks the current development version.');
 $discussionCss = file_get_contents($themeRoot . '/css/components/discussion.css');
 $assert(
   str_contains($discussionCss, '[data-aculta-discussion-announcement]')
@@ -130,7 +131,7 @@ $bootstrapPackages = array_values(array_filter(
   static fn(array $package): bool => ($package['name'] ?? '') === 'drupal/bootstrap',
 ));
 $bootstrapPackage = $bootstrapPackages[0] ?? NULL;
-$assert(count($bootstrapPackages) === 1 && ($bootstrapPackage['version'] ?? NULL) === '5.0.2', 'Drupal Bootstrap remains pinned to release 5.0.2.');
+$assert(count($bootstrapPackages) === 1 && ($bootstrapPackage['version'] ?? NULL) === '3.45.0', 'Drupal Bootstrap base theme is pinned to release 8.x-3.45.');
 $bootstrapFrameworkPackages = array_values(array_filter(
   $lock['packages'] ?? [],
   static fn(array $package): bool => ($package['name'] ?? '') === 'twbs/bootstrap',
@@ -142,7 +143,7 @@ $legacyBootstrapPackages = array_filter(
 );
 $assert($legacyBootstrapPackages === [], 'Composer has no legacy Bootstrap5 or SASS starter theme package.');
 $bootstrapInfo = Yaml::parseFile($root . '/web/themes/contrib/bootstrap/bootstrap.info.yml');
-$assert(($bootstrapInfo['version'] ?? NULL) === '5.0.2', 'Installed Drupal Bootstrap base theme matches the locked release.');
+$assert(($bootstrapInfo['version'] ?? NULL) === '8.x-3.45', 'Installed Drupal Bootstrap base theme matches the locked release.');
 
 $hookSourcePath = $themeRoot . '/src/Hook/ThemeHooks.php';
 $assert(is_file($hookSourcePath), 'OOP theme hook class exists.');

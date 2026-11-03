@@ -3,12 +3,11 @@
 declare(strict_types=1);
 
 /**
- * Copy the Composer-managed Bootstrap distribution to Drupal's public library path.
+ * Copy the Composer-managed Bootstrap 5 distribution to the local public library path.
  *
- * The Drupal Bootstrap theme resolves its local framework library from
- * /libraries/bootstrap. The upstream twbs/bootstrap package is a regular
- * Composer library and stays under vendor/, so Composer lifecycle events expose
- * only the CSS and JavaScript assets needed by the theme at that public path.
+ * Drupal Bootstrap 8.x-3.x provides Bootstrap 3 from its configured CDN. ACULTA
+ * keeps this local Bootstrap 5 distribution for its existing browser fixtures
+ * and static integration checks; it is not the base theme's framework asset.
  */
 
 $projectRoot = dirname(__DIR__);
