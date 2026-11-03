@@ -420,3 +420,7 @@ Classificação: PATCH (mapeia a apresentação dos blocos existentes, sem criar
 
 - O check visual agora mede as colunas do shell externo da Conta em desktop/mobile e tolera a borda computada fracionária por zoom. O reteste visual pós dev.32 está registrado no dev.32 abaixo e na auditoria Studio. O primeiro teste integral expôs e levou à correção da leitura do nó raiz em dev.34.
 
+## 0.7.0-dev.35 — aproximar o conteúdo do título global (2026-11-03; validação pendente)
+
+- Substitui a margem fluida de 24–40 px do cabeçalho da página por 20 px via token semântico. A inspeção da captura atual da Conta ainda mostrou espaço excedente entre o H1 e as caixas; o ajuste atende todas as rotas que usam `.aculta-page-heading`, preservando estrutura e cores. Lint, gates e Firefox Runtime pós-ajuste pendentes.
+

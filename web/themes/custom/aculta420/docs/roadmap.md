@@ -1,5 +1,9 @@
 # Roadmap — ACULTA420
 
+## Reduzir intervalo entre título global e conteúdo — 0.7.0-dev.35 (2026-11-03; validação pendente)
+
+`.aculta-page-heading` usa 20 px do token semântico `--aculta-space-5`, no lugar do clamp fluido 24–40 px. O objetivo é manter a escala global compacta também no espaço após o título; verificar telas e propósitos além do Studio após o Runtime.
+
 ## Composição responsiva da Conta Studio — 0.7.0-dev.34 (2026-11-03; Runtime PASS)
 
 O wrapper de Conta também pode ser o `.studio-account-section`; o harness consulta o próprio nó ou o descendente. Firefox ESR visível: 102/102 checks aplicáveis PASS, 21 SKIP, zero falhas. Matriz Conta confirma o layout responsivo em 320/390/768/1280px, 46px de altura mínima, AJAX/histórico, falhas/retry, Form API inválido/válido e sessão expirada. Capturas e JSON ficam em `$SUITE_OUT/studio-spacing-account-dev34-20261103/`.

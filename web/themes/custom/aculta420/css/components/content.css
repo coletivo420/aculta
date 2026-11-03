@@ -1,5 +1,5 @@
-/* 8. Main content: editorial spacing rather than a dashboard of panels. */
-.aculta-page-heading { margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
+/* 8. Main content: compact, consistent separation from the page heading. */
+.aculta-page-heading { margin-bottom: var(--aculta-space-5); }
 .aculta-page-heading h1 { margin: 0; }
 .aculta-highlighted:has(.alert, .nav, .button, .help) { margin-bottom: 1.5rem; }
 /* Status notices in the highlighted region belong in document flow. A fixed
