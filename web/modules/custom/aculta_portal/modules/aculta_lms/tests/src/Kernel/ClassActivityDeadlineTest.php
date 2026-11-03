@@ -6,20 +6,10 @@ namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\Component\Serialization\Yaml;
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Entity\EntityFormInterface;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\aculta_lms\Hook\ActivityDeadlineFormHooks;
+use Drupal\aculta_lms\Entity\ActivityEntity;
+use Drupal\aculta_lms\Entity\LessonEntity;
 use Drupal\group\Entity\Group;
-use Drupal\lms\Entity\Activity;
-use Drupal\lms\Entity\ActivityType;
-use Drupal\lms\Entity\Answer;
-use Drupal\lms\Entity\AnswerInterface;
-use Drupal\lms\Entity\CourseStatus;
-use Drupal\lms\Entity\CourseStatusInterface;
-use Drupal\lms\Entity\Lesson;
-use Drupal\lms\Entity\LessonStatus;
-use Drupal\lms\Entity\LessonStatusInterface;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -40,6 +30,7 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
+    'key',
     'system', 'domain',
     'datetime',
     'user',
@@ -49,7 +40,7 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
     'options',
     'entity_print',
     'entity_usage',
-    'aculta_image',
+    'aculta_image', 'aculta_file_uploader',
     'field',
     'filter',
     'flexible_permissions',
@@ -95,11 +86,8 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
-    $this->installEntitySchema('lms_lesson');
-    $this->installEntitySchema('lms_activity');
-    $this->installEntitySchema('lms_course_status');
-    $this->installEntitySchema('lms_lesson_status');
-    $this->installEntitySchema('lms_answer');
+    $this->installEntitySchema('aculta_lms_lesson');
+    $this->installEntitySchema('aculta_lms_activity');
   }
 
   /**
@@ -107,20 +95,22 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
    */
   public function testDeadlinePersistsPerClassWithoutChangingActivity(): void {
     $owner = $this->createUser();
-    ActivityType::create(['id' => 'deadline_test', 'name' => 'Deadline test', 'pluginId' => 'no_answer'])->save();
-    $activity = Activity::create([
-      'type' => 'deadline_test',
-      'name' => 'Atividade compartilhada',
-      'status' => 1,
-      'uid' => $owner->id(),
+    $course = Group::create(['type' => 'lms_course', 'label' => 'Curso', 'uid' => $owner->id()]);
+    $course->save();
+    $lesson = LessonEntity::create([
+      'course_id' => $course->id(),
+      'title' => 'Aula',
+      'published' => TRUE,
+      'weight' => 0,
+    ]);
+    $lesson->save();
+    $activity = ActivityEntity::create([
+      'lesson_id' => $lesson->id(),
+      'type' => 'true_false',
+      'graded' => TRUE,
+      'weight' => 0,
     ]);
     $activity->save();
-    $lesson = Lesson::create(['name' => 'Aula', 'status' => 1, 'uid' => $owner->id()]);
-    $lesson->get('activities')->appendItem(['target_id' => $activity->id()]);
-    $lesson->save();
-    $course = Group::create(['type' => 'lms_course', 'label' => 'Curso', 'uid' => $owner->id()]);
-    $course->get('lessons')->appendItem(['target_id' => $lesson->id()]);
-    $course->save();
     $unlinkedClass = Group::create(['type' => 'lms_class', 'label' => 'Turma sem vínculo', 'uid' => $owner->id()]);
     $unlinkedClass->save();
     $accessCheck = $this->container->get('aculta_lms.class_activity_deadline_access');
@@ -171,45 +161,7 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
     self::assertFalse($classA->hasPermission('take course', $learner), 'Take-course permission is evaluated on the parent course, not on the class group.');
     self::assertSame($deadlineA->id(), $manager->deadlineForLearner($course, $activity, $learner)?->id());
     self::assertNull($manager->deadlineForLearner($course, $activity, $outsider));
-    self::assertSame('Atividade compartilhada', $activity->label());
-
-    $course_status = CourseStatus::create([
-      CourseStatusInterface::COURSE_FIELD => $course->id(),
-      'uid' => $learner->id(),
-      'current' => TRUE,
-    ]);
-    $course_status->save();
-    $lesson_status = LessonStatus::create([
-      'course_status' => $course_status->id(),
-      LessonStatusInterface::LESSON_FIELD => $lesson->id(),
-    ]);
-    $lesson_status->save();
-    $answer = Answer::create([
-      'user_id' => $learner->id(),
-      'lesson_status' => $lesson_status->id(),
-      AnswerInterface::ACTIVITY_FIELD => ['target_id' => $activity->id()],
-    ]);
-    $answer->setData(['answer' => 'Resposta de teste']);
-    $answer->save();
-
-    $form_object = $this->createMock(EntityFormInterface::class);
-    $form_object->method('getEntity')->willReturn($answer);
-    $form_state = $this->createMock(FormStateInterface::class);
-    $form_state->method('getFormObject')->willReturn($form_object);
-    $date_formatter = $this->container->get('date.formatter');
-    $hook = $this->container->get(ActivityDeadlineFormHooks::class);
-    self::assertInstanceOf(ActivityDeadlineFormHooks::class, $hook);
-    $form = [];
-    $hook->answerFormAlter($form, $form_state);
-
-    self::assertSame('item', $form['aculta_lms_activity_deadline']['#type']);
-    $expected_date = $date_formatter->format(
-      (new \DateTimeImmutable('2026-10-22T12:00:00', new \DateTimeZone('UTC')))->getTimestamp(),
-      'long',
-      NULL,
-      'America/Sao_Paulo',
-    );
-    self::assertStringContainsString($expected_date, (string) $form['aculta_lms_activity_deadline']['#markup']);
+    self::assertSame('true_false', $activity->get('type')->value);
   }
 
 }

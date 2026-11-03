@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms_h5p\aculta_H5PDrupal;
 
-use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
+use Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner;
 use Drupal\aculta_image\ImageFileUsageManager;
 use Drupal\aculta_image\PackagedAssetPublisher;
 use Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PFileUsageManager;

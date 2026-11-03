@@ -8,6 +8,7 @@
 - [x] Auditar rotas administrativas servidas por controllers no checkout de 2026-10-28; filas editoriais existentes estão na allowlist e nenhum controller adicional atende ao critério.
 - [x] Corrigir colisão de caminho: `/painel-administrativo/conteudo` era compartilhado com a listagem Core `view.content.page_1`; rota customizada agora é `/painel-administrativo/colecoes-moderaveis`, sem alias transitório.
 - [x] Repetir revisão visual/acessível autenticada do candidato servido. Evidência atualizada na seção RC abaixo.
+- [x] Integrar a fila de propostas de Organizações do `aculta_contributions` pela rota nativa Events, preservando `administer aculta events`.
 
 ### Auditoria de controllers — 2026-10-28
 

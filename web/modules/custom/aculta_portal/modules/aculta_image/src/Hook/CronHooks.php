@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_image\Hook;
 
-use Drupal\aculta_image\Audit\ImageAudit;
-use Drupal\aculta_image\ImageCleanup;
+use Drupal\aculta_file_uploader\Audit\ImageAudit;
+use Drupal\aculta_file_uploader\Cleanup\ImageCleanup;
 use Drupal\Core\Hook\Attribute\Hook;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -21,9 +21,9 @@ final class CronHooks {
   private const LOTE = 200;
 
   public function __construct(
-    #[Autowire(service: 'aculta_image.audit')]
+    #[Autowire(service: 'aculta_file_uploader.audit')]
     private readonly ImageAudit $audit,
-    #[Autowire(service: 'aculta_image.cleanup')]
+    #[Autowire(service: 'aculta_file_uploader.cleanup')]
     private readonly ImageCleanup $cleanup,
   ) {}
 

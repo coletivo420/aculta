@@ -10,9 +10,9 @@ use Drupal\aculta_events\Controller\EventCatalogueController;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Controller\EventPageController;
-use Drupal\lms\Entity\Activity;
-use Drupal\lms\Entity\ActivityType;
-use Drupal\lms\Entity\Lesson;
+use Drupal\aculta_lms\Entity\ActivityEntity;
+use Drupal\aculta_lms\Entity\LessonEntity;
+use Drupal\aculta_lms_agenda\Hook\EventAccessHooks;
 use Drupal\group\Entity\Group;
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
 use Drupal\Tests\aculta_lms\Kernel\AcultaLmsDependencyHarnessTrait;
@@ -40,7 +40,7 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
    */
   protected static $modules = [
     'system', 'key', 'address', 'geofield', 'domain', 'datetime', 'datetime_range', 'user', 'file', 'image', 'media', 'options', 'link',
-    'entity_print', 'entity_usage', 'aculta_image', 'field', 'filter', 'flexible_permissions',
+    'entity_print', 'entity_usage', 'aculta_image', 'aculta_file_uploader', 'field', 'filter', 'flexible_permissions',
     'group', 'lms', 'lms_classes', 'views', 'text', 'taxonomy', 'aculta_lms', 'aculta_calendar',
     'aculta_events', 'aculta_lms_agenda',
   ];
@@ -58,7 +58,7 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installConfig(['system', 'group', 'lms', 'lms_classes']);
+    $this->installConfig(['system', 'group', 'lms', 'lms_classes', 'aculta_lms']);
     foreach ([
       'group.relationship_type.lms_class-lms_class_activity_due',
       'field.storage.group_relationship.field_activity_due_at',
@@ -77,11 +77,8 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
-    $this->installEntitySchema('lms_lesson');
-    $this->installEntitySchema('lms_activity');
-    $this->installEntitySchema('lms_course_status');
-    $this->installEntitySchema('lms_lesson_status');
-    $this->installEntitySchema('lms_answer');
+    $this->installEntitySchema('aculta_lms_lesson');
+    $this->installEntitySchema('aculta_lms_activity');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('aculta_event');
     $this->installEntitySchema('aculta_event_date');
@@ -99,24 +96,34 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Creates a published P2 lesson and activity inside a course.
+   */
+  private function createCourseActivity(Group $course, string $title, string $type): ActivityEntity {
+    $lesson = LessonEntity::create([
+      'course_id' => $course->id(),
+      'title' => $title,
+      'published' => TRUE,
+      'weight' => 0,
+    ]);
+    $lesson->save();
+    $activity = ActivityEntity::create([
+      'lesson_id' => $lesson->id(),
+      'type' => $type,
+      'graded' => FALSE,
+      'weight' => 0,
+    ]);
+    $activity->save();
+    return $activity;
+  }
+
+  /**
    * Aluno matriculado vê prazo e evento da turma; visitante não vê nada.
    */
   public function testSoMatriculadosVeemAsEntradasDaTurma(): void {
     $dono = $this->createUser();
-    ActivityType::create(['id' => 'agenda_test', 'name' => 'Agenda test', 'pluginId' => 'no_answer'])->save();
-    $atividade = Activity::create([
-      'type' => 'agenda_test',
-      'name' => 'Atividade de agenda',
-      'status' => 1,
-      'uid' => $dono->id(),
-    ]);
-    $atividade->save();
-    $aula = Lesson::create(['name' => 'Aula', 'status' => 1, 'uid' => $dono->id()]);
-    $aula->get('activities')->appendItem(['target_id' => $atividade->id()]);
-    $aula->save();
     $curso = Group::create(['type' => 'lms_course', 'label' => 'Curso de agenda', 'uid' => $dono->id(), 'status' => 1]);
-    $curso->get('lessons')->appendItem(['target_id' => $aula->id()]);
     $curso->save();
+    $atividade = $this->createCourseActivity($curso, 'Aula', 'agenda_item');
     $turma = Group::create(['type' => 'lms_class', 'label' => 'Turma A', 'uid' => $dono->id(), 'status' => 1]);
     $turma->save();
     $curso->addRelationship($turma, 'lms_classes');
@@ -157,6 +164,10 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $visitante = $this->createUser();
 
     $this->assertTrue($evento->access('view', $aluno));
+    $this->assertTrue($this->container->get('module_handler')->hasImplementations('entity_access', ['aculta_lms_agenda']));
+    $hookResult = $this->container->get(EventAccessHooks::class)->entityAccess($evento, 'view', $alunoOutraTurma);
+    $this->assertTrue($hookResult->isForbidden());
+    $this->assertFalse($this->container->get('aculta_lms_agenda.event_access')->access($evento, $alunoOutraTurma)->isAllowed(), 'The class access service must deny members of another class.');
     $this->assertFalse($evento->access('view', $alunoOutraTurma));
     $this->assertFalse($evento->access('view', $visitante));
     $this->assertTrue($eventoDaOutraTurma->access('view', $alunoOutraTurma));
@@ -274,20 +285,9 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $evento = $agora->modify('+3 days')->setTime(19, 0);
 
     $dono = $this->createUser();
-    ActivityType::create(['id' => 'painel_test', 'name' => 'Painel test', 'pluginId' => 'no_answer'])->save();
-    $atividade = Activity::create([
-      'type' => 'painel_test',
-      'name' => 'Leitura do painel',
-      'status' => 1,
-      'uid' => $dono->id(),
-    ]);
-    $atividade->save();
-    $aula = Lesson::create(['name' => 'Aula do painel', 'status' => 1, 'uid' => $dono->id()]);
-    $aula->get('activities')->appendItem(['target_id' => $atividade->id()]);
-    $aula->save();
     $curso = Group::create(['type' => 'lms_course', 'label' => 'Curso do painel', 'uid' => $dono->id(), 'status' => 1]);
-    $curso->get('lessons')->appendItem(['target_id' => $aula->id()]);
     $curso->save();
+    $atividade = $this->createCourseActivity($curso, 'Aula do painel', 'panel_reading');
     $turma = Group::create(['type' => 'lms_class', 'label' => 'Turma do painel', 'uid' => $dono->id(), 'status' => 1]);
     $turma->save();
     $curso->addRelationship($turma, 'lms_classes');
@@ -331,20 +331,9 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $prazo = (new \DateTimeImmutable('now', $fuso))->modify('+2 days')->setTime(12, 0);
 
     $dono = $this->createUser();
-    ActivityType::create(['id' => 'pessoal_test', 'name' => 'Pessoal test', 'pluginId' => 'no_answer'])->save();
-    $atividade = Activity::create([
-      'type' => 'pessoal_test',
-      'name' => 'Leitura pessoal',
-      'status' => 1,
-      'uid' => $dono->id(),
-    ]);
-    $atividade->save();
-    $aula = Lesson::create(['name' => 'Aula pessoal', 'status' => 1, 'uid' => $dono->id()]);
-    $aula->get('activities')->appendItem(['target_id' => $atividade->id()]);
-    $aula->save();
     $curso = Group::create(['type' => 'lms_course', 'label' => 'Curso pessoal', 'uid' => $dono->id(), 'status' => 1]);
-    $curso->get('lessons')->appendItem(['target_id' => $aula->id()]);
     $curso->save();
+    $atividade = $this->createCourseActivity($curso, 'Aula pessoal', 'personal_reading');
     $turma = Group::create(['type' => 'lms_class', 'label' => 'Turma pessoal', 'uid' => $dono->id(), 'status' => 1]);
     $turma->save();
     $curso->addRelationship($turma, 'lms_classes');
@@ -358,7 +347,7 @@ final class AgendaEntriesProviderKernelTest extends KernelTestBase {
     $resposta = PersonalCalendarController::create($this->container)->exportar($token);
 
     $this->assertSame(200, $resposta->getStatusCode());
-    $this->assertStringContainsString('SUMMARY:Prazo: Leitura pessoal', (string) $resposta->getContent());
+    $this->assertStringContainsString('SUMMARY:Prazo: Personal reading', (string) $resposta->getContent());
     $this->assertStringContainsString('no-store', (string) $resposta->headers->get('Cache-Control'));
 
     $tokens->revogar((int) $aluno->id());

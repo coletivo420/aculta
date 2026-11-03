@@ -16,7 +16,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\media\MediaInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\node\NodeInterface;
@@ -119,8 +119,8 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
     self::assertSame('courses', $provider->getAccessPurpose($course));
     self::assertSame(['group' => ['lms_course']], $provider->getSupportedEntityTypes());
 
-    $course->method('takeAccess')->willReturn(AccessResult::forbidden());
     $course->method('hasPermission')->willReturnMap([
+      ['take course', $account, FALSE],
       ['administer members', $account, FALSE],
       ['grade students', $account, TRUE],
     ]);
@@ -134,11 +134,14 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
     $provider = $this->createProvider();
     $course = $this->createCourse();
     $account = $this->createMock(AccountInterface::class);
-    $course->method('takeAccess')->willReturn(AccessResult::allowed());
-    $course->method('hasPermission')->willReturn(FALSE);
+    $course->method('hasPermission')->willReturnMap([
+      ['take course', $account, TRUE],
+      ['administer members', $account, FALSE],
+      ['grade students', $account, FALSE],
+    ]);
     self::assertTrue($provider->checkAccess($course, $account)->isAllowed());
 
-    $unrelated = $this->createMock(CourseInterface::class);
+    $unrelated = $this->createMock(GroupInterface::class);
     $unrelated->method('bundle')->willReturn('lms_class');
     self::assertNull($provider->project($unrelated));
     self::assertFalse($provider->checkAccess($unrelated, $account)->isAllowed());
@@ -152,10 +155,10 @@ final class LmsCourseContentIndexProviderTest extends UnitTestCase {
     ?EntityReferenceFieldItemListInterface $galleries = NULL,
     array $documents = [],
     ?EntityReferenceFieldItemListInterface $videos = NULL,
-  ): CourseInterface {
+  ): GroupInterface {
     $language = $this->createMock(LanguageInterface::class);
     $language->method('getId')->willReturn('pt-br');
-    $course = $this->createMock(CourseInterface::class);
+    $course = $this->createMock(GroupInterface::class);
     $course->method('getEntityTypeId')->willReturn('group');
     $course->method('bundle')->willReturn('lms_course');
     $course->method('id')->willReturn('8');

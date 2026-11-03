@@ -21,6 +21,24 @@ Descrição reutilizável. Um evento pode ter várias datas.
 | `field_organizador` | entity_reference (`user`/perfil) | `field_people_reference` | Via `aculta_user`, opt-in |
 | `field_status` | list_string | `field_status` | Rascunho, publicado, cancelado |
 
+### Configuração estrutural de RSVP — D-60
+
+Campos técnicos de RSVP em `aculta_event` representam as escolhas definidas em D-60. `field_rsvp_ativo` tem padrão `FALSE`; os campos não são exibidos no formulário do organizador enquanto não existir o fluxo completo de inscrição. `field_rsvp_capacidade` no Evento e na Data, e `field_capacidade` na oferta/lote, guardam limites nominais conforme `field_rsvp_escopo_capacidade`. Esses valores não reservam vagas nem medem disponibilidade consumida.
+
+| Campo em `aculta_event` | Tipo | Padrão/contrato |
+| --- | --- | --- |
+| `field_rsvp_ativo` | boolean | `FALSE`; não inicia inscrição |
+| `field_rsvp_escopo_capacidade` | list_string | `evento`, `data` ou `lote`; padrão `evento` |
+| `field_rsvp_capacidade` | integer | Capacidade nominal opcional; mínimo 1 quando informado |
+| `field_rsvp_limite_pessoa` | integer | Padrão 1; mínimo 1 |
+| `field_rsvp_duplicidade` | list_string | `impedir` (padrão) ou `permitir` |
+| `field_rsvp_reserva_minutos` | integer | Duração opcional; vazio significa que não há reserva temporária configurada |
+| `field_rsvp_lista_espera` | boolean | `FALSE` |
+| `field_rsvp_cancelamento` | list_string | Deve ser configurado quando o fluxo for habilitado |
+| `field_rsvp_serie` | list_string | `ocorrencia` (padrão) ou `serie` |
+
+`aculta_event_date.field_rsvp_capacidade` guarda limite por ocorrência. A entidade oferta usa `field_capacidade` quando o Evento seleciona escopo por lote. `RsvpPolicyResolver` valida a configuração e os vínculos do contexto antes de entregar uma política interna; oferta contextual precisa estar ativa e ser gratuita. A resolução não grava participantes nem reserva vagas. Concorrência, idempotência, deduplicação de participantes e expiração só serão efetivas quando o serviço transacional de inscrições existir.
+
 ## Data (ocorrência) — `aculta_event_date`
 
 Uma ocorrência do evento, em um local, em um intervalo.
@@ -121,9 +139,23 @@ aculta_event (1) ──< aculta_event_date (n) >── (1) aculta_event_location
 - Datas passadas saem da agenda principal e continuam acessíveis pelo arquivo do calendário.
 
 
-## Ingressos gratuitos e pagos - proposta de integração (ADR-036)
+## Ingressos gratuitos e pagos - integração planejada (ADR-036)
 
-O estado atual continua sem ticketing interno: `field_gratuito`, `field_pricing` e `field_pricing_info` são informativos; `field_ticketing` é link externo. Não há RSVP com emissão, venda Commerce, lote/estoque ligado a Data, emissão pós-pagamento ou check-in integrado.
+`field_gratuito`, `field_pricing` e `field_pricing_info` continuam informativos; `field_ticketing` é link externo. A entidade `aculta_event_offer` agora registra a estrutura de uma oferta/lote pertencente ao Evento e opcionalmente a uma Data. Ela não representa RSVP, pedido, pagamento, estoque consumido, ingresso ou check-in; ofertas são inativas por padrão e não têm rotas públicas.
+
+| Campo em `aculta_event_offer` | Tipo | Contrato |
+| --- | --- | --- |
+| `title` | string | Nome obrigatório da oferta/lote |
+| `field_evento` | entity_reference (`aculta_event`) | Evento obrigatório, sem duplicar Evento |
+| `field_data` | entity_reference (`aculta_event_date`) | Data/ocorrência opcional |
+| `field_modalidade` | list_string | `gratuita` ou `paga`; não inicia transação |
+| `field_preco` | decimal | Valor nominal não negativo; não é pedido ou registro financeiro |
+| `field_capacidade` | integer | Capacidade nominal opcional; disponibilidade consumida exige serviço transacional futuro |
+| `field_limite_por_pedido` | integer | Limite positivo; valor inicial 1 |
+| `field_inicio_vendas` / `field_fim_vendas` | datetime | Janela nominal da oferta, ainda sem fluxo público |
+| `field_ativa` | boolean | Padrão `FALSE`; nenhum usuário pode ativar sem fluxo de gestão autorizado |
+
+O tipo exige `administer aculta events` para qualquer operação e não declara links canônicos, criação ou edição. A validação de valores negativos usa constraints dos campos; regras cruzadas, capacidade atômica e administração por organizador permanecem pendentes.
 
 - **Ownership:** `aculta_events` é dono das ofertas/lotes, inscrições/participantes, emissão e check-in. `aculta_commerce` mantém pedidos e order items pagos; `aculta_pagamentos_mercadopago` mantém o gateway; `aculta_portal` coordena os tipos/contextos no carrinho já existente. Sem gateway, carrinho ou storage financeiro paralelo.
 - **Gratuito (proposta):** RSVP sem cobrança, nome e e-mail (D-33/D-40), sem CPF, pedido Commerce, carrinho ou Mercado Pago. Confirmar capacidade atomicamente e emitir credencial consumível uma vez no check-in. Não coletar dados reais em produção antes da revisão LGPD/base legal/aviso/retenção.
@@ -135,11 +167,11 @@ O estado atual continua sem ticketing interno: `field_gratuito`, `field_pricing`
 
 ### Decisões ainda abertas
 
-RSVP obrigatório ou opcional; limite por pessoa e prevenção de duplicidade; capacidade por lote versus Data; reserva temporária/expiração/fila; cancelamento e liberação de vaga; abrangência por série; transferência; entrega/acessibilidade do ingresso; retenção/base legal; critérios para migrar links externos.
+D-60/D-61 já definiram RSVP opcional, escopo de capacidade Evento/Data/Lote, regras configuráveis de limite/duplicidade/reserva/espera/cancelamento, abrangência por ocorrência/série e transferência auditável. Permanecem os gates LGPD para coleta pública, jurídico-fiscais para venda paga, contrato do item Commerce e especificação acessível de credencial/check-in. Definir precedência e migração de links externos antes de ativar ofertas públicas.
 
-### Evolução do modelo (não implementada)
+### Evolução restante do modelo
 
-- Oferta/lote ligado ao Evento e Data; não usar preço textual como valor transacional.
+- O modelo estrutural da oferta/lote está implementado; falta a interface autorizada de gestão, validação das regras e o contrato de item de pedido Commerce. Não usar preço textual como valor transacional.
 - Inscrição/participante e credencial devem atender RSVP gratuito sem pedido/pagamento e compra paga ligada a order item Commerce.
-- Capacidade e reserva precisam ser transacionais e protegidas contra overbooking concorrente. Definir entity/Commerce variation na P2.
+- Capacidade e reserva precisam ser transacionais e protegidas contra overbooking concorrente; a entidade de oferta não controla disponibilidade consumida. O contrato de item de pedido Commerce permanece separado.
 - Preservar campos atuais até aprovar fonte de exibição e migração; não indexar PII, pedidos ou tokens.

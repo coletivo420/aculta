@@ -16,7 +16,9 @@ use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
-/** Representação de conquistas, sem publicar evidências ou dados de origem. */
+/**
+ * Representação de conquistas, sem publicar evidências ou dados de origem.
+ */
 final class AchievementPresentation {
 
   use StringTranslationTrait;
@@ -29,13 +31,22 @@ final class AchievementPresentation {
     private readonly ModuleExtensionList $modules,
   ) {}
 
-  /** Preferências ausentes significam exibição pública, sem destaques. */
+  /**
+   * Preferências ausentes significam exibição pública, sem destaques.
+   */
   public function preferences(int $uid): array {
     $stored = $this->userData->get('aculta_user', $uid, 'game_achievement_display');
-    return is_array($stored) ? $stored + ['hide_all' => FALSE, 'items' => [], 'email_notifications' => TRUE] : ['hide_all' => FALSE, 'items' => [], 'email_notifications' => TRUE];
+    $defaults = [
+      'hide_all' => FALSE,
+      'items' => [],
+      'email_notifications' => TRUE,
+    ];
+    return is_array($stored) ? $stored + $defaults : $defaults;
   }
 
-  /** API interna; o chamador deve autorizar a pessoa que altera as escolhas. */
+  /**
+   * API interna; o chamador deve autorizar a pessoa que altera as escolhas.
+   */
   public function savePreferences(int $uid, array $preferences): void {
     if ($uid <= 0) {
       throw new \InvalidArgumentException('Preferências exigem uma conta.');
@@ -58,14 +69,18 @@ final class AchievementPresentation {
     $this->cacheInvalidator->invalidateTags(['aculta_game:display:' . $uid]);
   }
 
-  /** Lista própria: não depende das preferências públicas. */
+  /**
+   * Lista própria: não depende das preferências públicas.
+   */
   public function own(int $uid): array {
     $build = $this->listing($uid, FALSE);
     $build['#cache']['contexts'][] = 'user';
     return $build;
   }
 
-  /** Perfil e futuras caixas devem usar esta mesma projeção pública. */
+  /**
+   * Perfil e futuras caixas devem usar esta mesma projeção pública.
+   */
   public function publicFor(ProfileInterface $profile): array {
     $uid = (int) $profile->getOwnerId();
     $cache = $this->cache($uid)->addCacheableDependency($profile);
@@ -84,6 +99,9 @@ final class AchievementPresentation {
     return $build;
   }
 
+  /**
+   * Build the own or public achievement listing.
+   */
   private function listing(int $uid, bool $public): array {
     $preferences = $this->preferences($uid);
     $cache = $this->cache($uid);
@@ -178,7 +196,14 @@ final class AchievementPresentation {
           '#type' => 'container',
           'image' => $this->imageForDefinition($catalog[$row['id']]),
           // ItemList interpreta filhos sem #type como sublistas.
-          'label' => ['#type' => 'container', 'text' => ['#plain_text' => $row['highlight'] ? $this->t('@conquista — em destaque', ['@conquista' => $row['label']]) : (string) $row['label']]],
+          'label' => [
+            '#type' => 'container',
+            'text' => [
+              '#plain_text' => $row['highlight']
+                ? $this->t('@conquista — em destaque', ['@conquista' => $row['label']])
+                : (string) $row['label'],
+            ],
+          ],
         ];
       }
       $build = [
@@ -192,7 +217,9 @@ final class AchievementPresentation {
     return $build;
   }
 
-  /** IDs concedidos ativos para formar a ficha única de cada conquista. */
+  /**
+   * IDs concedidos ativos para formar a ficha única de cada conquista.
+   */
   public function earnedIds(int $uid): array {
     $ids = [];
     foreach ($this->badges->activeFor($uid) as $award) {
@@ -201,7 +228,9 @@ final class AchievementPresentation {
     return $ids;
   }
 
-  /** Imagem pública atual, com fallback dos arquivos históricos importados. */
+  /**
+   * Imagem pública atual, com fallback dos arquivos históricos importados.
+   */
   public function imageForDefinition(array $definition, bool $useFallback = FALSE, string $achievementId = ''): array {
     if (!empty($definition['image_uuid'])) {
       $files = $this->entities->getStorage('file')->loadByProperties(['uuid' => $definition['image_uuid']]);
@@ -254,10 +283,16 @@ final class AchievementPresentation {
     ] : [];
   }
 
+  /**
+   * Return the configured achievement definitions.
+   */
   public function definitions(): array {
     return $this->badges->definitions();
   }
 
+  /**
+   * Build cache metadata for one account achievement listing.
+   */
   private function cache(int $uid): CacheableMetadata {
     return (new CacheableMetadata())->addCacheTags([
       'user:' . $uid,

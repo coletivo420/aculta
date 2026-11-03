@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Presentation;
 
+use Drupal\aculta_learning_contracts\Learning\AccountCourseSummary;
 use Drupal\aculta_portal\AccountCoursesManager;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\lms\Entity\CourseStatusInterface;
 
 /**
- * Prepares ACCOUNT course view-models without owning LMS/Group state.
+ * Prepares account course view-models from provider-neutral course data.
  *
- * AccountCoursesManager remains responsible for authorized source data and
- * cross-domain course URLs. This presenter adds user-facing semantics that can
- * feed the current fallback render arrays or a future theme component.
+ * User-facing labels and tones belong to the Portal presenter; provider access
+ * and course progress remain behind the neutral learning contract.
  */
 final class AccountCoursePresenter {
 
@@ -46,7 +45,7 @@ final class AccountCoursePresenter {
     $items = [];
 
     foreach ($this->courses->getCourses($account) as $course) {
-      $statusCode = $course['status'] !== '' ? (string) $course['status'] : 'not_started';
+      $statusCode = (string) ($course['status'] ?? AccountCourseSummary::STATUS_NOT_STARTED);
       $score = $course['score'];
       $url = $course['url'];
 
@@ -85,28 +84,28 @@ final class AccountCoursePresenter {
   }
 
   /**
-   * Maps LMS state to the shared semantic presentation contract.
+   * Maps the shared learning status vocabulary to account presentation.
    *
    * @return array{code: string, label: string, tone: string}
    */
   private function statusPresentation(string $status): array {
     return match ($status) {
-      CourseStatusInterface::STATUS_PROGRESS => [
+      AccountCourseSummary::STATUS_IN_PROGRESS => [
         'code' => $status,
         'label' => (string) $this->translation->translate('Em andamento'),
         'tone' => 'info',
       ],
-      CourseStatusInterface::STATUS_PASSED => [
+      AccountCourseSummary::STATUS_COMPLETED => [
         'code' => $status,
         'label' => (string) $this->translation->translate('Concluído'),
         'tone' => 'success',
       ],
-      CourseStatusInterface::STATUS_FAILED => [
+      AccountCourseSummary::STATUS_FAILED => [
         'code' => $status,
         'label' => (string) $this->translation->translate('Não aprovado'),
         'tone' => 'danger',
       ],
-      CourseStatusInterface::STATUS_NEEDS_EVALUATION => [
+      AccountCourseSummary::STATUS_AWAITING_EVALUATION => [
         'code' => $status,
         'label' => (string) $this->translation->translate('Aguardando avaliação'),
         'tone' => 'warning',

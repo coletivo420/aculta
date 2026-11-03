@@ -1,0 +1,143 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_lms\Notice;
+
+use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupMembership;
+use Drupal\group\Entity\GroupRelationshipInterface;
+use Drupal\user\UserInterface;
+
+/**
+ * Educational eligibility rules used by producers and Messenger consumers.
+ */
+final class LearningEligibility implements LearningEligibilityInterface {
+
+  public function __construct(
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly ClassActivityDeadlineManager $deadlines,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function courseForAnswer(EntityInterface $answer): ?GroupInterface {
+    if ($answer->getEntityTypeId() !== 'aculta_lms_answer') {
+      return NULL;
+    }
+    $activity = $this->entityTypeManager->getStorage('aculta_lms_activity')->load((int) $answer->get('activity_id')->value);
+    if (!$activity instanceof EntityInterface) {
+      return NULL;
+    }
+    $lesson = $this->entityTypeManager->getStorage('aculta_lms_lesson')->load((int) $activity->get('lesson_id')->value);
+    if (!$lesson instanceof EntityInterface) {
+      return NULL;
+    }
+    $course = $this->entityTypeManager->getStorage('group')->load((int) $lesson->get('course_id')->value);
+    return $course instanceof GroupInterface && $course->bundle() === 'lms_course' ? $course : NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function coursesForContent(EntityInterface $content): array {
+    if ($content instanceof GroupInterface && $content->bundle() === 'lms_course') {
+      return [$content];
+    }
+    $lesson = NULL;
+    if ($content->getEntityTypeId() === 'aculta_lms_lesson') {
+      $lesson = $content;
+    }
+    elseif ($content->getEntityTypeId() === 'aculta_lms_activity') {
+      $lesson = $this->entityTypeManager->getStorage('aculta_lms_lesson')->load((int) $content->get('lesson_id')->value);
+    }
+    if (!$lesson instanceof EntityInterface) {
+      return [];
+    }
+    $course = $this->entityTypeManager->getStorage('group')->load((int) $lesson->get('course_id')->value);
+    return $course instanceof GroupInterface && $course->bundle() === 'lms_course' ? [$course] : [];
+  }
+
+  /** {@inheritdoc} */
+  public function isContentAvailable(EntityInterface $content): bool {
+    if ($content instanceof GroupInterface && $content->bundle() === 'lms_course') {
+      return $content->isPublished();
+    }
+    if ($content->getEntityTypeId() === 'aculta_lms_lesson') {
+      return (bool) $content->get('published')->value;
+    }
+    if ($content->getEntityTypeId() === 'aculta_lms_activity') {
+      $lesson = $this->entityTypeManager->getStorage('aculta_lms_lesson')->load((int) $content->get('lesson_id')->value);
+      return $lesson instanceof EntityInterface && (bool) $lesson->get('published')->value;
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasCurrentEnrollment(GroupInterface $course, AccountInterface $account): bool {
+    if (!$course->hasPermission('take course', $account)) {
+      return FALSE;
+    }
+    $classRelationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
+      'entity_id' => $course->id(),
+      'plugin_id' => 'lms_classes',
+    ]);
+    foreach ($classRelationships as $relationship) {
+      $class = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
+      if ($class === NULL || $class->bundle() !== 'lms_class') {
+        continue;
+      }
+      foreach (GroupMembership::loadByGroup($class) as $membership) {
+        $member = $membership->getEntity();
+        if ($membership->getPluginId() === 'group_membership'
+          && $member instanceof UserInterface && $member->isActive()
+          && (int) $member->id() === (int) $account->id()) {
+          return TRUE;
+        }
+      }
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function memberCanTakeCourseInClass(GroupInterface $class, AccountInterface $account): bool {
+    $course = $this->deadlines->courseForClass($class);
+    if (!$course->hasPermission('take course', $account)) {
+      return FALSE;
+    }
+    foreach (GroupMembership::loadByGroup($class) as $membership) {
+      $member = $membership->getEntity();
+      if ($member instanceof UserInterface && $member->isActive()
+        && (int) $member->id() === (int) $account->id()
+        && $membership->getPluginId() === 'group_membership') {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function courseForClass(GroupInterface $class): ?GroupInterface {
+    return $this->deadlines->courseForClass($class);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function activityBelongsToCourse(ContentEntityInterface $activity, GroupInterface $course): bool {
+    return $this->deadlines->activityBelongsToCourse($activity, $course);
+  }
+
+}

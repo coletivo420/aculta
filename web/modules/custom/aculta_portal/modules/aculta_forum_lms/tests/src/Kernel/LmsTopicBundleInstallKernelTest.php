@@ -27,6 +27,8 @@ use Symfony\Component\Yaml\Yaml;
 #[RunTestsInSeparateProcesses]
 final class LmsTopicBundleInstallKernelTest extends KernelTestBase {
 
+  use LmsForumDependencyHarnessTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -45,6 +47,11 @@ final class LmsTopicBundleInstallKernelTest extends KernelTestBase {
     'gnode',
     'lms',
     'lms_classes',
+    'aculta_lms',
+    'key',
+    'file',
+    'domain',
+    'aculta_file_uploader',
     'aculta_forum_lms_test',
   ];
 
@@ -123,7 +130,7 @@ final class LmsTopicBundleInstallKernelTest extends KernelTestBase {
     self::assertInstanceOf(FieldConfig::class, $activity_field);
     $activity_storage = FieldStorageConfig::load('node.field_lms_activity');
     self::assertInstanceOf(FieldStorageConfig::class, $activity_storage);
-    self::assertSame('lms_activity', $activity_storage->getSetting('target_type'));
+    self::assertSame('aculta_lms_activity', $activity_storage->getSetting('target_type'));
   }
 
   /**

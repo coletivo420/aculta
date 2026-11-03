@@ -6,14 +6,13 @@ namespace Drupal\aculta_forum_lms\Context;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Link;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipStorageInterface;
-use Drupal\lms\Entity\ActivityInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\node\NodeInterface;
 use Drupal\user\UserInterface;
 
@@ -38,7 +37,7 @@ final class LmsActivityDiscussionResolver {
    * A topic can be attached to the course or one of its classes. Group access
    * remains authoritative, so learners see only the contexts they can access.
    */
-  public function build(ActivityInterface $activity, CourseInterface $course, UserInterface $account): array {
+  public function build(ContentEntityInterface $activity, GroupInterface $course, UserInterface $account): array {
     $cache = (new CacheableMetadata())
       ->addCacheableDependency($activity)
       ->addCacheableDependency($course)
@@ -124,7 +123,7 @@ final class LmsActivityDiscussionResolver {
   /**
    * Checks that a topic's Group is the course or one of its valid classes.
    */
-  private function belongsToCourse(GroupInterface $group, CourseInterface $course, GroupRelationshipStorageInterface $storage, CacheableMetadata $cache): bool {
+  private function belongsToCourse(GroupInterface $group, GroupInterface $course, GroupRelationshipStorageInterface $storage, CacheableMetadata $cache): bool {
     if ((string) $group->id() === (string) $course->id()) {
       return $group->bundle() === 'lms_course';
     }
@@ -141,10 +140,10 @@ final class LmsActivityDiscussionResolver {
       $cache->addCacheableDependency($parent);
     }
     $parentCourse = $parent instanceof GroupRelationshipInterface ? $parent->getGroup() : NULL;
-    if ($parentCourse instanceof CourseInterface) {
+    if ($parentCourse instanceof GroupInterface) {
       $cache->addCacheableDependency($parentCourse);
     }
-    return $parentCourse instanceof CourseInterface
+    return $parentCourse instanceof GroupInterface
       && (string) $parentCourse->id() === (string) $course->id();
   }
 

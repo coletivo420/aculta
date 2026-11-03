@@ -25,7 +25,7 @@ final class AcultaMailerKernelTest extends KernelTestBase {
    *
    * @var string[]
    */
-  protected static $modules = ['system', 'user', 'aculta_mailer', 'aculta_mailer_test'];
+  protected static $modules = ['system', 'user', 'file', 'aculta_file_uploader', 'aculta_mailer', 'aculta_mailer_test'];
 
   /**
    * Correlation ID fixo usado nas mensagens de teste.

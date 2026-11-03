@@ -2,8 +2,7 @@
 
 declare(strict_types=1);
 
-// Adaptado de OpenCulturas 3.1.4 (GPL-2.0-or-later), profile/modules/custom/openculturas_map/src/Plugin/Field/FieldFormatter/SmartDateUpcomingFormatter.php
-
+// Adaptado de OpenCulturas 3.1.4 (GPL-2.0-or-later), profile/modules/custom/openculturas_map/src/Plugin/Field/FieldFormatter/SmartDateUpcomingFormatter.php.
 namespace Drupal\aculta_events\Plugin\Field\FieldFormatter;
 
 use Drupal\Component\Datetime\TimeInterface;
@@ -17,9 +16,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Mostra só as datas que ainda não terminaram, em horário de Brasília.
  *
- * Diferença em relação ao OpenCulturas: não depende de cron de invalidação. O cache do
- * elemento expira no fim da próxima data (correção de T5 na auditoria), e o formato é
- * dd/mm/aaaa HH:mm, em 24 horas.
+ * Não depende de cron de invalidação: o cache do elemento expira no fim da
+ * próxima data (correção de T5 na auditoria). O formato é dd/mm/aaaa HH:mm,
+ * em 24 horas.
  */
 #[FieldFormatter(
   id: 'aculta_daterange_upcoming',
@@ -96,7 +95,7 @@ final class DateRangeUpcomingFormatter extends FormatterBase {
       $validade = $validade === NULL ? $fim->getTimestamp() - $agora : min($validade, $fim->getTimestamp() - $agora);
     }
 
-    // Quando a próxima data terminar, o conjunto muda: o cache acompanha esse instante.
+    // O cache expira quando a próxima data termina e o conjunto muda.
     if ($validade !== NULL) {
       $elements['#cache'] = ['max-age' => $validade];
     }
@@ -105,7 +104,7 @@ final class DateRangeUpcomingFormatter extends FormatterBase {
   }
 
   /**
-   * Texto da data: "dd/mm/aaaa HH:mm – HH:mm" no mesmo dia, ou dois instantes completos.
+   * Formata a data no padrão brasileiro, com um ou dois instantes.
    */
   private function texto(\DateTimeImmutable $inicio, \DateTimeImmutable $fim): string {
     if ($inicio->format('Y-m-d') === $fim->format('Y-m-d')) {

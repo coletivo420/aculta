@@ -12,7 +12,7 @@ use Drupal\Core\Hook\Attribute\Hook;
 /**
  * Aplica a retenção configurada por métrica durante o cron do Drupal.
  *
- * Mesmo padrão de `LinkAnalyticsCronHooks` (aculta_links), com o prazo de cada
+ * Mesmo padrão de `LinkAnalyticsCronHooks` (aculta_linkweed), com o prazo de cada
  * métrica vindo de `RetentionPolicy` em vez de uma constante.
  */
 final class StatisticsCronHooks {

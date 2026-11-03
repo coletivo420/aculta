@@ -10,8 +10,8 @@ Origens: `QRG` = `qr_generator` 2.x `6335abd`; `BC` = `barcodes` 2.1.x `a78b494`
 
 | Recurso | Origem (arquivos) | Categoria | Justificativa | Versão alvo |
 | --- | --- | --- | --- | --- |
-| Motor de codificação SVG/PNG/WebP | `endroid/qr-code` 6.1.3 (dependência já no lock; usada por `aculta_links`) | REUTILIZAR | Um único motor. Nenhuma cópia de biblioteca de terceiros. | 0.2.0 |
-| Wrapper de geração (`QrCodeSvgGenerator`) | ACULTA `aculta_links/src/Service/QrCodeSvgGenerator.php` | PORTAR | Mesma configuração (correção `Medium`, margem, SvgWriter), mas com preset e sem acoplamento ao `aculta_links`. | 0.2.0 |
+| Motor de codificação SVG/PNG/WebP | `endroid/qr-code` 6.1.3 (dependência já no lock; usada por `aculta_linkweed`) | REUTILIZAR | Um único motor. Nenhuma cópia de biblioteca de terceiros. | 0.2.0 |
+| Wrapper de geração (`QrCodeSvgGenerator`) | ACULTA `aculta_linkweed/src/Service/QrCodeSvgGenerator.php` | PORTAR | Mesma configuração (correção `Medium`, margem, SvgWriter), mas com preset e sem acoplamento ao `aculta_linkweed`. | 0.2.0 |
 | Configuração de formato (tamanho, margem, rótulo) | `END` `src/Plugin/Field/FieldFormatter/EndroidQrCodeFormatter.php` | PORTAR | Padrão enxuto de configuração; sem rota pública. | 0.2.0 |
 | Cores, logo e legenda | `QRG` `src/QRCodeExportService.php` (cores, `hexToColor`, correção de erro, logo) | PORTAR | Regras de cor e correção são úteis. A origem do logo muda: somente arquivo do `aculta_image`. | 0.4.0 |
 | Logo por URL remota (`logo_source=url`) | `QRG` `QRCodeExportService::getLogoPath()` | DESCARTAR | Permite leitura de URL arbitrária no servidor (SSRF). | — |
@@ -29,8 +29,8 @@ Origens: `QRG` = `qr_generator` 2.x `6335abd`; `BC` = `barcodes` 2.1.x `a78b494`
 | Redirecionamento por UUID via REST | `QRG` `QRRestResource` | DESCARTAR | `access()` permite tudo e não há Entity Access. Substituído por rota própria. | — |
 | Redirecionamento por hash no kernel | `QR` `src/EventSubscriber/QRCodeRequestSubscriber.php` | REIMPLEMENTAR | Ideia de identificador opaco aproveitada. Gravação por leitura (`countHit()` com `save()`) descartada. | 0.3.0 |
 | Contador de visitas gravado por requisição | `QR` `src/Entity/QRCode.php::countHit()` | DESCARTAR | Escrita no banco a cada leitura; incompatível com cache. | — |
-| Redirecionamento curto já existente (`/redirecionar/{codigo}`) | ACULTA `aculta_links` | REUTILIZAR | Já usa `TrustedRedirectResponse` e `DomainPurposeManager`. Manter até a 0.7.0. | 0.7.0 |
-| Código opaco de 12 caracteres | ACULTA `aculta_links` (destinos curtos) | REUTILIZAR | Gerador e unicidade já existentes; adotar o mesmo padrão. | 0.3.0 |
+| Redirecionamento curto já existente (`/redirecionar/{codigo}`) | ACULTA `aculta_linkweed` | REUTILIZAR | Já usa `TrustedRedirectResponse` e `DomainPurposeManager`. Manter até a 0.7.0. | 0.7.0 |
+| Código opaco de 12 caracteres | ACULTA `aculta_linkweed` (destinos curtos) | REUTILIZAR | Gerador e unicidade já existentes; adotar o mesmo padrão. | 0.3.0 |
 | Endereço do QR dinâmico | `DomainPurposeManager` + `aculta_deployer` (`environment_bound`) | REUTILIZAR | Nenhum hostname fixo. | 0.3.0 |
 
 ## Integração com Drupal e ACULTA

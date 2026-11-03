@@ -1,5 +1,16 @@
 # Changelog — ACULTA Game
 
+## 0.1.0-dev.20 — zerar PHPCS do submódulo (2026-10-31)
+
+- Corrigidos docblocks e formatação de arrays longos no catálogo, formulários,
+  apresentação de conquistas, hooks, progresso e controlador administrativo.
+- Rótulos fixos de critérios mantêm traduções explícitas; rótulos e descrições
+  editáveis em configuração mantêm a tradução Drupal; o sniff de literal é
+  ignorado apenas nessas chamadas de conteúdo configurável.
+- PHPCS Drupal/DrupalPractice no módulo: zero erros e zero avisos. Unit: 14/77
+  PASS. Kernel ForumPost real: 1/25 PASS; cinco depreciações pertencem ao
+  módulo Domain contrib. Nenhuma regra de concessão, rota ou persistência mudou.
+
 ## 0.1.0-dev.19 — ForumPost real e smoke visual do perfil (2026-10-29)
 
 - Kernel cria e publica `ForumPost` pela entidade real e invoca o hook duas

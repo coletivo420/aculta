@@ -1,5 +1,13 @@
 # Changelog — ACULTA QR Code
 
+## 0.4.0-dev.4 — derivados via aculta_file_uploader
+
+- `QrCodeExporter` recebe `aculta_file_uploader.generated_file` (opcional, `@?`) no lugar de `aculta_image.generated_file`.
+- Dependência do módulo passa de `aculta_image` para `aculta_file_uploader`.
+- Mensagens de falha fechada passam a citar `aculta_file_uploader`. Teste Kernel de exportação atualizado.
+
+RUNTIME STATUS: DEFERRED.
+
 ## 0.4.0-dev.3 — correção de exportação raster — 2026-10-29
 
 - Corrigido o preparo do diretório de derivados para passar uma variável à API Drupal `FileSystemInterface::prepareDirectory()`, que recebe o caminho por referência. A gravação usa `FileExists::Replace`, API atual do Drupal 11.

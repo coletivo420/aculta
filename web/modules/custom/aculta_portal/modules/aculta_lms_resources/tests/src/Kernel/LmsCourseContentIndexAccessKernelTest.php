@@ -66,6 +66,7 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     'entity_usage',
     'media_duplicates',
     'aculta_image',
+    'aculta_file_uploader',
     'field',
     'filter',
     'flexible_permissions',
@@ -133,7 +134,12 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
       Yaml::PARSE_CUSTOM_TAGS,
     )['services'];
     $magazineService = $magazineServices['aculta_magazine.content_index_provider'];
-    $magazineDefinition = (new Definition($magazineService['class'], $magazineService['arguments'] ?? []))
+    // The owner YAML arguments are service-id strings here because this test
+    // parses YAML directly instead of compiling it through Drupal's container.
+    $magazineDefinition = (new Definition($magazineService['class'], [
+      new Reference('entity_usage.usage'),
+      new Reference('entity_type.manager'),
+    ]))
       ->setPublic(TRUE);
     foreach ($magazineService['tags'] ?? [] as $tag) {
       $magazineDefinition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
@@ -289,11 +295,11 @@ final class LmsCourseContentIndexAccessKernelTest extends KernelTestBase {
     ];
 
     self::assertTrue($course->access('view', $student, TRUE)->isAllowed(), 'The student fixture has Group Entity Access.');
-    self::assertCount(1, $filter->filter($candidate, $student)->entities, 'The Index accepts a student with takeAccess.');
+    self::assertCount(1, $filter->filter($candidate, $student)->entities, 'The Index accepts a student with take course.');
     self::assertSame(['cursos_aculta_org', 'aculta_org'], $this->domainSwitches, 'The student access check uses and restores its canonical Domain.');
     self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose(), 'The active Domain is restored after each access check.');
     $this->domainSwitches = [];
-    self::assertFalse($course->takeAccess($educator)->isAllowed(), 'The educator fixture does not have student access.');
+    self::assertFalse($course->hasPermission('take course', $educator), 'The educator fixture does not have student access.');
     self::assertTrue($course->hasPermission('grade students', $educator));
     self::assertTrue($course->access('view', $educator, TRUE)->isAllowed(), 'The educator fixture has Group Entity Access.');
     self::assertCount(1, $filter->filter($candidate, $educator)->entities, 'The Index accepts an educator with contextual permission.');

@@ -111,8 +111,8 @@ Demais itens (validação visual das áreas, auditoria de segurança e privacida
 
 `aculta_statistics` é a única fonte e central de estatísticas agregadas. Ordem:
 
-1. **Links (concluído em 0.4.0-dev.31 do aculta_links):** cliques em `links.link.clicks`; tabela
-   `aculta_links_stat_daily`, fila e cron próprios removidos. Sem migração (banco de teste, sem retenção).
+1. **Links (concluído em 0.4.0-dev.31 do aculta_linkweed):** cliques em `links.link.clicks`; tabela
+   `aculta_linkweed_stat_daily`, fila e cron próprios removidos. Sem migração (banco de teste, sem retenção).
    Aplicado no Runtime de teste em 2026-10-21.
 2. **Fórum:** séries temporais em `forum.*`; a contagem atual passa a ler o `aculta_statistics`.
    Bloqueio: produtores `forum.topic.created` e `forum.comment.created` (0.7.0).
@@ -225,7 +225,7 @@ Decisão: "quem está online" entra no Statistics. A forma segue o padrão de pr
 ## Decisões incorporadas (2026-10-20)
 
 - 0.6.0: GA4 condicionado a consentimento de conta pelo ledger `aculta_user_agreement`; banner de cookies (Consent Mode v2) para anônimos, sujeito a autorização para o tema ACULTA420. Somente `google_tag`.
-- 0.7.0: convergência do agregado de `aculta_links` no `aculta_statistics`; QR estático medido só nos QRs novos.
+- 0.7.0: convergência do agregado de `aculta_linkweed` no `aculta_statistics`; QR estático medido só nos QRs novos.
 - Antecipado para a 0.2.0-dev.3 por decisão do responsável: contador de leitura da Wiki (`wiki.entries.read`), com beacon e retenção configurável.
 - 0.2.0: configuração de retenção por métrica (Configuration API) e permissão própria; 0.9.0: auditoria das alterações de prazo.
 

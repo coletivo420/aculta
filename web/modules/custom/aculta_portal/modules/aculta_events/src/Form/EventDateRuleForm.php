@@ -15,10 +15,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Edita a regra de recorrência de uma data (D-14, RECORRENCIA.md, seções 5 e 7).
+ * Edita a regra de recorrência de uma data (D-14, seções 5 e 7).
  *
- * A regra é validada e gravada na forma canônica do RecurrenceRuleParser, para que
- * duas escritas da mesma regra não gerem valores diferentes no campo.
+ * A regra é validada e gravada na forma canônica do RecurrenceRuleParser,
+ * mantendo valores consistentes entre escritas equivalentes.
  */
 final class EventDateRuleForm extends FormBase {
 

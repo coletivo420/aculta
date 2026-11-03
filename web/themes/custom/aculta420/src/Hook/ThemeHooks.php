@@ -14,6 +14,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Security\TrustedCallbackInterface;
+use Drupal\Core\State\StateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Render\Element;
 use Drupal\node\NodeInterface;
@@ -39,6 +40,7 @@ final class ThemeHooks implements TrustedCallbackInterface {
     private readonly RouteMatchInterface $routeMatch,
     #[Autowire(service: 'extension.list.theme')]
     private readonly ExtensionList $themes,
+    private readonly StateInterface $state,
   ) {}
 
   /**
@@ -358,9 +360,11 @@ final class ThemeHooks implements TrustedCallbackInterface {
 
       $destination = $destinations[$pluginId] ?? NULL;
       if ($destination !== NULL) {
-        // Wiki entry and student dashboard Context Header SDCs own their H1.
-        // Suppress their redundant page-title block; preserve route titles.
+        // Wiki entry, student dashboard and learning room Context Header SDCs
+        // own their H1. Suppress their redundant page-title block; preserve
+        // route titles elsewhere.
         if (($wikiEntryPage || $wikiContextPage || $routeName === 'aculta_lms.student_dashboard'
+          || $routeName === 'lms.group.answer_form'
           || $routeName === 'aculta_events.page')
           && $destination === 'aculta_page_title') {
           unset($variables['page']['header'][$key]);
@@ -547,6 +551,12 @@ final class ThemeHooks implements TrustedCallbackInterface {
       $attributes->removeAttribute('data-bs-theme');
       if ($themeMode !== NULL) {
         $attributes->setAttribute('data-bs-theme', $themeMode);
+      }
+      // OCS-A1: controlled, non-user-facing switch between the Fidelity and
+      // Aculta Identity token layers. Enabled only by the responsible with
+      // `drush state:set aculta420.studio_identity 1` and a cache rebuild.
+      if ($this->state->get('aculta420.studio_identity', FALSE)) {
+        $attributes->addClass('studio-identity');
       }
     }
     // Título informado pelo Portal (aculta_head_title), após o Metatag.

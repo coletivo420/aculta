@@ -12,9 +12,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * Política de incorporação só para a agenda embutível (aculta_events.embed).
  *
- * Só sites da própria ACULTA podem incorporar: os hosts de teste e de produção do mapeamento
- * do aculta_deployer (EmbedHostAllowlist). O restante do site mantém a política padrão. Roda depois do
- * core e do módulo CSP, que removem ou reescrevem esses cabeçalhos.
+ * Só sites da ACULTA podem incorporar usando a allowlist do aculta_deployer.
+ * O restante mantém a política padrão. Roda após Core e CSP, que podem
+ * remover ou reescrever esses cabeçalhos.
  */
 final class EmbedFrameSubscriber implements EventSubscriberInterface {
 
@@ -53,11 +53,11 @@ final class EmbedFrameSubscriber implements EventSubscriberInterface {
    * Política de frame: 'self' e os domínios da própria ACULTA.
    *
    * @param string[] $hosts
+   *   Allowed ACULTA host names.
    */
   public static function politica(array $hosts): string {
     $origens = array_map(static fn (string $host): string => 'https://' . $host, array_values(array_unique($hosts)));
     return 'frame-ancestors ' . implode(' ', array_merge(["'self'"], $origens));
   }
-
 
 }

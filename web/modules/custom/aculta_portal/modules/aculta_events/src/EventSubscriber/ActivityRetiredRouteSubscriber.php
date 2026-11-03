@@ -12,7 +12,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * Aposenta rotas de atividades legadas (/node/add/activity) com HTTP 404.
  *
- * Somente Eventos são mantidos; a criação ocorre em /painel-administrativo/eventos/adicionar.
+ * Somente Eventos são mantidos. A criação ocorre no painel administrativo
+ * de Eventos.
  */
 final class ActivityRetiredRouteSubscriber implements EventSubscriberInterface {
 

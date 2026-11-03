@@ -22,9 +22,12 @@ progresso, certificado, mensagem ou amizade paralelos.
 
 ## Integração de avisos — contrato vigente
 
-O `aculta_lms` é dono dos eventos, cursos, matrículas e da elegibilidade dos
-destinatários. Consumidores, avisos no site, persistência, central, deduplicação,
-preferências e a orquestração de e-mail são centralizados no `aculta_messenger`.
+O `aculta_lms` é dono dos cursos, matrículas, status e da elegibilidade dos
+destinatários. A conclusão é publicada pelo provider atual como o evento neutro
+`aculta_learning_contracts\Event\CourseCompletedEvent`; Game concede a conquista
+por esse contrato e Messenger encaminha o aviso ao fluxo centralizado.
+Consumidores, avisos no site, persistência, central, deduplicação, preferências
+e a orquestração de e-mail são centralizados no `aculta_messenger`.
 O aviso no site é obrigatório; o membro pode escolher e-mail desligado, direto
 ou digest/resumo, sempre sujeito às políticas administrativas. Transporte,
 templates e logs de entrega permanecem no `aculta_mailer`. O adapter executável
@@ -98,32 +101,21 @@ testes / 215 assertions (6 depreciações). `AttemptArchiveLifecycleTest` passou
 com 9 testes / 369 assertions no banco Kernel dedicado; 42 depreciações vieram
 do Core e contrib. O access do histórico também nega estudante ou educador
 bloqueado e revalida após bloqueio e revogação da membership.
-O download de arquivo privado de resposta também nega estudante ou educador
-bloqueado antes de consultar a autorização LMS. Kernel lifecycle: 9 testes /
-369 assertions PASS (42 depreciações); Unit completo: 46 testes / 215
-assertions PASS (6 depreciações). O status ativo é verificado pelo User
-carregado também quando a requisição entrega apenas AccountProxy/session.
-O Kernel também apaga o `CourseStatus` real e confirma a negação do download
-enquanto `LessonStatus` e resposta ainda aguardam a fila de limpeza; ver
-`AttemptArchiveLifecycleTest`: 10 testes / 409 assertions PASS; Kernel
-LMS/Messenger: 24/770 PASS (95 depreciações upstream). PHPCS Drupal/
-DrupalPractice PASS.
+A rota atual de anexos recebe apenas `AnswerEntity` ACULTA, valida arquivo
+permanente em `private://` e revalida matrícula/permissão a cada requisição.
+O plugin de upload e a rota de download vinculados a `lms_answer` foram
+removidos no P5. A interface de submissão para criar referências de arquivo
+ACULTA ainda precisa ser conectada ao payload.
 O resolvedor tipa entidades de referência com `FieldableEntityInterface`; o
 PHPCS Drupal/DrupalPractice passou nos arquivos novos de resolução e no
 `AttemptArchiveManager`.
 Na emissão de certificado F11, o manager e o formulário também usam as
 referências dos campos do `CourseStatus`: se usuário ou curso tiver sido
 removido na limpeza assíncrona, o manager responde 422 e o formulário omite a
-conclusão, sem erro 500. O formulário de resposta também lê a referência da
-atividade pelo campo e omite o prazo se a atividade foi removida, sem invocar
-`Answer::getActivity()`: `ActivityDeadlineFormHooksTest` 2/6. O Kernel também
-confirma que o hook autoinjetado mostra o prazo da turma no formulário de
-resposta e formata a data no fuso da estudante: `ClassActivityDeadlineTest`
-1/46. O plugin de resposta aberta também descarta referências removidas: score
-seguro, formulário sem feedback dependente da atividade e indicação na tela de
-avaliação; `FreeTextReviewFeedbackTest` 4/20. Kernel focal: 4 testes / 126
-assertions; regressão Kernel LMS/Messenger: 23 testes / 719 assertions PASS, com
-95 depreciações upstream. Runtime `cursos`: sem updates pendentes, rebuild do
+conclusão, sem erro 500. Os prazos por turma seguem resolvidos pelo manager
+ACULTA e cobertos por `ClassActivityDeadlineTest`; o hook contrib que alterava
+o formulário de resposta e o componente LMS de início de curso foram removidos.
+A interface ACULTA de submissão ainda está pendente. Runtime `cursos`: sem updates pendentes, rebuild do
 cache concluiu e o container resolveu o hook; houve warning preexistente de
 cópia dos assets H5P. Não foi importada configuração e ainda falta um smoke
 HTTP/visual com resposta real. Unit LMS/Messenger: 84 testes / 445 assertions PASS, com
@@ -140,9 +132,9 @@ criada, então o download real de resposta continua sem smoke positivo.
 - Imagens de capa de curso usam `aculta_image` e sua `UploadPolicy`; imagens
   enviadas ao editor H5P usam `aculta_image.upload_ingester` e o ciclo de vida
   de File/uso compartilhado. Arquivos anexados a respostas do LMS passam pela
-  política central `aculta_portal.user_upload_policy`, no consumidor `lms`
-  (aba LMS do painel de uploads), e as imagens rasters também por
-  `AcultaLmsSubmissionImage`/`ImageInspector`. Continuam em storage privado e
+  política `aculta_file_uploader.consumer_policy`, na integração `lms` (painel
+  `/painel-administrativo/aculta/uploads`), e as imagens rasters também
+  pelo validador `AcultaLmsSubmissionImage`, que usa a mesma política. Continuam em storage privado e
   são entregues pela rota de download protegida pela resposta e pela matrícula
   vigente.
 - PDFs de material de turma usam Media `course_document`, relação de acesso
@@ -271,33 +263,19 @@ reembolso e isolamento A/B continuam DEFERRED. Matrícula manual e remoção pel
 interface de educador também precisam de smoke HTTP.
 Detalhes, limites e caminho de recuperação estão no [changelog](CHANGELOG.md).
 
-## F8 — Avaliações e feedback (implementação inicial)
+## F8 — Avaliações e feedback (transição ADR-042)
 
-Os tipos objetivos usam os plugins do submódulo contrib `lms_answer_plugins`:
-`select` (resposta única ou seleção múltipla), `select_feedback`, `true_false`,
-`true_false_feedback`, `fill_in_the_blanks` e `fill_in_the_blanks_feedback`.
-O educador escolhe o plugin ao criar um tipo de atividade; uma mesma seleção
-pode ser configurada como resposta única ou múltipla.
-Para resposta discursiva, `free_text` mantém a correção manual. O plugin
-`free_text_review_feedback` acrescenta feedback formativo configurável por
-frases, mas deliberadamente deixa a nota pendente para avaliação do educador;
-correspondência de palavras nunca é tratada como correção final de texto livre.
-Esse adaptador deriva do plugin `FreeTextFeedback` do Drupal LMS 1.2.4, licença
-GPL-2.0-or-later, com origem registrada no código.
+Os três scorers objetivos ACULTA cobrem `true_false`, `select` e `fill_blanks`,
+compartilhando `ObjectiveAnswerScorer`. A configuração de enunciado e gabarito
+ainda precisa ser definida em `ActivityEntity` antes de conectá-los ao fluxo de
+submissão. Resposta discursiva permanece com correção manual por estado e nota
+ACULTA; o plugin legado de feedback por frase foi removido no corte P5.
 
-`lms_answer_comments` integra a avaliação manual à Comment API do Core e deixa
-aluno e educador manterem comentários ligados à resposta original. LMS continua
-fonte da tentativa corrente, da nota e da conclusão. Como LMS 1.2.4 apaga uma
-resposta ao substituí-la, reiniciar a aula ou reavaliá-la, `aculta_lms` grava
-somente o estado anterior numa entidade interna e protegida de auditoria. Isso
-preserva o texto respondido, pontuação, horário e a conversa da resposta sem
-criar outro gradebook. Nenhuma nota é importada de Webform, H5P ou outro sistema.
-
-O histórico só aparece no detalhe da resposta e revalida acesso no momento da
-leitura: estudantes precisam manter `take course`; educadores precisam de
-`grade students` na turma. Os registros são apagados ao excluir o progresso do
-curso, a conta ou o curso. Assim, matrícula revogada não dá acesso ao arquivo
-histórico, e exclusões previstas pelo ciclo de vida removem as cópias.
+Comentários usam Comment API do Core e são ligados à resposta ACULTA. O
+histórico arquiva payload JSON e nota anterior em entidade interna protegida;
+`score_precise` guarda notas decimais sem alterar o campo inteiro legado.
+Acesso é revalidado contra associação e permissão atual do curso. Nenhuma nota
+é importada de Webform, H5P ou outro sistema.
 
 A nota mínima continua configurável por aula no LMS. Pontos de atividade são
 inteiros nativos do LMS; a nota da aula é a soma ponderada dividida pelo máximo,
@@ -444,7 +422,7 @@ o fuso da conta do educador; a área de atividade do estudante e o aviso usam o
 fuso da conta que consulta.
 
 Definir ou alterar o prazo gera aviso no painel e no resumo diário opt-in por
-meio de `aculta_lms_messenger`/`aculta_messenger`. O lembrete é enfileirado na
+meio do contrato público do `aculta_messenger`. O lembrete é enfileirado na
 janela de 24 horas antes do prazo. A mensagem não envia e-mail transacional e é
 revalidada contra publicação, curso e membership atual.
 O módulo `lms_classes` herda `take course` no curso pai a partir da matrícula na
@@ -469,8 +447,6 @@ LMS/Messenger 79/407 PASS (8 depreciações PHPUnit).
 - `tests/src/Unit/AttemptArchiveManagerTest.php`: preserva dados e notas
   anteriores antes de edição/reavaliação/reinício e ignora salvamento sem
   alteração.
-- `tests/src/Unit/FreeTextReviewFeedbackTest.php`: frases orientam somente o
-  feedback formativo e nunca finalizam a nota sem avaliação do educador.
 - `tests/src/Kernel/AcultaLmsInstallTest.php`: instalação isolada, registro DI, persistência, bloqueio de edição e limpeza por conta.
 - `tests/src/Unit/LearningDashboardManagerTest.php`: painel pessoal isolado por usuário e negação segura para turma sem curso pai.
 - `tests/src/Unit/ClassActivityDeadlineFormTest.php`: formulário interpreta o prazo no fuso horário da conta do educador e usa UTC como fallback.
@@ -506,3 +482,17 @@ Runtime/Homelab não faz parte do teste.
 ## Ganjalab em Cursos - migração ADR-038
 
 Estado ADR-038: `/ganjalab` em purpose `courses` está implementada; a antiga `/studio/ganjalab` foi removida sem alias. LMS mantém ownership de matrículas, progresso, dados, certificados e permissões. O bloqueio de purpose incorreto foi incluído na matriz HTTP de 275 requisições.
+
+
+## Fronteira de apresentação Ganjalab (2026-11-01)
+
+`aculta_lms` não declara dependência de `aculta_studio` e não registra serviços de apresentação do Studio. A experiência da jornada e da sala passou para CourseJourneyComposer e CourseJourneyPresentationHooks em aculta_studio, consumindo o contrato CourseJourneyReaderInterface. CourseRoomBuilder fica no LMS para matrícula e roster, sem compor a jornada.
+
+O `LearningDashboardManager` continua lendo entidades Group/Drupal LMS e certificados, mas publica `StudentLearningSummaryReaderInterface` com DTOs neutros. O `AccountCoursesReader` implementa `AccountCoursesReaderInterface` e fornece cursos autorizados para a Conta; o Portal recebe esse provider como opcional. `LmsFriendlySlugs`, o conversor, o route processor e o subscriber da rota foram movidos para este módulo, preservando os IDs de serviço `aculta_portal.lms_friendly_*` e os tipos de parâmetro existentes. O `aculta_portal` não declara mais `lms:lms`.
+
+A composição de render arrays do estudante pertence a `aculta_studio\Learning\\LearnerDashboardComposer`; as rotas Ganjalab são declaradas no Studio e mantêm IDs históricos `aculta_lms.*`. A rota nativa de atividade ainda é uma integração temporária. A separação remove a dependência Portal → Drupal LMS no metadata; o próprio `aculta_lms` continua dependente do contrib. Lint, testes e rebuild de rotas/container ainda precisam ser confirmados no checkout local; Runtime permanece sob a validação já delegada.
+
+A conclusão neutra remove o import direto do evento LMS nos consumidores Game e
+Messenger. O provider ainda lê `CourseStatusInterface` e permanece dependente
+do Drupal LMS contrib; esta mudança não migra dados nem remove a dependência do
+módulo LMS.

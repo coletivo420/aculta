@@ -7,7 +7,7 @@ namespace Drupal\aculta_document_viewer\Pdf;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\File\FileSystemInterface;
-use Drupal\aculta_image\GeneratedImageFileManager;
+use Drupal\aculta_file_uploader\GeneratedImageFileManager;
 use Drupal\aculta_image\PdfThumbnailGenerator;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\aculta_image\ImageInspector;

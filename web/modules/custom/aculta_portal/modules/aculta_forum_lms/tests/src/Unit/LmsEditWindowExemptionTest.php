@@ -16,7 +16,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipStorageInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
@@ -179,7 +179,7 @@ final class LmsEditWindowExemptionTest extends TestCase {
   /**
    * Creates a Group relationship to a course.
    */
-  private function relationship(CourseInterface $course): GroupRelationshipInterface {
+  private function relationship(GroupInterface $course): GroupRelationshipInterface {
     $relationship = $this->createMock(GroupRelationshipInterface::class);
     $relationship->method('getGroup')->willReturn($course);
     $relationship->method('getCacheTags')->willReturn(['group_relationship:1']);
@@ -194,12 +194,11 @@ final class LmsEditWindowExemptionTest extends TestCase {
    * @param array<string, bool> $permissions
    *   Permission decisions keyed by permission name.
    */
-  private function course(array $permissions = ['grade students' => TRUE]): CourseInterface {
-    $course = $this->createMock(CourseInterface::class);
+  private function course(array $permissions = ['grade students' => TRUE]): GroupInterface {
+    $course = $this->createMock(GroupInterface::class);
     $course->method('bundle')->willReturn('lms_course');
     $course->method('id')->willReturn('3');
     $course->method('access')->willReturn(AccessResult::allowed());
-    $course->method('takeAccess')->willReturn(AccessResult::allowed());
     $course->method('hasPermission')->willReturnCallback(
       static fn (string $permission): bool => (bool) ($permissions[$permission] ?? FALSE),
     );

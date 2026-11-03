@@ -5,10 +5,10 @@ Core e de módulos contrib para as experiências de conta, conteúdo, Commerce,
 aprendizagem e domínios. Core/contrib continuam donos das entidades e regras que
 já fornecem.
 
-## Situação vigente — Portal `0.4.1-dev.46` (2026-10-29)
+## Situação vigente — Portal `0.4.1-dev.48` (2026-11-01)
 
-Unit: 323 testes / 974 assertions PASS. Kernel: 80 testes / 1.530 assertions
-PASS, com 96 depreciações Core/contrib. Gate Drupal 11+: 1.163 checks PASS;
+Unit: 343 testes / 1.154 assertions PASS. Kernel: 95 testes / 1.829 assertions
+PASS, com 108 depreciações Core/contrib. Gate Drupal 11+: 1.205 checks PASS;
 PHPCS Drupal/DrupalPractice e PHP lint dos arquivos desta microfase PASS.
 Dev.46 integra CPF ao login principal e popup; os testes de ambos os módulos
 estão no changelog. Nenhuma configuração ou dado Runtime foi alterado.
@@ -17,6 +17,17 @@ O checkout servido está em `04a8dfa55`, anterior a este candidato; a
 revisão Firefox do login ainda precisa ser feita depois de servir o commit.
 Portal permanece Dev por fases de B1/B2, Content Index, vídeo e limpeza
 compartilhada listadas no roadmap.
+
+Dev.47 introduziu `aculta_portal.content_cleanup_preview` para IDs explícitos;
+Dev.48 acrescenta inventário paginado de File/Media pelo mesmo contrato. A
+consulta percorre IDs ordenados, limita cada página a 100, permite continuar por
+cursor e reavalia todas as entidades com os assessors owners. Relatórios trazem
+somente IDs e estados, sem metadados ou conteúdo, e não removem entidades. A
+suíte Unit do Portal passou 343 testes / 1.154 assertions (o teste focal passou
+5/78); Kernel com File/Media storage real passou 1/21 em `aculta_simpletest`.
+Inventário de Nodes,
+adapters por módulo owner e executor com backup/confirmação/trilha auditável
+continuam pendentes.
 
 Minha Conta em `/conta/dados` reutiliza o Form API de Profile
 do Portal para os dados cadastrais privados (nome e WhatsApp), excluindo
@@ -77,7 +88,7 @@ paralelo nem depender do tema para funcionar.
 
 A política reutilizável de upload de usuários pertence ao Portal e é documentada
 em [`docs/portal/USER-UPLOADS.md`](../../../../docs/portal/USER-UPLOADS.md).
-Consumidores reutilizam `aculta_portal.user_upload_policy` e
+Consumidores reutilizam `aculta_file_uploader.consumer_policy` e
 `aculta_portal.user_upload_dialog_builder`; a política global/per-domain,
 constraints Managed File e modal comum ficam no Portal, enquanto publicação,
 acesso, retenção e apresentação continuam vinculados às entidades de cada
@@ -187,3 +198,19 @@ A Loja exige CPF/CNPJ. No LMS, cursos pagos exigem documento; cursos gratuitos
 com preço base zero não exigem. A política lê a variação comprada e falha
 fechada se a composição do pedido não puder ser reconhecida. Descontos sobre
 cursos pagos não alteram essa regra.
+
+
+## Fronteira com Drupal LMS contrib — B3-A (2026-11-01)
+
+O módulo base `aculta_portal` não declara mais dependência de `lms:lms` nem
+injeta `lms.training_manager`. A seção Cursos da Conta lê o contrato neutro
+`AccountCoursesReaderInterface`; sem provider educacional, a Conta mostra o
+estado vazio. A leitura Group/LMS, os slugs amigáveis de curso/aula/atividade e
+a alteração da rota nativa foram movidos para o adaptador `aculta_lms`.
+IDs históricos de serviço e parâmetros de rota foram preservados para reduzir
+impacto de integração.
+
+O adaptador `aculta_lms` continua exigindo Drupal LMS e mantém Group/LMS como
+fontes de verdade. Nenhum dado ou configuração ativa foi migrado. O rebuild de
+container/rotas, lint e regressões precisam ser confirmados no checkout local;
+a instalação sem o módulo contrib ainda não está homologada.

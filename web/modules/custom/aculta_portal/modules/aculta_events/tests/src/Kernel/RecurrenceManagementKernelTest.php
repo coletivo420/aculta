@@ -15,10 +15,10 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Regra e ocorrência de série: edição, validação, cancelamento e reagendamento (D-14).
+ * Edita, valida, cancela e reagenda ocorrências de série (D-14).
  *
  * O fuso é fixo em America/Sao_Paulo; a ocorrência de meia-noite é o caso que
- * costuma quebrar quando o campo guarda UTC e a saída não volta ao fuso do site.
+ * falha quando dados UTC não voltam ao fuso do site.
  */
 #[Group('aculta_events')]
 #[RunTestsInSeparateProcesses]
@@ -138,7 +138,7 @@ final class RecurrenceManagementKernelTest extends KernelTestBase {
   }
 
   /**
-   * Cancelar a ocorrência grava exceção sem horário; a série a mostra cancelada.
+   * Cancelar grava uma exceção sem horário e marca a série.
    */
   public function testCancelarOcorrencia(): void {
     $data = $this->data('2030-03-04 19:00', 'FREQ=WEEKLY;COUNT=3');
@@ -213,7 +213,7 @@ final class RecurrenceManagementKernelTest extends KernelTestBase {
   public function testOcorrenciaInexistenteRecusada(): void {
     $data = $this->data('2030-03-04 19:00', 'FREQ=WEEKLY;COUNT=3');
 
-    // A validação é chamada direto: o buildForm recusaria com 404 antes disso, e o
+    // Valida diretamente: buildForm responderia 404 antes disso, e o
     // que se testa aqui é o guarda de POST forjado (início fora da série).
     $form_object = EventDateOccurrenceForm::create($this->container);
     $form_state = new FormState();
@@ -228,7 +228,7 @@ final class RecurrenceManagementKernelTest extends KernelTestBase {
   }
 
   /**
-   * Ocorrência de meia-noite continua às 00:00 de Brasília, não às 21:00 do dia anterior.
+   * Ocorrência à meia-noite permanece no dia local correto.
    */
   public function testExpansaoMeiaNoiteFusoBrasilia(): void {
     $data = $this->data('2030-01-01 00:00', 'FREQ=DAILY;COUNT=2', '2030-01-01 01:00');

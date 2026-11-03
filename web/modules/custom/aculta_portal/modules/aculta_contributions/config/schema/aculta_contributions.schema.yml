@@ -1,0 +1,10 @@
+aculta_contributions.settings:
+  type: config_object
+  label: 'ACULTA Contributions settings'
+  mapping:
+    flood_limit:
+      type: integer
+      label: 'Maximum submissions per account'
+    flood_window:
+      type: integer
+      label: 'Submission limit window in seconds'

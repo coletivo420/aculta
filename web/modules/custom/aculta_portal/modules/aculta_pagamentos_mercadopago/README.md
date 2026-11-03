@@ -2,6 +2,14 @@
 
 Gateway Mercado Pago Checkout Pro do Commerce, código próprio do Portal. Substitui o módulo contrib `commerce_mercado_pago` (3.0.0-rc3), que foi portado para cá e removido do projeto. Mesmo padrão do `aculta_portal_cep`.
 
+**Revalidação 2026-10-31:** suíte completa: 261 testes / 1.291 assertions PASS
+em `aculta_simpletest`, com 78 depreciações Core/contrib. Os testes de recorder
+recorrente (30/194) e webhook de assinatura (8/22) também passaram. Nenhum
+pagamento ou mensagem externa foi enviado; o comprador sandbox ainda não foi
+homologado.
+
+**Revalidação adicional 2026-11-02:** Unit completa do gateway passou com 258 testes / 1.156 assertions; Kernel `CheckoutProTest` passou com 3 testes / 135 assertions em `aculta_simpletest` (78 depreciações Core/contrib). As chamadas foram simuladas/localizadas; nenhuma transação ou mensagem externa ocorreu. Autenticação do comprador sandbox e conciliação live permanecem pendentes.
+
 ## O que faz
 
 - Gestão de planos da Conta em `/conta/mercado-pago/planos` no purpose `account`; a submissão usa `/integracoes/mercadopago/planos` no MAIN. Lista, cria e atualiza modelos remotos somente por gateway ativo em sandbox; requer `access aculta portal` e `administrar doacoes`, sem armazenamento paralelo. A URL antiga `/studio/conta/mercado-pago/planos` não possui alias.

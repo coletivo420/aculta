@@ -33,7 +33,7 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 - [architecture/aculta_lms.md](architecture/aculta_lms.md) — matrículas, prazos e ciclo de vida de certificados.
 - [architecture/aculta_portal.md](architecture/aculta_portal.md) — fronteiras de contratos transversais do Portal.
 - [architecture/aculta_forum.md](architecture/aculta_forum.md) — ownership, acesso público e conteúdo legado imutável do Fórum.
-- [architecture/aculta_links.md](architecture/aculta_links.md) — ownership de micropáginas e prévias privadas.
+- [architecture/aculta_linkweed.md](architecture/aculta_linkweed.md) — ownership de micropáginas e prévias privadas.
 - [architecture/aculta_user.md](architecture/aculta_user.md) — ownership de identidade, papéis, perfis e participação.
 - [architecture/aculta_messenger.md](architecture/aculta_messenger.md) — ownership de mensagens e avisos.
 - [architecture/aculta_mailer.md](architecture/aculta_mailer.md) — políticas e transportes de e-mail.

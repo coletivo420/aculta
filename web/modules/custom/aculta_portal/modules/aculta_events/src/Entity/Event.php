@@ -242,6 +242,61 @@ final class Event extends ContentEntityBase implements EntityOwnerInterface {
       ->setDisplayOptions('form', ['type' => 'options_select', 'weight' => 20])
       ->setDisplayConfigurable('form', TRUE);
 
+    // D-60 RSVP policy. Fields remain out of the organizer form until the
+    // complete registration flow is available; RSVP is opt-in and inert.
+    $fields['field_rsvp_ativo'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(new TranslatableMarkup('RSVP ativado'))
+      ->setDefaultValue(FALSE);
+
+    $fields['field_rsvp_escopo_capacidade'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(new TranslatableMarkup('Escopo da capacidade do RSVP'))
+      ->setDefaultValue('evento')
+      ->setSetting('allowed_values', [
+        'evento' => new TranslatableMarkup('Evento inteiro'),
+        'data' => new TranslatableMarkup('Por Data'),
+        'lote' => new TranslatableMarkup('Por lote'),
+      ]);
+
+    $fields['field_rsvp_capacidade'] = BaseFieldDefinition::create('integer')
+      ->setLabel(new TranslatableMarkup('Capacidade do Evento'))
+      ->addPropertyConstraints('value', ['Range' => ['min' => 1]]);
+
+    $fields['field_rsvp_limite_pessoa'] = BaseFieldDefinition::create('integer')
+      ->setLabel(new TranslatableMarkup('Limite por participante'))
+      ->setDefaultValue(1)
+      ->addPropertyConstraints('value', ['Range' => ['min' => 1]]);
+
+    $fields['field_rsvp_duplicidade'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(new TranslatableMarkup('Inscrições duplicadas'))
+      ->setDefaultValue('impedir')
+      ->setSetting('allowed_values', [
+        'impedir' => new TranslatableMarkup('Impedir duplicidade'),
+        'permitir' => new TranslatableMarkup('Permitir inscrições adicionais'),
+      ]);
+
+    $fields['field_rsvp_reserva_minutos'] = BaseFieldDefinition::create('integer')
+      ->setLabel(new TranslatableMarkup('Duração da reserva temporária, em minutos'))
+      ->addPropertyConstraints('value', ['Range' => ['min' => 1]]);
+
+    $fields['field_rsvp_lista_espera'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(new TranslatableMarkup('Permitir lista de espera'))
+      ->setDefaultValue(FALSE);
+
+    $fields['field_rsvp_cancelamento'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(new TranslatableMarkup('Cancelamento de RSVP'))
+      ->setSetting('allowed_values', [
+        'impedir' => new TranslatableMarkup('Não permitir cancelamento'),
+        'permitir' => new TranslatableMarkup('Permitir cancelamento'),
+      ]);
+
+    $fields['field_rsvp_serie'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(new TranslatableMarkup('Inscrição em evento recorrente'))
+      ->setDefaultValue('ocorrencia')
+      ->setSetting('allowed_values', [
+        'ocorrencia' => new TranslatableMarkup('Por ocorrência'),
+        'serie' => new TranslatableMarkup('Por toda a série'),
+      ]);
+
     // Dados estruturados aditivos (ARQ-04 / OpenCulturas 3.1.5).
     $fields['field_classificacao_etaria'] = BaseFieldDefinition::create('list_string')
       ->setLabel(new TranslatableMarkup('Classificação etária'))

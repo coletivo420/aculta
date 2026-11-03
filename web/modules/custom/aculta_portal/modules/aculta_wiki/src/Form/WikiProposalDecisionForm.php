@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Form;
 
+use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_contributions\Service\ContributionLifecycle;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\aculta_wiki\Service\WikiProposalDecision;
@@ -12,6 +14,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
@@ -25,6 +28,7 @@ final class WikiProposalDecisionForm extends FormBase {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly WikiProposalDecision $decision,
+    private readonly ContributionLifecycle $contributions,
     private readonly ModuleHandlerInterface $moduleHandler,
     private readonly DomainPurposeManager $domainPurposes,
   ) {}
@@ -36,6 +40,7 @@ final class WikiProposalDecisionForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('aculta_wiki.proposal_decision'),
+      $container->get('aculta_contributions.lifecycle'),
       $container->get('module_handler'),
       $container->get('aculta_portal.domain_purpose'),
     );
@@ -51,15 +56,17 @@ final class WikiProposalDecisionForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, ?WikiProposal $proposal = NULL): array {
-    if (!$proposal instanceof WikiProposal || !$proposal->access('update')) {
+  public function buildForm(array $form, FormStateInterface $form_state, WikiProposal|Contribution|null $proposal = NULL): array {
+    if ((!$proposal instanceof WikiProposal && !$proposal instanceof Contribution) || !$proposal->access('update')) {
       throw new AccessDeniedHttpException();
     }
     if (!in_array($proposal->get('state')->value, ['submitted', 'needs_changes'], TRUE)) {
       throw new ConflictHttpException('Esta proposta já recebeu uma decisão final.');
     }
     $form_state->set('wiki_proposal_id', (int) $proposal->id());
-    $proposedFields = $proposal->getProposedFields();
+    $isContribution = $proposal instanceof Contribution;
+    $sourceData = $isContribution ? $proposal->getSourceData() : [];
+    $proposedFields = $isContribution ? $proposal->getPayload() : $proposal->getProposedFields();
     $form_state->set('wiki_proposal_fields', array_keys($proposedFields));
 
     $form['#attributes']['data-portal-ui'] = 'wiki-proposal-decision';
@@ -80,7 +87,9 @@ final class WikiProposalDecisionForm extends FormBase {
       '#type' => 'fieldset',
       '#title' => $this->t('Decisão editorial'),
     ];
-    $target = $proposal->get('target')->entity;
+    $target = $proposal instanceof WikiProposal
+      ? $proposal->get('target')->entity
+      : $this->loadWikiTarget($proposal);
     if ($target !== NULL) {
       $targetUrl = $this->domainPurposes->routeUrl('wiki', 'entity.node.canonical', ['node' => $target->id()]);
       if ($targetUrl !== NULL && $this->domainPurposes->runInPurpose('wiki', static fn (): bool => $targetUrl->access())) {
@@ -92,7 +101,9 @@ final class WikiProposalDecisionForm extends FormBase {
       }
       $revisionUrl = $this->domainPurposes->routeUrl('wiki', 'entity.node.revision', [
         'node' => $target->id(),
-        'node_revision' => $proposal->get('target_revision_id')->value,
+        'node_revision' => $proposal instanceof WikiProposal
+          ? $proposal->get('target_revision_id')->value
+          : $proposal->get('base_revision')->value,
       ]);
       if ($revisionUrl !== NULL && $this->domainPurposes->runInPurpose('wiki', static fn (): bool => $revisionUrl->access())) {
         $form['proposal_header']['#slots']['actions']['base_revision'] = [
@@ -102,10 +113,17 @@ final class WikiProposalDecisionForm extends FormBase {
         ];
       }
     }
+    $proposedText = $proposal instanceof Contribution
+      ? (string) ($sourceData['proposed_text'] ?? '')
+      : (string) $proposal->get('proposed_text')->value;
     $contributionBody['proposed_text'] = [
       '#type' => 'container',
-      'label' => ['#plain_text' => $this->t('Alteração sugerida')],
-      'text' => ['#plain_text' => (string) $proposal->get('proposed_text')->value],
+      'label' => [
+        '#plain_text' => $this->t('Alteração sugerida'),
+      ],
+      'text' => [
+        '#plain_text' => $proposedText,
+      ],
     ];
     if ($proposedFields !== []) {
       $contributionBody['proposed_fields'] = [
@@ -163,8 +181,11 @@ final class WikiProposalDecisionForm extends FormBase {
       'text' => ['#plain_text' => (string) $proposal->get('rationale')->value],
     ];
     $sourceLinks = [];
-    foreach ($proposal->get('source_uri') as $sourceItem) {
-      $uri = (string) $sourceItem->value;
+    $sourceUris = $proposal instanceof Contribution
+      ? (array) ($sourceData['source_uris'] ?? [])
+      : array_map(static fn ($item): string => (string) $item->value, iterator_to_array($proposal->get('source_uri')));
+    foreach ($sourceUris as $sourceUri) {
+      $uri = is_string($sourceUri) ? $sourceUri : '';
       if (!filter_var($uri, FILTER_VALIDATE_URL)
         || !in_array(strtolower((string) parse_url($uri, PHP_URL_SCHEME)), ['http', 'https'], TRUE)) {
         continue;
@@ -250,20 +271,40 @@ final class WikiProposalDecisionForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $storage = $this->entityTypeManager->getStorage('aculta_wiki_proposal');
-    $proposal = $storage->load((int) $form_state->get('wiki_proposal_id'));
-    if (!$proposal instanceof WikiProposal) {
+    $id = (int) $form_state->get('wiki_proposal_id');
+    $proposal = $this->entityTypeManager->getStorage('aculta_contribution')->load($id);
+    if (!$proposal instanceof Contribution || $proposal->get('source')->value !== 'wiki') {
+      $proposal = $this->entityTypeManager->getStorage('aculta_wiki_proposal')->load($id);
+    }
+    if (!$proposal instanceof WikiProposal && !$proposal instanceof Contribution) {
       throw new AccessDeniedHttpException();
     }
     try {
-      $this->decision->decide(
-        $proposal,
-        (int) $form_state->getValue('expected_revision_id'),
-        (string) $form_state->getValue('decision'),
-        (string) $form_state->getValue('decision_note'),
-        array_values(array_filter((array) $form_state->getValue('approved_fields'))),
-        (array) $form_state->getValue('list_modes'),
-      );
+      $selectedFields = array_values(array_filter((array) $form_state->getValue('approved_fields')));
+      $listModes = (array) $form_state->getValue('list_modes');
+      if ($proposal instanceof Contribution) {
+        $decisionData = $form_state->getValue('decision') === 'accepted'
+          ? ['list_modes' => $listModes]
+          : [];
+        $this->contributions->decide(
+          $proposal,
+          (string) $form_state->getValue('decision'),
+          (string) $form_state->getValue('decision_note'),
+          $selectedFields,
+          (int) $form_state->getValue('expected_revision_id'),
+          $decisionData,
+        );
+      }
+      else {
+        $this->decision->decide(
+          $proposal,
+          (int) $form_state->getValue('expected_revision_id'),
+          (string) $form_state->getValue('decision'),
+          (string) $form_state->getValue('decision_note'),
+          $selectedFields,
+          $listModes,
+        );
+      }
     }
     catch (ConflictHttpException $exception) {
       $form_state->setErrorByName('decision', $exception->getMessage());
@@ -282,6 +323,22 @@ final class WikiProposalDecisionForm extends FormBase {
         'sub' => 'propostas',
       ]);
     }
+  }
+
+  /**
+   * Loads the target node from a generic Wiki contribution's stable UUID.
+   */
+  private function loadWikiTarget(Contribution $proposal): ?NodeInterface {
+    $uuid = (string) $proposal->get('target_uuid')->value;
+    if ($uuid === '') {
+      return NULL;
+    }
+    $matches = $this->entityTypeManager->getStorage('node')->loadByProperties([
+      'uuid' => $uuid,
+      'type' => 'wiki_entry',
+    ]);
+    $target = reset($matches);
+    return $target instanceof NodeInterface ? $target : NULL;
   }
 
   /**

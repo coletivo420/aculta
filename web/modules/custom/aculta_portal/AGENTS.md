@@ -2,7 +2,7 @@
 
 ## ADR-038 - caminhos atuais das Suites (retificado pelo responsável em 2026-10-30)
 
-Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/studio/we-sativa`; Green Stash `shop:/studio/green-stash`; Culturas `eventos:/culturas`. Os dois caminhos `/studio/*` aprovados são as áreas integradas ACULTA STUDIO WE SATIVA e ACULTA STUDIO GREEN STASH; `/studio` e os demais caminhos `/studio/*` respondem 404, sem aliases/redirects. O Domain Wiki canônico é `wiki420`. `aculta_studio` permanece framework compartilhado. A raiz de `conta` é entrada de Conta; Conta e Perfil permanecem separados. Veja ADR-038 e sua retificação explícita.
+Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/we-sativa`; Green Stash `shop:/green-stash`; Culturas `eventos:/culturas`. WE SATIVA e Green Stash são as áreas integradas ACULTA STUDIO WE SATIVA e ACULTA STUDIO GREEN STASH, com caminhos próprios. A entrada da Wiki (wiki420) é a raiz `/`, e a da loja (loja420) também; `/wiki` e `/loja` respondem 404. Os caminhos `/wesativa` e `/greenstash` respondem 404 sem redirect. `/studio` e todos os caminhos `/studio/*` respondem 404. O Domain Wiki canônico é `wiki420`. `aculta_studio` permanece framework compartilhado. A raiz de `conta` é entrada de Conta; Conta e Perfil permanecem separados. Veja ADR-038 e sua retificação explícita.
 
 
 Herde `AGENTS.md` da raiz. Consulte `docs/AGENT-POLICIES.md` **somente nas seções relevantes** e os contratos `docs/portal/GUARDRAILS.md` e `docs/portal/DRUPAL-11-STANDARDS.md` quando a alteração exigir.
@@ -39,8 +39,8 @@ Cada Suite responde em seu próprio domínio/purpose. As duas exceções explici
 | --- | --- | --- | --- | --- |
 | Marley | `account` | configurado no Domain | configurado no Domain | `/marley` |
 | Ganjalab | `courses` | configurado no Domain | configurado no Domain | `/ganjalab` |
-| ACULTA STUDIO WE SATIVA | `wiki` | configurado no Domain (`wiki420`) | configurado no Domain (`wiki420`) | `/studio/we-sativa` |
-| ACULTA STUDIO GREEN STASH | `shop` | configurado no Domain | configurado no Domain | `/studio/green-stash` |
+| ACULTA STUDIO WE SATIVA | `wiki` | configurado no Domain (`wiki420`) | configurado no Domain (`wiki420`) | `/we-sativa` |
+| ACULTA STUDIO GREEN STASH | `shop` | configurado no Domain | configurado no Domain | `/green-stash` |
 | Culturas | `eventos` | configurado no Domain | configurado no Domain | `/culturas` |
 
 Manter Conta e Perfil como experiências diferentes, fora das Suites. A raiz de `conta` apresenta uma página de entrada da Conta e não reescreve para `/studio`. `/conta/*`, `/perfil/*` e `/salvos` preservam seus owners e dados separados; `/conta-legada` continua.
@@ -51,7 +51,7 @@ Regras de implementação:
 - Novas Suites escolhem host/purpose e slug próprio antes de declarar rotas; não introduzir `/studio/{suite}`.
 - Hosts são lidos da configuração ativa por ambiente e URLs absolutas passam pelo `DomainPurposeManager`. Wiki mantém o Domain configurado `wiki420`; não renomear para `wiki.aculta.*`.
 - Atualizar `PurposeFrontPathProcessor`, `FrontPathPolicy`, subscriber de propósito, navegação e testes para a raiz de cada purpose e as rotas da Suite. Os cinco caminhos da matriz são rotas válidas apenas no purpose respectivo.
-- Manter apenas as rotas canônicas autorizadas de `/studio/we-sativa/**` no purpose `wiki` e `/studio/green-stash/**` no purpose `shop`; todas as demais rotas `/studio*` devem continuar 404. Sem redirects legados; canonical e links apontam diretamente aos novos hosts/caminhos.
+- Manter `/we-sativa/**` no purpose `wiki` e `/green-stash/**` no purpose `shop`; todas as rotas `/studio*` respondem 404. Sem redirects legados; canonical e links apontam diretamente aos novos hosts/caminhos.
 - Migrar links internos/externos, login/retorno, e-mail, notificações, sitemap, canonical, cache e testes. A troca de URL não transfere ownership de entidades, formulários, ACL ou workflows.
 
 Estado em 2026-10-30: caminhos novos e rejeição global de `/studio*` testados após rebuild; matriz HTTP 275/275 e captura Firefox ESR em 1440/390 px. Wiki usa o Domain canônico `wiki420`; HTTPS e navegação autenticada foram verificados no ambiente de desenvolvimento. DNS de produção `wiki420.aculta.org` não foi resolvido neste ambiente.

@@ -6,7 +6,6 @@ dependencies:
     - media.type.course_document
   module:
     - group
-    - lms
     - media
     - system
 id: lms_teacher
@@ -18,13 +17,9 @@ permissions:
   - 'access group overview'
   - 'administer lms'
   - 'create course_document media'
-  - 'create lms_activity entities'
   - 'create lms_class group'
   - 'create lms_course group'
-  - 'create lms_lesson entities'
   - 'create lms_teacher profile'
-  - 'edit lms_activity entities'
-  - 'edit lms_lesson entities'
   - 'update own lms_teacher profile'
   - 'view own lms_teacher profile'
   - 'view the administration theme'

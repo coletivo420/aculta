@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * Rebuilds the discussion reference against the ACULTA activity entity.
+ */
+function aculta_forum_lms_update_10001(): string {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $field_storage = $entity_type_manager->getStorage('field_storage_config')->load('node.field_lms_activity');
+  if ($field_storage && $field_storage->getSetting('target_type') !== 'aculta_lms_activity') {
+    $database = \Drupal::database();
+    $has_references = FALSE;
+    foreach (['node__field_lms_activity', 'node_revision__field_lms_activity'] as $table) {
+      if ($database->schema()->tableExists($table)
+        && $database->select($table, 'field')->isNotNull('field_lms_activity_target_id')->range(0, 1)->countQuery()->execute()->fetchField()) {
+        $has_references = TRUE;
+        break;
+      }
+    }
+    if ($has_references) {
+      throw new \RuntimeException('A referência legada field_lms_activity contém dados e não será descartada nem migrada automaticamente.');
+    }
+
+    $fields = $entity_type_manager->getStorage('field_config')->loadByProperties([
+      'entity_type' => 'node',
+      'field_name' => 'field_lms_activity',
+    ]);
+    foreach ($fields as $field) {
+      $field->delete();
+    }
+    $field_storage->delete();
+    $field_storage = NULL;
+  }
+
+  if (!$field_storage) {
+    $field_storage = \Drupal\field\Entity\FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'field_lms_activity',
+      'type' => 'entity_reference',
+      'settings' => ['target_type' => 'aculta_lms_activity'],
+      'cardinality' => 1,
+      'translatable' => FALSE,
+    ]);
+    $field_storage->save();
+  }
+
+  $field_config_storage = $entity_type_manager->getStorage('field_config');
+  if (!$field_config_storage->load('node.aculta_lms_topic.field_lms_activity')) {
+    \Drupal\field\Entity\FieldConfig::create([
+      'entity_type' => 'node',
+      'bundle' => 'aculta_lms_topic',
+      'field_name' => 'field_lms_activity',
+      'label' => 'Atividade do curso',
+      'description' => 'Associe esta discussão a uma atividade publicada do mesmo curso ou turma.',
+      'required' => FALSE,
+      'translatable' => FALSE,
+      'settings' => ['handler' => 'default:aculta_lms_activity'],
+    ])->save();
+  }
+
+  return 'A referência do Fórum agora aponta para a atividade ACULTA.';
+}

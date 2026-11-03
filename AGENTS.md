@@ -1,174 +1,60 @@
-# ACULTA — agentes CLI
-
-## ADR-038 - caminhos atuais das Suites (implementados)
-
-Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/wesativa`; Green Stash `shop:/greenstash`; Culturas `eventos:/culturas`. O Domain Wiki canônico é `wiki420`, conforme configuração ativa; a menção a `wiki.aculta.*` no pedido original foi erro corrigido pelo responsável. `/studio` e todo `/studio/*` foram removidos e respondem 404, sem aliases/redirects. `aculta_studio` permanece framework compartilhado. A raiz de `account` apresenta a entrada da Conta; Conta e Perfil permanecem separados. As referências anteriores neste arquivo descrevem o estado pré-migração. Consulte ADR-038.
-
-
-## REGRA GERAL PARA AGENTES (vale para todos, sem exceção)
-1. Um único branch de trabalho, definido pelo responsável. **Pendente de definição**: até lá,
-   trabalhe no branch atual do checkout. Todo trabalho é commit nele.
-   Não criar branch de frente, PR nova ou branch de publicação, nem trocar de branch sem ordem.
-2. O servidor de desenvolvimento (checkout /home/piradopirata/projetos/aculta) acompanha
-   SEMPRE o head da PR. Toda publicação é seguida de git checkout --detach no novo head.
-   Não esperar janela para isso.
-3. Bancos: só os existentes (aculta_runtime, aculta_simpletest). Nunca criar banco.
-   Nunca site:install em banco com tabelas. toca não é nosso: não tocar.
-4. Gatilho de banco do aculta_runtime em toda troca de head: updatedb:status e
-   config:status somente leitura; se houver pendência, snapshot com hash antes, depois
-   updatedb e config:import só do config/sync. Nunca pm:uninstall nem DROP sem ordem
-   explícita do responsável.
-5. Publicação por fast-forward, sem force. Gate vermelho: não publicar.
-6. Em dúvida ou ordem fora deste texto: parar e perguntar ao responsável.
-Detalhes: docs/operations/AGENTES-PROCEDIMENTO.md.
+# ACULTA — instruções para agentes
 
 PROJECT-STATUS-INDEX-GUARD: 2026-10-21
 
-Drupal 11.3+, PHP conforme `docs/architecture/environments.md`; Drupal root `web/`, módulos `web/modules/custom/`, tema `web/themes/custom/aculta420/`.
+Regras gerais do repositório, válidas para todos os agentes. Em caso de conflito, prevalecem a instrução explícita mais recente do responsável e as regras de segurança abaixo. Regras específicas de ambiente, Drush, servidor web e testes ficam em `docs/operations/AGENT-OPERATIONS.md`; regras por escopo, no índice `docs/operations/AGENT-POLICY-INDEX.md`. Não replique aqui históricos nem planos.
 
-## Regras sempre ativas
-- Atue apenas no escopo e na branch/PR autorizados; preserve trabalho paralelo. Sem nova PR, merge, deploy ou mudanças de produção sem autorização.
-- Antes de operar no Runtime, identifique host, diretório, branch, URI e banco com Drush; consulte `docs/architecture/environments.md`. Inspecione impacto/reversão antes de operações persistentes; nunca execute ações destrutivas sem autorização.
-- **Ambiente local do servidor de desenvolvimento:** quando `hostname` for `toca` e `drush status` confirmar `aculta_runtime`, a sessão já está no servidor de desenvolvimento. Use o checkout local e o Drush local (URI `http://default` é esperado). Gates somente leitura (`drush scr` de `validate-aculta420-foundation.php`, `validate-aculta420-shell-contract.php` etc.) são permitidos contra `aculta_runtime`. Não é permitido `updatedb`, `config:import` nem escrita persistente sem autorização. Não ler `aculta_runtime` como motivo para bloquear o trabalho: bloqueie só operações de escrita.
-- **Autorização de Runtime pelo responsável:** uma ordem direta do responsável para trabalhar, alinhar ou validar com escrita no Runtime é autorização explícita para as escritas necessárias ao escopo solicitado em `aculta_runtime`. Antes delas, confirme host, checkout, URI, nome e contagem de tabelas; faça e registre snapshot íntegro com hash. Isso não autoriza ampliar o escopo, alterar produção, trocar credenciais, nem executar `pm:uninstall`, `DROP DATABASE` ou `DROP TABLE` sem ordem explícita que nomeie essa operação. Em importação de configuração, revise o diff e preserve/migre conteúdo conforme a decisão do responsável; não trate autorização para trabalhar no Runtime como aprovação de qualquer diff global.
-- Testes Kernel usam sempre o banco dedicado `SIMPLETEST_DB` (`aculta_simpletest`), nunca `aculta_runtime`.
-- **MCP Drupal de leitura:** quando `aculta-drupal` estiver disponível, use-o para status do site, extensões, diferenças config/sync e updates pendentes. O servidor é somente leitura; não expõe conteúdo nem valores de configuração. Se a sessão ainda não carregou suas ferramentas, use o Drush local pelas regras acima e recarregue a sessão depois. Nunca trate este MCP como autorização de escrita.
-- Worktrees ficam em `/home/piradopirata/worktrees/` (ext4). Não usar `/mnt/disco1` para worktree ou dependências: é NTFS (`ntfs3`) e causa erros de permissão e de cópia.
-- **Servidor de desenvolvimento e docroot:** o docroot `/home/aculta/public_html` é o checkout `/home/piradopirata/projetos/aculta` (o `web/` dele). Os testes visuais X11 (`DISPLAY=:0`) rodam contra esse checkout. Ele deve estar no commit da PR sob teste (`git -C /home/piradopirata/projetos/aculta rev-parse --short HEAD`). Antes de trocar o commit desse checkout, guarde alterações não commitadas (patch em pasta de backup e `git stash`) e crie uma branch de backup do HEAD anterior. Não trocar sem autorização do responsável. Após trocar, rode `drush cr` (o Twig e o CSS compilados só mudam após rebuild de cache).
-- **Worktrees de integração** (ex.: `/home/piradopirata/worktrees/integracao-fronteira`) servem para desenvolvimento e revisão. Não são o docroot de teste visual.
-- **X11 disponível:** `DISPLAY=:0` com Firefox ESR visível e geckodriver, conforme a seção de testes de navegador abaixo. Use-o para inspeção humana, capturas de aceite e zoom real; headless automatizado é explicitamente selecionado no `wdlib`.
-- Não exponha segredos ou dados pessoais. Respeite acesso, cacheability, DI, APIs Drupal 11+ e código instalado.
-- Faça commits focados; execute gates pertinentes e relate somente testes efetivamente realizados. Respeite versionamento/status dos componentes.
-- **Bibliotecas novas ou atualizadas (Composer, npm, módulo Drupal contrib, JS/CSS copiado ou CDN): atualize o `README.md` no mesmo commit** — tabela da seção `## Bibliotecas usadas`, com versão lida do manifesto, origem e uso — e o README do módulo/tema que passou a depender dela. Commit que adiciona dependência sem tocar em README está incompleto. Detalhes: `docs/operations/AGENT-DEPENDENCIAS.md`.
-- **Endereço centralizado em `aculta_portal_cep` e país exclusivo Brasil (BR):**
-  - Ao implementar ou alterar qualquer formulário de endereço no ACULTA, use o serviço, widget e contrato centralizados em `aculta_portal_cep` (e `AccountAddressForm`). Não crie campos, endpoints, clientes de CEP ou fluxos de endereço paralelos.
-  - O país é sempre o Brasil (`BR`). Não exiba opção para selecionar país em nenhum formulário ou local do projeto; configure o endereço para usar exclusivamente `BR` e confirme esse valor também no servidor ao validar e salvar. JavaScript ou campo oculto, por si só, não substitui a validação do servidor.
-  - A busca de CEP deve continuar usando a biblioteca `aculta_portal_cep/cep-address`. Ela pode preencher os dados postais brasileiros, mas deve preservar número, S/N e complemento conforme o contrato central vigente.
-  - Antes de concluir, procure outros formulários e widgets de endereço afetados. Teste criação e edição, comportamento do CEP e rejeição ou normalização de um `country_code` diferente de `BR`. Preserve dados já armazenados e atualize a documentação do owner quando o formulário ou seu contrato mudar. Referências: `docs/decisions/ADR-034-pais-unico-brasil-endereco-central.md` e `docs/portal/ACCOUNT-ADDRESS.md`.
-- Integração externa (Melhor Envio, Mercado Pago, Google e futuras): abra a plataforma em popup (`aculta_portal/integration-popup`, atributo `data-aculta-popup`) e responda o retorno com `Drupal\aculta_portal\Integration\PopupReturnPage`, que fecha o popup e leva a janela de origem ao destino. O resultado vai para as mensagens do Drupal (`messenger`), exibidas pelo tema no destino. Não devolva texto puro nem tela própria. Rotas de autorização e retorno levam `no_cache`. Webhook de serviço responde só com o código HTTP. **Todas as chamadas de integração (ida, retorno, webhook, páginas de configuração e endpoints JSON) usam `/integracoes/<nome>/<ação>`; é proibido `/admin/...` e `/painel-administrativo/...` (o `rename_admin_paths` reescreve o primeiro).** Detalhes: `docs/architecture/integracoes-externas.md`.
+## Sessão
 
-## Política global de URLs durante o desenvolvimento
+- Antes de trocar de sessão, encerrar uma fase ou transferir o trabalho, atualize o handoff em [`docs/operations/ESTADO-DA-SESSAO.md`](docs/operations/ESTADO-DA-SESSAO.md): objetivo, o que foi feito, arquivos alterados, verificações e resultados, pendências e próximos passos, com caminhos concretos de leitura. Não registre segredos.
+- Atualize o registro existente em vez de criar históricos paralelos.
 
-- **Não crie nem mantenha aliases ou redirects temporários de compatibilidade**
-  para rotas renomeadas. O projeto ainda está em desenvolvimento: atualize
-  todos os consumidores para os IDs/paths canônicos e elimine os caminhos
-  anteriores do roteamento. A URL aposentada deve retornar 404, não 301/302.
-- Aplique esta regra a **todos os módulos ACULTA**, inclusive Studio, Marley,
-  LMS, Fórum, User, Portal e submódulos. Atualize também testes e mapa de rotas.
-  Gate: `php scripts/validate-no-temporary-route-aliases.php`.
-- **Não confundir aliases transitórios com redirects funcionais:** login,
-  logout, OAuth, checkout, confirmação, troca legítima de purpose, links
-  curtos e QR codes preservam seus fluxos de segurança. Nenhum redirect
-  funcional pode ser removido sem auditoria dos consumidores e callbacks.
-- Rotas técnicas de front de Domain permanecem **internas** e bloqueadas para
-  acesso direto; não as reative como aliases. Preserve segurança e dados
-  mesmo que uma URL histórica seja descartada.
+## Git (D-70, D-71)
 
-## Testes de navegador
-- Use **Firefox ESR visível na sessão X11 local** (`DISPLAY=:0`) para inspeção visual humana, capturas de aceite e testes de zoom real com atalhos do navegador. Referência verificada em 2026-10-31: Firefox ESR 153.5.1 e geckodriver 0.37.1.
-- Por autorização do responsável em 2026-10-31, **Firefox ESR headless pode executar gates automatizados repetitivos de geometria, reflow, DOM, foco e estados**, quando isso reduz setup e tempo. Chrome/Chromium headless podem ser usados como verificações automatizadas complementares se o driver corresponder à versão instalada. Essas camadas rápidas não substituem inspeção visual X11 nem teste de zoom real do Firefox. `wdlib.Driver()` mantém Firefox visível por padrão; solicite headless e browser explicitamente.
-- Declare explicitamente o modo headless no script/variável própria; não altere o padrão `wdlib.Driver()` para headless. Use perfil temporário sob `$SUITE_OUT` (fora do repositório), removido ao final; nunca o perfil pessoal. Não use `/tmp`: é tmpfs, com cerca de 3,9 GB, e costuma estar cheio.
-- O agente pode fechar Firefox ESR aberto sem uso. Antes, confirme que nenhum teste está em andamento e que nenhuma sessão WebDriver usa esse Firefox; se alguma estiver em uso, não feche.
-- **Testes visuais são infraestrutura de todo o ACULTA:** os scripts e instruções em `tests/browser/` atendem qualquer produto, módulo, domínio/purpose e consumer do projeto, não apenas o tema `aculta420`, Studio ou uma frente específica. Antes de criar um runner novo, tente os scripts genéricos com as URLs da área; só use/crie runner específico quando precisar validar contratos próprios (ACL, formulários, persistência, fixtures ou integrações). Todo script de teste visual (navegador, screenshot, medição de renderização) criado por agente deve ser salvo no repositório em `tests/browser/<frente>/`, com README local que diga o que cobre, ambiente (servidor de desenvolvimento ou local), variáveis e limitações. Nunca deixe o script só em `/tmp` ou em diretório pessoal. Artefatos (PNG, HTML, logs) ficam fora do repositório, em `$SUITE_OUT`. Consulte `tests/browser/README.md` antes de escrever script e reaproveite `wdlib.py`. Se o teste troca estado global (tema, configuração), o comando documentado deve restaurá-lo com `trap`.
-- Antes de criar teste de navegador novo para qualquer área do ACULTA, consulte `tests/browser/README.md` e `tests/browser/aculta-smoke/README.md`: `smoke-page.py` aceita URLs de qualquer purpose para reachability; `page-matrix.py` aceita páginas de qualquer módulo/domínio para a matriz responsiva, modos de cor e axe opcional. Use runner específico somente quando forem necessárias fixtures ou contratos funcionais/autorizativos de domínio. A sessão prévia opcional via `BROWSER_SESSION_START_URL` nunca deve ser impressa/versionada (pode conter ULI). Para fluxos autenticados, não imprima nem versione credenciais/ULI. Reutilize `wdlib.Driver` com browser/headless explícitos; não transforme smoke genérico em prova de ACL ou submissão funcional. Registre no README local o comando que funcionou, motor/versões, host, viewport, duração, evidência `$SUITE_OUT`, limitações e falhas observadas. Headless acelera repetição automatizada em qualquer frente; inspeção visual/zoom real continua em Firefox ESR/X11.
-- **Instruções e scripts de teste são infraestrutura de todo o ACULTA:** nenhuma frente deve tratá-los como pertencentes exclusivamente ao tema, Studio ou ao domínio que primeiro os utilizou. Passe URLs das páginas da sua área ao harness comum; acrescente runner próprio somente para uma lacuna funcional/ACL/fixture documentada, reutilizando `wdlib.py` e sem duplicar smoke ou matriz.
+- **Branch:** `dev`. Cada entrega é commitada e enviada a `origin/dev` por fast-forward, logo após o commit. Push automático, sem autorização por hash.
+- **Worktree local sem branch é permitido** para isolar a tarefa: `git worktree add --detach <caminho fora do repositório> origin/dev`. Ao integrar, `git push origin HEAD:dev` e depois `git worktree remove <caminho>`.
+- **Não crie branches, PRs nem publique em outra branch**, salvo ordem explícita do responsável. PR e merge em `main` só com pedido explícito; commit e push não autorizam merge. Tag só com pedido.
+- **Um commit por entrega**, só com os arquivos da entrega. Verifique o conteúdo staged antes do commit. Se a tarefa virar entregas independentes, separe em commits atômicos.
+- **Antes de editar**, confira `git status --short --branch`. Preserve alterações de outras pessoas e não descarte trabalho alheio.
+- **Se o remoto avançar ou o push for recusado**, integre por rebase sem sobrescrever trabalho, revise e tente de novo.
+- **Nunca** force push, reset destrutivo nem reescrita de histórico compartilhado.
+- **Stash não é entrega.** Não guarde trabalho em `git stash` como destino final.
+- **Mensagem de commit** em português, com o trailer `Claude-Session` quando a sessão for do Claude (CLAUDE.md).
+- **Coautoria é proibida.** Agentes não incluem `Co-Authored-By` nem outro trailer de coautoria em commits, PRs ou documentos.
+- **Não commitar** credenciais, `settings.local.php`, `.claude/settings.local.json`, backups locais nem conteúdo de `secrets/`.
+- **Ao concluir**, informe os commits enviados com hash, as validações executadas, o estado do Runtime e qualquer bloqueio. Não diga que publicou se o push não foi confirmado.
 
-## Procedimento de trabalho dos agentes
-Vale para todos os agentes. Detalhes: docs/operations/AGENTES-PROCEDIMENTO.md.
-- Um único branch de trabalho, definido pelo responsável (pendente; ver regra 1 acima). Todo trabalho é commit nele.
-- O servidor de desenvolvimento é o checkout /home/piradopirata/projetos/aculta, sempre no
-  head da PR, em HEAD destacado.
-- Bancos: só os existentes. Nunca criar banco. Nunca site:install em banco com tabelas.
-- updatedb e config:import no aculta_runtime seguem o gatilho do procedimento (por
-  head), com snapshot antes. pm:uninstall e DROP exigem ordem explícita.
-- Publicação por fast-forward, sem force. Gate vermelho: não publicar.
+## Runtime (D-70)
 
-## Consulte apenas quando aplicável
-- **Índice de regras por escopo:** `docs/operations/AGENT-POLICY-INDEX.md`. Consulte somente o documento local pertinente. `docs/operations/AGENT-GUARDRAILS-FULL.md` é arquivo histórico para auditoria, não contexto padrão.
-- **Aceite e consentimento:** existe um único formulário de aceite e o ledger registra somente os termos. Não crie formulários/checkboxes ou tipos adicionais sem decisão do responsável. Consulte `docs/portal/ACEITE-UNICO.md` e rode `php scripts/validate-single-acceptance.php` quando alterar fluxos de dados pessoais ou consentimento.
-- Portal: `docs/portal/GUARDRAILS.md`, `docs/portal/DRUPAL-11-STANDARDS.md` e documentação local.
-- Rotas/domínios: `docs/architecture/ROUTES-SITEMAP.md` e contratos vinculados.
-- Status/releases: `docs/operations/RELEASE-LIFECYCLE.md`; índice gerado, nunca editado manualmente (`php scripts/validate-project-status-index.php`).
-- **Mobile-first é norma global do tema ACULTA420 para todos os agentes que alterem UI**, em todos os purposes e consumers; não é restrito ao Studio. Antes de mudar CSS, Twig, SDC, JS de apresentação ou layout, consulte `docs/architecture/ACULTA420-MOBILE-FIRST-GUARDRAILS.md` e `web/themes/custom/aculta420/AGENTS.md`. A fidelidade OpenCulturas Next é restrita ao Studio; preserve Institution Bar e Domain Header. Não oculte a marca da Institution Bar por presumir que Domain Header existe em todos os purposes; em telas estreitas, quebre a barra em linhas quando necessário.
-- UI: documentação do tema; demais componentes: README/contratos próprios.
+- **Sincronização:** após cada push em `origin/dev`, atualize o Runtime de desenvolvimento para o mesmo commit. Atualize somente o código. Não toque em `secrets/`, `settings.local.php`, `private/`, `var/` nem nos dados do site.
+- **Antes da troca de head**, rode `updatedb:status` e `config:status` (somente leitura).
+- **Havendo pendência**, faça snapshot do `aculta_runtime` com hash e, depois, `updatedb` e `config:import` do `config/sync`. Pare e informe o responsável se qualquer passo falhar.
+- **Nunca** `pm:uninstall`, `DROP`, nem apagamento de conteúdo ou de dados, sem ordem explícita.
+- **Testes de Kernel** usam só `aculta_simpletest`. Nunca crie bancos.
+- **Não se aplica a produção.** Produção não recebe sincronização automática nem estados `estados/*.sqlite`.
 
-## Economia de contexto
-Modelo fixo **por sessão** escolhido no CLI, não neste arquivo. Busque trechos relevantes, evite dumps/logs integrais e repetições; não abra documentação não relacionada. Preserve prefixos estáveis quando possível, compacte contexto obsoleto e meça uso/cache real. Detalhes: `docs/operations/AGENT-CACHE.md`.
+## Escopo e segurança
 
-## Ferramentas e escopo
-- Para saídas extensas, use `python3 scripts/agent-output.py --lines 60 -- COMANDO` (consulte `docs/operations/AGENT-OUTPUT.md`); preserve e verifique o código de saída. Logs locais podem conter dados sensíveis.
-- Instruções locais em `web/modules/custom/aculta_portal/AGENTS.md` e submódulos prevalecem no próprio escopo; não carregue regras de componentes alheios.
-- Exclua `vendor/`, `web/core/`, `web/modules/contrib/`, `node_modules/`, caches e artefatos gerados das buscas **por padrão**, mas inclua o código instalado de Core/contrib quando necessário para verificar APIs e compatibilidade.
+- Altere somente o necessário para a tarefa. Preserve contratos existentes, trabalho paralelo e dados.
+- Não faça deploy nem alteração de produção sem autorização explícita.
+- Drupal fica em `web/`; módulos customizados em `web/modules/custom/`; tema em `web/themes/custom/aculta420/`. Siga os padrões Drupal/PHP e os contratos dos módulos envolvidos.
+- Não invente contratos nem altere ownership de rotas, entidades, permissões, workflow ou integrações sem verificar a documentação e o código atuais.
+- Não invente hosts, nomes de servidor, CNPJ, endereço ou dados institucionais.
+- **Evite caminhos e rotas absolutas.** Em código, scripts, testes, documentação e comandos versionados, não grave caminhos absolutos de máquina (`/home/...`, `/mnt/...`, `/usr/...`, `/tmp/...`) nem URLs de ambiente fixas. Use caminhos relativos à raiz do repositório, `__DIR__`/`$root` nos scripts, variáveis de ambiente (`SUITE_OUT`, `FIREFOX_BIN`, `GECKODRIVER`, `LOGIN_URL`, `BASE`) e resolução pelo `PATH`. Hosts e URLs de teste vêm de configuração ou de variável, não de texto fixo. Exceção: caminhos de servidor documentados em `docs/architecture/environments.md`.
 
-## Worktrees de agentes
-- Todo worktree de agente é criado em **`/home/piradopirata/worktrees/<frente>-<sufixo>`** (ext4). Não use `/mnt/disco1` nem `/tmp`.
-- Motivo: `/mnt/disco1` é NTFS (`ntfs3`, `fmask=0022`) — `cp -a` não preserva permissões nem bit de execução e emite "Operação sem suporte" em todos os arquivos; `/tmp` é tmpfs (≈3,9 GB, quase sempre cheio). Permissão errada já invalidou execuções antes.
-- Copie `vendor/`, `web/core/` e `web/modules/contrib/` como **cópias físicas** (`cp -a`), nunca symlink para outro checkout. Confira `du -sh` e dono `piradopirata` antes de rodar scripts; `php vendor/bin/drush` dispensa o bit de execução.
-- Um worktree por frente/branch. Consulte `git worktree list` antes de criar; não reutilize, limpe nem remova o worktree ou a base de teste de outro agente.
-- Ao terminar, remova apenas o próprio worktree (`git worktree remove <path>`) e publique a branch remota antes de descartá-lo.
+## Arquitetura e validação
 
-## DeepSeek: bloqueio de pico
-- Se o provedor da sessão for DeepSeek, **não execute chamadas diretas à API**: use o proxy local de `scripts/deepseek-offpeak.py` conforme `docs/operations/DEEPSEEK-OFFPEAK.md`. No pico, o trabalho segue com o Claude padrão (lançador `claude-deepseek`, que escolhe o provedor pelo horário); não chame a API DeepSeek diretamente e não contorne o HTTP 429. A instrução não substitui o bloqueio de rede nem a configuração do endpoint no CLI.
+- Suítes atuais: Marley `account:/marley`; Ganjalab `courses:/ganjalab`; WE SATIVA `wiki:/we-sativa`; Green Stash `shop:/green-stash`; Culturas `eventos:/culturas`. `aculta_studio` é infraestrutura compartilhada, não uma raiz pública. `/studio` e `/studio/*` respondem 404, sem alias nem redirect.
+- Rotas administrativas e de integração existem só no domínio principal e respondem 404 nos demais. A experiência de organizadores em `/culturas` permanece separada.
+- Preserve os módulos responsáveis e valide acesso no servidor, inclusive em escritas.
+- Endereço centralizado em `aculta_portal_cep` e país exclusivo Brasil (BR), conforme ADR-034 (`docs/decisions/ADR-034-pais-unico-brasil-endereco-central.md`).
+- Padrão Drupal 11+: `docs/portal/DRUPAL-11-STANDARDS.md`.
+- Antes de concluir, execute as verificações relevantes e registre os resultados. Não alegue testes que não executou.
 
+## Referências
 
-## Endereços e Locais (regra para agentes)
-
-- Antes de criar ou alterar qualquer formulário de endereço, consulte `docs/decisions/ADR-033-endereco-busca-e-locais.md`, `docs/portal/ACCOUNT-ADDRESS.md` e `docs/portal/GUARDRAILS.md`. A integração CEP central é padrão para todo formulário de endereço completo do Portal, inclusive módulos ACULTA novos.
-- Não adicione seletor de país a formulários brasileiros. Preserve Conta e checkout: a busca existente por CEP não deve mudar.
-- Busca por logradouro/endereço é uma função planejada e restrita às interfaces de Events e Maps. Não a exponha em Conta, checkout nem em formulário global. Não invente provedor, geocodificação ou endpoint.
-- Para Activity, use Local de `aculta_events`; não reintroduza campos de endereço avulsos. Seletor e cadastro devem seguir o plano de modal Drupal/AJAX, o contrato de autorização e a revisão de privacidade.
-- Ao encontrar formulário completo sem o adaptador, registre como lacuna de integração. Não altere dados/configuração Runtime nem promova versão ao apenas documentar.
-
-
-## Regra para popup de Local e integração entre módulos
-
-Agentes devem interpretar “modal” como popup sobreposto criado pelo sistema de diálogo do Drupal, com AJAX. Não trocar por formulário inline, off-canvas ou rota de tela inteira sem decisão explícita. Preservar o estado do formulário pai, retornar foco, suportar teclado/Escape, anunciar erros/estados e atualizar a referência do Local após confirmação.
-
-Para Locais, `aculta_events` é o owner da entidade e do ciclo editorial; `aculta_maps` consome os mesmos Locais autorizados para mapas e geocodificação. Não criar catálogo ou formulário paralelo em Maps. Consulte ADR-033 e o plano LOC antes de alterar os módulos.
-
-
-## ACULTA Studio Culturas — decisão de produto e domínio (2026-10-30)
-
-O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas**. A rota `/culturas` no purpose `eventos` foi adicionada; antes de declarar a jornada homologada, validar permissões e ações auxiliares. A entrada de Conta pode apresentar link gerado pelo DomainPurposeManager, sem escrita cross-domain.
-
-- A sessão administrativa técnica continua no domínio principal, em `/painel-administrativo/eventos`, restrita a administradores. Configuração global de permissões, auditoria e operações administrativas permanecem ali.
-- ACULTA Studio Culturas é a experiência de organizadores em `/culturas`, purpose `eventos`, composta sobre o owner `aculta_events`. O código da PR #299 já contém dashboard e fluxos iniciais de Eventos, Datas e Locais; não confundir isso com ativação/homologação Runtime. Não cria entidade, persistência ou catálogo duplicado.
-- A autorização para criar/editar/publicar Eventos e cadastrar Locais deve ser configurável pela administração de Eventos, com `content_editor` como padrão inicial. A configuração não concede acesso sozinha: permissões efetivas e access handlers do servidor continuam obrigatórios; criar, editar e publicar são capacidades distintas.
-- Escritas só são aceitas no purpose `eventos` através de rotas canônicas da experiência. O domínio `account` pode linkar para ela, mas não pode fazer POST nem gravar conteúdo de Eventos. Não introduzir proxy de escrita, alias de rota ou redirect de compatibilidade.
-- As telas públicas de Eventos continuam no purpose `eventos`. Outros domínios podem compor exibição somente leitura de Eventos publicados e acessíveis, sempre com link canônico de Eventos e sem expor Eventos privados do LMS.
-- Esta decisão substitui qualquer texto anterior que diga que todo trabalho editorial de Eventos só pode ocorrer no MAIN ou que o purpose `eventos` é exclusivamente público. O painel de administração permanece no MAIN; a área do organizador é a exceção explícita e separada em ACULTA Studio Culturas.
-- Estado: rota inicial implementada; validar autorização por domínio, navegação e homologação antes de marcar a experiência concluída.
-
-
-## Rotas administrativas e integrações: sempre no MAIN (guardrail)
-
-- **Toda rota administrativa e de integração responde somente no domínio principal (MAIN):** `/painel-administrativo/**` (Eventos, Datas, Locais, configurações, exportação) e `/integracoes/**` (OpenStreetMap, Melhor Envio, Mercado Pago, MCP e futuras). Em qualquer subdomínio, essas rotas retornam **404** (nunca 302), para todos os métodos.
-- Não renderize toolbar do Navigation, links contextuais ou qualquer ação administrativa em subdomínio. `DomainRouteSubscriber`, `DomainPurposeRequestSubscriber`, `AppearanceHooks` e `hook_contextual_links_view_alter` aplicam a regra no servidor; ocultar no cliente não substitui a checagem.
-- Não declare `_aculta_domain_purpose` diferente de `main` nem `_aculta_domain_purpose_authoritative` em rota administrativa ou de integração. Não crie alias, redirect ou segundo painel.
-- A experiência de organizadores do ACULTA Studio Culturas é uma superfície de escrita separada em `/culturas` no purpose `eventos`; não usa `/painel-administrativo` nem `/integracoes` e não é exceção a esta regra. A rota e o dashboard inicial estão no código; não declarar a jornada homologada antes de validar Runtime e autorização por operação.
-- Política: `docs/portal/ADMIN-DOMAIN-POLICY.md`. Gate: `php scripts/validate-admin-routes-main-domain.php`. Testes: `EventDomainBoundaryKernelTest`, `DomainRouteSubscriberIntegrationPurposeTest` e `DomainRoutePolicyTest`.
-
-## Contrato de migração: Suites do ACULTA Studio por domínio (ADR-038)
-
-Cada Suite responde em seu próprio domínio/purpose e sob o caminho-base abaixo. O prefixo público `/studio` e todas as rotas `/studio/*` serão retirados e responderão 404, sem alias ou redirect. `aculta_studio` permanece como infraestrutura compartilhada de composição e registry, não como raiz de URL.
-
-| Suite | Purpose | Host de produção | Host de teste | Caminho-base |
-| --- | --- | --- | --- | --- |
-| Marley | `account` | configurado no Domain | configurado no Domain | `/marley` |
-| Ganjalab | `courses` | configurado no Domain | configurado no Domain | `/ganjalab` |
-| WE SATIVA | `wiki` | configurado no Domain (`wiki420`) | configurado no Domain (`wiki420`) | `/wesativa` |
-| Green Stash | `shop` | configurado no Domain | configurado no Domain | `/greenstash` |
-| Culturas | `eventos` | configurado no Domain | configurado no Domain | `/culturas` |
-
-Manter Conta e Perfil como experiências diferentes, fora das Suites. A raiz de `conta` apresenta a entrada da Conta e não reescreve para `/studio`. `/conta/*`, `/perfil/*` e `/salvos` preservam seus owners. A Conta legada continua em `/conta-legada`.
-
-Regras de implementação:
-- Rotas declaram o purpose correto e validam usuário, módulo owner e permissão no servidor. Purpose incorreto responde 404, inclusive POST. Links cross-domain são absolutos via `DomainPurposeManager`; não enviar POST/proxy de escrita entre purposes.
-- Preservar route IDs e owners sempre que possível. Rotas de negócio podem ser declaradas pelo módulo owner e ter path/purpose ajustados conforme a Suite responsável.
-- Novas Suites escolhem host/purpose e slug próprio antes de declarar rotas; não introduzir `/studio/{suite}`.
-- Hosts são lidos da configuração ativa por ambiente e URLs absolutas passam pelo `DomainPurposeManager`. Wiki mantém o Domain configurado `wiki420`; não renomear para `wiki.aculta.*`.
-- `PurposeFrontPathProcessor`, `FrontPathPolicy`, subscriber de propósito, navegação e testes já usam os caminhos canônicos. Preservar a matriz de propósitos e as respostas 404 cross-purpose, inclusive escritas.
-- `/studio` e `/studio/*` estão removidos, sem redirects legados; canonical e links apontam aos hosts e caminhos resolvidos pela configuração do ambiente.
-- A migração de links, login/retorno, e-mail, notificações, sitemap, canonical, cache e testes foi feita nos consumidores inventariados. Continuar verificando novos consumidores sem transferir ownership de entidades, formulários, ACL ou workflows.
-
-Estado em 2026-10-30: caminhos canônicos e bloqueio de `/studio*` testados após rebuild de cache; matriz HTTP 275/275 e baseline Firefox ESR capturado em 1440/390 px. Wiki usa o Domain canônico `wiki420`; HTTPS e captura autenticada foram verificados no ambiente de desenvolvimento. DNS de produção `wiki420.aculta.org` não foi verificado com sucesso neste ambiente.
+- Ambientes, Drush, servidor web, banco de teste e ciclo de release: `docs/operations/AGENT-OPERATIONS.md`, `docs/architecture/environments.md`.
+- Regras por escopo: `docs/operations/AGENT-POLICY-INDEX.md`.
+- Decisões do responsável: `docs/architecture/DECISOES-RESPONSAVEL-2026-10-28.md` (D-70 e D-71 vigentes).
+- Contratos de domínio e rotas: ADR-038, `docs/portal/ADMIN-DOMAIN-POLICY.md` e documentação de arquitetura pertinente.
+- Aceite único de Termos de Uso e Política de Privacidade: `docs/portal/ACEITE-UNICO.md`.

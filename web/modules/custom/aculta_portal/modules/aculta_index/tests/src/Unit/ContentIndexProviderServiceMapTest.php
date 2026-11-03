@@ -9,6 +9,7 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\entity_usage\EntityUsageInterface;
 use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
@@ -44,6 +45,12 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
     $container = new ContainerBuilder();
     $purposeServiceId = 'aculta_portal.domain_purpose';
     $container->setDefinition($purposeServiceId, (new Definition(DomainPurposeManager::class))
+      ->setSynthetic(TRUE)
+      ->setPublic(TRUE));
+    $container->setDefinition('entity_type.manager', (new Definition(EntityTypeManagerInterface::class))
+      ->setSynthetic(TRUE)
+      ->setPublic(TRUE));
+    $container->setDefinition('entity_usage.usage', (new Definition(EntityUsageInterface::class))
       ->setSynthetic(TRUE)
       ->setPublic(TRUE));
     $relationTypeManagerServiceId = 'group_relation_type.manager';
@@ -86,6 +93,8 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     ));
+    $container->set('entity_type.manager', $this->createMock(EntityTypeManagerInterface::class));
+    $container->set('entity_usage.usage', $this->createMock(EntityUsageInterface::class));
     $relationTypeManager = $this->createMock(GroupRelationTypeManagerInterface::class);
     $relationTypeManager->method('hasDefinition')->willReturn(FALSE);
     $container->set($relationTypeManagerServiceId, $relationTypeManager);

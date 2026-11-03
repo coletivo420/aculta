@@ -1,5 +1,36 @@
 # Execução contínua ACULTA — histórico das frentes
 
+## Fórum — aposentadoria do permalink individual (2026-11-01, dev.330)
+
+- Aplicada D-65: `entity.comment.canonical` mantém geração de URLs de
+  compatibilidade, mas substitui os requisitos por uma checagem que sempre
+  lança 404. Comentários contextuais continuam sujeitos ao acesso da entidade
+  hospedeira.
+- Unit subscriber/access check: 2 testes / 4 assertions PASS. Rebuild de rotas
+  e HTTP no Runtime não foram executados; sem escrita Runtime.
+
+## Content Index da Revista — relação de vídeo (2026-11-01, Magazine dev.15)
+
+- O provider Magazine v3 usa a API `entity_usage` para a revisão corrente e
+  allowlist `media_embed` no campo `body`, limitando o alvo ao bundle
+  `remote_video`. Nenhum corpo, URL oEmbed ou thumbnail é lido/projetado.
+- Testes: Unit Magazine 7/43; Kernel de backfill/index Magazine 1/18; Kernel de
+  revalidação de acesso Magazine 2/31; boot/DI real dos owners 2/89. PHPCS e PHP
+  lint sem achados.
+- Wiki/Fórum permanecem sem alteração dos formatos de vídeo; isso ainda requer
+  decisão editorial. Sem escrita/rebuild no Runtime.
+
+## Activity Content Index e validação de formulário (2026-11-01, dev.12)
+
+- `aculta_activity` projeta `editorial_image` somente da referência explícita
+  `field_media_image`; versão da projeção v3. Sem corpo, URL ou metadados
+  privados da Media.
+- Corrigida validação para ler os valores submetidos, inclusive campos limpos;
+  `EntityTypeManager` e conta atual são injetados por DI.
+- Kernel Activity: 6 testes / 123 assertions PASS. Maps Unit + provider Index
+  de Events: 13 testes / 186 assertions PASS. PHPCS e PHP lint sem achados.
+- Nenhuma escrita ou reconstrução do índice no Runtime.
+
 ## Desenvolvimento na branch dev — Maps/Events (2026-11-01)
 
 - Branch `dev` partiu do commit integrado `889c2bae8`; worktree de desenvolvimento
@@ -2882,3 +2913,284 @@ ou preferência persistente alterados.
 - PHPUnit Kernel Events executado sobre esse tree antes da integração: **22 testes, 442 assertions, exit 0**; 15 deprecações de Core/contrib e aviso não bloqueante de diretório de saída PHPUnit não gravável. PHP lint, PHPCS Drupal/DrupalPractice e `git diff --check`: **exit 0**.
 - O push fast-forward foi aceito pelo remoto: `origin/main` avançou de `8e7882dbe` para `6b455316c`. Nenhum force push, merge adicional de PR ou alteração em dados/configuração Runtime foi feito.
 - `dev` ainda será atualizado por fast-forward para acompanhar o head integrado de `main`; isso preserva os commits e elimina a divergência dos ponteiros.
+
+### Microfase Calendar — consultas contextuais por provider (2026-11-01)
+
+- Em `dev`, `CalendarQuery` agora aceita allowlist opcional de IDs de providers; sem allowlist, mantém a consulta agregada original. `CalendarItemSource` aplica o escopo e `CalendarAgenda` preserva ID e link em cada ocorrência expandida.
+- README, changelog e roadmap de `aculta_calendar` documentam o contrato. Essa base não importa classes do Events e não altera a versão RC do motor.
+- Suíte completa `aculta_calendar`: **128 testes, 433 assertions, exit 0**; 2 depreciações de atributos EntityType do Core. PHPCS Drupal/DrupalPractice dos arquivos PHP da microfase, PHP lint e `git diff --check`: **exit 0**.
+- Nenhuma escrita em Runtime, rebuild ou configuração foi executada. O uso da consulta contextual pela página de Local permanece para a microfase seguinte.
+
+### Microfase Events — agenda contextual do Local (2026-11-01)
+
+- Base `dev`: `04cffc4ee37fd894fd0c5ab5a04ab275481300c0`. `LocationPageController` deixou de consultar `EventDate` e expandir manualmente os dados: agora chama `CalendarAgenda` com consulta restrita a `aculta_events` e ao ID de Local em `field_local`.
+- O provider de Events filtra a associação Data > Local, revalida view access de Evento e Local para a conta apropriada, mantém dados privados do Local fora da agenda global e usa cache por usuário para consultas contextuais. A página mostra uma janela de 30 dias e renderiza links, recorrências, cancelamentos e reagendamentos pelo contrato compartilhado. Para Local privado, owner/editor autorizado vê a agenda; outra conta recebe 404.
+- Corrigido também o fixture antigo do overview administrativo, que não instalava o schema de Organização e esperava contagens antigas (4 métricas e 9 ações no controller atual).
+- Suíte completa Events após a correção do fixture: **128 testes / 2.528 assertions, exit 0**, 51 depreciações upstream. Após adicionar checagem explícita de acesso do Evento, suíte focal (`EventCalendarItemProviderKernelTest`, `EventStructuredDataKernelTest`, `EventAccessKernelTest`, `EventLocationModalAndAdminKernelTest`): **19 testes / 380 assertions, exit 0**, 24 depreciações. PHP lint, PHPCS dos arquivos alterados e `git diff --check`: **exit 0**.
+- A suíte completa Calendar nesta sequência anterior: **128 testes / 433 assertions, exit 0**, 2 depreciações Core. A API contextual e a agenda por Local foram validadas pelos testes dos dois owners.
+- ICS contextual por Local, histórico, A/B em browser e homologação de purpose/runtime não foram executados. Nenhuma escrita, importação ou rebuild foi feita em `aculta_runtime`.
+
+### Reparo de gates estáticos e limpeza segura de refs locais (2026-10-31)
+
+- Em `dev`, a tabela de módulos contrib do mapa tema/módulo foi reconciliada com os oito módulos MCP/OAuth habilitados no `config/sync`: `consumers`, `mcp_server`, `mcp_server_oauth`, `mcp_server_tool_bridge`, `mcp_server_ui`, `simple_oauth`, `simple_oauth_21` e `tool`. `validate-module-theme-map.php`: **PASS (221 checks)**.
+- Os gates `validate-aculta420-foundation.php` e `validate-aculta420-shell-contract.php` falhavam quando iniciados por PHP numa worktree sem bootstrap, pois Composer tornava a classe Drupal disponível sem container inicializado. Eles agora detectam `Drupal::hasContainer()` e aceitam `ACULTA_DRUSH_ROOT`, mantendo a leitura dos arquivos no checkout atual. Reexecução com o Drush do checkout autorizado: Foundation **PASS (353 checks)**; Shell Contract **PASS (13 checks)**.
+- Outros gates estáticos executados: SDC schemas **PASS (55 componentes, 759 checks)**; Design Foundations **PASS (2432 checks)**; Browser Validators **PASS (21)**; Module/Theme Boundary **PASS (3496)**; route aliases **PASS (38 arquivos)**; status index **PASS (48 componentes)**. As tentativas diretas iniciais dos dois gates Drupal sem container não contam como resultado de código; foram repetidas via bootstrap Drush.
+- Fixtures de validação executadas no checkout `dev`: Design Foundations **PASS (160 resultados esperados)** e Shell Contract **PASS (19 fixtures)**.
+- Firefox ESR/X11 focal de Marley, 320px, com CSS candidato somente injetado: `/marley` **PASS** no heading do Hub; `/marley/revista/publicacoes/todos` **SKIP_NOT_WORKSPACE_LANDING**; captura `CAPTURED`, zero falhas de fidelidade. Isso corrige a asserção excessivamente ampla sem dispensar o teste da landing. Evidência privada: `/home/piradopirata/aculta-suite-out/marley-heading-route-scope-dev8-20261031/`. Não é homologação de OCS-F11/THEME-MF3 nem prova de CSS servido.
+- Higiene Git: fetch confirmou a antiga `refactor/openculturas-codigo-visual` em `889c2bae8`, checkout de outra worktree; todos os seus commits são ancestrais de `origin/main` e `origin/dev` (zero commits exclusivos). A referência foi preservada por estar em uso. Foram removidas **57 refs locais `backup/*`** cujas pontas eram alcançáveis por `origin/main`; branches em uso e branches com commits não alcançáveis por `origin/main`/`origin/dev` foram preservadas. Nenhuma branch remota, worktree ou arquivo de trabalho alheio foi removido.
+- Sem escrita, importação, rebuild ou alteração de conteúdo/configuração no Runtime.
+- Retestes direcionados dos gates recentes: D-65 do Fórum **PASS (2 testes, 4 assertions)**; Secrets Manager **PASS (14 testes, 60 assertions, 58 depreciações de Core/contrib)**; painel Secrets em Firefox ESR/X11 **PASS (31/31)** em 1280/390/320px, com CSS candidato injetado e captura mobile inspecionada. O teste Browser não confirma o CSS servido; Olivero e Functional de instalação/rollback continuam pendentes.
+
+### Microfase Maps/Events — ACL de Locais e transparência da geocodificação (2026-10-31)
+
+- A antiga branch local `refactor/openculturas-codigo-visual` estava em `889c2bae8`; após `git fetch --prune`, confirmou-se que seu HEAD é ancestral de `origin/dev` (`git merge-base --is-ancestor` exit 0; comparação `origin/dev...branch` = 23 commits à frente em dev, 0 exclusivos na branch). O remoto homônimo estava ausente (`gone`). O worktree correspondente estava limpo e sua pasta já não existia; o registro obsoleto foi podado e a branch local incorporada foi removida. Nenhuma branch remota foi alterada. `dev` permaneceu em sincronia com `origin/dev` (`0/0`).
+- `LocationCatalogue` revalida cada Local candidato com `access('view', $account, TRUE)` e agrega à cacheabilidade tanto resultados permitidos quanto negados antes de filtrar/paginar. Mapa e listagem consomem o catálogo compartilhado.
+- A regressão A/B foi ampliada para dois owners privados e anônimo. PHPUnit Kernel `LocationCatalogueKernelTest`: **6 testes, 129 assertions, exit 0**; 14 depreciações de Drupal/Core/contrib. O teste confirma que cada owner vê o próprio Local privado, não vê o do outro owner, e visitante anônimo vê apenas o Local público.
+- A política de privacidade foi atualizada somente como minuta versionada 0.6 em HTML e Markdown. Ela descreve requisições de tiles OSM/Google e a consulta server-side ao Nominatim no cadastro/alteração de endereço; não descreve busca/autocomplete postal. A minuta não foi publicada no Runtime. D-52 permanece interpretado como vedação a aviso inline; publicação depende de revisão jurídica e aprovação institucional.
+- Roadmaps Events/Maps e status YAML foram corrigidos para remover afirmações obsoletas de que não havia Entity Access ou teste A/B. Nenhuma escrita/config import/rebuild foi feita em `aculta_runtime`.
+
+### Microfase Maps — endpoint canônico de tiles OSM (2026-10-31)
+
+- Revisão da política oficial OSM encontrou que o código usava `https://{s}.tile.openstreetmap.org/...`; a política atual especifica `https://tile.openstreetmap.org/{z}/{x}/{y}.png`. `aculta-map.js` foi corrigido para o host canônico. Fontes normativas: `operations.osmfoundation.org/policies/tiles/` e `/policies/nominatim/`.
+- O README de Maps foi corrigido: D-46 usa Nominatim em todos engines, Google Geocoding não é chamado; endpoint, política de atribuição e estado da minuta são explícitos. A revisão técnica recebeu adendo datado: `Referrer-Policy` do Runtime ainda requer confirmação, e a Política 0.6 segue não publicada.
+- Smoke Firefox de Maps agora registra hosts de tiles e falha se OSM utilizar host não canônico. O artefato padrão mudou de `/tmp` para `/home/piradopirata/aculta-suite-out/mp7-maps`.
+- Gates estáticos: `node --check` JS **PASS**; compilação sintática Python **PASS**; status index **PASS (48)**; `git diff --check` **PASS**. PHPUnit focal Maps + controlador Events: **10 testes/90 assertions PASS**, 13 depreciações Drupal/Core/contrib. Firefox/X11 não executado porque o docroot servido não está neste HEAD; teste visual fica pendente para o candidato servido.
+- Nenhuma escrita, importação, rebuild ou alteração de conteúdo/configuração foi feita no `aculta_runtime`.
+
+### Conciliação de alterações locais de agentes — 2026-10-31
+
+- `game-responsive-rc` continha um runner Firefox/X11 mobile de Game ainda não rastreado. O runner foi trazido para `tests/browser/aculta-game/mobile-visual.py`, com instrução local e validação sintática Python. A evidência visual antiga usa CSS com SHA-256 `04ee7182…`, diferente do CSS atual em `dev` (`dcb7b96f…`); por isso seus resultados 27/27 não foram reapresentados como evidência do HEAD atual. O runner não foi executado nesta rodada porque gera ULI/sessão no Runtime; reflow/foco seguem pendentes para o candidato servido.
+- A diferença local do Studio era uma revisão anterior da medição de scroll de Marley. O `dev` já contém a medição do contêiner pai, regra scroll-ou-cabe e documentação/capturas mais recentes; o patch antigo conflitou com essas extensões e não foi aplicado para evitar regressão.
+- Secrets Manager já contém no `dev` o CSS responsivo, a fixture Kernel com `commerce_checkout`, os testes e a versão `0.1.0-dev.8`. O runner atual do `dev` já verifica que a captura começa na primeira coluna; os documentos versionados registram 31/31, mais recentes que os 28/28 do worktree antigo. Nenhuma cópia duplicada foi feita.
+- O arquivo não rastreado `test-forum-integration.php` no checkout servido é uma simulação fora dos módulos: declara um widget placeholder cujo `checkAccess()` retorna `TRUE`. Foi preservado e excluído do Git por não ser implementação segura/funcional.
+- No HEAD `dev`, PHPCS integral de `aculta_game` foi executado e passou (exit 0). Nenhuma escrita Runtime, importação, rebuild ou alteração de conteúdo/configuração foi feita.
+
+### Revalidação Content Index — 2026-11-02
+
+- Branch de trabalho `dev` e `origin/dev` iniciaram sincronizados em `bd11c4788`; o worktree estava limpo.
+- Suíte Unit completa do `aculta_index`: **51 testes / 265 assertions, exit 0** em `aculta_simpletest`.
+- Suíte Kernel completa do `aculta_index`: **127 testes / 2.171 assertions, exit 0** em `aculta_simpletest`; 274 depreciações Core/contrib. O runner avisou inicialmente que o diretório HTML não era gravável; criou-se a pasta no `$SUITE_OUT` e a suíte terminou normalmente.
+- PHPCS Drupal/DrupalPractice do módulo, PHP lint, `validate-no-temporary-route-aliases.php` (**38 arquivos**), `validate-admin-routes-main-domain.php` (**38 arquivos/154 rotas**) e `validate-project-status-index.php` (**48 componentes**) passaram.
+- Nenhum rebuild, importação ou escrita em `aculta_runtime`; nenhuma mudança de código funcional nesta microfase.
+
+### Revalidação ACL da agenda contextual Events — 2026-11-02
+
+- Worktree `dev` e `origin/dev` iniciaram limpos e sincronizados em `329b95e6f`.
+- `EventCalendarItemProviderKernelTest` passou em MariaDB `aculta_simpletest`: **6 testes / 116 assertions, exit 0**, 13 depreciações Core/contrib. A fixture usa UIDs 101/102 para evitar o bypass de acesso do UID 1; owner A vê o próprio Local privado, não vê o Local de B, e anônimo não recebe a agenda privada.
+- Nenhum código de produção, configuração, rebuild ou conteúdo de `aculta_runtime` foi alterado.
+
+### Revalidação Doações/Recorrência — 2026-11-02
+
+- Doação Unit: **26 testes / 90 assertions, exit 0**. `DonationPortKernelTest`: **5/196, exit 0**, 88 depreciações Core/contrib.
+- Mercado Pago Unit completa: **258 testes / 1.156 assertions, exit 0**. `CheckoutProTest`: **3/135, exit 0**, 78 depreciações Core/contrib. A cobertura Unit inclui idempotência/retry de planos e assinatura, falha de transporte ambígua, validação de IDs e recorder/webhook.
+- Testes executados em banco isolado `aculta_simpletest` quando Kernel; sem credenciais externas, cobrança, transação ou mensagem. Login do comprador sandbox e fluxos ponta a ponta permanecem pendentes.
+- Nenhuma configuração, conteúdo, rebuild ou escrita no `aculta_runtime`.
+
+### Revalidação Calendar/Maps/Events — 2026-11-02
+
+- Calendar Unit **98/299** e Kernel **30/134** PASS (duas depreciações Core). Maps Unit **7/33** e Kernel **3/6** PASS (duas depreciações Core).
+- Events `EventCalendarItemProviderKernelTest` **6/116** e `EventIcsControllerKernelTest` **3/54** PASS, 13 depreciações Core/contrib em cada execução. A cobertura confirma owner A, owner B e anônimo para agenda/ICS de Local privado.
+- Purpose/host HTTP, auditoria dos demais consumidores, homologação de Runtime e revisão jurídica de Maps continuam pendentes. Nenhuma escrita/config import/rebuild em `aculta_runtime`.
+
+### Revalidação Wiki/Fórum/Revista — 2026-11-02
+
+- Wiki: `WikiProposalRolePermissionsConfigTest` **1/8** e Kernel privado `testProposalSubmissionUsesPrivateRevisionedEntityAndAccess` **1/220** PASS; 250 depreciações Core/contrib/Webform. Sync contém os quatro grants esperados. Publisher Messenger revisado estaticamente; despacho/entrega Kernel por destinatário segue pendente.
+- Magazine: Unit **41/168** e `RevistaEditorialAccessKernelTest` **13/544** PASS. Forum Unit completa **189/1.348** PASS. Comments continuam hospedados em `field_aculta_discussion` da publicação e usam resolver `aculta_forum`/contexto `publication`. Fluxo de comentário/moderação HTTP no Runtime não executado.
+- D-65: access check Unit **1/1** e subscriber canonical **2/4** PASS. Requisição HTTP real `/comment/{cid}`=404 pós-rebuild permanece DEFERRED.
+- Nenhuma configuração, conteúdo, rebuild, cobrança ou mensagem externa foi escrita/enviada.
+
+### Revalidação Activity/Content Cleanup — 2026-11-02
+
+- Activity Unit **6/20** e Kernel **6/123** PASS em `aculta_simpletest`; 121 depreciações Core/contrib. Provider registrado no container real, relação `editorial_image` explícita e purpose `main`.
+- Content cleanup Portal Unit **5/78** e inventário Kernel **1/21** PASS com File/Media storage real. O inventário é paginado/dry-run e não executa exclusão.
+- Nenhum dado, arquivo, configuração ou geração no `aculta_runtime` foi alterado.
+
+### OCS-F3 — feedback de estado no Studio e catálogo do carrinho (2026-11-01)
+
+- Início da sessão: worktree `aculta-dev-development` em `dev`, HEAD `4c7dc29ac`, 4 commits atrás de `origin/dev`. Fast-forward para `7374cc80f`; durante a sessão, outra sessão publicou a frente de contribuições, levando o HEAD a `1fdbc6b68` e depois a `280623e34`.
+- Entrega visual própria: commit `741508798` (`feat(theme): add Studio status feedback and shipping stories`), publicado por fast-forward em `origin/dev` junto com `280623e34` da outra sessão. Nenhum force push; a árvore de trabalho da outra sessão foi preservada e não entrou no meu commit.
+- Alterações: `css/components/studio.css` (caixa de mensagem do `opcult` `_messages.scss` aplicada ao alerta Bootstrap dentro das raízes Fidelity), fixture `tests/browser/aculta-theme-mobile-first/studio-status-messages.py`, README da pasta, `component-catalog.md`, `mobile-first-audit.md`, `visual-parity-matrix.md`, `visual-cross-product-roadmap.md` e três stories de `content/shipping-summary`.
+- Fixture executada no Firefox ESR visível (`DISPLAY=:0`): **112/112 PASS**, exit 0, em 320/360/390/599/600/768/1024/1280/1440px, claro/escuro, zoom real 200%/400% via `xdotool`. Contraste de link 12,4:1 no claro e 14,5:1 no escuro; container de controle sem vazamento de escopo. Artefatos em `/home/piradopirata/aculta-suite-out/studio-status-messages-20261101/`.
+- Gates estáticos no HEAD da entrega: SDC schema **PASS (55 componentes, 27 includes, 759 checks)**; Design Foundations **PASS (2432 checks)** e `COLOR MODE TOKEN-ONLY: PASS`; Module-theme boundary **PASS (3526 verificações)**; Browser Validators **PASS (21 checks)**; SDC asset audit `{"components":55,"twig":55,"css":45,"stories":103}`, Findings 0; `git diff --check` PASS; `python3 -m py_compile` PASS. Stylelint/ESLint não foram executados porque a worktree não tem `node_modules`; o checkout servido não foi usado para lint.
+- Limites: a fixture reproduz markup Bootstrap e folhas do tema; não prova render Drupal, ACL, AJAX/no-JS, cache por usuário, leitor de tela ou envio de formulário. A região `aculta-highlighted` não herda `--aculta-studio-fidelity-*`, então a caixa usa `--aculta-shadow-raised` e a fonte do documento. OCS-F3 continua parcial; THEME-MF3 e OCS-F11 não aprovados; OCS-A1–A4 não iniciadas.
+- Conflito registrado como Pede-A na matriz de paridade: `ADR-038` e `FrontPathPolicy` mantêm `/studio/we-sativa` e `/studio/green-stash`, enquanto o commit `2013becb7` e `StudioIdentityRoutingTest` definem `/wesativa` e `/greenstash`. Nenhuma rota, política ou ADR foi alterada nesta sessão.
+- Nenhuma escrita, importação, rebuild ou alteração de conteúdo/configuração foi feita em `aculta_runtime`.
+
+### OCS-F3 — janela do Runtime, lint e validação servida (2026-11-01)
+
+- Autorização do responsável: janela para publicar a folha, reconstruir cache e repetir capturas servidas; decisão de **não usar Montserrat** na família de mensagens, com a exclusão da fidelidade tipográfica aceita e encerrada.
+- Dependências de lint instaladas na worktree (`npm ci --ignore-scripts`). `npm run lint:css` (stylelint) e `npm run lint:js` (eslint) retornaram exit 0.
+- Checkout servido passou de `882ad66cd` para `6cbcbdf52`. O caminho não rastreado `web/modules/custom/aculta_portal/tests/src/Kernel/Routing/` foi preservado; não conflita com o novo head.
+- Gatilho de banco: `updatedb:status` = "No database updates required."; `config:status` = "No differences between DB and sync directory." Sem snapshot obrigatório, `updatedb` ou `config:import`. `drush cr` = "Cache rebuild complete.". HTTP: main 200, loja 200, conta 302 (entrada).
+- Snapshot antes da sessão ULI: `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-ocs-f3-served-20261101.sql`, modo 0600, SHA-256 `38400a64e4e7c68e6571f785c0064c30a9bcc0b5c78a293c46d393f897bf4c9d`.
+- Sessão autenticada com ULI da conta sintética `aculta_visual_admin` (UID 257); o link não foi impresso. A folha servida contém o bloco OCS-F3; a mensagem real de login único em `conta:/marley` mediu borda de 2px, `rgb(104, 148, 39)`, `flex-wrap: wrap`, respiro 16px/32px e sombra, sem overflow em 320/600/768px.
+- `page-matrix.py` em `conta:/marley` e `conta:/conta`: **30/36** combinações; os seis avisos são a rolagem interna da tabela de publicações de Marley a 599/600/768px (`right=616` em viewport 600), sem alargar o documento. Artefatos em `/home/piradopirata/aculta-suite-out/ocs-f3-served-capture-20261101/`.
+- Nenhum conteúdo, configuração, permissão ou formulário foi alterado/enviado. Outros estados/rotas, AJAX/no-JS, cache por usuário e WCAG integral seguem pendentes; THEME-MF3 e OCS-F11 não aprovados.
+
+### OCS-F3 — captura servida ampliada (2026-11-01)
+
+- Com ULI de `aculta_visual_admin` (UID 257) iniciada em `conta`, `page-matrix.py` capturou oito áreas em 320/390/768/1440px, modo claro: `conta:/marley`, `conta:/conta`, `conta:/perfil`, `conta:/salvos`, `cursos:/ganjalab`, `wiki420:/wesativa`, `loja:/greenstash` e `eventos:/culturas`.
+- Todas responderam HTTP 200 e a sessão cruzou os subdomínios; o documento não excedeu a viewport. Avisos de overflow restritos à rolagem interna de tabela: Marley a 768px e Culturas a 320/390px.
+- Evidências em `/home/piradopirata/aculta-suite-out/ocs-f3-served-broad-20261101/` e `.../ocs-f3-served-broad-20261101b/`. Nenhum conteúdo, formulário ou permissão foi alterado; não há homologação de paridade por experiência, ACL A/B, AJAX/no-JS ou WCAG.
+
+### OCS-F3 — captura servida ampliada em modo escuro (2026-11-01)
+
+- Mesmas oito áreas Studio, 320/390/768/1440px, `MATRIX_MODES=dark`, sessão ULI UID 257: **32/32 respostas HTTP 200**.
+- `overflow=True` em 29/32; os três avisos repetem a rolagem interna de tabela já observada no claro: Marley a 768px e Culturas a 320/390px. Documento igual à viewport em todas.
+- Evidência em `/home/piradopirata/aculta-suite-out/ocs-f3-served-broad-dark-20261101/`. Sem alteração de conteúdo/formulário/permissão; zoom real, no-JS e WCAG integral seguem pendentes.
+
+### THEME-MF2 — correção do ícone de status no Marley mobile (2026-11-01)
+
+- Defeito reportado pelo responsável: ACULTA Studio Marley quebrado no mobile. A captura servida mostrou o alerta de status com um bloco vertical vazio de ~120px antes do texto.
+- Causa: o template de alerta do tema base emite `<svg>` sem `width`/`height`; a regra contrib limita só `max-width: 2rem`, e o ícone mantém 150px de altura intrínseca.
+- Correção: `css/drupal-bootstrap.css` passa a declarar `.alert svg { width: auto; height: auto; max-width: 2rem; max-height: 2rem; }`. Commit `cc02e433a`, publicado por fast-forward em `origin/dev`.
+- Fixture `studio-status-messages.py` recebeu o gate de regressão do ícone: **130/130 PASS** no Firefox ESR visível.
+- Servido: checkout de `6cbcbdf52` para `cc02e433a`; `updatedb:status` e `config:status` sem pendências; `drush cr` PASS. ULI UID 257 em `conta:/marley`: ícone **32×32**, alerta 175px a 320px e 111px a 600/768px, sem overflow. Evidência em `/home/piradopirata/aculta-suite-out/ocs-f3-marley-iconfix-served-20261101/`.
+- Probe de teclado servido (`/marley`, `/conta`, `/perfil`): **648 observações**, 621 alvos focáveis e 621 com foco visível/contorno; 27 capturas. Evidência em `/home/piradopirata/aculta-suite-out/ocs-f3-keyboard-served-20261101/`.
+
+### Registro de concorrência de worktree — 2026-11-01
+
+- O commit `ef478a617`, destinado apenas a três documentos do tema, incluiu também arquivos que a sessão da frente de contribuições/Wiki já había preparado no índice da mesma worktree. Nenhum desses arquivos foi editado por esta sessão; nenhum conteúdo foi revertido, apagado ou reescrito e não houve force push.
+- Para evitar repetição, os commits seguintes desta sessão usam `git commit --only <paths>`, que ignora alterações de terceiros no índice. A worktree continua compartilhada; as alterações não commitadas de outras frentes permanecem preservadas.
+
+### ADR-040 — rolagem horizontal visível em tabelas (2026-11-01)
+
+- Decisão do responsável: em todo o site, tabela que excede o contêiner deve exibir barra de rolagem horizontal, sem comprimir células nem rolar a página. Registrada em `docs/decisions/ADR-040-rolagem-horizontal-tabelas.md` e no índice de ADRs.
+- Implementação: `css/drupal-bootstrap.css` estiliza a barra (Firefox `scrollbar-width/color`; WebKit `::-webkit-scrollbar` de 0.75rem) e o foco em `.table-responsive`, `.webform-multiple-table-responsive`, `.studio__listing-wrap`, `[data-aculta-studio="listing-wrap"]` e `[data-portal-ui="studio-listing-wrap"]`; `studio.css` remove o `table-layout: fixed` que escondia o overflow; `js/studio-table-a11y.js` marca wrappers roláveis com `tabindex` e `aria-label` em todo o site.
+- Gates: Stylelint e ESLint exit 0; Design Foundations PASS (2438); fronteira tema/módulo PASS (3529); Browser Validators PASS (21); SDC schema PASS (759); `git diff --check` PASS.
+- Servido no HEAD `bc1fac9b0` após `drush cr` (sem updates/config pendentes): Marley a 768px tem wrapper interno com `clientWidth=432`, `scrollWidth=597`, `overflow-x: auto`, `scrollbar-color` do tema, `tabindex=0` e `aria-label="Tabela rolável"`, tabela em `table-layout: auto`; Culturas a 320px tem `clientWidth=280`, `scrollWidth=705`, mesmos atributos. Documento igual à viewport em ambos.
+- Capturas em `/home/piradopirata/aculta-suite-out/adr040-scroll-marley-20261101/`, `.../adr040-scroll-publicacoes-20261101/` e `.../adr040-scroll-publicacoes-320-20261101/`. A barra é avaliada pelo estilo computado e pelo overflow do wrapper; a captura de viewport não alcança a tabela abaixo dos filtros.
+- Nenhum markup, View, Form API, dado, ACL, rota ou configuração foi alterado; a mudança é só de apresentação e acessibilidade de teclado no tema.
+
+### OCS-F5/F7/F8/F10 — subrotas Studio servidas (2026-11-01)
+
+- Captura servida com ULI UID 257, 320/768px, claro: publicações/nova da Revista, produtos/novo do Green Stash, evento/local novos de Culturas, verbete novo da WE Sativa e curso novo do Ganjalab. **16/16 HTTP 200**; os dois avisos de overflow são rolagem interna de tabela (ADR-040) e o documento ficou igual à viewport.
+- Formulários inspecionados visualmente: evento, local (CEP antes do logradouro), produto e publicação. Nenhuma quebra de layout encontrada.
+- Pede-A registrado: `/greenstash/produtos/novo` usa `_form` direto e não recebe a navegação contextual das demais telas Green Stash. Nenhum arquivo do owner foi alterado.
+- Evidência em `/home/piradopirata/aculta-suite-out/ocs-f3-subroutes-20261101/`. Nenhum formulário foi submetido.
+
+### ADR-040 — barra visível e zoom servido (2026-11-01)
+
+- Capturas com a tabela centralizada confirmam a barra horizontal visível: `conta:/marley/revista/publicacoes` a 320px (`clientWidth=288`, `scrollWidth=551`) e `eventos:/culturas` a 320px (`clientWidth=280`, `scrollWidth=705`), ambas com `scrollbar-color` do tema e captura mostrando a barra ao pé da tabela.
+- Zoom real no Firefox (`xdotool`) em `/marley/revista/publicacoes`: 200% mediu `innerWidth=649`, documento 649, sem overflow. A sequência de `Ctrl+` chegou a ~500% (`innerWidth=256`), abaixo do alvo de reflow de 320px CSS; nesse ponto o documento mediu 275px. Em 320px CSS direto, o documento mede 320px e o overflow fica confinado ao wrapper da tabela.
+- Evidências em `/home/piradopirata/aculta-suite-out/adr040-table-shot-marley-20261101/`, `.../adr040-table-shot-culturas-20261101/` e `.../adr040-zoom-marley-20261101/`.
+
+### ADR-040 / THEME-MF3 — tabelas sem JavaScript (2026-11-01)
+
+- Firefox com `javascript.enabled=false`, ULI UID 257, 320px: oito áreas Studio carregaram com documento igual à viewport e um único `main`. As tabelas de `conta:/marley/revista/publicacoes` (288/551) e `eventos:/culturas` (280/705) mantêm `overflow-x: auto` e rolagem horizontal só com CSS.
+- Sem JS não há `tabindex` no wrapper (o ganho de teclado vem de `js/studio-table-a11y.js`); a rolagem continua possível por toque/roda. Limitação registrada; um `tabindex` server-side exigiria alterar o wrapper emitido pelo owner/Views.
+- `/conta` sem JS resolveu para a entrada da Conta em `/` (title da ACULTA), como esperado.
+
+## THEME-MF3 e OCS-F11 — fechamento dos gates (2026-11-01)
+
+- Runtime: checkout servido atualizado de `bc1fac9b0` para `928acfa4f`. O HEAD trazia `aculta_wiki_update_10003` pendente; snapshot salvo antes em `/home/piradopirata/aculta-suite-out/runtime-snapshots/aculta_runtime-before-wiki-10003-20261101.sql`, modo 0600, SHA-256 `24585e1692b976897d4607de12d758b2b3f0393a4f2036cf81e304a5eef753de`. `updatedb` executou "Reconciled 0 of 0 Wiki proposals"; depois, `updatedb:status` sem pendências, `config:status` sem diferenças e `drush cr` PASS.
+- THEME-MF3: color modes/reduced motion **576/576**; no-JS **210/210**; teclado **609/609**; zoom real 200/400% **30/30**; headings/reflow **120/120** — 1.545 checks. Unit do tema **47/346** e Kernel do tema **10/41** PASS após corrigir a expectativa obsoleta de `ProfileSdcRenderKernelTest`.
+- OCS-F11: matriz 8 áreas × 9 larguras × claro/escuro **144/144 HTTP 200**; overflow só nos wrappers de tabela (ADR-040). ACL negativa com a conta `f11_sem_acesso` (UID 261, só `authenticated`) **403 em 5/5** rotas operacionais; admin UID 257 com 200 nas mesmas áreas. Isolamento de purpose **7/7 404**. `/perfil` respondeu `private, no-cache` e `UNCACHEABLE (request policy)`, com conteúdo por conta. Sem JS, 8 áreas a 320px sem overflow documental. Teclado Studio 648 observações, 621 focos visíveis. axe 8 áreas: **0 violações**; `aria-label` em `div` corrigido com `role="region"`; `color-contrast` incompleto do Ganjalab revisado por token. Unit Studio **63/582**; Kernel Studio **8/153**, 13 depreciações. Fixture de feedback **130/130**.
+- Correção aplicada durante o gate: `js/studio-table-a11y.js` passa a definir `role="region"` antes do `aria-label` (commit `74c64b34a`, republicado como `928acfa4f` após rebase). Teste Kernel do tema corrigido no mesmo commit.
+- Ressalvas aceitas pelo responsável: pareamento com OpenCulturas autenticado, fluxos de escrita/persistência, duas lojas distintas, leitor de tela e WCAG manual integral permanecem DEFERRED. RTL não é suportado em pt-BR.
+- Com os dois gates aprovados, OCS-A1–A4 estão desbloqueadas e não foram iniciadas. Nenhum conteúdo, formulário, permissão ou configuração foi alterado além da conta de teste autorizada.
+
+### OCS-A1 — camada de identidade institucional no Studio (2026-11-01)
+
+- Implementada `css/components/studio-identity.css` sobre as mesmas raízes/tokens do Studio, com valores semânticos institucionais e sem seletores de modo fora de `tokens.css`. Nenhum SDC, markup ou consumer funcional foi alterado.
+- Alternância controlada por estado (`aculta420.studio_identity`) aplicada em `ThemeHooks::preprocessHtml`; sem o estado, a Fidelity continua. O teste Unit novo cobre a classe `studio-identity`.
+- Fixture `studio-identity.py`: **108/108** em nove larguras × claro/escuro comparando Fidelity e Identity; contraste de link 5,81:1 (claro) e 11,51:1 (escuro); CTA amarelo/verde-escuro 7,84:1. Evidência em `/home/piradopirata/aculta-suite-out/ocs-a1-identity-20261101/`.
+- Gates: Design Foundations 2.441 PASS (token-only), Stylelint exit 0, PHPCS exit 0, Unit do tema **48/349** PASS na worktree, fronteira tema/módulo 3.533 PASS, Browser Validators 21 PASS, SDC schema 759 PASS.
+- A2–A4 permanecem pendentes; a Identity não foi ativada no Runtime servido nesta microfase.
+
+### OCS-A1 — validação servida e reversão ao Fidelity (2026-11-01)
+
+- Checkout servido `d345661b7`; `updatedb:status` sem pendências, `config:status` sem diferenças, `drush cr` PASS.
+- `drush state:set aculta420.studio_identity 1` + `drush cr`: `/marley` e `/culturas` a 320px responderam 200 com `<html class="studio-identity ...">`; token primário/link verde-escuro (`rgb(12, 60, 41)`) e CTA amarelo (`rgb(242, 202, 54)`) com texto verde-escuro. Documento igual à viewport. Capturas em `/home/piradopirata/aculta-suite-out/ocs-a1-identity-served-20261101/` e `.../ocs-a1-identity-served-culturas-20261101/`.
+- `drush state:set aculta420.studio_identity 0` + `drush cr` reverteram o Runtime para a camada Fidelity; `state:get` = 0 e main HTTP 200. A Identity permanece implementada, mas desligada no Runtime até A2–A3 concluírem o acabamento e o benchmark.
+
+### OCS-A2 — acabamento institucional do Studio (2026-11-01)
+
+- `studio-identity.css` passou a usar Inter no corpo e Oswald nos títulos, raio institucional em cards/campos/botões e acento amarelo na aba ativa, sem novos SDCs/consumers e sem seletor de modo fora de `tokens.css`.
+- Fixture comparativa ampliada: **144/144** em nove larguras × claro/escuro, verificando tipografia (`Oswald`), raio de 3px consistente, aba ativa com `inset` amarelo, tokens e contrastes. Evidência em `/home/piradopirata/aculta-suite-out/ocs-a2-identity-20261101/`.
+- Design Foundations **2.441 PASS** (token-only) e Stylelint exit 0. A3/A4 pendentes.
+
+### OCS-A2/A3 — bloqueio operacional do checkout servido (2026-11-01)
+
+- A2 foi publicada em `bf43eb63a`, mas o checkout servido permaneceu em `d345661b7`: `git checkout --detach origin/dev` abortou porque `web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Kernel/WikiLeadImageLifecycleKernelTest.php` tem alteração local de outra sessão e também é alterado pelo novo HEAD.
+- Conforme o procedimento, a alteração de terceiro foi preservada e não houve sobrescrita. O estado `aculta420.studio_identity` foi revertido para `0`, `drush cr` executado e main respondeu HTTP 200; o Runtime permanece na camada Fidelity em `d345661b7`.
+- A2 está validada por fixture (144/144) e gates, mas a homologação servida e o benchmark servido de A3 ficam **DEFERRED** até o dono da alteração conciliar o arquivo. As capturas Fidelity × Identity em fixture estão em `/home/piradopirata/aculta-suite-out/ocs-a2-identity-20261101/`.
+
+### OCS-A3 — benchmark Fidelity × Identity em fixture (2026-11-01)
+
+- A fixture comparativa foi ampliada para capturar Fidelity e Identity em 320 e 1440px, claro/escuro, sobre o mesmo markup representativo (alerta, título, link, formulário, CTA, abas e card). Resultado **144/144** e oito capturas em `/home/piradopirata/aculta-suite-out/ocs-a3-benchmark-20261101/`.
+- O benchmark servido do Studio inteiro permanece **DEFERRED** pelo bloqueio do checkout servido registrado acima; A4 (consolidação) não foi iniciada.
+
+### OCS-A3 — benchmark servido e bloqueio do WE Sativa (2026-11-01)
+
+- O conflito do checkout servido foi resolvido pela própria frente Wiki: o checkout avançou para `66fe317d0` com árvore limpa e a A2 já está servida (`studio-identity.css` contém Oswald).
+- Com `aculta420.studio_identity=1` e `drush cr`, Marley (320/1440) e Culturas (320) confirmaram `<html class="studio-identity ...">`, títulos Oswald, cartões/campos com raio de 3px, CTA amarelo com texto verde-escuro e documento igual à viewport. Capturas em `/home/piradopirata/aculta-suite-out/ocs-a2-served-*` e `ocs-a3-served-1440-20261101/`.
+- Benchmark servido nas 8 áreas (320/1440, claro/escuro): **28/32 HTTP 200**. `wiki420:/wesativa` retornou **500** nas quatro combinações, inclusive com a Identity desligada — regressão do HEAD servido da frente Wiki/contribuições, não da camada visual. Fica **Pede-A** para o owner. As outras 7 áreas passaram sem overflow documental; Marley/Culturas mantêm overflow confinado às tabelas (ADR-040). Evidência em `/home/piradopirata/aculta-suite-out/ocs-a3-served-full-20261101/`.
+- Identity revertida: `aculta420.studio_identity=0`, `drush cr` PASS, main HTTP 200. A3 fica concluída para 7/8 áreas e DEFERRED para WE Sativa; A4 não iniciada.
+
+### OCS-A4 — consolidação da camada Identity (2026-11-01)
+
+- Criado `scripts/validate-aculta420-studio-identity.php` como gate de regressão: **34 checks** (sem seletores de modo fora de `tokens.css`, todo token sobrescrito com consumer, biblioteca carregada, ativação por estado, ausência de literais de cor). Resultado: **PASS (29 tokens sobrescritos)**.
+- O validador encontrou um override morto (`--aculta-studio-fidelity-muted`) e ele foi removido da camada Identity. Nenhum outro override sem consumer.
+- Licença/ativos: a Identity não adiciona fontes, imagens ou SVG; usa Inter/Oswald e cores já carregadas pelo tema. Montserrat permanece só na Fidelity, com o OFL já registrado.
+- Gates finais: Design Foundations **2.441 PASS** (token-only), SDC schema **759 PASS**, fronteira tema/módulo **3.535 PASS**, Browser Validators **21 PASS**, Unit do tema **48/349 PASS**, PHPCS e `php -l` do validador exit 0, fixture comparativa **144/144**. Evidência em `/home/piradopirata/aculta-suite-out/ocs-a4-identity-final-20261101/`.
+- O gate foi adicionado à lista de `web/themes/custom/aculta420/docs/development.md`. A1–A4 estão implementadas; a Identity permanece desligada no Runtime (`aculta420.studio_identity=0`) até a frente Wiki corrigir o 500 de `wiki420:/wesativa` e o responsável decidir a virada.
+
+### OCS-A3 — benchmark servido completo e correção do WE Sativa (2026-11-01)
+
+- O checkout servido avançou para `acffacc53` e o 500 autenticado de `wiki420:/wesativa` foi corrigido pela frente Wiki: recheck em 320/1440 e claro/escuro retornou **200**.
+- Com `aculta420.studio_identity=1` e `drush cr`, o benchmark das 8 áreas em 320/1440 e claro/escuro passou **32/32 HTTP 200**. Os 4 avisos de overflow são somente as tabelas de Marley/Culturas em 320px, confinadas pelo ADR-040. Evidência em `/home/piradopirata/aculta-suite-out/ocs-a3-served-complete-20261101/`.
+- Identity revertida para Fidelity: `aculta420.studio_identity=0`, `drush cr` PASS, main HTTP 200. Pede-A do WE Sativa encerrado.
+- Observação operacional (não importada): `config:status` aponta `core.extension` divergente porque o banco tem `aculta_contributions` instalado e o `config/sync` do HEAD não o lista. Importar removeria o módulo; nenhum `config:import` foi executado. O diff pertence à frente de contribuições e deve ser reconciliado pelo owner.
+
+### Reconciliação de config e Identity ligada no Runtime (2026-11-01)
+
+- Reconciliação: `drush config:export` confirmou exatamente duas diferenças — `core.extension` (banco com `aculta_contributions`, Sync sem) e `aculta_contributions.settings` (só no banco). O Sync recebeu a linha do módulo e o settings exportado; commit `627e0754d`. Nenhum `config:import`, `pm:uninstall` ou remoção foi executado.
+- Checkout servido atualizado para `627e0754d`; `updatedb:status` sem pendências e `config:status` **sem diferenças**.
+- Identity ligada: `drush state:set aculta420.studio_identity 1` + `drush cr`; `state:get` = 1, main e loja HTTP 200 e o HTML servido contém `studio-identity`.
+- Benchmark final com a Identity ativa nas 8 áreas em 320/1440 e claro/escuro: **32/32 HTTP 200**; os 4 avisos são as tabelas de Marley/Culturas em 320px (ADR-040). Evidência em `/home/piradopirata/aculta-suite-out/ocs-identity-live-20261101/`.
+- A Identity permanece **ligada** no Runtime; a Fidelity continua disponível desligando o estado e reconstruindo o cache.
+
+### Fechamento de lacunas servidas e homologação de SDCs (2026-11-01)
+
+- Culturas: CSS servida; três rotas GET 200 em 320/1440 e claro/escuro; axe 0; sem JS documento=320 e tabela rolável; zoom 200% sem overflow e wrapper 609/705; cache privado. 400% do harness ultrapassou para ~500% (256px), fora do alvo de 320px.
+- Revista: `revista-listing.css` servida no agregado `delta=4`; raiz 200 em 320/1440 e claro/escuro; axe 0; o overflow apontado é falso positivo do rótulo `visually-hidden` com `nowrap`. Estados vazio/erro DEFERRED.
+- WE Sativa/Conta/Perfil: `StudioIdentityRoutingTest` 4/201 PASS; páginas 200; axe 0; teclado 621/621. Pede-A registrado: `aria-describedby` do fieldset simple_sitemap aponta para ID inexistente no formulário de verbete.
+- SDCs transversais `context-header`, `context-tabs`, `content-grid`, `content-section` e `empty-state` promovidos a `stable` com consumers e evidência servida; `profile-*` e `course_card` permanecem experimentais. SDC schema 764, Design Foundations 2.441, Browser Validators 21 e fronteira 3.542 PASS.
+- Evidências em `$SUITE_OUT/gaps-served-matrix-20261101/`, `gaps-zoom-culturas-20261101/` e nas capturas de Revista/Culturas. Pareamento upstream autenticado continua DEFERRED.
+
+### Gaps servidos — Revista 404 e estado do checkout (2026-11-01)
+
+- Revista, estado de erro: `revista.aculta.toca.net.br/revista/nao-existe-20261101` respondeu 404 a 320px, sem overflow e com **0 violações axe**. O estado vazio da View continua DEFERRED por ausência de filtro exposto e de permissão para criar conteúdo de teste.
+- Checkout servido atualizado para `f57c1b275`: sem updates, `config:status` limpo, `drush cr` PASS, Identity ativa (`state=1`), main e loja HTTP 200.
+- **Preservado sem commit:** o checkout servido carrega deleções não rastreadas de outra sessão — `aculta_studio/src/Plugin/MarleyTab/CursosTab.php`, `WikiTab.php` e `tests/src/Unit/WikiTabAvailabilityTest.php`. Elas não foram restauradas nem incluídas em commits desta sessão; a navegação Marley servida reflete esse estado até o owner concluir a remoção.
+
+### Marley — reorganização de "Meu trabalho" (2026-11-01)
+
+- `publicacoes` suprime o sidebar; "Criar" vira ação de seção para `/marley/revista/criar`; "Comentários e moderação" vira aba após "Arquivados" com o mesmo listing e a mesma checagem de papéis/permissão. Apresentador preserva flags/ações; outras áreas intactas.
+- Servido em `0e1eb5dbc`: admin 257 sem sidebar, 6 abas (inclui moderação) e comentários 200; editora 258 com 5 abas e sem moderação; UID 261 sem áreas; criar 200 com "Nova publicação". Matriz 12/12 200; teclado 320/768 com foco visível no Criar e nas 6 abas. Unit Studio 58/568, PHPCS e lint PASS.
+
+### Correção do HTTP 500 local da WE SATIVA (2026-11-01)
+
+- Reproduzido `HTTP 500` em `https://wiki420.aculta.toca.net.br/wesativa` no Runtime de desenvolvimento (`toca`, checkout `/home/piradopirata/projetos/aculta`, HEAD `2205afce8`, URI Wiki, banco `aculta_runtime`, 627 tabelas). Watchdog identificou `Class "Drupal\\aculta_lms\\Hook\\LearningRoomHooks" not found`; o container compilado ainda tentava carregar a classe removida na transferência da apresentação LMS para Studio.
+- Antes do rebuild, snapshot integral gzip validado com `gzip -t`: `/home/piradopirata/aculta-runtime-snapshots/20261101-wesativa500/runtime-before-cache-rebuild.sql.gz.gz`, modo `0600`, 5.854.808 bytes, SHA-256 `f1ba71b8e4b9074cc5ba331a5abdb0963aa0ef9ba824b81ef6e61e3c5c7d2353`.
+- `drush cr --uri=https://wiki420.aculta.toca.net.br` concluiu. Repetição HTTP: `/wesativa`, `/wesativa/inicio` e `/wesativa/verbetes/novo` retornam 403 anônimo esperado; `/wesativa/propostas` e `/wesativa/propostas/nova` retornam 404 conforme remoção das rotas antigas. O erro fatal `LearningRoomHooks` não reaparece. Permanecem warnings não fatais do tema Bootstrap sobre `#form_id`; verificação autenticada pendente. Nenhum `updatedb` ou importação de configuração foi executado.
+
+### Rechecagem do WE SATIVA e status de updates (2026-11-01)
+
+- Checkout servido continuou em HEAD destacado `5453c691e`, com 12 arquivos modificados de outras frentes. Sem trocar HEAD nem tocar nessas alterações, `https://wiki420.aculta.toca.net.br/wesativa` respondeu `403` (anônimo), a raiz pública respondeu `200`, e `/conta` respondeu `404`. O GET de WE SATIVA não criou novos erros no watchdog; os últimos erros registrados são de 14:24 e anteriores e apontam para LMS/account ou bootstrap de Studio, não para esta rota. O fatal `LearningRoomHooks` antigo permanece no histórico, mas não foi reproduzido nesta rechecagem.
+- Drush confirmou Drupal 11.4.10, `aculta_runtime` conectado, host `toca`, URI `http://default`. `updatedb:status` lista Messenger 10015 e 10016 pendentes; `config:status` informa nenhuma diferença entre banco e `config/sync`. Nenhum update/importação/cache rebuild foi executado nesta rechecagem.
+- Atualização de evidência do plano: `aculta_messenger_update_10015()` agora tem cobertura Unit junto dos demais updates aditivos; `10016` continua com teste de idempotência. Os updates seguem sem homologação Runtime.
+- Validação no worktree `dev` em `bc362a1be`: `MessengerDefaultConfigUpdateTest` PASS (10 testes/50 assertions), PHP lint, PHPCS Drupal e `git diff --check` PASS. A suíte Unit completa de Messenger executou 394 testes e teve 2 falhas em `MessengerSettingsFormTest::testSubmitPersistsEmailModesAndWeeklyDigestAnchor` e `PersonalNoticeAdapterHooksTest::testDisabledOptionalAdaptersDoNotBreakListOrCount`; a suíte completa requer triagem separada e não é declarada verde.
+- Revalidação posterior no HEAD `6659b15bf`: corrigidas apenas expectativas antigas de testes Unit Messenger (10 gravações da configuração; locator opcional consultado por adapter/operação). Casos focais passaram 2/12 e a suíte Unit completa passou **395 testes / 4.317 assertions**; PHP lint, PHPCS Drupal e `git diff --check` PASS. Sem alteração de comportamento de produção.
+
+### Reconciliação fail-closed da migração Wiki 10003 (2026-11-01)
+
+- Revalidado `dev` após fast-forward até `d298f727d`; oito commits LMS/Game concorrentes foram preservados. O inventário F0 não encontrou mudança no owner/contratos de Contributions decorrente dessa integração.
+- Kernel `WikiLeadImageLifecycleKernelTest`, filtro `testWikiContributionMigration(PreservesRevisionHistory|PreservesIdCollision|RejectsTranslatedRevision)`, com `SIMPLETEST_DB` apontando a `aculta_simpletest`: **3 testes / 133 assertions PASS**. Os casos verificam retry sem revisões duplicadas, não sobrescrita de ID existente, ausência de checkpoint/revision map após colisão e rejeição de histórico traduzido sem cópia parcial. Foram reportadas 245 depreciações Core/contrib.
+- PHP lint, PHPCS Drupal e `git diff --check` PASS. Nenhum update foi executado no `aculta_runtime`; dados reais, contagem de colisões/traduções e homologação do update 10003 seguem pendentes.
+
+### Revalidação do ciclo Events Contributions (2026-11-01)
+
+- No HEAD `34e79950e`, `EventOrganizationLifecycleKernelTest` completa passou usando `aculta_simpletest`: 27 testes / 888 assertions, 24 depreciações Core/contrib. Filtro `testEventUpdateContribution*`: 6 testes / 171 assertions, incluindo submissão privada, aplicação seletiva, perda de Entity Access, membership revogado, Local privado e origem alterada.
+- Nenhuma escrita no `aculta_runtime`; os updates Messenger 10015–10016 e homologação permanecem pendentes.

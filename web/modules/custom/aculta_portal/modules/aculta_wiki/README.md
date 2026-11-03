@@ -1,22 +1,17 @@
 # ACULTA Wiki — Wiki420 como submódulo
 
-## WE SATIVA workspace (ADR-038)
+## WE SATIVA (ADR-038)
 
-By explicit product-owner decision, ACULTA STUDIO WE SATIVA is canonically
-`/studio/we-sativa` in purpose `wiki`, on the configured `wiki420` Domain.
-Its data, proposal decisions and editorial authorization remain owned by
-`aculta_wiki`. The reference to `wiki.aculta.*` in the initial ADR-038 request
-was corrected by the responsible product owner; no Domain or host migration is
-planned. The approved path retifies ADR-038; `/wesativa` and all other retired
-paths return 404 without aliases. Runtime route verification is pending after
-the path change.
+O caminho canônico de WE SATIVA é `wiki:/we-sativa`, no Domain configurado
+`wiki420`. Os dados, decisões de propostas e autorização editorial continuam
+sob responsabilidade de `aculta_wiki`. A proposta anterior
+`/we-sativa` foi descartada; não deve ser tratada como rota ativa nem
+receber alias. A confirmação de rotas no Runtime segue pendente.
 
-Wiki entry creation from WE SATIVA uses
-`/studio/we-sativa/verbetes/novo` (`aculta_wiki.studio_entry_create`) in the
-Wiki purpose. The route and controller require the existing
-`createAccess('wiki_entry')` decision and render Drupal's native Node Form API;
-they do not create a second editorial form. The Main-purpose
-`/node/add/wiki_entry` route is not used as a cross-purpose link.
+A criação de verbetes usa a rota owner da Wiki em `/we-sativa`, com a
+autorização existente `createAccess('wiki_entry')` e o formulário nativo Node
+Form API; não cria um segundo formulário editorial nem usa uma rota do propósito
+Main como link entre purposes.
 
 ## Avisos da Wiki
 
@@ -34,20 +29,20 @@ rotas próprias da Wiki420. O plano completo, com fases, riscos e decisões
 pendentes, está em
 [`docs/modules/WIKI-SUBMODULO.md`](../../../../../../docs/modules/WIKI-SUBMODULO.md).
 
-## Auditoria M-0 — RBAC de propostas (2026-10-26)
+## Auditoria M-0 — RBAC de propostas (revalidada em 2026-11-01)
 
-O Kernel focal `testProposalSubmissionUsesPrivateRevisionedEntityAndAccess`
-passou em MariaDB isolado (1 teste / 216 assertions; 256 depreciações Core/contrib
-e duas de PHPUnit). A checagem read-only do Runtime Wiki confirmou que os grants
-de propostas ainda não estão ativos: `email_confirmed` não tem
-`submit wiki proposals`/`view own wiki proposals`, e `content_editor` não tem
-`view any wiki proposals`/`moderate wiki proposals`. Os quatro grants existem em
-`config/sync/user.role.*.yml`. Assim, envio e fila editorial permanecem
-indisponíveis no Runtime, em vez de receberem acesso por fallback. O handler da
-proposta e as rotas mantêm acesso fechado por permissão; não foi identificada
-exposição de propostas por essa divergência. Nenhuma configuração ativa foi
-alterada. A reconciliação continua bloqueada até autorização de operação de
-configuração e revisão pós-apply; ver o registro M-0.
+Consulta read-only ao Runtime `wiki420` confirmou os quatro grants ativos:
+`email_confirmed` possui `submit wiki proposals` e `view own wiki proposals`;
+`content_editor` possui `view any wiki proposals` e `moderate wiki proposals`.
+`config:status` não apontou divergência. Nenhuma configuração ativa foi
+importada ou alterada. A validação ponta a ponta com contas distintas e a
+homologação por purpose continuam pendentes da janela operacional autorizada.
+O handler continua fail-closed e valida permissão, Entity Access e acesso à
+proposta.
+
+`WikiProposalRolePermissionsConfigTest`: 1 teste / 8 assertions PASS. O Kernel
+`testProposalSubmissionUsesPrivateRevisionedEntityAndAccess` passou com 1
+teste / 220 assertions; houve 250 depreciações de Core/contrib/Webform.
 
 Dev.118 adiciona `WikiProposalRolePermissionsConfigTest` (1 teste / 8
 assertions) para impedir que uma alteração futura remova os grants necessários
@@ -55,6 +50,31 @@ dos dois papéis versionados. O teste protege o Config Sync e não representa
 homologação dos grants ativos no Runtime.
 
 ## Estado atual
+
+- 0.1.0-dev.125 cobre retry/histórico, colisão e revisão traduzida no update
+  10003 (3/133 em `aculta_simpletest`); a colisão preserva a entidade existente
+  e a tradução não cria estado parcial. Runtime segue sem update.
+- 0.1.0-dev.124 mantém conversão/status por ID compatível com os dois stores.
+  Novos envios usam `aculta_contribution` somente após todos os checkpoints de
+  migração estarem presentes. Workspace, fila, decisão, retirada e publisher
+  aceitam propostas novas e legadas; Kernel de corte/status 2/264 PASS. Runtime
+  não atualizado.
+- 0.1.0-dev.123 introduz a leitura de status dual-store, resolvendo primeiro a
+  contribuição migrada e recuando para a proposta legada.
+- 0.1.0-dev.122 adiciona o update 10003 em lotes, preservando IDs/UUIDs e
+  revision IDs e registrando reconciliação por proposta e revisão. Kernel focal
+  1/55 PASS após cobertura de resolução dual-store; Runtime não atualizado. O update apenas copia os dados; rotas,
+  formulários e consumidores continuam no entity type legado até a troca
+  coordenada desses consumidores. Seleções de campos/modos de lista de decisões
+  antigas não eram armazenadas pelo modelo anterior. A migração aborta em
+  colisões ou revisões traduzidas, em vez de copiar parcialmente esse histórico.
+
+- Adapter `wiki` registrado em `aculta_contributions`: valida purpose, conta,
+  alvo, campos e escolhas de lista, delegando a aplicação seletiva ao serviço
+  editorial existente. Unit focal: 3 testes/5 assertions; Kernel focal:
+  1/223. A capacidade dual-store foi implementada no código; a migração dos dados
+  legados no Runtime não foi executada. O update 10003 e seus checkpoints
+  continuam necessários antes de declarar a migração concluída.
 
 - Contrato Wiki→Messenger v1 documentado em
   [`docs/MESSENGER-EVENT-CONTRACT.md`](docs/MESSENGER-EVENT-CONTRACT.md): dois
@@ -126,7 +146,7 @@ homologação dos grants ativos no Runtime.
   confirmados; 240 depreciações Core/contrib e 3 PHPUnit. Sem rebuild ou alteração
   no Runtime.
 
-- `0.1.0-dev.109`: a entrada WE SATIVA agora tem `/studio/we-sativa/inicio`
+- `0.1.0-dev.109`: a entrada WE SATIVA agora tem `/we-sativa/inicio`
   no purpose `account`, com criação, retomada de rascunho autorizado e guia
   editorial. O serviço Wiki mantém dados, Entity Access e cache; o workspace
   liga de volta ao início. Kernels focais passaram em 2 testes / 208
@@ -173,7 +193,7 @@ homologação dos grants ativos no Runtime.
   exige permissão editorial, revisão ou moderação de propostas, e só expõe a
   seção de verbetes compartilhados a `edit any wiki_entry content`. Unit Studio
   passou em 7 testes / 27 asserções. O smoke WE SATIVA no Firefox visível gerou
-  login e confirmou 404 em `/studio/we-sativa` (0/2); Runtime e visual seguem
+  login e confirmou 404 em `/we-sativa` (0/2); Runtime e visual seguem
   pendentes até registrar a rota no container.
 
 - `0.1.0-dev.104`: Kernel exercita o `WikiProposalDecision` real enquanto outro
@@ -547,7 +567,7 @@ homologação dos grants ativos no Runtime.
   1 teste / 41 asserções). O build e submit do formulário nativo ainda estão
   pendentes.
 
-- `0.1.0-dev.39`: primeira entrada WE SATIVA em `/studio/we-sativa` sob
+- `0.1.0-dev.39`: primeira entrada WE SATIVA em `/we-sativa` sob
   purpose `account`. O Studio encaminha para `WikiContributorWorkspace`, que
   consulta até 20 verbetes e propostas próprios por UID, revalida acesso por entidade e
   expõe criação somente após `createAccess('wiki_entry')`. Kernel cobre rota,
@@ -623,7 +643,7 @@ homologação dos grants ativos no Runtime.
   da proposta recém-criada. Kernel focal do fluxo de submissão: 1 teste / 85
   assertions.
 - `0.1.0-dev.22`: pessoas autoras podem abrir status e retorno da própria
-  proposta em `/wiki/propostas/{proposal}`. Decisões de ajustes/recusa enfileiram
+  proposta em `/propostas/{proposal}`. Decisões de ajustes/recusa enfileiram
   um e-mail mínimo para contas ativas e confirmadas, com link canônico privado.
   Entity Access agora usa o parâmetro `{proposal}` nas duas rotas editoriais.
   Kernel completo: 9 testes / 355 assertions.
@@ -653,7 +673,7 @@ homologação dos grants ativos no Runtime.
   depreciações Drupal/contrib e 9 PHPUnit); verifica a regra e a recusa de conta
   não confirmada.
 - `0.1.0-dev.16`: pessoas com `submit wiki proposals` podem abrir o Form API em
-  `/wiki/verbetes/{node}/contribuir`. A rota exige acesso de visualização ao
+  `/verbetes/{node}/contribuir`. A rota exige acesso de visualização ao
   verbete e o serviço revalida estado e VID-base ao salvar. A proposta continua
   privada e não é aplicada automaticamente. Kernel verifica rota e callback.
 - `0.1.0-dev.15`: serviço `aculta_wiki.editorial_queue` consulta propostas
@@ -678,7 +698,7 @@ homologação dos grants ativos no Runtime.
 - Kernel MariaDB também cobre a remoção da imagem na revisão atual: a Media e o
   arquivo são preservados enquanto uma revisão antiga do verbete os referencia.
 - `WikiLeadImageLifecycleKernelTest` inicializa `aculta_wiki` e verifica
-  `/wiki`, `/wiki/busca`, `/wiki/busca/previa`, a View `/wiki/verbetes` e o
+  `/wiki`, `/busca-wiki`, `/busca-wiki/previa`, a View `/verbetes` e o
   requisito `access content`. A busca real filtra grants de contas diferentes
   da mesma função e mantém contexto de cache nos resultados vazios/negativos.
 - No preflight read-only de 2026-10-23, `aculta_wiki` estava ativo e
@@ -686,8 +706,8 @@ homologação dos grants ativos no Runtime.
   estado efetivo do Runtime continuam sendo verificados separadamente.
 - O estado do Runtime varia por ambiente; não inferir habilitação pela
   existência de código ou configuração exportada.
-- As rotas `/wiki`, `/wiki/busca` e `/wiki/busca/previa` estão definidas neste
-  submódulo com os nomes `aculta_portal.wiki_*`; `/wiki/verbetes` permanece
+- As rotas `/wiki`, `/busca-wiki` e `/busca-wiki/previa` estão definidas neste
+  submódulo com os nomes `aculta_portal.wiki_*`; `/verbetes` permanece
   contrato da listagem. A disponibilidade no site depende da ativação efetiva
   do módulo no Runtime.
 
@@ -761,4 +781,4 @@ descrição, URL ou arquivo. Homologação Runtime continua separada.
 
 ## WE SATIVA em Wiki - migração ADR-038
 
-Registro histórico do plano: o destino proposto para `/wesativa` era `wiki.aculta.*`, mas o responsável corrigiu que essa referência estava errada. O Domain canônico permanece `wiki420`. Wiki mantém ownership de verbetes, propostas e permissões. Rotas Marley de moderação continuam na Suite Marley (`account:/marley/...`) quando esse for o contexto owner. `/studio/*` saiu sem alias.
+Registro histórico do plano: o destino proposto para `/we-sativa` era `wiki.aculta.*`, mas o responsável corrigiu que essa referência estava errada. O Domain canônico permanece `wiki420`. Wiki mantém ownership de verbetes, propostas e permissões. Rotas Marley de moderação continuam na Suite Marley (`account:/marley/...`) quando esse for o contexto owner. `/studio/*` saiu sem alias.

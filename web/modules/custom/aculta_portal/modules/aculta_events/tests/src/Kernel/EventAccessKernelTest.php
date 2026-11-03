@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Acesso a evento: rascunho só para quem vê rascunhos; criação só para administradores de eventos.
+ * Rascunhos exigem permissão; criação exige autorização de Eventos.
  */
 #[Group('aculta_events')]
 #[RunTestsInSeparateProcesses]
@@ -23,7 +23,10 @@ final class EventAccessKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'key', 'address', 'geofield', 'taxonomy', 'link', 'text', 'filter', 'options', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = [
+    'system', 'user', 'key', 'address', 'geofield', 'taxonomy', 'link', 'text',
+    'filter', 'options', 'aculta_calendar', 'aculta_events',
+  ];
 
   /**
    * {@inheritdoc}
@@ -34,7 +37,7 @@ final class EventAccessKernelTest extends KernelTestBase {
     $this->installEntitySchema('user_role');
     $this->installConfig(['system', 'user']);
     $this->installEntitySchema('aculta_event');
-    // O uid 1 é superusuário: um usuário de apoio evita que os usuários de teste recebam esse uid.
+    // Evita atribuir o uid 1 de superusuário às contas de teste.
     $this->createUser();
   }
 
@@ -48,7 +51,7 @@ final class EventAccessKernelTest extends KernelTestBase {
   }
 
   /**
-   * Rascunho é oculto de visitante, liberado com permissão de rascunho, e publicado é público.
+   * Rascunhos exigem permissão específica e eventos publicados são públicos.
    */
   public function testRascunhoSoParaQuemPodeVerRascunho(): void {
     $rascunho = $this->evento('rascunho');

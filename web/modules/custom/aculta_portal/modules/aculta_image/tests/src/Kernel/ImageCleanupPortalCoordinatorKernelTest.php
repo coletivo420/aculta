@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_image\Kernel;
 
-use Drupal\aculta_portal\Cleanup\FileReferenceInspector;
-use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceInspector;
+use Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
@@ -34,7 +34,7 @@ final class ImageCleanupPortalCoordinatorKernelTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'system', 'user', 'field', 'file', 'image', 'media', 'node', 'text', 'entity_usage', 'media_duplicates', 'aculta_image',
+    'system', 'user', 'field', 'file', 'image', 'media', 'node', 'text', 'entity_usage', 'media_duplicates', 'token', 'aculta_file_uploader', 'aculta_image',
   ];
 
   /**
@@ -42,7 +42,7 @@ final class ImageCleanupPortalCoordinatorKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->setDefinition('aculta_portal.file_reference_inspector', new Definition(
+    $container->setDefinition('aculta_file_uploader.file_reference_inspector', new Definition(
       FileReferenceInspector::class,
       [new Reference('entity_type.manager'), new Reference('entity_field.manager'), new Reference('database')],
     ));
@@ -50,14 +50,14 @@ final class ImageCleanupPortalCoordinatorKernelTest extends KernelTestBase {
       LoggerChannelInterface::class,
       ['aculta_portal_cleanup'],
     ))->setFactory([new Reference('logger.factory'), 'get']));
-    $container->setDefinition('aculta_portal.unused_file_cleaner', new Definition(
+    $container->setDefinition('aculta_file_uploader.unused_file_cleaner', new Definition(
       UnusedFileCleaner::class,
       [
         new Reference('file.usage'),
         new Reference('database'),
-        new Reference('aculta_portal.file_reference_inspector'),
+        new Reference('aculta_file_uploader.file_reference_inspector'),
         new Reference('aculta_image.file_remover'),
-        new Reference('aculta_image.inspector'),
+        new Reference('aculta_file_uploader.image_dimension_reader'),
         new Reference('aculta_portal.cleanup.logger'),
       ],
     ));
@@ -74,7 +74,8 @@ final class ImageCleanupPortalCoordinatorKernelTest extends KernelTestBase {
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('node', ['node_access']);
     $this->installSchema('entity_usage', ['entity_usage']);
-    $this->installSchema('aculta_image', ['aculta_image_fingerprint', 'aculta_image_origin', 'aculta_image_quarantine']);
+    $this->installSchema('aculta_image', ['aculta_image_fingerprint', 'aculta_image_origin']);
+    $this->installSchema('aculta_file_uploader', ['aculta_image_quarantine']);
     $this->installConfig(['media']);
     $this->installConfig(['node']);
 
@@ -145,7 +146,7 @@ final class ImageCleanupPortalCoordinatorKernelTest extends KernelTestBase {
     $queue->createItem(['fid' => (int) $embeddedFile->id()]);
     $queue->createItem(['fid' => (int) $revisionFile->id()]);
 
-    $result = $this->container->get('aculta_image.cleanup')->run(5);
+    $result = $this->container->get('aculta_file_uploader.cleanup')->run(5);
 
     self::assertSame(['processed' => 5, 'deleted' => 1], $result);
     self::assertNull($this->container->get('entity_type.manager')->getStorage('file')->load($file->id()));

@@ -5,223 +5,198 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Unit;
 
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Core\Field\FieldItemList;
-use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\TypedData\DataDefinition;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Field\FieldItemList;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\lms\Entity\ActivityInterface;
-use Drupal\lms\Entity\AnswerInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
-use Drupal\lms\Entity\CourseStatusInterface;
-use Drupal\lms\Entity\LessonInterface;
-use Drupal\lms\Entity\LessonStatus;
 use Drupal\aculta_lms\AttemptArchiveManager;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
-/**
- * Tests that changed responses and evaluations preserve the old LMS state.
- */
+/** Tests that ACULTA grading changes preserve prior attempts. */
 #[Group('aculta_lms')]
 final class AttemptArchiveManagerTest extends UnitTestCase {
 
-  public function testReevaluationArchivesPreviousAnswerAndScore(): void {
-    $original = $this->buildAnswer(['answer' => 'Resposta original'], 4, TRUE);
-    $updated = $this->buildAnswer(['answer' => 'Resposta original'], 2, TRUE);
-    $archive_entity = $this->createMock(EntityInterface::class);
-    $archive_entity->expects(self::once())->method('save');
+  /** @var array<string, mixed> */
+  private array $createdValues = [];
 
-    $created_values = NULL;
-    $archive_storage = $this->createMock(EntityStorageInterface::class);
-    $archive_storage->expects(self::once())->method('create')->willReturnCallback(
-      function (array $values) use (&$created_values, $archive_entity): EntityInterface {
-        $created_values = $values;
-        return $archive_entity;
-      },
-    );
-    $answer_storage = $this->createMock(EntityStorageInterface::class);
-    $answer_storage->expects(self::once())->method('loadUnchanged')->with('21')->willReturn($original);
-    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
-    $entity_type_manager->method('getStorage')->willReturnMap([
-      ['lms_answer', $answer_storage],
-      ['aculta_lms_attempt_archive', $archive_storage],
-    ]);
+  public function testReevaluationArchivesPreviousAnswerAndExactScore(): void {
+    $original = $this->buildAnswer(['answer' => 'Resposta original'], '80.25', 'graded');
+    $updated = $this->buildAnswer(['answer' => 'Resposta original'], '90', 'graded');
+    [$manager, $archive_entity] = $this->managerForArchive($original);
 
-    $manager = new AttemptArchiveManager(
-      $entity_type_manager,
-      $this->createMock(AccountInterface::class),
-      $this->buildTime(),
-    );
     $manager->archivePreviousAnswer($updated);
 
-    self::assertSame('evaluation_changed', $created_values['event_type']);
-    self::assertSame(4, $created_values['score']);
-    self::assertSame(4, $created_values['max_score']);
-    self::assertSame(['answer' => 'Resposta original'], json_decode($created_values['answer_data'], TRUE));
+    self::assertSame('evaluation_changed', $this->createdValues['event_type']);
+    self::assertSame(80, $this->createdValues['score']);
+    self::assertSame(80.25, $this->createdValues['score_precise']);
+    self::assertSame(100, $this->createdValues['max_score']);
+    self::assertSame(['answer' => 'Resposta original'], json_decode($this->createdValues['answer_data'], TRUE));
+    self::assertSame('', $this->createdValues['course_status_id']);
+    self::assertSame('', $this->createdValues['lesson_status_id']);
+    $archive_entity->expects(self::never())->method('delete');
   }
 
-  public function testAnswerEditArchivesPriorText(): void {
-    $original = $this->buildAnswer(['answer' => 'Versão anterior'], 3, TRUE);
-    $updated = $this->buildAnswer(['answer' => 'Nova versão'], 3, TRUE);
-    $archive_entity = $this->createMock(EntityInterface::class);
-    $archive_entity->expects(self::once())->method('save');
+  public function testDeletingAttemptArchivesItsImmutablePayloadAndContext(): void {
+    $answer = $this->buildAnswer(['answer' => 'Resposta da tentativa'], NULL, 'submitted');
+    [$manager] = $this->managerForArchive();
 
-    $created_values = NULL;
-    $archive_storage = $this->createMock(EntityStorageInterface::class);
-    $archive_storage->expects(self::once())->method('create')->willReturnCallback(
-      function (array $values) use (&$created_values, $archive_entity): EntityInterface {
-        $created_values = $values;
-        return $archive_entity;
-      },
-    );
-    $answer_storage = $this->createMock(EntityStorageInterface::class);
-    $answer_storage->expects(self::once())->method('loadUnchanged')->with('21')->willReturn($original);
-    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
-    $entity_type_manager->method('getStorage')->willReturnMap([
-      ['lms_answer', $answer_storage],
-      ['aculta_lms_attempt_archive', $archive_storage],
-    ]);
-
-    $manager = new AttemptArchiveManager(
-      $entity_type_manager,
-      $this->createMock(AccountInterface::class),
-      $this->buildTime(),
-    );
-    $manager->archivePreviousAnswer($updated);
-
-    self::assertSame('answer_changed', $created_values['event_type']);
-    self::assertSame(['answer' => 'Versão anterior'], json_decode($created_values['answer_data'], TRUE));
-  }
-
-  public function testRestartArchivesDeletedAnswerWithTimestamps(): void {
-    $answer = $this->buildAnswer(['answer' => 'Resposta da tentativa anterior'], 2, FALSE);
-    $archive_entity = $this->createMock(EntityInterface::class);
-    $archive_entity->expects(self::once())->method('save');
-    $created_values = NULL;
-    $archive_storage = $this->createMock(EntityStorageInterface::class);
-    $archive_storage->expects(self::once())->method('create')->willReturnCallback(
-      function (array $values) use (&$created_values, $archive_entity): EntityInterface {
-        $created_values = $values;
-        return $archive_entity;
-      },
-    );
-    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
-    $entity_type_manager->expects(self::once())->method('getStorage')
-      ->with('aculta_lms_attempt_archive')->willReturn($archive_storage);
-
-    $manager = new AttemptArchiveManager(
-      $entity_type_manager,
-      $this->createMock(AccountInterface::class),
-      $this->buildTime(),
-    );
     $manager->archiveAnswer($answer);
 
-    self::assertSame('deleted', $created_values['event_type']);
-    self::assertSame('answer-uuid-21', $created_values['answer_uuid']);
-    self::assertSame(1200, $created_values['answered']);
-    self::assertSame(2000, $created_values['archived']);
-    self::assertFalse($created_values['evaluated']);
+    self::assertSame('deleted', $this->createdValues['event_type']);
+    self::assertSame('answer-uuid-21', $this->createdValues['answer_uuid']);
+    self::assertSame('7', $this->createdValues['group_id']);
+    self::assertSame('3', $this->createdValues['lesson_id']);
+    self::assertSame('Aula 1', $this->createdValues['lesson_label']);
+    self::assertSame('free_text', $this->createdValues['activity_label']);
+    self::assertSame(1200, $this->createdValues['answered']);
+    self::assertSame(2000, $this->createdValues['archived']);
+    self::assertFalse($this->createdValues['evaluated']);
+    self::assertSame(0, $this->createdValues['score']);
+    self::assertSame(0.0, $this->createdValues['score_precise']);
+    self::assertSame(0, $this->createdValues['max_score']);
   }
 
-  public function testUnchangedAnswerDoesNotCreateDuplicateArchive(): void {
-    $answer = $this->buildAnswer(['answer' => 'Sem alterações'], 4, TRUE);
-    $archive_storage = $this->createMock(EntityStorageInterface::class);
-    $archive_storage->expects(self::never())->method('create');
+  public function testUnchangedGradeDoesNotCreateDuplicateArchive(): void {
+    $answer = $this->buildAnswer(['answer' => 'Sem alterações'], '80', 'graded');
     $answer_storage = $this->createMock(EntityStorageInterface::class);
     $answer_storage->expects(self::once())->method('loadUnchanged')->with('21')->willReturn($answer);
-    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
-    $entity_type_manager->method('getStorage')->willReturnMap([
-      ['lms_answer', $answer_storage],
-      ['aculta_lms_attempt_archive', $archive_storage],
-    ]);
-    $manager = new AttemptArchiveManager(
-      $entity_type_manager,
-      $this->createMock(AccountInterface::class),
-      $this->buildTime(),
-    );
+    $archive_storage = $this->createMock(EntityStorageInterface::class);
+    $archive_storage->expects(self::never())->method('create');
+    $manager = $this->manager($answer_storage, $archive_storage);
 
     $manager->archivePreviousAnswer($answer);
   }
 
-  public function testStaleReferencesSkipArchivingAndHistoryQuery(): void {
-    $answer = $this->createMock(AnswerInterface::class);
-    $answer->method('hasField')->willReturnMap([
-      ['lesson_status', TRUE],
-      ['activity_revision', TRUE],
-    ]);
-    $answer->method('get')->willReturnMap([
-      ['lesson_status', $this->referenceField(NULL)],
-      ['activity_revision', $this->referenceField(NULL)],
-    ]);
+  public function testMissingActivityReferenceSkipsArchiveAndHistoryQuery(): void {
+    $answer = $this->buildAnswer(['answer' => 'Sem atividade'], NULL, 'submitted');
+    $activity_storage = $this->createMock(EntityStorageInterface::class);
+    $activity_storage->expects(self::exactly(2))->method('load')->with('5')->willReturn(NULL);
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
-    $entity_type_manager->expects(self::never())->method('getStorage');
-    $manager = new AttemptArchiveManager(
-      $entity_type_manager,
-      $this->createMock(AccountInterface::class),
-      $this->buildTime(),
-    );
+    $entity_type_manager->method('getStorage')->willReturnMap([
+      ['aculta_lms_activity', $activity_storage],
+    ]);
+    $manager = new AttemptArchiveManager($entity_type_manager, $this->createMock(AccountInterface::class), $this->buildTime());
 
     $manager->archiveAnswer($answer);
     self::assertSame([], $manager->loadPreviousAttempts($answer, new \Drupal\Core\Cache\CacheableMetadata()));
   }
 
-  private function buildAnswer(array $data, int $score, bool $evaluated): AnswerInterface {
-    $group = $this->createMock(CourseInterface::class);
-    $group->method('id')->willReturn('course-7');
-    $course_status = $this->createMock(CourseStatusInterface::class);
-    $course_status->method('id')->willReturn('14');
-    $course_status->method('hasField')->with('course')->willReturn(TRUE);
-    $course_status->method('get')->with('course')->willReturn($this->referenceField($group));
-    $course_status->method('getCourseId')->willReturn('course-7');
-    $lesson = $this->createMock(LessonInterface::class);
-    $lesson->method('label')->willReturn('Aula 1');
-    $lesson->method('get')->with(LessonInterface::ACTIVITIES)->willReturn($this->buildActivityList());
-    $lesson_status = $this->createMock(LessonStatus::class);
-    $lesson_status->method('id')->willReturn('18');
-    $lesson_status->method('hasField')->willReturnMap([
-      ['course_status', TRUE],
-      ['lesson_revision', TRUE],
+  /**
+   * Creates the manager and captures the archive entity values.
+   *
+   * @return array{0: AttemptArchiveManager, 1: EntityInterface}
+   */
+  private function managerForArchive(?ContentEntityInterface $original = NULL): array {
+    $archive_entity = $this->createMock(EntityInterface::class);
+    $archive_entity->expects(self::once())->method('save');
+    $archive_storage = $this->createMock(EntityStorageInterface::class);
+    $archive_storage->expects(self::once())->method('create')->willReturnCallback(
+      function (array $values) use ($archive_entity): EntityInterface {
+        $this->createdValues = $values;
+        return $archive_entity;
+      },
+    );
+    $answer_storage = $this->createMock(EntityStorageInterface::class);
+    if ($original !== NULL) {
+      $answer_storage->expects(self::once())->method('loadUnchanged')->with('21')->willReturn($original);
+    }
+    $activity_storage = $this->entityStorage('5', $this->activity());
+    $lesson_storage = $this->entityStorage('3', $this->lesson());
+    $group_storage = $this->entityStorage('7', $this->course());
+    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_type_manager->method('getStorage')->willReturnMap([
+      ['aculta_lms_answer', $answer_storage],
+      ['aculta_lms_activity', $activity_storage],
+      ['aculta_lms_lesson', $lesson_storage],
+      ['group', $group_storage],
+      ['aculta_lms_attempt_archive', $archive_storage],
     ]);
-    $lesson_status->method('get')->willReturnMap([
-      ['course_status', $this->referenceField($course_status)],
-      ['lesson_revision', $this->referenceField($lesson)],
-    ]);
-    $lesson_status->method('getLessonId')->willReturn('3');
-    $lesson_status->method('getCreatedTime')->willReturn(1000);
-    $lesson_status->method('getFinishedTime')->willReturn(0);
-    $activity = $this->createMock(ActivityInterface::class);
-    $activity->method('id')->willReturn('5');
-    $activity->method('label')->willReturn('Questão discursiva');
-
-    $answer = $this->createMock(AnswerInterface::class);
-    $answer->method('isNew')->willReturn(FALSE);
-    $answer->method('id')->willReturn('21');
-    $answer->method('getUserId')->willReturn('9');
-    $answer->method('uuid')->willReturn('answer-uuid-21');
-    $answer->method('getData')->willReturn($data);
-    $answer->method('getScore')->willReturn($score);
-    $answer->method('isEvaluated')->willReturn($evaluated);
-    $answer->method('hasField')->willReturnCallback(static fn (string $field): bool => $field !== 'comments');
-    $answer->method('get')->willReturnMap([
-      ['lesson_status', $this->referenceField($lesson_status)],
-      ['activity_revision', $this->referenceField($activity)],
-      ['comments', $this->referenceField(NULL)],
-    ]);
-    $answer->method('getChangedTime')->willReturn(1200);
-    return $answer;
+    return [
+      new AttemptArchiveManager($entity_type_manager, $this->createMock(AccountInterface::class), $this->buildTime()),
+      $archive_entity,
+    ];
   }
 
-  private function referenceField(?object $entity): FieldItemListInterface {
-    return new class($entity) extends FieldItemList {
+  private function manager(EntityStorageInterface $answer_storage, EntityStorageInterface $archive_storage): AttemptArchiveManager {
+    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_type_manager->method('getStorage')->willReturnMap([
+      ['aculta_lms_answer', $answer_storage],
+      ['aculta_lms_attempt_archive', $archive_storage],
+    ]);
+    return new AttemptArchiveManager($entity_type_manager, $this->createMock(AccountInterface::class), $this->buildTime());
+  }
 
-      public function __construct(private readonly ?object $referencedEntity) {}
+  private function entityStorage(string $id, ContentEntityInterface $entity): EntityStorageInterface {
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('load')->with($id)->willReturn($entity);
+    return $storage;
+  }
+
+  private function buildAnswer(array $data, ?string $score, string $state): ContentEntityInterface {
+    return $this->contentEntity('aculta_lms_answer', '21', [
+      'activity_id' => '5',
+      'uid' => '9',
+      'state' => $state,
+      'score' => $score,
+      'answer_data' => json_encode((object) $data, JSON_THROW_ON_ERROR),
+      'created' => '1200',
+    ], 'answer-uuid-21', FALSE);
+  }
+
+  private function activity(): ContentEntityInterface {
+    return $this->contentEntity('aculta_lms_activity', '5', [
+      'lesson_id' => '3',
+      'type' => 'free_text',
+    ]);
+  }
+
+  private function lesson(): ContentEntityInterface {
+    return $this->contentEntity('aculta_lms_lesson', '3', [
+      'course_id' => '7',
+      'title' => 'Aula 1',
+    ]);
+  }
+
+  private function course(): GroupInterface {
+    $course = $this->createMock(GroupInterface::class);
+    $course->method('id')->willReturn('7');
+    $course->method('bundle')->willReturn('lms_course');
+    return $course;
+  }
+
+  /** Creates a content entity double backed by simple scalar field lists. */
+  private function contentEntity(string $type, string $id, array $values, string $uuid = 'entity-uuid', bool $new = FALSE): ContentEntityInterface {
+    $fields = [];
+    foreach ($values as $name => $value) {
+      $fields[$name] = $this->valueField($value);
+    }
+    $entity = $this->createMock(ContentEntityInterface::class);
+    $entity->method('getEntityTypeId')->willReturn($type);
+    $entity->method('id')->willReturn($id);
+    $entity->method('uuid')->willReturn($uuid);
+    $entity->method('isNew')->willReturn($new);
+    $entity->method('hasField')->willReturnCallback(static fn (string $field): bool => isset($fields[$field]));
+    $entity->method('get')->willReturnCallback(static fn (string $field): FieldItemListInterface => $fields[$field]);
+    return $entity;
+  }
+
+  private function valueField(mixed $value): FieldItemListInterface {
+    return new class($value) extends FieldItemList {
+
+      public function __construct(private readonly mixed $fieldValue) {}
+
+      public function isEmpty(): bool {
+        return $this->fieldValue === NULL;
+      }
 
       public function __get($property_name) {
-        if ($property_name === 'entity') {
-          return $this->referencedEntity;
+        if ($property_name === 'value') {
+          return $this->fieldValue;
         }
         return parent::__get($property_name);
       }
@@ -233,26 +208,6 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
     $time = $this->createMock(TimeInterface::class);
     $time->method('getRequestTime')->willReturn(2000);
     return $time;
-  }
-
-  private function buildActivityList(): FieldItemListInterface {
-    $activity_item = new class {
-
-      public string $target_id = '5';
-
-      public function getMaxScore(): int {
-        return 4;
-      }
-
-    };
-    return new class($activity_item) extends FieldItemList {
-
-      public function __construct(object $activity_item) {
-        parent::__construct(DataDefinition::create('field_item_list'));
-        $this->list = [$activity_item];
-      }
-
-    };
   }
 
 }

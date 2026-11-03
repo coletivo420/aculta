@@ -9,10 +9,12 @@ use Drupal\aculta_events\Controller\EventPageController;
 use Drupal\aculta_events\Controller\LocationPageController;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
+use Drupal\aculta_events\Entity\EventDateOverride;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\User;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -144,6 +146,110 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
     $this->assertSame('Rua Reservada, 987', $ownerLocations[1]['address']['streetAddress'] ?? NULL);
     $this->assertSame('80000-987', $ownerLocations[1]['address']['postalCode'] ?? NULL);
     $this->assertContains('user', $ownerPage['#cache']['contexts']);
+  }
+
+  /**
+   * Local agenda expands dates and exceptions through the shared Calendar API.
+   */
+  public function testLocationAgendaUsesCalendarRecurrenceAndLocalFilter(): void {
+    $timezone = new \DateTimeZone('America/Sao_Paulo');
+    $utc = new \DateTimeZone('UTC');
+    $now = (new \DateTimeImmutable('@' . $this->container->get('datetime.time')->getCurrentTime()))->setTimezone($timezone);
+    $first = $now->setTime(18, 0)->modify('+2 days');
+    $second = $first->modify('+1 day');
+    $third = $first->modify('+2 days');
+    $rescheduled = $first->modify('+4 days');
+    $asUtc = static fn (\DateTimeImmutable $date): string => $date->setTimezone($utc)->format('Y-m-d\\TH:i:s');
+
+    $owner = User::create(['name' => 'location-owner', 'status' => 1]);
+    $owner->save();
+    $location = EventLocation::create([
+      'title' => 'Local da agenda',
+      'field_status' => 'privado',
+      'field_organizador' => $owner->id(),
+    ]);
+    $location->save();
+    $otherLocation = EventLocation::create(['title' => 'Outro local', 'field_status' => 'publicado']);
+    $otherLocation->save();
+    $event = Event::create([
+      'title' => 'Evento da agenda',
+      'field_slug' => 'evento-da-agenda',
+      'field_status' => 'publicado',
+    ]);
+    $event->save();
+    $date = EventDate::create([
+      'title' => 'Série recorrente',
+      'field_evento' => $event->id(),
+      'field_local' => $location->id(),
+      'field_quando' => [
+        'value' => $asUtc($first),
+        'end_value' => $asUtc($first->modify('+2 hours')),
+      ],
+      'field_regra' => 'FREQ=DAILY;COUNT=3',
+    ]);
+    $date->save();
+    EventDateOverride::create([
+      'field_data_pai' => $date->id(),
+      'field_inicio_original' => $asUtc($second),
+    ])->save();
+    EventDateOverride::create([
+      'field_data_pai' => $date->id(),
+      'field_inicio_original' => $asUtc($third),
+      'field_inicio' => $asUtc($rescheduled),
+      'field_fim' => $asUtc($rescheduled->modify('+2 hours')),
+    ])->save();
+
+    $otherEvent = Event::create([
+      'title' => 'Evento de outro local',
+      'field_slug' => 'evento-de-outro-local',
+      'field_status' => 'publicado',
+    ]);
+    $otherEvent->save();
+    EventDate::create([
+      'title' => 'Outra data',
+      'field_evento' => $otherEvent->id(),
+      'field_local' => $otherLocation->id(),
+      'field_quando' => [
+        'value' => $asUtc($first),
+        'end_value' => $asUtc($first->modify('+2 hours')),
+      ],
+    ])->save();
+
+    $this->container->get('current_user')->setAccount($owner);
+    $build = LocationPageController::create($this->container)->page($location);
+    $days = $build['agenda']['days'];
+    $this->assertSame('aculta_events.location_ics', $build['agenda']['ics']['#url']->getRouteName());
+    $this->assertSame((string) $location->id(), (string) $build['agenda']['ics']['#url']->getRouteParameters()['aculta_event_location']);
+    $firstDay = $first->format('Y-m-d');
+    $cancelledDay = $second->format('Y-m-d');
+    $originalThirdDay = $third->format('Y-m-d');
+    $rescheduledDay = $rescheduled->format('Y-m-d');
+    $markup = '';
+    foreach ($days as $day) {
+      foreach ($day['items']['#items'] as $item) {
+        $markup .= (string) $item['#markup'];
+      }
+    }
+
+    $this->assertSame([$firstDay, $cancelledDay, $rescheduledDay], array_keys($days));
+    $this->assertArrayNotHasKey($originalThirdDay, $days);
+    $this->assertStringContainsString('/eventos/evento-da-agenda', $markup);
+    $this->assertStringContainsString('cancelado', $markup);
+    $this->assertStringNotContainsString('Evento de outro local', $markup);
+    $this->assertContains('aculta_event_date_list', $build['agenda']['#cache']['tags']);
+    $this->assertContains('user', $build['agenda']['#cache']['contexts']);
+
+    $outsider = User::create(['name' => 'unrelated-viewer', 'status' => 1]);
+    $outsider->save();
+    $this->container->get('current_user')->setAccount($outsider);
+    $denied = FALSE;
+    try {
+      LocationPageController::create($this->container)->page($location);
+    }
+    catch (NotFoundHttpException) {
+      $denied = TRUE;
+    }
+    $this->assertTrue($denied);
   }
 
   /**

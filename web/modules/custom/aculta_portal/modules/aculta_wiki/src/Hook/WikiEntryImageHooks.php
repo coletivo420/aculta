@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\Hook;
 
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
-use Drupal\aculta_portal\Upload\UserUploadPolicy;
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\RecentUploads;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_wiki\Service\WikiContributorWorkspace;
 use Drupal\aculta_wiki\Form\WikiEntryFormActions;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\Cache;
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Url;
 use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -37,13 +40,14 @@ final class WikiEntryImageHooks {
 
   public function __construct(
     TranslationInterface $stringTranslation,
-    private readonly UserUploadPolicy $uploadPolicy,
+    private readonly ConsumerUploadPolicy $uploadPolicy,
     private readonly UserUploadDialogBuilder $dialogBuilder,
     private readonly WikiLeadImageUploader $uploader,
     private readonly WikiContributorWorkspace $workspace,
     private readonly DomainPurposeManager $domainPurposes,
     private readonly AccountProxyInterface $currentUser,
     private readonly RouteProviderInterface $routeProvider,
+    private readonly ?RecentUploads $recentUploads = NULL,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -94,7 +98,7 @@ final class WikiEntryImageHooks {
 
     // Without an enabled image extension the policy has nothing to offer; the
     // core autocomplete stays visible instead of locking the field.
-    if ($this->uploadPolicy->imageExtensions(WikiLeadImageUploader::CONSUMER) === '') {
+    if ($this->uploadPolicy->imageExtensions(WikiLeadImageUploader::CONSUMER) === []) {
       $this->addReviewAction($form, $node);
       return;
     }
@@ -139,9 +143,41 @@ final class WikiEntryImageHooks {
           ? $this->t('@name (sem descrição)', ['@name' => $current['name']])
           : $this->t('@name — descrição: @alt', ['@name' => $current['name'], '@alt' => $current['alt']]),
       ];
+      // Ponto focal da imagem atual: vale para a imagem já salva, não para um envio novo.
+      if ($current['fid'] > 0) {
+        $form[$tab]['focal'] = [
+          '#type' => 'container',
+          '#attributes' => ['data-aculta-focal' => ''],
+          '#attached' => ['library' => ['aculta_file_uploader/focal-point']],
+          // Prévia da imagem atual, com a permissão de quem edita o verbete.
+          'preview' => $current['media'] instanceof MediaInterface && $current['media']->hasField('field_media_image')
+            ? $this->previewMarkup($current['media'], (string) $current['alt'])
+            : ['#markup' => ''],
+          'marker' => [
+            '#type' => 'html_tag',
+            '#tag' => 'span',
+            '#attributes' => ['data-focal-marker' => '', 'aria-hidden' => 'true'],
+          ],
+          'focal_x' => ['#type' => 'hidden', '#default_value' => '50', '#attributes' => ['data-focal-x' => '']],
+          'focal_y' => ['#type' => 'hidden', '#default_value' => '50', '#attributes' => ['data-focal-y' => '']],
+          'focal_fid' => ['#type' => 'hidden', '#value' => (string) $current['fid']],
+        ];
+        $form[$tab]['focal']['#title'] = $this->t('Ponto focal da imagem atual');
+      }
     }
 
     $this->dialogBuilder->addFileControls($form[$tab], WikiLeadImageUploader::CONSUMER, WikiLeadImageUploader::DIRECTORY, WikiLeadImageUploader::FILE);
+    // Envios recentes do Studio: o próprio usuário vê os seus; administrador vê todos.
+    $studioOptions = $this->recentUploads?->forUser((int) $this->currentUser->id(), WikiLeadImageUploader::CONSUMER, 10, $this->currentUser->hasPermission('administer site configuration')) ?? [];
+    if ($studioOptions !== []) {
+      $form[$tab][WikiLeadImageUploader::STUDIO_FILE] = [
+        '#type' => 'select',
+        '#title' => $this->t('Ou escolha um envio recente do Studio'),
+        '#options' => ['' => $this->t('- Nenhum -')] + $studioOptions,
+        '#default_value' => '',
+        '#description' => $this->t('Só vale se nenhum arquivo novo for enviado acima.'),
+      ];
+    }
     $form[$tab][WikiLeadImageUploader::FILE]['#title'] = $this->t('Nova imagem de destaque');
     $form[$tab][WikiLeadImageUploader::ALT] = [
       '#type' => 'textfield',
@@ -183,6 +219,39 @@ final class WikiEntryImageHooks {
   /**
    * Orders core fields and adds concise guidance for a new Wiki entry.
    */
+  /**
+   * Monta a prévia da imagem atual com a URL de query do core para arquivos privados.
+   *
+   * A forma de caminho /system/files/{arquivo} responde 404 neste core (o processador de
+   * caminho reescreve para /system/files sem rota exata). A forma ?file= é a usada pelo projeto.
+   */
+  private function previewMarkup(MediaInterface $media, string $alt): array {
+    $file = $media->get('field_media_image')->entity;
+    if ($file === NULL) {
+      return ['#markup' => ''];
+    }
+    $uri = $file->getFileUri();
+    $relative = self::privateFileQueryPath($uri);
+    if ($relative !== NULL) {
+      $src = Url::fromRoute('system.files', ['scheme' => 'private'], ['query' => ['file' => $relative]])->toString();
+    }
+    else {
+      $src = \Drupal::service('file_url_generator')->generateString($uri);
+    }
+    return ['#markup' => '<img src="' . Html::escape($src) . '" alt="' . Html::escape($alt) . '" class="img-fluid">'];
+  }
+
+  /**
+   * Caminho relativo de uma URI private:// para a forma de query ?file=; NULL para outros esquemas.
+   */
+  public static function privateFileQueryPath(string $uri): ?string {
+    if (!str_starts_with($uri, 'private://')) {
+      return NULL;
+    }
+    $relative = substr($uri, strlen('private://'));
+    return $relative === '' ? NULL : $relative;
+  }
+
   private function prepareAuthoringForm(array &$form, NodeInterface $node): void {
     $weights = [
       'title' => 0,
@@ -296,7 +365,8 @@ final class WikiEntryImageHooks {
     if ($media->hasField('field_media_image')) {
       $alt = (string) ($media->get('field_media_image')->first()?->get('alt')->getValue() ?? '');
     }
-    return ['name' => (string) $media->label(), 'alt' => $alt];
+    $fid = $media->hasField('field_media_image') ? (int) ($media->get('field_media_image')->target_id ?? 0) : 0;
+    return ['name' => (string) $media->label(), 'alt' => $alt, 'fid' => $fid, 'media' => $media];
   }
 
   /**

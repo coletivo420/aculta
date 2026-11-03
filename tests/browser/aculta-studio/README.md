@@ -64,7 +64,7 @@ export OCS_CONTEXT_TABS_CSS_ROOT=/home/piradopirata/worktrees/opencultures-f0-ad
 export OCS_CONTEXT_TABS_CSS_OVERRIDE=1
 export OCS_SKIP_OPENCULTURAS=1
 export STUDIO_LOGIN_URI=https://conta.aculta.toca.net.br
-export STUDIO_ROUTES=https://wiki420.aculta.toca.net.br/studio/we-sativa
+export STUDIO_ROUTES=https://wiki420.aculta.toca.net.br/we-sativa
 export OCS_WIDTHS=320,360,390,599,600,768,1024,1280,1440
 export SUITE_OUT=/home/piradopirata/aculta-suite-out/ocs-context-tabs
 python3 tests/browser/aculta-studio/ocs-baseline.py
@@ -326,6 +326,14 @@ Matriz de casos e critérios:
 ## OCS-F0 — baseline comparativo
 
 O script `ocs-baseline.py` captura, com Firefox ESR visível, a homepage pública e, por padrão, a entrada da Conta, Marley, Ganjalab, WE SATIVA, Conta, Perfil, Green Stash, Culturas e planos Mercado Pago. Para cada Suite resolve a URL no Domain ativo por `DomainPurposeManager::environmentPathUrl()`; não assume que paths de Suites diferentes funcionem no host da Conta. Requer `DISPLAY=:0`, `SUITE_OUT` fora do repositório e Drush local apontando para `aculta_runtime`; usa perfil temporário em `$SUITE_OUT/profiles`. `STUDIO_PAGE` limita a uma URL customizada; `STUDIO_ROUTES` aceita URLs completas ou caminhos no host `STUDIO_LOGIN_URI`. Imagens e JSON ficam em `$SUITE_OUT`. `OCS_WIDTHS=320,360,390,599,600,768,1024,1280,1440` captura a grade completa do gate; sem essa variável, o modo rápido usa 1440/390 px. Se ULI falhar, a tentativa vai a `baseline-deferred.json` e preserva a última execução bem-sucedida em `baseline.json`. A captura autentica somente a conta de teste e não homologa a operação do novo host Wiki.
+
+
+O check de heading `O que vamos criar hoje?` é exclusivo da rota exata `/marley`.
+Subrotas como `/marley/revista/publicacoes/todos` podem ter H1 próprio da tela;
+nelas o resultado é `SKIP_NOT_WORKSPACE_LANDING`, não `FAIL` por não conter o
+título do Hub. Em 2026-10-31, Firefox ESR a 320px confirmou `/marley` PASS e a
+listagem `SKIP`, com zero falhas de fidelidade. Captura autenticada GET com CSS
+candidata injetada: `/home/piradopirata/aculta-suite-out/marley-heading-route-scope-dev8-20261031/`.
 
 Para uma rota cuja captura deve corresponder a uma tela Studio específica,
 `OCS_EXPECT_STUDIO_ROOT` exige que o seletor apareça em cada viewport; ausência
@@ -758,19 +766,19 @@ coletor mede o wrapper, estados vazios, seções, quatro filtros (`aria-current`
 wrapping e links de pelo menos 44px), overflow e isolamento dos headers do shell.
 
 No checkout servido em `2493d7535`, `aculta_studio.we_sativa` resolve para
-`/wesativa`; o caminho da branch `https://wiki420.aculta.toca.net.br/studio/we-sativa`
+`/we-sativa`; o caminho da branch `https://wiki420.aculta.toca.net.br/we-sativa`
 retorna HTTP 404 nesse HEAD. A verificação foi feita por Drush e GET HTTP; o
 Runtime não está no commit da branch sob teste, então essa resposta não avalia
 o controller/template do path canônico. A captura oficial fica DEFERRED até o
 checkout visual executar o HEAD da branch. Para inspeção **exploratória** do
 mesmo consumer enquanto isso,
-use `STUDIO_ROUTES=https://wiki420.aculta.toca.net.br/wesativa` com
+use `STUDIO_ROUTES=https://wiki420.aculta.toca.net.br/we-sativa` com
 `OCS_STUDIO_FIDELITY_CSS_OVERRIDE=1`. Esse resultado comprova a composição do
 wrapper no path legado, mas não homologa o caminho canônico nem fecha OCS-F7.
 Aplique `OCS_STUDIO_COLOR_MODE=dark` para o teste visual escuro. O teste é GET,
 não altera conteúdo e nunca submete ações da Wiki.
 
-Reteste autenticado de `/wesativa` no Runtime: 279/279 invariantes em nove
+Reteste autenticado de `/we-sativa` no Runtime: 279/279 invariantes em nove
 larguras, nos modos claro e escuro, com CSS Fidelity candidata. Os links
 textuais da Institution Bar mediram 11,34:1 e 12,95:1, respectivamente. As
 capturas 320/1440px foram revisadas; veja os diretórios documentados no
@@ -779,7 +787,7 @@ observado estava vazio; a captura não prova conteúdo preenchido ou a rota ofic
 
 ### Reteste canônico WE SATIVA — 2026-10-31
 
-Baseline autenticado com `STUDIO_PAGE=https://wiki420.aculta.toca.net.br/studio/we-sativa`, usuário `teste.comum`, Firefox ESR/X11 e oito larguras. A rota respondeu **Acesso negado** em 8/8 capturas; o shell preservou Institution Bar e Domain Header sem overflow, mas nenhum consumer Wiki foi servido. Evidência: `/home/piradopirata/aculta-suite-out/studio-we-sativa-baseline-recheck-8d4dcc07d-20261031/`. Isso é bloqueio de autorização/instalação do Runtime, não aprovação visual. Não substituir pelo path legado `/wesativa`; repetir após liberar o acesso canônico e executar ACL, conteúdo real, no-JS/AJAX, teclado, zoom e WCAG.
+Baseline autenticado com `STUDIO_PAGE=https://wiki420.aculta.toca.net.br/we-sativa`, usuário `teste.comum`, Firefox ESR/X11 e oito larguras. A rota respondeu **Acesso negado** em 8/8 capturas; o shell preservou Institution Bar e Domain Header sem overflow, mas nenhum consumer Wiki foi servido. Evidência: `/home/piradopirata/aculta-suite-out/studio-we-sativa-baseline-recheck-8d4dcc07d-20261031/`. Isso é bloqueio de autorização/instalação do Runtime, não aprovação visual. Não substituir pelo path legado `/we-sativa`; repetir após liberar o acesso canônico e executar ACL, conteúdo real, no-JS/AJAX, teclado, zoom e WCAG.
 
 ## ACULTA Studio Culturas — dashboard responsivo candidato
 
@@ -837,8 +845,8 @@ segue pendente.
 
 ### Green Stash: rota canônica e baseline Runtime (2026-10-31)
 
-A rota canônica da branch é `shop:/studio/green-stash`; o Runtime `2493d7535`
-ainda usa `/greenstash`, portanto o caminho novo retorna 404 nesse HEAD. O baseline
+A rota canônica da branch é `shop:/green-stash`; o Runtime `2493d7535`
+ainda usa `/green-stash`, portanto o caminho novo retorna 404 nesse HEAD. O baseline
 legado foi capturado apenas para comparação em 320/390/1440px; document width
 excedeu 10px a viewport de 320px e a página ainda mostrava nove links. Não tratar
 esse menu antigo como contrato operacional atual nem como evidência da rota

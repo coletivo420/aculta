@@ -1,0 +1,392 @@
+# Plano de arquitetura e implementação - ACULTA Contributions
+
+**Estado:** F0 revalidado; F1/F2 concluídas e revalidadas localmente; F3 concluída quanto à migração/cutover dual-store, sem conteúdo Runtime a copiar; F4 concluída com escopo restrito a perfis públicos não reivindicados; F5 implementada localmente, incluindo escolha por site, e-mail imediato ou digest diário (padrão somente no site); F6/F7 implementadas localmente com homologação autenticada pendente; F8 concluída sem integração adicional (Calendar/Forum/UGC preservam owners); F9 permanece fase separada, sem remoção de Content Moderation. Updates Wiki/Messenger 10015–10017 foram aplicados no Runtime; o diff de import de `aculta_messenger.settings` continha somente a categoria `eventos_contribuicoes` com inbox obrigatório e opções de e-mail autorizadas. Pendentes: jornadas autenticadas de domínio, entrega real de e-mail e upload H5P no Runtime.
+**Base de código auditada:** branch `dev`, HEAD `9e6975fab` (2026-11-02). Inventário de domínios e regras permanece no [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md); nesta ponta, Messenger Unit 402/4.374, Contributions Unit+Kernel 18/188, adapter Wiki Unit 3/5, migração Wiki Kernel 3/133 e Events `EventOrganizationLifecycleKernelTest` 30/973 passaram. Revalidar HEAD antes de cada etapa, pois `dev` integra outras frentes.
+**Escopo:** motor de propostas comunitárias reutilizável por domínios ACULTA, sem depender de Workflow Participants ou de Content Moderation para o ciclo de contribuições.
+
+## 1. Decisão de arquitetura
+
+Criar o módulo first-party `aculta_contributions` como proprietário do ciclo de vida das propostas comunitárias: submissão, revisão da proposta, estados, decisões, comentários de revisão, concorrência, conflitos com a origem, trilha de auditoria e aplicação controlada.
+
+Os módulos de domínio continuam donos dos dados e das regras específicas:
+
+- `aculta_wiki`: verbetes, campos permitidos, elegibilidade e política editorial da Wiki.
+- `aculta_events`: Eventos, Locais e Organizações, campos permitidos, titularidade, membros e regras de publicação.
+- `aculta_user`: identidade, membros, titularidade e reivindicação de organizações.
+- `aculta_content_admin`: descoberta das filas de revisão e entrada no painel administrativo, sempre respeitando o acesso nativo.
+- `aculta_messenger`: avisos para proponente, revisores e responsáveis.
+- `aculta_index`: descoberta do conteúdo oficial publicado. Propostas privadas nunca entram no índice.
+
+O motor não deve ser um sistema universal de moderação. Denúncias, comentários de Fórum, reivindicações de titularidade, moderação de mensagens e decisões editoriais internas permanecem em seus módulos. Podem integrar-se por eventos ou links, sem serem convertidos em propostas.
+
+## 2. Evidências e estado atual
+
+### Evidências de implementação registradas em `46ec52a96` (2026-11-01)
+
+- `aculta_contributions` agora define `aculta_contribution`, entidade privada
+  revisionável, registro de adaptadores confiáveis e serviços de submissão,
+  revisão, decisão, aplicação seletiva, conflito e retirada.
+- A entidade preserva módulo owner, adapter, purpose e idioma; o payload é
+  validado pelo adapter. A política de submissão usa Flood configurável, chave
+  de idempotência armazenada como hash e lock. A aplicação exige revisão-base
+  igual e decisão explícita de campos.
+- Contexto privado da origem e escolhas do revisor ficam separados do payload
+  aplicável e são persistidos por revisão. O update 10001 instala os novos
+  campos em uma instalação existente.
+- O adapter Wiki foi registrado. Novas submissões e os consumers de status,
+  retirada, decisão, workspace, fila editorial e publisher usam leitura
+  dual-store; novos envios ficam fechados até existir checkpoint para toda
+  proposta legada. O workflow oficial da Wiki continua em Content Moderation.
+  No Runtime, schema Wiki 10003 já estava registrado; a auditoria encontrou zero
+  propostas/revisões legacy, Contributions, checkpoints e revision maps; o gate
+  de migração retornou completo. O update 10003 já está aplicado no Runtime; não havia
+  conteúdo a copiar.
+- Unit: registry/state machine 3 testes / 19 assertions; Kernel 12 testes / 138
+  assertions (passaram em `aculta_simpletest`; combinado 15/157). O Kernel revelou e corrigiu a
+  dependência `options` e um fixture que usava incorretamente UID 1. PHPCS
+  Drupal, lint PHP e `git diff --check` passaram após as alterações recentes.
+  Updates Messenger 10015/10016 foram executados no Runtime após os reparos
+  descritos na homologação abaixo.
+
+- O update Wiki 10003 está preparado em lotes e preserva ID, UUID e revision ID,
+  com reconciliação de cada proposta/revisão. Testes focais do corte/status
+  passaram 2/264; lifecycle genérico 10/109; consumer Messenger 5/55; adapter
+  Wiki 3/5; histórico/retry, colisão de ID e revisão traduzida passaram 3/133.
+  Acesso autenticado de ponta a ponta no Runtime continua pendente. O modelo Wiki antigo não persistia campos ou
+  modos de lista selecionados ao aceitar, portanto essa decisão histórica não
+  pode ser reconstruída. O update aborta uma proposta se encontrar colisão de
+  ID ou traduções históricas; essas situações exigem migração explicitamente
+  tratada antes da troca de consumidores.
+
+A implementação do núcleo é progresso parcial, não conclusão das fases F1/F2:
+persistência, submissão, aplicação seletiva, conflito, Flood configurável,
+rollback provocado pelo adapter e acesso delegado ao owner de domínio têm Kernel
+MariaDB. O ciclo de retorno para ajustes, nova revisão do autor e retirada final
+também tem cobertura Kernel. Updates/configuração Runtime foram homologados;
+autorização autenticada e jornadas de domínio ainda precisam de validação. O
+Kernel verifica contenção de submissão entre backends independentes/conexões
+MariaDB; ainda não há runner de processos SO concorrentes.
+
+A auditoria do HEAD confirmou:
+
+- A Wiki mantém `aculta_wiki_proposal` e fluxo legado revisionável; novos envios
+  gravam em `aculta_contribution` após gate de checkpoints. Os consumers aceitam
+  ambas entidades; preservação das tabelas antigas e reconciliação Runtime não
+  estão homologadas.
+- O serviço `WikiProposalDecision` ainda usa interfaces de `content_moderation` para transições e validação editorial da revisão oficial. Portanto, extrair a entidade de proposta não elimina por si só essa dependência.
+- `aculta_events` tem entidades próprias `aculta_event`, `aculta_event_location` e `aculta_event_organization`, formulários e controles de acesso, páginas/catálogo e providers para Index.
+- Organizações têm titularidade/reivindicação e membros. Locais e eventos vinculam organizador; os access handlers têm regras de publicação, propriedade e administração.
+- `aculta_content_admin` agrega coleções moderáveis sem copiar dados nem substituir a autorização da rota de origem.
+- `aculta_ugc` já opera denúncias com entidade, fila, estados e decisões próprios.
+- `aculta_messenger` é a central de mensagens e notificações.
+
+O inventário F0, incluindo a matriz domínio × operação × policy × applier, foi
+revalidado no checkout `559fc5c5e` em 2026-11-01 após a cobertura de falha fechada
+para organizações reivindicadas, conforme
+[`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md).
+Claims continuam exclusivamente em `aculta_user`; endereço completo de Local
+usa CEP central e apenas BR. Criação de Organização com claim pendente e
+propostas adicionais para membros de organização reivindicada seguem fora do
+adapter até fechar política e experiência do autor.
+
+O Drupal `Workflow Participants` exige `content_moderation`, associa participantes a entidades moderadas e descreve cobertura limitada para entidades que não sejam Nodes. Ele gerencia designação de editores/revisores dentro do workflow do Core, não propostas comunitárias independentes. Não usá-lo como dependência nem adaptar seu código como base.
+
+O Content Moderation do Core mantém revisão publicada enquanto outra revisão passa por estados de workflow. Esse padrão informa os requisitos de segurança e publicação, mas o motor comunitário será baseado em propostas separadas e contratos dos domínios. Não afirmar que a Wiki já é independente do Core: essa migração é uma frente distinta, com risco e escopo próprios.
+
+### Homologação de banco do Runtime — 2026-11-01
+
+- Ambiente confirmado: `toca`, checkout servido `/home/piradopirata/projetos/aculta`
+  no commit `46ec52a96`, URI `http://default`, banco `aculta_runtime`, Drupal
+  11.4.10, 631 tabelas. Schema final: Wiki 10003, Contributions 10001 e
+  Messenger 10016. `updatedb:status` não lista pendências e
+  `config:status` não mostra diferenças.
+- A leitura Wiki encontrou zero propostas/revisões legacy, zero Contributions,
+  zero checkpoints e zero revision maps; o gate de migração retornou completo.
+- Messenger 10015/10016 concluíram. O aviso usa bundle e fields dentro do limite
+  Drupal de 32 caracteres; 10015 instala apenas os nove objetos do aviso e
+  ignora entidades já presentes. 10016 preserva formatos de lista e mapa. Os
+  11 objetos ativos foram exportados seletivamente para `config/sync`; o
+  settings sincroniza também `private_message_digest_anchor`.
+- Snapshots integrais fora do repositório foram validados com `gzip -t` e
+  SHA-256. O último, posterior à sincronização, está em
+  `/home/piradopirata/worktrees/backup-runtime-messenger-20261101-post-import/`
+  com hash `daf48e769b5d02a343a800d8dc3a1db5f6f4645607904fe9c3eef291c6ba2e46`.
+  Houve tentativas abortadas por IDs acima de 32 caracteres e por instalação
+  global de default de amizade divergente; os updates foram então corrigidos e
+  concluídos seletivamente. `config:import --diff` também aplica a importação:
+  o diff removeu somente traduções órfãs. A conferência posterior ficou limpa.
+- Nenhuma mensagem de aviso foi criada na homologação. Testes autenticados de
+  acesso a filas e jornadas Events continuam um gate separado.
+
+### Homologação no Runtime registrada em `790a93fb2` — 2026-11-02
+
+- Checkout de desenvolvimento confirmado em `toca`, branch destacada no head
+  `790a93fb2`, URI Drush `http://default`, banco `aculta_runtime`, Drupal
+  11.4.10. Antes do update 10017 havia 631 tabelas; snapshot integral validado
+  com SHA-256
+  `7d26b545e43a94345e7b02c20b3af8e97eff77ff130d84bf4ecde2200476aa69`.
+- Update 10017 concluiu; criou a tabela/colunas esperadas (632 tabelas totais).
+  Os seis objetos de schema/display gerados pelo update foram adicionados ao
+  Config Sync antes do import, preservando os campos novos. `config:import
+  --diff` exibiu somente a inclusão de `email_modes.eventos_contribuicoes`
+  (`digest: true`, `immediate: true`, `default_mode: off`). Depois do import,
+  `config:status` e `updatedb:status` ficaram limpos e `drush cr` passou.
+- O módulo `aculta_file_uploader` está habilitado; os serviços
+  `aculta_file_uploader.ingestor` e `aculta_lms_h5p.editor_upload_manager`
+  resolvem. Foundation gate: 354 checks PASS. Smoke dos hosts de desenvolvimento:
+  raízes courses/wiki 200; Ganjalab e WE SATIVA nos respectivos paths 403; paths
+  cruzados 404. Não houve 500 nos paths testados. Shell-contract gate não passou:
+  o validator chama `ThemeHooks` com cinco argumentos, mas o construtor atual
+  requer seis. Páginas autenticadas, upload H5P e SMTP continuam sem validação.
+- Testes no checkout `790a93fb2`: Messenger Unit 402/4.374 PASS; Contributions
+  Unit 3/19 e Kernel 15/169 PASS via `aculta_simpletest`; integração Wiki/Events
+  Unit 11/32 e Events `EventOrganizationLifecycleKernelTest` 30/973 PASS via
+  `aculta_simpletest` (24 depreciações Drupal upstream). PHPCS Drupal +
+  DrupalPractice nos PHP alterados, PHP lint, YAML parse de 13 arquivos e
+  `git diff --check` passaram. `validate-project-status-index.php --write` regenerou a tabela do README. A
+  validação continua vermelha por problemas globais fora do escopo: status ausente
+  do File Uploader e versões divergentes em outros componentes; seus manifestos e
+  status não foram alterados nesta tarefa.
+
+### Revalidação de testes em `9e6975fab` — 2026-11-02
+
+- Sem escrita no Runtime: Messenger Unit 402/4.374 PASS; Contributions Unit e
+  Kernel 18/188 PASS; `WikiContributionAdapterTest` 3/5 PASS; migração Wiki
+  (`testWikiContributionMigration*`) 3/133 PASS; Events
+  `EventOrganizationLifecycleKernelTest` 30/973 PASS. Os Kernels usaram
+  exclusivamente `aculta_simpletest`; houve 24 depreciações Drupal upstream
+  no Kernel Events e 255 depreciações Core/contrib no Kernel Wiki.
+- A ponta `dev` avançou após a homologação Runtime em `790a93fb2`. O checkout
+  servido estava em `9bec71451` com alterações não commitadas de outras frentes;
+  não foi trocado nem usado para alegar homologação no novo HEAD. A validação
+  Runtime acima permanece evidência daquele commit, não de `9e6975fab`.
+- `validate-project-status-index.php --write` regenerou o bloco do README raiz.
+  A validação continua falhando por status ausente de File Uploader e versões
+  divergentes em componentes de outras frentes; esses manifestos/status não
+  foram alterados nesta tarefa.
+
+## 3. Conceitos e modelo proposto
+
+### 3.1 Proposta comunitária
+
+Uma proposta deve registrar, no mínimo:
+
+- UUID, domínio/módulo de origem e tipo de contribuição.
+- Entidade alvo (tipo e UUID), ou intenção de criação sem alvo.
+- Proponente e data; idioma/purpose quando aplicável.
+- Revisão-base ou fingerprint/versionamento dos campos relevantes da origem.
+- Payload estruturado allowlisted, com valores tipados; nunca aceitar nomes arbitrários de campos do cliente.
+- Estado atual e revisões imutáveis da proposta.
+- Histórico de decisões, revisor, momento, parecer e campos aceitos.
+- Metadados de deduplicação/idempotência, sem dados pessoais desnecessários.
+
+Estados iniciais: `submitted`, `needs_changes`, `accepted`, `declined`, `withdrawn`, `conflict`. `conflict` pode ser derivado ou persistido conforme decisão técnica; o comportamento deve exigir reanálise quando a origem divergir da revisão-base. Estados finais não podem ser reabertos sem ação explícita e histórico.
+
+### 3.2 Intenções
+
+- `create`: sugerir novo conteúdo comunitário.
+- `update`: propor alteração de entidade existente.
+- Opcionalmente `correction` como categoria de motivo dentro de `update`, sem duplicar o ciclo de vida.
+
+Proposta de criação gera entidade oficial somente após aprovação, passando por validações e deduplicação. Proposta de alteração nunca edita o conteúdo ativo ao ser submetida.
+
+### 3.3 Contratos de domínio
+
+Criar contratos explícitos, versionáveis e testáveis, por exemplo:
+
+- `ContributionTypeDefinitionInterface`: tipo, entidade alvo suportada, campos permitidos, formulários e apresentação.
+- `ContributionPolicyInterface`: autorização para submeter/decidir, elegibilidade, titularidade e acesso à origem.
+- `ContributionApplierInterface`: valida e aplica seleção allowlisted sob revisão-base/lock/transação.
+- `ContributionSourceResolverInterface`: resolve alvo, estado e versão-base; retorna acesso cacheável.
+- `ContributionEventInterface`: eventos de submissão, decisão, conflito e aplicação concluída.
+
+Não criar APIs genéricas que aceitem classe, campo, serviço ou rota arbitrários enviados pela requisição. Descobrir adaptadores por plugin manager/tag com schema e validação em servidor.
+
+## 4. Integrações e responsabilidades
+
+### 4.1 Wiki
+
+Extrair gradualmente o motor genérico da proposta existente, preservando a semântica funcional da Wiki. A Wiki fornece intents e campos permitidos para verbetes, regras de autoria, revisores, notas e aprovação.
+
+Não mover para `aculta_contributions` regras de conteúdo, workflow da Wiki, autorização de revisão de Nodes ou código de busca. O status da origem, revisão-base, permissões e publicação continuam revalidados pela Wiki.
+
+Como `WikiProposalDecision` depende de Content Moderation, há duas entregas separadas:
+
+1. Extrair propostas e contratos sem alterar o workflow oficial atual.
+2. Projetar e implementar eventual substituição do workflow Core da Wiki por mecanismo próprio, incluindo revisões oficiais, grants, leitura de revisão, publicação, rollback e migração. Não remover a dependência do Core antes de cobrir esses requisitos e dados.
+
+### 4.2 Eventos, Locais e Organizações
+
+Prioridade inicial:
+
+1. Organização: criação e correção de perfil; autorização por titularidade e membros ativos; respeitar status reivindicado/não reivindicado e reivindicação pendente.
+2. Local: criação e atualização de endereço, descrição, acessibilidade, coordenadas e instalações. Endereço completo, coordenadas precisas e contato devem obedecer à política de exposição e não aparecer em payload público/log.
+3. Evento: criação e correção de descrição, datas, local, organizador e informações de acesso. Revalidar organizador, vínculo com local, datas e estado do evento na decisão.
+
+Criar adaptadores no `aculta_events`; não deslocar entities nem access handlers ao módulo central. A aplicação deve rejeitar ou sinalizar conflito se a entidade mudou desde a proposta. Eventos publicados/índice público devem refletir apenas a entidade oficial depois da aplicação aprovada.
+
+### 4.3 Organizador
+
+Não criar uma entidade de Organizador antes de fechar o modelo. Hoje organizador é usuário associado e/ou organização cultural com titularidade e membros. O motor deve consultar `aculta_user` e `aculta_events`; propostas não inventam uma segunda fonte de titularidade.
+
+### 4.4 Painel de revisão
+
+Integrar a fila ao `aculta_content_admin` através de rota de coleção cuja autorização verifica acesso à proposta e ao contexto de domínio. O painel descobre e lista; a decisão permanece no serviço do `aculta_contributions` mais o adaptador de domínio. Não conceder acesso por o item aparecer na lista.
+
+### 4.5 Mensageria
+
+Publicar eventos mínimos no bus central. O Messenger envia avisos conforme preferências e política; não decide aprovação nem guarda estados da contribuição. Revalidar acesso antes de mostrar detalhes privados. Nunca incluir payload completo de proposta em e-mail ou log.
+
+### 4.6 Indexação, mapas e calendários
+
+- Index: só conteúdo oficial público; mudança semântica em projeções exige atualizar versão/fingerprint e seguir procedimento de rebuild.
+- Maps: auxiliar localização/validação; sem ownership da proposta ou do endereço.
+- Calendar/ICS: importações externas podem futuramente criar propostas em lote, com prévia, relatório de conflitos, idempotência e aprovação antes de alterar dados oficiais. Não misturar importação ICS com o CRUD inicial.
+- Fórum/UGC: oferecer entrada/encaminhamento quando útil; denúncia permanece denúncia e discussão permanece discussão.
+
+## 5. Fases e microfases
+
+### F0 - Inventário e contratos
+- Ler instruções locais e confirmar HEAD.
+- Mapear classe, tabela, configuração, rota, permissão, campos e testes da proposta Wiki.
+- Mapear entidades/fields/access de Organization, Location e Event e titularidade/membership.
+- Mapear filas de conteúdo do painel, eventos Messenger e políticas de retenção/privacidade.
+- Fechar contrato de versão-base, aplicação seletiva, estados, acesso e conflitos.
+**Saída:** ADR e matriz domínio × operação × policy × applier.
+
+### F1 - Esqueleto do módulo
+- Criar `aculta_contributions`, info, services, schema, permissões administrativas, entity/plugin definitions e documentação.
+- Criar entidade privada revisionável de proposta e armazenamento de decisão/histórico conforme modelo escolhido.
+- Implementar acesso negado por padrão; listagens sem vazamento, proteção CSRF/método e cache contexts.
+- Não integrar ainda todos os domínios.
+**Saída:** instalação limpa, proposta inacessível anonimamente, API sem adaptador falha fechada.
+
+### F2 - Ciclo genérico
+- Submissão idempotente e proteção de flood/abuso.
+- Revisão e alteração da proposta sem alterar origem.
+- Estados, parecer plain text, aceitar/recusar/pedir ajuste/retirar conforme política.
+- Lock de concorrência e transação ao decidir/aplicar.
+- Comparação da versão-base e conflito explícito.
+- Registro de autor/revisor/tempo e audit trail sem armazenar dados desnecessários.
+- Kernel valida contenção em conexão independente e processo OS separado: a
+  submissão concorrente é negada e nenhuma segunda proposta persiste (suíte
+  Entity + Lifecycle: 14 testes / 161 assertions no HEAD `50d01ac2c`; os commits
+  posteriores do Portal/LMS não alteram esses módulos.
+**Saída:** ciclo completo de proposta isolada e policy fake/fixture para integração.
+
+### F3 - Migração Wiki
+- Adaptar Wiki como primeiro consumidor.
+- Migrar propostas, UUIDs, revisões, autoria, estado, alvo, valores tipados e decisões sem perda.
+- Preservar links/rotas e acesso existentes ou documentar redirecionamento compatível.
+- Comparar comportamento do applier campo a campo com a versão atual.
+- Manter workflow Content Moderation existente nesta fase.
+**Saída:** migração idempotente, contagens reconciliadas, Wiki opera pelo contrato comum.
+
+### F4 - Organizações
+- [x] Criar proposta privada para Organização por não administradores, pelo formulário próprio e pelo modal do Evento; nenhuma entidade é criada nem vinculada antes da revisão.
+- [x] Decisão administrativa de criação exige seleção explícita dos campos e título; lifecycle e modal/admin Kernel completos passaram (13/437 e 8/266 assertions).
+- [x] Editar proposta de perfil de Organização existente com campos allowlisted.
+- [x] Preservar ownership em `aculta_user`: Contributions só editam perfil público de organização não reivindicada, excluem titularidade/membros/reivindicação do allowlist e falham fechado para organização reivindicada. Criação aprovada permanece não reivindicada, com proponente como organizador.
+- [x] Definir conflito para organização: mudanças no perfil ou estado de reivindicação invalidam a versão-base; a aplicação também revalida `isUnclaimed()`, e nome duplicado conflita sem mescla. Kernel novo `testContributionCannotSubmitOrApplyToClaimedOrganization`: 1/27 PASS em `aculta_simpletest`.
+**Saída:** criação e atualização sem alteração pública pré-aprovação.
+
+### F5 - Locais
+- [x] Implementar propostas privadas de criação/atualização com allowlist do perfil público e revisão-base; confirmar em Kernel que criação fica ausente até aprovação e atualização obsoleta conflita.
+- [x] Reutilizar o formulário de endereço central e fixar BR; excluir coordenadas, identificadores OSM e campos editoriais/protegidos do payload aplicável.
+- [x] Impedir duplicidade provável por título/endereço durante submissão/aplicação, sem mesclar automaticamente.
+- [x] Enfileirar resultados de Organização e Local por evento mínimo, sem payload, endereço ou parecer; Messenger persiste avisos privados no inbox e revalida revisão, autor e acesso ao listar/abrir.
+- [x] Definir política de entrega conforme preferência do membro: inbox obrigatório, e-mail imediato ou resumo diário opcional; padrão somente no site. Update 10017 aditivo instala campos de entrega/digest; validar no Runtime antes de declarar homologação.
+- [x] Workspace privado de leitura para Organização, Local e Evento em `/culturas/propostas`; ressubmissão em `/culturas/propostas/{uuid}/revisar` cria nova revisão após `needs_changes`, com payload tipado, endereço BR central e acesso restrito ao owner. A execução focal registrada foi 2/64, incluindo endereço BR; não repetida neste HEAD. Formulários de Evento para `event_create` e `event_update` estão implementados; o envio gera aviso privado por envelope mínimo. Homologação Runtime segue pendente.
+- [x] Antes de aplicar alteração de endereço/precisão do Local, incluir Datas relacionadas e estado dos Eventos na revisão-base; recarregar entidades do storage, revalidar disponibilidade e acesso `view` atual, e conflitar sem aplicar se a origem mudou. `testLocationAddressContributionDetectsChangedLinkedEvent` cobre mudança concorrente de Data e endereço preservado (1/26); a proposta não faz fusão de Eventos.
+**Saída:** catálogo, seletor de local, página pública e Index mantêm consistência.
+
+### F6 - Eventos
+- Adapter `events_event` implementa `event_create` e `event_update`, valida allowlist e intervalos, revalida organizador/Organização/Local, usa fingerprint com Datas e aplica sob lock/transação. A aplicação recarrega o autor e revalida capability e Entity Access atuais, limpando o cache do Evento e recarregando Locais das Datas antes de verificar acesso; a validação registrada no HEAD `dd6ba130c` da suíte de lifecycle e fronteira cobre revogação de membership, Local tornado privado, criação privada em rascunho e atualização seletiva com Datas aditivas (37 testes / 1.275 assertions; 24 depreciações upstream). Os commits posteriores de LMS não alteram esses módulos.
+- Decisões de propostas de Evento enfileiram envelope mínimo e são consumidas pelo mesmo inbox Messenger de Organização/Local; não incluem payload nem parecer. A revisão administrativa usa `administer aculta events` no MAIN e a fila aparece no Content Admin via autorização nativa. Na aplicação, Kernel comprova revalidação quando membership da Organização é revogado e quando o Local proposto passa a privado. O workspace abre propostas de Organização, Local e Evento. A ressubmissão após `needs_changes` usa formulário estruturado; `ContributionLifecycle::revise()` revalida owner, estado, capacidade e revisão-base. Autores propõem `event_create` em `/culturas/propostas/evento/nova` e `event_update` em `/culturas/eventos/{aculta_event}/propor-alteracao`; ambos salvam Contributions privadas e emitem aviso mínimo. Atualizações exigem Entity Access e capturam fingerprint da versão persistida; Datas novas são opcionais e append-only. Os cenários `event_update` passaram 6/171, cobrindo submissão, aplicação, perda de acesso, membership, Local e origem alterada. Updates Messenger 10015–10017 foram executados. No HEAD `9e6975fab`, a classe Events completa passou 30/973 (24 depreciações upstream), incluindo título duplicado case-insensitive e mudança de Data ligada ao Local. O teste de integração de Index passou 1/52 e confirma proposta/draft fora da projeção e publicação oficial agendando trabalho. Homologação autenticada permanece pendente.
+- Manter ICS/feeds existentes sem importação automática no escopo inicial.
+**Saída:** evento só entra no catálogo público após aprovação/aplicação.
+
+### F7 - Fila e notificações
+- [x] Expor as filas de propostas de Organização, Local e Evento no painel `aculta_content_admin` usando autorização nativa das rotas Events; Registry Unit 1/8 e Kernel Events 21/691 passaram localmente.
+- [x] Persistir avisos privados de decisão de Organização/Local/Evento no inbox Messenger, com revalidação da revisão/autor/acesso e outbox que permite recuperar falha transitória ao gravar na Queue API.
+- [x] Entregar workspace privado para consultar estado, payload e retorno editorial de propostas de Organização, Local e Evento; avisos Messenger abrem a proposta. Execuções registradas: Kernel Events 23/753 e fronteira de domínio 10/369; não repetidas neste HEAD.
+- [x] Permitir ressubmissão estruturada pelo autor somente em `needs_changes`, usando o ciclo genérico e nova revisão imutável. Kernel focal 2/64, incluindo endereço BR fixo.
+- [x] Oferecer formulário inicial `event_create` em `/culturas/propostas/evento/nova`; salva apenas Contribution privada, revalida capability e normaliza Datas. A suíte combinada registrada no incremento foi 37/1.275; não repetida neste HEAD.
+- [x] Oferecer formulário de proposta `event_update` para usuários com Entity Access `update`; captura revisão-base persistida e não altera o Evento até aprovação. Kernel focal 1/35.
+- [x] Avisar o autor no envio de propostas de Evento com envelope mínimo, revisão imutável, outbox e revalidação no Messenger. Updates 10015–10016 foram executados no Runtime após reparo dos IDs e instalação seletiva; config sync importado e limpo.
+- [x] Implementar a categoria Messenger `eventos_contribuicoes`, com inbox obrigatório, escolha por site/e-mail imediato/digest diário e padrão somente no site. Conteúdo do e-mail é genérico e a entrega revalida e-mail confirmado, preferência e acesso à proposta. Update 10017 e configuração foram aplicados no Runtime em 2026-11-02 após snapshot e import restrito à categoria.
+- Notificações não revelam campos privados nem fornecem links que bypassam Entity Access.
+**Saída:** revisor autorizado consegue encontrar e decidir; usuário só vê suas propostas.
+
+### F8 - Importação e integrações ampliadas
+- [x] Avaliar ICS como gerador de Contributions em lote. O importer de `aculta_calendar` já tem fontes autorizadas, identidade estável por `(source, external_uid)`, reconciliação `created/updated/unchanged/absent`, revisões para alterações e revisão administrativa antes de publicar `aculta_calendar_imported_item`. Converter sua revisão para Events Contributions perderia o owner do item externo e misturaria identidade/reconciliação de fonte com autoria comunitária; manter separado.
+- [x] Avaliar Fórum e UGC. `aculta_ugc_report`, seu `ModerationScope` e as pontes de denúncia do Fórum têm alvo, privacidade e decisão próprios. Não há fluxo claro que justifique criar uma Contribution paralela ou converter denúncias; manter nos owners existentes.
+- [x] Index, Calendar e Maps recebem mudanças somente através das entidades oficiais aprovadas/publicadas. `aculta_contribution` não tem provider de Index; itens ICS importados têm provider próprio e só são projetados depois de publicação editorial.
+**Saída:** a avaliação não encontrou integração necessária nesta fase; os três fluxos preservam seus owners e controles atuais.
+
+### F9 - Independência do workflow Core na Wiki (decisão/gate separado)
+- Inventariar todo uso de Content Moderation/Workflows em Wiki, configuração, permissões, revisões e ambiente.
+- Especificar mecanismo próprio para rascunho, revisão oficial, publicação, acesso a revisão, rollback e histórico.
+- Fazer migração reversível/testada; comparar grants e visibilidade antes/depois.
+- Remover dependência Core somente após paridade funcional e dados reconciliados.
+**Saída:** aprovação explícita de arquitetura e plano de migração antes de executar. Esta fase não é pré-requisito para o novo módulo aceitar proposals de Events.
+
+## 6. Segurança e integridade
+
+- Negar acesso por padrão; não confiar em UID, entity type, field names, estado ou URL enviados pelo cliente.
+- Revalidar usuário ativo, permissões, papel, membership/titularidade e acesso à entidade em submissão, leitura, decisão e aplicação.
+- Forçar allowlist de campos e validação de valores; nunca aplicar propriedades internas como proprietário, publicação ou estado de moderação sem regra explícita.
+- Lock por proposta e alvo; confirmar expected revision/fingerprint dentro da transação imediatamente antes de salvar.
+- Idempotência por proponente, token e alvo/operação; limites contra abuso configuráveis e documentados, sem fixar limites não aprovados como decisão de produto.
+- Sanitização de pareceres e payload; texto público mínimo; segredo e dados pessoais fora de logs.
+- Mensagens privadas só para proponente/revisores autorizados; respostas públicas da entidade só após publicação oficial.
+- Retenção e exclusão/anonimização definidas com política LGPD; não apagar trilha necessária sem regra.
+- Falhas de Messenger não podem reverter conteúdo aprovado; eventos devem ser recuperáveis/deduplicados.
+
+## 7. Testes e critérios de aceite
+
+Reusar testes existentes da Wiki e construir testes do novo contrato. Gates por fase:
+
+- Unit: máquina de estados, allowlist, conflito, idempotência e policy.
+- Kernel: persistência revisionável, transação/rollback, locks, acesso com duas contas, aplicação seletiva e migração Wiki.
+- Events: Organization, Location e Event com titulares, membros, proponente sem vínculo, revisor, entidade alterada e acesso revogado.
+- Painel: somente links autorizados e acesso revalidado na rota/ação.
+- Messenger: avisos únicos, sem payload sensível, links revalidam acesso.
+- Index: propostas privadas nunca projetadas; publicação aprovada atualiza projeção oficial conforme os gates do Index.
+- Migração/Runtime: backup, contagens, configuração, filas e conteúdo reconciliados; homologação real registrada separadamente de testes locais.
+
+Aceite final: nenhum conteúdo oficial é alterado na submissão; só adaptadores de domínio podem aplicar campos; conflitos bloqueiam sobrescrita; toda decisão é auditável; as propostas privadas ficam fora do Index; Events, Wiki e painel preservam access policy; instalação limpa e update existentes são suportados.
+
+## 8. Exclusões explícitas do escopo inicial
+
+- Substituir o sistema de denúncias `aculta_ugc`.
+- Reescrever moderação do Fórum, comentários da Revista, reivindicações de titularidade ou comunicação interna como propostas.
+- Autoaprovar/importar conteúdo externo.
+- Publicar propostas diretamente no Index.
+- Remover Content Moderation da Wiki durante a extração inicial.
+- Criar entidade própria de Organizador sem decisão de domínio.
+- Introduzir redesign visual ou mudança de rotas públicas sem ADR.
+
+## 9. Referências
+
+### ACULTA, branch `dev`
+- `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Entity/WikiProposal.php`
+- `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiProposalSubmission.php`
+- `web/modules/custom/aculta_portal/modules/aculta_wiki/src/Service/WikiProposalDecision.php`
+- `web/modules/custom/aculta_portal/modules/aculta_events/src/Entity/Event.php`
+- `web/modules/custom/aculta_portal/modules/aculta_events/src/Entity/EventLocation.php`
+- `web/modules/custom/aculta_portal/modules/aculta_events/src/Entity/EventOrganization.php`
+- `web/modules/custom/aculta_portal/modules/aculta_events/src/Access/`
+- `web/modules/custom/aculta_portal/modules/aculta_content_admin/src/Moderation/ModeratableCollectionRegistry.php`
+- `web/modules/custom/aculta_portal/modules/aculta_ugc/src/Service/ReportService.php`
+
+### Drupal.org
+- Content Moderation overview: https://www.drupal.org/docs/8/core/modules/content-moderation/overview
+- Workflow Participants: https://www.drupal.org/project/workflow_participants
+- Workbench Approver: https://www.drupal.org/project/workbench_approver
+- Workflows overview: https://www.drupal.org/docs/8/core/modules/workflows/overview
+
+As páginas de módulos contrib são referências de escopo e trade-offs, não requisitos de dependência. Nenhum módulo contrib listado deve ser adicionado ao composer como parte deste plano.
+
+Busca final de referências ao modelo anterior e motivos transitórios está
+registrada em [`INVENTARIO-ACULTA-CONTRIBUTIONS.md`](INVENTARIO-ACULTA-CONTRIBUTIONS.md).

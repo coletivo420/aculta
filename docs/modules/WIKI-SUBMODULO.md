@@ -23,7 +23,7 @@ Este documento é a fonte única da frente. Cada fase termina antes da próxima 
 **Conteúdo e configuração** (em `config/sync`):
 
 - Tipo `wiki_entry`, fluxo `wiki_editorial` (rascunho, em revisão, publicado).
-- Views `wiki_entries` (`/wiki/verbetes`) e `wiki_categories`.
+- Views `wiki_entries` (`/verbetes`) e `wiki_categories`.
 - Domínio `wiki420` (produção `wiki420.aculta.org`).
 - Formato de texto `wiki`, com mídia `document` no CKEditor.
 
@@ -31,8 +31,8 @@ Este documento é a fonte única da frente. Cada fase termina antes da próxima 
 
 - `aculta_portal/src/Controller/WikiController.php` (287 linhas).
 - `aculta_portal/src/Presentation/WikiSearchFormBuilder.php`.
-- Rotas `aculta_portal.wiki_home` (`/wiki`), `aculta_portal.wiki_search` (`/wiki/busca`) e
-  `aculta_portal.wiki_search_preview` (`/wiki/busca/previa`) em `aculta_portal.routing.yml`.
+- Rotas `aculta_portal.wiki_home` (`/wiki`), `aculta_portal.wiki_search` (`/busca-wiki`) e
+  `aculta_portal.wiki_search_preview` (`/busca-wiki/previa`) em `aculta_portal.routing.yml`.
 
 **Estatísticas** (`aculta_statistics`, 0.9.0-dev.5):
 
@@ -94,7 +94,7 @@ não existia e que o contador de leitura não estava decidido. Ambos estavam des
 - Unit e kernel do controlador e da busca.
 - `drush cr` sem erro.
 - Config Sync sem diferenças.
-- HTTP 200 em `/wiki`, `/wiki/verbetes`, `/wiki/busca` e `/wiki/busca/previa` no domínio `wiki420`.
+- HTTP 200 em `/wiki`, `/verbetes`, `/busca-wiki` e `/busca-wiki/previa` no domínio `wiki420`.
 - Backup privado antes de qualquer `updb`, como no procedimento atual.
 
 ## Fase 3 — Documentação obrigatória da mudança de escopo
@@ -201,7 +201,7 @@ ao fim da sessão.
 | E1 | Status final deste plano | Encerramento | este commit | concluída |
 | E2 | `git push` da branch | Encerramento | `39842f8b` em diante | concluída |
 | E3 | Ranking por verbete na área Wiki, com CSV | Fase 4 (item 4.4) | `44b957ba` | concluída |
-| E4 | Contagem e paginação da listagem `/wiki/verbetes` | Fase 5 (item 1) | nesta entrega | concluída |
+| E4 | Contagem e paginação da listagem `/verbetes` | Fase 5 (item 1) | nesta entrega | concluída |
 | E5 | Imagem, resumo e categorias no card da listagem | Fase 5 (item 1) | nesta entrega | concluída |
 | E6 | Upload contextual da imagem de destaque (consumidor `wiki`) | Fase 5 (item 2) | nesta entrega | concluída |
 | E7 | Adaptador `wiki` do Fórum: provider e discussão por verbete | Fase 5 (item 3) | nesta entrega | concluída |
@@ -418,7 +418,7 @@ configuração) e **revisar** (precisa de ajuste de contrato).
 | `web/modules/custom/aculta_portal/aculta_portal.routing.yml:226` | `_controller` da rota de busca | move | B2 move a rota inteira |
 | `web/modules/custom/aculta_portal/aculta_portal.routing.yml:234` | `_controller` da prévia | move | B2 move a rota inteira |
 | `web/modules/custom/aculta_portal/src/Controller/WikiController.php:162` | `Url::fromRoute('aculta_portal.wiki_search')` | move | Nome de rota não muda |
-| `web/modules/custom/aculta_portal/src/Controller/WikiController.php:67` | `Url::fromUserInput('/wiki/verbetes')` | move | Caminho servido por View; não muda |
+| `web/modules/custom/aculta_portal/src/Controller/WikiController.php:67` | `Url::fromUserInput('/verbetes')` | move | Caminho servido por View; não muda |
 | `web/modules/custom/aculta_portal/src/Controller/ShopController.php:16` | Comentário cita `/wiki` como caminho de purpose | fica no Portal | Comentário de domínio; não é código da Wiki |
 
 ### `WikiSearchFormBuilder`
@@ -447,7 +447,7 @@ configuração) e **revisar** (precisa de ajuste de contrato).
 
 | Arquivo:linha | Ocorrência | Classificação | Ação |
 | --- | --- | --- | --- |
-| `web/modules/custom/aculta_portal/aculta_portal.routing.yml:190,224,232` | Caminhos `/wiki`, `/wiki/busca`, `/wiki/busca/previa` | move | Caminhos idênticos em `aculta_wiki.routing.yml` |
+| `web/modules/custom/aculta_portal/aculta_portal.routing.yml:190,224,232` | Caminhos `/wiki`, `/busca-wiki`, `/busca-wiki/previa` | move | Caminhos idênticos em `aculta_wiki.routing.yml` |
 | `web/modules/custom/aculta_portal/src/PathProcessor/PurposeFrontPathProcessor.php:30,37` | `FRONT_PATHS['wiki'] = '/wiki'` | fica no Portal | Concern de domínio/purpose |
 | `web/modules/custom/aculta_portal/src/EventSubscriber/DomainPurposeRequestSubscriber.php:237` | Comentário cita `/wiki` | fica no Portal | Comentário de domínio |
 | `web/modules/custom/aculta_portal/modules/aculta_statistics/aculta_statistics.routing.yml:10` | `/estatisticas/wiki/{node}/leitura` | fica | Beacon de leitura da estatística; URL própria, não é rota da Wiki |

@@ -16,7 +16,9 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Integra Game aos pontos de extensão neutros do User. */
+/**
+ * Integra Game aos pontos de extensão neutros do User.
+ */
 final class ProfileHooks {
 
   use StringTranslationTrait;
@@ -29,11 +31,17 @@ final class ProfileHooks {
     private readonly MissionProgress $missions,
   ) {}
 
+  /**
+   * Add the public achievement presentation to a profile.
+   */
   #[Hook('aculta_user_public_profile_alter')]
   public function publicProfile(array &$build, ProfileInterface $profile): void {
     $build['conquistas'] = $this->presentation->publicFor($profile);
   }
 
+  /**
+   * Add missions and preferences to the achievements activity tab.
+   */
   #[Hook('aculta_user_activity_content_alter')]
   public function activity(array &$build, string $tab, int $uid): void {
     if ($tab === 'conquistas') {
@@ -44,6 +52,9 @@ final class ProfileHooks {
     }
   }
 
+  /**
+   * Add the achievement summary to the account dashboard.
+   */
   #[Hook('aculta_portal_dashboard_alter')]
   public function dashboard(array &$build, AccountInterface $account): void {
     $build['game'] = [
@@ -60,6 +71,9 @@ final class ProfileHooks {
     ];
   }
 
+  /**
+   * Add a link to achievement visibility preferences.
+   */
   #[Hook('form_aculta_user_profile_visibility_form_alter')]
   public function privacy(array &$form, FormStateInterface $formState): void {
     $form['conquistas'] = [

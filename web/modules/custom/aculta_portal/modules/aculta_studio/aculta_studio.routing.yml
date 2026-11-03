@@ -181,7 +181,7 @@ aculta_studio.profile_social:
     _aculta_domain_purpose: account
 
 aculta_studio.we_sativa:
-  path: /wesativa
+  path: /we-sativa
   defaults:
     _controller: 'aculta_studio.we_sativa_controller:page'
     _title: 'ACULTA STUDIO WE SATIVA'
@@ -191,7 +191,7 @@ aculta_studio.we_sativa:
     _aculta_domain_purpose: wiki
 
 aculta_studio.we_sativa_start:
-  path: /wesativa/inicio
+  path: /we-sativa/inicio
   defaults:
     _controller: 'aculta_studio.we_sativa_controller:start'
     _title: 'ACULTA STUDIO WE SATIVA'
@@ -262,3 +262,59 @@ aculta_studio.salvos:
     _user_is_logged_in: 'TRUE'
   options:
     _aculta_domain_purpose: account
+
+# Ganjalab learner and educator experiences are owned by Studio. Route IDs remain stable during migration.
+aculta_lms.student_dashboard:
+  path: '/ganjalab'
+  defaults:
+    _controller: 'aculta_studio.ganjalab_controller:student'
+    _title: 'ACULTA Studio Ganjalab Estudante'
+  requirements:
+    _permission: access aculta portal
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+
+# Keep the Group owner's add Form API inside the educator workspace, purpose
+# and theme. The generated entity.group.add_form is an admin route on purpose
+# main, so it would return 404 on courses and drop the ACULTA Studio shell.
+aculta_lms.course_create:
+  path: '/ganjalab/educador/cursos/novo'
+  defaults:
+    _controller: 'aculta_studio.course_authoring_controller:create'
+    _title: 'Novo curso - Ganjalab Educador'
+  requirements:
+    _permission: 'create lms_course group'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+
+aculta_lms.educator_dashboard:
+  path: '/ganjalab/educador'
+  defaults:
+    _controller: 'aculta_studio.course_authoring_controller:dashboard'
+    _title: 'ACULTA Studio Ganjalab Educador'
+  requirements:
+    _permission: 'create lms_course group'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+    _aculta_domain_purpose: courses
+
+
+# Drop zone embutida: uma página por integração, na casca do Studio. A regra de
+# cada integração vale no salvar; esta rota só exige usuário logado.
+aculta_studio.upload_embed:
+  path: /estudio/envio/{integracao}
+  defaults:
+    _controller: 'aculta_studio.upload_embed_controller:page'
+    _title: 'Envio de arquivos'
+  requirements:
+    _permission: 'access aculta portal'
+    _user_is_logged_in: 'TRUE'
+    integracao: 'wiki|forum|galeria|revista|lms'
+  options:
+    _aculta_domain_purpose: account
+    no_cache: true

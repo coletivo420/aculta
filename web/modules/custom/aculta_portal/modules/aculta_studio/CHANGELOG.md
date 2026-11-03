@@ -1,3 +1,158 @@
+> Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
+
+## 0.1.0-dev.40 — Página WE SATIVA em /we-sativa
+
+- As rotas `/wesativa` e `/wesativa/inicio` passam a `/we-sativa` e `/we-sativa/inicio`, no purpose `wiki`.
+- Qualquer `/studio/*` segue 404. Testes: DEFERRED.
+
+## 0.1.0-dev.39 — drop zone do Studio sobrevive ao cache de formulário e remove envios
+
+- As dependências do `StudioUploadEmbedForm` passam a `protected readonly`: o `DependencySerializationTrait` do FormBase só serializa propriedades visíveis no escopo dele, então `private` promovidas se perdiam e o envio em duas etapas dava 500 ("must not be accessed before initialization").
+- O `details` de envios recentes ganha `#tree`, para o tableselect chegar como `recentes[table][fid]`, e `#limit_validation_errors` inclui `integracao`; antes a ação de remover recebia seleção e integração vazias e não apagava nada.
+- Versão 0.1.0-dev.39.
+
+RUNTIME STATUS: VALIDATED no Runtime `aculta_runtime` (2026-11-02): PNG válido aceito
+(fid temporário em `private://studio/envio/wiki/`), texto renomeado para `.png` recusado,
+PNG de 11,47 MB recusado pelo teto de 10 MB, envio concluído com "Um arquivo recebido."
+e remoção de envio sem uso apagando o arquivo (status Deleted, linha e arquivo ausentes).
+Unit Studio 64/606 PASS.
+
+## 0.1.0-dev.38 — apresentação sai das classes de design
+
+- `LearnerDashboardComposer` e `CourseJourneyComposer` emitem `data-portal-ui` (e `data-state`/`data-variant`/`data-route-current`) em vez de classes `aculta-learning-*`; o ACULTA420 passou a selecionar por esses atributos.
+- Unit Studio 64/606 PASS. Revisão visual no navegador pendente.
+
+RUNTIME STATUS: DEFERRED. Mudança de marcação; visual não validado.
+
+## 0.1.0-dev.37 — revisão do formulário de envio
+
+- Imports do `StudioUploadEmbedForm` em ordem alfabética (padrão Drupal). Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.36 — aviso de prazo logo após o envio
+
+- Depois de enviar, a própria tela do Studio mostra o prazo de limpeza de envios sem uso. Sem e-mail nem notificação externa.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.35 — aviso de prazo na lista de envios
+
+- Envio sem uso mostra quanto falta para a limpeza automática (prazo de temporário do File API, 6 horas por padrão).
+- Aviso fica na própria página do Studio. Não há e-mail nem notificação de saída nesta fase.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.34 — só arquivos sem uso podem ser selecionados
+
+- Linhas de envios em uso ou ligados a conteúdo ficam desabilitadas na lista. A checagem no servidor continua valendo.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.33 — remover envio sem uso pelo Studio
+
+- A lista de envios recentes ganha seleção e o botão "Remover selecionados sem uso".
+- Remoção passa pela limpeza do aculta_file_uploader (`UnusedFileCleaner`): envio em uso não é apagado. Só o dono remove o seu; administrador remove qualquer um sem uso.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.32 — lista de envios recentes na página de envio
+
+- A página de envio do Studio lista os envios recentes da integração: os do usuário, ou todos se administrador.
+- Cada envio mostra data e situação (em uso ou sem uso ainda). Aviso: envios sem uso são apagados após 6 horas.
+- Dependências novas: RecentUploads, file.usage, current_user e date.formatter.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.31 — drop zone embutida no Studio
+
+- Nova página `/estudio/envio/{integracao}` (wiki, fórum, galeria, revista, LMS), na casca do Studio. Só usuário logado; a regra de cada integração vale no salvar.
+- `StudioUploadEmbedForm` monta a drop zone pela política `aculta_file_uploader.consumer_policy` (imagem e documento) e revalida o arquivo no envio. Não cria conteúdo.
+- Arquivo recebido fica temporário até a integração referenciá-lo. Essa ligação ainda não existe: a página só recebe e confirma o envio.
+- Usuário (foto) fica fora desta página.
+- Teste Unit do controller: integração da lista e 404 fora dela.
+
+RUNTIME STATUS: DEFERRED. Testes não executados (sem vendor/ nem Runtime).
+
+## 0.1.0-dev.30 — correção de runtime no Ganjalab Educador (2026-11-01)
+
+- `CourseAuthoringController::dashboard()` chamava `PortalLinkElement::build()`
+  com dois argumentos; o helper exige atributos. A ação "Novo curso" passou a
+  enviar `data-aculta-studio` e `data-portal-ui`, eliminando o
+  `ArgumentCountError` registrado no Runtime.
+- Arrays longos do dashboard foram divididos para o padrão Drupal.
+- `CourseJourneyPresentationHooks` recebeu o import explícito de
+  `Drupal\aculta_studio\Learning\CourseJourneyComposer`. Sem ele, o type hint
+  resolvia para `Drupal\aculta_studio\Hook\CourseJourneyComposer` e o container
+  lançava `TypeError` ao renderizar a jornada/sala. Corrigido e validado no
+  Runtime.
+- Regressão coberta em `CourseAuthoringControllerTest` (3 testes / 36
+  asserções). Verificação estática com nikic/php-parser: 54 chamadas,
+  0 com aridade insuficiente.
+- Acompanha a fase B2: o Studio possui `LearnerDashboardComposer`, as rotas
+  Ganjalab e `CourseJourneyPresentationHooks`; o LMS não é dependência.
+  `LearnerDashboardComposerTest` passou ao Studio, o teste obsoleto de
+  `LearningDashboardController::student()` no LMS foi removido e
+  `StudioExperienceManagerTest` usa o composer real.
+- Runtime: `/ganjalab/educador` e `/ganjalab/educador/cursos/novo` responderam
+  200 para conta autorizada; jornada e sala do estudante 74/74 em 320–1440 px.
+  Nenhum dado de curso, matrícula ou progresso foi alterado.
+
+## 0.1.0-dev.29 — Studio sem import de aculta_lms (2026-11-01)
+
+- `aculta_studio` declara dependência de `aculta_learning_contracts` e importa
+  apenas os contratos neutros: `CourseJourneyReaderInterface`, `CourseJourney`,
+  `CourseJourneyLesson` e `LearnerDashboardComposerInterface`.
+- `LearnerDashboardComposer` deixou de pertencer ao Studio; a implementação
+  vive no `aculta_lms`. `GanjalabExperienceProvider` consome a interface e a
+  referência opcional `@?aculta_lms.learner_dashboard_composer`.
+- O Studio não importa mais nenhuma classe do namespace LMS contrib nem de
+  `Drupal\aculta_lms`. Comportamento visual, rotas e destinos preservados.
+- Sem dados, storage, permissões ou configuração ativa alterados.
+- **Runtime:** `aculta_learning_contracts` foi habilitado após snapshot com hash;
+  `config:status` ficou sem diferenças e o namespace dos contratos passou a
+  autoload. Jornada e sala 74/74; dashboard e formulário do Educador 200.
+
+## 0.1.0-dev.28 — contrato da jornada em camada neutra (2026-11-01)
+
+- Correção da fatia dev.27: `CourseJourneyReaderInterface`,
+  `CourseJourney` e `CourseJourneyLesson` foram movidos para
+  `Drupal\aculta_portal\Contract\Learning`, do qual o Studio já depende.
+- `CourseJourneyComposer` passa a importar apenas o contrato neutro; não importa
+  classes do namespace LMS contrib nem `aculta_lms`. Comportamento visual, destinos e cache não
+  mudaram.
+- Validação: PHPUnit Unit Studio 60/586 e LMS 92/482 PASS; smoke Firefox/X11 do
+  Ganjalab a 390 px 29/29 OK. Nenhum dado ou configuração alterado.
+
+## 0.1.0-dev.27 — jornada consumida por contrato ACULTA (2026-11-01)
+
+- `CourseJourneyComposer` deixa de importar a interface Course do LMS contrib
+  e consome apenas `CourseJourney`/`CourseJourneyLesson`, o modelo de
+  apresentação do contrato `CourseJourneyReaderInterface`.
+- `build()` e `buildRoom()` recebem o DTO; aula atual, posição, estados,
+  progresso e destino continuam vindo do adaptador `aculta_lms`, que mantém a
+  fonte de verdade no Group/Drupal LMS.
+- O Studio não ganha armazenamento, permissão, rota ou dado paralelo.
+- Validação: PHPUnit Unit Studio 60/586 PASS; PHP lint e PHPCS sem erros.
+  Smoke Firefox ESR/X11 da experiência Ganjalab a 390 px: 29/29 verificações
+  OK (início, jornada e sala), sem alteração de dados ou configuração.
+  Inventário em `docs/modules/LMS-CONTRIB-DEPENDENCY-INVENTORY.md`.
+
+## 0.1.0-dev.26 — atalhos entre experiências Ganjalab (2026-11-01)
+
+- O dashboard de estudante mostra atalho ao Ganjalab Educador somente se a rota de Educador autorizar a conta.
+- O dashboard Educador oferece retorno ao estudante somente se a rota de estudante autorizar a conta; ordenação posiciona o atalho junto ao cabeçalho e mantém “Novo curso” como ação principal.
+- Sem papel novo, storage, mudança de membership ou mescla dos dashboards. A lista do Educador exige acesso update do Group para não confundir cursos somente frequentados com cursos gerenciáveis. Os destinos continuam em purpose courses e revalidam acesso no servidor.
+- Testes automatizados, lint/PHPCS, browser e Runtime não foram executados nesta etapa.
+
+## 0.1.0-dev.25 — fronteiras Marley/Ganjalab (2026-11-01)
+
+- Ganjalab estudante mantém `/ganjalab`; a experiência educadora usa `/ganjalab/educador` e o formulário de criação foi movido para `/ganjalab/educador/cursos/novo`.
+- Rótulos de dashboard e formulário agora identificam Ganjalab Educador; o retorno do formulário volta ao dashboard educador. O provider estudante passa a se identificar explicitamente como Ganjalab Estudante.
+- A aba Marley Fórum foi limitada à moderação de denúncias via permissão `moderar denuncias do forum` e rota owner `aculta_user.denuncias_forum`; criação de tópicos e navegação geral de discussões não aparecem no Marley.
+- Group/LMS e os módulos Forum/User continuam donos de ACL, conteúdo e persistência. Sem novos papéis, entidades ou armazenamento.
+- A expectativa da rota de criação no teste de identidade foi alinhada. Nenhum teste automatizado foi executado nesta alteração; Runtime e revisão visual continuam pendentes.
+
 ## Retificação de caminho ACULTA STUDIO WE SATIVA — 2026-10-30
 
 - O caminho canônico confirmado pelo responsável é `/studio/we-sativa` no purpose `wiki`, incluindo a entrada de contribuição.

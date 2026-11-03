@@ -12,9 +12,11 @@ theme state in a JSON artifact.
 - Firefox ESR visible on X11 (`DISPLAY=:0`) via geckodriver; no headless mode.
 - Reuses `tests/browser/aculta-cpf-checkout/wdlib.py`.
 - `MAP_URL` can override the test route. `SUITE_OUT` points to the external
-  artifact directory; default is `/tmp/aculta-maps-mp7`.
+  artifact directory; default is `/home/piradopirata/aculta-suite-out/mp7-maps`.
 - The page loads OpenStreetMap tiles, so this smoke makes ordinary read-only
   tile requests to the test-selected provider. It performs no Drupal writes.
+- When OpenStreetMap is selected, the test records loaded tile hosts and fails
+  if they differ from the canonical `tile.openstreetmap.org` host.
 
 ```sh
 DISPLAY=:0 SUITE_OUT=/home/piradopirata/aculta-suite-out/mp7-maps \

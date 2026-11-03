@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_image;
 
+use Drupal\aculta_file_uploader\ImageDimensionReaderInterface;
 use Drupal\Core\Image\ImageFactory;
 
 /**
@@ -11,7 +12,7 @@ use Drupal\Core\Image\ImageFactory;
  *
  * É o único acesso do site a ImageFactory.
  */
-final class ImageInspector {
+final class ImageInspector implements ImageDimensionReaderInterface {
 
   public function __construct(private readonly ImageFactory $imageFactory) {}
 

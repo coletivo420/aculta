@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_contributions\Entity\Contribution;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,7 +38,7 @@ final class WikiProposalStatusController extends ControllerBase {
   /**
    * Displays one proposal after route and entity access have been checked.
    */
-  public function view(WikiProposal $proposal, Request $request): array {
+  public function view(WikiProposal|Contribution $proposal, Request $request): array {
     $account = $this->currentUser;
     $access = $proposal->access('view', $account, TRUE);
     $cacheability = CacheableMetadata::createFromObject($proposal)
@@ -45,6 +46,10 @@ final class WikiProposalStatusController extends ControllerBase {
       ->addCacheContexts(['domain', 'languages:language_interface']);
 
     $state = (string) $proposal->get('state')->value;
+    $sourceData = $proposal instanceof Contribution ? $proposal->getSourceData() : [];
+    $proposedText = $proposal instanceof Contribution
+      ? (string) ($sourceData['proposed_text'] ?? '')
+      : (string) $proposal->get('proposed_text')->value;
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'wiki-proposal-status'],
@@ -58,11 +63,11 @@ final class WikiProposalStatusController extends ControllerBase {
         ],
       ],
       'state' => $this->section($this->t('Situação'), [
-        '#plain_text' => (string) ($proposal::STATES[$state] ?? $state),
+        '#plain_text' => $this->stateLabel($state),
       ]),
       'proposed_text' => $this->section($this->t('Alteração sugerida'), [
         '#type' => 'container',
-        'text' => ['#plain_text' => (string) $proposal->get('proposed_text')->value],
+        'text' => ['#plain_text' => $proposedText],
       ]),
       'rationale' => $this->section($this->t('Justificativa enviada'), [
         '#type' => 'container',
@@ -70,7 +75,9 @@ final class WikiProposalStatusController extends ControllerBase {
       ]),
     ];
 
-    $target = $proposal->get('target')->entity;
+    $target = $proposal instanceof WikiProposal
+      ? $proposal->get('target')->entity
+      : $this->loadTarget($proposal);
     if ($target instanceof NodeInterface) {
       $targetAccess = $target->access('view', $account, TRUE);
       $cacheability->addCacheableDependency($targetAccess);
@@ -84,7 +91,7 @@ final class WikiProposalStatusController extends ControllerBase {
       }
     }
 
-    if (in_array($state, ['needs_changes', 'declined'], TRUE)) {
+    if (in_array($state, ['needs_changes', 'declined', 'conflict'], TRUE)) {
       $build['decision_note'] = $this->section($this->t('Retorno editorial'), [
         '#type' => 'container',
         'text' => ['#plain_text' => (string) $proposal->get('decision_note')->value],
@@ -106,8 +113,11 @@ final class WikiProposalStatusController extends ControllerBase {
     $cacheability->addCacheableDependency(CacheableMetadata::createFromRenderArray($history));
 
     $sourceLinks = [];
-    foreach ($proposal->get('source_uri') as $sourceItem) {
-      $uri = (string) $sourceItem->value;
+    $sourceUris = $proposal instanceof Contribution
+      ? (array) ($sourceData['source_uris'] ?? [])
+      : array_map(static fn ($item): string => (string) $item->value, iterator_to_array($proposal->get('source_uri')));
+    foreach ($sourceUris as $sourceUri) {
+      $uri = is_string($sourceUri) ? $sourceUri : '';
       if (!filter_var($uri, FILTER_VALIDATE_URL)
         || !in_array(strtolower((string) parse_url($uri, PHP_URL_SCHEME)), ['http', 'https'], TRUE)) {
         continue;
@@ -158,12 +168,13 @@ final class WikiProposalStatusController extends ControllerBase {
    * @return array
    *   A table of revisions visible to this account and an optional pager.
    */
-  private function proposalHistory(WikiProposal $proposal, AccountInterface $account, Request $request): array {
+  private function proposalHistory(WikiProposal|Contribution $proposal, AccountInterface $account, Request $request): array {
+    $isContribution = $proposal instanceof Contribution;
     $metadata = (new CacheableMetadata())
       ->addCacheableDependency($proposal)
       ->addCacheContexts(['user', 'user.permissions', 'url.query_args:revision_cursor'])
-      ->addCacheTags(['aculta_wiki_proposal_list']);
-    $storage = $this->entities->getStorage('aculta_wiki_proposal');
+      ->addCacheTags([$isContribution ? 'aculta_contribution_list' : 'aculta_wiki_proposal_list']);
+    $storage = $this->entities->getStorage($proposal->getEntityTypeId());
     $cursor = $request->query->all()['revision_cursor'] ?? NULL;
     $scanCursor = is_string($cursor) && preg_match('/^[1-9][0-9]{0,12}$/D', $cursor)
       ? (int) $cursor
@@ -202,7 +213,9 @@ final class WikiProposalStatusController extends ControllerBase {
         $scanCursor = (int) $revisionId;
         $candidateCount++;
         $revision = $revisions[$revisionId] ?? NULL;
-        if (!$revision instanceof WikiProposal || (string) $revision->id() !== (string) $proposal->id()) {
+        if ((!$revision instanceof WikiProposal && !$revision instanceof Contribution)
+          || $revision->getEntityTypeId() !== $proposal->getEntityTypeId()
+          || (string) $revision->id() !== (string) $proposal->id()) {
           continue;
         }
         $revisionAccess = $revision->access('view revision', $account, TRUE);
@@ -215,8 +228,8 @@ final class WikiProposalStatusController extends ControllerBase {
         $rows[] = [
           '_cursor' => (string) $revision->getRevisionId(),
           'updated' => $this->dateFormatter->format($revision->getRevisionCreationTime(), 'short'),
-          'state' => (string) ($revision::STATES[$revisionState] ?? $revisionState),
-          'feedback' => in_array($revisionState, ['needs_changes', 'declined'], TRUE)
+          'state' => $this->stateLabel($revisionState),
+          'feedback' => in_array($revisionState, ['needs_changes', 'declined', 'conflict'], TRUE)
             ? (string) $revision->get('decision_note')->value
             : '',
         ];
@@ -268,6 +281,37 @@ final class WikiProposalStatusController extends ControllerBase {
     ];
     $metadata->applyTo($build);
     return $build;
+  }
+
+  /**
+   * Loads the Wiki target for a migrated contribution by its stable UUID.
+   */
+  private function loadTarget(Contribution $proposal): ?NodeInterface {
+    $uuid = (string) $proposal->get('target_uuid')->value;
+    if ($uuid === '') {
+      return NULL;
+    }
+    $matches = $this->entities->getStorage('node')->loadByProperties([
+      'uuid' => $uuid,
+      'type' => 'wiki_entry',
+    ]);
+    $target = reset($matches);
+    return $target instanceof NodeInterface ? $target : NULL;
+  }
+
+  /**
+   * Returns translated labels shared by both Wiki proposal stores.
+   */
+  private function stateLabel(string $state): string {
+    $labels = [
+      'submitted' => $this->t('Enviada'),
+      'needs_changes' => $this->t('Precisa de ajustes'),
+      'accepted' => $this->t('Aceita'),
+      'declined' => $this->t('Recusada'),
+      'withdrawn' => $this->t('Retirada'),
+      'conflict' => $this->t('Conflito de versão'),
+    ];
+    return (string) ($labels[$state] ?? $state);
   }
 
 }

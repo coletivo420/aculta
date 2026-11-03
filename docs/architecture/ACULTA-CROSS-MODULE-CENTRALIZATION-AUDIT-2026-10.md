@@ -1,6 +1,8 @@
 # Auditoria transversal ACULTA — centralização e contratos entre subkernels
 
 **Versão:** ACULTA-XK 0.1.0-dev.1 · **Data:** 2026-10-22 · **Estado:** auditoria documental do código/READMEs; sem implantação, instalação ou testes Runtime.
+
+> **Atualização 2026-11-01:** as extensões `aculta_wiki_messenger`, `aculta_lms_messenger` e `aculta_commerce_messenger` foram removidas do código e do Runtime de desenvolvimento. Os adapters vivem em `aculta_messenger/src/Integration/{Wiki,Lms,Commerce}`; Wiki, LMS e Commerce mantêm fatos e regras de domínio. Registro em `docs/architecture/MESSENGER-CONSOLIDATION-2026-11.md`. O texto abaixo permanece como auditoria histórica.
 **Objetivo:** reduzir duplicação sem transformar `aculta_portal` em supermódulo. Centralizar cada comportamento no kernel **proprietário** já existente.
 
 ## Mapa de ownership aprovado
@@ -10,7 +12,7 @@
 | Conta, confirmação, identidade, amizades, perfis e situação de associado | `aculta_user` + política de confirmação no Portal | demais subkernels consultam serviços públicos; não replicar estado de conta |
 | Primeira participação, políticas comuns de confiança/moderação | **`aculta_user`**, `ParticipationRules` | Fórum e Wiki com lookups próprios; LMS respeita contexto Group |
 | Conversas privadas | **`aculta_messenger`** integra Private Message | outros kernels apenas linkam/contextualizam; storage nativo permanece |
-| Avisos pessoais, notificações, assinatura/entrega, contadores/digest | **`aculta_messenger`** integrando Message/Message Notify/Flag | `aculta_lms_messenger` e futuros adapters Wiki/Fórum; não construir segundo inbox |
+| Avisos pessoais, notificações, assinatura/entrega, contadores/digest | **`aculta_messenger`** integrando Message/Message Notify/Flag | adapters internos em `aculta_messenger/src/Integration`; não construir segundo inbox |
 | Preferências pessoais/privacidade de novas conversas, amizades | `aculta_user` | Messenger consome contrato; distinguir configuração da conta de transporte e entrega |
 | Envio externo de e-mail | `aculta_mailer` + transportes existentes | Messenger orquestra notificações, Mailer é transporte; não duplicar SMTP |
 | Fóruns públicos e discussões contextuais | `aculta_forum` + `aculta_forum_lms` / `aculta_forum_wiki` | entidades e context resolver de fórum; não abrir tópico público por publicação/aula/verbete |
@@ -27,7 +29,7 @@
 ## Evidências do repositório
 
 - `aculta_messenger/README.md` descreve Private Message, Message, Message Notify, Message Subscribe/Flag, Site Alert e avisos `aculta_aviso`, com contadores e integração LMS. **Mensagens e avisos são fluxos diferentes**, embora tenham UI central.
-- `aculta_lms_messenger/README.md` declara adapter sem caixa nem storage próprios e acesso contextual de matrícula, turma e notas.
+- `docs/history/modules/aculta_lms_messenger.md` registra o adapter histórico sem caixa nem storage próprios e o acesso contextual de matrícula, turma e notas; a extensão foi removida em 2026-11-01.
 - `aculta_user/docs/ASSOCIADO.md` estabelece **associado como situação** (ativo, suspenso, desligado etc.), não papel. Nenhuma estratégia de Group pode usar apenas `hasRole('associado')`.
 - `aculta_forum_wiki/README.md` tem adapter contextual de discussão por verbete; não duplicar engine da Wiki.
 - `aculta_statistics/docs/ROADMAP.md` já prevê providers transversais para Wiki, Commerce, LMS e e-mail.

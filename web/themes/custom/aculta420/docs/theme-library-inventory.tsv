@@ -20,7 +20,7 @@ web/modules/custom/aculta_portal/modules/aculta_forum/aculta_forum.libraries.yml
 web/modules/custom/aculta_portal/modules/aculta_forum/aculta_forum.libraries.yml	ckeditor5.attachment	core/ckeditor5 | core/drupal.ajax | core/drupal.dialog.ajax | entity_embed/entity_embed			(sem assets CSS/JS locais declarados)
 web/modules/custom/aculta_portal/modules/aculta_gallery/aculta_gallery.libraries.yml	ckeditor5.create	core/ckeditor5 | core/drupal.ajax | core/drupal.dialog.ajax | entity_embed/entity_embed			(sem assets CSS/JS locais declarados)
 web/modules/custom/aculta_portal/modules/aculta_image/aculta_image.libraries.yml	ckeditor5.image_model	core/ckeditor5 | core/ckeditor5.image | ckeditor5/internal.drupal.ckeditor5.image			(sem assets CSS/JS locais declarados)
-web/modules/custom/aculta_portal/modules/aculta_links/aculta_links.libraries.yml	micropagina		css	component	css/micropagina.css
+web/modules/custom/aculta_portal/modules/aculta_linkweed/aculta_linkweed.libraries.yml	micropagina		css	component	css/micropagina.css
 web/modules/custom/aculta_portal/modules/aculta_lms/aculta_lms.libraries.yml	admin_toolbar_icon		css	theme	css/admin-toolbar-icon.css
 web/modules/custom/aculta_portal/modules/aculta_magazine/aculta_magazine.libraries.yml	revista-form	core/drupal | core/once			(sem assets CSS/JS locais declarados)
 web/modules/custom/aculta_portal/modules/aculta_mailer/aculta_mailer.libraries.yml	admin		css	theme	css/admin.css

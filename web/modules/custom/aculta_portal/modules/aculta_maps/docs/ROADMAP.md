@@ -13,7 +13,7 @@ Events mantém cadastro/ACL, Index mantém descoberta derivada e Maps não receb
 # Roadmap — ACULTA Maps (`aculta_maps`)
 
 Roadmap único do submódulo. Plano e contrato: `PLANO-IMPLANTACAO.md`.
-Status: MP0–MP7 verificados no Runtime de teste, com OSM como provedor padrão. A política pública não foi alterada após a decisão de não informar IP.
+Status: MP0–MP7 verificados no Runtime de teste, com OSM como provedor padrão. A versão 0.6 da política foi preparada como minuta, com divulgação de tiles e geocodificação; ainda não foi publicada no Runtime e requer revisão/aprovação.
 
 ## MP0 — Criação do submódulo
 
@@ -44,7 +44,7 @@ Evidência de MP2: `cac0efbba`.
 - [x] Geocodificação somente com Nominatim, qualquer que seja o engine do mapa: 1 req/s global, User-Agent, coordenadas armazenadas no local, sem autocompletar (D-46).
 - [x] Lista alternativa textual funciona sem JavaScript.
 
-Runtime de teste ativado com OSM após ordem explícita do responsável. A política não foi alterada conforme decisão de não informar IP; esse ponto de transparência continua registrado como pendência editorial.
+Runtime de teste ativado com OSM após ordem explícita do responsável. D-52 veda texto inline sobre envio de IP, sem eliminar a divulgação na política de privacidade. A minuta 0.6 agora descreve requisições de tiles e geocodificação; publicação no Runtime, revisão jurídica e aprovação institucional continuam pendentes.
 
 Evidência técnica MP3: `58359728f`.
 
@@ -82,7 +82,7 @@ Evidência MP7: smoke no servidor `eventos.aculta.toca.net.br`; configuração a
 
 Commit MP7: `fd5c96526`.
 
-## Revisão F0 — Termos e licenças
+## Revisão F0 — Termos, licenças e transparência
 
 Revisão técnica em [`REVISAO-TERMOS-MAPAS-2026-10-28.md`](REVISAO-TERMOS-MAPAS-2026-10-28.md). OpenStreetMap permanece
 o engine do Runtime de teste. D-46 mantém Nominatim para todos os engines e exige atribuição OSM/ODbL quando seus
@@ -91,9 +91,10 @@ alterada e a revisão editorial sobre o provedor de tiles permanece pendente.
 
 Implementação F0 concluída em `dc032d9e0`. Revalidação em 2026-10-29: suíte Maps
 10 testes/39 assertions PASS, com 2 depreciações do Core; cobre o uso de Nominatim
-e a atribuição OSM/ODbL no engine Google. A revisão da política continua aberta:
-a preferência registrada de não mencionar o envio de IP conflita com a exigência
-de transparência do ADR-030 antes da ativação final.
+e a atribuição OSM/ODbL no engine Google. D-52 proíbe apenas aviso inline sobre IP;
+ADR-030 exige transparência na política de privacidade. Minuta 0.6 preparada em
+2026-10-31 e renderizada para Markdown; não publicada no Runtime. Revisão jurídica,
+confirmação operacional dos provedores e aprovação institucional são gates pendentes.
 
 ## Fronteira módulo–tema (2026-10-29, dev.5)
 
@@ -107,11 +108,21 @@ pendentes.
 
 Fonte: [auditoria 3.1.5](../../../../../../../docs/architecture/AUDITORIA-OPENCULTURAS-3.1.5-2026-10-29.md). **Nenhuma mudança no provedor OSM/Leaflet padrão** (D-17 a D-20).
 
-- **OC-M1/P0:** testar proteção de locais no catálogo/mapa; revisar `accessCheck(FALSE)` de `LocationCatalogue`; garantir que precise de política explícita para expor dados pessoais/privados.
+- [x] **OC-M1/P0 — proteção de Locais:** `LocationCatalogue` usa consulta de candidatos sem filtro de query e revalida cada entidade com `access('view', $account, TRUE)`, agregando decisões permitidas e negadas à cacheabilidade antes de paginação/saída. Mapa e lista consomem esse catálogo. Kernel validado em 2026-10-31: 6 testes/129 assertions PASS, incluindo isolamento entre dois owners e anônimo. Homologação de propósito/Runtime e demais consumidores continua pendente.
 - [x] **OC-M2/P0:** aceitar coordenadas 0 e 0.0 sem eliminá-las por `!empty()`; testar range lat/lon e precisão aproximada. `MapController` usa validação numérica, com Kernel `0/0`; `MapRendererTest` cobre faixa inválida e arredondamento aproximado. Evidência no HEAD `dev`: 5 testes/57 assertions PASS (2026-11-01).
 - **OC-M3/P1:** integrar dados estruturados de acessibilidade/horários a filtros e popups, quando schema de Eventos existir.
 - **OC-M4/P2:** revisar `OfficeHoursToOsmFormatter.php` da origem após adoção de dados estruturados; não importar edição OSM sem revisão humana.
 - **Exploratório fora da paridade 3.1.5:** geometrias Polygon/MultiPolygon para circuitos e trajetos de eventos; **não** tratar como característica confirmada da origem nem implementar sem ADR de privacidade/custo.
+
+### Atualização de conformidade OSM — 2026-10-31
+
+- O mapa usa o endpoint HTTPS canônico `tile.openstreetmap.org`; o smoke Firefox
+  verifica o host carregado quando OSM está selecionado.
+- A política pública não foi publicada. A minuta 0.6 aguarda revisão jurídica e
+  aprovação institucional. A resposta do Runtime ainda precisa confirmar que
+  `Referrer-Policy` permite o `Referer` exigido pelo servidor público de tiles.
+- O smoke grava evidências em `/home/piradopirata/aculta-suite-out/mp7-maps`
+  por padrão; execução visual contra o candidato publicado continua pendente.
 
 ## Complemento OC-A/OC-E - OpenCulturas 3.1.5 (2026-10-29)
 

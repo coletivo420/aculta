@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Unit\Cleanup;
 
-use Drupal\aculta_portal\Cleanup\FileCleanupStatus;
-use Drupal\aculta_portal\Cleanup\FileReferenceInspectorInterface;
-use Drupal\aculta_portal\Cleanup\FileReferenceStatus;
+use Drupal\aculta_file_uploader\Cleanup\FileCleanupStatus;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceInspectorInterface;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceStatus;
 use Drupal\aculta_portal\Cleanup\UnusedMediaCleaner;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\media\MediaInterface;
@@ -26,7 +26,7 @@ final class UnusedMediaCleanerTest extends UnitTestCase {
     $media = $this->media(FALSE);
     $media->expects(self::once())->method('delete');
     $inspector = $this->createMock(FileReferenceInspectorInterface::class);
-    $inspector->expects(self::once())->method('inspect')->with($media)->willReturn(FileReferenceStatus::Clear);
+    $inspector->expects(self::exactly(2))->method('inspect')->with($media)->willReturn(FileReferenceStatus::Clear);
     $cleaner = new UnusedMediaCleaner($inspector, $this->createMock(LoggerChannelInterface::class));
 
     self::assertSame(FileCleanupStatus::Deleted, $cleaner->removeIfUnused($media));
@@ -53,6 +53,20 @@ final class UnusedMediaCleanerTest extends UnitTestCase {
     $media->expects(self::never())->method('delete');
     $inspector = $this->createMock(FileReferenceInspectorInterface::class);
     $inspector->method('inspect')->willReturn(FileReferenceStatus::Referenced);
+    $cleaner = new UnusedMediaCleaner($inspector, $this->createMock(LoggerChannelInterface::class));
+
+    self::assertSame(FileCleanupStatus::InUse, $cleaner->removeIfUnused($media));
+  }
+
+  /**
+   * A reference appearing after assessment blocks deletion at final recheck.
+   */
+  public function testRetainsMediaReferencedAfterInitialAssessment(): void {
+    $media = $this->media(FALSE);
+    $media->expects(self::never())->method('delete');
+    $inspector = $this->createMock(FileReferenceInspectorInterface::class);
+    $inspector->expects(self::exactly(2))->method('inspect')->with($media)
+      ->willReturnOnConsecutiveCalls(FileReferenceStatus::Clear, FileReferenceStatus::Referenced);
     $cleaner = new UnusedMediaCleaner($inspector, $this->createMock(LoggerChannelInterface::class));
 
     self::assertSame(FileCleanupStatus::InUse, $cleaner->removeIfUnused($media));

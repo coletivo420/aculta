@@ -9,7 +9,7 @@ use Drupal\Core\Condition\Attribute\Condition;
 use Drupal\Core\Condition\ConditionPluginBase;
 use Drupal\Core\Plugin\Context\EntityContextDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 
 /**
  * CTools-compatible condition for course displays with interactive activities.
@@ -29,7 +29,7 @@ final class GroupHasaculta_H5PActivities extends ConditionPluginBase {
    * Evaluates from the Group field, which remains the LMS source of truth. */
   public function evaluate(): bool {
     $course = $this->getContextValue('group');
-    return $course instanceof CourseInterface
+    return $course instanceof GroupInterface
       && $course->bundle() === 'lms_course'
       && $course->hasField('field_h5p_activities')
       && !$course->get('field_h5p_activities')->isEmpty();
@@ -45,7 +45,7 @@ final class GroupHasaculta_H5PActivities extends ConditionPluginBase {
    * Returns cache tags for the current course or the group list. */
   public function getCacheTags(): array {
     $course = $this->getContextValue('group');
-    return $course instanceof CourseInterface ? Cache::mergeTags($course->getCacheTags(), ['aculta_h5p_content_list']) : ['group_list'];
+    return $course instanceof GroupInterface ? Cache::mergeTags($course->getCacheTags(), ['aculta_h5p_content_list']) : ['group_list'];
   }
 
   /**

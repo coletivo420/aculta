@@ -44,3 +44,24 @@ uma conta temporária com a permissão específica e passe seu nome em
 
 Capturas e `game-results.json` ficam em `SUITE_OUT`. O script não submete o
 formulário de preferências nem modifica definições administrativas.
+
+## Conta e perfil mobile-first: `mobile-visual.py`
+
+Firefox ESR visível (`DISPLAY=:0`) verifica as páginas de Conta e perfil em
+viewports CSS de 1280, 390 e 320 px, reflow, overflow e foco por teclado. Antes
+de abrir o navegador, compara por HTTP o CSS público do perfil com o arquivo
+candidato do checkout; divergência ou falha HTTP bloqueia o resultado. O teste
+não envia formulários nem altera conteúdo ou configuração. O login ULI abre uma
+sessão temporária para a conta de teste `teste.comum`.
+
+```sh
+export SUITE_OUT=/home/piradopirata/aculta-suite-out/game-mobile
+export SUITE_PROJECT_ROOT=/home/piradopirata/projetos/aculta
+DISPLAY=:0 SUITE_OUT="$SUITE_OUT" python3 tests/browser/aculta-game/mobile-visual.py
+```
+
+`SUITE_PROJECT_ROOT` deve apontar para o checkout autorizado que atende o
+servidor de teste e gera o ULI; não imprime nem grava o link. Capturas e perfil
+temporário do Firefox ficam em `SUITE_OUT`, fora do repositório. É um gate focal
+da apresentação responsiva e do foco; não prova persistência de preferências,
+e-mail, instalação/rollback nem homologa todo o módulo Game.

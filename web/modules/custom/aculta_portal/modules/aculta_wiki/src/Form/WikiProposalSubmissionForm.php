@@ -6,6 +6,7 @@ namespace Drupal\aculta_wiki\Form;
 
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\aculta_wiki\Service\WikiProposalSubmission;
+use Drupal\aculta_contributions\Service\ContributionLifecycle;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -23,6 +24,7 @@ final class WikiProposalSubmissionForm extends FormBase {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly WikiProposalSubmission $submission,
+    private readonly ContributionLifecycle $contributions,
   ) {}
 
   /**
@@ -32,6 +34,7 @@ final class WikiProposalSubmissionForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('aculta_wiki.proposal_submission'),
+      $container->get('aculta_contributions.lifecycle'),
     );
   }
 
@@ -270,15 +273,27 @@ final class WikiProposalSubmissionForm extends FormBase {
         $values = $form_state->getValues();
       }
       $proposedFields = $this->extractProposedFields($values);
-      $proposal = $this->submission->submit(
-        $node,
-        (string) ($values['intent'] ?? ''),
-        (string) ($values['proposed_text'] ?? ''),
+      $wikiIntent = (string) ($values['intent'] ?? '');
+      $intentLabel = WikiProposal::INTENTS[$wikiIntent] ?? '';
+      if ($intentLabel === '') {
+        throw new UnprocessableEntityHttpException('Tipo de contribuição inválido.');
+      }
+      $subjectSuffix = ' — ' . $intentLabel;
+      $subject = mb_substr(trim($node->label()), 0, 255 - mb_strlen($subjectSuffix)) . $subjectSuffix;
+      $proposal = $this->contributions->submit(
+        'wiki',
+        'update',
+        (string) $node->uuid(),
+        $subject,
         (string) ($values['rationale'] ?? ''),
-        $this->getSourceUris((string) ($values['source_uris'] ?? '')),
-        (string) ($values['submission_token'] ?? $form_state->get('wiki_proposal_submission_token')),
         $proposedFields,
-        (int) $form_state->get('wiki_proposal_expected_revision'),
+        (string) ($values['submission_token'] ?? $form_state->get('wiki_proposal_submission_token')),
+        [
+          'wiki_intent' => $wikiIntent,
+          'proposed_text' => (string) ($values['proposed_text'] ?? ''),
+          'source_uris' => $this->getSourceUris((string) ($values['source_uris'] ?? '')),
+        ],
+        (string) $form_state->get('wiki_proposal_expected_revision'),
       );
     }
     catch (ConflictHttpException $exception) {

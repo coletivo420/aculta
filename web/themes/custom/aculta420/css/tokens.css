@@ -236,6 +236,8 @@ body.path-perfil .aculta-main:has(form#aculta-user-profile-visibility-form),
 body.path-perfil form#aculta-user-profile-visibility-form,
 body.path-ganjalab .aculta-main,
 body.path-culturas .aculta-main,
+.aculta-main:has([data-portal-ui="aculta-learning-journey"]),
+.aculta-main:has([data-portal-ui="aculta-learning-room"]),
 .aculta-main .we-sativa__workspace {
   --aculta-studio-fidelity-primary: #9d1980;
   --aculta-studio-fidelity-link: #a1167f;
@@ -312,6 +314,8 @@ body.path-culturas .aculta-main,
   body.path-perfil form#aculta-user-profile-visibility-form,
   body.path-ganjalab .aculta-main,
   body.path-culturas .aculta-main,
+  .aculta-main:has([data-portal-ui="aculta-learning-journey"]),
+  .aculta-main:has([data-portal-ui="aculta-learning-room"]),
   .aculta-main .we-sativa__workspace {
     --aculta-studio-fidelity-page-margin-sides: 1.25rem;
     --aculta-studio-fidelity-page-padding-inline: 1.5rem;
@@ -331,6 +335,8 @@ body.path-culturas .aculta-main,
   body.path-perfil form#aculta-user-profile-visibility-form,
   body.path-ganjalab .aculta-main,
   body.path-culturas .aculta-main,
+  .aculta-main:has([data-portal-ui="aculta-learning-journey"]),
+  .aculta-main:has([data-portal-ui="aculta-learning-room"]),
   .aculta-main .we-sativa__workspace {
     --aculta-studio-fidelity-page-padding-inline: 3.5rem;
     --aculta-studio-fidelity-gutter: 2rem;
@@ -351,6 +357,8 @@ body.path-culturas .aculta-main,
   body.path-perfil form#aculta-user-profile-visibility-form,
   body.path-ganjalab .aculta-main,
   body.path-culturas .aculta-main,
+  .aculta-main:has([data-portal-ui="aculta-learning-journey"]),
+  .aculta-main:has([data-portal-ui="aculta-learning-room"]),
   .aculta-main .we-sativa__workspace {
     --aculta-studio-fidelity-page-margin-sides: 3rem;
   }
@@ -369,6 +377,8 @@ body.path-culturas .aculta-main,
   body.path-perfil form#aculta-user-profile-visibility-form,
   body.path-ganjalab .aculta-main,
   body.path-culturas .aculta-main,
+  .aculta-main:has([data-portal-ui="aculta-learning-journey"]),
+  .aculta-main:has([data-portal-ui="aculta-learning-room"]),
   .aculta-main .we-sativa__workspace {
     --aculta-studio-fidelity-page-padding-inline: 5rem;
     --aculta-studio-fidelity-section-spacing: 5rem;
@@ -537,6 +547,8 @@ body.path-culturas .aculta-main,
 [data-bs-theme="dark"] body.path-perfil form#aculta-user-profile-visibility-form,
 [data-bs-theme="dark"] body.path-ganjalab .aculta-main,
 [data-bs-theme="dark"] body.path-culturas .aculta-main,
+[data-bs-theme="dark"] .aculta-main:has([data-portal-ui="aculta-learning-journey"]),
+[data-bs-theme="dark"] .aculta-main:has([data-portal-ui="aculta-learning-room"]),
 [data-bs-theme="dark"] .aculta-main .we-sativa__workspace {
   --aculta-studio-fidelity-primary: #9d1980;
   --aculta-studio-fidelity-link: #ffdd00;
@@ -582,6 +594,8 @@ body.path-culturas .aculta-main,
   :root:not([data-bs-theme="light"]) body.path-perfil form#aculta-user-profile-visibility-form,
   :root:not([data-bs-theme="light"]) body.path-ganjalab .aculta-main,
   :root:not([data-bs-theme="light"]) body.path-culturas .aculta-main,
+  :root:not([data-bs-theme="light"]) .aculta-main:has([data-portal-ui="aculta-learning-journey"]),
+  :root:not([data-bs-theme="light"]) .aculta-main:has([data-portal-ui="aculta-learning-room"]),
   :root:not([data-bs-theme="light"]) .aculta-main .we-sativa__workspace {
     --aculta-studio-fidelity-primary: #9d1980;
     --aculta-studio-fidelity-link: #ffdd00;

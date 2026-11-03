@@ -11,6 +11,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ExtensionList;
 use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\State\StateInterface;
+use Drupal\Core\Template\Attribute;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -56,9 +58,25 @@ final class ThemeHooksTest extends UnitTestCase {
   }
 
   /**
+   * The Studio Identity layer is enabled only by the controlled state flag.
+   */
+  public function testStudioIdentityClassFollowsTheStateSwitch(): void {
+    $state = $this->createMock(StateInterface::class);
+    $state->method('get')
+      ->with('aculta420.studio_identity', FALSE)
+      ->willReturn(TRUE);
+    $hooks = $this->themeHooksForRoute('aculta_studio.home', $state);
+    $variables = ['html_attributes' => new Attribute()];
+
+    $hooks->preprocessHtml($variables);
+
+    self::assertTrue($variables['html_attributes']->hasClass('studio-identity'));
+  }
+
+  /**
    * Builds theme hooks with the requested route name.
    */
-  private function themeHooksForRoute(string $routeName): ThemeHooks {
+  private function themeHooksForRoute(string $routeName, ?StateInterface $state = NULL): ThemeHooks {
     $routeMatch = $this->createMock(RouteMatchInterface::class);
     $routeMatch->method('getRouteName')->willReturn($routeName);
     return new ThemeHooks(
@@ -67,6 +85,7 @@ final class ThemeHooksTest extends UnitTestCase {
       $this->createMock(EntityTypeManagerInterface::class),
       $routeMatch,
       $this->createMock(ExtensionList::class),
+      $state ?? $this->createMock(StateInterface::class),
     );
   }
 

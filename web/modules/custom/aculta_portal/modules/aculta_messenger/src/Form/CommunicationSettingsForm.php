@@ -118,6 +118,7 @@ final class CommunicationSettingsForm extends FormBase {
       'doacao' => (string) $this->t('Doações'),
       AvisoPreferencias::EMAIL_PRIVATE_MESSAGES => (string) $this->t('Mensagens privadas'),
       AvisoPreferencias::EMAIL_FRIENDSHIP => (string) $this->t('Amizades'),
+      AvisoPreferencias::EMAIL_EVENTS_CONTRIBUTIONS => (string) $this->t('Propostas de Eventos'),
       default => throw new \InvalidArgumentException('Categoria de aviso inválida.'),
     };
   }
@@ -129,6 +130,7 @@ final class CommunicationSettingsForm extends FormBase {
     return match ($category) {
       AvisoPreferencias::EMAIL_PRIVATE_MESSAGES => (string) $this->t('O e-mail informa que há nova mensagem e quem enviou, sem conteúdo da conversa.'),
       AvisoPreferencias::EMAIL_FRIENDSHIP => (string) $this->t('Pedidos e aceites continuam disponíveis na área de mensagens do site.'),
+      AvisoPreferencias::EMAIL_EVENTS_CONTRIBUTIONS => (string) $this->t('O aviso no site permanece ativo. E-mails não incluem conteúdo nem pareceres da proposta.'),
       'doacao' => (string) $this->t('Inclui avisos distintos para pedido de doação criado e pagamento aprovado.'),
       default => (string) $this->t('O aviso no site permanece ativo; a administração pode limitar as opções de e-mail.'),
     };

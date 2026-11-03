@@ -1,0 +1,14 @@
+aculta_lms.settings:
+  type: config_object
+  label: 'ACULTA LMS settings'
+  mapping:
+    class_permission_mappings:
+      type: sequence
+      label: 'Course to class permission mappings'
+      sequence:
+        type: string
+    course_permission_mappings:
+      type: sequence
+      label: 'Class to course permission mappings'
+      sequence:
+        type: string

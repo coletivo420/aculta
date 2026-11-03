@@ -18,7 +18,7 @@ final class NoticeListFilter {
    */
   public const ORIGINS = [
     'comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'revista', 'loja',
-    'doacao', 'conquistas', 'conta',
+    'doacao', 'conquistas', 'conta', 'eventos',
   ];
 
   /**
@@ -28,7 +28,7 @@ final class NoticeListFilter {
    */
   public const PAGINATED_ORIGINS = [
     'comunicado', 'forum', 'alerta', 'amizade', 'aprendizagem', 'wiki', 'revista', 'loja',
-    'doacao', 'conquistas',
+    'doacao', 'conquistas', 'eventos',
   ];
 
   public const READ_STATES = ['read', 'unread'];

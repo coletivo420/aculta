@@ -18,11 +18,10 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Datas passadas fora das listagens e cache que expira no fim da data (auditoria, T5).
+ * Oculta datas passadas e expira o cache ao final da ocorrência (T5).
  *
- * Cobre o equivalente ao nodeViewAlter/viewsPostExecute do OpenCulturas, reescrito:
- * a página e o catálogo escondem ocorrência terminada, uma ocorrência em andamento
- * continua visível, e cada saída declara max-age até o instante em que muda sozinha.
+ * Cobre a lógica reescrita de página e catálogo: ocorrências terminadas somem,
+ * as que estão em andamento permanecem e o cache expira quando a saída muda.
  */
 #[Group('aculta_events')]
 #[RunTestsInSeparateProcesses]
@@ -87,7 +86,7 @@ final class EventDateHooksKernelTest extends KernelTestBase {
   }
 
   /**
-   * Ocorrência em andamento continua na página; antes, ela sumia no meio do evento.
+   * Ocorrência em andamento permanece visível até seu fim.
    */
   public function testOcorrenciaEmAndamentoPermaneceNaPagina(): void {
     [$evento] = $this->eventoComData(-60, 60);
@@ -118,8 +117,7 @@ final class EventDateHooksKernelTest extends KernelTestBase {
   public function testCacheDoCatalogoExpiraNoFimDaData(): void {
     [, , $fim] = $this->eventoComData(60, 120);
 
-    // A pilha de requisição volta ao estado inicial: o KernelTestBase fecha a sessão
-    // da requisição corrente no tearDown, e a requisição do teste não tem sessão.
+    // O tearDown restaura a pilha; esta requisição de teste não tem sessão.
     $pilha = $this->container->get('request_stack');
     $pilha->push(Request::create('/eventos'));
     try {
@@ -136,7 +134,7 @@ final class EventDateHooksKernelTest extends KernelTestBase {
   }
 
   /**
-   * A view de datas perde a linha vencida, corrige total_rows e declara a validade.
+   * A view remove datas vencidas e atualiza total_rows e cache.
    */
   public function testViewDeDatasRemoveLinhaVencida(): void {
     [, $vencida] = $this->eventoComData(-180, -60, 'Antiga');
@@ -192,7 +190,7 @@ final class EventDateHooksKernelTest extends KernelTestBase {
   }
 
   /**
-   * Criar ou editar evento e data invalida a listagem (tag declarada no catálogo).
+   * Criar ou editar evento e data invalida a listagem do catálogo.
    */
   public function testSalvarEventoOuDataTemHookDeInvalidacao(): void {
     $hooks = [

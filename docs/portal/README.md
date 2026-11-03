@@ -6,7 +6,7 @@
 - **Paths atuais pela ADR-038:** Conta `/conta/*`, Perfil `/perfil/*`,
   separados por owner; a raiz de `account` apresenta a entrada da Conta.
   `/conta-legada` preserva a Minha Conta original; `/minha-conta` responde 404.
-  As Suites estão em `/marley`, `/ganjalab`, `/wesativa`, `/greenstash` e
+  As Suites estão em `/marley`, `/ganjalab`, `/we-sativa`, `/green-stash` e
   `/culturas` nos purposes respectivos. `/studio` e `/studio/*` respondem 404.
 - [ADR-038](../decisions/ADR-038-aculta-studio-suites-por-dominio.md) registra
   a correspondência antiga → nova e confirma o Domain Wiki canônico `wiki420`.

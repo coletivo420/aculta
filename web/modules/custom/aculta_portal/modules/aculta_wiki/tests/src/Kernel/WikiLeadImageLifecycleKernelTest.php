@@ -21,8 +21,9 @@ use Drupal\Core\Session\UserSession;
 use Drupal\Core\StreamWrapper\PrivateStream;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
+use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\editor\Entity\Editor;
-use Drupal\aculta_portal\Cleanup\FileReferenceStatus;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceStatus;
 use Drupal\aculta_portal\Domain\FrontPathPolicy;
 use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
 use Drupal\field\Entity\FieldConfig;
@@ -51,6 +52,7 @@ use Drupal\aculta_wiki\Service\WikiProposalSubmission;
 use Drupal\aculta_wiki\Service\WikiEditorialQueue;
 use Drupal\aculta_wiki\Service\WikiProposalDecision;
 use Drupal\aculta_wiki\Entity\WikiProposal;
+use Drupal\aculta_contributions\Entity\Contribution;
 use Drupal\aculta_wiki\Form\WikiProposalDecisionForm;
 use Drupal\aculta_wiki\Form\WikiProposalSubmissionForm;
 use Drupal\aculta_wiki\Form\WikiProposalWithdrawalForm;
@@ -105,6 +107,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'ckeditor5',
       'freelinking',
       'history',
+      'language',
     ]);
     parent::bootKernel();
   }
@@ -125,11 +128,19 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->installEntitySchema('file');
     $this->installEntitySchema('media');
     $this->installEntitySchema('node');
+    // O crop está habilitado pela cadeia do aculta_file_uploader; sem o schema
+    // o hook de exclusão do arquivo quebra e a limpeza falha fechada.
+    $this->installEntitySchema('crop');
     // Core's menu_ui submit hooks inspect and may create menu links when a
     // native node form is submitted, so keep the entity schema available to
     // the isolated Kernel fixture even when the test does not exercise menus.
     $this->installEntitySchema('menu_link_content');
     $this->installEntitySchema('aculta_wiki_proposal');
+    $this->installEntitySchema('aculta_contribution');
+    require_once dirname(__DIR__, 3) . '/aculta_wiki.install';
+    foreach (aculta_wiki_schema() as $table => $definition) {
+      $this->container->get('database')->schema()->createTable($table, $definition);
+    }
     $this->installSchema('aculta_user', ['aculta_user_nickname']);
     $this->installSchema('user', ['users_data']);
     $this->installSchema('history', ['history']);
@@ -513,7 +524,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $node->delete();
     self::assertSame(
       FileReferenceStatus::Referenced,
-      $this->container->get('aculta_portal.file_reference_inspector')->inspect($media),
+      $this->container->get('aculta_file_uploader.file_reference_inspector')->inspect($media),
     );
     self::assertSame(['processed' => 1, 'media_deleted' => 0, 'files_deleted' => 0], $cleanup->cleanup());
     self::assertInstanceOf(Media::class, Media::load($media->id()));
@@ -522,7 +533,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $article->delete();
     self::assertSame(
       FileReferenceStatus::Clear,
-      $this->container->get('aculta_portal.file_reference_inspector')->inspect($media),
+      $this->container->get('aculta_file_uploader.file_reference_inspector')->inspect($media),
     );
     self::assertSame(['processed' => 1, 'media_deleted' => 1, 'files_deleted' => 1], $cleanup->cleanup());
     self::assertNull(Media::load($media->id()));
@@ -801,8 +812,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $accessManager = $this->container->get('access_manager');
     $routePaths = [
       'aculta_portal.wiki_home' => '/wiki',
-      'aculta_portal.wiki_search' => '/wiki/busca',
-      'aculta_portal.wiki_search_preview' => '/wiki/busca/previa',
+      'aculta_portal.wiki_search' => '/busca-wiki',
+      'aculta_portal.wiki_search_preview' => '/busca-wiki/previa',
     ];
     $purposeResolver = $this->container->get('aculta_portal.content_purpose_resolver');
     foreach ($routePaths as $routeName => $path) {
@@ -863,7 +874,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     // Public Wiki routes must not be served from the main Portal domain.
     $domainNegotiator->setActiveDomain(Domain::load('aculta_org'));
     $searchRoute = $routeProvider->getRouteByName('aculta_portal.wiki_search');
-    $wrongPurposeRequest = Request::create('https://main.example.invalid/wiki/busca');
+    $wrongPurposeRequest = Request::create('https://main.example.invalid/busca-wiki');
     $wrongPurposeRequest->attributes->set('_route', 'aculta_portal.wiki_search');
     $wrongPurposeRequest->attributes->set('_route_object', $searchRoute);
     $wrongPurposeEvent = new RequestEvent(
@@ -877,14 +888,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $domainNegotiator->setActiveDomain(Domain::load('wiki420_aculta_org'));
 
     $proposalRoute = $routeProvider->getRouteByName('aculta_wiki.proposal_submit');
-    self::assertSame('/wiki/verbetes/{node}/contribuir', $proposalRoute->getPath());
+    self::assertSame('/verbetes/{node}/contribuir', $proposalRoute->getPath());
     self::assertSame('submit wiki proposals', $proposalRoute->getRequirement('_permission'));
     self::assertSame('node.view', $proposalRoute->getRequirement('_entity_access'));
     self::assertSame('wiki', $proposalRoute->getOption('_aculta_domain_purpose'));
     self::assertSame('wiki', $purposeResolver->requiredPurpose(
       $proposalRoute,
       'aculta_wiki.proposal_submit',
-      Request::create('/wiki/verbetes/1/contribuir'),
+      Request::create('/verbetes/1/contribuir'),
     ));
     $proposalTarget = Node::create([
       'type' => 'wiki_entry',
@@ -896,7 +907,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $proposalTarget->save();
     self::assertFalse($accessManager->checkNamedRoute('aculta_wiki.proposal_submit', ['node' => $proposalTarget->id()], new AnonymousUserSession()));
     $domainNegotiator->setActiveDomain(Domain::load('aculta_org'));
-    $wrongProposalRequest = Request::create('https://main.example.invalid/wiki/verbetes/' . $proposalTarget->id() . '/contribuir');
+    $wrongProposalRequest = Request::create('https://main.example.invalid/verbetes/' . $proposalTarget->id() . '/contribuir');
     $wrongProposalRequest->attributes->set('_route', 'aculta_wiki.proposal_submit');
     $wrongProposalRequest->attributes->set('_route_object', $proposalRoute);
     $wrongProposalEvent = new RequestEvent(
@@ -909,14 +920,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame(404, $wrongProposalEvent->getResponse()->getStatusCode());
     $domainNegotiator->setActiveDomain(Domain::load('wiki420_aculta_org'));
     $intentRoute = $routeProvider->getRouteByName('aculta_wiki.contribution_intent');
-    self::assertSame('/wiki/verbetes/{node}/contribuir/como', $intentRoute->getPath());
+    self::assertSame('/verbetes/{node}/contribuir/como', $intentRoute->getPath());
     self::assertSame('wiki', $intentRoute->getOption('_aculta_domain_purpose'));
     self::assertSame('node.view', $intentRoute->getRequirement('_entity_access'));
     $withdrawRoute = $routeProvider->getRouteByName('aculta_wiki.proposal_withdraw');
-    self::assertSame('/wiki/propostas/{proposal}/retirar', $withdrawRoute->getPath());
+    self::assertSame('/propostas/{proposal}/retirar', $withdrawRoute->getPath());
     self::assertSame('proposal.view', $withdrawRoute->getRequirement('_entity_access'));
     $decisionRoute = $routeProvider->getRouteByName('aculta_wiki.proposal_decide');
-    self::assertSame('/wesativa/propostas/{proposal}/decidir', $decisionRoute->getPath());
+    self::assertSame('/we-sativa/propostas/{proposal}/decidir', $decisionRoute->getPath());
     self::assertSame('moderate wiki proposals', $decisionRoute->getRequirement('_permission'));
     self::assertSame('proposal.update', $decisionRoute->getRequirement('_entity_access'));
 
@@ -929,7 +940,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $contributor->id());
     $this->container->get('current_user')->setAccount($contributor);
     $requestStack = $this->container->get('request_stack');
-    $requestStack->push(Request::create('/wiki/verbetes/' . $proposalTarget->id() . '/contribuir', 'GET', ['intent' => 'reference']));
+    $requestStack->push(Request::create('/verbetes/' . $proposalTarget->id() . '/contribuir', 'GET', ['intent' => 'reference']));
     try {
       $proposalForm = WikiProposalSubmissionForm::create($this->container);
       $proposalBuild = $proposalForm->buildForm([], new FormState(), $proposalTarget);
@@ -968,10 +979,11 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       $actualProposalFormObject->submitForm($processedReviewForm, $actualFormState);
     });
     self::assertSame('aculta_wiki.proposal_status', $actualFormState->getRedirect()->getRouteName());
-    $actualProposal = $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
+    $actualProposal = $this->container->get('entity_type.manager')->getStorage('aculta_contribution')
       ->load($actualFormState->getRedirect()->getRouteParameters()['proposal']);
-    self::assertInstanceOf(WikiProposal::class, $actualProposal);
-    self::assertSame(['value' => 'Título revisado pelo Form API'], $actualProposal->getProposedFields()['title']);
+    self::assertInstanceOf(Contribution::class, $actualProposal);
+    self::assertSame('correction', $actualProposal->getSourceData()['wiki_intent']);
+    self::assertSame(['value' => 'Título revisado pelo Form API'], $actualProposal->getPayload()['title']);
 
     // Load the production Views used by the public Wiki home.
     foreach (['wiki_categories', 'wiki_entries'] as $viewId) {
@@ -1012,8 +1024,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
 
     $this->container->get('router.builder')->rebuild();
     $listingRoute = $routeProvider->getRouteByName('view.wiki_entries.page_1');
-    self::assertSame('/wiki/verbetes', $listingRoute->getPath());
-    self::assertCount(1, $routeProvider->getRoutesByPattern('/wiki/verbetes'));
+    self::assertSame('/verbetes', $listingRoute->getPath());
+    self::assertCount(1, $routeProvider->getRoutesByPattern('/verbetes'));
     self::assertSame('wiki', $listingRoute->getOption('_aculta_domain_purpose'));
     self::assertTrue($accessManager->checkNamedRoute(
       'view.wiki_entries.page_1',
@@ -1230,6 +1242,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       'label' => 'Wiki workspace creator test',
       'permissions' => ['access content', 'create wiki_entry content', 'edit own wiki_entry content'],
     ])->save();
+    $this->installEntitySchema('profile');
     $author = User::create([
       'uid' => 17,
       'name' => 'wiki-workspace-author',
@@ -1278,13 +1291,13 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
 
     $routes = $this->container->get('router.route_provider');
     $route = $routes->getRouteByName('aculta_studio.we_sativa');
-    self::assertSame('/wesativa', $route->getPath());
+    self::assertSame('/we-sativa', $route->getPath());
     self::assertSame('wiki', $route->getOption('_aculta_domain_purpose'));
     $startRoute = $routes->getRouteByName('aculta_studio.we_sativa_start');
-    self::assertSame('/wesativa/inicio', $startRoute->getPath());
+    self::assertSame('/we-sativa/inicio', $startRoute->getPath());
     self::assertSame('wiki', $startRoute->getOption('_aculta_domain_purpose'));
     $createRoute = $routes->getRouteByName('aculta_wiki.studio_entry_create');
-    self::assertSame('/wesativa/verbetes/novo', $createRoute->getPath());
+    self::assertSame('/we-sativa/verbetes/novo', $createRoute->getPath());
     self::assertSame('wiki', $createRoute->getOption('_aculta_domain_purpose'));
     self::assertSame('node:wiki_entry', $createRoute->getRequirement('_entity_create_access'));
     self::assertTrue($this->container->get('access_manager')->checkNamedRoute(
@@ -1298,8 +1311,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       $reader,
     ));
     $exactEntrypoints = array_filter(
-      $routes->getRoutesByPattern('/wesativa')->all(),
-      static fn ($candidate): bool => $candidate->getPath() === '/wesativa',
+      $routes->getRoutesByPattern('/we-sativa')->all(),
+      static fn ($candidate): bool => $candidate->getPath() === '/we-sativa',
     );
     self::assertCount(1, $exactEntrypoints);
 
@@ -1519,7 +1532,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame(21, (int) $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->condition('uid', 17)->count()->execute());
     self::assertTrue($workspace->access($author)->isAllowed(), 'Owner-scoped work or create access should expose the workspace.');
     $requestStack = $this->container->get('request_stack');
-    $requestStack->push(Request::create('/studio/we-sativa'));
+    $requestStack->push(Request::create('/we-sativa'));
     try {
       $firstPage = $workspace->build($author);
     }
@@ -1549,7 +1562,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertMatchesRegularExpression('/^[0-9]{1,12}-[1-9][0-9]{0,12}$/', $query['wiki_node_cursor']);
     self::assertMatchesRegularExpression('/^[0-9]{1,12}-[1-9][0-9]{0,12}$/', $query['wiki_proposal_cursor']);
 
-    $requestStack->push(Request::create('/studio/we-sativa', 'GET', $query));
+    $requestStack->push(Request::create('/we-sativa', 'GET', $query));
     try {
       $secondPage = $workspace->build($author);
     }
@@ -1595,7 +1608,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $restrictedProposal->save();
     self::assertFalse($restrictedAuthor->hasPermission('view own wiki proposals'));
     self::assertTrue($workspace->access($restrictedAuthor)->isAllowed());
-    $requestStack->push(Request::create('/studio/we-sativa'));
+    $requestStack->push(Request::create('/we-sativa'));
     try {
       $restrictedPage = $workspace->build($restrictedAuthor);
     }
@@ -1721,7 +1734,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       elseif ($filter !== 'all') {
         $query['wiki_node_state'] = $filter;
       }
-      $requestStack->push(Request::create('/studio/we-sativa', 'GET', $query));
+      $requestStack->push(Request::create('/we-sativa', 'GET', $query));
       try {
         $build = $workspace->build($author);
       }
@@ -1753,7 +1766,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       self::assertSame($filter === 'malformed' ? 'all' : $filter, $activeLink['#url']->getOption('query')['wiki_node_state'] ?? 'all');
     }
 
-    $requestStack->push(Request::create('/studio/we-sativa', 'GET', [
+    $requestStack->push(Request::create('/we-sativa', 'GET', [
       'wiki_node_state' => 'in_progress',
       'wiki_proposal_cursor' => '1720000000-9',
     ]));
@@ -1768,7 +1781,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $nextQuery = $firstDraftPage['entries']['#slots']['body']['next_page']['#url']->getOption('query');
     self::assertSame('in_progress', $nextQuery['wiki_node_state']);
     self::assertSame('1720000000-9', $nextQuery['wiki_proposal_cursor']);
-    $requestStack->push(Request::create('/studio/we-sativa', 'GET', $nextQuery));
+    $requestStack->push(Request::create('/we-sativa', 'GET', $nextQuery));
     try {
       $secondDraftPage = $workspace->build($author);
     }
@@ -2190,7 +2203,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $form = $formBuilder->buildForm($formObject, $formState);
 
     self::assertArrayHasKey(WikiLeadImageUploader::TAB, $form);
-    self::assertSame('managed_file', $form[WikiLeadImageUploader::TAB][WikiLeadImageUploader::FILE]['#type']);
+    self::assertSame('aculta_upload_dropzone', $form[WikiLeadImageUploader::TAB][WikiLeadImageUploader::FILE]['#type']);
     $formState->setValue($form['title']['widget'][0]['value']['#parents'], 'Rascunho com imagem real');
     $formState->setValue($form['body']['widget'][0]['value']['#parents'], 'Texto inicial com fonte.');
     $formState->setValue($form['body']['widget'][0]['format']['#parents'], 'plain_text');
@@ -2417,7 +2430,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $secondEntity = Node::load($secondNode);
     $secondAccess = $secondEntity->access('view', $firstReader, TRUE);
     self::assertFalse($secondAccess->isAllowed(), 'The other author’s Wiki entry must be denied.');
-    $firstSearch = $controller->search(Request::create('/wiki/busca', 'GET', ['q' => 'Cannabis']));
+    $firstSearch = $controller->search(Request::create('/busca-wiki', 'GET', ['q' => 'Cannabis']));
     self::assertSame([$firstNode], array_map('intval', array_keys($firstSearch['results'])));
     $firstHome = $controller->home();
     $firstRecentIds = array_map(
@@ -2428,7 +2441,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertContains('user.node_grants:view', $firstHome['changes']['#cache']['contexts']);
 
     $currentUser->setAccount($secondReader);
-    $secondSearch = $controller->search(Request::create('/wiki/busca', 'GET', ['q' => 'Cannabis']));
+    $secondSearch = $controller->search(Request::create('/busca-wiki', 'GET', ['q' => 'Cannabis']));
     self::assertSame([$secondNode], array_map('intval', array_keys($secondSearch['results'])));
     $secondHome = $controller->home();
     $secondRecentIds = array_map(
@@ -2438,13 +2451,13 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertSame([$secondNode], $secondRecentIds);
 
     $currentUser->setAccount($firstReader);
-    $emptyBuild = $controller->search(Request::create('/wiki/busca'));
+    $emptyBuild = $controller->search(Request::create('/busca-wiki'));
     self::assertArrayNotHasKey('results', $emptyBuild);
     self::assertContains('user.node_grants:view', $emptyBuild['#cache']['contexts']);
-    $negativeBuild = $controller->search(Request::create('/wiki/busca', 'GET', ['q' => 'termo-inexistente']));
+    $negativeBuild = $controller->search(Request::create('/busca-wiki', 'GET', ['q' => 'termo-inexistente']));
     self::assertArrayNotHasKey('results', $negativeBuild);
     self::assertContains('user.node_grants:view', $negativeBuild['#cache']['contexts']);
-    $malformedBuild = $controller->search(Request::create('/wiki/busca', 'GET', ['q' => ['termo']]));
+    $malformedBuild = $controller->search(Request::create('/busca-wiki', 'GET', ['q' => ['termo']]));
     self::assertArrayNotHasKey('results', $malformedBuild);
     self::assertContains('user.node_grants:view', $malformedBuild['#cache']['contexts']);
   }
@@ -2504,6 +2517,365 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertNotSame($unpublishedId, (int) $items[0]['#url']->getRouteParameters()['node']);
     self::assertNotSame((int) $foreignDomain->id(), (int) $items[0]['#url']->getRouteParameters()['node']);
     self::assertNull($newNode->id());
+  }
+
+  /**
+   * Wiki migration preserves entity/revision identity and private history.
+   */
+  public function testWikiContributionMigrationPreservesRevisionHistory(): void {
+    $legacy = WikiProposal::create([
+      'uid' => 0,
+      'subject' => 'Proposta legada',
+      'target' => ['target_id' => 987654],
+      'target_revision_id' => 77,
+      'intent' => 'reference',
+      'proposed_text' => 'Adicionar fonte ao verbete.',
+      'proposed_fields' => ['title' => ['value' => 'Título proposto']],
+      'rationale' => 'A fonte melhora a verificabilidade.',
+      'source_uri' => ['https://example.invalid/fonte'],
+      'state' => 'submitted',
+      'created' => 1000,
+      'changed' => 1000,
+    ]);
+    $legacy->setRevisionUserId(0);
+    $legacy->setRevisionCreationTime(1000);
+    $legacy->setRevisionLogMessage('Envio original');
+    $legacy->save();
+    $legacyId = (int) $legacy->id();
+    $legacyUuid = $legacy->uuid();
+    $firstRevisionId = (int) $legacy->getRevisionId();
+    $proposalConverter = $this->container->get('aculta_wiki.proposal_param_converter');
+    self::assertInstanceOf(WikiProposal::class, $proposalConverter->convert(
+      (string) $legacyId,
+      ['type' => 'wiki_proposal'],
+      'proposal',
+      [],
+    ));
+
+    $legacy->setNewRevision(TRUE);
+    $legacy->set('state', 'needs_changes');
+    $legacy->set('decision_note', 'Inclua uma fonte primária.');
+    $legacy->set('changed', 2000);
+    $legacy->setRevisionUserId(0);
+    $legacy->setRevisionCreationTime(2000);
+    $legacy->setRevisionLogMessage('Retorno editorial');
+    $legacy->save();
+    $latestRevisionId = (int) $legacy->getRevisionId();
+
+    $idempotencyHash = hash('sha256', '0:' . str_repeat('a', 64));
+    $this->container->get('keyvalue.expirable')
+      ->get('aculta_wiki_proposal_submissions')
+      ->set($idempotencyHash, $legacyId);
+
+    $sandbox = [];
+    aculta_wiki_update_10003($sandbox);
+    self::assertSame(1, $sandbox['#finished']);
+
+    $storage = $this->container->get('entity_type.manager')->getStorage('aculta_contribution');
+    $contribution = $storage->load($legacyId);
+    self::assertInstanceOf(Contribution::class, $contribution);
+    self::assertSame($contribution, $proposalConverter->convert(
+      (string) $legacyId,
+      ['type' => 'wiki_proposal'],
+      'proposal',
+      [],
+    ));
+    self::assertSame($legacyUuid, $contribution->uuid());
+    self::assertSame($latestRevisionId, (int) $contribution->getRevisionId());
+    self::assertSame('wiki', $contribution->get('source')->value);
+    self::assertSame('update', $contribution->get('intent')->value);
+    self::assertSame(987654, $contribution->getSourceData()['legacy_target_id']);
+    self::assertSame('reference', $contribution->getSourceData()['wiki_intent']);
+    self::assertSame($idempotencyHash, $contribution->get('idempotency_hash')->value);
+    self::assertSame('needs_changes', $contribution->get('state')->value);
+    self::assertSame('Inclua uma fonte primária.', $contribution->get('decision_note')->value);
+
+    $firstContributionRevision = $storage->loadRevision($firstRevisionId);
+    self::assertInstanceOf(Contribution::class, $firstContributionRevision);
+    self::assertSame('submitted', $firstContributionRevision->get('state')->value);
+    self::assertSame(1000, (int) $firstContributionRevision->getRevisionCreationTime());
+    self::assertSame('Envio original', $firstContributionRevision->getRevisionLogMessage());
+    self::assertSame([
+      'title' => ['value' => 'Título proposto'],
+    ], $firstContributionRevision->getPayload());
+
+    $revisionMapCount = (int) $this->container->get('database')->select('aculta_wiki_contribution_revision_map', 'map')
+      ->condition('legacy_id', $legacyId)
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+    self::assertSame(2, $revisionMapCount);
+    $sandbox = [];
+    aculta_wiki_update_10003($sandbox);
+    $revisionMapCountAfterRetry = (int) $this->container->get('database')->select('aculta_wiki_contribution_revision_map', 'map')
+      ->condition('legacy_id', $legacyId)
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+    self::assertSame($revisionMapCount, $revisionMapCountAfterRetry);
+    self::assertSame($latestRevisionId, (int) $storage->load($legacyId)->getRevisionId());
+  }
+
+  /**
+   * Wiki migration fails closed when a shared contribution already uses its ID.
+   */
+  public function testWikiContributionMigrationPreservesIdCollision(): void {
+    $legacy = WikiProposal::create([
+      'uid' => 0,
+      'subject' => 'Proposta com colisão',
+      'target' => ['target_id' => 987654],
+      'target_revision_id' => 77,
+      'intent' => 'correction',
+      'proposed_text' => 'Texto legado.',
+      'rationale' => 'Motivo legado.',
+      'state' => 'submitted',
+    ]);
+    $legacy->setRevisionUserId(0);
+    $legacy->save();
+    $legacyId = (int) $legacy->id();
+
+    $existing = Contribution::create([
+      'id' => $legacyId,
+      'uid' => 0,
+      'subject' => 'Contribuição preexistente',
+      'source' => 'events_event',
+      'source_module' => 'aculta_events',
+      'purpose' => 'eventos',
+      'intent' => 'update',
+      'base_revision' => 'existing-revision',
+      'rationale' => 'Não substituir.',
+      'state' => 'submitted',
+    ]);
+    $existing->save();
+
+    $sandbox = [];
+    try {
+      aculta_wiki_update_10003($sandbox);
+      self::fail('The migration should reject a preexisting Contribution ID.');
+    }
+    catch (\RuntimeException $exception) {
+      self::assertStringContainsString('collides with an existing ACULTA Contribution', $exception->getMessage());
+    }
+
+    self::assertSame('Contribuição preexistente', $this->container
+      ->get('entity_type.manager')->getStorage('aculta_contribution')->load($legacyId)->label());
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_wiki_contribution_migration', 'migration')
+      ->condition('legacy_id', $legacyId)->countQuery()->execute()->fetchField());
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_wiki_contribution_revision_map', 'revision_map')
+      ->condition('legacy_id', $legacyId)->countQuery()->execute()->fetchField());
+    self::assertInstanceOf(WikiProposal::class, $this->container
+      ->get('entity_type.manager')->getStorage('aculta_wiki_proposal')->load($legacyId));
+  }
+
+  /**
+   * Wiki migration rejects translated history instead of losing translations.
+   */
+  public function testWikiContributionMigrationRejectsTranslatedRevision(): void {
+    $this->installConfig(['language']);
+    ConfigurableLanguage::create(['id' => 'fr', 'label' => 'French'])->save();
+    $legacy = WikiProposal::create([
+      'uid' => 0,
+      'subject' => 'English proposal',
+      'target' => ['target_id' => 987654],
+      'target_revision_id' => 77,
+      'intent' => 'correction',
+      'proposed_text' => 'Legacy text.',
+      'rationale' => 'Legacy rationale.',
+      'state' => 'submitted',
+      'langcode' => 'en',
+    ]);
+    $legacy->addTranslation('fr', [
+      'subject' => 'Proposition française',
+      'rationale' => 'Motif français.',
+    ]);
+    $legacy->setRevisionUserId(0);
+    $legacy->save();
+    $legacyId = (int) $legacy->id();
+
+    $sandbox = [];
+    try {
+      aculta_wiki_update_10003($sandbox);
+      self::fail('The migration should reject a translated Wiki revision.');
+    }
+    catch (\RuntimeException $exception) {
+      self::assertStringContainsString('translations that are not supported', $exception->getMessage());
+    }
+
+    self::assertNull($this->container
+      ->get('entity_type.manager')->getStorage('aculta_contribution')->load($legacyId));
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_wiki_contribution_migration', 'migration')
+      ->condition('legacy_id', $legacyId)->countQuery()->execute()->fetchField());
+    self::assertSame(0, (int) $this->container->get('database')->select('aculta_wiki_contribution_revision_map', 'revision_map')
+      ->condition('legacy_id', $legacyId)->countQuery()->execute()->fetchField());
+    self::assertCount(2, $this->container
+      ->get('entity_type.manager')->getStorage('aculta_wiki_proposal')->load($legacyId)->getTranslationLanguages());
+  }
+
+  /**
+   * Proposal submission is private, revision-based, and Wiki-purpose bound.
+   */
+  public function testGenericWikiProposalCutoverIsGatedAndReachesConsumers(): void {
+    $this->installEntitySchema('profile');
+    FieldStorageConfig::create([
+      'entity_type' => 'profile',
+      'field_name' => 'field_nickname',
+      'type' => 'string',
+      'cardinality' => 1,
+    ])->save();
+    ProfileType::create(['id' => 'authenticated', 'label' => 'Authenticated profile'])->save();
+    FieldConfig::create([
+      'entity_type' => 'profile',
+      'bundle' => 'authenticated',
+      'field_name' => 'field_nickname',
+      'label' => 'Nickname',
+    ])->save();
+    Role::create([
+      'id' => 'wiki_contribution_author_test',
+      'label' => 'Wiki contribution author test',
+      'permissions' => ['submit wiki proposals', 'view own wiki proposals', 'create aculta_wiki_proposal'],
+    ])->save();
+    Role::create([
+      'id' => 'wiki_contribution_reviewer_test',
+      'label' => 'Wiki contribution reviewer test',
+      'permissions' => ['view any wiki proposals', 'moderate wiki proposals'],
+    ])->save();
+    User::create([
+      'uid' => 2,
+      'name' => 'wiki-contribution-author',
+      'status' => 1,
+      'roles' => ['wiki_contribution_author_test'],
+    ])->save();
+    $author = User::load(2);
+    $reviewer = User::create([
+      'uid' => 4,
+      'name' => 'wiki-contribution-reviewer',
+      'status' => 1,
+      'roles' => ['wiki_contribution_reviewer_test'],
+    ]);
+    $reviewer->save();
+    $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $author->id());
+
+    $wikiDomain = Domain::load('wiki420_aculta_org');
+    $this->container->get(DomainNegotiatorInterface::class)->setActiveDomain($wikiDomain);
+    $target = Node::create([
+      'type' => 'wiki_entry',
+      'title' => 'Verbete do corte genérico',
+      'uid' => $reviewer->id(),
+      'status' => TRUE,
+      'moderation_state' => 'published',
+      'field_domain_source' => ['target_id' => $wikiDomain->id()],
+      'field_wiki_test_grant_uid' => 2,
+      'body' => ['value' => 'Texto público.', 'format' => 'plain_text'],
+    ]);
+    $target->save();
+    $this->container->get(NodeAccessRebuild::class)->rebuild();
+    $this->container->get('node.view_all_nodes_memory_cache')->deleteAll();
+    $this->container->get('current_user')->setAccount($author);
+    $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', function () use ($target): void {
+      self::assertTrue($target->access('view'));
+    });
+
+    $legacy = WikiProposal::create([
+      'uid' => $author->id(),
+      'subject' => 'Proposta legada antes do corte',
+      'target' => ['target_id' => $target->id()],
+      'target_revision_id' => $target->getRevisionId(),
+      'intent' => 'correction',
+      'proposed_text' => 'Atualizar uma afirmação.',
+      'rationale' => 'A fonte confirma a forma revisada.',
+      'state' => 'submitted',
+    ]);
+    $legacy->save();
+    $this->container->get('current_user')->setAccount($author);
+    $adapter = $this->container->get('aculta_contributions.adapter_registry')->get('wiki');
+    self::assertFalse($this->container->get('aculta_wiki.contribution_migration_gate')->isComplete());
+    self::assertFalse($adapter->submitAccess($author, 'update', $target));
+
+    $sandbox = [];
+    $updateResult = aculta_wiki_update_10003($sandbox);
+    self::assertSame('Reconciled 1 of 1 Wiki proposals.', $updateResult);
+    self::assertTrue($this->container->get('aculta_wiki.contribution_migration_gate')->isComplete());
+
+    $formState = new FormState();
+    $form = WikiProposalSubmissionForm::create($this->container);
+    $build = $form->buildForm([], $formState, $target);
+    $formState->setValues([
+      'intent' => 'correction',
+      'proposed_text' => 'Texto sugerido pelo motor genérico.',
+      'proposed_fields_selected' => ['title' => 'title'],
+      'field_values' => ['title' => 'Título atualizado pelo motor'],
+      'rationale' => 'A referência atual confirma esta grafia.',
+      'source_uris' => 'https://example.invalid/wiki-source',
+      'submission_token' => $formState->get('wiki_proposal_submission_token'),
+    ]);
+    $form->validateForm($build, $formState);
+    self::assertFalse($formState->hasAnyErrors());
+    $form->continueToReview($build, $formState);
+    $reviewBuild = $form->buildForm([], $formState, $target);
+    $formState->setRebuild(FALSE);
+    $form->validateForm($reviewBuild, $formState);
+    $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', function () use ($form, $reviewBuild, $formState): void {
+      $form->submitForm($reviewBuild, $formState);
+    });
+    self::assertSame('aculta_wiki.proposal_status', $formState->getRedirect()->getRouteName());
+    $contributionId = (int) $formState->getRedirect()->getRouteParameters()['proposal'];
+    $contribution = $this->container->get('entity_type.manager')->getStorage('aculta_contribution')->load($contributionId);
+    self::assertInstanceOf(Contribution::class, $contribution);
+    self::assertSame('correction', $contribution->getSourceData()['wiki_intent']);
+    self::assertSame(['value' => 'Título atualizado pelo motor'], $contribution->getPayload()['title']);
+    self::assertSame($contribution, $this->container->get('aculta_wiki.proposal_param_converter')->convert(
+      (string) $contributionId,
+      ['type' => 'wiki_proposal'],
+      'proposal',
+      [],
+    ));
+
+    $workspace = $this->container->get('aculta_wiki.contributor_workspace');
+    $workspaceBuild = $workspace->build($author);
+    $proposalCards = $workspaceBuild['proposals']['#slots']['body']['items']['#slots']['items'];
+    self::assertCount(2, $proposalCards);
+
+    $this->container->get('aculta_wiki.editorial_event_queue')->prepareStorage();
+    $eventQueue = $this->container->get('queue')->get(WikiEditorialEventQueue::QUEUE_ID, TRUE);
+    $eventsBefore = $eventQueue->numberOfItems();
+    $this->container->get('current_user')->setAccount($reviewer);
+    $queuePage = $this->container->get('aculta_wiki.editorial_queue')->proposals();
+    $queuedContribution = NULL;
+    foreach ($queuePage->getItems() as $proposal) {
+      if ($proposal instanceof Contribution && $proposal->uuid() === $contribution->uuid()) {
+        $queuedContribution = $proposal;
+        break;
+      }
+    }
+    self::assertInstanceOf(Contribution::class, $queuedContribution);
+    $decision = WikiProposalDecisionForm::create($this->container);
+    $decisionState = new FormState();
+    $decision->buildForm([], $decisionState, $queuedContribution);
+    $decisionState->setValues([
+      'expected_revision_id' => $queuedContribution->getRevisionId(),
+      'decision' => 'needs_changes',
+      'decision_note' => 'Inclua mais evidências antes de reenviar.',
+    ]);
+    $decisionBuild = [];
+    $decision->validateForm($decisionBuild, $decisionState);
+    self::assertFalse($decisionState->hasAnyErrors());
+    $this->container->get('aculta_portal.domain_purpose')->runInPurpose('wiki', function () use ($decision, $decisionBuild, $decisionState): void {
+      $decision->submitForm($decisionBuild, $decisionState);
+    });
+    self::assertSame($eventsBefore + 1, $eventQueue->numberOfItems());
+
+    $this->container->get('current_user')->setAccount($author);
+    $current = $this->container->get('entity_type.manager')->getStorage('aculta_contribution')->load($contributionId);
+    $withdrawal = WikiProposalWithdrawalForm::create($this->container);
+    $withdrawalState = new FormState();
+    $withdrawalBuild = $withdrawal->buildForm([], $withdrawalState, $current);
+    $withdrawalState->setValue('expected_revision_id', $withdrawalBuild['expected_revision_id']['#value']);
+    $withdrawalState->setValue('confirm', 1);
+    $withdrawal->validateForm($withdrawalBuild, $withdrawalState);
+    self::assertFalse($withdrawalState->hasAnyErrors());
+    $withdrawal->submitForm($withdrawalBuild, $withdrawalState);
+    self::assertSame('withdrawn', $this->container->get('entity_type.manager')
+      ->getStorage('aculta_contribution')->load($contributionId)->get('state')->value);
   }
 
   /**
@@ -2636,6 +3008,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $this->container->get('aculta_portal.email_confirmation_policy')->markConfirmed((int) $submitter->id());
     $this->container->get('current_user')->setAccount($submitter);
 
+    $wikiAdapter = $this->container->get('aculta_contributions.adapter_registry')->get('wiki');
+    self::assertTrue($wikiAdapter->submitAccess($submitter, 'update', $target));
+    self::assertFalse($wikiAdapter->submitAccess($unconfirmed, 'update', $target));
+    $domainNegotiator = $this->container->get(DomainNegotiatorInterface::class);
+    $domainNegotiator->setActiveDomain(Domain::load('aculta_org'));
+    self::assertFalse($wikiAdapter->submitAccess($submitter, 'update', $target));
+    $domainNegotiator->setActiveDomain($wikiDomain);
+
     $staleTarget = Node::create([
       'type' => 'wiki_entry',
       'title' => 'Verbete alterado durante a proposta',
@@ -2669,12 +3049,12 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $staleTarget->setTitle('Versão concorrente publicada');
     $staleTarget->save();
     $proposalCountBeforeStaleSubmit = $this->container->get('entity_type.manager')
-      ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute();
+      ->getStorage('aculta_contribution')->getQuery()->accessCheck(FALSE)->count()->execute();
     self::assertSame($expectedTargetRevisionId, (int) $staleFormState->get('wiki_proposal_expected_revision'));
     $staleForm->submitForm($staleReview, $staleFormState);
     self::assertTrue($staleFormState->get('wiki_proposal_conflict'));
     self::assertSame($proposalCountBeforeStaleSubmit, (int) $this->container->get('entity_type.manager')
-      ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute());
+      ->getStorage('aculta_contribution')->getQuery()->accessCheck(FALSE)->count()->execute());
     $conflictBuild = $staleForm->buildForm([], $staleFormState, $staleTarget);
     self::assertArrayHasKey('conflict', $conflictBuild['review']['#slots']['body']);
     $staleFormState->clearErrors();
@@ -2834,7 +3214,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     ])));
     self::assertSame('wiki', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
     $proposalStatusRoute = $this->container->get('router.route_provider')->getRouteByName('aculta_wiki.proposal_status');
-    self::assertSame('/wiki/propostas/{proposal}', $proposalStatusRoute->getPath());
+    self::assertSame('/propostas/{proposal}', $proposalStatusRoute->getPath());
     $accessManager = $this->container->get('access_manager');
     self::assertTrue($accessManager->checkNamedRoute(
       'aculta_wiki.proposal_status',
@@ -2895,13 +3275,8 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     self::assertCount(26, array_unique(array_merge($firstPageIds, $secondPageIds)));
     self::assertSame($firstPageIds, array_map(static fn (WikiProposal $item): int => (int) $item->id(), $queue->proposals('invalid-cursor')->getItems()));
 
-    $wikiTab = $this->container->get('aculta_studio.marley_tab_manager')->createInstance('wiki');
-    self::assertTrue($wikiTab->access($reviewer)->isAllowed());
-    self::assertArrayHasKey('moderacao', $wikiTab->sections($reviewer));
-    self::assertArrayHasKey('propostas', $wikiTab->sections($reviewer)['moderacao']['tabs']);
-    self::assertArrayNotHasKey('verbetes', $wikiTab->sections($reviewer));
-    self::assertArrayNotHasKey('revisoes', $wikiTab->sections($reviewer));
-    self::assertArrayNotHasKey('moderacao', $wikiTab->sections($submitter));
+    // A aba Wiki do Marley foi removida (da7c0a348); a fila editorial da Wiki
+    // vive nas rotas do purpose wiki420 e no listing compartilhado do Studio.
     $studioProposalListing = $this->container->get('aculta_studio.marley_listing')
       ->build(['entity' => 'wiki_proposal_queue'], $reviewer);
     self::assertCount(25, $studioProposalListing['table']['#rows']);
@@ -3303,7 +3678,7 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $statusController = WikiProposalStatusController::create($this->container);
     $historyBuild = $statusController->view(
       $historyProposal,
-      Request::create('/wiki/propostas/' . $historyProposal->id()),
+      Request::create('/propostas/' . $historyProposal->id()),
     );
     self::assertSame('context-header', $historyBuild['header']['#name']);
     self::assertSame('content-section', $historyBuild['history']['#name']);
@@ -3312,14 +3687,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     $historyCursor = $historyBuild['history']['#slots']['body']['pager']['#url']->getOption('query')['revision_cursor'];
     $historyNextPage = $statusController->view(
       $historyProposal,
-      Request::create('/wiki/propostas/' . $historyProposal->id(), 'GET', ['revision_cursor' => $historyCursor]),
+      Request::create('/propostas/' . $historyProposal->id(), 'GET', ['revision_cursor' => $historyCursor]),
     );
     self::assertCount(1, $historyNextPage['history']['#slots']['body']['table']['#rows']);
     self::assertSame([], $historyNextPage['history']['#slots']['body']['pager']);
 
     $statusBuild = $statusController->view(
       $declinedProposal,
-      Request::create('/wiki/propostas/' . $declinedProposal->id()),
+      Request::create('/propostas/' . $declinedProposal->id()),
     );
     self::assertSame(
       'A evidência apresentada não sustenta esta alteração.',
@@ -3334,70 +3709,20 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
       $statusBuild['history']['#slots']['body']['table']['#rows'][0]['feedback'],
     );
     self::assertSame('Enviada', $statusBuild['history']['#slots']['body']['table']['#rows'][1]['state']);
+    // The shared submission cutover is covered after migration in
+    // testGenericWikiProposalCutoverIsGatedAndReachesConsumers().
     $this->container->get('current_user')->setAccount($submitter);
-    $formState = new FormState();
-    $proposalForm = WikiProposalSubmissionForm::create($this->container);
-    $proposalForm->buildForm([], $formState, $target);
-    $formState->setValues([
-      'intent' => 'correction',
-      'proposed_text' => 'Texto sugerido pelo Form API',
-      'proposed_fields_selected' => [
-        'title' => 'title',
-      ],
-      'field_values' => [
-        'title' => 'Novo título sugerido',
-      ],
-      'rationale' => 'Ajuste comprovado pela fonte.',
-      'source_uris' => 'https://example.invalid/referencia',
-      'submission_token' => $formState->get('wiki_proposal_submission_token'),
-    ]);
-    $build = [];
-    $proposalForm->validateForm($build, $formState);
-    self::assertFalse($formState->hasAnyErrors());
-    $proposalForm->continueToReview($build, $formState);
-    self::assertSame('review', $formState->get('wiki_proposal_step'));
-    $reviewBuild = $proposalForm->buildForm([], $formState, $target);
-    self::assertSame('content-section', $reviewBuild['review']['#name']);
-    self::assertStringContainsString('Novo título sugerido', (string) $reviewBuild['review']['#slots']['body']['fields']['#plain_text']);
-    self::assertFalse($reviewBuild['intent']['#access']);
-    $formState->setRebuild(FALSE);
-    $proposalForm->backToEdit($reviewBuild, $formState);
-    self::assertSame('edit', $formState->get('wiki_proposal_step'));
-    self::assertSame('Texto sugerido pelo Form API', $formState->getValue('proposed_text'));
-    $editBuild = $proposalForm->buildForm([], $formState, $target);
-    $formState->setRebuild(FALSE);
-    $proposalForm->validateForm($editBuild, $formState);
-    self::assertFalse($formState->hasAnyErrors());
-    $proposalForm->continueToReview($editBuild, $formState);
-    $reviewBuild = $proposalForm->buildForm([], $formState, $target);
-    $formState->setRebuild(FALSE);
-    $proposalForm->validateForm($reviewBuild, $formState);
-    self::assertFalse($formState->hasAnyErrors());
-    $currentTarget = $this->container->get('entity_type.manager')->getStorage('node')->loadUnchanged($target->id());
-    self::assertSame((int) $currentTarget->getRevisionId(), (int) $formState->get('wiki_proposal_expected_revision'));
-    $proposalForm->submitForm($reviewBuild, $formState);
-    self::assertSame([], $formState->getErrors());
-    self::assertSame('aculta_wiki.proposal_status', $formState->getRedirect()->getRouteName());
-    $redirectProposal = $this->container->get('entity_type.manager')->getStorage('aculta_wiki_proposal')
-      ->load($formState->getRedirect()->getRouteParameters()['proposal']);
-    self::assertInstanceOf(WikiProposal::class, $redirectProposal);
-    self::assertSame('correction', $redirectProposal->get('intent')->value);
-    self::assertSame(['value' => 'Novo título sugerido'], $redirectProposal->getProposedFields()['title']);
-    $firstFormSubmissionId = (int) $redirectProposal->id();
-    $proposalForm->submitForm($build, $formState);
-    self::assertSame($firstFormSubmissionId, (int) $formState->getRedirect()->getRouteParameters()['proposal']);
-
-    // Includes the proposal accepted through the independent row-lock test.
-    self::assertSame(31, (int) $this->container->get('entity_type.manager')
+    self::assertSame(30, (int) $this->container->get('entity_type.manager')
       ->getStorage('aculta_wiki_proposal')->getQuery()->accessCheck(FALSE)->count()->execute());
+    self::assertSame(0, (int) $this->container->get('entity_type.manager')
+      ->getStorage('aculta_contribution')->getQuery()->accessCheck(FALSE)->count()->execute());
 
-    $this->container->get('current_user')->setAccount($submitter);
     $withdrawal = $this->container->get('aculta_wiki.proposal_withdrawal');
     $pendingProposal = $submission->submit($target, 'improve', 'Ajustar a descrição.', 'A frase atual está ambígua.');
     $statusController = WikiProposalStatusController::create($this->container);
     $pendingStatus = $statusController->view(
       $pendingProposal,
-      Request::create('/wiki/propostas/' . $pendingProposal->id()),
+      Request::create('/propostas/' . $pendingProposal->id()),
     );
     self::assertSame('context-header', $pendingStatus['header']['#name']);
     self::assertSame('Retirar proposta', (string) $pendingStatus['header']['#slots']['actions']['#title']);
@@ -3468,21 +3793,14 @@ final class WikiLeadImageLifecycleKernelTest extends KernelTestBase {
     }
 
     $this->container->get('current_user')->setAccount($submitter);
-    $invalidFormState = new FormState();
-    $proposalForm->buildForm([], $invalidFormState, $target);
-    $invalidFormState->setValues([
-      'intent' => 'correction',
-      'proposed_text' => 'Propor uma imagem indisponível.',
-      'proposed_fields_selected' => ['field_wiki_image' => 'field_wiki_image'],
-      'field_values' => ['image' => 999999],
-      'rationale' => 'A imagem não está disponível no acervo.',
-      'source_uris' => '',
-      'submission_token' => $invalidFormState->get('wiki_proposal_submission_token'),
-    ]);
-    $invalidForm = [];
-    $proposalForm->submitForm($invalidForm, $invalidFormState);
-    self::assertArrayHasKey('', $invalidFormState->getErrors());
-    self::assertArrayNotHasKey('proposed_text', $invalidFormState->getErrors());
+    $wikiAdapter = $this->container->get('aculta_contributions.adapter_registry')->get('wiki');
+    try {
+      $wikiAdapter->validatePayload('update', ['field_wiki_image' => 999999], $target);
+      self::fail('A missing Wiki image must be rejected by the shared adapter.');
+    }
+    catch (UnprocessableEntityHttpException) {
+      self::assertTrue(TRUE);
+    }
 
     $this->container->get('current_user')->setAccount($other);
     $this->expectException(AccessDeniedHttpException::class);
@@ -3767,8 +4085,7 @@ PHP;
     self::assertSame('main', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
     self::assertNull($page->getNextCursor());
 
-    $wikiTab = $this->container->get('aculta_studio.marley_tab_manager')->createInstance('wiki');
-    self::assertArrayHasKey('revisoes', $wikiTab->sections($reviewer)['moderacao']['tabs']);
+    // Sem a aba Wiki do Marley (da7c0a348), a revisão usa o listing do Studio.
     $studioReviewListing = $this->container->get('aculta_studio.marley_listing')
       ->build(['entity' => 'wiki_entry_review_queue'], $reviewer);
     self::assertCount(1, $studioReviewListing['table']['#rows']);

@@ -89,6 +89,12 @@ final class EventDate extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Compra ou reserva externa'))
       ->setSetting('link_type', LinkItemInterface::LINK_EXTERNAL);
 
+    // D-60: per-occurrence capacity is used only when the parent Event selects
+    // the `data` capacity scope. No RSVP route or registration is implied.
+    $fields['field_rsvp_capacidade'] = BaseFieldDefinition::create('integer')
+      ->setLabel(new TranslatableMarkup('Capacidade de RSVP desta Data'))
+      ->addPropertyConstraints('value', ['Range' => ['min' => 1]]);
+
     // RRULE normalizada pelo RecurrenceRuleParser. Vazio = evento único.
     $fields['field_regra'] = BaseFieldDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Regra de recorrência'))
@@ -119,7 +125,8 @@ final class EventDate extends ContentEntityBase {
       ->setLabel(new TranslatableMarkup('Abertura de portas'))
       ->setSetting('max_length', 255);
 
-    // Ordem editorial da Data dentro do Evento. Zero mantém a ordem pelo início.
+    // Ordem editorial da Data dentro do Evento. Zero mantém a ordem pelo
+    // início.
     $fields['field_peso'] = BaseFieldDefinition::create('integer')
       ->setLabel(new TranslatableMarkup('Ordem'))
       ->setDescription(new TranslatableMarkup('Ordem editorial desta data dentro do evento. Valores menores aparecem primeiro; em empate, vale o início.'))

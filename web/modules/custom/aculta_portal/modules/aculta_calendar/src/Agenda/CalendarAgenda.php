@@ -28,8 +28,16 @@ final class CalendarAgenda {
   /**
    * Ocorrências da janela, agrupadas por dia no fuso do item.
    *
-   * @return array<string, array<int, array{titulo: string, inicio: \DateTimeImmutable,
-   *   fim: \DateTimeImmutable, local: string, diaInteiro: bool, cancelada: bool}>>
+   * @return array<string, array<int, array{
+   *   id: string,
+   *   titulo: string,
+   *   inicio: \DateTimeImmutable,
+   *   fim: \DateTimeImmutable,
+   *   local: string,
+   *   link: string|null,
+   *   diaInteiro: bool,
+   *   cancelada: bool
+   *   }>>
    *   Occurrences grouped by local calendar date.
    */
   public function dias(CalendarQuery $query): array {
@@ -49,10 +57,12 @@ final class CalendarAgenda {
       }
       foreach ($ocorrencias as $ocorrencia) {
         $ocorrenciaItem = [
+          'id' => $item->id,
           'titulo' => $item->titulo,
           'inicio' => $ocorrencia['inicio'],
           'fim' => $ocorrencia['fim'],
           'local' => $item->local,
+          'link' => $item->link,
           'diaInteiro' => $item->diaInteiro,
           'cancelada' => $ocorrencia['cancelada'] || $item->cancelado,
         ];

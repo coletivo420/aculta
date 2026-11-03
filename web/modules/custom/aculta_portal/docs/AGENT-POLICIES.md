@@ -38,7 +38,7 @@ A documentação deve registrar o motivo arquitetural das regras, não apenas su
 ## Uploads de arquivos enviados por usuários
 
 - A política reutilizável para uploads de usuários pertence ao módulo central
-  `aculta_portal`; consumidores devem usar `aculta_portal.user_upload_policy`
+  `aculta_portal`; consumidores devem usar `aculta_file_uploader.consumer_policy`
   e não duplicar listas de extensões, limites ou validadores.
 - A configuração central mantém uma política global e abas de override por
   consumidor integrado. Cada consumidor pode herdar a regra global ou definir

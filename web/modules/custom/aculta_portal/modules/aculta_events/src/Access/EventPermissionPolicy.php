@@ -12,7 +12,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\user\RoleInterface;
 
 /**
- * Política central de permissões configuráveis para criação e publicação de eventos e locais.
+ * Centraliza papéis configuráveis para criar e publicar Eventos e Locais.
  */
 final class EventPermissionPolicy {
 
@@ -48,7 +48,7 @@ final class EventPermissionPolicy {
   }
 
   /**
-   * Verifica se a conta pode publicar locais diretamente sem passar por rascunho.
+   * Verifica se a conta pode publicar Locais sem passar por rascunho.
    */
   public function canPublishLocation(AccountInterface $account): bool {
     return $account->hasPermission('administer aculta events')

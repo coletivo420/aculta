@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Drupal\aculta_events\Form;
 
 use Drupal\aculta_events\Access\EventPermissionPolicy;
+use Drupal\aculta_events\Adapter\OrganizationContributionAdapter;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Plugin\Field\FieldWidget\EventOrganizationModalWidget;
 use Drupal\aculta_events\Slug\EventSlugGenerator;
+use Drupal\aculta_contributions\Service\ContributionLifecycle;
 use Drupal\aculta_user\Organization\OrganizationAccessService;
 use Drupal\aculta_user\Organization\OrganizationMembershipManager;
 use Drupal\aculta_user\Organization\OwnershipClaimService;
@@ -42,6 +44,10 @@ final class EventOrganizationModalForm extends FormBase {
     private readonly OrganizationMembershipManager $membershipManager,
     #[Autowire(service: 'aculta_user.ownership_claim_service')]
     private readonly ?OwnershipClaimService $claimService = NULL,
+    #[Autowire(service: 'aculta_contributions.lifecycle')]
+    private readonly ?ContributionLifecycle $contributions = NULL,
+    #[Autowire(service: 'aculta_events.organization_contribution_adapter')]
+    private readonly ?OrganizationContributionAdapter $organizationAdapter = NULL,
   ) {}
 
   /**
@@ -54,6 +60,8 @@ final class EventOrganizationModalForm extends FormBase {
       $container->get('aculta_user.organization_access_service'),
       $container->get('aculta_user.organization_membership_manager'),
       $container->has('aculta_user.ownership_claim_service') ? $container->get('aculta_user.ownership_claim_service') : NULL,
+      $container->has('aculta_contributions.lifecycle') ? $container->get('aculta_contributions.lifecycle') : NULL,
+      $container->has('aculta_events.organization_contribution_adapter') ? $container->get('aculta_events.organization_contribution_adapter') : NULL,
     );
   }
 
@@ -375,8 +383,7 @@ final class EventOrganizationModalForm extends FormBase {
     }
     else {
       $claimOptions = [
-        'unclaimed' => $this->t('Cadastrar como organização não reivindicada (coletivo aberto ou parceiro sem titular cadastrado)'),
-        'request_claim' => $this->t('Cadastrar e solicitar titularidade à moderação (análise prévia)'),
+        'unclaimed' => $this->t('Propor criação como organização não reivindicada'),
       ];
     }
 
@@ -386,6 +393,28 @@ final class EventOrganizationModalForm extends FormBase {
       '#options' => $claimOptions,
       '#default_value' => (string) ($form_state->getValue('is_claimed_choice') ?? 'unclaimed'),
     ];
+
+    if (!$isAdmin) {
+      $form['create_review_notice'] = [
+        '#type' => 'item',
+        '#markup' => '<p>' . $this->t('A nova organização só será criada e ficará pública após revisão. Depois da aprovação, você poderá solicitar titularidade pelo fluxo de reivindicação.') . '</p>',
+      ];
+      $form['contribution_rationale'] = [
+        '#type' => 'textarea',
+        '#title' => $this->t('Por que esta organização deve ser cadastrada?'),
+        '#description' => $this->t('Esta justificativa ficará privada para a equipe revisora.'),
+        '#required' => TRUE,
+        '#maxlength' => 5000,
+        '#default_value' => (string) ($form_state->getValue('contribution_rationale') ?? ''),
+      ];
+      if (!$form_state->has('organization_contribution_token')) {
+        $form_state->set('organization_contribution_token', bin2hex(random_bytes(32)));
+      }
+      $form['contribution_submission_token'] = [
+        '#type' => 'value',
+        '#value' => $form_state->get('organization_contribution_token'),
+      ];
+    }
 
     $form['justificativa_reivindicacao'] = [
       '#type' => 'textarea',
@@ -493,10 +522,19 @@ final class EventOrganizationModalForm extends FormBase {
         $form_state->setErrorByName('is_claimed_choice', (string) $this->t('Apenas administradores podem conceder titularidade imediata no cadastro. Solicite a titularidade para análise da moderação.'));
       }
       if ($choice === 'request_claim') {
+        if (!$isAdmin) {
+          $form_state->setErrorByName('is_claimed_choice', (string) $this->t('A titularidade deve ser solicitada pelo fluxo próprio após a aprovação da criação.'));
+        }
         $justificativa = trim((string) $form_state->getValue('justificativa_reivindicacao'));
         if ($justificativa === '') {
           $form_state->setErrorByName('justificativa_reivindicacao', (string) $this->t('Informe a justificativa da solicitação de titularidade para análise da moderação.'));
         }
+      }
+      if (!$isAdmin && $choice !== 'unclaimed') {
+        $form_state->setErrorByName('is_claimed_choice', (string) $this->t('A proposta deve ser de uma organização não reivindicada.'));
+      }
+      if (!$isAdmin && trim((string) $form_state->getValue('contribution_rationale')) === '') {
+        $form_state->setErrorByName('contribution_rationale', (string) $this->t('Informe por que esta organização deve ser cadastrada.'));
       }
 
       $duplicateConfirmed = (bool) $form_state->get('duplicate_confirmed');
@@ -562,9 +600,36 @@ final class EventOrganizationModalForm extends FormBase {
     $choice = (string) $form_state->getValue('is_claimed_choice', 'unclaimed');
     $currentUid = (int) $this->currentUser()->id();
 
-    $slug = EventSlugGenerator::fromTitle($nome);
-
     $isAdmin = $this->currentUser()->hasPermission('administer aculta events');
+    if (!$isAdmin) {
+      if ($this->contributions === NULL || $this->organizationAdapter === NULL) {
+        throw new \LogicException('O serviço de propostas de organizações não está disponível.');
+      }
+      $payload = $this->organizationAdapter->validatePayload('organization_create', [
+        'title' => $nome,
+        'body' => $body,
+        'links' => $links,
+        'localidade' => $cidade,
+        'uf' => $uf,
+        'ocultar_localidade' => $ocultarLoc,
+      ]);
+      $this->contributions->submit(
+        'events_organization',
+        'organization_create',
+        NULL,
+        (string) $this->t('Criação da organização @name', ['@name' => $nome]),
+        (string) $form_state->getValue('contribution_rationale'),
+        $payload,
+        (string) $form_state->getValue('contribution_submission_token'),
+      );
+      $this->messenger()->addStatus($this->t('Sua proposta foi enviada. A organização só será criada após a aprovação e não foi vinculada ao Evento.'));
+      $form_state->set('proposal_submitted', TRUE);
+      $form_state->set('mode', 'search');
+      $form_state->setRebuild(TRUE);
+      return;
+    }
+
+    $slug = EventSlugGenerator::fromTitle($nome);
     $isClaimedImmediate = ($choice === 'claimed' && $isAdmin);
     $isPendingClaim = ($choice === 'request_claim');
 
@@ -631,9 +696,9 @@ final class EventOrganizationModalForm extends FormBase {
       return $form;
     }
     $orgId = (int) $form_state->get('selected_org_id');
-    // Defensive check: ensure we have a valid org ID
+    // Defensive check: ensure we have a valid org ID.
     if ($orgId <= 0) {
-      // If no organization was selected, return the form to show any potential errors
+      // Return the form when no organization was selected.
       return $form;
     }
     return $this->buildUpdateParentResponse(
@@ -649,6 +714,9 @@ final class EventOrganizationModalForm extends FormBase {
    */
   public function ajaxCreateOrganization(array &$form, FormStateInterface $form_state): AjaxResponse|array {
     if ($form_state->hasAnyErrors()) {
+      return $form;
+    }
+    if ($form_state->get('proposal_submitted')) {
       return $form;
     }
     $orgId = (int) $form_state->get('selected_org_id');

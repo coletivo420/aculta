@@ -8,7 +8,6 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_lms\Entity\CourseCertificate;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
 
 /**
  * Checks contextual authority to issue or revoke certificates.
@@ -24,7 +23,7 @@ final class CertificateIssueAccessCheck {
    * Checks the current user's authority in a course.
    */
   public function access(GroupInterface $group): AccessResult {
-    if (!$group instanceof CourseInterface) {
+    if ($group->bundle() !== 'lms_course') {
       return AccessResult::forbidden()->addCacheableDependency($group);
     }
     $account = $this->currentUser;
@@ -42,7 +41,7 @@ final class CertificateIssueAccessCheck {
    * Checks a certificate's course and authority before a revocation form.
    */
   public function revokeAccess(GroupInterface $group, CourseCertificate $certificate): AccessResult {
-    if (!$group instanceof CourseInterface || (int) $group->id() !== (int) $certificate->get('course_id')->value) {
+    if ($group->bundle() !== 'lms_course' || (int) $group->id() !== (int) $certificate->get('course_id')->value) {
       return AccessResult::forbidden()
         ->addCacheableDependency($group)
         ->addCacheableDependency($certificate);

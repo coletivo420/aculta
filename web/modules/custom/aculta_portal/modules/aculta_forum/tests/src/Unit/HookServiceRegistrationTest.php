@@ -9,15 +9,16 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Garante que toda classe de hook por atributo do módulo esteja registrada como serviço.
+ * Garante que classes de hook por atributo estejam registradas como serviços.
  *
- * Sem registro no services.yml, o Core não descobre os métodos #[Hook] e o comportamento some sem erro.
+ * Sem registro em services.yml, o Core não descobre métodos #[Hook] e o
+ * comportamento some sem erro.
  */
 #[Group('aculta_forum')]
 final class HookServiceRegistrationTest extends UnitTestCase {
 
   /**
-   * Toda classe em src/Hook que declara #[Hook] aparece no services.yml do módulo.
+   * Classes em src/Hook com #[Hook] aparecem no services.yml do módulo.
    */
   public function testEveryAttributeHookClassIsRegisteredAsService(): void {
     $module_dir = dirname(__DIR__, 3);

@@ -1,3 +1,13 @@
+## Revalidação 2026-11-02 — Doações e autorização recorrente
+
+- Unit completa: 26 testes / 90 assertions PASS. Donation Kernel: 5 testes / 196 assertions PASS em `aculta_simpletest`, 88 depreciações Core/contrib.
+- Nenhuma cobrança ou mensagem externa foi enviada; sandbox ponta a ponta continua pendente.
+
+## Verificação de regressão 2026-10-31
+
+- Unit + Kernel completos de Doações: **31 testes / 286 assertions PASS** em `aculta_simpletest`; 88 depreciações Core/contrib.
+- Nenhuma chamada financeira ou mensagem externa foi enviada. O sandbox ponta a ponta segue pendente, especialmente a autenticação do comprador.
+
 ## 0.1.0-dev.29 — descobrir a pane de autorização recorrente no Kernel (2026-10-27)
 
 - DonationPortKernelTest agora exige a descoberta de `donation_recurring_authorization`, a pane que delega a autorização recorrente ao recorder do Mercado Pago.

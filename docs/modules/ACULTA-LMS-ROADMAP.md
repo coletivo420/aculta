@@ -4,7 +4,16 @@
 
 Revisado em 2026-10-19. A implementação segue fases independentes, com autorização e critérios próprios. O status é registrado por fase; a homologação de PDF privado não ativa automaticamente o módulo `aculta_lms`.
 
+> **Atualização 2026-11-01:** a extensão `aculta_lms_messenger` foi removida. A elegibilidade educacional vive em `aculta_lms\\Notice\\LearningEligibility`; os produtores publicam `MessengerNoticeEvent` pelo contrato público e o Messenger mantém persistência, leitura, contadores, preferências e digest. Registro em `docs/architecture/MESSENGER-CONSOLIDATION-2026-11.md`.
+
+> **Independência do Drupal LMS contrib — B1/B2/B3-A (2026-11-01):** os contratos de jornada, resumo do estudante, cursos da Conta e conclusão educacional vivem em `aculta_learning_contracts`; `aculta_portal` não declara `lms:lms` nem injeta `lms.training_manager`; e o Studio compõe as experiências do estudante e do Educador. O provider `aculta_lms` continua lendo/escrevendo dados do Drupal LMS, que permanece a fonte de verdade. O Runtime foi validado no commit [`e60abcb62`](https://github.com/coletivo420/aculta/commit/e60abcb624a1bf3e73a46631915663cca39fddcb): smoke responsivo 74/74 em 320–1440 px, smoke final a 390 px, rotas do estudante/Educador respondendo e testes Unit/Kernels focais aprovados. Não houve migração de dados. Restam a instalação limpa sem contrib e a migração gradual de ownership, conteúdo, tentativas e progresso.
+
 ## Princípios e estado inicial
+
+## Experiência do estudante ACULTA Studio Ganjalab
+
+A implementação integrada das telas **Continuar aprendendo**, **Minha jornada** e **Sala de aula** está descrita em [GANJALAB-EXPERIENCE-IMPLEMENTATION-PLAN.md](../portal/GANJALAB-EXPERIENCE-IMPLEMENTATION-PLAN.md). Home do estudante, jornada e sala responderam no Runtime validado em 2026-11-01; smoke responsivo 74/74 em 320–1440 px e smoke final a 390 px passaram no commit `e60abcb62`. O plano segue como referência para evolução funcional, visual, acessibilidade e segurança.
+
 
 ### Limpeza de anexos de cursos — planejamento 2026-10-22
 
@@ -26,7 +35,7 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 | Fase | Escopo e dependências | Critério de aceite | Bloqueio/rollback |
 | --- | --- | --- | --- |
 | F0 — Documentação, inventário e auditoria | Fontes, versões, Composer, acesso, contratos, roadmap e revisão upstream | Documentos normativos atualizados; evidência PASS/FAIL/DEFERRED; nenhum estado Drupal alterado | `git diff --check`; commits documentais separados; rollback pelo revert dos commits |
-| F1 — Fundação `aculta_lms` | Módulo opcional, DI, contratos públicos e testes de instalação; sem mover serviços LMS ativos no Portal | Instalação em site de teste, sem mudança automática de dados/config, sem storage paralelo; gates Drupal 11.3+ | Não ativar no Runtime antes de target/URI/config confirmados; desinstalação preserva dados LMS |
+| F1 — Fundação `aculta_lms` | Módulo opcional, DI, contratos públicos e testes de instalação; sem storage paralelo | Contratos instalados e serviços reais resolvidos no Runtime; Ganjalab estudante/Educador smoke e HTTP validados em 2026-11-01 | Entregue e validada com Drupal LMS ativo; instalação isolada sem contrib continua no roadmap de independência |
 | F2 — PDF.js e formatter global | PDF.js 6.4.299 pinado localmente; viewer ESM implementado em `aculta_pdf_viewer`, substituindo o formatter legado `drupal/pdf`, removido do Composer | Unit, browser smoke isolado e leitura pública/privada no Runtime PASS (PDF oficial de 14 páginas; acesso privado sob Group descrito em PV5). | Sem patch direto em contrib. CSP, proxy, matriz ampliada de browsers e Hostinger ficam no PV7; rollback remove o módulo/asset após retirar o formatter do display |
 | F3 — PDFPreview e integração Media | `aculta_pdf_viewer` independente; formatter no display Media `document`; preview opcional e política de acesso a derivados | Formatter e filtro Core Media Embed testados em Kernel; CKEditor e criação de documento por educador, PDF público e miniatura gerada por `aculta_image` foram verificados no Runtime. A miniatura permanece restrita a PDF público; documentos de turma usam PV5. | PDFs grandes e falhas de conversão seguem para PV7. PDFPreview 1.2 requer ImageMagick 3.7/4.x; versões e policy do host exigem validação específica. Não aplicar policy PDF/PS nem migrar arquivos. Detalhes no roadmap próprio `aculta_pdf_viewer`. |
 | F4 — Consolidar Drupal LMS | Atualizar LMS/Group controladamente, rotas, papéis e provisionamento piloto | Composer audit/dry-run, config/schema update, conteúdo piloto reconciliado, regressões e permissões aprovadas | Não consolidar scripts antes de escolher fonte canônica. Backup e retorno de código/config; nunca deletar conteúdo como rollback |
@@ -38,7 +47,7 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 | F10 — H5P | Integração própria `aculta_lms_h5p`, editor, bibliotecas privadas, reprodução integrada ao curso e imagens via `aculta_image`; materiais PDF complementares usam `aculta_pdf_viewer` + Group | Bibliotecas, permissões, uploads, imagens, CSP/isolamento, salvamento e acesso de estudante homologados; sem nota oficial até API confiável | Despublicar atividades sem apagar conteúdo válido; preservar bibliotecas enquanto houver referências |
 | F11 — Certificados | Entity Print/Dompdf após conclusão LMS aprovada; QR via `aculta_qrcode` | emissão/reemissão transacional por educador/admin, snapshot imutável, verificação pública por código/QR, revogação com motivo, retenção após exclusão de conta, privacidade e template testados | Decisões registradas em `LMS-INTEGRATION-CONTRACTS.md`; reverter código sem apagar auditoria/artefatos válidos |
 | F12 — Dashboards | SDC ACULTA420 sobre LMS services/Views | dados próprios para estudante; aggregate limitado à turma para educador; sem cache cruzado | Reverter presenters/Views e manter rotas LMS |
-| F13 — Notificações educacionais | Adapter `aculta_lms_messenger` → avisos globais `aculta_messenger` / Message Notify | avisos sempre no site; matrícula/certificado com e-mail transacional; demais eventos em resumo diário opt-in; dedupe, access atual, fila, privacidade e UI testados | Desabilitar subscriber/producer; Message permanece fonte e não apagar comunicações existentes |
+| F13 — Notificações educacionais | Contrato público `aculta_messenger` + elegibilidade em `aculta_lms` | avisos sempre no site; matrícula/certificado com e-mail transacional; demais eventos em resumo diário opt-in; dedupe, access atual, fila, privacidade e UI testados | Desabilitar subscriber/producer; Message permanece fonte e não apagar comunicações existentes |
 | F14 — Conexões | `FriendshipManagerInterface` e Messenger existentes | ações e notificações usam amizade atual sem duplicar estado/permissão | Reverter adapter; amizade continua em `aculta_user` |
 | F15 — Integrações de conteúdo | `aculta_lms` e `aculta_lms_h5p` integrados a `aculta_image`, ao leitor PDF existente `aculta_pdf_viewer` (solicitado como `aculta_pdf_reader`) e `aculta_forum`; Gallery, Magazine, Wiki e Content Index | Imagens de curso, atividade, entrega e discussão passam pela política `aculta_image`; PDFs usam Media `course_document`, Group e viewer compartilhado, com vínculo opcional por atividade H5P; tópicos e respostas preservam Forum/Node/Comment como fonte e revalidam membership, access, cache e purpose; discussão ligada à atividade usa referência LMS e Group do curso/turma | `aculta_forum_lms` exibe discussões autorizadas dentro da atividade; H5P referencia documentos privados existentes do mesmo Group e usa o builder do viewer compartilhado. `aculta_lms_resources` registra `Group:lms_course` no Content Index e relações explicitamente permitidas para leituras, galerias e `course_document` quando o plugin PDF Group está disponível. `aculta_portal` é owner do Media compartilhado `remote_video` e fornece sua projeção mínima; por decisão do responsável, relações de vídeo aguardam fechamento dos formatos editoriais e contratos de acesso. Ainda é necessário identificar a fonte pedagógica Media antes de definir qualquer aresta, sem presumir referência direta da turma. Kernel MariaDB percorre rebuild e consulta outgoing pelo Index: estudante por `takeAccess()` e educador por `grade students` contextual recebem recursos autorizados; terceiro e leitura em rascunho são negados. O Kernel LMS/Index cobre leituras, galerias e documento (4 testes / 208 assertions; 53 depreciações Core/contrib) com Group real e plugin fixture para a relação PDF; a opcionalidade/projeção tem Unit 5/31. Providers são compilados dos YAMLs owner; boot completo da cadeia dos módulos ainda não foi provado. Runtime, instalação dos campos, smoke autenticado e revisão visual seguem pendentes. O Index não substitui dashboard/progresso LMS. Não duplicar storage, reader PDF ou entidade de discussão |
 | F16 — Hardening | performance, segurança, privacidade, acessibilidade, cache e tamanho/timeout PDF | zero Critical/High; matriz completa e gates PASS | rollback por componente/flag/config, sem downgrade destrutivo de entidades |
@@ -57,9 +66,9 @@ assertions, com 41 depreciações Core/contrib; PHP lint dos 11 arquivos PHP
 alterados e `git diff --check` passaram. F15 segue em Dev até o gate PHPCS
 completo passar.
 
-**F13 — notificações educacionais: implementação funcional; revisão visual pendente.** O responsável escolheu avisos para mudanças acionáveis persistidas; edições editoriais sem efeito acionável não notificam. Matrícula e certificado passam ao adapter
-`aculta_lms_messenger`, que grava Message, integra lista/contador do `aculta_messenger` e enfileira e-mail
-transacional mínimo via Message Notify. Conclusão, avaliação publicada, respostas pendentes, conteúdo publicado,
+**F13 — notificações educacionais: implementação funcional; revisão visual pendente.** O responsável escolheu avisos para mudanças acionáveis persistidas; edições editoriais sem efeito acionável não notificam. Matrícula e certificado são publicados pelo contrato público do
+`aculta_messenger`, que grava Message, integra lista/contador e enfileira e-mail
+transacional mínimo via `aculta_mailer`. Conclusão, avaliação publicada, respostas pendentes, conteúdo publicado,
 feedback do educador e definição/alteração de prazo aparecem no site e no resumo diário opt-in; educadores recebem
 respostas pendentes somente com `grade students` atual. Avisos não incluem resposta, nota, arquivo ou corpo de
 comentário, e revalidam a fonte ao exibir. O prazo é salvo por atividade na turma em relação Group, usa o fuso da
@@ -67,10 +76,7 @@ conta e não modifica o conteúdo LMS compartilhado entre turmas. O educador reg
 Esses Kernels registraram depreciações upstream (3 em instalação/certificado e 42 nos Kernels recentes de Group/Message).
 No Runtime de teste o adapter está habilitado, as cinco configurações Group de prazo foram importadas isoladamente e manager/worker instanciam. Smoke temporário com turma, membership e prazo confirmou aviso em Message, integração do aviso pessoal, enqueue pelo hook de Cron e persistência do lembrete pelo worker; limpeza removeu os dados e filas temporários. Não foi enviado e-mail. Cron roda a cada 3h, mas o hook e o worker foram invocados diretamente, sem aguardar execução agendada. A tentativa de Firefox headless em 2026-10-21 chegou ao antigo acordo geral `/agreement`; Agreement contrib foi posteriormente desinstalado e o fluxo foi substituído por `aculta_user_agreement`. Nenhum aceite foi submetido nessa tentativa. A gaveta autenticada ainda não foi revisada. Próximo: executar revisão visual/acessível em sessão de teste autenticada após concluir o aceite no fluxo atual; depois gates e revisão pré-RC.
 
-**F1 — Fundação `aculta_lms`: entregue na PR #286, versão `0.1.0-dev.1`.** O submódulo opcional e o contrato
-DI de conclusão aprovada estão implementados. Testes Unit (2/2) e Kernel isolado (1/1) passam; `aculta_lms`
-continua desativado no Runtime e ainda não tem produtor ou consumidor educacional ativo (**RUNTIME STATUS:
-DEFERRED**).
+**F1 — Fundação `aculta_lms`: implementada e integrada no Runtime de desenvolvimento.** Os contratos neutros estão habilitados; o provider LMS publica a conclusão aprovada e os consumidores Game/Messenger usam o evento compartilhado. Em 2026-11-01, `config:status` ficou limpo após habilitar `aculta_learning_contracts`; container, rotas de estudante e Educador e smoke final foram validados no commit `e60abcb62`. A independência do provider e instalação sem o contrib continuam fora deste gate.
 
 O viewer compartilhado e a relação Media↔Group para documentos privados de turma foram desenvolvidos nos
 submódulos `aculta_pdf_viewer` e `aculta_pdf_viewer_group`. O Kernel cobre membro, não membro, remoção da
@@ -667,9 +673,9 @@ Prévia de mudanças: `composer require --dry-run`, `composer validate`, `compos
 
 A árvore visual alvo é **Curso → Módulo → Item pedagógico**; **não** presumir entidade Módulo, tipo específico para vídeo/PDF/H5P, nem capacidade de drag-and-drop no backend. A fase CB-UX 0.3.0 deve provar providers e persistência de ordem antes de qualquer edição/reorganização. Desktop: árvore + editor de item em duas colunas; mobile: estrutura → item → edição, uma tela por vez. Todas as operações revalidam acesso nativo e atualizam cache adequadamente. Preservar especialmente as pendências e riscos já registrados neste roadmap.
 
-## Experiências de criador e estudante
+## Experiências de autoria e aprendizagem
 
-**ACULTA Studio Marley**: criação e edição editorial via `aculta_studio`. **ACULTA Studio Ganjalab**: experiência do estudante, conforme [documentação de aprendizagem](../portal/GANJALAB-LEARNING-UX.md). Ambas usam LMS/Group sem novos bancos, matrículas ou notas. Os artefatos visuais anteriores permanecem referências históricas; ver [identidade pública vigente](../portal/ACULTA-STUDIO-IDENTITY.md).
+**ACULTA Studio Marley** cobre Revista, moderação do Fórum e Galerias, delegando cada operação ao módulo owner. **ACULTA Studio Ganjalab Educador** é o workspace de autoria e gestão educacional em `courses:/ganjalab/educador`; o Course Builder visual pertence a ele e a criação ocorre em `/ganjalab/educador/cursos/novo`. **ACULTA Studio Ganjalab Estudante** mantém a jornada de aprendizagem planejada em [Ganjalab Experience](../portal/GANJALAB-EXPERIENCE-IMPLEMENTATION-PLAN.md) e os contratos visuais de estudante. As duas experiências Ganjalab são separadas na navegação e apresentação, mas consomem Group/LMS canônicos sem bancos, matrículas, progresso ou notas duplicados. Os dashboards Educador/Estudante incluem atalhos recíprocos apenas quando a rota de destino autoriza a conta. A fronteira de produto e a extração seletiva do Opigno estão em [ACULTA-STUDIO-EXPERIENCE-BOUNDARIES.md](../portal/ACULTA-STUDIO-EXPERIENCE-BOUNDARIES.md); a experiência pública/canônica segue [identidade do Studio](../portal/ACULTA-STUDIO-IDENTITY.md).
 
 ## Ajuste de rota estudantil — ACULTA Studio Ganjalab
 
@@ -704,3 +710,59 @@ A árvore visual alvo é **Curso → Módulo → Item pedagógico**; **não** pr
 ## GanjaLab420 — Consolidação e Homologação Visual (UX 0.8)
 
 [Contrato visual transversal e gates](../portal/GANJALAB-VISUAL-QUALITY-GATES.md) consolida interfaces de estudante, tokens ACULTA420, acessibilidade, mobile, H5P, PDF, privacidade A/B e testes no Runtime. É planejamento/documentação, sem alterar estados das fases F0–F17 ou o nome `aculta_lms`.
+
+
+## Independência do Drupal LMS contrib — escopo Opigno da primeira fase
+
+O recorte do Opigno para a independência do ACULTA LMS está em [Plano seletivo Opigno para independência](OPIGNO-ACULTA-INDEPENDENCE-PLAN.md). Nesta fase, aproveitamos requisitos de percurso em etapas, estados/progresso normalizados, próxima ação, navegação autorizada, reuso por referência e prévia. O Opigno não será dependência nem backend; Course Builder visual, ordenação, SCORM/xAPI, scoring novo e import/export ficam fora da primeira fase.
+
+A camada de contratos/DTOs precisa sobreviver sem lms:lms; por isso aculta_portal é apenas localização de transição, pois declara essa dependência. Isole o provider contrib como adaptador e remova dependências de código reversas entre aculta_lms e aculta_studio. Não remova pacote Composer, módulos ou dados até os gates definidos no inventário serem satisfeitos.
+
+Compatibilidade integral de cursos legados não é obrigatória. Cursos obsoletos podem ser excluídos do escopo de migração e o descarte pode reduzir o trabalho; nenhuma exclusão de dados ativos está autorizada por este planejamento. Qualquer remoção real exige inventário de referências e confirmação específica.
+
+
+## Ganjalab — apresentação sob responsabilidade do Studio (2026-11-01)
+
+A apresentação da jornada e da sala foi colocada em aculta_studio por meio de CourseJourneyComposer e CourseJourneyPresentationHooks. aculta_lms não declara mais dependência de aculta_studio; CourseRoomBuilder conserva apenas a composição de elementos de matrícula e roster. Os contratos e DTOs seguem em aculta_learning_contracts.
+
+O dashboard foi separado em duas camadas: `aculta_lms` fornece `StudentLearningSummaryReaderInterface` e DTOs tipados (`StudentLearningSummary`, `StudentLearningCourse`, `StudentLearningCertificate`); `aculta_studio` possui `LearnerDashboardComposer` e monta a interface. As rotas Ganjalab de estudante e educador também estão declaradas no Studio, mantendo IDs `aculta_lms.*` por compatibilidade. **Validação Runtime (2026-11-01, commit `e60abcb62`):** smoke Firefox ESR/X11 74/74 em 320, 390, 768, 1024, 1280 e 1440 px; smoke final do commit publicado a 390 px passou. `/ganjalab` e `/ganjalab/educador/cursos/novo` responderam HTTP 200; serviços e aliases foram resolvidos no container. PHPUnit Unit: Studio 62/597 e LMS 99/472; Kernel `ContractsInstallTest` 1/8; lint e PHPCS sem erros nos arquivos alterados. `config:status` ficou limpo. A integração com a rota nativa de atividade continua temporária; o provider permanece dependente do Drupal LMS.
+
+
+## Estado da independência arquitetural
+
+**B3-A está implementada no código de `dev`:** `aculta_portal` não declara
+`lms:lms`, não injeta `@lms.training_manager` e seu código-fonte não importa
+`Drupal\\lms`. Leitura de cursos e slugs educacionais ficam no adaptador
+`aculta_lms`; o Portal usa contratos neutros com provider opcional.
+
+A conquista de primeira formação também passou a consumir
+`aculta_learning_contracts\\Event\\CourseCompletedEvent`. O provider LMS
+confirma o status concluído e emite o evento; Game e Messenger consomem o
+contrato sem depender diretamente da classe de status. Isso reduz o acoplamento
+entre consumidores e o contrib, mas não torna o provider independente: o
+publisher e as funções de curso, atividade, tentativas, notas e certificados
+ainda dependem do Drupal LMS.
+
+### Microfase — acesso da agenda de turma pelo adapter LMS
+
+`aculta_lms_agenda` não importa mais `Drupal\\lms\\Entity\\Bundle\\CourseInterface` para autorizar eventos de turma. A verificação de curso publicado e `take course` foi centralizada em `ClassActivityDeadlineAccessCheck::courseAccessForClass()`, que retorna `AccessResult` com dependências e tags de cache; a agenda mantém a validação de membership ativa da turma. A mudança remove um import contrib fora do provider. **Estado:** implementada em `dev`; testes automatizados e Runtime desta microfase pendentes. Não altera conteúdo, memberships nem configuração.
+
+### Próximos gates
+
+1. Validar a closure de instalação sem Drupal LMS contrib em ambiente isolado;
+   o Runtime atual foi homologado com o provider LMS ativo.
+2. Mover os leitores restantes de curso e agenda para contratos neutros onde
+   isso reduza dependências de consumidores sem criar armazenamento paralelo.
+3. Desenhar a autoria ACULTA para curso e currículo, mantendo o LMS como provider
+   legado até existir paridade de acesso e progresso.
+4. Selecionar cursos legados elegíveis para futura migração. Cursos obsoletos
+   podem ficar fora do escopo; exclusão de dados requer inventário de vínculos,
+   backup e confirmação específica.
+5. Migrar conteúdo e, em fase separada, tentativas/progresso com ownership e
+   reconciliação explícitos. Só então planejar a remoção de pacote e módulos
+   contrib.
+
+Não alterar configuração ativa, migrar nem excluir dados como parte das etapas
+de desacoplamento por contratos. `updatedb:status` ainda aponta `aculta_messenger_update_10015` e `10016`, pertencentes à frente Events/Messenger; não foram executadas nesta validação. Consulte o
+[Inventário de dependência do Drupal LMS contrib](LMS-CONTRIB-DEPENDENCY-INVENTORY.md)
+para a matriz de consumidores e critérios de remoção.

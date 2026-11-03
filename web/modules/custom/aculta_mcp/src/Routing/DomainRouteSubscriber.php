@@ -17,8 +17,8 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
    * {@inheritdoc}
    */
   public static function getSubscribedEvents(): array {
-    // Apply after the portal's purpose assignment pass so the authoritative
-    // purpose cannot be overwritten by a broad route family rule.
+    // Executa antes da passagem de purpose do portal (-2049). Essa passagem
+    // respeita _aculta_domain_purpose_authoritative e mantém o purpose daqui.
     return [RoutingEvents::ALTER => [['onAlterRoutes', -2048]]];
   }
 

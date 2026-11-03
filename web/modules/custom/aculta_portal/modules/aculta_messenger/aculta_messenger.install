@@ -58,7 +58,7 @@ function aculta_messenger_update_10001(): void {
 }
 
 /**
- * Adds the Forum direct-email outbox columns to the existing idempotency ledger.
+ * Adds the Forum direct-email outbox columns to the idempotency ledger.
  */
 function aculta_messenger_update_10002(): void {
   $table = ForumNoticeEventSchema::TABLE;
@@ -156,11 +156,12 @@ function aculta_messenger_update_10011(): void {
   \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
 }
 
-/** Installs the shared Message-backed ACULTA Game achievement notice bundle. */
+/**
+ * Installs the shared Message-backed ACULTA Game achievement bundle.
+ */
 function aculta_messenger_update_10012(): void {
   \Drupal::service('config.installer')->installDefaultConfig('module', 'aculta_messenger');
 }
-
 
 /**
  * Installs only missing unread-count fields without replacing active config.
@@ -210,5 +211,158 @@ function aculta_messenger_update_10013(): void {
       continue;
     }
     $field_config->create($config)->save();
+  }
+}
+
+/**
+ * Moves the Wiki editorial review settings to the central Messenger config.
+ *
+ * Only copies keys the destination does not already configure. A conflict is
+ * logged and left untouched, so an explicit Messenger choice is never
+ * overwritten by the legacy Wiki value.
+ */
+function aculta_messenger_update_10014(): void {
+  if (!\Drupal::moduleHandler()->moduleExists('aculta_wiki')) {
+    return;
+  }
+  $source = \Drupal::configFactory()->getEditable('aculta_wiki.settings');
+  $destination = \Drupal::configFactory()->getEditable('aculta_messenger.settings');
+  $map = [
+    'review_notifications' => 'wiki_review_notifications',
+    'review_recipients' => 'wiki_review_recipients',
+  ];
+  $conflicts = [];
+  $copied = FALSE;
+  foreach ($map as $legacy_key => $central_key) {
+    $legacy_value = $source->get($legacy_key);
+    if ($legacy_value === NULL) {
+      continue;
+    }
+    if ($destination->get($central_key) !== NULL) {
+      $conflicts[] = $central_key;
+      continue;
+    }
+    $destination->set($central_key, $legacy_value);
+    $copied = TRUE;
+  }
+  if ($copied) {
+    $destination->save();
+  }
+  if ($conflicts !== []) {
+    \Drupal::logger('aculta_messenger')->notice(
+      'Wiki review settings were already configured in Messenger and were not overwritten: @keys.',
+      ['@keys' => implode(', ', $conflicts)],
+    );
+    return;
+  }
+  // Every legacy key was migrated: remove the source so it is not exported
+  // without an owner schema.
+  if ($source->get('review_notifications') !== NULL || $source->get('review_recipients') !== NULL) {
+    $source->delete();
+  }
+}
+
+/**
+ * Installs the private Message bundle used for Events contribution outcomes.
+ */
+function aculta_messenger_update_10015(): void {
+  $module_path = \Drupal::service('extension.list.module')->getPath('aculta_messenger');
+  $source = new FileStorage($module_path . '/config/install');
+  $names = [
+    'message.template.aculta_msg_events_contrib_notice',
+    'field.storage.message.field_aculta_events_outcome',
+    'field.storage.message.field_aculta_events_notice_read',
+    'field.storage.message.field_aculta_events_prop_rev',
+    'field.storage.message.field_aculta_events_prop_uuid',
+    'field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_outcome',
+    'field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_notice_read',
+    'field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_prop_rev',
+    'field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_prop_uuid',
+  ];
+  $config = $source->readMultiple($names);
+  $ordered_names = (new \Drupal\Core\Config\Entity\ConfigDependencyManager())
+    ->setData($config)
+    ->sortAll();
+  $config_manager = \Drupal::service('config.manager');
+  foreach ($ordered_names as $name) {
+    if ($config_manager->loadConfigEntityByName($name) !== NULL) {
+      continue;
+    }
+    $entity_type = $config_manager->getEntityTypeIdByName($name);
+    if ($entity_type === NULL || !isset($config[$name])) {
+      throw new \LogicException(sprintf('Events notice configuration %s is missing or is not an entity.', $name));
+    }
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+    $entity = $storage->createFromStorageRecord($config[$name]);
+    if (!$entity->isInstallable()) {
+      throw new \LogicException(sprintf('Events notice configuration %s has unmet dependencies.', $name));
+    }
+    $entity->save();
+  }
+}
+
+/**
+ * Allows the Events inbox bundle to store author submission notices.
+ */
+function aculta_messenger_update_10016(): void {
+  $storage = \Drupal::entityTypeManager()->getStorage('field_storage_config');
+  $field = $storage->load('message.field_aculta_events_outcome');
+  if ($field === NULL) {
+    return;
+  }
+  $allowedValues = $field->getSetting('allowed_values') ?? [];
+  $isList = array_is_list($allowedValues);
+  foreach ($allowedValues as $definition) {
+    if ($isList && ($definition['value'] ?? NULL) === 'submitted') {
+      return;
+    }
+  }
+  if (!$isList && array_key_exists('submitted', $allowedValues)) {
+    return;
+  }
+  if ($isList) {
+    $allowedValues[] = [
+      'value' => 'submitted',
+      'label' => 'Enviar para revisão',
+    ];
+  }
+  else {
+    $allowedValues['submitted'] = 'Enviar para revisão';
+  }
+  $field->setSetting('allowed_values', $allowedValues);
+  $field->save();
+}
+
+/**
+ * Adds digest and direct-email delivery fields to Events proposal notices.
+ */
+function aculta_messenger_update_10017(): void {
+  $module_path = \Drupal::service('extension.list.module')->getPath('aculta_messenger');
+  $source = new FileStorage($module_path . '/config/install');
+  $names = [
+    'field.storage.message.field_aculta_msg_delivery',
+    'field.storage.message.field_aculta_messenger_attempts',
+    'field.storage.message.field_aculta_events_digest_sent',
+    'field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_digest_sent',
+    'field.field.message.aculta_msg_events_contrib_notice.field_aculta_msg_delivery',
+    'field.field.message.aculta_msg_events_contrib_notice.field_aculta_messenger_attempts',
+  ];
+  $config = $source->readMultiple($names);
+  $config_manager = \Drupal::service('config.manager');
+  $ordered_names = (new \Drupal\Core\Config\Entity\ConfigDependencyManager())->setData($config)->sortAll();
+  foreach ($ordered_names as $name) {
+    if ($config_manager->loadConfigEntityByName($name) !== NULL) {
+      continue;
+    }
+    $entity_type = $config_manager->getEntityTypeIdByName($name);
+    if ($entity_type === NULL || !isset($config[$name])) {
+      throw new \LogicException(sprintf('Events notice delivery configuration %s is missing or is not an entity.', $name));
+    }
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+    $entity = $storage->createFromStorageRecord($config[$name]);
+    if (!$entity->isInstallable()) {
+      throw new \LogicException(sprintf('Events notice delivery configuration %s has unmet dependencies.', $name));
+    }
+    $entity->save();
   }
 }

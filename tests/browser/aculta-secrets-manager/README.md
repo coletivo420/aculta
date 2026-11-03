@@ -5,11 +5,13 @@ ausência de botões na aba do outro ambiente, troca de aba sem alterar o ambien
 ausência de rolagem horizontal em 1280, 390 e 320 px.
 
 - **Ambiente:** servidor de desenvolvimento (`*.aculta.toca.net.br`). Não é o ambiente local.
-- **Execução:** `DISPLAY=:0 python3 tests/browser/aculta-secrets-manager/painel-visual.py`
-- **Variáveis:** `SECRETS_UID` (padrão 205, conta de teste `qa_segredos`), `SUITE_OUT` (capturas, fora do Git).
+- **Execução:** `DISPLAY=:0 SUITE_OUT="$SUITE_OUT/secrets-manager" ACULTA_FF_PROFILE_ROOT="$SUITE_OUT/profiles" python3 tests/browser/aculta-secrets-manager/painel-visual.py`
+- **Variáveis:** `SECRETS_UID` (padrão 205, conta de teste `qa_segredos`), `SUITE_OUT` (capturas, fora do Git), `ACULTA_FF_PROFILE_ROOT` (perfil Firefox fora do Git).
+- **Validação de CSS candidato:** `SECRETS_CANDIDATE_CSS` aponta para o CSS da árvore em revisão; `ACULTA_RUNTIME_PROJECT` aponta para o checkout servido usado apenas para gerar o link de sessão. O script injeta esse CSS na página aberta, sem alterar o servidor, e mede o painel real.
 - **Login:** link de uso único do Drush, gerado no subprocesso e nunca impresso.
-- **Capturas:** em telas estreitas a captura pode trazer a gaveta do menu administrativo (Claro), que não está no DOM da página; por isso o layout é medido pelo DOM (rolagem e largura da tabela), não só pela imagem.
-- **Limites:** não altera dados. Não cobre o conteúdo das credenciais (isso está no teste HTTP documentado em
+- **Capturas:** o script oculta visualmente a barra administrativa Claro e centraliza a tabela apenas na sessão do navegador; o layout é medido pelo DOM (rolagem, largura das colunas e altura das linhas) e também inspecionado nas capturas.
+- **Critério mobile:** em cada viewport a tabela deve iniciar na primeira coluna (`scrollLeft=0`), manter cinco colunas com largura mínima legível e rolar somente dentro do contêiner. A inspeção das capturas é parte do gate, além das métricas DOM.
+- **Limites:** não altera dados no servidor. A injeção de CSS serve para validar a apresentação candidata sobre o HTML real, mas não confirma cache/build no host. Não cobre o conteúdo das credenciais (isso está no teste HTTP documentado em
   `docs/operations/SECRETS-SM9-INTEGRACAO.md`), nem o tema Olivero (pendente).
 
 ## Popups (somente leitura): `popups-visual.py`
@@ -33,6 +35,15 @@ ausência de rolagem horizontal em 1280, 390 e 320 px.
 - Correção do seletor da tabela: o módulo marca o contêiner com `data-portal-ui="secrets-table-scroll"`, e não com a
   classe. O script procurava a classe e acusava falso "não encontrado" (`excesso=None`). O seletor agora usa o atributo,
   como o CSS e o teste Unit `SecretsTabsTest` já fazem.
+- 2026-10-29, candidato em `931c364ee`, CSS candidato injetado no painel real do servidor de desenvolvimento:
+  Firefox ESR 28/28 em viewport CSS 1280/390/320 px. Verificados largura mínima das cinco colunas, altura das linhas,
+  rolagem confinada à tabela, ausência de overflow da página, abas e teclado. Inspeção visual confirmou o conteúdo legível.
+  Evidências em `/home/piradopirata/private/aculta/test-evidence/secrets-manager-20261029-candidate-fix`. A injeção não altera o servidor; o CSS ainda precisa ser validado servido pelo candidato.
+- 2026-10-31, CSS candidato da branch `dev` injetado no painel do Runtime de desenvolvimento:
+  Firefox ESR/X11 passou 31/31 em 1280/390/320 px, incluindo a primeira coluna visível, larguras das cinco colunas,
+  altura das linhas e rolagem interna. Capturas em `/home/piradopirata/private/aculta/test-evidence/secrets-manager-20261031-candidate-fix-3`.
+  A captura 320 px foi inspecionada manualmente e começa pela primeira coluna. Isto valida o CSS candidato sobre o DOM servido,
+  mas não comprova que o servidor já serve o CSS nem valida Olivero; esses gates permanecem pendentes.
 
 
 ## Foco por teclado, alvos e cor do ícone de apagar (Claro): `claro-foco-alvos.py`
@@ -48,3 +59,6 @@ ausência de rolagem horizontal em 1280, 390 e 320 px.
   pertence ao Local 2 (definir o token de erro para a página do Claro).
 - Nota de método: a varredura de Tab recarrega a página em cada largura. Sem recarregar, o foco da largura anterior
   ficava no fim do documento e a varredura seguinte não registrava elementos.
+
+- 2026-10-31, Unit + Kernel Routes: 14/60 PASS (58 deprecações). O Kernel usa
+  `commerce_checkout`, dependência real do resolver da rota; `commerce_shipping` não é necessário.

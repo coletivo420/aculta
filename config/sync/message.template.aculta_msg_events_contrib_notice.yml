@@ -1,0 +1,27 @@
+uuid: 6ffb0064-8b84-4d8d-948c-a184f5b7e9f6
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - filter.format.plain_text
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: nrXEC28cnympEDy6ncNB6REAKz_Eny4aAT-mZsfVrkg
+template: aculta_msg_events_contrib_notice
+label: 'Aviso de proposta de Eventos ACULTA'
+description: 'Aviso mínimo de decisão sobre proposta comunitária, sem conteúdo privado.'
+text:
+  -
+    value: 'Atualização da sua proposta de Eventos'
+    format: plain_text
+  -
+    value: '@summary Acesse sua conta para consultar a decisão.'
+    format: plain_text
+settings:
+  'token options':
+    clear: true
+    'token replace': false
+  purge_override: false
+  purge_methods: {  }

@@ -220,7 +220,7 @@ final class WikiProposalSubmission {
    * @return array<string, mixed>
    *   Normalized values safe to persist in the private proposal entity.
    */
-  private function validateProposedFields(array $proposedFields, NodeInterface $target, DomainInterface $wikiDomain): array {
+  public function validateProposedFields(array $proposedFields, NodeInterface $target, DomainInterface $wikiDomain): array {
     if (array_diff(array_keys($proposedFields), array_keys(WikiProposal::EDITORIAL_FIELDS)) !== []) {
       throw new UnprocessableEntityHttpException('A proposta contém um campo não permitido.');
     }
@@ -290,6 +290,55 @@ final class WikiProposalSubmission {
           $validated[$fieldName] = (int) $media->id();
           break;
       }
+    }
+    return $validated;
+  }
+
+  /**
+   * Validates private context that explains a Wiki proposal.
+   *
+   * @param array<string, mixed> $sourceData
+   *   Source-owned context; arbitrary keys are rejected.
+   *
+   * @return array{wiki_intent: string, proposed_text: string, source_uris: list<string>, legacy_target_id?: int}
+   *   Normalized context safe to persist on the private proposal.
+   */
+  public function validateProposalContext(array $sourceData): array {
+    if (array_diff(array_keys($sourceData), ['wiki_intent', 'proposed_text', 'source_uris', 'legacy_target_id']) !== []
+      || !isset($sourceData['wiki_intent'], $sourceData['proposed_text'], $sourceData['source_uris'])
+      || !is_string($sourceData['wiki_intent']) || !isset(WikiProposal::INTENTS[$sourceData['wiki_intent']])
+      || !is_string($sourceData['proposed_text']) || !is_array($sourceData['source_uris'])
+      || (isset($sourceData['legacy_target_id'])
+        && (!is_int($sourceData['legacy_target_id']) || $sourceData['legacy_target_id'] < 1))) {
+      throw new UnprocessableEntityHttpException('O contexto privado da proposta Wiki é inválido.');
+    }
+
+    $proposedText = trim($sourceData['proposed_text']);
+    if ($proposedText === '' || mb_strlen($proposedText) > 20000 || count($sourceData['source_uris']) > 10) {
+      throw new UnprocessableEntityHttpException('Texto sugerido ou quantidade de fontes inválidos.');
+    }
+    $sourceUris = [];
+    foreach ($sourceData['source_uris'] as $sourceUri) {
+      if (!is_string($sourceUri)) {
+        throw new UnprocessableEntityHttpException('A fonte deve ser uma URL HTTP ou HTTPS válida.');
+      }
+      $sourceUri = trim($sourceUri);
+      $scheme = strtolower((string) parse_url($sourceUri, PHP_URL_SCHEME));
+      if ($sourceUri === '' || mb_strlen($sourceUri) > 2048
+        || !filter_var($sourceUri, FILTER_VALIDATE_URL)
+        || !in_array($scheme, ['http', 'https'], TRUE)) {
+        throw new UnprocessableEntityHttpException('A fonte deve usar uma URL HTTP ou HTTPS válida.');
+      }
+      $sourceUris[] = $sourceUri;
+    }
+
+    $validated = [
+      'wiki_intent' => $sourceData['wiki_intent'],
+      'proposed_text' => $proposedText,
+      'source_uris' => array_values(array_unique($sourceUris)),
+    ];
+    if (isset($sourceData['legacy_target_id'])) {
+      $validated['legacy_target_id'] = $sourceData['legacy_target_id'];
     }
     return $validated;
   }

@@ -1,6 +1,10 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.7.0-dev.26
+version: 0.7.0-dev.27
 state: Dev
 progress_note: >-
-  0.7.0-dev.26 / THEME-MF2: studio.css usa composição vertical como base para navegação lateral e conteúdo; recupera 14rem à esquerda em min-width 48rem. Smoke visual injeta CSS candidata e mede a fronteira 767/768px. Stylelint e sintaxe JS PASS; Firefox/Runtime DEFERRED; MF3 não aprovado.
-next_phase: 'Executar smoke Studio com STUDIO_CSS_OVERRIDE e revisar a rota Marley real em 320/390/767/768/1024/1440px quando Firefox estiver disponível; continuar superfícies MF2 antes de THEME-MF3.'
+  Dev.27: seletores por data-portal-ui/data-aculta-focal para a marcação dos
+  módulos; gates de fundações e modo de cor PASS; revisão visual pendente.
+  0.7.0-dev.26 / THEME-MF2 e OCS-F3: fundação mobile-first global com schema SDC (759), Design Foundations (2432), fronteira tema/módulo (3526), Browser Validators (21), Stylelint e ESLint PASS. OCS-F3 aplica a caixa de mensagem do opcult ao alerta Bootstrap dentro das raízes Fidelity; fixture Firefox ESR 112/112 e verificação servida no HEAD `6cbcbdf52` confirmou a folha e a mensagem real sem overflow. Montserrat excluída por decisão do responsável. Catálogo de shipping-summary completo (103 stories). THEME-MF3 e OCS-F11 seguem pendentes por cobertura de estados/rotas e WCAG integral.
+  THEME-MF3 aprovado em 2026-11-01 no Runtime `928acfa4f`: color modes/reduced motion 576/576, no-JS 210/210, teclado 609/609, zoom 200/400% 30/30, headings 120/120 e Unit/Kernel do tema 47/346 e 10/41; OCS-F11 aprovado na sequência; ADR-040 implementa barra de rolagem horizontal em tabelas. Ressalvas: leitor de tela DEFERRED e RTL não suportado.
+  OCS-A1–A4 implementadas: camada Identity com Oswald/Inter, cantos institucionais e CTA amarelo; fixture 144/144 e gate `validate-aculta420-studio-identity.php` PASS (34 checks/29 tokens). Reconciliação de `core.extension`/`aculta_contributions.settings` publicada em `627e0754d`; Identity **ligada** no Runtime (`aculta420.studio_identity=1`), main/loja 200 e benchmark das 8 áreas 32/32 em 320/1440 e claro/escuro.
+next_phase: 'Manter a Identity servida e fechar os DEFERRED de leitor de tela e comparação upstream autenticada; a Fidelity permanece reversível desligando `aculta420.studio_identity`.'

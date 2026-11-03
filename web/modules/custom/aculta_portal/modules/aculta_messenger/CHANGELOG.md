@@ -1,3 +1,42 @@
+## Homologação de avisos Events no Runtime (2026-11-01)
+
+- Updates 10015 e 10016 concluíram em `aculta_runtime`; não há updates pendentes
+  nem diferenças de configuração. Nenhuma mensagem de aviso foi criada.
+- Bundle e fields foram encurtados para respeitar o limite Drupal de 32
+  caracteres. O update 10015 instala apenas os nove objetos deste aviso; 10016
+  preserva valores em lista e em mapa.
+- O config sync recebeu os 11 objetos ativos do bundle e o valor existente de
+  `private_message_digest_anchor`.
+
+## Aviso de submissão de Evento no inbox (2026-11-01)
+
+- O consumer aceita `submitted` no contrato privado de avisos de Events;
+  título e resumo são genéricos e a abertura revalida a revisão exata, autor e
+  acesso. Não inclui payload, não envia e-mail e não entra no digest.
+- Configuração inclui o valor novo e update idempotente 10016 o adiciona em
+  instalações existentes sem sobrescrever outros valores. Aplicado no Runtime.
+- Validação local combinada: Event lifecycle + Unit de Events/Messenger,
+  34 testes / 875 assertions; Unit update/consumer 5/20; PHP lint, PHPCS,
+  YAML e diff check passaram. Sem escrita Runtime.
+
+## Complemento local — inbox de decisões de Events Contributions (2026-11-01)
+
+- Messenger persiste resultados mínimos de Organização/Local no inbox do site,
+  com autor, revisão, outcome, estado de leitura e chave idempotente; não guarda
+  payload, endereço ou parecer. A lista e a abertura revalidam source e acesso.
+- Sem envio por email/digest. Update 10015 foi executado no Runtime após ser
+  limitado aos defaults deste bundle; 10016 também concluiu.
+- Unit consumer/queue **9 testes / 27 assertions PASS**. Renderização e Kernel
+  próprio de persistência do novo bundle aguardam validação integrada.
+
+## 0.1.1-dev.405 — consumir resultados de proposta Wiki migrada
+
+- Eventos de resultado Wiki aceitam `aculta_contribution` como entidade de
+  origem e resolvem primeiro o store compartilhado, com fallback para propostas
+  legadas.
+- Unitários do subscriber e manager: 5 testes / 55 assertions PASS. Sem envio
+  externo ou escrita Runtime.
+
 ## 0.1.1-dev.404 — avatar padrão no remetente da mensagem (Fase 4)
 
 - O avatar do remetente segue a regra única: foto, depois acervo ilustrativo, depois inicial.
@@ -340,4 +379,45 @@ andamento. SMTP externo e Runtime não foram usados. O smoke visual da central
 não passou da etapa de autenticação: não encontrou o acionador do Messenger;
 o Firefox também registrou falha de escrita do perfil temporário com `/tmp`
 entre 98% e 100% de uso. Não houve interação com avisos.
+
+## Complemento local — inbox de resultados de Contributions Events (2026-11-02)
+
+- Consumer Events registra resultados mínimos de Organização e Local em bundle
+  Message próprio; listagem, leitura e abertura revalidam autor/revisão/estado
+  e Entity Access no purpose `eventos`. Sem payload, endereço ou parecer no
+  Message. A abertura marca como lido e encaminha ao dashboard Culturas.
+- Update idempotente `10015` instala template e campos em Messenger já
+  instalado. Avisos são somente no inbox do site; e-mail/digest ainda não são
+  oferecidos. Nenhuma atualização Runtime executada nesta implementação.
+- Compatibilidade do ID da fila mantida: worker lê envelopes antigos de
+  Organização e os novos envelopes versionados de Organização/Local.
+# 0.1.1-dev.406 — entrega opcional dos avisos de Contributions Events
+
+O aviso de proposta de Eventos continua obrigatório no inbox. A categoria
+`eventos_contribuicoes` permite ao membro escolher somente no site, e-mail
+imediato ou resumo diário; o modo padrão é somente no site. Entregas usam texto
+genérico, confirmação de e-mail, preferência atual e revalidação de acesso.
+O update aditivo `10017` instala os campos de entrega/digest em instalações
+existentes. Foi aplicado no Runtime de desenvolvimento em 2026-11-02 após
+snapshot integral; os seis objetos estruturais resultantes foram sincronizados
+antes do import para preservar o schema. O diff do import continha somente a
+categoria `eventos_contribuicoes`, com `off`, `direct` e `digest`; depois dele,
+`updatedb:status` e `config:status` ficaram limpos.
+
+Validação: Unit Messenger **402 testes / 4.374 assertions PASS**; update 10017
+aplicado e configuração sincronizada no Runtime. SMTP e jornada autenticada não
+foram executados.
+
+## 0.1.1-dev.407 — avisos validam conteúdo educacional ACULTA
+
+- Abertura de avisos de aula/atividade usa as entidades próprias do LMS e a elegibilidade atual da aula publicada e da matrícula Group.
+
+## 0.1.1-dev.408 — revalida eventos de progresso e resposta próprios
+
+- Notificações de conclusão, avaliação e submissão leem `aculta_lms_progress` e `aculta_lms_answer`, com matrícula e permissão Group revalidadas; links vão aos painéis ACULTA enquanto não há tela de resposta.
+
+## 0.1.1-dev.409 — notificações de aprendizagem sem tipo LMS contrib
+
+- `LearningNoticeManager` usa Group e entidades ACULTA para cursos, atividades e respostas; links de curso apontam à rota canônica Group.
+- Kernel de persistência 4/52 PASS, com duas depreciações upstream.
 

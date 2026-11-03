@@ -10,7 +10,7 @@ e OAuth não podem virar destinos de retorno.
 
 O parâmetro Drupal `destination`, quando já fornecido por uma rota protegida,
 tem precedência. O Portal preserva **path e query string** da página de origem:
-uma busca como `/wiki/busca?q=termo` deve retornar com `q=termo` depois do
+uma busca como `/busca-wiki?q=termo` deve retornar com `q=termo` depois do
 login. O menu varia por `url.path` e `url.query_args` para não reutilizar em
 cache um destino de outra busca/filtro. Um acesso novo e direto a `/entrar`
 sem destino válido limpa qualquer destino abandonado da sessão.
@@ -159,7 +159,7 @@ separação evita afetar Wiki, Cursos, Apoio ou outros routes `aculta_portal.*`.
 
 Antes de alterar login/OAuth/Conta, validar pelo menos:
 
-- `/wiki/busca?q=termo` -> login -> retorno mantém `q=termo`;
+- `/busca-wiki?q=termo` -> login -> retorno mantém `q=termo`;
 - login vindo de MAIN/MAGAZINE/WIKI/COURSES retorna ao mesmo purpose;
 - acesso direto a `/entrar` não reutiliza destination antigo;
 - `user.page` continua registrado para Core Navigation, mas nunca renderiza o

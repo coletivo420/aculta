@@ -77,6 +77,16 @@ comentários ou contadores no Game. O evento atual é o hook de entidade Drupal;
 não há fila assíncrona nem módulo adapter adicional. A versão dev.11 substitui
 explicitamente o caminho transitório documentado na dev.10.
 
+### Conclusão educacional desacoplada do LMS
+
+O Game não importa `CourseStatusInterface` nem escuta hooks
+`lms_course_status_*`. O provider `aculta_lms` publica
+`aculta_learning_contracts\Event\CourseCompletedEvent` após confirmar uma
+conclusão válida; `CourseCompletionBadgeSubscriber` consome o contrato e
+concede `course_passed` pela API de conquistas existente. A validação de
+conclusão ainda depende do Drupal LMS dentro do provider. Runtime e integração
+end-to-end precisam ser validados após habilitar/reconstruir o container.
+
 ## Lacunas observadas no código atual
 
 Leitura de `868626d`, não auditoria funcional de Runtime:
@@ -172,7 +182,7 @@ por padrão não significa enviar e-mail ou publicar no feed automaticamente.
 | --- | --- | --- |
 | Primeira contribuição na comunidade | Comment | Primeira resposta atual publicada ou aprovada |
 | Contribuição ao conhecimento | Node/revisão da Wiki | Revisão autoral aceita, conforme o workflow real |
-| Primeira formação concluída | `lms_course_status` | Estado `passed`, sem confundir com matrícula ou compra |
+| Primeira formação concluída | Evento neutro `CourseCompletedEvent` (provider LMS atual) | Estado `passed`, sem confundir com matrícula ou compra |
 | Curadoria de fontes | Conteúdo editorial/Wiki | Contribuição validada pela equipe, se houver registro proprietário do fato |
 | Colaboração cultural | Registro administrativo existente | Concessão manual com motivo, sem inventar presença em atividade |
 | Caminho de participação | Fontes das etapas acima | Progresso individual, limiares definidos pelo responsável |

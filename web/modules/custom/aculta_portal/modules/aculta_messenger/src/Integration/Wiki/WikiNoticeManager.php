@@ -71,6 +71,9 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
   public function record(MessengerNoticeEvent $event): ?MessageInterface {
     if ($event->sourceModule() !== 'aculta_wiki'
       || !in_array($event->eventType(), ['wiki.review_requested', 'wiki.proposal_outcome'], TRUE)
+      || ($event->eventType() === 'wiki.review_requested' && $event->sourceEntityType() !== 'node')
+      || ($event->eventType() === 'wiki.proposal_outcome'
+        && !in_array($event->sourceEntityType(), ['aculta_wiki_proposal', 'aculta_contribution'], TRUE))
       || ($event->metadata()['mail_policy'] ?? NULL) !== 'user_preference'
       || !in_array($event->metadata()['notice_type'] ?? NULL, ['review_requested', 'proposal_outcome'], TRUE)) {
       return NULL;
@@ -401,41 +404,52 @@ final class WikiNoticeManager implements WikiNoticeManagerInterface, AvisoDigest
     if ($targets === []) {
       return [];
     }
-    $storage = $this->entityTypeManager->getStorage('aculta_wiki_proposal');
-    if (!$storage instanceof RevisionableStorageInterface) {
-      return [];
-    }
-    $query = $storage->getQuery()->accessCheck(FALSE)
-      ->condition('uuid', array_values(array_unique(array_column($targets, 'uuid'))), 'IN');
-    $currentProposals = $storage->loadMultiple($query->execute());
-    $currentUuids = [];
-    foreach ($currentProposals as $proposal) {
-      $currentUuids[$proposal->uuid()] = TRUE;
-    }
-    $revisionIds = [];
-    foreach ($targets as $target) {
-      if (isset($currentUuids[$target['uuid']])) {
-        $revisionIds[$target['revision_id']] = $target['revision_id'];
-      }
-    }
-    $revisions = $revisionIds === [] ? [] : $storage->loadMultipleRevisions(array_values($revisionIds));
     $resolved = [];
-    foreach ($targets as $key => $target) {
-      $proposal = $revisions[$target['revision_id']] ?? NULL;
-      if (!$account->isAuthenticated() || !$proposal || $proposal->uuid() !== $target['uuid']
-        || (int) $proposal->getRevisionId() !== $target['revision_id'] || !$proposal->isDefaultRevision()
-        || (int) $proposal->getOwnerId() !== (int) $account->id()
-        || !$proposal->access('view', $account, TRUE)->isAllowed()) {
+    foreach (['aculta_contribution', 'aculta_wiki_proposal'] as $entityTypeId) {
+      $storage = $this->entityTypeManager->getStorage($entityTypeId);
+      if (!$storage instanceof RevisionableStorageInterface) {
         continue;
       }
-      $url = $this->domainPurposes->canonicalRouteUrl('wiki', 'aculta_wiki.proposal_status', ['proposal' => $proposal->id()]);
-      if ($url !== NULL) {
-        $resolved[$key] = [
-          'title' => $this->t('Atualização de proposta editorial'),
-          'summary' => $this->t('Há uma atualização privada na sua proposta para a Wiki.'),
-          'email_summary' => $this->t('Sua proposta para a Wiki recebeu uma atualização.'),
-          'url' => $url,
-        ];
+      $query = $storage->getQuery()->accessCheck(FALSE)
+        ->condition('uuid', array_values(array_unique(array_column($targets, 'uuid'))), 'IN');
+      $current = $storage->loadMultiple($query->execute());
+      $currentUuids = [];
+      foreach ($current as $proposal) {
+        if ($entityTypeId === 'aculta_contribution'
+          && ($proposal->get('source')->value !== 'wiki'
+            || $proposal->get('source_module')->value !== 'aculta_wiki'
+            || $proposal->get('purpose')->value !== 'wiki')) {
+          continue;
+        }
+        $currentUuids[$proposal->uuid()] = TRUE;
+      }
+      $revisionIds = [];
+      foreach ($targets as $key => $target) {
+        if (!isset($resolved[$key]) && isset($currentUuids[$target['uuid']])) {
+          $revisionIds[$target['revision_id']] = $target['revision_id'];
+        }
+      }
+      $revisions = $revisionIds === [] ? [] : $storage->loadMultipleRevisions(array_values($revisionIds));
+      foreach ($targets as $key => $target) {
+        if (isset($resolved[$key])) {
+          continue;
+        }
+        $proposal = $revisions[$target['revision_id']] ?? NULL;
+        if (!$account->isAuthenticated() || !$proposal || $proposal->uuid() !== $target['uuid']
+          || (int) $proposal->getRevisionId() !== $target['revision_id'] || !$proposal->isDefaultRevision()
+          || (int) $proposal->getOwnerId() !== (int) $account->id()
+          || !$proposal->access('view', $account, TRUE)->isAllowed()) {
+          continue;
+        }
+        $url = $this->domainPurposes->canonicalRouteUrl('wiki', 'aculta_wiki.proposal_status', ['proposal' => $proposal->id()]);
+        if ($url !== NULL) {
+          $resolved[$key] = [
+            'title' => $this->t('Atualização de proposta editorial'),
+            'summary' => $this->t('Há uma atualização privada na sua proposta para a Wiki.'),
+            'email_summary' => $this->t('Sua proposta para a Wiki recebeu uma atualização.'),
+            'url' => $url,
+          ];
+        }
       }
     }
     return $resolved;

@@ -292,8 +292,6 @@
         "drupal/imageapi_optimize_binaries": "^1.2.0-beta1",
         "drupal/imagemagick": "^4.0",
         "drupal/key": "^1.22",
-        "drupal/lms": "^1.2",
-        "drupal/lms_file_upload": "^1.0",
         "drupal/login_emailusername": "^3.0",
         "drupal/mcp_server": "^2.0@beta",
         "drupal/mcp_server_oauth": "^1.0@alpha",

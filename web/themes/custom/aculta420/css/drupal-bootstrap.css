@@ -188,6 +188,50 @@
 .alert-secondary, .alert-light, .alert-dark { --bs-alert-bg: var(--aculta-surface-muted); --bs-alert-border-color: var(--aculta-border-default); }
 .alert-warning { --bs-alert-color: var(--aculta-status-error-text); --bs-alert-bg: var(--aculta-status-error-surface); --bs-alert-border-color: var(--aculta-status-error-border); border-inline-start: 3px solid var(--aculta-status-error-border); }
 .alert-danger { --bs-alert-bg: var(--bs-danger-bg-subtle); --bs-alert-border-color: var(--aculta-border-default); border-inline-start: 3px solid var(--aculta-text-accent); }
+/* O template de alerta do tema base não declara width/height no SVG; a regra
+   contrib limita apenas a largura, e o ícone mantém 150px de altura intrínseca,
+   abrindo um vazio alto no mobile. Confinar os dois eixos. */
+.alert svg { width: auto; height: auto; max-width: 2rem; max-height: 2rem; }
+
+/* ADR-040 (2026-11-01): tabela que excede o contêiner rola na horizontal com
+   barra visível, confinada ao wrapper. A página não ganha rolagem horizontal. */
+:is(.table-responsive, .webform-multiple-table-responsive, .studio__listing-wrap,
+  [data-aculta-studio="listing-wrap"], [data-portal-ui="studio-listing-wrap"]) {
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: auto;
+  scrollbar-color: var(--aculta-border-strong) var(--aculta-surface-muted);
+}
+
+:is(.table-responsive, .webform-multiple-table-responsive, .studio__listing-wrap,
+  [data-aculta-studio="listing-wrap"], [data-portal-ui="studio-listing-wrap"]):focus-visible {
+  outline: 3px solid var(--aculta-focus-ring);
+  outline-offset: 2px;
+}
+
+:is(.table-responsive, .webform-multiple-table-responsive, .studio__listing-wrap,
+  [data-aculta-studio="listing-wrap"], [data-portal-ui="studio-listing-wrap"])::-webkit-scrollbar {
+  height: 0.75rem;
+}
+
+:is(.table-responsive, .webform-multiple-table-responsive, .studio__listing-wrap,
+  [data-aculta-studio="listing-wrap"], [data-portal-ui="studio-listing-wrap"])::-webkit-scrollbar-track {
+  background: var(--aculta-surface-muted);
+  border-radius: 999px;
+}
+
+:is(.table-responsive, .webform-multiple-table-responsive, .studio__listing-wrap,
+  [data-aculta-studio="listing-wrap"], [data-portal-ui="studio-listing-wrap"])::-webkit-scrollbar-thumb {
+  background: var(--aculta-border-strong);
+  border-radius: 999px;
+}
+
+:is(.table-responsive, .webform-multiple-table-responsive, .studio__listing-wrap,
+  [data-aculta-studio="listing-wrap"], [data-portal-ui="studio-listing-wrap"])::-webkit-scrollbar-thumb:hover {
+  background: var(--aculta-text-secondary);
+}
 
 .table {
   --bs-table-color: var(--aculta-text-primary);

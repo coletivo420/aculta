@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Form;
 
-use Drupal\aculta_portal\Upload\UserUploadPolicy;
+use Drupal\aculta_file_uploader\ConsumerUploadPolicy;
+use Drupal\aculta_file_uploader\RecentUploads;
 use Drupal\aculta_portal\Upload\UserUploadDialogBuilder;
 use Drupal\aculta_forum\Attachment\ForumAttachmentPublication;
 use Drupal\Core\Ajax\AjaxResponse;
@@ -28,10 +29,11 @@ final class ForumGalleryUploadDialogForm extends FormBase {
   private const UPLOAD_DIRECTORY = 'private://forum/anexos';
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly UserUploadPolicy $uploadPolicy,
-    private readonly UserUploadDialogBuilder $dialogBuilder,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly ConsumerUploadPolicy $uploadPolicy,
+    protected readonly UserUploadDialogBuilder $dialogBuilder,
+    protected readonly RecentUploads $recentUploads,
   ) {}
 
   /**
@@ -40,8 +42,9 @@ final class ForumGalleryUploadDialogForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('current_user'),
-      $container->get('aculta_portal.user_upload_policy'),
+      $container->get('aculta_file_uploader.consumer_policy'),
       $container->get('aculta_portal.user_upload_dialog_builder'),
+      $container->get('aculta_file_uploader.recent_uploads'),
     );
   }
 
@@ -66,6 +69,19 @@ final class ForumGalleryUploadDialogForm extends FormBase {
       '#maxlength' => 255,
     ];
     $this->dialogBuilder->addFileControls($form, 'forum', self::UPLOAD_DIRECTORY, 'images', NULL, TRUE);
+    // Envios recentes de imagem do Studio: o próprio usuário vê os seus; administrador vê todos.
+    $studio_images = array_filter(
+      $this->recentUploads->forUser((int) $this->currentUser->id(), 'forum', 20, $this->currentUser->hasPermission('administer site configuration')),
+      fn (string $name): bool => in_array(strtolower(pathinfo($name, PATHINFO_EXTENSION)), $this->uploadPolicy->imageExtensions('forum'), TRUE),
+    );
+    if ($studio_images !== [] && isset($form['images'])) {
+      $form['studio_images'] = [
+        '#type' => 'checkboxes',
+        '#title' => $this->t('Ou escolha imagens recentes do Studio'),
+        '#options' => $studio_images,
+        '#description' => $this->t('Somam-se às imagens enviadas acima. Uma descrição por imagem, na ordem: novos envios primeiro, depois os escolhidos.'),
+      ];
+    }
     if (!isset($form['images'])) {
       $form['policy_notice'] = [
         '#type' => 'item',
@@ -92,7 +108,7 @@ final class ForumGalleryUploadDialogForm extends FormBase {
   /**
    * {@inheritdoc} */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
-    $fids = array_values(array_filter(array_map('intval', (array) $form_state->getValue('images'))));
+    $fids = $this->selectedFids($form_state);
     $title = trim((string) $form_state->getValue('title'));
     if ($title === '' || mb_strlen($title) > 255) {
       $form_state->setErrorByName('title', $this->t('Informe um título de até 255 caracteres.'));
@@ -115,11 +131,33 @@ final class ForumGalleryUploadDialogForm extends FormBase {
     }
     $form_state->setValue('title', $title);
     foreach ($files as $file) {
-      if (!$file instanceof FileInterface || !$this->uploadPolicy->isValidImage($file, 'forum')) {
+      if (!$file instanceof FileInterface || !$this->uploadPolicy->isValidImage($file, 'forum') || !$this->studioPickOk($form_state, $file)) {
         $form_state->setErrorByName('images', $this->t('Uma das imagens não atende às extensões ou ao tamanho permitidos.'));
         return;
       }
     }
+  }
+
+  /**
+   * Imagens escolhidas: uploads novos e envios recentes do Studio, sem repetição.
+   *
+   * @return int[]
+   */
+  private function selectedFids(FormStateInterface $form_state): array {
+    $uploaded = array_values(array_filter(array_map('intval', (array) $form_state->getValue('images'))));
+    $studio = array_values(array_filter(array_map('intval', array_keys(array_filter((array) $form_state->getValue('studio_images'))))));
+    return array_values(array_unique(array_merge($uploaded, $studio)));
+  }
+
+  /**
+   * Envio escolhido do Studio só vale para o próprio dono, ou para administrador.
+   */
+  private function studioPickOk(FormStateInterface $form_state, FileInterface $file): bool {
+    $studio = array_map('intval', array_keys(array_filter((array) $form_state->getValue('studio_images'))));
+    if (!in_array((int) $file->id(), $studio, TRUE)) {
+      return TRUE;
+    }
+    return $this->recentUploads->isOwnedBy($file, (int) $this->currentUser->id(), 'forum', $this->currentUser->hasPermission('administer site configuration'));
   }
 
   /**
@@ -135,7 +173,7 @@ final class ForumGalleryUploadDialogForm extends FormBase {
       return $response;
     }
 
-    $fids = array_values(array_filter(array_map('intval', (array) $form_state->getValue('images'))));
+    $fids = $this->selectedFids($form_state);
     $files = $this->entityTypeManager->getStorage('file')->loadMultiple($fids);
     $alt_lines = preg_split('/\\R/u', trim((string) $form_state->getValue('image_alts'))) ?: [];
     $title = trim((string) $form_state->getValue('title'));
@@ -156,7 +194,7 @@ final class ForumGalleryUploadDialogForm extends FormBase {
       return $response;
     }
     foreach ($files as $file) {
-      if (!$file instanceof FileInterface || !$this->uploadPolicy->isValidImage($file, 'forum')) {
+      if (!$file instanceof FileInterface || !$this->uploadPolicy->isValidImage($file, 'forum') || !$this->studioPickOk($form_state, $file)) {
         $form_state->setErrorByName('images', $this->t('Uma das imagens não atende às extensões ou ao tamanho permitidos.'));
         $response->addCommand(new HtmlCommand('#aculta-forum-gallery-dialog', $form));
         return $response;

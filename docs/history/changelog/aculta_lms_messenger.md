@@ -1,0 +1,196 @@
+## 0.1.0-dev.20 — atualizar fixture do consumer no Kernel — 2026-10-24
+
+- O Kernel do consumer agora injeta a preferência de entrega exigida pelo
+  subscriber LMS, alinhando o fixture ao contrato de canais dev.19.
+- MariaDB Simpletest: `LearningNoticePersistenceKernelTest` passa em 2 testes /
+  18 assertions; emite 2 depreciações de discovery de entidades Message do
+  Core/contrib. Runtime e envio real não executados.
+
+## 0.1.0-dev.19 — oferecer canais de e-mail escolhidos pela pessoa — 2026-10-24
+
+- Avisos LMS permanecem obrigatórios no site. A preferência da pessoa escolhe
+  entre sem e-mail, resumo diário e envio direto; resumo exige também o opt-in
+  geral do Messenger. Envio direto revalida a preferência no worker e usa
+  `AcultaMailerInterface`; políticas administrativas do Mailer podem suspender
+  cada tipo. Alterar para digest/desligado cancela uma entrega direta pendente,
+  sem remover o aviso do site.
+- Unit LMS: 27 testes / 165 assertions PASS; cobre escolha de canal,
+  revalidação da preferência no worker e cancelamento de item pendente.
+- PHPCS Drupal/DrupalPractice PASS. Tentativa Kernel: 2 testes não executados,
+  pois `SIMPLETEST_DB` não está definido. Nenhum envio real ou Runtime executado.
+
+## 0.1.0-dev.18 — centralizar a entrega direta pelo ACULTA Mailer — 2026-10-24
+
+- Substituiu `message_notify.sender` por `AcultaMailerInterface`, com resumo e
+  URL como variáveis escalares. O dev.19 acrescenta escolha de canal, sem envio
+  real ou homologação Runtime.
+
+## 0.1.0-dev.17 — centralizar todos os produtores de avisos LMS — 2026-10-24
+
+- Submissão, liberação de curso/aula/atividade, feedback e prazos agora
+  publicam `MessengerNoticeEvent` depois de o adapter LMS resolver os
+  destinatários elegíveis. O consumer encaminha todos os tipos suportados ao
+  `LearningNoticeManager`; a persistência Message, deduplicação, fila e digest
+  permanecem no fluxo central existente. Não há gravação direta paralela para
+  esses produtores nem novo storage.
+- Testes do consumer cobrem os sete tipos migrados; Kernel percorre publicação
+  do evento, persistência em Message e replay deduplicado. Unit LMS: 22 testes /
+  119 assertions PASS. Kernel SQLite: 2 testes / 18 assertions PASS, com 2
+  depreciações de annotations upstream em Message. PHPCS Drupal/DrupalPractice
+  PASS. Runtime não revalidado.
+
+## 0.1.0-dev.16 — consumir eventos pelo contrato compartilhado — 2026-10-24
+
+- Matrícula, certificado, conclusão e avaliação publicam envelope mínimo
+  MessengerNoticeEvent; o consumer LMS verifica módulo/tipo/origem declarados
+  e entrega ao LearningNoticeManager, que mantém Message, idempotência, fila e
+  digest existentes. Submissão, feedback, liberação e prazo migraram no dev.17.
+- Sem nova entidade ou storage. Unit LMS/Messenger: 21 testes / 83 assertions PASS; PHPCS Drupal/DrupalPractice PASS. YAML do serviço parseado. Kernel MariaDB não executado por falta de SIMPLETEST_DB; Runtime não revalidado.
+
+# Changelog — aculta_lms_messenger
+
+## 0.1.0-dev.15 — tolerar conclusão com curso removido — 2026-10-21
+
+- Aviso e digest de conclusão resolvem o curso pela referência do campo de
+  `CourseStatus`; se a limpeza assíncrona já removeu o curso, descartam o aviso
+  sem chamar o getter tipado que lança exceção. Teste do provider real cobre a
+  referência órfã. Unit LMS/Messenger: 81 testes / 429 assertions PASS; Kernel
+  MariaDB: 23 / 712 PASS. PHPCS Drupal/DrupalPractice PASS.
+
+## 0.1.0-dev.14 — testar revalidação do provider de resumo — 2026-10-21
+
+- Teste Unit percorre o `LearningNoticeManager` real: quando o certificado
+  referenciado já foi removido, a linha não entra no digest e a pendência é
+  descartada. Adapter: 17 testes / 76 assertions PASS; Kernel Message:
+  1 teste / 12 assertions PASS. A integração do resumo compartilhado continua
+  coberta separadamente pelo serviço do Messenger com provider de teste.
+
+## 0.1.0-dev.13 — ignorar respostas com contexto LMS removido — 2026-10-21
+
+- Avisos e produtores de submissão, avaliação e feedback agora resolvem o curso
+  pelas referências existentes, sem getters tipados quando o LMS remove
+  LessonStatus/CourseStatus de forma assíncrona. Referência ausente suprime o
+  aviso sem 500. Unit `LearningNoticeStaleAnswerTest`: 1 teste / 6 assertions
+  PASS; suíte Unit completa: 16 testes / 66 assertions PASS. Kernel Message:
+  1 teste / 12 assertions PASS, com 2 depreciações upstream de Message/Core.
+
+## Registro de validação Runtime — 2026-10-21
+
+- Smoke temporário no Runtime de teste confirmou persistência de aviso e
+  lembrete em Message, integração com aviso pessoal, enqueue pelo hook de Cron
+  e processamento pelo worker; dados temporários, memberships, papel concedido
+  pelo teste e filas foram restaurados/limpos. Nenhum e-mail foi enviado.
+- Hook e worker foram invocados diretamente; execução por Cron agendado e
+  revisão visual/autenticada continuam pendentes.
+- Tentativa Firefox headless isolada alcançou a tela `/agreement`, cuja
+  frequência ativa requer aceite na sessão. Nenhum aceite foi submetido; a
+  gaveta não foi validada e as fixtures, mensagens temporárias e perfil do
+  navegador foram limpos.
+
+## 0.1.0-dev.12 — usar DateTimeItemInterface do módulo datetime — 2026-10-21
+
+- Corrige o namespace do formatador de prazo usado ao exibir aviso e lembrete;
+  no Drupal instalado, `DateTimeItemInterface` pertence ao módulo `datetime`.
+- Encontrado ao resolver o primeiro aviso real no smoke do Runtime.
+
+## 0.1.0-dev.11 — validar take-course no curso pai — 2026-10-21
+
+- Valida membership ativa na turma e permissão `take course` herdada no curso
+  pai para avisos de conteúdo, prazos, matrículas e resolução. A verificação na
+  própria turma filtrava estudantes válidos, pois `lms_classes` calcula essa
+  permissão no Group de curso.
+
+## 0.1.0-dev.10 — injetar QueueFactory do Core — 2026-10-21
+
+- Tipa os produtores de fila com a classe concreta `QueueFactory`, que é o
+  serviço `queue` no Core instalado; a interface homônima não é implementada
+  por essa fábrica. Corrige falha de construção descoberta no Runtime.
+- No Runtime de teste foram habilitados `entity_print` (dependência já declarada
+  pelo LMS) e o adapter; importadas somente as cinco configurações Group de
+  prazo. Cache rebuild e construção do manager/worker passam; ainda não há turma
+  ou deadline para smoke de evento/Cron. A ativação de `entity_print` não obteve
+  a tradução pt-br por falha no destino local `translations://`; a ativação
+  concluiu apesar do aviso.
+
+## 0.1.0-dev.9 — registrar alias DI do manager — 2026-10-21
+
+- Registra a interface `LearningNoticeManagerInterface` como alias do serviço
+  concreto, permitindo autowiring do hook OOP e compilação do container.
+- Encontrado ao habilitar no Runtime; a primeira tentativa abortou a compilação
+  após marcar o módulo ativo, sem instalar configuração nem criar avisos.
+
+## 0.1.0-dev.8 — lembrete de prazo em fila — 2026-10-21
+
+- Adota provisoriamente a opção recomendada após o pedido de continuidade:
+  avisar ao definir/alterar e gerar lembrete quando a data entrar nas 24 horas
+  seguintes. Cron enfileira somente UUID/version opacos; worker revalida data,
+  publicação, turma, matrícula e acesso antes de criar aviso.
+- Lembrete aparece no painel e no resumo diário opt-in, sem e-mail transacional.
+  Unit LMS/adapter: 47 testes / 210 assertions PASS; Kernels de Group/Message:
+  6 testes / 79 assertions PASS, incluindo persistência e deduplicação em Message
+  real. Runtime/cron e revisão visual continuam DEFERRED.
+
+## 0.1.0-dev.7 — aviso de prazo por atividade/turma — 2026-10-21
+
+- Cria aviso de prazo ao definir ou alterar a data por atividade e turma;
+  membros ativos com `take course` são destinatários e o acesso é revalidado
+  na exibição e no resumo diário. Não envia e-mail transacional.
+- Mudanças futuras na data invalidam avisos antigos. O intervalo do lembrete
+  antecipado aguarda decisão; Unit LMS/adapter: 43 testes / 197 assertions
+  PASS. Kernel com entidades reais do provider, visual e Runtime DEFERRED.
+
+## 0.1.0-dev.6 — aviso de conteúdo liberado e retorno — 2026-10-21
+
+- Envia avisos de curso, aula e atividade recém-publicados aos estudantes
+  matriculados; publicação/referência atual, membership e acesso são revalidados
+  ao montar o destino.
+- Aviso de retorno educador vai ao titular da resposta após confirmar comentário
+  publicado, permissão atual de correção, matrícula e acesso. Texto do comentário
+  não é copiado para o aviso.
+- Ambos permanecem no site e entram no resumo diário opt-in, sem e-mail
+  transacional. Unit do LMS e adapter: 40 testes / 188 assertions PASS;
+  armazenamento Kernel integrado, visual e Runtime permanecem DEFERRED.
+
+## 0.1.0-dev.5 — validação do resumo diário compartilhado — 2026-10-21
+
+- Exercita o serviço real de resumo do `aculta_messenger` com provider
+  educacional: confirma envio, preservação de pendências após falha e descarte
+  somente do e-mail quando há opt-out.
+- A prova também detectou e corrigiu o idioma `und` inválido na mensagem do
+  resumo. Persistência/revalidação das entidades LMS no Runtime e inspeção visual
+  permanecem DEFERRED.
+
+## 0.1.0-dev.4 — aviso de resposta pendente — 2026-10-20
+
+- Cria avisos para educadores com permissão atual de correção no curso quando
+  chega resposta pendente; a origem e o acesso são revalidados ao abrir.
+- O aviso fica no painel multidomínio e no resumo diário opt-in, sem e-mail
+  transacional e sem conteúdo/resposta/anexo.
+- Testes Unit do produtor e adapter passam; integração Kernel/Runtime e visual:
+  DEFERRED.
+
+## 0.1.0-dev.3 — avisos de avaliações publicadas — 2026-10-20
+
+- Integra avaliações LMS à central multidomínio e ao resumo diário opt-in do
+  `aculta_messenger`; cada republicação tem deduplicação própria.
+- Revalida resposta, identidade, matrícula e acesso antes de exibir o aviso; não
+  inclui resposta nem nota. Não envia e-mail transacional deste evento.
+- Runtime e revisão visual do aviso: DEFERRED.
+
+## 0.1.0-dev.2 — conclusão no aviso e resumo diário — 2026-10-20
+
+- Publica avisos no site quando a conclusão aprovada é registrada, revalidando
+  status, curso e matrícula atual.
+- Fornece as conclusões ao resumo diário opt-in já existente no Messenger;
+  e-mail confirmado, janela diária e envio único combinam eventos LMS e Fórum.
+- Opt-out descarta somente a pendência de e-mail. O aviso no site permanece.
+- Unit cobre evento site-only. Revisão visual do drawer/Runtime DEFERRED.
+
+## 0.1.0-dev.1 — avisos de matrícula e certificado — 2026-10-20
+
+- Adiciona adapter opcional com eventos LMS, persistência idempotente em Message,
+  listagem no drawer e contagem do `aculta_messenger`.
+- E-mails transacionais usam Message Notify, fila, lock e revalidação do
+  destinatário e da origem antes do envio; links revalidam access e purpose.
+- Testes Unit cobrem a tradução dos eventos e o isolamento de falha no adapter.
+  Testes de integração e visual/Runtime: DEFERRED.

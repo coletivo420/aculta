@@ -21,19 +21,6 @@ final class DomainPurposeManager {
   /**
    * Canonical Domain IDs generated from production hosts.
    */
-  private const DOMAIN_IDS = [
-    'main' => 'aculta_org',
-    'account' => 'conta_aculta_org',
-    'support' => 'apoio_aculta_org',
-    'magazine' => 'revista420_aculta_org',
-    'wiki' => 'wiki420_aculta_org',
-    'shop' => 'loja_aculta_org',
-    'courses' => 'cursos_aculta_org',
-    'forum' => 'forum_aculta_org',
-    'links' => 'links_aculta_org',
-    'eventos' => 'eventos_aculta_org',
-  ];
-
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly DomainNegotiatorInterface $domainNegotiator,
@@ -61,7 +48,7 @@ final class DomainPurposeManager {
    * Returns the stable purpose for a configured Domain ID.
    */
   public function getPurposeForDomainId(string $domainId): ?string {
-    $purpose = array_search($domainId, self::DOMAIN_IDS, TRUE);
+    $purpose = array_search($domainId, DomainSurfaceMap::DOMAIN_IDS, TRUE);
     return $purpose === FALSE ? NULL : $purpose;
   }
 
@@ -97,7 +84,7 @@ final class DomainPurposeManager {
    * Returns a domain entity for a stable purpose.
    */
   public function getDomain(string $purpose): ?DomainInterface {
-    $id = self::DOMAIN_IDS[$purpose] ?? NULL;
+    $id = DomainSurfaceMap::DOMAIN_IDS[$purpose] ?? NULL;
     if ($id === NULL) {
       return NULL;
     }
@@ -135,7 +122,7 @@ final class DomainPurposeManager {
    * Generates an absolute route URL on the configured canonical domain.
    */
   public function canonicalRouteUrl(string $purpose, string $routeName, array $parameters = []): ?Url {
-    $domainId = self::DOMAIN_IDS[$purpose] ?? NULL;
+    $domainId = DomainSurfaceMap::DOMAIN_IDS[$purpose] ?? NULL;
     $domain = $this->getDomain($purpose);
     if ($domainId === NULL || !$domain) {
       return NULL;
@@ -167,7 +154,7 @@ final class DomainPurposeManager {
     if (!str_starts_with($path, '/') || str_starts_with($path, '//')) {
       return NULL;
     }
-    $domainId = self::DOMAIN_IDS[$purpose] ?? NULL;
+    $domainId = DomainSurfaceMap::DOMAIN_IDS[$purpose] ?? NULL;
     $domain = $this->getDomain($purpose);
     if ($domainId === NULL || !$domain) {
       return NULL;
@@ -191,7 +178,7 @@ final class DomainPurposeManager {
    * production URLs continue to use canonicalRouteUrl().
    */
   public function environmentRouteUrl(string $purpose, string $routeName, array $parameters = []): ?Url {
-    $domainId = self::DOMAIN_IDS[$purpose] ?? NULL;
+    $domainId = DomainSurfaceMap::DOMAIN_IDS[$purpose] ?? NULL;
     $domain = $this->getDomain($purpose);
     $host = $domainId === NULL ? NULL : $this->deployerHost($domainId);
     if ($domain === NULL || $host === NULL) {
@@ -215,7 +202,7 @@ final class DomainPurposeManager {
     if (!str_starts_with($path, '/') || str_starts_with($path, '//')) {
       return NULL;
     }
-    $domainId = self::DOMAIN_IDS[$purpose] ?? NULL;
+    $domainId = DomainSurfaceMap::DOMAIN_IDS[$purpose] ?? NULL;
     $host = $domainId === NULL ? NULL : $this->deployerHost($domainId);
     return $host === NULL ? NULL : Url::fromUri('https://' . $host . $path);
   }

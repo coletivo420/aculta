@@ -11,13 +11,14 @@ use Drupal\aculta_lms\Certificate\CourseCertificateManager;
 use Drupal\aculta_lms\Controller\LearningDashboardController;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\aculta_lms\LearningDashboardManager;
-use Drupal\aculta_studio\Learning\LearnerDashboardComposer;
+use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
+use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
+use Drupal\aculta_lms\Learning\CourseProgress;
+use Drupal\aculta_lms\Entity\ProgressEntity;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\group\PermissionScopeInterface;
-use Drupal\lms\Entity\CourseStatus;
-use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\user\UserInterface;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
@@ -37,13 +38,14 @@ final class ClassDashboardKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc} */
   protected static $modules = [
+    'key',
     'system', 'domain',
     'user',
     'file',
     'image',
     'media',
     'entity_usage',
-    'aculta_image',
+    'aculta_image', 'aculta_file_uploader',
     'field',
     'filter',
     'flexible_permissions',
@@ -53,6 +55,7 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     'text',
     'lms',
     'lms_classes',
+    'aculta_lms',
   ];
 
   /**
@@ -82,7 +85,9 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
-    $this->installEntitySchema('lms_course_status');
+    $this->installEntitySchema('aculta_lms_lesson');
+    $this->installEntitySchema('aculta_lms_activity');
+    $this->installEntitySchema('aculta_lms_progress');
   }
 
   /**
@@ -125,9 +130,9 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     $class->addMember($memberBlocked);
     $class->addMember($teacher);
 
-    $this->createStatus($course, $memberPending, CourseStatusInterface::STATUS_NEEDS_EVALUATION);
-    $this->createStatus($course, $memberPassed, CourseStatusInterface::STATUS_PASSED);
-    $this->createStatus($course, $outsiderFailed, CourseStatusInterface::STATUS_FAILED);
+    $this->createStatus($course, $memberPending, CourseProgress::STATUS_NEEDS_EVALUATION);
+    $this->createStatus($course, $memberPassed, CourseProgress::STATUS_PASSED);
+    $this->createStatus($course, $outsiderFailed, CourseProgress::STATUS_FAILED);
     self::assertTrue($course->hasPermission('grade students', $teacher));
 
     $entityTypeManager = $this->container->get('entity_type.manager');
@@ -142,7 +147,8 @@ final class ClassDashboardKernelTest extends KernelTestBase {
         $this->container->get('lock'),
       ),
       $entityTypeManager,
-      $this->container->get('lms.training_manager'),
+      $this->container->get(CourseProgressReaderInterface::class),
+      $this->container->get(CourseLessonReaderInterface::class),
     );
     $educatorAccess = $manager->classDashboardAccess($class, $educator);
     self::assertTrue($educatorAccess->isAllowed());
@@ -191,7 +197,6 @@ final class ClassDashboardKernelTest extends KernelTestBase {
       $currentUser,
       $dateFormatter,
       $translation,
-      new LearnerDashboardComposer($manager, $currentUser, $dateFormatter, $translation),
     );
     $build = $controller->class($class, $course);
     self::assertSame(0, $build['#cache']['max-age']);
@@ -212,12 +217,11 @@ final class ClassDashboardKernelTest extends KernelTestBase {
    * Creates a course status with the requested state.
    */
   private function createStatus(Group $course, UserInterface $student, string $status): void {
-    CourseStatus::create([
-      CourseStatusInterface::COURSE_FIELD => $course->id(),
+    ProgressEntity::create([
+      'course_id' => $course->id(),
       'uid' => $student->id(),
       'status' => $status,
-      'finished' => $status === CourseStatusInterface::STATUS_PASSED ? 1_700_000_000 : 0,
-      'current' => TRUE,
+      'finished' => $status === CourseProgress::STATUS_PASSED,
     ])->save();
   }
 

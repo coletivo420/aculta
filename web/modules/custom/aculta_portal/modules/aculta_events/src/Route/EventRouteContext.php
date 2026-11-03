@@ -10,7 +10,7 @@ namespace Drupal\aculta_events\Route;
 final class EventRouteContext {
 
   /**
-   * Returns the organizer route on the Events purpose, otherwise the MAIN route.
+   * Returns the organizer route for Events, otherwise the MAIN route.
    */
   public static function route(string $mainRoute, string $organizerRoute): string {
     if (\Drupal::hasService('aculta_portal.domain_purpose')

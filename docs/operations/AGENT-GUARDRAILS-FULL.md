@@ -688,6 +688,8 @@ Antes de alterar código do Portal ou do tema, siga `web/themes/custom/aculta420
 
 ### Diretório de trabalho obrigatório
 
+> Substituída pela D-70 (2026-11-02): worktrees locais sem branch são permitidos; ver `AGENTS.md`.
+
 - Trabalhar sempre no checkout local do repositório que o responsável abriu para a tarefa (`cwd` do projeto), mantendo o branch atual e as alterações visíveis.
 - Não criar nem usar worktrees, clones ou diretórios temporários alternativos (por exemplo, `/tmp/...`) para implementar a tarefa, salvo pedido explícito do responsável.
 - Antes de alterar arquivos, confirmar `pwd`, branch e `git status` nesse checkout. Não trocar de branch nem substituir arquivos com alterações locais; preservar trabalho existente e resolver conflitos com segurança.

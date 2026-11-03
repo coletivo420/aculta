@@ -30,6 +30,8 @@ use Symfony\Component\Yaml\Yaml;
 #[RunTestsInSeparateProcesses]
 final class LmsModuleLifecycleKernelTest extends KernelTestBase {
 
+  use LmsForumDependencyHarnessTrait;
+
   /**
    * Configuration shipped as optional because only the H5P module needs it.
    *
@@ -80,6 +82,11 @@ final class LmsModuleLifecycleKernelTest extends KernelTestBase {
     'gnode',
     'lms',
     'lms_classes',
+    'aculta_lms',
+    'key',
+    'file',
+    'domain',
+    'aculta_file_uploader',
     'aculta_forum_lms_test',
   ];
 

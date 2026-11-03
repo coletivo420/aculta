@@ -7,6 +7,7 @@ namespace Drupal\aculta_lms\Form;
 use Drupal\Core\Datetime\DateTimeItemInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
@@ -14,7 +15,6 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\lms\Entity\ActivityInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -163,7 +163,8 @@ final class ClassActivityDeadlineForm extends FormBase {
     $class = $this->deadlineRouteMatch->getParameter('group');
     $course = $this->deadlineRouteMatch->getParameter('course');
     $activity = $this->deadlineRouteMatch->getParameter('activity');
-    if (!$course instanceof GroupInterface || !$class instanceof GroupInterface || !$activity instanceof ActivityInterface) {
+    if (!$course instanceof GroupInterface || !$class instanceof GroupInterface || !$activity instanceof ContentEntityInterface
+      || $activity->getEntityTypeId() !== 'aculta_lms_activity') {
       throw new \LogicException('The class activity deadline route requires a course, class and activity.');
     }
     $relationships = $class->getRelationshipsByEntity($activity, 'lms_class_activity_due');

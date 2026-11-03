@@ -13,7 +13,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Drupal\node\NodeInterface;
 use PHPUnit\Framework\Attributes\Group;
@@ -132,12 +132,9 @@ final class CourseResourceBuilderKernelTest extends KernelTestBase {
 
   /**
    * Creates a course that grants contextual access to the learner. */
-  private function course(AccountProxyInterface $account): CourseInterface {
-    $course = $this->createMock(CourseInterface::class);
-    $course->method('takeAccess')
-      ->with($account)
-      ->willReturn(AccessResult::allowed()->addCacheContexts(['user.group_permissions']));
-    $course->method('hasPermission')->willReturn(FALSE);
+  private function course(AccountProxyInterface $account): GroupInterface {
+    $course = $this->createMock(GroupInterface::class);
+    $course->method('hasPermission')->willReturnCallback(static fn (string $permission): bool => $permission === 'take course');
     $course->method('getCacheTags')->willReturn(['group:course']);
     $course->method('getCacheContexts')->willReturn([]);
     $course->method('getCacheMaxAge')->willReturn(-1);

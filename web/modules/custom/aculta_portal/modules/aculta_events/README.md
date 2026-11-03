@@ -1,5 +1,136 @@
 # ACULTA Eventos (`aculta_events`)
 
+## Propostas de Evento — F6 parcial
+
+Revalidação local no HEAD `559fc5c5e`: `EventOrganizationLifecycleKernelTest`
+passou 30 testes / 973 assertions; os seis cenários `testEventUpdateContribution*`
+passaram 6/171, cobrindo submissão privada, aplicação seletiva, autorização
+atual, membership, acesso ao Local, fingerprint e rejeição de criação
+duplicada case-insensitive por título/Data, mudança concorrente em Data de Local
+e exclusão de Contributions/drafts do Index (24 depreciações Core/contrib).
+O teste de Index focal passou 1/52; não houve escrita de conteúdo/configuração no Runtime nesta validação.
+
+A aplicação de `event_update` recarrega Locais de Datas existentes e propostos,
+limpa o access handler e verifica o acesso `view` atual do autor. A revogação de
+membership em Organização reivindicada ou a mudança do Local para privado gera
+conflito sem mutar o Evento. Uma execução anterior da classe passou com 23
+testes / 744 assertions (24 depreciações Core/contrib).
+
+A revisão administrativa de propostas `event_create` e `event_update` fica em
+`/painel-administrativo/eventos/propostas`, protegida pela permissão nativa
+`administer aculta events` no MAIN e descoberta pelo Content Admin via
+`AccessManager`. A decisão aplica apenas campos selecionados pelo adaptador;
+as rotas não substituem o acesso do owner. O formulário de envio de propostas
+`event_create`/`event_update` continua separado da rota nativa de CRUD.
+Autores com capacidade configurada podem enviar um novo Evento para revisão em
+`/culturas/propostas/evento/nova`. Quem tem acesso `update` a um Evento pode
+propor alterações em `/culturas/eventos/{aculta_event}/propor-alteracao`; a rota
+usa revisão-base canônica e permite adicionar uma Data opcional. Ambos os
+formulários gravam apenas Contributions privadas e emitem aviso Messenger mínimo;
+nenhum Evento oficial muda antes da aprovação.
+
+O workspace do autor está em `/culturas/propostas`; lista e detalhe cobrem as
+propostas `events_organization`, `events_location` e `events_event`, sempre
+filtradas pelo titular e pelo Entity Access da contribuição. Isso permite que
+notificações de Organização e Local abram suas propostas. As rotas não têm cache
+compartilhado. A ressubmissão estruturada após `needs_changes` está disponível
+em `/culturas/propostas/{uuid}/revisar`: usa controles tipados para os campos
+allowlisted, o widget central de endereço com BR fixo e o lifecycle que cria
+nova revisão imutável, revalida estado, owner, permissão e revisão-base. A
+permissão de atualização do owner só existe durante `needs_changes`. O Kernel
+focado comprovou reenviar uma proposta de Evento e negou acesso a outro autor
+(1 teste / 35 assertions). O formulário inicial `/culturas/propostas/evento/nova`
+permite enviar título, descrição, referências publicadas e até 30 Datas como
+proposta privada; a capability é revalidada pelo adapter e lifecycle, Datas
+são normalizadas para UTC e nenhum Evento é salvo antes da aprovação. Um teste
+Kernel comprova persistência privada, acesso negado sem capability e ausência
+de entidade Event oficial (1/31). A suíte combinada atual de lifecycle e
+fronteira passou com 37 testes / 1.275 assertions (24 depreciações upstream);
+o teste focal de submissão `event_update` passou com 1/35.
+A inspeção visual autenticada e as jornadas Events autenticadas no Runtime não
+foram repetidas nesta rodada.
+
+O adapter `events_event` aceita `event_create` e `event_update` com allowlist
+editorial, valida intervalos de Datas e referências a Organizações/Locais, usa
+fingerprint incluindo as Datas existentes e aplica sob lock/transação. Datas
+propostas são aditivas; Datas oficiais existentes não são removidas nem
+substituídas. A criação aprovada atribui o Evento ao autor e mantém `rascunho`;
+estado de publicação, RSVP, titularidade e campos internos não fazem parte do
+payload. Atualizações aplicam somente campos escolhidos e preservam o estado de
+publicação existente. Na aplicação, a capability configurável de criação e o
+Entity Access atualizado do autor são revalidados; o cache do handler do Evento
+é limpo antes da checagem. Regressões Kernel cobrem a revogação de acesso entre
+submissão e decisão. Envios e decisões publicam evento mínimo ao Messenger
+(source, UUID/revisão, destinatário e tipo), sem payload ou parecer. O update
+Messenger 10015–10016 ampliam o tipo allowlisted e foram aplicados no Runtime;
+a configuração sincronizada está limpa.
+As interfaces de proposta inicial e de atualização estão implementadas. A
+fingerprint usa entidade recarregada para ser estável entre
+valores escalares em memória e a representação persistida. Não declarar a fase
+F6 concluída até cobrir conflitos restantes e homologar Runtime.
+
+## Propostas para criação de Organização
+
+Contas não administrativas enviam propostas privadas `organization_create`
+tanto pelo formulário `/culturas/organizacoes/nova` quanto pelo modal de
+Organização do formulário de Evento. Nenhuma entidade pública é criada nem
+vinculada ao Evento na submissão. A fila administrativa exige revisão e seleção
+do nome antes de criar a Organização como publicada, sem titularidade ou
+membership; a autoria permanece com o proponente. Depois da aprovação, a pessoa
+pode iniciar o fluxo separado de reivindicação. Administradores mantêm o
+cadastro direto pelo formulário.
+
+## Propostas de Local — F5 parcial
+
+O adapter `events_location` aceita propostas privadas de criação (`location_create`)
+e atualização (`location_update`) com allowlist do perfil público. O formulário
+de endereço central continua obrigatório, fixa o país em BR e conserva número e
+complemento; coordenadas, OSM, status/publicação, titularidade e vínculo com
+Evento não são aceitos como campos aplicáveis. Atualizações revalidam o acesso,
+a impressão digital da origem e usam lock; criação só ocorre após aprovação,
+como Local draft pertencente ao proponente, sem publicar nem vincular a Evento.
+Uma verificação de título/endereço bloqueia duplicidade provável sem mesclar
+registros automaticamente. A fila e a revisão administrativa ficam no MAIN,
+em `/painel-administrativo/eventos/locais/propostas`, descobertas pelo Content
+Admin sem substituir autorização Events. Testes focais locais passaram 3/100.
+Decisões de Organização e Local são enviadas ao inbox do site pelo Messenger
+com envelope mínimo, sem endereço, payload ou parecer; Runtime, email/digest e
+workspace do autor ainda são pendentes.
+
+Alterações propostas de endereço ou precisão incluem na revisão-base as Datas e
+os Eventos ligados ao Local. Na aplicação, Datas/Eventos são recarregados do
+storage e o acesso `view` do revisor é revalidado; uma mudança concorrente gera
+conflito sem aplicar o endereço. `testLocationAddressContributionDetectsChangedLinkedEvent` comprovou o cenário
+de Data alterada (1/26). A classe Kernel completa passou no HEAD
+`559fc5c5e` em 2026-11-01 com 30 testes / 973 assertions (24 depreciações upstream).
+
+## Propostas de perfil de Organização — dev.9
+
+Novas alterações de perfil em Organizações não reivindicadas são gravadas como
+`aculta_contribution` pelo adapter `events_organization`. A aplicação revalida
+que a Organização continua sem titular, compara a impressão digital do perfil,
+obtém o mesmo lock de Organização usado pelo fluxo legado e aplica apenas os
+campos selecionados pela revisão. Titularidade, reivindicações, membros, slug,
+status editorial e publicação não são campos aplicáveis.
+
+A fila em `/painel-administrativo/eventos/organizacoes/sugestoes` mostra as
+novas Contributions e os registros legados `aculta_event_org_suggestion`.
+Rotas e dados legados permanecem preservados para revisão durante a transição;
+nenhuma migração de Runtime foi executada. Este corte ainda não fornece a área
+do autor para acompanhar/revisar propostas devolvidas. A fila do Content Admin
+aponta para a rota nativa Events e preserva seu acesso. Decisões persistidas
+geram eventos mínimos em fila própria; o owner revalida revisão, autor e acesso
+antes de emitir envelope ao Messenger. O inbox consome o tipo
+`events.organization_proposal_outcome`; o Messenger mantém o aviso no site e
+oferece e-mail imediato ou resumo diário conforme preferência da pessoa. O
+padrão é somente no site; o conteúdo e os pareceres da proposta não vão ao e-mail.
+O enqueue ocorre após a decisão editorial: se a Queue API falhar, o evento mínimo
+fica no outbox KeyValue e `hook_cron()` tenta recuperá-lo em lotes de até 25.
+O consumer do Messenger é idempotente por proposta, revisão, destinatário e
+resultado; falha na publicação não desfaz a aplicação oficial.
+Edições diretas de
+Organizações reivindicadas e reivindicações continuam em seus owners atuais.
+
 ## ACULTA Studio Culturas — caminhos de organizadores (ADR-038)
 
 A experiência de organizadores começa em `/culturas`, no purpose `eventos`.
@@ -29,6 +160,28 @@ consulta, endpoint ou cliente de CEP. Isso também vale para etapas de revisão 
 endereços importados que exibam um formulário à pessoa.
 
 Eventos, datas e locais do purpose `eventos` (ADR-015). Usa o `aculta_calendar` para recorrência, agenda e `.ics`, e o `aculta_maps` para o mapa de locais. A versão atual mantém apenas gratuidade/preço informativos e link externo; RSVP gratuito com emissão e venda interna ainda não estão implementados. Consulte [plano de ingressos gratuitos e pagos](docs/PLANO-INGRESSOS-PAGOS.md).
+
+**Revalidação 2026-11-02:** `EventCalendarItemProviderKernelTest` passou com 6 testes / 116 assertions no `aculta_simpletest`, cobrindo proprietário A, proprietário B e conta anônima para agendas privadas. Nenhum código de produção ou estado do Runtime foi alterado nesta revalidação.
+
+Cada página de Local oferece exportação da agenda contextual em
+`/locais/{id}/agenda.ics`. O endpoint usa `CalendarQuery` e
+`CalendarIcsExporter`, consulta somente o provider de Events, cobre a mesma
+janela de 30 dias da agenda e revalida `view` do Local. Locais privados ficam
+disponíveis apenas às contas autorizadas; as respostas são `private, no-store`.
+O feed não inclui outros Locais nem providers LMS.
+
+O dashboard `/culturas` também revalida `view` do Local antes de exibir seu
+título ou município/UF. Se a conta pode editar o Evento, mas não visualizar o
+Local relacionado, a coluna informa “Não definido”. A resposta agrega os
+metadados de cache das decisões de acesso para impedir compartilhamento entre
+contas.
+
+Validação em 2026-11-01: Kernel Events em `aculta_simpletest`, 123 testes /
+2.597 assertions PASS; Unit, 10 testes / 23 assertions PASS. Foram registradas
+51 depreciações Core/contrib. A cobertura inclui Local público, filtro por
+Local, acesso privado do owner versus outra conta e ocultação de Local privado
+no dashboard do organizador. Matriz HTTP de purpose/host e Runtime seguem
+pendentes.
 
 ## Fluxo editorial: Evento é a unidade de trabalho
 
@@ -102,21 +255,22 @@ O nome aprovado para a experiência de organizadores é **ACULTA Studio Culturas
 - Estado: código parcial presente no HEAD auditado. Execução dos testes no HEAD, autorização/domínio no Runtime, navegação integrada e homologação visual permanecem pendentes.
 
 
-## Ingressos gratuitos e pagos - proposta de integração (ADR-036)
+## Ingressos gratuitos e pagos — decisões D-60/D-61, implementação pendente (ADR-036)
 
-O estado atual continua sem ticketing interno: `field_gratuito`, `field_pricing` e `field_pricing_info` são informativos; `field_ticketing` é link externo. Não há RSVP com emissão, venda Commerce, lote/estoque ligado a Data, emissão pós-pagamento ou check-in integrado.
+`field_gratuito`, `field_pricing` e `field_pricing_info` continuam informativos; `field_ticketing` é link externo. O modelo `aculta_event_offer` registra ofertas/lotes inativos; o update `10015` adiciona campos internos de política RSVP e capacidade nominal em Evento/Data. `RsvpPolicyResolver` valida configurações completas e contexto de capacidade, mas não cria inscrição nem reserva vaga. RSVP permanece desligado por padrão e os campos não aparecem no formulário do organizador. Não há endpoint de inscrição, emissão, venda Commerce, capacidade consumida ou check-in.
 
 - **Ownership:** `aculta_events` é dono das ofertas/lotes, inscrições/participantes, emissão e check-in. `aculta_commerce` mantém pedidos e order items pagos; `aculta_pagamentos_mercadopago` mantém o gateway; `aculta_portal` coordena os tipos/contextos no carrinho já existente. Sem gateway, carrinho ou storage financeiro paralelo.
-- **Gratuito (proposta):** RSVP sem cobrança, nome e e-mail (D-33/D-40), sem CPF, pedido Commerce, carrinho ou Mercado Pago. Confirmar capacidade atomicamente e emitir credencial consumível uma vez no check-in. Não coletar dados reais em produção antes da revisão LGPD/base legal/aviso/retenção.
+- **Gratuito:** RSVP opcional por Evento, sem cobrança, nome e e-mail (D-33/D-40), sem CPF, pedido Commerce, carrinho ou Mercado Pago. A capacidade será atômica e configurável por Evento/Data/Lote; regras de limite, duplicidade, reserva/expiração, espera e cancelamento também são configuráveis por Evento. Emissão/check-in ainda não estão implementados. Não coletar dados reais publicamente antes da revisão LGPD/base legal/aviso/retenção.
 - **Pago (proposta):** lote ligado a Evento e Data; pedido Commerce `ingresso`; Checkout Pro; somente confirmação de pagamento validada e idempotente emite o ingresso. Sem frete. Somente pedidos pagos participam do carrinho integrado e seguem a precedência D-39. Em pedidos mistos, o ingresso não exige endereço nem compõe frete.
 - **Credencial compartilhada:** RSVP e compra paga convergem em participante/credencial e check-in móvel, preservando estados financeiros distintos. QR leva apenas token opaco assinado; validar no servidor, exigir autorização contextual, gravar uma entrada e bloquear reuso. Não indexar pedido, PII ou token em `aculta_index`.
 - **Domínios e interface:** inscrições e compras iniciadas em `eventos`; escrita validada no servidor e nunca intermediada pelo purpose `account`. Administração técnica/global fica no MAIN. Gestão do organizador pertence ao ACULTA Studio Culturas em `/culturas`; o código é parcial e a homologação está pendente.
 - **Gates financeiros:** venda paga bloqueada até parecer fiscal/jurídico (D-31/D-35), políticas de taxa, estorno e repasse (D-32 a D-34), LGPD e testes em sandbox. Repasse manual por evento; sem marketplace/split na primeira versão.
 - **Compatibilidade:** preservar os campos informativos atuais sem migração destrutiva. Quando houver lotes internos, definir precedência de exibição e migração antes de ativar; não inferir uma transação do booleano de gratuidade.
 
-### Decisões ainda abertas
+Transferência de credencial é sempre permitida, auditável e invalida a credencial anterior (D-60). `aculta_events` é dono das ofertas/lotes e RSVP gratuito não usa Commerce (D-61). Estes comportamentos estão decididos, mas não implementados.
 
-RSVP obrigatório ou opcional; limite por pessoa e prevenção de duplicidade; capacidade por lote versus Data; reserva temporária/expiração/fila; cancelamento e liberação de vaga; abrangência por série; transferência; entrega/acessibilidade do ingresso; retenção/base legal; critérios para migrar links externos.
+Permanecem pendentes: parecer fiscal/jurídico para venda paga, revisão LGPD/base legal antes da coleta pública de dados, escolha técnica do item Commerce para ingressos pagos e detalhes de acessibilidade/entrega da credencial e categorias de operador do check-in. A lista não inclui os itens já resolvidos por D-60/D-61.
+
 
 ## ACULTA Studio Culturas em domínio próprio - ADR-038
 

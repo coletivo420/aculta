@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_image\Unit;
 
 use Drupal\aculta_image\FileRemoverInterface;
-use Drupal\aculta_image\ImageInspector;
-use Drupal\aculta_image\Quarantine\ImageQuarantine;
-use Drupal\aculta_portal\Cleanup\FileReferenceInspectorInterface;
-use Drupal\aculta_portal\Cleanup\UnusedFileCleaner;
+use Drupal\aculta_file_uploader\Quarantine\ImageQuarantine;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceInspectorInterface;
+use Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Schema;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileSystemInterface;
-use Drupal\Core\Image\ImageFactory;
+use Drupal\aculta_file_uploader\ImageDimensionReader;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Image\ImageInterface;
 use Drupal\file\FileInterface;
@@ -50,14 +49,14 @@ final class ImageQuarantineOwnershipTest extends UnitTestCase {
     $remover->expects(self::never())->method('delete');
     $logger = $this->createMock(LoggerChannelInterface::class);
     $image = $this->createMock(ImageInterface::class);
-    $factory = $this->createMock(ImageFactory::class);
-    $factory->method('get')->willReturn($image);
+    $factory = $this->createMock(ImageDimensionReader::class);
+    $factory->method('dimensions')->willReturn(['width' => 1, 'height' => 1]);
     $cleaner = new UnusedFileCleaner(
       $fileUsage,
       $database,
       $inspector,
       $remover,
-      new ImageInspector($factory),
+      $factory,
       $logger,
     );
 

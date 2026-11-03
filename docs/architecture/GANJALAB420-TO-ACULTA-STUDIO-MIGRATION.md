@@ -23,7 +23,7 @@
 1. Criado `Drupal\aculta_studio\Controller\GanjaLab420Controller`, o novo **entrypoint de interface** para o estudante.
 2. Rotas `/ganjalab420` e `/minha-aprendizagem` (nomes existentes) passam a chamar `aculta_studio.ganjalab420_controller:student`; **não** alterar URLs, permissões, purpose, cache ou títulos.
 3. `aculta_studio.services.yml` injeta opcionalmente o controller LMS; sem LMS a infraestrutura Studio continua habilitável. Rota não existe sem aculta_lms habilitado.
-4. `aculta_lms.info.yml` passa a depender explicitamente de `aculta_studio` — a instalação e a atualização do ambiente devem verificar que Studio está habilitado **antes de importar configurações**.
+4. `aculta_lms.info.yml` passa a depender explicitamente de `aculta_studio` — a instalação e a atualização do ambiente devem verificar que Studio está habilitado **antes de importar configurações**. **Atualização 2026-11-01:** essa dependência foi removida; a apresentação da jornada/sala vive no Studio (`CourseJourneyPresentationHooks`) e o LMS não declara `aculta_studio`.
 5. Os dados/render arrays seguem no `LearningDashboardController::student()`, até a extração visual em microfases posteriores. Não declarar migração completa de todos os componentes de sala, turma e curso.
 6. Teste Unit no Studio para dependência ausente (404); manter `LearningDashboardControllerTest` no LMS para política de cache de estudante. Teste de integração de rota e renderização deverá ser incluído em Kernel/Functional.
 
@@ -65,7 +65,7 @@ Separar `LearningDashboardController::student()` entre dados de aprendizagem e c
 
 ## G420-C — Composição Studio e namespace do domínio de conta (2026-10-22)
 
-**Código implementado, homologação pendente.** O dashboard de estudante agora é composto em `Drupal\aculta_studio\Learning\LearnerDashboardComposer`, que recebe `aculta_lms.learning_dashboard` para dados LMS autorizados e cacheáveis. O controller LMS conserva `student()` como adapter para o Composer e `class()` mantém o painel do educador. O provider GanjaLab420 passa a renderizar pelo Composer Studio. Ainda não houve redesenho completo dos cartões; a composição migrou sem alterar o contrato SDC existente (`context-header`, `empty-state`).
+**Código implementado, homologação pendente.** O dashboard de estudante é composto em `Drupal\aculta_studio\Learning\LearnerDashboardComposer`, que consome `StudentLearningSummaryReaderInterface` (B2) e recebe dados tipados e cacheáveis; o `aculta_lms` implementa o leitor. As rotas Ganjalab são declaradas no Studio e o controller LMS conserva apenas `class()` para o painel do educador. O provider GanjaLab420 renderiza pelo Composer Studio. Ainda não houve redesenho completo dos cartões; a composição migrou sem alterar o contrato SDC existente (`context-header`, `empty-state`).
 
 **Política global de localização do ACULTA Studio:** interfaces próprias do Studio usam o purpose `account` e a resolução de host pelo Portal/Domain, correspondente ao subdomínio `conta.aculta.*` em cada ambiente. O prefixo `/studio` é o namespace canônico. Não codificar hostname fixo, nem reproduzir o cabeçalho multidomínio dentro do Studio.
 
@@ -79,7 +79,7 @@ Separar `LearningDashboardController::student()` entre dados de aprendizagem e c
 
 ### Registro condicional do Composer
 
-O serviço `aculta_studio.learner_dashboard_composer` é declarado em `aculta_lms.services.yml` (não em `aculta_studio.services.yml`) porque depende de `aculta_lms.learning_dashboard`. O provider Studio usa referência opcional, preservando a instalação do Studio sem LMS. Teste obrigatório: rebuild com Studio habilitado e LMS desabilitado, além do cenário de ambos habilitados.
+O serviço `aculta_studio.learner_dashboard_composer` é declarado em `aculta_studio.services.yml` e recebe `@?Drupal\aculta_learning_contracts\Learning\StudentLearningSummaryReaderInterface` como provedor opcional. O provider Studio consome o composer no próprio Studio e não importa classes do LMS; sem o leitor, a experiência fica indisponível e falha fechada. Teste obrigatório: rebuild com Studio habilitado e LMS desabilitado, além do cenário de ambos habilitados.
 
 ## G420-C2 — composição de cartões com SDC (2026-10-22)
 

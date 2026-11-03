@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Form;
 
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
+use Drupal\aculta_messenger\Integration\Wiki\EditorialReviewNotice;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -197,7 +198,57 @@ final class MessengerSettingsForm extends ConfigFormBase {
         '#default_value' => $magazineEvents['review_returned'] ?? TRUE,
       ],
     ];
+    $form['wiki_review'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Avisos editoriais da Wiki'),
+      '#description' => $this->t('Quando um verbete passa a "Em revisão", um e-mail avisa as caixas editoriais. É um canal administrativo, não uma preferência pessoal.'),
+      '#open' => FALSE,
+    ];
+    $form['wiki_review']['wiki_review_notifications'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Avisar as caixas editoriais quando um verbete entrar em revisão'),
+      '#default_value' => (bool) $config->get('wiki_review_notifications'),
+    ];
+    $form['wiki_review']['wiki_review_recipients'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Endereços que recebem os avisos'),
+      '#default_value' => (string) $config->get('wiki_review_recipients'),
+      '#maxlength' => 512,
+      '#description' => $this->t('Um ou mais endereços, separados por vírgula, ponto e vírgula ou espaço. Use caixas da curadoria, não o endereço de uma pessoa sem que ela saiba: o <code>aculta_mailer</code> guarda HMAC do destinatário por 90 dias.'),
+    ];
+    $form['wiki_review']['lgpd'] = [
+      '#type' => 'item',
+      '#markup' => $this->t('O aviso leva o título do verbete, o estado e o link de edição. Não leva autoria nem conteúdo novo. Ver <code>docs/compliance/LGPD-INVENTARIO.md</code>.'),
+    ];
     return parent::buildForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
+    parent::validateForm($form, $form_state);
+
+    $raw = (string) $form_state->getValue('wiki_review_recipients');
+    $invalid = [];
+    foreach (preg_split('/[\s,;]+/', $raw, -1, PREG_SPLIT_NO_EMPTY) ?: [] as $candidate) {
+      if (filter_var(strtolower(trim($candidate)), FILTER_VALIDATE_EMAIL) === FALSE) {
+        $invalid[trim($candidate)] = trim($candidate);
+      }
+    }
+    if ($invalid !== []) {
+      $form_state->setErrorByName(
+        'wiki_review_recipients',
+        $this->t('Endereço inválido: @list.', ['@list' => implode(', ', array_values($invalid))]),
+      );
+    }
+    if ($form_state->getValue('wiki_review_notifications')
+      && EditorialReviewNotice::parseRecipients($raw) === []) {
+      $form_state->setErrorByName(
+        'wiki_review_recipients',
+        $this->t('Informe ao menos um endereço válido para ligar os avisos.'),
+      );
+    }
   }
 
   /**
@@ -236,6 +287,11 @@ final class MessengerSettingsForm extends ConfigFormBase {
         'review_submitted' => (bool) $form_state->getValue(['magazine_events', 'review_submitted']),
         'review_returned' => (bool) $form_state->getValue(['magazine_events', 'review_returned']),
       ])
+      ->set('wiki_review_notifications', (bool) $form_state->getValue('wiki_review_notifications'))
+      ->set(
+        'wiki_review_recipients',
+        implode(', ', EditorialReviewNotice::parseRecipients((string) $form_state->getValue('wiki_review_recipients'))),
+      )
       ->save();
     parent::submitForm($form, $form_state);
   }
@@ -254,6 +310,7 @@ final class MessengerSettingsForm extends ConfigFormBase {
       'doacao' => (string) $this->t('Doações'),
       AvisoPreferencias::EMAIL_PRIVATE_MESSAGES => (string) $this->t('Mensagens privadas'),
       AvisoPreferencias::EMAIL_FRIENDSHIP => (string) $this->t('Amizades'),
+      AvisoPreferencias::EMAIL_EVENTS_CONTRIBUTIONS => (string) $this->t('Propostas de Eventos'),
       default => throw new \InvalidArgumentException('Categoria de aviso inválida.'),
     };
   }

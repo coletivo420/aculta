@@ -110,15 +110,47 @@ final class RevistaTab extends MarleyTabBase {
       ];
     }
     $listTabs['todos']['actions'][] = $this->routeAction($this->t('Abrir painel de publicações'), 'aculta_magazine.studio_list', [], $account);
+
+    // Moderação entra como aba de status depois de "Arquivados", com o mesmo
+    // listing de comentários e a mesma checagem de papéis/permissão.
+    $commentRoles = $this->configFactory->get('aculta_magazine.settings')->get('comments_roles') ?? [];
+    $canModerateComments = array_intersect($account->getRoles(), $commentRoles) !== []
+      && $account->hasPermission('administer comments');
+    $moderationListing = [
+      'entity' => 'comment',
+      'bundle' => 'aculta_discussion_post',
+      'status' => 0,
+      'host_bundle' => 'revista',
+    ];
+    if ($canModerateComments) {
+      $listTabs['comentarios'] = [
+        'label' => $this->t('Comentários e moderação'),
+        'weight' => count($listTabs),
+        'listing' => $moderationListing,
+        'actions' => [],
+      ];
+    }
+
     $sections = [
       'publicacoes' => [
         'label' => $this->t('Meu trabalho'),
         'weight' => 0,
+        // A seção concentra título, ação de criação, abas e tabela; o menu
+        // lateral deixa de ser exibido neste contexto.
+        'suppress_sidebar' => TRUE,
+        'actions' => [
+          $this->routeAction($this->t('Criar'), 'aculta_studio.section', [
+            'aba' => $this->getPluginId(),
+            'secao' => 'criar',
+          ], $account),
+        ],
         'tabs' => $listTabs,
       ],
       'criar' => [
         'label' => $this->t('Criar'),
         'weight' => 10,
+        'sidebar' => FALSE,
+        'suppress_sidebar' => TRUE,
         'tabs' => [
           'nova-publicacao' => [
             'label' => $this->t('Nova publicação'),
@@ -130,23 +162,18 @@ final class RevistaTab extends MarleyTabBase {
         ],
       ],
     ];
-    $commentRoles = $this->configFactory->get('aculta_magazine.settings')->get('comments_roles') ?? [];
-    $canModerateComments = array_intersect($account->getRoles(), $commentRoles) !== []
-      && $account->hasPermission('administer comments');
     if ($canModerateComments) {
+      // Rota antiga continua resolvendo, mas fora do menu lateral.
       $sections['comentarios'] = [
         'label' => $this->t('Comentários e moderação'),
         'weight' => 20,
+        'sidebar' => FALSE,
+        'suppress_sidebar' => TRUE,
         'tabs' => [
           'pendentes' => [
             'label' => $this->t('Aguardando moderação'),
             'weight' => 0,
-            'listing' => [
-              'entity' => 'comment',
-              'bundle' => 'aculta_discussion_post',
-              'status' => 0,
-              'host_bundle' => 'revista',
-            ],
+            'listing' => $moderationListing,
             'actions' => [],
           ],
         ],

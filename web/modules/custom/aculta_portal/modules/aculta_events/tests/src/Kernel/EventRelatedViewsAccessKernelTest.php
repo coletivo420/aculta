@@ -17,13 +17,18 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 final class EventRelatedViewsAccessKernelTest extends KernelTestBase {
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = [
     'system', 'user', 'key', 'options', 'link', 'text', 'filter', 'taxonomy',
     'datetime', 'datetime_range', 'address', 'geofield', 'views',
     'aculta_calendar', 'aculta_events',
   ];
 
+  /**
+   * Related administrative Views are available only to administrators.
+   */
   public function testRelatedViewsRequireAdministratorRole(): void {
     $this->installConfig(['aculta_events']);
     $visitante = new UserSession(['uid' => 2, 'roles' => ['authenticated']]);
@@ -35,6 +40,9 @@ final class EventRelatedViewsAccessKernelTest extends KernelTestBase {
     }
   }
 
+  /**
+   * Administrative Views expose only fields approved for these reports.
+   */
   public function testAdministrativeViewsExposeOnlyMinimalFields(): void {
     $this->installConfig(['aculta_events']);
     $expected = [

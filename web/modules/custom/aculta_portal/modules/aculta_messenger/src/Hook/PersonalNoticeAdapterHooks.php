@@ -23,7 +23,7 @@ final class PersonalNoticeAdapterHooks {
    *
    * @var string[]
    */
-  private const ADAPTERS = ['friendship', 'lms', 'wiki', 'magazine', 'commerce', 'donation', 'game'];
+  private const ADAPTERS = ['friendship', 'lms', 'wiki', 'magazine', 'commerce', 'donation', 'game', 'eventos'];
 
   /**
    * Maps adapter service IDs to central-list origins.
@@ -38,6 +38,7 @@ final class PersonalNoticeAdapterHooks {
     'commerce' => 'loja',
     'donation' => 'doacao',
     'game' => 'conquistas',
+    'eventos' => 'eventos',
   ];
 
   /**

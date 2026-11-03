@@ -1,4 +1,22 @@
+## Revalidação 2026-11-02 — acesso e configuração
+
+- Unit Maps: 7 testes / 33 assertions PASS; Kernel: 3 testes / 6 assertions PASS, duas depreciações Core.
+- Catálogo de Locais A/B permanece testado em Events (6/129). HTTP/purpose, consumers restantes, cabeçalho Runtime e revisão jurídica continuam pendentes; sem escrita Runtime.
+
 # Changelog — aculta_maps
+
+## 2026-10-31 — conformidade com tiles e transparência
+
+- Leaflet passou a requisitar tiles pelo endpoint HTTPS canônico
+  `tile.openstreetmap.org`, conforme a política atual da OSMF; removidos os
+  subdomínios `{s}`.
+- README e revisão técnica distinguem a minuta de privacidade 0.6 da política
+  ainda não publicada no Runtime. D-52 segue sem aviso inline; ADR-030 requer
+  detalhamento na política.
+- Smoke Firefox de Maps agora registra e valida o host dos tiles e salva artefatos
+  fora do repositório, em `aculta-suite-out` por padrão.
+- Execução do Firefox/X11 contra o candidato ainda pendente; Runtime não foi
+  alterado.
 
 ## 0.1.0-dev.5 — fronteira de apresentação via tokens (2026-10-29)
 

@@ -11,12 +11,12 @@ use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Learner experience adapter; LMS retains the dashboard data and business ACL.
+ * Learner experience adapter that presents provider-neutral summary data.
  */
 final class GanjalabExperienceProvider implements StudioExperienceProviderInterface {
 
   public function __construct(
-    private readonly ?LearnerDashboardComposer $lmsDashboard,
+    private readonly LearnerDashboardComposer $dashboardComposer,
   ) {}
 
   /**
@@ -30,7 +30,7 @@ final class GanjalabExperienceProvider implements StudioExperienceProviderInterf
    * {@inheritdoc}
    */
   public function label(): string {
-    return 'ACULTA Studio Ganjalab';
+    return 'ACULTA Studio Ganjalab Estudante';
   }
 
   /**
@@ -51,7 +51,7 @@ final class GanjalabExperienceProvider implements StudioExperienceProviderInterf
    * {@inheritdoc}
    */
   public function available(): bool {
-    return $this->lmsDashboard !== NULL;
+    return $this->dashboardComposer->available();
   }
 
   /**
@@ -70,7 +70,7 @@ final class GanjalabExperienceProvider implements StudioExperienceProviderInterf
     if (!$this->available()) {
       throw new NotFoundHttpException();
     }
-    return $this->lmsDashboard->build();
+    return $this->dashboardComposer->build();
   }
 
 }

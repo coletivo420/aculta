@@ -11,6 +11,7 @@ use Drupal\aculta_portal\Checkout\CheckoutSlugMap;
 use Drupal\aculta_portal\Domain\ContentPurposeResolver;
 use Drupal\aculta_portal\Domain\DomainRoutePolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\aculta_portal\Domain\FrontPathPolicy;
 use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
 use Drupal\Core\Routing\RouteProviderInterface;
@@ -109,7 +110,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
 
       // ACCOUNT's Domain root is the public landing URL. Its domain-specific
       // front page resolves the overview route internally.
-      $accountRoot = $this->domainPurposeManager->pathUrl('account', '/');
+      $accountRoot = $this->domainPurposeManager->pathUrl(DomainSurfaceMap::ACCOUNT, '/');
       if ($accountRoot !== NULL) {
         $this->retargetRedirect($event, $accountRoot->toString());
         return;
@@ -120,7 +121,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    $login = $this->domainPurposeManager->routeUrl('account', 'user.login');
+    $login = $this->domainPurposeManager->routeUrl(DomainSurfaceMap::ACCOUNT, 'user.login');
     if ($login) {
       // Keep Core's status, cookies, and headers after a successful logout.
       $this->retargetRedirect($event, $login->toString());
@@ -141,17 +142,12 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $event->setResponse(new Response('', Response::HTTP_FORBIDDEN, ['Cache-Control' => 'private, no-store']));
       return;
     }
-    // Only canonical Green Stash and WE SATIVA paths remain under the Studio
-    // prefix. Purpose-scoped routing and entity access still authorize them.
+    // O prefixo /studio saiu: WE SATIVA e GREEN STASH têm caminhos próprios
+    // (/we-sativa e /green-stash). Qualquer /studio responde 404.
     $accountPath = $event->getRequest()->getPathInfo();
     if ($accountPath === '/studio' || str_starts_with($accountPath, '/studio/')) {
-      if (!FrontPathPolicy::caminhoStudioCanonicoPermitido(
-        $this->domainPurposeManager->getCurrentPurpose(),
-        $accountPath,
-      )) {
-        $event->setResponse($this->notFoundResponse());
-        return;
-      }
+      $event->setResponse($this->notFoundResponse());
+      return;
     }
     // /minha-conta remains a protected technical path, not a public alias.
     if ($accountPath === '/minha-conta' || str_starts_with($accountPath, '/minha-conta/')) {
@@ -183,12 +179,12 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       // this request. Inspect Drupal's path candidates and their metadata so
       // wrong-purpose mutations fail closed without duplicating route families.
       $request = $event->getRequest();
-      if ($this->domainPurposeManager->getCurrentPurpose() !== 'main'
+      if ($this->domainPurposeManager->getCurrentPurpose() !== DomainSurfaceMap::MAIN
         && !in_array($request->getMethod(), ['GET', 'HEAD'], TRUE)) {
         foreach ($this->routeProvider->getRouteCollectionForRequest($request) as $candidate) {
           if ($candidate->getOption('_admin_route')
-            || $candidate->getOption('_aculta_domain_purpose') === 'main'
-            || $candidate->getOption('_aculta_cross_domain_canonical_purpose') === 'main') {
+            || $candidate->getOption('_aculta_domain_purpose') === DomainSurfaceMap::MAIN
+            || $candidate->getOption('_aculta_cross_domain_canonical_purpose') === DomainSurfaceMap::MAIN) {
             $event->setResponse($this->notFoundResponse());
             return;
           }
@@ -199,7 +195,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     // Redirect anonymous visitors at the Account root to its login page.
     // This runs before access-aware routing would return 403.
     if ($matched['_route'] === 'aculta_portal.dashboard' && !$this->currentUser->isAuthenticated()) {
-      $login = $this->domainPurposeManager->routeUrl('account', 'user.login');
+      $login = $this->domainPurposeManager->routeUrl(DomainSurfaceMap::ACCOUNT, 'user.login');
       if ($login !== NULL) {
         $event->setResponse(new TrustedRedirectResponse($login->toString(), Response::HTTP_FOUND));
         return;
@@ -214,7 +210,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $this->currentUser->isAuthenticated(),
     );
     if ($accountAction === FrontPathPolicy::ACAO_LOGIN) {
-      $login = $this->domainPurposeManager->routeUrl('account', 'user.login');
+      $login = $this->domainPurposeManager->routeUrl(DomainSurfaceMap::ACCOUNT, 'user.login');
       if ($login !== NULL) {
         $event->setResponse(new TrustedRedirectResponse($login->toString(), Response::HTTP_FOUND));
         return;
@@ -243,9 +239,9 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       )) {
         return;
       }
-      if ($requiredPurpose === 'main'
+      if ($requiredPurpose === DomainSurfaceMap::MAIN
         && ($this->isAdministrativeRoute($route)
-          || $route->getOption('_aculta_cross_domain_canonical_purpose') === 'main')) {
+          || $route->getOption('_aculta_cross_domain_canonical_purpose') === DomainSurfaceMap::MAIN)) {
         // Toda a interface administrativa responde somente no MAIN. Em
         // subdomínios, a rota administrativa é negada (404), sem redirect.
         if ($this->isAdministrativeRoute($route)) {
@@ -345,9 +341,9 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     if (is_string($requiredPurpose)
       && !DomainRoutePolicy::allowsSharedPurpose($route, $requiredPurpose, (string) $currentPurpose)
       && !$resetEditException) {
-      if ($requiredPurpose === 'main'
+      if ($requiredPurpose === DomainSurfaceMap::MAIN
         && ($this->isAdministrativeRoute($route)
-          || $route->getOption('_aculta_cross_domain_canonical_purpose') === 'main')) {
+          || $route->getOption('_aculta_cross_domain_canonical_purpose') === DomainSurfaceMap::MAIN)) {
         // Toda a interface administrativa responde somente no MAIN. Em
         // subdomínios, a rota administrativa é negada (404), sem redirect.
         if ($this->isAdministrativeRoute($route)) {
@@ -394,7 +390,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       return $this->notFoundResponse();
     }
 
-    $url = $this->domainPurposeManager->pathUrl('main', $request->getPathInfo());
+    $url = $this->domainPurposeManager->pathUrl(DomainSurfaceMap::MAIN, $request->getPathInfo());
     if ($url === NULL) {
       return $this->notFoundResponse();
     }
@@ -433,7 +429,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     if ($parts === FALSE || !isset($parts['path'])) {
       return NULL;
     }
-    $url = $this->domainPurposeManager->pathUrl('main', $parts['path']);
+    $url = $this->domainPurposeManager->pathUrl(DomainSurfaceMap::MAIN, $parts['path']);
     if ($url === NULL) {
       return NULL;
     }
@@ -481,7 +477,7 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
     ?string $currentPurpose,
     array $matched = [],
   ): bool {
-    if ($routeName !== 'entity.user.edit_form' || $currentPurpose !== 'account') {
+    if ($routeName !== 'entity.user.edit_form' || $currentPurpose !== DomainSurfaceMap::ACCOUNT) {
       return FALSE;
     }
 

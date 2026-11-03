@@ -6,13 +6,14 @@ namespace Drupal\aculta_lms_resources;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 
 /**
@@ -42,8 +43,10 @@ final class CourseResourceBuilder {
    * @return array<string, mixed>
    *   Render array with access and cacheability metadata.
    */
-  public function build(CourseInterface $course): array {
-    $takeAccess = $course->takeAccess($this->currentUser);
+  public function build(GroupInterface $course): array {
+    $takeAccess = AccessResult::allowedIf($course->hasPermission('take course', $this->currentUser))
+      ->cachePerUser()
+      ->addCacheContexts(['user.permissions', 'user.group_permissions']);
     $canManage = $course->hasPermission('administer members', $this->currentUser)
       || $course->hasPermission('grade students', $this->currentUser);
     $cache = (new CacheableMetadata())
@@ -90,7 +93,7 @@ final class CourseResourceBuilder {
   /**
    * Creates visible canonical links for a course resource field.
    *
-   * @param \Drupal\lms\Entity\Bundle\CourseInterface $course
+   * @param \Drupal\group\Entity\GroupInterface $course
    *   Course containing resource references.
    * @param string $fieldName
    *   Course reference field name.
@@ -103,7 +106,7 @@ final class CourseResourceBuilder {
    *   Accessible resource links.
    */
   private function linksFromField(
-    CourseInterface $course,
+    GroupInterface $course,
     string $fieldName,
     string $entityType,
     CacheableMetadata $cache,

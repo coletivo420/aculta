@@ -28,7 +28,7 @@ Nenhum painel consulta provedor externo de forma síncrona: o painel lê agregad
 |---|---|---|
 | `Storage\AggregateStorageInterface` | Contrato de contador diário | Novo |
 | `Storage\DailyAggregateStorage` | `merge` por métrica, dimensão e dia UTC | Adaptado de `drupal/statistics` |
-| `Hook\StatisticsCronHooks` | Retenção de 90 dias no cron (`#[Hook('cron')]`) | Padrão de `aculta_links` |
+| `Hook\StatisticsCronHooks` | Retenção de 90 dias no cron (`#[Hook('cron')]`) | Padrão de `aculta_linkweed` |
 | `Connector\SearchConsole\SearchAnalyticsWindow` | Janela de datas da consulta GSC | Adaptado de `drupal/analyze_search_console` |
 | `Connector\SearchConsole\SearchMetricsDelta` | Variação entre períodos | Adaptado de `drupal/analyze_search_console` |
 

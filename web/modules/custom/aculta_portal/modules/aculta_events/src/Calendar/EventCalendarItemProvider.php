@@ -12,6 +12,7 @@ use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\Core\Url;
 
@@ -29,6 +30,7 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly EventFilter $filtro,
+    private readonly AccountInterface $currentUser,
   ) {}
 
   /**
@@ -44,7 +46,13 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
   public function items(CalendarQuery $query): iterable {
     $storage = $this->entityTypeManager->getStorage('aculta_event_date');
     $anonymous = new AnonymousUserSession();
-    foreach ($storage->loadMultiple($storage->getQuery()->accessCheck(FALSE)->execute()) as $data) {
+    $locationId = (int) ($query->filtros['local'] ?? 0);
+    $locationViewer = $locationId > 0 ? $this->currentUser : $anonymous;
+    $dateQuery = $storage->getQuery()->accessCheck(FALSE);
+    if ($locationId > 0) {
+      $dateQuery->condition('field_local', $locationId);
+    }
+    foreach ($storage->loadMultiple($dateQuery->execute()) as $data) {
       if (!$data instanceof EventDate) {
         continue;
       }
@@ -57,7 +65,16 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
       if ($evento->hasField('field_turma') && !$evento->get('field_turma')->isEmpty()) {
         continue;
       }
+      $eventViewer = $locationId > 0 ? $this->currentUser : $anonymous;
+      if (!$evento->access('view', $eventViewer)) {
+        continue;
+      }
       $local = $data->get('field_local')->entity;
+      if ($locationId > 0 && (!$local instanceof EventLocation
+        || (int) $local->id() !== $locationId
+        || !$local->access('view', $locationViewer))) {
+        continue;
+      }
       // The shared calendar is public and does not vary by signed-in user.
       // Never expose a private local's name through agenda or ICS.
       if ($local instanceof EventLocation && !$local->access('view', $anonymous)) {
@@ -66,7 +83,7 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
       if (!$this->filtro->aceita($evento, $local instanceof EventLocation ? $local : NULL, $query->filtros['tipo'] ?? NULL, $query->filtros['tipo_local'] ?? NULL)) {
         continue;
       }
-      $item = $this->itemDaData($data, $evento, $local instanceof EventLocation ? $local : NULL);
+      $item = $this->itemDaData($data, $evento, $local instanceof EventLocation ? $local : NULL, $locationViewer);
       if ($item !== NULL) {
         yield $item;
       }
@@ -93,7 +110,9 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
   /**
    * {@inheritdoc} */
   public function cacheContexts(): array {
-    return [];
+    // A Local contextual agenda may include private data visible only to the
+    // current owner/editor. Public global views still query as anonymous.
+    return ['user'];
   }
 
   /**
@@ -105,13 +124,18 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
   /**
    * Item de uma data, com regra, exceções e reagendamentos.
    */
-  public function itemDaData(EventDate $data, ?Event $evento = NULL, ?EventLocation $local = NULL): ?CalendarItem {
+  public function itemDaData(
+    EventDate $data,
+    ?Event $evento = NULL,
+    ?EventLocation $local = NULL,
+    ?AccountInterface $locationViewer = NULL,
+  ): ?CalendarItem {
     $evento ??= $data->get('field_evento')->entity;
     if ($evento === NULL) {
       return NULL;
     }
     $local ??= $data->get('field_local')->entity;
-    if ($local instanceof EventLocation && !$local->access('view', new AnonymousUserSession())) {
+    if ($local instanceof EventLocation && !$local->access('view', $locationViewer ?? new AnonymousUserSession())) {
       $local = NULL;
     }
     $valores = $data->get('field_quando')->first()?->getValue();

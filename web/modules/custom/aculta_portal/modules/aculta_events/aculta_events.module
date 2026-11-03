@@ -26,3 +26,10 @@ function aculta_events_theme(): array {
     ],
   ];
 }
+
+/**
+ * Implements hook_cron().
+ */
+function aculta_events_cron(): void {
+  \Drupal::service('aculta_events.organization_contribution_event_queue')->recoverUndelivered();
+}

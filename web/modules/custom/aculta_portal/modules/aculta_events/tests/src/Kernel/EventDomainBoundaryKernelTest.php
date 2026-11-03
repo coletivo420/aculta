@@ -8,7 +8,12 @@ use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Controller\EventOrganizerDashboardController;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\user\Entity\User;
+use Drupal\user\Entity\Role;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Drupal\aculta_events\Plugin\Block\UpcomingEventsBlock;
 use Drupal\aculta_portal\Domain\ContentPurposeResolver;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -71,6 +76,11 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
    */
   private const ORGANIZER_ROUTES = [
     'aculta_events.organizer_dashboard',
+    'aculta_events.organizer_contributions',
+    'aculta_events.organizer_contribution_status',
+    'aculta_events.organizer_contribution_revise',
+    'aculta_events.organizer_event_contribution_add',
+    'aculta_events.organizer_event_contribution_update',
     'aculta_events.organizer_event_add',
     'aculta_events.organizer_event_edit',
     'aculta_events.organizer_event_date_add',
@@ -86,6 +96,19 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     'aculta_events.organizer_organization_members',
     'aculta_events.organizer_organization_modal',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    // Keep this domain-boundary test isolated from the complete user module
+    // graph while preserving entity-specific editor scoping for its fixture.
+    $container->setDefinition(
+      'aculta_user.organization_access_service',
+      (new Definition(EventDomainBoundaryTestOrganizationAccessService::class))->setPublic(TRUE),
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -131,6 +154,18 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
       self::assertTrue((bool) $route->getOption('no_cache'), $name);
     }
     self::assertSame('/culturas', $routeProvider->getRouteByName('aculta_events.organizer_dashboard')->getPath());
+    self::assertSame(
+      '/culturas/propostas/evento/nova',
+      $routeProvider->getRouteByName('aculta_events.organizer_event_contribution_add')->getPath(),
+    );
+    self::assertSame(
+      '/culturas/eventos/{aculta_event}/propor-alteracao',
+      $routeProvider->getRouteByName('aculta_events.organizer_event_contribution_update')->getPath(),
+    );
+    self::assertSame(
+      'aculta_event.update',
+      $routeProvider->getRouteByName('aculta_events.organizer_event_contribution_update')->getRequirement('_entity_access'),
+    );
   }
 
   /**
@@ -144,6 +179,10 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     self::assertContains('user.permissions', $build['#cache']['contexts']);
     self::assertContains('url.query_args', $build['#cache']['contexts']);
     self::assertArrayHasKey('guide', $build);
+    self::assertContains('Minhas propostas', array_map(
+      static fn(array $item): string => (string) ($item['#title'] ?? ''),
+      $build['actions']['items'],
+    ));
     self::assertSame('details', $build['guide']['#type']);
     self::assertArrayHasKey('filters', $build);
     self::assertArrayHasKey('pager', $build);
@@ -228,6 +267,80 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
     self::assertCount(1, $buildStatus['events']['#rows']);
     self::assertSame('Oficina de Teatro', $buildStatus['events']['#rows'][0][0]['data']);
     $this->container->get('request_stack')->pop();
+  }
+
+  /**
+   * Private locations attached to an editable event stay private in the list.
+   */
+  public function testOrganizerDashboardDoesNotExposePrivateLocation(): void {
+    // UID 1 bypasses all access checks in Drupal, so reserve it for a dummy
+    // account and exercise the actual scoped organizer permissions below.
+    User::create([
+      'name' => 'root_test',
+      'mail' => 'root-test@example.com',
+      'status' => 1,
+    ])->save();
+
+    Role::load('content_editor') ?? Role::create([
+      'id' => 'content_editor',
+      'label' => 'Editor de Conteúdo',
+    ])->save();
+
+    $organizer = User::create([
+      'name' => 'organizador_local_privado',
+      'mail' => 'organizador-local-privado@example.com',
+      'status' => 1,
+    ]);
+    $organizer->addRole('content_editor');
+    $organizer->save();
+
+    $differentOwner = User::create([
+      'name' => 'responsavel_local_privado',
+      'mail' => 'responsavel-local-privado@example.com',
+      'status' => 1,
+    ]);
+    $differentOwner->save();
+
+    $privateLocation = EventLocation::create([
+      'title' => 'Local Confidencial',
+      'field_status' => 'rascunho',
+      'field_organizador' => (int) $differentOwner->id(),
+      'field_endereco' => [
+        'country_code' => 'BR',
+        'locality' => 'Cidade Confidencial',
+        'administrative_area' => 'SP',
+      ],
+    ]);
+    $privateLocation->save();
+
+    $event = Event::create([
+      'title' => 'Evento do Organizador',
+      'field_status' => 'rascunho',
+      'field_organizador' => (int) $organizer->id(),
+    ]);
+    $event->save();
+    EventDate::create([
+      'title' => 'Sessão privada',
+      'field_evento' => (int) $event->id(),
+      'field_local' => (int) $privateLocation->id(),
+      'field_quando' => ['value' => '2026-11-20T20:00:00', 'end_value' => '2026-11-20T22:00:00'],
+    ])->save();
+
+    $this->container->set(
+      'aculta_user.organization_access_service',
+      new EventDomainBoundaryTestOrganizationAccessService(),
+    );
+    $this->container->get('current_user')->setAccount($organizer);
+    self::assertTrue($event->access('update', $organizer));
+    self::assertFalse($privateLocation->access('view', $organizer));
+
+    $build = EventOrganizerDashboardController::create($this->container)->page();
+    self::assertCount(1, $build['events']['#rows']);
+    self::assertSame('Não definido', $build['events']['#rows'][0][2]['data']);
+    $row = serialize($build['events']['#rows'][0]);
+    self::assertStringNotContainsString('Local Confidencial', $row);
+    self::assertStringNotContainsString('Cidade Confidencial', $row);
+    self::assertContains('user', $build['#cache']['contexts']);
   }
 
   /**
@@ -389,6 +502,22 @@ final class EventDomainBoundaryKernelTest extends KernelTestBase {
       }
     }
     return $links;
+  }
+
+}
+
+/**
+ * Minimal scoped access collaborator for the dashboard privacy fixture.
+ */
+final class EventDomainBoundaryTestOrganizationAccessService {
+
+  /**
+   * Limits fixture edit access to an Event owned by the test editor.
+   */
+  public function isContentEditorScoped(EntityInterface $entity, AccountInterface $account): bool {
+    return $entity->getEntityTypeId() === 'aculta_event'
+      && $entity->hasField('field_organizador')
+      && (int) $entity->get('field_organizador')->target_id === (int) $account->id();
   }
 
 }

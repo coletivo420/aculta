@@ -68,7 +68,7 @@ Itens originais:
 
 ## 0.7.0 — integrações
 
-- `aculta_links`: migrar a geração para o serviço central, mantendo as rotas existentes.
+- `aculta_linkweed`: migrar a geração para o serviço central, mantendo as rotas existentes.
 - `aculta_lms` (F11): QR de verificação de certificado.
 - Commerce, eventos, Wiki, Fórum e conteúdos institucionais, quando o escopo for liberado.
 

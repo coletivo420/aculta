@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Migração event_type → aculta_event_type: cria os termos, remove o antigo e é idempotente.
+ * Migra o vocabulário event_type e remove o legado de forma idempotente.
  */
 #[Group('aculta_events')]
 #[RunTestsInSeparateProcesses]
@@ -20,7 +20,11 @@ final class EventTypeMigrationKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'key', 'address', 'geofield', 'field', 'link', 'text', 'filter', 'taxonomy', 'options', 'datetime', 'datetime_range', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = [
+    'system', 'user', 'key', 'address', 'geofield', 'field', 'link', 'text',
+    'filter', 'taxonomy', 'options', 'datetime', 'datetime_range',
+    'aculta_calendar', 'aculta_events',
+  ];
 
   /**
    * {@inheritdoc}
@@ -34,9 +38,9 @@ final class EventTypeMigrationKernelTest extends KernelTestBase {
   }
 
   /**
-   * Os termos antigos saem, os novos entram com os 10 tipos, e uma segunda rodada não duplica.
+   * A migração instala dez termos e a segunda execução não duplica registros.
    */
-  public function testMigraEIdempotente(): void {
+  public function testMigraIdempotentemente(): void {
     Vocabulary::create(['vid' => 'event_type', 'name' => 'Tipo de atividade'])->save();
     Term::create(['vid' => 'event_type', 'name' => 'Oficina'])->save();
 

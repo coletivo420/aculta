@@ -66,7 +66,7 @@ Versões de PHP: `qr_generator`, `barcodes`, `endroid_qr_code`, `qrcode_fields` 
 
 ## Código atual do ACULTA
 
-- `aculta_links` 0.4.0-dev.15 já gera QR SVG: `QrCodeSvgGenerator` usa `endroid/qr-code` 6.1.3, `SvgWriter`, correção de erro `Medium`, 320 px e margem 12. Rotas: `/pagina/{slug}/codigo-qr.svg` e `/redirecionar/{codigo}/codigo-qr.svg`. Não há registro de leitura.
+- `aculta_linkweed` 0.4.0-dev.15 já gera QR SVG: `QrCodeSvgGenerator` usa `endroid/qr-code` 6.1.3, `SvgWriter`, correção de erro `Medium`, 320 px e margem 12. Rotas: `/pagina/{slug}/codigo-qr.svg` e `/redirecionar/{codigo}/codigo-qr.svg`. Não há registro de leitura.
 - `composer.lock` fixa `endroid/qr-code` 6.1.3, `bacon/bacon-qr-code` 3.1.1 e `dasprid/enum` 1.0.7. Nenhuma dependência nova é necessária para 0.2.0.
 - O contrato F11 do `aculta_lms` (certificados com verificação pública por QR) declara que o QR será ligado a `aculta_qrcode`. Essa alteração está em andamento em outra frente e ainda não foi commitada.
 - Não existe PNG, WebP, PDF nem logo para QR no ACULTA hoje.

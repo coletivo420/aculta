@@ -7,9 +7,13 @@ namespace Drupal\Tests\aculta_magazine\Unit;
 use Drupal\aculta_magazine\ContentIndex\MagazineContentIndexProvider;
 use Drupal\aculta_magazine\Migration\GalleryReferenceMigrator;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\node\NodeInterface;
+use Drupal\entity_usage\EntityUsageInterface;
+use Drupal\media\MediaInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -38,7 +42,7 @@ final class MagazineContentIndexProviderTest extends UnitTestCase {
     $node->method('getChangedTime')->willReturn(200);
     $node->method('hasField')->willReturn(FALSE);
 
-    $projection = (new MagazineContentIndexProvider())->project($node);
+    $projection = $this->provider()->project($node);
 
     self::assertNotNull($projection);
     self::assertSame('node', $projection->entityTypeId);
@@ -54,7 +58,7 @@ final class MagazineContentIndexProviderTest extends UnitTestCase {
    * Tests cross-purpose access is revalidated in the Magazine domain.
    */
   public function testUsesCanonicalMagazineAccessPurpose(): void {
-    $provider = new MagazineContentIndexProvider();
+    $provider = $this->provider();
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn('revista');
 
@@ -90,7 +94,7 @@ final class MagazineContentIndexProviderTest extends UnitTestCase {
     $node->method('bundle')->willReturn($bundle);
     $node->method('isDefaultRevision')->willReturn($defaultRevision);
 
-    self::assertNull((new MagazineContentIndexProvider())->project($node));
+    self::assertNull($this->provider()->project($node));
   }
 
   /**
@@ -133,7 +137,7 @@ final class MagazineContentIndexProviderTest extends UnitTestCase {
       ['field_editorial_gallery', $editorialGallery],
     ]);
 
-    $projection = (new MagazineContentIndexProvider())->project($node);
+    $projection = $this->provider()->project($node);
 
     self::assertNotNull($projection);
     self::assertSame('coletivo420_aculta_org', $projection->domainId);
@@ -147,6 +151,140 @@ final class MagazineContentIndexProviderTest extends UnitTestCase {
       static fn ($relation): array => [$relation->type, $relation->targetEntityTypeId, $relation->targetEntityId],
       $projection->relations,
     ));
+  }
+
+  /**
+   * Tests only current-revision media_embed usages of remote_video are indexed.
+   */
+  public function testProjectsExplicitRemoteVideoEmbedsOnly(): void {
+    $video = $this->createMock(MediaInterface::class);
+    $video->method('bundle')->willReturn('remote_video');
+    $video->method('id')->willReturn('video-7');
+    $image = $this->createMock(MediaInterface::class);
+    $image->method('bundle')->willReturn('image');
+    $image->method('id')->willReturn('image-8');
+    $usage = $this->createMock(EntityUsageInterface::class);
+    $usage->expects(self::once())
+      ->method('listTargets')
+      ->willReturn([
+        'media' => [
+          'video-7' => [['method' => 'media_embed', 'field_name' => 'body']],
+          'image-8' => [['method' => 'entity_reference', 'field_name' => 'field_media_image']],
+        ],
+      ]);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::once())
+      ->method('loadMultiple')
+      ->with(['video-7'])
+      ->willReturn(['video-7' => $video]);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getStorage')->with('media')->willReturn($storage);
+    $language = $this->createMock(LanguageInterface::class);
+    $language->method('getId')->willReturn('en');
+    $node = $this->createMock(NodeInterface::class);
+    $node->method('bundle')->willReturn('revista');
+    $node->method('isDefaultRevision')->willReturn(TRUE);
+    $node->method('getRevisionId')->willReturn(101);
+    $node->method('language')->willReturn($language);
+    $node->method('id')->willReturn('41');
+    $node->method('uuid')->willReturn('magazine-video-uuid');
+    $node->method('label')->willReturn('Video publication');
+    $node->method('isPublished')->willReturn(TRUE);
+    $node->method('getCreatedTime')->willReturn(10);
+    $node->method('getChangedTime')->willReturn(20);
+    $node->method('hasField')->willReturn(FALSE);
+
+    $projection = (new MagazineContentIndexProvider($usage, $manager))->project($node);
+
+    self::assertNotNull($projection);
+    self::assertSame([
+      ['embedded_video', 'media', 'video-7'],
+    ], array_map(
+      static fn ($relation): array => [$relation->type, $relation->targetEntityTypeId, $relation->targetEntityId],
+      $projection->relations,
+    ));
+  }
+
+  /**
+   * Tests removing a body embed removes its relation from the next projection.
+   */
+  public function testRemovesEmbeddedVideoRelationWhenEmbedIsRemoved(): void {
+    $video = $this->createMock(MediaInterface::class);
+    $video->method('bundle')->willReturn('remote_video');
+    $video->method('id')->willReturn('video-7');
+
+    $usage = $this->createMock(EntityUsageInterface::class);
+    $usage->expects(self::exactly(2))
+      ->method('listTargets')
+      ->willReturnOnConsecutiveCalls(
+        ['media' => ['video-7' => [['method' => 'media_embed', 'field_name' => 'body']]]],
+        [],
+      );
+
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects(self::once())
+      ->method('loadMultiple')
+      ->with(['video-7'])
+      ->willReturn(['video-7' => $video]);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getStorage')->with('media')->willReturn($storage);
+
+    $language = $this->createMock(LanguageInterface::class);
+    $language->method('getId')->willReturn('en');
+    $node = $this->createMock(NodeInterface::class);
+    $node->method('bundle')->willReturn('revista');
+    $node->method('isDefaultRevision')->willReturn(TRUE);
+    $node->method('getRevisionId')->willReturn(101);
+    $node->method('language')->willReturn($language);
+    $node->method('id')->willReturn('41');
+    $node->method('uuid')->willReturn('magazine-video-uuid');
+    $node->method('label')->willReturn('Video publication');
+    $node->method('isPublished')->willReturn(TRUE);
+    $node->method('getCreatedTime')->willReturn(10);
+    $node->method('getChangedTime')->willReturn(20);
+    $node->method('hasField')->willReturn(FALSE);
+
+    $provider = new MagazineContentIndexProvider($usage, $manager);
+    $beforeRemoval = $provider->project($node);
+    $afterRemoval = $provider->project($node);
+
+    self::assertNotNull($beforeRemoval);
+    self::assertSame(
+      [['embedded_video', 'media', 'video-7']],
+      array_map(
+        static fn ($relation): array => [$relation->type, $relation->targetEntityTypeId, $relation->targetEntityId],
+        $beforeRemoval->relations,
+      ),
+    );
+    self::assertNotNull($afterRemoval);
+    self::assertSame([], $afterRemoval->relations);
+  }
+
+  /**
+   * Tests non-default revisions are rejected before entity_usage is queried.
+   */
+  public function testDoesNotProjectNonDefaultRevisions(): void {
+    $usage = $this->createMock(EntityUsageInterface::class);
+    $usage->expects(self::never())
+      ->method('listTargets');
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->expects(self::never())->method('getStorage');
+
+    $node = $this->createMock(NodeInterface::class);
+    $node->method('bundle')->willReturn('revista');
+    $node->method('isDefaultRevision')->willReturn(FALSE);
+
+    $provider = new MagazineContentIndexProvider($usage, $manager);
+    self::assertNull($provider->project($node));
+  }
+
+  /**
+   * Creates a provider with an empty usage source for unrelated tests.
+   */
+  private function provider(): MagazineContentIndexProvider {
+    $usage = $this->createMock(EntityUsageInterface::class);
+    $usage->method('listTargets')->willReturn([]);
+    return new MagazineContentIndexProvider($usage, $this->createMock(EntityTypeManagerInterface::class));
   }
 
   /**

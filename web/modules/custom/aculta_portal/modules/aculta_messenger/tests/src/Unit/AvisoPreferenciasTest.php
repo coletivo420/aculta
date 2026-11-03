@@ -100,6 +100,36 @@ final class AvisoPreferenciasTest extends UnitTestCase {
       [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE],
       $preferences->allowedEmailModes('doacao'),
     );
+    self::assertSame(
+      [AvisoPreferencias::EMAIL_OFF],
+      $preferences->allowedEmailModes(AvisoPreferencias::EMAIL_EVENTS_CONTRIBUTIONS),
+    );
+  }
+
+  /**
+   * The new Events category exposes all choices and defaults to site-only. */
+  public function testEventsContributionEmailChoicesDefaultToSiteOnly(): void {
+    $userData = $this->createMock(UserDataInterface::class);
+    $userData->expects(self::once())->method('get')
+      ->with(AvisoPreferencias::MODULO, 27, 'avisos_email_mode_' . AvisoPreferencias::EMAIL_EVENTS_CONTRIBUTIONS)
+      ->willReturn(NULL);
+    $preferences = new AvisoPreferencias($userData, $this->getConfigFactoryStub([
+      'aculta_messenger.settings' => [
+        'email_modes' => [
+          AvisoPreferencias::EMAIL_EVENTS_CONTRIBUTIONS => [
+            'digest' => TRUE,
+            'immediate' => TRUE,
+            'default_mode' => AvisoPreferencias::EMAIL_OFF,
+          ],
+        ],
+      ],
+    ]));
+
+    self::assertSame(AvisoPreferencias::EMAIL_OFF, $preferences->emailMode(27, AvisoPreferencias::EMAIL_EVENTS_CONTRIBUTIONS));
+    self::assertSame(
+      [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE],
+      $preferences->allowedEmailModes(AvisoPreferencias::EMAIL_EVENTS_CONTRIBUTIONS),
+    );
   }
 
   /**

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\Service;
 
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_contributions\Entity\Contribution;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -57,6 +58,7 @@ final class WikiContributorWorkspace {
     private readonly DomainPurposeManager $domainPurposes,
     TranslationInterface $stringTranslation,
     private readonly RequestStack $requestStack,
+    private readonly ?WikiEditorialQueue $editorialQueue = NULL,
   ) {
     $this->stringTranslation = $stringTranslation;
   }
@@ -88,9 +90,17 @@ final class WikiContributorWorkspace {
         ->condition('uid', $account->id())
         ->range(0, 1)
         ->execute();
-      return $create->orIf(AccessResult::allowedIf($node !== [] || $proposal !== []))
+      $contribution = $this->entities->getStorage('aculta_contribution')->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('uid', $account->id())
+        ->condition('source', 'wiki')
+        ->condition('source_module', 'aculta_wiki')
+        ->condition('purpose', 'wiki')
+        ->range(0, 1)
+        ->execute();
+      return $create->orIf(AccessResult::allowedIf($node !== [] || $proposal !== [] || $contribution !== []))
         ->addCacheContexts(['user', 'user.permissions', 'domain'])
-        ->addCacheTags(['node_list:wiki_entry', 'aculta_wiki_proposal_list']);
+        ->addCacheTags(['node_list:wiki_entry', 'aculta_wiki_proposal_list', 'aculta_contribution_list']);
     });
     if (!$result instanceof AccessResultInterface) {
       return AccessResult::forbidden()->addCacheContexts(['user', 'user.permissions', 'domain']);
@@ -115,7 +125,7 @@ final class WikiContributorWorkspace {
         'url.query_args:wiki_node_state',
         'url.query_args:wiki_proposal_cursor',
       ])
-      ->addCacheTags(['node_list:wiki_entry', 'aculta_wiki_proposal_list']);
+      ->addCacheTags(['node_list:wiki_entry', 'aculta_wiki_proposal_list', 'aculta_contribution_list']);
     $build = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'we-sativa-workspace'],
@@ -220,7 +230,7 @@ final class WikiContributorWorkspace {
       $items = [];
       $page = $this->ownProposals($account, $proposalCursor);
       foreach ($page['items'] as $proposal) {
-        if (!$proposal instanceof WikiProposal) {
+        if (!$proposal instanceof WikiProposal && !$proposal instanceof Contribution) {
           continue;
         }
         $view = $proposal->access('view', $account, TRUE);
@@ -251,6 +261,43 @@ final class WikiContributorWorkspace {
       $proposalNextPage = $this->nextPageLink($this->t('Mais propostas'), 'wiki_proposal_cursor', $proposalPage['next_cursor']);
     }
     $build['proposals'] = $this->listSection($this->t('Minhas propostas'), $proposalLinks, $this->t('Você ainda não enviou propostas.'), $proposalNextPage);
+
+    // Global editorial queues are supplied by the Wiki owner and enforce
+    // permission, Entity Access, revision access, and current transitions.
+    if ($this->editorialQueue !== NULL && $account->hasPermission('edit any wiki_entry content')) {
+      try {
+        $page = $this->editorialQueue->entryRevisions($this->requestCursor('wiki_revision_cursor'));
+        $cacheability->addCacheableDependency($page);
+        $items = [];
+        foreach ($page->getItems() as $revision) {
+          $url = $this->domainPurposes->routeUrl('wiki', 'entity.node.revision', ['node' => $revision->id(), 'node_revision' => $revision->getRevisionId()]);
+          if ($url !== NULL) {
+            $items[] = ['#theme' => 'aculta_portal_component', '#name' => 'card', '#slots' => ['header' => Link::fromTextAndUrl((string) $revision->label(), $url)->toRenderable(), 'content' => ['#plain_text' => $this->t('Em revisão')]]];
+          }
+        }
+        $build['editorial_review'] = $this->listSection($this->t('Verbetes em revisão'), $items, $this->t('Não há verbetes autorizados para revisar.'));
+      }
+      catch (AccessDeniedHttpException) {
+        // The editorial service remains the final access authority.
+      }
+    }
+    if ($this->editorialQueue !== NULL && $account->hasPermission('moderate wiki proposals')) {
+      try {
+        $page = $this->editorialQueue->proposals($this->requestCursor('wiki_moderation_cursor'));
+        $cacheability->addCacheableDependency($page);
+        $items = [];
+        foreach ($page->getItems() as $proposal) {
+          $url = $this->domainPurposes->routeUrl('wiki', 'aculta_wiki.proposal_decide', ['proposal' => $proposal->id()]);
+          if ($url !== NULL) {
+            $items[] = ['#theme' => 'aculta_portal_component', '#name' => 'card', '#slots' => ['header' => Link::fromTextAndUrl((string) $proposal->label(), $url)->toRenderable(), 'content' => ['#plain_text' => $this->proposalState($proposal)]]];
+          }
+        }
+        $build['proposal_moderation'] = $this->listSection($this->t('Propostas para moderação'), $items, $this->t('Não há propostas pendentes.'));
+      }
+      catch (AccessDeniedHttpException) {
+        // The editorial service remains the final access authority.
+      }
+    }
     $cacheability->applyTo($build);
     return $build;
   }
@@ -468,30 +515,57 @@ final class WikiContributorWorkspace {
    *   Candidate proposals and a continuation position; access is rechecked.
    */
   private function ownProposals(AccountInterface $account, ?string $cursor): array {
-    $storage = $this->entities->getStorage('aculta_wiki_proposal');
-    $query = $storage->getQuery()
-      // Owner-scoped candidates only; every proposal is revalidated below.
-      ->accessCheck(FALSE)
-      ->condition('uid', $account->id())
-      ->sort('changed', 'DESC')
-      ->sort('id', 'DESC')
-      ->range(0, self::PAGE_SIZE + 1);
     $position = $this->parseCursor($cursor);
-    if ($position !== NULL) {
-      $query->condition($query->orConditionGroup()
-        ->condition('changed', $position[0], '<')
-        ->condition($query->andConditionGroup()
-          ->condition('changed', $position[0])
-          ->condition('id', $position[1], '<')));
+    $items = [];
+    foreach (['aculta_contribution', 'aculta_wiki_proposal'] as $entityTypeId) {
+      $storage = $this->entities->getStorage($entityTypeId);
+      $query = $storage->getQuery()
+        // Owner-scoped candidates only; every proposal is revalidated below.
+        ->accessCheck(FALSE)
+        ->condition('uid', $account->id())
+        ->sort('changed', 'DESC')
+        ->sort('id', 'DESC')
+        ->range(0, self::PAGE_SIZE + 1);
+      if ($entityTypeId === 'aculta_contribution') {
+        $query->condition('source', 'wiki')
+          ->condition('source_module', 'aculta_wiki')
+          ->condition('purpose', 'wiki');
+      }
+      if ($position !== NULL) {
+        $query->condition($query->orConditionGroup()
+          ->condition('changed', $position[0], '<')
+          ->condition($query->andConditionGroup()
+            ->condition('changed', $position[0])
+            ->condition('id', $position[1], '<')));
+      }
+      $ids = array_values($query->execute());
+      $items = [...$items, ...array_values($storage->loadMultiple($ids))];
     }
-    $ids = array_values($query->execute());
-    $hasMore = count($ids) > self::PAGE_SIZE;
-    $ids = array_slice($ids, 0, self::PAGE_SIZE);
-    $items = array_values($storage->loadMultiple($ids));
+    usort($items, static function (WikiProposal|Contribution $left, WikiProposal|Contribution $right): int {
+      $changed = (int) $right->get('changed')->value <=> (int) $left->get('changed')->value;
+      if ($changed !== 0) {
+        return $changed;
+      }
+      $id = (int) $right->id() <=> (int) $left->id();
+      if ($id !== 0) {
+        return $id;
+      }
+      return ($left instanceof Contribution ? 0 : 1) <=> ($right instanceof Contribution ? 0 : 1);
+    });
+    $unique = [];
+    foreach ($items as $item) {
+      if (!$item instanceof WikiProposal && !$item instanceof Contribution) {
+        continue;
+      }
+      $unique[$item->uuid()] ??= $item;
+    }
+    $items = array_values($unique);
+    $hasMore = count($items) > self::PAGE_SIZE;
+    $items = array_slice($items, 0, self::PAGE_SIZE);
     $last = $items === [] ? NULL : $items[array_key_last($items)];
     return [
       'items' => $items,
-      'next_cursor' => $hasMore && $last instanceof WikiProposal
+      'next_cursor' => $hasMore && ($last instanceof WikiProposal || $last instanceof Contribution)
         ? $this->formatCursor((int) $last->get('changed')->value, (int) $last->id())
         : NULL,
     ];
@@ -618,13 +692,14 @@ final class WikiContributorWorkspace {
   /**
    * Returns the user-facing state of a proposal.
    */
-  private function proposalState(WikiProposal $proposal): string {
+  private function proposalState(WikiProposal|Contribution $proposal): string {
     return match ((string) $proposal->get('state')->value) {
       'submitted' => (string) $this->t('Enviada'),
       'needs_changes' => (string) $this->t('Precisa de ajustes'),
       'accepted' => (string) $this->t('Aceita'),
       'declined' => (string) $this->t('Recusada'),
       'withdrawn' => (string) $this->t('Retirada'),
+      'conflict' => (string) $this->t('Conflito de versão'),
       default => (string) $this->t('Estado desconhecido'),
     };
   }

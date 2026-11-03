@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms_h5p\aculta_H5PEditor;
 
-use Drupal\aculta_image\ImageUploadIngestor;
+use Drupal\aculta_file_uploader\FileUploadIngestor;
 use Drupal\aculta_image\ImageInspector;
 use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -23,7 +23,7 @@ final class aculta_H5PEditorUploadManager {
 
   public function __construct(
     private readonly FileUploadHandlerInterface $uploadHandler,
-    private readonly ImageUploadIngestor $imageUploadIngestor,
+    private readonly FileUploadIngestor $imageUploadIngestor,
     private readonly ImageInspector $imageInspector,
     private readonly FileSystemInterface $fileSystem,
     private readonly ConfigFactoryInterface $configFactory,
@@ -90,7 +90,7 @@ final class aculta_H5PEditorUploadManager {
     try {
       $wrapped = new FormUploadedFile($upload);
       if ($plural === 'images') {
-        $result = $this->imageUploadIngestor->upload($wrapped, $destination, $mimes);
+        $result = $this->imageUploadIngestor->upload($wrapped, $destination, allowedMimes: $mimes);
       }
       else {
         // Core supplies its usual PHP upload-size bound and filename safety

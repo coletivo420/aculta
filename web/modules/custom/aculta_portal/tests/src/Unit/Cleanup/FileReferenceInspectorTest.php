@@ -14,8 +14,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
-use Drupal\aculta_portal\Cleanup\FileReferenceInspector;
-use Drupal\aculta_portal\Cleanup\FileReferenceStatus;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceInspector;
+use Drupal\aculta_file_uploader\Cleanup\FileReferenceStatus;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 

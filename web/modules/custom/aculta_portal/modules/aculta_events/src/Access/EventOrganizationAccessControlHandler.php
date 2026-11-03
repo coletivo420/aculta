@@ -38,15 +38,7 @@ final class EventOrganizationAccessControlHandler extends EntityAccessControlHan
         return AccessResult::allowed()->cachePerPermissions();
       }
 
-      // Enquanto não reivindicada, qualquer usuário que possa criar eventos pode editar o perfil.
-      if ($entity->isUnclaimed()) {
-        $createAccess = \Drupal::service('aculta_events.permission_policy')->createEventAccessResult($account);
-        if ($createAccess->isAllowed()) {
-          return AccessResult::allowed()->cachePerPermissions()->addCacheableDependency($entity);
-        }
-      }
-
-      // Reivindicada: titular ou membros aprovados com papel de edição/copropriedade.
+      // A reivindicada permite edição ao titular e membros aprovados.
       if ($entity->isClaimed()) {
         $titularId = $entity->getOwnerId();
         if ($titularId !== NULL && $titularId === (int) $account->id()) {
@@ -63,6 +55,15 @@ final class EventOrganizationAccessControlHandler extends EntityAccessControlHan
       }
 
       return AccessResult::forbidden('Usuário sem poderes de edição sobre a organização.')->cachePerUser()->addCacheableDependency($entity);
+    }
+
+    if ($operation === 'suggest') {
+      if (!$entity->isUnclaimed()) {
+        return AccessResult::forbidden('Somente organizações sem titular aceitam sugestões.')->addCacheableDependency($entity);
+      }
+      return \Drupal::service('aculta_events.permission_policy')
+        ->createEventAccessResult($account)
+        ->addCacheableDependency($entity);
     }
 
     if ($operation === 'delete') {
@@ -119,6 +120,19 @@ final class EventOrganizationAccessControlHandler extends EntityAccessControlHan
     return AccessResult::forbidden('Apenas o titular ou coproprietário com delegação podem gerenciar acessos.')
       ->cachePerUser()
       ->addCacheableDependency($aculta_event_organization);
+  }
+
+  /**
+   * Access to direct edit or the suggestion form, as appropriate.
+   */
+  public static function editFormAccess(
+    AccountInterface $account,
+    EventOrganization $aculta_event_organization,
+  ): AccessResult {
+    $operation = $account->hasPermission('administer aculta events') || $aculta_event_organization->isClaimed()
+      ? 'update'
+      : 'suggest';
+    return $aculta_event_organization->access($operation, $account, TRUE);
   }
 
 }

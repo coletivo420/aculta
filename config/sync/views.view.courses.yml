@@ -6,7 +6,6 @@ dependencies:
     - group.type.lms_course
   module:
     - group
-    - lms
     - user
 _core:
   default_config_hash: 8G8IYgl3ZlVpyNetip_TMiN1pzHJlDrgm_9Mo_mGuPg

@@ -6,7 +6,9 @@ namespace Drupal\Tests\aculta_events\Kernel;
 
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
+use Drupal\aculta_events\Entity\EventDateOverride;
 use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\aculta_events\Form\EventDateCreateForm;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormState;
@@ -311,6 +313,90 @@ final class EventLocationManagementKernelTest extends KernelTestBase {
 
     $this->expectException(NotFoundHttpException::class);
     $controller->page($draftLoc);
+  }
+
+  /**
+   * The Local agenda renders only its own recurring dates and overrides.
+   */
+  public function testLocationAgendaRendersRecurringCancelledAndRescheduledDates(): void {
+    $location = EventLocation::create([
+      'title' => 'Espaço da série',
+      'field_status' => 'publicado',
+      'field_organizador' => $this->organizerUser->id(),
+    ]);
+    $location->save();
+    $otherLocation = EventLocation::create([
+      'title' => 'Outro espaço',
+      'field_status' => 'publicado',
+      'field_organizador' => $this->organizerUser->id(),
+    ]);
+    $otherLocation->save();
+
+    $event = Event::create([
+      'title' => 'Oficina recorrente',
+      'field_status' => 'publicado',
+      'field_slug' => 'oficina-recorrente',
+    ]);
+    $event->save();
+    $date = EventDate::create([
+      'title' => 'Oficina recorrente',
+      'field_evento' => $event->id(),
+      'field_local' => $location->id(),
+      'field_quando' => [
+        'value' => '2030-05-02T19:00:00',
+        'end_value' => '2030-05-02T21:00:00',
+      ],
+      'field_regra' => 'FREQ=WEEKLY;BYDAY=TH;COUNT=3',
+    ]);
+    $date->save();
+    EventDateOverride::create([
+      'field_data_pai' => $date->id(),
+      'field_inicio_original' => '2030-05-09T19:00:00',
+    ])->save();
+    EventDateOverride::create([
+      'field_data_pai' => $date->id(),
+      'field_inicio_original' => '2030-05-16T19:00:00',
+      'field_inicio' => '2030-05-17T20:00:00',
+      'field_fim' => '2030-05-17T22:00:00',
+    ])->save();
+
+    $unrelatedEvent = Event::create([
+      'title' => 'Evento de outro local',
+      'field_status' => 'publicado',
+      'field_slug' => 'evento-de-outro-local',
+    ]);
+    $unrelatedEvent->save();
+    EventDate::create([
+      'title' => 'Evento de outro local',
+      'field_evento' => $unrelatedEvent->id(),
+      'field_local' => $otherLocation->id(),
+      'field_quando' => [
+        'value' => '2030-05-03T19:00:00',
+        'end_value' => '2030-05-03T21:00:00',
+      ],
+    ])->save();
+
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getCurrentTime')->willReturn(strtotime('2030-05-01 15:00:00 UTC'));
+    $this->container->set('datetime.time', $time);
+    /** @var \Drupal\aculta_events\Controller\LocationPageController $controller */
+    $controller = $this->container->get('class_resolver')->getInstanceFromDefinition(
+      '\\Drupal\\aculta_events\\Controller\\LocationPageController'
+    );
+
+    $build = $controller->page($location);
+    $days = $build['agenda']['days'];
+    self::assertArrayHasKey('2030-05-02', $days);
+    self::assertArrayHasKey('2030-05-09', $days);
+    self::assertArrayNotHasKey('2030-05-16', $days);
+    self::assertArrayHasKey('2030-05-17', $days);
+
+    $cancelledMarkup = $days['2030-05-09']['items']['#items'][0]['#markup'];
+    self::assertStringContainsString('Oficina recorrente', $cancelledMarkup);
+    self::assertStringContainsString('cancelado', $cancelledMarkup);
+    $rescheduledMarkup = $days['2030-05-17']['items']['#items'][0]['#markup'];
+    self::assertStringContainsString('Oficina recorrente', $rescheduledMarkup);
+    self::assertStringNotContainsString('Evento de outro local', serialize($days));
   }
 
   /**

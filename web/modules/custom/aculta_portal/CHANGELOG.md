@@ -1,4 +1,170 @@
+## 0.4.1-dev.67 — propósito da rota de anexo ACULTA
+
+- A rota `aculta_lms.answer_attachment_download` em `/resposta/{answer}/arquivo` pertence ao purpose `courses`, com cobertura Unit e registro no mapa de rotas.
+- Validação focal: `DomainRouteSubscriberLocalizedPathsTest` 1/30 PASS; gate Drupal 11+ do Portal 1.172 checks PASS.
+
+## 0.4.1-dev.66 — caminho de diretório atrás do interruptor (Fase 3.5)
+
+- `SurfaceConfigReader::caminhoDiretorioConfigurado()` e `caminhoDiretorioAtivo()`: o caminho `/slug` de superfície em modo diretório só entra em vigor com `leitura_ativa` ligado. Com o padrão (desligado), retorna NULL e nenhum comportamento muda.
+- A resolução de `/slug` no MAIN não foi implementada (DEFERRED: exige teste de rota no Runtime).
+- Testes: `SurfaceConfigReaderTest::testCaminhoDiretorioSoComInterruptor` escrito, DEFERRED (sem vendor/ nem Runtime). Conferência standalone da lógica com stub de configuração: 9/9 PASS.
+
+## 0.4.1-dev.65 — subscriber de superfícies desligado (Fase 3.4)
+
+- `SurfaceRequestSubscriber`: responde 404 para superfície desativada, só com `leitura_ativa` ligado. Desligado por padrão; nenhum comportamento muda. Ativação depende do teste de rota da 3.0 no Runtime.
+- O MAIN nunca é afetado.
+- Testes: DEFERRED.
+
+## 0.4.1-dev.64 — testes escritos para mapa, leitor e validação de superfícies
+
+- `DomainSurfaceMapTest`: paridade dos purposes, IDs de Domain, raízes, nó da loja e caminho legado.
+- `SurfaceConfigReaderTest`: regras de MAIN, slug, reservados, duplicidade e lista de diretório.
+- Testes: escritos, NÃO executados (sem `vendor/` nem Runtime). DEFERRED.
+
+## 0.4.1-dev.63 — leitor de configuração de superfícies (Fase 3.4, parcial)
+
+- Novo `Domain/SurfaceConfigReader` (serviço `aculta_portal.surface_config_reader`) lê `aculta_portal.superficies` com padrões e valida regras: MAIN ativo, slug de diretório válido, sem reservados e sem duplicidade.
+- Configuração exportada em `config/sync/aculta_portal.superficies.yml` (padrão: todas em subdomínio, ativas) e schema em `config/schema/aculta_portal.superficies.schema.yml`.
+- As rotas ainda declaram purpose em YAML: a atribuição pela configuração fica para a 3.4 completa.
+- Testes: DEFERRED (sem `vendor/` nem Runtime).
+
+## 0.4.1-dev.62 — literais de purpose do subscriber viram constantes (Fase 3.3, sem mudança de valor)
+
+- `DomainSurfaceMap::MAIN` e `DomainSurfaceMap::ACCOUNT` substituem os literais `'main'` e `'account'` em `DomainPurposeRequestSubscriber` (14 ocorrências). Os valores são os mesmos.
+- A semântica das decisões não muda. A troca para "superfície protegida" e "superfície de Conta" fica para quando houver teste de rota.
+- Testes: DEFERRED (sem `vendor/` nem Runtime).
+
+## 0.4.1-dev.61 — mapa único de superfícies (Fase 3.1, sem mudança de valor)
+
+- Novo `Domain/DomainSurfaceMap` reúne `DOMAIN_IDS`, `FRONT_PATHS`, `NO_DA_RAIZ` e `CAMINHOS_LEGADOS`. Os valores são os mesmos de antes.
+- `DomainPurposeManager`, `FrontPathPolicy` e `PurposeFrontPathProcessor::FRONT_PATHS` passam a ler desse mapa. A constante pública `FRONT_PATHS` continua existindo, agora como alias.
+- Testes: DEFERRED (sem `vendor/` nem Runtime nesta sessão).
+
+## 0.4.1-dev.60 — resolvedor respeita a flag de purpose autoritativo
+
+- `DomainRouteSubscriber` do portal guarda o purpose das rotas com `_aculta_domain_purpose_authoritative` antes das regras de família e os restaura ao final. A ordem de prioridades não muda (-2049).
+- Comentário do `aculta_mcp` corrigido: o subscriber dele roda antes da passagem do portal, e a flag protege o purpose. Sem mudança de prioridade.
+- Testes: DEFERRED (sem `vendor/` nem Runtime nesta sessão). Teste de rota de `mcp_server.handle` previsto em TESTES-3.0.
+
+## 0.4.1-dev.59 — Prefixo /studio removido da guarda de caminhos
+
+- `CANONICAL_STUDIO_PATHS` e `caminhoStudioCanonicoPermitido` saem de `FrontPathPolicy`.
+- Qualquer `/studio` responde 404 no subscriber de propósito. O teste de exceção vira teste de caminhos internos fechados.
+- Testes: DEFERRED.
+
+## 0.4.1-dev.58 — dado antigo de uploads removido de config/sync
+
+- Removidos `config/sync/aculta_portal.user_upload.yml` e o bloco `aculta_portal.user_upload` do schema. Nenhum código lê mais esse dado.
+- O histórico do git mantém o arquivo removido: a configuração antiga (consumidores wiki e fórum) pode ser recuperada de commits anteriores.
+- Decisão do responsável: remover sem confirmar antes que `aculta_file_uploader_update_10001` rodou no Runtime. Se o update não rodou, as sobreposições de wiki e fórum precisam ser recriadas no painel novo.
+
+RUNTIME STATUS: DEFERRED. A linha `aculta_portal.user_upload` ainda existe no banco do Runtime até um config:import com remoção, por ordem explícita.
+
+## 0.4.1-dev.57 — painel antigo de uploads removido
+
+- Removidos: `UserUploadSettingsForm`, a rota `aculta_portal.user_upload_settings` (`/admin/config/aculta/uploads-usuarios`, sem redirect), o link de menu e a classe `UserUploadPolicy` com o serviço `aculta_portal.user_upload_policy`.
+- Todos os consumidores (wiki, fórum, LMS) usam `aculta_file_uploader.consumer_policy`. O painel de uploads por integração fica em `/painel-administrativo/aculta-portal/uploads`.
+- Mantidos: o dado `aculta_portal.user_upload` em config/sync e o schema. Remover o dado depende de ordem explícita e de confirmar que o `aculta_file_uploader_update_10001` já rodou no Runtime.
+- Testes que cobriam o painel antigo removidos. A cobertura do diálogo continua nos testes Kernel de wiki e fórum.
+
+RUNTIME STATUS: DEFERRED. Sem PHPUnit executado (sem vendor/ nem Runtime).
+
+## 0.4.1-dev.56 — diálogo de upload usa a política do aculta_file_uploader
+
+- `UserUploadDialogBuilder` recebe `aculta_file_uploader.consumer_policy` e monta imagem e documento com o elemento `aculta_upload_dropzone`. Serviço `aculta_portal.user_upload_dialog_builder` religado.
+- Consumidores ainda usam `UserUploadPolicy` para validar; a migração deles segue em commits próprios.
+- Testes: wiki e fórum (Unit e Kernel) e Kernel de upload montam o builder com a política nova. Config `aculta_file_uploader.settings` gravada onde o módulo não está habilitado.
+
+RUNTIME STATUS: DEFERRED. Testes não executados (sem vendor/ nem Runtime).
+
+## 0.4.1-dev.55 — registro do helper de quarentena migrado
+
+- `PortalHelperRegistry`: `aculta_image.quarantine` (serviço) vira `aculta_file_uploader.quarantine`. Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.4.1-dev.54 — registro do helper de limpeza migrado
+
+- `PortalHelperRegistry`: `aculta_image.cleanup` vira `aculta_file_uploader.cleanup`. Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.4.1-dev.53 — limpeza de File consome o aculta_file_uploader
+
+- Dependência nova: `aculta_portal:aculta_file_uploader`. `UnusedMediaCleaner`, `ContentCleanupPreview` e a interface de mídia usam os tipos do uploader.
+- `aculta_portal.unused_file_cleaner` e `aculta_portal.file_reference_inspector` saem do portal; registro do helper atualizado.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.4.1-dev.52 — registro do helper de auditoria migrado
+
+- `PortalHelperRegistry`: a entrada `aculta_image.audit` passa a `aculta_file_uploader.audit`.
+- Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.4.1-dev.51 — registro de helper do derivado migrado
+
+- `PortalHelperRegistry`: a entrada `aculta_image.generated_file` passa a `aculta_file_uploader.generated_file`.
+- Sem mudança de comportamento. O serviço agora é definido pelo `aculta_file_uploader`.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.4.1-dev.50 — contratos educacionais fora do Portal (2026-11-01)
+
+- Correção da dev.49: `CourseJourneyReaderInterface`, `CourseJourney`,
+  `CourseJourneyLesson` e o novo `LearnerDashboardComposerInterface` passam a
+  viver em `aculta_learning_contracts`, módulo sem dependência de `lms:lms`,
+  `aculta_portal`, `aculta_studio` ou `aculta_lms`.
+- Motivo: este módulo ainda exige `lms:lms`; manter os contratos aqui impediria
+  que continuassem disponíveis quando essa dependência for removida na fase B3.
+- O Portal não contém mais os contratos e não ganhou dependência do novo módulo.
+- Na B2, `LearnerDashboardComposerInterface` foi substituído por
+  `StudentLearningSummaryReaderInterface` e pelos DTOs tipados do painel; a
+  composição e as rotas Ganjalab ficam no Studio.
+
+## 0.4.1-dev.49 — contrato neutro da jornada educacional (2026-11-01)
+
+- `CourseJourneyReaderInterface`, `CourseJourney` e `CourseJourneyLesson` passam
+  a viver em `Drupal\aculta_portal\Contract\Learning`, camada neutra da qual
+  `aculta_studio` e `aculta_lms` já dependem. A revisão corrige a fatia inicial,
+  que mantinha o contrato no namespace do Studio enquanto o adaptador do LMS o
+  implementava.
+- O adaptador continua em `aculta_lms\LearningDashboardManager`; o alias
+  `aculta_lms.course_journey_reader` e o alias por interface foram apontados
+  para o namespace neutro. Nenhum dado, configuração ou rota mudou.
+
+## Revalidação 2026-11-02 — prévia de limpeza File/Media
+
+- `ContentCleanupPreviewTest`: 5 testes / 78 assertions PASS. `ContentCleanupInventoryKernelTest`: 1/21 PASS com storage real em `aculta_simpletest`.
+- A prévia é paginada, somente leitura e minimiza metadados; não chama remoção. Nenhuma exclusão, importação, rebuild ou escrita Runtime.
+
 # Changelog
+
+## 0.4.1-dev.48 — inventário paginado somente leitura de File/Media (2026-11-01)
+
+- `aculta_portal.content_cleanup_preview::inventory()` descobre File ou Media
+  em páginas de até 100 IDs ordenados, com cursor keyset e reavaliação pelo
+  assessor owner. O relatório expõe somente tipo, ID e estado; não lê nem
+  devolve rótulo, URI ou conteúdo e nunca executa remoção.
+- Testes Unit do Portal: 343 testes / 1.154 assertions PASS. A suíte focal
+  `ContentCleanupPreviewTest`: 5 testes / 78 assertions PASS. Os testes de
+  inventário cobrem File, Media, cursor, acesso interno sem filtro de acesso,
+  página final, validação de parâmetros e ausência de exclusão. Sem escrita
+  Runtime.
+- Kernel focal com File/Media Entity Storage real: 1 teste / 21 assertions
+  PASS em `aculta_simpletest` (1.049 tabelas permanentes antes da execução).
+- Suíte Kernel completa do Portal: 95 testes / 1.829 assertions PASS; 108
+  depreciações Core/contrib. JUnit confirmou 0 falhas, 0 erros e 0 skips.
+- Inventário de Nodes/posts e adapters por módulo owner, executor com backup,
+  confirmação explícita e trilha auditável continuam pendentes.
+
+## 0.4.1-dev.47 — prévia somente leitura de limpeza de File/Media (2026-11-01)
+
+- `aculta_portal.content_cleanup_preview` avalia IDs explícitos de File/Media em lote limitado a 100, deduplica IDs, falha em entradas inválidas e relata somente tipo, ID e estado; não chama métodos de remoção nem inclui nomes, URIs ou conteúdo.
+- Assessors de File/Media separam a avaliação sem escrita das APIs de remoção. A remoção de Media repete a checagem de publicação e referências imediatamente antes de excluir.
+- Unit focais de preview/cleaners: 11 testes / 55 assertions PASS; Kernel `FileReferenceInspectorKernelTest`: 2 testes / 19 assertions PASS. PHPCS Drupal/DrupalPractice, PHP lint, YAML dos serviços e gates Drupal 11+/fronteira módulo-tema PASS. Nenhuma exclusão, alteração Runtime ou reconstrução do índice foi executada.
+- A prévia cobre somente candidatos File/Media explícitos. Descoberta de conteúdo por adapters, inventário de posts e executor com backup/confirmação seguem pendentes.
 
 ## 0.4.1-dev.46 — login por CPF em todas as superfícies locais (2026-10-29)
 
@@ -248,3 +414,8 @@
 ## 0.4.1-dev.14 — providers de checkout e leitura do flow nativo (P-CART C) — 2026-10-22
 
 - Novo `OrderTypeCheckoutFlows`: lê o checkout flow associado ao tipo de pedido no Commerce, sem alterá-lo. Serve aos providers de Loja, LMS e Doações. Sem efeito público. RUNTIME STATUS: DEFERRED.
+
+## Próxima versão — renomeação LinkWeed
+
+- A superfície `links` passou a exibir LinkWeed; o módulo responsável foi renomeado para `aculta_linkweed`, preservando purpose e Domain.
+

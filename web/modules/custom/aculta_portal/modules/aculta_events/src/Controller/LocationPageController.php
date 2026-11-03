@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Controller;
 
+use Drupal\aculta_calendar\Agenda\CalendarAgenda;
+use Drupal\aculta_calendar\Item\CalendarQuery;
+use Drupal\aculta_events\Calendar\EventCalendarItemProvider;
 use Drupal\aculta_events\Catalogue\LocationCatalogue;
-use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Datetime\DateFormatterInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -26,21 +27,21 @@ final class LocationPageController extends ControllerBase {
    * Construtor.
    */
   public function __construct(
-    EntityTypeManagerInterface $entityTypeManager,
     private readonly LocationCatalogue $catalogue,
-    private readonly DateFormatterInterface $dateFormatter,
-  ) {
-    $this->entityTypeManager = $entityTypeManager;
-  }
+    private readonly CalendarAgenda $agenda,
+    private readonly EventCalendarItemProvider $calendarProvider,
+    private readonly TimeInterface $time,
+  ) {}
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('entity_type.manager'),
       $container->get('aculta_events.locations'),
-      $container->get('date.formatter'),
+      $container->get('aculta_calendar.agenda'),
+      $container->get('aculta_events.item_provider'),
+      $container->get('datetime.time'),
     );
   }
 
@@ -270,88 +271,81 @@ final class LocationPageController extends ControllerBase {
    * Constrói a agenda de datas e eventos associados a este local.
    */
   private function buildAgenda(EventLocation $location): array {
-    $dateStorage = $this->entityTypeManager->getStorage('aculta_event_date');
-    $dateIds = $dateStorage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('field_local', (int) $location->id())
-      ->sort('field_quando.value', 'ASC')
-      ->execute();
-
-    if (empty($dateIds)) {
-      return [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'event-location-agenda'],
-        'title' => [
-          '#type' => 'html_tag',
-          '#tag' => 'h2',
-          '#value' => (string) $this->t('Agenda neste local'),
-        ],
-        'empty' => [
-          '#markup' => '<p class="location-agenda-empty">' . $this->t('Nenhum evento agendado neste local no momento.') . '</p>',
-        ],
-      ];
-    }
-
-    $dates = $dateStorage->loadMultiple($dateIds);
-    $items = [];
-    $eventStorage = $this->entityTypeManager->getStorage('aculta_event');
-
-    foreach ($dates as $date) {
-      $eventId = (int) ($date->get('field_evento')->target_id ?? 0);
-      if ($eventId <= 0) {
-        continue;
-      }
-      /** @var \Drupal\aculta_events\Entity\Event|null $event */
-      $event = $eventStorage->load($eventId);
-      if (!$event instanceof Event || !$event->access('view', $this->currentUser())) {
-        continue;
-      }
-
-      $quando = $date->get('field_quando')->first();
-      $startFormatted = '';
-      if ($quando !== NULL && !empty($quando->value)) {
-        $timestamp = strtotime((string) $quando->value);
-        if ($timestamp !== FALSE) {
-          $startFormatted = $this->dateFormatter->format($timestamp, 'medium');
-        }
-      }
-
-      $slug = (string) ($event->get('field_slug')->value ?? '');
-      $eventUrl = $slug !== ''
-        ? Url::fromRoute('aculta_events.page', ['slug' => $slug])
-        : Url::fromRoute('aculta_events.catalogue');
-
-      $line = '<strong>' . Link::fromTextAndUrl((string) $event->label(), $eventUrl)->toString() . '</strong>';
-      $dateTitle = (string) $date->label();
-      if ($dateTitle !== '' && $dateTitle !== (string) $event->label()) {
-        $line .= ' — ' . Html::escape($dateTitle);
-      }
-      if ($startFormatted !== '') {
-        $line .= '<br><span class="event-date-time">' . Html::escape($startFormatted) . '</span>';
-      }
-
-      $isFree = (bool) ($date->get('field_gratuito')->value ?? FALSE);
-      if ($isFree) {
-        $line .= ' <span class="badge badge-free">' . Html::escape((string) $this->t('Gratuito')) . '</span>';
-      }
-
-      $items[] = ['#markup' => $line];
-    }
-
-    return [
+    $timezone = new \DateTimeZone('America/Sao_Paulo');
+    $now = (new \DateTimeImmutable('@' . $this->time->getCurrentTime()))->setTimezone($timezone);
+    $from = $now->setTime(0, 0);
+    $to = $from->modify('+30 days')->setTime(23, 59, 59);
+    $query = new CalendarQuery(
+      $from,
+      $to,
+      $now,
+      ['local' => (int) $location->id()],
+      ['aculta_events'],
+    );
+    $days = $this->agenda->dias($query);
+    $agenda = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'event-location-agenda'],
+      '#cache' => [
+        'tags' => $this->calendarProvider->cacheTags(),
+        'contexts' => $this->calendarProvider->cacheContexts(),
+        'max-age' => $this->calendarProvider->cacheMaxAge(),
+      ],
       'title' => [
         '#type' => 'html_tag',
         '#tag' => 'h2',
         '#value' => (string) $this->t('Agenda neste local'),
       ],
-      'list' => [
-        '#theme' => 'item_list',
-        '#items' => $items,
-        '#empty' => $this->t('Nenhum evento com acesso público disponível.'),
+      'ics' => [
+        '#type' => 'link',
+        '#title' => $this->t('Baixar agenda deste local (ICS)'),
+        '#url' => Url::fromRoute('aculta_events.location_ics', [
+          'aculta_event_location' => $location->id(),
+        ]),
       ],
     ];
+    if ($days === []) {
+      $agenda['empty'] = [
+        '#markup' => '<p class="location-agenda-empty">' . Html::escape((string) $this->t('Nenhum evento agendado neste local nos próximos 30 dias.')) . '</p>',
+      ];
+      return $agenda;
+    }
+
+    foreach ($days as $day => $occurrences) {
+      $dayItems = [];
+      foreach ($occurrences as $occurrence) {
+        $time = $occurrence['diaInteiro']
+          ? (string) $this->t('Dia inteiro')
+          : $occurrence['inicio']->format('H:i') . ' às ' . $occurrence['fim']->format('H:i');
+        $title = $occurrence['link'] !== NULL
+          ? Link::fromTextAndUrl($occurrence['titulo'], Url::fromUserInput($occurrence['link']))->toString()
+          : Html::escape($occurrence['titulo']);
+        $line = '<time datetime="' . Html::escape($occurrence['inicio']->format(DATE_ATOM)) . '">'
+          . Html::escape($time) . '</time> — <strong>' . $title . '</strong>';
+        if ($occurrence['local'] !== '') {
+          $line .= ' · ' . Html::escape($occurrence['local']);
+        }
+        if ($occurrence['cancelada']) {
+          $line .= ' <span class="event-cancelled">(' . Html::escape((string) $this->t('cancelado')) . ')</span>';
+        }
+        $dayItems[] = ['#markup' => $line];
+      }
+      $dayDate = new \DateTimeImmutable($day, $timezone);
+      $agenda['days'][$day] = [
+        '#type' => 'container',
+        '#attributes' => ['data-event-date' => $day],
+        'heading' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h3',
+          '#value' => $dayDate->format('d/m/Y'),
+        ],
+        'items' => [
+          '#theme' => 'item_list',
+          '#items' => $dayItems,
+        ],
+      ];
+    }
+    return $agenda;
   }
 
 }

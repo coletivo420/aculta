@@ -4,6 +4,8 @@
 
 **Referências:** [Studio Visual](STUDIO-VISUAL-CONCEPT.md) · [Fluxos de edição](STUDIO-EDITOR-FLOWS.md) · [Roadmap Studio](STUDIO-MAGAZINE-ROADMAP.md) · [Roadmap funcional LMS](../modules/ACULTA-LMS-ROADMAP.md) · [LMS/Group](../modules/LMS-GROUP.md) · [Contratos LMS](LMS-INTEGRATION-CONTRACTS.md).
 
+**Ownership atualizado:** este Course Builder pertence ao workspace **Ganjalab Educador**, separado do **Ganjalab Estudante** e do **Marley**. Marley cobre Revista, moderação do Fórum e Galerias; a experiência do estudante segue o plano Ganjalab. O workspace usa a rota existente `courses:/ganjalab/educador`; a criação de curso fica em `courses:/ganjalab/educador/cursos/novo`. O estudante permanece em `courses:/ganjalab`. Ver [fronteiras das experiências Studio](ACULTA-STUDIO-EXPERIENCE-BOUNDARIES.md).
+
 ## Objetivo e público
 
 Construir visualmente cursos por educadores sem usar as telas administrativas do Drupal no fluxo cotidiano. Padrão **Meus cursos**: apenas cursos que a pessoa criou ou efetivamente gerencia, conforme relações/permissões do Group, sem confundir “posso ver”, matrícula de estudante e responsabilidade de gestão. **Equipe/Cursos autorizados** é outro contexto explicitamente selecionado. Autoria de aula/curso e pessoa que edita devem aparecer corretamente.

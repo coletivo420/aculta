@@ -47,16 +47,23 @@ aculta_events.admin_organizations:
   parent: aculta_events.admin
   weight: 6
 
+aculta_events.admin_organization_suggestions:
+  title: 'Sugestões de organizações'
+  description: 'Revisar alterações propostas para organizações sem titular.'
+  route_name: aculta_events.admin_organization_suggestions
+  parent: aculta_events.admin
+  weight: 7
+
 aculta_events.admin_organization_add:
   title: 'Cadastrar organização'
   description: 'Cadastrar uma nova organização cultural.'
   route_name: aculta_events.admin_organization_add
   parent: aculta_events.admin
-  weight: 7
+  weight: 8
 
 aculta_events.admin_export:
   title: 'Exportar eventos (CSV)'
   description: 'Baixa datas de eventos publicados por período, com campos administrativos mínimos.'
   route_name: aculta_events.admin_export
   parent: aculta_events.admin
-  weight: 8
+  weight: 9

@@ -9,21 +9,21 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\aculta_lms\Account\AccountUserLoaderInterface;
 use Drupal\aculta_lms\AttemptArchiveManager;
+use Drupal\aculta_lms\Entity\AnswerEntity;
 use Drupal\aculta_lms\Entity\AttemptArchive;
 use Drupal\group\Access\GroupAccessResult;
-use Drupal\lms\Entity\AnswerInterface;
-use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Captures deleted LMS answers and renders protected attempt history. */
+/** Captures deleted ACULTA answers and renders protected attempt history. */
 final class AttemptArchiveHooks {
 
   public function __construct(
@@ -38,17 +38,13 @@ final class AttemptArchiveHooks {
 
   #[Hook('entity_predelete')]
   public function entityPredelete(EntityInterface $entity): void {
-    if ($entity instanceof AnswerInterface) {
+    if ($entity instanceof AnswerEntity) {
       $this->attemptArchiveManager->archiveAnswer($entity);
     }
   }
 
   #[Hook('entity_delete')]
   public function entityDelete(EntityInterface $entity): void {
-    if ($entity instanceof CourseStatusInterface) {
-      $this->attemptArchiveManager->purgeByCourseStatus($entity);
-      return;
-    }
     if ($entity instanceof GroupInterface && $entity->bundle() === 'lms_course') {
       $this->attemptArchiveManager->purgeByGroup($entity);
       return;
@@ -60,7 +56,7 @@ final class AttemptArchiveHooks {
 
   #[Hook('entity_presave')]
   public function entityPresave(EntityInterface $entity): void {
-    if ($entity instanceof AnswerInterface) {
+    if ($entity instanceof AnswerEntity) {
       $this->attemptArchiveManager->archivePreviousAnswer($entity);
     }
   }
@@ -80,12 +76,16 @@ final class AttemptArchiveHooks {
         }
         return $result;
       }
-      if ($account->hasPermission('administer lms')) {
-        return AccessResult::allowed()->cachePerPermissions()->addCacheableDependency($entity);
-      }
       $course = $this->entityTypeManager->getStorage('group')->load($entity->get('group_id')->value);
       if (!$course instanceof GroupInterface) {
         return AccessResult::forbidden()->addCacheableDependency($entity);
+      }
+      if (!$course->getMember($user)) {
+        return AccessResult::forbidden()
+          ->addCacheableDependency($entity)
+          ->addCacheableDependency($course)
+          ->addCacheTags(['group_relationship_list:plugin:group_membership:group:' . $course->id()])
+          ->cachePerUser();
       }
       $permissions = (string) $account->id() === (string) $entity->get('uid')->value
         ? ['take course']
@@ -103,12 +103,17 @@ final class AttemptArchiveHooks {
     if (($context['entity_type_id'] ?? NULL) !== 'aculta_lms_attempt_archive') {
       return AccessResult::neutral();
     }
-    return AccessResult::allowedIfHasPermission($account, 'administer lms')
-      ->cachePerPermissions();
+    return AccessResult::forbidden()->cachePerUser();
   }
 
-  #[Hook('lms_answer_details_alter')]
-  public function addPreviousAttempts(array &$build, AnswerInterface $answer, CacheableMetadata $cacheability): void {
+  #[Hook('entity_view')]
+  public function attemptArchiveView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
+    if (!$entity instanceof AnswerEntity || $view_mode !== 'full') {
+      return;
+    }
+    $answer = $entity;
+    $cacheability = new CacheableMetadata();
+    $cacheability->addCacheContexts(['user', 'user.group_permissions']);
     $storage = $this->entityTypeManager->getStorage('aculta_lms_attempt_archive');
     $cacheability->addCacheTags($storage->getEntityType()->getListCacheTags());
     $cacheability->addCacheContexts(['user', 'user.group_permissions']);
@@ -130,7 +135,7 @@ final class AttemptArchiveHooks {
         ['data' => ['#plain_text' => $event_label]],
         ['data' => ['#plain_text' => $record->get('evaluated')->value
           ? $this->translation->translate('Avaliada: @score de @maximum pontos', [
-            '@score' => $record->get('score')->value,
+            '@score' => $record->get('score_precise')->value ?? $record->get('score')->value,
             '@maximum' => $record->get('max_score')->value,
           ])
           : $this->translation->translate('Aguardando avaliação do educador')]],
@@ -164,6 +169,11 @@ final class AttemptArchiveHooks {
           $this->translation->translate('Resposta'),
         ],
         '#rows' => $rows,
+      ],
+      '#cache' => [
+        'contexts' => $cacheability->getCacheContexts(),
+        'tags' => $cacheability->getCacheTags(),
+        'max-age' => $cacheability->getCacheMaxAge(),
       ],
     ];
   }

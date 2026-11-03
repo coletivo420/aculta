@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_index_test\ContentIndex;
 
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
+use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\aculta_portal\ContentIndex\ContentIndexIndexabilityProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexOwnerResolver;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
@@ -26,6 +27,11 @@ final class SampleContentProvider implements ContentIndexProviderInterface, Cont
    * Test override used to simulate a provider contract change.
    */
   public static int $projectionVersion = 1;
+
+  /**
+   * Test override for the related target included in fixture projections.
+   */
+  public static ?string $relatedEntityId = NULL;
 
   /**
    * {@inheritdoc}
@@ -55,6 +61,10 @@ final class SampleContentProvider implements ContentIndexProviderInterface, Cont
     if (!$this->isIndexable($entity)) {
       return NULL;
     }
+    $relations = self::$relatedEntityId === NULL
+      ? []
+      : [new ContentIndexRelation('related_item', 'node', self::$relatedEntityId)];
+
     return new ContentIndexProjection(
       'node',
       (string) $entity->id(),
@@ -66,6 +76,7 @@ final class SampleContentProvider implements ContentIndexProviderInterface, Cont
       $entity->isPublished(),
       max(0, (int) $entity->getCreatedTime()),
       max(0, (int) $entity->getChangedTime()),
+      relations: $relations,
       ownerUid: ContentIndexOwnerResolver::resolve($entity),
     );
   }

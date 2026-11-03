@@ -25,6 +25,21 @@ final class RevistaMyWorkContractTest extends UnitTestCase {
   }
 
   /**
+   * Meu trabalho keeps create and moderation out of the sidebar.
+   */
+  public function testMyWorkMovesCreateAndModerationOutOfTheSidebar(): void {
+    $source = file_get_contents(__DIR__ . '/../../../src/Plugin/MarleyTab/RevistaTab.php');
+    self::assertIsString($source);
+    self::assertStringContainsString("'suppress_sidebar' => TRUE", $source);
+    self::assertStringContainsString("'sidebar' => FALSE", $source);
+    self::assertStringContainsString("'secao' => 'criar'", $source);
+    self::assertStringContainsString("'weight' => count(\$listTabs)", $source);
+    self::assertStringContainsString("'label' => \$this->t('Comentários e moderação')", $source);
+    self::assertStringContainsString("'listing' => \$moderationListing", $source);
+    self::assertStringContainsString("if (\$canModerateComments) {", $source);
+  }
+
+  /**
    * Seek pages are bounded, and authorization is checked on each page.
    */
   public function testSeekPagesAreBoundedAndAuthorizationIsChecked(): void {

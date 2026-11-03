@@ -76,6 +76,7 @@ $allowed_variables = [
   'OSM_PRODUCTION_CLIENT_ID',
   'OSM_PRODUCTION_CLIENT_SECRET',
   'ACULTA_OSM_TOKEN_ENCRYPTION_KEY',
+  'ACULTA_LMS_XAPI_TOKEN_SECRET',
 ];
 
 $values = parse_ini_file($secrets_path, FALSE, INI_SCANNER_RAW);

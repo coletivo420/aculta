@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_mailer\Unit;
 
+use Drupal\aculta_file_uploader\IngestionLimits;
 use Drupal\aculta_mailer\Alert\MailAlerts;
 use Drupal\aculta_mailer\Delivery\AdministratorRecipients;
 use Drupal\aculta_mailer\Delivery\MailSuppression;
 use Drupal\aculta_mailer\Monitor\BounceParser;
 use Drupal\aculta_mailer\Monitor\DmarcReportParser;
 use Drupal\aculta_mailer\Monitor\ImapClientInterface;
+use Drupal\aculta_mailer\Monitor\ImapMessageTooLargeException;
 use Drupal\aculta_mailer\Monitor\MailMonitor;
 use Drupal\aculta_mailer\Policy\QuotaSignal;
 use Drupal\aculta_mailer\Queue\MailQueue;
@@ -100,7 +102,7 @@ MAIL;
       $this->createMock(LoggerInterface::class),
       $applier,
       new BounceParser(),
-      new DmarcReportParser(),
+      new DmarcReportParser(IngestionLimits::defaults()),
       NULL,
       new MailAlerts(
         $configFactory,
@@ -111,16 +113,17 @@ MAIL;
         $this->createMock(AdministratorRecipients::class),
       ),
       $this->createMock(QuotaSignal::class),
+      IngestionLimits::defaults(),
     );
   }
 
   /**
    * Cliente falso: mensagens por UID, sem rede.
    */
-  private function fakeClient(array $messages): ImapClientInterface {
-    return new class($messages) implements ImapClientInterface {
+  private function fakeClient(array $messages, array $oversized = []): ImapClientInterface {
+    return new class($messages, $oversized) implements ImapClientInterface {
 
-      public function __construct(private readonly array $messages) {}
+      public function __construct(private readonly array $messages, private readonly array $oversized) {}
 
       /**
        * {@inheritdoc}
@@ -133,6 +136,9 @@ MAIL;
        * {@inheritdoc}
        */
       public function fetch(int $uid): string {
+        if (in_array($uid, $this->oversized, TRUE)) {
+          throw new ImapMessageTooLargeException('Mensagem IMAP acima do limite de download.');
+        }
         return $this->messages[$uid];
       }
 
@@ -173,6 +179,16 @@ MAIL;
   public function testBouncePollAdvancesCursor(): void {
     $monitor = $this->monitor();
     $client = $this->fakeClient([1 => "Subject: oi\n\nx\n", 2 => "Subject: oi\n\ny\n"]);
+    $this->assertSame(['checked' => 2, 'applied' => 0], $monitor->pollBounces($client));
+    $this->assertSame(['checked' => 0, 'applied' => 0], $monitor->pollBounces($client));
+  }
+
+  /**
+   * Mensagem acima do teto é descartada sem travar a fila: o cursor passa e a seguinte é lida.
+   */
+  public function testOversizedMessageIsSkippedAndQueueContinues(): void {
+    $monitor = $this->monitor();
+    $client = $this->fakeClient([1 => "Subject: oi\n\nx\n", 2 => "Subject: oi\n\ny\n"], [1]);
     $this->assertSame(['checked' => 2, 'applied' => 0], $monitor->pollBounces($client));
     $this->assertSame(['checked' => 0, 'applied' => 0], $monitor->pollBounces($client));
   }
@@ -230,7 +246,7 @@ MAIL;
       $logger,
       new DeliveryEventApplier($this->createMock(EntityTypeManagerInterface::class), $suppression),
       new BounceParser(),
-      new DmarcReportParser(),
+      new DmarcReportParser(IngestionLimits::defaults()),
       $secrets,
       new MailAlerts(
         $configFactory,
@@ -241,6 +257,7 @@ MAIL;
         $this->createMock(AdministratorRecipients::class),
       ),
       $this->createMock(QuotaSignal::class),
+      IngestionLimits::defaults(),
     );
 
     $monitor->cron();

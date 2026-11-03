@@ -1,5 +1,10 @@
 # Changelog — aculta_lms_resources
 
+## 0.1.0-dev.20 — cursos usam Group
+
+- A autorização e a projeção de materiais do curso usam `GroupInterface` e `take course`, sem imports Drupal LMS em `src/` ou testes.
+- Unit 13/66 PASS; Kernels focais 7/303 PASS, com 54 depreciações upstream.
+
 ## 0.1.0-dev.19 — correções da validação pós-integração
 
 - `PublishedGallerySelection` passa a declarar `group: 'aculta_lms_resources'`,

@@ -11,12 +11,20 @@ use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\node\NodeInterface;
+use Drupal\entity_usage\EntityUsageInterface;
+use Drupal\media\MediaInterface;
 
 /**
  * Projects current Revista publication metadata and explicit editorial links.
  */
 final class MagazineContentIndexProvider implements ContentIndexProviderInterface, ContentIndexIndexabilityProviderInterface, ContentIndexAccessContextProviderInterface {
+
+  public function __construct(
+    private readonly EntityUsageInterface $entityUsage,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+  ) {}
 
   /**
    * {@inheritdoc}
@@ -29,7 +37,7 @@ final class MagazineContentIndexProvider implements ContentIndexProviderInterfac
    * {@inheritdoc}
    */
   public function getProjectionVersion(): int {
-    return 2;
+    return 3;
   }
 
   /**
@@ -79,6 +87,7 @@ final class MagazineContentIndexProvider implements ContentIndexProviderInterfac
     $this->addRelations($entity, 'field_related_activity', 'related_activity', 'node', $relations);
     $this->addRelations($entity, 'field_media_image', 'editorial_image', 'media', $relations);
     $this->addRelations($entity, 'field_editorial_gallery', 'editorial_gallery', 'media_gallery', $relations);
+    $this->addEmbeddedVideos($entity, $relations);
 
     return new ContentIndexProjection(
       'node',
@@ -95,6 +104,40 @@ final class MagazineContentIndexProvider implements ContentIndexProviderInterfac
       array_values($relations),
       ownerUid: ContentIndexOwnerResolver::resolve($entity),
     );
+  }
+
+  /**
+   * Adds remote videos explicitly tracked as embeds in the current revision.
+   *
+   * @param \Drupal\node\NodeInterface $entity
+   *   The current Revista publication revision.
+   * @param array<string, \Drupal\aculta_portal\ContentIndex\ContentIndexRelation> $relations
+   *   Relations keyed by type and target identity to suppress duplicates.
+   */
+  private function addEmbeddedVideos(NodeInterface $entity, array &$relations): void {
+    $targets = $this->entityUsage->listTargets($entity, (int) $entity->getRevisionId());
+    $videoIds = [];
+    foreach ($targets['media'] ?? [] as $targetId => $usages) {
+      foreach ($usages as $usage) {
+        if (($usage['method'] ?? '') === 'media_embed'
+          && ($usage['field_name'] ?? '') === 'body') {
+          $videoIds[(string) $targetId] = (string) $targetId;
+          break;
+        }
+      }
+    }
+    if ($videoIds === []) {
+      return;
+    }
+
+    foreach ($this->entityTypeManager->getStorage('media')->loadMultiple(array_values($videoIds)) as $media) {
+      if (!$media instanceof MediaInterface || $media->bundle() !== 'remote_video') {
+        continue;
+      }
+      $targetId = (string) $media->id();
+      $key = 'embedded_video:media:' . $targetId;
+      $relations[$key] = new ContentIndexRelation('embedded_video', 'media', $targetId);
+    }
   }
 
   /**

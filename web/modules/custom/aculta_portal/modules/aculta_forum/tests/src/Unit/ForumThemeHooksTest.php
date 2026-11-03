@@ -9,7 +9,7 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Contrato do registro do agrupamento de categorias do fórum, após a migração para classe de hook.
+ * Contrato do registro das categorias após a migração para classe de hook.
  */
 #[Group('aculta_forum')]
 final class ForumThemeHooksTest extends UnitTestCase {

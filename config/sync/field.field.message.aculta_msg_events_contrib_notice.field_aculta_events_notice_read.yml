@@ -1,0 +1,28 @@
+uuid: 8e99dc7f-1fdb-4574-a70e-9f2fcee68db3
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_aculta_events_notice_read
+    - message.template.aculta_msg_events_contrib_notice
+  enforced:
+    module:
+      - aculta_messenger
+_core:
+  default_config_hash: CXF9IT88T7zZfd58eZCdWTBAFoRX-fZY63NPHMb-y3o
+id: message.aculta_msg_events_contrib_notice.field_aculta_events_notice_read
+field_name: field_aculta_events_notice_read
+entity_type: message
+bundle: aculta_msg_events_contrib_notice
+label: 'Aviso lido'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Habilitado
+  off_label: Desligado
+field_type: boolean

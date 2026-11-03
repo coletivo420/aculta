@@ -246,9 +246,9 @@ final class SitemapWiringKernelTest extends KernelTestBase {
     $generator->setSitemap($sitemap);
 
     try {
-      self::assertContains(['purpose' => 'wiki', 'path' => '/wiki/verbetes'], $generator->getDataSets());
-      $generated = $generator->generate(['purpose' => 'wiki', 'path' => '/wiki/verbetes']);
-      $expectedUrl = $purposeManager->environmentPathUrl('wiki', '/wiki/verbetes');
+      self::assertContains(['purpose' => 'wiki', 'path' => '/verbetes'], $generator->getDataSets());
+      $generated = $generator->generate(['purpose' => 'wiki', 'path' => '/verbetes']);
+      $expectedUrl = $purposeManager->environmentPathUrl('wiki', '/verbetes');
       self::assertNotNull($expectedUrl);
       self::assertSame($expectedUrl->toString(), $generated[0]['url']);
     }

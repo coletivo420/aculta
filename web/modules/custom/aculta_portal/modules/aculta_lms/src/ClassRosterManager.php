@@ -11,8 +11,6 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
-use Drupal\lms_classes\ClassHelper;
 use Drupal\aculta_user\Identity\AuthorCardBuilder;
 use Drupal\user\UserInterface;
 
@@ -37,7 +35,7 @@ class ClassRosterManager {
    * @return array<string, mixed>
    *   Render array with its per-user access and membership cache metadata.
    */
-  public function build(CourseInterface $course, AccountInterface $viewer): array {
+  public function build(GroupInterface $course, AccountInterface $viewer): array {
     $cacheability = (new CacheableMetadata())
       ->addCacheableDependency($course)
       ->setCacheContexts(['user', 'user.group_permissions'])
@@ -47,7 +45,7 @@ class ClassRosterManager {
       ]);
     $classLists = [];
 
-    foreach (ClassHelper::getClasses($course) as $class) {
+    foreach ($this->classesForCourse($course) as $class) {
       if (!$class instanceof GroupInterface || $class->bundle() !== 'lms_class') {
         continue;
       }
@@ -135,6 +133,25 @@ class ClassRosterManager {
       $roles = array_column($membership->get('group_roles')->getValue(), 'target_id');
       return in_array('lms_class-member', $roles, TRUE);
     }));
+  }
+
+  /** Loads class Groups through their course relationship records. */
+  private function classesForCourse(GroupInterface $course): array {
+    $relationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
+      'gid' => $course->id(),
+      'plugin_id' => 'lms_classes',
+    ]);
+    $classes = [];
+    foreach ($relationships as $relationship) {
+      if (!$relationship instanceof GroupRelationshipInterface) {
+        continue;
+      }
+      $class = $relationship->getEntity();
+      if ($class instanceof GroupInterface && $class->bundle() === 'lms_class') {
+        $classes[] = $class;
+      }
+    }
+    return $classes;
   }
 
 }

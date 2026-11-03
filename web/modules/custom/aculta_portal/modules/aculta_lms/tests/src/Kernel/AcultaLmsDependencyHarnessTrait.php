@@ -103,7 +103,7 @@ trait AcultaLmsDependencyHarnessTrait {
       ->addArgument(new Reference('aculta_messenger.notice_event_publisher'))
       ->addArgument(new Reference('lock'));
     $container->register('aculta_studio.experience.ganjalab', GanjalabExperienceProvider::class)
-      ->addArgument(new Reference('aculta_studio.learner_dashboard_composer', ContainerBuilder::IGNORE_ON_INVALID_REFERENCE));
+      ->addArgument(new Reference('aculta_lms.learner_dashboard_composer', ContainerBuilder::IGNORE_ON_INVALID_REFERENCE));
     $container->register('aculta_studio.experience_manager', StudioExperienceManager::class)
       ->addMethodCall('addProvider', [new Reference('aculta_studio.experience.ganjalab')]);
     $container->register('aculta_studio.ganjalab_controller', GanjalabController::class)

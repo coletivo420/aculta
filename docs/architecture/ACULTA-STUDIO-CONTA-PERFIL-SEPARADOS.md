@@ -15,7 +15,7 @@ de retirar o legado. Entregas de código são distintas de homologação Runtime
 | Perfil público | `/u/{apelido}` em MAIN | `aculta_user` e `PublicProfilePolicy` | Apenas informações autorizadas publicamente |
 | Marley | `/marley` · `account` | Owners editoriais | Trabalho editorial |
 | Ganjalab | `/ganjalab` · `courses` | LMS | Aprendizagem |
-| WE SATIVA | `/wesativa` · `wiki` | Wiki | Contribuição |
+| WE SATIVA | `/we-sativa` · `wiki` | Wiki | Contribuição |
 
 ### Garantia permanente do legado
 

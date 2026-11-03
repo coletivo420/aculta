@@ -1,3 +1,52 @@
+## 0.1.0-dev.78 — fixtures Kernel registram dependências de ingestão
+
+- Os Kernels do Mailer habilitam `file` e `aculta_file_uploader`, necessários
+  para compilar o serviço de ingestão e fornecer `IngestionLimits`.
+- PHPUnit oficial no Homelab: Unit 15/40 e Kernels `AcultaMailerKernelTest` +
+  `MailSettingsKernelTest` 7/33 PASS no `aculta_simpletest`.
+
+## 0.1.0-dev.77 — limites de ingestão configuráveis e guarda de relatório DMARC
+
+- Os tetos do parser DMARC (relatório descompactado) e do download IMAP (mensagem) saem do código e vêm de
+  `IngestionLimits`, do `aculta_file_uploader`, editável em `/painel-administrativo/aculta/uploads/limites`. Padrões
+  mantidos: 8 MB e 25 MB. Tetos fixos: 32 MB e 50 MB. Valor inválido ou acima do teto volta ao padrão.
+- `DmarcReportParser` recusa relatório sem `report_metadata` ou `policy_published`. Antes, esse XML gerava aviso de
+  propriedade nula e um resumo vazio gravado no estado.
+- Dependência nova: `aculta_file_uploader`.
+
+Validação: `MonitorParsersTest` 8/8 no shim unitário local (inclui o teto configurado e o relatório sem metadados).
+Não executados: `MailMonitorTest` e `AcultaMailerKernelTest` (usam `createMock` ou Runtime), PHPUnit oficial e gate
+Drupal 11+. Status: DEFERRED.
+
+## 0.1.0-dev.76 — teto de download IMAP por mensagem — 2026-11-02
+
+O cliente IMAP corta a transferência de uma mensagem ao passar de 25 MiB (`CurlImapClient::MAX_MESSAGE_BYTES`),
+medido durante o download por callback de escrita do curl, sem acumular o restante em memória. A mensagem acima do
+teto gera `ImapMessageTooLargeException`. Antes, uma exceção de fetch abortava o poll inteiro sem avançar o cursor,
+então uma mensagem grande bloqueava a fila de bounces e de DMARC para sempre. Agora o monitor descarta essa mensagem,
+avança o cursor e segue com as próximas.
+
+Validação: o caminho do curl foi exercitado contra um servidor HTTP local (`php -S`) com arquivo de 30 MiB: estouro
+gera a exceção; corpo abaixo do teto volta idêntico, inclusive com teto igual ao tamanho; a leitura sem teto continua
+íntegra. Pico de memória no estouro: 48 MiB. `MonitorParsersTest` 6/6 no shim unitário local.
+Não executados nesta sessão: `MailMonitorTest` (usa `createMock`, fora do shim; o teste de descarte foi escrito, mas
+não rodou), PHPUnit oficial, Kernel Mailer e gate Drupal 11+. Status: DEFERRED.
+
+## 0.1.0-dev.75 — limite de descompactação no parser DMARC — 2026-11-02
+
+Anexos DMARC de remetentes externos agora têm teto de 8 MiB de XML descompactado, medido ao ler. O parser
+lia a primeira entrada de ZIP inteira com `getFromIndex(0)` e descompactava GZIP com `gzdecode` sem limite, então
+um anexo pequeno com razão de compressão alta podia esgotar a memória do cron de monitoramento. O ZIP passa a ser
+lido em fluxo e o GZIP é alimentado em fatias, com corte ao passar do teto. Anexos acima do teto são ignorados como
+relatório, sem gerar resumo parcial.
+
+Limite conhecido e não tratado aqui: o IMAP ainda baixa a mensagem inteira em `CurlImapClient::fetch`, sem teto
+de tamanho. Limitar esse download é decisão separada (afeta o transporte e a leitura de bounces).
+
+Validação: `MonitorParsersTest` **6/6 PASS** no shim unitário local (dois testes novos de bomba GZIP e ZIP). Controle
+com o parser anterior: **4 PASS / 2 FAIL**, confirmando que os testes detectam a falha. Não executados: PHPUnit
+oficial, Kernel Mailer e gate Drupal 11+ (dependência Packagist/Runtime indisponível nesta sessão). Status: DEFERRED.
+
 ## 0.1.0-dev.74 — restringir detalhes pessoais nos logs operacionais — 2026-10-25
 
 Falhas IMAP agora guardam e registram somente a classe da exceção; o estado

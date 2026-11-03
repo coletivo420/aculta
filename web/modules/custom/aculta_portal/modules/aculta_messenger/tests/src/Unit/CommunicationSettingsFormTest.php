@@ -73,9 +73,11 @@ final class CommunicationSettingsFormTest extends UnitTestCase {
     $build = $form->buildForm([], new FormState());
 
     foreach (AvisoPreferencias::EMAIL_CATEGORIES as $category) {
-      $expected = $category === AvisoPreferencias::EMAIL_FRIENDSHIP
-        ? [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_IMMEDIATE]
-        : [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE];
+      $expected = match ($category) {
+        AvisoPreferencias::EMAIL_FRIENDSHIP => [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_IMMEDIATE],
+        AvisoPreferencias::EMAIL_EVENTS_CONTRIBUTIONS => [AvisoPreferencias::EMAIL_OFF],
+        default => [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE],
+      };
       self::assertSame($expected, array_keys($build['email_modes'][$category]['#options']), $category);
     }
     self::assertStringContainsString('nunca é enviado', $build['intro']['#plain_text']->getUntranslatedString());

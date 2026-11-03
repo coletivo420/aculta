@@ -10,9 +10,10 @@
 
 ## Identidade e divisão de responsabilidades
 
-- **ACULTA Studio Marley**: experiência pública de criação, edição, autoria, educação e moderação, executada tecnicamente pelo submódulo `aculta_studio` e pelos providers funcionais; acesso por permissões atuais.
-- **ACULTA Studio Ganjalab**: experiência de **usuário/estudante** para consumir cursos, acompanhar atividades, turmas, materiais, evolução e certificados. É uma identidade da experiência existente no portal/conta e LMS, **não** um segundo LMS, sistema de login, módulo, domínio, banco de dados ou conjunto de roles.
-- Uma pessoa pode utilizar ambos com a mesma conta: estudante em um curso e docente/criadora noutro. A escolha da interface é dada pela tarefa e acesso real, jamais por uma separação rígida de pessoas/roles.
+- **ACULTA Studio Marley**: workspace editorial restrito à Revista, moderação do Fórum e Galerias. O submódulo `aculta_studio` compõe a interface; Magazine, Forum/UGC e Gallery continuam owners de conteúdo e permissões.
+- **ACULTA Studio Ganjalab Estudante**: experiência para consumir cursos, acompanhar atividades, turmas, materiais, evolução e certificados em `courses:/ganjalab`.
+- **ACULTA Studio Ganjalab Educador**: workspace separado de autoria/gestão em `courses:/ganjalab/educador`; novo curso em `/ganjalab/educador/cursos/novo`. O Course Builder completo continua planejado.
+- Uma pessoa pode alternar com a mesma conta conforme tarefa e acesso real. Os atalhos entre dashboards só aparecem quando a rota destino autoriza; isso não mistura interfaces, dados ou roles.
 - **ACULTA420** continua dono de toda a apresentação/tokens/SDC, independente da identidade pública. Curso/turma/participação são responsabilidade de Group e Drupal LMS; `aculta_lms` integra; `aculta_user`, `aculta_messenger`, `aculta_pdf_viewer`, `aculta_image`, `aculta_forum`, `aculta_gallery` e `aculta_game` são serviços compartilhados nas suas fronteiras atuais.
 
 ## Promessa do produto
@@ -69,12 +70,14 @@ Cabeçalho leve com breadcrumb “Minha aprendizagem / Curso / Aula”, título 
 - Perda de acesso à turma revoga acesso aos arquivos e discussões conforme Group/Media; revalidar em cada requisição.
 - `user`, memberships, domain purpose, Group, route e cache tags específicos devem impedir vazamento cruzado. Nenhum analytics, certificados, armazenamento de mensagens ou perfil duplicado.
 
-## Conexões com ACULTA Studio Marley
+## Alternância entre Ganjalab Estudante e Ganjalab Educador
 
-Um mesmo curso pode aparecer de modo diferente:
-- **ACULTA Studio Marley / Course Builder:** “Editar curso”, currículo, turmas e avaliações autorizadas para criadores.
-- **ACULTA Studio Ganjalab:** “Continuar aula”, materiais, atividades e resultados próprios para estudantes.
-A alternância, quando permitida, deve ser explícita e não trocar o contexto de estudante por gestão silenciosamente; links dirigem a rotas reais do dono. Ambos compartilham conteúdo e conta, jamais tabelas de cópia.
+Um mesmo curso pode aparecer de modo diferente, mas os workspaces são distintos:
+- **Ganjalab Educador:** autoria/gestão por Course Builder e Form API do LMS, em `/ganjalab/educador`.
+- **Ganjalab Estudante:** “Continuar aprendendo”, materiais, atividades e resultados próprios, em `/ganjalab`.
+- **Marley** não contém Course Builder, currículo, turmas LMS ou avaliações; suas áreas são Revista, moderação do Fórum e Galerias.
+
+Os dashboards mostram links de alternância somente quando a rota destino autoriza. Os dados seguem Group/Drupal LMS, sem cópias.
 
 ## Componentes visuais propostos
 
@@ -99,11 +102,11 @@ Modos claro/escuro compartilham estrutura; tokens do ACULTA420 determinam superf
 
 ## Regra de transição de marca
 
-Nome público vigente: **ACULTA Studio Ganjalab**, ID `ganjalab`. A rota canônica é `/studio/ganjalab`; os aliases seguros estão no [contrato de identidade](ACULTA-STUDIO-IDENTITY.md). Referência à experiência editorial: ACULTA Studio Marley. O módulo `aculta_studio` continua sendo a plataforma compartilhada.
+Nomes públicos: **ACULTA Studio Ganjalab Estudante**, ID `ganjalab`, em `courses:/ganjalab`; **ACULTA Studio Ganjalab Educador** em `courses:/ganjalab/educador`, com criação em `/ganjalab/educador/cursos/novo`. `/studio` e `/studio/*` não são caminhos públicos gerais. Marley responde por Revista, moderação do Fórum e Galerias. `aculta_studio` continua como framework compartilhado.
 
 ## Rota inicial da experiência
 
-O dashboard canônico é `/studio/ganjalab`, usando `aculta_lms.student_dashboard`; `/ganjalab420`, `/minha-aprendizagem` e `/studio/ganjalab420` são aliases GET/HEAD temporários. Nenhuma rota de sala, avaliação, matrícula ou certificado do LMS foi renomeada. Ver [contrato de identidade](ACULTA-STUDIO-IDENTITY.md).
+O dashboard Estudante é `/ganjalab` no propósito `courses`, pela rota `aculta_lms.student_dashboard`. O workspace Educador é `/ganjalab/educador`; novo curso usa `/ganjalab/educador/cursos/novo`. As rotas `/studio/*` permanecem aposentadas, sem aliases. Nenhuma rota de sala, avaliação, matrícula ou certificado do LMS foi renomeada. Ver [contrato de identidade](ACULTA-STUDIO-IDENTITY.md) e [ADR-038](../decisions/ADR-038-aculta-studio-suites-por-dominio.md).
 
 ## Design visual detalhado — 2026-10-22
 
@@ -141,4 +144,4 @@ Consultar [G420-UX 0.4.3](GANJALAB-ACTIVITIES-ASSESSMENTS-VISUAL.md): questioná
 
 ## ACULTA Studio Ganjalab — migração para ACULTA Studio (G420-A)
 
-**Registro histórico da fase G420-A:** [contrato e inventário de migração](../architecture/GANJALAB420-TO-ACULTA-STUDIO-MIGRATION.md) descreve a implantação com nomes anteriores. O código vigente usa `GanjalabExperienceProvider`, `GanjalabController` e `aculta_studio.ganjalab_controller`; a rota canônica é `/studio/ganjalab`. O LMS permanece dono de dados, progresso, matrículas, certificados, controle de acesso e cache. Não confundir com ACULTA Studio Marley nem WE SATIVA.
+**Registro histórico da fase G420-A:** [contrato e inventário de migração](../architecture/GANJALAB420-TO-ACULTA-STUDIO-MIGRATION.md) descreve a implantação com nomes anteriores. O código vigente usa `GanjalabExperienceProvider`, `GanjalabController` e `aculta_studio.ganjalab_controller`; a rota canônica é `/ganjalab`, no propósito `courses`, após a ADR-038. O LMS permanece dono de dados, progresso, matrículas, certificados, controle de acesso e cache. Não confundir com ACULTA Studio Marley nem WE SATIVA.

@@ -1,0 +1,24 @@
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - filter.format.plain_text
+  enforced:
+    module:
+      - aculta_messenger
+template: aculta_msg_events_contrib_notice
+label: 'Aviso de proposta de Eventos ACULTA'
+description: 'Aviso mínimo de decisão sobre proposta comunitária, sem conteúdo privado.'
+text:
+  -
+    value: 'Atualização da sua proposta de Eventos'
+    format: plain_text
+  -
+    value: '@summary Acesse sua conta para consultar a decisão.'
+    format: plain_text
+settings:
+  'token options':
+    clear: true
+    'token replace': false
+  purge_override: false
+  purge_methods: {  }

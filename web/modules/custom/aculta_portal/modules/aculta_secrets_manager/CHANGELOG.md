@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.1.0-dev.8 — legibilidade responsiva da tabela (2026-10-31)
+
+- A tabela de requisitos preserva largura mínima e colunas legíveis, com rolagem
+  horizontal restrita ao próprio contêiner em telas estreitas.
+- Firefox ESR/X11: 31/31 verificações em 1280/390/320 px com CSS candidato
+  injetado no painel servido; captura a 320 px inspecionada manualmente.
+- A injeção não prova CSS servido pelo servidor. Olivero e Functional de
+  instalação/rollback continuam pendentes; não houve escrita no Runtime.
+
+## 0.1.0-dev.7 — corrigir a fixture Kernel das rotas (2026-10-31)
+
+- `SecretsRoutesKernelTest` instala `commerce_checkout`, necessário ao serviço de
+  resolução do checkout usado pelo painel, e remove `commerce_shipping`, que não
+  existe neste checkout nem é necessário para esse contrato.
+- Unit + Kernel Routes: 14 testes / 60 assertions PASS; 58 depreciações de Core e
+  contrib sem falhas. PHPCS Drupal/DrupalPractice (`--extensions=php`), PHP lint,
+  `node --check` e `git diff --check` PASS.
+- O CSS candidato ainda precisa ser validado servido pelo candidato e no tema
+  Olivero. Functional de instalação/rollback continua pendente; o módulo permanece Dev.
+
 ## 0.1.0-dev.6 — registrar revisão funcional e visual (2026-10-29)
 
 - HTTP com sessão real: 9/9; Firefox ESR: painel 16/16, popups 7/7 e foco/alvos

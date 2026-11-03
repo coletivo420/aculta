@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Monitor;
 
+use Drupal\aculta_file_uploader\IngestionLimits;
+
 /**
  * Relatório agregado DMARC (RFC 7489, Apêndice C): anexo XML em texto, gzip ou zip, resumido em contagens.
  *
@@ -25,6 +27,19 @@ final class DmarcReportParser {
     'application/zip',
     'application/x-zip-compressed',
   ];
+
+  /**
+   * Limites de ingestão em vigor (teto do XML descompactado, configurável no painel de uploads).
+   *
+   * Anexos vêm de remetentes externos. O tamanho declarado em ZIP ou GZIP pode
+   * ser forjado, então o limite é medido ao ler, e não pelo cabeçalho.
+   */
+  public function __construct(private readonly IngestionLimits $limits) {}
+
+  /**
+   * Tamanho de leitura ao descompactar um anexo.
+   */
+  private const READ_BYTES = 65536;
 
   /**
    * Resumo do primeiro relatório DMARC encontrado na mensagem, ou NULL.
@@ -64,8 +79,23 @@ final class DmarcReportParser {
    * XML de um anexo gzip, ou NULL quando não descompacta.
    */
   private function fromGzip(string $body): ?string {
-    $xml = @gzdecode($body);
-    return $xml === FALSE ? NULL : $xml;
+    $context = @inflate_init(ZLIB_ENCODING_GZIP);
+    if ($context === FALSE) {
+      return NULL;
+    }
+    $xml = '';
+    // Alimenta o inflador em fatias e para ao passar do teto, sem gerar tudo de uma vez.
+    for ($offset = 0, $length = strlen($body); $offset < $length; $offset += self::READ_BYTES) {
+      $piece = @inflate_add($context, substr($body, $offset, self::READ_BYTES));
+      if ($piece === FALSE) {
+        return NULL;
+      }
+      $xml .= $piece;
+      if (strlen($xml) > $this->limits->bytes(IngestionLimits::DMARC_MAX_REPORT_MB)) {
+        return NULL;
+      }
+    }
+    return $xml === '' ? NULL : $xml;
   }
 
   /**
@@ -82,9 +112,30 @@ final class DmarcReportParser {
       if ($zip->open($temp) !== TRUE || $zip->numFiles < 1) {
         return NULL;
       }
-      $xml = $zip->getFromIndex(0);
-      $zip->close();
-      return $xml === FALSE ? NULL : $xml;
+      // Lê a primeira entrada em fluxo e para no teto, em vez de descompactar tudo em memória.
+      $stream = $zip->getStreamIndex(0);
+      if ($stream === FALSE) {
+        $zip->close();
+        return NULL;
+      }
+      $xml = '';
+      try {
+        while (!feof($stream)) {
+          $chunk = fread($stream, self::READ_BYTES);
+          if ($chunk === FALSE) {
+            return NULL;
+          }
+          $xml .= $chunk;
+          if (strlen($xml) > $this->limits->bytes(IngestionLimits::DMARC_MAX_REPORT_MB)) {
+            return NULL;
+          }
+        }
+      }
+      finally {
+        fclose($stream);
+        $zip->close();
+      }
+      return $xml === '' ? NULL : $xml;
     }
     finally {
       @unlink($temp);
@@ -102,6 +153,10 @@ final class DmarcReportParser {
     $doc = simplexml_load_string($xml, \SimpleXMLElement::class, LIBXML_NONET);
     libxml_use_internal_errors($previous);
     if ($doc === FALSE || $doc->getName() !== 'feedback') {
+      return NULL;
+    }
+    // Sem metadados do relatório não há resumo útil; recusar evita aviso de propriedade nula e linha vazia.
+    if (!isset($doc->report_metadata->date_range, $doc->policy_published->domain)) {
       return NULL;
     }
     $total = 0;

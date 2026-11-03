@@ -6,36 +6,35 @@ namespace Drupal\aculta_lms;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Form\FormBuilderInterface;
-use Drupal\Core\Entity\EntityPublishedInterface;
-use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\Core\Url;
 use Drupal\aculta_lms\Form\CourseEnrollmentPurchaseForm;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\aculta_learning_contracts\Learning\CourseJourneyReaderInterface;
+use Drupal\group\Entity\GroupInterface;
 
 /**
- * Builds the learner facing overview on the native course page. */
+ * Builds course enrollment and participant roster elements for a Group course.
+ *
+ * Studio composes the learner-facing course journey from the neutral contract.
+ */
 final class CourseRoomBuilder {
 
   public function __construct(
     private readonly AccountProxyInterface $currentUser,
-    private readonly TranslationInterface $translation,
     private readonly FormBuilderInterface $formBuilder,
     private readonly ClassRosterManager $classRosters,
+    private readonly CourseJourneyReaderInterface $journeys,
   ) {}
 
   /**
-   * Creates an accessible lesson outline using Drupal LMS routes and access.
+   * Creates authorized enrollment and roster elements from Group state.
    *
    * @return array<string,mixed>
-   *   Render array suitable for an entity view build.
+   *   Render array containing enrollment or participant roster elements.
    */
-  public function build(CourseInterface $course): array {
-    $takeAccess = $course->takeAccess($this->currentUser);
+  public function build(GroupInterface $course): array {
+    $journey = $this->journeys->getCourseJourney((string) $course->id(), $this->currentUser);
     $cacheability = (new CacheableMetadata())
       ->addCacheableDependency($course)
-      ->addCacheableDependency($takeAccess)
       ->addCacheContexts(['user', 'user.group_permissions']);
 
     $build = [
@@ -43,7 +42,13 @@ final class CourseRoomBuilder {
       '#cache' => [],
     ];
 
-    if (!$takeAccess->isAllowed()) {
+    if ($journey === NULL) {
+      $cacheability->applyTo($build);
+      return $build;
+    }
+    $cacheability->addCacheableDependency($journey->cache);
+
+    if (!$journey->hasAccess()) {
       if (!$course->hasPermission('administer members', $this->currentUser)) {
         $build['enrollment'] = $this->formBuilder->getForm(CourseEnrollmentPurchaseForm::class, $course);
       }
@@ -51,42 +56,7 @@ final class CourseRoomBuilder {
       return $build;
     }
 
-    $items = [];
-    foreach ($course->get('lessons') as $delta => $reference) {
-      $lesson = $reference->entity;
-      if ($lesson === NULL) {
-        continue;
-      }
-      $cacheability->addCacheableDependency($lesson);
-      // The LMS answer route checks takeAccess() on this parent course. Generic
-      // lesson view access is not the learner's contextual curriculum access.
-      if (!$lesson instanceof EntityPublishedInterface || !$lesson->isPublished()) {
-        continue;
-      }
-      $activity = $lesson->get('activities')->first();
-      if ($activity === NULL || $activity->entity === NULL) {
-        $items[] = ['#plain_text' => (string) $lesson->label()];
-        continue;
-      }
-      $cacheability->addCacheableDependency($activity->entity);
-      $items[] = Link::fromTextAndUrl(
-        (string) $lesson->label(),
-        Url::fromRoute('lms.group.answer_form', [
-          'group' => $course,
-          'lesson_delta' => (int) $delta,
-          'activity_delta' => 0,
-        ]),
-      )->toRenderable();
-    }
-
-    $build['title'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'h2',
-      '#value' => $this->translation->translate('Conteúdo do curso'),
-    ];
-    $build['lessons'] = $items === []
-      ? ['#plain_text' => $this->translation->translate('Este curso ainda não tem aulas.')]
-      : ['#theme' => 'item_list', '#items' => $items];
+    // Studio adds the student-facing journey during entity view alteration.
     $rosters = $this->classRosters->build($course, $this->currentUser);
     if (isset($rosters['classes'])) {
       $build['participant_rosters'] = $rosters;

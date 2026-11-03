@@ -1,11 +1,11 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.19
+version: 0.1.0-dev.20
 state: Dev
 progress_note: >-
-  Unit Game 14/77, Kernel ForumPost real 1/25 e Firefox ESR 19/19 PASS. Smoke
-  cobriu /atividade/conquistas, /u/pessoa-5, rótulos, alt text e administração.
-  Conta/papel temporários foram removidos e a consulta confirmou ausência. Cinco
-  depreciações do Kernel são do Domain. CSS servido ainda é anterior ao
-  candidato mobile-first; reflow, teclado/foco completo e homologação da
-  migração Runtime seguem pendentes.
+  Dev.20: PHPCS Drupal/DrupalPractice no submódulo zero erros/avisos; Unit 14/77
+  PASS; Kernel ForumPost real 1/25 PASS com cinco depreciações do Domain.
+  Correção de estilo preserva regras e traduções. Firefox ESR 19/19 PASS nas
+  rotas e estados registrados anteriormente. CSS candidato mobile-first ainda
+  não está servido; reflow, teclado/foco completo e homologação da migração
+  Runtime continuam pendentes.
 next_phase: 'Validar 320/390px e teclado/foco no CSS candidato servido; concluir homologação de migração Runtime somente após autorização ([roadmap](web/modules/custom/aculta_portal/modules/aculta_game/docs/ROADMAP.md))'

@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_lms_activity
     - node.type.aculta_lms_topic
   module:
-    - lms
+    - aculta_lms
     - node
 id: node.aculta_lms_topic.field_lms_activity
 field_name: field_lms_activity
@@ -19,7 +19,7 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  handler: 'default:lms_activity'
+  handler: 'default:aculta_lms_activity'
   handler_settings:
     target_bundles: null
     sort:

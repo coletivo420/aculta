@@ -12,7 +12,9 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
-/** Missões unitárias sobre fatos históricos, sem saldo ou storage de progresso. */
+/**
+ * Missões unitárias sobre fatos históricos, sem saldo ou storage de progresso.
+ */
 final class MissionProgress {
 
   use StringTranslationTrait;
@@ -30,7 +32,9 @@ final class MissionProgress {
     private readonly DateFormatterInterface $dateFormatter,
   ) {}
 
-  /** Catálogo fechado: configuração não cria regras executáveis arbitrárias. */
+  /**
+   * Catálogo fechado: configuração não cria regras executáveis arbitrárias.
+   */
   public function definitions(bool $onlyEnabled = TRUE): array {
     $definitions = [];
     $configured = $this->configs->get('aculta_game.missions')->get('missions') ?? [];
@@ -45,7 +49,9 @@ final class MissionProgress {
     return $definitions;
   }
 
-  /** Progresso privado: zero ou um marco registrado, sem reavaliar o passado. */
+  /**
+   * Progresso privado: zero ou um marco registrado, sem reavaliar o passado.
+   */
   public function build(int $uid): array {
     $config = $this->configs->get('aculta_game.missions');
     $cache = (new CacheableMetadata())->addCacheableDependency($config)
@@ -57,7 +63,7 @@ final class MissionProgress {
       $cache->applyTo($build);
       return $build;
     }
-    // Data em que cada conquista foi obtida (tooltip "Obtida em"); só a concessão ativa conta.
+    // Data de obtenção exibida no tooltip; só concessões ativas contam.
     $active = [];
     foreach ($this->badges->activeFor($uid) as $award) {
       $active[(string) $award->get('badge')->value] = (int) $award->get('concedido_em')->value;
@@ -66,14 +72,26 @@ final class MissionProgress {
     foreach ($this->definitions() as $id => $definition) {
       $done = isset($active[$definition['badge']]);
       $data = $done ? $this->dateFormatter->format($active[$definition['badge']], 'custom', 'd/m/Y') : '';
+      // Mission labels and descriptions are maintained as configuration text.
+      // phpcs:ignore Drupal.Semantics.FunctionT.NotLiteralString
+      $label = $this->t($definition['label']);
+      // phpcs:ignore Drupal.Semantics.FunctionT.NotLiteralString
+      $criterion = $this->t($definition['description']);
       $build[$id] = [
         '#type' => 'details',
-        '#title' => $this->t($definition['label']),
+        '#title' => $label,
         '#open' => TRUE,
-        // Tooltip com a data de obtenção (title), presente só nas conquistas obtidas.
-        '#attributes' => $done ? ['title' => (string) $this->t('Obtida em @data', ['@data' => $data]), 'data-aculta-game' => 'obtida'] : [],
-        'criterion' => ['#plain_text' => $this->t($definition['description'])],
-        'progress' => ['#plain_text' => $done ? $this->t('Concluída em @data — 1 de 1 marco registrado.', ['@data' => $data]) : $this->t('A realizar — 0 de 1 marco registrado.')],
+        // O tooltip informa a data apenas para conquistas obtidas.
+        '#attributes' => $done ? [
+          'title' => (string) $this->t('Obtida em @data', ['@data' => $data]),
+          'data-aculta-game' => 'obtida',
+        ] : [],
+        'criterion' => ['#plain_text' => $criterion],
+        'progress' => [
+          '#plain_text' => $done
+            ? $this->t('Concluída em @data — 1 de 1 marco registrado.', ['@data' => $data])
+            : $this->t('A realizar — 0 de 1 marco registrado.'),
+        ],
       ];
     }
     if (count($this->definitions()) === 0) {

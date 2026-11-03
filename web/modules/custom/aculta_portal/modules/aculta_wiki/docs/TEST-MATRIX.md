@@ -7,6 +7,7 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
+| Migração Wiki → Contributions | Kernel MariaDB | Update 10003 em lote preserva ID, UUID, revision IDs, contexto, estado, parecer, autoria/timestamps e idempotência; retry não duplica revisões; colisão aborta sem sobrescrita/checkpoint; revisão traduzida aborta sem cópia parcial; rota resolve ambos stores pelo ID | Kernel migration/status e retry/histórico/colisão/tradução aprovados (1/55 e 3/133); update 10003 aplicado no Runtime, sem linhas para copiar; migration gate completo |
 | Contrato Wiki→Messenger v1 | Revisão de contrato | Dois fatos editoriais, payload privado mínimo, destinatários revalidados, deduplicação por revisão e fila persistente; e-mails mantidos | escopo decidido; value objects v1 aprovados 4/5; API Messenger e producers pendentes |
 | Value objects de evento Wiki | Unit | UUID, revisão, UID/estado allowlisted e payload Queue v1 mínimos | aprovado dev.112; 4 testes / 5 asserções |
 | Producers Wiki→Messenger | Unit | Transição default para `review`, insert direto, deduplicação por estado, revisão não-default ignorada e canal de e-mail independente | aprovado dev.113; Unit eventos/hooks/worker 18 testes / 73 asserções |
@@ -17,9 +18,9 @@ Cobertura planejada e executada do submódulo. Os cenários abaixo listados como
 | Update 10001 instala entidade tardia | Kernel MariaDB | Registra entidade de proposta e cria as quatro tabelas ausentes, incluindo `proposed_fields` | aprovado dev.111; 1 teste / 30 asserções; 197 depreciações Core/contrib, uma PHP/Webform e 2 PHPUnit |
 | CTA e início no Runtime | Firefox ESR/X11, sessão autenticada | Home Wiki → início account → Meu Trabalho → formulário/retorno; 1280/390/320 px | aprovado dev.111, Runtime 2026-10-24; 19/19 verificações após `updb` 10001 + `drush cr`; sem escrita de conteúdo |
 | Seletor contextual de contribuição | Kernel MariaDB | CTA usa rota Wiki; participantes confirmados veem quatro intenções allowlisted, edição direta vê somente formulário Core, pessoa não confirmada é bloqueada | aprovado (dev.89; 3 testes / 311 asserções) |
-| Entrada `/studio/we-sativa` | Kernel | Rota única no purpose `wiki`; provider disponível só com Wiki | path/purpose retificados em 2026-10-30; Kernel e Runtime pós-retificação pendentes |
-| Criar verbete dentro de WE SATIVA | Kernel + Browser | Rota `/studio/we-sativa/verbetes/novo` no purpose Wiki aplica create access e apresenta Form API nativo sem persistir conteúdo | implementação em curso; autorização da rota e construção HTTP real pendentes |
-| Início `/studio/we-sativa/inicio` | Kernel + Unit Studio | Purpose `wiki`, criação condicionada por `createAccess()` e rota, retomada de rascunho próprio atualizável, guia SDC, retorno do workspace e render ACULTA420; controller delega ao owner e nega acesso rejeitado | path/purpose retificados em 2026-10-30; Kernel e Runtime pós-retificação pendentes |
+| Entrada `/we-sativa` | Kernel | Rota única no purpose `wiki`; provider disponível só com Wiki | path/purpose retificados em 2026-10-30; Kernel e Runtime pós-retificação pendentes |
+| Criar verbete dentro de WE SATIVA | Kernel + Browser | Rota `/we-sativa/verbetes/novo` no purpose Wiki aplica create access e apresenta Form API nativo sem persistir conteúdo | implementação em curso; autorização da rota e construção HTTP real pendentes |
+| Início `/we-sativa/inicio` | Kernel + Unit Studio | Purpose `wiki`, criação condicionada por `createAccess()` e rota, retomada de rascunho próprio atualizável, guia SDC, retorno do workspace e render ACULTA420; controller delega ao owner e nega acesso rejeitado | path/purpose retificados em 2026-10-30; Kernel e Runtime pós-retificação pendentes |
 | Meu trabalho | Kernel MariaDB | 21 verbetes e propostas próprias paginam 20+1; outra autoria e candidato do mesmo UID sem `view` não aparecem; cursores e links no Domain `account` | aprovado (dev.83; focais 1/42 e 1/45; classe 24/1.142) |
 | Filtros dos verbetes | Kernel MariaDB | `draft`, `review`, `published` e todos; estados inválidos voltam a Todos; links preservam Domain/cursor de proposta e resetam cursor de verbete; 20+3 paginam sem duplicação/perda | aprovado (dev.88; focal 1/141; três Kernels workspace 3/235) |
 | Busca e alterações recentes por grants | Kernel MariaDB | Duas contas de mesmo papel recebem apenas verbetes autorizados na busca e lista recente; cache context de grants presente, inclusive vazio/negativo/malformado | aprovado (dev.90; focal 1/43; 283 depreciações upstream, 2 PHPUnit) |
@@ -146,12 +147,12 @@ do Webform contrib). Runtime não alterado nem homologado.
 | Rotas públicas | Kernel | `/wiki`, busca e prévia têm exatamente um owner e permissão pública definida | revalidado no HEAD: parte do focal 3/141 (MariaDB) |
 | Raiz pública e caminho interno | Kernel | Purpose processor converte `/` em `/wiki`; `/wiki` direto continua sujeito ao 404 da FrontPathPolicy | aprovado (dev.64; 1 teste / 65 asserções) |
 | Rotas Wiki em domínio incorreto | Kernel | Subscriber de domínio retorna 404 no host principal para rotas com purpose `wiki` | aprovado (dev.65; focal 1/73) |
-| Listagem de verbetes | Kernel | `/wiki/verbetes` resolve uma View, purpose `wiki` e acesso autenticado | aprovado |
+| Listagem de verbetes | Kernel | `/verbetes` resolve uma View, purpose `wiki` e acesso autenticado | aprovado |
 | Grants divergentes | Kernel | Contas do mesmo papel recebem apenas verbetes autorizados | revalidado no HEAD: parte do focal 3/141 (MariaDB) |
 | Cache vazio/negativo/malformado | Kernel | Cache varia por node grants, incluindo termo vazio e `q[]` | aprovado (dev.62) |
 | CTA de criação | Kernel | Permissão cacheável acompanha Entity API `createAccess()` | revalidado no HEAD: parte do focal 3/141 (MariaDB) |
 | Home do domínio Wiki | Runtime HTTP | `/` retorna 200; `/wiki` retorna 404 como caminho interno conforme política multidomínio | read-only 2026-10-24; Drupal 11.4.10 / banco `aculta_runtime` |
-| Listagem, busca e prévia | Runtime HTTP | `/wiki/verbetes`, `/wiki/busca` e `/wiki/busca/previa` retornam 200 | read-only 2026-10-24; nenhum estado alterado |
+| Listagem, busca e prévia | Runtime HTTP | `/verbetes`, `/busca-wiki` e `/busca-wiki/previa` retornam 200 | read-only 2026-10-24; nenhum estado alterado |
 | Ativação e homologação integral | Operacional | Index e dependências necessários ativos; configuração e fluxos homologados | pendente; Index estava desativado e nenhum estado foi alterado |
 
 ## R3 — evidência da primeira publicação
@@ -264,7 +265,7 @@ depreciações Core/contrib e 28 PHPUnit. Runtime intocado.
 | `WikiController::search` | Unit | Busca vazia, parâmetro `q[]` malformado, truncamento em `MAX_CHARS` e acesso/cache de grants | aprovado (`WikiControllerTest` 11 testes / 70 asserções) |
 | `WikiController::preview` | Unit | Entrada mínima, truncamento em `MAX_CHARS`, Entity Access dos resultados, link para busca completa e resposta privada | aprovado (`WikiControllerTest` 11/70; contagem textual renderizada segue sem teste) |
 | `WikiSearchFormBuilder` | Unit | `#action` e `data-preview-url` apontam para os nomes de rota estáveis | aprovado (4 testes / 18 asserções) |
-| Rotas | Kernel | `/wiki`, `/wiki/busca`, `/wiki/busca/previa` com os mesmos nomes e caminhos | aprovado (dev.20) |
+| Rotas | Kernel | `/wiki`, `/busca-wiki`, `/busca-wiki/previa` com os mesmos nomes e caminhos | aprovado (dev.20) |
 
 ## Fase 4 — métricas de publicação
 
@@ -279,8 +280,8 @@ depreciações Core/contrib e 28 PHPUnit. Runtime intocado.
 
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
-| Discovery das três rotas públicas da Wiki | Kernel | `/wiki`, `/wiki/busca` e `/wiki/busca/previa` com nomes/caminhos existentes | aprovado |
-| Discovery da página da View | Kernel | `view.wiki_entries.page_1` em `/wiki/verbetes` | aprovado |
+| Discovery das três rotas públicas da Wiki | Kernel | `/wiki`, `/busca-wiki` e `/busca-wiki/previa` com nomes/caminhos existentes | aprovado |
+| Discovery da página da View | Kernel | `view.wiki_entries.page_1` em `/verbetes` | aprovado |
 | Permissão de rota pública | Kernel | `access content` permite e negar a permissão bloqueia | aprovado |
 | Busca com grants distintos na mesma função | Kernel | cada conta recebe somente seu verbete publicado | aprovado |
 | Busca vazia e negativa | Kernel | sem resultados e cache inclui `user.node_grants:view` | aprovado |
@@ -349,7 +350,7 @@ apresentada na aba Wiki do GanjaLab.
 
 | Cenário | Tipo | Resultado esperado | Estado |
 | --- | --- | --- | --- |
-| Rota de contribuição | Kernel | `/wiki/verbetes/{node}/contribuir`, exige `submit wiki proposals` e `node.view` | aprovado |
+| Rota de contribuição | Kernel | `/verbetes/{node}/contribuir`, exige `submit wiki proposals` e `node.view` | aprovado |
 | Formulário | Kernel | Form API constrói intenção, texto, justificativa e fontes | aprovado |
 | Validação do formulário | Kernel | Texto/justificativa obrigatórios e fontes apenas HTTP(S), máximo dez | aprovado (válido exercitado; inválidos no serviço) |
 | Callback de submissão | Kernel | Persiste pela API proprietária, atualiza revisão-base e redireciona ao verbete | aprovado |

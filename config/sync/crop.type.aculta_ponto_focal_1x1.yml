@@ -1,0 +1,12 @@
+uuid: bc78f495-9d0d-4db9-8e05-3bbc65b1a656
+langcode: pt-br
+status: true
+dependencies: {  }
+label: 'Ponto focal 1:1'
+id: aculta_ponto_focal_1x1
+description: 'Recorte 1:1 gravado a partir do ponto focal da imagem.'
+aspect_ratio: '1:1'
+soft_limit_width: 0
+soft_limit_height: 0
+hard_limit_width: 0
+hard_limit_height: 0

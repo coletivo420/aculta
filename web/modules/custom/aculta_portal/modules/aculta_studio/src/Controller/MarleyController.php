@@ -103,37 +103,61 @@ final class MarleyController {
       $secao = (string) array_key_first($sections);
     }
     $section = $sections[$secao] ?? throw new NotFoundHttpException();
-    $build['layout'] = [
+    // Só entram no submenu seções explicitamente navegáveis. Seções que
+    // concentram as próprias ações podem suprimir o menu inteiro.
+    $sidebar_links = [];
+    foreach ($sections as $id => $candidate) {
+      if (($candidate['sidebar'] ?? TRUE) === FALSE) {
+        continue;
+      }
+      $sidebar_links[] = [
+        'id' => $id,
+        'label' => $candidate['label'],
+        'url' => Url::fromRoute(
+          'aculta_studio.section',
+          ['aba' => $area->getPluginId(), 'secao' => $id],
+        ),
+      ];
+    }
+    $layout = [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'studio-layout', 'data-aculta-studio' => 'layout'],
-      'sidebar' => [
+    ];
+    if ($sidebar_links !== [] && empty($section['suppress_sidebar'])) {
+      $layout['sidebar'] = [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'studio-sidebar', 'data-aculta-studio' => 'sidebar'],
         'sections' => $this->linkList(
-          array_map(
-            static fn (string $id, array $section): array => [
-              'id' => $id,
-              'label' => $section['label'],
-              'url' => Url::fromRoute(
-                'aculta_studio.section',
-                ['aba' => $area->getPluginId(), 'secao' => $id],
-              ),
-            ],
-            array_keys($sections),
-            $sections,
-          ),
+          $sidebar_links,
           'section',
           $secao,
           'studio-sections',
           (string) $this->t('Submenu da área'),
         ),
-      ],
-      'main' => [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'studio-main', 'data-aculta-studio' => 'main'],
-        'heading' => $this->element('h2', $section['label'], 'studio-heading', 'heading'),
-      ],
+      ];
+    }
+    $layout['main'] = [
+      '#type' => 'container',
+      '#attributes' => ['data-portal-ui' => 'studio-main', 'data-aculta-studio' => 'main'],
+      'heading' => $this->element('h2', $section['label'], 'studio-heading', 'heading'),
     ];
+    // Ações da seção ficam abaixo do título, antes das abas de status.
+    $section_actions = [];
+    foreach ($section['actions'] ?? [] as $action) {
+      $section_actions[] = PortalLinkElement::build(
+        $action['title'],
+        $action['url'],
+        ['data-portal-ui' => 'studio-action', 'data-aculta-studio' => 'section-action'],
+      );
+    }
+    if ($section_actions !== []) {
+      $layout['main']['section_actions'] = [
+        '#theme' => 'item_list',
+        '#items' => $section_actions,
+        '#attributes' => ['data-portal-ui' => 'studio-actions', 'data-aculta-studio' => 'section-actions'],
+      ];
+    }
+    $build['layout'] = $layout;
 
     // Nível 3: the requested subtab, or the first subtab in its section.
     if ($sub === '') {

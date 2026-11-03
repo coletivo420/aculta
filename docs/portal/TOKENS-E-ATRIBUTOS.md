@@ -328,7 +328,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `social-links-channel-facebook` | `aculta-social-links__channel--facebook` | (montado dinamicamente ou só no tema) |
 | `social-links-list` | `aculta-social-links__list`, `list-unstyled` | `web/modules/custom/aculta_portal/src/Presentation/SocialLinksPagePresenter.php` |
 | `social-links-footer-inner` | `aculta-social-links-footer__inner` | `web/modules/custom/aculta_portal/src/Presentation/SocialLinksPagePresenter.php` |
-| `social-links-settings-button` | `aculta-social-links-settings-button` | `web/modules/custom/aculta_portal/modules/aculta_links/src/Form/SocialLinksSettingsForm.php` |
+| `social-links-settings-button` | `aculta-social-links-settings-button` | `web/modules/custom/aculta_portal/modules/aculta_linkweed/src/Form/SocialLinksSettingsForm.php` |
 | `security-card` | `aculta-security-card` | (montado dinamicamente ou só no tema) |
 | `security-pending` | `aculta-security-pending` | `web/modules/custom/aculta_portal/src/Controller/PortalController.php` |
 | `auth-provider` | `aculta-auth-provider` | `web/modules/custom/aculta_portal/src/Form/LoginPopupForm.php`<br>`web/modules/custom/aculta_portal/src/Hook/PortalHooks.php` |
@@ -514,7 +514,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `lms-class-roster` | `aculta-lms-class-roster d-grid gap-3` | `web/modules/custom/aculta_portal/modules/aculta_lms/src/ClassRosterManager.php` |
 | `consent-banner` | `aculta-consent` | `web/modules/custom/aculta_portal/modules/aculta_statistics/js/consent.js` |
 | `secrets-environment` | `aculta-portal-secrets__environment` | `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/src/Controller/SecretsController.php` |
-| `links-page-link` | `aculta-links-page__link` | `web/modules/custom/aculta_portal/modules/aculta_links/src/Controller/LinkPagePublicController.php` |
+| `links-page-link` | `aculta-links-page__link` | `web/modules/custom/aculta_portal/modules/aculta_linkweed/src/Controller/LinkPagePublicController.php` |
 | `secrets-tabs` | `secrets-tabs` | `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/js/secrets-tabs.js` |
 | `secrets-tab` | `secrets-tabs__tab` | `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/js/secrets-tabs.js` |
 | `secrets-tabs-list` | `secrets-tabs__list` | `web/modules/custom/aculta_portal/modules/aculta_secrets_manager/src/Controller/SecretsController.php` |
@@ -586,7 +586,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `studio-profile-actions` | `studio__actions list-unstyled d-flex flex-wrap gap-2` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
 | `studio-profile-public-link` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
 | `studio-profile-editor` | `aculta-profile-editor` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioProfileController.php` |
-| `studio-fidelity-scope` | `studio` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Learning/LearnerDashboardComposer.php` |
+| `studio-fidelity-scope` | `studio` | `web/modules/custom/aculta_portal/modules/aculta_lms/src/Learning/LearnerDashboardComposer.php` |
 | `studio-bio-form`, `studio-social-form` | `studio-profile-form` | `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/AccountBioForm.php`; `web/modules/custom/aculta_portal/modules/aculta_user/src/Form/SocialLinkForm.php` |
 | `studio-saved-content` | `studio studio-saved-page` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-saved-summary` | `studio-saved-summary` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/SavedExperienceProvider.php` |

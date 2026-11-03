@@ -9,9 +9,18 @@ nativo, todos os links receberam foco visível e o painel passou nos viewports
 Expõe `/painel-administrativo/colecoes-moderaveis` somente quando a pessoa tem acesso a pelo menos uma coleção moderável. O painel
 descobre Views de página em caminhos administrativos cujo tipo-base é entidade de conteúdo e preserva o acesso nativo de
 cada View. Listas servidas por controllers entram em `ModeratableCollectionRegistry::CONTROLLER_COLLECTIONS`; cada rota
-passa pelo `access_manager` antes de virar link. A allowlist contém apenas filas/coleções, nunca ações, telas de
+passa pelo `access_manager` antes de virar link. A fila de propostas de Organizações do Events entra dessa forma e
+mantém a permissão `administer aculta events` da rota de origem. A allowlist contém apenas filas/coleções, nunca ações, telas de
 configuração ou relatórios operacionais.
 
 O painel não replica registros, campos nem ações em lote e não oferece exportação. A permissão da coleção de origem é a
 única fonte de autorização para visualizar e abrir cada lista.
+
+# Filas nativas de Contributions
+
+O registry descobre as filas owner de propostas de Organizações e Locais de
+`aculta_events` no painel administrativo. A listagem agregada não concede
+permissão: cada rota continua protegida por `administer aculta events` e a
+decisão, Entity Access e aplicação seletiva permanecem no owner Events e no
+adapter registrado em `aculta_contributions`.
 

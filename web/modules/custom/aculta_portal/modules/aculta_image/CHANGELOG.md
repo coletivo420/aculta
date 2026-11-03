@@ -1,3 +1,56 @@
+## 0.1.0-dev.54 — implementa a interface de dimensões do uploader
+
+- `ImageInspector` implementa `ImageDimensionReaderInterface` (`aculta_file_uploader`), que o uploader usa quando
+  este módulo está ativo. Sem mudança de comportamento para os demais chamadores.
+- RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.53 — motor da quarentena no aculta_file_uploader
+
+- `aculta_image.quarantine` (serviço) sai do aculta_image. O formulário `ImageQuarantineForm` e os testes obtêm `aculta_file_uploader.quarantine`. Rotas e abas inalteradas.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.52 — motor da fila de limpeza no aculta_file_uploader
+
+- `aculta_image.cleanup` sai do aculta_image. Hooks de entidade, cron e formulário de limpeza passam a usar `aculta_file_uploader.cleanup`. Rotas e abas inalteradas.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.51 — limpeza de File do aculta_portal passa pelos contratos do uploader
+
+- `FileRemoverInterface` passa a estender `aculta_file_uploader` `FileDeletionOwnerInterface`. Serviço `aculta_file_uploader.deletion_owner` (alias de `aculta_image.file_remover`) é o dono da exclusão.
+- Testes e serviços de quarentena usam o serviço e as classes novos. Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.50 — tabela da quarentena pertence ao aculta_file_uploader
+
+- `aculta_image_schema()` deixa de declarar `aculta_image_quarantine`. A definição vem de `aculta_file_uploader_schema()`.
+- `hook_update_10002()` continua disponível e lê a definição do aculta_file_uploader, sem recriar tabela existente.
+- Teste Kernel de limpeza: a tabela é instalada por `aculta_file_uploader`; o módulo entra na lista de módulos do teste.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.49 — motor da auditoria no aculta_file_uploader
+
+- `aculta_image.audit` sai do aculta_image; o serviço passa a ser `aculta_file_uploader.audit`. Controller, rotas e abas permanecem aqui.
+- `ImageAuditController`, `ImageQuarantineForm` e `CronHooks` usam o serviço e a classe do aculta_file_uploader. Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.48 — derivados movidos para o aculta_file_uploader
+
+- `GeneratedImageFileManager` e `aculta_image.generated_file` saem do `aculta_image`. O registro de derivados passa a ser `aculta_file_uploader.generated_file`.
+- Sem mudança de comportamento: derivado temporário, mesma limpeza por `system.file:temporary_maximum_age`.
+- Migração da limpeza em andamento (decisão: migrar tudo). Pendentes: auditoria, quarentena com tabela, fila de substituição, hooks e cron.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.47 — QuarantineRules movida para o aculta_file_uploader
+
+- `Quarantine\QuarantineRules` e seu teste saem do aculta_image; `ImageQuarantine` passa a importar a regra do aculta_file_uploader. Sem mudança de comportamento.
+- Migração completa da limpeza em andamento (decisão: migrar tudo). RUNTIME STATUS: DEFERRED.
+
 ## 0.1.0-dev.34 — toda limpeza delega ao coordenador global (2026-10-26)
 
 - `ImageCleanup` não chama mais `FileRemover` diretamente quando o coordenador

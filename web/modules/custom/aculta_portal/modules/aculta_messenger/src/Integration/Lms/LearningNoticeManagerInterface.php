@@ -19,31 +19,6 @@ interface LearningNoticeManagerInterface extends PaginatedPersonalNoticeAdapterI
   public function record(string $sourceUuid, string $type, int $uid, bool $sendEmail, string $eventVersion = '1', bool $includeInDigest = TRUE): ?MessageInterface;
 
   /**
-   * Publishes pending-answer events for current course graders.
-   */
-  public function publishSubmissionNoticesForEducators(string $answerUuid, string $eventVersion): void;
-
-  /**
-   * Publishes course-content release events for current learners.
-   */
-  public function publishContentReleaseNoticesForLearners(string $contentUuid, string $contentEntityType, string $eventVersion): void;
-
-  /**
-   * Publishes an educator-feedback event for the learner who owns the answer.
-   */
-  public function publishEducatorFeedbackNoticeForLearner(string $commentUuid, string $eventVersion): void;
-
-  /**
-   * Publishes a due-date event for current learners in the source class.
-   */
-  public function publishActivityDeadlineNoticesForLearners(string $deadlineUuid, string $eventVersion): void;
-
-  /**
-   * Publishes an upcoming-deadline reminder event for current class learners.
-   */
-  public function publishActivityDeadlineReminderForLearners(string $deadlineUuid, string $eventVersion): void;
-
-  /**
    * Resolves the current target only when access is still valid.
    */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array;

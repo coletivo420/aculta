@@ -7,7 +7,6 @@ dependencies:
   module:
     - aculta_lms
     - group
-    - lms
 id: lms_class-lms_class_activity_due
 group_type: lms_class
 content_plugin: lms_class_activity_due

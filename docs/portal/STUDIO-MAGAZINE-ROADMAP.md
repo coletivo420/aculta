@@ -4,6 +4,13 @@
 
 # ACULTA Magazine — Roadmap de realinhamento arquitetural
 
+## Escopo atual do ACULTA Studio Marley
+
+Marley é responsável somente por **Revista, Moderação do Fórum e Galerias**. Sua tela inicial e navegação devem apresentar esses três contextos com ações delegadas aos respectivos módulos owners. Autoria/revisão/publicação da Revista usa Magazine e workflow; moderação usa Forum/UGC e acesso contextual; Galerias usam o módulo Gallery owner. Marley não é workspace de autoria LMS nem experiência de estudante.
+
+A central administrativa/configuração permanece no MAIN quando o owner exigir. A moderação de discussões ligadas a um curso pode ser apresentada na Sala Ganjalab em contexto de aprendizagem, mas o serviço e a decisão de acesso permanecem no Forum/Group. Esta definição e as fronteiras com as duas experiências Ganjalab estão em [ACULTA-STUDIO-EXPERIENCE-BOUNDARIES.md](ACULTA-STUDIO-EXPERIENCE-BOUNDARIES.md).
+
+
 ### Central administrativa e Revista no ACULTA Studio Marley — dev.14 (2026-10-30)
 
 O código declara `/painel-administrativo/revista` no purpose `main` para

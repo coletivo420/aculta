@@ -23,7 +23,7 @@ final class MailSettingsKernelTest extends KernelTestBase {
    *
    * @var string[]
    */
-  protected static $modules = ['system', 'user', 'aculta_mailer'];
+  protected static $modules = ['system', 'user', 'file', 'aculta_file_uploader', 'aculta_mailer'];
 
   /**
    * A rota exige a permissão do módulo e a página informa a indisponibilidade do gerenciador de credenciais.

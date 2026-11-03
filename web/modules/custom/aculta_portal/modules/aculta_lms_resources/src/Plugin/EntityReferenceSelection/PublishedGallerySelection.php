@@ -15,7 +15,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -126,7 +126,7 @@ final class PublishedGallerySelection extends DefaultSelection {
    */
   private function canSelectForCourse(): bool {
     $course = $this->configuration['entity'] ?? NULL;
-    if (!$course instanceof CourseInterface) {
+    if (!$course instanceof GroupInterface) {
       return FALSE;
     }
     if ($course->isNew()) {

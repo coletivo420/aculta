@@ -1,4 +1,16 @@
+## Revalidação 2026-11-02 — motor e agenda contextual
+
+- Unit: 98 testes / 299 assertions PASS; Kernel: 30 testes / 134 assertions PASS, duas depreciações Core.
+- Eventos: Kernel de agenda contextual 6/116 e ICS por Local 3/54 PASS em `aculta_simpletest`, incluindo isolamento entre owners e anônimo. Matriz HTTP de purpose/host continua pendente; sem escrita Runtime.
+
 # Changelog — aculta_calendar
+
+## 2026-11-01 — consulta contextual por provider
+
+- `CalendarQuery` pode limitar os provedores consultados, mantendo todos como padrão.
+- As ocorrências geradas pela agenda preservam ID e link do item original para consumidores contextuais, como a agenda de um Local.
+- Cobertura Kernel verifica isolamento por provider e preservação do link. A integração do detalhe de Local com `CalendarAgenda` está implementada em Events; o status RC do motor existente não muda.
+- Suíte completa do módulo: **128 testes / 433 assertions PASS**, 2 depreciações Core; PHPCS/PHP lint/diff-check passaram.
 
 ## 0.1.0-rc.1 — candidato RC (2026-10-29)
 

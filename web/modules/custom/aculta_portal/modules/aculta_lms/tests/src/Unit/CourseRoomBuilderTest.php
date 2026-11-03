@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Unit;
 
-use Drupal\Core\Field\FieldItemList;
-use Drupal\aculta_lms\CourseRoomBuilder;
 use Drupal\aculta_lms\ClassRosterManager;
+use Drupal\aculta_lms\CourseRoomBuilder;
 use Drupal\aculta_lms\Form\CourseEnrollmentPurchaseForm;
-use Drupal\Core\Access\AccessResult;
+use Drupal\aculta_learning_contracts\Learning\CourseJourney;
+use Drupal\aculta_learning_contracts\Learning\CourseJourneyReaderInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Form\FormBuilderInterface;
-use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\lms\Entity\Lesson;
-use Drupal\lms\Entity\LessonInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 
-#[CoversClass(\Drupal\aculta_lms\CourseRoomBuilder::class)]
+/**
+ * Covers the course room builder against the ACULTA journey contract.
+ */
+#[CoversClass(CourseRoomBuilder::class)]
 final class CourseRoomBuilderTest extends UnitTestCase {
 
   /**
@@ -27,8 +28,8 @@ final class CourseRoomBuilderTest extends UnitTestCase {
    */
   public function testUsesEnrollmentPurchaseForm(): void {
     $account = $this->createMock(AccountProxyInterface::class);
-    $course = $this->createMock(CourseInterface::class);
-    $course->method('takeAccess')->with($account)->willReturn(AccessResult::forbidden());
+    $course = $this->createMock(GroupInterface::class);
+    $course->method('id')->willReturn('course-1');
     $course->method('hasPermission')->with('administer members', $account)->willReturn(FALSE);
     $course->method('getCacheTags')->willReturn([]);
     $course->method('getCacheContexts')->willReturn([]);
@@ -43,78 +44,86 @@ final class CourseRoomBuilderTest extends UnitTestCase {
 
     $builder = new CourseRoomBuilder(
       $account,
-      $this->createMock(TranslationInterface::class),
       $formBuilder,
       $this->createMock(ClassRosterManager::class),
+      $this->reader($this->journey(FALSE)),
     );
 
     self::assertSame($form, $builder->build($course)['enrollment']);
   }
 
   /**
-   * Verifies published curriculum uses the parent course access decision.
+   * Verifies the LMS builder composes rosters and leaves the journey to Studio.
    */
-  public function testShowsPublishedLessonsWithoutGenericEntityViewAccess(): void {
+  public function testAuthorizedCourseBuildsRosterWithoutComposingJourney(): void {
     $account = $this->createMock(AccountProxyInterface::class);
-    $course_access = AccessResult::allowed()->addCacheContexts(['user.group_permissions']);
-    $course = $this->createMock(CourseInterface::class);
-    $course->method('takeAccess')->with($account)->willReturn($course_access);
-    $course->method('getCacheTags')->willReturn(['group:course']);
+    $course = $this->createMock(GroupInterface::class);
+    $course->method('id')->willReturn('course-1');
+    $course->method('getCacheTags')->willReturn(['group:course-1']);
     $course->method('getCacheContexts')->willReturn([]);
     $course->method('getCacheMaxAge')->willReturn(-1);
 
-    $published = $this->lesson('Aula publicada', TRUE);
-    $unpublished = $this->lesson('Aula não publicada', FALSE);
-    $lesson_field = new class([
-      (object) ['entity' => $published],
-      (object) ['entity' => $unpublished],
-    ]) extends FieldItemList {
-
-      public function __construct(private array $items) {}
-
-      /**
-       * {@inheritdoc}
-       */
-      public function getIterator(): \ArrayIterator {
-        return new \ArrayIterator($this->items);
-      }
-
-    };
-    $course->expects(self::once())->method('get')->with('lessons')->willReturn($lesson_field);
-
     $rosters = $this->createMock(ClassRosterManager::class);
     $rosters->expects(self::once())->method('build')->with($course, $account)->willReturn([
-      '#cache' => ['contexts' => ['user'], 'tags' => ['group_relationship_list'], 'max-age' => 3600],
+      'classes' => ['class-1'],
     ]);
+
     $builder = new CourseRoomBuilder(
       $account,
-      $this->createMock(TranslationInterface::class),
       $this->createMock(FormBuilderInterface::class),
       $rosters,
+      $this->reader($this->journey(TRUE)),
     );
-
     $build = $builder->build($course);
 
-    self::assertSame('Aula publicada', $build['lessons']['#items'][0]['#plain_text']);
-    self::assertCount(1, $build['lessons']['#items']);
+    self::assertSame(['class-1'], $build['participant_rosters']['classes']);
+    self::assertArrayNotHasKey('aculta_learning_journey', $build);
     self::assertContains('user.group_permissions', $build['#cache']['contexts']);
   }
 
   /**
-   * Creates a published or unpublished lesson fixture.
+   * Builds one journey fixture with an authorized or denied result.
    */
-  private function lesson(string $label, bool $published): LessonInterface {
-    $lesson = $this->createMock(Lesson::class);
-    $lesson->method('isPublished')->willReturn($published);
-    $lesson->method('label')->willReturn($label);
-    $lesson->method('getCacheTags')->willReturn(['lms_lesson:' . $label]);
-    $lesson->method('getCacheContexts')->willReturn([]);
-    $lesson->method('getCacheMaxAge')->willReturn(-1);
-    $lesson->expects(self::never())->method('access');
-    $activities = $this->createMock(FieldItemListInterface::class);
-    $activities->method('first')->willReturn(NULL);
-    $lesson->method('get')->with('activities')->willReturn($activities);
-    return $lesson;
+  private function journey(bool $access): CourseJourney {
+    return new CourseJourney(
+      access: $access,
+      courseId: 'course-1',
+      courseLabel: 'Curso',
+      description: [],
+      started: FALSE,
+      finished: FALSE,
+      pendingEvaluation: FALSE,
+      currentLessonId: NULL,
+      currentLessonLabel: NULL,
+      currentLessonIndex: NULL,
+      totalLessons: 0,
+      completedLessons: 0,
+      progressPercent: 0,
+      lessons: [],
+      continueUrl: NULL,
+      cache: new CacheableMetadata(),
+    );
+  }
+
+  /**
+   * Returns a fake journey reader so the builder never touches Drupal LMS.
+   */
+  private function reader(?CourseJourney $journey): CourseJourneyReaderInterface {
+    return new class($journey) implements CourseJourneyReaderInterface {
+
+      /**
+       * Stores the journey returned for every request.
+       */
+      public function __construct(private readonly ?CourseJourney $journey) {}
+
+      /**
+       * {@inheritdoc}
+       */
+      public function getCourseJourney(string $course_id, AccountInterface $account): ?CourseJourney {
+        return $this->journey;
+      }
+
+    };
   }
 
 }

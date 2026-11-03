@@ -943,7 +943,7 @@ A grade do rodapé passa a uma coluna como base, duas colunas em `min-width:
 36rem` e quatro colunas em `min-width: 62rem`, mantendo ordem DOM e conteúdo.
 Firefox ESR visível verificou dez raízes públicas em 13 viewports (320–1440px),
 incluindo 576/992px. Os nove rodapés comuns usam 1/2/4 colunas. LINKS mantém o
-footer social de `aculta_links`; como o LinkGenerator não passa pelo
+footer social de `aculta_linkweed`; como o LinkGenerator não passa pelo
 `preprocess_link`, a folha candidata do SDC estiliza seus tokens semânticos
 diretamente e valida links/ícones de 44px. Resultado: 260/260 checks, sem
 overflow e com shell único. A execução usou CSS candidato só em LINKS. Detalhes
@@ -2260,3 +2260,69 @@ O axe passou oito combinações reduzidas com zero violações; resultados
 revisão manual. Unit da Revista passou 40 testes/162 asserções e o Kernel
 editorial passou 12 testes/500 asserções. Evidências detalhadas no log de
 execução contínua; isso não aprova THEME-MF3/OCS-F11 transversal.
+
+## OCS-F3 — família de feedback do Studio (2026-11-01)
+
+A lacuna de "estados vazio/erro/sucesso" da matriz F0 recebeu a caixa de
+mensagem do OpenCulturas Next com apresentação escopada ao Studio. Não houve
+novo SDC nem template: `studio.css` estiliza o alerta Bootstrap real das raízes
+`.studio`, `.aculta-profile-editor`, `.we-sativa__workspace`,
+`body.path-ganjalab` e `body.path-culturas`. A fixture
+`tests/browser/aculta-theme-mobile-first/studio-status-messages.py` passou
+**112/112** no Firefox ESR visível (nove larguras, claro/escuro, zoom
+200%/400%, escopo sem vazamento, contraste 12,4:1/14,5:1). Evidência em
+`/home/piradopirata/aculta-suite-out/studio-status-messages-20261101/`.
+
+Limites: fixture de folha, não render Drupal; a região `aculta-highlighted` não
+herda os tokens Fidelity e usa o token semântico de sombra. Decisão do
+responsável (2026-11-01): sem Montserrat nesta família, exclusão aceita e
+encerrada. Stylelint e ESLint do tema passaram (exit 0). OCS-F3 segue parcial
+apenas pelos gates servidos; F11 e MF3 não estão aprovados. Registrado também o
+conflito entre ADR-038/`FrontPathPolicy` (`/studio/we-sativa`,
+`/studio/green-stash`) e as rotas/testes atuais (`/wesativa`, `/greenstash`)
+como Pede-A na matriz de paridade.
+
+## OCS-A1 — camada Identity (2026-11-01)
+
+A Etapa 2 começou com a retokenização institucional do Studio. O arquivo
+`css/components/studio-identity.css` mantém as mesmas raízes e variáveis da
+Fidelity e troca os valores por tokens semânticos da marca; a alternância é
+controlada por `drush state:set aculta420.studio_identity 1` + `drush cr`, sem
+preferência de usuário. Fixture comparativa **108/108** em nove larguras e
+claro/escuro, com contrastes AA. A2 (acabamento de cards/campos/navegação), A3
+(benchmark em todas as áreas) e A4 (consolidação) seguem pendentes.
+
+## OCS-A2 — acabamento da Identity (2026-11-01)
+
+Inter/Oswald, cantos institucionais e acento amarelo na navegação, somente sob
+`html.studio-identity`. Fixture comparativa 144/144 em nove larguras e
+claro/escuro; A3 e A4 pendentes.
+
+## OCS-A3 — benchmark em fixture (2026-11-01)
+
+Benchmark Fidelity × Identity do markup representativo em 320/1440px e
+claro/escuro: 144/144. O benchmark servido do Studio inteiro está DEFERRED pelo
+bloqueio do checkout servido; A4 não iniciada.
+
+Atualização servida (2026-11-01): com a Identity ligada, Marley e Culturas
+confirmaram Oswald, raio de 3px e CTA amarelo; o benchmark das oito áreas deu
+28/32 HTTP 200. `wiki420:/wesativa` retornou 500 também com a Identity
+desligada, configurando Pede-A da frente Wiki. Identity revertida para Fidelity
+(state 0, main 200). A3 concluída em 7/8 áreas; A4 pendente.
+
+## OCS-A4 — consolidação (2026-11-01)
+
+Validador próprio da Identity (**34 checks, 29 tokens**) adicionado aos gates do
+tema; override morto removido; sem ativos novos. Fixture 144/144 e demais gates
+verdes. Identity desligada no Runtime até a correção do 500 de WE Sativa.
+
+Atualização final (2026-11-01): o 500 de `wiki420:/wesativa` foi corrigido no
+HEAD servido `acffacc53`; com a Identity ligada o benchmark das 8 áreas em
+320/1440 e claro/escuro passou **32/32 HTTP 200**. Identity revertida para
+Fidelity (state 0, main 200); a virada é decisão do responsável. A1–A4
+concluídas.
+
+Identity ligada (2026-11-01): reconciliação de config publicada em `627e0754d`,
+`config:status` limpo, estado `aculta420.studio_identity=1`, main/loja 200 e
+benchmark das 8 áreas **32/32** em 320/1440 e claro/escuro. Reversível pelo
+estado.

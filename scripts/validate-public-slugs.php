@@ -94,12 +94,8 @@ foreach (array_merge($customRouting, $themeRouting) as $file) {
 // override must exist and carry the friendly path.
 $portalOverrides = [
   'lms.group.answer_form' => [
-    'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/LmsFriendlyRouteSubscriber.php',
+    'file' => $root . '/web/modules/custom/aculta_portal/modules/aculta_lms/src/EventSubscriber/LmsFriendlyRouteSubscriber.php',
     'path' => '/curso/{group}/{lesson_delta}/{activity_delta}',
-  ],
-  'lms_file_upload.answer_file_download' => [
-    'file' => $root . '/web/modules/custom/aculta_portal/modules/aculta_lms/src/EventSubscriber/UploadedAnswerRouteSubscriber.php',
-    'path' => '/resposta/{lms_answer}/baixar-arquivo',
   ],
   'social_auth.network.redirect' => [
     'file' => $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainRouteSubscriber.php',

@@ -2,7 +2,7 @@ name: 'Wiki entry'
 component: aculta420:wiki-entry
 props:
   variant: article
-  url: /wiki/verbetes/exemplo
+  url: /verbetes/exemplo
   has_summary: true
   has_image: true
   has_categories: true

@@ -27,11 +27,34 @@ use Symfony\Component\HttpFoundation\RequestStack;
 #[RunTestsInSeparateProcesses]
 final class LocationPurposeAccessKernelTest extends KernelTestBase {
 
-  /** {@inheritdoc} */
-  protected static $modules = ['system', 'user', 'key', 'options', 'link', 'text', 'filter', 'taxonomy', 'datetime', 'datetime_range', 'address', 'geofield', 'aculta_calendar', 'aculta_events'];
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = [
+    'system', 'user', 'key', 'options', 'link', 'text', 'filter', 'taxonomy',
+    'datetime', 'datetime_range', 'address', 'geofield', 'aculta_calendar',
+    'aculta_events',
+  ];
 
+  /**
+   * Location page is confined to its canonical purpose.
+   */
   public function testLocationCatalogIsNotServedFromAnotherPurpose(): void {
-    $route = $this->container->get('router.route_provider')->getRouteByName('aculta_events.location_canonical');
+    $this->assertRouteIsConfinedToEventsPurpose('aculta_events.location_canonical', '/locais/1');
+  }
+
+  /**
+   * The contextual ICS endpoint is also confined to the eventos purpose.
+   */
+  public function testLocationAgendaIcsIsNotServedFromAnotherPurpose(): void {
+    $this->assertRouteIsConfinedToEventsPurpose('aculta_events.location_ics', '/locais/1/agenda.ics');
+  }
+
+  /**
+   * Assert that a public Local route returns 404 outside its canonical purpose.
+   */
+  private function assertRouteIsConfinedToEventsPurpose(string $routeName, string $path): void {
+    $route = $this->container->get('router.route_provider')->getRouteByName($routeName);
     $this->assertSame('eventos', $route->getOption('_aculta_domain_purpose'));
 
     $domainNegotiator = $this->createMock(DomainNegotiatorInterface::class);
@@ -43,9 +66,9 @@ final class LocationPurposeAccessKernelTest extends KernelTestBase {
       new RequestStack(),
     );
     $matcher = $this->createMock(RequestMatcherInterface::class);
-    $matcher->method('matchRequest')->willReturn(['_route' => 'aculta_events.location_canonical']);
+    $matcher->method('matchRequest')->willReturn(['_route' => $routeName]);
     $routes = $this->createMock(RouteProviderInterface::class);
-    $routes->method('getRouteByName')->with('aculta_events.location_canonical')->willReturn($route);
+    $routes->method('getRouteByName')->with($routeName)->willReturn($route);
     $currentUser = $this->createMock(AccountProxyInterface::class);
     $currentUser->method('isAuthenticated')->willReturn(FALSE);
     $resolver = new ContentPurposeResolver($this->container->get('entity_type.manager'), $purpose);
@@ -56,7 +79,7 @@ final class LocationPurposeAccessKernelTest extends KernelTestBase {
       $routes,
       $resolver,
     );
-    $request = Request::create('/locais/1');
+    $request = Request::create($path);
     $event = new RequestEvent($this->createMock(HttpKernelInterface::class), $request, HttpKernelInterface::MAIN_REQUEST);
 
     $subscriber->onRequestBeforeRouter($event);

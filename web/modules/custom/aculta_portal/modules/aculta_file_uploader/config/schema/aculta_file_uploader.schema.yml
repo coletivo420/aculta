@@ -1,0 +1,46 @@
+aculta_file_uploader.settings:
+  type: config_object
+  label: 'Política de upload de imagens por integração'
+  mapping:
+    allowed_extensions:
+      type: string
+      label: 'Extensões de imagem permitidas (subconjunto do catálogo central)'
+    max_size_mb:
+      type: integer
+      label: 'Tamanho máximo por arquivo em megabytes (limitado pelo catálogo central)'
+    consumers:
+      type: sequence
+      label: 'Políticas por integração'
+      sequence:
+        type: aculta_file_uploader.consumer
+
+aculta_file_uploader.consumer:
+  type: mapping
+  label: 'Política de uma integração'
+  mapping:
+    inherit_global:
+      type: boolean
+      label: 'Usar a política global'
+    allowed_extensions:
+      type: string
+      label: 'Extensões de imagem permitidas'
+    max_size_mb:
+      type: integer
+      label: 'Tamanho máximo por arquivo em megabytes'
+
+aculta_file_uploader.ingestion_limits:
+  type: config_object
+  label: 'Limites de ingestão de arquivos recebidos de fora (megabytes)'
+  mapping:
+    dmarc_max_report_mb:
+      type: integer
+      label: 'Relatório DMARC descompactado (MB, teto 32)'
+    imap_max_message_mb:
+      type: integer
+      label: 'Mensagem IMAP (MB, teto 50)'
+    h5p_max_entry_mb:
+      type: integer
+      label: 'Pacote H5P, uma entrada (MB, teto 128)'
+    h5p_max_total_mb:
+      type: integer
+      label: 'Pacote H5P, total descompactado (MB, teto 512)'

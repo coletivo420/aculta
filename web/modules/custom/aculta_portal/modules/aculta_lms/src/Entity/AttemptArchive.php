@@ -68,6 +68,10 @@ final class AttemptArchive extends ContentEntityBase {
         ->setRequired(TRUE)
         ->setDefaultValue(0);
     }
+    $fields['score_precise'] = BaseFieldDefinition::create('float')
+      ->setLabel(new TranslatableMarkup('Pontuação precisa'))
+      ->setRequired(TRUE)
+      ->setDefaultValue(0);
     $fields['evaluated'] = BaseFieldDefinition::create('boolean')
       ->setLabel(new TranslatableMarkup('Avaliada'))
       ->setRequired(TRUE)

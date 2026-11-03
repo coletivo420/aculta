@@ -10,18 +10,17 @@ use Drupal\aculta_lms\Access\ClassActivityDeadlineAccessCheck;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
-use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
+use Drupal\Core\Field\FieldItemInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
-use Drupal\lms\Entity\Activity;
-use Drupal\lms\Entity\Lesson;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipStorageInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
@@ -37,16 +36,12 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
    * Links an authorized topic in the current course.
    */
   public function testOnlyAccessibleDiscussionInSameCourseIsLinked(): void {
-    $activity = $this->createMock(Activity::class);
-    $activity->method('id')->willReturn('18');
-    $activity->method('isPublished')->willReturn(TRUE);
-    $this->setCacheMetadata($activity, ['lms_activity:18']);
-    $course = $this->createMock(CourseInterface::class);
+    $activity = $this->activity();
+    $course = $this->createMock(GroupInterface::class);
     $course->method('id')->willReturn('4');
     $course->method('bundle')->willReturn('lms_course');
     $course->method('getRelationships')->with('lms_classes')->willReturn([]);
     $this->setCacheMetadata($course, ['group:4']);
-    $this->setCourseLessons($course, [$activity]);
     $account = $this->createMock(UserInterface::class);
 
     $topic = $this->createMock(NodeInterface::class);
@@ -89,9 +84,12 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
       ->willReturn([$topicRelationship]);
 
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $lessonStorage = $this->createMock(EntityStorageInterface::class);
+    $lessonStorage->method('load')->with(11)->willReturn($this->lesson(4));
     $entityTypeManager->method('getStorage')->willReturnMap([
       ['node', $nodeStorage],
       ['group_relationship', $relationshipStorage],
+      ['aculta_lms_lesson', $lessonStorage],
     ]);
     $activityCheck = new ClassActivityDeadlineAccessCheck($entityTypeManager, $this->createMock(AccountProxyInterface::class));
     $resolver = new LmsActivityDiscussionResolver(
@@ -113,14 +111,14 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
    * Omits links when the activity does not belong to the course.
    */
   public function testActivityOutsideCourseReturnsNoDiscussion(): void {
-    $activity = $this->createMock(Activity::class);
-    $activity->method('isPublished')->willReturn(TRUE);
-    $this->setCacheMetadata($activity, ['lms_activity:18']);
-    $course = $this->createMock(CourseInterface::class);
+    $activity = $this->activity();
+    $course = $this->createMock(GroupInterface::class);
     $course->method('getRelationships')->with('lms_classes')->willReturn([]);
     $this->setCacheMetadata($course, ['group:4']);
-    $this->setCourseLessons($course, []);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $lessonStorage = $this->createMock(EntityStorageInterface::class);
+    $lessonStorage->method('load')->with(11)->willReturn($this->lesson(5));
+    $entityTypeManager->method('getStorage')->with('aculta_lms_lesson')->willReturn($lessonStorage);
     $accessCheck = new ClassActivityDeadlineAccessCheck($entityTypeManager, $this->createMock(AccountProxyInterface::class));
     $resolver = new LmsActivityDiscussionResolver(
       $entityTypeManager,
@@ -138,15 +136,11 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
    * Links class discussions only through their unique parent course.
    */
   public function testDiscussionInClassUnderCourseIsLinked(): void {
-    $activity = $this->createMock(Activity::class);
-    $activity->method('id')->willReturn('18');
-    $activity->method('isPublished')->willReturn(TRUE);
-    $this->setCacheMetadata($activity, ['lms_activity:18']);
-    $course = $this->createMock(CourseInterface::class);
+    $activity = $this->activity();
+    $course = $this->createMock(GroupInterface::class);
     $course->method('id')->willReturn('4');
     $course->method('getRelationships')->with('lms_classes')->willReturn([]);
     $this->setCacheMetadata($course, ['group:4']);
-    $this->setCourseLessons($course, [$activity]);
     $account = $this->createMock(UserInterface::class);
 
     $topic = $this->createMock(NodeInterface::class);
@@ -184,9 +178,12 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
       },
     );
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $lessonStorage = $this->createMock(EntityStorageInterface::class);
+    $lessonStorage->method('load')->with(11)->willReturn($this->lesson(4));
     $entityTypeManager->method('getStorage')->willReturnMap([
       ['node', $nodeStorage],
       ['group_relationship', $relationshipStorage],
+      ['aculta_lms_lesson', $lessonStorage],
     ]);
     $resolver = new LmsActivityDiscussionResolver(
       $entityTypeManager,
@@ -204,18 +201,35 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
     self::assertContains('group_relationship_list:plugin:lms_classes:entity:7', $build['#cache']['tags']);
   }
 
-  /**
-   * Sets the published activity references exposed by a mock course. */
-  private function setCourseLessons(CourseInterface $course, array $activities): void {
-    $lesson = $this->createMock(Lesson::class);
-    $lesson->method('isPublished')->willReturn(TRUE);
-    $lesson->method('hasField')->with('activities')->willReturn(TRUE);
-    $activityField = $this->createMock(EntityReferenceFieldItemListInterface::class);
-    $activityField->method('referencedEntities')->willReturn($activities);
-    $lesson->method('get')->with('activities')->willReturn($activityField);
-    $lessons = $this->createMock(EntityReferenceFieldItemListInterface::class);
-    $lessons->method('referencedEntities')->willReturn($activities === [] ? [] : [$lesson]);
-    $course->method('get')->with(CourseInterface::LESSONS)->willReturn($lessons);
+  /** Creates an ACULTA activity linked to lesson 11. */
+  private function activity(): ContentEntityInterface {
+    $activity = $this->createMock(ContentEntityInterface::class);
+    $activity->method('getEntityTypeId')->willReturn('aculta_lms_activity');
+    $activity->method('id')->willReturn('18');
+    $activity->method('hasField')->with('lesson_id')->willReturn(TRUE);
+    $activity->method('get')->with('lesson_id')->willReturn($this->fieldList(11));
+    $this->setCacheMetadata($activity, ['aculta_lms_activity:18']);
+    return $activity;
+  }
+
+  /** Creates a course lesson with publication and course fields. */
+  private function lesson(int $courseId): ContentEntityInterface {
+    $lesson = $this->createMock(ContentEntityInterface::class);
+    $lesson->method('hasField')->willReturnMap([['published', TRUE], ['course_id', TRUE]]);
+    $lesson->method('get')->willReturnMap([
+      ['published', $this->fieldList(TRUE)],
+      ['course_id', $this->fieldList($courseId)],
+    ]);
+    return $lesson;
+  }
+
+  /** Creates a field item list with one value. */
+  private function fieldList(mixed $value): FieldItemListInterface {
+    $item = $this->createMock(FieldItemInterface::class);
+    $item->method('getValue')->willReturn(['value' => $value]);
+    $list = $this->createMock(FieldItemListInterface::class);
+    $list->method('first')->willReturn($item);
+    return $list;
   }
 
   /**

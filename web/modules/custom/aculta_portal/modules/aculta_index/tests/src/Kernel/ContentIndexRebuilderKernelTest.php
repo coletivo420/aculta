@@ -8,6 +8,7 @@ use Drupal\aculta_index\Drush\Commands\ContentIndexQueueCommand;
 use Drupal\aculta_index\Drush\Commands\ContentIndexRebuildCommand;
 use Drupal\aculta_index\Drush\Commands\ContentIndexAuditCommand;
 use Drupal\aculta_index\Statistics\ContentIndexStatisticsBridge;
+use Drupal\aculta_index_test\ContentIndex\SampleContentProvider;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\aculta_index\Rebuild\ContentIndexRebuilder;
 use Drupal\aculta_index\Generation\ContentIndexGenerationManager;
@@ -515,6 +516,89 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
   }
 
   /**
+   * Reprojects stale provider data and replaces its obsolete relations.
+   */
+  public function testIncrementalAuditReprojectsObsoleteProviderVersion(): void {
+    try {
+      SampleContentProvider::$projectionVersion = 1;
+      SampleContentProvider::$relatedEntityId = 'old-target';
+      $node = Node::create(['type' => 'sample_content', 'title' => 'Current source', 'status' => 1]);
+      $node->save();
+
+      $rebuilder = $this->container->get('aculta_index.rebuilder');
+      $generationId = $rebuilder->start();
+      while (!$rebuilder->processNextBatch($generationId, 10)['complete']) {
+      }
+      $rebuilder->validate($generationId);
+      $this->completeBackfilledSourceWork();
+      $this->container->get('aculta_index.generation_manager')->activate($generationId);
+
+      $database = $this->container->get('database');
+      $entryQuery = $database->select('aculta_index_entry', 'entry')
+        ->condition('generation_id', $generationId)
+        ->condition('provider_id', 'test_sample_content')
+        ->condition('entity_type', 'node')
+        ->condition('entity_id', (string) $node->id());
+      self::assertSame(
+        1,
+        (int) $entryQuery->fields('entry', ['provider_version'])->execute()->fetchField(),
+      );
+      self::assertSame(
+        ['old-target'],
+        $this->projectionRelationTargets($generationId, (string) $node->id()),
+      );
+
+      SampleContentProvider::$projectionVersion = 2;
+      SampleContentProvider::$relatedEntityId = 'new-target';
+      $checker = $this->container->get('aculta_index.integrity_checker');
+      $checker->startAudit();
+      $state = $checker->processAuditBatch(10);
+      while ($state['status'] === 'running') {
+        $state = $checker->processAuditBatch(10);
+      }
+
+      self::assertSame(1, (int) $state['stale_projection_count']);
+      self::assertSame(0, (int) $state['missing_source_count']);
+      self::assertSame(0, (int) $state['unverified_source_count']);
+
+      $work = $database->select('aculta_index_work', 'work')
+        ->fields('work', ['work_id', 'operation', 'status'])
+        ->condition('provider_id', 'test_sample_content')
+        ->condition('entity_type', 'node')
+        ->condition('entity_id', (string) $node->id())
+        ->condition('langcode', 'en')
+        ->execute()
+        ->fetchAssoc();
+      self::assertSame('project', $work['operation']);
+      self::assertSame('queued', $work['status']);
+
+      $worker = $this->container->get('plugin.manager.queue_worker')
+        ->createInstance(ContentIndexWorkManager::QUEUE_ID);
+      $worker->processItem(['work_id' => (int) $work['work_id']]);
+
+      $updatedEntry = $database->select('aculta_index_entry', 'entry')
+        ->fields('entry', ['provider_version', 'label'])
+        ->condition('generation_id', $generationId)
+        ->condition('provider_id', 'test_sample_content')
+        ->condition('entity_type', 'node')
+        ->condition('entity_id', (string) $node->id())
+        ->execute()
+        ->fetchAssoc();
+      self::assertIsArray($updatedEntry);
+      self::assertSame(2, (int) $updatedEntry['provider_version']);
+      self::assertSame('Current source', $updatedEntry['label']);
+      self::assertSame(
+        ['new-target'],
+        $this->projectionRelationTargets($generationId, (string) $node->id()),
+      );
+    }
+    finally {
+      SampleContentProvider::$projectionVersion = 1;
+      SampleContentProvider::$relatedEntityId = NULL;
+    }
+  }
+
+  /**
    * Defers complete projection hashing to the source-coverage audit pass.
    */
   public function testIncrementalAuditRemovesSourcesNoLongerIndexable(): void {
@@ -548,6 +632,29 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
       ->execute()
       ->fetchAssoc();
     $this->assertSame(['operation' => 'delete', 'status' => 'queued'], $work);
+
+    $workId = $this->container->get('database')->select('aculta_index_work', 'work')
+      ->fields('work', ['work_id'])
+      ->condition('provider_id', 'test_sample_content')
+      ->condition('entity_type', 'node')
+      ->condition('entity_id', (string) $node->id())
+      ->condition('langcode', 'en')
+      ->execute()
+      ->fetchField();
+    $worker = $this->container->get('plugin.manager.queue_worker')
+      ->createInstance(ContentIndexWorkManager::QUEUE_ID);
+    $worker->processItem(['work_id' => (int) $workId]);
+
+    $this->assertSame(
+      0,
+      (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'test_sample_content')
+      ->condition('entity_type', 'node')
+      ->condition('entity_id', (string) $node->id())
+      ->countQuery()
+      ->execute()
+      ->fetchField());
   }
 
   /**
@@ -1024,6 +1131,25 @@ final class ContentIndexRebuilderKernelTest extends KernelTestBase {
       ->condition('generation_id', $generationId)
       ->execute()
       ->fetchField();
+  }
+
+  /**
+   * Returns targets for one fixture provider projection.
+   *
+   * @return string[]
+   *   Related target entity IDs.
+   */
+  private function projectionRelationTargets(string $generationId, string $sourceId): array {
+    return array_map('strval', $this->container->get('database')->select('aculta_index_relation', 'relation')
+      ->fields('relation', ['target_entity_id'])
+      ->condition('generation_id', $generationId)
+      ->condition('provider_id', 'test_sample_content')
+      ->condition('source_entity_type', 'node')
+      ->condition('source_entity_id', $sourceId)
+      ->condition('relation_type', 'related_item')
+      ->orderBy('target_entity_id')
+      ->execute()
+      ->fetchCol());
   }
 
   /**

@@ -1,3 +1,20 @@
+## 0.1.0-dev.180 — consulta paginada de relações recebidas (2026-11-01)
+
+- `ContentIndexRelationQuery::queryIncoming()` descobre origens por uma relação
+  nomeada, revalidando acesso do alvo e de cada origem, provider/versão ativos,
+  purpose e cursor opaco por conta. A consulta devolve entidades de origem;
+  não cria entidades nem expande RRULE/overrides como ocorrências.
+- Kernel Events verifica Evento > Local derivado de três Datas, deduplicação
+  por Evento, revogação imediata de origem/alvo e isolamento de cursor. Unit
+  Index 51/265 e Kernel Index 127/2.171 PASS em `aculta_simpletest`; PHPCS e PHP
+  lint focais PASS. O Runtime não foi alterado.
+
+## 0.1.0-dev.179 — revalidar suítes e gates (2026-11-02)
+
+- Unit completa: 51 testes / 265 assertions, PASS em `aculta_simpletest`.
+- Kernel completo: 127 testes / 2.171 assertions, PASS em `aculta_simpletest`; 274 depreciações Core/contrib.
+- PHPCS Drupal/DrupalPractice, PHP lint, validação de rotas, domínio administrativo e índice de status passaram. Nenhum rebuild ou escrita no Runtime foi executado.
+
 # Changelog — ACULTA Content Index
 
 ## 0.1.0-dev.178 — revalidar grants, acesso e qualidade estática (2026-10-29)

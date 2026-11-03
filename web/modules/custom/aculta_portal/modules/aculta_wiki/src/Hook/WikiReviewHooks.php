@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Hook;
 
-use Drupal\aculta_wiki\Notifier\WikiReviewNotifier;
 use Drupal\aculta_wiki\Event\WikiEntryReviewRequestedEvent;
 use Drupal\aculta_wiki\Service\WikiEditorialEventQueue;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\node\NodeInterface;
 
 /**
@@ -28,9 +26,7 @@ final class WikiReviewHooks {
   public const STATE_REVIEW = 'review';
 
   public function __construct(
-    private readonly WikiReviewNotifier $notifier,
     private readonly WikiEditorialEventQueue $events,
-    private readonly ?ModuleHandlerInterface $moduleHandler = NULL,
   ) {}
 
   /**
@@ -71,16 +67,16 @@ final class WikiReviewHooks {
   }
 
   /**
-   * Queues the current persisted revision and preserves the existing email. */
+   * Queues the current persisted revision in the transactional event queue.
+   *
+   * Messenger consumers own the personal and editorial delivery channels; the
+   * hook only records the editorial fact. */
   private function enqueue(NodeInterface $entity): void {
     $revisionId = $entity->getRevisionId();
     if ($revisionId === NULL || (int) $revisionId < 1 || !$entity->uuid()) {
       return;
     }
     $this->events->enqueue(new WikiEntryReviewRequestedEvent($entity->uuid(), (int) $revisionId));
-    if ($this->moduleHandler === NULL || !$this->moduleHandler->moduleExists('aculta_wiki_messenger')) {
-      $this->notifier->notifyReview($entity);
-    }
   }
 
   /**

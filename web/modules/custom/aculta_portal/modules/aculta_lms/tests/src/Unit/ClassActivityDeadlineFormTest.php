@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Unit;
 
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_lms\Form\ClassActivityDeadlineForm;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\lms\Entity\ActivityInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -53,7 +53,8 @@ final class ClassActivityDeadlineFormTest extends UnitTestCase {
     $class->method('id')->willReturn('12');
     $class->method('label')->willReturn('Turma teste');
     $class->method('getRelationshipsByEntity')->willReturn([]);
-    $activity = $this->createMock(ActivityInterface::class);
+    $activity = $this->createMock(ContentEntityInterface::class);
+    $activity->method('getEntityTypeId')->willReturn('aculta_lms_activity');
     $activity->method('label')->willReturn('Atividade teste');
     $course = $this->createMock(GroupInterface::class);
     $course->method('id')->willReturn('3');

@@ -137,6 +137,112 @@ final class ContentIndexRelationQuery {
   }
 
   /**
+   * Gets sources that point to one named, incoming relation.
+   *
+   * The target and every source are reloaded and checked with Entity Access.
+   * The index edge is only a discovery hint; it never grants access. Results
+   * contain source entities, not Calendar occurrences, so recurrence remains
+   * the responsibility of the owning Calendar provider.
+   *
+   * @param string $targetEntityType
+   *   Target entity type ID.
+   * @param string $targetEntityId
+   *   Target entity ID.
+   * @param string $targetLangcode
+   *   Exact indexed target translation language.
+   * @param string $relationType
+   *   Explicit relation type declared by a source provider.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Account for target/source access checks and cursor ownership.
+   * @param string|null $cursor
+   *   Opaque continuation token from a prior call with identical arguments.
+   * @param int $limit
+   *   Maximum source candidates, from 1 through 100.
+   */
+  public function queryIncoming(
+    string $targetEntityType,
+    string $targetEntityId,
+    string $targetLangcode,
+    string $relationType,
+    AccountInterface $account,
+    ?string $cursor = NULL,
+    int $limit = 25,
+  ): ContentIndexQueryResult {
+    $this->validateIdentity($targetEntityType, $targetEntityId, $targetLangcode, $relationType);
+    if ($limit < 1 || $limit > self::MAX_CANDIDATES) {
+      throw new \InvalidArgumentException(sprintf('Content Index relation candidate limit must be between 1 and %d.', self::MAX_CANDIDATES));
+    }
+
+    $cacheability = new CacheableMetadata();
+    $cacheability->setCacheMaxAge(0);
+    $generationId = $this->generations->getActiveGeneration();
+    if ($generationId === NULL) {
+      return new ContentIndexQueryResult([], NULL, $cacheability);
+    }
+
+    $targetCandidate = [
+      [
+        'entity_type' => $targetEntityType,
+        'entity_id' => $targetEntityId,
+        'langcode' => $targetLangcode,
+      ],
+    ];
+    $targetAccess = $this->accessFilter->filter($targetCandidate, $account);
+    $cacheability = $cacheability->merge($targetAccess->cacheability);
+    if (count($targetAccess->entities) !== 1) {
+      return new ContentIndexQueryResult([], NULL, $cacheability);
+    }
+    $targetProvider = $this->providers->findForBundle($targetEntityType, $targetAccess->entities[0]->bundle());
+    if ($targetProvider === NULL) {
+      return new ContentIndexQueryResult([], NULL, $cacheability);
+    }
+
+    $queryIdentity = [
+      'target_entity_type' => $targetEntityType,
+      'target_entity_id' => $targetEntityId,
+      'target_langcode' => $targetLangcode,
+      'relation_type' => $relationType,
+    ];
+    $queryHash = hash('sha256', json_encode([
+      'identity' => $queryIdentity,
+      'provider_fingerprint' => $this->providers->fingerprint(),
+      'target_provider' => $targetProvider->getProviderId(),
+      'target_provider_version' => $targetProvider->getProjectionVersion(),
+      'default_target_langcode' => $this->languageManager->getDefaultLanguage()->getId(),
+      'sort' => 'source_entry_id_desc_v1',
+    ], JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
+    $uid = (int) $account->id();
+    $after = $cursor === NULL ? NULL : $this->cursors->load($cursor, $uid, $generationId, $queryHash);
+    $candidates = $this->loadSources(
+      $generationId,
+      $queryIdentity,
+      $targetProvider->getProviderId(),
+      $targetProvider->getProjectionVersion(),
+      $after,
+      $limit,
+    );
+    $sourceAccess = $this->accessFilter->filter($candidates, $account);
+    $cacheability = $cacheability->merge($sourceAccess->cacheability);
+
+    $nextCursor = NULL;
+    if (count($candidates) === $limit) {
+      $last = end($candidates);
+      if ($cursor === NULL) {
+        $nextCursor = $this->cursors->create($uid, $generationId, $queryHash, 0, $last['entry_id']);
+      }
+      else {
+        $this->cursors->advance($cursor, $uid, $generationId, $queryHash, 0, $last['entry_id'], $after['revision']);
+        $nextCursor = $cursor;
+      }
+    }
+    elseif ($cursor !== NULL) {
+      $this->cursors->delete($cursor, $uid, $generationId, $queryHash);
+    }
+
+    return new ContentIndexQueryResult($sourceAccess->entities, $nextCursor, $cacheability);
+  }
+
+  /**
    * Loads distinct current-generation target identities in entry order.
    *
    * @param string $generationId
@@ -208,6 +314,93 @@ final class ContentIndexRelationQuery {
       ->range(0, $limit)
       ->execute();
 
+    $candidates = [];
+    foreach ($rows as $row) {
+      $candidates[] = [
+        'entity_type' => (string) $row->entity_type,
+        'entity_id' => (string) $row->entity_id,
+        'langcode' => (string) $row->langcode,
+        'entry_id' => (int) $row->entry_id,
+      ];
+    }
+    return $candidates;
+  }
+
+  /**
+   * Loads distinct current-generation sources pointing to an authorized target.
+   *
+   * @param string $generationId
+   *   Active generation selected by the generation pointer.
+   * @param array{target_entity_type: string, target_entity_id: string, target_langcode: string, relation_type: string} $identity
+   *   Validated target identity and named relation.
+   * @param string $targetProviderId
+   *   Provider that owns the target projection.
+   * @param int $targetProviderVersion
+   *   Current target projection version.
+   * @param array{changed: int, entry_id: int, revision: int}|null $after
+   *   Persisted private keyset state.
+   * @param int $limit
+   *   Maximum number of source candidates to return.
+   *
+   * @return list<array{entity_type: string, entity_id: string, langcode: string, entry_id: int}>
+   *   Candidate sources, not yet authorized.
+   */
+  private function loadSources(
+    string $generationId,
+    array $identity,
+    string $targetProviderId,
+    int $targetProviderVersion,
+    ?array $after,
+    int $limit,
+  ): array {
+    $providers = $this->providers->all();
+    if ($providers === []) {
+      return [];
+    }
+
+    $query = $this->database->select('aculta_index_relation', 'relation')
+      ->fields('source', ['entity_type', 'entity_id', 'langcode', 'entry_id']);
+    $query->innerJoin(
+      'aculta_index_entry',
+      'source',
+      'relation.generation_id = source.generation_id'
+        . ' AND relation.provider_id = source.provider_id'
+        . ' AND relation.source_entity_type = source.entity_type'
+        . ' AND relation.source_entity_id = source.entity_id'
+        . ' AND relation.source_langcode = source.langcode',
+    );
+    $query->innerJoin(
+      'aculta_index_entry',
+      'target',
+      'relation.generation_id = target.generation_id'
+        . ' AND relation.target_entity_type = target.entity_type'
+        . ' AND relation.target_entity_id = target.entity_id'
+        . ' AND (target.langcode = relation.target_langcode OR (relation.target_langcode = :index_und AND target.langcode = :default_langcode))',
+      [':index_und' => 'und', ':default_langcode' => $this->languageManager->getDefaultLanguage()->getId()],
+    );
+    $query->condition('target.provider_id', $targetProviderId)
+      ->condition('target.provider_version', $targetProviderVersion)
+      ->condition('relation.generation_id', $generationId)
+      ->condition('relation.target_entity_type', $identity['target_entity_type'])
+      ->condition('relation.target_entity_id', $identity['target_entity_id'])
+      ->condition('target.langcode', $identity['target_langcode'])
+      ->condition('relation.relation_type', $identity['relation_type']);
+
+    $currentSources = $query->orConditionGroup();
+    foreach ($providers as $providerId => $provider) {
+      $currentSources->condition($query->andConditionGroup()
+        ->condition('source.provider_id', $providerId)
+        ->condition('source.provider_version', $provider->getProjectionVersion()));
+    }
+    $query->condition($currentSources);
+    if ($after !== NULL) {
+      $query->condition('source.entry_id', $after['entry_id'], '<');
+    }
+
+    $rows = $query->distinct()
+      ->orderBy('source.entry_id', 'DESC')
+      ->range(0, $limit)
+      ->execute();
     $candidates = [];
     foreach ($rows as $row) {
       $candidates[] = [

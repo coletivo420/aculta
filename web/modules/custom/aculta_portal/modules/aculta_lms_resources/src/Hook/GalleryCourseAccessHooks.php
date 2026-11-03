@@ -12,7 +12,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\media_gallery\MediaGalleryInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -54,10 +54,12 @@ final class GalleryCourseAccessHooks {
       ->execute();
 
     foreach ($course_storage->loadMultiple($course_ids) as $course) {
-      if (!$course instanceof CourseInterface) {
+      if (!$course instanceof GroupInterface) {
         continue;
       }
-      $take_access = $course->takeAccess($account);
+      $take_access = AccessResult::allowedIf($course->hasPermission('take course', $account))
+        ->cachePerUser()
+        ->addCacheContexts(['user.permissions', 'user.group_permissions']);
       $can_manage = $course->hasPermission('administer members', $account)
         || $course->hasPermission('grade students', $account);
       $metadata->addCacheableDependency($course)

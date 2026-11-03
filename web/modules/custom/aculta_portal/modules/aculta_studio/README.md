@@ -2,17 +2,21 @@
 
 ## ADR-038 — estado atual
 
-`aculta_studio` permanece como framework compartilhado, registry e camada de composição. Não existe hub público `/studio`. Por decisão explícita do responsável, as áreas integradas **ACULTA STUDIO WE SATIVA** (`wiki:/studio/we-sativa`) e **ACULTA STUDIO GREEN STASH** (`shop:/studio/green-stash`) usam esses paths canônicos; `/studio` e os demais paths `/studio/*` continuam 404, sem alias nem redirect.
+`aculta_studio` permanece como framework compartilhado, registry e camada de composição. Não existe hub público `/studio`. Por decisão explícita do responsável, as áreas integradas **ACULTA STUDIO WE SATIVA** (`wiki:/we-sativa`) e **ACULTA STUDIO GREEN STASH** (`shop:/green-stash`) usam esses paths canônicos; `/studio` e os demais paths `/studio/*` continuam 404, sem alias nem redirect.
 
 | Suite | Purpose | Caminho |
 | --- | --- | --- |
 | Marley | `account` | `/marley` |
-| Ganjalab | `courses` | `/ganjalab` |
-| ACULTA STUDIO WE SATIVA | `wiki` | `/studio/we-sativa` |
-| ACULTA STUDIO GREEN STASH | `shop` | `/studio/green-stash` |
+| Ganjalab Estudante | `courses` | `/ganjalab` |
+| Ganjalab Educador | `courses` | `/ganjalab/educador` |
+| Criação de curso | `courses` | `/ganjalab/educador/cursos/novo` |
+| ACULTA STUDIO WE SATIVA | `wiki` | `/we-sativa` |
+| ACULTA STUDIO GREEN STASH | `shop` | `/green-stash` |
 | Culturas | `eventos` | `/culturas` |
 
-A raiz de `account` apresenta a entrada da Conta; Conta (`/conta/*`) e Perfil (`/perfil/*`) permanecem separados. Salvos usam `/salvos`, Mercado Pago usa `/conta/mercado-pago/planos` e `/conta-legada` permanece. URLs absolutas são resolvidas pelo `DomainPurposeManager`; o Domain Wiki canônico é `wiki420`, sem migração de host planejada.
+A raiz de `account` apresenta a entrada da Conta; Conta (`/conta/*`) e Perfil (`/perfil/*`) permanecem separados.
+
+**Responsabilidades atuais:** Marley reúne somente Revista, moderação do Fórum e Galerias; a aba de Fórum exige `moderar denuncias do forum` e oferece a rota de denúncias do owner, sem menu de discussões ou criação de tópicos. Ganjalab Educador e Ganjalab Estudante são experiências distintas no mesmo purpose `courses`; Course Builder/Form API fica com o Educador e dashboard/jornada com o Estudante. Group/LMS continuam owners de entidades, permissões, matrículas, progresso e notas. Os dashboards mostram links entre Educador/Estudante somente quando a rota destino autoriza a conta. Salvos usam `/salvos`, Mercado Pago usa `/conta/mercado-pago/planos` e `/conta-legada` permanece. URLs absolutas são resolvidas pelo `DomainPurposeManager`; o Domain Wiki canônico é `wiki420`, sem migração de host planejada.
 
 Implementado e publicado na PR #299 até `999a889ab`. Gates focados Studio/Portal/Commerce: 89 testes / 653 assertions; Kernels EventDomainBoundary e EventLocationModalAndAdmin: 15 testes / 373 assertions; cobertura focal de rotas, Conta/Perfil e políticas Green Stash: 30 testes / 391 assertions; aliases: PASS. Matriz HTTP: 275/275 respostas GET/POST/AJAX esperadas; Firefox ESR autenticado verificou Culturas em 200. Permanecem pendentes homologação integral de grants e fluxos de escrita, sobretudo Shop, e auditoria ampliada de acessibilidade. Os registros anteriores ao ajuste dos paths são históricos; as duas rotas `/studio/` atuais estão declaradas acima.
 
@@ -152,7 +156,7 @@ o fallback sem JavaScript dos modais bio/redes precisa evoluir na P2-B.
 A única entrada global é **`/studio`** (route ID `aculta_studio.hub`).
 A entrada editorial é **`/studio/marley`**, mais as subrotas canônicas.
 Meu Espaço: `/studio/pessoal`. Ganjalab: `/studio/ganjalab`;
-WE SATIVA: `/studio/we-sativa`.
+WE SATIVA: `/we-sativa`.
 
 Foram removidas as rotas transitórias `/studio/inicio`,
 `/studio/Marley`, `/ganjalab`, `/ganjalab420`,
@@ -221,22 +225,22 @@ Execução faseada: [ROADMAP.md](docs/ROADMAP.md), marcos STUDIO-P0–P7.
 
 - **Hub geral**: `/studio`, com descoberta e links autorizados; `/studio/inicio` é alias temporário seguro.
 - **ACULTA Studio Marley (`marley`)**: espaço editorial de criação, edição e moderação. Usa contratos exclusivos `MarleyTab`, `MarleyTabInterface`, `MarleyTabBase`, `MarleyTabManager`, `MarleyPresenter`, `MarleyListingBuilder` e `MarleyController`. Os IDs funcionais das áreas Revista, Wiki, Cursos, Fórum e Galerias não mudam.
-- **ACULTA Studio Ganjalab (`ganjalab`)**: entrada estudantil composta pelo `GanjalabExperienceProvider` e `GanjalabController`. `StudioExperienceManager` permanece registro compartilhado. `LearnerDashboardComposer`, `LearningDashboardManager` e `aculta_lms.student_dashboard` mantêm seus contratos neutros.
+- **ACULTA Studio Ganjalab (`ganjalab`)**: entrada estudantil composta pelo `GanjalabExperienceProvider` e `GanjalabController`. `StudioExperienceManager` permanece registro compartilhado. `LearnerDashboardComposer` é dono da apresentação do painel estudantil no Studio; recebe dados tipados por `StudentLearningSummaryReaderInterface`. O `LearningDashboardManager` do LMS é o adaptador/provedor desses dados. A rota preserva o ID histórico `aculta_lms.student_dashboard`.
 - **Meu Espaço (`pessoal`)**: entrypoint inicial no purpose `account`, com
   links para a Conta existente e autorização no registry; sem novos formulários
   nem substituição do shell de Conta. A rota é `/studio/pessoal`.
-- **WE SATIVA**: experiência independente de contribuição Wiki, nas rotas `/studio/we-sativa` e `/studio/we-sativa/inicio`.
+- **WE SATIVA**: experiência independente de contribuição Wiki, nas rotas `/we-sativa` e `/we-sativa/inicio`.
 
 A infraestrutura apresenta e encaminha. Os módulos proprietários continuam donos de entidades, formulários, workflow, permissões, matrículas, avaliações, progresso e cache de negócio.
 
 ## Rotas
 
-Todas as experiências usam `_aculta_domain_purpose: account`, `access aculta portal` e o domínio resolvido pelo Portal.
+As experiências pessoais usam `_aculta_domain_purpose: account`; Ganjalab usa o purpose `courses` e suas permissões educacionais específicas.
 
 - Meu Espaço: `/studio/pessoal` (P1-A; Runtime ainda não homologado).
 - Marley: `/studio/marley` (entrada canônica, minúscula), `/studio/marley/{aba}`, `/studio/marley/{aba}/{secao}`, `/studio/marley/{aba}/{secao}/{sub}`.
 - Ganjalab: `/studio/ganjalab` (estudante autenticado; declarada pelo LMS).
-- WE SATIVA: `/studio/we-sativa` e `/studio/we-sativa/inicio`.
+- WE SATIVA: `/we-sativa` e `/we-sativa/inicio`.
 - Planos Mercado Pago: apresentação administrativa no Studio em `/studio/conta/mercado-pago/planos`; o módulo de pagamentos é dono do formulário, do endpoint POST `/integracoes/mercadopago/planos` e das operações no provedor.
 
 A entrada antiga `/studio/ganjalab` não pode continuar editorial: agora pertence exclusivamente a Ganjalab. As entradas antigas não colidentes usam redirects temporários 302 apenas em GET/HEAD: `/ganjalab` e níveis profundos editoriais para Marley; `/ganjalab420`, `/minha-aprendizagem` e `/studio/ganjalab420` para Ganjalab. Métodos de escrita não são redirecionados. O registro completo está em [contrato de identidade](../../../../../../docs/portal/ACULTA-STUDIO-IDENTITY.md) e no [mapa de rotas](../../../../../../docs/architecture/ROUTES-SITEMAP.md).
@@ -284,8 +288,8 @@ sem alias ou redirect.
 | --- | --- | --- |
 | Marley | `account` | `/marley` |
 | Ganjalab | `courses` | `/ganjalab` |
-| ACULTA STUDIO WE SATIVA | `wiki` | `/studio/we-sativa` |
-| ACULTA STUDIO GREEN STASH | `shop` | `/studio/green-stash` |
+| ACULTA STUDIO WE SATIVA | `wiki` | `/we-sativa` |
+| ACULTA STUDIO GREEN STASH | `shop` | `/green-stash` |
 | Culturas | `eventos` | `/culturas` |
 
 Conta (`/conta/*`) e Perfil (`/perfil/*`) permanecem separados; salvos usam
@@ -310,3 +314,12 @@ Uma matriz HTTP focal verificou 275 respostas GET/POST/AJAX nos cinco hosts
 configurados pelo `DomainPurposeManager`, com 404 no purpose errado e nas
 rotas antigas. Testes Kernel seguem pendentes porque `SIMPLETEST_DB` não está
 configurado.
+
+
+## Ganjalab — composição visual da jornada (2026-11-01)
+
+A composição da jornada e da sala de aprendizagem pertence ao Studio. CourseJourneyComposer e CourseJourneyPresentationHooks vivem no módulo aculta_studio; os hooks acrescentam a jornada à página canônica de curso e envolvem a rota nativa de atividade usando CourseJourneyReaderInterface. A decisão de acesso, o estado da aula e os destinos continuam vindo do provider pelo contrato neutro.
+
+O LMS não deve importar classes do Studio nem registrar seus composers. CourseRoomBuilder permanece no aculta_lms somente para elementos próprios de matrícula e roster. A composição do dashboard pessoal ainda é um ponto transitório: LearnerDashboardComposer permanece implementado no LMS e será separado quando houver um contrato de dados de resumo do estudante; não duplicar dados nem mover autorização para a interface.
+
+A rota de atividade lms.group.answer_form continua como integração temporária com o Drupal LMS contrib. A extração não removeu essa rota nem alterou submissões. A validação Runtime está sendo conduzida em frente separada e não é declarada concluída aqui.

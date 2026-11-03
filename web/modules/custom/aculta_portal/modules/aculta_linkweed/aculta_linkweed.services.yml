@@ -1,0 +1,43 @@
+services:
+  aculta_linkweed.social_links_page:
+    class: Drupal\aculta_linkweed\Service\SocialLinksPagePresenter
+    arguments: ['@config.factory', '@string_translation', '@aculta_portal.domain_purpose']
+  aculta_linkweed.landing_controller:
+    class: Drupal\aculta_linkweed\Controller\LinksLandingController
+    arguments: ['@entity_type.manager', '@current_user', '@path_alias.manager', '@language_manager', '@aculta_portal.domain_purpose', '@aculta_linkweed.social_links_page']
+  aculta_linkweed.dashboard_access:
+    class: Drupal\aculta_linkweed\Access\LinksDashboardAccess
+
+  aculta_linkweed.dashboard_controller:
+    class: Drupal\aculta_linkweed\Controller\LinksDashboardController
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@aculta_linkweed.analytics', '@request_stack']
+
+  aculta_linkweed.public_page_controller:
+    class: Drupal\aculta_linkweed\Controller\LinkPagePublicController
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_user.author_identity_resolver', '@aculta_linkweed.destination_resolver', '@aculta_linkweed.analytics', '@request_stack']
+
+  aculta_linkweed.destination_resolver:
+    class: Drupal\aculta_linkweed\Service\LinkDestinationResolver
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_purpose']
+
+  aculta_linkweed.analytics:
+    class: Drupal\aculta_linkweed\Service\LinkAnalytics
+    arguments: ['@aculta_statistics.recorder', '@aculta_statistics.storage', '@datetime.time', '@config.factory']
+
+  aculta_linkweed.short_code_generator:
+    class: Drupal\aculta_linkweed\Service\LinkShortCodeGenerator
+
+  aculta_linkweed.qr_code_svg_generator:
+    class: Drupal\aculta_linkweed\Service\QrCodeSvgGenerator
+    arguments: ['@aculta_qrcode.payload_validator', '@aculta_qrcode.preset_registry', '@aculta_qrcode.generator']
+
+  aculta_linkweed.page_qr_code_controller:
+    class: Drupal\aculta_linkweed\Controller\LinkPageQrCodeController
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@aculta_linkweed.qr_code_svg_generator']
+
+  aculta_linkweed.short_qr_code_controller:
+    class: Drupal\aculta_linkweed\Controller\LinkShortCodeQrCodeController
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_purpose', '@aculta_linkweed.qr_code_svg_generator']
+
+  aculta_linkweed.social_links_form_callbacks:
+    class: Drupal\aculta_linkweed\Service\SocialLinksFormCallbacks

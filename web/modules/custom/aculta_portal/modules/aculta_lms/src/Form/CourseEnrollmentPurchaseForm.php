@@ -22,8 +22,7 @@ use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
-use Drupal\lms_classes\ClassHelper;
+use Drupal\group\Entity\GroupRelationshipInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /** Adds a course and the learner's chosen class to a Commerce cart. */
@@ -58,8 +57,8 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
     return 'aculta_lms_course_enrollment_purchase';
   }
 
-  public function buildForm(array $form, FormStateInterface $form_state, ?CourseInterface $course = NULL): array {
-    if (!$course instanceof CourseInterface) {
+  public function buildForm(array $form, FormStateInterface $form_state, ?GroupInterface $course = NULL): array {
+    if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course') {
       return $form;
     }
     $form_state->set('aculta_lms_course_id', (string) $course->id());
@@ -68,9 +67,12 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
       ->addCacheContexts(['user', 'user.group_permissions', 'domain'])
       ->addCacheTags(['group_relationship_list:plugin:lms_classes:group:' . $course->id()]);
 
-    $classes = ClassHelper::getClasses($course);
     $options = [];
-    foreach ($classes as $class) {
+    foreach ($course->getRelationships('lms_classes') as $relationship) {
+      $class = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
+      if (!$class instanceof GroupInterface || $class->bundle() !== 'lms_class') {
+        continue;
+      }
       $cacheability->addCacheableDependency($class);
       if ($class->isPublished()) {
         $options[(string) $class->id()] = (string) $class->label();
@@ -114,19 +116,19 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $course = $this->loadCourse($form_state);
     $class_id = (string) $form_state->getValue('course_class');
-    if (!$course instanceof CourseInterface || !$this->classIsAvailable($course, $class_id)) {
+    if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course' || !$this->classIsAvailable($course, $class_id)) {
       $form_state->setErrorByName('course_class', $this->t('Selecione uma turma disponível deste curso.'));
     }
-    if (!$course instanceof CourseInterface || !$this->courseVariation($course) instanceof ProductVariationInterface) {
+    if (!$course instanceof GroupInterface || !$this->courseVariation($course) instanceof ProductVariationInterface) {
       $form_state->setErrorByName('course_class', $this->t('A inscrição online não está disponível para este curso.'));
     }
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $course = $this->loadCourse($form_state);
-    $variation = $course instanceof CourseInterface ? $this->courseVariation($course) : NULL;
+    $variation = $course instanceof GroupInterface ? $this->courseVariation($course) : NULL;
     $class = $this->entityTypeManager->getStorage('group')->load((string) $form_state->getValue('course_class'));
-    if (!$course instanceof CourseInterface
+    if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course'
       || !$variation instanceof ProductVariationInterface
       || !$class instanceof GroupInterface
       || !$this->classIsAvailable($course, (string) $class->id())) {
@@ -152,25 +154,26 @@ final class CourseEnrollmentPurchaseForm extends FormBase {
     $form_state->setResponse(new TrustedRedirectResponse($checkoutUrl->toString()));
   }
 
-  private function loadCourse(FormStateInterface $form_state): ?CourseInterface {
+  private function loadCourse(FormStateInterface $form_state): ?GroupInterface {
     $course = $this->entityTypeManager->getStorage('group')->load($form_state->get('aculta_lms_course_id'));
-    return $course instanceof CourseInterface ? $course : NULL;
+    return $course instanceof GroupInterface && $course->bundle() === 'lms_course' ? $course : NULL;
   }
 
-  private function classIsAvailable(CourseInterface $course, string $class_id): bool {
+  private function classIsAvailable(GroupInterface $course, string $class_id): bool {
     $class = $this->entityTypeManager->getStorage('group')->load($class_id);
     if (!$class instanceof GroupInterface || $class->bundle() !== 'lms_class' || !$class->isPublished()) {
       return FALSE;
     }
-    foreach (ClassHelper::getClasses($course) as $courseClass) {
-      if ((string) $courseClass->id() === $class_id) {
+    foreach ($course->getRelationships('lms_classes') as $relationship) {
+      $courseClass = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
+      if ($courseClass instanceof GroupInterface && (string) $courseClass->id() === $class_id) {
         return TRUE;
       }
     }
     return FALSE;
   }
 
-  private function courseVariation(CourseInterface $course, ?CacheableMetadata $cacheability = NULL): ?ProductVariationInterface {
+  private function courseVariation(GroupInterface $course, ?CacheableMetadata $cacheability = NULL): ?ProductVariationInterface {
     if (!$course->hasField('field_course_product') || $course->get('field_course_product')->isEmpty()) {
       return NULL;
     }

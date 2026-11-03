@@ -23,19 +23,9 @@ services:
     arguments: ['@image.factory']
     tags:
       - { name: aculta_portal.helper }
-  aculta_image.generated_file:
-    class: Drupal\aculta_image\GeneratedImageFileManager
-    arguments: ['@entity_type.manager', '@file_system', '@file.mime_type.guesser', '@aculta_image.inspector', '@datetime.time']
-    tags:
-      - { name: aculta_portal.helper }
   aculta_image.file_remover:
     class: Drupal\aculta_image\FileRemover
     arguments: ['@file.usage', '@entity_type.manager', '@database', '@file_system', '@logger.factory']
-    tags:
-      - { name: aculta_portal.helper }
-  aculta_image.cleanup:
-    class: Drupal\aculta_image\ImageCleanup
-    arguments: ['@database', '@entity_type.manager', '@queue', '@config.factory', '@datetime.time', '@?aculta_portal.unused_file_cleaner']
     tags:
       - { name: aculta_portal.helper }
   aculta_image.ingester:
@@ -58,16 +48,6 @@ services:
     arguments: ['@aculta_image.inspector', '@file.usage']
     tags:
       - { name: aculta_portal.helper }
-  aculta_image.audit:
-    class: Drupal\aculta_image\Audit\ImageAudit
-    arguments: ['@database', '@?media_duplicates.checksum_statistics', '@file_system']
-    tags:
-      - { name: aculta_portal.helper }
-  aculta_image.quarantine:
-    class: Drupal\aculta_image\Quarantine\ImageQuarantine
-    arguments: ['@database', '@file.repository', '@file_system', '@?aculta_portal.unused_file_cleaner', '@datetime.time', '@entity_type.manager']
-    tags:
-      - { name: aculta_portal.helper }
   aculta_image.compressor:
     class: Drupal\aculta_image\Compression\ImageCompressor
     arguments: ['@config.factory', '@logger.factory']
@@ -82,3 +62,6 @@ services:
     class: Drupal\aculta_image\ImageCapabilities
     tags:
       - { name: aculta_portal.helper }
+
+  aculta_file_uploader.deletion_owner:
+    alias: aculta_image.file_remover

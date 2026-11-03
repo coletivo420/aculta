@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Formulário administrativo de configuração de papéis para criação de eventos e locais.
+ * Configura os papéis que podem criar Eventos e Locais.
  */
 final class EventSettingsForm extends ConfigFormBase {
 

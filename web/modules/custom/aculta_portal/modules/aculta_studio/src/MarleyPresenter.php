@@ -10,9 +10,10 @@ use Drupal\Core\Session\AccountInterface;
 /**
  * Decides what the account can see, at each level of the Studio.
  *
- * Three levels: area (top tabs, one per owner), section (left submenu of the area) and tab (the tabs of a
- * section). An action is shown only when the owner's route grants it. An empty level is removed, so an area
- * appears only when it has at least one allowed action in one of its sections and tabs.
+ * Three levels: area (top tabs, one per owner), section (left submenu of
+ * the area) and tab (the tabs of a section). An action is shown only when the
+ * owner's route grants it. An empty level is removed, so an area appears only
+ * when it has at least one allowed action in one of its sections and tabs.
  */
 final class MarleyPresenter {
 
@@ -45,7 +46,7 @@ final class MarleyPresenter {
    *
    * Only sections with tabs are kept, and only tabs with allowed actions.
    *
-   * @return array<string, array{label: \Stringable|string, weight: int, tabs: array<string, array{label: \Stringable|string, weight: int, actions: array<int, array{title: \Stringable|string, url: \Drupal\Core\Url, access: bool}>}>}>
+   * @return array<string, array{label: \Stringable|string, weight: int, tabs: array<string, array{label: \Stringable|string, weight: int, actions: array<int, array{title: \Stringable|string, url: \Drupal\Core\Url, access: bool}>}>, suppress_sidebar?: bool, sidebar?: bool, actions?: array<int, array{title: \Stringable|string, url: \Drupal\Core\Url, access: bool}>}>
    *   Sections keyed by identifier, in weight order.
    */
   public function sectionsFor(MarleyTabInterface $tab, AccountInterface $account): array {
@@ -72,11 +73,25 @@ final class MarleyPresenter {
         }
       }
       if ($tabs !== []) {
-        $sections[$sectionId] = [
+        $sectionActions = array_values(array_filter(
+          $section['actions'] ?? [],
+          static fn (array $action): bool => (bool) ($action['access'] ?? FALSE),
+        ));
+        $item = [
           'label' => $section['label'],
           'weight' => $section['weight'] ?? 0,
           'tabs' => $this->byWeight($tabs),
         ];
+        if (!empty($section['suppress_sidebar'])) {
+          $item['suppress_sidebar'] = TRUE;
+        }
+        if (array_key_exists('sidebar', $section)) {
+          $item['sidebar'] = (bool) $section['sidebar'];
+        }
+        if ($sectionActions !== []) {
+          $item['actions'] = $sectionActions;
+        }
+        $sections[$sectionId] = $item;
       }
     }
     return $this->byWeight($sections);

@@ -18,6 +18,7 @@ use Drupal\node\Entity\NodeType;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Yaml\Yaml;
 
@@ -35,6 +36,8 @@ final class ContentIndexMagazineProviderKernelTest extends KernelTestBase {
     'system',
     'user',
     'field',
+    'entity_usage',
+    'media',
     'text',
     'node',
     'aculta_index',
@@ -63,7 +66,10 @@ final class ContentIndexMagazineProviderKernelTest extends KernelTestBase {
         Yaml::PARSE_CUSTOM_TAGS,
       )['services'];
       $service = $services[$serviceId];
-      $definition = (new Definition($service['class'], $service['arguments'] ?? []))->setPublic(TRUE);
+      $arguments = array_map(static function (string $argument): string|Reference {
+        return str_starts_with($argument, '@') ? new Reference(substr($argument, 1)) : $argument;
+      }, $service['arguments'] ?? []);
+      $definition = (new Definition($service['class'], $arguments))->setPublic(TRUE);
       foreach ($service['tags'] ?? [] as $tag) {
         $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
       }
@@ -78,6 +84,7 @@ final class ContentIndexMagazineProviderKernelTest extends KernelTestBase {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
+    $this->installSchema('entity_usage', ['entity_usage']);
     $this->installSchema('node', ['node_access']);
     $this->installSchema('aculta_index', [
       'aculta_index_generation',

@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_events\Kernel;
 
-use Drupal\aculta_events\ContentIndex\OrganizationContentIndexProvider;
+use Drupal\aculta_contributions\Service\ContributionStateMachine;
+use Drupal\aculta_contributions\Service\ContributionLifecycle;
+use Drupal\aculta_contributions\Adapter\ContributionAdapterRegistry;
+use Drupal\aculta_events\Service\OrganizationContributionEventQueue;
+use Drupal\aculta_events\Adapter\OrganizationContributionAdapter;
 use Drupal\aculta_events\Controller\EventAdminOverviewController;
 use Drupal\aculta_events\Controller\EventOrganizationAdminController;
 use Drupal\aculta_events\Controller\EventOrganizerDashboardController;
@@ -17,12 +21,12 @@ use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_ugc\Entity\UgcReport;
 use Drupal\aculta_user\Controller\OwnershipClaimAdminController;
-use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\domain\DomainInterface;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\Role;
@@ -68,6 +72,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     'aculta_user',
     'aculta_ugc',
     'aculta_index',
+    'aculta_contributions',
     'aculta_events',
   ];
 
@@ -99,6 +104,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $loader->addPsr4('Drupal\\aculta_user\\', $customRoot . '/modules/aculta_user/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_ugc\\', $customRoot . '/modules/aculta_ugc/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_index\\', $customRoot . '/modules/aculta_index/src', TRUE);
+    $loader->addPsr4('Drupal\\aculta_contributions\\', $customRoot . '/modules/aculta_contributions/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_events\\', $customRoot . '/modules/aculta_events/src', TRUE);
 
     $container->register('aculta_portal.domain_purpose', DomainPurposeManager::class)
@@ -118,7 +124,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
       ->addArgument(new Reference('user.data'))
       ->addArgument(new Reference('entity_type.manager'))
       ->addArgument(new Reference('module_handler'));
-    $container->register('aculta_portal.unused_file_cleaner', \stdClass::class);
+    $container->register('aculta_file_uploader.unused_file_cleaner', \stdClass::class);
   }
 
   /**
@@ -148,7 +154,8 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_event_date');
     $this->installEntitySchema('aculta_event_location');
     $this->installEntitySchema('aculta_event_organization');
-    $this->installConfig(['system', 'user', 'taxonomy', 'domain']);
+    $this->installEntitySchema('aculta_contribution');
+    $this->installConfig(['system', 'user', 'taxonomy', 'domain', 'aculta_contributions']);
 
     FieldStorageConfig::create([
       'entity_type' => 'profile',
@@ -197,6 +204,20 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $this->commonUser->save();
 
     $this->container->get('current_user')->setAccount($this->adminUser);
+
+    $mainDomain = $this->createMock(DomainInterface::class);
+    $mainDomain->method('id')->willReturn('aculta_org');
+    $eventsDomain = $this->createMock(DomainInterface::class);
+    $eventsDomain->method('id')->willReturn('eventos_aculta_org');
+    $negotiator = $this->createMock(DomainNegotiatorInterface::class);
+    $negotiator->method('getActiveDomain')->willReturnCallback(fn() => (int) $this->container->get('current_user')->id() === (int) $this->editorUser->id() ? $eventsDomain : $mainDomain);
+    $this->container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+      $this->createMock(EntityTypeManagerInterface::class),
+      $negotiator,
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
+    ));
+
   }
 
   /**
@@ -513,13 +534,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
   public function testModalCreateAndParentUpdate(): void {
     $this->container->get('current_user')->setAccount($this->editorUser);
 
-    $modalForm = new EventOrganizationModalForm(
-      $this->container->get('entity_type.manager'),
-      $this->container->get('aculta_events.permission_policy'),
-      $this->container->get('aculta_user.organization_access_service'),
-      $this->container->get('aculta_user.organization_membership_manager'),
-    );
-
+    $modalForm = $this->createContributionModalForm();
     $formState = new FormState();
     $formState->set('mode', 'create');
     $formState->set('field_name', 'field_organizacao');
@@ -534,6 +549,8 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $formState->setValue('novo_ocultar_localidade', 1);
     $formState->setValue('is_claimed_choice', 'unclaimed');
     $formState->setValue('novo_links', 'https://autonomo.org');
+    $formState->setValue('contribution_rationale', 'Este coletivo precisa de um perfil para ser encontrado.');
+    $formState->setValue('contribution_submission_token', str_repeat('a', 64));
 
     $formBuild = $modalForm->buildForm([], $formState);
     $modalForm->validateForm($formBuild, $formState);
@@ -541,37 +558,21 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
 
     $modalForm->submitCreateOrganization($formBuild, $formState);
     $ajaxResponse = $modalForm->ajaxCreateOrganization($formBuild, $formState);
-    $this->assertInstanceOf(AjaxResponse::class, $ajaxResponse);
-    $commands = $ajaxResponse->getCommands();
+    $this->assertIsArray($ajaxResponse, 'A proposta mantém o modal aberto para mostrar o status.');
+    $this->assertTrue($formState->get('proposal_submitted'));
+    $this->assertNull($formState->get('selected_org_id'));
 
-    // Deve conter CloseModalDialogCommand, ReplaceCommand e InvokeCommand.
-    $hasClose = FALSE;
-    $hasReplace = FALSE;
-    $hasFocus = FALSE;
-    foreach ($commands as $cmd) {
-      if ($cmd['command'] === 'closeDialog') {
-        $hasClose = TRUE;
-      }
-      if ($cmd['command'] === 'insert' && ($cmd['selector'] ?? '') === '#org-wrapper-test') {
-        $hasReplace = TRUE;
-      }
-      if ($cmd['command'] === 'invoke' && ($cmd['method'] ?? '') === 'focus') {
-        $hasFocus = TRUE;
-      }
-    }
-
-    $this->assertTrue($hasClose, 'Modal dialog foi fechado.');
-    $this->assertTrue($hasReplace, 'Componente pai foi atualizado via ReplaceCommand.');
-    $this->assertTrue($hasFocus, 'Foco devolvido ao gatilho.');
-
-    // Confirma criação no banco.
+    // A submissão cria uma proposta privada, não um perfil público.
     $storage = $this->container->get('entity_type.manager')->getStorage('aculta_event_organization');
     $orgs = $storage->loadByProperties(['title' => 'Coletivo Autônomo Inovador']);
-    $this->assertCount(1, $orgs);
-    /** @var \Drupal\aculta_events\Entity\EventOrganization $createdOrg */
-    $createdOrg = reset($orgs);
-    $this->assertEquals('coletivo-autonomo-inovador', $createdOrg->get('field_slug')->value);
-    $this->assertTrue($createdOrg->shouldHideLocation());
+    $this->assertCount(0, $orgs);
+    $proposals = $this->container->get('entity_type.manager')->getStorage('aculta_contribution')
+      ->loadByProperties(['intent' => 'organization_create']);
+    $this->assertCount(1, $proposals);
+    $proposal = reset($proposals);
+    $this->assertSame('submitted', $proposal->get('state')->value);
+    $this->assertSame('Este coletivo precisa de um perfil para ser encontrado.', $proposal->get('rationale')->value);
+    $this->assertSame('https://autonomo.org', $proposal->getPayload()['links']);
   }
 
   /**
@@ -644,13 +645,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
   public function testNonAdminModalClaimRequestLifecycleAndIndex(): void {
     $this->container->get('current_user')->setAccount($this->editorUser);
 
-    $modalForm = new EventOrganizationModalForm(
-      $this->container->get('entity_type.manager'),
-      $this->container->get('aculta_events.permission_policy'),
-      $this->container->get('aculta_user.organization_access_service'),
-      $this->container->get('aculta_user.organization_membership_manager'),
-      $this->container->get('aculta_user.ownership_claim_service'),
-    );
+    $modalForm = $this->createContributionModalForm();
 
     // 1. Não-admin tentando assumir titularidade imediata falha na validação.
     $stateClaimImmediate = new FormState();
@@ -664,7 +659,8 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $this->assertTrue($stateClaimImmediate->hasAnyErrors());
     $this->assertArrayHasKey('is_claimed_choice', $stateClaimImmediate->getErrors());
 
-    // 2. Não-admin escolhendo request_claim sem justificativa falha.
+    // 2. Solicitação de titularidade deve seguir o fluxo próprio após a
+    // aprovação da criação.
     $stateClaimNoJust = new FormState();
     $stateClaimNoJust->set('mode', 'create');
     $stateClaimNoJust->setTriggeringElement(['#name' => 'op_create_save']);
@@ -675,9 +671,9 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $buildNoJust = $modalForm->buildForm([], $stateClaimNoJust);
     $modalForm->validateForm($buildNoJust, $stateClaimNoJust);
     $this->assertTrue($stateClaimNoJust->hasAnyErrors());
-    $this->assertArrayHasKey('justificativa_reivindicacao', $stateClaimNoJust->getErrors());
+    $this->assertArrayHasKey('is_claimed_choice', $stateClaimNoJust->getErrors());
 
-    // 3. Não-admin com request_claim e justificativa cria org pendente.
+    // 3. A proposta não cria organização nem registra claim de titularidade.
     $stateValid = new FormState();
     $stateValid->set('mode', 'create');
     $stateValid->set('field_name', 'field_organizacao');
@@ -688,9 +684,9 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $stateValid->setValue('novo_nome', 'Coletivo Vanguarda Singular');
     $stateValid->setValue('novo_localidade', 'Campinas');
     $stateValid->setValue('novo_uf', 'SP');
-    $stateValid->setValue('is_claimed_choice', 'request_claim');
-    $stateValid->setValue('justificativa_reivindicacao', 'Sou fundador e coordenador da entidade.');
-    $stateValid->setValue('contato_reivindicacao', 'contato@vanguardasingular.org');
+    $stateValid->setValue('is_claimed_choice', 'unclaimed');
+    $stateValid->setValue('contribution_rationale', 'O coletivo precisa de um perfil público.');
+    $stateValid->setValue('contribution_submission_token', str_repeat('b', 64));
 
     $buildValid = $modalForm->buildForm([], $stateValid);
     $modalForm->validateForm($buildValid, $stateValid);
@@ -698,64 +694,54 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
 
     $modalForm->submitCreateOrganization($buildValid, $stateValid);
 
-    // Confirma que a organização foi criada com reivindicada = FALSE.
+    // A proposta fica privada e não cria organização nem claim.
     $storage = $this->container->get('entity_type.manager')->getStorage('aculta_event_organization');
     $orgs = $storage->loadByProperties(['title' => 'Coletivo Vanguarda Singular']);
-    $this->assertCount(1, $orgs);
-    /** @var \Drupal\aculta_events\Entity\EventOrganization $org */
-    $org = reset($orgs);
+    $this->assertCount(0, $orgs);
+    $proposalStorage = $this->container->get('entity_type.manager')->getStorage('aculta_contribution');
+    $proposals = $proposalStorage->loadByProperties(['intent' => 'organization_create']);
+    $this->assertCount(1, $proposals);
+    $proposal = reset($proposals);
+    $this->assertSame('submitted', $proposal->get('state')->value);
+    $this->assertSame('O coletivo precisa de um perfil público.', $proposal->get('rationale')->value);
 
-    $this->assertFalse($org->isClaimed(), 'Organização NÃO é reivindicada imediatamente.');
-    $this->assertSame('pendente', $org->getClaimStatus(), 'Status de reivindicação é pendente.');
-    $this->assertNull($org->get('titular')->target_id, 'Titular permanece NULL até aprovação.');
-
-    // Confirma criação do registro de solicitação em aculta_ownership_claim.
+    // Nenhum pedido de titularidade é gravado junto com a proposta de criação.
     $claimStorage = $this->container->get('entity_type.manager')->getStorage('aculta_ownership_claim');
-    $claims = $claimStorage->loadByProperties([
-      'target_type' => 'aculta_event_organization',
-      'target_id' => (int) $org->id(),
-    ]);
-    $this->assertCount(1, $claims);
-    /** @var \Drupal\aculta_user\Entity\OwnershipClaim $claim */
-    $claim = reset($claims);
-    $this->assertSame('pending', (string) $claim->get('status')->value);
-    $this->assertSame((int) $this->editorUser->id(), (int) $claim->get('uid')->target_id);
-    $this->assertSame('Sou fundador e coordenador da entidade.', (string) $claim->get('justificativa')->value);
+    $this->assertCount(0, $claimStorage->loadMultiple());
+  }
 
-    // Papel owner NÃO foi concedido enquanto a reivindicação estiver pendente.
-    /** @var \Drupal\aculta_user\Organization\OrganizationMembershipManager $membershipManager */
-    $membershipManager = $this->container->get('aculta_user.organization_membership_manager');
-    $this->assertFalse($membershipManager->hasApprovedMembership($this->editorUser, (string) $org->id()), 'Nenhum vínculo de membro ativo antes da aprovação da moderação.');
-    $this->assertNull($membershipManager->getMemberRole($this->editorUser, (string) $org->id()), 'Nenhum papel atribuído antes do deferimento.');
-
-    // Valida projeção no Content Index enquanto pendente:
-    // Não deve conter ownerUid para organizações pendentes.
-    $indexProvider = new OrganizationContentIndexProvider($this->container->get('entity_type.manager'));
-    $projectionPending = $indexProvider->project($org);
-    $this->assertNotNull($projectionPending);
-    $this->assertNull($projectionPending->ownerUid, 'Organização pendente não projeta ownerUid no índice.');
-
-    // 4. Moderação administrativa aprova a solicitação de reivindicação.
-    /** @var \Drupal\aculta_user\Organization\OwnershipClaimService $claimService */
-    $claimService = $this->container->get('aculta_user.ownership_claim_service');
-    $claimService->decideClaim($claim, $this->adminUser, TRUE, 'Documentação verificada e aceita pela moderação.');
-
-    // Recarrega organização do banco e confere atualização.
-    $reloadedOrg = $storage->load($org->id());
-    $this->assertInstanceOf(EventOrganization::class, $reloadedOrg);
-    $this->assertTrue($reloadedOrg->isClaimed(), 'Organização agora é reivindicada.');
-    $this->assertSame('em_revisao', $reloadedOrg->getClaimStatus(), 'Status pós-aprovação passa a em_revisao conforme ARQ-05.');
-    $this->assertEquals((int) $this->editorUser->id(), (int) $reloadedOrg->get('titular')->target_id, 'Titular atribuído ao solicitante.');
-
-    // Membro 'owner' agora existe e está ativo.
-    $this->assertTrue($membershipManager->hasApprovedMembership($this->editorUser, (string) $org->id()), 'Vínculo ativado pós-deferimento.');
-    $this->assertSame('owner', $membershipManager->getMemberRole($this->editorUser, (string) $org->id()), 'Papel owner concedido após aprovação.');
-
-    // Projeção no Content Index pós-aprovação:
-    // Agora projeta ownerUid apontando ao titular aprovado.
-    $projectionApproved = $indexProvider->project($reloadedOrg);
-    $this->assertNotNull($projectionApproved);
-    $this->assertSame((int) $this->editorUser->id(), $projectionApproved->ownerUid, 'Organização reivindicada projeta ownerUid correto no índice.');
+  /**
+   * Creates the modal with the registered contribution services for tests. */
+  private function createContributionModalForm(): EventOrganizationModalForm {
+    $adapter = new OrganizationContributionAdapter(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('aculta_portal.domain_purpose'),
+      $this->container->get('aculta_events.permission_policy'),
+      $this->container->get('lock'),
+      $this->container->get('database'),
+      new OrganizationContributionEventQueue($this->container->get('queue'), $this->container->get('keyvalue')),
+    );
+    $registry = new ContributionAdapterRegistry();
+    $registry->addAdapter($adapter);
+    $lifecycle = new ContributionLifecycle(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('current_user'),
+      $registry,
+      new ContributionStateMachine(),
+      $this->container->get('flood'),
+      $this->container->get('lock'),
+      $this->container->get('database'),
+      $this->container->get('config.factory'),
+    );
+    return new EventOrganizationModalForm(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('aculta_events.permission_policy'),
+      $this->container->get('aculta_user.organization_access_service'),
+      $this->container->get('aculta_user.organization_membership_manager'),
+      $this->container->get('aculta_user.ownership_claim_service'),
+      $lifecycle,
+      $adapter,
+    );
   }
 
   /**

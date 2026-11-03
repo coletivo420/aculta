@@ -9,6 +9,7 @@ Revisão técnica: 2026-10-17.
 | Cursos e associação do autor/criador | Group, bundle `lms_course` | Apresentação, integrações e regras educacionais ausentes no LMS |
 | Membership, papéis e turmas | Group membership e papéis Group | Verificação e apresentação; não criar matrícula paralela |
 | Lições, atividades e plugins de resposta | Drupal LMS | Adaptar contratos; não duplicar entidades ou respostas |
+| Jornada do curso e sala (leitura) | Drupal LMS + Group, atrás de `CourseJourneyReaderInterface` | O contrato e os DTOs vivem em `aculta_learning_contracts` (sem `lms:lms`); o adaptador `LearningDashboardManager` monta `CourseJourney`, e o Studio consome o DTO sem importar o contrib nem `aculta_lms`. Fonte de verdade ainda no LMS. |
 | Tentativa, resposta, status e nota | Entidades `lms_course_status`, `lms_lesson_status`, `lms_answer` e `TrainingManager` | Consultar APIs LMS e construir projeções autorizadas |
 | Arquivos/documentos | Media + File + File Access | Referenciar mídia autorizada, nunca copiar arquivo/URL para storage próprio |
 | PDF viewer | Submódulo independente `aculta_pdf_viewer`; Media/File guardam arquivo e metadados | Integração global compartilhada; não pertence ao `aculta_lms` |

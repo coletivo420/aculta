@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\Hook;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\file\FileRepositoryInterface;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
@@ -17,6 +18,7 @@ final class WikiLeadImageDownloadAccess {
   public function __construct(
     private readonly FileRepositoryInterface $fileRepository,
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly AccountInterface $currentUser,
   ) {}
 
   /**
@@ -52,7 +54,8 @@ final class WikiLeadImageDownloadAccess {
         ->condition('field_media_image.target_id', $file->id())
         ->execute();
       if ($mediaIds === []) {
-        return -1;
+        // Mídia não publicada (verbete em rascunho): só quem pode editar o verbete vê a prévia.
+        return $this->editableDraftAccess((int) $file->id());
       }
 
       $publishedReferences = $this->entityTypeManager->getStorage('node')->getQuery()
@@ -63,7 +66,10 @@ final class WikiLeadImageDownloadAccess {
         ->range(0, 1)
         ->execute();
 
-      return $publishedReferences === [] ? -1 : NULL;
+      if ($publishedReferences !== []) {
+        return NULL;
+      }
+      return $this->editableDraftAccess((int) $file->id());
     }
     catch (\Throwable) {
       // Incomplete entity configuration or a lookup failure must not expose a
@@ -72,4 +78,30 @@ final class WikiLeadImageDownloadAccess {
     }
   }
 
+
+  /**
+   * Libera a prévia só a quem pode editar um verbete (qualquer status) que usa o arquivo.
+   */
+  private function editableDraftAccess(int $fileId): ?int {
+    $mediaIds = $this->entityTypeManager->getStorage('media')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('bundle', 'image')
+      ->condition('field_media_image.target_id', $fileId)
+      ->execute();
+    if ($mediaIds === []) {
+      return -1;
+    }
+    $nodeIds = $this->entityTypeManager->getStorage('node')->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('type', 'wiki_entry')
+      ->condition(WikiLeadImageUploader::FIELD . '.target_id', array_values($mediaIds), 'IN')
+      ->range(0, 20)
+      ->execute();
+    foreach ($this->entityTypeManager->getStorage('node')->loadMultiple($nodeIds) as $node) {
+      if ($node->access('update', $this->currentUser)) {
+        return NULL;
+      }
+    }
+    return -1;
+  }
 }

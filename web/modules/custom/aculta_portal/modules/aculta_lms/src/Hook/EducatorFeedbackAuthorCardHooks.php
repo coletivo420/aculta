@@ -12,7 +12,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\lms\Entity\AnswerInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -38,7 +37,7 @@ final class EducatorFeedbackAuthorCardHooks {
    */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
-    if ($entity->getEntityTypeId() !== 'comment' || $entity->bundle() !== 'lms_answer_comment' || !$entity instanceof CommentInterface) {
+    if ($entity->getEntityTypeId() !== 'comment' || $entity->bundle() !== EducatorFeedbackPolicy::COMMENT_TYPE || !$entity instanceof CommentInterface) {
       return;
     }
     $author = $entity->getOwner();
@@ -57,7 +56,7 @@ final class EducatorFeedbackAuthorCardHooks {
     if ($answer instanceof EntityInterface) {
       $cacheability->addCacheableDependency($answer);
     }
-    if ($answer instanceof AnswerInterface) {
+    if ($answer instanceof EntityInterface && $answer->getEntityTypeId() === 'aculta_lms_answer') {
       $course = $this->policy->courseForAnswer($answer);
       if ($course !== NULL) {
         $cacheability->addCacheableDependency($course);

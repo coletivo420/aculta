@@ -79,7 +79,7 @@ PDF até 20 MiB, com scheme padrão público e configuração fixa
 `public://pdfpreview`, 480×640, JPEG e nome derivado do ID. O processo
 ImageMagick recebe timeout de 15 segundos. A imagem usa texto alternativo
 derivado do título Media. O resultado é validado e registrado como File
-temporário pelo `aculta_image.generated_file`; a limpeza de temporários do
+temporário pelo `aculta_file_uploader.generated_file`; a limpeza de temporários do
 `aculta_image` o remove após `system.file:temporary_maximum_age`. A marcação é
 construída pelo serviço `aculta_image.render`, com tags do File e contexto
 `url.site`.

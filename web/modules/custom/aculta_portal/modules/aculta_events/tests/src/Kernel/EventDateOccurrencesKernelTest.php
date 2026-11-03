@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_events\Kernel;
 
+use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventDateOverride;
 use Drupal\KernelTests\KernelTestBase;
@@ -11,10 +12,10 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
- * Série salva e lida do banco: regra, exceção por data original e saída em horário de Brasília.
+ * Série salva e lida do banco, exceções e saída no horário de Brasília.
  *
- * Datas de referência: 28/10/2026 é quarta-feira. O banco guarda UTC; a saída é em
- * horário de Brasília, no formato dd/mm/aaaa HH:mm.
+ * Datas de referência: 28/10/2026 é quarta-feira. O banco guarda UTC; a saída
+ * usa horário de Brasília no formato dd/mm/aaaa HH:mm.
  */
 #[Group('aculta_events')]
 #[RunTestsInSeparateProcesses]
@@ -23,7 +24,11 @@ final class EventDateOccurrencesKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'key', 'address', 'geofield', 'taxonomy', 'link', 'text', 'filter', 'datetime', 'datetime_range', 'options', 'aculta_calendar', 'aculta_events'];
+  protected static $modules = [
+    'system', 'user', 'key', 'address', 'geofield', 'taxonomy', 'link', 'text',
+    'filter', 'datetime', 'datetime_range', 'options', 'aculta_calendar',
+    'aculta_events',
+  ];
 
   /**
    * {@inheritdoc}
@@ -40,8 +45,8 @@ final class EventDateOccurrencesKernelTest extends KernelTestBase {
   /**
    * Evento de apoio: a data precisa pertencer a um evento.
    */
-  private function evento(): \Drupal\aculta_events\Entity\Event {
-    $evento = \Drupal\aculta_events\Entity\Event::create(['title' => 'Evento de teste']);
+  private function evento(): Event {
+    $evento = Event::create(['title' => 'Evento de teste']);
     $evento->save();
     return $evento;
   }
@@ -73,7 +78,7 @@ final class EventDateOccurrencesKernelTest extends KernelTestBase {
   }
 
   /**
-   * Série lida do banco, com o cancelamento de 02/11 e o reagendamento de 04/11.
+   * Série lida do banco com cancelamento e reagendamento.
    */
   public function testSerieComExcecoesEmHorarioDeBrasilia(): void {
     $data = $this->serie();

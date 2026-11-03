@@ -12,8 +12,6 @@ use Drupal\commerce_product\Entity\ProductVariationInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
-use Drupal\lms_classes\ClassHelper;
 use Drupal\user\UserInterface;
 
 /**
@@ -102,7 +100,7 @@ final class CourseOrderEnrollmentManager implements CourseOrderEnrollmentManager
       }
       $course = $this->courseForItem($item);
       $class = $item->get('field_course_class')->entity;
-      if (!$course instanceof CourseInterface || !$class instanceof GroupInterface || !$this->classBelongsToCourse($class, $course)) {
+      if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course' || !$class instanceof GroupInterface || !$this->classBelongsToCourse($class, $course)) {
         continue;
       }
 
@@ -181,7 +179,7 @@ final class CourseOrderEnrollmentManager implements CourseOrderEnrollmentManager
         continue;
       }
       $course = $this->courseForItem($item);
-      if ($course instanceof CourseInterface
+      if ($course instanceof GroupInterface && $course->bundle() === 'lms_course'
         && $this->classBelongsToCourse($class, $course)
         && $this->hasActiveEntitlement($candidate)) {
         return $candidate;
@@ -193,7 +191,7 @@ final class CourseOrderEnrollmentManager implements CourseOrderEnrollmentManager
   /**
    * Resolves the course associated with a purchased course product.
    */
-  private function courseForItem(OrderItemInterface $item): ?CourseInterface {
+  private function courseForItem(OrderItemInterface $item): ?GroupInterface {
     $variation = $item->getPurchasedEntity();
     $product = $variation instanceof ProductVariationInterface ? $variation->getProduct() : NULL;
     if ($product === NULL || $product->bundle() !== 'produto_curso') {
@@ -208,18 +206,19 @@ final class CourseOrderEnrollmentManager implements CourseOrderEnrollmentManager
       return NULL;
     }
     $course = $this->entityTypeManager->getStorage('group')->load(reset($ids));
-    return $course instanceof CourseInterface ? $course : NULL;
+    return $course instanceof GroupInterface && $course->bundle() === 'lms_course' ? $course : NULL;
   }
 
   /**
    * Checks whether a class is linked to the specified course.
    */
-  private function classBelongsToCourse(GroupInterface $class, CourseInterface $course): bool {
+  private function classBelongsToCourse(GroupInterface $class, GroupInterface $course): bool {
     if ($class->bundle() !== 'lms_class') {
       return FALSE;
     }
-    foreach (ClassHelper::getClasses($course) as $courseClass) {
-      if ((string) $courseClass->id() === (string) $class->id()) {
+    foreach ($course->getRelationships('lms_classes') as $relationship) {
+      $courseClass = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
+      if ($courseClass instanceof GroupInterface && (string) $courseClass->id() === (string) $class->id()) {
         return TRUE;
       }
     }

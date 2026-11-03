@@ -7,8 +7,8 @@ namespace Drupal\aculta_events\Cache;
 /**
  * Tags de cache das listagens de eventos e datas.
  *
- * Usada pela listagem e pelo hook que a invalida. Centralizada para que o nome não
- * divirja entre quem declara a tag e quem a invalida.
+ * Compartilhada pela listagem e pelo hook de invalidação para manter o nome
+ * consistente.
  */
 final class EventCacheTags {
 

@@ -15,10 +15,12 @@ use Drupal\aculta420\Hook\ThemeHooks;
 
 $root = dirname(__DIR__);
 
-// O gate usa \Drupal::service(). Sem Drupal, delega ao Drush e repassa saída e
-// código de saída, como o gate de Foundation.
-if (!class_exists(\Drupal::class)) {
-  $drush = $root . '/vendor/drush/drush/drush.php';
+// Composer may autoload Drupal without bootstrapping it. Check the container
+// before using services and allow worktrees to delegate to the authorized
+// Runtime checkout's Drush while inspecting their own files.
+if (!class_exists(\Drupal::class) || !\Drupal::hasContainer()) {
+  $drushRoot = getenv('ACULTA_DRUSH_ROOT') ?: $root;
+  $drush = $drushRoot . '/vendor/drush/drush/drush.php';
   if (!is_file($drush)) {
     fwrite(STDERR, "ACULTA420 SHELL CONTRACT FAIL: Drush não instalado (vendor/drush/drush/drush.php ausente).\n");
     exit(1);
@@ -57,7 +59,7 @@ $assert(
   'Institution Bar markup keeps the shared base class without a parallel page-top wrapper.',
 );
 $headerPosition = strpos($pageSource, '<header class="aculta-header');
-$linksPagePosition = strpos($pageSource, '{% if aculta_links_page %}');
+$linksPagePosition = strpos($pageSource, '{% if aculta_linkweed_page %}');
 $assert(
   substr_count($pageSource, '<header class="aculta-header') === 1
     && $headerPosition !== FALSE
@@ -65,7 +67,7 @@ $assert(
     && $headerPosition < $linksPagePosition
     && str_contains(
       $pageSource,
-      '{% set aculta_links_page = domain_presentation.layout.links_page|default(false) %}',
+      '{% set aculta_linkweed_page = domain_presentation.layout.links_page|default(false) %}',
     )
     && str_contains($pageSource, '{% if aculta_show_site_header %}'),
   'One neutral-contract Domain Header is rendered before every purpose-specific page layout.',
@@ -87,6 +89,7 @@ $hooks = new ThemeHooks(
   \Drupal::service('entity_type.manager'),
   \Drupal::routeMatch(),
   \Drupal::service('extension.list.theme'),
+  \Drupal::service('state'),
 );
 
 $complete = [

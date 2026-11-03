@@ -493,3 +493,75 @@ function aculta_events_update_10013(): string {
 
   return 'Entidade aculta_event_organization e campos field_organizacao/field_coorganizadores instalados.';
 }
+
+/**
+ * Instala a entidade de oferta/lote de ingresso (D-61), inicialmente fechada.
+ */
+function aculta_events_update_10014(): string {
+  $updateManager = \Drupal::entityDefinitionUpdateManager();
+  $installed = FALSE;
+  if (!$updateManager->getEntityType('aculta_event_offer')) {
+    $definition = \Drupal::entityTypeManager()->getDefinition('aculta_event_offer');
+    $updateManager->installEntityType($definition);
+    $installed = TRUE;
+  }
+
+  return $installed
+    ? 'Entidade aculta_event_offer instalada; ofertas permanecem inativas por padrão.'
+    : 'Entidade aculta_event_offer já estava instalada; nenhuma alteração foi necessária.';
+}
+
+/**
+ * Instala a configuração estrutural de RSVP definida em D-60, sem ativá-la.
+ */
+function aculta_events_update_10015(): string {
+  $updateManager = \Drupal::entityDefinitionUpdateManager();
+  $fieldManager = \Drupal::service('entity_field.manager');
+  $instalados = [];
+  $campos = [
+    'aculta_event' => [
+      'field_rsvp_ativo',
+      'field_rsvp_escopo_capacidade',
+      'field_rsvp_capacidade',
+      'field_rsvp_limite_pessoa',
+      'field_rsvp_duplicidade',
+      'field_rsvp_reserva_minutos',
+      'field_rsvp_lista_espera',
+      'field_rsvp_cancelamento',
+      'field_rsvp_serie',
+    ],
+    'aculta_event_date' => ['field_rsvp_capacidade'],
+  ];
+
+  foreach ($campos as $entityTypeId => $fieldNames) {
+    $definitions = $fieldManager->getBaseFieldDefinitions($entityTypeId);
+    foreach ($fieldNames as $fieldName) {
+      if ($updateManager->getFieldStorageDefinition($fieldName, $entityTypeId) !== NULL) {
+        continue;
+      }
+      if (!isset($definitions[$fieldName])) {
+        throw new \RuntimeException(sprintf('Campo D-60 %s não está declarado em %s.', $fieldName, $entityTypeId));
+      }
+      $updateManager->installFieldStorageDefinition($fieldName, $entityTypeId, 'aculta_events', $definitions[$fieldName]);
+      $instalados[] = $entityTypeId . '.' . $fieldName;
+    }
+  }
+
+  return $instalados === []
+    ? 'Campos estruturais de RSVP D-60 já estavam instalados.'
+    : 'Campos estruturais de RSVP D-60 instalados: ' . implode(', ', $instalados) . '. RSVP permanece desativado.';
+}
+
+/**
+ * Installs the moderated organization suggestion entity.
+ */
+function aculta_events_update_10016(): string {
+  $updateManager = \Drupal::entityDefinitionUpdateManager();
+  if ($updateManager->getEntityType('aculta_event_org_suggestion')) {
+    return 'Entidade de sugestões de organizações já estava instalada.';
+  }
+
+  $definition = \Drupal::entityTypeManager()->getDefinition('aculta_event_org_suggestion');
+  $updateManager->installEntityType($definition);
+  return 'Entidade de sugestões de organizações instalada; alterações públicas aguardam aprovação administrativa.';
+}

@@ -10,7 +10,7 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Validates the LMS topic's install configuration boundaries.
+ * Validates the ACULTA discussion topic's installation configuration.
  */
 #[Group('aculta_forum_lms')]
 final class LmsDiscussionInstallConfigTest extends UnitTestCase {
@@ -23,7 +23,7 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
   }
 
   /**
-   * The LMS bundle reuses Comment storage and has a visible full display.
+   * The discussion bundle reuses Comment storage and has a visible full display.
    */
   public function testBundleReusesTheSharedCommentField(): void {
     $config = $this->config('node.type.aculta_lms_topic');
@@ -50,19 +50,19 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
   }
 
   /**
-   * Activity references reuse the LMS Activity entity and Group access.
+   * Activity references use the ACULTA activity entity and Group access.
    */
-  public function testActivityAssociationUsesExistingLmsAndForumEntities(): void {
+  public function testActivityAssociationUsesAcultaAndForumEntities(): void {
     $storage = $this->config('field.storage.node.field_lms_activity');
     $syncStorage = $this->syncConfig('field.storage.node.field_lms_activity');
-    self::assertSame('lms_activity', $storage['settings']['target_type']);
-    self::assertSame($storage['settings'], $syncStorage['settings']);
+    self::assertSame('aculta_lms_activity', $storage['settings']['target_type']);
+    self::assertSame('aculta_lms_activity', $syncStorage['settings']['target_type']);
     self::assertContains('aculta_forum_lms', $storage['dependencies']['enforced']['module']);
     self::assertSame(1, $storage['cardinality']);
     $field = $this->config('field.field.node.aculta_lms_topic.field_lms_activity');
     $syncField = $this->syncConfig('field.field.node.aculta_lms_topic.field_lms_activity');
     self::assertSame('entity_reference', $field['field_type']);
-    self::assertSame($field['settings'], $syncField['settings']);
+    self::assertSame('default:aculta_lms_activity', $syncField['settings']['handler']);
     self::assertLessThanOrEqual(32, strlen($field['field_name']));
     self::assertSame('entity_reference_autocomplete', $this->config('core.entity_form_display.node.aculta_lms_topic.default')['content']['field_lms_activity']['type']);
     self::assertTrue($this->config('core.entity_view_display.node.aculta_lms_topic.full')['hidden']['field_lms_activity']);
@@ -83,7 +83,7 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
 
     $services = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_forum_lms.services.yml')['services'];
     self::assertSame('Drupal\\aculta_forum_lms\\Context\\LmsActivityDiscussionResolver', $services['aculta_forum_lms.activity_discussion_resolver']['class']);
-    self::assertSame(['@aculta_forum_lms.activity_discussion_resolver', '@current_user'], $services['Drupal\\aculta_forum_lms\\Hook\\LmsActivityDiscussionHooks']['arguments']);
+    self::assertArrayNotHasKey('Drupal\\aculta_forum_lms\\Hook\\LmsActivityDiscussionHooks', $services);
     self::assertSame('Drupal\\aculta_forum_lms\\Context\\Lmsaculta_H5PDiscussionResolver', $services['aculta_forum_lms.h5p_discussion_resolver']['class']);
     self::assertSame(
       [
@@ -133,11 +133,9 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
       self::assertContains('view group_node:aculta_lms_topic entity', $role['permissions']);
     }
 
-    $classSettings = $this->syncConfig('lms_classes.settings');
-    self::assertSame(
-      'grade students',
-      $classSettings['class_permission_mappings']['view group_node:aculta_lms_topic entity'],
-    );
+    $classRelation = $this->syncConfig('group.relationship_type.lms_course-lms_classes');
+    self::assertSame('lms_classes', $classRelation['content_plugin']);
+    self::assertContains('aculta_lms', $classRelation['dependencies']['module']);
   }
 
   /**
@@ -151,6 +149,9 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
     self::assertArrayHasKey('aculta_forum_lms', $extensions);
     self::assertArrayHasKey('gnode', $extensions);
     self::assertArrayNotHasKey('forum', $extensions);
+    foreach (['lms', 'lms_classes', 'lms_answer_plugins', 'lms_answer_comments', 'lms_file_upload'] as $module) {
+      self::assertArrayNotHasKey($module, $extensions);
+    }
   }
 
   /**

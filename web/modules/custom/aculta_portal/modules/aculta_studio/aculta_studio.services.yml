@@ -1,4 +1,23 @@
 services:
+  aculta_studio.course_journey_composer:
+    class: Drupal\aculta_studio\Learning\CourseJourneyComposer
+    arguments: ['@string_translation']
+  Drupal\aculta_studio\Learning\CourseJourneyComposer: '@aculta_studio.course_journey_composer'
+  aculta_studio.learner_dashboard_composer:
+    class: Drupal\aculta_studio\Learning\LearnerDashboardComposer
+    arguments:
+      - '@?Drupal\aculta_learning_contracts\Learning\StudentLearningSummaryReaderInterface'
+      - '@current_user'
+      - '@date.formatter'
+      - '@string_translation'
+  Drupal\aculta_studio\Learning\LearnerDashboardComposer: '@aculta_studio.learner_dashboard_composer'
+  Drupal\aculta_studio\Hook\CourseJourneyPresentationHooks:
+    class: Drupal\aculta_studio\Hook\CourseJourneyPresentationHooks
+    arguments:
+      - '@current_route_match'
+      - '@current_user'
+      - '@?Drupal\aculta_learning_contracts\Learning\CourseJourneyReaderInterface'
+      - '@aculta_studio.course_journey_composer'
   aculta_studio.marley_tab_manager:
     class: Drupal\aculta_studio\MarleyTabManager
     parent: default_plugin_manager
@@ -51,7 +70,7 @@ services:
       - '@?aculta_user.avatar_resolver'
   aculta_studio.experience.ganjalab:
     class: Drupal\aculta_studio\Experience\GanjalabExperienceProvider
-    arguments: ['@?aculta_studio.learner_dashboard_composer']
+    arguments: ['@aculta_studio.learner_dashboard_composer']
   aculta_studio.experience.we_sativa:
     class: Drupal\aculta_studio\Experience\WeSativaExperienceProvider
     arguments: ['@?aculta_wiki.contributor_workspace', '@current_user']
@@ -79,3 +98,6 @@ services:
   aculta_studio.saved_controller:
     class: Drupal\aculta_studio\Controller\SavedContentController
     arguments: ['@aculta_studio.saved_content', '@aculta_studio.recommendations', '@current_user', '@request_stack', '@date.formatter', '@string_translation', '@aculta_portal.saved_content_query']
+  aculta_studio.upload_embed_controller:
+    class: Drupal\aculta_studio\Controller\StudioUploadEmbedController
+    arguments: ['@form_builder']

@@ -8,7 +8,7 @@ use Drupal\aculta_lms_resources\CourseResourceBuilder;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -49,7 +49,7 @@ final class CourseResourcesHooks {
    */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $viewMode): void {
-    if (!$entity instanceof CourseInterface || $viewMode !== 'full'
+    if (!$entity instanceof GroupInterface || $viewMode !== 'full'
       || !$display->getComponent('aculta_lms_course_resources')) {
       return;
     }

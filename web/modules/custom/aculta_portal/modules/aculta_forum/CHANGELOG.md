@@ -1,3 +1,73 @@
+## 0.1.0-dev.339 — diálogos de anexo e galeria sobrevivem ao cache de formulário
+
+- As dependências de `ForumAttachmentUploadDialogForm` e `ForumGalleryUploadDialogForm` passam a `protected readonly`: o `DependencySerializationTrait` do FormBase não serializa propriedades privadas da subclasse, então o upload em dois passos devolvia 500 ("typed property must not be accessed before initialization").
+- Versão 0.1.0-dev.339.
+
+RUNTIME STATUS: VALIDATED parcialmente no Runtime `aculta_runtime` (2026-11-02):
+upload de imagem no diálogo de anexo aceito em `private://forum/anexos/` após corrigir a
+permissão de grupo do diretório; o envio AJAX não foi exercitado por HTTP (o caminho de
+creção de Media é coberto pelo Kernel `ForumAttachmentUploadDialogFormKernelTest` 2/34 PASS).
+Unit Fórum 189/1348 PASS.
+
+## 0.1.0-dev.338 — Kernel do diálogo com a política central
+
+- `ForumAttachmentUploadDialogFormKernelTest` habilita `aculta_file_uploader`, injeta `RecentUploads` no formulário (5º argumento) e usa um PDF real de fixture, porque a política confere o MIME pelo conteúdo.
+- Kernel do diálogo 2/34 PASS.
+
+RUNTIME STATUS: DEFERRED. Só testes.
+
+## 0.1.0-dev.337 — galeria do Fórum aceita imagens recentes do Studio
+
+- `ForumGalleryUploadDialogForm` lista imagens recentes do Studio (integração `forum`) e as soma aos envios novos, sem repetir arquivo.
+- Cada escolha é checada pelo dono; administrador vê todos. Descrições continuam na mesma ordem: novos envios primeiro, depois os escolhidos.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.336 — anexo do Fórum aceita envio recente do Studio
+
+- `ForumAttachmentUploadDialogForm` lista os envios recentes do Studio da integração `forum` (imagens e documentos).
+- Envio escolhido vale só se for do próprio usuário; administrador vê todos. A galeria de imagens fica para uma etapa seguinte.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.335 — anexos e galeria validados pela política do aculta_file_uploader
+
+- `ForumAttachmentUploadDialogForm` e `ForumGalleryUploadDialogForm` usam `aculta_file_uploader.consumer_policy` (integração `forum`) em vez de `UserUploadPolicy`.
+- Validação confere MIME pelo conteúdo, além de extensão, tamanho e dimensões.
+- `aculta_forum.info.yml` declara a dependência `aculta_portal:aculta_file_uploader`.
+- Teste Kernel do diálogo monta a política do uploader. Imports sem uso removidos.
+
+RUNTIME STATUS: DEFERRED. Testes Kernel não executados (sem vendor/ nem Runtime).
+
+## 0.1.0-dev.334 — testes do diálogo com a política do uploader
+
+- Teste Kernel do diálogo monta o builder com `ConsumerUploadPolicy`. Validação ainda pela `UserUploadPolicy`.
+
+RUNTIME STATUS: DEFERRED.
+
+## 0.1.0-dev.333 — consumo do motor de limpeza movido para o aculta_file_uploader
+
+- Imports dos tipos de limpeza e serviço `aculta_portal.unused_file_cleaner` passam a `aculta_file_uploader`. Sem mudança de comportamento.
+
+RUNTIME STATUS: DEFERRED.
+
+## Revalidação 2026-11-02 — comentários e D-65
+
+- Suíte Unit completa: 189 testes / 1.348 assertions PASS. D-65 access check: 1/1; subscriber canônico: 2/4 PASS.
+- O código retorna 404 para permalink standalone; a resposta HTTP real após rebuild continua DEFERRED porque não houve alteração/alinhamento no Runtime.
+
+## `0.1.0-dev.332` — alinhar Config Install do Search API e Comment display
+
+- Os defaults de instalação do Search API e da View de busca passam a usar a
+  mesma ordenação versionada do Config Sync, removendo falsos negativos de
+  comparação estrita em mapas YAML.
+- O display de Comment instala também os campos adicionais ocultos presentes
+  no Sync (`field_aculta_published_at`, `field_autor_legado` e Entity Print),
+  evitando que a instalação exiba metadados que a configuração sincronizada
+  oculta.
+- Unit Fórum: 189 testes / 1.348 assertions PASS; PHPCS e PHP lint focal PASS.
+  Nenhuma escrita ou importação no Runtime.
+
 ## `0.1.0-dev.329` — registrar auditoria de migração no Runtime de desenvolvimento
 
 - `drush aculta-forum:audit-comment-migration` foi executado somente para
@@ -427,4 +497,23 @@ migração ou alteração de Runtime foi executada.
 - Novo Kernel focal executa a View de tópicos e confirma que a resposta mais recente com `legacy_author` usa `buildLegacyForum`, apresenta `-gr` e propaga a tag de cache da autoria. A fixture registra a entidade histórica real sem instalar toda a cadeia de serviços do módulo User; nenhum usuário é criado para representar autor legado.
 - Kernel focal 1 teste / 23 assertions PASS; suíte completa do Fórum 343 testes / 4.223 assertions PASS, 42 depreciações e 6 skips. PHP lint e PHPCS Drupal/DrupalPractice dos arquivos novos PASS.
 - A revisão Firefox ESR segue pendente até servir o candidato. Nenhum dado Runtime foi alterado.
+
+## `0.1.0-dev.330` — aplicar D-65 ao permalink standalone de Comment
+
+- A rota Core `entity.comment.canonical` permanece registrada para preservar
+  geração de URL por integrações existentes, mas seu requisito de acesso agora
+  lança 404 incondicional para `/comment/{cid}`. Comments continuam disponíveis
+  somente dentro do contexto autorizado da entidade hospedeira.
+- Unit route subscriber + access check: 2 testes / 4 assertions PASS. Não houve
+  migração nem escrita no Runtime; a reconstrução de rotas e verificação HTTP
+  no Runtime seguem pendentes.
+
+## `0.1.0-dev.331` — verificar o access check de permalink D-65
+
+- O teste unitário agora executa `CommentPermalinkAccessCheck::deny()` e exige
+  `NotFoundHttpException`, além de validar a substituição dos requisitos da
+  rota Core. Isso confirma localmente o guard 404 sem alegar resposta HTTP após
+  rebuild no Runtime.
+- Focal: 2 testes / 4 assertions PASS; PHP lint e PHPCS Drupal/DrupalPractice
+  PASS. Nenhuma escrita Runtime.
 

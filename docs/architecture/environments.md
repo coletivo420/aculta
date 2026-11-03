@@ -29,7 +29,7 @@ são acessados por symlinks no topo do projeto, fora da árvore pública.
 - O repositório git é o próprio `/home/aculta/`, que resolve para o checkout
   `/home/piradopirata/projetos/aculta`. Não há uma subpasta `aculta-site` nem uma
   segunda cópia de trabalho: edite pelo caminho canônico e confirme com
-  `git status`. O remoto é `git@github.com:coletivo420/aculta.git`.
+  `git status`. O remoto é `https://github.com/coletivo420/aculta-site`.
 - Drush e operações de runtime devem ser executados a partir de `/home/aculta/`
   (`php vendor/drush/drush/drush.php status`), porque o bootstrap lê
   `web/sites/default/settings.php` e `settings.local.php`.
