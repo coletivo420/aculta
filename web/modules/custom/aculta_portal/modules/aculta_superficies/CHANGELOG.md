@@ -1,3 +1,8 @@
+## 0.1.0-dev.6 — aviso de deploy sem citar a ferramenta
+
+- Mensagem do formulário ao mudar modo ou slug não cita o nome da ferramenta de deploy. A fronteira (`boundaries`) exige isso: consumidores não referenciam a ferramenta.
+- Testes: DEFERRED.
+
 ## 0.1.0-dev.5 — teste estático das rotas (3.0) e comando de sugestão planejado
 
 - `SurfaceRoutesStaticTest`: lê os YAML de Wiki, Studio e Commerce e confere os caminhos novos e a ausência dos antigos. Roda sem subir o Drupal.

@@ -11,7 +11,7 @@ namespace AcultaDeployer;
  */
 final class Cli {
 
-  public const VERSION = '0.1.28-rc.1';
+  public const VERSION = '0.1.29-dev.1';
 
   /**
    * Absolute path to this tool's module directory.
@@ -57,6 +57,7 @@ final class Cli {
       'boundaries' => $this->boundaries(),
       'list' => $this->list(),
       'register' => $this->register($options),
+      'superficies-sugestao' => $this->superficiesSugestao($options),
       'build' => $this->build($options),
       'hostinger-layout' => $this->hostingerLayout($options),
       'transition' => $this->transition($options),
@@ -574,6 +575,42 @@ final class Cli {
    * @return int
    *   Process exit code.
    */
+  /**
+   * Sugere entradas de correção de deploy para superfícies em diretório.
+   *
+   * Lê um JSON com {purpose: {modo, slug}} e imprime sugestões. Não grava no
+   * registro: o operador revisa e registra com `register`.
+   */
+  private function superficiesSugestao(array $o): int {
+    $arquivo = $o['from-json'] ?? NULL;
+    if (!is_string($arquivo) || !is_file($arquivo)) {
+      $this->err('superficies-sugestao: informe --from-json=<arquivo>');
+      return 1;
+    }
+    $dados = json_decode((string) file_get_contents($arquivo), TRUE);
+    if (!is_array($dados)) {
+      $this->err('superficies-sugestao: JSON inválido');
+      return 1;
+    }
+    $sugestoes = [];
+    foreach ($dados as $purpose => $linha) {
+      if (!is_array($linha) || ($linha['modo'] ?? '') !== 'diretorio') {
+        continue;
+      }
+      $sugestoes[] = [
+        'kind' => 'canonical',
+        'page' => '/' . (string) ($linha['slug'] ?? ''),
+        'current' => 'verificar no servidor de desenvolvimento',
+        'expected_production' => '<definido pelo Domain de produção do purpose ' . (string) $purpose . '>',
+        'reason' => 'Superfície ' . (string) $purpose . ' em modo diretório (aculta_superficies).',
+        'owner' => 'responsável pelo produto',
+        'decision' => 'pendente',
+      ];
+    }
+    $this->say((string) json_encode(['sugestoes' => $sugestoes], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    return 0;
+  }
+
   private function register(array $o): int {
     if (isset($o['from-json'])) {
       return $this->importFindings((string) $o['from-json']);
