@@ -1,5 +1,9 @@
 # Roadmap — ACULTA420
 
+## Composição responsiva da Conta Studio — 0.7.0-dev.34 (2026-11-03; Runtime PASS)
+
+O wrapper de Conta também pode ser o `.studio-account-section`; o harness consulta o próprio nó ou o descendente. Firefox ESR visível: 102/102 checks aplicáveis PASS, 21 SKIP, zero falhas. Matriz Conta confirma o layout responsivo em 320/390/768/1280px, 46px de altura mínima, AJAX/histórico, falhas/retry, Form API inválido/válido e sessão expirada. Capturas e JSON ficam em `$SUITE_OUT/studio-spacing-account-dev34-20261103/`.
+
 ## Verificação responsiva da Conta Studio — 0.7.0-dev.33 (2026-11-03; harness pendente)
 
 O teste visual agora verifica o grid externo (duas colunas a partir de 768 px; uma abaixo) e aceita largura fracionária de borda computada pelo Firefox sob escala/zoom. A suíte corrigida precisa rodar integralmente; capturas anteriores ao ajuste do harness continuam evidência de apresentação, não do novo assert.

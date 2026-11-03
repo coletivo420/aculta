@@ -412,7 +412,11 @@ Classificação: PATCH (mapeia a apresentação dos blocos existentes, sem criar
 - Introduz escala semântica de espaçamento ACULTA420 e reduz espaços globais de conteúdo e seção; ajusta páginas Studio, Conta e Perfil para usar a mesma cadência em caixas e painéis. Mantém alvos da navegação da Conta em 44 px e não altera cores do cabeçalho.
 - Referências: [Carbon spacing](https://www.carbondesignsystem.com/building-blocks/foundations/spacing/overview), [GOV.UK spacing](https://design-system.service.gov.uk/styles/spacing/) e [USWDS spacing units](https://designsystem.digital.gov/design-tokens/spacing-units/). Stylelint, Foundation 354, Design Foundations 2462 e SDC schema 764 PASS. Firefox ESR visível: Marley, Dashboard e Perfil 62/62 checks aplicáveis PASS, 21 SKIP; Conta em captura e métricas diretas PASS em 1440/320px (2/1 colunas, sem overflow e alvos 46px). Capturas em `$SUITE_OUT/studio-spacing-marley-20261103/` e `$SUITE_OUT/studio-spacing-account-20261103/`. Interação AJAX completa da Conta não foi repetida após este ajuste visual; a suite extensa foi interrompida e não gerou relatório final. Sem mudança de cores do cabeçalho.
 
-## 0.7.0-dev.33 — fortalecer a verificação responsiva da Conta Studio (2026-11-03; validação do harness pendente)
+## 0.7.0-dev.34 — validar a composição responsiva da Conta Studio (2026-11-03; Runtime PASS)
 
-- O check visual agora mede as colunas do shell externo da Conta em desktop/mobile e tolera a borda computada fracionária por zoom. O reteste visual pós dev.32 está registrado no dev.32 abaixo e na auditoria Studio; a execução integral deste harness corrigido segue pendente.
+- O contêiner `[data-aculta-account-root]` também é o elemento `.studio-account-section`; o teste aceita ambas as composições e lê o grid no próprio nó quando aplicável. Firefox ESR visível no Runtime: suite completa 102/102 verificações aplicáveis PASS, 21 SKIP e zero falhas; Conta em 320/390/768/1280px confirma uma/duas colunas no breakpoint, links de 46px, sem overflow e teclado. Cobriu navegação AJAX, histórico, retry, 403/404, timeout/resposta tardia, rebuild/validação de Form API e sessão expirada. A cor clara foi restaurada. Capturas/JSON: `$SUITE_OUT/studio-spacing-account-dev34-20261103/`.
+
+## 0.7.0-dev.33 — fortalecer a verificação responsiva da Conta Studio (2026-11-03; teste focal PASS)
+
+- O check visual agora mede as colunas do shell externo da Conta em desktop/mobile e tolera a borda computada fracionária por zoom. O reteste visual pós dev.32 está registrado no dev.32 abaixo e na auditoria Studio. O primeiro teste integral expôs e levou à correção da leitura do nó raiz em dev.34.
 
