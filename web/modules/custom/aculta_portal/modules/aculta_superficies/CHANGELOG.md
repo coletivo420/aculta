@@ -1,3 +1,8 @@
+## 0.1.0-dev.19 — módulo LinkWeed na coluna Módulo ACULTA
+
+- Coluna Módulo ACULTA mostra `aculta_linkweed` para a superfície links (antes `aculta_links`). Depende da renomeação do módulo, que segue o prompt de tarefa do Runtime.
+- Testes: DEFERRED. Lint dos PHP executado.
+
 ## 0.1.0-dev.18 — maiúsculas viram minúsculas no endereço e no slug
 
 - Slug e subdomínio convertidos para minúsculas antes da validação e do salvamento.

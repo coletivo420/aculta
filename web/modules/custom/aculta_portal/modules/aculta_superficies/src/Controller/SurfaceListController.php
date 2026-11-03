@@ -32,7 +32,7 @@ final class SurfaceListController extends ControllerBase {
     'shop' => 'aculta_commerce',
     'courses' => 'aculta_lms',
     'forum' => 'aculta_forum',
-    'links' => 'aculta_links',
+    'links' => 'aculta_linkweed',
     'eventos' => 'aculta_events',
   ];
 
