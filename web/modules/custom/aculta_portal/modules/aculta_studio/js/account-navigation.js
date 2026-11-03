@@ -2,8 +2,8 @@
   'use strict';
 
   const ROOT = '[data-aculta-account-root]';
-  let sequence = 0;
   let requestVersion = 0;
+  let clickBound = false;
   let popstateBound = false;
   let navigationOpen = true;
   let timeoutHandle = 0;
@@ -29,14 +29,16 @@
     if (!root) { window.location.assign(url); return; }
     const version = ++requestVersion;
     window.clearTimeout(timeoutHandle);
-    if (!link.id) link.id = `aculta-account-link-${++sequence}`;
     root.setAttribute('aria-busy', 'true');
     announce(Drupal.t('Carregando seção…'));
     const requestUrl = new URL(url, window.location.href);
     requestUrl.searchParams.set('_wrapper_format', 'drupal_ajax');
-    const ajax = new Drupal.Ajax(link.id, link, {
+    // This request is executed manually from our delegated handler. Passing the
+    // clicked link to Drupal.Ajax would also bind Core's click handler to it;
+    // repeated failures would then accumulate a second navigation path.
+    const ajax = new Drupal.Ajax(null, null, {
       url: requestUrl.pathname + requestUrl.search,
-      httpMethod: 'GET', event: 'click', wrapper: root.id || '', method: 'replaceWith',
+      httpMethod: 'GET', event: null, wrapper: root.id || '', method: 'replaceWith',
       progress: { type: 'none' }, effect: 'none',
     });
     const success = ajax.success.bind(ajax);
@@ -103,13 +105,19 @@
           navigation.open = navigationOpen;
           navigation.addEventListener('toggle', () => { navigationOpen = navigation.open; });
         }
-        root.addEventListener('click', (event) => {
+      });
+      // The Ajax command replaces ROOT itself. Keep one document delegate so
+      // navigation remains active across replaceWith and Form API rebuilds.
+      if (!clickBound) {
+        clickBound = true;
+        document.addEventListener('click', (event) => {
+          const root = document.querySelector(ROOT);
           const link = event.target.closest('a[data-aculta-account-link]');
-          if (!link || !eligible(event, link) || link.getAttribute('aria-current') === 'page') return;
+          if (!root || !link || !root.contains(link) || !eligible(event, link) || link.getAttribute('aria-current') === 'page') return;
           event.preventDefault();
           load(link, link.href, true);
         });
-      });
+      }
       if (!popstateBound) {
         popstateBound = true;
         window.addEventListener('popstate', () => {

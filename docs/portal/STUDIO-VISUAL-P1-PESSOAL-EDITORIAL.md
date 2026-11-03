@@ -2,6 +2,8 @@
 
 ## Implementação P1.1/P1.2 e estado P1.3 - 2026-11-03
 
+Reteste pós-implementação: Conta 92/92 verificações aplicáveis PASS (22 SKIP), rotas diretas 9/9 HTTP 200, no-JS 4/4, navegação AJAX e histórico, recovery 403/404/retry e timeout/resposta tardia passaram; zoom Perfil 200/400% sem overflow. Escritas pessoais, uploads/senha e comparação integral com a prancha seguem pendentes.
+
 P1.1 e a implementação local de P1.2 estão em código: dashboard de Conta, identidade provider-backed, shell Grid dedicado e navegação AJAX própria. Preserva Form API e owners. Focais Studio Unit 72/658 PASS. Runtime sincronizado em `b70e56dbec` com configuração limpa e cache reconstruído. Firefox ESR visível autenticado: Conta comum 82/82 (21 SKIP) e moderadora 99/99 (5 SKIP), sem falhas; Dashboard/Perfil em 320–1280px, Conta AJAX com histórico/falha/retry/timeout e Form API inválido/válido verificados. Upload, senha, escrita pessoal, zoom 200–400%, leitor de tela e conteúdo real de moderação permanecem DEFERRED; detalhes na auditoria. Marley mantém listagem, ação abaixo do título e moderação condicional owner-backed.
 
 

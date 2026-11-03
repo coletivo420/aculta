@@ -1,5 +1,13 @@
 # Conta Studio: auditoria AJAX e plano de recuperação
 
+## Reteste ampliado — 2026-11-03
+
+No Firefox ESR visível do Runtime, as nove rotas diretas `/conta/*` responderam HTTP 200; navegação AJAX comum com `replaceWith`, título/breadcrumb/foco, behaviors, back/forward, alternância mobile e cliques concorrentes passaram. No-JS passou 4/4 (Dados, Endereço e voltar). O Dashboard e o Perfil passaram em 320–1280px; Conta/Marley passaram em 320–1440px e Perfil foi verificado com zoom real 200/400% sem overflow.
+
+A suíte ampliada de Conta terminou 92/92 verificações aplicáveis PASS e 22 SKIP condicionais. Cobriu respostas HTTP 403/404 com feedback e retry, timeout, resposta tardia descartada, sessão expirada, navegação concorrente, rebuild de Form API inválido/válido e os demais fluxos listados no harness. Os SKIP dependem de publicação própria/aba de moderação ausente para esta conta. Senha, uploads/anexos e escritas pessoais/endereço não foram submetidos. Acesso anônimo/roles foi verificado em rodada anterior, mas não repetido neste reteste. A imagem de referência não estava disponível como arquivo local para comparação pareada; não declarar homologação visual integral. Artefatos em `$SUITE_OUT/studio-audit-20261103/member-final10/` e `$SUITE_OUT/studio-audit-20261103/nojs-final/`.
+
+O ajuste de `Drupal.Ajax(null, null, …)` evita que o construtor Core instale um segundo listener de clique; o listener delegado único fica em `document` e consulta a raiz atual, que o `replaceWith` substitui. Isso preserva os cliques elegíveis após troca de seção e rebuild de Form API sem listeners globais duplicados. Código alterado em `account-navigation.js`; versão do módulo `0.1.0-dev.41`.
+
 Data: 2026-11-03. Estado: implementação e validação visual/funcional focal concluídas no Runtime de desenvolvimento; matriz ampliada e homologação editorial completa permanecem parciais.
 Implementação enviada em `8ccbcb0618` (mais alias autowired `bf731e8789` e reconciliação Sync `1e336fe73e`/`b70e56dbec`), baseada nos contratos vigentes. Runtime sincronizado em `b70e56dbec`; `updatedb:status` sem pendências, `config:status` limpo e `drush cr` PASS. Firefox ESR visível autenticado passou em duas contas; sem alterações de conteúdo editorial. Evidências e limites abaixo.
 Escopo: entrada account, seções privadas /conta/* e comparação com /conta-legada e suas seções. Não altera grants, entidades ou rotas.

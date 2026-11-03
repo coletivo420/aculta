@@ -19,7 +19,15 @@ const GD = process.env.GECKODRIVER || 'http://127.0.0.1:4444';
 const CSS_OVERRIDE = process.env.STUDIO_CSS_OVERRIDE === '1';
 const CSS_ROOT = process.env.STUDIO_CSS_ROOT || PROJECT;
 const USER_ID = Number(process.env.STUDIO_USER_ID || '5');
+let firefoxPid = 0;
 if (!OUT) throw new Error('Defina SUITE_OUT em armazenamento fora do repositório.');
+const pressFirefoxKey = (key) => {
+  if (!firefoxPid) throw new Error('geckodriver não informou o PID do Firefox; zoom real abortado para não atingir outra janela.');
+  const windows = execFileSync('xdotool', ['search', '--onlyvisible', '--pid', String(firefoxPid)], { encoding: 'utf8' }).trim().split('\n').filter(Boolean);
+  if (!windows.length) throw new Error(`Janela visível do Firefox ESR do PID ${firefoxPid} não encontrada.`);
+  execFileSync('xdotool', ['windowactivate', '--sync', windows.at(-1)]);
+  execFileSync('xdotool', ['key', '--clearmodifiers', key]);
+};
 const candidateThemePath = 'web/themes/custom/aculta420';
 const candidateFont = (name) => `data:font/woff2;base64,${readFileSync(join(CSS_ROOT, candidateThemePath, 'assets/fonts/montserrat', name)).toString('base64')}`;
 const extractCssRule = (css, selector) => {
@@ -50,7 +58,7 @@ const CANDIDATE_CSS = CSS_OVERRIDE
 mkdirSync(OUT, { recursive: true });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const results = [];
-const check = (name, ok, detail = '') => { results.push({ name, ok: ok === null ? null : !!ok, detail }); console.log(`${ok === null ? 'SKIP' : ok ? 'PASS' : 'FAIL'}  ${name}${detail ? '  -- ' + detail : ''}`); return ok === null ? null : !!ok; };
+const check = (name, ok, detail = '') => { const safeDetail = String(detail).replace(/([?&](?:token|hash|destination|form_build_id|form_token)=)[^&\s"'<>]+/gi, '$1[redacted]'); results.push({ name, ok: ok === null ? null : !!ok, detail: safeDetail }); console.log(`${ok === null ? 'SKIP' : ok ? 'PASS' : 'FAIL'}  ${name}${safeDetail ? '  -- ' + safeDetail : ''}`); return ok === null ? null : !!ok; };
 
 async function wd(method, path, body) {
   const res = await fetch(GD + path, { method, headers: { 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
@@ -61,10 +69,13 @@ async function wd(method, path, body) {
 const oneTimeLogin = () => execFileSync('php', ['vendor/drush/drush/drush.php', 'uli', '--no-browser', `--name=${USER}`, `--uri=${LOGIN_URI}`], { cwd: DRUSH_ROOT }).toString().trim().split('\n').pop();
 
 const moz = { prefs: { 'network.dns.localDomains': [new URL(PAGE).hostname].join(',') } };
-const { value: session } = await wd('POST', '/session', { capabilities: { alwaysMatch: { browserName: 'firefox', acceptInsecureCerts: true, webSocketUrl: true, 'moz:firefoxOptions': moz } } }).then((v) => ({ value: { sessionId: v.sessionId, webSocketUrl: v.capabilities.webSocketUrl } }));
+const { value: session } = await wd('POST', '/session', { capabilities: { alwaysMatch: { browserName: 'firefox', acceptInsecureCerts: true, webSocketUrl: true, 'moz:firefoxOptions': moz } } }).then((v) => ({ value: { sessionId: v.sessionId, webSocketUrl: v.capabilities.webSocketUrl, processId: v.capabilities['moz:processID'] } }));
+firefoxPid = Number(session.processId) || 0;
 const sid = session.sessionId;
 const p = (path) => `/session/${sid}${path}`;
 const exec = (script, args = []) => wd('POST', p('/execute/sync'), { script, args });
+const installAjaxFailure = (status, statusText) => exec(`window.__studioOriginalAjax=Drupal.Ajax;const Original=window.__studioOriginalAjax;Drupal.Ajax=function(...args){const request=new Original(...args);request.execute=function(){try{request.error({status:${status},statusText:${JSON.stringify(statusText)},responseText:''},request.url,'Simulated HTTP ${status}')}catch(error){}return Promise.resolve()};return request};Drupal.Ajax.prototype=Original.prototype;return 1;`);
+const restoreAjax = () => exec(`if(window.__studioOriginalAjax){Drupal.Ajax=window.__studioOriginalAjax;delete window.__studioOriginalAjax}return 1;`);
 const trackPageErrors = () => exec(`window.__errs = []; window.addEventListener('error', (e) => window.__errs.push(String(e.message))); return 1;`);
 const shot = async (name) => writeFileSync(join(OUT, `${name}.png`), Buffer.from(await wd('GET', p('/screenshot')), 'base64'));
 const injectCandidateCss = async () => exec(`if(document.getElementById('aculta-studio-css-candidate'))return true;const style=document.createElement('style');style.id='aculta-studio-css-candidate';style.textContent=arguments[0];document.head.append(style);return !!style.sheet&&style.sheet.cssRules.length>0;`, [CANDIDATE_CSS]);
@@ -82,7 +93,14 @@ await new Promise((r) => (bidi.onopen = r));
 const bsend = (method, params = {}) => new Promise((res) => { const i = ++bid; bpend.set(i, res); bidi.send(JSON.stringify({ id: i, method, params })); });
 const tree = await bsend('browsingContext.getTree', {});
 const context = tree.result.contexts[0].context;
-const setViewport = (width, height) => bsend('browsingContext.setViewport', { context, viewport: { width, height } });
+const setViewport = async (width, height) => {
+  const response = await bsend('browsingContext.setViewport', { context, viewport: { width, height } });
+  if (response?.error) throw new Error(`Firefox recusou o viewport solicitado (${width} × ${height}): ${response.error}`);
+  await sleep(100);
+  const actualWidth = await exec('return window.innerWidth;');
+  if (Number(actualWidth) !== width) throw new Error(`Firefox aplicou innerWidth=${actualWidth}; esperado ${width}.`);
+  return response;
+};
 async function waitFor(expr, label, ms = 20000) {
   const end = Date.now() + ms;
   while (Date.now() < end) { if (await exec(`return !!(${expr});`)) return true; await sleep(300); }
@@ -411,6 +429,25 @@ try {
           if (width === 320) await shot('08-meu-perfil-mobile');
         }
         await setViewport(1280, 900);
+        const zoomResults = [];
+        for (const target of [2, 4]) {
+          pressFirefoxKey('ctrl+0');
+          await sleep(250);
+          let zoom = JSON.parse(await exec(`return JSON.stringify({width:innerWidth,dpr:devicePixelRatio,page:document.documentElement.scrollWidth});`));
+          for (let attempt = 0; attempt < 24 && 1280 / Math.max(1, zoom.width) < target - 0.08; attempt += 1) {
+            pressFirefoxKey('ctrl+plus');
+            await sleep(120);
+            zoom = JSON.parse(await exec(`return JSON.stringify({width:innerWidth,dpr:devicePixelRatio,page:document.documentElement.scrollWidth});`));
+          }
+          const effective = 1280 / Math.max(1, zoom.width);
+          const noOverflow = zoom.page <= zoom.width;
+          zoomResults.push({ target, effective: Number(effective.toFixed(2)), ...zoom, noOverflow });
+          check(`Meu Perfil reflow em zoom real de ${target * 100}% sem overflow`, effective >= target - 0.08 && noOverflow, JSON.stringify(zoomResults.at(-1)));
+          await shot(`09-meu-perfil-zoom-${target * 100}`);
+        }
+        pressFirefoxKey('ctrl+0');
+        await sleep(250);
+        check('zoom do Firefox restaurado ao terminar a medição', await exec(`return Math.abs(innerWidth-1280)<=2;`), await exec(`return JSON.stringify({width:innerWidth,dpr:devicePixelRatio});`));
       }
     } else check('Meu Perfil é independente dos formulários privados da Conta', false, 'link de perfil não foi renderizado');
   } else check('Dashboard separa entrada do Perfil e lista apenas destinos autorizados', false, 'Dashboard ausente');
@@ -421,14 +458,28 @@ try {
     check('Conta renderiza navegação contextual do Studio', navReady);
     if (navReady) {
       await shot('05-conta-dados');
+      const directAccountRoutes = JSON.parse(await exec(`return (async()=>{const paths=['/conta/dados','/conta/endereco','/conta/documentos','/conta/seguranca','/conta/seguranca/senha','/conta/conexoes','/conta/pedidos','/conta/apoio','/conta/preferencias'];const rows=[];for(const path of paths){try{const response=await fetch(path,{credentials:'same-origin',cache:'no-store'});const html=await response.text();const parsed=new DOMParser().parseFromString(html,'text/html');rows.push({path,status:response.status,finalPath:new URL(response.url).pathname,title:parsed.title,form:!!parsed.querySelector('form')});}catch(error){rows.push({path,error:String(error)});}}return JSON.stringify(rows);})()`));
+      const unexpectedAccountRoutes = directAccountRoutes.filter((route) => route.error || (route.path === '/conta/documentos' ? ![200, 404].includes(route.status) : route.status !== 200));
+      check('rotas Conta respondem direto com status coerente à disponibilidade (documentos opcional)', directAccountRoutes.length === 9 && unexpectedAccountRoutes.length === 0, JSON.stringify(directAccountRoutes));
       const navAudit = JSON.parse(await exec(`const nav=document.querySelector('.studio__subtabs');const links=[...nav.querySelectorAll('a')];return JSON.stringify({links:links.length,current:links.filter((a)=>a.getAttribute('aria-current')==='page').length,direction:getComputedStyle(nav).flexDirection,wrap:getComputedStyle(nav).flexWrap,items:[...nav.children].map((item)=>{const s=getComputedStyle(item);return [s.borderTopWidth,s.borderRightWidth,s.borderBottomWidth,s.borderLeftWidth,s.borderRadius,s.padding,s.backgroundColor]})});`));
       check('Conta preserva links e estado atual sem moldura de list-group', navAudit.links > 0 && navAudit.current === 1 && navAudit.direction === 'row' && navAudit.wrap === 'wrap' && navAudit.items.every((style) => style.join('|') === '0px|0px|0px|0px|0px|0px|rgba(0, 0, 0, 0)'), JSON.stringify(navAudit));
+      const preservedClicks = JSON.parse(await exec(`const cases=[{name:'Ctrl',href:'/conta/endereco',ctrlKey:true},{name:'Shift',href:'/conta/endereco',shiftKey:true},{name:'Alt',href:'/conta/endereco',altKey:true},{name:'target',href:'/conta/endereco',target:'_blank'},{name:'download',href:'/conta/endereco',download:true},{name:'externo',href:'https://example.invalid/'}];const rows=[];for(const item of cases){const link=document.createElement('a');link.dataset.acultaAccountLink='';link.href=item.href;link.textContent=item.name;if(item.target)link.target=item.target;if(item.download)link.download='arquivo';document.querySelector('[data-aculta-account-root]').append(link);let rootPrevented=false;const guard=(event)=>{if(event.target===link){rootPrevented=event.defaultPrevented;event.preventDefault()}};document.addEventListener('click',guard,{once:true});const event=new MouseEvent('click',{bubbles:true,cancelable:true,view:window,button:0,ctrlKey:!!item.ctrlKey,shiftKey:!!item.shiftKey,altKey:!!item.altKey});link.dispatchEvent(event);rows.push({name:item.name,rootPrevented,stillCurrent:location.pathname==='/conta/dados'});link.remove()}const logout=document.createElement('a');logout.href='/sair';logout.textContent='Sair';document.querySelector('[data-aculta-account-root]').append(logout);let logoutPrevented=false;document.addEventListener('click',(event)=>{if(event.target===logout){logoutPrevented=event.defaultPrevented;event.preventDefault()}},{once:true});logout.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window,button:0}));logout.remove();return JSON.stringify({cases:rows,logoutPrevented});`));
+      check('Conta preserva Ctrl/Shift/Alt, target, download, externo e logout', preservedClicks.cases.every((item) => !item.rootPrevented && item.stillCurrent) && !preservedClicks.logoutPrevented, JSON.stringify(preservedClicks));
       for (const width of [320, 390, 768, 1280]) {
         await setViewport(width, width < 500 ? 844 : 900);
         const dimensions = JSON.parse(await exec(`const nav=document.querySelector('.studio__subtabs');const targets=[...nav.querySelectorAll('a')].map((link)=>{const r=link.getBoundingClientRect();return {text:link.textContent.trim(),width:r.width,height:r.height}});return JSON.stringify({width:window.innerWidth,page:document.documentElement.scrollWidth,nav:nav?.scrollWidth,client:nav?.clientWidth,targets});`));
         check(`Conta sem overflow com abas em ${width}px`, dimensions.page <= width && dimensions.nav <= dimensions.client + 1, JSON.stringify(dimensions));
         check(`Conta com alvos de aba mínimos em ${width}px`, dimensions.targets.length > 0 && dimensions.targets.every((target) => target.width >= 44 && target.height >= 44), JSON.stringify(dimensions.targets));
       }
+
+      await setViewport(1280, 900);
+      const accountKeyboard = [];
+      for (let index = 0; index < 34; index += 1) {
+        await wd('POST', p('/actions'), { actions: [{ type: 'key', id: 'studio-account-keyboard', actions: [{ type: 'keyDown', value: '\uE004' }, { type: 'keyUp', value: '\uE004' }] }] });
+        const focus = JSON.parse(await exec(`const e=document.activeElement;let href='';try{const u=new URL(e?.href||'',location.href);href=u.origin===location.origin?u.pathname:u.hostname+u.pathname}catch{}return JSON.stringify({tag:e?.tagName||'',text:(e?.innerText||e?.getAttribute('aria-label')||'').trim().slice(0,60),href,visible:!!e&&e.getClientRects().length>0,focusVisible:!!e?.matches(':focus-visible')});`));
+        accountKeyboard.push(focus);
+      }
+      check('teclado Tab percorre controles visíveis da Conta com foco perceptível', accountKeyboard.filter((item) => item.tag === 'A' && item.href.startsWith('/conta/')).length > 0 && accountKeyboard.every((item) => item.visible && (item.tag !== 'A' || item.focusVisible)), JSON.stringify(accountKeyboard));
 
       // The account navigation has a separate Ajax contract from Marley. Exercise its
       // real Drupal.Ajax response, root replacement, metadata, and browser history.
@@ -448,6 +499,11 @@ try {
         await exec(`history.back();return 1;`);
         const accountBack = await waitFor(`location.pathname==='/conta/dados'&&document.querySelector('[data-aculta-account-root] [data-aculta-account-link][aria-current="page"]')?.getAttribute('href')==='/conta/dados'`, 'voltar para Dados via popstate');
         check('voltar do navegador restaura a seção Conta anterior via AJAX', accountBack, await exec(`return JSON.stringify({path:location.pathname,current:document.querySelector('[data-aculta-account-root] [data-aculta-account-link][aria-current="page"]')?.getAttribute('href'),entries:performance.getEntriesByType('navigation').length});`));
+        await exec(`history.forward();return 1;`);
+        const accountForward = await waitFor(`location.pathname==='/conta/endereco'&&document.querySelector('[data-aculta-account-root] [data-aculta-account-link][aria-current="page"]')?.getAttribute('href')==='/conta/endereco'`, 'avançar para Endereço via popstate');
+        check('avançar do navegador restaura a seção Conta seguinte via AJAX', accountForward, await exec(`return JSON.stringify({path:location.pathname,current:document.querySelector('[data-aculta-account-root] [data-aculta-account-link][aria-current="page"]')?.getAttribute('href')});`));
+        await exec(`history.back();return 1;`);
+        await waitFor(`location.pathname==='/conta/dados'&&document.querySelector('[data-aculta-account-root] [data-aculta-account-link][aria-current="page"]')?.getAttribute('href')==='/conta/dados'`, 'retorno a Dados antes do menu mobile');
 
         await setViewport(390, 844);
         const detailsReady = await waitFor(`document.querySelector('[data-aculta-account-root] details')`, 'menu responsivo de Conta');
@@ -463,20 +519,44 @@ try {
 
           // Exercise the navigation error callback without causing a server write.
           // The next retry restores Drupal.Ajax.execute and reaches a real GET route.
-          await exec(`window.__accountAjaxExecute=Drupal.Ajax.prototype.execute;Drupal.Ajax.prototype.execute=function(){try{this.error({status:503,statusText:'Service Unavailable',responseText:''},this.url,'Simulated browser network failure')}catch(error){window.__accountAjaxFailure=String(error.message)}return Promise.resolve()};return 1;`);
+          await installAjaxFailure(503, 'Service Unavailable');
           const dataLink = await wd('POST', p('/element'), { using: 'css selector', value: '[data-aculta-account-link][href="/conta/dados"]' }).catch(() => null);
           if (dataLink) {
             await wd('POST', p(`/element/${Object.values(dataLink)[0]}/click`), {});
             const retryReady = await waitFor(`!!document.querySelector('[data-aculta-account-retry]')`, 'botão de retry após falha');
             const failedState = JSON.parse(await exec(`return JSON.stringify({retry:!!document.querySelector('[data-aculta-account-retry]'),message:document.querySelector('[data-aculta-account-live]')?.textContent||'',busy:document.querySelector('[data-aculta-account-root]')?.hasAttribute('aria-busy'),path:location.pathname});`));
             check('falha de navegação anuncia erro e oferece retry', retryReady && /não foi possível carregar/i.test(failedState.message) && !failedState.busy && failedState.path === '/conta/seguranca', JSON.stringify(failedState));
-            await exec(`Drupal.Ajax.prototype.execute=window.__accountAjaxExecute;return 1;`);
+            await restoreAjax();
             if (retryReady) {
               const retry = await wd('POST', p('/element'), { using: 'css selector', value: '[data-aculta-account-retry]' });
               await wd('POST', p(`/element/${Object.values(retry)[0]}/click`), {});
               const retryRecovered = await waitFor(`location.pathname==='/conta/dados'&&document.querySelector('[data-aculta-account-root] form')&&!document.querySelector('[data-aculta-account-retry]')`, 'retry da navegação Conta');
               check('retry recupera a seção com resposta Drupal real', retryRecovered, await exec(`return JSON.stringify({path:location.pathname,form:!!document.querySelector('[data-aculta-account-root] form'),retry:!!document.querySelector('[data-aculta-account-retry]')});`));
             } else check('retry recupera a seção com resposta Drupal real', false, 'controle de retry ausente');
+
+            // Authorization/not-found responses leave the current private section
+            // intact and offer retry, as required for server-side access failures.
+            for (const status of [403, 404]) {
+              await installAjaxFailure(status, status === 403 ? 'Forbidden' : 'Not Found');
+              const failureClick = JSON.parse(await exec(`const link=document.querySelector('[data-aculta-account-link][href="/conta/seguranca"]');if(!link)return JSON.stringify({found:false});const root=document.querySelector('[data-aculta-account-root]');root.removeAttribute('data-studio-test-guard');const guard=(event)=>{if(event.target.closest('[data-aculta-account-link][href="/conta/seguranca"]')){root.dataset.studioTestGuard=event.defaultPrevented?'prevented':'missed';event.preventDefault()}};document.addEventListener('click',guard);const event=new MouseEvent('click',{bubbles:true,cancelable:true,view:window,button:0});link.dispatchEvent(event);document.removeEventListener('click',guard);return JSON.stringify({found:true,guard:root.dataset.studioTestGuard||'',path:location.pathname,retry:!!document.querySelector('[data-aculta-account-retry]')});`));
+              if (failureClick.found) {
+                const errorReady = await waitFor(`!!document.querySelector('[data-aculta-account-retry]')`, `erro HTTP ${status} na Conta`);
+                const errorState = JSON.parse(await exec(`return JSON.stringify({path:location.pathname,retry:!!document.querySelector('[data-aculta-account-retry]'),busy:document.querySelector('[data-aculta-account-root]')?.hasAttribute('aria-busy'),message:document.querySelector('[data-aculta-account-live]')?.textContent||''});`));
+                check(`HTTP ${status} na navegação encerra busy e oferece recuperação`, errorReady && failureClick.guard === 'prevented' && errorState.path === '/conta/dados' && errorState.retry && !errorState.busy, JSON.stringify({click:failureClick,state:errorState}));
+                await restoreAjax();
+                if (errorReady) {
+                  await exec(`document.querySelector('[data-aculta-account-retry]').click();return 1;`);
+                  const recovered = await waitFor(`location.pathname==='/conta/seguranca'&&document.querySelector('[data-aculta-account-root] form')`, `retry após HTTP ${status}`);
+                  check(`retry após HTTP ${status} restaura o destino com resposta real`, recovered, await exec(`return JSON.stringify({path:location.pathname,form:!!document.querySelector('[data-aculta-account-root] form'),retry:!!document.querySelector('[data-aculta-account-retry]')});`));
+                } else check(`retry após HTTP ${status} restaura o destino com resposta real`, false, 'controle de retry ausente');
+                const returnToData = await exec(`const link=document.querySelector('[data-aculta-account-link][href="/conta/dados"]');if(!link)return false;link.click();return true;`);
+                if (returnToData) await waitFor(`location.pathname==='/conta/dados'&&document.querySelector('[data-aculta-account-root] form')`, 'retorno ao formulário Dados');
+              } else {
+                await restoreAjax();
+                check(`HTTP ${status} na navegação encerra busy e oferece recuperação`, false, 'link Segurança ausente');
+                check(`retry após HTTP ${status} restaura o destino com resposta real`, false, 'link Segurança ausente');
+              }
+            }
 
             // Two eligible clicks in the same task must leave only the latest request visible.
             await exec(`const a=document.querySelector('[data-aculta-account-link][href="/conta/seguranca"]');const b=document.querySelector('[data-aculta-account-link][href="/conta/endereco"]');a.click();b.click();return 1;`);
@@ -486,7 +566,7 @@ try {
             // Force only the navigation timeout timer to run immediately and delay the
             // actual GET; this proves a late response cannot replace the fallback state.
             await setViewport(1280, 900);
-            await exec(`window.__accountNativeTimeout=window.setTimeout.bind(window);window.setTimeout=(callback,delay,...args)=>delay===15000?window.__accountNativeTimeout(callback,0,...args):window.__accountNativeTimeout(callback,delay,...args);window.__accountAjaxExecute=Drupal.Ajax.prototype.execute;Drupal.Ajax.prototype.execute=function(...args){return window.__accountNativeTimeout(()=>window.__accountAjaxExecute.apply(this,args),25)};return 1;`);
+            await exec(`window.__accountNativeTimeout=window.setTimeout.bind(window);window.setTimeout=(callback,delay,...args)=>delay===15000?window.__accountNativeTimeout(callback,0,...args):window.__accountNativeTimeout(callback,delay,...args);window.__studioOriginalAjax=Drupal.Ajax;const Original=window.__studioOriginalAjax;Drupal.Ajax=function(...args){const request=new Original(...args);request.execute=()=>{window.__accountNativeTimeout(()=>{Drupal.Ajax=Original;delete window.__studioOriginalAjax;request.error({status:200,statusText:'OK',responseText:''},request.url,'Simulated late response')},100);return Promise.resolve()};return request};Drupal.Ajax.prototype=Original.prototype;return 1;`);
             await exec(`document.querySelector('[data-aculta-account-link][href="/conta/dados"]').click();return 1;`);
             const timeoutReady = await waitFor(`!!document.querySelector('[data-aculta-account-fallback]')`, 'fallback após timeout');
             check('timeout anuncia demora e oferece navegação normal', timeoutReady && await exec(`return /demorou demais/i.test(document.querySelector('[data-aculta-account-live]')?.textContent||'')&&!document.querySelector('[data-aculta-account-root]')?.hasAttribute('aria-busy');`), await exec(`return JSON.stringify({path:location.pathname,fallback:!!document.querySelector('[data-aculta-account-fallback]'),busy:document.querySelector('[data-aculta-account-root]')?.hasAttribute('aria-busy')});`));
@@ -550,7 +630,7 @@ try {
               }
             } else check('fallback abre a rota direta sem JavaScript AJAX', false, 'link fallback ausente');
           } else {
-            await exec(`Drupal.Ajax.prototype.execute=window.__accountAjaxExecute;return 1;`);
+            await restoreAjax();
             check('falha de navegação anuncia erro e oferece retry', false, 'link Dados ausente');
             check('retry recupera a seção com resposta Drupal real', false, 'link Dados ausente');
             check('cliques rápidos preservam a resposta da última intenção', false, 'link Dados ausente');

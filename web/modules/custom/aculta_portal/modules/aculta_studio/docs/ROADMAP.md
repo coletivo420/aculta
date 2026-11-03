@@ -1157,3 +1157,9 @@ Fixture Runtime autorizada do Green Stash: produto rascunho NID 14, não
 publicado, renderizado na listagem e no detalhe em 16 estados responsivos, sem
 overflow e com axe sem violações. O conteúdo é exclusivamente de teste e foi
 preservado para inspeção humana; submit e rollback permanecem pendentes.
+## Reteste da Conta Studio — 2026-11-03
+
+`0.1.0-dev.41` corrige a construção de `Drupal.Ajax` da Conta para evitar que o Core associe outro listener de clique aos links administrados pelo handler delegado. No Runtime `aculta_runtime`, o preflight permaneceu sem updates de banco e `config:status` limpo; o cache foi reconstruído após o ajuste de JS.
+
+Firefox ESR visível: no-JS 4/4 PASS; rotas Conta diretas 9/9 HTTP 200; Dashboard/Perfil, navegação AJAX/back-forward/mobile, retries 403/404, timeout/resposta tardia, sessão expirada, Form API inválido/válido, Marley, responsividade 320–1440px e zoom real 200/400% passaram. Bateria Conta 92/92 aplicáveis PASS, 22 SKIP condicionais. Artefatos fora do repositório em `$SUITE_OUT/studio-audit-20261103/member-final10/` e `$SUITE_OUT/studio-audit-20261103/nojs-final/`. Senha/upload/anexos e escrita pessoal não foram submetidos; leitor de tela e cotejo pareado com a prancha continuam pendentes.
+
