@@ -1,10 +1,15 @@
-# ADR (rascunho v3): superfícies de domínio no aculta_portal
+# ADR-043: superfícies de domínio no aculta_portal
 
-Status: proposto. Não aceito. Não commitado. Base: branch `dev` @ 1034dbb, lido em worktree destacado e somente leitura. Aguarda decisão do responsável.
+- **Status:** proposto. Aguarda aceite do responsável. Não altera comportamento.
+- **Data:** 2026-11-02.
+- **Relaciona-se com:** ADR-038 (suítes do Studio por domínio), ADR-009 (ambientes), D-50 (cookie local host-only), D-70 (worktrees e sincronização do Runtime).
+- **Base do inventário:** `dev` @ 93b638a (a leitura inicial foi feita em 1034dbb; os números abaixo foram conferidos em 93b638a).
 
-Este rascunho substitui o v2 e acrescenta a seção de prioridades de execução.
+## Conflito registrado com ADR-038
 
-## Inventário medido (dev @ 1034dbb)
+O mapa `CANONICAL_STUDIO_PATHS` em `FrontPathPolicy` ainda aponta `shop` para `/studio/green-stash` e `wiki` para `/studio/we-sativa`. O ADR-038 declara que esses caminhos foram descartados, que `/studio` e `/studio/*` respondem 404, e que os caminhos oficiais são `wiki:/wesativa` e `shop:/greenstash`. Esta ADR não decide o conflito: ele precisa ser corrigido no código, em commit próprio, antes da Fase 3.1. Ver também `docs/architecture/TESTES-3.0-ROTAS-SUPERFICIES.md`.
+
+## Inventário medido (leitura inicial em 1034dbb)
 
 - Domain 3.0.1 com `domain`, `domain_alias`, `domain_config`, `domain_source` (aculta_portal), `domain` (aculta_wiki, aculta_portal_sitemap) e `domain_source` (aculta_forum).
 - 10 registros de domínio em `config/sync`, todos com `path_prefix: ''`. `domain.settings.yml` com `path_prefix: false`, recurso experimental do Domain desligado por padrão.

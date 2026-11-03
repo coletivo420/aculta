@@ -1,6 +1,24 @@
 # Estado da sessão
 
-## Handoff mais recente — contexto do fórum sobre entidades LMS próprias, 2026-11-02
+## Handoff mais recente — superfícies de domínio (planejamento), 2026-11-02
+
+- **Tarefa:** planejar o controle de superfícies do aculta_portal (modo subdomínio ou diretório, slug e ativar/desativar), mantendo o módulo Domain para hosts e ambientes. Autorizado commit e push em `dev`.
+- **Commits:** `c5333a1` (planejamento do submódulo e ADR, enviado a `origin/dev`, fast-forward a partir de `93b638a`); commit seguinte desta entrega (ADR-043 movido para `docs/decisions/`, roteiro 3.0, status do submódulo, handoff).
+- **Arquivos principais:** `web/modules/custom/aculta_portal/modules/aculta_superficies/` (info.yml, README, CHANGELOG, `docs/PLANO-FINAL.md`); `docs/decisions/ADR-043-superficies-dominio.md` e anexo; `docs/architecture/TESTES-3.0-ROTAS-SUPERFICIES.md`; `docs/architecture/rotas-por-purpose-dev-93b638a.csv`; `docs/operations/status/aculta_superficies.yml`.
+- **Verificações:** `validate-environment-addresses.php` FAIL preexistente em `aculta_lms/tests/src/Unit/XapiBatchIngestorTest.php:134` (fora desta entrega, não corrigido). `validate-public-slugs.php` e `validate-project-status-index.php` não executados: exigem `vendor/`, ausente nesta sessão.
+- **Pendências:**
+  1. Corrigir `CANONICAL_STUDIO_PATHS` em `FrontPathPolicy` (conflito com ADR-038) em commit próprio.
+  2. Regenerar a linha do `aculta_superficies` na tabela de status do README raiz com `php scripts/validate-project-status-index.php --write`, em ambiente com `vendor/`.
+  3. Aceite do ADR-043 pelo responsável.
+  4. Fase 3.0: testes de rota no Runtime (DEFERRED).
+- **Limites e riscos registrados:**
+  - O commit `c5333a1` tem trailer `Co-Authored-By`, proibido pelo `AGENTS.md`. Não foi reescrito por causa da regra de não reescrever histórico compartilhado. Decisão do responsável.
+  - O remoto `origin` respondeu que o repositório foi movido para `coletivo420/aculta`. Atualizar a URL do remoto depende de autorização explícita.
+  - A permissão de escrita da sessão foi marcada como recusada pelo classificador em uma troca de remoto, mas o push para `dev` foi aceito.
+- **Runtime:** sem acesso nesta sessão. Sincronização pós-push (D-70) não executada; registrar como DEFERRED.
+- **Retomar lendo:** `docs/decisions/ADR-043-superficies-dominio.md`; `web/modules/custom/aculta_portal/modules/aculta_superficies/docs/PLANO-FINAL.md`; `docs/decisions/ADR-038-aculta-studio-suites-por-dominio.md`; `git status --short --branch`.
+
+## Handoff anterior — contexto do fórum sobre entidades LMS próprias, 2026-11-02
 
 - **Tarefa:** continuar leitores/consumidores em P5 da ADR-042. Checkout `dev` iniciou em `1034dbb0c9679b786b5448e618a8ab94ae689edb`; `origin/dev` estava alinhada. Usuário autorizou commit/push e intervenção em outros módulos/tema. Sem P4, P5 de remoção de pacotes ou P6 executados ainda.
 - **Trabalho desta etapa:** Forum LMS passou a usar `GroupInterface` e entidades P2 ACULTA para resolver discussões por atividade; seleção H5P e acesso de membros usam permissões Group. Configuração de instalação do fórum referencia `aculta_lms_activity`. Removido o hook antigo que alterava formulário de resposta contrib inexistente na UI ACULTA. `config/sync` permaneceu intacta e conserva `lms_activity`, portanto a diferença e a estratégia de atualização dessa configuração ainda precisam de revisão antes de P5.

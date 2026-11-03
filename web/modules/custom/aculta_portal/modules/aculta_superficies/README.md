@@ -48,5 +48,5 @@ Sem o passo 1, este submódulo não tem o que controlar.
 ## Documentos de referência
 
 - `docs/PLANO-FINAL.md` (nesta pasta): plano consolidado, decisões e etapas.
-- ADR de superfícies: `docs/architecture/ADR-superficies-dominio.md` e anexo `docs/architecture/ADR-superficies-anexo-decisoes-fixas.md`.
+- ADR de superfícies: `docs/decisions/ADR-043-superficies-dominio.md` e anexo `docs/decisions/ADR-043-anexo-decisoes-fixas.md`.
 - `CHANGELOG.md` deste submódulo.
