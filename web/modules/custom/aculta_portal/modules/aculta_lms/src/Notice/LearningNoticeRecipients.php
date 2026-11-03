@@ -16,7 +16,6 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\lms\Entity\ActivityInterface;
-use Drupal\lms\Entity\AnswerInterface;
 use Drupal\lms\Entity\CourseInterface;
 use Drupal\user\UserInterface;
 
@@ -38,16 +37,17 @@ final class LearningNoticeRecipients implements LearningNoticeRecipientsInterfac
    * Publishes one pending answer for current course graders.
    */
   public function publishSubmissionNoticesForEducators(string $answerUuid, string $eventVersion): void {
-    $answers = $this->entityTypeManager->getStorage('lms_answer')->loadByProperties(['uuid' => $answerUuid]);
+    $answers = $this->entityTypeManager->getStorage('aculta_lms_answer')->loadByProperties(['uuid' => $answerUuid]);
     $answer = reset($answers);
-    if (!$answer instanceof AnswerInterface || $answer->isEvaluated() || $answer->getData() === []) {
+    if (!$answer instanceof EntityInterface || $answer->getEntityTypeId() !== 'aculta_lms_answer'
+      || (string) $answer->get('state')->value !== 'submitted') {
       return;
     }
     $course = $this->eligibility->courseForAnswer($answer);
-    if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course') {
+    if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course') {
       return;
     }
-    $student = $this->entityTypeManager->getStorage('user')->loadUnchanged((int) $answer->getUserId());
+    $student = $this->entityTypeManager->getStorage('user')->loadUnchanged((int) $answer->get('uid')->value);
     if (!$student instanceof UserInterface || !$student->isActive()
       || !$this->eligibility->hasCurrentEnrollment($course, $student)) {
       return;
@@ -58,11 +58,11 @@ final class LearningNoticeRecipients implements LearningNoticeRecipientsInterfac
       }
       $educator = $membership->getEntity();
       if (!$educator instanceof UserInterface || !$educator->isActive()
-        || (int) $educator->id() === (int) $answer->getUserId()
+        || (int) $educator->id() === (int) $answer->get('uid')->value
         || !$course->hasPermission('grade students', $educator)) {
         continue;
       }
-      $this->publishNotice('submission', 'lms_answer', $answerUuid, (int) $educator->id(), $eventVersion);
+      $this->publishNotice('submission', 'aculta_lms_answer', $answerUuid, (int) $educator->id(), $eventVersion);
     }
   }
 
@@ -127,18 +127,17 @@ final class LearningNoticeRecipients implements LearningNoticeRecipientsInterfac
       return;
     }
     $answer = $comment->getCommentedEntity();
-    if (!$answer instanceof AnswerInterface) {
+    if (!$answer instanceof EntityInterface || $answer->getEntityTypeId() !== 'aculta_lms_answer') {
       return;
     }
     $course = $this->eligibility->courseForAnswer($answer);
-    $learner = $this->entityTypeManager->getStorage('user')->loadUnchanged((int) $answer->getUserId());
+    $learner = $this->entityTypeManager->getStorage('user')->loadUnchanged((int) $answer->get('uid')->value);
     $educator = $comment->getOwner();
-    if (!$course instanceof CourseInterface || !$learner instanceof UserInterface || !$learner->isActive()
+    if (!$course instanceof GroupInterface || !$learner instanceof UserInterface || !$learner->isActive()
       || !$educator || (int) $educator->id() === (int) $learner->id()
       || !$course->hasPermission('grade students', $educator)
       || !$this->eligibility->hasCurrentEnrollment($course, $learner)
-      || !$comment->access('view', $learner, TRUE)->isAllowed()
-      || !$answer->access('see_details', $learner, TRUE)->isAllowed()) {
+      || !$comment->access('view', $learner, TRUE)->isAllowed()) {
       return;
     }
     $this->publishNotice('feedback', 'comment', $commentUuid, (int) $learner->id(), $eventVersion);

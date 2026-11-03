@@ -12,7 +12,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\lms\Entity\AnswerInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -57,7 +56,7 @@ final class EducatorFeedbackAuthorCardHooks {
     if ($answer instanceof EntityInterface) {
       $cacheability->addCacheableDependency($answer);
     }
-    if ($answer instanceof AnswerInterface) {
+    if ($answer instanceof EntityInterface && $answer->getEntityTypeId() === 'aculta_lms_answer') {
       $course = $this->policy->courseForAnswer($answer);
       if ($course !== NULL) {
         $cacheability->addCacheableDependency($course);

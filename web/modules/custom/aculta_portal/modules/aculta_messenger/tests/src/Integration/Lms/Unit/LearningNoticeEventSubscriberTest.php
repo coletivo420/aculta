@@ -85,7 +85,9 @@ final class LearningNoticeEventSubscriberTest extends UnitTestCase {
    */
   public function testRoutesSubmissionReleaseFeedbackAndDeadlineEvents(): void {
     $routes = [
-      ['submission', 'lms_answer'],
+      ['completion', 'aculta_lms_progress'],
+      ['evaluation', 'aculta_lms_answer'],
+      ['submission', 'aculta_lms_answer'],
       ['course_release', 'group'],
       ['lesson_release', 'aculta_lms_lesson'],
       ['activity_release', 'aculta_lms_activity'],
@@ -108,7 +110,9 @@ final class LearningNoticeEventSubscriberTest extends UnitTestCase {
     $subscriber = new LearningNoticeEventSubscriber($manager, $this->preferences(), new NullLogger());
 
     foreach ([
-      ['submission', 'lms_answer'],
+      ['completion', 'aculta_lms_progress'],
+      ['evaluation', 'aculta_lms_answer'],
+      ['submission', 'aculta_lms_answer'],
       ['course_release', 'group'],
       ['lesson_release', 'aculta_lms_lesson'],
       ['activity_release', 'aculta_lms_activity'],

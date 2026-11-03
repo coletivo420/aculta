@@ -65,7 +65,7 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
   public function courseCompleted(CourseCompletedEvent $event): void {
     $this->publish(
       'completion',
-      'lms_course_status',
+      'aculta_lms_progress',
       $event->sourceUuid,
       (int) $event->accountId,
       '1',
@@ -79,7 +79,7 @@ final class LearningNotificationSubscriber implements EventSubscriberInterface {
     try {
       $this->publish(
         'evaluation',
-        'lms_answer',
+        'aculta_lms_answer',
         $event->answerUuid,
         (int) $event->accountId,
         $event->publicationVersion,

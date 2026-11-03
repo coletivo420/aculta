@@ -19,9 +19,9 @@ final class LearningNoticeEventSubscriber implements EventSubscriberInterface {
   private const NOTICE_TYPES = [
     'enrollment' => 'group_relationship',
     'certificate' => 'aculta_course_certificate',
-    'completion' => 'lms_course_status',
-    'evaluation' => 'lms_answer',
-    'submission' => 'lms_answer',
+    'completion' => 'aculta_lms_progress',
+    'evaluation' => 'aculta_lms_answer',
+    'submission' => 'aculta_lms_answer',
     'course_release' => 'group',
     'lesson_release' => 'aculta_lms_lesson',
     'activity_release' => 'aculta_lms_activity',

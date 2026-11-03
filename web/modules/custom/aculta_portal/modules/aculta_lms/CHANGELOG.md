@@ -735,3 +735,8 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 
 - Compra de curso e configuração de visibilidade do roster recebem curso como `GroupInterface`; turmas elegíveis vêm de `lms_classes` por Group API.
 
+## 0.1.0-dev.145 — avisos de avaliação usam resposta própria
+
+- Eligibility, feedback educador e destinatários de submissão/avaliação resolvem `aculta_lms_answer` → atividade → aula → Group.
+- O payload não existe na entidade P2; os avisos apontam aos painéis Ganjalab até existir uma tela própria de resposta.
+

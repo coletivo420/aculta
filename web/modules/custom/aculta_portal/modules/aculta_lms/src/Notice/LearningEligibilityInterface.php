@@ -7,7 +7,6 @@ namespace Drupal\aculta_lms\Notice;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\lms\Entity\AnswerInterface;
 use Drupal\lms\Entity\CourseInterface;
 
 /**
@@ -21,7 +20,7 @@ interface LearningEligibilityInterface {
   /**
    * Resolves an answer's current course without typed getters on stale refs.
    */
-  public function courseForAnswer(AnswerInterface $answer): ?CourseInterface;
+  public function courseForAnswer(EntityInterface $answer): ?GroupInterface;
 
   /**
    * Finds published courses that currently reference the released content.

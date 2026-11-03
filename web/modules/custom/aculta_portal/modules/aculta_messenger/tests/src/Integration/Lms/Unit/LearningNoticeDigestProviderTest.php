@@ -11,11 +11,11 @@ use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Entity\Query\QueryInterface;
-use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\message\MessageInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
@@ -188,7 +188,7 @@ final class LearningNoticeDigestProviderTest extends UnitTestCase {
     $message->method('getOwnerId')->willReturn('27');
     $message->method('get')->willReturnCallback(fn(string $field): FieldItemListInterface => match ($field) {
       'field_aculta_lms_event_type' => $this->field('value', 'completion'),
-      'field_aculta_lms_source_uuid' => $this->field('value', 'orphaned-course-status-uuid'),
+      'field_aculta_lms_source_uuid' => $this->field('value', 'orphaned-progress-uuid'),
       default => throw new \InvalidArgumentException('Unexpected field: ' . $field),
     });
     $message->expects(self::once())
@@ -206,25 +206,31 @@ final class LearningNoticeDigestProviderTest extends UnitTestCase {
     $message_storage->method('loadMultiple')->with([1])->willReturn([$message]);
     $user_storage = $this->createMock(EntityStorageInterface::class);
     $user_storage->method('loadUnchanged')->with(27)->willReturn($account);
-    $status = $this->createMock(CourseStatusInterface::class);
-    $status->method('id')->willReturn('71');
-    $status->method('uuid')->willReturn('orphaned-course-status-uuid');
-    $status->method('getUserId')->willReturn('27');
-    $status->method('isFinished')->willReturn(TRUE);
-    $status->method('getStatus')->willReturn(CourseStatusInterface::STATUS_PASSED);
-    $status->method('get')->with(CourseStatusInterface::COURSE_FIELD)->willReturn($this->field('entity', NULL));
-    $status->expects(self::never())->method('getCourse');
-    $status_storage = $this->createMock(EntityStorageInterface::class);
-    $status_storage->method('loadByProperties')
-      ->with(['uuid' => ['orphaned-course-status-uuid']])
-      ->willReturn([$status]);
-    $status_storage->expects(self::once())->method('resetCache')->with(['71']);
-    $status_storage->expects(self::once())->method('loadMultiple')->with(['71'])->willReturn([$status]);
+    $progress = $this->createMock(ContentEntityBase::class);
+    $progress->method('getEntityTypeId')->willReturn('aculta_lms_progress');
+    $progress->method('id')->willReturn('71');
+    $progress->method('uuid')->willReturn('orphaned-progress-uuid');
+    $progress->method('get')->willReturnCallback(fn(string $name): FieldItemListInterface => $this->field('value', match ($name) {
+      'uid' => 27,
+      'finished' => TRUE,
+      'status' => 'passed',
+      'course_id' => 44,
+      default => NULL,
+    }));
+    $progress_storage = $this->createMock(EntityStorageInterface::class);
+    $progress_storage->method('loadByProperties')
+      ->with(['uuid' => ['orphaned-progress-uuid']])
+      ->willReturn([$progress]);
+    $progress_storage->expects(self::once())->method('resetCache')->with(['71']);
+    $progress_storage->expects(self::once())->method('loadMultiple')->with(['71'])->willReturn([$progress]);
+    $group_storage = $this->createMock(EntityStorageInterface::class);
+    $group_storage->expects(self::once())->method('load')->with(44)->willReturn(NULL);
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_type_manager->method('getStorage')->willReturnCallback(static fn(string $type): EntityStorageInterface => match ($type) {
       'user' => $user_storage,
       'message' => $message_storage,
-      'lms_course_status' => $status_storage,
+      'aculta_lms_progress' => $progress_storage,
+      'group' => $group_storage,
       default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
     });
     $manager = new LearningNoticeManager(

@@ -159,6 +159,7 @@ services:
     arguments: ['@entity_type.manager', '@string_translation', '@aculta_user.author_card_builder']
   aculta_lms.educator_feedback_policy:
     class: Drupal\aculta_lms\EducatorFeedbackPolicy
+    arguments: ['@aculta_lms.notice_eligibility']
   aculta_lms.course_order_enrollment:
     class: Drupal\aculta_lms\CourseOrderEnrollmentManager
     arguments: ['@entity_type.manager', '@aculta_portal.checkout_settings']

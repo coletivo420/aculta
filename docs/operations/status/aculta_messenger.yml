@@ -1,5 +1,5 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.1-dev.407
+version: 0.1.1-dev.408
 state: Dev
 next_phase: Smoke visual/autenticado da central e validação do envio de e-mail em ambiente controlado; SMTP e jornadas autenticadas de Events permanecem gates separados.
 progress_note: "Dev.406: categoria eventos_contribuicoes oferece inbox obrigatório e escolha site/imediato/digest (padrão site); update 10017 aplicado no Runtime de desenvolvimento após snapshot, import restrito à categoria após sincronizar seis objetos de schema. Unit Messenger 402/4.374 PASS; SMTP e jornada autenticada pendentes."

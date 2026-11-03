@@ -412,3 +412,7 @@ foram executados.
 
 - Abertura de avisos de aula/atividade usa as entidades próprias do LMS e a elegibilidade atual da aula publicada e da matrícula Group.
 
+## 0.1.1-dev.408 — revalida eventos de progresso e resposta próprios
+
+- Notificações de conclusão, avaliação e submissão leem `aculta_lms_progress` e `aculta_lms_answer`, com matrícula e permissão Group revalidadas; links vão aos painéis ACULTA enquanto não há tela de resposta.
+

@@ -11,10 +11,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\lms\Entity\AnswerInterface;
 use Drupal\lms\Entity\CourseInterface;
-use Drupal\lms\Entity\CourseStatusInterface;
-use Drupal\lms\Entity\LessonStatusInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -30,19 +27,20 @@ final class LearningEligibility implements LearningEligibilityInterface {
   /**
    * {@inheritdoc}
    */
-  public function courseForAnswer(AnswerInterface $answer): ?CourseInterface {
-    $lessonStatus = $answer->get('lesson_status')->entity;
-    if (!$lessonStatus instanceof LessonStatusInterface) {
+  public function courseForAnswer(EntityInterface $answer): ?GroupInterface {
+    if ($answer->getEntityTypeId() !== 'aculta_lms_answer') {
       return NULL;
     }
-    $courseStatus = $lessonStatus->get('course_status')->entity;
-    if (!$courseStatus instanceof CourseStatusInterface) {
+    $activity = $this->entityTypeManager->getStorage('aculta_lms_activity')->load((int) $answer->get('activity_id')->value);
+    if (!$activity instanceof EntityInterface) {
       return NULL;
     }
-    $course = $courseStatus->get(CourseStatusInterface::COURSE_FIELD)->entity;
-    return $course instanceof CourseInterface && $course->bundle() === 'lms_course'
-      ? $course
-      : NULL;
+    $lesson = $this->entityTypeManager->getStorage('aculta_lms_lesson')->load((int) $activity->get('lesson_id')->value);
+    if (!$lesson instanceof EntityInterface) {
+      return NULL;
+    }
+    $course = $this->entityTypeManager->getStorage('group')->load((int) $lesson->get('course_id')->value);
+    return $course instanceof GroupInterface && $course->bundle() === 'lms_course' ? $course : NULL;
   }
 
   /**

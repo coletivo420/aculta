@@ -9,7 +9,7 @@ use Drupal\aculta_lms\Notice\LearningNoticeRecipients;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\lms\Entity\AnswerInterface;
+use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -25,9 +25,9 @@ final class LearningNoticeRecipientsTest extends UnitTestCase {
    * A pending submission with no current course is ignored safely.
    */
   public function testSubmissionWithStaleCourseDoesNotPublish(): void {
-    $answer = $this->createMock(AnswerInterface::class);
-    $answer->method('isEvaluated')->willReturn(FALSE);
-    $answer->method('getData')->willReturn(['essay' => 'private response']);
+    $answer = $this->createMock(ContentEntityBase::class);
+    $answer->method('getEntityTypeId')->willReturn('aculta_lms_answer');
+    $answer->method('get')->with('state')->willReturn((object) ['value' => 'submitted']);
 
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->expects(self::once())
@@ -37,7 +37,7 @@ final class LearningNoticeRecipientsTest extends UnitTestCase {
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->expects(self::once())
       ->method('getStorage')
-      ->with('lms_answer')
+      ->with('aculta_lms_answer')
       ->willReturn($storage);
 
     $eligibility = $this->createMock(LearningEligibilityInterface::class);
