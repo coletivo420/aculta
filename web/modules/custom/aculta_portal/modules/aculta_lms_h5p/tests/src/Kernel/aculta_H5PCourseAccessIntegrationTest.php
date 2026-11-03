@@ -15,7 +15,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\Entity\GroupType;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;
 use Drupal\media\MediaInterface;
@@ -369,7 +369,7 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     );
     $course->get('field_h5p_activities')->appendItem(['h5p_content_id' => $content->id()]);
     $course->save();
-    self::assertInstanceOf(CourseInterface::class, $course);
+    self::assertInstanceOf(GroupInterface::class, $course);
     self::assertCount(1, $course->getRelationships('aculta_document_viewer:course_document'));
     self::assertCount(3, $content->get('course_documents')->referencedEntities());
 

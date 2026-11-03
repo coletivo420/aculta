@@ -18,7 +18,7 @@ use Drupal\aculta_lms_h5p\aculta_H5PDrupal\aculta_H5PDrupal;
 use Drupal\aculta_lms_h5p\Entity\aculta_H5PContent;
 use Drupal\aculta_lms_h5p\Plugin\Field\FieldType\aculta_H5PItem;
 use Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorUtilities;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -92,7 +92,7 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
 
     $course = $items->getEntity();
     $h5p_content_id = (int) ($items[$delta]->h5p_content_id ?? 0);
-    if (!$course instanceof CourseInterface || !$course->id()
+    if (!$course instanceof GroupInterface || !$course->id()
       || !$this->courseAccess->editorAccess((int) $course->id(), $h5p_content_id, $this->currentUser)->isAllowed()) {
       return [
         'h5p_content' => [
@@ -290,7 +290,7 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
       return FALSE;
     }
     $course = $formObject->getEntity();
-    return $course instanceof CourseInterface
+    return $course instanceof GroupInterface
       && $course->id() !== NULL
       && $this->courseAccess->editorAccess((int) $course->id(), $contentId, $this->currentUser)->isAllowed();
   }
@@ -305,7 +305,7 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
     }
     $entity = $formObject->getEntity();
     $fieldName = $this->fieldDefinition->getName();
-    if (!$entity instanceof CourseInterface || !$entity->hasField($fieldName)) {
+    if (!$entity instanceof GroupInterface || !$entity->hasField($fieldName)) {
       return 0;
     }
     $parents = $element['#parents'] ?? [];
@@ -323,7 +323,7 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
   /**
    * Lists existing course_document Media related to this Group.
    */
-  private function courseDocumentOptions(CourseInterface $course): array {
+  private function courseDocumentOptions(GroupInterface $course): array {
     if (!$this->currentUser->hasPermission('view media')) {
       return [];
     }
@@ -442,11 +442,11 @@ class aculta_H5PEditorWidget extends aculta_H5PWidgetBase implements ContainerFa
   /**
    * Retrieves the Group being edited for validating submitted references.
    */
-  private function courseForSave(int $courseId): ?CourseInterface {
+  private function courseForSave(int $courseId): ?GroupInterface {
     $course = $courseId
       ? $this->entityTypeManager->getStorage('group')->load($courseId)
       : NULL;
-    return $course instanceof CourseInterface ? $course : NULL;
+    return $course instanceof GroupInterface ? $course : NULL;
   }
 
 }

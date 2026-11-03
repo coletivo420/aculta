@@ -568,3 +568,8 @@ RUNTIME STATUS: DEFERRED.
 
 RUNTIME STATUS: PARTIAL.
 
+## 0.4.0-dev.170 — acesso H5P usa contratos Group
+
+- Acesso de estudante e educador, painel, formatter, editor e integrações agora tipam cursos por `GroupInterface`; permissão de estudante usa `take course` no Group.
+- Unit H5P 34/139 PASS; Kernel de acesso/integração 3/134 PASS, com 44 depreciações upstream.
+

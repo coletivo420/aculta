@@ -22,7 +22,7 @@ use Drupal\Core\State\StateInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_lms_h5p\Entity\aculta_H5PContent;
 use Drupal\aculta_lms_h5p\aculta_H5PEditor\aculta_H5PEditorDrupalStorage;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 use GuzzleHttp\ClientInterface;
 
 /**
@@ -212,21 +212,21 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
    * Prepares the generic H5PIntegration settings.
    */
   // phpcs:ignore Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps -- H5P integrations depend on this settings helper identifier.
-  public static function getGenericaculta_H5PIntegrationSettings(?CourseInterface $course = NULL): array {
+  public static function getGenericaculta_H5PIntegrationSettings(?GroupInterface $course = NULL): array {
     return self::framework()->buildGenericaculta_H5PIntegrationSettings($course);
   }
 
   /**
    * Builds H5PIntegration data from the injected Drupal services.
    *
-   * @param \Drupal\lms\Entity\Bundle\CourseInterface|null $course
+   * @param \Drupal\group\Entity\GroupInterface|null $course
    *   Optional course that scopes the current H5P integration settings.
    *
    * @return array
    *   Settings consumed by the H5P player and editor.
    */
   // phpcs:ignore Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps, DrupalPractice.Objects.UnusedPrivateMethod.UnusedMethod -- Called through the public H5P settings bridge; preserve the protocol identifier.
-  private function buildGenericaculta_H5PIntegrationSettings(?CourseInterface $course = NULL): array {
+  private function buildGenericaculta_H5PIntegrationSettings(?GroupInterface $course = NULL): array {
 
     // Load current user.
     $user = $this->currentUser;

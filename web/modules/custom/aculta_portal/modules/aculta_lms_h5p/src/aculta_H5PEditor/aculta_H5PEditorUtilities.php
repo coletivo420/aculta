@@ -10,7 +10,7 @@ use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Url;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 
 /**
  * Legacy H5P class identifier retained for Drupal discovery.
@@ -54,13 +54,13 @@ class aculta_H5PEditorUtilities {
   /**
    * Gets editor settings needed by the JavaScript front end.
    *
-   * @param \Drupal\lms\Entity\Bundle\CourseInterface $course
+   * @param \Drupal\group\Entity\GroupInterface $course
    *   The course whose editor endpoint will be configured.
    *
    * @return array<string, mixed>
    *   Settings required to render the editor.
    */
-  public function getEditorSettings(CourseInterface $course): array {
+  public function getEditorSettings(GroupInterface $course): array {
     $contentValidator = aculta_H5PDrupal::getInstance('contentvalidator');
 
     $settings = [
@@ -166,7 +166,7 @@ class aculta_H5PEditorUtilities {
    * @return string
    *   The internal URL string for the editor AJAX endpoint.
    */
-  private function getAjaxPath(CourseInterface $course): string {
+  private function getAjaxPath(GroupInterface $course): string {
     $securityToken = \H5PCore::createToken('editorajax');
     return Url::fromUri(
       "internal:/h5peditor/{$course->id()}/{$securityToken}/:contentId/"

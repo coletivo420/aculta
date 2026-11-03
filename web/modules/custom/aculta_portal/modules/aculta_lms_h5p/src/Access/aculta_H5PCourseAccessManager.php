@@ -7,7 +7,7 @@ namespace Drupal\aculta_lms_h5p\Access;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
+use Drupal\group\Entity\GroupInterface;
 
 /**
  * Legacy H5P class identifier retained for Drupal discovery.
@@ -42,7 +42,7 @@ final class aculta_H5PCourseAccessManager {
   private function courseAccess(int $groupId, int $contentId, AccountInterface $account, bool $editor): AccessResult {
     $cacheContexts = ['user', 'user.permissions', 'user.group_permissions'];
     $course = $this->entityTypeManager->getStorage('group')->load($groupId);
-    if (!$course instanceof CourseInterface || !$course->hasField('field_h5p_activities')) {
+    if (!$course instanceof GroupInterface || !$course->hasField('field_h5p_activities')) {
       return AccessResult::forbidden()
         ->addCacheContexts($cacheContexts)
         ->addCacheTags(['group_list']);
@@ -50,7 +50,9 @@ final class aculta_H5PCourseAccessManager {
 
     $courseAccess = $editor
       ? $course->access('update', $account, TRUE)
-      : $course->takeAccess($account);
+      : AccessResult::allowedIf($course->hasPermission('take course', $account))
+        ->cachePerUser()
+        ->addCacheContexts(['user.permissions', 'user.group_permissions']);
     $result = AccessResult::allowedIf($courseAccess->isAllowed())
       ->addCacheableDependency($course)
       ->addCacheableDependency($courseAccess)
