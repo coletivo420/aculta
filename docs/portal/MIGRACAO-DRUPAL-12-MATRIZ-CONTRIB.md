@@ -55,7 +55,7 @@ Legenda: ✅ D12 listado na estável atual · ⚠️ D12 só em beta/alpha · �
 | drupal/search_api | 1.41.0 | 1.43 | ^10.3 \|\| ^11 \|\| ^12 | ✅ (atualizar para 1.43) |
 | drupal/section_library | 2.0.1 | 2.0.1 | ^10.3 \|\| ^11 | ❌ |
 | drupal/security_review | 3.1.3 | 3.1.3 | ^10.3 \|\| ^11 | ❌ |
-| drupal/simple_oauth | 6.1.3 | 6.1.3 | ^10.3 \|\| ^11 | ❌ |
+| drupal/simple_oauth | 6.1.x-dev (Composer branch) | 6.1.x-dev | ^10.3 \|\| ^11 | ❌ |
 | drupal/simple_sitemap | 4.2.3 | 4.2.3 | ^10.3 \|\| ^11 | ❌ |
 | drupal/site_alert | 1.4.0 | 1.4 | ^8 … ^11 | ❌ |
 | drupal/social_auth | 4.1.2 | 4.1.2 | ^9.5 \|\| ^10 \|\| ^11 | ❌ |
@@ -90,13 +90,13 @@ Legenda: ✅ D12 listado na estável atual · ⚠️ D12 só em beta/alpha · �
 
 ## Não é módulo contrib de Drupal (ou nome não confere)
 
-- `e0ipso/simple_oauth_21` v1.13.1: sem verificação — depende de `simple_oauth` 6.x.
+- `e0ipso/simple_oauth_21` v1.13.1: as extensões declaram Core `^10.2 || ^11`; sem suporte Drupal 12 confirmado. O `.info.yml` principal exige Simple OAuth `>=6.0.3, <7.0`, mas o checkout Git Composer não informa `version`; `aculta_mcp` agora deriva esse metadado do pacote travado para evitar falso erro no relatório de requisitos. Isso não declara compatibilidade D12.
 - Bibliotecas JS (photoswipe, pdf.js, codemirror, select2, inputmask, intl-tel-input, rateit, timepicker, textcounter, popperjs, tabby, tippyjs, signature_pad, progress-tracker): não dependem da versão do Drupal; manter pins, validar apenas nos testes de navegador.
 
 ## Conclusões
 
 1. **Atualizações candidatas:** `geofield` 1.67.0 → 10.3.5 (estável, D12; migração major); `commerce_cart` e `commerce_checkout` 3.3.10 → 3.3.14 (estável, ainda sem D12); CKEditor Plugin Pack 1.5.6 → 2.0.0-beta1 e Premium Features 1.8.7 → 2.0.0-beta1 (beta D12, coordenar com Core 12).
-2. **Monitorar branches de desenvolvimento D12:** Simple OAuth `6.1.x-dev` (patch em revisão), Pathauto `8.x-1.x-dev` (issue de compatibilidade fechado, sem alpha/beta confirmado) e Simple Sitemap `5.x-dev` (issue D12 fechado, sem alpha/beta confirmado). Não são releases prontas para atualização automática.
+2. **Monitorar branches de desenvolvimento D12:** Simple OAuth `6.1.x-dev` (compatibilidade de API D12 ainda em revisão; o metadado de versão faltante no checkout Composer foi corrigido pelo `aculta_mcp`), Pathauto `8.x-1.x-dev` (issue de compatibilidade fechado, sem alpha/beta confirmado) e Simple Sitemap `5.x-dev` (issue D12 fechado, sem alpha/beta confirmado). Não são releases prontas para atualização automática.
 3. **Ausência de D12 na página não prova incompatibilidade:** muitos mantenedores só atualizam o campo depois de testar. Só a resolução do Composer e os testes dizem o real.
 4. **Já compatíveis ou quase:** `domain` 4.0.0-alpha2, `group` 4.0.0-alpha2, `diff`, `entity_usage`, `media_gallery`, `reporting`, `turnstile`, `ui_styles`, `search_api`, `metatag`, `message_subscribe`, `imagemagick`, `vvja`, `vvjb`, `vvjf`, `vvjs`, `vvjt`. As versões D12-capable listadas já estão no lock, exceto os upgrades específicos do item 1.
 5. **Verificação pendente (não lida ou inconsistente):** `login_emailusername`, `message`, `message_notify`, `tool`, `ui_patterns`, `ui_patterns_layouts`, `ui_patterns_field_group`, `views_bulk_operations`, `vvjh`, `vvjl`, `vvjr`, `crop`, `flag`, `google_tag`, `imageapi_optimize_binaries`, `media_duplicates`, `node_co_authors`, `physical`, `profile`, `schema_metatag`. Repetir com acesso estável ou direto ao Composer.

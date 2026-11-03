@@ -440,3 +440,22 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - Entrega em preparação: `aculta_pagamentos_mercadopago` 0.1.0-dev.85, teste,
   changelog, status e índice do README. Próxima etapa: inventariar os itens
   reais do `updatedb:status`/requirements e corrigi-los um a um.
+## Continuação — erro de dependência Simple OAuth no relatório — 2026-11-03
+
+- `core:requirements` indicava erro de versão para `simple_oauth_21` porque o
+  checkout Git Composer de `drupal/simple_oauth` não inclui `version` no
+  `.info.yml`. `ComposerVersionMetadataHooks` no owner `aculta_mcp` injeta o
+  branch `6.1.x-dev` consultando `Composer\InstalledVersions`, sem ampliar a
+  faixa de Core permitida pelo upstream.
+- **Validações:** Unit novo 3/6 PASS; PHPCS Drupal/DrupalPractice e PHP lint
+  focais PASS. Após `drush cr`, o `.info` descoberto mostra `6.1.x-dev`,
+  `core:requirements` não tem mais erros e `updatedb:status`/`config:status`
+  seguem limpos. `MIGRACAO-DRUPAL-12-MATRIZ-CONTRIB.md` registra que isso não
+  equivale a compatibilidade Drupal 12; os módulos OAuth upstream ainda
+  declaram suporte até Drupal 11.
+- Restam avisos de requisitos independentes (módulos/temas depreciados,
+  tradução, mídia duplicada, filtros redundantes, cache/render debug, Search,
+  Security Review e estado de atualização do Core); devem ser avaliados em
+  escopo próprio, preservando dados e sem desinstalação automática.
+- Arquivos: `web/modules/custom/aculta_mcp/src/Hook/` e `tests/src/Unit/Hook/`,
+  README do módulo, matriz Drupal 12 e este handoff.
