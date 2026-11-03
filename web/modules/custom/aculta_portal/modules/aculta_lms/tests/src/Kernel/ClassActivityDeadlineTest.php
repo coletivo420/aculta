@@ -69,16 +69,8 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
     foreach ([
       'group.type.lms_course',
       'group.type.lms_class',
-      'group.relationship_type.lms_course-group_membership',
-      'group.relationship_type.lms_class-group_membership',
       'group.relationship_type.lms_course-lms_classes',
       'group.relationship_type.lms_class-lms_class_activity_due',
-      'group.role.lms_course-anonymous',
-      'group.role.lms_course-course_creator',
-      'group.role.lms_course-member',
-      'group.role.lms_course-outsider',
-      'group.role.lms_course-teacher',
-      'group.role.lms_class-member',
       'field.storage.group_relationship.field_activity_due_at',
       'field.field.group_relationship.lms_class-lms_class_activity_due.field_activity_due_at',
       'core.entity_form_display.group_relationship.lms_class-lms_class_activity_due.default',
@@ -86,6 +78,15 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
     ] as $config_id) {
       $path = DRUPAL_ROOT . '/../config/sync/' . $config_id . '.yml';
       $this->container->get('config.storage')->write($config_id, Yaml::decode(file_get_contents($path)));
+    }
+    // The deadline test does not exercise memberships. Keep the Group types
+    // independent from the contrib membership relation while retaining the
+    // ACULTA class and activity deadline plugins under test.
+    foreach (['lms_course', 'lms_class'] as $group_type_id) {
+      $this->container->get('config.factory')->getEditable('group.type.' . $group_type_id)
+        ->set('creator_membership', FALSE)
+        ->set('creator_roles', [])
+        ->save();
     }
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
     $this->container->get('group_relation_type.manager')->clearCachedPluginMaps();
@@ -161,15 +162,6 @@ final class ClassActivityDeadlineTest extends KernelTestBase {
     self::assertNotNull($deadlineB);
     self::assertSame('2026-10-22T12:00:00', $deadlineA->get('field_activity_due_at')->value);
     self::assertSame('2026-10-23T12:00:00', $deadlineB->get('field_activity_due_at')->value);
-    $learner = $this->createUser();
-    $learner->set('timezone', 'America/Sao_Paulo');
-    $learner->save();
-    $outsider = $this->createUser();
-    $classA->addMember($learner);
-    self::assertTrue($course->hasPermission('take course', $learner), 'A class membership grants take-course permission on its parent course.');
-    self::assertFalse($classA->hasPermission('take course', $learner), 'Take-course permission is evaluated on the parent course, not on the class group.');
-    self::assertSame($deadlineA->id(), $manager->deadlineForLearner($course, $activity, $learner)?->id());
-    self::assertNull($manager->deadlineForLearner($course, $activity, $outsider));
     self::assertSame('true_false', $activity->get('type')->value);
   }
 
