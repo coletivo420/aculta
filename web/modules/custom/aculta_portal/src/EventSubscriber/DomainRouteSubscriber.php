@@ -26,6 +26,27 @@ final class DomainRouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc} */
   protected function alterRoutes(RouteCollection $collection): void {
+    // A flag _aculta_domain_purpose_authoritative é definida antes deste
+    // subscriber (aculta_mcp, -2048). O purpose dessas rotas é preservado.
+    $autoritativas = [];
+    foreach ($collection as $name => $route) {
+      if ($route->getOption('_aculta_domain_purpose_authoritative') === TRUE) {
+        $autoritativas[$name] = $route->getOption('_aculta_domain_purpose');
+      }
+    }
+    $this->aplicarRegrasDeFamilia($collection);
+    foreach ($autoritativas as $name => $purpose) {
+      $route = $collection->get($name);
+      if ($route !== NULL && is_string($purpose)) {
+        $route->setOption('_aculta_domain_purpose', $purpose);
+      }
+    }
+  }
+
+  /**
+   * Aplica as regras de família de rota (purpose e caminhos canônicos).
+   */
+  private function aplicarRegrasDeFamilia(RouteCollection $collection): void {
     // Doação rápida passa pelo resumo antes do pagamento
     // (Portal\Donation\DonationSummaryController).
     if ($quick = $collection->get('aculta_donation.donation.quick')) {

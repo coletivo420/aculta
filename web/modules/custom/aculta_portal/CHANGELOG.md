@@ -1,3 +1,9 @@
+## 0.4.1-dev.60 — resolvedor respeita a flag de purpose autoritativo
+
+- `DomainRouteSubscriber` do portal guarda o purpose das rotas com `_aculta_domain_purpose_authoritative` antes das regras de família e os restaura ao final. A ordem de prioridades não muda (-2049).
+- Comentário do `aculta_mcp` corrigido: o subscriber dele roda antes da passagem do portal, e a flag protege o purpose. Sem mudança de prioridade.
+- Testes: DEFERRED (sem `vendor/` nem Runtime nesta sessão). Teste de rota de `mcp_server.handle` previsto em TESTES-3.0.
+
 ## 0.4.1-dev.59 — Prefixo /studio removido da guarda de caminhos
 
 - `CANONICAL_STUDIO_PATHS` e `caminhoStudioCanonicoPermitido` saem de `FrontPathPolicy`.
