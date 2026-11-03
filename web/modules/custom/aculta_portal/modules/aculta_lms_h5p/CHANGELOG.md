@@ -1,3 +1,8 @@
+## 0.4.0-dev.171 — remove dependência do Drupal LMS contrib
+
+- `aculta_lms_h5p` mantém os acessos por Group e não precisa habilitar o módulo `lms`; o Kernel focal remove essa dependência do harness.
+- Unit 34/139 PASS; Kernel de acesso 3/128 PASS, com 35 depreciações upstream.
+
 ## 0.4.0-dev.169 — valida bombas ZIP reais antes da extração
 
 - Kernels do instalador criam ZIPs reais com uma entrada aleatória de 33 MiB e

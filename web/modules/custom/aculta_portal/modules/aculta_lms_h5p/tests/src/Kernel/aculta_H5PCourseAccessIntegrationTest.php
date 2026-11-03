@@ -53,7 +53,6 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
     'flexible_permissions',
     'group',
     'views',
-    'lms',
     'csp',
     'reporting',
     'aculta_document_viewer',
