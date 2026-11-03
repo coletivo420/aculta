@@ -49,22 +49,15 @@ final class DnsStatusChecker {
     if ($principal === NULL || $principal === '') {
       return ['classe' => 'aviso', 'texto' => (string) $this->t('Não verificado: o principal não tem Domain.')];
     }
-    $alvo = $this->registros($principal);
-    if ($alvo['ips'] === [] && $alvo['cnames'] === []) {
-      return ['classe' => 'aviso', 'texto' => (string) $this->t('Não verificado: o principal não resolve por DNS a partir deste servidor.')];
-    }
-    $sub = $this->registros($host);
-    if ($sub['ips'] === [] && $sub['cnames'] === []) {
-      return ['classe' => 'erro', 'texto' => (string) $this->t('Não resolve: nenhum registro DNS encontrado.')];
-    }
-    if (in_array(strtolower($principal), $sub['cnames'], TRUE)) {
-      return ['classe' => 'ok', 'texto' => (string) $this->t('OK: CNAME aponta para o principal.')];
-    }
-    if (array_intersect($sub['ips'], $alvo['ips']) !== []) {
-      return ['classe' => 'ok', 'texto' => (string) $this->t('OK: aponta para o mesmo servidor do principal.')];
-    }
-    $destino = $sub['cnames'] !== [] ? implode(', ', $sub['cnames']) : implode(', ', $sub['ips']);
-    return ['classe' => 'erro', 'texto' => (string) $this->t('Aponta para outro destino: @destino.', ['@destino' => $destino])];
+    $r = DnsClassificador::classificar($principal, $this->registros($principal), $this->registros($host));
+    $texto = match ($r['codigo']) {
+      'principal_sem_resolucao' => $this->t('Não verificado: o principal não resolve por DNS a partir deste servidor.'),
+      'nao_resolve' => $this->t('Não resolve: nenhum registro DNS encontrado.'),
+      'cname_principal' => $this->t('OK: CNAME aponta para o principal.'),
+      'mesmo_ip' => $this->t('OK: aponta para o mesmo servidor do principal.'),
+      default => $this->t('Aponta para outro destino: @destino.', ['@destino' => $r['destino'] ?? '']),
+    };
+    return ['classe' => $r['classe'], 'texto' => (string) $texto];
   }
 
   /**

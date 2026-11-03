@@ -1,3 +1,11 @@
+## 0.1.0-dev.20 — validação e DNS em classes puras, com testes
+
+- `EnderecoValidator` (puro): valida slug e host, devolve código e argumentos; a tela traduz. Testes em `EnderecoValidatorTest`.
+- `DnsClassificador` (puro): classifica o DNS do subdomínio. Testes em `DnsClassificadorTest`.
+- `DnsStatusChecker` e `SurfaceEditForm` passam a usar essas classes. Mensagens inalteradas.
+- README atualizado com o estado da validação e do DNS.
+- Testes: escritos, não executados (sem vendor/ nesta sessão). Lógica verificada com smoke test PHP fora do repositório (5 casos de validação e 1 de classificação).
+
 ## 0.1.0-dev.19 — módulo LinkWeed na coluna Módulo ACULTA
 
 - Coluna Módulo ACULTA mostra `aculta_linkweed` para a superfície links (antes `aculta_links`). Depende da renomeação do módulo, que segue o prompt de tarefa do Runtime.

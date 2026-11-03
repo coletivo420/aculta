@@ -7,6 +7,7 @@ namespace Drupal\aculta_superficies\Form;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\aculta_portal\Domain\SurfaceConfigReader;
+use Drupal\aculta_superficies\Validation\EnderecoValidator;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\Core\Ajax\RedirectCommand;
@@ -261,52 +262,30 @@ final class SurfaceEditForm extends FormBase {
   }
 
   /**
-   * Motivo da recusa de um endereço ou slug, ou NULL se estiver certo.
-   *
-   * Nomeia os caracteres proibidos. Host aceita letras sem acento, números,
-   * hífen e ponto; slug aceita só letras sem acento, números e hífen.
+   * Motivo da recusa de um endereço ou slug, traduzido, ou NULL se estiver certo.
    */
   private function motivoEndereco(string $valor, bool $host): ?string {
-    if ($valor === '') {
-      return (string) $this->t('Campo vazio. Digite um valor.');
+    $motivo = EnderecoValidator::motivo($valor, $host);
+    if ($motivo === NULL) {
+      return NULL;
     }
-    // Remove tudo que é permitido; o que sobra são os caracteres recusados.
-    $sobra = (string) preg_replace($host ? '/[a-z0-9.\-]/' : '/[a-z0-9\-]/', '', $valor);
-    $proibidos = array_values(array_unique(mb_str_split($sobra)));
-    if ($proibidos !== [] && $proibidos[0] !== '') {
-      $lista = implode(', ', array_map(static fn (string $c): string => $c === ' ' ? '«espaço»' : '«' . $c . '»', $proibidos));
-      $uso = $host
-        ? (string) $this->t('letras sem acento, números, hífen e ponto')
-        : (string) $this->t('letras sem acento, números e hífen');
-      return (string) $this->t('Caracteres não permitidos: @lista. Use só @uso.', ['@lista' => $lista, '@uso' => $uso]);
-    }
-    if (!$host) {
-      return preg_match('/^-|-$|--/', $valor)
-        ? (string) $this->t('Não pode começar nem terminar com hífen, nem ter dois hífens seguidos.')
-        : NULL;
-    }
-    if (strlen($valor) > 253) {
-      return (string) $this->t('Endereço maior que 253 caracteres.');
-    }
-    if (!str_contains($valor, '.')) {
-      return (string) $this->t('Falta o domínio. Ex.: wiki420.aculta.org.');
-    }
-    $trechos = explode('.', $valor);
-    foreach ($trechos as $trecho) {
-      if ($trecho === '') {
-        return (string) $this->t('Há um ponto sobrando, sem texto entre dois pontos.');
-      }
-      if (strlen($trecho) > 63) {
-        return (string) $this->t('Um trecho entre pontos passa de 63 caracteres.');
-      }
-      if (str_starts_with($trecho, '-') || str_ends_with($trecho, '-')) {
-        return (string) $this->t('Um trecho entre pontos começa ou termina com hífen.');
-      }
-    }
-    if (!preg_match('/^[a-z]{2,}$/', end($trechos))) {
-      return (string) $this->t('O final do endereço precisa ser letras (ex.: .org).');
-    }
-    return NULL;
+    $a = $motivo['args'];
+    return match ($motivo['codigo']) {
+      'vazio' => (string) $this->t('Campo vazio. Digite um valor.'),
+      'caracteres' => (string) $this->t('Caracteres não permitidos: @lista. Use só @uso.', [
+        '@lista' => $a['lista'],
+        '@uso' => $a['host'] === '1'
+          ? (string) $this->t('letras sem acento, números, hífen e ponto')
+          : (string) $this->t('letras sem acento, números e hífen'),
+      ]),
+      'hifen_slug' => (string) $this->t('Não pode começar nem terminar com hífen, nem ter dois hífens seguidos.'),
+      'tamanho' => (string) $this->t('Endereço maior que 253 caracteres.'),
+      'sem_ponto' => (string) $this->t('Falta o domínio. Ex.: wiki420.aculta.org.'),
+      'ponto_sobrando' => (string) $this->t('Há um ponto sobrando, sem texto entre dois pontos.'),
+      'trecho_longo' => (string) $this->t('Um trecho entre pontos passa de 63 caracteres.'),
+      'trecho_hifen' => (string) $this->t('Um trecho entre pontos começa ou termina com hífen.'),
+      default => (string) $this->t('O final do endereço precisa ser letras (ex.: .org).'),
+    };
   }
 
   /**

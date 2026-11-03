@@ -61,7 +61,13 @@ Sem o passo 1, este submódulo não tem o que controlar.
 | 3.3 Constantes de purpose | Código | `DomainSurfaceMap::MAIN` e `ACCOUNT` no subscriber. |
 | 3.4 Atribuição pela configuração | Parcial | Configuração, schema, leitor e interruptor `leitura_ativa` (desligado). `SurfaceRequestSubscriber` (núcleo) já existe e só age com o interruptor ligado. Atribuição de purpose por configuração não implementada. |
 | 3.5 Modo diretório | Parcial | Regra de diretório na validação; caminho em vigor só com `leitura_ativa` ligado. Resolução de `/slug` no MAIN não implementada (DEFERRED). |
-| 3.6 Formulário | Código | `/painel-administrativo/aculta/caminhos`, só MAIN, com tabela de caminhos. |
+| 3.6 Formulário | Código | `/painel-administrativo/aculta/caminhos`, só MAIN. Lista com Módulo ACULTA, Nome do Site, Status do DNS e Editar (modal). Modo troca o campo de caminho por AJAX: diretório pede o slug; subdomínio pede o endereço, gravado no Domain, com confirmação. |
 | 3.7 Exportação | Parcial | YAML em `config/sync`; conferência de importação DEFERRED. |
 
-Todos os testes escritos ainda não foram executados.
+## Validação e DNS (0.1.0-dev.20)
+
+- `Validation\EnderecoValidator`: recusa caracteres inválidos e diz quais são (ex.: «:», «/», «espaço»); recusa formato de host e de slug. Maiúsculas são convertidas para minúsculas antes da validação.
+- `Service\DnsClassificador`: classifica o DNS do subdomínio em relação ao principal (CNAME para o principal ou IP em comum = OK). Pura, sem rede.
+- `Service\DnsStatusChecker` (serviço `aculta_superficies.dns_status`): consulta o DNS e usa cache de 5 minutos. Diretório mostra "Modo Diretório, Não Aplicável".
+
+Todos os testes escritos ainda não foram executados. Testes novos: `EnderecoValidatorTest` e `DnsClassificadorTest`, sem vendor/ nesta sessão.
