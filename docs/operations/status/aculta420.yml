@@ -1,7 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.7.0-dev.37
+version: 0.7.0-dev.38
 state: Dev
 progress_note: >-
+  Dev.38: carrega Bootstrap 5.3.8 local sobre a base Drupal Bootstrap 8.x-3.45; revisão visual DEFERRED.
   Dev.37: manifest do tema declara ^11 || ^12; compatibilidade Drupal 12 não validada formalmente.
   Dev.31: navegação da Conta Studio é uma lista vertical própria e menu/conteúdo são painéis com tokens semânticos; Theme Unit 50/358, Design Foundations 2441 e SDC schemas 764 PASS. Browser Runtime e sincronização ainda pendentes. Dev.30: cabeçalho semântico alinha ação da seção Marley junto a “Meu trabalho”; Theme Unit 49/355, Foundation 2441 e Firefox ESR Runtime 97/97 verificações aplicáveis PASS (21 SKIP, 0 falhas), com ações/tabela utilizáveis em 320/390px. Runtime aculta420=0.7.0-dev.30 após reset do discovery cache. Capturas em $SUITE_OUT/studio-dashboard-final-20261103/marley-header-dev30-retest/. Dev.29: Firefox passou 94/94 verificações aplicáveis (21 SKIP), incluindo ações do Perfil legíveis em 1280px; capturas em $SUITE_OUT/studio-dashboard-final-20261103/post-push/. Dev.28: cartão de entrada da Conta e grade do SDC profile-editor; Unit 49/354 e Foundation / PHP lint PASS. Dev.27: seletores por data-portal-ui/data-aculta-focal para a marcação dos
   módulos; gates de fundações e modo de cor PASS; revisão visual pendente.

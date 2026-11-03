@@ -54,6 +54,7 @@ global:
   dependencies:
     - bootstrap/bootstrap
     - bootstrap/global-styling
+    - aculta420/bootstrap5-framework
     - aculta420/bootstrap-icons
     - core/drupal
     - core/once
@@ -64,6 +65,17 @@ bootstrap-icons:
   css:
     component:
       assets/icons/bootstrap-icons/font/bootstrap-icons.min.css: {}
+
+# The Drupal Bootstrap 8.x base theme uses Bootstrap 3. ACULTA420's public
+# components retain their Bootstrap 5 contract, so load the local framework
+# after the base theme and before this library's component styles and scripts.
+bootstrap5-framework:
+  version: 5.3.8
+  css:
+    theme:
+      /libraries/bootstrap/dist/css/bootstrap.min.css: { minified: true }
+  js:
+    /libraries/bootstrap/dist/js/bootstrap.bundle.min.js: { minified: true }
 
 album-slideshow:
   css:

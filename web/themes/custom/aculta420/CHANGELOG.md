@@ -1,3 +1,8 @@
+## 0.7.0-dev.38 — preservar o framework ACULTA420 sobre Bootstrap 8.x-3.45 (2026-11-03; não validado visualmente)
+
+- O tema Drupal 8.x-3.45 usa Bootstrap 3 para suas integrações. ACULTA420 agora carrega explicitamente Bootstrap 5.3.8 local depois da base e antes dos estilos/componentes próprios, preservando as classes, variáveis CSS e APIs `data-bs-*` do tema.
+- O gate Foundation verifica o carregamento e a presença dos assets locais. Revisão visual completa e validação após rebuild do cache continuam pendentes.
+
 ## 0.7.0-dev.37 — declarar compatibilidade com Drupal 12 (2026-11-03; não validado)
 
 - O manifest do tema passa a aceitar Drupal 11 e 12. Compatibilidade formal

@@ -338,3 +338,10 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - Verificações: Composer validate, gate Portal (1202 checks), gate ACULTA420 Foundation (355 checks), índice do README (53 componentes), PHP lint e Rector dry-run PASS. PHPUnit não executado.
 - Upgrade Status registrou avisos manuais não impeditivos, incluindo o shim legado de compatibilidade e depreciações removidas só no Drupal 13.
 - Snapshot pré-update do Runtime e bloqueio em `system_update_11501` estão descritos acima. `config:import` ficou pendente após a falha de `updatedb`.
+
+## Handoff — compatibilidade ACULTA420 com Bootstrap 8.x — 2026-11-03
+
+- ACULTA420 carrega agora `bootstrap5-framework` a partir de `/libraries/bootstrap`, depois das bibliotecas do Drupal Bootstrap 8.x-3.45 e antes dos CSS/JS do tema. Isso mantém as classes e APIs `data-bs-*` já usadas pelo tema.
+- Versão do tema marcada `0.7.0-dev.38`; CHANGELOG, roadmap, gate Foundation, `AGENTS.md` do tema e índice gerado atualizados.
+- Verificações estáticas: PHP lint, parsing de YAML, status index (53 componentes) e `git diff --check` PASS. Testes e revisão visual não executados.
+- Cache do Runtime não reconstruído. A sincronização permanece bloqueada pelo `system_update_11501` que procura `aculta_link`; registro do snapshot e hash no handoff Bootstrap acima.

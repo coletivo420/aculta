@@ -60,7 +60,7 @@ $info = Yaml::parseFile($themeRoot . '/aculta420.info.yml');
 $assert(($info['base theme'] ?? NULL) === 'bootstrap', 'Drupal Bootstrap remains the sole base theme.');
 $assert(($info['enforce_prop_schemas'] ?? FALSE) === TRUE, 'SDC prop schemas are enforced.');
 $assert(is_string($info['version'] ?? NULL) && trim($info['version']) !== '', 'Theme metadata declares a non-empty version.');
-$assert(($info['version'] ?? NULL) === '0.7.0-dev.37', 'Theme Foundation gate tracks the current development version.');
+$assert(($info['version'] ?? NULL) === '0.7.0-dev.38', 'Theme Foundation gate tracks the current development version.');
 $discussionCss = file_get_contents($themeRoot . '/css/components/discussion.css');
 $assert(
   str_contains($discussionCss, '[data-aculta-discussion-announcement]')
@@ -153,6 +153,18 @@ $assert(!str_contains($hookSource, '\\Drupal::'), 'Theme hook class uses DI inst
 $assert(!str_contains($hookSource, 'aculta_portal'), 'Theme hook class has no direct dependency on aculta_portal.');
 
 $libraries = Yaml::parseFile($themeRoot . '/aculta420.libraries.yml');
+$bootstrap5Library = $libraries['bootstrap5-framework'] ?? [];
+$assert(
+  in_array('aculta420/bootstrap5-framework', $libraries['global']['dependencies'] ?? [], TRUE),
+  'ACULTA420 global assets load the Bootstrap 5 framework after the Drupal Bootstrap base theme.',
+);
+$assert(
+  isset($bootstrap5Library['css']['theme']['/libraries/bootstrap/dist/css/bootstrap.min.css'])
+    && isset($bootstrap5Library['js']['/libraries/bootstrap/dist/js/bootstrap.bundle.min.js'])
+    && is_file($root . '/web/libraries/bootstrap/dist/css/bootstrap.min.css')
+    && is_file($root . '/web/libraries/bootstrap/dist/js/bootstrap.bundle.min.js'),
+  'Bootstrap 5.3.8 CSS and bundle are available as local ACULTA420 assets.',
+);
 $libraryIntegrationDependencies = [];
 foreach ($libraries as $libraryName => $definition) {
   foreach (($definition['css'] ?? []) as $assets) {

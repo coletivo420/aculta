@@ -1,5 +1,11 @@
 # Roadmap — ACULTA420
 
+## 0.7.0-dev.38 — manter Bootstrap 5 do ACULTA420 com base Drupal Bootstrap 8.x (2026-11-03; visual DEFERRED)
+
+A base Drupal Bootstrap 8.x-3.45 fornece Bootstrap 3. O ACULTA420 carrega
+Bootstrap 5.3.8 localmente para seus componentes existentes e mantém as APIs
+`data-bs-*`; revisão visual e rebuild do cache no Runtime ainda pendentes.
+
 ## 0.7.0-dev.37 — metadata de compatibilidade Drupal 12 (2026-11-03; não validado)
 
 Manifest atualizado para `^11 || ^12`. A validação formal do tema continua

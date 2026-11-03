@@ -47,7 +47,7 @@ escopada ao Studio.
   na menor largura suportada, e regras para mais espaço devem ser acrescentadas
   progressivamente quando o conteúdo justificar. Não basta reduzir ou empilhar
   automaticamente uma interface desktop.
-- Use os breakpoints existentes do Bootstrap 5 como referências compartilhadas
+- ACULTA420 carrega Bootstrap 5.3.8 localmente; use seus breakpoints como referências compartilhadas
   (`sm` 576 px, `md` 768 px, `lg` 992 px, `xl` 1200 px, `xxl` 1400 px). Eles não
   representam modelos específicos de aparelho; escolha a faixa pelo momento em
   que o conteúdo ou a tarefa pede uma mudança. CSS Grid, Flexbox e container
@@ -140,6 +140,6 @@ WCAG 2.2, critério 1.4.10 Reflow](https://www.w3.org/WAI/WCAG22/Understanding/r
 
 ## Ícones de interface: Bootstrap Icons por padrão (regra permanente)
 
-- Ícones de interface usam os **Bootstrap Icons** por padrão (`<i class="bi bi-…">`, já carregados pelo bootstrap5 do tema).
+- Ícones de interface usam os **Bootstrap Icons** por padrão (`<i class="bi bi-…">`, carregados pela biblioteca `aculta420/bootstrap-icons`).
 - Outro pacote de ícones ou SVG de interface só com exceção registrada no próprio componente, com o motivo e a origem documentados.
 - Logos de marcas de terceiros (ex.: Mercado Pago) ficam em `web/themes/custom/aculta420/assets/brands/`, com `alt` do nome da marca.
