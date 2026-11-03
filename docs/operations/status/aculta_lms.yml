@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
 version: 0.1.0-dev.173
 state: Dev
-progress_note: "ADR-041 documentada em dev.173, sem mudança de código funcional. Consulta somente leitura no Runtime: 3 declarações xAPI com lesson_status_id=4; 0 têm entidade aculta_lms_progress correspondente. Key aculta_lms_xapi_token existe e está ativa com provider env; ACULTA_LMS_XAPI_TOKEN_SECRET presente (comprimento 64; valor não lido nem registrado). Medição de carga de escrita MariaDB marcada DEFERRED até existir ambiente production-like representativo e teste sintético autorizado antes da ativação xAPI em produção. Nenhuma linha do Runtime foi alterada."
+progress_note: "ADR-041 documentada em dev.173, sem mudança de código funcional. Consulta somente leitura no Runtime: 3 declarações xAPI com lesson_status_id=4; 0 têm entidade aculta_lms_progress correspondente. Key aculta_lms_xapi_token existe e está ativa com provider env; ACULTA_LMS_XAPI_TOKEN_SECRET presente (comprimento 64; conteúdo não exibido nem registrado). Medição de carga de escrita MariaDB marcada DEFERRED até existir ambiente production-like representativo e teste sintético autorizado antes da ativação xAPI em produção. Nenhuma linha do Runtime foi alterada."
 next_phase: 'Executar medição de carga quando houver ambiente production-like representativo; provisionar segredo em produção antes da ativação xAPI.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.

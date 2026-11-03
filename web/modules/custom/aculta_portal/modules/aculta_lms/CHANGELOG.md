@@ -7,7 +7,7 @@
   `lesson_status_id=4`, sem progresso ACULTA correspondente. Nenhuma linha foi
   alterada.
 - Confirmada a Key ativa `aculta_lms_xapi_token`, provider `env`, e a presença
-  da variável contratada com comprimento 64; o valor não foi lido nem
+  da variável contratada com comprimento 64; o conteúdo não foi exibido nem
   registrado. Provisionamento de produção continua pendente.
 - Medição de carga de escrita MariaDB: **DEFERRED** até haver ambiente
   production-like representativo e teste sintético autorizado antes da
