@@ -1,3 +1,11 @@
+## 0.1.0-dev.82 — corrige update de metadados de cartão
+
+- O update `10001` agora valida os quatro campos de cartão como definições de
+  bundle do tipo `credit_card` no Commerce. Remove a tentativa inválida de
+  instalá-los como campos base, que recebia definição nula para `card_type`.
+- Runtime confirmou os quatro campos pelo Entity Field Manager e a execução
+  direta do update retornou sucesso. Suíte Unit e `updatedb` completos pendentes.
+
 ## 0.1.0-dev.81 — instala metadados de cartão do Commerce
 
 - Update `10001` instala nos meios de pagamento os campos base `card_type`, `card_number`, `card_exp_month` e `card_exp_year` definidos pelo Commerce 3.x.

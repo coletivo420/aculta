@@ -8,24 +8,22 @@ declare(strict_types=1);
  */
 
 /**
- * Installs Commerce payment method card metadata fields from Commerce 3.x.
+ * Verifies Commerce credit card bundle field definitions.
  */
 function aculta_pagamentos_mercadopago_update_10001(): string {
-  $entity_type_id = 'commerce_payment_method';
-  $manager = \Drupal::entityDefinitionUpdateManager();
+  // Commerce defines card metadata as bundle fields on the credit_card payment
+  // method type. They are not base fields and must not be installed through
+  // EntityDefinitionUpdateManager::installFieldStorageDefinition().
   $definitions = \Drupal::service('entity_field.manager')
-    ->getBaseFieldDefinitions($entity_type_id);
-
-  foreach (['card_type', 'card_number', 'card_exp_month', 'card_exp_year'] as $field_name) {
-    if ($manager->getFieldStorageDefinition($field_name, $entity_type_id) === NULL) {
-      $manager->installFieldStorageDefinition(
-        $field_name,
-        $entity_type_id,
-        'commerce_payment',
-        $definitions[$field_name],
-      );
-    }
+    ->getFieldDefinitions('commerce_payment_method', 'credit_card');
+  $required_fields = ['card_type', 'card_number', 'card_exp_month', 'card_exp_year'];
+  $missing_fields = array_diff($required_fields, array_keys($definitions));
+  if ($missing_fields) {
+    throw new \Drupal\Core\Utility\UpdateException(sprintf(
+      'Commerce payment method type credit_card is missing expected bundle fields: %s.',
+      implode(', ', $missing_fields),
+    ));
   }
 
-  return 'Installed Commerce payment method card metadata fields.';
+  return 'Verified Commerce credit_card bundle fields; no redundant base fields were installed.';
 }
