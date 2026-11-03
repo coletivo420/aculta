@@ -1,3 +1,9 @@
+## 0.4.1-dev.61 — mapa único de superfícies (Fase 3.1, sem mudança de valor)
+
+- Novo `Domain/DomainSurfaceMap` reúne `DOMAIN_IDS`, `FRONT_PATHS`, `NO_DA_RAIZ` e `CAMINHOS_LEGADOS`. Os valores são os mesmos de antes.
+- `DomainPurposeManager`, `FrontPathPolicy` e `PurposeFrontPathProcessor::FRONT_PATHS` passam a ler desse mapa. A constante pública `FRONT_PATHS` continua existindo, agora como alias.
+- Testes: DEFERRED (sem `vendor/` nem Runtime nesta sessão).
+
 ## 0.4.1-dev.60 — resolvedor respeita a flag de purpose autoritativo
 
 - `DomainRouteSubscriber` do portal guarda o purpose das rotas com `_aculta_domain_purpose_authoritative` antes das regras de família e os restaura ao final. A ordem de prioridades não muda (-2049).

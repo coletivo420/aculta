@@ -82,4 +82,4 @@ Hosts não entram no esquema: vêm do Domain e de variável de ambiente via Drup
 - Teste de rota para `mcp_server.handle` com a ordem atual de subscribers.
 - Mapear as ~12 decisões fixas do `DomainPurposeRequestSubscriber`, uma a uma.
 - Confirmar a chave do recurso experimental do Domain (não bloqueante na opção b).
-- Atualizar `AGENTS.md`: a lista de purposes ainda tem 7 itens; o projeto tem 10.
+- Lista de purposes: premissa corrigida em 2026-11-02. O `AGENTS.md` do repositório não a lista; a lista de 7 está nas instruções do projeto no claude.ai, fora do repositório, e precisa passar a 10.

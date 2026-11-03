@@ -83,7 +83,7 @@ Cada etapa vira PR própria, com lista de entregas, limites e `RUNTIME STATUS: D
 
 1. **Acesso ao Runtime** para 3.0. Sem ele, nenhuma etapa é validada de verdade.
 2. **Confirmar a chave** do recurso experimental do Domain (não bloqueia D3).
-3. **Atualizar `AGENTS.md`**: a lista de purposes tem 7 itens; o projeto tem 10. Mudança fora deste plano, em PR própria.
+3. **Lista de purposes (premissa corrigida em 2026-11-02):** o `AGENTS.md` do repositório não lista purposes. A lista de 7 itens está nas instruções do projeto no claude.ai, fora do repositório. O responsável deve atualizá-la para 10 purposes lá. Nada a mudar no repositório.
 4. **Classificar a versão** de cada etapa (PATCH, MINOR ou MAJOR).
 5. **Corrigir o comentário** do `aculta_mcp` (ordem de execução).
 
