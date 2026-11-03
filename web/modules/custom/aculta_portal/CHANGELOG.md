@@ -1,3 +1,11 @@
+## 0.4.1-dev.72 — recupera migração de autores de revisão do Group
+
+- `update_11010` recupera a instalação parcial de `revision_uid`, cria a coluna
+  ausente no `groups_revision` sem assumir coluna de bundle, copia e verifica os
+  autores antes de remover `revision_user` e seus metadados legados.
+- Kernel `GroupRevisionAuthorUpdateKernelTest`: 1 teste / 14 assertions PASS,
+  cobrindo migração, recuperação parcial e idempotência. Runtime pendente.
+
 ## 0.4.1-dev.71 — entidades e campos sincronizados (2026-11-03)
 
 - Adicionados updates idempotentes nos módulos owners para instalar os tipos de entidade ausentes e reconciliar os schemas indicados pelo relatório Drupal.

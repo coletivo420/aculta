@@ -526,8 +526,9 @@ function aculta_portal_update_11009(): string {
 /**
  * Migrates Group revision authors from the legacy field to revision_uid.
  *
- * The value copy happens before the old field definition is uninstalled, so
- * existing revision authors remain intact across the field-name change.
+ * Group revision rows use a shared table without a bundle column, so the
+ * migration uses the Schema API and verifies copied authors before removing
+ * the legacy column and installed-definition metadata.
  */
 function aculta_portal_update_11010(): string {
   $entity_type_id = 'group';
@@ -536,30 +537,62 @@ function aculta_portal_update_11010(): string {
   $field_manager = \Drupal::service('entity_field.manager');
   $database = \Drupal::database();
   $schema = $database->schema();
+  $installed_schema = \Drupal::service('entity.last_installed_schema.repository');
+  $deleted_fields = \Drupal::service('entity_field.deleted_fields_repository');
 
   $new_definition = $field_manager->getBaseFieldDefinitions($entity_type_id)['revision_uid'] ?? NULL;
   if ($new_definition === NULL) {
     throw new \Drupal\Core\Utility\UpdateException('The current Group revision_uid field definition is unavailable.');
   }
-
   $old_definition = $manager->getFieldStorageDefinition('revision_user', $entity_type_id);
-  if ($manager->getFieldStorageDefinition('revision_uid', $entity_type_id) === NULL) {
+  $new_installed_definition = $manager->getFieldStorageDefinition('revision_uid', $entity_type_id);
+  if ($new_installed_definition === NULL) {
     $manager->installFieldStorageDefinition('revision_uid', $entity_type_id, 'group', $new_definition);
   }
 
+  // Group's shared revision table has no bundle column. Core's generic field
+  // deletion path assumes one while archiving a removed base field, so create
+  // and migrate the replacement column directly through the Schema API.
+  if (!$schema->tableExists($table)) {
+    throw new \Drupal\Core\Utility\UpdateException('The Group revision table is unavailable.');
+  }
+  if (!$schema->fieldExists($table, 'revision_uid')) {
+    $field_schema = $new_definition->getSchema();
+    $column = $field_schema['columns']['target_id'] ?? NULL;
+    if ($column === NULL) {
+      throw new \Drupal\Core\Utility\UpdateException('The Group revision_uid column schema is unavailable.');
+    }
+    $schema->addField($table, 'revision_uid', $column);
+    $schema->addIndex($table, 'revision_uid', ['revision_uid'], ['fields' => ['revision_uid' => $column]]);
+  }
+
   $migrated = 0;
-  if ($schema->tableExists($table) && $schema->fieldExists($table, 'revision_user') && $schema->fieldExists($table, 'revision_uid')) {
-    $migrated = $database->query('SELECT COUNT(*) FROM {groups_revision} WHERE revision_user IS NOT NULL')->fetchField();
-    $database->query('UPDATE {groups_revision} SET revision_uid = revision_user WHERE revision_user IS NOT NULL AND revision_uid IS NULL');
-    $unmatched = $database->query('SELECT COUNT(*) FROM {groups_revision} WHERE revision_user IS NOT NULL AND (revision_uid IS NULL OR revision_uid <> revision_user)')->fetchField();
-    if ((int) $unmatched !== 0) {
+  if ($schema->fieldExists($table, 'revision_user')) {
+    $conflicts = (int) $database->query("SELECT COUNT(*) FROM {{$table}} WHERE revision_user IS NOT NULL AND revision_uid IS NOT NULL AND revision_user <> revision_uid")->fetchField();
+    if ($conflicts !== 0) {
+      throw new \Drupal\Core\Utility\UpdateException('Group revision authors conflict between revision_user and revision_uid; the legacy field was retained.');
+    }
+    $migrated = (int) $database->query("SELECT COUNT(*) FROM {{$table}} WHERE revision_user IS NOT NULL")->fetchField();
+    $database->query("UPDATE {{$table}} SET revision_uid = revision_user WHERE revision_user IS NOT NULL AND revision_uid IS NULL");
+    $unmatched = (int) $database->query("SELECT COUNT(*) FROM {{$table}} WHERE revision_user IS NOT NULL AND (revision_uid IS NULL OR revision_uid <> revision_user)")->fetchField();
+    if ($unmatched !== 0) {
       throw new \Drupal\Core\Utility\UpdateException('Group revision authors could not be copied without conflicts; the legacy field was retained.');
     }
+    $schema->dropField($table, 'revision_user');
   }
 
+  // Synchronize installed-definition metadata without invoking Core's generic
+  // delete-field archival, which cannot infer a bundle for groups_revision.
   if ($old_definition !== NULL) {
-    $manager->uninstallFieldStorageDefinition($old_definition);
+    $installed_schema->deleteLastInstalledFieldStorageDefinition($old_definition);
+    $deleted_fields->removeFieldStorageDefinition($old_definition);
   }
+  foreach ($deleted_fields->getFieldDefinitions() as $deleted_definition) {
+    if ($deleted_definition->getTargetEntityTypeId() === $entity_type_id && $deleted_definition->getName() === 'revision_user') {
+      $deleted_fields->removeFieldDefinition($deleted_definition);
+    }
+  }
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
 
-  return sprintf('Installed Group revision_uid, migrated %d revision author value(s), and removed the obsolete revision_user definition.', (int) $migrated);
+  return sprintf('Installed Group revision_uid, migrated %d revision author value(s), and removed the obsolete revision_user column.', $migrated);
 }
