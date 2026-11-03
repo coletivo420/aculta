@@ -9,6 +9,7 @@ use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\CommentType;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
@@ -51,8 +52,6 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
     'flexible_permissions',
     'group',
     'gnode',
-    'lms',
-    'lms_classes',
     'aculta_lms',
     'key',
     'file',
@@ -80,7 +79,30 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
     $this->installEntitySchema('group_config_wrapper');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
-    $this->installConfig(['system', 'user', 'node', 'comment', 'group', 'lms', 'lms_classes']);
+    foreach ([
+      'group.type.lms_course',
+      'group.type.lms_class',
+      'group.relationship_type.lms_course-group_membership',
+      'group.relationship_type.lms_course-lms_classes',
+      'group.relationship_type.lms_class-group_membership',
+    ] as $config_id) {
+      $path = dirname(__DIR__, 9) . '/config/sync/' . $config_id . '.yml';
+      self::assertFileExists($path);
+      $this->container->get('config.factory')->getEditable($config_id)
+        ->setData(Yaml::parseFile($path))
+        ->save();
+    }
+    $this->installConfig(['system', 'user', 'node', 'comment', 'aculta_lms']);
+    $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
+    $this->container->get('group_relation_type.manager')->clearCachedPluginMaps();
+
+    $this->installConfig(['group']);
+    foreach ([
+      'field.field.group_relationship.lms_course-group_membership.group_roles',
+      'field.field.group_relationship.lms_class-group_membership.group_roles',
+    ] as $config_id) {
+      FieldConfig::create(Yaml::parseFile(dirname(__DIR__, 9) . '/config/sync/' . $config_id . '.yml'))->save();
+    }
 
     CommentType::create([
       'id' => 'aculta_discussion_post',
@@ -149,6 +171,7 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
       'label' => 'LMS Educator',
     ])->save();
     foreach ([
+      'group.role.lms_course-course_creator',
       'group.role.lms_course-member',
       'group.role.lms_class-member',
     ] as $roleConfigName) {
