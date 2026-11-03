@@ -459,3 +459,10 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
   escopo próprio, preservando dados e sem desinstalação automática.
 - Arquivos: `web/modules/custom/aculta_mcp/src/Hook/` e `tests/src/Unit/Hook/`,
   README do módulo, matriz Drupal 12 e este handoff.
+## Correção posterior — registro da sincronização LMS
+
+- O texto “Runtime ainda não sincronizado” na entrada inicial do LMS e “entrega
+  em preparação” na entrada de pagamentos foram redigidos antes dos pushes.
+  Ambos foram publicados e sincronizados: LMS `808879f6e2`, pagamentos
+  `a799f461c8`; `drush cr`, `updatedb:status` e `config:status` passaram após
+  cada push.
