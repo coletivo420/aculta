@@ -1,5 +1,15 @@
 # Estado da sessão
 
+## Handoff — implementação Conta Studio e Dashboard, 2026-11-03
+
+- **Objetivo:** concluir Dashboard, shell AJAX de Conta, preservar Perfil público independente e ajustar a hierarquia editorial Marley, conforme planos e auditoria.
+- **Base:** branch `dev`, após pedido explícito de sincronização destrutiva do usuário; patch de trabalho foi preservado fora do repositório e reaplicado após `git reset --hard origin/dev`. Base atual `50050dc4dbf07a46dadb861fba45cce32ec194b4`.
+- **Implementação local:** biblioteca Conta própria com `Drupal.Ajax`, histórico, metadados de título/breadcrumb, foco, estado e falha/retry; detalhes nativos para menu móvel; wrappers Grid próprios. Dashboard consulta providers e acesso de destino em `DomainPurposeManager`; identidade usa resolver público e falha fechada. Culturas registrado pelo owner Eventos. Marley remove destino Studio quebrado de “Criar” e aponta para a rota owner; moderação permanece gated.
+- **Verificações:** Studio Unit 65/631 PASS; lint PHP, PHPCS focal sem erros, `node --check`; Portal Drupal 11+ 1172 PASS, Foundation 354 PASS, Shell 13 PASS, slugs 410/0 PASS, índice 49 PASS. Boundary/map falham por dívida anterior em `aculta_paths`; docs UI falha por 13 tokens/atributos preexistentes de LMS/Eventos/uploader.
+- **Runtime:** hostname `toca`, Drupal 11.4.10, PHP 8.4.27, `aculta_runtime`; `updatedb:status` limpo. `config:status` mantém diferenças LMS já presentes, portanto não importar. Firefox visual não executado porque `DISPLAY` está ausente. Não houve cache rebuild, updatedb, config import nem mudança de dados.
+- **Pendências:** revisar contrato AJAX no browser, formulários depois de múltiplas trocas, teclado, viewport/zoom, temas claro/escuro, rede/timeout/403/404 e autorização por role. Só então marcar revisão visual/Runtime. Antes da entrega: revisão final de diffs, `git diff --check`, commit português, push fast-forward `origin/dev`, preflight e sincronização de código Runtime conforme AGENTS.
+- **Leitura para retomar:** `docs/portal/STUDIO-CONTA-AJAX-AUDITORIA.md`; `docs/portal/ACULTA-STUDIO-VISUAL-PLANNING.md`; `docs/portal/STUDIO-VISUAL-P1-PESSOAL-EDITORIAL.md`; `web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md`; `git status --short --branch`.
+
 ## Handoff — medição de carga MariaDB para xAPI, 2026-11-03
 
 - **Objetivo:** medir carga sintética de escrita para `aculta_lms_xapi_statement` em banco separado no Homelab, sem escrita em `aculta_runtime`.

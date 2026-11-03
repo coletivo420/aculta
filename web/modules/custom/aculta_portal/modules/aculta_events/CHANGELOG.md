@@ -1,5 +1,10 @@
 > Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
 
+## Implementação pendente de validação — provider Culturas no Studio (2026-11-03)
+
+- Adicionado `CulturasExperienceProvider` no módulo owner Eventos para fornecer o destino existente ao dashboard apenas a usuários autorizados pela policy de criação.
+- A versão `0.2.0-dev.9` permanece sem avanço até validação de Runtime; não houve alteração de grants, dados ou workflow.
+
 ## Revalidação 2026-11-01 — ciclo de vida e propostas
 
 - `EventOrganizationLifecycleKernelTest`: **27 testes / 888 assertions PASS**;

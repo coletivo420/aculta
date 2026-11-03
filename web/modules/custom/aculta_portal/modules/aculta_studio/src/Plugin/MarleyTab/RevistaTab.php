@@ -26,8 +26,7 @@ use Drupal\aculta_magazine\Access\EditorialCapability;
  * revisão, Publicados, Arquivados) through the listing of the Studio, which
  * keeps the node access of the owner. Editorial operations resolve on the main
  * domain, as the Core marks every node operation route as an admin route; the
- * Magazine keeps the route contract and the Studio consumes it. Criar keeps
- * the create route.
+ * Magazine keeps the route contract and the Studio consumes it.
  */
 #[MarleyTab(
   id: 'revista',
@@ -139,10 +138,7 @@ final class RevistaTab extends MarleyTabBase {
         // lateral deixa de ser exibido neste contexto.
         'suppress_sidebar' => TRUE,
         'actions' => [
-          $this->routeAction($this->t('Criar'), 'aculta_studio.section', [
-            'aba' => $this->getPluginId(),
-            'secao' => 'criar',
-          ], $account),
+          $this->routeAction($this->t('Criar'), 'aculta_magazine.studio_add', [], $account),
         ],
         'tabs' => $listTabs,
       ],

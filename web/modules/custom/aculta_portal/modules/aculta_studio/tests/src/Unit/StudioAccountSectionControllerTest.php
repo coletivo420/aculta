@@ -189,14 +189,17 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
       self::assertSame([$ownerMethod], $owner->called);
       self::assertSame('studio-account-section', $page['#attributes']['data-portal-ui']);
       self::assertSame($studioMethod === 'password' ? 'password' : ($studioMethod === 'documents' ? 'documents' : $ownerMethod),
-        $page['content']['content']['section']['#owner']);
+        $page['content']['owner']['content']['section']['#owner']);
       self::assertSame(['#type' => 'form'],
-        $page['content']['content']['section']['form']);
-      self::assertArrayNotHasKey('tabs', $page['content']['content']);
-      self::assertSame('item_list', $page['navigation']['#theme']);
-      self::assertCount(9, $page['navigation']['#items']);
+        $page['content']['owner']['content']['section']['form']);
+      self::assertArrayNotHasKey('tabs', $page['content']['owner']['content']);
+      self::assertSame('item_list', $page['navigation']['links']['#theme']);
+      self::assertSame('details', $page['navigation']['#type']);
+      self::assertTrue($page['navigation']['#open']);
+      self::assertCount(9, $page['navigation']['links']['#items']);
       $routes = array_map(static fn (array $link) => $link['#url']->getRouteName(),
-        $page['navigation']['#items']);
+      $page['navigation']['links']['#items']);
+      self::assertSame('aculta-studio-account-root', $page['#attributes']['id']);
       self::assertSame([
         'aculta_studio.account_data',
         'aculta_studio.account_address',
@@ -234,7 +237,7 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
     $resolver->method('getInstanceFromDefinition')->willReturn($owner);
     $page = (new StudioAccountSectionController($resolver, $this->account(TRUE, TRUE)))->address();
     $routes = array_map(static fn (array $link): string => $link['#url']->getRouteName(),
-      $page['navigation']['#items']);
+      $page['navigation']['links']['#items']);
     self::assertCount(8, $routes);
     self::assertNotContains('aculta_studio.account_documents', $routes);
   }
@@ -282,8 +285,8 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
     $document = $this->createMock(AccountDocumentInterface::class);
     $document->method('isAvailable')->willReturn(FALSE);
     $page = (new StudioAccountSectionController($resolver, $this->account(TRUE, TRUE), $document))->documents();
-    self::assertSame('Indisponível', $page['content']['content']['form']['unavailable']['#plain_text']);
-    $routes = array_map(static fn (array $item): string => $item['#url']->getRouteName(), $page['navigation']['#items']);
+    self::assertSame('Indisponível', $page['content']['owner']['content']['form']['unavailable']['#plain_text']);
+    $routes = array_map(static fn (array $item): string => $item['#url']->getRouteName(), $page['navigation']['links']['#items']);
     self::assertNotContains('aculta_studio.account_documents', $routes);
   }
 
@@ -327,8 +330,8 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
       ->with(SupportController::class)->willReturn($owner);
     $page = (new StudioAccountSectionController($resolver, $this->account(TRUE, TRUE)))->support();
     self::assertSame(1, $owner->calls);
-    self::assertSame($action, $page['content']['table']['#rows'][0]['data']);
-    self::assertSame(['user'], $page['content']['#cache']['contexts']);
+    self::assertSame($action, $page['content']['owner']['table']['#rows'][0]['data']);
+    self::assertSame(['user'], $page['content']['owner']['#cache']['contexts']);
     $item = $this->navigationItem($page, 'aculta_studio.account_support');
     self::assertSame('page', $item['#attributes']['aria-current']);
   }
@@ -358,7 +361,7 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
     ];
     $forms->expects(self::once())->method('getForm')->with(AppearanceForm::class)->willReturn($original);
     $page = (new StudioAccountSectionController($resolver, $this->account(TRUE, TRUE), NULL, $forms))->preferences();
-    self::assertSame($original, $page['content']);
+    self::assertSame($original, $page['content']['owner']);
     $item = $this->navigationItem($page, 'aculta_studio.account_preferences');
     self::assertSame('page', $item['#attributes']['aria-current']);
     self::assertSame(0, $page['#cache']['max-age']);
@@ -400,7 +403,7 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
    *   The matching link render array.
    */
   private function navigationItem(array $page, string $route): array {
-    foreach ($page['navigation']['#items'] as $item) {
+    foreach ($page['navigation']['links']['#items'] as $item) {
       if ($item['#url']->getRouteName() === $route) {
         return $item;
       }

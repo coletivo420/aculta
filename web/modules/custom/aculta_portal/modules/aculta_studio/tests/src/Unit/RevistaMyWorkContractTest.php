@@ -32,7 +32,8 @@ final class RevistaMyWorkContractTest extends UnitTestCase {
     self::assertIsString($source);
     self::assertStringContainsString("'suppress_sidebar' => TRUE", $source);
     self::assertStringContainsString("'sidebar' => FALSE", $source);
-    self::assertStringContainsString("'secao' => 'criar'", $source);
+    self::assertStringContainsString("'aculta_magazine.studio_add'", $source);
+    self::assertStringNotContainsString("'secao' => 'criar'", $source);
     self::assertStringContainsString("'weight' => count(\$listTabs)", $source);
     self::assertStringContainsString("'label' => \$this->t('Comentários e moderação')", $source);
     self::assertStringContainsString("'listing' => \$moderationListing", $source);

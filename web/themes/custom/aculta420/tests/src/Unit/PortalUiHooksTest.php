@@ -535,7 +535,7 @@ final class PortalUiHooksTest extends UnitTestCase {
   public function testMapsTokensPreviouslyMissingFromTheThemeRegistry(): void {
     $variables = [
       'attributes' => new Attribute([
-        'data-portal-ui' => 'consent-banner studio-profile-editor studio-account-section notice-origin-section notice-origin-heading notice-related-group',
+        'data-portal-ui' => 'consent-banner studio-profile-editor studio-account-section studio-account-navigation notice-origin-section notice-origin-heading notice-related-group',
       ]),
     ];
 
@@ -544,7 +544,9 @@ final class PortalUiHooksTest extends UnitTestCase {
     $attributes = $variables['attributes'];
     $this->assertTrue($attributes->hasClass('aculta-consent'));
     $this->assertTrue($attributes->hasClass('aculta-profile-editor'));
-    $this->assertTrue($attributes->hasClass('studio__layout'));
+    $this->assertTrue($attributes->hasClass('studio-account-section'));
+    $this->assertTrue($attributes->hasClass('studio-account-section__navigation'));
+    $this->assertFalse($attributes->hasClass('studio__layout'));
     $this->assertTrue($attributes->hasClass('aculta-messenger-notice-origin'));
     $this->assertTrue($attributes->hasClass('aculta-messenger-notice-origin__heading'));
     $this->assertTrue($attributes->hasClass('aculta-messenger-notice-related-group'));

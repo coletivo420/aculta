@@ -5,3 +5,11 @@ navigation:
     - core/drupal
     - core/drupal.ajax
     - core/once
+
+account-navigation:
+  js:
+    js/account-navigation.js: {}
+  dependencies:
+    - core/drupal
+    - core/drupal.ajax
+    - core/once

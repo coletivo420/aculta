@@ -11,6 +11,8 @@ use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 
 /**
  * Private account experience: never edit the public/community profile here.
@@ -22,6 +24,9 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
   public function __construct(
     private readonly ?AccountDocumentInterface $documents = NULL,
     private readonly ?DomainPurposeManager $domainPurposes = NULL,
+    private readonly ?EntityTypeManagerInterface $entities = NULL,
+    private readonly ?AccountInterface $currentUser = NULL,
+    private readonly ?AuthorIdentityResolver $identityResolver = NULL,
   ) {}
 
   /**
@@ -73,33 +78,23 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
    */
   public function build(): array {
     $items = $this->links();
-    $suiteLinks = [];
-    foreach ([
-      ['account', 'aculta_studio.home', new TranslatableMarkup('Marley')],
-      ['courses', 'aculta_lms.student_dashboard', new TranslatableMarkup('Ganjalab')],
-      ['wiki', 'aculta_studio.we_sativa', new TranslatableMarkup('ACULTA STUDIO WE SATIVA')],
-      ['shop', 'aculta_commerce.green_stash', new TranslatableMarkup('ACULTA STUDIO GREEN STASH')],
-      ['eventos', 'aculta_events.organizer_dashboard', new TranslatableMarkup('Culturas')],
-    ] as [$purpose, $route, $label]) {
-      $url = $this->domainPurposes?->routeUrl($purpose, $route);
-      if ($url !== NULL) {
-        $suiteLinks[] = [
-          '#type' => 'link',
-          '#title' => $label,
-          '#url' => $url,
-        ];
-      }
-    }
     return [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'account-entry'],
       'heading' => [
         '#type' => 'html_tag',
         '#tag' => 'h1',
-        '#value' => 'Minha Conta',
+        '#value' => 'Studio Dashboard',
       ],
       'description' => [
         '#plain_text' => new TranslatableMarkup('Acesse seus dados, segurança e experiências ACULTA.'),
+      ],
+      'identity' => $this->identity(),
+      'profile_link' => [
+        '#type' => 'link',
+        '#title' => new TranslatableMarkup('Editar Meu Perfil'),
+        '#url' => Url::fromRoute('aculta_studio.profile'),
+        '#attributes' => ['data-portal-ui' => 'studio-profile-entry'],
       ],
       'sections' => [
         '#theme' => 'item_list',
@@ -112,7 +107,7 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
       ],
       'suites' => [
         '#theme' => 'item_list',
-        '#items' => $suiteLinks,
+        '#items' => [],
         '#attributes' => ['data-portal-ui' => 'account-experiences'],
       ],
       '#cache' => [
@@ -120,6 +115,37 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
         'max-age' => 0,
       ],
     ];
+  }
+
+  /**
+   * Builds current-user identity from the ACULTA User identity resolver.
+   */
+  private function identity(): array {
+    if ($this->entities === NULL || $this->currentUser === NULL || !$this->currentUser->id()) {
+      return [];
+    }
+    $user = $this->entities->getStorage('user')->load($this->currentUser->id());
+    if ($user === NULL) {
+      return [];
+    }
+    $identity = $this->identityResolver?->resolve($user, 'profile_full');
+    if ($identity !== NULL) {
+      return [
+        '#type' => 'container',
+        '#attributes' => ['data-portal-ui' => 'studio-account-identity'],
+        'name' => [
+          '#plain_text' => $identity->toArray()['display_name'] ?? '',
+        ],
+        '#cache' => [
+          'contexts' => ['user', 'user.permissions'],
+          'tags' => array_merge($user->getCacheTags(), $identity->getCacheTags()),
+          'max-age' => 0,
+        ],
+      ];
+    }
+    // A Drupal display name may be a private/legal name. Hide identity until
+    // the public identity owner is available instead of leaking that fallback.
+    return [];
   }
 
   /**

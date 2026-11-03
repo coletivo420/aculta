@@ -21,7 +21,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  *
  * Address normalization, security and OAuth first-password
  * handling are delegated to the unchanged original Portal controller.
- * The basics form is scoped by PortalHooks; the legacy /dados form stays intact.
+ * PortalHooks scopes the basics form; the legacy /dados form stays intact.
  * Studio owns only the route and the contextual navigation presentation.
  */
 final class StudioAccountSectionController {
@@ -182,9 +182,29 @@ final class StudioAccountSectionController {
   private function compose(array $content, string $section): array {
     return [
       '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'studio-account-section'],
-      'navigation' => $this->navigation($section),
-      'content' => $content,
+      '#attributes' => [
+        'data-portal-ui' => 'studio-account-section',
+        'data-aculta-account-root' => '',
+        'id' => 'aculta-studio-account-root',
+      ],
+      'live' => [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => [
+          'data-aculta-account-live' => '',
+          'aria-live' => 'polite',
+          'aria-atomic' => 'true',
+        ],
+      ],
+      'navigation' => [
+        '#type' => 'details',
+        '#title' => new TranslatableMarkup('Seções da conta'),
+        '#open' => TRUE,
+        '#attributes' => ['data-portal-ui' => 'studio-account-navigation'],
+        'links' => $this->navigation($section),
+      ],
+      'content' => ['#type' => 'container', '#attributes' => ['data-aculta-account-main' => ''], 'owner' => $content],
+      '#attached' => ['library' => ['aculta_studio/account-navigation']],
       '#cache' => [
         'contexts' => ['user', 'user.permissions', 'url.site', 'route'],
         'max-age' => 0,
@@ -200,15 +220,15 @@ final class StudioAccountSectionController {
    */
   private function navigation(string $section): array {
     $destinations = [
-      'dados' => ['Dados cadastrais', 'aculta_studio.account_data'],
-      'endereco' => ['Endereço', 'aculta_studio.account_address'],
-      'documentos' => ['Documentos', 'aculta_studio.account_documents'],
-      'seguranca' => ['E-mail e segurança', 'aculta_studio.account_security'],
-      'senha' => ['Senha', 'aculta_studio.account_password'],
-      'conexoes' => ['Contas conectadas', 'aculta_studio.account_connections'],
-      'pedidos' => ['Meus pedidos', 'aculta_studio.account_orders'],
-      'apoio' => ['Meu apoio', 'aculta_studio.account_support'],
-      'preferencias' => ['Preferências da conta', 'aculta_studio.account_preferences'],
+      'dados' => [new TranslatableMarkup('Dados cadastrais'), 'aculta_studio.account_data'],
+      'endereco' => [new TranslatableMarkup('Endereço'), 'aculta_studio.account_address'],
+      'documentos' => [new TranslatableMarkup('Documentos'), 'aculta_studio.account_documents'],
+      'seguranca' => [new TranslatableMarkup('E-mail e segurança'), 'aculta_studio.account_security'],
+      'senha' => [new TranslatableMarkup('Senha'), 'aculta_studio.account_password'],
+      'conexoes' => [new TranslatableMarkup('Contas conectadas'), 'aculta_studio.account_connections'],
+      'pedidos' => [new TranslatableMarkup('Meus pedidos'), 'aculta_studio.account_orders'],
+      'apoio' => [new TranslatableMarkup('Meu apoio'), 'aculta_studio.account_support'],
+      'preferencias' => [new TranslatableMarkup('Preferências da conta'), 'aculta_studio.account_preferences'],
     ];
 
     if (!$this->documents?->isAvailable()) {
@@ -217,13 +237,13 @@ final class StudioAccountSectionController {
 
     $items = [];
     foreach ($destinations as $key => [$label, $route]) {
-      $attributes = ['data-portal-ui' => 'studio-account-nav-link'];
+      $attributes = ['data-portal-ui' => 'studio-account-nav-link', 'data-aculta-account-link' => ''];
       if ($key === $section) {
         $attributes['aria-current'] = 'page';
       }
       $items[] = [
         '#type' => 'link',
-        '#title' => new TranslatableMarkup($label),
+        '#title' => $label,
         '#url' => Url::fromRoute($route),
         '#attributes' => $attributes,
       ];

@@ -1,7 +1,7 @@
 # Conta Studio: auditoria AJAX e plano de recuperação
 
-Data: 2026-11-03. Estado: diagnóstico estático e plano; implementação e homologação pendentes.
-Referência de integração documental: `60c4deb98c7776ffaaeabc75d3fcbb0da7146d69` em dev. Arquivos consultados na dev nesta sessão; revalidar no HEAD antes de implementar.
+Data: 2026-11-03. Estado: implementação local em desenvolvimento; homologação integrada Runtime/browser pendente.
+Implementação local baseada em código e contratos do HEAD `50050dc4d`; revisão visual integrada pendente.
 Escopo: entrada account, seções privadas /conta/* e comparação com /conta-legada e suas seções. Não altera grants, entidades ou rotas.
 
 ## Evidências e limites
@@ -21,7 +21,17 @@ As capturas fornecidas pelo responsável mostram /conta/dados com navegação, d
 
 Arquivos acima são relativos a web/modules/custom/aculta_portal, exceto arquivos do tema, relativos a web/themes/custom/aculta420. Controller e JS Studio ficam em modules/aculta_studio.
 
-Conclusão estática: falta integração entre a navegação contextual da Conta Studio e os contratos AJAX analisados. O layout tem um problema adicional de composição/mapeamento. Não declarar causa única de todas as falhas de Runtime nem homologar rotas com base em HTTP 200.
+Conclusão confirmada no código: as rotas Conta Studio não anexavam uma biblioteca que consumisse os links de navegação da Conta. `account-navigation.js` só é ligado ao shell legado e `studio-navigation.js` só seleciona níveis Marley; portanto os links Studio faziam navegação normal. O mapeamento visual `studio-account-section → studio__layout` introduzia a geometria flex editorial sem wrappers de sidebar/main, compondo navegação e formulário na mesma linha. Corrigido localmente com biblioteca dedicada, atributos elegíveis e layout próprio Grid. O comportamento integrado em navegador ainda não foi homologado.
+
+## Implementação local — 2026-11-03
+
+- `StudioAccountSectionController` mantém os render arrays owners intactos em `content.owner`, adiciona root estável, região `aria-live`, navegação própria e biblioteca `aculta_studio/account-navigation`.
+- O cliente intercepta somente links marcados, same-origin e sem modificadores/target/download; usa `Drupal.Ajax` com `replaceWith`, `pushState`/`popstate`, metadados server-side do renderer de Account, foco, estado busy e fallback/retry após erro/timeout. O detalhe nativo da navegação mantém abrir/fechar no mobile e preserva o estado ao trocar a raiz. Cada resposta passa pelo processamento Drupal e seus behaviors; confirmar em Runtime.
+- O layout tema usa navegação e conteúdo em Grid, coluna em viewport estreito e menu/conteúdo em colunas a partir de 768px; classes visuais vêm do ACULTA420.
+- Dashboard usa identidade `AuthorIdentityResolver`, link autorizado para Perfil e providers registrados; cada card exige disponibilidade e AccessResult permitido e resolve destino com `DomainPurposeManager`. Green Stash permanece provider integrado. Culturas usa `EventPermissionPolicy::createEventAccessResult` além do gate Portal.
+- Marley já exibia ação de seção abaixo do título; “Criar” foi removido como seção lateral duplicada. A aba de comentários segue condicionada ao gate proprietário. A captura funcional no Runtime continua pendente.
+- Focais locais: Studio Unit 65 testes / 631 assertions PASS; `validate-aculta-portal-drupal11.php` 1.172 checks PASS; Foundation 354 PASS; Shell 13 PASS; public slugs 410/0 PASS; status index 49 PASS; PHP lint, PHPCS focal sem erros e `node --check` PASS. O Firefox real não foi executado (`DISPLAY` indisponível); AJAX real, formulários após trocas, teclado, zoom, claro/escuro, rede/timeout e permissões seguem pendentes.
+- `validate-module-theme-boundary.php` falha por literais preexistentes em `aculta_paths`; `validate-module-theme-map.php` falha porque `aculta_paths` não consta no mapa; `validate-portal-ui-docs.php` também aponta tokens/atributos preexistentes e agora documenta os atributos desta implementação. Não declarar aceite visual integrado.
 
 ## Preservação do legado
 
@@ -69,4 +79,4 @@ C0-C4 são pré-requisitos para declarar P1.2 funcionalmente concluída. Não ap
 - [P1 pessoal/editorial](STUDIO-VISUAL-P1-PESSOAL-EDITORIAL.md)
 - [Roadmap Studio](../../web/modules/custom/aculta_portal/modules/aculta_studio/docs/ROADMAP.md)
 
-Limites desta entrega: documentação apenas, sem alterações funcionais, testes browser, deploy ou sincronização de Runtime. Gates anteriores permanecem históricos com seus escopos; não comprovam AJAX atual das seções /conta/*.
+Limites desta implementação: não foi executada no navegador nem sincronizada após commit; portanto não declara homologação visual integrada. Gates anteriores permanecem históricos com seus escopos; não comprovam AJAX atual das seções /conta/*.

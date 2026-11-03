@@ -1,8 +1,8 @@
 # Studio Visual P1 - estruturas pessoais e editoriais
 
-## Dependência funcional P1.2 - 2026-11-03
+## Implementação P1.1/P1.2 e estado P1.3 - 2026-11-03
 
-P1.2 deve executar primeiro C0-C4 da [auditoria AJAX da Conta](STUDIO-CONTA-AJAX-AUDITORIA.md): baseline, composição do shell, integração AJAX, histórico/estado e formulários. Rotas Studio próprias já existem; não criar outro prefixo nem duplicar Form API. Recuperar padrões úteis de /conta-legada com revisão dos riscos de histórico mobile, erro e concorrência. O mapeamento studio-account-section → studio__layout exige revisão para evitar formulário comprimido no desktop. P1.2 permanece pendente de implementação e homologação; gates antigos não demonstram funcionamento das seções atuais.
+P1.1 e a implementação local de P1.2 estão em código: dashboard de Conta, identidade provider-backed, shell Grid dedicado e navegação AJAX própria. Preserva Form API e owners. Focais Studio Unit 65/631 PASS. P1.2 ainda não está homologada no browser/Runtime nem cobre a matriz de formulários após trocas, falha/sessão, modo escuro, zoom e resize. Marley mantém listagem, ação abaixo do título e moderação condicional owner-backed; confirmar visualmente no Runtime.
 
 
 **Tipo:** plano documental para execução incremental.  

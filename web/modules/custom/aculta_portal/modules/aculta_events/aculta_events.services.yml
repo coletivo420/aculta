@@ -8,6 +8,9 @@ services:
   aculta_events.permission_policy:
     class: Drupal\aculta_events\Access\EventPermissionPolicy
     arguments: ['@config.factory', '@entity_type.manager']
+  aculta_studio.experience.culturas:
+    class: Drupal\aculta_events\Experience\CulturasExperienceProvider
+    arguments: ['@aculta_events.permission_policy']
   aculta_events.organization_suggestion:
     class: Drupal\aculta_events\Organization\OrganizationSuggestionService
     arguments: ['@entity_type.manager', '@aculta_events.permission_policy', '@lock', '@datetime.time', '@database']

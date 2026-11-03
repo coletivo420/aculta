@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Unit;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\aculta_studio\Controller\AccountController;
 use Drupal\aculta_studio\Experience\StudioExperienceManager;
 use Drupal\aculta_studio\Experience\StudioExperienceProviderInterface;
@@ -28,7 +33,7 @@ final class AccountControllerTest extends UnitTestCase {
    */
   public function testMissingProviderIsNotFound(): void {
     $this->expectException(NotFoundHttpException::class);
-    (new AccountController(new StudioExperienceManager(), $this->createMock(AccountInterface::class)))->page();
+    (new AccountController(new StudioExperienceManager(), $this->createMock(AccountInterface::class), $this->domains()))->page();
   }
 
   /**
@@ -38,7 +43,7 @@ final class AccountControllerTest extends UnitTestCase {
     $manager = new StudioExperienceManager();
     $manager->addProvider($this->provider(FALSE));
     $this->expectException(AccessDeniedHttpException::class);
-    (new AccountController($manager, $this->createMock(AccountInterface::class)))->page();
+    (new AccountController($manager, $this->createMock(AccountInterface::class), $this->domains()))->page();
   }
 
   /**
@@ -47,8 +52,10 @@ final class AccountControllerTest extends UnitTestCase {
   public function testAuthorizedProviderBuilds(): void {
     $manager = new StudioExperienceManager();
     $manager->addProvider($this->provider(TRUE));
-    self::assertSame(['#type' => 'container', '#account' => TRUE],
-      (new AccountController($manager, $this->createMock(AccountInterface::class)))->page());
+    $page = (new AccountController($manager, $this->createMock(AccountInterface::class), $this->domains()))->page();
+
+    self::assertTrue($page['#account']);
+    self::assertSame([], $page['suites']['#items']);
   }
 
   /**
@@ -109,6 +116,18 @@ final class AccountControllerTest extends UnitTestCase {
       }
 
     };
+  }
+
+  /**
+   * Creates a Domain resolver for controller tests.
+   */
+  private function domains(): DomainPurposeManager {
+    return new DomainPurposeManager(
+      $this->createMock(EntityTypeManagerInterface::class),
+      $this->createMock(DomainNegotiatorInterface::class),
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
+    );
   }
 
 }

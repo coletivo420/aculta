@@ -20,6 +20,11 @@
 
 | Atributo | Família | Uso (JS) | Arquivos |
 | --- | --- | --- | ---: |
+| `data-aculta-account-root` | exato | sim | 2 |
+| `data-aculta-account-live` | exato | sim | 2 |
+| `data-aculta-account-main` | exato | não | 1 |
+| `data-aculta-account-link` | exato | sim | 2 |
+| `data-aculta-account-retry` | exato | sim | 1 |
 
 Atributos: não há wildcard. Todo nome usado no código aparece na tabela acima (o gate reprova o que não estiver).
 | `data-aculta-account-list` | exato | sim | 2 |
@@ -576,6 +581,8 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `document-download-item` | `aculta-download-meta-item` | `web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Plugin/Field/FieldFormatter/DownloadWithMetaFormatter.php` |
 | `document-download-link` | `download-link` | `web/modules/custom/aculta_portal/modules/aculta_document_viewer/src/Plugin/Field/FieldFormatter/DownloadWithMetaFormatter.php` |
 | `studio-shell` | `studio` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/MarleyController.php` |
+| `studio-account-navigation` | `studio-account-section__navigation` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |
+| `studio-account-identity` | `studio-account-identity` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/AccountExperienceProvider.php` |
 | `studio-course-authoring` | `studio-course-authoring` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/CourseAuthoringController.php` |
 | `studio-course-authoring-back` | `studio-course-authoring__back` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/CourseAuthoringController.php` |
 | `studio-marley-entry` | `btn btn-outline-primary studio__action` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Experience/MarleyExperienceProvider.php` |
@@ -610,7 +617,7 @@ Montadas por concatenação no módulo (o gate não enxerga cada valor; a famíl
 | `studio-saved-content` | `studio studio-saved-page` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-page-title` | `page-title` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
 | `studio-saved-tabs` | `nav nav-tabs studio-saved-tabs` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/SavedContentController.php` |
-| `studio-account-section` | `studio studio__layout` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |
+| `studio-account-section` | `studio studio-account-section` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |
 | `studio-account-nav-link` | `nav-link studio__link` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |
 | `studio-account-contextual-nav` | `nav nav-tabs studio__subtabs` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioAccountSectionController.php` |
 | `studio-hub` | `studio` | `web/modules/custom/aculta_portal/modules/aculta_studio/src/Controller/StudioHubController.php` |

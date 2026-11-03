@@ -7,6 +7,8 @@ namespace Drupal\aculta_studio\Experience;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\aculta_portal\Domain\DomainPurposeManager;
 
 /**
  * Registry of independent Studio experiences, including Ganjalab and WE SATIVA.
@@ -19,6 +21,44 @@ final class StudioExperienceManager {
    * @var array<string, \Drupal\aculta_studio\Experience\StudioExperienceProviderInterface>
    */
   private array $providers = [];
+
+  /**
+   * Builds authorized cross-purpose entry links for available providers.
+   */
+  public function buildEntries(AccountInterface $account, DomainPurposeManager $domains, array $exclude = []): array {
+    $items = [];
+    foreach ($this->providers as $provider) {
+      if (in_array($provider->id(), $exclude, TRUE) || !$provider->available()) {
+        continue;
+      }
+      $access = $provider->access($account);
+      if (!$access->isAllowed()) {
+        continue;
+      }
+      $url = $domains->routeUrl($provider->purpose(), $provider->routeName());
+      if ($url === NULL) {
+        continue;
+      }
+      $routeAccess = $domains->runInPurpose(
+        $provider->purpose(),
+        static fn () => $url->access($account, TRUE),
+      );
+      if (!$routeAccess instanceof AccessResultInterface || !$routeAccess->isAllowed()) {
+        continue;
+      }
+      $cache = CacheableMetadata::createFromObject($access);
+      $cache->addCacheableDependency($routeAccess);
+      $cacheArray = [];
+      $cache->applyTo($cacheArray);
+      $items[] = [
+        '#type' => 'link',
+        '#title' => $provider->label(),
+        '#url' => $url,
+        '#cache' => $cacheArray['#cache'],
+      ];
+    }
+    return $items;
+  }
 
   /**
    * Adds an experience without silently shadowing an existing identifier.
@@ -42,6 +82,15 @@ final class StudioExperienceManager {
    */
   public function all(): array {
     return $this->providers;
+  }
+
+  /**
+   * Registers an optional owner provider only when that owner is installed.
+   */
+  public function addOptionalProvider(?StudioExperienceProviderInterface $provider): void {
+    if ($provider !== NULL) {
+      $this->addProvider($provider);
+    }
   }
 
   /**
