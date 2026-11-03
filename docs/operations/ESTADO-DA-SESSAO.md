@@ -1,5 +1,15 @@
 # Estado da sessão
 
+## Handoff documental - Conta Studio AJAX, 2026-11-03
+
+- Objetivo: aprofundar comparação Conta/legado e preparar execução da correção.
+- Entrega: docs/portal/STUDIO-CONTA-AJAX-AUDITORIA.md, integração nos planos ACULTA-STUDIO-VISUAL-PLANNING.md e STUDIO-VISUAL-P1-PESSOAL-EDITORIAL.md, e no roadmap do aculta_studio.
+- Evidências: rotas distintas; AccountShellBuilder anexa AJAX legado; StudioAccountSectionController emite links comuns; JS Studio editorial limitado por seletores e histórico Marley; PortalUiHooks mapeia conta para layout flex; riscos de histórico mobile/timeout legados documentados.
+- Verificação: leitura de fontes e revisão documental; nenhum teste de aplicação executado. Código funcional não alterado. Publicação via API GitHub sobre dev em commit único; sem checkout local.
+- Runtime: sem acesso nesta sessão; sincronização e homologação DEFERRED. Próximo agente deve cumprir preflight operacional antes de sincronizar.
+- Retomar: auditoria C0-C5 e P1.2; registrar DOM/rede/estilos computados antes de corrigir. Handoffs de outras frentes abaixo preservados.
+
+
 ## Handoff mais recente — ADR-042 P5 concluído, 2026-11-03
 
 - **Objetivo:** corte P5 do LMS contrib concluído. P6 e reescrita de histórico não executados.

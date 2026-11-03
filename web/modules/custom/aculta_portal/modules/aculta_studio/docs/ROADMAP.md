@@ -1,3 +1,7 @@
+## Pendência prioritária: Conta Studio AJAX e composição - 2026-11-03
+
+Estado: diagnóstico estático documentado; correção e homologação pendentes. A Conta tem rotas /conta/* próprias, porém os links contextuais não atendem ao contrato do JS editorial de Marley nem ao shell legado. O tema associa studio-account-section a studio__layout, cujo flex horizontal exige wrappers apropriados. Executar C0-C5 na [auditoria da Conta](../../../../../../../docs/portal/STUDIO-CONTA-AJAX-AUDITORIA.md), vinculada ao [plano P1](../../../../../../../docs/portal/STUDIO-VISUAL-P1-PESSOAL-EDITORIAL.md). C0-C4 bloqueiam conclusão funcional de P1.2. Preservar os gates históricos abaixo com seu commit/escopo; não interpretá-los como homologação do AJAX atual de /conta/*. Runtime não acessado nesta auditoria.
+
 > Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
 
 ## Atualização de escopo e fluxo — Marley / Ganjalab (2026-11-01)

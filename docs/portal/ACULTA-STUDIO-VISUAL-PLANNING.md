@@ -1,5 +1,10 @@
 # ACULTA Studio — plano documental visual e de navegação
 
+## Retificação de 2026-11-03: AJAX da Conta
+
+A presença de studio-navigation.js não demonstra cobertura global: o comportamento analisado atende navegação editorial, com histórico limitado a Marley. A Conta em /conta/* usa links contextuais comuns e exige integração própria. Priorizar C0-C4 da [auditoria e plano de recuperação](STUDIO-CONTA-AJAX-AUDITORIA.md) antes de concluir a aplicação visual da Conta. O diagnóstico também identifica mapeamento de layout e riscos no histórico mobile legado. Estado: diagnóstico estático; implementação e Runtime pendentes.
+
+
 **Estado:** planejamento para agentes; não é especificação de implementação já aprovada nem registro de homologação.  
 **Branch de referência:** `dev`.  
 **Objetivo:** orientar revisões visuais, documentação, roadmaps e futuras implementações das interfaces Studio, usando as estruturas existentes e a identidade real do tema ACULTA420.
