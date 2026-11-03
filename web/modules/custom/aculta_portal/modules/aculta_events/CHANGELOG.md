@@ -513,5 +513,5 @@
   depreciações upstream. `aculta_simpletest`, sem escrita no Runtime.
 ## Escopo do bloco Próximos eventos na landing principal (2026-11-03)
 
-- A configuração `block.block.aculta420_aculta_events_upcoming` combina a visibilidade do purpose `main` com o caminho `<front>`. O bloco não aparece mais em páginas internas do domínio principal, incluindo o Perfil público. Importar `config/sync`; sem mudança de conteúdo ou dados.
+- A configuração `block.block.aculta420_aculta_events_upcoming` combina a visibilidade do purpose `main` com o caminho `<front>`. O bloco não aparece mais em páginas internas do domínio principal, incluindo o Perfil público. Runtime atualizado após snapshot; HTTP anônimo confirmou landing `200` com o bloco e Perfil público `200` sem ele. Sem mudança de conteúdo ou dados.
 

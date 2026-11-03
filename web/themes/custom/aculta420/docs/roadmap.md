@@ -1,9 +1,9 @@
 # Roadmap — ACULTA420
 
-## 0.7.0-dev.36 — Dashboard compacto e escopo da caixa de eventos (2026-11-03; navegador parcial)
+## 0.7.0-dev.36 — Dashboard compacto e escopo da caixa de eventos (2026-11-03; Runtime PASS)
 
 - Dashboard: intervalo de 12 px entre blocos e ações, títulos internos sem margens padrão. Firefox ESR com CSS candidato local passou as verificações específicas em 320/390/768/1280 px; sem overflow e grade 1/2 colunas.
-- A visibilidade de Próximos eventos combina o purpose `main` com `<front>`, para aparecer somente na landing principal. A configuração requer import no Runtime após snapshot. A verificação visual candidata geral teve 126 PASS, 2 FAIL (carregamento de Montserrat no harness e moldura de abas secundárias) e 21 checks condicionais SKIP; os dois FAIL não medem espaçamento do Dashboard e ficam registrados, sem aceite geral desta execução.
+- A visibilidade de Próximos eventos combina o purpose `main` com `<front>`. Snapshot, import do único objeto, cache rebuild e checagem de configuração passaram. HTTP anônimo confirmou a caixa presente na landing principal e ausente no Perfil público. Firefox ESR contra o Runtime: 106/106 PASS, 21 SKIP condicionais, zero falhas. Uma execução anterior com CSS candidato injetado teve dois FAILs de harness; a execução integrada foi aprovada após rebuild.
 
 ## Reduzir intervalo entre título global e conteúdo — 0.7.0-dev.35 (2026-11-03; Studio validado no Runtime)
 
