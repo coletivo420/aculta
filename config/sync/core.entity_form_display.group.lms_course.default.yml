@@ -14,7 +14,6 @@ dependencies:
     - image.style.thumbnail
   module:
     - image
-    - lms
     - aculta_lms_resources
     - path
     - text
@@ -98,25 +97,11 @@ content:
     settings:
       include_locked: true
     third_party_settings: {  }
-  lessons:
-    type: lms_reference_table
-    weight: 1
-    region: content
-    settings:
-      view_data: lessons_selection.default
-    third_party_settings: {  }
   path:
     type: path
     weight: 30
     region: content
     settings: {  }
-    third_party_settings: {  }
-  revisit_mode:
-    type: boolean_checkbox
-    weight: 2
-    region: content
-    settings:
-      display_label: true
     third_party_settings: {  }
   status:
     type: boolean_checkbox

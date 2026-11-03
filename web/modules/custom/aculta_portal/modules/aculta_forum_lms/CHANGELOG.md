@@ -1,3 +1,14 @@
+## `0.1.0-dev.32` — discussão referencia atividades ACULTA no corte P5
+
+- O campo `field_lms_activity` passa a apontar para `aculta_lms_activity` em
+  instalação nova; update 10001 recria o armazenamento em ambientes existentes
+  somente quando não há referências para preservar.
+- Kernel do resolvedor sem `lms`/`lms_classes`: 1 teste/25 assertions PASS;
+  Unit: 33 testes/329 assertions PASS. Depreciações Kernel: 38 de Core e
+  módulos não LMS.
+- Gate Portal: 1.172 checks PASS; public-slugs: 410 rotas, sem violações.
+- Update 10001 segue pendente no Runtime até a aplicação controlada após o push.
+
 ## `0.1.0-dev.30` — corrigir o harness Kernel da integração H5P–Fórum — 2026-10-29
 
 - O teste focal usa os helpers de dependências reais do LMS e de limpeza do

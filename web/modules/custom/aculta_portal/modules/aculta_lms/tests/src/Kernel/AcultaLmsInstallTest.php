@@ -184,6 +184,19 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     aculta_lms_update_10011();
     self::assertTrue($schema->fieldExists('aculta_lms_attempt_archive', 'score_precise'));
 
+    $relationship_config = $this->container->get('config.factory')
+      ->getEditable('group.relationship_type.lms_course-lms_classes');
+    $relationship_config->set('dependencies', [
+      'config' => ['group.type.lms_course'],
+      'module' => ['lms', 'lms_classes'],
+    ])->save(TRUE);
+    aculta_lms_update_10012();
+    aculta_lms_update_10012();
+    self::assertSame(['aculta_lms'], $this->container->get('config.factory')
+      ->get('group.relationship_type.lms_course-lms_classes')->get('dependencies.module'));
+    self::assertSame(['group.type.lms_course'], $this->container->get('config.factory')
+      ->get('group.relationship_type.lms_course-lms_classes')->get('dependencies.config'));
+
     foreach (['aculta_lms_lesson', 'aculta_lms_activity', 'aculta_lms_answer', 'aculta_lms_progress'] as $entity_type_id) {
       $this->assertTrue($entity_type_manager->hasDefinition($entity_type_id));
       $this->assertTrue($schema->tableExists($entity_type_id));

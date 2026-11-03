@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.170
+version: 0.1.0-dev.171
 state: Dev
-progress_note: "ADR-042 P4 dev.170: manifesto de aculta_lms sem dependências lms*; Kernel de instalação das quatro entidades P2 sem habilitar módulos LMS ou schema contrib. Unit 218/758 PASS; AcultaLmsInstallTest 6/170 PASS (35 depreciações upstream); Portal 1.172 checks e public-slugs 423 rotas PASS. Runtime aculta_runtime: updatedb sem atualizações, cache rebuild PASS, módulo e rota próprios disponíveis; config:status mantém somente as diferenças anteriores aculta_portal.superficies e core.extension. Sem config import ou desinstalação de módulo. Composer e corte Runtime ficam para P5; P6 não executado."
-next_phase: 'Concluir inventário de código/configuração/Composer e desinstalação P5 com snapshot por hash e registro do descarte autorizado. P6 continua fora.'
+progress_note: "ADR-042 P5 dev.171: Config Sync remove configs de tipos/plugins LMS contrib, mantém Groups/cursos/turmas/relações e aponta discussões a aculta_lms_activity. Updates Forum 10001 e LMS 10012 estão pendentes e testados; o 10012 preserva dependência ACULTA da relação curso–turma. LMS Unit 218/758 PASS; AcultaLmsInstallTest 6/172 PASS (35 depreciações upstream); Portal 1.172 checks PASS; public-slugs 410 rotas PASS. Snapshot pré-P5: SHA-256 37947c05fe3d523fbce0ff42c78f61f5d90f56a2a566de7c06f1869774bcd595. Runtime: config:status revisado, sem import; Composer e módulos LMS ainda instalados. P4 dev.170 validou instalação sem dependências contrib. P6 e reescrita de histórico não executados."
+next_phase: 'Aplicar updates 10001/10012 com snapshot, completar remoção Composer/módulos LMS via P5 e validar gates finais; P6 continua fora.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.
 # O Studio compõe cards SDC, mas a homologação depende de fixtures LMS

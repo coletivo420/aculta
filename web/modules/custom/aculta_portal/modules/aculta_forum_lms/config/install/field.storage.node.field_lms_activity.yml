@@ -3,7 +3,7 @@ langcode: pt-br
 status: true
 dependencies:
   module:
-    - lms
+    - aculta_lms
     - node
   enforced:
     module:

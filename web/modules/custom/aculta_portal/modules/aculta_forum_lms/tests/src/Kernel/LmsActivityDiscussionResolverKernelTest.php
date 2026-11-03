@@ -11,6 +11,7 @@ use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\aculta_lms\Entity\ActivityEntity;
 use Drupal\aculta_lms\Entity\LessonEntity;
 use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupType;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Drupal\node\NodeInterface;
 use Drupal\node\Entity\NodeType;
@@ -23,7 +24,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Tests activity discussion resolution with real LMS, Node, and Group storage.
+ * Tests activity discussion resolution with ACULTA activity, Node, and Group storage.
  */
 #[TestGroup('aculta_forum_lms')]
 #[RunTestsInSeparateProcesses]
@@ -57,8 +58,6 @@ final class LmsActivityDiscussionResolverKernelTest extends KernelTestBase {
     'group',
     'gnode',
     'views',
-    'lms',
-    'lms_classes',
     'aculta_lms',
     'aculta_file_uploader',
   ];
@@ -68,12 +67,14 @@ final class LmsActivityDiscussionResolverKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installConfig(['system', 'user', 'node', 'group', 'lms', 'lms_classes']);
+    $this->installConfig(['system', 'user', 'node', 'group']);
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
+    GroupType::create(['id' => 'lms_course', 'label' => 'Curso'])->save();
+    GroupType::create(['id' => 'lms_class', 'label' => 'Turma'])->save();
     $this->installEntitySchema('aculta_lms_lesson');
     $this->installEntitySchema('aculta_lms_activity');
     $this->installSchema('node', ['node_access']);

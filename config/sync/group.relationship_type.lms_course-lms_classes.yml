@@ -5,8 +5,7 @@ dependencies:
   config:
     - group.type.lms_course
   module:
-    - lms
-    - lms_classes
+    - aculta_lms
 id: lms_course-lms_classes
 group_type: lms_course
 content_plugin: lms_classes

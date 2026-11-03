@@ -1,3 +1,20 @@
+## 0.1.0-dev.171 — prepara o corte de entidades e relações legadas
+
+- Config Sync remove configurações que pertencem às entidades LMS contrib,
+  mantém Groups, cursos, turmas e relações Group e aponta o vínculo de
+  discussões para `aculta_lms_activity`.
+- O Kernel focal do Fórum não habilita os módulos LMS. Um update recria o campo
+  de atividade ACULTA e recusa a execução se houver valores legados a migrar.
+- Update 10012 mantém a configuração da relação curso–turma sob dependência
+  de `aculta_lms`, preservando os vínculos Group no corte do contrib.
+- Unit: 218 testes/758 assertions PASS; `AcultaLmsInstallTest`: 6 testes/172
+  assertions PASS (35 depreciações upstream); gate Portal: 1.172 checks PASS.
+- `config:status` mostra as configurações contrib removidas/alteradas e
+  `aculta_portal.superficies`; a diferença foi revisada e não foi importada.
+- Snapshot pré-P5 do Runtime: SHA-256
+  `37947c05fe3d523fbce0ff42c78f61f5d90f56a2a566de7c06f1869774bcd595`.
+- Composer e módulos LMS continuam instalados no Runtime até a etapa final P5.
+
 ## 0.1.0-dev.170 — valida instalação limpa sem dependências LMS
 
 - Remove do manifesto de `aculta_lms` as dependências `lms`, `lms_classes`,

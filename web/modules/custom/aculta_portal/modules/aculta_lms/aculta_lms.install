@@ -229,3 +229,12 @@ function aculta_lms_update_10011(): void {
     ->getBaseFieldDefinitions('aculta_lms_attempt_archive');
   $manager->installFieldStorageDefinition('score_precise', 'aculta_lms_attempt_archive', 'aculta_lms', $definitions['score_precise']);
 }
+
+/** Keeps course-to-class Group relationships owned by ACULTA after P5. */
+function aculta_lms_update_10012(): void {
+  $name = 'group.relationship_type.lms_course-lms_classes';
+  $config = \Drupal::configFactory()->getEditable($name);
+  if (!$config->isNew()) {
+    $config->set('dependencies.module', ['aculta_lms'])->save(TRUE);
+  }
+}
