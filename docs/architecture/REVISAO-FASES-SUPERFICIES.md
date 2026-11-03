@@ -40,7 +40,7 @@ Data: 2026-11-03 (rodada 3). Base: `dev` em `bc99862a9`. **RUNTIME STATUS: valid
 
 ## Testes
 
-- Unit focal: 38 testes e 311 asserções PASS. Kernel `SurfaceRoutesKernelTest`: 2 testes, 22 asserções PASS, 39 depreciações de Core/contrib.
+- Unit focal: 38 testes e 311 asserções PASS; a suíte combinada Portal/Studio/Commerce/Wiki/Sitemap passou 257 testes e 1.642 asserções após atualizar as expectativas dos caminhos WE SATIVA e Green Stash. Kernel `SurfaceRoutesKernelTest`: 2 testes, 22 asserções PASS, 39 depreciações de Core/contrib.
 - Executado nesta rodada: lógica do leitor com stub de configuração (9/9 PASS, script em scratchpad, fora do repositório); lint PHP e YAML dos arquivos alterados; `validate-admin-routes-main-domain` PASS; `validate-environment-addresses` PASS; `validate-browser-validators` PASS (21 checks); suíte standalone do deployer PASS; `boundaries` PASS.
 - `validate-public-slugs` PASS (423 rotas); `validate-project-status-index` e `validate-aculta-portal-drupal11` FAIL por divergência simultânea do status/manifest de `aculta_lms` (`.159`/`.160`) e README em alteração de outro agente. Gates MAIN, endereços, browser, tema e boundaries PASS.
 
