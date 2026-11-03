@@ -10,6 +10,8 @@ Documento para humanos e agentes. **Não contém a senha.** O valor fica em `sec
 | Senha | ler `TESTE_COMUM_PASSWORD` em `secrets/teste_comum.env` |
 | Papéis | `authenticated`, `email_confirmed`, `wiki_contributor` (sem administrador) |
 
+> **Estado Runtime conferido em 2026-11-03:** a tabela acima é histórica e está desatualizada. `teste.comum` atualmente tem os papéis `authenticated`, `gerente_loja`, `email_confirmed`, `content_editor` e `lms_teacher`. `content_editor` concede `moderar denuncias do forum`, portanto a aba Marley de moderação está autorizada para esta conta. A senha continua protegida pela regra abaixo; não alterá-la sem decisão do responsável.
+
 ## Regras para agentes
 1. Use a senha de `secrets/teste_comum.env`. Não peça outra nem tente outras.
 2. **Não altere a senha** (`drush user:password`, painel ou banco) sem decisão do responsável.

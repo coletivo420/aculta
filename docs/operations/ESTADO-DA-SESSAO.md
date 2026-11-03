@@ -1,5 +1,15 @@
 # Estado da sessão
 
+## Handoff — complementos de validação Studio, 2026-11-03
+
+- **Base:** `dev`, HEAD inicial `f5ae2bf16d7b1f6da7a7a656e2f4e2f929b2a602`, igual a `origin/dev`; trabalho LMS paralelo `ad4b42e01e` já estava publicado e foi preservado.
+- **Ajuste local:** harness `tests/browser/aculta-studio/orca-speech.mjs` passou a usar `BASE`, `drush uli --no-browser`, validar labels/headings realmente presentes, exigir artefatos externos via `$SUITE_OUT`, proteger diretório/arquivos e evitar interpolação insegura do caminho em Python. `node --check` passou; Orca + Firefox ESR passou 5/5 em Marley, com três abas disponíveis, heading `Meu trabalho` e áudio não silencioso. Relatórios/capturas permanecem fora do repositório.
+- **Validações adicionais:** `teste.comum` atualmente tem papel `content_editor`, com permissão real de moderação; uma conta sintética sem esse grant não recebe a aba. Um PNG sintético chegou ao formulário de corte de avatar; não foi aplicado/salvo e o estado de avatar permaneceu idêntico. Nenhuma troca de senha ocorreu: a conta descartável exige aceite individual dos Termos, não realizado; a fixture comum proíbe troca sem decisão. Credencial sintética permanece em arquivo externo modo 0600.
+- **Referências:** cotejo real feito com `docs/portal/studio-visual/referencias/image(20261103-123227).png` e capturas Firefox existentes para Dashboard, Conta, Perfil e Marley. Cinco PNGs passaram `file` e `identify`; ZIP ausente, então `unzip -t` não executado. Não se declara igualdade pixel a pixel.
+- **Documentos atualizados:** auditoria AJAX, plano visual geral, P1 pessoal/editorial, roadmap Studio, README do harness e `docs/operations/TESTE-COMUM.md` receberam estado/limites atuais. Senha e persistência final de avatar continuam pendentes; teste Orca cobre Marley somente.
+- **Pendente neste handoff:** revisão e commit apenas dos arquivos desta entrega, push fast-forward de `origin/dev` e conferência de status/config do Runtime após publicação. Nesta etapa não houve alteração de grants, dos dados das contas existentes, Termos ou configuração; a conta sintética e o upload temporário registrados acima permanecem no Runtime.
+- **Retomar lendo:** os cinco documentos acima; `tests/browser/aculta-studio/orca-speech.mjs`; auditoria de Conta Studio.
+
 ## Handoff — revisão visual Studio, 2026-11-03
 
 ### Reteste da navegação em caixas da Conta — commit `963ab7c6b10a375819e9bb0651bbb1a8e43540da`

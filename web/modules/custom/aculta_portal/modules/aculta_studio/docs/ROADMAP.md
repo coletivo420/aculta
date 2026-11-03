@@ -2,6 +2,10 @@
 
 Comparação real mostrou que a lista da Conta ainda herdava `nav-tabs`/`studio__subtabs`, e não formava caixas claras para menu e conteúdo. O ACULTA420 dev.31 agora apresenta navegação vertical e painéis com tokens semânticos; Core `details`, item list e Form API foram reutilizados por não haver SDC apropriado para substituir a estrutura de vários owners. Nenhum formulário, permissão ou owner mudou. Firefox Runtime passou 97/97 checks aplicáveis (22 SKIP), no-JS 14/14; nove rotas Conta diretas HTTP 200, foco/ativo, AJAX e formulários inválido/válido confirmados. Dados e Endereço tiveram submits válidos no Firefox usando os valores já existentes, com hashes iguais antes/depois. Artefatos em `$SUITE_OUT/studio-dashboard-final-20261103/account-panels-dev31-final/`. Pendentes: upload/avatar/senha, módulos opcionais, screen reader e conteúdo editorial próprio da conta de teste. Theme Unit 50/358 e gates estáticos constam no handoff.
 
+### Complemento de testes — 2026-11-03
+
+Orca/Firefox ESR passou 5/5 na tela Marley, com nome acessível das três abas autorizadas e heading correto; a gravação de áudio teve sinal. Avatar sintético foi recebido pelo Form API e abriu o corte; não foi aplicado nem salvo, e o estado de avatar permaneceu igual. Senha continua pendente: a conta sintética exige o aceite individual dos Termos, não realizado; a fixture comum proíbe troca de senha sem decisão. A comparação visual real usa a prancha principal válida e capturas Runtime, sem declarar paridade pixel a pixel. ZIP não disponível; cinco PNGs rastreados validados por `file` e `identify`.
+
 ## Conta Studio e composição editorial Marley — 2026-11-03
 
 Dev.43 corrigiu o HTTP 500 do Dashboard: `AccessResultAllowed::applyTo()` não existe; `CacheableMetadata` aplica a cacheabilidade do link. Pós-push, Firefox ESR visível validou 94/94 checks aplicáveis, 21 SKIP, 0 falhas; Conta direta 9/9 HTTP 200, no-JS 4/4, Dashboard e Perfil responsivos, e ações do Perfil legíveis em viewport desktop. Capturas externas: `$SUITE_OUT/studio-dashboard-final-20261103/post-push/`.

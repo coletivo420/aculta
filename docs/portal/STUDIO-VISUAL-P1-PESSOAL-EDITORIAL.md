@@ -12,6 +12,10 @@ Firefox ESR pós-correção do Dashboard: 94/94 verificações aplicáveis PASS,
 
 P1.1 e a implementação de P1.2 estão no código: Dashboard com identidade e providers autorizados, shell Grid da Conta, navegação AJAX própria e Perfil público separado. Owners/Form API preservados. O Dashboard oferece uma única entrada para Conta, edição de Meu Perfil verificada pela rota/ACL e link público apenas se resolvido pelo owner. Reutiliza SDCs `aculta420:card` (`studio_fidelity`) e `profile-editor`/`profile-identity`, com tokens semânticos existentes; nenhuma mudança no cabeçalho global. Capturas reais pós-dev.29 e pós-dev.30 registradas nas pastas `$SUITE_OUT/studio-dashboard-final-20261103/post-push/` e `$SUITE_OUT/studio-dashboard-final-20261103/marley-header-dev30-retest/`. A prancha desktop/mobile foi removida do remoto `dev` em `4599e115ed` e não foi restaurada. Consulte a auditoria para DEFERRED.
 
+### Estado adicional dos testes — 2026-11-03
+
+Orca/Firefox ESR passou 5/5 em Marley, incluindo anúncios das abas permitidas, heading e saída de áudio; a conta teste.comum tem permissão de moderação vigente via `content_editor`. Upload sintético de avatar chegou ao formulário de corte sem salvar imagem; persistência continuou igual. Senha permanece sem submissão por causa do aceite obrigatório de Termos, que não foi feito em nome da conta. Comparação real das quatro telas com a prancha principal válida foi realizada; aceite pixel a pixel não foi declarado. Veja a auditoria AJAX para evidências e limites.
+
 
 **Tipo:** plano documental para execução incremental.  
 **Base:** branch `dev`; consultar [Plano documental visual geral](ACULTA-STUDIO-VISUAL-PLANNING.md).  
