@@ -2,7 +2,7 @@
 
 ## Retificação de 2026-11-03: AJAX da Conta — implementação local
 
-A presença de studio-navigation.js não cobria /conta/*. Foi criada biblioteca dedicada para Conta, com links elegíveis, histórico/foco/estado, recuperação e Grid próprio. Dashboard usa providers autorizados e identidade pública resolvida; Marley apresenta criação junto ao título e moderação condicionada. PHPUnit Studio 72/658 PASS e gates Foundation/Shell/Portal passam. Runtime sincronizado em `b70e56dbec` (`updatedb:status` e `config:status` limpos, `drush cr` PASS); browser autenticado e captura visual integrada continuam pendentes; detalhes em [auditoria](STUDIO-CONTA-AJAX-AUDITORIA.md).
+A presença de studio-navigation.js não cobria /conta/*. Foi criada biblioteca dedicada para Conta, com links elegíveis, histórico/foco/estado, recuperação e Grid próprio. Dashboard usa providers autorizados e identidade pública resolvida; Marley apresenta criação junto ao título e moderação condicionada. PHPUnit Studio 72/658 PASS e gates Foundation/Shell/Portal passam. Runtime em `b70e56dbec` com status/config limpos e `drush cr` PASS. Firefox ESR visível: conta comum 82/82 (21 SKIP) e moderadora 99/99 (5 SKIP), zero falhas; Dashboard e Perfil refluíram em 320–1280px, Marley em 320–1440px, Conta AJAX e Form API verificados. Capturas reais e limites estão na auditoria; detalhes em [auditoria](STUDIO-CONTA-AJAX-AUDITORIA.md).
 
 
 **Estado:** planejamento para agentes; não é especificação de implementação já aprovada nem registro de homologação.  

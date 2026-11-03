@@ -19,6 +19,14 @@ Nas capturas de WE SATIVA, o teste também mede o `row-gap`, as margens das seç
 e a distância efetiva entre listas; o gap deve corresponder ao token responsivo
 de 3rem, 4rem ou 5rem, sem margens duplicadas.
 
+## Conta Studio, Dashboard, Perfil e acesso editorial — reteste 2026-11-03
+
+`visual.mjs` também verifica `/` (Studio Dashboard), `/perfil`, o shell AJAX de Conta e os owners Form API. `STUDIO_ACCOUNT_CONTEXT_PAGE=https://conta.aculta.toca.net.br/conta/dados` habilita a navegação de Conta. `STUDIO_EXPECT_MODERATION=no|yes` declara a expectativa da role para a aba “Comentários e moderação”; a verificação busca a aba real sob Revista e seu destino `/marley/revista/publicacoes/comentarios`.
+
+A sequência da Conta cobre `replaceWith`, URL/histórico, título/breadcrumb, behaviors, menu mobile, cliques concorrentes, timeout/resposta tardia/fallback, falha/retry, sessão ULI expirada, rebuild Form API após navegação, endereço inválido sem persistência e Preferências válida. O wrapper guarda/restaura a preferência original; a criação/edição editorial é somente GET. O relatório não registra cookies, tokens, valores de perfil ou credenciais. Use Firefox ESR visível, `run-visual.sh` (não execute o `.mjs` diretamente) e `$SUITE_OUT` fora do checkout.
+
+Reteste real em 2026-11-03: `teste.comum` 82/82 PASS, 21 SKIP, 0 FAIL; `aculta_visual_admin` 99/99 PASS, 5 SKIP, 0 FAIL. Os SKIP comuns são os Form APIs de publicações próprias, pois a conta não possui publicação; os 5 da conta administradora dizem respeito ao submenu lateral, não aplicável quando a navegação é por abas. Conta/moderação A/B e probes HTTP anônimo foram registrados em `docs/portal/STUDIO-CONTA-AJAX-AUDITORIA.md`. Capturas e JSON, fora do repo: `$SUITE_OUT/studio-account-member-final-4-20261103/` e `$SUITE_OUT/studio-account-moderator-final-4-20261103/`.
+
 Somente no servidor de desenvolvimento, com a conta `teste.comum` (login único por Drush, sem senha no repositório). O
 Studio precisa estar habilitado no Runtime e a conta precisar de uma aba visível (permissão `create revista content`).
 O wrapper consulta a rota `aculta_studio.home` antes de abrir o Firefox e interrompe com diagnóstico se o Runtime ainda não expõe `/marley`.
