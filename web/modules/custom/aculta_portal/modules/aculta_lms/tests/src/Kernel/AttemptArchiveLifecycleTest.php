@@ -99,8 +99,8 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
     $this->installConfig(['system', 'comment']);
+    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
     $this->installEntitySchema('action');
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');

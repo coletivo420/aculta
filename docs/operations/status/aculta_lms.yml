@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.163
+version: 0.1.0-dev.164
 state: Dev
-progress_note: "ADR-042 P5 dev.163: comments Core ACULTA e payload JSON persistem tentativas; rota de anexo exige resposta enviada/avaliada, atividade file_upload, arquivo permanente private:// e matrícula atual do dono ou permissão grade students. Download privado com attachment/nosniff/no-store. Unit 236/829 PASS; Kernel AcultaLmsInstallTest 6/194 PASS (44 depreciações); Unit de acesso a arquivo 3/30 PASS; PHPCS e Portal gate 1.172 PASS. Runtime updates 10009/10010 aplicados após snapshots; cache reconstruído. `config:status` mantém diferenças externas em superficies/core.extension; sem import global. A rota contrib de download ainda coexiste; imports Drupal\\lms não foram removidos. P5 incompleto."
+progress_note: "ADR-042 P5 dev.164: harness Kernel AttemptArchiveLifecycleTest instala Comment antes de aculta_lms, suprindo field.storage.comment.comment_body. AcultaLmsInstallTest + AttemptArchiveLifecycleTest: 16 testes/603 asserções PASS; 57 depreciações Core/contrib. Unit completa 236/829 PASS (1 depreciação PHPUnit). P5 continua em andamento: consumidores, referências de configuração e dependências LMS ainda precisam ser migrados; imports Drupal\\lms não zerados. Runtime atualizado ao commit dev.163; esta entrega só altera teste, manifesto e documentação."
 next_phase: 'Concluir integração ACULTA de payload, tentativas, comentários e arquivos; resolver atividade/autoria e rota de início; remover todos os imports e dependências LMS, revisar 71 YAML de config sync, validar P4 sem contrib e então P5. P6 somente com ordem explícita.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.

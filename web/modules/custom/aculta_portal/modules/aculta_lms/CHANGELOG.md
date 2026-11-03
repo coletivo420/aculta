@@ -905,3 +905,9 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
   resposta; nenhum destino `lms.*` é inventado.
 - `CourseJourneyManagerTest` verifica rota/ID canônicos e URL de aula nula.
 
+## 0.1.0-dev.164 — instala Comment antes do módulo no Kernel de tentativas
+
+- Corrige a ordem do harness Kernel `AttemptArchiveLifecycleTest`: instala primeiro a configuração do Core Comment, incluindo o armazenamento `comment_body`, antes de instalar `aculta_lms`.
+- Verificação focal conjunta: `AcultaLmsInstallTest` + `AttemptArchiveLifecycleTest`, 16 testes/603 asserções PASS; 57 depreciações Core/contrib.
+- Unit completa: 236 testes/829 asserções PASS, 1 depreciação PHPUnit.
+
