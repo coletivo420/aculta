@@ -6,7 +6,7 @@ Submódulo opt-in do `aculta_portal`, para controlar cada superfície pública d
 - escolher o modo: `subdominio`, `diretorio` ou `desativado`;
 - definir o slug em português, usado no modo `diretorio`.
 
-**Status:** Dev `0.1.0-dev.7`. Formulário e tabela em código; resolução de rotas ainda atrás do interruptor `leitura_ativa` (desligado). Testes: **DEFERRED** (sem Runtime).
+**Status:** Dev `0.1.0-dev.8`. Formulário e tabela em código; matriz HTTP e Kernel focal validados no Runtime. A resolução de rotas continua atrás do interruptor `leitura_ativa`; `/slug` no MAIN segue DEFERRED.
 
 ## O que este submódulo faz
 

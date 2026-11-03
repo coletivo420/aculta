@@ -66,3 +66,28 @@ Os hosts são os de produção (host de produção) e os de teste (host de teste
 | Data | Commit | Host | Resultado | Status |
 |---|---|---|---|---|
 | — | — | — | não executado | DEFERRED |
+
+### Runtime Homelab — 2026-11-03
+
+Execução com `curl` contra `https://127.0.0.1`, usando `Host` dos aliases
+documentados em `docs/architecture/multidomain.md`; os resultados são do
+Runtime Homelab. A coluna `Location` ficou ausente em todos os casos.
+
+| Caso | leitura_ativa=FALSE | leitura_ativa=TRUE |
+|---|---:|---:|
+| Raízes MAIN, Wiki e Loja | 200 | 200 |
+| `/we-sativa` no Wiki | 403 | 403 |
+| `/green-stash` na Loja | 403 | 403 |
+| `/wiki` e `/loja` internos | 404 | 404 |
+| Painel MAIN sem sessão | 404 | 404 |
+| Painel em subdomínio | 404 | 404 |
+| `/studio` e `/studio/x` | 404 | 404 |
+| `/wesativa`, `/greenstash`, `/wiki/busca` | 404 | 404 |
+| `/integracoes/mcp` fora do MAIN | 404 | 404 |
+| `/integracoes/mcp` no MAIN sem autenticação | 401 | 401 |
+
+As respostas Drupal comuns usaram `Cache-Control: must-revalidate, no-cache,
+private`; `/studio*` e `/integracoes/mcp` fora do MAIN usaram `no-store,
+private`. Os 403 das Suites são controle de acesso para anônimo, sem redirect.
+A validação autenticada da página administrativa e das Suites permanece
+DEFERRED nesta execução.

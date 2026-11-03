@@ -364,6 +364,10 @@ código do módulo.
 
 ## Superfícies e caminhos públicos (2026-11-03)
 
+- **Runtime concluído para a matriz 3.0:** PHP 8.4 e MariaDB `aculta_runtime` confirmados; `composer install`, `updatedb:status`, `config:status`, `config:import --diff` e cache rebuild passaram. A matriz HTTP foi executada com `leitura_ativa` FALSE e TRUE; resultados completos estão em `docs/architecture/TESTES-3.0-ROTAS-SUPERFICIES.md`. A configuração foi ligada somente no Runtime; o YAML versionado permanece FALSE.
+- **Kernel desbloqueado:** `SurfaceRoutesKernelTest` passou 2/2 testes e 22 asserções após completar módulos necessários do fixture e instalar schemas de `user`, `domain` e `path_alias`. Restam depreciações de Core/contrib registradas na saída PHPUnit.
+- **DEFERRED:** validação autenticada da página `/painel-administrativo/aculta/caminhos` e das Suites; 3.5 (resolução inbound de `/slug` no MAIN); promoção da configuração TRUE para `config/sync` só no RC.
+
 - **Testes escritos, não executados (DEFERRED):** `DomainSurfaceMapTest`, `SurfaceConfigReaderTest` (incluindo `testCaminhoDiretorioSoComInterruptor`), `SurfaceRoutesStaticTest` (incluindo `testFormularioEhSoMain`), `FrontPathPolicyTest` e `SurfaceRoutesKernelTest`. Dependem de `vendor/` completo (não há autoload nesta sessão) e do Runtime.
 - **Gates sem `vendor/`:** `validate-public-slugs`, `validate-project-status-index` e `validate-aculta-portal-drupal11` não rodam aqui. O último falha igual em HEAD limpo (pré-existente): falta `vendor/` para o índice de status e a contagem de subscribers do Portal não bate.
 - **Índice de status:** a linha do `aculta_superficies` e a versão do `aculta_portal` no README raiz foram atualizadas à mão. A regeneração oficial (`php scripts/validate-project-status-index.php --write`) precisa de `vendor/`.

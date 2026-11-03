@@ -1,6 +1,6 @@
 # Revisão das fases do controlador de superfícies
 
-Data: 2026-11-03 (rodada 2). Base: `dev` após `89b6cdb`. **RUNTIME STATUS: DEFERRED** para tudo que depende de teste.
+Data: 2026-11-03 (rodada 3). Base: `dev` em `bc99862a9`. **RUNTIME STATUS: validado para a matriz de caminhos; UI autenticada DEFERRED**.
 
 ## Por fase
 
@@ -8,14 +8,14 @@ Data: 2026-11-03 (rodada 2). Base: `dev` após `89b6cdb`. **RUNTIME STATUS: DEFE
 | --- | --- | --- | --- |
 | 1 Inventário | Concluída | roteiro e CSV de rotas | — |
 | 2 Modelo (ADR-043) | Aceita | ADR, anexo de decisões fixas | — |
-| 3.0 Congelar comportamento | DEFERRED | roteiro, teste estático e Kernel escritos | executar a matriz no Runtime |
+| 3.0 Congelar comportamento | Parcialmente validada | matriz HTTP no Runtime e Kernel focal executados | autenticar e revisar a UI administrativa e as Suites |
 | 3.1 Mapa único | Código | `DomainSurfaceMap` e paridade escrita | executar testes |
 | 3.2 Flag autoritativa | Código | resolvedor preserva purpose; comentário corrigido | teste de rota da flag |
 | 3.3 Constantes de purpose | Código | `DomainSurfaceMap::MAIN` e `ACCOUNT` | executar testes |
 | 3.4 Atribuição pela configuração | Parcial | config, schema, leitor e `SurfaceRequestSubscriber`, todos atrás de `leitura_ativa` (desligado) | teste da 3.0 no Runtime; atribuição de purpose por configuração não implementada |
 | 3.5 Modo diretório | Parcial | validação; `caminhoDiretorioAtivo` só com interruptor ligado; tabela de caminhos | resolução de `/slug` no MAIN (DEFERRED: exige teste de rota) |
 | 3.6 Formulário | Código | `/painel-administrativo/aculta/caminhos`, só MAIN, com tabela somente leitura e link no menu ACULTA | executar testes e revisar UI no Firefox |
-| 3.7 Exportação | Parcial | YAML em `config/sync` | conferência de importação DEFERRED (ver abaixo) |
+| 3.7 Exportação | Validada no Runtime | `config:status` sem diferenças antes da ativação; `config:import --diff` sem alterações | ativação permanece somente no banco até RC |
 
 ### O que mudou nesta rodada (2026-11-03)
 
@@ -23,6 +23,7 @@ Data: 2026-11-03 (rodada 2). Base: `dev` após `89b6cdb`. **RUNTIME STATUS: DEFE
 - **3.5:** `SurfaceConfigReader::caminhoDiretorioConfigurado()` e `caminhoDiretorioAtivo()`. Com `leitura_ativa` desligada (padrão), `caminhoDiretorioAtivo()` devolve NULL.
 - **3.4:** conferido. `SurfaceRequestSubscriber` retorna antes de qualquer leitura de superfície quando `leitura_ativa` está desligada. Com o padrão, nenhum comportamento muda. Correção: o registro de dívidas dizia que o subscriber não existia; ele existe desde `20e7d6d`.
 - **3.7:** conferência de importação NÃO criada. Sem `vendor/` não há parser YAML nem config tipada para comparar com o schema. Caminho para o Runtime: `drush config:status` (somente leitura).
+- **Runtime 2026-11-03:** `composer install` com PHP 8.4, `updatedb:status`, `config:status`, `config:import --diff` e `cr` passaram. A matriz foi executada antes e depois de `leitura_ativa`; não houve `Location`. Raízes deram 200; caminhos internos, legados, `/studio*` e painel fora do MAIN deram 404. `/we-sativa` e `/green-stash` deram 403 para anônimo por controle de acesso; MCP deu 401 no MAIN e 404 fora dele. `leitura_ativa` está ligada no Runtime e continua FALSE no YAML versionado.
 - **Integração (revisão):** nenhum bloqueio novo encontrado nos pontos de contato (`aculta_portal_sitemap`, `aculta_deployer`, schema, serviços, injeção de `aculta_portal.domain_purpose`). Lint, gate de rotas MAIN, endereços e validadores de navegador PASS; boundaries do deployer PASS; suíte standalone do deployer PASS.
 
 ### Ativação (quando o Runtime validar a 3.0)
@@ -39,9 +40,9 @@ Data: 2026-11-03 (rodada 2). Base: `dev` após `89b6cdb`. **RUNTIME STATUS: DEFE
 
 ## Testes
 
-- Escritos e não executados: `DomainSurfaceMapTest`, `SurfaceConfigReaderTest` (incluindo o teste do interruptor de diretório), `SurfaceRoutesStaticTest` (incluindo o teste do formulário), `SurfaceRoutesKernelTest` (Kernel, DEFERRED).
+- Unit focal: 38 testes e 311 asserções PASS. Kernel `SurfaceRoutesKernelTest`: 2 testes, 22 asserções PASS, 39 depreciações de Core/contrib.
 - Executado nesta rodada: lógica do leitor com stub de configuração (9/9 PASS, script em scratchpad, fora do repositório); lint PHP e YAML dos arquivos alterados; `validate-admin-routes-main-domain` PASS; `validate-environment-addresses` PASS; `validate-browser-validators` PASS (21 checks); suíte standalone do deployer PASS; `boundaries` PASS.
-- Não executados por falta de `vendor/`: `validate-public-slugs`, `validate-project-status-index`. `validate-aculta-portal-drupal11` FAIL também em HEAD limpo (pré-existente).
+- `validate-public-slugs` PASS (423 rotas); `validate-project-status-index` e `validate-aculta-portal-drupal11` FAIL por divergência simultânea do status/manifest de `aculta_lms` (`.159`/`.160`) e README em alteração de outro agente. Gates MAIN, endereços, browser, tema e boundaries PASS.
 
 ## Commits desta rodada
 

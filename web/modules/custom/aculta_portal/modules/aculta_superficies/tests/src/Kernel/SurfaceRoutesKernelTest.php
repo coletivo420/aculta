@@ -6,15 +6,16 @@ namespace Drupal\Tests\aculta_superficies\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Fase 3.0 com Kernel: rotas reais e 404 dos caminhos antigos.
  *
- * DEFERRED: código escrito, NÃO executado. Requer vendor/ e o Runtime
- * (PHP 8.4). Confere o roteiro em docs/architecture/TESTES-3.0-ROTAS-SUPERFICIES.md.
+ * Confere o roteiro em docs/architecture/TESTES-3.0-ROTAS-SUPERFICIES.md.
  */
 #[Group('aculta_superficies')]
+#[RunTestsInSeparateProcesses]
 final class SurfaceRoutesKernelTest extends KernelTestBase {
 
   /**
@@ -23,13 +24,53 @@ final class SurfaceRoutesKernelTest extends KernelTestBase {
   protected static $modules = [
     'system',
     'user',
+    'file',
+    'path_alias',
+    'key',
+    'aculta_mailer',
+    'aculta_mail_confirmer',
+    'aculta_messenger',
+    'private_message',
+    'site_alert',
+    'message_notify',
+    'message_subscribe',
+    'flag',
+    'views',
+    'aculta_user',
+    'aculta_image',
+    'commerce_cart',
+    'commerce_store',
+    'commerce_checkout',
+    'commerce_price',
+    'commerce_order',
+    'commerce',
+    'content_moderation',
+    'workflows',
+    'text',
+    'options',
+    'address',
+    'entity_reference_revisions',
+    'profile',
+    'state_machine',
+    'node',
     'domain',
+    'aculta_file_uploader',
     'aculta_portal',
     'aculta_wiki',
     'aculta_studio',
     'aculta_commerce',
     'aculta_superficies',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->installEntitySchema('user');
+    $this->installEntitySchema('domain');
+    $this->installEntitySchema('path_alias');
+  }
 
   /**
    * Caminhos novos resolvem para as rotas esperadas.

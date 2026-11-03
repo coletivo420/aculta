@@ -1,3 +1,9 @@
+## 0.1.0-dev.8 — validação no Runtime e Kernel de superfícies
+
+- Kernel de rotas executado: 2 testes e 22 asserções PASS; fixture passou a declarar os módulos e schemas necessários ao boot real do Portal.
+- Matriz HTTP 3.0 executada antes e depois de `leitura_ativa` no Runtime Homelab; resultados registrados em `docs/architecture/TESTES-3.0-ROTAS-SUPERFICIES.md`.
+- A validação autenticada da interface administrativa e a resolução de `/slug` no MAIN continuam DEFERRED.
+
 ## 0.1.0-dev.7 — caminhos em /painel-administrativo/aculta/caminhos e tabela somente leitura
 
 - Formulário movido de `/painel-administrativo/superficies` para `/painel-administrativo/aculta/caminhos` (só MAIN, permissão `administrar superficies`). O caminho antigo deixa de existir, sem alias: o submódulo não está em produção.
