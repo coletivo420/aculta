@@ -1,10 +1,22 @@
 aculta_superficies.form:
   path: '/painel-administrativo/aculta/caminhos'
   defaults:
-    _form: '\Drupal\aculta_superficies\Form\SuperficiesForm'
+    _controller: '\Drupal\aculta_superficies\Controller\SurfaceListController::pagina'
     _title: 'Caminhos das superfícies'
   requirements:
     _permission: 'administrar superficies'
+  options:
+    _admin_route: TRUE
+    _aculta_domain_purpose: main
+
+aculta_superficies.editar:
+  path: '/painel-administrativo/aculta/caminhos/{purpose}/editar'
+  defaults:
+    _controller: '\Drupal\aculta_superficies\Controller\SurfaceEditController::abrir'
+    _title: 'Editar superfície'
+  requirements:
+    _permission: 'administrar superficies'
+    purpose: 'main|account|support|magazine|wiki|shop|courses|forum|links|eventos'
   options:
     _admin_route: TRUE
     _aculta_domain_purpose: main

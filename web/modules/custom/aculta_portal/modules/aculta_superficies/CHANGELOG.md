@@ -1,3 +1,10 @@
+## 0.1.0-dev.9 — edição em modal e seletor de modo por AJAX
+
+- Coluna Ações com botão Editar em cada linha; a edição abre em modal do Drupal (`/painel-administrativo/aculta/caminhos/{purpose}/editar`, só MAIN).
+- Classe `SurfaceEditForm`: título, ativação e modo. Ao mudar o modo por AJAX, o campo de caminho muda: diretório mostra o slug editável; subdomínio mostra o endereço vindo do Domain (somente leitura); desativado não mostra campo.
+- Salvar fecha o modal e volta à lista; erro de validação reabre o modal com a mensagem.
+- Testes: DEFERRED (sem vendor/ nem Runtime). Lint dos PHP executado.
+
 ## 0.1.0-dev.8 — validação no Runtime e Kernel de superfícies
 
 - Kernel de rotas executado: 2 testes e 22 asserções PASS; fixture passou a declarar os módulos e schemas necessários ao boot real do Portal.

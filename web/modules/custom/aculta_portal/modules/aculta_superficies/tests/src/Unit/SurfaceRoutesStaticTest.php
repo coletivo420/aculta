@@ -71,6 +71,17 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
   }
 
   /**
+   * A edição abre em modal dentro do MAIN, com o purpose na rota.
+   */
+  public function testEdicaoEhSoMainEModal(): void {
+    $dados = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_superficies.routing.yml');
+    $rota = $dados['aculta_superficies.editar'];
+    $this->assertSame('/painel-administrativo/aculta/caminhos/{purpose}/editar', $rota['path']);
+    $this->assertSame('main', $rota['options']['_aculta_domain_purpose']);
+    $this->assertSame('administrar superficies', $rota['requirements']['_permission']);
+  }
+
+  /**
    * Nenhum caminho antigo ou /studio continua declarado.
    */
   public function testCaminhosAntigosNaoDeclarados(): void {
