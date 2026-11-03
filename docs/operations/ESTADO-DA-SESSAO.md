@@ -8,7 +8,7 @@
 - **Arquivos do ajuste:** `tokens.css`, `layout.css`, `studio.css`, `portal-account.css`, `components/patterns/profile-editor/profile-editor.css`, `docs/design-system.md`, `CHANGELOG.md`, `docs/roadmap.md`, `aculta420.info.yml` (0.7.0-dev.32).
 - **Validações:** Stylelint PASS; Foundation 354 PASS; Design Foundations 2462 PASS; token-only claro/escuro PASS; SDC schema 764 PASS; `git diff --check` PASS. Capturas/baseline novas e inspeção Firefox pós-alteração ainda pendentes, portanto ajuste visual no Runtime não homologado.
 - **Pesquisa visual e limite:** referências do Studio válidas usadas anteriormente; esta alteração não tem captura pós-mudança. Os passos pendentes de senha e persistência do avatar permanecem conforme o handoff Studio logo abaixo.
-- **Git/Runtime:** nenhum commit ou push desta retomada ainda. Confirmar status e preservar somente os arquivos da entrega antes de publicar; atualizar Runtime após push conforme procedimento.
+- **Git/Runtime:** commit `70c677550fdba05255da9db3d73f78d756508a9e`, push fast-forward confirmado em `origin/dev`; o Runtime é o mesmo checkout (`toca`, Drupal 11.4.10, `aculta_runtime`) e está no mesmo HEAD. `updatedb:status` sem updates, `config:status` sem diferenças, `drush cr` PASS. Não foi necessário snapshot nem houve update/import. Firefox pós-alteração DEFERRED: `DISPLAY` não está definido nesta sessão.
 - **Retomar lendo:** tokens/layout/componentes acima, `web/themes/custom/aculta420/docs/versioning.md`, e os handoffs Studio nesta página.
 
 ## Handoff — estabilidade de UID na exportação ICS, 2026-11-03
