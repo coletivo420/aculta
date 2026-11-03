@@ -280,7 +280,7 @@ final class SurfaceEditForm extends FormBase {
       ]),
       'hifen_slug' => (string) $this->t('Não pode começar nem terminar com hífen, nem ter dois hífens seguidos.'),
       'tamanho' => (string) $this->t('Endereço maior que 253 caracteres.'),
-      'sem_ponto' => (string) $this->t('Falta o domínio. Ex.: wiki420.aculta.org.'),
+      'sem_ponto' => (string) $this->t('Falta o domínio. Ex.: subdominio.exemplo.org.'),
       'ponto_sobrando' => (string) $this->t('Há um ponto sobrando, sem texto entre dois pontos.'),
       'trecho_longo' => (string) $this->t('Um trecho entre pontos passa de 63 caracteres.'),
       'trecho_hifen' => (string) $this->t('Um trecho entre pontos começa ou termina com hífen.'),

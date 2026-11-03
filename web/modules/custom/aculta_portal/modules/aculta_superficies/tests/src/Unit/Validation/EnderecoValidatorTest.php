@@ -20,8 +20,8 @@ final class EnderecoValidatorTest extends UnitTestCase {
       'slug simples' => ['loja', FALSE],
       'slug com hífen' => ['loja-sativa', FALSE],
       'slug com número' => ['estudio420', FALSE],
-      'host' => ['wiki420.aculta.org', TRUE],
-      'host com hífen' => ['wiki-420.aculta.org.br', TRUE],
+      'host' => ['wiki420.exemplo.org', TRUE],
+      'host com hífen' => ['wiki-420.exemplo.org', TRUE],
     ];
   }
 

@@ -14,7 +14,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_superficies')]
 final class DnsClassificadorTest extends UnitTestCase {
 
-  private const PRINCIPAL = 'aculta.org';
+  private const PRINCIPAL = 'exemplo.org';
 
   public function testPrincipalSemResolucaoEhAviso(): void {
     $r = DnsClassificador::classificar(self::PRINCIPAL, ['ips' => [], 'cnames' => []], ['ips' => ['1.1.1.1'], 'cnames' => []]);
@@ -28,7 +28,7 @@ final class DnsClassificadorTest extends UnitTestCase {
   }
 
   public function testCnameParaPrincipalEhOk(): void {
-    $r = DnsClassificador::classificar(self::PRINCIPAL, ['ips' => ['1.1.1.1'], 'cnames' => []], ['ips' => [], 'cnames' => ['Aculta.org']]);
+    $r = DnsClassificador::classificar(self::PRINCIPAL, ['ips' => ['1.1.1.1'], 'cnames' => []], ['ips' => [], 'cnames' => ['Exemplo.org']]);
     $this->assertSame('cname_principal', $r['codigo']);
     $this->assertSame('ok', $r['classe']);
   }
