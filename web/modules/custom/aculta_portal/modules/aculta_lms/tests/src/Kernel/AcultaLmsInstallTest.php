@@ -176,6 +176,13 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     aculta_lms_update_10010();
     self::assertSame('2d34480d-1f59-4d31-86c2-829ef03786ac', $entity_type_manager->getStorage('field_config')->load('comment.aculta_lms_answer_comment.comment_body')->uuid());
 
+    $archive_fields = $this->container->get('entity_field.manager')->getBaseFieldDefinitions('aculta_lms_attempt_archive');
+    $update_manager->uninstallFieldStorageDefinition($archive_fields['score_precise']);
+    self::assertFalse($schema->fieldExists('aculta_lms_attempt_archive', 'score_precise'));
+    aculta_lms_update_10011();
+    aculta_lms_update_10011();
+    self::assertTrue($schema->fieldExists('aculta_lms_attempt_archive', 'score_precise'));
+
     foreach (['aculta_lms_lesson', 'aculta_lms_activity', 'aculta_lms_answer', 'aculta_lms_progress'] as $entity_type_id) {
       $this->assertTrue($entity_type_manager->hasDefinition($entity_type_id));
       $this->assertTrue($schema->tableExists($entity_type_id));

@@ -1,3 +1,11 @@
+## 0.1.0-dev.166 — cobre idempotência do campo de nota precisa
+
+- Kernel de instalação remove a coluna de precisão no banco efêmero e executa
+  `aculta_lms_update_10011()` duas vezes, confirmando instalação idempotente
+  (1 teste/51 asserções PASS; 43 depreciações Core/contrib).
+- A mudança complementa o corte do histórico ACULTA; não altera conteúdo do
+  Runtime. O gate Portal continua em 1.172 checks PASS.
+
 ## 0.1.0-dev.165 — arquiva tentativas ACULTA sem Drupal LMS
 
 - O histórico agora lê `AnswerEntity`, resolve atividade/aula/curso pelas
