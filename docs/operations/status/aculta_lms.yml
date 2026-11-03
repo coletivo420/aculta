@@ -1,7 +1,7 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.150
+version: 0.1.0-dev.151
 state: Dev
-progress_note: "ADR-042 P5 dev.150: os quatro leitores usam entidades próprias e os adaptadores P1 foram removidos. Matrícula consulta relações de Group sem importar lms_classes. Nenhum dado legado migrado. Consumidores de payload, xAPI/status de aula, rotas lms.* e provedor da relação lms_classes ainda pendentes; P4/P5 incompletos."
+progress_note: "ADR-042 P5 dev.151: os quatro leitores usam entidades próprias e adaptadores P1 foram removidos. Matrícula usa Group e a lista de cursos aponta para entity.group.canonical. Unit 223/744 PASS (1 depreciação PHPUnit). Nenhum dado legado migrado. Consumidores de payload, xAPI/status de aula, rotas lms.* e provedor da relação lms_classes ainda pendentes; P4/P5 incompletos."
 next_phase: 'Continuar consumidores LMS restantes. Antes de remover lms_classes, fornecer plugin Group compatível com as relações atuais; antes de remover rotas/formulários de resposta, definir substituição ACULTA sem inventar payload/status. Revisar config/sync e manter dados; P6 fora do escopo.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.

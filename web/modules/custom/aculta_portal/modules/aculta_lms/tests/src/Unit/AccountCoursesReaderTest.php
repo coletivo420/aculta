@@ -9,11 +9,18 @@ use Drupal\aculta_lms\Account\AccountCoursesReader;
 use Drupal\aculta_lms\Learning\CourseProgress;
 use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\domain\DomainInterface;
+use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\GroupMembershipLoaderInterface;
 use Drupal\Tests\UnitTestCase;
+use Symfony\Component\HttpFoundation\RequestStack;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -23,6 +30,49 @@ use PHPUnit\Framework\Attributes\Group;
  */
 #[Group('aculta_lms')]
 final class AccountCoursesReaderTest extends UnitTestCase {
+
+  /**
+   * Uses Group's canonical destination for a completed course.
+   */
+  public function testCompletedCourseUsesGroupCanonicalRoute(): void {
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('id')->willReturn('7');
+    $course = $this->createMock(GroupInterface::class);
+    $course->method('access')->with('view', $account, TRUE)->willReturn(AccessResult::allowed());
+    $course->method('bundle')->willReturn('lms_course');
+    $course->method('hasField')->with('field_description')->willReturn(FALSE);
+    $course->method('id')->willReturn('42');
+    $course->method('label')->willReturn('Course 42');
+    $course->method('getCacheTags')->willReturn(['group:42']);
+    $membership = $this->createMock(GroupRelationshipInterface::class);
+    $membership->method('getGroup')->willReturn($course);
+    $membership_loader = $this->createMock(GroupMembershipLoaderInterface::class);
+    $membership_loader->method('loadByUser')->willReturn([$membership]);
+    $progress = $this->createMock(CourseProgressReaderInterface::class);
+    $progress->method('current')->willReturn(new CourseProgress(CourseProgress::STATUS_PASSED, TRUE, 100));
+
+    $domain = $this->createMock(DomainInterface::class);
+    $domain->method('isHttps')->willReturn(TRUE);
+    $domain_storage = $this->createMock(EntityStorageInterface::class);
+    $domain_storage->method('load')->with('cursos_aculta_org')->willReturn($domain);
+    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
+    $entity_type_manager->method('getStorage')->with('domain')->willReturn($domain_storage);
+    $domain_negotiator = $this->createMock(DomainNegotiatorInterface::class);
+    $domain_negotiator->method('getActiveDomain')->willReturn(NULL);
+    $domain_purposes = new DomainPurposeManager(
+      $entity_type_manager,
+      $domain_negotiator,
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
+    );
+
+    $summaries = (new AccountCoursesReader($progress, $membership_loader, $domain_purposes))
+      ->getAccountCourses($account);
+
+    self::assertCount(1, $summaries);
+    self::assertSame('entity.group.canonical', $summaries[0]->url?->getRouteName());
+    self::assertSame(['group' => '42'], $summaries[0]->url?->getRouteParameters());
+  }
 
   /**
    * Keeps an explicitly granted course when Group returns a boolean result.

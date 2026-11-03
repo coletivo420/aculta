@@ -776,3 +776,10 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 - `EnrollmentFormHooksTest`: 9 testes / 63 asserções PASS; Unit completa:
   222 testes / 735 asserções PASS (1 depreciação PHPUnit).
 
+## 0.1.0-dev.151 — destino canônico Group na lista de cursos
+
+- `AccountCoursesReader` usa `entity.group.canonical` para cursos em andamento
+  e concluídos; cursos em avaliação continuam sem URL de retomada.
+- `AccountCoursesReaderTest`: 3 testes / 27 asserções PASS, cobrindo destino e
+  parâmetros do Group.
+

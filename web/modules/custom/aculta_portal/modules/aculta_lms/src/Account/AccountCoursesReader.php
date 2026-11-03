@@ -67,8 +67,7 @@ final class AccountCoursesReader implements AccountCoursesReaderInterface {
       $finished = $progress?->finished ?? FALSE;
       $url = NULL;
       if ($statusCode !== CourseProgress::STATUS_NEEDS_EVALUATION) {
-        $route = $finished ? 'lms.group.self_results' : 'lms.course.start';
-        $url = $this->domainPurposeManager->routeUrl('courses', $route, ['group' => $course->id()]);
+        $url = $this->domainPurposeManager->routeUrl('courses', 'entity.group.canonical', ['group' => $course->id()]);
       }
 
       $items[] = new AccountCourseSummary(
