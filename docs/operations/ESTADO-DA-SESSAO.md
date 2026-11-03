@@ -2,6 +2,14 @@
 
 ## Handoff — implementação Conta Studio e Dashboard, 2026-11-03
 
+### Reteste adicional no-JS — 2026-11-03
+
+- Runtime confirmado em `toca`, `aculta_runtime`, tema ACULTA420; `updatedb:status` sem pendências e `config:status` limpo. Nenhuma alteração de conteúdo foi feita.
+- Firefox ESR visível com a conta sintética `teste.comum`: `tests/browser/aculta-studio/nojs.mjs` passou 14/14. Cobriu autenticação temporária, shell/Form API em Dados, link HTML nativo para Endereço, voltar e as nove rotas diretas com região de conteúdo e item ativo. Relatório em `$SUITE_OUT/studio-audit-20261103/nojs-aculta-final2/nojs-results.json`.
+- Seis PNGs do commit `d732e95c` em `references/studio-visual/` estão truncados/corrompidos (IDAT incompleto/CRC inválido); comparação pareada continua pendente de reenvio íntegro. Sem cópia de conteúdo fictício.
+- O harness no-JS agora recebe o redirect `/conta/dados` no ULI, confirma a sessão antes das rotas privadas e não depende de classes de layout do tema. Atualizados auditoria Conta AJAX, plano visual, plano P1 e roadmap.
+- `config:status` anteriormente mostrou Olivero durante validação paralela; ao retomar, Runtime já estava restaurado em ACULTA420 e configuração limpa. O estado paralelo LMS foi preservado; esta entrega será publicada separadamente sobre o HEAD atual de `origin/dev`.
+
 - **Objetivo:** concluir Dashboard, shell AJAX de Conta, preservar Perfil público independente e ajustar a hierarquia editorial Marley, conforme planos e auditoria.
 - **Base/entrega Studio:** trabalho iniciado em `50050dc4dbf07a46dadb861fba45cce32ec194b4`; `8ccbcb0618` e o reparo autowired `bf731e8789` publicados em `origin/dev`. O pedido de reset foi cumprido preservando o patch fora do repositório.
 - **Implementação local:** biblioteca Conta própria com `Drupal.Ajax`, histórico, metadados de título/breadcrumb, foco, estado e falha/retry; detalhes nativos para menu móvel; wrappers Grid próprios. Reteste corrigiu a construção `Drupal.Ajax(null, null, ...)` para não associar listener de clique Core duplicado ao handler delegado. Dashboard consulta providers e acesso de destino em `DomainPurposeManager`; identidade usa resolver público e falha fechada. Culturas registrado pelo owner Eventos. Marley remove destino Studio quebrado de “Criar” e aponta para a rota owner; moderação permanece gated.

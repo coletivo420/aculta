@@ -27,7 +27,7 @@ async function wd(method, path, body) {
   if (!response.ok || data.value?.error) throw new Error(`${data.value?.error || response.status}: ${String(data.value?.message || '').split('\n')[0]}`);
   return data.value;
 }
-const oneTimeLogin = () => execFileSync('php', ['vendor/drush/drush/drush.php', 'uli', '--no-browser', `--name=${USER}`, `--uri=${BASE}`], { cwd: DRUSH, encoding: 'utf8' }).trim().split('\n').pop();
+const oneTimeLogin = () => execFileSync('php', ['vendor/drush/drush/drush.php', 'uli', '--no-browser', `--name=${USER}`, `--uri=${BASE}`, '/conta/dados'], { cwd: DRUSH, encoding: 'utf8' }).trim().split('\n').pop();
 
 let sid = '';
 try {
@@ -48,9 +48,12 @@ try {
   current = await wd('GET', p('/url'));
   const title = await wd('GET', p('/title'));
   const source = await wd('GET', p('/source'));
+  const authenticated = !source.includes('name="name"') && !source.includes('user/login');
+  check('sessão autenticada disponível para rotas privadas', authenticated, authenticated ? 'shell da conta carregado' : 'login não concluiu; rotas protegidas não foram testadas');
+  if (!authenticated) throw new Error('Firefox não concluiu autenticação por link único.');
   const dataForm = await wd('POST', p('/element'), { using: 'css selector', value: '[data-aculta-account-root] form' }).then(() => true, () => false);
-  const accountNav = await wd('POST', p('/element'), { using: 'css selector', value: '[data-aculta-account-root] .studio__subtabs' }).then(() => true, () => false);
-  check('rota direta Dados entrega shell e Form API sem JavaScript', new URL(current).pathname === '/conta/dados' && dataForm && accountNav, JSON.stringify({ path: new URL(current).pathname, title, form: dataForm, navigation: accountNav, scriptReferences: (source.match(/<script\b/gi) || []).length }));
+  const accountNav = await wd('POST', p('/element'), { using: 'css selector', value: '[data-aculta-account-link][aria-current="page"][href="/conta/dados"]' }).then(() => true, () => false);
+  check('rota direta Dados entrega shell e navegação ativa sem JavaScript', new URL(current).pathname === '/conta/dados' && dataForm && accountNav, JSON.stringify({ path: new URL(current).pathname, title, form: dataForm, navigation: accountNav, scriptReferences: (source.match(/<script\b/gi) || []).length }));
 
   const address = await wd('POST', p('/element'), { using: 'css selector', value: '[data-aculta-account-link][href="/conta/endereco"]' }).then((value) => value[Object.keys(value)[0]], () => null);
   if (address) {
@@ -66,6 +69,21 @@ try {
   await new Promise((resolve) => setTimeout(resolve, 700));
   current = await wd('GET', p('/url'));
   check('voltar funciona sem JavaScript', new URL(current).pathname === '/conta/dados', new URL(current).pathname);
+
+  // Check each section by direct URL. Optional owner modules can hide a link,
+  // so route availability is independent from the contextual menu contents.
+  const paths = ['/conta/dados', '/conta/endereco', '/conta/documentos', '/conta/seguranca', '/conta/seguranca/senha', '/conta/conexoes', '/conta/pedidos', '/conta/apoio', '/conta/preferencias'];
+  for (const path of paths) {
+    await wd('POST', p('/url'), { url: new URL(path, BASE).href });
+    await new Promise((resolve) => setTimeout(resolve, 550));
+    current = await wd('GET', p('/url'));
+    const source = await wd('GET', p('/source'));
+    const content = await wd('POST', p('/element'), { using: 'css selector', value: '[data-aculta-account-root] [data-aculta-account-main]' }).then(() => true, () => false);
+    const active = await wd('POST', p('/element'), { using: 'css selector', value: `[data-aculta-account-link][aria-current="page"][href="${path}"]` }).then(() => true, () => false);
+    const unavailable = source.includes('Access denied') || source.includes('Page not found');
+    const expectedPage = path !== '/conta/documentos' || (await wd('POST', p('/element'), { using: 'css selector', value: '[data-aculta-account-root] form' }).then(() => true, () => false));
+    check(`rota direta ${path} e resposta server-rendered sem JavaScript`, new URL(current).pathname === path && !unavailable && content && expectedPage && active, JSON.stringify({ path: new URL(current).pathname, content, active, unavailable }));
+  }
 } catch (error) {
   check('suíte no-JS executa integralmente', false, String(error.message || error));
 } finally {
