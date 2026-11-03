@@ -1,3 +1,8 @@
+## 0.1.0-dev.155 — Kernel de certificados usa progresso ACULTA (ADR-042 P5)
+
+- `CertificateLifecycleTest` cria e verifica `aculta_lms_progress`; deixa de importar tipos `CourseStatus` do LMS contrib, mantendo os testes do ciclo de certificados no modelo próprio já consumido pelo serviço.
+- Kernel focal: 5 testes/158 assertions PASS; suíte Unit completa: 228 testes/786 assertions PASS (1 depreciação PHPUnit).
+
 ## 0.1.0-dev.154 — slugs consultam conteúdo ACULTA (ADR-042 P5)
 
 - O conversor e o route processor usam `GroupInterface`; slugs de aula consultam `aculta_lms_lesson` por `course_id` e os de atividade consultam `aculta_lms_activity` por `lesson_id`, ambos em ordem de peso/ID.

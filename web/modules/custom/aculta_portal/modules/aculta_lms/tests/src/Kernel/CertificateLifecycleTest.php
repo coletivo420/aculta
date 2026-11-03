@@ -17,6 +17,8 @@ use Drupal\aculta_lms\Certificate\CourseCertificateManagerInterface;
 use Drupal\aculta_lms\Certificate\CertificateQrCodeProviderInterface;
 use Drupal\aculta_lms\Controller\CertificateVerificationController;
 use Drupal\aculta_lms\Entity\CourseCertificate;
+use Drupal\aculta_lms\Entity\ProgressEntity;
+use Drupal\aculta_lms\Learning\CourseProgress;
 use Drupal\aculta_lms\Form\CourseCertificateIssueForm;
 use Drupal\aculta_lms\Form\CourseCertificateRevokeForm;
 use Drupal\aculta_lms\Hook\CertificateEntityViewHooks;
@@ -26,8 +28,6 @@ use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\PermissionScopeInterface;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\lms\Entity\CourseStatus;
-use Drupal\lms\Entity\CourseStatusInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\user\Entity\User;
@@ -40,7 +40,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
- * Covers certificate issuance and state changes using real LMS entities.
+ * Covers certificate issuance and state changes using ACULTA progress entities.
  */
 #[TestGroup('aculta_lms')]
 #[RunTestsInSeparateProcesses]
@@ -79,7 +79,7 @@ final class CertificateLifecycleTest extends KernelTestBase {
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
-    $this->installEntitySchema('lms_course_status');
+    $this->installEntitySchema('aculta_lms_progress');
     $this->installEntitySchema('aculta_lms_certificate');
 
     $storage = FieldStorageConfig::create([
@@ -102,6 +102,20 @@ final class CertificateLifecycleTest extends KernelTestBase {
   }
 
   /**
+   * Creates ACULTA course progress for certificate lifecycle tests.
+   */
+  private function createProgress(int $courseId, int $uid, string $status, bool $finished): ProgressEntity {
+    $progress = $this->container->get('entity_type.manager')->getStorage('aculta_lms_progress')->create([
+      'course_id' => $courseId,
+      'uid' => $uid,
+      'status' => $status,
+      'finished' => $finished,
+    ]);
+    $progress->save();
+    return $progress;
+  }
+
+  /**
    * Tests issuance, reissuance, revocation, and retained history.
    */
   public function testEligibilityReissueAndRevocationKeepHistory(): void {
@@ -121,13 +135,7 @@ final class CertificateLifecycleTest extends KernelTestBase {
       'field_course_hours' => 0,
     ]);
     self::assertGreaterThan(0, count($course_without_workload->get('field_course_hours')->validate()));
-    $status = CourseStatus::create([
-      CourseStatusInterface::COURSE_FIELD => $course->id(),
-      'uid' => $student->id(),
-      'status' => CourseStatusInterface::STATUS_PASSED,
-      'finished' => 1_700_000_000,
-    ]);
-    $status->save();
+    $status = $this->createProgress((int) $course->id(), (int) $student->id(), CourseProgress::STATUS_PASSED, TRUE);
     $issuer = new UserSession(['uid' => 1, 'permissions' => ['administer lms']]);
     $manager = $this->container->get('aculta_lms.course_certificate_manager');
 
@@ -261,13 +269,7 @@ final class CertificateLifecycleTest extends KernelTestBase {
       'field_course_hours' => 8,
     ]);
     $course->save();
-    $status = CourseStatus::create([
-      CourseStatusInterface::COURSE_FIELD => $course->id(),
-      'uid' => $student->id(),
-      'status' => CourseStatusInterface::STATUS_PROGRESS,
-      'finished' => 0,
-    ]);
-    $status->save();
+    $status = $this->createProgress((int) $course->id(), (int) $student->id(), CourseProgress::STATUS_PROGRESS, FALSE);
     $manager = $this->container->get('aculta_lms.course_certificate_manager');
 
     try {
@@ -278,8 +280,8 @@ final class CertificateLifecycleTest extends KernelTestBase {
       self::assertStringContainsString('finished, approved', $exception->getMessage());
     }
 
-    $status->setStatus(CourseStatusInterface::STATUS_PASSED);
-    $status->setFinished(1_700_000_000)->save();
+    $status->set('status', CourseProgress::STATUS_PASSED);
+    $status->set('finished', TRUE)->save();
     try {
       $manager->issue($status, new UserSession(['uid' => 999, 'permissions' => []]));
       self::fail('An unauthorized issuer must be rejected.');
@@ -302,13 +304,7 @@ final class CertificateLifecycleTest extends KernelTestBase {
       'field_course_hours' => 8,
     ]);
     $course->save();
-    $status = CourseStatus::create([
-      CourseStatusInterface::COURSE_FIELD => $course->id(),
-      'uid' => $student->id(),
-      'status' => CourseStatusInterface::STATUS_PASSED,
-      'finished' => 1_700_000_000,
-    ]);
-    $status->save();
+    $status = $this->createProgress((int) $course->id(), (int) $student->id(), CourseProgress::STATUS_PASSED, TRUE);
     $manager = $this->container->get('aculta_lms.course_certificate_manager');
     $issuer = new UserSession(['uid' => 1, 'permissions' => ['administer lms']]);
 
@@ -327,11 +323,11 @@ final class CertificateLifecycleTest extends KernelTestBase {
     $form->setStringTranslation($this->container->get('string_translation'));
     $form->setMessenger($this->container->get('messenger'));
     $build = $form->buildForm([], new FormState());
-    self::assertSame([], $build['course_status']['#options'], 'The educator form skips statuses whose student reference was removed.');
+    self::assertSame([], $build['course_progress']['#options'], 'The educator form skips statuses whose student reference was removed.');
 
     foreach ([
       'student reference' => ['uid', 999_999],
-      'course reference' => [CourseStatusInterface::COURSE_FIELD, 999_999],
+      'course reference' => ['course_id', 999_999],
     ] as $reference => [$field, $targetId]) {
       $status->set($field, $targetId)->save();
       try {
@@ -371,13 +367,7 @@ final class CertificateLifecycleTest extends KernelTestBase {
       'permissions' => ['grade students'],
     ])->save();
     $course->addMember($educator, ['group_roles' => ['lms_course-certificate_teacher']]);
-    $status = CourseStatus::create([
-      CourseStatusInterface::COURSE_FIELD => $course->id(),
-      'uid' => $student->id(),
-      'status' => CourseStatusInterface::STATUS_PASSED,
-      'finished' => 1_700_000_000,
-    ]);
-    $status->save();
+    $status = $this->createProgress((int) $course->id(), (int) $student->id(), CourseProgress::STATUS_PASSED, TRUE);
     $manager = $this->createMock(CourseCertificateManagerInterface::class);
     $account = $this->container->get('current_user');
     $account->setAccount($educator);
@@ -390,7 +380,7 @@ final class CertificateLifecycleTest extends KernelTestBase {
       'certificate_name' => $student->getDisplayName(),
       'course_title' => $course->label(),
       'course_hours' => 8,
-      'completed' => $status->getFinished(),
+      'completed' => $status->get('changed')->value,
       'issued' => 1_700_000_100,
       'sequence' => 1,
       'supersedes_id' => 0,
@@ -425,9 +415,9 @@ final class CertificateLifecycleTest extends KernelTestBase {
     $issueForm->setStringTranslation($this->container->get('string_translation'));
     $issueForm->setMessenger($this->container->get('messenger'));
     $issueOptions = $issueForm->buildForm([], new FormState());
-    self::assertArrayHasKey((string) $status->id(), $issueOptions['course_status']['#options']);
+    self::assertArrayHasKey((string) $status->id(), $issueOptions['course_progress']['#options']);
     $issueState = new FormState();
-    $issueState->setValue('course_status', $status->id());
+    $issueState->setValue('course_progress', $status->id());
     $issueBuild = [];
     $issueForm->submitForm($issueBuild, $issueState);
 
@@ -471,13 +461,7 @@ final class CertificateLifecycleTest extends KernelTestBase {
       'field_course_hours' => 8,
     ]);
     $course->save();
-    $status = CourseStatus::create([
-      CourseStatusInterface::COURSE_FIELD => $course->id(),
-      'uid' => $student->id(),
-      'status' => CourseStatusInterface::STATUS_PASSED,
-      'finished' => 1_700_000_000,
-    ]);
-    $status->save();
+    $status = $this->createProgress((int) $course->id(), (int) $student->id(), CourseProgress::STATUS_PASSED, TRUE);
 
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->expects(self::once())
