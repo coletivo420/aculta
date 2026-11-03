@@ -16,14 +16,6 @@ use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
 final class FrontPathPolicy {
 
   /**
-   * Canonical Studio path prefixes and their owning domain purposes.
-   */
-  private const CANONICAL_STUDIO_PATHS = [
-    'shop' => '/studio/green-stash',
-    'wiki' => '/studio/we-sativa',
-  ];
-
-  /**
    * Caminho do nó que é a página inicial do subdomínio (não público).
    */
   private const NO_DA_RAIZ = [
@@ -59,17 +51,6 @@ final class FrontPathPolicy {
     // O endereço do Node da loja também é interno; a raiz o serve.
     $noDaRaiz = self::NO_DA_RAIZ[$purpose] ?? NULL;
     return $noDaRaiz !== NULL && $path === $noDaRaiz;
-  }
-
-  /**
-   * Whether a Studio-prefixed path belongs to a real canonical route.
-   *
-   * Route matching and access requirements remain authoritative after this
-   * narrow purpose/path guard. Unknown descendants still resolve to 404.
-   */
-  public static function caminhoStudioCanonicoPermitido(?string $purpose, string $path): bool {
-    $prefix = self::CANONICAL_STUDIO_PATHS[$purpose ?? ''] ?? NULL;
-    return $prefix !== NULL && ($path === $prefix || str_starts_with($path, $prefix . '/'));
   }
 
   /**

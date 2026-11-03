@@ -141,17 +141,12 @@ final class DomainPurposeRequestSubscriber implements EventSubscriberInterface {
       $event->setResponse(new Response('', Response::HTTP_FORBIDDEN, ['Cache-Control' => 'private, no-store']));
       return;
     }
-    // Only canonical Green Stash and WE SATIVA paths remain under the Studio
-    // prefix. Purpose-scoped routing and entity access still authorize them.
+    // O prefixo /studio saiu: WE SATIVA e GREEN STASH têm caminhos próprios
+    // (/we-sativa e /green-stash). Qualquer /studio responde 404.
     $accountPath = $event->getRequest()->getPathInfo();
     if ($accountPath === '/studio' || str_starts_with($accountPath, '/studio/')) {
-      if (!FrontPathPolicy::caminhoStudioCanonicoPermitido(
-        $this->domainPurposeManager->getCurrentPurpose(),
-        $accountPath,
-      )) {
-        $event->setResponse($this->notFoundResponse());
-        return;
-      }
+      $event->setResponse($this->notFoundResponse());
+      return;
     }
     // /minha-conta remains a protected technical path, not a public alias.
     if ($accountPath === '/minha-conta' || str_starts_with($accountPath, '/minha-conta/')) {
