@@ -142,3 +142,6 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Gates:** admin routes, environment addresses, browser validators, public slugs, tema ACULTA420, boundaries e suíte do deployer PASS. Índice/Portal Drupal 11 falham por alteração simultânea do LMS: manifest `.160`, status `.159` e README fora deste commit.
 - **DEFERRED:** revisão autenticada da interface `/painel-administrativo/aculta/caminhos` e das Suites; resolução inbound de `/slug` no MAIN (3.5); exportação de `leitura_ativa: true` para `config/sync` somente no RC.
 - **Estado do checkout:** alterações não staged do `aculta_lms` pertencem ao trabalho paralelo e foram preservadas; não incluir no próximo commit de superfícies.
+
+- **Continuação:** expectativas antigas de `/wesativa` e `/greenstash` foram corrigidas para `/we-sativa` e `/green-stash` nos testes de Studio e Commerce. A suíte combinada passou 257 testes/1.642 asserções; commit `52c52301b` está publicado em `origin/dev`.
+- **Interface administrativa:** rota, permissão restrita, parent de menu ACULTA e purpose MAIN conferidos nos YAML e no teste estático. A requisição anônima retorna 404; validação autenticada segue DEFERRED por falta de sessão de teste.
