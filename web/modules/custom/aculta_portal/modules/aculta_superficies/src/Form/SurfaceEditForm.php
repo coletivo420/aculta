@@ -120,7 +120,7 @@ final class SurfaceEditForm extends FormBase {
         $form['caminho']['hostname'] = [
           '#type' => 'textfield',
           '#title' => $this->t('Subdomínio (endereço completo)'),
-          '#description' => $this->t('Ex.: wiki420.aculta.org. Sem https://, sem barra final. O endereço é gravado no Domain desta superfície.'),
+          '#description' => $this->t('Ex.: wiki.exemplo.org. Sem https://, sem barra final. O endereço é gravado no Domain desta superfície.'),
           '#default_value' => $hostAtual,
           '#maxlength' => 253,
           '#required' => TRUE,

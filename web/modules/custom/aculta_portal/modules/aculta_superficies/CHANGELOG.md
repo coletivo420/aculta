@@ -66,3 +66,8 @@
   - cinco mapas de purpose unificados em uma configuração (Fase 3.1).
 - Testes: **DEFERRED**. Sem acesso ao Runtime.
 - Versão de referência: MINOR do `aculta_portal` quando houver implementação. Confirmar na classificação de versionamento antes de marcar a versão final.
+## 0.1.0-dev.11 — descrição de host sem ambiente fixo
+
+- Substituída a referência de produção na descrição do campo de host por um exemplo neutro; o valor exibido continua vindo da entidade Domain.
+- Gate de endereços de ambiente passa sem ocorrências no submódulo.
+
