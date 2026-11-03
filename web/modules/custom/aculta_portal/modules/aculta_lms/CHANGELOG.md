@@ -1,3 +1,9 @@
+## 0.1.0-dev.130 — plugins objetivos ACULTA (ADR-042, P3)
+
+- Adicionados plugins ACULTA para `true_false`, `select` e `fill_blanks`, ligados a `CourseActivity` pelo tipo estável e resolvidos por serviço injetado.
+- Os plugins usam `ObjectiveAnswerScorer`; seleção exige conjunto exato e lacunas usam a normalização existente. Os plugins do LMS contrib continuam ativos; nenhuma dissertativa, resposta por arquivo, revisão ou troca de leitor foi incluída.
+- `ObjectiveAnswerPluginsTest` 5/13 PASS; suíte Unit completa 216/686 PASS (1 depreciação PHPUnit). Kernel `AcultaLmsInstallTest` 5/128 PASS (27 depreciações upstream), incluindo serviço injetado e resolução de `select` pelo tipo de `CourseActivity`. Nenhuma troca dos plugins contrib, integração de formulário, persistência ou leitor nesta fase.
+
 ## 0.1.0-dev.129 — entidades próprias de aprendizagem (ADR-042, P2)
 
 - Criadas as entidades internas de aula, atividade, resposta e progresso, com acesso negado por padrão e sem rotas ou formulários.

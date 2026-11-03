@@ -8,7 +8,7 @@ namespace Drupal\aculta_lms\Learning;
  * Atividade de uma aula, no vocabulário ACULTA (ADR-042, P1).
  *
  * Valor imutável. O tipo é uma string estável do ACULTA (por exemplo
- * "objective", "essay", "file_upload"), não um bundle do contrib.
+ * "true_false", "select", "fill_blanks", "essay", "file_upload"), não um bundle do contrib.
  */
 final class CourseActivity {
 

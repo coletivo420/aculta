@@ -15,6 +15,9 @@ use Drupal\Core\Entity\EntityStorageException;
 use Drupal\aculta_lms\Event\CourseCompletionPublisherInterface;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\aculta_lms\Learning\CourseActivityReaderInterface;
+use Drupal\aculta_lms\Learning\CourseActivity;
+use Drupal\aculta_lms\Plugin\ActivityAnswer\ObjectiveAnswerPluginResolver;
+use Drupal\aculta_lms\Plugin\ActivityAnswer\SelectAnswerPlugin;
 use Drupal\aculta_lms\Learning\CourseAnswerReaderInterface;
 use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
 use Drupal\KernelTests\KernelTestBase;
@@ -90,6 +93,9 @@ final class AcultaLmsInstallTest extends KernelTestBase {
     );
     $this->assertInstanceOf(CourseLessonReaderInterface::class, $container->get(CourseLessonReaderInterface::class));
     $this->assertInstanceOf(CourseActivityReaderInterface::class, $container->get(CourseActivityReaderInterface::class));
+    $objectiveAnswers = $container->get(ObjectiveAnswerPluginResolver::class);
+    $this->assertInstanceOf(ObjectiveAnswerPluginResolver::class, $objectiveAnswers);
+    $this->assertInstanceOf(SelectAnswerPlugin::class, $objectiveAnswers->forActivity(new CourseActivity(10, 20, 'select', TRUE)));
     $this->assertInstanceOf(CourseAnswerReaderInterface::class, $container->get(CourseAnswerReaderInterface::class));
     $this->assertInstanceOf(
       CourseOrderEnrollmentManagerInterface::class,

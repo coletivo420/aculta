@@ -1,4 +1,22 @@
 services:
+  aculta_lms.objective_answer_scorer:
+    class: Drupal\aculta_lms\Assessment\ObjectiveAnswerScorer
+  aculta_lms.objective_answer.true_false:
+    class: Drupal\aculta_lms\Plugin\ActivityAnswer\TrueFalseAnswerPlugin
+    arguments: ['@aculta_lms.objective_answer_scorer']
+  aculta_lms.objective_answer.select:
+    class: Drupal\aculta_lms\Plugin\ActivityAnswer\SelectAnswerPlugin
+    arguments: ['@aculta_lms.objective_answer_scorer']
+  aculta_lms.objective_answer.fill_blanks:
+    class: Drupal\aculta_lms\Plugin\ActivityAnswer\FillBlanksAnswerPlugin
+    arguments: ['@aculta_lms.objective_answer_scorer']
+  aculta_lms.objective_answer_plugins:
+    class: Drupal\aculta_lms\Plugin\ActivityAnswer\ObjectiveAnswerPluginResolver
+    arguments:
+      - '@aculta_lms.objective_answer.true_false'
+      - '@aculta_lms.objective_answer.select'
+      - '@aculta_lms.objective_answer.fill_blanks'
+  Drupal\aculta_lms\Plugin\ActivityAnswer\ObjectiveAnswerPluginResolver: '@aculta_lms.objective_answer_plugins'
   aculta_lms.account_user_loader:
     class: Drupal\aculta_lms\Account\AccountUserLoader
     arguments: ['@entity_type.manager']
