@@ -1,3 +1,8 @@
+## 0.1.0-dev.156 — relação de turmas Group própria (ADR-042 P5)
+
+- `CourseClassRelation` no `aculta_lms` implementa o plugin Group `lms_classes` com as cardinalidades existentes; `CourseClassRelationHooks` seleciona a implementação ACULTA durante a convivência com o contrib, mantendo intactos os IDs e registros da relação.
+- `ClassRosterVisibilityTest` verifica plugin, cardinalidades e roster: Kernel focal 2 testes/50 assertions PASS (41 depreciações Core/contrib). Unit completa: 228 testes/786 assertions PASS (1 depreciação PHPUnit); PHPCS focal e gate Portal (1.160 checks) PASS. O harness sem contrib segue pendente para P4.
+
 ## 0.1.0-dev.155 — Kernel de certificados usa progresso ACULTA (ADR-042 P5)
 
 - `CertificateLifecycleTest` cria e verifica `aculta_lms_progress`; deixa de importar tipos `CourseStatus` do LMS contrib, mantendo os testes do ciclo de certificados no modelo próprio já consumido pelo serviço.

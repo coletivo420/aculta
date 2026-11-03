@@ -1,8 +1,8 @@
 # Status de componente para a tabela do README raiz (gerada). Edite só este arquivo.
-version: 0.1.0-dev.155
+version: 0.1.0-dev.156
 state: Dev
-progress_note: "ADR-042 P5 dev.155: os quatro leitores usam entidades próprias; adapters P1 removidos. Matrícula usa Group e dashboards/lista de cursos apontam para entity.group.canonical; tokens e ingestão xAPI autorizam pelo progresso ACULTA; slugs consultam Group e entidades próprias; Kernel de certificados valida progresso ACULTA; aulas da jornada sem URL até existir rota ACULTA. Unit 228/786 PASS (1 depreciação PHPUnit); Kernel xAPI 3/30 PASS (27 depreciações upstream); gate Portal 1160 PASS. Sem migração de legado. Histórico/payload de respostas, relação lms_classes e rotas de submissão seguem pendentes; P4/P5 incompletos."
-next_phase: 'Continuar consumidores LMS restantes. Antes de remover lms_classes, fornecer plugin Group compatível com as relações atuais; antes de remover rotas/formulários de resposta, definir substituição ACULTA sem inventar payload/status. Revisar config/sync e manter dados; P6 fora do escopo.'
+progress_note: "ADR-042 P5 dev.156: os quatro leitores usam entidades próprias; adapters P1 removidos. Matrícula usa Group e dashboards/lista de cursos apontam para entity.group.canonical; tokens e ingestão xAPI autorizam pelo progresso ACULTA; slugs consultam Group e entidades próprias; Kernel de certificados valida progresso ACULTA; `lms_classes` usa implementação de relação Group do ACULTA; aulas da jornada sem URL até existir rota ACULTA. Unit 228/786 PASS (1 depreciação PHPUnit); Kernel xAPI 3/30 PASS (27 depreciações upstream), Kernel ClassRoster 2/50 PASS (41 depreciações upstream); gate Portal 1160 PASS. Sem migração de legado. Histórico/payload de respostas, rotas de submissão e harness de instalação sem contrib seguem pendentes; P4/P5 incompletos."
+next_phase: 'Plugin Group `lms_classes` implementado no ACULTA com o ID atual; validar override e instalação limpa sem contrib em P4. Antes de remover rotas/formulários de resposta, definir substituição ACULTA sem inventar payload/status. Revisar config/sync e manter dados; P6 fora do escopo.'
 
 # 2026-10-22: Dependência externa de UI G420-C2-T permanece pendente.
 # O Studio compõe cards SDC, mas a homologação depende de fixtures LMS

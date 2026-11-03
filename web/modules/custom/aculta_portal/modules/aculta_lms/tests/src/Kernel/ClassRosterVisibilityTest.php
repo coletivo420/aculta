@@ -10,6 +10,7 @@ use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\PermissionScopeInterface;
 use Drupal\aculta_lms\ClassRosterManager;
+use Drupal\aculta_lms\Plugin\Group\Relation\CourseClassRelation;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
@@ -77,6 +78,22 @@ final class ClassRosterVisibilityTest extends KernelTestBase {
       'scope' => PermissionScopeInterface::INDIVIDUAL_ID,
       'global_role' => 'authenticated',
     ])->save();
+  }
+
+  /**
+   * The stable class relationship ID resolves to the ACULTA implementation.
+   */
+  public function testClassRelationshipUsesAcultaPlugin(): void {
+    $permissions = $this->container->get('user.permissions')->getPermissions();
+    self::assertArrayHasKey('administer lms', $permissions);
+
+    $manager = $this->container->get('group_relation_type.manager');
+    $definition = $manager->getDefinition('lms_classes');
+    self::assertSame(CourseClassRelation::class, $definition->getClass());
+
+    $plugin = $manager->createInstance('lms_classes', ['group_type_id' => 'lms_course']);
+    self::assertSame(0, $plugin->getGroupCardinality());
+    self::assertSame(1, $plugin->getEntityCardinality());
   }
 
   /**
