@@ -31,6 +31,8 @@ use Symfony\Component\Yaml\Yaml;
 #[RunTestsInSeparateProcesses]
 final class LmsRolePermissionsConfigSyncKernelTest extends KernelTestBase {
 
+  use LmsForumDependencyHarnessTrait;
+
   /**
    * The exported Group roles owned by the adapter.
    */
@@ -46,7 +48,9 @@ final class LmsRolePermissionsConfigSyncKernelTest extends KernelTestBase {
    */
   protected static $modules = [
     'system',
+    'key',
     'user',
+    'file',
     'field',
     'filter',
     'text',
@@ -57,8 +61,10 @@ final class LmsRolePermissionsConfigSyncKernelTest extends KernelTestBase {
     'flexible_permissions',
     'group',
     'gnode',
+    'domain',
     'lms',
     'lms_classes',
+    'aculta_lms',
     // The exported roles declare these modules as dependencies, and Group
     // validates them when the configuration is imported through Config Sync.
     'file',
@@ -66,6 +72,7 @@ final class LmsRolePermissionsConfigSyncKernelTest extends KernelTestBase {
     'media',
     'aculta_image',
     'aculta_document_viewer',
+    'aculta_file_uploader',
     // Enabled so the exported module dependency is satisfiable; the fixture
     // supplies the external services the module declares.
     'aculta_forum_lms',

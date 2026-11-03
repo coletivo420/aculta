@@ -17,7 +17,6 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipStorageInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -71,7 +70,7 @@ final class Courseaculta_H5PContentSelection extends DefaultSelection {
    * {@inheritdoc} */
   public function getReferenceableEntities($match = NULL, $match_operator = 'CONTAINS', $limit = 0): array {
     $course = $this->courseContext();
-    if (!$course instanceof CourseInterface || !$course->hasField('field_h5p_activities') || !$course->access('update', $this->currentUser)->isAllowed()) {
+    if (!$course instanceof GroupInterface || !$course->hasField('field_h5p_activities') || !$course->access('update', $this->currentUser)->isAllowed()) {
       return [];
     }
     $ids = [];
@@ -127,7 +126,7 @@ final class Courseaculta_H5PContentSelection extends DefaultSelection {
   /**
    * Resolves the Group context from the route or existing topic relation.
    */
-  private function courseContext(): ?CourseInterface {
+  private function courseContext(): ?GroupInterface {
     $request = $this->requestStack->getCurrentRequest();
     $group = $request?->attributes->get('group');
     if (!$group instanceof GroupInterface && ctype_digit((string) $request?->query->get('group_id'))) {
@@ -148,7 +147,7 @@ final class Courseaculta_H5PContentSelection extends DefaultSelection {
     if (!$group instanceof GroupInterface) {
       return NULL;
     }
-    if ($group instanceof CourseInterface) {
+    if ($group instanceof GroupInterface) {
       return $group;
     }
     if ($group->bundle() !== 'lms_class') {
@@ -160,7 +159,7 @@ final class Courseaculta_H5PContentSelection extends DefaultSelection {
     }
     $parent = reset($parents);
     $course = $parent instanceof GroupRelationshipInterface ? $parent->getGroup() : NULL;
-    return $course instanceof CourseInterface ? $course : NULL;
+    return $course instanceof GroupInterface ? $course : NULL;
   }
 
   /**

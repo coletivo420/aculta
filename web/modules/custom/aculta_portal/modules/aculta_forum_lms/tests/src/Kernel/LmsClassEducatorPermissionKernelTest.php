@@ -48,12 +48,16 @@ use Symfony\Component\Yaml\Yaml;
 #[RunTestsInSeparateProcesses]
 final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
 
+  use LmsForumDependencyHarnessTrait;
+
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
     'system',
+    'key',
     'user',
+    'file',
     'field',
     'filter',
     'text',
@@ -64,8 +68,11 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     'flexible_permissions',
     'group',
     'gnode',
+    'domain',
     'lms',
     'lms_classes',
+    'aculta_lms',
+    'aculta_file_uploader',
     'aculta_forum_lms_test',
   ];
 

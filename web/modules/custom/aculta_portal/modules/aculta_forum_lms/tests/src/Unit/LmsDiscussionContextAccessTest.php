@@ -13,7 +13,6 @@ use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipStorageInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\aculta_forum_lms\Context\LmsDiscussionContextProvider;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
@@ -35,18 +34,13 @@ final class LmsDiscussionContextAccessTest extends UnitTestCase {
     $educator = $this->createMock(AccountInterface::class);
     $educator->method('hasPermission')->with('post comments')->willReturn(TRUE);
 
-    $course = $this->createMock(CourseInterface::class);
+    $course = $this->createMock(GroupInterface::class);
     $this->addCacheability($course);
     $course->method('bundle')->willReturn('lms_course');
     $course->method('access')->with('view', self::anything(), TRUE)->willReturn(AccessResult::allowed());
-    $course->method('takeAccess')->willReturnCallback(
-      static fn (AccountInterface $account): AccessResult => $account === $student
-        ? AccessResult::allowed()
-        : AccessResult::forbidden(),
-    );
     $course->method('hasPermission')->willReturnCallback(
-      static fn (string $permission, AccountInterface $account): bool => $permission === 'grade students'
-        && $account === $educator,
+      static fn (string $permission, AccountInterface $account): bool => ($permission === 'take course' && $account === $student)
+        || ($permission === 'grade students' && $account === $educator),
     );
 
     $provider = $this->providerForCourse($course);
@@ -56,7 +50,7 @@ final class LmsDiscussionContextAccessTest extends UnitTestCase {
 
     self::assertTrue($topic->access('view', $student, TRUE)->isAllowed());
     self::assertTrue($course->access('view', $student, TRUE)->isAllowed());
-    self::assertTrue($course->takeAccess($student)->isAllowed());
+    self::assertTrue($course->hasPermission('take course', $student));
     self::assertTrue($course->hasPermission('grade students', $student) === FALSE);
     self::assertTrue($course->hasPermission('grade students', $educator));
 
@@ -75,12 +69,13 @@ final class LmsDiscussionContextAccessTest extends UnitTestCase {
   public function testClosedCommentFieldBlocksStudentWriting(): void {
     $student = $this->createMock(AccountInterface::class);
     $student->method('hasPermission')->with('post comments')->willReturn(TRUE);
-    $course = $this->createMock(CourseInterface::class);
+    $course = $this->createMock(GroupInterface::class);
     $this->addCacheability($course);
     $course->method('bundle')->willReturn('lms_course');
     $course->method('access')->willReturn(AccessResult::allowed());
-    $course->method('takeAccess')->willReturn(AccessResult::allowed());
-    $course->method('hasPermission')->willReturn(FALSE);
+    $course->method('hasPermission')->willReturnCallback(
+      static fn (string $permission): bool => $permission === 'take course',
+    );
 
     $provider = $this->providerForCourse($course);
     $context = $provider->getContext($this->createTopic($this->createCommentField(1)), $student);
@@ -100,7 +95,7 @@ final class LmsDiscussionContextAccessTest extends UnitTestCase {
     $educatorUser = $this->user();
     $outsiderUser = $this->user();
 
-    $course = $this->createMock(CourseInterface::class);
+    $course = $this->createMock(GroupInterface::class);
     $this->addCacheability($course);
     $course->method('bundle')->willReturn('lms_course');
     $course->method('hasPermission')->willReturnCallback(
@@ -160,7 +155,7 @@ final class LmsDiscussionContextAccessTest extends UnitTestCase {
   /**
    * Builds a provider with one Group Node course relationship.
    */
-  private function providerForCourse(CourseInterface $course): LmsDiscussionContextProvider {
+  private function providerForCourse(GroupInterface $course): LmsDiscussionContextProvider {
     $relationship = $this->createMock(GroupRelationshipInterface::class);
     $this->addCacheability($relationship);
     $relationship->method('getGroup')->willReturn($course);

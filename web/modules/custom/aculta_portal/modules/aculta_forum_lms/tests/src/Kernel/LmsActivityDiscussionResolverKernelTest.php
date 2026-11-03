@@ -8,18 +8,19 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\aculta_forum_lms\Context\LmsActivityDiscussionResolver;
 use Drupal\aculta_lms\Access\ClassActivityDeadlineAccessCheck;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
+use Drupal\aculta_lms\Entity\ActivityEntity;
+use Drupal\aculta_lms\Entity\LessonEntity;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
-use Drupal\lms\Entity\Activity;
-use Drupal\lms\Entity\ActivityType;
-use Drupal\lms\Entity\Lesson;
 use Drupal\node\NodeInterface;
 use Drupal\node\Entity\NodeType;
 use Drupal\Tests\user\Traits\UserCreationTrait;
+use Drupal\Tests\aculta_lms\Kernel\AcultaLmsDependencyHarnessTrait;
 use Drupal\user\Entity\Role;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Tests activity discussion resolution with real LMS, Node, and Group storage.
@@ -28,26 +29,38 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 final class LmsActivityDiscussionResolverKernelTest extends KernelTestBase {
 
+  use AcultaLmsDependencyHarnessTrait;
   use UserCreationTrait;
+
+  /** {@inheritdoc} */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $this->registerLmsDependencyServices($container);
+  }
 
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
     'system',
+    'key',
     'user',
+    'file',
     'field',
     'filter',
     'text',
     'options',
     'entity',
     'node',
+    'domain',
     'flexible_permissions',
     'group',
     'gnode',
     'views',
     'lms',
     'lms_classes',
+    'aculta_lms',
+    'aculta_file_uploader',
   ];
 
   /**
@@ -61,9 +74,8 @@ final class LmsActivityDiscussionResolverKernelTest extends KernelTestBase {
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
-    $this->installEntitySchema('lms_lesson');
-    $this->installEntitySchema('lms_activity');
-    $this->installEntitySchema('lms_course_status');
+    $this->installEntitySchema('aculta_lms_lesson');
+    $this->installEntitySchema('aculta_lms_activity');
     $this->installSchema('node', ['node_access']);
 
     NodeType::create(['type' => 'aculta_lms_topic', 'name' => 'LMS discussion topic'])->save();
@@ -72,7 +84,7 @@ final class LmsActivityDiscussionResolverKernelTest extends KernelTestBase {
       'field_name' => 'field_lms_activity',
       'entity_type' => 'node',
       'type' => 'entity_reference',
-      'settings' => ['target_type' => 'lms_activity'],
+      'settings' => ['target_type' => 'aculta_lms_activity'],
       'cardinality' => 1,
     ])->save();
     $this->container->get('entity_type.manager')->getStorage('field_config')->create([
@@ -80,7 +92,7 @@ final class LmsActivityDiscussionResolverKernelTest extends KernelTestBase {
       'entity_type' => 'node',
       'bundle' => 'aculta_lms_topic',
       'label' => 'Atividade do curso',
-      'settings' => ['handler' => 'default:lms_activity'],
+      'settings' => ['handler' => 'default:aculta_lms_activity'],
     ])->save();
 
     $group_type_storage = $this->container->get('entity_type.manager')->getStorage('group_type');
@@ -118,21 +130,22 @@ final class LmsActivityDiscussionResolverKernelTest extends KernelTestBase {
   public function testResolverRestrictsTopicsToActivityCourseAndGroupAccess(): void {
     $owner = $this->createUser();
     $student = $this->createUser();
-    ActivityType::create(['id' => 'discussion_test', 'name' => 'Discussion test', 'pluginId' => 'no_answer'])->save();
-    $activity = Activity::create([
-      'type' => 'discussion_test',
-      'name' => 'Atividade da turma',
-      'status' => 1,
-      'uid' => $owner->id(),
+    $course = Group::create(['type' => 'lms_course', 'label' => 'Curso da atividade', 'uid' => $owner->id()]);
+    $course->save();
+    $lesson = LessonEntity::create([
+      'course_id' => $course->id(),
+      'title' => 'Aula com atividade',
+      'published' => TRUE,
+      'weight' => 0,
+    ]);
+    $lesson->save();
+    $activity = ActivityEntity::create([
+      'lesson_id' => $lesson->id(),
+      'type' => 'true_false',
+      'graded' => TRUE,
+      'weight' => 0,
     ]);
     $activity->save();
-    $lesson = Lesson::create(['name' => 'Aula com atividade', 'status' => 1, 'uid' => $owner->id()]);
-    $lesson->get('activities')->appendItem(['target_id' => $activity->id()]);
-    $lesson->save();
-
-    $course = Group::create(['type' => 'lms_course', 'label' => 'Curso da atividade', 'uid' => $owner->id()]);
-    $course->get('lessons')->appendItem(['target_id' => $lesson->id()]);
-    $course->save();
     $course->addMember($student, ['group_roles' => ['lms_course-test_member']]);
 
     $other_course = Group::create(['type' => 'lms_course', 'label' => 'Outro curso', 'uid' => $owner->id()]);
@@ -166,7 +179,7 @@ final class LmsActivityDiscussionResolverKernelTest extends KernelTestBase {
   /**
    * Creates a topic referencing the given activity.
    */
-  private function createTopic(UserInterface $owner, string $title, Activity $activity): NodeInterface {
+  private function createTopic(UserInterface $owner, string $title, ActivityEntity $activity): NodeInterface {
     $topic = $this->container->get('entity_type.manager')->getStorage('node')->create([
       'type' => 'aculta_lms_topic',
       'title' => $title,

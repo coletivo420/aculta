@@ -41,6 +41,7 @@ final class LmsH5PDiscussionResolverKernelTest extends KernelTestBase {
    * {@inheritdoc} */
   protected static $modules = [
     'system',
+    'key',
     'domain',
     'user',
     'field',

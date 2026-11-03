@@ -12,7 +12,6 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipStorageInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\node\NodeInterface;
 
 /**
@@ -30,7 +29,7 @@ final class Lmsaculta_H5PDiscussionResolver {
 
   /**
    * Builds an access-checked discussion list for a course H5P item. */
-  public function build(int $contentId, CourseInterface $course, AccountInterface $account): array {
+  public function build(int $contentId, GroupInterface $course, AccountInterface $account): array {
     $cache = (new CacheableMetadata())
       ->addCacheableDependency($course)
       ->addCacheContexts(['user', 'user.permissions', 'user.group_permissions'])
@@ -103,7 +102,7 @@ final class Lmsaculta_H5PDiscussionResolver {
   /**
    * Confirms the Group is the course or one of its unique child classes.
    */
-  private function belongsToCourse(GroupInterface $group, CourseInterface $course, GroupRelationshipStorageInterface $storage, CacheableMetadata $cache): bool {
+  private function belongsToCourse(GroupInterface $group, GroupInterface $course, GroupRelationshipStorageInterface $storage, CacheableMetadata $cache): bool {
     if ((string) $group->id() === (string) $course->id()) {
       return $group->bundle() === 'lms_course';
     }
@@ -120,10 +119,10 @@ final class Lmsaculta_H5PDiscussionResolver {
     if ($parent instanceof GroupRelationshipInterface) {
       $cache->addCacheableDependency($parent);
     }
-    if ($parentCourse instanceof CourseInterface) {
+    if ($parentCourse instanceof GroupInterface) {
       $cache->addCacheableDependency($parentCourse);
     }
-    return $parentCourse instanceof CourseInterface && (string) $parentCourse->id() === (string) $course->id();
+    return $parentCourse instanceof GroupInterface && (string) $parentCourse->id() === (string) $course->id();
   }
 
   /**

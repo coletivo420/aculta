@@ -19,7 +19,7 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  handler: 'default:lms_activity'
+  handler: 'default:aculta_lms_activity'
   handler_settings:
     target_bundles: null
     sort:

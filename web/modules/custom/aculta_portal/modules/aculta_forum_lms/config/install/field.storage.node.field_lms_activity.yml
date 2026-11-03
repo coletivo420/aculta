@@ -13,7 +13,7 @@ field_name: field_lms_activity
 entity_type: node
 type: entity_reference
 settings:
-  target_type: lms_activity
+  target_type: aculta_lms_activity
 module: core
 locked: false
 cardinality: 1

@@ -506,3 +506,16 @@
   regra de trabalho manda parar esta frente sem alterar a fixture para contornar
   o resultado. Nenhum Runtime ou conteúdo de teste foi alterado.
 
+## `0.1.0-dev.31` — discussões ligadas às entidades próprias LMS — 2026-11-02
+
+- Os resolvers de atividade, o contexto de discussões e a seleção de conteúdo
+  H5P passaram a usar `GroupInterface` e `aculta_lms_activity`; permissões de
+  estudante são verificadas com `GroupInterface::hasPermission()`.
+- O campo de referência do tópico nas definições de instalação agora aponta
+  para `aculta_lms_activity`. `config/sync` permanece sem alteração e conserva
+  a referência legada até a etapa de migração de configuração/dados.
+- A integração antiga no formulário contrib de resposta foi removida porque
+  não existe formulário ACULTA equivalente nesta fase.
+- Kernel do fórum: 27 testes / 1.348 asserções PASS; 58 depreciações
+  Core/contrib. Unit: 33 testes / 323 asserções PASS.
+

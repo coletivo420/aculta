@@ -14,7 +14,6 @@ use Drupal\aculta_forum_lms\Context\Lmsaculta_H5PDiscussionResolver;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipStorageInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\node\NodeInterface;
 use Drupal\user\UserInterface;
 use Drupal\Tests\UnitTestCase;
@@ -123,8 +122,8 @@ final class Lmsaculta_H5PDiscussionResolverTest extends UnitTestCase {
   /**
    * Creates a cacheable course entity mock.
    */
-  private function courseMock(): CourseInterface {
-    $course = $this->createMock(CourseInterface::class);
+  private function courseMock(): GroupInterface {
+    $course = $this->createMock(GroupInterface::class);
     $course->method('bundle')->willReturn('lms_course');
     $course->method('id')->willReturn('12');
     $course->method('getCacheContexts')->willReturn([]);
