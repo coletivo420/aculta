@@ -41,30 +41,18 @@ services:
   logger.channel.aculta_lms:
     parent: logger.channel_base
     arguments: ['aculta_lms']
-  aculta_lms.course_progress_adapter:
-    class: Drupal\aculta_lms\Learning\ContribCourseProgressAdapter
-    arguments: ['@lms.training_manager']
   aculta_lms.course_progress_reader:
     class: Drupal\aculta_lms\Learning\EntityCourseProgressReader
     arguments: ['@entity_type.manager']
   Drupal\aculta_lms\Learning\CourseProgressReaderInterface: '@aculta_lms.course_progress_reader'
-  aculta_lms.course_lesson_adapter:
-    class: Drupal\aculta_lms\Learning\ContribCourseLessonAdapter
-    arguments: ['@entity_type.manager']
   aculta_lms.course_lesson_reader:
     class: Drupal\aculta_lms\Learning\EntityCourseLessonReader
     arguments: ['@entity_type.manager']
   Drupal\aculta_lms\Learning\CourseLessonReaderInterface: '@aculta_lms.course_lesson_reader'
-  aculta_lms.course_activity_adapter:
-    class: Drupal\aculta_lms\Learning\ContribCourseActivityAdapter
-    arguments: ['@entity_type.manager']
   aculta_lms.course_activity_reader:
     class: Drupal\aculta_lms\Learning\EntityCourseActivityReader
     arguments: ['@entity_type.manager']
   Drupal\aculta_lms\Learning\CourseActivityReaderInterface: '@aculta_lms.course_activity_reader'
-  aculta_lms.course_answer_adapter:
-    class: Drupal\aculta_lms\Learning\ContribCourseAnswerAdapter
-    arguments: ['@entity_type.manager', '@lms.training_manager']
   aculta_lms.course_answer_reader:
     class: Drupal\aculta_lms\Learning\EntityCourseAnswerReader
     arguments: ['@entity_type.manager']

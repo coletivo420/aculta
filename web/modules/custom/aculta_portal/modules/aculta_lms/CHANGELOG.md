@@ -755,3 +755,14 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 - Elegibilidade, destinatários e links de avisos usam resposta, aula e atividade ACULTA e Group; URLs de curso usam a rota canônica de Group.
 - LMS Unit 227/747 PASS; Kernel de prazos/painel 2/87 PASS; Messenger LMS Unit 48/470 e Kernel 4/52 PASS.
 
+## 0.1.0-dev.149 — encerramento dos adaptadores temporários P1
+
+- Os contratos CourseProgress, CourseLesson, CourseActivity e CourseAnswer já
+  são servidos por leitores de entidades ACULTA; os quatro adaptadores do LMS
+  contrib e seus serviços/testes temporários foram removidos.
+- Dados legados não foram migrados. Respostas sem payload na entidade P2 e
+  outros consumidores contrib continuam pendentes de implementação antes do
+  corte P5.
+- O Kernel do painel usa agora aulas/progresso próprios; sem progresso
+  individual por aula, exibe zero aulas concluídas em vez de inferi-las do LMS.
+
