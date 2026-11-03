@@ -127,6 +127,12 @@ services:
   aculta_lms.answer_submission_access:
     class: Drupal\aculta_lms\Access\AnswerSubmissionAccessCheck
     arguments: ['@aculta_portal.lms_friendly_slugs', '@aculta_lms.notice_eligibility', '@current_user']
+  aculta_lms.lesson_view_access:
+    class: Drupal\aculta_lms\Access\LessonViewAccessCheck
+    arguments: ['@aculta_portal.lms_friendly_slugs', '@aculta_lms.notice_eligibility', '@current_user']
+  aculta_lms.course_lesson_controller:
+    class: Drupal\aculta_lms\Controller\CourseLessonController
+    arguments: ['@entity_type.manager', '@aculta_portal.lms_friendly_slugs', '@aculta_lms.notice_eligibility', '@string_translation']
   Drupal\aculta_lms\Hook\ActivityDeadlineFormHooks:
     class: Drupal\aculta_lms\Hook\ActivityDeadlineFormHooks
     arguments: ['@aculta_lms.class_activity_deadline_manager', '@date.formatter', '@entity_type.manager', '@current_user', '@string_translation']

@@ -259,20 +259,25 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
     $metadata->addCacheTags($progress?->cacheTags ?? []);
     $lessons = [];
     $total = 0;
+    $lesson_delta = 0;
     foreach ($this->lessonReader->forCourse((int) $course->id()) as $lesson) {
+      $source_delta = $lesson_delta++;
       if (!$lesson->published) {
         continue;
       }
       $metadata->addCacheTags(['aculta_lms_lesson:' . $lesson->id]);
-      $delta = $total++;
+      $total++;
       $lessons[] = new CourseJourneyLesson(
         id: (string) $lesson->id,
         label: $lesson->title,
-        delta: $delta,
+        delta: $source_delta,
         state: $progress?->finished ? 'finished' : 'not_started',
         isCurrent: FALSE,
         allowed: TRUE,
-        url: NULL,
+        url: Url::fromRoute('aculta_lms.lesson_view', [
+          'group' => $course->id(),
+          'lesson_delta' => $source_delta,
+        ]),
       );
     }
     $completed = $progress?->finished ? $total : 0;
@@ -361,13 +366,15 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
   }
 
   /**
-   * Counts active learners of a class by situation, without checking the viewer's access.
+   * Counts active learners of a class by situation, without checking access.
    *
-   * The dashboard calls it after its access check. The daily class snapshot on cron calls it directly.
+   * The dashboard calls this after its access check. The daily class snapshot
+   * on cron calls it directly.
    *
    * @return array{students: int, not_started: int, in_progress: int, pending_evaluation: int, passed: int, failed: int, cache: \Drupal\Core\Cache\CacheableMetadata, by_student?: array<int, string>}
-   *   Counts by situation and the cache metadata of the membership and status data read. `by_student` (uid to
-   *   situation) só com `$perStudent`.
+   *   Counts by situation and cache metadata for membership and status data.
+   *   `by_student` (uid to situation) is only included when `$perStudent` is
+   *   TRUE.
    */
   public function countClassStatuses(GroupInterface $class, GroupInterface $course, bool $perStudent = FALSE): array {
     $members = [];
@@ -441,7 +448,8 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
         $bySituation[(int) $member_id] = $key;
       }
     }
-    // Situação por aluno: só quando pedida (série por aluno, com consentimento pelo aceite único). O painel não pede.
+    // Include per-student status only when requested. The dashboard does not
+    // request it.
     if ($perStudent) {
       $result['by_student'] = $bySituation;
     }
@@ -449,7 +457,8 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
   }
 
   /**
-   * Finds the LMS course that owns a class relationship. */
+   * Finds the LMS course that owns a class relationship.
+   */
   public function courseForClass(GroupInterface $class): ?GroupInterface {
     $relationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
       'entity_id' => $class->id(),
@@ -464,7 +473,9 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
     return NULL;
   }
 
-  /** Reproduces the course take-access policy using Group permissions alone. */
+  /**
+   * Reproduces the course take-access policy using Group permissions alone.
+   */
   private function courseTakeAccess(GroupInterface $course, AccountInterface $account): AccessResult {
     $allowed = $course->hasPermission('take course', $account);
     $contexts = ['user.group_permissions'];

@@ -407,3 +407,22 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Validações:** Studio Unit completo 66/639 PASS; PHPCS Drupal/DrupalPractice nos quatro arquivos alterados PASS; gate Portal Drupal 11+ 1202 checks PASS; índice 53 componentes PASS; `git diff --check` PASS. PHPUnit avisou que `sites/simpletest/browser_output` não é gravável.
 - **Runtime:** antes da publicação, `updatedb:status` sem atualizações e `config:status` sem diferenças; nenhuma escrita de banco/configuração necessária. Próximo passo após push: confirmar Runtime, então continuar a auditoria LMS; pagamentos e demais requisitos Drupal ficam para as etapas seguintes do objetivo.
 - Snapshot pré-update protegido: `$SUITE_OUT/runtime-snapshots/aculta_runtime-before-mp-card-fields-20261103.sql`, SHA-256 `81715e89580503147ba03ea4f5fdc9454518fd7d2a2efa243ea10e83da1271ce`.
+## Continuação — páginas individuais de aula LMS — 2026-11-03
+
+- A jornada do estudante agora fornece link por aula publicada e a rota
+  `/curso/{curso}/{aula}` renderiza atividades ordenadas com acesso às
+  submissões ACULTA. A autorização exige usuário autenticado, curso e aula
+  publicados e matrícula vigente; posições de URL preservam aulas não
+  publicadas na ordenação original.
+- Kernel confirma URL e renderização de aula sem atividades, incluindo aula
+  não publicada antes da visível: 1 teste/35 assertions PASS. Unit LMS 230/805
+  PASS; PHPCS e PHP lint focais PASS. Há seis depreciações upstream no Kernel e
+  quatro depreciações PHPUnit na suíte Unit.
+- Arquivos da entrega: `web/modules/custom/aculta_portal/modules/aculta_lms/`
+  (rota, serviços, acesso, controller, jornada, testes, versão e changelog),
+  `docs/operations/status/aculta_lms.yml`, linha gerada do `README.md` e este
+  handoff.
+- Ainda não sincronizado no Runtime. Antes do push, conferir `updatedb:status`
+  e `config:status`; em seguida publicar commit isolado e validar o Runtime.
+- Próxima etapa do objetivo: concluir auditoria LMS, depois pagamentos e então
+  resolver item a item os problemas reportados por `updatedb`.

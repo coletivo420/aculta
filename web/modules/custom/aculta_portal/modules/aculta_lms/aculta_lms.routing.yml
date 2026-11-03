@@ -35,6 +35,22 @@ aculta_lms.xapi_statements:
   options:
     _aculta_domain_purpose: courses
 
+aculta_lms.lesson_view:
+  path: '/curso/{group}/{lesson_delta}'
+  defaults:
+    _controller: 'aculta_lms.course_lesson_controller:view'
+    _title: 'Aula'
+  requirements:
+    _custom_access: 'aculta_lms.lesson_view_access:access'
+  options:
+    no_cache: true
+    parameters:
+      group:
+        type: aculta_portal.lms_course_slug
+      lesson_delta:
+        type: aculta_portal.lms_lesson_slug
+    _aculta_domain_purpose: courses
+
 aculta_lms.class_activity_deadline:
   path: '/painel-administrativo/lms/curso/{course}/turma/{group}/atividade/{activity}/prazo'
   defaults:

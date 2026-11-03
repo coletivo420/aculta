@@ -1184,3 +1184,15 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 - Adicionada revisão docente ACULTA em `/painel-administrativo/lms/curso/{course}/turma/{group}/respostas`: educadores listam tentativas, gravam nota de 0 a 100 e feedback, e a própria resposta do estudante exibe a avaliação. A permissão contextual `grade students` protege a lista e o detalhe.
 - Olivero validado no Firefox ESR visível em 1440 px e 320 px: 10/10 verificações PASS para formulário, upload, recusa de extensão, envio e JavaScript. O tema foi habilitado somente durante a validação e restaurado para `aculta420` ao final.
 
+## 0.1.0-dev.179 — abre páginas individuais de aula na jornada
+
+- A jornada do estudante agora liga cada aula publicada a uma página própria,
+  com atividades ordenadas e acesso às submissões existentes.
+- A autorização exige curso publicado, aula publicada e matrícula vigente; URLs
+  amigáveis mantêm a posição original quando há aulas não publicadas. A página
+  só exibe atividades disponíveis e pertencentes ao curso.
+- Kernel `LearningDashboardKernelTest`: 1 teste / 35 assertions PASS (6
+  depreciações upstream). Unit do LMS: 230 testes / 805 assertions PASS
+  (4 depreciações PHPUnit). PHPCS e PHP lint dos arquivos alterados PASS.
+- Runtime ainda não sincronizado com esta mudança.
+

@@ -20,6 +20,8 @@ final class LmsFriendlyRouteProcessor implements OutboundRouteProcessorInterface
 
   private const ROUTE = 'aculta_lms.answer_submission';
 
+  private const LESSON_ROUTE = 'aculta_lms.lesson_view';
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly LmsFriendlySlugs $slugs,
@@ -29,7 +31,7 @@ final class LmsFriendlyRouteProcessor implements OutboundRouteProcessorInterface
    * {@inheritdoc}
    */
   public function processOutbound($route_name, Route $route, array &$parameters, ?BubbleableMetadata $bubbleable_metadata = NULL): void {
-    if ($route_name !== self::ROUTE || !isset($parameters['group'])) {
+    if (!in_array($route_name, [self::ROUTE, self::LESSON_ROUTE], TRUE) || !isset($parameters['group'])) {
       return;
     }
     $course = $this->course($parameters['group']);
@@ -44,7 +46,7 @@ final class LmsFriendlyRouteProcessor implements OutboundRouteProcessorInterface
       $lesson = $this->slugs->lessonAt($course, $lessonDelta);
       $parameters['lesson_delta'] = $this->slugs->lessonSlug($course, $lessonDelta) ?? $parameters['lesson_delta'];
     }
-    if ($lesson !== NULL) {
+    if ($lesson !== NULL && $route_name === self::ROUTE) {
       $bubbleable_metadata?->addCacheableDependency($lesson);
       if (isset($parameters['activity_delta']) && $this->isPosition($parameters['activity_delta'])) {
         $parameters['activity_delta'] = $this->slugs->activitySlug($lesson, (int) $parameters['activity_delta']) ?? $parameters['activity_delta'];
