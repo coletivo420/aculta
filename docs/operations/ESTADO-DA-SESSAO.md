@@ -1,6 +1,16 @@
 # Estado da sessão
 
-## Handoff mais recente — continuação ADR-042 P5, 2026-11-03
+## Handoff mais recente — superfícies, rodada 2 (sem Runtime), 2026-11-03
+
+- **Tarefa:** página administrativa de caminhos (3.6), interruptor de diretório (3.5), revisão de 3.4 e integração, conferência de importação (3.7) e documentação das fases.
+- **Commits em `origin/dev`:** `d05f626` (reader de diretório atrás de `leitura_ativa`, aculta_portal 0.4.1-dev.66); `89b6cdb` (formulário em `/painel-administrativo/aculta/caminhos`, menu ACULTA, aculta_superficies 0.1.0-dev.7); e o commit de documentação desta rodada.
+- **Arquivos principais:** `web/modules/custom/aculta_portal/src/Domain/SurfaceConfigReader.php`; `web/modules/custom/aculta_portal/modules/aculta_superficies/` (`SuperficiesForm.php`, `aculta_superficies.routing.yml`, `aculta_superficies.links.menu.yml`, testes); `docs/architecture/REVISAO-FASES-SUPERFICIES.md`; `docs/operations/DEBT-REGISTER.md`.
+- **Verificações:** lint PHP e YAML dos arquivos alterados PASS; `validate-admin-routes-main-domain` PASS; `validate-environment-addresses` PASS; `validate-browser-validators` PASS; suíte standalone do deployer e `boundaries` PASS; lógica do leitor 9/9 PASS com stub (fora do repositório). `validate-aculta-portal-drupal11` FAIL também em HEAD limpo (pré-existente: vendor ausente e contagem de subscribers). Testes Drupal (Unit/Kernel) NÃO executados: sem `vendor/` completo.
+- **Pendências:** Fase 3.0 no Runtime (DEFERRED); resolução de `/slug` no MAIN (3.5, DEFERRED); conferência de importação de `aculta_portal.superficies` (3.7, DEFERRED: precisa de vendor; usar `drush config:status` no Runtime); regeneração do índice de status com `--write` (precisa de vendor).
+- **Correção de documento:** o registro de dívidas dizia que o subscriber de 3.4 não existia. Ele existe e está atrás de `leitura_ativa`.
+- **Retomar lendo:** `docs/architecture/REVISAO-FASES-SUPERFICIES.md`; `web/modules/custom/aculta_portal/modules/aculta_superficies/docs/PLANO-FINAL.md`; `git log --oneline -3`.
+
+## Handoff anterior — continuação ADR-042 P5, 2026-11-03
 
 - **Tarefa:** continuar a troca de consumidores LMS para entidades próprias e concluir P4/P5 quando não houver perda funcional sem contrato aprovado. Usuário autorizou commit/push e intervenção em outros módulos/tema. P6 e reescrita de histórico continuam proibidos.
 - **Commits publicados:** `.155` `20d56c7f3` (ciclo de certificados usa progresso ACULTA), `.156` `4f7ea82bc` (relação Group de turmas própria), `31915dbe9` (README de status), `.157` `536994ba1` (calculador e configuração ACULTA de permissões) e `fa9a5cf5a` (registro Runtime). `.158` foi publicado em `1b0333f89`; o ajuste do baseline do gate Portal em `ecd5daf3f`. Após novo avanço remoto, ambos foram rebaseados com segurança sobre `e9935d948` e enviados por fast-forward. A agenda usa entidades P2, corrige a negação de acesso entre turmas e corrige a sintaxe inválida herdada em `EventClassAccess.php`.

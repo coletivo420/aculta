@@ -364,11 +364,13 @@ código do módulo.
 
 ## Superfícies e caminhos públicos (2026-11-03)
 
-- **Testes escritos, não executados:** `DomainSurfaceMapTest`, `SurfaceConfigReaderTest` e a atualização de `FrontPathPolicyTest`. Dependem de `vendor/` e do Runtime.
-- **Gates sem `vendor/`:** `validate-public-slugs`, `validate-project-status-index` e `validate-aculta-portal-drupal11` não rodam nesta sessão. O último falha só por falta de `vendor/`.
-- **Índice de status:** a tabela do README raiz foi atualizada à mão. A regeneração oficial (`--write`) precisa de `vendor/`.
-- **Fase 3.0:** roteiro atualizado com os caminhos novos. Execução no Runtime DEFERRED.
-- **Fase 3.4 (parcial):** configuração, schema, leitor e interruptor `leitura_ativa` (desligado). O subscriber que aplica a configuração às rotas não existe.
-- **Fase 3.5 (parcial):** regra de diretório só na validação. URLs de diretório não implementadas.
-- **Fase 3.7 (parcial):** YAML exportado em `config/sync`. Conferência de importação no Runtime DEFERRED.
+- **Testes escritos, não executados (DEFERRED):** `DomainSurfaceMapTest`, `SurfaceConfigReaderTest` (incluindo `testCaminhoDiretorioSoComInterruptor`), `SurfaceRoutesStaticTest` (incluindo `testFormularioEhSoMain`), `FrontPathPolicyTest` e `SurfaceRoutesKernelTest`. Dependem de `vendor/` completo (não há autoload nesta sessão) e do Runtime.
+- **Gates sem `vendor/`:** `validate-public-slugs`, `validate-project-status-index` e `validate-aculta-portal-drupal11` não rodam aqui. O último falha igual em HEAD limpo (pré-existente): falta `vendor/` para o índice de status e a contagem de subscribers do Portal não bate.
+- **Índice de status:** a linha do `aculta_superficies` e a versão do `aculta_portal` no README raiz foram atualizadas à mão. A regeneração oficial (`php scripts/validate-project-status-index.php --write`) precisa de `vendor/`.
+- **Fase 3.0:** execução da matriz de rotas no Runtime (DEFERRED). Pré-requisito de qualquer ativação.
+- **Fase 3.4 (parcial):** existem configuração, schema, leitor e `SurfaceRequestSubscriber` (núcleo). O subscriber só age com `leitura_ativa` ligado e responde 404 para superfície desativada. A atribuição de purpose por configuração não existe (as rotas continuam com `_aculta_domain_purpose` em YAML). Ativar exige o teste da 3.0 no Runtime.
+- **Fase 3.5 (parcial):** caminho `/slug` em vigor só com `leitura_ativa` ligado (`SurfaceConfigReader::caminhoDiretorioAtivo`). A resolução de `/slug` no MAIN não existe. Uma reescrita de caminho inbound para `/wiki`, `/loja` etc. faria o MAIN servir rotas com purpose de outra superfície, e isso precisa de teste de rota antes. DEFERRED.
+- **Fase 3.7 (parcial, conferência DEFERRED):** a conferência de importação de `aculta_portal.superficies` (config/sync contra o schema) não foi criada. Sem `vendor/`, não há Symfony Yaml nem `config.typed` para comparar com o schema. O caminho viável é `drush config:status` no Runtime (somente leitura, já previsto em AGENTS.md).
+- **Registro de deploy:** o formulário avisa a correção de deploy, mas não grava nada. `superficies-sugestao` do aculta_deployer só imprime sugestões.
+- **Caminho antigo do formulário:** `/painel-administrativo/superficies` deixou de existir (sem alias). Não há produção para redirecionar.
 - **Caminhos antigos em CHANGELOG e ROADMAP:** mantidos como histórico, com nota de substituição no topo.
