@@ -2,4 +2,4 @@
 version: 0.1.0-dev.22
 state: Dev
 next_phase: Validar a interface administrativa autenticada; manter 3.5 DEFERRED e promover leitura_ativa ao config/sync somente no RC.
-progress_note: "Renomeado de aculta_superficies para aculta_paths; Runtime migrado, testes Unit/Kernel executados e gates de rotas/configuração verificados. UI autenticada e resolução de /slug no MAIN seguem DEFERRED."
+progress_note: "Renomeado de aculta_superficies para aculta_paths; Runtime migrado, modal AJAX, validações de endereço, status DNS, testes Unit/Kernel e gates verificados com ACULTA420 e Olivero. Somente a resolução de /slug no MAIN e a exportação de leitura_ativa permanecem DEFERRED."
