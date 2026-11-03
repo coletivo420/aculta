@@ -112,14 +112,10 @@ PHPCS Drupal/DrupalPractice passou nos arquivos novos de resolução e no
 Na emissão de certificado F11, o manager e o formulário também usam as
 referências dos campos do `CourseStatus`: se usuário ou curso tiver sido
 removido na limpeza assíncrona, o manager responde 422 e o formulário omite a
-conclusão, sem erro 500. O formulário de resposta também lê a referência da
-atividade pelo campo e omite o prazo se a atividade foi removida, sem invocar
-`Answer::getActivity()`: `ActivityDeadlineFormHooksTest` 2/6. O Kernel também
-confirma que o hook autoinjetado mostra o prazo da turma no formulário de
-resposta e formata a data no fuso da estudante: `ClassActivityDeadlineTest`
-1/46. Kernel focal: 4 testes / 126 assertions; regressão Kernel LMS/Messenger:
-23 testes / 719 assertions PASS, com
-95 depreciações upstream. Runtime `cursos`: sem updates pendentes, rebuild do
+conclusão, sem erro 500. Os prazos por turma seguem resolvidos pelo manager
+ACULTA e cobertos por `ClassActivityDeadlineTest`; o hook contrib que alterava
+o formulário de resposta e o componente LMS de início de curso foram removidos.
+A interface ACULTA de submissão ainda está pendente. Runtime `cursos`: sem updates pendentes, rebuild do
 cache concluiu e o container resolveu o hook; houve warning preexistente de
 cópia dos assets H5P. Não foi importada configuração e ainda falta um smoke
 HTTP/visual com resposta real. Unit LMS/Messenger: 84 testes / 445 assertions PASS, com

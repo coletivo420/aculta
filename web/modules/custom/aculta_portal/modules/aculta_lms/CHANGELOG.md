@@ -1,3 +1,14 @@
+## 0.1.0-dev.169 — remove hooks presos a formulários e links LMS
+
+- Remove `ActivityDeadlineFormHooks` e `CourseLinkHooks`, que alteravam
+  formulário/componente e rota fornecidos pelo contrib. Prazos por turma seguem
+  no manager ACULTA; início do curso segue pela página canônica do Group.
+- `rg -F "Drupal\lms" web/modules/custom -g "*.php"` retorna zero.
+- Unit 218/758 PASS; `AcultaLmsInstallTest` 6/196 PASS (44 depreciações);
+  `AttemptArchiveLifecycleTest` 5/201 PASS (50 depreciações); gate Portal
+  1.172 checks PASS. P4 ainda requer harness limpo e remoção das dependências
+  do manifesto; Composer e Runtime aguardam P5.
+
 ## 0.1.0-dev.168 — remove plugin e rota legados de arquivo
 
 - Remove `FileUpload`, `UploadedAnswerAccessCheck`, o controller e a rota antigos
