@@ -9,19 +9,19 @@ use Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\group\GroupMembershipLoaderInterface;
+use Drupal\aculta_lms\Group\GroupMembershipReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgress;
 use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
 use Drupal\group\Entity\GroupInterface;
 
 /**
- * Adapts authorized Group course data and ACULTA progress to account summaries (ADR-042, decisão 6).
+ * Adapts Group course data and ACULTA progress to account summaries.
  */
 final class AccountCoursesReader implements AccountCoursesReaderInterface {
 
   public function __construct(
     private readonly CourseProgressReaderInterface $progress,
-    private readonly GroupMembershipLoaderInterface $membershipLoader,
+    private readonly GroupMembershipReaderInterface $membershipLoader,
     private readonly DomainPurposeManager $domainPurposeManager,
   ) {}
 

@@ -17,8 +17,5 @@ required: true
 translatable: true
 default_value: {  }
 default_value_callback: ''
-settings:
-  display_summary: true
-  required_summary: false
-  allowed_formats: {  }
+settings: {  }
 field_type: text_with_summary

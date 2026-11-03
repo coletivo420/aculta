@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_lms\Unit;
 
 use Drupal\aculta_learning_contracts\Learning\AccountCourseSummary;
 use Drupal\aculta_lms\Account\AccountCoursesReader;
+use Drupal\aculta_lms\Group\GroupMembershipReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgress;
 use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
 use Drupal\aculta_portal\Domain\DomainPurposeManager;
@@ -18,7 +19,6 @@ use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\group\GroupMembershipLoaderInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
 use PHPUnit\Framework\Attributes\Group;
@@ -46,7 +46,7 @@ final class AccountCoursesReaderTest extends UnitTestCase {
     $course->method('getCacheTags')->willReturn(['group:42']);
     $membership = $this->createMock(GroupRelationshipInterface::class);
     $membership->method('getGroup')->willReturn($course);
-    $membership_loader = $this->createMock(GroupMembershipLoaderInterface::class);
+    $membership_loader = $this->createMock(GroupMembershipReaderInterface::class);
     $membership_loader->method('loadByUser')->willReturn([$membership]);
     $progress = $this->createMock(CourseProgressReaderInterface::class);
     $progress->method('current')->willReturn(new CourseProgress(CourseProgress::STATUS_PASSED, TRUE, 100));
@@ -89,7 +89,7 @@ final class AccountCoursesReaderTest extends UnitTestCase {
 
     $membership = $this->createMock(GroupRelationshipInterface::class);
     $membership->method('getGroup')->willReturn($course);
-    $membership_loader = $this->createMock(GroupMembershipLoaderInterface::class);
+    $membership_loader = $this->createMock(GroupMembershipReaderInterface::class);
     $membership_loader->method('loadByUser')->with($account)->willReturn([$membership]);
 
     $progress = $this->createMock(CourseProgressReaderInterface::class);
@@ -117,7 +117,7 @@ final class AccountCoursesReaderTest extends UnitTestCase {
     $course->method('bundle')->willReturn('lms_course');
     $membership = $this->createMock(GroupRelationshipInterface::class);
     $membership->method('getGroup')->willReturn($course);
-    $membership_loader = $this->createMock(GroupMembershipLoaderInterface::class);
+    $membership_loader = $this->createMock(GroupMembershipReaderInterface::class);
     $membership_loader->method('loadByUser')->with($account)->willReturn([$membership]);
     $progress = $this->createMock(CourseProgressReaderInterface::class);
     $progress->expects(self::never())->method('current');

@@ -150,10 +150,10 @@ Versões instaladas no `composer.lock` e no `web/themes/custom/aculta420/package
 
 | Biblioteca | Versão instalada | Origem | Uso no projeto |
 | --- | --- | --- | --- |
-| `drupal/core-recommended` | 11.4.10 | Composer | Conjunto recomendado do Drupal 11 |
-| `drupal/core-composer-scaffold` | 11.4.10 | Composer | Cópia dos arquivos de suporte do core para `web/` |
-| `drupal/core-project-message` | 11.4.10 | Composer | Mensagens do Composer no projeto |
-| `drupal/core-recipe-unpack` | 11.4.10 | Composer | Desempacotamento de receitas do core |
+| `drupal/core-recommended` | 11.5.0-beta1 | Composer | Conjunto recomendado do Drupal 11 |
+| `drupal/core-composer-scaffold` | 11.5.0-beta1 | Composer | Cópia dos arquivos de suporte do core para `web/` |
+| `drupal/core-project-message` | 11.5.0-beta1 | Composer | Mensagens do Composer no projeto |
+| `drupal/core-recipe-unpack` | 11.5.0-beta1 | Composer | Desempacotamento de receitas do core |
 
 ### Drupal contrib (módulos e tema)
 
@@ -162,7 +162,8 @@ Versões instaladas no `composer.lock` e no `web/themes/custom/aculta420/package
 | `drupal/commerce` | 3.3.10 | Composer | Base de pedidos e produtos da Loja (`aculta_commerce`) |
 | `drupal/commerce_cart` | 3.3.10 | Composer | Carrinhos de compra (ADR-032) |
 | `drupal/commerce_checkout` | 3.3.10 | Composer | Checkouts por contexto (D-43) |
-| `drupal/group` | 3.3.5 | Composer | Turmas e grupos do LMS |
+| `drupal/group` | 4.0.0-alpha2 | Composer | Turmas e grupos do LMS |
+| `drupal/flexible_permissions` | 2.0.1 | Composer | Cálculo de permissões do Group e do LMS |
 | `drupal/mcp_server` | 2.0.0-beta7 | Composer; Drupal.org (GPL-2.0-or-later) | Infraestrutura MCP HTTP e stdio para Drupal |
 | `drupal/mcp_server_oauth` | 1.0.0-alpha2 | Composer; Drupal.org (GPL-2.0-or-later) | OAuth Bearer e metadados protegidos para o endpoint MCP |
 | `drupal/mcp_server_tool_bridge` | 1.0.0-beta5 | Composer; Drupal.org (GPL-2.0-or-later) | Publica plugins Tool API como ferramentas MCP |
@@ -218,7 +219,7 @@ Versões instaladas no `composer.lock` e no `web/themes/custom/aculta420/package
 | `drupal/reporting` | 2.2.0 | Composer | Relatórios administrativos |
 | `drupal/site_alert` | 1.4.0 | Composer | Avisos no topo do site |
 | `drupal/views_bulk_operations` | 4.4.9 | Composer | Operações em lote nas listagens |
-| `drupal/domain` | 3.0.1 | Composer | Multidomínio por purpose (`main`, `account`, `shop`, `courses`, etc.) |
+| `drupal/domain` | 4.0.0-alpha2 | Composer | Multidomínio por purpose (`main`, `account`, `shop`, `courses`, etc.) |
 | `drupal/search_api` | 1.41.0 | Composer | Índice de busca (`aculta_index`) |
 | `drupal/google_tag` | 2.0.9 | Composer | Marcação do Google (GA4) |
 | `drupal/metatag` | 2.2.0 | Composer | Metadados das páginas |
@@ -289,7 +290,7 @@ Versões instaladas no `composer.lock` e no `web/themes/custom/aculta420/package
 | Biblioteca | Versão instalada | Origem | Uso no projeto |
 | --- | --- | --- | --- |
 | Drush | 13.8.0 | Composer | Linha de comando: cache, banco e configuração |
-| `drupal/core-dev` | 11.4.10 | Composer (dev) | PHPUnit, PHPCS, PHPStan e demais ferramentas de teste do core |
+| `drupal/core-dev` | 11.5.0-beta1 | Composer (dev) | PHPUnit, PHPCS, PHPStan e demais ferramentas de teste do core |
 | `drupal/sdc_devel` | 1.0.3 | Composer (dev) | Desenvolvimento de componentes SDC |
 | `drupal/storybook` | 1.0.4 | Composer (dev) | Catálogo visual de componentes |
 | `ESLint` | ^10.13 | npm (tema) | Lint de JavaScript do tema |

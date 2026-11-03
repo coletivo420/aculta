@@ -69,7 +69,11 @@ services:
   Drupal\aculta_lms\Learning\CourseAnswerReaderInterface: '@aculta_lms.course_answer_reader'
   aculta_lms.account_courses_reader:
     class: Drupal\aculta_lms\Account\AccountCoursesReader
-    arguments: ['@Drupal\aculta_lms\Learning\CourseProgressReaderInterface', '@group.membership_loader', '@aculta_portal.domain_purpose']
+    arguments: ['@Drupal\aculta_lms\Learning\CourseProgressReaderInterface', '@aculta_lms.group_membership_reader', '@aculta_portal.domain_purpose']
+  aculta_lms.group_membership_reader:
+    class: Drupal\aculta_lms\Group\GroupMembershipReader
+    arguments: ['@entity_type.manager']
+  Drupal\aculta_lms\Group\GroupMembershipReaderInterface: '@aculta_lms.group_membership_reader'
   Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface: '@aculta_lms.account_courses_reader'
   aculta_portal.lms_friendly_slugs:
     class: Drupal\aculta_lms\Routing\LmsFriendlySlugs
