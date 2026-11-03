@@ -750,3 +750,8 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 - O índice de conteúdo e os links de materiais verificam acesso estudantil por `take course` em Group, sem importar `CourseInterface` do LMS.
 - Unit de `aculta_lms_resources` 13/66 PASS; Kernel do índice de acesso 5/259 PASS (53 depreciações upstream).
 
+## 0.1.0-dev.148 — avisos resolvem entidades próprias
+
+- Elegibilidade, destinatários e links de avisos usam resposta, aula e atividade ACULTA e Group; URLs de curso usam a rota canônica de Group.
+- LMS Unit 227/747 PASS; Kernel de prazos/painel 2/87 PASS; Messenger LMS Unit 48/470 e Kernel 4/52 PASS.
+

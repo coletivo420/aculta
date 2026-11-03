@@ -8,6 +8,7 @@ use Drupal\aculta_lms\Event\ActivityDeadlineAssignedEvent;
 use Drupal\aculta_lms\Notice\LearningEligibilityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -22,8 +23,6 @@ use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
-use Drupal\lms\Entity\ActivityInterface;
 use Drupal\message\MessageInterface;
 use Drupal\user\UserInterface;
 use Drupal\aculta_messenger\Aviso\EligibleNoticePage;
@@ -549,12 +548,12 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     ]);
     foreach ($parents as $parent) {
       $course = $parent instanceof GroupRelationshipInterface ? $parent->getGroup() : NULL;
-      if (!$course instanceof CourseInterface || $course->bundle() !== 'lms_course'
+      if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course'
         || !$course->hasPermission('take course', $account)
         || !$course->access('view', $account, TRUE)->isAllowed()) {
         continue;
       }
-      $url = $this->domainPurposeManager->routeUrl('courses', 'lms.course.start', ['group' => $course->id()]);
+      $url = $this->domainPurposeManager->routeUrl('courses', 'entity.group.canonical', ['group' => $course->id()]);
       if ($url === NULL) {
         return NULL;
       }
@@ -708,7 +707,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
         || !$course->access('view', $account, TRUE)->isAllowed() || !$this->eligibility->hasCurrentEnrollment($course, $account)) {
         continue;
       }
-      $url = $this->domainPurposeManager->routeUrl('courses', 'lms.course.start', ['group' => $course->id()]);
+      $url = $this->domainPurposeManager->routeUrl('courses', 'entity.group.canonical', ['group' => $course->id()]);
       if ($url === NULL) {
         return NULL;
       }
@@ -774,9 +773,9 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     $class = $deadline->getGroup();
     $activity = $deadline->getEntity();
     $course = $class instanceof GroupInterface ? $this->deadlines->courseForClass($class) : NULL;
-    if (!$class instanceof GroupInterface || !$class->isPublished() || !$activity instanceof ActivityInterface
-      || !$activity instanceof EntityPublishedInterface || !$activity->isPublished()
-      || !$course instanceof CourseInterface || !$course->isPublished()
+    if (!$class instanceof GroupInterface || !$class->isPublished() || !$activity instanceof ContentEntityInterface
+      || $activity->getEntityTypeId() !== 'aculta_lms_activity'
+      || !$course instanceof GroupInterface || !$course->isPublished()
       || !$course->access('view', $account, TRUE)->isAllowed()
       || !$this->deadlines->activityBelongsToCourse($activity, $course)
       || !$this->eligibility->memberCanTakeCourseInClass($class, $account)) {
@@ -793,7 +792,7 @@ final class LearningNoticeManager implements LearningNoticeManagerInterface, Avi
     $user = $account instanceof UserInterface ? $account : NULL;
     $timestamp = $date->getTimestamp();
     $formattedDate = $this->dateFormatter->format($timestamp, 'long', NULL, $user?->getTimeZone());
-    $url = $this->domainPurposeManager->routeUrl('courses', 'lms.course.start', ['group' => $course->id()]);
+    $url = $this->domainPurposeManager->routeUrl('courses', 'entity.group.canonical', ['group' => $course->id()]);
     if ($url === NULL) {
       return NULL;
     }

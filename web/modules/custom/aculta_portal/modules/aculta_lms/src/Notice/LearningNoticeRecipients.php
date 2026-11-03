@@ -10,13 +10,10 @@ use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\lms\Entity\ActivityInterface;
-use Drupal\lms\Entity\CourseInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -181,9 +178,9 @@ final class LearningNoticeRecipients implements LearningNoticeRecipientsInterfac
     $class = $deadline->getGroup();
     $activity = $deadline->getEntity();
     $course = $class instanceof GroupInterface ? $this->eligibility->courseForClass($class) : NULL;
-    if (!$class instanceof GroupInterface || !$class->isPublished() || !$activity instanceof ActivityInterface
-      || !$activity instanceof EntityPublishedInterface || !$activity->isPublished()
-      || !$course instanceof CourseInterface || !$course->isPublished()
+    if (!$class instanceof GroupInterface || !$class->isPublished()
+      || !$activity instanceof EntityInterface || $activity->getEntityTypeId() !== 'aculta_lms_activity'
+      || !$course instanceof GroupInterface || !$course->isPublished()
       || !$this->eligibility->activityBelongsToCourse($activity, $course)) {
       return;
     }

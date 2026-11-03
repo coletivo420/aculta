@@ -416,3 +416,8 @@ foram executados.
 
 - Notificações de conclusão, avaliação e submissão leem `aculta_lms_progress` e `aculta_lms_answer`, com matrícula e permissão Group revalidadas; links vão aos painéis ACULTA enquanto não há tela de resposta.
 
+## 0.1.1-dev.409 — notificações de aprendizagem sem tipo LMS contrib
+
+- `LearningNoticeManager` usa Group e entidades ACULTA para cursos, atividades e respostas; links de curso apontam à rota canônica Group.
+- Kernel de persistência 4/52 PASS, com duas depreciações upstream.
+

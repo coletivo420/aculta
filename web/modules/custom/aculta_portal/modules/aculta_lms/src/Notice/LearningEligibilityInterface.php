@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Notice;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\lms\Entity\CourseInterface;
 
 /**
  * Educational eligibility policy owned by the LMS domain.
@@ -48,11 +48,11 @@ interface LearningEligibilityInterface {
   /**
    * Resolves the course of a class through the LMS deadline rules.
    */
-  public function courseForClass(GroupInterface $class): ?CourseInterface;
+  public function courseForClass(GroupInterface $class): ?GroupInterface;
 
   /**
    * Whether the activity currently belongs to the course.
    */
-  public function activityBelongsToCourse(ActivityInterface $activity, CourseInterface $course): bool;
+  public function activityBelongsToCourse(ContentEntityInterface $activity, GroupInterface $course): bool;
 
 }

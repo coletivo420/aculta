@@ -6,12 +6,12 @@ namespace Drupal\aculta_lms\Notice;
 
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\lms\Entity\CourseInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -112,7 +112,7 @@ final class LearningEligibility implements LearningEligibilityInterface {
    */
   public function memberCanTakeCourseInClass(GroupInterface $class, AccountInterface $account): bool {
     $course = $this->deadlines->courseForClass($class);
-    if (!$course instanceof CourseInterface || !$course->hasPermission('take course', $account)) {
+    if (!$course->hasPermission('take course', $account)) {
       return FALSE;
     }
     foreach (GroupMembership::loadByGroup($class) as $membership) {
@@ -129,14 +129,14 @@ final class LearningEligibility implements LearningEligibilityInterface {
   /**
    * {@inheritdoc}
    */
-  public function courseForClass(GroupInterface $class): ?CourseInterface {
+  public function courseForClass(GroupInterface $class): ?GroupInterface {
     return $this->deadlines->courseForClass($class);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function activityBelongsToCourse(ActivityInterface $activity, CourseInterface $course): bool {
+  public function activityBelongsToCourse(ContentEntityInterface $activity, GroupInterface $course): bool {
     return $this->deadlines->activityBelongsToCourse($activity, $course);
   }
 

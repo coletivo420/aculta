@@ -31,7 +31,6 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembership;
 use Drupal\group\Entity\GroupRelationshipInterface;
-use Drupal\lms\Entity\Bundle\CourseInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\message\Entity\MessageTemplate;
 use Drupal\user\Entity\User;
@@ -219,7 +218,7 @@ final class LearningNoticePersistenceKernelTest extends KernelTestBase {
     $class->method('bundle')->willReturn('lms_class');
     $class->method('access')->willReturn(AccessResult::allowed());
     $class->method('label')->willReturn('Turma 24');
-    $course = $this->createMock(CourseInterface::class);
+    $course = $this->createMock(GroupInterface::class);
     $course->method('id')->willReturn('course-12');
     $course->method('bundle')->willReturn('lms_course');
     $course->method('label')->willReturn('Curso aberto');
