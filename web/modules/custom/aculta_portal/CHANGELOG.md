@@ -415,3 +415,7 @@ RUNTIME STATUS: DEFERRED.
 
 - Novo `OrderTypeCheckoutFlows`: lê o checkout flow associado ao tipo de pedido no Commerce, sem alterá-lo. Serve aos providers de Loja, LMS e Doações. Sem efeito público. RUNTIME STATUS: DEFERRED.
 
+## Próxima versão — renomeação LinkWeed
+
+- A superfície `links` passou a exibir LinkWeed; o módulo responsável foi renomeado para `aculta_linkweed`, preservando purpose e Domain.
+

@@ -93,7 +93,7 @@ final class PageTitleVisibilityTest extends UnitTestCase {
       'institutional_home' => $isHome,
       'aculta_show_page_title_on_front' => FALSE,
       'aculta_show_site_header' => TRUE,
-      'aculta_links_page' => FALSE,
+      'aculta_linkweed_page' => FALSE,
       'aculta_brand_home' => '/',
     ]);
   }

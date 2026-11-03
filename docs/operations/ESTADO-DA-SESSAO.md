@@ -156,3 +156,11 @@ Não inclua credenciais, tokens ou outros dados sensíveis. Atualize este handof
 - **Local dev.169:** removidos `ActivityDeadlineFormHooks` e `CourseLinkHooks`, presos ao formulário/rota do contrib. Unit 218/758 PASS; `AcultaLmsInstallTest` 6/196 PASS (44 depreciações); `AttemptArchiveLifecycleTest` 5/201 PASS (50 depreciações); gate Portal 1.172 checks PASS. `rg -F 'Drupal\lms' web/modules/custom -g '*.php'` retorna zero.
 - **Pendências:** dev.169 ainda local. Dependências `lms*` seguem no manifesto; `composer.json`/lock, config sync e módulos Runtime não foram cortados. O formulário ACULTA de submissão de arquivo segue pendente. Configuração `activity_data` para os plugins objetivos aguarda definição; não inventar formato de enunciado/gabarito.
 - **Próximos passos:** publicar dev.169; preparar P4 removendo deps do manifesto e retirando lms do harness; executar testes limpos; então P5 Composer/config/Runtime com snapshot e ordem autorizada. P6 não executar.
+## Renomeação LinkWeed — 2026-11-03
+
+- Objetivo: renomear `aculta_links` para `aculta_linkweed`, mantendo purpose `links` e Domain `links_aculta_org`.
+- Feito: código, namespaces, entidades, tabelas, config, rotas administrativas e referências customizadas renomeados; título da superfície virou LinkWeed; Runtime atualizado e cache reconstruído.
+- Entidades/tabelas: `aculta_link` → `aculta_linkweed`, `aculta_link_revision` → `aculta_linkweed_revision`, `aculta_link_item` → `aculta_linkweed_item`, `aculta_link_item_revision` → `aculta_linkweed_item_revision`, `aculta_link_page` → `aculta_linkweed_page`, `aculta_link_page_revision` → `aculta_linkweed_page_revision`.
+- Contagens Runtime antes/depois: 1/1, 1/1, 0/0, 0/0, 0/0, 0/0, na ordem acima.
+- Verificações: `updb`, `cr`, `pm:list`, config `aculta_linkweed.social_links`; gates administrativos, endereços, browser validators, slugs, status index e Drupal 11 passaram. Unit do módulo: 8 testes/65 assertions.
+- Pendências: concluir Kernel focal (execução longa sem saída final capturada), revisar/commitar, push em `origin/dev`, confirmar `ls-remote` e verificar smoke HTTP das rotas no MAIN.

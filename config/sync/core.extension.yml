@@ -22,7 +22,6 @@ module:
   aculta_image: 0
   aculta_index: 0
   aculta_learning_contracts: 0
-  aculta_links: 0
   aculta_lms: 0
   aculta_lms_agenda: 0
   aculta_lms_h5p: 0
@@ -44,6 +43,7 @@ module:
   aculta_secrets_manager: 0
   aculta_statistics: 0
   aculta_studio: 0
+  aculta_superficies: 0
   aculta_ugc: 0
   aculta_user: 0
   aculta_wiki: 0
@@ -237,6 +237,7 @@ module:
   views: 10
   domain_source: 30
   standard: 1000
+  aculta_linkweed: 0
 theme:
   claro: 0
   stable9: 0

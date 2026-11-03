@@ -1,6 +1,6 @@
-# Arquitetura do aculta_links
+# Arquitetura do aculta_linkweed
 
-`aculta_links` é dono das micropáginas, seus itens e regras de publicação. O
+`aculta_linkweed` é dono das micropáginas, seus itens e regras de publicação. O
 tema renderiza a prévia com a apresentação pública, sem transformar rascunhos em
 conteúdo público.
 
@@ -9,7 +9,7 @@ conteúdo público.
 - **2026-10-20 — Prévia de micropágina é privada e não compartilhável em cache.**
   Situação: vigente. Motivo: permitir que o proprietário confira rascunhos e
   itens inativos sem publicá-los nem expô-los a outros visitantes. Origem:
-  `0.4.0-dev.3`, [histórico arquivado](../history/changelog/aculta_links.md).
+  `0.4.0-dev.3`, [histórico arquivado](../history/changelog/aculta_linkweed.md).
   A rota no purpose `links` exige autorização do proprietário e retorna
   `max-age: 0`.
 

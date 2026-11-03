@@ -35,7 +35,7 @@ final class ModeratableCollectionRegistry {
     'aculta_calendar.import_review' => 'Calendário — itens importados para revisão',
     'aculta_messenger.admin_temporary_notices' => 'Avisos — temporários',
     'aculta_messenger.admin_persistent_notices' => 'Avisos — persistentes',
-    'aculta_links.dashboard' => 'ACULTA Links — micropáginas e destinos',
+    'aculta_linkweed.dashboard' => 'ACULTA Links — micropáginas e destinos',
     'aculta_faq.admin' => 'FAQ — perguntas e blocos editoriais',
     'aculta_ugc.admin_reports' => 'Denúncias de conteúdo (UGC) — moderação unificada',
     'aculta_user.ownership_claims' => 'Pessoas — pedidos de reivindicação de posse',

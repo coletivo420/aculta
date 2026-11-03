@@ -59,7 +59,7 @@ $assert(
   'Institution Bar markup keeps the shared base class without a parallel page-top wrapper.',
 );
 $headerPosition = strpos($pageSource, '<header class="aculta-header');
-$linksPagePosition = strpos($pageSource, '{% if aculta_links_page %}');
+$linksPagePosition = strpos($pageSource, '{% if aculta_linkweed_page %}');
 $assert(
   substr_count($pageSource, '<header class="aculta-header') === 1
     && $headerPosition !== FALSE
@@ -67,7 +67,7 @@ $assert(
     && $headerPosition < $linksPagePosition
     && str_contains(
       $pageSource,
-      '{% set aculta_links_page = domain_presentation.layout.links_page|default(false) %}',
+      '{% set aculta_linkweed_page = domain_presentation.layout.links_page|default(false) %}',
     )
     && str_contains($pageSource, '{% if aculta_show_site_header %}'),
   'One neutral-contract Domain Header is rendered before every purpose-specific page layout.',

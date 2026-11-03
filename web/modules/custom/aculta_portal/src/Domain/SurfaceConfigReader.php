@@ -29,7 +29,7 @@ final class SurfaceConfigReader {
     'shop' => 'Loja',
     'courses' => 'Cursos',
     'forum' => 'Fórum',
-    'links' => 'Redes sociais',
+    'links' => 'LinkWeed',
     'eventos' => 'Eventos',
   ];
 

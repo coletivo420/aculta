@@ -1,5 +1,5 @@
 langcode: pt-br
-leitura_ativa: false
+leitura_ativa: true
 superficies:
   main:
     modo: subdominio
@@ -45,7 +45,7 @@ superficies:
     modo: subdominio
     ativa: true
     slug: ''
-    titulo: Redes sociais
+    titulo: 'Redes sociais'
   eventos:
     modo: subdominio
     ativa: true

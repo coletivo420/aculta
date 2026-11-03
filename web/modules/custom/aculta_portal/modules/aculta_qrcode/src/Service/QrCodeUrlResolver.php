@@ -15,7 +15,7 @@ use Drupal\Core\Url;
  * não monta URL. Assim, os testes Kernel do módulo não carregam o Portal.
  *
  * O host vem do `DomainPurposeManager`, nunca de concatenação. O purpose
- * `links` é o mesmo do redirecionamento curto do `aculta_links`.
+ * `links` é o mesmo do redirecionamento curto do `aculta_linkweed`.
  */
 final class QrCodeUrlResolver implements QrCodePublicUrlInterface {
 
