@@ -176,10 +176,8 @@ Versões instaladas no `composer.lock` e no `web/themes/custom/aculta420/package
 | `drupal/ckeditor5_plugin_pack` | 1.5.6 | Composer | Editor de texto rico |
 | `drupal/ctools` | 4.1.1 | Composer | Ferramentas de componentes e páginas |
 | `drupal/diff` | 2.1.1 | Composer | Comparação de revisões |
-| `drupal/fences` | 3.0.9 | Composer | Marcação de campos |
 | `drupal/freelinking` | 4.0.3 | Composer | Links internos em textos |
 | `drupal/history` | 1.0.0 | Composer | Registro de leitura de conteúdo |
-| `drupal/section_library` | 2.0.1 | Composer | Biblioteca de seções reutilizáveis |
 | `drupal/ui_patterns` | 2.0.23 | Composer | Padrões de interface (SDC) |
 | `drupal/ui_patterns_field_group` | 2.0.0-beta2 | Composer | Agrupamento de campos com padrões de interface |
 | `drupal/ui_patterns_layouts` | 2.0.23 | Composer | Layouts com padrões de interface |
