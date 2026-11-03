@@ -131,7 +131,7 @@ final class XapiBatchIngestorTest extends UnitTestCase {
 
   public function testRefusesStatementForDifferentContent(): void {
     $statement = $this->statement('a0000000-0000-4000-8000-000000000001');
-    $statement['object']['id'] = 'https://aculta.org/atividade/other';
+    $statement['object']['id'] = 'https://teste.invalid/atividade/other';
     $result = $this->ingestor()->ingest((string) json_encode([$statement]), $this->claims(), []);
 
     $this->assertSame([], $result['accepted']);
