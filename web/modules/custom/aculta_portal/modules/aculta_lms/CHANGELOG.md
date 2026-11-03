@@ -723,3 +723,7 @@ Tarefa: "Pendência de smoke autenticado do aculta_lms (CHANGELOG.md linha 51): 
 - Eventos de liberação e revalidação do Messenger usam `aculta_lms_lesson` e `aculta_lms_activity`; atividade fica disponível quando a aula ACULTA pai está publicada, pois o modelo P2 não define publicação independente.
 - O vínculo para curso e as matrículas continuam usando Group. Nenhum payload ou status legado foi migrado.
 
+## 0.1.0-dev.142 — acesso ao painel usa Group
+
+- `ClassDashboardAccessCheck` valida curso e turma por `GroupInterface`, alinhado ao retorno ACULTA do resolvedor de turma.
+
