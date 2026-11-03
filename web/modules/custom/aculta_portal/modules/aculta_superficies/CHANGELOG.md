@@ -1,3 +1,12 @@
+## 0.1.0-dev.17 — Nome do Site, status de DNS e validação de endereço
+
+- Lista: sai a coluna Caminho em vigor e a linha do Principal. Entram Módulo ACULTA (somente leitura) e Status do DNS. Superfície passa a ser Nome do Site.
+- Status do DNS: em diretório, "Modo Diretório, Não Aplicável"; em subdomínio, consulta o DNS (CNAME para o principal ou IP em comum), com cache de 5 minutos.
+- Orientação de DNS embaixo da tabela, com o host principal vindo do Domain.
+- Modal: título vira Nome do Site. Endereço e slug recusam caracteres inválidos e dizem quais são e por que.
+- Serviço novo: DnsStatusChecker (aculta_superficies.services.yml).
+- Testes: DEFERRED (sem vendor/ nem Runtime). Lint dos PHP executado.
+
 ## 0.1.0-dev.10 — subdomínio editável no modal (grava no Domain)
 
 - Modo subdomínio: campo com o endereço completo da superfície, gravado na entidade Domain do purpose. O principal continua somente leitura.

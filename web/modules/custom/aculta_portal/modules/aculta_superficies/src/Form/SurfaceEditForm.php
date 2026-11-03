@@ -61,7 +61,8 @@ final class SurfaceEditForm extends FormBase {
     $form['#purpose'] = $purpose;
     $form['titulo'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Título'),
+      '#title' => $this->t('Nome do Site'),
+      '#description' => $this->t('Nome exibido para esta superfície. Corresponde ao site do subdomínio.'),
       '#default_value' => $linha['titulo'],
       '#maxlength' => 80,
       '#required' => TRUE,
@@ -181,24 +182,38 @@ final class SurfaceEditForm extends FormBase {
       return;
     }
     $purpose = (string) $form['#purpose'];
+    $modo = (string) $form_state->getValue('modo');
+
+    // Caracteres e formato: a mensagem diz o que foi recusado e por quê.
+    if ($purpose !== DomainSurfaceMap::MAIN && $modo === 'diretorio') {
+      $motivo = $this->motivoEndereco((string) $form_state->getValue(['caminho', 'slug']), FALSE);
+      if ($motivo !== NULL) {
+        $form_state->setErrorByName('caminho][slug', $motivo);
+        return;
+      }
+    }
+    if ($purpose !== DomainSurfaceMap::MAIN && $modo === 'subdominio') {
+      $motivo = $this->motivoEndereco($this->hostSubmetido($form_state), TRUE);
+      if ($motivo !== NULL) {
+        $form_state->setErrorByName('caminho][hostname', $motivo);
+        return;
+      }
+    }
+
     $superficies = $this->reader->superficies();
     $superficies[$purpose] = $this->valoresDoFormulario($purpose, $form_state);
     $erros = SurfaceConfigReader::validar($superficies);
     if (isset($erros[$purpose])) {
-      $campo = $form_state->getValue('modo') === 'diretorio' ? 'caminho][slug' : 'modo';
+      $campo = $modo === 'diretorio' ? 'caminho][slug' : 'modo';
       $form_state->setErrorByName($campo, $erros[$purpose]);
     }
 
-    if ($purpose === DomainSurfaceMap::MAIN || $form_state->getValue('modo') !== 'subdominio') {
+    if ($purpose === DomainSurfaceMap::MAIN || $modo !== 'subdominio') {
       return;
     }
     $host = $this->hostSubmetido($form_state);
     $dominio = $this->purposes->getDomain($purpose);
     if ($dominio === NULL || $host === $dominio->getHostname()) {
-      return;
-    }
-    if (!preg_match('/^(?=.{1,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/', $host)) {
-      $form_state->setErrorByName('caminho][hostname', $this->t('Endereço inválido. Use só o domínio, em minúsculas, sem https:// e sem barra.'));
       return;
     }
     if (!$form_state->getValue(['caminho', 'confirmar_host'])) {
@@ -243,6 +258,55 @@ final class SurfaceEditForm extends FormBase {
         '@titulo' => $depois['titulo'],
       ]));
     }
+  }
+
+  /**
+   * Motivo da recusa de um endereço ou slug, ou NULL se estiver certo.
+   *
+   * Nomeia os caracteres proibidos. Host aceita letras sem acento, números,
+   * hífen e ponto; slug aceita só letras sem acento, números e hífen.
+   */
+  private function motivoEndereco(string $valor, bool $host): ?string {
+    if ($valor === '') {
+      return (string) $this->t('Campo vazio. Digite um valor.');
+    }
+    // Remove tudo que é permitido; o que sobra são os caracteres recusados.
+    $sobra = (string) preg_replace($host ? '/[a-z0-9.\-]/' : '/[a-z0-9\-]/', '', $valor);
+    $proibidos = array_values(array_unique(mb_str_split($sobra)));
+    if ($proibidos !== [] && $proibidos[0] !== '') {
+      $lista = implode(', ', array_map(static fn (string $c): string => $c === ' ' ? '«espaço»' : '«' . $c . '»', $proibidos));
+      $uso = $host
+        ? (string) $this->t('letras sem acento, números, hífen e ponto')
+        : (string) $this->t('letras minúsculas sem acento, números e hífen');
+      return (string) $this->t('Caracteres não permitidos: @lista. Use só @uso.', ['@lista' => $lista, '@uso' => $uso]);
+    }
+    if (!$host) {
+      return preg_match('/^-|-$|--/', $valor)
+        ? (string) $this->t('Não pode começar nem terminar com hífen, nem ter dois hífens seguidos.')
+        : NULL;
+    }
+    if (strlen($valor) > 253) {
+      return (string) $this->t('Endereço maior que 253 caracteres.');
+    }
+    if (!str_contains($valor, '.')) {
+      return (string) $this->t('Falta o domínio. Ex.: wiki420.aculta.org.');
+    }
+    $trechos = explode('.', $valor);
+    foreach ($trechos as $trecho) {
+      if ($trecho === '') {
+        return (string) $this->t('Há um ponto sobrando, sem texto entre dois pontos.');
+      }
+      if (strlen($trecho) > 63) {
+        return (string) $this->t('Um trecho entre pontos passa de 63 caracteres.');
+      }
+      if (str_starts_with($trecho, '-') || str_ends_with($trecho, '-')) {
+        return (string) $this->t('Um trecho entre pontos começa ou termina com hífen.');
+      }
+    }
+    if (!preg_match('/^[a-z]{2,}$/', end($trechos))) {
+      return (string) $this->t('O final do endereço precisa ser letras (ex.: .org).');
+    }
+    return NULL;
   }
 
   /**
