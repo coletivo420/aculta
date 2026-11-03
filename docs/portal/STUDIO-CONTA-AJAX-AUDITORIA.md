@@ -1,7 +1,7 @@
 # Conta Studio: auditoria AJAX e plano de recuperação
 
 Data: 2026-11-03. Estado: implementação local em desenvolvimento; homologação integrada Runtime/browser pendente.
-Implementação local baseada em código e contratos do HEAD `50050dc4d`; revisão visual integrada pendente.
+Implementação enviada em `8ccbcb0618`, baseada nos contratos vigentes; revisão visual integrada pendente. O Runtime respondeu em leitura anônima, mas a sincronização exige snapshot/import das diferenças LMS de Config Sync.
 Escopo: entrada account, seções privadas /conta/* e comparação com /conta-legada e suas seções. Não altera grants, entidades ou rotas.
 
 ## Evidências e limites

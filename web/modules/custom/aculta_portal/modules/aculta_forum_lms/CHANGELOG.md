@@ -540,3 +540,9 @@
 - Kernel do fórum: 27 testes / 1.348 asserções PASS; 58 depreciações
   Core/contrib. Unit: 33 testes / 323 asserções PASS.
 
+## `0.1.0-dev.34` — registrar alias autowired do resolvedor de discussão — 2026-11-03
+
+- O hook `LmsActivityDiscussionHooks` injeta `LmsActivityDiscussionResolver` pelo FQCN, mas o serviço existia somente com ID curto. Adicionado alias, sem criar segunda instância.
+- O preflight Drush falhava na compilação do container por essa referência ausente, bloqueando a sincronização de código/cache do Studio no Runtime. `LmsDiscussionInstallConfigTest` agora cobre o alias.
+- Validação e Runtime após esta correção registrados abaixo/depois do push.
+

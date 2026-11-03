@@ -23,7 +23,7 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
   }
 
   /**
-   * The discussion bundle reuses Comment storage and has a visible full display.
+   * The discussion bundle reuses Comment storage and has a full display.
    */
   public function testBundleReusesTheSharedCommentField(): void {
     $config = $this->config('node.type.aculta_lms_topic');
@@ -45,7 +45,8 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
     $textFormat = $this->syncConfig('filter.format.forum');
     self::assertSame('media', $textFormat['filters']['media_embed']['provider']);
     $editor = $this->syncConfig('editor.editor.forum');
-    // Uploads do Fórum são centralizados em aculta_portal: o upload de imagem nativo do CKEditor fica desligado.
+    // Uploads do Fórum passam pelo aculta_portal; o upload de imagem nativo
+    // do CKEditor permanece desligado.
     self::assertFalse($editor['image_upload']['status']);
   }
 
@@ -83,6 +84,10 @@ final class LmsDiscussionInstallConfigTest extends UnitTestCase {
 
     $services = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_forum_lms.services.yml')['services'];
     self::assertSame('Drupal\\aculta_forum_lms\\Context\\LmsActivityDiscussionResolver', $services['aculta_forum_lms.activity_discussion_resolver']['class']);
+    self::assertSame(
+      '@aculta_forum_lms.activity_discussion_resolver',
+      $services['Drupal\\aculta_forum_lms\\Context\\LmsActivityDiscussionResolver'],
+    );
     self::assertArrayNotHasKey('Drupal\\aculta_forum_lms\\Hook\\LmsActivityDiscussionHooks', $services);
     self::assertSame('Drupal\\aculta_forum_lms\\Context\\Lmsaculta_H5PDiscussionResolver', $services['aculta_forum_lms.h5p_discussion_resolver']['class']);
     self::assertSame(
